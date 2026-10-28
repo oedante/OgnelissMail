@@ -127,6 +127,11 @@ dependencies:
 # не изменился, поэтому переопределение безопасно.
 dependency_overrides:
   uuid: ^4.5.1
+  # Linux-часть flutter_inappwebview требует WPE WebKit, которого нет в
+  # Ubuntu 24.04; браузер на Linux не используется — пустая реализация
+  # (packages/flutter_inappwebview_linux_stub/pubspec.yaml, 28.10.2026).
+  flutter_inappwebview_linux:
+    path: packages/flutter_inappwebview_linux_stub
   # flutter_html 3.0.0 вызывает внутреннюю функцию matches() из
   # package:html/src/query_selector.dart, которую html 0.15.7 (август 2026)
   # удалил: сборка падает с «Method not found: 'matches'». Держим 0.15.6,

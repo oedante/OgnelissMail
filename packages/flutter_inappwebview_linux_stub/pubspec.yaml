@@ -1,0 +1,30 @@
+# Заглушка Linux-части flutter_inappwebview (1.8.6, 28.10.2026).
+#
+# flutter_inappwebview 6.2 (бета) на Linux собирается только с WPE WebKit,
+# а его нет в Ubuntu 24.04 — сборка Linux падала («WPE WebKit not found»).
+# Встроенный браузер на Linux приложение не использует: письма показывает
+# flutter_html (mailWebViewSupported — только Android и iOS), редактор
+# HugeRTE — Android, iOS, macOS, Windows (mailEditorSupported). Поэтому
+# Linux-реализация подменяется пустой (dependency_overrides в pubspec.yaml
+# приложения): без нативного кода, registerWith ничего не регистрирует.
+# Убрать, когда понадобится браузер на Linux и WPE WebKit будет в
+# дистрибутивах.
+name: flutter_inappwebview_linux
+description: Пустая Linux-реализация flutter_inappwebview для Ogneliss Mail.
+version: 0.1.0-beta.1
+publish_to: none
+
+environment:
+  sdk: ">=3.8.0 <4.0.0"
+  flutter: ">=3.32.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    implements: flutter_inappwebview
+    platforms:
+      linux:
+        dartPluginClass: InAppWebViewLinuxStub

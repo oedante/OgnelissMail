@@ -1,10 +1,10 @@
 /* Тексты Info.plist (название и запросы разрешений). Создано tool/l10n/l10n.py gen из assets/l10n/hi.xml — не править вручную. */
 "CFBundleDisplayName" = "Ogneliss Mail";
-"NSFaceIDUsageDescription" = "Face ID unlocks Ogneliss Mail instead of the PIN code.";
-"NSContactsUsageDescription" = "Contacts on this iPhone are used to suggest recipients, and contacts from your mailbox can be saved to the iPhone address book if you turn this on. They are not sent anywhere.";
-"NSCalendarsFullAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsWriteOnlyAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSPhotoLibraryUsageDescription" = "Photos are used only when you attach them to a message or choose a mailbox photo.";
-"NSCameraUsageDescription" = "Ogneliss Mail does not use the camera itself. A web page opened from a message (for example, a video meeting) may ask for it.";
-"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail does not track your location. A web page opened from a message may ask for it.";
+"NSFaceIDUsageDescription" = "Face ID, PIN कोड की जगह Ogneliss Mail अनलॉक करता है।";
+"NSContactsUsageDescription" = "इस iPhone के संपर्कों का उपयोग प्राप्तकर्ताओं के सुझाव देने के लिए होता है, और आपके मेलबॉक्स के संपर्क चालू करने पर iPhone की एड्रेस बुक में सेव किए जा सकते हैं। वे कहीं नहीं भेजे जाते।";
+"NSCalendarsFullAccessUsageDescription" = "आपके मेलबॉक्स की मीटिंग चालू करने पर iPhone कैलेंडर में जोड़ी जा सकती हैं।";
+"NSCalendarsWriteOnlyAccessUsageDescription" = "आपके मेलबॉक्स की मीटिंग चालू करने पर iPhone कैलेंडर में जोड़ी जा सकती हैं।";
+"NSCalendarsUsageDescription" = "आपके मेलबॉक्स की मीटिंग चालू करने पर iPhone कैलेंडर में जोड़ी जा सकती हैं।";
+"NSPhotoLibraryUsageDescription" = "फ़ोटो का उपयोग तभी होता है जब आप उन्हें ईमेल में अटैच करते हैं या मेलबॉक्स की फ़ोटो चुनते हैं।";
+"NSCameraUsageDescription" = "Ogneliss Mail खुद कैमरे का उपयोग नहीं करता। ईमेल से खोला गया वेब पेज (उदाहरण के लिए, वीडियो मीटिंग) उसकी अनुमति मांग सकता है।";
+"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail आपकी लोकेशन ट्रैक नहीं करता। ईमेल से खोला गया वेब पेज उसकी अनुमति मांग सकता है।";

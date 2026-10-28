@@ -1,10 +1,10 @@
 /* Тексты Info.plist (название и запросы разрешений). Создано tool/l10n/l10n.py gen из assets/l10n/pt.xml — не править вручную. */
 "CFBundleDisplayName" = "Ogneliss Mail";
-"NSFaceIDUsageDescription" = "Face ID unlocks Ogneliss Mail instead of the PIN code.";
-"NSContactsUsageDescription" = "Contacts on this iPhone are used to suggest recipients, and contacts from your mailbox can be saved to the iPhone address book if you turn this on. They are not sent anywhere.";
-"NSCalendarsFullAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsWriteOnlyAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSPhotoLibraryUsageDescription" = "Photos are used only when you attach them to a message or choose a mailbox photo.";
-"NSCameraUsageDescription" = "Ogneliss Mail does not use the camera itself. A web page opened from a message (for example, a video meeting) may ask for it.";
-"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail does not track your location. A web page opened from a message may ask for it.";
+"NSFaceIDUsageDescription" = "O Face ID desbloqueia o Ogneliss Mail em vez do código PIN.";
+"NSContactsUsageDescription" = "Os contatos deste iPhone são usados para sugerir destinatários, e os contatos da sua caixa de correio podem ser salvos na agenda do iPhone se você ativar essa opção. Eles não são enviados para lugar nenhum.";
+"NSCalendarsFullAccessUsageDescription" = "As reuniões da sua caixa de correio podem ser adicionadas ao calendário do iPhone se você ativar essa opção.";
+"NSCalendarsWriteOnlyAccessUsageDescription" = "As reuniões da sua caixa de correio podem ser adicionadas ao calendário do iPhone se você ativar essa opção.";
+"NSCalendarsUsageDescription" = "As reuniões da sua caixa de correio podem ser adicionadas ao calendário do iPhone se você ativar essa opção.";
+"NSPhotoLibraryUsageDescription" = "As fotos são usadas apenas quando você as anexa a uma mensagem ou escolhe uma foto para a caixa de correio.";
+"NSCameraUsageDescription" = "O Ogneliss Mail não usa a câmera por conta própria. Uma página da web aberta a partir de uma mensagem (por exemplo, uma videoconferência) pode solicitá-la.";
+"NSLocationWhenInUseUsageDescription" = "O Ogneliss Mail não rastreia sua localização. Uma página da web aberta a partir de uma mensagem pode solicitá-la.";

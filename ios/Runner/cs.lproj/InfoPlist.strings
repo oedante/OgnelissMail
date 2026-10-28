@@ -1,10 +1,10 @@
 /* Тексты Info.plist (название и запросы разрешений). Создано tool/l10n/l10n.py gen из assets/l10n/cs.xml — не править вручную. */
 "CFBundleDisplayName" = "Ogneliss Mail";
-"NSFaceIDUsageDescription" = "Face ID unlocks Ogneliss Mail instead of the PIN code.";
-"NSContactsUsageDescription" = "Contacts on this iPhone are used to suggest recipients, and contacts from your mailbox can be saved to the iPhone address book if you turn this on. They are not sent anywhere.";
-"NSCalendarsFullAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsWriteOnlyAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSPhotoLibraryUsageDescription" = "Photos are used only when you attach them to a message or choose a mailbox photo.";
-"NSCameraUsageDescription" = "Ogneliss Mail does not use the camera itself. A web page opened from a message (for example, a video meeting) may ask for it.";
-"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail does not track your location. A web page opened from a message may ask for it.";
+"NSFaceIDUsageDescription" = "Face ID odemyká Ogneliss Mail místo kódu PIN.";
+"NSContactsUsageDescription" = "Kontakty v tomto iPhonu se používají k navrhování příjemců a kontakty z vaší schránky lze uložit do adresáře iPhonu, pokud to zapnete. Nikam se neodesílají.";
+"NSCalendarsFullAccessUsageDescription" = "Schůzky z vaší schránky lze přidat do kalendáře iPhonu, pokud to zapnete.";
+"NSCalendarsWriteOnlyAccessUsageDescription" = "Schůzky z vaší schránky lze přidat do kalendáře iPhonu, pokud to zapnete.";
+"NSCalendarsUsageDescription" = "Schůzky z vaší schránky lze přidat do kalendáře iPhonu, pokud to zapnete.";
+"NSPhotoLibraryUsageDescription" = "Fotky se používají jen tehdy, když je přikládáte ke zprávě nebo vybíráte fotku schránky.";
+"NSCameraUsageDescription" = "Ogneliss Mail samotný fotoaparát nepoužívá. Webová stránka otevřená ze zprávy (například videoschůzka) o něj může požádat.";
+"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail nesleduje vaši polohu. Webová stránka otevřená ze zprávy o ni může požádat.";

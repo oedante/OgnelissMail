@@ -1,10 +1,10 @@
 /* Тексты Info.plist (название и запросы разрешений). Создано tool/l10n/l10n.py gen из assets/l10n/sv.xml — не править вручную. */
 "CFBundleDisplayName" = "Ogneliss Mail";
-"NSFaceIDUsageDescription" = "Face ID unlocks Ogneliss Mail instead of the PIN code.";
-"NSContactsUsageDescription" = "Contacts on this iPhone are used to suggest recipients, and contacts from your mailbox can be saved to the iPhone address book if you turn this on. They are not sent anywhere.";
-"NSCalendarsFullAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsWriteOnlyAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSPhotoLibraryUsageDescription" = "Photos are used only when you attach them to a message or choose a mailbox photo.";
-"NSCameraUsageDescription" = "Ogneliss Mail does not use the camera itself. A web page opened from a message (for example, a video meeting) may ask for it.";
-"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail does not track your location. A web page opened from a message may ask for it.";
+"NSFaceIDUsageDescription" = "Face ID låser upp Ogneliss Mail i stället för PIN-koden.";
+"NSContactsUsageDescription" = "Kontakter på den här iPhonen används för att föreslå mottagare, och kontakter från din postlåda kan sparas i iPhones adressbok om du slår på det. De skickas inte någonstans.";
+"NSCalendarsFullAccessUsageDescription" = "Möten från din postlåda kan läggas till i iPhones kalender om du slår på det.";
+"NSCalendarsWriteOnlyAccessUsageDescription" = "Möten från din postlåda kan läggas till i iPhones kalender om du slår på det.";
+"NSCalendarsUsageDescription" = "Möten från din postlåda kan läggas till i iPhones kalender om du slår på det.";
+"NSPhotoLibraryUsageDescription" = "Foton används bara när du bifogar dem till ett meddelande eller väljer ett foto för en postlåda.";
+"NSCameraUsageDescription" = "Ogneliss Mail använder inte kameran själv. En webbsida som öppnas från ett meddelande (till exempel ett videomöte) kan be om den.";
+"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail spårar inte din position. En webbsida som öppnas från ett meddelande kan be om den.";

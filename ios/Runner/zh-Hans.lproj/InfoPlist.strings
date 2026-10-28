@@ -1,10 +1,10 @@
 /* Тексты Info.plist (название и запросы разрешений). Создано tool/l10n/l10n.py gen из assets/l10n/zh.xml — не править вручную. */
 "CFBundleDisplayName" = "Ogneliss Mail";
-"NSFaceIDUsageDescription" = "Face ID unlocks Ogneliss Mail instead of the PIN code.";
-"NSContactsUsageDescription" = "Contacts on this iPhone are used to suggest recipients, and contacts from your mailbox can be saved to the iPhone address book if you turn this on. They are not sent anywhere.";
-"NSCalendarsFullAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsWriteOnlyAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSPhotoLibraryUsageDescription" = "Photos are used only when you attach them to a message or choose a mailbox photo.";
-"NSCameraUsageDescription" = "Ogneliss Mail does not use the camera itself. A web page opened from a message (for example, a video meeting) may ask for it.";
-"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail does not track your location. A web page opened from a message may ask for it.";
+"NSFaceIDUsageDescription" = "Face ID 可代替 PIN 码解锁 Ogneliss Mail。";
+"NSContactsUsageDescription" = "此 iPhone 上的联系人用于推荐收件人；如果你开启此选项，邮箱中的联系人可以保存到 iPhone 通讯录。这些信息不会发送到任何地方。";
+"NSCalendarsFullAccessUsageDescription" = "如果你开启此选项，邮箱中的会议可以添加到 iPhone 日历。";
+"NSCalendarsWriteOnlyAccessUsageDescription" = "如果你开启此选项，邮箱中的会议可以添加到 iPhone 日历。";
+"NSCalendarsUsageDescription" = "如果你开启此选项，邮箱中的会议可以添加到 iPhone 日历。";
+"NSPhotoLibraryUsageDescription" = "照片仅在你将其附加到邮件或选择邮箱头像时使用。";
+"NSCameraUsageDescription" = "Ogneliss Mail 本身不使用摄像头。从邮件中打开的网页（例如视频会议）可能会请求使用摄像头。";
+"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail 不会追踪你的位置。从邮件中打开的网页可能会请求获取位置。";

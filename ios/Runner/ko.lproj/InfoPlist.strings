@@ -1,10 +1,10 @@
 /* Тексты Info.plist (название и запросы разрешений). Создано tool/l10n/l10n.py gen из assets/l10n/ko.xml — не править вручную. */
 "CFBundleDisplayName" = "Ogneliss Mail";
-"NSFaceIDUsageDescription" = "Face ID unlocks Ogneliss Mail instead of the PIN code.";
-"NSContactsUsageDescription" = "Contacts on this iPhone are used to suggest recipients, and contacts from your mailbox can be saved to the iPhone address book if you turn this on. They are not sent anywhere.";
-"NSCalendarsFullAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsWriteOnlyAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSPhotoLibraryUsageDescription" = "Photos are used only when you attach them to a message or choose a mailbox photo.";
-"NSCameraUsageDescription" = "Ogneliss Mail does not use the camera itself. A web page opened from a message (for example, a video meeting) may ask for it.";
-"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail does not track your location. A web page opened from a message may ask for it.";
+"NSFaceIDUsageDescription" = "Face ID로 PIN 코드 대신 Ogneliss Mail의 잠금을 해제합니다.";
+"NSContactsUsageDescription" = "이 iPhone의 연락처는 받는 사람을 추천하는 데 사용되며, 이 옵션을 켜면 메일함의 연락처를 iPhone 주소록에 저장할 수 있습니다. 연락처는 어디로도 전송되지 않습니다.";
+"NSCalendarsFullAccessUsageDescription" = "이 옵션을 켜면 메일함의 회의를 iPhone 캘린더에 추가할 수 있습니다.";
+"NSCalendarsWriteOnlyAccessUsageDescription" = "이 옵션을 켜면 메일함의 회의를 iPhone 캘린더에 추가할 수 있습니다.";
+"NSCalendarsUsageDescription" = "이 옵션을 켜면 메일함의 회의를 iPhone 캘린더에 추가할 수 있습니다.";
+"NSPhotoLibraryUsageDescription" = "사진은 메일에 첨부하거나 메일함 사진을 선택할 때만 사용됩니다.";
+"NSCameraUsageDescription" = "Ogneliss Mail은 카메라를 직접 사용하지 않습니다. 메일에서 연 웹페이지(예: 화상 회의)에서 카메라 사용을 요청할 수 있습니다.";
+"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail은 사용자의 위치를 추적하지 않습니다. 메일에서 연 웹페이지에서 위치 정보를 요청할 수 있습니다.";

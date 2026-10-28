@@ -1,10 +1,10 @@
 /* Тексты Info.plist (название и запросы разрешений). Создано tool/l10n/l10n.py gen из assets/l10n/hu.xml — не править вручную. */
 "CFBundleDisplayName" = "Ogneliss Mail";
-"NSFaceIDUsageDescription" = "Face ID unlocks Ogneliss Mail instead of the PIN code.";
-"NSContactsUsageDescription" = "Contacts on this iPhone are used to suggest recipients, and contacts from your mailbox can be saved to the iPhone address book if you turn this on. They are not sent anywhere.";
-"NSCalendarsFullAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsWriteOnlyAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSPhotoLibraryUsageDescription" = "Photos are used only when you attach them to a message or choose a mailbox photo.";
-"NSCameraUsageDescription" = "Ogneliss Mail does not use the camera itself. A web page opened from a message (for example, a video meeting) may ask for it.";
-"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail does not track your location. A web page opened from a message may ask for it.";
+"NSFaceIDUsageDescription" = "A Face ID a PIN-kód helyett oldja fel az Ogneliss Mailt.";
+"NSContactsUsageDescription" = "Az iPhone-on lévő névjegyek a címzettek javaslására szolgálnak, és a postafiók névjegyei elmenthetők az iPhone címjegyzékébe, ha bekapcsolja ezt. Sehová nem kerülnek elküldésre.";
+"NSCalendarsFullAccessUsageDescription" = "A postafiók értekezletei hozzáadhatók az iPhone naptárához, ha bekapcsolja ezt.";
+"NSCalendarsWriteOnlyAccessUsageDescription" = "A postafiók értekezletei hozzáadhatók az iPhone naptárához, ha bekapcsolja ezt.";
+"NSCalendarsUsageDescription" = "A postafiók értekezletei hozzáadhatók az iPhone naptárához, ha bekapcsolja ezt.";
+"NSPhotoLibraryUsageDescription" = "A fotókat csak akkor használja az alkalmazás, ha Ön üzenethez csatolja őket, vagy postafiókfotót választ.";
+"NSCameraUsageDescription" = "Az Ogneliss Mail maga nem használja a kamerát. Az üzenetből megnyitott weboldal (például egy videóértekezlet) kérheti azt.";
+"NSLocationWhenInUseUsageDescription" = "Az Ogneliss Mail nem követi a tartózkodási helyét. Az üzenetből megnyitott weboldal kérheti azt.";

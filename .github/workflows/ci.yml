@@ -46,6 +46,10 @@ on:
         description: 'Собрать и iOS (без подписи, macOS)'
         type: boolean
         default: false
+      desktop:
+        description: 'Собрать Windows, macOS и Linux'
+        type: boolean
+        default: false
       shots:
         description: 'Снимки экранов (tool/shots) — в Artifacts'
         type: boolean
@@ -173,25 +177,179 @@ jobs:
 
   build-ios:
     needs: analyze-and-test
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.ios }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.ios) || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
     runs-on: macos-latest
     timeout-minutes: 60
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v5
-
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
-
+      - name: Platform folder
+        run: |
+          [ -d ios ] || flutter create --platforms=ios --org com.ogneliss --project-name ogneliss .
       - name: Install dependencies
         run: flutter pub get
-
       - name: Generate code
         run: dart run build_runner build --delete-conflicting-outputs
+      - name: dart_defines (optional)
+        env:
+          DART_DEFINES_JSON: ${{ secrets.DART_DEFINES_JSON }}
+        run: |
+          if [ -n "$DART_DEFINES_JSON" ]; then printf '%s' "$DART_DEFINES_JSON" > config/dart_defines.json; fi
+      - name: Build
+        run: |
+          DEFINES=""
+          if [ -f config/dart_defines.json ]; then DEFINES="--dart-define-from-file=config/dart_defines.json"; fi
+          flutter build ios --release --no-codesign $DEFINES
+      - name: Remove secrets
+        if: always()
+        run: rm -f config/dart_defines.json
+      - name: Package
+        run: |
+          mkdir -p out
+          cd build/ios/iphoneos && zip -qry ../../../out/ogneliss-ios-unsigned.zip Runner.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ogneliss-ios-${{ github.sha }}
+          path: out/*
+          retention-days: 14
 
-      - name: Build iOS (no signing)
-        run: flutter build ios --release --no-codesign
+  build-macos:
+    needs: analyze-and-test
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.desktop) || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    runs-on: macos-latest
+    timeout-minutes: 60
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Platform folder
+        run: |
+          [ -d macos ] || flutter create --platforms=macos --org com.ogneliss --project-name ogneliss .
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+      - name: dart_defines (optional)
+        env:
+          DART_DEFINES_JSON: ${{ secrets.DART_DEFINES_JSON }}
+        run: |
+          if [ -n "$DART_DEFINES_JSON" ]; then printf '%s' "$DART_DEFINES_JSON" > config/dart_defines.json; fi
+      - name: Build
+        run: |
+          DEFINES=""
+          if [ -f config/dart_defines.json ]; then DEFINES="--dart-define-from-file=config/dart_defines.json"; fi
+          flutter build macos --release $DEFINES
+      - name: Remove secrets
+        if: always()
+        run: rm -f config/dart_defines.json
+      - name: Package
+        run: |
+          mkdir -p out
+          cd build/macos/Build/Products/Release && ditto -c -k --keepParent *.app ../../../../../out/ogneliss-macos.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ogneliss-macos-${{ github.sha }}
+          path: out/*
+          retention-days: 14
+
+  build-windows:
+    needs: analyze-and-test
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.desktop) || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    runs-on: windows-latest
+    timeout-minutes: 60
+    continue-on-error: true
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Platform folder
+        run: |
+          [ -d windows ] || flutter create --platforms=windows --org com.ogneliss --project-name ogneliss .
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+      - name: dart_defines (optional)
+        env:
+          DART_DEFINES_JSON: ${{ secrets.DART_DEFINES_JSON }}
+        run: |
+          if [ -n "$DART_DEFINES_JSON" ]; then printf '%s' "$DART_DEFINES_JSON" > config/dart_defines.json; fi
+      - name: Build
+        run: |
+          DEFINES=""
+          if [ -f config/dart_defines.json ]; then DEFINES="--dart-define-from-file=config/dart_defines.json"; fi
+          flutter build windows --release $DEFINES
+      - name: Remove secrets
+        if: always()
+        run: rm -f config/dart_defines.json
+      - name: Package
+        run: |
+          mkdir -p out
+          cd build/windows/x64/runner/Release && 7z a -tzip ../../../../../out/ogneliss-windows-portable.zip . > /dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ogneliss-windows-${{ github.sha }}
+          path: out/*
+          retention-days: 14
+
+  build-linux:
+    needs: analyze-and-test
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.desktop) || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Linux build tools
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libsecret-1-dev libjsoncpp-dev libstdc++-12-dev
+          flutter config --enable-linux-desktop
+      - name: Platform folder
+        run: |
+          [ -d linux ] || flutter create --platforms=linux --org com.ogneliss --project-name ogneliss .
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+      - name: dart_defines (optional)
+        env:
+          DART_DEFINES_JSON: ${{ secrets.DART_DEFINES_JSON }}
+        run: |
+          if [ -n "$DART_DEFINES_JSON" ]; then printf '%s' "$DART_DEFINES_JSON" > config/dart_defines.json; fi
+      - name: Build
+        run: |
+          DEFINES=""
+          if [ -f config/dart_defines.json ]; then DEFINES="--dart-define-from-file=config/dart_defines.json"; fi
+          flutter build linux --release $DEFINES
+      - name: Remove secrets
+        if: always()
+        run: rm -f config/dart_defines.json
+      - name: Package
+        run: |
+          mkdir -p out
+          tar -czf out/ogneliss-linux-x64.tar.gz -C build/linux/x64/release/bundle .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ogneliss-linux-${{ github.sha }}
+          path: out/*
+          retention-days: 14
 
   # Снимки экранов (1.8.0): темы, языки, письмо справа налево — вид без
   # телефона. Только по кнопке «Run workflow» с отметкой «shots»; снимки —
@@ -246,21 +404,24 @@ jobs:
           path: tool/shots/out/
           retention-days: 3
 
-  # Выпуск: метка v* (например, v1.8.6) → страница Releases с APK.
+  # Выпуск: метка v* (например, v1.8.6) → страница Releases: Android APK,
+  # Windows (portable), macOS, Linux, iOS без подписи — что собралось.
   release:
-    needs: build-android
-    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    needs: [build-android, build-ios, build-macos, build-windows, build-linux]
+    if: ${{ always() && startsWith(github.ref, 'refs/tags/v') && needs.build-android.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: ogneliss-android-${{ github.sha }}
+          pattern: ogneliss-*-${{ github.sha }}
           path: out
       - uses: softprops/action-gh-release@v2
         with:
           name: Ogneliss Mail ${{ github.ref_name }}
           generate_release_notes: true
           files: |
-            out/flutter-apk/*.apk
+            out/**/*.apk
+            out/**/*.zip
+            out/**/*.tar.gz

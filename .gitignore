@@ -96,3 +96,7 @@ __pycache__/
 *.pyc
 config/dart_defines.json
 site/
+
+# Код drift (build_runner) и lock-файл: CI создаёт их сам
+*.g.dart
+pubspec.lock

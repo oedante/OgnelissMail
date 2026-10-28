@@ -88,3 +88,48 @@ class UiZoomBox extends StatelessWidget {
     });
   }
 }
+
+/// Встроенное системное окно (WebView на Android) — без масштаба интерфейса.
+///
+/// Android рисует «каплю» под курсором, ручки выделения и лупу сам, по
+/// координатам окна, не зная о масштабе, с которым Flutter его уменьшил: при
+/// масштабе 0,9 капля уезжала от курсора тем дальше, чем правее и ниже он
+/// стоял (замечание 28.10.2026). Окно получает место «доступное × zoom» и
+/// обратный масштаб — на экране оно занимает то же место, но в масштабе 1, и
+/// системные ручки встают на место. Содержимое уменьшает сама страница
+/// (viewport письма, textZoom редактора).
+///
+/// Структура дерева одна при любом [zoom]: смена масштаба не пересоздаёт окно.
+class UiZoomUndo extends StatelessWidget {
+  final double zoom;
+  final Widget child;
+
+  const UiZoomUndo({super.key, required this.zoom, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final z = UiZoom.isIdentity(zoom) ? 1.0 : zoom;
+    return LayoutBuilder(builder: (context, c) {
+      // Окно письма и редактор всегда в ограниченном месте; на случай
+      // неограниченного — без пересчёта.
+      final w = c.hasBoundedWidth ? c.maxWidth : null;
+      final h = c.hasBoundedHeight ? c.maxHeight : null;
+      return SizedBox(
+        width: w,
+        height: h,
+        child: Transform.scale(
+          scale: 1 / z,
+          alignment: Alignment.topLeft,
+          child: OverflowBox(
+            alignment: Alignment.topLeft,
+            minWidth: w == null ? null : w * z,
+            maxWidth: w == null ? null : w * z,
+            minHeight: h == null ? null : h * z,
+            maxHeight: h == null ? null : h * z,
+            child: child,
+          ),
+        ),
+      );
+    });
+  }
+}

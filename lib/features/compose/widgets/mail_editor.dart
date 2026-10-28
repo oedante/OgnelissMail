@@ -41,6 +41,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
+import '../../../widgets/common/ui_zoom.dart';
+
 /// Где редактор работает. Остальные платформы — простое текстовое поле.
 bool get mailEditorSupported =>
     !kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS || Platform.isWindows);
@@ -473,117 +475,129 @@ class _MailEditorState extends State<MailEditor> {
     return s.isEmpty || s == 'about' || s == 'data' || s == 'blob';
   }
 
+  /// Android: окно редактора рисуется без масштаба интерфейса ([UiZoomUndo]) —
+  /// иначе «капля» под курсором и ручки выделения уезжали от текста
+  /// (замечание 28.10.2026). Текст уменьшается самим окном (textZoom), чтобы
+  /// письмо было того же размера, что и остальной экран.
+  static double get _zoom => !kIsWeb && Platform.isAndroid ? UiZoom.current : 1.0;
+
   @override
   Widget build(BuildContext context) {
     final page = _page;
+    final web = page == null || !_routeDone ? null : _webView(page);
     return SizedBox(
       height: widget.height,
-      child: page == null || !_routeDone
+      child: web == null
           ? const SizedBox.shrink()
-          : InAppWebView(
-              // Меню выделения: жирный, курсив, подчёркнутый, без
-              // оформления, отменить — без открытия панели форматирования.
-              contextMenu: _contextMenu,
-              initialData: InAppWebViewInitialData(
-                data: page,
-                mimeType: 'text/html',
-                encoding: 'utf-8',
-                baseUrl: WebUri('about:blank'),
-              ),
-              initialSettings: InAppWebViewSettings(
-                javaScriptEnabled: true,
-                javaScriptCanOpenWindowsAutomatically: false,
-                supportMultipleWindows: false,
-                useShouldOverrideUrlLoading: true,
-                allowFileAccess: false,
-                allowContentAccess: false,
-                allowFileAccessFromFileURLs: false,
-                allowUniversalAccessFromFileURLs: false,
-                cacheEnabled: false,
-                incognito: true,
-                domStorageEnabled: false,
-                databaseEnabled: false,
-                thirdPartyCookiesEnabled: false,
-                geolocationEnabled: false,
-                // Редактору сеть не нужна вовсе.
-                blockNetworkImage: true,
-                blockNetworkLoads: true,
-                safeBrowsingEnabled: true,
-                mediaPlaybackRequiresUserGesture: true,
-                allowsLinkPreview: false,
-                transparentBackground: true,
-                supportZoom: false,
-                builtInZoomControls: false,
-                displayZoomControls: false,
-              ),
-              gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer()),
-                Factory<HorizontalDragGestureRecognizer>(() => HorizontalDragGestureRecognizer()),
-              },
-              onWebViewCreated: (c) {
-                c.addJavaScriptHandler(
-                  handlerName: 'ready',
-                  callback: (_) async {
-                    if (_done) return null;
-                    _done = true;
-                    _watchdog?.cancel();
-                    await widget.controller._attach(c);
-                    if (widget.initialHtml.isNotEmpty) {
-                      await widget.controller.setHtml(widget.initialHtml);
-                    }
-                    widget.onReady?.call();
-                    return null;
-                  },
-                );
-                c.addJavaScriptHandler(
-                  handlerName: 'change',
-                  callback: (args) {
-                    final html = args.isNotEmpty && args.first is String ? args.first as String : '';
-                    widget.onChanged?.call(html);
-                    return null;
-                  },
-                );
-                c.addJavaScriptHandler(
-                  handlerName: 'failed',
-                  callback: (args) {
-                    _fail(args.isNotEmpty ? '${args.first}' : 'init');
-                    return null;
-                  },
-                );
-                c.addJavaScriptHandler(
-                  handlerName: 'focus',
-                  callback: (_) {
-                    widget.onFocus?.call();
-                    return null;
-                  },
-                );
-                c.addJavaScriptHandler(
-                  handlerName: 'pickImage',
-                  callback: (_) async {
-                    final pick = widget.onPickImage;
-                    if (pick == null) return null;
-                    final uri = await pick();
-                    if (uri != null && uri.startsWith('data:image/')) {
-                      await widget.controller.insertHtml('<img src="${_attr(uri)}" alt="">');
-                    }
-                    return null;
-                  },
-                );
-              },
-              shouldOverrideUrlLoading: (controller, action) async =>
-                  _isLocal(action.request.url) ? NavigationActionPolicy.ALLOW : NavigationActionPolicy.CANCEL,
-              onCreateWindow: (controller, action) async => false,
-              onPermissionRequest: (controller, request) async =>
-                  PermissionResponse(resources: request.resources, action: PermissionResponseAction.DENY),
-              onGeolocationPermissionsShowPrompt: (controller, origin) async =>
-                  GeolocationPermissionShowPromptResponse(origin: origin, allow: false, retain: false),
-              onReceivedError: (controller, request, error) {
-                if (request.isForMainFrame ?? false) _fail('load: ${error.description}');
-              },
-              onWebContentProcessDidTerminate: (controller) => _fail('process'),
-            ),
+          : Platform.isAndroid
+              ? UiZoomUndo(zoom: _zoom, child: web)
+              : web,
     );
   }
+
+  Widget _webView(String page) => InAppWebView(
+      // Меню выделения: жирный, курсив, подчёркнутый, без
+      // оформления, отменить — без открытия панели форматирования.
+      contextMenu: _contextMenu,
+      initialData: InAppWebViewInitialData(
+        data: page,
+        mimeType: 'text/html',
+        encoding: 'utf-8',
+        baseUrl: WebUri('about:blank'),
+      ),
+      initialSettings: InAppWebViewSettings(
+        javaScriptEnabled: true,
+        javaScriptCanOpenWindowsAutomatically: false,
+        supportMultipleWindows: false,
+        useShouldOverrideUrlLoading: true,
+        allowFileAccess: false,
+        allowContentAccess: false,
+        allowFileAccessFromFileURLs: false,
+        allowUniversalAccessFromFileURLs: false,
+        cacheEnabled: false,
+        incognito: true,
+        domStorageEnabled: false,
+        databaseEnabled: false,
+        thirdPartyCookiesEnabled: false,
+        geolocationEnabled: false,
+        // Редактору сеть не нужна вовсе.
+        blockNetworkImage: true,
+        blockNetworkLoads: true,
+        safeBrowsingEnabled: true,
+        mediaPlaybackRequiresUserGesture: true,
+        allowsLinkPreview: false,
+        transparentBackground: true,
+        supportZoom: false,
+        builtInZoomControls: false,
+        displayZoomControls: false,
+        textZoom: UiZoom.isIdentity(_zoom) ? 100 : (_zoom * 100).round(),
+      ),
+      gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+        Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer()),
+        Factory<HorizontalDragGestureRecognizer>(() => HorizontalDragGestureRecognizer()),
+      },
+      onWebViewCreated: (c) {
+        c.addJavaScriptHandler(
+          handlerName: 'ready',
+          callback: (_) async {
+            if (_done) return null;
+            _done = true;
+            _watchdog?.cancel();
+            await widget.controller._attach(c);
+            if (widget.initialHtml.isNotEmpty) {
+              await widget.controller.setHtml(widget.initialHtml);
+            }
+            widget.onReady?.call();
+            return null;
+          },
+        );
+        c.addJavaScriptHandler(
+          handlerName: 'change',
+          callback: (args) {
+            final html = args.isNotEmpty && args.first is String ? args.first as String : '';
+            widget.onChanged?.call(html);
+            return null;
+          },
+        );
+        c.addJavaScriptHandler(
+          handlerName: 'failed',
+          callback: (args) {
+            _fail(args.isNotEmpty ? '${args.first}' : 'init');
+            return null;
+          },
+        );
+        c.addJavaScriptHandler(
+          handlerName: 'focus',
+          callback: (_) {
+            widget.onFocus?.call();
+            return null;
+          },
+        );
+        c.addJavaScriptHandler(
+          handlerName: 'pickImage',
+          callback: (_) async {
+            final pick = widget.onPickImage;
+            if (pick == null) return null;
+            final uri = await pick();
+            if (uri != null && uri.startsWith('data:image/')) {
+              await widget.controller.insertHtml('<img src="${_attr(uri)}" alt="">');
+            }
+            return null;
+          },
+        );
+      },
+      shouldOverrideUrlLoading: (controller, action) async =>
+          _isLocal(action.request.url) ? NavigationActionPolicy.ALLOW : NavigationActionPolicy.CANCEL,
+      onCreateWindow: (controller, action) async => false,
+      onPermissionRequest: (controller, request) async =>
+          PermissionResponse(resources: request.resources, action: PermissionResponseAction.DENY),
+      onGeolocationPermissionsShowPrompt: (controller, origin) async =>
+          GeolocationPermissionShowPromptResponse(origin: origin, allow: false, retain: false),
+      onReceivedError: (controller, request, error) {
+        if (request.isForMainFrame ?? false) _fail('load: ${error.description}');
+      },
+      onWebContentProcessDidTerminate: (controller) => _fail('process'),
+    );
 
   static String _attr(String s) => s.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
 }

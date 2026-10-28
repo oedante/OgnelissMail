@@ -316,11 +316,26 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         _error = null;
       });
 
-      final accounts = ref.read(accountsProvider);
       // Аккаунт мог быть удалён, пока экран открыт: firstWhere без orElse
       // бросал бы StateError и ронял операцию.
-      final account = accounts.where((a) => a.id == widget.accountId).firstOrNull;
-      if (account == null) return;
+      var found = ref.read(accountsProvider).where((a) => a.id == widget.accountId).firstOrNull;
+      if (found == null) {
+        // Письмо открыто сразу после запуска (уведомление, ссылка), ящики
+        // ещё грузятся — подождать их. Раньше экран здесь выходил и вечно
+        // показывал индикатор загрузки (28.10.2026).
+        await ref.read(accountsProvider.notifier).loaded.timeout(const Duration(seconds: 10), onTimeout: () {});
+        if (!mounted) return;
+        found = ref.read(accountsProvider).where((a) => a.id == widget.accountId).firstOrNull;
+        if (found == null) {
+          final notFound = AppLocalizations.of(context).tr('mailNotFound');
+          safeSetState(() {
+            _isLoading = false;
+            _error = notFound;
+          });
+          return;
+        }
+      }
+      final account = found;
       final cache = ref.read(mailOpenCacheProvider);
 
       if (account.usesEws || account.isExchange) {

@@ -327,14 +327,28 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       r'''\ssrc\s*=\s*("https?:[^"]*"|'https?:[^']*'|https?:[^\s>]+)''',
       caseSensitive: false);
 
-  static String _htmlToPlain(String html) => html
-      .replaceAll(RegExp(r'<br\s*/?>|</p>|</div>', caseSensitive: false), '\n')
-      .replaceAll(RegExp(r'<[^>]*>'), '')
-      .replaceAll('&nbsp;', ' ')
-      .replaceAll('&lt;', '<')
-      .replaceAll('&gt;', '>')
-      .replaceAll('&amp;', '&')
-      .trim();
+  /// HTML → текст для простого редактора и подписи: строки — по <br> и
+  /// концам блоков (абзац, строка таблицы, пункт списка, цитата), сущности —
+  /// в символы.
+  static String _htmlToPlain(String html) {
+    final t = html
+        .replaceAll(RegExp(r'<br\s*/?>|<hr[^>]*>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'</(p|div|tr|li|h[1-6]|blockquote|table|pre)>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'<[^>]*>'), '')
+        .replaceAllMapped(RegExp(r'&#(x[0-9a-fA-F]+|[0-9]+);'), (m) {
+          final v = m[1]!;
+          final code = v.startsWith('x') || v.startsWith('X') ? int.tryParse(v.substring(1), radix: 16) : int.tryParse(v);
+          return code == null || code <= 0 || code > 0x10FFFF ? '' : String.fromCharCode(code);
+        })
+        .replaceAll('&nbsp;', ' ')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&quot;', '"')
+        .replaceAll('&apos;', "'")
+        .replaceAll('&amp;', '&')
+        .replaceAll(RegExp(r'\n{3,}'), '\n\n');
+    return t.trim();
+  }
 
   static String _escText(String t) => t
       .replaceAll('&', '&amp;')
@@ -367,11 +381,12 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       _lastHtml += html;
       return;
     }
-    final text = html
-        .replaceAll(RegExp(r'<br\s*/?>'), '\n')
-        .replaceAll(RegExp(r'<[^>]*>'), '')
-        .trim();
-    _plainController.text += text;
+    // Раньше здесь были свои замены: в цитате оставались «&lt;адрес&gt;»,
+    // а «Тема: …» слипалась с первой строкой письма (28.10.2026).
+    // Между текстом и цитатой — две пустые строки, сколько бы <br> ни было.
+    final add = _htmlToPlain(html);
+    final cur = _plainController.text;
+    _plainController.text = cur.trim().isEmpty ? add : '${cur.trimRight()}\n\n\n$add';
   }
 
   /// Вставляет [text] в позицию курсора (или заменяет выделение).
@@ -677,6 +692,19 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     _parentForward = widget.replyToId == null && widget.forwardFromId != null;
     _parentAccountId = widget.accountId;
     _initFromAccount();
+    // Ящики ещё не загружены («Написать» из виджета, уведомления, «Поделиться»
+    // или ссылки mailto сразу после запуска): «От» — когда они появятся.
+    // Раньше строка так и оставалась пустой, с «?» вместо ящика (28.10.2026).
+    if (_fromAccount == null) {
+      ref.listenManual(accountsProvider, (_, next) {
+        if (_fromAccount != null || next.isEmpty || !mounted) return;
+        _initFromAccount();
+        final acc = _fromAccount;
+        if (acc == null) return;
+        _fromAccount = null; // _onFromChanged сравнивает с прежним ящиком
+        _onFromChanged(acc);
+      });
+    }
     // Поле темы или адресатов получило фокус — редактор письма отпускает
     // свой курсор (1.5.10: курсор и «капля» выделения оставались в тексте
     // письма, и курсоров было два).
@@ -2220,14 +2248,18 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                   else
                     // Фолбэк (Linux / без WebView): простой текстовый редактор.
                     // Отправляется как HTML (переводы строк → <br>). Упрощённо, как договорено.
-                    Container(
+                    // Как поле темы — без серой подложки и своих полей: на
+                    // компьютере текст письма был серым прямоугольником с
+                    // отступами, не похожим на остальной экран (28.10.2026).
+                    ConstrainedBox(
                       constraints: const BoxConstraints(minHeight: 220),
-                      padding: const EdgeInsets.symmetric(horizontal: Space.m),
                       child: TextField(
                         controller: _plainController,
                         focusNode: _bodyFocusNode,
                         decoration: InputDecoration(
                           border: InputBorder.none,
+                          filled: false,
+                          contentPadding: const EdgeInsets.symmetric(vertical: Space.m),
                           hintText: l10n.tr('messageBodyHint'),
                         ),
                         maxLines: null,
@@ -2355,8 +2387,10 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                   onPressed: _insertTemplate,
                   tooltip: l10n.tr('templates'),
                 ),
+                // Свой значок (облачко с молнией): рядом с «Шаблонами» два
+                // похожих листка путались.
                 IconButton(
-                  icon: const Icon(AppIcons.text_snippet),
+                  icon: const Icon(AppIcons.quickreply),
                   onPressed: () => _showTemplates(l10n),
                   tooltip: l10n.tr('quickPhrases'),
                 ),

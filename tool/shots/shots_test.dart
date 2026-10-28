@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/core/theme/app_icons.dart';
 import 'package:ogneliss/core/theme/app_theme.dart';
@@ -20,12 +21,15 @@ import 'package:ogneliss/data/models/folder_model.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/archive/screens/archive_screen.dart';
+import 'package:ogneliss/features/compose/screens/compose_screen.dart';
+import 'package:ogneliss/features/mail/screens/mail_detail_screen.dart';
 import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
 import 'package:ogneliss/features/settings/screens/settings_screen.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/services/archive/archive_container.dart';
 import 'package:ogneliss/services/archive/archive_db.dart';
 import 'package:ogneliss/services/archive/archive_vault.dart';
+import 'package:ogneliss/services/background/work_scheduler.dart';
 import 'package:ogneliss/widgets/common/hero_email_transition.dart';
 import 'package:ogneliss/widgets/navigation/app_bottom_bar.dart';
 import 'package:ogneliss/widgets/ui/app_menu_button.dart';
@@ -64,6 +68,23 @@ Future<AppDatabase> _db() async {
   return db;
 }
 
+/// Письмо для снимков экрана письма и ответа.
+Future<void> _letter(AppDatabase db) => db.into(db.emails).insert(EmailsCompanion.insert(
+      id: 'e1',
+      accountId: 'a1',
+      folderId: 'inbox',
+      fromEmail: 'anna.smirnova@corp.example',
+      fromName: const Value('Анна Смирнова'),
+      toRecipients: '[{"email":"i.petrov@corp.example","displayName":"Иван Петров"}]',
+      ccJson: const Value('[{"email":"o.kuznetsov@corp.example","displayName":"Олег Кузнецов"}]'),
+      subject: 'Смета по ремонту насосной станции',
+      bodyPlain: const Value('Иван, добрый день!\n\nНаправляю смету по ремонту насосной станции № 3. '
+          'Прошу согласовать до пятницы.\n\nС уважением,\nАнна Смирнова\nОтдел эксплуатации'),
+      bodyPreview: const Value('Иван, добрый день! Направляю смету по ремонту насосной станции № 3.'),
+      receivedAt: DateTime(2026, 10, 27, 9, 41),
+      isRead: const Value(true),
+    ));
+
 Future<void> _settle(WidgetTester tester) async {
   for (var i = 0; i < 12; i++) {
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 40)));
@@ -83,6 +104,7 @@ Future<void> _shot(
   Future<void> Function(WidgetTester tester)? before,
   List<Override> extra = const [],
 }) async {
+  FlutterSecureStorage.setMockInitialValues({});
   tester.view.physicalSize = size * 2;
   tester.view.devicePixelRatio = 2;
   addTearDown(tester.view.reset);
@@ -113,7 +135,11 @@ Future<void> _shot(
   }
   await expectLater(find.byType(MaterialApp), matchesGoldenFile('out/$name.png'));
   await tester.pumpWidget(const SizedBox());
-  await tester.pump(const Duration(seconds: 1));
+  // Пауза фоновой работы на время открытия письма считается по настоящим
+  // часам, а таймеры в тесте — поддельные: снять её сразу.
+  WorkScheduler.instance.releaseHold();
+  // Отложенные таймеры экранов (автосохранение, подсказки) — до конца.
+  await tester.pump(const Duration(minutes: 1));
 }
 
 /// Образцы: подписи разделов, группа настроек, кружки с буквой, нижняя панель.
@@ -304,6 +330,37 @@ void main() {
       final db = (await tester.runAsync(_db))!;
       await _shot(tester, 'confirm_$t', const _ConfirmDemo(), theme: _themes[t]!(), db: db, prefs: prefs,
           before: (tester) => tester.tap(find.byType(FilledButton)));
+      await tester.runAsync(db.close);
+    });
+  }
+
+  // Письмо и ответ на него (28.10.2026: «перепроверь просмотр и создание
+  // письма»). На Linux тело — без WebView: шапка, полосы и кнопки — как на
+  // телефоне.
+  for (final t in const ['light', 'dark']) {
+    testWidgets('письмо — $t', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await _shot(tester, 'letter_$t', const MailDetailScreen(emailId: 'e1', accountId: 'a1'),
+          theme: _themes[t]!(), db: db, prefs: prefs);
+      await tester.runAsync(db.close);
+    });
+    testWidgets('новое письмо — $t', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await _shot(tester, 'compose_$t', const ComposeScreen(accountId: 'a1'), theme: _themes[t]!(), db: db, prefs: prefs);
+      await tester.runAsync(db.close);
+    });
+    testWidgets('ответ — $t', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await _shot(tester, 'reply_$t', const ComposeScreen(accountId: 'a1', replyToId: 'e1', replyAll: true),
+          theme: _themes[t]!(), db: db, prefs: prefs);
       await tester.runAsync(db.close);
     });
   }

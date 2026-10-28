@@ -145,6 +145,12 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
   /// (`_loadAccounts`) ещё не завершена к моменту синка.
   Future<void> reload() => _loadAccounts();
 
+  /// Первая загрузка списка закончилась (успешно или нет). Экран, открытый
+  /// сразу после запуска (письмо из уведомления, «Написать» из виджета),
+  /// ждёт её, а не считает ящик удалённым.
+  Future<void> get loaded => _firstLoad.future;
+  final Completer<void> _firstLoad = Completer<void>();
+
   /// Снять отметку «вход не удался» (после повторного входа) — синхронизация
   /// и push снова включатся для аккаунта.
   Future<void> clearAuthFailure(String accountId) async {
@@ -224,6 +230,8 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
       AppLogger.info('Загружено ${state.length} аккаунтов');
     } catch (e, stack) {
       AppLogger.error('Ошибка загрузки аккаунтов', e, stack);
+    } finally {
+      if (!_firstLoad.isCompleted) _firstLoad.complete();
     }
   }
 

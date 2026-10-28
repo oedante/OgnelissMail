@@ -402,7 +402,7 @@ class AppTheme {
       extensions: [OgnelissLook(outlined: highContrast, cardBorder: highContrast)],
     );
     return _softIcons(
-        _fixedBar((dynamicScheme != null && !highContrast) ? _withDynamic(base, dynamicScheme) : base),
+        _cardDialogs(_fixedBar((dynamicScheme != null && !highContrast) ? _withDynamic(base, dynamicScheme) : base)),
         highContrast: highContrast);
   }
 
@@ -424,6 +424,18 @@ class AppTheme {
 
   /// Фон, поля ввода, разделители, выделение текста и панели — из цветов
   /// обоев, а не фирменных оттенков (иначе синеватый фон под розовой схемой).
+  /// Диалоги — фоном карточки (1.8.6): по умолчанию Material 3 красит их в
+  /// surfaceContainerHigh, и серый диалог рядом с белыми карточками и меню
+  /// «⋮» (AppMenuButton) выглядел чужим. Шторки не трогаем: в них белые
+  /// группы настроек отделяются от фона именно тоном шторки.
+  static ThemeData _cardDialogs(ThemeData t) {
+    final s = t.colorScheme;
+    final fill = s.brightness == Brightness.dark ? s.surfaceContainer : s.surfaceContainerLowest;
+    return t.copyWith(
+      dialogTheme: t.dialogTheme.copyWith(backgroundColor: fill, surfaceTintColor: Colors.transparent),
+    );
+  }
+
   static ThemeData _withDynamic(ThemeData t, ColorScheme s) => t.copyWith(
         scaffoldBackgroundColor: s.surfaceContainerLow,
         inputDecorationTheme: t.inputDecorationTheme.copyWith(fillColor: s.surfaceContainerHigh),
@@ -587,7 +599,7 @@ class AppTheme {
       extensions: [OgnelissLook(outlined: highContrast, cardBorder: highContrast)],
     );
     return _softIcons(
-        _fixedBar((dynamicScheme != null && !highContrast) ? _withDynamic(t, dynamicScheme) : t),
+        _cardDialogs(_fixedBar((dynamicScheme != null && !highContrast) ? _withDynamic(t, dynamicScheme) : t)),
         highContrast: highContrast);
   }
 

@@ -24,6 +24,7 @@ import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/widgets/common/hero_email_transition.dart';
 import 'package:ogneliss/widgets/navigation/app_bottom_bar.dart';
 import 'package:ogneliss/widgets/ui/app_menu_button.dart';
+import 'package:ogneliss/widgets/ui/confirm_dialog.dart';
 import 'package:ogneliss/widgets/ui/section_band.dart';
 import 'package:ogneliss/widgets/ui/settings_group.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -231,6 +232,26 @@ class _MenuDemo extends StatelessWidget {
   }
 }
 
+/// Подтверждение необратимого действия (confirmDestructive) — фон диалога
+/// как у карточек и меню (1.8.6).
+class _ConfirmDemo extends StatelessWidget {
+  const _ConfirmDemo();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.tr('inbox'))),
+      body: Center(
+        child: FilledButton(
+          onPressed: () => confirmDestructive(context, title: l10n.tr('emptyTrashTitle'), message: l10n.tr('emptyTrashBody')),
+          child: Text(l10n.tr('emptyTrash')),
+        ),
+      ),
+    );
+  }
+}
+
 void main() {
   setUpAll(() {
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -265,6 +286,17 @@ void main() {
       final db = (await tester.runAsync(_db))!;
       await _shot(tester, 'menu_$t', const _MenuDemo(), theme: _themes[t]!(), db: db, prefs: prefs,
           before: (tester) => tester.tap(find.byType(AppMenuButton<String>)));
+      await tester.runAsync(db.close);
+    });
+  }
+
+  for (final t in const ['light', 'dark']) {
+    testWidgets('подтверждение — $t', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await _shot(tester, 'confirm_$t', const _ConfirmDemo(), theme: _themes[t]!(), db: db, prefs: prefs,
+          before: (tester) => tester.tap(find.byType(FilledButton)));
       await tester.runAsync(db.close);
     });
   }

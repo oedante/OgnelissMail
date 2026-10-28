@@ -102,6 +102,7 @@ import '../../../services/mail/special_folders.dart';
 import '../../../core/permissions/app_permissions.dart';
 import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../widgets/ui/section_band.dart';
 import '../../../core/theme/ogneliss_look.dart';
 
@@ -783,89 +784,28 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             icon: const Icon(AppIcons.filter_list),
             onPressed: () => _showFilterSheet(context, l10n),
           ),
-          PopupMenuButton<String>(
-            icon: const Icon(AppIcons.more_vert),
+          AppMenuButton<String>(
             itemBuilder: (ctx) => [
-              PopupMenuItem(
-                value: 'sort',
-                child: ListTile(
-                  leading: const Icon(AppIcons.sort, size: 20),
-                  title: Text(l10n.tr('sortBy')),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-              PopupMenuItem(
-                value: 'select_all',
-                child: ListTile(
-                  leading: const Icon(AppIcons.select_all, size: 20),
-                  title: Text(l10n.tr('selectAll')),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-              PopupMenuItem(
-                value: 'mark_all_read',
-                child: ListTile(
-                  leading: const Icon(AppIcons.done_all, size: 20),
-                  title: Text(l10n.tr('markAllRead')),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-              PopupMenuItem(
-                value: 'read_where_cc',
-                child: ListTile(
-                  leading: const Icon(AppIcons.mark_email_read, size: 20),
-                  title: Text(l10n.tr('markReadWhereCc')),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
+              AppMenuEntry(value: 'sort', icon: AppIcons.sort, label: l10n.tr('sortBy')),
+              AppMenuEntry(value: 'select_all', icon: AppIcons.select_all, label: l10n.tr('selectAll')),
+              AppMenuEntry(value: 'mark_all_read', icon: AppIcons.done_all, label: l10n.tr('markAllRead')),
+              AppMenuEntry(value: 'read_where_cc', icon: AppIcons.mark_email_read, label: l10n.tr('markReadWhereCc')),
               // «Очистить» — только в Корзине и Спаме, и именно открытую
               // папку: раньше пункт был везде и чистил только Корзину.
               if (_currentFolder()?.type case FolderType.trash || FolderType.junk)
-                PopupMenuItem(
+                AppMenuEntry(
                   value: 'empty_trash',
-                  child: ListTile(
-                    leading: const Icon(AppIcons.delete_sweep, size: 20),
-                    title: Text(_currentFolder()?.type == FolderType.junk
-                        ? l10n.tr('clearJunk')
-                        : l10n.tr('emptyTrash')),
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                  ),
+                  icon: AppIcons.delete_sweep,
+                  label: _currentFolder()?.type == FolderType.junk ? l10n.tr('clearJunk') : l10n.tr('emptyTrash'),
+                  destructive: true,
                 ),
               // Exchange (EWS): удалённое из «Удалённых» ещё ~14 дней на сервере.
               if (_currentFolder()?.type == FolderType.trash &&
                   (ref.read(activeAccountProvider)?.hasEwsExtras ?? false))
-                PopupMenuItem(
-                  value: 'recover_deleted',
-                  child: ListTile(
-                    leading: const Icon(AppIcons.restore, size: 20),
-                    title: Text(l10n.tr('srvRecoverTitle')),
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              PopupMenuItem(
-                value: 'refresh',
-                child: ListTile(
-                  leading: const Icon(AppIcons.sync, size: 20),
-                  title: Text(l10n.tr('sync')),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-              PopupMenuItem(
-                value: 'mail_check',
-                child: ListTile(
-                  leading: const Icon(AppIcons.history, size: 20),
-                  title: Text(l10n.tr('mailCheckTitle')),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
+                AppMenuEntry(value: 'recover_deleted', icon: AppIcons.restore, label: l10n.tr('srvRecoverTitle')),
+              const AppMenuEntry.divider(),
+              AppMenuEntry(value: 'refresh', icon: AppIcons.sync, label: l10n.tr('sync')),
+              AppMenuEntry(value: 'mail_check', icon: AppIcons.history, label: l10n.tr('mailCheckTitle')),
             ],
             onSelected: (value) => _handleMenuAction(value, l10n),
           ),
@@ -2193,7 +2133,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         // Действия перенесены ВНИЗ экрана (см. _selectionBottomBar): на
         // современных телефонах до верхней панели не дотянуться одной рукой,
         // а массовые операции делают именно на ходу.
-        PopupMenuButton<String>(
+        AppMenuButton<String>(
           onSelected: (v) {
             if (v == 'all') _selectAllLoaded();
             if (v == 'control') _bulkControl();
@@ -2201,13 +2141,13 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             if (v == 'ogna') unawaited(_bulkOgna());
           },
           itemBuilder: (_) => [
-            PopupMenuItem(value: 'all', child: Text(l10n.tr('selectAll'))),
-            PopupMenuItem(value: 'later', child: Text(l10n.tr('later'))),
+            AppMenuEntry(value: 'all', icon: AppIcons.select_all, label: l10n.tr('selectAll')),
+            AppMenuEntry(value: 'later', icon: AppIcons.watch_later, label: l10n.tr('later')),
             if (ref.read(settingsProvider).mailControl)
-              PopupMenuItem(value: 'control', child: Text(l10n.tr('controlSet'))),
+              AppMenuEntry(value: 'control', icon: AppIcons.task_alt, label: l10n.tr('controlSet')),
             // Архив Ogneliss подключён — выбранные письма туда (1.7.3).
             if (ref.read(archiveVaultProvider).value?.exists ?? false)
-              PopupMenuItem(value: 'ogna', child: Text(l10n.tr('toOgnaArchive'))),
+              AppMenuEntry(value: 'ogna', icon: AppIcons.inventory_2, label: l10n.tr('toOgnaArchive')),
           ],
         ),
       ],

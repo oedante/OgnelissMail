@@ -13,6 +13,7 @@ import '../providers/categories_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/ui/app_menu_button.dart';
 
 class CategorySettingsScreen extends ConsumerWidget {
   const CategorySettingsScreen({super.key});
@@ -28,7 +29,7 @@ class CategorySettingsScreen extends ConsumerWidget {
       appBar: TextScaleCapBar(child: AppBar(
         title: Text(l10n.tr('categories')),
         actions: [
-          PopupMenuButton<String>(
+          AppMenuButton<String>(
             onSelected: (v) async {
               if (v == 'export') {
                 await Clipboard.setData(ClipboardData(text: notifier.exportJson()));
@@ -41,9 +42,10 @@ class CategorySettingsScreen extends ConsumerWidget {
               }
             },
             itemBuilder: (ctx) => [
-              PopupMenuItem(value: 'export', child: Text(l10n.tr('exportToClipboardParen'))),
-              PopupMenuItem(value: 'import', child: Text(l10n.tr('importFromClipboardParen'))),
-              PopupMenuItem(value: 'reset', child: Text(l10n.tr('resetToDefault'))),
+              AppMenuEntry(value: 'export', icon: AppIcons.content_copy, label: l10n.tr('exportToClipboardParen')),
+              AppMenuEntry(value: 'import', icon: AppIcons.download, label: l10n.tr('importFromClipboardParen')),
+              const AppMenuEntry.divider(),
+              AppMenuEntry(value: 'reset', icon: AppIcons.restart_alt, label: l10n.tr('resetToDefault'), destructive: true),
             ],
           ),
         ],

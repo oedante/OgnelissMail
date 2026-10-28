@@ -106,6 +106,7 @@ import '../../../services/mail/tnef/tnef_decoder.dart';
 import '../../../widgets/common/app_sheet.dart';
 import '../../compose/providers/templates_provider.dart' show templatesProvider;
 import '../../../widgets/common/text_scale_cap.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../core/theme/ogneliss_look.dart';
 
@@ -1484,7 +1485,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                               onPressed: _allowImages,
                               child: Text(l10n.tr('showImages')),
                             ),
-                          PopupMenuButton<String>(
+                          AppMenuButton<String>(
                             tooltip: l10n.tr('more'),
                             icon: Icon(AppIcons.more_vert, size: 20, color: theme.colorScheme.onSurfaceVariant),
                             onSelected: (v) {
@@ -1493,8 +1494,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                             },
                             itemBuilder: (_) => [
                               if (_externalImagesBlocked > 0)
-                                PopupMenuItem(value: 'always', child: Text(l10n.tr('alwaysFromSender'))),
-                              PopupMenuItem(value: 'what', child: Text(l10n.tr('whatWasBlocked'))),
+                                AppMenuEntry(value: 'always', icon: AppIcons.image, label: l10n.tr('alwaysFromSender')),
+                              AppMenuEntry(value: 'what', icon: AppIcons.info, label: l10n.tr('whatWasBlocked')),
                             ],
                           ),
                         ],

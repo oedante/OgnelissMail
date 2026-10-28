@@ -318,14 +318,15 @@ extension _MyDayBoard on _MyDayScreenState {
   }
 
   /// Перенос задачи — только руками: меню ⋮ (и перетаскивание).
-  Widget _taskMenu(Task t, _Col col, AppLocalizations l10n) => PopupMenuButton<_Col>(
+  Widget _taskMenu(Task t, _Col col, AppLocalizations l10n) => AppMenuButton<_Col>(
         tooltip: l10n.tr('more'),
         icon: const Icon(AppIcons.more_vert, size: 20),
         onSelected: (to) => _moveTask(t, to),
         itemBuilder: (_) => [
-          if (col != _Col.upcoming) PopupMenuItem(value: _Col.upcoming, child: Text(l10n.tr('boardMoveBack'))),
-          if (col != _Col.work) PopupMenuItem(value: _Col.work, child: Text(l10n.tr('boardMoveWork'))),
-          if (col != _Col.done) PopupMenuItem(value: _Col.done, child: Text(l10n.tr('boardMoveDone'))),
+          if (col != _Col.upcoming)
+            AppMenuEntry(value: _Col.upcoming, icon: AppIcons.event_upcoming, label: l10n.tr('boardMoveBack')),
+          if (col != _Col.work) AppMenuEntry(value: _Col.work, icon: AppIcons.work, label: l10n.tr('boardMoveWork')),
+          if (col != _Col.done) AppMenuEntry(value: _Col.done, icon: AppIcons.task_alt, label: l10n.tr('boardMoveDone')),
         ],
       );
 

@@ -15,6 +15,7 @@ import '../../../services/security/tracker_blocker.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../../widgets/ui/confirm_dialog.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 
 class TrackerSettingsScreen extends ConsumerWidget {
   const TrackerSettingsScreen({super.key});
@@ -87,12 +88,12 @@ class TrackerSettingsScreen extends ConsumerWidget {
               leading: const Icon(AppIcons.visibility_off),
               title: Text(e.key),
               subtitle: Text(l10n.tr('trackerTimesN').replaceAll('{n}', '${e.value}')),
-              trailing: PopupMenuButton<String>(
+              trailing: AppMenuButton<String>(
                 tooltip: l10n.tr('more'),
                 onSelected: (v) => v == 'allow' ? n.allowHost(e.key) : n.forgetHost(e.key),
                 itemBuilder: (_) => [
-                  PopupMenuItem(value: 'allow', child: Text(l10n.tr('trackerAllowHost'))),
-                  PopupMenuItem(value: 'forget', child: Text(l10n.tr('trackerForget'))),
+                  AppMenuEntry(value: 'allow', icon: AppIcons.check_circle, label: l10n.tr('trackerAllowHost')),
+                  AppMenuEntry(value: 'forget', icon: AppIcons.delete, label: l10n.tr('trackerForget')),
                 ],
               ),
             ),
@@ -133,7 +134,7 @@ class TrackerSettingsScreen extends ConsumerWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              trailing: PopupMenuButton<String>(
+              trailing: AppMenuButton<String>(
                 tooltip: l10n.tr('more'),
                 onSelected: (v) {
                   if (v == 'trust' && e.senderDomain.isNotEmpty) n.addWhitelist(e.senderDomain);
@@ -142,16 +143,14 @@ class TrackerSettingsScreen extends ConsumerWidget {
                 },
                 itemBuilder: (_) => [
                   if (e.senderDomain.isNotEmpty && !t.whitelistedDomains.contains(e.senderDomain))
-                    PopupMenuItem(
+                    AppMenuEntry(
                       value: 'trust',
-                      child: Text(l10n.tr('trackerTrustSender').replaceAll('{domain}', e.senderDomain)),
+                      icon: AppIcons.verified_user,
+                      label: l10n.tr('trackerTrustSender').replaceAll('{domain}', e.senderDomain),
                     ),
                   for (final h in e.hosts.where((h) => !t.allowedHosts.contains(h)))
-                    PopupMenuItem(
-                      value: 'allow:$h',
-                      child: Text('${l10n.tr('trackerAllowHost')}: $h'),
-                    ),
-                  PopupMenuItem(value: 'forget', child: Text(l10n.tr('trackerForget'))),
+                    AppMenuEntry(value: 'allow:$h', icon: AppIcons.check_circle, label: '${l10n.tr('trackerAllowHost')}: $h'),
+                  AppMenuEntry(value: 'forget', icon: AppIcons.delete, label: l10n.tr('trackerForget')),
                 ],
               ),
             ),

@@ -25,6 +25,7 @@ import '../../../widgets/common/shared_mailbox_badge.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/confirm_dialog.dart';
 import '../../../widgets/ui/help_hint.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../mail/providers/account_look.dart' show onAccountColor;
 import '../../mail/providers/mail_providers.dart';
 import '../providers/account_groups_provider.dart';
@@ -105,11 +106,11 @@ class AccountGroupsScreen extends ConsumerWidget {
                 ),
               ),
               onTap: () => _openEditor(context, g),
-              trailing: PopupMenuButton<String>(
+              trailing: AppMenuButton<String>(
                 itemBuilder: (_) => [
-                  PopupMenuItem(value: 'show', child: Text(l10n.tr('groupShowInMail'))),
-                  PopupMenuItem(value: 'edit', child: Text(l10n.tr('edit'))),
-                  PopupMenuItem(value: 'delete', child: Text(l10n.delete)),
+                  AppMenuEntry(value: 'show', icon: AppIcons.inbox, label: l10n.tr('groupShowInMail')),
+                  AppMenuEntry(value: 'edit', icon: AppIcons.edit, label: l10n.tr('edit')),
+                  AppMenuEntry(value: 'delete', icon: AppIcons.delete, label: l10n.delete, destructive: true),
                 ],
                 onSelected: (v) async {
                   switch (v) {

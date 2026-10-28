@@ -23,6 +23,7 @@ import 'package:ogneliss/features/settings/screens/settings_screen.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/widgets/common/hero_email_transition.dart';
 import 'package:ogneliss/widgets/navigation/app_bottom_bar.dart';
+import 'package:ogneliss/widgets/ui/app_menu_button.dart';
 import 'package:ogneliss/widgets/ui/section_band.dart';
 import 'package:ogneliss/widgets/ui/settings_group.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -73,6 +74,7 @@ Future<void> _shot(
   Size size = _phone,
   AppDatabase? db,
   SharedPreferences? prefs,
+  Future<void> Function(WidgetTester tester)? before,
 }) async {
   tester.view.physicalSize = size * 2;
   tester.view.devicePixelRatio = 2;
@@ -97,6 +99,10 @@ Future<void> _shot(
     ),
   ));
   await _settle(tester);
+  if (before != null) {
+    await before(tester);
+    await _settle(tester);
+  }
   await expectLater(find.byType(MaterialApp), matchesGoldenFile('out/$name.png'));
   await tester.pumpWidget(const SizedBox());
   await tester.pump(const Duration(seconds: 1));
@@ -197,6 +203,34 @@ class _MailRows extends StatelessWidget {
   }
 }
 
+/// Меню кнопки «⋮» (1.8.6) — в стиле карточки по удержанию: значки,
+/// выбранный пункт с галочкой, черта между группами, «опасный» пункт.
+class _MenuDemo extends StatelessWidget {
+  const _MenuDemo();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.tr('inbox')), actions: [
+        AppMenuButton<String>(
+          initialValue: 'all',
+          onSelected: (_) {},
+          itemBuilder: (_) => [
+            AppMenuEntry(value: 'sort', icon: AppIcons.sort, label: l10n.tr('sortBy')),
+            AppMenuEntry(value: 'all', icon: AppIcons.select_all, label: l10n.tr('selectAll')),
+            AppMenuEntry(value: 'read', icon: AppIcons.done_all, label: l10n.tr('markAllRead')),
+            const AppMenuEntry.divider(),
+            AppMenuEntry(value: 'sync', icon: AppIcons.sync, label: l10n.tr('sync')),
+            AppMenuEntry(value: 'empty', icon: AppIcons.delete_sweep, label: l10n.tr('emptyTrash'), destructive: true),
+          ],
+        ),
+      ]),
+      body: const _MailRows(),
+    );
+  }
+}
+
 void main() {
   setUpAll(() {
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -220,6 +254,17 @@ void main() {
       final prefs = await SharedPreferences.getInstance();
       final db = (await tester.runAsync(_db))!;
       await _shot(tester, 'mail_${t.key}', const _MailRows(), theme: t.value(), db: db, prefs: prefs);
+      await tester.runAsync(db.close);
+    });
+  }
+
+  for (final t in const ['light', 'dark']) {
+    testWidgets('меню «⋮» — $t', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await _shot(tester, 'menu_$t', const _MenuDemo(), theme: _themes[t]!(), db: db, prefs: prefs,
+          before: (tester) => tester.tap(find.byType(AppMenuButton<String>)));
       await tester.runAsync(db.close);
     });
   }

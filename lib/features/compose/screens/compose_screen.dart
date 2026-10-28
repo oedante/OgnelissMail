@@ -94,6 +94,7 @@ import '../widgets/people_picker_sheet.dart';
 import '../widgets/image_size_sheet.dart';
 import '../../../core/utils/format_bytes.dart';
 import '../../../widgets/ui/help_hint.dart' show HelpButton;
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../services/mail/image_shrink.dart';
 import '../../../services/mail/image_edit.dart' show ImageEdit;
 import '../../mail/screens/attachment_preview_screen.dart' show PreviewItem, openAttachment;
@@ -1600,9 +1601,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     final scheme = theme.colorScheme;
     return Align(
       alignment: AlignmentDirectional.centerStart,
-      child: PopupMenuButton<GreetingVariant>(
+      child: AppMenuButton<GreetingVariant>(
         tooltip: l10n.tr('greetingChipHint'),
-        position: PopupMenuPosition.under,
         onSelected: (v) {
           setState(() => _greetPick = v);
           _updateGreeting(force: true);
@@ -1610,18 +1610,10 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         },
         itemBuilder: (_) => [
           for (final (v, text) in set.choices)
-            PopupMenuItem(
+            AppMenuEntry(
               value: v,
-              child: Row(children: [
-                Icon(AppIcons.check, size: 18, color: (v == now || (text.isNotEmpty && text == nowText))
-                    ? scheme.primary
-                    : Colors.transparent),
-                const SizedBox(width: Space.m),
-                Flexible(
-                  child: Text(v == GreetingVariant.none ? l10n.tr('greetingOff') : text,
-                      maxLines: 2, overflow: TextOverflow.ellipsis),
-                ),
-              ]),
+              label: v == GreetingVariant.none ? l10n.tr('greetingOff') : text,
+              checked: v == now || (text.isNotEmpty && text == nowText),
             ),
         ],
         child: ConstrainedBox(
@@ -2053,7 +2045,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             ),
           // «Отправить» — внизу, под большим пальцем (решение владельца
           // 08.10.2026, по образцу Ogneliss Dialer).
-          PopupMenuButton<String>(
+          AppMenuButton<String>(
             tooltip: l10n.tr('more'),
             onSelected: (v) {
               switch (v) {
@@ -2083,14 +2075,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
               if (!_showBcc && _bccRecipients.isEmpty)
                 _menuItem('bcc', AppIcons.visibility_off, l10n.tr('bcc')),
               if (ref.read(settingsProvider).mailControl)
-                PopupMenuItem(
+                AppMenuEntry(
                   value: 'control',
-                  child: Row(children: [
-                    Icon(AppIcons.task_alt, size: 20, fill: _control ? 1 : 0),
-                    const SizedBox(width: Space.m),
-                    Expanded(child: Text(l10n.tr('controlOnSend'))),
-                    if (_control) const Icon(AppIcons.check, size: 18),
-                  ]),
+                  icon: AppIcons.task_alt,
+                  label: l10n.tr('controlOnSend'),
+                  checked: _control,
                 ),
             ],
           ),
@@ -2266,13 +2255,13 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                           ),
                           Icon(_quoteExpanded ? AppIcons.expand_less : AppIcons.expand_more,
                               size: 20, color: theme.colorScheme.onSurfaceVariant),
-                          PopupMenuButton<String>(
+                          AppMenuButton<String>(
                             tooltip: l10n.tr('more'),
                             icon: const Icon(AppIcons.more_vert, size: 20),
                             onSelected: (v) => v == 'edit' ? _editQuote() : _removeQuote(),
                             itemBuilder: (_) => [
-                              PopupMenuItem(value: 'edit', child: Text(l10n.tr('quoteEdit'))),
-                              PopupMenuItem(value: 'remove', child: Text(l10n.tr('quoteRemove'))),
+                              AppMenuEntry(value: 'edit', icon: AppIcons.edit, label: l10n.tr('quoteEdit')),
+                              AppMenuEntry(value: 'remove', icon: AppIcons.format_clear, label: l10n.tr('quoteRemove')),
                             ],
                           ),
                         ],
@@ -3524,10 +3513,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     } catch (_) {}
   }
 
-  PopupMenuItem<String> _menuItem(String value, IconData icon, String text) => PopupMenuItem(
-        value: value,
-        child: Row(children: [Icon(icon, size: 20), const SizedBox(width: Space.m), Text(text)]),
-      );
+  AppMenuEntry<String> _menuItem(String value, IconData icon, String text) =>
+      AppMenuEntry(value: value, icon: icon, label: text);
 
   /// Заголовок экрана по виду письма.
   /// Заголовок и под ним — «Сохранено · 06:41», когда черновик записан.

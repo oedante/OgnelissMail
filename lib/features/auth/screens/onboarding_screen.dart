@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/common/readable_width.dart';
 import '../../settings/providers/settings_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -62,69 +63,73 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            // Skip
-            Align(
-              alignment: Alignment.topRight,
-              child: TextButton(
-                onPressed: _finish,
-                child: Text(l10n.tr('skip')),
-              ),
-            ),
-
-            // Pages
-            Expanded(
-              child: PageView.builder(
-                controller: _controller,
-                itemCount: pages.length,
-                onPageChanged: (i) => setState(() => _currentPage = i),
-                itemBuilder: (_, i) => pages[i],
-              ),
-            ),
-
-            // Dots
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(pages.length, (i) {
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: Space.xs),
-                  width: _currentPage == i ? 24 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _currentPage == i ? theme.colorScheme.primary : theme.colorScheme.outline.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                );
-              }),
-            ),
-
-            const SizedBox(height: Space.xxl),
-
-            // Button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Space.xxl),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: FilledButton(
-                  onPressed: isLast
-                      ? _finish
-                      : () {
-                          HapticFeedback.selectionClick();
-                          _controller.nextPage(
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeInOut,
-                          );
-                        },
-                  child: Text(isLast ? l10n.tr('getStarted') : l10n.tr('next')),
+        // Окно компьютера и планшет: колонка по центру, а не во всю ширину.
+        child: ReadableWidth(
+          maxWidth: 640,
+          child: Column(
+            children: [
+              // Skip
+              Align(
+                alignment: Alignment.topRight,
+                child: TextButton(
+                  onPressed: _finish,
+                  child: Text(l10n.tr('skip')),
                 ),
               ),
-            ),
 
-            const SizedBox(height: Space.xxl),
-          ],
+              // Pages
+              Expanded(
+                child: PageView.builder(
+                  controller: _controller,
+                  itemCount: pages.length,
+                  onPageChanged: (i) => setState(() => _currentPage = i),
+                  itemBuilder: (_, i) => pages[i],
+                ),
+              ),
+
+              // Dots
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(pages.length, (i) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: Space.xs),
+                    width: _currentPage == i ? 24 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: _currentPage == i ? theme.colorScheme.primary : theme.colorScheme.outline.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  );
+                }),
+              ),
+
+              const SizedBox(height: Space.xxl),
+
+              // Button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Space.xxl),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: FilledButton(
+                    onPressed: isLast
+                        ? _finish
+                        : () {
+                            HapticFeedback.selectionClick();
+                            _controller.nextPage(
+                              duration: const Duration(milliseconds: 400),
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                    child: Text(isLast ? l10n.tr('getStarted') : l10n.tr('next')),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: Space.xxl),
+            ],
+          ),
         ),
       ),
     );

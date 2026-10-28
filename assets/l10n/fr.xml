@@ -551,8 +551,8 @@
     <string name="yesterday">Hier</string>
     <string name="termsOfUse">Conditions d’utilisation</string>
     <string name="privacyPolicy">Politique de confidentialité</string>
-    <string name="appLicense">Licence de l’application</string>
-    <string name="appLicenseDesc">Logiciel propriétaire gratuit. Titulaire des droits : {company}. Tous droits réservés.</string>
+    <string name="appLicense">Licence</string>
+    <string name="appLicenseDesc">Licence Apache 2.0 — gratuit et open source. © {company}</string>
     <string name="thirdPartyLicenses">Licences tierces</string>
     <string name="thirdPartyLicensesDesc">Composants open source et leurs licences</string>
     <string name="welcomeTo">Bienvenue dans {app}</string>
@@ -3506,4 +3506,6 @@
     <string name="onboardingDesc3NoEx">PIN et empreinte, alertes d’hameçonnage, blocage des traqueurs.\n\nLe courrier va de votre serveur directement sur votre appareil.</string>
     <string name="exchangeHiddenTitle">Boîtes Exchange masquées : {n}</string>
     <string name="exchangeHiddenDesc">Exchange n\'est pas pris en charge dans cette version. Les boîtes et leurs données restent sur l\'appareil et reviendront dans une version avec Exchange. Vous pouvez ajouter la messagerie en IMAP.</string>
+    <string name="sourceCode">Code source</string>
+    <string name="sourceCodeDesc">GitHub : lire, compiler, contribuer</string>
 </resources>

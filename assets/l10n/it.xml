@@ -551,8 +551,8 @@
     <string name="yesterday">Ieri</string>
     <string name="termsOfUse">Termini di utilizzo</string>
     <string name="privacyPolicy">Informativa sulla privacy</string>
-    <string name="appLicense">Licenza dell\'app</string>
-    <string name="appLicenseDesc">Software proprietario gratuito. Titolare dei diritti: {company}. Tutti i diritti riservati.</string>
+    <string name="appLicense">Licenza</string>
+    <string name="appLicenseDesc">Licenza Apache 2.0 — gratuito e open source. © {company}</string>
     <string name="thirdPartyLicenses">Licenze di terze parti</string>
     <string name="thirdPartyLicensesDesc">Componenti open source e relative licenze</string>
     <string name="welcomeTo">Benvenuto in {app}</string>
@@ -3146,4 +3146,6 @@
     <string name="tmplReceivedB">Ho ricevuto il tuo messaggio e risponderò più tardi.</string>
     <string name="onboardingDesc1NoEx">Gmail, Yandex, Mail.ru, Outlook e qualsiasi IMAP.\n\nCalendario, contatti, attività e note accanto alla tua posta.</string>
     <string name="onboardingDesc3NoEx">PIN e impronta digitale, avvisi di phishing, blocco dei tracker nelle email.\n\nLa posta va dal tuo server direttamente al tuo dispositivo.</string>
+    <string name="sourceCode">Codice sorgente</string>
+    <string name="sourceCodeDesc">GitHub: leggi, compila, contribuisci</string>
 </resources>

@@ -551,8 +551,8 @@
     <string name="yesterday">Gestern</string>
     <string name="termsOfUse">Nutzungsbedingungen</string>
     <string name="privacyPolicy">Datenschutzerklärung</string>
-    <string name="appLicense">App-Lizenz</string>
-    <string name="appLicenseDesc">Kostenlose proprietäre Software. Rechteinhaber: {company}. Alle Rechte vorbehalten.</string>
+    <string name="appLicense">Lizenz</string>
+    <string name="appLicenseDesc">Apache License 2.0 — kostenlos und quelloffen. © {company}</string>
     <string name="thirdPartyLicenses">Drittanbieterlizenzen</string>
     <string name="thirdPartyLicensesDesc">Open-Source-Komponenten und ihre Lizenzen</string>
     <string name="welcomeTo">Willkommen bei {app}</string>
@@ -3506,4 +3506,6 @@
     <string name="onboardingDesc3NoEx">PIN und Fingerabdruck, Phishing-Warnungen, Tracker-Blockierung.\n\nDie Mail kommt direkt von Ihrem Server auf Ihr Gerät.</string>
     <string name="exchangeHiddenTitle">Exchange-Postfächer ausgeblendet: {n}</string>
     <string name="exchangeHiddenDesc">Exchange wird in dieser Version nicht unterstützt. Die Postfächer und ihre Daten bleiben auf dem Gerät und kehren in einer Version mit Exchange zurück. Sie können die E-Mail per IMAP hinzufügen.</string>
+    <string name="sourceCode">Quellcode</string>
+    <string name="sourceCodeDesc">GitHub: lesen, bauen, mitwirken</string>
 </resources>

@@ -550,8 +550,8 @@
     <string name="yesterday">Eilen</string>
     <string name="termsOfUse">Käyttöehdot</string>
     <string name="privacyPolicy">Tietosuojakäytäntö</string>
-    <string name="appLicense">Sovelluksen lisenssi</string>
-    <string name="appLicenseDesc">Ilmainen suljetun lähdekoodin ohjelmisto. Oikeudenhaltija: {company}. Kaikki oikeudet pidätetään.</string>
+    <string name="appLicense">Lisenssi</string>
+    <string name="appLicenseDesc">Apache License 2.0 — ilmainen ja avointa lähdekoodia. © {company}</string>
     <string name="thirdPartyLicenses">Kolmansien osapuolten lisenssit</string>
     <string name="thirdPartyLicensesDesc">Avoimen lähdekoodin komponentit ja niiden lisenssit</string>
     <string name="welcomeTo">Tervetuloa sovellukseen {app}</string>
@@ -3135,4 +3135,6 @@
     <string name="tmplReviewB">Tutustu tähän ja anna palautetta viikon loppuun mennessä.</string>
     <string name="tmplReceivedT">Vastaanotettu, vastaan myöhemmin</string>
     <string name="tmplReceivedB">Olen saanut viestisi ja vastaan myöhemmin.</string>
+    <string name="sourceCode">Lähdekoodi</string>
+    <string name="sourceCodeDesc">GitHub: lue, käännä, osallistu</string>
 </resources>

@@ -550,8 +550,8 @@
     <string name="yesterday">אתמול</string>
     <string name="termsOfUse">תנאי שימוש</string>
     <string name="privacyPolicy">מדיניות פרטיות</string>
-    <string name="appLicense">רישיון האפליקציה</string>
-    <string name="appLicenseDesc">תוכנה קניינית חינמית. בעל הזכויות: {company}. כל הזכויות שמורות.</string>
+    <string name="appLicense">רישיון</string>
+    <string name="appLicenseDesc">רישיון Apache 2.0 — חינמי וקוד פתוח. © {company}</string>
     <string name="thirdPartyLicenses">רישיונות צד שלישי</string>
     <string name="thirdPartyLicensesDesc">רכיבי קוד פתוח והרישיונות שלהם</string>
     <string name="welcomeTo">ברוכים הבאים אל {app}</string>
@@ -3148,4 +3148,6 @@
     <string name="tmplReviewB">נא לעיין ולשלוח לי משוב עד סוף השבוע.</string>
     <string name="tmplReceivedT">התקבל, אענה מאוחר יותר</string>
     <string name="tmplReceivedB">ההודעה התקבלה, אענה מאוחר יותר.</string>
+    <string name="sourceCode">קוד מקור</string>
+    <string name="sourceCodeDesc">GitHub: לקרוא, לבנות, לתרום</string>
 </resources>

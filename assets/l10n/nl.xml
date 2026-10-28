@@ -551,8 +551,8 @@
     <string name="yesterday">Gisteren</string>
     <string name="termsOfUse">Gebruiksvoorwaarden</string>
     <string name="privacyPolicy">Privacybeleid</string>
-    <string name="appLicense">App-licentie</string>
-    <string name="appLicenseDesc">Gratis eigen software. Rechthebbende: {company}. Alle rechten voorbehouden.</string>
+    <string name="appLicense">Licentie</string>
+    <string name="appLicenseDesc">Apache License 2.0 — gratis en open source. © {company}</string>
     <string name="thirdPartyLicenses">Licenties van derden</string>
     <string name="thirdPartyLicensesDesc">Opensourcecomponenten en hun licenties</string>
     <string name="welcomeTo">Welkom bij {app}</string>
@@ -3146,4 +3146,6 @@
     <string name="tmplReceivedB">Ik heb je bericht ontvangen en antwoord later.</string>
     <string name="onboardingDesc1NoEx">Gmail, Yandex, Mail.ru, Outlook en elke IMAP-mailbox.\n\nAgenda, contacten, taken en notities direct naast je e-mail.</string>
     <string name="onboardingDesc3NoEx">PIN en vingerafdruk, phishingwaarschuwingen, blokkering van trackers in e-mails.\n\nE-mail gaat van je server rechtstreeks naar je apparaat.</string>
+    <string name="sourceCode">Broncode</string>
+    <string name="sourceCodeDesc">GitHub: lezen, bouwen, bijdragen</string>
 </resources>

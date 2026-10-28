@@ -551,8 +551,8 @@
     <string name="yesterday">Dün</string>
     <string name="termsOfUse">Kullanım Koşulları</string>
     <string name="privacyPolicy">Gizlilik Politikası</string>
-    <string name="appLicense">Uygulama lisansı</string>
-    <string name="appLicenseDesc">Ücretsiz özel yazılım. Hak sahibi: {company}. Tüm hakları saklıdır.</string>
+    <string name="appLicense">Lisans</string>
+    <string name="appLicenseDesc">Apache Lisansı 2.0 — ücretsiz ve açık kaynak. © {company}</string>
     <string name="thirdPartyLicenses">Üçüncü taraf lisansları</string>
     <string name="thirdPartyLicensesDesc">Açık kaynaklı bileşenler ve lisansları</string>
     <string name="welcomeTo">{app} uygulamasına hoş geldiniz</string>
@@ -3146,4 +3146,6 @@
     <string name="tmplReceivedB">İletinizi aldım, daha sonra yanıtlayacağım.</string>
     <string name="onboardingDesc1NoEx">Gmail, Yandex, Mail.ru, Outlook ve her türlü IMAP.\n\nTakvim, kişiler, görevler ve notlar e-postanızın hemen yanında.</string>
     <string name="onboardingDesc3NoEx">PIN ve parmak izi, kimlik avı uyarıları, e-postalarda izleyici engelleme.\n\nPosta sunucunuzdan doğrudan cihazınıza gelir.</string>
+    <string name="sourceCode">Kaynak kodu</string>
+    <string name="sourceCodeDesc">GitHub: oku, derle, katkıda bulun</string>
 </resources>

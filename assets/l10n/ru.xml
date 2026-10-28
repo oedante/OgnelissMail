@@ -551,8 +551,8 @@
     <string name="yesterday">Вчера</string>
     <string name="termsOfUse">Условия использования</string>
     <string name="privacyPolicy">Политика конфиденциальности</string>
-    <string name="appLicense">Лицензия приложения</string>
-    <string name="appLicenseDesc">Бесплатное ПО с закрытым кодом. Правообладатель — {company}. Все права защищены.</string>
+    <string name="appLicense">Лицензия</string>
+    <string name="appLicenseDesc">Apache License 2.0 — открытое бесплатное ПО. © {company}</string>
     <string name="thirdPartyLicenses">Сторонние лицензии</string>
     <string name="thirdPartyLicensesDesc">Открытые компоненты и их лицензии</string>
     <string name="welcomeTo">Добро пожаловать в {app}</string>
@@ -3544,4 +3544,6 @@
     <string name="onboardingDesc3NoEx">PIN-код и отпечаток, предупреждения о фишинге, блокировка трекеров в письмах.\n\nПочта идёт с вашего сервера прямо на ваше устройство.</string>
     <string name="exchangeHiddenTitle">Ящики Exchange скрыты: {n}</string>
     <string name="exchangeHiddenDesc">В этой версии Exchange не поддерживается. Ящики и их данные остались на устройстве и вернутся в версии с Exchange. Почту можно подключить по IMAP.</string>
+    <string name="sourceCode">Исходный код</string>
+    <string name="sourceCodeDesc">GitHub: читать, собирать, предлагать правки</string>
 </resources>

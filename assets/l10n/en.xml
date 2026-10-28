@@ -551,8 +551,8 @@
     <string name="yesterday">Yesterday</string>
     <string name="termsOfUse">Terms of Use</string>
     <string name="privacyPolicy">Privacy Policy</string>
-    <string name="appLicense">App licence</string>
-    <string name="appLicenseDesc">Free proprietary software. Rights holder: {company}. All rights reserved.</string>
+    <string name="appLicense">Licence</string>
+    <string name="appLicenseDesc">Apache License 2.0 — free and open source. © {company}</string>
     <string name="thirdPartyLicenses">Third-party licences</string>
     <string name="thirdPartyLicensesDesc">Open-source components and their licences</string>
     <string name="welcomeTo">Welcome to {app}</string>
@@ -3506,4 +3506,6 @@
     <string name="onboardingDesc3NoEx">PIN and fingerprint, phishing warnings, tracker blocking in emails.\n\nMail goes from your server straight to your device.</string>
     <string name="exchangeHiddenTitle">Exchange mailboxes hidden: {n}</string>
     <string name="exchangeHiddenDesc">Exchange isn\'t supported in this version. The mailboxes and their data stay on this device and will return in a version with Exchange. You can add the mail via IMAP.</string>
+    <string name="sourceCode">Source code</string>
+    <string name="sourceCodeDesc">GitHub: read, build, contribute</string>
 </resources>

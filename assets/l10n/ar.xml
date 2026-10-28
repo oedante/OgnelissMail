@@ -551,8 +551,8 @@
     <string name="yesterday">أمس</string>
     <string name="termsOfUse">شروط الاستخدام</string>
     <string name="privacyPolicy">سياسة الخصوصية</string>
-    <string name="appLicense">ترخيص التطبيق</string>
-    <string name="appLicenseDesc">برنامج مجاني مملوك. صاحب الحقوق: {company}. جميع الحقوق محفوظة.</string>
+    <string name="appLicense">الترخيص</string>
+    <string name="appLicenseDesc">ترخيص Apache 2.0 — برنامج مجاني ومفتوح المصدر. © {company}</string>
     <string name="thirdPartyLicenses">تراخيص الجهات الخارجية</string>
     <string name="thirdPartyLicensesDesc">المكوّنات مفتوحة المصدر وتراخيصها</string>
     <string name="welcomeTo">مرحبًا بك في {app}</string>
@@ -3198,4 +3198,6 @@
     <string name="tmplReceivedB">تم استلام رسالتك وسأرد لاحقًا.</string>
     <string name="onboardingDesc1NoEx">Gmail وYandex وMail.ru وOutlook وأي IMAP.\n\nالتقويم وجهات الاتصال والمهام والملاحظات بجوار بريدك مباشرة.</string>
     <string name="onboardingDesc3NoEx">رمز PIN وبصمة الإصبع، وتحذيرات التصيّد، وحظر المتتبعات في الرسائل.\n\nيصل البريد من خادمك مباشرة إلى جهازك.</string>
+    <string name="sourceCode">الشفرة المصدرية</string>
+    <string name="sourceCodeDesc">GitHub: القراءة والبناء والمساهمة</string>
 </resources>

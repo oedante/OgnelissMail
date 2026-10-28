@@ -551,8 +551,8 @@
     <string name="yesterday">昨日</string>
     <string name="termsOfUse">利用規約</string>
     <string name="privacyPolicy">プライバシーポリシー</string>
-    <string name="appLicense">アプリのライセンス</string>
-    <string name="appLicenseDesc">無償のプロプライエタリソフトウェアです。権利者: {company}。All rights reserved.</string>
+    <string name="appLicense">ライセンス</string>
+    <string name="appLicenseDesc">Apache License 2.0 — 無料のオープンソース。© {company}</string>
     <string name="thirdPartyLicenses">サードパーティのライセンス</string>
     <string name="thirdPartyLicensesDesc">オープンソースコンポーネントとそのライセンス</string>
     <string name="welcomeTo">{app}へようこそ</string>
@@ -3133,4 +3133,6 @@
     <string name="tmplReceivedB">メールを受け取りました。後ほど返信します。</string>
     <string name="onboardingDesc1NoEx">Gmail、Yandex、Mail.ru、Outlook、あらゆるIMAPに対応。\n\nカレンダー、連絡先、タスク、メモもメールのすぐそばに。</string>
     <string name="onboardingDesc3NoEx">PINと指紋認証、フィッシング警告、メール内のトラッカーブロック。\n\nメールはサーバーから直接お使いのデバイスに届きます。</string>
+    <string name="sourceCode">ソースコード</string>
+    <string name="sourceCodeDesc">GitHub: 閲覧・ビルド・貢献</string>
 </resources>

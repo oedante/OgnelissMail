@@ -551,8 +551,8 @@
     <string name="yesterday">Hôm qua</string>
     <string name="termsOfUse">Điều khoản sử dụng</string>
     <string name="privacyPolicy">Chính sách quyền riêng tư</string>
-    <string name="appLicense">Giấy phép ứng dụng</string>
-    <string name="appLicenseDesc">Phần mềm độc quyền miễn phí. Chủ sở hữu quyền: {company}. Bảo lưu mọi quyền.</string>
+    <string name="appLicense">Giấy phép</string>
+    <string name="appLicenseDesc">Giấy phép Apache 2.0 — miễn phí và mã nguồn mở. © {company}</string>
     <string name="thirdPartyLicenses">Giấy phép bên thứ ba</string>
     <string name="thirdPartyLicensesDesc">Các thành phần mã nguồn mở và giấy phép của chúng</string>
     <string name="welcomeTo">Chào mừng đến với {app}</string>
@@ -3133,4 +3133,6 @@
     <string name="tmplReceivedB">Tôi đã nhận được thư của bạn và sẽ trả lời sau.</string>
     <string name="onboardingDesc1NoEx">Gmail, Yandex, Mail.ru, Outlook và mọi IMAP.\n\nLịch, danh bạ, tác vụ và ghi chú ngay cạnh thư của bạn.</string>
     <string name="onboardingDesc3NoEx">PIN và vân tay, cảnh báo lừa đảo, chặn trình theo dõi trong thư.\n\nThư đi thẳng từ máy chủ của bạn đến thiết bị của bạn.</string>
+    <string name="sourceCode">Mã nguồn</string>
+    <string name="sourceCodeDesc">GitHub: xem, biên dịch, đóng góp</string>
 </resources>

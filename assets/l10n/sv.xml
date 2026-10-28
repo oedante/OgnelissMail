@@ -550,8 +550,8 @@
     <string name="yesterday">Igår</string>
     <string name="termsOfUse">Användarvillkor</string>
     <string name="privacyPolicy">Integritetspolicy</string>
-    <string name="appLicense">Applicens</string>
-    <string name="appLicenseDesc">Gratis proprietär programvara. Rättighetsinnehavare: {company}. Alla rättigheter förbehållna.</string>
+    <string name="appLicense">Licens</string>
+    <string name="appLicenseDesc">Apache License 2.0 — gratis och öppen källkod. © {company}</string>
     <string name="thirdPartyLicenses">Tredjepartslicenser</string>
     <string name="thirdPartyLicensesDesc">Komponenter med öppen källkod och deras licenser</string>
     <string name="welcomeTo">Välkommen till {app}</string>
@@ -3135,4 +3135,6 @@
     <string name="tmplReviewB">Ta en titt på detta och återkom med synpunkter före veckans slut.</string>
     <string name="tmplReceivedT">Mottaget, svarar senare</string>
     <string name="tmplReceivedB">Jag har tagit emot ditt meddelande och svarar senare.</string>
+    <string name="sourceCode">Källkod</string>
+    <string name="sourceCodeDesc">GitHub: läs, bygg, bidra</string>
 </resources>

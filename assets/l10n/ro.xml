@@ -550,8 +550,8 @@
     <string name="yesterday">Ieri</string>
     <string name="termsOfUse">Termeni de utilizare</string>
     <string name="privacyPolicy">Politica de confidențialitate</string>
-    <string name="appLicense">Licența aplicației</string>
-    <string name="appLicenseDesc">Software proprietar gratuit. Deținătorul drepturilor: {company}. Toate drepturile rezervate.</string>
+    <string name="appLicense">Licență</string>
+    <string name="appLicenseDesc">Licența Apache 2.0 — gratuit și open source. © {company}</string>
     <string name="thirdPartyLicenses">Licențe ale terților</string>
     <string name="thirdPartyLicensesDesc">Componente open-source și licențele lor</string>
     <string name="welcomeTo">Bun venit în {app}</string>
@@ -3148,4 +3148,6 @@
     <string name="tmplReviewB">Vă rog să aruncați o privire și să-mi transmiteți feedback până la sfârșitul săptămânii.</string>
     <string name="tmplReceivedT">Primit, voi răspunde mai târziu</string>
     <string name="tmplReceivedB">Mesajul a fost primit, voi răspunde mai târziu.</string>
+    <string name="sourceCode">Cod sursă</string>
+    <string name="sourceCodeDesc">GitHub: citește, compilează, contribuie</string>
 </resources>

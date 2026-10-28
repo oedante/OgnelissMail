@@ -551,8 +551,8 @@
     <string name="yesterday">कल</string>
     <string name="termsOfUse">उपयोग की शर्तें</string>
     <string name="privacyPolicy">गोपनीयता नीति</string>
-    <string name="appLicense">ऐप लाइसेंस</string>
-    <string name="appLicenseDesc">मुफ़्त स्वामित्व वाला सॉफ़्टवेयर। अधिकार धारक: {company}। सर्वाधिकार सुरक्षित।</string>
+    <string name="appLicense">लाइसेंस</string>
+    <string name="appLicenseDesc">Apache License 2.0 — मुफ़्त और ओपन सोर्स। © {company}</string>
     <string name="thirdPartyLicenses">तृतीय-पक्ष लाइसेंस</string>
     <string name="thirdPartyLicensesDesc">ओपन-सोर्स घटक और उनके लाइसेंस</string>
     <string name="welcomeTo">{app} में आपका स्वागत है</string>
@@ -3146,4 +3146,6 @@
     <string name="tmplReceivedB">आपका ईमेल मिल गया है, बाद में जवाब दूंगा।</string>
     <string name="onboardingDesc1NoEx">Gmail, Yandex, Mail.ru, Outlook और कोई भी IMAP।\n\nकैलेंडर, संपर्क, कार्य और नोट आपके मेल के ठीक पास।</string>
     <string name="onboardingDesc3NoEx">PIN और फ़िंगरप्रिंट, फ़िशिंग चेतावनियां, ईमेल में ट्रैकर ब्लॉक करना\n\nमेल आपके सर्वर से सीधे आपके डिवाइस तक पहुंचता है।</string>
+    <string name="sourceCode">सोर्स कोड</string>
+    <string name="sourceCodeDesc">GitHub: पढ़ें, बनाएँ, योगदान दें</string>
 </resources>

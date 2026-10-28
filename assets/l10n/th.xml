@@ -551,8 +551,8 @@
     <string name="yesterday">เมื่อวาน</string>
     <string name="termsOfUse">ข้อกำหนดการใช้งาน</string>
     <string name="privacyPolicy">นโยบายความเป็นส่วนตัว</string>
-    <string name="appLicense">ใบอนุญาตแอป</string>
-    <string name="appLicenseDesc">ซอฟต์แวร์เฉพาะที่ใช้ฟรี ผู้ถือสิทธิ์: {company} สงวนลิขสิทธิ์</string>
+    <string name="appLicense">สัญญาอนุญาต</string>
+    <string name="appLicenseDesc">Apache License 2.0 — ฟรีและเป็นโอเพนซอร์ส © {company}</string>
     <string name="thirdPartyLicenses">ใบอนุญาตของบุคคลที่สาม</string>
     <string name="thirdPartyLicensesDesc">คอมโพเนนต์โอเพนซอร์สและใบอนุญาต</string>
     <string name="welcomeTo">ยินดีต้อนรับสู่ {app}</string>
@@ -3133,4 +3133,6 @@
     <string name="tmplReceivedB">ได้รับอีเมลของคุณแล้ว จะตอบกลับภายหลัง</string>
     <string name="onboardingDesc1NoEx">Gmail, Yandex, Mail.ru, Outlook และ IMAP ทุกแบบ\n\nปฏิทิน ผู้ติดต่อ งาน และโน้ต อยู่ใกล้ๆ กับอีเมลของคุณ</string>
     <string name="onboardingDesc3NoEx">PIN และลายนิ้วมือ คำเตือนฟิชชิง การบล็อกตัวติดตามในอีเมล\n\nอีเมลส่งจากเซิร์ฟเวอร์ของคุณตรงถึงอุปกรณ์ของคุณ</string>
+    <string name="sourceCode">ซอร์สโค้ด</string>
+    <string name="sourceCodeDesc">GitHub: อ่าน สร้าง ร่วมพัฒนา</string>
 </resources>

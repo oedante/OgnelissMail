@@ -28,6 +28,9 @@ class AppConstants {
   // они указаны в Google Play и в уже установленных версиях.
   static const termsUrl = 'https://ogneliss.ru/mail/terms';
   static const eulaUrl = 'https://ogneliss.ru/mail/eula';
+  // Открытый исходный код (Apache 2.0, с 1.8.6).
+  static const sourceUrl = 'https://github.com/oedante/OgnelissMail';
+  static const licenseUrl = 'https://github.com/oedante/OgnelissMail/blob/main/LICENSE';
   static const privacyUrl = 'https://ogneliss.ru/mail/privacy';
   static const licensesUrl = 'https://ogneliss.ru/mail/licenses';
 

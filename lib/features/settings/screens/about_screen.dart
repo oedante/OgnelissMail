@@ -95,7 +95,15 @@ class AboutScreen extends StatelessWidget {
               l10n.tr('appLicenseDesc').replaceAll('{company}', AppConstants.copyrightHolder),
             ),
             trailing: const Icon(AppIcons.open_in_new, size: 18),
-            onTap: () => _open(AppConstants.eulaUrl),
+            onTap: () => _open(AppConstants.licenseUrl),
+          ),
+          // Открытый код (1.8.6): репозиторий на GitHub.
+          ListTile(
+            leading: const Icon(AppIcons.code),
+            title: Text(l10n.tr('sourceCode')),
+            subtitle: Text(l10n.tr('sourceCodeDesc')),
+            trailing: const Icon(AppIcons.open_in_new, size: 18),
+            onTap: () => _open(AppConstants.sourceUrl),
           ),
           ListTile(
             leading: const Icon(AppIcons.article),

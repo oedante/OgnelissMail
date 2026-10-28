@@ -550,8 +550,8 @@
     <string name="yesterday">Včera</string>
     <string name="termsOfUse">Podmínky použití</string>
     <string name="privacyPolicy">Zásady ochrany osobních údajů</string>
-    <string name="appLicense">Licence aplikace</string>
-    <string name="appLicenseDesc">Bezplatný proprietární software. Nositel práv: {company}. Všechna práva vyhrazena.</string>
+    <string name="appLicense">Licence</string>
+    <string name="appLicenseDesc">Apache License 2.0 — zdarma a s otevřeným kódem. © {company}</string>
     <string name="thirdPartyLicenses">Licence třetích stran</string>
     <string name="thirdPartyLicensesDesc">Open source komponenty a jejich licence</string>
     <string name="welcomeTo">Vítejte v aplikaci {app}</string>
@@ -3148,4 +3148,6 @@
     <string name="tmplReviewB">Prosím, podívejte se na to a pošlete zpětnou vazbu do konce týdne.</string>
     <string name="tmplReceivedT">Obdrženo, odpovím později</string>
     <string name="tmplReceivedB">Vaši zprávu jsem obdržel(a), odpovím později.</string>
+    <string name="sourceCode">Zdrojový kód</string>
+    <string name="sourceCodeDesc">GitHub: číst, sestavit, přispět</string>
 </resources>

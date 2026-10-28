@@ -551,8 +551,8 @@
     <string name="yesterday">어제</string>
     <string name="termsOfUse">이용약관</string>
     <string name="privacyPolicy">개인정보 처리방침</string>
-    <string name="appLicense">앱 라이선스</string>
-    <string name="appLicenseDesc">무료 독점 소프트웨어입니다. 권리자: {company}. 모든 권리 보유.</string>
+    <string name="appLicense">라이선스</string>
+    <string name="appLicenseDesc">Apache License 2.0 — 무료 오픈 소스. © {company}</string>
     <string name="thirdPartyLicenses">타사 라이선스</string>
     <string name="thirdPartyLicensesDesc">오픈 소스 구성 요소와 라이선스</string>
     <string name="welcomeTo">{app}에 오신 것을 환영합니다</string>
@@ -3133,4 +3133,6 @@
     <string name="tmplReceivedB">메일을 받았습니다. 나중에 답장드리겠습니다.</string>
     <string name="onboardingDesc1NoEx">Gmail, Yandex, Mail.ru, Outlook 및 모든 IMAP.\n\n캘린더, 연락처, 작업, 메모가 메일 바로 옆에 있어요.</string>
     <string name="onboardingDesc3NoEx">PIN과 지문, 피싱 경고, 메일 속 추적기 차단.\n\n메일은 서버에서 기기로 바로 전달돼요.</string>
+    <string name="sourceCode">소스 코드</string>
+    <string name="sourceCodeDesc">GitHub: 보기, 빌드, 기여</string>
 </resources>

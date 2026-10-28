@@ -551,8 +551,8 @@
     <string name="yesterday">昨天</string>
     <string name="termsOfUse">使用条款</string>
     <string name="privacyPolicy">隐私政策</string>
-    <string name="appLicense">应用许可</string>
-    <string name="appLicenseDesc">免费专有软件。权利人：{company}。保留所有权利。</string>
+    <string name="appLicense">许可证</string>
+    <string name="appLicenseDesc">Apache License 2.0 — 免费开源软件。© {company}</string>
     <string name="thirdPartyLicenses">第三方许可</string>
     <string name="thirdPartyLicensesDesc">开源组件及其许可</string>
     <string name="welcomeTo">欢迎使用 {app}</string>
@@ -3133,4 +3133,6 @@
     <string name="tmplReceivedB">已收到你的邮件，稍后回复。</string>
     <string name="onboardingDesc1NoEx">支持 Gmail、Yandex、Mail.ru、Outlook 以及任意 IMAP 邮箱。\n\n日历、联系人、任务和笔记与邮件触手可及。</string>
     <string name="onboardingDesc3NoEx">PIN 码和指纹、网络钓鱼警告、邮件中的跟踪器拦截。\n\n邮件从你的服务器直接送达你的设备。</string>
+    <string name="sourceCode">源代码</string>
+    <string name="sourceCodeDesc">GitHub：阅读、构建、参与贡献</string>
 </resources>

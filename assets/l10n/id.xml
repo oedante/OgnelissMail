@@ -551,8 +551,8 @@
     <string name="yesterday">Kemarin</string>
     <string name="termsOfUse">Ketentuan Penggunaan</string>
     <string name="privacyPolicy">Kebijakan Privasi</string>
-    <string name="appLicense">Lisensi aplikasi</string>
-    <string name="appLicenseDesc">Perangkat lunak berhak cipta yang gratis. Pemegang hak: {company}. Semua hak dilindungi.</string>
+    <string name="appLicense">Lisensi</string>
+    <string name="appLicenseDesc">Lisensi Apache 2.0 — gratis dan sumber terbuka. © {company}</string>
     <string name="thirdPartyLicenses">Lisensi pihak ketiga</string>
     <string name="thirdPartyLicensesDesc">Komponen sumber terbuka dan lisensinya</string>
     <string name="welcomeTo">Selamat datang di {app}</string>
@@ -3133,4 +3133,6 @@
     <string name="tmplReceivedB">Email Anda sudah saya terima dan akan saya balas nanti.</string>
     <string name="onboardingDesc1NoEx">Gmail, Yandex, Mail.ru, Outlook, dan IMAP apa pun.\n\nKalender, kontak, tugas, dan catatan tepat di samping email Anda.</string>
     <string name="onboardingDesc3NoEx">PIN dan sidik jari, peringatan phishing, pemblokiran pelacak di email.\n\nEmail langsung dari server Anda ke perangkat Anda.</string>
+    <string name="sourceCode">Kode sumber</string>
+    <string name="sourceCodeDesc">GitHub: baca, build, berkontribusi</string>
 </resources>

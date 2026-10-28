@@ -98,5 +98,5 @@ config/dart_defines.json
 site/
 
 # Код drift (build_runner) и lock-файл: CI создаёт их сам
-*.g.dart
+lib/data/database/*.g.dart
 pubspec.lock

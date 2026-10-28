@@ -3285,7 +3285,7 @@
     <string name="archiveNotOgna">Это не файл архива Ogneliss (.ogna)</string>
     <string name="archiveNewerFormat">Архив создан более новой версией приложения — обновите приложение</string>
     <string name="archiveBroken">Файл архива повреждён или не дописан</string>
-    <string name="archiveAlreadyExists">На этом устройстве уже есть архив. Несколько архивов — в следующих версиях</string>
+    <string name="archiveAlreadyExists">На этом устройстве уже есть архив. Чтобы добавить в него копию с другого устройства, выберите «Объединить с копией»</string>
     <string name="archiveNoCipher">В этой сборке нет шифрования базы — архив не создаётся</string>
     <string name="archiveLocked">Архив закрыт — откройте его паролем</string>
     <string name="archiveLockedIntro">Архив на этом устройстве закрыт. Откройте его паролем архива или кодом восстановления.</string>
@@ -3374,7 +3374,7 @@
     <string name="archiveKindTasksDesc">Выполненные и отменённые — копией</string>
     <string name="archiveKindContacts">Контакты</string>
     <string name="archiveKindContactsDesc">Свои контакты — снимком на дату архивации</string>
-    <string name="archiveAccountsSection">Какие ящики</string>
+    <string name="archiveAccountsSection">Какие ящики архивировать</string>
     <string name="archiveCopySection">Копия и защита</string>
     <string name="archiveCopyHelp">Архив лежит в данных приложения: при удалении приложения он удаляется вместе с ним. Сохраняйте копию (файл .ogna) на диск или в облако — Google Диск, «Файлы» с iCloud Drive, Яндекс Диск, флешку. Копия зашифрована тем же ключом: без пароля или кода её не открыть.</string>
     <string name="archiveCopySave">Сохранить копию архива</string>
@@ -3546,4 +3546,24 @@
     <string name="exchangeHiddenDesc">В этой версии Exchange не поддерживается. Ящики и их данные остались на устройстве и вернутся в версии с Exchange. Почту можно подключить по IMAP.</string>
     <string name="sourceCode">Исходный код</string>
     <string name="sourceCodeDesc">GitHub: читать, собирать, предлагать правки</string>
+    <string name="archiveMergeTitle">Объединить с копией</string>
+    <string name="archiveMergeSub">Добавить письма из копии с другого устройства — без повторов</string>
+    <string name="archiveMergeIntro">Выберите копию архива (.ogna) с другого устройства — из Google Диска, iCloud Drive, Яндекс Диска или с флешки — и введите её пароль или код восстановления. В архив на этом устройстве добавится всё, чего в нём нет; повторов не будет, пароль архива не изменится.</string>
+    <string name="archiveMergeRun">Объединить</string>
+    <string name="archiveMerging">Объединение: {done} из {total} писем</string>
+    <string name="archiveMergeDone">Добавлено писем: {n}. Уже были в архиве: {skipped}.</string>
+    <string name="archiveMergeAfter">Чтобы и на другом устройстве было всё, сохраните здесь копию архива и объедините её там.</string>
+    <string name="archiveDevicesSection">Другие устройства и облако</string>
+    <string name="archiveDevicesHow">Архив хранится на этом устройстве и зашифрован; облако — место для его копии. Чтобы открыть архив на другом телефоне или компьютере, сохраните копию в Google Диск, iCloud Drive, Яндекс Диск или на флешку, а там — «Архив Ogneliss» → «Подключить копию архива» (если архива там ещё нет) или «Объединить с копией» (если есть свой). Архивировать можно на обоих устройствах: время от времени сохраняйте копию на одном и объединяйте её на другом — повторов не будет.</string>
+    <string name="archiveDevicesHowNone">Архив уже есть на другом устройстве? Сохраните там копию архива (Настройки → «Архив Ogneliss» → «Сохранить копию архива») в облако или на флешку, а здесь нажмите «Подключить копию архива». Дальше архивировать можно на обоих устройствах: время от времени сохраняйте копию на одном и объединяйте её на другом.</string>
+    <string name="archiveSecuritySection">Защита</string>
+    <string name="archiveContentsSection">Ящики в архиве</string>
+    <string name="archiveContentsHelp">Один архив — для всех ящиков: у каждого своя ветка папок, как в ящике, — здесь и в меню слева, в разделе «Архив Ogneliss». Один и тот же ящик с разных устройств — одна ветка: ящики сводятся по адресу.</string>
+    <string name="archiveAccountMails">писем: {n}</string>
+    <string name="archiveAccountOtherDevice">с другого устройства</string>
+    <string name="archiveAccountsHelp">Архивируются только включённые ящики. Выключенный ящик не архивируется; то, что уже в архиве, остаётся.</string>
+    <string name="faq_archive_6_q">Как пользоваться одним архивом на телефоне и компьютере?</string>
+    <string name="faq_archive_6_a">Архив хранится на каждом устройстве своей копией, а облако (Google Диск, iCloud Drive, Яндекс Диск) или флешка — место для обмена. На первом устройстве: Настройки → «Архив Ogneliss» → «Сохранить копию архива». На втором: «Подключить копию архива», если архива там ещё нет, или «Объединить с копией», если есть свой. Архивировать можно на обоих: время от времени сохраняйте копию на одном и объединяйте её на другом. Объединение добавляет только то, чего нет: письма не повторяются, тот же ящик остаётся одной веткой.</string>
+    <string name="faq_archive_7_q">Как в архиве хранятся несколько ящиков?</string>
+    <string name="faq_archive_7_a">Все ящики — в одном архиве, у каждого своя ветка папок со структурой как в ящике: в меню слева, в разделе «Архив Ogneliss», и на экране архива в разделе «Ящики в архиве». Какие ящики архивировать, выбирается там же, в разделе «Какие ящики архивировать»; поиск по архиву идёт сразу по всем ящикам.</string>
 </resources>

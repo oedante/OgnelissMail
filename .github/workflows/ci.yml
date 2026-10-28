@@ -232,6 +232,11 @@ jobs:
       - name: Platform folder
         run: |
           [ -d macos ] || flutter create --platforms=macos --org com.ogneliss --project-name ogneliss .
+          # Плагины — через CocoaPods, не Swift Package Manager: пакет
+          # flutter_inappwebview_macos в SPM собирается под свою минимальную
+          # macOS и с Xcode 26 падал на presentationAnchor; Podfile ниже задаёт
+          # 10.15 для всех pods (28.10.2026, второй прогон).
+          flutter config --no-enable-swift-package-manager
           # flutter_inappwebview_macos (1.2 бета) с новым Xcode: «presentationAnchor
           # requires … macOS 10.14 and newer» — pods собираются для macOS 10.15+
           # (28.10.2026).

@@ -10,6 +10,7 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/core/theme/app_icons.dart';
 import 'package:ogneliss/core/theme/app_theme.dart';
@@ -18,9 +19,13 @@ import 'package:ogneliss/data/models/email_model.dart';
 import 'package:ogneliss/data/models/folder_model.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
+import 'package:ogneliss/features/archive/screens/archive_screen.dart';
 import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
 import 'package:ogneliss/features/settings/screens/settings_screen.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
+import 'package:ogneliss/services/archive/archive_container.dart';
+import 'package:ogneliss/services/archive/archive_db.dart';
+import 'package:ogneliss/services/archive/archive_vault.dart';
 import 'package:ogneliss/widgets/common/hero_email_transition.dart';
 import 'package:ogneliss/widgets/navigation/app_bottom_bar.dart';
 import 'package:ogneliss/widgets/ui/app_menu_button.dart';
@@ -76,6 +81,7 @@ Future<void> _shot(
   AppDatabase? db,
   SharedPreferences? prefs,
   Future<void> Function(WidgetTester tester)? before,
+  List<Override> extra = const [],
 }) async {
   tester.view.physicalSize = size * 2;
   tester.view.devicePixelRatio = 2;
@@ -84,6 +90,7 @@ Future<void> _shot(
     overrides: [
       if (db != null) databaseProvider.overrideWithValue(db),
       if (prefs != null) sharedPrefsProvider.overrideWithValue(prefs),
+      ...extra,
     ],
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -301,6 +308,46 @@ void main() {
     });
   }
 
+  // Архив Ogneliss (28.10.2026): кнопки на виду, ящики в архиве (один — с
+  // другого устройства), «Другие устройства и облако».
+  for (final (t, scroll) in const [('light', 0.0), ('light', 1100.0), ('light', 2400.0), ('dark', 0.0)]) {
+    testWidgets('архив — $t $scroll', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      final adb = ArchiveDb(NativeDatabase.memory());
+      await tester.runAsync(() async {
+        await adb.upsertAccount('a1', 'i.petrov@corp.example', 'Иван Петров', 'exchange', 0);
+        await adb.upsertAccount('d2', 'i.petrov@home.example', '', 'imap', 0);
+        for (final (acc, n) in [('a1', 3), ('d2', 1)]) {
+          for (var i = 0; i < n; i++) {
+            await adb.addMessage(ArchiveMessageInput(
+              accountId: acc,
+              folderChain: const [(name: 'Входящие', type: 'inbox')],
+              sourceId: '$acc$i',
+              subject: 'Отчёт $i',
+              fromName: 'Анна',
+              fromEmail: 'anna@corp.example',
+              date: DateTime(2025, 3, 1 + i),
+              searchText: 'Отчёт',
+            ));
+          }
+        }
+      });
+      await _shot(tester, 'archive_${t}_${scroll.round()}', const ArchiveScreen(),
+          theme: _themes[t]!(), db: db, prefs: prefs, extra: [
+        archiveVaultProvider.overrideWith(() => _ShotVault(adb)),
+      ], before: scroll == 0
+          ? null
+          : (tester) async {
+              // Ниже — расписание, ящики, «Другие устройства и облако».
+              await tester.drag(find.byType(ListView), Offset(0, -scroll));
+            });
+      await tester.runAsync(adb.close);
+      await tester.runAsync(db.close);
+    });
+  }
+
   for (final t in const ['light', 'dark', 'contrast']) {
     testWidgets('настройки — $t', (tester) async {
       SharedPreferences.setMockInitialValues({});
@@ -310,4 +357,19 @@ void main() {
       await tester.runAsync(db.close);
     });
   }
+}
+
+/// Открытый архив для снимка: база в памяти, без ключей и файлов.
+class _ShotVault extends ArchiveVault {
+  _ShotVault(this._fake);
+  final ArchiveDb _fake;
+
+  @override
+  ArchiveDb? get db => _fake;
+
+  @override
+  Future<ArchiveVaultState> build() async => ArchiveVaultState(
+        ArchiveStatus.open,
+        header: ArchiveHeader(id: 'shot', name: '', created: DateTime(2026, 10, 1), app: '1.8.7', keys: const {}),
+      );
 }

@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">Das ist keine Ogneliss-Archivdatei (.ogna)</string>
     <string name="archiveNewerFormat">Das Archiv stammt von einer neueren App-Version. Aktualisieren Sie die App</string>
     <string name="archiveBroken">Die Archivdatei ist beschädigt oder unvollständig</string>
-    <string name="archiveAlreadyExists">Auf diesem Gerät gibt es schon ein Archiv. Mehrere Archive folgen in späteren Versionen</string>
+    <string name="archiveAlreadyExists">Auf diesem Gerät gibt es schon ein Archiv. Um ihm eine Kopie von einem anderen Gerät hinzuzufügen, wählen Sie Mit einer Kopie zusammenführen</string>
     <string name="archiveNoCipher">Dieser Build hat keine Datenbankverschlüsselung, daher kann kein Archiv erstellt werden</string>
     <string name="archiveLocked">Das Archiv ist gesperrt. Öffnen Sie es mit dem Passwort</string>
     <string name="archiveLockedIntro">Das Archiv auf diesem Gerät ist gesperrt. Öffnen Sie es mit dem Archivpasswort oder dem Wiederherstellungscode.</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">Erledigte und abgebrochene, als Kopie</string>
     <string name="archiveKindContacts">Kontakte</string>
     <string name="archiveKindContactsDesc">Eigene Kontakte, als Momentaufnahme zum Archivierungszeitpunkt</string>
-    <string name="archiveAccountsSection">Welche Postfächer</string>
+    <string name="archiveAccountsSection">Zu archivierende Postfächer</string>
     <string name="archiveCopySection">Kopie und Schutz</string>
     <string name="archiveCopyHelp">Das Archiv liegt in den App-Daten: Wird die App entfernt, verschwindet es mit ihr. Speichern Sie eine Kopie (Datei .ogna) auf einem Laufwerk oder in der Cloud: Google Drive, „Dateien“ mit iCloud Drive, Yandex Disk, USB-Stick. Die Kopie ist mit demselben Schlüssel verschlüsselt und ohne Passwort oder Code nicht zu öffnen.</string>
     <string name="archiveCopySave">Archivkopie speichern</string>
@@ -3508,4 +3508,24 @@
     <string name="exchangeHiddenDesc">Exchange wird in dieser Version nicht unterstützt. Die Postfächer und ihre Daten bleiben auf dem Gerät und kehren in einer Version mit Exchange zurück. Sie können die E-Mail per IMAP hinzufügen.</string>
     <string name="sourceCode">Quellcode</string>
     <string name="sourceCodeDesc">GitHub: lesen, bauen, mitwirken</string>
+    <string name="archiveMergeTitle">Mit einer Kopie zusammenführen</string>
+    <string name="archiveMergeSub">Mails aus der Kopie eines anderen Geräts hinzufügen — ohne Doppelte</string>
+    <string name="archiveMergeIntro">Wählen Sie eine Archivkopie (.ogna) von einem anderen Gerät — in Google Drive, iCloud Drive, Yandex Disk oder auf einem USB-Stick — und geben Sie ihr Passwort oder ihren Wiederherstellungscode ein. Alles, was im Archiv auf diesem Gerät noch fehlt, wird hinzugefügt; nichts wird doppelt, das Archivpasswort bleibt gleich.</string>
+    <string name="archiveMergeRun">Zusammenführen</string>
+    <string name="archiveMerging">Zusammenführen: {done} von {total} Mails</string>
+    <string name="archiveMergeDone">Mails hinzugefügt: {n}. Schon im Archiv: {skipped}.</string>
+    <string name="archiveMergeAfter">Damit auch das andere Gerät alles hat, speichern Sie hier eine Archivkopie und führen Sie sie dort zusammen.</string>
+    <string name="archiveDevicesSection">Andere Geräte und Cloud</string>
+    <string name="archiveDevicesHow">Das Archiv liegt verschlüsselt auf diesem Gerät; die Cloud ist der Ort für seine Kopie. Um das Archiv auf einem anderen Telefon oder Computer zu öffnen, speichern Sie eine Kopie in Google Drive, iCloud Drive, Yandex Disk oder auf einem USB-Stick und tippen dort auf Ogneliss-Archiv → Archivkopie verbinden (wenn es dort noch kein Archiv gibt) oder Mit einer Kopie zusammenführen (wenn es ein eigenes gibt). Archivieren können Sie auf beiden Geräten: Speichern Sie ab und zu auf einem eine Kopie und führen Sie sie auf dem anderen zusammen — nichts wird doppelt.</string>
+    <string name="archiveDevicesHowNone">Sie haben schon ein Archiv auf einem anderen Gerät? Speichern Sie dort eine Archivkopie (Einstellungen → Ogneliss-Archiv → Archivkopie speichern) in der Cloud oder auf einem USB-Stick und tippen Sie hier auf Archivkopie verbinden. Danach können Sie auf beiden Geräten archivieren: Speichern Sie ab und zu auf einem eine Kopie und führen Sie sie auf dem anderen zusammen.</string>
+    <string name="archiveSecuritySection">Schutz</string>
+    <string name="archiveContentsSection">Postfächer im Archiv</string>
+    <string name="archiveContentsHelp">Ein Archiv für alle Postfächer: Jedes hat seinen eigenen Ordnerzweig wie im Postfach — hier und im Seitenmenü unter Ogneliss-Archiv. Dasselbe Postfach von verschiedenen Geräten ist ein Zweig: Postfächer werden nach Adresse zusammengeführt.</string>
+    <string name="archiveAccountMails">Mails: {n}</string>
+    <string name="archiveAccountOtherDevice">von einem anderen Gerät</string>
+    <string name="archiveAccountsHelp">Archiviert werden nur eingeschaltete Postfächer. Ein ausgeschaltetes Postfach wird nicht archiviert; was schon im Archiv ist, bleibt.</string>
+    <string name="faq_archive_6_q">Wie nutze ich ein Archiv auf Telefon und Computer?</string>
+    <string name="faq_archive_6_a">Jedes Gerät hat seine eigene Kopie des Archivs; die Cloud (Google Drive, iCloud Drive, Yandex Disk) oder ein USB-Stick dient zum Austausch. Auf dem ersten Gerät: Einstellungen → Ogneliss-Archiv → Archivkopie speichern. Auf dem zweiten: Archivkopie verbinden, wenn es dort noch kein Archiv gibt, oder Mit einer Kopie zusammenführen, wenn es ein eigenes gibt. Archivieren können Sie auf beiden: Speichern Sie ab und zu auf einem eine Kopie und führen Sie sie auf dem anderen zusammen. Beim Zusammenführen kommt nur hinzu, was fehlt: Mails werden nicht doppelt, dasselbe Postfach bleibt ein Zweig.</string>
+    <string name="faq_archive_7_q">Wie speichert das Archiv mehrere Postfächer?</string>
+    <string name="faq_archive_7_a">Alle Postfächer liegen in einem Archiv, jedes mit eigenem Ordnerzweig wie im Postfach: im Seitenmenü unter Ogneliss-Archiv und auf dem Archivbildschirm unter Postfächer im Archiv. Welche Postfächer archiviert werden, wählen Sie dort unter Zu archivierende Postfächer; die Archivsuche durchsucht alle Postfächer zugleich.</string>
 </resources>

@@ -20,6 +20,7 @@ import '../../core/theme/tokens.dart';
 import '../../core/utils/app_date_format.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/archive/archive_container.dart';
+import '../../services/archive/archive_db.dart' show ArchiveMergeReport;
 import '../../services/archive/archive_runner.dart';
 import '../../services/archive/archive_settings.dart';
 import '../../services/archive/archive_vault.dart';
@@ -66,12 +67,14 @@ Future<void> showArchiveNewCodeSheet(BuildContext context) => showAppSheet<void>
       builder: (_) => const _NewCodeSheet(),
     );
 
-Future<bool> showArchiveConnectSheet(BuildContext context) async =>
+/// Подключить копию архива (.ogna). [merge] — на устройстве уже есть свой
+/// архив: копия с ним объединяется (28.10.2026).
+Future<bool> showArchiveConnectSheet(BuildContext context, {bool merge = false}) async =>
     await showAppSheet<bool>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (_) => const _ConnectSheet(),
+      builder: (_) => _ConnectSheet(merge: merge),
     ) ==
     true;
 
@@ -600,7 +603,9 @@ class _NewCodeSheetState extends ConsumerState<_NewCodeSheet> {
 // ─────────────────────────── подключить копию ───────────────────────────
 
 class _ConnectSheet extends ConsumerStatefulWidget {
-  const _ConnectSheet();
+  /// Объединить с архивом на устройстве, а не подключить вместо него.
+  final bool merge;
+  const _ConnectSheet({this.merge = false});
 
   @override
   ConsumerState<_ConnectSheet> createState() => _ConnectSheetState();
@@ -614,6 +619,11 @@ class _ConnectSheetState extends ConsumerState<_ConnectSheet> {
   bool _busy = false;
   String? _error;
   bool _byCode = false;
+
+  /// Объединение: сколько писем перенесено из скольких; итог.
+  int _done = 0;
+  int _total = 0;
+  ArchiveMergeReport? _report;
 
   /// Копия, выбранная без пути (Android отдал только содержимое), — во
   /// временной папке; удаляется после подключения.
@@ -683,6 +693,20 @@ class _ConnectSheetState extends ConsumerState<_ConnectSheet> {
       _busy = true;
     });
     try {
+      if (widget.merge) {
+        final r = await ref.read(archiveVaultProvider.notifier).merge(f, _secret.text, onProgress: (done, total) {
+          if (!mounted) return;
+          setState(() {
+            _done = done;
+            _total = total;
+          });
+        });
+        if (!mounted) return;
+        // Пароль архива на устройстве не меняется — вход кодом копии нового
+        // пароля не требует.
+        setState(() => r.how == ArchiveUnlock.wrong ? _error = l10n.tr('archiveWrongSecret') : _report = r.report);
+        return;
+      }
       final r = await ref.read(archiveVaultProvider.notifier).connect(f, _secret.text);
       if (!mounted) return;
       switch (r) {
@@ -709,9 +733,33 @@ class _ConnectSheetState extends ConsumerState<_ConnectSheet> {
         _NewPasswordView(intro: l10n.tr('archiveOpenedByCode'), onDone: () => Navigator.of(context).pop(true)),
       ]);
     }
+    final report = _report;
+    if (report != null) {
+      return _SheetFrame(icon: AppIcons.merge, title: l10n.tr('archiveMergeTitle'), children: [
+        Text(
+            l10n
+                .tr('archiveMergeDone')
+                .replaceAll('{n}', AppDateFormat.number(context, report.messages))
+                .replaceAll('{skipped}', AppDateFormat.number(context, report.skipped)),
+            style: theme.textTheme.bodyMedium),
+        if (report.events + report.tasks + report.contacts > 0)
+          _Note(l10n
+              .tr('archiveStatOther')
+              .replaceAll('{events}', '${report.events}')
+              .replaceAll('{tasks}', '${report.tasks}')
+              .replaceAll('{contacts}', '${report.contacts}')),
+        _Note(l10n.tr('archiveMergeAfter')),
+        const SizedBox(height: Space.m),
+        FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(l10n.tr('done'))),
+      ]);
+    }
     final h = _header;
-    return _SheetFrame(icon: AppIcons.folder_open, title: l10n.tr('archiveConnectTitle'), children: [
-      Text(l10n.tr('archiveConnectIntro'), style: theme.textTheme.bodyMedium),
+    final merging = widget.merge && _busy && h != null;
+    return _SheetFrame(
+        icon: widget.merge ? AppIcons.merge : AppIcons.folder_open,
+        title: l10n.tr(widget.merge ? 'archiveMergeTitle' : 'archiveConnectTitle'),
+        children: [
+      Text(l10n.tr(widget.merge ? 'archiveMergeIntro' : 'archiveConnectIntro'), style: theme.textTheme.bodyMedium),
       const SizedBox(height: Space.s),
       OutlinedButton.icon(
         onPressed: _busy ? null : () => _pick(l10n),
@@ -725,11 +773,16 @@ class _ConnectSheetState extends ConsumerState<_ConnectSheet> {
             .replaceAll('{date}', AppDateFormat.date(context, h.created))),
       if (h != null) _PasswordField(_secret, l10n.tr('archivePwOrCode'), onSubmitted: (_) => _connect(l10n)),
       if (_error != null) _Note(_error!, error: true),
+      if (merging && _total > 0) ...[
+        const SizedBox(height: Space.m),
+        LinearProgressIndicator(value: _done / _total),
+        _Note(l10n.tr('archiveMerging').replaceAll('{done}', '$_done').replaceAll('{total}', '$_total')),
+      ],
       const SizedBox(height: Space.m),
       FilledButton.icon(
         onPressed: _busy || h == null ? null : () => _connect(l10n),
-        icon: _busyIcon(_busy && h != null, AppIcons.lock_open),
-        label: Text(l10n.tr('archiveConnect')),
+        icon: _busyIcon(_busy && h != null, widget.merge ? AppIcons.merge : AppIcons.lock_open),
+        label: Text(l10n.tr(widget.merge ? 'archiveMergeRun' : 'archiveConnect')),
       ),
     ]);
   }

@@ -108,6 +108,9 @@ const faqSections = <FaqSection>[
     FaqItem('archive_3', route: '/settings/archive'),
     FaqItem('archive_4', route: '/settings/archive'),
     FaqItem('archive_5', route: '/settings/archive'),
+    // Один архив на нескольких устройствах, несколько ящиков (28.10.2026).
+    FaqItem('archive_6', route: '/settings/archive'),
+    FaqItem('archive_7', route: '/settings/archive'),
   ]),
   FaqSection(id: 'security', icon: AppIcons.lock, items: [
     FaqItem('security_1'),

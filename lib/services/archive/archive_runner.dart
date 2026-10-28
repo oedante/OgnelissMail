@@ -379,9 +379,9 @@ class ArchiveRunner extends Notifier<ArchiveRunState> {
       final search = plain ??
           (html == null ? '' : await MailBodyProcessor.heavy(html, MailBodyProcessor.htmlToPlain, background: true));
       ArchivePerson person(EmailAddress a) => (name: a.displayName ?? '', email: a.email);
-      await adb.upsertAccount(account.id, account.email, account.displayName, account.type.name, account.colorValue);
+      final accountId = await _archiveAccount(adb, account);
       await adb.addMessage(ArchiveMessageInput(
-        accountId: account.id,
+        accountId: accountId,
         folderChain: folderChain(r.folderId, folders),
         sourceId: r.id,
         messageId: r.internetMessageId,
@@ -493,6 +493,23 @@ class ArchiveRunner extends Notifier<ArchiveRunState> {
 
   // ── встречи, задачи, контакты ──
 
+  /// Ящик в архиве для ящика [a]. Архив, подключённый или объединённый с
+  /// копией с другого устройства, знает этот же ящик под другим id — данные
+  /// пишутся в него (по адресу), а не второй веткой с тем же адресом.
+  final Map<String, String> _accountIds = {};
+  ArchiveDb? _accountIdsDb;
+  Future<String> _archiveAccount(ArchiveDb adb, AccountModel a) async {
+    if (!identical(adb, _accountIdsDb)) {
+      // Другой архив (подключён, создан заново, переоткрыт) — заново.
+      _accountIds.clear();
+      _accountIdsDb = adb;
+    }
+    final known = _accountIds[a.id];
+    if (known != null) return known;
+    final id = await adb.resolveAccount(a.id, a.email, a.displayName, a.type.name, a.colorValue);
+    return _accountIds[a.id] = id;
+  }
+
   Future<int> _events(List<AccountModel> accounts, DateTime cutoff) async {
     final adb = _adb;
     if (adb == null) return 0;
@@ -503,11 +520,11 @@ class ArchiveRunner extends Notifier<ArchiveRunState> {
             ..where((e) => e.accountId.equals(a.id) & e.endTime.isSmallerThanValue(cutoff) & e.recurrence.equals(0)))
           .get();
       if (rows.isEmpty) continue;
-      await adb.upsertAccount(a.id, a.email, a.displayName, a.type.name, a.colorValue);
+      final accountId = await _archiveAccount(adb, a);
       for (final e in rows) {
         if (_cancel) return n;
         await adb.upsertEvent(
-          accountId: a.id,
+          accountId: accountId,
           sourceId: e.id,
           title: e.title,
           location: e.location,
@@ -535,9 +552,9 @@ class ArchiveRunner extends Notifier<ArchiveRunState> {
       for (final t in rows) {
         if (_cancel) return n;
         if (!(t.completedAt ?? t.createdAt).isBefore(cutoff)) continue;
-        await adb.upsertAccount(a.id, a.email, a.displayName, a.type.name, a.colorValue);
+        final accountId = await _archiveAccount(adb, a);
         await adb.upsertTask(
-          accountId: a.id,
+          accountId: accountId,
           sourceId: t.id,
           title: t.title,
           due: t.dueDate,
@@ -554,16 +571,17 @@ class ArchiveRunner extends Notifier<ArchiveRunState> {
     final adb = _adb;
     if (adb == null) return 0;
     final db = ref.read(databaseProvider);
-    final ids = {for (final a in accounts) a.id};
+    final byId = {for (final a in accounts) a.id: a};
     // Свои контакты (ContactSource.personal = 1): снимок на дату архивации.
     final rows = await (db.select(db.contacts)..where((c) => c.source.equals(1))).get();
     var n = 0;
     for (final c in rows) {
       if (_cancel) return n;
       final acc = c.accountId ?? '';
-      if (acc.isNotEmpty && !ids.contains(acc)) continue;
+      final owner = byId[acc];
+      if (acc.isNotEmpty && owner == null) continue;
       await adb.upsertContact(
-        accountId: acc.isEmpty ? 'device' : acc,
+        accountId: owner == null ? 'device' : await _archiveAccount(adb, owner),
         sourceId: c.id,
         name: c.displayName,
         email: c.email,

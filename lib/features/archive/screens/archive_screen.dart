@@ -12,15 +12,17 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/platform/file_pick.dart' show FilePick;
 import '../../../core/security/secure_storage_service.dart';
+import '../../../data/models/account_model.dart';
 import '../../../data/providers/database_provider.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../services/archive/archive_app_settings.dart';
-import '../../../services/archive/archive_db.dart' show ArchiveSettingsSnapshot;
+import '../../../services/archive/archive_db.dart' show ArchiveAccountInfo, ArchiveFolder, ArchiveSettingsSnapshot;
 import '../../../services/backup/backup_service.dart' show BackupException;
 import '../../../services/sync/sync_service.dart' show syncServiceProvider;
 import '../../../core/theme/app_icons.dart';
@@ -306,6 +308,10 @@ class _ArchiveScreenState extends ConsumerState<ArchiveScreen> {
             onTap: () => showArchiveConnectSheet(context),
           ),
         ]),
+        // Как пользоваться одним архивом на нескольких устройствах
+        // (замечание 28.10.2026: «не понятно, как использовать один архив»).
+        SettingsSectionTitle(l10n.tr('archiveDevicesSection')),
+        SettingsGroup(children: [_TextBlock(l10n.tr('archiveDevicesHowNone'))]),
       ];
 
   List<Widget> _locked(AppLocalizations l10n) => [
@@ -363,14 +369,40 @@ class _ArchiveScreenState extends ConsumerState<ArchiveScreen> {
       SettingsSectionTitle(s.header?.name.isNotEmpty == true ? s.header!.name : l10n.tr('ognaArchive'),
           help: l10n.tr('archiveIntroMore')),
       SettingsGroup(children: [
-        Padding(
-          padding: const EdgeInsets.all(Space.l),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            for (final l in lines) Padding(padding: const EdgeInsets.only(bottom: Space.xs), child: Text(l)),
-            if (lines.isEmpty) Text(l10n.tr('archiveEmpty')),
-            Text(l10n.tr('archiveCreatedOn').replaceAll('{date}', AppDateFormat.date(context, s.header!.created)),
-                style: muted),
-          ]),
+        // Во всю ширину карточки: столбец группы выравнивает по центру —
+        // цифры и кнопки стояли посередине, а не от края.
+        SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(Space.l),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              for (final l in lines) Padding(padding: const EdgeInsets.only(bottom: Space.xs), child: Text(l)),
+              if (lines.isEmpty) Text(l10n.tr('archiveEmpty')),
+              Text(l10n.tr('archiveCreatedOn').replaceAll('{date}', AppDateFormat.date(context, s.header!.created)),
+                  style: muted),
+              if (!run.running) ...[
+                // Главные действия — кнопками на виду (замечание 28.10.2026:
+                // «нет кнопок»); итог прошлой архивации — строкой над ними.
+                Padding(
+                  padding: const EdgeInsets.only(top: Space.xs),
+                  child: Text(_lastText(l10n, run.last), style: muted),
+                ),
+                const SizedBox(height: Space.m),
+                Wrap(spacing: Space.s, runSpacing: Space.s, children: [
+                  FilledButton.tonalIcon(
+                    onPressed: () => showArchiveRunSheet(context),
+                    icon: const Icon(AppIcons.play_arrow),
+                    label: Text(l10n.tr('archiveRunNow')),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => context.push('/archive/search'),
+                    icon: const Icon(AppIcons.search),
+                    label: Text(l10n.tr('archiveSearchTitle')),
+                  ),
+                ]),
+              ],
+            ]),
+          ),
         ),
         if (run.running)
           Padding(
@@ -394,15 +426,11 @@ class _ArchiveScreenState extends ConsumerState<ArchiveScreen> {
                 ),
               ]),
             ]),
-          )
-        else
-          SettingsItem(
-            icon: AppIcons.play_arrow,
-            title: l10n.tr('archiveRunNow'),
-            subtitle: _lastText(l10n, run.last),
-            onTap: () => showArchiveRunSheet(context),
           ),
       ]),
+
+      // ── Что в архиве: ящики ──
+      ..._contents(l10n, accounts),
 
       // ── По расписанию ──
       SettingsSectionTitle(l10n.tr('archiveScheduleSection'), help: l10n.tr('archiveScheduleHelp')),
@@ -496,8 +524,8 @@ class _ArchiveScreenState extends ConsumerState<ArchiveScreen> {
           onChanged: (v) => ref.read(archiveSettingsProvider.notifier).setKind('contacts', v),
         ),
       ]),
-      if (accounts.length > 1) ...[
-        SettingsSectionTitle(l10n.tr('archiveAccountsSection')),
+      if (accounts.isNotEmpty) ...[
+        SettingsSectionTitle(l10n.tr('archiveAccountsSection'), help: l10n.tr('archiveAccountsHelp')),
         SettingsGroup(children: [
           for (final a in accounts)
             SettingsSwitchItem(
@@ -513,9 +541,10 @@ class _ArchiveScreenState extends ConsumerState<ArchiveScreen> {
       // ── Настройки приложения в архиве (25.10.2026) ──
       ..._appSettingsSection(l10n, settings, run.running),
 
-      // ── Копия и защита ──
-      SettingsSectionTitle(l10n.tr('archiveCopySection'), help: l10n.tr('archiveCopyHelp')),
+      // ── Другие устройства и облако (28.10.2026) ──
+      SettingsSectionTitle(l10n.tr('archiveDevicesSection'), help: l10n.tr('archiveCopyHelp')),
       SettingsGroup(children: [
+        _TextBlock(l10n.tr('archiveDevicesHow')),
         SettingsItem(
           icon: AppIcons.cloud_upload,
           title: l10n.tr('archiveCopySave'),
@@ -539,6 +568,17 @@ class _ArchiveScreenState extends ConsumerState<ArchiveScreen> {
               ),
             ]),
           ),
+        SettingsItem(
+          icon: AppIcons.merge,
+          title: l10n.tr('archiveMergeTitle'),
+          subtitle: l10n.tr('archiveMergeSub'),
+          onTap: _copyBusy || run.running ? null : () => showArchiveConnectSheet(context, merge: true),
+        ),
+      ]),
+
+      // ── Защита ──
+      SettingsSectionTitle(l10n.tr('archiveSecuritySection')),
+      SettingsGroup(children: [
         SettingsItem(
           icon: AppIcons.key,
           title: l10n.tr('archivePwChange'),
@@ -566,6 +606,40 @@ class _ArchiveScreenState extends ConsumerState<ArchiveScreen> {
     ];
   }
 
+  /// Ящики в архиве: у каждого своя ветка папок; нажатие открывает его
+  /// «Входящие» в архиве. Ящик, которого на устройстве нет (архив с другого
+  /// устройства), — с пометкой.
+  List<Widget> _contents(AppLocalizations l10n, List<AccountModel> onDevice) {
+    final inArchive = ref.watch(archiveAccountsProvider).value ?? const <ArchiveAccountInfo>[];
+    if (inArchive.isEmpty) return const [];
+    final folders = ref.watch(archiveFoldersProvider).value ?? const <ArchiveFolder>[];
+    final here = {for (final a in onDevice) a.email.trim().toLowerCase()};
+    int? start(String accountId) {
+      final roots = [for (final f in folders) if (f.accountId == accountId && f.parentId == null) f];
+      return (roots.where((f) => f.type == 'inbox').firstOrNull ?? roots.firstOrNull)?.id;
+    }
+
+    return [
+      SettingsSectionTitle(l10n.tr('archiveContentsSection'), help: l10n.tr('archiveContentsHelp')),
+      SettingsGroup(children: [
+        for (final a in inArchive)
+          SettingsItem(
+            icon: AppIcons.alternate_email,
+            title: a.label,
+            subtitle: [
+              if (a.label != a.email) a.email,
+              l10n.tr('archiveAccountMails').replaceAll('{n}', AppDateFormat.number(context, a.messages)),
+              if (!here.contains(a.email.trim().toLowerCase())) l10n.tr('archiveAccountOtherDevice'),
+            ].join(' · '),
+            onTap: switch (start(a.id)) {
+              final int id => () => context.push('/archive/folder/$id'),
+              null => null,
+            },
+          ),
+      ]),
+    ];
+  }
+
   String _lastText(AppLocalizations l10n, ArchiveRunResult? r) {
     if (r == null) return l10n.tr('archiveRunNever');
     final when = AppDateFormat.dateTime(context, r.at);
@@ -581,5 +655,20 @@ class _ArchiveScreenState extends ConsumerState<ArchiveScreen> {
     if (r.cancelled) text += '\n${l10n.tr('archiveStopped')}';
     if (r.errorKey != null) text += '\n${l10n.tr(r.errorKey!)}';
     return text;
+  }
+}
+
+/// Абзац пояснения внутри группы (как строка группы, без нажатия).
+class _TextBlock extends StatelessWidget {
+  final String text;
+  const _TextBlock(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, Space.s),
+      child: Text(text, style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+    );
   }
 }

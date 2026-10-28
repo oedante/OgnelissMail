@@ -425,6 +425,47 @@ class ArchiveVault extends AsyncNotifier<ArchiveVaultState> {
     return r.how;
   }
 
+  /// Объединить архив на устройстве с копией [file] (.ogna): с другого
+  /// устройства, где архивировали тот же или другие ящики, или сохранённой
+  /// раньше (28.10.2026: один архив на нескольких устройствах). Добавляется
+  /// то, чего в архиве нет; пароль и код архива на устройстве не меняются.
+  /// [secret] — пароль или код копии.
+  Future<({ArchiveUnlock how, ArchiveMergeReport? report})> merge(File file, String secret,
+      {void Function(int done, int total)? onProgress}) async {
+    final db = _db;
+    if (db == null) throw const ArchiveFormatException('archiveLocked');
+    final parsed = await ArchiveContainer.readHeader(file);
+    final r = await _unwrap(parsed.header, secret);
+    final key = r.key;
+    if (key == null) return (how: ArchiveUnlock.wrong, report: null);
+    final tmp = File(p.join((await getTemporaryDirectory()).path, 'ogna-merge-${DateTime.now().millisecondsSinceEpoch}.db'));
+    ArchiveDb? src;
+    try {
+      try {
+        await ArchiveContainer.extractDb(file, parsed.dataOffset, tmp);
+        src = _connect(tmp, key);
+        await src.check();
+      } catch (e) {
+        AppLogger.warning('Архив Ogneliss: копия для объединения не открылась: $e');
+        if (e is ArchiveFormatException) rethrow;
+        throw const ArchiveFormatException('archiveBroken');
+      }
+      final report = await db.mergeFrom(src, onProgress: onProgress);
+      AppLogger.info('Архив Ogneliss объединён с копией: писем +${report.messages}, '
+          'уже были ${report.skipped}, встреч +${report.events}, задач +${report.tasks}, '
+          'контактов +${report.contacts}');
+      return (how: r.how, report: report);
+    } finally {
+      touch();
+      try {
+        await src?.close();
+      } catch (_) {}
+      try {
+        if (await tmp.exists()) await tmp.delete();
+      } catch (_) {}
+    }
+  }
+
   /// Размер базы архива на устройстве (байты).
   Future<int> sizeOnDevice() async {
     final h = _now.header;

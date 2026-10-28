@@ -1,5 +1,4 @@
 // Масштаб интерфейса «Авто» (1.6.12).
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/widgets/common/ui_zoom.dart';

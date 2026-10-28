@@ -183,6 +183,101 @@ void main() {
     });
   });
 
+  // 28.10.2026: один архив на нескольких устройствах — копия с другого
+  // устройства объединяется с архивом на этом без повторов.
+  group('объединение с копией', () {
+    late ArchiveDb here;
+    late ArchiveDb copy;
+    setUp(() {
+      here = ArchiveDb(NativeDatabase.memory());
+      copy = ArchiveDb(NativeDatabase.memory());
+    });
+    tearDown(() async {
+      await here.close();
+      await copy.close();
+    });
+
+    ArchiveMessageInput mail(String account, String id, String folder, {String? mid, String subject = 'Счёт'}) =>
+        ArchiveMessageInput(
+          accountId: account,
+          folderChain: [(name: 'Входящие', type: 'inbox'), (name: folder, type: 'custom')],
+          sourceId: id,
+          messageId: mid,
+          subject: subject,
+          fromName: 'Иван',
+          fromEmail: 'ivan@corp.ru',
+          date: DateTime(2025, 3, 1),
+          bodyHtml: '<p>Смета по ремонту насоса</p>',
+          searchText: 'Смета по ремонту насоса',
+          attachments: [
+            ArchiveAttachmentInput(name: 'смета.xlsx', mime: 'application/vnd.ms-excel', bytes: Uint8List.fromList([1, 2, 3])),
+          ],
+        );
+
+    test('ящик с тем же адресом — одна ветка, письма не повторяются', () async {
+      // Телефон: ящик oleg@corp.ru под id «p1»; компьютер — тот же ящик под «d1».
+      await here.upsertAccount('p1', 'oleg@corp.ru', 'Олег', 'exchange', 1);
+      await here.addMessage(mail('p1', 'm1', 'Проекты', mid: '<a@corp>'));
+      await copy.upsertAccount('d1', 'Oleg@corp.ru', 'Олег', 'exchange', 1);
+      await copy.addMessage(mail('d1', 'm1', 'Проекты', mid: '<a@corp>')); // уже есть
+      await copy.addMessage(mail('d1', 'm2', 'Проекты', mid: '<b@corp>', subject: 'Акт'));
+      await copy.addMessage(mail('d1', 'm3', 'Договоры', subject: 'Договор поставки'));
+      await copy.upsertEvent(
+          accountId: 'd1', sourceId: 'e1', title: 'Планёрка', start: DateTime(2025, 1, 1), end: DateTime(2025, 1, 1, 1), allDay: false);
+
+      var calls = 0;
+      final r = await here.mergeFrom(copy, batch: 2, onProgress: (_, __) => calls++);
+      expect(r.messages, 2);
+      expect(r.skipped, 1);
+      expect(r.events, 1);
+      expect(calls, greaterThan(1));
+
+      final accounts = await here.accounts();
+      expect(accounts.length, 1);
+      expect(accounts.single.id, 'p1');
+      expect(accounts.single.messages, 3);
+      expect([for (final f in await here.folders()) f.path], containsAll(['Входящие/Проекты', 'Входящие/Договоры']));
+
+      // Письмо из копии — с вложением и находится поиском.
+      final found = await here.search('поставки');
+      expect(found.single.subject, 'Договор поставки');
+      final m = await here.message(found.single.id);
+      expect(await here.attachmentData(m!.attachments.single.id), [1, 2, 3]);
+
+      // Повторное объединение ничего не добавляет.
+      final again = await here.mergeFrom(copy);
+      expect(again.added, 0);
+      expect(again.skipped, 3);
+    });
+
+    test('другой ящик — своя ветка; архивация на этом устройстве пишет в ящик из копии', () async {
+      await copy.upsertAccount('d2', 'anna@corp.ru', 'Анна', 'imap', 2);
+      await copy.addMessage(mail('d2', 'x1', 'Отчёты'));
+      await here.mergeFrom(copy);
+      expect([for (final a in await here.accounts()) a.email], ['anna@corp.ru']);
+      // На этом устройстве у ящика Анны свой id — архивация идёт в ту же ветку.
+      expect(await here.resolveAccount('p2', 'anna@corp.ru', 'Анна', 'imap', 2), 'd2');
+      // Новый ящик — новая ветка со своим id.
+      expect(await here.resolveAccount('p3', 'petr@corp.ru', 'Пётр', 'imap', 3), 'p3');
+      expect((await here.accounts()).length, 2);
+    });
+
+    test('снимки настроек — по дате, не больше пяти', () async {
+      for (var i = 0; i < 4; i++) {
+        await copy.saveSettings(data: Uint8List.fromList([i]), app: '1.8', device: 'pc', accounts: 1, secrets: false);
+        await Future<void>.delayed(const Duration(milliseconds: 2));
+      }
+      for (var i = 0; i < 3; i++) {
+        await here.saveSettings(data: Uint8List.fromList([i]), app: '1.8', device: 'phone', accounts: 1, secrets: false);
+        await Future<void>.delayed(const Duration(milliseconds: 2));
+      }
+      final r = await here.mergeFrom(copy);
+      expect(r.settings, 4);
+      expect((await here.settingsSnapshots()).length, ArchiveDb.keepSettings);
+      expect((await here.mergeFrom(copy)).settings, lessThanOrEqualTo(4));
+    });
+  });
+
   group('какое письмо архивировать', () {
     late AppDatabase app;
     late Directory dir;

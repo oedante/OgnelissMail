@@ -144,4 +144,26 @@ void main() {
       expect(EmlReader.repairEncodedWords('Subject: =?broken'), 'Subject: =?broken');
     });
   });
+
+  group('Заголовки в UTF-8 без кодирования (1.8.6)', () {
+    test('тема и имена — кириллицей, а не «Ð¡Ðµ…»', () {
+      final eml = utf8.encode('From: Иванов Сергей <s.ivanov@corp.example>\r\n'
+          'To: Петрова Анна <a.petrova@corp.example>\r\n'
+          'Subject: RE: Работы с установкой\r\n'
+          'MIME-Version: 1.0\r\n'
+          'Content-Type: text/plain; charset=utf-8\r\n'
+          '\r\n'
+          'Коллеги, доброе утро!\r\n');
+      final m = EmlReader.parse(Uint8List.fromList(eml));
+      expect(m.subject, 'RE: Работы с установкой');
+      expect(m.from.first.name, 'Иванов Сергей');
+      expect(m.to.first.name, 'Петрова Анна');
+    });
+
+    test('fix8bit не трогает правильный текст', () {
+      expect(EmlReader.fix8bit('Сергей'), 'Сергей');
+      expect(EmlReader.fix8bit('Café'), 'Café');
+      expect(EmlReader.fix8bit('plain'), 'plain');
+    });
+  });
 }

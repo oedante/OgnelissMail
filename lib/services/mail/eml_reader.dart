@@ -185,7 +185,7 @@ class EmlReader {
     }
 
     return EmlMessage(
-      subject: (_safe(msg.decodeSubject) ?? '').trim(),
+      subject: fix8bit((_safe(msg.decodeSubject) ?? '').trim()),
       from: _addresses(() => msg.from),
       to: _addresses(() => msg.to),
       cc: _addresses(() => msg.cc),
@@ -296,6 +296,25 @@ class EmlReader {
 
   // ─────────────────────────── вспомогательное ───────────────────────────
 
+  /// Заголовки «8 бит» (RFC 6532): Exchange кладёт во вложенное письмо
+  /// тему и имена в UTF-8 без кодирования, а разбор MIME читает их как
+  /// Latin-1 — «Ð¡ÐµÑ€Ð³ÐµÐ¹» вместо «Сергей» (владелец 28.10.2026).
+  /// Строка только из символов до U+00FF, которая как байты — правильный
+  /// UTF-8, раскодируется заново; иначе остаётся как есть.
+  static String fix8bit(String s) {
+    var high = false;
+    for (final c in s.codeUnits) {
+      if (c > 0xFF) return s;
+      if (c >= 0x80) high = true;
+    }
+    if (!high) return s;
+    try {
+      return utf8.decode(latin1.encode(s));
+    } catch (_) {
+      return s;
+    }
+  }
+
   static String? _safe(String? Function() f) {
     try {
       return f();
@@ -316,7 +335,7 @@ class EmlReader {
     try {
       return [
         for (final a in f() ?? const <MailAddress>[])
-          EmlAddress((a.personalName ?? '').trim(), a.email.trim()),
+          EmlAddress(fix8bit((a.personalName ?? '').trim()), a.email.trim()),
       ];
     } catch (_) {
       return const [];
@@ -351,6 +370,7 @@ class EmlReader {
       var v = raw.trim();
       if (v.length > 1 && v.startsWith('"') && v.endsWith('"')) v = v.substring(1, v.length - 1);
       if (v.contains('=?')) v = MailCodec.decodeHeader(v) ?? v;
+      v = fix8bit(v);
       v = v.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1f]'), '_').trim();
       return v.isEmpty ? null : v;
     } catch (_) {

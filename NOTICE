@@ -1,10 +1,15 @@
 Ogneliss Mail
 Copyright 2025-2026 Oleg Andreevich Ermishin (Ермишин Олег Андреевич)
+https://github.com/oedante/OgnelissMail
+
+Uses the open source project Ogneliss Mail by Oleg Ermishin.
+С использованием открытого проекта Ogneliss Mail от Ермишина Олега Андреевича.
 
 Licensed under the Apache License, Version 2.0 (see LICENSE).
 
-Third-party libraries are distributed under their own licenses (see
-pubspec.yaml and the in-app list of open source licenses).
+Third-party libraries, fonts and the message editor are distributed under
+their own licenses (see docs/LICENSING.md and the in-app list of open
+source licenses).
 
 Microsoft, Exchange, Exchange ActiveSync, Outlook and Microsoft 365 are
 trademarks of the Microsoft group of companies. Gmail and Google are

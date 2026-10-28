@@ -12,13 +12,18 @@ with calendar, contacts, tasks and notes (CalDAV/CardDAV for IMAP accounts).
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
+Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE). The name
+and icon are not covered by the license: [TRADEMARKS.md](TRADEMARKS.md).
+Third-party components, Exchange protocols and app store builds:
+[docs/LICENSING.md](docs/LICENSING.md).
 
 Exchange protocols are implemented from Microsoft Open Specifications
 (MS-ASCMD, MS-ASWBXML, MS-OXWS… ). Microsoft's Interoperability Principles
 patent pledge for open source developers covers non-commercial distribution
 of open source implementations of these specifications. Ogneliss Mail is
-distributed free of charge.
+distributed free of charge: no paid version, subscriptions, in-app purchases
+or ads. If you distribute a modified version commercially, the pledge does
+not cover that distribution.
 
 ## Building
 

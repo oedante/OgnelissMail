@@ -6,5 +6,5 @@
   "main": "server.js",
   "engines": { "node": ">=18" },
   "scripts": { "start": "node server.js" },
-  "license": "UNLICENSED"
+  "license": "Apache-2.0"
 }

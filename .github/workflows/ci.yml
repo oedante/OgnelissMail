@@ -412,11 +412,28 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # Подтверждение происхождения (28.10.2026): каждый файл выпуска подписан
+      # аттестацией GitHub — из какого коммита и какой сборкой он сделан.
+      # Проверка: gh attestation verify <файл> --repo oedante/OgnelissMail
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/download-artifact@v4
         with:
           pattern: ogneliss-*-${{ github.sha }}
           path: out
+      - name: Checksums
+        run: |
+          cd out
+          find . -type f \( -name '*.apk' -o -name '*.zip' -o -name '*.tar.gz' \) -print0 \
+            | sort -z | xargs -0 sha256sum | sed 's#  \./.*/#  #' > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            out/**/*.apk
+            out/**/*.zip
+            out/**/*.tar.gz
       - uses: softprops/action-gh-release@v2
         with:
           name: Ogneliss Mail ${{ github.ref_name }}
@@ -425,3 +442,4 @@ jobs:
             out/**/*.apk
             out/**/*.zip
             out/**/*.tar.gz
+            out/SHA256SUMS.txt

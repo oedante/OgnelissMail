@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/pl.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: blokada ekranu</string>
+    <string name="device_admin_description">Stosuje limit czasu blokady ekranu wymagany przez serwer Exchange Twojej organizacji. Ogneliss Mail nie może wymazać danych z urządzenia ani zmienić hasła.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Sprawdzanie poczty, gdy aplikacja jest zminimalizowana</string>
+    <string name="bg_sync_hide">Ukryj</string>
+    <string name="bg_sync_channel">Synchronizacja w tle</string>
+    <string name="bg_sync_channel_desc">Utrzymuje synchronizację poczty, gdy aplikacja jest zminimalizowana. Możesz wyłączyć to powiadomienie — synchronizacja będzie trwać.</string>
+    <string name="widget_myday_label">Mój dzień</string>
+    <string name="widget_myday_desc">Dzisiejsze spotkania i zadania, nieprzeczytane i śledzone wiadomości</string>
+    <string name="widget_compose">Utwórz</string>
+    <string name="widget_open_app">Otwórz Ogneliss Mail, aby wypełnić widżet</string>
+    <string name="widget_mail_label">Poczta</string>
+    <string name="widget_mail_desc">Nieprzeczytane wiadomości według kont i najnowsze nieprzeczytane</string>
+    <string name="widget_cal_label">Kalendarz</string>
+    <string name="widget_cal_desc">Twoje wydarzenia ze wszystkich kont: dzień, tydzień lub miesiąc</string>
+    <string name="widget_cal_add">Nowe wydarzenie</string>
+    <string name="widget_notes_label">Notatki</string>
+    <string name="widget_note_new">Nowa notatka</string>
+    <string name="widget_notes_desc">Najnowsze notatki i przycisk nowej notatki</string>
+    <string name="widget_prev">Wstecz</string>
+    <string name="widget_next">Dalej</string>
+    <string name="widget_cal_day">Dzień</string>
+    <string name="widget_cal_week">Tydzień</string>
+    <string name="widget_cal_month">Miesiąc</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/zh.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail：屏幕锁定</string>
+    <string name="device_admin_description">应用你所在组织的 Exchange 服务器要求的屏幕锁定超时设置。Ogneliss Mail 无法清除你的设备数据，也无法更改你的密码。</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">应用最小化时正在检查邮件</string>
+    <string name="bg_sync_hide">隐藏</string>
+    <string name="bg_sync_channel">后台同步</string>
+    <string name="bg_sync_channel_desc">应用最小化时保持邮件同步。你可以关闭此通知，同步仍会继续。</string>
+    <string name="widget_myday_label">我的一天</string>
+    <string name="widget_myday_desc">今天的会议和任务、未读邮件和跟踪邮件</string>
+    <string name="widget_compose">写邮件</string>
+    <string name="widget_open_app">打开 Ogneliss Mail 以填充小组件</string>
+    <string name="widget_mail_label">邮件</string>
+    <string name="widget_mail_desc">按账户显示的未读邮件和最新未读邮件</string>
+    <string name="widget_cal_label">日历</string>
+    <string name="widget_cal_desc">所有账户的日程，按日、周或月显示</string>
+    <string name="widget_cal_add">新建日程</string>
+    <string name="widget_notes_label">笔记</string>
+    <string name="widget_note_new">新建笔记</string>
+    <string name="widget_notes_desc">最新笔记和新建笔记按钮</string>
+    <string name="widget_prev">上一个</string>
+    <string name="widget_next">下一个</string>
+    <string name="widget_cal_day">日</string>
+    <string name="widget_cal_week">周</string>
+    <string name="widget_cal_month">月</string>
+</resources>

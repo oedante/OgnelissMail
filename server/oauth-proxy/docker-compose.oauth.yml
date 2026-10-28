@@ -1,0 +1,29 @@
+# Образец. Рабочий файл создаёт install-oauth-proxy.sh (подставляет сеть
+# Nginx Proxy Manager, порт и путь проверки). Вручную: docker compose -f
+# docker-compose.oauth.yml up -d --build
+version: "2.1"
+services:
+  oauth-proxy:
+    build: .
+    image: ogneliss/oauth-proxy:latest
+    container_name: oauth-proxy
+    env_file:
+      - ./.env
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8787
+    expose:
+      - "8787"
+    restart: always
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - npm
+
+networks:
+  npm:
+    external:
+      name: mailserver_default

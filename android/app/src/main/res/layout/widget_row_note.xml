@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Строка заметки: заголовок и первая строка текста. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nt_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingTop="7dp"
+    android:paddingBottom="7dp">
+    <TextView android:id="@+id/nt_title" style="@style/WidgetRowTitle" android:textStyle="bold" />
+    <TextView android:id="@+id/nt_prev" style="@style/WidgetRowSub" android:visibility="gone" />
+</LinearLayout>

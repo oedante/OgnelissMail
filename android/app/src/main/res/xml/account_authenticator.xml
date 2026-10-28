@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Учётная запись «Ogneliss Mail» для контактов и календарей ящиков в телефоне. -->
+<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="com.ogneliss.mail.account"
+    android:icon="@mipmap/ic_launcher"
+    android:smallIcon="@mipmap/ic_launcher"
+    android:label="@string/phone_account_label" />

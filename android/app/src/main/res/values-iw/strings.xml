@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/he.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: נעילת מסך</string>
+    <string name="device_admin_description">מחיל את זמן הנעילה של המסך שנדרש על ידי שרת ה-Exchange של הארגון שלכם. Ogneliss Mail אינו יכול למחוק את המכשיר שלכם או לשנות את הסיסמה שלכם.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">בודק דואר בזמן שהאפליקציה ממוזערת</string>
+    <string name="bg_sync_hide">הסתרה</string>
+    <string name="bg_sync_channel">סנכרון ברקע</string>
+    <string name="bg_sync_channel_desc">שומר על סנכרון הדואר בזמן שהאפליקציה ממוזערת. אפשר לכבות את ההתראה הזו — הסנכרון יימשך.</string>
+    <string name="widget_myday_label">היום שלי</string>
+    <string name="widget_myday_desc">הפגישות והמשימות של היום, הודעות שלא נקראו והודעות במעקב</string>
+    <string name="widget_compose">כתיבה</string>
+    <string name="widget_open_app">פתחו את Ogneliss Mail כדי למלא את הווידג\'ט</string>
+    <string name="widget_mail_label">דואר</string>
+    <string name="widget_mail_desc">הודעות שלא נקראו לפי חשבון וההודעות האחרונות שלא נקראו</string>
+    <string name="widget_cal_label">לוח שנה</string>
+    <string name="widget_cal_desc">האירועים שלכם מכל החשבונות לפי יום, שבוע או חודש</string>
+    <string name="widget_cal_add">אירוע חדש</string>
+    <string name="widget_notes_label">הערות</string>
+    <string name="widget_note_new">הערה חדשה</string>
+    <string name="widget_notes_desc">ההערות האחרונות שלכם וכפתור להערה חדשה</string>
+    <string name="widget_prev">הקודם</string>
+    <string name="widget_next">הבא</string>
+    <string name="widget_cal_day">יום</string>
+    <string name="widget_cal_week">שבוע</string>
+    <string name="widget_cal_month">חודש</string>
+</resources>

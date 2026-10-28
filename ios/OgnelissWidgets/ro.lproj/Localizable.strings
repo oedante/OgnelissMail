@@ -1,0 +1,14 @@
+/* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/ro.xml — не править вручную. */
+"open_app" = "Deschide Ogneliss Mail pentru a completa widgetul";
+"myday_label" = "Ziua mea";
+"myday_desc" = "Întâlnirile și sarcinile de azi, mesajele necitite și urmărite";
+"mail_label" = "E-mail";
+"mail_desc" = "Mesaje necitite pe conturi și cele mai recente mesaje necitite";
+"cal_label" = "Calendar";
+"cal_desc" = "Evenimentele viitoare din toate conturile tale pentru două săptămâni";
+"notes_label" = "Note";
+"notes_desc" = "Cele mai recente note ale tale și un buton pentru una nouă";
+"calweek_label" = "Calendar: săptămână";
+"calweek_desc" = "Șapte zile și evenimentele săptămânii";
+"calmonth_label" = "Calendar: lună";
+"calmonth_desc" = "Luna sub formă de grilă, cu puncte pentru evenimente";

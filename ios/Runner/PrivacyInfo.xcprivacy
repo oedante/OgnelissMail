@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Манифест конфиденциальности приложения (требование App Store с 2024 г.).
+     Отслеживания нет, данные пользователя разработчик не собирает: почта,
+     контакты и календарь хранятся на устройстве и идут напрямую на почтовые
+     серверы пользователя. OAuth-прокси ogneliss.ru только обменивает код
+     входа на токены и ничего не хранит (см. site/privacy.html).
+     API «с обязательной причиной», которые использует код приложения
+     (Dart VM и собственный код; плагины объявляют свои в своих манифестах):
+       FileTimestamp  C617.1 — даты файлов в контейнере приложения (кэш вложений);
+       SystemBootTime 35F9.1 — замер интервалов (Stopwatch, таймауты);
+       UserDefaults   CA92.1 — настройки приложения (shared_preferences);
+                      1C8F.1 — данные для виджетов в общей App Group
+                      «group.com.ogneliss.mail» (WidgetBridgePlugin, 1.7.0). -->
+<plist version="1.0">
+<dict>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>C617.1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategorySystemBootTime</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>35F9.1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+				<string>1C8F.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -1,0 +1,14 @@
+/* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/vi.xml — не править вручную. */
+"open_app" = "Mở Ogneliss Mail để điền widget";
+"myday_label" = "Ngày của tôi";
+"myday_desc" = "Cuộc họp và công việc hôm nay, thư chưa đọc và thư đang theo dõi";
+"mail_label" = "Thư";
+"mail_desc" = "Thư chưa đọc theo tài khoản và các thư chưa đọc mới nhất";
+"cal_label" = "Lịch";
+"cal_desc" = "Sự kiện sắp tới từ mọi tài khoản của bạn trong hai tuần";
+"notes_label" = "Ghi chú";
+"notes_desc" = "Ghi chú mới nhất của bạn và nút tạo ghi chú mới";
+"calweek_label" = "Lịch: tuần";
+"calweek_desc" = "Bảy ngày và sự kiện trong tuần này";
+"calmonth_label" = "Lịch: tháng";
+"calmonth_desc" = "Tháng dạng lưới có chấm cho sự kiện";

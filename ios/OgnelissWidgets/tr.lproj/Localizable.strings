@@ -1,0 +1,14 @@
+/* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/tr.xml — не править вручную. */
+"open_app" = "Widget’ı doldurmak için Ogneliss Mail’i açın";
+"myday_label" = "Günüm";
+"myday_desc" = "Bugünün toplantıları ve görevleri, okunmamış ve takipteki e-postalar";
+"mail_label" = "E-posta";
+"mail_desc" = "Hesaba göre okunmamış e-postalar ve en son okunmamış e-postalar";
+"cal_label" = "Takvim";
+"cal_desc" = "Tüm hesaplarınızdaki önümüzdeki iki haftanın etkinlikleri";
+"notes_label" = "Notlar";
+"notes_desc" = "Son notlarınız ve yeni not için bir düğme";
+"calweek_label" = "Takvim: hafta";
+"calweek_desc" = "Yedi gün ve bu haftanın etkinlikleri";
+"calmonth_label" = "Takvim: ay";
+"calmonth_desc" = "Ay, etkinlik noktalarıyla ızgara olarak";

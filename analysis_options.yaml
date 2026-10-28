@@ -1,0 +1,41 @@
+# analysis_options.yaml
+# Строгие правила анализа кода
+
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    missing_return: error
+    dead_code: warning
+    unused_import: warning
+    unused_local_variable: warning
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+
+linter:
+  rules:
+    # Безопасность
+    - avoid_print  # Используем AppLogger вместо print
+    - avoid_web_libraries_in_flutter
+
+    # Стиль
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_final_fields
+    - prefer_final_locals
+    - prefer_single_quotes
+    - sort_child_properties_last
+    - use_key_in_widget_constructors
+    - sized_box_for_whitespace
+
+    # Асинхронность
+    - unawaited_futures
+    - avoid_void_async
+
+    # Null safety
+    - avoid_null_checks_in_equality_operators
+    - null_check_on_nullable_type_parameter
+
+    # Документация
+    - public_member_api_docs: false  # Отключено — комментарии в коде достаточны

@@ -1,0 +1,14 @@
+/* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/zh.xml — не править вручную. */
+"open_app" = "打开 Ogneliss Mail 以填充小组件";
+"myday_label" = "我的一天";
+"myday_desc" = "今天的会议和任务、未读邮件和跟踪邮件";
+"mail_label" = "邮件";
+"mail_desc" = "按账户显示的未读邮件和最新未读邮件";
+"cal_label" = "日历";
+"cal_desc" = "所有账户未来两周的日程";
+"notes_label" = "笔记";
+"notes_desc" = "最新笔记和新建笔记按钮";
+"calweek_label" = "日历：周";
+"calweek_desc" = "七天和本周的日程";
+"calmonth_label" = "日历：月";
+"calmonth_desc" = "网格显示的月份，用圆点标记日程";

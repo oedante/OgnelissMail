@@ -1,0 +1,14 @@
+/* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/fi.xml — не править вручную. */
+"open_app" = "Avaa Ogneliss Mail täyttääksesi widgetin";
+"myday_label" = "Oma päivä";
+"myday_desc" = "Tämän päivän kokoukset ja tehtävät, lukemattomat ja seurattavat viestit";
+"mail_label" = "Sähköposti";
+"mail_desc" = "Lukemattomat viestit tileittäin ja uusimmat lukemattomat viestit";
+"cal_label" = "Kalenteri";
+"cal_desc" = "Tulevat tapahtumat kaikilta tileiltäsi kahden viikon ajalta";
+"notes_label" = "Muistiinpanot";
+"notes_desc" = "Uusimmat muistiinpanosi ja painike uutta varten";
+"calweek_label" = "Kalenteri: viikko";
+"calweek_desc" = "Seitsemän päivää ja viikon tapahtumat";
+"calmonth_label" = "Kalenteri: kuukausi";
+"calmonth_desc" = "Kuukausi ruudukkona, jossa tapahtumat näkyvät pisteinä";

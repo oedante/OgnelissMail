@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/ro.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: blocarea ecranului</string>
+    <string name="device_admin_description">Aplică timpul de blocare a ecranului cerut de serverul Exchange al organizației tale. Ogneliss Mail nu poate șterge datele dispozitivului și nu poate schimba parola ta.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Se verifică e-mailul cât timp aplicația este minimizată</string>
+    <string name="bg_sync_hide">Ascunde</string>
+    <string name="bg_sync_channel">Sincronizare în fundal</string>
+    <string name="bg_sync_channel_desc">Menține e-mailul sincronizat cât timp aplicația este minimizată. Poți dezactiva această notificare — sincronizarea continuă.</string>
+    <string name="widget_myday_label">Ziua mea</string>
+    <string name="widget_myday_desc">Întâlnirile și sarcinile de azi, mesajele necitite și urmărite</string>
+    <string name="widget_compose">Scrie</string>
+    <string name="widget_open_app">Deschide Ogneliss Mail pentru a completa widgetul</string>
+    <string name="widget_mail_label">E-mail</string>
+    <string name="widget_mail_desc">Mesaje necitite pe conturi și cele mai recente mesaje necitite</string>
+    <string name="widget_cal_label">Calendar</string>
+    <string name="widget_cal_desc">Evenimentele tale din toate conturile pe zi, săptămână sau lună</string>
+    <string name="widget_cal_add">Eveniment nou</string>
+    <string name="widget_notes_label">Note</string>
+    <string name="widget_note_new">Notă nouă</string>
+    <string name="widget_notes_desc">Cele mai recente note ale tale și un buton pentru una nouă</string>
+    <string name="widget_prev">Înapoi</string>
+    <string name="widget_next">Înainte</string>
+    <string name="widget_cal_day">Zi</string>
+    <string name="widget_cal_week">Săptămână</string>
+    <string name="widget_cal_month">Lună</string>
+</resources>

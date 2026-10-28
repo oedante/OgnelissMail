@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/nl.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: schermvergrendeling</string>
+    <string name="device_admin_description">Past de time-out voor schermvergrendeling toe die de Exchange-server van je organisatie vereist. Ogneliss Mail kan je apparaat niet wissen en je wachtwoord niet wijzigen.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">E-mail controleren terwijl de app is geminimaliseerd</string>
+    <string name="bg_sync_hide">Verbergen</string>
+    <string name="bg_sync_channel">Synchronisatie op de achtergrond</string>
+    <string name="bg_sync_channel_desc">Houdt e-mail gesynchroniseerd terwijl de app is geminimaliseerd. Je kunt deze melding uitzetten — de synchronisatie gaat door.</string>
+    <string name="widget_myday_label">Mijn dag</string>
+    <string name="widget_myday_desc">Vergaderingen en taken van vandaag, ongelezen en gevolgde e-mails</string>
+    <string name="widget_compose">Opstellen</string>
+    <string name="widget_open_app">Open Ogneliss Mail om de widget te vullen</string>
+    <string name="widget_mail_label">E-mail</string>
+    <string name="widget_mail_desc">Ongelezen e-mail per account en de nieuwste ongelezen e-mails</string>
+    <string name="widget_cal_label">Agenda</string>
+    <string name="widget_cal_desc">Je afspraken van alle accounts per dag, week of maand</string>
+    <string name="widget_cal_add">Nieuwe afspraak</string>
+    <string name="widget_notes_label">Notities</string>
+    <string name="widget_note_new">Nieuwe notitie</string>
+    <string name="widget_notes_desc">Je nieuwste notities en een knop voor een nieuwe</string>
+    <string name="widget_prev">Vorige</string>
+    <string name="widget_next">Volgende</string>
+    <string name="widget_cal_day">Dag</string>
+    <string name="widget_cal_week">Week</string>
+    <string name="widget_cal_month">Maand</string>
+</resources>

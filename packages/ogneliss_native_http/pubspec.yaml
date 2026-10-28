@@ -1,0 +1,26 @@
+name: ogneliss_native_http
+description: HTTP-запросы через сетевой стек системы — Android и iOS (режим совместимости со шлюзом Ogneliss Mail).
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.10.0 <4.0.0"
+  flutter: ">=3.38.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+# Плагин, а не код в MainActivity: Flutter регистрирует плагины пакетов в
+# КАЖДОМ движке, в том числе в фоновом движке WorkManager. Канал,
+# зарегистрированный вручную в MainActivity, в фоне отсутствовал, и
+# синхронизация в режиме совместимости там не работала.
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.ogneliss.nativehttp
+        pluginClass: NativeHttpPlugin
+      # 1.6.12: iPhone — NSURLSession (ios/Classes/NativeHttpPlugin.swift).
+      ios:
+        pluginClass: NativeHttpPlugin

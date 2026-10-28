@@ -1,0 +1,261 @@
+#!/usr/bin/env python3
+"""Иконка Ogneliss Mail, редакция 3 (октябрь 2026): строгая корпоративная.
+
+Плоская геометрия без градиентов и текста: сланцево-синий скруглённый
+квадрат (#46566C), по центру светлый конверт (#F1F0EC), клапан —
+треугольник остриём вниз (#6A8293), вписанный с тонкой рамкой цвета конверта.
+
+    python3 tool/branding/make_icon_v3.py build    — записать все ресурсы
+    python3 tool/branding/make_icon_v3.py preview  — только лист предпросмотра
+
+Нужен только Pillow. Рисуем с суперсэмплингом (4096 px) и уменьшаем LANCZOS.
+
+Что пишется в build:
+  assets/icons/app_icon*.png               — исходники flutter_launcher_icons
+  assets/icons/tray_icon.ico               — значок трея Windows
+  android/.../drawable-*/ic_launcher_*.png — слои адаптивной иконки (108 dp)
+  android/.../mipmap-*/ic_launcher*.png    — значок для Android < 8
+  android/.../values/colors.xml            — цвет ic_launcher_background (заставка)
+  assets/branding/ogneliss-mail-icon.svg   — знак в векторе
+  site/mail/*                              — иконки сайта почты
+  docs/store/icons/play-icon-512.png                  — значок для Google Play
+Иконки в site/ (корень) — это лендинг «Огнелисс»/звонилки, их не трогаем.
+"""
+import re
+import sys
+from pathlib import Path
+
+from PIL import Image, ImageChops, ImageDraw
+
+ROOT = Path(__file__).resolve().parents[2]
+SS = 4096  # холст суперсэмплинга
+
+SLATE = (0x46, 0x56, 0x6C, 255)
+PAPER = (0xF1, 0xF0, 0xEC, 255)
+FLAP = (0x6A, 0x82, 0x93, 255)
+HEX = {'slate': '#46566C', 'paper': '#F1F0EC', 'flap': '#6A8293'}
+
+ASPECT = 1.45          # ширина/высота конверта
+R_K = 0.04 / 0.62      # радиус углов конверта относительно его ширины
+B_K = 0.015 / 0.62     # рамка вокруг клапана относительно ширины конверта
+APEX = 0.55            # остриё клапана, доля высоты конверта
+TILE_R = 0.225         # радиус скругления плитки, доля её стороны
+
+ENV_FULL = 0.62        # ширина конверта на плитке
+ENV_ADAPTIVE = 0.46    # ширина конверта на холсте 108 dp (безопасная зона 66 dp)
+LEGACY_PAD = 0.08      # поля значка для Android < 8 с каждой стороны
+ROUND_PAD = 0.04       # поля круглого значка
+ENV_ROUND = 0.58       # ширина конверта относительно диаметра круга
+
+
+def env_geom(cx, cy, w):
+    h = w / ASPECT
+    x0, y0 = cx - w / 2, cy - h / 2
+    return x0, y0, x0 + w, y0 + h, h, w * R_K, w * B_K
+
+
+def draw_envelope(img, cx, cy, w, mono=False):
+    """Конверт на RGBA-холсте img (координаты в пикселях img)."""
+    x0, y0, x1, y1, h, r, b = env_geom(cx, cy, w)
+    size = img.size
+    body = Image.new('L', size, 0)
+    ImageDraw.Draw(body).rounded_rectangle((x0, y0, x1, y1), radius=r, fill=255)
+    apex = (cx, y0 + APEX * h)
+    if mono:
+        # Белый силуэт, клапан — вырезанная линия.
+        m = w * 0.06
+        t = w * 0.045
+        cut = Image.new('L', size, 0)
+        ImageDraw.Draw(cut).line([(x0 + m, y0 + m), apex, (x1 - m, y0 + m)],
+                                 fill=255, width=round(t), joint='curve')
+        for p in [(x0 + m, y0 + m), (x1 - m, y0 + m)]:
+            ImageDraw.Draw(cut).ellipse((p[0] - t / 2, p[1] - t / 2, p[0] + t / 2, p[1] + t / 2), fill=255)
+        alpha = ImageChops.subtract(body, cut)
+        layer = Image.new('RGBA', size, (255, 255, 255, 255))
+        layer.putalpha(alpha)
+        img.alpha_composite(layer)
+        return img
+    layer = Image.new('RGBA', size, PAPER)
+    layer.putalpha(body)
+    img.alpha_composite(layer)
+    tri = Image.new('L', size, 0)
+    ImageDraw.Draw(tri).polygon([(x0 + b, y0 + b), (x1 - b, y0 + b), apex], fill=255)
+    inner = Image.new('L', size, 0)
+    ImageDraw.Draw(inner).rounded_rectangle((x0 + b, y0 + b, x1 - b, y1 - b), radius=r - b, fill=255)
+    flap = Image.new('RGBA', size, FLAP)
+    flap.putalpha(ImageChops.multiply(tri, inner))
+    img.alpha_composite(flap)
+    return img
+
+
+def tile(pad=0.0, shape='rounded', square_bg=False, env_k=ENV_FULL):
+    """Значок целиком на холсте SS: плитка (скругл. квадрат / круг / квадрат) + конверт."""
+    img = Image.new('RGBA', (SS, SS), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    p = SS * pad
+    side = SS - 2 * p
+    if square_bg:
+        d.rectangle((0, 0, SS, SS), fill=SLATE)
+    elif shape == 'circle':
+        d.ellipse((p, p, SS - p, SS - p), fill=SLATE)
+    else:
+        d.rounded_rectangle((p, p, SS - p, SS - p), radius=side * TILE_R, fill=SLATE)
+    return draw_envelope(img, SS / 2, SS / 2, side * env_k)
+
+
+def adaptive_bg():
+    return Image.new('RGBA', (SS, SS), SLATE)
+
+
+def adaptive_fg(mono=False):
+    img = Image.new('RGBA', (SS, SS), (0, 0, 0, 0))
+    return draw_envelope(img, SS / 2, SS / 2, SS * ENV_ADAPTIVE, mono=mono)
+
+
+def down(img, n):
+    return img.resize((n, n), Image.LANCZOS)
+
+
+def svg_icon():
+    s = 1024
+    w = s * ENV_FULL
+    x0, y0, x1, y1, h, r, b = env_geom(s / 2, s / 2, w)
+    f = lambda v: f'{v:.1f}'
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {s} {s}">'
+        f'<defs><clipPath id="in"><rect x="{f(x0 + b)}" y="{f(y0 + b)}" width="{f(w - 2 * b)}" '
+        f'height="{f(h - 2 * b)}" rx="{f(r - b)}"/></clipPath></defs>'
+        f'<rect width="{s}" height="{s}" rx="{f(s * TILE_R)}" fill="{HEX["slate"]}"/>'
+        f'<rect x="{f(x0)}" y="{f(y0)}" width="{f(w)}" height="{f(h)}" rx="{f(r)}" fill="{HEX["paper"]}"/>'
+        f'<path clip-path="url(#in)" fill="{HEX["flap"]}" d="M{f(x0 + b)} {f(y0 + b)}H{f(x1 - b)}'
+        f'L{f(s / 2)} {f(y0 + APEX * h)}Z"/></svg>\n')
+
+
+DENS = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
+
+
+def masters():
+    return {
+        'full_sq': tile(square_bg=True),                       # квадрат без прозрачности
+        'tile': tile(),                                        # скругл. квадрат, во всю ширину
+        'legacy': tile(pad=LEGACY_PAD),                        # Android < 8
+        'round': tile(pad=ROUND_PAD, shape='circle', env_k=ENV_ROUND),
+        'bg': adaptive_bg(),
+        'fg': adaptive_fg(),
+        'mono': adaptive_fg(mono=True),
+    }
+
+
+def build(m):
+    res = ROOT / 'android/app/src/main/res'
+    icons = ROOT / 'assets/icons'
+    out = {}
+
+    def save(img, path, rgb=False):
+        path = ROOT / path
+        (img.convert('RGB') if rgb else img).save(path, optimize=True)
+        out[str(path.relative_to(ROOT))] = img
+
+    for d, k in DENS.items():
+        a, l = int(108 * k), int(48 * k)
+        save(down(m['bg'], a), f'android/app/src/main/res/drawable-{d}/ic_launcher_background.png')
+        save(down(m['fg'], a), f'android/app/src/main/res/drawable-{d}/ic_launcher_foreground.png')
+        save(down(m['mono'], a), f'android/app/src/main/res/drawable-{d}/ic_launcher_monochrome.png')
+        save(down(m['legacy'], l), f'android/app/src/main/res/mipmap-{d}/ic_launcher.png')
+        if (res / f'mipmap-{d}/ic_launcher_round.png').exists():
+            save(down(m['round'], l), f'android/app/src/main/res/mipmap-{d}/ic_launcher_round.png')
+
+    save(down(m['full_sq'], 1024), 'assets/icons/app_icon.png', rgb=True)
+    save(down(m['bg'], 1024), 'assets/icons/app_icon_background.png')
+    save(down(m['fg'], 1024), 'assets/icons/app_icon_foreground.png')
+    save(down(m['mono'], 1024), 'assets/icons/app_icon_monochrome.png')
+    # Google Play сам накладывает маску — квадрат без скругления и прозрачности.
+    save(down(m['full_sq'], 512), 'docs/store/icons/play-icon-512.png', rgb=True)
+    save(down(m['tile'], 256), 'site/mail/app-icon.png')
+    # iOS сам скругляет apple-touch-icon; прозрачные углы он залил бы чёрным.
+    save(down(m['full_sq'], 180), 'site/mail/apple-touch-icon.png', rgb=True)
+    save(down(m['tile'], 32), 'site/mail/favicon-32.png')
+    save(down(m['full_sq'], 120), 'site/mail/logo-120.png', rgb=True)
+
+    svg = svg_icon()
+    (ROOT / 'site/mail/favicon.svg').write_text(svg)
+    (ROOT / 'assets/branding/ogneliss-mail-icon.svg').write_text(svg)
+    down(m['tile'], 256).save(icons / 'tray_icon.ico',
+                              sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
+
+    # Цвет фона адаптивной иконки — он же фон заставки (launch_background.xml).
+    colors = res / 'values/colors.xml'
+    txt = colors.read_text()
+    txt = re.sub(r'(<color name="ic_launcher_background">)#[0-9A-Fa-f]+(</color>)',
+                 rf'\g<1>{HEX["slate"]}\g<2>', txt)
+    colors.write_text(txt)
+    return out
+
+
+def preview(m, path):
+    """Все размеры рядом + адаптивная иконка под масками + монохром."""
+    sizes = [16, 32, 48, 72, 96, 120, 144, 180, 192, 256, 512]
+    rows = []
+    for key in ('legacy', 'round', 'tile', 'full_sq'):
+        rows.append([down(m[key], s) for s in sizes])
+    comp = m['bg'].copy()
+    comp.alpha_composite(m['fg'])
+    masks = []
+    for shape in ('circle', 'squircle', 'square'):
+        mk = Image.new('L', (SS, SS), 0)
+        dd = ImageDraw.Draw(mk)
+        inset = SS * 18 / 108  # видимая область 72 dp из 108
+        box = (inset, inset, SS - inset, SS - inset)
+        if shape == 'circle':
+            dd.ellipse(box, fill=255)
+        elif shape == 'squircle':
+            dd.rounded_rectangle(box, radius=(SS - 2 * inset) * 0.3, fill=255)
+        else:
+            dd.rounded_rectangle(box, radius=(SS - 2 * inset) * 0.08, fill=255)
+        c = Image.new('RGBA', (SS, SS), (0, 0, 0, 0))
+        c.paste(comp, (0, 0), mk)
+        masks.append(down(c, 432))
+    mono = Image.new('RGBA', (SS, SS), (0x2A, 0x33, 0x40, 255))
+    mono.alpha_composite(m['mono'])
+    mk = Image.new('L', (SS, SS), 0)
+    inset = SS * 18 / 108
+    ImageDraw.Draw(mk).ellipse((inset, inset, SS - inset, SS - inset), fill=255)
+    mc = Image.new('RGBA', (SS, SS), (0, 0, 0, 0))
+    mc.paste(mono, (0, 0), mk)
+    masks.append(down(mc, 432))
+    fgraw = Image.new('RGBA', (SS, SS), (230, 230, 230, 255))
+    fgraw.alpha_composite(m['fg'])
+    d = ImageDraw.Draw(fgraw)
+    s0 = SS * 21 / 108
+    d.ellipse((s0, s0, SS - s0, SS - s0), outline=(255, 0, 0, 255), width=12)  # безопасная зона 66 dp
+    masks.append(down(fgraw, 432))
+
+    gap = 16
+    W = max(sum(s for s in sizes) + gap * (len(sizes) + 1), 5 * 432 + 6 * gap)
+    H = gap + sum(512 + gap for _ in rows) + 432 + gap
+    sheet = Image.new('RGBA', (W, H), (250, 250, 250, 255))
+    y = gap
+    for i, row in enumerate(rows):
+        x = gap
+        if i % 2:
+            ImageDraw.Draw(sheet).rectangle((0, y - gap // 2, W, y + 512 + gap // 2), fill=(40, 44, 52, 255))
+        for im in row:
+            sheet.alpha_composite(im, (x, y + 512 - im.size[1]))
+            x += im.size[0] + gap
+        y += 512 + gap
+    x = gap
+    for im in masks:
+        sheet.alpha_composite(im, (x, y))
+        x += 432 + gap
+    sheet.convert('RGB').save(path)
+
+
+if __name__ == '__main__':
+    cmd = sys.argv[1] if len(sys.argv) > 1 else 'preview'
+    m = masters()
+    if cmd == 'build':
+        for p in build(m):
+            print('записан', p)
+    prev = sys.argv[2] if len(sys.argv) > 2 else str(ROOT / 'tool/branding/preview_v3.png')
+    preview(m, prev)
+    print('предпросмотр:', prev)

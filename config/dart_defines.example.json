@@ -1,0 +1,12 @@
+{
+  "OAUTH_PROXY_URL": "https://www.ogneliss.ru/oauth",
+  "OAUTH_PROXY_KEY": "",
+  "SUPPORT_EMAIL": "",
+  "GOOGLE_ANDROID_CLIENT_ID": "",
+  "GOOGLE_IOS_CLIENT_ID": "",
+  "GOOGLE_DESKTOP_CLIENT_ID": "",
+  "GOOGLE_DESKTOP_CLIENT_SECRET": "",
+  "MS_CLIENT_ID": "",
+  "PUSH_RELAY_URL": "https://www.ogneliss.ru/push",
+  "PUSH_WAKE_MODE": "silent"
+}

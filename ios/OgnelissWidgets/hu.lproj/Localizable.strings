@@ -1,0 +1,14 @@
+/* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/hu.xml — не править вручную. */
+"open_app" = "A widget kitöltéséhez nyisd meg az Ogneliss Mailt";
+"myday_label" = "Saját napom";
+"myday_desc" = "A mai megbeszélések és feladatok, olvasatlan és követett levelek";
+"mail_label" = "Levelek";
+"mail_desc" = "Olvasatlan levelek fiókonként és a legutóbbi olvasatlan levelek";
+"cal_label" = "Naptár";
+"cal_desc" = "Az összes fiókod közelgő eseményei két hétre előre";
+"notes_label" = "Jegyzetek";
+"notes_desc" = "Legutóbbi jegyzeteid és egy gomb az újhoz";
+"calweek_label" = "Naptár: hét";
+"calweek_desc" = "Hét nap és a hét eseményei";
+"calmonth_label" = "Naptár: hónap";
+"calmonth_desc" = "A hónap rácsban, az események pontokkal jelölve";

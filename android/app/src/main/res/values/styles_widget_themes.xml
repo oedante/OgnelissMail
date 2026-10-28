@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
+<resources>
+    <style name="WidgetRootLt">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:background">@drawable/widget_bg_lt</item>
+    </style>
+    <style name="WidgetRootDk">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:background">@drawable/widget_bg_dk</item>
+    </style>
+    <style name="WidgetHeaderLt">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="WidgetHeaderDk">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="WidgetTitleLt">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/widget_text_lt</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetTitleDk">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/widget_text_dk</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetSubtitleLt">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/widget_sub_lt</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetSubtitleDk">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/widget_sub_dk</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetHeadButtonLt">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:background">@drawable/widget_btn_bg_lt</item>
+    </style>
+    <style name="WidgetHeadButtonDk">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:background">@drawable/widget_btn_bg_dk</item>
+    </style>
+    <style name="WidgetNavButtonLt">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+    <style name="WidgetNavButtonDk">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+    <style name="WidgetCardLt">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:background">@drawable/widget_card_bg_lt</item>
+    </style>
+    <style name="WidgetCardDk">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:background">@drawable/widget_card_bg_dk</item>
+    </style>
+    <style name="WidgetFooterLt">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/widget_sub_lt</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="WidgetFooterDk">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/widget_sub_dk</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="WidgetRowTitleLt">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/widget_text_lt</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetRowTitleDk">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/widget_text_dk</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetRowSubLt">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:textColor">@color/widget_sub_lt</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetRowSubDk">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:textColor">@color/widget_sub_dk</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetBarLt">
+        <item name="android:layout_width">3dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:src">@drawable/widget_bar</item>
+        <!-- Метка цвета — оформление: TalkBack её не читает (1.6.48). -->
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+    <style name="WidgetBarDk">
+        <item name="android:layout_width">3dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:src">@drawable/widget_bar</item>
+        <!-- Метка цвета — оформление: TalkBack её не читает (1.6.48). -->
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+    <style name="WidgetTabLt">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/widget_text_lt</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="WidgetTabDk">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/widget_text_dk</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="WidgetWeekdayLt">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/widget_sub_lt</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+    <style name="WidgetWeekdayDk">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/widget_sub_dk</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+    <style name="WidgetMonthCellLt">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:lineSpacingMultiplier">0.9</item>
+        <item name="android:textColor">@color/widget_text_lt</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="WidgetMonthCellDk">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:lineSpacingMultiplier">0.9</item>
+        <item name="android:textColor">@color/widget_text_dk</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="WidgetMonthCellFixedLt" parent="WidgetMonthCellLt">
+        <item name="android:layout_marginStart">3dp</item>
+        <item name="android:layout_marginEnd">3dp</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+    </style>
+    <style name="WidgetMonthCellFixedDk" parent="WidgetMonthCellDk">
+        <item name="android:layout_marginStart">3dp</item>
+        <item name="android:layout_marginEnd">3dp</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+    </style>
+</resources>

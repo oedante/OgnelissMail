@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Неделя в сетке месяца: семь ячеек (число и цветные точки встреч). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:orientation="horizontal">
+    <TextView android:id="@+id/mc0" style="@style/WidgetMonthCell" />
+    <TextView android:id="@+id/mc1" style="@style/WidgetMonthCell" />
+    <TextView android:id="@+id/mc2" style="@style/WidgetMonthCell" />
+    <TextView android:id="@+id/mc3" style="@style/WidgetMonthCell" />
+    <TextView android:id="@+id/mc4" style="@style/WidgetMonthCell" />
+    <TextView android:id="@+id/mc5" style="@style/WidgetMonthCell" />
+    <TextView android:id="@+id/mc6" style="@style/WidgetMonthCell" />
+</LinearLayout>

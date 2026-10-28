@@ -1,0 +1,266 @@
+# .github/workflows/ci.yml
+# Проверка и сборка на GitHub.
+#
+#  · Проверка (каждый push в любую ветку и pull request в master):
+#    flutter pub get → build_runner (drift) → flutter analyze → flutter test.
+#    Ошибки анализатора и упавшие тесты — аннотациями (tool/dev/ci_annotate.py):
+#    их видно в сводке сборки и через API GitHub без журнала. Повторный push в
+#    ту же ветку отменяет идущую проверку — минуты Actions у закрытого
+#    репозитория ограничены.
+#  · Сборка Android (по кнопке «Run workflow» и по метке v*): APK по
+#    архитектурам и App Bundle — в «Artifacts» сборки (14 дней).
+#    Секреты — Settings → Secrets and variables → Actions (все по желанию):
+#      DART_DEFINES_JSON          — содержимое config/dart_defines.json
+#                                   (вход OAuth, сигналы iPhone);
+#      ANDROID_KEYSTORE_BASE64    — ключ загрузки .jks в base64;
+#      ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD.
+#    Без ключа сборка подписывается отладочным ключом: подходит для проверки
+#    на телефоне, не для Google Play.
+#  · Сборка iOS без подписи (только по кнопке: macOS расходует минуты
+#    вдесятеро быстрее) — проверка, что проект собирается.
+#
+# 23.10.2026 (аудит движка 07.10, п. 5): Flutter — текущий stable (pubspec
+# требует Flutter 3.38+ и Dart 3.10+).
+
+name: CI/CD
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+    # 27.10.2026: коммиты, где только готовые части перевода (агенты пишут их
+    # по ходу) или документы, приложение не меняют — проверка не запускается
+    # и не отменяет идущую (concurrency ниже).
+    paths-ignore:
+      - 'tool/l10n/job_*/**'
+      - 'docs/**'
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      android:
+        description: 'Собрать Android (APK и App Bundle)'
+        type: boolean
+        default: true
+      ios:
+        description: 'Собрать и iOS (без подписи, macOS)'
+        type: boolean
+        default: false
+      shots:
+        description: 'Снимки экранов (tool/shots) — в Artifacts'
+        type: boolean
+        default: false
+
+concurrency:
+  group: ci-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Install dependencies
+        id: deps
+        run: flutter pub get
+
+      - name: Generate code (Drift)
+        id: gen
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Analyze
+        id: analyze
+        run: |
+          set +e
+          flutter analyze --no-fatal-infos > analyze.txt 2>&1
+          code=$?
+          cat analyze.txt
+          python3 tool/dev/ci_annotate.py analyze analyze.txt
+          exit $code
+
+      # Тесты — и когда анализатор нашёл предупреждения: их результат нужен
+      # отдельно.
+      - name: Run tests
+        if: ${{ !cancelled() && steps.gen.outcome == 'success' }}
+        run: |
+          set +e
+          flutter test --coverage --machine > test-machine.jsonl 2> test-stderr.txt
+          code=$?
+          tail -n 80 test-stderr.txt
+          python3 tool/dev/ci_annotate.py test test-machine.jsonl
+          exit $code
+
+  build-android:
+    needs: analyze-and-test
+    # Автосборка (28.10.2026): каждый push в main, метка v* (выпуск) и вручную.
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.android) || startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build secrets (optional)
+        env:
+          DART_DEFINES_JSON: ${{ secrets.DART_DEFINES_JSON }}
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$DART_DEFINES_JSON" ]; then
+            printf '%s' "$DART_DEFINES_JSON" > config/dart_defines.json
+            echo "dart_defines.json: из секрета"
+          else
+            echo "::warning title=Без DART_DEFINES_JSON::Вход через OAuth-прокси (Gmail, Яндекс, Mail.ru, Outlook) в этой сборке работать не будет"
+          fi
+          if [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/upload-keystore.jks"
+            {
+              echo "storeFile=$RUNNER_TEMP/upload-keystore.jks"
+              echo "storePassword=$KS_PASS"
+              echo "keyAlias=$KEY_ALIAS"
+              echo "keyPassword=$KEY_PASS"
+            } > android/key.properties
+            echo "Подпись: ключ загрузки из секретов"
+          else
+            echo "::warning title=Без ключа подписи::Сборка подписана отладочным ключом — для проверки на телефоне, не для Google Play"
+          fi
+
+      - name: Build APK and App Bundle
+        run: |
+          DEFINES=""
+          if [ -f config/dart_defines.json ]; then DEFINES="--dart-define-from-file=config/dart_defines.json"; fi
+          flutter build apk --release --split-per-abi $DEFINES
+          flutter build appbundle --release $DEFINES
+
+      - name: Remove secrets
+        if: always()
+        run: rm -f config/dart_defines.json android/key.properties "$RUNNER_TEMP/upload-keystore.jks"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ogneliss-android-${{ github.sha }}
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/bundle/release/*.aab
+          retention-days: 14
+
+  build-ios:
+    needs: analyze-and-test
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.ios }}
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build iOS (no signing)
+        run: flutter build ios --release --no-codesign
+
+  # Снимки экранов (1.8.0): темы, языки, письмо справа налево — вид без
+  # телефона. Только по кнопке «Run workflow» с отметкой «shots»; снимки —
+  # в Artifacts на 3 дня.
+  screens:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.shots }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Снимки — ещё и в ветку shots (их можно читать через API GitHub).
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Screens
+        run: |
+          set +e
+          flutter test tool/shots --update-goldens --machine > shots-machine.jsonl 2> shots-stderr.txt
+          code=$?
+          tail -n 120 shots-stderr.txt
+          python3 tool/dev/ci_annotate.py test shots-machine.jsonl
+          echo "exit $code"
+
+      - name: Push shots branch
+        if: always()
+        run: |
+          set -e
+          cd tool/shots/out || exit 0
+          git init -q
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          git checkout -q -b shots
+          git add -A
+          git commit -q -m "shots ${{ github.sha }}"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" shots
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screens-${{ github.sha }}
+          path: tool/shots/out/
+          retention-days: 3
+
+  # Выпуск: метка v* (например, v1.8.6) → страница Releases с APK.
+  release:
+    needs: build-android
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ogneliss-android-${{ github.sha }}
+          path: out
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: Ogneliss Mail ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            out/flutter-apk/*.apk

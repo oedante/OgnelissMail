@@ -1,0 +1,14 @@
+/* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/ja.xml — не править вручную. */
+"open_app" = "ウィジェットを表示するには Ogneliss Mail を開いてください";
+"myday_label" = "今日の予定";
+"myday_desc" = "今日の会議とタスク、未読メールと追跡中のメール";
+"mail_label" = "メール";
+"mail_desc" = "アカウント別の未読メールと最新の未読メール";
+"cal_label" = "カレンダー";
+"cal_desc" = "すべてのアカウントの今後2週間の予定";
+"notes_label" = "メモ";
+"notes_desc" = "最新のメモと新規作成ボタン";
+"calweek_label" = "カレンダー：週";
+"calweek_desc" = "7日間と今週の予定";
+"calmonth_label" = "カレンダー：月";
+"calmonth_desc" = "予定をドットで示した月のグリッド";

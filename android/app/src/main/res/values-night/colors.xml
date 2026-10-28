@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Выделение текста в тёмной теме: светлый спокойный синий
+         (как AppTheme.selectionBlueDark). -->
+    <color name="selection_accent">#8AB1E6</color>
+    <color name="selection_highlight">#478AB1E6</color>
+    <!-- Виджеты на рабочем столе (как карточки приложения в тёмной теме). -->
+    <color name="widget_bg">#181D23</color>
+    <color name="widget_card">#232A33</color>
+    <color name="widget_text">#E2E4E8</color>
+    <color name="widget_sub">#9AA3AE</color>
+    <color name="widget_accent">#8AB1E6</color>
+    <color name="widget_join_text">#10223A</color>
+    <color name="widget_divider">#2C343E</color>
+    <color name="widget_tab_sel">#2B3B50</color>
+    <color name="widget_on_accent">#10223A</color>
+    <color name="widget_task">#8CC59A</color>
+    <color name="widget_muted">#858E99</color>
+    <!-- 1.6.48: приглушённый 4,4:1 (было 3,2); «Не обновлялось» 7,2:1. -->
+    <color name="widget_warn">#E0B03A</color>
+    <color name="widget_bg_soft">#B3181D23</color>
+    <color name="widget_card_soft">#99232A33</color>
+</resources>

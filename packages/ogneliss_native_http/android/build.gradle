@@ -1,0 +1,21 @@
+// Модуль плагина Android. Версию AGP задаёт приложение (android/settings.gradle.kts),
+// поэтому здесь только применение плагина библиотеки. Код на Java — не
+// зависит от того, включён ли встроенный Kotlin AGP 9 (android.builtInKotlin).
+group = "com.ogneliss.nativehttp"
+version = "1.0"
+
+apply plugin: "com.android.library"
+
+android {
+    namespace = "com.ogneliss.nativehttp"
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 24
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}

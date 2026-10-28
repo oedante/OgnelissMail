@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/ru.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: блокировка экрана</string>
+    <string name="device_admin_description">Применяет тайм-аут блокировки экрана, который требует сервер Exchange вашей организации. Ogneliss Mail не может стереть устройство или изменить пароль.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Проверяет почту, пока приложение свёрнуто</string>
+    <string name="bg_sync_hide">Скрыть</string>
+    <string name="bg_sync_channel">Фоновая синхронизация</string>
+    <string name="bg_sync_channel_desc">Поддерживает синхронизацию почты, пока приложение свёрнуто. Уведомление можно выключить — синхронизация продолжится.</string>
+    <string name="widget_myday_label">Мой день</string>
+    <string name="widget_myday_desc">Встречи и задачи на сегодня, непрочитанные и письма в работе</string>
+    <string name="widget_compose">Написать</string>
+    <string name="widget_open_app">Откройте Ogneliss Mail, чтобы заполнить виджет</string>
+    <string name="widget_mail_label">Почта</string>
+    <string name="widget_mail_desc">Непрочитанные по ящикам и последние непрочитанные письма</string>
+    <string name="widget_cal_label">Календарь</string>
+    <string name="widget_cal_desc">Встречи всех ящиков: день, неделя или месяц</string>
+    <string name="widget_cal_add">Новая встреча</string>
+    <string name="widget_notes_label">Заметки</string>
+    <string name="widget_note_new">Новая заметка</string>
+    <string name="widget_notes_desc">Последние заметки и кнопка новой заметки</string>
+    <string name="widget_prev">Назад</string>
+    <string name="widget_next">Вперёд</string>
+    <string name="widget_cal_day">День</string>
+    <string name="widget_cal_week">Неделя</string>
+    <string name="widget_cal_month">Месяц</string>
+</resources>

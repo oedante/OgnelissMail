@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/id.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: kunci layar</string>
+    <string name="device_admin_description">Menerapkan batas waktu kunci layar yang diwajibkan oleh server Exchange organisasi Anda. Ogneliss Mail tidak dapat menghapus data perangkat atau mengubah kata sandi Anda.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Memeriksa email saat aplikasi diminimalkan</string>
+    <string name="bg_sync_hide">Sembunyikan</string>
+    <string name="bg_sync_channel">Sinkronisasi latar belakang</string>
+    <string name="bg_sync_channel_desc">Menjaga email tetap tersinkron saat aplikasi diminimalkan. Anda dapat menonaktifkan notifikasi ini — sinkronisasi tetap berjalan.</string>
+    <string name="widget_myday_label">Hari saya</string>
+    <string name="widget_myday_desc">Rapat dan tugas hari ini, email belum dibaca dan yang dipantau</string>
+    <string name="widget_compose">Tulis</string>
+    <string name="widget_open_app">Buka Ogneliss Mail untuk mengisi widget</string>
+    <string name="widget_mail_label">Email</string>
+    <string name="widget_mail_desc">Email belum dibaca per akun dan email belum dibaca terbaru</string>
+    <string name="widget_cal_label">Kalender</string>
+    <string name="widget_cal_desc">Acara Anda dari semua akun per hari, minggu, atau bulan</string>
+    <string name="widget_cal_add">Acara baru</string>
+    <string name="widget_notes_label">Catatan</string>
+    <string name="widget_note_new">Catatan baru</string>
+    <string name="widget_notes_desc">Catatan terbaru Anda dan tombol untuk catatan baru</string>
+    <string name="widget_prev">Sebelumnya</string>
+    <string name="widget_next">Berikutnya</string>
+    <string name="widget_cal_day">Hari</string>
+    <string name="widget_cal_week">Minggu</string>
+    <string name="widget_cal_month">Bulan</string>
+</resources>

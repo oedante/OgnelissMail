@@ -1,0 +1,98 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+
+# Android
+**/android/**/gradle-wrapper.jar
+**/android/app/.cxx/
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+
+# iOS
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.perspectivev3
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/ephemeral/
+**/ios/**/xcuserdata/
+**/ios/build/
+# Подпись iOS — только локально (scripts/build_ios.sh пишет TEAM_ID сюда).
+**/ios/Flutter/Signing.xcconfig
+**/ios/Runner.xcodeproj/.base_seen
+**/ios/Runner.xcodeproj/project.pbxproj.base
+scripts/ios_remote.json
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Android Studio / IntelliJ: общие конфигурации запуска храним в git,
+# остальное (рабочее место, кэш индексов) — нет.
+.idea/*
+!.idea/runConfigurations/
+.vscode/
+
+# Ключи сборки (--dart-define-from-file): только локально
+config/dart_defines.json
+!.vscode/extensions.json
+
+# Logs
+*.log
+logs/
+
+# Secrets — NEVER commit
+*.keystore
+*.jks
+key.properties
+key.properties.bak-*
+**/google-services.json
+**/GoogleService-Info.plist
+
+# TLS-сертификаты и ключи (секреты — не коммитить)
+server/**/ssl/
+*.p8
+*_key.pem
+privkey.pem
+
+# Секреты OAuth-прокси — только на сервере, не в репозитории
+.env
+server/**/.env
+!.env.example
+# Файлы со значениями переменных окружения (секреты)
+ENV_VALUES.txt
+server/**/ENV_VALUES.txt
+# Секреты сборки приложения
+scripts/.env.build
+!scripts/.env.build.example
+
+# Скачанный сборочным скриптом nuget.exe
+tools/
+
+# Python
+__pycache__/
+*.pyc
+tool/shots/out/
+# Копия файла проекта Xcode до scripts/ios_localizations.py (1.8.0)
+ios/Runner.xcodeproj/project.pbxproj.bak
+__pycache__/
+*.pyc
+config/dart_defines.json
+site/

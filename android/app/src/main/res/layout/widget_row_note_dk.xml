@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
+<!-- Строка заметки: заголовок и первая строка текста. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nt_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingTop="7dp"
+    android:paddingBottom="7dp">
+    <TextView android:id="@+id/nt_title" style="@style/WidgetRowTitleDk" android:textStyle="bold" />
+    <TextView android:id="@+id/nt_prev" style="@style/WidgetRowSubDk" android:visibility="gone" />
+</LinearLayout>

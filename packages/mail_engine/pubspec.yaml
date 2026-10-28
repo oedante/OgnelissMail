@@ -1,0 +1,15 @@
+name: mail_engine
+description: Единый движок синхронизации почты организации (EAS/EWS/IMAP-SMTP/OAuth). Чистый Dart, без Flutter.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  http: ^1.2.0
+  xml: ^6.5.0
+  enough_mail: ">=2.1.6 <2.2.0"
+
+dev_dependencies:
+  lints: ^4.0.0

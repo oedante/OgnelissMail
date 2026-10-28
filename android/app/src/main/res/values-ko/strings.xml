@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/ko.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: 화면 잠금</string>
+    <string name="device_admin_description">조직의 Exchange 서버에서 요구하는 화면 잠금 시간 제한을 적용합니다. Ogneliss Mail은 기기 데이터를 지우거나 비밀번호를 변경할 수 없습니다.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">앱을 최소화한 동안 메일을 확인하는 중</string>
+    <string name="bg_sync_hide">숨기기</string>
+    <string name="bg_sync_channel">백그라운드 동기화</string>
+    <string name="bg_sync_channel_desc">앱을 최소화한 동안에도 메일 동기화를 유지합니다. 이 알림을 꺼도 동기화는 계속됩니다.</string>
+    <string name="widget_myday_label">나의 하루</string>
+    <string name="widget_myday_desc">오늘의 회의와 할 일, 읽지 않은 메일 및 추적 중인 메일</string>
+    <string name="widget_compose">쓰기</string>
+    <string name="widget_open_app">위젯을 채우려면 Ogneliss Mail을 여세요</string>
+    <string name="widget_mail_label">메일</string>
+    <string name="widget_mail_desc">계정별 읽지 않은 메일과 최근 읽지 않은 메일</string>
+    <string name="widget_cal_label">캘린더</string>
+    <string name="widget_cal_desc">모든 계정의 일정을 일, 주 또는 월 단위로 표시</string>
+    <string name="widget_cal_add">새 일정</string>
+    <string name="widget_notes_label">메모</string>
+    <string name="widget_note_new">새 메모</string>
+    <string name="widget_notes_desc">최근 메모와 새 메모 버튼</string>
+    <string name="widget_prev">이전</string>
+    <string name="widget_next">다음</string>
+    <string name="widget_cal_day">일</string>
+    <string name="widget_cal_week">주</string>
+    <string name="widget_cal_month">월</string>
+</resources>

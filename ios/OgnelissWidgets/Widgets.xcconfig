@@ -1,0 +1,8 @@
+// Базовые настройки цели OgnelissWidgets: номер версии и сборки — те же,
+// что у приложения (FLUTTER_BUILD_NAME / FLUTTER_BUILD_NUMBER из pubspec),
+// иначе App Store отклонит сборку («версия расширения не совпадает»).
+// Pods-конфигурации Runner сюда сознательно не подключаются.
+#include "../Flutter/Generated.xcconfig"
+// Команда разработчика — та же, что у приложения (локальный файл, не в git).
+#include? "../Flutter/Signing.xcconfig"
+IPHONEOS_DEPLOYMENT_TARGET = 15.0

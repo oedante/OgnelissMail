@@ -1,0 +1,14 @@
+/* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/nl.xml — не править вручную. */
+"open_app" = "Open Ogneliss Mail om de widget te vullen";
+"myday_label" = "Mijn dag";
+"myday_desc" = "Vergaderingen en taken van vandaag, ongelezen en gevolgde e-mails";
+"mail_label" = "E-mail";
+"mail_desc" = "Ongelezen e-mail per account en de nieuwste ongelezen e-mails";
+"cal_label" = "Agenda";
+"cal_desc" = "Komende afspraken van al je accounts voor twee weken";
+"notes_label" = "Notities";
+"notes_desc" = "Je nieuwste notities en een knop voor een nieuwe";
+"calweek_label" = "Agenda: week";
+"calweek_desc" = "Zeven dagen en de afspraken van deze week";
+"calmonth_label" = "Agenda: maand";
+"calmonth_desc" = "De maand als raster met stippen voor afspraken";

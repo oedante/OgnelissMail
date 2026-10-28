@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  HTTP без шифрования запрещён: EWS/EAS/OAuth передают пароль домена и токены.
+  (IMAP/SMTP идут через сокеты и этой настройкой не затрагиваются; для них
+  незашифрованный порт без STARTTLS отклоняется в приложении.)
+  Пользовательские сертификаты оставлены сознательно: корпоративный CA
+  организации ставится через MDM или вручную.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="user"/>
+        </trust-anchors>
+    </base-config>
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user"/>
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>

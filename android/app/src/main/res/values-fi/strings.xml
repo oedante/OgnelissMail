@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/fi.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: näytön lukitus</string>
+    <string name="device_admin_description">Ottaa käyttöön organisaatiosi Exchange-palvelimen vaatiman näytön lukituksen aikakatkaisun. Ogneliss Mail ei voi tyhjentää laitettasi tai vaihtaa salasanaasi.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Tarkistaa sähköpostia, kun sovellus on pienennettynä</string>
+    <string name="bg_sync_hide">Piilota</string>
+    <string name="bg_sync_channel">Synkronointi taustalla</string>
+    <string name="bg_sync_channel_desc">Pitää sähköpostin synkronoituna, kun sovellus on pienennettynä. Voit poistaa tämän ilmoituksen käytöstä — synkronointi jatkuu.</string>
+    <string name="widget_myday_label">Oma päivä</string>
+    <string name="widget_myday_desc">Tämän päivän kokoukset ja tehtävät, lukemattomat ja seurattavat viestit</string>
+    <string name="widget_compose">Kirjoita</string>
+    <string name="widget_open_app">Avaa Ogneliss Mail täyttääksesi widgetin</string>
+    <string name="widget_mail_label">Sähköposti</string>
+    <string name="widget_mail_desc">Lukemattomat viestit tileittäin ja uusimmat lukemattomat viestit</string>
+    <string name="widget_cal_label">Kalenteri</string>
+    <string name="widget_cal_desc">Tapahtumasi kaikilta tileiltä päivittäin, viikoittain tai kuukausittain</string>
+    <string name="widget_cal_add">Uusi tapahtuma</string>
+    <string name="widget_notes_label">Muistiinpanot</string>
+    <string name="widget_note_new">Uusi muistiinpano</string>
+    <string name="widget_notes_desc">Uusimmat muistiinpanosi ja painike uutta varten</string>
+    <string name="widget_prev">Edellinen</string>
+    <string name="widget_next">Seuraava</string>
+    <string name="widget_cal_day">Päivä</string>
+    <string name="widget_cal_week">Viikko</string>
+    <string name="widget_cal_month">Kuukausi</string>
+</resources>

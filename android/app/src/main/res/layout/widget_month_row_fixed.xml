@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Неделя в сетке месяца, когда под сеткой — встречи выбранного дня
+     (1.6.49): строка постоянной высоты, сетка не растягивается на весь
+     виджет. Сегодня — заливкой акцента, выбранный день — светлой. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:orientation="horizontal">
+    <TextView android:id="@+id/mc0" style="@style/WidgetMonthCellFixed" />
+    <TextView android:id="@+id/mc1" style="@style/WidgetMonthCellFixed" />
+    <TextView android:id="@+id/mc2" style="@style/WidgetMonthCellFixed" />
+    <TextView android:id="@+id/mc3" style="@style/WidgetMonthCellFixed" />
+    <TextView android:id="@+id/mc4" style="@style/WidgetMonthCellFixed" />
+    <TextView android:id="@+id/mc5" style="@style/WidgetMonthCellFixed" />
+    <TextView android:id="@+id/mc6" style="@style/WidgetMonthCellFixed" />
+</LinearLayout>

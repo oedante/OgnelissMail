@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/en.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: screen lock</string>
+    <string name="device_admin_description">Applies the screen lock timeout required by your organization\'s Exchange server. Ogneliss Mail cannot erase your device or change your password.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Checking mail while the app is minimized</string>
+    <string name="bg_sync_hide">Hide</string>
+    <string name="bg_sync_channel">Background sync</string>
+    <string name="bg_sync_channel_desc">Keeps mail syncing while the app is minimized. You can turn this notification off — sync continues.</string>
+    <string name="widget_myday_label">My day</string>
+    <string name="widget_myday_desc">Today’s meetings and tasks, unread and tracked emails</string>
+    <string name="widget_compose">Compose</string>
+    <string name="widget_open_app">Open Ogneliss Mail to fill in the widget</string>
+    <string name="widget_mail_label">Mail</string>
+    <string name="widget_mail_desc">Unread mail by account and the latest unread emails</string>
+    <string name="widget_cal_label">Calendar</string>
+    <string name="widget_cal_desc">Your events by day, week or month from all accounts</string>
+    <string name="widget_cal_add">New event</string>
+    <string name="widget_notes_label">Notes</string>
+    <string name="widget_note_new">New note</string>
+    <string name="widget_notes_desc">Your latest notes and a button for a new one</string>
+    <string name="widget_prev">Previous</string>
+    <string name="widget_next">Next</string>
+    <string name="widget_cal_day">Day</string>
+    <string name="widget_cal_week">Week</string>
+    <string name="widget_cal_month">Month</string>
+    <string name="phone_account_label" translatable="false">Ogneliss Mail</string>
+</resources>

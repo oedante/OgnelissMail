@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
+<!-- Полоса недели: день недели, число («сегодня» — в круге), до трёх
+     цветных точек встреч. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingBottom="2dp">
+    <LinearLayout
+        android:id="@+id/wk_cell0"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
+        <TextView
+            android:id="@+id/wk_day0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/widget_sub_dk"
+            android:textSize="11sp" />
+        <TextView
+            android:id="@+id/wk_num0"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:textColor="@color/widget_text_dk"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/wk_dots0"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="8sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/wk_cell1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
+        <TextView
+            android:id="@+id/wk_day1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/widget_sub_dk"
+            android:textSize="11sp" />
+        <TextView
+            android:id="@+id/wk_num1"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:textColor="@color/widget_text_dk"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/wk_dots1"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="8sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/wk_cell2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
+        <TextView
+            android:id="@+id/wk_day2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/widget_sub_dk"
+            android:textSize="11sp" />
+        <TextView
+            android:id="@+id/wk_num2"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:textColor="@color/widget_text_dk"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/wk_dots2"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="8sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/wk_cell3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
+        <TextView
+            android:id="@+id/wk_day3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/widget_sub_dk"
+            android:textSize="11sp" />
+        <TextView
+            android:id="@+id/wk_num3"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:textColor="@color/widget_text_dk"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/wk_dots3"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="8sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/wk_cell4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
+        <TextView
+            android:id="@+id/wk_day4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/widget_sub_dk"
+            android:textSize="11sp" />
+        <TextView
+            android:id="@+id/wk_num4"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:textColor="@color/widget_text_dk"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/wk_dots4"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="8sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/wk_cell5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
+        <TextView
+            android:id="@+id/wk_day5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/widget_sub_dk"
+            android:textSize="11sp" />
+        <TextView
+            android:id="@+id/wk_num5"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:textColor="@color/widget_text_dk"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/wk_dots5"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="8sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/wk_cell6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp">
+        <TextView
+            android:id="@+id/wk_day6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/widget_sub_dk"
+            android:textSize="11sp" />
+        <TextView
+            android:id="@+id/wk_num6"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:textColor="@color/widget_text_dk"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/wk_dots6"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="8sp" />
+    </LinearLayout>
+</LinearLayout>

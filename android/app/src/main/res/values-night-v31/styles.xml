@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+: системная заставка показывает знак с лисой, а не значок
+         приложения (иначе система взяла бы ic_launcher). -->
+    <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:windowSplashScreenBackground">@color/splash_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_fox</item>
+        <item name="android:colorAccent">@color/selection_accent</item>
+        <item name="android:colorControlActivated">@color/selection_accent</item>
+    </style>
+    <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">?android:colorBackground</item>
+        <!-- Ручки и подсветка выделения текста в письме (WebView) и системных
+             полях: спокойный синий вместо бирюзово-зелёного по умолчанию. -->
+        <item name="android:colorAccent">@color/selection_accent</item>
+        <item name="android:colorControlActivated">@color/selection_accent</item>
+        <item name="android:textColorHighlight">@color/selection_highlight</item>
+    </style>
+</resources>

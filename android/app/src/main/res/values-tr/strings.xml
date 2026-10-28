@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/tr.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: ekran kilidi</string>
+    <string name="device_admin_description">Kuruluşunuzun Exchange sunucusunun gerektirdiği ekran kilidi zaman aşımını uygular. Ogneliss Mail cihazınızı silemez veya şifrenizi değiştiremez.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Uygulama küçültülmüşken e-postalar denetleniyor</string>
+    <string name="bg_sync_hide">Gizle</string>
+    <string name="bg_sync_channel">Arka planda senkronizasyon</string>
+    <string name="bg_sync_channel_desc">Uygulama küçültülmüşken e-postanın senkronize olmasını sağlar. Bu bildirimi kapatabilirsiniz; senkronizasyon devam eder.</string>
+    <string name="widget_myday_label">Günüm</string>
+    <string name="widget_myday_desc">Bugünün toplantıları ve görevleri, okunmamış ve takipteki e-postalar</string>
+    <string name="widget_compose">Yeni ileti</string>
+    <string name="widget_open_app">Widget’ı doldurmak için Ogneliss Mail’i açın</string>
+    <string name="widget_mail_label">E-posta</string>
+    <string name="widget_mail_desc">Hesaba göre okunmamış e-postalar ve en son okunmamış e-postalar</string>
+    <string name="widget_cal_label">Takvim</string>
+    <string name="widget_cal_desc">Tüm hesaplarınızdaki etkinlikler: gün, hafta veya ay görünümü</string>
+    <string name="widget_cal_add">Yeni etkinlik</string>
+    <string name="widget_notes_label">Notlar</string>
+    <string name="widget_note_new">Yeni not</string>
+    <string name="widget_notes_desc">Son notlarınız ve yeni not için bir düğme</string>
+    <string name="widget_prev">Önceki</string>
+    <string name="widget_next">Sonraki</string>
+    <string name="widget_cal_day">Gün</string>
+    <string name="widget_cal_week">Hafta</string>
+    <string name="widget_cal_month">Ay</string>
+</resources>

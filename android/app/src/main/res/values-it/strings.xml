@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/it.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: blocco schermo</string>
+    <string name="device_admin_description">Applica il timeout del blocco schermo richiesto dal server Exchange della tua organizzazione. Ogneliss Mail non può cancellare il tuo dispositivo né modificare la tua password.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Controllo della posta mentre l’app è ridotta a icona</string>
+    <string name="bg_sync_hide">Nascondi</string>
+    <string name="bg_sync_channel">Sincronizzazione in background</string>
+    <string name="bg_sync_channel_desc">Mantiene la posta sincronizzata mentre l’app è ridotta a icona. Puoi disattivare questa notifica: la sincronizzazione continua.</string>
+    <string name="widget_myday_label">Il mio giorno</string>
+    <string name="widget_myday_desc">Riunioni e attività di oggi, email non lette e monitorate</string>
+    <string name="widget_compose">Scrivi</string>
+    <string name="widget_open_app">Apri Ogneliss Mail per compilare il widget</string>
+    <string name="widget_mail_label">Posta</string>
+    <string name="widget_mail_desc">Email non lette per account e le ultime email non lette</string>
+    <string name="widget_cal_label">Calendario</string>
+    <string name="widget_cal_desc">I tuoi eventi per giorno, settimana o mese da tutti gli account</string>
+    <string name="widget_cal_add">Nuovo evento</string>
+    <string name="widget_notes_label">Note</string>
+    <string name="widget_note_new">Nuova nota</string>
+    <string name="widget_notes_desc">Le tue ultime note e un pulsante per crearne una nuova</string>
+    <string name="widget_prev">Precedente</string>
+    <string name="widget_next">Successivo</string>
+    <string name="widget_cal_day">Giorno</string>
+    <string name="widget_cal_week">Settimana</string>
+    <string name="widget_cal_month">Mese</string>
+</resources>

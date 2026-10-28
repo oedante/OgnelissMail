@@ -1,0 +1,10 @@
+/* Тексты Info.plist (название и запросы разрешений). Создано tool/l10n/l10n.py gen из assets/l10n/ru.xml — не править вручную. */
+"CFBundleDisplayName" = "Ogneliss Mail";
+"NSFaceIDUsageDescription" = "Face ID разблокирует Ogneliss Mail вместо PIN-кода.";
+"NSContactsUsageDescription" = "Контакты iPhone нужны для подсказки адресатов, а контакты из почтового ящика можно сохранить в адресную книгу iPhone, если включить это в настройках. Контакты никуда не отправляются.";
+"NSCalendarsFullAccessUsageDescription" = "Встречи из почтового ящика можно добавлять в календарь iPhone, если включить это в настройках.";
+"NSCalendarsWriteOnlyAccessUsageDescription" = "Встречи из почтового ящика можно добавлять в календарь iPhone, если включить это в настройках.";
+"NSCalendarsUsageDescription" = "Встречи из почтового ящика можно добавлять в календарь iPhone, если включить это в настройках.";
+"NSPhotoLibraryUsageDescription" = "Фото используются, только когда вы прикрепляете их к письму или выбираете фото ящика.";
+"NSCameraUsageDescription" = "Ogneliss Mail сам камеру не использует. Её может запросить веб-страница, открытая из письма (например, видеовстреча).";
+"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail не определяет ваше местоположение. Его может запросить веб-страница, открытая из письма.";

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Строка встречи или задачи: колонка времени 52 dp · метка цвета ·
+     название и подпись (место, «весь день»). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ev_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="44dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
+    <LinearLayout
+        android:layout_width="52dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/ev_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textColor="@color/widget_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/ev_end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textColor="@color/widget_sub"
+            android:textSize="11sp"
+            android:visibility="gone" />
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/ev_bar"
+        style="@style/WidgetBar" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <TextView android:id="@+id/ev_title" style="@style/WidgetRowTitle" />
+        <TextView android:id="@+id/ev_sub" style="@style/WidgetRowSub" android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

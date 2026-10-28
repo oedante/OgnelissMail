@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Заголовок дня в списке недели: «ПН, 12 ОКТ» — как полосы разделов в
+     приложении. -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/row_text"
+    android:layout_width="match_parent"
+    android:layout_height="26dp"
+    android:gravity="bottom"
+    android:paddingBottom="3dp"
+    android:singleLine="true"
+    android:ellipsize="end"
+    android:letterSpacing="0.06"
+    android:textAllCaps="true"
+    android:textColor="@color/widget_sub"
+    android:textSize="11sp"
+    android:textStyle="bold" />

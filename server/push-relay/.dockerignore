@@ -1,0 +1,6 @@
+.env
+*.env
+keys
+data
+*.p8
+backup-*

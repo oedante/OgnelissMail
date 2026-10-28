@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Дни недели над сеткой месяца. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="18dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+    <TextView android:id="@+id/mh0" style="@style/WidgetWeekday" />
+    <TextView android:id="@+id/mh1" style="@style/WidgetWeekday" />
+    <TextView android:id="@+id/mh2" style="@style/WidgetWeekday" />
+    <TextView android:id="@+id/mh3" style="@style/WidgetWeekday" />
+    <TextView android:id="@+id/mh4" style="@style/WidgetWeekday" />
+    <TextView android:id="@+id/mh5" style="@style/WidgetWeekday" />
+    <TextView android:id="@+id/mh6" style="@style/WidgetWeekday" />
+</LinearLayout>

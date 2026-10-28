@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Тема на время запуска Flutter (заставка до первого кадра). -->
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:colorAccent">@color/selection_accent</item>
+        <item name="android:colorControlActivated">@color/selection_accent</item>
+    </style>
+    <!-- Тема окна после запуска: фон под Flutter-интерфейсом при смене ориентации и т.п. -->
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">?android:colorBackground</item>
+        <!-- Ручки и подсветка выделения текста в письме (WebView) и системных
+             полях: спокойный синий вместо бирюзово-зелёного по умолчанию. -->
+        <item name="android:colorAccent">@color/selection_accent</item>
+        <item name="android:colorControlActivated">@color/selection_accent</item>
+        <item name="android:textColorHighlight">@color/selection_highlight</item>
+    </style>
+    <!-- ═══ Виджеты рабочего стола: единая сетка (10.10.2026) ═══
+         Поля 14 dp, шапка 40 dp (название 16 sp + подпись 12 sp), отступ
+         до содержимого 10 dp, карточка со скруглением 16 dp и полями 12 dp,
+         строки не ниже 44 dp с разделителями, колонка времени 52 dp —
+         названия всех строк начинаются с одной линии. -->
+    <style name="WidgetRoot">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:background">@drawable/widget_bg</item>
+    </style>
+    <style name="WidgetHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="WidgetTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/widget_text</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetSubtitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/widget_sub</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetHeadButton">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:background">@drawable/widget_btn_bg</item>
+    </style>
+    <style name="WidgetNavButton">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+    <style name="WidgetCard">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:background">@drawable/widget_card_bg</item>
+    </style>
+    <style name="WidgetFooter">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/widget_sub</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <!-- Строка списка -->
+    <style name="WidgetRowTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/widget_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetRowSub">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:textColor">@color/widget_sub</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="WidgetBar">
+        <item name="android:layout_width">3dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:src">@drawable/widget_bar</item>
+        <!-- Метка цвета — оформление: TalkBack её не читает (1.6.48). -->
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+    <!-- Переключатель «День · Неделя · Месяц» -->
+    <style name="WidgetTab">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/widget_text</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <!-- Неделя и месяц -->
+    <style name="WidgetWeekday">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/widget_sub</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+    <style name="WidgetMonthCell">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:lineSpacingMultiplier">0.9</item>
+        <item name="android:textColor">@color/widget_text</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <!-- Ячейка месяца над встречами выбранного дня (1.6.49). -->
+    <style name="WidgetMonthCellFixed" parent="WidgetMonthCell">
+        <item name="android:layout_marginStart">3dp</item>
+        <item name="android:layout_marginEnd">3dp</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+    </style>
+    <!-- Окно «Создать» виджета календаря и выбор даты/времени барабанами. -->
+    <style name="QuickCreateTheme" parent="@android:style/Theme.Material.Light.Dialog.NoActionBar">
+        <item name="android:windowBackground">@drawable/qc_dialog_bg</item>
+        <item name="android:windowMinWidthMajor">80%</item>
+        <item name="android:windowMinWidthMinor">92%</item>
+        <item name="android:colorAccent">@color/widget_accent</item>
+        <item name="android:textColorHint">@color/widget_muted</item>
+    </style>
+    <style name="QuickPickerTheme" parent="@android:style/Theme.Material.Light.Dialog">
+        <item name="android:colorAccent">@color/widget_accent</item>
+        <item name="android:datePickerStyle">@style/QuickDatePicker</item>
+        <item name="android:timePickerStyle">@style/QuickTimePicker</item>
+    </style>
+    <style name="QuickDatePicker" parent="@android:style/Widget.Material.Light.DatePicker">
+        <item name="android:datePickerMode">spinner</item>
+        <item name="android:calendarViewShown">false</item>
+    </style>
+    <style name="QuickTimePicker" parent="@android:style/Widget.Material.Light.TimePicker">
+        <item name="android:timePickerMode">spinner</item>
+    </style>
+</resources>

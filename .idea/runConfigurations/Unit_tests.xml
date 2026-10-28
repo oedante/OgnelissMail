@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Тесты (test/)" type="FlutterTestConfigType" factoryName="Flutter Test">
+    <option name="testDir" value="$PROJECT_DIR$/test" />
+    <option name="useRegexp" value="false" />
+    <option name="additionalArgs" value="" />
+    <option name="scope" value="DIRECTORY" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/fr.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail : verrouillage de l\'écran</string>
+    <string name="device_admin_description">Applique le délai de verrouillage de l\'écran exigé par le serveur Exchange de votre organisation. Ogneliss Mail ne peut ni effacer votre appareil ni modifier votre mot de passe.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Vérifie le courrier pendant que l’application est réduite</string>
+    <string name="bg_sync_hide">Masquer</string>
+    <string name="bg_sync_channel">Synchronisation en arrière-plan</string>
+    <string name="bg_sync_channel_desc">Maintient la synchronisation du courrier quand l’application est réduite. Vous pouvez désactiver cette notification : la synchronisation continue.</string>
+    <string name="widget_myday_label">Ma journée</string>
+    <string name="widget_myday_desc">Réunions et tâches du jour, e-mails non lus et suivis</string>
+    <string name="widget_compose">Écrire</string>
+    <string name="widget_open_app">Ouvrez Ogneliss Mail pour remplir le widget</string>
+    <string name="widget_mail_label">Mail</string>
+    <string name="widget_mail_desc">E-mails non lus par compte et les derniers non lus</string>
+    <string name="widget_cal_label">Agenda</string>
+    <string name="widget_cal_desc">Vos événements par jour, semaine ou mois, toutes boîtes confondues</string>
+    <string name="widget_cal_add">Nouvel événement</string>
+    <string name="widget_notes_label">Notes</string>
+    <string name="widget_note_new">Nouvelle note</string>
+    <string name="widget_notes_desc">Vos dernières notes et un bouton pour en créer une</string>
+    <string name="widget_prev">Précédent</string>
+    <string name="widget_next">Suivant</string>
+    <string name="widget_cal_day">Jour</string>
+    <string name="widget_cal_week">Semaine</string>
+    <string name="widget_cal_month">Mois</string>
+</resources>

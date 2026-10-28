@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>ru</string>
+		<string>de</string>
+		<string>fr</string>
+		<string>ar</string>
+		<string>zh-Hans</string>
+		<string>cs</string>
+		<string>da</string>
+		<string>nl</string>
+		<string>fi</string>
+		<string>he</string>
+		<string>hi</string>
+		<string>hu</string>
+		<string>id</string>
+		<string>it</string>
+		<string>ja</string>
+		<string>ko</string>
+		<string>nb</string>
+		<string>pl</string>
+		<string>pt</string>
+		<string>ro</string>
+		<string>sk</string>
+		<string>es</string>
+		<string>sv</string>
+		<string>th</string>
+		<string>tr</string>
+		<string>vi</string>
+	</array>
+	<key>CFBundleDisplayName</key>
+	<string>Ogneliss Mail</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Ogneliss Mail</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
+
+	<!-- Возврат из входа через OAuth-прокси (Gmail, Яндекс, Mail.ru, Outlook):
+	     com.ogneliss.mail://oauth — та же схема, что в AndroidManifest и
+	     lib/services/mail/oauth/oauth_proxy_flow.dart (kAppScheme). -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.ogneliss.mail.oauth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.ogneliss.mail</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mailto</string>
+		<string>tel</string>
+		<string>sms</string>
+	</array>
+
+	<!-- Разрешения. Тексты на 4 языках — в */InfoPlist.strings. -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>Face ID unlocks Ogneliss Mail instead of the PIN code.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Contacts on this iPhone are used to suggest recipients, and contacts from your mailbox can be saved to the iPhone address book if you turn this on. They are not sent anywhere.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Meetings from your mailbox can be added to the iPhone calendar if you turn this on.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>Meetings from your mailbox can be added to the iPhone calendar if you turn this on.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Meetings from your mailbox can be added to the iPhone calendar if you turn this on.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Ogneliss Mail does not use the camera itself. A web page opened from a message (for example, a video meeting) may ask for it.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Ogneliss Mail does not track your location. A web page opened from a message may ask for it.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photos are used only when you attach them to a message or choose a mailbox photo.</string>
+
+	<!-- Фоновая проверка почты (BGTaskScheduler, пакет workmanager).
+	     Идентификатор = имя задачи в Dart (_TaskNames.periodicSync) и в
+	     AppDelegate (WorkmanagerPlugin.registerPeriodicTask). Время запуска
+	     выбирает iOS; постоянного соединения (IDLE / Ping) в фоне на iOS нет. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+		<string>remote-notification</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>periodic_sync</string>
+		<string>processing_sync</string>
+	</array>
+
+	<!-- Сеть (1.6.13). С 1.6.12 почта на iPhone идёт и через NSURLSession
+	     (режим «как Почта iPhone»), а на него ATS действует: сертификат,
+	     принятый пользователем по отпечатку (корпоративный ЦС, которого нет в
+	     системе), ATS отвергал — NSURLErrorDomain -1200 (журнал симулятора
+	     17.10.2026). Почтовый клиент подключается к серверам, которые задаёт
+	     пользователь, поэтому ATS выключен; проверку сертификата делает
+	     приложение (системные корни, ЦС приложения, «Доверять» по отпечатку).
+	     NSAllowsArbitraryLoadsInWebContent убран: вместе с ним iOS
+	     игнорирует NSAllowsArbitraryLoads. Картинки писем по http в WebView
+	     покрываются этим же ключом. В App Store Connect при проверке —
+	     пояснение: «Email client: connects to user-configured mail servers,
+	     including corporate servers with private CAs». -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+
+	<!-- Экспортное соответствие (ITSAppUsesNonExemptEncryption) намеренно
+	     НЕ задано: приложение использует стандартную криптографию не только
+	     системы (TLS в Dart, AES в SQLCipher). Ответ дайте в App Store Connect
+	     по первой сборке и затем добавьте ключ — docs/store/APP_STORE.md, §6. -->
+
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+</dict>
+</plist>

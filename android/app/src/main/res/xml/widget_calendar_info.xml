@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Виджет «Календарь»: 4×4 (месяц сеткой помещается целиком), растягивается;
+     в меньшем размере День и Неделя показывают, сколько помещается. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="250dp"
+    android:minHeight="250dp"
+    android:minResizeWidth="180dp"
+    android:minResizeHeight="180dp"
+    android:targetCellWidth="4"
+    android:targetCellHeight="4"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/widget_calendar"
+    android:previewLayout="@layout/widget_calendar"
+    android:description="@string/widget_cal_desc"
+    android:widgetCategory="home_screen" />

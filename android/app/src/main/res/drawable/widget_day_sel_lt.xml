@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
+<!-- Выбранный день в сетке месяца (1.6.49): под сеткой — его встречи. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/widget_tab_sel_lt" />
+    <corners android:radius="16dp" />
+</shape>

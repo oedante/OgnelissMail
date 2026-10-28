@@ -1,0 +1,219 @@
+name: ogneliss
+description: Ogneliss Mail — почтовый клиент для Exchange, Gmail, Яндекс и Mail.ru
+publish_to: "none"
+version: 1.8.5+120
+
+environment:
+  # Dart 3.10+: этого требует sqlite3 3.x (через drift 2.32+). Flutter 3.38+.
+  sdk: ">=3.10.0 <4.0.0"
+  flutter: ">=3.38.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  # Значки встроенных элементов Flutter в стиле iOS (колёса выбора времени и
+  # т. п.): без пакета сборка предупреждала «Expected to find fonts for
+  # packages/cupertino_icons/CupertinoIcons», а такой значок был бы квадратом.
+  cupertino_icons: ^1.0.8
+  # Единый движок синхронизации почты (EAS/EWS/IMAP-SMTP/OAuth) — локальный пакет.
+  mail_engine:
+    path: packages/mail_engine
+  # Режим совместимости со шлюзом: HTTP через сетевой стек Android. Пакет-
+  # плагин, чтобы канал работал и в фоновом движке WorkManager.
+  ogneliss_native_http:
+    path: packages/ogneliss_native_http
+  # Riverpod 3: StateProvider / StateNotifierProvider импортируются из
+  # package:flutter_riverpod/legacy.dart (добавлено во все 30 файлов).
+  # riverpod_annotation / riverpod_generator удалены: аннотации @riverpod в
+  # проекте не используются, а версии 2.x конфликтовали с Riverpod 3.
+  flutter_riverpod: ^3.3.2
+  go_router: ^14.6.0
+  # drift 2.32+ (именно от 2.32) работает на sqlite3 3.x: SQLite собирается/скачивается
+  # build-хуком пакета sqlite3, поэтому sqlite3_flutter_libs больше не нужен
+  # (с 3.x он пустой, EOL) и удалён из зависимостей.
+  drift: ^2.32.0
+  # Прямой доступ к SQLite нужен для шифрования базы (проверка ключа,
+  # перевод старой незашифрованной базы) — см. app_database.dart.
+  sqlite3: ^3.4.0
+  path_provider: ^2.1.2
+  path: ^1.9.0
+  flutter_secure_storage: ^10.0.0
+  shared_preferences: ^2.2.2
+  http: ^1.2.0
+  xml: ^6.6.0
+  # 4.5+: этого требует свежий image (4.12 — archive ^4.5.0). Используемый
+  # API (Archive, ArchiveFile, ZipEncoder/ZipDecoder) в 4.x не менялся.
+  # Конфликт с pdf 3.12 снят переопределением ниже (dependency_overrides).
+  archive: ^4.5.1
+  # 2.2.x (форк, затем слит) заменил eventBus на eventStream — IMAP IDLE
+  # (imap_service.startIdle) написан под 2.1.x. Переход на 2.2 — в TECH_DEBT.
+  enough_mail: ">=2.1.6 <2.2.0"
+  local_auth: ^2.2.0
+  flutter_appauth: ^6.0.5
+  crypto: ^3.0.3
+  url_launcher: ^6.2.5
+  pointycastle: ^4.0.0
+  basic_utils: ^5.7.0
+  flutter_html: ^3.0.0-beta.2
+  # Разбор HTML для очистки писем по белому списку (уже используется
+  # flutter_html; здесь — явная зависимость, т.к. импортируется напрямую).
+  html: ^0.15.4
+  flutter_html_table: ^3.0.0-beta.2
+  shimmer: ^3.0.0
+  flutter_slidable: ^3.0.1
+  badges: ^3.1.2
+  # Цвета от обоев Android 12+ (Material You), выключаются в «Общих».
+  dynamic_color: ^1.7.0
+  # Значки Material Symbols Rounded (решение владельца 08.10.2026).
+  material_symbols_icons: ^4.2719.3
+  intl: ^0.20.2
+  flutter_local_notifications: ^17.0.0
+  timezone: ^0.9.4
+  # 0.5.x использовал удалённый в Flutter 3.29 v1-embedding (Registrar) —
+  # Android-сборка падала. 0.9: ExistingPeriodicWorkPolicy вместо ExistingWorkPolicy.
+  # 0.10.6+: на AGP 9 с android.builtInKotlin=false 0.9.3 не подключал Kotlin
+  # и Kotlin-код плагина не собирался («cannot find symbol WorkmanagerPlugin»,
+  # 13.10.2026). 0.10.8–0.10.10 — исправления фоновых задач на Android 16.
+  # 0.10.10 — последняя (сентябрь 2026). KGP подключает по условию, но
+  # Flutter 3.47 всё равно называет его в предупреждении «plugins that apply
+  # KGP» (flutter_workmanager#743) — ждём выпуска с встроенным Kotlin.
+  workmanager: ^0.10.10
+  # 13.x (1.7.2): без Kotlin Gradle Plugin и на win32 6 (её требуют плагины
+  # plus ниже). API с 12-й версии другой (FilePickerResult нет, PlatformFile
+  # абстрактный, saveFile возвращает Uri) — весь вызов плагина в
+  # lib/core/platform/file_pick.dart, экраны его не трогают.
+  file_picker: ^13.1.0
+  open_filex: ^4.3.4
+  # Быстрые действия на значке приложения (долгое нажатие).
+  quick_actions: ^1.1.0
+  # Плагины plus (1.7.2, просьба владельца 23.10.2026): встроенный Kotlin;
+  # KGP подключают сами только при android.builtInKotlin=false (наш случай,
+  # android/gradle.properties) — исправление от 01.10.2026 (plus_plugins#3944).
+  # С 13 / 10 — win32 6 (только Windows), отсюда file_picker 13.
+  device_info_plus: ^13.3.0
+  package_info_plus: ^10.2.2
+  image: ^4.2.0
+  # 5.1 — последняя стабильная; встроенный Kotlin — только в 6.0 (пока alpha,
+  # требует Flutter 3.44 и Dart 3.12). Перейти, когда 6.0 выйдет.
+  flutter_web_auth_2: ^5.0.0
+  # Встроенный браузер: показ писем (MailHtmlView, JS выключен) и редактор
+  # писем HugeRTE (MailEditor, файлы — assets/editor/, лицензия MIT).
+  # 6.2 (бета): 6.1.5 не собирается с текущим Flutter (несовпадение
+  # интерфейсов платформ). Заменить на стабильную 6.2.x, когда выйдет.
+  flutter_inappwebview: ^6.2.0-beta.3
+  # 13.3.1 — см. «Плагины plus» выше (API SharePlus/ShareParams тот же).
+  share_plus: ^13.3.1
+  # QR-код карточки контакта («Мой контакт»). Чистый Dart, без настройки платформ.
+  qr_flutter: ^4.1.0
+  # Генерация PDF: «Экспорт в PDF» и «Печать» в меню письма (не просмотр —
+  # PDF-вложения открываются во внешнем приложении, pdfx удалён в 1.6.2).
+  # Чистый Dart, без платформенной настройки.
+  pdf: ^3.12.0
+  receive_sharing_intent: ^1.8.0
+  permission_handler: ^11.3.0
+  # 4.x (раньше требовал pdfx, удалён в 1.6.2). Используется только
+  # Uuid().v4(), его сигнатура между 3.x и 4.x не менялась.
+  uuid: ^4.5.1
+  collection: ^1.18.0
+  connectivity_plus: ^6.1.0
+  window_manager: ^0.3.8
+  system_tray: ^2.0.3
+
+# system_tray 2.0.3 (последний релиз) объявляет uuid ^3.0.6, а у нас
+# uuid ^4.5.1 — без переопределения версии не согласуются ("version solving
+# failed"). system_tray вызывает только `const Uuid().v1()`, который в 4.x
+# не изменился, поэтому переопределение безопасно.
+dependency_overrides:
+  uuid: ^4.5.1
+  # flutter_html 3.0.0 вызывает внутреннюю функцию matches() из
+  # package:html/src/query_selector.dart, которую html 0.15.7 (август 2026)
+  # удалил: сборка падает с «Method not found: 'matches'». Держим 0.15.6,
+  # пока flutter_html не выпустит исправление (issue #1522).
+  html: 0.15.6
+  # pdf 3.12 объявляет archive <4.1, а image 4.12 требует archive ^4.5.
+  # pdf 3.13 разрешает archive <5, но требует xml 7, а enough_mail 2.1.x —
+  # xml <7, так что pdf 3.13 недоступен. Переопределение безопасно: в pdf
+  # 3.12 archive импортируется только в веб-сборке (io/js.dart); на Android,
+  # iOS и Windows сжатие идёт через dart:io zlib. Между 3.12 и 3.13 код pdf,
+  # связанный с archive, не менялся — изменилась только граница версии.
+  archive: ^4.5.1
+
+dev_dependencies:
+  integration_test:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  drift_dev: ^2.32.0
+  build_runner: ^2.5.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  # Все значки (Android, iOS, сайт, магазины) генерирует
+  # tool/branding/make_icon_v5.py build — запускать плагин не нужно, он
+  # перезаписал бы ресурсы. Ниже — прежние настройки для справки. iOS: Xcode-проекта (Assets.xcassets) в репозитории
+  # нет — плагин падал с PathNotFoundException. Включить после
+  # `flutter create --platforms=ios .`
+  android: false
+  ios: false
+  image_path: "assets/icons/app_icon.png"
+  # Иконка (2026-10, ред. 3): строгая плоская — сланцевый фон #46566C, светлый
+  # конверт с клапаном-треугольником, без градиентов (tool/branding/make_icon_v3.py —
+  # он же сгенерировал ресурсы Android; flutter_launcher_icons нужен только для
+  # iOS/web/Windows). Адаптивная иконка Android = сплошной фон + конверт в
+  # безопасной зоне + одноцветный слой для тематических значков Android 13+.
+  adaptive_icon_background: "assets/icons/app_icon_background.png"
+  adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
+  adaptive_icon_monochrome: "assets/icons/app_icon_monochrome.png"
+  remove_alpha_ios: true
+  min_sdk_android: 21
+  web:
+    generate: false
+    image_path: "assets/icons/app_icon.png"
+  windows:
+    generate: false
+    image_path: "assets/icons/app_icon.png"
+    icon_size: 256
+
+# Шифрование локальной базы: вместо обычного SQLite build-хук пакета sqlite3
+# подключает SQLite3 Multiple Ciphers (на Android, iOS, Windows, macOS, Linux).
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/icons/
+    - assets/brand/
+    # assets/branding/ НЕ включаем в сборку: логотипы (1.1 МБ) нужны для
+    # магазинов приложений, презентаций и документации, но в коде не
+    # используются — в APK это был бы мёртвый груз. Файлы остаются в
+    # репозитории; если понадобятся в UI — вернуть строку ниже.
+    # - assets/branding/
+    - assets/certs/
+    # Строки интерфейса всех языков (1.7.3): assets/l10n/<код>.xml.
+    - assets/l10n/
+    - assets/fonts/pdf/
+    # Редактор писем HugeRTE — tool/editor/build_editor.sh
+    - assets/editor/
+  fonts:
+    # Шрифт интерфейса — один на всех платформах (1.6.20): иначе iPhone и Mac
+    # показывали бы SF, Windows — Segoe UI, Android — Roboto, и вид
+    # приложения различался. Те же файлы — для выгрузки письма в PDF.
+    - family: AppRoboto
+      fonts:
+        - asset: assets/fonts/pdf/Roboto-Regular.ttf
+        - asset: assets/fonts/pdf/Roboto-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/pdf/Roboto-Bold.ttf
+          weight: 700
+    - family: OpenDyslexic
+      fonts:
+        - asset: assets/fonts/OpenDyslexic-Regular.otf
+        - asset: assets/fonts/OpenDyslexic-Bold.otf
+          weight: 700

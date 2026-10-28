@@ -1,0 +1,10 @@
+/* Тексты Info.plist (название и запросы разрешений). Создано tool/l10n/l10n.py gen из assets/l10n/fr.xml — не править вручную. */
+"CFBundleDisplayName" = "Ogneliss Mail";
+"NSFaceIDUsageDescription" = "Face ID déverrouille Ogneliss Mail à la place du code PIN.";
+"NSContactsUsageDescription" = "Les contacts de cet iPhone servent à suggérer des destinataires, et les contacts de votre boîte peuvent être enregistrés dans le carnet d’adresses de l’iPhone si vous l’activez. Ils ne sont envoyés nulle part.";
+"NSCalendarsFullAccessUsageDescription" = "Les réunions de votre boîte peuvent être ajoutées au calendrier de l’iPhone si vous l’activez.";
+"NSCalendarsWriteOnlyAccessUsageDescription" = "Les réunions de votre boîte peuvent être ajoutées au calendrier de l’iPhone si vous l’activez.";
+"NSCalendarsUsageDescription" = "Les réunions de votre boîte peuvent être ajoutées au calendrier de l’iPhone si vous l’activez.";
+"NSPhotoLibraryUsageDescription" = "Les photos ne sont utilisées que lorsque vous les joignez à un message ou choisissez une photo de boîte.";
+"NSCameraUsageDescription" = "Ogneliss Mail n’utilise pas la caméra lui-même. Une page web ouverte depuis un message (par exemple une visioconférence) peut la demander.";
+"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail ne suit pas votre position. Une page web ouverte depuis un message peut la demander.";

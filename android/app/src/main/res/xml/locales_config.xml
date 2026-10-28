@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Языки приложения для системной настройки «Язык приложения» (Android 13+).
+     Создано tool/l10n/l10n.py gen по assets/l10n/*.xml. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="ru"/>
+    <locale android:name="en"/>
+    <locale android:name="de"/>
+    <locale android:name="fr"/>
+    <locale android:name="ar"/>
+    <locale android:name="zh-CN"/>
+    <locale android:name="cs"/>
+    <locale android:name="da"/>
+    <locale android:name="nl"/>
+    <locale android:name="fi"/>
+    <locale android:name="he"/>
+    <locale android:name="hi"/>
+    <locale android:name="hu"/>
+    <locale android:name="id"/>
+    <locale android:name="it"/>
+    <locale android:name="ja"/>
+    <locale android:name="ko"/>
+    <locale android:name="nb"/>
+    <locale android:name="pl"/>
+    <locale android:name="pt"/>
+    <locale android:name="ro"/>
+    <locale android:name="sk"/>
+    <locale android:name="es"/>
+    <locale android:name="sv"/>
+    <locale android:name="th"/>
+    <locale android:name="tr"/>
+    <locale android:name="vi"/>
+</locale-config>

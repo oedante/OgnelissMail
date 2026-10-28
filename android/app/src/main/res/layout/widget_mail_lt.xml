@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
+<!-- Виджет «Почта» (MailWidget): число непрочитанных в шапке, письма
+     карточкой (widget_row_mail), внизу — непрочитанные по ящикам. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mail_root"
+    style="@style/WidgetRootLt">
+    <LinearLayout style="@style/WidgetHeaderLt">
+        <LinearLayout
+            android:id="@+id/mail_head"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/mail_title"
+                    style="@style/WidgetTitleLt"
+                    android:text="@string/widget_mail_label" />
+                <TextView
+                    android:id="@+id/mail_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="8dp"
+                    android:minWidth="20dp"
+                    android:gravity="center"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:background="@drawable/widget_badge_bg_lt"
+                    android:textColor="@color/widget_on_accent_lt"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/mail_sub"
+                style="@style/WidgetSubtitleLt"
+                android:visibility="gone" />
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/mail_action"
+            style="@style/WidgetHeadButtonLt"
+            android:src="@drawable/widget_ic_compose_lt"
+            android:contentDescription="@string/widget_compose" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mail_list"
+        style="@style/WidgetCardLt" />
+
+    <TextView
+        android:id="@+id/mail_footer"
+        style="@style/WidgetFooterLt" />
+</LinearLayout>

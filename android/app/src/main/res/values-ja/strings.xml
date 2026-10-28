@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/ja.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail：画面ロック</string>
+    <string name="device_admin_description">組織の Exchange サーバーが要求する画面ロックのタイムアウトを適用します。Ogneliss Mail がデバイスのデータを消去したり、パスワードを変更したりすることはできません。</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">アプリを最小化している間もメールを確認しています</string>
+    <string name="bg_sync_hide">非表示</string>
+    <string name="bg_sync_channel">バックグラウンド同期</string>
+    <string name="bg_sync_channel_desc">アプリを最小化している間もメールを同期し続けます。この通知はオフにでき、同期は継続されます。</string>
+    <string name="widget_myday_label">今日の予定</string>
+    <string name="widget_myday_desc">今日の会議とタスク、未読メールと追跡中のメール</string>
+    <string name="widget_compose">作成</string>
+    <string name="widget_open_app">ウィジェットを表示するには Ogneliss Mail を開いてください</string>
+    <string name="widget_mail_label">メール</string>
+    <string name="widget_mail_desc">アカウント別の未読メールと最新の未読メール</string>
+    <string name="widget_cal_label">カレンダー</string>
+    <string name="widget_cal_desc">すべてのアカウントの予定を日・週・月で表示</string>
+    <string name="widget_cal_add">新しい予定</string>
+    <string name="widget_notes_label">メモ</string>
+    <string name="widget_note_new">新しいメモ</string>
+    <string name="widget_notes_desc">最新のメモと新規作成ボタン</string>
+    <string name="widget_prev">前へ</string>
+    <string name="widget_next">次へ</string>
+    <string name="widget_cal_day">日</string>
+    <string name="widget_cal_week">週</string>
+    <string name="widget_cal_month">月</string>
+</resources>

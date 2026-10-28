@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/cs.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: zámek obrazovky</string>
+    <string name="device_admin_description">Uplatňuje časový limit zámku obrazovky, který vyžaduje server Exchange vaší organizace. Ogneliss Mail nemůže vymazat vaše zařízení ani změnit vaše heslo.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Kontrola pošty, když je aplikace minimalizovaná</string>
+    <string name="bg_sync_hide">Skrýt</string>
+    <string name="bg_sync_channel">Synchronizace na pozadí</string>
+    <string name="bg_sync_channel_desc">Udržuje synchronizaci pošty, když je aplikace minimalizovaná. Toto oznámení můžete vypnout — synchronizace bude pokračovat.</string>
+    <string name="widget_myday_label">Můj den</string>
+    <string name="widget_myday_desc">Dnešní schůzky a úkoly, nepřečtené a sledované zprávy</string>
+    <string name="widget_compose">Napsat</string>
+    <string name="widget_open_app">Widget vyplníte otevřením Ogneliss Mail</string>
+    <string name="widget_mail_label">Pošta</string>
+    <string name="widget_mail_desc">Nepřečtené zprávy podle účtů a nejnovější nepřečtené zprávy</string>
+    <string name="widget_cal_label">Kalendář</string>
+    <string name="widget_cal_desc">Vaše události ze všech účtů po dnech, týdnech nebo měsících</string>
+    <string name="widget_cal_add">Nová událost</string>
+    <string name="widget_notes_label">Poznámky</string>
+    <string name="widget_note_new">Nová poznámka</string>
+    <string name="widget_notes_desc">Vaše nejnovější poznámky a tlačítko pro novou</string>
+    <string name="widget_prev">Předchozí</string>
+    <string name="widget_next">Další</string>
+    <string name="widget_cal_day">Den</string>
+    <string name="widget_cal_week">Týden</string>
+    <string name="widget_cal_month">Měsíc</string>
+</resources>

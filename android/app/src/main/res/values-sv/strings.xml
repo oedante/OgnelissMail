@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/sv.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: skärmlås</string>
+    <string name="device_admin_description">Tillämpar den tidsgräns för skärmlås som din organisations Exchange-server kräver. Ogneliss Mail kan inte radera din enhet eller ändra ditt lösenord.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Kontrollerar e-post medan appen är minimerad</string>
+    <string name="bg_sync_hide">Dölj</string>
+    <string name="bg_sync_channel">Synkronisering i bakgrunden</string>
+    <string name="bg_sync_channel_desc">Håller e-posten synkroniserad medan appen är minimerad. Du kan stänga av den här aviseringen — synkroniseringen fortsätter.</string>
+    <string name="widget_myday_label">Min dag</string>
+    <string name="widget_myday_desc">Dagens möten och uppgifter, olästa och följda e-postmeddelanden</string>
+    <string name="widget_compose">Skriv</string>
+    <string name="widget_open_app">Öppna Ogneliss Mail för att fylla i widgeten</string>
+    <string name="widget_mail_label">E-post</string>
+    <string name="widget_mail_desc">Olästa e-postmeddelanden per konto och de senaste olästa</string>
+    <string name="widget_cal_label">Kalender</string>
+    <string name="widget_cal_desc">Dina händelser från alla konton per dag, vecka eller månad</string>
+    <string name="widget_cal_add">Ny händelse</string>
+    <string name="widget_notes_label">Anteckningar</string>
+    <string name="widget_note_new">Ny anteckning</string>
+    <string name="widget_notes_desc">Dina senaste anteckningar och en knapp för en ny</string>
+    <string name="widget_prev">Föregående</string>
+    <string name="widget_next">Nästa</string>
+    <string name="widget_cal_day">Dag</string>
+    <string name="widget_cal_week">Vecka</string>
+    <string name="widget_cal_month">Månad</string>
+</resources>

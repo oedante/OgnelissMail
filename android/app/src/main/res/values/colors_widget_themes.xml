@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
+<resources>
+    <color name="widget_accent_lt">#2A63A6</color>
+    <color name="widget_accent_dk">#8AB1E6</color>
+    <color name="widget_bg_lt">#E6EBF2</color>
+    <color name="widget_bg_dk">#181D23</color>
+    <color name="widget_bg_soft_lt">#B3E6EBF2</color>
+    <color name="widget_bg_soft_dk">#B3181D23</color>
+    <color name="widget_card_lt">#F5F7FA</color>
+    <color name="widget_card_dk">#232A33</color>
+    <color name="widget_card_soft_lt">#99F5F7FA</color>
+    <color name="widget_card_soft_dk">#99232A33</color>
+    <color name="widget_divider_lt">#DCE2EA</color>
+    <color name="widget_divider_dk">#2C343E</color>
+    <color name="widget_join_text_lt">#FFFFFF</color>
+    <color name="widget_join_text_dk">#10223A</color>
+    <color name="widget_muted_lt">#6F7782</color>
+    <color name="widget_muted_dk">#858E99</color>
+    <color name="widget_on_accent_lt">#FFFFFF</color>
+    <color name="widget_on_accent_dk">#10223A</color>
+    <color name="widget_sub_lt">#5B6470</color>
+    <color name="widget_sub_dk">#9AA3AE</color>
+    <color name="widget_tab_sel_lt">#D6E3F4</color>
+    <color name="widget_tab_sel_dk">#2B3B50</color>
+    <color name="widget_task_lt">#3F6E4B</color>
+    <color name="widget_task_dk">#8CC59A</color>
+    <color name="widget_text_lt">#1F2329</color>
+    <color name="widget_text_dk">#E2E4E8</color>
+    <color name="widget_warn_lt">#7A5E00</color>
+    <color name="widget_warn_dk">#E0B03A</color>
+</resources>

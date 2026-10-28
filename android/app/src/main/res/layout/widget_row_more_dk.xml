@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
+<!-- «ещё N» / «Встреч нет»: строка-подпись внутри карточки. -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/row_text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="32dp"
+    android:gravity="center_vertical"
+    android:singleLine="true"
+    android:ellipsize="end"
+    android:textColor="@color/widget_sub_dk"
+    android:textSize="13sp" />

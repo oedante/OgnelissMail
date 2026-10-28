@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:colorAccent">@color/selection_accent</item>
+        <item name="android:colorControlActivated">@color/selection_accent</item>
+    </style>
+    <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">?android:colorBackground</item>
+        <!-- Ручки и подсветка выделения текста в письме (WebView) и системных
+             полях: спокойный синий вместо бирюзово-зелёного по умолчанию. -->
+        <item name="android:colorAccent">@color/selection_accent</item>
+        <item name="android:colorControlActivated">@color/selection_accent</item>
+        <item name="android:textColorHighlight">@color/selection_highlight</item>
+    </style>
+    <!-- Окно «Создать» виджета календаря и выбор даты/времени барабанами. -->
+    <style name="QuickCreateTheme" parent="@android:style/Theme.Material.Dialog.NoActionBar">
+        <item name="android:windowBackground">@drawable/qc_dialog_bg</item>
+        <item name="android:windowMinWidthMajor">80%</item>
+        <item name="android:windowMinWidthMinor">92%</item>
+        <item name="android:colorAccent">@color/widget_accent</item>
+        <item name="android:textColorHint">@color/widget_muted</item>
+    </style>
+    <style name="QuickPickerTheme" parent="@android:style/Theme.Material.Dialog">
+        <item name="android:colorAccent">@color/widget_accent</item>
+        <item name="android:datePickerStyle">@style/QuickDatePicker</item>
+        <item name="android:timePickerStyle">@style/QuickTimePicker</item>
+    </style>
+    <style name="QuickDatePicker" parent="@android:style/Widget.Material.DatePicker">
+        <item name="android:datePickerMode">spinner</item>
+        <item name="android:calendarViewShown">false</item>
+    </style>
+    <style name="QuickTimePicker" parent="@android:style/Widget.Material.TimePicker">
+        <item name="android:timePickerMode">spinner</item>
+    </style>
+</resources>

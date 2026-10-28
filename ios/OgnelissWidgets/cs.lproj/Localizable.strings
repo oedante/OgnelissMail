@@ -1,0 +1,14 @@
+/* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/cs.xml — не править вручную. */
+"open_app" = "Widget vyplníte otevřením Ogneliss Mail";
+"myday_label" = "Můj den";
+"myday_desc" = "Dnešní schůzky a úkoly, nepřečtené a sledované zprávy";
+"mail_label" = "Pošta";
+"mail_desc" = "Nepřečtené zprávy podle účtů a nejnovější nepřečtené zprávy";
+"cal_label" = "Kalendář";
+"cal_desc" = "Nadcházející události ze všech vašich účtů na dva týdny";
+"notes_label" = "Poznámky";
+"notes_desc" = "Vaše nejnovější poznámky a tlačítko pro novou";
+"calweek_label" = "Kalendář: týden";
+"calweek_desc" = "Sedm dní a události tohoto týdne";
+"calmonth_label" = "Kalendář: měsíc";
+"calmonth_desc" = "Měsíc v mřížce s tečkami událostí";

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>организации Почта — авторизация</title>
+</head>
+<body style="font-family:sans-serif;text-align:center;padding-top:48px">
+  <h3>Авторизация завершена</h3>
+  <p>Можно закрыть это окно.</p>
+  <script>
+    (function () {
+      var query = window.location.search.substring(1);
+      if (window.opener) {
+        window.opener.postMessage('oauth-result:' + query, window.location.origin);
+      }
+      setTimeout(function () { window.close(); }, 400);
+    })();
+  </script>
+</body>
+</html>

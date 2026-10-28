@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/hu.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: képernyőzár</string>
+    <string name="device_admin_description">Alkalmazza a szervezeted Exchange-szervere által előírt képernyőzár-időkorlátot. Az Ogneliss Mail nem tudja törölni az eszközödet, és nem tudja megváltoztatni a jelszavadat.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Levelek ellenőrzése, amíg az alkalmazás kis méretben fut</string>
+    <string name="bg_sync_hide">Elrejtés</string>
+    <string name="bg_sync_channel">Szinkronizálás a háttérben</string>
+    <string name="bg_sync_channel_desc">Szinkronban tartja a leveleket, amíg az alkalmazás kis méretben fut. Ezt az értesítést kikapcsolhatod — a szinkronizálás folytatódik.</string>
+    <string name="widget_myday_label">Saját napom</string>
+    <string name="widget_myday_desc">A mai megbeszélések és feladatok, olvasatlan és követett levelek</string>
+    <string name="widget_compose">Új üzenet</string>
+    <string name="widget_open_app">A widget kitöltéséhez nyisd meg az Ogneliss Mailt</string>
+    <string name="widget_mail_label">Levelek</string>
+    <string name="widget_mail_desc">Olvasatlan levelek fiókonként és a legutóbbi olvasatlan levelek</string>
+    <string name="widget_cal_label">Naptár</string>
+    <string name="widget_cal_desc">Eseményeid az összes fiókból napi, heti vagy havi nézetben</string>
+    <string name="widget_cal_add">Új esemény</string>
+    <string name="widget_notes_label">Jegyzetek</string>
+    <string name="widget_note_new">Új jegyzet</string>
+    <string name="widget_notes_desc">Legutóbbi jegyzeteid és egy gomb az újhoz</string>
+    <string name="widget_prev">Előző</string>
+    <string name="widget_next">Következő</string>
+    <string name="widget_cal_day">Nap</string>
+    <string name="widget_cal_week">Hét</string>
+    <string name="widget_cal_month">Hónap</string>
+</resources>

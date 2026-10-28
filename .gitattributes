@@ -1,0 +1,5 @@
+# Скрипты для Linux-серверов — только с LF, иначе bash: $'\r': command not found
+*.sh text eol=lf
+server/** text eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf

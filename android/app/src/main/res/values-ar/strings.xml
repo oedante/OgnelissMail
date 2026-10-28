@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/ar.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: قفل الشاشة</string>
+    <string name="device_admin_description">يطبّق مهلة قفل الشاشة التي يشترطها خادم Exchange الخاص بمؤسستك. لا يستطيع Ogneliss Mail مسح بيانات جهازك أو تغيير كلمة مرورك.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">جارٍ فحص البريد أثناء تصغير التطبيق</string>
+    <string name="bg_sync_hide">إخفاء</string>
+    <string name="bg_sync_channel">المزامنة في الخلفية</string>
+    <string name="bg_sync_channel_desc">يُبقي البريد متزامنًا أثناء تصغير التطبيق. يمكنك إيقاف هذا الإشعار، وستستمر المزامنة.</string>
+    <string name="widget_myday_label">يومي</string>
+    <string name="widget_myday_desc">اجتماعات اليوم ومهامه، والرسائل غير المقروءة والمتابَعة</string>
+    <string name="widget_compose">إنشاء</string>
+    <string name="widget_open_app">افتح Ogneliss Mail لملء الأداة</string>
+    <string name="widget_mail_label">البريد</string>
+    <string name="widget_mail_desc">الرسائل غير المقروءة حسب الحساب وأحدث الرسائل غير المقروءة</string>
+    <string name="widget_cal_label">التقويم</string>
+    <string name="widget_cal_desc">أحداثك من جميع الحسابات حسب اليوم أو الأسبوع أو الشهر</string>
+    <string name="widget_cal_add">حدث جديد</string>
+    <string name="widget_notes_label">الملاحظات</string>
+    <string name="widget_note_new">ملاحظة جديدة</string>
+    <string name="widget_notes_desc">أحدث ملاحظاتك وزر لإنشاء ملاحظة جديدة</string>
+    <string name="widget_prev">السابق</string>
+    <string name="widget_next">التالي</string>
+    <string name="widget_cal_day">يوم</string>
+    <string name="widget_cal_week">أسبوع</string>
+    <string name="widget_cal_month">شهر</string>
+</resources>

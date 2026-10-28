@@ -1,0 +1,16 @@
+{
+  "name": "mail-oauth-proxy",
+  "version": "1.1.0",
+  "description": "OAuth redirect/token-exchange proxy for Mail (keeps client secrets server-side, auto-refreshes tokens)",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.3"
+  },
+  "private": true
+}

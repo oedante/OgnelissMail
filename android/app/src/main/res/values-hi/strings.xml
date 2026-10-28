@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/hi.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: स्क्रीन लॉक</string>
+    <string name="device_admin_description">आपके संगठन के Exchange सर्वर द्वारा आवश्यक स्क्रीन लॉक टाइमआउट लागू करता है। Ogneliss Mail आपके डिवाइस का डेटा मिटा नहीं सकता और आपका पासवर्ड नहीं बदल सकता।</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">ऐप के छोटा होने पर भी मेल जांच रहा है</string>
+    <string name="bg_sync_hide">छिपाएं</string>
+    <string name="bg_sync_channel">बैकग्राउंड सिंक</string>
+    <string name="bg_sync_channel_desc">ऐप के छोटा होने पर भी मेल सिंक रखता है। आप यह सूचना बंद कर सकते हैं — सिंक जारी रहेगा।</string>
+    <string name="widget_myday_label">मेरा दिन</string>
+    <string name="widget_myday_desc">आज की मीटिंग और कार्य, अपठित और ट्रैक किए गए ईमेल</string>
+    <string name="widget_compose">लिखें</string>
+    <string name="widget_open_app">विजेट भरने के लिए Ogneliss Mail खोलें</string>
+    <string name="widget_mail_label">मेल</string>
+    <string name="widget_mail_desc">खाते के अनुसार अपठित ईमेल और सबसे नए अपठित ईमेल</string>
+    <string name="widget_cal_label">कैलेंडर</string>
+    <string name="widget_cal_desc">सभी खातों के आपके इवेंट — दिन, सप्ताह या महीने के अनुसार</string>
+    <string name="widget_cal_add">नया इवेंट</string>
+    <string name="widget_notes_label">नोट</string>
+    <string name="widget_note_new">नया नोट</string>
+    <string name="widget_notes_desc">आपके नवीनतम नोट और नया नोट बनाने का बटन</string>
+    <string name="widget_prev">पिछला</string>
+    <string name="widget_next">अगला</string>
+    <string name="widget_cal_day">दिन</string>
+    <string name="widget_cal_week">सप्ताह</string>
+    <string name="widget_cal_month">महीना</string>
+</resources>

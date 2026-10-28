@@ -1,0 +1,14 @@
+/* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/ko.xml — не править вручную. */
+"open_app" = "위젯을 채우려면 Ogneliss Mail을 여세요";
+"myday_label" = "나의 하루";
+"myday_desc" = "오늘의 회의와 할 일, 읽지 않은 메일 및 추적 중인 메일";
+"mail_label" = "메일";
+"mail_desc" = "계정별 읽지 않은 메일과 최근 읽지 않은 메일";
+"cal_label" = "캘린더";
+"cal_desc" = "모든 계정의 앞으로 2주간 일정";
+"notes_label" = "메모";
+"notes_desc" = "최근 메모와 새 메모 버튼";
+"calweek_label" = "캘린더: 주";
+"calweek_desc" = "7일과 이번 주 일정";
+"calmonth_label" = "캘린더: 월";
+"calmonth_desc" = "일정 점이 표시되는 격자형 월 보기";

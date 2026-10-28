@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Заставка запуска: знак приложения (конверт с огненной лисой в круге)
+     по центру; файл splash_fox — tool/branding/make_icon_v5.py. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splash_background" />
+    <item>
+        <bitmap android:gravity="center" android:src="@drawable/splash_fox" />
+    </item>
+</layer-list>

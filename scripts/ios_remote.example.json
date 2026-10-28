@@ -1,0 +1,9 @@
+{
+  "host": "192.168.1.50",
+  "user": "oleg",
+  "remoteDir": "ogneliss-mail",
+  "teamId": "ABCDE12345",
+  "ascKeyId": "",
+  "ascIssuerId": "",
+  "keychainPassword": ""
+}

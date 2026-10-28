@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Фон адаптивной иконки (как adaptive_icon_background в pubspec.yaml). -->
+    <color name="ic_launcher_background">#394450</color>
+    <!-- Фон заставки запуска (знак с лисой). -->
+    <color name="splash_background">#FFFFFF</color>
+    <!-- Выделение текста: спокойный синий (как AppTheme.selectionBlueLight). -->
+    <color name="selection_accent">#2F6DB5</color>
+    <color name="selection_highlight">#472F6DB5</color>
+    <!-- Быстрые действия значка: цвет знака приложения (графит) и белый значок. -->
+    <color name="shortcut_background">#2E333B</color>
+    <color name="shortcut_glyph">#FFFFFF</color>
+    <!-- Виджеты на рабочем столе: фон и карточки — как в приложении («Мой
+         день»: голубовато-серая подложка, светлые карточки). Чисто белый фон
+         выделялся на рабочем столе (замечание 10.10.2026). -->
+    <color name="widget_bg">#E6EBF2</color>
+    <color name="widget_card">#F5F7FA</color>
+    <color name="widget_text">#1F2329</color>
+    <color name="widget_sub">#5B6470</color>
+    <color name="widget_accent">#2A63A6</color>
+    <color name="widget_join_text">#FFFFFF</color>
+    <!-- Сетка виджетов (10.10.2026): разделители, выбранная вкладка, «сегодня». -->
+    <color name="widget_divider">#DCE2EA</color>
+    <color name="widget_tab_sel">#D6E3F4</color>
+    <color name="widget_on_accent">#FFFFFF</color>
+    <color name="widget_task">#3F6E4B</color>
+    <color name="widget_muted">#6F7782</color>
+    <!-- 1.6.48: «Не обновлялось с …» в виджете «Почта». Контраст на карточке
+         5,7:1; акцент 5,7:1 (было 4,4 на фоне), задачи 5,5 (было 4,0),
+         приглушённый (прошедшие встречи) 4,2 (было 2,9). -->
+    <color name="widget_warn">#7A5E00</color>
+    <!-- 1.6.49: полупрозрачный фон виджетов (настройка «Фон виджетов»). -->
+    <color name="widget_bg_soft">#B3E6EBF2</color>
+    <color name="widget_card_soft">#99F5F7FA</color>
+</resources>

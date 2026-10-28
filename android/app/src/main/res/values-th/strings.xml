@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/th.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: ล็อกหน้าจอ</string>
+    <string name="device_admin_description">ใช้เวลาหมดอายุของการล็อกหน้าจอตามที่เซิร์ฟเวอร์ Exchange ขององค์กรกำหนด Ogneliss Mail ไม่สามารถลบข้อมูลในอุปกรณ์หรือเปลี่ยนรหัสผ่านของคุณได้</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">กำลังตรวจสอบอีเมลขณะที่ย่อแอปอยู่</string>
+    <string name="bg_sync_hide">ซ่อน</string>
+    <string name="bg_sync_channel">การซิงค์เบื้องหลัง</string>
+    <string name="bg_sync_channel_desc">ทำให้อีเมลซิงค์ต่อเนื่องขณะที่ย่อแอปอยู่ คุณปิดการแจ้งเตือนนี้ได้ การซิงค์จะยังคงทำงานต่อไป</string>
+    <string name="widget_myday_label">วันของฉัน</string>
+    <string name="widget_myday_desc">การประชุมและงานของวันนี้ อีเมลที่ยังไม่ได้อ่านและอีเมลที่ติดตาม</string>
+    <string name="widget_compose">เขียน</string>
+    <string name="widget_open_app">เปิด Ogneliss Mail เพื่อเติมข้อมูลวิดเจ็ต</string>
+    <string name="widget_mail_label">อีเมล</string>
+    <string name="widget_mail_desc">อีเมลที่ยังไม่ได้อ่านแยกตามบัญชี และอีเมลที่ยังไม่ได้อ่านล่าสุด</string>
+    <string name="widget_cal_label">ปฏิทิน</string>
+    <string name="widget_cal_desc">กิจกรรมของคุณจากทุกบัญชี แสดงเป็นรายวัน รายสัปดาห์ หรือรายเดือน</string>
+    <string name="widget_cal_add">กิจกรรมใหม่</string>
+    <string name="widget_notes_label">โน้ต</string>
+    <string name="widget_note_new">โน้ตใหม่</string>
+    <string name="widget_notes_desc">โน้ตล่าสุดของคุณและปุ่มสำหรับสร้างโน้ตใหม่</string>
+    <string name="widget_prev">ก่อนหน้า</string>
+    <string name="widget_next">ถัดไป</string>
+    <string name="widget_cal_day">วัน</string>
+    <string name="widget_cal_week">สัปดาห์</string>
+    <string name="widget_cal_month">เดือน</string>
+</resources>

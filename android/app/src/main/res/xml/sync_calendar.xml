@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Календари ящиков в телефоне пишет приложение; системная синхронизация не нужна. -->
+<sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
+    android:contentAuthority="com.android.calendar"
+    android:accountType="com.ogneliss.mail.account"
+    android:supportsUploading="false"
+    android:userVisible="false"
+    android:isAlwaysSyncable="false" />

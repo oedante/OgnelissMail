@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/sk.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: zámok obrazovky</string>
+    <string name="device_admin_description">Uplatňuje časový limit zámku obrazovky, ktorý vyžaduje server Exchange vašej organizácie. Ogneliss Mail nemôže vymazať vaše zariadenie ani zmeniť vaše heslo.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Kontrola pošty, keď je aplikácia minimalizovaná</string>
+    <string name="bg_sync_hide">Skryť</string>
+    <string name="bg_sync_channel">Synchronizácia na pozadí</string>
+    <string name="bg_sync_channel_desc">Udržiava synchronizáciu pošty, keď je aplikácia minimalizovaná. Toto upozornenie môžete vypnúť — synchronizácia bude pokračovať.</string>
+    <string name="widget_myday_label">Môj deň</string>
+    <string name="widget_myday_desc">Dnešné stretnutia a úlohy, neprečítané a sledované správy</string>
+    <string name="widget_compose">Napísať</string>
+    <string name="widget_open_app">Miniaplikáciu vyplníte otvorením Ogneliss Mail</string>
+    <string name="widget_mail_label">Pošta</string>
+    <string name="widget_mail_desc">Neprečítané správy podľa účtov a najnovšie neprečítané správy</string>
+    <string name="widget_cal_label">Kalendár</string>
+    <string name="widget_cal_desc">Vaše udalosti zo všetkých účtov po dňoch, týždňoch alebo mesiacoch</string>
+    <string name="widget_cal_add">Nová udalosť</string>
+    <string name="widget_notes_label">Poznámky</string>
+    <string name="widget_note_new">Nová poznámka</string>
+    <string name="widget_notes_desc">Vaše najnovšie poznámky a tlačidlo pre novú</string>
+    <string name="widget_prev">Predchádzajúce</string>
+    <string name="widget_next">Ďalšie</string>
+    <string name="widget_cal_day">Deň</string>
+    <string name="widget_cal_week">Týždeň</string>
+    <string name="widget_cal_month">Mesiac</string>
+</resources>

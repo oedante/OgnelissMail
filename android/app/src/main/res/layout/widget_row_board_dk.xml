@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
+<!-- Дело в колонке доски «Мой день». -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/row_text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:maxLines="2"
+    android:ellipsize="end"
+    android:lineSpacingMultiplier="1.05"
+    android:textColor="@color/widget_text_dk"
+    android:textSize="12sp" />

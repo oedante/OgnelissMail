@@ -1,0 +1,45 @@
+# Образец. Рабочий файл создаёт install-push-relay.sh в /opt/mailserver/push-relay
+# (подставляет сеть Nginx Proxy Manager и путь). Вручную:
+#   docker compose -f docker-compose.push.yml up -d --build
+services:
+  push-relay:
+    build: .
+    image: ogneliss/push-relay:latest
+    container_name: push-relay
+    env_file:
+      - ./.env
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8788
+      - DATA_FILE=/data/tokens.json
+    expose:
+      - "8788"
+    volumes:
+      - ./data:/data
+      - ./keys:/keys:ro
+    restart: always
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8788/push/healthz"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+    networks:
+      - npm
+
+networks:
+  npm:
+    external: true
+    name: mailserver_default

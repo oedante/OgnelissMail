@@ -1,0 +1,272 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- Напоминания о встречах и задачах — точные будильники. На Android 14+
+         SCHEDULE_EXACT_ALARM по умолчанию не выдан: приложение один раз
+         предлагает включить его после разрешения на уведомления (и всегда —
+         в «Настройки → Разрешения»); без него напоминание ставится неточно.
+         USE_EXACT_ALARM (выдаётся сразу) сознательно не используется: Google
+         Play разрешает его только приложениям, чья ОСНОВНАЯ функция —
+         будильник или календарь, и почтовый клиент рискует отказом. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
+    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
+    <!-- Политика Exchange «нужен пароль устройства»: узнать сложность блокировки
+         экрана (Android 10+). Обычное разрешение, запрос у пользователя не нужен. -->
+    <uses-permission android:name="android.permission.REQUEST_PASSWORD_COMPLEXITY"/>
+
+    <application
+        android:label="Ogneliss Mail"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:usesCleartextTraffic="false"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:localeConfig="@xml/locales_config">
+        <!-- Одно окно приложения (замечание 13.10.2026: в «Недавних» висели два
+             окна). Было singleTop с taskAffinity="": нажатие на виджет или
+             уведомление (NEW_TASK) и «Написать» из другого приложения
+             создавали второе окно со своим движком Flutter — вторая копия
+             приложения синхронизировала ящик параллельно (ключи синхронизации
+             ActiveSync расходились, сервер сбрасывал папки, письма
+             задваивались). singleTask: окно одно, новое намерение приходит в
+             onNewIntent; сходство задачи — по умолчанию (имя пакета). -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme"/>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="mailto"/>
+            </intent-filter>
+            <!-- «Написать письмо» из других приложений (контакты, браузер):
+                 ACTION_SENDTO mailto — так система ищет почтовую программу.
+                 Без него было «Не найдено почтовое приложение» (11.10.2026). -->
+            <intent-filter>
+                <action android:name="android.intent.action.SENDTO"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="mailto"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+        </activity>
+        <meta-data android:name="flutterEmbedding" android:value="2"/>
+
+        <!-- Foreground service: удержание процесса для синхронизации, пока
+             приложение свёрнуто (тип dataSync — Android 14+). -->
+        <service
+            android:name=".SyncForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync"/>
+        <!-- Окно «Создать» виджета «Календарь»: встреча или задача без входа
+             в приложение (QuickCreateActivity.kt). Своя задача и без следа
+             в «Недавних»: после «Создать» человек остаётся на рабочем столе. -->
+        <activity
+            android:name=".QuickCreateActivity"
+            android:theme="@style/QuickCreateTheme"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:taskAffinity="com.ogneliss.mail.quickcreate"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <!-- Виджет «Мой день» на рабочем столе (MyDayWidget.kt). -->
+        <receiver
+            android:name=".MyDayWidget"
+            android:label="@string/widget_myday_label"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_my_day_info" />
+        </receiver>
+        <!-- Виджет «Почта» (MailWidget.kt). -->
+        <receiver
+            android:name=".MailWidget"
+            android:label="@string/widget_mail_label"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_mail_info" />
+        </receiver>
+        <!-- Виджет «Календарь» (CalendarWidget в HomeWidgets.kt). -->
+        <receiver
+            android:name=".CalendarWidget"
+            android:label="@string/widget_cal_label"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_calendar_info" />
+        </receiver>
+        <!-- Виджет «Заметки» (NotesWidget в HomeWidgets.kt). -->
+        <receiver
+            android:name=".NotesWidget"
+            android:label="@string/widget_notes_label"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_notes_info" />
+        </receiver>
+        <!-- Пульс фоновой работы: будильник раз в ~10 мин будит процесс, пока
+             работает SyncForegroundService (проверка push в глубоком сне). -->
+        <receiver android:exported="false"
+            android:name=".SyncHeartbeatReceiver" />
+
+        <!-- Приёмники для отложенных уведомлений (снуз писем): доставка по расписанию
+             и перепланирование после перезагрузки устройства. -->
+        <receiver android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <!-- Кнопки уведомления без открытия приложения («Прочитано», «Удалить»,
+             умные ответы). Без этого приёмника нажатие ничего не делало. -->
+        <receiver android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
+        <!-- 1.6.12 (замечание Google Play: BOOT_COMPLETED и служба dataSync на
+             Android 15): приёмника загрузки у приложения нет. После
+             перезагрузки напоминания перевыставляет первая фоновая проверка
+             почты (WorkManager) — reminder_scheduler_service.dart узнаёт
+             перезагрузку по /proc/uptime. После обновления приложения —
+             как раньше. -->
+        <receiver android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+        <!-- Администратор устройства: только тайм-аут блокировки экрана из политики
+             Exchange (res/xml/device_admin.xml). Включает пользователь сам. -->
+        <receiver
+            android:name=".OgnelissDeviceAdminReceiver"
+            android:label="@string/device_admin_label"
+            android:description="@string/device_admin_description"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+        <!-- Учётная запись «Ogneliss Mail» (Настройки → Аккаунты): контакты и
+             календари ящиков в телефоне — отдельной группой (PhoneMirrorPlugin).
+             Адаптеры синхронизации пустые: данные пишет приложение. -->
+        <service
+            android:name=".OgnelissAuthenticatorService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/account_authenticator" />
+        </service>
+        <service
+            android:name=".OgnelissContactsSyncService"
+            android:exported="true"
+            android:permission="android.permission.BIND_SYNC_ADAPTER">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/sync_contacts" />
+        </service>
+        <service
+            android:name=".OgnelissCalendarSyncService"
+            android:exported="true"
+            android:permission="android.permission.BIND_SYNC_ADAPTER">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/sync_calendar" />
+        </service>
+        <!-- OAuth через корпоративный прокси: ловим возврат com.ogneliss.mail://oauth.
+             Активность из flutter_web_auth_2; taskAffinity="" — рекомендация пакета
+             (иначе возможны проблемы с возвратом в приложение). -->
+        <!-- Открытие вложений внешним приложением (FileOpenBridge, 1.6.2). -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_open_paths" />
+        </provider>
+
+        <activity
+            android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
+            android:exported="true"
+            android:taskAffinity="">
+            <intent-filter android:label="flutter_web_auth_2">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="com.ogneliss.mail" android:host="oauth" />
+            </intent-filter>
+            <!-- Вход без сервера входа (1.6.2): Google возвращает на
+                 com.ogneliss.mail:/oauth2redirect (схема пакета, без хоста). -->
+            <intent-filter android:label="flutter_web_auth_2">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="com.ogneliss.mail" android:path="/oauth2redirect" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+    <queries>
+        <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="https"/></intent>
+        <intent><action android:name="android.intent.action.SENDTO"/><data android:scheme="mailto"/></intent>
+        <!-- Открытие вложений во внешних приложениях (Android 11+: без этого
+             open_filex не видит ни одного приложения и молча ничего не делает). -->
+        <intent><action android:name="android.intent.action.VIEW"/><data android:mimeType="*/*"/></intent>
+        <intent><action android:name="android.intent.action.SEND"/><data android:mimeType="*/*"/></intent>
+    </queries>
+</manifest>

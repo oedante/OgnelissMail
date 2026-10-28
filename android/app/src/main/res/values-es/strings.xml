@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/es.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: bloqueo de pantalla</string>
+    <string name="device_admin_description">Aplica el tiempo de bloqueo de pantalla que exige el servidor Exchange de tu organización. Ogneliss Mail no puede borrar tu dispositivo ni cambiar tu contraseña.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Comprobando el correo mientras la app está minimizada</string>
+    <string name="bg_sync_hide">Ocultar</string>
+    <string name="bg_sync_channel">Sincronización en segundo plano</string>
+    <string name="bg_sync_channel_desc">Mantiene el correo sincronizado mientras la app está minimizada. Puedes desactivar esta notificación; la sincronización continúa.</string>
+    <string name="widget_myday_label">Mi día</string>
+    <string name="widget_myday_desc">Reuniones y tareas de hoy, correos sin leer y en seguimiento</string>
+    <string name="widget_compose">Redactar</string>
+    <string name="widget_open_app">Abre Ogneliss Mail para rellenar el widget</string>
+    <string name="widget_mail_label">Correo</string>
+    <string name="widget_mail_desc">Correos sin leer por cuenta y los últimos correos sin leer</string>
+    <string name="widget_cal_label">Calendario</string>
+    <string name="widget_cal_desc">Tus eventos por día, semana o mes de todas las cuentas</string>
+    <string name="widget_cal_add">Nuevo evento</string>
+    <string name="widget_notes_label">Notas</string>
+    <string name="widget_note_new">Nueva nota</string>
+    <string name="widget_notes_desc">Tus últimas notas y un botón para crear una nueva</string>
+    <string name="widget_prev">Anterior</string>
+    <string name="widget_next">Siguiente</string>
+    <string name="widget_cal_day">Día</string>
+    <string name="widget_cal_week">Semana</string>
+    <string name="widget_cal_month">Mes</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/de.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: Bildschirmsperre</string>
+    <string name="device_admin_description">Wendet das vom Exchange-Server Ihrer Organisation geforderte Zeitlimit für die Bildschirmsperre an. Ogneliss Mail kann Ihr Gerät weder löschen noch das Passwort ändern.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Prüft E-Mails, während die App minimiert ist</string>
+    <string name="bg_sync_hide">Ausblenden</string>
+    <string name="bg_sync_channel">Hintergrund-Synchronisierung</string>
+    <string name="bg_sync_channel_desc">Hält die E-Mail-Synchronisierung bei minimierter App aktiv. Die Benachrichtigung kann deaktiviert werden – die Synchronisierung läuft weiter.</string>
+    <string name="widget_myday_label">Mein Tag</string>
+    <string name="widget_myday_desc">Heutige Termine und Aufgaben, ungelesene und verfolgte E-Mails</string>
+    <string name="widget_compose">Verfassen</string>
+    <string name="widget_open_app">Öffnen Sie Ogneliss Mail, um das Widget zu füllen</string>
+    <string name="widget_mail_label">Mail</string>
+    <string name="widget_mail_desc">Ungelesene E-Mails nach Konto und die neuesten ungelesenen</string>
+    <string name="widget_cal_label">Kalender</string>
+    <string name="widget_cal_desc">Termine aller Postfächer als Tag, Woche oder Monat</string>
+    <string name="widget_cal_add">Neuer Termin</string>
+    <string name="widget_notes_label">Notizen</string>
+    <string name="widget_note_new">Neue Notiz</string>
+    <string name="widget_notes_desc">Ihre neuesten Notizen und eine Taste für eine neue</string>
+    <string name="widget_prev">Zurück</string>
+    <string name="widget_next">Weiter</string>
+    <string name="widget_cal_day">Tag</string>
+    <string name="widget_cal_week">Woche</string>
+    <string name="widget_cal_month">Monat</string>
+</resources>

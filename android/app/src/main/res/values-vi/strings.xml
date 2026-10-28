@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано tool/l10n/l10n.py gen из assets/l10n/vi.xml (ключи android_*) — не править вручную. -->
+<resources>
+    <string name="device_admin_label">Ogneliss Mail: khóa màn hình</string>
+    <string name="device_admin_description">Áp dụng thời gian chờ khóa màn hình theo yêu cầu của máy chủ Exchange của tổ chức bạn. Ogneliss Mail không thể xóa dữ liệu thiết bị hay đổi mật khẩu của bạn.</string>
+    <string name="bg_sync_title">Ogneliss Mail</string>
+    <string name="bg_sync_text">Đang kiểm tra thư khi ứng dụng được thu nhỏ</string>
+    <string name="bg_sync_hide">Ẩn</string>
+    <string name="bg_sync_channel">Đồng bộ nền</string>
+    <string name="bg_sync_channel_desc">Giữ thư luôn được đồng bộ khi ứng dụng được thu nhỏ. Bạn có thể tắt thông báo này — việc đồng bộ vẫn tiếp tục.</string>
+    <string name="widget_myday_label">Ngày của tôi</string>
+    <string name="widget_myday_desc">Cuộc họp và công việc hôm nay, thư chưa đọc và thư đang theo dõi</string>
+    <string name="widget_compose">Soạn thư</string>
+    <string name="widget_open_app">Mở Ogneliss Mail để điền widget</string>
+    <string name="widget_mail_label">Thư</string>
+    <string name="widget_mail_desc">Thư chưa đọc theo tài khoản và các thư chưa đọc mới nhất</string>
+    <string name="widget_cal_label">Lịch</string>
+    <string name="widget_cal_desc">Sự kiện của bạn từ mọi tài khoản theo ngày, tuần hoặc tháng</string>
+    <string name="widget_cal_add">Sự kiện mới</string>
+    <string name="widget_notes_label">Ghi chú</string>
+    <string name="widget_note_new">Ghi chú mới</string>
+    <string name="widget_notes_desc">Ghi chú mới nhất của bạn và nút tạo ghi chú mới</string>
+    <string name="widget_prev">Trước</string>
+    <string name="widget_next">Tiếp</string>
+    <string name="widget_cal_day">Ngày</string>
+    <string name="widget_cal_week">Tuần</string>
+    <string name="widget_cal_month">Tháng</string>
+</resources>

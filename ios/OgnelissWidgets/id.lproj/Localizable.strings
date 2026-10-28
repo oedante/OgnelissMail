@@ -1,0 +1,14 @@
+/* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/id.xml — не править вручную. */
+"open_app" = "Buka Ogneliss Mail untuk mengisi widget";
+"myday_label" = "Hari saya";
+"myday_desc" = "Rapat dan tugas hari ini, email belum dibaca dan yang dipantau";
+"mail_label" = "Email";
+"mail_desc" = "Email belum dibaca per akun dan email belum dibaca terbaru";
+"cal_label" = "Kalender";
+"cal_desc" = "Acara mendatang dari semua akun Anda selama dua minggu";
+"notes_label" = "Catatan";
+"notes_desc" = "Catatan terbaru Anda dan tombol untuk catatan baru";
+"calweek_label" = "Kalender: minggu";
+"calweek_desc" = "Tujuh hari dan acara minggu ini";
+"calmonth_label" = "Kalender: bulan";
+"calmonth_desc" = "Bulan dalam bentuk kisi dengan titik acara";

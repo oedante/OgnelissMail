@@ -1,0 +1,57 @@
+# Сборка iOS без своего Mac — облако Codemagic (codemagic.io).
+# Что подготовить один раз (подробно — docs/store/APP_STORE.md, §3):
+#  1. App Store Connect → Пользователи и доступ → Интеграции → ключ API
+#     (роль App Manager). В Codemagic: Teams → Integrations → App Store
+#     Connect → добавить ключ под именем «Ogneliss ASC».
+#  2. Codemagic → приложение → Environment variables, группа «ogneliss»:
+#       DART_DEFINES_JSON  — содержимое config/dart_defines.json (Secure);
+#       APP_STORE_APPLE_ID — числовой Apple ID приложения из App Store Connect.
+#  3. Подпись: Codemagic сам создаёт сертификат распространения и профиль для
+#     com.ogneliss.mail через ключ API (automatic code signing).
+workflows:
+  ios-testflight:
+    name: iOS → TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: Ogneliss ASC
+    environment:
+      flutter: 3.38.0
+      xcode: latest
+      cocoapods: default
+      groups:
+        - ogneliss
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.ogneliss.mail
+    triggering:
+      events: []            # запуск вручную из интерфейса Codemagic
+    scripts:
+      - name: Секреты сборки
+        script: |
+          mkdir -p config
+          printf '%s' "$DART_DEFINES_JSON" > config/dart_defines.json
+          python3 -c "import json;json.load(open('config/dart_defines.json'))"
+      - name: Зависимости
+        script: |
+          flutter pub get
+          cd ios && pod install --repo-update
+      - name: Профили подписи
+        script: xcode-project use-profiles
+      - name: Сборка IPA
+        script: |
+          # Номер сборки: из pubspec, но больше последнего в TestFlight.
+          PUB=$(grep '^version:' pubspec.yaml | sed 's/.*+//')
+          LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          BUILD=$(( LATEST >= PUB ? LATEST + 1 : PUB ))
+          flutter build ipa --release \
+            --build-number="$BUILD" \
+            --dart-define-from-file=config/dart_defines.json \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

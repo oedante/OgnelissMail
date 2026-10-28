@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
+<!-- Виджет «Календарь» (CalendarWidget): День · Неделя · Месяц.
+     Шапка — период (нажатие — сегодня) и стрелки; ниже переключатель вида;
+     содержимое строит код: День — встречи дня карточкой; Неделя — полоса из
+     7 дней и встречи недели по дням; Месяц — сетка 7 × 5–6 с цветными
+     точками встреч. Нажатие на день недели или месяца — этот день. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cal_root"
+    style="@style/WidgetRootDk">
+    <LinearLayout style="@style/WidgetHeaderDk">
+        <LinearLayout
+            android:id="@+id/cal_head"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/cal_title"
+                    style="@style/WidgetTitleDk"
+                    android:text="@string/widget_cal_label" />
+                <TextView
+                    android:id="@+id/cal_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="8dp"
+                    android:minWidth="20dp"
+                    android:gravity="center"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:background="@drawable/widget_badge_bg_dk"
+                    android:textColor="@color/widget_on_accent_dk"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/cal_sub"
+                style="@style/WidgetSubtitleDk"
+                android:visibility="gone" />
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/cal_prev"
+            style="@style/WidgetNavButtonDk"
+            android:src="@drawable/widget_ic_prev_dk"
+            android:contentDescription="@string/widget_prev" />
+        <ImageView
+            android:id="@+id/cal_next"
+            style="@style/WidgetNavButtonDk"
+            android:src="@drawable/widget_ic_next_dk"
+            android:contentDescription="@string/widget_next" />
+        <ImageView
+            android:id="@+id/cal_action"
+            style="@style/WidgetHeadButtonDk"
+            android:src="@drawable/widget_ic_add_dk"
+            android:contentDescription="@string/widget_cal_add" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:padding="3dp"
+        android:background="@drawable/widget_tabs_bg_dk">
+        <TextView android:id="@+id/cal_tab0" style="@style/WidgetTabDk" android:text="@string/widget_cal_day" />
+        <TextView android:id="@+id/cal_tab1" style="@style/WidgetTabDk" android:text="@string/widget_cal_week" />
+        <TextView android:id="@+id/cal_tab2" style="@style/WidgetTabDk" android:text="@string/widget_cal_month" />
+    </LinearLayout>
+
+    <!-- «Подключиться»: идущая или ближайшая (в 15 минутах) онлайн-встреча. -->
+    <TextView
+        android:id="@+id/cal_join"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/widget_badge_bg_dk"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textColor="@color/widget_on_accent_dk"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <!-- Неделя: семь дней. -->
+    <LinearLayout
+        android:id="@+id/cal_strip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+    <!-- Месяц: дни недели и 5–6 строк (код). -->
+    <LinearLayout
+        android:id="@+id/cal_month"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+    <!-- Месяц и встречи выбранного дня (1.6.49, когда хватает высоты):
+         сетка постоянной высоты, под ней — карточка cal_list. -->
+    <LinearLayout
+        android:id="@+id/cal_month_fixed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+    <!-- День и неделя (и месяц со встречами дня): встречи карточкой. -->
+    <LinearLayout
+        android:id="@+id/cal_list"
+        style="@style/WidgetCardDk" />
+</LinearLayout>

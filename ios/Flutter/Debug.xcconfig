@@ -1,0 +1,5 @@
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
+#include "Generated.xcconfig"
+// Команда разработчика Apple (DEVELOPMENT_TEAM) — локально, не в git:
+// scripts/build_ios.sh --team ABCDE12345 создаёт этот файл.
+#include? "Signing.xcconfig"

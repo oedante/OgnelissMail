@@ -3311,7 +3311,7 @@
     <string name="archiveNotOgna">هذا ليس ملف أرشيف Ogneliss (‎.ogna‎)</string>
     <string name="archiveNewerFormat">تم إنشاء الأرشيف بإصدار أحدث من التطبيق. حدّث التطبيق</string>
     <string name="archiveBroken">ملف الأرشيف تالف أو غير مكتمل</string>
-    <string name="archiveAlreadyExists">يوجد أرشيف بالفعل على هذا الجهاز. ستتوفر عدة أرشيفات في الإصدارات القادمة</string>
+    <string name="archiveAlreadyExists">يوجد أرشيف بالفعل على هذا الجهاز. لإضافة نسخة من جهاز آخر إليه، اختر دمج مع نسخة</string>
     <string name="archiveNoCipher">هذا الإصدار لا يتضمن تشفير قاعدة البيانات، لذا لا يمكن إنشاء أرشيف</string>
     <string name="archiveLocked">الأرشيف مقفل. افتحه بكلمة المرور</string>
     <string name="archiveLockedIntro">الأرشيف على هذا الجهاز مقفل. افتحه بكلمة مرور الأرشيف أو برمز الاسترداد.</string>
@@ -3412,7 +3412,7 @@
     <string name="archiveKindTasksDesc">المكتملة والملغاة، كنسخ</string>
     <string name="archiveKindContacts">جهات الاتصال</string>
     <string name="archiveKindContactsDesc">جهات اتصالك الخاصة، كلقطة وقت الأرشفة</string>
-    <string name="archiveAccountsSection">أي صناديق البريد</string>
+    <string name="archiveAccountsSection">صناديق البريد المراد أرشفتها</string>
     <string name="archiveCopySection">النسخة والحماية</string>
     <string name="archiveCopyHelp">يُحفظ الأرشيف في بيانات التطبيق: إذا أزلت التطبيق، يُحذف الأرشيف معه. احفظ نسخة (ملف ‎.ogna‎) على محرك أو في السحابة: Google Drive أو تطبيق الملفات مع iCloud Drive أو Yandex Disk أو محرك USB. النسخة مشفّرة بالمفتاح نفسه: لا يمكن فتحها بدون كلمة المرور أو الرمز.</string>
     <string name="archiveCopySave">حفظ نسخة من الأرشيف</string>
@@ -3584,4 +3584,24 @@
     <string name="exchangeHiddenDesc">Exchange غير مدعوم في هذا الإصدار. تبقى صناديق البريد وبياناتها على هذا الجهاز وستعود في إصدار يدعم Exchange. يمكنك إضافة البريد عبر IMAP.</string>
     <string name="sourceCode">الشفرة المصدرية</string>
     <string name="sourceCodeDesc">GitHub: القراءة والبناء والمساهمة</string>
+    <string name="archiveMergeTitle">دمج مع نسخة</string>
+    <string name="archiveMergeSub">إضافة رسائل من نسخة تم إنشاؤها على جهاز آخر — بدون تكرار</string>
+    <string name="archiveMergeIntro">اختر نسخة من الأرشيف (‎.ogna) من جهاز آخر — من السحابة (Google Drive، iCloud Drive، Yandex Disk) أو من وحدة USB — وأدخل كلمة مرورها أو رمز الاسترداد. تتم إضافة كل ما ليس موجودًا بعد في الأرشيف على هذا الجهاز؛ ولا يتكرر شيء، وتبقى كلمة مرور الأرشيف كما هي.</string>
+    <string name="archiveMergeRun">دمج</string>
+    <string name="archiveMerging">جارٍ الدمج: {done} من {total} رسالة</string>
+    <string name="archiveMergeDone">الرسائل المضافة: {n}. الموجودة في الأرشيف مسبقًا: {skipped}.</string>
+    <string name="archiveMergeAfter">لتتوفر كل الرسائل على الجهاز الآخر أيضًا، احفظ هنا نسخة من الأرشيف ثم ادمجها هناك.</string>
+    <string name="archiveDevicesSection">الأجهزة الأخرى والسحابة</string>
+    <string name="archiveDevicesHow">يُخزَّن الأرشيف على هذا الجهاز وهو مشفّر؛ والسحابة مكان لنسخته. لفتح الأرشيف على هاتف أو كمبيوتر آخر، احفظ نسخة في السحابة (Google Drive، iCloud Drive، Yandex Disk) أو على وحدة USB، ثم اضغط هناك على أرشيف Ogneliss → ربط نسخة من الأرشيف (إذا لم يكن لديه أرشيف بعد) أو دمج مع نسخة (إذا كان لديه أرشيف خاص). يمكنك الأرشفة على كلا الجهازين: احفظ نسخة بين حين وآخر على أحدهما وادمجها على الآخر — ولا يتكرر شيء.</string>
+    <string name="archiveDevicesHowNone">هل لديك أرشيف على جهاز آخر؟ احفظ هناك نسخة من الأرشيف (الإعدادات → أرشيف Ogneliss → حفظ نسخة من الأرشيف) في السحابة أو على وحدة USB، ثم اضغط هنا على ربط نسخة من الأرشيف. بعد ذلك يمكنك الأرشفة على كلا الجهازين: احفظ نسخة بين حين وآخر على أحدهما وادمجها على الآخر.</string>
+    <string name="archiveSecuritySection">الحماية</string>
+    <string name="archiveContentsSection">صناديق البريد في الأرشيف</string>
+    <string name="archiveContentsHelp">يحتوي أرشيف واحد على كل صناديق البريد: لكل صندوق فرع مجلدات خاص به، كما في صندوق البريد نفسه — هنا وفي القائمة الجانبية ضمن أرشيف Ogneliss. صندوق البريد نفسه من أجهزة مختلفة هو فرع واحد: تتم مطابقة صناديق البريد حسب العنوان.</string>
+    <string name="archiveAccountMails">الرسائل: {n}</string>
+    <string name="archiveAccountOtherDevice">من جهاز آخر</string>
+    <string name="archiveAccountsHelp">تتم أرشفة صناديق البريد المفعّلة فقط. لا تتم أرشفة صندوق بريد معطّل؛ وما هو موجود بالفعل في الأرشيف يبقى فيه.</string>
+    <string name="faq_archive_6_q">كيف أستخدم أرشيفًا واحدًا على الهاتف والكمبيوتر؟</string>
+    <string name="faq_archive_6_a">يحتفظ كل جهاز بنسخته الخاصة من الأرشيف، والسحابة (Google Drive، iCloud Drive، Yandex Disk) أو وحدة USB هي مكان تبادلها. على الجهاز الأول: الإعدادات → أرشيف Ogneliss → حفظ نسخة من الأرشيف. على الثاني: ربط نسخة من الأرشيف إذا لم يكن لديه أرشيف بعد، أو دمج مع نسخة إذا كان لديه أرشيف خاص. يمكنك الأرشفة على كليهما: احفظ نسخة بين حين وآخر على أحدهما وادمجها على الآخر. يضيف الدمج ما هو مفقود فقط: لا تتكرر الرسائل ويبقى صندوق البريد نفسه فرعًا واحدًا.</string>
+    <string name="faq_archive_7_q">كيف يحتفظ الأرشيف بعدة صناديق بريد؟</string>
+    <string name="faq_archive_7_a">توجد كل صناديق البريد في أرشيف واحد، ولكل منها فرع مجلدات خاص به بنفس بنية صندوق البريد: في القائمة الجانبية ضمن أرشيف Ogneliss، وعلى شاشة الأرشيف ضمن صناديق البريد في الأرشيف. تُحدَّد صناديق البريد المراد أرشفتها على الشاشة نفسها ضمن صناديق البريد المراد أرشفتها؛ ويشمل البحث في الأرشيف كل صناديق البريد معًا.</string>
 </resources>

@@ -3246,7 +3246,7 @@
     <string name="archiveNotOgna">Đây không phải tệp kho lưu trữ Ogneliss (.ogna)</string>
     <string name="archiveNewerFormat">Kho lưu trữ được tạo bởi phiên bản ứng dụng mới hơn. Hãy cập nhật ứng dụng</string>
     <string name="archiveBroken">Tệp kho lưu trữ bị hỏng hoặc chưa hoàn chỉnh</string>
-    <string name="archiveAlreadyExists">Thiết bị này đã có một kho lưu trữ. Nhiều kho lưu trữ sẽ có trong các phiên bản sau</string>
+    <string name="archiveAlreadyExists">Thiết bị này đã có kho lưu trữ. Để thêm bản sao từ thiết bị khác vào đó, hãy chọn “Hợp nhất với bản sao”</string>
     <string name="archiveNoCipher">Bản dựng này không có mã hóa cơ sở dữ liệu nên không thể tạo kho lưu trữ</string>
     <string name="archiveLocked">Kho lưu trữ đã bị khóa. Hãy mở bằng mật khẩu</string>
     <string name="archiveLockedIntro">Kho lưu trữ trên thiết bị này đã bị khóa. Hãy mở bằng mật khẩu kho lưu trữ hoặc mã khôi phục.</string>
@@ -3317,7 +3317,7 @@
     <string name="archiveKindTasksDesc">Tác vụ đã hoàn thành và đã hủy, dưới dạng bản sao</string>
     <string name="archiveKindContacts">Danh bạ</string>
     <string name="archiveKindContactsDesc">Liên hệ của riêng bạn, dưới dạng ảnh chụp nhanh tại thời điểm lưu trữ</string>
-    <string name="archiveAccountsSection">Những hộp thư nào</string>
+    <string name="archiveAccountsSection">Hộp thư cần lưu trữ</string>
     <string name="archiveCopySection">Bản sao và bảo vệ</string>
     <string name="archiveCopyHelp">Kho lưu trữ nằm trong dữ liệu ứng dụng: nếu bạn gỡ ứng dụng, kho lưu trữ cũng mất theo. Hãy lưu một bản sao (tệp .ogna) vào ổ đĩa hoặc đám mây: Google Drive, ứng dụng Tệp với iCloud Drive, Yandex Disk, ổ USB. Bản sao được mã hóa bằng cùng một khóa: không thể mở nếu không có mật khẩu hoặc mã.</string>
     <string name="archiveCopySave">Lưu bản sao kho lưu trữ</string>
@@ -3489,4 +3489,24 @@
     <string name="exchangeHiddenDesc">Phiên bản này không hỗ trợ Exchange. Các hộp thư và dữ liệu của chúng vẫn ở trên thiết bị này và sẽ xuất hiện lại trong phiên bản có Exchange. Bạn có thể thêm thư qua IMAP.</string>
     <string name="sourceCode">Mã nguồn</string>
     <string name="sourceCodeDesc">GitHub: xem, biên dịch, đóng góp</string>
+    <string name="archiveMergeTitle">Hợp nhất với bản sao</string>
+    <string name="archiveMergeSub">Thêm thư từ bản sao được tạo trên thiết bị khác — không trùng lặp</string>
+    <string name="archiveMergeIntro">Chọn một bản sao kho lưu trữ (.ogna) từ thiết bị khác — trong Google Drive, iCloud Drive, Yandex Disk hoặc ổ USB — rồi nhập mật khẩu hoặc mã khôi phục của bản sao đó. Mọi thứ chưa có trong kho lưu trữ trên thiết bị này sẽ được thêm vào; không có gì bị trùng lặp và mật khẩu kho lưu trữ vẫn giữ nguyên.</string>
+    <string name="archiveMergeRun">Hợp nhất</string>
+    <string name="archiveMerging">Đang hợp nhất: {done} trên {total} thư</string>
+    <string name="archiveMergeDone">Thư đã thêm: {n}. Đã có trong kho lưu trữ: {skipped}.</string>
+    <string name="archiveMergeAfter">Để thiết bị kia cũng có đầy đủ mọi thứ, hãy lưu bản sao kho lưu trữ tại đây rồi hợp nhất ở đó.</string>
+    <string name="archiveDevicesSection">Thiết bị khác và đám mây</string>
+    <string name="archiveDevicesHow">Kho lưu trữ được lưu trên thiết bị này và được mã hóa; đám mây là nơi chứa bản sao của nó. Để mở kho lưu trữ trên điện thoại hoặc máy tính khác, hãy lưu một bản sao vào Google Drive, iCloud Drive, Yandex Disk hoặc ổ USB, rồi ở đó nhấn Lưu trữ Ogneliss → “Kết nối bản sao kho lưu trữ” (nếu chưa có kho lưu trữ) hoặc “Hợp nhất với bản sao” (nếu đã có kho lưu trữ riêng). Bạn có thể lưu trữ trên cả hai thiết bị: thỉnh thoảng lưu bản sao trên một thiết bị và hợp nhất trên thiết bị kia — sẽ không có gì bị trùng lặp.</string>
+    <string name="archiveDevicesHowNone">Đã có kho lưu trữ trên thiết bị khác? Hãy lưu bản sao kho lưu trữ ở đó (Cài đặt → Lưu trữ Ogneliss → Lưu bản sao kho lưu trữ) vào đám mây hoặc ổ USB, rồi nhấn “Kết nối bản sao kho lưu trữ” ở đây. Sau đó bạn có thể lưu trữ trên cả hai thiết bị: thỉnh thoảng lưu bản sao trên một thiết bị và hợp nhất trên thiết bị kia.</string>
+    <string name="archiveSecuritySection">Bảo vệ</string>
+    <string name="archiveContentsSection">Hộp thư trong kho lưu trữ</string>
+    <string name="archiveContentsHelp">Một kho lưu trữ chứa tất cả hộp thư: mỗi hộp thư có nhánh thư mục riêng, giống như trong hộp thư — ở đây và trong menu bên, mục “Lưu trữ Ogneliss”. Cùng một hộp thư từ các thiết bị khác nhau là một nhánh: các hộp thư được khớp theo địa chỉ.</string>
+    <string name="archiveAccountMails">thư: {n}</string>
+    <string name="archiveAccountOtherDevice">từ thiết bị khác</string>
+    <string name="archiveAccountsHelp">Chỉ các hộp thư đang bật mới được lưu trữ. Hộp thư đang tắt sẽ không được lưu trữ; những gì đã có trong kho lưu trữ vẫn được giữ lại.</string>
+    <string name="faq_archive_6_q">Làm cách nào để dùng một kho lưu trữ trên cả điện thoại và máy tính?</string>
+    <string name="faq_archive_6_a">Mỗi thiết bị giữ một bản sao kho lưu trữ riêng, còn đám mây (Google Drive, iCloud Drive, Yandex Disk) hoặc ổ USB là nơi để trao đổi bản sao. Trên thiết bị đầu tiên: Cài đặt → Lưu trữ Ogneliss → Lưu bản sao kho lưu trữ. Trên thiết bị thứ hai: “Kết nối bản sao kho lưu trữ” nếu chưa có kho lưu trữ, hoặc “Hợp nhất với bản sao” nếu đã có kho lưu trữ riêng. Bạn có thể lưu trữ trên cả hai: thỉnh thoảng lưu bản sao trên một thiết bị và hợp nhất trên thiết bị kia. Hợp nhất chỉ thêm những gì còn thiếu: thư không bị trùng lặp và cùng một hộp thư vẫn là một nhánh.</string>
+    <string name="faq_archive_7_q">Kho lưu trữ chứa nhiều hộp thư như thế nào?</string>
+    <string name="faq_archive_7_a">Tất cả hộp thư nằm trong một kho lưu trữ, mỗi hộp thư có nhánh thư mục riêng với cấu trúc giống như trong hộp thư: trong menu bên, mục “Lưu trữ Ogneliss”, và trên màn hình kho lưu trữ, mục “Hộp thư trong kho lưu trữ”. Hộp thư nào được lưu trữ sẽ được chọn trên cùng màn hình đó, ở mục “Hộp thư cần lưu trữ”; tìm kiếm trong kho lưu trữ bao gồm tất cả hộp thư cùng lúc.</string>
 </resources>

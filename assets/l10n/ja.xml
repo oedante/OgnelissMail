@@ -3246,7 +3246,7 @@
     <string name="archiveNotOgna">Ogneliss のアーカイブファイル（.ogna）ではありません</string>
     <string name="archiveNewerFormat">新しいバージョンのアプリで作成されたアーカイブです。アプリを更新してください</string>
     <string name="archiveBroken">アーカイブファイルが破損しているか、不完全です</string>
-    <string name="archiveAlreadyExists">このデバイスにはすでにアーカイブがあります。複数のアーカイブには今後のバージョンで対応します</string>
+    <string name="archiveAlreadyExists">このデバイスにはすでにアーカイブがあります。別のデバイスのコピーを追加するには、「コピーと統合」を選択してください</string>
     <string name="archiveNoCipher">このビルドにはデータベースの暗号化がないため、アーカイブを作成できません</string>
     <string name="archiveLocked">アーカイブはロックされています。パスワードで開いてください</string>
     <string name="archiveLockedIntro">このデバイスのアーカイブはロックされています。アーカイブのパスワードまたはリカバリーコードで開いてください。</string>
@@ -3317,7 +3317,7 @@
     <string name="archiveKindTasksDesc">完了済みとキャンセル済みのタスクをコピーとして保存</string>
     <string name="archiveKindContacts">連絡先</string>
     <string name="archiveKindContactsDesc">自分の連絡先を、アーカイブ時点のスナップショットとして保存</string>
-    <string name="archiveAccountsSection">対象のメールボックス</string>
+    <string name="archiveAccountsSection">アーカイブするメールボックス</string>
     <string name="archiveCopySection">コピーと保護</string>
     <string name="archiveCopyHelp">アーカイブはアプリのデータ内にあり、アプリを削除するとアーカイブも一緒に消えます。コピー（.ogna ファイル）をドライブやクラウド（Google Drive、iCloud Drive を使う「ファイル」App、Yandex Disk、USBドライブ）に保存してください。コピーは同じ鍵で暗号化されているため、パスワードまたはコードがないと開けません。</string>
     <string name="archiveCopySave">アーカイブのコピーを保存</string>
@@ -3489,4 +3489,24 @@
     <string name="exchangeHiddenDesc">このバージョンでは Exchange に対応していません。メールボックスとそのデータはこのデバイスに残り、Exchange に対応するバージョンで戻ります。IMAP でメールを追加することもできます。</string>
     <string name="sourceCode">ソースコード</string>
     <string name="sourceCodeDesc">GitHub: 閲覧・ビルド・貢献</string>
+    <string name="archiveMergeTitle">コピーと統合</string>
+    <string name="archiveMergeSub">別のデバイスで作成したコピーのメールを追加します — 重複はありません</string>
+    <string name="archiveMergeIntro">別のデバイスのアーカイブのコピー（.ogna）を、Google Drive、iCloud Drive、Yandex Disk、またはUSBメモリから選択し、そのパスワードまたはリカバリーコードを入力してください。このデバイスのアーカイブにまだないものがすべて追加されます。重複はなく、アーカイブのパスワードも変わりません。</string>
+    <string name="archiveMergeRun">統合</string>
+    <string name="archiveMerging">統合中: {total}件中{done}件のメール</string>
+    <string name="archiveMergeDone">追加したメール: {n}件。すでにアーカイブにあるメール: {skipped}件。</string>
+    <string name="archiveMergeAfter">もう一方のデバイスでもすべて使えるようにするには、ここでアーカイブのコピーを保存し、そちらで統合してください。</string>
+    <string name="archiveDevicesSection">他のデバイスとクラウド</string>
+    <string name="archiveDevicesHow">アーカイブはこのデバイスに保存され、暗号化されます。クラウドはそのコピーを置く場所です。別のスマートフォンやコンピューターでアーカイブを開くには、Google Drive、iCloud Drive、Yandex Disk、またはUSBメモリにコピーを保存し、そちらで Ogneliss アーカイブ →「アーカイブのコピーを接続」（まだアーカイブがない場合）または「コピーと統合」（すでに独自のアーカイブがある場合）をタップしてください。両方のデバイスでアーカイブできます。ときどき一方でコピーを保存し、もう一方で統合してください。重複はありません。</string>
+    <string name="archiveDevicesHowNone">別のデバイスにすでにアーカイブがありますか？そちらでアーカイブのコピーをクラウドまたはUSBメモリに保存し（設定 → Ogneliss アーカイブ → アーカイブのコピーを保存）、こちらで「アーカイブのコピーを接続」をタップしてください。その後は両方のデバイスでアーカイブできます。ときどき一方でコピーを保存し、もう一方で統合してください。</string>
+    <string name="archiveSecuritySection">保護</string>
+    <string name="archiveContentsSection">アーカイブ内のメールボックス</string>
+    <string name="archiveContentsHelp">1つのアーカイブにすべてのメールボックスが入ります。メールボックスごとに、メールボックスと同じ構成の独自のフォルダーツリーがあります。ここと、サイドメニューの「Ogneliss アーカイブ」に表示されます。異なるデバイスの同じメールボックスは1つのツリーにまとまります。メールボックスはアドレスで照合されます。</string>
+    <string name="archiveAccountMails">メール: {n}件</string>
+    <string name="archiveAccountOtherDevice">別のデバイスから</string>
+    <string name="archiveAccountsHelp">オンにしたメールボックスのみがアーカイブされます。オフにしたメールボックスはアーカイブされませんが、すでにアーカイブにあるものはそのまま残ります。</string>
+    <string name="faq_archive_6_q">スマートフォンとコンピューターで1つのアーカイブを使うには？</string>
+    <string name="faq_archive_6_a">各デバイスがアーカイブの自分のコピーを保持し、クラウド（Google Drive、iCloud Drive、Yandex Disk）またはUSBメモリがコピーを受け渡す場所になります。1台目のデバイスでは、設定 → Ogneliss アーカイブ → アーカイブのコピーを保存 の順に選びます。2台目では、まだアーカイブがない場合は「アーカイブのコピーを接続」、すでに独自のアーカイブがある場合は「コピーと統合」を選びます。両方のデバイスでアーカイブできます。ときどき一方でコピーを保存し、もう一方で統合してください。統合では足りないものだけが追加され、メールは重複せず、同じメールボックスは1つのツリーのままです。</string>
+    <string name="faq_archive_7_q">アーカイブでは複数のメールボックスをどのように保存しますか？</string>
+    <string name="faq_archive_7_a">すべてのメールボックスが1つのアーカイブに入り、メールボックスごとに、メールボックスと同じ構成の独自のフォルダーツリーがあります。サイドメニューの「Ogneliss アーカイブ」と、アーカイブ画面の「アーカイブ内のメールボックス」に表示されます。アーカイブするメールボックスは、同じ画面の「アーカイブするメールボックス」で選択します。アーカイブ内の検索は、すべてのメールボックスを一度に対象とします。</string>
 </resources>

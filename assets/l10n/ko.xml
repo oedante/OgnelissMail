@@ -3246,7 +3246,7 @@
     <string name="archiveNotOgna">Ogneliss 보관함 파일(.ogna)이 아닙니다</string>
     <string name="archiveNewerFormat">더 최신 버전의 앱에서 만든 보관함입니다. 앱을 업데이트하세요</string>
     <string name="archiveBroken">보관함 파일이 손상되었거나 불완전합니다</string>
-    <string name="archiveAlreadyExists">이 기기에는 이미 보관함이 있습니다. 여러 보관함은 이후 버전에서 지원됩니다</string>
+    <string name="archiveAlreadyExists">이 기기에 이미 보관함이 있습니다. 다른 기기의 사본을 여기에 추가하려면 “사본과 병합”을 선택하세요</string>
     <string name="archiveNoCipher">이 빌드에는 데이터베이스 암호화가 없어 보관함을 만들 수 없습니다</string>
     <string name="archiveLocked">보관함이 잠겨 있습니다. 비밀번호로 여세요</string>
     <string name="archiveLockedIntro">이 기기의 보관함이 잠겨 있습니다. 보관함 비밀번호 또는 복구 코드로 여세요.</string>
@@ -3317,7 +3317,7 @@
     <string name="archiveKindTasksDesc">완료 및 취소된 작업을 사본으로</string>
     <string name="archiveKindContacts">연락처</string>
     <string name="archiveKindContactsDesc">내 연락처를 보관 시점의 스냅샷으로</string>
-    <string name="archiveAccountsSection">대상 메일 계정</string>
+    <string name="archiveAccountsSection">보관할 메일함</string>
     <string name="archiveCopySection">사본 및 보호</string>
     <string name="archiveCopyHelp">보관함은 앱 데이터 안에 있으므로 앱을 삭제하면 보관함도 함께 사라집니다. 사본(.ogna 파일)을 드라이브나 클라우드(Google Drive, iCloud Drive를 사용하는 파일 앱, Yandex Disk, USB 드라이브)에 저장하세요. 사본은 같은 키로 암호화되어 있어 비밀번호나 코드 없이는 열 수 없습니다.</string>
     <string name="archiveCopySave">보관함 사본 저장</string>
@@ -3489,4 +3489,24 @@
     <string name="exchangeHiddenDesc">이 버전에서는 Exchange를 지원하지 않습니다. 메일 계정과 해당 데이터는 이 기기에 남아 있으며 Exchange를 지원하는 버전에서 다시 나타납니다. IMAP으로 메일을 추가할 수 있습니다.</string>
     <string name="sourceCode">소스 코드</string>
     <string name="sourceCodeDesc">GitHub: 보기, 빌드, 기여</string>
+    <string name="archiveMergeTitle">사본과 병합</string>
+    <string name="archiveMergeSub">다른 기기에서 만든 사본의 메일을 추가합니다 — 중복 없이</string>
+    <string name="archiveMergeIntro">다른 기기에서 만든 보관함 사본(.ogna)을 Google Drive, iCloud Drive, Yandex Disk 또는 USB 드라이브에서 선택하고 비밀번호 또는 복구 코드를 입력하세요. 이 기기의 보관함에 아직 없는 항목이 모두 추가되며, 중복되는 항목은 없고 보관함 비밀번호도 그대로 유지됩니다.</string>
+    <string name="archiveMergeRun">병합</string>
+    <string name="archiveMerging">병합 중: 메일 {total}개 중 {done}개</string>
+    <string name="archiveMergeDone">추가된 메일: {n}개. 이미 보관함에 있던 메일: {skipped}개.</string>
+    <string name="archiveMergeAfter">다른 기기에서도 모든 메일을 사용하려면 여기서 보관함 사본을 저장하고 그쪽에서 병합하세요.</string>
+    <string name="archiveDevicesSection">다른 기기 및 클라우드</string>
+    <string name="archiveDevicesHow">보관함은 이 기기에 저장되며 암호화됩니다. 클라우드는 보관함 사본을 두는 곳입니다. 다른 휴대전화나 컴퓨터에서 보관함을 열려면 사본을 Google Drive, iCloud Drive, Yandex Disk 또는 USB 드라이브에 저장한 다음, 그 기기에서 Ogneliss 보관함 → “보관함 사본 연결”(보관함이 아직 없는 경우) 또는 “사본과 병합”(이미 보관함이 있는 경우)을 탭하세요. 두 기기에서 모두 보관할 수 있습니다. 가끔 한 기기에서 사본을 저장하고 다른 기기에서 병합하세요. 중복되지 않습니다.</string>
+    <string name="archiveDevicesHowNone">다른 기기에 이미 보관함이 있나요? 그 기기에서 보관함 사본을 클라우드 또는 USB 드라이브에 저장(설정 → Ogneliss 보관함 → 보관함 사본 저장)한 다음, 여기서 “보관함 사본 연결”을 탭하세요. 그 후에는 두 기기에서 모두 보관할 수 있습니다. 가끔 한 기기에서 사본을 저장하고 다른 기기에서 병합하세요.</string>
+    <string name="archiveSecuritySection">보호</string>
+    <string name="archiveContentsSection">보관함의 메일함</string>
+    <string name="archiveContentsHelp">하나의 보관함에 모든 메일함이 들어 있습니다. 메일함마다 메일함과 같은 구조의 폴더 트리가 따로 있으며, 여기와 사이드 메뉴의 “Ogneliss 보관함”에서 볼 수 있습니다. 다른 기기의 같은 메일함은 하나의 트리로 합쳐지며, 메일함은 주소로 구분됩니다.</string>
+    <string name="archiveAccountMails">메일: {n}개</string>
+    <string name="archiveAccountOtherDevice">다른 기기에서</string>
+    <string name="archiveAccountsHelp">켜져 있는 메일함만 보관됩니다. 꺼진 메일함은 보관되지 않으며, 이미 보관함에 있는 항목은 그대로 유지됩니다.</string>
+    <string name="faq_archive_6_q">휴대전화와 컴퓨터에서 하나의 보관함을 사용하려면 어떻게 하나요?</string>
+    <string name="faq_archive_6_a">각 기기가 보관함 사본을 따로 가지며, 클라우드(Google Drive, iCloud Drive, Yandex Disk)나 USB 드라이브는 사본을 주고받는 곳입니다. 첫 번째 기기에서: 설정 → Ogneliss 보관함 → 보관함 사본 저장. 두 번째 기기에서: 보관함이 아직 없으면 “보관함 사본 연결”, 이미 보관함이 있으면 “사본과 병합”. 두 기기에서 모두 보관할 수 있습니다. 가끔 한 기기에서 사본을 저장하고 다른 기기에서 병합하세요. 병합은 없는 항목만 추가하므로 메일이 중복되지 않으며 같은 메일함은 하나의 트리로 유지됩니다.</string>
+    <string name="faq_archive_7_q">보관함에는 여러 메일함이 어떻게 저장되나요?</string>
+    <string name="faq_archive_7_a">모든 메일함이 하나의 보관함에 들어 있으며, 메일함마다 메일함과 같은 구조의 폴더 트리가 따로 있습니다. 사이드 메뉴의 “Ogneliss 보관함”과 보관함 화면의 “보관함의 메일함”에서 볼 수 있습니다. 보관할 메일함은 같은 화면의 “보관할 메일함”에서 선택하며, 보관함 검색은 모든 메일함을 한 번에 검색합니다.</string>
 </resources>

@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">Ez nem Ogneliss-archívumfájl (.ogna)</string>
     <string name="archiveNewerFormat">Az archívumot az alkalmazás újabb verziója hozta létre. Frissítse az alkalmazást</string>
     <string name="archiveBroken">Az archívumfájl sérült vagy hiányos</string>
-    <string name="archiveAlreadyExists">Ezen az eszközön már van archívum. Több archívum a későbbi verziókban lesz elérhető</string>
+    <string name="archiveAlreadyExists">Ezen az eszközön már van archívum. Ha egy másik eszközről származó másolatot szeretne hozzáadni, válassza az Egyesítés másolattal lehetőséget</string>
     <string name="archiveNoCipher">Ez a verzió nem támogatja az adatbázis-titkosítást, ezért archívum nem hozható létre</string>
     <string name="archiveLocked">Az archívum zárolva van. Nyissa meg a jelszóval</string>
     <string name="archiveLockedIntro">Az eszközön lévő archívum zárolva van. Nyissa meg az archívum jelszavával vagy a helyreállítási kóddal.</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">Befejezett és megszakított feladatok, másolatként</string>
     <string name="archiveKindContacts">Névjegyek</string>
     <string name="archiveKindContactsDesc">Saját névjegyek, pillanatképként az archiválás időpontjában</string>
-    <string name="archiveAccountsSection">Mely postafiókok</string>
+    <string name="archiveAccountsSection">Archiválandó postafiókok</string>
     <string name="archiveCopySection">Másolat és védelem</string>
     <string name="archiveCopyHelp">Az archívum az alkalmazás adatai között található: ha eltávolítja az alkalmazást, az archívum is elvész. Mentsen egy másolatot (.ogna fájlt) meghajtóra vagy felhőbe: Google Drive, a Fájlok alkalmazás iCloud Drive-val, Yandex Disk, USB-meghajtó. A másolat ugyanazzal a kulccsal titkosított: jelszó vagy kód nélkül nem nyitható meg.</string>
     <string name="archiveCopySave">Archív másolat mentése</string>
@@ -3508,4 +3508,24 @@
     <string name="exchangeHiddenDesc">Az Exchange nem támogatott ebben a verzióban. A postafiókok és adataik ezen az eszközön maradnak, és az Exchange-et támogató verzióban újra megjelennek. A levelezést IMAP-on keresztül hozzáadhatja.</string>
     <string name="sourceCode">Forráskód</string>
     <string name="sourceCodeDesc">GitHub: olvasás, fordítás, hozzájárulás</string>
+    <string name="archiveMergeTitle">Egyesítés másolattal</string>
+    <string name="archiveMergeSub">Üzenetek hozzáadása egy másik eszközön készített másolatból – ismétlődések nélkül</string>
+    <string name="archiveMergeIntro">Válasszon ki egy archív másolatot (.ogna) egy másik eszközről – felhőből (Google Drive, iCloud Drive, Yandex Disk) vagy USB-meghajtóról –, majd adja meg a jelszavát vagy helyreállítási kódját. Minden, ami még nincs az ezen az eszközön lévő archívumban, hozzáadódik; semmi sem duplikálódik, az archívum jelszava pedig változatlan marad.</string>
+    <string name="archiveMergeRun">Egyesítés</string>
+    <string name="archiveMerging">Egyesítés: {done} / {total} üzenet</string>
+    <string name="archiveMergeDone">Hozzáadott üzenetek: {n}. Már az archívumban volt: {skipped}.</string>
+    <string name="archiveMergeAfter">Hogy a másik eszközön is minden meglegyen, mentsen itt egy archív másolatot, és egyesítse ott.</string>
+    <string name="archiveDevicesSection">Más eszközök és a felhő</string>
+    <string name="archiveDevicesHow">Az archívum ezen az eszközön van tárolva, és titkosított; a felhő a másolat helye. Ha egy másik telefonon vagy számítógépen szeretné megnyitni az archívumot, mentsen másolatot a felhőbe (Google Drive, iCloud Drive, Yandex Disk) vagy USB-meghajtóra, ott pedig koppintson az Ogneliss-archívum → Archív másolat csatlakoztatása (ha még nincs ott archívum) vagy Egyesítés másolattal (ha már van saját) elemre. Archiválhat mindkét eszközön: időnként mentsen másolatot az egyiken, és egyesítse a másikon – semmi sem duplikálódik.</string>
+    <string name="archiveDevicesHowNone">Már van archívuma egy másik eszközön? Mentsen ott egy archív másolatot (Beállítások → Ogneliss-archívum → Archív másolat mentése) a felhőbe vagy USB-meghajtóra, itt pedig koppintson az Archív másolat csatlakoztatása elemre. Ezután mindkét eszközön archiválhat: időnként mentsen másolatot az egyiken, és egyesítse a másikon.</string>
+    <string name="archiveSecuritySection">Védelem</string>
+    <string name="archiveContentsSection">Postafiókok az archívumban</string>
+    <string name="archiveContentsHelp">Egy archívum az összes postafiókot tartalmazza: mindegyiknek saját mappaága van, mint a postafiókban – itt és az oldalmenüben, az Ogneliss-archívum alatt. Ugyanaz a postafiók különböző eszközökről egyetlen ág: a postafiókokat cím alapján párosítja az alkalmazás.</string>
+    <string name="archiveAccountMails">üzenetek: {n}</string>
+    <string name="archiveAccountOtherDevice">másik eszközről</string>
+    <string name="archiveAccountsHelp">Csak a bekapcsolt postafiókok archiválódnak. A kikapcsolt postafiók nem archiválódik; ami már az archívumban van, ott marad.</string>
+    <string name="faq_archive_6_q">Hogyan használhatok egy archívumot telefonon és számítógépen is?</string>
+    <string name="faq_archive_6_a">Minden eszköz a saját archív másolatát tárolja, a csere helye pedig a felhő (Google Drive, iCloud Drive, Yandex Disk) vagy egy USB-meghajtó. Az első eszközön: Beállítások → Ogneliss-archívum → Archív másolat mentése. A másodikon: Archív másolat csatlakoztatása, ha még nincs ott archívum, vagy Egyesítés másolattal, ha már van saját. Mindkét eszközön archiválhat: időnként mentsen másolatot az egyiken, és egyesítse a másikon. Az egyesítés csak a hiányzó elemeket adja hozzá: az üzenetek nem duplikálódnak, és ugyanaz a postafiók egyetlen ág marad.</string>
+    <string name="faq_archive_7_q">Hogyan tárol az archívum több postafiókot?</string>
+    <string name="faq_archive_7_a">Az összes postafiók egyetlen archívumban van, mindegyiknek saját mappaága van, a postafiókéval megegyező szerkezettel: az oldalmenüben az Ogneliss-archívum alatt, az archívum képernyőjén pedig a Postafiókok az archívumban szakaszban. Hogy mely postafiókok legyenek archiválva, ugyanazon a képernyőn az Archiválandó postafiókok szakaszban választható ki; az archívumban való keresés egyszerre az összes postafiókra kiterjed.</string>
 </resources>

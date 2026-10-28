@@ -11,6 +11,11 @@ macOS and Linux builds are in preview.
 
 Website: https://ogneliss.ru/mail/
 
+**Downloads:** [GitHub Releases](https://github.com/oedante/OgnelissMail/releases)
+— Android (APK), Windows, macOS and Linux builds made by GitHub Actions from
+a tagged commit, with `SHA256SUMS.txt` and build provenance attestations.
+Android testing on Google Play: https://play.google.com/apps/testing/com.ogneliss.mail
+
 ## Principles
 
 - **Open source.** The app, the mail engine and both servers are here, under

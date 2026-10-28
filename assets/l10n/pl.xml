@@ -3285,7 +3285,7 @@
     <string name="archiveNotOgna">To nie jest plik archiwum Ogneliss (.ogna)</string>
     <string name="archiveNewerFormat">Archiwum utworzono w nowszej wersji aplikacji. Zaktualizuj aplikację</string>
     <string name="archiveBroken">Plik archiwum jest uszkodzony lub niekompletny</string>
-    <string name="archiveAlreadyExists">Na tym urządzeniu jest już archiwum. Obsługa kilku archiwów pojawi się w kolejnych wersjach</string>
+    <string name="archiveAlreadyExists">Na tym urządzeniu jest już archiwum. Aby dodać do niego kopię z innego urządzenia, wybierz Scal z kopią</string>
     <string name="archiveNoCipher">Ta wersja nie ma szyfrowania bazy danych, więc nie można utworzyć archiwum</string>
     <string name="archiveLocked">Archiwum jest zablokowane. Otwórz je hasłem</string>
     <string name="archiveLockedIntro">Archiwum na tym urządzeniu jest zablokowane. Otwórz je hasłem archiwum albo kodem odzyskiwania.</string>
@@ -3374,7 +3374,7 @@
     <string name="archiveKindTasksDesc">Ukończone i anulowane, jako kopie</string>
     <string name="archiveKindContacts">Kontakty</string>
     <string name="archiveKindContactsDesc">Własne kontakty, jako migawka z chwili archiwizowania</string>
-    <string name="archiveAccountsSection">Które skrzynki</string>
+    <string name="archiveAccountsSection">Skrzynki do archiwizowania</string>
     <string name="archiveCopySection">Kopia i ochrona</string>
     <string name="archiveCopyHelp">Archiwum znajduje się w danych aplikacji: jeśli usuniesz aplikację, archiwum zniknie razem z nią. Zapisz kopię (plik .ogna) na dysku lub w chmurze: Google Drive, w aplikacji Pliki z iCloud Drive, Yandex Disk, na dysku USB. Kopia jest zaszyfrowana tym samym kluczem: nie można jej otworzyć bez hasła lub kodu.</string>
     <string name="archiveCopySave">Zapisz kopię archiwum</string>
@@ -3546,4 +3546,24 @@
     <string name="exchangeHiddenDesc">Exchange nie jest obsługiwany w tej wersji. Skrzynki i ich dane zostają na tym urządzeniu i wrócą w wersji z obsługą Exchange. Możesz dodać pocztę przez IMAP.</string>
     <string name="sourceCode">Kod źródłowy</string>
     <string name="sourceCodeDesc">GitHub: czytaj, buduj, współtwórz</string>
+    <string name="archiveMergeTitle">Scal z kopią</string>
+    <string name="archiveMergeSub">Dodaj wiadomości z kopii wykonanej na innym urządzeniu — bez duplikatów</string>
+    <string name="archiveMergeIntro">Wybierz kopię archiwum (.ogna) z innego urządzenia — z Google Drive, iCloud Drive, Yandex Disk lub z dysku USB — i wpisz jej hasło lub kod odzyskiwania. Wszystko, czego jeszcze nie ma w archiwum na tym urządzeniu, zostanie dodane; nic nie zostanie zduplikowane, a hasło archiwum pozostanie bez zmian.</string>
+    <string name="archiveMergeRun">Scal</string>
+    <string name="archiveMerging">Scalanie: {done} z {total} wiadomości</string>
+    <string name="archiveMergeDone">Dodano wiadomości: {n}. Już w archiwum: {skipped}.</string>
+    <string name="archiveMergeAfter">Aby wszystko było też na drugim urządzeniu, zapisz tutaj kopię archiwum i scal ją tam.</string>
+    <string name="archiveDevicesSection">Inne urządzenia i chmura</string>
+    <string name="archiveDevicesHow">Archiwum jest przechowywane na tym urządzeniu i zaszyfrowane; chmura to miejsce na jego kopię. Aby otworzyć archiwum na innym telefonie lub komputerze, zapisz kopię w Google Drive, iCloud Drive, Yandex Disk lub na dysku USB, a tam dotknij Archiwum Ogneliss → Połącz kopię archiwum (jeśli nie ma jeszcze archiwum) albo Scal z kopią (jeśli ma własne). Możesz archiwizować na obu urządzeniach: od czasu do czasu zapisz kopię na jednym i scal ją na drugim — nic nie zostanie zduplikowane.</string>
+    <string name="archiveDevicesHowNone">Masz już archiwum na innym urządzeniu? Zapisz tam kopię archiwum (Ustawienia → Archiwum Ogneliss → Zapisz kopię archiwum) w chmurze lub na dysku USB, a tutaj dotknij Połącz kopię archiwum. Potem możesz archiwizować na obu urządzeniach: od czasu do czasu zapisz kopię na jednym i scal ją na drugim.</string>
+    <string name="archiveSecuritySection">Ochrona</string>
+    <string name="archiveContentsSection">Skrzynki w archiwum</string>
+    <string name="archiveContentsHelp">Jedno archiwum obejmuje wszystkie skrzynki: każda ma własną gałąź folderów, jak w skrzynce — tutaj i w menu bocznym, w sekcji Archiwum Ogneliss. Ta sama skrzynka z różnych urządzeń to jedna gałąź: skrzynki są dopasowywane według adresu.</string>
+    <string name="archiveAccountMails">wiadomości: {n}</string>
+    <string name="archiveAccountOtherDevice">z innego urządzenia</string>
+    <string name="archiveAccountsHelp">Archiwizowane są tylko włączone skrzynki. Wyłączona skrzynka nie jest archiwizowana; to, co już jest w archiwum, zostaje.</string>
+    <string name="faq_archive_6_q">Jak korzystać z jednego archiwum na telefonie i komputerze?</string>
+    <string name="faq_archive_6_a">Każde urządzenie przechowuje własną kopię archiwum, a chmura (Google Drive, iCloud Drive, Yandex Disk) lub dysk USB służy do wymiany. Na pierwszym urządzeniu: Ustawienia → Archiwum Ogneliss → Zapisz kopię archiwum. Na drugim: Połącz kopię archiwum, jeśli nie ma jeszcze archiwum, albo Scal z kopią, jeśli ma własne. Możesz archiwizować na obu: od czasu do czasu zapisz kopię na jednym i scal ją na drugim. Scalanie dodaje tylko to, czego brakuje: wiadomości się nie powielają, a ta sama skrzynka pozostaje jedną gałęzią.</string>
+    <string name="faq_archive_7_q">Jak archiwum przechowuje kilka skrzynek?</string>
+    <string name="faq_archive_7_a">Wszystkie skrzynki są w jednym archiwum, każda z własną gałęzią folderów o strukturze jak w skrzynce: w menu bocznym, w sekcji Archiwum Ogneliss, oraz na ekranie archiwum, w sekcji Skrzynki w archiwum. Które skrzynki archiwizować, wybiera się na tym samym ekranie, w sekcji Skrzynki do archiwizowania; wyszukiwanie w archiwum obejmuje wszystkie skrzynki naraz.</string>
 </resources>

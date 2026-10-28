@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">यह Ogneliss संग्रह फ़ाइल (.ogna) नहीं है</string>
     <string name="archiveNewerFormat">यह संग्रह ऐप के नए वर्शन से बनाया गया है. ऐप अपडेट करें</string>
     <string name="archiveBroken">संग्रह फ़ाइल क्षतिग्रस्त या अधूरी है</string>
-    <string name="archiveAlreadyExists">इस डिवाइस पर पहले से एक संग्रह है. एक से ज़्यादा संग्रह आगे के वर्शन में मिलेंगे</string>
+    <string name="archiveAlreadyExists">इस डिवाइस पर पहले से एक संग्रह मौजूद है। उसमें किसी दूसरे डिवाइस की कॉपी जोड़ने के लिए “कॉपी के साथ मर्ज करें” चुनें</string>
     <string name="archiveNoCipher">इस बिल्ड में डेटाबेस एन्क्रिप्शन नहीं है, इसलिए संग्रह नहीं बनाया जा सकता</string>
     <string name="archiveLocked">संग्रह लॉक है. उसे पासवर्ड से खोलें</string>
     <string name="archiveLockedIntro">इस डिवाइस पर संग्रह लॉक है. उसे संग्रह के पासवर्ड या रिकवरी कोड से खोलें.</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">पूरे और रद्द किए गए, कॉपी के रूप में</string>
     <string name="archiveKindContacts">संपर्क</string>
     <string name="archiveKindContactsDesc">आपके अपने संपर्क, संग्रहण के समय के स्नैपशॉट के रूप में</string>
-    <string name="archiveAccountsSection">कौन-से मेलबॉक्स</string>
+    <string name="archiveAccountsSection">संग्रहित करने के लिए मेलबॉक्स</string>
     <string name="archiveCopySection">कॉपी और सुरक्षा</string>
     <string name="archiveCopyHelp">संग्रह ऐप के डेटा में रहता है: ऐप हटाने पर संग्रह भी उसके साथ हट जाता है. कॉपी (.ogna फ़ाइल) किसी ड्राइव या क्लाउड में सेव करें: Google Drive, iCloud Drive वाला फ़ाइलें ऐप, Yandex Disk, USB ड्राइव. कॉपी उसी कुंजी से एन्क्रिप्टेड है: पासवर्ड या कोड के बिना उसे खोला नहीं जा सकता.</string>
     <string name="archiveCopySave">संग्रह की कॉपी सेव करें</string>
@@ -3508,4 +3508,24 @@
     <string name="exchangeHiddenDesc">इस वर्शन में Exchange सपोर्ट नहीं है. मेलबॉक्स और उनका डेटा इस डिवाइस पर रहेंगे और Exchange वाले वर्शन में वापस आ जाएंगे. आप IMAP के ज़रिए मेल जोड़ सकते हैं.</string>
     <string name="sourceCode">सोर्स कोड</string>
     <string name="sourceCodeDesc">GitHub: पढ़ें, बनाएँ, योगदान दें</string>
+    <string name="archiveMergeTitle">कॉपी के साथ मर्ज करें</string>
+    <string name="archiveMergeSub">दूसरे डिवाइस पर बनाई गई कॉपी से ईमेल जोड़ें — बिना डुप्लिकेट के</string>
+    <string name="archiveMergeIntro">दूसरे डिवाइस से संग्रह की कॉपी (.ogna) चुनें — Google Drive, iCloud Drive, Yandex Disk या USB ड्राइव से — और उसका पासवर्ड या रिकवरी कोड डालें। इस डिवाइस के संग्रह में जो कुछ अभी नहीं है, वह सब जोड़ दिया जाएगा; कुछ भी दोहराया नहीं जाएगा और संग्रह का पासवर्ड वही रहेगा।</string>
+    <string name="archiveMergeRun">मर्ज करें</string>
+    <string name="archiveMerging">मर्ज हो रहा है: {total} में से {done} ईमेल</string>
+    <string name="archiveMergeDone">जोड़े गए ईमेल: {n}। संग्रह में पहले से मौजूद: {skipped}।</string>
+    <string name="archiveMergeAfter">दूसरे डिवाइस पर भी सब कुछ पाने के लिए, यहां संग्रह की कॉपी सेव करें और उसे वहां मर्ज करें।</string>
+    <string name="archiveDevicesSection">अन्य डिवाइस और क्लाउड</string>
+    <string name="archiveDevicesHow">संग्रह इसी डिवाइस पर रहता है और एन्क्रिप्टेड होता है; क्लाउड उसकी कॉपी रखने की जगह है। संग्रह को किसी दूसरे फ़ोन या कंप्यूटर पर खोलने के लिए, कॉपी को Google Drive, iCloud Drive, Yandex Disk या USB ड्राइव में सेव करें, और वहां Ogneliss संग्रह → “संग्रह की कॉपी कनेक्ट करें” (अगर वहां अभी संग्रह नहीं है) या “कॉपी के साथ मर्ज करें” (अगर वहां अपना संग्रह है) पर टैप करें। आप दोनों डिवाइस पर संग्रहित कर सकते हैं: समय-समय पर एक डिवाइस पर कॉपी सेव करें और दूसरे पर मर्ज करें — कुछ भी दोहराया नहीं जाएगा।</string>
+    <string name="archiveDevicesHowNone">क्या दूसरे डिवाइस पर पहले से संग्रह है? वहां संग्रह की कॉपी क्लाउड या USB ड्राइव में सेव करें (सेटिंग → Ogneliss संग्रह → संग्रह की कॉपी सेव करें), और यहां “संग्रह की कॉपी कनेक्ट करें” पर टैप करें। इसके बाद आप दोनों डिवाइस पर संग्रहित कर सकते हैं: समय-समय पर एक डिवाइस पर कॉपी सेव करें और दूसरे पर मर्ज करें।</string>
+    <string name="archiveSecuritySection">सुरक्षा</string>
+    <string name="archiveContentsSection">संग्रह में मेलबॉक्स</string>
+    <string name="archiveContentsHelp">एक संग्रह में सभी मेलबॉक्स रहते हैं: हर मेलबॉक्स की फ़ोल्डरों की अपनी शाखा होती है, ठीक मेलबॉक्स की तरह — यहां और साइड मेनू में “Ogneliss संग्रह” के अंतर्गत। अलग-अलग डिवाइस का एक ही मेलबॉक्स एक ही शाखा होता है: मेलबॉक्स पते से मिलाए जाते हैं।</string>
+    <string name="archiveAccountMails">ईमेल: {n}</string>
+    <string name="archiveAccountOtherDevice">दूसरे डिवाइस से</string>
+    <string name="archiveAccountsHelp">सिर्फ़ चालू किए गए मेलबॉक्स संग्रहित किए जाते हैं। बंद किया गया मेलबॉक्स संग्रहित नहीं होता; जो पहले से संग्रह में है, वह वहीं रहता है।</string>
+    <string name="faq_archive_6_q">फ़ोन और कंप्यूटर पर एक ही संग्रह का उपयोग कैसे करें?</string>
+    <string name="faq_archive_6_a">हर डिवाइस संग्रह की अपनी कॉपी रखता है, और क्लाउड (Google Drive, iCloud Drive, Yandex Disk) या USB ड्राइव उसे आदान-प्रदान करने की जगह है। पहले डिवाइस पर: सेटिंग → Ogneliss संग्रह → संग्रह की कॉपी सेव करें। दूसरे पर: अगर वहां अभी संग्रह नहीं है तो “संग्रह की कॉपी कनेक्ट करें”, या अगर अपना संग्रह है तो “कॉपी के साथ मर्ज करें”। आप दोनों पर संग्रहित कर सकते हैं: समय-समय पर एक पर कॉपी सेव करें और दूसरे पर मर्ज करें। मर्ज सिर्फ़ वही जोड़ता है जो मौजूद नहीं है: ईमेल दोहराए नहीं जाते और एक ही मेलबॉक्स एक ही शाखा रहता है।</string>
+    <string name="faq_archive_7_q">संग्रह में कई मेलबॉक्स कैसे रखे जाते हैं?</string>
+    <string name="faq_archive_7_a">सभी मेलबॉक्स एक ही संग्रह में रहते हैं, हर एक की फ़ोल्डरों की अपनी शाखा होती है जिसकी संरचना मेलबॉक्स जैसी ही है: साइड मेनू में “Ogneliss संग्रह” के अंतर्गत, और संग्रह स्क्रीन पर “संग्रह में मेलबॉक्स” के अंतर्गत। कौन-से मेलबॉक्स संग्रहित करने हैं, यह उसी स्क्रीन पर “संग्रहित करने के लिए मेलबॉक्स” के अंतर्गत चुना जाता है; संग्रह में खोज एक साथ सभी मेलबॉक्स में होती है।</string>
 </resources>

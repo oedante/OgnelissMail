@@ -3272,7 +3272,7 @@
     <string name="archiveNotOgna">זה אינו קובץ ארכיון של Ogneliss (‎.ogna‎)</string>
     <string name="archiveNewerFormat">הארכיון נוצר בגרסה חדשה יותר של האפליקציה. עדכן את האפליקציה</string>
     <string name="archiveBroken">קובץ הארכיון פגום או לא שלם</string>
-    <string name="archiveAlreadyExists">כבר קיים ארכיון במכשיר הזה. בגרסאות הבאות אפשר יהיה להחזיק כמה ארכיונים</string>
+    <string name="archiveAlreadyExists">כבר קיים ארכיון במכשיר הזה. כדי להוסיף אליו עותק ממכשיר אחר, בחר באפשרות מזג עם עותק</string>
     <string name="archiveNoCipher">בגרסה הזאת אין הצפנת מסד נתונים, ולכן אי אפשר ליצור ארכיון</string>
     <string name="archiveLocked">הארכיון נעול. פתח אותו באמצעות הסיסמה</string>
     <string name="archiveLockedIntro">הארכיון במכשיר הזה נעול. פתח אותו באמצעות סיסמת הארכיון או קוד השחזור.</string>
@@ -3355,7 +3355,7 @@
     <string name="archiveKindTasksDesc">משימות שהושלמו ובוטלו, כעותקים</string>
     <string name="archiveKindContacts">אנשי קשר</string>
     <string name="archiveKindContactsDesc">אנשי הקשר שלך, כתצלום מצב בזמן ההעברה לארכיון</string>
-    <string name="archiveAccountsSection">אילו תיבות דואר</string>
+    <string name="archiveAccountsSection">תיבות דואר להעברה לארכיון</string>
     <string name="archiveCopySection">עותק והגנה</string>
     <string name="archiveCopyHelp">הארכיון נשמר בנתוני האפליקציה: אם תסיר את האפליקציה, הארכיון יימחק איתה. שמור עותק (קובץ ‎.ogna‎) בכונן או בענן: Google Drive, קבצים עם iCloud Drive, Yandex Disk, כונן USB. העותק מוצפן באותו מפתח: אי אפשר לפתוח אותו בלי הסיסמה או הקוד.</string>
     <string name="archiveCopySave">שמור עותק של הארכיון</string>
@@ -3527,4 +3527,24 @@
     <string name="exchangeHiddenDesc">Exchange אינו נתמך בגרסה הזאת. תיבות הדואר והנתונים שלהן נשארים במכשיר הזה ויחזרו בגרסה עם Exchange. אפשר להוסיף את הדואר דרך IMAP.</string>
     <string name="sourceCode">קוד מקור</string>
     <string name="sourceCodeDesc">GitHub: לקרוא, לבנות, לתרום</string>
+    <string name="archiveMergeTitle">מזג עם עותק</string>
+    <string name="archiveMergeSub">הוסף הודעות מעותק שנוצר במכשיר אחר – ללא כפילויות</string>
+    <string name="archiveMergeIntro">בחר עותק של הארכיון (‎.ogna) ממכשיר אחר – מהענן (Google Drive, iCloud Drive, Yandex Disk) או מכונן USB – והזן את הסיסמה שלו או את קוד השחזור. כל מה שעדיין לא נמצא בארכיון במכשיר הזה יתווסף; שום דבר לא יוכפל, וסיסמת הארכיון תישאר כפי שהיא.</string>
+    <string name="archiveMergeRun">מזג</string>
+    <string name="archiveMerging">ממזג: {done} מתוך {total} הודעות</string>
+    <string name="archiveMergeDone">הודעות שנוספו: {n}. כבר היו בארכיון: {skipped}.</string>
+    <string name="archiveMergeAfter">כדי שהכול יהיה גם במכשיר השני, שמור כאן עותק של הארכיון ומזג אותו שם.</string>
+    <string name="archiveDevicesSection">מכשירים אחרים והענן</string>
+    <string name="archiveDevicesHow">הארכיון מאוחסן במכשיר הזה ומוצפן; הענן הוא מקום לעותק שלו. כדי לפתוח את הארכיון בטלפון או במחשב אחר, שמור עותק בענן (Google Drive, iCloud Drive, Yandex Disk) או בכונן USB, ושם הקש על ארכיון Ogneliss → חבר עותק של הארכיון (אם עדיין אין שם ארכיון) או מזג עם עותק (אם יש שם ארכיון משלו). אפשר להעביר לארכיון בשני המכשירים: מדי פעם שמור עותק באחד ומזג אותו בשני – שום דבר לא יוכפל.</string>
+    <string name="archiveDevicesHowNone">יש כבר ארכיון במכשיר אחר? שמור שם עותק של הארכיון (הגדרות → ארכיון Ogneliss → שמור עותק של הארכיון) בענן או בכונן USB, ובמכשיר הזה הקש על חבר עותק של הארכיון. לאחר מכן אפשר להעביר לארכיון בשני המכשירים: מדי פעם שמור עותק באחד ומזג אותו בשני.</string>
+    <string name="archiveSecuritySection">הגנה</string>
+    <string name="archiveContentsSection">תיבות דואר בארכיון</string>
+    <string name="archiveContentsHelp">ארכיון אחד מכיל את כל תיבות הדואר: לכל אחת יש ענף תיקיות משלה, כמו בתיבת הדואר – כאן ובתפריט הצד, תחת ארכיון Ogneliss. אותה תיבת דואר ממכשירים שונים היא ענף אחד: תיבות הדואר מותאמות לפי כתובת.</string>
+    <string name="archiveAccountMails">הודעות: {n}</string>
+    <string name="archiveAccountOtherDevice">ממכשיר אחר</string>
+    <string name="archiveAccountsHelp">רק תיבות דואר מופעלות מועברות לארכיון. תיבת דואר כבויה אינה מועברת לארכיון; מה שכבר בארכיון נשאר שם.</string>
+    <string name="faq_archive_6_q">איך משתמשים בארכיון אחד בטלפון ובמחשב?</string>
+    <string name="faq_archive_6_a">בכל מכשיר נשמר עותק משלו של הארכיון, והענן (Google Drive, iCloud Drive, Yandex Disk) או כונן USB הוא המקום להחלפה שלו. במכשיר הראשון: הגדרות → ארכיון Ogneliss → שמור עותק של הארכיון. בשני: חבר עותק של הארכיון, אם עדיין אין שם ארכיון, או מזג עם עותק, אם יש לו ארכיון משלו. אפשר להעביר לארכיון בשניהם: מדי פעם שמור עותק באחד ומזג אותו בשני. המיזוג מוסיף רק את מה שחסר: הודעות לא מוכפלות ואותה תיבת דואר נשארת ענף אחד.</string>
+    <string name="faq_archive_7_q">איך הארכיון שומר כמה תיבות דואר?</string>
+    <string name="faq_archive_7_a">כל תיבות הדואר נמצאות בארכיון אחד, ולכל אחת יש ענף תיקיות משלה במבנה כמו בתיבת הדואר: בתפריט הצד תחת ארכיון Ogneliss, ובמסך הארכיון תחת תיבות דואר בארכיון. את תיבות הדואר להעברה לארכיון בוחרים באותו מסך תחת תיבות דואר להעברה לארכיון; החיפוש בארכיון כולל את כל תיבות הדואר בבת אחת.</string>
 </resources>

@@ -3272,7 +3272,7 @@
     <string name="archiveNotOgna">Acesta nu este un fișier de arhivă Ogneliss (.ogna)</string>
     <string name="archiveNewerFormat">Arhiva a fost creată de o versiune mai nouă a aplicației. Actualizează aplicația</string>
     <string name="archiveBroken">Fișierul arhivei este deteriorat sau incomplet</string>
-    <string name="archiveAlreadyExists">Pe acest dispozitiv există deja o arhivă. Mai multe arhive vor apărea în versiunile viitoare</string>
+    <string name="archiveAlreadyExists">Pe acest dispozitiv există deja o arhivă. Ca să adaugi în ea o copie de pe alt dispozitiv, alege Îmbină cu o copie</string>
     <string name="archiveNoCipher">Această versiune nu are criptarea bazei de date, așa că nu se poate crea o arhivă</string>
     <string name="archiveLocked">Arhiva este blocată. Deschide-o cu parola</string>
     <string name="archiveLockedIntro">Arhiva de pe acest dispozitiv este blocată. Deschide-o cu parola arhivei sau cu codul de recuperare.</string>
@@ -3355,7 +3355,7 @@
     <string name="archiveKindTasksDesc">Cele finalizate și anulate, sub formă de copii</string>
     <string name="archiveKindContacts">Contacte</string>
     <string name="archiveKindContactsDesc">Contactele tale, ca instantaneu la data arhivării</string>
-    <string name="archiveAccountsSection">Ce cutii poștale</string>
+    <string name="archiveAccountsSection">Cutii poștale de arhivat</string>
     <string name="archiveCopySection">Copie și protecție</string>
     <string name="archiveCopyHelp">Arhiva se află în datele aplicației: dacă elimini aplicația, arhiva dispare odată cu ea. Salvează o copie (un fișier .ogna) pe o unitate sau în cloud: Google Drive, Fișiere cu iCloud Drive, Yandex Disk, o unitate USB. Copia este criptată cu aceeași cheie: nu poate fi deschisă fără parolă sau cod.</string>
     <string name="archiveCopySave">Salvează o copie a arhivei</string>
@@ -3527,4 +3527,24 @@
     <string name="exchangeHiddenDesc">Exchange nu este acceptat în această versiune. Cutiile poștale și datele lor rămân pe acest dispozitiv și vor reveni într-o versiune cu Exchange. Poți adăuga e-mailul prin IMAP.</string>
     <string name="sourceCode">Cod sursă</string>
     <string name="sourceCodeDesc">GitHub: citește, compilează, contribuie</string>
+    <string name="archiveMergeTitle">Îmbină cu o copie</string>
+    <string name="archiveMergeSub">Adaugă mesaje dintr-o copie creată pe alt dispozitiv – fără dubluri</string>
+    <string name="archiveMergeIntro">Alege o copie a arhivei (.ogna) de pe alt dispozitiv – din cloud (Google Drive, iCloud Drive, Yandex Disk) sau de pe un stick USB – și introdu parola sau codul de recuperare al acesteia. Tot ce nu se află încă în arhiva de pe acest dispozitiv se adaugă; nimic nu se dublează, iar parola arhivei rămâne aceeași.</string>
+    <string name="archiveMergeRun">Îmbină</string>
+    <string name="archiveMerging">Îmbinare: {done} din {total} mesaje</string>
+    <string name="archiveMergeDone">Mesaje adăugate: {n}. Deja în arhivă: {skipped}.</string>
+    <string name="archiveMergeAfter">Ca să ai tot și pe celălalt dispozitiv, salvează aici o copie a arhivei și îmbin-o acolo.</string>
+    <string name="archiveDevicesSection">Alte dispozitive și cloud-ul</string>
+    <string name="archiveDevicesHow">Arhiva este stocată pe acest dispozitiv și este criptată; cloud-ul este un loc pentru copia ei. Ca să deschizi arhiva pe alt telefon sau computer, salvează o copie în cloud (Google Drive, iCloud Drive, Yandex Disk) sau pe un stick USB, iar acolo atinge Arhivă Ogneliss → Conectează o copie a arhivei (dacă acolo nu există încă o arhivă) sau Îmbină cu o copie (dacă are una proprie). Poți arhiva pe ambele dispozitive: din când în când salvează o copie pe unul și îmbin-o pe celălalt – nimic nu se dublează.</string>
+    <string name="archiveDevicesHowNone">Ai deja o arhivă pe alt dispozitiv? Salvează acolo o copie a arhivei (Setări → Arhivă Ogneliss → Salvează o copie a arhivei) în cloud sau pe un stick USB, iar aici atinge Conectează o copie a arhivei. După aceea poți arhiva pe ambele dispozitive: din când în când salvează o copie pe unul și îmbin-o pe celălalt.</string>
+    <string name="archiveSecuritySection">Protecție</string>
+    <string name="archiveContentsSection">Cutii poștale în arhivă</string>
+    <string name="archiveContentsHelp">O singură arhivă conține toate cutiile poștale: fiecare are propria ramură de dosare, ca în cutia poștală – aici și în meniul lateral, la Arhivă Ogneliss. Aceeași cutie poștală de pe dispozitive diferite este o singură ramură: cutiile poștale sunt asociate după adresă.</string>
+    <string name="archiveAccountMails">mesaje: {n}</string>
+    <string name="archiveAccountOtherDevice">de pe alt dispozitiv</string>
+    <string name="archiveAccountsHelp">Doar cutiile poștale activate sunt arhivate. O cutie poștală dezactivată nu este arhivată; ce se află deja în arhivă rămâne acolo.</string>
+    <string name="faq_archive_6_q">Cum folosesc o singură arhivă pe telefon și pe computer?</string>
+    <string name="faq_archive_6_a">Fiecare dispozitiv păstrează propria copie a arhivei, iar cloud-ul (Google Drive, iCloud Drive, Yandex Disk) sau un stick USB este locul pentru schimbul ei. Pe primul dispozitiv: Setări → Arhivă Ogneliss → Salvează o copie a arhivei. Pe al doilea: Conectează o copie a arhivei, dacă acolo nu există încă o arhivă, sau Îmbină cu o copie, dacă are una proprie. Poți arhiva pe ambele: din când în când salvează o copie pe unul și îmbin-o pe celălalt. Îmbinarea adaugă doar ce lipsește: mesajele nu se dublează, iar aceeași cutie poștală rămâne o singură ramură.</string>
+    <string name="faq_archive_7_q">Cum păstrează arhiva mai multe cutii poștale?</string>
+    <string name="faq_archive_7_a">Toate cutiile poștale sunt într-o singură arhivă, fiecare cu propria ramură de dosare, structurată ca în cutia poștală: în meniul lateral, la Arhivă Ogneliss, și pe ecranul arhivei, la Cutii poștale în arhivă. Ce cutii poștale se arhivează se alege pe același ecran, la Cutii poștale de arhivat; căutarea în arhivă acoperă toate cutiile poștale deodată.</string>
 </resources>

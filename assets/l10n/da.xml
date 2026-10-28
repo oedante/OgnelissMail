@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">Det er ikke en Ogneliss-arkivfil (.ogna)</string>
     <string name="archiveNewerFormat">Arkivet er oprettet med en nyere version af appen. Opdater appen</string>
     <string name="archiveBroken">Arkivfilen er beskadiget eller ufuldstændig</string>
-    <string name="archiveAlreadyExists">Der er allerede et arkiv på denne enhed. Flere arkiver kommer i senere versioner</string>
+    <string name="archiveAlreadyExists">Der er allerede et arkiv på denne enhed. Vælg Flet med en kopi for at føje en kopi fra en anden enhed til det</string>
     <string name="archiveNoCipher">Denne version har ingen databasekryptering, så der kan ikke oprettes et arkiv</string>
     <string name="archiveLocked">Arkivet er låst. Åbn det med adgangskoden</string>
     <string name="archiveLockedIntro">Arkivet på denne enhed er låst. Åbn det med arkivets adgangskode eller gendannelseskoden.</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">Udførte og annullerede, som kopier</string>
     <string name="archiveKindContacts">Kontakter</string>
     <string name="archiveKindContactsDesc">Dine egne kontakter, som et øjebliksbillede ved arkivering</string>
-    <string name="archiveAccountsSection">Hvilke postkasser</string>
+    <string name="archiveAccountsSection">Postkasser, der skal arkiveres</string>
     <string name="archiveCopySection">Kopi og beskyttelse</string>
     <string name="archiveCopyHelp">Arkivet ligger i appens data: hvis du fjerner appen, forsvinder arkivet med den. Gem en kopi (en .ogna-fil) på et drev eller i en sky: Google Drive, Filer med iCloud Drive, Yandex Disk, et USB-drev. Kopien er krypteret med den samme nøgle: den kan ikke åbnes uden adgangskoden eller koden.</string>
     <string name="archiveCopySave">Gem en kopi af arkivet</string>
@@ -3508,4 +3508,24 @@
     <string name="exchangeHiddenDesc">Exchange understøttes ikke i denne version. Postkasserne og deres data bliver på denne enhed og vender tilbage i en version med Exchange. Du kan tilføje mailen via IMAP.</string>
     <string name="sourceCode">Kildekode</string>
     <string name="sourceCodeDesc">GitHub: læs, byg, bidrag</string>
+    <string name="archiveMergeTitle">Flet med en kopi</string>
+    <string name="archiveMergeSub">Tilføj mails fra en kopi lavet på en anden enhed — uden dubletter</string>
+    <string name="archiveMergeIntro">Vælg en kopi af arkivet (.ogna) fra en anden enhed — i Google Drive, iCloud Drive, Yandex Disk eller på et USB-drev — og angiv dens adgangskode eller gendannelseskode. Alt, hvad der endnu ikke er i arkivet på denne enhed, tilføjes; intet duplikeres, og arkivets adgangskode forbliver den samme.</string>
+    <string name="archiveMergeRun">Flet</string>
+    <string name="archiveMerging">Fletter: {done} af {total} mails</string>
+    <string name="archiveMergeDone">Mails tilføjet: {n}. Allerede i arkivet: {skipped}.</string>
+    <string name="archiveMergeAfter">For at have alt på den anden enhed også skal du gemme en kopi af arkivet her og flette den der.</string>
+    <string name="archiveDevicesSection">Andre enheder og skyen</string>
+    <string name="archiveDevicesHow">Arkivet gemmes på denne enhed og er krypteret; skyen er et sted til dets kopi. For at åbne arkivet på en anden telefon eller computer skal du gemme en kopi i Google Drive, iCloud Drive, Yandex Disk eller på et USB-drev og dér trykke på Ogneliss-arkiv → Tilslut en kopi af arkivet (hvis den ikke har noget arkiv endnu) eller Flet med en kopi (hvis den har sit eget). Du kan arkivere på begge enheder: gem en kopi på den ene en gang imellem, og flet den på den anden — intet duplikeres.</string>
+    <string name="archiveDevicesHowNone">Har du allerede et arkiv på en anden enhed? Gem en kopi af arkivet dér (Indstillinger → Ogneliss-arkiv → Gem en kopi af arkivet) i skyen eller på et USB-drev, og tryk på Tilslut en kopi af arkivet her. Derefter kan du arkivere på begge enheder: gem en kopi på den ene en gang imellem, og flet den på den anden.</string>
+    <string name="archiveSecuritySection">Beskyttelse</string>
+    <string name="archiveContentsSection">Postkasser i arkivet</string>
+    <string name="archiveContentsHelp">Ét arkiv rummer alle postkasser: hver har sin egen gren af mapper, som i postkassen — her og i sidemenuen under Ogneliss-arkiv. Den samme postkasse fra forskellige enheder er én gren: postkasser genkendes på adressen.</string>
+    <string name="archiveAccountMails">mails: {n}</string>
+    <string name="archiveAccountOtherDevice">fra en anden enhed</string>
+    <string name="archiveAccountsHelp">Kun postkasser, der er slået til, arkiveres. En postkasse, der er slået fra, arkiveres ikke; det, der allerede er i arkivet, forbliver der.</string>
+    <string name="faq_archive_6_q">Hvordan bruger jeg ét arkiv på telefon og computer?</string>
+    <string name="faq_archive_6_a">Hver enhed har sin egen kopi af arkivet, og skyen (Google Drive, iCloud Drive, Yandex Disk) eller et USB-drev er stedet, hvor man udveksler den. På den første enhed: Indstillinger → Ogneliss-arkiv → Gem en kopi af arkivet. På den anden: Tilslut en kopi af arkivet, hvis den ikke har noget arkiv endnu, eller Flet med en kopi, hvis den har sit eget. Du kan arkivere på begge: gem en kopi på den ene en gang imellem, og flet den på den anden. Fletning tilføjer kun det, der mangler: mails duplikeres ikke, og den samme postkasse forbliver én gren.</string>
+    <string name="faq_archive_7_q">Hvordan gemmer arkivet flere postkasser?</string>
+    <string name="faq_archive_7_a">Alle postkasser ligger i ét arkiv, hver med sin egen gren af mapper opbygget som i postkassen: i sidemenuen under Ogneliss-arkiv og på arkivskærmen under Postkasser i arkivet. Hvilke postkasser der skal arkiveres, vælger du på samme skærm under Postkasser, der skal arkiveres; søgning i arkivet dækker alle postkasser på én gang.</string>
 </resources>

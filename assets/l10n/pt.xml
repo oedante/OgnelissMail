@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">Este não é um arquivo do Ogneliss (.ogna)</string>
     <string name="archiveNewerFormat">O arquivo foi criado por uma versão mais recente do app. Atualize o app</string>
     <string name="archiveBroken">O arquivo está danificado ou incompleto</string>
-    <string name="archiveAlreadyExists">Já existe um arquivo neste dispositivo. Vários arquivos virão em versões futuras</string>
+    <string name="archiveAlreadyExists">Já existe um arquivo neste dispositivo. Para adicionar a ele uma cópia de outro dispositivo, escolha Mesclar com uma cópia</string>
     <string name="archiveNoCipher">Esta versão não tem criptografia do banco de dados, por isso não é possível criar um arquivo</string>
     <string name="archiveLocked">O arquivo está bloqueado. Abra-o com a senha</string>
     <string name="archiveLockedIntro">O arquivo deste dispositivo está bloqueado. Abra-o com a senha do arquivo ou com o código de recuperação.</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">As concluídas e canceladas, como cópias</string>
     <string name="archiveKindContacts">Contatos</string>
     <string name="archiveKindContactsDesc">Seus próprios contatos, como um instantâneo na data do arquivamento</string>
-    <string name="archiveAccountsSection">Quais caixas de correio</string>
+    <string name="archiveAccountsSection">Caixas de correio para arquivar</string>
     <string name="archiveCopySection">Cópia e proteção</string>
     <string name="archiveCopyHelp">O arquivo fica nos dados do app: se você remover o app, o arquivo vai junto. Salve uma cópia (um arquivo .ogna) em uma unidade ou na nuvem: Google Drive, Arquivos com iCloud Drive, Yandex Disk, uma unidade USB. A cópia é criptografada com a mesma chave: não pode ser aberta sem a senha ou o código.</string>
     <string name="archiveCopySave">Salvar uma cópia do arquivo</string>
@@ -3508,4 +3508,24 @@
     <string name="exchangeHiddenDesc">O Exchange não é compatível com esta versão. As caixas de correio e os dados delas permanecem neste dispositivo e voltarão em uma versão com Exchange. Você pode adicionar o e-mail via IMAP.</string>
     <string name="sourceCode">Código-fonte</string>
     <string name="sourceCodeDesc">GitHub: ler, compilar, contribuir</string>
+    <string name="archiveMergeTitle">Mesclar com uma cópia</string>
+    <string name="archiveMergeSub">Adicione mensagens de uma cópia feita em outro dispositivo, sem duplicatas</string>
+    <string name="archiveMergeIntro">Escolha uma cópia do arquivo (.ogna) de outro dispositivo — no Google Drive, iCloud Drive, Yandex Disk ou em uma unidade USB — e informe a senha ou o código de recuperação dela. Tudo o que ainda não estiver no arquivo deste dispositivo será adicionado; nada é duplicado e a senha do arquivo continua a mesma.</string>
+    <string name="archiveMergeRun">Mesclar</string>
+    <string name="archiveMerging">Mesclando: {done} de {total} mensagens</string>
+    <string name="archiveMergeDone">Mensagens adicionadas: {n}. Já estavam no arquivo: {skipped}.</string>
+    <string name="archiveMergeAfter">Para ter tudo também no outro dispositivo, salve aqui uma cópia do arquivo e mescle-a lá.</string>
+    <string name="archiveDevicesSection">Outros dispositivos e a nuvem</string>
+    <string name="archiveDevicesHow">O arquivo fica neste dispositivo e é criptografado; a nuvem é um lugar para a cópia dele. Para abrir o arquivo em outro celular ou computador, salve uma cópia no Google Drive, iCloud Drive, Yandex Disk ou em uma unidade USB e, lá, toque em Arquivo do Ogneliss → Conectar uma cópia do arquivo (se ainda não houver um arquivo) ou Mesclar com uma cópia (se já houver um próprio). Você pode arquivar nos dois dispositivos: de tempos em tempos, salve uma cópia em um e mescle no outro — nada é duplicado.</string>
+    <string name="archiveDevicesHowNone">Já tem um arquivo em outro dispositivo? Salve lá uma cópia do arquivo (Configurações → Arquivo do Ogneliss → Salvar uma cópia do arquivo) na nuvem ou em uma unidade USB e toque aqui em Conectar uma cópia do arquivo. Depois disso, você pode arquivar nos dois dispositivos: de tempos em tempos, salve uma cópia em um e mescle no outro.</string>
+    <string name="archiveSecuritySection">Proteção</string>
+    <string name="archiveContentsSection">Caixas de correio no arquivo</string>
+    <string name="archiveContentsHelp">Um arquivo guarda todas as caixas de correio: cada uma tem seu próprio ramo de pastas, como na caixa de correio — aqui e no menu lateral, em Arquivo do Ogneliss. A mesma caixa de correio de dispositivos diferentes é um só ramo: as caixas são identificadas pelo endereço.</string>
+    <string name="archiveAccountMails">mensagens: {n}</string>
+    <string name="archiveAccountOtherDevice">de outro dispositivo</string>
+    <string name="archiveAccountsHelp">Somente as caixas de correio ativadas são arquivadas. Uma caixa desativada não é arquivada; o que já está no arquivo permanece lá.</string>
+    <string name="faq_archive_6_q">Como usar um único arquivo no celular e no computador?</string>
+    <string name="faq_archive_6_a">Cada dispositivo mantém a própria cópia do arquivo, e a nuvem (Google Drive, iCloud Drive, Yandex Disk) ou uma unidade USB serve para trocá-la. No primeiro dispositivo: Configurações → Arquivo do Ogneliss → Salvar uma cópia do arquivo. No segundo: Conectar uma cópia do arquivo, se ele ainda não tiver um arquivo, ou Mesclar com uma cópia, se já tiver o próprio. Você pode arquivar nos dois: de tempos em tempos, salve uma cópia em um e mescle no outro. A mesclagem adiciona só o que falta: as mensagens não são duplicadas e a mesma caixa de correio continua sendo um só ramo.</string>
+    <string name="faq_archive_7_q">Como o arquivo guarda várias caixas de correio?</string>
+    <string name="faq_archive_7_a">Todas as caixas de correio ficam em um só arquivo, cada uma com seu próprio ramo de pastas estruturado como na caixa de correio: no menu lateral, em Arquivo do Ogneliss, e na tela do arquivo, em Caixas de correio no arquivo. Quais caixas arquivar é escolhido na mesma tela, em Caixas de correio para arquivar; a pesquisa no arquivo abrange todas as caixas de uma vez.</string>
 </resources>

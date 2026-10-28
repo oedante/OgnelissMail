@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">Dit is geen Ogneliss-archiefbestand (.ogna)</string>
     <string name="archiveNewerFormat">Het archief is gemaakt met een nieuwere versie van de app. Werk de app bij</string>
     <string name="archiveBroken">Het archiefbestand is beschadigd of onvolledig</string>
-    <string name="archiveAlreadyExists">Er staat al een archief op dit apparaat. Meerdere archieven komen in latere versies</string>
+    <string name="archiveAlreadyExists">Er staat al een archief op dit apparaat. Kies Samenvoegen met een kopie om er een kopie van een ander apparaat aan toe te voegen</string>
     <string name="archiveNoCipher">Deze build heeft geen databaseversleuteling, dus er kan geen archief worden gemaakt</string>
     <string name="archiveLocked">Het archief is vergrendeld. Open het met het wachtwoord</string>
     <string name="archiveLockedIntro">Het archief op dit apparaat is vergrendeld. Open het met het archiefwachtwoord of de herstelcode.</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">Voltooide en geannuleerde, als kopieën</string>
     <string name="archiveKindContacts">Contacten</string>
     <string name="archiveKindContactsDesc">Je eigen contacten, als momentopname op het moment van archiveren</string>
-    <string name="archiveAccountsSection">Welke mailboxen</string>
+    <string name="archiveAccountsSection">Te archiveren mailboxen</string>
     <string name="archiveCopySection">Kopie en beveiliging</string>
     <string name="archiveCopyHelp">Het archief staat in de appgegevens: als je de app verwijdert, verdwijnt het archief mee. Sla een kopie (een .ogna-bestand) op een schijf of in de cloud op: Google Drive, Bestanden met iCloud Drive, Yandex Disk, een USB-stick. De kopie is met dezelfde sleutel versleuteld en kan niet worden geopend zonder het wachtwoord of de code.</string>
     <string name="archiveCopySave">Archiefkopie opslaan</string>
@@ -3508,4 +3508,24 @@
     <string name="exchangeHiddenDesc">Exchange wordt in deze versie niet ondersteund. De mailboxen en hun gegevens blijven op dit apparaat en komen terug in een versie met Exchange. Je kunt de e-mail toevoegen via IMAP.</string>
     <string name="sourceCode">Broncode</string>
     <string name="sourceCodeDesc">GitHub: lezen, bouwen, bijdragen</string>
+    <string name="archiveMergeTitle">Samenvoegen met een kopie</string>
+    <string name="archiveMergeSub">Voeg berichten toe uit een kopie die op een ander apparaat is gemaakt — zonder dubbelen</string>
+    <string name="archiveMergeIntro">Kies een archiefkopie (.ogna) van een ander apparaat — in Google Drive, iCloud Drive, Yandex Disk of op een USB-stick — en voer het wachtwoord of de herstelcode in. Alles wat nog niet in het archief op dit apparaat staat, wordt toegevoegd; er wordt niets dubbel opgeslagen en het archiefwachtwoord blijft hetzelfde.</string>
+    <string name="archiveMergeRun">Samenvoegen</string>
+    <string name="archiveMerging">Samenvoegen: {done} van {total} berichten</string>
+    <string name="archiveMergeDone">Toegevoegde berichten: {n}. Al in het archief: {skipped}.</string>
+    <string name="archiveMergeAfter">Om alles ook op het andere apparaat te hebben, sla je hier een archiefkopie op en voeg je die daar samen.</string>
+    <string name="archiveDevicesSection">Andere apparaten en de cloud</string>
+    <string name="archiveDevicesHow">Het archief wordt op dit apparaat bewaard en is versleuteld; de cloud is een plek voor de kopie ervan. Om het archief op een andere telefoon of computer te openen, sla je een kopie op in Google Drive, iCloud Drive, Yandex Disk of op een USB-stick en tik je daar op Ogneliss-archief → Archiefkopie koppelen (als er nog geen archief is) of Samenvoegen met een kopie (als er al een eigen archief is). Je kunt op beide apparaten archiveren: sla af en toe een kopie op op het ene apparaat en voeg die samen op het andere — er wordt niets dubbel opgeslagen.</string>
+    <string name="archiveDevicesHowNone">Heb je al een archief op een ander apparaat? Sla daar een archiefkopie op (Instellingen → Ogneliss-archief → Archiefkopie opslaan) in de cloud of op een USB-stick en tik hier op Archiefkopie koppelen. Daarna kun je op beide apparaten archiveren: sla af en toe een kopie op op het ene apparaat en voeg die samen op het andere.</string>
+    <string name="archiveSecuritySection">Beveiliging</string>
+    <string name="archiveContentsSection">Mailboxen in het archief</string>
+    <string name="archiveContentsHelp">Eén archief bevat alle mailboxen: elke mailbox heeft een eigen tak met mappen, net als in de mailbox — hier en in het zijmenu, onder Ogneliss-archief. Dezelfde mailbox van verschillende apparaten is één tak: mailboxen worden herkend aan het adres.</string>
+    <string name="archiveAccountMails">berichten: {n}</string>
+    <string name="archiveAccountOtherDevice">van een ander apparaat</string>
+    <string name="archiveAccountsHelp">Alleen mailboxen die aanstaan, worden gearchiveerd. Een mailbox die uitstaat, wordt niet gearchiveerd; wat al in het archief staat, blijft er staan.</string>
+    <string name="faq_archive_6_q">Hoe gebruik ik één archief op een telefoon en een computer?</string>
+    <string name="faq_archive_6_a">Elk apparaat bewaart een eigen kopie van het archief, en de cloud (Google Drive, iCloud Drive, Yandex Disk) of een USB-stick is de plek om die uit te wisselen. Op het eerste apparaat: Instellingen → Ogneliss-archief → Archiefkopie opslaan. Op het tweede: Archiefkopie koppelen als er nog geen archief is, of Samenvoegen met een kopie als er al een eigen archief is. Je kunt op beide archiveren: sla af en toe een kopie op op het ene apparaat en voeg die samen op het andere. Samenvoegen voegt alleen toe wat ontbreekt: berichten worden niet dubbel opgeslagen en dezelfde mailbox blijft één tak.</string>
+    <string name="faq_archive_7_q">Hoe bewaart het archief meerdere mailboxen?</string>
+    <string name="faq_archive_7_a">Alle mailboxen staan in één archief, elk met een eigen tak met mappen die is opgebouwd zoals in de mailbox: in het zijmenu onder Ogneliss-archief en op het archiefscherm onder Mailboxen in het archief. Welke mailboxen je archiveert, kies je op hetzelfde scherm onder Te archiveren mailboxen; zoeken in het archief doorzoekt alle mailboxen tegelijk.</string>
 </resources>

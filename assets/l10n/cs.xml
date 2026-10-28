@@ -3272,7 +3272,7 @@
     <string name="archiveNotOgna">Toto není soubor archivu Ogneliss (.ogna)</string>
     <string name="archiveNewerFormat">Archiv byl vytvořen novější verzí aplikace. Aktualizujte aplikaci</string>
     <string name="archiveBroken">Soubor archivu je poškozený nebo neúplný</string>
-    <string name="archiveAlreadyExists">Na tomto zařízení už archiv je. Více archivů přijde v dalších verzích</string>
+    <string name="archiveAlreadyExists">Na tomto zařízení už archiv existuje. Chcete-li do něj přidat kopii z jiného zařízení, zvolte Sloučit s kopií</string>
     <string name="archiveNoCipher">Tato verze nemá šifrování databáze, proto nelze vytvořit archiv</string>
     <string name="archiveLocked">Archiv je zamčený. Otevřete ho heslem</string>
     <string name="archiveLockedIntro">Archiv na tomto zařízení je zamčený. Otevřete ho heslem archivu nebo obnovovacím kódem.</string>
@@ -3355,7 +3355,7 @@
     <string name="archiveKindTasksDesc">Dokončené a zrušené, jako kopie</string>
     <string name="archiveKindContacts">Kontakty</string>
     <string name="archiveKindContactsDesc">Vlastní kontakty jako snímek k datu archivace</string>
-    <string name="archiveAccountsSection">Které schránky</string>
+    <string name="archiveAccountsSection">Schránky k archivaci</string>
     <string name="archiveCopySection">Kopie a ochrana</string>
     <string name="archiveCopyHelp">Archiv je uložen v datech aplikace: když aplikaci odstraníte, archiv zmizí s ní. Uložte kopii (soubor .ogna) na disk nebo do cloudu: Google Drive, Soubory s iCloud Drive, Yandex Disk, USB disk. Kopie je zašifrovaná stejným klíčem: bez hesla nebo kódu ji nelze otevřít.</string>
     <string name="archiveCopySave">Uložit kopii archivu</string>
@@ -3527,4 +3527,24 @@
     <string name="exchangeHiddenDesc">Exchange není v této verzi podporován. Schránky a jejich data zůstanou na tomto zařízení a vrátí se ve verzi s Exchange. Poštu můžete přidat přes IMAP.</string>
     <string name="sourceCode">Zdrojový kód</string>
     <string name="sourceCodeDesc">GitHub: číst, sestavit, přispět</string>
+    <string name="archiveMergeTitle">Sloučit s kopií</string>
+    <string name="archiveMergeSub">Přidat zprávy z kopie vytvořené na jiném zařízení – bez duplicit</string>
+    <string name="archiveMergeIntro">Vyberte kopii archivu (.ogna) z jiného zařízení – z cloudu (Google Drive, iCloud Drive, Yandex Disk) nebo z USB disku – a zadejte její heslo nebo obnovovací kód. Přidá se vše, co v archivu na tomto zařízení ještě není; nic se nezduplikuje a heslo archivu zůstane stejné.</string>
+    <string name="archiveMergeRun">Sloučit</string>
+    <string name="archiveMerging">Slučování: {done} z {total} zpráv</string>
+    <string name="archiveMergeDone">Přidáno zpráv: {n}. Už v archivu: {skipped}.</string>
+    <string name="archiveMergeAfter">Aby bylo vše i na druhém zařízení, uložte zde kopii archivu a tam ji sloučte.</string>
+    <string name="archiveDevicesSection">Další zařízení a cloud</string>
+    <string name="archiveDevicesHow">Archiv je uložen na tomto zařízení a je šifrovaný; cloud je místo pro jeho kopii. Chcete-li archiv otevřít na jiném telefonu nebo počítači, uložte kopii do cloudu (Google Drive, iCloud Drive, Yandex Disk) nebo na USB disk a tam klepněte na Archiv Ogneliss → Připojit kopii archivu (pokud tam archiv ještě není) nebo Sloučit s kopií (pokud má vlastní). Archivovat můžete na obou zařízeních: čas od času uložte kopii na jednom a sloučte ji na druhém – nic se nezduplikuje.</string>
+    <string name="archiveDevicesHowNone">Už máte archiv na jiném zařízení? Uložte tam kopii archivu (Nastavení → Archiv Ogneliss → Uložit kopii archivu) do cloudu nebo na USB disk a tady klepněte na Připojit kopii archivu. Potom můžete archivovat na obou zařízeních: čas od času uložte kopii na jednom a sloučte ji na druhém.</string>
+    <string name="archiveSecuritySection">Ochrana</string>
+    <string name="archiveContentsSection">Schránky v archivu</string>
+    <string name="archiveContentsHelp">Jeden archiv obsahuje všechny schránky: každá má vlastní větev složek jako ve schránce – tady i v postranním menu v části Archiv Ogneliss. Stejná schránka z různých zařízení je jedna větev: schránky se rozpoznávají podle adresy.</string>
+    <string name="archiveAccountMails">zpráv: {n}</string>
+    <string name="archiveAccountOtherDevice">z jiného zařízení</string>
+    <string name="archiveAccountsHelp">Archivují se jen zapnuté schránky. Vypnutá schránka se nearchivuje; co už v archivu je, tam zůstane.</string>
+    <string name="faq_archive_6_q">Jak používat jeden archiv na telefonu i počítači?</string>
+    <string name="faq_archive_6_a">Každé zařízení má svou vlastní kopii archivu a místem pro výměnu je cloud (Google Drive, iCloud Drive, Yandex Disk) nebo USB disk. Na prvním zařízení: Nastavení → Archiv Ogneliss → Uložit kopii archivu. Na druhém: Připojit kopii archivu, pokud tam archiv ještě není, nebo Sloučit s kopií, pokud má vlastní. Archivovat můžete na obou: čas od času uložte kopii na jednom a sloučte ji na druhém. Sloučení přidá jen to, co chybí: zprávy se neduplikují a stejná schránka zůstává jednou větví.</string>
+    <string name="faq_archive_7_q">Jak archiv uchovává více schránek?</string>
+    <string name="faq_archive_7_a">Všechny schránky jsou v jednom archivu, každá má vlastní větev složek se strukturou jako ve schránce: v postranním menu v části Archiv Ogneliss a na obrazovce archivu v části Schránky v archivu. Které schránky se mají archivovat, se vybírá na stejné obrazovce v části Schránky k archivaci; vyhledávání v archivu prohledává všechny schránky najednou.</string>
 </resources>

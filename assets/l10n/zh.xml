@@ -3246,7 +3246,7 @@
     <string name="archiveNotOgna">这不是 Ogneliss 归档文件（.ogna）</string>
     <string name="archiveNewerFormat">归档由更新版本的应用创建，请更新应用</string>
     <string name="archiveBroken">归档文件已损坏或不完整</string>
-    <string name="archiveAlreadyExists">此设备上已有归档。后续版本将支持多个归档</string>
+    <string name="archiveAlreadyExists">此设备上已有归档。要将其他设备的副本添加到其中，请选择“与副本合并”</string>
     <string name="archiveNoCipher">此版本不含数据库加密功能，因此无法创建归档</string>
     <string name="archiveLocked">归档已锁定，请使用密码打开</string>
     <string name="archiveLockedIntro">此设备上的归档已锁定。请使用归档密码或恢复码打开。</string>
@@ -3317,7 +3317,7 @@
     <string name="archiveKindTasksDesc">已完成和已取消的任务，以副本形式归档</string>
     <string name="archiveKindContacts">联系人</string>
     <string name="archiveKindContactsDesc">你自己的联系人，以归档时的快照形式保存</string>
-    <string name="archiveAccountsSection">哪些邮箱</string>
+    <string name="archiveAccountsSection">要归档的邮箱</string>
     <string name="archiveCopySection">副本与保护</string>
     <string name="archiveCopyHelp">归档保存在应用数据中：卸载应用时，归档也会一并删除。请将副本（.ogna 文件）保存到驱动器或云端：Google Drive、“文件”中的 iCloud Drive、Yandex Disk、U 盘。副本使用同一密钥加密：没有密码或恢复码就无法打开。</string>
     <string name="archiveCopySave">保存归档副本</string>
@@ -3489,4 +3489,24 @@
     <string name="exchangeHiddenDesc">此版本不支持 Exchange。这些邮箱及其数据仍保留在此设备上，将在支持 Exchange 的版本中恢复。你可以改用 IMAP 添加该邮箱。</string>
     <string name="sourceCode">源代码</string>
     <string name="sourceCodeDesc">GitHub：阅读、构建、参与贡献</string>
+    <string name="archiveMergeTitle">与副本合并</string>
+    <string name="archiveMergeSub">添加在其他设备上创建的副本中的邮件 — 不会重复</string>
+    <string name="archiveMergeIntro">从其他设备选择归档副本（.ogna）— 位于 Google Drive、iCloud Drive、Yandex Disk 或 U 盘中 — 然后输入其密码或恢复码。此设备上的归档中没有的内容都会被添加；不会产生重复，归档密码保持不变。</string>
+    <string name="archiveMergeRun">合并</string>
+    <string name="archiveMerging">正在合并：{done} / {total} 封邮件</string>
+    <string name="archiveMergeDone">已添加邮件：{n}。归档中已有：{skipped}。</string>
+    <string name="archiveMergeAfter">要让另一台设备上也有全部内容，请在此处保存归档副本，然后在那边合并。</string>
+    <string name="archiveDevicesSection">其他设备和云端</string>
+    <string name="archiveDevicesHow">归档存储在此设备上并经过加密；云端用于存放它的副本。要在另一部手机或电脑上打开归档，请将副本保存到 Google Drive、iCloud Drive、Yandex Disk 或 U 盘，然后在那里点按 Ogneliss 归档 →“连接归档副本”（如果那里还没有归档）或“与副本合并”（如果有自己的归档）。您可以在两台设备上都进行归档：不时在一台设备上保存副本，再在另一台上合并 — 不会产生重复。</string>
+    <string name="archiveDevicesHowNone">其他设备上已有归档？请在那里将归档副本保存到云端或 U 盘（设置 → Ogneliss 归档 → 保存归档副本），然后在此处点按“连接归档副本”。之后您可以在两台设备上都进行归档：不时在一台设备上保存副本，再在另一台上合并。</string>
+    <string name="archiveSecuritySection">保护</string>
+    <string name="archiveContentsSection">归档中的邮箱</string>
+    <string name="archiveContentsHelp">一个归档包含所有邮箱：每个邮箱都有各自的文件夹分支，结构与邮箱中相同 — 在此处以及侧边菜单的“Ogneliss 归档”下。不同设备上的同一邮箱是同一个分支：邮箱按地址匹配。</string>
+    <string name="archiveAccountMails">邮件：{n}</string>
+    <string name="archiveAccountOtherDevice">来自其他设备</string>
+    <string name="archiveAccountsHelp">只有已开启的邮箱才会被归档。已关闭的邮箱不会被归档；已在归档中的内容会保留。</string>
+    <string name="faq_archive_6_q">如何在手机和电脑上使用同一个归档？</string>
+    <string name="faq_archive_6_a">每台设备各自保存一份归档副本，云端（Google Drive、iCloud Drive、Yandex Disk）或 U 盘用于交换副本。在第一台设备上：设置 → Ogneliss 归档 → 保存归档副本。在第二台设备上：如果还没有归档，选择“连接归档副本”；如果已有自己的归档，选择“与副本合并”。您可以在两台设备上都进行归档：不时在一台设备上保存副本，再在另一台上合并。合并只会添加缺少的内容：邮件不会重复，同一个邮箱仍是一个分支。</string>
+    <string name="faq_archive_7_q">归档如何保存多个邮箱？</string>
+    <string name="faq_archive_7_a">所有邮箱都在同一个归档中，每个邮箱都有各自的文件夹分支，结构与邮箱中相同：在侧边菜单的“Ogneliss 归档”下，以及归档界面的“归档中的邮箱”下。要归档哪些邮箱，在同一界面的“要归档的邮箱”下选择；归档搜索会同时覆盖所有邮箱。</string>
 </resources>

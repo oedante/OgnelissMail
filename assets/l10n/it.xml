@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">Questo non è un file di archivio Ogneliss (.ogna)</string>
     <string name="archiveNewerFormat">L\'archivio è stato creato da una versione più recente dell\'app. Aggiorna l\'app</string>
     <string name="archiveBroken">Il file dell\'archivio è danneggiato o incompleto</string>
-    <string name="archiveAlreadyExists">Su questo dispositivo c\'è già un archivio. Più archivi saranno disponibili nelle prossime versioni</string>
+    <string name="archiveAlreadyExists">Su questo dispositivo esiste già un archivio. Per aggiungervi una copia da un altro dispositivo, scegli Unisci con una copia</string>
     <string name="archiveNoCipher">Questa build non include la crittografia del database, quindi non è possibile creare un archivio</string>
     <string name="archiveLocked">L\'archivio è bloccato. Aprilo con la password</string>
     <string name="archiveLockedIntro">L\'archivio su questo dispositivo è bloccato. Aprilo con la password dell\'archivio o con il codice di recupero.</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">Quelle completate e annullate, come copie</string>
     <string name="archiveKindContacts">Contatti</string>
     <string name="archiveKindContactsDesc">I tuoi contatti, come istantanea alla data dell\'archiviazione</string>
-    <string name="archiveAccountsSection">Quali cassette postali</string>
+    <string name="archiveAccountsSection">Cassette postali da archiviare</string>
     <string name="archiveCopySection">Copia e protezione</string>
     <string name="archiveCopyHelp">L\'archivio si trova nei dati dell\'app: se rimuovi l\'app, l\'archivio va con lei. Salva una copia (un file .ogna) su un\'unità o nel cloud: Google Drive, File con iCloud Drive, Yandex Disk, un\'unità USB. La copia è crittografata con la stessa chiave: non si può aprire senza la password o il codice.</string>
     <string name="archiveCopySave">Salva una copia dell\'archivio</string>
@@ -3508,4 +3508,24 @@
     <string name="exchangeHiddenDesc">Exchange non è supportato in questa versione. Le cassette postali e i loro dati restano su questo dispositivo e torneranno in una versione con Exchange. Puoi aggiungere la posta tramite IMAP.</string>
     <string name="sourceCode">Codice sorgente</string>
     <string name="sourceCodeDesc">GitHub: leggi, compila, contribuisci</string>
+    <string name="archiveMergeTitle">Unisci con una copia</string>
+    <string name="archiveMergeSub">Aggiungi messaggi da una copia creata su un altro dispositivo, senza duplicati</string>
+    <string name="archiveMergeIntro">Scegli una copia dell\'archivio (.ogna) da un altro dispositivo — su Google Drive, iCloud Drive, Yandex Disk o su un\'unità USB — e inserisci la sua password o il codice di recupero. Viene aggiunto tutto ciò che non è ancora nell\'archivio su questo dispositivo; non viene duplicato nulla e la password dell\'archivio resta la stessa.</string>
+    <string name="archiveMergeRun">Unisci</string>
+    <string name="archiveMerging">Unione in corso: {done} di {total} messaggi</string>
+    <string name="archiveMergeDone">Messaggi aggiunti: {n}. Già presenti nell\'archivio: {skipped}.</string>
+    <string name="archiveMergeAfter">Per avere tutto anche sull\'altro dispositivo, salva qui una copia dell\'archivio e uniscila lì.</string>
+    <string name="archiveDevicesSection">Altri dispositivi e il cloud</string>
+    <string name="archiveDevicesHow">L\'archivio è memorizzato su questo dispositivo e crittografato; il cloud è un posto per la sua copia. Per aprire l\'archivio su un altro telefono o computer, salva una copia su Google Drive, iCloud Drive, Yandex Disk o su un\'unità USB e, lì, tocca Archivio Ogneliss → Collega una copia dell\'archivio (se non ha ancora un archivio) o Unisci con una copia (se ne ha già uno proprio). Puoi archiviare su entrambi i dispositivi: ogni tanto salva una copia su uno e uniscila sull\'altro — nulla viene duplicato.</string>
+    <string name="archiveDevicesHowNone">Hai già un archivio su un altro dispositivo? Salva lì una copia dell\'archivio (Impostazioni → Archivio Ogneliss → Salva una copia dell\'archivio) nel cloud o su un\'unità USB e tocca qui Collega una copia dell\'archivio. Poi potrai archiviare su entrambi i dispositivi: ogni tanto salva una copia su uno e uniscila sull\'altro.</string>
+    <string name="archiveSecuritySection">Protezione</string>
+    <string name="archiveContentsSection">Cassette postali nell\'archivio</string>
+    <string name="archiveContentsHelp">Un archivio contiene tutte le cassette postali: ognuna ha il proprio ramo di cartelle, come nella cassetta postale — qui e nel menu laterale, in Archivio Ogneliss. La stessa cassetta postale da dispositivi diversi è un unico ramo: le cassette postali vengono abbinate in base all\'indirizzo.</string>
+    <string name="archiveAccountMails">messaggi: {n}</string>
+    <string name="archiveAccountOtherDevice">da un altro dispositivo</string>
+    <string name="archiveAccountsHelp">Vengono archiviate solo le cassette postali attivate. Una cassetta postale disattivata non viene archiviata; ciò che è già nell\'archivio resta lì.</string>
+    <string name="faq_archive_6_q">Come si usa un solo archivio su telefono e computer?</string>
+    <string name="faq_archive_6_a">Ogni dispositivo conserva la propria copia dell\'archivio, e il cloud (Google Drive, iCloud Drive, Yandex Disk) o un\'unità USB è il posto in cui scambiarla. Sul primo dispositivo: Impostazioni → Archivio Ogneliss → Salva una copia dell\'archivio. Sul secondo: Collega una copia dell\'archivio se non ha ancora un archivio, oppure Unisci con una copia se ne ha già uno proprio. Puoi archiviare su entrambi: ogni tanto salva una copia su uno e uniscila sull\'altro. L\'unione aggiunge solo ciò che manca: i messaggi non vengono duplicati e la stessa cassetta postale resta un unico ramo.</string>
+    <string name="faq_archive_7_q">Come conserva l\'archivio più cassette postali?</string>
+    <string name="faq_archive_7_a">Tutte le cassette postali sono in un unico archivio, ognuna con il proprio ramo di cartelle strutturato come nella cassetta postale: nel menu laterale, in Archivio Ogneliss, e nella schermata dell\'archivio, in Cassette postali nell\'archivio. Le cassette postali da archiviare si scelgono nella stessa schermata, in Cassette postali da archiviare; la ricerca nell\'archivio copre tutte le cassette postali insieme.</string>
 </resources>

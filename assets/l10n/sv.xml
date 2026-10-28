@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">Det här är inte en Ogneliss-arkivfil (.ogna)</string>
     <string name="archiveNewerFormat">Arkivet har skapats med en nyare version av appen. Uppdatera appen</string>
     <string name="archiveBroken">Arkivfilen är skadad eller ofullständig</string>
-    <string name="archiveAlreadyExists">Det finns redan ett arkiv på den här enheten. Flera arkiv kommer i senare versioner</string>
+    <string name="archiveAlreadyExists">Det finns redan ett arkiv på den här enheten. Om du vill lägga till en kopia från en annan enhet i det väljer du Slå ihop med en kopia</string>
     <string name="archiveNoCipher">Den här versionen saknar databaskryptering, så ett arkiv kan inte skapas</string>
     <string name="archiveLocked">Arkivet är låst. Öppna det med lösenordet</string>
     <string name="archiveLockedIntro">Arkivet på den här enheten är låst. Öppna det med arkivlösenordet eller återställningskoden.</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">Slutförda och avbrutna, som kopior</string>
     <string name="archiveKindContacts">Kontakter</string>
     <string name="archiveKindContactsDesc">Dina egna kontakter, som en ögonblicksbild vid arkivering</string>
-    <string name="archiveAccountsSection">Vilka postlådor</string>
+    <string name="archiveAccountsSection">Postlådor att arkivera</string>
     <string name="archiveCopySection">Kopia och skydd</string>
     <string name="archiveCopyHelp">Arkivet finns i appens data: om du tar bort appen försvinner arkivet med den. Spara en kopia (en .ogna-fil) på en disk eller i ett moln: Google Drive, Filer med iCloud Drive, Yandex Disk, ett USB-minne. Kopian är krypterad med samma nyckel: den kan inte öppnas utan lösenordet eller koden.</string>
     <string name="archiveCopySave">Spara en kopia av arkivet</string>
@@ -3508,4 +3508,24 @@
     <string name="exchangeHiddenDesc">Exchange stöds inte i den här versionen. Postlådorna och deras data finns kvar på den här enheten och kommer tillbaka i en version med Exchange. Du kan lägga till e-posten via IMAP.</string>
     <string name="sourceCode">Källkod</string>
     <string name="sourceCodeDesc">GitHub: läs, bygg, bidra</string>
+    <string name="archiveMergeTitle">Slå ihop med en kopia</string>
+    <string name="archiveMergeSub">Lägg till e-post från en kopia som skapats på en annan enhet – utan dubbletter</string>
+    <string name="archiveMergeIntro">Välj en kopia av arkivet (.ogna) från en annan enhet – i Google Drive, iCloud Drive, Yandex Disk eller på ett USB-minne – och ange dess lösenord eller återställningskod. Allt som inte redan finns i arkivet på den här enheten läggs till; inget dubbleras och arkivlösenordet förblir detsamma.</string>
+    <string name="archiveMergeRun">Slå ihop</string>
+    <string name="archiveMerging">Slår ihop: {done} av {total} meddelanden</string>
+    <string name="archiveMergeDone">Meddelanden som lagts till: {n}. Fanns redan i arkivet: {skipped}.</string>
+    <string name="archiveMergeAfter">Om du vill ha allt på den andra enheten också sparar du en kopia av arkivet här och slår ihop den där.</string>
+    <string name="archiveDevicesSection">Andra enheter och molnet</string>
+    <string name="archiveDevicesHow">Arkivet lagras på den här enheten och är krypterat; molnet är en plats för kopian av det. Om du vill öppna arkivet på en annan telefon eller dator sparar du en kopia i Google Drive, iCloud Drive, Yandex Disk eller på ett USB-minne och trycker där på Ogneliss-arkiv → Anslut en kopia av arkivet (om det inte har något arkiv än) eller Slå ihop med en kopia (om det har ett eget). Du kan arkivera på båda enheterna: spara då och då en kopia på den ena och slå ihop den på den andra – inget dubbleras.</string>
+    <string name="archiveDevicesHowNone">Har du redan ett arkiv på en annan enhet? Spara en kopia av arkivet där (Inställningar → Ogneliss-arkiv → Spara en kopia av arkivet) i molnet eller på ett USB-minne och tryck på Anslut en kopia av arkivet här. Därefter kan du arkivera på båda enheterna: spara då och då en kopia på den ena och slå ihop den på den andra.</string>
+    <string name="archiveSecuritySection">Skydd</string>
+    <string name="archiveContentsSection">Postlådor i arkivet</string>
+    <string name="archiveContentsHelp">Ett arkiv rymmer alla postlådor: var och en har sin egen gren av mappar, som i postlådan – här och i sidomenyn under Ogneliss-arkiv. Samma postlåda från olika enheter är en gren: postlådor matchas efter adress.</string>
+    <string name="archiveAccountMails">meddelanden: {n}</string>
+    <string name="archiveAccountOtherDevice">från en annan enhet</string>
+    <string name="archiveAccountsHelp">Bara postlådor som är aktiverade arkiveras. En avaktiverad postlåda arkiveras inte; det som redan finns i arkivet blir kvar.</string>
+    <string name="faq_archive_6_q">Hur använder jag ett arkiv på både telefon och dator?</string>
+    <string name="faq_archive_6_a">Varje enhet har sin egen kopia av arkivet, och molnet (Google Drive, iCloud Drive, Yandex Disk) eller ett USB-minne är platsen där du utbyter den. På den första enheten: Inställningar → Ogneliss-arkiv → Spara en kopia av arkivet. På den andra: Anslut en kopia av arkivet om det inte har något arkiv än, eller Slå ihop med en kopia om det har ett eget. Du kan arkivera på båda: spara då och då en kopia på den ena och slå ihop den på den andra. Sammanslagningen lägger bara till det som saknas: meddelanden dubbleras inte och samma postlåda förblir en gren.</string>
+    <string name="faq_archive_7_q">Hur lagrar arkivet flera postlådor?</string>
+    <string name="faq_archive_7_a">Alla postlådor finns i ett arkiv, var och en med sin egen gren av mappar uppbyggd som i postlådan: i sidomenyn under Ogneliss-arkiv och på arkivskärmen under Postlådor i arkivet. Vilka postlådor som ska arkiveras väljer du på samma skärm under Postlådor att arkivera; arkivsökningen omfattar alla postlådor samtidigt.</string>
 </resources>

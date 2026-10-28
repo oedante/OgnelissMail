@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">Este no es un archivo de Ogneliss (.ogna)</string>
     <string name="archiveNewerFormat">El archivo se creó con una versión más reciente de la aplicación. Actualiza la aplicación</string>
     <string name="archiveBroken">El archivo está dañado o incompleto</string>
-    <string name="archiveAlreadyExists">Ya hay un archivo en este dispositivo. La compatibilidad con varios archivos llegará en próximas versiones</string>
+    <string name="archiveAlreadyExists">Ya hay un archivo en este dispositivo. Para añadirle una copia de otro dispositivo, elige Combinar con una copia</string>
     <string name="archiveNoCipher">Esta versión no incluye cifrado de la base de datos, así que no se puede crear un archivo</string>
     <string name="archiveLocked">El archivo está bloqueado. Ábrelo con la contraseña</string>
     <string name="archiveLockedIntro">El archivo de este dispositivo está bloqueado. Ábrelo con la contraseña del archivo o con el código de recuperación.</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">Las completadas y canceladas, como copias</string>
     <string name="archiveKindContacts">Contactos</string>
     <string name="archiveKindContactsDesc">Tus propios contactos, como una instantánea en el momento del archivado</string>
-    <string name="archiveAccountsSection">Qué buzones</string>
+    <string name="archiveAccountsSection">Buzones que archivar</string>
     <string name="archiveCopySection">Copia y protección</string>
     <string name="archiveCopyHelp">El archivo se guarda en los datos de la aplicación: si desinstalas la aplicación, el archivo desaparece con ella. Guarda una copia (un archivo .ogna) en una unidad o en la nube: Google Drive, Archivos con iCloud Drive, Yandex Disk, una unidad USB. La copia está cifrada con la misma clave: no se puede abrir sin la contraseña o el código.</string>
     <string name="archiveCopySave">Guardar una copia del archivo</string>
@@ -3508,4 +3508,24 @@
     <string name="exchangeHiddenDesc">Exchange no es compatible con esta versión. Los buzones y sus datos permanecen en este dispositivo y volverán en una versión con Exchange. Puedes añadir el correo mediante IMAP.</string>
     <string name="sourceCode">Código fuente</string>
     <string name="sourceCodeDesc">GitHub: leer, compilar, contribuir</string>
+    <string name="archiveMergeTitle">Combinar con una copia</string>
+    <string name="archiveMergeSub">Añade mensajes de una copia hecha en otro dispositivo, sin duplicados</string>
+    <string name="archiveMergeIntro">Elige una copia del archivo (.ogna) de otro dispositivo — en Google Drive, iCloud Drive, Yandex Disk o en una unidad USB — e introduce su contraseña o código de recuperación. Se añade todo lo que aún no está en el archivo de este dispositivo; no se duplica nada y la contraseña del archivo no cambia.</string>
+    <string name="archiveMergeRun">Combinar</string>
+    <string name="archiveMerging">Combinando: {done} de {total} mensajes</string>
+    <string name="archiveMergeDone">Mensajes añadidos: {n}. Ya estaban en el archivo: {skipped}.</string>
+    <string name="archiveMergeAfter">Para tenerlo todo también en el otro dispositivo, guarda aquí una copia del archivo y combínala allí.</string>
+    <string name="archiveDevicesSection">Otros dispositivos y la nube</string>
+    <string name="archiveDevicesHow">El archivo se guarda en este dispositivo y está cifrado; la nube es un lugar para su copia. Para abrir el archivo en otro teléfono u ordenador, guarda una copia en Google Drive, iCloud Drive, Yandex Disk o en una unidad USB y, allí, toca Archivo de Ogneliss → Conectar una copia del archivo (si aún no tiene archivo) o Combinar con una copia (si ya tiene uno propio). Puedes archivar en ambos dispositivos: de vez en cuando guarda una copia en uno y combínala en el otro; no se duplica nada.</string>
+    <string name="archiveDevicesHowNone">¿Ya tienes un archivo en otro dispositivo? Guarda allí una copia del archivo (Ajustes → Archivo de Ogneliss → Guardar una copia del archivo) en la nube o en una unidad USB y toca aquí Conectar una copia del archivo. Después podrás archivar en ambos dispositivos: de vez en cuando guarda una copia en uno y combínala en el otro.</string>
+    <string name="archiveSecuritySection">Protección</string>
+    <string name="archiveContentsSection">Buzones en el archivo</string>
+    <string name="archiveContentsHelp">Un archivo contiene todos los buzones: cada uno tiene su propia rama de carpetas, como en el buzón, aquí y en el menú lateral, en Archivo de Ogneliss. El mismo buzón de distintos dispositivos es una sola rama: los buzones se emparejan por dirección.</string>
+    <string name="archiveAccountMails">mensajes: {n}</string>
+    <string name="archiveAccountOtherDevice">de otro dispositivo</string>
+    <string name="archiveAccountsHelp">Solo se archivan los buzones activados. Un buzón desactivado no se archiva; lo que ya está en el archivo se conserva.</string>
+    <string name="faq_archive_6_q">¿Cómo uso un solo archivo en el teléfono y en el ordenador?</string>
+    <string name="faq_archive_6_a">Cada dispositivo guarda su propia copia del archivo, y la nube (Google Drive, iCloud Drive, Yandex Disk) o una unidad USB sirve para intercambiarla. En el primer dispositivo: Ajustes → Archivo de Ogneliss → Guardar una copia del archivo. En el segundo: Conectar una copia del archivo si aún no tiene archivo, o Combinar con una copia si ya tiene uno propio. Puedes archivar en ambos: de vez en cuando guarda una copia en uno y combínala en el otro. Al combinar solo se añade lo que falta: los mensajes no se duplican y el mismo buzón sigue siendo una sola rama.</string>
+    <string name="faq_archive_7_q">¿Cómo guarda el archivo varios buzones?</string>
+    <string name="faq_archive_7_a">Todos los buzones están en un solo archivo, cada uno con su propia rama de carpetas estructurada como en el buzón: en el menú lateral, en Archivo de Ogneliss, y en la pantalla del archivo, en Buzones en el archivo. Qué buzones archivar se elige en la misma pantalla, en Buzones que archivar; la búsqueda en el archivo abarca todos los buzones a la vez.</string>
 </resources>

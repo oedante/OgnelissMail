@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">Tämä ei ole Ogneliss-arkistotiedosto (.ogna)</string>
     <string name="archiveNewerFormat">Arkisto on luotu sovelluksen uudemmalla versiolla. Päivitä sovellus</string>
     <string name="archiveBroken">Arkistotiedosto on vahingoittunut tai keskeneräinen</string>
-    <string name="archiveAlreadyExists">Tällä laitteella on jo arkisto. Useita arkistoja tulee myöhemmissä versioissa</string>
+    <string name="archiveAlreadyExists">Tällä laitteella on jo arkisto. Jos haluat lisätä siihen kopion toiselta laitteelta, valitse Sulauta kopion kanssa</string>
     <string name="archiveNoCipher">Tässä versiossa ei ole tietokannan salausta, joten arkistoa ei voi luoda</string>
     <string name="archiveLocked">Arkisto on lukittu. Avaa se salasanalla</string>
     <string name="archiveLockedIntro">Tämän laitteen arkisto on lukittu. Avaa se arkiston salasanalla tai palautuskoodilla.</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">Valmistuneet ja peruutetut, kopiona</string>
     <string name="archiveKindContacts">Yhteystiedot</string>
     <string name="archiveKindContactsDesc">Omat yhteystiedot tilannekuvana arkistointihetkellä</string>
-    <string name="archiveAccountsSection">Mitkä postilaatikot</string>
+    <string name="archiveAccountsSection">Arkistoitavat postilaatikot</string>
     <string name="archiveCopySection">Kopio ja suojaus</string>
     <string name="archiveCopyHelp">Arkisto sijaitsee sovelluksen tiedoissa: jos poistat sovelluksen, arkisto poistuu sen mukana. Tallenna kopio (.ogna-tiedosto) levylle tai pilveen: Google Driveen, Tiedostot-sovelluksen kautta iCloud Driveen, Yandex Diskiin tai USB-asemalle. Kopio on salattu samalla avaimella: sitä ei voi avata ilman salasanaa tai koodia.</string>
     <string name="archiveCopySave">Tallenna arkistokopio</string>
@@ -3508,4 +3508,24 @@
     <string name="exchangeHiddenDesc">Exchangea ei tueta tässä versiossa. Postilaatikot ja niiden tiedot pysyvät tällä laitteella ja palaavat Exchange-tuen sisältävässä versiossa. Voit lisätä postin IMAP-yhteydellä.</string>
     <string name="sourceCode">Lähdekoodi</string>
     <string name="sourceCodeDesc">GitHub: lue, käännä, osallistu</string>
+    <string name="archiveMergeTitle">Sulauta kopion kanssa</string>
+    <string name="archiveMergeSub">Lisää viestit toisella laitteella tehdystä kopiosta – ilman kaksoiskappaleita</string>
+    <string name="archiveMergeIntro">Valitse toiselta laitteelta arkistokopio (.ogna) – pilvipalvelusta (Google Drive, iCloud Drive, Yandex Disk) tai USB-muistitikulta – ja anna sen salasana tai palautuskoodi. Kaikki, mitä tämän laitteen arkistossa ei vielä ole, lisätään; kaksoiskappaleita ei synny ja arkiston salasana pysyy samana.</string>
+    <string name="archiveMergeRun">Sulauta</string>
+    <string name="archiveMerging">Sulautetaan: {done}/{total} viestiä</string>
+    <string name="archiveMergeDone">Viestejä lisätty: {n}. Jo arkistossa: {skipped}.</string>
+    <string name="archiveMergeAfter">Jotta kaikki olisi myös toisella laitteella, tallenna arkistokopio täällä ja sulauta se siellä.</string>
+    <string name="archiveDevicesSection">Muut laitteet ja pilvi</string>
+    <string name="archiveDevicesHow">Arkisto on tallennettu tälle laitteelle ja salattu; pilvi on paikka sen kopiolle. Jos haluat avata arkiston toisella puhelimella tai tietokoneella, tallenna kopio pilveen (Google Drive, iCloud Drive, Yandex Disk) tai USB-muistitikulle ja napauta siellä Ogneliss-arkisto → Yhdistä arkistokopio (jos laitteessa ei vielä ole arkistoa) tai Sulauta kopion kanssa (jos siinä on oma arkisto). Voit arkistoida molemmilla laitteilla: tallenna aina välillä kopio toisella ja sulauta se toisella – kaksoiskappaleita ei synny.</string>
+    <string name="archiveDevicesHowNone">Onko toisella laitteella jo arkisto? Tallenna siellä arkistokopio (Asetukset → Ogneliss-arkisto → Tallenna arkistokopio) pilveen tai USB-muistitikulle ja napauta tässä laitteessa Yhdistä arkistokopio. Sen jälkeen voit arkistoida molemmilla laitteilla: tallenna aina välillä kopio toisella ja sulauta se toisella.</string>
+    <string name="archiveSecuritySection">Suojaus</string>
+    <string name="archiveContentsSection">Arkiston postilaatikot</string>
+    <string name="archiveContentsHelp">Yksi arkisto sisältää kaikki postilaatikot: kullakin on oma kansiohaaransa, kuten postilaatikossa – tässä ja sivuvalikossa Ogneliss-arkiston alla. Sama postilaatikko eri laitteilta on yksi haara: postilaatikot tunnistetaan osoitteen perusteella.</string>
+    <string name="archiveAccountMails">viestejä: {n}</string>
+    <string name="archiveAccountOtherDevice">toiselta laitteelta</string>
+    <string name="archiveAccountsHelp">Vain käytössä olevat postilaatikot arkistoidaan. Pois käytöstä oleva postilaatikko ei arkistoidu; arkistossa jo oleva säilyy.</string>
+    <string name="faq_archive_6_q">Miten käytän samaa arkistoa puhelimessa ja tietokoneella?</string>
+    <string name="faq_archive_6_a">Jokaisella laitteella on arkisto omana kopionaan, ja pilvi (Google Drive, iCloud Drive, Yandex Disk) tai USB-muistitikku on paikka sen siirtämiseen. Ensimmäisellä laitteella: Asetukset → Ogneliss-arkisto → Tallenna arkistokopio. Toisella: Yhdistä arkistokopio, jos laitteessa ei vielä ole arkistoa, tai Sulauta kopion kanssa, jos siinä on oma arkisto. Voit arkistoida molemmilla: tallenna aina välillä kopio toisella ja sulauta se toisella. Sulauttaminen lisää vain puuttuvat: viesteistä ei tule kaksoiskappaleita ja sama postilaatikko pysyy yhtenä haarana.</string>
+    <string name="faq_archive_7_q">Miten arkisto säilyttää useita postilaatikoita?</string>
+    <string name="faq_archive_7_a">Kaikki postilaatikot ovat samassa arkistossa, ja kullakin on oma kansiohaaransa, jonka rakenne on sama kuin postilaatikossa: sivuvalikossa Ogneliss-arkiston alla ja arkistonäkymässä kohdassa Arkiston postilaatikot. Arkistoitavat postilaatikot valitaan samassa näkymässä kohdassa Arkistoitavat postilaatikot; arkistohaku kattaa kaikki postilaatikot kerralla.</string>
 </resources>

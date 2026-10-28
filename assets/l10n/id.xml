@@ -3246,7 +3246,7 @@
     <string name="archiveNotOgna">Ini bukan file arsip Ogneliss (.ogna)</string>
     <string name="archiveNewerFormat">Arsip dibuat oleh aplikasi versi yang lebih baru. Perbarui aplikasi</string>
     <string name="archiveBroken">File arsip rusak atau tidak lengkap</string>
-    <string name="archiveAlreadyExists">Sudah ada arsip di perangkat ini. Beberapa arsip akan tersedia di versi mendatang</string>
+    <string name="archiveAlreadyExists">Sudah ada arsip di perangkat ini. Untuk menambahkan salinan dari perangkat lain ke dalamnya, pilih “Gabungkan dengan salinan”</string>
     <string name="archiveNoCipher">Build ini tidak memiliki enkripsi database, sehingga arsip tidak dapat dibuat</string>
     <string name="archiveLocked">Arsip terkunci. Buka dengan kata sandi</string>
     <string name="archiveLockedIntro">Arsip di perangkat ini terkunci. Buka dengan kata sandi arsip atau kode pemulihan.</string>
@@ -3317,7 +3317,7 @@
     <string name="archiveKindTasksDesc">Yang selesai dan dibatalkan, sebagai salinan</string>
     <string name="archiveKindContacts">Kontak</string>
     <string name="archiveKindContactsDesc">Kontak milik sendiri, sebagai cuplikan saat pengarsipan</string>
-    <string name="archiveAccountsSection">Kotak surat yang mana</string>
+    <string name="archiveAccountsSection">Kotak surat yang akan diarsipkan</string>
     <string name="archiveCopySection">Salinan dan perlindungan</string>
     <string name="archiveCopyHelp">Arsip disimpan di data aplikasi: jika aplikasi dihapus, arsip ikut terhapus. Simpan salinan (file .ogna) ke drive atau cloud: Google Drive, Files dengan iCloud Drive, Yandex Disk, atau drive USB. Salinan dienkripsi dengan kunci yang sama: tidak dapat dibuka tanpa kata sandi atau kode.</string>
     <string name="archiveCopySave">Simpan salinan arsip</string>
@@ -3489,4 +3489,24 @@
     <string name="exchangeHiddenDesc">Exchange tidak didukung di versi ini. Kotak surat dan datanya tetap berada di perangkat ini dan akan kembali di versi yang mendukung Exchange. Email dapat ditambahkan lewat IMAP.</string>
     <string name="sourceCode">Kode sumber</string>
     <string name="sourceCodeDesc">GitHub: baca, build, berkontribusi</string>
+    <string name="archiveMergeTitle">Gabungkan dengan salinan</string>
+    <string name="archiveMergeSub">Tambahkan email dari salinan yang dibuat di perangkat lain — tanpa duplikat</string>
+    <string name="archiveMergeIntro">Pilih salinan arsip (.ogna) dari perangkat lain — di Google Drive, iCloud Drive, Yandex Disk, atau flash drive USB — lalu masukkan kata sandi atau kode pemulihannya. Semua yang belum ada di arsip pada perangkat ini akan ditambahkan; tidak ada yang digandakan dan kata sandi arsip tetap sama.</string>
+    <string name="archiveMergeRun">Gabungkan</string>
+    <string name="archiveMerging">Menggabungkan: {done} dari {total} email</string>
+    <string name="archiveMergeDone">Email ditambahkan: {n}. Sudah ada di arsip: {skipped}.</string>
+    <string name="archiveMergeAfter">Agar semuanya juga ada di perangkat lain, simpan salinan arsip di sini lalu gabungkan di sana.</string>
+    <string name="archiveDevicesSection">Perangkat lain dan cloud</string>
+    <string name="archiveDevicesHow">Arsip disimpan di perangkat ini dan dienkripsi; cloud adalah tempat untuk salinannya. Untuk membuka arsip di ponsel atau komputer lain, simpan salinan ke Google Drive, iCloud Drive, Yandex Disk, atau flash drive USB, lalu di sana ketuk Arsip Ogneliss → “Hubungkan salinan arsip” (jika belum ada arsip) atau “Gabungkan dengan salinan” (jika sudah punya arsip sendiri). Anda dapat mengarsipkan di kedua perangkat: sesekali simpan salinan di salah satunya dan gabungkan di yang lain — tidak ada yang digandakan.</string>
+    <string name="archiveDevicesHowNone">Sudah punya arsip di perangkat lain? Simpan salinan arsip di sana (Pengaturan → Arsip Ogneliss → Simpan salinan arsip) ke cloud atau flash drive USB, lalu ketuk “Hubungkan salinan arsip” di sini. Setelah itu Anda dapat mengarsipkan di kedua perangkat: sesekali simpan salinan di salah satunya dan gabungkan di yang lain.</string>
+    <string name="archiveSecuritySection">Perlindungan</string>
+    <string name="archiveContentsSection">Kotak surat di arsip</string>
+    <string name="archiveContentsHelp">Satu arsip menyimpan semua kotak surat: masing-masing punya cabang folder sendiri, seperti di kotak surat — di sini dan di menu samping, di bawah “Arsip Ogneliss”. Kotak surat yang sama dari perangkat berbeda adalah satu cabang: kotak surat dicocokkan berdasarkan alamat.</string>
+    <string name="archiveAccountMails">email: {n}</string>
+    <string name="archiveAccountOtherDevice">dari perangkat lain</string>
+    <string name="archiveAccountsHelp">Hanya kotak surat yang diaktifkan yang diarsipkan. Kotak surat yang dinonaktifkan tidak diarsipkan; yang sudah ada di arsip tetap di sana.</string>
+    <string name="faq_archive_6_q">Bagaimana cara menggunakan satu arsip di ponsel dan komputer?</string>
+    <string name="faq_archive_6_a">Setiap perangkat menyimpan salinan arsipnya sendiri, dan cloud (Google Drive, iCloud Drive, Yandex Disk) atau flash drive USB menjadi tempat untuk bertukar salinan. Di perangkat pertama: Pengaturan → Arsip Ogneliss → Simpan salinan arsip. Di perangkat kedua: “Hubungkan salinan arsip” jika belum ada arsip, atau “Gabungkan dengan salinan” jika sudah punya arsip sendiri. Anda dapat mengarsipkan di keduanya: sesekali simpan salinan di salah satunya dan gabungkan di yang lain. Penggabungan hanya menambahkan yang belum ada: email tidak digandakan dan kotak surat yang sama tetap menjadi satu cabang.</string>
+    <string name="faq_archive_7_q">Bagaimana arsip menyimpan beberapa kotak surat?</string>
+    <string name="faq_archive_7_a">Semua kotak surat berada dalam satu arsip, masing-masing dengan cabang folder sendiri yang strukturnya seperti di kotak surat: di menu samping di bawah “Arsip Ogneliss”, dan di layar arsip di bawah “Kotak surat di arsip”. Kotak surat mana yang diarsipkan dipilih di layar yang sama di bawah “Kotak surat yang akan diarsipkan”; pencarian arsip mencakup semua kotak surat sekaligus.</string>
 </resources>

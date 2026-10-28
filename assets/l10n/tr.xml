@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">Bu bir Ogneliss arşiv dosyası (.ogna) değil</string>
     <string name="archiveNewerFormat">Arşiv, uygulamanın daha yeni bir sürümüyle oluşturulmuş. Uygulamayı güncelleyin</string>
     <string name="archiveBroken">Arşiv dosyası hasarlı veya eksik</string>
-    <string name="archiveAlreadyExists">Bu cihazda zaten bir arşiv var. Birden fazla arşiv sonraki sürümlerde gelecek</string>
+    <string name="archiveAlreadyExists">Bu cihazda zaten bir arşiv var. Başka bir cihazdaki kopyayı buna eklemek için Kopyayla birleştir seçeneğini seçin</string>
     <string name="archiveNoCipher">Bu sürümde veritabanı şifrelemesi yok, bu yüzden arşiv oluşturulamaz</string>
     <string name="archiveLocked">Arşiv kilitli. Şifreyle açın</string>
     <string name="archiveLockedIntro">Bu cihazdaki arşiv kilitli. Arşiv şifresiyle veya kurtarma koduyla açın.</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">Tamamlanan ve iptal edilenler kopya olarak</string>
     <string name="archiveKindContacts">Kişiler</string>
     <string name="archiveKindContactsDesc">Kendi kişileriniz, arşivleme anındaki anlık görüntü olarak</string>
-    <string name="archiveAccountsSection">Hangi posta kutuları</string>
+    <string name="archiveAccountsSection">Arşivlenecek posta kutuları</string>
     <string name="archiveCopySection">Kopya ve koruma</string>
     <string name="archiveCopyHelp">Arşiv uygulama verilerinde durur: uygulamayı kaldırırsanız arşiv de gider. Bir kopyayı (.ogna dosyası) sürücüye veya buluta kaydedin: Google Drive, Dosyalar uygulaması (iCloud Drive), Yandex Disk, USB bellek. Kopya aynı anahtarla şifrelenir: şifre veya kod olmadan açılamaz.</string>
     <string name="archiveCopySave">Arşiv kopyasını kaydet</string>
@@ -3508,4 +3508,24 @@
     <string name="exchangeHiddenDesc">Exchange bu sürümde desteklenmiyor. Posta kutuları ve verileri bu cihazda kalır ve Exchange destekli bir sürümde geri gelir. Postayı IMAP ile ekleyebilirsiniz.</string>
     <string name="sourceCode">Kaynak kodu</string>
     <string name="sourceCodeDesc">GitHub: oku, derle, katkıda bulun</string>
+    <string name="archiveMergeTitle">Kopyayla birleştir</string>
+    <string name="archiveMergeSub">Başka bir cihazda oluşturulmuş kopyadaki iletileri yinelenme olmadan ekleyin</string>
+    <string name="archiveMergeIntro">Başka bir cihazdan bir arşiv kopyası (.ogna) seçin — Google Drive, iCloud Drive, Yandex Disk veya USB bellekten — ve şifresini ya da kurtarma kodunu girin. Bu cihazdaki arşivde henüz olmayan her şey eklenir; hiçbir şey yinelenmez ve arşiv şifresi aynı kalır.</string>
+    <string name="archiveMergeRun">Birleştir</string>
+    <string name="archiveMerging">Birleştiriliyor: {done} / {total} ileti</string>
+    <string name="archiveMergeDone">Eklenen ileti: {n}. Arşivde zaten olan: {skipped}.</string>
+    <string name="archiveMergeAfter">Her şeyin diğer cihazda da olması için burada arşiv kopyasını kaydedin ve orada birleştirin.</string>
+    <string name="archiveDevicesSection">Diğer cihazlar ve bulut</string>
+    <string name="archiveDevicesHow">Arşiv bu cihazda saklanır ve şifrelenir; bulut, kopyası için bir yerdir. Arşivi başka bir telefonda veya bilgisayarda açmak için kopyayı Google Drive, iCloud Drive, Yandex Disk veya USB belleğe kaydedin; orada şuna dokunun: Ogneliss arşivi → Arşiv kopyasını bağla (henüz arşivi yoksa) veya Kopyayla birleştir (kendi arşivi varsa). Her iki cihazda da arşivleme yapabilirsiniz: ara sıra birinde kopya kaydedip diğerinde birleştirin — hiçbir şey yinelenmez.</string>
+    <string name="archiveDevicesHowNone">Başka bir cihazda zaten arşiviniz mi var? Orada arşiv kopyasını buluta veya USB belleğe kaydedin (Ayarlar → Ogneliss arşivi → Arşiv kopyasını kaydet), burada ise Arşiv kopyasını bağla seçeneğine dokunun. Ardından her iki cihazda da arşivleme yapabilirsiniz: ara sıra birinde kopya kaydedip diğerinde birleştirin.</string>
+    <string name="archiveSecuritySection">Koruma</string>
+    <string name="archiveContentsSection">Arşivdeki posta kutuları</string>
+    <string name="archiveContentsHelp">Bir arşiv tüm posta kutularını içerir: her birinin posta kutusundaki gibi kendi klasör dalı vardır — burada ve yan menüde, Ogneliss arşivi bölümünde. Farklı cihazlardaki aynı posta kutusu tek daldır: posta kutuları adrese göre eşleştirilir.</string>
+    <string name="archiveAccountMails">ileti: {n}</string>
+    <string name="archiveAccountOtherDevice">başka bir cihazdan</string>
+    <string name="archiveAccountsHelp">Yalnızca açık olan posta kutuları arşivlenir. Kapalı bir posta kutusu arşivlenmez; arşivde zaten olanlar orada kalır.</string>
+    <string name="faq_archive_6_q">Telefonda ve bilgisayarda tek bir arşivi nasıl kullanırım?</string>
+    <string name="faq_archive_6_a">Her cihaz arşivin kendi kopyasını tutar; bulut (Google Drive, iCloud Drive, Yandex Disk) veya USB bellek ise kopyayı aktarmak için kullanılır. İlk cihazda: Ayarlar → Ogneliss arşivi → Arşiv kopyasını kaydet. İkinci cihazda: henüz arşivi yoksa Arşiv kopyasını bağla, kendi arşivi varsa Kopyayla birleştir. İki cihazda da arşivleyebilirsiniz: ara sıra birinde kopya kaydedip diğerinde birleştirin. Birleştirme yalnızca eksik olanı ekler: iletiler yinelenmez ve aynı posta kutusu tek dal olarak kalır.</string>
+    <string name="faq_archive_7_q">Arşiv birden fazla posta kutusunu nasıl saklar?</string>
+    <string name="faq_archive_7_a">Tüm posta kutuları tek arşivdedir; her birinin posta kutusundaki gibi yapılandırılmış kendi klasör dalı vardır: yan menüde Ogneliss arşivi bölümünde ve arşiv ekranında Arşivdeki posta kutuları bölümünde. Hangi posta kutularının arşivleneceği aynı ekranda Arşivlenecek posta kutuları bölümünden seçilir; arşivde arama tüm posta kutularını aynı anda kapsar.</string>
 </resources>

@@ -13,6 +13,8 @@
 // - двойное расширение («счёт.pdf.exe») и символ смены направления текста
 //   (U+202E, «exe.fdp» выглядит как «pdf.exe») распознаются;
 // - на Windows каждому сохранённому вложению ставится метка интернета.
+// - на iPhone и iPad архивы и форматы, которых не показывает «Просмотр»
+//   iOS, открываются листом «Поделиться» (1.8.12); у ZIP с паролем — подсказка.
 
 import 'dart:io';
 import '../theme/app_icons.dart';
@@ -23,6 +25,7 @@ import '../platform/file_opener.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../widgets/common/inline_notice.dart' show showInlineNotice;
 
 enum AttachmentRisk { safe, warn, blocked }
 
@@ -103,6 +106,18 @@ class AttachmentSafety {
         break;
     }
     await markFromInternet(path);
+    // iPhone и iPad (1.8.12): то, что «Просмотр» iOS показать не может
+    // (архивы, неизвестные форматы), — сразу в лист «Поделиться»: там
+    // «Сохранить в Файлы» и приложения для формата (архиватор). Раньше
+    // открывался пустой экран просмотра, а его кнопка «Скопировать в …» не
+    // работала (замечание владельца 29.10.2026). Архив с паролем «Файлы»
+    // не открывают («нет прав») — об этом строка сверху.
+    if (!kIsWeb && Platform.isIOS && !FileOpener.quickLookShows(fileName)) {
+      if (await isEncryptedZip(path)) showInlineNotice(l10n.tr('zipEncryptedHint'));
+      await SharePlus.instance
+          .share(ShareParams(files: [XFile(await FileOpener.namedCopy(path, fileName), name: fileName)]));
+      return;
+    }
     final res = await FileOpener.open(path, mime: mimeOf(fileName), name: fileName);
     if (res == OpenFileOutcome.done || !context.mounted) return;
     // Приложения для формата нет или система отказала — предлагаем
@@ -154,6 +169,34 @@ class AttachmentSafety {
       'vcf': 'text/x-vcard',
       'xml': 'text/xml',
     }[ext];
+  }
+
+  /// Архив ZIP с паролем (1.8.12): у первого файла архива в заголовке
+  /// выставлен признак шифрования (бит 0 флагов; ZipCrypto и AES WinZip).
+  /// Такие присылают, например, расчётные листки из 1С. «Файлы» на iPhone
+  /// их не распаковывают, нужен архиватор.
+  static Future<bool> isEncryptedZip(String path) async {
+    try {
+      final f = await File(path).open();
+      try {
+        return zipHeaderEncrypted(await f.read(64));
+      } finally {
+        await f.close();
+      }
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// [head] — начало файла ZIP. Перед первым заголовком может стоять
+  /// метка многотомного архива (PK\x07\x08).
+  static bool zipHeaderEncrypted(List<int> head) {
+    bool sig(int at, int c, int d) =>
+        head.length >= at + 4 && head[at] == 0x50 && head[at + 1] == 0x4B && head[at + 2] == c && head[at + 3] == d;
+    var at = 0;
+    if (sig(0, 0x07, 0x08)) at = 4;
+    if (!sig(at, 0x03, 0x04) || head.length < at + 8) return false;
+    return head[at + 6] & 0x01 == 1;
   }
 
   /// Windows: «метка интернета» (поток Zone.Identifier, зона 3 — Интернет).

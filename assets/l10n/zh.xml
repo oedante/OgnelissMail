@@ -3524,4 +3524,5 @@
     <string name="graphUnknown">轻点检查</string>
     <string name="graphHint">Microsoft 正在关闭 Exchange Online 中的 EWS：自 2026 年 10 月起按组织逐步关闭，2027 年 4 月完全关闭。邮件、日历、联系人和自动答复通过 ActiveSync 工作，不受影响。通讯簿（职位、部门、同事照片）、发送提示、服务器规则和恢复已删除项目现已改用 Microsoft Graph。若管理员已向应用授予 Place.Read.All 和 GroupMember.Read.All，会议室和通讯组成员也是如此。Microsoft Graph 不提供在线存档、共享邮箱和签名导入——在 EWS 可用期间它们仍通过 EWS 工作。</string>
     <string name="srvViaGraph">Exchange Online — 通过 Microsoft Graph</string>
+    <string name="zipEncryptedHint">压缩包有密码保护，“文件”无法打开。请选择解压缩 App，它会询问密码</string>
 </resources>

@@ -3581,4 +3581,5 @@
     <string name="graphUnknown">Dotknij, aby sprawdzić</string>
     <string name="graphHint">Microsoft wyłącza EWS w Exchange Online: od października 2026 kolejno w organizacjach, całkowicie w kwietniu 2027. Poczta, kalendarz, kontakty i odpowiedzi automatyczne działają przez ActiveSync i się nie zmieniają. Książka adresowa (stanowiska, działy, zdjęcia współpracowników), porady przy wysyłaniu, reguły serwera i odzyskiwanie usuniętych elementów działają teraz przez Microsoft Graph. Sale i członkowie list dystrybucyjnych także, jeśli administrator przyznał aplikacji Place.Read.All i GroupMember.Read.All. Microsoft Graph nie udostępnia archiwum online, skrzynek współdzielonych ani importu podpisu — działają przez EWS, dopóki jest dostępne.</string>
     <string name="srvViaGraph">Exchange Online — przez Microsoft Graph</string>
+    <string name="zipEncryptedHint">Archiwum jest chronione hasłem, aplikacja Pliki go nie otworzy. Wybierz aplikację do archiwów: poprosi o hasło</string>
 </resources>

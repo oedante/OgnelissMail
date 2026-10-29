@@ -3543,4 +3543,5 @@
     <string name="graphUnknown">Tryck för att kontrollera</string>
     <string name="graphHint">Microsoft stänger av EWS i Exchange Online: från oktober 2026 organisation för organisation, helt i april 2027. E-post, kalender, kontakter och automatiska svar går via ActiveSync och påverkas inte. Adressboken (befattningar, avdelningar, kollegors foton), tips vid sändning, serverregler och återställning av borttagna objekt går nu via Microsoft Graph. Mötesrum och medlemmar i distributionslistor också, om administratören har gett appen Place.Read.All och GroupMember.Read.All. Microsoft Graph erbjuder inte onlinearkiv, delade postlådor eller import av signatur — de använder EWS så länge det finns.</string>
     <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
+    <string name="zipEncryptedHint">Arkivet är lösenordsskyddat och Filer kan inte öppna det. Välj en arkivapp – den frågar efter lösenordet</string>
 </resources>

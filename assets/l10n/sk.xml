@@ -3397,7 +3397,7 @@
     <string name="noSender">(bez odosielateľa)</string>
     <string name="faq_archive_title">Archív Ogneliss</string>
     <string name="faq_archive_1_q">Čím sa archív Ogneliss líši od tlačidla Archív?</string>
-    <string name="faq_archive_1_a">Archív presunie správu do priečinka archívu na serveri: zostane v schránke a zaberá miesto. Archív Ogneliss funguje ako Automatické archivovanie v Outlooku: celé správy s prílohami a priečinkami sa uložia do zašifrovaného súboru v zariadení a na serveri sa presunú do priečinka Odstránená pošta. Archív sa v ponuke zobrazuje ako sekcia Archív Ogneliss, vyhľadáva sa spolu s poštou a otvára sa aj offline. Zapnete ho v časti Nastavenia → Archív Ogneliss.</string>
+    <string name="faq_archive_1_a">Archív presunie správu do priečinka archívu na serveri: zostane v schránke a zaberá miesto. Archív Ogneliss funguje ako Automatické archivovanie v Outlooku: celé správy s prílohami a priečinkami sa uložia do zašifrovaného súboru v zariadení a na serveri sa presunú do priečinka Odstránená pošta. Archív sa v ponuke zobrazuje ako sekcia Archív Ogneliss, vyhľadáva sa spolu s poštou a otvára sa aj offline. Zapnete ho v časti Nastavenia → Archív Ogneliss. V ponuke je archív vybranej schránky; všetky schránky naraz sú v položke Celý archív.</string>
     <string name="faq_archive_2_q">Ako presuniem archív do iného zariadenia alebo do cloudu?</string>
     <string name="faq_archive_2_a">Nastavenia → Archív Ogneliss → Uložiť kópiu archívu: súbor .ogna uložte do Google Drive, Súborov s iCloud Drive, Yandex Disk, na USB disk alebo do počítača. Na druhom zariadení: Pripojiť kópiu archívu → vyberte súbor → heslo archívu alebo kód na obnovenie. Kópia je zašifrovaná a bez hesla alebo kódu sa nedá otvoriť. Nastavenia aplikácie sa prenášajú s archívom a môžete ich obnoviť na tej istej obrazovke.</string>
     <string name="faq_archive_3_q">Čo robiť, ak zabudnem heslo archívu?</string>
@@ -3573,4 +3573,6 @@
     <string name="faq_notify_6_a">Otvorte konverzáciu → ⋮ → „Stlmiť upozornenia“ (alebo podržte jej riadok v zozname → „Ďalšie“). Nové správy v nej prichádzajú bez upozornenia a pri riadku je preškrtnutý zvonček. Ostatná pošta upozorňuje ako doteraz. Znova zapnúť: rovnaká položka alebo zvonček v konverzácii.</string>
     <string name="mailOpenInBrowser">Otvoriť v prehliadači</string>
     <string name="mailOpenInBrowserFailed">Správu sa nepodarilo otvoriť v prehliadači</string>
+    <string name="archiveAll">Celý archív</string>
+    <string name="archiveHubHelp">Ponuka ukazuje len archív vybranej schránky: jej priečinky, udalosti, úlohy a kontakty. Tu je celý archív: všetky schránky vrátane tých, ktoré už v aplikácii nie sú, a hľadanie vo všetkých správach.</string>
 </resources>

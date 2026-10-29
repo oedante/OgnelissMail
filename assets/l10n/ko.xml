@@ -3359,7 +3359,7 @@
     <string name="noSender">(보낸 사람 없음)</string>
     <string name="faq_archive_title">Ogneliss 보관함</string>
     <string name="faq_archive_1_q">Ogneliss 보관함은 보관 버튼과 어떻게 다른가요?</string>
-    <string name="faq_archive_1_a">보관은 메일을 서버의 보관함 폴더로 옮깁니다. 메일은 메일 계정에 남아 용량을 차지합니다. Ogneliss 보관함은 Outlook 자동 보관처럼 작동합니다. 첨부파일과 폴더를 포함한 메일 전체가 기기의 암호화된 파일에 저장되고, 서버에서는 삭제된 항목으로 이동합니다. 보관함은 메뉴에 Ogneliss 보관함 섹션으로 표시되고 메일과 함께 검색되며 오프라인에서도 열립니다. 설정 → Ogneliss 보관함에서 켤 수 있습니다.</string>
+    <string name="faq_archive_1_a">보관은 메일을 서버의 보관함 폴더로 옮깁니다. 메일은 메일 계정에 남아 용량을 차지합니다. Ogneliss 보관함은 Outlook 자동 보관처럼 작동합니다. 첨부파일과 폴더를 포함한 메일 전체가 기기의 암호화된 파일에 저장되고, 서버에서는 삭제된 항목으로 이동합니다. 보관함은 메뉴에 Ogneliss 보관함 섹션으로 표시되고 메일과 함께 검색되며 오프라인에서도 열립니다. 설정 → Ogneliss 보관함에서 켤 수 있습니다. 메뉴에는 선택한 메일함의 보관함이 표시되고, 모든 메일함은 전체 보관함에 함께 표시됩니다.</string>
     <string name="faq_archive_2_q">보관함을 다른 기기나 클라우드로 옮기려면 어떻게 하나요?</string>
     <string name="faq_archive_2_a">설정 → Ogneliss 보관함 → 보관함 사본 저장: .ogna 파일을 Google Drive, iCloud Drive를 사용하는 파일 앱, Yandex Disk, USB 드라이브 또는 컴퓨터에 두세요. 다른 기기에서는 보관함 사본 연결 → 파일 선택 → 보관함 비밀번호 또는 복구 코드를 입력합니다. 사본은 암호화되어 있어 비밀번호나 코드 없이는 열 수 없습니다. 앱 설정도 보관함과 함께 이동하며 같은 화면에서 복원할 수 있습니다.</string>
     <string name="faq_archive_3_q">보관함 비밀번호를 잊어버렸다면 어떻게 하나요?</string>
@@ -3535,4 +3535,6 @@
     <string name="faq_notify_6_a">대화를 열고 → ⋮ → «알림 끄기»(또는 목록에서 행을 길게 누름 → «더보기»). 이 대화의 새 메일은 알림 없이 도착하고 행에 사선이 그어진 종이 표시됩니다. 나머지 메일은 그대로 알림을 보냅니다. 다시 켜려면 같은 항목을 선택하거나 대화에서 종을 누르세요.</string>
     <string name="mailOpenInBrowser">브라우저에서 열기</string>
     <string name="mailOpenInBrowserFailed">브라우저에서 메시지를 열 수 없습니다</string>
+    <string name="archiveAll">전체 보관함</string>
+    <string name="archiveHubHelp">메뉴에는 선택한 메일함의 보관함만 표시됩니다: 폴더, 일정, 할 일, 연락처. 이 화면에는 전체 보관함이 표시됩니다: 앱에 더 이상 없는 메일함을 포함한 모든 메일함과 모든 메일 검색.</string>
 </resources>

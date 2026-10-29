@@ -3378,7 +3378,7 @@
     <string name="noSender">(nincs feladó)</string>
     <string name="faq_archive_title">Ogneliss-archívum</string>
     <string name="faq_archive_1_q">Miben különbözik az Ogneliss-archívum az Archívum gombtól?</string>
-    <string name="faq_archive_1_a">Az Archívum gomb az üzenetet a kiszolgáló archív mappájába helyezi: az a postafiókban marad, és helyet foglal. Az Ogneliss-archívum az Outlook automatikus archiválásához hasonlóan működik: a teljes üzenetek mellékletekkel és mappákkal egy titkosított fájlba kerülnek az eszközön, a kiszolgálón pedig a Törölt elemek mappába. Az archívum az Ogneliss-archívum szakaszként jelenik meg a menüben, a levelezéssel együtt kereshető, és offline is megnyitható. Kapcsolja be itt: Beállítások → Ogneliss-archívum.</string>
+    <string name="faq_archive_1_a">Az Archívum gomb az üzenetet a kiszolgáló archív mappájába helyezi: az a postafiókban marad, és helyet foglal. Az Ogneliss-archívum az Outlook automatikus archiválásához hasonlóan működik: a teljes üzenetek mellékletekkel és mappákkal egy titkosított fájlba kerülnek az eszközön, a kiszolgálón pedig a Törölt elemek mappába. Az archívum az Ogneliss-archívum szakaszként jelenik meg a menüben, a levelezéssel együtt kereshető, és offline is megnyitható. Kapcsolja be itt: Beállítások → Ogneliss-archívum. A menüben a kiválasztott postafiók archívuma látszik; az összes postafiók egyszerre a Teljes archívum alatt.</string>
     <string name="faq_archive_2_q">Hogyan vihetem át az archívumot másik eszközre vagy felhőbe?</string>
     <string name="faq_archive_2_a">Beállítások → Ogneliss-archívum → Archív másolat mentése: helyezze az .ogna fájlt Google Drive-ra, a Fájlok alkalmazás iCloud Drive-jába, Yandex Diskre, USB-meghajtóra vagy számítógépre. A másik eszközön: Archív másolat csatlakoztatása → válassza ki a fájlt → archívumjelszó vagy helyreállítási kód. A másolat titkosított, jelszó vagy kód nélkül nem nyitható meg. Az alkalmazás beállításai az archívummal együtt utaznak, és ugyanezen a képernyőn visszaállíthatja őket.</string>
     <string name="faq_archive_3_q">Mi a teendő, ha elfelejtem az archívum jelszavát?</string>
@@ -3554,4 +3554,6 @@
     <string name="faq_notify_6_a">Nyissa meg a beszélgetést → ⋮ → „Értesítések némítása” (vagy tartsa nyomva a sorát a listában → „Továbbiak”). Az új üzenetei értesítés nélkül érkeznek, a sorban áthúzott csengő látható. A többi levél ugyanúgy értesít. Visszakapcsolás ugyanott, vagy a csengőre koppintva a beszélgetésben.</string>
     <string name="mailOpenInBrowser">Megnyitás böngészőben</string>
     <string name="mailOpenInBrowserFailed">Az üzenetet nem sikerült megnyitni a böngészőben</string>
+    <string name="archiveAll">Teljes archívum</string>
+    <string name="archiveHubHelp">A menüben csak a kiválasztott postafiók archívuma látszik: mappái, eseményei, feladatai és névjegyei. Itt a teljes archívum van: minden postafiók, azok is, amelyek már nincsenek az alkalmazásban, és keresés az összes levélben.</string>
 </resources>

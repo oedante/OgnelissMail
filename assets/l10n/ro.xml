@@ -3397,7 +3397,7 @@
     <string name="noSender">(fără expeditor)</string>
     <string name="faq_archive_title">Arhivă Ogneliss</string>
     <string name="faq_archive_1_q">Prin ce se deosebește arhiva Ogneliss de butonul Arhivă?</string>
-    <string name="faq_archive_1_a">Arhivă mută un mesaj în dosarul de arhivă de pe server: rămâne în cutia poștală și ocupă spațiu. Arhiva Ogneliss funcționează ca Arhivarea automată din Outlook: mesajele întregi, cu atașamente și dosare, ajung într-un fișier criptat de pe dispozitiv, iar pe server sunt mutate în Elemente șterse. Arhiva apare în meniu ca secțiunea Arhivă Ogneliss, este căutată împreună cu e-mailurile tale și se deschide offline. O activezi în Setări → Arhivă Ogneliss.</string>
+    <string name="faq_archive_1_a">Arhivă mută un mesaj în dosarul de arhivă de pe server: rămâne în cutia poștală și ocupă spațiu. Arhiva Ogneliss funcționează ca Arhivarea automată din Outlook: mesajele întregi, cu atașamente și dosare, ajung într-un fișier criptat de pe dispozitiv, iar pe server sunt mutate în Elemente șterse. Arhiva apare în meniu ca secțiunea Arhivă Ogneliss, este căutată împreună cu e-mailurile tale și se deschide offline. O activezi în Setări → Arhivă Ogneliss. Meniul arată arhiva căsuței selectate; toate căsuțele deodată sunt în Întreaga arhivă.</string>
     <string name="faq_archive_2_q">Cum mut arhiva pe alt dispozitiv sau în cloud?</string>
     <string name="faq_archive_2_a">Setări → Arhivă Ogneliss → Salvează o copie a arhivei: pune fișierul .ogna în Google Drive, Fișiere cu iCloud Drive, Yandex Disk, pe o unitate USB sau pe un computer. Pe celălalt dispozitiv: Conectează o copie a arhivei → alege fișierul → parola arhivei sau codul de recuperare. Copia este criptată și nu poate fi deschisă fără parolă sau cod. Setările aplicației se transferă împreună cu arhiva și le poți restaura pe același ecran.</string>
     <string name="faq_archive_3_q">Ce fac dacă am uitat parola arhivei?</string>
@@ -3573,4 +3573,6 @@
     <string name="faq_notify_6_a">Deschideți conversația → ⋮ → „Dezactivează notificările” (sau apăsați lung rândul din listă → „Mai multe”). Mesajele noi din ea sosesc fără notificare, iar rândul arată un clopoțel tăiat. Restul e-mailurilor notifică la fel ca înainte. Reactivare: aceeași opțiune sau atingeți clopoțelul din conversație.</string>
     <string name="mailOpenInBrowser">Deschide în browser</string>
     <string name="mailOpenInBrowserFailed">Mesajul nu a putut fi deschis în browser</string>
+    <string name="archiveAll">Întreaga arhivă</string>
+    <string name="archiveHubHelp">Meniul arată doar arhiva căsuței selectate: dosarele, evenimentele, sarcinile și contactele ei. Aici este întreaga arhivă: toate căsuțele, inclusiv cele care nu mai sunt în aplicație, și căutarea în toate mesajele.</string>
 </resources>

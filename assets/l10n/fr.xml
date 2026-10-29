@@ -3378,7 +3378,7 @@
     <string name="noSender">(sans expéditeur)</string>
     <string name="faq_archive_title">Archive Ogneliss</string>
     <string name="faq_archive_1_q">En quoi l’archive Ogneliss diffère-t-elle du bouton Archiver ?</string>
-    <string name="faq_archive_1_a">Archiver déplace un message dans le dossier d’archives sur le serveur : il reste dans la boîte et prend de la place. L’archive Ogneliss fonctionne comme l’archivage automatique d’Outlook : les messages entiers, avec pièces jointes et dossiers, vont dans un fichier chiffré sur l’appareil, et sur le serveur dans Éléments supprimés. L’archive apparaît dans le menu comme section Archive Ogneliss, se recherche avec vos messages et s’ouvre hors ligne. Pour l’activer : Réglages → Archive Ogneliss.</string>
+    <string name="faq_archive_1_a">Archiver déplace un message dans le dossier d’archives sur le serveur : il reste dans la boîte et prend de la place. L’archive Ogneliss fonctionne comme l’archivage automatique d’Outlook : les messages entiers, avec pièces jointes et dossiers, vont dans un fichier chiffré sur l’appareil, et sur le serveur dans Éléments supprimés. L’archive apparaît dans le menu comme section Archive Ogneliss, se recherche avec vos messages et s’ouvre hors ligne. Pour l’activer : Réglages → Archive Ogneliss. Le menu affiche l’archive de la boîte sélectionnée ; toutes les boîtes à la fois sont dans « Toute l’archive ».</string>
     <string name="faq_archive_2_q">Comment transférer l’archive sur un autre appareil ou dans un cloud ?</string>
     <string name="faq_archive_2_a">Réglages → Archive Ogneliss → Enregistrer une copie de l’archive : placez le fichier .ogna sur Google Drive, Fichiers avec iCloud Drive, Yandex Disk, une clé USB ou un ordinateur. Sur l’autre appareil : Connecter une copie de l’archive → choisir le fichier → mot de passe de l’archive ou code de récupération. La copie est chiffrée : impossible de l’ouvrir sans mot de passe ni code. Les réglages de l’app voyagent avec l’archive et se restaurent sur le même écran.</string>
     <string name="faq_archive_3_q">Que faire si j’oublie le mot de passe de l’archive ?</string>
@@ -3554,4 +3554,6 @@
     <string name="faq_notify_6_a">Ouvrez la conversation → ⋮ → « Désactiver les notifications » (ou appui long sur sa ligne → « Plus »). Ses nouveaux messages arrivent sans notification, la ligne affiche une cloche barrée. Le reste du courrier notifie comme avant. Pour réactiver : même option ou touchez la cloche dans la conversation.</string>
     <string name="mailOpenInBrowser">Ouvrir dans le navigateur</string>
     <string name="mailOpenInBrowserFailed">Impossible d\'ouvrir le message dans le navigateur</string>
+    <string name="archiveAll">Toute l\'archive</string>
+    <string name="archiveHubHelp">Le menu affiche seulement l\'archive de la boîte sélectionnée : ses dossiers, événements, tâches et contacts. Cette page affiche toute l\'archive : toutes les boîtes, y compris celles qui ne sont plus dans l\'application, et la recherche dans tous les messages.</string>
 </resources>

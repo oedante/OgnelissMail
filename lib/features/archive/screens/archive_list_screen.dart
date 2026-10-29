@@ -24,10 +24,14 @@ import '../archive_sheets.dart';
 import '../../../core/theme/ogneliss_look.dart';
 
 class ArchiveListScreen extends ConsumerStatefulWidget {
-  /// Папка архива; null — поиск по всему архиву.
+  /// Папка архива; null — поиск по архиву.
   final int? folderId;
   final String? query;
-  const ArchiveListScreen({super.key, this.folderId, this.query});
+
+  /// Поиск только по письмам этих ящиков (1.8.14: из меню — архив
+  /// выбранного ящика); null — по всему архиву.
+  final Set<String>? accounts;
+  const ArchiveListScreen({super.key, this.folderId, this.query, this.accounts});
 
   @override
   ConsumerState<ArchiveListScreen> createState() => _ArchiveListScreenState();
@@ -79,7 +83,13 @@ class _ArchiveListScreenState extends ConsumerState<ArchiveListScreen> {
     try {
       List<ArchiveMessageHead> got;
       if (_searching && _q.isNotEmpty) {
-        got = await db.search(_q);
+        // В папке — по письмам её ящика.
+        final folder = widget.folderId == null
+            ? null
+            : (ref.read(archiveFoldersProvider).value ?? const <ArchiveFolder>[])
+                .where((f) => f.id == widget.folderId)
+                .firstOrNull;
+        got = await db.search(_q, accounts: widget.accounts ?? (folder == null ? null : {folder.accountId}));
         _more = false;
       } else if (widget.folderId != null && !_searching) {
         got = await db.messages(widget.folderId!, limit: _page, offset: append ? _items.length : 0);

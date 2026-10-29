@@ -3378,7 +3378,7 @@
     <string name="noSender">(ingen avsändare)</string>
     <string name="faq_archive_title">Ogneliss-arkiv</string>
     <string name="faq_archive_1_q">Vad skiljer Ogneliss-arkivet från knappen Arkiv?</string>
-    <string name="faq_archive_1_a">Arkiv flyttar ett meddelande till arkivmappen på servern: det finns kvar i postlådan och tar plats. Ogneliss-arkivet fungerar som Outlooks automatiska arkivering: hela meddelanden med bilagor och mappar hamnar i en krypterad fil på enheten, och på servern flyttas de till Borttagna objekt. Arkivet visas i menyn som avsnittet Ogneliss-arkiv, genomsöks tillsammans med din e-post och öppnas offline. Slå på det i Inställningar → Ogneliss-arkiv.</string>
+    <string name="faq_archive_1_a">Arkiv flyttar ett meddelande till arkivmappen på servern: det finns kvar i postlådan och tar plats. Ogneliss-arkivet fungerar som Outlooks automatiska arkivering: hela meddelanden med bilagor och mappar hamnar i en krypterad fil på enheten, och på servern flyttas de till Borttagna objekt. Arkivet visas i menyn som avsnittet Ogneliss-arkiv, genomsöks tillsammans med din e-post och öppnas offline. Slå på det i Inställningar → Ogneliss-arkiv. Menyn visar arkivet för den valda brevlådan; alla brevlådor på en gång finns under Hela arkivet.</string>
     <string name="faq_archive_2_q">Hur flyttar jag arkivet till en annan enhet eller ett moln?</string>
     <string name="faq_archive_2_a">Inställningar → Ogneliss-arkiv → Spara en kopia av arkivet: lägg .ogna-filen på Google Drive, Filer med iCloud Drive, Yandex Disk, ett USB-minne eller en dator. På den andra enheten: Anslut en kopia av arkivet → välj filen → arkivlösenord eller återställningskod. Kopian är krypterad och kan inte öppnas utan lösenordet eller koden. Appinställningarna följer med arkivet, och du kan återställa dem på samma skärm.</string>
     <string name="faq_archive_3_q">Vad gör jag om jag har glömt arkivlösenordet?</string>
@@ -3554,4 +3554,6 @@
     <string name="faq_notify_6_a">Öppna konversationen → ⋮ → ”Stäng av aviseringar” (eller håll ned raden i listan → ”Mer”). Nya meddelanden i den kommer utan avisering, och raden visar en överstruken klocka. Övrig post aviserar som förut. Slå på igen: samma val eller tryck på klockan i konversationen.</string>
     <string name="mailOpenInBrowser">Öppna i webbläsaren</string>
     <string name="mailOpenInBrowserFailed">Det gick inte att öppna meddelandet i webbläsaren</string>
+    <string name="archiveAll">Hela arkivet</string>
+    <string name="archiveHubHelp">Menyn visar bara arkivet för den valda brevlådan: dess mappar, händelser, uppgifter och kontakter. Här finns hela arkivet: alla brevlådor, även de som inte längre finns i appen, och sökning i alla meddelanden.</string>
 </resources>

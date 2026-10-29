@@ -3359,7 +3359,7 @@
     <string name="noSender">（无发件人）</string>
     <string name="faq_archive_title">Ogneliss 归档</string>
     <string name="faq_archive_1_q">Ogneliss 归档与“归档”按钮有何不同？</string>
-    <string name="faq_archive_1_a">“归档”会将邮件移到服务器上的归档文件夹：邮件仍留在邮箱中并占用空间。Ogneliss 归档类似 Outlook 的自动归档：完整邮件连同附件和文件夹会存入设备上的加密文件，在服务器上则移到“已删除邮件”。归档会在菜单中显示为“Ogneliss 归档”部分，可与邮件一起搜索，并可离线打开。可在“设置 → Ogneliss 归档”中开启。</string>
+    <string name="faq_archive_1_a">“归档”会将邮件移到服务器上的归档文件夹：邮件仍留在邮箱中并占用空间。Ogneliss 归档类似 Outlook 的自动归档：完整邮件连同附件和文件夹会存入设备上的加密文件，在服务器上则移到“已删除邮件”。归档会在菜单中显示为“Ogneliss 归档”部分，可与邮件一起搜索，并可离线打开。可在“设置 → Ogneliss 归档”中开启。菜单显示所选邮箱的归档；所有邮箱一起显示在“整个归档”中。</string>
     <string name="faq_archive_2_q">如何将归档转移到其他设备或云端？</string>
     <string name="faq_archive_2_a">设置 → Ogneliss 归档 → 保存归档副本：将 .ogna 文件放到 Google Drive、“文件”中的 iCloud Drive、Yandex Disk、U 盘或电脑上。在另一台设备上：连接归档副本 → 选择文件 → 输入归档密码或恢复码。副本已加密，没有密码或恢复码就无法打开。应用设置会随归档一起转移，你可以在同一屏幕上恢复它们。</string>
     <string name="faq_archive_3_q">忘记归档密码怎么办？</string>
@@ -3535,4 +3535,6 @@
     <string name="faq_notify_6_a">打开会话 → ⋮ →「关闭通知」（或在列表中长按该行 →「更多」）。此会话的新邮件将静默送达，行上显示带斜线的铃铛。其他邮件照常通知。要重新开启，可使用同一选项或点按会话中的铃铛。</string>
     <string name="mailOpenInBrowser">在浏览器中打开</string>
     <string name="mailOpenInBrowserFailed">无法在浏览器中打开邮件</string>
+    <string name="archiveAll">整个归档</string>
+    <string name="archiveHubHelp">菜单只显示所选邮箱的归档：其文件夹、日程、任务和联系人。此页面显示整个归档：所有邮箱（包括已不在应用中的邮箱），并可搜索所有邮件。</string>
 </resources>

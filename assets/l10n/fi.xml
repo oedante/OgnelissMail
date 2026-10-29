@@ -3378,7 +3378,7 @@
     <string name="noSender">(ei lähettäjää)</string>
     <string name="faq_archive_title">Ogneliss-arkisto</string>
     <string name="faq_archive_1_q">Miten Ogneliss-arkisto eroaa Arkisto-painikkeesta?</string>
-    <string name="faq_archive_1_a">Arkisto siirtää viestin palvelimen arkistokansioon: se pysyy postilaatikossa ja vie tilaa. Ogneliss-arkisto toimii kuten Outlookin automaattinen arkistointi: kokonaiset viestit liitteineen ja kansioineen siirtyvät salattuun tiedostoon laitteella, ja palvelimella ne siirretään kansioon Poistetut. Arkisto näkyy valikossa Ogneliss-arkisto-osiona, sitä haetaan postin kanssa yhdessä ja se avautuu offline-tilassa. Ota se käyttöön kohdassa Asetukset → Ogneliss-arkisto.</string>
+    <string name="faq_archive_1_a">Arkisto siirtää viestin palvelimen arkistokansioon: se pysyy postilaatikossa ja vie tilaa. Ogneliss-arkisto toimii kuten Outlookin automaattinen arkistointi: kokonaiset viestit liitteineen ja kansioineen siirtyvät salattuun tiedostoon laitteella, ja palvelimella ne siirretään kansioon Poistetut. Arkisto näkyy valikossa Ogneliss-arkisto-osiona, sitä haetaan postin kanssa yhdessä ja se avautuu offline-tilassa. Ota se käyttöön kohdassa Asetukset → Ogneliss-arkisto. Valikossa on valitun postilaatikon arkisto; kaikki postilaatikot kerralla kohdassa Koko arkisto.</string>
     <string name="faq_archive_2_q">Miten siirrän arkiston toiselle laitteelle tai pilveen?</string>
     <string name="faq_archive_2_a">Asetukset → Ogneliss-arkisto → Tallenna arkistokopio: vie .ogna-tiedosto Google Driveen, Tiedostot-sovelluksen kautta iCloud Driveen, Yandex Diskiin, USB-asemalle tai tietokoneelle. Toisella laitteella: Yhdistä arkistokopio → valitse tiedosto → arkiston salasana tai palautuskoodi. Kopio on salattu, eikä sitä voi avata ilman salasanaa tai koodia. Sovelluksen asetukset siirtyvät arkiston mukana, ja voit palauttaa ne samalla näytöllä.</string>
     <string name="faq_archive_3_q">Mitä jos unohdan arkiston salasanan?</string>
@@ -3554,4 +3554,6 @@
     <string name="faq_notify_6_a">Avaa keskustelu → ⋮ → ”Mykistä ilmoitukset” (tai paina rivin kohdalla luettelossa pitkään → ”Lisää”). Sen uudet viestit saapuvat ilman ilmoitusta, ja rivillä näkyy yliviivattu kello. Muu posti ilmoittaa kuten ennenkin. Ota takaisin käyttöön samasta kohdasta tai napauttamalla kelloa keskustelussa.</string>
     <string name="mailOpenInBrowser">Avaa selaimessa</string>
     <string name="mailOpenInBrowserFailed">Viestiä ei voitu avata selaimessa</string>
+    <string name="archiveAll">Koko arkisto</string>
+    <string name="archiveHubHelp">Valikossa näkyy vain valitun postilaatikon arkisto: sen kansiot, tapahtumat, tehtävät ja yhteystiedot. Tässä on koko arkisto: kaikki postilaatikot, myös ne joita sovelluksessa ei enää ole, ja haku kaikista viesteistä.</string>
 </resources>

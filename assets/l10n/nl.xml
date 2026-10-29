@@ -3378,7 +3378,7 @@
     <string name="noSender">(geen afzender)</string>
     <string name="faq_archive_title">Ogneliss-archief</string>
     <string name="faq_archive_1_q">Wat is het verschil tussen het Ogneliss-archief en de knop Archief?</string>
-    <string name="faq_archive_1_a">De knop Archief verplaatst een bericht naar de archiefmap op de server: het blijft in de mailbox en neemt ruimte in. Het Ogneliss-archief werkt als Automatisch archiveren in Outlook: hele berichten met bijlagen en mappen gaan naar een versleuteld bestand op het apparaat en op de server naar Verwijderde items. Het archief staat in het menu als het onderdeel Ogneliss-archief, wordt samen met je e-mail doorzocht en gaat offline open. Schakel het in via Instellingen → Ogneliss-archief.</string>
+    <string name="faq_archive_1_a">De knop Archief verplaatst een bericht naar de archiefmap op de server: het blijft in de mailbox en neemt ruimte in. Het Ogneliss-archief werkt als Automatisch archiveren in Outlook: hele berichten met bijlagen en mappen gaan naar een versleuteld bestand op het apparaat en op de server naar Verwijderde items. Het archief staat in het menu als het onderdeel Ogneliss-archief, wordt samen met je e-mail doorzocht en gaat offline open. Schakel het in via Instellingen → Ogneliss-archief. Het menu toont het archief van de gekozen mailbox; alle mailboxen samen staan onder Hele archief.</string>
     <string name="faq_archive_2_q">Hoe verplaats ik het archief naar een ander apparaat of de cloud?</string>
     <string name="faq_archive_2_a">Instellingen → Ogneliss-archief → Archiefkopie opslaan: zet het .ogna-bestand op Google Drive, Bestanden met iCloud Drive, Yandex Disk, een USB-stick of een computer. Op het andere apparaat: Archiefkopie koppelen → kies het bestand → archiefwachtwoord of herstelcode. De kopie is versleuteld en kan niet worden geopend zonder het wachtwoord of de code. De app-instellingen gaan met het archief mee en je kunt ze op hetzelfde scherm herstellen.</string>
     <string name="faq_archive_3_q">Wat moet ik doen als ik het archiefwachtwoord vergeet?</string>
@@ -3554,4 +3554,6 @@
     <string name="faq_notify_6_a">Open het gesprek → ⋮ → ‘Meldingen dempen’ (of houd de rij in de lijst ingedrukt → ‘Meer’). Nieuwe berichten erin komen zonder melding binnen en de rij toont een doorgestreepte bel. De rest van je mail meldt zoals voorheen. Weer aanzetten: hetzelfde item of tik op de bel in het gesprek.</string>
     <string name="mailOpenInBrowser">Openen in browser</string>
     <string name="mailOpenInBrowserFailed">Kan het bericht niet openen in de browser</string>
+    <string name="archiveAll">Hele archief</string>
+    <string name="archiveHubHelp">Het menu toont alleen het archief van de gekozen mailbox: de mappen, afspraken, taken en contacten. Hier staat het hele archief: alle mailboxen, ook die niet meer in de app staan, en zoeken in alle berichten.</string>
 </resources>

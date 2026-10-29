@@ -3378,7 +3378,7 @@
     <string name="noSender">(ingen avsender)</string>
     <string name="faq_archive_title">Ogneliss-arkiv</string>
     <string name="faq_archive_1_q">Hva er forskjellen mellom Ogneliss-arkivet og Arkiv-knappen?</string>
-    <string name="faq_archive_1_a">Arkiv flytter en melding til arkivmappen på serveren: den blir i postboksen og tar plass. Ogneliss-arkivet fungerer som Outlooks automatiske arkivering: hele meldinger med vedlegg og mapper havner i en kryptert fil på enheten, og på serveren flyttes de til Slettede elementer. Arkivet vises i menyen som delen Ogneliss-arkiv, søkes sammen med e-posten din og kan åpnes uten nett. Slå det på under Innstillinger → Ogneliss-arkiv.</string>
+    <string name="faq_archive_1_a">Arkiv flytter en melding til arkivmappen på serveren: den blir i postboksen og tar plass. Ogneliss-arkivet fungerer som Outlooks automatiske arkivering: hele meldinger med vedlegg og mapper havner i en kryptert fil på enheten, og på serveren flyttes de til Slettede elementer. Arkivet vises i menyen som delen Ogneliss-arkiv, søkes sammen med e-posten din og kan åpnes uten nett. Slå det på under Innstillinger → Ogneliss-arkiv. Menyen viser arkivet for den valgte postkassen; alle postkasser samlet under Hele arkivet.</string>
     <string name="faq_archive_2_q">Hvordan flytter jeg arkivet til en annen enhet eller en sky?</string>
     <string name="faq_archive_2_a">Innstillinger → Ogneliss-arkiv → Lagre en kopi av arkivet: legg .ogna-filen på Google Drive, Filer med iCloud Drive, Yandex Disk, en USB-stasjon eller en datamaskin. På den andre enheten: Koble til en kopi av arkivet → velg filen → arkivpassord eller gjenopprettingskode. Kopien er kryptert og kan ikke åpnes uten passordet eller koden. Appinnstillingene følger med arkivet, og du kan gjenopprette dem på samme skjerm.</string>
     <string name="faq_archive_3_q">Hva gjør jeg hvis jeg glemmer arkivpassordet?</string>
@@ -3554,4 +3554,6 @@
     <string name="faq_notify_6_a">Åpne samtalen → ⋮ → «Demp varsler» (eller hold inne raden i listen → «Mer»). Nye meldinger i den kommer uten varsel, og raden viser en overstreket bjelle. Resten av posten varsler som før. Slå på igjen: samme punkt eller trykk på bjellen i samtalen.</string>
     <string name="mailOpenInBrowser">Åpne i nettleser</string>
     <string name="mailOpenInBrowserFailed">Kunne ikke åpne meldingen i nettleseren</string>
+    <string name="archiveAll">Hele arkivet</string>
+    <string name="archiveHubHelp">Menyen viser bare arkivet for den valgte postkassen: mappene, avtalene, oppgavene og kontaktene. Her er hele arkivet: alle postkasser, også de som ikke lenger er i appen, og søk i alle meldinger.</string>
 </resources>

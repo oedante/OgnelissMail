@@ -3378,7 +3378,7 @@
     <string name="noSender">(sin remitente)</string>
     <string name="faq_archive_title">Archivo de Ogneliss</string>
     <string name="faq_archive_1_q">¿En qué se diferencia el archivo de Ogneliss del botón Archivo?</string>
-    <string name="faq_archive_1_a">El botón Archivo mueve un mensaje a la carpeta de archivo del servidor: sigue en el buzón y ocupa espacio. El archivo de Ogneliss funciona como el archivado automático de Outlook: los mensajes completos, con archivos adjuntos y carpetas, pasan a un archivo cifrado en el dispositivo, y en el servidor van a Elementos eliminados. El archivo aparece en el menú como la sección Archivo de Ogneliss, se busca junto con tu correo y se abre sin conexión. Actívalo en Ajustes → Archivo de Ogneliss.</string>
+    <string name="faq_archive_1_a">El botón Archivo mueve un mensaje a la carpeta de archivo del servidor: sigue en el buzón y ocupa espacio. El archivo de Ogneliss funciona como el archivado automático de Outlook: los mensajes completos, con archivos adjuntos y carpetas, pasan a un archivo cifrado en el dispositivo, y en el servidor van a Elementos eliminados. El archivo aparece en el menú como la sección Archivo de Ogneliss, se busca junto con tu correo y se abre sin conexión. Actívalo en Ajustes → Archivo de Ogneliss. El menú muestra el archivo del buzón seleccionado; todos los buzones a la vez están en Todo el archivo.</string>
     <string name="faq_archive_2_q">¿Cómo paso el archivo a otro dispositivo o a la nube?</string>
     <string name="faq_archive_2_a">Ajustes → Archivo de Ogneliss → Guardar una copia del archivo: guarda el archivo .ogna en Google Drive, Archivos con iCloud Drive, Yandex Disk, una unidad USB o un ordenador. En el otro dispositivo: Conectar una copia del archivo → elige el archivo → contraseña del archivo o código de recuperación. La copia está cifrada y no se puede abrir sin la contraseña o el código. Los ajustes de la aplicación viajan con el archivo y puedes restaurarlos en la misma pantalla.</string>
     <string name="faq_archive_3_q">¿Qué hago si olvido la contraseña del archivo?</string>
@@ -3554,4 +3554,6 @@
     <string name="faq_notify_6_a">Abre la conversación → ⋮ → «Silenciar notificaciones» (o mantén pulsada su fila en la lista → «Más»). Sus mensajes nuevos llegan sin notificación y la fila muestra una campana tachada. El resto del correo avisa como antes. Para reactivarlas, usa la misma opción o toca la campana en la conversación.</string>
     <string name="mailOpenInBrowser">Abrir en el navegador</string>
     <string name="mailOpenInBrowserFailed">No se pudo abrir el mensaje en el navegador</string>
+    <string name="archiveAll">Todo el archivo</string>
+    <string name="archiveHubHelp">El menú muestra solo el archivo del buzón seleccionado: sus carpetas, eventos, tareas y contactos. Aquí está todo el archivo: todos los buzones, incluidos los que ya no están en la app, y la búsqueda en todos los mensajes.</string>
 </resources>

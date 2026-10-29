@@ -3378,7 +3378,7 @@
     <string name="noSender">(gönderen yok)</string>
     <string name="faq_archive_title">Ogneliss arşivi</string>
     <string name="faq_archive_1_q">Ogneliss arşivi, Arşiv düğmesinden nasıl farklıdır?</string>
-    <string name="faq_archive_1_a">Arşiv düğmesi bir iletiyi sunucudaki arşiv klasörüne taşır: ileti posta kutusunda kalır ve yer kaplar. Ogneliss arşivi Outlook Otomatik Arşivleme gibi çalışır: iletiler ekleri ve klasörleriyle birlikte cihazdaki şifreli bir dosyaya, sunucuda ise Silinmiş öğeler klasörüne gider. Arşiv menüde Ogneliss arşivi bölümü olarak görünür, postanızla birlikte aranır ve çevrimdışı açılır. Ayarlar → Ogneliss arşivi bölümünden açın.</string>
+    <string name="faq_archive_1_a">Arşiv düğmesi bir iletiyi sunucudaki arşiv klasörüne taşır: ileti posta kutusunda kalır ve yer kaplar. Ogneliss arşivi Outlook Otomatik Arşivleme gibi çalışır: iletiler ekleri ve klasörleriyle birlikte cihazdaki şifreli bir dosyaya, sunucuda ise Silinmiş öğeler klasörüne gider. Arşiv menüde Ogneliss arşivi bölümü olarak görünür, postanızla birlikte aranır ve çevrimdışı açılır. Ayarlar → Ogneliss arşivi bölümünden açın. Menü seçili posta kutusunun arşivini gösterir; tüm posta kutuları birlikte Tüm arşiv altındadır.</string>
     <string name="faq_archive_2_q">Arşivi başka bir cihaza veya buluta nasıl taşırım?</string>
     <string name="faq_archive_2_a">Ayarlar → Ogneliss arşivi → Arşiv kopyasını kaydet: .ogna dosyasını Google Drive, Dosyalar uygulaması (iCloud Drive), Yandex Disk, USB bellek veya bir bilgisayar üzerine koyun. Diğer cihazda: Arşiv kopyasını bağla → dosyayı seçin → arşiv şifresi veya kurtarma kodu. Kopya şifrelidir ve şifre ya da kod olmadan açılamaz. Uygulama ayarları arşivle birlikte taşınır ve aynı ekranda geri yükleyebilirsiniz.</string>
     <string name="faq_archive_3_q">Arşiv şifresini unutursam ne yapmalıyım?</string>
@@ -3554,4 +3554,6 @@
     <string name="faq_notify_6_a">Yazışmayı açın → ⋮ → «Bildirimleri sessize al» (veya listedeki satırına uzun basın → «Diğer»). Yeni iletileri bildirimsiz gelir ve satırda üstü çizili zil görünür. Diğer postalar eskisi gibi bildirim gönderir. Yeniden açmak için aynı seçeneği kullanın veya yazışmadaki zile dokunun.</string>
     <string name="mailOpenInBrowser">Tarayıcıda aç</string>
     <string name="mailOpenInBrowserFailed">İleti tarayıcıda açılamadı</string>
+    <string name="archiveAll">Tüm arşiv</string>
+    <string name="archiveHubHelp">Menü yalnızca seçili posta kutusunun arşivini gösterir: klasörleri, etkinlikleri, görevleri ve kişileri. Burada tüm arşiv vardır: uygulamada artık bulunmayanlar dahil tüm posta kutuları ve tüm iletilerde arama.</string>
 </resources>

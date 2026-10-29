@@ -3359,7 +3359,7 @@
     <string name="noSender">(tanpa pengirim)</string>
     <string name="faq_archive_title">Arsip Ogneliss</string>
     <string name="faq_archive_1_q">Apa bedanya arsip Ogneliss dengan tombol Arsip?</string>
-    <string name="faq_archive_1_a">Arsip memindahkan email ke folder arsip di server: email tetap berada di kotak surat dan memakan ruang. Arsip Ogneliss bekerja seperti AutoArchive di Outlook: email utuh beserta lampiran dan folder masuk ke file terenkripsi di perangkat, sedangkan di server dipindahkan ke Item yang dihapus. Arsip muncul di menu sebagai bagian Arsip Ogneliss, dicari bersama email lainnya, dan dapat dibuka secara offline. Aktifkan di Pengaturan → Arsip Ogneliss.</string>
+    <string name="faq_archive_1_a">Arsip memindahkan email ke folder arsip di server: email tetap berada di kotak surat dan memakan ruang. Arsip Ogneliss bekerja seperti AutoArchive di Outlook: email utuh beserta lampiran dan folder masuk ke file terenkripsi di perangkat, sedangkan di server dipindahkan ke Item yang dihapus. Arsip muncul di menu sebagai bagian Arsip Ogneliss, dicari bersama email lainnya, dan dapat dibuka secara offline. Aktifkan di Pengaturan → Arsip Ogneliss. Menu menampilkan arsip kotak surat yang dipilih; semua kotak surat sekaligus ada di Seluruh arsip.</string>
     <string name="faq_archive_2_q">Bagaimana cara memindahkan arsip ke perangkat lain atau cloud?</string>
     <string name="faq_archive_2_a">Pengaturan → Arsip Ogneliss → Simpan salinan arsip: letakkan file .ogna di Google Drive, Files dengan iCloud Drive, Yandex Disk, drive USB, atau komputer. Di perangkat lain: Hubungkan salinan arsip → pilih file → kata sandi arsip atau kode pemulihan. Salinan terenkripsi dan tidak dapat dibuka tanpa kata sandi atau kode. Pengaturan aplikasi ikut pindah bersama arsip, dan dapat dipulihkan di layar yang sama.</string>
     <string name="faq_archive_3_q">Bagaimana jika lupa kata sandi arsip?</string>
@@ -3535,4 +3535,6 @@
     <string name="faq_notify_6_a">Buka percakapan → ⋮ → «Bisukan notifikasi» (atau tekan lama barisnya di daftar → «Lainnya»). Pesan barunya masuk tanpa notifikasi, dan barisnya menampilkan lonceng dicoret. Email lain tetap memberi notifikasi seperti biasa. Untuk menyalakan lagi, gunakan opsi yang sama atau ketuk lonceng di percakapan.</string>
     <string name="mailOpenInBrowser">Buka di browser</string>
     <string name="mailOpenInBrowserFailed">Tidak dapat membuka pesan di browser</string>
+    <string name="archiveAll">Seluruh arsip</string>
+    <string name="archiveHubHelp">Menu hanya menampilkan arsip kotak surat yang dipilih: folder, acara, tugas, dan kontaknya. Di sini ada seluruh arsip: semua kotak surat, termasuk yang sudah tidak ada di aplikasi, dan pencarian di semua pesan.</string>
 </resources>

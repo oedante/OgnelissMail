@@ -3378,7 +3378,7 @@
     <string name="noSender">(kein Absender)</string>
     <string name="faq_archive_title">Ogneliss-Archiv</string>
     <string name="faq_archive_1_q">Worin unterscheidet sich das Ogneliss-Archiv von der Schaltfläche Archivieren?</string>
-    <string name="faq_archive_1_a">Archivieren verschiebt eine Nachricht in den Archivordner auf dem Server: Sie bleibt im Postfach und belegt Platz. Das Ogneliss-Archiv arbeitet wie die AutoArchivierung von Outlook: Ganze Nachrichten mit Anhängen und Ordnern kommen in eine verschlüsselte Datei auf dem Gerät und auf dem Server in „Gelöschte Elemente“. Das Archiv erscheint im Menü als Bereich Ogneliss-Archiv, wird zusammen mit den E-Mails durchsucht und öffnet sich ohne Netz. Einschalten: Einstellungen → Ogneliss-Archiv.</string>
+    <string name="faq_archive_1_a">Archivieren verschiebt eine Nachricht in den Archivordner auf dem Server: Sie bleibt im Postfach und belegt Platz. Das Ogneliss-Archiv arbeitet wie die AutoArchivierung von Outlook: Ganze Nachrichten mit Anhängen und Ordnern kommen in eine verschlüsselte Datei auf dem Gerät und auf dem Server in „Gelöschte Elemente“. Das Archiv erscheint im Menü als Bereich Ogneliss-Archiv, wird zusammen mit den E-Mails durchsucht und öffnet sich ohne Netz. Einschalten: Einstellungen → Ogneliss-Archiv. Im Menü steht das Archiv des gewählten Postfachs; alle Postfächer auf einmal unter „Gesamtes Archiv“.</string>
     <string name="faq_archive_2_q">Wie übertrage ich das Archiv auf ein anderes Gerät oder in die Cloud?</string>
     <string name="faq_archive_2_a">Einstellungen → Ogneliss-Archiv → Archivkopie speichern: Die Datei .ogna kommt in Google Drive, „Dateien“ mit iCloud Drive, Yandex Disk, auf einen USB-Stick oder Computer. Auf dem anderen Gerät: Archivkopie verbinden → Datei wählen → Archivpasswort oder Wiederherstellungscode. Die Kopie ist verschlüsselt und ohne Passwort oder Code nicht zu öffnen. Die App-Einstellungen reisen mit dem Archiv und lassen sich auf demselben Bildschirm wiederherstellen.</string>
     <string name="faq_archive_3_q">Was tun, wenn ich das Archivpasswort vergessen habe?</string>
@@ -3554,4 +3554,6 @@
     <string name="faq_notify_6_a">Unterhaltung öffnen → ⋮ → „Stummschalten“ (oder die Zeile in der Liste gedrückt halten → „Mehr“). Neue Nachrichten darin kommen ohne Mitteilung, die Zeile zeigt eine durchgestrichene Glocke. Die übrige Post meldet sich wie bisher. Wieder einschalten: derselbe Punkt oder die Glocke in der Unterhaltung.</string>
     <string name="mailOpenInBrowser">Im Browser öffnen</string>
     <string name="mailOpenInBrowserFailed">Die E-Mail konnte nicht im Browser geöffnet werden</string>
+    <string name="archiveAll">Gesamtes Archiv</string>
+    <string name="archiveHubHelp">Im Menü erscheint nur das Archiv des gewählten Postfachs: seine Ordner, Termine, Aufgaben und Kontakte. Hier ist das gesamte Archiv: alle Postfächer, auch solche, die nicht mehr in der App sind, und die Suche in allen E-Mails.</string>
 </resources>

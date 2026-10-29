@@ -3359,7 +3359,7 @@
     <string name="noSender">(không có người gửi)</string>
     <string name="faq_archive_title">Kho lưu trữ Ogneliss</string>
     <string name="faq_archive_1_q">Kho lưu trữ Ogneliss khác nút Lưu trữ như thế nào?</string>
-    <string name="faq_archive_1_a">Lưu trữ chuyển thư vào thư mục lưu trữ trên máy chủ: thư vẫn nằm trong hộp thư và chiếm dung lượng. Kho lưu trữ Ogneliss hoạt động giống Lưu trữ tự động của Outlook: toàn bộ thư kèm tệp đính kèm và thư mục được đưa vào một tệp mã hóa trên thiết bị, còn trên máy chủ thì chuyển vào Mục đã xóa. Kho lưu trữ hiện trong menu ở mục Kho lưu trữ Ogneliss, được tìm kiếm cùng với thư của bạn và mở được khi không có mạng. Bật tại Cài đặt → Kho lưu trữ Ogneliss.</string>
+    <string name="faq_archive_1_a">Lưu trữ chuyển thư vào thư mục lưu trữ trên máy chủ: thư vẫn nằm trong hộp thư và chiếm dung lượng. Kho lưu trữ Ogneliss hoạt động giống Lưu trữ tự động của Outlook: toàn bộ thư kèm tệp đính kèm và thư mục được đưa vào một tệp mã hóa trên thiết bị, còn trên máy chủ thì chuyển vào Mục đã xóa. Kho lưu trữ hiện trong menu ở mục Kho lưu trữ Ogneliss, được tìm kiếm cùng với thư của bạn và mở được khi không có mạng. Bật tại Cài đặt → Kho lưu trữ Ogneliss. Menu hiển thị kho lưu trữ của hộp thư đã chọn; tất cả hộp thư cùng lúc nằm trong Toàn bộ kho lưu trữ.</string>
     <string name="faq_archive_2_q">Làm thế nào để chuyển kho lưu trữ sang thiết bị khác hoặc lên đám mây?</string>
     <string name="faq_archive_2_a">Cài đặt → Kho lưu trữ Ogneliss → Lưu bản sao kho lưu trữ: đặt tệp .ogna lên Google Drive, ứng dụng Tệp với iCloud Drive, Yandex Disk, ổ USB hoặc máy tính. Trên thiết bị khác: Kết nối bản sao kho lưu trữ → chọn tệp → nhập mật khẩu kho lưu trữ hoặc mã khôi phục. Bản sao được mã hóa và không thể mở nếu không có mật khẩu hoặc mã. Cài đặt ứng dụng đi kèm kho lưu trữ, và bạn có thể khôi phục chúng ngay trên cùng màn hình đó.</string>
     <string name="faq_archive_3_q">Nếu quên mật khẩu kho lưu trữ thì sao?</string>
@@ -3535,4 +3535,6 @@
     <string name="faq_notify_6_a">Mở cuộc trò chuyện → ⋮ → «Tắt thông báo» (hoặc nhấn giữ dòng của nó trong danh sách → «Thêm»). Thư mới trong đó đến mà không có thông báo, dòng hiển thị chuông gạch chéo. Thư khác vẫn thông báo như trước. Để bật lại, dùng cùng mục đó hoặc chạm vào chuông trong cuộc trò chuyện.</string>
     <string name="mailOpenInBrowser">Mở trong trình duyệt</string>
     <string name="mailOpenInBrowserFailed">Không thể mở thư trong trình duyệt</string>
+    <string name="archiveAll">Toàn bộ kho lưu trữ</string>
+    <string name="archiveHubHelp">Menu chỉ hiển thị kho lưu trữ của hộp thư đã chọn: thư mục, sự kiện, việc cần làm và danh bạ của nó. Trang này hiển thị toàn bộ kho lưu trữ: mọi hộp thư, kể cả những hộp thư không còn trong ứng dụng, và tìm kiếm trong mọi thư.</string>
 </resources>

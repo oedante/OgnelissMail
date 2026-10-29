@@ -35,6 +35,8 @@ import '../../features/archive/screens/archive_screen.dart';
 import '../../features/archive/screens/archive_list_screen.dart';
 import '../../features/archive/screens/archive_message_screen.dart';
 import '../../features/archive/screens/archive_items_screen.dart';
+import '../../features/archive/screens/archive_hub_screen.dart';
+import '../../features/archive/archive_providers.dart' show archiveAccountsParam;
 import '../../features/my_day/my_day_screen.dart';
 import '../../features/mail/screens/subscriptions_screen.dart';
 import '../../features/notes/screens/note_edit_screen.dart';
@@ -305,10 +307,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           path: '/archive/folder/:id',
           name: 'ogna-folder',
           builder: (_, st) => WideFrame(child: ArchiveListScreen(folderId: int.tryParse(st.pathParameters['id'] ?? '')))),
+      // Весь архив (1.8.14): все ящики, встречи, задачи и контакты — как
+      // «Файлы» для вложений. В меню — только архив выбранного ящика.
+      GoRoute(path: '/archive', name: 'ogna-hub', builder: (_, __) => const WideFrame(child: ArchiveHubScreen())),
       GoRoute(
           path: '/archive/search',
           name: 'ogna-search',
-          builder: (_, st) => WideFrame(child: ArchiveListScreen(query: st.uri.queryParameters['q']))),
+          builder: (_, st) => WideFrame(
+              child: ArchiveListScreen(
+                  query: st.uri.queryParameters['q'],
+                  accounts: archiveAccountsParam(st.uri.queryParameters['accounts'])))),
       GoRoute(
           path: '/archive/message/:id',
           name: 'ogna-message',
@@ -316,7 +324,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
           path: '/archive/items/:kind',
           name: 'ogna-items',
-          builder: (_, st) => WideFrame(child: ArchiveItemsScreen(kind: st.pathParameters['kind'] ?? 'events'))),
+          builder: (_, st) => WideFrame(
+              child: ArchiveItemsScreen(
+                  kind: st.pathParameters['kind'] ?? 'events',
+                  accounts: archiveAccountsParam(st.uri.queryParameters['accounts'])))),
       GoRoute(path: '/settings/folder-sync', name: 'folderSync', builder: (_, st) => WideFrame(child: FolderSyncSettingsScreen(accountId: st.uri.queryParameters['accountId']))),
       GoRoute(path: '/settings/conflicts', name: 'conflicts', builder: (_, __) => const WideFrame(child: ConflictSettingsScreen())),
       GoRoute(path: '/contacts/duplicates', name: 'contacts-duplicates', builder: (_, __) => const WideFrame(child: DuplicateContactsScreen())),

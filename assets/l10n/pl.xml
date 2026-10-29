@@ -3416,7 +3416,7 @@
     <string name="noSender">(brak nadawcy)</string>
     <string name="faq_archive_title">Archiwum Ogneliss</string>
     <string name="faq_archive_1_q">Czym archiwum Ogneliss różni się od przycisku Archiwum?</string>
-    <string name="faq_archive_1_a">Przycisk Archiwum przenosi wiadomość do folderu archiwum na serwerze: zostaje ona w skrzynce i zajmuje miejsce. Archiwum Ogneliss działa jak Autoarchiwizacja w Outlooku: całe wiadomości z załącznikami i folderami trafiają do zaszyfrowanego pliku na urządzeniu, a na serwerze do folderu Elementy usunięte. Archiwum widać w menu jako sekcję Archiwum Ogneliss, jest przeszukiwane razem z pocztą i otwiera się offline. Włącz je w Ustawienia → Archiwum Ogneliss.</string>
+    <string name="faq_archive_1_a">Przycisk Archiwum przenosi wiadomość do folderu archiwum na serwerze: zostaje ona w skrzynce i zajmuje miejsce. Archiwum Ogneliss działa jak Autoarchiwizacja w Outlooku: całe wiadomości z załącznikami i folderami trafiają do zaszyfrowanego pliku na urządzeniu, a na serwerze do folderu Elementy usunięte. Archiwum widać w menu jako sekcję Archiwum Ogneliss, jest przeszukiwane razem z pocztą i otwiera się offline. Włącz je w Ustawienia → Archiwum Ogneliss. Menu pokazuje archiwum wybranej skrzynki; wszystkie skrzynki naraz są w pozycji Całe archiwum.</string>
     <string name="faq_archive_2_q">Jak przenieść archiwum na inne urządzenie lub do chmury?</string>
     <string name="faq_archive_2_a">Ustawienia → Archiwum Ogneliss → Zapisz kopię archiwum: umieść plik .ogna w Google Drive, w aplikacji Pliki z iCloud Drive, w Yandex Disk, na dysku USB lub na komputerze. Na drugim urządzeniu: Połącz kopię archiwum → wybierz plik → hasło archiwum lub kod odzyskiwania. Kopia jest zaszyfrowana i nie można jej otworzyć bez hasła lub kodu. Ustawienia aplikacji podróżują razem z archiwum i możesz je przywrócić na tym samym ekranie.</string>
     <string name="faq_archive_3_q">Co zrobić, jeśli zapomnę hasła do archiwum?</string>
@@ -3592,4 +3592,6 @@
     <string name="faq_notify_6_a">Otwórz rozmowę → ⋮ → „Wycisz powiadomienia” (lub przytrzymaj jej wiersz na liście → „Więcej”). Nowe wiadomości w niej przychodzą bez powiadomień, a przy wierszu widać przekreślony dzwonek. Pozostała poczta powiadamia jak dotąd. Aby włączyć ponownie, użyj tej samej opcji lub dotknij dzwonka w rozmowie.</string>
     <string name="mailOpenInBrowser">Otwórz w przeglądarce</string>
     <string name="mailOpenInBrowserFailed">Nie udało się otworzyć wiadomości w przeglądarce</string>
+    <string name="archiveAll">Całe archiwum</string>
+    <string name="archiveHubHelp">Menu pokazuje tylko archiwum wybranej skrzynki: jej foldery, wydarzenia, zadania i kontakty. Tutaj jest całe archiwum: wszystkie skrzynki, także te, których nie ma już w aplikacji, i wyszukiwanie we wszystkich wiadomościach.</string>
 </resources>

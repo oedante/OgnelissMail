@@ -173,6 +173,38 @@ void main() {
       expect((await db.contacts()).single.subtitle, 'ivan@corp.ru');
     });
 
+    // 1.8.14: в меню — архив выбранного ящика, «Весь архив» — все ящики.
+    test('поиск, встречи, задачи и контакты — по ящикам', () async {
+      ArchiveMessageInput of(String account, String id, String subject) => ArchiveMessageInput(
+            accountId: account,
+            folderChain: const [(name: 'Inbox', type: 'inbox')],
+            sourceId: id,
+            subject: subject,
+            fromName: 'Иван',
+            fromEmail: 'ivan@corp.ru',
+            to: const [],
+            date: DateTime(2025, 3, 1),
+            bodyHtml: '<p>Смета</p>',
+            searchText: 'Смета',
+          );
+      await db.addMessage(of('a1', 'm1', 'Смета склада'));
+      await db.addMessage(of('a2', 'm2', 'Смета офиса'));
+      expect((await db.search('смета')).length, 2);
+      expect((await db.search('смета', accounts: {'a2'})).single.subject, 'Смета офиса');
+      expect((await db.search('смета', accounts: {'a1', 'a2'})).length, 2);
+      await db.upsertEvent(
+          accountId: 'a1', sourceId: 'e1', title: 'Планёрка', start: DateTime(2025, 1, 1, 9), end: DateTime(2025, 1, 1, 10), allDay: false);
+      await db.upsertTask(accountId: 'a2', sourceId: 't1', title: 'Отчёт', completedAt: DateTime(2025, 1, 2));
+      await db.upsertContact(accountId: 'a2', sourceId: 'c1', name: 'Иван', email: 'ivan@corp.ru');
+      expect((await db.events(accounts: {'a2'})), isEmpty);
+      expect((await db.events(accounts: {'a1'})).single.title, 'Планёрка');
+      expect((await db.tasks(accounts: {'a2'})).single.title, 'Отчёт');
+      expect((await db.contacts()).length, 1);
+      final counts = await db.itemCounts();
+      expect(counts['a1'], (events: 1, tasks: 0, contacts: 0));
+      expect(counts['a2'], (events: 0, tasks: 1, contacts: 1));
+    });
+
     test('настройки приложения: хранятся последние пять', () async {
       for (var i = 0; i < 7; i++) {
         await db.saveSettings(data: Uint8List.fromList([i]), app: '1.7.3', device: 'test', accounts: i, secrets: false);

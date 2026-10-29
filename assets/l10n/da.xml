@@ -3378,7 +3378,7 @@
     <string name="noSender">(ingen afsender)</string>
     <string name="faq_archive_title">Ogneliss-arkiv</string>
     <string name="faq_archive_1_q">Hvad er forskellen på Ogneliss-arkivet og knappen Arkiv?</string>
-    <string name="faq_archive_1_a">Arkiv flytter en mail til arkivmappen på serveren: den bliver i postkassen og fylder. Ogneliss-arkivet fungerer som Outlooks automatiske arkivering: hele mails med vedhæftede filer og mapper lægges i en krypteret fil på enheden og flyttes på serveren til Slettet post. Arkivet vises i menuen som afsnittet Ogneliss-arkiv, gennemsøges sammen med din mail og kan åbnes offline. Slå det til i Indstillinger → Ogneliss-arkiv.</string>
+    <string name="faq_archive_1_a">Arkiv flytter en mail til arkivmappen på serveren: den bliver i postkassen og fylder. Ogneliss-arkivet fungerer som Outlooks automatiske arkivering: hele mails med vedhæftede filer og mapper lægges i en krypteret fil på enheden og flyttes på serveren til Slettet post. Arkivet vises i menuen som afsnittet Ogneliss-arkiv, gennemsøges sammen med din mail og kan åbnes offline. Slå det til i Indstillinger → Ogneliss-arkiv. Menuen viser arkivet for den valgte postkasse; alle postkasser på én gang under Hele arkivet.</string>
     <string name="faq_archive_2_q">Hvordan flytter jeg arkivet til en anden enhed eller en sky?</string>
     <string name="faq_archive_2_a">Indstillinger → Ogneliss-arkiv → Gem en kopi af arkivet: læg .ogna-filen på Google Drive, Filer med iCloud Drive, Yandex Disk, et USB-drev eller en computer. På den anden enhed: Tilslut en kopi af arkivet → vælg filen → arkivets adgangskode eller gendannelseskode. Kopien er krypteret og kan ikke åbnes uden adgangskoden eller koden. Appindstillingerne følger med arkivet, og du kan gendanne dem på samme skærm.</string>
     <string name="faq_archive_3_q">Hvad hvis jeg glemmer arkivets adgangskode?</string>
@@ -3554,4 +3554,6 @@
     <string name="faq_notify_6_a">Åbn samtalen → ⋮ → “Slå notifikationer fra” (eller hold på rækken i listen → “Mere”). Nye beskeder i den kommer uden notifikation, og rækken viser en overstreget klokke. Resten af posten giver besked som før. Slå til igen: samme punkt eller tryk på klokken i samtalen.</string>
     <string name="mailOpenInBrowser">Åbn i browser</string>
     <string name="mailOpenInBrowserFailed">Beskeden kunne ikke åbnes i browseren</string>
+    <string name="archiveAll">Hele arkivet</string>
+    <string name="archiveHubHelp">Menuen viser kun arkivet for den valgte postkasse: dens mapper, aftaler, opgaver og kontakter. Her er hele arkivet: alle postkasser, også dem der ikke længere er i appen, og søgning i alle beskeder.</string>
 </resources>

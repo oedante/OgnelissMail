@@ -12,8 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/tokens.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/home_widget_service.dart';
@@ -72,27 +72,19 @@ class _MailWorkSectionState extends ConsumerState<MailWorkSection> with _Prefs {
 
   Future<void> _pickRecipLayout(AppLocalizations l10n) async {
     final cur = _recipLayout;
-    final picked = await showDialog<RecipientsLayout>(
-      context: context,
-      builder: (ctx) => SimpleDialog(
-        title: Text(l10n.tr('expRecipTitle')),
-        children: [
-          for (final l in RecipientsLayout.values)
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(ctx, l),
-              child: Row(children: [
-                Icon(l == cur ? AppIcons.radio_button_checked : AppIcons.radio_button_unchecked, size: Sizes.iconRow),
-                const SizedBox(width: Space.m),
-                Expanded(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(l10n.tr('recip_${l.name}')),
-                    Text(l10n.tr('recip_${l.name}_desc'), style: Theme.of(ctx).textTheme.bodySmall),
-                  ]),
-                ),
-              ]),
-            ),
-        ],
-      ),
+    // Карточкой по центру (1.8.8), как меню «⋮»; выбранное — с галочкой.
+    final picked = await showActionSheet<RecipientsLayout>(
+      context,
+      title: l10n.tr('expRecipTitle'),
+      items: [
+        for (final l in RecipientsLayout.values)
+          ActionSheetItem(
+            icon: l == cur ? AppIcons.radio_button_checked : AppIcons.radio_button_unchecked,
+            label: l10n.tr('recip_${l.name}'),
+            subtitle: l10n.tr('recip_${l.name}_desc'),
+            value: l,
+          ),
+      ],
     );
     if (picked == null || !mounted) return;
     await ref.read(sharedPrefsProvider).setString(ExperimentalKeys.recipientsLayout, picked.name);

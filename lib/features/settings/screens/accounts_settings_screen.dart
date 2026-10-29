@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
-import '../../../widgets/common/app_sheet.dart';
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/ui/confirm_dialog.dart';
 import '../../../core/theme/tokens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -171,27 +171,20 @@ String accountTypeLabel(AccountType t, AppLocalizations l10n) {
 /// отправителях и первом контакте, у личного их нет.
 Future<void> pickAccountKind(BuildContext context, WidgetRef ref, AccountModel a) async {
   final l10n = AppLocalizations.of(context);
-  final picked = await showAppSheet<String>(
-    context: context,
-    showDragHandle: true,
-    builder: (ctx) => SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(title: Text(l10n.tr('accountKind'), style: Theme.of(ctx).textTheme.titleMedium),
-              subtitle: Text(l10n.tr('accountKindHint'))),
-          for (final k in const ['auto', 'work', 'personal'])
-            ListTile(
-              leading: Icon(k == 'work' ? AppIcons.work : k == 'personal' ? AppIcons.person : AppIcons.auto_mode),
-              title: Text(l10n.tr(k == 'work' ? 'accountKindWork' : k == 'personal' ? 'accountKindPersonal' : 'accountKindAuto')),
-              trailing: (k == 'auto' ? a.accountKind == null : a.accountKind == k)
-                  ? Icon(AppIcons.check, color: Theme.of(ctx).colorScheme.primary)
-                  : null,
-              onTap: () => Navigator.pop(ctx, k),
-            ),
-        ],
-      ),
-    ),
+  // Карточкой (1.8.8), как меню «⋮»; текущий — с галочкой.
+  final picked = await showChoiceSheet<String>(
+    context,
+    title: l10n.tr('accountKind'),
+    subtitle: l10n.tr('accountKindHint'),
+    selected: a.accountKind ?? 'auto',
+    entries: [
+      for (final k in const ['auto', 'work', 'personal'])
+        AppMenuEntry(
+          value: k,
+          icon: k == 'work' ? AppIcons.work : k == 'personal' ? AppIcons.person : AppIcons.auto_mode,
+          label: l10n.tr(k == 'work' ? 'accountKindWork' : k == 'personal' ? 'accountKindPersonal' : 'accountKindAuto'),
+        ),
+    ],
   );
   if (picked == null) return;
   await ref.read(accountsProvider.notifier).setAccountKind(a.id, picked == 'auto' ? null : picked);

@@ -4,6 +4,7 @@
 // внутренние домены, уровни классификации, отчёт нарушений.
 
 import 'package:flutter/material.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../l10n/app_localizations.dart';
@@ -279,16 +280,10 @@ class DlpSettingsScreen extends ConsumerWidget {
               title: Text(l10n.tr('dlpMassThreshold')),
               trailing: SizedBox(
                 width: 80,
-                child: DropdownButton<int>(
+                child: AppSelectField<int>(
                   value: dlp.massSendThreshold,
-                  isExpanded: true,
-                  items: [5, 10, 15, 20, 30, 50].map((v) {
-                    return DropdownMenuItem(
-                        value: v, child: Text('$v'));
-                  }).toList(),
-                  onChanged: (v) {
-                    if (v != null) notifier.setMassSendThreshold(v);
-                  },
+                  entries: [for (final v in const [5, 10, 15, 20, 30, 50]) AppMenuEntry(value: v, label: '$v')],
+                  onChanged: notifier.setMassSendThreshold,
                 ),
               ),
             ),

@@ -69,7 +69,9 @@ class PeekGroup {
 /// Показать карточку над [anchor] (глобальные координаты строки; null — по
 /// центру экрана). [card] — содержимое карточки (поля внутри — свои).
 /// [more] — все действия по группам: последней кнопкой ряда становится
-/// «Ещё» ([moreLabel]), нажатие разворачивает их под кнопками.
+/// «Ещё» ([moreLabel]), нажатие разворачивает их под кнопками. [moreOpen] —
+/// группы развёрнуты сразу и без кнопки «Ещё» (1.8.8: «Ещё» в письме —
+/// эта же карточка, а не шторка снизу).
 Future<void> showPeekCard(
   BuildContext context, {
   required Rect? anchor,
@@ -78,6 +80,7 @@ Future<void> showPeekCard(
   VoidCallback? onOpen,
   List<PeekGroup> more = const [],
   String moreLabel = '…',
+  bool moreOpen = false,
 }) {
   final reduce = MediaQuery.of(context).disableAnimations;
   return showGeneralDialog<void>(
@@ -87,7 +90,13 @@ Future<void> showPeekCard(
     barrierColor: Colors.transparent,
     transitionDuration: reduce ? Duration.zero : const Duration(milliseconds: 220),
     pageBuilder: (ctx, _, __) => _PeekOverlay(
-        anchor: anchor, card: card, actions: actions, onOpen: onOpen, more: more, moreLabel: moreLabel),
+        anchor: anchor,
+        card: card,
+        actions: actions,
+        onOpen: onOpen,
+        more: more,
+        moreLabel: moreLabel,
+        moreOpen: moreOpen),
     transitionBuilder: (ctx, anim, _, child) => FadeTransition(
       opacity: CurvedAnimation(parent: anim, curve: Curves.easeOut),
       child: child,
@@ -146,6 +155,7 @@ class _PeekOverlay extends StatefulWidget {
   final VoidCallback? onOpen;
   final List<PeekGroup> more;
   final String moreLabel;
+  final bool moreOpen;
 
   const _PeekOverlay({
     required this.anchor,
@@ -154,6 +164,7 @@ class _PeekOverlay extends StatefulWidget {
     this.onOpen,
     this.more = const [],
     this.moreLabel = '…',
+    this.moreOpen = false,
   });
 
   @override
@@ -161,7 +172,7 @@ class _PeekOverlay extends StatefulWidget {
 }
 
 class _PeekOverlayState extends State<_PeekOverlay> {
-  bool _expanded = false;
+  late bool _expanded = widget.moreOpen;
   final _scroll = ScrollController();
   final _listKey = GlobalKey();
 
@@ -193,7 +204,7 @@ class _PeekOverlayState extends State<_PeekOverlay> {
     final reduce = MediaQuery.of(context).disableAnimations;
     final actions = [
       ...widget.actions,
-      if (widget.more.isNotEmpty)
+      if (widget.more.isNotEmpty && !widget.moreOpen)
         PeekAction(
           icon: _expanded ? AppIcons.expand_less : AppIcons.more_horiz,
           label: widget.moreLabel,
@@ -235,7 +246,8 @@ class _PeekOverlayState extends State<_PeekOverlay> {
                       ),
                       if (actions.isNotEmpty) ...[
                         const SizedBox(height: Space.m),
-                        PeekActionsRow(actions: actions, highlight: _expanded ? actions.length - 1 : null),
+                        PeekActionsRow(
+                            actions: actions, highlight: _expanded && !widget.moreOpen ? actions.length - 1 : null),
                       ],
                       // «Ещё» — все действия по группам, здесь же.
                       AnimatedSize(
@@ -716,6 +728,9 @@ class AppMenuEntry<T> {
   final bool checked;
   final bool isDivider;
 
+  /// Уровень вложенности (дерево папок): отступ слева.
+  final int indent;
+
   const AppMenuEntry({
     required T this.value,
     required this.label,
@@ -725,6 +740,7 @@ class AppMenuEntry<T> {
     this.destructive = false,
     this.enabled = true,
     this.checked = false,
+    this.indent = 0,
   }) : isDivider = false;
 
   /// Черта между группами пунктов.
@@ -737,17 +753,25 @@ class AppMenuEntry<T> {
         destructive = false,
         enabled = false,
         checked = false,
+        indent = 0,
         isDivider = true;
 }
 
 /// Меню у [anchor] (прямоугольник кнопки на экране). Возвращает value
 /// выбранного пункта или null (закрыли мимо, «Назад»). [selected] — текущее
 /// значение: пункт с ним отмечен галочкой.
+///
+/// 1.8.8 (замечание владельца 29.10.2026: всплывающие панели — как карточка
+/// по удержанию): [anchor] null — карточка по центру экрана (шторки действий
+/// [showActionSheet] стали такими); [header] — шапка с объектом (значок, имя,
+/// подпись) над пунктами, [footer] — пояснение под ними.
 Future<T?> showAnchoredMenu<T>(
   BuildContext context, {
-  required Rect anchor,
+  required Rect? anchor,
   required List<AppMenuEntry<T>> entries,
   T? selected,
+  Widget? header,
+  Widget? footer,
 }) {
   final reduce = MediaQuery.of(context).disableAnimations;
   return showGeneralDialog<T>(
@@ -756,7 +780,8 @@ Future<T?> showAnchoredMenu<T>(
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
     barrierColor: Colors.transparent,
     transitionDuration: reduce ? Duration.zero : const Duration(milliseconds: 160),
-    pageBuilder: (ctx, _, __) => _AnchoredMenuOverlay<T>(anchor: anchor, entries: entries, selected: selected),
+    pageBuilder: (ctx, _, __) => _AnchoredMenuOverlay<T>(
+        anchor: anchor, entries: entries, selected: selected, header: header, footer: footer),
     transitionBuilder: (ctx, anim, _, child) => FadeTransition(
       opacity: CurvedAnimation(parent: anim, curve: Curves.easeOut),
       child: child,
@@ -765,10 +790,13 @@ Future<T?> showAnchoredMenu<T>(
 }
 
 class _AnchoredMenuOverlay<T> extends StatelessWidget {
-  final Rect anchor;
+  final Rect? anchor;
   final List<AppMenuEntry<T>> entries;
   final T? selected;
-  const _AnchoredMenuOverlay({required this.anchor, required this.entries, required this.selected});
+  final Widget? header;
+  final Widget? footer;
+  const _AnchoredMenuOverlay(
+      {required this.anchor, required this.entries, required this.selected, this.header, this.footer});
 
   @override
   Widget build(BuildContext context) {
@@ -779,8 +807,9 @@ class _AnchoredMenuOverlay<T> extends StatelessWidget {
         child: Padding(
           padding: insets,
           child: CustomSingleChildLayout(
-            delegate: _AnchoredMenuLayout(anchor: anchor, insets: insets),
-            child: _Lift(child: _AnchoredMenuList<T>(entries: entries, selected: selected)),
+            delegate: _AnchoredMenuLayout(anchor: anchor, insets: insets, wide: header != null || footer != null),
+            child: _Lift(
+                child: _AnchoredMenuList<T>(entries: entries, selected: selected, header: header, footer: footer)),
           ),
         ),
       ),
@@ -789,25 +818,32 @@ class _AnchoredMenuOverlay<T> extends StatelessWidget {
 }
 
 /// Меню — под кнопкой (не помещается — над ней), правым краем к правому краю
-/// кнопки, если кнопка в правой половине экрана, иначе левым к левому.
+/// кнопки, если кнопка в правой половине экрана, иначе левым к левому. Без
+/// кнопки — по центру экрана. [wide] — с шапкой: шире, как карточка письма.
 class _AnchoredMenuLayout extends SingleChildLayoutDelegate {
-  final Rect anchor;
+  final Rect? anchor;
   final EdgeInsets insets;
-  const _AnchoredMenuLayout({required this.anchor, required this.insets});
+  final bool wide;
+  const _AnchoredMenuLayout({required this.anchor, required this.insets, this.wide = false});
 
   static const _minWidth = 200.0;
   static const _maxWidth = 320.0;
+  static const _wideMin = 280.0;
+  static const _wideMax = 400.0;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
-    final max = math.min(_maxWidth, constraints.maxWidth);
-    return BoxConstraints(minWidth: math.min(_minWidth, max), maxWidth: max, maxHeight: constraints.maxHeight);
+    final max = math.min(wide ? _wideMax : _maxWidth, constraints.maxWidth);
+    final min = math.min(wide || anchor == null ? _wideMin : _minWidth, max);
+    return BoxConstraints(minWidth: min, maxWidth: max, maxHeight: constraints.maxHeight);
   }
 
   @override
   Offset getPositionForChild(Size size, Size child) {
     final maxLeft = math.max(0.0, size.width - child.width);
     final maxTop = math.max(0.0, size.height - child.height);
+    final anchor = this.anchor;
+    if (anchor == null) return Offset(maxLeft / 2, maxTop / 2);
     final a = anchor.translate(-insets.left, -insets.top);
     final rightSide = a.center.dx > size.width / 2;
     final left = (rightSide ? a.right - child.width : a.left).clamp(0.0, maxLeft).toDouble();
@@ -817,13 +853,15 @@ class _AnchoredMenuLayout extends SingleChildLayoutDelegate {
   }
 
   @override
-  bool shouldRelayout(_AnchoredMenuLayout old) => old.anchor != anchor || old.insets != insets;
+  bool shouldRelayout(_AnchoredMenuLayout old) => old.anchor != anchor || old.insets != insets || old.wide != wide;
 }
 
 class _AnchoredMenuList<T> extends StatelessWidget {
   final List<AppMenuEntry<T>> entries;
   final T? selected;
-  const _AnchoredMenuList({required this.entries, required this.selected});
+  final Widget? header;
+  final Widget? footer;
+  const _AnchoredMenuList({required this.entries, required this.selected, this.header, this.footer});
 
   @override
   Widget build(BuildContext context) {
@@ -843,11 +881,19 @@ class _AnchoredMenuList<T> extends StatelessWidget {
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: Space.xs),
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            if (header != null) ...[
+              header!,
+              const Divider(height: Space.s),
+            ],
             for (final e in entries)
               if (e.isDivider)
                 const Divider(height: Space.s, indent: Space.l, endIndent: Space.l)
               else
                 _row(context, theme, scheme, e, withIcons, withCheck),
+            if (footer != null) ...[
+              const Divider(height: Space.s),
+              footer!,
+            ],
           ]),
         ),
       ),
@@ -875,7 +921,8 @@ class _AnchoredMenuList<T> extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: Sizes.tapTarget),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Space.l, vertical: Space.s),
+              padding: EdgeInsetsDirectional.fromSTEB(
+                  Space.l + e.indent.clamp(0, 5) * Space.l, Space.s, Space.l, Space.s),
               child: Row(children: [
                 if (withIcons) ...[
                   Icon(e.icon,

@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/ui/app_radio_tile.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
@@ -62,41 +63,27 @@ class MailSettingsScreen extends ConsumerWidget {
 
   Future<void> _pickStartup(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
     final current = ref.read(startupFolderProvider);
-    final picked = await showAppSheet<StartupFolder>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          ListTile(title: Text(l10n.tr('startupFolder'), style: Theme.of(ctx).textTheme.titleMedium)),
-          for (final f in StartupFolder.values)
-            ListTile(
-              title: Text(_startupLabel(f, l10n)),
-              trailing: f == current ? Icon(AppIcons.check, color: Theme.of(ctx).colorScheme.primary) : null,
-              onTap: () => Navigator.pop(ctx, f),
-            ),
-        ]),
-      ),
+    // Карточкой (1.8.8), как меню «⋮»; текущая — с галочкой.
+    final picked = await showChoiceSheet<StartupFolder>(
+      context,
+      title: l10n.tr('startupFolder'),
+      selected: current,
+      entries: [for (final f in StartupFolder.values) AppMenuEntry(value: f, label: _startupLabel(f, l10n))],
     );
     if (picked != null) await ref.read(startupFolderProvider.notifier).set(picked);
   }
 
   Future<void> _pickPhotoSize(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
     final current = ref.read(featureFlagsProvider).photoSize;
-    final picked = await showAppSheet<int>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          ListTile(title: Text(l10n.tr('photoSendSize'), style: Theme.of(ctx).textTheme.titleMedium)),
-          for (final v in FeatureFlags.photoSizes)
-            ListTile(
-              title: Text(photoSizeLabel(l10n, v)),
-              subtitle: v == 0 ? Text(l10n.tr('photoSizeAskDesc')) : null,
-              trailing: v == current ? Icon(AppIcons.check, color: Theme.of(ctx).colorScheme.primary) : null,
-              onTap: () => Navigator.pop(ctx, v),
-            ),
-        ]),
-      ),
+    // Карточкой (1.8.8), как меню «⋮»; текущий — с галочкой.
+    final picked = await showChoiceSheet<int>(
+      context,
+      title: l10n.tr('photoSendSize'),
+      selected: current,
+      entries: [
+        for (final v in FeatureFlags.photoSizes)
+          AppMenuEntry(value: v, label: photoSizeLabel(l10n, v), subtitle: v == 0 ? l10n.tr('photoSizeAskDesc') : null),
+      ],
     );
     if (picked != null) await ref.read(featureFlagsProvider.notifier).setPhotoSize(picked);
   }

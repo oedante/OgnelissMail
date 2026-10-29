@@ -1,6 +1,7 @@
 // lib/features/settings/screens/general_settings_screen.dart
 // Общие настройки: тема, язык, масштаб шрифта. Реальное применение через settingsProvider.
 
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/ui/app_radio_tile.dart';
 import 'dart:io' show Platform;
 import '../../../core/theme/app_icons.dart';
@@ -19,7 +20,6 @@ import '../../../widgets/navigation/app_bottom_bar.dart' show AppBottomBar;
 import '../../help/faq_screen.dart' show FaqButton;
 import '../../../l10n/app_localizations.dart';
 import '../../../l10n/languages.g.dart' show kAppLanguages;
-import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/ui_zoom.dart';
 
@@ -235,26 +235,15 @@ class GeneralSettingsScreen extends ConsumerWidget {
   /// Выбор языка: все языки приложения, у каждого — название на нём самом и
   /// по-английски.
   Future<void> _pickLanguage(BuildContext context, String current, void Function(Locale) set) async {
-    final picked = await showAppSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (ctx) => ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.8),
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            for (final lang in kAppLanguages)
-              AppRadioTile<String>(
-                title: Text(lang.name),
-                subtitle: lang.name == lang.english ? null : Text(lang.english),
-                value: lang.code,
-                groupValue: current,
-                onChanged: (v) => Navigator.of(ctx).pop(v),
-              ),
-          ],
-        ),
-      ),
+    // Карточкой (1.8.8), как меню «⋮»; текущий — с галочкой.
+    final picked = await showChoiceSheet<String>(
+      context,
+      title: AppLocalizations.of(context).tr('language'),
+      selected: current,
+      entries: [
+        for (final lang in kAppLanguages)
+          AppMenuEntry(value: lang.code, label: lang.name, subtitle: lang.name == lang.english ? null : lang.english),
+      ],
     );
     if (picked != null && picked != current) set(Locale(picked));
   }

@@ -1,7 +1,7 @@
 // lib/features/settings/screens/tasks_settings_screen.dart
 // Настройки модуля To Do (Задачи): вид по умолчанию, скрытие выполненных, напоминания.
 
-import '../../../widgets/ui/app_radio_tile.dart';
+import '../../../widgets/ui/action_sheet.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
@@ -11,7 +11,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../help/faq_screen.dart' show FaqButton;
 import '../../../l10n/app_localizations.dart';
 import '../providers/module_settings_provider.dart';
-import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 
 class TasksSettingsScreen extends ConsumerWidget {
@@ -46,23 +45,19 @@ class TasksSettingsScreen extends ConsumerWidget {
               title: l10n.tr('defaultView'),
               // «Сегодня» убрано — день смотрят в календаре.
               subtitle: viewLabel(s.taskView == TaskDefaultView.today ? TaskDefaultView.upcoming : s.taskView),
-              onTap: () => showAppSheet(
-                context: context,
-                builder: (ctx) => SafeArea(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: TaskDefaultView.values.where((v) => v != TaskDefaultView.today).map((v) => AppRadioTile<TaskDefaultView>(
-                          title: Text(viewLabel(v)),
-                          value: v,
-                          groupValue: s.taskView == TaskDefaultView.today ? TaskDefaultView.upcoming : s.taskView,
-                          onChanged: (sel) {
-                            n.setTaskView(sel!);
-                            Navigator.pop(ctx);
-                          },
-                        )).toList(),
-                  ),
-                ),
-              ),
+              // Карточкой (1.8.8), как меню «⋮»; текущий — с галочкой.
+              onTap: () async {
+                final v = await showChoiceSheet<TaskDefaultView>(
+                  context,
+                  title: l10n.tr('defaultView'),
+                  selected: s.taskView == TaskDefaultView.today ? TaskDefaultView.upcoming : s.taskView,
+                  entries: [
+                    for (final v in TaskDefaultView.values)
+                      if (v != TaskDefaultView.today) AppMenuEntry(value: v, label: viewLabel(v)),
+                  ],
+                );
+                if (v != null) await n.setTaskView(v);
+              },
             ),
           ]),
           // «Скрывать выполненные» убрано: выполненные задачи и так живут в

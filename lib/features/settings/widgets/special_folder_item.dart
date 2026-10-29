@@ -13,8 +13,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/app_theme.dart' show AppColors;
 import '../../../core/utils/folder_icons.dart';
 import '../../../data/models/account_model.dart';
 import '../../../data/models/folder_model.dart';
@@ -22,7 +22,6 @@ import '../../../data/providers/database_provider.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/special_folders.dart';
-import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../mail/providers/mail_providers.dart' show accountFoldersProvider;
 
@@ -75,49 +74,22 @@ class _SpecialFolderItemState extends ConsumerState<SpecialFolderItem> {
       });
     // Отдельное значение для «Автоматически»: null — «передумал».
     const auto = '\u0000auto';
-    final picked = await showAppSheet<String>(
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (ctx) {
-        final theme = Theme.of(ctx);
-        final check = Icon(AppIcons.check, color: theme.colorScheme.primary);
-        return SafeArea(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.8),
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                ListTile(
-                  title: Text(l10n.tr(_titleKey), style: theme.textTheme.titleMedium),
-                  trailing: HelpButton(text: l10n.tr('specialFoldersHint'), title: l10n.tr(_titleKey)),
-                ),
-                ListTile(
-                  leading: const Icon(AppIcons.auto_awesome),
-                  title: Text(l10n.tr('specialFolderAutoOption')),
-                  subtitle: Text(l10n.tr(_archive ? 'specialArchiveAutoDesc' : 'specialJunkAutoDesc')),
-                  trailing: chosenId == null ? check : null,
-                  onTap: () => Navigator.pop(ctx, auto),
-                ),
-                for (final f in options)
-                  ListTile(
-                    leading: Icon(folderIconOf(f)),
-                    title: Text(f.displayName, maxLines: 1, overflow: TextOverflow.ellipsis),
-                    subtitle: switch (_parentPath(f, byId)) {
-                      final p? => Text(p,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: AppColors.mutedText(ctx))),
-                      null => null,
-                    },
-                    trailing: chosenId == f.id ? check : null,
-                    onTap: () => Navigator.pop(ctx, f.id),
-                  ),
-              ],
-            ),
-          ),
-        );
-      },
+    // Карточкой (1.8.8), как меню «⋮»; выбранная — с галочкой.
+    final picked = await showChoiceSheet<String>(
+      context,
+      title: l10n.tr(_titleKey),
+      headerTrailing: HelpButton(text: l10n.tr('specialFoldersHint'), title: l10n.tr(_titleKey)),
+      selected: chosenId ?? auto,
+      entries: [
+        AppMenuEntry(
+          value: auto,
+          label: l10n.tr('specialFolderAutoOption'),
+          subtitle: l10n.tr(_archive ? 'specialArchiveAutoDesc' : 'specialJunkAutoDesc'),
+          icon: AppIcons.auto_awesome,
+        ),
+        for (final f in options)
+          AppMenuEntry(value: f.id, label: f.displayName, subtitle: _parentPath(f, byId), icon: folderIconOf(f)),
+      ],
     );
     if (picked == null || !mounted) return;
     final id = picked == auto ? null : picked;

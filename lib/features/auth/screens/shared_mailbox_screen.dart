@@ -21,6 +21,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
@@ -178,15 +179,15 @@ class _SharedMailboxScreenState extends ConsumerState<SharedMailboxScreen> {
 
           // Основной аккаунт: под его учётными данными пойдут запросы.
           if (accounts.length > 1) ...[
-            DropdownButtonFormField<String>(
-              initialValue: accounts.any((a) => a.id == _parent?.id) ? _parent?.id : null,
+            AppSelectField<String>(
+              value: accounts.any((a) => a.id == _parent?.id) ? _parent?.id : null,
               decoration: InputDecoration(
                 labelText: l10n.tr('accessVia'),
                 prefixIcon: const Icon(AppIcons.person),
               ),
-              items: [
+              entries: [
                 for (final a in accounts)
-                  DropdownMenuItem(value: a.id, child: Text(a.email)),
+                  AppMenuEntry(value: a.id, label: a.email, icon: AppIcons.mail, iconColor: Color(a.colorValue)),
               ],
               onChanged: done != null
                   ? null

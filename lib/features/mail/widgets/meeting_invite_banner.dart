@@ -10,6 +10,7 @@
 // время». Раньше ответ уходил сразу и всегда, без текста и без вариантов.
 
 import 'dart:convert' show HtmlEscape;
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../core/theme/app_icons.dart';
 
 import 'package:flutter/material.dart';
@@ -311,45 +312,17 @@ class _MeetingInviteBannerState extends ConsumerState<MeetingInviteBanner> {
     final l10n = AppLocalizations.of(context);
     // Предложить время письмом (iMIP) не умеем — только Exchange.
     final canPropose = response != 'accept' && invite == null;
-    final choice = await showModalBottomSheet<String>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Какой ответ выбран — заголовком (1.6.5: лист был без подписи).
-            Padding(
-              padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.s),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(_responseLabel(l10n, response), style: Theme.of(ctx).textTheme.titleMedium),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(AppIcons.send),
-              title: Text(l10n.tr('meetingRespondSendNow')),
-              onTap: () => Navigator.pop(ctx, 'now'),
-            ),
-            ListTile(
-              leading: const Icon(AppIcons.edit),
-              title: Text(l10n.tr('meetingRespondEdit')),
-              onTap: () => Navigator.pop(ctx, 'edit'),
-            ),
-            ListTile(
-              leading: const Icon(AppIcons.event_available),
-              title: Text(l10n.tr('meetingRespondDontSend')),
-              onTap: () => Navigator.pop(ctx, 'none'),
-            ),
-            if (canPropose)
-              ListTile(
-                leading: const Icon(AppIcons.schedule),
-                title: Text(l10n.tr('meetingProposeTime')),
-                onTap: () => Navigator.pop(ctx, 'propose'),
-              ),
-          ],
-        ),
-      ),
+    // Карточкой (1.8.8), как меню «⋮»; какой ответ выбран — заголовком
+    // (1.6.5: лист был без подписи).
+    final choice = await showActionSheet<String>(
+      context,
+      title: _responseLabel(l10n, response),
+      items: [
+        ActionSheetItem(icon: AppIcons.send, label: l10n.tr('meetingRespondSendNow'), value: 'now'),
+        ActionSheetItem(icon: AppIcons.edit, label: l10n.tr('meetingRespondEdit'), value: 'edit'),
+        ActionSheetItem(icon: AppIcons.event_available, label: l10n.tr('meetingRespondDontSend'), value: 'none'),
+        if (canPropose) ActionSheetItem(icon: AppIcons.schedule, label: l10n.tr('meetingProposeTime'), value: 'propose'),
+      ],
     );
     if (!mounted || choice == null) return;
     switch (choice) {

@@ -1,4 +1,5 @@
 // lib/features/mail/screens/mail_list_screen.dart
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/common/gap_below.dart';
 import '../widgets/mail_check_sheet.dart' show showMailCheckSheet;
 import '../widgets/background_hint_strip.dart';
@@ -6,7 +7,6 @@ import '../widgets/first_load_strip.dart';
 import '../../../core/utils/text_safe.dart';
 import '../providers/drawer_prefs.dart' show drawerPinnedProvider, menuOnRightProvider, quickFiltersProvider, mailSwipePagerProvider;
 import '../../../widgets/navigation/app_bottom_bar.dart' show AppBottomBar;
-import '../../../widgets/ui/app_radio_tile.dart';
 import '../providers/startup_folder.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../widgets/common/sync_progress_indicator.dart' show SyncStatusDot, SyncStatus, syncStatusProvider;
@@ -1439,8 +1439,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
               },
               // На Windows и с мышью меню открывается правой кнопкой — раньше
               // до него можно было добраться только долгим нажатием в режиме
-              // выбора.
-              onSecondaryTap: () => _showContextMenu(context, item, l10n),
+              // выбора. С 1.8.8 — та же карточка, что по удержанию (была
+              // отдельная шторка со своим списком).
+              onSecondaryTap: () => _showPeek(rowCtx, item, l10n),
               // Долгое нажатие: на строке — меню действий, на портрете —
               // выбор писем (09.10.2026).
               onLongPress: () {
@@ -1674,24 +1675,17 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           ..orderBy([(f) => OrderingTerm(expression: f.sortOrder)]))
         .get();
     if (!mounted) return;
-    final target = await showAppSheet<Folder>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            // Только папки аккаунта этого письма: переместить письмо между
-            // ящиками разных серверов нельзя.
-            for (final f in folders.where((f) => f.id != email.folderId))
-              ListTile(
-                leading: Icon(folderIconOf(folderFromRow(f))),
-                title: Text(f.displayName),
-                onTap: () => Navigator.pop(ctx, f),
-              ),
-          ],
-        ),
-      ),
+    // Карточкой (1.8.8), как меню «⋮». Только папки аккаунта этого
+    // письма: переместить письмо между ящиками разных серверов нельзя.
+    final targetId = await showChoiceSheet<String>(
+      context,
+      title: AppLocalizations.of(context).tr('moveToDots'),
+      entries: [
+        for (final f in folders.where((f) => f.id != email.folderId))
+          AppMenuEntry(value: f.id, label: f.displayName, icon: folderIconOf(folderFromRow(f))),
+      ],
     );
+    final target = folders.where((f) => f.id == targetId).firstOrNull;
     if (target == null || !mounted) return;
     final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
     if (account == null) return;
@@ -2088,7 +2082,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
 
   /// Выбор папки назначения. Системные папки — по типу (у каждого письма в
   /// своём аккаунте), пользовательские — с подписью ящика, если их несколько.
-  Future<FolderModel?> _pickTargetFolder(AppLocalizations l10n) {
+  Future<FolderModel?> _pickTargetFolder(AppLocalizations l10n) async {
     final folders = ref.read(foldersProvider).value ?? const <FolderModel>[];
     final selected = _selectedEmails();
     final accountIds = selected.map((e) => e.accountId).toSet();
@@ -2105,33 +2099,21 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         if (f.type == FolderType.custom && accountIds.contains(f.accountId)) f,
     ];
 
-    return showAppSheet<FolderModel>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(Space.l),
-              child: Text(l10n.tr('moveToDots'), style: Theme.of(ctx).textTheme.titleMedium),
-            ),
-            Flexible(
-              child: ListView(
-                shrinkWrap: true,
-                children: options.map((o) => ListTile(
-                      leading: Icon(folderIconOf(o)),
-                      title: Text(o.displayName),
-                      subtitle: (multi && o.type == FolderType.custom)
-                          ? Text(emailOf[o.accountId] ?? '')
-                          : null,
-                      onTap: () => Navigator.of(ctx).pop(o),
-                    )).toList(),
-              ),
-            ),
-          ],
-        ),
-      ),
+    // Карточкой (1.8.8), как меню «⋮».
+    final i = await showChoiceSheet<int>(
+      context,
+      title: l10n.tr('moveToDots'),
+      entries: [
+        for (final (i, o) in options.indexed)
+          AppMenuEntry(
+            value: i,
+            label: o.displayName,
+            icon: folderIconOf(o),
+            subtitle: (multi && o.type == FolderType.custom) ? (emailOf[o.accountId] ?? '') : null,
+          ),
+      ],
     );
+    return i == null ? null : options[i];
   }
 
 
@@ -2398,188 +2380,6 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         ),
       ]),
     ];
-  }
-
-  void _showContextMenu(
-    BuildContext context,
-    EmailModel email,
-    AppLocalizations l10n,
-  ) {
-    showAppSheet(
-      context: context,
-      isScrollControlled: true,
-      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (ctx) {
-        return SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-              // Ручка
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: Space.m),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Theme.of(ctx).colorScheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-
-              // Заголовок
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Space.l),
-                child: Text(
-                  email.subject.isEmpty ? l10n.tr('noSubject') : email.subject,
-                  style: Theme.of(context).textTheme.titleSmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(height: Space.s),
-
-              // Действия. «Выбрать» — то же, что долгое нажатие на портрет.
-              if (!_selectionMode)
-                ListTile(
-                  leading: const Icon(AppIcons.checklist),
-                  title: Text(l10n.tr('selectEmails')),
-                  onTap: () {
-                    Navigator.of(ctx).pop();
-                    setState(() {
-                      _selectionMode = true;
-                      _selectedIds.add(email.id);
-                    });
-                  },
-                ),
-              ListTile(
-                leading: const Icon(AppIcons.reply),
-                title: Text(l10n.tr('reply')),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}');
-                },
-              ),
-              ListTile(
-                leading: const Icon(AppIcons.reply_all),
-                title: Text(l10n.tr('replyAll')),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}&replyAll=true');
-                },
-              ),
-              ListTile(
-                leading: const Icon(AppIcons.forward),
-                title: Text(l10n.tr('forward')),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  _forward(email, l10n);
-                },
-              ),
-              const Divider(height: 1),
-              ListTile(
-                leading: Icon(_rowUnread(email) ? AppIcons.mark_email_read : AppIcons.mark_email_unread),
-                title: Text(_rowUnread(email) ? l10n.tr('markRead') : l10n.tr('markUnread')),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  _toggleRead(email);
-                },
-              ),
-              ListTile(
-                leading: Icon(AppIcons.flag, fill: email.isFlagged ? 0 : 1),
-                title: Text(l10n.tr('flag')),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  _toggleFlag(email);
-                },
-              ),
-              if (ref.read(settingsProvider).mailControl)
-                ListTile(
-                  leading: Icon(AppIcons.task_alt, fill: _rowControl(email) != 0 ? 1 : 0),
-                  title: Text(l10n.tr(_rowControl(email) == 0 ? 'controlSet' : 'controlClear')),
-                  onTap: () {
-                    Navigator.of(ctx).pop();
-                    _toggleControl(email);
-                  },
-                ),
-              ListTile(
-                leading: Icon(AppIcons.watch_later, fill: email.laterState != 0 ? 1 : 0),
-                title: Text(l10n.tr('later')),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  unawaited(_snoozeSingle(email, l10n));
-                },
-              ),
-              // Закрепить вверху ленты (1.6.49, как чат в Telegram).
-              Builder(builder: (_) {
-                final pinnedNow = ref.read(pinnedMailProvider.notifier).isPinned(email.accountId, email.id);
-                return ListTile(
-                  leading: Icon(AppIcons.push_pin, fill: pinnedNow ? 1 : 0),
-                  title: Text(l10n.tr(pinnedNow ? 'unpinMail' : 'pinMail')),
-                  onTap: () {
-                    Navigator.of(ctx).pop();
-                    unawaited(_togglePin(email));
-                  },
-                );
-              }),
-              ListTile(
-                leading: const Icon(AppIcons.label),
-                title: Text(l10n.tr('addTag')),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  _showTagPicker(email, l10n);
-                },
-              ),
-              const Divider(height: 1),
-              ListTile(
-                leading: const Icon(AppIcons.calendar_today),
-                title: Text(l10n.tr('createEvent')),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  _planMeeting(email);
-                },
-              ),
-              ListTile(
-                leading: const Icon(AppIcons.check_box),
-                title: Text(l10n.tr('createTask')),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  _createTaskFromEmail(email, l10n);
-                },
-              ),
-              ListTile(
-                leading: const Icon(AppIcons.drive_file_move),
-                title: Text(l10n.tr('moveTo')),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  _moveSingle(email, l10n);
-                },
-              ),
-              ListTile(
-                leading: const Icon(AppIcons.archive),
-                title: Text(l10n.tr('archive')),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  _archiveEmail(email, l10n);
-                },
-              ),
-              ListTile(
-                leading: const Icon(AppIcons.delete, color: AppColors.errorRed),
-                title: Text(l10n.delete, style: TextStyle(color: AppColors.errorText(context))),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  _deleteEmail(email, l10n);
-                },
-              ),
-              const SizedBox(height: Space.s),
-            ],
-          ),
-          ),
-        );
-      },
-    );
   }
 
   // ════════════════════════ ДЕЙСТВИЯ ════════════════════════
@@ -2909,37 +2709,34 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     );
   }
 
-  void _showTagPicker(EmailModel email, AppLocalizations l10n) {
-    showAppSheet(
-      context: context,
-      builder: (ctx) => ListView(
-        shrinkWrap: true,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(Space.l),
-            child: Text(l10n.tr('addTag'), style: Theme.of(context).textTheme.titleMedium),
+  /// Метки письма (1.8.8): карточкой, как меню «⋮»; нажатие ставит или
+  /// снимает метку. Раньше шторка показывала метки, но нажатие ничего не
+  /// меняло.
+  Future<void> _showTagPicker(EmailModel email, AppLocalizations l10n) async {
+    final tags = ref.read(categoriesProvider);
+    if (tags.isEmpty) {
+      showInlineNotice(l10n.tr('noTags'));
+      return;
+    }
+    final t = await showChoiceSheet<String>(
+      context,
+      title: l10n.tr('addTag'),
+      entries: [
+        for (final tag in tags)
+          AppMenuEntry(
+            value: tag,
+            label: tag,
+            icon: AppIcons.label,
+            iconColor: AppTheme.getTagColor(tag),
+            checked: email.tags.contains(tag),
           ),
-          ...ref.watch(categoriesProvider).map((tag) => ListTile(
-                leading: Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: AppTheme.getTagColor(tag),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                title: Text(tag),
-                trailing: email.tags.contains(tag)
-                    ? const Icon(AppIcons.check, color: AppColors.successGreen)
-                    : null,
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  HapticFeedback.selectionClick();
-                },
-              )),
-        ],
-      ),
+      ],
     );
+    if (t == null || !mounted) return;
+    final next = email.tags.contains(t) ? [for (final x in email.tags) if (x != t) x] : [...email.tags, t];
+    unawaited(HapticFeedback.selectionClick());
+    await ref.read(emailActionsProvider).setTags(email.id, next, accountId: email.accountId);
+    await ref.read(emailsProvider.notifier).refresh();
   }
 
   void _showFilterSheet(BuildContext context, AppLocalizations l10n) {
@@ -3074,31 +2871,15 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       MailSort.sizeLargest: l10n.tr('sortLargest'),
       MailSort.sizeSmallest: l10n.tr('sortSmallest'),
     };
-    showAppSheet(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(Space.l),
-              child: Text(l10n.tr('sortBy'), style: Theme.of(ctx).textTheme.titleMedium),
-            ),
-            ...options.entries.map((e) => AppRadioTile<MailSort>(
-                  value: e.key,
-                  groupValue: current,
-                  title: Text(e.value),
-                  onChanged: (v) {
-                    if (v != null) {
-                      ref.read(mailSortProvider.notifier).state = v;
-                      Navigator.pop(ctx);
-                    }
-                  },
-                )),
-          ],
-        ),
-      ),
-    );
+    // Карточкой (1.8.8), как меню «⋮»; текущая — с галочкой.
+    unawaited(showChoiceSheet<MailSort>(
+      context,
+      title: l10n.tr('sortBy'),
+      selected: current,
+      entries: [for (final e in options.entries) AppMenuEntry(value: e.key, label: e.value)],
+    ).then((v) {
+      if (v != null) ref.read(mailSortProvider.notifier).state = v;
+    }));
   }
 
   Future<void> _markAllRead() async {

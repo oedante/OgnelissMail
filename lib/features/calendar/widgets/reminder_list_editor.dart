@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart' show AppColors;
 import '../../../core/theme/tokens.dart';
@@ -27,31 +28,15 @@ String reminderLabel(int m, AppLocalizations l10n) {
 /// выбранных ([exclude]); [current] — отмечено галочкой. null — передумали.
 Future<int?> showReminderPicker(BuildContext context, {Set<int> exclude = const {}, int? current}) {
   final l10n = AppLocalizations.of(context);
-  return showAppSheet<int>(
-    context: context,
-    showDragHandle: true,
-    isScrollControlled: true,
-    builder: (ctx) {
-      final theme = Theme.of(ctx);
-      return SafeArea(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.8),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              ListTile(title: Text(l10n.tr('reminder'), style: theme.textTheme.titleMedium)),
-              for (final m in EventReminders.presets)
-                if (m == current || !exclude.contains(m))
-                  ListTile(
-                    title: Text(reminderLabel(m, l10n)),
-                    trailing: m == current ? Icon(AppIcons.check, color: theme.colorScheme.primary) : null,
-                    onTap: () => Navigator.pop(ctx, m),
-                  ),
-            ],
-          ),
-        ),
-      );
-    },
+  // Карточкой (1.8.8), как меню «⋮»; текущее — с галочкой.
+  return showChoiceSheet<int>(
+    context,
+    title: l10n.tr('reminder'),
+    selected: current,
+    entries: [
+      for (final m in EventReminders.presets)
+        if (m == current || !exclude.contains(m)) AppMenuEntry(value: m, label: reminderLabel(m, l10n)),
+    ],
   );
 }
 

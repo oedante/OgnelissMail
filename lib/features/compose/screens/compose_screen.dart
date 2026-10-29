@@ -2942,26 +2942,23 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   /// Выбор отправителя списком (по нажатию на подпись «От»).
   Future<void> _pickFromSheet(List<AccountModel> accounts, ThemeData theme) async {
-    final picked = await showAppSheet<AccountModel>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            for (final a in accounts)
-              ListTile(
-                leading: Icon(a.isSharedMailbox ? AppIcons.supervisor_account : AppIcons.alternate_email,
-                    color: a.isSharedMailbox ? kSharedMailboxColor : null),
-                title: Text(a.displayName, maxLines: 1, overflow: TextOverflow.ellipsis),
-                subtitle: Text(a.email, maxLines: 1, overflow: TextOverflow.ellipsis),
-                selected: a.id == _fromAccount?.id,
-                onTap: () => Navigator.pop(ctx, a),
-              ),
-          ],
-        ),
-      ),
+    // Карточкой (1.8.8), как меню «⋮».
+    final id = await showChoiceSheet<String>(
+      context,
+      title: AppLocalizations.of(context).tr('from'),
+      selected: _fromAccount?.id,
+      entries: [
+        for (final a in accounts)
+          AppMenuEntry(
+            value: a.id,
+            label: a.displayName,
+            subtitle: a.email,
+            icon: a.isSharedMailbox ? AppIcons.supervisor_account : AppIcons.alternate_email,
+            iconColor: a.isSharedMailbox ? kSharedMailboxColor : null,
+          ),
+      ],
     );
+    final picked = accounts.where((a) => a.id == id).firstOrNull;
     if (picked != null) _onFromChanged(picked);
   }
 
@@ -3030,84 +3027,46 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         ),
         const SizedBox(width: Space.s),
         Expanded(
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: selKey,
-              isExpanded: true,
-              itemHeight: null,
-              // В строке — имя ящика (раньше — адрес); в списке — имя и адрес.
-              // Адреса отправки «от имени» (1.6.27) — под своим ящиком, с
-              // пометкой: отправить от чужого имени по невнимательности —
-              // дорогая ошибка, особенно когда секретарь ведёт ящик руководителя.
-              selectedItemBuilder: (_) => [
-                for (final e in entries)
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Text(
-                      e.alias ?? _accountName(e.account),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: (e.account.isSharedMailbox || e.alias != null) ? kSharedMailboxColor : null,
-                        fontWeight: (e.account.isSharedMailbox || e.alias != null) ? FontWeight.w600 : null,
-                      ),
-                    ),
-                  ),
-              ],
-              items: [
-                for (final e in entries)
-                  DropdownMenuItem(
-                    value: e.key,
-                    child: Padding(
-                      padding: EdgeInsetsDirectional.only(
-                          top: Space.xs, bottom: Space.xs, start: e.alias != null ? Space.l : 0),
-                      child: Row(
-                        children: [
-                          if (e.account.isSharedMailbox || e.alias != null) ...[
-                            const Icon(AppIcons.supervisor_account, size: 16, color: kSharedMailboxColor),
-                            const SizedBox(width: 6),
-                          ],
-                          Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  e.alias ?? _accountName(e.account),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: (e.account.isSharedMailbox || e.alias != null) ? kSharedMailboxColor : null,
-                                    fontWeight: (e.account.isSharedMailbox || e.alias != null) ? FontWeight.w600 : null,
-                                  ),
-                                ),
-                                if (e.alias != null)
-                                  Text(l10n.tr('fromOnBehalfVia').replaceAll('{account}', e.account.email),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(color: theme.colorScheme.onSurfaceVariant))
-                                else if (_accountName(e.account) != e.account.email)
-                                  Text(e.account.email,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
-              onChanged: (key) {
-                final e = entries.where((x) => x.key == key).firstOrNull;
-                if (e == null) return;
-                _onFromChanged(e.account);
-                setState(() => _fromAlias = e.alias);
-              },
-            ),
+          // Меню-карточка (1.8.8) вместо списка Material. В строке — имя
+          // ящика (раньше — адрес); в меню — имя и адрес. Адреса отправки «от
+          // имени» (1.6.27) — под своим ящиком, с пометкой: отправить от
+          // чужого имени по невнимательности — дорогая ошибка, особенно когда
+          // секретарь ведёт ящик руководителя.
+          child: AppSelectField<String>(
+            value: selKey,
+            entries: [
+              for (final e in entries)
+                AppMenuEntry(
+                  value: e.key,
+                  label: e.alias ?? _accountName(e.account),
+                  icon: (e.account.isSharedMailbox || e.alias != null) ? AppIcons.supervisor_account : AppIcons.mail,
+                  iconColor:
+                      (e.account.isSharedMailbox || e.alias != null) ? kSharedMailboxColor : Color(e.account.colorValue),
+                  subtitle: e.alias != null
+                      ? l10n.tr('fromOnBehalfVia').replaceAll('{account}', e.account.email)
+                      : (_accountName(e.account) != e.account.email ? e.account.email : null),
+                ),
+            ],
+            selectedBuilder: (_, sel) {
+              final e = entries.where((x) => x.key == sel?.value).firstOrNull;
+              if (e == null) return const SizedBox.shrink();
+              final marked = e.account.isSharedMailbox || e.alias != null;
+              return Text(
+                e.alias ?? _accountName(e.account),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: marked ? kSharedMailboxColor : null,
+                  fontWeight: marked ? FontWeight.w600 : null,
+                ),
+              );
+            },
+            onChanged: (key) {
+              final e = entries.where((x) => x.key == key).firstOrNull;
+              if (e == null) return;
+              _onFromChanged(e.account);
+              setState(() => _fromAlias = e.alias);
+            },
           ),
         ),
       ],
@@ -3696,30 +3655,15 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   void _pickOption(String title, Map<String, String> options, String current,
       ValueChanged<String> onPick) {
-    showAppSheet(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(Space.l, Space.l, Space.l, Space.s),
-              child: Text(title, style: Theme.of(ctx).textTheme.titleMedium),
-            ),
-            for (final e in options.entries)
-              ListTile(
-                leading: Icon(e.key == current ? AppIcons.radio_button_checked : AppIcons.radio_button_unchecked),
-                title: Text(e.value),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  onPick(e.key);
-                },
-              ),
-          ],
-        ),
-      ),
-    );
+    // Карточкой (1.8.8), как меню «⋮»; выбранное — с галочкой.
+    unawaited(showChoiceSheet<String>(
+      context,
+      title: title,
+      selected: current,
+      entries: [for (final e in options.entries) AppMenuEntry(value: e.key, label: e.value)],
+    ).then((v) {
+      if (v != null) onPick(v);
+    }));
   }
 
   // ════════════════════════ АВТОДОПОЛНЕНИЕ ════════════════════════
@@ -3997,49 +3941,36 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       showInlineNotice(l10n.tr('noSignaturesCompose'));
       return;
     }
-    showAppSheet(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(Space.l),
-              child: Text(l10n.tr('insertSignature'),
-                  style: Theme.of(ctx).textTheme.titleMedium),
-            ),
-            Flexible(
-              child: ListView(
-                shrinkWrap: true,
-                children: sigs
-                    .map((s) => ListTile(
-                          leading: const Icon(AppIcons.draw),
-                          title: Text(s.name),
-                          subtitle: Text(
-                            s.plainContent.replaceAll('\n', ' '),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          onTap: () {
-                            Navigator.pop(ctx);
-                            if (_fromAccount == null) return;
-                            if (_useHtmlEditor) {
-                              // Заменяет текущую подпись (или добавляется в конец).
-                              _autoSignature = false;
-                              _editor.setSignature(_renderSignature(s.htmlContent.isNotEmpty ? s.htmlContent : s.plainContent.replaceAll('\n', '<br>'), html: true));
-                            } else {
-                              _appendBodyPlain(
-                                  '\n\n${_renderSignature(s.plainContent.isNotEmpty ? s.plainContent : s.htmlContent, html: false)}');
-                            }
-                          },
-                        ))
-                    .toList(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    // Карточкой (1.8.8), как меню «⋮».
+    unawaited(showChoiceSheet<int>(
+      context,
+      title: l10n.tr('insertSignature'),
+      entries: [
+        for (final (i, s) in sigs.indexed)
+          AppMenuEntry(
+            value: i,
+            label: s.name,
+            icon: AppIcons.draw,
+            subtitle: () {
+              final t = s.plainContent.replaceAll('\n', ' ').trim();
+              return t.length > 60 ? '${t.substring(0, 60)}…' : t;
+            }(),
+          ),
+      ],
+    ).then((i) {
+      if (i == null || !mounted || _fromAccount == null) return;
+      final s = sigs[i];
+      if (_useHtmlEditor) {
+        // Заменяет текущую подпись (или добавляется в конец).
+        _autoSignature = false;
+        _editor.setSignature(_renderSignature(
+            s.htmlContent.isNotEmpty ? s.htmlContent : s.plainContent.replaceAll('\n', '<br>'),
+            html: true));
+      } else {
+        _appendBodyPlain(
+            '\n\n${_renderSignature(s.plainContent.isNotEmpty ? s.plainContent : s.htmlContent, html: false)}');
+      }
+    }));
   }
 
   /// Лист управления группами рассылки.
@@ -4161,30 +4092,16 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// Действия с группой-получателем: объяснение и «Раскрыть».
   Future<void> _showGroupActions(EmailAddress group, List<EmailAddress> recipients) async {
     final l10n = AppLocalizations.of(context);
-    final expand = await showAppSheet<bool>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ListTile(
-              leading: const Icon(AppIcons.groups),
-              title: Text(group.label),
-              subtitle: Text('${l10n.tr('groupMailingList')} · ${group.email}'),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.s),
-              child: Text(l10n.tr('groupExpandHint'), style: Theme.of(ctx).textTheme.bodySmall),
-            ),
-            ListTile(
-              leading: const Icon(AppIcons.unfold_more),
-              title: Text(l10n.tr('groupExpand')),
-              onTap: () => Navigator.pop(ctx, true),
-            ),
-          ],
-        ),
+    // Карточкой (1.8.8), как меню «⋮».
+    final expand = await showActionSheet<bool>(
+      context,
+      title: group.label,
+      subtitle: '${l10n.tr('groupMailingList')} · ${group.email}',
+      leading: const Icon(AppIcons.groups),
+      items: [ActionSheetItem(icon: AppIcons.unfold_more, label: l10n.tr('groupExpand'), value: true)],
+      footer: Padding(
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.xs, Space.l, Space.s),
+        child: Text(l10n.tr('groupExpandHint'), style: Theme.of(context).textTheme.bodySmall),
       ),
     );
     if (expand != true || !mounted) return;
@@ -5228,41 +5145,26 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   Future<void> _insertTemplate() async {
     final l10n = AppLocalizations.of(context);
     final templates = [for (final t in ref.read(templatesProvider)) t.resolve(l10n.tr)];
-    final chosen = await showAppSheet<ReplyTemplate>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: templates.isEmpty
-            ? Padding(
-                padding: const EdgeInsets.all(Space.xl),
-                child: Text(l10n.tr('noTemplates')),
-              )
-            : Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(Space.l),
-                    child: Text(l10n.tr('insertTemplate'),
-                        style: Theme.of(ctx).textTheme.titleMedium),
-                  ),
-                  Flexible(
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        for (final t in templates)
-                          ListTile(
-                            leading: const Icon(AppIcons.article),
-                            title: Text(t.title),
-                            subtitle: Text(t.body, maxLines: 2, overflow: TextOverflow.ellipsis),
-                            onTap: () => Navigator.of(ctx).pop(t),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-      ),
+    if (templates.isEmpty) {
+      showInlineNotice(l10n.tr('noTemplates'));
+      return;
+    }
+    // Карточкой (1.8.8), как меню «⋮».
+    final i = await showChoiceSheet<int>(
+      context,
+      title: l10n.tr('insertTemplate'),
+      entries: [
+        for (final (i, t) in templates.indexed)
+          AppMenuEntry(
+            value: i,
+            label: t.title,
+            icon: AppIcons.article,
+            subtitle: t.body.length > 80 ? '${t.body.substring(0, 80).trim()}…' : t.body,
+          ),
+      ],
     );
-    if (chosen == null) return;
+    if (i == null) return;
+    final chosen = templates[i];
     final text = applyPlaceholders(chosen.body,
         name: _fromAccount?.displayName,
         email: _fromAccount?.email,
@@ -5303,34 +5205,23 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   }
 
   void _showTemplates(AppLocalizations l10n) {
-    showAppSheet(
-      context: context,
-      builder: (ctx) => ListView(
-        shrinkWrap: true,
-        children: [
-          ListTile(title: Text(l10n.tr('templates'), style: const TextStyle(fontWeight: FontWeight.bold))),
-          _templateTile(l10n.tr('templateAccepted'), l10n, ctx),
-          _templateTile(l10n.tr('templateApproved'), l10n, ctx),
-          _templateTile(l10n.tr('templateInProgress'), l10n, ctx),
-          _templateTile(l10n.tr('templateClarify'), l10n, ctx),
-          _templateTile(l10n.tr('templateThankYou'), l10n, ctx),
-          _templateTile(l10n.tr('templateWillDo'), l10n, ctx),
-          _templateTile(l10n.tr('templateMeetingOk'), l10n, ctx),
-          _templateTile(l10n.tr('templateCannotAttend'), l10n, ctx),
-        ],
-      ),
-    );
-  }
-
-  Widget _templateTile(String text, AppLocalizations l10n, BuildContext ctx) {
-    return ListTile(
-      title: Text(text),
-      onTap: () {
-        _insertBodyPlainAtCursor(text);
-        Navigator.of(ctx).pop();
-        HapticFeedback.selectionClick();
-      },
-    );
+    // Карточкой (1.8.8), как меню «⋮».
+    final texts = [
+      for (final k in const [
+        'templateAccepted', 'templateApproved', 'templateInProgress', 'templateClarify',
+        'templateThankYou', 'templateWillDo', 'templateMeetingOk', 'templateCannotAttend',
+      ])
+        l10n.tr(k),
+    ];
+    unawaited(showChoiceSheet<String>(
+      context,
+      title: l10n.tr('templates'),
+      entries: [for (final t in texts) AppMenuEntry(value: t, label: t, icon: AppIcons.quickreply)],
+    ).then((text) {
+      if (text == null || !mounted) return;
+      _insertBodyPlainAtCursor(text);
+      HapticFeedback.selectionClick();
+    }));
   }
 
 }

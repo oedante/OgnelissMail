@@ -1056,39 +1056,21 @@ class MailDrawer extends ConsumerWidget {
     for (final r in tree.roots) {
       walk(r, 0);
     }
-    return showDialog<String>(
-      context: context,
-      builder: (ctx) => SimpleDialog(
-        title: Text(title),
-        children: [
-          SimpleDialogOption(
-            onPressed: () => Navigator.of(ctx).pop(''),
-            child: Row(children: [
-              const Icon(AppIcons.account_tree, size: 20),
-              const SizedBox(width: Space.m),
-              Expanded(child: Text(l10n.tr('folderRoot'),
-                  style: TextStyle(fontWeight: (current ?? '').isEmpty ? FontWeight.w600 : null))),
-            ]),
-          ),
-          for (final (f, depth) in rows)
-            SimpleDialogOption(
-              onPressed: () => Navigator.of(ctx).pop(f.id),
-              child: Padding(
-                padding: EdgeInsets.only(left: depth.clamp(0, 5) * Space.l),
-                child: Row(children: [
-                  Icon(folderIconOf(f), size: 20),
-                  const SizedBox(width: Space.m),
-                  Expanded(
-                    child: Text(_localizedFolderName(f, l10n),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontWeight: f.id == current ? FontWeight.w600 : null)),
-                  ),
-                ]),
-              ),
-            ),
-        ],
+    // Карточкой по центру (1.8.8), как меню «⋮»: дерево папок отступами,
+    // текущее место — с галочкой.
+    return showAnchoredMenu<String>(
+      context,
+      anchor: null,
+      selected: current ?? '',
+      header: Padding(
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, Space.s),
+        child: Text(title, style: Theme.of(context).textTheme.titleMedium),
       ),
+      entries: [
+        AppMenuEntry(value: '', label: l10n.tr('folderRoot'), icon: AppIcons.account_tree),
+        for (final (f, depth) in rows)
+          AppMenuEntry(value: f.id, label: _localizedFolderName(f, l10n), icon: folderIconOf(f), indent: depth),
+      ],
     );
   }
 

@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../data/models/account_model.dart';
@@ -131,29 +132,21 @@ Future<void> pickServerFiltersAccount(BuildContext context, List<AccountModel> a
     return;
   }
   final l10n = AppLocalizations.of(context);
-  final picked = await showAppSheet<AccountModel>(
-    context: context,
-    showDragHandle: true,
-    builder: (ctx) => SafeArea(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.s),
-          child: Text(l10n.tr('srvFiltersPickAccount'), style: Theme.of(ctx).textTheme.titleMedium),
+  // Карточкой (1.8.8), как меню «⋮».
+  final id = await showChoiceSheet<String>(
+    context,
+    title: l10n.tr('srvFiltersPickAccount'),
+    entries: [
+      for (final a in accounts)
+        AppMenuEntry(
+          value: a.id,
+          label: a.displayName.trim().isNotEmpty ? a.displayName.trim() : a.email,
+          subtitle: a.email,
+          icon: AppIcons.mail,
+          iconColor: Color(a.colorValue),
         ),
-        Flexible(
-          child: ListView(shrinkWrap: true, children: [
-            for (final a in accounts)
-              ListTile(
-                leading: const Icon(AppIcons.mail),
-                title: Text(a.displayName.trim().isNotEmpty ? a.displayName.trim() : a.email,
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                subtitle: Text(a.email, maxLines: 1, overflow: TextOverflow.ellipsis),
-                onTap: () => Navigator.of(ctx).pop(a),
-              ),
-          ]),
-        ),
-      ]),
-    ),
+    ],
   );
+  final picked = accounts.where((a) => a.id == id).firstOrNull;
   if (picked != null && context.mounted) openServerFilters(context, picked);
 }

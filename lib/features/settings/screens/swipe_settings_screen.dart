@@ -13,13 +13,13 @@
 // Это подсказано прямо на экране, чтобы результат не был сюрпризом.
 
 import 'package:flutter/material.dart';
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../providers/settings_provider.dart';
-import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 
@@ -174,30 +174,17 @@ class SwipeSettingsScreen extends ConsumerWidget {
       title: title,
       subtitle: _label(l10n, value),
       onTap: () async {
-        final picked = await showAppSheet<SwipeAction>(
-          context: context,
-          isScrollControlled: true,
-          builder: (ctx) => SafeArea(
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(Space.l),
-                  child: Text(title, style: Theme.of(ctx).textTheme.titleMedium),
-                ),
-                for (final a in only ?? SwipeAction.values)
-                  // «На контроле» выключено в «Функциях» — пункта нет.
-                  if (a != SwipeAction.control ||
-                      ProviderScope.containerOf(ctx, listen: false).read(settingsProvider).mailControl)
-                  ListTile(
-                    leading: Icon(_icon(a)),
-                    title: Text(_label(l10n, a)),
-                    selected: a == value,
-                    onTap: () => Navigator.pop(ctx, a),
-                  ),
-              ],
-            ),
-          ),
+        // Карточкой (1.8.8), как меню «⋮»; текущее — с галочкой.
+        final mailControl = ProviderScope.containerOf(context, listen: false).read(settingsProvider).mailControl;
+        final picked = await showChoiceSheet<SwipeAction>(
+          context,
+          title: title,
+          selected: value,
+          entries: [
+            for (final a in only ?? SwipeAction.values)
+              // «На контроле» выключено в «Функциях» — пункта нет.
+              if (a != SwipeAction.control || mailControl) AppMenuEntry(value: a, label: _label(l10n, a), icon: _icon(a)),
+          ],
         );
         if (picked != null) onChanged(picked);
       },

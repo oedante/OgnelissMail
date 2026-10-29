@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/theme/app_theme.dart';
@@ -140,26 +141,13 @@ class SignaturesSettingsScreen extends ConsumerWidget {
   Future<void> _pickGreeting(BuildContext context, WidgetRef ref, String accId) async {
     final l10n = AppLocalizations.of(context);
     final current = ref.read(greetingModeProvider.notifier).of(accId);
-    final picked = await showAppSheet<GreetingMode>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text(l10n.tr('greetingSetting'), style: Theme.of(ctx).textTheme.titleMedium),
-              subtitle: Text(l10n.tr('greetingSettingDesc')),
-            ),
-            for (final m in GreetingMode.values)
-              ListTile(
-                leading: Icon(m == current ? AppIcons.radio_button_checked : AppIcons.radio_button_unchecked),
-                title: Text(_greetingLabel(l10n, m)),
-                onTap: () => Navigator.pop(ctx, m),
-              ),
-            const SizedBox(height: Space.s),
-          ],
-        ),
-      ),
+    // Карточкой (1.8.8), как меню «⋮»; текущее — с галочкой.
+    final picked = await showChoiceSheet<GreetingMode>(
+      context,
+      title: l10n.tr('greetingSetting'),
+      subtitle: l10n.tr('greetingSettingDesc'),
+      selected: current,
+      entries: [for (final m in GreetingMode.values) AppMenuEntry(value: m, label: _greetingLabel(l10n, m))],
     );
     if (picked != null) await ref.read(greetingModeProvider.notifier).set(accId, picked);
   }
@@ -171,40 +159,27 @@ class SignaturesSettingsScreen extends ConsumerWidget {
     final current = SignatureChoicesNotifier.resolve(
         ref.read(signaturesProvider), ref.read(signatureChoicesProvider), accId,
         reply: reply);
-    showAppSheet(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(Space.l, Space.l, Space.l, Space.s),
-              child: Text(l10n.tr(reply ? 'signatureForReplies' : 'signatureForNew'),
-                  style: Theme.of(ctx).textTheme.titleMedium),
-            ),
-            ListTile(
-              leading: Icon(current == null ? AppIcons.radio_button_checked : AppIcons.radio_button_unchecked),
-              title: Text(l10n.tr('noSignature')),
-              onTap: () {
-                ref.read(signatureChoicesProvider.notifier).set(accId, reply: reply, signatureId: '');
-                Navigator.pop(ctx);
-              },
-            ),
-            for (final s in signatures)
-              ListTile(
-                leading: Icon(current?.id == s.id ? AppIcons.radio_button_checked : AppIcons.radio_button_unchecked),
-                title: Text(s.name),
-                subtitle: Text(s.plainContent.replaceAll('\n', ' '),
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                onTap: () {
-                  ref.read(signatureChoicesProvider.notifier).set(accId, reply: reply, signatureId: s.id);
-                  Navigator.pop(ctx);
-                },
-              ),
-          ],
-        ),
-      ),
-    );
+    // Карточкой (1.8.8), как меню «⋮»; текущая — с галочкой ('' — без подписи).
+    unawaited(showChoiceSheet<String>(
+      context,
+      title: l10n.tr(reply ? 'signatureForReplies' : 'signatureForNew'),
+      selected: current?.id ?? '',
+      entries: [
+        AppMenuEntry(value: '', label: l10n.tr('noSignature')),
+        for (final s in signatures)
+          AppMenuEntry(
+            value: s.id,
+            label: s.name,
+            icon: AppIcons.draw,
+            subtitle: () {
+              final t = s.plainContent.replaceAll('\n', ' ').trim();
+              return t.length > 60 ? '${t.substring(0, 60)}…' : t;
+            }(),
+          ),
+      ],
+    ).then((id) {
+      if (id != null) ref.read(signatureChoicesProvider.notifier).set(accId, reply: reply, signatureId: id);
+    }));
   }
 
   void _editSignature(BuildContext context, WidgetRef ref, SignatureModel? existing) {

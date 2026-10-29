@@ -958,36 +958,21 @@ class _PendingInvitesBar extends ConsumerWidget {
 
   Future<void> _showAll(BuildContext context, List<Email> list) async {
     final locale = l10n.localeCode;
-    await showAppSheet<void>(
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (ctx) => ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.7),
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.only(bottom: Space.l),
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.s),
-              child: Text(l10n.tr('invitesPendingTitle'), style: Theme.of(ctx).textTheme.titleMedium),
-            ),
-            for (final m in list)
-              ListTile(
-                leading: const Icon(AppIcons.event_available),
-                title: Text(_subject(m, l10n), maxLines: 2, overflow: TextOverflow.ellipsis),
-                subtitle: Text([_when(m, locale, l10n), _who(m)].where((x) => x.isNotEmpty).join(' · '),
-                    maxLines: 2, overflow: TextOverflow.ellipsis),
-                trailing: const Icon(AppIcons.chevron_right),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  _openMail(context, m);
-                },
-              ),
-          ],
-        ),
-      ),
+    // Карточкой (1.8.8), как меню «⋮»: приглашение — открыть письмо.
+    final i = await showChoiceSheet<int>(
+      context,
+      title: l10n.tr('invitesPendingTitle'),
+      entries: [
+        for (final (i, m) in list.indexed)
+          AppMenuEntry(
+            value: i,
+            icon: AppIcons.event_available,
+            label: _subject(m, l10n),
+            subtitle: [_when(m, locale, l10n), _who(m)].where((x) => x.isNotEmpty).join(' · '),
+          ),
+      ],
     );
+    if (i != null && context.mounted) _openMail(context, list[i]);
   }
 
   @override

@@ -3537,4 +3537,10 @@
     <string name="folderToOgna">Pasta para o arquivo Ogneliss</string>
     <string name="folderToOgnaBody">A pasta \"{folder}\", com as subpastas e todas as mensagens, será copiada para o arquivo neste dispositivo, com a estrutura de pastas da caixa. As mensagens mais antigas que o período de sincronização são obtidas do servidor.</string>
     <string name="folderToOgnaStarted">A arquivar a pasta — o progresso aparece em Arquivo Ogneliss</string>
+    <string name="graphChecking">A verificar…</string>
+    <string name="graphOk">Ligado: diretório, sugestões de correio, regras do servidor e recuperação de itens eliminados</string>
+    <string name="graphNoConsent">Sem consentimento — toque para iniciar sessão novamente. Se não resultar, o administrador da organização tem de o autorizar</string>
+    <string name="graphUnknown">Toque para verificar</string>
+    <string name="graphHint">A Microsoft está a desativar o EWS no Exchange Online: a partir de outubro de 2026 por organização, totalmente em abril de 2027. Correio, calendário, contactos e respostas automáticas usam ActiveSync e não mudam. O diretório (cargos, departamentos, fotos dos colegas), as sugestões ao enviar, as regras do servidor e a recuperação de itens eliminados usam agora o Microsoft Graph. As salas e os membros de listas de distribuição também, se o administrador concedeu à app Place.Read.All e GroupMember.Read.All. O Microsoft Graph não oferece o arquivo online, as caixas partilhadas nem a importação de assinatura: usam o EWS enquanto estiver disponível.</string>
+    <string name="srvViaGraph">Exchange Online — através do Microsoft Graph</string>
 </resources>

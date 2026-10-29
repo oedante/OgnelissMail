@@ -30,8 +30,11 @@ class OAuthResult {
   /// токен ящика обновляется прямо у провайдера. null — через сервер входа.
   final String? directClient;
 
+  /// Вход Exchange Online с согласием на Microsoft Graph (1.8.10).
+  final bool graphConsent;
+
   const OAuthResult({required this.accessToken, this.refreshToken, this.expiry, this.email, this.displayName,
-      this.directClient});
+      this.directClient, this.graphConsent = false});
 }
 
 class OAuthService {

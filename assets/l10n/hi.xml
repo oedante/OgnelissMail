@@ -3537,4 +3537,10 @@
     <string name="folderToOgna">फ़ोल्डर को Ogneliss संग्रह में</string>
     <string name="folderToOgnaBody">फ़ोल्डर «{folder}» अपने सबफ़ोल्डर और सभी संदेशों के साथ इस डिवाइस के संग्रह में कॉपी होगा — मेलबॉक्स जैसी फ़ोल्डर संरचना के साथ। सिंक अवधि से पुराने संदेश सर्वर से लाए जाएँगे।</string>
     <string name="folderToOgnaStarted">फ़ोल्डर संग्रहित हो रहा है — प्रगति Ogneliss संग्रह में दिखती है</string>
+    <string name="graphChecking">जाँच हो रही है…</string>
+    <string name="graphOk">जुड़ा है: पता पुस्तिका, मेल सुझाव, सर्वर नियम और हटाए गए आइटम की बहाली</string>
+    <string name="graphNoConsent">सहमति नहीं है — फिर से साइन इन करने के लिए टैप करें। काम न करे तो संगठन के व्यवस्थापक को अनुमति देनी होगी</string>
+    <string name="graphUnknown">जाँचने के लिए टैप करें</string>
+    <string name="graphHint">Microsoft, Exchange Online में EWS बंद कर रहा है: अक्टूबर 2026 से संगठन दर संगठन, अप्रैल 2027 में पूरी तरह। मेल, कैलेंडर, संपर्क और स्वचालित उत्तर ActiveSync से चलते हैं और नहीं बदलते। पता पुस्तिका (पद, विभाग, सहकर्मियों की फ़ोटो), भेजते समय सुझाव, सर्वर नियम और हटाए गए आइटम की बहाली अब Microsoft Graph से होती है। मीटिंग रूम और वितरण सूची के सदस्य भी, यदि व्यवस्थापक ने ऐप को Place.Read.All और GroupMember.Read.All दिया है। Microsoft Graph ऑनलाइन संग्रह, साझा मेलबॉक्स और हस्ताक्षर आयात नहीं देता — ये EWS उपलब्ध रहने तक EWS से चलते हैं।</string>
+    <string name="srvViaGraph">Exchange Online — Microsoft Graph के ज़रिए</string>
 </resources>

@@ -3537,4 +3537,10 @@
     <string name="folderToOgna">Map naar Ogneliss-archief</string>
     <string name="folderToOgnaBody">De map ‘{folder}’ met submappen en alle berichten wordt naar het archief op dit apparaat gekopieerd, met de mapstructuur van de mailbox. Berichten ouder dan de synchronisatieperiode worden van de server opgehaald.</string>
     <string name="folderToOgnaStarted">Map wordt gearchiveerd — voortgang in Ogneliss-archief</string>
+    <string name="graphChecking">Controleren…</string>
+    <string name="graphOk">Verbonden: adresboek, e-mailtips, serverregels en herstellen van verwijderde items</string>
+    <string name="graphNoConsent">Geen toestemming — tik om opnieuw in te loggen. Helpt dat niet, dan moet de beheerder van je organisatie het toestaan</string>
+    <string name="graphUnknown">Tik om te controleren</string>
+    <string name="graphHint">Microsoft schakelt EWS in Exchange Online uit: vanaf oktober 2026 per organisatie, volledig in april 2027. E-mail, agenda, contacten en automatische antwoorden gaan via ActiveSync en veranderen niet. Het adresboek (functies, afdelingen, foto’s van collega’s), tips bij verzenden, serverregels en het herstellen van verwijderde items gaan nu via Microsoft Graph. Vergaderruimten en leden van distributielijsten ook, als de beheerder de app Place.Read.All en GroupMember.Read.All heeft gegeven. Microsoft Graph biedt geen online archief, gedeelde postvakken of handtekeningimport: die gebruiken EWS zolang het beschikbaar is.</string>
+    <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
 </resources>

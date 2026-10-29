@@ -38,6 +38,7 @@ import '../../../core/theme/app_theme.dart' show AppColors;
 import '../../../core/utils/app_date_format.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../services/mail/shared_access.dart';
+import '../widgets/graph_status_item.dart';
 import '../widgets/online_archive_item.dart';
 import '../widgets/special_folder_item.dart';
 import '../widgets/server_filters_item.dart' show serverFilterItems;
@@ -330,6 +331,9 @@ class AccountScreen extends ConsumerWidget {
               subtitle: account.usesOAuthTokens ? null : l10n.tr('signInAgainDesc'),
               onTap: () => reauthenticateFlow(context, ref, account),
             ),
+            // Exchange Online: дала ли организация согласие на Microsoft Graph
+            // (1.8.10, вместо EWS, который Microsoft отключает).
+            if (account.isExchangeOnlineOAuth) GraphStatusItem(account: account),
             // Совместимость со шлюзом — рядом с остальными данными подключения
             // (раньше только в списке ящиков и на экране входа).
             if (account.isMsExchange || account.usesEas || account.usesEws)

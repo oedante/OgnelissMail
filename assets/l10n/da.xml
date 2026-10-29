@@ -3537,4 +3537,10 @@
     <string name="folderToOgna">Mappe til Ogneliss-arkivet</string>
     <string name="folderToOgnaBody">Mappen “{folder}” med undermapper og alle beskeder kopieres til arkivet på denne enhed med postkassens mappestruktur. Beskeder, der er ældre end synkroniseringsperioden, hentes fra serveren.</string>
     <string name="folderToOgnaStarted">Mappen arkiveres – forløbet vises i Ogneliss-arkivet</string>
+    <string name="graphChecking">Kontrollerer…</string>
+    <string name="graphOk">Forbundet: adressebog, mailtip, serverregler og gendannelse af slettede elementer</string>
+    <string name="graphNoConsent">Intet samtykke — tryk for at logge ind igen. Hjælper det ikke, skal organisationens administrator give tilladelse</string>
+    <string name="graphUnknown">Tryk for at kontrollere</string>
+    <string name="graphHint">Microsoft slukker for EWS i Exchange Online: fra oktober 2026 organisation for organisation, helt i april 2027. Mail, kalender, kontakter og automatiske svar bruger ActiveSync og påvirkes ikke. Adressebogen (stillinger, afdelinger, kollegers fotos), tip ved afsendelse, serverregler og gendannelse af slettede elementer bruger nu Microsoft Graph. Mødelokaler og medlemmer af distributionslister også, hvis administratoren har givet appen Place.Read.All og GroupMember.Read.All. Microsoft Graph tilbyder ikke onlinearkiv, delte postkasser eller import af signatur — de bruger EWS, så længe det er tilgængeligt.</string>
+    <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
 </resources>

@@ -154,6 +154,7 @@ abstract final class AppIcons {
   static const IconData groups = Symbols.groups_rounded;
   static const IconData help = Symbols.help_rounded;
   static const IconData hide_image = Symbols.hide_image_rounded;
+  static const IconData hub = Symbols.hub_rounded;
   static const IconData history = Symbols.history_rounded;
   static const IconData restore = Symbols.restore_rounded;
   static const IconData restart_alt = Symbols.restart_alt_rounded;

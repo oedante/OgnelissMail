@@ -3556,4 +3556,10 @@
     <string name="folderToOgna">תיקייה לארכיון Ogneliss</string>
     <string name="folderToOgnaBody">התיקייה „{folder}” עם תיקיות המשנה וכל ההודעות תועתק לארכיון במכשיר הזה, עם מבנה התיקיות של תיבת הדואר. הודעות ישנות מתקופת הסנכרון יורדו מהשרת.</string>
     <string name="folderToOgnaStarted">התיקייה עוברת לארכיון — ההתקדמות מוצגת בארכיון Ogneliss</string>
+    <string name="graphChecking">בודק…</string>
+    <string name="graphOk">מחובר: ספר כתובות, עצות דואר, כללי שרת ושחזור פריטים שנמחקו</string>
+    <string name="graphNoConsent">אין הסכמה — הקישו כדי להיכנס שוב. אם זה לא עוזר, מנהל הארגון צריך לאשר</string>
+    <string name="graphUnknown">הקישו לבדיקה</string>
+    <string name="graphHint">Microsoft מכבה את EWS ב-Exchange Online: מאוקטובר 2026 ארגון אחר ארגון, ולגמרי באפריל 2027. דואר, יומן, אנשי קשר ותשובות אוטומטיות פועלים דרך ActiveSync ואינם משתנים. ספר הכתובות (תפקידים, מחלקות, תמונות עמיתים), עצות בשליחה, כללי שרת ושחזור פריטים שנמחקו עובדים עכשיו דרך Microsoft Graph. גם חדרי ישיבות וחברי רשימות תפוצה, אם המנהל העניק לאפליקציה את Place.Read.All ו-GroupMember.Read.All. ‏Microsoft Graph אינו מציע ארכיון מקוון, תיבות משותפות וייבוא חתימה — הם עובדים דרך EWS כל עוד הוא זמין.</string>
+    <string name="srvViaGraph">Exchange Online — דרך Microsoft Graph</string>
 </resources>

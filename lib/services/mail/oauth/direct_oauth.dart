@@ -27,7 +27,19 @@
 //     /organizations (только рабочие учётные записи), Outlook.com — /common. API permissions (Delegated): Office 365 Exchange
 //     Online → EAS.AccessAsUser.All, EWS.AccessAsUser.All; IMAP.AccessAsUser.All,
 //     SMTP.Send; offline_access, openid, email, profile.
+//     Microsoft Graph для Exchange Online (1.8.10, [graphConsentScopes]):
+//     User.Read, User.ReadBasic.All, People.Read, Mail.ReadWrite,
+//     MailboxSettings.ReadWrite; по желанию (согласие администратора) —
+//     Place.Read.All (переговорные) и GroupMember.Read.All (состав рассылок).
 // Клиент не задан — вход идёт как раньше (через сервер входа, если он есть).
+//
+// Microsoft Graph (1.8.10, замечание владельца 29.10.2026: Microsoft
+// переводит Exchange Online с EWS на Graph — EWS отключается с октября 2026,
+// окончательно в апреле 2027). При входе в Exchange Online приложение просит
+// согласие и на права Graph; токен Graph — отдельный, его выдаёт тот же
+// refresh-токен (lib/services/mail/graph/graph_client.dart). Организация не
+// разрешает такие права без администратора — вход повторяется без них
+// (ActiveSync работает и так).
 //
 // Адреса возврата: телефон — своя схема приложения (com.ogneliss.mail),
 // её перехватывает flutter_web_auth_2 (Custom Tabs / ASWebAuthenticationSession);
@@ -59,6 +71,12 @@ class DirectOAuthClient {
   final Uri authorizeEndpoint;
   final Uri tokenEndpoint;
   final List<String> scopes;
+
+  /// Права, на которые просится согласие при входе, если их больше, чем у
+  /// токена ([scopes]): Exchange Online — ещё и Microsoft Graph. Токен
+  /// выдаётся только на [scopes] (один ресурс на токен), токен Graph — по
+  /// тому же refresh-токену отдельно. null — как [scopes].
+  final List<String>? consentScopes;
   final Map<String, String> extraParams;
 
   const DirectOAuthClient({
@@ -68,8 +86,20 @@ class DirectOAuthClient {
     required this.authorizeEndpoint,
     required this.tokenEndpoint,
     required this.scopes,
+    this.consentScopes,
     this.extraParams = const {},
   });
+
+  /// Тот же клиент без дополнительных прав при входе.
+  DirectOAuthClient withoutExtraConsent() => DirectOAuthClient(
+        provider: provider,
+        clientId: clientId,
+        clientSecret: clientSecret,
+        authorizeEndpoint: authorizeEndpoint,
+        tokenEndpoint: tokenEndpoint,
+        scopes: scopes,
+        extraParams: extraParams,
+      );
 
   /// Отметка для хранилища: по ней обновляется токен ящика.
   String get marker => '$provider|$clientId';
@@ -119,6 +149,52 @@ class DirectOAuth {
     'https://outlook.office365.com/EWS.AccessAsUser.All',
   ];
 
+  /// Microsoft Graph для Exchange Online (1.8.10): права, на которые
+  /// просится согласие при входе. Все — без согласия администратора:
+  /// User.Read — своя карточка и фото; User.ReadBasic.All — фото коллег;
+  /// People.Read — должность, отдел и телефоны коллег; Mail.ReadWrite —
+  /// подсказки MailTips и «Восстановить удалённые»;
+  /// MailboxSettings.ReadWrite — правила сервера. Права с согласием
+  /// администратора (Place.Read.All, GroupMember.Read.All) при входе не
+  /// просятся: обычный сотрудник не смог бы войти; если администратор их
+  /// выдал организации, токен ([graphScopes]) получит их сам.
+  static const graphConsentScopes = [
+    'https://graph.microsoft.com/User.Read',
+    'https://graph.microsoft.com/User.ReadBasic.All',
+    'https://graph.microsoft.com/People.Read',
+    'https://graph.microsoft.com/Mail.ReadWrite',
+    'https://graph.microsoft.com/MailboxSettings.ReadWrite',
+  ];
+
+  /// Токен Graph — со всеми правами, на которые есть согласие (свои при
+  /// входе и выданные администратором организации).
+  static const graphScopes = ['https://graph.microsoft.com/.default', 'offline_access'];
+
+  /// Клиент для токена Graph ящика Exchange Online по отметке клиента входа
+  /// ([DirectOAuthClient.marker]); null — ящик вошёл не как Exchange Online.
+  static DirectOAuthClient? graphClient(String marker) {
+    final i = marker.indexOf('|');
+    if (i <= 0 || marker.substring(0, i) != 'exchange') return null;
+    return DirectOAuthClient(
+      provider: 'exchange',
+      clientId: marker.substring(i + 1),
+      authorizeEndpoint: _orgAuth,
+      tokenEndpoint: _orgToken,
+      scopes: graphScopes,
+    );
+  }
+
+  /// Отказ, после которого вход стоит повторить без дополнительных прав
+  /// (1.8.10): организация требует согласия администратора (AADSTS90094,
+  /// 90095, 65001), человек отказался от новых прав (65004), права неизвестны
+  /// регистрации (650057, invalid_scope).
+  static bool isConsentError(String code, String? detail) {
+    final d = (detail ?? '').toUpperCase();
+    const codes = {'consent_required', 'invalid_scope', 'interaction_required'};
+    const aadsts = ['AADSTS65001', 'AADSTS65004', 'AADSTS90094', 'AADSTS90095', 'AADSTS650057', 'AADSTS90008'];
+    return codes.contains(code) || aadsts.any(d.contains);
+  }
+
   /// Клиент для [provider] на этой платформе; null — в сборке не задан.
   static DirectOAuthClient? clientFor(String provider) {
     switch (provider) {
@@ -151,6 +227,7 @@ class DirectOAuth {
           authorizeEndpoint: provider == 'exchange' ? _orgAuth : _msAuth,
           tokenEndpoint: provider == 'exchange' ? _orgToken : _msToken,
           scopes: provider == 'exchange' ? _exchangeScopes : _outlookScopes,
+          consentScopes: provider == 'exchange' ? [..._exchangeScopes, ...graphConsentScopes] : null,
           extraParams: const {'prompt': 'select_account'},
         );
     }
@@ -188,6 +265,18 @@ class DirectOAuth {
   /// Вход: браузер → провайдер → код → токены. [loginHint] — адрес ящика
   /// («Войти снова»), чтобы провайдер сразу предложил нужную учётную запись.
   static Future<OAuthResult> authenticate(DirectOAuthClient c, {String? loginHint}) async {
+    try {
+      return await _authenticate(c, loginHint: loginHint);
+    } on OAuthProviderError catch (e) {
+      // Права Graph организация без администратора не даёт (или человек от
+      // них отказался) — вход заново без них: ActiveSync работает и так.
+      if (c.consentScopes == null || !isConsentError(e.code, e.detail)) rethrow;
+      AppLogger.warning('OAuth (${c.provider}): согласие на Microsoft Graph не получено (${e.code}) — вход без Graph');
+      return _authenticate(c.withoutExtraConsent(), loginHint: loginHint);
+    }
+  }
+
+  static Future<OAuthResult> _authenticate(DirectOAuthClient c, {String? loginHint}) async {
     final verifier = _random(64);
     final challenge = base64Url.encode(sha256.convert(ascii.encode(verifier)).bytes).replaceAll('=', '');
     final state = _random(24);
@@ -207,7 +296,7 @@ class DirectOAuth {
       'response_type': 'code',
       'client_id': c.clientId,
       'redirect_uri': redirect,
-      'scope': c.scopes.join(' '),
+      'scope': (c.consentScopes ?? c.scopes).join(' '),
       'state': state,
       'code_challenge': challenge,
       'code_challenge_method': 'S256',
@@ -270,7 +359,8 @@ class DirectOAuth {
       if (c.clientSecret != null) 'client_secret': c.clientSecret!,
       'redirect_uri': redirect,
       'code_verifier': verifier,
-      // Microsoft: тот же набор прав, что при входе.
+      // Microsoft: права токена — одного ресурса (без Graph, если согласие
+      // на него просилось вместе со входом).
       if (c.provider != 'google') 'scope': c.scopes.join(' '),
     }).timeout(const Duration(seconds: 30));
     if (resp.statusCode != 200) {
@@ -293,6 +383,7 @@ class DirectOAuth {
       email: (email != null && email.contains('@')) ? email : null,
       displayName: claims['name'] as String?,
       directClient: c.marker,
+      graphConsent: c.consentScopes != null,
     );
   }
 

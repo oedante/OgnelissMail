@@ -3556,4 +3556,10 @@
     <string name="folderToOgna">Složku do archivu Ogneliss</string>
     <string name="folderToOgnaBody">Složka „{folder}“ s podsložkami a všemi zprávami se zkopíruje do archivu v tomto zařízení se strukturou složek jako ve schránce. Zprávy starší než období synchronizace se stáhnou ze serveru.</string>
     <string name="folderToOgnaStarted">Složka se archivuje — průběh je v Archivu Ogneliss</string>
+    <string name="graphChecking">Kontrola…</string>
+    <string name="graphOk">Připojeno: adresář, tipy k poště, pravidla serveru a obnova odstraněných položek</string>
+    <string name="graphNoConsent">Chybí souhlas — klepnutím se přihlaste znovu. Pokud to nepomůže, musí souhlas udělit správce organizace</string>
+    <string name="graphUnknown">Klepnutím zkontrolujte</string>
+    <string name="graphHint">Microsoft vypíná EWS v Exchange Online: od října 2026 postupně po organizacích, úplně v dubnu 2027. Pošta, kalendář, kontakty a automatické odpovědi jdou přes ActiveSync a nemění se. Adresář (funkce, oddělení, fotky kolegů), tipy při odesílání, pravidla serveru a obnova odstraněných položek nyní používají Microsoft Graph. Zasedačky a členové distribučních seznamů také, pokud správce aplikaci udělil Place.Read.All a GroupMember.Read.All. Online archiv, sdílené schránky a import podpisu Microsoft Graph nenabízí — používají EWS, dokud je dostupné.</string>
+    <string name="srvViaGraph">Exchange Online — přes Microsoft Graph</string>
 </resources>

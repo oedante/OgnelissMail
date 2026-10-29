@@ -3537,4 +3537,10 @@
     <string name="folderToOgna">Folder to Ogneliss archive</string>
     <string name="folderToOgnaBody">The folder \"{folder}\" with its subfolders and all messages will be copied to the archive on this device, keeping the folder structure of the mailbox. Messages older than the sync period are fetched from the server.</string>
     <string name="folderToOgnaStarted">Archiving the folder — progress is shown in Ogneliss archive</string>
+    <string name="graphChecking">Checking…</string>
+    <string name="graphOk">Connected: directory, MailTips, server rules and recovering deleted items</string>
+    <string name="graphNoConsent">No consent yet — tap to sign in again. If that doesn\'t help, your organisation\'s admin has to allow it</string>
+    <string name="graphUnknown">Tap to check</string>
+    <string name="graphHint">Microsoft is turning off EWS in Exchange Online: from October 2026 organisation by organisation, completely in April 2027. Mail, calendar, contacts and automatic replies use ActiveSync and are not affected. The directory (job titles, departments, colleagues\' photos), send-time tips, server rules and recovering deleted items now use Microsoft Graph. Rooms and distribution list members too, if your admin has granted the app Place.Read.All and GroupMember.Read.All. Microsoft Graph does not offer the online archive, shared mailboxes or signature import — they use EWS while it is available.</string>
+    <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
 </resources>

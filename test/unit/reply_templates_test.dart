@@ -12,7 +12,7 @@ void main() {
     expect(r.body, 'tr:tmplFyiB');
     const own = ReplyTemplate(title: 'A', body: 'B');
     expect(own.resolve((k) => 'x'), same(own));
-    expect(ReplyTemplate.fromJson({'builtIn': 'unknown', 'title': 'T', 'body': 'B'}).builtIn, isNull);
+    expect(ReplyTemplate.fromJson(const {'builtIn': 'unknown', 'title': 'T', 'body': 'B'}).builtIn, isNull);
   });
 
   test('готовые шаблоны добавляются один раз, удалённые не возвращаются', () async {

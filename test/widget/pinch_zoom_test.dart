@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/widgets/common/pinch_zoom.dart';
 
-Widget _host() => MaterialApp(
+Widget _host() => const MaterialApp(
       home: Scaffold(
         body: SingleChildScrollView(
-          child: Column(children: const [
+          child: Column(children: [
             SizedBox(height: 50),
             PinchZoom(
               resetLabel: 'Обычный размер',

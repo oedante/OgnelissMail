@@ -305,7 +305,7 @@ class TrackerBlockerNotifier extends StateNotifier<TrackerBlockerState> {
         external++;
         items.add(BlockedImage(reason: BlockReason.external, host: host, path: _shortPath(uri)));
         // Подпись «изображения скрыты» показывает экран письма над текстом.
-        return '<span style="background:#f0f0f0;padding:2px 6px;border-radius:4px;">🖼</span>';
+        return placeholder(tag);
       }
       return tag;
     });
@@ -345,6 +345,36 @@ class TrackerBlockerNotifier extends StateNotifier<TrackerBlockerState> {
     final first = host.split('.').first;
     if (trackerLabels.contains(first) && host.split('.').length >= 3) return BlockReason.trackerService;
     return null;
+  }
+
+  /// Место скрытой картинки (1.8.14). Раньше любая картинка становилась
+  /// значком 🖼 в строку, и вёрстка рассылки схлопывалась: баннеры, колонки
+  /// и кнопки-картинки съезжали, письмо выглядело сломанным. Теперь — серое
+  /// поле её размера (по ширине и высоте из письма, уже экрана — в
+  /// пропорции) с подписью картинки, как в Outlook и Почте iPhone; тонкая
+  /// картинка-отступ — пустое место того же размера. Оформление — у окна
+  /// письма (MailHtmlDocument, data-og-*): во встроенном стиле только
+  /// размер и фон — показ виджетами (MailNativeBody) их не считает сложной
+  /// вёрсткой и рисует подпись.
+  static String placeholder(String tag) {
+    final style = (_attr(tag, 'style') ?? '').toLowerCase().replaceAll(' ', '');
+    final w = _px(_attr(tag, 'width')) ?? _cssPx(style, 'width');
+    final h = _px(_attr(tag, 'height')) ?? _cssPx(style, 'height');
+    var alt = (_attr(tag, 'alt') ?? '').trim().replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+    if (alt.length > 80) alt = '${cutSafe(alt, 79).replaceFirst(RegExp(r'&[#\w]*$'), '')}…';
+    final label = alt.isEmpty ? '🖼' : alt;
+    const badge = 'background:#f0f0f0;border-radius:4px;';
+    if ((w == null || w <= 0) && (h == null || h <= 0)) {
+      return '<span style="${badge}padding:2px 6px;">$label</span>';
+    }
+    final ww = (w != null && w > 0 ? w : h!).round();
+    final hh = h != null && h > 0 ? h.round() : null;
+    if (ww <= 4 || (hh != null && hh <= 4)) {
+      return '<span data-og-sp="1" style="width:${ww}px;height:${hh ?? 1}px"></span>';
+    }
+    final block = style.contains('display:block') ? ' data-og-block="1"' : '';
+    final size = hh == null ? 'width:${ww}px' : 'width:${ww}px;aspect-ratio:$ww / $hh';
+    return '<span data-og-img="1"$block style="$badge$size">$label</span>';
   }
 
   static String? _attr(String tag, String name) {

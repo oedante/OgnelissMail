@@ -35,6 +35,11 @@ void main() {
         allowRemoteImages: false);
     expect(d.declaredWidth, 640);
     expect(d.fitted(640, 0.6), contains('width=640'));
+    // Окно без масштаба интерфейса (Android, 1.8.14): страница уменьшается
+    // сама, пределы щипка — тоже.
+    expect(d.fitted(640, 0.6, zoom: 0.9), contains('initial-scale=0.540, minimum-scale=0.540, maximum-scale=2.160'));
+    expect(d.atWidth(400, zoom: 0.9), contains('width=400, initial-scale=0.900, minimum-scale=0.900, maximum-scale=3.600'));
+    expect(d.atWidth(400), contains('width=400, initial-scale=1, minimum-scale=1, maximum-scale=4'));
   });
 
   test('обычное письмо без размеров — не вписывается', () {

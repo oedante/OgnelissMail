@@ -3619,4 +3619,5 @@
     <string name="graphUnknown">اضغط للتحقق</string>
     <string name="graphHint">توقف Microsoft خدمة EWS في Exchange Online: بدءًا من أكتوبر 2026 مؤسسةً تلو أخرى، وكليًا في أبريل 2027. البريد والتقويم وجهات الاتصال والردود التلقائية تعمل عبر ActiveSync ولا تتغير. دليل العناوين (المسميات الوظيفية والأقسام وصور الزملاء) وتلميحات الإرسال وقواعد الخادم واستعادة العناصر المحذوفة تعمل الآن عبر Microsoft Graph، وكذلك غرف الاجتماعات وأعضاء قوائم التوزيع إذا منح المسؤول التطبيق الإذنين Place.Read.All وGroupMember.Read.All. لا يتيح Microsoft Graph الأرشيف عبر الإنترنت ولا صناديق البريد المشتركة ولا استيراد التوقيع، فهي تعمل عبر EWS ما دام متاحًا.</string>
     <string name="srvViaGraph">Exchange Online — عبر Microsoft Graph</string>
+    <string name="zipEncryptedHint">الأرشيف محمي بكلمة مرور، لذلك لا يستطيع تطبيق الملفات فتحه. اختر تطبيقًا للأرشيفات: سيطلب كلمة المرور</string>
 </resources>

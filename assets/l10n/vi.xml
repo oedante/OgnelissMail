@@ -3524,4 +3524,5 @@
     <string name="graphUnknown">Chạm để kiểm tra</string>
     <string name="graphHint">Microsoft đang tắt EWS trong Exchange Online: từ tháng 10/2026 theo từng tổ chức, hoàn toàn vào tháng 4/2027. Thư, lịch, danh bạ và trả lời tự động dùng ActiveSync và không thay đổi. Danh bạ tổ chức (chức danh, phòng ban, ảnh đồng nghiệp), gợi ý khi gửi, quy tắc máy chủ và khôi phục mục đã xóa nay dùng Microsoft Graph. Phòng họp và thành viên danh sách phân phối cũng vậy nếu quản trị viên đã cấp cho ứng dụng quyền Place.Read.All và GroupMember.Read.All. Microsoft Graph không cung cấp lưu trữ trực tuyến, hộp thư dùng chung và nhập chữ ký — chúng dùng EWS khi còn khả dụng.</string>
     <string name="srvViaGraph">Exchange Online — qua Microsoft Graph</string>
+    <string name="zipEncryptedHint">Tệp nén được bảo vệ bằng mật khẩu nên ứng dụng Tệp không mở được. Hãy chọn một ứng dụng giải nén: ứng dụng sẽ hỏi mật khẩu</string>
 </resources>

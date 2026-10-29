@@ -59,6 +59,32 @@ class FileOpener {
     }
   }
 
+  /// Форматы, которые показывает «Просмотр» iOS (QuickLook): PDF, Office и
+  /// iWork, RTF, текст, картинки, звук и видео, 3D. Остальное (архивы,
+  /// неизвестные форматы) QuickLook показывает пустым экраном с кнопкой
+  /// «Скопировать в …», и эта кнопка не срабатывала (замечание владельца
+  /// 29.10.2026, ZIP из письма) — такие файлы на iPhone и iPad идут сразу в
+  /// лист «Поделиться» (AttachmentSafety.openExternally).
+  static const _quickLook = {
+    'pdf',
+    'doc', 'docx', 'docm', 'dot', 'dotx', 'xls', 'xlsx', 'xlsm', 'xlt', 'xltx',
+    'ppt', 'pptx', 'pptm', 'pps', 'ppsx', 'pot', 'potx',
+    'pages', 'numbers', 'key', 'rtf', 'rtfd',
+    'txt', 'text', 'log', 'md', 'csv', 'tsv', 'xml', 'json',
+    'jpg', 'jpeg', 'png', 'gif', 'heic', 'heif', 'tif', 'tiff', 'bmp', 'webp',
+    'mp3', 'm4a', 'aac', 'wav', 'aif', 'aiff', 'caf',
+    'mp4', 'm4v', 'mov', '3gp',
+    'usdz', 'reality',
+    // Приглашение и визитка — как раньше, через «Просмотр».
+    'ics', 'vcf',
+  };
+
+  /// «Просмотр» iOS покажет файл [name] (по расширению).
+  static bool quickLookShows(String name) {
+    final ext = p.extension(name.trim()).toLowerCase();
+    return ext.length > 1 && _quickLook.contains(ext.substring(1));
+  }
+
   /// Недопустимые в именах файлов символы и управляющие — на «_».
   static String safeName(String name) {
     var n = name.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F]'), '_').trim();

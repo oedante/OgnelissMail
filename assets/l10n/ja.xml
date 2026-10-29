@@ -3524,4 +3524,5 @@
     <string name="graphUnknown">タップして確認</string>
     <string name="graphHint">Microsoft は Exchange Online の EWS を停止します：2026 年 10 月から組織ごとに、2027 年 4 月に完全停止。メール、予定表、連絡先、自動応答は ActiveSync で動作し、変わりません。アドレス帳（役職、部署、同僚の写真）、送信時のヒント、サーバーのルール、削除済みアイテムの回復は Microsoft Graph を使うようになりました。会議室と配布リストのメンバーも、管理者がアプリに Place.Read.All と GroupMember.Read.All を許可していれば同様です。オンライン アーカイブ、共有メールボックス、署名のインポートは Microsoft Graph にないため、EWS が使える間は EWS で動作します。</string>
     <string name="srvViaGraph">Exchange Online — Microsoft Graph 経由</string>
+    <string name="zipEncryptedHint">アーカイブはパスワードで保護されているため、「ファイル」では開けません。アーカイブ用のアプリを選んでください。パスワードを求められます</string>
 </resources>

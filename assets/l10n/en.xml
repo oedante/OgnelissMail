@@ -3543,4 +3543,5 @@
     <string name="graphUnknown">Tap to check</string>
     <string name="graphHint">Microsoft is turning off EWS in Exchange Online: from October 2026 organisation by organisation, completely in April 2027. Mail, calendar, contacts and automatic replies use ActiveSync and are not affected. The directory (job titles, departments, colleagues\' photos), send-time tips, server rules and recovering deleted items now use Microsoft Graph. Rooms and distribution list members too, if your admin has granted the app Place.Read.All and GroupMember.Read.All. Microsoft Graph does not offer the online archive, shared mailboxes or signature import — they use EWS while it is available.</string>
     <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
+    <string name="zipEncryptedHint">The archive is password-protected, so Files can’t open it. Choose an archive app: it will ask for the password</string>
 </resources>

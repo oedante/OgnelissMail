@@ -87,6 +87,11 @@ Future<void> main() async {
       final text = await rootBundle.loadString('assets/fonts/OpenDyslexic-OFL.txt');
       yield LicenseEntryWithLineBreaks(const ['OpenDyslexic'], text);
     });
+    // Medeo Sans — шрифт интерфейса на выбор (1.8.8), тоже OFL 1.1.
+    LicenseRegistry.addLicense(() async* {
+      final text = await rootBundle.loadString('assets/fonts/medeo/MedeoSans-OFL.txt');
+      yield LicenseEntryWithLineBreaks(const ['Medeo Sans'], text);
+    });
     LicenseRegistry.addLicense(() async* {
       final notice = await rootBundle.loadString('NOTICE');
       final license = await rootBundle.loadString('LICENSE');
@@ -389,6 +394,8 @@ class MailApp extends ConsumerWidget {
     // телефонах). Выезд, сдвиг и раскрытие панелей — обычные переходы.
     uiAnimations = false;
     mailPageWarm = settings.warmPage || settings.reading;
+    // Шрифт интерфейса (1.8.8): его читают все темы ниже.
+    AppTheme.fontFamily = AppTheme.familyFor(settings.uiFont);
     // Переходы между экранами — обычные (сдвиг, предиктивный «назад»);
     // «Уменьшить движение» выключает и их. Переменная пропала при удалении
     // настройки «Анимации интерфейса» — сборка 1.5.1 падала (10.10.2026).

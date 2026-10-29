@@ -80,6 +80,9 @@ class AppSettings {
   /// Масштаб интерфейса (1.6.12): 0 — авто по ширине экрана и шрифту
   /// (UiZoom.auto), иначе — выбранный вручную (0,85…1,1).
   final double uiScale;
+  /// Шрифт интерфейса (1.8.8): 'roboto' — прежний (по умолчанию), 'medeo' —
+  /// Medeo Sans (OFL 1.1). Шрифт для дислексии и очень крупный текст важнее.
+  final String uiFont;
   final bool isFirstLaunch;
   final bool licenseAccepted;
 
@@ -167,6 +170,7 @@ class AppSettings {
     this.locale = const Locale('ru'),
     this.fontScale = 1.0,
     this.uiScale = 0,
+    this.uiFont = 'roboto',
     this.isFirstLaunch = true,
     this.licenseAccepted = false,
     this.highContrast = false,
@@ -228,6 +232,7 @@ class AppSettings {
     Locale? locale,
     double? fontScale,
     double? uiScale,
+    String? uiFont,
     bool? isFirstLaunch,
     bool? licenseAccepted,
     bool? highContrast,
@@ -275,6 +280,7 @@ class AppSettings {
       locale: locale ?? this.locale,
       fontScale: fontScale ?? this.fontScale,
       uiScale: uiScale ?? this.uiScale,
+      uiFont: uiFont ?? this.uiFont,
       isFirstLaunch: isFirstLaunch ?? this.isFirstLaunch,
       licenseAccepted: licenseAccepted ?? this.licenseAccepted,
       highContrast: highContrast ?? this.highContrast,
@@ -329,6 +335,7 @@ class _K {
   static const locale = 's_locale';
   static const fontScale = 's_font_scale';
   static const uiScale = 's_ui_scale';
+  static const uiFont = 's_ui_font';
   static const isFirstLaunch = 's_first_launch';
   static const licenseAccepted = 's_license_accepted';
   static const highContrast = 's_high_contrast';
@@ -410,6 +417,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       locale: Locale(_initialLanguage(_p.getString(_K.locale))),
       fontScale: _p.getDouble(_K.fontScale) ?? 1.0,
       uiScale: _p.getDouble(_K.uiScale) ?? 0,
+      uiFont: _p.getString(_K.uiFont) == 'medeo' ? 'medeo' : 'roboto',
       isFirstLaunch: _p.getBool(_K.isFirstLaunch) ?? true,
       licenseAccepted: _p.getBool(_K.licenseAccepted) ?? false,
       highContrast: _p.getBool(_K.highContrast) ?? false,
@@ -544,6 +552,13 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     final value = v <= 0 ? 0.0 : v.clamp(0.85, 1.1).toDouble();
     await _p.setDouble(_K.uiScale, value);
     state = state.copyWith(uiScale: value);
+  }
+
+  /// 'roboto' или 'medeo'.
+  Future<void> setUiFont(String v) async {
+    final value = v == 'medeo' ? 'medeo' : 'roboto';
+    await _p.setString(_K.uiFont, value);
+    state = state.copyWith(uiFont: value);
   }
 
   Future<void> markFirstLaunchDone() async {
@@ -728,7 +743,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       // AMOLED, «Работать в фоне» и «Вложения только по Wi-Fi» раньше
       // сбросом не затрагивались.
       _K.amoled, _K.reading, _K.dynamicColor, _K.allowRotation, _K.warmPage, _K.mailControl, _K.myDay, _K.morningDigest, _K.morningDigestMinutes, _K.backgroundKeepAlive, _K.attachmentsWifiOnly,
-      _K.themeMode, _K.locale, _K.fontScale, _K.uiScale, _K.highContrast,
+      _K.themeMode, _K.locale, _K.fontScale, _K.uiScale, _K.uiFont, _K.highContrast,
       _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode,
       _K.notificationsEnabled, _K.notificationSound, _K.notificationVibration,
       _K.syncOnlyWifi, _K.syncInterval, _K.emailFetchMode,

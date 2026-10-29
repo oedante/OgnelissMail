@@ -3509,4 +3509,13 @@
     <string name="faq_archive_6_a">各デバイスがアーカイブの自分のコピーを保持し、クラウド（Google Drive、iCloud Drive、Yandex Disk）またはUSBメモリがコピーを受け渡す場所になります。1台目のデバイスでは、設定 → Ogneliss アーカイブ → アーカイブのコピーを保存 の順に選びます。2台目では、まだアーカイブがない場合は「アーカイブのコピーを接続」、すでに独自のアーカイブがある場合は「コピーと統合」を選びます。両方のデバイスでアーカイブできます。ときどき一方でコピーを保存し、もう一方で統合してください。統合では足りないものだけが追加され、メールは重複せず、同じメールボックスは1つのツリーのままです。</string>
     <string name="faq_archive_7_q">アーカイブでは複数のメールボックスをどのように保存しますか？</string>
     <string name="faq_archive_7_a">すべてのメールボックスが1つのアーカイブに入り、メールボックスごとに、メールボックスと同じ構成の独自のフォルダーツリーがあります。サイドメニューの「Ogneliss アーカイブ」と、アーカイブ画面の「アーカイブ内のメールボックス」に表示されます。アーカイブするメールボックスは、同じ画面の「アーカイブするメールボックス」で選択します。アーカイブ内の検索は、すべてのメールボックスを一度に対象とします。</string>
+    <string name="archiveNothingOld">選んだ期間より古いメールはなく、アーカイブするものはありませんでした。期間を短くするか「すべてのメール」を選べます。</string>
+    <string name="uiFontTitle">画面のフォント</string>
+    <string name="uiFontRobotoHint">これまでどおり</string>
+    <string name="uiFontMedeoHint">ラテン文字とキリル文字のオープンフォント（OFL 1.1）</string>
+    <string name="uiFontDyslexiaNote">ディスレクシア向けフォントがオンです（アクセシビリティ）。こちらが優先されます。</string>
+    <string name="loginOrChoose">またはメールを選択</string>
+    <string name="folderToOgna">フォルダーを Ogneliss アーカイブへ</string>
+    <string name="folderToOgnaBody">フォルダー「{folder}」をサブフォルダーとすべてのメールごと、このデバイスのアーカイブにコピーします。フォルダー構成はメールボックスと同じです。同期期間より古いメールはサーバーから取得します。</string>
+    <string name="folderToOgnaStarted">フォルダーをアーカイブ中です。進行状況は Ogneliss アーカイブで確認できます</string>
 </resources>

@@ -14,6 +14,13 @@
 //     настройки почты», «Повторить».
 // «Войти снова» (`/login?reauth=<id>`) — сразу шаг 2, заполненный данными
 // ящика: адрес не меняется, способ не выбирается.
+//
+// 1.8.8 (замечание владельца 29.10.2026: «адрес на ogneliss.ru — сразу
+// Exchange; раньше можно было просто нажать Google или Яндекс»): под полем
+// адреса — плитки способов входа. Google, Яндекс и Microsoft открывают
+// страницу входа службы сразу, адрес не нужен; остальные — шаг 2 с полем
+// адреса. На шаге 2 у рабочей почты — переключатель «Exchange | IMAP»:
+// протокол, который узнали по адресу, видно и можно сменить.
 
 import '../../../core/constants/exchange_feature.dart';
 import 'dart:async';
@@ -122,6 +129,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   /// Что узнали по адресу (null — способ выбран вручную или «Войти снова»).
   MailGuess? _guess;
+
+  /// Шаг 2 открыт без адреса (плитка или «Другой способ входа» до ввода
+  /// адреса) — поле адреса на шаге 2. Флаг, а не «адрес неверный»: иначе
+  /// поле пропадало бы посреди ввода, как только адрес становился похож на
+  /// настоящий.
+  bool _askEmail = false;
+
+  /// Домен, для которого узнан [_guess].
+  String? _guessFor;
 
   /// Способ выбран вручную («Другой способ входа»).
   bool _manual = false;
@@ -241,7 +257,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   bool get _emailValid => MailProviderDetect.domainOf(_email) != null && !_email.startsWith('@');
 
   /// Выбрать способ входа (и серверы IMAP, если они известны).
-  void _applyKind(MailKind k, {ImapPreset? preset}) {
+  /// [guessed] — серверы IMAP додуманы по домену (imap./smtp.): их стоит
+  /// проверить.
+  void _applyKind(MailKind k, {ImapPreset? preset, bool guessed = false}) {
     _icloud = k == MailKind.icloud;
     _selectedType = switch (k) {
       MailKind.google => AccountType.google,
@@ -261,7 +279,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     }
     // Серверы IMAP неизвестны или это догадка — «Расширенные настройки»
     // открыты сразу: их стоит проверить.
-    _showAdvanced = k == MailKind.imap && (preset == null || !(_guess?.sure ?? true));
+    _showAdvanced = k == MailKind.imap && (preset == null || guessed || !(_guess?.sure ?? true));
     ref.read(authProvider.notifier).reset();
   }
 
@@ -313,7 +331,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       _detecting = false;
       _resetForDomain();
       _guess = guess;
+      _guessFor = MailProviderDetect.domainOf(_email);
       _manual = false;
+      _askEmail = false;
       _applyKind(guess.kind, preset: guess.imap);
       _step = _Step.method;
     });
@@ -360,18 +380,58 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       ],
     );
     if (k == null || !mounted) return;
+    _pickMethod(k);
+  }
+
+  /// Способ входа выбран вручную (плитка, «Другой способ входа»): шаг 2.
+  /// Google, Яндекс и Microsoft — сразу страница входа службы: адрес для
+  /// неё не нужен (если введён — подставляется).
+  void _pickMethod(MailKind k) {
     setState(() {
       _resetForDomain();
-      // IMAP вручную: серверы — из того, что узнали, или из таблицы служб.
-      final preset = k == MailKind.imap
-          ? (_guess?.imap ?? ImapPreset.fromTable(AppConstants.serverConfigForEmail(_email)))
-          : null;
+      // Адрес не проверяли (плитка до «Далее») — подсказки прежнего адреса
+      // («догадка», пароль приложения) не к месту.
+      if (_guess != null && MailProviderDetect.domainOf(_email) != _guessFor) _guess = null;
       _manual = true;
-      _applyKind(k, preset: preset);
+      _askEmail = !_emailValid;
+      final p = _imapPreset();
+      _applyKind(k, preset: k == MailKind.imap ? p.preset : null, guessed: p.guessed);
       _step = _Step.method;
     });
     unawaited(HapticFeedback.selectionClick());
-    _focusPasswordSoon();
+    if (_isOAuthKind) {
+      _onOAuth();
+    } else {
+      _focusPasswordSoon();
+    }
+  }
+
+  /// Серверы IMAP для адреса: что узнали по нему, таблица известных служб
+  /// или imap./smtp. домена (их можно поправить в «Расширенных настройках»).
+  ({ImapPreset? preset, bool guessed}) _imapPreset() {
+    final known = _guess?.imap ?? ImapPreset.fromTable(AppConstants.serverConfigForEmail(_email));
+    if (known != null) return (preset: known, guessed: false);
+    final d = MailProviderDetect.domainOf(_email);
+    if (d == null) return (preset: null, guessed: false);
+    return (preset: ImapPreset(
+      imapHost: 'imap.$d',
+      imapPort: 993,
+      imapEncryption: EncryptionType.ssl,
+      smtpHost: 'smtp.$d',
+      smtpPort: 587,
+      smtpEncryption: EncryptionType.starttls,
+    ), guessed: true);
+  }
+
+  /// Переключатель «Exchange | IMAP» на шаге 2 (1.8.8).
+  void _switchProtocol(MailKind k) {
+    if (k == _kind) return;
+    setState(() {
+      _manual = true;
+      final p = _imapPreset();
+      _applyKind(k, preset: k == MailKind.imap ? p.preset : null, guessed: p.guessed);
+    });
+    unawaited(HapticFeedback.selectionClick());
   }
 
   // ════════════════════════ ЭКРАН ════════════════════════
@@ -514,13 +574,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 : Text(l10n.tr('next')),
           ),
         ),
-        const SizedBox(height: Space.s),
-        Center(
-          child: TextButton(
-            onPressed: _detecting ? null : _chooseMethod,
-            child: Text(l10n.tr('loginOtherMethod')),
-          ),
-        ),
+        // Способы входа плитками (1.8.8): Google, Яндекс и Microsoft — сразу
+        // страница входа службы, без адреса.
+        const SizedBox(height: Space.xl),
+        _buildOrDivider(theme, l10n.tr('loginOrChoose')),
+        const SizedBox(height: Space.l),
+        _buildMethodTiles(theme, l10n),
 
         // Новый телефон: ящики и настройки — из резервной копии.
         if (!hasAccounts) ...[
@@ -562,6 +621,96 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     );
   }
 
+  /// Черта с подписью посередине: «или выберите почту».
+  Widget _buildOrDivider(ThemeData theme, String text) {
+    final color = theme.colorScheme.outlineVariant;
+    return Row(children: [
+      Expanded(child: Divider(color: color)),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Space.m),
+        child: Text(text, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+      ),
+      Expanded(child: Divider(color: color)),
+    ]);
+  }
+
+  /// Плитки способов входа: по три в ряд.
+  Widget _buildMethodTiles(ThemeData theme, AppLocalizations l10n) {
+    final kinds = [
+      MailKind.google,
+      MailKind.yandex,
+      MailKind.microsoft,
+      MailKind.mailru,
+      MailKind.icloud,
+      if (kExchangeEnabled) MailKind.exchange,
+      MailKind.imap,
+    ];
+    return LayoutBuilder(builder: (context, c) {
+      const gap = Space.s;
+      final w = ((c.maxWidth - gap * 2) / 3).floorToDouble();
+      return Wrap(
+        spacing: gap,
+        runSpacing: gap,
+        alignment: WrapAlignment.center,
+        children: [for (final k in kinds) SizedBox(width: w, child: _buildMethodTile(theme, l10n, k))],
+      );
+    });
+  }
+
+  Widget _buildMethodTile(ThemeData theme, AppLocalizations l10n, MailKind k) {
+    final scheme = theme.colorScheme;
+    final color = _kindColor(k);
+    return Material(
+      color: scheme.surfaceContainerHigh,
+      borderRadius: Radii.chipAll,
+      child: InkWell(
+        borderRadius: Radii.chipAll,
+        onTap: _detecting ? null : () => _pickMethod(k),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: Space.m, horizontal: Space.xs),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: color,
+              child: Icon(_kindIcon(k), size: 22, color: Colors.white),
+            ),
+            const SizedBox(height: Space.s),
+            Text(
+              _kindTitle(l10n, k, short: true),
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelMedium,
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  Color _kindColor(MailKind k) => switch (k) {
+        MailKind.google => _providerColor(AccountType.google),
+        MailKind.yandex => _providerColor(AccountType.yandex),
+        MailKind.microsoft => _providerColor(AccountType.outlook),
+        MailKind.mailru => _providerColor(AccountType.mailru),
+        MailKind.icloud => const Color(0xFF3693F3),
+        MailKind.exchange => const Color(0xFF0F5BA7),
+        MailKind.imap => const Color(0xFF5A6472),
+      };
+
+  /// Переключатель «Exchange | IMAP» — у рабочей почты на шаге 2.
+  Widget _buildProtocolSwitch(AppLocalizations l10n, bool busy) {
+    return SegmentedButton<MailKind>(
+      segments: [
+        ButtonSegment(value: MailKind.exchange, icon: const Icon(AppIcons.business), label: Text(l10n.tr('exchange'))),
+        const ButtonSegment(value: MailKind.imap, icon: Icon(AppIcons.settings_ethernet), label: Text('IMAP')),
+      ],
+      selected: {_kind},
+      showSelectedIcon: false,
+      onSelectionChanged: busy ? null : (v) => _switchProtocol(v.first),
+    );
+  }
+
   // ════════════════════════ ШАГ 2: ВХОД ════════════════════════
 
   Widget _buildMethodStep(ThemeData theme, AppLocalizations l10n, AuthState authState, bool busy) {
@@ -577,6 +726,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           const SizedBox(height: Space.l),
         ],
         _buildProviderHeader(theme, l10n, busy),
+        if (!reauth && kExchangeEnabled && (kind == MailKind.exchange || kind == MailKind.imap)) ...[
+          const SizedBox(height: Space.l),
+          Center(child: _buildProtocolSwitch(l10n, busy)),
+        ],
         if (!reauth && !_manual && _guess != null && !_guess!.sure) ...[
           const SizedBox(height: Space.m),
           _buildNote(theme, kind == MailKind.imap ? l10n.tr('loginGuessImap') : l10n.tr('loginGuessUnsure')),
@@ -647,14 +800,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   /// Название способа входа.
-  String _kindTitle(AppLocalizations l10n, MailKind k) => switch (k) {
+  String _kindTitle(AppLocalizations l10n, MailKind k, {bool short = false}) => switch (k) {
         MailKind.exchange => l10n.tr('exchange'),
         MailKind.google => 'Google',
         MailKind.microsoft => (_guess?.microsoft365 ?? false) ? 'Microsoft 365' : 'Microsoft',
         MailKind.yandex => l10n.tr('yandex'),
         MailKind.mailru => 'Mail.ru',
         MailKind.icloud => 'iCloud',
-        MailKind.imap => l10n.tr('loginKindImap'),
+        MailKind.imap => short ? 'IMAP' : l10n.tr('loginKindImap'),
       };
 
   IconData _kindIcon(MailKind k) => switch (k) {
@@ -680,7 +833,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         ),
         const SizedBox(height: Space.m),
         Text(_kindTitle(l10n, kind), style: theme.textTheme.titleLarge, textAlign: TextAlign.center),
-        if (_emailValid) ...[
+        if (_emailValid && !_askEmail) ...[
           const SizedBox(height: Space.xs),
           Wrap(
             alignment: WrapAlignment.center,
@@ -779,7 +932,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         ],
 
         // Адрес — если его нет в шапке (способ выбрали до ввода адреса).
-        if (!_emailValid) ...[
+        if (_askEmail && !reauth) ...[
           TextFormField(
             controller: _emailController,
             decoration: InputDecoration(
@@ -1122,6 +1275,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           server: _cleanServer(_serverController.text).isNotEmpty ? _cleanServer(_serverController.text) : null,
         );
       case MailKind.imap:
+        // Адрес ввели уже на шаге 2 (плитка «IMAP») — серверы по нему.
+        if (_imapServerController.text.trim().isEmpty) {
+          final p = _imapPreset().preset;
+          if (p != null) {
+            _imapServerController.text = p.imapHost;
+            _imapPortController.text = '${p.imapPort}';
+            _imapEncryption = p.imapEncryption;
+            if (_smtpServerController.text.trim().isEmpty) {
+              _smtpServerController.text = p.smtpHost;
+              _smtpPortController.text = '${p.smtpPort}';
+              _smtpEncryption = p.smtpEncryption;
+            }
+          }
+        }
         auth.loginImap(
           email: email,
           password: _passwordController.text,

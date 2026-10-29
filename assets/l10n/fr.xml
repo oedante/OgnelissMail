@@ -3528,5 +3528,13 @@
     <string name="faq_archive_6_a">Chaque appareil garde sa propre copie de l’archive ; le cloud (Google Drive, iCloud Drive, Yandex Disk) ou une clé USB sert à l’échanger. Sur le premier appareil : Paramètres → Archive Ogneliss → Enregistrer une copie de l’archive. Sur le second : Connecter une copie de l’archive s’il n’a pas encore d’archive, ou Fusionner avec une copie s’il a la sienne. Vous pouvez archiver sur les deux : de temps en temps, enregistrez une copie sur l’un et fusionnez-la sur l’autre. La fusion n’ajoute que ce qui manque : les messages ne sont pas dupliqués et une même boîte reste une seule branche.</string>
     <string name="faq_archive_7_q">Comment l’archive conserve-t-elle plusieurs boîtes ?</string>
     <string name="faq_archive_7_a">Toutes les boîtes sont dans une seule archive, chacune avec sa branche de dossiers organisée comme dans la boîte : dans le menu latéral sous Archive Ogneliss, et sur l’écran de l’archive sous Boîtes dans l’archive. Les boîtes à archiver se choisissent sur le même écran, sous Boîtes à archiver ; la recherche dans l’archive couvre toutes les boîtes à la fois.</string>
-    <string name="archiveNothingOld">Aucun message plus ancien que l’âge choisi — il n’y avait rien à archiver. Vous pouvez choisir un âge plus court ou Tous les messages.</string>
+    <string name="archiveNothingOld">Aucun message plus ancien que l\'âge choisi — rien à archiver. Choisissez un âge plus court ou « Tous les messages ».</string>
+    <string name="uiFontTitle">Police de l\'interface</string>
+    <string name="uiFontRobotoHint">Comme avant</string>
+    <string name="uiFontMedeoHint">Police libre pour le latin et le cyrillique (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">La police pour la dyslexie est activée (Accessibilité) — elle prime sur ce choix.</string>
+    <string name="loginOrChoose">ou choisissez votre messagerie</string>
+    <string name="folderToOgna">Dossier vers l\'archive Ogneliss</string>
+    <string name="folderToOgnaBody">Le dossier « {folder} », ses sous-dossiers et tous ses messages seront copiés dans l\'archive de cet appareil, avec l\'arborescence de la boîte. Les messages plus anciens que la période de synchronisation sont récupérés sur le serveur.</string>
+    <string name="folderToOgnaStarted">Archivage du dossier — progression dans l\'archive Ogneliss</string>
 </resources>

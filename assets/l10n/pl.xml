@@ -3566,4 +3566,13 @@
     <string name="faq_archive_6_a">Każde urządzenie przechowuje własną kopię archiwum, a chmura (Google Drive, iCloud Drive, Yandex Disk) lub dysk USB służy do wymiany. Na pierwszym urządzeniu: Ustawienia → Archiwum Ogneliss → Zapisz kopię archiwum. Na drugim: Połącz kopię archiwum, jeśli nie ma jeszcze archiwum, albo Scal z kopią, jeśli ma własne. Możesz archiwizować na obu: od czasu do czasu zapisz kopię na jednym i scal ją na drugim. Scalanie dodaje tylko to, czego brakuje: wiadomości się nie powielają, a ta sama skrzynka pozostaje jedną gałęzią.</string>
     <string name="faq_archive_7_q">Jak archiwum przechowuje kilka skrzynek?</string>
     <string name="faq_archive_7_a">Wszystkie skrzynki są w jednym archiwum, każda z własną gałęzią folderów o strukturze jak w skrzynce: w menu bocznym, w sekcji Archiwum Ogneliss, oraz na ekranie archiwum, w sekcji Skrzynki w archiwum. Które skrzynki archiwizować, wybiera się na tym samym ekranie, w sekcji Skrzynki do archiwizowania; wyszukiwanie w archiwum obejmuje wszystkie skrzynki naraz.</string>
+    <string name="archiveNothingOld">Nie znaleziono wiadomości starszych niż wybrany wiek — nie było czego archiwizować. Wybierz krótszy okres lub „Wszystkie wiadomości”.</string>
+    <string name="uiFontTitle">Czcionka interfejsu</string>
+    <string name="uiFontRobotoHint">Jak dotychczas</string>
+    <string name="uiFontMedeoHint">Otwarta czcionka dla alfabetu łacińskiego i cyrylicy (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Włączona jest czcionka dla dyslektyków (Ułatwienia dostępu) — ma pierwszeństwo przed tym wyborem.</string>
+    <string name="loginOrChoose">lub wybierz pocztę</string>
+    <string name="folderToOgna">Folder do archiwum Ogneliss</string>
+    <string name="folderToOgnaBody">Folder „{folder}” z podfolderami i wszystkimi wiadomościami zostanie skopiowany do archiwum na tym urządzeniu — ze strukturą folderów jak w skrzynce. Wiadomości starsze niż okres synchronizacji zostaną pobrane z serwera.</string>
+    <string name="folderToOgnaStarted">Archiwizowanie folderu — postęp w Archiwum Ogneliss</string>
 </resources>

@@ -3528,4 +3528,13 @@
     <string name="faq_archive_6_a">Ogni dispositivo conserva la propria copia dell\'archivio, e il cloud (Google Drive, iCloud Drive, Yandex Disk) o un\'unità USB è il posto in cui scambiarla. Sul primo dispositivo: Impostazioni → Archivio Ogneliss → Salva una copia dell\'archivio. Sul secondo: Collega una copia dell\'archivio se non ha ancora un archivio, oppure Unisci con una copia se ne ha già uno proprio. Puoi archiviare su entrambi: ogni tanto salva una copia su uno e uniscila sull\'altro. L\'unione aggiunge solo ciò che manca: i messaggi non vengono duplicati e la stessa cassetta postale resta un unico ramo.</string>
     <string name="faq_archive_7_q">Come conserva l\'archivio più cassette postali?</string>
     <string name="faq_archive_7_a">Tutte le cassette postali sono in un unico archivio, ognuna con il proprio ramo di cartelle strutturato come nella cassetta postale: nel menu laterale, in Archivio Ogneliss, e nella schermata dell\'archivio, in Cassette postali nell\'archivio. Le cassette postali da archiviare si scelgono nella stessa schermata, in Cassette postali da archiviare; la ricerca nell\'archivio copre tutte le cassette postali insieme.</string>
+    <string name="archiveNothingOld">Nessun messaggio più vecchio dell\'età scelta: non c\'era nulla da archiviare. Puoi scegliere un periodo più breve o «Tutti i messaggi».</string>
+    <string name="uiFontTitle">Carattere dell\'interfaccia</string>
+    <string name="uiFontRobotoHint">Come prima</string>
+    <string name="uiFontMedeoHint">Carattere libero per latino e cirillico (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Il carattere per la dislessia è attivo (Accessibilità) e ha la precedenza su questa scelta.</string>
+    <string name="loginOrChoose">o scegli la posta</string>
+    <string name="folderToOgna">Cartella nell\'archivio Ogneliss</string>
+    <string name="folderToOgnaBody">La cartella «{folder}» con le sottocartelle e tutti i messaggi verrà copiata nell\'archivio su questo dispositivo, con la struttura delle cartelle della casella. I messaggi più vecchi del periodo di sincronizzazione vengono scaricati dal server.</string>
+    <string name="folderToOgnaStarted">Archiviazione della cartella: avanzamento in Archivio Ogneliss</string>
 </resources>

@@ -106,6 +106,28 @@ void main() {
     expect((await adb.search('Текст')).length, 3);
   });
 
+  test('папка целиком (1.8.8): с подпапками и всеми письмами, без проверки возраста', () async {
+    final account = c.read(accountsProvider).single;
+    final r = await c.read(archiveRunnerProvider.notifier).archiveFolder(account, 'INBOX');
+    expect(r.errorKey, isNull);
+    // Входящие (старое и свежее) и подпапка «Проекты»; «Отправленные» — нет.
+    expect(r.mails, 3);
+    final paths = [for (final f in await adb.folders()) f.path];
+    expect(paths, containsAll(['Входящие', 'Входящие/Проекты', 'Входящие/Пустая']));
+    expect(paths, isNot(contains('Отправленные')));
+    // Повторно — без дублей.
+    await c.read(archiveRunnerProvider.notifier).archiveFolder(account, 'INBOX');
+    expect((await adb.search('Текст')).length, 3);
+  });
+
+  test('подпапки папки — папка первой, вся глубина', () async {
+    final folders = await app.select(app.folders).get();
+    expect([for (final f in ArchiveRunner.subtreeOf('INBOX', folders)) f.id],
+        ['INBOX', 'INBOX/Work', 'INBOX/Empty']);
+    expect([for (final f in ArchiveRunner.subtreeOf('Trash', folders)) f.id], ['Trash', 'Trash/Old']);
+    expect(ArchiveRunner.subtreeOf('нет', folders), isEmpty);
+  });
+
   test('письмо с сервера (MIME): тело, адресаты, вложение, картинка в тексте, важность', () async {
     const png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
     final mime = [

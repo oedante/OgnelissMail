@@ -3509,4 +3509,13 @@
     <string name="faq_archive_6_a">每台设备各自保存一份归档副本，云端（Google Drive、iCloud Drive、Yandex Disk）或 U 盘用于交换副本。在第一台设备上：设置 → Ogneliss 归档 → 保存归档副本。在第二台设备上：如果还没有归档，选择“连接归档副本”；如果已有自己的归档，选择“与副本合并”。您可以在两台设备上都进行归档：不时在一台设备上保存副本，再在另一台上合并。合并只会添加缺少的内容：邮件不会重复，同一个邮箱仍是一个分支。</string>
     <string name="faq_archive_7_q">归档如何保存多个邮箱？</string>
     <string name="faq_archive_7_a">所有邮箱都在同一个归档中，每个邮箱都有各自的文件夹分支，结构与邮箱中相同：在侧边菜单的“Ogneliss 归档”下，以及归档界面的“归档中的邮箱”下。要归档哪些邮箱，在同一界面的“要归档的邮箱”下选择；归档搜索会同时覆盖所有邮箱。</string>
+    <string name="archiveNothingOld">未找到早于所选期限的邮件，没有可归档的内容。可以选择更短的期限或“所有邮件”。</string>
+    <string name="uiFontTitle">界面字体</string>
+    <string name="uiFontRobotoHint">与以前相同</string>
+    <string name="uiFontMedeoHint">适用于拉丁字母和西里尔字母的开源字体（OFL 1.1）</string>
+    <string name="uiFontDyslexiaNote">已开启阅读障碍字体（无障碍），它优先于此选项。</string>
+    <string name="loginOrChoose">或选择邮箱</string>
+    <string name="folderToOgna">文件夹存入 Ogneliss 归档</string>
+    <string name="folderToOgnaBody">文件夹“{folder}”及其子文件夹和全部邮件将复制到本设备上的归档中，文件夹结构与邮箱一致。早于同步期限的邮件将从服务器获取。</string>
+    <string name="folderToOgnaStarted">正在归档文件夹——进度显示在 Ogneliss 归档中</string>
 </resources>

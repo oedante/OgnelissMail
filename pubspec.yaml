@@ -1,7 +1,7 @@
 name: ogneliss
 description: Ogneliss Mail — почтовый клиент для Exchange, Gmail, Яндекс и Mail.ru
 publish_to: "none"
-version: 1.8.7+123
+version: 1.8.8+124
 
 environment:
   # Dart 3.10+: этого требует sqlite3 3.x (через drift 2.32+). Flutter 3.38+.
@@ -204,9 +204,10 @@ flutter:
     # Строки интерфейса всех языков (1.7.3): assets/l10n/<код>.xml.
     - assets/l10n/
     - assets/fonts/pdf/
-    # Лицензии для страницы «Тексты лицензий» (lib/main.dart): шрифт
-    # OpenDyslexic (OFL 1.1) и само приложение (Apache 2.0).
+    # Лицензии для страницы «Тексты лицензий» (lib/main.dart): шрифты
+    # OpenDyslexic и Medeo Sans (OFL 1.1) и само приложение (Apache 2.0).
     - assets/fonts/OpenDyslexic-OFL.txt
+    - assets/fonts/medeo/MedeoSans-OFL.txt
     - LICENSE
     - NOTICE
     # Редактор писем HugeRTE — tool/editor/build_editor.sh
@@ -221,6 +222,18 @@ flutter:
         - asset: assets/fonts/pdf/Roboto-Medium.ttf
           weight: 500
         - asset: assets/fonts/pdf/Roboto-Bold.ttf
+          weight: 700
+    # Medeo Sans (1.8.8) — шрифт интерфейса на выбор («Общие → Шрифт»).
+    # SIL OFL 1.1 (assets/fonts/medeo/MedeoSans-OFL.txt), файлы без изменений
+    # из github.com/DNFDEVS/medeo-font (fonts/MedeoSans/ttf, RC4).
+    - family: MedeoSans
+      fonts:
+        - asset: assets/fonts/medeo/MedeoSans-Regular.ttf
+        - asset: assets/fonts/medeo/MedeoSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/medeo/MedeoSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/medeo/MedeoSans-Bold.ttf
           weight: 700
     - family: OpenDyslexic
       fonts:

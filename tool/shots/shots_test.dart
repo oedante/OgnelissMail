@@ -21,6 +21,8 @@ import 'package:ogneliss/data/models/folder_model.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/archive/screens/archive_screen.dart';
+import 'package:ogneliss/features/auth/screens/login_screen.dart';
+import 'package:ogneliss/features/settings/screens/general_settings_screen.dart';
 import 'package:ogneliss/features/compose/screens/compose_screen.dart';
 import 'package:ogneliss/features/mail/screens/mail_detail_screen.dart';
 import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
@@ -401,6 +403,39 @@ void main() {
               await tester.drag(find.byType(ListView), Offset(0, -scroll));
             });
       await tester.runAsync(adb.close);
+      await tester.runAsync(db.close);
+    });
+  }
+
+  // Вход (1.8.8): плитки способов входа; шаг 2 с переключателем
+  // «Exchange | IMAP»; «Общие» со шрифтом Medeo Sans.
+  for (final t in const ['light', 'dark']) {
+    testWidgets('вход — $t', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = AppDatabase.forTesting(NativeDatabase.memory());
+      await _shot(tester, 'login_$t', const LoginScreen(), theme: _themes[t]!(), db: db, prefs: prefs);
+      await _shot(tester, 'login_exchange_$t', const LoginScreen(), theme: _themes[t]!(), db: db, prefs: prefs,
+          before: (tester) async {
+        await tester.enterText(find.byType(TextField).first, 'oedante@ogneliss.ru');
+        await tester.ensureVisible(find.text('Exchange'));
+        await tester.tap(find.text('Exchange'));
+      });
+      await tester.runAsync(db.close);
+    });
+  }
+
+  for (final font in const ['roboto', 'medeo']) {
+    testWidgets('общие — шрифт $font', (tester) async {
+      SharedPreferences.setMockInitialValues({'s_ui_font': font});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      AppTheme.fontFamily = AppTheme.familyFor(font);
+      addTearDown(() => AppTheme.fontFamily = AppTheme.robotoFamily);
+      await _shot(tester, 'general_$font', const GeneralSettingsScreen(), theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs,
+          before: (tester) async {
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+      });
       await tester.runAsync(db.close);
     });
   }

@@ -3509,4 +3509,13 @@
     <string name="faq_archive_6_a">Setiap perangkat menyimpan salinan arsipnya sendiri, dan cloud (Google Drive, iCloud Drive, Yandex Disk) atau flash drive USB menjadi tempat untuk bertukar salinan. Di perangkat pertama: Pengaturan → Arsip Ogneliss → Simpan salinan arsip. Di perangkat kedua: “Hubungkan salinan arsip” jika belum ada arsip, atau “Gabungkan dengan salinan” jika sudah punya arsip sendiri. Anda dapat mengarsipkan di keduanya: sesekali simpan salinan di salah satunya dan gabungkan di yang lain. Penggabungan hanya menambahkan yang belum ada: email tidak digandakan dan kotak surat yang sama tetap menjadi satu cabang.</string>
     <string name="faq_archive_7_q">Bagaimana arsip menyimpan beberapa kotak surat?</string>
     <string name="faq_archive_7_a">Semua kotak surat berada dalam satu arsip, masing-masing dengan cabang folder sendiri yang strukturnya seperti di kotak surat: di menu samping di bawah “Arsip Ogneliss”, dan di layar arsip di bawah “Kotak surat di arsip”. Kotak surat mana yang diarsipkan dipilih di layar yang sama di bawah “Kotak surat yang akan diarsipkan”; pencarian arsip mencakup semua kotak surat sekaligus.</string>
+    <string name="archiveNothingOld">Tidak ditemukan pesan yang lebih lama dari usia yang dipilih — tidak ada yang perlu diarsipkan. Pilih usia yang lebih pendek atau \"Semua email\".</string>
+    <string name="uiFontTitle">Font antarmuka</string>
+    <string name="uiFontRobotoHint">Seperti sebelumnya</string>
+    <string name="uiFontMedeoHint">Font terbuka untuk huruf Latin dan Sirilik (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Font disleksia aktif (Aksesibilitas) — font itu didahulukan dari pilihan ini.</string>
+    <string name="loginOrChoose">atau pilih email Anda</string>
+    <string name="folderToOgna">Folder ke arsip Ogneliss</string>
+    <string name="folderToOgnaBody">Folder \"{folder}\" beserta subfolder dan semua pesannya akan disalin ke arsip di perangkat ini, dengan struktur folder seperti di kotak surat. Pesan yang lebih lama dari periode sinkronisasi diambil dari server.</string>
+    <string name="folderToOgnaStarted">Folder sedang diarsipkan — progres tampil di Arsip Ogneliss</string>
 </resources>

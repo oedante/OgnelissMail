@@ -7,6 +7,7 @@ import '../../../core/theme/app_icons.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../widgets/ui/settings_group.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -159,6 +160,28 @@ class GeneralSettingsScreen extends ConsumerWidget {
               subtitle: AppLocalizations.languageOf(settings.locale.languageCode)?.english,
               onTap: () => _pickLanguage(context, settings.locale.languageCode, notifier.setLocale),
             ),
+          ]),
+
+          // ── Шрифт интерфейса (1.8.8) ──
+          // Каждый вариант подписан своим шрифтом — видно, как он выглядит.
+          SettingsSectionTitle(l10n.tr('uiFontTitle')),
+          SettingsGroup(children: [
+            for (final o in [
+              ('roboto', 'Roboto', l10n.tr('uiFontRobotoHint'), AppTheme.robotoFamily),
+              ('medeo', 'Medeo Sans', l10n.tr('uiFontMedeoHint'), AppTheme.medeoFamily),
+            ])
+              AppRadioTile<String>(
+                title: Text(o.$2, style: TextStyle(fontFamily: o.$4)),
+                subtitle: Text(o.$3, style: TextStyle(fontFamily: o.$4)),
+                value: o.$1,
+                groupValue: settings.uiFont,
+                onChanged: (v) => notifier.setUiFont(v ?? 'roboto'),
+              ),
+            if (settings.dyslexiaFont)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(Space.m, 0, Space.m, Space.s),
+                child: Text(l10n.tr('uiFontDyslexiaNote'), style: Theme.of(context).textTheme.bodySmall),
+              ),
           ]),
 
           // ── Масштаб шрифта ──

@@ -3509,4 +3509,13 @@
     <string name="faq_archive_6_a">각 기기가 보관함 사본을 따로 가지며, 클라우드(Google Drive, iCloud Drive, Yandex Disk)나 USB 드라이브는 사본을 주고받는 곳입니다. 첫 번째 기기에서: 설정 → Ogneliss 보관함 → 보관함 사본 저장. 두 번째 기기에서: 보관함이 아직 없으면 “보관함 사본 연결”, 이미 보관함이 있으면 “사본과 병합”. 두 기기에서 모두 보관할 수 있습니다. 가끔 한 기기에서 사본을 저장하고 다른 기기에서 병합하세요. 병합은 없는 항목만 추가하므로 메일이 중복되지 않으며 같은 메일함은 하나의 트리로 유지됩니다.</string>
     <string name="faq_archive_7_q">보관함에는 여러 메일함이 어떻게 저장되나요?</string>
     <string name="faq_archive_7_a">모든 메일함이 하나의 보관함에 들어 있으며, 메일함마다 메일함과 같은 구조의 폴더 트리가 따로 있습니다. 사이드 메뉴의 “Ogneliss 보관함”과 보관함 화면의 “보관함의 메일함”에서 볼 수 있습니다. 보관할 메일함은 같은 화면의 “보관할 메일함”에서 선택하며, 보관함 검색은 모든 메일함을 한 번에 검색합니다.</string>
+    <string name="archiveNothingOld">선택한 기간보다 오래된 메일이 없어 보관할 항목이 없었습니다. 더 짧은 기간이나 \'모든 메일\'을 선택할 수 있습니다.</string>
+    <string name="uiFontTitle">인터페이스 글꼴</string>
+    <string name="uiFontRobotoHint">기존과 같이</string>
+    <string name="uiFontMedeoHint">라틴 문자와 키릴 문자용 오픈 글꼴(OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">난독증용 글꼴이 켜져 있습니다(접근성). 이 선택보다 우선합니다.</string>
+    <string name="loginOrChoose">또는 메일 선택</string>
+    <string name="folderToOgna">폴더를 Ogneliss 보관함으로</string>
+    <string name="folderToOgnaBody">\"{folder}\" 폴더가 하위 폴더 및 모든 메일과 함께 이 기기의 보관함에 복사됩니다. 폴더 구조는 메일함과 같습니다. 동기화 기간보다 오래된 메일은 서버에서 가져옵니다.</string>
+    <string name="folderToOgnaStarted">폴더를 보관하는 중 — 진행 상황은 Ogneliss 보관함에 표시됩니다</string>
 </resources>

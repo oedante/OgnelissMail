@@ -3528,4 +3528,13 @@
     <string name="faq_archive_6_a">Varje enhet har sin egen kopia av arkivet, och molnet (Google Drive, iCloud Drive, Yandex Disk) eller ett USB-minne är platsen där du utbyter den. På den första enheten: Inställningar → Ogneliss-arkiv → Spara en kopia av arkivet. På den andra: Anslut en kopia av arkivet om det inte har något arkiv än, eller Slå ihop med en kopia om det har ett eget. Du kan arkivera på båda: spara då och då en kopia på den ena och slå ihop den på den andra. Sammanslagningen lägger bara till det som saknas: meddelanden dubbleras inte och samma postlåda förblir en gren.</string>
     <string name="faq_archive_7_q">Hur lagrar arkivet flera postlådor?</string>
     <string name="faq_archive_7_a">Alla postlådor finns i ett arkiv, var och en med sin egen gren av mappar uppbyggd som i postlådan: i sidomenyn under Ogneliss-arkiv och på arkivskärmen under Postlådor i arkivet. Vilka postlådor som ska arkiveras väljer du på samma skärm under Postlådor att arkivera; arkivsökningen omfattar alla postlådor samtidigt.</string>
+    <string name="archiveNothingOld">Inga meddelanden äldre än vald ålder hittades — det fanns inget att arkivera. Välj en kortare ålder eller ”Alla meddelanden”.</string>
+    <string name="uiFontTitle">Gränssnittets typsnitt</string>
+    <string name="uiFontRobotoHint">Som tidigare</string>
+    <string name="uiFontMedeoHint">Öppet typsnitt för latinska och kyrilliska tecken (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Typsnittet för dyslexi är på (Tillgänglighet) och går före detta val.</string>
+    <string name="loginOrChoose">eller välj e-posttjänst</string>
+    <string name="folderToOgna">Mapp till Ogneliss-arkivet</string>
+    <string name="folderToOgnaBody">Mappen ”{folder}” med undermappar och alla meddelanden kopieras till arkivet på enheten, med brevlådans mappstruktur. Meddelanden som är äldre än synkperioden hämtas från servern.</string>
+    <string name="folderToOgnaStarted">Mappen arkiveras – förloppet visas i Ogneliss-arkivet</string>
 </resources>

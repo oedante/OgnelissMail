@@ -56,7 +56,8 @@ import '../../../services/archive/archive_db.dart' show ArchiveFolder, ArchiveAc
 import '../../../services/archive/archive_runner.dart' show archiveRunnerProvider;
 import '../../../services/archive/archive_vault.dart' show archiveVaultProvider;
 import '../../archive/archive_providers.dart';
-import '../../archive/archive_sheets.dart' show showArchiveUnlockSheet;
+import '../../archive/archive_sheets.dart' show ensureArchiveReady, showArchiveUnlockSheet;
+import '../../../services/archive/archive_settings.dart' show archiveSettingsProvider;
 import '../../../core/theme/ogneliss_look.dart';
 import '../../settings/screens/folder_sync_settings_screen.dart' show folderNotifyOffProvider;
 import '../../../services/notifications/account_notify_mode.dart' show FolderNotify;
@@ -863,6 +864,12 @@ class MailDrawer extends ConsumerWidget {
             label: l10n.tr('folderReorder'),
             onTap: () => _reorderFolders(context, ref, folder),
           ),
+          // Папка целиком, с подпапками, — в архив Ogneliss (1.8.8).
+          PeekAction(
+            icon: AppIcons.inventory_2,
+            label: l10n.tr('folderToOgna'),
+            onTap: () => unawaited(_folderToOgna(context, ref, folder, l10n)),
+          ),
         ]),
         PeekGroup(items: [
           if (folder.type == FolderType.trash || folder.type == FolderType.junk)
@@ -941,6 +948,40 @@ class MailDrawer extends ConsumerWidget {
     final n = await ref.read(folderActionsProvider).markAllRead(account, folder);
     showInlineNotice(l10n.tr('markedReadN').replaceAll('{n}', '$n'));
     unawaited(ref.read(emailsProvider.notifier).refresh());
+  }
+
+  /// «Папку в архив Ogneliss» (1.8.8): папка с подпапками и всеми письмами —
+  /// в архив на устройстве, структура как в ящике. Архива нет — сначала
+  /// создать, закрыт — открыть паролем.
+  Future<void> _folderToOgna(
+      BuildContext context, WidgetRef ref, FolderModel folder, AppLocalizations l10n) async {
+    final account = _accountOf(ref, folder);
+    if (account == null) return;
+    if (!await ensureArchiveReady(context, ref) || !context.mounted) return;
+    final deletes = ref.read(archiveSettingsProvider).deleteFromServer;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.tr('folderToOgna')),
+        content: Text('${l10n.tr('folderToOgnaBody').replaceAll('{folder}', _localizedFolderName(folder, l10n))}\n\n'
+            '${l10n.tr(deletes ? 'archiveRunDeletes' : 'archiveRunCopies')}'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.tr('archiveRunStart'))),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    showInlineNotice(l10n.tr('folderToOgnaStarted'));
+    final r = await ref.read(archiveRunnerProvider.notifier).archiveFolder(account, folder.id);
+    if (r.errorKey != null && r.mails == 0) {
+      showInlineError(l10n.tr(r.errorKey!));
+      return;
+    }
+    var text = l10n.plural('archiveNMails', r.mails);
+    if (r.failed > 0) text += ' · ${l10n.tr('archiveFailedN').replaceAll('{n}', '${r.failed}')}';
+    showInlineNotice(text);
+    if (r.deleted > 0) unawaited(ref.read(emailsProvider.notifier).refresh());
   }
 
   /// Очистить корзину или спам — с подтверждением, безвозвратно.

@@ -1,5 +1,7 @@
 # Ogneliss Mail
 
+**English** · [Русский](README.ru.md)
+
 **Open-source email you can verify.** Mail, calendar, contacts and tasks for
 Microsoft Exchange (ActiveSync and EWS) and IMAP/SMTP mailboxes, with
 CalDAV/CardDAV calendars and contacts. Android, iPhone and iPad; Windows,
@@ -51,9 +53,12 @@ so they cannot be compared byte for byte.
   others; OAuth sign-in or app passwords; CalDAV and CardDAV.
 - **Every day:** My Day, follow-ups and snooze, conversations, undo send,
   scheduled sending, rules, VIP and quiet hours, widgets.
+- **Ogneliss archive:** an encrypted archive on the device — messages with
+  attachments and the folder structure, meetings, tasks, contacts and
+  settings; archive search, a copy for another device.
 - **Security:** S/MIME, phishing and external-sender warnings, tracker
   blocking, PIN and biometric lock.
-- 27 interface languages.
+- 27 interface languages; interface font: Roboto or Medeo Sans.
 
 ## Building
 

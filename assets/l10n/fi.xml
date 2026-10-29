@@ -3528,4 +3528,13 @@
     <string name="faq_archive_6_a">Jokaisella laitteella on arkisto omana kopionaan, ja pilvi (Google Drive, iCloud Drive, Yandex Disk) tai USB-muistitikku on paikka sen siirtämiseen. Ensimmäisellä laitteella: Asetukset → Ogneliss-arkisto → Tallenna arkistokopio. Toisella: Yhdistä arkistokopio, jos laitteessa ei vielä ole arkistoa, tai Sulauta kopion kanssa, jos siinä on oma arkisto. Voit arkistoida molemmilla: tallenna aina välillä kopio toisella ja sulauta se toisella. Sulauttaminen lisää vain puuttuvat: viesteistä ei tule kaksoiskappaleita ja sama postilaatikko pysyy yhtenä haarana.</string>
     <string name="faq_archive_7_q">Miten arkisto säilyttää useita postilaatikoita?</string>
     <string name="faq_archive_7_a">Kaikki postilaatikot ovat samassa arkistossa, ja kullakin on oma kansiohaaransa, jonka rakenne on sama kuin postilaatikossa: sivuvalikossa Ogneliss-arkiston alla ja arkistonäkymässä kohdassa Arkiston postilaatikot. Arkistoitavat postilaatikot valitaan samassa näkymässä kohdassa Arkistoitavat postilaatikot; arkistohaku kattaa kaikki postilaatikot kerralla.</string>
+    <string name="archiveNothingOld">Valittua ikää vanhempia viestejä ei löytynyt – arkistoitavaa ei ollut. Valitse lyhyempi ikä tai ”Kaikki viestit”.</string>
+    <string name="uiFontTitle">Käyttöliittymän fontti</string>
+    <string name="uiFontRobotoHint">Kuten ennen</string>
+    <string name="uiFontMedeoHint">Avoin fontti latinalaisille ja kyrillisille merkeille (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Lukihäiriöfontti on käytössä (Esteettömyys), ja se ohittaa tämän valinnan.</string>
+    <string name="loginOrChoose">tai valitse sähköposti</string>
+    <string name="folderToOgna">Kansio Ogneliss-arkistoon</string>
+    <string name="folderToOgnaBody">Kansio ”{folder}” alikansioineen ja kaikkine viesteineen kopioidaan tämän laitteen arkistoon postilaatikon kansiorakenteella. Synkronointijaksoa vanhemmat viestit haetaan palvelimelta.</string>
+    <string name="folderToOgnaStarted">Kansiota arkistoidaan – edistyminen näkyy Ogneliss-arkistossa</string>
 </resources>

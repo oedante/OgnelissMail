@@ -3528,4 +3528,13 @@
     <string name="faq_archive_6_a">Minden eszköz a saját archív másolatát tárolja, a csere helye pedig a felhő (Google Drive, iCloud Drive, Yandex Disk) vagy egy USB-meghajtó. Az első eszközön: Beállítások → Ogneliss-archívum → Archív másolat mentése. A másodikon: Archív másolat csatlakoztatása, ha még nincs ott archívum, vagy Egyesítés másolattal, ha már van saját. Mindkét eszközön archiválhat: időnként mentsen másolatot az egyiken, és egyesítse a másikon. Az egyesítés csak a hiányzó elemeket adja hozzá: az üzenetek nem duplikálódnak, és ugyanaz a postafiók egyetlen ág marad.</string>
     <string name="faq_archive_7_q">Hogyan tárol az archívum több postafiókot?</string>
     <string name="faq_archive_7_a">Az összes postafiók egyetlen archívumban van, mindegyiknek saját mappaága van, a postafiókéval megegyező szerkezettel: az oldalmenüben az Ogneliss-archívum alatt, az archívum képernyőjén pedig a Postafiókok az archívumban szakaszban. Hogy mely postafiókok legyenek archiválva, ugyanazon a képernyőn az Archiválandó postafiókok szakaszban választható ki; az archívumban való keresés egyszerre az összes postafiókra kiterjed.</string>
+    <string name="archiveNothingOld">Nem található a választott kornál régebbi üzenet — nem volt mit archiválni. Válasszon rövidebb időt vagy az „Összes üzenet” lehetőséget.</string>
+    <string name="uiFontTitle">Felület betűtípusa</string>
+    <string name="uiFontRobotoHint">Mint eddig</string>
+    <string name="uiFontMedeoHint">Nyílt betűtípus latin és cirill írásra (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">A diszlexiás betűtípus be van kapcsolva (Kisegítő lehetőségek) — ez elsőbbséget élvez.</string>
+    <string name="loginOrChoose">vagy válassza ki a levelezést</string>
+    <string name="folderToOgna">Mappa az Ogneliss-archívumba</string>
+    <string name="folderToOgnaBody">A(z) „{folder}” mappa az almappáival és minden levelével az eszközön lévő archívumba kerül, a postafiók mappaszerkezetével. A szinkronizálási időszaknál régebbi leveleket a szerverről tölti le.</string>
+    <string name="folderToOgnaStarted">Mappa archiválása — a folyamat az Ogneliss-archívumban látható</string>
 </resources>

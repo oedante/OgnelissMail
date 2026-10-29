@@ -3529,4 +3529,12 @@
     <string name="faq_archive_7_q">How does the archive keep several mailboxes?</string>
     <string name="faq_archive_7_a">All mailboxes are in one archive, each with its own branch of folders structured as in the mailbox: in the side menu under Ogneliss archive, and on the archive screen under Mailboxes in the archive. Which mailboxes to archive is chosen on the same screen under Mailboxes to archive; archive search covers all mailboxes at once.</string>
     <string name="archiveNothingOld">No messages older than the chosen age were found — there was nothing to archive. You can choose a shorter age or All mail.</string>
+    <string name="uiFontTitle">Interface font</string>
+    <string name="uiFontRobotoHint">As before</string>
+    <string name="uiFontMedeoHint">Open font for Latin and Cyrillic (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">The dyslexia font is on (Accessibility) — it takes priority over this choice.</string>
+    <string name="loginOrChoose">or choose your mail</string>
+    <string name="folderToOgna">Folder to Ogneliss archive</string>
+    <string name="folderToOgnaBody">The folder \"{folder}\" with its subfolders and all messages will be copied to the archive on this device, keeping the folder structure of the mailbox. Messages older than the sync period are fetched from the server.</string>
+    <string name="folderToOgnaStarted">Archiving the folder — progress is shown in Ogneliss archive</string>
 </resources>

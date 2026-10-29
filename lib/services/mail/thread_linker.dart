@@ -183,12 +183,16 @@ class ThreadLinker {
       final childConv = await _existingConv(db, account.id, mids);
       var plan = ThreadLinker.plan(msgs, known: known, childConv: childConv);
 
-      // Ответы без заголовков цепочки (или со ссылками только на письма
-      // вне базы) — по теме и собеседнику.
+      // Ответы без заголовков цепочки — по теме и собеседнику. Письмо со
+      // ссылками на письма, которых в базе ещё нет, ждёт их: исходное
+      // загрузится позже (история, «Отправленные» после «Входящих») и
+      // соберёт беседу по ссылкам. По теме такой ответ прилип бы к прежней
+      // переписке с тем же человеком и той же темой, а исходное письмо
+      // осталось бы одно.
       final own = OwnAddresses.of(account);
       final orphans = [
         for (final m in msgs)
-          if (m.isReplyBySubject && !m.refs.any((r) => known.containsKey(r) || mids.contains(r))) m,
+          if (m.isReplyBySubject && m.refs.isEmpty) m,
       ]..sort((a, b) => b.at.compareTo(a.at));
       final byTopic = <String, String>{};
       var lookups = 0;

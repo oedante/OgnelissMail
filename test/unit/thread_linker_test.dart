@@ -211,6 +211,27 @@ void main() {
       expect(conv['e'], '<e@x>');
     });
 
+    test('ответ на письмо, которого ещё нет в базе, не прилипает по теме к прежней переписке', () async {
+      // Прежняя переписка с Иваном на ту же тему.
+      await put(_mail('t1', mid: '<t1@x>', day: 1));
+      // «Входящие» раньше «Отправленных»: ответ Ивана на моё новое письмо.
+      final a2 = (await ThreadLinker.link(db, _icloud, [
+        _mail('a2', mid: '<a2@x>', refs: ['<r2@x>'], subject: 'RE: Отчёт', day: 10),
+      ]))
+          .single;
+      expect(a2.conversationId, '<r2@x>');
+      await put(a2);
+      // Моё письмо из «Отправленных» — в беседе ответа, прежняя — отдельно.
+      final r2 = (await ThreadLinker.link(db, _icloud, [
+        _mail('r2', mid: '<r2@x>', from: 'oleg@icloud.com', to: ['ivan@ext.ru'], day: 9),
+      ]))
+          .single;
+      expect(r2.conversationId, '<r2@x>');
+      final rows = {for (final r in await db.select(db.emails).get()) r.id: r.conversationId};
+      expect(rows['t1'], '<t1@x>');
+      expect(rows['a2'], '<r2@x>');
+    });
+
     test('разово после обновления: разорванные беседы сливаются', () async {
       await put(_mail('a', mid: '<a@x>', day: 1));
       await put(_mail('b', mid: '<b@x>', refs: ['<a@x>'], day: 2));

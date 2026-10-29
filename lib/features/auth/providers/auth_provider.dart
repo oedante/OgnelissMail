@@ -10,7 +10,7 @@ import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, Tar
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../../../services/mail/engine/mail_engine_service.dart';
-import '../../../services/mail/graph/graph_client.dart' show graphClientProvider;
+import '../../../services/mail/oauth/graph_tokens.dart' show graphTokensProvider;
 import 'package:local_auth/local_auth.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart';
@@ -411,7 +411,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// Обычный вход по паролю в Exchange Online Microsoft закрыл в 2022 году.
   /// 1.8.10: при входе — и согласие на Microsoft Graph (адресная книга,
   /// MailTips, правила сервера вместо EWS, который Microsoft отключает);
-  /// токен Graph — сразу после входа (graph_client.dart).
+  /// токен Graph — сразу после входа (graph_tokens.dart).
   Future<bool> loginExchangeOnline() async {
     final secureStorage = _ref.read(secureStorageProvider);
     String? accountId;
@@ -467,7 +467,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       unawaited(_tryImportSignature(account));
       // Токен Graph — сразу: в настройках ящика видно, дала ли организация
       // согласие (1.8.10).
-      unawaited(_ref.read(graphClientProvider).token(account));
+      unawaited(_ref.read(graphTokensProvider).token(account));
       state = state.copyWith(status: AuthStatus.success);
       await _audit('login_success', details: '${SecurityUtils.maskEmail(email)} (Exchange Online/OAuth)'
           '${result.graphConsent ? ', Graph' : ''}');
@@ -646,7 +646,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         if (account.isExchangeOnlineOAuth) {
           _ref.read(mailEngineServiceProvider).disconnect(account.id);
           // Согласие на Graph могло появиться — проверить заново (1.8.10).
-          final graph = _ref.read(graphClientProvider);
+          final graph = _ref.read(graphTokensProvider);
           await graph.reset(account.id);
           unawaited(graph.token(account));
         }

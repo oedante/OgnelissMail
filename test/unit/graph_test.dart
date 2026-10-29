@@ -1,5 +1,6 @@
-// Microsoft Graph для Exchange Online (1.8.10): разбор ответов Graph,
-// правила сервера, согласие при входе и клиент запросов (сеть подменена).
+// Microsoft Graph для Exchange Online в приложении (1.8.10; с 1.8.11 сам
+// Graph — в движке, см. graph_engine_test.dart): согласие при входе, токены
+// Graph (напрямую и через сервер входа), перевод в модели приложения.
 
 import 'dart:convert';
 
@@ -7,12 +8,15 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:mail_engine/mail_engine.dart' as me;
 import 'package:ogneliss/core/security/secure_storage_service.dart';
 import 'package:ogneliss/data/models/account_model.dart';
-import 'package:ogneliss/services/mail/graph/graph_client.dart';
-import 'package:ogneliss/services/mail/graph/graph_directory.dart';
-import 'package:ogneliss/services/mail/graph/graph_server_tools.dart';
+import 'package:ogneliss/data/models/contact_model.dart';
+import 'package:ogneliss/services/mail/engine/graph_server_tools.dart';
+import 'package:ogneliss/services/mail/engine/mail_engine_service.dart';
 import 'package:ogneliss/services/mail/oauth/direct_oauth.dart';
+import 'package:ogneliss/services/mail/oauth/graph_tokens.dart';
+import 'package:ogneliss/services/mail/oauth/oauth_proxy_client.dart';
 import 'package:ogneliss/services/mail/sieve/sieve_rules.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,6 +30,22 @@ AccountModel _exo({String id = 'a1'}) => AccountModel(
       exchangeAuthMethod: ExchangeAuthMethod.bearer,
       createdAt: DateTime(2026),
     );
+
+/// Сервер входа: обновление токена без сети.
+class _FakeProxy extends OAuthProxyClient {
+  _FakeProxy(super.storage);
+  final calls = <String>[];
+
+  @override
+  bool get isEnabled => true;
+
+  @override
+  Future<({String accessToken, DateTime expiresAt, String rt})> refreshWithBlob(String rt, String provider,
+      {String? resource}) async {
+    calls.add('$provider $resource $rt');
+    return (accessToken: 'graph-via-proxy', expiresAt: DateTime.now().add(const Duration(hours: 1)), rt: 'blob2');
+  }
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -44,13 +64,14 @@ void main() {
       final c = DirectOAuth.graphClient('exchange|11111111-2222');
       expect(c, isNotNull);
       expect(c!.clientId, '11111111-2222');
-      expect(c.scopes, contains('https://graph.microsoft.com/.default'));
+      expect(c.scopes, me.GraphEngine.tokenScopes);
       expect(c.tokenEndpoint.toString(), contains('/organizations/'));
       expect(DirectOAuth.graphClient('microsoft|x'), isNull);
       expect(DirectOAuth.graphClient('google|x'), isNull);
     });
 
-    test('права при входе — без согласия администратора', () {
+    test('права при входе — из движка, без согласия администратора', () {
+      expect(DirectOAuth.graphConsentScopes, me.GraphEngine.consentScopes);
       final s = DirectOAuth.graphConsentScopes.join(' ');
       expect(s, isNot(contains('Place.Read.All')));
       expect(s, isNot(contains('GroupMember.Read.All')));
@@ -59,264 +80,121 @@ void main() {
     });
   });
 
-  group('адресная книга Graph', () {
-    test('пользователь каталога → контакт', () {
-      final c = GraphDirectory.contactFromUser({
-        'displayName': 'Смирнова Анна Петровна',
-        'givenName': 'Анна',
-        'surname': 'Смирнова',
-        'mail': 'Anna.Smirnova@contoso.example',
-        'jobTitle': 'Инженер',
-        'department': 'Отдел эксплуатации',
-        'companyName': 'Контосо',
-        'officeLocation': 'к. 12',
-        'businessPhones': ['+7 495 000-00-01'],
-        'mobilePhone': '+7 900 000-00-02',
-      }, accountId: 'a1')!;
-      expect(c.email, 'anna.smirnova@contoso.example');
-      expect(c.jobTitle, 'Инженер');
-      expect(c.department, 'Отдел эксплуатации');
-      expect(c.company, 'Контосо');
-      expect(c.office, 'к. 12');
-      expect(c.phoneWork, '+7 495 000-00-01');
-      expect(c.phoneMobile, '+7 900 000-00-02');
-      expect(GraphDirectory.contactFromUser({'displayName': 'Без адреса'}), isNull);
+  group('модели приложения', () {
+    test('пользователь Graph → контакт адресной книги', () {
+      final c = MailEngineService.contactFromGraph(
+          const me.GraphUser(
+            email: 'anna@contoso.example',
+            displayName: 'Смирнова Анна',
+            givenName: 'Анна',
+            surname: 'Смирнова',
+            jobTitle: 'Инженер',
+            department: 'Эксплуатация',
+            office: 'к. 12',
+            businessPhone: '101',
+            mobilePhone: '+7 900',
+            manager: 'Петров',
+          ),
+          accountId: 'a1');
+      expect(c.id, 'gal_${'anna@contoso.example'.hashCode}');
+      expect(c.accountId, 'a1');
+      expect(c.firstName, 'Анна');
+      expect(c.lastName, 'Смирнова');
+      expect(c.phoneWork, '101');
+      expect(c.phoneMobile, '+7 900');
+      expect(c.manager, 'Петров');
+      expect(c.source, ContactSource.exchangeGal);
     });
 
-    test('люди: нужный адрес, сотрудник организации — раньше личного контакта', () {
-      final p = GraphDirectory.pickPerson([
-        {
-          'displayName': 'Анна (личный контакт)',
-          'scoredEmailAddresses': [
-            {'address': 'anna@contoso.example'}
-          ],
-          'personType': {'class': 'Person', 'subclass': 'PersonalContact'},
-        },
-        {
-          'displayName': 'Смирнова Анна',
-          'jobTitle': 'Инженер',
-          'department': 'Эксплуатация',
-          'scoredEmailAddresses': [
-            {'address': 'Anna@contoso.example'}
-          ],
-          'phones': [
-            {'type': 'business', 'number': '101'},
-            {'type': 'mobile', 'number': '+7 900'}
-          ],
-          'personType': {'class': 'Person', 'subclass': 'OrganizationUser'},
-        },
-        {
-          'displayName': 'Другой',
-          'scoredEmailAddresses': [
-            {'address': 'other@contoso.example'}
-          ],
-        },
-      ], 'anna@contoso.example')!;
-      expect(p.displayName, 'Смирнова Анна');
-      expect(p.department, 'Эксплуатация');
-      expect(p.phoneWork, '101');
-      expect(p.phoneMobile, '+7 900');
-      expect(GraphDirectory.pickPerson(const [], 'x@y.z'), isNull);
+    test('подсказка Graph → MailTips; места → переговорные', () {
+      final t = MailEngineService.mailTipFromGraph(
+          const me.GraphMailTip(email: 'all@contoso.example', totalMembers: 120, externalMembers: 3));
+      expect(t.isBigList, isTrue);
+      expect(t.hasExternal, isTrue);
+      expect(MailEngineService.roomsFromGraph(const [me.GraphPlace(name: 'Комната', email: 'r@x.y')]).single.email,
+          'r@x.y');
     });
 
-    test('MailTips: автоответ без разметки, переполненный ящик, рассылка', () {
-      final tips = GraphDirectory.parseMailTips({
-        'value': [
-          {
-            'emailAddress': {'address': 'Anna@contoso.example', 'name': 'Анна'},
-            'automaticReplies': {'message': '<html><body><p>В отпуске до 10&nbsp;ноября</p></body></html>'},
-            'mailboxFull': false,
-          },
-          {
-            'emailAddress': {'address': 'all@contoso.example'},
-            'automaticReplies': {'message': ''},
-            'totalMemberCount': 120,
-            'externalMemberCount': 3,
-          },
-          {
-            'emailAddress': {'address': 'full@contoso.example'},
-            'mailboxFull': true,
-          },
-        ]
-      });
-      expect(tips.length, 3);
-      expect(tips[0].email, 'anna@contoso.example');
-      expect(tips[0].autoReply, 'В отпуске до 10 ноября');
-      expect(tips[1].autoReply, isNull);
-      expect(tips[1].isBigList, isTrue);
-      expect(tips[1].hasExternal, isTrue);
-      expect(tips[2].mailboxFull, isTrue);
-      expect(GraphDirectory.parseMailTips(null), isEmpty);
-    });
-
-    test('переговорные и категории', () {
-      final rooms = GraphDirectory.parsePlaces([
-        {'displayName': 'Переговорная 3.1', 'emailAddress': 'room31@contoso.example'},
-        {'displayName': 'Без адреса'},
-      ]);
-      expect(rooms.single.email, 'room31@contoso.example');
-      expect(rooms.single.name, 'Переговорная 3.1');
-      final cats = GraphDirectory.parseCategories([
-        {'displayName': 'Красная', 'color': 'preset0'},
-        {'displayName': 'Синяя', 'color': 'preset7'},
-        {'displayName': 'Без цвета', 'color': 'none'},
-      ]);
-      expect(cats.map((c) => c.color).toList(), [0, 7, -1]);
+    test('правило редактора → правило Graph; флажка у Graph нет', () {
+      final s = GraphServerTools.specFromSieve(
+          const SieveRule(
+              name: 'Начальник',
+              field: SieveField.from,
+              op: SieveOp.isExactly,
+              value: 'boss@x.y',
+              action: SieveAction.forward,
+              arg: 'me@home.example'),
+          3)!;
+      expect(jsonEncode(s.toJson()['conditions']), '{"fromAddresses":[{"emailAddress":{"address":"boss@x.y"}}]}');
+      expect(s.toJson()['sequence'], 3);
+      expect(
+          GraphServerTools.specFromSieve(
+              const SieveRule(name: 'x', field: SieveField.subject, value: 'y', action: SieveAction.flag), 1),
+          isNull);
+      final r = GraphServerTools.ruleFromGraph(const me.GraphRule(
+          id: 'r1', name: 'x', enabled: false, sequence: 4, readOnly: true, hasError: false, actions: {'move'}));
+      expect(r.priority, 4);
+      expect(r.readOnly, isTrue);
+      expect(r.actions, ['move']);
     });
   });
 
-  group('правила сервера Graph', () {
-    test('список: действия, только чтение, порядок', () {
-      final rules = GraphServerTools.parseRules([
-        {
-          'id': 'r2',
-          'displayName': 'Рассылки',
-          'sequence': 2,
-          'isEnabled': false,
-          'actions': {'moveToFolder': 'AAMk…', 'stopProcessingRules': true, 'markAsRead': false},
-        },
-        {
-          'id': 'r1',
-          'displayName': 'Начальник',
-          'sequence': 1,
-          'isEnabled': true,
-          'isReadOnly': true,
-          'hasError': true,
-          'actions': {
-            'forwardTo': [
-              {
-                'emailAddress': {'address': 'x@y.z'}
-              }
-            ],
-            'assignCategories': <String>[],
-          },
-        },
-      ]);
-      expect(rules.map((r) => r.id).toList(), ['r1', 'r2']);
-      expect(rules[0].readOnly, isTrue);
-      expect(rules[0].inError, isTrue);
-      expect(rules[0].actions, ['forward']);
-      expect(rules[1].enabled, isFalse);
-      expect(rules[1].actions.toSet(), {'move', 'stop'});
-    });
-
-    test('новое правило: условие и действие', () {
-      final b = GraphServerTools.ruleBody(
-          const SieveRule(name: '', field: SieveField.from, op: SieveOp.isExactly, value: 'boss@x.y', action: SieveAction.forward, arg: 'me@home.example'),
-          3);
-      expect(b['displayName'], 'boss@x.y');
-      expect(b['sequence'], 3);
-      expect(jsonEncode(b['conditions']), '{"fromAddresses":[{"emailAddress":{"address":"boss@x.y"}}]}');
-      expect(jsonEncode(b['actions']), '{"forwardTo":[{"emailAddress":{"address":"me@home.example"}}]}');
-
-      final d = GraphServerTools.ruleBody(
-          const SieveRule(name: 'Спам', field: SieveField.subject, value: 'акция', action: SieveAction.delete), 0);
-      expect(d['sequence'], 1);
-      expect(jsonEncode(d['conditions']), '{"subjectContains":["акция"]}');
-      expect(jsonEncode(d['actions']), '{"delete":true,"stopProcessingRules":true}');
-
-      final m = GraphServerTools.ruleBody(
-          const SieveRule(name: 'В папку', field: SieveField.to, value: 'team', action: SieveAction.move, arg: 'F1', stop: true), 2);
-      expect(jsonEncode(m['conditions']), '{"recipientContains":["team"]}');
-      expect(jsonEncode(m['actions']), '{"moveToFolder":"F1","stopProcessingRules":true}');
-
-      final r = GraphServerTools.ruleBody(
-          const SieveRule(name: 'x', field: SieveField.any, value: 'счёт', action: SieveAction.markRead), 1);
-      expect(jsonEncode(r['conditions']), '{"bodyOrSubjectContains":["счёт"]}');
-      expect(jsonEncode(r['actions']), '{"markAsRead":true}');
-    });
-
-    test('восстановить удалённые: список писем', () {
-      final items = GraphServerTools.parseRecoverable([
-        {
-          'id': 'm1',
-          'subject': 'Смета',
-          'from': {
-            'emailAddress': {'name': 'Анна', 'address': 'anna@x.y'}
-          },
-          'receivedDateTime': '2026-10-20T07:30:00Z',
-        },
-        {'subject': 'без id'},
-      ]);
-      expect(items.single.id, 'm1');
-      expect(items.single.from, 'Анна');
-      expect(items.single.isMail, isTrue);
-      expect(items.single.received!.toUtc(), DateTime.utc(2026, 10, 20, 7, 30));
-    });
-  });
-
-  group('клиент Graph', () {
+  group('токены Graph', () {
     late SharedPreferences prefs;
     late SecureStorageService storage;
 
-    setUp(() async {
+    Future<void> init(Map<String, String> secure) async {
       SharedPreferences.setMockInitialValues({});
       prefs = await SharedPreferences.getInstance();
-      FlutterSecureStorage.setMockInitialValues({
+      FlutterSecureStorage.setMockInitialValues(secure);
+      storage = SecureStorageService();
+    }
+
+    test('движок берёт сохранённый токен', () async {
+      await init({
         'oc_a1': 'exchange|client-id',
         'rt_a1': 'refresh',
         'gat_a1': 'graph-token',
         'gexp_a1': DateTime.now().add(const Duration(hours: 1)).toIso8601String(),
       });
-      storage = SecureStorageService();
-    });
-
-    test('запрос с токеном, все страницы списка', () async {
-      final seen = <String>[];
-      final client = GraphClient(storage, prefs, httpClient: MockClient((req) async {
-        seen.add('${req.method} ${req.url.path}?${req.url.query}');
+      final tokens = GraphTokens(storage, prefs, httpClient: MockClient((req) async {
         expect(req.headers['Authorization'], 'Bearer graph-token');
-        if (req.url.queryParameters.containsKey(r'$skiptoken')) {
-          return http.Response(jsonEncode({'value': [{'id': 'r2'}]}), 200);
-        }
-        return http.Response(
-            jsonEncode({
-              'value': [{'id': 'r1'}],
-              '@odata.nextLink': '${GraphClient.base}/me/mailFolders/inbox/messageRules?\$skiptoken=2',
-            }),
-            200);
+        return http.Response(jsonEncode({'mail': 'ivan@contoso.example', 'displayName': 'Ivan'}), 200);
       }));
-      final list = await client.list(_exo(), '/me/mailFolders/inbox/messageRules');
-      expect(list.map((r) => r['id']).toList(), ['r1', 'r2']);
-      expect(seen.length, 2);
+      final engine = tokens.engine(_exo())!;
+      expect(identical(engine, tokens.engine(_exo())), isTrue);
+      expect((await engine.me())!.email, 'ivan@contoso.example');
     });
 
-    test('ошибка Graph — код и текст; 404 у фото — «нет фото»', () async {
-      final client = GraphClient(storage, prefs, httpClient: MockClient((req) async {
-        if (req.url.path.endsWith(r'$value')) return http.Response('', 404);
-        return http.Response(jsonEncode({'error': {'code': 'ErrorAccessDenied', 'message': 'Access is denied.'}}), 403);
-      }));
-      expect(await client.getBytes(_exo(), '/me/photo/\$value'), isNull);
-      await expectLater(
-        client.get(_exo(), '/places/microsoft.graph.roomlist'),
-        throwsA(isA<GraphException>()
-            .having((e) => e.status, 'status', 403)
-            .having((e) => e.code, 'code', 'ErrorAccessDenied')
-            .having((e) => e.forbidden, 'forbidden', isTrue)),
-      );
-    });
-
-    test('не Exchange Online — Graph нет, запрос не уходит', () async {
-      var calls = 0;
-      final client = GraphClient(storage, prefs, httpClient: MockClient((req) async {
-        calls++;
-        return http.Response('{}', 200);
-      }));
+    test('не Exchange Online — Graph нет', () async {
+      await init({});
+      final tokens = GraphTokens(storage, prefs);
       final imap = AccountModel(
           id: 'a2', type: AccountType.imap, email: 'x@y.z', displayName: 'x', username: 'x', createdAt: DateTime(2026));
-      expect(client.supports(imap), isFalse);
-      await expectLater(client.get(imap, '/me'), throwsA(isA<GraphException>().having((e) => e.status, 'status', 0)));
-      expect(calls, 0);
-      expect(client.access(imap), GraphAccess.unknown);
+      expect(tokens.supports(imap), isFalse);
+      expect(tokens.engine(imap), isNull);
+      expect(await tokens.token(imap), isNull);
+      expect(tokens.access(imap), GraphAccess.unknown);
+    });
+
+    test('вход через сервер входа — токен Graph у него (resource=graph)', () async {
+      await init({'rt_a1': 'blob1'});
+      final proxy = _FakeProxy(storage);
+      final tokens = GraphTokens(storage, prefs, proxy: proxy);
+      expect(await tokens.token(_exo()), 'graph-via-proxy');
+      expect(proxy.calls, ['exchange graph blob1']);
+      expect(await storage.getRefreshToken('a1'), 'blob2');
+      expect(tokens.access(_exo()), GraphAccess.ok);
     });
 
     test('отказ в согласии — пауза, «нет согласия»; сброс — заново', () async {
+      await init({'oc_a1': 'exchange|client-id', 'rt_a1': 'refresh'});
       await prefs.setString('graph_state_a1', 'noconsent:${DateTime.now().millisecondsSinceEpoch}');
-      final client = GraphClient(storage, prefs, httpClient: MockClient((req) async => http.Response('{}', 200)));
-      expect(client.access(_exo()), GraphAccess.noConsent);
-      expect(await client.token(_exo()), isNull);
-      await client.reset('a1');
-      expect(client.access(_exo()), GraphAccess.unknown);
+      final tokens = GraphTokens(storage, prefs);
+      expect(tokens.access(_exo()), GraphAccess.noConsent);
+      expect(await tokens.token(_exo()), isNull);
+      await tokens.reset('a1');
+      expect(tokens.access(_exo()), GraphAccess.unknown);
     });
   });
 }

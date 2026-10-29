@@ -99,6 +99,8 @@ class ProxyPkce {
       'provider': (m['provider'] ?? params['provider'] ?? '').toString(),
       if ((m['email'] ?? '').toString().isNotEmpty) 'email': m['email'].toString(),
       if ((m['name'] ?? '').toString().isNotEmpty) 'name': m['name'].toString(),
+      // Exchange Online: дано согласие и на Microsoft Graph (сервер входа 1.8.11).
+      if (m['graph'] == true) 'graph': '1',
     };
   }
 }

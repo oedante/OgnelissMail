@@ -27,9 +27,9 @@ import '../../../core/theme/tokens.dart';
 import '../../../data/models/account_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/ews/ews_server_tools.dart';
-import '../../../services/mail/graph/graph_client.dart' show graphClientProvider;
-import '../../../services/mail/graph/graph_server_tools.dart' show graphServerToolsProvider;
+import '../../../services/mail/engine/graph_server_tools.dart' show graphServerToolsProvider;
 import '../../../services/mail/engine/mail_engine_service.dart' show mailEngineServiceProvider;
+import '../../../services/mail/oauth/graph_tokens.dart' show graphTokensProvider;
 import '../../../services/mail/sieve/sieve_rules.dart' show SieveAction;
 import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
@@ -87,7 +87,7 @@ Future<AccountModel?> ewsAccountFor(WidgetRef ref, AccountModel a) async {
 /// (свой или того же сервера у ActiveSync). null — ни того, ни другого.
 /// [graph] — через Graph.
 Future<({AccountModel account, ServerTools tools, bool graph})?> serverToolsFor(WidgetRef ref, AccountModel a) async {
-  final graph = ref.read(graphClientProvider);
+  final graph = ref.read(graphTokensProvider);
   if (graph.supports(a) && await graph.token(a) != null) {
     return (account: a, tools: ref.read(graphServerToolsProvider), graph: true);
   }

@@ -32,7 +32,7 @@
 set -Eeuo pipefail
 umask 077
 
-SCRIPT_VERSION="2026.10.2"
+SCRIPT_VERSION="2026.10.3"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Префикс файловой системы — только для автотестов скрипта. Не задавайте его.
@@ -71,7 +71,7 @@ NGX_LOGFMT="$ROOT/etc/nginx/conf.d/ogneliss-oauth-logformat.conf"
 # Ключи, которые скрипт никогда не меняет в существующем .env
 PROTECTED_KEYS="ENC_SECRET PROXY_API_KEY STATE_SECRET"
 # Ключи, которые можно подгрузить из файла --secrets
-SECRET_KEY_RE='^(GOOGLE|MS|YANDEX|MAILRU|YAHOO)_(CLIENT_ID|CLIENT_SECRET|APP_ID|SCOPE)$'
+SECRET_KEY_RE='^((GOOGLE|MS|EXO|YANDEX|MAILRU|YAHOO)_(CLIENT_ID|CLIENT_SECRET|APP_ID|SCOPE)|EXO_GRAPH)$'
 APP_REDIRECT="com.ogneliss.mail://oauth"
 DEFAULT_REDIRECTS="com.ogneliss.mail://oauth,com.ogneliss.mail:/oauth2redirect"
 
@@ -293,6 +293,11 @@ GOOGLE_SCOPE=https://mail.google.com/ https://www.googleapis.com/auth/gmail.sett
 MS_CLIENT_ID=
 MS_CLIENT_SECRET=
 MS_SCOPE=https://outlook.office.com/IMAP.AccessAsUser.All https://outlook.office.com/SMTP.Send offline_access openid email profile
+# Exchange Online (ActiveSync + Microsoft Graph). Пусто — клиент MS_CLIENT_ID/MS_CLIENT_SECRET.
+EXO_CLIENT_ID=
+EXO_CLIENT_SECRET=
+# 0 — не просить при входе согласие на Microsoft Graph.
+EXO_GRAPH=1
 YANDEX_CLIENT_ID=
 YANDEX_CLIENT_SECRET=
 YANDEX_SCOPE=mail:imap_full mail:smtp calendar:all addressbook:all login:email login:info
@@ -351,6 +356,10 @@ update_env() {
   esac
   env_add_missing GOOGLE_SCOPE "https://mail.google.com/ https://www.googleapis.com/auth/gmail.settings.basic https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/carddav openid email profile" "$f"
   env_add_missing MS_SCOPE "https://outlook.office.com/IMAP.AccessAsUser.All https://outlook.office.com/SMTP.Send offline_access openid email profile" "$f"
+  # Exchange Online (1.8.11): пустой клиент — тот же, что у Microsoft.
+  env_add_missing EXO_CLIENT_ID "" "$f"
+  env_add_missing EXO_CLIENT_SECRET "" "$f"
+  env_add_missing EXO_GRAPH "1" "$f"
   env_add_missing YANDEX_SCOPE "mail:imap_full mail:smtp calendar:all addressbook:all login:email login:info" "$f"
   env_add_missing MAILRU_SCOPE "openid email profile mail.imap offline_access" "$f"
   # Mail.ru (документация OAuth Mail, 2025): openid обязателен, refresh_token —
@@ -441,6 +450,16 @@ provider_status() {
     elif [ -n "$id" ]; then warn "$name: есть client_id, нет client_secret"
     else printf '  - %s: не настроен\n' "$name" >&2; fi
   done
+  # Exchange Online — свой клиент или клиент Microsoft.
+  id="$(env_get EXO_CLIENT_ID "$ENV_FILE")"; sec="$(env_get EXO_CLIENT_SECRET "$ENV_FILE")"
+  name="Exchange Online"
+  if [ -z "$id" ]; then
+    id="$(env_get MS_CLIENT_ID "$ENV_FILE")"; sec="$(env_get MS_CLIENT_SECRET "$ENV_FILE")"; name="Exchange Online (клиент Microsoft)"
+  fi
+  [ "$(env_get EXO_GRAPH "$ENV_FILE")" = 0 ] && name="$name, без Microsoft Graph"
+  if [ -n "$id" ] && [ -n "$sec" ]; then ok "$name: настроен"
+  elif [ -n "$id" ]; then warn "$name: есть client_id, нет client_secret"
+  else printf '  - %s: не настроен\n' "$name" >&2; fi
 }
 
 # ── Вариант docker (рядом с почтой, за Nginx Proxy Manager) ─────────────────
@@ -860,7 +879,10 @@ cmd_check() {
   else bad "локально не отвечает: $(local_health_url)"; fails=$((fails + 1)); fi
 
   body="$(curl -fsS --max-time 10 "$BASE_URL/healthz" 2>/dev/null || true)"
-  if printf '%s' "$body" | grep -q '"ok":true'; then ok "снаружи отвечает: $BASE_URL/healthz"
+  if printf '%s' "$body" | grep -q '"ok":true'; then
+    ok "снаружи отвечает: $BASE_URL/healthz"
+    if printf '%s' "$body" | grep -q '"exchange"'; then ok "Exchange Online и Microsoft Graph: есть (прокси 1.8.11)"
+    else bad "в прокси нет Exchange Online (старая версия). Выполните: sudo bash $0 update"; fails=$((fails + 1)); fi
   else
     bad "снаружи не отвечает: $BASE_URL/healthz"
     explain_external

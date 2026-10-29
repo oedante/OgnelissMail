@@ -2,7 +2,8 @@
 // «Microsoft Graph» в настройках ящика Exchange Online (1.8.10): дала ли
 // организация согласие на Graph. Microsoft отключает EWS в Exchange Online;
 // адресная книга, подсказки MailTips, правила сервера и «Восстановить
-// удалённые» теперь идут через Graph (graph_client.dart). Нет согласия —
+// удалённые» теперь идут через Graph (движок, me.GraphEngine; токен —
+// graph_tokens.dart). Нет согласия —
 // нажатие ведёт ко входу заново (согласие просится при входе); не помогло —
 // разрешение должен дать администратор организации.
 
@@ -14,7 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../data/models/account_model.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../services/mail/graph/graph_client.dart';
+import '../../../services/mail/oauth/graph_tokens.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../mail/widgets/account_auth_banner.dart' show reauthenticateFlow;
 
@@ -33,19 +34,19 @@ class _GraphStatusItemState extends ConsumerState<GraphStatusItem> {
   void initState() {
     super.initState();
     // Состояние ещё не известно — узнать (запрос токена, без окна входа).
-    if (ref.read(graphClientProvider).access(widget.account) == GraphAccess.unknown) unawaited(_check());
+    if (ref.read(graphTokensProvider).access(widget.account) == GraphAccess.unknown) unawaited(_check());
   }
 
   Future<void> _check() async {
     setState(() => _checking = true);
-    await ref.read(graphClientProvider).token(widget.account);
+    await ref.read(graphTokensProvider).token(widget.account);
     if (mounted) setState(() => _checking = false);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final state = ref.read(graphClientProvider).access(widget.account);
+    final state = ref.read(graphTokensProvider).access(widget.account);
     final theme = Theme.of(context);
     final (String sub, Color? color) = _checking
         ? (l10n.tr('graphChecking'), null)

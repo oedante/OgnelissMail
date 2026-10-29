@@ -37,7 +37,7 @@
 // переводит Exchange Online с EWS на Graph — EWS отключается с октября 2026,
 // окончательно в апреле 2027). При входе в Exchange Online приложение просит
 // согласие и на права Graph; токен Graph — отдельный, его выдаёт тот же
-// refresh-токен (lib/services/mail/graph/graph_client.dart). Организация не
+// refresh-токен (graph_tokens.dart; запросы — движок, me.GraphEngine). Организация не
 // разрешает такие права без администратора — вход повторяется без них
 // (ActiveSync работает и так).
 //
@@ -53,6 +53,7 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http/http.dart' as http;
+import 'package:mail_engine/mail_engine.dart' as me;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/errors/app_exceptions.dart';
@@ -150,7 +151,8 @@ class DirectOAuth {
   ];
 
   /// Microsoft Graph для Exchange Online (1.8.10): права, на которые
-  /// просится согласие при входе. Все — без согласия администратора:
+  /// просится согласие при входе (список — в движке,
+  /// me.GraphEngine.consentScopes). Все — без согласия администратора:
   /// User.Read — своя карточка и фото; User.ReadBasic.All — фото коллег;
   /// People.Read — должность, отдел и телефоны коллег; Mail.ReadWrite —
   /// подсказки MailTips и «Восстановить удалённые»;
@@ -158,17 +160,11 @@ class DirectOAuth {
   /// администратора (Place.Read.All, GroupMember.Read.All) при входе не
   /// просятся: обычный сотрудник не смог бы войти; если администратор их
   /// выдал организации, токен ([graphScopes]) получит их сам.
-  static const graphConsentScopes = [
-    'https://graph.microsoft.com/User.Read',
-    'https://graph.microsoft.com/User.ReadBasic.All',
-    'https://graph.microsoft.com/People.Read',
-    'https://graph.microsoft.com/Mail.ReadWrite',
-    'https://graph.microsoft.com/MailboxSettings.ReadWrite',
-  ];
+  static const graphConsentScopes = me.GraphEngine.consentScopes;
 
   /// Токен Graph — со всеми правами, на которые есть согласие (свои при
   /// входе и выданные администратором организации).
-  static const graphScopes = ['https://graph.microsoft.com/.default', 'offline_access'];
+  static const graphScopes = me.GraphEngine.tokenScopes;
 
   /// Клиент для токена Graph ящика Exchange Online по отметке клиента входа
   /// ([DirectOAuthClient.marker]); null — ящик вошёл не как Exchange Online.

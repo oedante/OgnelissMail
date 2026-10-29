@@ -45,11 +45,14 @@ class CrossPlatformOAuthService {
   /// снова» и при входе по адресу (1.8.0) — служба подставит его сама.
   Future<OAuthResult> authenticate(String providerName, {String? loginHint}) async {
     // 1.6.2: вход без сервера входа — если в сборке задан публичный клиент
-    // провайдера для этой платформы (Google, Microsoft). Exchange Online —
-    // только так: сервер входа токенов ActiveSync/EWS не выдаёт.
+    // провайдера для этой платформы (Google, Microsoft). Exchange Online без
+    // него — через сервер входа 1.8.11 (провайдер exchange); прежний сервер
+    // токенов ActiveSync/EWS не выдаёт.
     final direct = kIsWeb ? null : DirectOAuth.clientFor(providerName);
     if (direct != null) return DirectOAuth.authenticate(direct, loginHint: loginHint);
-    if (providerName == 'exchange') throw const OAuthNotConfiguredException();
+    if (providerName == 'exchange' && (kIsWeb || !OAuthProxyFlow.isEnabled || !await OAuthProxyFlow.offers('exchange'))) {
+      throw const OAuthNotConfiguredException();
+    }
 
     // Иначе — корпоративный прокси (если задан OAUTH_PROXY_URL).
     // Единый клиент типа «веб» на все платформы, client_secret остаётся на сервере.

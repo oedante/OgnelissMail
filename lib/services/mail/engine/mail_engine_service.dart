@@ -38,8 +38,8 @@ import '../dav/dav_pim_service.dart';
 import '../ews/ews_service.dart';
 import '../ews/ews_directory_extras.dart';
 import '../ews/ews_mail_tips.dart';
-import '../graph/graph_client.dart';
-import '../graph/graph_directory.dart';
+import '../oauth/graph_tokens.dart';
+import 'engine_log.dart';
 import '../oauth/oauth_proxy_client.dart';
 import '../oauth/oauth_service.dart' show OAuthService;
 import '../imap/imap_service.dart';
@@ -379,33 +379,8 @@ class MailEngineService {
     return engine;
   }
 
-  /// Журнал движка пишется в журнал приложения сразу, по мере работы:
-  /// раньше он копился в памяти и попадал в файл только при неудачном
-  /// подключении — ошибки синхронизации, 403 от шлюза, повторный Provision
-  /// и строка «Политики: …» при успешном входе терялись.
-  /// В обычном режиме — шаги и коды ответов; в подробном (AppLogger.detailed)
-  /// ещё заголовки, фрагменты тел и деревья WBXML.
-  me.DebugLog _newEngineLog() {
-    return me.DebugLog(
-      // Проверяется на каждой записи: подробный режим выключается сам через
-      // сутки, а движок подключённого ящика живёт всю сессию.
-      isVerbose: () => AppLogger.detailed,
-      echo: false,
-      sink: (e) {
-        final line = '[${e.transport}] ${e.message}';
-        switch (e.level) {
-          case me.LogLevel.debug:
-            if (AppLogger.detailed) AppLogger.debug(line);
-          case me.LogLevel.info:
-            AppLogger.info(line);
-          case me.LogLevel.warn:
-            AppLogger.warning(line);
-          case me.LogLevel.error:
-            AppLogger.error(line);
-        }
-      },
-    );
-  }
+  /// Журнал движка — в журнал приложения сразу (engine_log.dart).
+  me.DebugLog _newEngineLog() => newEngineLog();
 
   /// Перенести журнал движка в общий лог приложения.
   ///
@@ -791,7 +766,8 @@ class MailEngineService {
     final key = 'cat_master_at_${account.id}';
     final last = DateTime.tryParse(_prefs.getString(key) ?? '');
     if (last != null && DateTime.now().difference(last) < const Duration(hours: 24)) return;
-    final g = await _viaGraph(account, 'категории', () => _graph.masterCategories(account));
+    final g = await _viaGraph(account, 'категории',
+        (graph) async => [for (final c in await graph.masterCategories()) (name: c.name, color: c.color)]);
     final list = g.ok
         ? g.value
         : await _ews.getCategoryList(account).timeout(const Duration(seconds: 25), onTimeout: () => null);
@@ -1571,20 +1547,22 @@ class MailEngineService {
   late final EwsService _ews =
       _ref?.read(ewsServiceProvider) ?? EwsService(secureStorage: _secureStorage);
 
-  /// Microsoft Graph у ящиков Exchange Online (1.8.10): адресная книга,
-  /// фото, MailTips, переговорные, рассылки, категории — вместо EWS, который
-  /// Microsoft отключает. Нет Graph — по EWS, как раньше.
-  late final GraphDirectory _graph =
-      _ref?.read(graphDirectoryProvider) ?? GraphDirectory(GraphClient(_secureStorage, _prefs));
+  /// Microsoft Graph у ящиков Exchange Online (1.8.10; с 1.8.11 — движок,
+  /// me.GraphEngine): адресная книга, фото, MailTips, переговорные,
+  /// рассылки, категории — вместо EWS, который Microsoft отключает. Нет
+  /// Graph — по EWS, как раньше. Токен движку даёт GraphTokens.
+  late final GraphTokens _graphTokens = _ref?.read(graphTokensProvider) ?? GraphTokens(_secureStorage, _prefs);
 
-  /// Запрос через Graph: ok — Graph ответил (значение может быть null —
-  /// «нет такого»); не ok — Graph для ящика нет, нет права или сбой: дальше
-  /// по EWS.
-  Future<({bool ok, T? value})> _viaGraph<T>(AccountModel account, String what, Future<T?> Function() f) async {
-    if (!_graph.supports(account)) return (ok: false, value: null);
+  /// Запрос через движок Graph: ok — Graph ответил (значение может быть
+  /// null — «нет такого»); не ok — Graph для ящика нет, нет права или сбой:
+  /// дальше по EWS.
+  Future<({bool ok, T? value})> _viaGraph<T>(
+      AccountModel account, String what, Future<T?> Function(me.GraphEngine graph) f) async {
+    final graph = _graphTokens.engine(account);
+    if (graph == null) return (ok: false, value: null);
     try {
-      return (ok: true, value: await f());
-    } on GraphException catch (e) {
+      return (ok: true, value: await f(graph));
+    } on me.GraphException catch (e) {
       if (e.status != 0) AppLogger.debug('Graph ($what): $e — по EWS');
       return (ok: false, value: null);
     } catch (e) {
@@ -1723,7 +1701,7 @@ class MailEngineService {
       // Отдел, руководитель, кабинет — в адресной книге Graph у Exchange
       // Online (1.8.10), иначе — EWS. У ящика ActiveSync — по адресу EWS того
       // же сервера, если он отвечает (1.6.49).
-      final g = await _viaGraph(account, 'карточка', () => _graph.person(account, e));
+      final g = await _viaGraph(account, 'карточка', (graph) async => _galFromGraph(await graph.person(e), account));
       final dir = g.ok ? null : await _directoryEws(account);
       if (g.value case final m?) out = out == null ? m : _mergePerson(out, m);
       if (dir != null) {
@@ -1759,7 +1737,8 @@ class MailEngineService {
     // или отделом — этого достаточно; иначе — дополнить адресной книгой
     // ActiveSync (в ней должность, телефоны и кабинет есть всегда). EWS при
     // ответе Graph не спрашивается: Microsoft его отключает.
-    final viaGraph = await _viaGraph(account, 'адресная книга', () => _graph.person(account, e));
+    final viaGraph =
+        await _viaGraph(account, 'адресная книга', (graph) async => _galFromGraph(await graph.person(e), account));
     final fromGraph = viaGraph.value;
     if (fromGraph != null && ((fromGraph.jobTitle ?? '').isNotEmpty || (fromGraph.department ?? '').isNotEmpty)) {
       return fromGraph;
@@ -1865,7 +1844,8 @@ class MailEngineService {
     ];
     if (ask.isNotEmpty) {
       // Exchange Online — через Graph (1.8.10), иначе EWS.
-      final g = await _viaGraph(account, 'MailTips', () => _graph.mailTips(account, ask.take(50).toList()));
+      final g = await _viaGraph(account, 'MailTips',
+          (graph) async => [for (final t in await graph.mailTips(ask.take(50).toList())) mailTipFromGraph(t)]);
       final dir = g.ok ? account : await _directoryEws(account);
       if (dir == null) return const [];
       try {
@@ -1898,7 +1878,7 @@ class MailEngineService {
     final e = email.trim().toLowerCase();
     if (!e.contains('@')) return null;
     // Exchange Online — фото через Graph (1.8.10): нет фото — null, без EWS.
-    final g = await _viaGraph(account, 'фото', () => _graph.photo(account, e));
+    final g = await _viaGraph(account, 'фото', (graph) => graph.photo(e, own: e == account.email.trim().toLowerCase()));
     if (g.ok) {
       final bytes = g.value;
       return bytes == null || bytes.isEmpty ? null : 'data:image/jpeg;base64,${base64Encode(bytes)}';
@@ -1937,18 +1917,19 @@ class MailEngineService {
   final Map<String, ({DateTime at, List<DirectoryRoom> items})> _roomsCache = {};
 
   Future<List<DirectoryRoom>> roomLists(AccountModel account) => _rooms(
-      account, 'lists', (dir) => _ews.getRoomLists(dir), () => _graph.roomLists(account));
+      account, 'lists', (dir) => _ews.getRoomLists(dir), (graph) async => roomsFromGraph(await graph.roomLists()));
 
   Future<List<DirectoryRoom>> roomsOf(AccountModel account, String listEmail) => _rooms(
       account,
       'list:${listEmail.toLowerCase()}',
       (dir) => _ews.getRooms(dir, listEmail),
-      () => _graph.rooms(account, listEmail));
+      (graph) async => roomsFromGraph(await graph.rooms(listEmail)));
 
   /// Exchange Online — переговорные из Graph (1.8.10, право Place.Read.All
   /// выдаёт администратор); нет права — EWS.
   Future<List<DirectoryRoom>> _rooms(AccountModel account, String what,
-      Future<List<DirectoryRoom>> Function(AccountModel dir) load, Future<List<DirectoryRoom>> Function() graph) async {
+      Future<List<DirectoryRoom>> Function(AccountModel dir) load,
+      Future<List<DirectoryRoom>> Function(me.GraphEngine graph) graph) async {
     final key = '${account.id}|$what';
     final hit = _roomsCache[key];
     if (hit != null && DateTime.now().difference(hit.at) < const Duration(minutes: 30)) return hit.items;
@@ -2053,6 +2034,41 @@ class MailEngineService {
   }
 
   /// Дополнить карточку ActiveSync полями EWS (отдел, руководитель, ФИО).
+  /// Пользователь каталога Graph → контакт адресной книги организации.
+  static ContactModel contactFromGraph(me.GraphUser u, {String? accountId}) => ContactModel(
+        id: 'gal_${u.email.hashCode}',
+        accountId: accountId,
+        email: u.email,
+        displayName: u.displayName,
+        firstName: u.givenName,
+        lastName: u.surname,
+        jobTitle: u.jobTitle,
+        department: u.department,
+        company: u.company,
+        office: u.office,
+        phoneWork: u.businessPhone,
+        phoneMobile: u.mobilePhone,
+        city: u.city,
+        manager: u.manager,
+        source: ContactSource.exchangeGal,
+      );
+
+  static ContactModel? _galFromGraph(me.GraphUser? u, AccountModel account) =>
+      u == null ? null : contactFromGraph(u, accountId: account.id);
+
+  /// Подсказка Graph → подсказка MailTips (как из EWS).
+  static MailTip mailTipFromGraph(me.GraphMailTip t) => MailTip(
+        email: t.email,
+        name: t.name,
+        autoReply: t.autoReply,
+        mailboxFull: t.mailboxFull,
+        totalMembers: t.totalMembers,
+        externalMembers: t.externalMembers,
+      );
+
+  static List<DirectoryRoom> roomsFromGraph(List<me.GraphPlace> places) =>
+      [for (final p in places) DirectoryRoom(name: p.name, email: p.email)];
+
   static ContactModel _mergePerson(ContactModel a, ContactModel b) {
     String? pick(String? x, String? y) => (x ?? '').trim().isNotEmpty ? x : y;
     return ContactModel(
@@ -2135,7 +2151,10 @@ class MailEngineService {
   Future<List<ContactModel>?> expandGroup(AccountModel account, String email) async {
     // Exchange Online — через Graph (1.8.10, право GroupMember.Read.All
     // выдаёт администратор); нет права — EWS.
-    final g = await _viaGraph(account, 'рассылка', () => _graph.groupMembers(account, email));
+    final g = await _viaGraph(account, 'рассылка', (graph) async {
+      final members = await graph.groupMembers(email);
+      return members == null ? null : [for (final u in members) contactFromGraph(u, accountId: account.id)];
+    });
     if (g.ok && g.value != null) return g.value;
     if (!account.hasEwsExtras && !account.isExchange) return null;
     try {

@@ -28,4 +28,11 @@ void main() {
     const first = 'https://login.microsoftonline.com/x?prompt=select_account&client_id=y';
     expect(OAuthProxyFlow.withHint(first, 'microsoft', 'a@b.ru'), 'https://login.microsoftonline.com/x?client_id=y&login_hint=a%40b.ru');
   });
+
+  test('Exchange Online через сервер входа (1.8.11): как Microsoft', () {
+    const u = 'https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?response_type=code&client_id=x'
+        '&state=s&prompt=select_account';
+    final r = OAuthProxyFlow.withHint(u, 'exchange', 'ivan@contoso.example');
+    expect(r, endsWith('&state=s&login_hint=ivan%40contoso.example'));
+  });
 }

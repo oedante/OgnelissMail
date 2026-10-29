@@ -6,7 +6,7 @@
 // чтобы пользователь не логинился заново.
 //
 // Эндпоинты:
-//   GET  /healthz                          — проверка живости
+//   GET  /healthz                          — проверка живости и настройки
 //   GET  /oauth/:provider/login?redirect=  — старт авторизации (редирект к провайдеру)
 //   GET  /oauth/callback?code&state        — приём кода, обмен на токены, редирект в приложение
 //   GET  /token?session=...                — выдать действующий access_token (с авто-refresh)
@@ -86,6 +86,39 @@ const PROVIDERS = {
     scope: process.env.MS_SCOPE || 'https://outlook.office.com/IMAP.AccessAsUser.All https://outlook.office.com/SMTP.Send offline_access openid email profile',
     // select_account: выбор учётной записи, если в браузере их несколько.
     // consent — не нужен: согласие запрашивается само при первом входе.
+    extra: { prompt: 'select_account' },
+  },
+  // Exchange Online (Microsoft 365) по ActiveSync и Microsoft Graph (1.8.11).
+  // Только рабочие учётные записи (/organizations). Токен — для ActiveSync и
+  // EWS (ресурс outlook.office365.com); согласие при входе — ещё и на права
+  // Microsoft Graph без согласия администратора: Microsoft отключает EWS в
+  // Exchange Online, адресная книга, подсказки MailTips, правила сервера и
+  // «Восстановить удалённые» идут через Graph. Токен Graph — тем же входом:
+  // POST /token с resource=graph. Организация не разрешает сотрудникам
+  // давать согласие на Graph — вход повторяется без него (ActiveSync
+  // работает и так). EXO_GRAPH=0 — не просить Graph вовсе.
+  // Клиент — тот же, что у microsoft (EXO_CLIENT_ID/SECRET, иначе MS_*), с
+  // правами «Office 365 Exchange Online → EAS.AccessAsUser.All,
+  // EWS.AccessAsUser.All» и правами Graph (docs/guides/OAUTH_SETUP.md).
+  exchange: {
+    authUrl: 'https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize',
+    tokenUrl: 'https://login.microsoftonline.com/organizations/oauth2/v2.0/token',
+    clientId: process.env.EXO_CLIENT_ID || process.env.MS_CLIENT_ID,
+    clientSecret: process.env.EXO_CLIENT_SECRET || process.env.MS_CLIENT_SECRET,
+    scope: process.env.EXO_SCOPE || 'https://outlook.office365.com/EAS.AccessAsUser.All https://outlook.office365.com/EWS.AccessAsUser.All offline_access openid email profile',
+    consentScope: process.env.EXO_GRAPH === '0' ? '' : (process.env.EXO_GRAPH_CONSENT || [
+      'https://graph.microsoft.com/User.Read',
+      'https://graph.microsoft.com/User.ReadBasic.All',
+      'https://graph.microsoft.com/People.Read',
+      'https://graph.microsoft.com/Mail.ReadWrite',
+      'https://graph.microsoft.com/MailboxSettings.ReadWrite',
+    ].join(' ')),
+    // Все права Graph, на которые есть согласие (в том числе выданные
+    // администратором: Place.Read.All, GroupMember.Read.All, User.Read.All).
+    graphScope: 'https://graph.microsoft.com/.default offline_access',
+    // У входа два ресурса — при обмене кода и обновлении scope указывается
+    // явно, иначе Microsoft выберет ресурс сам.
+    explicitScope: true,
     extra: { prompt: 'select_account' },
   },
   yandex: {
@@ -385,6 +418,7 @@ router.get('/healthz', (_req, res) => res.json({
     clientId: Boolean(p.clientId),
     clientSecret: Boolean(p.clientSecret),
     auth: p.authStyle === 'basic' ? 'basic' : 'body',
+    ...(p.graphScope ? { graph: Boolean(p.consentScope) } : {}),
   }])),
   keys: {
     api: fingerprint(API_KEY),
@@ -404,15 +438,28 @@ router.get('/oauth/:provider/login', (req, res) => {
   const cc = req.query.cc ? String(req.query.cc) : '';
   if (cc && !/^[A-Za-z0-9_-]{43}$/.test(cc)) return plain(res, 400, 'bad code_challenge');
   const nonce = crypto.randomBytes(16).toString('hex');
+  // g — просили согласие и на Graph (Exchange Online).
+  const g = p.consentScope ? 1 : undefined;
   const state = makeState(p, {
     provider: req.params.provider,
     redirect,
     cc: cc || undefined,
     nonce,
+    g,
     ts: Date.now(),
   });
-  res.redirect(authUrl(p, state, p.scope, nonce));
+  res.redirect(authUrl(p, state, g ? `${p.scope} ${p.consentScope}` : p.scope, nonce));
 });
+
+// Отказ, после которого вход стоит повторить без прав Graph (как в
+// приложении, DirectOAuth.isConsentError): организация требует согласия
+// администратора (AADSTS90094, 90095, 65001), человек отказался от новых прав
+// (65004), права неизвестны регистрации (650057, invalid_scope).
+function isConsentError(code, detail) {
+  const d = String(detail || '').toUpperCase();
+  if (['consent_required', 'invalid_scope', 'interaction_required'].includes(code)) return true;
+  return ['AADSTS65001', 'AADSTS65004', 'AADSTS90094', 'AADSTS90095', 'AADSTS650057', 'AADSTS90008'].some((c) => d.includes(c));
+}
 
 function authUrl(p, state, scope, nonce) {
   const auth = new URL(p.authUrl);
@@ -440,6 +487,18 @@ router.get(['/oauth/callback', '/callback'], async (req, res) => {
   // как есть (отражённый XSS на домене прокси).
   if (req.query.error) {
     const err = /^[a-z_]{1,40}$/.test(String(req.query.error)) ? String(req.query.error) : 'provider_error';
+    // Exchange Online: согласия на Graph не дали — вход без Graph.
+    if (data.g && isConsentError(err, req.query.error_description)) {
+      const aad = /AADSTS\d+/.exec(String(req.query.error_description || ''));
+      console.warn(`[${data.provider}] согласие на Microsoft Graph не получено (${aad ? aad[0] : err}) — вход без Graph`);
+      const nonce = crypto.randomBytes(16).toString('hex');
+      return res.redirect(authUrl(p, makeState(p, {
+        ...data,
+        g: undefined,
+        nonce,
+        ts: Date.now(),
+      }), p.scope, nonce));
+    }
     // Не все права выданы приложению у провайдера — повтор со следующим
     // запасным набором (data.fb — сколько наборов уже пробовали).
     const tried = Number(data.fb || 0);
@@ -469,6 +528,7 @@ router.get(['/oauth/callback', '/callback'], async (req, res) => {
       redirect_uri: CALLBACK_URL,
     };
     if (p.pkce && data.nonce) params.code_verifier = pkceVerifier(data.nonce);
+    if (p.explicitScope) params.scope = p.scope;
     const tok = await tokenRequest(p, params);
     // Stateless: refresh шифруется в blob rt и отдаётся клиенту (сервер БД не ведёт).
     const access = tok.access_token || '';
@@ -487,7 +547,7 @@ router.get(['/oauth/callback', '/callback'], async (req, res) => {
     back.searchParams.set('provider', data.provider);
     if (data.cc) {
       const oc = crypto.randomBytes(24).toString('base64url');
-      PENDING.set(oc, { at: access, exp: expMs, rt, provider: data.provider, cc: data.cc, email: ident.email, name: ident.name, until: Date.now() + PENDING_TTL_MS });
+      PENDING.set(oc, { at: access, exp: expMs, rt, provider: data.provider, cc: data.cc, email: ident.email, name: ident.name, graph: Boolean(data.g), until: Date.now() + PENDING_TTL_MS });
       back.searchParams.set('oc', oc);
     } else {
       back.searchParams.set('at', access);
@@ -573,7 +633,7 @@ router.post('/exchange', requireApiKey, (req, res) => {
   if (!entry || entry.until < Date.now()) return res.status(400).json({ error: 'invalid or expired code' });
   const challenge = crypto.createHash('sha256').update(cv).digest('base64url');
   if (!safeEqual(challenge, entry.cc)) return res.status(400).json({ error: 'invalid verifier' });
-  res.json({ access_token: entry.at, expires_at: entry.exp, rt: entry.rt, provider: entry.provider, email: entry.email || '', name: entry.name || '' });
+  res.json({ access_token: entry.at, expires_at: entry.exp, rt: entry.rt, provider: entry.provider, email: entry.email || '', name: entry.name || '', ...(entry.graph ? { graph: true } : {}) });
 });
 
 // 3) Выдать действующий access_token (с авто-обновлением)
@@ -642,21 +702,33 @@ router.post('/revoke', requireApiKey, async (req, res) => {
 });
 
 // Stateless-обновление по refresh-blob rt — основной эндпоинт для приложения.
+// resource=graph (Exchange Online, 1.8.11) — токен Microsoft Graph тем же
+// входом; в ответе тогда resource: 'graph' (по нему приложение отличает
+// новый сервер от прежнего, который resource не знает).
 router.post('/token', requireApiKey, async (req, res) => {
   try {
     const provider = String(req.body.provider || '');
     const rt = String(req.body.rt || '');
+    const resource = String(req.body.resource || '');
     const p = PROVIDERS[provider];
     if (!p) return res.status(400).json({ error: 'unknown provider' });
     if (!rt) return res.status(400).json({ error: 'rt required' });
+    if (resource && !(resource === 'graph' && p.graphScope)) return res.status(400).json({ error: 'unknown resource' });
     let refresh;
     try { refresh = decRt(rt); } catch { return res.status(400).json({ error: 'bad rt' }); }
-    const tok = await tokenRequest(p, { grant_type: 'refresh_token', refresh_token: refresh });
+    const params = { grant_type: 'refresh_token', refresh_token: refresh };
+    if (resource === 'graph') params.scope = p.graphScope;
+    else if (p.explicitScope) params.scope = p.scope;
+    const tok = await tokenRequest(p, params);
     const out = { access_token: tok.access_token, expires_at: Date.now() + ((tok.expires_in || 3600) * 1000) };
     if (tok.refresh_token) out.rt = encRt(tok.refresh_token); // ротация refresh
+    if (resource) out.resource = resource;
     res.json(out);
   } catch (e) {
-    res.status(e.status === 401 ? 401 : 400).json({ error: e.message });
+    // Код AADSTS (без секретов) — приложению: по нему видно, что не так
+    // (например, AADSTS65001 — нет согласия на права Graph).
+    const aad = /AADSTS\d+/.exec(String((e.body || {}).error_description || ''));
+    res.status(e.status === 401 ? 401 : 400).json({ error: e.message, ...(aad ? { aadsts: aad[0] } : {}) });
   }
 });
 

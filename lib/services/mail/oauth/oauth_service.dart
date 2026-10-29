@@ -257,7 +257,8 @@ class OAuthService {
           messageKey: 'errSessionExpired',
           code: 'OAUTH_NO_REFRESH');
     }
-    final provider = _providerName(account.type);
+    // Exchange Online через сервер входа — провайдер «exchange» (1.8.11).
+    final provider = account.isExchangeOnlineOAuth ? 'exchange' : _providerName(account.type);
 
     try {
       // Вход без сервера входа (1.6.2): токен — прямо у провайдера тем же

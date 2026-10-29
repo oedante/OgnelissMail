@@ -2,10 +2,12 @@
 library mail_engine;
 
 export 'src/models/models.dart';
+export 'src/models/graph_models.dart';
 export 'src/mail_engine.dart';
 export 'src/engine_factory.dart';
 export 'src/transport/eas_engine.dart';
 export 'src/transport/ews_engine.dart';
+export 'src/transport/graph_engine.dart';
 export 'src/transport/imap_smtp_engine.dart';
 export 'src/transport/autodiscover.dart';
 export 'src/transport/dav_client.dart';

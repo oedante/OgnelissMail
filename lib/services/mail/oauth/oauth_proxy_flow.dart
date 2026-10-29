@@ -22,6 +22,7 @@
 // поэтому на Windows/Linux принудительно useWebview: false → системный браузер
 // + локальный сервер на порту из callbackUrlScheme.
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
@@ -63,7 +64,30 @@ class OAuthProxyFlow {
   }
 
   /// Службы, которые подставляют адрес почты на своей странице входа.
-  static const _hintProviders = {'google', 'microsoft', 'yandex'};
+  static const _hintProviders = {'google', 'microsoft', 'exchange', 'yandex'};
+
+  /// Сервер входа умеет входить через [provider] (у него заданы клиент и
+  /// секрет): Exchange Online — с сервера входа 1.8.11. Прежний сервер его не
+  /// знает — тогда браузер показал бы «unknown provider». Нет связи — true:
+  /// ошибку покажет сам вход.
+  static Future<bool> offers(String provider) async {
+    final base = AppConstants.oauthProxyBaseUrl.replaceAll(RegExp(r'/+$'), '');
+    final client = HttpClient()..connectionTimeout = const Duration(seconds: 8);
+    try {
+      final req = await client.getUrl(Uri.parse('$base/healthz'));
+      final resp = await req.close().timeout(const Duration(seconds: 10));
+      final body = await resp.transform(utf8.decoder).join();
+      if (resp.statusCode != 200) return true;
+      final m = jsonDecode(body);
+      final c = m is Map && m['config'] is Map ? (m['config'] as Map)[provider] : null;
+      return c is Map && c['clientId'] == true && c['clientSecret'] == true;
+    } catch (e) {
+      AppLogger.info('OAuth: сервер входа не ответил на /healthz ($e)');
+      return true;
+    } finally {
+      client.close(force: true);
+    }
+  }
 
   /// Адрес страницы входа службы (1.8.0). Сервер входа отвечает на
   /// /oauth/<служба>/login переадресацией (302) на страницу службы со своими
@@ -96,7 +120,7 @@ class OAuthProxyFlow {
   @visibleForTesting
   static String withHint(String url, String provider, String hint) {
     var out = url;
-    if (provider == 'microsoft') {
+    if (provider == 'microsoft' || provider == 'exchange') {
       out = out
           .replaceFirst(RegExp(r'&prompt=select_account(?=&|$)'), '')
           .replaceFirst(RegExp(r'\?prompt=select_account&'), '?')
@@ -193,6 +217,7 @@ class OAuthProxyFlow {
       // Если прокси сообщает адрес — берём; иначе его запросит вход.
       email: (p['email'] ?? '').isNotEmpty ? p['email'] : null,
       displayName: (p['name'] ?? '').isNotEmpty ? p['name'] : null,
+      graphConsent: p['graph'] == '1',
     );
   }
 }

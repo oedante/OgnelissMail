@@ -121,6 +121,41 @@ https://www.ogneliss.ru/oauth/callback
 
 > Токен, выданный под EWS-scope, приложение использует для Exchange-транспорта (EWS).
 
+### 2а. Exchange Online (Microsoft 365) — ActiveSync и Microsoft Graph (прокси 1.8.11)
+
+Провайдер `exchange`: вход только рабочими учётными записями
+(`/organizations`), токен — для ActiveSync и EWS (`outlook.office365.com`),
+токен Microsoft Graph — тем же входом (`POST /token` с `"resource":"graph"`).
+Microsoft отключает EWS в Exchange Online (с 1 октября 2026 — по
+организациям, окончательно — в апреле 2027): адресная книга, подсказки
+MailTips, фото коллег, правила сервера и «Восстановить удалённые» в
+приложении идут через Graph.
+
+Клиент — тот же, что у Microsoft (пункт 2), если в его **API permissions**
+(всё — **Delegated**) есть:
+
+| API | Право | Согласие администратора |
+|---|---|---|
+| Office 365 Exchange Online | `EAS.AccessAsUser.All`, `EWS.AccessAsUser.All` | нет |
+| Microsoft Graph | `User.Read`, `User.ReadBasic.All`, `People.Read`, `Mail.ReadWrite`, `MailboxSettings.ReadWrite`, `offline_access`, `openid`, `email`, `profile` | нет |
+| Microsoft Graph (по желанию) | `Place.Read.All` (переговорные), `GroupMember.Read.All` (состав рассылок), `User.Read.All` (руководитель в карточке) | **да** |
+
+Тип учётных записей — «Accounts in any organizational directory» (и личные,
+если тот же клиент входит в Outlook.com), платформа **Web**, адрес возврата —
+`<BASE_URL>/callback`. Отдельный клиент — `EXO_CLIENT_ID` и
+`EXO_CLIENT_SECRET` в `.env`. `EXO_GRAPH=0` — не просить согласие на Graph.
+
+При входе прокси просит согласие и на права Graph. Если организация не
+разрешает сотрудникам давать согласие (AADSTS90094, 65001, 65004…), вход
+повторяется без Graph — ActiveSync работает и так, в журнале прокси —
+строка «согласие на Microsoft Graph не получено». Тогда администратор
+организации открывает в своём Entra «Enterprise applications» → Ogneliss →
+«Permissions» → «Grant admin consent», а сотрудник — «Настройки ящика →
+Войти снова».
+
+Проверка: `curl <BASE_URL>/healthz` — в `providers` есть `exchange`, в
+`config.exchange` — `"graph": true`.
+
 ---
 
 ## 3. Яндекс (Yandex Mail)
@@ -208,7 +243,7 @@ docker logs oauth-proxy | tail -2
 #   redirect_uri для консолей провайдеров: https://www.ogneliss.ru/oauth/callback
 
 curl https://www.ogneliss.ru/oauth/healthz
-# {"ok":true,"providers":["google","microsoft","yandex","mailru"]}
+# {"ok":true,"providers":["google","microsoft","exchange","yandex","mailru","yahoo"],...}
 
 # старт авторизации (должен быть 302 к провайдеру)
 curl -i "https://www.ogneliss.ru/oauth/oauth/yandex/login?redirect=com.ogneliss.mail://oauth"

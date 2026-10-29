@@ -66,7 +66,8 @@ Microsoft отключает EWS в Exchange Online (с 1 октября 2026 �
 автоответ ящика Exchange Online идут по ActiveSync и от этого не зависят;
 адресная книга, подсказки MailTips, фото коллег, правила сервера, «Восстановить
 удалённые», переговорные и состав рассылок с 1.8.10 идут через Microsoft Graph
-(`lib/services/mail/graph/`), EWS — запасной путь, пока он открыт.
+(с 1.8.11 — в движке: `packages/mail_engine`, `GraphEngine`; токен Graph —
+`lib/services/mail/oauth/graph_tokens.dart`), EWS — запасной путь, пока он открыт.
 
 «API permissions» регистрации (все — Delegated):
 
@@ -88,7 +89,7 @@ Microsoft отключает EWS в Exchange Online (с 1 октября 2026 �
 не использует — их можно не добавлять.
 
 При входе в Exchange Online приложение просит согласие на права без
-согласия администратора (`DirectOAuth.graphConsentScopes`). Если организация
+согласия администратора (`GraphEngine.consentScopes`). Если организация
 не разрешает сотрудникам давать согласие, вход повторяется без прав Graph
 (ActiveSync работает и так), а в настройках ящика пункт «Microsoft Graph»
 показывает «Нет согласия». Тогда администратор организации открывает

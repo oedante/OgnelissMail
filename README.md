@@ -34,7 +34,7 @@ Android testing on Google Play: https://play.google.com/apps/testing/com.ognelis
 | Claim | Where to look |
 |---|---|
 | No ads, analytics or tracking | `pubspec.yaml` and `android/app/build.gradle.kts` — the complete dependency list |
-| Mail goes straight to your server | `packages/mail_engine` — Exchange ActiveSync, EWS, IMAP/SMTP; `lib/services/mail/graph` — Microsoft Graph for Exchange Online; `lib/core/network` — HTTP clients and certificate checks |
+| Mail goes straight to your server | `packages/mail_engine` — Exchange ActiveSync, EWS, Microsoft Graph (Exchange Online), IMAP/SMTP; `lib/core/network` — HTTP clients and certificate checks |
 | Encrypted local storage | `lib/data/database/app_database.dart` — SQLite3 Multiple Ciphers; the key is kept in the OS secure storage |
 | What the author's servers do | `server/oauth-proxy` (OAuth code exchange, tokens kept in memory for at most 2 minutes) and `server/push-relay` (empty "check mail" signals for iPhone); [privacy policy, section 6](https://ogneliss.ru/mail/privacy#oauth) |
 | Release files | GitHub Actions builds them from a tagged commit with a public log; each file has a signed build provenance attestation: `gh attestation verify <file> --repo oedante/OgnelissMail`, checksums in `SHA256SUMS.txt` |

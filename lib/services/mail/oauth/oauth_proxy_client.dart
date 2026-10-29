@@ -72,9 +72,12 @@ class OAuthProxyClient {
   /// входа Google.
   static ProxyRefreshFailure describeFailure(int status, String body) {
     var err = '';
+    var aad = '';
     try {
       final m = jsonDecode(body);
       if (m is Map && m['error'] is String) err = m['error'] as String;
+      // Код Microsoft (сервер входа 1.8.11): AADSTS65001 — нет согласия.
+      if (m is Map && m['aadsts'] is String) aad = m['aadsts'] as String;
     } catch (_) {}
     if (err.length > 120) err = err.substring(0, 120);
     final e = err.toLowerCase();
@@ -91,8 +94,8 @@ class OAuthProxyClient {
           'прокси не может прочитать сохранённый вход (сменился ключ шифрования на сервере) — нужен повторный вход');
     }
     if (e.contains('invalid_grant')) {
-      return const ProxyRefreshFailure(ProxyFailureKind.signIn,
-          'вход отозван или истёк (invalid_grant) — нужен повторный вход');
+      return ProxyRefreshFailure(ProxyFailureKind.signIn,
+          'вход отозван или истёк (invalid_grant${aad.isEmpty ? '' : ', $aad'}) — нужен повторный вход');
     }
     if (status >= 500 || status == 0) {
       return ProxyRefreshFailure(ProxyFailureKind.temporary, 'сбой прокси ($status${err.isEmpty ? '' : ': $err'})');
@@ -150,8 +153,10 @@ class OAuthProxyClient {
   /// Возвращает новый access, срок и (при ротации) новый rt-blob. При отказе
   /// бросает [OAuthRefreshFailure] с причиной (раньше — null, и причина
   /// терялась: «HTTP 401» не отличал отозванный вход от неверного ключа).
+  /// [resource] 'graph' — токен Microsoft Graph тем же входом Exchange Online
+  /// (1.8.11; сервер входа 1.8.11+).
   Future<({String accessToken, DateTime expiresAt, String rt})> refreshWithBlob(
-      String rt, String provider) async {
+      String rt, String provider, {String? resource}) async {
     if (!isEnabled || rt.isEmpty) {
       throw const OAuthRefreshFailure('нет сохранённого входа', needsSignIn: true);
     }
@@ -160,7 +165,7 @@ class OAuthProxyClient {
       resp = await http.post(
         Uri.parse('$_base/token'),
         headers: {'x-api-key': _apiKey, 'Content-Type': 'application/json'},
-        body: jsonEncode({'rt': rt, 'provider': provider}),
+        body: jsonEncode({'rt': rt, 'provider': provider, if (resource != null) 'resource': resource}),
       ).timeout(const Duration(seconds: 20));
     } catch (e) {
       AppLogger.warning('OAuth proxy refreshWithBlob: $e');
@@ -168,13 +173,18 @@ class OAuthProxyClient {
     }
     if (resp.statusCode != 200) {
       final why = describeFailure(resp.statusCode, resp.body);
-      lastFailure = why;
-      AppLogger.warning('OAuth proxy /token (blob) HTTP ${resp.statusCode}: ${why.text}');
+      // Отказ в токене Graph — не отказ входа ящика.
+      if (resource == null) lastFailure = why;
+      AppLogger.warning('OAuth proxy /token (blob${resource == null ? '' : ', $resource'}) HTTP ${resp.statusCode}: ${why.text}');
       throw OAuthRefreshFailure(why.text,
           needsSignIn: why.needsSignIn, temporary: why.kind == ProxyFailureKind.temporary);
     }
-    lastFailure = null;
+    if (resource == null) lastFailure = null;
     final m = jsonDecode(resp.body) as Map<String, dynamic>;
+    // Прежний сервер входа resource не знает и выдал бы токен ActiveSync.
+    if (resource != null && m['resource'] != resource) {
+      throw OAuthRefreshFailure('сервер входа не выдаёт токен $resource — обновите его до 1.8.11');
+    }
     final at = m['access_token'] as String?;
     if (at == null || at.isEmpty) {
       throw const OAuthRefreshFailure('прокси не вернул access_token', temporary: true);

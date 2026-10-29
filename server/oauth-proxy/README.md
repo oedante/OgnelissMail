@@ -22,7 +22,7 @@ Stateless-посредник OAuth: держит `client_secret` **на серв
 | `server.js`, `package.json`, `package-lock.json`, `Dockerfile`, `docker-compose.oauth.yml` | Исходники прокси; установщик берёт их из этой папки — копируйте на сервер папку целиком. |
 | `.env.example` | Шаблон конфигурации. Реальный `.env` — только на сервере, в git не коммитится. |
 | `../../docs/guides/OAUTH_UPDATE_2026-10.md` | **Обновление 10.2026**: календарь и контакты Gmail/Яндекса, Mail.ru — пошагово. |
-| `PROVIDERS.md` | Что заполнять в консолях Google / Яндекс / Microsoft / Mail.ru. |
+| `PROVIDERS.md` | Что заполнять в консолях Google / Яндекс / Microsoft (и Exchange Online с Microsoft Graph) / Mail.ru. |
 | `docs/guides/OAUTH_UPDATE_2026-10.md` | **Обновление октября 2026:** права календаря и контактов (Google, Яндекс), пароль приложения Mail.ru, порядок шагов. |
 | `OGNELISS-OAUTH.md` | Два режима размещения (путь на домене / поддомен) + настройка NPM. |
 | `MAIL-TLS-OGNELISS.md` | TLS для `mail.ogneliss.ru`. |
@@ -60,7 +60,7 @@ sudo bash install-oauth-proxy.sh key
 | GET | `/oauth/:provider/login?redirect=` | старт авторизации (302 к провайдеру) |
 | GET | `/callback` | приём кода, обмен на токены, возврат в приложение |
 | POST | `/exchange` | одноразовый код `oc` + `cv` → токены (PKCE), нужен API-ключ |
-| GET/POST | `/token` | выдать действующий access (авто-refresh), нужен API-ключ |
+| GET/POST | `/token` | выдать действующий access (авто-refresh), нужен API-ключ; `POST {rt, provider:"exchange", resource:"graph"}` — токен Microsoft Graph тем же входом Exchange Online (1.8.11) |
 | POST | `/refresh`, `/revoke` | обновление / отзыв |
 
 ## Поток в приложении

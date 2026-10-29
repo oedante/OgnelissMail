@@ -1,11 +1,12 @@
 # mail_engine — универсальный движок синхронизации почты
 
 Чистый Dart-пакет (без Flutter). Универсален — **не привязан к конкретному серверу/домену/организации**.
-Поддерживает: Exchange (EAS/EWS с автоопределением через Autodiscover), IMAP/SMTP, OAuth2, CalDAV, CardDAV.
+Поддерживает: Exchange (EAS/EWS с автоопределением через Autodiscover), Microsoft Graph (Exchange Online),
+IMAP/SMTP, OAuth2, CalDAV, CardDAV.
 Один движок для теста и для приложения — без дублирования методов под каждый протокол.
 
 ## Оси архитектуры
-- **Транспорт**: EAS / EWS / IMAP-SMTP / CalDAV / CardDAV.
+- **Транспорт**: EAS / EWS / Microsoft Graph / IMAP-SMTP / CalDAV / CardDAV.
 - **Аутентификация** (ортогонально транспорту): Basic / OAuth2 / AppPassword.
 - **Возможности** (Capabilities): mail/calendar/contacts/tasks/notes/push/policies.
 - **Политики** (SecurityPolicy): из EAS Provision; иначе null.
@@ -27,7 +28,7 @@ TLS здесь — Dart, не iOS: 403 «If you are not a bot» с профил�
 - Gmail IMAP `imap.gmail.com:993`, SMTP `smtp.gmail.com:465` (нужен OAuth-token или пароль приложения).
 - Exchange — указать сервер вида `mail.company.ru` или оставить пусто для Autodiscover.
 
-## Статус реализации (23.10.2026, Ogneliss Mail 1.7.2)
+## Статус реализации (29.10.2026, Ogneliss Mail 1.8.11)
 - **EAS** (`EasEngine`) — рабочий движок приложения: OPTIONS и выбор версии
   (16.1 → 16.0 → 14.1 → 14.0; сервер только с 12.x — понятный отказ),
   Provision (политики, удалённое стирание, «политики нет» — Status 2),
@@ -39,6 +40,16 @@ TLS здесь — Dart, не iOS: 403 «If you are not a bot» с профил�
 - **Autodiscover** — POX (Outlook и MobileSync в своих пространствах имён),
   redirectAddr, redirectUrl, 302 на POST, метод HTTP-перенаправления;
   перенаправления — только https и только в домене почты.
+- **Microsoft Graph** (`GraphEngine`, 1.8.11) — у ящиков Exchange Online то,
+  что шло по EWS (Microsoft отключает EWS в Exchange Online с октября 2026,
+  окончательно — в апреле 2027): своя карточка и карточки коллег (People,
+  каталог, руководитель), фото, MailTips, переговорные (`/places`), состав
+  рассылок, категории Outlook, правила «Входящих» (список, вкл./выкл.,
+  создание, удаление), папки почты и «Восстановить удалённые». Токен движок
+  просит у приложения (`GraphTokenSource`, после 401 — с `force`), как
+  `EasEngine` просит токен ActiveSync. Права — `GraphEngine.consentScopes`
+  (при входе) и `GraphEngine.tokenScopes` (токен). Проверка из консоли —
+  `bin/graph_check.dart` (только чтение, токен — `OGN_GRAPH_TOKEN`).
 - **EWS** (`EwsEngine`) — только пробное подключение при входе (GetFolder);
   рабочий стек EWS — в приложении (`lib/services/mail/ews`, NTLMv2 с
   привязкой к каналу, OAuth).

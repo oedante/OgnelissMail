@@ -35,7 +35,7 @@ IMAP/SMTP, календари и контакты по CalDAV/CardDAV. Android, 
 | Утверждение | Где смотреть |
 |---|---|
 | Нет рекламы, аналитики и слежки | `pubspec.yaml` и `android/app/build.gradle.kts` — полный список зависимостей |
-| Почта идёт прямо на ваш сервер | `packages/mail_engine` — Exchange ActiveSync, EWS, IMAP/SMTP; `lib/services/mail/graph` — Microsoft Graph для Exchange Online; `lib/core/network` — HTTP-клиенты и проверка сертификатов |
+| Почта идёт прямо на ваш сервер | `packages/mail_engine` — Exchange ActiveSync, EWS, Microsoft Graph (Exchange Online), IMAP/SMTP; `lib/core/network` — HTTP-клиенты и проверка сертификатов |
 | Зашифрованное хранение на устройстве | `lib/data/database/app_database.dart` — SQLite3 Multiple Ciphers; ключ хранится в защищённом хранилище ОС |
 | Что делают серверы автора | `server/oauth-proxy` (обмен кода OAuth, токены в памяти не дольше 2 минут) и `server/push-relay` (пустые сигналы «проверь почту» для iPhone); [политика конфиденциальности, раздел 6](https://ogneliss.ru/mail/privacy#oauth) |
 | Файлы выпусков | GitHub Actions собирает их из коммита с меткой, журнал сборки открыт; у каждого файла — подписанное подтверждение происхождения: `gh attestation verify <файл> --repo oedante/OgnelissMail`, контрольные суммы — в `SHA256SUMS.txt` |

@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">Bu yazışmanın bildirimleri açık</string>
     <string name="faq_notify_6_q">Tek bir yazışmanın bildirimlerini nasıl sessize alırım?</string>
     <string name="faq_notify_6_a">Yazışmayı açın → ⋮ → «Bildirimleri sessize al» (veya listedeki satırına uzun basın → «Diğer»). Yeni iletileri bildirimsiz gelir ve satırda üstü çizili zil görünür. Diğer postalar eskisi gibi bildirim gönderir. Yeniden açmak için aynı seçeneği kullanın veya yazışmadaki zile dokunun.</string>
+    <string name="mailOpenInBrowser">Tarayıcıda aç</string>
+    <string name="mailOpenInBrowserFailed">İleti tarayıcıda açılamadı</string>
 </resources>

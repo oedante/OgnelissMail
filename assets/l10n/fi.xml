@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">Tämän keskustelun ilmoitukset ovat käytössä</string>
     <string name="faq_notify_6_q">Miten mykistän yhden keskustelun ilmoitukset?</string>
     <string name="faq_notify_6_a">Avaa keskustelu → ⋮ → ”Mykistä ilmoitukset” (tai paina rivin kohdalla luettelossa pitkään → ”Lisää”). Sen uudet viestit saapuvat ilman ilmoitusta, ja rivillä näkyy yliviivattu kello. Muu posti ilmoittaa kuten ennenkin. Ota takaisin käyttöön samasta kohdasta tai napauttamalla kelloa keskustelussa.</string>
+    <string name="mailOpenInBrowser">Avaa selaimessa</string>
+    <string name="mailOpenInBrowserFailed">Viestiä ei voitu avata selaimessa</string>
 </resources>

@@ -3628,4 +3628,6 @@
     <string name="convUnmutedNotice">تم تشغيل إشعارات هذه المحادثة</string>
     <string name="faq_notify_6_q">كيف أكتم إشعارات محادثة واحدة؟</string>
     <string name="faq_notify_6_a">افتح المحادثة ← ⋮ ← «كتم الإشعارات» (أو اضغط مطولًا على سطرها في القائمة ← «المزيد»). تصل رسائلها الجديدة دون إشعارات، ويظهر بجوار السطر جرس مشطوب. بقية البريد يرسل الإشعارات كالمعتاد. لإعادة التشغيل استخدم الخيار نفسه أو اضغط الجرس في المحادثة.</string>
+    <string name="mailOpenInBrowser">فتح في المتصفح</string>
+    <string name="mailOpenInBrowserFailed">تعذر فتح الرسالة في المتصفح</string>
 </resources>

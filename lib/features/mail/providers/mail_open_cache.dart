@@ -55,10 +55,13 @@ class PreparedMailBody {
   final bool remoteImages;
 
   /// То же, что [firstDoc], для показа без WebView (простое письмо, 1.5.9);
-  /// null — письмо сложное, показывается в WebView.
+  /// null — письмо сложное, показывается в WebView. На компьютере (окна
+  /// браузера в письме нет) — и у сложного письма, упрощённо
+  /// ([buildNativeMailForced], 1.8.14).
   final NativeMail? native;
 
-  /// Почему письмо показывается в WebView (1.5.10) — в замер открытия.
+  /// Почему письмо сложное (1.5.10) — в замер открытия; на компьютере ещё и
+  /// повод показать «Открыть в браузере».
   final String? nativeWhy;
 
   const PreparedMailBody({
@@ -235,19 +238,22 @@ class MailOpenCache {
 
   /// Статическая обёртка: замыкание для изолята не должно захватывать
   /// объект с Ref.
-  static Future<PreparedMailBody> _run(String raw, bool keepStyles, TrackerBlockOptions o, bool remote) async {
+  static Future<PreparedMailBody> _run(String raw, bool webView, TrackerBlockOptions o, bool remote) async {
     // Рабочий изолят (1.5.9): без запуска изолята на каждое письмо — порог
     // ниже (было 4 КБ).
-    if (kIsWeb || raw.length < 2048) return _prepareSync(raw, keepStyles, o, remote);
+    if (kIsWeb || raw.length < 2048) return _prepareSync(raw, webView, o, remote);
     try {
-      return await WorkIsolate.interactive.run(() => _prepareSync(raw, keepStyles, o, remote));
+      return await WorkIsolate.interactive.run(() => _prepareSync(raw, webView, o, remote));
     } on UnsupportedError {
-      return _prepareSync(raw, keepStyles, o, remote);
+      return _prepareSync(raw, webView, o, remote);
     }
   }
 
-  static PreparedMailBody _prepareSync(String raw, bool keepStyles, TrackerBlockOptions o, bool remote) {
-    final secured = MailBodyProcessor.processSync(raw, keepStyles: keepStyles, options: o);
+  /// [webView] — письмо показывает окно браузера (Android, iOS). Стили
+  /// письма сохраняются везде (1.8.14): на компьютере по ним решается, простое
+  /// ли письмо, и собирается документ для «Открыть в браузере».
+  static PreparedMailBody _prepareSync(String raw, bool webView, TrackerBlockOptions o, bool remote) {
+    final secured = MailBodyProcessor.processSync(raw, keepStyles: true, options: o);
     QuoteSplit split;
     try {
       split = splitQuotedHtml(secured.html);
@@ -259,14 +265,17 @@ class MailOpenCache {
     // Простое письмо — и для показа без WebView (тот же проход изолята).
     NativeMail? native;
     String? why;
-    if (keepStyles) {
+    try {
+      final r = buildNativeMailWhy(first, remoteImages: remote);
+      native = r.mail;
+      why = r.why;
+    } catch (e) {
+      why = 'ошибка разбора';
+    }
+    if (!webView && native == null) {
       try {
-        final r = buildNativeMailWhy(first, remoteImages: remote);
-        native = r.mail;
-        why = r.why;
-      } catch (e) {
-        why = 'ошибка разбора';
-      }
+        native = remote ? buildNativeMailForcedRemote(first) : buildNativeMailForced(first);
+      } catch (_) {}
     }
     return PreparedMailBody(
         secured: secured, split: split, firstDoc: doc, remoteImages: remote, native: native, nativeWhy: why);

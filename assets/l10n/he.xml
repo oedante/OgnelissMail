@@ -3571,4 +3571,6 @@
     <string name="convUnmutedNotice">ההתראות לשיחה זו פועלות</string>
     <string name="faq_notify_6_q">איך משתיקים התראות של שיחה אחת?</string>
     <string name="faq_notify_6_a">פתחו את השיחה ← ⋮ ← «השתקת התראות» (או לחיצה ארוכה על השורה ברשימה ← «עוד»). הודעות חדשות בה מגיעות ללא התראה, ולצד השורה מופיע פעמון מחוק. שאר הדואר מתריע כרגיל. להפעלה מחדש — אותה אפשרות או הקשה על הפעמון בשיחה.</string>
+    <string name="mailOpenInBrowser">פתיחה בדפדפן</string>
+    <string name="mailOpenInBrowserFailed">לא ניתן לפתוח את ההודעה בדפדפן</string>
 </resources>

@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">Varsler for denne samtalen er på</string>
     <string name="faq_notify_6_q">Hvordan demper jeg varsler for én samtale?</string>
     <string name="faq_notify_6_a">Åpne samtalen → ⋮ → «Demp varsler» (eller hold inne raden i listen → «Mer»). Nye meldinger i den kommer uten varsel, og raden viser en overstreket bjelle. Resten av posten varsler som før. Slå på igjen: samme punkt eller trykk på bjellen i samtalen.</string>
+    <string name="mailOpenInBrowser">Åpne i nettleser</string>
+    <string name="mailOpenInBrowserFailed">Kunne ikke åpne meldingen i nettleseren</string>
 </resources>

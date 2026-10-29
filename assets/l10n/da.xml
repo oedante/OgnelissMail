@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">Notifikationer for denne samtale er slået til</string>
     <string name="faq_notify_6_q">Hvordan slår jeg notifikationer fra for én samtale?</string>
     <string name="faq_notify_6_a">Åbn samtalen → ⋮ → “Slå notifikationer fra” (eller hold på rækken i listen → “Mere”). Nye beskeder i den kommer uden notifikation, og rækken viser en overstreget klokke. Resten af posten giver besked som før. Slå til igen: samme punkt eller tryk på klokken i samtalen.</string>
+    <string name="mailOpenInBrowser">Åbn i browser</string>
+    <string name="mailOpenInBrowserFailed">Beskeden kunne ikke åbnes i browseren</string>
 </resources>

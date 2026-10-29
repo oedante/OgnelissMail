@@ -3533,4 +3533,6 @@
     <string name="convUnmutedNotice">이 대화의 알림이 켜졌습니다</string>
     <string name="faq_notify_6_q">한 대화의 알림만 끄려면 어떻게 하나요?</string>
     <string name="faq_notify_6_a">대화를 열고 → ⋮ → «알림 끄기»(또는 목록에서 행을 길게 누름 → «더보기»). 이 대화의 새 메일은 알림 없이 도착하고 행에 사선이 그어진 종이 표시됩니다. 나머지 메일은 그대로 알림을 보냅니다. 다시 켜려면 같은 항목을 선택하거나 대화에서 종을 누르세요.</string>
+    <string name="mailOpenInBrowser">브라우저에서 열기</string>
+    <string name="mailOpenInBrowserFailed">브라우저에서 메시지를 열 수 없습니다</string>
 </resources>

@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">A beszélgetés értesítései bekapcsolva</string>
     <string name="faq_notify_6_q">Hogyan némíthatom egyetlen beszélgetés értesítéseit?</string>
     <string name="faq_notify_6_a">Nyissa meg a beszélgetést → ⋮ → „Értesítések némítása” (vagy tartsa nyomva a sorát a listában → „Továbbiak”). Az új üzenetei értesítés nélkül érkeznek, a sorban áthúzott csengő látható. A többi levél ugyanúgy értesít. Visszakapcsolás ugyanott, vagy a csengőre koppintva a beszélgetésben.</string>
+    <string name="mailOpenInBrowser">Megnyitás böngészőben</string>
+    <string name="mailOpenInBrowserFailed">Az üzenetet nem sikerült megnyitni a böngészőben</string>
 </resources>

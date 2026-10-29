@@ -4,6 +4,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/core/security/html_sanitizer.dart';
 import 'package:ogneliss/features/mail/widgets/mail_html_view.dart';
+import 'package:ogneliss/features/mail/widgets/mail_native_body.dart';
 import 'package:ogneliss/services/security/tracker_blocker.dart';
 
 void main() {
@@ -122,4 +123,41 @@ void main() {
       expect(d.html, isNot(contains('\ntable{border-collapse:collapse;}')));
     });
   });
+
+  group('компьютер: сложная вёрстка виджетами', () {
+    test('скрытое стилями письма — вне @media; голые теги и псевдоклассы — нет', () {
+      expect(
+          hiddenSelectors('<!-- .preheader{display:none!important} @media (max-width:600px){.mob{display:block}} '
+              '.mob, td.only-mobile {display: none; max-height:0} a:hover{display:none} div{display:none} '
+              '@font-face{font-family:X} .x{color:red} -->'),
+          ['.preheader', '.mob', 'td.only-mobile']);
+    });
+
+    test('рассылка таблицами — блоки без скрытого текста', () {
+      const html = '<style>.mob{display:none} @media (max-width:600px){.mob{display:block!important}}</style>'
+          '<div style="max-height:0;overflow:hidden;font-size:1px">Прехедер</div>'
+          '<table width="600"><tr><td><table><tr><td><table><tr>'
+          '<td style="background-image:url(https://x.ru/a.png)">Чёрная пятница</td>'
+          '<td class="mob">Только телефон</td></tr></table></td></tr></table></td></tr></table>'
+          '<p style="opacity:0">Невидимое</p><p>Отписаться</p>';
+      expect(buildNativeMailWhy(html).mail, isNull); // для телефона — сложное
+      final m = buildNativeMailDesktop(html);
+      expect(m, isNotNull);
+      final text = _text(m!.blocks);
+      expect(text, contains('Чёрная пятница'));
+      expect(text, contains('Отписаться'));
+      expect(text, isNot(contains('Прехедер')));
+      expect(text, isNot(contains('Только телефон')));
+      expect(text, isNot(contains('Невидимое')));
+    });
+  });
 }
+
+String _text(List<NBlock> blocks) => [
+      for (final b in blocks) ...[
+        for (final s in b.spans) s.text,
+        if (b.table != null)
+          for (final r in b.table!)
+            for (final c in r) _text(c.blocks),
+      ],
+    ].join(' ');

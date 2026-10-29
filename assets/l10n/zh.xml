@@ -3533,4 +3533,6 @@
     <string name="convUnmutedNotice">已开启此会话的通知</string>
     <string name="faq_notify_6_q">如何关闭单个会话的通知？</string>
     <string name="faq_notify_6_a">打开会话 → ⋮ →「关闭通知」（或在列表中长按该行 →「更多」）。此会话的新邮件将静默送达，行上显示带斜线的铃铛。其他邮件照常通知。要重新开启，可使用同一选项或点按会话中的铃铛。</string>
+    <string name="mailOpenInBrowser">在浏览器中打开</string>
+    <string name="mailOpenInBrowserFailed">无法在浏览器中打开邮件</string>
 </resources>

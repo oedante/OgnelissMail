@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">Notifications de cette conversation activées</string>
     <string name="faq_notify_6_q">Comment couper les notifications d’une seule conversation ?</string>
     <string name="faq_notify_6_a">Ouvrez la conversation → ⋮ → « Désactiver les notifications » (ou appui long sur sa ligne → « Plus »). Ses nouveaux messages arrivent sans notification, la ligne affiche une cloche barrée. Le reste du courrier notifie comme avant. Pour réactiver : même option ou touchez la cloche dans la conversation.</string>
+    <string name="mailOpenInBrowser">Ouvrir dans le navigateur</string>
+    <string name="mailOpenInBrowserFailed">Impossible d\'ouvrir le message dans le navigateur</string>
 </resources>

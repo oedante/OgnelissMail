@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">Aviseringar för konversationen är på</string>
     <string name="faq_notify_6_q">Hur stänger jag av aviseringar för en konversation?</string>
     <string name="faq_notify_6_a">Öppna konversationen → ⋮ → ”Stäng av aviseringar” (eller håll ned raden i listan → ”Mer”). Nya meddelanden i den kommer utan avisering, och raden visar en överstruken klocka. Övrig post aviserar som förut. Slå på igen: samma val eller tryck på klockan i konversationen.</string>
+    <string name="mailOpenInBrowser">Öppna i webbläsaren</string>
+    <string name="mailOpenInBrowserFailed">Det gick inte att öppna meddelandet i webbläsaren</string>
 </resources>

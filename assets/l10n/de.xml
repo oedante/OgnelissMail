@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">Mitteilungen für diese Unterhaltung sind aktiviert</string>
     <string name="faq_notify_6_q">Wie schalte ich Mitteilungen für eine einzelne Unterhaltung stumm?</string>
     <string name="faq_notify_6_a">Unterhaltung öffnen → ⋮ → „Stummschalten“ (oder die Zeile in der Liste gedrückt halten → „Mehr“). Neue Nachrichten darin kommen ohne Mitteilung, die Zeile zeigt eine durchgestrichene Glocke. Die übrige Post meldet sich wie bisher. Wieder einschalten: derselbe Punkt oder die Glocke in der Unterhaltung.</string>
+    <string name="mailOpenInBrowser">Im Browser öffnen</string>
+    <string name="mailOpenInBrowserFailed">Die E-Mail konnte nicht im Browser geöffnet werden</string>
 </resources>

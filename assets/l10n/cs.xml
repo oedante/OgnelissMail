@@ -3571,4 +3571,6 @@
     <string name="convUnmutedNotice">Oznámení této konverzace jsou zapnutá</string>
     <string name="faq_notify_6_q">Jak ztlumit oznámení jedné konverzace?</string>
     <string name="faq_notify_6_a">Otevřete konverzaci → ⋮ → „Ztlumit oznámení“ (nebo podržte její řádek v seznamu → „Další“). Nové zprávy v ní přicházejí bez oznámení a u řádku je přeškrtnutý zvonek. Ostatní pošta upozorňuje jako dřív. Znovu zapnout: stejná položka nebo zvonek v konverzaci.</string>
+    <string name="mailOpenInBrowser">Otevřít v prohlížeči</string>
+    <string name="mailOpenInBrowserFailed">Zprávu se nepodařilo otevřít v prohlížeči</string>
 </resources>

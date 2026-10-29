@@ -3533,4 +3533,6 @@
     <string name="convUnmutedNotice">Đã bật thông báo cho cuộc trò chuyện này</string>
     <string name="faq_notify_6_q">Làm sao tắt thông báo của một cuộc trò chuyện?</string>
     <string name="faq_notify_6_a">Mở cuộc trò chuyện → ⋮ → «Tắt thông báo» (hoặc nhấn giữ dòng của nó trong danh sách → «Thêm»). Thư mới trong đó đến mà không có thông báo, dòng hiển thị chuông gạch chéo. Thư khác vẫn thông báo như trước. Để bật lại, dùng cùng mục đó hoặc chạm vào chuông trong cuộc trò chuyện.</string>
+    <string name="mailOpenInBrowser">Mở trong trình duyệt</string>
+    <string name="mailOpenInBrowserFailed">Không thể mở thư trong trình duyệt</string>
 </resources>

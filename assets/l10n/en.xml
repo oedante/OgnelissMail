@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">Notifications for this conversation are on</string>
     <string name="faq_notify_6_q">How do I mute notifications for one conversation?</string>
     <string name="faq_notify_6_a">Open the conversation → ⋮ → Mute notifications (or long-press its row in the list → More). New messages in it arrive without notifications, and the row shows a crossed-out bell. The rest of your mail notifies as before. To turn them back on, use the same item or tap the bell in the conversation.</string>
+    <string name="mailOpenInBrowser">Open in browser</string>
+    <string name="mailOpenInBrowserFailed">Couldn\'t open the message in the browser</string>
 </resources>

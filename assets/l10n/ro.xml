@@ -3571,4 +3571,6 @@
     <string name="convUnmutedNotice">Notificările acestei conversații sunt activate</string>
     <string name="faq_notify_6_q">Cum dezactivez notificările pentru o singură conversație?</string>
     <string name="faq_notify_6_a">Deschideți conversația → ⋮ → „Dezactivează notificările” (sau apăsați lung rândul din listă → „Mai multe”). Mesajele noi din ea sosesc fără notificare, iar rândul arată un clopoțel tăiat. Restul e-mailurilor notifică la fel ca înainte. Reactivare: aceeași opțiune sau atingeți clopoțelul din conversație.</string>
+    <string name="mailOpenInBrowser">Deschide în browser</string>
+    <string name="mailOpenInBrowserFailed">Mesajul nu a putut fi deschis în browser</string>
 </resources>

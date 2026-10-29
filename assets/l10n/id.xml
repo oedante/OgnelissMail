@@ -3533,4 +3533,6 @@
     <string name="convUnmutedNotice">Notifikasi percakapan ini aktif</string>
     <string name="faq_notify_6_q">Bagaimana cara membisukan notifikasi satu percakapan?</string>
     <string name="faq_notify_6_a">Buka percakapan → ⋮ → «Bisukan notifikasi» (atau tekan lama barisnya di daftar → «Lainnya»). Pesan barunya masuk tanpa notifikasi, dan barisnya menampilkan lonceng dicoret. Email lain tetap memberi notifikasi seperti biasa. Untuk menyalakan lagi, gunakan opsi yang sama atau ketuk lonceng di percakapan.</string>
+    <string name="mailOpenInBrowser">Buka di browser</string>
+    <string name="mailOpenInBrowserFailed">Tidak dapat membuka pesan di browser</string>
 </resources>

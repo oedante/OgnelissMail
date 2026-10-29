@@ -3571,4 +3571,6 @@
     <string name="convUnmutedNotice">Upozornenia tejto konverzácie sú zapnuté</string>
     <string name="faq_notify_6_q">Ako stlmiť upozornenia jednej konverzácie?</string>
     <string name="faq_notify_6_a">Otvorte konverzáciu → ⋮ → „Stlmiť upozornenia“ (alebo podržte jej riadok v zozname → „Ďalšie“). Nové správy v nej prichádzajú bez upozornenia a pri riadku je preškrtnutý zvonček. Ostatná pošta upozorňuje ako doteraz. Znova zapnúť: rovnaká položka alebo zvonček v konverzácii.</string>
+    <string name="mailOpenInBrowser">Otvoriť v prehliadači</string>
+    <string name="mailOpenInBrowserFailed">Správu sa nepodarilo otvoriť v prehliadači</string>
 </resources>

@@ -3533,4 +3533,6 @@
     <string name="convUnmutedNotice">このスレッドの通知をオンにしました</string>
     <string name="faq_notify_6_q">1つのスレッドだけ通知をミュートするには？</string>
     <string name="faq_notify_6_a">スレッドを開き → ⋮ →「通知をミュート」（または一覧の行を長押し →「その他」）。そのスレッドの新着メールは通知なしで届き、行に斜線付きのベルが表示されます。ほかのメールはこれまでどおり通知します。元に戻すには同じ項目を選ぶか、スレッド内のベルをタップします。</string>
+    <string name="mailOpenInBrowser">ブラウザで開く</string>
+    <string name="mailOpenInBrowserFailed">メッセージをブラウザで開けませんでした</string>
 </resources>

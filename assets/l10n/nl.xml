@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">Meldingen voor dit gesprek staan aan</string>
     <string name="faq_notify_6_q">Hoe demp ik meldingen voor één gesprek?</string>
     <string name="faq_notify_6_a">Open het gesprek → ⋮ → ‘Meldingen dempen’ (of houd de rij in de lijst ingedrukt → ‘Meer’). Nieuwe berichten erin komen zonder melding binnen en de rij toont een doorgestreepte bel. De rest van je mail meldt zoals voorheen. Weer aanzetten: hetzelfde item of tik op de bel in het gesprek.</string>
+    <string name="mailOpenInBrowser">Openen in browser</string>
+    <string name="mailOpenInBrowserFailed">Kan het bericht niet openen in de browser</string>
 </resources>

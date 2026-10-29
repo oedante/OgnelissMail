@@ -8,8 +8,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
@@ -18,7 +16,6 @@ import 'package:path_provider/path_provider.dart';
 import '../../../core/security/html_sanitizer.dart';
 import '../../../core/security/link_opener.dart';
 import '../../../core/security/mail_body_processor.dart';
-import '../../../core/security/security_utils.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/mail_page_color.dart';
@@ -34,6 +31,7 @@ import '../../../widgets/ui/section_band.dart';
 import '../../mail/providers/mail_open_cache.dart' show MailOpenCache;
 import '../../mail/providers/mail_providers.dart' show accountsProvider;
 import '../../mail/screens/attachment_preview_screen.dart' show PreviewItem, openAttachment;
+import '../../mail/widgets/desktop_mail_body.dart';
 import '../../mail/widgets/mail_html_view.dart';
 
 class ArchiveMessageScreen extends ConsumerStatefulWidget {
@@ -48,6 +46,9 @@ class _ArchiveMessageScreenState extends ConsumerState<ArchiveMessageScreen> {
   ArchiveMessage? _m;
   String? _html;
   MailHtmlDocument? _doc;
+
+  /// Встроенные картинки письма (cid → data URI) — для показа виджетами.
+  Map<String, String> _images = const {};
   bool _loading = true;
   bool _missing = false;
 
@@ -78,22 +79,25 @@ class _ArchiveMessageScreenState extends ConsumerState<ArchiveMessageScreen> {
       String? html;
       final rawHtml = (m.bodyHtml ?? '').trim();
       if (rawHtml.isNotEmpty) {
-        html = await MailBodyProcessor.heavy(
-            rawHtml, mailWebViewSupported ? HtmlSanitizer.sanitizeKeepingStyles : SecurityUtils.sanitizeHtml);
+        // Стили письма — и на компьютере (1.8.14): по ним показ виджетами
+        // решает, что скрыто и простое ли письмо.
+        html = await MailBodyProcessor.heavy(rawHtml, HtmlSanitizer.sanitizeKeepingStyles);
       } else if ((m.bodyText ?? '').trim().isNotEmpty) {
         html = '<pre style="white-space:pre-wrap;word-wrap:break-word;font-family:inherit;margin:0">'
             '${const HtmlEscape(HtmlEscapeMode.element).convert(m.bodyText!)}</pre>';
       }
       MailHtmlDocument? doc;
+      var images = const <String, String>{};
+      if (html != null) images = await _inlineImages(db, m, rawHtml.toLowerCase());
       if (html != null && mailWebViewSupported) {
-        doc = await MailHtmlDocument.buildAsync(html,
-            allowRemoteImages: false, inlineImages: await _inlineImages(db, m, rawHtml.toLowerCase()));
+        doc = await MailHtmlDocument.buildAsync(html, allowRemoteImages: false, inlineImages: images);
       }
       if (!mounted) return;
       setState(() {
         _m = m;
         _html = html;
         _doc = doc;
+        _images = images;
         _loading = false;
       });
     } catch (e) {
@@ -331,11 +335,13 @@ class _ArchiveMessageScreenState extends ConsumerState<ArchiveMessageScreen> {
             ),
           )
         else
+          // Компьютер (1.8.14): виджетами, как в экране письма.
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: Space.l),
-            child: Html(
-              data: html.replaceAll(RegExp(r'<style[\s\S]*?</style>', caseSensitive: false), ''),
-              extensions: const [TableHtmlExtension()],
+            child: DesktopMailBody(
+              html: html,
+              images: _images,
+              onLink: (url, text) => LinkOpener.open(context, url, linkText: text),
             ),
           ),
         if (files.isNotEmpty) ...[

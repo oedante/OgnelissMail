@@ -29,18 +29,16 @@ import '../../../core/theme/tokens.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/app_date_format.dart';
 import '../../../l10n/app_localizations.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/security/attachment_safety.dart';
 import '../../../core/security/link_opener.dart';
 import '../widgets/mail_html_view.dart';
+import '../widgets/desktop_mail_body.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../services/mail/pkpass_parser.dart';
 import '../../../services/mail/eml_reader.dart';
 import '../../../core/security/html_sanitizer.dart';
 import '../../../core/security/mail_body_processor.dart';
-import '../../../core/security/security_utils.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError;
 import '../../../widgets/ui/section_band.dart';
 import '../../../core/theme/mail_page_color.dart';
@@ -330,8 +328,9 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
     final m = await EmlReader.parseAsync(bytes);
     String? html;
     if ((m.html ?? '').trim().isNotEmpty) {
-      html = await MailBodyProcessor.heavy(
-          m.html!, mailWebViewSupported ? HtmlSanitizer.sanitizeKeepingStyles : SecurityUtils.sanitizeHtml);
+      // Стили письма — и на компьютере (1.8.14): по ним показ виджетами
+      // решает, что скрыто и простое ли письмо.
+      html = await MailBodyProcessor.heavy(m.html!, HtmlSanitizer.sanitizeKeepingStyles);
     } else if ((m.plain ?? '').trim().isNotEmpty) {
       html = '<pre style="white-space:pre-wrap;word-wrap:break-word;font-family:inherit;margin:0">'
           '${const HtmlEscape(HtmlEscapeMode.element).convert(m.plain!)}</pre>';
@@ -472,12 +471,13 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         ),
       );
     }
+    // Компьютер (1.8.14): виджетами, как в экране письма.
     return SingleChildScrollView(
       padding: const EdgeInsets.all(Space.l),
-      child: Html(
-        // flutter_html не применяет <style> и может вывести его текст.
-        data: html.replaceAll(RegExp(r'<style[\s\S]*?</style>', caseSensitive: false), ''),
-        extensions: const [TableHtmlExtension()],
+      child: DesktopMailBody(
+        html: html,
+        textScale: _fontScale,
+        onLink: (url, text) => LinkOpener.open(context, url, linkText: text),
       ),
     );
   }
@@ -769,9 +769,11 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         else
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: Space.l),
-            child: Html(
-              data: html.replaceAll(RegExp(r'<style[\s\S]*?</style>', caseSensitive: false), ''),
-              extensions: const [TableHtmlExtension()],
+            child: DesktopMailBody(
+              html: html,
+              images: m.inlineImages,
+              textScale: _fontScale,
+              onLink: (url, text) => LinkOpener.open(context, url, linkText: text),
             ),
           ),
         if (m.attachments.isNotEmpty) ...[

@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">Notifiche della conversazione attivate</string>
     <string name="faq_notify_6_q">Come silenzio le notifiche di una sola conversazione?</string>
     <string name="faq_notify_6_a">Apri la conversazione → ⋮ → «Silenzia notifiche» (o tieni premuta la riga nell’elenco → «Altro»). I nuovi messaggi arrivano senza notifica e la riga mostra una campanella barrata. Il resto della posta notifica come prima. Per riattivarle usa la stessa voce o tocca la campanella nella conversazione.</string>
+    <string name="mailOpenInBrowser">Apri nel browser</string>
+    <string name="mailOpenInBrowserFailed">Impossibile aprire il messaggio nel browser</string>
 </resources>

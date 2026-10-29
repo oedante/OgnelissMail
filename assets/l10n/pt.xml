@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">Notificações desta conversa ativadas</string>
     <string name="faq_notify_6_q">Como silenciar as notificações de uma só conversa?</string>
     <string name="faq_notify_6_a">Abra a conversa → ⋮ → «Silenciar notificações» (ou mantenha pressionada a linha na lista → «Mais»). As novas mensagens dela chegam sem notificação, e a linha mostra um sino riscado. O restante do e-mail notifica como antes. Para reativar, use a mesma opção ou toque no sino na conversa.</string>
+    <string name="mailOpenInBrowser">Abrir no navegador</string>
+    <string name="mailOpenInBrowserFailed">Não foi possível abrir a mensagem no navegador</string>
 </resources>

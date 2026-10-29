@@ -3552,4 +3552,6 @@
     <string name="convUnmutedNotice">इस बातचीत की सूचनाएँ चालू हैं</string>
     <string name="faq_notify_6_q">एक बातचीत की सूचनाएँ कैसे म्यूट करें?</string>
     <string name="faq_notify_6_a">बातचीत खोलें → ⋮ → «सूचनाएँ म्यूट करें» (या सूची में उसकी पंक्ति को देर तक दबाएँ → «और»)। इसके नए संदेश बिना सूचना के आते हैं, और पंक्ति पर कटी हुई घंटी दिखती है। बाकी मेल पहले की तरह सूचना देता है। फिर से चालू करने के लिए वही विकल्प चुनें या बातचीत में घंटी पर टैप करें।</string>
+    <string name="mailOpenInBrowser">ब्राउज़र में खोलें</string>
+    <string name="mailOpenInBrowserFailed">संदेश ब्राउज़र में नहीं खुल सका</string>
 </resources>

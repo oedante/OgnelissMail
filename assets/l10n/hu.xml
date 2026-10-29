@@ -3556,4 +3556,13 @@
     <string name="mailOpenInBrowserFailed">Az üzenetet nem sikerült megnyitni a böngészőben</string>
     <string name="archiveAll">Teljes archívum</string>
     <string name="archiveHubHelp">A menüben csak a kiválasztott postafiók archívuma látszik: mappái, eseményei, feladatai és névjegyei. Itt a teljes archívum van: minden postafiók, azok is, amelyek már nincsenek az alkalmazásban, és keresés az összes levélben.</string>
+    <string name="zipPasswordNeeded">Az archívum jelszóval védett</string>
+    <string name="zipPassword">Jelszó</string>
+    <string name="zipWrongPassword">Hibás jelszó</string>
+    <string name="zipOpen">Megnyitás</string>
+    <string name="zipSummary">Fájlok: {n} · {size}</string>
+    <string name="zipCannotRead">Az archívum nem olvasható: sérült, vagy az alkalmazás által nem ismert formátumú (7z, RAR). Nyissa meg másik alkalmazásban.</string>
+    <string name="pdfProtected">A PDF jelszóval védett. Nyissa meg másik alkalmazásban.</string>
+    <string name="faq_mail_10_q">Mely mellékletek nyílnak meg közvetlenül az alkalmazásban?</string>
+    <string name="faq_mail_10_a">A ZIP-archívumok, a jelszóval védettek is, valamint a TAR, GZ, BZ2 és XZ közvetlenül az alkalmazásban nyílnak meg: koppintson egy fájlra a megnyitásához. Az alkalmazásban nyílnak meg a PDF-ek is Androidon, a képek, a szöveg és a CSV, az .eml levelek és a .pkpass jegyek. iPhone-on és iPaden az iOS gyorsnézete mutatja a PDF-eket, képeket és Office-dokumentumokat. Minden mást megfelelő alkalmazás nyit meg, és bármely fájl elküldhető oda a felső gombbal. A 7z- és RAR-archívumok csak másik alkalmazásban nyílnak meg.</string>
 </resources>

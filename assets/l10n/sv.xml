@@ -3556,4 +3556,13 @@
     <string name="mailOpenInBrowserFailed">Det gick inte att öppna meddelandet i webbläsaren</string>
     <string name="archiveAll">Hela arkivet</string>
     <string name="archiveHubHelp">Menyn visar bara arkivet för den valda brevlådan: dess mappar, händelser, uppgifter och kontakter. Här finns hela arkivet: alla brevlådor, även de som inte längre finns i appen, och sökning i alla meddelanden.</string>
+    <string name="zipPasswordNeeded">Arkivet är lösenordsskyddat</string>
+    <string name="zipPassword">Lösenord</string>
+    <string name="zipWrongPassword">Fel lösenord</string>
+    <string name="zipOpen">Öppna</string>
+    <string name="zipSummary">Filer: {n} · {size}</string>
+    <string name="zipCannotRead">Arkivet kan inte läsas: det är skadat eller i ett format som appen inte känner till (7z, RAR). Öppna det i en annan app.</string>
+    <string name="pdfProtected">PDF:en är lösenordsskyddad. Öppna den i en annan app.</string>
+    <string name="faq_mail_10_q">Vilka bilagor öppnas direkt i appen?</string>
+    <string name="faq_mail_10_a">ZIP-arkiv, även lösenordsskyddade, samt TAR, GZ, BZ2 och XZ öppnas direkt i appen: tryck på en fil i arkivet för att öppna den. PDF:er på Android, bilder, text och CSV, .eml-meddelanden och .pkpass-biljetter öppnas också i appen. På iPhone och iPad visar iOS Snabbtitt PDF:er, bilder och Office-dokument. Allt annat öppnas i en lämplig app, och alla filer kan skickas dit med knappen överst. 7z- och RAR-arkiv öppnas bara i en annan app.</string>
 </resources>

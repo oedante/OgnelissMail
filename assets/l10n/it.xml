@@ -3556,4 +3556,13 @@
     <string name="mailOpenInBrowserFailed">Impossibile aprire il messaggio nel browser</string>
     <string name="archiveAll">Tutto l\'archivio</string>
     <string name="archiveHubHelp">Il menu mostra solo l\'archivio della casella selezionata: cartelle, eventi, attività e contatti. Qui c\'è tutto l\'archivio: tutte le caselle, anche quelle non più presenti nell\'app, e la ricerca in tutti i messaggi.</string>
+    <string name="zipPasswordNeeded">L\'archivio è protetto da password</string>
+    <string name="zipPassword">Password</string>
+    <string name="zipWrongPassword">Password errata</string>
+    <string name="zipOpen">Apri</string>
+    <string name="zipSummary">File: {n} · {size}</string>
+    <string name="zipCannotRead">Impossibile leggere l\'archivio: è danneggiato o in un formato che l\'app non conosce (7z, RAR). Aprilo in un\'altra app.</string>
+    <string name="pdfProtected">Il PDF è protetto da password. Aprilo in un\'altra app.</string>
+    <string name="faq_mail_10_q">Quali allegati si aprono direttamente nell\'app?</string>
+    <string name="faq_mail_10_a">Gli archivi ZIP, anche protetti da password, e anche TAR, GZ, BZ2 e XZ si aprono direttamente nell\'app: tocca un file all\'interno per aprirlo. Nell\'app si aprono anche i PDF su Android, le immagini, il testo e i CSV, i messaggi .eml e i biglietti .pkpass. Su iPhone e iPad, Quick Look di iOS mostra PDF, immagini e documenti Office. Il resto si apre in un\'app adatta, e qualsiasi file può esserle inviato con il pulsante in alto. Gli archivi 7z e RAR si aprono solo in un\'altra app.</string>
 </resources>

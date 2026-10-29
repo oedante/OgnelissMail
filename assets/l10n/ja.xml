@@ -3537,4 +3537,13 @@
     <string name="mailOpenInBrowserFailed">メッセージをブラウザで開けませんでした</string>
     <string name="archiveAll">アーカイブ全体</string>
     <string name="archiveHubHelp">メニューには選択中のメールボックスのアーカイブだけが表示されます（フォルダ、予定、タスク、連絡先）。この画面にはアーカイブ全体が表示されます。アプリにないメールボックスも含むすべてのメールボックスと、全メッセージの検索です。</string>
+    <string name="zipPasswordNeeded">アーカイブはパスワードで保護されています</string>
+    <string name="zipPassword">パスワード</string>
+    <string name="zipWrongPassword">パスワードが違います</string>
+    <string name="zipOpen">開く</string>
+    <string name="zipSummary">ファイル: {n} · {size}</string>
+    <string name="zipCannotRead">アーカイブを読み込めません。破損しているか、アプリが対応していない形式です（7z、RAR）。別のアプリで開いてください。</string>
+    <string name="pdfProtected">このPDFはパスワードで保護されています。別のアプリで開いてください。</string>
+    <string name="faq_mail_10_q">アプリ内で直接開ける添付ファイルは？</string>
+    <string name="faq_mail_10_a">パスワード付きを含む ZIP アーカイブと、TAR、GZ、BZ2、XZ はアプリ内で直接開けます。中のファイルをタップすると開きます。Android の PDF、画像、テキストと CSV、.eml メール、.pkpass チケットもアプリ内で開けます。iPhone と iPad では、PDF、画像、Office 書類を iOS のクイックルックで表示します。それ以外は適したアプリで開き、上部のボタンでどのファイルも送れます。7z と RAR のアーカイブは別のアプリでのみ開けます。</string>
 </resources>

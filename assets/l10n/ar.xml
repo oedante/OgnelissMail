@@ -3632,4 +3632,13 @@
     <string name="mailOpenInBrowserFailed">تعذر فتح الرسالة في المتصفح</string>
     <string name="archiveAll">الأرشيف كاملاً</string>
     <string name="archiveHubHelp">تعرض القائمة أرشيف صندوق البريد المحدد فقط: مجلداته ومواعيده ومهامه وجهات اتصاله. وتعرض هذه الصفحة الأرشيف كاملاً: كل صناديق البريد، بما فيها التي لم تعد في التطبيق، والبحث في كل الرسائل.</string>
+    <string name="zipPasswordNeeded">الأرشيف محمي بكلمة مرور</string>
+    <string name="zipPassword">كلمة المرور</string>
+    <string name="zipWrongPassword">كلمة المرور غير صحيحة</string>
+    <string name="zipOpen">فتح</string>
+    <string name="zipSummary">الملفات: {n} · {size}</string>
+    <string name="zipCannotRead">تعذرت قراءة الأرشيف: إنه تالف أو بتنسيق لا يعرفه التطبيق (7z، RAR). افتحه في تطبيق آخر.</string>
+    <string name="pdfProtected">ملف PDF محمي بكلمة مرور. افتحه في تطبيق آخر.</string>
+    <string name="faq_mail_10_q">ما المرفقات التي تُفتح داخل التطبيق مباشرة؟</string>
+    <string name="faq_mail_10_a">تُفتح أرشيفات ZIP، ومنها المحمية بكلمة مرور، وكذلك TAR وGZ وBZ2 وXZ داخل التطبيق مباشرة: اضغط على ملف بداخلها لفتحه. وتُفتح كذلك ملفات PDF على Android والصور والنصوص وCSV ورسائل .eml وتذاكر .pkpass داخل التطبيق. وعلى iPhone وiPad تعرض المعاينة السريعة في iOS ملفات PDF والصور ومستندات Office. أما غير ذلك فيفتحه تطبيق مناسب، ويمكن إرسال أي ملف إليه بالزر في الأعلى. ولا تُفتح أرشيفات 7z وRAR إلا في تطبيق آخر.</string>
 </resources>

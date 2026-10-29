@@ -3537,4 +3537,13 @@
     <string name="mailOpenInBrowserFailed">无法在浏览器中打开邮件</string>
     <string name="archiveAll">整个归档</string>
     <string name="archiveHubHelp">菜单只显示所选邮箱的归档：其文件夹、日程、任务和联系人。此页面显示整个归档：所有邮箱（包括已不在应用中的邮箱），并可搜索所有邮件。</string>
+    <string name="zipPasswordNeeded">压缩包受密码保护</string>
+    <string name="zipPassword">密码</string>
+    <string name="zipWrongPassword">密码错误</string>
+    <string name="zipOpen">打开</string>
+    <string name="zipSummary">文件：{n} · {size}</string>
+    <string name="zipCannotRead">无法读取压缩包：文件已损坏或格式不受支持（7z、RAR）。请在其他应用中打开。</string>
+    <string name="pdfProtected">此 PDF 受密码保护，请在其他应用中打开。</string>
+    <string name="faq_mail_10_q">哪些附件可以直接在应用中打开？</string>
+    <string name="faq_mail_10_a">ZIP 压缩包（包括带密码的）以及 TAR、GZ、BZ2 和 XZ 可直接在应用中打开：点按其中的文件即可打开。Android 上的 PDF、图片、文本和 CSV、.eml 邮件以及 .pkpass 票券也可在应用中打开。在 iPhone 和 iPad 上，PDF、图片和 Office 文档由 iOS 的快速查看显示。其他文件由合适的应用打开，任何文件都可以通过顶部按钮发送到该应用。7z 和 RAR 压缩包只能在其他应用中打开。</string>
 </resources>

@@ -3556,4 +3556,13 @@
     <string name="mailOpenInBrowserFailed">Viestiä ei voitu avata selaimessa</string>
     <string name="archiveAll">Koko arkisto</string>
     <string name="archiveHubHelp">Valikossa näkyy vain valitun postilaatikon arkisto: sen kansiot, tapahtumat, tehtävät ja yhteystiedot. Tässä on koko arkisto: kaikki postilaatikot, myös ne joita sovelluksessa ei enää ole, ja haku kaikista viesteistä.</string>
+    <string name="zipPasswordNeeded">Arkisto on suojattu salasanalla</string>
+    <string name="zipPassword">Salasana</string>
+    <string name="zipWrongPassword">Väärä salasana</string>
+    <string name="zipOpen">Avaa</string>
+    <string name="zipSummary">Tiedostoja: {n} · {size}</string>
+    <string name="zipCannotRead">Arkistoa ei voi lukea: se on vioittunut tai muodossa, jota sovellus ei tunne (7z, RAR). Avaa se toisessa sovelluksessa.</string>
+    <string name="pdfProtected">PDF on suojattu salasanalla. Avaa se toisessa sovelluksessa.</string>
+    <string name="faq_mail_10_q">Mitkä liitteet avautuvat suoraan sovelluksessa?</string>
+    <string name="faq_mail_10_a">ZIP-arkistot, myös salasanalla suojatut, sekä TAR, GZ, BZ2 ja XZ avautuvat suoraan sovelluksessa: avaa tiedosto napauttamalla sitä. Myös PDF-tiedostot Androidissa, kuvat, teksti ja CSV, .eml-viestit ja .pkpass-liput avautuvat sovelluksessa. iPhonessa ja iPadissa iOS:n pikakatselu näyttää PDF-tiedostot, kuvat ja Office-asiakirjat. Muut avaa sopiva sovellus, ja minkä tahansa tiedoston voi lähettää siihen yläreunan painikkeella. 7z- ja RAR-arkistot avautuvat vain toisessa sovelluksessa.</string>
 </resources>

@@ -3556,4 +3556,13 @@
     <string name="mailOpenInBrowserFailed">संदेश ब्राउज़र में नहीं खुल सका</string>
     <string name="archiveAll">पूरा संग्रह</string>
     <string name="archiveHubHelp">मेनू में केवल चुने गए मेलबॉक्स का संग्रह दिखता है: उसके फ़ोल्डर, कार्यक्रम, कार्य और संपर्क। यहाँ पूरा संग्रह है: सभी मेलबॉक्स, वे भी जो अब ऐप में नहीं हैं, और सभी संदेशों में खोज।</string>
+    <string name="zipPasswordNeeded">संग्रह पासवर्ड से सुरक्षित है</string>
+    <string name="zipPassword">पासवर्ड</string>
+    <string name="zipWrongPassword">गलत पासवर्ड</string>
+    <string name="zipOpen">खोलें</string>
+    <string name="zipSummary">फ़ाइलें: {n} · {size}</string>
+    <string name="zipCannotRead">संग्रह पढ़ा नहीं जा सकता: यह क्षतिग्रस्त है या ऐसे प्रारूप में है जिसे ऐप नहीं जानता (7z, RAR)। इसे किसी अन्य ऐप में खोलें।</string>
+    <string name="pdfProtected">PDF पासवर्ड से सुरक्षित है। इसे किसी अन्य ऐप में खोलें।</string>
+    <string name="faq_mail_10_q">कौन-से अनुलग्नक सीधे ऐप में खुलते हैं?</string>
+    <string name="faq_mail_10_a">ZIP संग्रह, पासवर्ड वाले भी, और TAR, GZ, BZ2 तथा XZ सीधे ऐप में खुलते हैं: अंदर की किसी फ़ाइल पर टैप करके उसे खोलें। Android पर PDF, चित्र, टेक्स्ट और CSV, .eml संदेश और .pkpass टिकट भी ऐप में खुलते हैं। iPhone और iPad पर iOS का क्विक लुक PDF, चित्र और Office दस्तावेज़ दिखाता है। बाकी फ़ाइलें उपयुक्त ऐप में खुलती हैं, और कोई भी फ़ाइल ऊपर के बटन से उसमें भेजी जा सकती है। 7z और RAR संग्रह केवल किसी अन्य ऐप में खुलते हैं।</string>
 </resources>

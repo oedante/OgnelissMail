@@ -123,6 +123,8 @@ class MainActivity : FlutterFragmentActivity() {
         WidgetBridge.register(messenger, this)
         // Открытие вложений — не зависит от подключения плагина к окну.
         FileOpenBridge.register(messenger, this)
+        // PDF внутри приложения (1.8.14) — системным PdfRenderer.
+        PdfRendererPlugin.register(messenger)
         TimeZoneBridge.register(messenger)
         // mailto и «Написать письмо» из других приложений.
         MailtoBridge.register(messenger)

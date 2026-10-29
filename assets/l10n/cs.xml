@@ -3575,4 +3575,13 @@
     <string name="mailOpenInBrowserFailed">Zprávu se nepodařilo otevřít v prohlížeči</string>
     <string name="archiveAll">Celý archiv</string>
     <string name="archiveHubHelp">Nabídka ukazuje jen archiv vybrané schránky: její složky, události, úkoly a kontakty. Tady je celý archiv: všechny schránky včetně těch, které už v aplikaci nejsou, a hledání ve všech zprávách.</string>
+    <string name="zipPasswordNeeded">Archiv je chráněn heslem</string>
+    <string name="zipPassword">Heslo</string>
+    <string name="zipWrongPassword">Nesprávné heslo</string>
+    <string name="zipOpen">Otevřít</string>
+    <string name="zipSummary">Souborů: {n} · {size}</string>
+    <string name="zipCannotRead">Archiv nelze přečíst: je poškozený nebo ve formátu, který aplikace nezná (7z, RAR). Otevřete ho v jiné aplikaci.</string>
+    <string name="pdfProtected">PDF je chráněno heslem. Otevřete ho v jiné aplikaci.</string>
+    <string name="faq_mail_10_q">Které přílohy se otevřou přímo v aplikaci?</string>
+    <string name="faq_mail_10_a">Archivy ZIP, i chráněné heslem, a také TAR, GZ, BZ2 a XZ se otevřou přímo v aplikaci: soubor uvnitř otevřete klepnutím. V aplikaci se otevřou i PDF na Androidu, obrázky, text a CSV, zprávy .eml a vstupenky .pkpass. Na iPhonu a iPadu zobrazí PDF, obrázky a dokumenty Office náhled iOS. Ostatní otevře vhodná aplikace a každý soubor do ní pošlete tlačítkem nahoře. Archivy 7z a RAR se otevřou jen v jiné aplikaci.</string>
 </resources>

@@ -3594,4 +3594,13 @@
     <string name="mailOpenInBrowserFailed">Nie udało się otworzyć wiadomości w przeglądarce</string>
     <string name="archiveAll">Całe archiwum</string>
     <string name="archiveHubHelp">Menu pokazuje tylko archiwum wybranej skrzynki: jej foldery, wydarzenia, zadania i kontakty. Tutaj jest całe archiwum: wszystkie skrzynki, także te, których nie ma już w aplikacji, i wyszukiwanie we wszystkich wiadomościach.</string>
+    <string name="zipPasswordNeeded">Archiwum jest chronione hasłem</string>
+    <string name="zipPassword">Hasło</string>
+    <string name="zipWrongPassword">Nieprawidłowe hasło</string>
+    <string name="zipOpen">Otwórz</string>
+    <string name="zipSummary">Pliki: {n} · {size}</string>
+    <string name="zipCannotRead">Nie można odczytać archiwum: jest uszkodzone lub w formacie, którego aplikacja nie zna (7z, RAR). Otwórz je w innej aplikacji.</string>
+    <string name="pdfProtected">PDF jest chroniony hasłem. Otwórz go w innej aplikacji.</string>
+    <string name="faq_mail_10_q">Które załączniki otwierają się bezpośrednio w aplikacji?</string>
+    <string name="faq_mail_10_a">Archiwa ZIP, także chronione hasłem, oraz TAR, GZ, BZ2 i XZ otwierają się bezpośrednio w aplikacji: stuknij plik w środku, aby go otworzyć. W aplikacji otwierają się też pliki PDF na Androidzie, obrazy, tekst i CSV, wiadomości .eml oraz bilety .pkpass. Na iPhonie i iPadzie podgląd iOS pokazuje pliki PDF, obrazy i dokumenty Office. Pozostałe otwiera odpowiednia aplikacja, a każdy plik można do niej wysłać przyciskiem u góry. Archiwa 7z i RAR otwierają się tylko w innej aplikacji.</string>
 </resources>

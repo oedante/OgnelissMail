@@ -3556,4 +3556,13 @@
     <string name="mailOpenInBrowserFailed">Couldn\'t open the message in the browser</string>
     <string name="archiveAll">Whole archive</string>
     <string name="archiveHubHelp">The menu shows the archive of the selected mailbox only: its folders, events, tasks and contacts. This page shows the whole archive: every mailbox, including ones no longer in the app, and search across all messages.</string>
+    <string name="zipPasswordNeeded">This archive is password-protected</string>
+    <string name="zipPassword">Password</string>
+    <string name="zipWrongPassword">Wrong password</string>
+    <string name="zipOpen">Open</string>
+    <string name="zipSummary">Files: {n} · {size}</string>
+    <string name="zipCannotRead">The archive can\'t be read: it is damaged or in a format the app doesn\'t know (7z, RAR). Open it in another app.</string>
+    <string name="pdfProtected">This PDF is password-protected. Open it in another app.</string>
+    <string name="faq_mail_10_q">Which attachments open right in the app?</string>
+    <string name="faq_mail_10_a">ZIP archives, including password-protected ones, and TAR, GZ, BZ2 and XZ open right in the app: tap a file inside to open it. PDFs on Android, images, text and CSV, .eml messages and .pkpass tickets also open in the app. On iPhone and iPad, iOS Quick Look shows PDFs, images and Office documents. Anything else opens in a suitable app, and any file can be sent to one with the button at the top. 7z and RAR archives open only in another app.</string>
 </resources>

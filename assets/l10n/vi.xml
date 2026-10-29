@@ -3537,4 +3537,13 @@
     <string name="mailOpenInBrowserFailed">Không thể mở thư trong trình duyệt</string>
     <string name="archiveAll">Toàn bộ kho lưu trữ</string>
     <string name="archiveHubHelp">Menu chỉ hiển thị kho lưu trữ của hộp thư đã chọn: thư mục, sự kiện, việc cần làm và danh bạ của nó. Trang này hiển thị toàn bộ kho lưu trữ: mọi hộp thư, kể cả những hộp thư không còn trong ứng dụng, và tìm kiếm trong mọi thư.</string>
+    <string name="zipPasswordNeeded">Tệp nén được bảo vệ bằng mật khẩu</string>
+    <string name="zipPassword">Mật khẩu</string>
+    <string name="zipWrongPassword">Sai mật khẩu</string>
+    <string name="zipOpen">Mở</string>
+    <string name="zipSummary">Tệp: {n} · {size}</string>
+    <string name="zipCannotRead">Không đọc được tệp nén: tệp bị hỏng hoặc ở định dạng ứng dụng không hỗ trợ (7z, RAR). Hãy mở bằng ứng dụng khác.</string>
+    <string name="pdfProtected">Tệp PDF được bảo vệ bằng mật khẩu. Hãy mở bằng ứng dụng khác.</string>
+    <string name="faq_mail_10_q">Tệp đính kèm nào mở ngay trong ứng dụng?</string>
+    <string name="faq_mail_10_a">Tệp nén ZIP, kể cả có mật khẩu, cùng TAR, GZ, BZ2 và XZ mở ngay trong ứng dụng: chạm vào tệp bên trong để mở. PDF trên Android, ảnh, văn bản và CSV, thư .eml và vé .pkpass cũng mở trong ứng dụng. Trên iPhone và iPad, Xem nhanh của iOS hiển thị PDF, ảnh và tài liệu Office. Các tệp khác mở bằng ứng dụng phù hợp, và có thể gửi mọi tệp tới ứng dụng đó bằng nút ở trên cùng. Tệp nén 7z và RAR chỉ mở được bằng ứng dụng khác.</string>
 </resources>

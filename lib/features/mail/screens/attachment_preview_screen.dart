@@ -8,7 +8,9 @@
 //
 // Поддержка по форматам:
 //   изображения — нативно (Image.file + масштабирование щипком);
-//   PDF         — внешнее приложение (1.6.2: pdfx удалён, см. openAttachment);
+//   PDF         — Android: системный PdfRenderer (1.8.14, pdf_view.dart);
+//                 iPhone и iPad — «Просмотр» iOS, компьютер — своя программа;
+//   архивы      — zip (и с паролем), tar, tgz, gz, bz2, xz (1.8.14, zip_view.dart);
 //   текст       — чтение файла (с ограничением размера, чтобы не съесть память);
 //   письмо .eml — как письмо: заголовки, тело в том же защищённом WebView,
 //                 свои вложения (тоже открываются здесь же);
@@ -22,6 +24,7 @@ import '../../../core/theme/app_icons.dart';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../core/theme/tokens.dart';
@@ -34,6 +37,8 @@ import '../../../core/security/attachment_safety.dart';
 import '../../../core/security/link_opener.dart';
 import '../widgets/mail_html_view.dart';
 import '../widgets/desktop_mail_body.dart';
+import '../widgets/pdf_view.dart';
+import '../widgets/zip_view.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../services/mail/pkpass_parser.dart';
 import '../../../services/mail/eml_reader.dart';
@@ -47,7 +52,7 @@ import '../../../services/security/smime_service.dart';
 import '../../../services/security/smime_mime.dart';
 import '../../settings/providers/settings_provider.dart';
 
-enum _Kind { image, pdf, text, pass, mail, other }
+enum _Kind { image, pdf, text, pass, mail, zip, other }
 
 /// Одна вкладка предпросмотра: файл + подпись.
 class PreviewItem {
@@ -100,6 +105,15 @@ class AttachmentPreviewScreen extends StatefulWidget {
     final ext = name.contains('.') ? name.split('.').last : '';
     final ct = item.mimeType?.toLowerCase() ?? '';
     if (ext == 'eml' || ext == 'p7m' || ct.contains('pkcs7-mime') || ct == 'message/rfc822') return true;
+    // 1.8.14 (просьба пользователей через владельца 29.10.2026): архивы — в
+    // приложении везде; PDF — на Android (системный PdfRenderer); картинки,
+    // текст и билеты — на Android и компьютере. iPhone и iPad показывают
+    // PDF, картинки, текст и документы Office «Просмотром» iOS — он и так
+    // внутри приложения, а билет .pkpass добавляет в Wallet.
+    if (PackedArchive.kindOf(name) != null) return true;
+    final ios = !kIsWeb && Platform.isIOS;
+    if (ext == 'pdf') return NativePdf.supported;
+    if (!ios && (_imageExt.contains(ext) || _textExt.contains(ext) || ext == 'pkpass')) return true;
     // Exchange отдаёт вложенное письмо и без расширения — по началу файла.
     if (ext.isEmpty || ext == 'dat' || ext == 'bin') {
       try {
@@ -115,6 +129,9 @@ class AttachmentPreviewScreen extends StatefulWidget {
     return false;
   }
 
+
+  static const _imageExt = {'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'};
+  static const _textExt = {'txt', 'log', 'csv', 'json', 'xml', 'md', 'yaml', 'yml', 'ini'};
 
   /// Все вложения письма — чтобы листать между ними, не возвращаясь назад.
   final List<PreviewItem> items;
@@ -175,6 +192,9 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   /// Вложения без расширения, которые по содержимому оказались письмами.
   final Set<int> _sniffedMail = {};
   final Map<int, String> _errors = {};
+
+  /// Ошибки, которые показываются как есть (понятная причина).
+  final Set<int> _plainErrors = {};
   final Set<int> _loaded = {};
 
   /// Вкладки, которые ещё загружаются (в том числе проверка «не письмо ли»).
@@ -226,8 +246,9 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   _Kind _kindOf(int i) {
     final name = widget.items[i].fileName;
     final ext = name.contains('.') ? name.split('.').last.toLowerCase() : '';
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].contains(ext)) return _Kind.image;
+    if (AttachmentPreviewScreen._imageExt.contains(ext)) return _Kind.image;
     if (ext == 'pdf') return _Kind.pdf;
+    if (PackedArchive.kindOf(name) != null) return _Kind.zip;
     if (ext == 'pkpass') return _Kind.pass;
     // Письмо — письмом, а не текстом MIME (раньше .eml показывался сырым:
     // заголовки Received, «=?koi8-r?…», quoted-printable).
@@ -238,9 +259,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         _sniffedMail.contains(i)) {
       return _Kind.mail;
     }
-    if (['txt', 'log', 'csv', 'json', 'xml', 'md', 'yaml', 'yml', 'ini'].contains(ext)) {
-      return _Kind.text;
-    }
+    if (AttachmentPreviewScreen._textExt.contains(ext)) return _Kind.text;
     return _Kind.other;
   }
 
@@ -252,6 +271,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
     try {
       switch (_kindOf(i)) {
         case _Kind.pdf:
+        case _Kind.zip:
           break;
         case _Kind.text:
           final f = File(item.filePath);
@@ -351,6 +371,8 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         return AppIcons.image;
       case _Kind.pdf:
         return AppIcons.picture_as_pdf;
+      case _Kind.zip:
+        return AppIcons.folder_zip;
       case _Kind.text:
         return AppIcons.description;
       case _Kind.pass:
@@ -504,7 +526,9 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   Widget _page(int i, bool ru) {
     final l10n = AppLocalizations.of(context);
     if (_errors.containsKey(i)) {
-      return _fallback(i, ru, l10n.tr('cannotOpenFile').replaceAll('{e}', '${_errors[i]}'));
+      // Понятная причина (PDF с паролем, архив не читается) — как есть.
+      return _fallback(
+          i, ru, _plainErrors.contains(i) ? '${_errors[i]}' : l10n.tr('cannotOpenFile').replaceAll('{e}', '${_errors[i]}'));
     }
     switch (_kindOf(i)) {
       case _Kind.image:
@@ -520,9 +544,30 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         );
 
       case _Kind.pdf:
-        // PDF открывается во внешнем приложении (решение владельца
-        // 12.10.2026): встроенный просмотр был хуже системного.
-        return _fallback(i, ru, l10n.tr('previewUnsupported'));
+        // 12.10.2026 PDF ушёл во внешнее приложение: встроенный просмотр
+        // (pdfx) был хуже системного. С 1.8.14 на Android — свой, на
+        // системном PdfRenderer (pdf_view.dart): резкость при увеличении,
+        // номер страницы; другое приложение — кнопкой вверху.
+        if (!NativePdf.supported) return _fallback(i, ru, l10n.tr('previewUnsupported'));
+        return PdfView(
+          path: widget.items[i].filePath,
+          onUnsupported: (protected, e) => setState(() {
+            _errors[i] = protected ? l10n.tr('pdfProtected') : l10n.tr('fileDamaged');
+            _plainErrors.add(i);
+          }),
+        );
+
+      case _Kind.zip:
+        return ZipView(
+          path: widget.items[i].filePath,
+          fileName: widget.items[i].fileName,
+          onOpen: (path, name) => openAttachment(context, PreviewItem(filePath: path, fileName: name),
+              emailSubject: widget.emailSubject, accountId: widget.accountId),
+          onFailed: (e) => setState(() {
+            _errors[i] = l10n.tr('zipCannotRead');
+            _plainErrors.add(i);
+          }),
+        );
 
       case _Kind.text:
         final t = _texts[i];

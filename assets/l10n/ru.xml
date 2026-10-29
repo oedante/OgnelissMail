@@ -3594,4 +3594,13 @@
     <string name="mailOpenInBrowserFailed">Не удалось открыть письмо в браузере</string>
     <string name="archiveAll">Весь архив</string>
     <string name="archiveHubHelp">В меню — архив только выбранного ящика: его папки, встречи, задачи и контакты. Здесь — весь архив: все ящики, в том числе те, которых в приложении уже нет, и поиск по всем письмам.</string>
+    <string name="zipPasswordNeeded">Архив защищён паролем</string>
+    <string name="zipPassword">Пароль</string>
+    <string name="zipWrongPassword">Пароль не подходит</string>
+    <string name="zipOpen">Открыть</string>
+    <string name="zipSummary">Файлов: {n} · {size}</string>
+    <string name="zipCannotRead">Архив не читается: он повреждён или в формате, которого приложение не знает (7z, RAR). Откройте его в другом приложении.</string>
+    <string name="pdfProtected">PDF защищён паролем — откройте его в другом приложении.</string>
+    <string name="faq_mail_10_q">Какие вложения открываются прямо в приложении?</string>
+    <string name="faq_mail_10_a">Прямо в почте открываются архивы ZIP, в том числе с паролем, а также TAR, GZ, BZ2 и XZ: файлы внутри открываются нажатием. PDF на Android, картинки, текст и CSV, письма .eml и билеты .pkpass тоже открываются в приложении. На iPhone и iPad PDF, картинки и документы Office показывает Просмотр iOS. Остальное открывает подходящая программа, и любой файл можно отправить в неё кнопкой вверху. Архивы 7z и RAR открываются только другим приложением.</string>
 </resources>

@@ -3537,4 +3537,13 @@
     <string name="mailOpenInBrowserFailed">브라우저에서 메시지를 열 수 없습니다</string>
     <string name="archiveAll">전체 보관함</string>
     <string name="archiveHubHelp">메뉴에는 선택한 메일함의 보관함만 표시됩니다: 폴더, 일정, 할 일, 연락처. 이 화면에는 전체 보관함이 표시됩니다: 앱에 더 이상 없는 메일함을 포함한 모든 메일함과 모든 메일 검색.</string>
+    <string name="zipPasswordNeeded">압축 파일이 암호로 보호되어 있습니다</string>
+    <string name="zipPassword">암호</string>
+    <string name="zipWrongPassword">암호가 올바르지 않습니다</string>
+    <string name="zipOpen">열기</string>
+    <string name="zipSummary">파일: {n} · {size}</string>
+    <string name="zipCannotRead">압축 파일을 읽을 수 없습니다. 손상되었거나 앱이 지원하지 않는 형식입니다(7z, RAR). 다른 앱에서 여세요.</string>
+    <string name="pdfProtected">PDF가 암호로 보호되어 있습니다. 다른 앱에서 여세요.</string>
+    <string name="faq_mail_10_q">앱에서 바로 열리는 첨부 파일은 무엇인가요?</string>
+    <string name="faq_mail_10_a">암호가 걸린 것을 포함한 ZIP 압축 파일과 TAR, GZ, BZ2, XZ는 앱에서 바로 열립니다. 안의 파일을 탭하면 열립니다. Android의 PDF, 이미지, 텍스트와 CSV, .eml 메일, .pkpass 티켓도 앱에서 열립니다. iPhone과 iPad에서는 iOS 훑어보기가 PDF, 이미지, Office 문서를 보여 줍니다. 그 밖의 파일은 알맞은 앱에서 열리며, 위쪽 버튼으로 어떤 파일이든 보낼 수 있습니다. 7z와 RAR 압축 파일은 다른 앱에서만 열립니다.</string>
 </resources>

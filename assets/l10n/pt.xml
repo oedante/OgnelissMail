@@ -3556,4 +3556,13 @@
     <string name="mailOpenInBrowserFailed">Não foi possível abrir a mensagem no navegador</string>
     <string name="archiveAll">Arquivo inteiro</string>
     <string name="archiveHubHelp">O menu mostra apenas o arquivo da caixa selecionada: pastas, eventos, tarefas e contatos. Aqui está o arquivo inteiro: todas as caixas, inclusive as que não estão mais no app, e a busca em todas as mensagens.</string>
+    <string name="zipPasswordNeeded">O arquivo compactado é protegido por senha</string>
+    <string name="zipPassword">Senha</string>
+    <string name="zipWrongPassword">Senha incorreta</string>
+    <string name="zipOpen">Abrir</string>
+    <string name="zipSummary">Arquivos: {n} · {size}</string>
+    <string name="zipCannotRead">Não é possível ler o arquivo compactado: ele está danificado ou em um formato que o app não conhece (7z, RAR). Abra em outro app.</string>
+    <string name="pdfProtected">O PDF é protegido por senha. Abra em outro app.</string>
+    <string name="faq_mail_10_q">Quais anexos abrem direto no app?</string>
+    <string name="faq_mail_10_a">Arquivos ZIP, inclusive com senha, além de TAR, GZ, BZ2 e XZ abrem direto no app: toque em um arquivo dentro deles para abri-lo. PDFs no Android, imagens, texto e CSV, mensagens .eml e ingressos .pkpass também abrem no app. No iPhone e no iPad, a Visualização Rápida do iOS mostra PDFs, imagens e documentos do Office. O restante abre em um app adequado, e qualquer arquivo pode ser enviado a ele pelo botão no topo. Arquivos 7z e RAR abrem só em outro app.</string>
 </resources>

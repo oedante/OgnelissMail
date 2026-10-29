@@ -3556,4 +3556,13 @@
     <string name="mailOpenInBrowserFailed">İleti tarayıcıda açılamadı</string>
     <string name="archiveAll">Tüm arşiv</string>
     <string name="archiveHubHelp">Menü yalnızca seçili posta kutusunun arşivini gösterir: klasörleri, etkinlikleri, görevleri ve kişileri. Burada tüm arşiv vardır: uygulamada artık bulunmayanlar dahil tüm posta kutuları ve tüm iletilerde arama.</string>
+    <string name="zipPasswordNeeded">Arşiv parolayla korunuyor</string>
+    <string name="zipPassword">Parola</string>
+    <string name="zipWrongPassword">Parola yanlış</string>
+    <string name="zipOpen">Aç</string>
+    <string name="zipSummary">Dosya: {n} · {size}</string>
+    <string name="zipCannotRead">Arşiv okunamıyor: bozuk veya uygulamanın tanımadığı bir biçimde (7z, RAR). Başka bir uygulamada açın.</string>
+    <string name="pdfProtected">PDF parolayla korunuyor. Başka bir uygulamada açın.</string>
+    <string name="faq_mail_10_q">Hangi ekler doğrudan uygulamada açılır?</string>
+    <string name="faq_mail_10_a">Parolalı olanlar dahil ZIP arşivleri ile TAR, GZ, BZ2 ve XZ doğrudan uygulamada açılır: açmak için içindeki bir dosyaya dokunun. Android\'de PDF\'ler, görseller, metin ve CSV, .eml iletileri ve .pkpass biletleri de uygulamada açılır. iPhone ve iPad\'de iOS Hızlı Bakış PDF\'leri, görselleri ve Office belgelerini gösterir. Diğerleri uygun bir uygulamada açılır ve her dosya üstteki düğmeyle oraya gönderilebilir. 7z ve RAR arşivleri yalnızca başka bir uygulamada açılır.</string>
 </resources>

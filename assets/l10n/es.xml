@@ -3556,4 +3556,13 @@
     <string name="mailOpenInBrowserFailed">No se pudo abrir el mensaje en el navegador</string>
     <string name="archiveAll">Todo el archivo</string>
     <string name="archiveHubHelp">El menú muestra solo el archivo del buzón seleccionado: sus carpetas, eventos, tareas y contactos. Aquí está todo el archivo: todos los buzones, incluidos los que ya no están en la app, y la búsqueda en todos los mensajes.</string>
+    <string name="zipPasswordNeeded">El archivo está protegido con contraseña</string>
+    <string name="zipPassword">Contraseña</string>
+    <string name="zipWrongPassword">Contraseña incorrecta</string>
+    <string name="zipOpen">Abrir</string>
+    <string name="zipSummary">Archivos: {n} · {size}</string>
+    <string name="zipCannotRead">No se puede leer el archivo: está dañado o en un formato que la app no conoce (7z, RAR). Ábrelo en otra app.</string>
+    <string name="pdfProtected">El PDF está protegido con contraseña. Ábrelo en otra app.</string>
+    <string name="faq_mail_10_q">¿Qué adjuntos se abren directamente en la app?</string>
+    <string name="faq_mail_10_a">Los archivos ZIP, incluso con contraseña, y también TAR, GZ, BZ2 y XZ se abren directamente en la app: toca un archivo de dentro para abrirlo. Los PDF en Android, las imágenes, el texto y CSV, los mensajes .eml y las entradas .pkpass también se abren en la app. En iPhone y iPad, la Vista rápida de iOS muestra PDF, imágenes y documentos de Office. Lo demás lo abre una app adecuada, y cualquier archivo se puede enviar a ella con el botón de arriba. Los archivos 7z y RAR solo se abren en otra app.</string>
 </resources>

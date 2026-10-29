@@ -3556,4 +3556,13 @@
     <string name="mailOpenInBrowserFailed">Beskeden kunne ikke åbnes i browseren</string>
     <string name="archiveAll">Hele arkivet</string>
     <string name="archiveHubHelp">Menuen viser kun arkivet for den valgte postkasse: dens mapper, aftaler, opgaver og kontakter. Her er hele arkivet: alle postkasser, også dem der ikke længere er i appen, og søgning i alle beskeder.</string>
+    <string name="zipPasswordNeeded">Arkivet er beskyttet med adgangskode</string>
+    <string name="zipPassword">Adgangskode</string>
+    <string name="zipWrongPassword">Forkert adgangskode</string>
+    <string name="zipOpen">Åbn</string>
+    <string name="zipSummary">Filer: {n} · {size}</string>
+    <string name="zipCannotRead">Arkivet kan ikke læses: det er beskadiget eller i et format, appen ikke kender (7z, RAR). Åbn det i en anden app.</string>
+    <string name="pdfProtected">PDF\'en er beskyttet med adgangskode. Åbn den i en anden app.</string>
+    <string name="faq_mail_10_q">Hvilke vedhæftede filer åbnes direkte i appen?</string>
+    <string name="faq_mail_10_a">ZIP-arkiver, også med adgangskode, samt TAR, GZ, BZ2 og XZ åbnes direkte i appen: tryk på en fil inde i arkivet for at åbne den. PDF\'er på Android, billeder, tekst og CSV, .eml-beskeder og .pkpass-billetter åbnes også i appen. På iPhone og iPad viser iOS Vis hurtigt PDF\'er, billeder og Office-dokumenter. Alt andet åbnes i en passende app, og enhver fil kan sendes dertil med knappen øverst. 7z- og RAR-arkiver åbnes kun i en anden app.</string>
 </resources>

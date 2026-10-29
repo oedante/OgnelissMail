@@ -3556,4 +3556,13 @@
     <string name="mailOpenInBrowserFailed">Kan het bericht niet openen in de browser</string>
     <string name="archiveAll">Hele archief</string>
     <string name="archiveHubHelp">Het menu toont alleen het archief van de gekozen mailbox: de mappen, afspraken, taken en contacten. Hier staat het hele archief: alle mailboxen, ook die niet meer in de app staan, en zoeken in alle berichten.</string>
+    <string name="zipPasswordNeeded">Het archief is beveiligd met een wachtwoord</string>
+    <string name="zipPassword">Wachtwoord</string>
+    <string name="zipWrongPassword">Onjuist wachtwoord</string>
+    <string name="zipOpen">Openen</string>
+    <string name="zipSummary">Bestanden: {n} · {size}</string>
+    <string name="zipCannotRead">Het archief kan niet worden gelezen: het is beschadigd of in een indeling die de app niet kent (7z, RAR). Open het in een andere app.</string>
+    <string name="pdfProtected">De pdf is beveiligd met een wachtwoord. Open hem in een andere app.</string>
+    <string name="faq_mail_10_q">Welke bijlagen openen direct in de app?</string>
+    <string name="faq_mail_10_a">ZIP-archieven, ook met wachtwoord, en TAR, GZ, BZ2 en XZ openen direct in de app: tik op een bestand erin om het te openen. Pdf\'s op Android, afbeeldingen, tekst en CSV, .eml-berichten en .pkpass-tickets openen ook in de app. Op iPhone en iPad toont Snel bekijken van iOS pdf\'s, afbeeldingen en Office-documenten. De rest opent in een geschikte app, en elk bestand kun je daarheen sturen met de knop bovenaan. 7z- en RAR-archieven openen alleen in een andere app.</string>
 </resources>

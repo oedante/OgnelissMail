@@ -3537,4 +3537,13 @@
     <string name="mailOpenInBrowserFailed">Tidak dapat membuka pesan di browser</string>
     <string name="archiveAll">Seluruh arsip</string>
     <string name="archiveHubHelp">Menu hanya menampilkan arsip kotak surat yang dipilih: folder, acara, tugas, dan kontaknya. Di sini ada seluruh arsip: semua kotak surat, termasuk yang sudah tidak ada di aplikasi, dan pencarian di semua pesan.</string>
+    <string name="zipPasswordNeeded">Arsip dilindungi kata sandi</string>
+    <string name="zipPassword">Kata sandi</string>
+    <string name="zipWrongPassword">Kata sandi salah</string>
+    <string name="zipOpen">Buka</string>
+    <string name="zipSummary">File: {n} · {size}</string>
+    <string name="zipCannotRead">Arsip tidak dapat dibaca: rusak atau dalam format yang tidak dikenal aplikasi (7z, RAR). Buka di aplikasi lain.</string>
+    <string name="pdfProtected">PDF dilindungi kata sandi. Buka di aplikasi lain.</string>
+    <string name="faq_mail_10_q">Lampiran apa yang terbuka langsung di aplikasi?</string>
+    <string name="faq_mail_10_a">Arsip ZIP, termasuk yang memakai kata sandi, serta TAR, GZ, BZ2, dan XZ terbuka langsung di aplikasi: ketuk file di dalamnya untuk membukanya. PDF di Android, gambar, teks dan CSV, pesan .eml, serta tiket .pkpass juga terbuka di aplikasi. Di iPhone dan iPad, Lihat Cepat iOS menampilkan PDF, gambar, dan dokumen Office. Selebihnya dibuka aplikasi yang sesuai, dan file apa pun bisa dikirim ke sana dengan tombol di atas. Arsip 7z dan RAR hanya terbuka di aplikasi lain.</string>
 </resources>

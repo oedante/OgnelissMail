@@ -118,10 +118,11 @@ fi
 
 say "Зависимости"
 flutter pub get
-# Сгенерированный код базы (drift) в архив проекта не входит.
-if [[ ! -f lib/data/database/app_database.g.dart ]]; then
-  dart run build_runner build
-fi
+# Код базы (drift) — всегда заново, под установленную версию drift: файл,
+# сгенерированный другой версией drift_dev, не собирается («Method not found:
+# '$_getPrefetchedDataByColumns'», 29.10.2026 — в архиве лежал файл от drift
+# 2.35.3, а на Mac стоял 2.35.2). Без изменений — секунды.
+dart run build_runner build --delete-conflicting-outputs
 (cd ios && pod install --repo-update)
 
 if [[ -n "${KEYCHAIN_PASSWORD:-}" ]]; then

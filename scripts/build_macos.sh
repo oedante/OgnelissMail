@@ -88,9 +88,8 @@ setup() {
 prepare() {
   [[ -d macos ]] || setup
   flutter pub get >/dev/null
-  if [[ ! -f lib/data/database/app_database.g.dart ]]; then
-    dart run build_runner build --delete-conflicting-outputs
-  fi
+  # Код базы — всегда заново, под установленную версию drift (см. build_ios.sh).
+  dart run build_runner build --delete-conflicting-outputs
   (cd macos && pod install --repo-update >/dev/null)
 }
 

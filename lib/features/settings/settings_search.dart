@@ -49,6 +49,7 @@ const _entries = <_Entry>[
   _Entry('theme', 'general', AppIcons.palette, '/settings/general'),
   _Entry('language', 'general', AppIcons.language, '/settings/general'),
   _Entry('fontSize', 'general', AppIcons.format_size, '/settings/general'),
+  _Entry('uiFontTitle', 'general', AppIcons.font_download, '/settings/general'),
   // Специальные возможности
   _Entry('highContrast', 'accessibility', AppIcons.contrast, '/settings/accessibility'),
   _Entry('colorBlind', 'accessibility', AppIcons.palette, '/settings/accessibility'),

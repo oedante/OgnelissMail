@@ -3528,4 +3528,13 @@
     <string name="faq_archive_6_a">Elk apparaat bewaart een eigen kopie van het archief, en de cloud (Google Drive, iCloud Drive, Yandex Disk) of een USB-stick is de plek om die uit te wisselen. Op het eerste apparaat: Instellingen → Ogneliss-archief → Archiefkopie opslaan. Op het tweede: Archiefkopie koppelen als er nog geen archief is, of Samenvoegen met een kopie als er al een eigen archief is. Je kunt op beide archiveren: sla af en toe een kopie op op het ene apparaat en voeg die samen op het andere. Samenvoegen voegt alleen toe wat ontbreekt: berichten worden niet dubbel opgeslagen en dezelfde mailbox blijft één tak.</string>
     <string name="faq_archive_7_q">Hoe bewaart het archief meerdere mailboxen?</string>
     <string name="faq_archive_7_a">Alle mailboxen staan in één archief, elk met een eigen tak met mappen die is opgebouwd zoals in de mailbox: in het zijmenu onder Ogneliss-archief en op het archiefscherm onder Mailboxen in het archief. Welke mailboxen je archiveert, kies je op hetzelfde scherm onder Te archiveren mailboxen; zoeken in het archief doorzoekt alle mailboxen tegelijk.</string>
+    <string name="archiveNothingOld">Geen berichten ouder dan de gekozen leeftijd gevonden — er was niets te archiveren. Kies een kortere leeftijd of ‘Alle berichten’.</string>
+    <string name="uiFontTitle">Lettertype van de interface</string>
+    <string name="uiFontRobotoHint">Zoals voorheen</string>
+    <string name="uiFontMedeoHint">Open lettertype voor Latijns en Cyrillisch schrift (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Het dyslexielettertype staat aan (Toegankelijkheid) en gaat voor deze keuze.</string>
+    <string name="loginOrChoose">of kies je e-maildienst</string>
+    <string name="folderToOgna">Map naar Ogneliss-archief</string>
+    <string name="folderToOgnaBody">De map ‘{folder}’ met submappen en alle berichten wordt naar het archief op dit apparaat gekopieerd, met de mapstructuur van de mailbox. Berichten ouder dan de synchronisatieperiode worden van de server opgehaald.</string>
+    <string name="folderToOgnaStarted">Map wordt gearchiveerd — voortgang in Ogneliss-archief</string>
 </resources>

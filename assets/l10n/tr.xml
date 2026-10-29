@@ -3528,4 +3528,13 @@
     <string name="faq_archive_6_a">Her cihaz arşivin kendi kopyasını tutar; bulut (Google Drive, iCloud Drive, Yandex Disk) veya USB bellek ise kopyayı aktarmak için kullanılır. İlk cihazda: Ayarlar → Ogneliss arşivi → Arşiv kopyasını kaydet. İkinci cihazda: henüz arşivi yoksa Arşiv kopyasını bağla, kendi arşivi varsa Kopyayla birleştir. İki cihazda da arşivleyebilirsiniz: ara sıra birinde kopya kaydedip diğerinde birleştirin. Birleştirme yalnızca eksik olanı ekler: iletiler yinelenmez ve aynı posta kutusu tek dal olarak kalır.</string>
     <string name="faq_archive_7_q">Arşiv birden fazla posta kutusunu nasıl saklar?</string>
     <string name="faq_archive_7_a">Tüm posta kutuları tek arşivdedir; her birinin posta kutusundaki gibi yapılandırılmış kendi klasör dalı vardır: yan menüde Ogneliss arşivi bölümünde ve arşiv ekranında Arşivdeki posta kutuları bölümünde. Hangi posta kutularının arşivleneceği aynı ekranda Arşivlenecek posta kutuları bölümünden seçilir; arşivde arama tüm posta kutularını aynı anda kapsar.</string>
+    <string name="archiveNothingOld">Seçilen yaştan eski ileti bulunamadı — arşivlenecek bir şey yoktu. Daha kısa bir süre veya \"Tüm iletiler\" seçebilirsiniz.</string>
+    <string name="uiFontTitle">Arayüz yazı tipi</string>
+    <string name="uiFontRobotoHint">Önceki gibi</string>
+    <string name="uiFontMedeoHint">Latin ve Kiril alfabesi için açık yazı tipi (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Disleksi yazı tipi açık (Erişilebilirlik) — bu seçimin önüne geçer.</string>
+    <string name="loginOrChoose">veya e-posta hizmetini seçin</string>
+    <string name="folderToOgna">Klasörü Ogneliss arşivine</string>
+    <string name="folderToOgnaBody">\"{folder}\" klasörü, alt klasörleri ve tüm iletileriyle birlikte posta kutusundaki klasör yapısıyla bu cihazdaki arşive kopyalanacak. Eşitleme süresinden eski iletiler sunucudan alınır.</string>
+    <string name="folderToOgnaStarted">Klasör arşivleniyor — ilerleme Ogneliss arşivinde görünür</string>
 </resources>

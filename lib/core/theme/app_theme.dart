@@ -185,7 +185,18 @@ class AppTheme {
 
   /// Шрифт интерфейса (pubspec.yaml → fonts): Roboto из пакета приложения на
   /// всех платформах — Android, iPhone, Mac и Windows выглядят одинаково.
-  static const fontFamily = 'AppRoboto';
+  static const robotoFamily = 'AppRoboto';
+
+  /// Medeo Sans (1.8.8, OFL 1.1, github.com/DNFDEVS/medeo-font) — на выбор в
+  /// «Общих». Латиница и кириллица; остальные письменности — системным
+  /// шрифтом, как и с Roboto.
+  static const medeoFamily = 'MedeoSans';
+
+  /// Шрифт интерфейса, выбранный в «Общих» (`uiFont`); main.dart ставит его
+  /// до сборки тем.
+  static String fontFamily = robotoFamily;
+
+  static String familyFor(String uiFont) => uiFont == 'medeo' ? medeoFamily : robotoFamily;
 
   /// Переходы между экранами — без анимации (замечание 07.10.2026: переходы
   /// были рваными и не к месту). Прежние: Android — предиктивный «назад»,

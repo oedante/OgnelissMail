@@ -3528,4 +3528,13 @@
     <string name="faq_archive_6_a">Hver enhed har sin egen kopi af arkivet, og skyen (Google Drive, iCloud Drive, Yandex Disk) eller et USB-drev er stedet, hvor man udveksler den. På den første enhed: Indstillinger → Ogneliss-arkiv → Gem en kopi af arkivet. På den anden: Tilslut en kopi af arkivet, hvis den ikke har noget arkiv endnu, eller Flet med en kopi, hvis den har sit eget. Du kan arkivere på begge: gem en kopi på den ene en gang imellem, og flet den på den anden. Fletning tilføjer kun det, der mangler: mails duplikeres ikke, og den samme postkasse forbliver én gren.</string>
     <string name="faq_archive_7_q">Hvordan gemmer arkivet flere postkasser?</string>
     <string name="faq_archive_7_a">Alle postkasser ligger i ét arkiv, hver med sin egen gren af mapper opbygget som i postkassen: i sidemenuen under Ogneliss-arkiv og på arkivskærmen under Postkasser i arkivet. Hvilke postkasser der skal arkiveres, vælger du på samme skærm under Postkasser, der skal arkiveres; søgning i arkivet dækker alle postkasser på én gang.</string>
+    <string name="archiveNothingOld">Der blev ikke fundet mails ældre end den valgte alder — der var intet at arkivere. Vælg en kortere alder eller »Alle mails«.</string>
+    <string name="uiFontTitle">Skrifttype i brugerfladen</string>
+    <string name="uiFontRobotoHint">Som hidtil</string>
+    <string name="uiFontMedeoHint">Åben skrifttype til latinsk og kyrillisk skrift (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Skrifttypen til ordblinde er slået til (Tilgængelighed) og har forrang for dette valg.</string>
+    <string name="loginOrChoose">eller vælg din mail</string>
+    <string name="folderToOgna">Mappe til Ogneliss-arkivet</string>
+    <string name="folderToOgnaBody">Mappen “{folder}” med undermapper og alle beskeder kopieres til arkivet på denne enhed med postkassens mappestruktur. Beskeder, der er ældre end synkroniseringsperioden, hentes fra serveren.</string>
+    <string name="folderToOgnaStarted">Mappen arkiveres – forløbet vises i Ogneliss-arkivet</string>
 </resources>

@@ -3547,4 +3547,13 @@
     <string name="faq_archive_6_a">Fiecare dispozitiv păstrează propria copie a arhivei, iar cloud-ul (Google Drive, iCloud Drive, Yandex Disk) sau un stick USB este locul pentru schimbul ei. Pe primul dispozitiv: Setări → Arhivă Ogneliss → Salvează o copie a arhivei. Pe al doilea: Conectează o copie a arhivei, dacă acolo nu există încă o arhivă, sau Îmbină cu o copie, dacă are una proprie. Poți arhiva pe ambele: din când în când salvează o copie pe unul și îmbin-o pe celălalt. Îmbinarea adaugă doar ce lipsește: mesajele nu se dublează, iar aceeași cutie poștală rămâne o singură ramură.</string>
     <string name="faq_archive_7_q">Cum păstrează arhiva mai multe cutii poștale?</string>
     <string name="faq_archive_7_a">Toate cutiile poștale sunt într-o singură arhivă, fiecare cu propria ramură de dosare, structurată ca în cutia poștală: în meniul lateral, la Arhivă Ogneliss, și pe ecranul arhivei, la Cutii poștale în arhivă. Ce cutii poștale se arhivează se alege pe același ecran, la Cutii poștale de arhivat; căutarea în arhivă acoperă toate cutiile poștale deodată.</string>
+    <string name="archiveNothingOld">Nu s-au găsit mesaje mai vechi decât vârsta aleasă — nu era nimic de arhivat. Alegeți o perioadă mai scurtă sau „Toate mesajele”.</string>
+    <string name="uiFontTitle">Fontul interfeței</string>
+    <string name="uiFontRobotoHint">Ca până acum</string>
+    <string name="uiFontMedeoHint">Font deschis pentru alfabetul latin și chirilic (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Fontul pentru dislexie este activat (Accesibilitate) și are prioritate față de această alegere.</string>
+    <string name="loginOrChoose">sau alegeți e-mailul</string>
+    <string name="folderToOgna">Dosarul în arhiva Ogneliss</string>
+    <string name="folderToOgnaBody">Dosarul „{folder}”, cu subdosarele și toate mesajele, va fi copiat în arhiva de pe acest dispozitiv, cu structura de dosare a căsuței. Mesajele mai vechi decât perioada de sincronizare se descarcă de pe server.</string>
+    <string name="folderToOgnaStarted">Se arhivează dosarul — progresul apare în Arhiva Ogneliss</string>
 </resources>

@@ -3509,4 +3509,13 @@
     <string name="faq_archive_6_a">Mỗi thiết bị giữ một bản sao kho lưu trữ riêng, còn đám mây (Google Drive, iCloud Drive, Yandex Disk) hoặc ổ USB là nơi để trao đổi bản sao. Trên thiết bị đầu tiên: Cài đặt → Lưu trữ Ogneliss → Lưu bản sao kho lưu trữ. Trên thiết bị thứ hai: “Kết nối bản sao kho lưu trữ” nếu chưa có kho lưu trữ, hoặc “Hợp nhất với bản sao” nếu đã có kho lưu trữ riêng. Bạn có thể lưu trữ trên cả hai: thỉnh thoảng lưu bản sao trên một thiết bị và hợp nhất trên thiết bị kia. Hợp nhất chỉ thêm những gì còn thiếu: thư không bị trùng lặp và cùng một hộp thư vẫn là một nhánh.</string>
     <string name="faq_archive_7_q">Kho lưu trữ chứa nhiều hộp thư như thế nào?</string>
     <string name="faq_archive_7_a">Tất cả hộp thư nằm trong một kho lưu trữ, mỗi hộp thư có nhánh thư mục riêng với cấu trúc giống như trong hộp thư: trong menu bên, mục “Lưu trữ Ogneliss”, và trên màn hình kho lưu trữ, mục “Hộp thư trong kho lưu trữ”. Hộp thư nào được lưu trữ sẽ được chọn trên cùng màn hình đó, ở mục “Hộp thư cần lưu trữ”; tìm kiếm trong kho lưu trữ bao gồm tất cả hộp thư cùng lúc.</string>
+    <string name="archiveNothingOld">Không tìm thấy thư cũ hơn độ tuổi đã chọn — không có gì để lưu trữ. Bạn có thể chọn khoảng ngắn hơn hoặc \"Tất cả thư\".</string>
+    <string name="uiFontTitle">Phông chữ giao diện</string>
+    <string name="uiFontRobotoHint">Như trước</string>
+    <string name="uiFontMedeoHint">Phông chữ mở cho chữ Latinh và Kirin (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Phông chữ cho người khó đọc đang bật (Trợ năng) — phông này được ưu tiên hơn lựa chọn này.</string>
+    <string name="loginOrChoose">hoặc chọn dịch vụ thư</string>
+    <string name="folderToOgna">Thư mục vào kho lưu trữ Ogneliss</string>
+    <string name="folderToOgnaBody">Thư mục \"{folder}\" cùng các thư mục con và mọi thư sẽ được sao chép vào kho lưu trữ trên thiết bị này, giữ nguyên cấu trúc thư mục của hộp thư. Thư cũ hơn khoảng đồng bộ sẽ được tải từ máy chủ.</string>
+    <string name="folderToOgnaStarted">Đang lưu trữ thư mục — tiến trình hiển thị trong Kho lưu trữ Ogneliss</string>
 </resources>

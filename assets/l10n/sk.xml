@@ -3547,4 +3547,13 @@
     <string name="faq_archive_6_a">Každé zariadenie má svoju vlastnú kópiu archívu a miestom na výmenu je cloud (Google Drive, iCloud Drive, Yandex Disk) alebo USB disk. Na prvom zariadení: Nastavenia → Archív Ogneliss → Uložiť kópiu archívu. Na druhom: Pripojiť kópiu archívu, ak tam archív ešte nie je, alebo Zlúčiť s kópiou, ak má vlastný. Archivovať môžete na oboch: z času na čas uložte kópiu na jednom a zlúčte ju na druhom. Zlúčenie pridá iba to, čo chýba: správy sa neduplikujú a rovnaká schránka zostáva jednou vetvou.</string>
     <string name="faq_archive_7_q">Ako archív uchováva viacero schránok?</string>
     <string name="faq_archive_7_a">Všetky schránky sú v jednom archíve, každá má vlastnú vetvu priečinkov so štruktúrou ako v schránke: v bočnej ponuke v časti Archív Ogneliss a na obrazovke archívu v časti Schránky v archíve. Ktoré schránky sa majú archivovať, sa vyberá na tej istej obrazovke v časti Schránky na archiváciu; vyhľadávanie v archíve prehľadáva všetky schránky naraz.</string>
+    <string name="archiveNothingOld">Nenašli sa správy staršie ako zvolený vek — nebolo čo archivovať. Zvoľte kratšiu dobu alebo „Všetky správy“.</string>
+    <string name="uiFontTitle">Písmo rozhrania</string>
+    <string name="uiFontRobotoHint">Ako doteraz</string>
+    <string name="uiFontMedeoHint">Otvorené písmo pre latinku a cyriliku (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Je zapnuté písmo pre dyslektikov (Dostupnosť) — má prednosť pred touto voľbou.</string>
+    <string name="loginOrChoose">alebo vyberte poštu</string>
+    <string name="folderToOgna">Priečinok do archívu Ogneliss</string>
+    <string name="folderToOgnaBody">Priečinok „{folder}“ s podpriečinkami a všetkými správami sa skopíruje do archívu v tomto zariadení so štruktúrou priečinkov ako v schránke. Správy staršie ako obdobie synchronizácie sa stiahnu zo servera.</string>
+    <string name="folderToOgnaStarted">Priečinok sa archivuje — priebeh je v Archíve Ogneliss</string>
 </resources>

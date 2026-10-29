@@ -32,6 +32,7 @@ Contributions are accepted under the same license (section 5 of the license).
 | SQLite3 Multiple Ciphers (encrypted database) | MIT; SQLite — public domain | built by the `sqlite3` package |
 | Roboto font | Apache-2.0 | `assets/fonts/pdf/` |
 | OpenDyslexic font | SIL OFL 1.1, Reserved Font Name "OpenDyslexic" | `assets/fonts/` |
+| Medeo Sans font (unmodified, github.com/DNFDEVS/medeo-font) | SIL OFL 1.1 | `assets/fonts/medeo/` |
 | Material Symbols icons | Apache-2.0 | `material_symbols_icons` |
 | AndroidX, Kotlin, AppAuth | Apache-2.0 | Android and iOS builds |
 | Russian Trusted Root CA certificates | public certificates | `assets/certs/` |
@@ -100,8 +101,8 @@ your own version needs its own servers and OAuth registrations
   сохраните NOTICE и уведомления об авторских правах, пометьте изменённые
   файлы, дайте версии своё название, значок и идентификатор (TRADEMARKS.md).
 - **Сторонние компоненты** — BSD, MIT, Apache 2.0; enough_mail,
-  enough_convert, dbus и nm — MPL 2.0 (используются без изменений); шрифт
-  OpenDyslexic — OFL 1.1. GPL, LGPL и AGPL нет. Полный список с текстами
+  enough_convert, dbus и nm — MPL 2.0 (используются без изменений); шрифты
+  OpenDyslexic и Medeo Sans — OFL 1.1. GPL, LGPL и AGPL нет. Полный список с текстами
   лицензий — в приложении: «Настройки → О приложении → Тексты лицензий».
 - **Протоколы Exchange (EAS, EWS)** реализованы самостоятельно по открытым
   спецификациям Microsoft (Open Specifications); кода Microsoft нет.

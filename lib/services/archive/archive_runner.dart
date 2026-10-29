@@ -570,6 +570,136 @@ class ArchiveRunner extends Notifier<ArchiveRunState> {
     return (archived: archived, failed: failed);
   }
 
+  /// Папка целиком, с подпапками, — в архив Ogneliss (1.8.8, «Папку в архив»
+  /// по удержанию папки). Структура — как в ящике (и пустые подпапки); все
+  /// письма папок без проверки возраста, как выбранные вручную. Что старше
+  /// периода синхронизации ящика (на устройстве этого нет) — с сервера:
+  /// IMAP и EWS, как при архивации по возрасту. Исходные — в «Удалённые»,
+  /// если так настроено.
+  Future<ArchiveRunResult> archiveFolder(AccountModel account, String folderId) async {
+    final now = DateTime.now();
+    if (state.running) return state.last ?? ArchiveRunResult(at: now, manual: true);
+    final adb = _adb;
+    if (adb == null) {
+      return _finish(ArchiveRunResult(at: now, manual: true, errorKey: 'archiveLocked'), record: false);
+    }
+    _cancel = false;
+    state = state.copyWith(running: true, cancelling: false, done: 0, total: 0, failed: 0, stage: 'mail');
+    final s = ref.read(archiveSettingsProvider);
+    final db = ref.read(databaseProvider);
+    var archived = 0, deleted = 0, failed = 0;
+    String? error;
+    try {
+      final all = await (db.select(db.folders)..where((f) => f.accountId.equals(account.id))).get();
+      final byId = {for (final f in all) f.id: f};
+      final subtree = subtreeOf(folderId, all);
+      final acc = await _archiveAccount(adb, account);
+      for (final f in subtree) {
+        await adb.ensureFolder(acc, folderChain(f.id, byId));
+      }
+      // Письма на устройстве — по одному (тексты не держатся в памяти).
+      final plan = <String>[];
+      for (final f in subtree) {
+        final q = db.selectOnly(db.emails)
+          ..addColumns([db.emails.id])
+          ..where(db.emails.accountId.equals(account.id) &
+              db.emails.folderId.equals(f.id) &
+              db.emails.isDraft.equals(false))
+          ..orderBy([OrderingTerm.asc(db.emails.receivedAt)]);
+        plan.addAll([for (final r in await q.get()) r.read(db.emails.id)!]);
+      }
+      state = state.copyWith(total: plan.length);
+      for (final id in plan) {
+        if (_cancel) break;
+        final row = await (db.select(db.emails)..where((e) => e.id.equals(id) & e.accountId.equals(account.id)))
+            .getSingleOrNull();
+        if (row != null &&
+            ArchiveRules.mailEligible(row, folderType: null, cutoff: now, includeFlagged: true, now: now, manual: true)) {
+          final r = await _archiveOne(account, row, byId, delete: s.deleteFromServer);
+          if (r.archived) archived++;
+          if (r.deleted) deleted++;
+          if (!r.archived) failed++;
+        }
+        state = state.copyWith(done: state.done + 1, failed: failed);
+        await Future<void>.delayed(Duration.zero);
+      }
+      // Старше периода синхронизации — с сервера (ActiveSync так не умеет;
+      // «Вся почта» — всё уже на устройстве).
+      final fromServer = !(account.usesEas || (account.isMsExchange && !account.usesEws)) && account.syncDays > 0;
+      if (fromServer && !_cancel) {
+        if (!ref.read(connectivityServiceProvider).isConnected) {
+          error = 'archiveNoNetwork';
+        } else {
+          final before = now.subtract(Duration(days: account.syncDays));
+          for (final f in subtree) {
+            if (_cancel) break;
+            final chain = folderChain(f.id, byId);
+            List<String> ids;
+            try {
+              ids = account.usesEws
+                  ? await ref.read(ewsServiceProvider).itemIdsBefore(account, folderId: f.id, before: before)
+                  : [
+                      for (final u in await ref.read(imapServiceProvider).uidsBefore(account, folderId: f.id, before: before))
+                        '${f.id}:$u',
+                    ];
+            } catch (e) {
+              // Сервер не отвечает — остальные подпапки не пробуем (как
+              // при архивации по возрасту).
+              AppLogger.warning('Архив: старые письма папки «${f.displayName}» с сервера не получены: $e');
+              break;
+            }
+            if (ids.isEmpty) continue;
+            final target = await adb.ensureFolder(acc, chain);
+            state = state.copyWith(total: state.total + ids.length);
+            for (final id in ids) {
+              if (_cancel) break;
+              var ok = await adb.hasMessage(acc, target, id, null);
+              if (!ok) {
+                ok = await _archiveServerMessage(adb, account, acc, chain, f.id, id);
+                if (ok) archived++;
+              }
+              if (!ok) {
+                failed++;
+              } else if (s.deleteFromServer && await _deleteOnServer(account, f.id, id)) {
+                deleted++;
+              }
+              state = state.copyWith(done: state.done + 1, failed: failed);
+              await Future<void>.delayed(Duration.zero);
+            }
+          }
+        }
+      }
+    } catch (e, st) {
+      AppLogger.error('Архив Ogneliss: папка не заархивирована', e, st);
+      error ??= 'archiveFailed';
+    }
+    AppLogger.info('Архив Ogneliss: папка — писем $archived (удалено с сервера $deleted, не удалось $failed)'
+        '${_cancel ? ', остановлено' : ''}');
+    return _finish(ArchiveRunResult(
+      at: now,
+      manual: true,
+      mails: archived,
+      deleted: deleted,
+      failed: failed,
+      cancelled: _cancel,
+      errorKey: error,
+    ));
+  }
+
+  /// Папка [folderId] и все её подпапки (папка — первой).
+  static List<Folder> subtreeOf(String folderId, List<Folder> folders) {
+    final root = folders.where((f) => f.id == folderId).firstOrNull;
+    if (root == null) return const [];
+    final out = <Folder>[root];
+    final seen = {root.id};
+    for (var i = 0; i < out.length; i++) {
+      for (final c in folders) {
+        if (c.parentId == out[i].id && seen.add(c.id)) out.add(c);
+      }
+    }
+    return out;
+  }
+
   /// Одно письмо в архив. archived — копия в архиве; deleted — исходное
   /// отправлено в «Удалённые».
   Future<({bool archived, bool deleted})> _archiveOne(

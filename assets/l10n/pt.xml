@@ -3528,4 +3528,13 @@
     <string name="faq_archive_6_a">Cada dispositivo mantém a própria cópia do arquivo, e a nuvem (Google Drive, iCloud Drive, Yandex Disk) ou uma unidade USB serve para trocá-la. No primeiro dispositivo: Configurações → Arquivo do Ogneliss → Salvar uma cópia do arquivo. No segundo: Conectar uma cópia do arquivo, se ele ainda não tiver um arquivo, ou Mesclar com uma cópia, se já tiver o próprio. Você pode arquivar nos dois: de tempos em tempos, salve uma cópia em um e mescle no outro. A mesclagem adiciona só o que falta: as mensagens não são duplicadas e a mesma caixa de correio continua sendo um só ramo.</string>
     <string name="faq_archive_7_q">Como o arquivo guarda várias caixas de correio?</string>
     <string name="faq_archive_7_a">Todas as caixas de correio ficam em um só arquivo, cada uma com seu próprio ramo de pastas estruturado como na caixa de correio: no menu lateral, em Arquivo do Ogneliss, e na tela do arquivo, em Caixas de correio no arquivo. Quais caixas arquivar é escolhido na mesma tela, em Caixas de correio para arquivar; a pesquisa no arquivo abrange todas as caixas de uma vez.</string>
+    <string name="archiveNothingOld">Não foram encontradas mensagens mais antigas do que a idade escolhida — não havia nada para arquivar. Escolha um prazo menor ou \"Todas as mensagens\".</string>
+    <string name="uiFontTitle">Fonte da interface</string>
+    <string name="uiFontRobotoHint">Como antes</string>
+    <string name="uiFontMedeoHint">Fonte livre para latim e cirílico (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">A fonte para dislexia está ativada (Acessibilidade) e tem prioridade sobre esta escolha.</string>
+    <string name="loginOrChoose">ou escolha o seu e-mail</string>
+    <string name="folderToOgna">Pasta para o arquivo Ogneliss</string>
+    <string name="folderToOgnaBody">A pasta \"{folder}\", com as subpastas e todas as mensagens, será copiada para o arquivo neste dispositivo, com a estrutura de pastas da caixa. As mensagens mais antigas que o período de sincronização são obtidas do servidor.</string>
+    <string name="folderToOgnaStarted">A arquivar a pasta — o progresso aparece em Arquivo Ogneliss</string>
 </resources>

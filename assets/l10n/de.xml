@@ -3529,4 +3529,12 @@
     <string name="faq_archive_7_q">Wie speichert das Archiv mehrere Postfächer?</string>
     <string name="faq_archive_7_a">Alle Postfächer liegen in einem Archiv, jedes mit eigenem Ordnerzweig wie im Postfach: im Seitenmenü unter Ogneliss-Archiv und auf dem Archivbildschirm unter Postfächer im Archiv. Welche Postfächer archiviert werden, wählen Sie dort unter Zu archivierende Postfächer; die Archivsuche durchsucht alle Postfächer zugleich.</string>
     <string name="archiveNothingOld">Keine Nachrichten älter als das gewählte Alter gefunden — es gab nichts zu archivieren. Wählen Sie ein kürzeres Alter oder „Alle E-Mails“.</string>
+    <string name="uiFontTitle">Schriftart der Oberfläche</string>
+    <string name="uiFontRobotoHint">Wie bisher</string>
+    <string name="uiFontMedeoHint">Freie Schrift für Latein und Kyrillisch (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">Die Legasthenie-Schrift ist aktiv (Bedienungshilfen) — sie hat Vorrang vor dieser Auswahl.</string>
+    <string name="loginOrChoose">oder Mail-Dienst wählen</string>
+    <string name="folderToOgna">Ordner ins Ogneliss-Archiv</string>
+    <string name="folderToOgnaBody">Der Ordner „{folder}“ wird mit Unterordnern und allen Nachrichten ins Archiv auf diesem Gerät kopiert – mit der Ordnerstruktur des Postfachs. Nachrichten, die älter als der Synchronisierungszeitraum sind, werden vom Server geladen.</string>
+    <string name="folderToOgnaStarted">Ordner wird archiviert – Fortschritt im Ogneliss-Archiv</string>
 </resources>

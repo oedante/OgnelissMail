@@ -3528,4 +3528,13 @@
     <string name="faq_archive_6_a">Cada dispositivo guarda su propia copia del archivo, y la nube (Google Drive, iCloud Drive, Yandex Disk) o una unidad USB sirve para intercambiarla. En el primer dispositivo: Ajustes → Archivo de Ogneliss → Guardar una copia del archivo. En el segundo: Conectar una copia del archivo si aún no tiene archivo, o Combinar con una copia si ya tiene uno propio. Puedes archivar en ambos: de vez en cuando guarda una copia en uno y combínala en el otro. Al combinar solo se añade lo que falta: los mensajes no se duplican y el mismo buzón sigue siendo una sola rama.</string>
     <string name="faq_archive_7_q">¿Cómo guarda el archivo varios buzones?</string>
     <string name="faq_archive_7_a">Todos los buzones están en un solo archivo, cada uno con su propia rama de carpetas estructurada como en el buzón: en el menú lateral, en Archivo de Ogneliss, y en la pantalla del archivo, en Buzones en el archivo. Qué buzones archivar se elige en la misma pantalla, en Buzones que archivar; la búsqueda en el archivo abarca todos los buzones a la vez.</string>
+    <string name="archiveNothingOld">No se encontraron mensajes anteriores a la antigüedad elegida: no había nada que archivar. Puede elegir un plazo más corto o «Todos los mensajes».</string>
+    <string name="uiFontTitle">Fuente de la interfaz</string>
+    <string name="uiFontRobotoHint">Como antes</string>
+    <string name="uiFontMedeoHint">Fuente libre para alfabeto latino y cirílico (OFL 1.1)</string>
+    <string name="uiFontDyslexiaNote">La fuente para dislexia está activada (Accesibilidad) y tiene prioridad sobre esta opción.</string>
+    <string name="loginOrChoose">o elija su correo</string>
+    <string name="folderToOgna">Carpeta al archivo de Ogneliss</string>
+    <string name="folderToOgnaBody">La carpeta «{folder}» con sus subcarpetas y todos los mensajes se copiará al archivo de este dispositivo, con la estructura de carpetas del buzón. Los mensajes anteriores al periodo de sincronización se descargarán del servidor.</string>
+    <string name="folderToOgnaStarted">Archivando la carpeta: el progreso se ve en Archivo de Ogneliss</string>
 </resources>

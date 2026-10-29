@@ -13,6 +13,7 @@ import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/auth/screens/login_screen.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
+import 'package:ogneliss/services/mail/mail_provider_detect.dart' show MailKind;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _settle(WidgetTester tester) async {
@@ -84,6 +85,70 @@ void main() {
     await tester.tap(find.text('Войти'));
     await _settle(tester);
     expect(find.text('Введите пароль'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 1));
+    await tester.runAsync(db.close);
+  });
+
+  // 1.8.8 (замечание 29.10.2026): способ входа — плиткой, без адреса;
+  // у рабочей почты — переключатель «Exchange | IMAP».
+  testWidgets('плитки способов входа и переключатель Exchange | IMAP', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    tester.view.physicalSize = const Size(400, 900) * 2;
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        databaseProvider.overrideWithValue(db),
+        sharedPrefsProvider.overrideWithValue(prefs),
+      ],
+      child: MaterialApp(
+        theme: AppTheme.lightTheme(1.0),
+        locale: const Locale('ru'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: const LoginScreen(),
+      ),
+    ));
+    await _settle(tester);
+
+    // На первом шаге — плитки всех способов.
+    for (final t in ['Google', 'Яндекс', 'Microsoft', 'Mail.ru', 'iCloud', 'Exchange', 'IMAP']) {
+      expect(find.text(t), findsOneWidget, reason: t);
+    }
+
+    // Exchange без адреса: шаг 2 с полем адреса и переключателем.
+    await tester.ensureVisible(find.text('Exchange'));
+    await tester.tap(find.text('Exchange'));
+    await _settle(tester);
+    expect(find.byType(SegmentedButton<MailKind>), findsOneWidget);
+    expect(find.widgetWithText(TextFormField, 'Email'), findsOneWidget);
+
+    // Поле адреса не пропадает, когда адрес стал похож на настоящий.
+    await tester.enterText(find.widgetWithText(TextFormField, 'Email'), 'oedante@ogneliss.ru');
+    await _settle(tester);
+    expect(find.widgetWithText(TextFormField, 'Email'), findsOneWidget);
+
+    // IMAP — серверы домена в «Расширенных настройках».
+    await tester.tap(find.descendant(of: find.byType(SegmentedButton<MailKind>), matching: find.text('IMAP')));
+    await _settle(tester);
+    expect(find.text('Другая почта (IMAP)'), findsOneWidget);
+    expect(find.text('imap.ogneliss.ru'), findsOneWidget);
+    expect(find.text('smtp.ogneliss.ru'), findsOneWidget);
+
+    // Обратно на Exchange.
+    await tester.tap(find.descendant(of: find.byType(SegmentedButton<MailKind>), matching: find.text('Exchange')));
+    await _settle(tester);
+    expect(find.text('imap.ogneliss.ru'), findsNothing);
 
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));

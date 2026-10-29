@@ -9,7 +9,9 @@ import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ogneliss/core/security/secure_storage_service.dart';
 import 'package:ogneliss/data/database/app_database.dart';
+import 'package:ogneliss/data/models/account_model.dart';
 import 'package:ogneliss/data/models/folder_model.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
@@ -34,11 +36,27 @@ class _Vault extends ArchiveVault {
       header: ArchiveHeader(id: 't', name: '', created: DateTime(2026), app: 'test', keys: const {}));
 }
 
+/// Сервер без сети: «писем старше периода на сервере нет». Раньше тест
+/// подключался к imap.corp.example по-настоящему: на Linux отказ приходил
+/// сразу, а на Windows поиск имени шёл 13–20 с, и «папка целиком» (два
+/// прохода) не укладывалась в 30 с (журнал владельца 29.10.2026).
+class _Imap extends ImapService {
+  _Imap() : super(SecureStorageService());
+  final asked = <String>[];
+
+  @override
+  Future<List<int>> uidsBefore(AccountModel account, {required String folderId, required DateTime before}) async {
+    asked.add(folderId);
+    return const [];
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late AppDatabase app;
   late ArchiveDb adb;
   late ProviderContainer c;
+  late _Imap imap;
 
   setUp(() async {
     FlutterSecureStorage.setMockInitialValues({});
@@ -78,7 +96,9 @@ void main() {
     await mail('Sent:3', 'Sent', 400);
     await mail('INBOX:4', 'INBOX', 10); // свежее
     await mail('Trash:5', 'Trash', 300); // корзина не архивируется
+    imap = _Imap();
     c = ProviderContainer(overrides: [
+      imapServiceProvider.overrideWithValue(imap),
       databaseProvider.overrideWithValue(app),
       sharedPrefsProvider.overrideWithValue(prefs),
       archiveVaultProvider.overrideWith(() => _Vault(adb)),
@@ -118,6 +138,8 @@ void main() {
     // Повторно — без дублей.
     await c.read(archiveRunnerProvider.notifier).archiveFolder(account, 'INBOX');
     expect((await adb.search('Текст')).length, 3);
+    // Старше периода синхронизации — спрошено у сервера по всем папкам ветки.
+    expect(imap.asked.toSet(), {'INBOX', 'INBOX/Work', 'INBOX/Empty'});
   });
 
   test('подпапки папки — папка первой, вся глубина', () async {

@@ -18,6 +18,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../services/rules/device_rules_service.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../mail/providers/mail_providers.dart' show accountsProvider;
 
 /// Открыть редактор правила. [initial] — правка; без него — новое правило
@@ -164,8 +165,9 @@ class _DeviceRuleScreenState extends ConsumerState<DeviceRuleScreen> {
               leading: const Icon(AppIcons.alternate_email),
               title: Text(l10n.tr('ruleAccount')),
               subtitle: Text(acc?.email ?? l10n.tr('ruleAllAccounts')),
-              trailing: PopupMenuButton<String>(
+              trailing: AppMenuButton<String>(
                 icon: const Icon(AppIcons.arrow_drop_down),
+                initialValue: _r.accountId ?? '',
                 onSelected: (v) => setState(() {
                   // Папки у каждого ящика свои — при смене ящика папка сбрасывается.
                   _r = v.isEmpty
@@ -173,8 +175,8 @@ class _DeviceRuleScreenState extends ConsumerState<DeviceRuleScreen> {
                       : _r.copyWith(accountId: v, clearMove: v != _r.accountId);
                 }),
                 itemBuilder: (_) => [
-                  PopupMenuItem(value: '', child: Text(l10n.tr('ruleAllAccounts'))),
-                  for (final a in accounts) PopupMenuItem(value: a.id, child: Text(a.email)),
+                  AppMenuEntry(value: '', label: l10n.tr('ruleAllAccounts')),
+                  for (final a in accounts) AppMenuEntry(value: a.id, label: a.email),
                 ],
               ),
             ),
@@ -242,12 +244,12 @@ class _DeviceRuleScreenState extends ConsumerState<DeviceRuleScreen> {
               leading: const Icon(AppIcons.notifications),
               title: Text(l10n.tr('ruleNotify')),
               subtitle: Text(_notifyLabel(_r.notify, l10n)),
-              trailing: PopupMenuButton<RuleNotify>(
+              trailing: AppMenuButton<RuleNotify>(
                 icon: const Icon(AppIcons.arrow_drop_down),
                 initialValue: _r.notify,
                 onSelected: (v) => setState(() => _r = _r.copyWith(notify: v)),
                 itemBuilder: (_) => [
-                  for (final n in RuleNotify.values) PopupMenuItem(value: n, child: Text(_notifyLabel(n, l10n))),
+                  for (final n in RuleNotify.values) AppMenuEntry(value: n, label: _notifyLabel(n, l10n)),
                 ],
               ),
             ),
@@ -275,12 +277,12 @@ class _DeviceRuleScreenState extends ConsumerState<DeviceRuleScreen> {
               leading: const Icon(AppIcons.watch_later),
               title: Text(l10n.tr('ruleLater')),
               subtitle: Text(_laterLabel(_r.later, l10n)),
-              trailing: PopupMenuButton<RuleLater>(
+              trailing: AppMenuButton<RuleLater>(
                 icon: const Icon(AppIcons.arrow_drop_down),
                 initialValue: _r.later,
                 onSelected: (v) => setState(() => _r = _r.copyWith(later: v)),
                 itemBuilder: (_) => [
-                  for (final l in RuleLater.values) PopupMenuItem(value: l, child: Text(_laterLabel(l, l10n))),
+                  for (final l in RuleLater.values) AppMenuEntry(value: l, label: _laterLabel(l, l10n)),
                 ],
               ),
             ),
@@ -330,15 +332,16 @@ class _DeviceRuleScreenState extends ConsumerState<DeviceRuleScreen> {
       leading: const Icon(AppIcons.drive_file_move),
       title: Text(l10n.tr('ruleMove')),
       subtitle: Text(_r.moveFolderName ?? l10n.tr('ruleMoveNone')),
-      trailing: PopupMenuButton<String>(
+      trailing: AppMenuButton<String>(
         icon: const Icon(AppIcons.arrow_drop_down),
+        initialValue: _r.moveFolderId ?? '',
         onSelected: (v) => setState(() {
           final f = folders.where((x) => x.id == v).firstOrNull;
           _r = f == null ? _r.copyWith(clearMove: true) : _r.copyWith(moveFolderId: f.id, moveFolderName: f.displayName);
         }),
         itemBuilder: (_) => [
-          PopupMenuItem(value: '', child: Text(l10n.tr('ruleMoveNone'))),
-          for (final f in folders) PopupMenuItem(value: f.id, child: Text(f.displayName)),
+          AppMenuEntry(value: '', label: l10n.tr('ruleMoveNone')),
+          for (final f in folders) AppMenuEntry(value: f.id, label: f.displayName),
         ],
       ),
     );

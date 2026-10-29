@@ -20,6 +20,7 @@ import '../../../services/mail/greeting_mode.dart';
 import '../../../core/utils/greeting_helper.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/ui/app_menu_button.dart';
 
 class SignaturesSettingsScreen extends ConsumerWidget {
   const SignaturesSettingsScreen({super.key, this.accountId});
@@ -107,7 +108,7 @@ class SignaturesSettingsScreen extends ConsumerWidget {
                 subtitle: Text(sig.plainContent,
                     maxLines: 2, overflow: TextOverflow.ellipsis),
                 onTap: () => _editSignature(context, ref, sig),
-                trailing: PopupMenuButton<String>(
+                trailing: AppMenuButton<String>(
                   onSelected: (action) {
                     if (action == 'default') {
                       ref.read(signaturesProvider.notifier).setDefault(sig.id);
@@ -116,8 +117,8 @@ class SignaturesSettingsScreen extends ConsumerWidget {
                     }
                   },
                   itemBuilder: (_) => [
-                    PopupMenuItem(value: 'default', child: Text(l10n.tr('makeDefault'))),
-                    PopupMenuItem(value: 'delete', child: Text(l10n.tr('delete'))),
+                    AppMenuEntry(value: 'default', icon: AppIcons.star, label: l10n.tr('makeDefault')),
+                    AppMenuEntry(value: 'delete', icon: AppIcons.delete, label: l10n.tr('delete'), destructive: true),
                   ],
                 ),
               )),

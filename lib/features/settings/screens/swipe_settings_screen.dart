@@ -218,6 +218,7 @@ class SwipeSettingsScreen extends ConsumerWidget {
         SwipeAction.findBySender => l10n.tr('from'),
         SwipeAction.none => l10n.tr('none'),
         SwipeAction.control => l10n.tr('controlSet'),
+        SwipeAction.toOgna => l10n.tr('toOgnaArchive'),
       };
 
   IconData _icon(SwipeAction a) => switch (a) {
@@ -234,5 +235,6 @@ class SwipeSettingsScreen extends ConsumerWidget {
         SwipeAction.findBySender => AppIcons.person_search,
         SwipeAction.none => Icons.block_flipped,
         SwipeAction.control => AppIcons.task_alt,
+        SwipeAction.toOgna => AppIcons.inventory_2,
       };
 }

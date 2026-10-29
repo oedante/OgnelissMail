@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/tokens.dart';
+import '../ui/app_menu_button.dart';
 import 'package:flutter/services.dart';
 
 import '../../l10n/app_localizations.dart';
@@ -68,14 +69,14 @@ class RichTextToolbar extends StatelessWidget {
           }),
           _divider(),
           // Размер шрифта
-          PopupMenuButton<int>(
+          AppMenuButton<int>(
             icon: const Icon(AppIcons.format_size, size: 20),
             tooltip: l10n.tr('fontSize'),
             itemBuilder: (_) => [
-              PopupMenuItem(value: 1, child: Text(l10n.tr('fontSmall'), style: const TextStyle(fontSize: 12))),
-              PopupMenuItem(value: 3, child: Text(l10n.tr('fontNormal'), style: const TextStyle(fontSize: 14))),
-              PopupMenuItem(value: 5, child: Text(l10n.tr('fontLarge'), style: const TextStyle(fontSize: 18))),
-              PopupMenuItem(value: 7, child: Text(l10n.tr('fontHuge'), style: const TextStyle(fontSize: 24))),
+              AppMenuEntry(value: 1, icon: AppIcons.text_fields, label: l10n.tr('fontSmall')),
+              AppMenuEntry(value: 3, icon: AppIcons.text_fields, label: l10n.tr('fontNormal')),
+              AppMenuEntry(value: 5, icon: AppIcons.format_size, label: l10n.tr('fontLarge')),
+              AppMenuEntry(value: 7, icon: AppIcons.format_size, label: l10n.tr('fontHuge')),
             ],
             onSelected: (size) {
               HapticFeedback.selectionClick();
@@ -83,7 +84,7 @@ class RichTextToolbar extends StatelessWidget {
             },
           ),
           // Цвет текста
-          PopupMenuButton<Color>(
+          AppMenuButton<Color>(
             icon: const Icon(AppIcons.format_color_text, size: 20),
             tooltip: l10n.tr('textColor'),
             itemBuilder: (_) => [
@@ -130,18 +131,8 @@ class RichTextToolbar extends StatelessWidget {
     );
   }
 
-  PopupMenuItem<Color> _colorItem(Color color, String label) {
-    return PopupMenuItem(
-      value: color,
-      child: Row(
-        children: [
-          Container(width: 16, height: 16, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-          const SizedBox(width: Space.s),
-          Text(label),
-        ],
-      ),
-    );
-  }
+  AppMenuEntry<Color> _colorItem(Color color, String label) =>
+      AppMenuEntry(value: color, icon: AppIcons.radio_button_checked, iconColor: color, label: label);
 }
 
 /// Хелпер для применения HTML-тегов к тексту

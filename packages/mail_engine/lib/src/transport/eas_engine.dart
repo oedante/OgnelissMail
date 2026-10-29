@@ -3351,7 +3351,7 @@ class EasEngine implements MailEngine {
   /// Search, Find возвращает ServerId — по нему письмо можно изменить
   /// (прочитано, флаг) командой Sync, даже если оно старше окна
   /// синхронизации. null — команда не поддерживается или не прошла.
-  /// Теги code page 25 сверены с таблицей Z-Push (wbxmldefs.php).
+  /// Теги — кодовая страница 25 (Find) из спецификации MS-ASWBXML.
   Future<List<EasFindHit>?> findInFolder(String collectionId, String freeText, {int limit = 50}) async {
     final cfg = _cfg;
     if (cfg == null || _findUnsupported || freeText.trim().isEmpty) return null;

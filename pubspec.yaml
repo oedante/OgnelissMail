@@ -1,7 +1,7 @@
 name: ogneliss
 description: Ogneliss Mail — почтовый клиент для Exchange, Gmail, Яндекс и Mail.ru
 publish_to: "none"
-version: 1.8.6+122
+version: 1.8.7+123
 
 environment:
   # Dart 3.10+: этого требует sqlite3 3.x (через drift 2.32+). Flutter 3.38+.
@@ -127,6 +127,11 @@ dependencies:
 # не изменился, поэтому переопределение безопасно.
 dependency_overrides:
   uuid: ^4.5.1
+  # Linux-часть flutter_inappwebview требует WPE WebKit, которого нет в
+  # Ubuntu 24.04; браузер на Linux не используется — пустая реализация
+  # (packages/flutter_inappwebview_linux_stub/pubspec.yaml, 28.10.2026).
+  flutter_inappwebview_linux:
+    path: packages/flutter_inappwebview_linux_stub
   # flutter_html 3.0.0 вызывает внутреннюю функцию matches() из
   # package:html/src/query_selector.dart, которую html 0.15.7 (август 2026)
   # удалил: сборка падает с «Method not found: 'matches'». Держим 0.15.6,
@@ -199,6 +204,11 @@ flutter:
     # Строки интерфейса всех языков (1.7.3): assets/l10n/<код>.xml.
     - assets/l10n/
     - assets/fonts/pdf/
+    # Лицензии для страницы «Тексты лицензий» (lib/main.dart): шрифт
+    # OpenDyslexic (OFL 1.1) и само приложение (Apache 2.0).
+    - assets/fonts/OpenDyslexic-OFL.txt
+    - LICENSE
+    - NOTICE
     # Редактор писем HugeRTE — tool/editor/build_editor.sh
     - assets/editor/
   fonts:

@@ -1485,6 +1485,25 @@ class ImapService {
 
   /// Письмо целиком (BODY.PEEK[], флаг «прочитано» не меняется) — для
   /// проверки подписи S/MIME.
+  /// UID писем папки [folderId], полученных раньше [before] (поиск на
+  /// сервере, `UID SEARCH BEFORE`), по возрастанию. Для архива Ogneliss:
+  /// письма старше периода синхронизации на устройстве не лежат (29.10.2026).
+  Future<List<int>> uidsBefore(AccountModel account, {required String folderId, required DateTime before}) =>
+      _withClient<List<int>>(account, (client) async {
+        await client.selectMailboxByPath(folderId);
+        final r = await client.uidSearchMessages(searchCriteria: 'BEFORE ${imapSearchDate(before)} NOT DELETED');
+        final seq = r.matchingSequence;
+        if (seq == null || seq.isEmpty) return const <int>[];
+        return seq.toList()..sort();
+      });
+
+  /// Дата для поиска IMAP (RFC 3501): «29-Apr-2026». BEFORE сравнивает
+  /// только дату, без времени и часового пояса.
+  static String imapSearchDate(DateTime d) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${d.day}-${months[d.month - 1]}-${d.year}';
+  }
+
   Future<Uint8List?> fetchRawMessage(AccountModel account,
       {required String folderId, required int uid}) async {
     return _withClient<Uint8List?>(account, (client) async {

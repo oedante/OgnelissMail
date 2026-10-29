@@ -35,6 +35,7 @@ import '../../mail/folder_order.dart' show hideUnsyncedFoldersProvider;
 import '../../../services/sync/sync_service.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/ui/app_menu_button.dart';
 
 /// Выключенные уведомления папок («ящик|папка»).
 final folderNotifyOffProvider = NotifierProvider<FolderNotifyOffNotifier, Set<String>>(FolderNotifyOffNotifier.new);
@@ -77,23 +78,17 @@ class FolderSyncSettingsScreen extends ConsumerWidget {
         ),
         actions: [
           HelpButton(text: l10n.tr('folderSyncDisabledInfo'), title: l10n.tr('folderSync')),
-          PopupMenuButton<String>(
+          AppMenuButton<String>(
             onSelected: (v) => switch (v) {
               'notifyAll' || 'notifyNone' => _bulkNotify(ref, account, notify: v == 'notifyAll'),
               _ => _bulk(context, ref, enable: v == 'all'),
             },
             itemBuilder: (_) => [
-              PopupMenuItem(
-                value: 'all',
-                child: Text(l10n.tr('enableAll')),
-              ),
-              PopupMenuItem(
-                value: 'none',
-                child: Text(l10n.tr('disableAll')),
-              ),
-              const PopupMenuDivider(),
-              PopupMenuItem(value: 'notifyAll', child: Text(l10n.tr('folderNotifyAll'))),
-              PopupMenuItem(value: 'notifyNone', child: Text(l10n.tr('folderNotifyNone'))),
+              AppMenuEntry(value: 'all', icon: AppIcons.sync, label: l10n.tr('enableAll')),
+              AppMenuEntry(value: 'none', icon: AppIcons.sync_disabled, label: l10n.tr('disableAll')),
+              const AppMenuEntry.divider(),
+              AppMenuEntry(value: 'notifyAll', icon: AppIcons.notifications_active, label: l10n.tr('folderNotifyAll')),
+              AppMenuEntry(value: 'notifyNone', icon: AppIcons.notifications_off, label: l10n.tr('folderNotifyNone')),
             ],
           ),
         ],

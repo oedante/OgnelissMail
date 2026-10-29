@@ -54,6 +54,7 @@ import '../widgets/peek_helpers.dart';
 import '../widgets/quick_reply_bar.dart';
 import '../providers/drawer_prefs.dart' show convChatOrderProvider, quickReplyBarProvider;
 import '../../../widgets/common/inline_notice.dart' show showInlineError;
+import '../../../widgets/ui/app_menu_button.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 /// Письма беседы из БД, самое новое первым — строки без тел (1.5.9): раньше
@@ -507,7 +508,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   onPressed: _busy ? null : () => _markAllRead(emails),
                 ),
               if (emails != null && emails.isNotEmpty)
-                PopupMenuButton<String>(
+                AppMenuButton<String>(
                   tooltip: l10n.tr('more'),
                   onSelected: (v) {
                     switch (v) {
@@ -518,19 +519,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     }
                   },
                   itemBuilder: (_) => [
-                    CheckedPopupMenuItem(
-                      value: 'order',
-                      checked: chat,
-                      child: Text(l10n.tr('convChatOrder')),
-                    ),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(children: [
-                        Icon(AppIcons.delete, color: AppColors.errorText(context)),
-                        const SizedBox(width: Space.m),
-                        Text(l10n.tr('convDelete')),
-                      ]),
-                    ),
+                    AppMenuEntry(value: 'order', icon: AppIcons.forum, label: l10n.tr('convChatOrder'), checked: chat),
+                    AppMenuEntry(value: 'delete', icon: AppIcons.delete, label: l10n.tr('convDelete'), destructive: true),
                   ],
                 ),
             ],

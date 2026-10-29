@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">Ce n’est pas un fichier d’archive Ogneliss (.ogna)</string>
     <string name="archiveNewerFormat">L’archive vient d’une version plus récente de l’app. Mettez l’app à jour</string>
     <string name="archiveBroken">Le fichier d’archive est endommagé ou incomplet</string>
-    <string name="archiveAlreadyExists">Il existe déjà une archive sur cet appareil. Plusieurs archives viendront dans une version ultérieure</string>
+    <string name="archiveAlreadyExists">Il existe déjà une archive sur cet appareil. Pour y ajouter une copie venant d’un autre appareil, choisissez Fusionner avec une copie</string>
     <string name="archiveNoCipher">Cette version n’a pas de chiffrement de base de données : impossible de créer une archive</string>
     <string name="archiveLocked">L’archive est verrouillée. Ouvrez-la avec le mot de passe</string>
     <string name="archiveLockedIntro">L’archive sur cet appareil est verrouillée. Ouvrez-la avec son mot de passe ou le code de récupération.</string>
@@ -3324,7 +3324,7 @@
     <string name="archiveWhatSection">Quoi archiver</string>
     <string name="archiveKindMail">Messages</string>
     <string name="archiveKindMailDesc">Avec pièces jointes et dossiers, comme dans la boîte</string>
-    <string name="archivePeriodHint">L’archive prend les messages présents sur l’appareil, dans la période de synchronisation de la boîte (réglages de la boîte → Période). Pour archiver des messages plus anciens, choisissez-y Tous les messages. Brouillons, boîte d’envoi, corbeille et indésirables ne sont pas archivés.</string>
+    <string name="archivePeriodHint">Pour les boîtes IMAP et Exchange (EWS), les messages plus anciens que la période de synchronisation sont pris directement sur le serveur. Pour ActiveSync, seulement les messages présents sur l’appareil, dans la période de synchronisation (réglages de la boîte → Période ; Tous les messages — tout). Brouillons, boîte d’envoi, corbeille et indésirables ne sont pas archivés.</string>
     <string name="archiveIncludeFlagged">Avec indicateur et suivis</string>
     <string name="archiveIncludeFlaggedDesc">Archiver aussi les messages encore en cours</string>
     <string name="archiveDeleteFromServer">Retirer les messages du serveur</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">Terminées et annulées, en copie</string>
     <string name="archiveKindContacts">Contacts</string>
     <string name="archiveKindContactsDesc">Vos contacts, instantané au moment de l’archivage</string>
-    <string name="archiveAccountsSection">Quelles boîtes</string>
+    <string name="archiveAccountsSection">Boîtes à archiver</string>
     <string name="archiveCopySection">Copie et protection</string>
     <string name="archiveCopyHelp">L’archive se trouve dans les données de l’app : si vous supprimez l’app, l’archive part avec elle. Enregistrez une copie (fichier .ogna) sur un disque ou dans un cloud : Google Drive, Fichiers avec iCloud Drive, Yandex Disk, clé USB. La copie est chiffrée avec la même clé : impossible de l’ouvrir sans mot de passe ni code.</string>
     <string name="archiveCopySave">Enregistrer une copie de l’archive</string>
@@ -3384,7 +3384,7 @@
     <string name="faq_archive_3_q">Que faire si j’oublie le mot de passe de l’archive ?</string>
     <string name="faq_archive_3_a">Saisissez à la place du mot de passe le code de récupération affiché à la création de l’archive, puis définissez un nouveau mot de passe. Code perdu mais archive ouverte ? Réglages → Archive Ogneliss → Nouveau code de récupération. Sans mot de passe ni code, personne ne peut ouvrir l’archive : la clé n’est pas sur nos serveurs.</string>
     <string name="faq_archive_4_q">Pourquoi certains messages ne sont-ils pas allés dans l’archive ?</string>
-    <string name="faq_archive_4_a">L’archive prend les messages présents sur l’appareil, dans la période de synchronisation de la boîte : pour les plus anciens, choisissez Période → Tous les messages dans les réglages de la boîte. Les messages avec indicateur et suivis ne sont pas archivés par défaut (interrupteur dans les réglages de l’archive), pas plus que les brouillons, la corbeille et les indésirables. Si le texte ou une pièce jointe n’a pas été téléchargé, le message reste dans la boîte et partira au prochain archivage.</string>
+    <string name="faq_archive_4_a">Vérifiez d’abord l’âge : par défaut, les messages de plus de 6 mois vont dans l’archive ; s’il n’y en a pas, il n’y a rien à archiver — choisissez un âge plus court ou Tous les messages (Archiver maintenant). Pour IMAP et Exchange (EWS), les messages plus anciens que la période de synchronisation sont pris directement sur le serveur ; pour ActiveSync, seulement ceux présents sur l’appareil (réglages de la boîte → Période → Tous les messages — tout). Les messages avec indicateur et suivis ne sont pas archivés par défaut (interrupteur dans les réglages de l’archive), pas plus que les brouillons, la corbeille et les indésirables. Si le texte ou une pièce jointe n’a pas été téléchargé, le message reste dans la boîte et partira au prochain archivage.</string>
     <string name="faq_archive_5_q">Comment récupérer boîtes et réglages depuis l’archive sur un nouvel appareil ?</string>
     <string name="faq_archive_5_a">Sur l’écran de connexion, touchez Connecter une archive Ogneliss (ou Réglages → Archive Ogneliss), connectez la copie de l’archive puis, sous Réglages de l’app dans l’archive, touchez Restaurer sur cet appareil. Boîtes, signatures, notes et réglages sont ajoutés ; si l’archive contenait les mots de passe des boîtes, inutile de se reconnecter.</string>
     <string name="greetHelloOnly">Bonjour,</string>
@@ -3508,4 +3508,25 @@
     <string name="exchangeHiddenDesc">Exchange n\'est pas pris en charge dans cette version. Les boîtes et leurs données restent sur l\'appareil et reviendront dans une version avec Exchange. Vous pouvez ajouter la messagerie en IMAP.</string>
     <string name="sourceCode">Code source</string>
     <string name="sourceCodeDesc">GitHub : lire, compiler, contribuer</string>
+    <string name="archiveMergeTitle">Fusionner avec une copie</string>
+    <string name="archiveMergeSub">Ajouter les messages d’une copie faite sur un autre appareil — sans doublons</string>
+    <string name="archiveMergeIntro">Choisissez une copie de l’archive (.ogna) venant d’un autre appareil — dans Google Drive, iCloud Drive, Yandex Disk ou sur une clé USB — et saisissez son mot de passe ou son code de récupération. Tout ce qui manque dans l’archive de cet appareil est ajouté ; rien n’est dupliqué et le mot de passe de l’archive ne change pas.</string>
+    <string name="archiveMergeRun">Fusionner</string>
+    <string name="archiveMerging">Fusion : {done} sur {total} messages</string>
+    <string name="archiveMergeDone">Messages ajoutés : {n}. Déjà dans l’archive : {skipped}.</string>
+    <string name="archiveMergeAfter">Pour que l’autre appareil ait aussi tout, enregistrez ici une copie de l’archive et fusionnez-la là-bas.</string>
+    <string name="archiveDevicesSection">Autres appareils et cloud</string>
+    <string name="archiveDevicesHow">L’archive est stockée chiffrée sur cet appareil ; le cloud sert à garder sa copie. Pour ouvrir l’archive sur un autre téléphone ou ordinateur, enregistrez une copie dans Google Drive, iCloud Drive, Yandex Disk ou sur une clé USB, puis là-bas touchez Archive Ogneliss → Connecter une copie de l’archive (s’il n’y a pas encore d’archive) ou Fusionner avec une copie (s’il a la sienne). Vous pouvez archiver sur les deux appareils : de temps en temps, enregistrez une copie sur l’un et fusionnez-la sur l’autre — rien n’est dupliqué.</string>
+    <string name="archiveDevicesHowNone">Vous avez déjà une archive sur un autre appareil ? Enregistrez-y une copie de l’archive (Paramètres → Archive Ogneliss → Enregistrer une copie de l’archive) dans le cloud ou sur une clé USB, puis touchez ici Connecter une copie de l’archive. Ensuite, vous pouvez archiver sur les deux appareils : de temps en temps, enregistrez une copie sur l’un et fusionnez-la sur l’autre.</string>
+    <string name="archiveSecuritySection">Protection</string>
+    <string name="archiveContentsSection">Boîtes dans l’archive</string>
+    <string name="archiveContentsHelp">Une seule archive pour toutes les boîtes : chacune a sa branche de dossiers, comme dans la boîte — ici et dans le menu latéral, sous Archive Ogneliss. La même boîte venant de plusieurs appareils forme une seule branche : les boîtes sont rapprochées par adresse.</string>
+    <string name="archiveAccountMails">messages : {n}</string>
+    <string name="archiveAccountOtherDevice">d’un autre appareil</string>
+    <string name="archiveAccountsHelp">Seules les boîtes activées sont archivées. Une boîte désactivée n’est pas archivée ; ce qui est déjà dans l’archive y reste.</string>
+    <string name="faq_archive_6_q">Comment utiliser une même archive sur un téléphone et un ordinateur ?</string>
+    <string name="faq_archive_6_a">Chaque appareil garde sa propre copie de l’archive ; le cloud (Google Drive, iCloud Drive, Yandex Disk) ou une clé USB sert à l’échanger. Sur le premier appareil : Paramètres → Archive Ogneliss → Enregistrer une copie de l’archive. Sur le second : Connecter une copie de l’archive s’il n’a pas encore d’archive, ou Fusionner avec une copie s’il a la sienne. Vous pouvez archiver sur les deux : de temps en temps, enregistrez une copie sur l’un et fusionnez-la sur l’autre. La fusion n’ajoute que ce qui manque : les messages ne sont pas dupliqués et une même boîte reste une seule branche.</string>
+    <string name="faq_archive_7_q">Comment l’archive conserve-t-elle plusieurs boîtes ?</string>
+    <string name="faq_archive_7_a">Toutes les boîtes sont dans une seule archive, chacune avec sa branche de dossiers organisée comme dans la boîte : dans le menu latéral sous Archive Ogneliss, et sur l’écran de l’archive sous Boîtes dans l’archive. Les boîtes à archiver se choisissent sur le même écran, sous Boîtes à archiver ; la recherche dans l’archive couvre toutes les boîtes à la fois.</string>
+    <string name="archiveNothingOld">Aucun message plus ancien que l’âge choisi — il n’y avait rien à archiver. Vous pouvez choisir un âge plus court ou Tous les messages.</string>
 </resources>

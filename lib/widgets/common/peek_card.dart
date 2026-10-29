@@ -687,3 +687,221 @@ class _HoldMenuListState extends State<_HoldMenuList> implements HoldTarget {
     );
   }
 }
+
+// ───────────────────────── Меню кнопки («⋮», выбор значения) ─────────────────────────
+//
+// 1.8.6 (замечание владельца 28.10.2026: всплывающие панели — как карточка
+// по удержанию письма). Раньше меню «⋮» и выбор значения в настройках были
+// стандартными меню Material: другой фон, другие отступы и тени, без
+// размытия. Теперь — тот же размытый фон и та же карточка, что у удержания:
+// меню у кнопки (под ней; не помещается — над ней), строки как в меню
+// кнопки «Написать», выбранное значение — с галочкой.
+
+/// Пункт меню кнопки ([showAnchoredMenu], [AppMenuButton]).
+class AppMenuEntry<T> {
+  final T? value;
+  final String label;
+  final IconData? icon;
+
+  /// Цвет значка (образец цвета текста в панели форматирования); null — обычный.
+  final Color? iconColor;
+  final String? subtitle;
+
+  /// Необратимое действие («Удалить», «Очистить») — цветом ошибки.
+  final bool destructive;
+  final bool enabled;
+
+  /// Переключатель включён (например, «На контроле при отправке») — галочка
+  /// справа, как у выбранного значения.
+  final bool checked;
+  final bool isDivider;
+
+  const AppMenuEntry({
+    required T this.value,
+    required this.label,
+    this.icon,
+    this.iconColor,
+    this.subtitle,
+    this.destructive = false,
+    this.enabled = true,
+    this.checked = false,
+  }) : isDivider = false;
+
+  /// Черта между группами пунктов.
+  const AppMenuEntry.divider()
+      : value = null,
+        label = '',
+        icon = null,
+        iconColor = null,
+        subtitle = null,
+        destructive = false,
+        enabled = false,
+        checked = false,
+        isDivider = true;
+}
+
+/// Меню у [anchor] (прямоугольник кнопки на экране). Возвращает value
+/// выбранного пункта или null (закрыли мимо, «Назад»). [selected] — текущее
+/// значение: пункт с ним отмечен галочкой.
+Future<T?> showAnchoredMenu<T>(
+  BuildContext context, {
+  required Rect anchor,
+  required List<AppMenuEntry<T>> entries,
+  T? selected,
+}) {
+  final reduce = MediaQuery.of(context).disableAnimations;
+  return showGeneralDialog<T>(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    barrierColor: Colors.transparent,
+    transitionDuration: reduce ? Duration.zero : const Duration(milliseconds: 160),
+    pageBuilder: (ctx, _, __) => _AnchoredMenuOverlay<T>(anchor: anchor, entries: entries, selected: selected),
+    transitionBuilder: (ctx, anim, _, child) => FadeTransition(
+      opacity: CurvedAnimation(parent: anim, curve: Curves.easeOut),
+      child: child,
+    ),
+  );
+}
+
+class _AnchoredMenuOverlay<T> extends StatelessWidget {
+  final Rect anchor;
+  final List<AppMenuEntry<T>> entries;
+  final T? selected;
+  const _AnchoredMenuOverlay({required this.anchor, required this.entries, required this.selected});
+
+  @override
+  Widget build(BuildContext context) {
+    final insets = _safe(MediaQuery.of(context));
+    return Stack(children: [
+      const _PeekBackdrop(),
+      Positioned.fill(
+        child: Padding(
+          padding: insets,
+          child: CustomSingleChildLayout(
+            delegate: _AnchoredMenuLayout(anchor: anchor, insets: insets),
+            child: _Lift(child: _AnchoredMenuList<T>(entries: entries, selected: selected)),
+          ),
+        ),
+      ),
+    ]);
+  }
+}
+
+/// Меню — под кнопкой (не помещается — над ней), правым краем к правому краю
+/// кнопки, если кнопка в правой половине экрана, иначе левым к левому.
+class _AnchoredMenuLayout extends SingleChildLayoutDelegate {
+  final Rect anchor;
+  final EdgeInsets insets;
+  const _AnchoredMenuLayout({required this.anchor, required this.insets});
+
+  static const _minWidth = 200.0;
+  static const _maxWidth = 320.0;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    final max = math.min(_maxWidth, constraints.maxWidth);
+    return BoxConstraints(minWidth: math.min(_minWidth, max), maxWidth: max, maxHeight: constraints.maxHeight);
+  }
+
+  @override
+  Offset getPositionForChild(Size size, Size child) {
+    final maxLeft = math.max(0.0, size.width - child.width);
+    final maxTop = math.max(0.0, size.height - child.height);
+    final a = anchor.translate(-insets.left, -insets.top);
+    final rightSide = a.center.dx > size.width / 2;
+    final left = (rightSide ? a.right - child.width : a.left).clamp(0.0, maxLeft).toDouble();
+    final below = a.bottom + Space.xs;
+    final top = below + child.height <= size.height ? below : a.top - Space.xs - child.height;
+    return Offset(left, top.clamp(0.0, maxTop).toDouble());
+  }
+
+  @override
+  bool shouldRelayout(_AnchoredMenuLayout old) => old.anchor != anchor || old.insets != insets;
+}
+
+class _AnchoredMenuList<T> extends StatelessWidget {
+  final List<AppMenuEntry<T>> entries;
+  final T? selected;
+  const _AnchoredMenuList({required this.entries, required this.selected});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    // Место под значок — у всех строк, если он есть хоть у одной: подписи
+    // начинаются с одной линии.
+    final withIcons = entries.any((e) => e.icon != null);
+    final withCheck = selected != null || entries.any((e) => e.checked);
+    return Material(
+      color: AppColors.cardFill(context),
+      elevation: 12,
+      shadowColor: Colors.black.withValues(alpha: 0.35),
+      borderRadius: Radii.cardAll,
+      clipBehavior: Clip.antiAlias,
+      child: IntrinsicWidth(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: Space.xs),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            for (final e in entries)
+              if (e.isDivider)
+                const Divider(height: Space.s, indent: Space.l, endIndent: Space.l)
+              else
+                _row(context, theme, scheme, e, withIcons, withCheck),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  Widget _row(BuildContext context, ThemeData theme, ColorScheme scheme, AppMenuEntry<T> e, bool withIcons,
+      bool withCheck) {
+    // Выбранное значение — с подложкой и галочкой; включённый переключатель —
+    // только с галочкой.
+    final isSelected = selected != null && e.value == selected;
+    final isChecked = isSelected || e.checked;
+    final fg = !e.enabled
+        ? theme.disabledColor
+        : e.destructive
+            ? scheme.error
+            : scheme.onSurface;
+    return Semantics(
+      selected: isChecked,
+      button: true,
+      child: Material(
+        color: isSelected ? scheme.secondaryContainer : Colors.transparent,
+        child: InkWell(
+          onTap: e.enabled ? () => Navigator.of(context).pop(e.value) : null,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: Sizes.tapTarget),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Space.l, vertical: Space.s),
+              child: Row(children: [
+                if (withIcons) ...[
+                  Icon(e.icon,
+                      size: Sizes.icon,
+                      color: e.iconColor ?? (e.enabled && !e.destructive ? scheme.onSurfaceVariant : fg)),
+                  const SizedBox(width: Space.l),
+                ],
+                Expanded(
+                  child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(e.label, style: theme.textTheme.bodyLarge?.copyWith(color: fg)),
+                    if (e.subtitle != null)
+                      Text(e.subtitle!, style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
+                  ]),
+                ),
+                if (withCheck) ...[
+                  const SizedBox(width: Space.m),
+                  SizedBox(
+                    width: Sizes.iconRow,
+                    child: isChecked ? Icon(AppIcons.check, size: Sizes.iconRow, color: scheme.primary) : null,
+                  ),
+                ],
+              ]),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

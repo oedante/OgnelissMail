@@ -47,6 +47,7 @@ import '../widgets/task_editor_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/adaptive_layout.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
+import '../../../widgets/ui/app_menu_button.dart';
 
 /// Умные списки.
 enum TaskList { myDay, planned, important, all, mail, completed }
@@ -237,7 +238,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               tooltip: l10n.tr('search'),
               onPressed: () => setState(() => _searchActive = true),
             ),
-          PopupMenuButton<String>(
+          AppMenuButton<String>(
             onSelected: (v) async {
               switch (v) {
                 case 'clear_done':
@@ -249,8 +250,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               }
             },
             itemBuilder: (_) => [
-              PopupMenuItem(value: 'clear_done', child: Text(l10n.tr('clearCompleted'))),
-              PopupMenuItem(value: 'settings', child: Text(l10n.tr('settings'))),
+              AppMenuEntry(value: 'clear_done', icon: AppIcons.delete_sweep, label: l10n.tr('clearCompleted')),
+              AppMenuEntry(value: 'settings', icon: AppIcons.settings, label: l10n.tr('settings')),
             ],
           ),
         ],

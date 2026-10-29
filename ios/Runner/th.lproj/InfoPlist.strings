@@ -1,10 +1,10 @@
 /* Тексты Info.plist (название и запросы разрешений). Создано tool/l10n/l10n.py gen из assets/l10n/th.xml — не править вручную. */
 "CFBundleDisplayName" = "Ogneliss Mail";
-"NSFaceIDUsageDescription" = "Face ID unlocks Ogneliss Mail instead of the PIN code.";
-"NSContactsUsageDescription" = "Contacts on this iPhone are used to suggest recipients, and contacts from your mailbox can be saved to the iPhone address book if you turn this on. They are not sent anywhere.";
-"NSCalendarsFullAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsWriteOnlyAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSPhotoLibraryUsageDescription" = "Photos are used only when you attach them to a message or choose a mailbox photo.";
-"NSCameraUsageDescription" = "Ogneliss Mail does not use the camera itself. A web page opened from a message (for example, a video meeting) may ask for it.";
-"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail does not track your location. A web page opened from a message may ask for it.";
+"NSFaceIDUsageDescription" = "Face ID ปลดล็อก Ogneliss Mail แทนรหัส PIN";
+"NSContactsUsageDescription" = "ผู้ติดต่อบน iPhone เครื่องนี้ใช้เพื่อแนะนำผู้รับ และหากคุณเปิดใช้ตัวเลือกนี้ ผู้ติดต่อจากกล่องจดหมายของคุณจะบันทึกลงในสมุดที่อยู่ของ iPhone ได้ ข้อมูลเหล่านี้จะไม่ถูกส่งไปที่ใด";
+"NSCalendarsFullAccessUsageDescription" = "หากคุณเปิดใช้ตัวเลือกนี้ การประชุมจากกล่องจดหมายของคุณจะถูกเพิ่มลงในปฏิทินของ iPhone ได้";
+"NSCalendarsWriteOnlyAccessUsageDescription" = "หากคุณเปิดใช้ตัวเลือกนี้ การประชุมจากกล่องจดหมายของคุณจะถูกเพิ่มลงในปฏิทินของ iPhone ได้";
+"NSCalendarsUsageDescription" = "หากคุณเปิดใช้ตัวเลือกนี้ การประชุมจากกล่องจดหมายของคุณจะถูกเพิ่มลงในปฏิทินของ iPhone ได้";
+"NSPhotoLibraryUsageDescription" = "รูปภาพจะถูกใช้เฉพาะเมื่อคุณแนบลงในข้อความหรือเลือกรูปภาพของกล่องจดหมายเท่านั้น";
+"NSCameraUsageDescription" = "Ogneliss Mail ไม่ได้ใช้กล้องเอง หน้าเว็บที่เปิดจากข้อความ (เช่น การประชุมทางวิดีโอ) อาจขอใช้กล้อง";
+"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail ไม่ติดตามตำแหน่งของคุณ หน้าเว็บที่เปิดจากข้อความอาจขอใช้ตำแหน่ง";

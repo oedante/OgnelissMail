@@ -117,8 +117,35 @@ class ArchiveAccountInfo {
   final String id;
   final String email;
   final String name;
-  const ArchiveAccountInfo(this.id, this.email, this.name);
+
+  /// Писем этого ящика в архиве.
+  final int messages;
+  const ArchiveAccountInfo(this.id, this.email, this.name, {this.messages = 0});
   String get label => name.trim().isNotEmpty ? name.trim() : email;
+}
+
+/// Итог объединения архива с копией (.ogna с другого устройства).
+class ArchiveMergeReport {
+  /// Добавлено писем; уже были в архиве (не повторялись).
+  final int messages;
+  final int skipped;
+  final int events;
+  final int tasks;
+  final int contacts;
+
+  /// Снимков настроек приложения добавлено.
+  final int settings;
+
+  const ArchiveMergeReport({
+    this.messages = 0,
+    this.skipped = 0,
+    this.events = 0,
+    this.tasks = 0,
+    this.contacts = 0,
+    this.settings = 0,
+  });
+
+  int get added => messages + events + tasks + contacts;
 }
 
 class ArchiveFolder {
@@ -375,11 +402,36 @@ class ArchiveDb extends GeneratedDatabase {
       'type = excluded.type, color = excluded.color',
       [id, email, name, type, color]);
 
+  /// Ящик архива для ящика приложения: тот же id — он; иначе ящик с тем же
+  /// адресом (архив подключён или объединён с копией с другого устройства,
+  /// где у ящика другой id) — его id, данные одного ящика не раздваиваются
+  /// на две ветки; иначе — новый ящик архива с этим id.
+  Future<String> resolveAccount(String id, String email, String name, String type, int color) async {
+    final same = await customSelect('SELECT id FROM accounts WHERE id = ?', variables: [Variable.withString(id)])
+        .getSingleOrNull();
+    final addr = email.trim();
+    if (same == null && addr.isNotEmpty) {
+      final byEmail = await customSelect('SELECT id FROM accounts WHERE lower(email) = lower(?) ORDER BY id LIMIT 1',
+          variables: [Variable.withString(addr)]).getSingleOrNull();
+      if (byEmail != null) {
+        final existing = byEmail.read<String>('id');
+        await customStatement(
+            'UPDATE accounts SET name = ?, type = ?, color = ? WHERE id = ?', [name, type, color, existing]);
+        return existing;
+      }
+    }
+    await upsertAccount(id, email, name, type, color);
+    return id;
+  }
+
   Future<List<ArchiveAccountInfo>> accounts() async {
-    final rows = await customSelect('SELECT id, email, name FROM accounts ORDER BY email').get();
+    final rows = await customSelect('SELECT a.id, a.email, a.name, '
+            '(SELECT count(*) FROM messages m WHERE m.account_id = a.id) AS n FROM accounts a ORDER BY a.email')
+        .get();
     return [
       for (final r in rows)
-        ArchiveAccountInfo(r.read<String>('id'), r.read<String>('email'), r.readNullable<String>('name') ?? ''),
+        ArchiveAccountInfo(r.read<String>('id'), r.read<String>('email'), r.readNullable<String>('name') ?? '',
+            messages: r.read<int>('n')),
     ];
   }
 
@@ -828,6 +880,237 @@ class ArchiveDb extends GeneratedDatabase {
         .getSingleOrNull();
     return r?.readNullable<Uint8List>('data');
   }
+
+  // ── объединение с копией ──
+
+  /// Добавить в этот архив всё, чего в нём нет, из архива [src] — копии
+  /// (.ogna) с другого устройства или сохранённой раньше (28.10.2026: один
+  /// архив на нескольких устройствах). Ящики сводятся по адресу, папки — по
+  /// пути, письмо, которое уже есть (та же папка и тот же Message-ID или id
+  /// на сервере), не повторяется; встречи, задачи и контакты — по id в
+  /// ящике; снимки настроек — по дате. Письма — пачками по [batch], одна
+  /// транзакция на пачку: прерванное объединение можно просто повторить.
+  Future<ArchiveMergeReport> mergeFrom(ArchiveDb src,
+      {int batch = 50, void Function(int done, int total)? onProgress}) async {
+    // Ящики.
+    final accounts = <String, String>{};
+    for (final r in await src.customSelect('SELECT id, email, name, type, color FROM accounts').get()) {
+      final id = r.read<String>('id');
+      accounts[id] = await resolveAccount(id, r.read<String>('email'), r.readNullable<String>('name') ?? '',
+          r.readNullable<String>('type') ?? '', r.readNullable<int>('color') ?? 0);
+    }
+    String acc(String id) => accounts[id] ?? id;
+
+    // Папки: путь родителя короче — родители раньше детей.
+    final folders = <int, int>{};
+    final srcFolders = await src
+        .customSelect('SELECT id, account_id, path, name, parent_id, type FROM folders ORDER BY length(path), id')
+        .get();
+    await transaction(() async {
+      for (final f in srcFolders) {
+        final account = acc(f.read<String>('account_id'));
+        final path = f.read<String>('path');
+        final existing = await customSelect('SELECT id FROM folders WHERE account_id = ? AND path = ?',
+            variables: [Variable.withString(account), Variable.withString(path)]).getSingleOrNull();
+        if (existing != null) {
+          folders[f.read<int>('id')] = existing.read<int>('id');
+          continue;
+        }
+        final parent = f.readNullable<int>('parent_id');
+        folders[f.read<int>('id')] = await customInsert(
+          'INSERT INTO folders(account_id, path, name, parent_id, type) VALUES (?, ?, ?, ?, ?)',
+          variables: [
+            Variable.withString(account),
+            Variable.withString(path),
+            Variable.withString(f.read<String>('name')),
+            Variable<int>(parent == null ? null : folders[parent]),
+            Variable.withString(f.read<String>('type')),
+          ],
+        );
+      }
+    });
+
+    // Письма.
+    final ids = [for (final r in await src.customSelect('SELECT id FROM messages ORDER BY id').get()) r.read<int>('id')];
+    var added = 0, skipped = 0;
+    onProgress?.call(0, ids.length);
+    for (var i = 0; i < ids.length; i += batch) {
+      final part = ids.sublist(i, i + batch > ids.length ? ids.length : i + batch);
+      await transaction(() async {
+        for (final id in part) {
+          final m = await src.customSelect('SELECT * FROM messages WHERE id = ?', variables: [Variable.withInt(id)])
+              .getSingleOrNull();
+          if (m == null) continue;
+          final folder = folders[m.read<int>('folder_id')];
+          if (folder == null) {
+            skipped++;
+            continue;
+          }
+          final account = acc(m.read<String>('account_id'));
+          final sourceId = m.readNullable<String>('source_id') ?? '';
+          final mid = (m.readNullable<String>('message_id') ?? '').trim();
+          final dup = await customSelect(
+            'SELECT id FROM messages WHERE account_id = ? AND folder_id = ? AND '
+            '((? <> \'\' AND source_id = ?) OR (? <> \'\' AND message_id = ?)) LIMIT 1',
+            variables: [
+              Variable.withString(account),
+              Variable.withInt(folder),
+              Variable.withString(sourceId),
+              Variable.withString(sourceId),
+              Variable.withString(mid),
+              Variable.withString(mid),
+            ],
+          ).getSingleOrNull();
+          if (dup != null) {
+            skipped++;
+            continue;
+          }
+          final newId = await customInsert(
+            'INSERT INTO messages(account_id, folder_id, source_id, message_id, conversation_id, subject, '
+            'from_name, from_email, to_json, cc_json, bcc_json, reply_to_json, date, is_read, is_flagged, '
+            'importance, has_attachments, body_html, body_text, preview, size, archived_at) '
+            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            variables: [
+              Variable.withString(account),
+              Variable.withInt(folder),
+              Variable<String>(m.readNullable<String>('source_id')),
+              Variable<String>(mid.isEmpty ? null : mid),
+              Variable<String>(m.readNullable<String>('conversation_id')),
+              Variable.withString(m.read<String>('subject')),
+              Variable<String>(m.readNullable<String>('from_name')),
+              Variable.withString(m.read<String>('from_email')),
+              Variable<String>(m.readNullable<String>('to_json')),
+              Variable<String>(m.readNullable<String>('cc_json')),
+              Variable<String>(m.readNullable<String>('bcc_json')),
+              Variable<String>(m.readNullable<String>('reply_to_json')),
+              Variable.withInt(m.read<int>('date')),
+              Variable.withInt(m.read<int>('is_read')),
+              Variable.withInt(m.read<int>('is_flagged')),
+              Variable.withInt(m.read<int>('importance')),
+              Variable.withInt(m.read<int>('has_attachments')),
+              Variable<String>(m.readNullable<String>('body_html')),
+              Variable<String>(m.readNullable<String>('body_text')),
+              Variable<String>(m.readNullable<String>('preview')),
+              Variable<int>(m.readNullable<int>('size')),
+              Variable.withInt(m.read<int>('archived_at')),
+            ],
+          );
+          for (final a in await src.customSelect(
+              'SELECT name, mime, size, content_id, is_inline, data FROM attachments WHERE message_id = ? ORDER BY id',
+              variables: [Variable.withInt(id)]).get()) {
+            await customInsert(
+              'INSERT INTO attachments(message_id, name, mime, size, content_id, is_inline, data) '
+              'VALUES (?, ?, ?, ?, ?, ?, ?)',
+              variables: [
+                Variable.withInt(newId),
+                Variable.withString(a.read<String>('name')),
+                Variable<String>(a.readNullable<String>('mime')),
+                Variable.withInt(a.read<int>('size')),
+                Variable<String>(a.readNullable<String>('content_id')),
+                Variable.withInt(a.read<int>('is_inline')),
+                Variable<Uint8List>(a.readNullable<Uint8List>('data')),
+              ],
+            );
+          }
+          final fts = await src.customSelect('SELECT subject, people, body, files FROM messages_fts WHERE rowid = ?',
+              variables: [Variable.withInt(id)]).getSingleOrNull();
+          await customInsert(
+            'INSERT INTO messages_fts(rowid, subject, people, body, files) VALUES (?, ?, ?, ?, ?)',
+            variables: [
+              Variable.withInt(newId),
+              Variable.withString(fts?.readNullable<String>('subject') ?? m.read<String>('subject')),
+              Variable.withString(fts?.readNullable<String>('people') ?? ''),
+              Variable.withString(fts?.readNullable<String>('body') ?? ''),
+              Variable.withString(fts?.readNullable<String>('files') ?? ''),
+            ],
+          );
+          added++;
+        }
+      });
+      onProgress?.call(i + part.length, ids.length);
+    }
+
+    // Встречи, задачи, контакты: по ящику и id в ящике.
+    Future<int> items(String table, List<String> cols) async {
+      var n = 0;
+      final rows = await src.customSelect('SELECT account_id, source_id, ${cols.join(', ')} FROM $table').get();
+      await transaction(() async {
+        for (final r in rows) {
+          final account = acc(r.read<String>('account_id'));
+          final sourceId = r.read<String>('source_id');
+          final has = await customSelect('SELECT id FROM $table WHERE account_id = ? AND source_id = ?',
+              variables: [Variable.withString(account), Variable.withString(sourceId)]).getSingleOrNull();
+          if (has != null) continue;
+          await customInsert(
+            'INSERT INTO $table(account_id, source_id, ${cols.join(', ')}) '
+            'VALUES (?, ?, ${List.filled(cols.length, '?').join(', ')})',
+            variables: [
+              Variable.withString(account),
+              Variable.withString(sourceId),
+              for (final c in cols) _variable(r.data[c]),
+            ],
+          );
+          n++;
+        }
+      });
+      return n;
+    }
+
+    final events = await items(
+        'events', const ['title', 'location', 'start', 'end', 'all_day', 'organizer', 'data_json', 'archived_at']);
+    final tasks = await items('tasks', const ['title', 'due', 'completed_at', 'data_json', 'archived_at']);
+    final contacts =
+        await items('contacts', const ['name', 'email', 'company', 'phone', 'data_json', 'archived_at']);
+
+    // Снимки настроек приложения: каких нет (по дате и устройству), затем
+    // — только последние [keepSettings].
+    var settings = 0;
+    final snaps = await src.customSelect('SELECT created, app, device, accounts, secrets, data FROM app_settings').get();
+    await transaction(() async {
+      for (final r in snaps) {
+        final has = await customSelect('SELECT id FROM app_settings WHERE created = ? AND coalesce(device, \'\') = ?',
+            variables: [
+              Variable.withInt(r.read<int>('created')),
+              Variable.withString(r.readNullable<String>('device') ?? ''),
+            ]).getSingleOrNull();
+        if (has != null) continue;
+        await customInsert(
+          'INSERT INTO app_settings(created, app, device, accounts, secrets, data) VALUES (?, ?, ?, ?, ?, ?)',
+          variables: [
+            Variable.withInt(r.read<int>('created')),
+            Variable<String>(r.readNullable<String>('app')),
+            Variable<String>(r.readNullable<String>('device')),
+            Variable.withInt(r.read<int>('accounts')),
+            Variable.withInt(r.read<int>('secrets')),
+            Variable.withBlob(r.read<Uint8List>('data')),
+          ],
+        );
+        settings++;
+      }
+      await customStatement(
+        'DELETE FROM app_settings WHERE id NOT IN (SELECT id FROM app_settings ORDER BY created DESC LIMIT ?)',
+        [keepSettings],
+      );
+    });
+
+    return ArchiveMergeReport(
+      messages: added,
+      skipped: skipped,
+      events: events,
+      tasks: tasks,
+      contacts: contacts,
+      settings: settings,
+    );
+  }
+
+  static Variable<Object> _variable(Object? v) => switch (v) {
+        null => const Variable(null),
+        final int i => Variable.withInt(i),
+        final double d => Variable.withReal(d),
+        final String t => Variable.withString(t),
+        final Uint8List b => Variable.withBlob(b),
+        _ => Variable.withString('$v'),
+      };
 
   Future<ArchiveStats> stats() async {
     Future<int> count(String sql) async => (await customSelect(sql).getSingle()).read<int>('n');

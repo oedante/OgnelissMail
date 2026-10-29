@@ -21,6 +21,7 @@ import '../../../features/mail/providers/mail_providers.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart' show SettingsSectionTitle;
 import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
+import '../../../widgets/ui/app_menu_button.dart';
 
 class RulesScreen extends ConsumerWidget {
   const RulesScreen({super.key, this.embedded = false, this.accountId});
@@ -38,16 +39,17 @@ class RulesScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final rules = ref.watch(autoRulesProvider);
 
-    final menu = PopupMenuButton<String>(
+    final menu = AppMenuButton<String>(
       onSelected: (v) {
         if (v == 'export') _exportRules(context, ref);
         if (v == 'import') _importRules(context, ref);
         if (v == 'reset') _resetRules(context, ref);
       },
       itemBuilder: (ctx) => [
-        PopupMenuItem(value: 'export', child: Text(l10n.tr('exportRules'))),
-        PopupMenuItem(value: 'import', child: Text(l10n.tr('importRules'))),
-        PopupMenuItem(value: 'reset', child: Text(l10n.tr('resetToDefaults'))),
+        AppMenuEntry(value: 'export', icon: AppIcons.upload, label: l10n.tr('exportRules')),
+        AppMenuEntry(value: 'import', icon: AppIcons.download, label: l10n.tr('importRules')),
+        const AppMenuEntry.divider(),
+        AppMenuEntry(value: 'reset', icon: AppIcons.restart_alt, label: l10n.tr('resetToDefaults'), destructive: true),
       ],
     );
 
@@ -388,10 +390,10 @@ class _RuleTile extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
-        trailing: PopupMenuButton<String>(
+        trailing: AppMenuButton<String>(
           itemBuilder: (ctx) => [
-            PopupMenuItem(value: 'edit', child: Text(l10n.tr('edit'))),
-            PopupMenuItem(value: 'delete', child: Text(l10n.tr('delete'))),
+            AppMenuEntry(value: 'edit', icon: AppIcons.edit, label: l10n.tr('edit')),
+            AppMenuEntry(value: 'delete', icon: AppIcons.delete, label: l10n.tr('delete'), destructive: true),
           ],
           onSelected: (value) {
             if (value == 'edit') onEdit();

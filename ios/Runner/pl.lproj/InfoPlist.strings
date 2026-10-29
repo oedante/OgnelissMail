@@ -1,10 +1,10 @@
 /* Тексты Info.plist (название и запросы разрешений). Создано tool/l10n/l10n.py gen из assets/l10n/pl.xml — не править вручную. */
 "CFBundleDisplayName" = "Ogneliss Mail";
-"NSFaceIDUsageDescription" = "Face ID unlocks Ogneliss Mail instead of the PIN code.";
-"NSContactsUsageDescription" = "Contacts on this iPhone are used to suggest recipients, and contacts from your mailbox can be saved to the iPhone address book if you turn this on. They are not sent anywhere.";
-"NSCalendarsFullAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsWriteOnlyAccessUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSCalendarsUsageDescription" = "Meetings from your mailbox can be added to the iPhone calendar if you turn this on.";
-"NSPhotoLibraryUsageDescription" = "Photos are used only when you attach them to a message or choose a mailbox photo.";
-"NSCameraUsageDescription" = "Ogneliss Mail does not use the camera itself. A web page opened from a message (for example, a video meeting) may ask for it.";
-"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail does not track your location. A web page opened from a message may ask for it.";
+"NSFaceIDUsageDescription" = "Face ID odblokowuje Ogneliss Mail zamiast kodu PIN.";
+"NSContactsUsageDescription" = "Kontakty z tego iPhone'a służą do podpowiadania odbiorców, a kontakty ze skrzynki można zapisać w książce adresowej iPhone'a, jeśli to włączysz. Nie są nigdzie wysyłane.";
+"NSCalendarsFullAccessUsageDescription" = "Spotkania ze skrzynki można dodawać do kalendarza iPhone'a, jeśli to włączysz.";
+"NSCalendarsWriteOnlyAccessUsageDescription" = "Spotkania ze skrzynki można dodawać do kalendarza iPhone'a, jeśli to włączysz.";
+"NSCalendarsUsageDescription" = "Spotkania ze skrzynki można dodawać do kalendarza iPhone'a, jeśli to włączysz.";
+"NSPhotoLibraryUsageDescription" = "Zdjęcia są używane tylko wtedy, gdy dołączasz je do wiadomości lub wybierasz zdjęcie skrzynki.";
+"NSCameraUsageDescription" = "Ogneliss Mail sam nie korzysta z aparatu. Strona internetowa otwarta z wiadomości (na przykład wideospotkanie) może o niego poprosić.";
+"NSLocationWhenInUseUsageDescription" = "Ogneliss Mail nie śledzi Twojej lokalizacji. Strona internetowa otwarta z wiadomości może o nią poprosić.";

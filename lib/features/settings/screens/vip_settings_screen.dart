@@ -23,6 +23,7 @@ import '../../../services/mail/server_filters.dart' show ServerFilters;
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/ui/app_menu_button.dart';
 
 class VipSettingsScreen extends ConsumerWidget {
   const VipSettingsScreen({super.key});
@@ -38,15 +39,11 @@ class VipSettingsScreen extends ConsumerWidget {
       appBar: TextScaleCapBar(child: AppBar(
         title: Text(l10n.tr('vipRulesTitle')),
         actions: [
-          PopupMenuButton<String>(
+          AppMenuButton<String>(
             onSelected: (v) => _onMenu(context, ref, v),
             itemBuilder: (ctx) => [
-              PopupMenuItem(
-                  value: 'export',
-                  child: Text(l10n.tr('exportToClipboard'))),
-              PopupMenuItem(
-                  value: 'import',
-                  child: Text(l10n.tr('importFromClipboard'))),
+              AppMenuEntry(value: 'export', icon: AppIcons.content_copy, label: l10n.tr('exportToClipboard')),
+              AppMenuEntry(value: 'import', icon: AppIcons.download, label: l10n.tr('importFromClipboard')),
             ],
           ),
         ],

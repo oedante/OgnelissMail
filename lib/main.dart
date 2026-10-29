@@ -80,6 +80,18 @@ Future<void> main() async {
       final text = await rootBundle.loadString('assets/fonts/pdf/Roboto-LICENSE.txt');
       yield LicenseEntryWithLineBreaks(const ['Roboto'], text);
     });
+    // Шрифт для дислексии (SIL OFL 1.1 требует передавать лицензию вместе со
+    // шрифтом) и лицензия самого приложения (Apache 2.0: LICENSE и NOTICE
+    // должны быть видны и в собранных из кода версиях).
+    LicenseRegistry.addLicense(() async* {
+      final text = await rootBundle.loadString('assets/fonts/OpenDyslexic-OFL.txt');
+      yield LicenseEntryWithLineBreaks(const ['OpenDyslexic'], text);
+    });
+    LicenseRegistry.addLicense(() async* {
+      final notice = await rootBundle.loadString('NOTICE');
+      final license = await rootBundle.loadString('LICENSE');
+      yield LicenseEntryWithLineBreaks(const [AppConstants.appName], '$notice\n\n$license');
+    });
 
     // Честный User-Agent из реальных системных данных (модель/ОС/версия) —
     // вычисляется один раз. Не блокирует старт надолго; при сбое — фолбэк.

@@ -3259,7 +3259,7 @@
     <string name="archiveNotOgna">This is not an Ogneliss archive file (.ogna)</string>
     <string name="archiveNewerFormat">The archive was made by a newer app version. Update the app</string>
     <string name="archiveBroken">The archive file is damaged or incomplete</string>
-    <string name="archiveAlreadyExists">There is already an archive on this device. Several archives will come in later versions</string>
+    <string name="archiveAlreadyExists">There is already an archive on this device. To add a copy from another device to it, choose Merge with a copy</string>
     <string name="archiveNoCipher">This build has no database encryption, so an archive cannot be created</string>
     <string name="archiveLocked">The archive is locked. Open it with the password</string>
     <string name="archiveLockedIntro">The archive on this device is locked. Open it with the archive password or the recovery code.</string>
@@ -3324,7 +3324,7 @@
     <string name="archiveWhatSection">What to archive</string>
     <string name="archiveKindMail">Mail</string>
     <string name="archiveKindMailDesc">With attachments and folders, as in the mailbox</string>
-    <string name="archivePeriodHint">The archive takes the messages that are on this device, within the mailbox sync period (mailbox settings → Period). To archive older mail, choose All mail there. Drafts, Outbox, Trash and Junk are not archived.</string>
+    <string name="archivePeriodHint">For IMAP and Exchange (EWS) mailboxes, messages older than the sync period are taken straight from the server. For ActiveSync, only the messages on this device, within the sync period (mailbox settings → Period; All mail — everything). Drafts, Outbox, Trash and Junk are not archived.</string>
     <string name="archiveIncludeFlagged">Flagged and tracked</string>
     <string name="archiveIncludeFlaggedDesc">Archive messages that are still in progress too</string>
     <string name="archiveDeleteFromServer">Remove messages from the server</string>
@@ -3336,7 +3336,7 @@
     <string name="archiveKindTasksDesc">Completed and cancelled ones, as copies</string>
     <string name="archiveKindContacts">Contacts</string>
     <string name="archiveKindContactsDesc">Your own contacts, as a snapshot at archiving time</string>
-    <string name="archiveAccountsSection">Which mailboxes</string>
+    <string name="archiveAccountsSection">Mailboxes to archive</string>
     <string name="archiveCopySection">Copy and protection</string>
     <string name="archiveCopyHelp">The archive lives in the app data: if you remove the app, the archive goes with it. Save a copy (an .ogna file) to a drive or a cloud: Google Drive, Files with iCloud Drive, Yandex Disk, a USB drive. The copy is encrypted with the same key: it cannot be opened without the password or the code.</string>
     <string name="archiveCopySave">Save an archive copy</string>
@@ -3384,7 +3384,7 @@
     <string name="faq_archive_3_q">What if I forget the archive password?</string>
     <string name="faq_archive_3_a">Enter the recovery code shown when the archive was created instead of the password, then set a new password. Lost the code while the archive is open? Settings → Ogneliss archive → New recovery code. Without the password and the code nobody can open the archive: the key is not on our servers.</string>
     <string name="faq_archive_4_q">Why did some messages not go to the archive?</string>
-    <string name="faq_archive_4_a">The archive takes messages that are on this device, within the mailbox sync period: to include older ones, choose Period → All mail in the mailbox settings. Flagged and tracked messages are not archived by default (there is a switch in the archive settings), nor are drafts, Trash and Junk. If a text or an attachment did not download, the message stays in the mailbox and goes with the next archiving run.</string>
+    <string name="faq_archive_4_a">Check the age first: by default messages older than 6 months go to the archive; if there are none, there is nothing to archive — choose a shorter age or All mail (Archive now). For IMAP and Exchange (EWS), messages older than the sync period are taken straight from the server; for ActiveSync, only the messages on this device (mailbox settings → Period → All mail — everything). Flagged and tracked messages are not archived by default (there is a switch in the archive settings), nor are drafts, Trash and Junk. If a text or an attachment did not download, the message stays in the mailbox and goes with the next archiving run.</string>
     <string name="faq_archive_5_q">How do I bring back mailboxes and settings from the archive on a new device?</string>
     <string name="faq_archive_5_a">On the sign-in screen tap Connect an Ogneliss archive (or Settings → Ogneliss archive), connect the archive copy and, under App settings in the archive, tap Restore on this device. Mailboxes, signatures, notes and settings are added; if the archive kept mailbox passwords, you do not need to sign in again.</string>
     <string name="greetHelloOnly">Hello,</string>
@@ -3508,4 +3508,25 @@
     <string name="exchangeHiddenDesc">Exchange isn\'t supported in this version. The mailboxes and their data stay on this device and will return in a version with Exchange. You can add the mail via IMAP.</string>
     <string name="sourceCode">Source code</string>
     <string name="sourceCodeDesc">GitHub: read, build, contribute</string>
+    <string name="archiveMergeTitle">Merge with a copy</string>
+    <string name="archiveMergeSub">Add mail from a copy made on another device — without duplicates</string>
+    <string name="archiveMergeIntro">Choose an archive copy (.ogna) from another device — in Google Drive, iCloud Drive, Yandex Disk or on a USB drive — and enter its password or recovery code. Everything that is not yet in the archive on this device is added; nothing is duplicated and the archive password stays the same.</string>
+    <string name="archiveMergeRun">Merge</string>
+    <string name="archiveMerging">Merging: {done} of {total} messages</string>
+    <string name="archiveMergeDone">Messages added: {n}. Already in the archive: {skipped}.</string>
+    <string name="archiveMergeAfter">To have everything on the other device as well, save an archive copy here and merge it there.</string>
+    <string name="archiveDevicesSection">Other devices and the cloud</string>
+    <string name="archiveDevicesHow">The archive is stored on this device and encrypted; the cloud is a place for its copy. To open the archive on another phone or computer, save a copy to Google Drive, iCloud Drive, Yandex Disk or a USB drive, and there tap Ogneliss archive → Connect an archive copy (if it has no archive yet) or Merge with a copy (if it has its own). You can archive on both devices: now and then save a copy on one and merge it on the other — nothing is duplicated.</string>
+    <string name="archiveDevicesHowNone">Already have an archive on another device? Save an archive copy there (Settings → Ogneliss archive → Save an archive copy) to the cloud or a USB drive, and tap Connect an archive copy here. After that you can archive on both devices: now and then save a copy on one and merge it on the other.</string>
+    <string name="archiveSecuritySection">Protection</string>
+    <string name="archiveContentsSection">Mailboxes in the archive</string>
+    <string name="archiveContentsHelp">One archive holds all mailboxes: each has its own branch of folders, as in the mailbox — here and in the side menu, under Ogneliss archive. The same mailbox from different devices is one branch: mailboxes are matched by address.</string>
+    <string name="archiveAccountMails">messages: {n}</string>
+    <string name="archiveAccountOtherDevice">from another device</string>
+    <string name="archiveAccountsHelp">Only the mailboxes switched on are archived. A mailbox switched off is not archived; what is already in the archive stays there.</string>
+    <string name="faq_archive_6_q">How do I use one archive on a phone and a computer?</string>
+    <string name="faq_archive_6_a">Each device keeps its own copy of the archive, and the cloud (Google Drive, iCloud Drive, Yandex Disk) or a USB drive is the place to exchange it. On the first device: Settings → Ogneliss archive → Save an archive copy. On the second: Connect an archive copy if it has no archive yet, or Merge with a copy if it has its own. You can archive on both: now and then save a copy on one and merge it on the other. Merging adds only what is missing: messages are not duplicated and the same mailbox stays one branch.</string>
+    <string name="faq_archive_7_q">How does the archive keep several mailboxes?</string>
+    <string name="faq_archive_7_a">All mailboxes are in one archive, each with its own branch of folders structured as in the mailbox: in the side menu under Ogneliss archive, and on the archive screen under Mailboxes in the archive. Which mailboxes to archive is chosen on the same screen under Mailboxes to archive; archive search covers all mailboxes at once.</string>
+    <string name="archiveNothingOld">No messages older than the chosen age were found — there was nothing to archive. You can choose a shorter age or All mail.</string>
 </resources>

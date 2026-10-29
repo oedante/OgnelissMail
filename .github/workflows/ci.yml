@@ -232,6 +232,27 @@ jobs:
       - name: Platform folder
         run: |
           [ -d macos ] || flutter create --platforms=macos --org com.ogneliss --project-name ogneliss .
+          # Плагины — через CocoaPods, не Swift Package Manager: пакет
+          # flutter_inappwebview_macos в SPM собирается под свою минимальную
+          # macOS и с Xcode 26 падал на presentationAnchor; Podfile ниже задаёт
+          # 10.15 для всех pods (28.10.2026, второй прогон).
+          flutter config --no-enable-swift-package-manager
+          # flutter_inappwebview_macos (1.2 бета) с новым Xcode: «presentationAnchor
+          # requires … macOS 10.14 and newer» — pods собираются для macOS 10.15+
+          # (28.10.2026).
+          # Podfile Flutter создаёт при первой сборке из своего шаблона — берём
+          # тот же шаблон заранее, чтобы дописать настройку.
+          [ -f macos/Podfile ] || cp "$FLUTTER_ROOT/packages/flutter_tools/templates/cocoapods/Podfile-macos" macos/Podfile
+          python3 - <<'PY'
+          p = 'macos/Podfile'
+          s = open(p).read()
+          key = "flutter_additional_macos_build_settings(target)"
+          add = key + "\n    target.build_configurations.each do |config|\n      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.15'\n    end"
+          if 'MACOSX_DEPLOYMENT_TARGET' not in s and key in s:
+              s = s.replace(key, add, 1)
+              open(p, 'w').write(s)
+          print(s[s.find('post_install'):])
+          PY
       - name: Install dependencies
         run: flutter pub get
       - name: Generate code
@@ -277,6 +298,15 @@ jobs:
       - name: Platform folder
         run: |
           [ -d windows ] || flutter create --platforms=windows --org com.ogneliss --project-name ogneliss .
+          # MSVC 14.51 (Visual Studio 2026) сделал <experimental/coroutine> ошибкой
+          # STL1011 — его подключают flutter_inappwebview_windows, local_auth_windows,
+          # permission_handler_windows. Как в scripts/build_windows.ps1: определение
+          # сразу после project(...) в windows/CMakeLists.txt (28.10.2026).
+          if ! grep -q _SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS windows/CMakeLists.txt; then
+            sed -i '0,/^project(/{/^project(/a add_compile_definitions(_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)
+            }' windows/CMakeLists.txt
+          fi
+          grep -n -A1 '^project(' windows/CMakeLists.txt
       - name: Install dependencies
         run: flutter pub get
       - name: Generate code
@@ -319,7 +349,10 @@ jobs:
       - name: Linux build tools
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libsecret-1-dev libjsoncpp-dev libstdc++-12-dev
+          # libwebkit2gtk-4.1-dev — desktop_webview_window (вход OAuth через
+          # flutter_web_auth_2): без него CMake не находил webkit2gtk (28.10.2026).
+          # libayatana-appindicator3-dev — значок в трее (system_tray).
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libsecret-1-dev libjsoncpp-dev libstdc++-12-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev
           flutter config --enable-linux-desktop
       - name: Platform folder
         run: |
@@ -412,11 +445,28 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # Подтверждение происхождения (28.10.2026): каждый файл выпуска подписан
+      # аттестацией GitHub — из какого коммита и какой сборкой он сделан.
+      # Проверка: gh attestation verify <файл> --repo oedante/OgnelissMail
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/download-artifact@v4
         with:
           pattern: ogneliss-*-${{ github.sha }}
           path: out
+      - name: Checksums
+        run: |
+          cd out
+          find . -type f \( -name '*.apk' -o -name '*.zip' -o -name '*.tar.gz' \) -print0 \
+            | sort -z | xargs -0 sha256sum | sed 's#  \./.*/#  #' > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            out/**/*.apk
+            out/**/*.zip
+            out/**/*.tar.gz
       - uses: softprops/action-gh-release@v2
         with:
           name: Ogneliss Mail ${{ github.ref_name }}
@@ -425,3 +475,4 @@ jobs:
             out/**/*.apk
             out/**/*.zip
             out/**/*.tar.gz
+            out/SHA256SUMS.txt

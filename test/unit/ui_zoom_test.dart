@@ -34,4 +34,37 @@ void main() {
     expect(z.devicePixelRatio, closeTo(2.7, 0.001));
     expect(z.padding.top, closeTo(26.67, 0.01));
   });
+
+  // Встроенное окно (WebView на Android) — в итоговом масштабе 1: иначе
+  // системные ручки выделения уезжали от курсора (28.10.2026).
+  testWidgets('UiZoomUndo: окно на том же месте, но без масштаба', (tester) async {
+    const key = Key('native');
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: UiZoomBox(
+        zoom: 0.85,
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 40, top: 100),
+            child: SizedBox(
+              width: 300,
+              height: 200,
+              child: UiZoomUndo(zoom: 0.85, child: Container(key: key)),
+            ),
+          ),
+        ),
+      ),
+    ));
+    final box = tester.renderObject<RenderBox>(find.byKey(key));
+    // Размер окна — «место × масштаб», на экране — то же место.
+    expect(box.size.width, closeTo(255, 0.01));
+    expect(box.size.height, closeTo(170, 0.01));
+    final m = box.getTransformTo(null);
+    expect(m.getMaxScaleOnAxis(), closeTo(1, 0.0001));
+    final r = MatrixUtils.transformRect(m, Offset.zero & box.size);
+    expect(r.left, closeTo(34, 0.01));
+    expect(r.top, closeTo(85, 0.01));
+    expect(r.width, closeTo(255, 0.01));
+  });
 }

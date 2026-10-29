@@ -12,6 +12,7 @@
 // Данные — поток из базы за видимый период (calendar_data.dart).
 
 import '../../../widgets/ui/wheel_pickers.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 import 'dart:async';
 import 'dart:io' show Platform;
 import '../../../core/theme/app_icons.dart';
@@ -254,7 +255,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             tooltip: l10n.tr('search'),
             onPressed: () => _openSearch(l10n),
           ),
-          PopupMenuButton<CalendarDefaultView>(
+          AppMenuButton<CalendarDefaultView>(
             tooltip: l10n.tr('defaultView'),
             icon: Icon(_viewIcon(view)),
             initialValue: view,
@@ -267,14 +268,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 CalendarDefaultView.week,
                 CalendarDefaultView.month,
               ])
-                PopupMenuItem(
-                  value: v,
-                  child: Row(children: [
-                    Icon(_viewIcon(v), size: 20),
-                    const SizedBox(width: Space.m),
-                    Text(_viewLabel(v, l10n)),
-                  ]),
-                ),
+                AppMenuEntry(value: v, icon: _viewIcon(v), label: _viewLabel(v, l10n)),
             ],
           ),
           IconButton(

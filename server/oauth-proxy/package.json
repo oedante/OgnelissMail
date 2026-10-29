@@ -3,6 +3,7 @@
   "version": "1.1.0",
   "description": "OAuth redirect/token-exchange proxy for Mail (keeps client secrets server-side, auto-refreshes tokens)",
   "main": "server.js",
+  "license": "Apache-2.0",
   "engines": {
     "node": ">=18"
   },

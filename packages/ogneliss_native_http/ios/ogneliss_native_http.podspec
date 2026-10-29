@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.summary          = 'HTTP через сетевой стек системы для Ogneliss Mail.'
   s.description      = 'Канал ogneliss/native_http: запросы к почтовому серверу через NSURLSession.'
   s.homepage         = 'https://ogneliss.ru'
-  s.license          = { :type => 'Proprietary' }
+  s.license          = { :type => 'Apache-2.0' }
   s.author           = { 'Ogneliss' => 'support@ogneliss.ru' }
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*'

@@ -51,6 +51,7 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../person_names.dart';
 import '../contact_prefs.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../services/mail/focus_mode_service.dart' show focusModeProvider;
 import '../../../core/utils/person_names.dart' show PersonNames;
 import '../../../core/theme/ogneliss_look.dart';
@@ -259,7 +260,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
             tooltip: l10n.tr('findDuplicates'),
             onPressed: () => context.push('/contacts/duplicates'),
           ),
-          PopupMenuButton<String>(
+          AppMenuButton<String>(
             onSelected: (v) {
               if (v == 'export_vcf' || v == 'export_csv') {
                 _exportContacts(db, v == 'export_vcf' ? 'vcf' : 'csv');
@@ -272,18 +273,19 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
               }
             },
             itemBuilder: (_) => [
-              PopupMenuItem(value: 'all', child: Text(l10n.tr('all'))),
-              PopupMenuItem(value: 'frequent', child: Text(l10n.tr('frequent'))),
-              PopupMenuItem(value: 'company', child: Text(l10n.tr('byCompany'))),
-              PopupMenuItem(value: 'fromMail', child: Text(l10n.tr('contactsFromMail'))),
-              const PopupMenuDivider(),
-              PopupMenuItem(value: 'groups', child: Text(l10n.tr('contactGroups'))),
+              AppMenuEntry(value: 'all', icon: AppIcons.contacts, label: l10n.tr('all'), checked: _filter == 'all'),
+              AppMenuEntry(value: 'frequent', icon: AppIcons.star, label: l10n.tr('frequent'), checked: _filter == 'frequent'),
+              AppMenuEntry(value: 'company', icon: AppIcons.business, label: l10n.tr('byCompany'), checked: _filter == 'company'),
+              AppMenuEntry(
+                  value: 'fromMail', icon: AppIcons.alternate_email, label: l10n.tr('contactsFromMail'), checked: _filter == 'fromMail'),
+              const AppMenuEntry.divider(),
+              AppMenuEntry(value: 'groups', icon: AppIcons.groups, label: l10n.tr('contactGroups')),
               // Полное обновление (1.8.0): контакты всех ящиков заново с
               // сервера — изменения, сделанные в Outlook или на сайте почты.
-              PopupMenuItem(value: 'resync', child: Text(l10n.tr('contactsResync'))),
-              const PopupMenuDivider(),
-              PopupMenuItem(value: 'export_vcf', child: Text(l10n.tr('exportVcf'))),
-              PopupMenuItem(value: 'export_csv', child: Text(l10n.tr('exportCsv'))),
+              AppMenuEntry(value: 'resync', icon: AppIcons.sync, label: l10n.tr('contactsResync')),
+              const AppMenuEntry.divider(),
+              AppMenuEntry(value: 'export_vcf', icon: AppIcons.save_alt, label: l10n.tr('exportVcf')),
+              AppMenuEntry(value: 'export_csv', icon: AppIcons.table_chart, label: l10n.tr('exportCsv')),
             ],
           ),
         ],

@@ -3,6 +3,8 @@
 // выбор участников из GAL, повторения, напоминания, цвет,
 // ссылка на онлайн-встречу.
 
+import '../../../widgets/ui/action_sheet.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../widgets/ui/wheel_pickers.dart';
 import '../../../widgets/ui/settings_group.dart' show SettingsGroup, SettingsSectionTitle;
 import '../../../core/utils/text_safe.dart';
@@ -46,7 +48,7 @@ import '../widgets/room_picker_sheet.dart';
 import '../../../core/utils/app_date_format.dart';
 import '../../../services/mail/ews/ews_directory_extras.dart' show DirectoryRoom;
 import '../../../widgets/common/hero_email_transition.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
 import '../../../data/models/account_model.dart';
 import '../../../services/calendar/event_reminders.dart';
 import '../../../widgets/ui/help_hint.dart' show TitleWithHelp;
@@ -416,38 +418,21 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   Future<void> _pickAccount(AppLocalizations l10n) async {
     final engine = ref.read(mailEngineServiceProvider);
     final list = _calendarAccounts();
-    final picked = await showAppSheet<String>(
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (ctx) {
-        final theme = Theme.of(ctx);
-        return SafeArea(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.8),
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                ListTile(title: Text(l10n.tr('eventSaveTo'), style: theme.textTheme.titleMedium)),
-                for (final a in list)
-                  ListTile(
-                    leading: Icon(AppIcons.calendar_month, color: Color(a.colorValue)),
-                    title: Text(_accountTitle(a), maxLines: 1, overflow: TextOverflow.ellipsis),
-                    subtitle: Text(
-                      engine.canWriteCalendar(a)
-                          ? a.email
-                          : l10n.tr('eventCalendarPhoneOnly').replaceAll('{email}', a.email),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: a.id == _account?.id ? Icon(AppIcons.check, color: theme.colorScheme.primary) : null,
-                    onTap: () => Navigator.pop(ctx, a.id),
-                  ),
-              ],
-            ),
+    // Карточкой (1.8.8), как меню «⋮»; выбранный — с галочкой.
+    final picked = await showChoiceSheet<String>(
+      context,
+      title: l10n.tr('eventSaveTo'),
+      selected: _account?.id,
+      entries: [
+        for (final a in list)
+          AppMenuEntry(
+            value: a.id,
+            icon: AppIcons.calendar_month,
+            iconColor: Color(a.colorValue),
+            label: _accountTitle(a),
+            subtitle: engine.canWriteCalendar(a) ? a.email : l10n.tr('eventCalendarPhoneOnly').replaceAll('{email}', a.email),
           ),
-        );
-      },
+      ],
     );
     if (picked == null || !mounted || picked == _accountId) return;
     setState(() {
@@ -654,16 +639,11 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
               contentPadding: rowPad,
               leading: Icon(AppIcons.repeat, color: muted),
               title: Text(l10n.tr('repeat')),
-              trailing: DropdownButton<RecurrenceType>(
+              trailing: AppSelectField<RecurrenceType>(
+                compact: true,
                 value: _recurrence,
-                underline: const SizedBox.shrink(),
-                items: RecurrenceType.values.map((r) {
-                  return DropdownMenuItem(
-                    value: r,
-                    child: Text(_recurrenceLabel(r, l10n)),
-                  );
-                }).toList(),
-                onChanged: (v) => setState(() => _recurrence = v!),
+                entries: [for (final r in RecurrenceType.values) AppMenuEntry(value: r, label: _recurrenceLabel(r, l10n))],
+                onChanged: (v) => setState(() => _recurrence = v),
               ),
             ),
             // Напоминания — несколько (1.7.2+110): строками, «×» убирает,
@@ -1080,51 +1060,32 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     final l10n = AppLocalizations.of(context);
     final dayFmt = DateFormat('EEE, d MMMM', l10n.localeCode);
     final t = DateFormat.Hm();
-    showAppSheet(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Space.l),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.tr('findFreeSlot'), style: Theme.of(ctx).textTheme.titleMedium),
-              const SizedBox(height: Space.xs),
-              Text(l10n.tr('freeSlotsHint'),
-                  style: Theme.of(ctx).textTheme.bodySmall?.copyWith(color: AppColors.mutedText(ctx))),
-              const SizedBox(height: Space.s),
-              if (noData)
-                Text(l10n.tr('noAvailabilityData'))
-              else if (slots.isEmpty)
-                Text(l10n.tr('noFreeSlots'))
-              else
-                Flexible(
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      for (final s in slots)
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          leading: const Icon(AppIcons.event_available, color: AppColors.successGreen),
-                          title: Text('${t.format(s)} – ${t.format(s.add(length))}'),
-                          subtitle: Text(dayFmt.format(s)),
-                          onTap: () {
-                            setState(() {
-                              _startDate = s;
-                              _endDate = s.add(length);
-                            });
-                            Navigator.pop(ctx);
-                          },
-                        ),
-                    ],
-                  ),
-                ),
-            ],
+    if (noData || slots.isEmpty) {
+      showInlineNotice(l10n.tr(noData ? 'noAvailabilityData' : 'noFreeSlots'));
+      return;
+    }
+    // Карточкой (1.8.8), как меню «⋮»: свободное время — выбрать.
+    unawaited(showChoiceSheet<int>(
+      context,
+      title: l10n.tr('findFreeSlot'),
+      subtitle: l10n.tr('freeSlotsHint'),
+      entries: [
+        for (final (i, s) in slots.indexed)
+          AppMenuEntry(
+            value: i,
+            icon: AppIcons.event_available,
+            iconColor: AppColors.successGreen,
+            label: '${t.format(s)} – ${t.format(s.add(length))}',
+            subtitle: dayFmt.format(s),
           ),
-        ),
-      ),
-    );
+      ],
+    ).then((i) {
+      if (i == null || !mounted) return;
+      setState(() {
+        _startDate = slots[i];
+        _endDate = slots[i].add(length);
+      });
+    }));
   }
 
   void _showAvailabilitySheet(FreeBusyView view, bool ru) {

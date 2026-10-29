@@ -13,7 +13,8 @@ import '../../../widgets/ui/banner_button.dart';
 import '../../../core/platform/download_saver.dart';
 import '../../../core/platform/file_opener.dart';
 import '../../../widgets/ui/section_band.dart';
-import '../../../widgets/ui/settings_group.dart' show SettingsSectionTitle;
+import '../../../widgets/common/peek_card.dart' show PeekAction, PeekGroup;
+import '../widgets/mail_peek_card.dart' show showMailPeek;
 import '../widgets/unsubscribe_banner.dart';
 import '../widgets/booking_card.dart';
 import '../widgets/control_sheet.dart';
@@ -2140,131 +2141,97 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // Действия сгруппированы по смыслу (раньше — сплошная сетка из 20+
     // значков, где «Экспорт», «Сохранить PDF» и «Печать» делали одно и то же).
     final isExchange = ref.read(accountsProvider).any((a) => a.id == email.accountId && a.isMsExchange);
-    showAppSheet(
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (ctx) {
-        void run(VoidCallback f) {
-          Navigator.of(ctx).pop();
-          f();
-        }
-
-        return ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.85),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.l),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _gridSection(ctx, l10n.tr('actionsRespond'), [
-                  _gridAction(AppIcons.reply, l10n.tr('reply'), () => run(() =>
-                      context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}'))),
-                  _gridAction(AppIcons.reply_all, l10n.tr('replyAll'), () => run(() => context
-                      .push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}&replyAll=true'))),
-                  _gridAction(AppIcons.quickreply, l10n.tr('quickReplies'),
-                      () => run(() => _showQuickReplies(email, l10n))),
-                  _gridAction(AppIcons.attach_email, l10n.tr('asEml'),
-                        () => run(() => unawaited(_forwardAsEml(email)))),
-                ]),
-                _gridSection(ctx, l10n.tr('actionsOrganize'), [
-                  _gridAction(AppIcons.archive, l10n.tr('archive'), () => run(() => _archiveEmail(email, l10n))),
-                  _gridAction(email.isRead ? AppIcons.mark_email_unread : AppIcons.mark_email_read,
-                      email.isRead ? l10n.tr('markUnread') : l10n.tr('markRead'), () => run(() {
-                    final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
-                    if (acc != null) {
-                      final newRead = !email.isRead;
-                      ref.read(emailActionsProvider).setRead(acc, email.id, email.folderId, newRead);
-                      ref.read(emailsProvider.notifier).applyLocalFlags(email.id, isRead: newRead);
-                      safeSetState(() => _email = email.copyWith(isRead: newRead));
-                    }
-                  })),
-                  _gridAction(AppIcons.flag, l10n.tr('flag'), fill: email.isFlagged,
-                      () => run(() => _toggleFlag(email))),
-                  // Важность (замечание 07.10.2026: поставить было нельзя)
-                  _gridAction(AppIcons.priority_high, l10n.tr('importance'),
-                      () => run(() => unawaited(_pickImportance(email, l10n)))),
-                  // «На контроль» (вместе с бывшим «Напомнить, если нет
-                  // ответа»): меню со сроком; снять — там же.
-                  if (ref.read(settingsProvider).mailControl)
-                    _gridAction(AppIcons.task_alt,
-                        l10n.tr(email.controlState == 0 ? 'controlSet' : 'controlFilter'),
-                        () => run(() => unawaited(_controlMenu(email))),
-                        fill: email.controlState != 0),
-                  _gridAction(AppIcons.label, l10n.tr('addTag'), () => run(() => _editTags(context, email, l10n))),
-                  // Категории Outlook — только у Exchange
-                  if (isExchange)
-                    _gridAction(AppIcons.new_label, l10n.tr('outlookCategories'), () => run(() {
-                      final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
-                      if (acc != null) _editCategories(context, acc, email, l10n);
-                    })),
-                  _gridAction(AppIcons.report, l10n.tr('moveToJunk'), () => run(() => _moveToJunk(email, l10n))),
-                ]),
-                _gridSection(ctx, l10n.tr('actionsCreate'), [
-                  // Встреча по письму: тема, участники и текст — из письма.
-                  _gridAction(AppIcons.event, l10n.tr('createEvent'), () => run(() => _planMeeting(email))),
-                  _gridAction(AppIcons.check_box, l10n.tr('createTask'), () => run(() => _createTask(email, l10n))),
-                  _gridAction(AppIcons.watch_later, l10n.tr('later'), fill: email.laterState != 0,
-                      () => run(() => unawaited(_later(context, email)))),
-                  // Правило на телефоне для этого отправителя (09.10.2026).
-                  _gridAction(AppIcons.rule, l10n.tr('ruleShort'), () => run(() => unawaited(
-                      openDeviceRule(context, sender: email.from.email, accountId: email.accountId)))),
-                ]),
-                _gridSection(ctx, l10n.tr('actionsSave'), [
-                  // Письмо целиком — в архив Ogneliss (1.7.3); архива нет —
-                  // сначала создать (29.10.2026: пункт был скрыт до создания).
-                  _gridAction(AppIcons.inventory_2, l10n.tr('toOgnaArchive'),
-                      () => run(() => unawaited(_toOgnaArchive(email, l10n)))),
-                  _gridAction(AppIcons.picture_as_pdf, l10n.tr('saveAsPdf'),
-                      () => run(() => unawaited(_exportPdf(email, l10n)))),
-                  // Печать — через PDF: системный просмотрщик/«Поделиться»
-                  // отправляет его на принтер на любой платформе.
-                  _gridAction(AppIcons.print, l10n.tr('print'), () => run(() => unawaited(_exportPdf(email, l10n)))),
-                  _gridAction(AppIcons.share, l10n.tr('share'), () => run(() => SharePlus.instance.share(
-                      ShareParams(text: '${email.subject}\n\n${email.bodyPlain ?? email.bodyPreview ?? ""}')))),
-                ]),
-                _gridSection(ctx, l10n.tr('actionsMore'), [
-                  _gridAction(AppIcons.info, l10n.tr('messageDetails'),
-                      () => run(() => _showMessageDetails(email, l10n))),
-                  // «Найти документ»: все файлы этого отправителя из всех писем.
-                  if (email.from.email.contains('@') && ref.read(featureFlagsProvider).showFileHub)
-                    _gridAction(AppIcons.attach_file, l10n.tr('senderFiles'), () => run(() => unawaited(
-                        context.push('/attachment-hub?from=${Uri.encodeQueryComponent(email.from.email)}')))),
-                  _gridAction(AppIcons.sync, l10n.tr('redownload'), () => run(_loadEmailDetail)),
-                  // Отзыв письма (нативно — Exchange ActiveSync 16.1).
-                  if (_canRecall(ref, email))
-                    _gridAction(AppIcons.undo, l10n.tr('recallMessage'),
-                        () => run(() => _confirmRecall(context, ref, email, l10n))),
-                ]),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  /// Раздел шторки действий: подпись и плитки по 4 в ряд (на широком
-  /// экране — больше, ширина плитки постоянная).
-  Widget _gridSection(BuildContext ctx, String title, List<Widget> tiles) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: Space.m),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Раздел — полосой, как в боковом меню и настройках (10.10.2026).
-          SettingsSectionTitle(title),
-          LayoutBuilder(builder: (context, c) {
-            final perRow = (c.maxWidth / 88).floor().clamp(4, 8);
-            final w = c.maxWidth / perRow;
-            return Wrap(
-              children: [for (final t in tiles) SizedBox(width: w, child: t)],
-            );
+    // Та же карточка, что по удержанию письма в ленте (1.8.8, замечание
+    // владельца 29.10.2026): шапка с письмом и все действия по группам —
+    // круглыми кнопками, сразу развёрнуты.
+    unawaited(showMailPeek(
+      context,
+      email: email,
+      anchor: null,
+      previewLines: 2,
+      moreOpen: true,
+      actions: const [],
+      more: [
+        PeekGroup(title: l10n.tr('actionsRespond'), items: [
+          _peekAction(AppIcons.reply, l10n.tr('reply'), () => context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}')),
+          _peekAction(AppIcons.reply_all, l10n.tr('replyAll'), () => context
+              .push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}&replyAll=true')),
+          _peekAction(AppIcons.quickreply, l10n.tr('quickReplies'),
+              () => _showQuickReplies(email, l10n)),
+          _peekAction(AppIcons.attach_email, l10n.tr('asEml'),
+                () => unawaited(_forwardAsEml(email))),
+        ]),
+        PeekGroup(title: l10n.tr('actionsOrganize'), items: [
+          _peekAction(AppIcons.archive, l10n.tr('archive'), () => _archiveEmail(email, l10n)),
+          _peekAction(email.isRead ? AppIcons.mark_email_unread : AppIcons.mark_email_read,
+              email.isRead ? l10n.tr('markUnread') : l10n.tr('markRead'), () {
+            final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+            if (acc != null) {
+              final newRead = !email.isRead;
+              ref.read(emailActionsProvider).setRead(acc, email.id, email.folderId, newRead);
+              ref.read(emailsProvider.notifier).applyLocalFlags(email.id, isRead: newRead);
+              safeSetState(() => _email = email.copyWith(isRead: newRead));
+            }
           }),
-        ],
-      ),
-    );
+          _peekAction(AppIcons.flag, l10n.tr('flag'), fill: email.isFlagged,
+              () => _toggleFlag(email)),
+          // Важность (замечание 07.10.2026: поставить было нельзя)
+          _peekAction(AppIcons.priority_high, l10n.tr('importance'),
+              () => unawaited(_pickImportance(email, l10n))),
+          // «На контроль» (вместе с бывшим «Напомнить, если нет
+          // ответа»): меню со сроком; снять — там же.
+          if (ref.read(settingsProvider).mailControl)
+            _peekAction(AppIcons.task_alt,
+                l10n.tr(email.controlState == 0 ? 'controlSet' : 'controlFilter'),
+                () => unawaited(_controlMenu(email)),
+                fill: email.controlState != 0),
+          _peekAction(AppIcons.label, l10n.tr('addTag'), () => _editTags(context, email, l10n)),
+          // Категории Outlook — только у Exchange
+          if (isExchange)
+            _peekAction(AppIcons.new_label, l10n.tr('outlookCategories'), () {
+              final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+              if (acc != null) _editCategories(context, acc, email, l10n);
+            }),
+          _peekAction(AppIcons.report, l10n.tr('moveToJunk'), () => _moveToJunk(email, l10n)),
+        ]),
+        PeekGroup(title: l10n.tr('actionsCreate'), items: [
+          // Встреча по письму: тема, участники и текст — из письма.
+          _peekAction(AppIcons.event, l10n.tr('createEvent'), () => _planMeeting(email)),
+          _peekAction(AppIcons.check_box, l10n.tr('createTask'), () => _createTask(email, l10n)),
+          _peekAction(AppIcons.watch_later, l10n.tr('later'), fill: email.laterState != 0,
+              () => unawaited(_later(context, email))),
+          // Правило на телефоне для этого отправителя (09.10.2026).
+          _peekAction(AppIcons.rule, l10n.tr('ruleShort'), () => unawaited(
+              openDeviceRule(context, sender: email.from.email, accountId: email.accountId))),
+        ]),
+        PeekGroup(title: l10n.tr('actionsSave'), items: [
+          // Письмо целиком — в архив Ogneliss (1.7.3); архива нет —
+          // сначала создать (29.10.2026: пункт был скрыт до создания).
+          _peekAction(AppIcons.inventory_2, l10n.tr('toOgnaArchive'),
+              () => unawaited(_toOgnaArchive(email, l10n))),
+          _peekAction(AppIcons.picture_as_pdf, l10n.tr('saveAsPdf'),
+              () => unawaited(_exportPdf(email, l10n))),
+          // Печать — через PDF: системный просмотрщик/«Поделиться»
+          // отправляет его на принтер на любой платформе.
+          _peekAction(AppIcons.print, l10n.tr('print'), () => unawaited(_exportPdf(email, l10n))),
+          _peekAction(AppIcons.share, l10n.tr('share'), () => SharePlus.instance.share(
+              ShareParams(text: '${email.subject}\n\n${email.bodyPlain ?? email.bodyPreview ?? ""}'))),
+        ]),
+        PeekGroup(title: l10n.tr('actionsMore'), items: [
+          _peekAction(AppIcons.info, l10n.tr('messageDetails'),
+              () => _showMessageDetails(email, l10n)),
+          // «Найти документ»: все файлы этого отправителя из всех писем.
+          if (email.from.email.contains('@') && ref.read(featureFlagsProvider).showFileHub)
+            _peekAction(AppIcons.attach_file, l10n.tr('senderFiles'), () => unawaited(
+                context.push('/attachment-hub?from=${Uri.encodeQueryComponent(email.from.email)}'))),
+          _peekAction(AppIcons.sync, l10n.tr('redownload'), _loadEmailDetail),
+          // Отзыв письма (нативно — Exchange ActiveSync 16.1).
+          if (_canRecall(ref, email))
+            _peekAction(AppIcons.undo, l10n.tr('recallMessage'),
+                () => _confirmRecall(context, ref, email, l10n)),
+        ]),
+      ],
+    ));
   }
 
   /// Поставить или снять «На контроле».
@@ -2601,74 +2568,35 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     safeSetState(() => _email = email.copyWith(isFlagged: flagged));
   }
 
-  Widget _gridAction(IconData icon, String label, VoidCallback onTap, {bool fill = false}) {
-    final scheme = Theme.of(context).colorScheme;
-    return Semantics(
-      button: true,
-      label: label,
-      excludeSemantics: true,
-      child: InkWell(
+  /// Кнопка «Ещё» письма (1.8.8) — круглая, как в карточке по удержанию.
+  PeekAction _peekAction(IconData icon, String label, VoidCallback onTap, {bool fill = false}) => PeekAction(
+        icon: icon,
+        label: label,
+        filled: fill,
         onTap: () {
           HapticFeedback.selectionClick();
           onTap();
         },
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: Space.s, horizontal: Space.xs),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Круглая цветная кнопка, как в «Ещё» карточки по удержанию и
-              // в карточке папки (замечание владельца 27.10.2026: «меню „Ещё“
-              // не соответствует остальному UI — всё серое»).
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: scheme.secondaryContainer.withValues(alpha: 0.7),
-                ),
-                child: Icon(icon, size: 22, fill: fill ? 1 : 0, color: scheme.onSecondaryContainer),
-              ),
-              const SizedBox(height: Space.xs),
-              Text(label,
-                  style: Theme.of(context).textTheme.labelSmall,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+      );
 
   // ════════════════════════ ДЕЙСТВИЯ ════════════════════════
 
   /// Важность письма: в приложении — всегда; на сервере — для ящиков EWS
   /// (у ActiveSync и IMAP важность полученного письма не меняется).
   Future<void> _pickImportance(EmailModel email, AppLocalizations l10n) async {
-    final picked = await showAppSheet<EmailPriority>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final (p, icon, key) in const [
-              (EmailPriority.high, AppIcons.priority_high, 'importanceHigh'),
-              (EmailPriority.normal, AppIcons.remove, 'importanceNormal'),
-              (EmailPriority.low, AppIcons.arrow_downward, 'importanceLow'),
-            ])
-              ListTile(
-                leading: Icon(icon),
-                title: Text(l10n.tr(key)),
-                selected: email.priority == p,
-                onTap: () => Navigator.pop(ctx, p),
-              ),
-          ],
-        ),
-      ),
+    // Карточкой (1.8.8), как меню «⋮»; текущая — с галочкой.
+    final picked = await showChoiceSheet<EmailPriority>(
+      context,
+      title: l10n.tr('importance'),
+      selected: email.priority,
+      entries: [
+        for (final (p, icon, key) in const [
+          (EmailPriority.high, AppIcons.priority_high, 'importanceHigh'),
+          (EmailPriority.normal, AppIcons.remove, 'importanceNormal'),
+          (EmailPriority.low, AppIcons.arrow_downward, 'importanceLow'),
+        ])
+          AppMenuEntry(value: p, label: l10n.tr(key), icon: icon),
+      ],
     );
     if (picked == null || picked == email.priority) return;
     final db = ref.read(databaseProvider);

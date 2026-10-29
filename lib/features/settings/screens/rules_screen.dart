@@ -690,53 +690,23 @@ class _RuleEditorScreenState extends State<_RuleEditorScreen> {
 
   Widget _buildConditionDropdown(int index) {
     final l10n = AppLocalizations.of(context);
-    return DropdownButton<RuleConditionType>(
+    return AppSelectField<RuleConditionType>(
       value: _conditions[index].type,
-      isExpanded: true,
-      underline: const SizedBox.shrink(),
-      items: RuleConditionType.values.map((type) {
-        return DropdownMenuItem(
-          value: type,
-          child: Text(_conditionTypeLabel(type, l10n),
-              style: Theme.of(context).textTheme.bodyMedium),
-        );
-      }).toList(),
-      onChanged: (type) {
-        if (type != null) {
-          setState(() {
-            _conditions[index] = RuleCondition(
-              type: type,
-              value: _conditions[index].value,
-            );
-          });
-        }
-      },
+      entries: [for (final type in RuleConditionType.values) AppMenuEntry(value: type, label: _conditionTypeLabel(type, l10n))],
+      onChanged: (type) => setState(() {
+        _conditions[index] = RuleCondition(type: type, value: _conditions[index].value);
+      }),
     );
   }
 
   Widget _buildActionDropdown(int index) {
     final l10n = AppLocalizations.of(context);
-    return DropdownButton<RuleActionType>(
+    return AppSelectField<RuleActionType>(
       value: _actions[index].type,
-      isExpanded: true,
-      underline: const SizedBox.shrink(),
-      items: RuleActionType.values.map((type) {
-        return DropdownMenuItem(
-          value: type,
-          child: Text(_actionTypeLabel(type, l10n),
-              style: Theme.of(context).textTheme.bodyMedium),
-        );
-      }).toList(),
-      onChanged: (type) {
-        if (type != null) {
-          setState(() {
-            _actions[index] = RuleAction(
-              type: type,
-              value: _actions[index].value,
-            );
-          });
-        }
-      },
+      entries: [for (final type in RuleActionType.values) AppMenuEntry(value: type, label: _actionTypeLabel(type, l10n))],
+      onChanged: (type) => setState(() {
+        _actions[index] = RuleAction(type: type, value: _actions[index].value);
+      }),
     );
   }
 

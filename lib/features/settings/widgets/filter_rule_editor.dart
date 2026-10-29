@@ -11,6 +11,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../l10n/app_localizations.dart';
@@ -155,12 +156,10 @@ class _FilterRuleEditorState extends State<FilterRuleEditor> {
             const SizedBox(height: Space.m),
             TextField(controller: _name, decoration: InputDecoration(labelText: l10n.tr('sieveRuleName'))),
             SettingsSectionTitle(l10n.tr('sieveIf')),
-            DropdownButtonFormField<SieveField>(
-              initialValue: _r.field,
-              isExpanded: true,
-              items: [
-                for (final f in SieveField.values) DropdownMenuItem(value: f, child: Text(filterFieldLabel(f, l10n))),
-              ],
+            AppSelectField<SieveField>(
+              value: _r.field,
+              decoration: const InputDecoration(),
+              entries: [for (final f in SieveField.values) AppMenuEntry(value: f, label: filterFieldLabel(f, l10n))],
               onChanged: (v) => setState(() => _r = _r.copyWith(field: v)),
             ),
             const SizedBox(height: Space.s),
@@ -176,26 +175,22 @@ class _FilterRuleEditorState extends State<FilterRuleEditor> {
             const SizedBox(height: Space.s),
             TextField(controller: _value, decoration: InputDecoration(labelText: l10n.tr('sieveValue'))),
             SettingsSectionTitle(l10n.tr('sieveThen')),
-            DropdownButtonFormField<SieveAction>(
-              initialValue: widget.actions.contains(_r.action) ? _r.action : null,
-              isExpanded: true,
-              items: [
+            AppSelectField<SieveAction>(
+              value: widget.actions.contains(_r.action) ? _r.action : null,
+              decoration: const InputDecoration(),
+              entries: [
                 for (final a in SieveAction.values)
-                  if (widget.actions.contains(a)) DropdownMenuItem(value: a, child: Text(filterActionLabel(a, l10n))),
+                  if (widget.actions.contains(a)) AppMenuEntry(value: a, label: filterActionLabel(a, l10n)),
               ],
               onChanged: (v) => setState(() => _r = _r.copyWith(action: v, arg: v == SieveAction.move ? _r.arg : '')),
             ),
             const SizedBox(height: Space.s),
             if (_r.action == SieveAction.move)
-              DropdownButtonFormField<String>(
-                initialValue: folders.any((f) => f.id == _r.arg) ? _r.arg : null,
-                isExpanded: true,
+              AppSelectField<String>(
+                value: folders.any((f) => f.id == _r.arg) ? _r.arg : null,
                 decoration: InputDecoration(labelText: l10n.tr('sieveFolder')),
-                items: [
-                  for (final f in folders)
-                    DropdownMenuItem(value: f.id, child: Text(f.label, overflow: TextOverflow.ellipsis)),
-                ],
-                onChanged: (v) => setState(() => _r = _r.copyWith(arg: v ?? '')),
+                entries: [for (final f in folders) AppMenuEntry(value: f.id, label: f.label, icon: AppIcons.folder)],
+                onChanged: (v) => setState(() => _r = _r.copyWith(arg: v)),
               ),
             if (_r.action == SieveAction.forward)
               TextField(

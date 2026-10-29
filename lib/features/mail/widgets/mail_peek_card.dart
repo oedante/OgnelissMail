@@ -93,6 +93,7 @@ Future<void> showMailPeek(
   PeekOpenFile? openFile,
   List<PeekGroup> more = const [],
   String moreLabel = '…',
+  bool moreOpen = false,
 }) =>
     showPeekCard(
       context,
@@ -101,6 +102,7 @@ Future<void> showMailPeek(
       onOpen: onOpen,
       more: more,
       moreLabel: moreLabel,
+      moreOpen: moreOpen,
       card: _MailCard(
         email: email,
         conversationCount: conversationCount,

@@ -1,7 +1,7 @@
 // lib/features/settings/screens/contacts_settings_screen.dart
 // Настройки модуля Контакты: сортировка, фото, приоритет глобального каталога.
 
-import '../../../widgets/ui/app_radio_tile.dart';
+import '../../../widgets/ui/action_sheet.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
@@ -14,7 +14,6 @@ import '../../../services/device/device_contacts_sync.dart';
 import '../../mail/providers/mail_providers.dart';
 import '../providers/module_settings_provider.dart';
 import '../../../core/permissions/app_permissions.dart';
-import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
 
@@ -49,23 +48,16 @@ class ContactsSettingsScreen extends ConsumerWidget {
               icon: AppIcons.sort_by_alpha,
               title: l10n.tr('sortOrder'),
               subtitle: sortLabel(s.contactSort),
-              onTap: () => showAppSheet(
-                context: context,
-                builder: (ctx) => SafeArea(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: ContactSort.values.map((v) => AppRadioTile<ContactSort>(
-                          title: Text(sortLabel(v)),
-                          value: v,
-                          groupValue: s.contactSort,
-                          onChanged: (sel) {
-                            n.setContactSort(sel!);
-                            Navigator.pop(ctx);
-                          },
-                        )).toList(),
-                  ),
-                ),
-              ),
+              // Карточкой (1.8.8), как меню «⋮»; текущий — с галочкой.
+              onTap: () async {
+                final v = await showChoiceSheet<ContactSort>(
+                  context,
+                  title: l10n.tr('sortOrder'),
+                  selected: s.contactSort,
+                  entries: [for (final v in ContactSort.values) AppMenuEntry(value: v, label: sortLabel(v))],
+                );
+                if (v != null) await n.setContactSort(v);
+              },
             ),
             SettingsSwitchItem(
               icon: AppIcons.account_circle,

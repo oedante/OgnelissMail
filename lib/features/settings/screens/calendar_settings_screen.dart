@@ -2,7 +2,9 @@
 // Настройки модуля Календарь (как на эталонных экранах):
 // вид по умолчанию, начало недели, номера недель, напоминание, отклонённые.
 
-import '../../../widgets/ui/app_radio_tile.dart';
+import 'dart:async';
+
+import '../../../widgets/ui/action_sheet.dart';
 import '../widgets/feature_settings_sections.dart';
 import 'dart:io' show Platform;
 import '../../../core/theme/app_icons.dart';
@@ -19,7 +21,6 @@ import '../../../services/device/device_calendar_sync.dart';
 import '../../mail/providers/mail_providers.dart';
 import '../providers/module_settings_provider.dart';
 import '../../../core/permissions/app_permissions.dart';
-import '../../../widgets/common/app_sheet.dart';
 import '../../../services/notifications/reminder_scheduler_service.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
@@ -120,50 +121,37 @@ class CalendarSettingsScreen extends ConsumerWidget {
 
   void _pickView(BuildContext context, WidgetRef ref, CalendarDefaultView current,
       String Function(CalendarDefaultView) label) {
-    showAppSheet(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: CalendarDefaultView.values.map((v) => AppRadioTile<CalendarDefaultView>(
-                title: Text(label(v)),
-                value: v,
-                groupValue: current,
-                onChanged: (sel) {
-                  ref.read(moduleSettingsProvider.notifier).setCalendarView(sel!);
-                  Navigator.pop(ctx);
-                },
-              )).toList(),
-        ),
-      ),
-    );
+    // Карточкой (1.8.8), как меню «⋮»; текущий — с галочкой.
+    unawaited(showChoiceSheet<CalendarDefaultView>(
+      context,
+      title: AppLocalizations.of(context).tr('defaultView'),
+      selected: current,
+      entries: [for (final v in CalendarDefaultView.values) AppMenuEntry(value: v, label: label(v))],
+    ).then((v) {
+      if (v != null) ref.read(moduleSettingsProvider.notifier).setCalendarView(v);
+    }));
   }
 
   void _pickReminder(BuildContext context, WidgetRef ref, int current, AppLocalizations l10n) {
     const options = [0, 5, 10, 15, 30, 60, 1440];
-    showAppSheet(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: options.map((m) => AppRadioTile<int>(
-                title: Text(m == 0
-                    ? (l10n.tr('none'))
-                    : m == 1440
-                        ? (l10n.tr('oneDayBefore'))
-                        : _label(m, l10n)),
-                value: m,
-                groupValue: current,
-                onChanged: (sel) async {
-                  Navigator.pop(ctx);
-                  await ref.read(moduleSettingsProvider.notifier).setDefaultReminder(sel!);
-                  // Напоминания встреч без своего — по новому умолчанию.
-                  await ref.read(reminderSchedulerProvider).rescheduleAll();
-                },
-              )).toList(),
-        ),
-      ),
-    );
+    // Карточкой (1.8.8), как меню «⋮»; текущее — с галочкой.
+    unawaited(showChoiceSheet<int>(
+      context,
+      title: l10n.tr('defaultReminder'),
+      selected: current,
+      entries: [
+        for (final m in options)
+          AppMenuEntry(
+            value: m,
+            label: m == 0 ? l10n.tr('none') : m == 1440 ? l10n.tr('oneDayBefore') : _label(m, l10n),
+          ),
+      ],
+    ).then((sel) async {
+      if (sel == null) return;
+      await ref.read(moduleSettingsProvider.notifier).setDefaultReminder(sel);
+      // Напоминания встреч без своего — по новому умолчанию.
+      await ref.read(reminderSchedulerProvider).rescheduleAll();
+    }));
   }
 
   String _label(int m, AppLocalizations l10n) => m < 60 ? '$m ${l10n.tr('minShort')}' : '${m ~/ 60} ${l10n.tr('hourShort')}';

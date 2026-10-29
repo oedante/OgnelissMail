@@ -5,6 +5,8 @@
 // можно было править только через меню долгого нажатия, по пункту за раз,
 // а напоминания отдельно от срока не было вовсе.
 
+import '../../../widgets/ui/action_sheet.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../widgets/ui/wheel_pickers.dart';
 import '../../../widgets/ui/settings_group.dart' show SettingsGroup, SettingsSectionTitle;
 import 'dart:async';
@@ -435,21 +437,15 @@ class _TaskEditorState extends ConsumerState<TaskEditor> {
                 active: _repeat != TaskRepeat.none,
                 onClear: _repeat == TaskRepeat.none ? null : () => setState(() => _repeat = TaskRepeat.none),
                 onTap: () async {
-                  final v = await showAppSheet<int>(
-                    context: context,
-                    builder: (ctx) => SafeArea(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          for (final r in [TaskRepeat.none, ...TaskRepeat.all])
-                            ListTile(
-                              leading: Icon(r == _repeat ? AppIcons.radio_button_checked : AppIcons.radio_button_unchecked),
-                              title: Text(r == TaskRepeat.none ? l10n.tr('none') : _repeatLabel(r, l10n)),
-                              onTap: () => Navigator.pop(ctx, r),
-                            ),
-                        ],
-                      ),
-                    ),
+                  // Карточкой (1.8.8), как меню «⋮».
+                  final v = await showChoiceSheet<int>(
+                    context,
+                    title: l10n.tr('repeat'),
+                    selected: _repeat,
+                    entries: [
+                      for (final r in [TaskRepeat.none, ...TaskRepeat.all])
+                        AppMenuEntry(value: r, label: r == TaskRepeat.none ? l10n.tr('none') : _repeatLabel(r, l10n)),
+                    ],
                   );
                   if (v != null) setState(() => _repeat = v);
                 },
@@ -843,24 +839,14 @@ class _AccountPicker extends StatelessWidget {
           Icon(AppIcons.inbox, color: theme.hintColor),
           const SizedBox(width: Space.l),
           Expanded(
-            child: DropdownButton<String>(
+            // Меню-карточка (1.8.8) вместо списка Material.
+            child: AppSelectField<String>(
               value: accounts.any((a) => a.id == selected) ? selected : accounts.first.id,
-              isExpanded: true,
-              underline: const SizedBox.shrink(),
-              items: [
+              entries: [
                 for (final a in accounts)
-                  DropdownMenuItem(
-                    value: a.id,
-                    child: Row(children: [
-                      CircleAvatar(radius: 6, backgroundColor: Color(a.colorValue)),
-                      const SizedBox(width: 10),
-                      Expanded(child: Text(a.email, overflow: TextOverflow.ellipsis)),
-                    ]),
-                  ),
+                  AppMenuEntry(value: a.id, label: a.email, icon: AppIcons.mail, iconColor: Color(a.colorValue)),
               ],
-              onChanged: (v) {
-                if (v != null) onChanged(v);
-              },
+              onChanged: onChanged,
             ),
           ),
         ],

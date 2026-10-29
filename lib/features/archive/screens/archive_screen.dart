@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
 import 'package:share_plus/share_plus.dart';
 
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../core/platform/file_pick.dart' show FilePick;
 import '../../../core/security/secure_storage_service.dart';
 import '../../../data/models/account_model.dart';
@@ -32,9 +33,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../services/archive/archive_runner.dart';
 import '../../../services/archive/archive_settings.dart';
 import '../../../services/archive/archive_vault.dart';
-import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
-import '../../../widgets/ui/app_radio_tile.dart';
 import '../../../widgets/ui/confirm_dialog.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../help/faq_screen.dart' show FaqButton;
@@ -245,25 +244,12 @@ class _ArchiveScreenState extends ConsumerState<ArchiveScreen> {
     required String Function(int) label,
     required Future<void> Function(int) onPick,
   }) async {
-    final picked = await showAppSheet<int>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.s),
-            child: Text(title, style: Theme.of(ctx).textTheme.titleMedium),
-          ),
-          for (final o in options)
-            AppRadioTile<int>(
-              value: o,
-              groupValue: value,
-              onChanged: (v) => Navigator.of(ctx).pop(v),
-              title: Text(label(o)),
-            ),
-          const SizedBox(height: Space.s),
-        ]),
-      ),
+    // Карточкой (1.8.8), как меню «⋮»; текущее — с галочкой.
+    final picked = await showChoiceSheet<int>(
+      context,
+      title: title,
+      selected: value,
+      entries: [for (final o in options) AppMenuEntry(value: o, label: label(o))],
     );
     if (picked != null) await onPick(picked);
   }

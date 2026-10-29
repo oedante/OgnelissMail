@@ -48,6 +48,7 @@ import '../../../services/mail/oauth/direct_oauth.dart' show DirectOAuth;
 import '../../../widgets/common/app_logo.dart';
 import '../../../widgets/common/eas_compat_switch.dart';
 import '../../../widgets/ui/action_sheet.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../widgets/ui/help_hint.dart' show TitleWithHelp;
 import '../../mail/providers/mail_providers.dart';
 import '../providers/auth_provider.dart';
@@ -1060,20 +1061,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         // выпускаемой «строгий» не отличался от стандартного (1.6.2).
         if (!kReleaseMode) ...[
           const SizedBox(height: Space.m),
-          DropdownButtonFormField<PinningMode>(
-            initialValue: _pinningMode,
+          AppSelectField<PinningMode>(
+            value: _pinningMode,
             decoration: InputDecoration(labelText: l10n.certValidation, prefixIcon: const Icon(AppIcons.verified_user)),
-            isExpanded: true,
-            items: [
-              DropdownMenuItem(value: PinningMode.trustStore, child: Text(l10n.pinTrustStore)),
-              DropdownMenuItem(value: PinningMode.pinned, child: Text(l10n.pinStrict)),
-              DropdownMenuItem(value: PinningMode.off, child: Text(l10n.pinAcceptAll)),
+            entries: [
+              AppMenuEntry(value: PinningMode.trustStore, label: l10n.pinTrustStore),
+              AppMenuEntry(value: PinningMode.pinned, label: l10n.pinStrict),
+              AppMenuEntry(value: PinningMode.off, label: l10n.pinAcceptAll),
             ],
             onChanged: (v) {
-              if (v != null) {
-                setState(() => _pinningMode = v);
-                ref.read(certPinningProvider).setMode(v);
-              }
+              setState(() => _pinningMode = v);
+              ref.read(certPinningProvider).setMode(v);
             },
           ),
         ],
@@ -1091,19 +1089,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           children: [
             Expanded(flex: 2, child: TextFormField(controller: _imapPortController, decoration: InputDecoration(labelText: 'IMAP ${l10n.tr('port')}'), keyboardType: TextInputType.number)),
             const SizedBox(width: Space.m),
-            Expanded(flex: 3, child: DropdownButtonFormField<EncryptionType>(
-              // Шифрование подставляется и по адресу — ключ пересоздаёт
-              // поле, чтобы показать новое значение.
-              key: ValueKey(_imapEncryption),
-              initialValue: _imapEncryption,
+            Expanded(flex: 3, child: AppSelectField<EncryptionType>(
+              value: _imapEncryption,
               decoration: InputDecoration(labelText: l10n.tr('encryption')),
-              items: const [
-                DropdownMenuItem(value: EncryptionType.ssl, child: Text('SSL/TLS')),
-                DropdownMenuItem(value: EncryptionType.starttls, child: Text('STARTTLS')),
-                DropdownMenuItem(value: EncryptionType.none, child: Text('None')),
+              entries: const [
+                AppMenuEntry(value: EncryptionType.ssl, label: 'SSL/TLS'),
+                AppMenuEntry(value: EncryptionType.starttls, label: 'STARTTLS'),
+                AppMenuEntry(value: EncryptionType.none, label: 'None'),
               ],
               onChanged: (v) {
-                if (v == null) return;
                 setState(() {
                   _imapEncryption = v;
                   _applyStandardPort(_imapPortController, _imapStandardPorts, v);
@@ -1119,17 +1113,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           children: [
             Expanded(flex: 2, child: TextFormField(controller: _smtpPortController, decoration: InputDecoration(labelText: 'SMTP ${l10n.tr('port')}'), keyboardType: TextInputType.number)),
             const SizedBox(width: Space.m),
-            Expanded(flex: 3, child: DropdownButtonFormField<EncryptionType>(
-              key: ValueKey(_smtpEncryption),
-              initialValue: _smtpEncryption,
+            Expanded(flex: 3, child: AppSelectField<EncryptionType>(
+              value: _smtpEncryption,
               decoration: InputDecoration(labelText: l10n.tr('encryption')),
-              items: const [
-                DropdownMenuItem(value: EncryptionType.ssl, child: Text('SSL/TLS')),
-                DropdownMenuItem(value: EncryptionType.starttls, child: Text('STARTTLS')),
-                DropdownMenuItem(value: EncryptionType.none, child: Text('None')),
+              entries: const [
+                AppMenuEntry(value: EncryptionType.ssl, label: 'SSL/TLS'),
+                AppMenuEntry(value: EncryptionType.starttls, label: 'STARTTLS'),
+                AppMenuEntry(value: EncryptionType.none, label: 'None'),
               ],
               onChanged: (v) {
-                if (v == null) return;
                 setState(() {
                   _smtpEncryption = v;
                   _applyStandardPort(_smtpPortController, _smtpStandardPorts, v);

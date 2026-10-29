@@ -5,6 +5,7 @@
 // разбросаны по общему меню настроек и меню ⋮ строки аккаунта и работали с
 // «активным» ящиком, а не с тем, который хотели настроить.
 
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../services/sync/sync_schedule.dart';
 import '../../../services/notifications/account_notify_mode.dart';
 import 'delivery_schedule_screen.dart' show scheduleDaysLabel;
@@ -501,31 +502,20 @@ class AccountScreen extends ConsumerWidget {
   Future<void> _pickNotifyMode(
       BuildContext context, WidgetRef ref, AccountModel account, AccountNotifyMode current) async {
     final l10n = AppLocalizations.of(context);
-    final picked = await showAppSheet<AccountNotifyMode>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text(l10n.tr('accNotify'), style: Theme.of(ctx).textTheme.titleMedium),
-                trailing: HelpButton(text: l10n.tr('accNotifyHint'), title: l10n.tr('accNotify')),
-              ),
-              for (final m in AccountNotifyMode.values)
-                ListTile(
-                  title: Text(l10n.tr(AccountNotify.labelKey(m))),
-                  subtitle: Text(l10n.tr('${AccountNotify.labelKey(m)}Desc')),
-                  trailing: m == current
-                      ? Icon(AppIcons.check, color: Theme.of(ctx).colorScheme.primary)
-                      : null,
-                  onTap: () => Navigator.pop(ctx, m),
-                ),
-            ],
+    // Карточкой (1.8.8), как меню «⋮»; текущий — с галочкой.
+    final picked = await showChoiceSheet<AccountNotifyMode>(
+      context,
+      title: l10n.tr('accNotify'),
+      headerTrailing: HelpButton(text: l10n.tr('accNotifyHint'), title: l10n.tr('accNotify')),
+      selected: current,
+      entries: [
+        for (final m in AccountNotifyMode.values)
+          AppMenuEntry(
+            value: m,
+            label: l10n.tr(AccountNotify.labelKey(m)),
+            subtitle: l10n.tr('${AccountNotify.labelKey(m)}Desc'),
           ),
-        ),
-      ),
+      ],
     );
     if (picked == null || picked == current) return;
     await AccountNotify.set(ref.read(sharedPrefsProvider), account.id, picked);
@@ -534,49 +524,39 @@ class AccountScreen extends ConsumerWidget {
 
   Future<void> _pickInterval(BuildContext context, WidgetRef ref, AccountModel account) async {
     final l10n = AppLocalizations.of(context);
-    final picked = await showAppSheet<SyncInterval>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text(l10n.tr('checkMail'), style: Theme.of(ctx).textTheme.titleMedium),
-                trailing: HelpButton(text: l10n.tr('checkMailHint'), title: l10n.tr('checkMail')),
-              ),
-              for (final i in const [
-                SyncInterval.push,
-                SyncInterval.scheduled,
-                SyncInterval.minutes15,
-                SyncInterval.minutes30,
-                SyncInterval.hour1,
-                SyncInterval.manual,
-              ])
-                ListTile(
-                  title: Text(_intervalLabel(i, l10n)),
-                  // «По расписанию» — с текущим окном; настройка — в своём экране.
-                  subtitle: i == SyncInterval.scheduled ? Text(_scheduleSummary(l10n)) : null,
-                  trailing: i == account.syncInterval
-                      ? Icon(AppIcons.check, color: Theme.of(ctx).colorScheme.primary)
-                      : null,
-                  onTap: () => Navigator.pop(ctx, i),
-                ),
-              ListTile(
-                leading: const Icon(AppIcons.schedule),
-                title: Text(l10n.tr('scheduleSetup')),
-                trailing: const Icon(AppIcons.chevron_right),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  context.push('/settings/delivery-schedule');
-                },
-              ),
-            ],
+    // Карточкой (1.8.8), как меню «⋮»; текущий — с галочкой. Последний
+    // пункт — настройка расписания (значение null в меню — не выбор).
+    const setup = -1;
+    const options = [
+      SyncInterval.push,
+      SyncInterval.scheduled,
+      SyncInterval.minutes15,
+      SyncInterval.minutes30,
+      SyncInterval.hour1,
+      SyncInterval.manual,
+    ];
+    final v = await showChoiceSheet<int>(
+      context,
+      title: l10n.tr('checkMail'),
+      headerTrailing: HelpButton(text: l10n.tr('checkMailHint'), title: l10n.tr('checkMail')),
+      selected: account.syncInterval.index,
+      entries: [
+        for (final i in options)
+          AppMenuEntry(
+            value: i.index,
+            label: _intervalLabel(i, l10n),
+            // «По расписанию» — с текущим окном; настройка — в своём экране.
+            subtitle: i == SyncInterval.scheduled ? _scheduleSummary(l10n) : null,
           ),
-        ),
-      ),
+        const AppMenuEntry.divider(),
+        AppMenuEntry(value: setup, label: l10n.tr('scheduleSetup'), icon: AppIcons.schedule),
+      ],
     );
+    if (v == setup) {
+      if (context.mounted) unawaited(context.push('/settings/delivery-schedule'));
+      return;
+    }
+    final picked = v == null ? null : SyncInterval.values[v];
     if (picked == null || picked == account.syncInterval) return;
     final updated = account.copyWith(syncInterval: picked);
     await ref.read(accountsProvider.notifier).updateAccount(updated);
@@ -866,25 +846,20 @@ class AccountScreen extends ConsumerWidget {
   Future<void> _pickPhoto(BuildContext context, WidgetRef ref, AccountModel account) async {
     final l10n = AppLocalizations.of(context);
     final manual = ref.read(manualPhotosProvider).contains(account.id);
-    final action = await showAppSheet<String>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          ListTile(
-            leading: const Icon(AppIcons.photo_library),
-            title: Text(l10n.tr('accountPhotoChoose')),
-            onTap: () => Navigator.pop(ctx, 'pick'),
+    // Карточкой (1.8.8), как меню «⋮».
+    final action = await showActionSheet<String>(
+      context,
+      title: l10n.tr('accountPhoto'),
+      items: [
+        ActionSheetItem(icon: AppIcons.photo_library, label: l10n.tr('accountPhotoChoose'), value: 'pick'),
+        if (account.avatarUrl != null || manual)
+          ActionSheetItem(
+            icon: AppIcons.hide_image,
+            label: l10n.tr('accountPhotoReset'),
+            subtitle: l10n.tr('accountPhotoResetDesc'),
+            value: 'reset',
           ),
-          if (account.avatarUrl != null || manual)
-            ListTile(
-              leading: const Icon(AppIcons.hide_image),
-              title: Text(l10n.tr('accountPhotoReset')),
-              subtitle: Text(l10n.tr('accountPhotoResetDesc')),
-              onTap: () => Navigator.pop(ctx, 'reset'),
-            ),
-        ]),
-      ),
+      ],
     );
     if (action == null) return;
     final notifier = ref.read(accountsProvider.notifier);

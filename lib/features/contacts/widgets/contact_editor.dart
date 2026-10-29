@@ -21,6 +21,7 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../core/logging/app_logger.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
@@ -377,23 +378,16 @@ class _ContactEditorScreenState extends ConsumerState<ContactEditorScreen> {
                   Icon(AppIcons.cloud_sync, color: muted),
                   const SizedBox(width: Space.l),
                   Expanded(
-                    child: DropdownButtonFormField<String>(
-                      initialValue: _target,
-                      isExpanded: true,
-                      decoration: const InputDecoration(
-                        filled: false,
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: Space.s),
-                      ),
-                      items: [
+                    // Меню-карточка (1.8.8) вместо списка Material.
+                    child: AppSelectField<String>(
+                      value: _target,
+                      entries: [
                         for (final a in accounts)
-                          DropdownMenuItem(value: a.id, child: Text(a.email, overflow: TextOverflow.ellipsis)),
-                        DropdownMenuItem(value: _localTarget, child: Text(l10n.tr('contactLocalOnly'))),
+                          AppMenuEntry(value: a.id, label: a.email, icon: AppIcons.mail, iconColor: Color(a.colorValue)),
+                        AppMenuEntry(value: _localTarget, label: l10n.tr('contactLocalOnly'), icon: AppIcons.smartphone),
                       ],
                       onChanged: (v) => setState(() {
-                        _target = v ?? _localTarget;
+                        _target = v;
                         _error = null;
                       }),
                     ),

@@ -3,7 +3,9 @@
 // Высокая контрастность, крупный текст, дальтонизм, дислексия,
 // экранный диктор, голосовое управление, уменьшение движения.
 
-import '../../../widgets/ui/app_radio_tile.dart';
+import 'dart:async';
+
+import '../../../widgets/ui/action_sheet.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
@@ -11,7 +13,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../providers/settings_provider.dart';
-import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 
@@ -126,57 +127,20 @@ class AccessibilityScreen extends ConsumerWidget {
   void _showColorBlindPicker(
       BuildContext context, WidgetRef ref, AppSettings settings) {
     final l10n = AppLocalizations.of(context);
-    showAppSheet(
-      context: context,
-      builder: (ctx) => ListView(
-        shrinkWrap: true,
-        children: [
-          ListTile(
-            title: Text(l10n.tr('colorBlindMode'),
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          AppRadioTile<int>(
-            title: Text(l10n.tr('cbDisabled')),
-            value: 0,
-            groupValue: settings.colorBlindMode,
-            onChanged: (v) {
-              ref.read(settingsProvider.notifier).setColorBlindMode(v!);
-              Navigator.of(ctx).pop();
-            },
-          ),
-          AppRadioTile<int>(
-            title: Text(l10n.tr('cbProtanopia')),
-            subtitle: Text(l10n.tr('cbProtanopiaDesc')),
-            value: 1,
-            groupValue: settings.colorBlindMode,
-            onChanged: (v) {
-              ref.read(settingsProvider.notifier).setColorBlindMode(v!);
-              Navigator.of(ctx).pop();
-            },
-          ),
-          AppRadioTile<int>(
-            title: Text(l10n.tr('cbDeuteranopia')),
-            subtitle: Text(l10n.tr('cbDeuteranopiaDesc')),
-            value: 2,
-            groupValue: settings.colorBlindMode,
-            onChanged: (v) {
-              ref.read(settingsProvider.notifier).setColorBlindMode(v!);
-              Navigator.of(ctx).pop();
-            },
-          ),
-          AppRadioTile<int>(
-            title: Text(l10n.tr('cbTritanopia')),
-            subtitle: Text(l10n.tr('cbTritanopiaDesc')),
-            value: 3,
-            groupValue: settings.colorBlindMode,
-            onChanged: (v) {
-              ref.read(settingsProvider.notifier).setColorBlindMode(v!);
-              Navigator.of(ctx).pop();
-            },
-          ),
-        ],
-      ),
-    );
+    // Карточкой (1.8.8), как меню «⋮»; текущий — с галочкой.
+    unawaited(showChoiceSheet<int>(
+      context,
+      title: l10n.tr('colorBlindMode'),
+      selected: settings.colorBlindMode,
+      entries: [
+        AppMenuEntry(value: 0, label: l10n.tr('cbDisabled')),
+        AppMenuEntry(value: 1, label: l10n.tr('cbProtanopia'), subtitle: l10n.tr('cbProtanopiaDesc')),
+        AppMenuEntry(value: 2, label: l10n.tr('cbDeuteranopia'), subtitle: l10n.tr('cbDeuteranopiaDesc')),
+        AppMenuEntry(value: 3, label: l10n.tr('cbTritanopia'), subtitle: l10n.tr('cbTritanopiaDesc')),
+      ],
+    ).then((v) {
+      if (v != null) ref.read(settingsProvider.notifier).setColorBlindMode(v);
+    }));
   }
 
 

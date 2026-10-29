@@ -15,6 +15,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/core/theme/app_icons.dart';
 import 'package:ogneliss/core/theme/app_theme.dart';
+import 'package:ogneliss/core/theme/tokens.dart';
 import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/data/models/email_model.dart';
 import 'package:ogneliss/data/models/folder_model.dart';
@@ -34,6 +35,7 @@ import 'package:ogneliss/services/archive/archive_vault.dart';
 import 'package:ogneliss/services/background/work_scheduler.dart';
 import 'package:ogneliss/widgets/common/hero_email_transition.dart';
 import 'package:ogneliss/widgets/navigation/app_bottom_bar.dart';
+import 'package:ogneliss/widgets/ui/action_sheet.dart';
 import 'package:ogneliss/widgets/ui/app_menu_button.dart';
 import 'package:ogneliss/widgets/ui/confirm_dialog.dart';
 import 'package:ogneliss/widgets/ui/section_band.dart';
@@ -349,6 +351,18 @@ void main() {
           theme: _themes[t]!(), db: db, prefs: prefs);
       await tester.runAsync(db.close);
     });
+    // «Ещё» в письме (1.8.8) — карточка, как по удержанию письма в ленте.
+    testWidgets('письмо, ещё — $t', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await _shot(tester, 'letter_more_$t', const MailDetailScreen(emailId: 'e1', accountId: 'a1'),
+          theme: _themes[t]!(), db: db, prefs: prefs, before: (tester) async {
+        await tester.tap(find.bySemanticsLabel('Ещё').last);
+      });
+      await tester.runAsync(db.close);
+    });
     testWidgets('новое письмо — $t', (tester) async {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
@@ -425,6 +439,18 @@ void main() {
     });
   }
 
+  // Шторки действий и выбор значения (1.8.8) — карточкой, как меню «⋮».
+  for (final t in const ['light', 'dark']) {
+    testWidgets('карточка действий — $t', (tester) async {
+      await _shot(tester, 'action_card_$t', const _CardHost(choice: false), theme: _themes[t]!(),
+          before: (tester) async => tester.tap(find.text('open')));
+    });
+    testWidgets('карточка выбора — $t', (tester) async {
+      await _shot(tester, 'choice_card_$t', const _CardHost(choice: true), theme: _themes[t]!(),
+          before: (tester) async => tester.tap(find.text('open')));
+    });
+  }
+
   for (final font in const ['roboto', 'medeo']) {
     testWidgets('общие — шрифт $font', (tester) async {
       SharedPreferences.setMockInitialValues({'s_ui_font': font});
@@ -463,5 +489,51 @@ class _ShotVault extends ArchiveVault {
   Future<ArchiveVaultState> build() async => ArchiveVaultState(
         ArchiveStatus.open,
         header: ArchiveHeader(id: 'shot', name: '', created: DateTime(2026, 10, 1), app: '1.8.7', keys: const {}),
+      );
+}
+
+/// Экран для снимков карточек действий и выбора: кнопка «open».
+class _CardHost extends StatelessWidget {
+  final bool choice;
+  const _CardHost({required this.choice});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: const Text('Ogneliss Mail')),
+        body: Builder(
+          builder: (context) => Center(
+            child: FilledButton(
+              onPressed: () => choice
+                  ? showChoiceSheet<int>(
+                      context,
+                      title: 'Сортировка',
+                      selected: 1,
+                      entries: const [
+                        AppMenuEntry(value: 0, label: 'Сначала новые'),
+                        AppMenuEntry(value: 1, label: 'Сначала старые'),
+                        AppMenuEntry(value: 2, label: 'По отправителю'),
+                        AppMenuEntry(value: 3, label: 'По теме'),
+                      ],
+                    )
+                  : showActionSheet<int>(
+                      context,
+                      title: 'Анна Смирнова',
+                      subtitle: 'anna.smirnova@corp.example',
+                      leading: const CircleAvatar(child: Text('А')),
+                      items: const [
+                        ActionSheetItem(icon: AppIcons.person, label: 'В «Кому»', value: 0),
+                        ActionSheetItem(icon: AppIcons.group, label: 'В «Копию»', value: 1),
+                        ActionSheetItem(icon: AppIcons.content_copy, label: 'Скопировать адрес', value: 2),
+                        ActionSheetItem(icon: AppIcons.close, label: 'Убрать', value: 3, destructive: true),
+                      ],
+                      footer: const Padding(
+                        padding: EdgeInsets.fromLTRB(Space.l, Space.xs, Space.l, Space.s),
+                        child: Text('Адрес можно перетащить в другое поле'),
+                      ),
+                    ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
       );
 }

@@ -3563,4 +3563,12 @@
     <string name="graphHint">Microsoft dezactivează EWS în Exchange Online: din octombrie 2026 pe organizații, complet în aprilie 2027. E-mailul, calendarul, contactele și răspunsurile automate folosesc ActiveSync și nu se schimbă. Agenda (funcții, departamente, fotografiile colegilor), sfaturile la trimitere, regulile serverului și recuperarea elementelor șterse folosesc acum Microsoft Graph. Sălile și membrii listelor de distribuție la fel, dacă administratorul a acordat aplicației Place.Read.All și GroupMember.Read.All. Microsoft Graph nu oferă arhiva online, cutiile partajate și importul semnăturii — acestea folosesc EWS cât timp este disponibil.</string>
     <string name="srvViaGraph">Exchange Online — prin Microsoft Graph</string>
     <string name="zipEncryptedHint">Arhiva este protejată prin parolă, aplicația Fișiere nu o poate deschide. Alegeți o aplicație de arhive: vă va cere parola</string>
+    <string name="reminderToday">Astăzi · {at}</string>
+    <string name="composeBadAddress">Verificați adresa: {addr}</string>
+    <string name="convMute">Dezactivează notificările</string>
+    <string name="convUnmute">Activează notificările</string>
+    <string name="convMutedNotice">Mesajele noi din această conversație nu vor trimite notificări</string>
+    <string name="convUnmutedNotice">Notificările acestei conversații sunt activate</string>
+    <string name="faq_notify_6_q">Cum dezactivez notificările pentru o singură conversație?</string>
+    <string name="faq_notify_6_a">Deschideți conversația → ⋮ → „Dezactivează notificările” (sau apăsați lung rândul din listă → „Mai multe”). Mesajele noi din ea sosesc fără notificare, iar rândul arată un clopoțel tăiat. Restul e-mailurilor notifică la fel ca înainte. Reactivare: aceeași opțiune sau atingeți clopoțelul din conversație.</string>
 </resources>

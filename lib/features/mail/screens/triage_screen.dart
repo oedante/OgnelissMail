@@ -25,7 +25,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/navigation/app_router.dart' show mailDetailPath;
+import '../../../core/navigation/app_router.dart' show mailOpenPath;
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
@@ -178,7 +178,7 @@ class _TriageScreenState extends ConsumerState<TriageScreen> {
   }
 
   Future<void> _open(EmailModel e) async {
-    await context.push(mailDetailPath(e.id, accountId: e.accountId));
+    await context.push(mailOpenPath(context, e.id, accountId: e.accountId));
     if (!mounted) return;
     // Открыли — письмо прочитано; в разборе — следующее.
     _next(_Act.read);

@@ -3544,4 +3544,12 @@
     <string name="graphHint">Microsoft slukker for EWS i Exchange Online: fra oktober 2026 organisation for organisation, helt i april 2027. Mail, kalender, kontakter og automatiske svar bruger ActiveSync og påvirkes ikke. Adressebogen (stillinger, afdelinger, kollegers fotos), tip ved afsendelse, serverregler og gendannelse af slettede elementer bruger nu Microsoft Graph. Mødelokaler og medlemmer af distributionslister også, hvis administratoren har givet appen Place.Read.All og GroupMember.Read.All. Microsoft Graph tilbyder ikke onlinearkiv, delte postkasser eller import af signatur — de bruger EWS, så længe det er tilgængeligt.</string>
     <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
     <string name="zipEncryptedHint">Arkivet er beskyttet med adgangskode, så Filer kan ikke åbne det. Vælg en arkivapp – den spørger om adgangskoden</string>
+    <string name="reminderToday">I dag · {at}</string>
+    <string name="composeBadAddress">Tjek adressen: {addr}</string>
+    <string name="convMute">Slå notifikationer fra</string>
+    <string name="convUnmute">Slå notifikationer til</string>
+    <string name="convMutedNotice">Nye beskeder i denne samtale giver ingen notifikation</string>
+    <string name="convUnmutedNotice">Notifikationer for denne samtale er slået til</string>
+    <string name="faq_notify_6_q">Hvordan slår jeg notifikationer fra for én samtale?</string>
+    <string name="faq_notify_6_a">Åbn samtalen → ⋮ → “Slå notifikationer fra” (eller hold på rækken i listen → “Mere”). Nye beskeder i den kommer uden notifikation, og rækken viser en overstreget klokke. Resten af posten giver besked som før. Slå til igen: samme punkt eller tryk på klokken i samtalen.</string>
 </resources>

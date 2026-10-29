@@ -21,7 +21,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/navigation/app_router.dart' show mailDetailPath;
+import '../../../core/navigation/app_router.dart' show mailOpenPath;
 import '../../../core/theme/app_theme.dart';
 import '../../../data/database/app_database.dart';
 import '../../../data/models/account_model.dart';
@@ -636,8 +636,9 @@ class _TaskEditorState extends ConsumerState<TaskEditor> {
               subtitle: Text(l10n.tr('openEmail')),
               onTap: () {
                 final router = GoRouter.of(context);
+                final path = mailOpenPath(context, widget.task!.linkedEmailId!, accountId: widget.task!.accountId);
                 _close();
-                router.push(mailDetailPath(widget.task!.linkedEmailId!, accountId: widget.task!.accountId));
+                router.push(path);
               },
             ),
         ]),

@@ -3525,4 +3525,12 @@
     <string name="graphHint">Microsoft 正在关闭 Exchange Online 中的 EWS：自 2026 年 10 月起按组织逐步关闭，2027 年 4 月完全关闭。邮件、日历、联系人和自动答复通过 ActiveSync 工作，不受影响。通讯簿（职位、部门、同事照片）、发送提示、服务器规则和恢复已删除项目现已改用 Microsoft Graph。若管理员已向应用授予 Place.Read.All 和 GroupMember.Read.All，会议室和通讯组成员也是如此。Microsoft Graph 不提供在线存档、共享邮箱和签名导入——在 EWS 可用期间它们仍通过 EWS 工作。</string>
     <string name="srvViaGraph">Exchange Online — 通过 Microsoft Graph</string>
     <string name="zipEncryptedHint">压缩包有密码保护，“文件”无法打开。请选择解压缩 App，它会询问密码</string>
+    <string name="reminderToday">今天 · {at}</string>
+    <string name="composeBadAddress">请检查地址：{addr}</string>
+    <string name="convMute">关闭通知</string>
+    <string name="convUnmute">开启通知</string>
+    <string name="convMutedNotice">此会话的新邮件将不再通知</string>
+    <string name="convUnmutedNotice">已开启此会话的通知</string>
+    <string name="faq_notify_6_q">如何关闭单个会话的通知？</string>
+    <string name="faq_notify_6_a">打开会话 → ⋮ →「关闭通知」（或在列表中长按该行 →「更多」）。此会话的新邮件将静默送达，行上显示带斜线的铃铛。其他邮件照常通知。要重新开启，可使用同一选项或点按会话中的铃铛。</string>
 </resources>

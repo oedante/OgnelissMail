@@ -191,6 +191,9 @@ class PhoneMirrorService {
           'start': e.isAllDay ? _utcMidnight(e.startTime.toLocal()) : e.startTime.millisecondsSinceEpoch,
           'end': e.isAllDay ? _utcMidnight(e.endTime.toLocal()) : e.endTime.millisecondsSinceEpoch,
           'allDay': e.isAllDay,
+          // 1.8.13: на iPhone конец события на весь день — включительно;
+          // отметка меняет хэш, и уже записанные события перезаписываются.
+          if (e.isAllDay) 'fmt': 2,
           'reminderMinutes': ReminderSchedulerService.remindersOf(e.remindersJson)?.firstOrNull,
         }),
     ];

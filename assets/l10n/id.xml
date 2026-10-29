@@ -3525,4 +3525,12 @@
     <string name="graphHint">Microsoft mematikan EWS di Exchange Online: mulai Oktober 2026 per organisasi, sepenuhnya pada April 2027. Email, kalender, kontak, dan balasan otomatis memakai ActiveSync dan tidak berubah. Buku alamat (jabatan, departemen, foto rekan), tips saat mengirim, aturan server, dan pemulihan item terhapus kini memakai Microsoft Graph. Ruang rapat dan anggota daftar distribusi juga, jika admin memberi aplikasi izin Place.Read.All dan GroupMember.Read.All. Microsoft Graph tidak menyediakan arsip online, kotak surat bersama, dan impor tanda tangan — semuanya memakai EWS selama masih tersedia.</string>
     <string name="srvViaGraph">Exchange Online — melalui Microsoft Graph</string>
     <string name="zipEncryptedHint">Arsip dilindungi kata sandi, jadi Files tidak bisa membukanya. Pilih app arsip: app itu akan meminta kata sandi</string>
+    <string name="reminderToday">Hari ini · {at}</string>
+    <string name="composeBadAddress">Periksa alamat: {addr}</string>
+    <string name="convMute">Bisukan notifikasi</string>
+    <string name="convUnmute">Bunyikan notifikasi</string>
+    <string name="convMutedNotice">Pesan baru dalam percakapan ini tidak akan memberi notifikasi</string>
+    <string name="convUnmutedNotice">Notifikasi percakapan ini aktif</string>
+    <string name="faq_notify_6_q">Bagaimana cara membisukan notifikasi satu percakapan?</string>
+    <string name="faq_notify_6_a">Buka percakapan → ⋮ → «Bisukan notifikasi» (atau tekan lama barisnya di daftar → «Lainnya»). Pesan barunya masuk tanpa notifikasi, dan barisnya menampilkan lonceng dicoret. Email lain tetap memberi notifikasi seperti biasa. Untuk menyalakan lagi, gunakan opsi yang sama atau ketuk lonceng di percakapan.</string>
 </resources>

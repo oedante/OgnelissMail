@@ -75,6 +75,7 @@ import '../../../widgets/common/undo_manager.dart';
 import '../../../data/models/folder_model.dart';
 import 'package:drift/drift.dart' show BooleanExpressionOperators, OrderingTerm;
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditorForEmail;
+import '../providers/conversation_mute.dart';
 import '../providers/mail_providers.dart';
 import '../../../core/utils/folder_icons.dart';
 import '../../../services/mail/folder_actions_service.dart';
@@ -2310,6 +2311,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     final q = 'replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}';
     final control = ref.read(settingsProvider).mailControl;
     final pinned = ref.read(pinnedMailProvider.notifier).isPinned(email.accountId, email.id);
+    final muted = ref.read(mutedConversationsProvider.notifier).isMuted(email.accountId, email.conversationId);
     return [
       PeekGroup(title: l10n.tr('peekGroupReply'), items: [
         PeekAction(icon: AppIcons.reply, label: l10n.tr('reply'), onTap: () => context.push('/compose?$q')),
@@ -2344,6 +2346,16 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           label: l10n.tr(pinned ? 'unpinMail' : 'pinMail'),
           onTap: () => unawaited(_togglePin(email)),
         ),
+        // Беседа без уведомлений (1.8.13, как «Без звука» у чата в Telegram).
+        if ((email.conversationId ?? '').isNotEmpty)
+          PeekAction(
+            icon: muted ? AppIcons.notifications_active : AppIcons.notifications_off,
+            label: l10n.tr(muted ? 'convUnmute' : 'convMute'),
+            onTap: () => unawaited(() async {
+              final now = await ref.read(mutedConversationsProvider.notifier).toggle(email.accountId, email.conversationId!);
+              showInlineNotice(l10n.tr(now ? 'convMutedNotice' : 'convUnmutedNotice'));
+            }()),
+          ),
       ]),
       PeekGroup(title: l10n.tr('peekGroupCreate'), items: [
         PeekAction(icon: AppIcons.calendar_today, label: l10n.tr('createEvent'), onTap: () => _planMeeting(email)),
@@ -2883,14 +2895,32 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   }
 
   Future<void> _markAllRead() async {
-    final account = ref.read(activeAccountProvider);
-    if (account == null) return;
-    final state = ref.read(emailsProvider);
-    final unreadIds = state.emails.where((e) => !e.isRead).map((e) => e.id).toList();
-    if (unreadIds.isEmpty) return;
-    final folderId = state.emails.isNotEmpty ? state.emails.first.folderId : 'inbox';
-    await ref.read(emailActionsProvider).batchSetRead(account, unreadIds, folderId, true);
-    await ref.read(emailsProvider.notifier).refresh();
+    final unread = ref.read(emailsProvider).emails.where((e) => !e.isRead).toList();
+    if (unread.isEmpty) return;
+    await _setReadEach(unread);
+  }
+
+  /// «Прочитано» — каждому письму в его ящике и папке (1.8.13). Раньше —
+  /// ящику, выбранному в ленте, и папке первого письма: во «Всей почте» и в
+  /// группе ящиков IMAP отмечал прочитанным письмо с тем же номером в чужой
+  /// папке, а письма других ящиков не отмечались вовсе.
+  Future<void> _setReadEach(List<EmailModel> emails) async {
+    final actions = ref.read(emailActionsProvider);
+    final notifier = ref.read(emailsProvider.notifier);
+    final accounts = {for (final a in ref.read(accountsProvider)) a.id: a};
+    for (final e in emails) {
+      notifier.applyLocalFlags(e.id, isRead: true);
+    }
+    for (final e in emails) {
+      final a = accounts[e.accountId];
+      if (a == null) continue;
+      try {
+        await actions.setRead(a, e.id, e.folderId, true);
+      } catch (err) {
+        AppLogger.warning('Прочитано: $err');
+      }
+    }
+    await notifier.refresh();
   }
 
   /// Отметить прочитанными письма, где пользователь стоит В КОПИИ, но НЕ в «Кому».
@@ -2900,18 +2930,20 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   /// письма, адресованные не лично пользователю, — их обычно достаточно
   /// просмотреть. Решение принимает пользователь, вызывая пункт вручную.
   Future<void> _markReadWhereCc(AppLocalizations l10n) async {
-    final account = ref.read(activeAccountProvider);
-    if (account == null) return;
     final state = ref.read(emailsProvider);
+    final accounts = {for (final a in ref.read(accountsProvider)) a.id: a};
 
+    // Свои адреса — ящика самого письма (во «Всей почте» их несколько).
     bool inCcOnly(EmailModel e) {
-      if (e.isRead) return false;
+      final account = accounts[e.accountId];
+      if (e.isRead || account == null) return false;
       final inTo = e.to.any((a) => OwnAddresses.isMine(account, a.email));
       final inCc = e.cc.any((a) => OwnAddresses.isMine(account, a.email));
       return inCc && !inTo;
     }
 
-    final ids = state.emails.where(inCcOnly).map((e) => e.id).toList();
+    final list = state.emails.where(inCcOnly).toList();
+    final ids = [for (final e in list) e.id];
     if (ids.isEmpty) {
       showInlineNotice(l10n.tr('nothingToMark'));
       return;
@@ -2931,9 +2963,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     );
     if (ok != true) return;
 
-    final folderId = state.emails.isNotEmpty ? state.emails.first.folderId : 'inbox';
-    await ref.read(emailActionsProvider).batchSetRead(account, ids, folderId, true);
-    await ref.read(emailsProvider.notifier).refresh();
+    await _setReadEach(list);
     if (!mounted) return;
     showInlineNotice(l10n.tr('markedReadN').replaceAll('{n}', '${ids.length}'));
   }

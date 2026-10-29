@@ -8,9 +8,9 @@ import 'package:ogneliss/services/notifications/notification_router.dart';
 
 void main() {
   group('NotificationRouter.routeFor', () {
-    test('письмо — карточка письма с ящиком', () {
+    test('письмо — отдельной страницей поверх любого экрана, с ящиком', () {
       final p = jsonEncode({'type': 'email', 'accountId': 'acc 1', 'emailId': 'eas_2:15'});
-      expect(NotificationRouter.routeFor(p), '/mail/detail/eas_2%3A15?accountId=acc+1');
+      expect(NotificationRouter.routeFor(p), '/message/eas_2%3A15?accountId=acc+1');
     });
 
     test('письмо без id — лента', () {

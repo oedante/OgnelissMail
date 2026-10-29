@@ -3582,4 +3582,12 @@
     <string name="graphHint">Microsoft wyłącza EWS w Exchange Online: od października 2026 kolejno w organizacjach, całkowicie w kwietniu 2027. Poczta, kalendarz, kontakty i odpowiedzi automatyczne działają przez ActiveSync i się nie zmieniają. Książka adresowa (stanowiska, działy, zdjęcia współpracowników), porady przy wysyłaniu, reguły serwera i odzyskiwanie usuniętych elementów działają teraz przez Microsoft Graph. Sale i członkowie list dystrybucyjnych także, jeśli administrator przyznał aplikacji Place.Read.All i GroupMember.Read.All. Microsoft Graph nie udostępnia archiwum online, skrzynek współdzielonych ani importu podpisu — działają przez EWS, dopóki jest dostępne.</string>
     <string name="srvViaGraph">Exchange Online — przez Microsoft Graph</string>
     <string name="zipEncryptedHint">Archiwum jest chronione hasłem, aplikacja Pliki go nie otworzy. Wybierz aplikację do archiwów: poprosi o hasło</string>
+    <string name="reminderToday">Dziś · {at}</string>
+    <string name="composeBadAddress">Sprawdź adres: {addr}</string>
+    <string name="convMute">Wycisz powiadomienia</string>
+    <string name="convUnmute">Włącz powiadomienia</string>
+    <string name="convMutedNotice">Nowe wiadomości w tej rozmowie nie będą powiadamiać</string>
+    <string name="convUnmutedNotice">Powiadomienia tej rozmowy są włączone</string>
+    <string name="faq_notify_6_q">Jak wyciszyć powiadomienia jednej rozmowy?</string>
+    <string name="faq_notify_6_a">Otwórz rozmowę → ⋮ → „Wycisz powiadomienia” (lub przytrzymaj jej wiersz na liście → „Więcej”). Nowe wiadomości w niej przychodzą bez powiadomień, a przy wierszu widać przekreślony dzwonek. Pozostała poczta powiadamia jak dotąd. Aby włączyć ponownie, użyj tej samej opcji lub dotknij dzwonka w rozmowie.</string>
 </resources>

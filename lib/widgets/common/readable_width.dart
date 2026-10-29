@@ -14,6 +14,7 @@ class ReadableWidth extends StatelessWidget {
     required this.child,
     this.maxWidth = 860,
     this.alignment = Alignment.topCenter,
+    this.fill = false,
   });
 
   final Widget child;
@@ -24,13 +25,19 @@ class ReadableWidth extends StatelessWidget {
 
   final AlignmentGeometry alignment;
 
+  /// Колонка во всю [maxWidth] (на узком экране — во всю ширину), а не по
+  /// самому широкому содержимому (1.8.13): у короткого письма колонка текста
+  /// была уже колонки шапки и стояла по центру — текст начинался правее темы
+  /// и адресатов.
+  final bool fill;
+
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: alignment,
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxWidth),
-        child: child,
+        child: fill ? SizedBox(width: double.infinity, child: child) : child,
       ),
     );
   }

@@ -3544,4 +3544,12 @@
     <string name="graphHint">A Microsoft está a desativar o EWS no Exchange Online: a partir de outubro de 2026 por organização, totalmente em abril de 2027. Correio, calendário, contactos e respostas automáticas usam ActiveSync e não mudam. O diretório (cargos, departamentos, fotos dos colegas), as sugestões ao enviar, as regras do servidor e a recuperação de itens eliminados usam agora o Microsoft Graph. As salas e os membros de listas de distribuição também, se o administrador concedeu à app Place.Read.All e GroupMember.Read.All. O Microsoft Graph não oferece o arquivo online, as caixas partilhadas nem a importação de assinatura: usam o EWS enquanto estiver disponível.</string>
     <string name="srvViaGraph">Exchange Online — através do Microsoft Graph</string>
     <string name="zipEncryptedHint">O arquivo está protegido por senha e o app Arquivos não consegue abri-lo. Escolha um app de arquivos compactados: ele pedirá a senha</string>
+    <string name="reminderToday">Hoje · {at}</string>
+    <string name="composeBadAddress">Verifique o endereço: {addr}</string>
+    <string name="convMute">Silenciar notificações</string>
+    <string name="convUnmute">Ativar notificações</string>
+    <string name="convMutedNotice">Novas mensagens desta conversa não vão notificar</string>
+    <string name="convUnmutedNotice">Notificações desta conversa ativadas</string>
+    <string name="faq_notify_6_q">Como silenciar as notificações de uma só conversa?</string>
+    <string name="faq_notify_6_a">Abra a conversa → ⋮ → «Silenciar notificações» (ou mantenha pressionada a linha na lista → «Mais»). As novas mensagens dela chegam sem notificação, e a linha mostra um sino riscado. O restante do e-mail notifica como antes. Para reativar, use a mesma opção ou toque no sino na conversa.</string>
 </resources>

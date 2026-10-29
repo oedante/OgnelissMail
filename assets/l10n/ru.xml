@@ -3582,4 +3582,12 @@
     <string name="graphHint">Microsoft отключает EWS в Exchange Online: с октября 2026 года — по организациям, полностью — в апреле 2027. Почта, календарь, контакты и автоответ идут по ActiveSync и не меняются. Адресная книга (должность, отдел, фото коллег), подсказки при отправке, правила сервера и «Восстановить удалённые» теперь работают через Microsoft Graph. Переговорные и состав рассылок — тоже, если администратор разрешил приложению права Place.Read.All и GroupMember.Read.All. Онлайн-архив, общие ящики и импорт подписи у Microsoft Graph не открыты — они работают по EWS, пока он доступен.</string>
     <string name="srvViaGraph">Exchange Online — через Microsoft Graph</string>
     <string name="zipEncryptedHint">Архив защищён паролем — «Файлы» его не откроют. Выберите архиватор: он спросит пароль</string>
+    <string name="reminderToday">Сегодня · {at}</string>
+    <string name="composeBadAddress">Проверьте адрес: {addr}</string>
+    <string name="convMute">Без уведомлений</string>
+    <string name="convUnmute">Включить уведомления</string>
+    <string name="convMutedNotice">Новые письма этой беседы — без уведомлений</string>
+    <string name="convUnmutedNotice">Уведомления о новых письмах беседы включены</string>
+    <string name="faq_notify_6_q">Как отключить уведомления об одной переписке?</string>
+    <string name="faq_notify_6_a">Откройте беседу → «⋮» → «Без уведомлений» (или удержите строку в ленте → «Ещё»). Новые письма этой беседы приходят в ленту без уведомлений, у строки — перечёркнутый колокольчик. Остальная почта уведомляет как раньше. Включить снова — там же или нажатием на колокольчик в беседе.</string>
 </resources>

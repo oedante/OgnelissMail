@@ -3544,4 +3544,12 @@
     <string name="graphHint">Microsoft is turning off EWS in Exchange Online: from October 2026 organisation by organisation, completely in April 2027. Mail, calendar, contacts and automatic replies use ActiveSync and are not affected. The directory (job titles, departments, colleagues\' photos), send-time tips, server rules and recovering deleted items now use Microsoft Graph. Rooms and distribution list members too, if your admin has granted the app Place.Read.All and GroupMember.Read.All. Microsoft Graph does not offer the online archive, shared mailboxes or signature import — they use EWS while it is available.</string>
     <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
     <string name="zipEncryptedHint">The archive is password-protected, so Files can’t open it. Choose an archive app: it will ask for the password</string>
+    <string name="reminderToday">Today · {at}</string>
+    <string name="composeBadAddress">Check the address: {addr}</string>
+    <string name="convMute">Mute notifications</string>
+    <string name="convUnmute">Unmute notifications</string>
+    <string name="convMutedNotice">New messages in this conversation won’t notify you</string>
+    <string name="convUnmutedNotice">Notifications for this conversation are on</string>
+    <string name="faq_notify_6_q">How do I mute notifications for one conversation?</string>
+    <string name="faq_notify_6_a">Open the conversation → ⋮ → Mute notifications (or long-press its row in the list → More). New messages in it arrive without notifications, and the row shows a crossed-out bell. The rest of your mail notifies as before. To turn them back on, use the same item or tap the bell in the conversation.</string>
 </resources>

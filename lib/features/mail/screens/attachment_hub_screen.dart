@@ -27,7 +27,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../core/navigation/app_router.dart' show mailDetailPath;
+import '../../../core/navigation/app_router.dart' show mailOpenPath;
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart' show AppColors;
 import '../../../core/theme/tokens.dart';
@@ -381,7 +381,7 @@ class _AttachmentHubScreenState extends ConsumerState<AttachmentHubScreen> with 
     if (action == null || !mounted) return;
     if (action == 'open') return _open(item, l10n);
     if (action == 'mail') {
-      unawaited(context.push(mailDetailPath(item.emailId, accountId: item.accountId)));
+      unawaited(context.push(mailOpenPath(context, item.emailId, accountId: item.accountId)));
       return;
     }
     if (action == 'sender') {

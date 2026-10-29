@@ -3620,4 +3620,12 @@
     <string name="graphHint">توقف Microsoft خدمة EWS في Exchange Online: بدءًا من أكتوبر 2026 مؤسسةً تلو أخرى، وكليًا في أبريل 2027. البريد والتقويم وجهات الاتصال والردود التلقائية تعمل عبر ActiveSync ولا تتغير. دليل العناوين (المسميات الوظيفية والأقسام وصور الزملاء) وتلميحات الإرسال وقواعد الخادم واستعادة العناصر المحذوفة تعمل الآن عبر Microsoft Graph، وكذلك غرف الاجتماعات وأعضاء قوائم التوزيع إذا منح المسؤول التطبيق الإذنين Place.Read.All وGroupMember.Read.All. لا يتيح Microsoft Graph الأرشيف عبر الإنترنت ولا صناديق البريد المشتركة ولا استيراد التوقيع، فهي تعمل عبر EWS ما دام متاحًا.</string>
     <string name="srvViaGraph">Exchange Online — عبر Microsoft Graph</string>
     <string name="zipEncryptedHint">الأرشيف محمي بكلمة مرور، لذلك لا يستطيع تطبيق الملفات فتحه. اختر تطبيقًا للأرشيفات: سيطلب كلمة المرور</string>
+    <string name="reminderToday">اليوم · {at}</string>
+    <string name="composeBadAddress">تحقّق من العنوان: {addr}</string>
+    <string name="convMute">كتم الإشعارات</string>
+    <string name="convUnmute">إلغاء كتم الإشعارات</string>
+    <string name="convMutedNotice">لن تصلك إشعارات بالرسائل الجديدة في هذه المحادثة</string>
+    <string name="convUnmutedNotice">تم تشغيل إشعارات هذه المحادثة</string>
+    <string name="faq_notify_6_q">كيف أكتم إشعارات محادثة واحدة؟</string>
+    <string name="faq_notify_6_a">افتح المحادثة ← ⋮ ← «كتم الإشعارات» (أو اضغط مطولًا على سطرها في القائمة ← «المزيد»). تصل رسائلها الجديدة دون إشعارات، ويظهر بجوار السطر جرس مشطوب. بقية البريد يرسل الإشعارات كالمعتاد. لإعادة التشغيل استخدم الخيار نفسه أو اضغط الجرس في المحادثة.</string>
 </resources>

@@ -12,6 +12,8 @@ import '../../../widgets/ui/wheel_pickers.dart';
 import '../../../widgets/ui/settings_group.dart' show SettingsSectionTitle;
 import '../../../core/utils/text_safe.dart';
 import '../../../core/utils/subject_prefix.dart';
+import '../../../core/utils/address_input.dart';
+import '../../../core/utils/mail_domains.dart' show sameOrgDomain;
 import '../../../widgets/common/person_photo.dart';
 import '../../../services/mail/alias_service.dart' show aliasServiceProvider;
 import '../../../core/theme/app_icons.dart';
@@ -239,9 +241,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   bool get _useHtmlEditor => mailEditorSupported && !_editorFailed;
 
   // Тело как обычный текст и как HTML.
-  String get _bodyPlain => _useHtmlEditor
-      ? _lastHtml.replaceAll(RegExp(r'<br\s*/?>'), '\n').replaceAll(RegExp(r'<[^>]*>'), '').trim()
-      : _plainController.text.trimRight();
+  String get _bodyPlain => _useHtmlEditor ? _htmlToPlain(_lastHtml) : _plainController.text.trimRight();
 
   /// Только то, что человек написал сам: без приветствия и подписи. По нему
   /// работают подсказки Smart Compose и их обучение. Раньше бралось всё тело:
@@ -2024,7 +2024,25 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
     // Системное «Назад» и жест — как крестик (1.7.0): несохранённое письмо не
     // закрывается молча, а спрашивает, сохранить ли черновик.
-    return PopScope(
+    // Клавиатура компьютера и планшета (1.8.13), как в Outlook и Почте Mac:
+    // Ctrl+Enter (⌘+Enter) — отправить, Ctrl+S (⌘+S) — сохранить черновик,
+    // Esc — закрыть (с вопросом о черновике). В тексте письма — через
+    // редактор (MailEditor.onKey).
+    void send() {
+      if (!_isSending) unawaited(_onSend(l10n, settings));
+    }
+    void save() {
+      if (!_isSending) unawaited(_saveDraftNow(l10n));
+    }
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.enter, control: true): send,
+        const SingleActivator(LogicalKeyboardKey.enter, meta: true): send,
+        const SingleActivator(LogicalKeyboardKey.keyS, control: true): save,
+        const SingleActivator(LogicalKeyboardKey.keyS, meta: true): save,
+        const SingleActivator(LogicalKeyboardKey.escape): () => _onDiscard(l10n),
+      },
+      child: PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _onDiscard(l10n);
@@ -2146,6 +2164,12 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                           style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error)),
                     ),
                   if (_suggestFor == _toController) _buildSuggestions(theme),
+                  if (_badAddress != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: Space.xxl + Space.s, bottom: Space.xs, right: Space.s),
+                      child: Text(l10n.tr('composeBadAddress').replaceAll('{addr}', _badAddress!),
+                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error)),
+                    ),
                   const Divider(height: 1),
                   if (_showCc || _ccRecipients.isNotEmpty) ...[
                     _buildRecipientField(
@@ -2244,6 +2268,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                       },
                       onPickImage: pickInlineImageDataUri,
                       onFocus: _onEditorFocus,
+                      onKey: (k) {
+                        if (_isSending) return;
+                        if (k == 'send') unawaited(_onSend(l10n, settings));
+                        if (k == 'save') unawaited(_saveDraftNow(l10n));
+                      },
                     )
                   else
                     // Фолбэк (Linux / без WebView): простой текстовый редактор.
@@ -2433,7 +2462,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
           ),
         ],
       ),
-    ));
+    )));
   }
 
   /// «Отправить»: на широком экране — с подписью, на узком — значок.
@@ -4296,24 +4325,63 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   void _commitPendingRecipient(TextEditingController controller, List<EmailAddress> recipients) {
     final text = controller.text.trim();
     if (text.isEmpty) return;
-    // Поддержка нескольких адресов через запятую/пробел/точку с запятой
-    final parts = text.split(RegExp(r'[,;\s]+')).where((s) => s.contains('@'));
-    for (final p in parts) {
-      final email = p.trim();
-      if (email.isNotEmpty && !recipients.any((r) => r.email == email)) {
-        recipients.add(EmailAddress(email: email));
+    // Несколько адресов через запятую, точку с запятой или пробел, «Имя
+    // <адрес>» и «mailto:» (1.8.13, AddressInput). Раньше адресатом
+    // становился любой кусок с «@» — «<ivan@corp.ru>» со скобками, «ivan@».
+    final parsed = AddressInput.parse(text);
+    for (final a in parsed.addresses) {
+      if (!recipients.any((r) => r.email.toLowerCase() == a.email.toLowerCase())) recipients.add(a);
+    }
+    // Неверный адрес остаётся в поле — его исправят; текст без «@» (поиск
+    // по имени) убирается, как раньше.
+    final bad = parsed.rest.contains('@') ? parsed.rest : '';
+    if (controller.text != bad) controller.text = bad;
+    if (bad.isNotEmpty) {
+      _badAddress = bad;
+    } else if (_badAddress == text) {
+      _badAddress = null;
+    }
+  }
+
+  /// Неверный адрес в поле адресатов — строкой под полями (1.8.13).
+  String? _badAddress;
+
+  /// Перед отправкой: в полях адресатов не осталось неверных адресов.
+  bool _addressesOk(AppLocalizations l10n) {
+    for (final (c, f) in [(_toController, _toFocus), (_ccController, _ccFocus), (_bccController, _bccFocus)]) {
+      final t = c.text.trim();
+      if (t.contains('@')) {
+        setState(() {
+          _badAddress = t;
+          _editingField = c;
+        });
+        f.requestFocus();
+        unawaited(HapticFeedback.heavyImpact());
+        return false;
       }
     }
-    controller.clear();
+    if (_badAddress != null) setState(() => _badAddress = null);
+    return true;
   }
 
 
   /// Отложенная отправка. [at] — время из быстрого варианта (меню по
   /// удержанию «Отправить», 1.6.49); без него — шторка выбора времени.
   Future<void> _onScheduleSend(AppLocalizations l10n, AppSettings settings, {DateTime? at}) async {
+    if (_sendInFlight) return;
+    _sendInFlight = true;
+    try {
+      await _onScheduleSendGuarded(l10n, settings, at: at);
+    } finally {
+      _sendInFlight = false;
+    }
+  }
+
+  Future<void> _onScheduleSendGuarded(AppLocalizations l10n, AppSettings settings, {DateTime? at}) async {
     _commitPendingRecipient(_toController, _toRecipients);
     _commitPendingRecipient(_ccController, _ccRecipients);
     _commitPendingRecipient(_bccController, _bccRecipients);
+    if (!_addressesOk(l10n)) return;
 
     if (_toRecipients.isEmpty) {
       // Подсказка у поля «Кому» (всплывающие сообщения отключены — раньше
@@ -4399,11 +4467,28 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     }
   }
 
+  /// Отправка уже идёт (проверки, окна вопросов, сборка письма) — второе
+  /// нажатие «Отправить» ничего не делает (1.8.13). Раньше двойное касание,
+  /// пока письмо собиралось (крупные вложения), ставило его в очередь
+  /// дважды — адресаты получали два одинаковых письма.
+  bool _sendInFlight = false;
+
   Future<void> _onSend(AppLocalizations l10n, AppSettings settings) async {
+    if (_sendInFlight) return;
+    _sendInFlight = true;
+    try {
+      await _onSendGuarded(l10n, settings);
+    } finally {
+      _sendInFlight = false;
+    }
+  }
+
+  Future<void> _onSendGuarded(AppLocalizations l10n, AppSettings settings) async {
     // Захватываем незакоммиченный текст из полей (если пользователь не нажал Enter)
     _commitPendingRecipient(_toController, _toRecipients);
     _commitPendingRecipient(_ccController, _ccRecipients);
     _commitPendingRecipient(_bccController, _bccRecipients);
+    if (!_addressesOk(l10n)) return;
 
     if (_toRecipients.isEmpty) {
       // Подсказка у поля «Кому» (всплывающие сообщения отключены — раньше
@@ -4552,10 +4637,14 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     // ничего не отправлено и письмо не потеряно. Ноль секунд = сразу.
     final undoSeconds = ref.read(featureFlagsProvider).undoSendSeconds;
     if (undoSeconds > 0) {
+      // Письмо собирается (тело, файлы, уменьшение фото) — кнопка крутится.
+      if (mounted) setState(() => _isSending = true);
       try {
         await _sendWithUndo(l10n, Duration(seconds: undoSeconds));
       } on _MissingFile {
         // Строка о файле уже вверху экрана, письмо не ушло.
+      } finally {
+        if (mounted) setState(() => _isSending = false);
       }
     } else {
       await _performSend(l10n);
@@ -4640,6 +4729,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   String? _mimeForName(String name) {
     final ext = name.contains('.') ? name.split('.').last.toLowerCase() : '';
+    // Без типа файл уходит как application/octet-stream: фото HEIC и WebP,
+    // видео и приглашения у получателя не открывались просмотром (1.8.13 —
+    // добавлены частые типы).
     const m = {
       'pdf': 'application/pdf', 'png': 'image/png', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg',
       'gif': 'image/gif', 'txt': 'text/plain', 'zip': 'application/zip', 'csv': 'text/csv',
@@ -4647,6 +4739,19 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'ppt': 'application/vnd.ms-powerpoint', 'rtf': 'application/rtf',
+      'odt': 'application/vnd.oasis.opendocument.text',
+      'ods': 'application/vnd.oasis.opendocument.spreadsheet',
+      'odp': 'application/vnd.oasis.opendocument.presentation',
+      'heic': 'image/heic', 'heif': 'image/heif', 'webp': 'image/webp', 'bmp': 'image/bmp',
+      'tif': 'image/tiff', 'tiff': 'image/tiff', 'svg': 'image/svg+xml',
+      'mp4': 'video/mp4', 'mov': 'video/quicktime', 'mp3': 'audio/mpeg', 'm4a': 'audio/mp4',
+      'wav': 'audio/wav', 'ogg': 'audio/ogg',
+      // .eml — без message/rfc822: такую часть нельзя кодировать base64
+      // (RFC 2046), и часть серверов отклоняет письмо.
+      'ics': 'text/calendar', 'vcf': 'text/vcard',
+      'html': 'text/html', 'htm': 'text/html', 'xml': 'application/xml', 'json': 'application/json',
+      '7z': 'application/x-7z-compressed', 'rar': 'application/vnd.rar', 'gz': 'application/gzip',
     };
     return m[ext];
   }
@@ -4711,19 +4816,24 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     // (Gmail, Яндекс) все получатели «внешние», и предупреждение было бы на
     // каждом письме. Для личной почты остаётся только проверка «много
     // получателей».
-    final corporate = _fromAccount?.isMsExchange ?? false;
-    final orgDomain = corporate ? _domainOf(_fromAccount?.email ?? '') : '';
+    // Домены организации — по всем адресам ящика (адрес входа, основной с
+    // сервера, алиасы) и с поддоменами («msk.corp.ru» — свой для «corp.ru»):
+    // раньше «внешними» считались коллеги на втором домене организации.
+    final acc = _fromAccount;
+    final corporate = acc?.isMsExchange ?? false;
+    final orgDomains = corporate && acc != null ? OwnAddresses.domains(acc) : const <String>{};
     final externalDomains = <String>{};
     for (final r in all) {
       final d = _domainOf(r.email);
-      if (d.isNotEmpty && orgDomain.isNotEmpty && d != orgDomain) externalDomains.add(d);
+      if (d.isNotEmpty && orgDomains.isNotEmpty && !orgDomains.any((o) => sameOrgDomain(d, o))) {
+        externalDomains.add(d);
+      }
     }
     final many = all.length >= _manyRecipientsThreshold;
 
     if (externalDomains.isEmpty && !many) return true; // всё в порядке
 
     final lines = <String>[];
-    if (externalDomains.isEmpty && !many) return true;
     if (many) {
       lines.add(l10n.tr('goesToNRecipients').replaceAll('{n}', '${all.length}'));
     }

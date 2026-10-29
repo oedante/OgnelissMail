@@ -3544,4 +3544,12 @@
     <string name="graphHint">Microsoft, Exchange Online\'da EWS\'yi kapatıyor: Ekim 2026\'dan itibaren kuruluş kuruluş, Nisan 2027\'de tamamen. Posta, takvim, kişiler ve otomatik yanıtlar ActiveSync ile çalışır, değişmez. Adres defteri (unvanlar, departmanlar, iş arkadaşlarının fotoğrafları), gönderim ipuçları, sunucu kuralları ve silinen öğeleri kurtarma artık Microsoft Graph kullanıyor. Toplantı odaları ve dağıtım listesi üyeleri de, yönetici uygulamaya Place.Read.All ve GroupMember.Read.All izni verdiyse. Microsoft Graph çevrimiçi arşiv, paylaşılan posta kutuları ve imza içe aktarma sunmuyor — bunlar EWS kullanılabildiği sürece EWS ile çalışır.</string>
     <string name="srvViaGraph">Exchange Online — Microsoft Graph üzerinden</string>
     <string name="zipEncryptedHint">Arşiv parolayla korunuyor, Dosyalar onu açamaz. Bir arşiv uygulaması seçin: parolayı soracaktır</string>
+    <string name="reminderToday">Bugün · {at}</string>
+    <string name="composeBadAddress">Adresi kontrol edin: {addr}</string>
+    <string name="convMute">Bildirimleri sessize al</string>
+    <string name="convUnmute">Bildirimleri aç</string>
+    <string name="convMutedNotice">Bu yazışmadaki yeni iletiler bildirim göndermeyecek</string>
+    <string name="convUnmutedNotice">Bu yazışmanın bildirimleri açık</string>
+    <string name="faq_notify_6_q">Tek bir yazışmanın bildirimlerini nasıl sessize alırım?</string>
+    <string name="faq_notify_6_a">Yazışmayı açın → ⋮ → «Bildirimleri sessize al» (veya listedeki satırına uzun basın → «Diğer»). Yeni iletileri bildirimsiz gelir ve satırda üstü çizili zil görünür. Diğer postalar eskisi gibi bildirim gönderir. Yeniden açmak için aynı seçeneği kullanın veya yazışmadaki zile dokunun.</string>
 </resources>

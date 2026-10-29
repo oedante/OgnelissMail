@@ -34,7 +34,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/navigation/app_router.dart' show eventDetailsPath, mailDetailPath, tasksPath;
+import '../../../core/navigation/app_router.dart' show eventDetailsPath, mailOpenPath, tasksPath;
 import '../../../data/database/app_database.dart';
 import '../../../data/providers/database_provider.dart';
 import '../../../l10n/app_localizations.dart';
@@ -575,12 +575,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       return;
     }
     if (isMailItem(e)) {
-      context.push(mailDetailPath(e.id.substring(mailPrefix.length), accountId: e.accountId));
+      context.push(mailOpenPath(context, e.id.substring(mailPrefix.length), accountId: e.accountId));
       return;
     }
     // Приглашение без ответа — письмо с «Принять / Под вопросом / Отклонить».
     if (isInviteItem(e)) {
-      context.push(mailDetailPath(e.id.substring(invitePrefix.length), accountId: e.accountId));
+      context.push(mailOpenPath(context, e.id.substring(invitePrefix.length), accountId: e.accountId));
       return;
     }
     // Широкий экран: встреча открывается справа, календарь остаётся виден.
@@ -954,7 +954,7 @@ class _PendingInvitesBar extends ConsumerWidget {
   }
 
   void _openMail(BuildContext context, Email m) =>
-      context.push(mailDetailPath(m.id, accountId: m.accountId));
+      context.push(mailOpenPath(context, m.id, accountId: m.accountId));
 
   Future<void> _showAll(BuildContext context, List<Email> list) async {
     final locale = l10n.localeCode;

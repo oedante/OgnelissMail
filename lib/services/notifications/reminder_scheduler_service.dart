@@ -194,10 +194,13 @@ class ReminderSchedulerService {
     final now = DateTime.now();
     final until = now.add(_horizon);
 
+    // С начала суток (1.8.13): событие на весь день уже «началось» в
+    // полночь, а его утреннее напоминание ещё впереди.
+    final dayStart = DateTime(now.year, now.month, now.day);
     final events = await (_db.select(_db.calendarEvents)
           // С запасом назад: напоминание «за сутки» о встрече через 2 часа
           // уже прошло, а о встрече через 25 часов — нет.
-          ..where((e) => e.startTime.isBiggerThanValue(now))
+          ..where((e) => e.startTime.isBiggerOrEqualValue(dayStart))
           ..where((e) => e.startTime.isSmallerThanValue(until))
           ..where((e) => e.isCancelled.equals(false)))
         .get();
@@ -208,7 +211,7 @@ class ReminderSchedulerService {
       // Свободное время (showAs = 0) — например, чужие дни рождения — не напоминаем.
       if (e.showAs == 0 && remindersOf(e.remindersJson) == null) continue;
       for (final minutes in remindersFor(e, prefs)) {
-        final when = e.startTime.subtract(Duration(minutes: minutes));
+        final when = reminderTime(e, minutes, prefs);
         if (when.isBefore(now)) continue; // момент уже прошёл
         final nid = eventNotificationId(e.accountId, e.id, minutes);
         ids.add(nid);
@@ -239,6 +242,19 @@ class ReminderSchedulerService {
     if (count > 0) AppLogger.info('Запланировано напоминаний о встречах: $count (новые и изменённые)');
   }
 
+  /// Когда звучит напоминание «за [minutes] минут». У события на весь день
+  /// «в момент начала» — утро этого дня (час из «Напоминать о сроке»,
+  /// 9:00), а не полночь (1.8.13): iCloud хранит «в день события в 9:00» как
+  /// напоминание после начала, оно читалось как «в момент начала» и звенело
+  /// в 00:00.
+  static DateTime reminderTime(CalendarEvent e, int minutes, SharedPreferences prefs) {
+    if (e.isAllDay && minutes == 0) {
+      final s = e.startTime.toLocal();
+      return DateTime(s.year, s.month, s.day, prefs.getInt(_kTaskDueHour) ?? 9);
+    }
+    return e.startTime.subtract(Duration(minutes: minutes));
+  }
+
   /// Минуты «за сколько до» из remindersJson. Формат: [{"minutesBefore": 15}].
   /// null — напоминание не задано (тогда действует умолчание); пустой список —
   /// явно «без напоминания».
@@ -266,6 +282,8 @@ class ReminderSchedulerService {
         ? ' · ${e.location}'
         : '';
     if (minutes == 0) {
+      // Весь день — утреннее напоминание в тот же день (см. reminderTime).
+      if (e.isAllDay) return '${l10n.tr('reminderToday').replaceAll('{at}', at)}$where';
       return '${l10n.tr('reminderStartsNow').replaceAll('{at}', at)}$where';
     }
     if (minutes < 60) {

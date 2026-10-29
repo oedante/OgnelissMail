@@ -305,6 +305,7 @@ class MailEditor extends StatefulWidget {
     this.onFailed,
     this.onPickImage,
     this.onFocus,
+    this.onKey,
     this.bodyStyle = '',
     this.toolbarHidden = false,
   });
@@ -331,6 +332,11 @@ class MailEditor extends StatefulWidget {
 
   /// Курсор в тексте письма (нажатие в редактор).
   final VoidCallback? onFocus;
+
+  /// Сочетание клавиш в тексте письма (1.8.13): 'send' — Ctrl+Enter
+  /// (⌘+Enter на Mac), 'save' — Ctrl+S. Клавиши во встроенном браузере до
+  /// приложения не доходят — редактор сообщает о них сам.
+  final ValueChanged<String>? onKey;
 
   @override
   State<MailEditor> createState() => _MailEditorState();
@@ -570,6 +576,14 @@ class _MailEditorState extends State<MailEditor> {
           handlerName: 'focus',
           callback: (_) {
             widget.onFocus?.call();
+            return null;
+          },
+        );
+        c.addJavaScriptHandler(
+          handlerName: 'key',
+          callback: (args) {
+            final k = args.isNotEmpty ? '${args.first}' : '';
+            if (k == 'send' || k == 'save') widget.onKey?.call(k);
             return null;
           },
         );

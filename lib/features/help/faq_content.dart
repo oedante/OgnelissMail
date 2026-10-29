@@ -88,6 +88,7 @@ const faqSections = <FaqSection>[
     FaqItem('notify_3', route: '/settings/permissions'),
     FaqItem('notify_4', route: '/settings/notifications'),
     FaqItem('notify_5', route: '/settings/notifications'),
+    FaqItem('notify_6'),
   ]),
   FaqSection(id: 'widgets', icon: AppIcons.widgets, items: [
     FaqItem('widgets_1'),

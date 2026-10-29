@@ -3525,4 +3525,12 @@
     <string name="graphHint">Microsoft กำลังปิด EWS ใน Exchange Online: ตั้งแต่ตุลาคม 2026 ทีละองค์กร และปิดทั้งหมดในเมษายน 2027 อีเมล ปฏิทิน รายชื่อติดต่อ และการตอบกลับอัตโนมัติใช้ ActiveSync และไม่เปลี่ยนแปลง สมุดที่อยู่ (ตำแหน่ง แผนก รูปเพื่อนร่วมงาน) คำแนะนำขณะส่ง กฎของเซิร์ฟเวอร์ และการกู้คืนรายการที่ลบ ใช้ Microsoft Graph แล้ว รวมถึงห้องประชุมและสมาชิกรายชื่อแจกจ่ายหากผู้ดูแลระบบให้สิทธิ์ Place.Read.All และ GroupMember.Read.All แก่แอป Microsoft Graph ไม่มีที่เก็บถาวรออนไลน์ กล่องจดหมายที่ใช้ร่วมกัน และการนำเข้าลายเซ็น — สิ่งเหล่านี้ใช้ EWS ตราบที่ยังใช้ได้</string>
     <string name="srvViaGraph">Exchange Online — ผ่าน Microsoft Graph</string>
     <string name="zipEncryptedHint">ไฟล์บีบอัดนี้มีรหัสผ่าน แอปไฟล์จึงเปิดไม่ได้ เลือกแอปจัดการไฟล์บีบอัด แอปจะถามรหัสผ่าน</string>
+    <string name="reminderToday">วันนี้ · {at}</string>
+    <string name="composeBadAddress">ตรวจสอบที่อยู่: {addr}</string>
+    <string name="convMute">ปิดเสียงการแจ้งเตือน</string>
+    <string name="convUnmute">เปิดเสียงการแจ้งเตือน</string>
+    <string name="convMutedNotice">ข้อความใหม่ในการสนทนานี้จะไม่แจ้งเตือน</string>
+    <string name="convUnmutedNotice">เปิดการแจ้งเตือนของการสนทนานี้แล้ว</string>
+    <string name="faq_notify_6_q">จะปิดเสียงการแจ้งเตือนของการสนทนาเดียวได้อย่างไร</string>
+    <string name="faq_notify_6_a">เปิดการสนทนา → ⋮ → «ปิดเสียงการแจ้งเตือน» (หรือกดค้างที่แถวในรายการ → «เพิ่มเติม») ข้อความใหม่ในการสนทนานี้จะเข้ามาโดยไม่แจ้งเตือน และแถวจะแสดงกระดิ่งมีขีดฆ่า อีเมลอื่นยังแจ้งเตือนตามปกติ หากต้องการเปิดอีกครั้ง ให้ใช้รายการเดิมหรือแตะกระดิ่งในการสนทนา</string>
 </resources>

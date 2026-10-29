@@ -52,8 +52,8 @@ so they cannot be compared byte for byte.
   device policies and remote wipe.
 - **Any IMAP/SMTP mailbox** — Gmail, Outlook.com, Yandex, Mail.ru, iCloud and
   others; OAuth sign-in or app passwords; CalDAV and CardDAV.
-- **Every day:** My Day, follow-ups and snooze, conversations, undo send,
-  scheduled sending, rules, VIP and quiet hours, widgets.
+- **Every day:** My Day, follow-ups and snooze, conversations (mute any of
+  them), undo send, scheduled sending, rules, VIP and quiet hours, widgets.
 - **Ogneliss archive:** an encrypted archive on the device — messages with
   attachments and the folder structure, meetings, tasks, contacts and
   settings; archive search, a copy for another device.

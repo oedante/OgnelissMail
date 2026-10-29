@@ -6,7 +6,7 @@
 // Контроль RAM: не держим в памяти больше 200 писем.
 
 import '../../../core/constants/exchange_feature.dart';
-import '../../../services/notifications/account_notify_mode.dart' show FolderNotify;
+import '../../../services/notifications/account_notify_mode.dart' show ConversationNotify, FolderNotify;
 import '../../../services/mail/special_folders.dart';
 import '../../../services/mail/own_addresses.dart';
 import '../../../services/device/phone_mirror_service.dart' show phoneMirrorProvider;
@@ -449,6 +449,8 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
         await p.remove('eas_policy_$accountId');
         // Уведомления по папкам этого ящика (1.7.2).
         await FolderNotify.forgetAccount(p, accountId);
+        // Беседы без уведомлений (1.8.13).
+        await ConversationNotify.forgetAccount(p, accountId);
         // Выбранные вручную папки «Архив» и «Спам» (1.7.2+106).
         await SpecialFolders.forgetAccount(p, accountId);
       } catch (_) {}
@@ -1029,10 +1031,11 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
       }
       if (seen.add(conversationKey(e.accountId, conv))) out.add(e);
     }
-    // Подпись учитывает прочитанность и «На контроле»: изменились — сводка
-    // бесед (непрочитанные внутри, отметка) пересчитывается.
-    _loadConversationSizes(
-        out, Object.hashAll(rows.map((e) => Object.hash(e.id, e.isRead, e.controlState, e.controlReplied))));
+    // Подпись учитывает прочитанность, «На контроле» и беседу (1.8.13:
+    // беседы IMAP сливаются, когда пришло связывающее письмо): изменились —
+    // сводка бесед (число писем, непрочитанные, отметка) пересчитывается.
+    _loadConversationSizes(out,
+        Object.hashAll(rows.map((e) => Object.hash(e.id, e.isRead, e.controlState, e.controlReplied, e.conversationId))));
     return out;
   }
 

@@ -22,7 +22,7 @@ import '../../../services/mail/unsubscribe_service.dart' show encodeListUnsubscr
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditorForEmail;
 import '../../../core/utils/text_safe.dart';
 import '../../../core/utils/symbol_fonts.dart';
-import '../../../core/navigation/app_router.dart' show mailDetailPath;
+import '../../../core/navigation/app_router.dart' show mailOpenPath;
 import '../../../core/theme/app_icons.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -83,6 +83,7 @@ import '../providers/drawer_prefs.dart'
 import '../../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../widgets/mail_html_view.dart';
 import '../../../widgets/common/readable_width.dart';
+import '../providers/conversation_mute.dart';
 import '../widgets/read_receipt_banner.dart';
 import '../../../data/database/app_database.dart';
 import '../../../data/providers/database_provider.dart';
@@ -635,7 +636,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   Future<void> _sendReadReceipt(EmailModel email) async {
     final l10n = AppLocalizations.of(context);
     try {
-      final account = ref.read(activeAccountProvider);
+      // Ящик письма, а не выбранный в ленте (1.8.13): в «Всей почте», группе
+      // и из уведомления другого ящика уведомление уходило от чужого адреса.
+      final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
       if (account == null) return;
       await ref.read(mailEngineServiceProvider).sendReadReceipt(
         account,
@@ -1586,7 +1589,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 emails: _conversationEmails!,
                 currentEmailId: email.id,
                 onEmailTap: (e) {
-                  context.push(mailDetailPath(e.id, accountId: e.accountId));
+                  context.push(mailOpenPath(context, e.id, accountId: e.accountId));
                 },
               ),
             ],
@@ -1596,6 +1599,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         if (!pinHeader) {
           return SingleChildScrollView(
             child: ReadableWidth(
+              fill: true,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [...headerChildren, ...bodyChildren],
@@ -1607,11 +1611,13 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ReadableWidth(
+              fill: true,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: headerChildren),
             ),
             Expanded(
               child: SingleChildScrollView(
                 child: ReadableWidth(
+                  fill: true,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: bodyChildren),
                 ),
               ),
@@ -1927,11 +1933,18 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       child: SafeArea(
         top: false,
         // Кнопки «Ответить» меняются, когда в быстром ответе появился текст.
+        // Широкое окно (планшет, компьютер, 1.8.13): кнопки — по центру
+        // колонкой шириной с телефон, а не через весь экран, где до «Ответить»
+        // от «Удалить» было полметра.
         child: ListenableBuilder(
           listenable: _quickReply,
-          builder: (context, _) => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: _barButtons(email, settings, l10n, order: order, draft: draft),
+          builder: (context, _) => ReadableWidth(
+            maxWidth: 600,
+            fill: true,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: _barButtons(email, settings, l10n, order: order, draft: draft),
+            ),
           ),
         ),
       ),
@@ -1941,12 +1954,16 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Строка ответа — шириной с колонку письма (как шапка и текст).
         ColoredBox(
           color: mailPageColor(theme),
-          child: QuickReplyBar(
-            key: ValueKey('qr_${email.accountId}_${email.id}'),
-            email: email,
-            controller: _quickReply,
+          child: ReadableWidth(
+            fill: true,
+            child: QuickReplyBar(
+              key: ValueKey('qr_${email.accountId}_${email.id}'),
+              email: email,
+              controller: _quickReply,
+            ),
           ),
         ),
         bar,
@@ -2141,6 +2158,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // Действия сгруппированы по смыслу (раньше — сплошная сетка из 20+
     // значков, где «Экспорт», «Сохранить PDF» и «Печать» делали одно и то же).
     final isExchange = ref.read(accountsProvider).any((a) => a.id == email.accountId && a.isMsExchange);
+    final convMuted = ref.read(mutedConversationsProvider.notifier).isMuted(email.accountId, email.conversationId);
     // Та же карточка, что по удержанию письма в ленте (1.8.8, замечание
     // владельца 29.10.2026): шапка с письмом и все действия по группам —
     // круглыми кнопками, сразу развёрнуты.
@@ -2225,6 +2243,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             _peekAction(AppIcons.attach_file, l10n.tr('senderFiles'), () => unawaited(
                 context.push('/attachment-hub?from=${Uri.encodeQueryComponent(email.from.email)}'))),
           _peekAction(AppIcons.sync, l10n.tr('redownload'), _loadEmailDetail),
+          // Беседа без уведомлений (1.8.13, как «Без звука» в Telegram).
+          if ((email.conversationId ?? '').isNotEmpty)
+            _peekAction(convMuted ? AppIcons.notifications_active : AppIcons.notifications_off,
+                l10n.tr(convMuted ? 'convUnmute' : 'convMute'), () => unawaited(_toggleMute(email, l10n))),
           // Отзыв письма (нативно — Exchange ActiveSync 16.1).
           if (_canRecall(ref, email))
             _peekAction(AppIcons.undo, l10n.tr('recallMessage'),
@@ -2232,6 +2254,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         ]),
       ],
     ));
+  }
+
+  /// Беседа письма без уведомлений или снова с ними (1.8.13).
+  Future<void> _toggleMute(EmailModel email, AppLocalizations l10n) async {
+    final conv = email.conversationId;
+    if (conv == null || conv.isEmpty) return;
+    final muted = await ref.read(mutedConversationsProvider.notifier).toggle(email.accountId, conv);
+    if (mounted) showInlineNotice(l10n.tr(muted ? 'convMutedNotice' : 'convUnmutedNotice'));
   }
 
   /// Поставить или снять «На контроле».

@@ -3525,4 +3525,12 @@
     <string name="graphHint">Microsoft は Exchange Online の EWS を停止します：2026 年 10 月から組織ごとに、2027 年 4 月に完全停止。メール、予定表、連絡先、自動応答は ActiveSync で動作し、変わりません。アドレス帳（役職、部署、同僚の写真）、送信時のヒント、サーバーのルール、削除済みアイテムの回復は Microsoft Graph を使うようになりました。会議室と配布リストのメンバーも、管理者がアプリに Place.Read.All と GroupMember.Read.All を許可していれば同様です。オンライン アーカイブ、共有メールボックス、署名のインポートは Microsoft Graph にないため、EWS が使える間は EWS で動作します。</string>
     <string name="srvViaGraph">Exchange Online — Microsoft Graph 経由</string>
     <string name="zipEncryptedHint">アーカイブはパスワードで保護されているため、「ファイル」では開けません。アーカイブ用のアプリを選んでください。パスワードを求められます</string>
+    <string name="reminderToday">今日 · {at}</string>
+    <string name="composeBadAddress">アドレスを確認してください：{addr}</string>
+    <string name="convMute">通知をミュート</string>
+    <string name="convUnmute">ミュートを解除</string>
+    <string name="convMutedNotice">このスレッドの新着メールは通知されません</string>
+    <string name="convUnmutedNotice">このスレッドの通知をオンにしました</string>
+    <string name="faq_notify_6_q">1つのスレッドだけ通知をミュートするには？</string>
+    <string name="faq_notify_6_a">スレッドを開き → ⋮ →「通知をミュート」（または一覧の行を長押し →「その他」）。そのスレッドの新着メールは通知なしで届き、行に斜線付きのベルが表示されます。ほかのメールはこれまでどおり通知します。元に戻すには同じ項目を選ぶか、スレッド内のベルをタップします。</string>
 </resources>

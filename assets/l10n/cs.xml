@@ -3563,4 +3563,12 @@
     <string name="graphHint">Microsoft vypíná EWS v Exchange Online: od října 2026 postupně po organizacích, úplně v dubnu 2027. Pošta, kalendář, kontakty a automatické odpovědi jdou přes ActiveSync a nemění se. Adresář (funkce, oddělení, fotky kolegů), tipy při odesílání, pravidla serveru a obnova odstraněných položek nyní používají Microsoft Graph. Zasedačky a členové distribučních seznamů také, pokud správce aplikaci udělil Place.Read.All a GroupMember.Read.All. Online archiv, sdílené schránky a import podpisu Microsoft Graph nenabízí — používají EWS, dokud je dostupné.</string>
     <string name="srvViaGraph">Exchange Online — přes Microsoft Graph</string>
     <string name="zipEncryptedHint">Archiv je chráněný heslem, aplikace Soubory ho neotevře. Vyberte aplikaci pro archivy: zeptá se na heslo</string>
+    <string name="reminderToday">Dnes · {at}</string>
+    <string name="composeBadAddress">Zkontrolujte adresu: {addr}</string>
+    <string name="convMute">Ztlumit oznámení</string>
+    <string name="convUnmute">Zrušit ztlumení</string>
+    <string name="convMutedNotice">Nové zprávy v této konverzaci budou bez oznámení</string>
+    <string name="convUnmutedNotice">Oznámení této konverzace jsou zapnutá</string>
+    <string name="faq_notify_6_q">Jak ztlumit oznámení jedné konverzace?</string>
+    <string name="faq_notify_6_a">Otevřete konverzaci → ⋮ → „Ztlumit oznámení“ (nebo podržte její řádek v seznamu → „Další“). Nové zprávy v ní přicházejí bez oznámení a u řádku je přeškrtnutý zvonek. Ostatní pošta upozorňuje jako dřív. Znovu zapnout: stejná položka nebo zvonek v konverzaci.</string>
 </resources>

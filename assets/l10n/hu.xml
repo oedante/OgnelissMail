@@ -3544,4 +3544,12 @@
     <string name="graphHint">A Microsoft kikapcsolja az EWS-t az Exchange Online-ban: 2026 októberétől szervezetenként, teljesen 2027 áprilisában. A levelezés, a naptár, a névjegyek és az automatikus válaszok ActiveSyncen futnak, nem változnak. A címjegyzék (beosztás, osztály, kollégák fotói), a küldési tippek, a kiszolgálószabályok és a törölt elemek visszaállítása mostantól a Microsoft Graphot használja. A tárgyalók és a terjesztési listák tagjai is, ha a rendszergazda megadta az alkalmazásnak a Place.Read.All és GroupMember.Read.All engedélyt. Az online archívumot, a megosztott postafiókokat és az aláírás importálását a Microsoft Graph nem kínálja — ezek az EWS-t használják, amíg elérhető.</string>
     <string name="srvViaGraph">Exchange Online — Microsoft Graphon keresztül</string>
     <string name="zipEncryptedHint">Az archívum jelszóval védett, a Fájlok app nem tudja megnyitni. Válasszon tömörítő appot: az kérni fogja a jelszót</string>
+    <string name="reminderToday">Ma · {at}</string>
+    <string name="composeBadAddress">Ellenőrizze a címet: {addr}</string>
+    <string name="convMute">Értesítések némítása</string>
+    <string name="convUnmute">Némítás feloldása</string>
+    <string name="convMutedNotice">A beszélgetés új üzeneteiről nem kap értesítést</string>
+    <string name="convUnmutedNotice">A beszélgetés értesítései bekapcsolva</string>
+    <string name="faq_notify_6_q">Hogyan némíthatom egyetlen beszélgetés értesítéseit?</string>
+    <string name="faq_notify_6_a">Nyissa meg a beszélgetést → ⋮ → „Értesítések némítása” (vagy tartsa nyomva a sorát a listában → „Továbbiak”). Az új üzenetei értesítés nélkül érkeznek, a sorban áthúzott csengő látható. A többi levél ugyanúgy értesít. Visszakapcsolás ugyanott, vagy a csengőre koppintva a beszélgetésben.</string>
 </resources>

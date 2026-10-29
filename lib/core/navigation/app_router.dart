@@ -161,6 +161,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // «Разобрать входящие» — непрочитанные по одному (поверх ленты).
       GoRoute(path: '/triage', name: 'triage', builder: (_, __) => const TriageScreen()),
 
+      // Письмо отдельной страницей поверх любого экрана (1.8.13): из
+      // уведомления, ярлыка, виджета и со страниц вне главного экрана
+      // (настройки, «Разобрать», «Файлы», встреча). См. [messagePath].
+      GoRoute(
+        path: '/message/:emailId',
+        name: 'message',
+        // На широком окне — колонкой по центру, как редактор и встреча.
+        builder: (_, state) => WideFrame.wide(
+          child: MailDetailScreen(
+            emailId: state.pathParameters['emailId']!,
+            accountId: state.uri.queryParameters['accountId'] ?? '',
+          ),
+        ),
+      ),
+
       // Fullscreen dialogs
       GoRoute(
         path: '/compose', name: 'compose',
@@ -362,6 +377,25 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 String mailDetailPath(String emailId, {String? accountId}) =>
     '/mail/detail/${Uri.encodeComponent(emailId)}'
     '${accountId != null ? '?accountId=${Uri.encodeQueryComponent(accountId)}' : ''}';
+
+/// Письмо отдельной страницей поверх любого экрана (1.8.13). Страница
+/// ленты ([mailDetailPath]) живёт внутри главного экрана, и открытая поверх
+/// страницы вне его (настройки, «Написать», «Разобрать», «Файлы», встреча)
+/// создавала второй главный экран с теми же ключами страниц: после «Назад»
+/// пропадали верхняя и нижняя панели (замечание 29.10.2026).
+String messagePath(String emailId, {String? accountId}) =>
+    '/message/${Uri.encodeComponent(emailId)}'
+    '${accountId != null && accountId.isNotEmpty ? '?accountId=${Uri.encodeQueryComponent(accountId)}' : ''}';
+
+/// Адрес письма для перехода из [context]: со страницы главного экрана
+/// (лента, календарь, «Мой день», задачи) — страница в нём, панель
+/// навигации остаётся; со страницы поверх главного экрана — [messagePath].
+String mailOpenPath(BuildContext context, String emailId, {String? accountId}) {
+  final nav = Navigator.maybeOf(context);
+  final root = Navigator.maybeOf(context, rootNavigator: true);
+  final inShell = nav != null && root != null && !identical(nav, root);
+  return inShell ? mailDetailPath(emailId, accountId: accountId) : messagePath(emailId, accountId: accountId);
+}
 
 /// Письмо ленты с листанием соседних писем (1.6.49+95).
 String mailPagerPath(String emailId, {required String accountId}) =>

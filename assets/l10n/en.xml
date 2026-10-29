@@ -3324,7 +3324,7 @@
     <string name="archiveWhatSection">What to archive</string>
     <string name="archiveKindMail">Mail</string>
     <string name="archiveKindMailDesc">With attachments and folders, as in the mailbox</string>
-    <string name="archivePeriodHint">The archive takes the messages that are on this device, within the mailbox sync period (mailbox settings → Period). To archive older mail, choose All mail there. Drafts, Outbox, Trash and Junk are not archived.</string>
+    <string name="archivePeriodHint">For IMAP and Exchange (EWS) mailboxes, messages older than the sync period are taken straight from the server. For ActiveSync, only the messages on this device, within the sync period (mailbox settings → Period; All mail — everything). Drafts, Outbox, Trash and Junk are not archived.</string>
     <string name="archiveIncludeFlagged">Flagged and tracked</string>
     <string name="archiveIncludeFlaggedDesc">Archive messages that are still in progress too</string>
     <string name="archiveDeleteFromServer">Remove messages from the server</string>
@@ -3384,7 +3384,7 @@
     <string name="faq_archive_3_q">What if I forget the archive password?</string>
     <string name="faq_archive_3_a">Enter the recovery code shown when the archive was created instead of the password, then set a new password. Lost the code while the archive is open? Settings → Ogneliss archive → New recovery code. Without the password and the code nobody can open the archive: the key is not on our servers.</string>
     <string name="faq_archive_4_q">Why did some messages not go to the archive?</string>
-    <string name="faq_archive_4_a">The archive takes messages that are on this device, within the mailbox sync period: to include older ones, choose Period → All mail in the mailbox settings. Flagged and tracked messages are not archived by default (there is a switch in the archive settings), nor are drafts, Trash and Junk. If a text or an attachment did not download, the message stays in the mailbox and goes with the next archiving run.</string>
+    <string name="faq_archive_4_a">Check the age first: by default messages older than 6 months go to the archive; if there are none, there is nothing to archive — choose a shorter age or All mail (Archive now). For IMAP and Exchange (EWS), messages older than the sync period are taken straight from the server; for ActiveSync, only the messages on this device (mailbox settings → Period → All mail — everything). Flagged and tracked messages are not archived by default (there is a switch in the archive settings), nor are drafts, Trash and Junk. If a text or an attachment did not download, the message stays in the mailbox and goes with the next archiving run.</string>
     <string name="faq_archive_5_q">How do I bring back mailboxes and settings from the archive on a new device?</string>
     <string name="faq_archive_5_a">On the sign-in screen tap Connect an Ogneliss archive (or Settings → Ogneliss archive), connect the archive copy and, under App settings in the archive, tap Restore on this device. Mailboxes, signatures, notes and settings are added; if the archive kept mailbox passwords, you do not need to sign in again.</string>
     <string name="greetHelloOnly">Hello,</string>
@@ -3528,4 +3528,5 @@
     <string name="faq_archive_6_a">Each device keeps its own copy of the archive, and the cloud (Google Drive, iCloud Drive, Yandex Disk) or a USB drive is the place to exchange it. On the first device: Settings → Ogneliss archive → Save an archive copy. On the second: Connect an archive copy if it has no archive yet, or Merge with a copy if it has its own. You can archive on both: now and then save a copy on one and merge it on the other. Merging adds only what is missing: messages are not duplicated and the same mailbox stays one branch.</string>
     <string name="faq_archive_7_q">How does the archive keep several mailboxes?</string>
     <string name="faq_archive_7_a">All mailboxes are in one archive, each with its own branch of folders structured as in the mailbox: in the side menu under Ogneliss archive, and on the archive screen under Mailboxes in the archive. Which mailboxes to archive is chosen on the same screen under Mailboxes to archive; archive search covers all mailboxes at once.</string>
+    <string name="archiveNothingOld">No messages older than the chosen age were found — there was nothing to archive. You can choose a shorter age or All mail.</string>
 </resources>

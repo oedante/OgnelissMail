@@ -313,6 +313,47 @@ $mailboxes
   // ════════════════════════ EMAILS ════════════════════════
 
   /// FindItem — поиск писем в папке с пагинацией
+  /// Письма папки, полученные раньше [before], — только идентификаторы,
+  /// самые старые первыми (архив Ogneliss: письма старше периода
+  /// синхронизации на устройстве не лежат, 29.10.2026). Порядок элементов —
+  /// по схеме: вид страницы, Restriction, SortOrder, ParentFolderIds.
+  static String buildFindItemIdsBefore({
+    required String folderId,
+    required DateTime before,
+    int offset = 0,
+    int maxCount = 100,
+  }) {
+    final folderRef = _isDistinguished(folderId)
+        ? '<t:DistinguishedFolderId Id="$folderId"/>'
+        : '<t:FolderId Id="$folderId"/>';
+    final at = before.toUtc().toIso8601String().split('.').first;
+    return '''<m:FindItem Traversal="Shallow">
+  <m:ItemShape>
+    <t:BaseShape>IdOnly</t:BaseShape>
+    <t:AdditionalProperties>
+      <t:FieldURI FieldURI="item:DateTimeReceived"/>
+    </t:AdditionalProperties>
+  </m:ItemShape>
+  <m:IndexedPageItemView MaxEntriesReturned="$maxCount" Offset="$offset" BasePoint="Beginning"/>
+  <m:Restriction>
+    <t:IsLessThan>
+      <t:FieldURI FieldURI="item:DateTimeReceived"/>
+      <t:FieldURIOrConstant>
+        <t:Constant Value="${at}Z"/>
+      </t:FieldURIOrConstant>
+    </t:IsLessThan>
+  </m:Restriction>
+  <m:SortOrder>
+    <t:FieldOrder Order="Ascending">
+      <t:FieldURI FieldURI="item:DateTimeReceived"/>
+    </t:FieldOrder>
+  </m:SortOrder>
+  <m:ParentFolderIds>
+    $folderRef
+  </m:ParentFolderIds>
+</m:FindItem>''';
+  }
+
   static String buildFindItem({
     required String folderId,
     int offset = 0,

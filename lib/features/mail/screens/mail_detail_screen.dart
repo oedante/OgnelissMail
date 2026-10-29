@@ -85,10 +85,9 @@ import '../../../widgets/common/readable_width.dart';
 import '../widgets/read_receipt_banner.dart';
 import '../../../data/database/app_database.dart';
 import '../../../data/providers/database_provider.dart';
-import '../../archive/archive_sheets.dart' show ensureArchiveOpen;
+import '../../archive/archive_sheets.dart' show ensureArchiveReady;
 import '../../../services/archive/archive_runner.dart' show archiveRunnerProvider;
 import '../../../services/archive/archive_settings.dart' show archiveSettingsProvider;
-import '../../../services/archive/archive_vault.dart' show archiveVaultProvider;
 import '../../../services/mail/special_folders.dart';
 import '../../../services/mail/imap/imap_service.dart';
 import '../../../services/mail/email_actions_service.dart';
@@ -2213,10 +2212,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                       openDeviceRule(context, sender: email.from.email, accountId: email.accountId)))),
                 ]),
                 _gridSection(ctx, l10n.tr('actionsSave'), [
-                  // Архив Ogneliss подключён — письмо целиком в архив (1.7.3).
-                  if (ref.read(archiveVaultProvider).value?.exists ?? false)
-                    _gridAction(AppIcons.inventory_2, l10n.tr('toOgnaArchive'),
-                        () => run(() => unawaited(_toOgnaArchive(email, l10n)))),
+                  // Письмо целиком — в архив Ogneliss (1.7.3); архива нет —
+                  // сначала создать (29.10.2026: пункт был скрыт до создания).
+                  _gridAction(AppIcons.inventory_2, l10n.tr('toOgnaArchive'),
+                      () => run(() => unawaited(_toOgnaArchive(email, l10n)))),
                   _gridAction(AppIcons.picture_as_pdf, l10n.tr('saveAsPdf'),
                       () => run(() => unawaited(_exportPdf(email, l10n)))),
                   // Печать — через PDF: системный просмотрщик/«Поделиться»
@@ -3159,7 +3158,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// (тогда экран закрывается сразу, письмо скрыто в ленте; не удалось —
   /// возвращается в ленту и строка ошибки).
   Future<void> _toOgnaArchive(EmailModel email, AppLocalizations l10n) async {
-    if (!await ensureArchiveOpen(context, ref) || !mounted) return;
+    if (!await ensureArchiveReady(context, ref) || !mounted) return;
     final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
     if (account == null) return;
     final db = ref.read(databaseProvider);

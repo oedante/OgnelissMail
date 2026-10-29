@@ -18,11 +18,10 @@ import '../../settings/widgets/feature_settings_sections.dart' show Experimental
 import '../../../core/utils/work_isolate.dart';
 import '../../../services/background/work_scheduler.dart';
 import '../providers/mail_open_cache.dart';
-import '../../archive/archive_sheets.dart' show ensureArchiveOpen;
+import '../../archive/archive_sheets.dart' show ensureArchiveReady;
 import '../../archive/widgets/archive_search_strip.dart';
 import '../../../services/archive/archive_runner.dart' show archiveRunnerProvider;
 import '../../../services/archive/archive_settings.dart' show archiveSettingsProvider;
-import '../../../services/archive/archive_vault.dart' show archiveVaultProvider;
 import '../widgets/mail_html_view.dart' show MailHtmlView, MailWebViewPool;
 import '../../../widgets/common/swipe_action_indicator.dart';
 import '../../compose/widgets/mail_editor.dart' show warmUpMailEditor;
@@ -874,10 +873,10 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   /// Выбранные письма — в архив Ogneliss (1.7.3). Исходные — в «Удалённые»
   /// на сервере, если так настроено; не заархивированные (не скачалось
   /// вложение) остаются в ящике — строкой «Не удалось: N».
-  Future<void> _bulkOgna() async {
-    if (_selectedIds.isEmpty) return;
+  Future<void> _bulkOgna({List<EmailModel>? emails}) async {
+    if (emails == null && _selectedIds.isEmpty) return;
     final l10n = AppLocalizations.of(context);
-    if (!await ensureArchiveOpen(context, ref) || !mounted) return;
+    if (!await ensureArchiveReady(context, ref) || !mounted) return;
     final runner = ref.read(archiveRunnerProvider.notifier);
     final db = ref.read(databaseProvider);
     final hide = ref.read(archiveSettingsProvider).deleteFromServer;
@@ -891,7 +890,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       }
       final r = await runner.archiveEmails(a, [row]);
       failed += r.failed;
-    }, done: () {
+    }, emails: emails, done: () {
       if (failed > 0) showInlineError(l10n.tr('archiveSomeFailed').replaceAll('{n}', '$failed'));
     });
   }
@@ -1641,6 +1640,8 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         _searchBySender(email);
       case SwipeAction.control:
         _toggleControl(email);
+      case SwipeAction.toOgna:
+        unawaited(_bulkOgna(emails: [email]));
       case SwipeAction.none:
         break;
     }
@@ -1855,6 +1856,15 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           foregroundColor: Colors.white,
           icon: AppIcons.task_alt,
           label: l10n.tr(_rowControl(email) == 0 ? 'controlSet' : 'controlClear'),
+        );
+      // В архив Ogneliss на устройстве (29.10.2026).
+      case SwipeAction.toOgna:
+        return _swipe(
+          onPressed: (_) => unawaited(_bulkOgna(emails: [email])),
+          backgroundColor: AppColors.primaryBlue,
+          foregroundColor: Colors.white,
+          icon: AppIcons.inventory_2,
+          label: l10n.tr('ognaArchive'),
         );
       case SwipeAction.none:
         return _swipe(
@@ -2145,9 +2155,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             AppMenuEntry(value: 'later', icon: AppIcons.watch_later, label: l10n.tr('later')),
             if (ref.read(settingsProvider).mailControl)
               AppMenuEntry(value: 'control', icon: AppIcons.task_alt, label: l10n.tr('controlSet')),
-            // Архив Ogneliss подключён — выбранные письма туда (1.7.3).
-            if (ref.read(archiveVaultProvider).value?.exists ?? false)
-              AppMenuEntry(value: 'ogna', icon: AppIcons.inventory_2, label: l10n.tr('toOgnaArchive')),
+            // Выбранные письма — в архив Ogneliss (1.7.3); архива нет —
+            // сначала создать (29.10.2026: пункт был скрыт до создания).
+            AppMenuEntry(value: 'ogna', icon: AppIcons.inventory_2, label: l10n.tr('toOgnaArchive')),
           ],
         ),
       ],
@@ -2370,6 +2380,11 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           ),
         PeekAction(icon: AppIcons.drive_file_move, label: l10n.tr('moveTo'), onTap: () => unawaited(_moveSingle(email, l10n))),
         PeekAction(icon: AppIcons.archive, label: l10n.tr('archive'), onTap: () => _archiveEmail(email, l10n)),
+        // В архив Ogneliss на устройстве (29.10.2026: в карточке не было).
+        PeekAction(
+            icon: AppIcons.inventory_2,
+            label: l10n.tr('toOgnaArchive'),
+            onTap: () => unawaited(_bulkOgna(emails: [email]))),
         // «В спам» (1.7.2+106: в карточке не было); в папке спама — «Не спам».
         if (_inJunk(email))
           PeekAction(icon: AppIcons.inbox, label: l10n.tr('notSpam'), onTap: () => unawaited(_notJunk(email, l10n)))

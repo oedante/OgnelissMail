@@ -35,6 +35,16 @@ Future<bool> ensureArchiveOpen(BuildContext context, WidgetRef ref) async {
   return showArchiveUnlockSheet(context);
 }
 
+/// Перед «В архив Ogneliss»: архива нет — создать его (раньше действие
+/// было скрыто, пока архив не создан, и отправить письмо в архив было
+/// нечем — замечание 29.10.2026), закрыт — открыть паролем.
+Future<bool> ensureArchiveReady(BuildContext context, WidgetRef ref) async {
+  final s = await ref.read(archiveVaultProvider.future);
+  if (s.isOpen) return true;
+  if (!context.mounted) return false;
+  return s.status == ArchiveStatus.none ? showArchiveCreateSheet(context) : showArchiveUnlockSheet(context);
+}
+
 Future<bool> showArchiveCreateSheet(BuildContext context) async =>
     await showAppSheet<bool>(
       context: context,

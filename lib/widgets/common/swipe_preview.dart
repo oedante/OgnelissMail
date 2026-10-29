@@ -69,6 +69,8 @@ class SwipeActionPreview extends StatelessWidget {
         return _SwipeConfig(AppIcons.person_search, l10n.tr('swipePrevSender'), AppColors.primaryBlue);
       case SwipeAction.control:
         return _SwipeConfig(AppIcons.task_alt, l10n.tr('controlSet'), AppColors.successGreen);
+      case SwipeAction.toOgna:
+        return _SwipeConfig(AppIcons.inventory_2, l10n.tr('ognaArchive'), AppColors.primaryBlue);
       case SwipeAction.none:
         return const _SwipeConfig(AppIcons.more_horiz, '', AppColors.tagGeneral);
     }

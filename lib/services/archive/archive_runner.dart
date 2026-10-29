@@ -39,7 +39,10 @@ import '../../features/mail/providers/mail_providers.dart' show accountsProvider
 import '../mail/attachment_cache_service.dart' show attachmentCacheProvider;
 import '../mail/draft_sync_service.dart' show draftSyncServiceProvider;
 import '../mail/email_actions_service.dart' show emailActionsProvider;
+import '../mail/eml_reader.dart';
 import '../mail/engine/mail_engine_service.dart';
+import '../mail/ews/ews_service.dart' show ewsServiceProvider;
+import '../mail/imap/imap_service.dart' show imapServiceProvider;
 import 'archive_app_settings.dart';
 import 'archive_db.dart';
 import 'archive_settings.dart';
@@ -218,10 +221,19 @@ class ArchiveRunner extends Notifier<ArchiveRunState> {
         if (!ref.read(connectivityServiceProvider).isConnected) {
           error = 'archiveNoNetwork';
         } else {
+          // Папки ящиков — в архив сразу, даже пустые: структура как в
+          // ящике видна с первой архивации (замечание 29.10.2026).
+          await _mirrorFolders(accounts);
           final r = await _mail(accounts, cutoff, s, now);
           mails = r.archived;
           deleted = r.deleted;
           failed = r.failed;
+          if (!_cancel) {
+            final r2 = await _serverMail(accounts, cutoff, s, now);
+            mails += r2.archived;
+            deleted += r2.deleted;
+            failed += r2.failed;
+          }
         }
       }
       if (s.events && !_cancel) {
@@ -327,6 +339,210 @@ class ArchiveRunner extends Notifier<ArchiveRunState> {
       await Future<void>.delayed(Duration.zero);
     }
     return (archived: archived, deleted: deleted, failed: failed);
+  }
+
+  /// Папки ящика, из которых архивируется почта, — с цепочкой от корня;
+  /// внутри корзины, спама, черновиков и исходящих — нет.
+  static List<({Folder folder, List<({String name, String type})> chain})> mailFoldersOf(List<Folder> folders) {
+    final byId = {for (final f in folders) f.id: f};
+    final out = <({Folder folder, List<({String name, String type})> chain})>[];
+    for (final f in folders) {
+      final t = _type(f.type);
+      if (t == null || !ArchiveRules.mailFolders.contains(t) || !f.isSynced) continue;
+      final chain = folderChain(f.id, byId);
+      final excluded = {FolderType.trash, FolderType.junk, FolderType.drafts, FolderType.outbox}.map((e) => e.name).toSet();
+      if (chain.any((c) => excluded.contains(c.type))) continue;
+      out.add((folder: f, chain: chain));
+    }
+    return out;
+  }
+
+  Future<void> _mirrorFolders(List<AccountModel> accounts) async {
+    final adb = _adb;
+    if (adb == null) return;
+    final db = ref.read(databaseProvider);
+    for (final a in accounts) {
+      final folders = await (db.select(db.folders)..where((f) => f.accountId.equals(a.id))).get();
+      final list = mailFoldersOf(folders);
+      if (list.isEmpty) continue;
+      final acc = await _archiveAccount(adb, a);
+      for (final f in list) {
+        await adb.ensureFolder(acc, f.chain);
+      }
+    }
+  }
+
+  /// Письма старше срока, которых нет на устройстве, — прямо с сервера
+  /// (29.10.2026: «в архив ничего не попадает»). Устройство хранит почту за
+  /// период синхронизации ящика (по умолчанию год); всё, что старше, раньше
+  /// архивация не видела. IMAP — поиск BEFORE и письмо целиком (MIME);
+  /// Exchange по EWS — FindItem по дате и MIME. ActiveSync — нет: в нём нет
+  /// запроса «письма до даты», которые потом можно удалить; для него
+  /// архивируется то, что на устройстве (период «Вся почта» — вся почта).
+  Future<({int archived, int deleted, int failed})> _serverMail(
+      List<AccountModel> accounts, DateTime cutoff, ArchiveSettings s, DateTime now) async {
+    final adb = _adb;
+    var archived = 0, deleted = 0, failed = 0;
+    if (adb == null) return (archived: 0, deleted: 0, failed: 0);
+    final db = ref.read(databaseProvider);
+    for (final a in accounts) {
+      if (_cancel) break;
+      if (a.usesEas || (a.isMsExchange && !a.usesEws)) continue;
+      // «Вся почта» — всё уже на устройстве и заархивировано выше.
+      if (a.syncDays <= 0) continue;
+      final window = now.subtract(Duration(days: a.syncDays));
+      final before = cutoff.isBefore(window) ? cutoff : window;
+      final folders = await (db.select(db.folders)..where((f) => f.accountId.equals(a.id))).get();
+      final acc = await _archiveAccount(adb, a);
+      for (final f in mailFoldersOf(folders)) {
+        if (_cancel) break;
+        List<String> ids;
+        try {
+          ids = a.usesEws
+              ? await ref.read(ewsServiceProvider).itemIdsBefore(a, folderId: f.folder.id, before: before)
+              : [
+                  for (final u in await ref.read(imapServiceProvider).uidsBefore(a, folderId: f.folder.id, before: before))
+                    '${f.folder.id}:$u',
+                ];
+        } catch (e) {
+          // Сервер не отвечает — остальные папки этого ящика не пробуем
+          // (на медленной сети каждая попытка — десятки секунд).
+          AppLogger.warning('Архив: старые письма папки «${f.folder.displayName}» с сервера не получены: $e');
+          break;
+        }
+        if (ids.isEmpty) continue;
+        AppLogger.info('Архив: «${f.folder.displayName}» — с сервера писем старше периода: ${ids.length}');
+        final folderId = await adb.ensureFolder(acc, f.chain);
+        state = state.copyWith(total: state.total + ids.length);
+        for (final id in ids) {
+          if (_cancel) break;
+          var ok = await adb.hasMessage(acc, folderId, id, null);
+          if (!ok) {
+            ok = await _archiveServerMessage(adb, a, acc, f.chain, f.folder.id, id);
+            if (ok) archived++;
+          }
+          if (!ok) {
+            failed++;
+          } else if (s.deleteFromServer && await _deleteOnServer(a, f.folder.id, id)) {
+            deleted++;
+          }
+          state = state.copyWith(done: state.done + 1, failed: state.failed + (ok ? 0 : 1));
+          await Future<void>.delayed(Duration.zero);
+        }
+      }
+    }
+    return (archived: archived, deleted: deleted, failed: failed);
+  }
+
+  Future<bool> _archiveServerMessage(ArchiveDb adb, AccountModel a, String archiveAccount,
+      List<({String name, String type})> chain, String folderId, String id) async {
+    try {
+      final raw = a.usesEws
+          ? await ref.read(ewsServiceProvider).getMimeContent(a, id).timeout(const Duration(minutes: 3))
+          : await ref
+              .read(imapServiceProvider)
+              .fetchRawMessage(a, folderId: folderId, uid: int.parse(id.substring(id.lastIndexOf(':') + 1)))
+              .timeout(const Duration(minutes: 3));
+      if (raw == null || raw.isEmpty) return false;
+      await adb.addMessage(
+          await inputFromMime(raw, accountId: archiveAccount, folderChain: chain, sourceId: id));
+      return true;
+    } catch (e) {
+      AppLogger.warning('Архив: письмо с сервера не заархивировано: $e');
+      return false;
+    }
+  }
+
+  Future<bool> _deleteOnServer(AccountModel a, String folderId, String id) async {
+    try {
+      if (a.usesEws) {
+        await ref.read(ewsServiceProvider).deleteEmail(a, emailId: id);
+      } else {
+        await ref.read(imapServiceProvider).deleteEmail(a, folderId: folderId, uid: id.substring(id.lastIndexOf(':') + 1));
+      }
+      return true;
+    } catch (e) {
+      AppLogger.warning('Архив: письмо на сервере не удалено (копия в архиве есть): $e');
+      return false;
+    }
+  }
+
+  /// Письмо целиком (MIME) — в запись архива: тело, адресаты, вложения и
+  /// картинки в тексте (cid:), Message-ID и важность из заголовков.
+  static Future<ArchiveMessageInput> inputFromMime(Uint8List raw,
+      {required String accountId,
+      required List<({String name, String type})> folderChain,
+      required String sourceId}) async {
+    final m = await EmlReader.parseAsync(raw);
+    final head = mimeHeaders(raw);
+    final html = (m.html ?? '').trim().isEmpty ? null : m.html;
+    final plain = (m.plain ?? '').trim().isEmpty ? null : m.plain;
+    final search = plain ??
+        (html == null ? '' : await MailBodyProcessor.heavy(html, MailBodyProcessor.htmlToPlain, background: true));
+    final from = m.from.firstOrNull;
+    final files = <ArchiveAttachmentInput>[
+      for (final a in m.attachments) ArchiveAttachmentInput(name: a.name, mime: a.contentType, bytes: a.bytes),
+      for (final e in m.inlineImages.entries)
+        if (e.value.startsWith('data:') && e.value.contains(';base64,'))
+          ArchiveAttachmentInput(
+            name: e.key,
+            mime: e.value.substring(5, e.value.indexOf(';')),
+            bytes: base64Decode(e.value.substring(e.value.indexOf(',') + 1)),
+            contentId: e.key,
+            isInline: true,
+          ),
+    ];
+    final previewSource = (search ?? '').replaceAll(RegExp(r'\s+'), ' ').trim();
+    return ArchiveMessageInput(
+      accountId: accountId,
+      folderChain: folderChain,
+      sourceId: sourceId,
+      messageId: head['message-id'],
+      subject: m.subject,
+      fromName: from?.name ?? '',
+      fromEmail: from?.email ?? '',
+      to: [for (final a in m.to) (name: a.name, email: a.email)],
+      cc: [for (final a in m.cc) (name: a.name, email: a.email)],
+      date: m.date ?? DateTime.now(),
+      importance: importanceOf(head),
+      bodyHtml: html,
+      bodyText: plain,
+      preview: previewSource.length > 200 ? previewSource.substring(0, 200) : previewSource,
+      size: raw.length,
+      attachments: files,
+      searchText: search ?? '',
+    );
+  }
+
+  /// Заголовки письма (до первой пустой строки), имена — строчными;
+  /// перенесённые строки склеиваются.
+  static Map<String, String> mimeHeaders(Uint8List raw) {
+    final text = latin1.decode(raw.length > 65536 ? raw.sublist(0, 65536) : raw, allowInvalid: true);
+    final end = text.indexOf(RegExp(r'\r?\n\r?\n'));
+    final out = <String, String>{};
+    String? name;
+    for (final line in (end < 0 ? text : text.substring(0, end)).split(RegExp(r'\r?\n'))) {
+      if (line.startsWith(' ') || line.startsWith('\t')) {
+        if (name != null) out[name] = '${out[name]} ${line.trim()}';
+        continue;
+      }
+      final i = line.indexOf(':');
+      if (i <= 0) continue;
+      name = line.substring(0, i).trim().toLowerCase();
+      out.putIfAbsent(name, () => line.substring(i + 1).trim());
+    }
+    return out;
+  }
+
+  /// Важность: Importance или X-Priority; 0 — низкая, 1 — обычная, 2 — высокая.
+  static int importanceOf(Map<String, String> head) {
+    final imp = (head['importance'] ?? '').toLowerCase();
+    if (imp.startsWith('high')) return 2;
+    if (imp.startsWith('low')) return 0;
+    final p = int.tryParse((head['x-priority'] ?? '').trim().split(' ').first);
+    if (p != null && p <= 2) return 2;
+    if (p != null && p >= 4) return 0;
+    return 1;
   }
 
   static FolderType? _type(int index) => index >= 0 && index < FolderType.values.length ? FolderType.values[index] : null;

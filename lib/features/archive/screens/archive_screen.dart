@@ -651,6 +651,10 @@ class _ArchiveScreenState extends ConsumerState<ArchiveScreen> {
       if (r.contacts > 0) l10n.plural('archiveNContacts', r.contacts),
     ];
     var text = '$when · ${parts.join(', ')}';
+    // Писем не нашлось — сказать почему, а не просто «0 писем».
+    if (r.mails == 0 && r.failed == 0 && !r.cancelled && r.errorKey == null) {
+      text += '\n${l10n.tr('archiveNothingOld')}';
+    }
     if (r.failed > 0) text += '\n${l10n.tr('archiveFailedN').replaceAll('{n}', '${r.failed}')}';
     if (r.cancelled) text += '\n${l10n.tr('archiveStopped')}';
     if (r.errorKey != null) text += '\n${l10n.tr(r.errorKey!)}';

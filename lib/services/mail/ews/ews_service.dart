@@ -1084,6 +1084,31 @@ class EwsService {
 
   /// Исходный MIME письма (GetItem IncludeMimeContent) — для проверки
   /// подписи S/MIME. null — сервер не отдал.
+  /// Идентификаторы писем папки [folderId], полученных раньше [before], —
+  /// самые старые первыми, страницами по [count] (не больше [limit]).
+  Future<List<String>> itemIdsBefore(AccountModel account,
+      {required String folderId, required DateTime before, int count = 100, int limit = 20000}) async {
+    final out = <String>[];
+    while (out.length < limit) {
+      final doc = await _soapRequest(
+          account, EwsXmlBuilder.buildFindItemIdsBefore(folderId: folderId, before: before, offset: out.length, maxCount: count),
+          timeoutSeconds: AppConstants.ewsTimeoutSeconds);
+      _ensureSuccess(doc, 'find-before');
+      final ids = [
+        for (final e in doc.descendants.whereType<XmlElement>())
+          if (e.name.local == 'ItemId' && e.getAttribute('Id') != null) e.getAttribute('Id')!,
+      ];
+      out.addAll(ids);
+      final last = doc.descendants
+          .whereType<XmlElement>()
+          .where((e) => e.name.local == 'RootFolder')
+          .firstOrNull
+          ?.getAttribute('IncludesLastItemInRange');
+      if (ids.length < count || last == 'true') break;
+    }
+    return out;
+  }
+
   Future<Uint8List?> getMimeContent(AccountModel account, String itemId) async {
     final doc = await _soapRequest(account, EwsXmlBuilder.buildGetItemMime(itemId), timeoutSeconds: 120);
     _ensureSuccess(doc, 'mime');

@@ -1,45 +1,65 @@
 #!/usr/bin/env bash
-# Архив проекта для владельца (HANDOFF, правило 1): /home/claude/out/ogneliss-mail-<версия>.zip
+# Архив проекта для владельца (HANDOFF, правило 1): <OUT>/ogneliss-mail-<версия>.zip,
+# внутри — папка ogneliss-mail (как у владельца). OUT — первый параметр, по
+# умолчанию build/out.
 #
-# Не входят: секреты (config/dart_defines.json, key.properties, *.jks, ключи APNs
-# *.p8, .env служб, файлы Firebase), сборка,
-# кэши и файлы, которые Xcode меняет у владельца при настройке подписи
-# (1.6.12): project.pbxproj (Team, App Groups, цель виджетов), Runner.entitlements,
-# Signing.xcconfig, xcuserdata, contents.xcworkspacedata (его ведёт pod install).
-# Файл проекта Xcode кладётся рядом как project.pbxproj.base — для новой папки
-# (scripts/build_ios.sh берёт его, если project.pbxproj нет).
+#   tool/dev/make_archive.sh [OUT]
+#
+# Источник — коммит HEAD (git archive): только файлы из git — без сборки,
+# кэшей, сгенерированного кода и секретов (config/dart_defines.json,
+# key.properties, *.jks, ключи APNs *.p8, .env служб, файлы Firebase).
+#
+# Не входят и файлы, которые Xcode меняет у владельца при настройке подписи
+# (1.6.12): project.pbxproj (Team, App Groups, Push, цель виджетов),
+# Runner.entitlements, Signing.xcconfig, xcuserdata, contents.xcworkspacedata
+# (его ведёт pod install). Файл проекта Xcode кладётся как
+# project.pbxproj.base — для новой папки (scripts/build_ios.sh берёт его, если
+# project.pbxproj нет).
+#
+# 29.10.2026: архивы 1.8.8–1.8.12 собирались мимо этого скрипта (git archive
+# целиком) — project.pbxproj из git затёр у владельца настройки Xcode. Скрипт
+# теперь работает из любой копии репозитория, а не только из /home/claude/src.
+#
+# Код базы (app_database.g.dart) в архив не кладётся: его генерирует
+# build_runner под установленную версию drift (scripts/build_ios.sh,
+# build_windows.ps1, setup.sh) — файл от другой версии drift не собирается.
 set -euo pipefail
-SRC=/home/claude/src
-OUT=/home/claude/out
-cd "$SRC/ogneliss-mail"
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+OUT="${1:-$ROOT/build/out}"
+cd "$ROOT"
 python3 tool/dev/removed_files.py >/dev/null
 VER=$(grep '^version:' pubspec.yaml | awk '{print $2}')
-ZIP="$OUT/ogneliss-mail-$VER.zip"
 mkdir -p "$OUT"
+OUT="$(cd "$OUT" && pwd)"
+ZIP="$OUT/ogneliss-mail-$VER.zip"
 rm -f "$OUT"/ogneliss-mail-*.zip
-cd "$SRC"
-zip -qr "$ZIP" ogneliss-mail -x 'ogneliss-mail/build/*' 'ogneliss-mail/.dart_tool/*' 'ogneliss-mail/.git/*' \
-  '*/node_modules/*' 'ogneliss-mail/ios/Pods/*' 'ogneliss-mail/config/dart_defines.json' \
-  '*/__pycache__/*' '*.pyc' 'ogneliss-mail/site/dist/*' \
-  '*/key.properties' '*.jks' '*.p8' '*/.env' '*/google-services.json' '*/GoogleService-Info.plist' \
-  'ogneliss-mail/server/push-relay/data/*' 'ogneliss-mail/server/push-relay/keys/*' \
-  'ogneliss-mail/ios/Runner.xcodeproj/project.pbxproj' 'ogneliss-mail/ios/Runner.xcodeproj/.base_seen' \
-  'ogneliss-mail/ios/Runner.xcodeproj/project.pbxproj.bak' \
-  'ogneliss-mail/ios/Runner/Runner.entitlements' 'ogneliss-mail/ios/Flutter/Signing.xcconfig' \
-  'ogneliss-mail/ios/Runner.xcworkspace/contents.xcworkspacedata' '*/xcuserdata/*'
-# Свежий project.pbxproj (если он есть в рабочей папке) — под именем .base;
-# если его нет, в архиве остаётся уже лежащий рядом project.pbxproj.base.
-if [[ -f ogneliss-mail/ios/Runner.xcodeproj/project.pbxproj ]]; then
-  TMP=$(mktemp -d)
-  mkdir -p "$TMP/ogneliss-mail/ios/Runner.xcodeproj"
-  cp ogneliss-mail/ios/Runner.xcodeproj/project.pbxproj "$TMP/ogneliss-mail/ios/Runner.xcodeproj/project.pbxproj.base"
-  (cd "$TMP" && zip -q "$ZIP" ogneliss-mail/ios/Runner.xcodeproj/project.pbxproj.base)
-  rm -rf "$TMP"
-fi
+
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+git archive --prefix=ogneliss-mail/ HEAD | tar -x -C "$TMP"
+P="$TMP/ogneliss-mail"
+# Список удалённых файлов — свежий (только что обновлён, мог быть не закоммичен).
+cp tool/dev/removed_files.txt "$P/tool/dev/removed_files.txt"
+
+# Проект Xcode — под именем .base; настройки Xcode владельца — не трогаем.
+mv "$P/ios/Runner.xcodeproj/project.pbxproj" "$P/ios/Runner.xcodeproj/project.pbxproj.base"
+rm -f "$P/ios/Runner.xcodeproj/.base_seen" "$P/ios/Runner.xcodeproj/project.pbxproj.bak" \
+  "$P/ios/Runner/Runner.entitlements" "$P/ios/Flutter/Signing.xcconfig" \
+  "$P/ios/Runner.xcworkspace/contents.xcworkspacedata"
+find "$P" -name xcuserdata -prune -exec rm -rf {} +
+# Секреты — на случай, если когда-нибудь окажутся в git.
+rm -f "$P/config/dart_defines.json"
+find "$P" \( -name key.properties -o -name '*.jks' -o -name '*.p8' -o -name .env \
+  -o -name google-services.json -o -name GoogleService-Info.plist \) -delete
+rm -rf "$P/server/push-relay/data" "$P/server/push-relay/keys"
+
+(cd "$TMP" && zip -qr -X "$ZIP" ogneliss-mail)
+
 BASE=$(unzip -l "$ZIP" | grep -c "project.pbxproj.base$" || true)
 [[ "$BASE" == 1 ]] || { echo "✗ в архиве нет ios/Runner.xcodeproj/project.pbxproj.base"; exit 1; }
-SECRETS=$(unzip -l "$ZIP" | grep -c "dart_defines.json\|key.properties\|\.jks\|\.p8$\|/\.env$" || true)
-XCODE=$(unzip -l "$ZIP" | grep -c "project.pbxproj$\|Runner.entitlements\|Signing.xcconfig\|xcuserdata" || true)
+SECRETS=$(unzip -l "$ZIP" | grep -c "dart_defines.json$\|key.properties\|\.jks$\|\.p8$\|/\.env$" || true)
+XCODE=$(unzip -l "$ZIP" | grep -c "project.pbxproj$\|Runner.entitlements\|Signing.xcconfig\|xcuserdata\|Runner.xcworkspace/contents.xcworkspacedata" || true)
+GEN=$(unzip -l "$ZIP" | grep -c "app_database.g.dart" || true)
 echo "$ZIP"
-echo "секретов в архиве: $SECRETS; файлов настройки Xcode: $XCODE"
-[[ "$SECRETS" == 0 && "$XCODE" == 0 ]] || { echo "✗ архив не годится"; exit 1; }
+echo "секретов в архиве: $SECRETS; файлов настройки Xcode: $XCODE; сгенерированного кода базы: $GEN"
+[[ "$SECRETS" == 0 && "$XCODE" == 0 && "$GEN" == 0 ]] || { echo "✗ архив не годится"; exit 1; }

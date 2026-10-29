@@ -38,6 +38,8 @@ class SecureStorageService {
     await delete('exp_$accountId');
     await delete('proxy_session_$accountId');
     await delete('proxy_$accountId');
+    await delete('gat_$accountId'); // токен Microsoft Graph (1.8.10)
+    await delete('gexp_$accountId');
     await delete('oc_$accountId');
   }
 

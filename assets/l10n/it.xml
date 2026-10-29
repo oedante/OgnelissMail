@@ -3537,4 +3537,10 @@
     <string name="folderToOgna">Cartella nell\'archivio Ogneliss</string>
     <string name="folderToOgnaBody">La cartella «{folder}» con le sottocartelle e tutti i messaggi verrà copiata nell\'archivio su questo dispositivo, con la struttura delle cartelle della casella. I messaggi più vecchi del periodo di sincronizzazione vengono scaricati dal server.</string>
     <string name="folderToOgnaStarted">Archiviazione della cartella: avanzamento in Archivio Ogneliss</string>
+    <string name="graphChecking">Verifica…</string>
+    <string name="graphOk">Connesso: rubrica, suggerimenti posta, regole del server e recupero degli elementi eliminati</string>
+    <string name="graphNoConsent">Nessun consenso: tocca per accedere di nuovo. Se non basta, deve autorizzarlo l’amministratore dell’organizzazione</string>
+    <string name="graphUnknown">Tocca per verificare</string>
+    <string name="graphHint">Microsoft disattiva EWS in Exchange Online: da ottobre 2026 organizzazione per organizzazione, del tutto ad aprile 2027. Posta, calendario, contatti e risposte automatiche usano ActiveSync e non cambiano. La rubrica (ruoli, reparti, foto dei colleghi), i suggerimenti all’invio, le regole del server e il recupero degli elementi eliminati ora usano Microsoft Graph. Anche sale riunioni e membri delle liste di distribuzione, se l’amministratore ha concesso all’app Place.Read.All e GroupMember.Read.All. Microsoft Graph non offre archivio online, cassette condivise e importazione della firma: usano EWS finché è disponibile.</string>
+    <string name="srvViaGraph">Exchange Online — tramite Microsoft Graph</string>
 </resources>

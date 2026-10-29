@@ -3556,4 +3556,10 @@
     <string name="folderToOgna">Priečinok do archívu Ogneliss</string>
     <string name="folderToOgnaBody">Priečinok „{folder}“ s podpriečinkami a všetkými správami sa skopíruje do archívu v tomto zariadení so štruktúrou priečinkov ako v schránke. Správy staršie ako obdobie synchronizácie sa stiahnu zo servera.</string>
     <string name="folderToOgnaStarted">Priečinok sa archivuje — priebeh je v Archíve Ogneliss</string>
+    <string name="graphChecking">Kontrola…</string>
+    <string name="graphOk">Pripojené: adresár, tipy k pošte, pravidlá servera a obnova odstránených položiek</string>
+    <string name="graphNoConsent">Chýba súhlas — ťuknutím sa prihláste znova. Ak to nepomôže, súhlas musí udeliť správca organizácie</string>
+    <string name="graphUnknown">Ťuknutím skontrolujte</string>
+    <string name="graphHint">Microsoft vypína EWS v Exchange Online: od októbra 2026 postupne po organizáciách, úplne v apríli 2027. Pošta, kalendár, kontakty a automatické odpovede idú cez ActiveSync a nemenia sa. Adresár (funkcie, oddelenia, fotky kolegov), tipy pri odosielaní, pravidlá servera a obnova odstránených položiek teraz používajú Microsoft Graph. Zasadačky a členovia distribučných zoznamov tiež, ak správca aplikácii udelil Place.Read.All a GroupMember.Read.All. Online archív, zdieľané schránky a import podpisu Microsoft Graph neponúka — používajú EWS, kým je dostupné.</string>
+    <string name="srvViaGraph">Exchange Online — cez Microsoft Graph</string>
 </resources>

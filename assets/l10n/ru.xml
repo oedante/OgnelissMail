@@ -3575,4 +3575,10 @@
     <string name="folderToOgna">Папку в архив Ogneliss</string>
     <string name="folderToOgnaBody">Папка «{folder}» с подпапками и всеми письмами будет скопирована в архив на устройстве — со структурой папок, как в ящике. Письма старше периода синхронизации загрузятся с сервера.</string>
     <string name="folderToOgnaStarted">Папка архивируется — ход виден в «Архив Ogneliss»</string>
+    <string name="graphChecking">Проверка…</string>
+    <string name="graphOk">Подключён: адресная книга, подсказки, правила сервера и восстановление удалённых</string>
+    <string name="graphNoConsent">Нет согласия на доступ — нажмите, чтобы войти снова. Не помогает — разрешение даёт администратор организации</string>
+    <string name="graphUnknown">Нажмите, чтобы проверить</string>
+    <string name="graphHint">Microsoft отключает EWS в Exchange Online: с октября 2026 года — по организациям, полностью — в апреле 2027. Почта, календарь, контакты и автоответ идут по ActiveSync и не меняются. Адресная книга (должность, отдел, фото коллег), подсказки при отправке, правила сервера и «Восстановить удалённые» теперь работают через Microsoft Graph. Переговорные и состав рассылок — тоже, если администратор разрешил приложению права Place.Read.All и GroupMember.Read.All. Онлайн-архив, общие ящики и импорт подписи у Microsoft Graph не открыты — они работают по EWS, пока он доступен.</string>
+    <string name="srvViaGraph">Exchange Online — через Microsoft Graph</string>
 </resources>

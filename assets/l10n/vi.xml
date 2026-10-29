@@ -3518,4 +3518,10 @@
     <string name="folderToOgna">Thư mục vào kho lưu trữ Ogneliss</string>
     <string name="folderToOgnaBody">Thư mục \"{folder}\" cùng các thư mục con và mọi thư sẽ được sao chép vào kho lưu trữ trên thiết bị này, giữ nguyên cấu trúc thư mục của hộp thư. Thư cũ hơn khoảng đồng bộ sẽ được tải từ máy chủ.</string>
     <string name="folderToOgnaStarted">Đang lưu trữ thư mục — tiến trình hiển thị trong Kho lưu trữ Ogneliss</string>
+    <string name="graphChecking">Đang kiểm tra…</string>
+    <string name="graphOk">Đã kết nối: danh bạ, gợi ý thư, quy tắc máy chủ và khôi phục mục đã xóa</string>
+    <string name="graphNoConsent">Chưa có sự đồng ý — chạm để đăng nhập lại. Nếu không được, quản trị viên tổ chức cần cho phép</string>
+    <string name="graphUnknown">Chạm để kiểm tra</string>
+    <string name="graphHint">Microsoft đang tắt EWS trong Exchange Online: từ tháng 10/2026 theo từng tổ chức, hoàn toàn vào tháng 4/2027. Thư, lịch, danh bạ và trả lời tự động dùng ActiveSync và không thay đổi. Danh bạ tổ chức (chức danh, phòng ban, ảnh đồng nghiệp), gợi ý khi gửi, quy tắc máy chủ và khôi phục mục đã xóa nay dùng Microsoft Graph. Phòng họp và thành viên danh sách phân phối cũng vậy nếu quản trị viên đã cấp cho ứng dụng quyền Place.Read.All và GroupMember.Read.All. Microsoft Graph không cung cấp lưu trữ trực tuyến, hộp thư dùng chung và nhập chữ ký — chúng dùng EWS khi còn khả dụng.</string>
+    <string name="srvViaGraph">Exchange Online — qua Microsoft Graph</string>
 </resources>

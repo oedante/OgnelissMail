@@ -3518,4 +3518,10 @@
     <string name="folderToOgna">フォルダーを Ogneliss アーカイブへ</string>
     <string name="folderToOgnaBody">フォルダー「{folder}」をサブフォルダーとすべてのメールごと、このデバイスのアーカイブにコピーします。フォルダー構成はメールボックスと同じです。同期期間より古いメールはサーバーから取得します。</string>
     <string name="folderToOgnaStarted">フォルダーをアーカイブ中です。進行状況は Ogneliss アーカイブで確認できます</string>
+    <string name="graphChecking">確認中…</string>
+    <string name="graphOk">接続済み：アドレス帳、メール ヒント、サーバーのルール、削除済みアイテムの回復</string>
+    <string name="graphNoConsent">同意がありません。タップして再度サインインしてください。解決しない場合は組織の管理者による許可が必要です</string>
+    <string name="graphUnknown">タップして確認</string>
+    <string name="graphHint">Microsoft は Exchange Online の EWS を停止します：2026 年 10 月から組織ごとに、2027 年 4 月に完全停止。メール、予定表、連絡先、自動応答は ActiveSync で動作し、変わりません。アドレス帳（役職、部署、同僚の写真）、送信時のヒント、サーバーのルール、削除済みアイテムの回復は Microsoft Graph を使うようになりました。会議室と配布リストのメンバーも、管理者がアプリに Place.Read.All と GroupMember.Read.All を許可していれば同様です。オンライン アーカイブ、共有メールボックス、署名のインポートは Microsoft Graph にないため、EWS が使える間は EWS で動作します。</string>
+    <string name="srvViaGraph">Exchange Online — Microsoft Graph 経由</string>
 </resources>

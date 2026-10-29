@@ -3518,4 +3518,10 @@
     <string name="folderToOgna">Folder ke arsip Ogneliss</string>
     <string name="folderToOgnaBody">Folder \"{folder}\" beserta subfolder dan semua pesannya akan disalin ke arsip di perangkat ini, dengan struktur folder seperti di kotak surat. Pesan yang lebih lama dari periode sinkronisasi diambil dari server.</string>
     <string name="folderToOgnaStarted">Folder sedang diarsipkan — progres tampil di Arsip Ogneliss</string>
+    <string name="graphChecking">Memeriksa…</string>
+    <string name="graphOk">Terhubung: buku alamat, tips email, aturan server, dan pemulihan item terhapus</string>
+    <string name="graphNoConsent">Belum ada izin — ketuk untuk masuk lagi. Jika tidak berhasil, admin organisasi Anda harus mengizinkannya</string>
+    <string name="graphUnknown">Ketuk untuk memeriksa</string>
+    <string name="graphHint">Microsoft mematikan EWS di Exchange Online: mulai Oktober 2026 per organisasi, sepenuhnya pada April 2027. Email, kalender, kontak, dan balasan otomatis memakai ActiveSync dan tidak berubah. Buku alamat (jabatan, departemen, foto rekan), tips saat mengirim, aturan server, dan pemulihan item terhapus kini memakai Microsoft Graph. Ruang rapat dan anggota daftar distribusi juga, jika admin memberi aplikasi izin Place.Read.All dan GroupMember.Read.All. Microsoft Graph tidak menyediakan arsip online, kotak surat bersama, dan impor tanda tangan — semuanya memakai EWS selama masih tersedia.</string>
+    <string name="srvViaGraph">Exchange Online — melalui Microsoft Graph</string>
 </resources>

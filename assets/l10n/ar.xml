@@ -3613,4 +3613,10 @@
     <string name="folderToOgna">المجلد إلى أرشيف Ogneliss</string>
     <string name="folderToOgnaBody">سيُنسخ المجلد «{folder}» مع مجلداته الفرعية وجميع رسائله إلى الأرشيف على هذا الجهاز، مع بنية المجلدات كما في صندوق البريد. تُجلب الرسائل الأقدم من فترة المزامنة من الخادم.</string>
     <string name="folderToOgnaStarted">جارٍ أرشفة المجلد — يظهر التقدم في أرشيف Ogneliss</string>
+    <string name="graphChecking">جارٍ التحقق…</string>
+    <string name="graphOk">متصل: دليل العناوين وتلميحات البريد وقواعد الخادم واستعادة العناصر المحذوفة</string>
+    <string name="graphNoConsent">لا توجد موافقة — اضغط لتسجيل الدخول مجددًا. إن لم يفلح ذلك فعلى مسؤول مؤسستك منح الإذن</string>
+    <string name="graphUnknown">اضغط للتحقق</string>
+    <string name="graphHint">توقف Microsoft خدمة EWS في Exchange Online: بدءًا من أكتوبر 2026 مؤسسةً تلو أخرى، وكليًا في أبريل 2027. البريد والتقويم وجهات الاتصال والردود التلقائية تعمل عبر ActiveSync ولا تتغير. دليل العناوين (المسميات الوظيفية والأقسام وصور الزملاء) وتلميحات الإرسال وقواعد الخادم واستعادة العناصر المحذوفة تعمل الآن عبر Microsoft Graph، وكذلك غرف الاجتماعات وأعضاء قوائم التوزيع إذا منح المسؤول التطبيق الإذنين Place.Read.All وGroupMember.Read.All. لا يتيح Microsoft Graph الأرشيف عبر الإنترنت ولا صناديق البريد المشتركة ولا استيراد التوقيع، فهي تعمل عبر EWS ما دام متاحًا.</string>
+    <string name="srvViaGraph">Exchange Online — عبر Microsoft Graph</string>
 </resources>

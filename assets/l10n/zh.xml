@@ -3518,4 +3518,10 @@
     <string name="folderToOgna">文件夹存入 Ogneliss 归档</string>
     <string name="folderToOgnaBody">文件夹“{folder}”及其子文件夹和全部邮件将复制到本设备上的归档中，文件夹结构与邮箱一致。早于同步期限的邮件将从服务器获取。</string>
     <string name="folderToOgnaStarted">正在归档文件夹——进度显示在 Ogneliss 归档中</string>
+    <string name="graphChecking">正在检查…</string>
+    <string name="graphOk">已连接：通讯簿、邮件提示、服务器规则和恢复已删除项目</string>
+    <string name="graphNoConsent">尚未同意——轻点重新登录。如仍不行，需由组织管理员授权</string>
+    <string name="graphUnknown">轻点检查</string>
+    <string name="graphHint">Microsoft 正在关闭 Exchange Online 中的 EWS：自 2026 年 10 月起按组织逐步关闭，2027 年 4 月完全关闭。邮件、日历、联系人和自动答复通过 ActiveSync 工作，不受影响。通讯簿（职位、部门、同事照片）、发送提示、服务器规则和恢复已删除项目现已改用 Microsoft Graph。若管理员已向应用授予 Place.Read.All 和 GroupMember.Read.All，会议室和通讯组成员也是如此。Microsoft Graph 不提供在线存档、共享邮箱和签名导入——在 EWS 可用期间它们仍通过 EWS 工作。</string>
+    <string name="srvViaGraph">Exchange Online — 通过 Microsoft Graph</string>
 </resources>

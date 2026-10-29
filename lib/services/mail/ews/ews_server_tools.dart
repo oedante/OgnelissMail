@@ -36,6 +36,19 @@ import 'ews_service.dart';
 
 final ewsServerToolsProvider = Provider<EwsServerTools>((ref) => EwsServerTools(ref.watch(ewsServiceProvider)));
 
+/// Правила сервера и «Восстановить удалённые» (1.8.10): по EWS
+/// ([EwsServerTools]) или через Microsoft Graph у Exchange Online
+/// (graph_server_tools.dart) — экран не знает, через что.
+abstract class ServerTools {
+  Future<ServerRulesResult> getRules(AccountModel account);
+  Future<String?> setEnabled(AccountModel account, ServerRule rule, bool enabled);
+  Future<String?> createRule(AccountModel account, SieveRule rule, {required int priority});
+  Future<String?> deleteRule(AccountModel account, ServerRule rule);
+  Future<List<({String id, String label})>> ruleFolders(AccountModel account);
+  Future<List<RecoverableItem>> getRecoverable(AccountModel account, {int max = 100});
+  Future<int> restore(AccountModel account, List<RecoverableItem> items);
+}
+
 /// Серверное правило Exchange (как пришло с сервера).
 class ServerRule {
   final String id;
@@ -52,8 +65,9 @@ class ServerRule {
   /// forward, redirect, read, flag, category, importance, stop, reply).
   final List<String> actions;
 
-  /// Исходный элемент Rule — для SetRule (правило заменяется целиком).
-  final XmlElement raw;
+  /// Как пришло с сервера: элемент Rule у EWS (для SetRule — правило
+  /// заменяется целиком), объект правила у Graph.
+  final Object? raw;
 
   const ServerRule({
     required this.id,
@@ -95,7 +109,7 @@ class RecoverableItem {
   bool get isMail => itemClass.isEmpty || itemClass.startsWith('IPM.Note');
 }
 
-class EwsServerTools {
+class EwsServerTools implements ServerTools {
   final EwsService _ews;
   EwsServerTools(this._ews);
 
@@ -118,6 +132,7 @@ class EwsServerTools {
 
   // ── Правила ──
 
+  @override
   Future<ServerRulesResult> getRules(AccountModel account) async {
     try {
       final doc = await _ews.rawSoapRequest(account, '<m:GetInboxRules/>');
@@ -156,12 +171,14 @@ class EwsServerTools {
 
   /// Включить/выключить правило. null — успех; иначе код ошибки:
   /// 'outlookBlob' (есть правила Outlook на компьютере), 'readOnly' или текст.
+  @override
   Future<String?> setEnabled(AccountModel account, ServerRule rule, bool enabled) async {
-    if (rule.readOnly) return 'readOnly';
+    final raw = rule.raw;
+    if (rule.readOnly || raw is! XmlElement) return 'readOnly';
     try {
       final body = '<m:UpdateInboxRules>'
           '<m:RemoveOutlookRuleBlob>false</m:RemoveOutlookRuleBlob>'
-          '<m:Operations><t:SetRuleOperation>${ruleXmlForSet(rule.raw, enabled)}</t:SetRuleOperation></m:Operations>'
+          '<m:Operations><t:SetRuleOperation>${ruleXmlForSet(raw, enabled)}</t:SetRuleOperation></m:Operations>'
           '</m:UpdateInboxRules>';
       final doc = await _ews.rawSoapRequest(account, body);
       final code = doc.findAllElements('ResponseCode', namespace: '*').firstOrNull?.innerText.trim();
@@ -286,10 +303,12 @@ class EwsServerTools {
   }
 
   /// Создать правило. null — успех; иначе 'outlookBlob' или текст ошибки.
+  @override
   Future<String?> createRule(AccountModel account, SieveRule rule, {required int priority}) =>
       _update(account, createRuleBody(rule, priority), 'CreateRule');
 
   /// Удалить правило. null — успех.
+  @override
   Future<String?> deleteRule(AccountModel account, ServerRule rule) => _update(
       account,
       '<m:UpdateInboxRules>'
@@ -319,6 +338,7 @@ class EwsServerTools {
 
   /// Папки ящика для «Переложить в папку» (FolderId EWS — у ящика ActiveSync
   /// id из ActiveSync не подходят): подпись — путь «Папка/Подпапка».
+  @override
   Future<List<({String id, String label})>> ruleFolders(AccountModel account) async {
     final folders = await _ews.getFolders(account);
     final byId = {for (final f in folders) f.id: f};
@@ -341,6 +361,7 @@ class EwsServerTools {
 
   // ── Восстановить удалённые ──
 
+  @override
   Future<List<RecoverableItem>> getRecoverable(AccountModel account, {int max = 100}) async {
     final body = '<m:FindItem Traversal="Shallow">'
         '<m:ItemShape><t:BaseShape>IdOnly</t:BaseShape><t:AdditionalProperties>'
@@ -382,6 +403,7 @@ class EwsServerTools {
   }
 
   /// Вернуть письма во «Входящие». Возвращает, сколько восстановлено.
+  @override
   Future<int> restore(AccountModel account, List<RecoverableItem> items) async {
     if (items.isEmpty) return 0;
     final ids = items.map((i) => '<t:ItemId Id="${_esc(i.id)}"/>').join();

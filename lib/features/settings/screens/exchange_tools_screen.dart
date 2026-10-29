@@ -10,6 +10,9 @@
 // объясняет, почему правила сервера недоступны, и ведёт к правилам на
 // телефоне. Правила можно создавать (редактор — общий с фильтрами Sieve) и
 // удалять.
+//
+// 1.8.10: у ящика Exchange Online — через Microsoft Graph ([serverToolsFor]),
+// EWS там Microsoft отключает; без согласия на Graph — по EWS, как раньше.
 
 import 'dart:async';
 
@@ -24,6 +27,8 @@ import '../../../core/theme/tokens.dart';
 import '../../../data/models/account_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/ews/ews_server_tools.dart';
+import '../../../services/mail/graph/graph_client.dart' show graphClientProvider;
+import '../../../services/mail/graph/graph_server_tools.dart' show graphServerToolsProvider;
 import '../../../services/mail/engine/mail_engine_service.dart' show mailEngineServiceProvider;
 import '../../../services/mail/sieve/sieve_rules.dart' show SieveAction;
 import '../../../widgets/common/app_sheet.dart';
@@ -77,6 +82,19 @@ Future<AccountModel?> ewsAccountFor(WidgetRef ref, AccountModel a) async {
   return url == null ? null : a.copyWith(ewsUrl: url);
 }
 
+/// Через что работают правила и «Восстановить удалённые» (1.8.10): у
+/// Exchange Online — Microsoft Graph, если есть согласие на него; иначе EWS
+/// (свой или того же сервера у ActiveSync). null — ни того, ни другого.
+/// [graph] — через Graph.
+Future<({AccountModel account, ServerTools tools, bool graph})?> serverToolsFor(WidgetRef ref, AccountModel a) async {
+  final graph = ref.read(graphClientProvider);
+  if (graph.supports(a) && await graph.token(a) != null) {
+    return (account: a, tools: ref.read(graphServerToolsProvider), graph: true);
+  }
+  final ews = await ewsAccountFor(ref, a);
+  return ews == null ? null : (account: ews, tools: ref.read(ewsServerToolsProvider), graph: false);
+}
+
 AccountModel? _initial(WidgetRef ref, String? accountId) {
   // Из настроек ящика — этот ящик Exchange, даже без своего EWS (1.7.3).
   if (accountId != null) {
@@ -103,8 +121,13 @@ class ServerRulesScreen extends ConsumerStatefulWidget {
 class _ServerRulesScreenState extends ConsumerState<ServerRulesScreen> {
   late AccountModel? _account = _initial(ref, widget.accountId);
 
-  /// Ящик для запросов EWS (у ActiveSync — с адресом EWS того же сервера).
+  /// Ящик для запросов EWS (у ActiveSync — с адресом EWS того же сервера)
+  /// или ящик Exchange Online для запросов Graph.
   AccountModel? _ews;
+
+  /// Через что: EWS или Microsoft Graph (1.8.10).
+  ServerTools? _tools;
+  bool _viaGraph = false;
 
   /// У ящика ActiveSync EWS нет — правила сервера недоступны.
   bool _noEws = false;
@@ -129,19 +152,22 @@ class _ServerRulesScreenState extends ConsumerState<ServerRulesScreen> {
       _error = null;
       _noEws = false;
     });
-    final ews = await ewsAccountFor(ref, acc);
+    final via = await serverToolsFor(ref, acc);
     if (!mounted) return;
-    if (ews == null) {
+    if (via == null) {
       setState(() {
         _ews = null;
+        _tools = null;
         _result = null;
         _noEws = true;
         _loading = false;
       });
       return;
     }
-    _ews = ews;
-    final r = await ref.read(ewsServerToolsProvider).getRules(ews);
+    final ews = _ews = via.account;
+    _tools = via.tools;
+    _viaGraph = via.graph;
+    final r = await via.tools.getRules(ews);
     if (!mounted) return;
     setState(() {
       _result = r;
@@ -169,9 +195,9 @@ class _ServerRulesScreenState extends ConsumerState<ServerRulesScreen> {
   /// проверяется только на «содержит».
   Future<void> _create() async {
     final ews = _ews;
-    if (ews == null || _busy) return;
+    final tools = _tools;
+    if (ews == null || tools == null || _busy) return;
     final l10n = AppLocalizations.of(context);
-    final tools = ref.read(ewsServerToolsProvider);
     setState(() {
       _busy = true;
       _error = null;
@@ -259,7 +285,9 @@ class _ServerRulesScreenState extends ConsumerState<ServerRulesScreen> {
       _saving.add(rule.id);
       _error = null;
     });
-    final err = await ref.read(ewsServerToolsProvider).deleteRule(ews, rule);
+    final tools = _tools;
+    if (tools == null) return;
+    final err = await tools.deleteRule(ews, rule);
     if (!mounted) return;
     setState(() {
       _saving.remove(rule.id);
@@ -270,13 +298,14 @@ class _ServerRulesScreenState extends ConsumerState<ServerRulesScreen> {
 
   Future<void> _toggle(ServerRule rule, bool on) async {
     final acc = _ews;
-    if (acc == null) return;
+    final tools = _tools;
+    if (acc == null || tools == null) return;
     final l10n = AppLocalizations.of(context);
     setState(() {
       _saving.add(rule.id);
       _error = null;
     });
-    final err = await ref.read(ewsServerToolsProvider).setEnabled(acc, rule, on);
+    final err = await tools.setEnabled(acc, rule, on);
     if (!mounted) return;
     setState(() {
       _saving.remove(rule.id);
@@ -332,6 +361,7 @@ class _ServerRulesScreenState extends ConsumerState<ServerRulesScreen> {
                     },
                   ),
                   SettingsIntro(l10n.tr('srvRulesIntro'), more: l10n.tr('srvRulesMore'), moreTitle: l10n.tr('srvRulesTitle')),
+                  if (_viaGraph) _notice(context, l10n.tr('srvViaGraph'), warn: false),
                   // Ящик ActiveSync, а EWS сервер не открывает (1.7.3).
                   if (_noEws) ...[
                     _notice(context, l10n.tr('srvRulesNoEwsEas'), warn: false),
@@ -428,8 +458,11 @@ class RecoverDeletedScreen extends ConsumerStatefulWidget {
 class _RecoverDeletedScreenState extends ConsumerState<RecoverDeletedScreen> {
   late AccountModel? _account = _initial(ref, widget.accountId);
 
-  /// Ящик для запросов EWS (у ActiveSync — EWS того же сервера), 1.7.3.
+  /// Ящик для запросов EWS (у ActiveSync — EWS того же сервера), 1.7.3,
+  /// или ящик Exchange Online для запросов Graph (1.8.10).
   AccountModel? _ews;
+  ServerTools? _tools;
+  bool _viaGraph = false;
   bool _noEws = false;
   List<RecoverableItem>? _items;
   final Set<String> _picked = {};
@@ -453,14 +486,18 @@ class _RecoverDeletedScreenState extends ConsumerState<RecoverDeletedScreen> {
       _noEws = false;
     });
     try {
-      final ews = _ews ?? await ewsAccountFor(ref, acc);
+      final via = _ews != null && _tools != null
+          ? (account: _ews!, tools: _tools!, graph: _viaGraph)
+          : await serverToolsFor(ref, acc);
       if (!mounted) return;
-      if (ews == null) {
+      if (via == null) {
         setState(() => _noEws = true);
         return;
       }
-      _ews = ews;
-      final items = await ref.read(ewsServerToolsProvider).getRecoverable(ews);
+      final ews = _ews = via.account;
+      _tools = via.tools;
+      _viaGraph = via.graph;
+      final items = await via.tools.getRecoverable(ews);
       if (!mounted) return;
       setState(() {
         _items = items;
@@ -475,8 +512,9 @@ class _RecoverDeletedScreenState extends ConsumerState<RecoverDeletedScreen> {
 
   Future<void> _restore() async {
     final acc = _ews;
+    final tools = _tools;
     final items = _items;
-    if (acc == null || items == null || _picked.isEmpty) return;
+    if (acc == null || tools == null || items == null || _picked.isEmpty) return;
     final l10n = AppLocalizations.of(context);
     setState(() {
       _restoring = true;
@@ -485,7 +523,7 @@ class _RecoverDeletedScreenState extends ConsumerState<RecoverDeletedScreen> {
     });
     try {
       final chosen = items.where((i) => _picked.contains(i.id)).toList();
-      final n = await ref.read(ewsServerToolsProvider).restore(acc, chosen);
+      final n = await tools.restore(acc, chosen);
       if (!mounted) return;
       setState(() {
         _done = l10n.tr('srvRestored').replaceAll('{n}', '$n');
@@ -543,6 +581,7 @@ class _RecoverDeletedScreenState extends ConsumerState<RecoverDeletedScreen> {
                       setState(() {
                         _account = a;
                         _ews = null;
+                        _tools = null;
                         _items = null;
                         _picked.clear();
                       });
@@ -550,6 +589,7 @@ class _RecoverDeletedScreenState extends ConsumerState<RecoverDeletedScreen> {
                     },
                   ),
                   SettingsIntro(l10n.tr('srvRecoverIntro'), more: l10n.tr('srvRecoverMore'), moreTitle: l10n.tr('srvRecoverTitle')),
+                  if (_viaGraph) _notice(context, l10n.tr('srvViaGraph'), warn: false),
                   if (_noEws) _notice(context, l10n.tr('srvRecoverNoEwsEas'), warn: false),
                   if (_error != null) _notice(context, _error!),
                   if (_done != null) _notice(context, _done!, warn: false),

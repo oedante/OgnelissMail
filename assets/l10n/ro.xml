@@ -3556,4 +3556,10 @@
     <string name="folderToOgna">Dosarul în arhiva Ogneliss</string>
     <string name="folderToOgnaBody">Dosarul „{folder}”, cu subdosarele și toate mesajele, va fi copiat în arhiva de pe acest dispozitiv, cu structura de dosare a căsuței. Mesajele mai vechi decât perioada de sincronizare se descarcă de pe server.</string>
     <string name="folderToOgnaStarted">Se arhivează dosarul — progresul apare în Arhiva Ogneliss</string>
+    <string name="graphChecking">Se verifică…</string>
+    <string name="graphOk">Conectat: agendă, sfaturi de e-mail, reguli de server și recuperarea elementelor șterse</string>
+    <string name="graphNoConsent">Fără consimțământ — atingeți pentru a vă conecta din nou. Dacă nu ajută, trebuie să îl acorde administratorul organizației</string>
+    <string name="graphUnknown">Atingeți pentru a verifica</string>
+    <string name="graphHint">Microsoft dezactivează EWS în Exchange Online: din octombrie 2026 pe organizații, complet în aprilie 2027. E-mailul, calendarul, contactele și răspunsurile automate folosesc ActiveSync și nu se schimbă. Agenda (funcții, departamente, fotografiile colegilor), sfaturile la trimitere, regulile serverului și recuperarea elementelor șterse folosesc acum Microsoft Graph. Sălile și membrii listelor de distribuție la fel, dacă administratorul a acordat aplicației Place.Read.All și GroupMember.Read.All. Microsoft Graph nu oferă arhiva online, cutiile partajate și importul semnăturii — acestea folosesc EWS cât timp este disponibil.</string>
+    <string name="srvViaGraph">Exchange Online — prin Microsoft Graph</string>
 </resources>

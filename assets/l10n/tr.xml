@@ -3537,4 +3537,10 @@
     <string name="folderToOgna">Klasörü Ogneliss arşivine</string>
     <string name="folderToOgnaBody">\"{folder}\" klasörü, alt klasörleri ve tüm iletileriyle birlikte posta kutusundaki klasör yapısıyla bu cihazdaki arşive kopyalanacak. Eşitleme süresinden eski iletiler sunucudan alınır.</string>
     <string name="folderToOgnaStarted">Klasör arşivleniyor — ilerleme Ogneliss arşivinde görünür</string>
+    <string name="graphChecking">Denetleniyor…</string>
+    <string name="graphOk">Bağlı: adres defteri, posta ipuçları, sunucu kuralları ve silinen öğeleri kurtarma</string>
+    <string name="graphNoConsent">Onay yok — yeniden oturum açmak için dokunun. İşe yaramazsa kuruluşunuzun yöneticisi izin vermelidir</string>
+    <string name="graphUnknown">Denetlemek için dokunun</string>
+    <string name="graphHint">Microsoft, Exchange Online\'da EWS\'yi kapatıyor: Ekim 2026\'dan itibaren kuruluş kuruluş, Nisan 2027\'de tamamen. Posta, takvim, kişiler ve otomatik yanıtlar ActiveSync ile çalışır, değişmez. Adres defteri (unvanlar, departmanlar, iş arkadaşlarının fotoğrafları), gönderim ipuçları, sunucu kuralları ve silinen öğeleri kurtarma artık Microsoft Graph kullanıyor. Toplantı odaları ve dağıtım listesi üyeleri de, yönetici uygulamaya Place.Read.All ve GroupMember.Read.All izni verdiyse. Microsoft Graph çevrimiçi arşiv, paylaşılan posta kutuları ve imza içe aktarma sunmuyor — bunlar EWS kullanılabildiği sürece EWS ile çalışır.</string>
+    <string name="srvViaGraph">Exchange Online — Microsoft Graph üzerinden</string>
 </resources>

@@ -1415,7 +1415,6 @@
     <string name="darkMode">Tmavý režim</string>
     <string name="fontSizeLbl">Velikost písma</string>
     <string name="aiAnalysisLbl">Analýza AI</string>
-    <string name="smartCompose">Chytré psaní</string>
     <string name="summary">Shrnutí</string>
     <string name="categoryLbl">Kategorie</string>
     <string name="tags">Štítky</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Vypněte kanál „Práce na pozadí“ – doručování bude fungovat dál, jen záznam z panelu oznámení zmizí</string>
     <string name="recipientSearchGal">Hledání v adresáři organizace…</string>
     <string name="recipientSearchNone">Nic nenalezeno – můžete zadat celou adresu</string>
-    <string name="composeSuggestInsert">Vložit:</string>
     <string name="senderName">Jméno odesílatele</string>
     <string name="senderNameEmpty">Nenastaveno — v poli Od a v podpisu se zobrazí jen adresa</string>
     <string name="senderNameHint">Celé jméno</string>
@@ -3584,4 +3582,5 @@
     <string name="pdfProtected">PDF je chráněno heslem. Otevřete ho v jiné aplikaci.</string>
     <string name="faq_mail_10_q">Které přílohy se otevřou přímo v aplikaci?</string>
     <string name="faq_mail_10_a">Archivy ZIP, i chráněné heslem, a také TAR, GZ, BZ2 a XZ se otevřou přímo v aplikaci: soubor uvnitř otevřete klepnutím. V aplikaci se otevřou i PDF na Androidu, obrázky, text a CSV, zprávy .eml a vstupenky .pkpass. Na iPhonu a iPadu zobrazí PDF, obrázky a dokumenty Office náhled iOS. Ostatní otevře vhodná aplikace a každý soubor do ní pošlete tlačítkem nahoře. Archivy 7z a RAR se otevřou jen v jiné aplikaci.</string>
+    <string name="quickRepliesCardHint">Text se vloží do odpovědi — zkontrolujte a odešlete</string>
 </resources>

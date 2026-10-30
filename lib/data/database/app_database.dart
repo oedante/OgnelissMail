@@ -1540,21 +1540,16 @@ class AppDatabase extends _$AppDatabase {
   /// «Входящих», и во «Всей почте» (и в папках ярлыков) — в беседе оно
   /// показывалось дважды (замечание 09.10.2026). Склеиваем по Message-ID;
   /// из копий оставляем ту, что не в служебной папке Gmail.
-  static List<Email> dedupCopies(List<Email> rows) {
-    bool virtualFolder(Email e) {
-      final f = '${e.folderId} ${e.folderName ?? ''}'.toLowerCase();
-      return f.contains('[gmail]') ||
-          f.contains('[google mail]') ||
-          f.contains('all mail') ||
-          f.contains('вся почта') ||
-          f.contains('important') ||
-          f.contains('важные') ||
-          f.contains('starred') ||
-          f.contains('помеченные');
-    }
-
+  ///
+  /// Письмо самому себе (1.8.12) — две отдельные копии, в «Отправленных» и
+  /// во «Входящих», каждая со своей прочитанностью. Остаётся непрочитанная:
+  /// её и откроет нажатие, иначе входящая копия так и висела бы
+  /// непрочитанной. [copies] — куда записать остальные копии оставленных
+  /// писем (id оставленного → копии).
+  static List<Email> dedupCopies(List<Email> rows, {Map<String, List<Email>>? copies}) {
     final byMid = <String, int>{};
     final out = <Email>[];
+    final dropped = <int, List<Email>>{};
     for (final e in rows) {
       final raw = e.internetMessageId?.trim().toLowerCase() ?? '';
       if (raw.isEmpty || !raw.contains('@')) {
@@ -1566,11 +1561,37 @@ class AppDatabase extends _$AppDatabase {
       if (i == null) {
         byMid[mid] = out.length;
         out.add(e);
-      } else if (virtualFolder(out[i]) && !virtualFolder(e)) {
+        continue;
+      }
+      final kept = out[i];
+      final vk = isGmailVirtualCopy(kept), ve = isGmailVirtualCopy(e);
+      if ((vk && !ve) || (vk == ve && kept.isRead && !e.isRead)) {
         out[i] = e;
+        (dropped[i] ??= []).add(kept);
+      } else {
+        (dropped[i] ??= []).add(e);
+      }
+    }
+    if (copies != null) {
+      for (final d in dropped.entries) {
+        copies[out[d.key].id] = d.value;
       }
     }
     return out;
+  }
+
+  /// Копия письма в служебной папке Gmail («Вся почта», «Важные», «Помеченные»):
+  /// то же письмо, что во «Входящих», с теми же отметками на сервере.
+  static bool isGmailVirtualCopy(Email e) {
+    final f = '${e.folderId} ${e.folderName ?? ''}'.toLowerCase();
+    return f.contains('[gmail]') ||
+        f.contains('[google mail]') ||
+        f.contains('all mail') ||
+        f.contains('вся почта') ||
+        f.contains('important') ||
+        f.contains('важные') ||
+        f.contains('starred') ||
+        f.contains('помеченные');
   }
 
   /// Письма без тел (HTML и текст) — для всего, что тексты не показывает:
@@ -1597,14 +1618,19 @@ class AppDatabase extends _$AppDatabase {
   /// таблицы писем, то есть во время синхронизации — несколько раз в секунду.
   /// Карточкам беседы нужны шапка и превью; превью, которого нет в строке,
   /// даёт [previewsFromBody]. Строки без тел обратно в базу не записывать.
+  ///
+  /// [dedup] false — и копии одного письма ([dedupCopies] вызывающий
+  /// сделает сам: экрану беседы нужны папки копий).
   Stream<List<Email>> watchConversationLight({
     required String conversationId,
     required String accountId,
+    bool dedup = true,
   }) {
     final q = _EmailListQuery(emails)
       ..where((e) => e.conversationId.equals(conversationId) & e.accountId.equals(accountId))
       ..orderBy([(e) => OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)]);
-    return q.watchLight(this).map(dedupCopies);
+    final rows = q.watchLight(this);
+    return dedup ? rows.map((r) => dedupCopies(r)) : rows;
   }
 
   /// Превью из сохранённого текста письма — начало text/plain одной строкой,
@@ -1772,7 +1798,7 @@ class AppDatabase extends _$AppDatabase {
       final marks = List.filled(part.length, '?').join(',');
       final rows = await customSelect(
         // Копии одного письма (Gmail: «Входящие» и «Вся почта») — одно письмо.
-        "SELECT account_id, conversation_id, COUNT(DISTINCT COALESCE(NULLIF(internet_message_id, ''), id)) AS cnt FROM emails "
+        'SELECT account_id, conversation_id, COUNT(DISTINCT $_messageKeySql) AS cnt FROM emails '
         'WHERE conversation_id IN ($marks) '
         'GROUP BY account_id, conversation_id HAVING cnt > 1',
         variables: [for (final id in part) Variable.withString(id)],
@@ -1785,9 +1811,19 @@ class AppDatabase extends _$AppDatabase {
     return out;
   }
 
+  /// Одно письмо в SQL — как в [dedupCopies]: копии с одним Message-ID
+  /// (письмо самому себе: «Отправленные» и «Входящие»; Gmail: «Входящие» и
+  /// «Вся почта») — одно письмо, письмо без Message-ID — само по себе.
+  static const _messageKeySql = "CASE WHEN instr(internet_message_id, '@') > 0 "
+      "THEN 'm:' || lower(trim(internet_message_id)) ELSE 'i:' || id END";
+
   /// Сводка бесед для строки свёрнутой беседы: число писем, непрочитанных
   /// и отметка «На контроле» любого письма беседы (важнее: «нужно ответить»,
   /// «жду ответа», затем «исполнено»). Только беседы из 2+ писем.
+  ///
+  /// Копии одного письма — одно письмо (1.8.12): письмо самому себе в
+  /// списке было беседой «2», а экран беседы показывал одно письмо
+  /// (замечание владельца 29.10.2026).
   Future<Map<String, ({int count, int unread, int control, String? replied, String? to})>> conversationStats(
       Set<String> conversationIds) async {
     final out = <String, ({int count, int unread, int control, String? replied, String? to})>{};
@@ -1796,8 +1832,8 @@ class AppDatabase extends _$AppDatabase {
       final part = ids.sublist(i, i + 500 > ids.length ? ids.length : i + 500);
       final marks = List.filled(part.length, '?').join(',');
       final rows = await customSelect(
-        'SELECT account_id, conversation_id, COUNT(*) AS cnt, '
-        'SUM(CASE WHEN is_read = 0 THEN 1 ELSE 0 END) AS unread, '
+        'SELECT account_id, conversation_id, COUNT(DISTINCT $_messageKeySql) AS cnt, '
+        'COUNT(DISTINCT CASE WHEN is_read = 0 THEN $_messageKeySql END) AS unread, '
         'MAX(CASE control_state WHEN 2 THEN 4 WHEN 1 THEN 3 WHEN 3 THEN 2 ELSE 0 END) AS ctl, '
         'MAX(CASE WHEN control_state = 1 THEN control_replied END) AS replied, '
         'MAX(CASE WHEN control_state = 1 THEN to_recipients END) AS rcpt '

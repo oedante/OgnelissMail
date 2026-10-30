@@ -18,6 +18,7 @@ import '../../security/mail_classification.dart' show MailLabel;
 import '../../security/smime_mime.dart' show SmimeMime;
 import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
+import 'package:mail_engine/mail_engine.dart' show SmtpNotSentException, TolerantSmtpClient;
 import 'package:drift/drift.dart' show Value, BooleanExpressionOperators;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -428,7 +429,8 @@ class ImapService {
 
   Future<SmtpClient> _openSmtp(AccountModel account, {bool tokenRetried = false}) async {
     final smtpServer = _smtpHost(account);
-    final client = SmtpClient(
+    // Терпимый к голому «334» Яндекса (см. TolerantSmtpClient).
+    final client = TolerantSmtpClient(
       account.email.split('@').last,
       isLogEnabled: false,
       onBadCertificate: (c) => _acceptCert(c, smtpServer, account.smtpPort ?? 465),
@@ -1639,7 +1641,16 @@ class ImapService {
       raw = await mimeTransform(raw);
       protectedText = utf8.decode(raw, allowMalformed: true);
     }
-    final client = await _openSmtp(account);
+    final SmtpClient client;
+    try {
+      client = await _openSmtp(account);
+    } catch (e) {
+      // Подключение или вход не прошли — письмо точно не отправлено, и
+      // очередь может повторить его без риска дубля (1.8.12: тайм-аут входа
+      // считался «сервер мог принять», и письмо сразу падало в «не
+      // отправлено» без повтора).
+      throw SmtpNotSentException(e);
+    }
     try {
       if (protectedText != null) {
         await client.sendMessageText(

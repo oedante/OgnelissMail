@@ -1415,7 +1415,6 @@
     <string name="darkMode">Chế độ tối</string>
     <string name="fontSizeLbl">Cỡ chữ</string>
     <string name="aiAnalysisLbl">Phân tích AI</string>
-    <string name="smartCompose">Soạn thư thông minh</string>
     <string name="summary">Tóm tắt</string>
     <string name="categoryLbl">Danh mục</string>
     <string name="tags">Thẻ</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Tắt kênh “Chạy nền” — thư vẫn được gửi đến bình thường, chỉ mục trong ngăn thông báo biến mất</string>
     <string name="recipientSearchGal">Đang tìm trong danh bạ của tổ chức…</string>
     <string name="recipientSearchNone">Không tìm thấy gì — bạn có thể nhập đầy đủ địa chỉ</string>
-    <string name="composeSuggestInsert">Chèn:</string>
     <string name="senderName">Tên người gửi</string>
     <string name="senderNameEmpty">Chưa đặt — chỉ hiển thị địa chỉ trong mục Từ và chữ ký</string>
     <string name="senderNameHint">Họ và tên</string>
@@ -3546,4 +3544,5 @@
     <string name="pdfProtected">Tệp PDF được bảo vệ bằng mật khẩu. Hãy mở bằng ứng dụng khác.</string>
     <string name="faq_mail_10_q">Tệp đính kèm nào mở ngay trong ứng dụng?</string>
     <string name="faq_mail_10_a">Tệp nén ZIP, kể cả có mật khẩu, cùng TAR, GZ, BZ2 và XZ mở ngay trong ứng dụng: chạm vào tệp bên trong để mở. PDF trên Android, ảnh, văn bản và CSV, thư .eml và vé .pkpass cũng mở trong ứng dụng. Trên iPhone và iPad, Xem nhanh của iOS hiển thị PDF, ảnh và tài liệu Office. Các tệp khác mở bằng ứng dụng phù hợp, và có thể gửi mọi tệp tới ứng dụng đó bằng nút ở trên cùng. Tệp nén 7z và RAR chỉ mở được bằng ứng dụng khác.</string>
+    <string name="quickRepliesCardHint">Văn bản được đưa vào thư trả lời — kiểm tra rồi gửi</string>
 </resources>

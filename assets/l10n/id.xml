@@ -1415,7 +1415,6 @@
     <string name="darkMode">Mode gelap</string>
     <string name="fontSizeLbl">Ukuran font</string>
     <string name="aiAnalysisLbl">Analisis AI</string>
-    <string name="smartCompose">Tulis cerdas</string>
     <string name="summary">Ringkasan</string>
     <string name="categoryLbl">Kategori</string>
     <string name="tags">Tag</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Matikan saluran “Kerja di latar belakang” — pengiriman tetap berjalan, entri di bilah notifikasi hilang</string>
     <string name="recipientSearchGal">Mencari di direktori organisasi…</string>
     <string name="recipientSearchNone">Tidak ada hasil — Anda bisa mengetik alamat lengkap</string>
-    <string name="composeSuggestInsert">Sisipkan:</string>
     <string name="senderName">Nama pengirim</string>
     <string name="senderNameEmpty">Belum diatur — hanya alamat yang ditampilkan di Dari dan tanda tangan</string>
     <string name="senderNameHint">Nama lengkap</string>
@@ -3546,4 +3544,5 @@
     <string name="pdfProtected">PDF dilindungi kata sandi. Buka di aplikasi lain.</string>
     <string name="faq_mail_10_q">Lampiran apa yang terbuka langsung di aplikasi?</string>
     <string name="faq_mail_10_a">Arsip ZIP, termasuk yang memakai kata sandi, serta TAR, GZ, BZ2, dan XZ terbuka langsung di aplikasi: ketuk file di dalamnya untuk membukanya. PDF di Android, gambar, teks dan CSV, pesan .eml, serta tiket .pkpass juga terbuka di aplikasi. Di iPhone dan iPad, Lihat Cepat iOS menampilkan PDF, gambar, dan dokumen Office. Selebihnya dibuka aplikasi yang sesuai, dan file apa pun bisa dikirim ke sana dengan tombol di atas. Arsip 7z dan RAR hanya terbuka di aplikasi lain.</string>
+    <string name="quickRepliesCardHint">Teks dimasukkan ke balasan — periksa lalu kirim</string>
 </resources>

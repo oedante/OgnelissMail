@@ -1415,7 +1415,6 @@
     <string name="darkMode">Koyu mod</string>
     <string name="fontSizeLbl">Yazı tipi boyutu</string>
     <string name="aiAnalysisLbl">Yapay zekâ analizi</string>
-    <string name="smartCompose">Akıllı yazma</string>
     <string name="summary">Özet</string>
     <string name="categoryLbl">Kategori</string>
     <string name="tags">Etiketler</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">“Arka plan çalışması” kanalını kapatın; teslimat çalışmaya devam eder, bildirim panelindeki öğe kaybolur</string>
     <string name="recipientSearchGal">Kuruluş rehberinde aranıyor…</string>
     <string name="recipientSearchNone">Hiçbir şey bulunamadı — adresin tamamını yazabilirsiniz</string>
-    <string name="composeSuggestInsert">Ekle:</string>
     <string name="senderName">Gönderen adı</string>
     <string name="senderNameEmpty">Ayarlanmadı — Kimden alanında ve imzada yalnızca adres gösterilir</string>
     <string name="senderNameHint">Ad soyad</string>
@@ -3565,4 +3563,5 @@
     <string name="pdfProtected">PDF parolayla korunuyor. Başka bir uygulamada açın.</string>
     <string name="faq_mail_10_q">Hangi ekler doğrudan uygulamada açılır?</string>
     <string name="faq_mail_10_a">Parolalı olanlar dahil ZIP arşivleri ile TAR, GZ, BZ2 ve XZ doğrudan uygulamada açılır: açmak için içindeki bir dosyaya dokunun. Android\'de PDF\'ler, görseller, metin ve CSV, .eml iletileri ve .pkpass biletleri de uygulamada açılır. iPhone ve iPad\'de iOS Hızlı Bakış PDF\'leri, görselleri ve Office belgelerini gösterir. Diğerleri uygun bir uygulamada açılır ve her dosya üstteki düğmeyle oraya gönderilebilir. 7z ve RAR arşivleri yalnızca başka bir uygulamada açılır.</string>
+    <string name="quickRepliesCardHint">Metin yanıta eklenir — kontrol edip gönderin</string>
 </resources>

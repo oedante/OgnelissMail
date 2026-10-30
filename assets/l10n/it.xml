@@ -1415,7 +1415,6 @@
     <string name="darkMode">Modalità scura</string>
     <string name="fontSizeLbl">Dimensione del carattere</string>
     <string name="aiAnalysisLbl">Analisi con IA</string>
-    <string name="smartCompose">Scrittura intelligente</string>
     <string name="summary">Riepilogo</string>
     <string name="categoryLbl">Categoria</string>
     <string name="tags">Tag</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Disattiva il canale “Attività in background”: la consegna continua a funzionare, ma la voce nel pannello delle notifiche scompare</string>
     <string name="recipientSearchGal">Ricerca nella rubrica dell\'organizzazione…</string>
     <string name="recipientSearchNone">Nessun risultato — puoi digitare l\'indirizzo completo</string>
-    <string name="composeSuggestInsert">Inserisci:</string>
     <string name="senderName">Nome del mittente</string>
     <string name="senderNameEmpty">Non impostato — in Da e nella firma viene mostrato solo l\'indirizzo</string>
     <string name="senderNameHint">Nome completo</string>
@@ -3565,4 +3563,5 @@
     <string name="pdfProtected">Il PDF è protetto da password. Aprilo in un\'altra app.</string>
     <string name="faq_mail_10_q">Quali allegati si aprono direttamente nell\'app?</string>
     <string name="faq_mail_10_a">Gli archivi ZIP, anche protetti da password, e anche TAR, GZ, BZ2 e XZ si aprono direttamente nell\'app: tocca un file all\'interno per aprirlo. Nell\'app si aprono anche i PDF su Android, le immagini, il testo e i CSV, i messaggi .eml e i biglietti .pkpass. Su iPhone e iPad, Quick Look di iOS mostra PDF, immagini e documenti Office. Il resto si apre in un\'app adatta, e qualsiasi file può esserle inviato con il pulsante in alto. Gli archivi 7z e RAR si aprono solo in un\'altra app.</string>
+    <string name="quickRepliesCardHint">Il testo va nella risposta: controlla e invia</string>
 </resources>

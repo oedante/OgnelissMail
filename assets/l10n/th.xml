@@ -1415,7 +1415,6 @@
     <string name="darkMode">โหมดมืด</string>
     <string name="fontSizeLbl">ขนาดตัวอักษร</string>
     <string name="aiAnalysisLbl">การวิเคราะห์ด้วย AI</string>
-    <string name="smartCompose">เขียนอัจฉริยะ</string>
     <string name="summary">สรุป</string>
     <string name="categoryLbl">หมวดหมู่</string>
     <string name="tags">แท็ก</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">ปิดช่อง “การทำงานเบื้องหลัง” — การรับอีเมลยังทำงานต่อไป รายการในแถบแจ้งเตือนจะหายไป</string>
     <string name="recipientSearchGal">กำลังค้นหาในสมุดที่อยู่ขององค์กร…</string>
     <string name="recipientSearchNone">ไม่พบรายการ — พิมพ์ที่อยู่แบบเต็มได้เลย</string>
-    <string name="composeSuggestInsert">แทรก:</string>
     <string name="senderName">ชื่อผู้ส่ง</string>
     <string name="senderNameEmpty">ยังไม่ได้ตั้งค่า: จะแสดงเฉพาะที่อยู่อีเมลใน “จาก” และลายเซ็น</string>
     <string name="senderNameHint">ชื่อ-นามสกุล</string>
@@ -3546,4 +3544,5 @@
     <string name="pdfProtected">PDF นี้มีรหัสผ่านป้องกัน โปรดเปิดในแอปอื่น</string>
     <string name="faq_mail_10_q">ไฟล์แนบแบบใดเปิดในแอปได้โดยตรง</string>
     <string name="faq_mail_10_a">ไฟล์บีบอัด ZIP รวมถึงแบบมีรหัสผ่าน และ TAR, GZ, BZ2, XZ เปิดในแอปได้โดยตรง แตะไฟล์ด้านในเพื่อเปิด PDF บน Android รูปภาพ ข้อความและ CSV อีเมล .eml และตั๋ว .pkpass ก็เปิดในแอปได้เช่นกัน บน iPhone และ iPad การดูด่วนของ iOS จะแสดง PDF รูปภาพ และเอกสาร Office ไฟล์อื่นจะเปิดในแอปที่เหมาะสม และส่งไฟล์ใดก็ได้ไปยังแอปนั้นด้วยปุ่มด้านบน ไฟล์บีบอัด 7z และ RAR เปิดได้เฉพาะในแอปอื่น</string>
+    <string name="quickRepliesCardHint">ข้อความจะอยู่ในคำตอบ — ตรวจสอบแล้วส่ง</string>
 </resources>

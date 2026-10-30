@@ -34,12 +34,14 @@ import 'package:ogneliss/services/archive/archive_db.dart';
 import 'package:ogneliss/services/archive/archive_vault.dart';
 import 'package:ogneliss/services/background/work_scheduler.dart';
 import 'package:ogneliss/widgets/common/hero_email_transition.dart';
+import 'package:ogneliss/widgets/common/ui_zoom.dart';
 import 'package:ogneliss/widgets/navigation/app_bottom_bar.dart';
 import 'package:ogneliss/widgets/ui/action_sheet.dart';
 import 'package:ogneliss/widgets/ui/app_menu_button.dart';
 import 'package:ogneliss/widgets/ui/confirm_dialog.dart';
 import 'package:ogneliss/widgets/ui/section_band.dart';
 import 'package:ogneliss/widgets/ui/settings_group.dart';
+import 'package:ogneliss/widgets/ui/wheel_pickers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Темы снимков: светлая, тёмная, AMOLED, высокий контраст.
@@ -107,10 +109,15 @@ Future<void> _shot(
   SharedPreferences? prefs,
   Future<void> Function(WidgetTester tester)? before,
   List<Override> extra = const [],
+  // Системный шрифт и масштаб интерфейса, как в приложении (main.dart:
+  // UiZoom.auto по ширине и шрифту, UiZoomBox) — 1.8.12, проверка экранов
+  // на разных размерах. null — без них (прежние снимки).
+  double? textScale,
+  double dpr = 2,
 }) async {
   FlutterSecureStorage.setMockInitialValues({});
-  tester.view.physicalSize = size * 2;
-  tester.view.devicePixelRatio = 2;
+  tester.view.physicalSize = size * dpr;
+  tester.view.devicePixelRatio = dpr;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(ProviderScope(
     overrides: [
@@ -130,6 +137,23 @@ Future<void> _shot(
         GlobalCupertinoLocalizations.delegate,
       ],
       home: home,
+      builder: textScale == null
+          ? null
+          : (context, child) {
+              final mq = MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale));
+              final zoom = UiZoom.auto(mq.size, textScale.clamp(0.8, 1.6));
+              UiZoom.current = zoom;
+              return MediaQuery(
+                data: mq,
+                child: UiZoomBox(
+                  zoom: zoom,
+                  child: MediaQuery(
+                      data: UiZoom.scaleData(mq, zoom).copyWith(
+                          textScaler: TextScaler.linear(textScale).clamp(maxScaleFactor: 1.6)),
+                      child: child!),
+                ),
+              );
+            },
     ),
   ));
   await _settle(tester);
@@ -475,6 +499,63 @@ void main() {
     });
   }
 
+  // Телефоны разной ширины и плотности, обычный и крупный шрифт — с
+  // масштабом интерфейса, как в приложении (1.8.12).
+  for (final (dev, size, dpr) in const [
+    ('320', Size(320, 568), 2.0),
+    ('360', Size(360, 780), 3.0),
+    ('412', Size(412, 915), 2.625),
+  ]) {
+    for (final ts in const [1.0, 1.3, 1.6]) {
+      final tag = '${dev}_x${(ts * 10).round()}';
+      testWidgets('размеры — лента $tag', (tester) async {
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        final db = (await tester.runAsync(_db))!;
+        await _shot(tester, 'size_mail_$tag', const _MailRows(), theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs,
+            size: size, dpr: dpr, textScale: ts);
+        await tester.runAsync(db.close);
+      });
+      testWidgets('размеры — письмо $tag', (tester) async {
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        final db = (await tester.runAsync(_db))!;
+        await tester.runAsync(() => _letter(db));
+        await _shot(tester, 'size_letter_$tag', const MailDetailScreen(emailId: 'e1', accountId: 'a1'),
+            theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, dpr: dpr, textScale: ts);
+        await tester.runAsync(db.close);
+      });
+      testWidgets('размеры — новое письмо $tag', (tester) async {
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        final db = (await tester.runAsync(_db))!;
+        await _shot(tester, 'size_compose_$tag', const ComposeScreen(accountId: 'a1'),
+            theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, dpr: dpr, textScale: ts);
+        await tester.runAsync(db.close);
+      });
+      testWidgets('размеры — настройки $tag', (tester) async {
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        final db = (await tester.runAsync(_db))!;
+        await _shot(tester, 'size_settings_$tag', const SettingsScreen(), theme: AppTheme.lightTheme(1.0), db: db,
+            prefs: prefs, size: size, dpr: dpr, textScale: ts);
+        await tester.runAsync(db.close);
+      });
+      testWidgets('размеры — барабаны $tag', (tester) async {
+        await _shot(tester, 'size_wheels_$tag', const _WheelHost(), theme: AppTheme.lightTheme(1.0),
+            size: size, dpr: dpr, textScale: ts, before: (tester) async => tester.tap(find.text('open')));
+      });
+    }
+  }
+
+  // Барабаны даты и времени (1.8.12): одна полоса выбора, изгиб, затухание.
+  for (final t in const ['light', 'dark']) {
+    testWidgets('барабаны — $t', (tester) async {
+      await _shot(tester, 'wheels_$t', const _WheelHost(), theme: _themes[t]!(),
+          before: (tester) async => tester.tap(find.text('open')));
+    });
+  }
+
   for (final font in const ['roboto', 'medeo']) {
     testWidgets('общие — шрифт $font', (tester) async {
       SharedPreferences.setMockInitialValues({'s_ui_font': font});
@@ -555,6 +636,23 @@ class _CardHost extends StatelessWidget {
                         child: Text('Адрес можно перетащить в другое поле'),
                       ),
                     ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      );
+}
+
+class _WheelHost extends StatelessWidget {
+  const _WheelHost();
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: const Text('Создать встречу')),
+        body: Builder(
+          builder: (context) => Center(
+            child: FilledButton(
+              onPressed: () => showWheelDateTimePicker(context, initial: DateTime(2026, 10, 30, 21, 30)),
               child: const Text('open'),
             ),
           ),

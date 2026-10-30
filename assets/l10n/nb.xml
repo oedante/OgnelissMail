@@ -1415,7 +1415,6 @@
     <string name="darkMode">Mørk modus</string>
     <string name="fontSizeLbl">Skriftstørrelse</string>
     <string name="aiAnalysisLbl">AI-analyse</string>
-    <string name="smartCompose">Smart Compose</string>
     <string name="summary">Sammendrag</string>
     <string name="categoryLbl">Kategori</string>
     <string name="tags">Tagger</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Slå av kanalen «Bakgrunnsarbeid» – leveringen fortsetter, men oppføringen i varselpanelet forsvinner</string>
     <string name="recipientSearchGal">Søker i organisasjonens adresseliste…</string>
     <string name="recipientSearchNone">Ingen treff – du kan skrive inn hele adressen</string>
-    <string name="composeSuggestInsert">Sett inn:</string>
     <string name="senderName">Avsendernavn</string>
     <string name="senderNameEmpty">Ikke angitt – bare adressen vises i Fra og i signaturen</string>
     <string name="senderNameHint">Fullt navn</string>
@@ -3565,4 +3563,5 @@
     <string name="pdfProtected">PDF-en er passordbeskyttet. Åpne den i en annen app.</string>
     <string name="faq_mail_10_q">Hvilke vedlegg åpnes rett i appen?</string>
     <string name="faq_mail_10_a">ZIP-arkiver, også passordbeskyttede, og TAR, GZ, BZ2 og XZ åpnes rett i appen: trykk på en fil i arkivet for å åpne den. PDF-er på Android, bilder, tekst og CSV, .eml-meldinger og .pkpass-billetter åpnes også i appen. På iPhone og iPad viser iOS Hurtigvisning PDF-er, bilder og Office-dokumenter. Alt annet åpnes i en passende app, og alle filer kan sendes dit med knappen øverst. 7z- og RAR-arkiver åpnes bare i en annen app.</string>
+    <string name="quickRepliesCardHint">Teksten settes inn i svaret – sjekk og send</string>
 </resources>

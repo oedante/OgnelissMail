@@ -1415,7 +1415,6 @@
     <string name="darkMode">Mode sombre</string>
     <string name="fontSizeLbl">Taille de police</string>
     <string name="aiAnalysisLbl">Analyse IA</string>
-    <string name="smartCompose">Saisie semi-automatique</string>
     <string name="summary">Résumé</string>
     <string name="categoryLbl">Catégorie</string>
     <string name="tags">Balises</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Désactivez le canal « Travail en arrière-plan » — la distribution continue</string>
     <string name="recipientSearchGal">Recherche dans l’annuaire de l’organisation…</string>
     <string name="recipientSearchNone">Aucun résultat — saisissez l’adresse complète</string>
-    <string name="composeSuggestInsert">Insérer :</string>
     <string name="senderName">Nom de l’expéditeur</string>
     <string name="senderNameEmpty">Non défini — seule l’adresse est affichée</string>
     <string name="senderNameHint">Nom complet</string>
@@ -3565,4 +3563,5 @@
     <string name="pdfProtected">Ce PDF est protégé par un mot de passe. Ouvrez-le dans une autre application.</string>
     <string name="faq_mail_10_q">Quelles pièces jointes s\'ouvrent directement dans l\'application ?</string>
     <string name="faq_mail_10_a">Les archives ZIP, même protégées par mot de passe, ainsi que TAR, GZ, BZ2 et XZ s\'ouvrent directement dans l\'application : touchez un fichier pour l\'ouvrir. Les PDF sur Android, les images, le texte et le CSV, les messages .eml et les billets .pkpass s\'ouvrent aussi dans l\'application. Sur iPhone et iPad, l\'aperçu d\'iOS affiche les PDF, les images et les documents Office. Le reste s\'ouvre dans une application adaptée, et tout fichier peut y être envoyé avec le bouton en haut. Les archives 7z et RAR s\'ouvrent seulement dans une autre application.</string>
+    <string name="quickRepliesCardHint">Le texte est placé dans la réponse : vérifiez et envoyez</string>
 </resources>

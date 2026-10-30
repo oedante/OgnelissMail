@@ -1415,7 +1415,6 @@
     <string name="darkMode">Modo oscuro</string>
     <string name="fontSizeLbl">Tamaño de fuente</string>
     <string name="aiAnalysisLbl">Análisis con IA</string>
-    <string name="smartCompose">Escritura inteligente</string>
     <string name="summary">Resumen</string>
     <string name="categoryLbl">Categoría</string>
     <string name="tags">Etiquetas</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Desactiva el canal «Trabajo en segundo plano»: la entrega sigue funcionando, pero desaparece la entrada del panel de notificaciones</string>
     <string name="recipientSearchGal">Buscando en el directorio de la organización…</string>
     <string name="recipientSearchNone">No se ha encontrado nada: puedes escribir la dirección completa</string>
-    <string name="composeSuggestInsert">Insertar:</string>
     <string name="senderName">Nombre del remitente</string>
     <string name="senderNameEmpty">Sin definir: en De y en la firma solo se muestra la dirección</string>
     <string name="senderNameHint">Nombre completo</string>
@@ -3565,4 +3563,5 @@
     <string name="pdfProtected">El PDF está protegido con contraseña. Ábrelo en otra app.</string>
     <string name="faq_mail_10_q">¿Qué adjuntos se abren directamente en la app?</string>
     <string name="faq_mail_10_a">Los archivos ZIP, incluso con contraseña, y también TAR, GZ, BZ2 y XZ se abren directamente en la app: toca un archivo de dentro para abrirlo. Los PDF en Android, las imágenes, el texto y CSV, los mensajes .eml y las entradas .pkpass también se abren en la app. En iPhone y iPad, la Vista rápida de iOS muestra PDF, imágenes y documentos de Office. Lo demás lo abre una app adecuada, y cualquier archivo se puede enviar a ella con el botón de arriba. Los archivos 7z y RAR solo se abren en otra app.</string>
+    <string name="quickRepliesCardHint">El texto se coloca en la respuesta: revísalo y envíalo</string>
 </resources>

@@ -1415,7 +1415,6 @@
     <string name="darkMode">ダークモード</string>
     <string name="fontSizeLbl">文字サイズ</string>
     <string name="aiAnalysisLbl">AI 分析</string>
-    <string name="smartCompose">スマート作成</string>
     <string name="summary">要約</string>
     <string name="categoryLbl">カテゴリ</string>
     <string name="tags">タグ</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">「バックグラウンド動作」チャンネルをオフにします。メールの受信は続き、通知パネルの項目だけが消えます</string>
     <string name="recipientSearchGal">組織のアドレス帳を検索しています…</string>
     <string name="recipientSearchNone">見つかりませんでした — アドレスをそのまま入力できます</string>
-    <string name="composeSuggestInsert">挿入：</string>
     <string name="senderName">差出人名</string>
     <string name="senderNameEmpty">未設定：「差出人」と署名にはアドレスのみが表示されます</string>
     <string name="senderNameHint">氏名</string>
@@ -3546,4 +3544,5 @@
     <string name="pdfProtected">このPDFはパスワードで保護されています。別のアプリで開いてください。</string>
     <string name="faq_mail_10_q">アプリ内で直接開ける添付ファイルは？</string>
     <string name="faq_mail_10_a">パスワード付きを含む ZIP アーカイブと、TAR、GZ、BZ2、XZ はアプリ内で直接開けます。中のファイルをタップすると開きます。Android の PDF、画像、テキストと CSV、.eml メール、.pkpass チケットもアプリ内で開けます。iPhone と iPad では、PDF、画像、Office 書類を iOS のクイックルックで表示します。それ以外は適したアプリで開き、上部のボタンでどのファイルも送れます。7z と RAR のアーカイブは別のアプリでのみ開けます。</string>
+    <string name="quickRepliesCardHint">テキストが返信に入ります。確認して送信してください</string>
 </resources>

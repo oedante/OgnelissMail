@@ -757,8 +757,27 @@ class NotificationService {
     );
   }
 
+  /// Payload уведомления для журнала: тип и ключи, без темы и адресов.
+  static String payloadSummary(String? payload) {
+    if (payload == null || payload.isEmpty) return '—';
+    if (!payload.startsWith('{')) {
+      final i = payload.indexOf(':');
+      return i < 0 ? payload : payload.substring(0, i);
+    }
+    try {
+      final m = jsonDecode(payload) as Map<String, dynamic>;
+      return [
+        m['type'] ?? 'email',
+        for (final k in const ['emailId', 'folderId', 'id']) if (m[k] != null) '$k=${m[k]}',
+      ].join(' ');
+    } catch (_) {
+      return '?';
+    }
+  }
+
   void _onNotificationResponse(NotificationResponse response) {
-    AppLogger.info('Notification action: ${response.actionId} / ${response.payload}');
+    // Без темы и адреса из payload (1.8.12): журнал уходит в поддержку.
+    AppLogger.info('Notification action: ${response.actionId} / ${payloadSummary(response.payload)}');
     onResponse?.call(response.actionId ?? '', response.payload, response.input);
   }
 }

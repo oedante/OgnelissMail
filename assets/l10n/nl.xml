@@ -1415,7 +1415,6 @@
     <string name="darkMode">Donkere modus</string>
     <string name="fontSizeLbl">Lettergrootte</string>
     <string name="aiAnalysisLbl">AI-analyse</string>
-    <string name="smartCompose">Slim schrijven</string>
     <string name="summary">Samenvatting</string>
     <string name="categoryLbl">Categorie</string>
     <string name="tags">Tags</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Zet het kanaal “Achtergrondactiviteit” uit: bezorging blijft werken, maar de melding verdwijnt uit het meldingenpaneel</string>
     <string name="recipientSearchGal">Zoeken in de adreslijst van de organisatie…</string>
     <string name="recipientSearchNone">Niets gevonden — je kunt het volledige adres typen</string>
-    <string name="composeSuggestInsert">Invoegen:</string>
     <string name="senderName">Naam afzender</string>
     <string name="senderNameEmpty">Niet ingesteld: in ‘Van’ en de handtekening staat alleen het adres</string>
     <string name="senderNameHint">Volledige naam</string>
@@ -3565,4 +3563,5 @@
     <string name="pdfProtected">De pdf is beveiligd met een wachtwoord. Open hem in een andere app.</string>
     <string name="faq_mail_10_q">Welke bijlagen openen direct in de app?</string>
     <string name="faq_mail_10_a">ZIP-archieven, ook met wachtwoord, en TAR, GZ, BZ2 en XZ openen direct in de app: tik op een bestand erin om het te openen. Pdf\'s op Android, afbeeldingen, tekst en CSV, .eml-berichten en .pkpass-tickets openen ook in de app. Op iPhone en iPad toont Snel bekijken van iOS pdf\'s, afbeeldingen en Office-documenten. De rest opent in een geschikte app, en elk bestand kun je daarheen sturen met de knop bovenaan. 7z- en RAR-archieven openen alleen in een andere app.</string>
+    <string name="quickRepliesCardHint">De tekst komt in het antwoord — controleer en verstuur</string>
 </resources>

@@ -1415,7 +1415,6 @@
     <string name="darkMode">Tumma tila</string>
     <string name="fontSizeLbl">Kirjasinkoko</string>
     <string name="aiAnalysisLbl">Tekoälyanalyysi</string>
-    <string name="smartCompose">Smart Compose</string>
     <string name="summary">Yhteenveto</string>
     <string name="categoryLbl">Luokka</string>
     <string name="tags">Tunnisteet</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Poista käytöstä ”Taustatyö”-kanava – toimitus jatkuu, mutta merkintä ilmoituspaneelista häviää</string>
     <string name="recipientSearchGal">Haetaan organisaation osoitekirjasta…</string>
     <string name="recipientSearchNone">Ei tuloksia – voit kirjoittaa koko osoitteen</string>
-    <string name="composeSuggestInsert">Lisää:</string>
     <string name="senderName">Lähettäjän nimi</string>
     <string name="senderNameEmpty">Ei asetettu – Lähettäjä-kentässä ja allekirjoituksessa näkyy vain osoite</string>
     <string name="senderNameHint">Koko nimi</string>
@@ -3565,4 +3563,5 @@
     <string name="pdfProtected">PDF on suojattu salasanalla. Avaa se toisessa sovelluksessa.</string>
     <string name="faq_mail_10_q">Mitkä liitteet avautuvat suoraan sovelluksessa?</string>
     <string name="faq_mail_10_a">ZIP-arkistot, myös salasanalla suojatut, sekä TAR, GZ, BZ2 ja XZ avautuvat suoraan sovelluksessa: avaa tiedosto napauttamalla sitä. Myös PDF-tiedostot Androidissa, kuvat, teksti ja CSV, .eml-viestit ja .pkpass-liput avautuvat sovelluksessa. iPhonessa ja iPadissa iOS:n pikakatselu näyttää PDF-tiedostot, kuvat ja Office-asiakirjat. Muut avaa sopiva sovellus, ja minkä tahansa tiedoston voi lähettää siihen yläreunan painikkeella. 7z- ja RAR-arkistot avautuvat vain toisessa sovelluksessa.</string>
+    <string name="quickRepliesCardHint">Teksti lisätään vastaukseen – tarkista ja lähetä</string>
 </resources>

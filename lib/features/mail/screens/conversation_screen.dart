@@ -59,20 +59,27 @@ import '../providers/conversation_mute.dart';
 import '../../../widgets/ui/app_menu_button.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
+/// Письма беседы и другие копии каждого из них (письмо самому себе лежит и в
+/// «Отправленных», и во «Входящих»: одна карточка с обеими метками папок;
+/// «Прочитать все» и «Удалить беседу» — и для копий). Копии в служебных
+/// папках Gmail не входят: это то же письмо на сервере.
+typedef _ConvRows = ({List<EmailModel> emails, Map<String, List<EmailModel>> copies});
+
 /// Письма беседы из БД, самое новое первым — строки без тел (1.5.9): раньше
 /// каждое изменение таблицы писем (во время синхронизации — несколько раз в
 /// секунду) перечитывало тексты всех писем длинной беседы. Изменения других
 /// писем экран не перерисовывают. Превью, которого нет в строке (IMAP),
 /// берётся из начала текста — один раз на письмо.
-Stream<List<EmailModel>> _watchConversation(
-    AppDatabase db, String conversationId, String accountId) {
+Stream<_ConvRows> _watchConversation(AppDatabase db, String conversationId, String accountId) {
   final previews = <String, String>{};
   final asked = <String>{};
   bool noPreview(Email r) => (r.bodyPreview ?? '').trim().isEmpty;
   return db
-      .watchConversationLight(conversationId: conversationId, accountId: accountId)
+      .watchConversationLight(conversationId: conversationId, accountId: accountId, dedup: false)
       .distinct((a, b) => listEquals(a, b))
-      .asyncMap((rows) async {
+      .asyncMap((all) async {
+    final dropped = <String, List<Email>>{};
+    final rows = AppDatabase.dedupCopies(all, copies: dropped);
     final need = [
       for (final r in rows)
         if (noPreview(r) && asked.add(r.id)) r.id,
@@ -84,12 +91,21 @@ Stream<List<EmailModel>> _watchConversation(
         AppLogger.debug('Беседа: превью из текста — $e');
       }
     }
-    return [
-      for (final r in rows)
-        emailModelFromRow(noPreview(r) && previews[r.id] != null
-            ? r.copyWith(bodyPreview: Value(previews[r.id]))
-            : r),
-    ];
+    return (
+      emails: [
+        for (final r in rows)
+          emailModelFromRow(noPreview(r) && previews[r.id] != null
+              ? r.copyWith(bodyPreview: Value(previews[r.id]))
+              : r),
+      ],
+      copies: {
+        for (final d in dropped.entries)
+          d.key: [
+            for (final c in d.value)
+              if (!AppDatabase.isGmailVirtualCopy(c)) emailModelFromRow(c),
+          ],
+      },
+    );
   });
 }
 
@@ -112,7 +128,7 @@ class ConversationScreen extends ConsumerStatefulWidget {
 }
 
 class _ConversationScreenState extends ConsumerState<ConversationScreen> {
-  late final Stream<List<EmailModel>> _stream;
+  late final Stream<_ConvRows> _stream;
   bool _busy = false;
 
   @override
@@ -153,7 +169,10 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     }
   }
 
-  Future<void> _deleteAll(List<EmailModel> emails, AppLocalizations l10n) async {
+  /// [copies] — другие копии писем беседы (письмо самому себе — и в
+  /// «Отправленных»): удаляются вместе с письмами, в счёт не входят.
+  Future<void> _deleteAll(List<EmailModel> emails, AppLocalizations l10n,
+      {List<EmailModel> copies = const []}) async {
     final account = ref.read(accountsProvider).where((a) => a.id == widget.accountId).firstOrNull;
     if (account == null) return;
     final trashId = await ref
@@ -172,7 +191,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     if (!ok || !mounted) return;
     setState(() => _busy = true);
     final byFolder = <String, List<String>>{};
-    for (final e in toMove) {
+    for (final e in [...toMove, ...copies.where((c) => c.folderId != trashId)]) {
       (byFolder[e.folderId] ??= []).add(e.id);
     }
     try {
@@ -436,10 +455,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     final theme = Theme.of(context);
     final chat = ref.watch(convChatOrderProvider);
     final quickReply = ref.watch(quickReplyBarProvider);
-    return StreamBuilder<List<EmailModel>>(
+    return StreamBuilder<_ConvRows>(
       stream: _stream,
       builder: (context, snap) {
-        final emails = snap.data;
+        final emails = snap.data?.emails;
+        final copies = snap.data?.copies ?? const <String, List<EmailModel>>{};
         final subject = (emails != null && emails.isNotEmpty) ? emails.first.subject : '';
         final target = emails == null ? null : _replyTarget(emails);
         final hasUnread = emails != null && emails.any((e) => !e.isRead);
@@ -474,6 +494,10 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 builder: (cardCtx) => _MessageCard(
                   email: e,
                   mine: mine,
+                  alsoIn: [
+                    for (final c in copies[e.id] ?? const <EmailModel>[])
+                      if ((c.folderName ?? '').isNotEmpty) c.folderName!,
+                  ],
                   onTap: () => _open(e),
                   // Карточка письма с быстрыми действиями, как в ленте
                   // (1.6.30); полный список — «Ещё…».
@@ -525,7 +549,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 IconButton(
                   tooltip: l10n.tr('markAllRead'),
                   icon: const Icon(AppIcons.mark_email_read),
-                  onPressed: _busy ? null : () => _markAllRead(emails),
+                  onPressed: _busy ? null : () => _markAllRead([...emails, for (final c in copies.values) ...c]),
                 ),
               if (emails != null && emails.isNotEmpty)
                 AppMenuButton<String>(
@@ -537,7 +561,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                       case 'mute':
                         unawaited(_toggleMute(l10n));
                       case 'delete':
-                        if (!_busy) unawaited(_deleteAll(emails, l10n));
+                        if (!_busy) {
+                          unawaited(_deleteAll(emails, l10n, copies: [for (final c in copies.values) ...c]));
+                        }
                     }
                   },
                   itemBuilder: (_) => [
@@ -636,7 +662,11 @@ class _MessageCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
 
-  const _MessageCard({required this.email, required this.mine, required this.onTap, this.onLongPress});
+  /// Другие папки, где лежит копия этого письма (письмо самому себе).
+  final List<String> alsoIn;
+
+  const _MessageCard(
+      {required this.email, required this.mine, required this.onTap, this.onLongPress, this.alsoIn = const []});
 
   @override
   Widget build(BuildContext context) {
@@ -645,6 +675,10 @@ class _MessageCard extends StatelessWidget {
     final unread = !email.isRead;
     final name = email.from.label;
     final preview = email.preview.replaceAll(RegExp(r'\s+'), ' ').trim();
+    final folders = <String>{
+      if ((email.folderName ?? '').isNotEmpty) email.folderName!,
+      ...alsoIn,
+    };
     // Фото — в серой рамке (её рисует HeroEmailAvatar для всех портретов).
     // Нажатие на аватар — карточка отправителя (должность, отдел, телефоны).
     final avatar = GestureDetector(
@@ -737,22 +771,22 @@ class _MessageCard extends StatelessWidget {
                             ?.copyWith(color: scheme.onSurfaceVariant),
                       ),
                     ],
-                    if ((email.folderName ?? '').isNotEmpty) ...[
+                    if (folders.isNotEmpty) ...[
                       const SizedBox(height: Space.s),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: Space.s, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: scheme.secondaryContainer,
-                          borderRadius: Radii.chipAll,
-                        ),
-                        child: Text(
-                          email.folderName!.toUpperCase() == 'INBOX'
-                              ? AppLocalizations.of(context).tr('inbox')
-                              : email.folderName!,
-                          style: theme.textTheme.labelSmall
-                              ?.copyWith(color: scheme.onSecondaryContainer),
-                        ),
-                      ),
+                      Wrap(spacing: Space.xs, runSpacing: Space.xs, children: [
+                        for (final f in folders)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: Space.s, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: scheme.secondaryContainer,
+                              borderRadius: Radii.chipAll,
+                            ),
+                            child: Text(
+                              f.toUpperCase() == 'INBOX' ? AppLocalizations.of(context).tr('inbox') : f,
+                              style: theme.textTheme.labelSmall?.copyWith(color: scheme.onSecondaryContainer),
+                            ),
+                          ),
+                      ]),
                     ],
                   ],
                 ),
@@ -830,7 +864,7 @@ class _ConversationPagerScreenState extends ConsumerState<ConversationPagerScree
     final width = MailHtmlView.bodyWidthOf(context);
     final dark = theme.brightness == Brightness.dark;
     final page = mailPageColor(theme);
-    final scale = ref.read(settingsProvider).fontScale;
+    final scale = MailHtmlView.textScaleOf(context);
     final id = ids[next];
     unawaited(WorkScheduler.instance.run(WorkPriority.idle, () async {
       // Окна может ещё не быть (его забрало открытое письмо) — создать.

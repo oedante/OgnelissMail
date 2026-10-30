@@ -1415,7 +1415,6 @@
     <string name="darkMode">深色模式</string>
     <string name="fontSizeLbl">字体大小</string>
     <string name="aiAnalysisLbl">AI 分析</string>
-    <string name="smartCompose">智能撰写</string>
     <string name="summary">摘要</string>
     <string name="categoryLbl">类别</string>
     <string name="tags">标签</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">关闭“后台运行”通知渠道——邮件照常送达，通知栏中的该条目会消失</string>
     <string name="recipientSearchGal">正在搜索组织通讯录…</string>
     <string name="recipientSearchNone">未找到结果 — 可以直接输入完整地址</string>
-    <string name="composeSuggestInsert">插入：</string>
     <string name="senderName">发件人姓名</string>
     <string name="senderNameEmpty">未设置：“发件人”和签名中仅显示邮件地址</string>
     <string name="senderNameHint">姓名</string>
@@ -3546,4 +3544,5 @@
     <string name="pdfProtected">此 PDF 受密码保护，请在其他应用中打开。</string>
     <string name="faq_mail_10_q">哪些附件可以直接在应用中打开？</string>
     <string name="faq_mail_10_a">ZIP 压缩包（包括带密码的）以及 TAR、GZ、BZ2 和 XZ 可直接在应用中打开：点按其中的文件即可打开。Android 上的 PDF、图片、文本和 CSV、.eml 邮件以及 .pkpass 票券也可在应用中打开。在 iPhone 和 iPad 上，PDF、图片和 Office 文档由 iOS 的快速查看显示。其他文件由合适的应用打开，任何文件都可以通过顶部按钮发送到该应用。7z 和 RAR 压缩包只能在其他应用中打开。</string>
+    <string name="quickRepliesCardHint">文本将放入回复中，请检查后发送</string>
 </resources>

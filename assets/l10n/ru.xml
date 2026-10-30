@@ -1415,7 +1415,6 @@
     <string name="darkMode">Тёмная тема</string>
     <string name="fontSizeLbl">Размер шрифта</string>
     <string name="aiAnalysisLbl">AI-анализ</string>
-    <string name="smartCompose">Автодополнение</string>
     <string name="summary">Краткое содержание</string>
     <string name="categoryLbl">Категория</string>
     <string name="tags">Теги</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Выключите канал «Работа в фоне» — доставка продолжит работать, строка из шторки уйдёт</string>
     <string name="recipientSearchGal">Ищем в адресной книге организации…</string>
     <string name="recipientSearchNone">Ничего не найдено — можно ввести адрес целиком</string>
-    <string name="composeSuggestInsert">Вставить:</string>
     <string name="senderName">Имя отправителя</string>
     <string name="senderNameEmpty">Не задано — в «От» и подписи будет только адрес</string>
     <string name="senderNameHint">Фамилия Имя Отчество</string>
@@ -3603,4 +3601,5 @@
     <string name="pdfProtected">PDF защищён паролем — откройте его в другом приложении.</string>
     <string name="faq_mail_10_q">Какие вложения открываются прямо в приложении?</string>
     <string name="faq_mail_10_a">Прямо в почте открываются архивы ZIP, в том числе с паролем, а также TAR, GZ, BZ2 и XZ: файлы внутри открываются нажатием. PDF на Android, картинки, текст и CSV, письма .eml и билеты .pkpass тоже открываются в приложении. На iPhone и iPad PDF, картинки и документы Office показывает Просмотр iOS. Остальное открывает подходящая программа, и любой файл можно отправить в неё кнопкой вверху. Архивы 7z и RAR открываются только другим приложением.</string>
+    <string name="quickRepliesCardHint">Текст встанет в ответ — проверьте и отправьте</string>
 </resources>

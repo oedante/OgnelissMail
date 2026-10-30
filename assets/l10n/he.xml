@@ -1415,7 +1415,6 @@
     <string name="darkMode">מצב כהה</string>
     <string name="fontSizeLbl">גודל גופן</string>
     <string name="aiAnalysisLbl">ניתוח AI</string>
-    <string name="smartCompose">השלמה חכמה</string>
     <string name="summary">סיכום</string>
     <string name="categoryLbl">קטגוריה</string>
     <string name="tags">תגים</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">כבו את הערוץ “עבודה ברקע” — המסירה ממשיכה לעבוד, והפריט ייעלם ממגש ההתראות</string>
     <string name="recipientSearchGal">מחפש בספר הכתובות של הארגון…</string>
     <string name="recipientSearchNone">לא נמצאו תוצאות – אפשר להקליד את הכתובת המלאה</string>
-    <string name="composeSuggestInsert">הוסף:</string>
     <string name="senderName">שם השולח</string>
     <string name="senderNameEmpty">לא הוגדר — בשדה מאת ובחתימה תוצג רק הכתובת</string>
     <string name="senderNameHint">שם מלא</string>
@@ -3584,4 +3582,5 @@
     <string name="pdfProtected">קובץ ה-PDF מוגן בסיסמה. פתחו אותו באפליקציה אחרת.</string>
     <string name="faq_mail_10_q">אילו קבצים מצורפים נפתחים ישירות באפליקציה?</string>
     <string name="faq_mail_10_a">ארכיוני ZIP, גם כאלה המוגנים בסיסמה, וגם TAR, GZ, BZ2 ו-XZ נפתחים ישירות באפליקציה: הקישו על קובץ בתוכם כדי לפתוח אותו. גם קובצי PDF ב-Android, תמונות, טקסט ו-CSV, הודעות .eml וכרטיסי .pkpass נפתחים באפליקציה. ב-iPhone וב-iPad, התצוגה המהירה של iOS מציגה קובצי PDF, תמונות ומסמכי Office. כל השאר נפתח באפליקציה מתאימה, ואפשר לשלוח אליה כל קובץ בכפתור למעלה. ארכיוני 7z ו-RAR נפתחים רק באפליקציה אחרת.</string>
+    <string name="quickRepliesCardHint">הטקסט ייכנס לתשובה — בדקו ושלחו</string>
 </resources>

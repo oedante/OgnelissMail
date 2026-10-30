@@ -1415,7 +1415,6 @@
     <string name="darkMode">डार्क मोड</string>
     <string name="fontSizeLbl">फ़ॉन्ट का आकार</string>
     <string name="aiAnalysisLbl">AI विश्लेषण</string>
-    <string name="smartCompose">स्मार्ट कंपोज़</string>
     <string name="summary">सारांश</string>
     <string name="categoryLbl">श्रेणी</string>
     <string name="tags">टैग</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">“बैकग्राउंड में काम” चैनल बंद करें — डिलीवरी काम करती रहेगी, बस नोटिफ़िकेशन शेड से यह एंट्री हट जाएगी</string>
     <string name="recipientSearchGal">संगठन की डायरेक्टरी में खोज रहे हैं…</string>
     <string name="recipientSearchNone">कुछ नहीं मिला — आप पूरा पता लिख सकते हैं</string>
-    <string name="composeSuggestInsert">जोड़ें:</string>
     <string name="senderName">प्रेषक का नाम</string>
     <string name="senderNameEmpty">सेट नहीं है — प्रेषक और हस्ताक्षर में केवल पता दिखाया जाता है</string>
     <string name="senderNameHint">पूरा नाम</string>
@@ -3565,4 +3563,5 @@
     <string name="pdfProtected">PDF पासवर्ड से सुरक्षित है। इसे किसी अन्य ऐप में खोलें।</string>
     <string name="faq_mail_10_q">कौन-से अनुलग्नक सीधे ऐप में खुलते हैं?</string>
     <string name="faq_mail_10_a">ZIP संग्रह, पासवर्ड वाले भी, और TAR, GZ, BZ2 तथा XZ सीधे ऐप में खुलते हैं: अंदर की किसी फ़ाइल पर टैप करके उसे खोलें। Android पर PDF, चित्र, टेक्स्ट और CSV, .eml संदेश और .pkpass टिकट भी ऐप में खुलते हैं। iPhone और iPad पर iOS का क्विक लुक PDF, चित्र और Office दस्तावेज़ दिखाता है। बाकी फ़ाइलें उपयुक्त ऐप में खुलती हैं, और कोई भी फ़ाइल ऊपर के बटन से उसमें भेजी जा सकती है। 7z और RAR संग्रह केवल किसी अन्य ऐप में खुलते हैं।</string>
+    <string name="quickRepliesCardHint">पाठ उत्तर में जुड़ जाएगा — जाँचें और भेजें</string>
 </resources>

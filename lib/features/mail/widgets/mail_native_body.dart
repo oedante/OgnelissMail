@@ -44,6 +44,8 @@ import '../../../core/theme/mail_page_color.dart';
 import '../../../core/utils/linkify.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/common/image_actions.dart';
+import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/pinch_zoom.dart';
 import 'span_table.dart';
 
@@ -634,6 +636,8 @@ class _Builder {
         final src = (e.attributes['src'] ?? '').trim();
         _add(NSpan('',
             image: src,
+            // Картинка в ссылке — нажатие открывает ссылку (1.8.12).
+            href: x.href,
             imageWidth: _dim(e.attributes['width'], st, 'width'),
             imageHeight: _dim(e.attributes['height'], st, 'height')));
         _space = false;
@@ -1151,7 +1155,8 @@ class _MailNativeBodyState extends State<MailNativeBody> {
     final page = mailPageColor(theme);
     final fg = theme.colorScheme.onSurface;
     final link = theme.colorScheme.primary;
-    final base = TextStyle(fontSize: 14 * widget.textScale, height: 1.35, color: fg);
+    // 15 px, как в окне браузера (MailHtmlView._baseCss, 1.8.12: было 14).
+    final base = TextStyle(fontSize: 15 * widget.textScale, height: 1.4, color: fg);
 
     Color? textColor(NSpan s, Color? cellBg) {
       if (s.background == null && cellBg != null) {
@@ -1171,6 +1176,25 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       return _contrast(c, page) < 3 ? (s.href != null ? link : null) : c;
     }
 
+    // Нажатие на картинку (1.8.12): в ссылке — ссылка, иначе — картинка на
+    // весь экран с увеличением («иногда они мелкие», замечание 30.10.2026).
+    // Копировать, сохранить, поделиться — из просмотра (данные картинки).
+    Widget tappable(NSpan s, ImageProvider full, Widget child) {
+      final href = s.href;
+      final Future<Uint8List?> Function() bytes = full is MemoryImage
+          ? () async => full.bytes
+          : () => ImageActions.download(s.image ?? '');
+      return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: href != null
+              ? () => widget.onLink(href, s.text.trim())
+              : () => showImageViewer(context, full, bytes: bytes),
+          child: child,
+        ),
+      );
+    }
+
     InlineSpan span(NSpan s, Color? cellBg) {
       if (s.image != null) {
         final src = s.image!;
@@ -1180,7 +1204,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
           final h = s.imageHeight;
           return WidgetSpan(
             alignment: PlaceholderAlignment.bottom,
-            child: ConstrainedBox(
+            child: tappable(s, NetworkImage(src), ConstrainedBox(
               constraints: BoxConstraints(maxWidth: w ?? double.infinity),
               child: Image.network(
                 src,
@@ -1195,7 +1219,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
                     : SizedBox(width: w ?? 1, height: (w != null && h != null) ? h : 1),
                 errorBuilder: (context, error, stack) => const SizedBox.shrink(),
               ),
-            ),
+            )),
           );
         }
         final b = _bytes(src);
@@ -1203,11 +1227,11 @@ class _MailNativeBodyState extends State<MailNativeBody> {
         final w = s.imageWidth;
         return WidgetSpan(
           alignment: PlaceholderAlignment.bottom,
-          child: ConstrainedBox(
+          child: tappable(s, MemoryImage(b), ConstrainedBox(
             constraints: BoxConstraints(maxWidth: w ?? double.infinity),
             child: Image.memory(b,
                 width: w, height: w == null ? s.imageHeight : null, fit: BoxFit.contain, gaplessPlayback: true),
-          ),
+          )),
         );
       }
       TapGestureRecognizer? tap;
@@ -1246,7 +1270,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       } else if (bl.kind == NBlockKind.table && bl.table!.any((r) => r.any((c) => c.rowSpan > 1 || c.colSpan > 1))) {
         // Объединённые ячейки (1.5.11) — своя раскладка, рамки — у ячеек.
         w = _spanTable(bl, theme, cellBg, blocks);
-        final after = bl.after * base.fontSize! * 1.35;
+        final after = bl.after * base.fontSize! * 1.4;
         if (after > 0) w = Padding(padding: EdgeInsets.only(bottom: after), child: w);
       } else if (bl.kind == NBlockKind.table) {
         final rows = bl.table!;
@@ -1291,7 +1315,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
               ]),
           ],
         );
-        final after = bl.after * base.fontSize! * 1.35;
+        final after = bl.after * base.fontSize! * 1.4;
         if (after > 0) w = Padding(padding: EdgeInsets.only(bottom: after), child: w);
       } else {
         final text = Text.rich(
@@ -1311,7 +1335,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
                 Expanded(child: text),
               ]);
         final indent = (bl.list > 1 ? (bl.list - 1) * 18.0 : 0.0);
-        final after = bl.after * base.fontSize! * 1.35;
+        final after = bl.after * base.fontSize! * 1.4;
         if (indent > 0 || after > 0) {
           w = Padding(padding: EdgeInsets.only(left: indent, bottom: after), child: w);
         }

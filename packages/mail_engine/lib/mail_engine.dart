@@ -9,6 +9,7 @@ export 'src/transport/eas_engine.dart';
 export 'src/transport/ews_engine.dart';
 export 'src/transport/graph_engine.dart';
 export 'src/transport/imap_smtp_engine.dart';
+export 'src/transport/tolerant_smtp_client.dart';
 export 'src/transport/autodiscover.dart';
 export 'src/transport/dav_client.dart';
 export 'src/transport/wbxml_codec.dart';

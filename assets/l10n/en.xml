@@ -1415,7 +1415,6 @@
     <string name="darkMode">Dark mode</string>
     <string name="fontSizeLbl">Font size</string>
     <string name="aiAnalysisLbl">AI Analysis</string>
-    <string name="smartCompose">Smart Compose</string>
     <string name="summary">Summary</string>
     <string name="categoryLbl">Category</string>
     <string name="tags">Tags</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Turn off the “Background work” channel — delivery keeps working, the shade entry goes away</string>
     <string name="recipientSearchGal">Searching the organization directory…</string>
     <string name="recipientSearchNone">Nothing found — you can type the full address</string>
-    <string name="composeSuggestInsert">Insert:</string>
     <string name="senderName">Sender name</string>
     <string name="senderNameEmpty">Not set — only the address is shown in From and the signature</string>
     <string name="senderNameHint">Full name</string>
@@ -3565,4 +3563,5 @@
     <string name="pdfProtected">This PDF is password-protected. Open it in another app.</string>
     <string name="faq_mail_10_q">Which attachments open right in the app?</string>
     <string name="faq_mail_10_a">ZIP archives, including password-protected ones, and TAR, GZ, BZ2 and XZ open right in the app: tap a file inside to open it. PDFs on Android, images, text and CSV, .eml messages and .pkpass tickets also open in the app. On iPhone and iPad, iOS Quick Look shows PDFs, images and Office documents. Anything else opens in a suitable app, and any file can be sent to one with the button at the top. 7z and RAR archives open only in another app.</string>
+    <string name="quickRepliesCardHint">The text goes into the reply — check it and send</string>
 </resources>

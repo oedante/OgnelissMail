@@ -1415,7 +1415,6 @@
     <string name="darkMode">Tryb ciemny</string>
     <string name="fontSizeLbl">Rozmiar czcionki</string>
     <string name="aiAnalysisLbl">Analiza AI</string>
-    <string name="smartCompose">Inteligentne pisanie</string>
     <string name="summary">Podsumowanie</string>
     <string name="categoryLbl">Kategoria</string>
     <string name="tags">Tagi</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Wyłącz kanał „Praca w tle” — dostarczanie nadal działa, ale wpis znika z panelu powiadomień</string>
     <string name="recipientSearchGal">Wyszukiwanie w książce adresowej organizacji…</string>
     <string name="recipientSearchNone">Nic nie znaleziono — możesz wpisać cały adres</string>
-    <string name="composeSuggestInsert">Wstaw:</string>
     <string name="senderName">Nazwa nadawcy</string>
     <string name="senderNameEmpty">Nie ustawiono — w polu Od i w podpisie widać tylko adres</string>
     <string name="senderNameHint">Imię i nazwisko</string>
@@ -3603,4 +3601,5 @@
     <string name="pdfProtected">PDF jest chroniony hasłem. Otwórz go w innej aplikacji.</string>
     <string name="faq_mail_10_q">Które załączniki otwierają się bezpośrednio w aplikacji?</string>
     <string name="faq_mail_10_a">Archiwa ZIP, także chronione hasłem, oraz TAR, GZ, BZ2 i XZ otwierają się bezpośrednio w aplikacji: stuknij plik w środku, aby go otworzyć. W aplikacji otwierają się też pliki PDF na Androidzie, obrazy, tekst i CSV, wiadomości .eml oraz bilety .pkpass. Na iPhonie i iPadzie podgląd iOS pokazuje pliki PDF, obrazy i dokumenty Office. Pozostałe otwiera odpowiednia aplikacja, a każdy plik można do niej wysłać przyciskiem u góry. Archiwa 7z i RAR otwierają się tylko w innej aplikacji.</string>
+    <string name="quickRepliesCardHint">Tekst trafi do odpowiedzi — sprawdź i wyślij</string>
 </resources>

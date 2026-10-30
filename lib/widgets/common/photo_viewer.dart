@@ -5,11 +5,17 @@
 // 288 точек, см. photoImage).
 
 import 'dart:convert';
+import 'dart:io' show Platform;
+
+import 'package:flutter/foundation.dart' show Uint8List;
 
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/tokens.dart';
+import '../../l10n/app_localizations.dart';
+import 'image_actions.dart';
+import 'inline_notice.dart' show showInlineError, showInlineNotice;
 
 /// Картинка без уменьшения: data URI или https-ссылка.
 ImageProvider? fullPhotoImage(String? photo) {
@@ -32,6 +38,15 @@ ImageProvider? fullPhotoImage(String? photo) {
 Future<void> showPhotoViewer(BuildContext context, {required String photo, String? title}) {
   final image = fullPhotoImage(photo);
   if (image == null) return Future.value();
+  return showImageViewer(context, image, title: title);
+}
+
+/// Картинка на весь экран (1.8.12: картинка в письме — по нажатию, «иногда
+/// они мелкие»): пальцами — приблизить до ×6, касание или «Назад» — закрыть.
+/// [bytes] — данные картинки для «Копировать», «Сохранить», «Поделиться»
+/// (кнопки — только когда задано); [name] — имя файла, если известно.
+Future<void> showImageViewer(BuildContext context, ImageProvider image,
+    {String? title, Future<Uint8List?> Function()? bytes, String? name}) {
   final reduce = MediaQuery.of(context).disableAnimations;
   return showGeneralDialog<void>(
     context: context,
@@ -39,7 +54,7 @@ Future<void> showPhotoViewer(BuildContext context, {required String photo, Strin
     barrierLabel: MaterialLocalizations.of(context).closeButtonLabel,
     barrierColor: Colors.black.withValues(alpha: 0.92),
     transitionDuration: reduce ? Duration.zero : const Duration(milliseconds: 200),
-    pageBuilder: (ctx, _, __) => _PhotoView(image: image, title: title),
+    pageBuilder: (ctx, _, __) => _PhotoView(image: image, title: title, bytes: bytes, name: name),
     transitionBuilder: (ctx, anim, _, child) => FadeTransition(
       opacity: CurvedAnimation(parent: anim, curve: Curves.easeOut),
       child: ScaleTransition(
@@ -53,7 +68,32 @@ Future<void> showPhotoViewer(BuildContext context, {required String photo, Strin
 class _PhotoView extends StatelessWidget {
   final ImageProvider image;
   final String? title;
-  const _PhotoView({required this.image, this.title});
+  final Future<Uint8List?> Function()? bytes;
+  final String? name;
+  const _PhotoView({required this.image, this.title, this.bytes, this.name});
+
+  Future<void> _act(BuildContext context, String what) async {
+    final l10n = AppLocalizations.of(context);
+    final b = await bytes?.call();
+    if (b == null || b.isEmpty) {
+      showInlineError(l10n.tr('error'));
+      return;
+    }
+    switch (what) {
+      case 'copy':
+        if (await ImageActions.copy(b, name: name)) {
+          // Android 13+ сам показывает, что скопировано.
+          if (Platform.isIOS) showInlineNotice(l10n.tr('copied'));
+        } else {
+          showInlineError(l10n.tr('error'));
+        }
+      case 'save':
+        final r = await ImageActions.save(b, name: name);
+        if (r != null) showInlineNotice(l10n.tr('savedToDownloads').replaceAll('{name}', r.name));
+      case 'share':
+        await ImageActions.share(b, name: name);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +107,7 @@ class _PhotoView extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               onTap: () => Navigator.of(context).pop(),
               child: InteractiveViewer(
-                maxScale: 4,
+                maxScale: 6,
                 child: Center(
                   child: Semantics(
                     image: true,
@@ -89,13 +129,36 @@ class _PhotoView extends StatelessWidget {
                 icon: const Icon(AppIcons.close),
                 onPressed: () => Navigator.of(context).pop(),
               ),
-              if ((title ?? '').isNotEmpty)
-                Expanded(
-                  child: Text(title!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white)),
+              Expanded(
+                child: (title ?? '').isEmpty
+                    ? const SizedBox.shrink()
+                    : Text(title!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white)),
+              ),
+              // Копировать, сохранить, поделиться (1.8.12).
+              if (bytes != null) ...[
+                if (ImageActions.canCopy)
+                  IconButton(
+                    tooltip: AppLocalizations.of(context).tr('copy'),
+                    color: Colors.white,
+                    icon: const Icon(AppIcons.content_copy),
+                    onPressed: () => _act(context, 'copy'),
+                  ),
+                IconButton(
+                  tooltip: AppLocalizations.of(context).tr('save'),
+                  color: Colors.white,
+                  icon: const Icon(AppIcons.download),
+                  onPressed: () => _act(context, 'save'),
                 ),
+                IconButton(
+                  tooltip: AppLocalizations.of(context).tr('share'),
+                  color: Colors.white,
+                  icon: const Icon(AppIcons.share),
+                  onPressed: () => _act(context, 'share'),
+                ),
+              ],
             ]),
           ),
         ]),

@@ -13,7 +13,7 @@ import '../../../widgets/ui/banner_button.dart';
 import '../../../core/platform/download_saver.dart';
 import '../../../core/platform/file_opener.dart';
 import '../../../widgets/ui/section_band.dart';
-import '../../../widgets/common/peek_card.dart' show PeekAction, PeekGroup;
+import '../../../widgets/common/peek_card.dart' show AppMenuEntry, PeekAction, PeekGroup;
 import '../widgets/mail_peek_card.dart' show showMailPeek;
 import '../widgets/unsubscribe_banner.dart';
 import '../widgets/booking_card.dart';
@@ -1032,7 +1032,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           key: ValueKey('${email.id}_native_$mode'),
           mail: n,
           images: _inlineImages,
-          textScale: settings.fontScale,
+          textScale: MailHtmlView.textScaleOf(context),
           onShown: () {
             OpenTrace.mark('без WebView');
             OpenTrace.done();
@@ -1233,7 +1233,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           document: doc,
           active: widget.active,
           allowRemoteImages: _imagesAllowed,
-          textScale: settings.fontScale,
+          textScale: MailHtmlView.textScaleOf(context),
           pageColor: mailPageColor(theme),
           dark: theme.brightness == Brightness.dark,
           onShown: _onBodyShown,
@@ -2153,58 +2153,56 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// Быстрые ответы: короткие рабочие формулировки и шаблоны пользователя.
   /// Выбранный текст подставляется в ответ между приветствием и подписью —
   /// остаётся проверить и нажать «Отправить».
-  void _showQuickReplies(EmailModel email, AppLocalizations l10n) {
+  ///
+  /// 1.8.12 (замечание 30.10.2026: «быстрые ответы отличаются от остального
+  /// UI») — карточкой, как остальные выборы; «ответить всем» — переключатель
+  /// в шапке карточки (было скрытое долгое нажатие на строку).
+  Future<void> _showQuickReplies(EmailModel email, AppLocalizations l10n) async {
     final templates = [for (final t in ref.read(templatesProvider)) t.resolve(l10n.tr)];
     const builtIn = ['quickReply1', 'quickReply2', 'quickReply3', 'quickReply4', 'quickReply5'];
-    void open(String text, {bool all = false}) {
-      Navigator.of(context, rootNavigator: true).pop();
-      context.push(Uri(path: '/compose', queryParameters: {
-        'replyToId': email.id,
-        'accountId': email.accountId,
-        if (all) 'replyAll': 'true',
-        'quick': text,
-      }).toString());
-    }
-
-    showAppSheet<void>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            ListTile(
-              title: Text(l10n.tr('quickReplies'), style: Theme.of(ctx).textTheme.titleMedium),
-              subtitle: Text(l10n.tr('quickRepliesHint')),
-            ),
-            for (final k in builtIn)
-              ListTile(
-                leading: const Icon(AppIcons.quickreply),
-                title: Text(l10n.tr(k)),
-                onTap: () => open(l10n.tr(k)),
-                onLongPress: () => open(l10n.tr(k), all: true),
-              ),
-            for (final t in templates)
-              ListTile(
-                leading: const Icon(AppIcons.description),
-                title: Text(t.title.isEmpty ? t.body : t.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-                subtitle: t.title.isEmpty
-                    ? null
-                    : Text(t.body, maxLines: 2, overflow: TextOverflow.ellipsis),
-                onTap: () => open(t.body),
-                onLongPress: () => open(t.body, all: true),
-              ),
-            ListTile(
-              leading: const Icon(AppIcons.edit_note),
-              title: Text(l10n.tr('quickRepliesManage')),
-              onTap: () {
-                Navigator.of(ctx).pop();
-                context.push('/settings/templates');
-              },
-            ),
-          ],
+    final texts = [for (final k in builtIn) l10n.tr(k), for (final t in templates) t.body];
+    const manage = -1;
+    final all = ValueNotifier<bool>(false);
+    final picked = await showChoiceSheet<int>(
+      context,
+      title: l10n.tr('quickReplies'),
+      subtitle: l10n.tr('quickRepliesCardHint'),
+      headerTrailing: ValueListenableBuilder<bool>(
+        valueListenable: all,
+        builder: (ctx, on, _) => IconButton(
+          tooltip: l10n.tr(on ? 'quickReplyToSender' : 'replyAll'),
+          isSelected: on,
+          icon: const Icon(AppIcons.reply),
+          selectedIcon: Icon(AppIcons.reply_all, color: Theme.of(ctx).colorScheme.primary),
+          onPressed: () => all.value = !on,
         ),
       ),
+      entries: [
+        for (var i = 0; i < builtIn.length; i++)
+          AppMenuEntry(value: i, icon: AppIcons.quickreply, label: texts[i]),
+        for (var j = 0; j < templates.length; j++)
+          AppMenuEntry(
+            value: builtIn.length + j,
+            icon: AppIcons.description,
+            label: templates[j].title.isEmpty ? templates[j].body : templates[j].title,
+            subtitle: templates[j].title.isEmpty ? null : templates[j].body,
+          ),
+        AppMenuEntry(value: manage, icon: AppIcons.edit_note, label: l10n.tr('quickRepliesManage')),
+      ],
     );
+    final toAll = all.value;
+    all.dispose();
+    if (picked == null || !mounted) return;
+    if (picked == manage) {
+      unawaited(context.push('/settings/templates'));
+      return;
+    }
+    unawaited(context.push(Uri(path: '/compose', queryParameters: {
+      'replyToId': email.id,
+      'accountId': email.accountId,
+      if (toAll) 'replyAll': 'true',
+      'quick': texts[picked],
+    }).toString()));
   }
 
   // ════════════════════════ ПОЛНЫЙ BOTTOM SHEET ════════════════════════

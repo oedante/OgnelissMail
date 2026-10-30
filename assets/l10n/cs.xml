@@ -3563,4 +3563,6 @@
     <string name="graphHint">Microsoft vypíná EWS v Exchange Online: od října 2026 postupně po organizacích, úplně v dubnu 2027. Pošta, kalendář, kontakty a automatické odpovědi jdou přes ActiveSync a nemění se. Adresář (funkce, oddělení, fotky kolegů), tipy při odesílání, pravidla serveru a obnova odstraněných položek nyní používají Microsoft Graph. Zasedačky a členové distribučních seznamů také, pokud správce aplikaci udělil Place.Read.All a GroupMember.Read.All. Online archiv, sdílené schránky a import podpisu Microsoft Graph nenabízí — používají EWS, dokud je dostupné.</string>
     <string name="srvViaGraph">Exchange Online — přes Microsoft Graph</string>
     <string name="zipEncryptedHint">Archiv je chráněný heslem, aplikace Soubory ho neotevře. Vyberte aplikaci pro archivy: zeptá se na heslo</string>
+    <string name="archiveWhole">Celý archiv</string>
+    <string name="archiveNoAccountData">V archivu nejsou data této schránky</string>
 </resources>

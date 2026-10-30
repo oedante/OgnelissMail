@@ -206,6 +206,23 @@ class MailHtmlDocument {
       }
     }
 
+    // Картинка, у которой задана только высота (height="64" у логотипа,
+    // 28 — у значков; файлы — в 2–3 раза крупнее, «@2x», «@3x»), — этой
+    // высоты (1.8.12, письмо Google Play 29.10.2026). Базовый стиль ставит
+    // всем картинкам height:auto (против вытянутых картинок Outlook), и такие
+    // картинки выходили в 2–3 раза больше задуманного. object-fit — без
+    // искажения, если ширину ограничит экран.
+    for (final img in body.querySelectorAll('img[height]')) {
+      final h = int.tryParse((img.attributes['height'] ?? '').trim().replaceAll(RegExp(r'px$'), ''));
+      final style = img.attributes['style'] ?? '';
+      if (h == null || h <= 0 || h > 2000 || img.attributes.containsKey('width') ||
+          RegExp(r'(^|[;\s])(width|height)\s*:', caseSensitive: false).hasMatch(style)) {
+        continue;
+      }
+      img.attributes['style'] = '${style.isEmpty || style.trim().endsWith(';') ? style : '$style;'}'
+          'height:${h}px !important;width:auto !important;object-fit:contain';
+    }
+
     // Стрелки и маркеры из шрифтов Wingdings и Symbol («à» вместо «→»).
     if (SymbolFonts.mayContain(bodyHtml)) SymbolFonts.mapDom(body);
 
@@ -224,6 +241,14 @@ class MailHtmlDocument {
       if (href.isNotEmpty && text.isNotEmpty) links.putIfAbsent(href, () => text);
       // Ссылки — только в этом окне: target="_blank" просит новое окно.
       a.attributes.remove('target');
+      // Длинный адрес текстом ссылки переносится где угодно (1.8.12,
+      // замечание 29.10.2026, рассылка с ссылками drive.google.com/…):
+      // неразрывный адрес раздвигал ячейку таблицы шире вёрстки (600 → 800),
+      // и даже вписанное по ширине письмо обрезалось справа — вместе с
+      // абзацами той же ячейки. Обычные слова и короткие ссылки — как раньше:
+      // перенос «где угодно» для всего письма рвал бы слова в узких
+      // колонках таблиц.
+      if (isLongToken(text)) a.classes.add('og-brk');
     }
 
     // Стили письма (<style> в теле — Outlook кладёт их туда при пересылке)
@@ -245,6 +270,10 @@ class MailHtmlDocument {
         '<body>${body.innerHtml}</body></html>';
     return MailHtmlDocument(out, links, declaredWidth: declared);
   }
+
+  /// Текст ссылки — один длинный «токен» без пробелов (адрес, путь, код):
+  /// такой можно переносить в любом месте.
+  static bool isLongToken(String text) => text.length >= 24 && !text.contains(RegExp(r'\s'));
 
   static final _imgTag = RegExp(r'''<img\b(?:[^>"']|"[^"]*"|'[^']*')*>''', caseSensitive: false);
   static final _cidSrc = RegExp(r'''\ssrc\s*=\s*"cid:([^"]*)"''', caseSensitive: false);
@@ -355,11 +384,18 @@ body{padding:4px 0 12px;font-family:-apple-system,Roboto,"Segoe UI",Arial,sans-s
 font-size:14px;line-height:1.35;overflow-wrap:anywhere;word-wrap:break-word;-webkit-text-size-adjust:100%;}
 p{margin:0 0 .4em;}
 p.MsoNormal,li.MsoNormal,div.MsoNormal{margin:0;}
-img{max-width:100% !important;height:auto !important;}
-/* !important: у картинок Outlook высота задана в style — ширина сжималась,
-   а высота оставалась прежней, картинка вытягивалась (10.10.2026). */
+img{max-width:100%;height:auto !important;}
+/* !important у высоты: у картинок Outlook высота задана в style — ширина
+   сжималась, а высота оставалась прежней, картинка вытягивалась (10.10.2026).
+   У ширины — без !important (1.8.12, письмо CDEK 29.10.2026): адаптивные
+   рассылки задают картинке «width:100%; max-width:80px», и наше
+   max-width:100% !important отменяло их 80 px — значок растягивался на всю
+   ширину экрана. */
 pre,code{white-space:pre-wrap;}
 a{color:#1D4F91;}
+/* Длинный адрес текстом ссылки — переносится где угодно и не раздвигает
+   таблицу (MailHtmlDocument.build, og-brk). */
+.og-brk{overflow-wrap:anywhere !important;word-break:break-all !important;}
 blockquote{margin:8px 0 8px 4px;padding-left:10px;border-left:3px solid #c7cdd6;color:#4a4f57;}
 table{border-collapse:collapse;}
 /* Широкая таблица листается вбок, даже если письмо запретило прокрутку. */

@@ -22,7 +22,7 @@ import '../../../services/mail/unsubscribe_service.dart' show encodeListUnsubscr
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditorForEmail;
 import '../../../core/utils/text_safe.dart';
 import '../../../core/utils/symbol_fonts.dart';
-import '../../../core/navigation/app_router.dart' show mailDetailPath;
+import '../../../core/navigation/app_router.dart' show pushMailDetail;
 import '../../../core/theme/app_icons.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -1586,7 +1586,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 emails: _conversationEmails!,
                 currentEmailId: email.id,
                 onEmailTap: (e) {
-                  context.push(mailDetailPath(e.id, accountId: e.accountId));
+                  pushMailDetail(GoRouter.of(context), e.id, accountId: e.accountId);
                 },
               ),
             ],

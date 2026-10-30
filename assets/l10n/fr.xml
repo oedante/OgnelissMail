@@ -3544,4 +3544,6 @@
     <string name="graphHint">Microsoft désactive EWS dans Exchange Online : à partir d’octobre 2026 organisation par organisation, entièrement en avril 2027. Courrier, calendrier, contacts et réponses automatiques passent par ActiveSync et ne changent pas. L’annuaire (fonctions, services, photos des collègues), les infos à l’envoi, les règles du serveur et la récupération des éléments supprimés passent désormais par Microsoft Graph. Les salles et membres des listes de distribution aussi, si l’administrateur a accordé à l’application Place.Read.All et GroupMember.Read.All. Microsoft Graph n’offre pas l’archive en ligne, les boîtes partagées ni l’import de signature : ils utilisent EWS tant qu’il est disponible.</string>
     <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
     <string name="zipEncryptedHint">L’archive est protégée par un mot de passe : Fichiers ne peut pas l’ouvrir. Choisissez une app d’archives : elle demandera le mot de passe</string>
+    <string name="archiveWhole">Archive complète</string>
+    <string name="archiveNoAccountData">Aucune donnée de cette boîte dans l’archive</string>
 </resources>

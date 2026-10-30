@@ -33,7 +33,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../services/calendar/pending_invites.dart' show loadPendingInvites;
-import '../../core/navigation/app_router.dart' show eventDetailsPath, mailDetailPath;
+import '../../core/navigation/app_router.dart' show eventDetailsPath, mailDetailPath, pushMailDetail;
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';

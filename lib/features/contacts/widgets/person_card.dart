@@ -17,7 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/navigation/app_router.dart' show mailDetailPath;
+import '../../../core/navigation/app_router.dart' show pushMailDetail;
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
@@ -379,7 +379,7 @@ class _PersonMailsState extends ConsumerState<PersonMails> {
 
   void _openMail(Email m) {
     widget.onOpen?.call();
-    context.push(mailDetailPath(m.id, accountId: m.accountId));
+    pushMailDetail(GoRouter.of(context), m.id, accountId: m.accountId);
   }
 
   @override

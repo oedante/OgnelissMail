@@ -141,8 +141,25 @@ class NotificationRouter {
     }
   }
 
+  /// Последнее открытое нажатием уведомление и когда (см. [open]).
+  static String? _lastPayload;
+  static DateTime? _lastAt;
+
   /// Нажатие на уведомление (не на кнопку).
+  ///
+  /// Одно нажатие при открытом окне приходит дважды (1.8.12): колбэком
+  /// плагина и при возврате на экран ([checkLaunch]) — плагин подменяет
+  /// намерение окна намерением уведомления. Письмо открывалось двумя
+  /// экранами подряд. Повтор того же уведомления за 10 с — пропускается.
   void open(String? payload) {
+    final now = DateTime.now();
+    final last = _lastAt;
+    if (payload != null && payload == _lastPayload && last != null && now.difference(last).inSeconds < 10) {
+      AppLogger.info('Уведомление: повтор нажатия — уже открыто');
+      return;
+    }
+    _lastPayload = payload;
+    _lastAt = now;
     final route = routeFor(payload);
     if (route == null) {
       AppLogger.info('Уведомление: нет маршрута для нажатия');
@@ -211,17 +228,25 @@ class NotificationRouter {
     }
   }
 
+  static const _mailDetail = '/mail/detail/';
+
   void _go(String route) {
     try {
       final router = _ref.read(appRouterProvider);
       // Разделы нижней панели — переход, остальное — поверх текущего экрана,
       // чтобы «Назад» вернул туда, где человек был.
-      if (route == '/mail' || route.startsWith('/tasks') || route == '/calendar') {
+      var to = route;
+      if (route == '/mail' || route.startsWith('/tasks') || route == '/calendar' || route == '/my-day') {
         router.go(route);
       } else {
-        router.push(route);
+        // Сверху экран вне оболочки (настройки, новое письмо, встреча):
+        // письмо — отдельным экраном поверх него, см. [pushMailDetail].
+        if (route.startsWith(_mailDetail) && !routerTopInShell(router)) {
+          to = '/email/${route.substring(_mailDetail.length)}';
+        }
+        router.push(to);
       }
-      AppLogger.info('Переход по уведомлению: $route');
+      AppLogger.info('Переход по уведомлению: $to');
       if (_openQueue) {
         _openQueue = false;
         // Шторка — когда экран почты уже построен.

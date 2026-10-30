@@ -632,9 +632,13 @@ class MailDrawer extends ConsumerWidget {
   // ════════════════════════ АРХИВ OGNELISS ════════════════════════
 
   /// Подключённый архив Ogneliss (1.7.3, просьба владельца 25.10.2026:
-  /// «как раздел „Папки“, но архив»): папки архива по ящикам со структурой
-  /// как в ящике, встречи, задачи и контакты. Закрытый архив — строкой
-  /// «Открыть архив»; архива нет — раздела нет.
+  /// «как раздел „Папки“, но архив»): папки архива со структурой как в
+  /// ящике, встречи, задачи и контакты. Закрытый архив — строкой «Открыть
+  /// архив»; архива нет — раздела нет.
+  ///
+  /// С 1.8.12 (замечание владельца 29.10.2026: в одном архиве — ящики с
+  /// разными папками) — только данные выбранного ящика; все ящики архива —
+  /// в режиме «Все ящики» и на экране «Весь архив» (/archive).
   List<Widget> _buildArchiveSection(BuildContext context, WidgetRef ref, AppLocalizations l10n, ThemeData theme) {
     final vault = ref.watch(archiveVaultProvider).value;
     if (vault == null || !vault.exists) return const [];
@@ -685,8 +689,14 @@ class MailDrawer extends ConsumerWidget {
       ];
     }
     final folders = ref.watch(archiveFoldersProvider).value ?? const <ArchiveFolder>[];
-    final accounts = ref.watch(archiveAccountsProvider).value ?? const <ArchiveAccountInfo>[];
-    final stats = ref.watch(archiveStatsProvider).value;
+    final all = [
+      for (final a in ref.watch(archiveAccountsProvider).value ?? const <ArchiveAccountInfo>[])
+        if (!a.isEmpty) a,
+    ];
+    final active = ref.watch(activeAccountProvider);
+    final everyAccount = ref.watch(allAccountsModeProvider);
+    final mine = everyAccount || active == null ? null : archiveAccountOf(all, id: active.id, email: active.email);
+    final accounts = everyAccount || active == null ? all : [?mine];
     final collapsed = ref.watch(collapsedFoldersProvider);
     final multi = accounts.length > 1;
     final tiles = <Widget>[band];
@@ -718,7 +728,7 @@ class MailDrawer extends ConsumerWidget {
       if (tree.roots.isEmpty) continue;
       var depth = 0;
       if (multi) {
-        // Несколько ящиков в одном архиве — у каждого своя ветка.
+        // Все ящики: у каждого ящика архива своя ветка.
         final isCollapsed = collapsed.contains(CollapsedFoldersNotifier.key('ogna:${a.id}', ''));
         tiles.add(_FolderTile(
           icon: AppIcons.alternate_email,
@@ -735,22 +745,24 @@ class MailDrawer extends ConsumerWidget {
         tiles.addAll(branch(tree, f, depth));
       }
     }
-    void open(String kind) {
-      _close(context);
-      context.push('/archive/items/$kind');
+    void items(String kind, IconData icon, String key, int Function(ArchiveAccountInfo a) n) {
+      if (accounts.fold<int>(0, (s, a) => s + n(a)) <= 0) return;
+      tiles.add(_FolderTile(
+        icon: icon,
+        label: l10n.tr(key),
+        onTap: () {
+          _close(context);
+          context.push(mine == null
+              ? '/archive/items/$kind'
+              : Uri(path: '/archive/items/$kind', queryParameters: {'account': mine.id}).toString());
+        },
+      ));
     }
 
-    if ((stats?.events ?? 0) > 0) {
-      tiles.add(_FolderTile(icon: AppIcons.event, label: l10n.tr('archiveKindEvents'), onTap: () => open('events')));
-    }
-    if ((stats?.tasks ?? 0) > 0) {
-      tiles.add(_FolderTile(icon: AppIcons.check_box, label: l10n.tr('archiveKindTasks'), onTap: () => open('tasks')));
-    }
-    if ((stats?.contacts ?? 0) > 0) {
-      tiles.add(
-          _FolderTile(icon: AppIcons.contacts, label: l10n.tr('archiveKindContacts'), onTap: () => open('contacts')));
-    }
-    if (tiles.length == 1) {
+    items('events', AppIcons.event, 'archiveKindEvents', (a) => a.events);
+    items('tasks', AppIcons.check_box, 'archiveKindTasks', (a) => a.tasks);
+    items('contacts', AppIcons.contacts, 'archiveKindContacts', (a) => a.contacts);
+    if (all.isEmpty) {
       // Архив пуст: подсказка, как в него положить.
       tiles.add(_FolderTile(
         icon: AppIcons.inventory_2,
@@ -758,6 +770,20 @@ class MailDrawer extends ConsumerWidget {
         onTap: () {
           _close(context);
           context.push('/settings/archive');
+        },
+      ));
+    } else if (all.length > 1 || accounts.isEmpty) {
+      if (tiles.length == 1) {
+        // В архиве есть другие ящики, а этого — нет.
+        tiles.add(_FolderTile(icon: AppIcons.info, label: l10n.tr('archiveNoAccountData')));
+      }
+      // Весь архив — отдельным экраном (в архиве не только этот ящик).
+      tiles.add(_FolderTile(
+        icon: AppIcons.inventory_2,
+        label: l10n.tr('archiveWhole'),
+        onTap: () {
+          _close(context);
+          context.push('/archive');
         },
       ));
     }

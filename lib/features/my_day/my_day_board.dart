@@ -261,7 +261,7 @@ extension _MyDayBoard on _MyDayScreenState {
         subtitle: returned
             ? '${l10n.tr('laterReturned')} · ${m.fromName ?? m.fromEmail}'
             : '${l10n.tr('myDayLaterReturns')} ${hm.format(at!)} · ${m.fromName ?? m.fromEmail}',
-        onTap: () => context.push(mailDetailPath(m.id, accountId: m.accountId)),
+        onTap: () => pushMailDetail(GoRouter.of(context), m.id, accountId: m.accountId),
       ));
     }
 
@@ -287,7 +287,7 @@ extension _MyDayBoard on _MyDayScreenState {
         ].join(' · '),
         subtitleColor: overdue ? err : null,
         faded: isDone,
-        onTap: () => context.push(mailDetailPath(m.id, accountId: m.accountId)),
+        onTap: () => pushMailDetail(GoRouter.of(context), m.id, accountId: m.accountId),
       ));
     }
 
@@ -304,7 +304,7 @@ extension _MyDayBoard on _MyDayScreenState {
           l10n.tr('myDayInvite'),
           if (start != null) DateFormat('EEE, d MMM, HH:mm', l10n.localeCode).format(start.toLocal()),
         ].join(' · '),
-        onTap: () => context.push(mailDetailPath(m.id, accountId: m.accountId)),
+        onTap: () => pushMailDetail(GoRouter.of(context), m.id, accountId: m.accountId),
       ));
     }
 

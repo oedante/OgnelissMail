@@ -3563,4 +3563,6 @@
     <string name="graphHint">Microsoft מכבה את EWS ב-Exchange Online: מאוקטובר 2026 ארגון אחר ארגון, ולגמרי באפריל 2027. דואר, יומן, אנשי קשר ותשובות אוטומטיות פועלים דרך ActiveSync ואינם משתנים. ספר הכתובות (תפקידים, מחלקות, תמונות עמיתים), עצות בשליחה, כללי שרת ושחזור פריטים שנמחקו עובדים עכשיו דרך Microsoft Graph. גם חדרי ישיבות וחברי רשימות תפוצה, אם המנהל העניק לאפליקציה את Place.Read.All ו-GroupMember.Read.All. ‏Microsoft Graph אינו מציע ארכיון מקוון, תיבות משותפות וייבוא חתימה — הם עובדים דרך EWS כל עוד הוא זמין.</string>
     <string name="srvViaGraph">Exchange Online — דרך Microsoft Graph</string>
     <string name="zipEncryptedHint">הארכיון מוגן בסיסמה, ולכן אפליקציית הקבצים לא תפתח אותו. בחרו אפליקציית ארכיונים: היא תבקש את הסיסמה</string>
+    <string name="archiveWhole">כל הארכיון</string>
+    <string name="archiveNoAccountData">אין בארכיון נתונים של תיבה זו</string>
 </resources>

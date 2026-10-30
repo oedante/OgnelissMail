@@ -35,6 +35,16 @@ final archiveAccountsProvider = FutureProvider<List<ArchiveAccountInfo>>((ref) a
   return db.accounts();
 });
 
+/// Ящик архива для ящика приложения (1.8.12, замечание 29.10.2026: в одном
+/// архиве — ящики с разными папками, в меню — только выбранный). Тот же id,
+/// а после объединения с копией с другого устройства — тот же адрес (копия
+/// приходит под своим id, ArchiveDb.resolveAccount сводит её по адресу).
+ArchiveAccountInfo? archiveAccountOf(List<ArchiveAccountInfo> all, {required String id, required String email}) {
+  final e = email.trim().toLowerCase();
+  return all.where((a) => a.id == id).firstOrNull ??
+      (e.isEmpty ? null : all.where((a) => a.email.trim().toLowerCase() == e).firstOrNull);
+}
+
 /// Сколько всего в архиве.
 final archiveStatsProvider = FutureProvider<ArchiveStats?>((ref) async {
   ref.watch(archiveRevisionProvider);

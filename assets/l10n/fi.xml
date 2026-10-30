@@ -3544,4 +3544,6 @@
     <string name="graphHint">Microsoft poistaa EWS:n käytöstä Exchange Onlinessa: lokakuusta 2026 organisaatio kerrallaan, kokonaan huhtikuussa 2027. Sähköposti, kalenteri, yhteystiedot ja automaattiset vastaukset kulkevat ActiveSyncin kautta eivätkä muutu. Osoitekirja (tehtävänimikkeet, osastot, kollegoiden kuvat), lähetysvihjeet, palvelimen säännöt ja poistettujen kohteiden palautus käyttävät nyt Microsoft Graphia. Myös neuvotteluhuoneet ja jakeluluetteloiden jäsenet, jos järjestelmänvalvoja on antanut sovellukselle oikeudet Place.Read.All ja GroupMember.Read.All. Microsoft Graph ei tarjoa verkkoarkistoa, jaettuja postilaatikoita eikä allekirjoituksen tuontia — ne käyttävät EWS:ää niin kauan kuin se on saatavilla.</string>
     <string name="srvViaGraph">Exchange Online — Microsoft Graphin kautta</string>
     <string name="zipEncryptedHint">Arkisto on suojattu salasanalla, joten Tiedostot ei voi avata sitä. Valitse arkistoapp: se kysyy salasanaa</string>
+    <string name="archiveWhole">Koko arkisto</string>
+    <string name="archiveNoAccountData">Arkistossa ei ole tämän postilaatikon tietoja</string>
 </resources>

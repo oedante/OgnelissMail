@@ -3544,4 +3544,6 @@
     <string name="graphHint">Microsoft, Exchange Online में EWS बंद कर रहा है: अक्टूबर 2026 से संगठन दर संगठन, अप्रैल 2027 में पूरी तरह। मेल, कैलेंडर, संपर्क और स्वचालित उत्तर ActiveSync से चलते हैं और नहीं बदलते। पता पुस्तिका (पद, विभाग, सहकर्मियों की फ़ोटो), भेजते समय सुझाव, सर्वर नियम और हटाए गए आइटम की बहाली अब Microsoft Graph से होती है। मीटिंग रूम और वितरण सूची के सदस्य भी, यदि व्यवस्थापक ने ऐप को Place.Read.All और GroupMember.Read.All दिया है। Microsoft Graph ऑनलाइन संग्रह, साझा मेलबॉक्स और हस्ताक्षर आयात नहीं देता — ये EWS उपलब्ध रहने तक EWS से चलते हैं।</string>
     <string name="srvViaGraph">Exchange Online — Microsoft Graph के ज़रिए</string>
     <string name="zipEncryptedHint">आर्काइव पासवर्ड से सुरक्षित है, इसलिए फ़ाइलें ऐप इसे नहीं खोल सकता। कोई आर्काइव ऐप चुनें: वह पासवर्ड पूछेगा</string>
+    <string name="archiveWhole">पूरा संग्रह</string>
+    <string name="archiveNoAccountData">संग्रह में इस मेलबॉक्स का डेटा नहीं है</string>
 </resources>

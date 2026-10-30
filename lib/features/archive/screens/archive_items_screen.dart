@@ -1,6 +1,8 @@
 // lib/features/archive/screens/archive_items_screen.dart
 // Встречи, задачи и контакты в архиве Ogneliss (1.7.3) — списком, с
 // поиском по названию. Подробности — шторкой (всё, что сохранено).
+// С 1.8.12 — и одного ящика ([ArchiveItemsScreen.accountId], из меню
+// ящика): в одном архиве бывают данные нескольких ящиков.
 
 import 'dart:convert';
 
@@ -15,7 +17,7 @@ import '../../../core/utils/app_date_format.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/archive/archive_db.dart';
 import '../../../services/archive/archive_vault.dart';
-import '../archive_providers.dart' show archiveRevisionProvider;
+import '../archive_providers.dart' show archiveRevisionProvider, archiveAccountsProvider;
 import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 
@@ -33,7 +35,10 @@ final _itemsProvider = FutureProvider.autoDispose.family<List<ArchiveItem>, Stri
 
 class ArchiveItemsScreen extends ConsumerStatefulWidget {
   final String kind;
-  const ArchiveItemsScreen({super.key, required this.kind});
+
+  /// Ящик архива; null — все ящики.
+  final String? accountId;
+  const ArchiveItemsScreen({super.key, required this.kind, this.accountId});
 
   @override
   ConsumerState<ArchiveItemsScreen> createState() => _ArchiveItemsScreenState();
@@ -146,12 +151,21 @@ class _ArchiveItemsScreenState extends ConsumerState<ArchiveItemsScreen> {
     final theme = Theme.of(context);
     final items = ref.watch(_itemsProvider(widget.kind));
     final q = _q.text.trim().toLowerCase();
+    final acc = widget.accountId;
+    final accLabel = acc == null
+        ? null
+        : (ref.watch(archiveAccountsProvider).value ?? const <ArchiveAccountInfo>[])
+            .where((a) => a.id == acc)
+            .firstOrNull
+            ?.label;
     return Scaffold(
       appBar: TextScaleCapBar(
         child: AppBar(
           title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(_title(l10n)),
-            Text(l10n.tr('ognaArchive'),
+            Text(accLabel == null ? l10n.tr('ognaArchive') : '${l10n.tr('ognaArchive')} · $accLabel',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(color: AppColors.mutedText(context))),
           ]),
         ),
@@ -159,7 +173,8 @@ class _ArchiveItemsScreenState extends ConsumerState<ArchiveItemsScreen> {
       body: items.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('$e')),
-        data: (all) {
+        data: (every) {
+          final all = acc == null ? every : [for (final i in every) if (i.accountId == acc) i];
           final list = q.isEmpty
               ? all
               : [for (final i in all) if ('${i.title} ${i.subtitle}'.toLowerCase().contains(q)) i];

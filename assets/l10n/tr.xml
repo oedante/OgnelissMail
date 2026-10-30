@@ -3544,4 +3544,6 @@
     <string name="graphHint">Microsoft, Exchange Online\'da EWS\'yi kapatıyor: Ekim 2026\'dan itibaren kuruluş kuruluş, Nisan 2027\'de tamamen. Posta, takvim, kişiler ve otomatik yanıtlar ActiveSync ile çalışır, değişmez. Adres defteri (unvanlar, departmanlar, iş arkadaşlarının fotoğrafları), gönderim ipuçları, sunucu kuralları ve silinen öğeleri kurtarma artık Microsoft Graph kullanıyor. Toplantı odaları ve dağıtım listesi üyeleri de, yönetici uygulamaya Place.Read.All ve GroupMember.Read.All izni verdiyse. Microsoft Graph çevrimiçi arşiv, paylaşılan posta kutuları ve imza içe aktarma sunmuyor — bunlar EWS kullanılabildiği sürece EWS ile çalışır.</string>
     <string name="srvViaGraph">Exchange Online — Microsoft Graph üzerinden</string>
     <string name="zipEncryptedHint">Arşiv parolayla korunuyor, Dosyalar onu açamaz. Bir arşiv uygulaması seçin: parolayı soracaktır</string>
+    <string name="archiveWhole">Arşivin tamamı</string>
+    <string name="archiveNoAccountData">Arşivde bu posta kutusuna ait veri yok</string>
 </resources>

@@ -120,8 +120,17 @@ class ArchiveAccountInfo {
 
   /// Писем этого ящика в архиве.
   final int messages;
-  const ArchiveAccountInfo(this.id, this.email, this.name, {this.messages = 0});
+
+  /// Встреч, задач и контактов этого ящика (1.8.12: архив по ящикам).
+  final int events;
+  final int tasks;
+  final int contacts;
+  const ArchiveAccountInfo(this.id, this.email, this.name,
+      {this.messages = 0, this.events = 0, this.tasks = 0, this.contacts = 0});
   String get label => name.trim().isNotEmpty ? name.trim() : email;
+
+  /// В архиве есть что-нибудь этого ящика.
+  bool get isEmpty => messages + events + tasks + contacts == 0;
 }
 
 /// Итог объединения архива с копией (.ogna с другого устройства).
@@ -426,12 +435,16 @@ class ArchiveDb extends GeneratedDatabase {
 
   Future<List<ArchiveAccountInfo>> accounts() async {
     final rows = await customSelect('SELECT a.id, a.email, a.name, '
-            '(SELECT count(*) FROM messages m WHERE m.account_id = a.id) AS n FROM accounts a ORDER BY a.email')
+            '(SELECT count(*) FROM messages m WHERE m.account_id = a.id) AS n, '
+            '(SELECT count(*) FROM events e WHERE e.account_id = a.id) AS ne, '
+            '(SELECT count(*) FROM tasks t WHERE t.account_id = a.id) AS nt, '
+            '(SELECT count(*) FROM contacts c WHERE c.account_id = a.id) AS nc '
+            'FROM accounts a ORDER BY a.email')
         .get();
     return [
       for (final r in rows)
         ArchiveAccountInfo(r.read<String>('id'), r.read<String>('email'), r.readNullable<String>('name') ?? '',
-            messages: r.read<int>('n')),
+            messages: r.read<int>('n'), events: r.read<int>('ne'), tasks: r.read<int>('nt'), contacts: r.read<int>('nc')),
     ];
   }
 

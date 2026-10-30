@@ -3544,4 +3544,6 @@
     <string name="graphHint">Microsoft schakelt EWS in Exchange Online uit: vanaf oktober 2026 per organisatie, volledig in april 2027. E-mail, agenda, contacten en automatische antwoorden gaan via ActiveSync en veranderen niet. Het adresboek (functies, afdelingen, foto’s van collega’s), tips bij verzenden, serverregels en het herstellen van verwijderde items gaan nu via Microsoft Graph. Vergaderruimten en leden van distributielijsten ook, als de beheerder de app Place.Read.All en GroupMember.Read.All heeft gegeven. Microsoft Graph biedt geen online archief, gedeelde postvakken of handtekeningimport: die gebruiken EWS zolang het beschikbaar is.</string>
     <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
     <string name="zipEncryptedHint">Het archief is beveiligd met een wachtwoord, Bestanden kan het niet openen. Kies een archiefapp: die vraagt om het wachtwoord</string>
+    <string name="archiveWhole">Volledig archief</string>
+    <string name="archiveNoAccountData">Geen gegevens van deze mailbox in het archief</string>
 </resources>

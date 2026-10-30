@@ -233,10 +233,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // (замечание владельца 29.10.2026). Адрес — [pushMailDetail].
       GoRoute(
         path: '/email/:emailId', name: 'mail-detail-top',
-        builder: (_, state) => MailDetailScreen(
+        // Колонкой по центру на широком окне — как новое письмо и встреча.
+        builder: (_, state) => WideFrame.wide(
+            child: MailDetailScreen(
           emailId: state.pathParameters['emailId']!,
           accountId: state.uri.queryParameters['accountId'] ?? '',
-        ),
+        )),
       ),
       // Встреча целиком (из календаря, напоминания, уведомления).
       GoRoute(

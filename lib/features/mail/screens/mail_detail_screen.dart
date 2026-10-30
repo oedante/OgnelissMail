@@ -1593,29 +1593,23 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
 
             const SizedBox(height: 100), // Отступ для bottom bar
         ];
-        if (!pinHeader) {
-          return SingleChildScrollView(
-            child: ReadableWidth(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [...headerChildren, ...bodyChildren],
+        // Колонка — во всю ширину чтения (1.8.12): в ReadableWidth (Align)
+        // она сжималась до самого длинного абзаца и вставала по центру —
+        // на планшете и компьютере короткое письмо съезжало вправо от шапки.
+        Widget column(List<Widget> children) => ReadableWidth(
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: children),
               ),
-            ),
-          );
+            );
+        if (!pinHeader) {
+          return SingleChildScrollView(child: column([...headerChildren, ...bodyChildren]));
         }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ReadableWidth(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: headerChildren),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: ReadableWidth(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: bodyChildren),
-                ),
-              ),
-            ),
+            column(headerChildren),
+            Expanded(child: SingleChildScrollView(child: column(bodyChildren))),
           ],
         );
       }))),

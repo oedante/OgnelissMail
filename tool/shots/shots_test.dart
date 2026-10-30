@@ -452,6 +452,40 @@ void main() {
     });
   }
 
+  // Планшет и компьютер (1.8.12, проверка экранов по размерам): письмо,
+  // новое письмо и настройки на широком окне.
+  for (final (dev, size) in const [
+    ('tablet', Size(800, 1280)),
+    ('tablet_land', Size(1280, 800)),
+    ('desktop', Size(1440, 900)),
+  ]) {
+    testWidgets('письмо — $dev', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await _shot(tester, 'letter_$dev', const MailDetailScreen(emailId: 'e1', accountId: 'a1'),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size);
+      await tester.runAsync(db.close);
+    });
+    testWidgets('новое письмо — $dev', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await _shot(tester, 'compose_$dev', const ComposeScreen(accountId: 'a1'),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size);
+      await tester.runAsync(db.close);
+    });
+    testWidgets('настройки — $dev', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await _shot(tester, 'settings_$dev', const SettingsScreen(), theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs,
+          size: size);
+      await tester.runAsync(db.close);
+    });
+  }
+
   // Барабаны даты и времени (1.8.12): одна полоса выбора, изгиб, затухание.
   for (final t in const ['light', 'dark']) {
     testWidgets('барабаны — $t', (tester) async {

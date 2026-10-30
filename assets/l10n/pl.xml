@@ -1415,7 +1415,6 @@
     <string name="darkMode">Tryb ciemny</string>
     <string name="fontSizeLbl">Rozmiar czcionki</string>
     <string name="aiAnalysisLbl">Analiza AI</string>
-    <string name="smartCompose">Inteligentne pisanie</string>
     <string name="summary">Podsumowanie</string>
     <string name="categoryLbl">Kategoria</string>
     <string name="tags">Tagi</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Wyłącz kanał „Praca w tle” — dostarczanie nadal działa, ale wpis znika z panelu powiadomień</string>
     <string name="recipientSearchGal">Wyszukiwanie w książce adresowej organizacji…</string>
     <string name="recipientSearchNone">Nic nie znaleziono — możesz wpisać cały adres</string>
-    <string name="composeSuggestInsert">Wstaw:</string>
     <string name="senderName">Nazwa nadawcy</string>
     <string name="senderNameEmpty">Nie ustawiono — w polu Od i w podpisie widać tylko adres</string>
     <string name="senderNameHint">Imię i nazwisko</string>

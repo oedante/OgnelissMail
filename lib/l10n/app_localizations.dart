@@ -229,7 +229,6 @@ class AppLocalizations {
 
   // ── AI / Smart ───────────────────────────────────────────────────────────
   String get aiAnalysis => tr('aiAnalysisLbl');
-  String get smartCompose => tr('smartCompose');
   String get summary => tr('summary');
   String get category => tr('categoryLbl');
   String get tags => tr('tags');

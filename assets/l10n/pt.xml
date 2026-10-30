@@ -1415,7 +1415,6 @@
     <string name="darkMode">Modo escuro</string>
     <string name="fontSizeLbl">Tamanho da fonte</string>
     <string name="aiAnalysisLbl">Análise com IA</string>
-    <string name="smartCompose">Escrita inteligente</string>
     <string name="summary">Resumo</string>
     <string name="categoryLbl">Categoria</string>
     <string name="tags">Tags</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Desative o canal “Trabalho em segundo plano” — a entrega continua funcionando, mas o item some da barra de notificações</string>
     <string name="recipientSearchGal">Pesquisando no diretório da organização…</string>
     <string name="recipientSearchNone">Nada encontrado — você pode digitar o endereço completo</string>
-    <string name="composeSuggestInsert">Inserir:</string>
     <string name="senderName">Nome do remetente</string>
     <string name="senderNameEmpty">Não definido — só o endereço aparece em De e na assinatura</string>
     <string name="senderNameHint">Nome completo</string>

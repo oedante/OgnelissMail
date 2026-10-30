@@ -1415,7 +1415,6 @@
     <string name="darkMode">Mod întunecat</string>
     <string name="fontSizeLbl">Dimensiunea fontului</string>
     <string name="aiAnalysisLbl">Analiză AI</string>
-    <string name="smartCompose">Completare inteligentă</string>
     <string name="summary">Rezumat</string>
     <string name="categoryLbl">Categorie</string>
     <string name="tags">Etichete</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Dezactivați canalul „Lucru în fundal” — livrarea continuă să funcționeze, intrarea din panoul de notificări dispare</string>
     <string name="recipientSearchGal">Se caută în lista de adrese a organizației…</string>
     <string name="recipientSearchNone">Nu s-a găsit nimic – poți introduce adresa completă</string>
-    <string name="composeSuggestInsert">Inserează:</string>
     <string name="senderName">Numele expeditorului</string>
     <string name="senderNameEmpty">Nesetat — în câmpul De la și în semnătură apare doar adresa</string>
     <string name="senderNameHint">Nume complet</string>

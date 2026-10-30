@@ -13,7 +13,7 @@ const _png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDw
 void main() {
   testWidgets('картинка — на весь экран, картинка в ссылке — ссылка', (t) async {
     final links = <String>[];
-    final html = '<p>Скрин:</p><img src="data:image/png;base64,$_png" width="40" height="40">'
+    const html = '<p>Скрин:</p><img src="data:image/png;base64,$_png" width="40" height="40">'
         '<a href="https://example.com/x"><img src="data:image/png;base64,$_png" width="40" height="40"></a>';
     final mail = buildNativeMailForced(html)!;
     await t.pumpWidget(MaterialApp(

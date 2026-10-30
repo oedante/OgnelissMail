@@ -1415,7 +1415,6 @@
     <string name="darkMode">Тёмная тема</string>
     <string name="fontSizeLbl">Размер шрифта</string>
     <string name="aiAnalysisLbl">AI-анализ</string>
-    <string name="smartCompose">Автодополнение</string>
     <string name="summary">Краткое содержание</string>
     <string name="categoryLbl">Категория</string>
     <string name="tags">Теги</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Выключите канал «Работа в фоне» — доставка продолжит работать, строка из шторки уйдёт</string>
     <string name="recipientSearchGal">Ищем в адресной книге организации…</string>
     <string name="recipientSearchNone">Ничего не найдено — можно ввести адрес целиком</string>
-    <string name="composeSuggestInsert">Вставить:</string>
     <string name="senderName">Имя отправителя</string>
     <string name="senderNameEmpty">Не задано — в «От» и подписи будет только адрес</string>
     <string name="senderNameHint">Фамилия Имя Отчество</string>

@@ -1415,7 +1415,6 @@
     <string name="darkMode">Mörkt läge</string>
     <string name="fontSizeLbl">Teckenstorlek</string>
     <string name="aiAnalysisLbl">AI-analys</string>
-    <string name="smartCompose">Smart Compose</string>
     <string name="summary">Sammanfattning</string>
     <string name="categoryLbl">Kategori</string>
     <string name="tags">Taggar</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Stäng av kanalen ”Bakgrundsarbete” – leveransen fortsätter, men posten i aviseringspanelen försvinner</string>
     <string name="recipientSearchGal">Söker i organisationens adresslista…</string>
     <string name="recipientSearchNone">Inga träffar – du kan skriva in hela adressen</string>
-    <string name="composeSuggestInsert">Infoga:</string>
     <string name="senderName">Avsändarnamn</string>
     <string name="senderNameEmpty">Inte angivet – bara adressen visas i Från och i signaturen</string>
     <string name="senderNameHint">Fullständigt namn</string>

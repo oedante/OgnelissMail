@@ -1415,7 +1415,6 @@
     <string name="darkMode">الوضع الداكن</string>
     <string name="fontSizeLbl">حجم الخط</string>
     <string name="aiAnalysisLbl">تحليل الذكاء الاصطناعي</string>
-    <string name="smartCompose">الإكمال الذكي</string>
     <string name="summary">الملخص</string>
     <string name="categoryLbl">الفئة</string>
     <string name="tags">الوسوم</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">أوقف قناة «العمل في الخلفية» — يستمر التسليم في العمل، ويختفي العنصر من شريط الإشعارات</string>
     <string name="recipientSearchGal">جارٍ البحث في دليل المؤسسة…</string>
     <string name="recipientSearchNone">لم يُعثر على شيء — يمكنك كتابة العنوان كاملًا</string>
-    <string name="composeSuggestInsert">إدراج:</string>
     <string name="senderName">اسم المرسل</string>
     <string name="senderNameEmpty">غير محدد — يظهر العنوان فقط في حقل «من» وفي التوقيع</string>
     <string name="senderNameHint">الاسم الكامل</string>

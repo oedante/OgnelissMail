@@ -1415,7 +1415,6 @@
     <string name="darkMode">מצב כהה</string>
     <string name="fontSizeLbl">גודל גופן</string>
     <string name="aiAnalysisLbl">ניתוח AI</string>
-    <string name="smartCompose">השלמה חכמה</string>
     <string name="summary">סיכום</string>
     <string name="categoryLbl">קטגוריה</string>
     <string name="tags">תגים</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">כבו את הערוץ “עבודה ברקע” — המסירה ממשיכה לעבוד, והפריט ייעלם ממגש ההתראות</string>
     <string name="recipientSearchGal">מחפש בספר הכתובות של הארגון…</string>
     <string name="recipientSearchNone">לא נמצאו תוצאות – אפשר להקליד את הכתובת המלאה</string>
-    <string name="composeSuggestInsert">הוסף:</string>
     <string name="senderName">שם השולח</string>
     <string name="senderNameEmpty">לא הוגדר — בשדה מאת ובחתימה תוצג רק הכתובת</string>
     <string name="senderNameHint">שם מלא</string>

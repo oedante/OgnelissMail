@@ -1415,7 +1415,6 @@
     <string name="darkMode">Dunkler Modus</string>
     <string name="fontSizeLbl">Schriftgröße</string>
     <string name="aiAnalysisLbl">KI-Analyse</string>
-    <string name="smartCompose">Automatische Vervollständigung</string>
     <string name="summary">Zusammenfassung</string>
     <string name="categoryLbl">Kategorie</string>
     <string name="tags">Tags</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Kanal „Hintergrundarbeit“ ausschalten — die Zustellung läuft weiter</string>
     <string name="recipientSearchGal">Suche im Organisationsverzeichnis…</string>
     <string name="recipientSearchNone">Nichts gefunden — Adresse vollständig eingeben</string>
-    <string name="composeSuggestInsert">Einfügen:</string>
     <string name="senderName">Absendername</string>
     <string name="senderNameEmpty">Nicht festgelegt — nur die Adresse wird angezeigt</string>
     <string name="senderNameHint">Vollständiger Name</string>

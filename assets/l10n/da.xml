@@ -1415,7 +1415,6 @@
     <string name="darkMode">Mørk tilstand</string>
     <string name="fontSizeLbl">Skriftstørrelse</string>
     <string name="aiAnalysisLbl">AI-analyse</string>
-    <string name="smartCompose">Smart Compose</string>
     <string name="summary">Resumé</string>
     <string name="categoryLbl">Kategori</string>
     <string name="tags">Tags</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Slå kanalen »Baggrundsarbejde« fra – leveringen fortsætter, men posten i notifikationspanelet forsvinder</string>
     <string name="recipientSearchGal">Søger i organisationens adresseliste…</string>
     <string name="recipientSearchNone">Ingen resultater – du kan skrive hele adressen</string>
-    <string name="composeSuggestInsert">Indsæt:</string>
     <string name="senderName">Afsendernavn</string>
     <string name="senderNameEmpty">Ikke angivet – kun adressen vises i Fra og i signaturen</string>
     <string name="senderNameHint">Fuldt navn</string>

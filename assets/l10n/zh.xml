@@ -1415,7 +1415,6 @@
     <string name="darkMode">深色模式</string>
     <string name="fontSizeLbl">字体大小</string>
     <string name="aiAnalysisLbl">AI 分析</string>
-    <string name="smartCompose">智能撰写</string>
     <string name="summary">摘要</string>
     <string name="categoryLbl">类别</string>
     <string name="tags">标签</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">关闭“后台运行”通知渠道——邮件照常送达，通知栏中的该条目会消失</string>
     <string name="recipientSearchGal">正在搜索组织通讯录…</string>
     <string name="recipientSearchNone">未找到结果 — 可以直接输入完整地址</string>
-    <string name="composeSuggestInsert">插入：</string>
     <string name="senderName">发件人姓名</string>
     <string name="senderNameEmpty">未设置：“发件人”和签名中仅显示邮件地址</string>
     <string name="senderNameHint">姓名</string>

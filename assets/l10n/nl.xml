@@ -1415,7 +1415,6 @@
     <string name="darkMode">Donkere modus</string>
     <string name="fontSizeLbl">Lettergrootte</string>
     <string name="aiAnalysisLbl">AI-analyse</string>
-    <string name="smartCompose">Slim schrijven</string>
     <string name="summary">Samenvatting</string>
     <string name="categoryLbl">Categorie</string>
     <string name="tags">Tags</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Zet het kanaal “Achtergrondactiviteit” uit: bezorging blijft werken, maar de melding verdwijnt uit het meldingenpaneel</string>
     <string name="recipientSearchGal">Zoeken in de adreslijst van de organisatie…</string>
     <string name="recipientSearchNone">Niets gevonden — je kunt het volledige adres typen</string>
-    <string name="composeSuggestInsert">Invoegen:</string>
     <string name="senderName">Naam afzender</string>
     <string name="senderNameEmpty">Niet ingesteld: in ‘Van’ en de handtekening staat alleen het adres</string>
     <string name="senderNameHint">Volledige naam</string>

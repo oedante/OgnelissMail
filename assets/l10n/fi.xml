@@ -1415,7 +1415,6 @@
     <string name="darkMode">Tumma tila</string>
     <string name="fontSizeLbl">Kirjasinkoko</string>
     <string name="aiAnalysisLbl">Tekoälyanalyysi</string>
-    <string name="smartCompose">Smart Compose</string>
     <string name="summary">Yhteenveto</string>
     <string name="categoryLbl">Luokka</string>
     <string name="tags">Tunnisteet</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Poista käytöstä ”Taustatyö”-kanava – toimitus jatkuu, mutta merkintä ilmoituspaneelista häviää</string>
     <string name="recipientSearchGal">Haetaan organisaation osoitekirjasta…</string>
     <string name="recipientSearchNone">Ei tuloksia – voit kirjoittaa koko osoitteen</string>
-    <string name="composeSuggestInsert">Lisää:</string>
     <string name="senderName">Lähettäjän nimi</string>
     <string name="senderNameEmpty">Ei asetettu – Lähettäjä-kentässä ja allekirjoituksessa näkyy vain osoite</string>
     <string name="senderNameHint">Koko nimi</string>

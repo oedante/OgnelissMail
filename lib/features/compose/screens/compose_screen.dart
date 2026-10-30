@@ -62,7 +62,6 @@ import '../../../data/models/account_model.dart';
 import '../../../data/models/email_model.dart';
 import '../../../data/models/contact_model.dart';
 import '../../../services/mail/offline_send_service.dart';
-import '../../../services/mail/smart_compose_service.dart';
 import '../../settings/providers/feature_flags_provider.dart';
 import '../../../services/security/dlp_service.dart';
 import '../../settings/screens/dlp_settings_screen.dart' show dlpSettingsProvider;
@@ -234,8 +233,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     });
     _markDraftChanged();
   }
-  /// Подсказки Smart Compose для текущего ввода (показываются чипами над вложениями).
-  List<SmartComposeSuggestion> _composeSuggestions = const [];
   // HTML-редактор — на Android, iOS, macOS и Windows (WebView2). На Linux,
   // в вебе и при сбое загрузки — простое текстовое поле.
   bool get _useHtmlEditor => mailEditorSupported && !_editorFailed;
@@ -837,7 +834,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   void _markDraftChanged() {
     if (_sentOrDiscarded) return;
     _autosave?.updateDraft(_snapshot());
-    _recomputeSuggestions();
   }
 
   /// Черновик записан (таймер или кнопка «Сохранить»): подпись «Сохранено ·
@@ -889,34 +885,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     if (widget.draftId != null && from != null) {
       unawaited(_replyDrafts.removeBySubject(from, _subjectController.text));
     }
-  }
-
-  /// Пересчитать подсказки Smart Compose по текущему тексту тела. Вызывается на
-  /// каждое изменение тела (единая точка _markDraftChanged — работает и для
-  /// html-редактора через onChangeContent, и для TextField-фолбэка).
-  void _recomputeSuggestions() {
-    final list = ref.read(smartComposeProvider).getSuggestions(_authoredPlain);
-    if (!mounted) return;
-    // Не дёргаем setState, если набор не изменился (снижаем перерисовки при наборе).
-    if (list.length == _composeSuggestions.length &&
-        List.generate(list.length, (i) => list[i].text == _composeSuggestions[i].text)
-            .every((x) => x)) {
-      return;
-    }
-    setState(() => _composeSuggestions = list);
-  }
-
-  /// Применить подсказку: вставляем ОСТАТОК фразы за уже набранным префиксом
-  /// (ghost-completion) — читается верно в обоих редакторах. Если фраза не
-  /// продолжает набранное — вставляем целиком.
-  void _applySuggestion(SmartComposeSuggestion s) {
-    final typed = _authoredPlain.split('\n').last.trimLeft();
-    final phrase = s.text;
-    final insert = (typed.isNotEmpty && phrase.toLowerCase().startsWith(typed.toLowerCase()))
-        ? phrase.substring(typed.length)
-        : phrase;
-    _insertBodyPlainAtCursor(insert);
-    setState(() => _composeSuggestions = const []);
   }
 
   /// Текущее состояние письма для черновика.
@@ -2349,46 +2317,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
               ),
             ),
           ),
-
-          // Smart Compose — над нижней панелью: под редактором и цитатой
-          // подсказки уходили за край экрана.
-          // Подсказки вставки фраз: с подписью «Вставить:» и кнопкой «закрыть»
-          // (раньше одинокая кнопка «✦ E-mail: …» внизу была непонятна).
-          if (_composeSuggestions.isNotEmpty)
-            SizedBox(
-              height: 24 + 16 * context.textScale.clamp(1.0, TextScaleLimits.app),
-              child: Row(children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: Space.m),
-                  child: Text(l10n.tr('composeSuggestInsert'),
-                      style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
-                ),
-                Expanded(child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: Space.s, vertical: 2),
-                itemCount: _composeSuggestions.length,
-                separatorBuilder: (_, __) => const SizedBox(width: Space.s),
-                itemBuilder: (context, i) {
-                  final s = _composeSuggestions[i];
-                  return ActionChip(
-                    visualDensity: VisualDensity.compact,
-                    avatar: Icon(AppIcons.auto_awesome, size: 16, color: AppColors.accent(context)),
-                    label: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 240),
-                      child: Text(s.text, overflow: TextOverflow.ellipsis),
-                    ),
-                    onPressed: () => _applySuggestion(s),
-                  );
-                },
-              )),
-                IconButton(
-                  tooltip: l10n.tr('close'),
-                  visualDensity: VisualDensity.compact,
-                  icon: const Icon(AppIcons.close, size: 18),
-                  onPressed: () => setState(() => _composeSuggestions = const []),
-                ),
-              ]),
-            ),
 
           // Нижняя панель
           Container(
@@ -4433,7 +4361,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       final account = _fromAccount!;
       // Отложенная отправка уходит обычным путём — с цитатой.
       final bodyHtml = _withQuote(await _getBodyHtmlAsync());
-      ref.read(smartComposeProvider).learnFromSentEmail(_authoredPlain);
       await _awaitRunningDownloads();
       await ref.read(offlineSendProvider).scheduleSend(
             accountId: account.id,
@@ -4625,10 +4552,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     // Фото во вложениях: как есть или уменьшить (1.7.2+109). Шторку смахнули —
     // письмо не уходит.
     if (!await _chooseImageSize() || !mounted) return;
-
-    // Smart Compose учится на отправленных фразах (частые формулировки станут
-    // подсказками). Вызов здесь — единая точка для обычной отправки и Undo Send.
-    ref.read(smartComposeProvider).learnFromSentEmail(_authoredPlain);
 
     // «На контроле»: отправленное письмо получит отметку «жду ответа», когда
     // появится в «Отправленных»; ответ на письмо «должен ответить» — исполнено.

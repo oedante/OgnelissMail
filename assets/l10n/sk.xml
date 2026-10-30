@@ -1415,7 +1415,6 @@
     <string name="darkMode">Tmavý režim</string>
     <string name="fontSizeLbl">Veľkosť písma</string>
     <string name="aiAnalysisLbl">Analýza AI</string>
-    <string name="smartCompose">Inteligentné dopĺňanie</string>
     <string name="summary">Zhrnutie</string>
     <string name="categoryLbl">Kategória</string>
     <string name="tags">Štítky</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Vypnite kanál „Práca na pozadí“ — doručovanie funguje ďalej, položka v paneli upozornení zmizne</string>
     <string name="recipientSearchGal">Hľadanie v adresári organizácie…</string>
     <string name="recipientSearchNone">Nič sa nenašlo – môžete zadať celú adresu</string>
-    <string name="composeSuggestInsert">Vložiť:</string>
     <string name="senderName">Meno odosielateľa</string>
     <string name="senderNameEmpty">Nenastavené — v poli Od a v podpise sa zobrazí iba adresa</string>
     <string name="senderNameHint">Celé meno</string>

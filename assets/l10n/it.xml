@@ -1415,7 +1415,6 @@
     <string name="darkMode">Modalità scura</string>
     <string name="fontSizeLbl">Dimensione del carattere</string>
     <string name="aiAnalysisLbl">Analisi con IA</string>
-    <string name="smartCompose">Scrittura intelligente</string>
     <string name="summary">Riepilogo</string>
     <string name="categoryLbl">Categoria</string>
     <string name="tags">Tag</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Disattiva il canale “Attività in background”: la consegna continua a funzionare, ma la voce nel pannello delle notifiche scompare</string>
     <string name="recipientSearchGal">Ricerca nella rubrica dell\'organizzazione…</string>
     <string name="recipientSearchNone">Nessun risultato — puoi digitare l\'indirizzo completo</string>
-    <string name="composeSuggestInsert">Inserisci:</string>
     <string name="senderName">Nome del mittente</string>
     <string name="senderNameEmpty">Non impostato — in Da e nella firma viene mostrato solo l\'indirizzo</string>
     <string name="senderNameHint">Nome completo</string>

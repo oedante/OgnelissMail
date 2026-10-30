@@ -1415,7 +1415,6 @@
     <string name="darkMode">डार्क मोड</string>
     <string name="fontSizeLbl">फ़ॉन्ट का आकार</string>
     <string name="aiAnalysisLbl">AI विश्लेषण</string>
-    <string name="smartCompose">स्मार्ट कंपोज़</string>
     <string name="summary">सारांश</string>
     <string name="categoryLbl">श्रेणी</string>
     <string name="tags">टैग</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">“बैकग्राउंड में काम” चैनल बंद करें — डिलीवरी काम करती रहेगी, बस नोटिफ़िकेशन शेड से यह एंट्री हट जाएगी</string>
     <string name="recipientSearchGal">संगठन की डायरेक्टरी में खोज रहे हैं…</string>
     <string name="recipientSearchNone">कुछ नहीं मिला — आप पूरा पता लिख सकते हैं</string>
-    <string name="composeSuggestInsert">जोड़ें:</string>
     <string name="senderName">प्रेषक का नाम</string>
     <string name="senderNameEmpty">सेट नहीं है — प्रेषक और हस्ताक्षर में केवल पता दिखाया जाता है</string>
     <string name="senderNameHint">पूरा नाम</string>

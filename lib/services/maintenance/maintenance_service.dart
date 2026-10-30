@@ -1,3 +1,5 @@
+import 'dart:async' show unawaited;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' show TableUpdate, UpdateKind;
 
@@ -50,6 +52,9 @@ class MaintenanceService {
   ///     разорванные до этой версии, сливаются.
   Future<void> afterUpdateOnce() async {
     final prefs = _ref.read(sharedPrefsProvider);
+    // Подсказки «Вставить:» убраны (1.8.12, замечание 30.10.2026: «странно
+    // работают») — и фразы, выученные из отправленных писем, тоже.
+    if (prefs.containsKey('smart_compose_phrases')) unawaited(prefs.remove('smart_compose_phrases'));
     final previews = prefs.getBool(_kPreviewsFilled) ?? false;
     final marked = prefs.getBool(OfflineStoreService.indexMarkedPrefKey) ?? false;
     final dupes = prefs.getBool(_kEasDupes) ?? false;

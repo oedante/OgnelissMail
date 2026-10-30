@@ -1415,7 +1415,6 @@
     <string name="darkMode">Sötét mód</string>
     <string name="fontSizeLbl">Betűméret</string>
     <string name="aiAnalysisLbl">MI-elemzés</string>
-    <string name="smartCompose">Okos szövegkiegészítés</string>
     <string name="summary">Összefoglaló</string>
     <string name="categoryLbl">Kategória</string>
     <string name="tags">Címkék</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">Kapcsolja ki a „Háttérmunka” csatornát – a kézbesítés folytatódik, de a bejegyzés eltűnik az értesítési sávból</string>
     <string name="recipientSearchGal">Keresés a szervezeti címjegyzékben…</string>
     <string name="recipientSearchNone">Nincs találat – megadhatja a teljes címet</string>
-    <string name="composeSuggestInsert">Beszúrás:</string>
     <string name="senderName">Feladó neve</string>
     <string name="senderNameEmpty">Nincs megadva – a Feladó mezőben és az aláírásban csak a cím jelenik meg</string>
     <string name="senderNameHint">Teljes név</string>

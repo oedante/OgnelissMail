@@ -1415,7 +1415,6 @@
     <string name="darkMode">ダークモード</string>
     <string name="fontSizeLbl">文字サイズ</string>
     <string name="aiAnalysisLbl">AI 分析</string>
-    <string name="smartCompose">スマート作成</string>
     <string name="summary">要約</string>
     <string name="categoryLbl">カテゴリ</string>
     <string name="tags">タグ</string>
@@ -1724,7 +1723,6 @@
     <string name="bgNotifHideDesc">「バックグラウンド動作」チャンネルをオフにします。メールの受信は続き、通知パネルの項目だけが消えます</string>
     <string name="recipientSearchGal">組織のアドレス帳を検索しています…</string>
     <string name="recipientSearchNone">見つかりませんでした — アドレスをそのまま入力できます</string>
-    <string name="composeSuggestInsert">挿入：</string>
     <string name="senderName">差出人名</string>
     <string name="senderNameEmpty">未設定：「差出人」と署名にはアドレスのみが表示されます</string>
     <string name="senderNameHint">氏名</string>

@@ -3565,4 +3565,5 @@
     <string name="pdfProtected">PDF\'en er beskyttet med adgangskode. Åbn den i en anden app.</string>
     <string name="faq_mail_10_q">Hvilke vedhæftede filer åbnes direkte i appen?</string>
     <string name="faq_mail_10_a">ZIP-arkiver, også med adgangskode, samt TAR, GZ, BZ2 og XZ åbnes direkte i appen: tryk på en fil inde i arkivet for at åbne den. PDF\'er på Android, billeder, tekst og CSV, .eml-beskeder og .pkpass-billetter åbnes også i appen. På iPhone og iPad viser iOS Vis hurtigt PDF\'er, billeder og Office-dokumenter. Alt andet åbnes i en passende app, og enhver fil kan sendes dertil med knappen øverst. 7z- og RAR-arkiver åbnes kun i en anden app.</string>
+    <string name="quickRepliesCardHint">Teksten indsættes i svaret – tjek og send</string>
 </resources>

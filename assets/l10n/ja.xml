@@ -3546,4 +3546,5 @@
     <string name="pdfProtected">このPDFはパスワードで保護されています。別のアプリで開いてください。</string>
     <string name="faq_mail_10_q">アプリ内で直接開ける添付ファイルは？</string>
     <string name="faq_mail_10_a">パスワード付きを含む ZIP アーカイブと、TAR、GZ、BZ2、XZ はアプリ内で直接開けます。中のファイルをタップすると開きます。Android の PDF、画像、テキストと CSV、.eml メール、.pkpass チケットもアプリ内で開けます。iPhone と iPad では、PDF、画像、Office 書類を iOS のクイックルックで表示します。それ以外は適したアプリで開き、上部のボタンでどのファイルも送れます。7z と RAR のアーカイブは別のアプリでのみ開けます。</string>
+    <string name="quickRepliesCardHint">テキストが返信に入ります。確認して送信してください</string>
 </resources>

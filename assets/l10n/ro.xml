@@ -3584,4 +3584,5 @@
     <string name="pdfProtected">PDF-ul este protejat cu parolă. Deschide-l în altă aplicație.</string>
     <string name="faq_mail_10_q">Ce atașamente se deschid direct în aplicație?</string>
     <string name="faq_mail_10_a">Arhivele ZIP, inclusiv cele protejate cu parolă, precum și TAR, GZ, BZ2 și XZ se deschid direct în aplicație: atinge un fișier din interior pentru a-l deschide. Tot în aplicație se deschid PDF-urile pe Android, imaginile, textul și CSV, mesajele .eml și biletele .pkpass. Pe iPhone și iPad, Previzualizarea iOS afișează PDF-uri, imagini și documente Office. Restul se deschide într-o aplicație potrivită, iar orice fișier poate fi trimis acolo cu butonul de sus. Arhivele 7z și RAR se deschid doar în altă aplicație.</string>
+    <string name="quickRepliesCardHint">Textul intră în răspuns — verificați și trimiteți</string>
 </resources>

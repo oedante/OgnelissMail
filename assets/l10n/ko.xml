@@ -3546,4 +3546,5 @@
     <string name="pdfProtected">PDF가 암호로 보호되어 있습니다. 다른 앱에서 여세요.</string>
     <string name="faq_mail_10_q">앱에서 바로 열리는 첨부 파일은 무엇인가요?</string>
     <string name="faq_mail_10_a">암호가 걸린 것을 포함한 ZIP 압축 파일과 TAR, GZ, BZ2, XZ는 앱에서 바로 열립니다. 안의 파일을 탭하면 열립니다. Android의 PDF, 이미지, 텍스트와 CSV, .eml 메일, .pkpass 티켓도 앱에서 열립니다. iPhone과 iPad에서는 iOS 훑어보기가 PDF, 이미지, Office 문서를 보여 줍니다. 그 밖의 파일은 알맞은 앱에서 열리며, 위쪽 버튼으로 어떤 파일이든 보낼 수 있습니다. 7z와 RAR 압축 파일은 다른 앱에서만 열립니다.</string>
+    <string name="quickRepliesCardHint">텍스트가 답장에 들어갑니다. 확인 후 보내세요</string>
 </resources>

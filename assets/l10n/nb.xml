@@ -3565,4 +3565,5 @@
     <string name="pdfProtected">PDF-en er passordbeskyttet. Åpne den i en annen app.</string>
     <string name="faq_mail_10_q">Hvilke vedlegg åpnes rett i appen?</string>
     <string name="faq_mail_10_a">ZIP-arkiver, også passordbeskyttede, og TAR, GZ, BZ2 og XZ åpnes rett i appen: trykk på en fil i arkivet for å åpne den. PDF-er på Android, bilder, tekst og CSV, .eml-meldinger og .pkpass-billetter åpnes også i appen. På iPhone og iPad viser iOS Hurtigvisning PDF-er, bilder og Office-dokumenter. Alt annet åpnes i en passende app, og alle filer kan sendes dit med knappen øverst. 7z- og RAR-arkiver åpnes bare i en annen app.</string>
+    <string name="quickRepliesCardHint">Teksten settes inn i svaret – sjekk og send</string>
 </resources>

@@ -44,6 +44,7 @@ import '../../../core/theme/mail_page_color.dart';
 import '../../../core/utils/linkify.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/pinch_zoom.dart';
 import 'span_table.dart';
 
@@ -634,6 +635,8 @@ class _Builder {
         final src = (e.attributes['src'] ?? '').trim();
         _add(NSpan('',
             image: src,
+            // Картинка в ссылке — нажатие открывает ссылку (1.8.12).
+            href: x.href,
             imageWidth: _dim(e.attributes['width'], st, 'width'),
             imageHeight: _dim(e.attributes['height'], st, 'height')));
         _space = false;
@@ -1172,6 +1175,19 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       return _contrast(c, page) < 3 ? (s.href != null ? link : null) : c;
     }
 
+    // Нажатие на картинку (1.8.12): в ссылке — ссылка, иначе — картинка на
+    // весь экран с увеличением («иногда они мелкие», замечание 30.10.2026).
+    Widget tappable(NSpan s, ImageProvider full, Widget child) {
+      final href = s.href;
+      return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: href != null ? () => widget.onLink(href, s.text.trim()) : () => showImageViewer(context, full),
+          child: child,
+        ),
+      );
+    }
+
     InlineSpan span(NSpan s, Color? cellBg) {
       if (s.image != null) {
         final src = s.image!;
@@ -1181,7 +1197,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
           final h = s.imageHeight;
           return WidgetSpan(
             alignment: PlaceholderAlignment.bottom,
-            child: ConstrainedBox(
+            child: tappable(s, NetworkImage(src), ConstrainedBox(
               constraints: BoxConstraints(maxWidth: w ?? double.infinity),
               child: Image.network(
                 src,
@@ -1196,7 +1212,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
                     : SizedBox(width: w ?? 1, height: (w != null && h != null) ? h : 1),
                 errorBuilder: (context, error, stack) => const SizedBox.shrink(),
               ),
-            ),
+            )),
           );
         }
         final b = _bytes(src);
@@ -1204,11 +1220,11 @@ class _MailNativeBodyState extends State<MailNativeBody> {
         final w = s.imageWidth;
         return WidgetSpan(
           alignment: PlaceholderAlignment.bottom,
-          child: ConstrainedBox(
+          child: tappable(s, MemoryImage(b), ConstrainedBox(
             constraints: BoxConstraints(maxWidth: w ?? double.infinity),
             child: Image.memory(b,
                 width: w, height: w == null ? s.imageHeight : null, fit: BoxFit.contain, gaplessPlayback: true),
-          ),
+          )),
         );
       }
       TapGestureRecognizer? tap;

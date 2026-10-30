@@ -3565,4 +3565,5 @@
     <string name="pdfProtected">A PDF jelszóval védett. Nyissa meg másik alkalmazásban.</string>
     <string name="faq_mail_10_q">Mely mellékletek nyílnak meg közvetlenül az alkalmazásban?</string>
     <string name="faq_mail_10_a">A ZIP-archívumok, a jelszóval védettek is, valamint a TAR, GZ, BZ2 és XZ közvetlenül az alkalmazásban nyílnak meg: koppintson egy fájlra a megnyitásához. Az alkalmazásban nyílnak meg a PDF-ek is Androidon, a képek, a szöveg és a CSV, az .eml levelek és a .pkpass jegyek. iPhone-on és iPaden az iOS gyorsnézete mutatja a PDF-eket, képeket és Office-dokumentumokat. Minden mást megfelelő alkalmazás nyit meg, és bármely fájl elküldhető oda a felső gombbal. A 7z- és RAR-archívumok csak másik alkalmazásban nyílnak meg.</string>
+    <string name="quickRepliesCardHint">A szöveg a válaszba kerül – ellenőrizze és küldje el</string>
 </resources>

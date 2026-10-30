@@ -3565,4 +3565,5 @@
     <string name="pdfProtected">Ce PDF est protégé par un mot de passe. Ouvrez-le dans une autre application.</string>
     <string name="faq_mail_10_q">Quelles pièces jointes s\'ouvrent directement dans l\'application ?</string>
     <string name="faq_mail_10_a">Les archives ZIP, même protégées par mot de passe, ainsi que TAR, GZ, BZ2 et XZ s\'ouvrent directement dans l\'application : touchez un fichier pour l\'ouvrir. Les PDF sur Android, les images, le texte et le CSV, les messages .eml et les billets .pkpass s\'ouvrent aussi dans l\'application. Sur iPhone et iPad, l\'aperçu d\'iOS affiche les PDF, les images et les documents Office. Le reste s\'ouvre dans une application adaptée, et tout fichier peut y être envoyé avec le bouton en haut. Les archives 7z et RAR s\'ouvrent seulement dans une autre application.</string>
+    <string name="quickRepliesCardHint">Le texte est placé dans la réponse : vérifiez et envoyez</string>
 </resources>

@@ -3565,4 +3565,5 @@
     <string name="pdfProtected">De pdf is beveiligd met een wachtwoord. Open hem in een andere app.</string>
     <string name="faq_mail_10_q">Welke bijlagen openen direct in de app?</string>
     <string name="faq_mail_10_a">ZIP-archieven, ook met wachtwoord, en TAR, GZ, BZ2 en XZ openen direct in de app: tik op een bestand erin om het te openen. Pdf\'s op Android, afbeeldingen, tekst en CSV, .eml-berichten en .pkpass-tickets openen ook in de app. Op iPhone en iPad toont Snel bekijken van iOS pdf\'s, afbeeldingen en Office-documenten. De rest opent in een geschikte app, en elk bestand kun je daarheen sturen met de knop bovenaan. 7z- en RAR-archieven openen alleen in een andere app.</string>
+    <string name="quickRepliesCardHint">De tekst komt in het antwoord — controleer en verstuur</string>
 </resources>

@@ -37,6 +37,7 @@
 // (100 %, широкие части прокручиваются вбок) и обратно.
 
 import 'dart:async';
+import 'dart:convert' show base64Decode;
 import '../../../core/theme/app_icons.dart';
 import 'dart:io' show Platform;
 
@@ -55,6 +56,7 @@ import '../../../core/security/mail_body_processor.dart';
 import '../../../core/utils/linkify.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/ui_zoom.dart';
 
 /// Где показ письма в WebView поддерживается. Остальные платформы (Linux,
@@ -1477,6 +1479,66 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     });
   }
 
+  // ── Картинка по касанию (1.8.12, замечание 30.10.2026: «по нажатию по
+  // картинке в письме увеличивать её, иногда они мелкие») ──
+  // JavaScript в окне письма выключен, письмо не переделывается: после
+  // короткого касания без сдвига окно спрашивается, что было под пальцем
+  // (getHitTestResult, Android). Картинка вне ссылки — на весь экран;
+  // картинку в ссылке открывает сама ссылка.
+  Offset? _downAt;
+  DateTime? _downTime;
+  int _pointers = 0;
+
+  void _tapDown(PointerDownEvent e) {
+    _pointers++;
+    _downAt = _pointers == 1 ? e.position : null;
+    _downTime = DateTime.now();
+  }
+
+  void _tapUp(PointerUpEvent e) {
+    _pointers = (_pointers - 1).clamp(0, 10);
+    final at = _downAt, t = _downTime;
+    _downAt = null;
+    if (at == null || t == null) return;
+    if ((e.position - at).distance > 12 || DateTime.now().difference(t) > const Duration(milliseconds: 450)) return;
+    final c = _web;
+    if (c == null) return;
+    // Окно обновляет результат по своему касанию — чуть позже Flutter.
+    Future<void>.delayed(const Duration(milliseconds: 80), () async {
+      try {
+        final r = await c.getHitTestResult();
+        if (!mounted || r?.type != InAppWebViewHitTestResultType.IMAGE_TYPE) return;
+        final image = _imageFor(r?.extra);
+        if (image != null && mounted) unawaited(showImageViewer(context, image));
+      } catch (_) {}
+    });
+  }
+
+  /// Картинка письма по адресу из окна: data:, cid: (встроенная) или из
+  /// интернета (только когда картинки из сети разрешены).
+  ImageProvider? _imageFor(String? src) {
+    if (src == null || src.isEmpty) return null;
+    final low = src.toLowerCase();
+    if (low.startsWith('data:image/')) {
+      final i = src.indexOf('base64,');
+      if (i < 0) return null;
+      try {
+        return MemoryImage(base64Decode(src.substring(i + 7)));
+      } catch (_) {
+        return null;
+      }
+    }
+    if (low.startsWith('cid:')) {
+      final raw = _cidResponse(WebUri(src));
+      final data = raw?.data;
+      return data == null || data.length <= _blankGif.length ? null : MemoryImage(data);
+    }
+    if (widget.allowRemoteImages && (low.startsWith('https://') || low.startsWith('http://'))) {
+      return NetworkImage(src);
+    }
+    return null;
+  }
+
   Widget _webView() {
     final cover = widget.pageColor ?? Theme.of(context).colorScheme.surface;
     if (!_create || !_activated) return SizedBox(height: _height, child: ColoredBox(color: cover));
@@ -1492,7 +1554,11 @@ class _MailHtmlViewState extends State<MailHtmlView> {
             child: Offstage(
                 offstage: _covered,
                 child: !kIsWeb && Platform.isAndroid
-                    ? UiZoomUndo(zoom: MailHtmlView.webZoom, child: _inAppWebView())
+                    ? Listener(
+                        // Касание картинки — на весь экран (1.8.12).
+                        onPointerDown: _tapDown,
+                        onPointerUp: _tapUp,
+                        child: UiZoomUndo(zoom: MailHtmlView.webZoom, child: _inAppWebView()))
                     : _inAppWebView())),
         if (_covered)
           Positioned.fill(

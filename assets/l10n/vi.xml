@@ -3546,4 +3546,5 @@
     <string name="pdfProtected">Tệp PDF được bảo vệ bằng mật khẩu. Hãy mở bằng ứng dụng khác.</string>
     <string name="faq_mail_10_q">Tệp đính kèm nào mở ngay trong ứng dụng?</string>
     <string name="faq_mail_10_a">Tệp nén ZIP, kể cả có mật khẩu, cùng TAR, GZ, BZ2 và XZ mở ngay trong ứng dụng: chạm vào tệp bên trong để mở. PDF trên Android, ảnh, văn bản và CSV, thư .eml và vé .pkpass cũng mở trong ứng dụng. Trên iPhone và iPad, Xem nhanh của iOS hiển thị PDF, ảnh và tài liệu Office. Các tệp khác mở bằng ứng dụng phù hợp, và có thể gửi mọi tệp tới ứng dụng đó bằng nút ở trên cùng. Tệp nén 7z và RAR chỉ mở được bằng ứng dụng khác.</string>
+    <string name="quickRepliesCardHint">Văn bản được đưa vào thư trả lời — kiểm tra rồi gửi</string>
 </resources>

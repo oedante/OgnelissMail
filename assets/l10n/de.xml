@@ -3565,4 +3565,5 @@
     <string name="pdfProtected">Das PDF ist passwortgeschützt. Öffnen Sie es in einer anderen App.</string>
     <string name="faq_mail_10_q">Welche Anhänge öffnen sich direkt in der App?</string>
     <string name="faq_mail_10_a">ZIP-Archive, auch passwortgeschützte, sowie TAR, GZ, BZ2 und XZ öffnen sich direkt in der App: Tippen Sie auf eine Datei darin, um sie zu öffnen. PDFs auf Android, Bilder, Text und CSV, .eml-Nachrichten und .pkpass-Tickets öffnen sich ebenfalls in der App. Auf iPhone und iPad zeigt die iOS-Übersicht PDFs, Bilder und Office-Dokumente. Alles andere öffnet eine passende App, und jede Datei lässt sich mit der Schaltfläche oben an eine App senden. 7z- und RAR-Archive öffnen sich nur in einer anderen App.</string>
+    <string name="quickRepliesCardHint">Der Text kommt in die Antwort – prüfen und senden</string>
 </resources>

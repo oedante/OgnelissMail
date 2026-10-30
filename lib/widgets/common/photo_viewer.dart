@@ -32,6 +32,12 @@ ImageProvider? fullPhotoImage(String? photo) {
 Future<void> showPhotoViewer(BuildContext context, {required String photo, String? title}) {
   final image = fullPhotoImage(photo);
   if (image == null) return Future.value();
+  return showImageViewer(context, image, title: title);
+}
+
+/// Картинка на весь экран (1.8.12: картинка в письме — по нажатию, «иногда
+/// они мелкие»): пальцами — приблизить до ×6, касание или «Назад» — закрыть.
+Future<void> showImageViewer(BuildContext context, ImageProvider image, {String? title}) {
   final reduce = MediaQuery.of(context).disableAnimations;
   return showGeneralDialog<void>(
     context: context,
@@ -67,7 +73,7 @@ class _PhotoView extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               onTap: () => Navigator.of(context).pop(),
               child: InteractiveViewer(
-                maxScale: 4,
+                maxScale: 6,
                 child: Center(
                   child: Semantics(
                     image: true,

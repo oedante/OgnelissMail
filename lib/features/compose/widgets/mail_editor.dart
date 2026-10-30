@@ -40,7 +40,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../services/background/work_scheduler.dart';
 import '../../../widgets/common/ui_zoom.dart';
 
 /// Где редактор работает. Остальные платформы — простое текстовое поле.
@@ -307,9 +309,14 @@ class MailEditor extends StatefulWidget {
     this.onFocus,
     this.bodyStyle = '',
     this.toolbarHidden = false,
+    this.usePool = false,
   });
 
   final MailEditorController controller;
+
+  /// Брать готовое окно редактора из запасного ([MailEditorPool], Android):
+  /// «Новое сообщение». Подписи в настройках — без него.
+  final bool usePool;
 
   /// CSS текста письма (шрифт и размер аккаунта).
   final String bodyStyle;
@@ -375,9 +382,28 @@ class _MailEditorState extends State<MailEditor> {
     if (_page == null) _build();
   }
 
+  /// Окно из запасного ([MailEditorPool]) и пришло ли из него «готов».
+  HeadlessInAppWebView? _adopted;
+
   Future<void> _build() async {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final lang = _lang(Localizations.localeOf(context).languageCode);
+    if (widget.usePool && MailEditorPool.supported) {
+      final key = MailEditorPool.keyOf(lang: lang, dark: dark, placeholder: widget.placeholder);
+      final size = Size(MediaQuery.sizeOf(context).width * _zoom, widget.height * _zoom);
+      final t = MailEditorPool.take(key, size: size);
+      if (t != null) {
+        // Стиль ящика и панель — после подключения (в запасном окне их нет).
+        unawaited(widget.controller.setBodyStyle(widget.bodyStyle));
+        unawaited(widget.controller.showToolbar(!widget.toolbarHidden));
+        setState(() {
+          _adopted = t;
+          _page = '';
+          _contextMenu = _buildContextMenu(lang);
+        });
+        return;
+      }
+    }
     try {
       final a = await _EditorAssets.load();
       final page = buildMailEditorPage(
@@ -467,6 +493,8 @@ class _MailEditorState extends State<MailEditor> {
     _routeAnim?.removeStatusListener(_onRouteStatus);
     _watchdog?.cancel();
     widget.controller._detach();
+    // Следующее «Новое сообщение» — из готового окна (создаётся в простое).
+    if (widget.usePool) MailEditorPool.scheduleSpare();
     super.dispose();
   }
 
@@ -495,17 +523,8 @@ class _MailEditorState extends State<MailEditor> {
     );
   }
 
-  Widget _webView(String page) => InAppWebView(
-      // Меню выделения: жирный, курсив, подчёркнутый, без
-      // оформления, отменить — без открытия панели форматирования.
-      contextMenu: _contextMenu,
-      initialData: InAppWebViewInitialData(
-        data: page,
-        mimeType: 'text/html',
-        encoding: 'utf-8',
-        baseUrl: WebUri('about:blank'),
-      ),
-      initialSettings: InAppWebViewSettings(
+  /// Настройки окна редактора (и запасного — те же).
+  static InAppWebViewSettings _settings() => InAppWebViewSettings(
         javaScriptEnabled: true,
         javaScriptCanOpenWindowsAutomatically: false,
         supportMultipleWindows: false,
@@ -531,7 +550,35 @@ class _MailEditorState extends State<MailEditor> {
         builtInZoomControls: false,
         displayZoomControls: false,
         textZoom: UiZoom.isIdentity(_zoom) ? 100 : (_zoom * 100).round(),
-      ),
+      );
+
+  Future<void> _onReady(InAppWebViewController c) async {
+    if (_done) return;
+    _done = true;
+    _watchdog?.cancel();
+    await widget.controller._attach(c);
+    if (widget.initialHtml.isNotEmpty) {
+      await widget.controller.setHtml(widget.initialHtml);
+    }
+    widget.onReady?.call();
+  }
+
+  Widget _webView(String page) => InAppWebView(
+      // Готовое окно из запасного: страница уже загружена, initialData не
+      // загружается.
+      headlessWebView: _adopted,
+      // Меню выделения: жирный, курсив, подчёркнутый, без
+      // оформления, отменить — без открытия панели форматирования.
+      contextMenu: _contextMenu,
+      initialData: _adopted != null
+          ? null
+          : InAppWebViewInitialData(
+              data: page,
+              mimeType: 'text/html',
+              encoding: 'utf-8',
+              baseUrl: WebUri('about:blank'),
+            ),
+      initialSettings: _settings(),
       gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
         Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer()),
         Factory<HorizontalDragGestureRecognizer>(() => HorizontalDragGestureRecognizer()),
@@ -540,17 +587,13 @@ class _MailEditorState extends State<MailEditor> {
         c.addJavaScriptHandler(
           handlerName: 'ready',
           callback: (_) async {
-            if (_done) return null;
-            _done = true;
-            _watchdog?.cancel();
-            await widget.controller._attach(c);
-            if (widget.initialHtml.isNotEmpty) {
-              await widget.controller.setHtml(widget.initialHtml);
-            }
-            widget.onReady?.call();
+            await _onReady(c);
             return null;
           },
         );
+        // Запасное окно уже сообщило «готов» — до того, как его забрал экран.
+        final adopted = _adopted;
+        if (adopted != null && MailEditorPool.takenReady(adopted)) unawaited(_onReady(c));
         c.addJavaScriptHandler(
           handlerName: 'change',
           callback: (args) {
@@ -600,4 +643,169 @@ class _MailEditorState extends State<MailEditor> {
     );
 
   static String _attr(String s) => s.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
+}
+
+
+/// Запасное окно редактора (1.8.12, замечание 29.10.2026: «при открытии окна
+/// нового письма интерфейс сильно тормозит»).
+///
+/// Редактор — 1,3 МБ скрипта HugeRTE во встроенном окне (гибридная
+/// композиция): пока окно создавалось, а скрипт разбирался и запускал
+/// редактор, кадры Flutter ждали главный поток Android — экран дёргался.
+/// Как и у просмотра писем ([MailWebViewPool]): одно невидимое окно с уже
+/// запущенным редактором держится наготове, «Новое сообщение» забирает его
+/// готовым. Ключ — язык, тема и подсказка; стиль ящика и панель
+/// форматирования задаются после подключения. Ключ последнего окна
+/// запоминается — и после перезапуска окно готовится в простое.
+/// Только Android; свёрнуто — окно закрывается ([release]).
+class MailEditorPool {
+  MailEditorPool._();
+
+  static bool get supported => !kIsWeb && Platform.isAndroid;
+
+  static const _prefKey = 'mail_editor_spare_v1';
+
+  static HeadlessInAppWebView? _spare;
+  static String? _key;
+  static bool _ready = false;
+  static Future<void>? _creating;
+
+  /// Последний ключ и размер окна (с «Нового сообщения»).
+  static String? _lastKey;
+  static Size? _lastSize;
+
+  /// Окно, которое забрал экран, и пришло ли «готов» до подключения виджета.
+  static HeadlessInAppWebView? _taken;
+  static bool _takenReady = false;
+
+  static bool takenReady(HeadlessInAppWebView v) => identical(v, _taken) && _takenReady;
+
+  static String keyOf({required String lang, required bool dark, required String placeholder}) =>
+      jsonEncode({'l': lang, 'd': dark, 'p': placeholder});
+
+  /// Забрать готовое окно с ключом [key]; null — нет такого (обычный путь).
+  static HeadlessInAppWebView? take(String key, {required Size size}) {
+    _lastKey = key;
+    _lastSize = size;
+    unawaited(_save(key, size));
+    final h = _spare;
+    if (h == null || _key != key || !h.isRunning()) return null;
+    _taken = h;
+    _takenReady = _ready;
+    _spare = null;
+    _key = null;
+    _ready = false;
+    return h;
+  }
+
+  /// Подготовить окно в простое (после закрытия «Нового сообщения», при
+  /// показе ленты).
+  static void scheduleSpare() {
+    if (!supported) return;
+    unawaited(WorkScheduler.instance.run(WorkPriority.idle, ensureSpare));
+  }
+
+  static Future<void> ensureSpare() async {
+    if (!supported) return;
+    if (_lastKey == null) await _restore();
+    final key = _lastKey, size = _lastSize;
+    if (key == null || size == null || size.isEmpty) return;
+    if (_spare != null && _key == key) return;
+    return _creating ??= _create(key, size).whenComplete(() => _creating = null);
+  }
+
+  static Future<void> _create(String key, Size size) async {
+    await release();
+    final cfg = jsonDecode(key) as Map<String, dynamic>;
+    final dark = cfg['d'] == true;
+    final lang = cfg['l'] as String? ?? 'en';
+    final a = await _EditorAssets.load();
+    final page = buildMailEditorPage(
+      script: a.script,
+      scriptHash: a.scriptHash,
+      skinCss: dark ? a.skinDark : a.skin,
+      config: {
+        'lang': lang,
+        'dark': dark,
+        'placeholder': cfg['p'] as String? ?? '',
+        'contentCss': dark ? a.contentDark : a.content,
+        'extraCss': _MailEditorState._contentExtraCss,
+        'imageTooltip': _MailEditorState._imageTooltip(lang),
+        'bodyStyle': '',
+        'toolbarHidden': true,
+      },
+    );
+    late final HeadlessInAppWebView h;
+    h = HeadlessInAppWebView(
+      initialSize: size,
+      initialData: InAppWebViewInitialData(
+          data: page, mimeType: 'text/html', encoding: 'utf-8', baseUrl: WebUri('about:blank')),
+      initialSettings: _MailEditorState._settings(),
+      onWebViewCreated: (c) {
+        c.addJavaScriptHandler(
+          handlerName: 'ready',
+          callback: (_) {
+            if (identical(h, _spare)) _ready = true;
+            if (identical(h, _taken)) _takenReady = true;
+            return null;
+          },
+        );
+        c.addJavaScriptHandler(
+          handlerName: 'failed',
+          callback: (_) {
+            if (identical(h, _spare)) unawaited(release());
+            return null;
+          },
+        );
+      },
+      shouldOverrideUrlLoading: (c, action) async => _MailEditorState._isLocal(action.request.url)
+          ? NavigationActionPolicy.ALLOW
+          : NavigationActionPolicy.CANCEL,
+      onCreateWindow: (c, action) async => false,
+      onPermissionRequest: (c, request) async =>
+          PermissionResponse(resources: request.resources, action: PermissionResponseAction.DENY),
+    );
+    _spare = h;
+    _key = key;
+    _ready = false;
+    try {
+      await h.run();
+    } catch (e) {
+      debugPrint('MailEditorPool: окно не создано ($e)');
+      if (identical(_spare, h)) {
+        _spare = null;
+        _key = null;
+      }
+    }
+  }
+
+  /// Приложение свёрнуто — закрыть запасное окно (память).
+  static Future<void> release() async {
+    final h = _spare;
+    _spare = null;
+    _key = null;
+    _ready = false;
+    if (h == null) return;
+    try {
+      await h.dispose();
+    } catch (_) {}
+  }
+
+  static Future<void> _save(String key, Size size) async {
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setString(_prefKey, jsonEncode({'k': key, 'w': size.width, 'h': size.height}));
+    } catch (_) {}
+  }
+
+  static Future<void> _restore() async {
+    try {
+      final p = await SharedPreferences.getInstance();
+      final raw = p.getString(_prefKey);
+      if (raw == null) return;
+      final m = jsonDecode(raw) as Map<String, dynamic>;
+      _lastKey = m['k'] as String?;
+      _lastSize = Size((m['w'] as num).toDouble(), (m['h'] as num).toDouble());
+    } catch (_) {}
+  }
 }

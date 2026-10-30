@@ -9,6 +9,7 @@
 
 import '../../features/mail/providers/mail_open_cache.dart';
 import '../../features/mail/widgets/mail_html_view.dart' show MailWebViewPool;
+import '../../features/compose/widgets/mail_editor.dart' show MailEditorPool;
 import '../../services/sync/offline_store_service.dart';
 import '../../services/notifications/email_reminder_service.dart';
 import '../../services/mail/auto_reply_status.dart';
@@ -174,6 +175,8 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       // Запасное окно браузера (1.5.9) — тоже: вернувшись, лента создаст его
       // заново в простое.
       unawaited(MailWebViewPool.release());
+      // Запасное окно редактора — тоже (1.8.12).
+      unawaited(MailEditorPool.release());
     }
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden ||

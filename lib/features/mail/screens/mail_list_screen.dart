@@ -24,7 +24,7 @@ import '../../../services/archive/archive_runner.dart' show archiveRunnerProvide
 import '../../../services/archive/archive_settings.dart' show archiveSettingsProvider;
 import '../widgets/mail_html_view.dart' show MailHtmlView, MailWebViewPool;
 import '../../../widgets/common/swipe_action_indicator.dart';
-import '../../compose/widgets/mail_editor.dart' show warmUpMailEditor;
+import '../../compose/widgets/mail_editor.dart' show MailEditorPool, warmUpMailEditor;
 import '../../../services/mail/conversation_counter.dart';
 import 'dart:async';
 import '../../../services/mail/offline_send_service.dart';
@@ -263,6 +263,8 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       // Редактор письма (1,3 МБ скрипта и его хэш) — тоже заранее (1.6.19):
       // первое «Новое сообщение» открывалось с паузой.
       unawaited(warmUpMailEditor());
+      // И само окно редактора с запущенным HugeRTE (1.8.12).
+      MailEditorPool.scheduleSpare();
       _warmSpare();
     }
     Future<void>.delayed(const Duration(seconds: 2), warmUp);
@@ -338,6 +340,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       unawaited(WorkScheduler.instance.run(WorkPriority.idle, () async {
         await Future<void>.delayed(const Duration(seconds: 2));
         _warmSpare();
+        // Окно редактора — ещё позже: сначала письма, потом «Новое сообщение».
+        await Future<void>.delayed(const Duration(seconds: 3));
+        MailEditorPool.scheduleSpare();
       }));
       if (_scrollController.hasClients && _scrollController.offset > 0) {
         _scrollController.jumpTo(0);

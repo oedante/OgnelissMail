@@ -2219,6 +2219,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                     MailEditor(
                       key: _editorKey,
                       controller: _editor,
+                      // Готовое окно редактора из запасного (1.8.12).
+                      usePool: true,
                       placeholder: l10n.tr('messageBodyHint'),
                       // Половина экрана (не меньше 260): на большом телефоне
                       // поле не обрывается посередине, на маленьком влезает.

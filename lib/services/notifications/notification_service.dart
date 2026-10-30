@@ -154,7 +154,14 @@ class NotificationService {
     );
 
     await _plugin.initialize(
-      InitializationSettings(android: androidInit, iOS: iosInit),
+      // macOS и Linux (1.8.13): без своих настроек плагин бросал ArgumentError
+      // при запуске, и уведомлений на компьютере не было вовсе.
+      InitializationSettings(
+        android: androidInit,
+        iOS: iosInit,
+        macOS: iosInit,
+        linux: LinuxInitializationSettings(defaultActionName: _t('ntfOpen')),
+      ),
       onDidReceiveNotificationResponse: _onNotificationResponse,
       onDidReceiveBackgroundNotificationResponse: notificationBackgroundHandler,
     );
@@ -269,21 +276,31 @@ class NotificationService {
       actions.add(AndroidNotificationAction('delete', _t('ntfDelete')));
     }
 
-    // Раскладка (10.10.2026, NotificationText): жирным — тема, ниже —
-    // «Отправитель — начало текста» без цитаты и подписи; папка и короткая
-    // подпись ящика — в шапке уведомления, а не в заголовке. Раньше
-    // заголовок «Отправитель · полный адрес ящика» съедал строку, а тема
-    // терялась в тексте.
-    final title = NotificationText.title(subject, noSubject: _t('noSubject'), vip: isVip, shared: isSharedMailbox);
-    final text = NotificationText.preview(preview);
-    final collapsed = NotificationText.line(senderName, text);
-    final subText = NotificationText.subText(folder: folderLabel, mailbox: mailboxLabel);
-
+    // Раскладка (1.8.13, NotificationText): жирным — только отправитель,
+    // ниже тема, в раскрытом — тема и начало текста без цитаты и подписи;
+    // папка и короткая подпись ящика — в шапке уведомления.
     final badge = await _bumpBadge();
+    final title = NotificationText.title(senderName, vip: isVip, shared: isSharedMailbox);
+    final subj = NotificationText.subject(subject, noSubject: _t('noSubject'));
+    final text = NotificationText.preview(preview);
+    final subText = NotificationText.subText(folder: folderLabel, mailbox: mailboxLabel);
+    // Строка текста: на Android — тема (свёрнутое уведомление), на iPhone и
+    // Mac тема — подзаголовок, а в тексте — начало письма и последней
+    // строкой папка и ящик (шапки, как на Android, там нет).
+    // Linux — тема и текст: раскрывать уведомление там нечем.
+    final apple = Platform.isIOS || Platform.isMacOS;
+    final body = apple
+        ? [if (text.isNotEmpty) text, if (subText != null) subText].join('\n')
+        : (Platform.isAndroid ? subj : NotificationText.big(subj, text));
+    final darwin = DarwinNotificationDetails(
+        presentAlert: true, presentSound: _soundOn && !silent && !quiet, presentBadge: true, badgeNumber: badge,
+        subtitle: subj,
+        categoryIdentifier: isInvite ? 'INVITE' : 'EMAIL', threadIdentifier: 'email_$accountId');
+
     await _plugin.show(
       notificationIdForEmail(accountId, emailId),
       title,
-      collapsed,
+      body,
       NotificationDetails(
         // Android 8+ фиксирует звук/вибрацию на уровне КАНАЛА (не отдельного
         // уведомления). Поэтому вариант кодируем в id канала — при смене настройки
@@ -312,16 +329,15 @@ class NotificationService {
           // Полный текст превью по раскрытию.
           subText: subText,
           styleInformation: BigTextStyleInformation(
-            NotificationText.big(senderName, text),
+            NotificationText.big(subj, text),
             contentTitle: title,
             summaryText: subText,
           ),
         ),
-        // iPhone: тема — заголовок, отправитель — подзаголовок, текст ниже.
-        iOS: DarwinNotificationDetails(
-            presentAlert: true, presentSound: _soundOn && !silent && !quiet, presentBadge: true, badgeNumber: badge,
-            subtitle: [senderName, if (subText != null) subText].join(' · '),
-            categoryIdentifier: isInvite ? 'INVITE' : 'EMAIL', threadIdentifier: 'email_$accountId'),
+        // iPhone и Mac: отправитель — заголовок, тема — подзаголовок, текст
+        // ниже (как в Почте iPhone).
+        iOS: darwin,
+        macOS: darwin,
       ),
       payload: payload,
     );
@@ -365,14 +381,13 @@ class NotificationService {
 
   /// Сводное уведомление группы писем ящика (Android сворачивает в него
   /// отдельные уведомления). [accountEmail] — подпись в шапке (короткая
-  /// подпись ящика или «Письма за время фокуса»); [lines] — до 6 строк,
-  /// при [htmlLines] — HTML (тема жирным, NotificationText.summaryLine).
+  /// подпись ящика или «Письма за время фокуса»); [lines] — до 6 строк
+  /// обычным шрифтом (NotificationText.summaryLine).
   Future<void> showSummaryNotification({
     required String accountId,
     required String accountEmail,
     required int count,
     List<String> lines = const [],
-    bool htmlLines = false,
     /// Ящик «без звука» (1.6.45): сводка — тихим каналом.
     bool quiet = false,
   }) async {
@@ -404,7 +419,6 @@ class NotificationService {
               ? null
               : InboxStyleInformation(
                   lines.take(6).toList(),
-                  htmlFormatLines: htmlLines,
                   contentTitle: _newMailCount(count),
                   summaryText: accountEmail.isEmpty ? null : accountEmail,
                 ),

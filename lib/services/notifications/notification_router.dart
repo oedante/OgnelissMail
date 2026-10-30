@@ -15,6 +15,7 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/widgets.dart' show WidgetsBinding;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart' show GoRouter, ImperativeRouteMatch;
 
 import '../../core/logging/app_logger.dart';
 import '../../core/navigation/app_router.dart';
@@ -76,7 +77,11 @@ class NotificationRouter {
         case 'email':
           final id = m['emailId'] as String?;
           if (id == null || id.isEmpty) return '/mail';
-          return mailDetailPath(id, accountId: accountId.isEmpty ? null : accountId);
+          // Отдельной страницей поверх любого экрана (1.8.13): страница
+          // ленты внутри главного экрана, открытая поверх настроек или
+          // «Написать», создавала второй главный экран — после «Назад»
+          // пропадали панели.
+          return messagePath(id, accountId: accountId.isEmpty ? null : accountId);
         case 'mail_summary':
           return '/mail';
         case 'event':
@@ -141,6 +146,17 @@ class NotificationRouter {
     }
   }
 
+  /// Последнее нажатое уведомление и когда (1.8.13). На Android нажатие при
+  /// живом окне приходит дважды: колбэком плагина (onNewIntent) и намерением
+  /// окна при возврате на экран (checkLaunch, плагин сохраняет намерение
+  /// через setIntent). Письмо открывалось двумя страницами: «Назад»
+  /// возвращало на то же письмо, а состояние навигации расходилось с экраном.
+  static String? _lastPayload;
+  static DateTime? _lastAt;
+
+  /// Повтор того же нажатия — в пределах [_repeatWindow].
+  static const _repeatWindow = Duration(seconds: 5);
+
   /// Нажатие на уведомление (не на кнопку).
   void open(String? payload) {
     final route = routeFor(payload);
@@ -148,6 +164,14 @@ class NotificationRouter {
       AppLogger.info('Уведомление: нет маршрута для нажатия');
       return;
     }
+    final now = DateTime.now();
+    final last = _lastAt;
+    if (payload == _lastPayload && last != null && now.difference(last) < _repeatWindow) {
+      AppLogger.info('Уведомление: повтор того же нажатия — пропущен');
+      return;
+    }
+    _lastPayload = payload;
+    _lastAt = now;
     final account = mailAccountFor(payload);
     _openQueue = payload?.startsWith('outbox:') ?? false;
     // Ждать главного экрана нужно только при запуске процесса (заставка
@@ -211,6 +235,14 @@ class NotificationRouter {
     }
   }
 
+  /// Адрес страницы, которая сейчас сверху: у открытой поверх (push) —
+  /// её собственный, а не адрес под ней (его отдаёт currentConfiguration.uri).
+  static String topLocation(GoRouter router) {
+    final config = router.routerDelegate.currentConfiguration;
+    final last = config.lastOrNull;
+    return last is ImperativeRouteMatch ? last.matches.uri.toString() : config.uri.toString();
+  }
+
   void _go(String route) {
     try {
       final router = _ref.read(appRouterProvider);
@@ -218,6 +250,9 @@ class NotificationRouter {
       // чтобы «Назад» вернул туда, где человек был.
       if (route == '/mail' || route.startsWith('/tasks') || route == '/calendar') {
         router.go(route);
+      } else if (topLocation(router) == route) {
+        // Это письмо (встреча) уже открыто сверху — вторая такая же страница не нужна.
+        AppLogger.info('Переход по уведомлению: уже открыто');
       } else {
         router.push(route);
       }

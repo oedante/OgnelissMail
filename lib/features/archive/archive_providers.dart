@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/utils/folder_icons.dart';
+import '../../data/models/account_model.dart';
 import '../../data/models/folder_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/archive/archive_db.dart';
@@ -34,6 +35,33 @@ final archiveAccountsProvider = FutureProvider<List<ArchiveAccountInfo>>((ref) a
   if (db == null) return const [];
   return db.accounts();
 });
+
+/// Встречи, задачи и контакты архива по ящикам (1.8.14).
+final archiveItemCountsProvider = FutureProvider<Map<String, ({int events, int tasks, int contacts})>>((ref) async {
+  ref.watch(archiveRevisionProvider);
+  final db = ref.watch(archiveDbProvider);
+  if (db == null) return const {};
+  return db.itemCounts();
+});
+
+/// Ящики архива, которые — этот ящик приложения (1.8.14: в меню — архив
+/// выбранного ящика): тот же id или тот же адрес. У архива, перенесённого с
+/// другого устройства (.ogna), id ящиков свои, адрес — тот же.
+Set<String> archiveAccountsOf(AccountModel a, Iterable<ArchiveAccountInfo> all) {
+  final email = a.email.trim().toLowerCase();
+  return {
+    for (final x in all)
+      if (x.id == a.id || (email.isNotEmpty && x.email.trim().toLowerCase() == email)) x.id,
+  };
+}
+
+/// Ящики в адресе экрана архива («?accounts=a,b»); null — весь архив.
+Set<String>? archiveAccountsParam(String? v) {
+  final ids = (v ?? '').split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toSet();
+  return ids.isEmpty ? null : ids;
+}
+
+String archiveAccountsQuery(Set<String> ids) => ids.map(Uri.encodeQueryComponent).join(',');
 
 /// Сколько всего в архиве.
 final archiveStatsProvider = FutureProvider<ArchiveStats?>((ref) async {

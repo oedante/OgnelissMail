@@ -321,6 +321,15 @@ class GraphEngine {
       if (at == null || at.isEmpty) throw const GraphException(0, 'unavailable');
       r = await once(at);
     }
+    // Ограничение запросов (429) и перегрузка сервиса (503, 504): Graph
+    // сообщает, сколько подождать (Retry-After, секунды), — одна повторная
+    // попытка, не дольше 30 с (1.8.13; раньше ошибка сразу).
+    final wait = retryDelay(r.statusCode, r.headers['retry-after']);
+    if (wait != null) {
+      _log?.info('GRAPH', '$method ${uri.path} → ${r.statusCode}, повтор через ${wait.inSeconds} с');
+      await Future<void>.delayed(wait);
+      r = await once(at);
+    }
     final ms = DateTime.now().difference(t0).inMilliseconds;
     if (r.statusCode >= 200 && r.statusCode < 300) {
       _log?.debug('GRAPH', '$method ${uri.path} → ${r.statusCode} (${ms}ms)');
@@ -330,6 +339,15 @@ class GraphEngine {
     final e = GraphException(r.statusCode, err.code, err.message);
     _log?.info('GRAPH', '$method ${uri.path} → $e (${ms}ms)');
     throw e;
+  }
+
+  /// Пауза перед повтором для ответа [status]: 429, 503, 504 — по
+  /// Retry-After (секунды; без заголовка — 2 с), не больше 30 с. null —
+  /// повторять не нужно.
+  static Duration? retryDelay(int status, String? retryAfter) {
+    if (status != 429 && status != 503 && status != 504) return null;
+    final sec = int.tryParse(retryAfter?.trim() ?? '') ?? 2;
+    return Duration(seconds: sec.clamp(0, 30));
   }
 
   // ════════════════════════ Разбор ответов ════════════════════════

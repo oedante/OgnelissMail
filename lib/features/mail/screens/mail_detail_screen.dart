@@ -22,7 +22,7 @@ import '../../../services/mail/unsubscribe_service.dart' show encodeListUnsubscr
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditorForEmail;
 import '../../../core/utils/text_safe.dart';
 import '../../../core/utils/symbol_fonts.dart';
-import '../../../core/navigation/app_router.dart' show mailDetailPath;
+import '../../../core/navigation/app_router.dart' show mailOpenPath;
 import '../../../core/theme/app_icons.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -83,6 +83,7 @@ import '../providers/drawer_prefs.dart'
 import '../../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../widgets/mail_html_view.dart';
 import '../../../widgets/common/readable_width.dart';
+import '../providers/conversation_mute.dart';
 import '../widgets/read_receipt_banner.dart';
 import '../../../data/database/app_database.dart';
 import '../../../data/providers/database_provider.dart';
@@ -97,7 +98,7 @@ import '../../../widgets/common/hero_email_transition.dart';
 import '../../../widgets/common/animated_appearance.dart';
 import '../../../core/utils/quote_splitter.dart';
 import '../../../services/mail/eml_builder.dart';
-import 'package:flutter_html_table/flutter_html_table.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import '../../../core/security/link_opener.dart';
 import 'attachment_preview_screen.dart';
@@ -635,7 +636,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   Future<void> _sendReadReceipt(EmailModel email) async {
     final l10n = AppLocalizations.of(context);
     try {
-      final account = ref.read(activeAccountProvider);
+      // Ящик письма, а не выбранный в ленте (1.8.13): в «Всей почте», группе
+      // и из уведомления другого ящика уведомление уходило от чужого адреса.
+      final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
       if (account == null) return;
       await ref.read(mailEngineServiceProvider).sendReadReceipt(
         account,
@@ -970,7 +973,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// (письмо сложное, выключено в «Возможностях», цитата ещё не отделена).
   /// Кнопка «Как в браузере» убрана в 1.5.10 — показ виджетами точнее.
   Widget? _nativeBody(EmailModel email, String html, ThemeData theme, AppLocalizations l10n, AppSettings settings) {
-    if (!(ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.nativeMail) ?? true)) return null;
+    // Компьютер (1.8.14): окна браузера в письме нет — виджетами всегда.
+    if (mailWebViewSupported && !(ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.nativeMail) ?? true)) {
+      return null;
+    }
     final split = _split;
     if (split == null) return null;
     final full = !split.hasQuote || _showQuote;
@@ -983,7 +989,12 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // Письмо целиком («Показать переписку») — модель строится в изоляте.
         if (_nativeBuilding.add(mode)) {
           final gen = _docGen;
-          unawaited(MailBodyProcessor.heavy(full ? html : split.reply, _imagesAllowed ? buildNativeMailRemote : buildNativeMail).then(
+          unawaited(MailBodyProcessor.heavy(
+                  full ? html : split.reply,
+                  mailWebViewSupported
+                      ? (_imagesAllowed ? buildNativeMailRemote : buildNativeMail)
+                      : (_imagesAllowed ? buildNativeMailDesktopRemote : buildNativeMailDesktop))
+              .then(
             (n) {
               if (gen == _docGen) safeSetState(() => _natives[mode] = n);
             },
@@ -1033,6 +1044,84 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       ],
     );
   }
+
+  /// Тело письма на компьютере (Windows, macOS, Linux; 1.8.14). Окна браузера
+  /// в письме нет, а прежний показ (flutter_html с расширением таблиц) на
+  /// вёрстке таблицами рассылок падал при раскладке: вместо письма — пустые
+  /// и серые места (замечание 29.10.2026 «сложные письма отображаются
+  /// некорректно»). Теперь — виджетами, как простые письма на телефоне;
+  /// сложная вёрстка — упрощённо, оформление целиком — «Открыть в браузере».
+  Widget _buildDesktopBody(EmailModel email, ThemeData theme, AppLocalizations l10n, AppSettings settings) {
+    final html = email.bodyHtml!;
+    if (!identical(_splitSource, html)) {
+      _splitSource = html;
+      _hasCid = html.toLowerCase().contains('cid:');
+      _natives.clear();
+      _nativeBuilding.clear();
+      _docGen++;
+      final p = _prepared;
+      _split = p != null && identical(p.secured.html, html) ? p.split : splitQuotedHtml(html);
+    }
+    final native = _nativeBody(email, html, theme, l10n, settings);
+    final body = native ?? _flutterHtmlBody(html, theme, l10n);
+    if (_prepared?.nativeWhy == null) return body;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton.icon(
+            onPressed: () => unawaited(_openInBrowser(email)),
+            style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+            icon: const Icon(AppIcons.open_in_new, size: 18),
+            label: Text(l10n.tr('mailOpenInBrowser')),
+          ),
+        ),
+        body,
+      ],
+    );
+  }
+
+  /// Письмо целиком в браузере компьютера (1.8.14): тот же очищенный
+  /// документ, что у окна письма на телефоне — без скриптов (CSP), картинки
+  /// из интернета — только если они разрешены в письме.
+  Future<void> _openInBrowser(EmailModel email) async {
+    final html = email.bodyHtml;
+    if (html == null || html.isEmpty) return;
+    try {
+      final doc = await MailHtmlDocument.buildAsync(html,
+          allowRemoteImages: _imagesAllowed, inlineImages: _inlineImages);
+      final subject = email.subject.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+      // Поля у краёв окна браузера и тема письма — в заголовке вкладки.
+      final page = MailHtmlView.composeHtml(doc,
+              viewWidth: 0, fitWidth: null, dark: false, pageColor: Colors.white, textScale: 1)
+          .replaceFirst('</head>', '<title>$subject</title><style>body{padding:16px !important;}</style></head>');
+      final dir = await getTemporaryDirectory();
+      // Один файл на все письма: прежнее письмо не копится во временной папке.
+      final f = File('${dir.path}${Platform.pathSeparator}ogneliss-mail-view.html');
+      await f.writeAsString(page, flush: true);
+      final ok = await launchUrl(Uri.file(f.path), mode: LaunchMode.externalApplication);
+      if (!ok && mounted) showInlineError(AppLocalizations.of(context).tr('mailOpenInBrowserFailed'));
+    } catch (e) {
+      AppLogger.warning('Письмо в браузере: $e');
+      if (mounted) showInlineError(AppLocalizations.of(context).tr('mailOpenInBrowserFailed'));
+    }
+  }
+
+  /// Запасной показ на компьютере, если разбор виджетами не удался.
+  Widget _flutterHtmlBody(String html, ThemeData theme, AppLocalizations l10n) {
+    // Блоки <style> письма flutter_html применил бы по-своему (без @media) —
+    // без них, как раньше.
+    final plain = html.replaceAll(_styleBlock, '');
+    Map<String, Style> htmlStyle() => {
+          'body': Style(fontSize: FontSize(15), lineHeight: const LineHeight(1.5)),
+          'a': Style(color: AppColors.linkBlue),
+        };
+    return SelectionArea(
+        child: Html(data: plain, style: htmlStyle(), onLinkTap: (url, _, el) => _onLinkTap(url, el)));
+  }
+
+  static final _styleBlock = RegExp(r'<style[^>]*>[\s\S]*?</style>', caseSensitive: false);
 
   /// Тело письма в WebView (Android, iOS): вложенные таблицы Outlook, стили,
   /// широкая вёрстка. Цитата свёрнута; «Показать переписку» загружает письмо
@@ -1540,36 +1629,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 child: email.bodyHtml != null && email.bodyHtml!.isNotEmpty && mailWebViewSupported
                     ? _buildWebBody(email, theme, l10n, settings)
                     : email.bodyHtml != null && email.bodyHtml!.isNotEmpty
-                    ? Builder(builder: (context) {
-                        // Разбор цитаты — один раз на тело письма, а не на
-                        // каждую перерисовку (прокрутка, открытие панелей).
-                        if (!identical(_splitSource, email.bodyHtml)) {
-                          _splitSource = email.bodyHtml;
-                          _split = splitQuotedHtml(email.bodyHtml!);
-                        }
-                        final split = _split!;
-                        Map<String, Style> htmlStyle() => {
-                              'body': Style(fontSize: FontSize(15), lineHeight: const LineHeight(1.5)),
-                              'a': Style(color: AppColors.linkBlue),
-                            };
-                        if (!split.hasQuote) {
-                          return SelectionArea(child: Html(data: email.bodyHtml!, extensions: const [TableHtmlExtension()], style: htmlStyle(), onLinkTap: (url, _, el) => _onLinkTap(url, el)));
-                        }
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Свежий ответ — показываем сразу.
-                            SelectionArea(child: Html(data: split.reply, extensions: const [TableHtmlExtension()], style: htmlStyle(), onLinkTap: (url, _, el) => _onLinkTap(url, el))),
-                            // Переключатель «показать/скрыть» процитированную переписку.
-                            _quoteToggle(theme, l10n),
-                            if (_showQuote)
-                              Opacity(
-                                opacity: 0.75,
-                                child: SelectionArea(child: Html(data: split.quoted, extensions: const [TableHtmlExtension()], style: htmlStyle(), onLinkTap: (url, _, el) => _onLinkTap(url, el))),
-                              ),
-                          ],
-                        );
-                      })
+                    ? _buildDesktopBody(email, theme, l10n, settings)
                     : LinkifiedText(
                         SymbolFonts.fixPlain(email.bodyPlain ?? email.bodyPreview ?? ''),
                         style: theme.textTheme.bodyMedium?.copyWith(height: 1.35),
@@ -1586,7 +1646,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 emails: _conversationEmails!,
                 currentEmailId: email.id,
                 onEmailTap: (e) {
-                  context.push(mailDetailPath(e.id, accountId: e.accountId));
+                  context.push(mailOpenPath(context, e.id, accountId: e.accountId));
                 },
               ),
             ],
@@ -1596,6 +1656,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         if (!pinHeader) {
           return SingleChildScrollView(
             child: ReadableWidth(
+              fill: true,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [...headerChildren, ...bodyChildren],
@@ -1607,11 +1668,13 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ReadableWidth(
+              fill: true,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: headerChildren),
             ),
             Expanded(
               child: SingleChildScrollView(
                 child: ReadableWidth(
+                  fill: true,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: bodyChildren),
                 ),
               ),
@@ -1927,11 +1990,18 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       child: SafeArea(
         top: false,
         // Кнопки «Ответить» меняются, когда в быстром ответе появился текст.
+        // Широкое окно (планшет, компьютер, 1.8.13): кнопки — по центру
+        // колонкой шириной с телефон, а не через весь экран, где до «Ответить»
+        // от «Удалить» было полметра.
         child: ListenableBuilder(
           listenable: _quickReply,
-          builder: (context, _) => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: _barButtons(email, settings, l10n, order: order, draft: draft),
+          builder: (context, _) => ReadableWidth(
+            maxWidth: 600,
+            fill: true,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: _barButtons(email, settings, l10n, order: order, draft: draft),
+            ),
           ),
         ),
       ),
@@ -1941,12 +2011,16 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Строка ответа — шириной с колонку письма (как шапка и текст).
         ColoredBox(
           color: mailPageColor(theme),
-          child: QuickReplyBar(
-            key: ValueKey('qr_${email.accountId}_${email.id}'),
-            email: email,
-            controller: _quickReply,
+          child: ReadableWidth(
+            fill: true,
+            child: QuickReplyBar(
+              key: ValueKey('qr_${email.accountId}_${email.id}'),
+              email: email,
+              controller: _quickReply,
+            ),
           ),
         ),
         bar,
@@ -2141,6 +2215,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // Действия сгруппированы по смыслу (раньше — сплошная сетка из 20+
     // значков, где «Экспорт», «Сохранить PDF» и «Печать» делали одно и то же).
     final isExchange = ref.read(accountsProvider).any((a) => a.id == email.accountId && a.isMsExchange);
+    final convMuted = ref.read(mutedConversationsProvider.notifier).isMuted(email.accountId, email.conversationId);
     // Та же карточка, что по удержанию письма в ленте (1.8.8, замечание
     // владельца 29.10.2026): шапка с письмом и все действия по группам —
     // круглыми кнопками, сразу развёрнуты.
@@ -2225,6 +2300,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             _peekAction(AppIcons.attach_file, l10n.tr('senderFiles'), () => unawaited(
                 context.push('/attachment-hub?from=${Uri.encodeQueryComponent(email.from.email)}'))),
           _peekAction(AppIcons.sync, l10n.tr('redownload'), _loadEmailDetail),
+          // Беседа без уведомлений (1.8.13, как «Без звука» в Telegram).
+          if ((email.conversationId ?? '').isNotEmpty)
+            _peekAction(convMuted ? AppIcons.notifications_active : AppIcons.notifications_off,
+                l10n.tr(convMuted ? 'convUnmute' : 'convMute'), () => unawaited(_toggleMute(email, l10n))),
           // Отзыв письма (нативно — Exchange ActiveSync 16.1).
           if (_canRecall(ref, email))
             _peekAction(AppIcons.undo, l10n.tr('recallMessage'),
@@ -2232,6 +2311,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         ]),
       ],
     ));
+  }
+
+  /// Беседа письма без уведомлений или снова с ними (1.8.13).
+  Future<void> _toggleMute(EmailModel email, AppLocalizations l10n) async {
+    final conv = email.conversationId;
+    if (conv == null || conv.isEmpty) return;
+    final muted = await ref.read(mutedConversationsProvider.notifier).toggle(email.accountId, conv);
+    if (mounted) showInlineNotice(l10n.tr(muted ? 'convMutedNotice' : 'convUnmutedNotice'));
   }
 
   /// Поставить или снять «На контроле».

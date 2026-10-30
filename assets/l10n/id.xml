@@ -3359,7 +3359,7 @@
     <string name="noSender">(tanpa pengirim)</string>
     <string name="faq_archive_title">Arsip Ogneliss</string>
     <string name="faq_archive_1_q">Apa bedanya arsip Ogneliss dengan tombol Arsip?</string>
-    <string name="faq_archive_1_a">Arsip memindahkan email ke folder arsip di server: email tetap berada di kotak surat dan memakan ruang. Arsip Ogneliss bekerja seperti AutoArchive di Outlook: email utuh beserta lampiran dan folder masuk ke file terenkripsi di perangkat, sedangkan di server dipindahkan ke Item yang dihapus. Arsip muncul di menu sebagai bagian Arsip Ogneliss, dicari bersama email lainnya, dan dapat dibuka secara offline. Aktifkan di Pengaturan → Arsip Ogneliss.</string>
+    <string name="faq_archive_1_a">Arsip memindahkan email ke folder arsip di server: email tetap berada di kotak surat dan memakan ruang. Arsip Ogneliss bekerja seperti AutoArchive di Outlook: email utuh beserta lampiran dan folder masuk ke file terenkripsi di perangkat, sedangkan di server dipindahkan ke Item yang dihapus. Arsip muncul di menu sebagai bagian Arsip Ogneliss, dicari bersama email lainnya, dan dapat dibuka secara offline. Aktifkan di Pengaturan → Arsip Ogneliss. Menu menampilkan arsip kotak surat yang dipilih; semua kotak surat sekaligus ada di Seluruh arsip.</string>
     <string name="faq_archive_2_q">Bagaimana cara memindahkan arsip ke perangkat lain atau cloud?</string>
     <string name="faq_archive_2_a">Pengaturan → Arsip Ogneliss → Simpan salinan arsip: letakkan file .ogna di Google Drive, Files dengan iCloud Drive, Yandex Disk, drive USB, atau komputer. Di perangkat lain: Hubungkan salinan arsip → pilih file → kata sandi arsip atau kode pemulihan. Salinan terenkripsi dan tidak dapat dibuka tanpa kata sandi atau kode. Pengaturan aplikasi ikut pindah bersama arsip, dan dapat dipulihkan di layar yang sama.</string>
     <string name="faq_archive_3_q">Bagaimana jika lupa kata sandi arsip?</string>
@@ -3525,4 +3525,25 @@
     <string name="graphHint">Microsoft mematikan EWS di Exchange Online: mulai Oktober 2026 per organisasi, sepenuhnya pada April 2027. Email, kalender, kontak, dan balasan otomatis memakai ActiveSync dan tidak berubah. Buku alamat (jabatan, departemen, foto rekan), tips saat mengirim, aturan server, dan pemulihan item terhapus kini memakai Microsoft Graph. Ruang rapat dan anggota daftar distribusi juga, jika admin memberi aplikasi izin Place.Read.All dan GroupMember.Read.All. Microsoft Graph tidak menyediakan arsip online, kotak surat bersama, dan impor tanda tangan — semuanya memakai EWS selama masih tersedia.</string>
     <string name="srvViaGraph">Exchange Online — melalui Microsoft Graph</string>
     <string name="zipEncryptedHint">Arsip dilindungi kata sandi, jadi Files tidak bisa membukanya. Pilih app arsip: app itu akan meminta kata sandi</string>
+    <string name="reminderToday">Hari ini · {at}</string>
+    <string name="composeBadAddress">Periksa alamat: {addr}</string>
+    <string name="convMute">Bisukan notifikasi</string>
+    <string name="convUnmute">Bunyikan notifikasi</string>
+    <string name="convMutedNotice">Pesan baru dalam percakapan ini tidak akan memberi notifikasi</string>
+    <string name="convUnmutedNotice">Notifikasi percakapan ini aktif</string>
+    <string name="faq_notify_6_q">Bagaimana cara membisukan notifikasi satu percakapan?</string>
+    <string name="faq_notify_6_a">Buka percakapan → ⋮ → «Bisukan notifikasi» (atau tekan lama barisnya di daftar → «Lainnya»). Pesan barunya masuk tanpa notifikasi, dan barisnya menampilkan lonceng dicoret. Email lain tetap memberi notifikasi seperti biasa. Untuk menyalakan lagi, gunakan opsi yang sama atau ketuk lonceng di percakapan.</string>
+    <string name="mailOpenInBrowser">Buka di browser</string>
+    <string name="mailOpenInBrowserFailed">Tidak dapat membuka pesan di browser</string>
+    <string name="archiveAll">Seluruh arsip</string>
+    <string name="archiveHubHelp">Menu hanya menampilkan arsip kotak surat yang dipilih: folder, acara, tugas, dan kontaknya. Di sini ada seluruh arsip: semua kotak surat, termasuk yang sudah tidak ada di aplikasi, dan pencarian di semua pesan.</string>
+    <string name="zipPasswordNeeded">Arsip dilindungi kata sandi</string>
+    <string name="zipPassword">Kata sandi</string>
+    <string name="zipWrongPassword">Kata sandi salah</string>
+    <string name="zipOpen">Buka</string>
+    <string name="zipSummary">File: {n} · {size}</string>
+    <string name="zipCannotRead">Arsip tidak dapat dibaca: rusak atau dalam format yang tidak dikenal aplikasi (7z, RAR). Buka di aplikasi lain.</string>
+    <string name="pdfProtected">PDF dilindungi kata sandi. Buka di aplikasi lain.</string>
+    <string name="faq_mail_10_q">Lampiran apa yang terbuka langsung di aplikasi?</string>
+    <string name="faq_mail_10_a">Arsip ZIP, termasuk yang memakai kata sandi, serta TAR, GZ, BZ2, dan XZ terbuka langsung di aplikasi: ketuk file di dalamnya untuk membukanya. PDF di Android, gambar, teks dan CSV, pesan .eml, serta tiket .pkpass juga terbuka di aplikasi. Di iPhone dan iPad, Lihat Cepat iOS menampilkan PDF, gambar, dan dokumen Office. Selebihnya dibuka aplikasi yang sesuai, dan file apa pun bisa dikirim ke sana dengan tombol di atas. Arsip 7z dan RAR hanya terbuka di aplikasi lain.</string>
 </resources>

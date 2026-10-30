@@ -3378,7 +3378,7 @@
     <string name="noSender">(kein Absender)</string>
     <string name="faq_archive_title">Ogneliss-Archiv</string>
     <string name="faq_archive_1_q">Worin unterscheidet sich das Ogneliss-Archiv von der Schaltfläche Archivieren?</string>
-    <string name="faq_archive_1_a">Archivieren verschiebt eine Nachricht in den Archivordner auf dem Server: Sie bleibt im Postfach und belegt Platz. Das Ogneliss-Archiv arbeitet wie die AutoArchivierung von Outlook: Ganze Nachrichten mit Anhängen und Ordnern kommen in eine verschlüsselte Datei auf dem Gerät und auf dem Server in „Gelöschte Elemente“. Das Archiv erscheint im Menü als Bereich Ogneliss-Archiv, wird zusammen mit den E-Mails durchsucht und öffnet sich ohne Netz. Einschalten: Einstellungen → Ogneliss-Archiv.</string>
+    <string name="faq_archive_1_a">Archivieren verschiebt eine Nachricht in den Archivordner auf dem Server: Sie bleibt im Postfach und belegt Platz. Das Ogneliss-Archiv arbeitet wie die AutoArchivierung von Outlook: Ganze Nachrichten mit Anhängen und Ordnern kommen in eine verschlüsselte Datei auf dem Gerät und auf dem Server in „Gelöschte Elemente“. Das Archiv erscheint im Menü als Bereich Ogneliss-Archiv, wird zusammen mit den E-Mails durchsucht und öffnet sich ohne Netz. Einschalten: Einstellungen → Ogneliss-Archiv. Im Menü steht das Archiv des gewählten Postfachs; alle Postfächer auf einmal unter „Gesamtes Archiv“.</string>
     <string name="faq_archive_2_q">Wie übertrage ich das Archiv auf ein anderes Gerät oder in die Cloud?</string>
     <string name="faq_archive_2_a">Einstellungen → Ogneliss-Archiv → Archivkopie speichern: Die Datei .ogna kommt in Google Drive, „Dateien“ mit iCloud Drive, Yandex Disk, auf einen USB-Stick oder Computer. Auf dem anderen Gerät: Archivkopie verbinden → Datei wählen → Archivpasswort oder Wiederherstellungscode. Die Kopie ist verschlüsselt und ohne Passwort oder Code nicht zu öffnen. Die App-Einstellungen reisen mit dem Archiv und lassen sich auf demselben Bildschirm wiederherstellen.</string>
     <string name="faq_archive_3_q">Was tun, wenn ich das Archivpasswort vergessen habe?</string>
@@ -3544,4 +3544,25 @@
     <string name="graphHint">Microsoft schaltet EWS in Exchange Online ab: ab Oktober 2026 Organisation für Organisation, vollständig im April 2027. E-Mail, Kalender, Kontakte und automatische Antworten laufen über ActiveSync und sind nicht betroffen. Adressbuch (Positionen, Abteilungen, Fotos von Kollegen), Hinweise beim Senden, Serverregeln und das Wiederherstellen gelöschter Elemente nutzen jetzt Microsoft Graph. Räume und Mitglieder von Verteilerlisten ebenfalls, wenn der Administrator der App Place.Read.All und GroupMember.Read.All erteilt hat. Online-Archiv, freigegebene Postfächer und Signaturimport bietet Microsoft Graph nicht — sie nutzen EWS, solange es verfügbar ist.</string>
     <string name="srvViaGraph">Exchange Online — über Microsoft Graph</string>
     <string name="zipEncryptedHint">Das Archiv ist passwortgeschützt, „Dateien“ kann es nicht öffnen. Wählen Sie eine Archiv-App: Sie fragt nach dem Passwort</string>
+    <string name="reminderToday">Heute · {at}</string>
+    <string name="composeBadAddress">Adresse prüfen: {addr}</string>
+    <string name="convMute">Stummschalten</string>
+    <string name="convUnmute">Stummschaltung aufheben</string>
+    <string name="convMutedNotice">Neue Nachrichten dieser Unterhaltung ohne Mitteilung</string>
+    <string name="convUnmutedNotice">Mitteilungen für diese Unterhaltung sind aktiviert</string>
+    <string name="faq_notify_6_q">Wie schalte ich Mitteilungen für eine einzelne Unterhaltung stumm?</string>
+    <string name="faq_notify_6_a">Unterhaltung öffnen → ⋮ → „Stummschalten“ (oder die Zeile in der Liste gedrückt halten → „Mehr“). Neue Nachrichten darin kommen ohne Mitteilung, die Zeile zeigt eine durchgestrichene Glocke. Die übrige Post meldet sich wie bisher. Wieder einschalten: derselbe Punkt oder die Glocke in der Unterhaltung.</string>
+    <string name="mailOpenInBrowser">Im Browser öffnen</string>
+    <string name="mailOpenInBrowserFailed">Die E-Mail konnte nicht im Browser geöffnet werden</string>
+    <string name="archiveAll">Gesamtes Archiv</string>
+    <string name="archiveHubHelp">Im Menü erscheint nur das Archiv des gewählten Postfachs: seine Ordner, Termine, Aufgaben und Kontakte. Hier ist das gesamte Archiv: alle Postfächer, auch solche, die nicht mehr in der App sind, und die Suche in allen E-Mails.</string>
+    <string name="zipPasswordNeeded">Das Archiv ist passwortgeschützt</string>
+    <string name="zipPassword">Passwort</string>
+    <string name="zipWrongPassword">Falsches Passwort</string>
+    <string name="zipOpen">Öffnen</string>
+    <string name="zipSummary">Dateien: {n} · {size}</string>
+    <string name="zipCannotRead">Das Archiv lässt sich nicht lesen: Es ist beschädigt oder in einem Format, das die App nicht kennt (7z, RAR). Öffnen Sie es in einer anderen App.</string>
+    <string name="pdfProtected">Das PDF ist passwortgeschützt. Öffnen Sie es in einer anderen App.</string>
+    <string name="faq_mail_10_q">Welche Anhänge öffnen sich direkt in der App?</string>
+    <string name="faq_mail_10_a">ZIP-Archive, auch passwortgeschützte, sowie TAR, GZ, BZ2 und XZ öffnen sich direkt in der App: Tippen Sie auf eine Datei darin, um sie zu öffnen. PDFs auf Android, Bilder, Text und CSV, .eml-Nachrichten und .pkpass-Tickets öffnen sich ebenfalls in der App. Auf iPhone und iPad zeigt die iOS-Übersicht PDFs, Bilder und Office-Dokumente. Alles andere öffnet eine passende App, und jede Datei lässt sich mit der Schaltfläche oben an eine App senden. 7z- und RAR-Archive öffnen sich nur in einer anderen App.</string>
 </resources>

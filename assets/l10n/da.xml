@@ -3378,7 +3378,7 @@
     <string name="noSender">(ingen afsender)</string>
     <string name="faq_archive_title">Ogneliss-arkiv</string>
     <string name="faq_archive_1_q">Hvad er forskellen på Ogneliss-arkivet og knappen Arkiv?</string>
-    <string name="faq_archive_1_a">Arkiv flytter en mail til arkivmappen på serveren: den bliver i postkassen og fylder. Ogneliss-arkivet fungerer som Outlooks automatiske arkivering: hele mails med vedhæftede filer og mapper lægges i en krypteret fil på enheden og flyttes på serveren til Slettet post. Arkivet vises i menuen som afsnittet Ogneliss-arkiv, gennemsøges sammen med din mail og kan åbnes offline. Slå det til i Indstillinger → Ogneliss-arkiv.</string>
+    <string name="faq_archive_1_a">Arkiv flytter en mail til arkivmappen på serveren: den bliver i postkassen og fylder. Ogneliss-arkivet fungerer som Outlooks automatiske arkivering: hele mails med vedhæftede filer og mapper lægges i en krypteret fil på enheden og flyttes på serveren til Slettet post. Arkivet vises i menuen som afsnittet Ogneliss-arkiv, gennemsøges sammen med din mail og kan åbnes offline. Slå det til i Indstillinger → Ogneliss-arkiv. Menuen viser arkivet for den valgte postkasse; alle postkasser på én gang under Hele arkivet.</string>
     <string name="faq_archive_2_q">Hvordan flytter jeg arkivet til en anden enhed eller en sky?</string>
     <string name="faq_archive_2_a">Indstillinger → Ogneliss-arkiv → Gem en kopi af arkivet: læg .ogna-filen på Google Drive, Filer med iCloud Drive, Yandex Disk, et USB-drev eller en computer. På den anden enhed: Tilslut en kopi af arkivet → vælg filen → arkivets adgangskode eller gendannelseskode. Kopien er krypteret og kan ikke åbnes uden adgangskoden eller koden. Appindstillingerne følger med arkivet, og du kan gendanne dem på samme skærm.</string>
     <string name="faq_archive_3_q">Hvad hvis jeg glemmer arkivets adgangskode?</string>
@@ -3544,4 +3544,25 @@
     <string name="graphHint">Microsoft slukker for EWS i Exchange Online: fra oktober 2026 organisation for organisation, helt i april 2027. Mail, kalender, kontakter og automatiske svar bruger ActiveSync og påvirkes ikke. Adressebogen (stillinger, afdelinger, kollegers fotos), tip ved afsendelse, serverregler og gendannelse af slettede elementer bruger nu Microsoft Graph. Mødelokaler og medlemmer af distributionslister også, hvis administratoren har givet appen Place.Read.All og GroupMember.Read.All. Microsoft Graph tilbyder ikke onlinearkiv, delte postkasser eller import af signatur — de bruger EWS, så længe det er tilgængeligt.</string>
     <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
     <string name="zipEncryptedHint">Arkivet er beskyttet med adgangskode, så Filer kan ikke åbne det. Vælg en arkivapp – den spørger om adgangskoden</string>
+    <string name="reminderToday">I dag · {at}</string>
+    <string name="composeBadAddress">Tjek adressen: {addr}</string>
+    <string name="convMute">Slå notifikationer fra</string>
+    <string name="convUnmute">Slå notifikationer til</string>
+    <string name="convMutedNotice">Nye beskeder i denne samtale giver ingen notifikation</string>
+    <string name="convUnmutedNotice">Notifikationer for denne samtale er slået til</string>
+    <string name="faq_notify_6_q">Hvordan slår jeg notifikationer fra for én samtale?</string>
+    <string name="faq_notify_6_a">Åbn samtalen → ⋮ → “Slå notifikationer fra” (eller hold på rækken i listen → “Mere”). Nye beskeder i den kommer uden notifikation, og rækken viser en overstreget klokke. Resten af posten giver besked som før. Slå til igen: samme punkt eller tryk på klokken i samtalen.</string>
+    <string name="mailOpenInBrowser">Åbn i browser</string>
+    <string name="mailOpenInBrowserFailed">Beskeden kunne ikke åbnes i browseren</string>
+    <string name="archiveAll">Hele arkivet</string>
+    <string name="archiveHubHelp">Menuen viser kun arkivet for den valgte postkasse: dens mapper, aftaler, opgaver og kontakter. Her er hele arkivet: alle postkasser, også dem der ikke længere er i appen, og søgning i alle beskeder.</string>
+    <string name="zipPasswordNeeded">Arkivet er beskyttet med adgangskode</string>
+    <string name="zipPassword">Adgangskode</string>
+    <string name="zipWrongPassword">Forkert adgangskode</string>
+    <string name="zipOpen">Åbn</string>
+    <string name="zipSummary">Filer: {n} · {size}</string>
+    <string name="zipCannotRead">Arkivet kan ikke læses: det er beskadiget eller i et format, appen ikke kender (7z, RAR). Åbn det i en anden app.</string>
+    <string name="pdfProtected">PDF\'en er beskyttet med adgangskode. Åbn den i en anden app.</string>
+    <string name="faq_mail_10_q">Hvilke vedhæftede filer åbnes direkte i appen?</string>
+    <string name="faq_mail_10_a">ZIP-arkiver, også med adgangskode, samt TAR, GZ, BZ2 og XZ åbnes direkte i appen: tryk på en fil inde i arkivet for at åbne den. PDF\'er på Android, billeder, tekst og CSV, .eml-beskeder og .pkpass-billetter åbnes også i appen. På iPhone og iPad viser iOS Vis hurtigt PDF\'er, billeder og Office-dokumenter. Alt andet åbnes i en passende app, og enhver fil kan sendes dertil med knappen øverst. 7z- og RAR-arkiver åbnes kun i en anden app.</string>
 </resources>

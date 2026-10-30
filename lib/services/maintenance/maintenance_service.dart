@@ -6,6 +6,7 @@ import '../../core/security/mail_body_processor.dart';
 import '../../data/providers/database_provider.dart';
 import '../../data/providers/shared_prefs_provider.dart';
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
+import '../mail/thread_linker.dart';
 import '../sync/offline_store_service.dart';
 
 final maintenanceServiceProvider = Provider<MaintenanceService>((ref) {
@@ -29,6 +30,7 @@ class MaintenanceService {
   static const _kEasDupes = 'db_eas_dupes_removed_v1';
   static const _kCalFull = 'cal_full_after_162';
   static const _kPreviewLines = 'db_previews_lines_v1';
+  static const _kThreads = 'db_threads_relinked_v1';
   static const _interval = Duration(hours: 24);
 
   bool _running = false;
@@ -44,6 +46,8 @@ class MaintenanceService {
   ///     открытии письма, — доиндексирует OfflineStoreService.
   ///  3. Дубли писем ActiveSync от сброса синхронизации на сервере
   ///     (AppDatabase.removeEasDuplicates, замечание 13.10.2026).
+  ///  4. Беседы IMAP по ссылкам на письма (1.8.13, ThreadLinker): беседы,
+  ///     разорванные до этой версии, сливаются.
   Future<void> afterUpdateOnce() async {
     final prefs = _ref.read(sharedPrefsProvider);
     final previews = prefs.getBool(_kPreviewsFilled) ?? false;
@@ -51,7 +55,8 @@ class MaintenanceService {
     final dupes = prefs.getBool(_kEasDupes) ?? false;
     final calFull = prefs.getBool(_kCalFull) ?? false;
     final lines = prefs.getBool(_kPreviewLines) ?? false;
-    if (_running || (previews && marked && dupes && calFull && lines)) return;
+    final threads = prefs.getBool(_kThreads) ?? false;
+    if (_running || (previews && marked && dupes && calFull && lines && threads)) return;
     _running = true;
     final db = _ref.read(databaseProvider);
     try {
@@ -108,6 +113,15 @@ class MaintenanceService {
         await prefs.setBool(_kPreviewLines, true);
         if (changed > 0) db.notifyUpdates({TableUpdate.onTable(db.emails, kind: UpdateKind.update)});
         AppLogger.info('База: превью с переносами строк — $changed писем за ${sw.elapsedMilliseconds} мс');
+      }
+      if (!threads) {
+        final sw = Stopwatch()..start();
+        var n = 0;
+        for (final a in _ref.read(accountsProvider)) {
+          if (ThreadLinker.appliesTo(a)) n += await ThreadLinker.relinkAccount(db, a);
+        }
+        await prefs.setBool(_kThreads, true);
+        AppLogger.info('База: беседы по ссылкам на письма — $n писем за ${sw.elapsedMilliseconds} мс');
       }
     } catch (e) {
       AppLogger.warning('База: разовая подготовка после обновления не завершена — $e');

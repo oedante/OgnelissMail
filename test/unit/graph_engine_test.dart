@@ -307,6 +307,23 @@ void main() {
       );
     });
 
+    test('429 с Retry-After — одна повторная попытка (1.8.13)', () async {
+      var calls = 0;
+      final g = GraphEngine(
+        tokenSource: ({bool force = false}) async => 't',
+        httpClient: MockClient((req) async {
+          calls++;
+          if (calls == 1) return http.Response('', 429, headers: {'retry-after': '0'});
+          return http.Response.bytes(utf8.encode(jsonEncode({'mail': 'me@contoso.example'})), 200);
+        }),
+      );
+      expect((await g.me())!.email, 'me@contoso.example');
+      expect(calls, 2);
+      expect(GraphEngine.retryDelay(429, '120'), const Duration(seconds: 30));
+      expect(GraphEngine.retryDelay(503, null), const Duration(seconds: 2));
+      expect(GraphEngine.retryDelay(404, '5'), isNull);
+    });
+
     test('нет токена — запрос не уходит', () async {
       var calls = 0;
       final g = GraphEngine(

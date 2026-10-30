@@ -3359,7 +3359,7 @@
     <string name="noSender">（无发件人）</string>
     <string name="faq_archive_title">Ogneliss 归档</string>
     <string name="faq_archive_1_q">Ogneliss 归档与“归档”按钮有何不同？</string>
-    <string name="faq_archive_1_a">“归档”会将邮件移到服务器上的归档文件夹：邮件仍留在邮箱中并占用空间。Ogneliss 归档类似 Outlook 的自动归档：完整邮件连同附件和文件夹会存入设备上的加密文件，在服务器上则移到“已删除邮件”。归档会在菜单中显示为“Ogneliss 归档”部分，可与邮件一起搜索，并可离线打开。可在“设置 → Ogneliss 归档”中开启。</string>
+    <string name="faq_archive_1_a">“归档”会将邮件移到服务器上的归档文件夹：邮件仍留在邮箱中并占用空间。Ogneliss 归档类似 Outlook 的自动归档：完整邮件连同附件和文件夹会存入设备上的加密文件，在服务器上则移到“已删除邮件”。归档会在菜单中显示为“Ogneliss 归档”部分，可与邮件一起搜索，并可离线打开。可在“设置 → Ogneliss 归档”中开启。菜单显示所选邮箱的归档；所有邮箱一起显示在“整个归档”中。</string>
     <string name="faq_archive_2_q">如何将归档转移到其他设备或云端？</string>
     <string name="faq_archive_2_a">设置 → Ogneliss 归档 → 保存归档副本：将 .ogna 文件放到 Google Drive、“文件”中的 iCloud Drive、Yandex Disk、U 盘或电脑上。在另一台设备上：连接归档副本 → 选择文件 → 输入归档密码或恢复码。副本已加密，没有密码或恢复码就无法打开。应用设置会随归档一起转移，你可以在同一屏幕上恢复它们。</string>
     <string name="faq_archive_3_q">忘记归档密码怎么办？</string>
@@ -3525,4 +3525,25 @@
     <string name="graphHint">Microsoft 正在关闭 Exchange Online 中的 EWS：自 2026 年 10 月起按组织逐步关闭，2027 年 4 月完全关闭。邮件、日历、联系人和自动答复通过 ActiveSync 工作，不受影响。通讯簿（职位、部门、同事照片）、发送提示、服务器规则和恢复已删除项目现已改用 Microsoft Graph。若管理员已向应用授予 Place.Read.All 和 GroupMember.Read.All，会议室和通讯组成员也是如此。Microsoft Graph 不提供在线存档、共享邮箱和签名导入——在 EWS 可用期间它们仍通过 EWS 工作。</string>
     <string name="srvViaGraph">Exchange Online — 通过 Microsoft Graph</string>
     <string name="zipEncryptedHint">压缩包有密码保护，“文件”无法打开。请选择解压缩 App，它会询问密码</string>
+    <string name="reminderToday">今天 · {at}</string>
+    <string name="composeBadAddress">请检查地址：{addr}</string>
+    <string name="convMute">关闭通知</string>
+    <string name="convUnmute">开启通知</string>
+    <string name="convMutedNotice">此会话的新邮件将不再通知</string>
+    <string name="convUnmutedNotice">已开启此会话的通知</string>
+    <string name="faq_notify_6_q">如何关闭单个会话的通知？</string>
+    <string name="faq_notify_6_a">打开会话 → ⋮ →「关闭通知」（或在列表中长按该行 →「更多」）。此会话的新邮件将静默送达，行上显示带斜线的铃铛。其他邮件照常通知。要重新开启，可使用同一选项或点按会话中的铃铛。</string>
+    <string name="mailOpenInBrowser">在浏览器中打开</string>
+    <string name="mailOpenInBrowserFailed">无法在浏览器中打开邮件</string>
+    <string name="archiveAll">整个归档</string>
+    <string name="archiveHubHelp">菜单只显示所选邮箱的归档：其文件夹、日程、任务和联系人。此页面显示整个归档：所有邮箱（包括已不在应用中的邮箱），并可搜索所有邮件。</string>
+    <string name="zipPasswordNeeded">压缩包受密码保护</string>
+    <string name="zipPassword">密码</string>
+    <string name="zipWrongPassword">密码错误</string>
+    <string name="zipOpen">打开</string>
+    <string name="zipSummary">文件：{n} · {size}</string>
+    <string name="zipCannotRead">无法读取压缩包：文件已损坏或格式不受支持（7z、RAR）。请在其他应用中打开。</string>
+    <string name="pdfProtected">此 PDF 受密码保护，请在其他应用中打开。</string>
+    <string name="faq_mail_10_q">哪些附件可以直接在应用中打开？</string>
+    <string name="faq_mail_10_a">ZIP 压缩包（包括带密码的）以及 TAR、GZ、BZ2 和 XZ 可直接在应用中打开：点按其中的文件即可打开。Android 上的 PDF、图片、文本和 CSV、.eml 邮件以及 .pkpass 票券也可在应用中打开。在 iPhone 和 iPad 上，PDF、图片和 Office 文档由 iOS 的快速查看显示。其他文件由合适的应用打开，任何文件都可以通过顶部按钮发送到该应用。7z 和 RAR 压缩包只能在其他应用中打开。</string>
 </resources>

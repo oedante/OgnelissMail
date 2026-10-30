@@ -237,6 +237,11 @@
           tooltip: cfg.imageTooltip || 'Image',
           onAction: function () { send('pickImage'); },
         });
+        // Сочетания клавиш компьютера и клавиатуры планшета (1.8.13):
+        // Ctrl+Enter (⌘+Enter на Mac) — отправить, Ctrl+S — сохранить
+        // черновик. Клавиши во встроенном браузере до приложения не доходят.
+        editor.addShortcut('meta+13', '', function () { send('key', 'send'); });
+        editor.addShortcut('meta+83', '', function () { send('key', 'save'); });
         editor.on('init', function () {
           if (cfg.bodyStyle) editor.getBody().setAttribute('style', cfg.bodyStyle);
           lastSent = editor.getContent();

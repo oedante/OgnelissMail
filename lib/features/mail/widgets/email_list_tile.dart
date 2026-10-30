@@ -8,6 +8,8 @@
 // - Иконки: приоритет, вложения, флаг, replied, forwarded
 
 import '../../../core/utils/text_safe.dart';
+import '../providers/conversation_mute.dart';
+import '../../../services/notifications/account_notify_mode.dart' show ConversationNotify;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_icons.dart';
@@ -176,6 +178,12 @@ class EmailListTile extends ConsumerWidget {
     // булавки в строке»): булавка среди значков строки — закреплённое видно и
     // в поиске, и после прокрутки, где полосы раздела уже нет.
     final pinned = ref.watch(pinnedMailProvider.select((l) => l.any((p) => p.accountId == email.accountId && p.emailId == email.id)));
+    // Беседа без уведомлений (1.8.13) — перечёркнутый колокольчик, как у
+    // чата «без звука» в Telegram.
+    final convId = email.conversationId;
+    final muted = convId != null &&
+        convId.isNotEmpty &&
+        ref.watch(mutedConversationsProvider.select((m) => m.contains(ConversationNotify.key(email.accountId, convId))));
 
     // Своё отправленное письмо (во «Всей почте» теперь есть и отправленные):
     // вместо собственного имени — адресаты.
@@ -499,6 +507,9 @@ class EmailListTile extends ConsumerWidget {
                               if (pinned)
                                 Padding(padding: const EdgeInsets.only(left: Space.xs),
                                     child: Icon(AppIcons.push_pin, size: 15, fill: 1, color: theme.colorScheme.primary.withValues(alpha: 0.75))),
+                              if (muted)
+                                Padding(padding: const EdgeInsets.only(left: Space.xs),
+                                    child: Icon(AppIcons.notifications_off, size: 15, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
                               if (email.hasAttachments)
                                 Padding(padding: const EdgeInsets.only(left: Space.xs),
                                     child: Icon(AppIcons.attach_file, size: 15, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),

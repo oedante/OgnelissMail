@@ -3397,7 +3397,7 @@
     <string name="noSender">(fără expeditor)</string>
     <string name="faq_archive_title">Arhivă Ogneliss</string>
     <string name="faq_archive_1_q">Prin ce se deosebește arhiva Ogneliss de butonul Arhivă?</string>
-    <string name="faq_archive_1_a">Arhivă mută un mesaj în dosarul de arhivă de pe server: rămâne în cutia poștală și ocupă spațiu. Arhiva Ogneliss funcționează ca Arhivarea automată din Outlook: mesajele întregi, cu atașamente și dosare, ajung într-un fișier criptat de pe dispozitiv, iar pe server sunt mutate în Elemente șterse. Arhiva apare în meniu ca secțiunea Arhivă Ogneliss, este căutată împreună cu e-mailurile tale și se deschide offline. O activezi în Setări → Arhivă Ogneliss.</string>
+    <string name="faq_archive_1_a">Arhivă mută un mesaj în dosarul de arhivă de pe server: rămâne în cutia poștală și ocupă spațiu. Arhiva Ogneliss funcționează ca Arhivarea automată din Outlook: mesajele întregi, cu atașamente și dosare, ajung într-un fișier criptat de pe dispozitiv, iar pe server sunt mutate în Elemente șterse. Arhiva apare în meniu ca secțiunea Arhivă Ogneliss, este căutată împreună cu e-mailurile tale și se deschide offline. O activezi în Setări → Arhivă Ogneliss. Meniul arată arhiva căsuței selectate; toate căsuțele deodată sunt în Întreaga arhivă.</string>
     <string name="faq_archive_2_q">Cum mut arhiva pe alt dispozitiv sau în cloud?</string>
     <string name="faq_archive_2_a">Setări → Arhivă Ogneliss → Salvează o copie a arhivei: pune fișierul .ogna în Google Drive, Fișiere cu iCloud Drive, Yandex Disk, pe o unitate USB sau pe un computer. Pe celălalt dispozitiv: Conectează o copie a arhivei → alege fișierul → parola arhivei sau codul de recuperare. Copia este criptată și nu poate fi deschisă fără parolă sau cod. Setările aplicației se transferă împreună cu arhiva și le poți restaura pe același ecran.</string>
     <string name="faq_archive_3_q">Ce fac dacă am uitat parola arhivei?</string>
@@ -3563,4 +3563,25 @@
     <string name="graphHint">Microsoft dezactivează EWS în Exchange Online: din octombrie 2026 pe organizații, complet în aprilie 2027. E-mailul, calendarul, contactele și răspunsurile automate folosesc ActiveSync și nu se schimbă. Agenda (funcții, departamente, fotografiile colegilor), sfaturile la trimitere, regulile serverului și recuperarea elementelor șterse folosesc acum Microsoft Graph. Sălile și membrii listelor de distribuție la fel, dacă administratorul a acordat aplicației Place.Read.All și GroupMember.Read.All. Microsoft Graph nu oferă arhiva online, cutiile partajate și importul semnăturii — acestea folosesc EWS cât timp este disponibil.</string>
     <string name="srvViaGraph">Exchange Online — prin Microsoft Graph</string>
     <string name="zipEncryptedHint">Arhiva este protejată prin parolă, aplicația Fișiere nu o poate deschide. Alegeți o aplicație de arhive: vă va cere parola</string>
+    <string name="reminderToday">Astăzi · {at}</string>
+    <string name="composeBadAddress">Verificați adresa: {addr}</string>
+    <string name="convMute">Dezactivează notificările</string>
+    <string name="convUnmute">Activează notificările</string>
+    <string name="convMutedNotice">Mesajele noi din această conversație nu vor trimite notificări</string>
+    <string name="convUnmutedNotice">Notificările acestei conversații sunt activate</string>
+    <string name="faq_notify_6_q">Cum dezactivez notificările pentru o singură conversație?</string>
+    <string name="faq_notify_6_a">Deschideți conversația → ⋮ → „Dezactivează notificările” (sau apăsați lung rândul din listă → „Mai multe”). Mesajele noi din ea sosesc fără notificare, iar rândul arată un clopoțel tăiat. Restul e-mailurilor notifică la fel ca înainte. Reactivare: aceeași opțiune sau atingeți clopoțelul din conversație.</string>
+    <string name="mailOpenInBrowser">Deschide în browser</string>
+    <string name="mailOpenInBrowserFailed">Mesajul nu a putut fi deschis în browser</string>
+    <string name="archiveAll">Întreaga arhivă</string>
+    <string name="archiveHubHelp">Meniul arată doar arhiva căsuței selectate: dosarele, evenimentele, sarcinile și contactele ei. Aici este întreaga arhivă: toate căsuțele, inclusiv cele care nu mai sunt în aplicație, și căutarea în toate mesajele.</string>
+    <string name="zipPasswordNeeded">Arhiva este protejată cu parolă</string>
+    <string name="zipPassword">Parolă</string>
+    <string name="zipWrongPassword">Parolă greșită</string>
+    <string name="zipOpen">Deschide</string>
+    <string name="zipSummary">Fișiere: {n} · {size}</string>
+    <string name="zipCannotRead">Arhiva nu poate fi citită: este deteriorată sau într-un format pe care aplicația nu îl cunoaște (7z, RAR). Deschide-o în altă aplicație.</string>
+    <string name="pdfProtected">PDF-ul este protejat cu parolă. Deschide-l în altă aplicație.</string>
+    <string name="faq_mail_10_q">Ce atașamente se deschid direct în aplicație?</string>
+    <string name="faq_mail_10_a">Arhivele ZIP, inclusiv cele protejate cu parolă, precum și TAR, GZ, BZ2 și XZ se deschid direct în aplicație: atinge un fișier din interior pentru a-l deschide. Tot în aplicație se deschid PDF-urile pe Android, imaginile, textul și CSV, mesajele .eml și biletele .pkpass. Pe iPhone și iPad, Previzualizarea iOS afișează PDF-uri, imagini și documente Office. Restul se deschide într-o aplicație potrivită, iar orice fișier poate fi trimis acolo cu butonul de sus. Arhivele 7z și RAR se deschid doar în altă aplicație.</string>
 </resources>

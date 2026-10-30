@@ -241,6 +241,11 @@ NativeMail? buildNativeMailRemote(String html) => buildNativeMailWhy(html, remot
     }
   }
 
+  final mail = _buildBlocks(body, html);
+  return mail == null ? no('пустое') : (mail: mail, why: null);
+}
+
+NativeMail? _buildBlocks(dom.Element body, String html) {
   if (SymbolFonts.mayContain(html)) SymbolFonts.mapDom(body);
 
   final b = _Builder();
@@ -254,8 +259,112 @@ NativeMail? buildNativeMailRemote(String html) => buildNativeMailWhy(html, remot
   while (blocks.isNotEmpty && blocks.last.isBlank) {
     blocks.removeLast();
   }
-  if (blocks.isEmpty) return no('пустое');
-  return (mail: NativeMail(blocks), why: null);
+  return blocks.isEmpty ? null : NativeMail(blocks);
+}
+
+/// Письмо со сложной вёрсткой — тоже виджетами (компьютер, 1.8.14). Окна
+/// браузера в письме на Windows, macOS и Linux нет, а прежний показ
+/// (flutter_html с расширением таблиц) на вёрстке таблицами рассылок падал
+/// при раскладке — вместо письма были пустые и серые места. Здесь — тот же
+/// разбор, что у простых писем, без проверок «сложности»: колонки и
+/// вложенные таблицы — таблицами виджетов, фоновые картинки и @media не
+/// применяются. Скрытое стилями письма (display:none в <style> вне @media —
+/// мобильная версия, «прехедер»; max-height:0, opacity:0, visibility:hidden
+/// в стиле блока) не показывается. Оформление целиком — «Открыть в
+/// браузере» на экране письма. null — письмо пустое или слишком большое.
+NativeMail? buildNativeMailForced(String html) => _forced(html);
+
+/// То же при разрешённых картинках из интернета.
+NativeMail? buildNativeMailForcedRemote(String html) => _forced(html);
+
+/// Компьютер: простое письмо — как на телефоне, сложное — упрощённо.
+NativeMail? buildNativeMailDesktop(String html) => buildNativeMail(html) ?? buildNativeMailForced(html);
+
+/// То же при разрешённых картинках из интернета.
+NativeMail? buildNativeMailDesktopRemote(String html) =>
+    buildNativeMailRemote(html) ?? buildNativeMailForcedRemote(html);
+
+NativeMail? _forced(String html) {
+  if (html.length > 3 * 1024 * 1024) return null;
+  final doc = html_parser.parse(html);
+  final body = doc.body;
+  if (body == null) return null;
+  for (final st in doc.querySelectorAll('style')) {
+    for (final sel in hiddenSelectors(st.text)) {
+      try {
+        for (final e in body.querySelectorAll(sel)) {
+          e.remove();
+        }
+      } catch (_) {
+        // Селектор, который разборщик не понимает, — пропустить.
+      }
+    }
+  }
+  for (final e in body.querySelectorAll('[style]')) {
+    final st = (e.attributes['style'] ?? '').toLowerCase().replaceAll(_ws, '');
+    if (st.contains('visibility:hidden') ||
+        _zeroOpacity.hasMatch(st) ||
+        (_zeroMaxHeight.hasMatch(st) && st.contains('overflow:hidden'))) {
+      e.remove();
+    }
+  }
+  return _buildBlocks(body, html);
+}
+
+final _zeroOpacity = RegExp(r'(^|;)opacity:0(\.0+)?(!important)?(;|$)');
+final _zeroMaxHeight = RegExp(r'(^|;)max-height:0(px)?(!important)?(;|$)');
+final _cssComment = RegExp(r'/\*[\s\S]*?\*/');
+final _simpleSelector = RegExp(r'^[a-zA-Z0-9_.#\-\s>]+$');
+final _bareTag = RegExp(r'^[a-zA-Z0-9]+$');
+
+/// Простые селекторы правил <style> с display:none — вне @media и других
+/// @-блоков (они — для другой ширины экрана или для Outlook).
+List<String> hiddenSelectors(String css) {
+  // Outlook кладёт CSS в <!-- … --> внутри <style>.
+  final text = css.replaceAll(_cssComment, '').replaceAll('<!--', ' ').replaceAll('-->', ' ');
+  final out = <String>[];
+  // Глубина внутри @-правила (@media, @font-face, @page); -1 — вне его.
+  var at = -1;
+  var start = 0;
+  var i = 0;
+  while (i < text.length) {
+    final c = text[i];
+    if (at < 0 && c == '@') {
+      at = 0;
+    } else if (c == '{') {
+      if (at >= 0) {
+        at++;
+      } else {
+        final end = text.indexOf('}', i);
+        if (end < 0) break;
+        final decls = text.substring(i + 1, end).toLowerCase().replaceAll(_ws, '');
+        if (decls.contains('display:none')) {
+          for (final one in text.substring(start, i).split(',')) {
+            final t = one.trim();
+            // Голое имя тега (td, div, img) — не скрывать: так прячут
+            // разве что всё письмо для другой программы.
+            if (t.isEmpty || !_simpleSelector.hasMatch(t) || _bareTag.hasMatch(t)) continue;
+            out.add(t);
+          }
+        }
+        i = end + 1;
+        start = i;
+        continue;
+      }
+    } else if (c == '}' && at > 0) {
+      at--;
+      if (at == 0) {
+        at = -1;
+        start = i + 1;
+      }
+    } else if (c == ';' && at == 0) {
+      // @import, @charset — без блока.
+      at = -1;
+      start = i + 1;
+    }
+    i++;
+  }
+  return out;
 }
 
 const kBorderTop = 1, kBorderRight = 2, kBorderBottom = 4, kBorderLeft = 8, kBorderInsideH = 16, kBorderInsideV = 32;

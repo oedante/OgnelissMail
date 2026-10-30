@@ -3359,7 +3359,7 @@
     <string name="noSender">(보낸 사람 없음)</string>
     <string name="faq_archive_title">Ogneliss 보관함</string>
     <string name="faq_archive_1_q">Ogneliss 보관함은 보관 버튼과 어떻게 다른가요?</string>
-    <string name="faq_archive_1_a">보관은 메일을 서버의 보관함 폴더로 옮깁니다. 메일은 메일 계정에 남아 용량을 차지합니다. Ogneliss 보관함은 Outlook 자동 보관처럼 작동합니다. 첨부파일과 폴더를 포함한 메일 전체가 기기의 암호화된 파일에 저장되고, 서버에서는 삭제된 항목으로 이동합니다. 보관함은 메뉴에 Ogneliss 보관함 섹션으로 표시되고 메일과 함께 검색되며 오프라인에서도 열립니다. 설정 → Ogneliss 보관함에서 켤 수 있습니다.</string>
+    <string name="faq_archive_1_a">보관은 메일을 서버의 보관함 폴더로 옮깁니다. 메일은 메일 계정에 남아 용량을 차지합니다. Ogneliss 보관함은 Outlook 자동 보관처럼 작동합니다. 첨부파일과 폴더를 포함한 메일 전체가 기기의 암호화된 파일에 저장되고, 서버에서는 삭제된 항목으로 이동합니다. 보관함은 메뉴에 Ogneliss 보관함 섹션으로 표시되고 메일과 함께 검색되며 오프라인에서도 열립니다. 설정 → Ogneliss 보관함에서 켤 수 있습니다. 메뉴에는 선택한 메일함의 보관함이 표시되고, 모든 메일함은 전체 보관함에 함께 표시됩니다.</string>
     <string name="faq_archive_2_q">보관함을 다른 기기나 클라우드로 옮기려면 어떻게 하나요?</string>
     <string name="faq_archive_2_a">설정 → Ogneliss 보관함 → 보관함 사본 저장: .ogna 파일을 Google Drive, iCloud Drive를 사용하는 파일 앱, Yandex Disk, USB 드라이브 또는 컴퓨터에 두세요. 다른 기기에서는 보관함 사본 연결 → 파일 선택 → 보관함 비밀번호 또는 복구 코드를 입력합니다. 사본은 암호화되어 있어 비밀번호나 코드 없이는 열 수 없습니다. 앱 설정도 보관함과 함께 이동하며 같은 화면에서 복원할 수 있습니다.</string>
     <string name="faq_archive_3_q">보관함 비밀번호를 잊어버렸다면 어떻게 하나요?</string>
@@ -3525,4 +3525,25 @@
     <string name="graphHint">Microsoft가 Exchange Online의 EWS를 끕니다: 2026년 10월부터 조직별로, 2027년 4월에 완전히. 메일, 일정, 연락처, 자동 회신은 ActiveSync로 동작하며 바뀌지 않습니다. 주소록(직함, 부서, 동료 사진), 보낼 때 팁, 서버 규칙, 삭제된 항목 복구는 이제 Microsoft Graph를 사용합니다. 회의실과 메일 그룹 구성원도 관리자가 앱에 Place.Read.All 및 GroupMember.Read.All 권한을 주었다면 마찬가지입니다. 온라인 보관함, 공유 사서함, 서명 가져오기는 Microsoft Graph에 없어 EWS를 쓸 수 있는 동안 EWS로 동작합니다.</string>
     <string name="srvViaGraph">Exchange Online — Microsoft Graph를 통해</string>
     <string name="zipEncryptedHint">압축 파일이 암호로 보호되어 있어 파일 앱에서 열 수 없습니다. 압축 앱을 선택하세요. 암호를 물어봅니다</string>
+    <string name="reminderToday">오늘 · {at}</string>
+    <string name="composeBadAddress">주소를 확인하세요: {addr}</string>
+    <string name="convMute">알림 끄기</string>
+    <string name="convUnmute">알림 켜기</string>
+    <string name="convMutedNotice">이 대화의 새 메일은 알림이 오지 않습니다</string>
+    <string name="convUnmutedNotice">이 대화의 알림이 켜졌습니다</string>
+    <string name="faq_notify_6_q">한 대화의 알림만 끄려면 어떻게 하나요?</string>
+    <string name="faq_notify_6_a">대화를 열고 → ⋮ → «알림 끄기»(또는 목록에서 행을 길게 누름 → «더보기»). 이 대화의 새 메일은 알림 없이 도착하고 행에 사선이 그어진 종이 표시됩니다. 나머지 메일은 그대로 알림을 보냅니다. 다시 켜려면 같은 항목을 선택하거나 대화에서 종을 누르세요.</string>
+    <string name="mailOpenInBrowser">브라우저에서 열기</string>
+    <string name="mailOpenInBrowserFailed">브라우저에서 메시지를 열 수 없습니다</string>
+    <string name="archiveAll">전체 보관함</string>
+    <string name="archiveHubHelp">메뉴에는 선택한 메일함의 보관함만 표시됩니다: 폴더, 일정, 할 일, 연락처. 이 화면에는 전체 보관함이 표시됩니다: 앱에 더 이상 없는 메일함을 포함한 모든 메일함과 모든 메일 검색.</string>
+    <string name="zipPasswordNeeded">압축 파일이 암호로 보호되어 있습니다</string>
+    <string name="zipPassword">암호</string>
+    <string name="zipWrongPassword">암호가 올바르지 않습니다</string>
+    <string name="zipOpen">열기</string>
+    <string name="zipSummary">파일: {n} · {size}</string>
+    <string name="zipCannotRead">압축 파일을 읽을 수 없습니다. 손상되었거나 앱이 지원하지 않는 형식입니다(7z, RAR). 다른 앱에서 여세요.</string>
+    <string name="pdfProtected">PDF가 암호로 보호되어 있습니다. 다른 앱에서 여세요.</string>
+    <string name="faq_mail_10_q">앱에서 바로 열리는 첨부 파일은 무엇인가요?</string>
+    <string name="faq_mail_10_a">암호가 걸린 것을 포함한 ZIP 압축 파일과 TAR, GZ, BZ2, XZ는 앱에서 바로 열립니다. 안의 파일을 탭하면 열립니다. Android의 PDF, 이미지, 텍스트와 CSV, .eml 메일, .pkpass 티켓도 앱에서 열립니다. iPhone과 iPad에서는 iOS 훑어보기가 PDF, 이미지, Office 문서를 보여 줍니다. 그 밖의 파일은 알맞은 앱에서 열리며, 위쪽 버튼으로 어떤 파일이든 보낼 수 있습니다. 7z와 RAR 압축 파일은 다른 앱에서만 열립니다.</string>
 </resources>

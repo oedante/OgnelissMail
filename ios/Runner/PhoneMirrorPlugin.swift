@@ -248,12 +248,19 @@ enum PhoneMirrorPlugin {
             ev.isAllDay = allDay
             if allDay {
                 // Dart передаёт полночь UTC — для iOS это даты в текущем поясе.
+                // Конец у Dart — полночь ПОСЛЕ последнего дня, а EventKit
+                // считает конец события на весь день включительно: событие на
+                // один день становилось двухдневным (1.8.13, замечание
+                // 29.10.2026 «события iCloud относятся на два дня»). Конец —
+                // последняя секунда последнего дня.
                 var utc = Calendar(identifier: .gregorian)
                 utc.timeZone = TimeZone(identifier: "UTC")!
                 let s = utc.dateComponents([.year, .month, .day], from: Date(timeIntervalSince1970: start / 1000))
                 let e = utc.dateComponents([.year, .month, .day], from: Date(timeIntervalSince1970: end / 1000))
-                ev.startDate = Calendar.current.date(from: s) ?? Date(timeIntervalSince1970: start / 1000)
-                ev.endDate = Calendar.current.date(from: e) ?? Date(timeIntervalSince1970: end / 1000)
+                let first = Calendar.current.date(from: s) ?? Date(timeIntervalSince1970: start / 1000)
+                let after = Calendar.current.date(from: e) ?? Date(timeIntervalSince1970: end / 1000)
+                ev.startDate = first
+                ev.endDate = max(first, after.addingTimeInterval(-1))
             } else {
                 ev.startDate = Date(timeIntervalSince1970: start / 1000)
                 ev.endDate = Date(timeIntervalSince1970: end / 1000)

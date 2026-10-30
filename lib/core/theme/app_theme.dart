@@ -201,9 +201,12 @@ class AppTheme {
   /// Переходы между экранами — без анимации (замечание 07.10.2026: переходы
   /// были рваными и не к месту). Прежние: Android — предиктивный «назад»,
   /// iOS/macOS — Cupertino, Windows/Linux — FadeForwards.
+  /// iPhone и iPad (1.8.13) — системный сдвиг всегда: вместе с ним работает
+  /// свайп «назад» от левого края — главный жест навигации iOS, без него
+  /// вернуться можно было только кнопкой в углу.
   static const _pageTransitions = PageTransitionsTheme(builders: {
     TargetPlatform.android: NoPageTransitionsBuilder(),
-    TargetPlatform.iOS: NoPageTransitionsBuilder(),
+    TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
     TargetPlatform.macOS: NoPageTransitionsBuilder(),
     TargetPlatform.windows: NoPageTransitionsBuilder(),
     TargetPlatform.linux: NoPageTransitionsBuilder(),

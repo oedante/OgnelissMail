@@ -88,7 +88,7 @@ class AppShortcuts {
       final q = Uri.parse(type).queryParameters;
       final id = q['id'];
       if (id != null && id.isNotEmpty) {
-        unawaited(router.push(mailDetailPath(id, accountId: q['acc'])));
+        unawaited(router.push(messagePath(id, accountId: q['acc'])));
       }
       return;
     }

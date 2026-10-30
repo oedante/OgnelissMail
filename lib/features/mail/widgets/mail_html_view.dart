@@ -55,6 +55,7 @@ import '../../../core/security/mail_body_processor.dart';
 import '../../../core/utils/linkify.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/common/ui_zoom.dart';
 
 /// Где показ письма в WebView поддерживается. Остальные платформы (Linux,
 /// Windows без проверенного WebView2) — прежний рендер flutter_html.
@@ -87,17 +88,26 @@ class MailHtmlDocument {
   /// под письмом оставалось «бесконечное» пустое поле), крупнее — до ×4
   /// (при ×5 от вписанного письма окно становилось таким высоким, что
   /// Android переставал его рисовать — письмо пропадало).
-  String atWidth(int width) => html.replaceFirst(
-      _viewportTag,
-      '<meta name="viewport" content="width=$width, initial-scale=1, minimum-scale=1, maximum-scale=4, user-scalable=yes">');
+  ///
+  /// [zoom] — масштаб интерфейса, когда окно рисуется без него
+  /// ([UiZoomUndo], Android, 1.8.14): страница уменьшается сама — так же,
+  /// как её уменьшил бы Flutter.
+  String atWidth(int width, {double zoom = 1}) => zoom == 1
+      ? html.replaceFirst(_viewportTag,
+          '<meta name="viewport" content="width=$width, initial-scale=1, minimum-scale=1, maximum-scale=4, user-scalable=yes">')
+      : fitted(width, 1, zoom: zoom);
 
   /// Тот же документ, размеченный на ширину [width] и уменьшенный до
-  /// [scale]: так широкое письмо целиком помещается на экран.
-  String fitted(int width, double scale) => html.replaceFirst(
-      _viewportTag,
-      '<meta name="viewport" content="width=$width, initial-scale=${scale.toStringAsFixed(3)}, '
-      'minimum-scale=${scale.toStringAsFixed(3)}, maximum-scale=${(scale * 4).clamp(scale, 5.0).toStringAsFixed(3)}, '
-      'user-scalable=yes">');
+  /// [scale]: так широкое письмо целиком помещается на экран. [zoom] — как
+  /// у [atWidth].
+  String fitted(int width, double scale, {double zoom = 1}) {
+    String f(double v) => v.toStringAsFixed(3);
+    final max = (scale * 4).clamp(scale, 5.0);
+    return html.replaceFirst(
+        _viewportTag,
+        '<meta name="viewport" content="width=$width, initial-scale=${f(scale * zoom)}, '
+        'minimum-scale=${f(scale * zoom)}, maximum-scale=${f(max * zoom)}, user-scalable=yes">');
+  }
 
   /// Ширина вёрстки: максимум объявленных размеров от 320 до 3000 px (широкие
   /// таблицы-трекеры тоже вписываются, а не обрезаются справа).
@@ -206,6 +216,28 @@ class MailHtmlDocument {
       }
     }
 
+    // Размеры картинок (1.8.14). Раньше всем картинкам ставилась высота
+    // auto: картинка Outlook, суженная до экрана, больше не вытягивалась, но
+    // значки соцсетей и логотипы, заданные одной высотой (height="20"),
+    // раздувались до своего настоящего размера, а «распорка» 600×20 из
+    // картинки 1×1 становилась квадратом во всю ширину. Теперь высота auto —
+    // только у картинок с шириной и высотой, а пропорция — из письма
+    // (aspect-ratio), а не у файла картинки. Своё ограничение ширины у
+    // картинки (max-width:260px) остаётся — не шире экрана.
+    for (final img in body.querySelectorAll('img')) {
+      final st = img.attributes['style'] ?? '';
+      final w = _imgDim(img.attributes['width'], st, 'width');
+      final h = _imgDim(img.attributes['height'], st, 'height');
+      var style = st.replaceAllMapped(
+          _maxWidthDecl, (m) => 'max-width:min(100%, ${m.group(1)!.trim()}) !important');
+      if (w != null && h != null) {
+        img.attributes['data-og-ar'] = '1';
+        final t = style.trim();
+        style = '${t.isEmpty || t.endsWith(';') ? t : '$t;'}aspect-ratio:${_num(w)} / ${_num(h)}';
+      }
+      if (style != st) img.attributes['style'] = style;
+    }
+
     // Стрелки и маркеры из шрифтов Wingdings и Symbol («à» вместо «→»).
     if (SymbolFonts.mayContain(bodyHtml)) SymbolFonts.mapDom(body);
 
@@ -245,6 +277,33 @@ class MailHtmlDocument {
         '<body>${body.innerHtml}</body></html>';
     return MailHtmlDocument(out, links, declaredWidth: declared);
   }
+
+  static final _maxWidthDecl =
+      RegExp(r'(?<![-\w])max-width\s*:\s*([^;!]+)(?:!\s*important)?', caseSensitive: false);
+  static final _cssLen = <String, RegExp>{};
+
+  /// Размер картинки в точках по атрибуту или стилю (px, pt, in, cm, mm);
+  /// null — не задан или в процентах.
+  static double? _imgDim(String? attr, String style, String prop) {
+    final a = attr?.trim().toLowerCase().replaceAll('px', '');
+    final v = a == null ? null : double.tryParse(a);
+    if (v != null && v > 0) return v;
+    final m = (_cssLen[prop] ??= RegExp('(?<![-\\w])$prop\\s*:\\s*(\\d+(?:\\.\\d+)?|\\.\\d+)\\s*(px|pt|in|cm|mm)',
+            caseSensitive: false))
+        .firstMatch(style);
+    if (m == null) return null;
+    final n = double.tryParse(m.group(1)!);
+    if (n == null || n <= 0) return null;
+    return switch (m.group(2)!.toLowerCase()) {
+      'pt' => n * 4 / 3,
+      'in' => n * 96,
+      'cm' => n * 96 / 2.54,
+      'mm' => n * 96 / 25.4,
+      _ => n,
+    };
+  }
+
+  static String _num(double v) => v == v.roundToDouble() ? '${v.round()}' : v.toStringAsFixed(2);
 
   static final _imgTag = RegExp(r'''<img\b(?:[^>"']|"[^"]*"|'[^']*')*>''', caseSensitive: false);
   static final _cidSrc = RegExp(r'''\ssrc\s*=\s*"cid:([^"]*)"''', caseSensitive: false);
@@ -355,13 +414,27 @@ body{padding:4px 0 12px;font-family:-apple-system,Roboto,"Segoe UI",Arial,sans-s
 font-size:14px;line-height:1.35;overflow-wrap:anywhere;word-wrap:break-word;-webkit-text-size-adjust:100%;}
 p{margin:0 0 .4em;}
 p.MsoNormal,li.MsoNormal,div.MsoNormal{margin:0;}
-img{max-width:100% !important;height:auto !important;}
-/* !important: у картинок Outlook высота задана в style — ширина сжималась,
-   а высота оставалась прежней, картинка вытягивалась (10.10.2026). */
+img{max-width:100% !important;}
+/* Картинка с шириной и высотой (data-og-ar, пропорция — aspect-ratio из
+   письма): у Outlook высота задана в style, и без !important ширина
+   сжималась до экрана, а высота оставалась — картинка вытягивалась
+   (10.10.2026). Остальные — без искажения, если ширина упёрлась в экран. */
+img[data-og-ar]{height:auto !important;}
+img:not([data-og-ar]){object-fit:contain;}
+/* Скрытая картинка из интернета (TrackerBlocker.placeholder): поле её
+   размера с подписью; распорка — пустое место. */
+span[data-og-img]{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;
+max-width:100%;min-height:0;overflow:hidden;vertical-align:middle;padding:2px 4px;color:#7d838c;
+font-size:12px;line-height:1.25;text-align:center;overflow-wrap:anywhere;}
+span[data-og-img][data-og-block]{display:flex;}
+span[data-og-sp]{display:inline-block;max-width:100%;}
 pre,code{white-space:pre-wrap;}
 a{color:#1D4F91;}
 blockquote{margin:8px 0 8px 4px;padding-left:10px;border-left:3px solid #c7cdd6;color:#4a4f57;}
-table{border-collapse:collapse;}
+/* Слитные рамки — у таблиц без cellspacing (Outlook, 1С); у рассылок
+   cellspacing задаёт промежутки между ячейками (1.8.14: раньше слипались).
+   :where — стили самого письма важнее. */
+:where(table:not([cellspacing])){border-collapse:collapse;}
 /* Широкая таблица листается вбок, даже если письмо запретило прокрутку. */
 html,body{overflow-x:auto !important;}
 /* Встроенная картинка, которая ещё не подставлена: без пустого места. */
@@ -483,10 +556,11 @@ class MailHtmlView extends StatefulWidget {
       required double textScale,
       bool cidByRequest = false}) {
     final scale = fitWidth == null || viewWidth <= 0 ? 1.0 : viewWidth / fitWidth;
+    final zoom = webZoom;
     final html = fitWidth != null
-        ? doc.fitted(fitWidth, scale)
+        ? doc.fitted(fitWidth, scale, zoom: zoom)
         : viewWidth > 0
-            ? doc.atWidth(viewWidth.round())
+            ? doc.atWidth(viewWidth.round(), zoom: zoom)
             : doc.html;
     final out = _themed(html, dark: dark, pageColor: pageColor, textScale: textScale);
     if (!cidByRequest) return out;
@@ -579,6 +653,17 @@ class MailHtmlView extends StatefulWidget {
   static bool fitWide = false;
   static const fitWideKey = 'mail_wide_fit';
 
+  /// Масштаб интерфейса, который окно письма применяет само (Android,
+  /// 1.8.14; 1 — масштаба нет). Окно рисуется без масштаба Flutter
+  /// ([UiZoomUndo]): уменьшенное Flutter встроенное окно Android получает
+  /// касания со сдвигом, а «капли» выделения, лупу и меню «Копировать»
+  /// рисует по своим координатам — капли стояли в стороне от текста, тем
+  /// дальше, чем ниже и правее он был (замечания 28 и 29.10.2026; ошибка
+  /// Flutter 144278). Страница уменьшается сама (viewport), высота и масштаб
+  /// в единицах экрана письма остаются прежними.
+  static double get webZoom =>
+      !kIsWeb && Platform.isAndroid && !UiZoom.isIdentity(UiZoom.current) ? UiZoom.current : 1.0;
+
   /// Вписывание при первом показе: письмо шире окна по объявленным размерам
   /// и включено «сразу по ширине экрана».
   static int? initialFit(MailHtmlDocument doc, double viewWidth) {
@@ -663,7 +748,8 @@ class _MailHtmlViewState extends State<MailHtmlView> {
 
   String _layoutKey() {
     final h = widget.document.html;
-    return '${h.length}:${h.hashCode}|${_viewWidth.round()}|${widget.textScale}|${widget.dark}|$_actualSize';
+    return '${h.length}:${h.hashCode}|${_viewWidth.round()}|${widget.textScale}|${widget.dark}|$_actualSize|'
+        '${MailHtmlView.webZoom}';
   }
 
   void _rememberLayout() {
@@ -788,6 +874,11 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   double _dpr = 1;
   double _mqDpr = 1;
 
+  /// Точек экрана на точку окна (Android): окно рисуется без масштаба
+  /// интерфейса ([UiZoomUndo]), поэтому масштаб, который сообщает движок,
+  /// в единицах экрана письма делится и на него.
+  double get _nativeDpr => _dpr * MailHtmlView.webZoom;
+
   /// Письмо уже показывалось (onShown — один раз: после поворота письмо
   /// перезагружается и показывается снова).
   bool _shownOnce = false;
@@ -807,7 +898,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     // картинками — мегабайты.
     final key = '${identityHashCode(widget.document)}|$w|${_viewWidth.round()}|${_scale.toStringAsFixed(4)}|${widget.dark}|'
         '${widget.inlineRaw != null}|'
-        '${widget.textScale}|${widget.pageColor}';
+        '${widget.textScale}|${widget.pageColor}|${MailHtmlView.webZoom}';
     final cached = _htmlMemo;
     if (cached != null && cached.$1 == key) return cached.$2;
     final out = MailHtmlView.composeHtml(widget.document,
@@ -910,11 +1001,14 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     if (c == null || !mounted || _covered || _viewWidth <= 0 || _height <= 0) return;
     final screenH = MediaQuery.sizeOf(context).height;
     final h = _height < screenH * 1.5 ? _height : screenH * 1.5;
+    // Координаты окна: без масштаба интерфейса ([UiZoomUndo]) окно меньше
+    // места на экране письма в webZoom раз.
+    final z = MailHtmlView.webZoom;
     try {
       final bytes = await c.takeScreenshot(
         screenshotConfiguration: ScreenshotConfiguration(
-          rect: InAppWebViewRect(x: 0, y: 0, width: _viewWidth, height: h),
-          snapshotWidth: _viewWidth * 0.75,
+          rect: InAppWebViewRect(x: 0, y: 0, width: _viewWidth * z, height: h * z),
+          snapshotWidth: _viewWidth * z * 0.75,
           compressFormat: CompressFormat.JPEG,
           quality: 70,
         ),
@@ -1231,11 +1325,11 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   /// экрана — там просто замер.
   void _onZoomed(InAppWebViewController c, double newScale) {
     if (Platform.isAndroid) {
-      final z = newScale / _dpr;
+      final z = newScale / _nativeDpr;
       if (z > 0.05 && z < 10) _zoom = z;
     }
     // Увеличено относительно исходного масштаба — показать «Обычный размер».
-    final zs = Platform.isAndroid ? newScale / _dpr : newScale;
+    final zs = Platform.isAndroid ? newScale / _nativeDpr : newScale;
     final pinched = zs > _scale * 1.02;
     if (pinched != _pinched && mounted) setState(() => _pinched = pinched);
     _zoomTimer?.cancel();
@@ -1345,7 +1439,14 @@ class _MailHtmlViewState extends State<MailHtmlView> {
       height: _height,
       child: Stack(children: [
         // Окно скрыто на время перехода (не удаляется: письмо в нём живо).
-        Positioned.fill(child: Offstage(offstage: _covered, child: _inAppWebView())),
+        // Android: окно — без масштаба интерфейса (1.8.14), иначе капли и
+        // ручки выделения стояли не там, где текст.
+        Positioned.fill(
+            child: Offstage(
+                offstage: _covered,
+                child: !kIsWeb && Platform.isAndroid
+                    ? UiZoomUndo(zoom: MailHtmlView.webZoom, child: _inAppWebView())
+                    : _inAppWebView())),
         if (_covered)
           Positioned.fill(
             child: IgnorePointer(
@@ -1504,7 +1605,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
             _onZoomed(controller, newScale);
           } else {
             // Масштаб вписывания, который поставил движок, — для замеров.
-            final z = newScale / _dpr;
+            final z = newScale / _nativeDpr;
             if (Platform.isAndroid && z > 0.05 && z < 10) _zoom = z;
             // Масштаб из документа (вписывание) движок ставит вокруг центра —
             // вернуть письмо к левому краю, пока оно не показано.
@@ -1583,7 +1684,7 @@ class MailWebViewPool {
       if ((_width - width).abs() < 0.5) return Future<void>.value();
       _width = width;
       _html = null;
-      return h.setSize(Size(width, 1)).catchError((Object _) {});
+      return h.setSize(Size(width * MailHtmlView.webZoom, 1)).catchError((Object _) {});
     }
     return _creating ??= _create(width, textScale).whenComplete(() => _creating = null);
   }
@@ -1593,7 +1694,8 @@ class MailWebViewPool {
     final blank = Completer<void>();
     late final HeadlessInAppWebView h;
     h = HeadlessInAppWebView(
-      initialSize: Size(width, 1),
+      // Размер окна — как у окна письма на экране ([UiZoomUndo]).
+      initialSize: Size(width * MailHtmlView.webZoom, 1),
       initialData: InAppWebViewInitialData(
         data: '<!DOCTYPE html><html><body></body></html>',
         mimeType: 'text/html',
@@ -1668,7 +1770,7 @@ class MailWebViewPool {
     if (width != null && width > 0 && sp != null && (_width - width).abs() >= 0.5) {
       _width = width;
       try {
-        await sp.setSize(Size(width, 1));
+        await sp.setSize(Size(width * MailHtmlView.webZoom, 1));
       } catch (_) {}
       if (gen != _gen) return;
     }

@@ -52,8 +52,13 @@ object DeviceCalendarPlugin {
             (m["location"] as? String)?.let { put(CalendarContract.Events.EVENT_LOCATION, it) }
             put(CalendarContract.Events.DTSTART, (m["startTime"] as Number).toLong())
             put(CalendarContract.Events.DTEND, (m["endTime"] as Number).toLong())
-            put(CalendarContract.Events.EVENT_TIMEZONE, tz)
-            if (m["allDay"] as? Boolean == true) put(CalendarContract.Events.ALL_DAY, 1)
+            // Весь день — полночь UTC и пояс UTC (требование календаря Android;
+            // Dart передаёт такие времена с 1.8.13). Раньше шло местное время с
+            // местным поясом, и восточнее Гринвича событие уходило на день
+            // раньше или растягивалось на два дня.
+            val allDay = m["allDay"] as? Boolean == true
+            put(CalendarContract.Events.EVENT_TIMEZONE, if (allDay) "UTC" else tz)
+            if (allDay) put(CalendarContract.Events.ALL_DAY, 1)
         }
 
         val uri = cr.insert(CalendarContract.Events.CONTENT_URI, values) ?: return false

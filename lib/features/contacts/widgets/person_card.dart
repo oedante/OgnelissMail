@@ -17,7 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/navigation/app_router.dart' show mailDetailPath;
+import '../../../core/navigation/app_router.dart' show mailOpenPath;
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
@@ -378,8 +378,12 @@ class _PersonMailsState extends ConsumerState<PersonMails> {
   }
 
   void _openMail(Email m) {
+    // Адрес — до закрытия карточки: карточка лежит в навигаторе того
+    // экрана, откуда её открыли (главный экран или страница поверх него).
+    final router = GoRouter.of(context);
+    final path = mailOpenPath(context, m.id, accountId: m.accountId);
     widget.onOpen?.call();
-    context.push(mailDetailPath(m.id, accountId: m.accountId));
+    router.push(path);
   }
 
   @override

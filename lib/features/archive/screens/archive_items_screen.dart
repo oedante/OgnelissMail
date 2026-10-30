@@ -19,21 +19,27 @@ import '../archive_providers.dart' show archiveRevisionProvider;
 import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 
-/// Что показывать: events, tasks, contacts.
-final _itemsProvider = FutureProvider.autoDispose.family<List<ArchiveItem>, String>((ref, kind) async {
+/// Что показывать: events, tasks, contacts; ящики — через запятую, пусто —
+/// все (1.8.14).
+final _itemsProvider =
+    FutureProvider.autoDispose.family<List<ArchiveItem>, ({String kind, String accounts})>((ref, k) async {
   ref.watch(archiveRevisionProvider);
   final db = ref.watch(archiveDbProvider);
   if (db == null) return const [];
-  return switch (kind) {
-    'events' => db.events(),
-    'tasks' => db.tasks(),
-    _ => db.contacts(),
+  final only = k.accounts.isEmpty ? null : k.accounts.split(',').toSet();
+  return switch (k.kind) {
+    'events' => db.events(accounts: only),
+    'tasks' => db.tasks(accounts: only),
+    _ => db.contacts(accounts: only),
   };
 });
 
 class ArchiveItemsScreen extends ConsumerStatefulWidget {
   final String kind;
-  const ArchiveItemsScreen({super.key, required this.kind});
+
+  /// Только этих ящиков (из меню — выбранного); null — весь архив.
+  final Set<String>? accounts;
+  const ArchiveItemsScreen({super.key, required this.kind, this.accounts});
 
   @override
   ConsumerState<ArchiveItemsScreen> createState() => _ArchiveItemsScreenState();
@@ -144,7 +150,8 @@ class _ArchiveItemsScreenState extends ConsumerState<ArchiveItemsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final items = ref.watch(_itemsProvider(widget.kind));
+    final items = ref.watch(
+        _itemsProvider((kind: widget.kind, accounts: ((widget.accounts ?? const <String>{}).toList()..sort()).join(','))));
     final q = _q.text.trim().toLowerCase();
     return Scaffold(
       appBar: TextScaleCapBar(

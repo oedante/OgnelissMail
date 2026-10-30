@@ -3378,7 +3378,7 @@
     <string name="noSender">(gönderen yok)</string>
     <string name="faq_archive_title">Ogneliss arşivi</string>
     <string name="faq_archive_1_q">Ogneliss arşivi, Arşiv düğmesinden nasıl farklıdır?</string>
-    <string name="faq_archive_1_a">Arşiv düğmesi bir iletiyi sunucudaki arşiv klasörüne taşır: ileti posta kutusunda kalır ve yer kaplar. Ogneliss arşivi Outlook Otomatik Arşivleme gibi çalışır: iletiler ekleri ve klasörleriyle birlikte cihazdaki şifreli bir dosyaya, sunucuda ise Silinmiş öğeler klasörüne gider. Arşiv menüde Ogneliss arşivi bölümü olarak görünür, postanızla birlikte aranır ve çevrimdışı açılır. Ayarlar → Ogneliss arşivi bölümünden açın.</string>
+    <string name="faq_archive_1_a">Arşiv düğmesi bir iletiyi sunucudaki arşiv klasörüne taşır: ileti posta kutusunda kalır ve yer kaplar. Ogneliss arşivi Outlook Otomatik Arşivleme gibi çalışır: iletiler ekleri ve klasörleriyle birlikte cihazdaki şifreli bir dosyaya, sunucuda ise Silinmiş öğeler klasörüne gider. Arşiv menüde Ogneliss arşivi bölümü olarak görünür, postanızla birlikte aranır ve çevrimdışı açılır. Ayarlar → Ogneliss arşivi bölümünden açın. Menü seçili posta kutusunun arşivini gösterir; tüm posta kutuları birlikte Tüm arşiv altındadır.</string>
     <string name="faq_archive_2_q">Arşivi başka bir cihaza veya buluta nasıl taşırım?</string>
     <string name="faq_archive_2_a">Ayarlar → Ogneliss arşivi → Arşiv kopyasını kaydet: .ogna dosyasını Google Drive, Dosyalar uygulaması (iCloud Drive), Yandex Disk, USB bellek veya bir bilgisayar üzerine koyun. Diğer cihazda: Arşiv kopyasını bağla → dosyayı seçin → arşiv şifresi veya kurtarma kodu. Kopya şifrelidir ve şifre ya da kod olmadan açılamaz. Uygulama ayarları arşivle birlikte taşınır ve aynı ekranda geri yükleyebilirsiniz.</string>
     <string name="faq_archive_3_q">Arşiv şifresini unutursam ne yapmalıyım?</string>
@@ -3544,4 +3544,25 @@
     <string name="graphHint">Microsoft, Exchange Online\'da EWS\'yi kapatıyor: Ekim 2026\'dan itibaren kuruluş kuruluş, Nisan 2027\'de tamamen. Posta, takvim, kişiler ve otomatik yanıtlar ActiveSync ile çalışır, değişmez. Adres defteri (unvanlar, departmanlar, iş arkadaşlarının fotoğrafları), gönderim ipuçları, sunucu kuralları ve silinen öğeleri kurtarma artık Microsoft Graph kullanıyor. Toplantı odaları ve dağıtım listesi üyeleri de, yönetici uygulamaya Place.Read.All ve GroupMember.Read.All izni verdiyse. Microsoft Graph çevrimiçi arşiv, paylaşılan posta kutuları ve imza içe aktarma sunmuyor — bunlar EWS kullanılabildiği sürece EWS ile çalışır.</string>
     <string name="srvViaGraph">Exchange Online — Microsoft Graph üzerinden</string>
     <string name="zipEncryptedHint">Arşiv parolayla korunuyor, Dosyalar onu açamaz. Bir arşiv uygulaması seçin: parolayı soracaktır</string>
+    <string name="reminderToday">Bugün · {at}</string>
+    <string name="composeBadAddress">Adresi kontrol edin: {addr}</string>
+    <string name="convMute">Bildirimleri sessize al</string>
+    <string name="convUnmute">Bildirimleri aç</string>
+    <string name="convMutedNotice">Bu yazışmadaki yeni iletiler bildirim göndermeyecek</string>
+    <string name="convUnmutedNotice">Bu yazışmanın bildirimleri açık</string>
+    <string name="faq_notify_6_q">Tek bir yazışmanın bildirimlerini nasıl sessize alırım?</string>
+    <string name="faq_notify_6_a">Yazışmayı açın → ⋮ → «Bildirimleri sessize al» (veya listedeki satırına uzun basın → «Diğer»). Yeni iletileri bildirimsiz gelir ve satırda üstü çizili zil görünür. Diğer postalar eskisi gibi bildirim gönderir. Yeniden açmak için aynı seçeneği kullanın veya yazışmadaki zile dokunun.</string>
+    <string name="mailOpenInBrowser">Tarayıcıda aç</string>
+    <string name="mailOpenInBrowserFailed">İleti tarayıcıda açılamadı</string>
+    <string name="archiveAll">Tüm arşiv</string>
+    <string name="archiveHubHelp">Menü yalnızca seçili posta kutusunun arşivini gösterir: klasörleri, etkinlikleri, görevleri ve kişileri. Burada tüm arşiv vardır: uygulamada artık bulunmayanlar dahil tüm posta kutuları ve tüm iletilerde arama.</string>
+    <string name="zipPasswordNeeded">Arşiv parolayla korunuyor</string>
+    <string name="zipPassword">Parola</string>
+    <string name="zipWrongPassword">Parola yanlış</string>
+    <string name="zipOpen">Aç</string>
+    <string name="zipSummary">Dosya: {n} · {size}</string>
+    <string name="zipCannotRead">Arşiv okunamıyor: bozuk veya uygulamanın tanımadığı bir biçimde (7z, RAR). Başka bir uygulamada açın.</string>
+    <string name="pdfProtected">PDF parolayla korunuyor. Başka bir uygulamada açın.</string>
+    <string name="faq_mail_10_q">Hangi ekler doğrudan uygulamada açılır?</string>
+    <string name="faq_mail_10_a">Parolalı olanlar dahil ZIP arşivleri ile TAR, GZ, BZ2 ve XZ doğrudan uygulamada açılır: açmak için içindeki bir dosyaya dokunun. Android\'de PDF\'ler, görseller, metin ve CSV, .eml iletileri ve .pkpass biletleri de uygulamada açılır. iPhone ve iPad\'de iOS Hızlı Bakış PDF\'leri, görselleri ve Office belgelerini gösterir. Diğerleri uygun bir uygulamada açılır ve her dosya üstteki düğmeyle oraya gönderilebilir. 7z ve RAR arşivleri yalnızca başka bir uygulamada açılır.</string>
 </resources>

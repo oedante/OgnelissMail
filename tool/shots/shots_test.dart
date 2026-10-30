@@ -381,6 +381,30 @@ void main() {
     });
   }
 
+  // Письмо и ответ на планшете, компьютере и телефоне боком (1.8.13):
+  // текст письма — одной колонкой с шапкой, строка ответа и кнопки — не
+  // через весь экран.
+  for (final (name, size) in const [('tablet', Size(1194, 834)), ('desktop', Size(1280, 800)), ('phoneland', Size(852, 393))]) {
+    testWidgets('письмо — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await _shot(tester, 'letter_$name', const MailDetailScreen(emailId: 'e1', accountId: 'a1'),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size);
+      await tester.runAsync(db.close);
+    });
+    testWidgets('ответ — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await _shot(tester, 'reply_$name', const ComposeScreen(accountId: 'a1', replyToId: 'e1', replyAll: true),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size);
+      await tester.runAsync(db.close);
+    });
+  }
+
   // Архив Ogneliss (28.10.2026): кнопки на виду, ящики в архиве (один — с
   // другого устройства), «Другие устройства и облако».
   for (final (t, scroll) in const [('light', 0.0), ('light', 1100.0), ('light', 2400.0), ('dark', 0.0)]) {

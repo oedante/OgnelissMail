@@ -93,3 +93,43 @@ class FolderNotify {
     await p.setStringList(_key, next.toList()..sort());
   }
 }
+
+/// Беседы без уведомлений (1.8.13, как «Без звука» у чата в Telegram и «Не
+/// уведомлять» в Почте iPhone): новые письма беседы приходят в ленту молча —
+/// длинная рассылочная переписка не звонит каждые пять минут, а остальная
+/// почта по-прежнему уведомляет. Список «ящик|беседа» в SharedPreferences —
+/// его читает и фоновая задача. Правило «уведомлять всегда» пробивает и
+/// выключенную беседу.
+class ConversationNotify {
+  ConversationNotify._();
+
+  static const _key = 'conv_notify_off';
+
+  /// Помним не больше стольких бесед (самые давние уходят из списка).
+  static const _max = 500;
+
+  static String key(String accountId, String conversationId) => '$accountId|$conversationId';
+
+  static Set<String> off(SharedPreferences p) => (p.getStringList(_key) ?? const <String>[]).toSet();
+
+  static bool isMuted(SharedPreferences p, String accountId, String? conversationId) =>
+      conversationId != null && conversationId.isNotEmpty && off(p).contains(key(accountId, conversationId));
+
+  /// Включить ([notify]) или выключить уведомления беседы.
+  static Future<Set<String>> set(SharedPreferences p, String accountId, String conversationId, bool notify) async {
+    final k = key(accountId, conversationId);
+    final list = [...?p.getStringList(_key)]..remove(k);
+    if (!notify) list.add(k);
+    while (list.length > _max) {
+      list.removeAt(0);
+    }
+    await p.setStringList(_key, list);
+    return list.toSet();
+  }
+
+  /// Ящик удалён — его беседы из списка убрать.
+  static Future<void> forgetAccount(SharedPreferences p, String accountId) async {
+    final list = [...?p.getStringList(_key)]..removeWhere((k) => k.startsWith('$accountId|'));
+    await p.setStringList(_key, list);
+  }
+}

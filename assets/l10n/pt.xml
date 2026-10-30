@@ -3378,7 +3378,7 @@
     <string name="noSender">(sem remetente)</string>
     <string name="faq_archive_title">Arquivo do Ogneliss</string>
     <string name="faq_archive_1_q">Qual é a diferença entre o arquivo do Ogneliss e o botão Arquivo?</string>
-    <string name="faq_archive_1_a">O botão Arquivo move uma mensagem para a pasta de arquivo no servidor: ela continua na caixa de correio e ocupa espaço. O arquivo do Ogneliss funciona como o Arquivamento Automático do Outlook: mensagens inteiras, com anexos e pastas, vão para um arquivo criptografado no dispositivo e, no servidor, para Itens excluídos. O arquivo aparece no menu como a seção Arquivo do Ogneliss, entra na pesquisa junto com seus e-mails e abre sem conexão. Ative em Configurações → Arquivo do Ogneliss.</string>
+    <string name="faq_archive_1_a">O botão Arquivo move uma mensagem para a pasta de arquivo no servidor: ela continua na caixa de correio e ocupa espaço. O arquivo do Ogneliss funciona como o Arquivamento Automático do Outlook: mensagens inteiras, com anexos e pastas, vão para um arquivo criptografado no dispositivo e, no servidor, para Itens excluídos. O arquivo aparece no menu como a seção Arquivo do Ogneliss, entra na pesquisa junto com seus e-mails e abre sem conexão. Ative em Configurações → Arquivo do Ogneliss. O menu mostra o arquivo da caixa selecionada; todas as caixas de uma vez ficam em Arquivo inteiro.</string>
     <string name="faq_archive_2_q">Como transfiro o arquivo para outro dispositivo ou para a nuvem?</string>
     <string name="faq_archive_2_a">Configurações → Arquivo do Ogneliss → Salvar uma cópia do arquivo: coloque o arquivo .ogna no Google Drive, em Arquivos com iCloud Drive, no Yandex Disk, em uma unidade USB ou em um computador. No outro dispositivo: Conectar uma cópia do arquivo → escolha o arquivo → senha do arquivo ou código de recuperação. A cópia é criptografada e não pode ser aberta sem a senha ou o código. As configurações do app acompanham o arquivo, e você pode restaurá-las na mesma tela.</string>
     <string name="faq_archive_3_q">E se eu esquecer a senha do arquivo?</string>
@@ -3544,4 +3544,25 @@
     <string name="graphHint">A Microsoft está a desativar o EWS no Exchange Online: a partir de outubro de 2026 por organização, totalmente em abril de 2027. Correio, calendário, contactos e respostas automáticas usam ActiveSync e não mudam. O diretório (cargos, departamentos, fotos dos colegas), as sugestões ao enviar, as regras do servidor e a recuperação de itens eliminados usam agora o Microsoft Graph. As salas e os membros de listas de distribuição também, se o administrador concedeu à app Place.Read.All e GroupMember.Read.All. O Microsoft Graph não oferece o arquivo online, as caixas partilhadas nem a importação de assinatura: usam o EWS enquanto estiver disponível.</string>
     <string name="srvViaGraph">Exchange Online — através do Microsoft Graph</string>
     <string name="zipEncryptedHint">O arquivo está protegido por senha e o app Arquivos não consegue abri-lo. Escolha um app de arquivos compactados: ele pedirá a senha</string>
+    <string name="reminderToday">Hoje · {at}</string>
+    <string name="composeBadAddress">Verifique o endereço: {addr}</string>
+    <string name="convMute">Silenciar notificações</string>
+    <string name="convUnmute">Ativar notificações</string>
+    <string name="convMutedNotice">Novas mensagens desta conversa não vão notificar</string>
+    <string name="convUnmutedNotice">Notificações desta conversa ativadas</string>
+    <string name="faq_notify_6_q">Como silenciar as notificações de uma só conversa?</string>
+    <string name="faq_notify_6_a">Abra a conversa → ⋮ → «Silenciar notificações» (ou mantenha pressionada a linha na lista → «Mais»). As novas mensagens dela chegam sem notificação, e a linha mostra um sino riscado. O restante do e-mail notifica como antes. Para reativar, use a mesma opção ou toque no sino na conversa.</string>
+    <string name="mailOpenInBrowser">Abrir no navegador</string>
+    <string name="mailOpenInBrowserFailed">Não foi possível abrir a mensagem no navegador</string>
+    <string name="archiveAll">Arquivo inteiro</string>
+    <string name="archiveHubHelp">O menu mostra apenas o arquivo da caixa selecionada: pastas, eventos, tarefas e contatos. Aqui está o arquivo inteiro: todas as caixas, inclusive as que não estão mais no app, e a busca em todas as mensagens.</string>
+    <string name="zipPasswordNeeded">O arquivo compactado é protegido por senha</string>
+    <string name="zipPassword">Senha</string>
+    <string name="zipWrongPassword">Senha incorreta</string>
+    <string name="zipOpen">Abrir</string>
+    <string name="zipSummary">Arquivos: {n} · {size}</string>
+    <string name="zipCannotRead">Não é possível ler o arquivo compactado: ele está danificado ou em um formato que o app não conhece (7z, RAR). Abra em outro app.</string>
+    <string name="pdfProtected">O PDF é protegido por senha. Abra em outro app.</string>
+    <string name="faq_mail_10_q">Quais anexos abrem direto no app?</string>
+    <string name="faq_mail_10_a">Arquivos ZIP, inclusive com senha, além de TAR, GZ, BZ2 e XZ abrem direto no app: toque em um arquivo dentro deles para abri-lo. PDFs no Android, imagens, texto e CSV, mensagens .eml e ingressos .pkpass também abrem no app. No iPhone e no iPad, a Visualização Rápida do iOS mostra PDFs, imagens e documentos do Office. O restante abre em um app adequado, e qualquer arquivo pode ser enviado a ele pelo botão no topo. Arquivos 7z e RAR abrem só em outro app.</string>
 </resources>

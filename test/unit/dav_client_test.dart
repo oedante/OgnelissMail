@@ -51,10 +51,44 @@ void main() {
       expect(await c.collectionTag('https://dav.example/c/'), isNull);
     });
 
+    test('адрес без HTTPS — запрос не уходит (1.8.13)', () async {
+      var asked = 0;
+      final c = _client('<d:multistatus xmlns:d="DAV:"/>', onRequest: (_) => asked++);
+      expect(await c.collectionTag('http://dav.example/c/'), isNull);
+      expect(asked, 0);
+    });
+
     test('ошибка HTTP — null', () async {
       final c = _client('nope', status: 500);
       expect(await c.collectionTag('https://dav.example/c/'), isNull);
     });
+  });
+
+  test('iCloud: календари на другом узле — адреса от узла, который ответил (1.8.13)', () async {
+    final asked = <String>[];
+    final c = DavClient('Basic x', httpClient: MockClient((req) async {
+      asked.add('${req.method} ${req.url}');
+      final body = switch (req.url.toString()) {
+        'https://caldav.icloud.com/' => '<d:multistatus xmlns:d="DAV:"><d:response><d:href>/</d:href><d:propstat><d:prop>'
+            '<d:current-user-principal><d:href>/123/principal/</d:href></d:current-user-principal></d:prop></d:propstat>'
+            '</d:response></d:multistatus>',
+        'https://caldav.icloud.com/123/principal/' => '<d:multistatus xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav">'
+            '<d:response><d:href>/123/principal/</d:href><d:propstat><d:prop><c:calendar-home-set>'
+            '<d:href>https://p52-caldav.icloud.com:443/123/calendars/</d:href></c:calendar-home-set></d:prop></d:propstat>'
+            '</d:response></d:multistatus>',
+        _ => '<d:multistatus xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav">'
+            '<d:response><d:href>/123/calendars/</d:href><d:propstat><d:prop><d:resourcetype><d:collection/></d:resourcetype>'
+            '</d:prop></d:propstat></d:response>'
+            '<d:response><d:href>/123/calendars/home/</d:href><d:propstat><d:prop><d:resourcetype><d:collection/><c:calendar/>'
+            '</d:resourcetype><d:displayname>Дом</d:displayname></d:prop></d:propstat></d:response></d:multistatus>',
+      };
+      return http.Response.bytes(utf8.encode(body), 207, headers: {'content-type': 'application/xml'});
+    }));
+    final cals = await c.discoverCalendars('https://caldav.icloud.com/');
+    expect(cals, hasLength(1));
+    expect(Uri.parse(cals.single.url).host, 'p52-caldav.icloud.com');
+    expect(Uri.parse(cals.single.url).path, '/123/calendars/home/');
+    expect(cals.single.name, 'Дом');
   });
 
   test('utf8Body: без charset тело читается как UTF-8', () {

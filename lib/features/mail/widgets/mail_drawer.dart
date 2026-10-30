@@ -656,7 +656,13 @@ class MailDrawer extends ConsumerWidget {
             icon: Icon(AppIcons.search, size: 20, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             onPressed: () {
               _close(context);
-              context.push('/archive/search');
+              // Поиск по письмам выбранного ящика (1.8.14); весь архив — в
+              // окне «Весь архив».
+              final a = ref.read(activeAccountProvider);
+              final ids = a == null
+                  ? const <String>{}
+                  : archiveAccountsOf(a, ref.read(archiveAccountsProvider).value ?? const <ArchiveAccountInfo>[]);
+              context.push(ids.isEmpty ? '/archive/search' : '/archive/search?accounts=${archiveAccountsQuery(ids)}');
             },
           ),
         IconButton(
@@ -687,9 +693,25 @@ class MailDrawer extends ConsumerWidget {
     final folders = ref.watch(archiveFoldersProvider).value ?? const <ArchiveFolder>[];
     final accounts = ref.watch(archiveAccountsProvider).value ?? const <ArchiveAccountInfo>[];
     final stats = ref.watch(archiveStatsProvider).value;
+    final counts = ref.watch(archiveItemCountsProvider).value ?? const {};
     final collapsed = ref.watch(collapsedFoldersProvider);
-    final multi = accounts.length > 1;
-    final tiles = <Widget>[band];
+    // Только архив выбранного ящика (1.8.14, просьба владельца 29.10.2026:
+    // в архиве несколько ящиков, папки у них разные и устроены по-разному).
+    // Весь архив — отдельным окном, как «Файлы».
+    final active = ref.watch(activeAccountProvider);
+    final mine = active == null ? const <String>{} : archiveAccountsOf(active, accounts);
+    final shown = [for (final a in accounts) if (mine.contains(a.id)) a];
+    final tiles = <Widget>[
+      band,
+      _FolderTile(
+        icon: AppIcons.inventory_2,
+        label: l10n.tr('archiveAll'),
+        onTap: () {
+          _close(context);
+          context.push('/archive');
+        },
+      ),
+    ];
 
     Iterable<Widget> branch(ArchiveFolderTree tree, ArchiveFolder f, int depth) sync* {
       final kids = tree.children[f.id] ?? const <ArchiveFolder>[];
@@ -713,16 +735,18 @@ class MailDrawer extends ConsumerWidget {
       }
     }
 
-    for (final a in accounts) {
+    // Тот же ящик в архиве под двумя id (копия с другого устройства) — у
+    // каждого своя ветка с адресом.
+    final multi = shown.length > 1;
+    for (final a in shown) {
       final tree = ArchiveFolderTree.build(folders, a.id);
       if (tree.roots.isEmpty) continue;
       var depth = 0;
       if (multi) {
-        // Несколько ящиков в одном архиве — у каждого своя ветка.
         final isCollapsed = collapsed.contains(CollapsedFoldersNotifier.key('ogna:${a.id}', ''));
         tiles.add(_FolderTile(
           icon: AppIcons.alternate_email,
-          label: a.label,
+          label: '${a.label} (${a.messages})',
           hasChildren: true,
           expanded: !isCollapsed,
           onToggle: () => ref.read(collapsedFoldersProvider.notifier).toggle('ogna:${a.id}', ''),
@@ -735,31 +759,43 @@ class MailDrawer extends ConsumerWidget {
         tiles.addAll(branch(tree, f, depth));
       }
     }
+    var events = 0, tasks = 0, contacts = 0;
+    for (final id in mine) {
+      final c = counts[id];
+      if (c == null) continue;
+      events += c.events;
+      tasks += c.tasks;
+      contacts += c.contacts;
+    }
+    final only = mine.isEmpty ? '' : '?accounts=${archiveAccountsQuery(mine)}';
     void open(String kind) {
       _close(context);
-      context.push('/archive/items/$kind');
+      context.push('/archive/items/$kind$only');
     }
 
-    if ((stats?.events ?? 0) > 0) {
+    if (events > 0) {
       tiles.add(_FolderTile(icon: AppIcons.event, label: l10n.tr('archiveKindEvents'), onTap: () => open('events')));
     }
-    if ((stats?.tasks ?? 0) > 0) {
+    if (tasks > 0) {
       tiles.add(_FolderTile(icon: AppIcons.check_box, label: l10n.tr('archiveKindTasks'), onTap: () => open('tasks')));
     }
-    if ((stats?.contacts ?? 0) > 0) {
+    if (contacts > 0) {
       tiles.add(
           _FolderTile(icon: AppIcons.contacts, label: l10n.tr('archiveKindContacts'), onTap: () => open('contacts')));
     }
-    if (tiles.length == 1) {
+    final empty = (stats?.messages ?? 0) == 0 && (stats?.events ?? 0) + (stats?.tasks ?? 0) + (stats?.contacts ?? 0) == 0;
+    if (empty) {
       // Архив пуст: подсказка, как в него положить.
-      tiles.add(_FolderTile(
-        icon: AppIcons.inventory_2,
-        label: l10n.tr('archiveEmptyDrawer'),
-        onTap: () {
-          _close(context);
-          context.push('/settings/archive');
-        },
-      ));
+      tiles
+        ..removeLast()
+        ..add(_FolderTile(
+          icon: AppIcons.inventory_2,
+          label: l10n.tr('archiveEmptyDrawer'),
+          onTap: () {
+            _close(context);
+            context.push('/settings/archive');
+          },
+        ));
     }
     tiles.add(const SizedBox(height: Space.s));
     return tiles;

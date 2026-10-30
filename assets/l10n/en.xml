@@ -3378,7 +3378,7 @@
     <string name="noSender">(no sender)</string>
     <string name="faq_archive_title">Ogneliss archive</string>
     <string name="faq_archive_1_q">How is the Ogneliss archive different from the Archive button?</string>
-    <string name="faq_archive_1_a">Archive moves a message into the archive folder on the server: it stays in the mailbox and takes space. The Ogneliss archive works like Outlook AutoArchive: whole messages with attachments and folders go into an encrypted file on the device, and on the server they go to Deleted Items. The archive shows in the menu as the Ogneliss archive section, is searched together with your mail and opens offline. Turn it on in Settings → Ogneliss archive.</string>
+    <string name="faq_archive_1_a">Archive moves a message into the archive folder on the server: it stays in the mailbox and takes space. The Ogneliss archive works like Outlook AutoArchive: whole messages with attachments and folders go into an encrypted file on the device, and on the server they go to Deleted Items. The archive shows in the menu as the Ogneliss archive section, is searched together with your mail and opens offline. Turn it on in Settings → Ogneliss archive. The menu shows the archive of the selected mailbox; all mailboxes at once are under Whole archive.</string>
     <string name="faq_archive_2_q">How do I move the archive to another device or a cloud?</string>
     <string name="faq_archive_2_a">Settings → Ogneliss archive → Save an archive copy: put the .ogna file on Google Drive, Files with iCloud Drive, Yandex Disk, a USB drive or a computer. On the other device: Connect an archive copy → choose the file → archive password or recovery code. The copy is encrypted and cannot be opened without the password or the code. The app settings travel with the archive, and you can restore them on the same screen.</string>
     <string name="faq_archive_3_q">What if I forget the archive password?</string>
@@ -3544,4 +3544,25 @@
     <string name="graphHint">Microsoft is turning off EWS in Exchange Online: from October 2026 organisation by organisation, completely in April 2027. Mail, calendar, contacts and automatic replies use ActiveSync and are not affected. The directory (job titles, departments, colleagues\' photos), send-time tips, server rules and recovering deleted items now use Microsoft Graph. Rooms and distribution list members too, if your admin has granted the app Place.Read.All and GroupMember.Read.All. Microsoft Graph does not offer the online archive, shared mailboxes or signature import — they use EWS while it is available.</string>
     <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
     <string name="zipEncryptedHint">The archive is password-protected, so Files can’t open it. Choose an archive app: it will ask for the password</string>
+    <string name="reminderToday">Today · {at}</string>
+    <string name="composeBadAddress">Check the address: {addr}</string>
+    <string name="convMute">Mute notifications</string>
+    <string name="convUnmute">Unmute notifications</string>
+    <string name="convMutedNotice">New messages in this conversation won’t notify you</string>
+    <string name="convUnmutedNotice">Notifications for this conversation are on</string>
+    <string name="faq_notify_6_q">How do I mute notifications for one conversation?</string>
+    <string name="faq_notify_6_a">Open the conversation → ⋮ → Mute notifications (or long-press its row in the list → More). New messages in it arrive without notifications, and the row shows a crossed-out bell. The rest of your mail notifies as before. To turn them back on, use the same item or tap the bell in the conversation.</string>
+    <string name="mailOpenInBrowser">Open in browser</string>
+    <string name="mailOpenInBrowserFailed">Couldn\'t open the message in the browser</string>
+    <string name="archiveAll">Whole archive</string>
+    <string name="archiveHubHelp">The menu shows the archive of the selected mailbox only: its folders, events, tasks and contacts. This page shows the whole archive: every mailbox, including ones no longer in the app, and search across all messages.</string>
+    <string name="zipPasswordNeeded">This archive is password-protected</string>
+    <string name="zipPassword">Password</string>
+    <string name="zipWrongPassword">Wrong password</string>
+    <string name="zipOpen">Open</string>
+    <string name="zipSummary">Files: {n} · {size}</string>
+    <string name="zipCannotRead">The archive can\'t be read: it is damaged or in a format the app doesn\'t know (7z, RAR). Open it in another app.</string>
+    <string name="pdfProtected">This PDF is password-protected. Open it in another app.</string>
+    <string name="faq_mail_10_q">Which attachments open right in the app?</string>
+    <string name="faq_mail_10_a">ZIP archives, including password-protected ones, and TAR, GZ, BZ2 and XZ open right in the app: tap a file inside to open it. PDFs on Android, images, text and CSV, .eml messages and .pkpass tickets also open in the app. On iPhone and iPad, iOS Quick Look shows PDFs, images and Office documents. Anything else opens in a suitable app, and any file can be sent to one with the button at the top. 7z and RAR archives open only in another app.</string>
 </resources>

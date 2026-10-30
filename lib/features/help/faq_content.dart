@@ -45,6 +45,8 @@ const faqSections = <FaqSection>[
     FaqItem('mail_8'),
     // Увеличение письма разведением пальцев (1.8.0).
     FaqItem('mail_9', route: '/settings/general'),
+    // Вложения внутри приложения (1.8.14): архивы, PDF, картинки, текст.
+    FaqItem('mail_10'),
   ]),
   FaqSection(id: 'drafts', icon: AppIcons.drafts, items: [
     FaqItem('drafts_1'),
@@ -88,6 +90,7 @@ const faqSections = <FaqSection>[
     FaqItem('notify_3', route: '/settings/permissions'),
     FaqItem('notify_4', route: '/settings/notifications'),
     FaqItem('notify_5', route: '/settings/notifications'),
+    FaqItem('notify_6'),
   ]),
   FaqSection(id: 'widgets', icon: AppIcons.widgets, items: [
     FaqItem('widgets_1'),

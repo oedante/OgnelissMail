@@ -143,16 +143,19 @@ class _WheelSheetState extends State<_WheelSheet> {
   // высотой 52 (было 32), колонки во всю ширину шторки, крупные цифры,
   // нажатие на строку выбирает её, полоса выбора видна.
   // 1.6.49+95 (замечание владельца 20.10.2026: «барабаны не очень удобны,
-  // можно крупнее»): строки 60 (было 52), выбранное число — 28, соседние —
-  // 22; у каждой колонки свой «барабан» — видно, что крутится; щелчок
-  // вибрацией на каждом шаге; барабаны площе (меньше искажение по краям).
+  // можно крупнее»): строки 60 (было 52), крупные цифры, щелчок вибрацией на
+  // каждом шаге.
+  // 1.8.12 (замечание 30.10.2026: «давай улучшим барабаны»): как в iOS —
+  // одна полоса выбора через все колонки вместо рамки у каждой колонки,
+  // настоящий изгиб барабана, центральная строка чуть увеличена лупой,
+  // строки к краям затухают; колонки по бокам слегка повёрнуты к центру.
+  // Размер строк и цифр — прежний, крупный.
   static const _extent = 60.0;
   static const _visible = 5;
-  static const _fontSelected = 28.0;
-  static const _font = 22.0;
+  static const _font = 24.0;
   // Слова (день недели, месяц) — чуть мельче чисел: «Ср, 30 сент.» целиком.
-  static const _fontWordsSelected = 24.0;
   static const _fontWords = 20.0;
+  static const _magnification = 1.12;
 
   late final DateTime _base = _dateBase();
   late final int _dayCount = _dateCount();
@@ -306,6 +309,7 @@ class _WheelSheetState extends State<_WheelSheet> {
     int flex = 1,
     TextAlign align = TextAlign.center,
     bool words = false,
+    double offAxis = 0,
   }) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -316,7 +320,7 @@ class _WheelSheetState extends State<_WheelSheet> {
       return GestureDetector(
         behavior: HitTestBehavior.opaque,
         // Нажатие на строку — выбрать её (не только прокрутка).
-        onTap: () => ctl.animateToItem(i, duration: const Duration(milliseconds: 200), curve: Curves.easeOut),
+        onTap: () => ctl.animateToItem(i, duration: const Duration(milliseconds: 220), curve: Curves.easeOutCubic),
         child: Container(
           alignment: align == TextAlign.center
               ? Alignment.center
@@ -328,8 +332,8 @@ class _WheelSheetState extends State<_WheelSheet> {
             overflow: TextOverflow.fade,
             softWrap: false,
             style: theme.textTheme.titleLarge?.copyWith(
-              fontSize: words ? (sel ? _fontWordsSelected : _fontWords) : (sel ? _fontSelected : _font),
-              fontWeight: sel ? FontWeight.w700 : FontWeight.w400,
+              fontSize: words ? _fontWords : _font,
+              fontWeight: sel ? FontWeight.w600 : FontWeight.w400,
               color: sel ? scheme.onSurface : scheme.onSurfaceVariant,
               fontFeatures: const [FontFeature.tabularFigures()],
             ),
@@ -343,38 +347,27 @@ class _WheelSheetState extends State<_WheelSheet> {
     return Expanded(
       key: ValueKey('wheel_$key'),
       flex: flex,
-      // Свой «барабан» у колонки: подложка и полоса выбранной строки.
-      child: Container(
-        decoration: BoxDecoration(color: scheme.surfaceContainerLow, borderRadius: Radii.cardAll),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(alignment: Alignment.center, children: [
-          Container(
-            height: _extent,
-            margin: const EdgeInsets.symmetric(horizontal: Space.xs),
-            decoration: BoxDecoration(
-              color: scheme.primary.withValues(alpha: 0.10),
-              borderRadius: Radii.chipAll,
-              border: Border.all(color: scheme.primary.withValues(alpha: 0.25)),
-            ),
-          ),
-          ListWheelScrollView.useDelegate(
-            controller: ctl,
-            itemExtent: _extent,
-            physics: const FixedExtentScrollPhysics(),
-            diameterRatio: 3.0,
-            perspective: 0.0015,
-            overAndUnderCenterOpacity: 0.45,
-            onSelectedItemChanged: (i) {
-              if (_syncing) return;
-              // Щелчок на каждом шаге — как у механического барабана.
-              unawaited(HapticFeedback.selectionClick());
-              onChanged(looping ? i % count : i);
-            },
-            childDelegate: looping
-                ? ListWheelChildLoopingListDelegate(children: [for (var i = 0; i < count; i++) item(i)])
-                : ListWheelChildBuilderDelegate(childCount: count, builder: (_, i) => item(i)),
-          ),
-        ]),
+      child: ListWheelScrollView.useDelegate(
+        controller: ctl,
+        itemExtent: _extent,
+        physics: const FixedExtentScrollPhysics(),
+        // Изгиб барабана: строки у краёв уходят назад и сжимаются.
+        diameterRatio: 1.5,
+        perspective: 0.003,
+        offAxisFraction: offAxis,
+        // Выбранная строка — под лупой, чуть крупнее соседних.
+        useMagnifier: true,
+        magnification: _magnification,
+        overAndUnderCenterOpacity: 0.55,
+        onSelectedItemChanged: (i) {
+          if (_syncing) return;
+          // Щелчок на каждом шаге — как у механического барабана.
+          unawaited(HapticFeedback.selectionClick());
+          onChanged(looping ? i % count : i);
+        },
+        childDelegate: looping
+            ? ListWheelChildLoopingListDelegate(children: [for (var i = 0; i < count; i++) item(i)])
+            : ListWheelChildBuilderDelegate(childCount: count, builder: (_, i) => item(i)),
       ),
     );
   }
@@ -437,8 +430,12 @@ class _WheelSheetState extends State<_WheelSheet> {
     final columns = <Widget>[];
     // Часы и минуты.
     void time() {
+      // Колонки по бокам слегка повёрнуты к центру (как в iOS); рядом с
+      // датой время — правая часть общего барабана.
+      final withDate = widget.mode == WheelMode.dateTime && !gridMode;
       columns.add(_wheel(
         key: 'h',
+        offAxis: withDate ? 0.05 : -0.1,
         // Часы и минуты — вдвое шире (1.6.8, замечание владельца: узкие
         // колонки неудобно крутить пальцем).
         flex: 2,
@@ -450,10 +447,11 @@ class _WheelSheetState extends State<_WheelSheet> {
       ));
       columns.add(Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.xs),
-        child: Text(':', style: theme.textTheme.titleLarge?.copyWith(fontSize: _fontSelected, fontWeight: FontWeight.w700)),
+        child: Text(':', style: theme.textTheme.titleLarge?.copyWith(fontSize: _font * _magnification, fontWeight: FontWeight.w600)),
       ));
       columns.add(_wheel(
         key: 'm',
+        offAxis: withDate ? 0.15 : 0.1,
         flex: 2,
         count: 60 ~/ _interval,
         selected: _value.minute ~/ _interval,
@@ -471,6 +469,7 @@ class _WheelSheetState extends State<_WheelSheet> {
           columns
             ..add(_wheel(
               key: 'dd',
+              offAxis: -0.15,
               count: daysInMonth,
               selected: _value.day - 1,
               flex: 2,
@@ -493,6 +492,7 @@ class _WheelSheetState extends State<_WheelSheet> {
             ..add(_gap)
             ..add(_wheel(
               key: 'y',
+              offAxis: 0.15,
               count: years,
               selected: _value.year - _base.year,
               flex: 3,
@@ -517,10 +517,13 @@ class _WheelSheetState extends State<_WheelSheet> {
         } else {
           columns.add(_wheel(
             key: 'd',
+            offAxis: -0.12,
             count: _dayCount,
             selected: _dayIndex.clamp(0, _dayCount - 1),
             flex: 5,
-            align: TextAlign.left,
+            // К времени, как в iOS: под лупой (она увеличивает от центра)
+            // строка, прижатая влево, обрезалась.
+            align: TextAlign.right,
             words: true,
             label: (i) {
               final d = _base.add(Duration(days: i));
@@ -540,14 +543,38 @@ class _WheelSheetState extends State<_WheelSheet> {
     // Под сеткой месяца — три строки времени вместо пяти: шторка не
     // вырастает выше экрана.
     final visible = gridMode ? 3 : _visible;
+    final scheme = theme.colorScheme;
     final picker = columns.isEmpty
         ? null
         : SizedBox(
             height: _extent * visible,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Space.m),
-              child: Row(children: columns),
-            ),
+            child: Stack(children: [
+              // Одна полоса выбора через все колонки (как в iOS).
+              Center(
+                child: Container(
+                  height: _extent,
+                  margin: const EdgeInsets.symmetric(horizontal: Space.m),
+                  decoration: BoxDecoration(
+                    color: scheme.primary.withValues(alpha: theme.brightness == Brightness.dark ? 0.16 : 0.08),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ),
+              // Строки к верху и низу затухают — глубина барабана.
+              ShaderMask(
+                blendMode: BlendMode.dstIn,
+                shaderCallback: (r) => const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0x00000000), Color(0xFF000000), Color(0xFF000000), Color(0x00000000)],
+                  stops: [0, 0.22, 0.78, 1],
+                ).createShader(r),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: Space.m),
+                  child: Row(children: columns),
+                ),
+              ),
+            ]),
           );
 
     final canGrid = widget.mode != WheelMode.time;

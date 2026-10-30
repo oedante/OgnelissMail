@@ -837,7 +837,7 @@ class _ConversationPagerScreenState extends ConsumerState<ConversationPagerScree
     final width = MailHtmlView.bodyWidthOf(context);
     final dark = theme.brightness == Brightness.dark;
     final page = mailPageColor(theme);
-    final scale = ref.read(settingsProvider).fontScale;
+    final scale = MailHtmlView.textScaleOf(context);
     final id = ids[next];
     unawaited(WorkScheduler.instance.run(WorkPriority.idle, () async {
       // Окна может ещё не быть (его забрало открытое письмо) — создать.

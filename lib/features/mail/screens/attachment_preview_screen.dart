@@ -47,7 +47,6 @@ import '../../../core/theme/mail_page_color.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import '../../../services/security/smime_service.dart';
 import '../../../services/security/smime_mime.dart';
-import '../../settings/providers/settings_provider.dart';
 
 enum _Kind { image, pdf, text, pass, mail, other }
 
@@ -441,15 +440,9 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
     );
   }
 
-  /// Размер шрифта письма из настроек (как на экране письма) — раньше письмо
-  /// во вложении всегда было 100 % (1.5.10).
-  double get _fontScale {
-    try {
-      return ProviderScope.containerOf(context, listen: false).read(settingsProvider).fontScale;
-    } catch (_) {
-      return 1.0;
-    }
-  }
+  /// Размер шрифта письма — как на экране письма ([MailHtmlView.textScaleOf]);
+  /// раньше письмо во вложении всегда было 100 % (1.5.10).
+  double get _fontScale => MailHtmlView.textScaleOf(context);
 
   /// Вкладка письма: тот же HTML, что и в карточке — в том же защищённом
   /// WebView (без JavaScript, без сети, ссылки через проверку домена).

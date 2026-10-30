@@ -3,7 +3,7 @@
 // «Ответить…» внизу письма (как поле ввода в Telegram). Письмо, а не «СМС»
 // (09.10.2026): приветствие, текст отдельным абзацем, подпись ящика для
 // ответов. Через очередь отправки: без связи ответ уйдёт позже, а не
-// пропадёт. In-Reply-To — Message-ID исходного письма.
+// пропадёт. Цепочка — References исходного письма и его Message-ID.
 
 import 'dart:convert' show HtmlEscape, jsonEncode;
 
@@ -58,9 +58,15 @@ class QuickReplyService {
         '<div>$body</div><div><br></div>'
         '<div>$signature</div>'
         '</body></html>';
+    // Цепочка «References родителя + его Message-ID» (1.8.13), как у ответа
+    // из редактора: с одним Message-ID родителя ответ в длинной переписке
+    // уходил в отдельную беседу — и у нас, и у получателей.
     String? messageId;
     final mid = parent?.internetMessageId?.trim();
-    if (mid != null && mid.contains('@')) messageId = mid;
+    if (mid != null && mid.contains('@')) {
+      final refs = parent?.referencesStr?.trim() ?? '';
+      messageId = refs.isEmpty ? mid : '$refs $mid';
+    }
     final sent = await _ref.read(offlineSendProvider).sendOrQueue(
           accountId: account.id,
           to: to,

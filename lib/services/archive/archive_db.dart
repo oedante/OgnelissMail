@@ -120,17 +120,8 @@ class ArchiveAccountInfo {
 
   /// Писем этого ящика в архиве.
   final int messages;
-
-  /// Встреч, задач и контактов этого ящика (1.8.12: архив по ящикам).
-  final int events;
-  final int tasks;
-  final int contacts;
-  const ArchiveAccountInfo(this.id, this.email, this.name,
-      {this.messages = 0, this.events = 0, this.tasks = 0, this.contacts = 0});
+  const ArchiveAccountInfo(this.id, this.email, this.name, {this.messages = 0});
   String get label => name.trim().isNotEmpty ? name.trim() : email;
-
-  /// В архиве есть что-нибудь этого ящика.
-  bool get isEmpty => messages + events + tasks + contacts == 0;
 }
 
 /// Итог объединения архива с копией (.ogna с другого устройства).
@@ -435,16 +426,12 @@ class ArchiveDb extends GeneratedDatabase {
 
   Future<List<ArchiveAccountInfo>> accounts() async {
     final rows = await customSelect('SELECT a.id, a.email, a.name, '
-            '(SELECT count(*) FROM messages m WHERE m.account_id = a.id) AS n, '
-            '(SELECT count(*) FROM events e WHERE e.account_id = a.id) AS ne, '
-            '(SELECT count(*) FROM tasks t WHERE t.account_id = a.id) AS nt, '
-            '(SELECT count(*) FROM contacts c WHERE c.account_id = a.id) AS nc '
-            'FROM accounts a ORDER BY a.email')
+            '(SELECT count(*) FROM messages m WHERE m.account_id = a.id) AS n FROM accounts a ORDER BY a.email')
         .get();
     return [
       for (final r in rows)
         ArchiveAccountInfo(r.read<String>('id'), r.read<String>('email'), r.readNullable<String>('name') ?? '',
-            messages: r.read<int>('n'), events: r.read<int>('ne'), tasks: r.read<int>('nt'), contacts: r.read<int>('nc')),
+            messages: r.read<int>('n')),
     ];
   }
 
@@ -633,16 +620,27 @@ class ArchiveDb extends GeneratedDatabase {
       .map((w) => '"$w"*')
       .join(' ');
 
-  /// Поиск по архиву: новые сверху.
-  Future<List<ArchiveMessageHead>> search(String query, {int limit = 200}) async {
+  /// Условие «только эти ящики» (1.8.14: в меню — архив выбранного ящика);
+  /// пустое — все.
+  static ({String sql, List<Variable> vars}) _inAccounts(String column, Set<String>? accounts) {
+    if (accounts == null || accounts.isEmpty) return (sql: '', vars: const []);
+    return (
+      sql: ' AND $column IN (${List.filled(accounts.length, '?').join(',')})',
+      vars: [for (final a in accounts) Variable.withString(a)],
+    );
+  }
+
+  /// Поиск по архиву: новые сверху. [accounts] — только письма этих ящиков.
+  Future<List<ArchiveMessageHead>> search(String query, {int limit = 200, Set<String>? accounts}) async {
     final q = ftsQuery(query);
     if (q.isEmpty) return const [];
+    final only = _inAccounts('m.account_id', accounts);
     final rows = await customSelect(
       'SELECT $_headCols, f.path AS folder_path FROM messages_fts '
       'JOIN messages m ON m.id = messages_fts.rowid '
       'JOIN folders f ON f.id = m.folder_id '
-      'WHERE messages_fts MATCH ? ORDER BY m.date DESC LIMIT ?',
-      variables: [Variable.withString(q), Variable.withInt(limit)],
+      'WHERE messages_fts MATCH ?${only.sql} ORDER BY m.date DESC LIMIT ?',
+      variables: [Variable.withString(q), ...only.vars, Variable.withInt(limit)],
     ).get();
     return [for (final r in rows) ArchiveMessageHead.fromRow(r)];
   }
@@ -782,10 +780,12 @@ class ArchiveDb extends GeneratedDatabase {
         [accountId, sourceId, name, email, company, phone, dataJson, DateTime.now().millisecondsSinceEpoch],
       );
 
-  Future<List<ArchiveItem>> events({int limit = 500}) async {
+  Future<List<ArchiveItem>> events({int limit = 500, Set<String>? accounts}) async {
+    final only = _inAccounts('account_id', accounts);
     final rows = await customSelect(
-      'SELECT id, account_id, title, location, start, data_json FROM events ORDER BY start DESC LIMIT ?',
-      variables: [Variable.withInt(limit)],
+      'SELECT id, account_id, title, location, start, data_json FROM events WHERE 1=1${only.sql} '
+      'ORDER BY start DESC LIMIT ?',
+      variables: [...only.vars, Variable.withInt(limit)],
     ).get();
     return [
       for (final r in rows)
@@ -800,11 +800,12 @@ class ArchiveDb extends GeneratedDatabase {
     ];
   }
 
-  Future<List<ArchiveItem>> tasks({int limit = 500}) async {
+  Future<List<ArchiveItem>> tasks({int limit = 500, Set<String>? accounts}) async {
+    final only = _inAccounts('account_id', accounts);
     final rows = await customSelect(
-      'SELECT id, account_id, title, due, completed_at, data_json FROM tasks '
+      'SELECT id, account_id, title, due, completed_at, data_json FROM tasks WHERE 1=1${only.sql} '
       'ORDER BY coalesce(completed_at, due, archived_at) DESC LIMIT ?',
-      variables: [Variable.withInt(limit)],
+      variables: [...only.vars, Variable.withInt(limit)],
     ).get();
     return [
       for (final r in rows)
@@ -821,10 +822,12 @@ class ArchiveDb extends GeneratedDatabase {
     ];
   }
 
-  Future<List<ArchiveItem>> contacts({int limit = 2000}) async {
+  Future<List<ArchiveItem>> contacts({int limit = 2000, Set<String>? accounts}) async {
+    final only = _inAccounts('account_id', accounts);
     final rows = await customSelect(
-      'SELECT id, account_id, name, email, company, data_json FROM contacts ORDER BY name LIMIT ?',
-      variables: [Variable.withInt(limit)],
+      'SELECT id, account_id, name, email, company, data_json FROM contacts WHERE 1=1${only.sql} '
+      'ORDER BY name LIMIT ?',
+      variables: [...only.vars, Variable.withInt(limit)],
     ).get();
     return [
       for (final r in rows)
@@ -1124,6 +1127,21 @@ class ArchiveDb extends GeneratedDatabase {
         final Uint8List b => Variable.withBlob(b),
         _ => Variable.withString('$v'),
       };
+
+  /// Встречи, задачи и контакты по ящикам (1.8.14): ящик → (встречи,
+  /// задачи, контакты).
+  Future<Map<String, ({int events, int tasks, int contacts})>> itemCounts() async {
+    final out = <String, ({int events, int tasks, int contacts})>{};
+    Future<Map<String, int>> by(String table) async => {
+          for (final r in await customSelect('SELECT account_id, count(*) AS n FROM $table GROUP BY account_id').get())
+            r.read<String>('account_id'): r.read<int>('n'),
+        };
+    final e = await by('events'), t = await by('tasks'), c = await by('contacts');
+    for (final id in {...e.keys, ...t.keys, ...c.keys}) {
+      out[id] = (events: e[id] ?? 0, tasks: t[id] ?? 0, contacts: c[id] ?? 0);
+    }
+    return out;
+  }
 
   Future<ArchiveStats> stats() async {
     Future<int> count(String sql) async => (await customSelect(sql).getSingle()).read<int>('n');

@@ -30,7 +30,15 @@ class DavClient {
         if (depth != null) 'Depth': '$depth',
       };
 
+  /// Только HTTPS (1.8.13): адреса коллекций приходят от сервера, и адрес
+  /// «http://…» в ответе увёл бы пароль или токен открытым текстом.
+  static bool _secure(String url) => Uri.tryParse(url)?.scheme.toLowerCase() == 'https';
+
   Future<String?> _dav(String method, String url, {String? body, int? depth}) async {
+    if (!_secure(url)) {
+      AppLogger.warning('DAV $method: адрес без HTTPS пропущен (${Uri.tryParse(url)?.host ?? ''})');
+      return null;
+    }
     try {
       final req = http.Request(method, Uri.parse(url));
       req.headers.addAll(_headers(depth: depth));
@@ -91,6 +99,9 @@ class DavClient {
         '<d:propfind xmlns:d="DAV:"><d:prop><d:current-user-principal/></d:prop></d:propfind>');
     final principal = _href(principalXml, 'current-user-principal') ?? baseUrl;
     final principalUrl = _abs(base, principal);
+    // Адреса в ответе — относительно адреса запроса (RFC 4918), а не начала
+    // обнаружения: у iCloud календари лежат на другом узле (pNN-caldav), и
+    // «/123/calendars/home/» от caldav.icloud.com — другой адрес (1.8.13).
 
     // 2) home-set (calendar-home-set / addressbook-home-set)
     final ns = homeProp.contains('calendar')
@@ -99,20 +110,21 @@ class DavClient {
     final homeXml = await _dav('PROPFIND', principalUrl, depth: 0, body:
         '<d:propfind xmlns:d="DAV:" xmlns:x="$ns"><d:prop><x:$homeProp/></d:prop></d:propfind>');
     final home = _href(homeXml, homeProp) ?? principalUrl;
-    final homeUrl = _abs(base, home);
+    final homeUrl = _abs(Uri.parse(principalUrl), home);
 
     // 3) список коллекций нужного типа
     final listXml = await _dav('PROPFIND', homeUrl, depth: 1, body:
         '<d:propfind xmlns:d="DAV:"><d:prop><d:resourcetype/><d:displayname/></d:prop></d:propfind>');
     if (listXml == null) return fallback.isNotEmpty ? fallback : [homeUrl];
     final result = <String>[];
+    final listBase = Uri.parse(homeUrl);
     final doc = XmlDocument.parse(listXml);
     for (final resp in doc.descendants.whereType<XmlElement>().where((e) => e.name.local == 'response')) {
       final isType = resp.descendants.whereType<XmlElement>().any((e) => e.name.local == collType);
       if (!isType) continue;
       final href = resp.descendants.whereType<XmlElement>()
           .where((e) => e.name.local == 'href').firstOrNull?.innerText.trim();
-      if (href != null) result.add(_abs(base, href));
+      if (href != null) result.add(_abs(listBase, href));
     }
     if (result.isEmpty) return fallback.isNotEmpty ? fallback : [homeUrl];
     return result;
@@ -129,13 +141,15 @@ class DavClient {
     final homeXml = await _dav('PROPFIND', principalUrl, depth: 0, body:
         '<d:propfind xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav">'
         '<d:prop><c:calendar-home-set/></d:prop></d:propfind>');
-    final homeUrl = _abs(base, _href(homeXml, 'calendar-home-set') ?? principalUrl);
+    // Адреса — относительно адреса запроса (см. discoverCollections).
+    final homeUrl = _abs(Uri.parse(principalUrl), _href(homeXml, 'calendar-home-set') ?? principalUrl);
     final listXml = await _dav('PROPFIND', homeUrl, depth: 1, body:
         '<d:propfind xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav">'
         '<d:prop><d:resourcetype/><d:displayname/><d:current-user-privilege-set/>'
         '<c:supported-calendar-component-set/></d:prop></d:propfind>');
     List<DavCalendar> fb() => [for (final f in fallback) DavCalendar(url: f)];
     if (listXml == null) return fallback.isNotEmpty ? fb() : [DavCalendar(url: homeUrl)];
+    final listBase = Uri.parse(homeUrl);
     final out = <DavCalendar>[];
     try {
       final doc = XmlDocument.parse(listXml);
@@ -153,7 +167,7 @@ class DavClient {
             ? const <String>{}
             : {for (final p in privs.descendants.whereType<XmlElement>()) p.name.local};
         out.add(DavCalendar(
-          url: _abs(base, href),
+          url: _abs(listBase, href),
           name: els.where((e) => e.name.local == 'displayname').firstOrNull?.innerText.trim(),
           events: comps.isEmpty || comps.contains('VEVENT'),
           todos: comps.contains('VTODO'),
@@ -244,6 +258,10 @@ class DavClient {
 
   Future<http.Response?> _raw(String method, String url,
       {String? body, Map<String, String> headers = const {}}) async {
+    if (!_secure(url)) {
+      AppLogger.warning('DAV $method: адрес без HTTPS пропущен (${Uri.tryParse(url)?.host ?? ''})');
+      return null;
+    }
     try {
       final req = http.Request(method, Uri.parse(url));
       req.headers['Authorization'] = authorization;

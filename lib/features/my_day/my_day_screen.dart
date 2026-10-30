@@ -33,7 +33,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../services/calendar/pending_invites.dart' show loadPendingInvites;
-import '../../core/navigation/app_router.dart' show eventDetailsPath, mailDetailPath, pushMailDetail;
+import '../../core/navigation/app_router.dart' show eventDetailsPath, mailOpenPath;
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
@@ -786,7 +786,7 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
         subtitle: '${l10n.tr('myDayLaterReturns')} · ${m.fromName ?? m.fromEmail}',
         icon: AppIcons.watch_later,
         color: const Color(0xFF7B61B8),
-        onTap: () => context.push(mailDetailPath(m.id, accountId: m.accountId)),
+        onTap: () => context.push(mailOpenPath(context, m.id, accountId: m.accountId)),
       ));
     }
     return out;
@@ -951,7 +951,7 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
               },
             )
           : null,
-      onTap: () => context.push(mailDetailPath(m.id, accountId: m.accountId)),
+      onTap: () => context.push(mailOpenPath(context, m.id, accountId: m.accountId)),
     );
   }
 
@@ -991,7 +991,7 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
           maxLines: 1, overflow: TextOverflow.ellipsis),
       subtitle: Text([l10n.tr('myDayInvite'), if (when != null) when, m.fromName ?? m.fromEmail].join(' · '),
           maxLines: 1, overflow: TextOverflow.ellipsis),
-      onTap: () => context.push(mailDetailPath(m.id, accountId: m.accountId)),
+      onTap: () => context.push(mailOpenPath(context, m.id, accountId: m.accountId)),
     );
   }
 
@@ -1001,7 +1001,7 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
             maxLines: 1, overflow: TextOverflow.ellipsis),
         subtitle: Text('${l10n.tr('laterReturned')} · ${m.fromName ?? m.fromEmail}',
             maxLines: 1, overflow: TextOverflow.ellipsis),
-        onTap: () => context.push(mailDetailPath(m.id, accountId: m.accountId)),
+        onTap: () => context.push(mailOpenPath(context, m.id, accountId: m.accountId)),
       );
 
   /// Тема письма.
@@ -1033,7 +1033,7 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
               onPressed: () => _cancelScheduled(x, l10n),
             )
           : Text(when, style: theme.textTheme.labelSmall?.copyWith(color: AppColors.mutedText(context))),
-      onTap: x.mail == null ? null : () => context.push(mailDetailPath(x.mail!.id, accountId: x.mail!.accountId)),
+      onTap: x.mail == null ? null : () => context.push(mailOpenPath(context, x.mail!.id, accountId: x.mail!.accountId)),
     );
   }
 
@@ -1064,7 +1064,7 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
       subtitle: Text(_subjectOf(m, l10n), maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: Text(sameDay ? DateFormat('HH:mm').format(at) : DateFormat('d MMM', l10n.localeCode).format(at),
           style: theme.textTheme.labelSmall?.copyWith(color: AppColors.mutedText(context))),
-      onTap: () => context.push(mailDetailPath(m.id, accountId: m.accountId)),
+      onTap: () => context.push(mailOpenPath(context, m.id, accountId: m.accountId)),
     );
   }
 }

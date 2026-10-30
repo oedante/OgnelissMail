@@ -38,16 +38,19 @@ void main() {
     });
   });
 
-  test('заголовок: тема, без темы, VIP и общий ящик', () {
-    expect(NotificationText.title('  RE: Смена рейса ', noSubject: '(Без темы)'), 'RE: Смена рейса');
-    expect(NotificationText.title('', noSubject: '(Без темы)'), '(Без темы)');
-    expect(NotificationText.title('Отчёт', noSubject: '-', vip: true, shared: true), '👥 ★ Отчёт');
+  test('заголовок (жирный) — отправитель; VIP и общий ящик', () {
+    expect(NotificationText.title('  Захаров О. '), 'Захаров О.');
+    expect(NotificationText.title('Захаров О.', vip: true, shared: true), '👥 ★ Захаров О.');
   });
 
-  test('строки: свёрнутая и раскрытая', () {
-    expect(NotificationText.line('Захаров Олег', 'Согласовано.'), 'Захаров Олег — Согласовано.');
-    expect(NotificationText.line('Захаров Олег', ''), 'Захаров Олег');
-    expect(NotificationText.big('Олег', 'Текст'), 'Олег\nТекст');
+  test('тема — строкой под отправителем; без темы — подпись', () {
+    expect(NotificationText.subject('  RE: Смена\n рейса ', noSubject: '(Без темы)'), 'RE: Смена рейса');
+    expect(NotificationText.subject(' ', noSubject: '(Без темы)'), '(Без темы)');
+  });
+
+  test('раскрытое: тема, ниже текст', () {
+    expect(NotificationText.big('Смена рейса', 'Согласовано.'), 'Смена рейса\nСогласовано.');
+    expect(NotificationText.big('Смена рейса', ''), 'Смена рейса');
   });
 
   test('короткая подпись ящика: имя до @, при совпадении — домен', () {
@@ -62,7 +65,7 @@ void main() {
     expect(NotificationText.subText(), isNull);
   });
 
-  test('строка сводки: «Отправитель — тема», без жирного и HTML', () {
-    expect(NotificationText.summaryLine('A < B', 'Иван & Co'), 'Иван & Co — A < B');
+  test('строка сводки — обычным шрифтом: отправитель и тема', () {
+    expect(NotificationText.summaryLine(' Иван & Co ', 'A < B '), 'Иван & Co — A < B');
   });
 }

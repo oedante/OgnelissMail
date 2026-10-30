@@ -3416,7 +3416,7 @@
     <string name="noSender">(brak nadawcy)</string>
     <string name="faq_archive_title">Archiwum Ogneliss</string>
     <string name="faq_archive_1_q">Czym archiwum Ogneliss różni się od przycisku Archiwum?</string>
-    <string name="faq_archive_1_a">Przycisk Archiwum przenosi wiadomość do folderu archiwum na serwerze: zostaje ona w skrzynce i zajmuje miejsce. Archiwum Ogneliss działa jak Autoarchiwizacja w Outlooku: całe wiadomości z załącznikami i folderami trafiają do zaszyfrowanego pliku na urządzeniu, a na serwerze do folderu Elementy usunięte. Archiwum widać w menu jako sekcję Archiwum Ogneliss, jest przeszukiwane razem z pocztą i otwiera się offline. Włącz je w Ustawienia → Archiwum Ogneliss.</string>
+    <string name="faq_archive_1_a">Przycisk Archiwum przenosi wiadomość do folderu archiwum na serwerze: zostaje ona w skrzynce i zajmuje miejsce. Archiwum Ogneliss działa jak Autoarchiwizacja w Outlooku: całe wiadomości z załącznikami i folderami trafiają do zaszyfrowanego pliku na urządzeniu, a na serwerze do folderu Elementy usunięte. Archiwum widać w menu jako sekcję Archiwum Ogneliss, jest przeszukiwane razem z pocztą i otwiera się offline. Włącz je w Ustawienia → Archiwum Ogneliss. Menu pokazuje archiwum wybranej skrzynki; wszystkie skrzynki naraz są w pozycji Całe archiwum.</string>
     <string name="faq_archive_2_q">Jak przenieść archiwum na inne urządzenie lub do chmury?</string>
     <string name="faq_archive_2_a">Ustawienia → Archiwum Ogneliss → Zapisz kopię archiwum: umieść plik .ogna w Google Drive, w aplikacji Pliki z iCloud Drive, w Yandex Disk, na dysku USB lub na komputerze. Na drugim urządzeniu: Połącz kopię archiwum → wybierz plik → hasło archiwum lub kod odzyskiwania. Kopia jest zaszyfrowana i nie można jej otworzyć bez hasła lub kodu. Ustawienia aplikacji podróżują razem z archiwum i możesz je przywrócić na tym samym ekranie.</string>
     <string name="faq_archive_3_q">Co zrobić, jeśli zapomnę hasła do archiwum?</string>
@@ -3582,6 +3582,25 @@
     <string name="graphHint">Microsoft wyłącza EWS w Exchange Online: od października 2026 kolejno w organizacjach, całkowicie w kwietniu 2027. Poczta, kalendarz, kontakty i odpowiedzi automatyczne działają przez ActiveSync i się nie zmieniają. Książka adresowa (stanowiska, działy, zdjęcia współpracowników), porady przy wysyłaniu, reguły serwera i odzyskiwanie usuniętych elementów działają teraz przez Microsoft Graph. Sale i członkowie list dystrybucyjnych także, jeśli administrator przyznał aplikacji Place.Read.All i GroupMember.Read.All. Microsoft Graph nie udostępnia archiwum online, skrzynek współdzielonych ani importu podpisu — działają przez EWS, dopóki jest dostępne.</string>
     <string name="srvViaGraph">Exchange Online — przez Microsoft Graph</string>
     <string name="zipEncryptedHint">Archiwum jest chronione hasłem, aplikacja Pliki go nie otworzy. Wybierz aplikację do archiwów: poprosi o hasło</string>
-    <string name="archiveWhole">Całe archiwum</string>
-    <string name="archiveNoAccountData">W archiwum nie ma danych tej skrzynki</string>
+    <string name="reminderToday">Dziś · {at}</string>
+    <string name="composeBadAddress">Sprawdź adres: {addr}</string>
+    <string name="convMute">Wycisz powiadomienia</string>
+    <string name="convUnmute">Włącz powiadomienia</string>
+    <string name="convMutedNotice">Nowe wiadomości w tej rozmowie nie będą powiadamiać</string>
+    <string name="convUnmutedNotice">Powiadomienia tej rozmowy są włączone</string>
+    <string name="faq_notify_6_q">Jak wyciszyć powiadomienia jednej rozmowy?</string>
+    <string name="faq_notify_6_a">Otwórz rozmowę → ⋮ → „Wycisz powiadomienia” (lub przytrzymaj jej wiersz na liście → „Więcej”). Nowe wiadomości w niej przychodzą bez powiadomień, a przy wierszu widać przekreślony dzwonek. Pozostała poczta powiadamia jak dotąd. Aby włączyć ponownie, użyj tej samej opcji lub dotknij dzwonka w rozmowie.</string>
+    <string name="mailOpenInBrowser">Otwórz w przeglądarce</string>
+    <string name="mailOpenInBrowserFailed">Nie udało się otworzyć wiadomości w przeglądarce</string>
+    <string name="archiveAll">Całe archiwum</string>
+    <string name="archiveHubHelp">Menu pokazuje tylko archiwum wybranej skrzynki: jej foldery, wydarzenia, zadania i kontakty. Tutaj jest całe archiwum: wszystkie skrzynki, także te, których nie ma już w aplikacji, i wyszukiwanie we wszystkich wiadomościach.</string>
+    <string name="zipPasswordNeeded">Archiwum jest chronione hasłem</string>
+    <string name="zipPassword">Hasło</string>
+    <string name="zipWrongPassword">Nieprawidłowe hasło</string>
+    <string name="zipOpen">Otwórz</string>
+    <string name="zipSummary">Pliki: {n} · {size}</string>
+    <string name="zipCannotRead">Nie można odczytać archiwum: jest uszkodzone lub w formacie, którego aplikacja nie zna (7z, RAR). Otwórz je w innej aplikacji.</string>
+    <string name="pdfProtected">PDF jest chroniony hasłem. Otwórz go w innej aplikacji.</string>
+    <string name="faq_mail_10_q">Które załączniki otwierają się bezpośrednio w aplikacji?</string>
+    <string name="faq_mail_10_a">Archiwa ZIP, także chronione hasłem, oraz TAR, GZ, BZ2 i XZ otwierają się bezpośrednio w aplikacji: stuknij plik w środku, aby go otworzyć. W aplikacji otwierają się też pliki PDF na Androidzie, obrazy, tekst i CSV, wiadomości .eml oraz bilety .pkpass. Na iPhonie i iPadzie podgląd iOS pokazuje pliki PDF, obrazy i dokumenty Office. Pozostałe otwiera odpowiednia aplikacja, a każdy plik można do niej wysłać przyciskiem u góry. Archiwa 7z i RAR otwierają się tylko w innej aplikacji.</string>
 </resources>

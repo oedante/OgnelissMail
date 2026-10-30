@@ -59,6 +59,7 @@ import '../../features/settings/providers/settings_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../mail/own_identity_service.dart' show ownIdentityServiceProvider;
 import '../mail/own_addresses.dart';
+import '../mail/thread_linker.dart';
 import '../mail/special_folders.dart';
 import '../security/mail_classification.dart' show MailLabel;
 import '../rules/device_rules_service.dart' show deviceRulesProvider, RuleNotify, RuleOutcome;
@@ -2014,8 +2015,12 @@ class SyncService {
       // Папка без уведомлений (1.7.2, «Синхронизация папок» → колокольчик):
       // молчит для всех писем, кроме правила «уведомлять всегда».
       final folderMuted = FolderNotify.isMuted(_prefs, account.id, folder.id);
+      // Беседа без уведомлений (1.8.13, «Без уведомлений» в беседе) — тоже
+      // молчит; правило «уведомлять всегда» пробивает и её.
       bool mutedByAccount(EmailModel e) =>
-          folderMuted || (accMode == AccountNotifyMode.vipOnly && !focus.isVip(e));
+          folderMuted ||
+          ConversationNotify.isMuted(_prefs, account.id, e.conversationId) ||
+          (accMode == AccountNotifyMode.vipOnly && !focus.isVip(e));
       // Фокус-режим: тихие часы и расписание доставки. Внутри shouldNotify VIP и
       // письма с высоким приоритетом пробивают тишину.
       final fresh = processed
@@ -2045,7 +2050,7 @@ class SyncService {
         if (mutedByAccount(e)) continue;
         if (focus.shouldNotify(e)) continue;
         final subj = e.subject.trim().isEmpty ? '—' : e.subject.trim();
-        held.add('${PersonNames.short(e.from.displayName, email: e.from.email)}: $subj');
+        held.add(NotificationText.summaryLine(PersonNames.short(e.from.displayName, email: e.from.email), subj));
       }
       if (held.isNotEmpty) await FocusDigest.hold(_prefs, held);
       final unread = fresh
@@ -2108,7 +2113,7 @@ class SyncService {
       if (unread.length > singles.length) {
         final rest = unread.skip(singles.length).take(6).map((e) {
           final subj = e.subject.trim().isEmpty ? '—' : e.subject.trim();
-          return NotificationText.summaryLine(subj, PersonNames.short(e.from.displayName, email: e.from.email));
+          return NotificationText.summaryLine(PersonNames.short(e.from.displayName, email: e.from.email), subj);
         }).toList();
         await service.showSummaryNotification(
           accountId: account.id,
@@ -3235,6 +3240,13 @@ class SyncService {
       emails = emails.where((e) => !e.receivedAt.isBefore(cutoff)).toList();
     }
     if (emails.isEmpty) return 0;
+    // Беседы IMAP — по ссылкам на письма и по теме с собеседником (1.8.13):
+    // ответ из Outlook, где в References только родитель, уходил в
+    // отдельную беседу.
+    final owner = _ref.read(accountsProvider).where((a) => a.id == accountId).firstOrNull;
+    if (owner != null && ThreadLinker.appliesTo(owner)) {
+      emails = await ThreadLinker.link(db, owner, emails);
+    }
 
     // Существующие письма этой папки — целиком (нужны их локальные поля для
     // слияния, а не только id). Раньше брались лишь id, и запись шла через

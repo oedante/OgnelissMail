@@ -334,31 +334,9 @@ class DavPimService {
 
   /// Развернуть содержимое одного ресурса (серия + изменённые вхождения)
   /// в события периода.
-  /// Сколько раз за запуск записаны в журнал события «весь день» длиннее
-  /// суток (см. [_expandResource]).
-  int _longAllDayLogged = 0;
-
   List<CalendarEventModel> _expandResource(AccountModel account, String data, DateTime from, DateTime to) {
     final out = <CalendarEventModel>[];
     final all = ICalParser.parse(data).where((e) => e.start != null && e.end != null).toList();
-    // Разбор (1.8.12, замечание 29.10.2026: дни рождения из iCloud — на два
-    // дня): у события «весь день» длиннее суток — исходные строки времени
-    // в журнал, без названия. Стандартные формы iCloud разбираются верно
-    // (тест ical_all_day_test), нужен формат именно этих событий.
-    if (_longAllDayLogged < 3) {
-      for (final ev in all) {
-        if (!ev.isAllDay || ev.end!.difference(ev.start!).inHours <= 26) continue;
-        _longAllDayLogged++;
-        final lines = data
-            .split(RegExp(r'\r?\n'))
-            .where((l) => RegExp(r'^(DTSTART|DTEND|DURATION|RRULE|RECURRENCE-ID|X-MICROSOFT-CDO-ALLDAYEVENT)\b', caseSensitive: false)
-                .hasMatch(l))
-            .take(8)
-            .join(' | ');
-        AppLogger.info('CalDAV: событие на весь день длиннее суток (${ev.end!.difference(ev.start!).inHours} ч): $lines');
-        break;
-      }
-    }
     final byUid = <String, List<VEvent>>{};
     for (final ev in all) {
       byUid.putIfAbsent(ev.uid ?? 'h${data.hashCode}', () => []).add(ev);

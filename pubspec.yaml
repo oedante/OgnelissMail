@@ -1,7 +1,7 @@
 name: ogneliss
 description: Ogneliss Mail — почтовый клиент для Exchange, Gmail, Яндекс и Mail.ru
 publish_to: "none"
-version: 1.8.12+128
+version: 1.8.13+129
 
 environment:
   # Dart 3.10+: этого требует sqlite3 3.x (через drift 2.32+). Flutter 3.38+.
@@ -60,7 +60,9 @@ dependencies:
   # Разбор HTML для очистки писем по белому списку (уже используется
   # flutter_html; здесь — явная зависимость, т.к. импортируется напрямую).
   html: ^0.15.4
-  flutter_html_table: ^3.0.0-beta.2
+  # flutter_html_table убран в 1.8.14: его таблицы падали при раскладке
+  # (LayoutBuilder в ячейке) — письма на компьютере показываются виджетами
+  # (desktop_mail_body.dart).
   shimmer: ^3.0.0
   flutter_slidable: ^3.0.1
   badges: ^3.1.2

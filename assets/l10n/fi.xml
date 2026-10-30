@@ -3378,7 +3378,7 @@
     <string name="noSender">(ei lähettäjää)</string>
     <string name="faq_archive_title">Ogneliss-arkisto</string>
     <string name="faq_archive_1_q">Miten Ogneliss-arkisto eroaa Arkisto-painikkeesta?</string>
-    <string name="faq_archive_1_a">Arkisto siirtää viestin palvelimen arkistokansioon: se pysyy postilaatikossa ja vie tilaa. Ogneliss-arkisto toimii kuten Outlookin automaattinen arkistointi: kokonaiset viestit liitteineen ja kansioineen siirtyvät salattuun tiedostoon laitteella, ja palvelimella ne siirretään kansioon Poistetut. Arkisto näkyy valikossa Ogneliss-arkisto-osiona, sitä haetaan postin kanssa yhdessä ja se avautuu offline-tilassa. Ota se käyttöön kohdassa Asetukset → Ogneliss-arkisto.</string>
+    <string name="faq_archive_1_a">Arkisto siirtää viestin palvelimen arkistokansioon: se pysyy postilaatikossa ja vie tilaa. Ogneliss-arkisto toimii kuten Outlookin automaattinen arkistointi: kokonaiset viestit liitteineen ja kansioineen siirtyvät salattuun tiedostoon laitteella, ja palvelimella ne siirretään kansioon Poistetut. Arkisto näkyy valikossa Ogneliss-arkisto-osiona, sitä haetaan postin kanssa yhdessä ja se avautuu offline-tilassa. Ota se käyttöön kohdassa Asetukset → Ogneliss-arkisto. Valikossa on valitun postilaatikon arkisto; kaikki postilaatikot kerralla kohdassa Koko arkisto.</string>
     <string name="faq_archive_2_q">Miten siirrän arkiston toiselle laitteelle tai pilveen?</string>
     <string name="faq_archive_2_a">Asetukset → Ogneliss-arkisto → Tallenna arkistokopio: vie .ogna-tiedosto Google Driveen, Tiedostot-sovelluksen kautta iCloud Driveen, Yandex Diskiin, USB-asemalle tai tietokoneelle. Toisella laitteella: Yhdistä arkistokopio → valitse tiedosto → arkiston salasana tai palautuskoodi. Kopio on salattu, eikä sitä voi avata ilman salasanaa tai koodia. Sovelluksen asetukset siirtyvät arkiston mukana, ja voit palauttaa ne samalla näytöllä.</string>
     <string name="faq_archive_3_q">Mitä jos unohdan arkiston salasanan?</string>
@@ -3544,6 +3544,25 @@
     <string name="graphHint">Microsoft poistaa EWS:n käytöstä Exchange Onlinessa: lokakuusta 2026 organisaatio kerrallaan, kokonaan huhtikuussa 2027. Sähköposti, kalenteri, yhteystiedot ja automaattiset vastaukset kulkevat ActiveSyncin kautta eivätkä muutu. Osoitekirja (tehtävänimikkeet, osastot, kollegoiden kuvat), lähetysvihjeet, palvelimen säännöt ja poistettujen kohteiden palautus käyttävät nyt Microsoft Graphia. Myös neuvotteluhuoneet ja jakeluluetteloiden jäsenet, jos järjestelmänvalvoja on antanut sovellukselle oikeudet Place.Read.All ja GroupMember.Read.All. Microsoft Graph ei tarjoa verkkoarkistoa, jaettuja postilaatikoita eikä allekirjoituksen tuontia — ne käyttävät EWS:ää niin kauan kuin se on saatavilla.</string>
     <string name="srvViaGraph">Exchange Online — Microsoft Graphin kautta</string>
     <string name="zipEncryptedHint">Arkisto on suojattu salasanalla, joten Tiedostot ei voi avata sitä. Valitse arkistoapp: se kysyy salasanaa</string>
-    <string name="archiveWhole">Koko arkisto</string>
-    <string name="archiveNoAccountData">Arkistossa ei ole tämän postilaatikon tietoja</string>
+    <string name="reminderToday">Tänään · {at}</string>
+    <string name="composeBadAddress">Tarkista osoite: {addr}</string>
+    <string name="convMute">Mykistä ilmoitukset</string>
+    <string name="convUnmute">Poista mykistys</string>
+    <string name="convMutedNotice">Tämän keskustelun uusista viesteistä ei ilmoiteta</string>
+    <string name="convUnmutedNotice">Tämän keskustelun ilmoitukset ovat käytössä</string>
+    <string name="faq_notify_6_q">Miten mykistän yhden keskustelun ilmoitukset?</string>
+    <string name="faq_notify_6_a">Avaa keskustelu → ⋮ → ”Mykistä ilmoitukset” (tai paina rivin kohdalla luettelossa pitkään → ”Lisää”). Sen uudet viestit saapuvat ilman ilmoitusta, ja rivillä näkyy yliviivattu kello. Muu posti ilmoittaa kuten ennenkin. Ota takaisin käyttöön samasta kohdasta tai napauttamalla kelloa keskustelussa.</string>
+    <string name="mailOpenInBrowser">Avaa selaimessa</string>
+    <string name="mailOpenInBrowserFailed">Viestiä ei voitu avata selaimessa</string>
+    <string name="archiveAll">Koko arkisto</string>
+    <string name="archiveHubHelp">Valikossa näkyy vain valitun postilaatikon arkisto: sen kansiot, tapahtumat, tehtävät ja yhteystiedot. Tässä on koko arkisto: kaikki postilaatikot, myös ne joita sovelluksessa ei enää ole, ja haku kaikista viesteistä.</string>
+    <string name="zipPasswordNeeded">Arkisto on suojattu salasanalla</string>
+    <string name="zipPassword">Salasana</string>
+    <string name="zipWrongPassword">Väärä salasana</string>
+    <string name="zipOpen">Avaa</string>
+    <string name="zipSummary">Tiedostoja: {n} · {size}</string>
+    <string name="zipCannotRead">Arkistoa ei voi lukea: se on vioittunut tai muodossa, jota sovellus ei tunne (7z, RAR). Avaa se toisessa sovelluksessa.</string>
+    <string name="pdfProtected">PDF on suojattu salasanalla. Avaa se toisessa sovelluksessa.</string>
+    <string name="faq_mail_10_q">Mitkä liitteet avautuvat suoraan sovelluksessa?</string>
+    <string name="faq_mail_10_a">ZIP-arkistot, myös salasanalla suojatut, sekä TAR, GZ, BZ2 ja XZ avautuvat suoraan sovelluksessa: avaa tiedosto napauttamalla sitä. Myös PDF-tiedostot Androidissa, kuvat, teksti ja CSV, .eml-viestit ja .pkpass-liput avautuvat sovelluksessa. iPhonessa ja iPadissa iOS:n pikakatselu näyttää PDF-tiedostot, kuvat ja Office-asiakirjat. Muut avaa sopiva sovellus, ja minkä tahansa tiedoston voi lähettää siihen yläreunan painikkeella. 7z- ja RAR-arkistot avautuvat vain toisessa sovelluksessa.</string>
 </resources>

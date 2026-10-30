@@ -36,6 +36,7 @@ import '../../features/archive/screens/archive_list_screen.dart';
 import '../../features/archive/screens/archive_message_screen.dart';
 import '../../features/archive/screens/archive_items_screen.dart';
 import '../../features/archive/screens/archive_hub_screen.dart';
+import '../../features/archive/archive_providers.dart' show archiveAccountsParam;
 import '../../features/my_day/my_day_screen.dart';
 import '../../features/mail/screens/subscriptions_screen.dart';
 import '../../features/notes/screens/note_edit_screen.dart';
@@ -162,6 +163,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // «Разобрать входящие» — непрочитанные по одному (поверх ленты).
       GoRoute(path: '/triage', name: 'triage', builder: (_, __) => const TriageScreen()),
 
+      // Письмо отдельной страницей поверх любого экрана (1.8.13): из
+      // уведомления, ярлыка, виджета и со страниц вне главного экрана
+      // (настройки, «Разобрать», «Файлы», встреча). См. [messagePath].
+      GoRoute(
+        path: '/message/:emailId',
+        name: 'message',
+        // На широком окне — колонкой по центру, как редактор и встреча.
+        builder: (_, state) => WideFrame.wide(
+          child: MailDetailScreen(
+            emailId: state.pathParameters['emailId']!,
+            accountId: state.uri.queryParameters['accountId'] ?? '',
+          ),
+        ),
+      ),
+
       // Fullscreen dialogs
       GoRoute(
         path: '/compose', name: 'compose',
@@ -225,20 +241,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             )),
           );
         },
-      ),
-      // Письмо поверх экрана вне оболочки (1.8.12): уведомление, нажатое в
-      // настройках или в новом письме, «Разобрать входящие», «Файлы». Письмо
-      // ленты (/mail/detail) оттуда открывало вторую оболочку с тем же
-      // ключом страницы — стек экранов ломался, и пропадали панели
-      // (замечание владельца 29.10.2026). Адрес — [pushMailDetail].
-      GoRoute(
-        path: '/email/:emailId', name: 'mail-detail-top',
-        // Колонкой по центру на широком окне — как новое письмо и встреча.
-        builder: (_, state) => WideFrame.wide(
-            child: MailDetailScreen(
-          emailId: state.pathParameters['emailId']!,
-          accountId: state.uri.queryParameters['accountId'] ?? '',
-        )),
       ),
       // Встреча целиком (из календаря, напоминания, уведомления).
       GoRoute(
@@ -305,10 +307,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           path: '/archive/folder/:id',
           name: 'ogna-folder',
           builder: (_, st) => WideFrame(child: ArchiveListScreen(folderId: int.tryParse(st.pathParameters['id'] ?? '')))),
+      // Весь архив (1.8.14): все ящики, встречи, задачи и контакты — как
+      // «Файлы» для вложений. В меню — только архив выбранного ящика.
+      GoRoute(path: '/archive', name: 'ogna-hub', builder: (_, __) => const WideFrame(child: ArchiveHubScreen())),
       GoRoute(
           path: '/archive/search',
           name: 'ogna-search',
-          builder: (_, st) => WideFrame(child: ArchiveListScreen(query: st.uri.queryParameters['q']))),
+          builder: (_, st) => WideFrame(
+              child: ArchiveListScreen(
+                  query: st.uri.queryParameters['q'],
+                  accounts: archiveAccountsParam(st.uri.queryParameters['accounts'])))),
       GoRoute(
           path: '/archive/message/:id',
           name: 'ogna-message',
@@ -318,9 +326,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           name: 'ogna-items',
           builder: (_, st) => WideFrame(
               child: ArchiveItemsScreen(
-                  kind: st.pathParameters['kind'] ?? 'events', accountId: st.uri.queryParameters['account']))),
-      // Весь архив (1.8.12): все ящики архива — по аналогии с «Файлами».
-      GoRoute(path: '/archive', name: 'ogna-hub', builder: (_, __) => const WideFrame(child: ArchiveHubScreen())),
+                  kind: st.pathParameters['kind'] ?? 'events',
+                  accounts: archiveAccountsParam(st.uri.queryParameters['accounts'])))),
       GoRoute(path: '/settings/folder-sync', name: 'folderSync', builder: (_, st) => WideFrame(child: FolderSyncSettingsScreen(accountId: st.uri.queryParameters['accountId']))),
       GoRoute(path: '/settings/conflicts', name: 'conflicts', builder: (_, __) => const WideFrame(child: ConflictSettingsScreen())),
       GoRoute(path: '/contacts/duplicates', name: 'contacts-duplicates', builder: (_, __) => const WideFrame(child: DuplicateContactsScreen())),
@@ -378,39 +385,28 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 /// Адрес экрана письма. id кодируется: у IMAP он содержит путь папки
 /// («[Gmail]/Вся почта:2038»), и «/» без кодирования ломал маршрут —
 /// открывался экран «Ошибка».
-///
-/// Это письмо ВНУТРИ оболочки (ленты): открывать его можно, только когда
-/// сверху экран оболочки. Откуда угодно — [pushMailDetail].
 String mailDetailPath(String emailId, {String? accountId}) =>
     '/mail/detail/${Uri.encodeComponent(emailId)}'
     '${accountId != null ? '?accountId=${Uri.encodeQueryComponent(accountId)}' : ''}';
 
-/// Письмо отдельным экраном поверх любого (вне оболочки).
-String mailDetailTopPath(String emailId, {String? accountId}) =>
-    '/email/${Uri.encodeComponent(emailId)}'
-    '${accountId != null ? '?accountId=${Uri.encodeQueryComponent(accountId)}' : ''}';
+/// Письмо отдельной страницей поверх любого экрана (1.8.13). Страница
+/// ленты ([mailDetailPath]) живёт внутри главного экрана, и открытая поверх
+/// страницы вне его (настройки, «Написать», «Разобрать», «Файлы», встреча)
+/// создавала второй главный экран с теми же ключами страниц: после «Назад»
+/// пропадали верхняя и нижняя панели (замечание 29.10.2026).
+String messagePath(String emailId, {String? accountId}) =>
+    '/message/${Uri.encodeComponent(emailId)}'
+    '${accountId != null && accountId.isNotEmpty ? '?accountId=${Uri.encodeQueryComponent(accountId)}' : ''}';
 
-/// Сверху — экран главной оболочки (лента, письмо и беседа в ней, разделы
-/// нижней панели), а не экран поверх неё (настройки, новое письмо, встреча).
-bool routerTopInShell(GoRouter router) {
-  var list = router.routerDelegate.currentConfiguration;
-  while (list.matches.isNotEmpty) {
-    final top = list.matches.last;
-    if (top is ShellRouteMatch) return true;
-    if (top is! ImperativeRouteMatch) return false;
-    list = top.matches;
-  }
-  return false;
+/// Адрес письма для перехода из [context]: со страницы главного экрана
+/// (лента, календарь, «Мой день», задачи) — страница в нём, панель
+/// навигации остаётся; со страницы поверх главного экрана — [messagePath].
+String mailOpenPath(BuildContext context, String emailId, {String? accountId}) {
+  final nav = Navigator.maybeOf(context);
+  final root = Navigator.maybeOf(context, rootNavigator: true);
+  final inShell = nav != null && root != null && !identical(nav, root);
+  return inShell ? mailDetailPath(emailId, accountId: accountId) : messagePath(emailId, accountId: accountId);
 }
-
-/// Открыть письмо откуда угодно (1.8.12). Сверху оболочка — письмом ленты,
-/// как раньше; сверху экран вне её — отдельным экраном: маршрут оболочки,
-/// открытый поверх такого экрана, создавал вторую оболочку с тем же ключом
-/// страницы, и после «Назад» пропадали панели.
-Future<T?> pushMailDetail<T extends Object?>(GoRouter router, String emailId, {String? accountId}) =>
-    router.push<T>(routerTopInShell(router)
-        ? mailDetailPath(emailId, accountId: accountId)
-        : mailDetailTopPath(emailId, accountId: accountId));
 
 /// Письмо ленты с листанием соседних писем (1.6.49+95).
 String mailPagerPath(String emailId, {required String accountId}) =>

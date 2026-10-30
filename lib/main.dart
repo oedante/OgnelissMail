@@ -92,6 +92,19 @@ Future<void> main() async {
       final text = await rootBundle.loadString('assets/fonts/medeo/MedeoSans-OFL.txt');
       yield LicenseEntryWithLineBreaks(const ['Medeo Sans'], text);
     });
+    // Редактор писем HugeRTE (MIT) и DOMPurify в его сборке (Apache 2.0):
+    // тексты — и в «Текстах лицензий» (1.8.13), а не только в файлах
+    // assets/editor.
+    LicenseRegistry.addLicense(() async* {
+      final text = await rootBundle.loadString('assets/editor/LICENSE-hugerte.txt');
+      yield LicenseEntryWithLineBreaks(const ['HugeRTE'], text);
+      yield const LicenseEntryWithLineBreaks(['DOMPurify'],
+          'Copyright 2024 Dr.-Ing. Mario Heiderich, Cure53 and other contributors.\n\n'
+          'DOMPurify is dual-licensed under the Mozilla Public License 2.0 and the '
+          'Apache License 2.0; it is used here under the Apache License 2.0 '
+          '(full text: https://www.apache.org/licenses/LICENSE-2.0).\n'
+          'Source: https://github.com/cure53/DOMPurify');
+    });
     LicenseRegistry.addLicense(() async* {
       final notice = await rootBundle.loadString('NOTICE');
       final license = await rootBundle.loadString('LICENSE');

@@ -3397,7 +3397,7 @@
     <string name="noSender">(bez odosielateľa)</string>
     <string name="faq_archive_title">Archív Ogneliss</string>
     <string name="faq_archive_1_q">Čím sa archív Ogneliss líši od tlačidla Archív?</string>
-    <string name="faq_archive_1_a">Archív presunie správu do priečinka archívu na serveri: zostane v schránke a zaberá miesto. Archív Ogneliss funguje ako Automatické archivovanie v Outlooku: celé správy s prílohami a priečinkami sa uložia do zašifrovaného súboru v zariadení a na serveri sa presunú do priečinka Odstránená pošta. Archív sa v ponuke zobrazuje ako sekcia Archív Ogneliss, vyhľadáva sa spolu s poštou a otvára sa aj offline. Zapnete ho v časti Nastavenia → Archív Ogneliss.</string>
+    <string name="faq_archive_1_a">Archív presunie správu do priečinka archívu na serveri: zostane v schránke a zaberá miesto. Archív Ogneliss funguje ako Automatické archivovanie v Outlooku: celé správy s prílohami a priečinkami sa uložia do zašifrovaného súboru v zariadení a na serveri sa presunú do priečinka Odstránená pošta. Archív sa v ponuke zobrazuje ako sekcia Archív Ogneliss, vyhľadáva sa spolu s poštou a otvára sa aj offline. Zapnete ho v časti Nastavenia → Archív Ogneliss. V ponuke je archív vybranej schránky; všetky schránky naraz sú v položke Celý archív.</string>
     <string name="faq_archive_2_q">Ako presuniem archív do iného zariadenia alebo do cloudu?</string>
     <string name="faq_archive_2_a">Nastavenia → Archív Ogneliss → Uložiť kópiu archívu: súbor .ogna uložte do Google Drive, Súborov s iCloud Drive, Yandex Disk, na USB disk alebo do počítača. Na druhom zariadení: Pripojiť kópiu archívu → vyberte súbor → heslo archívu alebo kód na obnovenie. Kópia je zašifrovaná a bez hesla alebo kódu sa nedá otvoriť. Nastavenia aplikácie sa prenášajú s archívom a môžete ich obnoviť na tej istej obrazovke.</string>
     <string name="faq_archive_3_q">Čo robiť, ak zabudnem heslo archívu?</string>
@@ -3563,6 +3563,25 @@
     <string name="graphHint">Microsoft vypína EWS v Exchange Online: od októbra 2026 postupne po organizáciách, úplne v apríli 2027. Pošta, kalendár, kontakty a automatické odpovede idú cez ActiveSync a nemenia sa. Adresár (funkcie, oddelenia, fotky kolegov), tipy pri odosielaní, pravidlá servera a obnova odstránených položiek teraz používajú Microsoft Graph. Zasadačky a členovia distribučných zoznamov tiež, ak správca aplikácii udelil Place.Read.All a GroupMember.Read.All. Online archív, zdieľané schránky a import podpisu Microsoft Graph neponúka — používajú EWS, kým je dostupné.</string>
     <string name="srvViaGraph">Exchange Online — cez Microsoft Graph</string>
     <string name="zipEncryptedHint">Archív je chránený heslom, aplikácia Súbory ho neotvorí. Vyberte aplikáciu na archívy: opýta sa na heslo</string>
-    <string name="archiveWhole">Celý archív</string>
-    <string name="archiveNoAccountData">V archíve nie sú údaje tejto schránky</string>
+    <string name="reminderToday">Dnes · {at}</string>
+    <string name="composeBadAddress">Skontrolujte adresu: {addr}</string>
+    <string name="convMute">Stlmiť upozornenia</string>
+    <string name="convUnmute">Zrušiť stlmenie</string>
+    <string name="convMutedNotice">Nové správy v tejto konverzácii budú bez upozornenia</string>
+    <string name="convUnmutedNotice">Upozornenia tejto konverzácie sú zapnuté</string>
+    <string name="faq_notify_6_q">Ako stlmiť upozornenia jednej konverzácie?</string>
+    <string name="faq_notify_6_a">Otvorte konverzáciu → ⋮ → „Stlmiť upozornenia“ (alebo podržte jej riadok v zozname → „Ďalšie“). Nové správy v nej prichádzajú bez upozornenia a pri riadku je preškrtnutý zvonček. Ostatná pošta upozorňuje ako doteraz. Znova zapnúť: rovnaká položka alebo zvonček v konverzácii.</string>
+    <string name="mailOpenInBrowser">Otvoriť v prehliadači</string>
+    <string name="mailOpenInBrowserFailed">Správu sa nepodarilo otvoriť v prehliadači</string>
+    <string name="archiveAll">Celý archív</string>
+    <string name="archiveHubHelp">Ponuka ukazuje len archív vybranej schránky: jej priečinky, udalosti, úlohy a kontakty. Tu je celý archív: všetky schránky vrátane tých, ktoré už v aplikácii nie sú, a hľadanie vo všetkých správach.</string>
+    <string name="zipPasswordNeeded">Archív je chránený heslom</string>
+    <string name="zipPassword">Heslo</string>
+    <string name="zipWrongPassword">Nesprávne heslo</string>
+    <string name="zipOpen">Otvoriť</string>
+    <string name="zipSummary">Súbory: {n} · {size}</string>
+    <string name="zipCannotRead">Archív sa nedá prečítať: je poškodený alebo vo formáte, ktorý aplikácia nepozná (7z, RAR). Otvorte ho v inej aplikácii.</string>
+    <string name="pdfProtected">PDF je chránené heslom. Otvorte ho v inej aplikácii.</string>
+    <string name="faq_mail_10_q">Ktoré prílohy sa otvoria priamo v aplikácii?</string>
+    <string name="faq_mail_10_a">Archívy ZIP, aj chránené heslom, a tiež TAR, GZ, BZ2 a XZ sa otvoria priamo v aplikácii: súbor vnútri otvoríte ťuknutím. V aplikácii sa otvoria aj PDF v Androide, obrázky, text a CSV, správy .eml a vstupenky .pkpass. Na iPhone a iPade zobrazí PDF, obrázky a dokumenty Office rýchly náhľad iOS. Ostatné otvorí vhodná aplikácia a každý súbor do nej pošlete tlačidlom hore. Archívy 7z a RAR sa otvoria len v inej aplikácii.</string>
 </resources>

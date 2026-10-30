@@ -39,16 +39,26 @@ class HtmlSanitizer {
     'header', 'footer', 'nav', 'main', 'aside', 'time',
   };
 
-  /// Разрешённые атрибуты для всех тегов.
+  /// Разрешённые атрибуты для всех тегов. 1.8.14: и оформление старой
+  /// вёрстки писем — отступы картинок (hspace, vspace), перенос под
+  /// картинку (br clear), линии таблиц (rules, frame, bordercolor):
+  /// без них рассылки и письма 1С слипались.
   static const _globalAttrs = {
     'style', 'class', 'id', 'title', 'dir', 'lang', 'align', 'valign',
     'width', 'height', 'bgcolor', 'color', 'face', 'size', 'border',
     'cellpadding', 'cellspacing', 'colspan', 'rowspan', 'span', 'nowrap',
-    'start', 'type', 'name',
+    'start', 'type', 'name', 'hspace', 'vspace', 'clear', 'rules', 'frame',
+    'bordercolor', 'noshade', 'reversed', 'value', 'scope', 'headers', 'abbr',
   };
 
   static final _cssDanger = RegExp(
     r'(url\s*\(|expression\s*\(|javascript:|vbscript:|behavior\s*:|-moz-binding|@import|position\s*:\s*fixed)',
+    caseSensitive: false,
+  );
+
+  /// То же без url(): в окне письма загрузку по нему решает CSP документа.
+  static final _cssDangerKeepUrl = RegExp(
+    r'(expression\s*\(|javascript:|vbscript:|behavior\s*:|-moz-binding|@import|position\s*:\s*fixed)',
     caseSensitive: false,
   );
 
@@ -85,11 +95,100 @@ class HtmlSanitizer {
     final b = doc.body;
     var body = '';
     if (b != null) {
-      _clean(b);
+      _clean(b, keepUrls: true);
+      // Шрифт, цвет и фон письма, заданные у <body> (1.8.14): документ для
+      // показа берёт только содержимое тела, и они терялись — текст писем
+      // «Verdana 12, серый» шёл шрифтом приложения.
+      final look = _bodyLook(b);
+      if (look != null) {
+        final wrap = dom.Element.tag('div')..attributes['style'] = look;
+        for (final n in b.nodes.toList()) {
+          wrap.append(n..remove());
+        }
+        b.append(wrap);
+      }
       body = b.innerHtml;
     }
     final c = css.toString().trim();
     return c.isEmpty ? body : '<style>$c</style>$body';
+  }
+
+  static const _bodyProps = {
+    'color', 'background', 'background-color', 'font', 'font-family', 'font-size', 'font-weight',
+    'font-style', 'line-height', 'text-align', 'direction', 'letter-spacing',
+  };
+
+  /// Оформление из атрибутов <body> для обёртки содержимого; null — нет.
+  static String? _bodyLook(dom.Element body) {
+    final out = <String>[];
+    final bg = body.attributes['bgcolor']?.trim() ?? '';
+    if (RegExp(r'^#?[0-9a-zA-Z]{3,20}$').hasMatch(bg)) out.add('background-color:$bg');
+    final text = body.attributes['text']?.trim() ?? '';
+    if (RegExp(r'^#?[0-9a-zA-Z]{3,20}$').hasMatch(text)) out.add('color:$text');
+    final st = cleanInlineStyle(body.attributes['style'] ?? '', keepUrls: true);
+    if (st != null) {
+      for (final d in _declarations(st)) {
+        final i = d.indexOf(':');
+        if (i <= 0) continue;
+        final name = d.substring(0, i).trim().toLowerCase();
+        if (_bodyProps.contains(name) && !d.toLowerCase().contains('url(')) out.add(d.trim());
+      }
+    }
+    return out.isEmpty ? null : out.join(';');
+  }
+
+  /// Встроенный стиль без опасных объявлений; null — ничего не осталось
+  /// (1.8.14). Раньше стиль с url(…) убирался целиком — вместе с полями,
+  /// выравниванием, цветом и шрифтом: у рассылок с фоновой картинкой
+  /// заголовок съезжал влево и терял поля. [keepUrls] — для окна письма
+  /// (WebView): url() остаётся, загрузку решает CSP документа. Объявление с
+  /// экранированием «\» убирается, если url() не разрешён: «\75 rl(» —
+  /// тоже url(.
+  static String? cleanInlineStyle(String style, {bool keepUrls = false}) {
+    if (style.trim().isEmpty) return null;
+    final danger = keepUrls ? _cssDangerKeepUrl : _cssDanger;
+    final out = <String>[];
+    for (final d in _declarations(style)) {
+      final t = d.trim();
+      if (t.isEmpty) continue;
+      final plain = _decodeEntities(t);
+      if (danger.hasMatch(plain)) continue;
+      if (!keepUrls && plain.contains(r'\')) continue;
+      out.add(t);
+    }
+    return out.isEmpty ? null : out.join(';');
+  }
+
+  /// Объявления стиля по «;» — кроме «;» в кавычках и скобках
+  /// (url(data:image/png;base64,…), font-family:"A;B").
+  static List<String> _declarations(String s) {
+    final out = <String>[];
+    var depth = 0;
+    String? quote;
+    var start = 0;
+    for (var i = 0; i < s.length; i++) {
+      final c = s[i];
+      if (quote != null) {
+        if (c == r'\') {
+          i++;
+        } else if (c == quote) {
+          quote = null;
+        }
+        continue;
+      }
+      if (c == '"' || c == "'") {
+        quote = c;
+      } else if (c == '(') {
+        depth++;
+      } else if (c == ')') {
+        if (depth > 0) depth--;
+      } else if (c == ';' && depth == 0) {
+        out.add(s.substring(start, i));
+        start = i + 1;
+      }
+    }
+    out.add(s.substring(start));
+    return out;
   }
 
   static final _cssImport = RegExp(r'@import[^;]*;?', caseSensitive: false);
@@ -114,7 +213,7 @@ class HtmlSanitizer {
   static String forEditor(String html) =>
       sanitize(html).replaceAll(r'\', '&#92;');
 
-  static void _clean(dom.Node node) {
+  static void _clean(dom.Node node, {bool keepUrls = false}) {
     // Копия списка: дети меняются во время обхода.
     for (final child in node.nodes.toList()) {
       if (child is dom.Comment) {
@@ -127,7 +226,7 @@ class HtmlSanitizer {
         child.remove();
         continue;
       }
-      _clean(child);
+      _clean(child, keepUrls: keepUrls);
       if (!_allowedTags.contains(tag)) {
         // Неизвестный или запрещённый тег (form, body, html, o:p …):
         // убираем сам тег, оставляя содержимое.
@@ -140,11 +239,11 @@ class HtmlSanitizer {
         }
         continue;
       }
-      _cleanAttributes(child, tag);
+      _cleanAttributes(child, tag, keepUrls: keepUrls);
     }
   }
 
-  static void _cleanAttributes(dom.Element el, String tag) {
+  static void _cleanAttributes(dom.Element el, String tag, {bool keepUrls = false}) {
     final attrs = Map<Object, String>.from(el.attributes);
     el.attributes.clear();
     attrs.forEach((key, value) {
@@ -166,7 +265,9 @@ class HtmlSanitizer {
       }
       if (!_globalAttrs.contains(name)) return;
       if (name == 'style') {
-        if (_cssDanger.hasMatch(_decodeEntities(value))) return;
+        final st = cleanInlineStyle(value, keepUrls: keepUrls);
+        if (st != null) el.attributes['style'] = st;
+        return;
       }
       el.attributes[name] = value;
     });

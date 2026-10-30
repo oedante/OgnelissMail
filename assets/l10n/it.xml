@@ -3378,7 +3378,7 @@
     <string name="noSender">(nessun mittente)</string>
     <string name="faq_archive_title">Archivio Ogneliss</string>
     <string name="faq_archive_1_q">In cosa l\'archivio Ogneliss è diverso dal pulsante Archivio?</string>
-    <string name="faq_archive_1_a">Il pulsante Archivio sposta un messaggio nella cartella archivio sul server: resta nella cassetta postale e occupa spazio. L\'archivio Ogneliss funziona come l\'Archiviazione automatica di Outlook: i messaggi interi, con allegati e cartelle, finiscono in un file crittografato sul dispositivo e sul server vanno in Posta eliminata. L\'archivio compare nel menu come sezione Archivio Ogneliss, viene cercato insieme alla posta e si apre offline. Attivalo in Impostazioni → Archivio Ogneliss.</string>
+    <string name="faq_archive_1_a">Il pulsante Archivio sposta un messaggio nella cartella archivio sul server: resta nella cassetta postale e occupa spazio. L\'archivio Ogneliss funziona come l\'Archiviazione automatica di Outlook: i messaggi interi, con allegati e cartelle, finiscono in un file crittografato sul dispositivo e sul server vanno in Posta eliminata. L\'archivio compare nel menu come sezione Archivio Ogneliss, viene cercato insieme alla posta e si apre offline. Attivalo in Impostazioni → Archivio Ogneliss. Il menu mostra l’archivio della casella selezionata; tutte le caselle insieme sono in Tutto l’archivio.</string>
     <string name="faq_archive_2_q">Come sposto l\'archivio su un altro dispositivo o nel cloud?</string>
     <string name="faq_archive_2_a">Impostazioni → Archivio Ogneliss → Salva una copia dell\'archivio: metti il file .ogna su Google Drive, File con iCloud Drive, Yandex Disk, un\'unità USB o un computer. Sull\'altro dispositivo: Collega una copia dell\'archivio → scegli il file → password dell\'archivio o codice di recupero. La copia è crittografata e non si può aprire senza la password o il codice. Le impostazioni dell\'app viaggiano con l\'archivio e puoi ripristinarle nella stessa schermata.</string>
     <string name="faq_archive_3_q">Cosa faccio se dimentico la password dell\'archivio?</string>
@@ -3544,6 +3544,25 @@
     <string name="graphHint">Microsoft disattiva EWS in Exchange Online: da ottobre 2026 organizzazione per organizzazione, del tutto ad aprile 2027. Posta, calendario, contatti e risposte automatiche usano ActiveSync e non cambiano. La rubrica (ruoli, reparti, foto dei colleghi), i suggerimenti all’invio, le regole del server e il recupero degli elementi eliminati ora usano Microsoft Graph. Anche sale riunioni e membri delle liste di distribuzione, se l’amministratore ha concesso all’app Place.Read.All e GroupMember.Read.All. Microsoft Graph non offre archivio online, cassette condivise e importazione della firma: usano EWS finché è disponibile.</string>
     <string name="srvViaGraph">Exchange Online — tramite Microsoft Graph</string>
     <string name="zipEncryptedHint">L’archivio è protetto da password, File non può aprirlo. Scegli un’app per archivi: chiederà la password</string>
-    <string name="archiveWhole">Archivio completo</string>
-    <string name="archiveNoAccountData">Nessun dato di questa casella nell’archivio</string>
+    <string name="reminderToday">Oggi · {at}</string>
+    <string name="composeBadAddress">Controlla l’indirizzo: {addr}</string>
+    <string name="convMute">Silenzia notifiche</string>
+    <string name="convUnmute">Riattiva notifiche</string>
+    <string name="convMutedNotice">I nuovi messaggi di questa conversazione non invieranno notifiche</string>
+    <string name="convUnmutedNotice">Notifiche della conversazione attivate</string>
+    <string name="faq_notify_6_q">Come silenzio le notifiche di una sola conversazione?</string>
+    <string name="faq_notify_6_a">Apri la conversazione → ⋮ → «Silenzia notifiche» (o tieni premuta la riga nell’elenco → «Altro»). I nuovi messaggi arrivano senza notifica e la riga mostra una campanella barrata. Il resto della posta notifica come prima. Per riattivarle usa la stessa voce o tocca la campanella nella conversazione.</string>
+    <string name="mailOpenInBrowser">Apri nel browser</string>
+    <string name="mailOpenInBrowserFailed">Impossibile aprire il messaggio nel browser</string>
+    <string name="archiveAll">Tutto l\'archivio</string>
+    <string name="archiveHubHelp">Il menu mostra solo l\'archivio della casella selezionata: cartelle, eventi, attività e contatti. Qui c\'è tutto l\'archivio: tutte le caselle, anche quelle non più presenti nell\'app, e la ricerca in tutti i messaggi.</string>
+    <string name="zipPasswordNeeded">L\'archivio è protetto da password</string>
+    <string name="zipPassword">Password</string>
+    <string name="zipWrongPassword">Password errata</string>
+    <string name="zipOpen">Apri</string>
+    <string name="zipSummary">File: {n} · {size}</string>
+    <string name="zipCannotRead">Impossibile leggere l\'archivio: è danneggiato o in un formato che l\'app non conosce (7z, RAR). Aprilo in un\'altra app.</string>
+    <string name="pdfProtected">Il PDF è protetto da password. Aprilo in un\'altra app.</string>
+    <string name="faq_mail_10_q">Quali allegati si aprono direttamente nell\'app?</string>
+    <string name="faq_mail_10_a">Gli archivi ZIP, anche protetti da password, e anche TAR, GZ, BZ2 e XZ si aprono direttamente nell\'app: tocca un file all\'interno per aprirlo. Nell\'app si aprono anche i PDF su Android, le immagini, il testo e i CSV, i messaggi .eml e i biglietti .pkpass. Su iPhone e iPad, Quick Look di iOS mostra PDF, immagini e documenti Office. Il resto si apre in un\'app adatta, e qualsiasi file può esserle inviato con il pulsante in alto. Gli archivi 7z e RAR si aprono solo in un\'altra app.</string>
 </resources>

@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 import '../../core/logging/app_logger.dart';
+import '../../core/utils/mail_domains.dart' show isPublicMailDomain, mailDomainOf;
 import '../../data/models/account_model.dart';
 import '../../data/models/folder_model.dart' show FolderType;
 import '../../data/providers/database_provider.dart';
@@ -100,11 +101,20 @@ class OwnIdentityService {
         // заместитель, отправляющий от имени руководителя или общего ящика,
         // «присвоил» бы чужой адрес: письма от него перестали бы уведомлять.
         // Адреса с сервера (ActiveSync) точнее — тогда «Отправленные» дают
-        // только имя.
+        // только имя. Личный ящик общедоступной почты (iCloud, Gmail,
+        // Яндекс, Mail.ru…, 1.8.13) от имени другого не пишет: свой — любой
+        // адрес из трёх писем и больше (алиас iCloud с другим именем,
+        // «Отправлять как» в Gmail). Иначе свои письма с алиаса считались
+        // чужими: беседа «чата» стояла не той стороной, и беседы по теме не
+        // складывались.
         final local = account.email.split('@').first.trim().toLowerCase();
+        final personal = !account.usesEas && !account.usesEws && isPublicMailDomain(mailDomainOf(account.email));
         final mine = serverOk
             ? const <String>[]
-            : [for (final e in byAddr.entries) if (e.value >= 3 && e.key.split('@').first == local) e.key];
+            : [
+                for (final e in byAddr.entries)
+                  if (e.value >= 3 && (personal || e.key.split('@').first == local)) e.key,
+              ];
         changed |= await OwnAddresses.remember(account.id, mine);
         if (name == null && byName.isNotEmpty) {
           final top = byName.entries.reduce((a, b) => a.value >= b.value ? a : b);

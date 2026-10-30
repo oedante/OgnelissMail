@@ -1184,7 +1184,7 @@ class ImapService {
         accountId: accountId,
         folderId: folderId,
         internetMessageId: messageId,
-        references: references?.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toList(),
+        references: imapReferenceIds(references, inReplyTo),
         conversationId: imapConversationId(references, inReplyTo, messageId),
         from: from,
         to: to,
@@ -2164,6 +2164,17 @@ class ImapService {
     _imapClients.clear();
     _smtpClients.clear();
   }
+}
+
+/// Цепочка письма для базы: References и родитель из In-Reply-To в конце,
+/// если его там нет (1.8.13). Так советует RFC 5322 для писем без References,
+/// и часть программ пишет только In-Reply-To — без родителя письмо не
+/// находило свою беседу (ThreadLinker), а ответ на него терял цепочку.
+List<String>? imapReferenceIds(String? references, String? inReplyTo) {
+  final ids = RegExp(r'<[^<>\s]+>').allMatches(references ?? '').map((m) => m.group(0)!).toList();
+  final parent = RegExp(r'<[^<>\s]+>').firstMatch(inReplyTo ?? '')?.group(0);
+  if (parent != null && !ids.contains(parent)) ids.add(parent);
+  return ids.isEmpty ? null : ids;
 }
 
 /// Корень переписки для IMAP: ПЕРВЫЙ Message-ID из References (исходное

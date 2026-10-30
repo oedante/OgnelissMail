@@ -14,6 +14,13 @@
 // все адреса и отображаемое имя) и по «Отправленным» (адрес отправителя
 // своих писем). Хранится в SharedPreferences; читается синхронно —
 // [load] вызывается при запуске приложения и фонового процесса.
+//
+// 1.8.13 (замечание 29.10.2026: беседы не складывались «из-за неверного
+// определения пользователя»): адреса, которые у почтовой службы — тот же
+// ящик, свои без «Отправленных»: iCloud — @icloud.com, @me.com и @mac.com
+// с тем же именем; Gmail — @gmail.com и @googlemail.com, точки в имени не
+// важны; Яндекс — @yandex.ru, @ya.ru и другие домены Яндекса, «-» и «.» в
+// имени равны.
 
 import 'dart:convert';
 
@@ -82,16 +89,58 @@ class OwnAddresses {
   static Set<String> extraFor(String accountId) => {...learned(accountId), ...?_aliases[accountId]};
 
   /// Все адреса ящика в нижнем регистре.
-  static Set<String> of(AccountModel a) => {
-        a.email.trim().toLowerCase(),
-        if ((a.sharedMailboxEmail ?? '').isNotEmpty) a.sharedMailboxEmail!.trim().toLowerCase(),
-        ...learned(a.id),
-        ...?_aliases[a.id],
-      }..removeWhere((e) => !e.contains('@'));
+  static Set<String> of(AccountModel a) {
+    final out = <String>{
+      a.email.trim().toLowerCase(),
+      if ((a.sharedMailboxEmail ?? '').isNotEmpty) a.sharedMailboxEmail!.trim().toLowerCase(),
+      ...learned(a.id),
+      ...?_aliases[a.id],
+    }..removeWhere((e) => !e.contains('@'));
+    // Общий ящик — чужой адрес: его варианты не добавляются.
+    final login = a.email.trim().toLowerCase();
+    return {...out, ...sameMailbox(login)};
+  }
+
+  static const _apple = ['icloud.com', 'me.com', 'mac.com'];
+  static const _google = ['gmail.com', 'googlemail.com'];
+  static const _yandex = ['yandex.ru', 'ya.ru', 'yandex.com', 'yandex.by', 'yandex.kz', 'yandex.ua'];
+
+  /// Адреса, которые почтовая служба доставляет в тот же ящик, что [email]
+  /// (вместе с ним самим): iCloud, Gmail, Яндекс. Остальные — только [email].
+  static Set<String> sameMailbox(String email) {
+    final e = email.trim().toLowerCase();
+    final at = e.lastIndexOf('@');
+    if (at <= 0) return {if (e.isNotEmpty) e};
+    final local = e.substring(0, at);
+    final domain = e.substring(at + 1);
+    List<String>? group;
+    for (final g in const [_apple, _google, _yandex]) {
+      if (g.contains(domain)) group = g;
+    }
+    if (group == null) return {e};
+    final names = <String>{local};
+    if (identical(group, _yandex)) names.addAll({local.replaceAll('-', '.'), local.replaceAll('.', '-')});
+    return {for (final n in names) for (final d in group) '$n@$d'};
+  }
+
+  /// Gmail не различает точки в имени и «+метку»: «i.petrov+work@gmail.com»
+  /// — тот же ящик, что «ipetrov@gmail.com».
+  static String _gmailKey(String e) {
+    final at = e.lastIndexOf('@');
+    if (at <= 0 || !_google.contains(e.substring(at + 1))) return e;
+    var local = e.substring(0, at);
+    final plus = local.indexOf('+');
+    if (plus > 0) local = local.substring(0, plus);
+    return '${local.replaceAll('.', '')}@gmail.com';
+  }
 
   static bool isMine(AccountModel a, String? email) {
     final e = (email ?? '').trim().toLowerCase();
-    return e.isNotEmpty && of(a).contains(e);
+    if (e.isEmpty) return false;
+    final mine = of(a);
+    if (mine.contains(e)) return true;
+    final g = _gmailKey(e);
+    return g != e && mine.any((m) => _gmailKey(m) == g);
   }
 
   /// Домены организации — по всем адресам ящика.

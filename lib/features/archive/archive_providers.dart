@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/utils/folder_icons.dart';
+import '../../data/models/account_model.dart';
 import '../../data/models/folder_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/archive/archive_db.dart';
@@ -35,15 +36,32 @@ final archiveAccountsProvider = FutureProvider<List<ArchiveAccountInfo>>((ref) a
   return db.accounts();
 });
 
-/// Ящик архива для ящика приложения (1.8.12, замечание 29.10.2026: в одном
-/// архиве — ящики с разными папками, в меню — только выбранный). Тот же id,
-/// а после объединения с копией с другого устройства — тот же адрес (копия
-/// приходит под своим id, ArchiveDb.resolveAccount сводит её по адресу).
-ArchiveAccountInfo? archiveAccountOf(List<ArchiveAccountInfo> all, {required String id, required String email}) {
-  final e = email.trim().toLowerCase();
-  return all.where((a) => a.id == id).firstOrNull ??
-      (e.isEmpty ? null : all.where((a) => a.email.trim().toLowerCase() == e).firstOrNull);
+/// Встречи, задачи и контакты архива по ящикам (1.8.14).
+final archiveItemCountsProvider = FutureProvider<Map<String, ({int events, int tasks, int contacts})>>((ref) async {
+  ref.watch(archiveRevisionProvider);
+  final db = ref.watch(archiveDbProvider);
+  if (db == null) return const {};
+  return db.itemCounts();
+});
+
+/// Ящики архива, которые — этот ящик приложения (1.8.14: в меню — архив
+/// выбранного ящика): тот же id или тот же адрес. У архива, перенесённого с
+/// другого устройства (.ogna), id ящиков свои, адрес — тот же.
+Set<String> archiveAccountsOf(AccountModel a, Iterable<ArchiveAccountInfo> all) {
+  final email = a.email.trim().toLowerCase();
+  return {
+    for (final x in all)
+      if (x.id == a.id || (email.isNotEmpty && x.email.trim().toLowerCase() == email)) x.id,
+  };
 }
+
+/// Ящики в адресе экрана архива («?accounts=a,b»); null — весь архив.
+Set<String>? archiveAccountsParam(String? v) {
+  final ids = (v ?? '').split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toSet();
+  return ids.isEmpty ? null : ids;
+}
+
+String archiveAccountsQuery(Set<String> ids) => ids.map(Uri.encodeQueryComponent).join(',');
 
 /// Сколько всего в архиве.
 final archiveStatsProvider = FutureProvider<ArchiveStats?>((ref) async {

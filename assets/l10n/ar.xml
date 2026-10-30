@@ -3454,7 +3454,7 @@
     <string name="noSender">(بلا مرسل)</string>
     <string name="faq_archive_title">أرشيف Ogneliss</string>
     <string name="faq_archive_1_q">ما الفرق بين أرشيف Ogneliss وزر الأرشيف؟</string>
-    <string name="faq_archive_1_a">يقوم الأرشيف بنقل الرسالة إلى مجلد الأرشيف على الخادم: تبقى في صندوق البريد وتشغل مساحة. أما أرشيف Ogneliss فيعمل مثل الأرشفة التلقائية في Outlook: تنتقل الرسائل كاملة مع المرفقات والمجلدات إلى ملف مشفّر على الجهاز، وعلى الخادم تنتقل إلى العناصر المحذوفة. يظهر الأرشيف في القائمة كقسم أرشيف Ogneliss، ويُبحث فيه مع بريدك، ويُفتح دون اتصال. فعّله من الإعدادات → أرشيف Ogneliss.</string>
+    <string name="faq_archive_1_a">يقوم الأرشيف بنقل الرسالة إلى مجلد الأرشيف على الخادم: تبقى في صندوق البريد وتشغل مساحة. أما أرشيف Ogneliss فيعمل مثل الأرشفة التلقائية في Outlook: تنتقل الرسائل كاملة مع المرفقات والمجلدات إلى ملف مشفّر على الجهاز، وعلى الخادم تنتقل إلى العناصر المحذوفة. يظهر الأرشيف في القائمة كقسم أرشيف Ogneliss، ويُبحث فيه مع بريدك، ويُفتح دون اتصال. فعّله من الإعدادات → أرشيف Ogneliss. تعرض القائمة أرشيف صندوق البريد المحدد، وكل الصناديق معاً في «الأرشيف كاملاً».</string>
     <string name="faq_archive_2_q">كيف أنقل الأرشيف إلى جهاز آخر أو إلى السحابة؟</string>
     <string name="faq_archive_2_a">الإعدادات → أرشيف Ogneliss → حفظ نسخة من الأرشيف: ضع ملف ‎.ogna‎ في Google Drive أو تطبيق الملفات مع iCloud Drive أو Yandex Disk أو على محرك USB أو على كمبيوتر. على الجهاز الآخر: ربط نسخة من الأرشيف → اختر الملف → كلمة مرور الأرشيف أو رمز الاسترداد. النسخة مشفّرة ولا يمكن فتحها بدون كلمة المرور أو الرمز. تنتقل إعدادات التطبيق مع الأرشيف، ويمكنك استعادتها في الشاشة نفسها.</string>
     <string name="faq_archive_3_q">ماذا أفعل إذا نسيت كلمة مرور الأرشيف؟</string>
@@ -3620,6 +3620,25 @@
     <string name="graphHint">توقف Microsoft خدمة EWS في Exchange Online: بدءًا من أكتوبر 2026 مؤسسةً تلو أخرى، وكليًا في أبريل 2027. البريد والتقويم وجهات الاتصال والردود التلقائية تعمل عبر ActiveSync ولا تتغير. دليل العناوين (المسميات الوظيفية والأقسام وصور الزملاء) وتلميحات الإرسال وقواعد الخادم واستعادة العناصر المحذوفة تعمل الآن عبر Microsoft Graph، وكذلك غرف الاجتماعات وأعضاء قوائم التوزيع إذا منح المسؤول التطبيق الإذنين Place.Read.All وGroupMember.Read.All. لا يتيح Microsoft Graph الأرشيف عبر الإنترنت ولا صناديق البريد المشتركة ولا استيراد التوقيع، فهي تعمل عبر EWS ما دام متاحًا.</string>
     <string name="srvViaGraph">Exchange Online — عبر Microsoft Graph</string>
     <string name="zipEncryptedHint">الأرشيف محمي بكلمة مرور، لذلك لا يستطيع تطبيق الملفات فتحه. اختر تطبيقًا للأرشيفات: سيطلب كلمة المرور</string>
-    <string name="archiveWhole">الأرشيف بالكامل</string>
-    <string name="archiveNoAccountData">لا توجد بيانات لهذا البريد في الأرشيف</string>
+    <string name="reminderToday">اليوم · {at}</string>
+    <string name="composeBadAddress">تحقّق من العنوان: {addr}</string>
+    <string name="convMute">كتم الإشعارات</string>
+    <string name="convUnmute">إلغاء كتم الإشعارات</string>
+    <string name="convMutedNotice">لن تصلك إشعارات بالرسائل الجديدة في هذه المحادثة</string>
+    <string name="convUnmutedNotice">تم تشغيل إشعارات هذه المحادثة</string>
+    <string name="faq_notify_6_q">كيف أكتم إشعارات محادثة واحدة؟</string>
+    <string name="faq_notify_6_a">افتح المحادثة ← ⋮ ← «كتم الإشعارات» (أو اضغط مطولًا على سطرها في القائمة ← «المزيد»). تصل رسائلها الجديدة دون إشعارات، ويظهر بجوار السطر جرس مشطوب. بقية البريد يرسل الإشعارات كالمعتاد. لإعادة التشغيل استخدم الخيار نفسه أو اضغط الجرس في المحادثة.</string>
+    <string name="mailOpenInBrowser">فتح في المتصفح</string>
+    <string name="mailOpenInBrowserFailed">تعذر فتح الرسالة في المتصفح</string>
+    <string name="archiveAll">الأرشيف كاملاً</string>
+    <string name="archiveHubHelp">تعرض القائمة أرشيف صندوق البريد المحدد فقط: مجلداته ومواعيده ومهامه وجهات اتصاله. وتعرض هذه الصفحة الأرشيف كاملاً: كل صناديق البريد، بما فيها التي لم تعد في التطبيق، والبحث في كل الرسائل.</string>
+    <string name="zipPasswordNeeded">الأرشيف محمي بكلمة مرور</string>
+    <string name="zipPassword">كلمة المرور</string>
+    <string name="zipWrongPassword">كلمة المرور غير صحيحة</string>
+    <string name="zipOpen">فتح</string>
+    <string name="zipSummary">الملفات: {n} · {size}</string>
+    <string name="zipCannotRead">تعذرت قراءة الأرشيف: إنه تالف أو بتنسيق لا يعرفه التطبيق (7z، RAR). افتحه في تطبيق آخر.</string>
+    <string name="pdfProtected">ملف PDF محمي بكلمة مرور. افتحه في تطبيق آخر.</string>
+    <string name="faq_mail_10_q">ما المرفقات التي تُفتح داخل التطبيق مباشرة؟</string>
+    <string name="faq_mail_10_a">تُفتح أرشيفات ZIP، ومنها المحمية بكلمة مرور، وكذلك TAR وGZ وBZ2 وXZ داخل التطبيق مباشرة: اضغط على ملف بداخلها لفتحه. وتُفتح كذلك ملفات PDF على Android والصور والنصوص وCSV ورسائل .eml وتذاكر .pkpass داخل التطبيق. وعلى iPhone وiPad تعرض المعاينة السريعة في iOS ملفات PDF والصور ومستندات Office. أما غير ذلك فيفتحه تطبيق مناسب، ويمكن إرسال أي ملف إليه بالزر في الأعلى. ولا تُفتح أرشيفات 7z وRAR إلا في تطبيق آخر.</string>
 </resources>

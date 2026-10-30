@@ -25,7 +25,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/navigation/app_router.dart' show pushMailDetail;
+import '../../../core/navigation/app_router.dart' show mailOpenPath;
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/ogneliss_look.dart';
 import '../../../data/database/app_database.dart';
@@ -529,7 +529,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             PeekAction(
               icon: AppIcons.mail,
               label: l10n.tr('openEmail'),
-              onTap: () => pushMailDetail(GoRouter.of(context), linked, accountId: t.accountId),
+              onTap: () => context.push(mailOpenPath(context, linked, accountId: t.accountId)),
             ),
           ]),
         PeekGroup(items: [
@@ -652,7 +652,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   .write(const EmailsCompanion(remindAt: Value(null), followUpAt: Value(null)));
             },
           ),
-          onTap: () => pushMailDetail(GoRouter.of(context), e.id, accountId: e.accountId),
+          onTap: () => context.push(mailOpenPath(context, e.id, accountId: e.accountId)),
         );
       },
     );

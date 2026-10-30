@@ -48,7 +48,20 @@ enum DeviceCalendarPlugin {
             event.endDate = Date(timeIntervalSince1970: endMs.doubleValue / 1000.0)
             if let notes = m["description"] as? String { event.notes = notes }
             if let loc = m["location"] as? String { event.location = loc }
-            if let allDay = m["allDay"] as? Bool { event.isAllDay = allDay }
+            if let allDay = m["allDay"] as? Bool, allDay {
+                // Весь день (1.8.13): Dart передаёт полночь UTC первого дня и
+                // полночь после последнего, а EventKit считает конец
+                // включительно — событие на день становилось двухдневным.
+                var utc = Calendar(identifier: .gregorian)
+                utc.timeZone = TimeZone(identifier: "UTC")!
+                let s = utc.dateComponents([.year, .month, .day], from: event.startDate)
+                let e = utc.dateComponents([.year, .month, .day], from: event.endDate)
+                let first = Calendar.current.date(from: s) ?? event.startDate!
+                let after = Calendar.current.date(from: e) ?? event.endDate!
+                event.isAllDay = true
+                event.startDate = first
+                event.endDate = max(first, after.addingTimeInterval(-1))
+            }
             event.calendar = store.defaultCalendarForNewEvents
             if let minutes = m["reminderMinutes"] as? NSNumber {
                 event.addAlarm(EKAlarm(relativeOffset: -(minutes.doubleValue * 60.0)))

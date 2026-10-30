@@ -3378,7 +3378,7 @@
     <string name="noSender">(sans expéditeur)</string>
     <string name="faq_archive_title">Archive Ogneliss</string>
     <string name="faq_archive_1_q">En quoi l’archive Ogneliss diffère-t-elle du bouton Archiver ?</string>
-    <string name="faq_archive_1_a">Archiver déplace un message dans le dossier d’archives sur le serveur : il reste dans la boîte et prend de la place. L’archive Ogneliss fonctionne comme l’archivage automatique d’Outlook : les messages entiers, avec pièces jointes et dossiers, vont dans un fichier chiffré sur l’appareil, et sur le serveur dans Éléments supprimés. L’archive apparaît dans le menu comme section Archive Ogneliss, se recherche avec vos messages et s’ouvre hors ligne. Pour l’activer : Réglages → Archive Ogneliss.</string>
+    <string name="faq_archive_1_a">Archiver déplace un message dans le dossier d’archives sur le serveur : il reste dans la boîte et prend de la place. L’archive Ogneliss fonctionne comme l’archivage automatique d’Outlook : les messages entiers, avec pièces jointes et dossiers, vont dans un fichier chiffré sur l’appareil, et sur le serveur dans Éléments supprimés. L’archive apparaît dans le menu comme section Archive Ogneliss, se recherche avec vos messages et s’ouvre hors ligne. Pour l’activer : Réglages → Archive Ogneliss. Le menu affiche l’archive de la boîte sélectionnée ; toutes les boîtes à la fois sont dans « Toute l’archive ».</string>
     <string name="faq_archive_2_q">Comment transférer l’archive sur un autre appareil ou dans un cloud ?</string>
     <string name="faq_archive_2_a">Réglages → Archive Ogneliss → Enregistrer une copie de l’archive : placez le fichier .ogna sur Google Drive, Fichiers avec iCloud Drive, Yandex Disk, une clé USB ou un ordinateur. Sur l’autre appareil : Connecter une copie de l’archive → choisir le fichier → mot de passe de l’archive ou code de récupération. La copie est chiffrée : impossible de l’ouvrir sans mot de passe ni code. Les réglages de l’app voyagent avec l’archive et se restaurent sur le même écran.</string>
     <string name="faq_archive_3_q">Que faire si j’oublie le mot de passe de l’archive ?</string>
@@ -3544,6 +3544,25 @@
     <string name="graphHint">Microsoft désactive EWS dans Exchange Online : à partir d’octobre 2026 organisation par organisation, entièrement en avril 2027. Courrier, calendrier, contacts et réponses automatiques passent par ActiveSync et ne changent pas. L’annuaire (fonctions, services, photos des collègues), les infos à l’envoi, les règles du serveur et la récupération des éléments supprimés passent désormais par Microsoft Graph. Les salles et membres des listes de distribution aussi, si l’administrateur a accordé à l’application Place.Read.All et GroupMember.Read.All. Microsoft Graph n’offre pas l’archive en ligne, les boîtes partagées ni l’import de signature : ils utilisent EWS tant qu’il est disponible.</string>
     <string name="srvViaGraph">Exchange Online — via Microsoft Graph</string>
     <string name="zipEncryptedHint">L’archive est protégée par un mot de passe : Fichiers ne peut pas l’ouvrir. Choisissez une app d’archives : elle demandera le mot de passe</string>
-    <string name="archiveWhole">Archive complète</string>
-    <string name="archiveNoAccountData">Aucune donnée de cette boîte dans l’archive</string>
+    <string name="reminderToday">Aujourd’hui · {at}</string>
+    <string name="composeBadAddress">Vérifiez l’adresse : {addr}</string>
+    <string name="convMute">Désactiver les notifications</string>
+    <string name="convUnmute">Réactiver les notifications</string>
+    <string name="convMutedNotice">Les nouveaux messages de cette conversation n’enverront pas de notification</string>
+    <string name="convUnmutedNotice">Notifications de cette conversation activées</string>
+    <string name="faq_notify_6_q">Comment couper les notifications d’une seule conversation ?</string>
+    <string name="faq_notify_6_a">Ouvrez la conversation → ⋮ → « Désactiver les notifications » (ou appui long sur sa ligne → « Plus »). Ses nouveaux messages arrivent sans notification, la ligne affiche une cloche barrée. Le reste du courrier notifie comme avant. Pour réactiver : même option ou touchez la cloche dans la conversation.</string>
+    <string name="mailOpenInBrowser">Ouvrir dans le navigateur</string>
+    <string name="mailOpenInBrowserFailed">Impossible d\'ouvrir le message dans le navigateur</string>
+    <string name="archiveAll">Toute l\'archive</string>
+    <string name="archiveHubHelp">Le menu affiche seulement l\'archive de la boîte sélectionnée : ses dossiers, événements, tâches et contacts. Cette page affiche toute l\'archive : toutes les boîtes, y compris celles qui ne sont plus dans l\'application, et la recherche dans tous les messages.</string>
+    <string name="zipPasswordNeeded">L\'archive est protégée par un mot de passe</string>
+    <string name="zipPassword">Mot de passe</string>
+    <string name="zipWrongPassword">Mot de passe incorrect</string>
+    <string name="zipOpen">Ouvrir</string>
+    <string name="zipSummary">Fichiers : {n} · {size}</string>
+    <string name="zipCannotRead">L\'archive est illisible : elle est endommagée ou dans un format inconnu de l\'application (7z, RAR). Ouvrez-la dans une autre application.</string>
+    <string name="pdfProtected">Ce PDF est protégé par un mot de passe. Ouvrez-le dans une autre application.</string>
+    <string name="faq_mail_10_q">Quelles pièces jointes s\'ouvrent directement dans l\'application ?</string>
+    <string name="faq_mail_10_a">Les archives ZIP, même protégées par mot de passe, ainsi que TAR, GZ, BZ2 et XZ s\'ouvrent directement dans l\'application : touchez un fichier pour l\'ouvrir. Les PDF sur Android, les images, le texte et le CSV, les messages .eml et les billets .pkpass s\'ouvrent aussi dans l\'application. Sur iPhone et iPad, l\'aperçu d\'iOS affiche les PDF, les images et les documents Office. Le reste s\'ouvre dans une application adaptée, et tout fichier peut y être envoyé avec le bouton en haut. Les archives 7z et RAR s\'ouvrent seulement dans une autre application.</string>
 </resources>

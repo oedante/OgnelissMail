@@ -3359,7 +3359,7 @@
     <string name="noSender">(không có người gửi)</string>
     <string name="faq_archive_title">Kho lưu trữ Ogneliss</string>
     <string name="faq_archive_1_q">Kho lưu trữ Ogneliss khác nút Lưu trữ như thế nào?</string>
-    <string name="faq_archive_1_a">Lưu trữ chuyển thư vào thư mục lưu trữ trên máy chủ: thư vẫn nằm trong hộp thư và chiếm dung lượng. Kho lưu trữ Ogneliss hoạt động giống Lưu trữ tự động của Outlook: toàn bộ thư kèm tệp đính kèm và thư mục được đưa vào một tệp mã hóa trên thiết bị, còn trên máy chủ thì chuyển vào Mục đã xóa. Kho lưu trữ hiện trong menu ở mục Kho lưu trữ Ogneliss, được tìm kiếm cùng với thư của bạn và mở được khi không có mạng. Bật tại Cài đặt → Kho lưu trữ Ogneliss.</string>
+    <string name="faq_archive_1_a">Lưu trữ chuyển thư vào thư mục lưu trữ trên máy chủ: thư vẫn nằm trong hộp thư và chiếm dung lượng. Kho lưu trữ Ogneliss hoạt động giống Lưu trữ tự động của Outlook: toàn bộ thư kèm tệp đính kèm và thư mục được đưa vào một tệp mã hóa trên thiết bị, còn trên máy chủ thì chuyển vào Mục đã xóa. Kho lưu trữ hiện trong menu ở mục Kho lưu trữ Ogneliss, được tìm kiếm cùng với thư của bạn và mở được khi không có mạng. Bật tại Cài đặt → Kho lưu trữ Ogneliss. Menu hiển thị kho lưu trữ của hộp thư đã chọn; tất cả hộp thư cùng lúc nằm trong Toàn bộ kho lưu trữ.</string>
     <string name="faq_archive_2_q">Làm thế nào để chuyển kho lưu trữ sang thiết bị khác hoặc lên đám mây?</string>
     <string name="faq_archive_2_a">Cài đặt → Kho lưu trữ Ogneliss → Lưu bản sao kho lưu trữ: đặt tệp .ogna lên Google Drive, ứng dụng Tệp với iCloud Drive, Yandex Disk, ổ USB hoặc máy tính. Trên thiết bị khác: Kết nối bản sao kho lưu trữ → chọn tệp → nhập mật khẩu kho lưu trữ hoặc mã khôi phục. Bản sao được mã hóa và không thể mở nếu không có mật khẩu hoặc mã. Cài đặt ứng dụng đi kèm kho lưu trữ, và bạn có thể khôi phục chúng ngay trên cùng màn hình đó.</string>
     <string name="faq_archive_3_q">Nếu quên mật khẩu kho lưu trữ thì sao?</string>
@@ -3525,6 +3525,25 @@
     <string name="graphHint">Microsoft đang tắt EWS trong Exchange Online: từ tháng 10/2026 theo từng tổ chức, hoàn toàn vào tháng 4/2027. Thư, lịch, danh bạ và trả lời tự động dùng ActiveSync và không thay đổi. Danh bạ tổ chức (chức danh, phòng ban, ảnh đồng nghiệp), gợi ý khi gửi, quy tắc máy chủ và khôi phục mục đã xóa nay dùng Microsoft Graph. Phòng họp và thành viên danh sách phân phối cũng vậy nếu quản trị viên đã cấp cho ứng dụng quyền Place.Read.All và GroupMember.Read.All. Microsoft Graph không cung cấp lưu trữ trực tuyến, hộp thư dùng chung và nhập chữ ký — chúng dùng EWS khi còn khả dụng.</string>
     <string name="srvViaGraph">Exchange Online — qua Microsoft Graph</string>
     <string name="zipEncryptedHint">Tệp nén được bảo vệ bằng mật khẩu nên ứng dụng Tệp không mở được. Hãy chọn một ứng dụng giải nén: ứng dụng sẽ hỏi mật khẩu</string>
-    <string name="archiveWhole">Toàn bộ lưu trữ</string>
-    <string name="archiveNoAccountData">Không có dữ liệu của hộp thư này trong lưu trữ</string>
+    <string name="reminderToday">Hôm nay · {at}</string>
+    <string name="composeBadAddress">Kiểm tra địa chỉ: {addr}</string>
+    <string name="convMute">Tắt thông báo</string>
+    <string name="convUnmute">Bật thông báo</string>
+    <string name="convMutedNotice">Thư mới trong cuộc trò chuyện này sẽ không thông báo</string>
+    <string name="convUnmutedNotice">Đã bật thông báo cho cuộc trò chuyện này</string>
+    <string name="faq_notify_6_q">Làm sao tắt thông báo của một cuộc trò chuyện?</string>
+    <string name="faq_notify_6_a">Mở cuộc trò chuyện → ⋮ → «Tắt thông báo» (hoặc nhấn giữ dòng của nó trong danh sách → «Thêm»). Thư mới trong đó đến mà không có thông báo, dòng hiển thị chuông gạch chéo. Thư khác vẫn thông báo như trước. Để bật lại, dùng cùng mục đó hoặc chạm vào chuông trong cuộc trò chuyện.</string>
+    <string name="mailOpenInBrowser">Mở trong trình duyệt</string>
+    <string name="mailOpenInBrowserFailed">Không thể mở thư trong trình duyệt</string>
+    <string name="archiveAll">Toàn bộ kho lưu trữ</string>
+    <string name="archiveHubHelp">Menu chỉ hiển thị kho lưu trữ của hộp thư đã chọn: thư mục, sự kiện, việc cần làm và danh bạ của nó. Trang này hiển thị toàn bộ kho lưu trữ: mọi hộp thư, kể cả những hộp thư không còn trong ứng dụng, và tìm kiếm trong mọi thư.</string>
+    <string name="zipPasswordNeeded">Tệp nén được bảo vệ bằng mật khẩu</string>
+    <string name="zipPassword">Mật khẩu</string>
+    <string name="zipWrongPassword">Sai mật khẩu</string>
+    <string name="zipOpen">Mở</string>
+    <string name="zipSummary">Tệp: {n} · {size}</string>
+    <string name="zipCannotRead">Không đọc được tệp nén: tệp bị hỏng hoặc ở định dạng ứng dụng không hỗ trợ (7z, RAR). Hãy mở bằng ứng dụng khác.</string>
+    <string name="pdfProtected">Tệp PDF được bảo vệ bằng mật khẩu. Hãy mở bằng ứng dụng khác.</string>
+    <string name="faq_mail_10_q">Tệp đính kèm nào mở ngay trong ứng dụng?</string>
+    <string name="faq_mail_10_a">Tệp nén ZIP, kể cả có mật khẩu, cùng TAR, GZ, BZ2 và XZ mở ngay trong ứng dụng: chạm vào tệp bên trong để mở. PDF trên Android, ảnh, văn bản và CSV, thư .eml và vé .pkpass cũng mở trong ứng dụng. Trên iPhone và iPad, Xem nhanh của iOS hiển thị PDF, ảnh và tài liệu Office. Các tệp khác mở bằng ứng dụng phù hợp, và có thể gửi mọi tệp tới ứng dụng đó bằng nút ở trên cùng. Tệp nén 7z và RAR chỉ mở được bằng ứng dụng khác.</string>
 </resources>

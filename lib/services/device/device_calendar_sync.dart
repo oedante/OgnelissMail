@@ -66,10 +66,17 @@ class DeviceCalendarSync {
     }
 
     try {
+      // Весь день — полночь UTC первого дня и полночь после последнего
+      // (1.8.13), как в «Календаре в телефоне»: так их ждут календари
+      // Android и iPhone.
+      int ms(DateTime d) => allDay
+          ? DateTime.utc(d.toLocal().year, d.toLocal().month, d.toLocal().day).millisecondsSinceEpoch
+          : d.millisecondsSinceEpoch;
+      final end = allDay && !endTime.isAfter(startTime) ? startTime.add(const Duration(days: 1)) : endTime;
       final result = await _channel.invokeMethod<bool>('addEvent', {
         'title': title,
-        'startTime': startTime.millisecondsSinceEpoch,
-        'endTime': endTime.millisecondsSinceEpoch,
+        'startTime': ms(startTime),
+        'endTime': ms(end),
         'description': description,
         'location': location,
         'allDay': allDay,

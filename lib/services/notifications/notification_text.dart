@@ -1,13 +1,17 @@
 // lib/services/notifications/notification_text.dart
-// Тексты уведомления о письме (10.10.2026, по замечанию: «всё в одну строку,
-// не понятно о чём, адрес ящика занимает много места, жирным — тема, а не
-// отправитель»). Раскладка:
-//   заголовок (жирный)   — тема письма (★ у VIP, 👥 у общего ящика);
-//   строка (свёрнуто)    — «Отправитель — начало текста»;
-//   раскрыто             — отправитель, ниже текст без цитаты и подписи;
+// Тексты уведомления о письме. 1.8.13 (замечание владельца 29.10.2026:
+// «много жирного шрифта, непонятно, на что смотреть»): жирным — одна
+// короткая строка, кто написал, как в Почте iPhone, Gmail и Telegram.
+// Раньше жирной была тема — длинная («RE: FW: Согласование…»), и в шторке с
+// несколькими письмами и сводкой жирные строки шли одна за другой.
+// Раскладка:
+//   заголовок (жирный)   — отправитель (★ у VIP, 👥 у общего ящика);
+//   строка (свёрнуто)    — тема;
+//   раскрыто             — тема, ниже текст без цитаты и подписи;
 //   шапка уведомления    — 📁 папка (если не «Входящие») и короткая подпись
 //                          ящика вместо полного адреса;
-//   сводка «N новых»     — строки «Отправитель — тема» без жирного (1.8.12).
+//   сводка «N новых писем» — строки «Отправитель — тема» обычным шрифтом.
+// iPhone: отправитель — заголовок, тема — подзаголовок, текст — ниже.
 // Чистые функции — проверяются тестом notification_text_test.dart.
 
 import '../../core/utils/text_safe.dart' show cleanPreviewText;
@@ -40,18 +44,19 @@ class NotificationText {
     return text;
   }
 
-  /// Заголовок: тема (или «без темы»), ★ у VIP, 👥 у общего ящика.
-  static String title(String subject, {required String noSubject, bool vip = false, bool shared = false}) {
-    final s = subject.trim().isEmpty ? noSubject : subject.trim();
-    return '${shared ? '👥 ' : ''}${vip ? '★ ' : ''}$s';
+  /// Заголовок — единственное жирное: кто написал, ★ у VIP, 👥 у общего
+  /// ящика.
+  static String title(String sender, {bool vip = false, bool shared = false}) =>
+      '${shared ? '👥 ' : ''}${vip ? '★ ' : ''}${sender.trim()}';
+
+  /// Тема (или «без темы») — строка под отправителем.
+  static String subject(String subject, {required String noSubject}) {
+    final s = subject.replaceAll(RegExp(r'\s+'), ' ').trim();
+    return s.isEmpty ? noSubject : s;
   }
 
-  /// Свёрнутая строка: «Отправитель — начало текста».
-  static String line(String sender, String preview) =>
-      preview.isEmpty ? sender : '$sender — $preview';
-
-  /// Раскрытый текст: отправитель, ниже — текст.
-  static String big(String sender, String preview) => preview.isEmpty ? sender : '$sender\n$preview';
+  /// Раскрытый текст: тема, ниже — начало текста.
+  static String big(String subject, String preview) => preview.isEmpty ? subject : '$subject\n$preview';
 
   /// Короткая подпись ящика: имя до «@»; если у другого подключённого ящика
   /// такое же имя — домен («i.petrov» / «gmail.com»).
@@ -75,12 +80,8 @@ class NotificationText {
     return parts.isEmpty ? null : parts.join(' · ');
   }
 
-  /// Строка сводки группы: «Отправитель — тема», без жирного (1.8.12,
-  /// замечание 29.10.2026: «много жирного шрифта, непонятно на что
-  /// смотреть» — тема жирным была в каждой из шести строк сводки, рядом с
-  /// жирными заголовками уведомлений). Жирное в шторке — только заголовки.
-  static String summaryLine(String subject, String sender) => '$sender — $subject';
-
-  static String esc(String s) =>
-      s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+  /// Строка сводки группы — обычным шрифтом: «Отправитель — тема». Жирной
+  /// темы в каждой строке (до 1.8.13) больше нет: жирный в сводке — только
+  /// её заголовок «N новых писем».
+  static String summaryLine(String sender, String subject) => '${sender.trim()} — ${subject.trim()}';
 }

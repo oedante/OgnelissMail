@@ -53,7 +53,9 @@ import '../../../widgets/common/peek_card.dart' show peekAnchorOf;
 import '../widgets/peek_helpers.dart';
 import '../widgets/quick_reply_bar.dart';
 import '../providers/drawer_prefs.dart' show convChatOrderProvider, quickReplyBarProvider;
-import '../../../widgets/common/inline_notice.dart' show showInlineError;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../services/notifications/account_notify_mode.dart' show ConversationNotify;
+import '../providers/conversation_mute.dart';
 import '../../../widgets/ui/app_menu_button.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
@@ -419,6 +421,14 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     ];
   }
 
+  /// «Без уведомлений» / «Включить уведомления» (1.8.13): новые письма
+  /// беседы — молча, строкой вверху — что сделано.
+  Future<void> _toggleMute(AppLocalizations l10n) async {
+    unawaited(HapticFeedback.selectionClick());
+    final muted = await ref.read(mutedConversationsProvider.notifier).toggle(widget.accountId, widget.conversationId);
+    if (mounted) showInlineNotice(l10n.tr(muted ? 'convMutedNotice' : 'convUnmutedNotice'));
+  }
+
   /// Подпись дня между письмами (1.6.49, как в Telegram): «Сегодня»,
   /// «Вчера», «17 октября».
   String _dayLabel(DateTime d, AppLocalizations l10n) {
@@ -457,6 +467,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           for (final a in ref.watch(accountsProvider)) ...OwnAddresses.of(a),
         };
         final settings = ref.watch(settingsProvider);
+        final muted = ref.watch(mutedConversationsProvider
+            .select((m) => m.contains(ConversationNotify.key(widget.accountId, widget.conversationId))));
 
         // Письмо [i] (самое новое — 0) карточкой; над ним — подпись дня,
         // если день сменился (в порядке показа).
@@ -525,6 +537,14 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             // «Прочитать все» и «Удалить беседу» — вверху (1.6.49): внизу —
             // строка ответа, как в мессенджере.
             actions: [
+              // Беседа без уведомлений (1.8.13) — значок на виду, как у
+              // чата «без звука» в Telegram; нажатие включает уведомления.
+              if (muted)
+                IconButton(
+                  tooltip: l10n.tr('convUnmute'),
+                  icon: Icon(AppIcons.notifications_off, color: theme.colorScheme.onSurfaceVariant),
+                  onPressed: () => unawaited(_toggleMute(l10n)),
+                ),
               if (hasUnread)
                 IconButton(
                   tooltip: l10n.tr('markAllRead'),
@@ -538,6 +558,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     switch (v) {
                       case 'order':
                         unawaited(ref.read(convChatOrderProvider.notifier).set(!chat));
+                      case 'mute':
+                        unawaited(_toggleMute(l10n));
                       case 'delete':
                         if (!_busy) {
                           unawaited(_deleteAll(emails, l10n, copies: [for (final c in copies.values) ...c]));
@@ -546,6 +568,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   },
                   itemBuilder: (_) => [
                     AppMenuEntry(value: 'order', icon: AppIcons.forum, label: l10n.tr('convChatOrder'), checked: chat),
+                    AppMenuEntry(
+                      value: 'mute',
+                      icon: muted ? AppIcons.notifications_active : AppIcons.notifications_off,
+                      label: l10n.tr(muted ? 'convUnmute' : 'convMute'),
+                    ),
                     AppMenuEntry(value: 'delete', icon: AppIcons.delete, label: l10n.tr('convDelete'), destructive: true),
                   ],
                 ),

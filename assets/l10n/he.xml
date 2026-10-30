@@ -3397,7 +3397,7 @@
     <string name="noSender">(ללא שולח)</string>
     <string name="faq_archive_title">ארכיון Ogneliss</string>
     <string name="faq_archive_1_q">במה ארכיון Ogneliss שונה מהכפתור ארכיון?</string>
-    <string name="faq_archive_1_a">הכפתור ארכיון מעביר הודעה לתיקיית הארכיון בשרת: היא נשארת בתיבת הדואר ותופסת מקום. ארכיון Ogneliss פועל כמו ארכוב אוטומטי ב-Outlook: הודעות שלמות עם קבצים מצורפים ותיקיות עוברות לקובץ מוצפן במכשיר, ובשרת הן עוברות לפריטים שנמחקו. הארכיון מופיע בתפריט כקטע ארכיון Ogneliss, החיפוש כולל אותו יחד עם הדואר שלך, והוא נפתח גם במצב לא מקוון. הפעלה: הגדרות → ארכיון Ogneliss.</string>
+    <string name="faq_archive_1_a">הכפתור ארכיון מעביר הודעה לתיקיית הארכיון בשרת: היא נשארת בתיבת הדואר ותופסת מקום. ארכיון Ogneliss פועל כמו ארכוב אוטומטי ב-Outlook: הודעות שלמות עם קבצים מצורפים ותיקיות עוברות לקובץ מוצפן במכשיר, ובשרת הן עוברות לפריטים שנמחקו. הארכיון מופיע בתפריט כקטע ארכיון Ogneliss, החיפוש כולל אותו יחד עם הדואר שלך, והוא נפתח גם במצב לא מקוון. הפעלה: הגדרות → ארכיון Ogneliss. התפריט מציג את הארכיון של תיבת הדואר שנבחרה; כל התיבות יחד נמצאות בפריט כל הארכיון.</string>
     <string name="faq_archive_2_q">איך מעבירים את הארכיון למכשיר אחר או לענן?</string>
     <string name="faq_archive_2_a">הגדרות → ארכיון Ogneliss → שמור עותק של הארכיון: שמור את קובץ ‎.ogna‎ ב-Google Drive, בקבצים עם iCloud Drive, ב-Yandex Disk, בכונן USB או במחשב. במכשיר השני: חבר עותק של הארכיון → בחר את הקובץ → סיסמת הארכיון או קוד שחזור. העותק מוצפן ואי אפשר לפתוח אותו בלי הסיסמה או הקוד. הגדרות האפליקציה עוברות יחד עם הארכיון, ואפשר לשחזר אותן באותו מסך.</string>
     <string name="faq_archive_3_q">מה עושים אם שכחתי את סיסמת הארכיון?</string>
@@ -3563,6 +3563,25 @@
     <string name="graphHint">Microsoft מכבה את EWS ב-Exchange Online: מאוקטובר 2026 ארגון אחר ארגון, ולגמרי באפריל 2027. דואר, יומן, אנשי קשר ותשובות אוטומטיות פועלים דרך ActiveSync ואינם משתנים. ספר הכתובות (תפקידים, מחלקות, תמונות עמיתים), עצות בשליחה, כללי שרת ושחזור פריטים שנמחקו עובדים עכשיו דרך Microsoft Graph. גם חדרי ישיבות וחברי רשימות תפוצה, אם המנהל העניק לאפליקציה את Place.Read.All ו-GroupMember.Read.All. ‏Microsoft Graph אינו מציע ארכיון מקוון, תיבות משותפות וייבוא חתימה — הם עובדים דרך EWS כל עוד הוא זמין.</string>
     <string name="srvViaGraph">Exchange Online — דרך Microsoft Graph</string>
     <string name="zipEncryptedHint">הארכיון מוגן בסיסמה, ולכן אפליקציית הקבצים לא תפתח אותו. בחרו אפליקציית ארכיונים: היא תבקש את הסיסמה</string>
-    <string name="archiveWhole">כל הארכיון</string>
-    <string name="archiveNoAccountData">אין בארכיון נתונים של תיבה זו</string>
+    <string name="reminderToday">היום · {at}</string>
+    <string name="composeBadAddress">בדקו את הכתובת: {addr}</string>
+    <string name="convMute">השתקת התראות</string>
+    <string name="convUnmute">ביטול השתקה</string>
+    <string name="convMutedNotice">הודעות חדשות בשיחה זו יגיעו ללא התראה</string>
+    <string name="convUnmutedNotice">ההתראות לשיחה זו פועלות</string>
+    <string name="faq_notify_6_q">איך משתיקים התראות של שיחה אחת?</string>
+    <string name="faq_notify_6_a">פתחו את השיחה ← ⋮ ← «השתקת התראות» (או לחיצה ארוכה על השורה ברשימה ← «עוד»). הודעות חדשות בה מגיעות ללא התראה, ולצד השורה מופיע פעמון מחוק. שאר הדואר מתריע כרגיל. להפעלה מחדש — אותה אפשרות או הקשה על הפעמון בשיחה.</string>
+    <string name="mailOpenInBrowser">פתיחה בדפדפן</string>
+    <string name="mailOpenInBrowserFailed">לא ניתן לפתוח את ההודעה בדפדפן</string>
+    <string name="archiveAll">כל הארכיון</string>
+    <string name="archiveHubHelp">התפריט מציג רק את הארכיון של תיבת הדואר שנבחרה: התיקיות, האירועים, המשימות ואנשי הקשר שלה. כאן מוצג כל הארכיון: כל תיבות הדואר, כולל כאלה שכבר אינן באפליקציה, וחיפוש בכל ההודעות.</string>
+    <string name="zipPasswordNeeded">הארכיון מוגן בסיסמה</string>
+    <string name="zipPassword">סיסמה</string>
+    <string name="zipWrongPassword">סיסמה שגויה</string>
+    <string name="zipOpen">פתיחה</string>
+    <string name="zipSummary">קבצים: {n} · {size}</string>
+    <string name="zipCannotRead">לא ניתן לקרוא את הארכיון: הוא פגום או בפורמט שהאפליקציה אינה מכירה (7z, RAR). פתחו אותו באפליקציה אחרת.</string>
+    <string name="pdfProtected">קובץ ה-PDF מוגן בסיסמה. פתחו אותו באפליקציה אחרת.</string>
+    <string name="faq_mail_10_q">אילו קבצים מצורפים נפתחים ישירות באפליקציה?</string>
+    <string name="faq_mail_10_a">ארכיוני ZIP, גם כאלה המוגנים בסיסמה, וגם TAR, GZ, BZ2 ו-XZ נפתחים ישירות באפליקציה: הקישו על קובץ בתוכם כדי לפתוח אותו. גם קובצי PDF ב-Android, תמונות, טקסט ו-CSV, הודעות .eml וכרטיסי .pkpass נפתחים באפליקציה. ב-iPhone וב-iPad, התצוגה המהירה של iOS מציגה קובצי PDF, תמונות ומסמכי Office. כל השאר נפתח באפליקציה מתאימה, ואפשר לשלוח אליה כל קובץ בכפתור למעלה. ארכיוני 7z ו-RAR נפתחים רק באפליקציה אחרת.</string>
 </resources>

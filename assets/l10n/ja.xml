@@ -3359,7 +3359,7 @@
     <string name="noSender">（差出人なし）</string>
     <string name="faq_archive_title">Ogneliss アーカイブ</string>
     <string name="faq_archive_1_q">Ogneliss アーカイブと「アーカイブ」ボタンの違いは何ですか？</string>
-    <string name="faq_archive_1_a">「アーカイブ」は、メールをサーバー上のアーカイブフォルダーに移動します。メールはメールボックスに残り、容量を使います。Ogneliss アーカイブは Outlook の自動アーカイブと同様に動作し、添付ファイルやフォルダーを含むメールをまるごとデバイス上の暗号化ファイルに保存し、サーバー上では削除済みアイテムに移動します。アーカイブはメニューに「Ogneliss アーカイブ」セクションとして表示され、メールと一緒に検索でき、オフラインでも開けます。有効にするには、設定 → Ogneliss アーカイブを開きます。</string>
+    <string name="faq_archive_1_a">「アーカイブ」は、メールをサーバー上のアーカイブフォルダーに移動します。メールはメールボックスに残り、容量を使います。Ogneliss アーカイブは Outlook の自動アーカイブと同様に動作し、添付ファイルやフォルダーを含むメールをまるごとデバイス上の暗号化ファイルに保存し、サーバー上では削除済みアイテムに移動します。アーカイブはメニューに「Ogneliss アーカイブ」セクションとして表示され、メールと一緒に検索でき、オフラインでも開けます。有効にするには、設定 → Ogneliss アーカイブを開きます。メニューには選択中のメールボックスのアーカイブが表示され、すべてのメールボックスは「アーカイブ全体」にまとめて表示されます。</string>
     <string name="faq_archive_2_q">アーカイブを別のデバイスやクラウドに移すには？</string>
     <string name="faq_archive_2_a">設定 → Ogneliss アーカイブ → アーカイブのコピーを保存：.ogna ファイルを Google Drive、iCloud Drive を使う「ファイル」App、Yandex Disk、USBドライブ、またはコンピューターに置きます。別のデバイスでは、アーカイブのコピーを接続 → ファイルを選択 → アーカイブのパスワードまたはリカバリーコードを入力します。コピーは暗号化されており、パスワードまたはコードがないと開けません。アプリの設定もアーカイブと一緒に移行でき、同じ画面で復元できます。</string>
     <string name="faq_archive_3_q">アーカイブのパスワードを忘れた場合は？</string>
@@ -3525,6 +3525,25 @@
     <string name="graphHint">Microsoft は Exchange Online の EWS を停止します：2026 年 10 月から組織ごとに、2027 年 4 月に完全停止。メール、予定表、連絡先、自動応答は ActiveSync で動作し、変わりません。アドレス帳（役職、部署、同僚の写真）、送信時のヒント、サーバーのルール、削除済みアイテムの回復は Microsoft Graph を使うようになりました。会議室と配布リストのメンバーも、管理者がアプリに Place.Read.All と GroupMember.Read.All を許可していれば同様です。オンライン アーカイブ、共有メールボックス、署名のインポートは Microsoft Graph にないため、EWS が使える間は EWS で動作します。</string>
     <string name="srvViaGraph">Exchange Online — Microsoft Graph 経由</string>
     <string name="zipEncryptedHint">アーカイブはパスワードで保護されているため、「ファイル」では開けません。アーカイブ用のアプリを選んでください。パスワードを求められます</string>
-    <string name="archiveWhole">アーカイブ全体</string>
-    <string name="archiveNoAccountData">アーカイブにこのメールボックスのデータはありません</string>
+    <string name="reminderToday">今日 · {at}</string>
+    <string name="composeBadAddress">アドレスを確認してください：{addr}</string>
+    <string name="convMute">通知をミュート</string>
+    <string name="convUnmute">ミュートを解除</string>
+    <string name="convMutedNotice">このスレッドの新着メールは通知されません</string>
+    <string name="convUnmutedNotice">このスレッドの通知をオンにしました</string>
+    <string name="faq_notify_6_q">1つのスレッドだけ通知をミュートするには？</string>
+    <string name="faq_notify_6_a">スレッドを開き → ⋮ →「通知をミュート」（または一覧の行を長押し →「その他」）。そのスレッドの新着メールは通知なしで届き、行に斜線付きのベルが表示されます。ほかのメールはこれまでどおり通知します。元に戻すには同じ項目を選ぶか、スレッド内のベルをタップします。</string>
+    <string name="mailOpenInBrowser">ブラウザで開く</string>
+    <string name="mailOpenInBrowserFailed">メッセージをブラウザで開けませんでした</string>
+    <string name="archiveAll">アーカイブ全体</string>
+    <string name="archiveHubHelp">メニューには選択中のメールボックスのアーカイブだけが表示されます（フォルダ、予定、タスク、連絡先）。この画面にはアーカイブ全体が表示されます。アプリにないメールボックスも含むすべてのメールボックスと、全メッセージの検索です。</string>
+    <string name="zipPasswordNeeded">アーカイブはパスワードで保護されています</string>
+    <string name="zipPassword">パスワード</string>
+    <string name="zipWrongPassword">パスワードが違います</string>
+    <string name="zipOpen">開く</string>
+    <string name="zipSummary">ファイル: {n} · {size}</string>
+    <string name="zipCannotRead">アーカイブを読み込めません。破損しているか、アプリが対応していない形式です（7z、RAR）。別のアプリで開いてください。</string>
+    <string name="pdfProtected">このPDFはパスワードで保護されています。別のアプリで開いてください。</string>
+    <string name="faq_mail_10_q">アプリ内で直接開ける添付ファイルは？</string>
+    <string name="faq_mail_10_a">パスワード付きを含む ZIP アーカイブと、TAR、GZ、BZ2、XZ はアプリ内で直接開けます。中のファイルをタップすると開きます。Android の PDF、画像、テキストと CSV、.eml メール、.pkpass チケットもアプリ内で開けます。iPhone と iPad では、PDF、画像、Office 書類を iOS のクイックルックで表示します。それ以外は適したアプリで開き、上部のボタンでどのファイルも送れます。7z と RAR のアーカイブは別のアプリでのみ開けます。</string>
 </resources>

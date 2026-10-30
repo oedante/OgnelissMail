@@ -22,7 +22,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/navigation/app_router.dart' show mailDetailPath;
+import '../../../core/navigation/app_router.dart' show mailOpenPath;
 import '../../../data/database/app_database.dart';
 import '../../../data/providers/database_provider.dart';
 import '../../../l10n/app_localizations.dart';
@@ -335,7 +335,7 @@ class _EventDetails extends ConsumerWidget {
               _Row(
                 icon: AppIcons.mail,
                 title: l10n.tr('openInvitation'),
-                onTap: () => context.push(mailDetailPath(e.linkedEmailId!, accountId: e.accountId)),
+                onTap: () => context.push(mailOpenPath(context, e.linkedEmailId!, accountId: e.accountId)),
               ),
           ]),
 
@@ -639,7 +639,7 @@ class _PrepSection extends ConsumerWidget {
     final theme = Theme.of(context);
     final muted = AppColors.mutedText(context);
     final locale = l10n.localeCode;
-    void open(PrepCandidate m) => context.push(mailDetailPath(m.id, accountId: m.accountId));
+    void open(PrepCandidate m) => context.push(mailOpenPath(context, m.id, accountId: m.accountId));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

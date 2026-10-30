@@ -382,6 +382,30 @@ void main() {
     });
   }
 
+  // Письмо и ответ на планшете, компьютере и телефоне боком (1.8.13):
+  // текст письма — одной колонкой с шапкой, строка ответа и кнопки — не
+  // через весь экран.
+  for (final (name, size) in const [('tablet', Size(1194, 834)), ('desktop', Size(1280, 800)), ('phoneland', Size(852, 393))]) {
+    testWidgets('письмо — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await _shot(tester, 'letter_$name', const MailDetailScreen(emailId: 'e1', accountId: 'a1'),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size);
+      await tester.runAsync(db.close);
+    });
+    testWidgets('ответ — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await _shot(tester, 'reply_$name', const ComposeScreen(accountId: 'a1', replyToId: 'e1', replyAll: true),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size);
+      await tester.runAsync(db.close);
+    });
+  }
+
   // Архив Ogneliss (28.10.2026): кнопки на виду, ящики в архиве (один — с
   // другого устройства), «Другие устройства и облако».
   for (final (t, scroll) in const [('light', 0.0), ('light', 1100.0), ('light', 2400.0), ('dark', 0.0)]) {
@@ -449,40 +473,6 @@ void main() {
     testWidgets('карточка выбора — $t', (tester) async {
       await _shot(tester, 'choice_card_$t', const _CardHost(choice: true), theme: _themes[t]!(),
           before: (tester) async => tester.tap(find.text('open')));
-    });
-  }
-
-  // Планшет и компьютер (1.8.12, проверка экранов по размерам): письмо,
-  // новое письмо и настройки на широком окне.
-  for (final (dev, size) in const [
-    ('tablet', Size(800, 1280)),
-    ('tablet_land', Size(1280, 800)),
-    ('desktop', Size(1440, 900)),
-  ]) {
-    testWidgets('письмо — $dev', (tester) async {
-      SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-      final db = (await tester.runAsync(_db))!;
-      await tester.runAsync(() => _letter(db));
-      await _shot(tester, 'letter_$dev', const MailDetailScreen(emailId: 'e1', accountId: 'a1'),
-          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size);
-      await tester.runAsync(db.close);
-    });
-    testWidgets('новое письмо — $dev', (tester) async {
-      SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-      final db = (await tester.runAsync(_db))!;
-      await _shot(tester, 'compose_$dev', const ComposeScreen(accountId: 'a1'),
-          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size);
-      await tester.runAsync(db.close);
-    });
-    testWidgets('настройки — $dev', (tester) async {
-      SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-      final db = (await tester.runAsync(_db))!;
-      await _shot(tester, 'settings_$dev', const SettingsScreen(), theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs,
-          size: size);
-      await tester.runAsync(db.close);
     });
   }
 

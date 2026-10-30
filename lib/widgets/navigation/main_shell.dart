@@ -304,6 +304,13 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
                     extended: screenWidth >= 1200,
                     minWidth: 56,
                     minExtendedWidth: 200,
+                    // Низкое окно (телефон боком с «Поворотом экрана», узкое
+                    // окно компьютера, 1.8.13): разделы прокручиваются, а
+                    // «Написать» и нижние значки остаются на месте. Раньше
+                    // колонка не помещалась по высоте и обрезалась.
+                    scrollable: true,
+                    leadingAtTop: true,
+                    trailingAtBottom: true,
                     leading: Padding(
                       padding: const EdgeInsets.symmetric(vertical: Space.s),
                       child: FloatingActionButton.small(
@@ -312,9 +319,10 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
                         child: const Icon(AppIcons.edit),
                       ),
                     ),
-                    trailing: Expanded(
+                    trailing: Padding(
+                      padding: const EdgeInsets.only(top: Space.s),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           if (ref.watch(settingsProvider.select((s) => s.myDay)))
                             IconButton(

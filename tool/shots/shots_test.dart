@@ -40,6 +40,7 @@ import 'package:ogneliss/widgets/ui/app_menu_button.dart';
 import 'package:ogneliss/widgets/ui/confirm_dialog.dart';
 import 'package:ogneliss/widgets/ui/section_band.dart';
 import 'package:ogneliss/widgets/ui/settings_group.dart';
+import 'package:ogneliss/widgets/ui/wheel_pickers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Темы снимков: светлая, тёмная, AMOLED, высокий контраст.
@@ -475,6 +476,14 @@ void main() {
     });
   }
 
+  // Барабаны даты и времени (1.8.12): одна полоса выбора, изгиб, затухание.
+  for (final t in const ['light', 'dark']) {
+    testWidgets('барабаны — $t', (tester) async {
+      await _shot(tester, 'wheels_$t', const _WheelHost(), theme: _themes[t]!(),
+          before: (tester) async => tester.tap(find.text('open')));
+    });
+  }
+
   for (final font in const ['roboto', 'medeo']) {
     testWidgets('общие — шрифт $font', (tester) async {
       SharedPreferences.setMockInitialValues({'s_ui_font': font});
@@ -555,6 +564,23 @@ class _CardHost extends StatelessWidget {
                         child: Text('Адрес можно перетащить в другое поле'),
                       ),
                     ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      );
+}
+
+class _WheelHost extends StatelessWidget {
+  const _WheelHost();
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: const Text('Создать встречу')),
+        body: Builder(
+          builder: (context) => Center(
+            child: FilledButton(
+              onPressed: () => showWheelDateTimePicker(context, initial: DateTime(2026, 10, 30, 21, 30)),
               child: const Text('open'),
             ),
           ),

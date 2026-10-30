@@ -1032,7 +1032,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           key: ValueKey('${email.id}_native_$mode'),
           mail: n,
           images: _inlineImages,
-          textScale: settings.fontScale,
+          textScale: MailHtmlView.textScaleOf(context),
           onShown: () {
             OpenTrace.mark('без WebView');
             OpenTrace.done();
@@ -1233,7 +1233,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           document: doc,
           active: widget.active,
           allowRemoteImages: _imagesAllowed,
-          textScale: settings.fontScale,
+          textScale: MailHtmlView.textScaleOf(context),
           pageColor: mailPageColor(theme),
           dark: theme.brightness == Brightness.dark,
           onShown: _onBodyShown,

@@ -1151,7 +1151,8 @@ class _MailNativeBodyState extends State<MailNativeBody> {
     final page = mailPageColor(theme);
     final fg = theme.colorScheme.onSurface;
     final link = theme.colorScheme.primary;
-    final base = TextStyle(fontSize: 14 * widget.textScale, height: 1.35, color: fg);
+    // 15 px, как в окне браузера (MailHtmlView._baseCss, 1.8.12: было 14).
+    final base = TextStyle(fontSize: 15 * widget.textScale, height: 1.4, color: fg);
 
     Color? textColor(NSpan s, Color? cellBg) {
       if (s.background == null && cellBg != null) {
@@ -1246,7 +1247,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       } else if (bl.kind == NBlockKind.table && bl.table!.any((r) => r.any((c) => c.rowSpan > 1 || c.colSpan > 1))) {
         // Объединённые ячейки (1.5.11) — своя раскладка, рамки — у ячеек.
         w = _spanTable(bl, theme, cellBg, blocks);
-        final after = bl.after * base.fontSize! * 1.35;
+        final after = bl.after * base.fontSize! * 1.4;
         if (after > 0) w = Padding(padding: EdgeInsets.only(bottom: after), child: w);
       } else if (bl.kind == NBlockKind.table) {
         final rows = bl.table!;
@@ -1291,7 +1292,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
               ]),
           ],
         );
-        final after = bl.after * base.fontSize! * 1.35;
+        final after = bl.after * base.fontSize! * 1.4;
         if (after > 0) w = Padding(padding: EdgeInsets.only(bottom: after), child: w);
       } else {
         final text = Text.rich(
@@ -1311,7 +1312,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
                 Expanded(child: text),
               ]);
         final indent = (bl.list > 1 ? (bl.list - 1) * 18.0 : 0.0);
-        final after = bl.after * base.fontSize! * 1.35;
+        final after = bl.after * base.fontSize! * 1.4;
         if (indent > 0 || after > 0) {
           w = Padding(padding: EdgeInsets.only(left: indent, bottom: after), child: w);
         }

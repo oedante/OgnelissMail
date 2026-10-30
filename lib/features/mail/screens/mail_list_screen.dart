@@ -2453,7 +2453,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     MailWebViewPool.enabled =
         ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.webViewSpare) ?? true;
     unawaited(MailHtmlView.warmUp(
-        width: MailHtmlView.bodyWidthOf(context), textScale: ref.read(settingsProvider).fontScale));
+        width: MailHtmlView.bodyWidthOf(context), textScale: MailHtmlView.textScaleOf(context)));
   }
 
   // ── Свежие письма — заранее (1.5.9) ──
@@ -2540,7 +2540,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         width: MailHtmlView.bodyWidthOf(context),
         dark: th.brightness == Brightness.dark,
         pageColor: mailPageColor(th),
-        textScale: ref.read(settingsProvider).fontScale);
+        textScale: MailHtmlView.textScaleOf(context));
   }
 
   /// Черновик: свой (локальный, папка «drafts») или из серверных «Черновиков».

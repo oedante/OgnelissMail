@@ -238,6 +238,19 @@ class MailHtmlDocument {
       if (style != st) img.attributes['style'] = style;
     }
 
+    // Высота в долях окна (height/min-height: 100vh — «экран» рассылки,
+    // 1.8.12, письмо Kaspersky 30.10.2026): окно письма растягивается под
+    // содержимое, а такой блок — под окно, и после каждого замера письмо
+    // становилось выше, внизу — бесконечное пустое поле. Высота — по
+    // содержимому.
+    for (final e in body.querySelectorAll('[style]')) {
+      final st = e.attributes['style']!;
+      if (st.contains('vh')) e.attributes['style'] = noViewportHeights(st);
+    }
+    for (final st in body.querySelectorAll('style')) {
+      if (st.text.contains('vh')) st.text = noViewportHeights(st.text);
+    }
+
     // Стрелки и маркеры из шрифтов Wingdings и Symbol («à» вместо «→»).
     if (SymbolFonts.mayContain(bodyHtml)) SymbolFonts.mapDom(body);
 
@@ -256,6 +269,11 @@ class MailHtmlDocument {
       if (href.isNotEmpty && text.isNotEmpty) links.putIfAbsent(href, () => text);
       // Ссылки — только в этом окне: target="_blank" просит новое окно.
       a.attributes.remove('target');
+      // Длинный адрес текстом ссылки (1.8.12, письмо Synergy 29.10.2026):
+      // переносится где угодно, иначе он раздвигал колонку 600 px до 800 и
+      // письмо обрезалось справа. Только у таких ссылок: перенос «где
+      // угодно» для всего письма рвал бы слова в узких колонках таблиц.
+      if (isLongToken(text)) a.classes.add('og-brk');
     }
 
     // Стили письма (<style> в теле — Outlook кладёт их туда при пересылке)
@@ -304,6 +322,17 @@ class MailHtmlDocument {
   }
 
   static String _num(double v) => v == v.roundToDouble() ? '${v.round()}' : v.toStringAsFixed(2);
+
+  /// CSS без высот в долях окна: «height: 100vh», «min-height:80vh» →
+  /// «height:auto» (см. [build]). max-height не трогается — он только
+  /// ограничивает.
+  static String noViewportHeights(String css) => css.replaceAllMapped(
+      RegExp(r'(^|[;{\s])((?:min-)?height)\s*:\s*[\d.]+\s*(?:d|s|l)?vh\b(\s*!important)?', caseSensitive: false),
+      (m) => '${m[1]}${m[2]}:auto');
+
+  /// Текст ссылки — один длинный «токен» без пробелов (адрес, путь, код):
+  /// такой можно переносить в любом месте.
+  static bool isLongToken(String text) => text.length >= 24 && !text.contains(RegExp(r'\s'));
 
   static final _imgTag = RegExp(r'''<img\b(?:[^>"']|"[^"]*"|'[^']*')*>''', caseSensitive: false);
   static final _cidSrc = RegExp(r'''\ssrc\s*=\s*"cid:([^"]*)"''', caseSensitive: false);
@@ -411,7 +440,7 @@ class MailHtmlDocument {
   static const _baseCss = '''
 html,body{margin:0;padding:0;background:#ffffff;color:#1b1c1f;color-scheme:light;}
 body{padding:4px 0 12px;font-family:-apple-system,Roboto,"Segoe UI",Arial,sans-serif;
-font-size:14px;line-height:1.35;overflow-wrap:anywhere;word-wrap:break-word;-webkit-text-size-adjust:100%;}
+font-size:15px;line-height:1.4;overflow-wrap:anywhere;word-wrap:break-word;-webkit-text-size-adjust:100%;}
 p{margin:0 0 .4em;}
 p.MsoNormal,li.MsoNormal,div.MsoNormal{margin:0;}
 img{max-width:100% !important;}
@@ -429,6 +458,9 @@ font-size:12px;line-height:1.25;text-align:center;overflow-wrap:anywhere;}
 span[data-og-img][data-og-block]{display:flex;}
 span[data-og-sp]{display:inline-block;max-width:100%;}
 pre,code{white-space:pre-wrap;}
+/* Длинный адрес текстом ссылки — переносится где угодно и не раздвигает
+   таблицу (MailHtmlDocument.build, og-brk). */
+.og-brk{overflow-wrap:anywhere !important;word-break:break-all !important;}
 a{color:#1D4F91;}
 blockquote{margin:8px 0 8px 4px;padding-left:10px;border-left:3px solid #c7cdd6;color:#4a4f57;}
 /* Слитные рамки — у таблиц без cellspacing (Outlook, 1С); у рассылок
@@ -627,6 +659,21 @@ class MailHtmlView extends StatefulWidget {
           disableVerticalScroll: true,
           textZoom: (textScale * 100).round().clamp(80, 300),
         );
+
+  /// Масштаб текста письма (1.8.12, замечание владельца 30.10.2026: «у нас
+  /// очень мелкий шрифт»). Текст письма — и в окне браузера, и в простом
+  /// письме — рисовался 14 px без учёта системного размера шрифта, а
+  /// масштаб интерфейса уменьшал его ещё: 360 dp, шрифт ×1,15, масштаб 85 %
+  /// давали 12 dp на экране против ~17 у других программ. Теперь — шрифт
+  /// приложения с системным (как у остального текста, предел ×1,6), а
+  /// масштаб интерфейса текст письма не уменьшает: письмо прокручивается и
+  /// переносит строки, ему место не нужно. Шаг 0,05 — у запасного окна и
+  /// кэша письма один и тот же масштаб.
+  static double textScaleOf(BuildContext context) {
+    final system = MediaQuery.textScalerOf(context).scale(100) / 100;
+    final zoom = UiZoom.current <= 0 ? 1.0 : UiZoom.current;
+    return ((system / zoom).clamp(0.8, 3.0) * 20).roundToDouble() / 20;
+  }
 
   /// Ширина тела письма на экране письма (телефон): ширина экрана без
   /// вырезов и боковых панелей (SafeArea), не больше удобной ширины чтения

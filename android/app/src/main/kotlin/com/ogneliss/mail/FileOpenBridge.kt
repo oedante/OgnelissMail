@@ -50,6 +50,19 @@ object FileOpenBridge {
                 }.start()
                 return@setMethodCallHandler
             }
+            // Картинка из письма — в буфер обмена (1.8.12): файл через
+            // FileProvider; приложение, куда её вставят, получает доступ на
+            // чтение от системы вместе с буфером.
+            if (call.method == "copyImage") {
+                val p = call.argument<String>("path")
+                val m = call.argument<String>("mime")?.takeIf { it.startsWith("image/") } ?: "image/png"
+                if (p.isNullOrEmpty() || !File(p).exists()) {
+                    result.success(false)
+                    return@setMethodCallHandler
+                }
+                result.success(copyImage(app, File(p), m))
+                return@setMethodCallHandler
+            }
             if (call.method != "open") {
                 result.notImplemented()
                 return@setMethodCallHandler
@@ -80,6 +93,19 @@ object FileOpenBridge {
         } catch (e: Exception) {
             "error"
         }
+    }
+
+    private fun copyImage(app: Context, src: File, mime: String): Boolean = try {
+        val uri = FileProvider.getUriForFile(app, "${app.packageName}.files", shareable(app, src))
+        val clip = android.content.ClipData(
+            android.content.ClipDescription(src.name, arrayOf(mime)),
+            android.content.ClipData.Item(uri),
+        )
+        val cm = app.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+        cm.setPrimaryClip(clip)
+        true
+    } catch (e: Exception) {
+        false
     }
 
     /**

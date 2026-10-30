@@ -56,6 +56,7 @@ import '../../../core/security/mail_body_processor.dart';
 import '../../../core/utils/linkify.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/common/image_actions.dart';
 import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/ui_zoom.dart';
 
@@ -1508,8 +1509,12 @@ class _MailHtmlViewState extends State<MailHtmlView> {
       try {
         final r = await c.getHitTestResult();
         if (!mounted || r?.type != InAppWebViewHitTestResultType.IMAGE_TYPE) return;
-        final image = _imageFor(r?.extra);
-        if (image != null && mounted) unawaited(showImageViewer(context, image));
+        final src = r?.extra ?? '';
+        final image = _imageFor(src);
+        if (image == null || !mounted) return;
+        final Future<Uint8List?> Function() bytes =
+            image is MemoryImage ? () async => image.bytes : () => ImageActions.download(src);
+        unawaited(showImageViewer(context, image, bytes: bytes));
       } catch (_) {}
     });
   }

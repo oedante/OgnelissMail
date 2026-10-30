@@ -240,6 +240,15 @@ import workmanager_apple
           AppDelegate.endBackground(UIBackgroundTaskIdentifier(rawValue: raw))
         }
         result(nil)
+      case "copyImage":
+        // Картинка из письма — в буфер обмена (1.8.12).
+        guard let data = (call.arguments as? FlutterStandardTypedData)?.data,
+              let image = UIImage(data: data) else {
+          result(false)
+          return
+        }
+        UIPasteboard.general.image = image
+        result(true)
       case "clearBadge":
         // Число на значке сбрасывается при открытии приложения (письма
         // остаются непрочитанными — значок говорит лишь «пришло новое»).

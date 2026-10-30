@@ -44,6 +44,7 @@ import '../../../core/theme/mail_page_color.dart';
 import '../../../core/utils/linkify.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/common/image_actions.dart';
 import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/pinch_zoom.dart';
 import 'span_table.dart';
@@ -1177,12 +1178,18 @@ class _MailNativeBodyState extends State<MailNativeBody> {
 
     // Нажатие на картинку (1.8.12): в ссылке — ссылка, иначе — картинка на
     // весь экран с увеличением («иногда они мелкие», замечание 30.10.2026).
+    // Копировать, сохранить, поделиться — из просмотра (данные картинки).
     Widget tappable(NSpan s, ImageProvider full, Widget child) {
       final href = s.href;
+      final Future<Uint8List?> Function() bytes = full is MemoryImage
+          ? () async => full.bytes
+          : () => ImageActions.download(s.image ?? '');
       return MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
-          onTap: href != null ? () => widget.onLink(href, s.text.trim()) : () => showImageViewer(context, full),
+          onTap: href != null
+              ? () => widget.onLink(href, s.text.trim())
+              : () => showImageViewer(context, full, bytes: bytes),
           child: child,
         ),
       );

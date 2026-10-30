@@ -9,6 +9,8 @@
 
 import 'package:enough_mail/enough_mail.dart' as em;
 
+import 'tolerant_smtp_client.dart';
+
 import '../debug_log.dart';
 import '../mail_engine.dart';
 import '../models/models.dart';
@@ -184,7 +186,7 @@ class ImapSmtpEngine implements MailEngine {
     final smtpHost = cfg.smtpHost ?? cfg.imapHost!.replaceFirst('imap', 'smtp');
     final useSSL = cfg.smtpPort == 465;
     log.info(_t, 'SMTP -> $smtpHost:${cfg.smtpPort} (SSL=$useSSL)');
-    final smtp = em.SmtpClient('mailengine', isLogEnabled: false);
+    final smtp = TolerantSmtpClient('mailengine', isLogEnabled: false);
     await smtp.connectToServer(smtpHost, cfg.smtpPort, isSecure: useSSL);
     await smtp.ehlo();
     if (!useSSL) await smtp.startTls();

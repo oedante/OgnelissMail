@@ -29,7 +29,7 @@ import 'attachment_cache_service.dart' show attachmentCacheProvider;
 import 'draft_files.dart';
 import 'engine/mail_engine_service.dart' show MailEngineService, mailEngineServiceProvider;
 import 'draft_autosave_service.dart' show DraftData, draftAutosaveProvider;
-import 'package:mail_engine/mail_engine.dart' as me show GatewaySizeRejected;
+import 'package:mail_engine/mail_engine.dart' as me show GatewaySizeRejected, SmtpNotSentException;
 import 'package:uuid/uuid.dart';
 
 /// Письмо не ушло из-за размера: сервер назвал лимит или шлюз перед
@@ -948,8 +948,10 @@ class OfflineSendService {
   }
 
   /// Ошибка «ответ не дождались»: письмо могло уже уйти на сервере.
+  /// Сбой подключения или входа SMTP ([me.SmtpNotSentException]) — не
+  /// «неясный» тайм-аут: письмо до сервера не дошло, повтор безопасен.
   static bool _isUncertainTimeout(Object e) =>
-      e is TimeoutException || '$e'.toLowerCase().contains('timed out');
+      e is! me.SmtpNotSentException && (e is TimeoutException || '$e'.toLowerCase().contains('timed out'));
 
   /// Временная ли ошибка (стоит повторять) — 502/503/таймаут/нет сети.
   bool _isTransientError(String error) {

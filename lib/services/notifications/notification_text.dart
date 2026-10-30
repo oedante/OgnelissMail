@@ -6,7 +6,8 @@
 //   строка (свёрнуто)    — «Отправитель — начало текста»;
 //   раскрыто             — отправитель, ниже текст без цитаты и подписи;
 //   шапка уведомления    — 📁 папка (если не «Входящие») и короткая подпись
-//                          ящика вместо полного адреса.
+//                          ящика вместо полного адреса;
+//   сводка «N новых»     — строки «Отправитель — тема» без жирного (1.8.12).
 // Чистые функции — проверяются тестом notification_text_test.dart.
 
 import '../../core/utils/text_safe.dart' show cleanPreviewText;
@@ -74,8 +75,11 @@ class NotificationText {
     return parts.isEmpty ? null : parts.join(' · ');
   }
 
-  /// Строка сводки группы (HTML): тема жирным, отправитель обычным.
-  static String summaryLine(String subject, String sender) => '<b>${esc(subject)}</b>  ${esc(sender)}';
+  /// Строка сводки группы: «Отправитель — тема», без жирного (1.8.12,
+  /// замечание 29.10.2026: «много жирного шрифта, непонятно на что
+  /// смотреть» — тема жирным была в каждой из шести строк сводки, рядом с
+  /// жирными заголовками уведомлений). Жирное в шторке — только заголовки.
+  static String summaryLine(String subject, String sender) => '$sender — $subject';
 
   static String esc(String s) =>
       s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');

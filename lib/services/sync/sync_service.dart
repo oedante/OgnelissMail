@@ -2115,7 +2115,6 @@ class SyncService {
           accountEmail: active.length > 1 ? shortLabel : '',
           count: unread.length,
           lines: rest,
-          htmlLines: true,
           quiet: accMode == AccountNotifyMode.quiet,
         );
       }

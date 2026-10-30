@@ -366,7 +366,7 @@ class NotificationService {
   /// Сводное уведомление группы писем ящика (Android сворачивает в него
   /// отдельные уведомления). [accountEmail] — подпись в шапке (короткая
   /// подпись ящика или «Письма за время фокуса»); [lines] — до 6 строк,
-  /// при [htmlLines] — HTML (тема жирным, NotificationText.summaryLine).
+  /// при [htmlLines] — HTML (сводка писем с 1.8.12 — обычный текст, NotificationText.summaryLine).
   Future<void> showSummaryNotification({
     required String accountId,
     required String accountEmail,

@@ -62,7 +62,7 @@ void main() {
     expect(NotificationText.subText(), isNull);
   });
 
-  test('строка сводки: тема жирным, HTML экранирован', () {
-    expect(NotificationText.summaryLine('A < B', 'Иван & Co'), '<b>A &lt; B</b>  Иван &amp; Co');
+  test('строка сводки: «Отправитель — тема», без жирного и HTML', () {
+    expect(NotificationText.summaryLine('A < B', 'Иван & Co'), 'Иван & Co — A < B');
   });
 }

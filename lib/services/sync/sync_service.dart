@@ -59,6 +59,7 @@ import '../../features/settings/providers/settings_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../mail/own_identity_service.dart' show ownIdentityServiceProvider;
 import '../mail/own_addresses.dart';
+import '../mail/delivery/delivery_report_service.dart';
 import '../mail/thread_linker.dart';
 import '../mail/special_folders.dart';
 import '../security/mail_classification.dart' show MailLabel;
@@ -1540,8 +1541,12 @@ class SyncService {
       if (n > 0) AppLogger.info('ActiveSync ${folder.displayName}: после загрузки заново убрано устаревших писем — $n');
     }
     // Первая загрузка ящика — это не «новая почта»: без уведомлений.
-    if (received.isNotEmpty && !initial) {
-      await _notifyNewMail(account, folder, received, addedTotal, settings);
+    // Отчёты о доставке своих писем (1.9.x) — своим уведомлением.
+    if (received.isNotEmpty) {
+      final toNotify = await _deliveryReports(account, folder, received, initial ? const [] : received, settings);
+      if (toNotify.isNotEmpty && !initial) {
+        await _notifyNewMail(account, folder, toNotify, addedTotal - (received.length - toNotify.length), settings);
+      }
     }
     if (received.isNotEmpty) {
       unawaited(_prefetchAttachments(account, received, settings));
@@ -1912,7 +1917,9 @@ class SyncService {
 
       // Уведомление о новых письмах (кроме удалённых/архива/спама/служебных).
       // Первая загрузка папки — не «новая почта».
-      if (!initialLoad) await _notifyNewMail(account, folder, fresh, added, settings);
+      // Отчёты о доставке своих писем (1.9.x) — своим уведомлением.
+      final toNotify = await _deliveryReports(account, folder, fresh, initialLoad ? const [] : fresh, settings);
+      if (!initialLoad) await _notifyNewMail(account, folder, toNotify, added - (fresh.length - toNotify.length), settings);
       // Остаток на сервере (перемотка курсора или 20 страниц не хватило) —
       // догружаем сразу, а не при следующем синке.
       if (!deltaFailed && (skipDelta || !reachedLast)) {
@@ -1930,6 +1937,51 @@ class SyncService {
   }
 
   /// Message-ID писем, о которых уже уведомили (по аккаунту, последние 500).
+  /// Отчёты о доставке среди новых писем (1.9.x, просьба владельца
+  /// 31.10.2026): статусы адресатов — в delivery_status, о недоставленном
+  /// недавнем своём письме — уведомление «Письмо не доставлено». Возвращает
+  /// [notify] без отчётов, привязанных к своему письму: обычное уведомление о
+  /// письме робота вместо понятного не нужно. Любой сбой — как раньше.
+  Future<List<EmailModel>> _deliveryReports(AccountModel account, FolderModel folder, List<EmailModel> fresh,
+      List<EmailModel> notify, AppSettings settings) async {
+    if (fresh.isEmpty) return notify;
+    if (folder.type == FolderType.sent || folder.type == FolderType.drafts || folder.type == FolderType.outbox) {
+      return notify;
+    }
+    try {
+      final engine = _ref.read(mailEngineServiceProvider);
+      final handled = await DeliveryReportService.process(
+        db: _ref.read(databaseProvider),
+        account: account,
+        fresh: fresh,
+        isNew: {for (final e in notify) e.id},
+        fetchRaw: (e) async {
+          final b = await engine.fetchRawMime(account, folderId: folder.id, emailId: e.id);
+          return b == null ? null : utf8.decode(b, allowMalformed: true);
+        },
+        onFailure: (f) async {
+          if (!settings.notificationsEnabled) return;
+          final first = f.failed.first;
+          await _ref.read(notificationServiceProvider).showDeliveryFailureNotification(
+                accountId: account.id,
+                emailId: f.original.id,
+                folderId: f.original.folderId,
+                subject: f.original.subject,
+                recipient: first.recipient,
+                reasonKey: first.reason.l10nKey,
+                status: first.status,
+                more: f.failed.length - 1,
+              );
+        },
+      );
+      if (handled.isEmpty) return notify;
+      return [for (final e in notify) if (!handled.contains(e.id)) e];
+    } catch (e) {
+      AppLogger.warning('Отчёты о доставке: $e');
+      return notify;
+    }
+  }
+
   static final Map<String, List<String>> _notifiedIds = {};
 
   static bool _firstNotification(String accountId, EmailModel e) {
@@ -2325,7 +2377,9 @@ class SyncService {
     // загрузка уведомлений не дают.
     final newest = known?.maxUid ?? 1 << 62;
     final notify = fresh.where((e) => uidOf(e.id) > newest).toList();
-    if (notify.isNotEmpty) await _notifyNewMail(account, folder, notify, notify.length, settings);
+    // Отчёты о доставке своих писем (1.9.x) — своим уведомлением.
+    final toNotify = await _deliveryReports(account, folder, fresh, notify, settings);
+    if (toNotify.isNotEmpty) await _notifyNewMail(account, folder, toNotify, toNotify.length, settings);
     if (fresh.isNotEmpty) await _maybeAutoReply(account, folder, notify);
     // Тексты новых писем «Входящих» — заранее: письмо открывается сразу,
     // без секунды ожидания сервера.

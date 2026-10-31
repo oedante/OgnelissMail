@@ -343,6 +343,55 @@ class NotificationService {
     );
   }
 
+  /// «Письмо не доставлено» (1.9.x, отчёты о доставке, просьба владельца
+  /// 31.10.2026): вместо обычного уведомления о письме робота — кому не
+  /// дошло и почему. Нажатие открывает само отправленное письмо: там
+  /// «Отправить снова» и «Изменить адрес». Тихие часы действуют.
+  Future<void> showDeliveryFailureNotification({
+    required String accountId,
+    required String emailId,
+    required String folderId,
+    required String subject,
+    required String recipient,
+    required String reasonKey,
+    String? status,
+    int more = 0,
+  }) async {
+    if (_skipOnThisPlatform()) return;
+    if (!_initialized) await initialize();
+    if (_prefs != null && QuietHours.isQuietNow(_prefs)) {
+      AppLogger.info('Уведомление «письмо не доставлено» не показано: тихие часы');
+      return;
+    }
+    final title = _t('dsnNotifTitle');
+    final line = '$recipient — ${_t(reasonKey)}${status == null ? '' : ' ($status)'}${more > 0 ? ' · +$more' : ''}';
+    final subj = NotificationText.subject(subject, noSubject: _t('noSubject'));
+    final darwin = DarwinNotificationDetails(
+        presentAlert: true, presentSound: _soundOn, subtitle: subj, threadIdentifier: 'email_$accountId');
+    await _plugin.show(
+      notificationIdForEmail(accountId, emailId),
+      title,
+      line,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'email_default_${_soundOn ? 's' : 'n'}${_vibrationOn ? 'v' : 'n'}',
+          _t('ntfChMail'),
+          importance: Importance.high,
+          priority: Priority.high,
+          category: AndroidNotificationCategory.email,
+          visibility: NotificationVisibility.private,
+          groupKey: 'email_$accountId',
+          playSound: _soundOn,
+          enableVibration: _vibrationOn,
+          styleInformation: BigTextStyleInformation(NotificationText.big(subj, line), contentTitle: title),
+        ),
+        iOS: darwin,
+        macOS: darwin,
+      ),
+      payload: jsonEncode({'type': 'email', 'accountId': accountId, 'emailId': emailId, 'folderId': folderId}),
+    );
+  }
+
   /// Пробное уведомление (1.6.45, «Проверка почты»): тем же каналом и с теми
   /// же звуком и вибрацией, что уведомление о письме. Не пришло — значит,
   /// уведомления о почте выключены в телефоне (разрешение, категория

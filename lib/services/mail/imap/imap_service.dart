@@ -15,6 +15,7 @@ import 'dart:io';
 import 'dart:convert';
 import '../unsubscribe_service.dart' show encodeListUnsubscribe;
 import '../../security/mail_classification.dart' show MailLabel;
+import '../delivery/delivery_report.dart' show DeliveryReportHints;
 import '../../security/smime_mime.dart' show SmimeMime;
 import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
@@ -1406,6 +1407,14 @@ class ImapService {
           preview = previewKeepingLines(text);
         }
       } catch (_) {}
+
+      // Отчёт о доставке (1.9.x): корень — multipart/report; report-type=
+      // delivery-status. Подсказка синхронизации: проверить письмо и от
+      // необычного отправителя (DeliveryReportService).
+      final rootType = msg.body?.contentType;
+      if (DeliveryReportHints.isReportType(rootType?.mediaType.text, rootType?.parameters['report-type'])) {
+        DeliveryReportHints.add(accountId, '$folderId:$uid');
+      }
 
       return EmailModel(
         // UID уникален только внутри папки → делаем глобально-уникальный id

@@ -129,6 +129,12 @@
     <string name="connecting">Pripája sa...</string>
     <string name="createEvent">Vytvoriť udalosť</string>
     <string name="createMeeting">Vytvoriť stretnutie</string>
+    <string name="dateShowInCalendar">Zobraziť v kalendári</string>
+    <string name="mailDates">Dátumy v texte správy</string>
+    <string name="mailDatesDesc">Ťuknutím na dátum vytvoríte stretnutie, pripomienku alebo otvoríte deň v kalendári</string>
+    <string name="quickEventTitle">Udalosť jednou vetou</string>
+    <string name="quickEventHint">Napríklad: Hovor s Annou v piatok o 15 na hodinu</string>
+    <string name="quickEventMore">Podrobnosti</string>
     <string name="createTask">Vytvoriť úlohu</string>
     <string name="date">Dátum</string>
     <string name="dayPlan">Plán dňa</string>

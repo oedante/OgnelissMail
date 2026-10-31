@@ -1,11 +1,12 @@
 // lib/features/mail/widgets/linkified_text.dart
 // Текст письма без HTML (text/plain) с нажимаемыми ссылками и адресами
-// почты (1.5.10). Раньше — SelectableText без ссылок.
+// почты (1.5.10). Раньше — SelectableText без ссылок. Даты в тексте —
+// тоже нажимаемые (1.9.x, [dates], ссылки `ogdate:` — DateLinks).
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/utils/linkify.dart';
+import '../../../core/utils/date_links.dart';
 
 class LinkifiedText extends StatefulWidget {
   final String text;
@@ -18,7 +19,10 @@ class LinkifiedText extends StatefulWidget {
   /// письма, [MailHtmlView.textScaleOf]).
   final TextScaler? textScaler;
 
-  const LinkifiedText(this.text, {super.key, this.style, required this.onLink, this.textScaler});
+  /// Даты в тексте — нажимаемые, от даты письма; null — не искать.
+  final DateContext? dates;
+
+  const LinkifiedText(this.text, {super.key, this.style, required this.onLink, this.textScaler, this.dates});
 
   @override
   State<LinkifiedText> createState() => _LinkifiedTextState();
@@ -29,6 +33,7 @@ class _LinkifiedTextState extends State<LinkifiedText> {
   List<InlineSpan>? _spans;
   String? _for;
   Color? _link;
+  String? _datesFor;
 
   void _dropTaps() {
     for (final t in _taps) {
@@ -43,9 +48,13 @@ class _LinkifiedTextState extends State<LinkifiedText> {
     super.dispose();
   }
 
+  /// Даты ищутся на главном потоке — в очень длинном тексте без них
+  /// (журналы, выгрузки), чтобы открытие не подтормаживало.
+  static const _datesMaxChars = 30000;
+
   List<InlineSpan> _build(String text, Color link) {
     _dropTaps();
-    final found = Linkify.find(text);
+    final found = DateLinks.find(text, text.length <= _datesMaxChars ? widget.dates : null);
     if (found.isEmpty) return [TextSpan(text: text)];
     final out = <InlineSpan>[];
     var at = 0;
@@ -54,11 +63,16 @@ class _LinkifiedTextState extends State<LinkifiedText> {
       final shown = text.substring(m.start, m.end);
       final tap = TapGestureRecognizer()..onTap = () => widget.onLink(m.href, shown);
       _taps.add(tap);
+      final date = DateLinks.isDateLink(m.href);
       out.add(TextSpan(
         text: shown,
         recognizer: tap,
         mouseCursor: SystemMouseCursors.click,
-        style: TextStyle(color: link, decoration: TextDecoration.underline),
+        // Дата — цвета текста, пунктиром: нажимается, но не похожа на ссылку.
+        style: TextStyle(
+            color: date ? null : link,
+            decoration: TextDecoration.underline,
+            decorationStyle: date ? TextDecorationStyle.dotted : null),
       ));
       at = m.end;
     }
@@ -69,10 +83,12 @@ class _LinkifiedTextState extends State<LinkifiedText> {
   @override
   Widget build(BuildContext context) {
     final link = Theme.of(context).colorScheme.primary;
-    if (_spans == null || _for != widget.text || _link != link) {
+    final datesKey = widget.dates?.key;
+    if (_spans == null || _for != widget.text || _link != link || _datesFor != datesKey) {
       _spans = _build(widget.text, link);
       _for = widget.text;
       _link = link;
+      _datesFor = datesKey;
     }
     return SelectableText.rich(TextSpan(style: widget.style, children: _spans), textScaler: widget.textScaler);
   }

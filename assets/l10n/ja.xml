@@ -129,6 +129,12 @@
     <string name="connecting">接続中...</string>
     <string name="createEvent">予定を作成</string>
     <string name="createMeeting">会議を作成</string>
+    <string name="dateShowInCalendar">カレンダーで表示</string>
+    <string name="mailDates">メール本文の日付</string>
+    <string name="mailDatesDesc">日付をタップして会議やリマインダーを作成、またはカレンダーでその日を表示</string>
+    <string name="quickEventTitle">一文で予定を作成</string>
+    <string name="quickEventHint">例: 金曜15時からアンナと1時間の通話</string>
+    <string name="quickEventMore">詳細</string>
     <string name="createTask">タスクを作成</string>
     <string name="date">日付</string>
     <string name="dayPlan">今日の予定</string>

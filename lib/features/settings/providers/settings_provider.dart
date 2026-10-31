@@ -70,6 +70,9 @@ class AppSettings {
   /// «На контроле»: пункты в письме и списке, проверка ответов, раздел в
   /// «Моём дне». Выключено — всё скрыто, отметки сохраняются.
   final bool mailControl;
+  /// Даты в тексте письма — нажимаемые (1.9.x, просьба владельца
+  /// 31.10.2026): встреча, напоминание, календарь. Включено по умолчанию.
+  final bool mailDates;
   /// Вкладка «Мой день» (в «Ещё»).
   final bool myDay;
   /// Утренняя сводка — одно уведомление в [morningDigestMinutes] (минуты от
@@ -181,6 +184,7 @@ class AppSettings {
     this.allowRotation = false,
     this.warmPage = false,
     this.mailControl = true,
+    this.mailDates = true,
     this.myDay = true,
     this.morningDigest = false,
     this.morningDigestMinutes = 8 * 60,
@@ -260,6 +264,7 @@ class AppSettings {
     bool? allowRotation,
     bool? warmPage,
     bool? mailControl,
+    bool? mailDates,
     bool? myDay,
     bool? morningDigest,
     int? morningDigestMinutes,
@@ -315,6 +320,7 @@ class AppSettings {
       allowRotation: allowRotation ?? this.allowRotation,
       warmPage: warmPage ?? this.warmPage,
       mailControl: mailControl ?? this.mailControl,
+      mailDates: mailDates ?? this.mailDates,
       myDay: myDay ?? this.myDay,
       morningDigest: morningDigest ?? this.morningDigest,
       morningDigestMinutes: morningDigestMinutes ?? this.morningDigestMinutes,
@@ -375,6 +381,7 @@ class _K {
   static const allowRotation = 's_allow_rotation';
   static const warmPage = 's_warm_page';
   static const mailControl = 's_mail_control';
+  static const mailDates = 's_mail_dates';
   static const myDay = 's_my_day';
   // Те же ключи читает ReminderSchedulerService (фоновая синхронизация).
   static const morningDigest = 's_morning_digest';
@@ -465,6 +472,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       allowRotation: _p.getBool(_K.allowRotation) ?? false,
       warmPage: _p.getBool(_K.warmPage) ?? false,
       mailControl: _p.getBool(_K.mailControl) ?? true,
+      mailDates: _p.getBool(_K.mailDates) ?? true,
       myDay: _p.getBool(_K.myDay) ?? true,
       morningDigest: _p.getBool(_K.morningDigest) ?? false,
       morningDigestMinutes: _p.getInt(_K.morningDigestMinutes) ?? 8 * 60,
@@ -537,6 +545,11 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   Future<void> setMailControl(bool v) async {
     await _p.setBool(_K.mailControl, v);
     state = state.copyWith(mailControl: v);
+  }
+
+  Future<void> setMailDates(bool v) async {
+    await _p.setBool(_K.mailDates, v);
+    state = state.copyWith(mailDates: v);
   }
 
   Future<void> setMyDay(bool v) async {
@@ -839,7 +852,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     final keys = [
       // AMOLED, «Работать в фоне» и «Вложения только по Wi-Fi» раньше
       // сбросом не затрагивались.
-      _K.amoled, _K.reading, _K.dynamicColor, _K.allowRotation, _K.warmPage, _K.mailControl, _K.myDay, _K.morningDigest, _K.morningDigestMinutes, _K.backgroundKeepAlive, _K.attachmentsWifiOnly,
+      _K.amoled, _K.reading, _K.dynamicColor, _K.allowRotation, _K.warmPage, _K.mailControl, _K.mailDates, _K.myDay, _K.morningDigest, _K.morningDigestMinutes, _K.backgroundKeepAlive, _K.attachmentsWifiOnly,
       _K.themeMode, _K.locale, _K.fontScale, _K.uiScale, _K.uiFont, _K.highContrast,
       _K.themePreset, _K.accentColor, _K.listTint, _K.corners, _K.listDensity, _K.openAnimation,
       _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode,

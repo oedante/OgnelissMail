@@ -103,6 +103,8 @@ import '../../../services/mail/eml_builder.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import '../../../core/security/link_opener.dart';
+import '../../../core/utils/date_links.dart';
+import '../widgets/date_link_sheet.dart';
 import 'attachment_preview_screen.dart';
 import '../../../services/mail/attachment_cache_service.dart';
 import '../../../services/mail/tnef/tnef_decoder.dart';
@@ -367,7 +369,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           final rawHtml = header.bodyHtml ?? '';
           final o = cache.optionsFor(header);
           final ready = rawHtml.isEmpty ||
-              cache.peekPrepared(rawHtml, options: o.options, allowImages: o.allowImages) != null;
+              cache.peekPrepared(rawHtml, options: o.options, allowImages: o.allowImages, dates: cache.datesFor(header)) !=
+                  null;
           if (!ready) {
             safeSetState(() {
               _email = header;
@@ -524,7 +527,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         final o = cache.optionsFor(email);
         final ready = hasBody &&
             (email.bodyHtml ?? '').isNotEmpty &&
-            cache.peekPrepared(email.bodyHtml!, options: o.options, allowImages: o.allowImages) != null;
+            cache.peekPrepared(email.bodyHtml!,
+                    options: o.options, allowImages: o.allowImages, dates: cache.datesFor(email)) !=
+                null;
         if (!ready) {
           if (!mounted) return;
           final header = email;
@@ -718,7 +723,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // Очистка (стили письма для WebView сохраняются очищенными), цитата и
     // документ WebView — одним заходом в изолят; подготовленное при касании
     // строки списка или при прошлом открытии — сразу.
-    final p = await cache.prepare(e.bodyHtml!, options: opts, allowImages: allowImages);
+    final p = await cache.prepare(e.bodyHtml!, options: opts, allowImages: allowImages, dates: cache.datesFor(e));
     _prepared = p;
     final r = p.secured;
     if (mounted) {
@@ -1003,11 +1008,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // Письмо целиком («Показать переписку») — модель строится в изоляте.
         if (_nativeBuilding.add(mode)) {
           final gen = _docGen;
-          unawaited(MailBodyProcessor.heavy(
-                  full ? html : split.reply,
-                  mailWebViewSupported
-                      ? (_imagesAllowed ? buildNativeMailRemote : buildNativeMail)
-                      : (_imagesAllowed ? buildNativeMailDesktopRemote : buildNativeMailDesktop))
+          unawaited(MailBodyProcessor.heavy(full ? html : split.reply, _nativeBuilder(_imagesAllowed, _datesFor(email)))
               .then(
             (n) {
               if (gen == _docGen) safeSetState(() => _natives[mode] = n);
@@ -1054,12 +1055,36 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             OpenTrace.done();
             _onBodyShown();
           },
-          onLink: (url, text) => LinkOpener.open(context, url, linkText: text, accountId: widget.accountId),
+          onLink: (url, text) => _onBodyLink(email, url, text),
         ),
         if (n.clipped) MailClippedBar(onShowWhole: _onShowWhole),
         if (split.hasQuote) _quoteToggle(theme, l10n),
       ],
     );
+  }
+
+  // ── Даты в тексте письма (1.9.x, просьба владельца 31.10.2026) ──
+  // Даты нажимаются, как у iOS (DateLinks, «Настройки → Почта → Даты в
+  // тексте письма»): «завтра» — от даты письма. Нажатие — карточка «Создать
+  // встречу / Напоминание / Скопировать / Показать в календаре».
+  DateContext? _datesFor(EmailModel email) => ref.read(mailOpenCacheProvider).datesFor(email);
+
+  /// Разбор простого письма для изолята. Статический: замыкание внутри
+  /// метода экрана захватило бы и сам экран, а его в изолят не передать.
+  static NativeMail? Function(String) _nativeBuilder(bool remote, DateContext? dates) {
+    final build = mailWebViewSupported
+        ? (remote ? buildNativeMailRemote : buildNativeMail)
+        : (remote ? buildNativeMailDesktopRemote : buildNativeMailDesktop);
+    return (h) => build(h, dates: dates);
+  }
+
+  void _onBodyLink(EmailModel email, String url, String? text) {
+    if (DateLinks.isDateLink(url)) {
+      final t = DateLinks.parse(url);
+      if (t != null) unawaited(showDateLinkSheet(context, t, text: text, email: email));
+      return;
+    }
+    LinkOpener.open(context, url, linkText: text, accountId: widget.accountId);
   }
 
   // ── Очень длинное письмо (1.9.x, просьба владельца 31.10.2026) ──
@@ -1091,7 +1116,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       short ?? _plainText,
       style: theme.textTheme.bodyMedium?.copyWith(fontSize: 15 * MailHtmlView.textScaleOf(context), height: 1.4),
       textScaler: TextScaler.noScaling,
-      onLink: (url, text) => LinkOpener.open(context, url, linkText: text, accountId: widget.accountId),
+      dates: _datesFor(email),
+      onLink: (url, text) => _onBodyLink(email, url, text),
     );
     if (short == null) return text;
     return Column(
@@ -1293,6 +1319,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             allowRemoteImages: _imagesAllowed,
             keepCid: true,
             clip: docKey == baseKey,
+            dates: _datesFor(email),
           ).catchError((Object e) {
             AppLogger.warning('Подготовка письма к показу: $e');
             return const MailHtmlDocument('<!DOCTYPE html><html><body></body></html>', {});
@@ -1331,8 +1358,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           dark: dark && !original,
           onShown: _onBodyShown,
           inlineRaw: byRequest ? _inlineRaw : null,
-          onLink: (url, text) =>
-              LinkOpener.open(context, url, linkText: text, accountId: widget.accountId),
+          onLink: (url, text) => _onBodyLink(email, url, text),
         ),
         if (doc.clipped) MailClippedBar(onShowWhole: _onShowWhole, busy: _showWhole),
         if (split.hasQuote) _quoteToggle(theme, l10n),

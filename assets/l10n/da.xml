@@ -129,6 +129,12 @@
     <string name="connecting">Opretter forbindelse...</string>
     <string name="createEvent">Opret begivenhed</string>
     <string name="createMeeting">Opret møde</string>
+    <string name="dateShowInCalendar">Vis i kalenderen</string>
+    <string name="mailDates">Datoer i beskedens tekst</string>
+    <string name="mailDatesDesc">Tryk på en dato for at oprette et møde, en påmindelse eller åbne dagen i kalenderen</string>
+    <string name="quickEventTitle">Begivenhed i én sætning</string>
+    <string name="quickEventHint">For eksempel: Opkald med Anna fredag kl. 15 i en time</string>
+    <string name="quickEventMore">Flere detaljer</string>
     <string name="createTask">Opret opgave</string>
     <string name="date">Dato</string>
     <string name="dayPlan">Dagsplan</string>

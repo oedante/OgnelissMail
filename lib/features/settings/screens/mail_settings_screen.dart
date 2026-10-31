@@ -225,6 +225,15 @@ class MailSettingsScreen extends ConsumerWidget {
                 },
               ),
             ),
+            // Даты в тексте письма — нажимаемые (1.9.x, просьба владельца
+            // 31.10.2026): встреча, напоминание, календарь.
+            SettingsSwitchItem(
+              icon: AppIcons.event,
+              title: l10n.tr('mailDates'),
+              subtitle: l10n.tr('mailDatesDesc'),
+              value: settings.mailDates,
+              onChanged: (v) => notifier.setMailDates(v),
+            ),
           ]),
           // Бывшие «Возможности» (1.6.1): работа с письмами и их открытие.
           const MailWorkSection(),

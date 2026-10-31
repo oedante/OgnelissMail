@@ -137,6 +137,42 @@ void main() {
     await db.close();
   });
 
+  test('Обновление 26 → 27: таблица отчётов о доставке, письма сохраняются', () async {
+    final file = File('${dir.path}/v26.db');
+    var db = AppDatabase.forTesting(NativeDatabase(file));
+    await _addAccount(db, 'a1');
+    await db.into(db.emails).insert(EmailsCompanion.insert(
+          id: 'Sent:5',
+          accountId: 'a1',
+          folderId: 'Sent',
+          fromEmail: 'a1@example.com',
+          toRecipients: '[{"email":"nobody@example.net"}]',
+          subject: 'Отчёт',
+          receivedAt: DateTime(2026, 10, 31),
+          internetMessageId: const Value('<Orig-1@example.com>'),
+        ));
+    await db.customStatement('DROP TABLE delivery_status');
+    await db.customStatement('PRAGMA user_version = 26');
+    await db.close();
+
+    db = AppDatabase.forTesting(NativeDatabase(file));
+    expect(await _columns(db, 'delivery_status'),
+        containsAll(['account_id', 'message_id', 'recipient', 'action', 'status', 'diagnostic', 'reported_at']));
+    expect((await db.emailByMessageId('a1', 'orig-1@example.com'))?.id, 'Sent:5');
+    // Окончательный ответ не заменяется более поздней задержкой.
+    expect(await db.saveDeliveryStatuses('a1', 'orig-1@example.com', [
+      (recipient: 'nobody@example.net', action: 'failed', status: '5.1.1', diagnostic: '550 User unknown'),
+    ], reportEmailId: 'INBOX:9'), ['nobody@example.net']);
+    expect(await db.saveDeliveryStatuses('a1', 'orig-1@example.com', [
+      (recipient: 'nobody@example.net', action: 'delayed', status: '4.4.1', diagnostic: null),
+    ]), isEmpty);
+    final rows = await db.watchDeliveryStatuses('a1', 'orig-1@example.com').first;
+    expect(rows.single.action, 'failed');
+    expect(await db.watchUndelivered().first, {'a1|orig-1@example.com'});
+    expect(await db.deliveryReportTarget('a1', 'INBOX:9'), 'orig-1@example.com');
+    await db.close();
+  });
+
   test('«Позже»: порядок — вернувшиеся, по сроку, без даты в конце', () async {
     final db = AppDatabase.forTesting(NativeDatabase(File('${dir.path}/later.db')));
     await _addAccount(db, 'a1');

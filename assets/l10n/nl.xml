@@ -1884,6 +1884,23 @@
         <item quantity="other">{n} jaar</item>
     </plurals>
     <string name="readReceiptRequested">{name} vraagt om een leesbevestiging</string>
+    <string name="dsnFailed">Niet afgeleverd: {addr}</string>
+    <string name="dsnDelayed">Vertraagd: {addr}</string>
+    <string name="dsnDelivered">Afgeleverd bij de server van de ontvanger: {addr}</string>
+    <string name="dsnDeliveredNote">Dit is geen leesbevestiging: de server van de ontvanger heeft het bericht aangenomen</string>
+    <string name="dsnReasonNoSuchUser">het adres bestaat niet</string>
+    <string name="dsnReasonDomain">domein niet gevonden — controleer het deel na @</string>
+    <string name="dsnReasonFull">de mailbox van de ontvanger is vol</string>
+    <string name="dsnReasonBlocked">de server van de ontvanger heeft het als spam geweigerd of geblokkeerd</string>
+    <string name="dsnReasonTooLarge">het bericht is te groot voor de server van de ontvanger</string>
+    <string name="dsnReasonDelayed">de server van de ontvanger reageert nog niet; aflevering wordt opnieuw geprobeerd</string>
+    <string name="dsnReasonOther">de server van de ontvanger heeft het bericht niet aangenomen</string>
+    <string name="dsnResend">Opnieuw verzenden</string>
+    <string name="dsnChangeAddress">Adres wijzigen</string>
+    <string name="dsnReportChip">Afleveringsrapport</string>
+    <string name="dsnNotifTitle">Bericht niet afgeleverd</string>
+    <string name="dsnRequest">Afleveringsbevestiging vragen</string>
+    <string name="dsnRequestHint">De server van de ontvanger meldt dat het bericht is aangenomen. Dit is geen leesbevestiging</string>
     <string name="recallAttemptDesc">Er wordt geprobeerd het bericht bij de ontvangers terug te halen. Of dat lukt, hangt af van hun mailserver en of het bericht al is gelezen.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Gesprek ({n} bericht)</item>

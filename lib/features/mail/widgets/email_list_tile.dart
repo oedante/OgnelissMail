@@ -8,6 +8,7 @@
 // - Иконки: приоритет, вложения, флаг, replied, forwarded
 
 import '../../../core/utils/text_safe.dart';
+import '../providers/delivery_status_provider.dart';
 import '../providers/conversation_mute.dart';
 import '../../../services/notifications/account_notify_mode.dart' show ConversationNotify;
 import 'package:flutter/material.dart';
@@ -205,6 +206,9 @@ class EmailListTile extends ConsumerWidget {
       return false;
     }));
     final isOwnSent = !email.isDraft && isOwnFrom && email.to.isNotEmpty;
+    // Не доставлено хотя бы одному адресату — красный значок (1.9.x, отчёты
+    // о доставке, 31.10.2026).
+    final undelivered = isOwnSent && ref.watch(undeliveredProvider.select((v) => isUndelivered(v.value, email)));
     final ownAddress = email.from.email.toLowerCase();
 
     final accountMark = showAccountMark
@@ -288,6 +292,11 @@ class EmailListTile extends ConsumerWidget {
     // Значки строки: закреплено, без уведомлений, вложения, флаг, ответ,
     // пересылка — в строке превью или (компактная плотность, 1.9.x) темы.
     final marks = <Widget>[
+      if (undelivered)
+        Padding(padding: const EdgeInsets.only(left: Space.xs),
+            child: Tooltip(
+                message: AppLocalizations.of(context).tr('dsnNotifTitle'),
+                child: const Icon(AppIcons.error, size: 15, fill: 1, color: AppColors.errorRed))),
       if (pinned)
         Padding(padding: const EdgeInsets.only(left: Space.xs),
             child: Icon(AppIcons.push_pin, size: 15, fill: 1, color: theme.colorScheme.primary.withValues(alpha: 0.75))),

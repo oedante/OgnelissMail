@@ -1898,6 +1898,23 @@
         <item quantity="other">{n} лет</item>
     </plurals>
     <string name="readReceiptRequested">{name} запрашивает уведомление о прочтении</string>
+    <string name="dsnFailed">Не доставлено: {addr}</string>
+    <string name="dsnDelayed">Задерживается: {addr}</string>
+    <string name="dsnDelivered">Доставлено на сервер получателя: {addr}</string>
+    <string name="dsnDeliveredNote">Это не уведомление о прочтении: сервер получателя принял письмо</string>
+    <string name="dsnReasonNoSuchUser">адрес не существует</string>
+    <string name="dsnReasonDomain">домен не найден — проверьте адрес после @</string>
+    <string name="dsnReasonFull">ящик получателя переполнен</string>
+    <string name="dsnReasonBlocked">сервер получателя отклонил письмо как спам или заблокировал</string>
+    <string name="dsnReasonTooLarge">письмо слишком большое для сервера получателя</string>
+    <string name="dsnReasonDelayed">сервер получателя пока не отвечает, отправка будет повторяться</string>
+    <string name="dsnReasonOther">сервер получателя не принял письмо</string>
+    <string name="dsnResend">Отправить снова</string>
+    <string name="dsnChangeAddress">Изменить адрес</string>
+    <string name="dsnReportChip">Отчёт о доставке</string>
+    <string name="dsnNotifTitle">Письмо не доставлено</string>
+    <string name="dsnRequest">Запросить подтверждение доставки</string>
+    <string name="dsnRequestHint">Сервер получателя сообщит, что принял письмо. Это не уведомление о прочтении</string>
     <string name="recallAttemptDesc">Будет предпринята попытка отозвать письмо у получателей. Успех зависит от их почтового сервера и того, прочитано ли письмо.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Беседа ({n} письмо)</item>

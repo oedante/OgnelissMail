@@ -87,6 +87,7 @@ import '../widgets/mail_html_view.dart';
 import '../../../widgets/common/readable_width.dart';
 import '../providers/conversation_mute.dart';
 import '../widgets/read_receipt_banner.dart';
+import '../widgets/delivery_status_banner.dart';
 import '../../../data/database/app_database.dart';
 import '../../../data/providers/database_provider.dart';
 import '../../archive/archive_sheets.dart' show ensureArchiveReady;
@@ -1675,6 +1676,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 },
                 onDismiss: () => setState(() => _readReceiptHandled = true),
               ),
+            // Доставка своего письма по отчётам сервера; на письме-отчёте —
+            // чип «Отчёт о доставке» (1.9.x, 31.10.2026).
+            DeliveryStatusBanner(email: email),
 
 
             // ── Внешние изображения скрыты ──

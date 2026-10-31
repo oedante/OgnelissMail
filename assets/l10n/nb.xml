@@ -1884,6 +1884,23 @@
         <item quantity="other">{n} år</item>
     </plurals>
     <string name="readReceiptRequested">{name} ber om lesebekreftelse</string>
+    <string name="dsnFailed">Ikke levert: {addr}</string>
+    <string name="dsnDelayed">Forsinket: {addr}</string>
+    <string name="dsnDelivered">Levert til mottakerens server: {addr}</string>
+    <string name="dsnDeliveredNote">Dette er ikke en lesebekreftelse: mottakerens server har tatt imot meldingen</string>
+    <string name="dsnReasonNoSuchUser">adressen finnes ikke</string>
+    <string name="dsnReasonDomain">domenet ble ikke funnet – sjekk delen etter @</string>
+    <string name="dsnReasonFull">mottakerens postkasse er full</string>
+    <string name="dsnReasonBlocked">mottakerens server avviste den som spam eller blokkerte den</string>
+    <string name="dsnReasonTooLarge">meldingen er for stor for mottakerens server</string>
+    <string name="dsnReasonDelayed">mottakerens server svarer ikke ennå; leveringen blir forsøkt på nytt</string>
+    <string name="dsnReasonOther">mottakerens server tok ikke imot meldingen</string>
+    <string name="dsnResend">Send på nytt</string>
+    <string name="dsnChangeAddress">Endre adresse</string>
+    <string name="dsnReportChip">Leveringsrapport</string>
+    <string name="dsnNotifTitle">Meldingen ble ikke levert</string>
+    <string name="dsnRequest">Be om leveringsbekreftelse</string>
+    <string name="dsnRequestHint">Mottakerens server melder at den har tatt imot meldingen. Dette er ikke en lesebekreftelse</string>
     <string name="recallAttemptDesc">Det blir gjort et forsøk på å tilbakekalle meldingen fra mottakerne. Resultatet avhenger av e-postserveren deres og om meldingen allerede er lest.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Samtale ({n} melding)</item>

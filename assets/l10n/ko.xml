@@ -1877,6 +1877,23 @@
         <item quantity="other">{n}년</item>
     </plurals>
     <string name="readReceiptRequested">{name}님이 수신 확인을 요청합니다</string>
+    <string name="dsnFailed">전달되지 않음: {addr}</string>
+    <string name="dsnDelayed">지연됨: {addr}</string>
+    <string name="dsnDelivered">받는 사람 서버에 전달됨: {addr}</string>
+    <string name="dsnDeliveredNote">읽음 확인이 아닙니다. 받는 사람 서버가 메시지를 받았습니다</string>
+    <string name="dsnReasonNoSuchUser">주소가 존재하지 않습니다</string>
+    <string name="dsnReasonDomain">도메인을 찾을 수 없습니다 — @ 뒤 부분을 확인하세요</string>
+    <string name="dsnReasonFull">받는 사람의 사서함이 가득 찼습니다</string>
+    <string name="dsnReasonBlocked">받는 사람 서버가 스팸으로 거부하거나 차단했습니다</string>
+    <string name="dsnReasonTooLarge">메시지가 받는 사람 서버에 비해 너무 큽니다</string>
+    <string name="dsnReasonDelayed">받는 사람 서버가 아직 응답하지 않습니다. 전달을 다시 시도합니다</string>
+    <string name="dsnReasonOther">받는 사람 서버가 메시지를 받지 않았습니다</string>
+    <string name="dsnResend">다시 보내기</string>
+    <string name="dsnChangeAddress">주소 변경</string>
+    <string name="dsnReportChip">전달 보고서</string>
+    <string name="dsnNotifTitle">메시지가 전달되지 않음</string>
+    <string name="dsnRequest">전달 확인 요청</string>
+    <string name="dsnRequestHint">받는 사람 서버가 메시지를 받았다고 알려 줍니다. 읽음 확인이 아닙니다</string>
     <string name="recallAttemptDesc">받는 사람에게서 메일 회수를 시도합니다. 성공 여부는 상대방의 메일 서버와 메일을 이미 읽었는지에 따라 달라집니다.</string>
     <plurals name="threadTitleN">
         <item quantity="other">대화(메일 {n}개)</item>

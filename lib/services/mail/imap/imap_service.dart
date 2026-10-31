@@ -15,11 +15,12 @@ import 'dart:io';
 import 'dart:convert';
 import '../unsubscribe_service.dart' show encodeListUnsubscribe;
 import '../../security/mail_classification.dart' show MailLabel;
+import '../delivery/delivery_report.dart' show DeliveryReportHints;
 import '../../security/smime_mime.dart' show SmimeMime;
 import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
 import 'package:mail_engine/mail_engine.dart'
-    show ImapNotifyChange, ImapNotifyRejected, NotifyImapClient, SmtpNotSentException, TolerantSmtpClient;
+    show DsnRequest, ImapNotifyChange, ImapNotifyRejected, NotifyImapClient, SmtpNotSentException, TolerantSmtpClient;
 import 'package:drift/drift.dart' show Value, BooleanExpressionOperators;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -1407,6 +1408,14 @@ class ImapService {
         }
       } catch (_) {}
 
+      // Отчёт о доставке (1.9.x): корень — multipart/report; report-type=
+      // delivery-status. Подсказка синхронизации: проверить письмо и от
+      // необычного отправителя (DeliveryReportService).
+      final rootType = msg.body?.contentType;
+      if (DeliveryReportHints.isReportType(rootType?.mediaType.text, rootType?.parameters['report-type'])) {
+        DeliveryReportHints.add(accountId, '$folderId:$uid');
+      }
+
       return EmailModel(
         // UID уникален только внутри папки → делаем глобально-уникальный id
         // вида "folderId:uid", иначе письма из разных папок с одинаковым UID
@@ -1951,6 +1960,9 @@ class ImapService {
     Future<Uint8List> Function(Uint8List mime)? mimeTransform,
     /// Адрес отправки (псевдоним, 1.6.27); null — адрес ящика.
     EmailAddress? from,
+    /// «Запросить подтверждение доставки» (1.9.x): DSN NOTIFY=SUCCESS — сервер
+    /// получателя сообщит и об успешной доставке.
+    bool requestDeliveryReport = false,
   }) async {
     final message = buildOutgoingMessage(
       fromName: from == null ? account.displayName : (from.displayName ?? ''),
@@ -1984,17 +1996,48 @@ class ImapService {
       // отправлено» без повтора).
       throw SmtpNotSentException(e);
     }
-    try {
+    Future<void> deliver(SmtpClient c) async {
       if (protectedText != null) {
-        await client.sendMessageText(
+        await c.sendMessageText(
           protectedText,
           MailAddress(from == null ? account.displayName : (from.displayName ?? ''), from?.email ?? account.email),
           [for (final a in [...to, ...cc, ...bcc]) MailAddress(a.displayName, a.email)],
-          use8BitEncoding: client.serverInfo.supports8BitMime,
+          use8BitEncoding: c.serverInfo.supports8BitMime,
         );
       } else {
-        await client.sendMessage(message,
-            use8BitEncoding: client.serverInfo.supports8BitMime);
+        await c.sendMessage(message,
+            use8BitEncoding: c.serverInfo.supports8BitMime);
+      }
+    }
+
+    // DSN (RFC 3461, 1.9.x, просьба владельца 31.10.2026): если сервер его
+    // объявил — отчёты о недоставке и задержке приходят машинными, с ENVID =
+    // Message-ID письма (по нему отчёт находит своё письмо); по просьбе
+    // пользователя — и об успешной доставке.
+    final envId = (message.getHeaderValue('message-id') ?? '').trim().replaceAll(RegExp(r'^<|>$'), '');
+    if (client is TolerantSmtpClient) {
+      client.dsn = DsnRequest(envelopeId: envId.isEmpty ? null : envId, notifySuccess: requestDeliveryReport);
+    }
+    try {
+      try {
+        await deliver(client);
+      } on SmtpException catch (e) {
+        // Сервер объявил DSN, но отверг его параметры до DATA (501/504/555):
+        // письмо не ушло — один раз повторяем без DSN на новом соединении.
+        if (client is! TolerantSmtpClient ||
+            !client.dsnUsed ||
+            client.dataStarted ||
+            !const {501, 504, 555}.contains(e.response.code)) {
+          rethrow;
+        }
+        AppLogger.warning('SMTP: параметры DSN отвергнуты (${e.response.code}) — отправка без DSN');
+        try { await client.quit(); } catch (_) {}
+        final plain = await _openSmtp(account);
+        try {
+          await deliver(plain);
+        } finally {
+          try { await plain.quit(); } catch (_) {}
+        }
       }
       AppLogger.info('SMTP sent: $subject');
     } catch (e) {

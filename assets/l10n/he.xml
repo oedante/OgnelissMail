@@ -1891,6 +1891,23 @@
         <item quantity="other">{n} שנים</item>
     </plurals>
     <string name="readReceiptRequested">התקבלה בקשה לאישור קריאה מאת {name}</string>
+    <string name="dsnFailed">לא נמסר: {addr}</string>
+    <string name="dsnDelayed">מתעכב: {addr}</string>
+    <string name="dsnDelivered">נמסר לשרת של הנמען: {addr}</string>
+    <string name="dsnDeliveredNote">זה לא אישור קריאה: השרת של הנמען קיבל את ההודעה</string>
+    <string name="dsnReasonNoSuchUser">הכתובת אינה קיימת</string>
+    <string name="dsnReasonDomain">הדומיין לא נמצא — בדקו את החלק שאחרי @</string>
+    <string name="dsnReasonFull">תיבת הדואר של הנמען מלאה</string>
+    <string name="dsnReasonBlocked">השרת של הנמען דחה אותה כספאם או חסם אותה</string>
+    <string name="dsnReasonTooLarge">ההודעה גדולה מדי עבור השרת של הנמען</string>
+    <string name="dsnReasonDelayed">השרת של הנמען עדיין לא מגיב; המסירה תנוסה שוב</string>
+    <string name="dsnReasonOther">השרת של הנמען לא קיבל את ההודעה</string>
+    <string name="dsnResend">שליחה מחדש</string>
+    <string name="dsnChangeAddress">שינוי כתובת</string>
+    <string name="dsnReportChip">דוח מסירה</string>
+    <string name="dsnNotifTitle">ההודעה לא נמסרה</string>
+    <string name="dsnRequest">בקשת אישור מסירה</string>
+    <string name="dsnRequestHint">השרת של הנמען ידווח שקיבל את ההודעה. זה לא אישור קריאה</string>
     <string name="recallAttemptDesc">ייעשה ניסיון לשלוף את ההודעה מהנמענים. ההצלחה תלויה בשרת הדואר שלהם ובשאלה אם ההודעה כבר נקראה.</string>
     <plurals name="threadTitleN">
         <item quantity="one">שיחה ({n} הודעה)</item>

@@ -1884,6 +1884,23 @@
         <item quantity="other">{n} år</item>
     </plurals>
     <string name="readReceiptRequested">{name} anmoder om en læsekvittering</string>
+    <string name="dsnFailed">Ikke leveret: {addr}</string>
+    <string name="dsnDelayed">Forsinket: {addr}</string>
+    <string name="dsnDelivered">Leveret til modtagerens server: {addr}</string>
+    <string name="dsnDeliveredNote">Dette er ikke en læsekvittering: modtagerens server har modtaget beskeden</string>
+    <string name="dsnReasonNoSuchUser">adressen findes ikke</string>
+    <string name="dsnReasonDomain">domænet blev ikke fundet — tjek delen efter @</string>
+    <string name="dsnReasonFull">modtagerens postkasse er fuld</string>
+    <string name="dsnReasonBlocked">modtagerens server afviste den som spam eller blokerede den</string>
+    <string name="dsnReasonTooLarge">beskeden er for stor til modtagerens server</string>
+    <string name="dsnReasonDelayed">modtagerens server svarer ikke endnu; leveringen bliver forsøgt igen</string>
+    <string name="dsnReasonOther">modtagerens server tog ikke imod beskeden</string>
+    <string name="dsnResend">Send igen</string>
+    <string name="dsnChangeAddress">Skift adresse</string>
+    <string name="dsnReportChip">Leveringsrapport</string>
+    <string name="dsnNotifTitle">Beskeden blev ikke leveret</string>
+    <string name="dsnRequest">Anmod om leveringsbekræftelse</string>
+    <string name="dsnRequestHint">Modtagerens server melder, at den har modtaget beskeden. Det er ikke en læsekvittering</string>
     <string name="recallAttemptDesc">Der gøres et forsøg på at tilbagekalde mailen fra modtagerne. Om det lykkes, afhænger af deres mailserver, og om mailen allerede er læst.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Samtale ({n} mail)</item>

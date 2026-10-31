@@ -1891,6 +1891,23 @@
         <item quantity="other">{n} let</item>
     </plurals>
     <string name="readReceiptRequested">{name} žádá o potvrzení o přečtení</string>
+    <string name="dsnFailed">Nedoručeno: {addr}</string>
+    <string name="dsnDelayed">Zpožděno: {addr}</string>
+    <string name="dsnDelivered">Doručeno na server příjemce: {addr}</string>
+    <string name="dsnDeliveredNote">Nejde o potvrzení o přečtení: server příjemce zprávu přijal</string>
+    <string name="dsnReasonNoSuchUser">adresa neexistuje</string>
+    <string name="dsnReasonDomain">doména nenalezena — zkontrolujte část za @</string>
+    <string name="dsnReasonFull">schránka příjemce je plná</string>
+    <string name="dsnReasonBlocked">server příjemce zprávu odmítl jako spam nebo ji zablokoval</string>
+    <string name="dsnReasonTooLarge">zpráva je pro server příjemce příliš velká</string>
+    <string name="dsnReasonDelayed">server příjemce zatím neodpovídá, doručení se bude opakovat</string>
+    <string name="dsnReasonOther">server příjemce zprávu nepřijal</string>
+    <string name="dsnResend">Odeslat znovu</string>
+    <string name="dsnChangeAddress">Změnit adresu</string>
+    <string name="dsnReportChip">Zpráva o doručení</string>
+    <string name="dsnNotifTitle">Zpráva nebyla doručena</string>
+    <string name="dsnRequest">Vyžádat potvrzení o doručení</string>
+    <string name="dsnRequestHint">Server příjemce oznámí, že zprávu přijal. Nejde o potvrzení o přečtení</string>
     <string name="recallAttemptDesc">Pokusíme se zprávu u příjemců odvolat. Úspěch závisí na jejich poštovním serveru a na tom, zda už byla zpráva přečtena.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Konverzace ({n} zpráva)</item>

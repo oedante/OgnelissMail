@@ -1877,6 +1877,23 @@
         <item quantity="other">{n} tahun</item>
     </plurals>
     <string name="readReceiptRequested">{name} meminta tanda terima baca</string>
+    <string name="dsnFailed">Tidak terkirim: {addr}</string>
+    <string name="dsnDelayed">Tertunda: {addr}</string>
+    <string name="dsnDelivered">Terkirim ke server penerima: {addr}</string>
+    <string name="dsnDeliveredNote">Ini bukan tanda telah dibaca: server penerima telah menerima pesan</string>
+    <string name="dsnReasonNoSuchUser">alamat tidak ada</string>
+    <string name="dsnReasonDomain">domain tidak ditemukan — periksa bagian setelah @</string>
+    <string name="dsnReasonFull">kotak surat penerima penuh</string>
+    <string name="dsnReasonBlocked">server penerima menolaknya sebagai spam atau memblokirnya</string>
+    <string name="dsnReasonTooLarge">pesan terlalu besar untuk server penerima</string>
+    <string name="dsnReasonDelayed">server penerima belum merespons; pengiriman akan dicoba lagi</string>
+    <string name="dsnReasonOther">server penerima tidak menerima pesan</string>
+    <string name="dsnResend">Kirim lagi</string>
+    <string name="dsnChangeAddress">Ubah alamat</string>
+    <string name="dsnReportChip">Laporan pengiriman</string>
+    <string name="dsnNotifTitle">Pesan tidak terkirim</string>
+    <string name="dsnRequest">Minta konfirmasi pengiriman</string>
+    <string name="dsnRequestHint">Server penerima akan memberi tahu bahwa pesan diterima. Ini bukan tanda telah dibaca</string>
     <string name="recallAttemptDesc">Aplikasi akan mencoba menarik kembali email dari penerima. Keberhasilannya bergantung pada server email mereka dan apakah email sudah dibaca.</string>
     <plurals name="threadTitleN">
         <item quantity="other">Percakapan ({n} email)</item>

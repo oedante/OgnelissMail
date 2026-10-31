@@ -1884,6 +1884,23 @@
         <item quantity="other">{n} Jahre</item>
     </plurals>
     <string name="readReceiptRequested">{name} fordert eine Lesebestätigung an</string>
+    <string name="dsnFailed">Nicht zugestellt: {addr}</string>
+    <string name="dsnDelayed">Verzögert: {addr}</string>
+    <string name="dsnDelivered">An den Server des Empfängers zugestellt: {addr}</string>
+    <string name="dsnDeliveredNote">Das ist keine Lesebestätigung: Der Server des Empfängers hat die Nachricht angenommen</string>
+    <string name="dsnReasonNoSuchUser">die Adresse existiert nicht</string>
+    <string name="dsnReasonDomain">Domain nicht gefunden – prüfen Sie den Teil nach @</string>
+    <string name="dsnReasonFull">das Postfach des Empfängers ist voll</string>
+    <string name="dsnReasonBlocked">der Server des Empfängers hat sie als Spam abgelehnt oder blockiert</string>
+    <string name="dsnReasonTooLarge">die Nachricht ist für den Server des Empfängers zu groß</string>
+    <string name="dsnReasonDelayed">der Server des Empfängers antwortet noch nicht; die Zustellung wird wiederholt</string>
+    <string name="dsnReasonOther">der Server des Empfängers hat die Nachricht nicht angenommen</string>
+    <string name="dsnResend">Erneut senden</string>
+    <string name="dsnChangeAddress">Adresse ändern</string>
+    <string name="dsnReportChip">Zustellbericht</string>
+    <string name="dsnNotifTitle">Nachricht nicht zugestellt</string>
+    <string name="dsnRequest">Zustellbestätigung anfordern</string>
+    <string name="dsnRequestHint">Der Server des Empfängers meldet, dass er die Nachricht angenommen hat. Das ist keine Lesebestätigung</string>
     <string name="recallAttemptDesc">Es wird versucht, die Nachricht bei den Empfängern zurückzurufen. Der Erfolg hängt von deren Mailserver ab und davon, ob die Nachricht schon gelesen wurde.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Unterhaltung ({n} Nachricht)</item>

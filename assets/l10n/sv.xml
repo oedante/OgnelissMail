@@ -1884,6 +1884,23 @@
         <item quantity="other">{n} år</item>
     </plurals>
     <string name="readReceiptRequested">{name} begär läskvitto</string>
+    <string name="dsnFailed">Inte levererat: {addr}</string>
+    <string name="dsnDelayed">Försenat: {addr}</string>
+    <string name="dsnDelivered">Levererat till mottagarens server: {addr}</string>
+    <string name="dsnDeliveredNote">Det här är inte ett läskvitto: mottagarens server har tagit emot meddelandet</string>
+    <string name="dsnReasonNoSuchUser">adressen finns inte</string>
+    <string name="dsnReasonDomain">domänen hittades inte – kontrollera delen efter @</string>
+    <string name="dsnReasonFull">mottagarens brevlåda är full</string>
+    <string name="dsnReasonBlocked">mottagarens server avvisade det som skräppost eller blockerade det</string>
+    <string name="dsnReasonTooLarge">meddelandet är för stort för mottagarens server</string>
+    <string name="dsnReasonDelayed">mottagarens server svarar inte än; leveransen försöks igen</string>
+    <string name="dsnReasonOther">mottagarens server tog inte emot meddelandet</string>
+    <string name="dsnResend">Skicka igen</string>
+    <string name="dsnChangeAddress">Ändra adress</string>
+    <string name="dsnReportChip">Leveransrapport</string>
+    <string name="dsnNotifTitle">Meddelandet levererades inte</string>
+    <string name="dsnRequest">Begär leveransbekräftelse</string>
+    <string name="dsnRequestHint">Mottagarens server meddelar att den har tagit emot meddelandet. Det är inte ett läskvitto</string>
     <string name="recallAttemptDesc">Ett försök görs att återkalla meddelandet hos mottagarna. Resultatet beror på deras e-postserver och på om meddelandet redan har lästs.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Konversation ({n} meddelande)</item>

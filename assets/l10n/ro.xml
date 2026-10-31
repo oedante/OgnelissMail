@@ -1891,6 +1891,23 @@
         <item quantity="other">{n} de ani</item>
     </plurals>
     <string name="readReceiptRequested">{name} solicită confirmare de citire</string>
+    <string name="dsnFailed">Nelivrat: {addr}</string>
+    <string name="dsnDelayed">Întârziat: {addr}</string>
+    <string name="dsnDelivered">Livrat pe serverul destinatarului: {addr}</string>
+    <string name="dsnDeliveredNote">Aceasta nu este o confirmare de citire: serverul destinatarului a acceptat mesajul</string>
+    <string name="dsnReasonNoSuchUser">adresa nu există</string>
+    <string name="dsnReasonDomain">domeniul nu a fost găsit — verificați partea de după @</string>
+    <string name="dsnReasonFull">căsuța destinatarului este plină</string>
+    <string name="dsnReasonBlocked">serverul destinatarului l-a respins ca spam sau l-a blocat</string>
+    <string name="dsnReasonTooLarge">mesajul este prea mare pentru serverul destinatarului</string>
+    <string name="dsnReasonDelayed">serverul destinatarului nu răspunde încă; livrarea va fi reîncercată</string>
+    <string name="dsnReasonOther">serverul destinatarului nu a acceptat mesajul</string>
+    <string name="dsnResend">Trimite din nou</string>
+    <string name="dsnChangeAddress">Schimbă adresa</string>
+    <string name="dsnReportChip">Raport de livrare</string>
+    <string name="dsnNotifTitle">Mesaj nelivrat</string>
+    <string name="dsnRequest">Solicită confirmare de livrare</string>
+    <string name="dsnRequestHint">Serverul destinatarului va raporta că a acceptat mesajul. Nu este o confirmare de citire</string>
     <string name="recallAttemptDesc">Se va încerca retragerea mesajului de la destinatari. Reușita depinde de serverul lor de e-mail și de faptul dacă mesajul a fost deja citit.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Conversație ({n} mesaj)</item>

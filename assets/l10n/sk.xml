@@ -1891,6 +1891,23 @@
         <item quantity="other">{n} rokov</item>
     </plurals>
     <string name="readReceiptRequested">{name} žiada o potvrdenie o prečítaní</string>
+    <string name="dsnFailed">Nedoručené: {addr}</string>
+    <string name="dsnDelayed">Oneskorené: {addr}</string>
+    <string name="dsnDelivered">Doručené na server príjemcu: {addr}</string>
+    <string name="dsnDeliveredNote">Nejde o potvrdenie o prečítaní: server príjemcu správu prijal</string>
+    <string name="dsnReasonNoSuchUser">adresa neexistuje</string>
+    <string name="dsnReasonDomain">doména sa nenašla — skontrolujte časť za @</string>
+    <string name="dsnReasonFull">schránka príjemcu je plná</string>
+    <string name="dsnReasonBlocked">server príjemcu správu odmietol ako spam alebo ju zablokoval</string>
+    <string name="dsnReasonTooLarge">správa je pre server príjemcu príliš veľká</string>
+    <string name="dsnReasonDelayed">server príjemcu zatiaľ neodpovedá, doručenie sa bude opakovať</string>
+    <string name="dsnReasonOther">server príjemcu správu neprijal</string>
+    <string name="dsnResend">Odoslať znova</string>
+    <string name="dsnChangeAddress">Zmeniť adresu</string>
+    <string name="dsnReportChip">Správa o doručení</string>
+    <string name="dsnNotifTitle">Správa nebola doručená</string>
+    <string name="dsnRequest">Vyžiadať potvrdenie o doručení</string>
+    <string name="dsnRequestHint">Server príjemcu oznámi, že správu prijal. Nejde o potvrdenie o prečítaní</string>
     <string name="recallAttemptDesc">Pokúsime sa správu u príjemcov odvolať. Úspech závisí od ich poštového servera a od toho, či už bola správa prečítaná.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Konverzácia ({n} správa)</item>

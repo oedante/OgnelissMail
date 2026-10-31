@@ -1898,6 +1898,23 @@
         <item quantity="other">{n} lat</item>
     </plurals>
     <string name="readReceiptRequested">{name} prosi o potwierdzenie odczytu</string>
+    <string name="dsnFailed">Nie dostarczono: {addr}</string>
+    <string name="dsnDelayed">Opóźnione: {addr}</string>
+    <string name="dsnDelivered">Dostarczono na serwer odbiorcy: {addr}</string>
+    <string name="dsnDeliveredNote">To nie jest potwierdzenie przeczytania: serwer odbiorcy przyjął wiadomość</string>
+    <string name="dsnReasonNoSuchUser">adres nie istnieje</string>
+    <string name="dsnReasonDomain">nie znaleziono domeny — sprawdź część po @</string>
+    <string name="dsnReasonFull">skrzynka odbiorcy jest pełna</string>
+    <string name="dsnReasonBlocked">serwer odbiorcy odrzucił ją jako spam lub zablokował</string>
+    <string name="dsnReasonTooLarge">wiadomość jest za duża dla serwera odbiorcy</string>
+    <string name="dsnReasonDelayed">serwer odbiorcy jeszcze nie odpowiada; dostarczenie zostanie ponowione</string>
+    <string name="dsnReasonOther">serwer odbiorcy nie przyjął wiadomości</string>
+    <string name="dsnResend">Wyślij ponownie</string>
+    <string name="dsnChangeAddress">Zmień adres</string>
+    <string name="dsnReportChip">Raport doręczenia</string>
+    <string name="dsnNotifTitle">Wiadomość nie została dostarczona</string>
+    <string name="dsnRequest">Poproś o potwierdzenie doręczenia</string>
+    <string name="dsnRequestHint">Serwer odbiorcy poinformuje, że przyjął wiadomość. To nie jest potwierdzenie przeczytania</string>
     <string name="recallAttemptDesc">Zostanie podjęta próba wycofania wiadomości od odbiorców. Powodzenie zależy od ich serwera poczty i od tego, czy wiadomość została już przeczytana.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Konwersacja ({n} wiadomość)</item>

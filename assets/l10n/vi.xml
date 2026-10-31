@@ -1877,6 +1877,23 @@
         <item quantity="other">{n} năm</item>
     </plurals>
     <string name="readReceiptRequested">{name} yêu cầu xác nhận đã đọc</string>
+    <string name="dsnFailed">Không gửi được: {addr}</string>
+    <string name="dsnDelayed">Đang chậm: {addr}</string>
+    <string name="dsnDelivered">Đã gửi tới máy chủ của người nhận: {addr}</string>
+    <string name="dsnDeliveredNote">Đây không phải xác nhận đã đọc: máy chủ của người nhận đã nhận thư</string>
+    <string name="dsnReasonNoSuchUser">địa chỉ không tồn tại</string>
+    <string name="dsnReasonDomain">không tìm thấy tên miền — hãy kiểm tra phần sau @</string>
+    <string name="dsnReasonFull">hộp thư của người nhận đã đầy</string>
+    <string name="dsnReasonBlocked">máy chủ của người nhận đã từ chối vì cho là thư rác hoặc đã chặn</string>
+    <string name="dsnReasonTooLarge">thư quá lớn đối với máy chủ của người nhận</string>
+    <string name="dsnReasonDelayed">máy chủ của người nhận chưa phản hồi; việc gửi sẽ được thử lại</string>
+    <string name="dsnReasonOther">máy chủ của người nhận không nhận thư</string>
+    <string name="dsnResend">Gửi lại</string>
+    <string name="dsnChangeAddress">Đổi địa chỉ</string>
+    <string name="dsnReportChip">Báo cáo gửi thư</string>
+    <string name="dsnNotifTitle">Thư không gửi được</string>
+    <string name="dsnRequest">Yêu cầu xác nhận đã gửi tới</string>
+    <string name="dsnRequestHint">Máy chủ của người nhận sẽ báo đã nhận thư. Đây không phải xác nhận đã đọc</string>
     <string name="recallAttemptDesc">Ứng dụng sẽ thử thu hồi thư từ người nhận. Kết quả phụ thuộc vào máy chủ thư của họ và việc thư đã được đọc hay chưa.</string>
     <plurals name="threadTitleN">
         <item quantity="other">Cuộc hội thoại ({n} thư)</item>

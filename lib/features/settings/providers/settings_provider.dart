@@ -11,6 +11,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/theme/appearance.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart' show AppLocalizations;
 
@@ -85,6 +86,22 @@ class AppSettings {
   final String uiFont;
   final bool isFirstLaunch;
   final bool licenseAccepted;
+
+  // ── Оформление (1.9.x, просьба владельца 31.10.2026) ──
+  /// Цветовая тема: «Классика» — прежний вид.
+  final ThemePreset themePreset;
+  /// Свой акцент (ARGB) или null — акцент цветовой темы.
+  final int? accentColor;
+  /// Оттенок фона ленты и беседы.
+  final ListTint listTint;
+  /// Скругление карточек, шторок и «пузырей».
+  final CornerSize corners;
+  /// Плотность ленты (и строк беседы и архива).
+  final ListDensity listDensity;
+  /// Анимация открытия письма: общий портрет и тема, закрытие свайпом вниз.
+  /// Выключено по умолчанию (прежние анимации были медленными);
+  /// «Уменьшить движение» важнее.
+  final bool openAnimation;
 
   // ── Доступность ──
   final bool highContrast;
@@ -173,6 +190,12 @@ class AppSettings {
     this.uiFont = 'roboto',
     this.isFirstLaunch = true,
     this.licenseAccepted = false,
+    this.themePreset = ThemePreset.classic,
+    this.accentColor,
+    this.listTint = ListTint.none,
+    this.corners = CornerSize.medium,
+    this.listDensity = ListDensity.normal,
+    this.openAnimation = false,
     this.highContrast = false,
     this.dyslexiaFont = false,
     this.reduceMotion = false,
@@ -206,6 +229,17 @@ class AppSettings {
     this.attachmentsWifiOnly = true,
   });
 
+  /// «Оформление» для сборки тем. [systemNoAnimations] — системное «Убрать
+  /// анимацию»: вместе с «Уменьшить движение» выключает анимацию открытия.
+  Appearance appearance({bool systemNoAnimations = false}) => Appearance(
+        preset: themePreset,
+        accent: accentColor,
+        tint: listTint,
+        corners: corners,
+        density: listDensity,
+        openAnimation: openAnimation && !reduceMotion && !systemNoAnimations,
+      );
+
   /// Текущий выбор темы из themeMode + amoled.
   AppThemeChoice get themeChoice {
     if (reading) return AppThemeChoice.reading;
@@ -235,6 +269,13 @@ class AppSettings {
     String? uiFont,
     bool? isFirstLaunch,
     bool? licenseAccepted,
+    ThemePreset? themePreset,
+    int? accentColor,
+    bool clearAccentColor = false,
+    ListTint? listTint,
+    CornerSize? corners,
+    ListDensity? listDensity,
+    bool? openAnimation,
     bool? highContrast,
     bool? dyslexiaFont,
     bool? reduceMotion,
@@ -283,6 +324,12 @@ class AppSettings {
       uiFont: uiFont ?? this.uiFont,
       isFirstLaunch: isFirstLaunch ?? this.isFirstLaunch,
       licenseAccepted: licenseAccepted ?? this.licenseAccepted,
+      themePreset: themePreset ?? this.themePreset,
+      accentColor: clearAccentColor ? null : (accentColor ?? this.accentColor),
+      listTint: listTint ?? this.listTint,
+      corners: corners ?? this.corners,
+      listDensity: listDensity ?? this.listDensity,
+      openAnimation: openAnimation ?? this.openAnimation,
       highContrast: highContrast ?? this.highContrast,
       dyslexiaFont: dyslexiaFont ?? this.dyslexiaFont,
       reduceMotion: reduceMotion ?? this.reduceMotion,
@@ -338,6 +385,13 @@ class _K {
   static const uiFont = 's_ui_font';
   static const isFirstLaunch = 's_first_launch';
   static const licenseAccepted = 's_license_accepted';
+  // «Оформление» (1.9.x): тема — по имени, остальное — номером варианта.
+  static const themePreset = 's_theme_preset';
+  static const accentColor = 's_accent';
+  static const listTint = 's_list_tint';
+  static const corners = 's_corners';
+  static const listDensity = 's_density';
+  static const openAnimation = 's_open_anim';
   static const highContrast = 's_high_contrast';
   static const dyslexiaFont = 's_dyslexia';
   static const reduceMotion = 's_reduce_motion';
@@ -420,6 +474,13 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       uiFont: _p.getString(_K.uiFont) == 'medeo' ? 'medeo' : 'roboto',
       isFirstLaunch: _p.getBool(_K.isFirstLaunch) ?? true,
       licenseAccepted: _p.getBool(_K.licenseAccepted) ?? false,
+      themePreset: ThemePreset.values.asNameMap()[_p.getString(_K.themePreset)] ?? ThemePreset.classic,
+      accentColor: _p.getInt(_K.accentColor),
+      listTint: ListTint.values[(_p.getInt(_K.listTint) ?? ListTint.none.index).clamp(0, ListTint.values.length - 1)],
+      corners: CornerSize.values[(_p.getInt(_K.corners) ?? CornerSize.medium.index).clamp(0, CornerSize.values.length - 1)],
+      listDensity:
+          ListDensity.values[(_p.getInt(_K.listDensity) ?? ListDensity.normal.index).clamp(0, ListDensity.values.length - 1)],
+      openAnimation: _p.getBool(_K.openAnimation) ?? false,
       highContrast: _p.getBool(_K.highContrast) ?? false,
       dyslexiaFont: _p.getBool(_K.dyslexiaFont) ?? false,
       reduceMotion: _p.getBool(_K.reduceMotion) ?? false,
@@ -559,6 +620,42 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     final value = v == 'medeo' ? 'medeo' : 'roboto';
     await _p.setString(_K.uiFont, value);
     state = state.copyWith(uiFont: value);
+  }
+
+  // ── Оформление (1.9.x) ──
+  Future<void> setThemePreset(ThemePreset v) async {
+    await _p.setString(_K.themePreset, v.name);
+    state = state.copyWith(themePreset: v);
+  }
+
+  /// null — акцент цветовой темы.
+  Future<void> setAccentColor(int? v) async {
+    if (v == null) {
+      await _p.remove(_K.accentColor);
+    } else {
+      await _p.setInt(_K.accentColor, v);
+    }
+    state = state.copyWith(accentColor: v, clearAccentColor: v == null);
+  }
+
+  Future<void> setListTint(ListTint v) async {
+    await _p.setInt(_K.listTint, v.index);
+    state = state.copyWith(listTint: v);
+  }
+
+  Future<void> setCorners(CornerSize v) async {
+    await _p.setInt(_K.corners, v.index);
+    state = state.copyWith(corners: v);
+  }
+
+  Future<void> setListDensity(ListDensity v) async {
+    await _p.setInt(_K.listDensity, v.index);
+    state = state.copyWith(listDensity: v);
+  }
+
+  Future<void> setOpenAnimation(bool v) async {
+    await _p.setBool(_K.openAnimation, v);
+    state = state.copyWith(openAnimation: v);
   }
 
   Future<void> markFirstLaunchDone() async {
@@ -744,6 +841,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       // сбросом не затрагивались.
       _K.amoled, _K.reading, _K.dynamicColor, _K.allowRotation, _K.warmPage, _K.mailControl, _K.myDay, _K.morningDigest, _K.morningDigestMinutes, _K.backgroundKeepAlive, _K.attachmentsWifiOnly,
       _K.themeMode, _K.locale, _K.fontScale, _K.uiScale, _K.uiFont, _K.highContrast,
+      _K.themePreset, _K.accentColor, _K.listTint, _K.corners, _K.listDensity, _K.openAnimation,
       _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode,
       _K.notificationsEnabled, _K.notificationSound, _K.notificationVibration,
       _K.syncOnlyWifi, _K.syncInterval, _K.emailFetchMode,

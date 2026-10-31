@@ -112,6 +112,8 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/app_menu_button.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../core/theme/ogneliss_look.dart';
+import '../../../core/theme/appearance.dart' show AppearanceLook;
+import '../../../widgets/common/mail_open_motion.dart' show MailHeroTags, MailOpenHandoff, MailSubjectHero;
 
 class MailDetailScreen extends ConsumerStatefulWidget {
   final String emailId;
@@ -178,6 +180,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // Докачка «Писем на телефоне» ждёт несколько секунд: сеть и процессор —
     // открытому письму.
     ref.read(offlineStoreProvider).hold();
+    // Шапка из строки ленты (1.9.x, «Анимация открытия письма»): портрет и
+    // тема — уже в первом кадре, им есть куда лететь; тело — как обычно.
+    final early = widget.embedded ? null : MailOpenHandoff.take(widget.accountId, widget.emailId);
+    if (early != null) {
+      _email = early;
+      _isLoading = false;
+      _isLoadingBody = true;
+    }
     _loadEmailDetail();
     // Журнал открытых писем для «Продолжить» больше не ведётся (раздел
     // убран 10.10.2026); прежний журнал стирается (один раз, а не запись в
@@ -315,7 +325,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   Future<void> _loadEmailDetail() async {
     try {
       safeSetState(() {
-        _isLoading = true;
+        // Шапка из ленты уже на экране — без индикатора на весь экран.
+        _isLoading = _email == null || _error != null;
         _error = null;
       });
 
@@ -481,6 +492,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           safeSetState(() {
             _email = sanitizedEmail;
             _isLoading = false;
+            _isLoadingBody = false;
 
             // Инициализируем состояния вложений (уже скачанные не сбрасываем)
             for (final att in sanitizedEmail.attachments) {
@@ -1481,12 +1493,17 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
               padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.m),
               child: Semantics(
                 header: true,
-                child: Text(
-                  email.subject.isEmpty ? l10n.tr('noSubject') : email.subject,
-                  // В закреплённой шапке длинная тема не занимает пол-экрана.
-                  maxLines: pinHeader ? 3 : null,
-                  overflow: pinHeader ? TextOverflow.ellipsis : null,
-                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+                // Тема летит из строки ленты (1.9.x, «Анимация открытия письма»).
+                child: MailSubjectHero(
+                  tag: MailHeroTags.subject(email.accountId, email.id),
+                  enabled: !widget.embedded && AppearanceLook.of(context).openAnimation,
+                  child: Text(
+                    email.subject.isEmpty ? l10n.tr('noSubject') : email.subject,
+                    // В закреплённой шапке длинная тема не занимает пол-экрана.
+                    maxLines: pinHeader ? 3 : null,
+                    overflow: pinHeader ? TextOverflow.ellipsis : null,
+                    style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
             ),

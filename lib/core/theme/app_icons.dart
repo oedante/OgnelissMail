@@ -206,6 +206,12 @@ abstract final class AppIcons {
   static const IconData playlist_add_check = Symbols.playlist_add_check_rounded;
   static const IconData outbox = Symbols.outbox_rounded;
   static const IconData palette = Symbols.palette_rounded;
+  // «Оформление» (1.9.x): свой цвет, скругление, плотность, свайп вниз.
+  static const IconData colorize = Symbols.colorize_rounded;
+  static const IconData rounded_corner = Symbols.rounded_corner_rounded;
+  static const IconData density_medium = Symbols.density_medium_rounded;
+  static const IconData swipe_down = Symbols.swipe_down_rounded;
+  static const IconData format_paint = Symbols.format_paint_rounded;
   static const IconData person = Symbols.person_rounded;
   // Адресаты в шапке письма (1.5.9): значки вместо слов «Кому» и «Копия».
   static const IconData mailTo = Symbols.arrow_forward_rounded;

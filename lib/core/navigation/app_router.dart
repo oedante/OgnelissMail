@@ -81,6 +81,8 @@ import '../../widgets/navigation/main_shell.dart';
 import '../../features/settings/screens/folder_sync_settings_screen.dart';
 import '../../widgets/common/text_scale_cap.dart';
 import '../../widgets/common/wide_frame.dart';
+import '../../widgets/common/mail_open_motion.dart' show MailOpenPage;
+import '../../features/settings/screens/appearance_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -105,12 +107,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             name: 'mail',
             builder: (_, __) => const MailListScreen(),
             routes: [
+              // Письмо из ленты — страницей MailOpenPage (1.9.x): с «Анимацией
+              // открытия письма» портрет и тема летят из строки, письмо
+              // закрывается свайпом вниз; без неё — как MaterialPage.
               GoRoute(
                 path: 'detail/:emailId',
                 name: 'mail-detail',
-                builder: (_, state) => MailDetailScreen(
-                  emailId: state.pathParameters['emailId']!,
-                  accountId: state.uri.queryParameters['accountId'] ?? '',
+                pageBuilder: (_, state) => _mailPage(
+                  state,
+                  MailDetailScreen(
+                    emailId: state.pathParameters['emailId']!,
+                    accountId: state.uri.queryParameters['accountId'] ?? '',
+                  ),
                 ),
               ),
               // Листание писем ленты свайпом (1.6.49+95). Без списка (адрес
@@ -118,12 +126,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'pager',
                 name: 'mail-pager',
-                builder: (_, state) {
+                pageBuilder: (_, state) {
                   final a = state.extra;
-                  if (a is MailPagerArgs && a.items.isNotEmpty) return MailListPagerScreen(args: a);
-                  return MailDetailScreen(
-                    emailId: state.uri.queryParameters['emailId'] ?? '',
-                    accountId: state.uri.queryParameters['accountId'] ?? '',
+                  if (a is MailPagerArgs && a.items.isNotEmpty) return _mailPage(state, MailListPagerScreen(args: a));
+                  return _mailPage(
+                    state,
+                    MailDetailScreen(
+                      emailId: state.uri.queryParameters['emailId'] ?? '',
+                      accountId: state.uri.queryParameters['accountId'] ?? '',
+                    ),
                   );
                 },
               ),
@@ -138,10 +149,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: ':emailId',
                     name: 'mail-conversation-message',
-                    builder: (_, state) => ConversationPagerScreen(
-                      conversationId: state.pathParameters['convId']!,
-                      emailId: state.pathParameters['emailId']!,
-                      accountId: state.uri.queryParameters['accountId'] ?? '',
+                    pageBuilder: (_, state) => _mailPage(
+                      state,
+                      ConversationPagerScreen(
+                        conversationId: state.pathParameters['convId']!,
+                        emailId: state.pathParameters['emailId']!,
+                        accountId: state.uri.queryParameters['accountId'] ?? '',
+                      ),
                     ),
                   ),
                 ],
@@ -292,6 +306,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/settings/delivery-schedule', name: 'delivery-schedule', builder: (_, __) => const WideFrame(child: DeliveryScheduleScreen())),
       GoRoute(path: '/settings/profile', name: 'profile-settings', builder: (_, __) => const WideFrame(child: ProfileSettingsScreen())),
       GoRoute(path: '/settings/general', name: 'general-settings', builder: (_, __) => const WideFrame(child: GeneralSettingsScreen())),
+      // «Оформление» (1.9.x): тема, цвета, скругление, плотность ленты.
+      GoRoute(path: '/settings/appearance', name: 'appearance', builder: (_, __) => const WideFrame(child: AppearanceScreen())),
       GoRoute(path: '/settings/mail', name: 'mail-settings', builder: (_, __) => const WideFrame(child: MailSettingsScreen())),
       GoRoute(path: '/settings/calendar', name: 'calendar-settings', builder: (_, __) => const WideFrame(child: CalendarSettingsScreen())),
       GoRoute(path: '/settings/contacts', name: 'contacts-settings', builder: (_, __) => const WideFrame(child: ContactsSettingsScreen())),
@@ -381,6 +397,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   );
 });
 
+
+/// Страница письма из ленты или беседы — те же ключ, имя и аргументы, что
+/// у MaterialPage, которую go_router строит для builder.
+Page<void> _mailPage(GoRouterState state, Widget child) => MailOpenPage<void>(
+      key: state.pageKey,
+      name: state.name ?? state.path,
+      arguments: <String, String>{...state.pathParameters, ...state.uri.queryParameters},
+      restorationId: state.pageKey.value,
+      child: child,
+    );
 
 /// Адрес экрана письма. id кодируется: у IMAP он содержит путь папки
 /// («[Gmail]/Вся почта:2038»), и «/» без кодирования ломал маршрут —

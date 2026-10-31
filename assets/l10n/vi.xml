@@ -129,6 +129,12 @@
     <string name="connecting">Đang kết nối...</string>
     <string name="createEvent">Tạo sự kiện</string>
     <string name="createMeeting">Tạo cuộc họp</string>
+    <string name="dateShowInCalendar">Hiển thị trong lịch</string>
+    <string name="mailDates">Ngày trong nội dung thư</string>
+    <string name="mailDatesDesc">Chạm vào ngày để tạo cuộc họp, lời nhắc hoặc mở ngày đó trong lịch</string>
+    <string name="quickEventTitle">Sự kiện trong một câu</string>
+    <string name="quickEventHint">Ví dụ: Gọi với Anna vào thứ Sáu lúc 15 giờ trong một giờ</string>
+    <string name="quickEventMore">Thêm chi tiết</string>
     <string name="createTask">Tạo tác vụ</string>
     <string name="date">Ngày</string>
     <string name="dayPlan">Kế hoạch trong ngày</string>

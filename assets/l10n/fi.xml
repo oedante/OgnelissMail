@@ -129,6 +129,12 @@
     <string name="connecting">Yhdistetään...</string>
     <string name="createEvent">Luo tapahtuma</string>
     <string name="createMeeting">Luo kokous</string>
+    <string name="dateShowInCalendar">Näytä kalenterissa</string>
+    <string name="mailDates">Päivämäärät viestin tekstissä</string>
+    <string name="mailDatesDesc">Napauta päivämäärää luodaksesi kokouksen, muistutuksen tai avataksesi päivän kalenterissa</string>
+    <string name="quickEventTitle">Tapahtuma yhdellä lauseella</string>
+    <string name="quickEventHint">Esimerkiksi: Puhelu Annan kanssa perjantaina klo 15 tunnin ajan</string>
+    <string name="quickEventMore">Lisätietoja</string>
     <string name="createTask">Luo tehtävä</string>
     <string name="date">Päivämäärä</string>
     <string name="dayPlan">Päivän suunnitelma</string>

@@ -129,6 +129,12 @@
     <string name="connecting">Подключение...</string>
     <string name="createEvent">Создать встречу</string>
     <string name="createMeeting">Создать встречу</string>
+    <string name="dateShowInCalendar">Показать в календаре</string>
+    <string name="mailDates">Даты в тексте письма</string>
+    <string name="mailDatesDesc">Нажатие на дату — встреча, напоминание или этот день в календаре</string>
+    <string name="quickEventTitle">Встреча одной фразой</string>
+    <string name="quickEventHint">Например: Созвон с Анной в пятницу в 15 на час</string>
+    <string name="quickEventMore">Подробнее</string>
     <string name="createTask">Создать задачу</string>
     <string name="date">Дата</string>
     <string name="dayPlan">План дня</string>

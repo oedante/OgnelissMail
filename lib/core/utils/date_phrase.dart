@@ -66,7 +66,7 @@ class PhraseDate {
   /// «через 2 часа», «in 30 minutes» — от момента ввода.
   final int? offsetMinutes;
 
-  /// Час без минут и уточнений («в 3», «at 3»): утро это или день — не
+  /// Час без минут и уточнений («в 3», «at 3», «с 3 до 4»): утро это или день — не
   /// сказано (календарь считает «в 3» днём).
   final bool loneHour;
 
@@ -284,6 +284,9 @@ class DatePhrase {
 
   static const _ampm = r'am|pm|a\.m\.|p\.m\.';
 
+  /// Основы названий дней недели — быстрая проверка перед правилом.
+  static const _wdStems = ['понедельник', 'вторник', 'сред', 'четверг', 'пятниц', 'суббот', 'воскресен'];
+
   // ───────────────────────── правила ─────────────────────────
 
   static final _reDay = _re('$_lb(послезавтра|day\\s+after\\s+tomorrow|завтра|tomorrow|сегодня|today|tonight)$_rb');
@@ -459,10 +462,17 @@ class DatePhrase {
 
   static List<_T> _scan(String text, {required bool phrase, required bool monthFirst}) {
     final out = <_T>[];
+    // Правило без нужного ему знака или слова в тексте («:», «.», «на»,
+    // «завтра») не запускается: в письме даты ищутся в каждом абзаце, и
+    // проход двух десятков правил по каждому был заметен на рассылках.
+    // Время словами («пол десятого», «без четверти десять») — только во
+    // фразе ввода: в письме без цифр рядом оно не считается.
+    final low = text.toLowerCase();
+    Iterable<RegExpMatch> on(RegExp re, bool need) => need ? re.allMatches(text) : const [];
     String after(int end) => text.substring(end, end + 16 > text.length ? text.length : end + 16);
     String before(int start) => text.substring(start < 16 ? 0 : start - 16, start);
 
-    for (final m in _reDay.allMatches(text)) {
+    for (final m in on(_reDay, low.contains('завтра') || low.contains('сегодня') || low.contains('to'))) {
       final w = m.group(1)!.toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
       final add = switch (w) {
         'послезавтра' || 'day after tomorrow' => 2,
@@ -471,12 +481,15 @@ class DatePhrase {
       };
       out.add(_T(_K.day, m.start, m.end, add: add, part: w == 'tonight' ? 3 : 0));
     }
-    for (final m in _rePart.allMatches(text)) {
+    for (final m in on(
+      _rePart,
+      low.contains('ом') || low.contains('дн') || low.contains('ning') || low.contains('noon'),
+    )) {
       final w = m.group(1)!.toLowerCase();
       final part = w == 'утром' || w.endsWith('morning') ? 1 : (w.startsWith('дн') || w.endsWith('afternoon') ? 2 : 3);
       out.add(_T(_K.part, m.start, m.end, part: part));
     }
-    for (final m in _reWeekday.allMatches(text)) {
+    for (final m in on(_reWeekday, low.contains('day') || _wdStems.any(low.contains))) {
       out.add(_T(_K.weekday, _lead(text, m.start, _leadWeekday).$1, m.end, wd: _weekdays[m.group(1)!.toLowerCase()]));
     }
 
@@ -497,7 +510,7 @@ class DatePhrase {
     }
 
     // Дни числом.
-    for (final m in _reIso.allMatches(text)) {
+    for (final m in on(_reIso, low.contains('-'))) {
       final y = int.parse(m.group(1)!), mo = int.parse(m.group(2)!), d = int.parse(m.group(3)!);
       if (!_validDate(y, mo, d)) continue;
       out.add(_T(_K.date, m.start, m.end, y: y, m: mo, d: d, numeric: true));
@@ -511,7 +524,7 @@ class DatePhrase {
     }
 
     bool money(int s, int e) => _moneyAfter.hasMatch(after(e)) || _moneyBefore.hasMatch(before(s));
-    for (final m in _reDmy.allMatches(text)) {
+    for (final m in on(_reDmy, low.contains('.') || low.contains('/') || low.contains('-'))) {
       final sep = m.group(2)!;
       final ys = m.group(4)!;
       if (sep == '-' && ys.length != 4) continue; // 12-34-56 — телефон
@@ -521,7 +534,7 @@ class DatePhrase {
       if (!_validDate(y, dm.$2, dm.$1) || money(m.start, m.end)) continue;
       out.add(_T(_K.date, m.start, m.end, y: y, m: dm.$2, d: dm.$1, numeric: true));
     }
-    for (final m in _reDm.allMatches(text)) {
+    for (final m in on(_reDm, low.contains('.') || low.contains('/'))) {
       final sep = m.group(2)!;
       final mStr = m.group(3)!;
       // В письме месяц — двумя цифрами («31.10», «5.11»): «1.5», «2.5» —
@@ -534,17 +547,17 @@ class DatePhrase {
 
     // Время.
     bool notTime(int end) => _notTimeAfter.hasMatch(after(end));
-    for (final m in _reHm.allMatches(text)) {
+    for (final m in on(_reHm, low.contains(':'))) {
       final h = _apply(int.parse(m.group(1)!), m.group(3));
       out.add(_T(_K.time, _lead(text, m.start, _leadTime).$1, m.end, h: h, mi: int.parse(m.group(2)!), strong: true));
     }
-    for (final m in _reHdot.allMatches(text)) {
+    for (final m in on(_reHdot, low.contains('.'))) {
       final h = _apply(int.parse(m.group(2)!), m.group(4));
       final mi = int.parse(m.group(3)!);
       if (h > 23 || mi > 59 || money(m.start, m.end)) continue;
       out.add(_T(_K.time, m.start, m.end, h: h, mi: mi, strong: true));
     }
-    for (final m in _reHfr.allMatches(text)) {
+    for (final m in on(_reHfr, low.contains('h'))) {
       final h = int.parse(m.group(1)!);
       final mi = m.group(2) == null ? 0 : int.parse(m.group(2)!);
       final (s, prep) = _lead(text, m.start, _leadTime);
@@ -552,7 +565,7 @@ class DatePhrase {
       if ((prep != 'à' && m.group(2) == null) || h > 23 || mi > 59) continue;
       out.add(_T(_K.time, s, m.end, h: h, mi: mi, strong: true));
     }
-    for (final m in _reAmPm.allMatches(text)) {
+    for (final m in on(_reAmPm, low.contains('m'))) {
       out.add(
         _T(
           _K.time,
@@ -573,20 +586,27 @@ class DatePhrase {
       if (!strong && notTime(m.end)) continue;
       out.add(_T(_K.time, m.start, m.end, h: h, strong: strong));
     }
-    for (final m in _reUnit.allMatches(text)) {
+    for (final m in on(
+      _reUnit,
+      low.contains('uhr') ||
+          low.contains('clock') ||
+          low.contains('утра') ||
+          low.contains('вечера') ||
+          low.contains('ночи'),
+    )) {
       final h = _apply(int.parse(m.group(1)!), m.group(2));
       if (h > 23) continue;
       out.add(_T(_K.time, m.start, m.end, h: h, strong: true));
     }
-    for (final m in _reHalf.allMatches(text)) {
+    for (final m in on(_reHalf, phrase && low.contains('пол'))) {
       final h = _ordinals[m.group(1)!.toLowerCase().replaceAll('ё', 'е')]! - 1;
       out.add(_T(_K.time, _lead(text, m.start, _leadWord).$1, m.end, h: h, mi: 30, strong: true));
     }
-    for (final m in _reQuarter.allMatches(text)) {
+    for (final m in on(_reQuarter, phrase && low.contains('четверть'))) {
       final h = _ordinals[m.group(1)!.toLowerCase().replaceAll('ё', 'е')]! - 1;
       out.add(_T(_K.time, _lead(text, m.start, _leadWord).$1, m.end, h: h, mi: 15, strong: true));
     }
-    for (final m in _reWithout.allMatches(text)) {
+    for (final m in on(_reWithout, phrase && low.contains('без'))) {
       final h = _hourWord(m.group(2)!);
       if (h == null || h > 24) continue;
       const off = {'четверти': 15, 'пятнадцати': 15, 'двадцати': 20, 'десяти': 10, 'пяти': 5};
@@ -601,7 +621,7 @@ class DatePhrase {
         ),
       );
     }
-    for (final m in _reNoon.allMatches(text)) {
+    for (final m in on(_reNoon, low.contains('пол') || low.contains('noon') || low.contains('midnight'))) {
       final w = m.group(1)!.toLowerCase();
       out.add(
         _T(_K.time, _lead(text, m.start, _leadWord).$1, m.end, h: w == 'полдень' || w == 'noon' ? 12 : 0, strong: true),
@@ -636,7 +656,7 @@ class DatePhrase {
       out.add(_T(_K.range, start, m.end, h: h1, mi: mi1, h2: h2, mi2: mi2, strong: strong));
     }
 
-    for (final m in _reDuration.allMatches(text)) {
+    for (final m in on(_reDuration, low.contains('на') || low.contains('for'))) {
       int? minutes;
       final word = m.group(3)?.toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
       if (word != null) {
@@ -974,7 +994,7 @@ class DatePhrase {
       endMinute: endMinute,
       durationMinutes: duration?.minutes,
       offsetMinutes: offset?.minutes,
-      loneHour: time != null && !time.strong && time.k == _K.time && part == 0,
+      loneHour: time != null && !time.strong && part == 0,
       spans: spans,
       rest: _squash(buf.toString()),
     );

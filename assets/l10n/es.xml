@@ -129,6 +129,12 @@
     <string name="connecting">Conectando...</string>
     <string name="createEvent">Crear evento</string>
     <string name="createMeeting">Crear reunión</string>
+    <string name="dateShowInCalendar">Mostrar en el calendario</string>
+    <string name="mailDates">Fechas en el texto del mensaje</string>
+    <string name="mailDatesDesc">Toca una fecha para crear una reunión o un recordatorio, o abrir ese día en el calendario</string>
+    <string name="quickEventTitle">Evento en una frase</string>
+    <string name="quickEventHint">Por ejemplo: Llamada con Ana el viernes a las 15 durante una hora</string>
+    <string name="quickEventMore">Más detalles</string>
     <string name="createTask">Crear tarea</string>
     <string name="date">Fecha</string>
     <string name="dayPlan">Plan del día</string>

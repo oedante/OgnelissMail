@@ -129,6 +129,12 @@
     <string name="connecting">Csatlakozás...</string>
     <string name="createEvent">Esemény létrehozása</string>
     <string name="createMeeting">Értekezlet létrehozása</string>
+    <string name="dateShowInCalendar">Megjelenítés a naptárban</string>
+    <string name="mailDates">Dátumok az üzenet szövegében</string>
+    <string name="mailDatesDesc">Koppintson egy dátumra: értekezlet, emlékeztető vagy az adott nap a naptárban</string>
+    <string name="quickEventTitle">Esemény egy mondatban</string>
+    <string name="quickEventHint">Például: Hívás Annával pénteken 15-kor egy órára</string>
+    <string name="quickEventMore">További részletek</string>
     <string name="createTask">Feladat létrehozása</string>
     <string name="date">Dátum</string>
     <string name="dayPlan">Napi terv</string>

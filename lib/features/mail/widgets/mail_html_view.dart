@@ -53,6 +53,7 @@ import '../../../core/logging/open_trace.dart';
 import '../../../services/background/work_scheduler.dart';
 import '../../../core/utils/work_isolate.dart';
 import '../../../core/security/mail_body_processor.dart';
+import '../../../core/utils/date_links.dart';
 import '../../../core/utils/linkify.dart';
 import '../../../core/utils/mail_clip.dart';
 import '../../../core/utils/mail_color_scheme.dart';
@@ -191,17 +192,18 @@ class MailHtmlDocument {
     Map<String, String> inlineImages = const {},
     bool keepCid = false,
     bool clip = false,
+    DateContext? dates,
   }) async {
     if (kIsWeb || bodyHtml.length < MailBodyProcessor.isolateThreshold) {
       return build(bodyHtml,
-          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip);
+          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip, dates: dates);
     }
     try {
       return await WorkIsolate.interactive.run(() => build(bodyHtml,
-          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip));
+          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip, dates: dates));
     } on UnsupportedError {
       return build(bodyHtml,
-          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip);
+          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip, dates: dates);
     }
   }
 
@@ -212,13 +214,15 @@ class MailHtmlDocument {
   /// картинок (1.5.6). Без него такие картинки убираются сразу. [clip] —
   /// очень длинное письмо показать только началом ([clipped], 1.9.x): так
   /// собирает документ экран письма; ответ, пересылка, печать и «Открыть в
-  /// браузере» берут письмо целиком.
+  /// браузере» берут письмо целиком. [dates] — даты в тексте письма
+  /// нажимаемые (ссылки `ogdate:`, DateLinks; 1.9.x), от даты письма.
   static MailHtmlDocument build(
     String bodyHtml, {
     required bool allowRemoteImages,
     Map<String, String> inlineImages = const {},
     bool keepCid = false,
     bool clip = false,
+    DateContext? dates,
   }) {
     final doc = html_parser.parse(bodyHtml);
     final body = doc.body ?? dom.Element.tag('body');
@@ -306,8 +310,10 @@ class MailHtmlDocument {
     _trimSide(body, start: true);
     _trimSide(body, start: false);
 
-    // Ссылки и адреса почты обычным текстом — нажимаемые (1.5.10).
-    if (Linkify.mayContain(bodyHtml)) _linkifyText(body);
+    // Ссылки и адреса почты обычным текстом — нажимаемые (1.5.10); даты —
+    // тоже (1.9.x, просьба владельца 31.10.2026): ссылками `ogdate:`, их
+    // нажатие окно отдаёт приложению, как и остальные ссылки.
+    if (Linkify.mayContain(bodyHtml) || dates != null) _linkifyText(body, dates);
 
     final links = <String, String>{};
     for (final a in body.querySelectorAll('a[href]')) {
@@ -464,8 +470,9 @@ class MailHtmlDocument {
     return MailHtmlDocument(out, linkTexts, declaredWidth: declaredWidth, darkDesign: darkDesign, clipped: clipped);
   }
 
-  /// Текст вне ссылок, стилей и полей ввода: найденные адреса → `<a href>`.
-  static void _linkifyText(dom.Node node, {int depth = 0}) {
+  /// Текст вне ссылок, стилей и полей ввода: найденные адреса и даты →
+  /// `<a href>`.
+  static void _linkifyText(dom.Node node, DateContext? dates, {int depth = 0}) {
     if (depth > 64) return;
     for (final n in node.nodes.toList()) {
       if (n is dom.Element) {
@@ -473,10 +480,10 @@ class MailHtmlDocument {
         if (tag == 'a' || tag == 'style' || tag == 'script' || tag == 'textarea' || tag == 'title' || tag == 'svg') {
           continue;
         }
-        _linkifyText(n, depth: depth + 1);
+        _linkifyText(n, dates, depth: depth + 1);
       } else if (n is dom.Text) {
         final t = n.text;
-        final found = Linkify.find(t);
+        final found = DateLinks.find(t, dates);
         if (found.isEmpty) continue;
         final parent = n.parentNode!;
         var at = parent.nodes.indexOf(n);
@@ -571,6 +578,9 @@ pre,code{white-space:pre-wrap;}
    таблицу (MailHtmlDocument.build, og-brk). */
 .og-brk{overflow-wrap:anywhere !important;word-break:break-all !important;}
 a{color:#1D4F91;}
+/* Дата в тексте (1.9.x, DateLinks): цвет текста, подчёркнута пунктиром —
+   нажимается, но не спорит с оформлением письма. */
+a[href^="ogdate:"]{color:inherit !important;text-decoration:underline dotted !important;text-underline-offset:2px;}
 blockquote{margin:8px 0 8px 4px;padding-left:10px;border-left:3px solid #c7cdd6;color:#4a4f57;}
 /* Слитные рамки — у таблиц без cellspacing (Outlook, 1С); у рассылок
    cellspacing задаёт промежутки между ячейками (1.8.14: раньше слипались).

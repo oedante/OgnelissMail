@@ -210,8 +210,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final extra = state.extra;
           EmailModel? email;
           DateTime? start, end;
-          String? location, title, description;
+          String? location, title, description, linkedEmailId;
           CalendarEvent? edit, duplicate;
+          var allDay = false;
           if (extra is EmailModel) {
             email = extra;
           } else if (extra is CalendarEvent) {
@@ -224,6 +225,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             title = extra['title'] as String?;
             description = extra['description'] as String?;
             duplicate = extra['duplicate'] as CalendarEvent?;
+            // Дата из текста письма (1.9.x): весь день, ссылка на письмо.
+            allDay = extra['allDay'] == true;
+            linkedEmailId = extra['linkedEmailId'] as String?;
             // Правка с новым временем — «Принять предложенное время» (1.6.7).
             edit = extra['edit'] as CalendarEvent?;
           }
@@ -238,6 +242,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               initialLocation: location,
               initialTitle: title,
               initialDescription: description,
+              initialAllDay: allDay,
+              linkedEmailId: linkedEmailId,
             )),
           );
         },

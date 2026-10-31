@@ -26,6 +26,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/logging/app_logger.dart';
 import '../../../core/security/mail_body_processor.dart';
+import '../../../core/utils/date_links.dart';
 import '../../../core/utils/work_isolate.dart';
 import '../../../core/utils/quote_splitter.dart';
 import '../../../data/database/app_database.dart';
@@ -38,6 +39,7 @@ import '../../../services/security/tracker_blocker.dart';
 import '../widgets/mail_html_view.dart';
 import '../widgets/mail_native_body.dart';
 import '../../settings/widgets/feature_settings_sections.dart' show ExperimentalKeys;
+import '../../settings/providers/settings_provider.dart' show settingsProvider;
 import 'mail_providers.dart' show accountsProvider, emailModelFromRow;
 
 final mailOpenCacheProvider = Provider<MailOpenCache>((ref) => MailOpenCache(ref));
@@ -205,31 +207,37 @@ class MailOpenCache {
     return (options: opts, allowImages: allowImages, domain: domain);
   }
 
-  static String _bodyKey(String raw, TrackerBlockOptions o, bool remote) {
+  static String _bodyKey(String raw, TrackerBlockOptions o, bool remote, DateContext? dates) {
     final hosts = o.allowedHosts.isEmpty ? '' : (o.allowedHosts.toList()..sort()).join(',');
     return '${mailWebViewSupported ? 1 : 0}|${o.enabled ? 1 : 0}|${o.blockExternal ? 1 : 0}|'
-        '${remote ? 1 : 0}|$hosts|${raw.length}|${raw.hashCode}';
+        '${remote ? 1 : 0}|$hosts|${dates?.key ?? '-'}|${raw.length}|${raw.hashCode}';
   }
 
+  /// Даты в тексте письма (1.9.x, «Настройки → Почта → Даты в тексте
+  /// письма»): от даты отправки; null — выключено.
+  DateContext? datesFor(EmailModel e) =>
+      _ref.read(settingsProvider).mailDates ? DateContext.forMail(e.sentAt ?? e.receivedAt) : null;
+
   /// Подготовленное тело уже готово (без ожидания).
-  PreparedMailBody? peekPrepared(String raw, {required TrackerBlockOptions options, required bool allowImages}) {
+  PreparedMailBody? peekPrepared(String raw,
+      {required TrackerBlockOptions options, required bool allowImages, DateContext? dates}) {
     final remote = allowImages || !options.blockExternal;
-    return _ready[_bodyKey(raw, options, remote)];
+    return _ready[_bodyKey(raw, options, remote, dates)];
   }
 
   /// Очистка, цитата и документ WebView — одним заходом в отдельный изолят
   /// (раньше — три разбора письма по очереди, мелкие — на главном потоке,
   /// прямо во время перехода на экран письма).
   Future<PreparedMailBody> prepare(String raw,
-      {required TrackerBlockOptions options, required bool allowImages}) {
+      {required TrackerBlockOptions options, required bool allowImages, DateContext? dates}) {
     final remote = allowImages || !options.blockExternal;
-    final k = _bodyKey(raw, options, remote);
+    final k = _bodyKey(raw, options, remote, dates);
     final hit = _bodies.remove(k);
     if (hit != null) {
       _bodies[k] = hit; // свежее — в конец очереди вытеснения
       return hit;
     }
-    final f = _run(raw, mailWebViewSupported, options, remote);
+    final f = _run(raw, mailWebViewSupported, options, remote, dates);
     _bodies[k] = f;
     unawaited(f.then((p) {
       if (!_bodies.containsKey(k)) return;
@@ -255,21 +263,23 @@ class MailOpenCache {
 
   /// Статическая обёртка: замыкание для изолята не должно захватывать
   /// объект с Ref.
-  static Future<PreparedMailBody> _run(String raw, bool webView, TrackerBlockOptions o, bool remote) async {
+  static Future<PreparedMailBody> _run(
+      String raw, bool webView, TrackerBlockOptions o, bool remote, DateContext? dates) async {
     // Рабочий изолят (1.5.9): без запуска изолята на каждое письмо — порог
     // ниже (было 4 КБ).
-    if (kIsWeb || raw.length < 2048) return _prepareSync(raw, webView, o, remote);
+    if (kIsWeb || raw.length < 2048) return _prepareSync(raw, webView, o, remote, dates);
     try {
-      return await WorkIsolate.interactive.run(() => _prepareSync(raw, webView, o, remote));
+      return await WorkIsolate.interactive.run(() => _prepareSync(raw, webView, o, remote, dates));
     } on UnsupportedError {
-      return _prepareSync(raw, webView, o, remote);
+      return _prepareSync(raw, webView, o, remote, dates);
     }
   }
 
   /// [webView] — письмо показывает окно браузера (Android, iOS). Стили
   /// письма сохраняются везде (1.8.14): на компьютере по ним решается, простое
   /// ли письмо, и собирается документ для «Открыть в браузере».
-  static PreparedMailBody _prepareSync(String raw, bool webView, TrackerBlockOptions o, bool remote) {
+  static PreparedMailBody _prepareSync(
+      String raw, bool webView, TrackerBlockOptions o, bool remote, DateContext? dates) {
     final secured = MailBodyProcessor.processSync(raw, keepStyles: true, options: o);
     QuoteSplit split;
     try {
@@ -279,12 +289,12 @@ class MailOpenCache {
     }
     final first = split.hasQuote ? split.reply : secured.html;
     // Очень длинное письмо — началом, как его покажет экран письма (1.9.x).
-    final doc = MailHtmlDocument.build(first, allowRemoteImages: remote, keepCid: true, clip: true);
+    final doc = MailHtmlDocument.build(first, allowRemoteImages: remote, keepCid: true, clip: true, dates: dates);
     // Простое письмо — и для показа без WebView (тот же проход изолята).
     NativeMail? native;
     String? why;
     try {
-      final r = buildNativeMailWhy(first, remoteImages: remote);
+      final r = buildNativeMailWhy(first, remoteImages: remote, dates: dates);
       native = r.mail;
       why = r.why;
     } catch (e) {
@@ -292,7 +302,9 @@ class MailOpenCache {
     }
     if (!webView && native == null) {
       try {
-        native = remote ? buildNativeMailForcedRemote(first) : buildNativeMailForced(first);
+        native = remote
+            ? buildNativeMailForcedRemote(first, dates: dates)
+            : buildNativeMailForced(first, dates: dates);
       } catch (_) {}
     }
     return PreparedMailBody(
@@ -317,7 +329,7 @@ class MailOpenCache {
         final html = e.bodyHtml;
         if (html != null && html.isNotEmpty) {
           final o = optionsFor(e);
-          unawaited(prepare(html, options: o.options, allowImages: o.allowImages)
+          unawaited(prepare(html, options: o.options, allowImages: o.allowImages, dates: datesFor(e))
               .then((_) {}, onError: (Object _) {}));
           if (images) unawaited(inlineImages(accountId, e).then((_) {}, onError: (Object _) {}));
         }
@@ -341,7 +353,7 @@ class MailOpenCache {
       final html = e.bodyHtml;
       if (html == null || html.isEmpty) return;
       final o = optionsFor(e);
-      await prepare(html, options: o.options, allowImages: o.allowImages);
+      await prepare(html, options: o.options, allowImages: o.allowImages, dates: datesFor(e));
     } catch (e) {
       AppLogger.debug('Подготовка свежего письма: $e');
     }
@@ -364,7 +376,7 @@ class MailOpenCache {
         final html = e.bodyHtml;
         if (html == null || html.isEmpty) return;
         final o = optionsFor(e);
-        final p = await prepare(html, options: o.options, allowImages: o.allowImages);
+        final p = await prepare(html, options: o.options, allowImages: o.allowImages, dates: datesFor(e));
         // Простое письмо покажется без WebView — окно ему не нужно.
         if (p.native != null && (_ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.nativeMail) ?? true)) return;
         // Картинки из интернета разрешены (письмо, доверенный отправитель,

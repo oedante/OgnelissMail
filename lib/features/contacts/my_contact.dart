@@ -198,7 +198,7 @@ class _QrCard extends StatelessWidget {
         // тёмной теме тоже.
         Container(
           padding: const EdgeInsets.all(Space.m),
-          decoration: const BoxDecoration(color: Colors.white, borderRadius: Radii.chipAll),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: Radii.chipAll),
           child: QrImageView(
             data: vcardOf(c),
             version: QrVersions.auto,

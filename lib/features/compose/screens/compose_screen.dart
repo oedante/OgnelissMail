@@ -3471,7 +3471,13 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// Заголовок экрана по виду письма.
   /// Заголовок и под ним — «Сохранено · 06:41», когда черновик записан.
   Widget _titleWithSaved(AppLocalizations l10n) {
-    final title = Text(_screenTitle(l10n), maxLines: 1, overflow: TextOverflow.ellipsis);
+    // Узкий экран и крупный шрифт (320 dp, ×1,3) — название уменьшается, а не
+    // обрезается («Новое сообщен…», проверка размеров 1.8.12).
+    final title = FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: AlignmentDirectional.centerStart,
+      child: Text(_screenTitle(l10n), maxLines: 1),
+    );
     final at = _savedAt;
     if (at == null || _sentOrDiscarded) return title;
     final theme = Theme.of(context);

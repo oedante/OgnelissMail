@@ -150,12 +150,16 @@ class _WheelSheetState extends State<_WheelSheet> {
   // настоящий изгиб барабана, центральная строка чуть увеличена лупой,
   // строки к краям затухают; колонки по бокам слегка повёрнуты к центру.
   // Размер строк и цифр — прежний, крупный.
+  // Без лупы (проверка размеров 1.8.12): лупа увеличивала строку от центра
+  // колонки, и выбранная «Сегодня» стояла правее соседних строк — выбранная
+  // строка чуть крупнее сама.
   static const _extent = 60.0;
   static const _visible = 5;
   static const _font = 24.0;
+  static const _fontSelected = 27.0;
   // Слова (день недели, месяц) — чуть мельче чисел: «Ср, 30 сент.» целиком.
   static const _fontWords = 20.0;
-  static const _magnification = 1.12;
+  static const _fontWordsSelected = 22.0;
 
   late final DateTime _base = _dateBase();
   late final int _dayCount = _dateCount();
@@ -332,7 +336,7 @@ class _WheelSheetState extends State<_WheelSheet> {
             overflow: TextOverflow.fade,
             softWrap: false,
             style: theme.textTheme.titleLarge?.copyWith(
-              fontSize: words ? _fontWords : _font,
+              fontSize: words ? (sel ? _fontWordsSelected : _fontWords) : (sel ? _fontSelected : _font),
               fontWeight: sel ? FontWeight.w600 : FontWeight.w400,
               color: sel ? scheme.onSurface : scheme.onSurfaceVariant,
               fontFeatures: const [FontFeature.tabularFigures()],
@@ -355,9 +359,6 @@ class _WheelSheetState extends State<_WheelSheet> {
         diameterRatio: 1.5,
         perspective: 0.003,
         offAxisFraction: offAxis,
-        // Выбранная строка — под лупой, чуть крупнее соседних.
-        useMagnifier: true,
-        magnification: _magnification,
         overAndUnderCenterOpacity: 0.55,
         onSelectedItemChanged: (i) {
           if (_syncing) return;
@@ -447,7 +448,7 @@ class _WheelSheetState extends State<_WheelSheet> {
       ));
       columns.add(Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.xs),
-        child: Text(':', style: theme.textTheme.titleLarge?.copyWith(fontSize: _font * _magnification, fontWeight: FontWeight.w600)),
+        child: Text(':', style: theme.textTheme.titleLarge?.copyWith(fontSize: _fontSelected, fontWeight: FontWeight.w600)),
       ));
       columns.add(_wheel(
         key: 'm',
@@ -553,7 +554,8 @@ class _WheelSheetState extends State<_WheelSheet> {
               Center(
                 child: Container(
                   height: _extent,
-                  margin: const EdgeInsets.symmetric(horizontal: Space.m),
+                  // Края полосы — по краям кнопок «Отмена» и «Готово».
+                  margin: const EdgeInsets.symmetric(horizontal: Space.l),
                   decoration: BoxDecoration(
                     color: scheme.primary.withValues(alpha: theme.brightness == Brightness.dark ? 0.16 : 0.08),
                     borderRadius: BorderRadius.circular(14),
@@ -591,10 +593,16 @@ class _WheelSheetState extends State<_WheelSheet> {
             padding: EdgeInsets.only(
                 left: canGrid ? Space.xxl + Space.l : Space.l, top: Space.s, right: canGrid ? Space.s : Space.l),
             child: Row(children: [
+              // Узкий экран (320 dp) — строка уменьшается, а не переносит
+              // время на вторую строку.
               Expanded(
-                child: Text(summary,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600)),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(summary,
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600)),
+                ),
               ),
               // Дата сеткой месяца или барабаном (1.6.49).
               if (canGrid)
@@ -619,6 +627,8 @@ class _WheelSheetState extends State<_WheelSheet> {
                   ChoiceChip(
                     label: Text(q.$1),
                     showCheckmark: false,
+                    // Не меньше 48 dp под палец (у компактных чипов — 32).
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
                     selected: _value == _normalize(q.$2),
                     onSelected: (_) => _preset(q.$2),
                   ),
@@ -632,6 +642,7 @@ class _WheelSheetState extends State<_WheelSheet> {
                   ChoiceChip(
                     label: Text(q.$1),
                     showCheckmark: false,
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
                     selected: day == q.$2,
                     onSelected: (_) => _jump(q.$2),
                   ),

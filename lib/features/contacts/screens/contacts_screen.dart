@@ -237,6 +237,8 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
     ref.listen<int>(contactsAddRequestProvider, (_, __) => _addContact(db));
     // Закреплённые контакты (1.6.49+95) — вверху списка, без поиска.
     final pinKeys = ref.watch(pinnedContactsProvider);
+    // VIP (звёздочка) — тоже в «Закреплённых» (1.8.12, замечание 31.10.2026).
+    final vip = ref.watch(focusModeProvider.select((s) => s.vipEmails.map((e) => e.trim().toLowerCase()).toSet()));
     // Есть ли в области ящик Exchange — тогда поиск идёт и по адресной
     // книге организации.
     ref.watch(accountsProvider);
@@ -368,13 +370,15 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
 
                 // Закреплённые — отдельным разделом сверху, в буквах их нет;
                 // по алфавиту, как остальной список (1.7.1: раньше — в порядке
-                // закрепления).
+                // закрепления). С 1.8.12 — и VIP (звёздочка в строке).
                 final pinKeySet = pinKeys.toSet();
                 final seen = <String>{};
-                final pinned = _search.isEmpty && pinKeys.isNotEmpty
+                bool top(Contact c) =>
+                    pinKeySet.contains(contactPinKey(c)) || vip.contains(c.email.trim().toLowerCase());
+                final pinned = _search.isEmpty && (pinKeys.isNotEmpty || vip.isNotEmpty)
                     ? [
                         for (final c in filtered)
-                          if (pinKeySet.contains(contactPinKey(c)) && seen.add(contactPinKey(c))) c,
+                          if (top(c) && seen.add(contactPinKey(c))) c,
                       ]
                     : <Contact>[];
                 pinned.sort((a, b) => a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));

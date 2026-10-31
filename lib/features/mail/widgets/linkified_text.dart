@@ -14,7 +14,11 @@ class LinkifiedText extends StatefulWidget {
   /// Адрес (https://…, mailto:…) и видимый текст ссылки.
   final void Function(String url, String text) onLink;
 
-  const LinkifiedText(this.text, {super.key, this.style, required this.onLink});
+  /// Масштаб шрифта: null — системный (MediaQuery); задан — свой (текст
+  /// письма, [MailHtmlView.textScaleOf]).
+  final TextScaler? textScaler;
+
+  const LinkifiedText(this.text, {super.key, this.style, required this.onLink, this.textScaler});
 
   @override
   State<LinkifiedText> createState() => _LinkifiedTextState();
@@ -70,6 +74,6 @@ class _LinkifiedTextState extends State<LinkifiedText> {
       _for = widget.text;
       _link = link;
     }
-    return SelectableText.rich(TextSpan(style: widget.style, children: _spans));
+    return SelectableText.rich(TextSpan(style: widget.style, children: _spans), textScaler: widget.textScaler);
   }
 }

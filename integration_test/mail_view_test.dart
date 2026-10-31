@@ -239,147 +239,151 @@ Future<_Probe> _open(
 }
 
 void mailViewTests() {
-  late AppLocalizations l10n;
+  // Свои setUp/tearDown — только для этих тестов (в emulator_test.dart все
+  // файлы идут одним набором).
+  group('Окно письма', () {
+    late AppLocalizations l10n;
 
-  setUpAll(() async {
-    l10n = await loadStrings();
-  });
-
-  setUp(() {
-    MailHtmlView.fitWide = false;
-    MailWebViewPool.enabled = false;
-  });
-
-  tearDown(() async {
-    setUiZoom(1.0);
-    await MailWebViewPool.release();
-  });
-
-  for (final zoom in const [1.0, 0.85]) {
-    group('Окно письма, масштаб интерфейса $zoom', () {
-      testWidgets('обычное письмо: 100 %, высота по документу', (tester) async {
-        setUiZoom(zoom);
-        final ts = mailTextScaleFor(zoom);
-        final doc = MailHtmlDocument.build(_plainHtml, allowRemoteImages: false);
-        final p = await _open(tester, doc, zoom: zoom);
-        final w = tester.getSize(find.byType(MailHtmlView)).width;
-        expect(w, closeTo(screenWidth(tester) / zoom - 32, 1));
-        // Не широкое — кнопки масштаба нет.
-        expect(find.text(l10n.tr('mailFitToWidth')), findsNothing);
-        expect(find.text(l10n.tr('mailActualSize')), findsNothing);
-        _expectScale(await _scales(tester, p), 1.0, 'обычное письмо');
-        final ref = await _referenceHeight(tester, doc, viewWidth: w, fitWidth: null, textScale: ts);
-        _expectHeight(p.height, ref, 'обычное письмо');
-      }, skip: !onAndroid);
-
-      testWidgets('рассылка 640 px: «По ширине экрана», «Обычный размер», «Исходный масштаб» — без пустого поля', (
-        tester,
-      ) async {
-        setUiZoom(zoom);
-        final ts = mailTextScaleFor(zoom);
-        final doc = MailHtmlDocument.build(_newsletterHtml(), allowRemoteImages: false);
-        expect(doc.declaredWidth, 640);
-        final p = await _open(tester, doc, zoom: zoom);
-        final w = tester.getSize(find.byType(MailHtmlView)).width;
-        final fit = w / 640;
-        final refActual = await _referenceHeight(tester, doc, viewWidth: w, fitWidth: null, textScale: ts);
-        final refFit = await _referenceHeight(tester, doc, viewWidth: w, fitWidth: 640, textScale: ts);
-        expect(refFit, lessThan(refActual), reason: 'вписанное письмо ниже');
-
-        // Открытие: обычный масштаб (fitWide выключено), кнопка «По ширине экрана».
-        expect(p.layout!.actualSize, isTrue);
-        _expectScale(await _scales(tester, p), 1.0, 'открытие');
-        _expectHeight(p.height, refActual, 'открытие');
-
-        // «По ширине экрана».
-        var loads = p.loadStops;
-        await tester.tap(find.text(l10n.tr('mailFitToWidth')));
-        await pumpUntil(tester, () => p.loadStops > loads, what: 'документ перезагружен по ширине экрана');
-        await _settle(tester, p, 'по ширине экрана');
-        expect(p.layout!.fitWidth, 640);
-        _expectScale(await _scales(tester, p), fit, 'по ширине экрана');
-        _expectHeight(p.height, refFit, 'по ширине экрана');
-
-        // Увеличение (как щипком; zoomBy — родной вызов WebView, без касаний)
-        // → «Обычный размер».
-        await p.controller!.zoomBy(zoomFactor: 1.6);
-        await pumpUntil(tester, () => p.layout?.pinched ?? false, what: 'письмо увеличено, кнопка «Обычный размер»');
-        await _settle(tester, p, 'увеличено');
-        final zoomed = await _scales(tester, p);
-        expect(zoomed.current, greaterThan(fit * 1.2));
-        // Высота растёт ровно с масштабом.
-        _expectHeight(p.height, refFit * zoomed.current / fit, 'увеличено');
-        expect(find.text(l10n.tr('mailZoomReset')), findsOneWidget);
-
-        loads = p.loadStops;
-        await tester.tap(find.text(l10n.tr('mailZoomReset')));
-        await pumpUntil(tester, () => p.loadStops > loads, what: 'документ перезагружен («Обычный размер»)');
-        await _settle(tester, p, 'обычный размер');
-        expect(p.layout!.pinched, isFalse);
-        _expectScale(await _scales(tester, p), fit, 'обычный размер');
-        _expectHeight(p.height, refFit, 'обычный размер');
-
-        // «Исходный масштаб» — снова 100 %.
-        loads = p.loadStops;
-        await tester.tap(find.text(l10n.tr('mailActualSize')));
-        await pumpUntil(tester, () => p.loadStops > loads, what: 'документ перезагружен в исходном масштабе');
-        await _settle(tester, p, 'исходный масштаб');
-        expect(p.layout!.actualSize, isTrue);
-        _expectScale(await _scales(tester, p), 1.0, 'исходный масштаб');
-        _expectHeight(p.height, refActual, 'исходный масштаб');
-      }, skip: !onAndroid);
-
-      testWidgets('касания попадают в ссылку и картинку (getHitTestResult)', (tester) async {
-        setUiZoom(zoom);
-        final links = <String>[];
-        final doc = MailHtmlDocument.build(_targetsHtml(), allowRemoteImages: false);
-        final p = await _open(tester, doc, zoom: zoom, onLink: (url, _) => links.add(url));
-        final c = p.controller!;
-        // Ширина документа в CSS-пикселях — ширина окна на экране письма
-        // (письмо не широкое, масштаб 1); точек экрана на CSS-пиксель — по
-        // месту окна на экране: так проверяется и пересчёт касаний под
-        // масштаб интерфейса (UiZoomBox) и окно без него (UiZoomUndo).
-        final cssWidth = tester.getSize(find.byType(MailHtmlView)).width;
-        final rect = tester.getRect(find.byType(InAppWebView));
-        final k = rect.width / cssWidth;
-        expect(k, closeTo(zoom, 0.01));
-        Offset at(double x, double y) => rect.topLeft + Offset(x, y) * k;
-
-        Future<InAppWebViewHitTestResult?> hitAfterTap(Offset point, InAppWebViewHitTestResultType want) async {
-          await tapAtGlobal(tester, point);
-          return pollUntil<InAppWebViewHitTestResult?>(
-            tester,
-            c.getHitTestResult,
-            (r) => r?.type == want,
-            what: 'касание в $point → ${want.toNativeValue()}',
-          );
-        }
-
-        // Текст — не ссылка и не картинка (касание не «прилипает» к
-        // прошлому результату).
-        await hitAfterTap(at(cssWidth / 2, _bodyTop + 60), InAppWebViewHitTestResultType.UNKNOWN_TYPE);
-
-        // Ссылка слева вверху: тип и адрес, и приложение получило нажатие.
-        final r1 = await hitAfterTap(at(120, _bodyTop + 120 + 40), InAppWebViewHitTestResultType.SRC_ANCHOR_TYPE);
-        expect(r1?.extra, _link1);
-        await pumpUntil(tester, () => links.contains(_link1), what: 'onLink для левой ссылки');
-
-        // Ссылка справа ниже: сдвиг касаний растёт вправо и вниз — здесь он
-        // был бы заметен.
-        final r2 = await hitAfterTap(
-          at(cssWidth - 100, _bodyTop + 440 + 30),
-          InAppWebViewHitTestResultType.SRC_ANCHOR_TYPE,
-        );
-        expect(r2?.extra, _link2);
-        await pumpUntil(tester, () => links.contains(_link2), what: 'onLink для правой ссылки');
-
-        // Картинка справа: тип IMAGE, и приложение открыло её на весь экран.
-        await hitAfterTap(at(cssWidth - 80, _bodyTop + 260 + 60), InAppWebViewHitTestResultType.IMAGE_TYPE);
-        final viewer = find.byWidgetPredicate((w) => w.runtimeType.toString() == '_PhotoView');
-        await pumpUntil(tester, () => viewer.evaluate().isNotEmpty, what: 'картинка открыта на весь экран');
-        Navigator.of(tester.element(viewer)).pop();
-        await pumpUntil(tester, () => viewer.evaluate().isEmpty, what: 'просмотр картинки закрыт');
-      }, skip: !onAndroid);
+    setUpAll(() async {
+      l10n = await loadStrings();
     });
-  }
+
+    setUp(() {
+      MailHtmlView.fitWide = false;
+      MailWebViewPool.enabled = false;
+    });
+
+    tearDown(() async {
+      setUiZoom(1.0);
+      await MailWebViewPool.release();
+    });
+
+    for (final zoom in const [1.0, 0.85]) {
+      group('масштаб интерфейса $zoom', () {
+        testWidgets('обычное письмо: 100 %, высота по документу', (tester) async {
+          setUiZoom(zoom);
+          final ts = mailTextScaleFor(zoom);
+          final doc = MailHtmlDocument.build(_plainHtml, allowRemoteImages: false);
+          final p = await _open(tester, doc, zoom: zoom);
+          final w = tester.getSize(find.byType(MailHtmlView)).width;
+          expect(w, closeTo(screenWidth(tester) / zoom - 32, 1));
+          // Не широкое — кнопки масштаба нет.
+          expect(find.text(l10n.tr('mailFitToWidth')), findsNothing);
+          expect(find.text(l10n.tr('mailActualSize')), findsNothing);
+          _expectScale(await _scales(tester, p), 1.0, 'обычное письмо');
+          final ref = await _referenceHeight(tester, doc, viewWidth: w, fitWidth: null, textScale: ts);
+          _expectHeight(p.height, ref, 'обычное письмо');
+        }, skip: !onAndroid);
+
+        testWidgets('рассылка 640 px: «По ширине экрана», «Обычный размер», «Исходный масштаб» — без пустого поля', (
+          tester,
+        ) async {
+          setUiZoom(zoom);
+          final ts = mailTextScaleFor(zoom);
+          final doc = MailHtmlDocument.build(_newsletterHtml(), allowRemoteImages: false);
+          expect(doc.declaredWidth, 640);
+          final p = await _open(tester, doc, zoom: zoom);
+          final w = tester.getSize(find.byType(MailHtmlView)).width;
+          final fit = w / 640;
+          final refActual = await _referenceHeight(tester, doc, viewWidth: w, fitWidth: null, textScale: ts);
+          final refFit = await _referenceHeight(tester, doc, viewWidth: w, fitWidth: 640, textScale: ts);
+          expect(refFit, lessThan(refActual), reason: 'вписанное письмо ниже');
+
+          // Открытие: обычный масштаб (fitWide выключено), кнопка «По ширине экрана».
+          expect(p.layout!.actualSize, isTrue);
+          _expectScale(await _scales(tester, p), 1.0, 'открытие');
+          _expectHeight(p.height, refActual, 'открытие');
+
+          // «По ширине экрана».
+          var loads = p.loadStops;
+          await tester.tap(find.text(l10n.tr('mailFitToWidth')));
+          await pumpUntil(tester, () => p.loadStops > loads, what: 'документ перезагружен по ширине экрана');
+          await _settle(tester, p, 'по ширине экрана');
+          expect(p.layout!.fitWidth, 640);
+          _expectScale(await _scales(tester, p), fit, 'по ширине экрана');
+          _expectHeight(p.height, refFit, 'по ширине экрана');
+
+          // Увеличение (как щипком; zoomBy — родной вызов WebView, без касаний)
+          // → «Обычный размер».
+          await p.controller!.zoomBy(zoomFactor: 1.6);
+          await pumpUntil(tester, () => p.layout?.pinched ?? false, what: 'письмо увеличено, кнопка «Обычный размер»');
+          await _settle(tester, p, 'увеличено');
+          final zoomed = await _scales(tester, p);
+          expect(zoomed.current, greaterThan(fit * 1.2));
+          // Высота растёт ровно с масштабом.
+          _expectHeight(p.height, refFit * zoomed.current / fit, 'увеличено');
+          expect(find.text(l10n.tr('mailZoomReset')), findsOneWidget);
+
+          loads = p.loadStops;
+          await tester.tap(find.text(l10n.tr('mailZoomReset')));
+          await pumpUntil(tester, () => p.loadStops > loads, what: 'документ перезагружен («Обычный размер»)');
+          await _settle(tester, p, 'обычный размер');
+          expect(p.layout!.pinched, isFalse);
+          _expectScale(await _scales(tester, p), fit, 'обычный размер');
+          _expectHeight(p.height, refFit, 'обычный размер');
+
+          // «Исходный масштаб» — снова 100 %.
+          loads = p.loadStops;
+          await tester.tap(find.text(l10n.tr('mailActualSize')));
+          await pumpUntil(tester, () => p.loadStops > loads, what: 'документ перезагружен в исходном масштабе');
+          await _settle(tester, p, 'исходный масштаб');
+          expect(p.layout!.actualSize, isTrue);
+          _expectScale(await _scales(tester, p), 1.0, 'исходный масштаб');
+          _expectHeight(p.height, refActual, 'исходный масштаб');
+        }, skip: !onAndroid);
+
+        testWidgets('касания попадают в ссылку и картинку (getHitTestResult)', (tester) async {
+          setUiZoom(zoom);
+          final links = <String>[];
+          final doc = MailHtmlDocument.build(_targetsHtml(), allowRemoteImages: false);
+          final p = await _open(tester, doc, zoom: zoom, onLink: (url, _) => links.add(url));
+          final c = p.controller!;
+          // Ширина документа в CSS-пикселях — ширина окна на экране письма
+          // (письмо не широкое, масштаб 1); точек экрана на CSS-пиксель — по
+          // месту окна на экране: так проверяется и пересчёт касаний под
+          // масштаб интерфейса (UiZoomBox) и окно без него (UiZoomUndo).
+          final cssWidth = tester.getSize(find.byType(MailHtmlView)).width;
+          final rect = tester.getRect(find.byType(InAppWebView));
+          final k = rect.width / cssWidth;
+          expect(k, closeTo(zoom, 0.01));
+          Offset at(double x, double y) => rect.topLeft + Offset(x, y) * k;
+
+          Future<InAppWebViewHitTestResult?> hitAfterTap(Offset point, InAppWebViewHitTestResultType want) async {
+            await tapAtGlobal(tester, point);
+            return pollUntil<InAppWebViewHitTestResult?>(
+              tester,
+              c.getHitTestResult,
+              (r) => r?.type == want,
+              what: 'касание в $point → ${want.toNativeValue()}',
+            );
+          }
+
+          // Текст — не ссылка и не картинка (касание не «прилипает» к
+          // прошлому результату).
+          await hitAfterTap(at(cssWidth / 2, _bodyTop + 60), InAppWebViewHitTestResultType.UNKNOWN_TYPE);
+
+          // Ссылка слева вверху: тип и адрес, и приложение получило нажатие.
+          final r1 = await hitAfterTap(at(120, _bodyTop + 120 + 40), InAppWebViewHitTestResultType.SRC_ANCHOR_TYPE);
+          expect(r1?.extra, _link1);
+          await pumpUntil(tester, () => links.contains(_link1), what: 'onLink для левой ссылки');
+
+          // Ссылка справа ниже: сдвиг касаний растёт вправо и вниз — здесь он
+          // был бы заметен.
+          final r2 = await hitAfterTap(
+            at(cssWidth - 100, _bodyTop + 440 + 30),
+            InAppWebViewHitTestResultType.SRC_ANCHOR_TYPE,
+          );
+          expect(r2?.extra, _link2);
+          await pumpUntil(tester, () => links.contains(_link2), what: 'onLink для правой ссылки');
+
+          // Картинка справа: тип IMAGE, и приложение открыло её на весь экран.
+          await hitAfterTap(at(cssWidth - 80, _bodyTop + 260 + 60), InAppWebViewHitTestResultType.IMAGE_TYPE);
+          final viewer = find.byWidgetPredicate((w) => w.runtimeType.toString() == '_PhotoView');
+          await pumpUntil(tester, () => viewer.evaluate().isNotEmpty, what: 'картинка открыта на весь экран');
+          Navigator.of(tester.element(viewer)).pop();
+          await pumpUntil(tester, () => viewer.evaluate().isEmpty, what: 'просмотр картинки закрыт');
+        }, skip: !onAndroid);
+      });
+    }
+  });
 }

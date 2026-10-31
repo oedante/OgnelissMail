@@ -173,7 +173,9 @@ def cmd_baseline(args) -> int:
             old = json.load(f)
     except (OSError, ValueError):
         old = {}
-    old['metrics'] = new_baseline(metrics, args.headroom, args.step)
+    # Замеры, которых в этом прогоне нет, остаются со старой базой.
+    merged = {**(old.get('metrics') or {}), **new_baseline(metrics, args.headroom, args.step)}
+    old['metrics'] = dict(sorted(merged.items()))
     with open(args.baseline, 'w', encoding='utf-8') as f:
         json.dump(old, f, ensure_ascii=False, indent=2)
         f.write('\n')

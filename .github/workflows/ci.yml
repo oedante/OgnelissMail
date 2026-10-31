@@ -22,6 +22,9 @@
 #    на телефоне, не для Google Play.
 #  · Сборка iOS без подписи (только по кнопке: macOS расходует минуты
 #    вдесятеро быстрее) — проверка, что проект собирается.
+#  · Эмулятор Android (по кнопке с отметкой «emulator» и по метке v*; не на
+#    каждый push — это ~30 минут Actions): окно письма, редактор и замеры
+#    скорости (integration_test/emulator_test.dart, tool/perf/README.md).
 #
 # 23.10.2026 (аудит движка 07.10, п. 5): Flutter — текущий stable (pubspec
 # требует Flutter 3.38+ и Dart 3.10+).
@@ -56,6 +59,10 @@ on:
         default: false
       shots:
         description: 'Снимки экранов (tool/shots) — в Artifacts'
+        type: boolean
+        default: false
+      emulator:
+        description: 'Тесты и замеры скорости на эмуляторе Android (~30 мин)'
         type: boolean
         default: false
 
@@ -478,6 +485,118 @@ jobs:
           name: screens-${{ github.sha }}
           path: tool/shots/out/
           retention-days: 3
+
+  # Эмулятор Android (1.9.x, просьба владельца 31.10.2026): то, что раньше
+  # было видно только на телефоне, — окно письма (масштаб вписывания, высота
+  # без пустого поля после «По ширине экрана» / «Обычный размер», касания по
+  # ссылкам и картинкам при масштабе интерфейса 1,0 и 0,85), редактор
+  # (загрузка, текст, курсор по касанию) и замеры скорости (открытие письма,
+  # «Новое сообщение», запуск) — integration_test/emulator_test.dart.
+  # Дорого (сборка APK, загрузка эмулятора, тесты — около получаса минут
+  # Actions), поэтому только по кнопке «Run workflow» с отметкой «emulator» и
+  # по метке v*, не на каждый push. Выпуск этой задачи не ждёт.
+  # Замеры — таблица в сводке и perf-results.json в Artifacts; ошибка — если
+  # медленнее tool/perf/baseline.json больше чем вдвое (tool/perf/README.md).
+  # android-emulator-runner (ReactiveCircus) — Apache-2.0.
+  emulator:
+    needs: analyze-and-test
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.emulator) || startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      # Аппаратное ускорение эмулятора (KVM) — как советует
+      # android-emulator-runner; без него x86_64 не запускается.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      # Сборка — до запуска эмулятора: Gradle (до 8 ГБ, android/gradle.properties)
+      # и эмулятор не делят память и процессоры раннера, а flutter test потом
+      # только дособирает свою часть (плагины, SQLite и Kotlin уже собраны).
+      - name: Build debug APK
+        run: flutter build apk --debug --target-platform android-x64 -t integration_test/emulator_test.dart
+
+      # Готовый эмулятор со снимком загрузки — в кэше Actions (место в
+      # хранилище кэша, не минуты): без него каждый запуск создаёт AVD и
+      # загружает систему с нуля — несколько минут. Ключ — версия Android,
+      # образ и устройство: поменяли что-то из них — поменять и ключ.
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-34-google_apis-x86_64-pixel_6-v1
+
+      - name: Create AVD and snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "AVD snapshot for the cache"
+
+      # Анимации системы не выключаются: переходы экранов — часть того, что
+      # меряется, как на телефоне. Ожидания в тестах — по событиям, не паузы.
+      - name: Integration tests on the emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: bash tool/dev/emulator_tests.sh
+
+      - name: Test annotations
+        if: ${{ !cancelled() && hashFiles('emulator-machine.jsonl') != '' }}
+        run: python3 tool/dev/ci_annotate.py test emulator-machine.jsonl
+
+      - name: Speed report
+        if: ${{ !cancelled() }}
+        run: |
+          python3 tool/perf/perf_check.py extract emulator-machine.jsonl emulator-logcat.txt -o perf-results.json
+          python3 tool/perf/perf_check.py compare perf-results.json --summary "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: emulator-${{ github.sha }}
+          path: |
+            perf-results.json
+            emulator-machine.jsonl
+            emulator-stderr.txt
+            emulator-logcat.txt
+          retention-days: 14
+          if-no-files-found: ignore
 
   # Выпуск: метка v* (например, v1.8.6) → страница Releases: Android APK,
   # Windows (portable), macOS, Linux, iOS без подписи — что собралось.

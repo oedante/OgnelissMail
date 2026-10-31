@@ -241,89 +241,93 @@ Future<int> _openCompose(WidgetTester tester, GlobalKey<NavigatorState> nav, {re
 }
 
 void perfTests() {
-  setUpAll(() async {
-    await loadStrings();
-  });
+  // Свои setUp/tearDown — только для этих тестов (в emulator_test.dart все
+  // файлы идут одним набором).
+  group('Скорость', () {
+    setUpAll(() async {
+      await loadStrings();
+    });
 
-  setUp(() {
-    setUiZoom(1.0);
-    MailHtmlView.fitWide = false;
-  });
+    setUp(() {
+      setUiZoom(1.0);
+      MailHtmlView.fitWide = false;
+    });
 
-  tearDown(() async {
-    MailWebViewPool.enabled = false;
-    await MailWebViewPool.release();
-  });
+    tearDown(() async {
+      MailWebViewPool.enabled = false;
+      await MailWebViewPool.release();
+    });
 
-  testWidgets('скорость: открытие письма — первое, повторное, с запасным окном', (tester) async {
-    PerfLog.device(tester);
-    final nav = await _home(tester);
-    final width = screenWidth(tester) - 32;
-    final ts = mailTextScaleFor(1.0);
-    var n = 0;
-    MailHtmlDocument next() => MailHtmlDocument.build(_letter(++n), allowRemoteImages: false);
+    testWidgets('скорость: открытие письма — первое, повторное, с запасным окном', (tester) async {
+      PerfLog.device(tester);
+      final nav = await _home(tester);
+      final width = screenWidth(tester) - 32;
+      final ts = mailTextScaleFor(1.0);
+      var n = 0;
+      MailHtmlDocument next() => MailHtmlDocument.build(_letter(++n), allowRemoteImages: false);
 
-    final first = await _openMail(tester, nav, next(), width: width, textScale: ts);
-    PerfLog.record('mail_open_first_ms', first.ms, extra: {'marks': first.marks});
+      final first = await _openMail(tester, nav, next(), width: width, textScale: ts);
+      PerfLog.record('mail_open_first_ms', first.ms, extra: {'marks': first.marks});
 
-    final warm = <({int ms, Map<String, int> marks})>[];
-    for (var i = 0; i < _runs; i++) {
-      warm.add(await _openMail(tester, nav, next(), width: width, textScale: ts));
-    }
-    PerfLog.record(
-      'mail_open_ms',
-      median([for (final r in warm) r.ms]),
-      extra: {
-        'runs': [for (final r in warm) r.ms],
-        'marks': warm.last.marks,
-      },
-    );
-
-    final spare = <({int ms, Map<String, int> marks})>[];
-    for (var i = 0; i < _runs; i++) {
-      spare.add(await _openMail(tester, nav, next(), width: width, textScale: ts, spare: true));
-    }
-    PerfLog.record(
-      'mail_open_spare_ms',
-      median([for (final r in spare) r.ms]),
-      extra: {
-        'runs': [for (final r in spare) r.ms],
-        'marks': spare.last.marks,
-      },
-    );
-  }, skip: !onAndroid);
-
-  testWidgets('скорость: «Новое сообщение» — первое, повторное, с запасным окном', (tester) async {
-    final nav = await _home(tester);
-
-    PerfLog.record('compose_first_ms', await _openCompose(tester, nav, usePool: false));
-
-    final warm = <int>[];
-    for (var i = 0; i < _runs; i++) {
-      warm.add(await _openCompose(tester, nav, usePool: false));
-    }
-    PerfLog.record('compose_ms', median(warm), extra: {'runs': warm});
-
-    // Запасное окно: первое открытие с usePool запоминает ключ (язык, тема,
-    // подсказка, масштаб) и размер окна — дальше окно готовится заранее,
-    // как после закрытия «Нового сообщения» в приложении.
-    await _openCompose(tester, nav, usePool: true);
-    final spare = <int>[];
-    for (var i = 0; i < _runs; i++) {
-      MailEditorPool.editorOpen = false;
-      await waitFor(tester, MailEditorPool.ensureSpare(), what: 'запасное окно редактора создано');
-      await pumpUntil(
-        tester,
-        () => MailEditorPool.debugSpareReady,
-        what: 'редактор в запасном окне запущен',
-        timeout: const Duration(seconds: 40),
+      final warm = <({int ms, Map<String, int> marks})>[];
+      for (var i = 0; i < _runs; i++) {
+        warm.add(await _openMail(tester, nav, next(), width: width, textScale: ts));
+      }
+      PerfLog.record(
+        'mail_open_ms',
+        median([for (final r in warm) r.ms]),
+        extra: {
+          'runs': [for (final r in warm) r.ms],
+          'marks': warm.last.marks,
+        },
       );
-      spare.add(await _openCompose(tester, nav, usePool: true));
-      expect(MailEditorPool.debugSpareReady, isFalse, reason: 'запасное окно не забрано');
-    }
-    PerfLog.record('compose_spare_ms', median(spare), extra: {'runs': spare});
-    await MailEditorPool.release();
-  }, skip: !onAndroid);
+
+      final spare = <({int ms, Map<String, int> marks})>[];
+      for (var i = 0; i < _runs; i++) {
+        spare.add(await _openMail(tester, nav, next(), width: width, textScale: ts, spare: true));
+      }
+      PerfLog.record(
+        'mail_open_spare_ms',
+        median([for (final r in spare) r.ms]),
+        extra: {
+          'runs': [for (final r in spare) r.ms],
+          'marks': spare.last.marks,
+        },
+      );
+    }, skip: !onAndroid);
+
+    testWidgets('скорость: «Новое сообщение» — первое, повторное, с запасным окном', (tester) async {
+      final nav = await _home(tester);
+
+      PerfLog.record('compose_first_ms', await _openCompose(tester, nav, usePool: false));
+
+      final warm = <int>[];
+      for (var i = 0; i < _runs; i++) {
+        warm.add(await _openCompose(tester, nav, usePool: false));
+      }
+      PerfLog.record('compose_ms', median(warm), extra: {'runs': warm});
+
+      // Запасное окно: первое открытие с usePool запоминает ключ (язык, тема,
+      // подсказка, масштаб) и размер окна — дальше окно готовится заранее,
+      // как после закрытия «Нового сообщения» в приложении.
+      await _openCompose(tester, nav, usePool: true);
+      final spare = <int>[];
+      for (var i = 0; i < _runs; i++) {
+        MailEditorPool.editorOpen = false;
+        await waitFor(tester, MailEditorPool.ensureSpare(), what: 'запасное окно редактора создано');
+        await pumpUntil(
+          tester,
+          () => MailEditorPool.debugSpareReady,
+          what: 'редактор в запасном окне запущен',
+          timeout: const Duration(seconds: 40),
+        );
+        spare.add(await _openCompose(tester, nav, usePool: true));
+        expect(MailEditorPool.debugSpareReady, isFalse, reason: 'запасное окно не забрано');
+      }
+      PerfLog.record('compose_spare_ms', median(spare), extra: {'runs': spare});
+      await MailEditorPool.release();
+    }, skip: !onAndroid);
+  });
 }
 
 /// Запуск приложения. Последним: main() ставит свои обработчики ошибок и

@@ -129,7 +129,7 @@ class SyncService {
           await running.timeout(fresh ? const Duration(seconds: 20) : const Duration(minutes: 5));
         } catch (_) {}
         if (!fresh) return;
-        AppLogger.info('Синхронизация для фоновой задачи: после идущей — свой проход');
+        AppLogger.info('Синхронизация: после идущей — свой проход');
       } else {
         AppLogger.warning('Синхронизация идёт ${age.inMinutes} мин — считаю зависшей, запускаю новую');
       }
@@ -573,6 +573,16 @@ class SyncService {
     _pimForce.add(account.id);
     _folderSyncForce.add(account.id);
     return FinishInBackground.guard(() => _single(() => _syncAccountBody(account)));
+  }
+
+  /// Первая синхронизация только что добавленного ящика (1.9.x, журнал
+  /// владельца 31.10.2026: Outlook после входа — «Ещё не обновлялось», письма
+  /// только по «обновить»). Свой проход — и после уже идущей синхронизации:
+  /// та началась без этого ящика, а [syncAccount] после неё ничего не делал.
+  Future<void> syncNewAccount(AccountModel account) {
+    _pimForce.add(account.id);
+    _folderSyncForce.add(account.id);
+    return FinishInBackground.guard(() => _single(() => _syncAccountBody(account), fresh: true));
   }
 
   /// Последний FolderSync ActiveSync (папки не чаще раза в час) и ящики,

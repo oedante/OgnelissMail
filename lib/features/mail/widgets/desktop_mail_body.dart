@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import '../../../core/security/mail_body_processor.dart';
+import 'mail_clipped_bar.dart';
 import 'mail_native_body.dart';
 
 class DesktopMailBody extends StatefulWidget {
@@ -36,6 +37,10 @@ class DesktopMailBody extends StatefulWidget {
 class _DesktopMailBodyState extends State<DesktopMailBody> {
   late Future<NativeMail?> _mail;
 
+  /// Очень длинное письмо — началом, целиком — по кнопке (1.9.x,
+  /// [NativeMail.shortened]).
+  bool _whole = false;
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +50,10 @@ class _DesktopMailBodyState extends State<DesktopMailBody> {
   @override
   void didUpdateWidget(DesktopMailBody old) {
     super.didUpdateWidget(old);
-    if (old.html != widget.html) _mail = _build();
+    if (old.html != widget.html) {
+      _mail = _build();
+      _whole = false;
+    }
   }
 
   Future<NativeMail?> _build() =>
@@ -61,7 +69,14 @@ class _DesktopMailBodyState extends State<DesktopMailBody> {
         if (snap.connectionState != ConnectionState.done) return const SizedBox(height: 120);
         final m = snap.data;
         if (m != null) {
-          return MailNativeBody(mail: m, images: widget.images, textScale: widget.textScale, onLink: widget.onLink);
+          final shown = _whole ? m : m.shortened;
+          final body =
+              MailNativeBody(mail: shown, images: widget.images, textScale: widget.textScale, onLink: widget.onLink);
+          if (!shown.clipped) return body;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [body, MailClippedBar(onShowWhole: () => setState(() => _whole = true))],
+          );
         }
         // Разбор не удался — flutter_html без таблиц и без <style> письма.
         return SelectionArea(

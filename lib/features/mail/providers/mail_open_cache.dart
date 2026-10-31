@@ -177,6 +177,23 @@ class MailOpenCache {
     unawaited(prefs.setStringList(_kImagesAllowed, list.take(500).toList()));
   }
 
+  /// Письма, показанные «Исходными цветами» (1.9.x, просьба владельца
+  /// 31.10.2026): в тёмной теме — светлыми, как задумал отправитель, без
+  /// перекраски. На время работы приложения: выбор — для одного письма.
+  final LinkedHashSet<String> _original = LinkedHashSet();
+
+  bool originalColors(EmailModel e) => _original.contains(imagesKey(e));
+
+  void setOriginalColors(EmailModel e, bool on) {
+    final k = imagesKey(e);
+    _original.remove(k);
+    if (!on) return;
+    _original.add(k);
+    while (_original.length > 200) {
+      _original.remove(_original.first);
+    }
+  }
+
   /// Параметры очистки письма — те же, что у экрана письма.
   ({TrackerBlockOptions options, bool allowImages, String? domain}) optionsFor(EmailModel e,
       {bool allowImages = false}) {
@@ -261,7 +278,8 @@ class MailOpenCache {
       split = QuoteSplit(secured.html, '');
     }
     final first = split.hasQuote ? split.reply : secured.html;
-    final doc = MailHtmlDocument.build(first, allowRemoteImages: remote, keepCid: true);
+    // Очень длинное письмо — началом, как его покажет экран письма (1.9.x).
+    final doc = MailHtmlDocument.build(first, allowRemoteImages: remote, keepCid: true, clip: true);
     // Простое письмо — и для показа без WebView (тот же проход изолята).
     NativeMail? native;
     String? why;
@@ -363,8 +381,14 @@ class MailOpenCache {
           }
         }
         final fit = MailHtmlView.initialFit(doc, width);
+        // «Исходные цвета» письма (1.9.x) — так же, как покажет экран письма.
+        final original = dark && originalColors(e);
         final composed = MailHtmlView.composeHtml(doc,
-            viewWidth: width, fitWidth: fit, dark: dark, pageColor: pageColor, textScale: textScale);
+            viewWidth: width,
+            fitWidth: fit,
+            dark: dark && !original,
+            pageColor: original ? const Color(0xFFFFFFFF) : pageColor,
+            textScale: textScale);
         await MailWebViewPool.preload(composed,
             textScale: textScale, heightScale: fit == null ? 1.0 : width / fit, blockNet: !remote, width: width);
       } catch (e) {

@@ -18,7 +18,8 @@ import '../../security/mail_classification.dart' show MailLabel;
 import '../../security/smime_mime.dart' show SmimeMime;
 import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
-import 'package:mail_engine/mail_engine.dart' show SmtpNotSentException, TolerantSmtpClient;
+import 'package:mail_engine/mail_engine.dart'
+    show ImapNotifyChange, ImapNotifyRejected, NotifyImapClient, SmtpNotSentException, TolerantSmtpClient;
 import 'package:drift/drift.dart' show Value, BooleanExpressionOperators;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -301,8 +302,10 @@ class ImapService {
     // и для HTTPS: принятый пользователем по отпечатку (экран аккаунта →
     // «Безопасность») или корпоративный домен. Раньше IMAP и SMTP эти
     // правила не учитывали, и сервер с собственным сертификатом не работал.
+    // Клиент push — с командой NOTIFY (RFC 5465): пока NOTIFY не включён,
+    // он ничем не отличается от ImapClient.
     final client = forIdle
-        ? ImapClient(isLogEnabled: false, onBadCertificate: (c) => _acceptCert(c, host, port))
+        ? NotifyImapClient(isLogEnabled: false, onBadCertificate: (c) => _acceptCert(c, host, port))
         : ImapClient(
             isLogEnabled: false,
             defaultWriteTimeout: const Duration(seconds: 30),
@@ -333,6 +336,8 @@ class ImapService {
       AppLogger.info('IMAP: STARTTLS...');
       await client.startTls();
     }
+    // Возможности до входа — чтобы понять, прислал ли сервер новые при входе.
+    final capsBeforeLogin = client.serverInfo.capabilitiesText;
 
     // Аутентификация
     if (account.isOAuth) {
@@ -383,7 +388,39 @@ class ImapService {
       }
     }
 
+    await _afterLogin(account, client, capsBeforeLogin, forIdle: forIdle);
     return client;
+  }
+
+  /// После входа (1.9.x, просьба владельца 31.10.2026): возможности сервера
+  /// и ENABLE QRESYNC.
+  ///
+  /// До входа сервер называет не все возможности (Dovecot — без CONDSTORE и
+  /// NOTIFY). Обычно полный список приходит в ответе на вход; не пришёл —
+  /// спрашиваем CAPABILITY. ENABLE разрешён только до первого SELECT,
+  /// поэтому — здесь, для общего клиента. Клиенту push QRESYNC не нужен:
+  /// с ним сервер сообщал бы об удалении иначе (VANISHED вместо EXPUNGE).
+  Future<void> _afterLogin(AccountModel account, ImapClient client, String? capsBefore,
+      {required bool forIdle}) async {
+    final caps = client.serverInfo.capabilitiesText;
+    if (caps == null || caps == capsBefore) {
+      try {
+        await client.capability().timeout(const Duration(seconds: 15));
+      } catch (e) {
+        AppLogger.debug('IMAP ${account.email}: CAPABILITY — $e');
+      }
+    }
+    if (forIdle || !client.serverInfo.supportsQresync || _qresyncOff.contains(account.id)) return;
+    try {
+      await client.enable([ImapServerInfo.capabilityQresync]).timeout(const Duration(seconds: 15));
+    } catch (e) {
+      // Обрыв — не отказ: на следующем соединении попробуем снова.
+      if (_isConnectionError(e)) {
+        AppLogger.debug('IMAP ${account.email}: ENABLE QRESYNC — $e');
+      } else if (_qresyncOff.add(account.id)) {
+        AppLogger.warning('IMAP ${account.email}: ENABLE QRESYNC не принят — $e; синхронизация без QRESYNC');
+      }
+    }
   }
 
   /// Серверы по умолчанию для почтовых сервисов (аккаунты OAuth хранят
@@ -751,6 +788,11 @@ class ImapService {
   /// новые (UID больше известного), флаги и наличие писем во всём уже
   /// загруженном диапазоне (один лёгкий FETCH FLAGS) и догрузка истории
   /// порциями по [backfill], пока в папке меньше [keep] писем.
+  ///
+  /// Сервер с CONDSTORE/QRESYNC (RFC 7162), история загружена — быстрый
+  /// способ ([_syncFolderFast]): вместо флагов всего окна — только
+  /// изменённые с прошлого HIGHESTMODSEQ (1.9.x, просьба владельца
+  /// 31.10.2026). Не получилось — этот же полный способ.
   Future<ImapFolderDelta> syncFolderDelta(
     AccountModel account, {
     required String folderId,
@@ -760,14 +802,46 @@ class ImapService {
     int keep = 10000,
   }) {
     return _withClient(account, (client) async {
-      final box = await client.selectMailboxByPath(folderId);
+      if (known != null && _canSyncFast(client, account, folderId, known, backfill)) {
+        try {
+          final fast = await _syncFolderFast(client, account, folderId, known);
+          if (fast != null) return fast;
+        } catch (e) {
+          // Обрыв — повтор на новом соединении (_withClient); отказ или
+          // непонятный ответ сервера — полный способ, без потери писем.
+          if (_isConnectionError(e)) rethrow;
+          _fastSyncFailed(account, folderId, e);
+        }
+      }
+      // SELECT с CONDSTORE: сервер сообщит HIGHESTMODSEQ, и следующий проход
+      // пойдёт быстрым способом. Без CONDSTORE — как раньше.
+      final condStore = _condStore(client) && !_fastOff.contains('${account.id}|$folderId');
+      Mailbox box;
+      try {
+        box = await client.selectMailboxByPath(folderId, enableCondStore: condStore);
+      } catch (e) {
+        if (!condStore || _isConnectionError(e)) rethrow;
+        _fastSyncFailed(account, folderId, e);
+        box = await client.selectMailboxByPath(folderId);
+      }
       final total = box.messagesExists;
       final validity = box.uidValidity ?? 0;
       final reset = known == null || known.uidValidity != validity || known.maxUid <= 0;
+      final modSeq = condStore ? box.highestModSequence : null;
+      final checkedAt = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      ImapFolderState stateOf(int minUid, int maxUid) => ImapFolderState(
+            uidValidity: validity,
+            minUid: minUid,
+            maxUid: maxUid,
+            highestModSeq: modSeq,
+            exists: total,
+            uidNext: box.uidNext,
+            fullAt: checkedAt,
+          );
       if (total <= 0) {
         return ImapFolderDelta(
           added: const [], flags: const {}, present: const {},
-          state: ImapFolderState(uidValidity: validity, minUid: 0, maxUid: 0),
+          state: stateOf(0, 0),
           reset: reset, empty: true, complete: true,
         );
       }
@@ -776,10 +850,9 @@ class ImapService {
         final start = (total - initial + 1).clamp(1, total);
         final list = await _fetchList(client, MessageSequence.fromRange(start, total), account, folderId);
         final uids = list.map((e) => _uidOf(e.id)).where((u) => u > 0);
-        final st = ImapFolderState(
-          uidValidity: validity,
-          minUid: uids.isEmpty ? 0 : uids.reduce((a, b) => a < b ? a : b),
-          maxUid: uids.isEmpty ? 0 : uids.reduce((a, b) => a > b ? a : b),
+        final st = stateOf(
+          uids.isEmpty ? 0 : uids.reduce((a, b) => a < b ? a : b),
+          uids.isEmpty ? 0 : uids.reduce((a, b) => a > b ? a : b),
         );
         AppLogger.info('IMAP $folderId: первичная загрузка — ${list.length} из $total');
         return ImapFolderDelta(
@@ -842,13 +915,171 @@ class ImapService {
         backfilled: older,
         flags: flags,
         present: {...flags.keys, ...added.map((e) => _uidOf(e.id))},
-        state: ImapFolderState(uidValidity: validity, minUid: minUid, maxUid: maxUid),
+        state: stateOf(minUid, maxUid),
         checkedFrom: known.minUid,
         checkedTo: known.maxUid,
         reset: false,
         complete: complete,
       );
     });
+  }
+
+  // ════════════════════ CONDSTORE / QRESYNC (RFC 7162) ════════════════════
+  // 1.9.x, просьба владельца 31.10.2026. Полный способ на каждом проходе
+  // запрашивает флаги ВСЕХ писем окна (до 10 000 строк FETCH): так видны
+  // прочитанные на другом устройстве и удалённые письма. Сервер с CONDSTORE
+  // хранит номер изменения (MODSEQ) каждого письма и отдаёт только
+  // изменённые после известного номера; с QRESYNC — ещё и UID удалённых
+  // (VANISHED) прямо в ответе на SELECT, одним обменом. Поддержку смотрим
+  // только по CAPABILITY сервера: Gmail — CONDSTORE без QRESYNC, Dovecot и
+  // Fastmail — оба, у остальных бывает по-разному.
+
+  /// Полная сверка окна не реже раза в сутки: страховка от ошибок сервера и
+  /// от изменений, пропущенных из-за локальных правок.
+  static const _fullCheckEvery = Duration(hours: 24);
+
+  /// Папки («аккаунт|папка»), где быстрый способ не удался: до перезапуска
+  /// приложения — полным способом, в журнал — один раз.
+  final Set<String> _fastOff = {};
+
+  /// Аккаунты, где сервер не принял ENABLE QRESYNC (повторять не будем).
+  final Set<String> _qresyncOff = {};
+
+  static bool _condStore(ImapClient c) =>
+      c.serverInfo.supports('CONDSTORE') || c.serverInfo.supportsQresync;
+
+  bool _canSyncFast(
+      ImapClient client, AccountModel account, String folderId, ImapFolderState known, int backfill) {
+    final modSeq = known.highestModSeq;
+    final fullAt = known.fullAt;
+    // История ещё догружается — нужен полный способ: место догрузки
+    // считается по числу всех писем окна.
+    if (modSeq == null || fullAt == null || known.maxUid <= 0 || backfill > 0) return false;
+    if (!_condStore(client) || _fastOff.contains('${account.id}|$folderId')) return false;
+    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    return now >= fullAt && now - fullAt < _fullCheckEvery.inSeconds;
+  }
+
+  void _fastSyncFailed(AccountModel account, String folderId, Object e) {
+    if (_fastOff.add('${account.id}|$folderId')) {
+      AppLogger.warning('IMAP ${account.email} / $folderId: быстрая синхронизация (CONDSTORE/QRESYNC) '
+          'не удалась — $e; папка синхронизируется полным способом');
+    }
+  }
+
+  /// Быстрый проход по папке с известным HIGHESTMODSEQ. null — нужен полный
+  /// способ: сменился UIDVALIDITY (там же папка загружается заново) или
+  /// сервер не ведёт MODSEQ для этой папки.
+  Future<ImapFolderDelta?> _syncFolderFast(
+      ImapClient client, AccountModel account, String folderId, ImapFolderState known) async {
+    final qresync = client.serverInfo.isEnabled(ImapServerInfo.capabilityQresync);
+    final changed = <int, ({bool read, bool flagged})>{};
+    void take(MimeMessage m) {
+      final uid = m.uid;
+      final f = m.flags;
+      if (uid == null || f == null || uid < known.minUid || uid > known.maxUid) return;
+      changed[uid] = (read: f.contains(MessageFlags.seen), flagged: f.contains(MessageFlags.flagged));
+    }
+
+    Set<int>? vanished;
+    final Mailbox box;
+    if (qresync) {
+      // SELECT (QRESYNC (UIDVALIDITY MODSEQ окно-UID)): изменённые флаги
+      // приходят строками FETCH, удалённые — VANISHED (EARLIER). enough_mail
+      // передаёт их событиями шины клиента, а не в результате SELECT.
+      final gone = vanished = <int>{};
+      final subs = [
+        client.eventBus.on<ImapFetchEvent>().listen((e) => take(e.message)),
+        client.eventBus.on<ImapVanishedEvent>().listen((e) {
+          final seq = e.vanishedMessages;
+          if (seq != null && !seq.isNil && seq.isNotEmpty) gone.addAll(seq.toList());
+        }),
+      ];
+      try {
+        box = await client.selectMailboxByPath(folderId,
+            qresync: QResyncParameters(known.uidValidity, known.highestModSeq)
+              ..knownUids = MessageSequence.fromRange(known.minUid, known.maxUid, isUidSequence: true));
+        // События шины доставляются асинхронно — даём им дойти.
+        await Future<void>.delayed(Duration.zero);
+      } finally {
+        for (final s in subs) {
+          await s.cancel();
+        }
+      }
+    } else {
+      box = await client.selectMailboxByPath(folderId, enableCondStore: true);
+    }
+    final validity = box.uidValidity ?? 0;
+    final modSeq = box.highestModSequence;
+    if (validity != known.uidValidity || modSeq == null) return null;
+    final total = box.messagesExists;
+    final next = box.uidNext;
+    if (total <= 0) {
+      return ImapFolderDelta(
+        added: const [], flags: const {}, present: const {},
+        state: ImapFolderState(uidValidity: validity, minUid: 0, maxUid: 0,
+            highestModSeq: modSeq, exists: 0, uidNext: next, fullAt: known.fullAt),
+        reset: false, empty: true, complete: true, fast: true,
+      );
+    }
+
+    // 1. Новые письма — как в полном способе.
+    var added = <EmailModel>[];
+    if (next == null || next > known.maxUid + 1) {
+      added = (await _fetchList(client,
+              MessageSequence.fromRangeToLast(known.maxUid + 1, isUidSequence: true), account, folderId))
+          .where((e) => _uidOf(e.id) > known.maxUid)
+          .toList();
+    }
+
+    // 2. Флаги: с QRESYNC они уже пришли в ответе на SELECT; иначе —
+    // UID FETCH окна (FLAGS) (CHANGEDSINCE). HIGHESTMODSEQ не изменился —
+    // не менялось ничего, запрос не нужен.
+    if (!qresync && modSeq != known.highestModSeq) {
+      final r = await client.uidFetchMessages(
+          MessageSequence.fromRange(known.minUid, known.maxUid, isUidSequence: true), '(UID FLAGS)',
+          changedSinceModSequence: known.highestModSeq);
+      r.messages.forEach(take);
+    }
+
+    // 3. Удаления без QRESYNC. Число писем и UIDNEXT те же, что в прошлом
+    // SELECT, — писем не добавлялось и не удалялось (удаление уменьшило бы
+    // число, а новое письмо — сдвинуло UIDNEXT). Иначе — UID SEARCH окна:
+    // только номера писем, а не строки с флагами.
+    Set<int>? present;
+    if (!qresync && !(known.exists == total && known.uidNext != null && known.uidNext == next)) {
+      final r = await client.uidSearchMessages(
+          searchCriteria: 'UID ${known.minUid}:${known.maxUid}',
+          returnOptions: client.serverInfo.supports('ESEARCH') ? [ReturnOption.all()] : null);
+      final seq = r.matchingSequence;
+      present = {if (seq != null && !seq.isNil && seq.isNotEmpty) ...seq.toList()};
+    }
+
+    final addedUids = added.map((e) => _uidOf(e.id)).toList();
+    final maxUid = addedUids.isEmpty ? known.maxUid : [known.maxUid, ...addedUids].reduce((a, b) => a > b ? a : b);
+    AppLogger.debug('IMAP $folderId: ${qresync ? 'QRESYNC' : 'CONDSTORE'} — новых ${added.length}, '
+        'флаги ${changed.length}'
+        '${vanished != null ? ', удалено ${vanished.length}' : present != null ? ', сверены номера писем' : ''}');
+    return ImapFolderDelta(
+      added: added,
+      flags: changed,
+      present: present == null ? const <int>{} : {...present, ...addedUids},
+      vanished: vanished,
+      state: ImapFolderState(
+        uidValidity: validity,
+        minUid: known.minUid,
+        maxUid: maxUid,
+        highestModSeq: modSeq,
+        exists: total,
+        uidNext: next,
+        fullAt: known.fullAt,
+      ),
+      checkedFrom: present == null ? null : known.minUid,
+      checkedTo: present == null ? null : known.maxUid,
+      reset: false,
+      complete: known.minUid <= 1,
+      fast: true,
+    );
   }
 
   /// Вернуть вложениям параметры типа, которые MediaType отбрасывает:
@@ -1337,17 +1568,30 @@ class ImapService {
     try { await c.disconnect(); } catch (_) {}
   }
 
-  /// Push для папки: поток отдаёт число писем в папке при EXISTS, -1 при
-  /// EXPUNGE и -2 после переподключения (письма, пришедшие за время обрыва,
-  /// IDLE не сообщит — их забирает синхронизация папки).
+  /// Аккаунты, где сервер не принял NOTIFY: до перезапуска — обычный IDLE.
+  final Set<String> _notifyOff = {};
+
+  /// Аккаунты, о включении NOTIFY у которых уже написано в журнал.
+  final Set<String> _notifyLogged = {};
+
+  /// Push для папки: поток отдаёт событие с числом писем в папке при
+  /// EXISTS, [ImapPushEvent.expunged] при EXPUNGE и
+  /// [ImapPushEvent.reconnected] после переподключения (письма, пришедшие
+  /// за время обрыва, IDLE не сообщит — их забирает синхронизация папки).
   /// Держится сам: при обрыве переподключается с растущей паузой (15 с → 10 мин).
   /// Отказ во входе — поток завершается ошибкой [PushAuthFailure]: повторять
   /// вход с неверным паролем нельзя (раньше — каждые 15 с, бесконечно).
   ///
+  /// [watch] — остальные папки, за которыми следить. Сервер умеет NOTIFY
+  /// (RFC 5465; 1.9.x, просьба владельца 31.10.2026) — то же соединение
+  /// сообщает и об их изменениях ([ImapPushEvent.changed] с путём папки), и
+  /// об изменении флагов в [folderId]. Без NOTIFY — IDLE как раньше.
+  ///
   /// Остановка — [stopIdle] (номер цикла снимается, ожидание прерывается):
   /// отмена подписки на async*-поток сама по себе срабатывает лишь на
   /// следующем yield, то есть при следующем письме.
-  Stream<int> startIdle(AccountModel account, String folderId) async* {
+  Stream<ImapPushEvent> startIdle(AccountModel account, String folderId,
+      {Future<List<String>> Function()? watch}) async* {
     if (_idleGen.containsKey(account.id)) return; // уже слушаем этот ящик
     final gen = ++_idleSeq;
     _idleGen[account.id] = gen;
@@ -1359,10 +1603,21 @@ class ImapService {
     var connectedOnce = false;
     // Соединение этого цикла (в _idleClients — только пока цикл свой).
     ImapClient? client;
+    // NOTIFY этого соединения: папки, за которыми следим (null — не включён).
+    List<String>? notifying;
+    StreamSubscription<ImapNotifyChange>? notifySub;
+    // События NOTIFY, пришедшие между командами, ждут ближайшего ожидания.
+    final notifyEarly = <ImapNotifyChange>[];
+    StreamController<Object?>? waiting;
 
     Future<void> drop() async {
       final c = client;
       client = null;
+      notifying = null;
+      notifyEarly.clear();
+      final ns = notifySub;
+      notifySub = null;
+      await ns?.cancel();
       if (c != null && identical(_idleClients[account.id], c)) _idleClients.remove(account.id);
       await _closeIdleClient(c);
     }
@@ -1384,18 +1639,36 @@ class ImapService {
             client = c;
             _idleClients[account.id] = c;
             fresh = true;
+            if (c is NotifyImapClient) {
+              notifySub = c.notifyChanges.listen((e) {
+                final w = waiting;
+                if (w != null && !w.isClosed) {
+                  w.add(e);
+                } else {
+                  notifyEarly.add(e);
+                }
+              });
+            }
           }
           await c.selectMailboxByPath(folderId).timeout(_idleStep);
+          if (watch != null && c is NotifyImapClient && c.supportsNotify && !_notifyOff.contains(account.id)) {
+            final want = await watch();
+            final now = notifying;
+            // Список папок изменился (включили ещё одну) — NOTIFY заново.
+            if (now == null || !_sameFolders(now, want)) {
+              notifying = await _notifySet(account, c, want);
+            }
+          }
           await c.idleStart().timeout(_idleStep);
           markPushAlive(account.id);
           if (fresh && connectedOnce) {
             AppLogger.info('IMAP IDLE (${account.email}): переподключён — догоняем пропущенное');
-            yield -2;
+            yield ImapPushEvent(folderId, ImapPushEvent.reconnected);
           }
           connectedOnce = true;
 
           // Ждём событие сервера, плановый перезапуск или «толчок» сторожа.
-          final wake = StreamController<ImapEvent?>();
+          final wake = waiting = StreamController<Object?>();
           final subs = <StreamSubscription<dynamic>>[
             c.eventBus.on<ImapEvent>().listen((e) {
               if (!wake.isClosed) wake.add(e);
@@ -1404,6 +1677,9 @@ class ImapService {
               if (!wake.isClosed) wake.add(null);
             }),
           ];
+          notifyEarly
+            ..forEach(wake.add)
+            ..clear();
           final cycle = Timer(_idleCycle, () {
             if (!wake.isClosed) wake.add(null);
           });
@@ -1413,13 +1689,36 @@ class ImapService {
               markPushAlive(account.id);
               if (event is ImapMessagesExistEvent) {
                 AppLogger.info('IMAP IDLE: новое письмо (EXISTS ${event.newMessagesExists})');
-                yield event.newMessagesExists;
+                yield ImapPushEvent(folderId, event.newMessagesExists);
               } else if (event is ImapExpungeEvent) {
                 AppLogger.info('IMAP IDLE: письмо удалено (EXPUNGE)');
-                yield -1;
+                yield ImapPushEvent(folderId, ImapPushEvent.expunged);
+              } else if (event is ImapFetchEvent && notifying != null) {
+                // NOTIFY FlagChange: флаги письма этой папки изменились.
+                yield ImapPushEvent(folderId, ImapPushEvent.changed);
+              } else if (event is ImapNotifyChange) {
+                final box = event.mailbox;
+                if (box != null) {
+                  yield ImapPushEvent(box, ImapPushEvent.changed);
+                } else if (!event.overflow) {
+                  // Изменение этой папки пришло в ответ на саму команду NOTIFY.
+                  yield ImapPushEvent(folderId, ImapPushEvent.changed);
+                } else {
+                  // Сервер не успевал сообщать и перестал: синхронизировать
+                  // всё, что слушали, и включить NOTIFY заново.
+                  AppLogger.info('IMAP NOTIFY (${account.email}): переполнение — синхронизирую все папки');
+                  final all = notifying ?? const <String>[];
+                  notifying = null;
+                  yield ImapPushEvent(folderId, ImapPushEvent.reconnected);
+                  for (final f in all) {
+                    yield ImapPushEvent(f, ImapPushEvent.changed);
+                  }
+                  break;
+                }
               }
             }
           } finally {
+            waiting = null;
             cycle.cancel();
             for (final sub in subs) {
               await sub.cancel();
@@ -1461,6 +1760,40 @@ class ImapService {
       await drop();
       AppLogger.info('IMAP IDLE: остановлен ${account.email}');
     }
+  }
+
+  static bool _sameFolders(List<String> a, List<String> b) =>
+      a.length == b.length && a.toSet().containsAll(b);
+
+  /// NOTIFY SET на соединении push. Возвращает папки, за которыми теперь
+  /// следим, или null — сервер отказал (тогда до перезапуска — обычный IDLE).
+  /// Сначала — с изменением флагов; не принят — без него. Нет ответа —
+  /// соединение в неясном состоянии: ошибка наверх, цикл переподключится
+  /// уже без NOTIFY.
+  Future<List<String>?> _notifySet(AccountModel account, NotifyImapClient c, List<String> folders) async {
+    Object? refused;
+    for (final flags in const [true, false]) {
+      try {
+        await c.notifySet(folders, flagChanges: flags, timeout: _idleStep);
+        final msg = 'IMAP NOTIFY (${account.email}): слежу за папками — ${folders.length + 1}'
+            '${flags ? '' : ' (без изменений флагов)'}';
+        if (_notifyLogged.add(account.id)) {
+          AppLogger.info(msg);
+        } else {
+          AppLogger.debug(msg);
+        }
+        return List.of(folders);
+      } on ImapNotifyRejected catch (e) {
+        refused = e;
+      } on TimeoutException catch (e) {
+        _notifyOff.add(account.id);
+        AppLogger.warning('IMAP NOTIFY (${account.email}): сервер не ответил ($e) — дальше обычный IDLE');
+        rethrow;
+      }
+    }
+    _notifyOff.add(account.id);
+    AppLogger.warning('IMAP NOTIFY (${account.email}): $refused — дальше обычный IDLE');
+    return null;
   }
 
   /// Остановить IDLE конкретного ящика: цикл выходит из ожидания сразу, не
@@ -2201,12 +2534,28 @@ class ImapFolderState {
   final bool historyDone;
   /// Период синхронизации (дни), при котором история признана загруженной.
   final int syncDays;
+  /// HIGHESTMODSEQ папки (CONDSTORE, RFC 7162) на момент SELECT прошлой
+  /// синхронизации; null — сервер не поддерживает. Хранится вместе с
+  /// UIDVALIDITY и окном UID одной записью: по отдельности они могли бы
+  /// разойтись (1.9.x, просьба владельца 31.10.2026).
+  final int? highestModSeq;
+  /// Число писем (EXISTS) и UIDNEXT из того же SELECT: оба не изменились —
+  /// писем не добавлялось и не удалялось, проверять удаления не нужно.
+  final int? exists;
+  final int? uidNext;
+  /// Когда флаги и наличие писем последний раз сверялись по всему окну
+  /// (секунды Unix). Быстрая синхронизация — не дольше суток подряд.
+  final int? fullAt;
   const ImapFolderState({
     required this.uidValidity,
     required this.minUid,
     required this.maxUid,
     this.historyDone = false,
     this.syncDays = 0,
+    this.highestModSeq,
+    this.exists,
+    this.uidNext,
+    this.fullAt,
   });
 
   ImapFolderState copyWith({bool? historyDone, int? syncDays}) => ImapFolderState(
@@ -2215,6 +2564,23 @@ class ImapFolderState {
         maxUid: maxUid,
         historyDone: historyDone ?? this.historyDone,
         syncDays: syncDays ?? this.syncDays,
+        highestModSeq: highestModSeq,
+        exists: exists,
+        uidNext: uidNext,
+        fullAt: fullAt,
+      );
+
+  /// Изменения, которые на этот раз не применены (у писем есть локальные
+  /// правки, ждущие отправки): следующая синхронизация начнёт с прежнего
+  /// HIGHESTMODSEQ [previous] и заново проверит удаления.
+  ImapFolderState heldBack(int? previous) => ImapFolderState(
+        uidValidity: uidValidity,
+        minUid: minUid,
+        maxUid: maxUid,
+        historyDone: historyDone,
+        syncDays: syncDays,
+        highestModSeq: previous,
+        fullAt: fullAt,
       );
 
   Map<String, int> toJson() => {
@@ -2223,6 +2589,11 @@ class ImapFolderState {
         'max': maxUid,
         if (historyDone) 'd': 1,
         if (historyDone) 'days': syncDays,
+        // Без CONDSTORE запись прежняя.
+        if (highestModSeq != null) 'ms': highestModSeq!,
+        if (highestModSeq != null && exists != null) 'n': exists!,
+        if (highestModSeq != null && uidNext != null) 'nx': uidNext!,
+        if (highestModSeq != null && fullAt != null) 'f': fullAt!,
       };
   static ImapFolderState? fromJson(String? s) {
     if (s == null || s.isEmpty) return null;
@@ -2234,11 +2605,38 @@ class ImapFolderState {
         maxUid: m['max'] as int,
         historyDone: m['d'] == 1,
         syncDays: (m['days'] as int?) ?? 0,
+        highestModSeq: m['ms'] as int?,
+        exists: m['n'] as int?,
+        uidNext: m['nx'] as int?,
+        fullAt: m['f'] as int?,
       );
     } catch (_) {
       return null;
     }
   }
+}
+
+/// Событие push IMAP ([ImapService.startIdle]).
+class ImapPushEvent {
+  const ImapPushEvent(this.folderId, this.count);
+
+  /// Папка (путь как в LIST), в которой что-то изменилось.
+  final String folderId;
+
+  /// Число писем в папке (EXISTS) или один из кодов ниже.
+  final int count;
+
+  /// Письмо удалено (EXPUNGE).
+  static const expunged = -1;
+
+  /// Соединение восстановлено — синхронизировать пропущенное.
+  static const reconnected = -2;
+
+  /// Изменение по NOTIFY: письма или флаги в папке (1.9.x).
+  static const changed = -3;
+
+  @override
+  String toString() => 'ImapPushEvent($folderId, $count)';
 }
 
 /// Изменения папки IMAP за один проход.
@@ -2262,6 +2660,12 @@ class ImapFolderDelta {
   /// папки (Черновики, Спам, Notes) после каждого прохода снова считались
   /// «первой загрузкой», и продолжение крутилось до лимита в 40 шагов.
   final bool complete;
+  /// UID, удалённые на сервере с прошлой синхронизации (QRESYNC: ответ
+  /// VANISHED). null — сервер их не сообщает, удаления видны по [present].
+  final Set<int>? vanished;
+  /// Быстрая синхронизация (CONDSTORE/QRESYNC): в [flags] только письма,
+  /// флаги которых изменились.
+  final bool fast;
 
   const ImapFolderDelta({
     required this.added,
@@ -2274,6 +2678,8 @@ class ImapFolderDelta {
     required this.reset,
     this.empty = false,
     this.complete = false,
+    this.vanished,
+    this.fast = false,
   });
 }
 

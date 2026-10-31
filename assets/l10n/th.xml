@@ -1871,6 +1871,23 @@
         <item quantity="other">{n} ปี</item>
     </plurals>
     <string name="readReceiptRequested">{name} ขอใบตอบรับการอ่าน</string>
+    <string name="dsnFailed">ส่งไม่ถึง: {addr}</string>
+    <string name="dsnDelayed">ล่าช้า: {addr}</string>
+    <string name="dsnDelivered">ส่งถึงเซิร์ฟเวอร์ของผู้รับแล้ว: {addr}</string>
+    <string name="dsnDeliveredNote">นี่ไม่ใช่การยืนยันการอ่าน: เซิร์ฟเวอร์ของผู้รับรับข้อความแล้ว</string>
+    <string name="dsnReasonNoSuchUser">ไม่มีที่อยู่นี้</string>
+    <string name="dsnReasonDomain">ไม่พบโดเมน — ตรวจสอบส่วนหลัง @</string>
+    <string name="dsnReasonFull">กล่องจดหมายของผู้รับเต็ม</string>
+    <string name="dsnReasonBlocked">เซิร์ฟเวอร์ของผู้รับปฏิเสธว่าเป็นสแปมหรือบล็อกไว้</string>
+    <string name="dsnReasonTooLarge">ข้อความมีขนาดใหญ่เกินไปสำหรับเซิร์ฟเวอร์ของผู้รับ</string>
+    <string name="dsnReasonDelayed">เซิร์ฟเวอร์ของผู้รับยังไม่ตอบสนอง ระบบจะพยายามส่งอีกครั้ง</string>
+    <string name="dsnReasonOther">เซิร์ฟเวอร์ของผู้รับไม่รับข้อความ</string>
+    <string name="dsnResend">ส่งอีกครั้ง</string>
+    <string name="dsnChangeAddress">เปลี่ยนที่อยู่</string>
+    <string name="dsnReportChip">รายงานการส่ง</string>
+    <string name="dsnNotifTitle">ส่งข้อความไม่ถึง</string>
+    <string name="dsnRequest">ขอการยืนยันการส่ง</string>
+    <string name="dsnRequestHint">เซิร์ฟเวอร์ของผู้รับจะแจ้งว่ารับข้อความแล้ว นี่ไม่ใช่การยืนยันการอ่าน</string>
     <string name="recallAttemptDesc">ระบบจะพยายามเรียกคืนข้อความจากผู้รับ ความสำเร็จขึ้นอยู่กับเซิร์ฟเวอร์อีเมลของผู้รับและการที่ข้อความถูกอ่านไปแล้วหรือไม่</string>
     <plurals name="threadTitleN">
         <item quantity="other">การสนทนา ({n} ข้อความ)</item>

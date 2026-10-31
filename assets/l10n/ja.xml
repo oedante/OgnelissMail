@@ -1871,6 +1871,23 @@
         <item quantity="other">{n} 年</item>
     </plurals>
     <string name="readReceiptRequested">{name}さんが開封確認を求めています</string>
+    <string name="dsnFailed">配信されませんでした: {addr}</string>
+    <string name="dsnDelayed">遅延しています: {addr}</string>
+    <string name="dsnDelivered">受信者のサーバーに配信されました: {addr}</string>
+    <string name="dsnDeliveredNote">開封確認ではありません。受信者のサーバーがメッセージを受け取りました</string>
+    <string name="dsnReasonNoSuchUser">アドレスが存在しません</string>
+    <string name="dsnReasonDomain">ドメインが見つかりません — @ 以降を確認してください</string>
+    <string name="dsnReasonFull">受信者のメールボックスがいっぱいです</string>
+    <string name="dsnReasonBlocked">受信者のサーバーが迷惑メールとして拒否またはブロックしました</string>
+    <string name="dsnReasonTooLarge">メッセージが受信者のサーバーには大きすぎます</string>
+    <string name="dsnReasonDelayed">受信者のサーバーがまだ応答しません。配信は再試行されます</string>
+    <string name="dsnReasonOther">受信者のサーバーがメッセージを受け付けませんでした</string>
+    <string name="dsnResend">再送信</string>
+    <string name="dsnChangeAddress">アドレスを変更</string>
+    <string name="dsnReportChip">配信レポート</string>
+    <string name="dsnNotifTitle">メッセージが配信されませんでした</string>
+    <string name="dsnRequest">配信確認を要求</string>
+    <string name="dsnRequestHint">受信者のサーバーが受け取ったことを知らせます。開封確認ではありません</string>
     <string name="recallAttemptDesc">受信者からメールの取り消しを試みます。成功するかどうかは、相手のメールサーバーと、メールがすでに読まれたかどうかによります。</string>
     <plurals name="threadTitleN">
         <item quantity="other">会話 ({n} 件のメール)</item>

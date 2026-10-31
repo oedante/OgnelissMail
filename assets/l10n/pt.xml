@@ -1878,6 +1878,23 @@
         <item quantity="other">{n} anos</item>
     </plurals>
     <string name="readReceiptRequested">{name} solicita confirmação de leitura</string>
+    <string name="dsnFailed">Não entregue: {addr}</string>
+    <string name="dsnDelayed">Atrasado: {addr}</string>
+    <string name="dsnDelivered">Entregue ao servidor do destinatário: {addr}</string>
+    <string name="dsnDeliveredNote">Não é uma confirmação de leitura: o servidor do destinatário aceitou a mensagem</string>
+    <string name="dsnReasonNoSuchUser">o endereço não existe</string>
+    <string name="dsnReasonDomain">domínio não encontrado — verifique a parte depois do @</string>
+    <string name="dsnReasonFull">a caixa do destinatário está cheia</string>
+    <string name="dsnReasonBlocked">o servidor do destinatário rejeitou como spam ou bloqueou</string>
+    <string name="dsnReasonTooLarge">a mensagem é grande demais para o servidor do destinatário</string>
+    <string name="dsnReasonDelayed">o servidor do destinatário ainda não responde; a entrega será repetida</string>
+    <string name="dsnReasonOther">o servidor do destinatário não aceitou a mensagem</string>
+    <string name="dsnResend">Enviar novamente</string>
+    <string name="dsnChangeAddress">Alterar endereço</string>
+    <string name="dsnReportChip">Relatório de entrega</string>
+    <string name="dsnNotifTitle">Mensagem não entregue</string>
+    <string name="dsnRequest">Solicitar confirmação de entrega</string>
+    <string name="dsnRequestHint">O servidor do destinatário informará que aceitou a mensagem. Não é uma confirmação de leitura</string>
     <string name="recallAttemptDesc">Será feita uma tentativa de recuperar a mensagem dos destinatários. O sucesso depende do servidor de e-mail deles e de a mensagem já ter sido lida ou não.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Conversa ({n} mensagem)</item>

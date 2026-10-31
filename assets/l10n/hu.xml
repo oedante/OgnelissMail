@@ -1878,6 +1878,23 @@
         <item quantity="other">{n} év</item>
     </plurals>
     <string name="readReceiptRequested">{name} olvasási visszaigazolást kér</string>
+    <string name="dsnFailed">Nem kézbesítve: {addr}</string>
+    <string name="dsnDelayed">Késik: {addr}</string>
+    <string name="dsnDelivered">Kézbesítve a címzett szerverének: {addr}</string>
+    <string name="dsnDeliveredNote">Ez nem olvasási visszaigazolás: a címzett szervere elfogadta az üzenetet</string>
+    <string name="dsnReasonNoSuchUser">a cím nem létezik</string>
+    <string name="dsnReasonDomain">a tartomány nem található – ellenőrizze a @ utáni részt</string>
+    <string name="dsnReasonFull">a címzett postafiókja megtelt</string>
+    <string name="dsnReasonBlocked">a címzett szervere spamként elutasította vagy letiltotta</string>
+    <string name="dsnReasonTooLarge">az üzenet túl nagy a címzett szerverének</string>
+    <string name="dsnReasonDelayed">a címzett szervere még nem válaszol; a kézbesítést újrapróbálja</string>
+    <string name="dsnReasonOther">a címzett szervere nem fogadta el az üzenetet</string>
+    <string name="dsnResend">Küldés újra</string>
+    <string name="dsnChangeAddress">Cím módosítása</string>
+    <string name="dsnReportChip">Kézbesítési jelentés</string>
+    <string name="dsnNotifTitle">Az üzenet nem lett kézbesítve</string>
+    <string name="dsnRequest">Kézbesítési visszaigazolás kérése</string>
+    <string name="dsnRequestHint">A címzett szervere jelzi, hogy elfogadta az üzenetet. Ez nem olvasási visszaigazolás</string>
     <string name="recallAttemptDesc">Az üzenet visszahívására kísérlet történik a címzetteknél. A siker a címzettek levelezőszerverétől és attól függ, hogy az üzenetet elolvasták-e már.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Beszélgetés ({n} üzenet)</item>

@@ -1878,6 +1878,23 @@
         <item quantity="other">{n} years</item>
     </plurals>
     <string name="readReceiptRequested">{name} requests a read receipt</string>
+    <string name="dsnFailed">Not delivered: {addr}</string>
+    <string name="dsnDelayed">Delayed: {addr}</string>
+    <string name="dsnDelivered">Delivered to the recipient\'s server: {addr}</string>
+    <string name="dsnDeliveredNote">This is not a read receipt: the recipient\'s server accepted the message</string>
+    <string name="dsnReasonNoSuchUser">the address does not exist</string>
+    <string name="dsnReasonDomain">domain not found — check the part after @</string>
+    <string name="dsnReasonFull">the recipient\'s mailbox is full</string>
+    <string name="dsnReasonBlocked">the recipient\'s server rejected it as spam or blocked it</string>
+    <string name="dsnReasonTooLarge">the message is too large for the recipient\'s server</string>
+    <string name="dsnReasonDelayed">the recipient\'s server is not responding yet; delivery will be retried</string>
+    <string name="dsnReasonOther">the recipient\'s server did not accept the message</string>
+    <string name="dsnResend">Send again</string>
+    <string name="dsnChangeAddress">Change address</string>
+    <string name="dsnReportChip">Delivery report</string>
+    <string name="dsnNotifTitle">Message not delivered</string>
+    <string name="dsnRequest">Request delivery confirmation</string>
+    <string name="dsnRequestHint">The recipient\'s server will report that it accepted the message. This is not a read receipt</string>
     <string name="recallAttemptDesc">An attempt will be made to recall the message from recipients. Success depends on their mail server and whether the message was already read.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Conversation ({n} message)</item>

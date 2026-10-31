@@ -1878,6 +1878,23 @@
         <item quantity="other">{n} vuotta</item>
     </plurals>
     <string name="readReceiptRequested">{name} pyytää lukukuittausta</string>
+    <string name="dsnFailed">Ei toimitettu: {addr}</string>
+    <string name="dsnDelayed">Viivästynyt: {addr}</string>
+    <string name="dsnDelivered">Toimitettu vastaanottajan palvelimelle: {addr}</string>
+    <string name="dsnDeliveredNote">Tämä ei ole lukukuittaus: vastaanottajan palvelin hyväksyi viestin</string>
+    <string name="dsnReasonNoSuchUser">osoitetta ei ole olemassa</string>
+    <string name="dsnReasonDomain">verkkotunnusta ei löydy — tarkista @-merkin jälkeinen osa</string>
+    <string name="dsnReasonFull">vastaanottajan postilaatikko on täynnä</string>
+    <string name="dsnReasonBlocked">vastaanottajan palvelin hylkäsi viestin roskapostina tai esti sen</string>
+    <string name="dsnReasonTooLarge">viesti on liian suuri vastaanottajan palvelimelle</string>
+    <string name="dsnReasonDelayed">vastaanottajan palvelin ei vielä vastaa; toimitusta yritetään uudelleen</string>
+    <string name="dsnReasonOther">vastaanottajan palvelin ei hyväksynyt viestiä</string>
+    <string name="dsnResend">Lähetä uudelleen</string>
+    <string name="dsnChangeAddress">Vaihda osoite</string>
+    <string name="dsnReportChip">Toimitusraportti</string>
+    <string name="dsnNotifTitle">Viestiä ei toimitettu</string>
+    <string name="dsnRequest">Pyydä toimitusvahvistus</string>
+    <string name="dsnRequestHint">Vastaanottajan palvelin ilmoittaa hyväksyneensä viestin. Tämä ei ole lukukuittaus</string>
     <string name="recallAttemptDesc">Viestiä yritetään perua vastaanottajilta. Onnistuminen riippuu heidän sähköpostipalvelimestaan ja siitä, onko viesti jo luettu.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Keskustelu ({n} viesti)</item>

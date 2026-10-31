@@ -1878,6 +1878,23 @@
         <item quantity="other">{n} साल</item>
     </plurals>
     <string name="readReceiptRequested">{name} पढ़ने की रसीद मांग रहे हैं</string>
+    <string name="dsnFailed">नहीं पहुँचा: {addr}</string>
+    <string name="dsnDelayed">देरी हो रही है: {addr}</string>
+    <string name="dsnDelivered">प्राप्तकर्ता के सर्वर तक पहुँचा: {addr}</string>
+    <string name="dsnDeliveredNote">यह पढ़ने की रसीद नहीं है: प्राप्तकर्ता के सर्वर ने संदेश स्वीकार किया</string>
+    <string name="dsnReasonNoSuchUser">पता मौजूद नहीं है</string>
+    <string name="dsnReasonDomain">डोमेन नहीं मिला — @ के बाद का हिस्सा जाँचें</string>
+    <string name="dsnReasonFull">प्राप्तकर्ता का मेलबॉक्स भरा है</string>
+    <string name="dsnReasonBlocked">प्राप्तकर्ता के सर्वर ने इसे स्पैम मानकर अस्वीकार या ब्लॉक किया</string>
+    <string name="dsnReasonTooLarge">संदेश प्राप्तकर्ता के सर्वर के लिए बहुत बड़ा है</string>
+    <string name="dsnReasonDelayed">प्राप्तकर्ता का सर्वर अभी जवाब नहीं दे रहा; डिलीवरी फिर से की जाएगी</string>
+    <string name="dsnReasonOther">प्राप्तकर्ता के सर्वर ने संदेश स्वीकार नहीं किया</string>
+    <string name="dsnResend">फिर से भेजें</string>
+    <string name="dsnChangeAddress">पता बदलें</string>
+    <string name="dsnReportChip">डिलीवरी रिपोर्ट</string>
+    <string name="dsnNotifTitle">संदेश नहीं पहुँचा</string>
+    <string name="dsnRequest">डिलीवरी की पुष्टि माँगें</string>
+    <string name="dsnRequestHint">प्राप्तकर्ता का सर्वर बताएगा कि संदेश स्वीकार हुआ। यह पढ़ने की रसीद नहीं है</string>
     <string name="recallAttemptDesc">प्राप्तकर्ताओं से ईमेल वापस बुलाने की कोशिश की जाएगी। सफलता उनके मेल सर्वर पर और इस पर निर्भर है कि ईमेल पहले ही पढ़ा जा चुका है या नहीं।</string>
     <plurals name="threadTitleN">
         <item quantity="one">बातचीत ({n} ईमेल)</item>

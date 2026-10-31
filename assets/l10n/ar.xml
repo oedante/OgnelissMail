@@ -1906,6 +1906,23 @@
         <item quantity="other">{n} سنة</item>
     </plurals>
     <string name="readReceiptRequested">{name} يطلب إشعار قراءة</string>
+    <string name="dsnFailed">لم يتم التسليم: {addr}</string>
+    <string name="dsnDelayed">متأخر: {addr}</string>
+    <string name="dsnDelivered">تم التسليم إلى خادم المستلم: {addr}</string>
+    <string name="dsnDeliveredNote">هذا ليس إشعار قراءة: قبل خادم المستلم الرسالة</string>
+    <string name="dsnReasonNoSuchUser">العنوان غير موجود</string>
+    <string name="dsnReasonDomain">لم يتم العثور على النطاق — تحقق من الجزء بعد @</string>
+    <string name="dsnReasonFull">صندوق بريد المستلم ممتلئ</string>
+    <string name="dsnReasonBlocked">رفض خادم المستلم الرسالة كرسالة مزعجة أو حظرها</string>
+    <string name="dsnReasonTooLarge">الرسالة كبيرة جدًا بالنسبة لخادم المستلم</string>
+    <string name="dsnReasonDelayed">خادم المستلم لا يستجيب بعد؛ ستُعاد محاولة التسليم</string>
+    <string name="dsnReasonOther">لم يقبل خادم المستلم الرسالة</string>
+    <string name="dsnResend">إرسال مرة أخرى</string>
+    <string name="dsnChangeAddress">تغيير العنوان</string>
+    <string name="dsnReportChip">تقرير التسليم</string>
+    <string name="dsnNotifTitle">لم يتم تسليم الرسالة</string>
+    <string name="dsnRequest">طلب تأكيد التسليم</string>
+    <string name="dsnRequestHint">سيُبلغ خادم المستلم أنه قبل الرسالة. هذا ليس إشعار قراءة</string>
     <string name="recallAttemptDesc">ستُجرى محاولة لاسترجاع الرسالة من المستلمين. يعتمد النجاح على خادم البريد لديهم وعلى ما إذا كانت الرسالة قد قُرئت بالفعل.</string>
     <plurals name="threadTitleN">
         <item quantity="zero">محادثة ({n} رسائل)</item>

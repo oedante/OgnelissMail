@@ -1871,6 +1871,23 @@
         <item quantity="other">{n} 年</item>
     </plurals>
     <string name="readReceiptRequested">{name} 请求已读回执</string>
+    <string name="dsnFailed">未送达：{addr}</string>
+    <string name="dsnDelayed">延迟：{addr}</string>
+    <string name="dsnDelivered">已送达收件人服务器：{addr}</string>
+    <string name="dsnDeliveredNote">这不是已读回执：收件人服务器已接收邮件</string>
+    <string name="dsnReasonNoSuchUser">地址不存在</string>
+    <string name="dsnReasonDomain">找不到域名——请检查 @ 后面的部分</string>
+    <string name="dsnReasonFull">收件人邮箱已满</string>
+    <string name="dsnReasonBlocked">收件人服务器将其作为垃圾邮件拒收或已拦截</string>
+    <string name="dsnReasonTooLarge">邮件对收件人服务器来说太大</string>
+    <string name="dsnReasonDelayed">收件人服务器暂未响应，将重试投递</string>
+    <string name="dsnReasonOther">收件人服务器未接收邮件</string>
+    <string name="dsnResend">重新发送</string>
+    <string name="dsnChangeAddress">更改地址</string>
+    <string name="dsnReportChip">投递报告</string>
+    <string name="dsnNotifTitle">邮件未送达</string>
+    <string name="dsnRequest">请求投递确认</string>
+    <string name="dsnRequestHint">收件人服务器会报告已接收邮件。这不是已读回执</string>
     <string name="recallAttemptDesc">将尝试从收件人处召回该邮件。能否成功取决于对方的邮件服务器，以及邮件是否已被阅读。</string>
     <plurals name="threadTitleN">
         <item quantity="other">会话（{n} 封邮件）</item>

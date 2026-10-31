@@ -1878,6 +1878,23 @@
         <item quantity="other">{n} ans</item>
     </plurals>
     <string name="readReceiptRequested">{name} demande un accusé de lecture</string>
+    <string name="dsnFailed">Non distribué : {addr}</string>
+    <string name="dsnDelayed">Retardé : {addr}</string>
+    <string name="dsnDelivered">Remis au serveur du destinataire : {addr}</string>
+    <string name="dsnDeliveredNote">Ce n\'est pas un accusé de lecture : le serveur du destinataire a accepté le message</string>
+    <string name="dsnReasonNoSuchUser">l\'adresse n\'existe pas</string>
+    <string name="dsnReasonDomain">domaine introuvable — vérifiez la partie après @</string>
+    <string name="dsnReasonFull">la boîte du destinataire est pleine</string>
+    <string name="dsnReasonBlocked">le serveur du destinataire l\'a rejeté comme spam ou bloqué</string>
+    <string name="dsnReasonTooLarge">le message est trop volumineux pour le serveur du destinataire</string>
+    <string name="dsnReasonDelayed">le serveur du destinataire ne répond pas encore ; la distribution sera retentée</string>
+    <string name="dsnReasonOther">le serveur du destinataire n\'a pas accepté le message</string>
+    <string name="dsnResend">Renvoyer</string>
+    <string name="dsnChangeAddress">Modifier l\'adresse</string>
+    <string name="dsnReportChip">Rapport de distribution</string>
+    <string name="dsnNotifTitle">Message non distribué</string>
+    <string name="dsnRequest">Demander une confirmation de distribution</string>
+    <string name="dsnRequestHint">Le serveur du destinataire signalera qu\'il a accepté le message. Ce n\'est pas un accusé de lecture</string>
     <string name="recallAttemptDesc">Une tentative de rappel du message sera faite auprès des destinataires. Le succès dépend de leur serveur et de la lecture éventuelle du message.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Conversation ({n} message)</item>

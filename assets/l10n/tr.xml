@@ -1878,6 +1878,23 @@
         <item quantity="other">{n} yıl</item>
     </plurals>
     <string name="readReceiptRequested">{name} okundu bilgisi istiyor</string>
+    <string name="dsnFailed">Teslim edilmedi: {addr}</string>
+    <string name="dsnDelayed">Gecikiyor: {addr}</string>
+    <string name="dsnDelivered">Alıcının sunucusuna teslim edildi: {addr}</string>
+    <string name="dsnDeliveredNote">Bu bir okundu bilgisi değildir: alıcının sunucusu iletiyi kabul etti</string>
+    <string name="dsnReasonNoSuchUser">adres mevcut değil</string>
+    <string name="dsnReasonDomain">alan adı bulunamadı — @ işaretinden sonraki kısmı kontrol edin</string>
+    <string name="dsnReasonFull">alıcının posta kutusu dolu</string>
+    <string name="dsnReasonBlocked">alıcının sunucusu iletiyi spam olarak reddetti veya engelledi</string>
+    <string name="dsnReasonTooLarge">ileti alıcının sunucusu için çok büyük</string>
+    <string name="dsnReasonDelayed">alıcının sunucusu henüz yanıt vermiyor; teslimat yeniden denenecek</string>
+    <string name="dsnReasonOther">alıcının sunucusu iletiyi kabul etmedi</string>
+    <string name="dsnResend">Yeniden gönder</string>
+    <string name="dsnChangeAddress">Adresi değiştir</string>
+    <string name="dsnReportChip">Teslim raporu</string>
+    <string name="dsnNotifTitle">İleti teslim edilmedi</string>
+    <string name="dsnRequest">Teslim onayı iste</string>
+    <string name="dsnRequestHint">Alıcının sunucusu iletiyi kabul ettiğini bildirecek. Bu bir okundu bilgisi değildir</string>
     <string name="recallAttemptDesc">İletiyi alıcılardan geri çağırma denenecek. Başarı, alıcıların posta sunucusuna ve iletinin okunup okunmadığına bağlıdır.</string>
     <plurals name="threadTitleN">
         <item quantity="one">Konuşma ({n} ileti)</item>

@@ -1700,6 +1700,9 @@ class ImapService {
                 final box = event.mailbox;
                 if (box != null) {
                   yield ImapPushEvent(box, ImapPushEvent.changed);
+                } else if (!event.overflow) {
+                  // Изменение этой папки пришло в ответ на саму команду NOTIFY.
+                  yield ImapPushEvent(folderId, ImapPushEvent.changed);
                 } else {
                   // Сервер не успевал сообщать и перестал: синхронизировать
                   // всё, что слушали, и включить NOTIFY заново.

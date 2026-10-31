@@ -115,6 +115,16 @@ void main() {
       expect(events[2].count, ImapPushEvent.changed);
     });
 
+    test('письмо, о котором сервер сообщил в ответ на NOTIFY, не теряется', () async {
+      await serve('IMAP4rev1 IDLE NOTIFY');
+      srv.beforeNotifyOk.add('* 1 EXISTS');
+      listen();
+      await srv.waitIdle();
+      await waitFor(() => events.isNotEmpty);
+      expect(events.single.folderId, 'INBOX');
+      expect(events.single.count, ImapPushEvent.changed);
+    });
+
     test('переполнение: синхронизировать всё и включить NOTIFY заново', () async {
       await serve('IMAP4rev1 IDLE NOTIFY');
       listen(watch: ['Archive', 'Sent']);

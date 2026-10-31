@@ -74,6 +74,9 @@ class FakeImapServer {
   /// Отклонять NOTIFY SET (NO [BADEVENT]).
   bool rejectNotify = false;
 
+  /// Строки без метки в ответ на NOTIFY SET — до OK (NOTIFY подразумевает NOOP).
+  final beforeNotifyOk = <String>[];
+
   ServerSocket? _server;
   final _conns = <_Conn>[];
 
@@ -205,6 +208,7 @@ class _Conn {
       if (srv.rejectNotify) {
         write('$tag NO [BADEVENT (MessageNew MessageExpunge)] not supported');
       } else {
+        srv.beforeNotifyOk.forEach(write);
         _ok(tag, 'NOTIFY completed');
       }
     } else if (upper == 'LOGOUT') {

@@ -33,11 +33,18 @@ class ImapNotifyChange {
       : mailbox = null,
         overflow = true;
 
+  /// Изменение в выбранной папке, о котором сервер сообщил в ответ на саму
+  /// команду NOTIFY (она подразумевает NOOP): enough_mail такие строки не
+  /// ждёт — без этого новое письмо осталось бы незамеченным до следующего цикла.
+  const ImapNotifyChange.selected()
+      : mailbox = null,
+        overflow = false;
+
   final String? mailbox;
   final bool overflow;
 
   @override
-  String toString() => overflow ? 'NOTIFICATIONOVERFLOW' : 'STATUS $mailbox';
+  String toString() => overflow ? 'NOTIFICATIONOVERFLOW' : mailbox == null ? 'SELECTED' : 'STATUS $mailbox';
 }
 
 /// Сервер отклонил NOTIFY SET (NO или BAD).
@@ -126,10 +133,14 @@ class NotifyImapClient extends em.ImapClient {
         // STATUS другой папки enough_mail не ждёт — дальше не передаём;
         // «* OK […]» — передаём: это обычный ответ для него.
         if (!change.overflow) return;
+      } else if (tag != null && _selectedChange.hasMatch(text) && !_changes.isClosed) {
+        _changes.add(const ImapNotifyChange.selected());
       }
     }
     super.onServerResponse(imapResponse);
   }
+
+  static final _selectedChange = RegExp(r'^\* \d+ (EXISTS|EXPUNGE|FETCH)\b', caseSensitive: false);
 
   /// Команда NOTIFY SET. Выбранная папка (её слушает IDLE) — фильтр
   /// SELECTED; остальные — MAILBOXES со списком или PERSONAL, если их много.

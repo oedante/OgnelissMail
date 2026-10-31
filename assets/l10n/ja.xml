@@ -3545,4 +3545,8 @@
     <string name="faq_mail_10_q">アプリ内で直接開ける添付ファイルは？</string>
     <string name="faq_mail_10_a">パスワード付きを含む ZIP アーカイブと、TAR、GZ、BZ2、XZ はアプリ内で直接開けます。中のファイルをタップすると開きます。Android の PDF、画像、テキストと CSV、.eml メール、.pkpass チケットもアプリ内で開けます。iPhone と iPad では、PDF、画像、Office 書類を iOS のクイックルックで表示します。それ以外は適したアプリで開き、上部のボタンでどのファイルも送れます。7z と RAR のアーカイブは別のアプリでのみ開けます。</string>
     <string name="quickRepliesCardHint">テキストが返信に入ります。確認して送信してください</string>
+    <string name="notifyMessengerStyle">メッセージアプリ風の通知</string>
+    <string name="notifyMessengerStyleDesc">メッセージの横に送信者の写真または頭文字を表示</string>
+    <string name="notifyVipConversations">VIP との会話</string>
+    <string name="notifyVipConversationsDesc">VIP からのメールは Android の「会話」に表示され、優先に設定できます</string>
 </resources>

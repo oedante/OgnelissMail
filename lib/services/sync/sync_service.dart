@@ -53,6 +53,7 @@ import '../../services/mail/imap/imap_service.dart';
 import '../../services/mail/engine/mail_engine_service.dart';
 import '../../services/notifications/notification_service.dart';
 import '../../services/notifications/notification_text.dart';
+import '../../services/notifications/messenger_notifications.dart' show MessengerNotify;
 import '../../services/rules/auto_rules_service.dart';
 import '../../widgets/common/sync_progress_indicator.dart';
 import '../../features/settings/providers/settings_provider.dart';
@@ -2080,6 +2081,11 @@ class SyncService {
 
       // Самые старые из показываемых — первыми: в шторке сверху окажется самое свежее.
       final singles = unread.take(_maxSingleNotifications).toList().reversed.toList();
+      // Фото отправителей из контактов — для уведомлений «как в
+      // мессенджерах» (1.9.x); выключено — базу не спрашиваем.
+      final photos = MessengerNotify.styleOn(_prefs)
+          ? await _senderPhotos([for (final e in singles) e.from.email])
+          : const <String, String>{};
       for (var i = 0; i < singles.length; i++) {
         final e = singles[i];
         await service.showEmailNotification(
@@ -2102,6 +2108,8 @@ class SyncService {
           // и вибрации (VIP — всё равно со звуком).
           quiet: ruled[e.id]?.notify == RuleNotify.silent || accMode == AccountNotifyMode.quiet,
           isInvite: e.meeting?.isRequest == true,
+          senderPhoto: photos[e.from.email.trim().toLowerCase()],
+          accountLabel: shortLabel,
         );
       }
 
@@ -2125,6 +2133,26 @@ class SyncService {
       }
     } catch (e) {
       AppLogger.warning('Не удалось показать уведомление: $e');
+    }
+  }
+
+  /// Фото людей по адресам (в нижнем регистре) — из контактов (CardDAV
+  /// PHOTO, Exchange Picture), как в списке писем (personPhotosProvider).
+  Future<Map<String, String>> _senderPhotos(List<String> emails) async {
+    final keys = {for (final e in emails) if (e.contains('@')) e.trim().toLowerCase()};
+    if (keys.isEmpty) return const {};
+    try {
+      final db = _ref.read(databaseProvider);
+      final rows = await (db.select(db.contacts)
+            ..where((c) => c.email.lower().isIn(keys) & c.avatarUrl.isNotNull()))
+          .get();
+      return {
+        for (final r in rows)
+          if ((r.avatarUrl ?? '').isNotEmpty) r.email.toLowerCase(): r.avatarUrl!,
+      };
+    } catch (e) {
+      AppLogger.debug('Фото для уведомлений: $e');
+      return const {};
     }
   }
 

@@ -3640,4 +3640,8 @@
     <string name="faq_mail_10_q">ما المرفقات التي تُفتح داخل التطبيق مباشرة؟</string>
     <string name="faq_mail_10_a">تُفتح أرشيفات ZIP، ومنها المحمية بكلمة مرور، وكذلك TAR وGZ وBZ2 وXZ داخل التطبيق مباشرة: اضغط على ملف بداخلها لفتحه. وتُفتح كذلك ملفات PDF على Android والصور والنصوص وCSV ورسائل .eml وتذاكر .pkpass داخل التطبيق. وعلى iPhone وiPad تعرض المعاينة السريعة في iOS ملفات PDF والصور ومستندات Office. أما غير ذلك فيفتحه تطبيق مناسب، ويمكن إرسال أي ملف إليه بالزر في الأعلى. ولا تُفتح أرشيفات 7z وRAR إلا في تطبيق آخر.</string>
     <string name="quickRepliesCardHint">يُضاف النص إلى الرد — راجعه ثم أرسله</string>
+    <string name="notifyMessengerStyle">إشعارات بأسلوب تطبيقات المراسلة</string>
+    <string name="notifyMessengerStyleDesc">صورة المرسل أو الحرف الأول من اسمه بجانب الرسالة</string>
+    <string name="notifyVipConversations">محادثات لكبار الشخصيات</string>
+    <string name="notifyVipConversationsDesc">يظهر بريد كبار الشخصيات في قسم المحادثات في Android، حيث يمكنك جعله ذا أولوية</string>
 </resources>

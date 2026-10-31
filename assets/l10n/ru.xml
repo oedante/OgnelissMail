@@ -3602,4 +3602,8 @@
     <string name="faq_mail_10_q">Какие вложения открываются прямо в приложении?</string>
     <string name="faq_mail_10_a">Прямо в почте открываются архивы ZIP, в том числе с паролем, а также TAR, GZ, BZ2 и XZ: файлы внутри открываются нажатием. PDF на Android, картинки, текст и CSV, письма .eml и билеты .pkpass тоже открываются в приложении. На iPhone и iPad PDF, картинки и документы Office показывает Просмотр iOS. Остальное открывает подходящая программа, и любой файл можно отправить в неё кнопкой вверху. Архивы 7z и RAR открываются только другим приложением.</string>
     <string name="quickRepliesCardHint">Текст встанет в ответ — проверьте и отправьте</string>
+    <string name="notifyMessengerStyle">Уведомления как в мессенджерах</string>
+    <string name="notifyMessengerStyleDesc">Фото или буква отправителя рядом с письмом</string>
+    <string name="notifyVipConversations">Беседы для VIP</string>
+    <string name="notifyVipConversationsDesc">Письма VIP — в разделе «Беседы» Android: их можно сделать приоритетными</string>
 </resources>

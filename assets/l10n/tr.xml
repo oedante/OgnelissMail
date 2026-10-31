@@ -3564,4 +3564,8 @@
     <string name="faq_mail_10_q">Hangi ekler doğrudan uygulamada açılır?</string>
     <string name="faq_mail_10_a">Parolalı olanlar dahil ZIP arşivleri ile TAR, GZ, BZ2 ve XZ doğrudan uygulamada açılır: açmak için içindeki bir dosyaya dokunun. Android\'de PDF\'ler, görseller, metin ve CSV, .eml iletileri ve .pkpass biletleri de uygulamada açılır. iPhone ve iPad\'de iOS Hızlı Bakış PDF\'leri, görselleri ve Office belgelerini gösterir. Diğerleri uygun bir uygulamada açılır ve her dosya üstteki düğmeyle oraya gönderilebilir. 7z ve RAR arşivleri yalnızca başka bir uygulamada açılır.</string>
     <string name="quickRepliesCardHint">Metin yanıta eklenir — kontrol edip gönderin</string>
+    <string name="notifyMessengerStyle">Mesajlaşma uygulaması gibi bildirimler</string>
+    <string name="notifyMessengerStyleDesc">Mesajın yanında gönderenin fotoğrafı veya baş harfi</string>
+    <string name="notifyVipConversations">VIP\'ler için görüşmeler</string>
+    <string name="notifyVipConversationsDesc">VIP e-postaları Android\'in Görüşmeler bölümünde görünür ve öncelikli olarak işaretlenebilir</string>
 </resources>

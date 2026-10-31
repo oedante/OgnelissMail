@@ -3583,4 +3583,8 @@
     <string name="faq_mail_10_q">Ktoré prílohy sa otvoria priamo v aplikácii?</string>
     <string name="faq_mail_10_a">Archívy ZIP, aj chránené heslom, a tiež TAR, GZ, BZ2 a XZ sa otvoria priamo v aplikácii: súbor vnútri otvoríte ťuknutím. V aplikácii sa otvoria aj PDF v Androide, obrázky, text a CSV, správy .eml a vstupenky .pkpass. Na iPhone a iPade zobrazí PDF, obrázky a dokumenty Office rýchly náhľad iOS. Ostatné otvorí vhodná aplikácia a každý súbor do nej pošlete tlačidlom hore. Archívy 7z a RAR sa otvoria len v inej aplikácii.</string>
     <string name="quickRepliesCardHint">Text sa vloží do odpovede — skontrolujte a odošlite</string>
+    <string name="notifyMessengerStyle">Upozornenia ako v messengeri</string>
+    <string name="notifyMessengerStyleDesc">Fotka alebo iniciála odosielateľa vedľa správy</string>
+    <string name="notifyVipConversations">Konverzácie pre VIP</string>
+    <string name="notifyVipConversationsDesc">Pošta od VIP sa zobrazí v sekcii Konverzácie v Androide, kde ju môžete označiť ako prioritnú</string>
 </resources>

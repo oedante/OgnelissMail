@@ -3564,4 +3564,8 @@
     <string name="faq_mail_10_q">कौन-से अनुलग्नक सीधे ऐप में खुलते हैं?</string>
     <string name="faq_mail_10_a">ZIP संग्रह, पासवर्ड वाले भी, और TAR, GZ, BZ2 तथा XZ सीधे ऐप में खुलते हैं: अंदर की किसी फ़ाइल पर टैप करके उसे खोलें। Android पर PDF, चित्र, टेक्स्ट और CSV, .eml संदेश और .pkpass टिकट भी ऐप में खुलते हैं। iPhone और iPad पर iOS का क्विक लुक PDF, चित्र और Office दस्तावेज़ दिखाता है। बाकी फ़ाइलें उपयुक्त ऐप में खुलती हैं, और कोई भी फ़ाइल ऊपर के बटन से उसमें भेजी जा सकती है। 7z और RAR संग्रह केवल किसी अन्य ऐप में खुलते हैं।</string>
     <string name="quickRepliesCardHint">पाठ उत्तर में जुड़ जाएगा — जाँचें और भेजें</string>
+    <string name="notifyMessengerStyle">मैसेंजर जैसी सूचनाएं</string>
+    <string name="notifyMessengerStyleDesc">संदेश के पास प्रेषक की फ़ोटो या पहला अक्षर</string>
+    <string name="notifyVipConversations">VIP के लिए बातचीत</string>
+    <string name="notifyVipConversationsDesc">VIP की मेल Android के बातचीत अनुभाग में दिखती है, जहां आप इसे प्राथमिकता दे सकते हैं</string>
 </resources>

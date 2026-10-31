@@ -3545,4 +3545,8 @@
     <string name="faq_mail_10_q">앱에서 바로 열리는 첨부 파일은 무엇인가요?</string>
     <string name="faq_mail_10_a">암호가 걸린 것을 포함한 ZIP 압축 파일과 TAR, GZ, BZ2, XZ는 앱에서 바로 열립니다. 안의 파일을 탭하면 열립니다. Android의 PDF, 이미지, 텍스트와 CSV, .eml 메일, .pkpass 티켓도 앱에서 열립니다. iPhone과 iPad에서는 iOS 훑어보기가 PDF, 이미지, Office 문서를 보여 줍니다. 그 밖의 파일은 알맞은 앱에서 열리며, 위쪽 버튼으로 어떤 파일이든 보낼 수 있습니다. 7z와 RAR 압축 파일은 다른 앱에서만 열립니다.</string>
     <string name="quickRepliesCardHint">텍스트가 답장에 들어갑니다. 확인 후 보내세요</string>
+    <string name="notifyMessengerStyle">메신저 스타일 알림</string>
+    <string name="notifyMessengerStyleDesc">메시지 옆에 보낸 사람의 사진 또는 이니셜 표시</string>
+    <string name="notifyVipConversations">VIP 대화</string>
+    <string name="notifyVipConversationsDesc">VIP 메일이 Android의 대화 섹션에 표시되며 우선순위로 지정할 수 있습니다</string>
 </resources>

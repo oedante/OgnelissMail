@@ -6,6 +6,7 @@
 // - Конфигурация для каждой платформы
 
 import '../../../core/platform/orientation_policy.dart';
+import 'dart:async' show unawaited;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart' show AppLocalizations;
+import '../../../services/notifications/messenger_notifications.dart' show MessengerNotify;
 
 /// Режим загрузки писем
 enum EmailFetchMode {
@@ -100,6 +102,11 @@ class AppSettings {
   final bool notificationsEnabled;
   final bool notificationSound;
   final bool notificationVibration;
+  /// Уведомления «как в мессенджерах» (1.9.x, просьба владельца
+  /// 31.10.2026): фото или буква отправителя (MessengerNotify).
+  final bool notificationMessengerStyle;
+  /// Android: письма VIP — в разделе «Беседы» (ярлык беседы).
+  final bool notificationVipConversations;
 
   // ── Синхронизация ──
   final bool syncOnlyWifi;
@@ -181,6 +188,8 @@ class AppSettings {
     this.notificationsEnabled = true,
     this.notificationSound = true,
     this.notificationVibration = true,
+    this.notificationMessengerStyle = true,
+    this.notificationVipConversations = true,
     this.syncOnlyWifi = false,
     this.backgroundKeepAlive = true,
     this.syncIntervalMinutes = 15,
@@ -243,6 +252,8 @@ class AppSettings {
     bool? notificationsEnabled,
     bool? notificationSound,
     bool? notificationVibration,
+    bool? notificationMessengerStyle,
+    bool? notificationVipConversations,
     bool? syncOnlyWifi,
     bool? backgroundKeepAlive,
     int? syncIntervalMinutes,
@@ -291,6 +302,8 @@ class AppSettings {
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       notificationSound: notificationSound ?? this.notificationSound,
       notificationVibration: notificationVibration ?? this.notificationVibration,
+      notificationMessengerStyle: notificationMessengerStyle ?? this.notificationMessengerStyle,
+      notificationVipConversations: notificationVipConversations ?? this.notificationVipConversations,
       syncOnlyWifi: syncOnlyWifi ?? this.syncOnlyWifi,
       backgroundKeepAlive: backgroundKeepAlive ?? this.backgroundKeepAlive,
       syncIntervalMinutes: syncIntervalMinutes ?? this.syncIntervalMinutes,
@@ -346,6 +359,9 @@ class _K {
   static const notificationsEnabled = 's_notif_on';
   static const notificationSound = 's_notif_sound';
   static const notificationVibration = 's_notif_vib';
+  // Читаются и в фоне (MessengerNotify.prefStyle / prefVipConversations).
+  static const notificationMessengerStyle = 's_notif_messenger';
+  static const notificationVipConversations = 's_notif_vip_conv';
   static const syncOnlyWifi = 's_sync_wifi';
   // v2: прежний ключ в ранних сборках включался по умолчанию, и постоянное
   // уведомление появлялось без ведома пользователя. Новый ключ — выбор
@@ -428,6 +444,8 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       notificationsEnabled: _p.getBool(_K.notificationsEnabled) ?? true,
       notificationSound: _p.getBool(_K.notificationSound) ?? true,
       notificationVibration: _p.getBool(_K.notificationVibration) ?? true,
+      notificationMessengerStyle: _p.getBool(_K.notificationMessengerStyle) ?? true,
+      notificationVipConversations: _p.getBool(_K.notificationVipConversations) ?? true,
       syncOnlyWifi: _p.getBool(_K.syncOnlyWifi) ?? false,
       // По умолчанию включено: у новых ящиков режим «Мгновенно», и без
       // фоновой работы push в свёрнутом приложении не работал вовсе.
@@ -611,6 +629,19 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(notificationVibration: v);
   }
 
+  Future<void> setNotificationMessengerStyle(bool v) async {
+    await _p.setBool(_K.notificationMessengerStyle, v);
+    state = state.copyWith(notificationMessengerStyle: v);
+    // Без вида «как в мессенджерах» бесед нет — ярлыки VIP снимаем.
+    if (!v) unawaited(MessengerNotify.removeShortcuts());
+  }
+
+  Future<void> setNotificationVipConversations(bool v) async {
+    await _p.setBool(_K.notificationVipConversations, v);
+    state = state.copyWith(notificationVipConversations: v);
+    if (!v) unawaited(MessengerNotify.removeShortcuts());
+  }
+
   Future<void> setSyncOnlyWifi(bool v) async {
     await _p.setBool(_K.syncOnlyWifi, v);
     state = state.copyWith(syncOnlyWifi: v);
@@ -746,6 +777,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       _K.themeMode, _K.locale, _K.fontScale, _K.uiScale, _K.uiFont, _K.highContrast,
       _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode,
       _K.notificationsEnabled, _K.notificationSound, _K.notificationVibration,
+      _K.notificationMessengerStyle, _K.notificationVipConversations,
       _K.syncOnlyWifi, _K.syncInterval, _K.emailFetchMode,
       _K.groupByConversation, _K.swipeLP, _K.swipeLS, _K.swipeRP, _K.swipeRS, _K.swipeCL, _K.swipeCR, _K.swipeAnim, _K.previewLines, _K.peekPreviewLines,
       _K.aiEnabled, _K.smartReplies, _K.dlpEnabled, _K.autoRules,

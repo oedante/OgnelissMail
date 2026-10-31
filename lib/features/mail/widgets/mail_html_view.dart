@@ -246,12 +246,18 @@ class MailHtmlDocument {
     // содержимое, а такой блок — под окно, и после каждого замера письмо
     // становилось выше, внизу — бесконечное пустое поле. Высота — по
     // содержимому.
+    // «Прилипающие» блоки (position: fixed / sticky): окно письма высотой
+    // с само письмо, и такой блок вставал поверх текста — вверху или в самом
+    // конце письма, а не на своём месте. Блок — на своё место в тексте.
     for (final e in body.querySelectorAll('[style]')) {
       final st = e.attributes['style']!;
-      if (st.contains('vh')) e.attributes['style'] = noViewportHeights(st);
+      final out = layoutSafe(st);
+      if (!identical(out, st)) e.attributes['style'] = out;
     }
     for (final st in body.querySelectorAll('style')) {
-      if (st.text.contains('vh')) st.text = noViewportHeights(st.text);
+      final css = st.text;
+      final out = layoutSafe(css);
+      if (!identical(out, css)) st.text = out;
     }
 
     // Стрелки и маркеры из шрифтов Wingdings и Symbol («à» вместо «→»).
@@ -329,6 +335,22 @@ class MailHtmlDocument {
   /// CSS без высот в долях окна: «height: 100vh», «min-height:80vh» →
   /// «height:auto» (см. [build]). max-height не трогается — он только
   /// ограничивает.
+  /// CSS письма без того, что ломает вёрстку в окне высотой с письмо:
+  /// высоты в долях окна ([noViewportHeights]) и «прилипание»
+  /// ([noFixedPosition]). Без таких мест — та же строка (identical).
+  static String layoutSafe(String css) {
+    final low = css.toLowerCase();
+    var out = css;
+    if (low.contains('vh')) out = noViewportHeights(out);
+    if (low.contains('fixed') || low.contains('sticky')) out = noFixedPosition(out);
+    return out == css ? css : out;
+  }
+
+  /// position: fixed / sticky → static (так делает и Proton Mail).
+  static String noFixedPosition(String css) => css.replaceAllMapped(
+      RegExp(r'(^|[;{\s])position\s*:\s*(?:-webkit-)?(?:fixed|sticky)\b(\s*!important)?', caseSensitive: false),
+      (m) => '${m[1]}position:static');
+
   static String noViewportHeights(String css) => css.replaceAllMapped(
       RegExp(r'(^|[;{\s])((?:min-)?height)\s*:\s*[\d.]+\s*(?:d|s|l)?vh\b(\s*!important)?', caseSensitive: false),
       (m) => '${m[1]}${m[2]}:auto');
@@ -547,6 +569,10 @@ class MailHtmlView extends StatefulWidget {
           blockNetworkImage: true,
           transparentBackground: true,
         ),
+        // Без обработчика падение процесса страницы завершает приложение.
+        onRenderProcessGone: (controller, detail) async {
+          if (!loaded.isCompleted) loaded.complete();
+        },
         onLoadStop: (controller, url) {
           if (!loaded.isCompleted) loaded.complete();
         },
@@ -852,6 +878,35 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   HeadlessInAppWebView? _adopted;
   bool _adoptChecked = false;
   bool _adoptedLoaded = false;
+
+  /// Сколько раз окно создавалось заново после падения процесса страницы.
+  int _webGen = 0;
+
+  /// Процесс страницы завершён (Android: renderer убит системой при
+  /// нехватке памяти или упал; iOS: процесс WebKit завершён) — окно пустое
+  /// и больше не годится. Без обработчика на Android плагин завершал всё
+  /// приложение. Новое окно — с тем же письмом; не больше двух раз, чтобы
+  /// письмо, которое само роняет процесс, не создавало окна по кругу.
+  void _onWebGone(String why) {
+    AppLogger.warning('Окно письма: процесс страницы завершён ($why)');
+    if (!mounted || _webGen >= 2) return;
+    _revealGen++;
+    for (final t in _timers) {
+      t.cancel();
+    }
+    _timers.clear();
+    setState(() {
+      _webGen++;
+      _web = null;
+      _adopted = null;
+      _adoptChecked = true;
+      _adoptedLoaded = false;
+      _initialHtmlKey = null;
+      _reloading = false;
+      _measured = false;
+      _ready = false;
+    });
+  }
 
   void _adoptSpare() {
     if (_adoptChecked) return;
@@ -1616,6 +1671,8 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     final html = _htmlFor();
     _initialHtmlKey ??= _htmlMemo?.$1;
     return InAppWebView(
+        // Новое окно после падения процесса страницы ([_onWebGone]).
+        key: ValueKey(_webGen),
         // Запасное окно с уже загруженным письмом (этап 2): плагин передаёт
         // созданный WebView виджету, initialData тогда не загружается.
         headlessWebView: _adopted,
@@ -1735,6 +1792,9 @@ class _MailHtmlViewState extends State<MailHtmlView> {
             PermissionResponse(resources: request.resources, action: PermissionResponseAction.DENY),
         onGeolocationPermissionsShowPrompt: (controller, origin) async =>
             GeolocationPermissionShowPromptResponse(origin: origin, allow: false, retain: false),
+        onRenderProcessGone: (controller, detail) async =>
+            _onWebGone(detail.didCrash ? 'сбой' : 'системой'),
+        onWebContentProcessDidTerminate: (controller) => _onWebGone('WebKit'),
     );
   }
 }
@@ -1829,6 +1889,11 @@ class MailWebViewPool {
       onCreateWindow: (c, action) async => false,
       onPermissionRequest: (c, request) async =>
           PermissionResponse(resources: request.resources, action: PermissionResponseAction.DENY),
+      // Процесс страницы упал — запасное окно больше не годится (без
+      // обработчика плагин завершает приложение).
+      onRenderProcessGone: (c, detail) async {
+        if (identical(h, _spare)) unawaited(release());
+      },
       onLoadStop: (c, url) {
         if (!blank.isCompleted) {
           blank.complete();

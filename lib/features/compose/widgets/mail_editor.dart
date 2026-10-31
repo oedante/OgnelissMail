@@ -42,6 +42,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/logging/app_logger.dart';
 import '../../../services/background/work_scheduler.dart';
 import '../../../widgets/common/ui_zoom.dart';
 
@@ -495,6 +496,21 @@ class _MailEditorState extends State<MailEditor> {
     widget.onFailed?.call();
   }
 
+  bool _gone = false;
+
+  /// Процесс страницы завершён (Android: renderer убит системой или упал;
+  /// iOS: процесс WebKit) — окно пустое, и после загрузки тоже. Набранный
+  /// текст переходит в простое поле (onFailed). Без обработчика на Android
+  /// плагин завершал всё приложение.
+  void _onGone(String why) {
+    if (_gone) return;
+    _gone = true;
+    _done = true;
+    _watchdog?.cancel();
+    AppLogger.warning('Редактор: процесс страницы завершён ($why)');
+    widget.onFailed?.call();
+  }
+
   @override
   void dispose() {
     _routeAnim?.removeStatusListener(_onRouteStatus);
@@ -666,7 +682,8 @@ class _MailEditorState extends State<MailEditor> {
       onReceivedError: (controller, request, error) {
         if (request.isForMainFrame ?? false) _fail('load: ${error.description}');
       },
-      onWebContentProcessDidTerminate: (controller) => _fail('process'),
+      onRenderProcessGone: (controller, detail) async => _onGone(detail.didCrash ? 'сбой' : 'системой'),
+      onWebContentProcessDidTerminate: (controller) => _onGone('WebKit'),
     );
 
   static String _attr(String s) => s.replaceAll('&', '&amp;').replaceAll('"', '&quot;');

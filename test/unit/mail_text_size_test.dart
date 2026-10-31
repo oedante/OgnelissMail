@@ -13,13 +13,17 @@ void main() {
     Future<double> at(double system, double zoom) async {
       UiZoom.current = zoom;
       late double out;
-      await t.pumpWidget(MediaQuery(
-        data: MediaQueryData(textScaler: TextScaler.linear(system)),
-        child: Builder(builder: (c) {
-          out = MailHtmlView.textScaleOf(c);
-          return const SizedBox();
-        }),
-      ));
+      await t.pumpWidget(
+        MediaQuery(
+          data: MediaQueryData(textScaler: TextScaler.linear(system)),
+          child: Builder(
+            builder: (c) {
+              out = MailHtmlView.textScaleOf(c);
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
       return out;
     }
 
@@ -39,8 +43,29 @@ void main() {
     expect(MailHtmlDocument.noViewportHeights('max-height:80vh;width:50vw'), 'max-height:80vh;width:50vw');
     expect(MailHtmlDocument.noViewportHeights('line-height:1.4'), 'line-height:1.4');
     final doc = MailHtmlDocument.build(
-        '<style>.wrap{min-height:100vh}</style><div class="wrap" style="height:100dvh">Текст</div>',
-        allowRemoteImages: false);
+      '<style>.wrap{min-height:100vh}</style><div class="wrap" style="height:100dvh">Текст</div>',
+      allowRemoteImages: false,
+    );
     expect(doc.html, isNot(contains('vh')));
+  });
+
+  test('«прилипающие» блоки — на своё место в тексте', () {
+    expect(MailHtmlDocument.noFixedPosition('position:fixed;bottom:0'), 'position:static;bottom:0');
+    expect(
+      MailHtmlDocument.noFixedPosition('.b{position: -webkit-sticky !important; top:0}'),
+      '.b{position:static; top:0}',
+    );
+    expect(MailHtmlDocument.noFixedPosition('position:relative'), 'position:relative');
+    expect(MailHtmlDocument.noFixedPosition('table-layout:fixed'), 'table-layout:fixed');
+    const plain = 'color:red;table-layout:fixed';
+    expect(identical(MailHtmlDocument.layoutSafe(plain), plain), isTrue);
+    final doc = MailHtmlDocument.build(
+      '<style>.bar{position:sticky;top:0}</style><div class="bar">Меню</div>'
+      '<div style="position:fixed;bottom:0;left:0">Подвал</div><p>Текст</p>',
+      allowRemoteImages: false,
+    );
+    expect(doc.html, isNot(contains('sticky')));
+    expect(doc.html, isNot(contains('position:fixed')));
+    expect(doc.html, contains('style="position:static;bottom:0;left:0"'));
   });
 }

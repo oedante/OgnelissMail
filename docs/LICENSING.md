@@ -46,6 +46,17 @@ libraries and shown in the app (Settings → About → Licence texts).
 The server dependencies (`server/oauth-proxy`: express and its dependencies)
 are MIT, ISC and BSD-3-Clause.
 
+Every push checks these licences automatically (`tool/dev/license_check.py`
+in CI): GPL, LGPL, AGPL, SSPL, BUSL, non-commercial or unrecognised licences
+fail the build unless `tool/dev/license_allowlist.txt` lists the package with
+a reason.
+
+Tools used only by the build on GitHub Actions (not part of the app or the
+servers): OSV-Scanner and osv-scanner-action (Google, Apache-2.0) with the
+free OSV database (osv.dev) for dependency vulnerabilities, and
+android-emulator-runner (ReactiveCircus, Apache-2.0) for the Android
+emulator tests.
+
 ## 3. Microsoft Exchange protocols
 
 Exchange support is an independent implementation written from the

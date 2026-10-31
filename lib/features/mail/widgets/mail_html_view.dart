@@ -583,6 +583,28 @@ img[src^="cid:" i]{display:none !important;}
 ''';
 }
 
+/// Наблюдатель окна письма для интеграционных тестов на эмуляторе Android
+/// (integration_test/mail_view_test.dart; 1.9.x, просьба владельца
+/// 31.10.2026): окно, загрузка, масштаб от движка, высота на экране письма.
+/// Через него тесты сверяют вписывание, высоту после «По ширине экрана» /
+/// «Обычный размер» и касания (getHitTestResult). В приложении не задан —
+/// на поведение не влияет.
+@visibleForTesting
+class MailHtmlViewProbe {
+  MailHtmlViewProbe({this.onCreated, this.onLoadStop, this.onZoomScaleChanged, this.onLayout});
+
+  final void Function(InAppWebViewController controller)? onCreated;
+  final VoidCallback? onLoadStop;
+
+  /// Как onZoomScaleChanged окна: масштаб в точках Android (с плотностью).
+  final void Function(double oldScale, double newScale)? onZoomScaleChanged;
+
+  /// Каждая сборка: высота окна на экране письма, ширина вписывания (null —
+  /// обычный масштаб), «Исходный масштаб» выбран, письмо увеличено, показано.
+  final void Function(({double height, int? fitWidth, bool actualSize, bool pinched, bool ready}) layout)?
+      onLayout;
+}
+
 /// Тело письма в WebView. Ссылки — через [onLink]; высота подстраивается под
 /// содержимое.
 class MailHtmlView extends StatefulWidget {
@@ -821,6 +843,11 @@ class MailHtmlView extends StatefulWidget {
   /// «Почта → Широкие письма по ширине экрана». Щипок — как раньше.
   static bool fitWide = false;
   static const fitWideKey = 'mail_wide_fit';
+
+  /// Наблюдатель для интеграционных тестов ([MailHtmlViewProbe]); null в
+  /// приложении.
+  @visibleForTesting
+  static MailHtmlViewProbe? debugProbe;
 
   /// Масштаб интерфейса, который окно письма применяет само (Android,
   /// 1.8.14; 1 — масштаба нет). Окно рисуется без масштаба Flutter
@@ -1623,6 +1650,8 @@ class _MailHtmlViewState extends State<MailHtmlView> {
           }
         }
       }
+      MailHtmlView.debugProbe?.onLayout?.call(
+          (height: _height, fitWidth: _fitWidth, actualSize: _actualSize, pinched: _pinched, ready: _ready));
       final l10n = AppLocalizations.of(context);
       final fitLabel = l10n.tr('mailFitToWidth');
       final realLabel = l10n.tr('mailActualSize');
@@ -1865,6 +1894,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         onWebViewCreated: (c) {
           _web = c;
           OpenTrace.mark('создано');
+          MailHtmlView.debugProbe?.onCreated?.call(c);
           // Движок уже загружен этим окном — прогрев не нужен.
           MailHtmlView._warmed = true;
           final adopted = _adopted;
@@ -1896,11 +1926,13 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         onLoadStop: (controller, url) {
           OpenTrace.mark('загрузка');
           _scheduleMeasures(controller);
+          MailHtmlView.debugProbe?.onLoadStop?.call();
         },
         // Смена масштаба больше не сбрасывает таймеры показа (раньше 70 мс
         // начинались заново): до показа — заново ждать устоявшейся высоты,
         // после — только замер.
         onZoomScaleChanged: (controller, oldScale, newScale) {
+          MailHtmlView.debugProbe?.onZoomScaleChanged?.call(oldScale, newScale);
           if (_ready) {
             _onZoomed(controller, newScale);
           } else {
@@ -1968,6 +2000,13 @@ class MailWebViewPool {
 
   /// Почему последнее окно не подошло экрану письма — в замер открытия.
   static String lastMiss = '';
+
+  /// Высота документа, измеренная в запасном окне высотой 1 px (null — ещё
+  /// не измерена). Интеграционные тесты сверяют с ней высоту окна письма:
+  /// пустого поля под письмом быть не должно (1.9.x, просьба владельца
+  /// 31.10.2026).
+  @visibleForTesting
+  static double? get debugMeasuredHeight => _loaded ? _height : null;
 
   /// Окно, которое забрал экран письма, и пришла ли его загрузка до того,
   /// как виджет принял события окна на себя.

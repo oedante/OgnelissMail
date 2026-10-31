@@ -1,0 +1,13 @@
+{
+  "_comment": "База замеров скорости на эмуляторе Android (задача emulator в CI, integration_test/perf_test.dart), мс. Отладочная сборка, API 34 x86_64, программная графика: числа заведомо с запасом. Ошибка — замер больше базы вдвое. Обновить — tool/perf/README.md. 31.10.2026: начальные значения с запасом, до первого прогона на GitHub.",
+  "metrics": {
+    "app_first_frame_ms": 8000,
+    "app_first_screen_ms": 12000,
+    "compose_first_ms": 10000,
+    "compose_ms": 6000,
+    "compose_spare_ms": 4000,
+    "mail_open_first_ms": 6000,
+    "mail_open_ms": 3000,
+    "mail_open_spare_ms": 3000
+  }
+}

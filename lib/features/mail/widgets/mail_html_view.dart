@@ -699,7 +699,10 @@ class MailHtmlView extends StatefulWidget {
   /// переносит строки, ему место не нужно. Шаг 0,05 — у запасного окна и
   /// кэша письма один и тот же масштаб.
   static double textScaleOf(BuildContext context) {
-    final system = MediaQuery.textScalerOf(context).scale(100) / 100;
+    // Множитель — на базовом размере текста письма (15 px): на Android 14+
+    // системный шрифт масштабируется нелинейно, и крупный текст (100 px)
+    // почти не увеличивается — по scale(100) письмо не росло вовсе.
+    final system = MediaQuery.textScalerOf(context).scale(15) / 15;
     final zoom = UiZoom.current <= 0 ? 1.0 : UiZoom.current;
     return ((system / zoom).clamp(0.8, 3.0) * 20).roundToDouble() / 20;
   }
@@ -1216,6 +1219,10 @@ class _MailHtmlViewState extends State<MailHtmlView> {
           }
         }
       }
+      // Android, письмо увеличено щипком: документ не ниже окна в масштабе
+      // исходного, и замер давал высоту вдвое больше — она росла с каждым
+      // щипком. Высоту при щипке пересчитывает [_onZoomed].
+      if (Platform.isAndroid && (_zoom ?? _scale) > _scale * 1.02) return;
       final h = await c.getContentHeight();
       if (!mounted || h == null || h <= 0) return;
       // Android отдаёт высоту в CSS-пикселях — на экране она умножается на
@@ -1242,6 +1249,9 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     final c = _web;
     if (c == null) return;
     setState(() {
+      // Высота — под исходный масштаб: замер её не уменьшил бы (документ не
+      // ниже окна), под письмом оставалось пустое поле.
+      _height = (_height * _scale / _effScale).clamp(40.0, 60000.0);
       _pinched = false;
       _zoom = null;
       _heightZoom = 0;
@@ -1258,9 +1268,14 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   Future<void> _toggleScale() async {
     final c = _web;
     if (c == null) return;
+    final was = _effScale;
     setState(() {
       _actualSize = !_actualSize;
       _fitWidth = _actualSize ? null : _fitTarget;
+      // «По ширине экрана» — письмо мельче: высота уменьшается сразу (замер
+      // её не уменьшил бы — документ не ниже окна, под письмом оставалось
+      // пустое поле); больше — поднимут замеры.
+      if (_scale < was) _height = (_height * _scale / was).clamp(40.0, 60000.0);
       _pinched = false;
       _zoom = null;
       _heightZoom = 0;
@@ -1441,16 +1456,22 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     _zoomTimer = Timer(const Duration(milliseconds: 120), () {
       if (!mounted) return;
       final z = _zoom;
-      if (Platform.isAndroid && z != null && _heightZoom > 0 && (z / _heightZoom - 1).abs() > 0.01) {
+      // Масштаб высоты неизвестен (высота из запасного окна или с прошлого
+      // открытия) — она измерена в исходном.
+      final hz = _heightZoom > 0 ? _heightZoom : _scale;
+      if (Platform.isAndroid && z != null && (z / hz - 1).abs() > 0.01) {
         // Окно не выше ~30 000 точек экрана: выше Android его не рисует
         // (письмо пропадало после щипка, 13.10.2026).
         final maxH = 30000 / (_mqDpr <= 0 ? 1 : _mqDpr);
-        setState(() => _height = (_height * z / _heightZoom).clamp(40.0, maxH < 2000 ? 2000.0 : maxH));
+        setState(() => _height = (_height * z / hz).clamp(40.0, maxH < 2000 ? 2000.0 : maxH));
         _heightZoom = z;
       } else if (!Platform.isAndroid) {
         _measured = false;
       }
-      unawaited(_measure(c));
+      // Android: пересчёт выше точный, а замер сразу после него читал
+      // высоту окна прежнего размера — после уменьшения внизу оставалось
+      // пустое поле.
+      if (!Platform.isAndroid) unawaited(_measure(c));
       _snap = null;
       _scheduleSnap();
     });

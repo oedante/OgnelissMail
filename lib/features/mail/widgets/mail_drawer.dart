@@ -183,12 +183,20 @@ class MailDrawer extends ConsumerWidget {
                 ),
 
               // ── Аватарки аккаунтов ──
+              // Все ящики — рядом, прокрутка вбок (1.8.12, замечание
+              // 31.10.2026: при пяти и больше ящиках ряд из четырёх портретов,
+              // «…» и шестерёнки выходил за край панели). Шестерёнка — на месте.
               Padding(
-                padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.s),
+                padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.s, 0),
                 child: Row(
                   children: [
-                    // Аватарки
-                    ...accounts.take(4).map((account) {
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        // Место сверху и справа — числу непрочитанных над портретом.
+                        padding: const EdgeInsets.fromLTRB(0, Space.m, Space.s, Space.s),
+                        child: Row(children: [
+                    ...accounts.map((account) {
                       final isActive = account.id == activeAccount?.id && !isAllAccounts;
                       // Непрочитанные этого ящика (1.7.3, замечание владельца
                       // 25.10.2026): на значке «Почта» — сумма по всем ящикам,
@@ -245,29 +253,9 @@ class MailDrawer extends ConsumerWidget {
                       );
                     }),
 
-                    if (accounts.length > 4)
-                      GestureDetector(
-                        // Показать все аккаунты (в ряду помещается 4).
-                        onTap: () {
-                          _close(context);
-                          context.push('/settings/accounts');
-                        },
-                        // Непрочитанные ящиков, которые в ряд не поместились.
-                        child: _withUnread(
-                          context,
-                          ref.watch(unifiedUnreadByKeyProvider(
-                                  [for (final a in accounts.skip(4)) if (a.isActive) a.id].join(',')))
-                              .value ??
-                              0,
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                            child: const Icon(AppIcons.more_horiz, size: 20),
-                          ),
-                        ),
+                        ]),
                       ),
-
-                    const Spacer(),
+                    ),
                     IconButton(tooltip: l10n.tr('settings'), icon: const Icon(AppIcons.settings), onPressed: () {
                       _close(context);
                       context.push('/settings');

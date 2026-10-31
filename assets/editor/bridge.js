@@ -152,6 +152,9 @@
     // стилем аккаунта), открывается кнопкой «Aa» на экране письма.
     toolbar: function (show) {
       document.documentElement.classList.toggle('ogn-notoolbar', !show);
+      // Панель, скрытая при запуске, пересчитывает ширину кнопок (иначе часть
+      // кнопок пряталась в «…» по размеру, измеренному скрытой).
+      if (show) window.dispatchEvent(new Event('resize'));
     },
     // Стиль текста аккаунта (шрифт, размер) — при смене ящика «От».
     setBodyStyle: function (css) {

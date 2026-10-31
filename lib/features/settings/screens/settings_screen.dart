@@ -77,6 +77,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 title: a.displayName,
                 subtitle: a.email,
+                subtitleOneLine: true,
                 onTap: () => context.push('/settings/account/${Uri.encodeComponent(a.id)}'),
               ),
             SettingsItem(

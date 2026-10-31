@@ -162,6 +162,10 @@ class SettingsItem extends StatelessWidget {
   final Widget? trailing;
   /// Подробное пояснение — за значком «?» после названия.
   final String? hint;
+
+  /// Подпись в одну строку с многоточием (адрес ящика: при крупном шрифте
+  /// он переносился посреди слова, 1.8.12).
+  final bool subtitleOneLine;
   const SettingsItem({
     super.key,
     this.icon,
@@ -172,6 +176,7 @@ class SettingsItem extends StatelessWidget {
     required this.onTap,
     this.trailing,
     this.hint,
+    this.subtitleOneLine = false,
   });
 
   @override
@@ -182,7 +187,12 @@ class SettingsItem extends StatelessWidget {
       minTileHeight: Sizes.tapTarget,
       leading: leading ?? (icon == null ? null : Icon(icon, color: color ?? scheme.primary)),
       title: TitleWithHelp(title, hint: hint, style: color == null ? null : TextStyle(color: color)),
-      subtitle: subtitle == null || subtitle!.isEmpty ? null : Text(subtitle!),
+      subtitle: subtitle == null || subtitle!.isEmpty
+          ? null
+          : Text(subtitle!,
+              maxLines: subtitleOneLine ? 1 : null,
+              overflow: subtitleOneLine ? TextOverflow.ellipsis : null,
+              softWrap: !subtitleOneLine),
       trailing: trailing ?? (color == null && onTap != null ? const Icon(AppIcons.chevron_right) : null),
       onTap: onTap == null
           ? null

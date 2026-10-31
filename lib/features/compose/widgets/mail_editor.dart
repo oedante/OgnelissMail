@@ -42,6 +42,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/logging/app_logger.dart';
 import '../../../services/background/work_scheduler.dart';
 import '../../../widgets/common/ui_zoom.dart';
 
@@ -395,7 +396,8 @@ class _MailEditorState extends State<MailEditor> {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final lang = _lang(Localizations.localeOf(context).languageCode);
     if (widget.usePool && MailEditorPool.supported) {
-      final key = MailEditorPool.keyOf(lang: lang, dark: dark, placeholder: widget.placeholder);
+      MailEditorPool.editorOpen = true;
+      final key = MailEditorPool.keyOf(lang: lang, dark: dark, placeholder: widget.placeholder, zoom: _zoom);
       final size = Size(MediaQuery.sizeOf(context).width * _zoom, widget.height * _zoom);
       final t = MailEditorPool.take(key, size: size);
       if (t != null) {
@@ -494,13 +496,34 @@ class _MailEditorState extends State<MailEditor> {
     widget.onFailed?.call();
   }
 
+  bool _gone = false;
+
+  /// Процесс страницы завершён (Android: renderer убит системой или упал;
+  /// iOS: процесс WebKit) — окно пустое, и после загрузки тоже. Набранный
+  /// текст переходит в простое поле (onFailed). Без обработчика на Android
+  /// плагин завершал всё приложение.
+  void _onGone(String why) {
+    if (_gone) return;
+    _gone = true;
+    _done = true;
+    _watchdog?.cancel();
+    AppLogger.warning('Редактор: процесс страницы завершён ($why)');
+    widget.onFailed?.call();
+  }
+
   @override
   void dispose() {
     _routeAnim?.removeStatusListener(_onRouteStatus);
     _watchdog?.cancel();
     widget.controller._detach();
-    // Следующее «Новое сообщение» — из готового окна (создаётся в простое).
-    if (widget.usePool) MailEditorPool.scheduleSpare();
+    if (widget.usePool) {
+      // Окно забрали из запасного, а экран закрыли раньше, чем оно встало
+      // на место (закрыли во время анимации открытия): иначе оно жило бы
+      // до конца процесса. После подключения isRunning() — false.
+      final a = _adopted;
+      if (a != null && a.isRunning()) unawaited(a.dispose());
+      MailEditorPool.editorClosed();
+    }
     super.dispose();
   }
 
@@ -530,7 +553,7 @@ class _MailEditorState extends State<MailEditor> {
   }
 
   /// Настройки окна редактора (и запасного — те же).
-  static InAppWebViewSettings _settings() => InAppWebViewSettings(
+  static InAppWebViewSettings _settings([double? zoom]) => InAppWebViewSettings(
         javaScriptEnabled: true,
         javaScriptCanOpenWindowsAutomatically: false,
         supportMultipleWindows: false,
@@ -555,7 +578,7 @@ class _MailEditorState extends State<MailEditor> {
         supportZoom: false,
         builtInZoomControls: false,
         displayZoomControls: false,
-        textZoom: UiZoom.isIdentity(_zoom) ? 100 : (_zoom * 100).round(),
+        textZoom: UiZoom.isIdentity(zoom ?? _zoom) ? 100 : ((zoom ?? _zoom) * 100).round(),
       );
 
   Future<void> _onReady(InAppWebViewController c) async {
@@ -599,7 +622,13 @@ class _MailEditorState extends State<MailEditor> {
         );
         // Запасное окно уже сообщило «готов» — до того, как его забрал экран.
         final adopted = _adopted;
-        if (adopted != null && MailEditorPool.takenReady(adopted)) unawaited(_onReady(c));
+        if (adopted != null) {
+          // Меню выделения у забранного окна задаётся отдельно: плагин не
+          // передаёт в него contextMenu виджета (было бы обычное меню Android
+          // без «Жирный», «Курсив»…).
+          unawaited(c.setContextMenu(_contextMenu).catchError((Object _) {}));
+          if (MailEditorPool.takenReady(adopted)) unawaited(_onReady(c));
+        }
         c.addJavaScriptHandler(
           handlerName: 'change',
           callback: (args) {
@@ -653,7 +682,8 @@ class _MailEditorState extends State<MailEditor> {
       onReceivedError: (controller, request, error) {
         if (request.isForMainFrame ?? false) _fail('load: ${error.description}');
       },
-      onWebContentProcessDidTerminate: (controller) => _fail('process'),
+      onRenderProcessGone: (controller, detail) async => _onGone(detail.didCrash ? 'сбой' : 'системой'),
+      onWebContentProcessDidTerminate: (controller) => _onGone('WebKit'),
     );
 
   static String _attr(String s) => s.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
@@ -694,8 +724,28 @@ class MailEditorPool {
 
   static bool takenReady(HeadlessInAppWebView v) => identical(v, _taken) && _takenReady;
 
-  static String keyOf({required String lang, required bool dark, required String placeholder}) =>
-      jsonEncode({'l': lang, 'd': dark, 'p': placeholder});
+  /// Ключ окна: язык, тема, подсказка и масштаб интерфейса (textZoom окна
+  /// задаётся при создании).
+  static String keyOf({required String lang, required bool dark, required String placeholder, double zoom = 1}) =>
+      jsonEncode({'l': lang, 'd': dark, 'p': placeholder, 'z': (zoom * 100).round()});
+
+  /// Открыт экран с редактором: второе окно в это время не готовится —
+  /// не разбирать 1,3 МБ скрипта, пока человек пишет письмо.
+  static bool editorOpen = false;
+
+  /// Экран с редактором закрыт: следующее окно — в простое, после анимации
+  /// закрытия.
+  static void editorClosed() {
+    editorOpen = false;
+    _taken = null;
+    _takenReady = false;
+    if (!supported) return;
+    Future<void>.delayed(const Duration(seconds: 2), scheduleSpare);
+  }
+
+  /// Номер жизни запасного окна: [release] посреди создания — созданное
+  /// окно закрывается.
+  static int _gen = 0;
 
   /// Забрать готовое окно с ключом [key]; null — нет такого (обычный путь).
   static HeadlessInAppWebView? take(String key, {required Size size}) {
@@ -703,7 +753,12 @@ class MailEditorPool {
     _lastSize = size;
     unawaited(_save(key, size));
     final h = _spare;
-    if (h == null || _key != key || !h.isRunning()) return null;
+    if (h == null || !h.isRunning()) return null;
+    if (_key != key) {
+      // Другая тема, язык или масштаб — это окно уже не подойдёт.
+      unawaited(release());
+      return null;
+    }
     _taken = h;
     _takenReady = _ready;
     _spare = null;
@@ -715,12 +770,18 @@ class MailEditorPool {
   /// Подготовить окно в простое (после закрытия «Нового сообщения», при
   /// показе ленты).
   static void scheduleSpare() {
-    if (!supported) return;
-    unawaited(WorkScheduler.instance.run(WorkPriority.idle, ensureSpare));
+    if (!supported || editorOpen) return;
+    unawaited(WorkScheduler.instance.run(WorkPriority.idle, () async {
+      try {
+        await ensureSpare();
+      } catch (e) {
+        debugPrint('MailEditorPool: $e');
+      }
+    }));
   }
 
   static Future<void> ensureSpare() async {
-    if (!supported) return;
+    if (!supported || editorOpen) return;
     if (_lastKey == null) await _restore();
     final key = _lastKey, size = _lastSize;
     if (key == null || size == null || size.isEmpty) return;
@@ -730,10 +791,13 @@ class MailEditorPool {
 
   static Future<void> _create(String key, Size size) async {
     await release();
+    final gen = _gen;
     final cfg = jsonDecode(key) as Map<String, dynamic>;
     final dark = cfg['d'] == true;
     final lang = cfg['l'] as String? ?? 'en';
+    final zoom = ((cfg['z'] as num?) ?? 100) / 100;
     final a = await _EditorAssets.load();
+    if (gen != _gen || editorOpen) return;
     final page = buildMailEditorPage(
       script: a.script,
       scriptHash: a.scriptHash,
@@ -754,7 +818,12 @@ class MailEditorPool {
       initialSize: size,
       initialData: InAppWebViewInitialData(
           data: page, mimeType: 'text/html', encoding: 'utf-8', baseUrl: WebUri('about:blank')),
-      initialSettings: _MailEditorState._settings(),
+      initialSettings: _MailEditorState._settings(zoom),
+      // Процесс страницы упал — окно больше не годится (без обработчика
+      // плагин завершает приложение).
+      onRenderProcessGone: (c, detail) async {
+        if (identical(h, _spare)) unawaited(release());
+      },
       onWebViewCreated: (c) {
         c.addJavaScriptHandler(
           handlerName: 'ready',
@@ -784,6 +853,9 @@ class MailEditorPool {
     _ready = false;
     try {
       await h.run();
+      // Пока окно создавалось, запасное закрыли (свернули приложение) или
+      // открыли редактор — это окно не нужно.
+      if (!identical(_spare, h) || gen != _gen) await h.dispose();
     } catch (e) {
       debugPrint('MailEditorPool: окно не создано ($e)');
       if (identical(_spare, h)) {
@@ -795,6 +867,7 @@ class MailEditorPool {
 
   /// Приложение свёрнуто — закрыть запасное окно (память).
   static Future<void> release() async {
+    _gen++;
     final h = _spare;
     _spare = null;
     _key = null;

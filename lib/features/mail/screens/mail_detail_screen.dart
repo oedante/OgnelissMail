@@ -1630,9 +1630,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                     ? _buildWebBody(email, theme, l10n, settings)
                     : email.bodyHtml != null && email.bodyHtml!.isNotEmpty
                     ? _buildDesktopBody(email, theme, l10n, settings)
+                    // Письмо без HTML — того же размера, что и HTML-письма
+                    // (1.8.12): 15 px × шрифт системы, без уменьшения
+                    // масштабом интерфейса (MailHtmlView.textScaleOf).
                     : LinkifiedText(
                         SymbolFonts.fixPlain(email.bodyPlain ?? email.bodyPreview ?? ''),
-                        style: theme.textTheme.bodyMedium?.copyWith(height: 1.35),
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontSize: 15 * MailHtmlView.textScaleOf(context), height: 1.4),
+                        textScaler: TextScaler.noScaling,
                         onLink: (url, text) => LinkOpener.open(context, url, linkText: text, accountId: widget.accountId),
                       ),
               ),

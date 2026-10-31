@@ -563,21 +563,26 @@ class AccountScreen extends ConsumerWidget {
     final picked = v == null ? null : SyncInterval.values[v];
     if (picked == null || picked == account.syncInterval) return;
     final updated = account.copyWith(syncInterval: picked);
-    await ref.read(accountsProvider.notifier).updateAccount(updated);
+    // Контейнер провайдеров — до ожиданий: экран могли закрыть, пока
+    // запускался push, и ref после этого уже нельзя использовать (журнал
+    // 31.10.2026: «Using ref when a widget is unmounted»).
+    if (!context.mounted) return;
+    final container = ProviderScope.containerOf(context, listen: false);
+    await container.read(accountsProvider.notifier).updateAccount(updated);
     // Push включаем и выключаем сразу, не дожидаясь перезапуска.
-    final push = ref.read(imapPushServiceProvider);
+    final push = container.read(imapPushServiceProvider);
     if (SyncSchedule.pushNow(updated)) {
       await push.start();
     } else {
       await push.stopForAccount(account.id);
     }
     // Фоновый сервис нужен только ящикам с мгновенной доставкой.
-    final st = ref.read(settingsProvider);
-    final ctl = ref.read(foregroundSyncControllerProvider);
+    final st = container.read(settingsProvider);
+    final ctl = container.read(foregroundSyncControllerProvider);
     if (keepAliveNeeded(
         keepAliveSetting: st.backgroundKeepAlive,
         globalInterval: st.syncIntervalMinutes,
-        accounts: ref.read(accountsProvider))) {
+        accounts: container.read(accountsProvider))) {
       await ctl.start();
     } else {
       await ctl.stop();

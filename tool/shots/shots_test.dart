@@ -27,6 +27,7 @@ import 'package:ogneliss/features/settings/screens/general_settings_screen.dart'
 import 'package:ogneliss/features/compose/screens/compose_screen.dart';
 import 'package:ogneliss/features/mail/screens/mail_detail_screen.dart';
 import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
+import 'package:ogneliss/features/mail/widgets/mail_drawer.dart';
 import 'package:ogneliss/features/settings/screens/settings_screen.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/services/archive/archive_container.dart';
@@ -546,6 +547,31 @@ void main() {
             size: size, dpr: dpr, textScale: ts, before: (tester) async => tester.tap(find.text('open')));
       });
     }
+  }
+
+  // Меню с семью ящиками на узком экране (1.8.12, замечание 31.10.2026:
+  // при пяти и больше ящиках выбор ящиков уходил за край панели).
+  for (final (tag, size, ts) in const [('360', Size(360, 780), 1.0), ('320_x13', Size(320, 568), 1.3)]) {
+    testWidgets('меню, семь ящиков — $tag', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() async {
+        for (var i = 2; i <= 7; i++) {
+          await db.into(db.accounts).insert(AccountsCompanion.insert(
+                id: 'a$i',
+                type: 7,
+                email: 'user$i@corp$i.example',
+                displayName: 'Ящик $i',
+                username: 'user$i',
+                createdAt: DateTime(2026),
+              ));
+        }
+      });
+      await _shot(tester, 'drawer_7_$tag', const Scaffold(body: MailDrawer()), theme: AppTheme.lightTheme(1.0),
+          db: db, prefs: prefs, size: size, textScale: ts);
+      await tester.runAsync(db.close);
+    });
   }
 
   // Барабаны даты и времени (1.8.12): одна полоса выбора, изгиб, затухание.

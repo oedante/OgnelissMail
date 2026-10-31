@@ -68,6 +68,7 @@ lib/services/mail/graph/graph_client.dart
 lib/services/mail/graph/graph_directory.dart
 lib/services/mail/graph/graph_server_tools.dart
 lib/services/mail/schedule_hints.dart
+lib/services/mail/smart_compose_service.dart
 lib/services/notifications/meeting_reminder_service.dart
 lib/services/notifications/task_reminder_service.dart
 lib/services/ocr/ocr_scan_screen.dart

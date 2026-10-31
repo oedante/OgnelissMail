@@ -12,7 +12,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/app_logo.dart';
+import '../../../widgets/common/readable_width.dart';
 import '../../../widgets/common/text_scale_cap.dart';
+import '../../../widgets/ui/settings_group.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -40,94 +42,94 @@ class AboutScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
+    // Как остальные экраны настроек (1.8.12, замечание 31.10.2026: «экран
+    // „О приложении“ отличается от остального UI»): строки — карточками
+    // SettingsGroup на фоне экрана, шапка с логотипом — тоже карточкой.
+    final scheme = theme.colorScheme;
+    final muted = theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant);
+    const external = Icon(AppIcons.open_in_new, size: 18);
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(title: Text(l10n.tr('about')))),
-      body: ListView(
-        children: [
-          const SizedBox(height: Space.xl),
-          const Center(
-            child: AppLogo(size: 72),
-          ),
-          const SizedBox(height: Space.m),
-          Center(
-            child: Text(AppConstants.appName,
-                style: theme.textTheme.headlineSmall),
-          ),
-          Center(
-            child: FutureBuilder<String>(
-              future: _version(),
-              builder: (_, snap) => Text(
-                snap.data ?? 'v${AppConstants.appVersion}',
-                style: theme.textTheme.bodyMedium
-                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+      body: ReadableWidth(
+        maxWidth: 720,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xl),
+          children: [
+            SettingsGroup(children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: Space.xl, horizontal: Space.l),
+                child: Column(children: [
+                  const AppLogo(size: 72),
+                  const SizedBox(height: Space.m),
+                  Text(AppConstants.appName, style: theme.textTheme.headlineSmall),
+                  const SizedBox(height: Space.xxs),
+                  FutureBuilder<String>(
+                    future: _version(),
+                    builder: (_, snap) => Text(snap.data ?? 'v${AppConstants.appVersion}',
+                        style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+                  ),
+                  const SizedBox(height: Space.xs),
+                  Text('© 2026 ${AppConstants.copyrightHolder}', style: muted),
+                ]),
               ),
-            ),
-          ),
-          const SizedBox(height: Space.xs),
-          Center(
-            child: Text(
-              '© 2026 ${AppConstants.copyrightHolder}',
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-            ),
-          ),
-          const SizedBox(height: Space.xl),
-          const Divider(),
-          ListTile(
-            leading: const Icon(AppIcons.description),
-            title: Text(l10n.tr('termsOfUse')),
-            trailing: const Icon(AppIcons.open_in_new, size: 18),
-            onTap: () => _open(AppConstants.termsUrl),
-          ),
-          ListTile(
-            leading: const Icon(AppIcons.privacy_tip),
-            title: Text(l10n.tr('privacyPolicy')),
-            trailing: const Icon(AppIcons.open_in_new, size: 18),
-            onTap: () => _open(AppConstants.privacyUrl),
-          ),
-          const Divider(),
-          // Все документы — на сайте (ogneliss.ru/mail): одна редакция для
-          // приложения, Google Play и сайта, правка без выпуска новой версии.
-          ListTile(
-            leading: const Icon(AppIcons.workspace_premium),
-            title: Text(l10n.tr('appLicense')),
-            subtitle: Text(
-              l10n.tr('appLicenseDesc').replaceAll('{company}', AppConstants.copyrightHolder),
-            ),
-            trailing: const Icon(AppIcons.open_in_new, size: 18),
-            onTap: () => _open(AppConstants.licenseUrl),
-          ),
-          // Открытый код (1.8.6): репозиторий на GitHub.
-          ListTile(
-            leading: const Icon(AppIcons.code),
-            title: Text(l10n.tr('sourceCode')),
-            subtitle: Text(l10n.tr('sourceCodeDesc')),
-            trailing: const Icon(AppIcons.open_in_new, size: 18),
-            onTap: () => _open(AppConstants.sourceUrl),
-          ),
-          ListTile(
-            leading: const Icon(AppIcons.article),
-            title: Text(l10n.tr('thirdPartyLicenses')),
-            subtitle: Text(l10n.tr('thirdPartyLicensesDesc')),
-            trailing: const Icon(AppIcons.open_in_new, size: 18),
-            onTap: () => _open(AppConstants.licensesUrl),
-          ),
-          // Тексты лицензий (MIT, Apache, BSD требуют их воспроизводить) —
-          // собираются из самих пакетов и открываются без сети.
-          ListTile(
-            leading: const Icon(AppIcons.gavel),
-            title: Text(l10n.tr('licenseTexts')),
-            subtitle: Text(l10n.tr('licenseTextsDesc')),
-            trailing: const Icon(AppIcons.chevron_right),
-            onTap: () => showLicensePage(
-              context: context,
-              applicationName: AppConstants.appName,
-              applicationVersion: 'v${AppConstants.appVersion}',
-              applicationLegalese: '© 2026 ${AppConstants.copyrightHolder}',
-            ),
-          ),
-          const SizedBox(height: Space.xl),
-        ],
+            ]),
+            const SizedBox(height: Space.l),
+            SettingsGroup(children: [
+              SettingsItem(
+                icon: AppIcons.description,
+                title: l10n.tr('termsOfUse'),
+                trailing: external,
+                onTap: () => _open(AppConstants.termsUrl),
+              ),
+              SettingsItem(
+                icon: AppIcons.privacy_tip,
+                title: l10n.tr('privacyPolicy'),
+                trailing: external,
+                onTap: () => _open(AppConstants.privacyUrl),
+              ),
+            ]),
+            const SizedBox(height: Space.l),
+            // Все документы — на сайте (ogneliss.ru/mail): одна редакция для
+            // приложения, Google Play и сайта, правка без выпуска новой версии.
+            SettingsGroup(children: [
+              SettingsItem(
+                icon: AppIcons.workspace_premium,
+                title: l10n.tr('appLicense'),
+                subtitle: l10n.tr('appLicenseDesc').replaceAll('{company}', AppConstants.copyrightHolder),
+                trailing: external,
+                onTap: () => _open(AppConstants.licenseUrl),
+              ),
+              // Открытый код (1.8.6): репозиторий на GitHub.
+              SettingsItem(
+                icon: AppIcons.code,
+                title: l10n.tr('sourceCode'),
+                subtitle: l10n.tr('sourceCodeDesc'),
+                trailing: external,
+                onTap: () => _open(AppConstants.sourceUrl),
+              ),
+              SettingsItem(
+                icon: AppIcons.article,
+                title: l10n.tr('thirdPartyLicenses'),
+                subtitle: l10n.tr('thirdPartyLicensesDesc'),
+                trailing: external,
+                onTap: () => _open(AppConstants.licensesUrl),
+              ),
+              // Тексты лицензий (MIT, Apache, BSD требуют их воспроизводить) —
+              // собираются из самих пакетов и открываются без сети.
+              SettingsItem(
+                icon: AppIcons.gavel,
+                title: l10n.tr('licenseTexts'),
+                subtitle: l10n.tr('licenseTextsDesc'),
+                onTap: () => showLicensePage(
+                  context: context,
+                  applicationName: AppConstants.appName,
+                  applicationVersion: 'v${AppConstants.appVersion}',
+                  applicationLegalese: '© 2026 ${AppConstants.copyrightHolder}',
+                ),
+              ),
+            ]),
+          ],
+        ),
       ),
     );
   }

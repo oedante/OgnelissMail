@@ -328,6 +328,8 @@ class _ArchiveMessageScreenState extends ConsumerState<ArchiveMessageScreen> {
                 key: ValueKey('ogna_${widget.id}_${theme.brightness.name}'),
                 document: doc,
                 allowRemoteImages: false,
+                // Размер текста — как на экране письма (1.8.12).
+                textScale: MailHtmlView.textScaleOf(context),
                 pageColor: mailPageColor(theme),
                 dark: theme.brightness == Brightness.dark,
                 onLink: (url, text) => LinkOpener.open(context, url, linkText: text),
@@ -341,6 +343,7 @@ class _ArchiveMessageScreenState extends ConsumerState<ArchiveMessageScreen> {
             child: DesktopMailBody(
               html: html,
               images: _images,
+              textScale: MailHtmlView.textScaleOf(context),
               onLink: (url, text) => LinkOpener.open(context, url, linkText: text),
             ),
           ),

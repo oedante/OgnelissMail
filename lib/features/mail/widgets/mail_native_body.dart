@@ -23,7 +23,12 @@
 // страницы, заменяется цветом темы; выделенный маркером текст — чёрным или
 // белым по яркости маркера. Блоки <style> письма не применяются (как у
 // большинства мобильных клиентов для простых писем); письма, где без них
-// не обойтись (скрытый текст классами, @media), уходят в WebView.
+// не обойтись (скрытый текст классами, @media), уходят в WebView. Поэтому
+// и своё тёмное оформление письма (@media (prefers-color-scheme: dark),
+// 1.9.x) сюда не попадает — его применяет WebView (MailColorScheme), а
+// «Исходные цвета» нужны только там.
+//
+// Очень длинное письмо — только начало ([NativeMail.shortened], 1.9.x).
 //
 // Выключатель — «Настройки → Почта → Открытие писем → Простые письма без браузера».
 // Кнопка «Как в браузере» в письме убрана в 1.5.10: по отзывам тестировщиков
@@ -42,6 +47,7 @@ import 'package:html/parser.dart' as html_parser;
 
 import '../../../core/theme/mail_page_color.dart';
 import '../../../core/utils/linkify.dart';
+import '../../../core/utils/mail_clip.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/image_actions.dart';
@@ -154,7 +160,89 @@ class NBlock {
 
 class NativeMail {
   final List<NBlock> blocks;
-  const NativeMail(this.blocks);
+
+  /// Показано только начало очень длинного письма ([shortened]).
+  final bool clipped;
+  NativeMail(this.blocks, {this.clipped = false});
+
+  NativeMail? _short;
+
+  /// Очень длинное письмо — только начало (1.9.x, просьба владельца
+  /// 31.10.2026; пороги — MailClip): блоки письма, пока текста не больше
+  /// [MailClip.textKeep]; письмо не длиннее [MailClip.textLimit] — оно само.
+  /// Один раз на письмо: экран перестраивается часто, а MailNativeBody
+  /// узнаёт готовое дерево по тому же объекту.
+  NativeMail get shortened => _short ??= _clip();
+
+  NativeMail _clip() {
+    if (_chars(blocks, MailClip.textLimit + 1) <= MailClip.textLimit) return this;
+    var left = MailClip.textKeep;
+    final out = <NBlock>[];
+    for (final b in blocks) {
+      final n = _chars([b], left + 1);
+      if (n <= left) {
+        out.add(b);
+        left -= n;
+        continue;
+      }
+      // Блок не помещается: длинный абзац (журнал, выгрузка) — его начало.
+      if (b.kind == NBlockKind.text && left >= 2048) out.add(b._head(left));
+      break;
+    }
+    return NativeMail(out, clipped: true);
+  }
+
+  /// Знаков текста в блоках (с ячейками таблиц); считает не дальше [cap].
+  static int _chars(List<NBlock> list, int cap) {
+    var n = 0;
+    for (final b in list) {
+      for (final s in b.spans) {
+        n += s.text.length;
+      }
+      final t = b.table;
+      if (t != null) {
+        for (final r in t) {
+          for (final c in r) {
+            n += _chars(c.blocks, cap - n);
+            if (n >= cap) return n;
+          }
+        }
+      }
+      if (n >= cap) return n;
+    }
+    return n;
+  }
+}
+
+extension on NBlock {
+  /// Тот же абзац, но только первые [keep] знаков текста.
+  NBlock _head(int keep) {
+    final out = <NSpan>[];
+    var left = keep;
+    for (final s in spans) {
+      if (s.text.length <= left) {
+        out.add(s);
+        left -= s.text.length;
+        continue;
+      }
+      final t = MailClip.cutText(s.text, left);
+      if (t.isNotEmpty) {
+        out.add(NSpan(t,
+            bold: s.bold,
+            italic: s.italic,
+            underline: s.underline,
+            strike: s.strike,
+            mono: s.mono,
+            color: s.color,
+            background: s.background,
+            size: s.size,
+            href: s.href));
+      }
+      break;
+    }
+    return NBlock(
+        kind: kind, spans: out, quote: quote, list: list, bullet: bullet, align: align, after: after, pre: pre);
+  }
 }
 
 // ───────────────────────── построение (в изоляте) ─────────────────────────

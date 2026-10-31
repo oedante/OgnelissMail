@@ -54,6 +54,8 @@ import '../../../services/background/work_scheduler.dart';
 import '../../../core/utils/work_isolate.dart';
 import '../../../core/security/mail_body_processor.dart';
 import '../../../core/utils/linkify.dart';
+import '../../../core/utils/mail_clip.dart';
+import '../../../core/utils/mail_color_scheme.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/image_actions.dart';
@@ -77,7 +79,29 @@ class MailHtmlDocument {
   /// (width у таблиц и картинок, width/min-width в стилях); null — не задана.
   final int? declaredWidth;
 
-  const MailHtmlDocument(this.html, this.linkTexts, {this.declaredWidth});
+  /// У письма своё тёмное оформление (@media (prefers-color-scheme: dark)
+  /// в стилях, 1.9.x): в тёмной теме оно показывается вместо инверсии.
+  /// Стили письма тогда — в двух вариантах ([_csLight] / [_csDark]), один из
+  /// них выключен (media="not all"); [MailHtmlView.composeHtml] включает нужный.
+  final bool darkDesign;
+
+  /// Очень длинное письмо — показано только начало (1.9.x, [MailClip]):
+  /// под письмом — «Показать письмо целиком».
+  final bool clipped;
+
+  const MailHtmlDocument(this.html, this.linkTexts,
+      {this.declaredWidth, this.darkDesign = false, this.clipped = false});
+
+  /// Стили письма в светлом и тёмном вариантах (так их записывает разбор
+  /// HTML: атрибуты по порядку, значения в кавычках).
+  static const _csLight = '<style data-og-cs="light">';
+  static const _csLightOff = '<style data-og-cs="light" media="not all">';
+  static const _csDark = '<style data-og-cs="dark">';
+  static const _csDarkOff = '<style data-og-cs="dark" media="not all">';
+
+  /// Документ [html] (этот же, размеченный по ширине) с включённым тёмным
+  /// вариантом стилей письма.
+  static String darkStyles(String html) => html.replaceAll(_csLight, _csLightOff).replaceAll(_csDarkOff, _csDark);
 
   static const _viewportTag = '<meta name="viewport" content="width=device-width, initial-scale=1">';
 
@@ -166,15 +190,18 @@ class MailHtmlDocument {
     required bool allowRemoteImages,
     Map<String, String> inlineImages = const {},
     bool keepCid = false,
+    bool clip = false,
   }) async {
     if (kIsWeb || bodyHtml.length < MailBodyProcessor.isolateThreshold) {
-      return build(bodyHtml, allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid);
+      return build(bodyHtml,
+          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip);
     }
     try {
       return await WorkIsolate.interactive.run(() => build(bodyHtml,
-          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid));
+          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip));
     } on UnsupportedError {
-      return build(bodyHtml, allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid);
+      return build(bodyHtml,
+          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip);
     }
   }
 
@@ -182,12 +209,16 @@ class MailHtmlDocument {
   /// data URI встроенных картинок (`cid:`). [keepCid] — картинки, которых нет
   /// в [inlineImages], остаются ссылками `cid:` (скрыты стилем) и
   /// подставляются потом [withInlineImages]: документ собирается, не дожидаясь
-  /// картинок (1.5.6). Без него такие картинки убираются сразу.
+  /// картинок (1.5.6). Без него такие картинки убираются сразу. [clip] —
+  /// очень длинное письмо показать только началом ([clipped], 1.9.x): так
+  /// собирает документ экран письма; ответ, пересылка, печать и «Открыть в
+  /// браузере» берут письмо целиком.
   static MailHtmlDocument build(
     String bodyHtml, {
     required bool allowRemoteImages,
     Map<String, String> inlineImages = const {},
     bool keepCid = false,
+    bool clip = false,
   }) {
     final doc = html_parser.parse(bodyHtml);
     final body = doc.body ?? dom.Element.tag('body');
@@ -199,6 +230,11 @@ class MailHtmlDocument {
       st.remove();
       body.nodes.insert(0, st);
     }
+
+    // Очень длинное письмо — только начало, по границе блока (1.9.x, просьба
+    // владельца 31.10.2026; пороги и почему — MailClip). Сразу после
+    // разбора: остальная подготовка идёт уже по короткому письму.
+    final clipped = clip && MailClip.clipDom(body, raw: bodyHtml);
 
     // Встроенные картинки: cid:xxx → data:…; неизвестные cid убираем, чтобы
     // движок не пытался их загрузить.
@@ -240,6 +276,8 @@ class MailHtmlDocument {
       }
       if (style != st) img.attributes['style'] = style;
     }
+
+    final darkDesign = _schemeStyles(body);
 
     // Высота в долях окна (height/min-height: 100vh — «экран» рассылки,
     // 1.8.12, письмо Kaspersky 30.10.2026): окно письма растягивается под
@@ -302,7 +340,53 @@ class MailHtmlDocument {
         '<meta name="referrer" content="no-referrer">'
         '<style>$_baseCss</style></head>'
         '<body>${body.innerHtml}</body></html>';
-    return MailHtmlDocument(out, links, declaredWidth: declared);
+    return MailHtmlDocument(out, links, declaredWidth: declared, darkDesign: darkDesign, clipped: clipped);
+  }
+
+  /// Стили письма с условием по схеме цветов (1.9.x, просьба владельца
+  /// 31.10.2026): условие решается здесь, а не движком окна (MailColorScheme).
+  /// Светлый вариант — всегда: и в светлой теме, и для инверсии, и для
+  /// «Исходных цветов» письмо показывается светлым на любом движке и при
+  /// любой теме системы. Есть своё тёмное оформление — рядом тёмный вариант,
+  /// выключенный (media="not all", это понимает любой движок); включает его
+  /// [MailHtmlView.composeHtml]. true — тёмное оформление есть.
+  static bool _schemeStyles(dom.Element body) {
+    final found = <(dom.Element, String)>[];
+    for (final st in body.querySelectorAll('style')) {
+      final media = st.attributes['media']?.trim() ?? '';
+      final text = st.text;
+      final inMedia = media.isNotEmpty && MailColorScheme.mentions(media);
+      if (!inMedia && !MailColorScheme.mentions(text)) continue;
+      // <style media="(prefers-color-scheme: dark)"> — тот же блок @media
+      // (и любое другое условие элемента: новый элемент — без него).
+      found.add((st, media.isNotEmpty ? '@media $media{$text}' : text));
+    }
+    if (found.isEmpty) return false;
+    final variants = [
+      for (final (st, css) in found)
+        (st, MailColorScheme.rewrite(css, dark: false).css, MailColorScheme.rewrite(css, dark: true)),
+    ];
+    final dark = variants.any((v) => v.$3.darkRules);
+    for (final (st, light, d) in variants) {
+      final parent = st.parentNode;
+      if (parent == null) continue;
+      final at = parent.nodes.indexOf(st);
+      st.remove();
+      // Новые элементы — только со своими атрибутами: по ним
+      // composeHtml находит варианты строкой.
+      final l = dom.Element.tag('style')..text = light;
+      if (dark) l.attributes['data-og-cs'] = 'light';
+      parent.nodes.insert(at, l);
+      if (dark) {
+        parent.nodes.insert(
+            at + 1,
+            dom.Element.tag('style')
+              ..attributes['data-og-cs'] = 'dark'
+              ..attributes['media'] = 'not all'
+              ..text = d.css);
+      }
+    }
+    return dark;
   }
 
   static final _maxWidthDecl =
@@ -377,7 +461,7 @@ class MailHtmlDocument {
       if (data == null) return '';
       return tag.replaceRange(s.start, s.end, ' src="$data"');
     });
-    return MailHtmlDocument(out, linkTexts, declaredWidth: declaredWidth);
+    return MailHtmlDocument(out, linkTexts, declaredWidth: declaredWidth, darkDesign: darkDesign, clipped: clipped);
   }
 
   /// Текст вне ссылок, стилей и полей ввода: найденные адреса → `<a href>`.
@@ -598,6 +682,9 @@ class MailHtmlView extends StatefulWidget {
   /// Тёмная тема: письмо перекрашивается инверсией цветов (картинки
   /// возвращаются к исходным). Письма Outlook задают чёрный текст прямо в
   /// разметке — без инверсии на тёмном фоне его было бы не прочитать.
+  /// У письма со своим тёмным оформлением ([MailHtmlDocument.darkDesign],
+  /// 1.9.x) — оно, без инверсии. «Исходные цвета» письма (1.9.x) — экран
+  /// письма передаёт false и белую страницу.
   final bool dark;
   final bool allowRemoteImages;
   final void Function(String url, String? linkText) onLink;
@@ -623,7 +710,10 @@ class MailHtmlView extends StatefulWidget {
         : viewWidth > 0
             ? doc.atWidth(viewWidth.round(), zoom: zoom)
             : doc.html;
-    final out = _themed(html, dark: dark, pageColor: pageColor, textScale: textScale);
+    // Своё тёмное оформление письма (1.9.x) — вместо инверсии.
+    final own = dark && doc.darkDesign;
+    final out = _themed(own ? MailHtmlDocument.darkStyles(html) : html,
+        dark: dark, ownDark: own, pageColor: pageColor, textScale: textScale);
     if (!cidByRequest) return out;
     // Картинки cid: окно запросит само — не скрывать их.
     const show = '<style id="og-cid">img[src^="cid:" i]{display:inline !important;}</style>';
@@ -756,7 +846,8 @@ class MailHtmlView extends StatefulWidget {
   }
 
   /// Оформление под тему приложения — отдельным стилем после стилей письма.
-  static String _themed(String html, {required bool dark, required Color? pageColor, required double textScale}) {
+  static String _themed(String html,
+      {required bool dark, bool ownDark = false, required Color? pageColor, required double textScale}) {
     final page = pageColor ?? Colors.white;
     // Поля слева и справа — у экрана письма (16 dp, как у шапки и плашек), а
     // не внутри документа: внутренний отступ 14px уменьшался вместе с
@@ -784,19 +875,32 @@ class MailHtmlView extends StatefulWidget {
       final pct = (textScale * 100).round().clamp(80, 300);
       css.write('html,body{-webkit-text-size-adjust:$pct% !important;}');
     }
-    if (dark) {
+    if (ownDark) {
+      // Своё тёмное оформление письма (1.9.x, просьба владельца 31.10.2026)
+      // — без инверсии. Фон — цвет страницы, только если письмо не задало
+      // свой: правило без !important, а стили письма идут после него (в
+      // теле документа) и при равной точности важнее. Текст и ссылки без
+      // своего цвета — светлые: базовые стили документа — под светлое письмо.
+      css
+        ..write('html,body{background:${_hex(page)};color:#e3e3e6;color-scheme:dark !important;}')
+        ..write('a{color:#8ab4f8;}')
+        ..write('blockquote{border-left-color:#5f6670;color:#b9bec6;}')
+        ..write('::selection{background:rgba(138,180,248,.35);}');
+    } else if (dark) {
       // Инверсия всего документа: белый фон письма становится цветом
       // страницы, чёрный текст — светлым. Фон задаётся «до инверсии» —
-      // обратным к нужному цвету.
+      // обратным к нужному цвету. Схема — светлая и у письма с
+      // «color-scheme: light dark» (1.9.x): инвертируется светлое письмо.
       final inv = Color.fromARGB(255, 255 - (page.r * 255).round(),
           255 - (page.g * 255).round(), 255 - (page.b * 255).round());
       css
         ..write('html{filter:invert(1) hue-rotate(180deg);background:${_hex(inv)} !important;}')
         ..write('body{background:transparent !important;}')
+        ..write('html,body{color-scheme:light !important;}')
         ..write('img,video,picture,svg,canvas,[style*="background-image"],[background]'
             '{filter:invert(1) hue-rotate(180deg);}');
     } else {
-      css.write('html,body{background:${_hex(page)} !important;}');
+      css.write('html,body{background:${_hex(page)} !important;color-scheme:light !important;}');
     }
     final tag = '<style id="og-theme">$css</style>';
     final i = html.indexOf('</head>');

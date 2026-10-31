@@ -74,7 +74,9 @@ import '../../../features/settings/providers/settings_provider.dart';
 import '../../../features/settings/providers/feature_flags_provider.dart';
 import '../../settings/widgets/feature_settings_sections.dart' show ExperimentalKeys;
 import '../widgets/linkified_text.dart';
+import '../widgets/mail_clipped_bar.dart';
 import '../widgets/mail_native_body.dart';
+import '../../../core/utils/mail_clip.dart';
 import '../widgets/mail_header.dart';
 import '../widgets/conversation_thread_view.dart';
 import '../widgets/quick_reply_bar.dart';
@@ -1006,8 +1008,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         return _bodyPreparing();
       }
     }
-    final n = _natives[mode];
-    if (n == null) {
+    final whole = _natives[mode];
+    if (whole == null) {
       // В замер открытия — почему письмо в браузере (1.5.10).
       final why = _prepared?.nativeWhy;
       if (why != null && _whyMarkedFor != email.id) {
@@ -1016,6 +1018,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       }
       return null;
     }
+    // Очень длинное письмо — начало, целиком — по кнопке (1.9.x).
+    final n = _showWhole ? whole : whole.shortened;
     // Встроенные картинки — подставляются, когда придут (перерисовка без
     // пересоздания окна, ждать их не нужно).
     if (_hasCid && _inlineLoadedFor != email.id) {
@@ -1040,9 +1044,71 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           },
           onLink: (url, text) => LinkOpener.open(context, url, linkText: text, accountId: widget.accountId),
         ),
+        if (n.clipped) MailClippedBar(onShowWhole: _onShowWhole),
         if (split.hasQuote) _quoteToggle(theme, l10n),
       ],
     );
+  }
+
+  // ── Очень длинное письмо (1.9.x, просьба владельца 31.10.2026) ──
+  // Огромные рассылки, цепочки с цитатами, журналы показываются началом
+  // (пороги — MailClip), под ним — «Показать письмо целиком». Ответ,
+  // пересылка, печать и PDF берут письмо целиком: обрезается только показ.
+  bool _showWhole = false;
+
+  void _onShowWhole() => safeSetState(() => _showWhole = true);
+
+  /// Письмо без HTML и его начало, если оно очень длинное (один раз на
+  /// текст: экран перестраивается часто).
+  String? _plainFor;
+  String _plainText = '';
+  String? _plainShort;
+
+  Widget _plainBody(EmailModel email, ThemeData theme) {
+    final src = email.bodyPlain ?? email.bodyPreview ?? '';
+    if (!identical(_plainFor, src)) {
+      _plainFor = src;
+      _plainText = SymbolFonts.fixPlain(src);
+      _plainShort = MailClip.clipText(_plainText);
+    }
+    final short = _showWhole ? null : _plainShort;
+    // Письмо без HTML — того же размера, что и HTML-письма (1.8.12): 15 px ×
+    // шрифт системы, без уменьшения масштабом интерфейса
+    // (MailHtmlView.textScaleOf).
+    final text = LinkifiedText(
+      short ?? _plainText,
+      style: theme.textTheme.bodyMedium?.copyWith(fontSize: 15 * MailHtmlView.textScaleOf(context), height: 1.4),
+      textScaler: TextScaler.noScaling,
+      onLink: (url, text) => LinkOpener.open(context, url, linkText: text, accountId: widget.accountId),
+    );
+    if (short == null) return text;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [text, MailClippedBar(onShowWhole: _onShowWhole)],
+    );
+  }
+
+  // ── «Исходные цвета» (1.9.x, просьба владельца 31.10.2026) ──
+  // В тёмной теме письмо в окне браузера перекрашивается (своё тёмное
+  // оформление письма или инверсия). «Исходные цвета» в «Ещё» показывают
+  // его так, как задумал отправитель: светлым на белом, без перекраски.
+  // Выбор — для этого письма на время работы приложения (MailOpenCache).
+  bool _originalColors(EmailModel e) => ref.read(mailOpenCacheProvider).originalColors(e);
+
+  void _toggleOriginalColors(EmailModel e) {
+    ref.read(mailOpenCacheProvider).setOriginalColors(e, !_originalColors(e));
+    safeSetState(() {});
+  }
+
+  /// Тело письма сейчас в окне браузера (простое письмо виджетами не
+  /// перекрашивается — «Исходные цвета» ему не нужны).
+  bool _inWebView(EmailModel e) {
+    if (!mailWebViewSupported || (e.bodyHtml ?? '').isEmpty) return false;
+    if (!(ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.nativeMail) ?? true)) return true;
+    final split = _split;
+    if (split == null) return false;
+    final mode = !split.hasQuote || _showQuote ? 'full' : 'reply';
+    return _natives.containsKey(mode) && _natives[mode] == null;
   }
 
   /// Тело письма на компьютере (Windows, macOS, Linux; 1.8.14). Окна браузера
@@ -1190,36 +1256,49 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     if (split == null) return _bodyPreparing();
     final full = !split.hasQuote || _showQuote;
     final baseKey = '${full ? 'full' : 'reply'}_${_imagesAllowed ? 'img' : 'noimg'}';
+    // Письмо целиком (1.9.x) — свой документ, без обрезки; документ, который
+    // и так не обрезан, годится и для него.
+    final cut = _baseDocs[baseKey];
+    final docKey = _showWhole && (cut == null || cut.clipped) ? '${baseKey}_whole' : baseKey;
     final byRequest = _hasCid && _inlineByRequest;
-    final key = '${baseKey}_${byRequest ? 'req' : _inlineImages.length}';
-    var doc = _webDocs[key];
+    // Картинки — строкой в готовый документ (без разбора HTML).
+    MailHtmlDocument withImages(String k, MailHtmlDocument base) =>
+        _webDocs['${k}_${byRequest ? 'req' : _inlineImages.length}'] ??=
+            _hasCid && !byRequest ? base.withInlineImages(_inlineImages) : base;
+    var doc = _webDocs['${docKey}_${byRequest ? 'req' : _inlineImages.length}'];
     if (doc == null) {
-      final base = _baseDocs[baseKey];
+      final base = _baseDocs[docKey];
       if (base != null) {
-        // Картинки — строкой в готовый документ (без разбора HTML).
-        doc = _webDocs[key] = _hasCid && !byRequest ? base.withInlineImages(_inlineImages) : base;
+        doc = withImages(docKey, base);
       } else {
         // Ключ сборки — с «поколением»: сборка для прежнего тела не
         // блокирует новую с тем же ключом.
         final gen = _docGen;
-        final buildKey = '$gen|$baseKey';
+        final buildKey = '$gen|$docKey';
         if (_docBuilding.add(buildKey)) {
           unawaited(MailHtmlDocument.buildAsync(
             full ? html : split.reply,
             allowRemoteImages: _imagesAllowed,
             keepCid: true,
+            clip: docKey == baseKey,
           ).catchError((Object e) {
             AppLogger.warning('Подготовка письма к показу: $e');
             return const MailHtmlDocument('<!DOCTYPE html><html><body></body></html>', {});
           }).then((d) {
             _docBuilding.remove(buildKey);
             if (gen != _docGen) return;
-            safeSetState(() => _baseDocs[baseKey] = d);
+            safeSetState(() => _baseDocs[docKey] = d);
           }));
         }
-        return _bodyPreparing();
+        // Письмо целиком ещё собирается — пока показано начало: целиком оно
+        // загрузится в то же окно (MailHtmlView.didUpdateWidget), высота
+        // только вырастет.
+        if (docKey == baseKey || cut == null) return _bodyPreparing();
+        doc = withImages(baseKey, cut);
       }
     }
+    final dark = theme.brightness == Brightness.dark;
+    final original = dark && _originalColors(email);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1228,19 +1307,22 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         MailHtmlView(
           // Без числа встроенных картинок: пришедшие картинки загружаются в
           // то же окно (MailHtmlView.didUpdateWidget), а не пересоздают
-          // WebView (1.5.9).
-          key: ValueKey('${email.id}_${baseKey}_${theme.brightness.name}'),
+          // WebView (1.5.9). Письмо целиком (1.9.x) — тоже в то же окно.
+          key: ValueKey('${email.id}_${baseKey}_${original ? 'original' : theme.brightness.name}'),
           document: doc,
           active: widget.active,
           allowRemoteImages: _imagesAllowed,
           textScale: MailHtmlView.textScaleOf(context),
-          pageColor: mailPageColor(theme),
-          dark: theme.brightness == Brightness.dark,
+          // «Исходные цвета» (1.9.x) — светлое письмо на белом, как в
+          // светлой теме.
+          pageColor: original ? Colors.white : mailPageColor(theme),
+          dark: dark && !original,
           onShown: _onBodyShown,
           inlineRaw: byRequest ? _inlineRaw : null,
           onLink: (url, text) =>
               LinkOpener.open(context, url, linkText: text, accountId: widget.accountId),
         ),
+        if (doc.clipped) MailClippedBar(onShowWhole: _onShowWhole, busy: _showWhole),
         if (split.hasQuote) _quoteToggle(theme, l10n),
       ],
     );
@@ -1630,16 +1712,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                     ? _buildWebBody(email, theme, l10n, settings)
                     : email.bodyHtml != null && email.bodyHtml!.isNotEmpty
                     ? _buildDesktopBody(email, theme, l10n, settings)
-                    // Письмо без HTML — того же размера, что и HTML-письма
-                    // (1.8.12): 15 px × шрифт системы, без уменьшения
-                    // масштабом интерфейса (MailHtmlView.textScaleOf).
-                    : LinkifiedText(
-                        SymbolFonts.fixPlain(email.bodyPlain ?? email.bodyPreview ?? ''),
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(fontSize: 15 * MailHtmlView.textScaleOf(context), height: 1.4),
-                        textScaler: TextScaler.noScaling,
-                        onLink: (url, text) => LinkOpener.open(context, url, linkText: text, accountId: widget.accountId),
-                      ),
+                    // Письмо без HTML (очень длинное — началом, 1.9.x).
+                    : _plainBody(email, theme),
               ),
 
             // ── Цепочка беседы ──
@@ -2298,6 +2372,11 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         PeekGroup(title: l10n.tr('actionsMore'), items: [
           _peekAction(AppIcons.info, l10n.tr('messageDetails'),
               () => _showMessageDetails(email, l10n)),
+          // «Исходные цвета» (1.9.x): в тёмной теме — письмо как задумано,
+          // светлым, без перекраски; отмечено — включено для этого письма.
+          if (Theme.of(context).brightness == Brightness.dark && _inWebView(email))
+            _peekAction(AppIcons.palette, l10n.tr('mailOriginalColors'), fill: _originalColors(email),
+                () => _toggleOriginalColors(email)),
           // «Найти документ»: все файлы этого отправителя из всех писем.
           if (email.from.email.contains('@') && ref.read(featureFlagsProvider).showFileHub)
             _peekAction(AppIcons.attach_file, l10n.tr('senderFiles'), () => unawaited(

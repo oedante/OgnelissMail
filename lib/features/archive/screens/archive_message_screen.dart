@@ -26,12 +26,14 @@ import '../../../services/archive/archive_db.dart';
 import '../../../services/archive/archive_vault.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError;
 import '../../../widgets/common/text_scale_cap.dart';
+import '../../../widgets/ui/app_menu_button.dart';
 import '../../../widgets/ui/confirm_dialog.dart';
 import '../../../widgets/ui/section_band.dart';
 import '../../mail/providers/mail_open_cache.dart' show MailOpenCache;
 import '../../mail/providers/mail_providers.dart' show accountsProvider;
 import '../../mail/screens/attachment_preview_screen.dart' show PreviewItem, openAttachment;
 import '../../mail/widgets/desktop_mail_body.dart';
+import '../../mail/widgets/mail_clipped_bar.dart';
 import '../../mail/widgets/mail_html_view.dart';
 
 class ArchiveMessageScreen extends ConsumerStatefulWidget {
@@ -51,6 +53,14 @@ class _ArchiveMessageScreenState extends ConsumerState<ArchiveMessageScreen> {
   Map<String, String> _images = const {};
   bool _loading = true;
   bool _missing = false;
+
+  /// Очень длинное письмо показано началом (1.9.x): письмо целиком
+  /// собирается по «Показать письмо целиком».
+  bool _wholeBusy = false;
+
+  /// Письма архива с «Исходными цветами» (1.9.x) — на время работы
+  /// приложения, как в экране письма.
+  static final _originalIds = <int>{};
 
   @override
   void initState() {
@@ -90,7 +100,7 @@ class _ArchiveMessageScreenState extends ConsumerState<ArchiveMessageScreen> {
       var images = const <String, String>{};
       if (html != null) images = await _inlineImages(db, m, rawHtml.toLowerCase());
       if (html != null && mailWebViewSupported) {
-        doc = await MailHtmlDocument.buildAsync(html, allowRemoteImages: false, inlineImages: images);
+        doc = await MailHtmlDocument.buildAsync(html, allowRemoteImages: false, inlineImages: images, clip: true);
       }
       if (!mounted) return;
       setState(() {
@@ -105,6 +115,22 @@ class _ArchiveMessageScreenState extends ConsumerState<ArchiveMessageScreen> {
         setState(() => _loading = false);
         showInlineError('${AppLocalizations.of(context).tr('errorLbl')}: $e');
       }
+    }
+  }
+
+  /// «Показать письмо целиком» (1.9.x): тот же документ без обрезки — в то
+  /// же окно письма (MailHtmlView.didUpdateWidget).
+  Future<void> _showWhole() async {
+    final html = _html;
+    if (html == null || _wholeBusy) return;
+    setState(() => _wholeBusy = true);
+    try {
+      final doc = await MailHtmlDocument.buildAsync(html, allowRemoteImages: false, inlineImages: _images);
+      if (mounted) setState(() => _doc = doc);
+    } catch (e) {
+      if (mounted) showInlineError('${AppLocalizations.of(context).tr('errorLbl')}: $e');
+    } finally {
+      if (mounted) setState(() => _wholeBusy = false);
     }
   }
 
@@ -258,6 +284,23 @@ class _ArchiveMessageScreenState extends ConsumerState<ArchiveMessageScreen> {
               IconButton(tooltip: l10n.tr('reply'), icon: const Icon(AppIcons.reply), onPressed: () => _compose(forward: false)),
               IconButton(tooltip: l10n.tr('forward'), icon: const Icon(AppIcons.forward), onPressed: () => _compose(forward: true)),
               IconButton(tooltip: l10n.tr('archiveDeleteMsg'), icon: const Icon(AppIcons.delete), onPressed: _delete),
+              // «Исходные цвета» (1.9.x): в тёмной теме — письмо как
+              // задумано, светлым, без перекраски.
+              if (_doc != null && Theme.of(context).brightness == Brightness.dark)
+                AppMenuButton<String>(
+                  tooltip: l10n.tr('more'),
+                  onSelected: (_) => setState(() {
+                    if (!_originalIds.remove(widget.id)) _originalIds.add(widget.id);
+                  }),
+                  itemBuilder: (_) => [
+                    AppMenuEntry(
+                      value: 'original',
+                      icon: AppIcons.palette,
+                      label: l10n.tr('mailOriginalColors'),
+                      checked: _originalIds.contains(widget.id),
+                    ),
+                  ],
+                ),
             ],
           ],
         ),
@@ -291,6 +334,7 @@ class _ArchiveMessageScreenState extends ConsumerState<ArchiveMessageScreen> {
     final files = [for (final a in m.attachments) if (!a.isInline) a];
     final html = _html;
     final doc = _doc;
+    final original = theme.brightness == Brightness.dark && _originalIds.contains(widget.id);
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: Space.m),
       children: [
@@ -322,18 +366,24 @@ class _ArchiveMessageScreenState extends ConsumerState<ArchiveMessageScreen> {
         else if (doc != null)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: Space.l),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: MailHtmlView(
-                key: ValueKey('ogna_${widget.id}_${theme.brightness.name}'),
-                document: doc,
-                allowRemoteImages: false,
-                // Размер текста — как на экране письма (1.8.12).
-                textScale: MailHtmlView.textScaleOf(context),
-                pageColor: mailPageColor(theme),
-                dark: theme.brightness == Brightness.dark,
-                onLink: (url, text) => LinkOpener.open(context, url, linkText: text),
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: MailHtmlView(
+                    key: ValueKey('ogna_${widget.id}_${original ? 'original' : theme.brightness.name}'),
+                    document: doc,
+                    allowRemoteImages: false,
+                    // Размер текста — как на экране письма (1.8.12).
+                    textScale: MailHtmlView.textScaleOf(context),
+                    pageColor: original ? Colors.white : mailPageColor(theme),
+                    dark: theme.brightness == Brightness.dark && !original,
+                    onLink: (url, text) => LinkOpener.open(context, url, linkText: text),
+                  ),
+                ),
+                if (doc.clipped) MailClippedBar(onShowWhole: _showWhole, busy: _wholeBusy),
+              ],
             ),
           )
         else

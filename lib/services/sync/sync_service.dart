@@ -2220,6 +2220,8 @@ class SyncService {
     // Инкрементально по UID: новые письма, флаги и удаления во всём
     // загруженном диапазоне, догрузка истории (ENGINE_AUDIT P1-11). Раньше —
     // 50 последних писем на каждом проходе, остальное было не видно.
+    // Сервер с CONDSTORE/QRESYNC отдаёт только изменения с прошлого прохода
+    // (1.9.x); HIGHESTMODSEQ хранится в том же состоянии папки.
     final stateKey = 'imap_state:${account.id}:${folder.id}';
     final known = ImapFolderState.fromJson(_prefs.getString(stateKey));
     final cutoff = _cutoffFor(account.id);
@@ -2273,10 +2275,12 @@ class SyncService {
     }
 
     // Удалённые или перенесённые на сервере: в проверенном диапазоне UID
-    // письма нет. Пустая папка на сервере — пусто и у нас.
+    // письма нет. Пустая папка на сервере — пусто и у нас. С QRESYNC сервер
+    // сам называет удалённые UID (VANISHED, 1.9.x).
     final from = delta.empty ? 0 : (delta.reset ? delta.state.minUid : delta.checkedFrom);
     final to = delta.empty ? 1 << 62 : (delta.reset ? delta.state.maxUid : delta.checkedTo);
-    if (from != null && to != null) {
+    final vanished = delta.vanished;
+    if ((from != null && to != null) || (vanished != null && vanished.isNotEmpty)) {
       // Только id: раньше здесь читались строки целиком — с текстами всех
       // писем папки, при каждой синхронизации папки.
       final local = await (db.selectOnly(db.emails)
@@ -2288,7 +2292,8 @@ class SyncService {
           .get();
       final gone = local.where((id) {
         final u = uidOf(id);
-        return u >= from && u <= to && !delta.present.contains(u);
+        if (vanished != null && vanished.contains(u)) return true;
+        return from != null && to != null && u >= from && u <= to && !delta.present.contains(u);
       }).toList();
       if (gone.isNotEmpty) {
         for (var i = 0; i < gone.length; i += 500) {
@@ -2305,8 +2310,17 @@ class SyncService {
         delta.complete ||
         (!delta.reset && older.isEmpty) ||
         (cutoff != null && older.isNotEmpty && older.every((e) => e.receivedAt.isBefore(cutoff)));
-    await _prefs.setString(
-        stateKey, jsonEncode(delta.state.copyWith(historyDone: done, syncDays: days).toJson()));
+    var state = delta.state.copyWith(historyDone: done, syncDays: days);
+    // CONDSTORE (1.9.x): письма с правками, ждущими отправки, выше не
+    // обновлялись и не удалялись. Быстрый способ увидел бы только изменения
+    // после нового HIGHESTMODSEQ — поэтому следующий проход начнёт с
+    // прежнего и заново проверит удаления. Прежний — только при том же
+    // UIDVALIDITY: номера изменений разных «поколений» папки несравнимы.
+    if (state.highestModSeq != null && await _hasLocalEdits(db, account.id, folder.id)) {
+      state = state.heldBack(
+          known != null && known.uidValidity == state.uidValidity ? known.highestModSeq : null);
+    }
+    await _prefs.setString(stateKey, jsonEncode(state.toJson()));
     // Уведомляем только о действительно новых: догруженная история и первая
     // загрузка уведомлений не дают.
     final newest = known?.maxUid ?? 1 << 62;
@@ -2324,6 +2338,15 @@ class SyncService {
       _continuations.remove('${account.id}|${folder.id}');
     }
     return added;
+  }
+
+  /// В папке есть письма с локальными правками, ещё не отправленными на сервер.
+  Future<bool> _hasLocalEdits(AppDatabase db, String accountId, String folderId) async {
+    final r = await db.customSelect(
+      'SELECT 1 FROM emails WHERE account_id = ? AND folder_id = ? AND is_locally_modified = 1 LIMIT 1',
+      variables: [Variable.withString(accountId), Variable.withString(folderId)],
+    ).get();
+    return r.isNotEmpty;
   }
 
   /// Предзагрузка текста (без вложений, BODY.PEEK — прочитанными не

@@ -44,6 +44,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import '../../../widgets/common/mail_open_motion.dart' show MailDragCover;
 import 'package:flutter/scheduler.dart' show SchedulerBinding;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:html/dom.dart' as dom;
@@ -1099,6 +1100,10 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   Animation<double>? _ownAnim;
   Animation<double>? _overAnim;
 
+  /// Свайп вниз закрывает письмо (1.9.x, «Анимация открытия письма»): пока
+  /// страница идёт за пальцем, окно скрыто, как в переходе.
+  ValueListenable<bool>? _drag;
+
   void _scheduleSnap() {
     _snapTimer?.cancel();
     _snapTimer = Timer(const Duration(milliseconds: 1200), () => unawaited(_takeSnap()));
@@ -1141,7 +1146,14 @@ class _MailHtmlViewState extends State<MailHtmlView> {
       _overAnim?.removeStatusListener(_onTransition);
       _overAnim = over?..addStatusListener(_onTransition);
     }
+    final drag = MailDragCover.of(context);
+    if (!identical(drag, _drag)) {
+      _drag?.removeListener(_onDrag);
+      _drag = drag?..addListener(_onDrag);
+    }
   }
+
+  void _onDrag() => _onTransition(AnimationStatus.completed);
 
   /// Уход с экрана («назад») или экран поверх письма — окно скрыть;
   /// вернулись — показать.
@@ -1152,8 +1164,12 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     // Без снимка не скрывать (1.5.10): на месте письма было пустое поле
     // цвета страницы (снимок ещё не сделан — первые 1,2 с после показа — или
     // не удался).
-    final covered = _ready && _web != null && _snap != null &&
-        (leaving || (over != null && over != AnimationStatus.dismissed));
+    // Свайп вниз — окно скрыто и без снимка (тогда на его месте цвет
+    // страницы): встроенное окно не должно ехать за пальцем.
+    final dragging = _drag?.value ?? false;
+    final covered = _ready &&
+        _web != null &&
+        ((_snap != null && (leaving || (over != null && over != AnimationStatus.dismissed))) || dragging);
     if (covered != _covered) setState(() => _covered = covered);
   }
 
@@ -1161,6 +1177,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   void dispose() {
     _ownAnim?.removeStatusListener(_onTransition);
     _overAnim?.removeStatusListener(_onTransition);
+    _drag?.removeListener(_onDrag);
     _snapTimer?.cancel();
     _zoomTimer?.cancel();
     _routeAnim?.removeListener(_onRouteTick);

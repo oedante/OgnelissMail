@@ -37,6 +37,11 @@ class ThemePalette {
   // ── «Классика»: прежние значения AppTheme (до 1.9.x) ──
   static const _brandBlue = Color(0xFF1D4F91);
 
+  // Палитры «Классики» постоянны — строятся один раз (ColorScheme.fromSeed
+  // не бесплатен, а тема собирается заново при каждой смене настроек).
+  static final ThemePalette _classicLightMemo = _classicLight();
+  static final ThemePalette _classicDarkMemo = _classicDark();
+
   static ThemePalette _classicLight() => ThemePalette(
         scheme: ColorScheme.fromSeed(seedColor: _brandBlue).copyWith(
           primary: _brandBlue,
@@ -116,7 +121,7 @@ class ThemePalette {
 
   static ThemePalette _build(Appearance a, Brightness b) {
     final dark = b == Brightness.dark;
-    final classic = dark ? _classicDark() : _classicLight();
+    final classic = dark ? _classicDarkMemo : _classicLightMemo;
     if (a.classicColors) return classic;
     final spec = PresetSpec.of(a.preset);
     // Серые поверхности — к тону темы (у «Классики» со своим акцентом —

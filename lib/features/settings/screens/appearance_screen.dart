@@ -542,40 +542,44 @@ class _AccentPalette extends StatelessWidget {
       opacity: enabled ? 1 : 0.5,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(Space.s, Space.s, Space.s, Space.s),
-        child: Wrap(
-          alignment: WrapAlignment.start,
-          children: [
-            _Swatch(
-              color: pal.scheme.primary,
-              selected: accent == null,
-              tooltip: l10n.tr('apAccentAuto'),
-              icon: AppIcons.format_paint,
-              onTap: enabled ? () => onPick(null) : null,
-            ),
-            for (final (i, c) in accentSwatches.indexed)
+        // Во всю ширину: в колонке группы Wrap иначе встаёт по центру.
+        child: SizedBox(
+          width: double.infinity,
+          child: Wrap(
+            alignment: WrapAlignment.start,
+            children: [
               _Swatch(
-                color: shown(c),
-                selected: accent == c.toARGB32(),
-                tooltip: '${l10n.tr('apAccent')} ${i + 1}',
-                onTap: enabled ? () => onPick(c.toARGB32()) : null,
+                color: pal.scheme.primary,
+                selected: accent == null,
+                tooltip: l10n.tr('apAccentAuto'),
+                icon: AppIcons.format_paint,
+                onTap: enabled ? () => onPick(null) : null,
               ),
-            _Swatch(
-              color: custom ? shown(Color(accent!)) : null,
-              selected: custom,
-              tooltip: l10n.tr('apAccentCustom'),
-              icon: AppIcons.colorize,
-              onTap: enabled
-                  ? () async {
-                      final start = custom ? Color(accent!) : PresetSpec.of(preset).accent;
-                      final picked = await showDialog<Color>(
-                        context: context,
-                        builder: (_) => _CustomColorDialog(initial: start),
-                      );
-                      if (picked != null) onPick(picked.toARGB32());
-                    }
-                  : null,
-            ),
-          ],
+              for (final (i, c) in accentSwatches.indexed)
+                _Swatch(
+                  color: shown(c),
+                  selected: accent == c.toARGB32(),
+                  tooltip: '${l10n.tr('apAccent')} ${i + 1}',
+                  onTap: enabled ? () => onPick(c.toARGB32()) : null,
+                ),
+              _Swatch(
+                color: custom ? shown(Color(accent!)) : null,
+                selected: custom,
+                tooltip: l10n.tr('apAccentCustom'),
+                icon: AppIcons.colorize,
+                onTap: enabled
+                    ? () async {
+                        final start = custom ? Color(accent!) : PresetSpec.of(preset).accent;
+                        final picked = await showDialog<Color>(
+                          context: context,
+                          builder: (_) => _CustomColorDialog(initial: start),
+                        );
+                        if (picked != null) onPick(picked.toARGB32());
+                      }
+                    : null,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -789,19 +793,23 @@ class _Chips<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.s),
-    child: Wrap(
-      spacing: Space.s,
-      runSpacing: Space.xs,
-      children: [
-        for (final o in options)
-          ChoiceChip(
-            avatar: o.$3,
-            label: Text(o.$2),
-            selected: value == o.$1,
-            showCheckmark: o.$3 == null,
-            onSelected: (_) => onChanged(o.$1),
-          ),
-      ],
+    // Во всю ширину: в колонке группы Wrap иначе встаёт по центру.
+    child: SizedBox(
+      width: double.infinity,
+      child: Wrap(
+        spacing: Space.s,
+        runSpacing: Space.xs,
+        children: [
+          for (final o in options)
+            ChoiceChip(
+              avatar: o.$3,
+              label: Text(o.$2),
+              selected: value == o.$1,
+              showCheckmark: o.$3 == null,
+              onSelected: (_) => onChanged(o.$1),
+            ),
+        ],
+      ),
     ),
   );
 }

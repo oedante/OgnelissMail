@@ -7,6 +7,10 @@
 #    их видно в сводке сборки и через API GitHub без журнала. Повторный push в
 #    ту же ветку отменяет идущую проверку — минуты Actions у закрытого
 #    репозитория ограничены.
+#    После тестов (1.9.x, просьба владельца 31.10.2026) — лицензии
+#    зависимостей (tool/dev/license_check.py, правило владельца из CLAUDE.md)
+#    и уязвимости (OSV-Scanner по pubspec.lock и package-lock.json серверов);
+#    таблицы — в сводке сборки.
 #  · Сборка Android (по кнопке «Run workflow» и по метке v*): APK по
 #    архитектурам и App Bundle — в «Artifacts» сборки (14 дней).
 #    Секреты — Settings → Secrets and variables → Actions (все по желанию):
@@ -103,6 +107,44 @@ jobs:
           tail -n 80 test-stderr.txt
           python3 tool/dev/ci_annotate.py test test-machine.jsonl
           exit $code
+
+      # Лицензии зависимостей (1.9.x, правило владельца 31.10.2026 —
+      # CLAUDE.md, docs/LICENSING.md): GPL/LGPL/AGPL, SSPL, BUSL,
+      # «некоммерческое» и нераспознанные — ошибка, кроме исключений с
+      # причиной в tool/dev/license_allowlist.txt. Пакеты pub — по LICENSE в
+      # папке пакета (после pub get), серверные — по package-lock.json.
+      # Сначала — проверки самих скриптов CI (секунды).
+      - name: Licenses
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: |
+          python3 -m unittest discover -s tool/dev -p 'test_*.py'
+          python3 tool/dev/license_check.py --summary "$GITHUB_STEP_SUMMARY"
+
+      # Уязвимости (OSV-Scanner, Google, Apache-2.0; база osv.dev): lock-файлы
+      # приложения (pubspec.lock создаёт pub get) и серверов. Новый сервер с
+      # package-lock.json — строка --lockfile ниже. Сканер сборку сам не
+      # останавливает (continue-on-error), решает отчёт: HIGH/CRITICAL с уже
+      # вышедшим исправлением в пакете приложения или сервера — ошибка
+      # (обновить зависимость — обычная работа, выпуск с известной исправленной
+      # уязвимостью — нет); остальное — предупреждения, чтобы не останавливать
+      # каждый push. Не относится к нам — tool/dev/osv-scanner.toml.
+      # Загрузка в «Code scanning» (SARIF) не используется: для закрытого
+      # репозитория это платный GitHub Advanced Security.
+      - name: Vulnerabilities (OSV-Scanner)
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        continue-on-error: true
+        uses: google/osv-scanner-action/osv-scanner-action@v2.7.0
+        with:
+          scan-args: |-
+            --format=json
+            --output=osv-results.json
+            --config=tool/dev/osv-scanner.toml
+            --lockfile=pubspec.lock
+            --lockfile=server/oauth-proxy/package-lock.json
+
+      - name: Vulnerabilities report
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: python3 tool/dev/osv_report.py osv-results.json --summary "$GITHUB_STEP_SUMMARY"
 
   build-android:
     needs: analyze-and-test

@@ -1,7 +1,7 @@
 name: ogneliss
 description: Ogneliss Mail — почтовый клиент для Exchange, Gmail, Яндекс и Mail.ru
 publish_to: "none"
-version: 1.8.13+129
+version: 1.9.0+130
 
 environment:
   # Dart 3.10+: этого требует sqlite3 3.x (через drift 2.32+). Flutter 3.38+.

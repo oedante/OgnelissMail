@@ -30,14 +30,14 @@ import '../providers/settings_provider.dart';
 
 /// Подписи цветовых тем.
 String presetLabel(AppLocalizations l10n, ThemePreset p) => l10n.tr(switch (p) {
-      ThemePreset.classic => 'apPresetClassic',
-      ThemePreset.sky => 'apPresetSky',
-      ThemePreset.ocean => 'apPresetOcean',
-      ThemePreset.forest => 'apPresetForest',
-      ThemePreset.sunset => 'apPresetSunset',
-      ThemePreset.graphite => 'apPresetGraphite',
-      ThemePreset.midnight => 'apPresetMidnight',
-    });
+  ThemePreset.classic => 'apPresetClassic',
+  ThemePreset.sky => 'apPresetSky',
+  ThemePreset.ocean => 'apPresetOcean',
+  ThemePreset.forest => 'apPresetForest',
+  ThemePreset.sunset => 'apPresetSunset',
+  ThemePreset.graphite => 'apPresetGraphite',
+  ThemePreset.midnight => 'apPresetMidnight',
+});
 
 class AppearanceScreen extends ConsumerWidget {
   const AppearanceScreen({super.key});
@@ -69,9 +69,9 @@ class AppearanceScreen extends ConsumerWidget {
     }
 
     Widget note(String text) => Padding(
-          padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.m),
-          child: Text(text, style: hint),
-        );
+      padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.m),
+      child: Text(text, style: hint),
+    );
 
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(title: Text(l10n.tr('appearanceTitle')))),
@@ -82,118 +82,134 @@ class AppearanceScreen extends ConsumerWidget {
 
           // ── Тема ──
           SettingsSectionTitle(l10n.tr('theme')),
-          SettingsGroup(children: [
-            for (final t in [
-              (AppThemeChoice.system, l10n.tr('systemTheme'), null),
-              (AppThemeChoice.light, l10n.tr('lightTheme'), null),
-              (AppThemeChoice.dark, l10n.tr('darkTheme'), null),
-              (AppThemeChoice.amoled, l10n.tr('amoledTheme'), l10n.tr('amoledThemeHint')),
-              (AppThemeChoice.reading, l10n.tr('readingTheme'), l10n.tr('readingThemeHint')),
-            ])
-              AppRadioTile<AppThemeChoice>(
-                title: Text(t.$2),
-                subtitle: t.$3 == null ? null : Text(t.$3!),
-                value: t.$1,
-                groupValue: settings.themeChoice,
-                onChanged: (v) => notifier.setThemeChoice(v!),
-              ),
-          ]),
+          SettingsGroup(
+            children: [
+              for (final t in [
+                (AppThemeChoice.system, l10n.tr('systemTheme'), null),
+                (AppThemeChoice.light, l10n.tr('lightTheme'), null),
+                (AppThemeChoice.dark, l10n.tr('darkTheme'), null),
+                (AppThemeChoice.amoled, l10n.tr('amoledTheme'), l10n.tr('amoledThemeHint')),
+                (AppThemeChoice.reading, l10n.tr('readingTheme'), l10n.tr('readingThemeHint')),
+              ])
+                AppRadioTile<AppThemeChoice>(
+                  title: Text(t.$2),
+                  subtitle: t.$3 == null ? null : Text(t.$3!),
+                  value: t.$1,
+                  groupValue: settings.themeChoice,
+                  onChanged: (v) => notifier.setThemeChoice(v!),
+                ),
+            ],
+          ),
 
           // ── Цветовая тема ──
           SettingsSectionTitle(l10n.tr('apColorTheme'), help: l10n.tr('apColorThemeHelp')),
-          SettingsGroup(children: [
-            // Цвета от обоев — Android 12+ (на iOS и компьютере системной
-            // палитры нет). Пока включены, тема и акцент — от обоев.
-            if (android)
-              SettingsSwitchItem(
-                icon: AppIcons.palette,
-                title: l10n.tr('dynamicColor'),
-                subtitle: l10n.tr(settings.highContrast
-                    ? 'dynamicColorHc'
-                    : (settings.reading ? 'dynamicColorReading' : 'apDynamicDesc')),
-                value: settings.dynamicColor,
-                onChanged: locked ? null : notifier.setDynamicColor,
+          SettingsGroup(
+            children: [
+              // Цвета от обоев — Android 12+ (на iOS и компьютере системной
+              // палитры нет). Пока включены, тема и акцент — от обоев.
+              if (android)
+                SettingsSwitchItem(
+                  icon: AppIcons.palette,
+                  title: l10n.tr('dynamicColor'),
+                  subtitle: l10n.tr(
+                    settings.highContrast
+                        ? 'dynamicColorHc'
+                        : (settings.reading ? 'dynamicColorReading' : 'apDynamicDesc'),
+                  ),
+                  value: settings.dynamicColor,
+                  onChanged: locked ? null : notifier.setDynamicColor,
+                ),
+              _PresetStrip(
+                selected: (wallpaper || locked) ? null : settings.themePreset,
+                enabled: !locked,
+                onPick: pickPreset,
               ),
-            _PresetStrip(
-              selected: (wallpaper || locked) ? null : settings.themePreset,
-              enabled: !locked,
-              onPick: pickPreset,
-            ),
-            if (locked)
-              note(l10n.tr(settings.highContrast ? 'apColorsHc' : 'apColorsReading'))
-            else if (wallpaper)
-              note(l10n.tr('apDynamicOverrides')),
-          ]),
+              if (locked)
+                note(l10n.tr(settings.highContrast ? 'apColorsHc' : 'apColorsReading'))
+              else if (wallpaper)
+                note(l10n.tr('apDynamicOverrides')),
+            ],
+          ),
 
           // ── Акцент ──
           SettingsSectionTitle(l10n.tr('apAccent')),
-          SettingsGroup(children: [
-            _AccentPalette(
-              preset: settings.themePreset,
-              accent: (wallpaper || locked) ? -1 : settings.accentColor,
-              enabled: !locked,
-              onPick: pickAccent,
-            ),
-          ]),
+          SettingsGroup(
+            children: [
+              _AccentPalette(
+                preset: settings.themePreset,
+                accent: (wallpaper || locked) ? -1 : settings.accentColor,
+                enabled: !locked,
+                onPick: pickAccent,
+              ),
+            ],
+          ),
 
           // ── Фон ленты и беседы ──
           SettingsSectionTitle(l10n.tr('apListTint')),
-          SettingsGroup(children: [
-            _Chips<ListTint>(
-              value: settings.listTint,
-              options: [
-                (ListTint.none, l10n.tr('apTintNone'), null),
-                (ListTint.subtle, l10n.tr('apTintSubtle'), null),
-                (ListTint.soft, l10n.tr('apTintSoft'), null),
-              ],
-              onChanged: notifier.setListTint,
-            ),
-          ]),
+          SettingsGroup(
+            children: [
+              _Chips<ListTint>(
+                value: settings.listTint,
+                options: [
+                  (ListTint.none, l10n.tr('apTintNone'), null),
+                  (ListTint.subtle, l10n.tr('apTintSubtle'), null),
+                  (ListTint.soft, l10n.tr('apTintSoft'), null),
+                ],
+                onChanged: notifier.setListTint,
+              ),
+            ],
+          ),
 
           // ── Скругление углов ──
           SettingsSectionTitle(l10n.tr('apCorners')),
-          SettingsGroup(children: [
-            _Chips<CornerSize>(
-              value: settings.corners,
-              options: [
-                (CornerSize.small, l10n.tr('apCornersSmall'), const _CornerGlyph(radius: 2)),
-                (CornerSize.medium, l10n.tr('apCornersMedium'), const _CornerGlyph(radius: 5)),
-                (CornerSize.large, l10n.tr('apCornersLarge'), const _CornerGlyph(radius: 8)),
-              ],
-              onChanged: notifier.setCorners,
-            ),
-          ]),
+          SettingsGroup(
+            children: [
+              _Chips<CornerSize>(
+                value: settings.corners,
+                options: [
+                  (CornerSize.small, l10n.tr('apCornersSmall'), const _CornerGlyph(radius: 2)),
+                  (CornerSize.medium, l10n.tr('apCornersMedium'), const _CornerGlyph(radius: 5)),
+                  (CornerSize.large, l10n.tr('apCornersLarge'), const _CornerGlyph(radius: 8)),
+                ],
+                onChanged: notifier.setCorners,
+              ),
+            ],
+          ),
 
           // ── Плотность ленты ──
           SettingsSectionTitle(l10n.tr('apDensity')),
-          SettingsGroup(children: [
-            for (final o in [
-              (ListDensity.compact, l10n.tr('apDensityCompact'), l10n.tr('apDensityCompactHint')),
-              (ListDensity.normal, l10n.tr('apDensityNormal'), null),
-              (ListDensity.comfortable, l10n.tr('apDensityComfortable'), l10n.tr('apDensityComfortableHint')),
-            ])
-              AppRadioTile<ListDensity>(
-                title: Text(o.$2),
-                subtitle: o.$3 == null ? null : Text(o.$3!),
-                value: o.$1,
-                groupValue: settings.listDensity,
-                onChanged: (v) => notifier.setListDensity(v ?? ListDensity.normal),
-              ),
-          ]),
+          SettingsGroup(
+            children: [
+              for (final o in [
+                (ListDensity.compact, l10n.tr('apDensityCompact'), l10n.tr('apDensityCompactHint')),
+                (ListDensity.normal, l10n.tr('apDensityNormal'), null),
+                (ListDensity.comfortable, l10n.tr('apDensityComfortable'), l10n.tr('apDensityComfortableHint')),
+              ])
+                AppRadioTile<ListDensity>(
+                  title: Text(o.$2),
+                  subtitle: o.$3 == null ? null : Text(o.$3!),
+                  value: o.$1,
+                  groupValue: settings.listDensity,
+                  onChanged: (v) => notifier.setListDensity(v ?? ListDensity.normal),
+                ),
+            ],
+          ),
 
           // ── Движение ──
           SettingsSectionTitle(l10n.tr('a11yMotion')),
-          SettingsGroup(children: [
-            // Выключено по умолчанию: прежние анимации были медленными.
-            // «Уменьшить движение» (Специальные возможности) важнее.
-            SettingsSwitchItem(
-              icon: AppIcons.swipe_down,
-              title: l10n.tr('apOpenAnimation'),
-              subtitle: l10n.tr(settings.reduceMotion ? 'apOpenAnimationReduced' : 'apOpenAnimationDesc'),
-              value: settings.openAnimation && !settings.reduceMotion,
-              onChanged: settings.reduceMotion ? null : notifier.setOpenAnimation,
-            ),
-          ]),
+          SettingsGroup(
+            children: [
+              // Выключено по умолчанию: прежние анимации были медленными.
+              // «Уменьшить движение» (Специальные возможности) важнее.
+              SettingsSwitchItem(
+                icon: AppIcons.swipe_down,
+                title: l10n.tr('apOpenAnimation'),
+                subtitle: l10n.tr(settings.reduceMotion ? 'apOpenAnimationReduced' : 'apOpenAnimationDesc'),
+                value: settings.openAnimation && !settings.reduceMotion,
+                onChanged: settings.reduceMotion ? null : notifier.setOpenAnimation,
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -216,51 +232,68 @@ class AppearancePreview extends StatelessWidget {
     final dark = theme.brightness == Brightness.dark;
     final now = DateTime.now();
     // Адреса без «@»: пример не просит фото у адресной книги организации.
-    EmailModel row(String id, String from, String subject, String text,
-            {bool read = true, bool att = false, bool flagged = false, int minutes = 12}) =>
-        EmailModel(
-          id: id,
-          accountId: 'appearance-preview',
-          folderId: 'inbox',
-          from: EmailAddress(email: 'preview-$id', displayName: from),
-          to: const [],
-          subject: subject,
-          bodyPreview: text,
-          receivedAt: now.subtract(Duration(minutes: minutes)),
-          isRead: read,
-          hasAttachments: att,
-          isFlagged: flagged,
-        );
+    EmailModel row(
+      String id,
+      String from,
+      String subject,
+      String text, {
+      bool read = true,
+      bool att = false,
+      bool flagged = false,
+      int minutes = 12,
+    }) => EmailModel(
+      id: id,
+      accountId: 'appearance-preview',
+      folderId: 'inbox',
+      from: EmailAddress(email: 'preview-$id', displayName: from),
+      to: const [],
+      subject: subject,
+      bodyPreview: text,
+      receivedAt: now.subtract(Duration(minutes: minutes)),
+      isRead: read,
+      hasAttachments: att,
+      isFlagged: flagged,
+    );
     final rows = [
       row('p1', l10n.tr('apPreviewFrom1'), l10n.tr('apPreviewSubject1'), l10n.tr('apPreviewText1'), read: false),
-      row('p2', l10n.tr('apPreviewFrom2'), l10n.tr('apPreviewSubject2'), l10n.tr('apPreviewText2'),
-          att: true, minutes: 95),
+      row(
+        'p2',
+        l10n.tr('apPreviewFrom2'),
+        l10n.tr('apPreviewSubject2'),
+        l10n.tr('apPreviewText2'),
+        att: true,
+        minutes: 95,
+      ),
     ];
     // Фон беседы — как на экране беседы: светлая тема — фон ленты, тёмная —
     // фон экрана или оттенок ленты.
-    final convFill =
-        dark ? (AppearanceLook.of(context).listFill ?? theme.scaffoldBackgroundColor) : AppColors.listFill(context);
+    final convFill = dark
+        ? (AppearanceLook.of(context).listFill ?? theme.scaffoldBackgroundColor)
+        : AppColors.listFill(context);
     final base = dark ? scheme.surfaceContainer : scheme.surfaceContainerLow;
     final mine = Color.alphaBlend(scheme.primary.withValues(alpha: dark ? 0.08 : 0.07), base);
 
     Widget bubble(String text, {String? name, required bool own}) => Align(
-          alignment: own ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
+      alignment: own ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
+      child: Padding(
+        padding: EdgeInsetsDirectional.only(start: own ? Space.xxl : 0, end: own ? 0 : Space.xxl),
+        child: Material(
+          color: own ? mine : base,
+          borderRadius: Radii.cardAll,
           child: Padding(
-            padding: EdgeInsetsDirectional.only(start: own ? Space.xxl : 0, end: own ? 0 : Space.xxl),
-            child: Material(
-              color: own ? mine : base,
-              borderRadius: Radii.cardAll,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.s + Space.xxs),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                  if (name != null)
-                    Text(name, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
-                  Text(text, style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
-                ]),
-              ),
+            padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.s + Space.xxs),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (name != null) Text(name, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+                Text(text, style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+              ],
             ),
           ),
-        );
+        ),
+      ),
+    );
 
     return ExcludeSemantics(
       child: IgnorePointer(
@@ -268,23 +301,30 @@ class AppearancePreview extends StatelessWidget {
           color: AppColors.cardFill(context),
           shape: RoundedRectangleBorder(borderRadius: Radii.cardAll, side: AppColors.cardSide(context)),
           clipBehavior: Clip.antiAlias,
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            ColoredBox(
-              color: AppColors.listFill(context),
-              child: Column(children: [for (final e in rows) EmailListTile(email: e, onTap: () {})]),
-            ),
-            ColoredBox(
-              color: convFill,
-              child: Padding(
-                padding: const EdgeInsets.all(Space.m),
-                child: Column(children: [
-                  bubble(l10n.tr('apPreviewBubbleIn'), name: l10n.tr('apPreviewFrom1'), own: false),
-                  const SizedBox(height: Space.xs + Space.xxs),
-                  bubble(l10n.tr('apPreviewBubbleOut'), own: true),
-                ]),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ColoredBox(
+                color: AppColors.listFill(context),
+                child: Column(
+                  children: [for (final e in rows) EmailListTile(email: e, onTap: () {})],
+                ),
               ),
-            ),
-          ]),
+              ColoredBox(
+                color: convFill,
+                child: Padding(
+                  padding: const EdgeInsets.all(Space.m),
+                  child: Column(
+                    children: [
+                      bubble(l10n.tr('apPreviewBubbleIn'), name: l10n.tr('apPreviewFrom1'), own: false),
+                      const SizedBox(height: Space.xs + Space.xxs),
+                      bubble(l10n.tr('apPreviewBubbleOut'), own: true),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -296,11 +336,10 @@ class AppearancePreview extends StatelessWidget {
 /// Палитры тем без своего акцента — постоянны, строятся один раз.
 final _presetPalettes = <(ThemePreset, Brightness), ThemePalette>{};
 
-ThemePalette _paletteOf(ThemePreset p, Brightness b) => _presetPalettes.putIfAbsent(
-    (p, b),
-    () => b == Brightness.dark
-        ? ThemePalette.dark(Appearance(preset: p))
-        : ThemePalette.light(Appearance(preset: p)));
+ThemePalette _paletteOf(ThemePreset p, Brightness b) => _presetPalettes.putIfAbsent((
+  p,
+  b,
+), () => b == Brightness.dark ? ThemePalette.dark(Appearance(preset: p)) : ThemePalette.light(Appearance(preset: p)));
 
 /// Плитки цветовых тем в ряд (листаются вбок): круг пополам — фон светлой и
 /// тёмной темы, в центре — акцент; ниже — название.
@@ -362,45 +401,51 @@ class _PresetTile extends StatelessWidget {
         borderRadius: Radii.chipAll,
         child: SizedBox(
           width: 76,
-          child: Column(children: [
-            const SizedBox(height: Space.xs),
-            SizedBox(
-              width: 56,
-              height: 56,
-              child: CustomPaint(
-                painter: _PresetSwatchPainter(
-                  light: light.scaffold,
-                  lightCard: light.card,
-                  dark: darkFill,
-                  accent: accent,
-                  ring: selected ? theme.colorScheme.primary : theme.colorScheme.outlineVariant,
-                  selected: selected,
-                ),
-                child: selected
-                    ? Center(
-                        child: Icon(AppIcons.check,
-                            size: 16, color: ThemeData.estimateBrightnessForColor(accent) == Brightness.dark
+          child: Column(
+            children: [
+              const SizedBox(height: Space.xs),
+              SizedBox(
+                width: 56,
+                height: 56,
+                child: CustomPaint(
+                  painter: _PresetSwatchPainter(
+                    light: light.scaffold,
+                    lightCard: light.card,
+                    dark: darkFill,
+                    accent: accent,
+                    ring: selected ? theme.colorScheme.primary : theme.colorScheme.outlineVariant,
+                    selected: selected,
+                  ),
+                  child: selected
+                      ? Center(
+                          child: Icon(
+                            AppIcons.check,
+                            size: 16,
+                            color: ThemeData.estimateBrightnessForColor(accent) == Brightness.dark
                                 ? Colors.white
-                                : Colors.black))
-                    : null,
+                                : Colors.black,
+                          ),
+                        )
+                      : null,
+                ),
               ),
-            ),
-            const SizedBox(height: Space.xs),
-            SizedBox(
-              width: 72,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: selected ? theme.colorScheme.primary : null,
-                    fontWeight: selected ? FontWeight.w600 : null,
+              const SizedBox(height: Space.xs),
+              SizedBox(
+                width: 72,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: selected ? theme.colorScheme.primary : null,
+                      fontWeight: selected ? FontWeight.w600 : null,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ]),
+            ],
+          ),
         ),
       ),
     );
@@ -443,18 +488,22 @@ class _PresetSwatchPainter extends CustomPainter {
     canvas.drawPath(tl, Paint()..color = light);
     // Белая «карточка» на светлой половине — видно, что фон тонирован.
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromLTWH(circle.left + r * 0.28, circle.top + r * 0.42, r * 0.7, r * 0.26), Radius.circular(r * 0.1)),
-        Paint()..color = lightCard);
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(circle.left + r * 0.28, circle.top + r * 0.42, r * 0.7, r * 0.26),
+        Radius.circular(r * 0.1),
+      ),
+      Paint()..color = lightCard,
+    );
     canvas.restore();
     canvas.drawCircle(c, r * 0.36, Paint()..color = accent);
     canvas.drawCircle(
-        c,
-        selected ? r + 2.5 : r,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = selected ? 2.5 : 1
-          ..color = ring);
+      c,
+      selected ? r + 2.5 : r,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = selected ? 2.5 : 1
+        ..color = ring,
+    );
   }
 
   @override
@@ -572,15 +621,17 @@ class _Swatch extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: fill,
                   gradient: fill == null
-                      ? const SweepGradient(colors: [
-                          Color(0xFFE53935),
-                          Color(0xFFFDD835),
-                          Color(0xFF43A047),
-                          Color(0xFF00ACC1),
-                          Color(0xFF3949AB),
-                          Color(0xFF8E24AA),
-                          Color(0xFFE53935),
-                        ])
+                      ? const SweepGradient(
+                          colors: [
+                            Color(0xFFE53935),
+                            Color(0xFFFDD835),
+                            Color(0xFF43A047),
+                            Color(0xFF00ACC1),
+                            Color(0xFF3949AB),
+                            Color(0xFF8E24AA),
+                            Color(0xFFE53935),
+                          ],
+                        )
                       : null,
                   border: selected
                       ? Border.all(color: scheme.onSurface, width: 2.5, strokeAlign: BorderSide.strokeAlignOutside)
@@ -626,37 +677,45 @@ class _CustomColorDialogState extends State<_CustomColorDialog> {
     return AlertDialog(
       title: Text(l10n.tr('apAccentCustom')),
       content: SingleChildScrollView(
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          // Пример: кнопка и подпись цветом акцента — как в приложении.
-          Row(children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(color: shown, shape: BoxShape.circle),
-              child: Icon(AppIcons.check, color: onShown, size: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Пример: кнопка и подпись цветом акцента — как в приложении.
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(color: shown, shape: BoxShape.circle),
+                  child: Icon(AppIcons.check, color: onShown, size: 20),
+                ),
+                const SizedBox(width: Space.m),
+                Expanded(
+                  child: Text(
+                    l10n.tr('apAccent'),
+                    style: theme.textTheme.titleMedium?.copyWith(color: shown, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: Space.m),
-            Expanded(
-              child: Text(l10n.tr('apAccent'),
-                  style: theme.textTheme.titleMedium?.copyWith(color: shown, fontWeight: FontWeight.w600)),
+            const SizedBox(height: Space.l),
+            Text(l10n.tr('apHue'), style: theme.textTheme.labelLarge),
+            _GradientSlider(
+              value: _hue / 360,
+              colors: [for (var h = 0; h <= 360; h += 30) AccentFit.hsl(h.toDouble(), 0.85, 0.5)],
+              onChanged: (v) => setState(() => _hue = v * 360),
+              semantic: '${_hue.round()}°',
             ),
-          ]),
-          const SizedBox(height: Space.l),
-          Text(l10n.tr('apHue'), style: theme.textTheme.labelLarge),
-          _GradientSlider(
-            value: _hue / 360,
-            colors: [for (var h = 0; h <= 360; h += 30) AccentFit.hsl(h.toDouble(), 0.85, 0.5)],
-            onChanged: (v) => setState(() => _hue = v * 360),
-            semantic: '${_hue.round()}°',
-          ),
-          Text(l10n.tr('apSaturation'), style: theme.textTheme.labelLarge),
-          _GradientSlider(
-            value: _sat,
-            colors: [AccentFit.hsl(_hue, 0, 0.5), AccentFit.hsl(_hue, 1, 0.45)],
-            onChanged: (v) => setState(() => _sat = v),
-            semantic: '${(_sat * 100).round()}%',
-          ),
-        ]),
+            Text(l10n.tr('apSaturation'), style: theme.textTheme.labelLarge),
+            _GradientSlider(
+              value: _sat,
+              colors: [AccentFit.hsl(_hue, 0, 0.5), AccentFit.hsl(_hue, 1, 0.45)],
+              onChanged: (v) => setState(() => _sat = v),
+              semantic: '${(_sat * 100).round()}%',
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.cancel)),
@@ -680,35 +739,38 @@ class _GradientSlider extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return SizedBox(
       height: Sizes.tapTarget,
-      child: Stack(alignment: Alignment.center, children: [
-        Positioned(
-          left: 24,
-          right: 24,
-          child: Container(
-            height: 12,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              gradient: LinearGradient(colors: colors),
-              border: Border.all(color: scheme.outlineVariant),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            left: 24,
+            right: 24,
+            child: Container(
+              height: 12,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                gradient: LinearGradient(colors: colors),
+                border: Border.all(color: scheme.outlineVariant),
+              ),
             ),
           ),
-        ),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            trackHeight: 12,
-            activeTrackColor: Colors.transparent,
-            inactiveTrackColor: Colors.transparent,
-            thumbColor: Colors.white,
-            overlayColor: scheme.onSurface.withValues(alpha: 0.08),
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 11, elevation: 2),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              trackHeight: 12,
+              activeTrackColor: Colors.transparent,
+              inactiveTrackColor: Colors.transparent,
+              thumbColor: Colors.white,
+              overlayColor: scheme.onSurface.withValues(alpha: 0.08),
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 11, elevation: 2),
+            ),
+            child: Slider(
+              value: value.clamp(0.0, 1.0),
+              onChanged: onChanged,
+              semanticFormatterCallback: (_) => semantic,
+            ),
           ),
-          child: Slider(
-            value: value.clamp(0.0, 1.0),
-            onChanged: onChanged,
-            semanticFormatterCallback: (_) => semantic,
-          ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }
@@ -726,22 +788,22 @@ class _Chips<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.s),
-        child: Wrap(
-          spacing: Space.s,
-          runSpacing: Space.xs,
-          children: [
-            for (final o in options)
-              ChoiceChip(
-                avatar: o.$3,
-                label: Text(o.$2),
-                selected: value == o.$1,
-                showCheckmark: o.$3 == null,
-                onSelected: (_) => onChanged(o.$1),
-              ),
-          ],
-        ),
-      );
+    padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.s),
+    child: Wrap(
+      spacing: Space.s,
+      runSpacing: Space.xs,
+      children: [
+        for (final o in options)
+          ChoiceChip(
+            avatar: o.$3,
+            label: Text(o.$2),
+            selected: value == o.$1,
+            showCheckmark: o.$3 == null,
+            onSelected: (_) => onChanged(o.$1),
+          ),
+      ],
+    ),
+  );
 }
 
 /// Значок скругления для чипа: уголок рамки с радиусом [radius].
@@ -772,12 +834,13 @@ class _CornerPainter extends CustomPainter {
       ..arcToPoint(Offset(w / 2 + radius, w / 2), radius: Radius.circular(radius))
       ..lineTo(size.width, w / 2);
     canvas.drawPath(
-        path,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = w
-          ..strokeCap = StrokeCap.round
-          ..color = color);
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = w
+        ..strokeCap = StrokeCap.round
+        ..color = color,
+    );
   }
 
   @override

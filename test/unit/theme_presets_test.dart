@@ -51,10 +51,10 @@ void _expectAA(String what, ThemeData t) {
 }
 
 List<(String, ThemeData)> _themes(Appearance a) => [
-      ('light', AppTheme.lightTheme(1.0, appearance: a)),
-      ('dark', AppTheme.darkTheme(1.0, appearance: a)),
-      ('amoled', AppTheme.amoledTheme(1.0, appearance: a)),
-    ];
+  ('light', AppTheme.lightTheme(1.0, appearance: a)),
+  ('dark', AppTheme.darkTheme(1.0, appearance: a)),
+  ('amoled', AppTheme.amoledTheme(1.0, appearance: a)),
+];
 
 void main() {
   test('«Классика» без своего акцента — прежние цвета', () {
@@ -113,9 +113,9 @@ void main() {
     expect(card(CornerSize.medium).borderRadius, BorderRadius.circular(16));
     expect(card(CornerSize.small).borderRadius, BorderRadius.circular(8));
     expect(card(CornerSize.large).borderRadius, BorderRadius.circular(16 * 1.4));
-    final sheet = AppTheme.lightTheme(1.0, appearance: const Appearance(corners: CornerSize.large))
-        .bottomSheetTheme
-        .shape! as RoundedRectangleBorder;
+    final sheet =
+        AppTheme.lightTheme(1.0, appearance: const Appearance(corners: CornerSize.large)).bottomSheetTheme.shape!
+            as RoundedRectangleBorder;
     expect(sheet.borderRadius, const BorderRadius.vertical(top: Radius.circular(32)));
   });
 

@@ -116,21 +116,27 @@ class Appearance {
 
   /// Множитель скругления: малое — заметно строже, большое — мягче.
   double get radiusScale => switch (corners) {
-        CornerSize.small => 0.5,
-        CornerSize.medium => 1.0,
-        CornerSize.large => 1.4,
-      };
+    CornerSize.small => 0.5,
+    CornerSize.medium => 1.0,
+    CornerSize.large => 1.4,
+  };
 
-  Appearance copyWith({ThemePreset? preset, int? accent, bool clearAccent = false, ListTint? tint,
-          CornerSize? corners, ListDensity? density, bool? openAnimation}) =>
-      Appearance(
-        preset: preset ?? this.preset,
-        accent: clearAccent ? null : (accent ?? this.accent),
-        tint: tint ?? this.tint,
-        corners: corners ?? this.corners,
-        density: density ?? this.density,
-        openAnimation: openAnimation ?? this.openAnimation,
-      );
+  Appearance copyWith({
+    ThemePreset? preset,
+    int? accent,
+    bool clearAccent = false,
+    ListTint? tint,
+    CornerSize? corners,
+    ListDensity? density,
+    bool? openAnimation,
+  }) => Appearance(
+    preset: preset ?? this.preset,
+    accent: clearAccent ? null : (accent ?? this.accent),
+    tint: tint ?? this.tint,
+    corners: corners ?? this.corners,
+    density: density ?? this.density,
+    openAnimation: openAnimation ?? this.openAnimation,
+  );
 
   @override
   bool operator ==(Object other) =>
@@ -184,10 +190,10 @@ class DensitySpec {
   static const comfortable = DensitySpec(padV: 14, avatarRadius: 26, lineGap: 4, minPreviewLines: 2);
 
   static DensitySpec of(ListDensity d) => switch (d) {
-        ListDensity.compact => compact,
-        ListDensity.normal => normal,
-        ListDensity.comfortable => comfortable,
-      };
+    ListDensity.compact => compact,
+    ListDensity.normal => normal,
+    ListDensity.comfortable => comfortable,
+  };
 
   /// Строк превью при настройке [setting] (1–4).
   int previewFor(int setting) => previewLines ?? math.max(setting, minPreviewLines);
@@ -215,10 +221,10 @@ class AppearanceLook extends ThemeExtension<AppearanceLook> {
 
   @override
   AppearanceLook copyWith({ListDensity? density, Color? listFill, bool? openAnimation}) => AppearanceLook(
-        density: density ?? this.density,
-        listFill: listFill ?? this.listFill,
-        openAnimation: openAnimation ?? this.openAnimation,
-      );
+    density: density ?? this.density,
+    listFill: listFill ?? this.listFill,
+    openAnimation: openAnimation ?? this.openAnimation,
+  );
 
   @override
   AppearanceLook lerp(covariant AppearanceLook? other, double t) {
@@ -250,8 +256,7 @@ abstract final class AccentFit {
   static Color light(Color base, Color on) {
     var h = HSLColor.fromColor(base);
     if (h.lightness > 0.45) h = h.withLightness(0.45);
-    while (h.lightness > 0.06 &&
-        (contrast(h.toColor(), on) < target || contrast(Colors.white, h.toColor()) < target)) {
+    while (h.lightness > 0.06 && (contrast(h.toColor(), on) < target || contrast(Colors.white, h.toColor()) < target)) {
       h = h.withLightness(h.lightness - 0.01);
     }
     return h.toColor();

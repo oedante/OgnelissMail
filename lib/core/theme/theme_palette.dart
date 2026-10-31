@@ -43,75 +43,75 @@ class ThemePalette {
   static final ThemePalette _classicDarkMemo = _classicDark();
 
   static ThemePalette _classicLight() => ThemePalette(
-        scheme: ColorScheme.fromSeed(seedColor: _brandBlue).copyWith(
-          primary: _brandBlue,
-          onPrimary: Colors.white,
-          primaryContainer: const Color(0xFFD9E5F6),
-          onPrimaryContainer: const Color(0xFF0B2545),
-          secondary: const Color(0xFF4A5A70),
-          onSecondary: Colors.white,
-          // Выбранные/активные элементы (навигация, чипы) — мягкая
-          // голубая заливка с тёмно-синим текстом, без яркого акцента.
-          secondaryContainer: const Color(0xFFDCE6F3),
-          onSecondaryContainer: const Color(0xFF13263F),
-          tertiary: const Color(0xFFA35A0B),
-          onTertiary: Colors.white,
-          surface: Colors.white,
-          // Мягче (1.6.20): основной текст — тёмный графит, а не почти
-          // чёрный; вторичный светлее (5,9:1 к белому — норма AA).
-          onSurface: const Color(0xFF242A33),
-          onSurfaceVariant: const Color(0xFF5A6472),
-          surfaceContainerLowest: Colors.white,
-          surfaceContainerLow: const Color(0xFFF2F5F9),
-          surfaceContainer: const Color(0xFFF0F3F7),
-          surfaceContainerHigh: const Color(0xFFEAEEF3),
-          surfaceContainerHighest: const Color(0xFFE3E8EF),
-          outline: const Color(0xFF8A94A3),
-          outlineVariant: const Color(0xFFE1E6EC),
-        ),
-        // Фон чуть темнее (1.6.20): белые карточки отделяются тоном, без рамки.
-        scaffold: const Color(0xFFF2F5F9),
-        card: Colors.white,
-        // #E9EDF2: заметно и на фоне экрана, и на белой карточке.
-        inputFill: const Color(0xFFE9EDF2),
-        divider: const Color(0xFFEBEEF2),
-        // Светло-серо-голубая, как фон экрана (1.8.0, «воздушный» вид).
-        navBar: const Color(0xFFF7F9FC),
-        tab: _brandBlue,
-      );
+    scheme: ColorScheme.fromSeed(seedColor: _brandBlue).copyWith(
+      primary: _brandBlue,
+      onPrimary: Colors.white,
+      primaryContainer: const Color(0xFFD9E5F6),
+      onPrimaryContainer: const Color(0xFF0B2545),
+      secondary: const Color(0xFF4A5A70),
+      onSecondary: Colors.white,
+      // Выбранные/активные элементы (навигация, чипы) — мягкая
+      // голубая заливка с тёмно-синим текстом, без яркого акцента.
+      secondaryContainer: const Color(0xFFDCE6F3),
+      onSecondaryContainer: const Color(0xFF13263F),
+      tertiary: const Color(0xFFA35A0B),
+      onTertiary: Colors.white,
+      surface: Colors.white,
+      // Мягче (1.6.20): основной текст — тёмный графит, а не почти
+      // чёрный; вторичный светлее (5,9:1 к белому — норма AA).
+      onSurface: const Color(0xFF242A33),
+      onSurfaceVariant: const Color(0xFF5A6472),
+      surfaceContainerLowest: Colors.white,
+      surfaceContainerLow: const Color(0xFFF2F5F9),
+      surfaceContainer: const Color(0xFFF0F3F7),
+      surfaceContainerHigh: const Color(0xFFEAEEF3),
+      surfaceContainerHighest: const Color(0xFFE3E8EF),
+      outline: const Color(0xFF8A94A3),
+      outlineVariant: const Color(0xFFE1E6EC),
+    ),
+    // Фон чуть темнее (1.6.20): белые карточки отделяются тоном, без рамки.
+    scaffold: const Color(0xFFF2F5F9),
+    card: Colors.white,
+    // #E9EDF2: заметно и на фоне экрана, и на белой карточке.
+    inputFill: const Color(0xFFE9EDF2),
+    divider: const Color(0xFFEBEEF2),
+    // Светло-серо-голубая, как фон экрана (1.8.0, «воздушный» вид).
+    navBar: const Color(0xFFF7F9FC),
+    tab: _brandBlue,
+  );
 
   static ThemePalette _classicDark() => ThemePalette(
-        scheme: ColorScheme.fromSeed(seedColor: _brandBlue, brightness: Brightness.dark).copyWith(
-          primary: const Color(0xFF9DBDEB),
-          onPrimary: const Color(0xFF0B2545),
-          primaryContainer: const Color(0xFF233E63),
-          onPrimaryContainer: const Color(0xFFD9E5F6),
-          secondary: const Color(0xFFB4C1D3),
-          onSecondary: const Color(0xFF1B2533),
-          secondaryContainer: const Color(0xFF2A3A50),
-          onSecondaryContainer: const Color(0xFFDCE6F3),
-          tertiary: const Color(0xFFF0B866),
-          onTertiary: const Color(0xFF3A2200),
-          surface: const Color(0xFF161A20),
-          onSurface: const Color(0xFFDCE1E8),
-          onSurfaceVariant: const Color(0xFFA3ACB9),
-          surfaceContainerLowest: const Color(0xFF101318),
-          surfaceContainerLow: const Color(0xFF181D24),
-          surfaceContainer: const Color(0xFF1D232B),
-          surfaceContainerHigh: const Color(0xFF242B34),
-          surfaceContainerHighest: const Color(0xFF2C343E),
-          outline: const Color(0xFF7D8796),
-          outlineVariant: const Color(0xFF2D343E),
-        ),
-        scaffold: const Color(0xFF12161B),
-        // Карточка на ступень светлее фона (по умолчанию surfaceContainerLow
-        // — 1.07:1 к фону).
-        card: const Color(0xFF1D232B),
-        inputFill: const Color(0xFF232A33),
-        divider: const Color(0xFF262C35),
-        // Чуть светлее фона экрана (#12161B) — панель отделена от ленты.
-        navBar: const Color(0xFF1C2229),
-      );
+    scheme: ColorScheme.fromSeed(seedColor: _brandBlue, brightness: Brightness.dark).copyWith(
+      primary: const Color(0xFF9DBDEB),
+      onPrimary: const Color(0xFF0B2545),
+      primaryContainer: const Color(0xFF233E63),
+      onPrimaryContainer: const Color(0xFFD9E5F6),
+      secondary: const Color(0xFFB4C1D3),
+      onSecondary: const Color(0xFF1B2533),
+      secondaryContainer: const Color(0xFF2A3A50),
+      onSecondaryContainer: const Color(0xFFDCE6F3),
+      tertiary: const Color(0xFFF0B866),
+      onTertiary: const Color(0xFF3A2200),
+      surface: const Color(0xFF161A20),
+      onSurface: const Color(0xFFDCE1E8),
+      onSurfaceVariant: const Color(0xFFA3ACB9),
+      surfaceContainerLowest: const Color(0xFF101318),
+      surfaceContainerLow: const Color(0xFF181D24),
+      surfaceContainer: const Color(0xFF1D232B),
+      surfaceContainerHigh: const Color(0xFF242B34),
+      surfaceContainerHighest: const Color(0xFF2C343E),
+      outline: const Color(0xFF7D8796),
+      outlineVariant: const Color(0xFF2D343E),
+    ),
+    scaffold: const Color(0xFF12161B),
+    // Карточка на ступень светлее фона (по умолчанию surfaceContainerLow
+    // — 1.07:1 к фону).
+    card: const Color(0xFF1D232B),
+    inputFill: const Color(0xFF232A33),
+    divider: const Color(0xFF262C35),
+    // Чуть светлее фона экрана (#12161B) — панель отделена от ленты.
+    navBar: const Color(0xFF1C2229),
+  );
 
   /// Светлая палитра для [a].
   static ThemePalette light(Appearance a) => _build(a, Brightness.light);
@@ -130,8 +130,12 @@ class ThemePalette {
     Color n(Color c) {
       if (keepNeutrals) return c;
       final h = HSLColor.fromColor(c);
-      return HSLColor.fromAHSL(1, spec.neutralHue, (h.saturation * spec.neutralSat).clamp(0.0, 1.0), h.lightness)
-          .toColor();
+      return HSLColor.fromAHSL(
+        1,
+        spec.neutralHue,
+        (h.saturation * spec.neutralSat).clamp(0.0, 1.0),
+        h.lightness,
+      ).toColor();
     }
 
     final s = classic.scheme;
@@ -193,6 +197,5 @@ class ThemePalette {
   }
 
   /// Акцент темы [p] для показа на плитке и в образцах (светлый или тёмный).
-  static Color accentOf(Appearance a, Brightness b) =>
-      (b == Brightness.dark ? dark(a) : light(a)).scheme.primary;
+  static Color accentOf(Appearance a, Brightness b) => (b == Brightness.dark ? dark(a) : light(a)).scheme.primary;
 }

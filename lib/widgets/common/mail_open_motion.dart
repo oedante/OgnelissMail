@@ -94,31 +94,36 @@ class MailOpenRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixin<T>
   Duration get transitionDuration => _own ? const Duration(milliseconds: 260) : super.transitionDuration;
 
   @override
-  Duration get reverseTransitionDuration =>
-      _own ? const Duration(milliseconds: 220) : super.reverseTransitionDuration;
+  Duration get reverseTransitionDuration => _own ? const Duration(milliseconds: 220) : super.reverseTransitionDuration;
 
   // Лента под письмом стоит на месте (не уезжает влево): портрет и тема
   // летят из своих мест, а при свайпе вниз лента видна такой, как была.
   @override
-  bool canTransitionFrom(TransitionRoute<dynamic> previousRoute) =>
-      !motion && super.canTransitionFrom(previousRoute);
+  bool canTransitionFrom(TransitionRoute<dynamic> previousRoute) => !motion && super.canTransitionFrom(previousRoute);
 
   @override
   DelegatedTransitionBuilder? get delegatedTransition => motion ? null : super.delegatedTransition;
 
   @override
-  Widget buildContent(BuildContext context) =>
-      motion ? MailSwipeToClose(route: this, child: _page.child) : _page.child;
+  Widget buildContent(BuildContext context) => motion ? MailSwipeToClose(route: this, child: _page.child) : _page.child;
 
   @override
   Widget buildTransitions(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     if (!motion || _cupertino(context)) {
       return super.buildTransitions(context, animation, secondaryAnimation, child);
     }
     // Экран поверх письма (вложение, шторка) — переходом темы, как раньше.
     return super.buildTransitions(
-        context, kAlwaysCompleteAnimation, secondaryAnimation, _MailOpenTransition(animation: animation, child: child));
+      context,
+      kAlwaysCompleteAnimation,
+      secondaryAnimation,
+      _MailOpenTransition(animation: animation, child: child),
+    );
   }
 
   /// Показать ленту под письмом (на время свайпа вниз): маршрут перестаёт
@@ -157,7 +162,10 @@ class _MailOpenTransitionState extends State<_MailOpenTransition> {
   void _bind() {
     _curve = CurvedAnimation(parent: widget.animation, curve: Curves.easeOutCubic, reverseCurve: Curves.easeInCubic);
     // Непрозрачно уже к 60 % пути — портрет и тема долетают на готовую шапку.
-    _fade = CurvedAnimation(parent: widget.animation, curve: const Interval(0, 0.6, curve: Curves.easeOut));
+    _fade = CurvedAnimation(
+      parent: widget.animation,
+      curve: const Interval(0, 0.6, curve: Curves.easeOut),
+    );
     _slide = Tween<Offset>(begin: const Offset(0, 0.035), end: Offset.zero).animate(_curve);
   }
 
@@ -179,8 +187,10 @@ class _MailOpenTransitionState extends State<_MailOpenTransition> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      FadeTransition(opacity: _fade, child: SlideTransition(position: _slide, child: widget.child));
+  Widget build(BuildContext context) => FadeTransition(
+    opacity: _fade,
+    child: SlideTransition(position: _slide, child: widget.child),
+  );
 }
 
 // ───────────────────────── Hero: портрет и тема ─────────────────────────
@@ -188,13 +198,20 @@ class _MailOpenTransitionState extends State<_MailOpenTransition> {
 /// Полёт портрета: портрет места назначения, вписанный в летящий
 /// прямоугольник (буква растёт и уменьшается вместе с кружком, без скачка
 /// размера шрифта в конце).
-Widget mailAvatarShuttle(BuildContext flightContext, Animation<double> animation, HeroFlightDirection direction,
-    BuildContext fromContext, BuildContext toContext) {
+Widget mailAvatarShuttle(
+  BuildContext flightContext,
+  Animation<double> animation,
+  HeroFlightDirection direction,
+  BuildContext fromContext,
+  BuildContext toContext,
+) {
   final to = (toContext.widget as Hero).child;
   final box = toContext.findRenderObject();
   final size = box is RenderBox && box.hasSize ? box.size : null;
   if (size == null || size.isEmpty) return to;
-  return FittedBox(child: SizedBox.fromSize(size: size, child: to));
+  return FittedBox(
+    child: SizedBox.fromSize(size: size, child: to),
+  );
 }
 
 /// Тема письма — Hero между строкой ленты и шапкой письма. [enabled] false
@@ -214,8 +231,13 @@ class MailSubjectHero extends StatelessWidget {
 
   /// Строка ленты гаснет, шапка письма проявляется; обе масштабируются от
   /// кегля одной к кеглю другой, левым верхним углом к месту полёта.
-  static Widget _textShuttle(BuildContext flightContext, Animation<double> animation, HeroFlightDirection direction,
-      BuildContext fromContext, BuildContext toContext) {
+  static Widget _textShuttle(
+    BuildContext flightContext,
+    Animation<double> animation,
+    HeroFlightDirection direction,
+    BuildContext fromContext,
+    BuildContext toContext,
+  ) {
     final push = direction == HeroFlightDirection.push;
     final listCtx = push ? fromContext : toContext;
     final mailCtx = push ? toContext : fromContext;
@@ -237,16 +259,16 @@ class MailSubjectHero extends StatelessWidget {
     const outList = Interval(0.0, 0.55, curve: Curves.easeOut);
     const inMail = Interval(0.25, 0.9, curve: Curves.easeIn);
     Widget part(Widget text, DefaultTextStyle style, Size size) => SizedBox.fromSize(
-          size: size,
-          child: DefaultTextStyle(
-            style: style.style,
-            textAlign: style.textAlign,
-            softWrap: style.softWrap,
-            overflow: style.overflow,
-            maxLines: style.maxLines,
-            child: text,
-          ),
-        );
+      size: size,
+      child: DefaultTextStyle(
+        style: style.style,
+        textAlign: style.textAlign,
+        softWrap: style.softWrap,
+        overflow: style.overflow,
+        maxLines: style.maxLines,
+        child: text,
+      ),
+    );
     final listPart = part(listText, listStyle, listSize);
     final mailPart = part(mailText, mailStyle, mailSize);
     return Material(
@@ -257,26 +279,35 @@ class MailSubjectHero extends StatelessWidget {
           // 0 — строка ленты, 1 — шапка письма (и при закрытии тоже).
           final t = animation.value;
           final e = Curves.easeInOut.transform(t);
-          return Stack(clipBehavior: Clip.none, children: [
-            Positioned(
-              left: 0,
-              top: 0,
-              child: Opacity(
-                opacity: 1 - outList.transform(t),
-                child: Transform.scale(
-                    scale: lerpDouble(1, k, e)!, alignment: AlignmentDirectional.topStart, child: listPart),
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Positioned(
+                left: 0,
+                top: 0,
+                child: Opacity(
+                  opacity: 1 - outList.transform(t),
+                  child: Transform.scale(
+                    scale: lerpDouble(1, k, e)!,
+                    alignment: AlignmentDirectional.topStart,
+                    child: listPart,
+                  ),
+                ),
               ),
-            ),
-            Positioned(
-              left: 0,
-              top: 0,
-              child: Opacity(
-                opacity: inMail.transform(t),
-                child: Transform.scale(
-                    scale: lerpDouble(1 / k, 1, e)!, alignment: AlignmentDirectional.topStart, child: mailPart),
+              Positioned(
+                left: 0,
+                top: 0,
+                child: Opacity(
+                  opacity: inMail.transform(t),
+                  child: Transform.scale(
+                    scale: lerpDouble(1 / k, 1, e)!,
+                    alignment: AlignmentDirectional.topStart,
+                    child: mailPart,
+                  ),
+                ),
               ),
-            ),
-          ]);
+            ],
+          );
         },
       ),
     );
@@ -389,7 +420,13 @@ class _MailSwipeToCloseState extends State<MailSwipeToClose> with SingleTickerPr
 
   void _springBack(double velocity) {
     const spring = SpringDescription(mass: 1, stiffness: 520, damping: 46);
-    final sim = SpringSimulation(spring, _dy.value, 0, velocity, tolerance: const Tolerance(distance: 0.5, velocity: 5));
+    final sim = SpringSimulation(
+      spring,
+      _dy.value,
+      0,
+      velocity,
+      tolerance: const Tolerance(distance: 0.5, velocity: 5),
+    );
     _dy.animateWith(sim).whenCompleteOrCancel(() {
       if (!mounted || _closing || _dy.value > 0.5) return;
       _dy.value = 0;
@@ -478,23 +515,26 @@ class _MailSwipeToCloseState extends State<MailSwipeToClose> with SingleTickerPr
               final moving = dy > 0;
               // Дерево одно и то же в покое и в движении: состояние письма
               // (окно браузера) не пересоздаётся.
-              return Stack(fit: StackFit.expand, children: [
-                IgnorePointer(
-                  child: ColoredBox(color: Colors.black.withValues(alpha: moving ? 0.28 * (1 - p) : 0)),
-                ),
-                Transform.translate(
-                  offset: Offset(0, dy),
-                  child: Transform.scale(
-                    scale: 1 - 0.06 * p,
-                    alignment: Alignment.topCenter,
-                    child: ClipRRect(
-                      clipBehavior: moving ? Clip.antiAlias : Clip.none,
-                      borderRadius: BorderRadius.circular(Radii.of(Radii.card) * (p * 4).clamp(0.0, 1.0)),
-                      child: child,
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  IgnorePointer(
+                    child: ColoredBox(color: Colors.black.withValues(alpha: moving ? 0.28 * (1 - p) : 0)),
+                  ),
+                  Transform.translate(
+                    offset: Offset(0, dy),
+                    child: Transform.scale(
+                      scale: 1 - 0.06 * p,
+                      alignment: Alignment.topCenter,
+                      child: ClipRRect(
+                        clipBehavior: moving ? Clip.antiAlias : Clip.none,
+                        borderRadius: BorderRadius.circular(Radii.of(Radii.card) * (p * 4).clamp(0.0, 1.0)),
+                        child: child,
+                      ),
                     ),
                   ),
-                ),
-              ]);
+                ],
+              );
             },
           ),
         ),

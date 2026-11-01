@@ -291,6 +291,7 @@ class _TriageScreenState extends ConsumerState<TriageScreen> {
                 hero: false,
                 radius: 22,
                 email: e.from.email,
+                authResults: e.authResults,
                 initial: e.from.label.isEmpty ? '?' : initialOf(e.from.label),
                 color: HeroEmailAvatar.colorForEmail(e.from.email),
               ),

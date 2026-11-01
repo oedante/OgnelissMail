@@ -56,6 +56,7 @@ class MailSenderTitle extends StatelessWidget {
             initial: name.isNotEmpty ? initialOf(name) : '?',
             color: HeroEmailAvatar.colorForEmail(email.from.email),
             email: email.from.email,
+            authResults: email.authResults,
             radius: kMailFaceRadius,
           ),
           const SizedBox(width: Space.m),

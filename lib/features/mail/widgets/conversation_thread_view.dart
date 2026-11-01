@@ -14,6 +14,7 @@ import '../../../core/utils/text_safe.dart';
 import '../../../data/models/email_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/person_photo.dart' show avatarTones;
+import '../../../widgets/common/bimi_avatar.dart';
 
 class ConversationThreadView extends StatefulWidget {
   final List<EmailModel> emails;
@@ -149,7 +150,12 @@ class _ConversationThreadViewState extends State<ConversationThreadView> {
                           // Заголовок
                           Row(
                             children: [
-                              CircleAvatar(
+                              // Логотип BIMI вместо буквы (1.9.x).
+                              BimiAvatar(
+                                email: email.from.email,
+                                authResults: email.authResults,
+                                radius: 14,
+                                fallback: CircleAvatar(
                                 radius: 14,
                                 backgroundColor:
                                     avatarTones(context, _avatarColor(email.from.email)).fill,
@@ -164,6 +170,7 @@ class _ConversationThreadViewState extends State<ConversationThreadView> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                              ),
                               ),
                               const SizedBox(width: Space.s),
                               // Черновик в цепочке: видно, что ответ начат, но

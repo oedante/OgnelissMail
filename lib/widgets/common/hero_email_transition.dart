@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/settings/providers/module_settings_provider.dart' show moduleSettingsProvider;
 import '../../services/contacts/mail_contacts_service.dart' show mailContactsServiceProvider;
 import 'animated_appearance.dart' show uiAnimations;
+import 'bimi_avatar.dart';
 import 'person_photo.dart';
 
 /// Обёртка для Hero-анимации аватарки. Есть фото (контакт, аккаунт) —
@@ -23,6 +24,9 @@ class HeroEmailAvatar extends ConsumerWidget {
   final String? email;
   /// Фото задано явно (например, у аккаунта).
   final String? photo;
+  /// Authentication-Results письма: при dmarc=pass вместо буквы — логотип
+  /// отправителя BIMI (1.9.x). null — только фото или буква.
+  final String? authResults;
 
   /// false — без Hero. В split-view (Windows, планшет) список и карточка
   /// письма в одном маршруте: два Hero с одним тегом роняют перерисовку
@@ -38,6 +42,7 @@ class HeroEmailAvatar extends ConsumerWidget {
     this.hero = true,
     this.email,
     this.photo,
+    this.authResults,
   });
 
   @override
@@ -72,7 +77,9 @@ class HeroEmailAvatar extends ConsumerWidget {
               onBackgroundImageError: (_, __) {},
             ),
           )
-        : _monogram(context);
+        : (authResults != null && email != null
+            ? BimiAvatar(email: email!, authResults: authResults, radius: radius, fallback: _monogram(context))
+            : _monogram(context));
     if (!hero || !uiAnimations) return avatar;
     return Hero(tag: 'avatar_$emailId', child: avatar);
   }

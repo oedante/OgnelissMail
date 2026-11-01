@@ -299,6 +299,7 @@ class EmailListTile extends ConsumerWidget {
                               initial: _initial(email.from),
                               color: HeroEmailAvatar.colorForEmail(email.from.email),
                               email: email.from.email,
+                              authResults: email.authResults,
                             ),
                     ),
                     ),

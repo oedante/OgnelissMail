@@ -95,6 +95,10 @@ class AppSettings {
   /// рваными); «Уменьшить движение» и системная настройка важнее.
   final bool uiAnimations;
   final int colorBlindMode;
+  /// Логотипы отправителей BIMI вместо буквы (1.9.x, просьба владельца
+  /// 31.10.2026). Работает, только если сборка знает сервер Ogneliss
+  /// (BimiResolver.configured).
+  final bool bimiLogos;
 
   // ── Уведомления ──
   final bool notificationsEnabled;
@@ -178,6 +182,7 @@ class AppSettings {
     this.reduceMotion = false,
     this.uiAnimations = false,
     this.colorBlindMode = 0,
+    this.bimiLogos = true,
     this.notificationsEnabled = true,
     this.notificationSound = true,
     this.notificationVibration = true,
@@ -240,6 +245,7 @@ class AppSettings {
     bool? reduceMotion,
     bool? uiAnimations,
     int? colorBlindMode,
+    bool? bimiLogos,
     bool? notificationsEnabled,
     bool? notificationSound,
     bool? notificationVibration,
@@ -288,6 +294,7 @@ class AppSettings {
       reduceMotion: reduceMotion ?? this.reduceMotion,
       uiAnimations: uiAnimations ?? this.uiAnimations,
       colorBlindMode: colorBlindMode ?? this.colorBlindMode,
+      bimiLogos: bimiLogos ?? this.bimiLogos,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       notificationSound: notificationSound ?? this.notificationSound,
       notificationVibration: notificationVibration ?? this.notificationVibration,
@@ -343,6 +350,7 @@ class _K {
   static const reduceMotion = 's_reduce_motion';
   static const uiAnimations = 's_ui_animations';
   static const colorBlindMode = 's_color_blind';
+  static const bimiLogos = 's_bimi_logos';
   static const notificationsEnabled = 's_notif_on';
   static const notificationSound = 's_notif_sound';
   static const notificationVibration = 's_notif_vib';
@@ -425,6 +433,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       reduceMotion: _p.getBool(_K.reduceMotion) ?? false,
       uiAnimations: _p.getBool(_K.uiAnimations) ?? false,
       colorBlindMode: _p.getInt(_K.colorBlindMode) ?? 0,
+      bimiLogos: _p.getBool(_K.bimiLogos) ?? true,
       notificationsEnabled: _p.getBool(_K.notificationsEnabled) ?? true,
       notificationSound: _p.getBool(_K.notificationSound) ?? true,
       notificationVibration: _p.getBool(_K.notificationVibration) ?? true,
@@ -591,6 +600,11 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(uiAnimations: v);
   }
 
+  Future<void> setBimiLogos(bool v) async {
+    await _p.setBool(_K.bimiLogos, v);
+    state = state.copyWith(bimiLogos: v);
+  }
+
   Future<void> setColorBlindMode(int v) async {
     await _p.setInt(_K.colorBlindMode, v);
     state = state.copyWith(colorBlindMode: v);
@@ -744,7 +758,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       // сбросом не затрагивались.
       _K.amoled, _K.reading, _K.dynamicColor, _K.allowRotation, _K.warmPage, _K.mailControl, _K.myDay, _K.morningDigest, _K.morningDigestMinutes, _K.backgroundKeepAlive, _K.attachmentsWifiOnly,
       _K.themeMode, _K.locale, _K.fontScale, _K.uiScale, _K.uiFont, _K.highContrast,
-      _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode,
+      _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode, _K.bimiLogos,
       _K.notificationsEnabled, _K.notificationSound, _K.notificationVibration,
       _K.syncOnlyWifi, _K.syncInterval, _K.emailFetchMode,
       _K.groupByConversation, _K.swipeLP, _K.swipeLS, _K.swipeRP, _K.swipeRS, _K.swipeCL, _K.swipeCR, _K.swipeAnim, _K.previewLines, _K.peekPreviewLines,

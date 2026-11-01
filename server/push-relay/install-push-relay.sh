@@ -1,34 +1,38 @@
 #!/usr/bin/env bash
 # =============================================================================
-#  Ogneliss Mail — «будильник» для iPhone (push-relay): установка, обновление
-#  и проверка. Сервер с Docker и Nginx Proxy Manager — тот же, где OAuth-прокси
-#  и сайт (/opt/mailserver). Запуск от root.
+#  Ogneliss Mail — «будильник» для iPhone и Android (push-relay): установка,
+#  обновление и проверка. Сервер с Docker и Nginx Proxy Manager — тот же, где
+#  OAuth-прокси и сайт (/opt/mailserver). Запуск от root.
 #
 #  Команды:
 #    install   первая установка (по умолчанию); повторный запуск — как update
 #    update    обновить код службы из этого архива; .env, ключи и токены
 #              остаются
-#    key       поставить или заменить ключ APNs (.p8) и Team ID
-#    check     проверить: контейнер, ключ (пробный сигнал Apple), адрес снаружи
-#    remove    остановить и удалить контейнер (каталог с .env, ключом и
+#    key       поставить или заменить ключ APNs (.p8) и Team ID и/или ключ
+#              сервисного аккаунта Firebase (Android)
+#    check     проверить: контейнер, ключи (пробные сигналы Apple и Google),
+#              адрес снаружи
+#    remove    остановить и удалить контейнер (каталог с .env, ключами и
 #              токенами остаётся)
 #
 #  Примеры:
 #    sudo bash install-push-relay.sh install --team ABCDE12345 --key /root/AuthKey_XYZ1234567.p8
 #    sudo bash install-push-relay.sh key --key /root/AuthKey_NEW1234567.p8
+#    sudo bash install-push-relay.sh key --fcm-service-account /root/ogneliss-firebase.json
 #    sudo bash install-push-relay.sh update
 #    sudo bash install-push-relay.sh check
 #
-#  Подробно: README.md рядом и docs/guides/IOS_PUSH_SETUP.md (раздел 3).
+#  Подробно: README.md рядом, docs/guides/IOS_PUSH_SETUP.md (раздел 3) и
+#  docs/guides/ANDROID_PUSH_SETUP.md.
 #
-#  Что хранит служба: только токены уведомлений Apple (случайные
+#  Что хранит служба: только токены уведомлений Apple и Google (случайные
 #  идентификаторы установок), окружение, интервал и время последнего сигнала.
 #  Ни адресов, ни паролей, ни писем. Значения ключей скрипт на экран не выводит.
 # =============================================================================
 set -Eeuo pipefail
 umask 077
 
-SCRIPT_VERSION="2026.10.1"
+SCRIPT_VERSION="2026.11.1"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Префикс файловой системы — только для автотестов скрипта. Не задавайте его.
@@ -43,6 +47,7 @@ TEAM_ARG="${APNS_TEAM_ID:-}"
 KEY_SRC=""
 KEY_ID_ARG=""
 KEY_SANDBOX=0
+FCM_SRC=""
 ASSUME_YES="${ASSUME_YES:-0}"
 PORT=8788
 CONTAINER=push-relay
@@ -62,7 +67,7 @@ die()  { printf '%sОШИБКА:%s %s\n' "$C_R" "$C_0" "$*" >&2; exit 1; }
 trap 'printf "%sОШИБКА%s в строке %s: %s\n" "$C_R" "$C_0" "$LINENO" "$BASH_COMMAND" >&2' ERR
 
 usage() {
-  sed -n '3,26p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+  sed -n '3,30p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
   cat <<'EOF'
 Флаги:
   --team TEAMID         Team ID учётной записи Apple Developer (10 символов)
@@ -71,6 +76,9 @@ usage() {
   --sandbox             ключ из --key — только для Sandbox (сборки из Xcode);
                         без флага ключ работает для Production, а если
                         отдельного ключа Sandbox нет — и для Sandbox
+  --fcm-service-account FILE
+                        ключ сервисного аккаунта Firebase (JSON) — сигналы
+                        для Android (docs/guides/ANDROID_PUSH_SETUP.md)
   --base-url URL        внешний адрес службы, по умолчанию
                         https://www.ogneliss.ru/push
   --mail-dir DIR        каталог почтового сервера, по умолчанию /opt/mailserver
@@ -90,6 +98,7 @@ parse_args() {
       --key) KEY_SRC="${2:?}"; shift ;;
       --key-id) KEY_ID_ARG="${2:?}"; shift ;;
       --sandbox) KEY_SANDBOX=1 ;;
+      --fcm-service-account) FCM_SRC="${2:?}"; shift ;;
       --base-url) BASE_URL_ARG="${2:?}"; shift ;;
       --mail-dir) MAIL_DIR="${2:?}"; shift ;;
       --network) NPM_NETWORK="${2:?}"; shift ;;
@@ -355,6 +364,33 @@ put_key() {
   warn "исходный файл $KEY_SRC можно удалить: копия — в $KEYS_DIR (храните оригинал в надёжном месте, Apple второй раз его не выдаст)"
 }
 
+# Ключ сервисного аккаунта Firebase (Android, 1.9.x): JSON из консоли
+# Firebase → Project settings → Service accounts → Generate new private key.
+# Проверка — до любых изменений на сервере.
+FCM_PROJECT=""
+check_fcm() {
+  [ -n "$FCM_SRC" ] || return 0
+  [ -f "$FCM_SRC" ] || die "нет файла ключа Firebase: $FCM_SRC"
+  grep -q '"type": *"service_account"' "$FCM_SRC" \
+    || die "$FCM_SRC — не ключ сервисного аккаунта (нужен JSON из Firebase → Project settings → Service accounts → Generate new private key; google-services.json не подходит)"
+  grep -q '"private_key": *"-----BEGIN PRIVATE KEY-----' "$FCM_SRC" || die "$FCM_SRC: в файле нет private_key"
+  grep -q '"client_email": *"[^"]' "$FCM_SRC" || die "$FCM_SRC: в файле нет client_email"
+  FCM_PROJECT="$(sed -n 's/.*"project_id": *"\([^"]*\)".*/\1/p' "$FCM_SRC" | head -n 1)"
+  [ -n "$FCM_PROJECT" ] || die "$FCM_SRC: в файле нет project_id"
+}
+
+# Копия ключа в keys/fcm-service-account.json: читать может только служба.
+put_fcm() {
+  [ -n "$FCM_SRC" ] || return 0
+  install -d -m 750 "$KEYS_DIR"
+  install -m 640 "$FCM_SRC" "$KEYS_DIR/fcm-service-account.json"
+  if [ -z "$ROOT" ]; then chown "root:$APP_UID" "$KEYS_DIR" "$KEYS_DIR/fcm-service-account.json"; fi
+  env_set FCM_SERVICE_ACCOUNT_FILE "/keys/fcm-service-account.json" "$ENV_FILE"
+  chmod 600 "$ENV_FILE"
+  ok "ключ Firebase (Android): проект $FCM_PROJECT"
+  warn "исходный файл $FCM_SRC удалите: копия — в $KEYS_DIR (новый ключ при потере можно создать в консоли Firebase, старый там же отозвать)"
+}
+
 backup_env() {
   [ -f "$ENV_FILE" ] || return 0
   local b; b="$APP_DIR/backup-$(date +%Y%m%d-%H%M%S)"
@@ -399,7 +435,7 @@ EOF
 
 # ── Команды ─────────────────────────────────────────────────────────────────
 cmd_install() {
-  need_root; check_sources; check_key
+  need_root; check_sources; check_key; check_fcm
   if [ -z "$ROOT" ]; then have docker || die "Docker не найден"; fi
   [ -n "$ROOT" ] && DC_V2=1 || compose_cmd
   resolve_base_url
@@ -418,6 +454,7 @@ cmd_install() {
   copy_code
   prepare_env
   put_key
+  put_fcm
   up
   key_summary
   [ "$first" = 1 ] && print_npm_steps
@@ -427,13 +464,15 @@ cmd_install() {
 cmd_key() {
   need_root
   [ -f "$ENV_FILE" ] || die "служба не установлена: sudo bash $0 install --team … --key …"
-  [ -n "$KEY_SRC" ] || [ -n "$TEAM_ARG" ] || die "укажите --key AuthKey_<KEYID>.p8 и/или --team TEAMID"
-  check_key
+  [ -n "$KEY_SRC" ] || [ -n "$TEAM_ARG" ] || [ -n "$FCM_SRC" ] \
+    || die "укажите --key AuthKey_<KEYID>.p8 и/или --team TEAMID, или --fcm-service-account FILE.json"
+  check_key; check_fcm
   [ -n "$ROOT" ] && DC_V2=1 || compose_cmd
   resolve_base_url
   backup_env
   if [ -n "$TEAM_ARG" ]; then env_set APNS_TEAM_ID "$TEAM_ARG" "$ENV_FILE"; ok "Team ID: $TEAM_ARG"; fi
   put_key
+  put_fcm
   up
   key_summary
 }
@@ -452,19 +491,53 @@ key_summary() {
   local h keys
   h="$(local_get /healthz)"; keys="$(json_obj "$h" keys)"
   if [ "$(json_val "$keys" team)" != true ]; then
-    warn "нет Team ID — сигналы не отправляются. sudo bash $0 key --team TEAMID"
+    warn "нет Team ID — сигналы iPhone не отправляются. sudo bash $0 key --team TEAMID"
   elif [ "$(json_val "$keys" production)" != true ]; then
-    warn "нет ключа APNs — регистрации принимаются, сигналы не отправляются."
+    warn "нет ключа APNs — регистрации iPhone принимаются, сигналы не отправляются."
     warn "  sudo bash $0 key --key /путь/AuthKey_<KEYID>.p8"
   else
     probe_report || true
   fi
+  fcm_report || true
+}
+
+# Ответ POST /probe — один на запуск скрипта: проба Apple и Google.
+PROBE_JSON=""
+probe_json() {  # заполняет PROBE_JSON (не в подоболочке — иначе не запомнится)
+  [ -n "$PROBE_JSON" ] || PROBE_JSON="$(local_post /probe)"
+}
+
+# Пробное сообщение Google (validate_only, на заведомо неверный токен):
+# ключ сервисного аккаунта и право отправки (Android, 1.9.x). Без ключа —
+# только предупреждение: сигналы для Android необязательны.
+fcm_report() {
+  local r part status reason
+  probe_json; r="$PROBE_JSON"
+  [ -n "$r" ] || { bad "пробное сообщение FCM: служба не ответила"; return 1; }
+  part="$(json_obj "$r" fcm)"
+  if [ "$(json_val "$part" ready)" != true ]; then
+    warn "ключ Firebase не задан — сигналы для Android не отправляются (sudo bash $0 key --fcm-service-account FILE.json)"
+    return 0
+  fi
+  status="$(json_val "$part" status)"; reason="$(json_val "$part" reason)"
+  if [ "$(json_val "$part" keyOk)" = true ]; then
+    ok "ключ Firebase принят Google (пробный токен, как и ожидалось, отклонён: $reason)"
+    return 0
+  fi
+  case "$status" in
+    401) bad "FCM: Google не принимает ключ сервисного аккаунта ($status ${reason:-}) — ключ отозван или часы сервера расходятся (timedatectl)" ;;
+    403) bad "FCM: нет права отправки ($status ${reason:-}) — в Google Cloud включите Firebase Cloud Messaging API и проверьте роль аккаунта (ANDROID_PUSH_SETUP.md)" ;;
+    404) bad "FCM: проект не найден ($status ${reason:-}) — FCM_PROJECT_ID или ключ от другого проекта" ;;
+    0|'') bad "FCM: нет связи с Google (${reason:-нет ответа}) — исходящий HTTPS из Docker к oauth2.googleapis.com и fcm.googleapis.com" ;;
+    *) bad "FCM: ответ Google $status ${reason:-}" ;;
+  esac
+  return 1
 }
 
 # Пробный сигнал Apple на несуществующий токен (POST /probe внутри контейнера).
 probe_report() {
   local r env part status reason fails=0
-  r="$(local_post /probe)"
+  probe_json; r="$PROBE_JSON"
   [ -n "$r" ] || { bad "пробный сигнал: служба не ответила"; return 1; }
   for env in production sandbox; do
     part="$(json_obj "$r" "$env")"
@@ -506,13 +579,14 @@ cmd_check() {
   h="$(local_get /healthz)"
   if printf '%s' "$h" | grep -q '"ok":true'; then
     tok="$(json_obj "$h" tokens)"; keys="$(json_obj "$h" keys)"
-    ok "служба отвечает: установок $(json_val "$tok" total) (production $(json_val "$tok" production), sandbox $(json_val "$tok" sandbox)); сигналов отправлено $(json_val "$h" sent), ошибок $(json_val "$h" failed), токенов удалено $(json_val "$h" removed)"
+    ok "служба отвечает: установок $(json_val "$tok" total) (production $(json_val "$tok" production), sandbox $(json_val "$tok" sandbox), android $(json_val "$tok" fcm)); сигналов отправлено $(json_val "$h" sent), ошибок $(json_val "$h" failed), токенов удалено $(json_val "$h" removed)"
     local le; le="$(json_val "$h" lastError)"
     [ -n "$le" ] && [ "$le" != null ] && warn "последняя ошибка отправки: $le"
     [ "$(json_val "$h" apiKey)" = true ] && ok "ключ приложения (x-api-key) задан" || warn "PUSH_API_KEY пуст — регистрация без ключа приложения"
     if [ "$(json_val "$keys" team)" != true ]; then bad "нет APNS_TEAM_ID: sudo bash $0 key --team TEAMID"; fails=$((fails + 1))
     elif [ "$(json_val "$keys" production)" != true ]; then bad "нет ключа APNs: sudo bash $0 key --key AuthKey_<KEYID>.p8"; fails=$((fails + 1))
     else probe_report || fails=$((fails + 1)); fi
+    fcm_report || fails=$((fails + 1))
   else
     bad "служба не отвечает внутри контейнера"; docker logs --tail 20 "$CONTAINER" >&2 || true
     fails=$((fails + 1))
@@ -538,7 +612,7 @@ cmd_check() {
     fails=$((fails + 1))
   fi
   echo >&2
-  if [ "$fails" = 0 ]; then log "${C_G}Всё в порядке.${C_0} На iPhone: Настройки → Уведомления → Сигналы сервера (iPhone)"
+  if [ "$fails" = 0 ]; then log "${C_G}Всё в порядке.${C_0} В приложении: Настройки → Уведомления → Сигналы сервера"
   else log "${C_R}Проблем: $fails${C_0} (подробно — README.md, раздел «Если не работает»)"; return 1; fi
 }
 

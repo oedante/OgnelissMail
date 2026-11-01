@@ -64,6 +64,7 @@ import 'core/security/trusted_ca_store.dart';
 import 'core/security/account_ca_sync.dart';
 import 'features/mail/providers/mail_providers.dart' show accountsProvider;
 import 'features/compose/widgets/mail_editor.dart' show registerMailEditorLicense;
+import 'services/translation/translator.dart' show registerTranslationLicense;
 import 'widgets/common/text_scale_cap.dart';
 import 'widgets/common/quick_long_press.dart' show HoldTiming;
 import 'widgets/common/ui_zoom.dart';
@@ -76,6 +77,8 @@ Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     registerMailEditorLicense();
+    // Google ML Kit (перевод писем на Android, 1.9.x) — условия Google.
+    registerTranslationLicense();
     // Шрифт интерфейса Roboto (Apache 2.0) — на странице «Лицензии».
     LicenseRegistry.addLicense(() async* {
       final text = await rootBundle.loadString('assets/fonts/pdf/Roboto-LICENSE.txt');

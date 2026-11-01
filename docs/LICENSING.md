@@ -36,6 +36,8 @@ Contributions are accepted under the same license (section 5 of the license).
 | Material Symbols icons | Apache-2.0 | `material_symbols_icons` |
 | flutter_svg (sender logos, BIMI) with vector_graphics, vector_graphics_codec, vector_graphics_compiler | MIT; vector_graphics*: BSD-3-Clause | pub.dev |
 | AndroidX, Kotlin, AppAuth | Apache-2.0 | Android and iOS builds |
+| Google ML Kit Translation and Language ID (`com.google.mlkit:translate` 17.0.3, `com.google.mlkit:language-id` 17.0.6) — on-device message translation | Free; ML Kit Terms of Service and Google APIs Terms of Service (closed-source binaries). Conditions: Google attribution next to translated text and in the app description/help ("Translated by Google"); no use in embedded devices (cars, TVs, appliances, speakers); ML Kit sends usage metrics (not text) to Google — mention in the privacy policy | Android build (`android/app/build.gradle.kts`) |
+| Apple Translation, NaturalLanguage, SwiftUI — on-device message translation (iOS 18+) | Part of the iOS SDK (Apple Developer Program License Agreement), free, no attribution | iOS build (`ios/Runner/AppDelegate.swift`) |
 | Russian Trusted Root CA certificates | public certificates | `assets/certs/` |
 
 There are no GPL, LGPL or AGPL dependencies. MPL-2.0 is a file-level copyleft
@@ -130,6 +132,13 @@ pledge turned out to forbid commercial distribution):
 - **Распространяете код или свою сборку** — приложите текст лицензии,
   сохраните NOTICE и уведомления об авторских правах, пометьте изменённые
   файлы, дайте версии своё название, значок и идентификатор (TRADEMARKS.md).
+- **Перевод писем на устройстве** (1.9.x): на Android — Google ML Kit
+  (бесплатно, условия ML Kit и Google APIs: подпись «Переведено Google» у
+  перевода и упоминание Google Translate в описании и справке; ML Kit
+  отправляет в Google статистику работы, не текст писем — указать в
+  политике конфиденциальности); на iPhone и iPad — Apple Translation из iOS
+  SDK (бесплатно, без условий атрибуции). Подробности —
+  docs/guides/TRANSLATION_SETUP.md.
 - **Сторонние компоненты** — BSD, MIT, Apache 2.0; enough_mail,
   enough_convert, dbus и nm — MPL 2.0 (используются без изменений); шрифты
   OpenDyslexic и Medeo Sans — OFL 1.1. GPL, LGPL и AGPL нет. Полный список с текстами

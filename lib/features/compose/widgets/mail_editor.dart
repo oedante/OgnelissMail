@@ -124,6 +124,10 @@ class MailEditorController {
   /// Заменить содержимое (история отмены начинается заново).
   Future<void> setHtml(String html) => _run('OgnEditor.set(${_js(html)})');
 
+  /// Заменить содержимое так, чтобы «Отменить» редактора вернуло прежнее
+  /// (перевод своего письма, 1.9.x).
+  Future<void> replaceHtml(String html) => _run('OgnEditor.setUndoable(${_js(html)})');
+
   /// Вставить в позицию курсора.
   Future<void> insertHtml(String html) => _run('OgnEditor.insert(${_js(html)})');
 

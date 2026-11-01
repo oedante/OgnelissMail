@@ -78,6 +78,8 @@ class MainActivity : FlutterFragmentActivity() {
             runCatching { WidgetBridge.register(messenger, app) }
             runCatching { FileOpenBridge.register(messenger, app) }
             runCatching { TimeZoneBridge.register(messenger) }
+            // Перевод писем на устройстве (ML Kit, 1.9.x).
+            runCatching { TranslationBridge.register(messenger) }
             runCatching { ConversationShortcuts.register(messenger, app) }
             engine.dartExecutor.executeDartEntrypoint(DartExecutor.DartEntrypoint.createDefault())
             cache.put(ENGINE_ID, engine)
@@ -138,6 +140,7 @@ class MainActivity : FlutterFragmentActivity() {
         // PDF внутри приложения (1.8.14) — системным PdfRenderer.
         PdfRendererPlugin.register(messenger)
         TimeZoneBridge.register(messenger)
+        TranslationBridge.register(messenger)
         // Беседы для VIP (1.9.x): ярлыки бесед уведомлений о письмах.
         ConversationShortcuts.register(messenger, this)
         // mailto и «Написать письмо» из других приложений.

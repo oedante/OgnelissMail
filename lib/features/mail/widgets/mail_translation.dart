@@ -92,12 +92,16 @@ class MailTranslationController extends ChangeNotifier {
     dismissed = false;
   }
 
-  String _appLang() => ref.read(settingsProvider).locale.languageCode;
+  /// Язык приложения — читается, пока экран жив (в build и по нажатию):
+  /// после await экран могли закрыть, и ref уже нельзя трогать.
+  String _lang = 'en';
+  String _appLang() => _lang;
 
   /// Определить язык письма (один раз на письмо) и решить, предлагать ли
   /// перевод. Вызывается из build — сама работа после кадра.
   void detect(EmailModel e) {
     if (!translationPlatformSupported) return;
+    _lang = ref.read(settingsProvider).locale.languageCode;
     _resetFor(e.id);
     final key = '${e.id}|${(e.bodyHtml ?? e.bodyPlain ?? '').length}';
     if (_detectedFor == key) return;
@@ -164,6 +168,7 @@ class MailTranslationController extends ChangeNotifier {
   Future<void> translate(BuildContext context, EmailModel e) async {
     final t = ref.read(translatorProvider);
     final l10n = _l10n = AppLocalizations.of(context);
+    _lang = ref.read(settingsProvider).locale.languageCode;
     if (!await t.isAvailable()) {
       showInlineError(l10n.tr('translateUnavailable'));
       return;
@@ -196,7 +201,7 @@ class MailTranslationController extends ChangeNotifier {
 
   Future<void> _run(EmailModel e) async {
     final f = from, tt = to;
-    if (f == null || tt == null) return;
+    if (f == null || tt == null || _disposed) return;
     final t = ref.read(translatorProvider);
     phase = MailTranslationPhase.working;
     _notify();

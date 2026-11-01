@@ -133,6 +133,9 @@ void main() {
       await waitFor(() => events.length == 3);
       expect(events.map((e) => e.folderId), ['INBOX', 'Archive', 'Sent']);
       await waitFor(() => srv.commands.where((c) => c.startsWith('NOTIFY')).length == 2);
+      // Соединение снова в IDLE: остановка между NOTIFY и IDLE ждала ответа
+      // на DONE до тайм-аута (в CI тест упирался в 30 с).
+      await srv.waitIdle();
     });
 
     test('NOTIFY отклонён — обычный IDLE, письма во «Входящих» по-прежнему видны', () async {

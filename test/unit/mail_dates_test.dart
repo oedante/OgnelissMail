@@ -62,17 +62,28 @@ void main() {
       }
       final html = '<table>$b</table>';
       MailHtmlDocument.build(html, allowRemoteImages: false); // прогрев
-      final sw0 = Stopwatch()..start();
-      MailHtmlDocument.build(html, allowRemoteImages: false);
-      final without = sw0.elapsedMilliseconds;
-      final sw = Stopwatch()..start();
-      final doc = MailHtmlDocument.build(html, allowRemoteImages: false, dates: ctx);
-      final withDates = sw.elapsedMilliseconds;
+      final doc = MailHtmlDocument.build(html, allowRemoteImages: false, dates: ctx); // прогрев
       expect('href="ogdate:'.allMatches(doc.html).length, 60);
+      // Лучшее из трёх, вперемешку: один замер на общей машине CI шумит
+      // (01.11.2026 — 221 мс при пороге 150 в одной сборке и в пределах в
+      // остальных); лучший замер — это стоимость работы, а не очередь
+      // процессора.
+      var without = 1 << 30, withDates = 1 << 30;
+      for (var i = 0; i < 3; i++) {
+        final sw0 = Stopwatch()..start();
+        MailHtmlDocument.build(html, allowRemoteImages: false);
+        if (sw0.elapsedMilliseconds < without) without = sw0.elapsedMilliseconds;
+        final sw = Stopwatch()..start();
+        MailHtmlDocument.build(html, allowRemoteImages: false, dates: ctx);
+        if (sw.elapsedMilliseconds < withDates) withDates = sw.elapsedMilliseconds;
+      }
       // ignore: avoid_print
       print('Сборка документа ${html.length ~/ 1024} КБ: без дат $without мс, с датами $withDates мс');
-      // Бюджет с запасом на медленную машину CI.
-      expect(withDates - without, lessThan(150));
+      // Бюджет — в долях сборки без дат на той же машине: абсолютные 150 мс
+      // разницы не выдерживала медленная машина CI (на быстрой — около 110).
+      // Даты добавляют к сборке примерно втрое; в 6 раз — уже не шум, а
+      // поломка разбора (например, перебор в регулярном выражении).
+      expect(withDates, lessThan(without * 6 + 60), reason: 'без дат $without мс, с датами $withDates мс');
     });
   });
 

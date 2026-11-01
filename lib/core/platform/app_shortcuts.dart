@@ -3,6 +3,12 @@
 // «Написать письмо», «Создать встречу», «Создать напоминание». Письмо и напоминание
 // создаются в открытом ящике, а если ящик не выбран (общий вид) — в первом
 // личном; в самом окне ящик можно поменять.
+//
+// 1.9.x (просьба владельца 31.10.2026): на Android эти четыре действия —
+// статические ярлыки res/xml/shortcuts.xml (их же видит Google Ассистент),
+// поэтому динамические ярлыки плагина там убираются, иначе в меню значка
+// они шли бы дважды. На iPhone — как раньше, плагином. Siri, «Команды» и
+// Ассистент открывают экраны через [openType] (см. assistant_actions.dart).
 
 import 'dart:async';
 
@@ -11,11 +17,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quick_actions/quick_actions.dart';
 
 import '../../features/mail/providers/mail_providers.dart';
+import '../../widgets/navigation/panel_requests.dart' show mailSearchQueryProvider;
+import '../utils/date_links.dart' show DateContext;
 import '../../features/settings/providers/settings_provider.dart';
 import '../../features/settings/providers/feature_flags_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../logging/app_logger.dart';
 import '../navigation/app_router.dart';
+import 'assistant_actions.dart';
 
 class AppShortcuts {
   AppShortcuts._();
@@ -32,7 +41,12 @@ class AppShortcuts {
     if (!_supported) return;
     const qa = QuickActions();
     try {
+      // Ярлыки, закреплённые на рабочем столе до 1.9.x, работают и дальше.
       await qa.initialize((type) => unawaited(_open(container, type)));
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        await qa.clearShortcutItems();
+        return;
+      }
       await _setItems(container);
       // Язык сменили — подписи действий тоже.
       container.listen(settingsProvider.select((s) => s.locale.languageCode), (_, __) {
@@ -117,27 +131,27 @@ class AppShortcuts {
       unawaited(router.push('/notes/edit'));
       return;
     }
+    // Быстрые действия значка, Siri, «Команды», Google Ассистент.
+    final action = AssistantAction.parse(type);
+    if (action == null) return;
+    if (action.kind == AssistantKind.notes && !container.read(featureFlagsProvider).showNotes) {
+      router.go('/mail');
+      return;
+    }
     final acc = _accountId(container);
-    switch (type) {
-      case _compose:
-        unawaited(router.push(Uri(path: '/compose', queryParameters: {
-          if (acc != null) 'accountId': acc,
-        }).toString()));
-      case _event:
-        unawaited(router.push('/create-event'));
-      case _myDay:
-        router.go('/my-day');
-      case 'mail':
-        router.go('/mail');
-      case 'calendar':
-        router.go('/calendar');
-      case 'notes':
-        router.go('/notes');
-      case _reminder:
-        router.go(Uri(path: '/tasks', queryParameters: {
-          'new': '1',
-          if (acc != null) 'accountId': acc,
-        }).toString());
+    final r = action.route(accountId: acc, monthFirst: DateContext.deviceMonthFirst);
+    if (r.filter != null) container.read(mailFilterProvider.notifier).state = r.filter!;
+    // Запрос лента подхватит и после перехода (mailSearchQueryProvider).
+    if (r.search != null && r.search!.isNotEmpty) container.read(mailSearchQueryProvider.notifier).state = r.search;
+    if (r.push) {
+      unawaited(router.push(r.location, extra: r.extra));
+    } else {
+      router.go(r.location);
+    }
+    // Поиск без запроса — поле поиска, когда лента уже на экране.
+    if (r.search != null && r.search!.isEmpty) {
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      container.read(mailSearchRequestProvider.notifier).state++;
     }
   }
 }

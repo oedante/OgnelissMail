@@ -23,11 +23,24 @@ def keep(path: str) -> bool:
         and not path.startswith('/') and not (root / path).exists()
 
 
+def ignored(paths: set[str]) -> set[str]:
+    """Пути, которые git сейчас игнорирует: сгенерированные и личные файлы
+    (app_database.g.dart когда-то был в git). В чистой копии их нет, и без
+    этой проверки они попадали в список — скрипт очистки удалил бы у
+    владельца код базы (01.11.2026)."""
+    if not paths:
+        return set()
+    r = subprocess.run(['git', 'check-ignore', '--no-index', '--stdin'], cwd=root, input='\n'.join(sorted(paths)),
+                       capture_output=True, text=True)
+    return {l.strip() for l in r.stdout.splitlines() if l.strip()}
+
+
 out = subprocess.run(['git', 'log', '--diff-filter=D', '--name-only', '--format='],
                      cwd=root, capture_output=True, text=True, check=True).stdout
 lines = target.read_text(encoding='utf-8').splitlines() if target.exists() else []
 head = [l for l in lines if l.startswith('#')]
 before = {l.strip() for l in lines if l.strip() and not l.startswith('#')}
-gone = sorted({p for p in before | set(out.splitlines()) if keep(p.strip())})
+candidates = {p.strip() for p in before | set(out.splitlines()) if keep(p.strip())}
+gone = sorted(candidates - ignored(candidates))
 target.write_text('\n'.join(head + gone) + '\n', encoding='utf-8')
 print(f'{len(gone)} файлов в {target.relative_to(root)}')

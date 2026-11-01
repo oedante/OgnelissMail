@@ -1026,10 +1026,34 @@ object WidgetBridge {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
+    /**
+     * Нажатие на виджет или ярлык значка (extra [EXTRA]) и Google Ассистент
+     * (App Actions, 1.9.x, res/xml/shortcuts.xml). Экран ждёт в [pending],
+     * пока Dart не заберёт его «take», — и при холодном запуске.
+     */
     fun handle(intent: Intent?) {
-        val type = intent?.getStringExtra(EXTRA) ?: return
-        intent?.removeExtra(EXTRA)
+        if (intent == null) return
+        val type = intent.getStringExtra(EXTRA) ?: assistantType(intent) ?: return
+        intent.removeExtra(EXTRA)
         pending = type
         runCatching { channel?.invokeMethod("open", null) }
     }
+
+    /** Действие Ассистента → экран для Dart (lib/core/platform/assistant_actions.dart):
+     *  GET_THING — «search?q=…», OPEN_APP_FEATURE — «feature?f=…» (id ярлыка
+     *  или слова человека). */
+    private fun assistantType(intent: Intent): String? {
+        if (intent.action != ASSISTANT) return null
+        val q = intent.getStringExtra("q")
+        val f = intent.getStringExtra("feature")
+        intent.removeExtra("q")
+        intent.removeExtra("feature")
+        return when {
+            q != null -> Uri.Builder().path("search").appendQueryParameter("q", q).build().toString()
+            f != null -> Uri.Builder().path("feature").appendQueryParameter("f", f).build().toString()
+            else -> null
+        }
+    }
+
+    private const val ASSISTANT = "com.ogneliss.mail.ASSISTANT"
 }

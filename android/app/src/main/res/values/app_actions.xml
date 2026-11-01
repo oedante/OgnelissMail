@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Слова разделов для Google Ассистента (App Actions, res/xml/shortcuts.xml,
+     1.9.x): «Открой непрочитанные в Ogneliss Mail». Подписи ярлыков
+     Ассистент знает и так; здесь — другие слова того же раздела. -->
+<resources>
+    <string-array name="app_action_myday">
+        <item>My day</item>
+        <item>Today</item>
+        <item>Agenda</item>
+    </string-array>
+    <string-array name="app_action_compose">
+        <item>New email</item>
+        <item>Compose</item>
+        <item>Write an email</item>
+        <item>New message</item>
+    </string-array>
+    <string-array name="app_action_event">
+        <item>New meeting</item>
+        <item>New event</item>
+        <item>Create a meeting</item>
+    </string-array>
+    <string-array name="app_action_reminder">
+        <item>New reminder</item>
+        <item>Create a reminder</item>
+        <item>Remind me</item>
+    </string-array>
+    <string-array name="app_action_unread">
+        <item>Unread</item>
+        <item>Unread mail</item>
+        <item>New mail</item>
+    </string-array>
+    <string-array name="app_action_vip">
+        <item>VIP</item>
+        <item>VIP mail</item>
+        <item>Mail from VIPs</item>
+    </string-array>
+    <string-array name="app_action_calendar">
+        <item>Calendar</item>
+        <item>Meetings</item>
+        <item>Events</item>
+    </string-array>
+    <string-array name="app_action_tasks">
+        <item>Tasks</item>
+        <item>Reminders</item>
+        <item>To-do</item>
+    </string-array>
+</resources>

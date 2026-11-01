@@ -25,4 +25,12 @@
     <string name="widget_cal_day">Zi</string>
     <string name="widget_cal_week">Săptămână</string>
     <string name="widget_cal_month">Lună</string>
+    <string name="shortcut_myday">Ziua mea</string>
+    <string name="shortcut_compose">Mesaj nou</string>
+    <string name="shortcut_event">Întâlnire nouă</string>
+    <string name="shortcut_reminder">Memento nou</string>
+    <string name="shortcut_unread">Necitite</string>
+    <string name="shortcut_vip">E-mail VIP</string>
+    <string name="shortcut_calendar">Calendar</string>
+    <string name="shortcut_tasks">Activități</string>
 </resources>

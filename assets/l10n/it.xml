@@ -3639,4 +3639,26 @@
     <string name="notifyMessengerStyleDesc">La foto o l\'iniziale del mittente accanto al messaggio</string>
     <string name="notifyVipConversations">Conversazioni per i VIP</string>
     <string name="notifyVipConversationsDesc">La posta dei VIP compare in Conversazioni di Android, dove puoi renderla prioritaria</string>
+    <string name="ios_siriCompose">Nuova email</string>
+    <string name="ios_siriEvent">Nuovo evento</string>
+    <string name="ios_siriReminder">Nuovo promemoria</string>
+    <string name="ios_siriMyDay">Il mio giorno</string>
+    <string name="ios_siriUnread">Non letti</string>
+    <string name="ios_siriTo">A</string>
+    <string name="ios_siriSubject">Oggetto</string>
+    <string name="android_shortcut_myday">Il mio giorno</string>
+    <string name="android_shortcut_compose">Nuovo messaggio</string>
+    <string name="android_shortcut_event">Nuova riunione</string>
+    <string name="android_shortcut_reminder">Nuovo promemoria</string>
+    <string name="android_shortcut_unread">Non letti</string>
+    <string name="android_shortcut_vip">Posta VIP</string>
+    <string name="android_shortcut_calendar">Calendario</string>
+    <string name="android_shortcut_tasks">Attività</string>
+    <string name="ios_siriVip">Email dai VIP</string>
+    <string name="ios_siriSearch">Cerca nella posta</string>
+    <string name="ios_siriPhrase">Cosa e quando</string>
+    <string name="ios_siriQuery">Cerca</string>
+    <string name="ios_siriEventAsk">Quale riunione e quando?</string>
+    <string name="ios_siriReminderAsk">Cosa devo ricordarti e quando?</string>
+    <string name="ios_siriSearchAsk">Cosa devo cercare?</string>
 </resources>

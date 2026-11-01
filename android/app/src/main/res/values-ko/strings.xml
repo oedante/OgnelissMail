@@ -25,4 +25,12 @@
     <string name="widget_cal_day">일</string>
     <string name="widget_cal_week">주</string>
     <string name="widget_cal_month">월</string>
+    <string name="shortcut_myday">오늘 일정</string>
+    <string name="shortcut_compose">새 메일</string>
+    <string name="shortcut_event">새 회의</string>
+    <string name="shortcut_reminder">새 알림</string>
+    <string name="shortcut_unread">읽지 않음</string>
+    <string name="shortcut_vip">VIP 메일</string>
+    <string name="shortcut_calendar">캘린더</string>
+    <string name="shortcut_tasks">작업</string>
 </resources>

@@ -3639,4 +3639,26 @@
     <string name="notifyMessengerStyleDesc">A feladó fotója vagy kezdőbetűje az üzenet mellett</string>
     <string name="notifyVipConversations">Beszélgetések VIP-eknek</string>
     <string name="notifyVipConversationsDesc">A VIP-ek levelei az Android Beszélgetések részében jelennek meg, ahol prioritásossá tehetők</string>
+    <string name="ios_siriCompose">Új üzenet</string>
+    <string name="ios_siriEvent">Új esemény</string>
+    <string name="ios_siriReminder">Új emlékeztető</string>
+    <string name="ios_siriMyDay">Saját napom</string>
+    <string name="ios_siriUnread">Olvasatlan</string>
+    <string name="ios_siriTo">Címzett</string>
+    <string name="ios_siriSubject">Tárgy</string>
+    <string name="android_shortcut_myday">Saját napom</string>
+    <string name="android_shortcut_compose">Új üzenet</string>
+    <string name="android_shortcut_event">Új értekezlet</string>
+    <string name="android_shortcut_reminder">Új emlékeztető</string>
+    <string name="android_shortcut_unread">Olvasatlan</string>
+    <string name="android_shortcut_vip">VIP-levelek</string>
+    <string name="android_shortcut_calendar">Naptár</string>
+    <string name="android_shortcut_tasks">Feladatok</string>
+    <string name="ios_siriVip">VIP-levelek</string>
+    <string name="ios_siriSearch">Keresés a levelekben</string>
+    <string name="ios_siriPhrase">Mit és mikor</string>
+    <string name="ios_siriQuery">Keresett szöveg</string>
+    <string name="ios_siriEventAsk">Milyen megbeszélés, és mikor?</string>
+    <string name="ios_siriReminderAsk">Mire és mikor emlékeztesselek?</string>
+    <string name="ios_siriSearchAsk">Mit keressek?</string>
 </resources>

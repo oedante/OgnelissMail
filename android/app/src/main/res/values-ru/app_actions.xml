@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Слова разделов для Google Ассистента — см. values/app_actions.xml. -->
+<resources>
+    <string-array name="app_action_myday">
+        <item>Мой день</item>
+        <item>Сегодня</item>
+        <item>План на день</item>
+    </string-array>
+    <string-array name="app_action_compose">
+        <item>Новое письмо</item>
+        <item>Написать письмо</item>
+        <item>Письмо</item>
+    </string-array>
+    <string-array name="app_action_event">
+        <item>Новая встреча</item>
+        <item>Создать встречу</item>
+        <item>Встреча</item>
+    </string-array>
+    <string-array name="app_action_reminder">
+        <item>Новое напоминание</item>
+        <item>Создать напоминание</item>
+        <item>Напоминание</item>
+    </string-array>
+    <string-array name="app_action_unread">
+        <item>Непрочитанные</item>
+        <item>Непрочитанные письма</item>
+        <item>Новые письма</item>
+    </string-array>
+    <string-array name="app_action_vip">
+        <item>VIP</item>
+        <item>Письма от VIP</item>
+        <item>Важные письма</item>
+    </string-array>
+    <string-array name="app_action_calendar">
+        <item>Календарь</item>
+        <item>Встречи</item>
+        <item>События</item>
+    </string-array>
+    <string-array name="app_action_tasks">
+        <item>Задачи</item>
+        <item>Напоминания</item>
+        <item>Дела</item>
+    </string-array>
+</resources>

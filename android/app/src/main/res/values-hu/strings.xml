@@ -25,4 +25,12 @@
     <string name="widget_cal_day">Nap</string>
     <string name="widget_cal_week">Hét</string>
     <string name="widget_cal_month">Hónap</string>
+    <string name="shortcut_myday">Saját napom</string>
+    <string name="shortcut_compose">Új üzenet</string>
+    <string name="shortcut_event">Új értekezlet</string>
+    <string name="shortcut_reminder">Új emlékeztető</string>
+    <string name="shortcut_unread">Olvasatlan</string>
+    <string name="shortcut_vip">VIP-levelek</string>
+    <string name="shortcut_calendar">Naptár</string>
+    <string name="shortcut_tasks">Feladatok</string>
 </resources>

@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "Bilder brukes bare når du legger dem ved en melding eller velger et bilde for en postboks.";
 "NSCameraUsageDescription" = "Ogneliss Mail bruker ikke kameraet selv. En nettside som åpnes fra en melding (for eksempel et videomøte), kan be om det.";
 "NSLocationWhenInUseUsageDescription" = "Ogneliss Mail sporer ikke posisjonen din. En nettside som åpnes fra en melding, kan be om den.";
+"siriCompose" = "Ny e-post";
+"siriEvent" = "Ny aktivitet";
+"siriReminder" = "Ny påminnelse";
+"siriMyDay" = "Min dag";
+"siriUnread" = "Uleste";
+"siriTo" = "Til";
+"siriSubject" = "Emne";
+"siriVip" = "E-post fra VIP-er";
+"siriSearch" = "Søk i e-post";
+"siriPhrase" = "Hva og når";
+"siriQuery" = "Søk etter";
+"siriEventAsk" = "Hvilket møte, og når?";
+"siriReminderAsk" = "Hva skal jeg minne deg på, og når?";
+"siriSearchAsk" = "Hva skal jeg søke etter?";

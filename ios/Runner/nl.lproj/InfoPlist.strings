@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "Foto's worden alleen gebruikt wanneer je ze aan een bericht toevoegt of een mailboxfoto kiest.";
 "NSCameraUsageDescription" = "Ogneliss Mail gebruikt zelf de camera niet. Een webpagina die vanuit een bericht wordt geopend (bijvoorbeeld een videovergadering) kan erom vragen.";
 "NSLocationWhenInUseUsageDescription" = "Ogneliss Mail volgt je locatie niet. Een webpagina die vanuit een bericht wordt geopend, kan erom vragen.";
+"siriCompose" = "Nieuw bericht";
+"siriEvent" = "Nieuwe afspraak";
+"siriReminder" = "Nieuwe herinnering";
+"siriMyDay" = "Mijn dag";
+"siriUnread" = "Ongelezen";
+"siriTo" = "Aan";
+"siriSubject" = "Onderwerp";
+"siriVip" = "Mail van VIP's";
+"siriSearch" = "Zoeken in mail";
+"siriPhrase" = "Wat en wanneer";
+"siriQuery" = "Zoeken naar";
+"siriEventAsk" = "Welke afspraak en wanneer?";
+"siriReminderAsk" = "Waaraan moet ik je herinneren, en wanneer?";
+"siriSearchAsk" = "Waar moet ik naar zoeken?";

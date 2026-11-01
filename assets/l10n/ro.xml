@@ -3658,4 +3658,26 @@
     <string name="notifyMessengerStyleDesc">Fotografia sau inițiala expeditorului lângă mesaj</string>
     <string name="notifyVipConversations">Conversații pentru VIP</string>
     <string name="notifyVipConversationsDesc">E-mailurile VIP apar la Conversații în Android, unde le puteți marca drept prioritare</string>
+    <string name="ios_siriCompose">Mesaj nou</string>
+    <string name="ios_siriEvent">Eveniment nou</string>
+    <string name="ios_siriReminder">Memento nou</string>
+    <string name="ios_siriMyDay">Ziua mea</string>
+    <string name="ios_siriUnread">Necitite</string>
+    <string name="ios_siriTo">Către</string>
+    <string name="ios_siriSubject">Subiect</string>
+    <string name="android_shortcut_myday">Ziua mea</string>
+    <string name="android_shortcut_compose">Mesaj nou</string>
+    <string name="android_shortcut_event">Întâlnire nouă</string>
+    <string name="android_shortcut_reminder">Memento nou</string>
+    <string name="android_shortcut_unread">Necitite</string>
+    <string name="android_shortcut_vip">E-mail VIP</string>
+    <string name="android_shortcut_calendar">Calendar</string>
+    <string name="android_shortcut_tasks">Activități</string>
+    <string name="ios_siriVip">E-mailuri de la VIP</string>
+    <string name="ios_siriSearch">Caută în e-mail</string>
+    <string name="ios_siriPhrase">Ce și când</string>
+    <string name="ios_siriQuery">Caută</string>
+    <string name="ios_siriEventAsk">Ce întâlnire și când?</string>
+    <string name="ios_siriReminderAsk">Ce să îți amintesc și când?</string>
+    <string name="ios_siriSearchAsk">Ce să caut?</string>
 </resources>

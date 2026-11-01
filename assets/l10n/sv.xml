@@ -3639,4 +3639,26 @@
     <string name="notifyMessengerStyleDesc">Avsändarens foto eller initial bredvid meddelandet</string>
     <string name="notifyVipConversations">Konversationer för VIP</string>
     <string name="notifyVipConversationsDesc">E-post från VIP visas under Konversationer i Android, där du kan prioritera den</string>
+    <string name="ios_siriCompose">Nytt e-postmeddelande</string>
+    <string name="ios_siriEvent">Ny händelse</string>
+    <string name="ios_siriReminder">Ny påminnelse</string>
+    <string name="ios_siriMyDay">Min dag</string>
+    <string name="ios_siriUnread">Olästa</string>
+    <string name="ios_siriTo">Till</string>
+    <string name="ios_siriSubject">Ämne</string>
+    <string name="android_shortcut_myday">Min dag</string>
+    <string name="android_shortcut_compose">Nytt meddelande</string>
+    <string name="android_shortcut_event">Nytt möte</string>
+    <string name="android_shortcut_reminder">Ny påminnelse</string>
+    <string name="android_shortcut_unread">Olästa</string>
+    <string name="android_shortcut_vip">VIP-e-post</string>
+    <string name="android_shortcut_calendar">Kalender</string>
+    <string name="android_shortcut_tasks">Uppgifter</string>
+    <string name="ios_siriVip">Mejl från VIP:er</string>
+    <string name="ios_siriSearch">Sök i mejl</string>
+    <string name="ios_siriPhrase">Vad och när</string>
+    <string name="ios_siriQuery">Sök efter</string>
+    <string name="ios_siriEventAsk">Vilket möte, och när?</string>
+    <string name="ios_siriReminderAsk">Vad ska jag påminna dig om, och när?</string>
+    <string name="ios_siriSearchAsk">Vad ska jag söka efter?</string>
 </resources>

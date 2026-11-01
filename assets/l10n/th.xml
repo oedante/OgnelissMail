@@ -3620,4 +3620,26 @@
     <string name="notifyMessengerStyleDesc">รูปภาพหรืออักษรย่อของผู้ส่งข้างข้อความ</string>
     <string name="notifyVipConversations">การสนทนาสำหรับ VIP</string>
     <string name="notifyVipConversationsDesc">อีเมลจาก VIP จะแสดงในส่วนการสนทนาของ Android ซึ่งคุณตั้งเป็นลำดับความสำคัญได้</string>
+    <string name="ios_siriCompose">อีเมลใหม่</string>
+    <string name="ios_siriEvent">กิจกรรมใหม่</string>
+    <string name="ios_siriReminder">การเตือนใหม่</string>
+    <string name="ios_siriMyDay">วันของฉัน</string>
+    <string name="ios_siriUnread">ยังไม่ได้อ่าน</string>
+    <string name="ios_siriTo">ถึง</string>
+    <string name="ios_siriSubject">หัวเรื่อง</string>
+    <string name="android_shortcut_myday">วันของฉัน</string>
+    <string name="android_shortcut_compose">อีเมลใหม่</string>
+    <string name="android_shortcut_event">การประชุมใหม่</string>
+    <string name="android_shortcut_reminder">การเตือนใหม่</string>
+    <string name="android_shortcut_unread">ยังไม่ได้อ่าน</string>
+    <string name="android_shortcut_vip">อีเมล VIP</string>
+    <string name="android_shortcut_calendar">ปฏิทิน</string>
+    <string name="android_shortcut_tasks">งาน</string>
+    <string name="ios_siriVip">อีเมลจาก VIP</string>
+    <string name="ios_siriSearch">ค้นหาในอีเมล</string>
+    <string name="ios_siriPhrase">อะไรและเมื่อไร</string>
+    <string name="ios_siriQuery">ค้นหา</string>
+    <string name="ios_siriEventAsk">ประชุมอะไรและเมื่อไร</string>
+    <string name="ios_siriReminderAsk">ให้เตือนเรื่องอะไรและเมื่อไร</string>
+    <string name="ios_siriSearchAsk">ต้องการค้นหาอะไร</string>
 </resources>

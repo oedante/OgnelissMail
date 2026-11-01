@@ -25,4 +25,12 @@
     <string name="widget_cal_day">يوم</string>
     <string name="widget_cal_week">أسبوع</string>
     <string name="widget_cal_month">شهر</string>
+    <string name="shortcut_myday">يومي</string>
+    <string name="shortcut_compose">رسالة جديدة</string>
+    <string name="shortcut_event">اجتماع جديد</string>
+    <string name="shortcut_reminder">تذكير جديد</string>
+    <string name="shortcut_unread">غير المقروءة</string>
+    <string name="shortcut_vip">بريد VIP</string>
+    <string name="shortcut_calendar">التقويم</string>
+    <string name="shortcut_tasks">المهام</string>
 </resources>

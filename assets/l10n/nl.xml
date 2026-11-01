@@ -3639,4 +3639,26 @@
     <string name="notifyMessengerStyleDesc">Foto of initiaal van de afzender naast het bericht</string>
     <string name="notifyVipConversations">Gesprekken voor VIP\'s</string>
     <string name="notifyVipConversationsDesc">Mail van VIP\'s verschijnt onder Gesprekken in Android, waar je deze als prioriteit kunt markeren</string>
+    <string name="ios_siriCompose">Nieuw bericht</string>
+    <string name="ios_siriEvent">Nieuwe afspraak</string>
+    <string name="ios_siriReminder">Nieuwe herinnering</string>
+    <string name="ios_siriMyDay">Mijn dag</string>
+    <string name="ios_siriUnread">Ongelezen</string>
+    <string name="ios_siriTo">Aan</string>
+    <string name="ios_siriSubject">Onderwerp</string>
+    <string name="android_shortcut_myday">Mijn dag</string>
+    <string name="android_shortcut_compose">Nieuw bericht</string>
+    <string name="android_shortcut_event">Nieuwe vergadering</string>
+    <string name="android_shortcut_reminder">Nieuwe herinnering</string>
+    <string name="android_shortcut_unread">Ongelezen</string>
+    <string name="android_shortcut_vip">VIP-mail</string>
+    <string name="android_shortcut_calendar">Agenda</string>
+    <string name="android_shortcut_tasks">Taken</string>
+    <string name="ios_siriVip">Mail van VIP\'s</string>
+    <string name="ios_siriSearch">Zoeken in mail</string>
+    <string name="ios_siriPhrase">Wat en wanneer</string>
+    <string name="ios_siriQuery">Zoeken naar</string>
+    <string name="ios_siriEventAsk">Welke afspraak en wanneer?</string>
+    <string name="ios_siriReminderAsk">Waaraan moet ik je herinneren, en wanneer?</string>
+    <string name="ios_siriSearchAsk">Waar moet ik naar zoeken?</string>
 </resources>

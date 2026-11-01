@@ -3658,4 +3658,26 @@
     <string name="notifyMessengerStyleDesc">תמונת השולח או האות הראשונה לצד ההודעה</string>
     <string name="notifyVipConversations">שיחות לאנשי VIP</string>
     <string name="notifyVipConversationsDesc">דואר מאנשי VIP מופיע בקטע השיחות של Android, שם אפשר לסמן אותו כבעל עדיפות</string>
+    <string name="ios_siriCompose">הודעה חדשה</string>
+    <string name="ios_siriEvent">אירוע חדש</string>
+    <string name="ios_siriReminder">תזכורת חדשה</string>
+    <string name="ios_siriMyDay">היום שלי</string>
+    <string name="ios_siriUnread">לא נקראו</string>
+    <string name="ios_siriTo">אל</string>
+    <string name="ios_siriSubject">נושא</string>
+    <string name="android_shortcut_myday">היום שלי</string>
+    <string name="android_shortcut_compose">הודעה חדשה</string>
+    <string name="android_shortcut_event">פגישה חדשה</string>
+    <string name="android_shortcut_reminder">תזכורת חדשה</string>
+    <string name="android_shortcut_unread">לא נקראו</string>
+    <string name="android_shortcut_vip">דואר VIP</string>
+    <string name="android_shortcut_calendar">לוח שנה</string>
+    <string name="android_shortcut_tasks">משימות</string>
+    <string name="ios_siriVip">דואר מאנשי VIP</string>
+    <string name="ios_siriSearch">חיפוש בדואר</string>
+    <string name="ios_siriPhrase">מה ומתי</string>
+    <string name="ios_siriQuery">חיפוש</string>
+    <string name="ios_siriEventAsk">איזו פגישה ומתי?</string>
+    <string name="ios_siriReminderAsk">על מה להזכיר ומתי?</string>
+    <string name="ios_siriSearchAsk">מה לחפש?</string>
 </resources>

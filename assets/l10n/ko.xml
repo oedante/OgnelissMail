@@ -3620,4 +3620,26 @@
     <string name="notifyMessengerStyleDesc">메시지 옆에 보낸 사람의 사진 또는 이니셜 표시</string>
     <string name="notifyVipConversations">VIP 대화</string>
     <string name="notifyVipConversationsDesc">VIP 메일이 Android의 대화 섹션에 표시되며 우선순위로 지정할 수 있습니다</string>
+    <string name="ios_siriCompose">새 메일</string>
+    <string name="ios_siriEvent">새 일정</string>
+    <string name="ios_siriReminder">새 알림</string>
+    <string name="ios_siriMyDay">오늘 일정</string>
+    <string name="ios_siriUnread">읽지 않음</string>
+    <string name="ios_siriTo">받는 사람</string>
+    <string name="ios_siriSubject">제목</string>
+    <string name="android_shortcut_myday">오늘 일정</string>
+    <string name="android_shortcut_compose">새 메일</string>
+    <string name="android_shortcut_event">새 회의</string>
+    <string name="android_shortcut_reminder">새 알림</string>
+    <string name="android_shortcut_unread">읽지 않음</string>
+    <string name="android_shortcut_vip">VIP 메일</string>
+    <string name="android_shortcut_calendar">캘린더</string>
+    <string name="android_shortcut_tasks">작업</string>
+    <string name="ios_siriVip">VIP 메일</string>
+    <string name="ios_siriSearch">메일 검색</string>
+    <string name="ios_siriPhrase">내용과 시간</string>
+    <string name="ios_siriQuery">검색어</string>
+    <string name="ios_siriEventAsk">어떤 회의를 언제 할까요?</string>
+    <string name="ios_siriReminderAsk">무엇을 언제 알려 드릴까요?</string>
+    <string name="ios_siriSearchAsk">무엇을 검색할까요?</string>
 </resources>

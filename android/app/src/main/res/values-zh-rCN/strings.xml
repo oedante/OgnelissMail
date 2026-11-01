@@ -25,4 +25,12 @@
     <string name="widget_cal_day">日</string>
     <string name="widget_cal_week">周</string>
     <string name="widget_cal_month">月</string>
+    <string name="shortcut_myday">我的一天</string>
+    <string name="shortcut_compose">新邮件</string>
+    <string name="shortcut_event">新会议</string>
+    <string name="shortcut_reminder">新提醒</string>
+    <string name="shortcut_unread">未读</string>
+    <string name="shortcut_vip">VIP 邮件</string>
+    <string name="shortcut_calendar">日历</string>
+    <string name="shortcut_tasks">任务</string>
 </resources>

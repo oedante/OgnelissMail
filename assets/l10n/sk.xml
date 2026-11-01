@@ -3658,4 +3658,26 @@
     <string name="notifyMessengerStyleDesc">Fotka alebo iniciála odosielateľa vedľa správy</string>
     <string name="notifyVipConversations">Konverzácie pre VIP</string>
     <string name="notifyVipConversationsDesc">Pošta od VIP sa zobrazí v sekcii Konverzácie v Androide, kde ju môžete označiť ako prioritnú</string>
+    <string name="ios_siriCompose">Nová správa</string>
+    <string name="ios_siriEvent">Nová udalosť</string>
+    <string name="ios_siriReminder">Nová pripomienka</string>
+    <string name="ios_siriMyDay">Môj deň</string>
+    <string name="ios_siriUnread">Neprečítané</string>
+    <string name="ios_siriTo">Komu</string>
+    <string name="ios_siriSubject">Predmet</string>
+    <string name="android_shortcut_myday">Môj deň</string>
+    <string name="android_shortcut_compose">Nová správa</string>
+    <string name="android_shortcut_event">Nové stretnutie</string>
+    <string name="android_shortcut_reminder">Nová pripomienka</string>
+    <string name="android_shortcut_unread">Neprečítané</string>
+    <string name="android_shortcut_vip">VIP pošta</string>
+    <string name="android_shortcut_calendar">Kalendár</string>
+    <string name="android_shortcut_tasks">Úlohy</string>
+    <string name="ios_siriVip">Pošta od VIP</string>
+    <string name="ios_siriSearch">Hľadať v pošte</string>
+    <string name="ios_siriPhrase">Čo a kedy</string>
+    <string name="ios_siriQuery">Hľadať</string>
+    <string name="ios_siriEventAsk">Aká schôdzka a kedy?</string>
+    <string name="ios_siriReminderAsk">Čo a kedy vám mám pripomenúť?</string>
+    <string name="ios_siriSearchAsk">Čo mám hľadať?</string>
 </resources>

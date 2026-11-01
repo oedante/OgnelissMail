@@ -34,6 +34,7 @@ Contributions are accepted under the same license (section 5 of the license).
 | OpenDyslexic font | SIL OFL 1.1, Reserved Font Name "OpenDyslexic" | `assets/fonts/` |
 | Medeo Sans font (unmodified, github.com/DNFDEVS/medeo-font) | SIL OFL 1.1 | `assets/fonts/medeo/` |
 | Material Symbols icons | Apache-2.0 | `material_symbols_icons` |
+| flutter_svg (sender logos, BIMI) with vector_graphics, vector_graphics_codec, vector_graphics_compiler | MIT; vector_graphics*: BSD-3-Clause | pub.dev |
 | AndroidX, Kotlin, AppAuth | Apache-2.0 | Android and iOS builds |
 | Russian Trusted Root CA certificates | public certificates | `assets/certs/` |
 

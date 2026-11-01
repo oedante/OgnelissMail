@@ -652,6 +652,7 @@ class ImapService {
         final parent = newParentPath ?? (i < 0 ? '' : path.substring(0, i));
         final last = newName ?? decodeMutf7(i < 0 ? path : path.substring(i + sep.length));
         final target = parent.isEmpty ? last : '$parent$sep$last';
+        await _leaveSelected(client);
         await client.renameMailbox(box, target);
         AppLogger.info('IMAP: папка $path → $target');
         return true;
@@ -663,9 +664,26 @@ class ImapService {
         final boxes = await client.listMailboxes(recursive: true);
         final box = boxes.where((b) => b.encodedPath == path).firstOrNull;
         if (box == null) return false;
+        await _leaveSelected(client);
         await client.deleteMailbox(box);
         return true;
       }, canRetry: () => false);
+
+  /// Выйти из открытой (SELECT) папки перед её удалением или
+  /// переименованием. Dovecot, удаляя открытую в этом соединении папку,
+  /// разрывает соединение («Selected mailbox was deleted, have to
+  /// disconnect»), и следующие операции ящика ждали тайм-аута (проверка на
+  /// настоящем сервере, 01.11.2026). Переход во «Входящие», а не UNSELECT:
+  /// в enough_mail 2.1.7 ответ на UNSELECT падает при разборе (тип
+  /// Response<void>), и команда не завершается; CLOSE удалил бы письма,
+  /// помеченные к удалению.
+  Future<void> _leaveSelected(ImapClient client) async {
+    try {
+      await client.selectInbox();
+    } catch (_) {
+      // Не вышло — удаление всё равно попробуем: хуже, чем было, не станет.
+    }
+  }
 
   FolderType _mapMailboxType(Mailbox mb) {
     if (mb.isInbox) return FolderType.inbox;
@@ -1210,7 +1228,10 @@ class ImapService {
       final String fetchSpec;
       switch (fetchMode) {
         case EmailFetchMode.full:
-          fetchSpec = '(UID FLAGS ENVELOPE BODY.PEEK[] RFC822.SIZE)';
+          // BODYSTRUCTURE — и здесь: список вложений берётся из структуры
+          // (msg.body). Без неё в режиме «целиком» у открытого письма не было
+          // ни одного вложения (проверка на настоящем сервере, 01.11.2026).
+          fetchSpec = '(UID FLAGS ENVELOPE BODYSTRUCTURE BODY.PEEK[] RFC822.SIZE)';
           break;
         // Частичные режимы прежде запрашивали BODY.PEEK[]<0.N>: сервер
         // отвечает «BODY[]<0>», а разборщик enough_mail такой ключ не
@@ -2119,7 +2140,9 @@ class ImapService {
     if (cc.isNotEmpty) builder.cc = cc.map((a) => MailAddress(a.displayName, a.email)).toList();
     if (bcc.isNotEmpty) builder.bcc = bcc.map((a) => MailAddress(a.displayName, a.email)).toList();
     builder.subject = subject;
-    builder.setHeader('Message-ID', messageId);
+    // Через свойство, не setHeader: при сборке enough_mail пишет свой
+    // Message-Id поверх заголовка (проверка на настоящем сервере, 01.11.2026).
+    builder.messageId = messageId;
     final message = builder.buildMimeMessage();
     applyAddressHeaders(message,
         fromName: account.displayName,

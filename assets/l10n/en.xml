@@ -3013,6 +3013,8 @@
     <string name="pushWakeStatusLast">Last signal: {when}</string>
     <string name="pushWakeStatusNone">Not registered yet</string>
     <string name="pushWakeStatusError">Failed: {e}</string>
+    <string name="pushWakeTitleAndroid">Server signals</string>
+    <string name="pushWakeHelpAndroid">Android decides on its own when a background app may run: in deep sleep it postpones background checks, and since Android 15 background sync gets at most 6 hours a day. The developer’s server (ogneliss.ru/push) sends an empty “check your mail” signal through Google (Firebase Cloud Messaging) at the chosen interval, and the app checks your mailboxes itself, from this device. Only this installation’s notification token is sent to the server — no addresses, passwords or messages. In deep sleep Android may deliver the signal later, in the next maintenance window. Requires Google Play services. Details are in the Privacy Policy, section 6.2.</string>
     <string name="mailCheckKindSignal">server signal</string>
     <string name="specialArchiveFolder">Archive folder</string>
     <string name="specialJunkFolder">Junk folder</string>

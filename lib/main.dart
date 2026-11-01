@@ -109,6 +109,19 @@ Future<void> main() async {
           '(full text: https://www.apache.org/licenses/LICENSE-2.0).\n'
           'Source: https://github.com/cure53/DOMPurify');
     });
+    // Firebase Cloud Messaging (сигналы сервера на Android, 1.9.x) —
+    // библиотека Android, а не пакет pub.dev: текст лицензии сам не попадает
+    // в список. Apache 2.0 — тот же текст, что у приложения (LICENSE).
+    if (!kIsWeb && Platform.isAndroid) {
+      LicenseRegistry.addLicense(() async* {
+        final license = await rootBundle.loadString('LICENSE');
+        yield LicenseEntryWithLineBreaks(const ['Firebase Cloud Messaging'],
+            'Firebase Android SDK (firebase-messaging and the Firebase libraries it uses)\n'
+            'Copyright Google LLC. Licensed under the Apache License, Version 2.0.\n'
+            'Source: https://github.com/firebase/firebase-android-sdk\n'
+            'Uses Google Play services (Google APIs Terms of Service).\n\n$license');
+      });
+    }
     LicenseRegistry.addLicense(() async* {
       final notice = await rootBundle.loadString('NOTICE');
       final license = await rootBundle.loadString('LICENSE');

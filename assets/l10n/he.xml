@@ -3026,6 +3026,8 @@
     <string name="pushWakeStatusLast">האות האחרון: {when}</string>
     <string name="pushWakeStatusNone">עדיין לא נרשם</string>
     <string name="pushWakeStatusError">נכשל: {e}</string>
+    <string name="pushWakeTitleAndroid">אותות מהשרת</string>
+    <string name="pushWakeHelpAndroid">Android מחליט בעצמו מתי אפליקציה ברקע רשאית לפעול: בשינה עמוקה הוא דוחה בדיקות ברקע, ומאז Android 15 הסנכרון ברקע מקבל לכל היותר 6 שעות ביממה. שרת המפתח (ogneliss.ru/push) שולח דרך Google (Firebase Cloud Messaging), במרווח שנבחר, אות ריק „בדוק דואר”, והאפליקציה בודקת את תיבות הדואר בעצמה, מהמכשיר הזה. לשרת נשלח רק אסימון ההתראות של התקנה זו — ללא כתובות, סיסמאות או הודעות. בשינה עמוקה Android עשוי למסור את האות מאוחר יותר, בחלון התחזוקה הקרוב. נדרשים שירותי Google Play. פרטים במדיניות הפרטיות, סעיף 6.2.</string>
     <string name="mailCheckKindSignal">אות מהשרת</string>
     <string name="specialArchiveFolder">תיקיית ארכיון</string>
     <string name="specialJunkFolder">תיקיית דואר זבל</string>

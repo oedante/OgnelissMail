@@ -3000,6 +3000,8 @@
     <string name="pushWakeStatusLast">Tín hiệu gần nhất: {when}</string>
     <string name="pushWakeStatusNone">Chưa đăng ký</string>
     <string name="pushWakeStatusError">Không thành công: {e}</string>
+    <string name="pushWakeTitleAndroid">Tín hiệu từ máy chủ</string>
+    <string name="pushWakeHelpAndroid">Android tự quyết định khi nào ứng dụng chạy nền được hoạt động: khi ngủ sâu, Android hoãn các lần kiểm tra nền, và từ Android 15 việc đồng bộ nền chỉ được tối đa 6 giờ mỗi ngày. Máy chủ của nhà phát triển (ogneliss.ru/push) gửi tín hiệu trống «kiểm tra thư» qua Google (Firebase Cloud Messaging) theo khoảng thời gian đã chọn, và ứng dụng tự kiểm tra hộp thư từ chính thiết bị này. Chỉ mã thông báo của lần cài đặt này được gửi đến máy chủ — không có địa chỉ, mật khẩu hay thư. Khi ngủ sâu, Android có thể chuyển tín hiệu muộn hơn, vào khoảng bảo trì tiếp theo. Cần dịch vụ Google Play. Chi tiết trong Chính sách quyền riêng tư, mục 6.2.</string>
     <string name="mailCheckKindSignal">tín hiệu từ máy chủ</string>
     <string name="specialArchiveFolder">Thư mục lưu trữ</string>
     <string name="specialJunkFolder">Thư mục thư rác</string>

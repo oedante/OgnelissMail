@@ -105,10 +105,14 @@ class NotificationsSettingsScreen extends ConsumerWidget {
               onTap: () => unawaited(ref.read(notificationServiceProvider).showTestNotification()),
             ),
           ]),
-          // Сигналы сервера (iPhone, 1.7.2): свёрнутое приложение просыпается
-          // по пустому сигналу «проверь почту» с ogneliss.ru/push.
+          // Сигналы сервера (iPhone, 1.7.2; Android через FCM, 1.9.x):
+          // свёрнутое приложение просыпается по пустому сигналу «проверь
+          // почту» с ogneliss.ru/push.
           if (PushWakeService.supported) ...[
-            SettingsSectionTitle(l10n.tr('pushWakeTitle'), help: l10n.tr('pushWakeHelp')),
+            if (PushWakeService.platformOs == PushWakeOs.android)
+              SettingsSectionTitle(l10n.tr('pushWakeTitleAndroid'), help: l10n.tr('pushWakeHelpAndroid'))
+            else
+              SettingsSectionTitle(l10n.tr('pushWakeTitle'), help: l10n.tr('pushWakeHelp')),
             SettingsGroup(children: [
               SettingsSwitchItem(
                 icon: AppIcons.cloud_sync,

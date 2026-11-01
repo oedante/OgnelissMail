@@ -16,6 +16,8 @@ services:
       - "8788"
     volumes:
       - ./data:/data
+      # Ключи: AuthKey_<KEYID>.p8 (Apple) и fcm-service-account.json
+      # (Firebase, Android) — только чтение.
       - ./keys:/keys:ro
     restart: always
     read_only: true

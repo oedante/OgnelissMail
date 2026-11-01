@@ -3013,6 +3013,8 @@
     <string name="pushWakeStatusLast">Ultimo segnale: {when}</string>
     <string name="pushWakeStatusNone">Non ancora registrato</string>
     <string name="pushWakeStatusError">Errore: {e}</string>
+    <string name="pushWakeTitleAndroid">Segnali del server</string>
+    <string name="pushWakeHelpAndroid">Android decide da solo quando un\'app in background può funzionare: nel sonno profondo rimanda i controlli in background e, da Android 15, la sincronizzazione in background ha al massimo 6 ore al giorno. Il server dello sviluppatore (ogneliss.ru/push) invia tramite Google (Firebase Cloud Messaging), all\'intervallo scelto, un segnale vuoto «controlla la posta», e l\'app controlla da sola le tue cassette postali, da questo dispositivo. Al server viene inviato solo il token di notifica di questa installazione: nessun indirizzo, password o messaggio. Nel sonno profondo Android può consegnare il segnale più tardi, nella successiva finestra di manutenzione. Richiede i servizi Google Play. Dettagli nell\'Informativa sulla privacy, sezione 6.2.</string>
     <string name="mailCheckKindSignal">segnale del server</string>
     <string name="specialArchiveFolder">Cartella archivio</string>
     <string name="specialJunkFolder">Cartella spam</string>

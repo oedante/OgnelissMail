@@ -3013,6 +3013,8 @@
     <string name="pushWakeStatusLast">Utolsó jelzés: {when}</string>
     <string name="pushWakeStatusNone">Még nincs regisztrálva</string>
     <string name="pushWakeStatusError">Sikertelen: {e}</string>
+    <string name="pushWakeTitleAndroid">Szerverjelzések</string>
+    <string name="pushWakeHelpAndroid">Az Android maga dönti el, mikor futhat a háttérben lévő alkalmazás: mély alvásban elhalasztja a háttérellenőrzéseket, és az Android 15 óta a háttérszinkronizálás naponta legfeljebb 6 órát kap. A fejlesztő szervere (ogneliss.ru/push) a választott időközönként a Google-on (Firebase Cloud Messaging) keresztül üres „levelek ellenőrzése” jelzést küld, és az alkalmazás maga ellenőrzi a postafiókokat erről az eszközről. A szerverre csak a telepítés értesítési tokenje kerül — se címek, se jelszavak, se levelek. Mély alvásban az Android később, a következő karbantartási ablakban is kézbesítheti a jelzést. Google Play-szolgáltatások szükségesek. Részletek az Adatvédelmi irányelvek 6.2. pontjában.</string>
     <string name="mailCheckKindSignal">a szerver jelzése</string>
     <string name="specialArchiveFolder">Archív mappa</string>
     <string name="specialJunkFolder">Levélszemét mappa</string>

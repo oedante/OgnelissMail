@@ -7,7 +7,7 @@
 // - Синхронизация контактов/календаря с устройством
 // - Регистрация всех фоновых задач
 
-import '../push/push_wake_service.dart' show pushWakeServiceProvider;
+import '../push/push_wake_service.dart' show PushWakeService, pushWakeServiceProvider;
 import '../calendar/quick_create_service.dart' show quickCreateProvider;
 import '../sync/sync_schedule.dart';
 import 'dart:async';
@@ -57,6 +57,9 @@ class _TaskNames {
   /// iOS (1.6.42): BGProcessingTask — дополнительные пробуждения сверх
   /// BGAppRefresh (тот же идентификатор в Info.plist и AppDelegate).
   static const processingSync = 'processing_sync';
+  /// Android (1.9.x): сигнал сервера через FCM — разовую задачу ставит
+  /// PushWakeFcm.kt (то же имя там).
+  static const pushWake = 'push_wake';
 }
 
 /// iOS: какая фоновая задача сейчас работает (мс эпохи) — чтобы две задачи
@@ -73,16 +76,25 @@ const _mainPortName = 'ogneliss_main_tasks_v1';
 const _legacyAliveKey = 'bg_main_alive_at';
 
 /// Лимит фоновой задачи: WorkManager обрывает работу через ~10 мин; iOS даёт
-/// «Обновлению контента» ~30 с, «Обработке» — минуты.
+/// «Обновлению контента» ~30 с, «Обработке» — минуты. Сигнал сервера на
+/// Android — 3 минуты: срочную задачу (высокий приоритет FCM) система
+/// держит недолго, а следующий сигнал придёт через интервал.
 Duration _taskLimit(String taskName) {
+  if (taskName == _TaskNames.pushWake) return const Duration(minutes: 3);
   if (kIsWeb || !Platform.isIOS) return const Duration(minutes: 9);
   return taskName == _TaskNames.processingSync ? const Duration(minutes: 3) : const Duration(seconds: 27);
 }
 
 String _taskKind(String taskName) {
+  if (taskName == _TaskNames.pushWake) return PushWakeService.androidWakeKind;
   if (kIsWeb || !Platform.isIOS) return 'WorkManager';
   return taskName == _TaskNames.processingSync ? 'BGProcessing iOS' : 'BGTask iOS';
 }
+
+/// Для тестов: имя и лимит фоновой задачи по её имени.
+@visibleForTesting
+({String kind, Duration limit}) backgroundTaskInfo(String taskName) =>
+    (kind: _taskKind(taskName), limit: _taskLimit(taskName));
 
 /// Сколько осталось от лимита с момента пробуждения (не меньше 5 с).
 Duration _leftOf(Duration limit, DateTime wokeAt) {
@@ -181,6 +193,13 @@ void callbackDispatcher() {
     AppLogger.setTag('фон');
     await AppLogger.init();
     AppLogger.info('WorkManager: $taskName (фоновый изолят)');
+    // Сигнал сервера (Android, 1.9.x) — отметка для «Последний сигнал» в
+    // настройках; проверка — та же, что у плановой задачи.
+    if (taskName == _TaskNames.pushWake) {
+      try {
+        await PushWakeService.noteWake(await SharedPreferences.getInstance());
+      } catch (_) {}
+    }
     // Процесс приложения жив — проверку делает оно, задача ждёт итог (раньше
     // в этом случае задача уходила сразу: «пропуск: приложение работает
     // само», а приложение без сети или замороженное ничего не проверяло).
@@ -194,12 +213,13 @@ void callbackDispatcher() {
       return _runIosTask(taskName, wokeAt);
     }
     try {
-      await BackgroundJournal.track('WorkManager', () => runInBackgroundContainer((container) async {
-        // Лимит задачи WorkManager ~10 мин — держим синк заведомо короче.
+      await BackgroundJournal.track(_taskKind(taskName), () => runInBackgroundContainer((container) async {
+        // Лимит задачи WorkManager ~10 мин — держим синк заведомо короче
+        // (сигнал сервера — 3 мин, _taskLimit).
         await container
             .read(syncServiceProvider)
             .syncAll(scheduled: true, respectInterval: true)
-            .timeout(const Duration(minutes: 9));
+            .timeout(_taskLimit(taskName));
         // Напоминания встреч, пришедших с этим синком, проверка «нет ответа»
         // и виджет — до закрытия контейнера (их запускает syncAll; раньше
         // напоминания выставлялись здесь второй раз).
@@ -403,7 +423,8 @@ class BackgroundService {
         }
       }
 
-      // 2a. iPhone: сигналы сервера «проверь почту» (1.7.2).
+      // 2a. Сигналы сервера «проверь почту»: iPhone (1.7.2), Android (1.9.x,
+      // если в сборке есть параметры Firebase).
       unawaited(_ref.read(pushWakeServiceProvider).init());
 
       // 3. Таймеры в foreground
@@ -492,6 +513,13 @@ class BackgroundService {
     if (reply is! SendPort) return;
     reply.send(const <String, Object?>{'ack': true});
     final kind = '${msg['kind'] ?? 'фоновая задача'}';
+    // Сигнал сервера на Android: отметку уже записала фоновая задача, но у
+    // приложения свой кэш настроек — иначе экран показал бы прежнее время.
+    if (kind == PushWakeService.androidWakeKind) {
+      try {
+        unawaited(PushWakeService.noteWake(_ref.read(sharedPrefsProvider)));
+      } catch (_) {}
+    }
     final ms = msg['limitMs'];
     final limit = Duration(milliseconds: ms is int ? ms : 9 * 60 * 1000);
     var run = _taskRun;

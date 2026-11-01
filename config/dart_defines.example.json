@@ -8,5 +8,10 @@
   "GOOGLE_DESKTOP_CLIENT_SECRET": "",
   "MS_CLIENT_ID": "",
   "PUSH_RELAY_URL": "https://www.ogneliss.ru/push",
-  "PUSH_WAKE_MODE": "silent"
+  "PUSH_WAKE_MODE": "silent",
+  "FIREBASE_API_KEY": "",
+  "FIREBASE_APP_ID": "",
+  "FIREBASE_SENDER_ID": "",
+  "FIREBASE_PROJECT_ID": "",
+  "PUSH_WAKE_ANDROID_PRIORITY": "normal"
 }

@@ -3026,6 +3026,8 @@
     <string name="pushWakeStatusLast">Posledný signál: {when}</string>
     <string name="pushWakeStatusNone">Zatiaľ nezaregistrované</string>
     <string name="pushWakeStatusError">Nepodarilo sa: {e}</string>
+    <string name="pushWakeTitleAndroid">Signály zo servera</string>
+    <string name="pushWakeHelpAndroid">Android sám rozhoduje, kedy môže aplikácia na pozadí bežať: v hlbokom spánku odkladá kontroly na pozadí a od Androidu 15 dostáva synchronizácia na pozadí najviac 6 hodín denne. Server vývojára (ogneliss.ru/push) vo zvolenom intervale posiela cez Google (Firebase Cloud Messaging) prázdny signál „skontroluj poštu“ a aplikácia schránky skontroluje sama, z tohto zariadenia. Na server sa odosiela len token upozornení tejto inštalácie — žiadne adresy, heslá ani správy. V hlbokom spánku môže Android signál doručiť neskôr, v najbližšom okne údržby. Vyžaduje služby Google Play. Podrobnosti sú v Zásadách ochrany súkromia, oddiel 6.2.</string>
     <string name="mailCheckKindSignal">signál zo servera</string>
     <string name="specialArchiveFolder">Priečinok archívu</string>
     <string name="specialJunkFolder">Priečinok nevyžiadanej pošty</string>

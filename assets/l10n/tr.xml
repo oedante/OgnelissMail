@@ -3013,6 +3013,8 @@
     <string name="pushWakeStatusLast">Son sinyal: {when}</string>
     <string name="pushWakeStatusNone">Henüz kayıtlı değil</string>
     <string name="pushWakeStatusError">Hata: {e}</string>
+    <string name="pushWakeTitleAndroid">Sunucu sinyalleri</string>
+    <string name="pushWakeHelpAndroid">Android, arka plandaki bir uygulamanın ne zaman çalışabileceğine kendisi karar verir: derin uykuda arka plan denetimlerini erteler ve Android 15’ten beri arka plan eşitlemesine günde en fazla 6 saat verilir. Geliştiricinin sunucusu (ogneliss.ru/push) seçilen aralıkla Google (Firebase Cloud Messaging) üzerinden boş bir «postayı denetle» sinyali gönderir ve uygulama posta kutularınızı bu cihazdan kendisi denetler. Sunucuya yalnızca bu kurulumun bildirim belirteci gönderilir — adres, parola veya ileti gönderilmez. Derin uykuda Android sinyali daha sonra, bir sonraki bakım aralığında iletebilir. Google Play hizmetleri gerekir. Ayrıntılar Gizlilik Politikası’nın 6.2 bölümündedir.</string>
     <string name="mailCheckKindSignal">sunucu sinyali</string>
     <string name="specialArchiveFolder">Arşiv klasörü</string>
     <string name="specialJunkFolder">Gereksiz e-posta klasörü</string>

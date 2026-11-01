@@ -3013,6 +3013,8 @@
     <string name="pushWakeStatusLast">Seneste signal: {when}</string>
     <string name="pushWakeStatusNone">Endnu ikke registreret</string>
     <string name="pushWakeStatusError">Mislykkedes: {e}</string>
+    <string name="pushWakeTitleAndroid">Serversignaler</string>
+    <string name="pushWakeHelpAndroid">Android bestemmer selv, hvornår en app i baggrunden må køre: i dyb dvale udsætter den baggrundstjek, og fra Android 15 får baggrundssynkronisering højst 6 timer i døgnet. Udviklerens server (ogneliss.ru/push) sender med det valgte interval et tomt signal “tjek mail” via Google (Firebase Cloud Messaging), og appen tjekker selv dine postkasser fra denne enhed. Kun denne installations notifikationstoken sendes til serveren — ingen adresser, adgangskoder eller beskeder. I dyb dvale kan Android levere signalet senere, i det næste vedligeholdelsesvindue. Kræver Google Play-tjenester. Detaljer står i privatlivspolitikken, afsnit 6.2.</string>
     <string name="mailCheckKindSignal">signal fra serveren</string>
     <string name="specialArchiveFolder">Arkivmappe</string>
     <string name="specialJunkFolder">Spammappe</string>

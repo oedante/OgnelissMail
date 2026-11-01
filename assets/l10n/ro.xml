@@ -3026,6 +3026,8 @@
     <string name="pushWakeStatusLast">Ultimul semnal: {when}</string>
     <string name="pushWakeStatusNone">Încă neînregistrat</string>
     <string name="pushWakeStatusError">Eșec: {e}</string>
+    <string name="pushWakeTitleAndroid">Semnale de la server</string>
+    <string name="pushWakeHelpAndroid">Android decide singur când poate rula o aplicație în fundal: în somn profund amână verificările în fundal, iar de la Android 15 sincronizarea în fundal primește cel mult 6 ore pe zi. Serverul dezvoltatorului (ogneliss.ru/push) trimite prin Google (Firebase Cloud Messaging), la intervalul ales, un semnal gol „verifică e-mailul”, iar aplicația verifică singură căsuțele, de pe acest dispozitiv. Către server se trimite doar tokenul de notificare al acestei instalări — fără adrese, parole sau mesaje. În somn profund, Android poate livra semnalul mai târziu, în următoarea fereastră de întreținere. Necesită serviciile Google Play. Detalii în Politica de confidențialitate, secțiunea 6.2.</string>
     <string name="mailCheckKindSignal">semnal de la server</string>
     <string name="specialArchiveFolder">Dosar de arhivă</string>
     <string name="specialJunkFolder">Dosar spam</string>

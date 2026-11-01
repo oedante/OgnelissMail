@@ -3039,6 +3039,8 @@
     <string name="pushWakeStatusLast">Ostatni sygnał: {when}</string>
     <string name="pushWakeStatusNone">Jeszcze nie zarejestrowano</string>
     <string name="pushWakeStatusError">Błąd: {e}</string>
+    <string name="pushWakeTitleAndroid">Sygnały z serwera</string>
+    <string name="pushWakeHelpAndroid">Android sam decyduje, kiedy aplikacja w tle może działać: w głębokim uśpieniu odkłada sprawdzanie w tle, a od Androida 15 synchronizacja w tle dostaje najwyżej 6 godzin na dobę. Serwer dewelopera (ogneliss.ru/push) w wybranym odstępie wysyła przez Google (Firebase Cloud Messaging) pusty sygnał „sprawdź pocztę”, a aplikacja sama sprawdza skrzynki z tego urządzenia. Na serwer trafia tylko token powiadomień tej instalacji — bez adresów, haseł i wiadomości. W głębokim uśpieniu Android może dostarczyć sygnał później, w najbliższym oknie konserwacji. Wymaga usług Google Play. Szczegóły w Polityce prywatności, sekcja 6.2.</string>
     <string name="mailCheckKindSignal">sygnał serwera</string>
     <string name="specialArchiveFolder">Folder archiwum</string>
     <string name="specialJunkFolder">Folder wiadomości-śmieci</string>

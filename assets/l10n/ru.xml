@@ -3039,6 +3039,8 @@
     <string name="pushWakeStatusLast">Последний сигнал: {when}</string>
     <string name="pushWakeStatusNone">Ещё не зарегистрировано</string>
     <string name="pushWakeStatusError">Не удалось: {e}</string>
+    <string name="pushWakeTitleAndroid">Сигналы сервера</string>
+    <string name="pushWakeHelpAndroid">Android сам решает, когда давать работать свёрнутому приложению: в глубоком сне откладывает фоновые проверки, а с Android 15 фоновой синхронизации даётся не больше 6 часов в сутки. Сервер разработчика (ogneliss.ru/push) раз в выбранный интервал присылает через Google (Firebase Cloud Messaging) пустой сигнал «проверь почту», и приложение проверяет ящики само, с устройства. На сервер уходит только токен уведомлений этой установки — ни адресов, ни паролей, ни писем. В глубоком сне Android может доставить сигнал позже, в ближайшее окно обслуживания. Нужны сервисы Google Play. Подробно — в Политике конфиденциальности, раздел 6.2.</string>
     <string name="mailCheckKindSignal">сигнал сервера</string>
     <string name="specialArchiveFolder">Папка для архива</string>
     <string name="specialJunkFolder">Папка для спама</string>

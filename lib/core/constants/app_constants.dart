@@ -111,6 +111,22 @@ class AppConstants {
   static const pushRelayUrl = String.fromEnvironment('PUSH_RELAY_URL', defaultValue: 'https://www.ogneliss.ru/push');
   static const pushWakeMode = String.fromEnvironment('PUSH_WAKE_MODE', defaultValue: 'silent');
 
+  // ═══════════════ СИГНАЛЫ СЕРВЕРА НА ANDROID (FCM, 1.9.x) ═══════════════
+  // Тот же «будильник» шлёт сигнал через Firebase Cloud Messaging (просьба
+  // владельца 31.10.2026). Параметры проекта Firebase — из сборки, без
+  // google-services.json (android/.../PushWakeFcm.kt); хоть один пуст —
+  // сигналов на Android нет, всё как раньше. docs/guides/ANDROID_PUSH_SETUP.md.
+  static const firebaseApiKey = String.fromEnvironment('FIREBASE_API_KEY', defaultValue: '');
+  static const firebaseAppId = String.fromEnvironment('FIREBASE_APP_ID', defaultValue: '');
+  static const firebaseSenderId = String.fromEnvironment('FIREBASE_SENDER_ID', defaultValue: '');
+  static const firebaseProjectId = String.fromEnvironment('FIREBASE_PROJECT_ID', defaultValue: '');
+  static bool get firebaseConfigured => [firebaseApiKey, firebaseAppId, firebaseSenderId, firebaseProjectId]
+      .every((v) => v.trim().isNotEmpty);
+  // normal — обычный приоритет FCM: в глубоком сне сигнал ждёт окна
+  // обслуживания. high — будит сразу, но Google понижает приоритет, если
+  // срочные сообщения не ведут к уведомлению, а сигнал чаще всего пустой.
+  static const pushWakeAndroidPriority = String.fromEnvironment('PUSH_WAKE_ANDROID_PRIORITY', defaultValue: 'normal');
+
   /// Exchange Online (Microsoft 365): ActiveSync и EWS — на этом узле, вход
   /// только по OAuth (1.6.2).
   static const exchangeOnlineHost = 'outlook.office365.com';

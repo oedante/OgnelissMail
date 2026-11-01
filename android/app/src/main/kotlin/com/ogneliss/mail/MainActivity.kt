@@ -64,6 +64,7 @@ class MainActivity : FlutterFragmentActivity() {
                     // Движок уничтожен (процесс завершается) — Dart больше нет:
                     // фоновый сервис и его пульс не нужны.
                     ForegroundSyncPlugin.detach(app)
+                    PushWakeFcm.detach()
                     FlutterEngineCache.getInstance().remove(ENGINE_ID)
                 }
             })
@@ -78,6 +79,7 @@ class MainActivity : FlutterFragmentActivity() {
             runCatching { WidgetBridge.register(messenger, app) }
             runCatching { FileOpenBridge.register(messenger, app) }
             runCatching { TimeZoneBridge.register(messenger) }
+            runCatching { PushWakeFcm.register(messenger, app) }
             // Перевод писем на устройстве (ML Kit, 1.9.x).
             runCatching { TranslationBridge.register(messenger) }
             runCatching { ConversationShortcuts.register(messenger, app) }
@@ -140,6 +142,8 @@ class MainActivity : FlutterFragmentActivity() {
         // PDF внутри приложения (1.8.14) — системным PdfRenderer.
         PdfRendererPlugin.register(messenger)
         TimeZoneBridge.register(messenger)
+        // Сигналы сервера (1.9.x): токен FCM для «будильника».
+        PushWakeFcm.register(messenger, this)
         TranslationBridge.register(messenger)
         // Беседы для VIP (1.9.x): ярлыки бесед уведомлений о письмах.
         ConversationShortcuts.register(messenger, this)

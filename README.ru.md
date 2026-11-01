@@ -37,7 +37,7 @@ IMAP/SMTP, календари и контакты по CalDAV/CardDAV. Android, 
 | Нет рекламы, аналитики и слежки | `pubspec.yaml` и `android/app/build.gradle.kts` — полный список зависимостей |
 | Почта идёт прямо на ваш сервер | `packages/mail_engine` — Exchange ActiveSync, EWS, Microsoft Graph (Exchange Online), IMAP/SMTP; `lib/core/network` — HTTP-клиенты и проверка сертификатов |
 | Зашифрованное хранение на устройстве | `lib/data/database/app_database.dart` — SQLite3 Multiple Ciphers; ключ хранится в защищённом хранилище ОС |
-| Что делают серверы автора | `server/oauth-proxy` (обмен кода OAuth, токены в памяти не дольше 2 минут; логотипы отправителей BIMI — поиск в DNS только по домену отправителя, домены не записываются в журнал) и `server/push-relay` (пустые сигналы «проверь почту» для iPhone); [политика конфиденциальности, раздел 6](https://ogneliss.ru/mail/privacy#oauth) |
+| Что делают серверы автора | `server/oauth-proxy` (обмен кода OAuth, токены в памяти не дольше 2 минут; логотипы отправителей BIMI — поиск в DNS только по домену отправителя, домены не записываются в журнал) и `server/push-relay` (пустые сигналы «проверь почту» для iPhone и, через Firebase Cloud Messaging, Android); [политика конфиденциальности, раздел 6](https://ogneliss.ru/mail/privacy#oauth) |
 | Файлы выпусков | GitHub Actions собирает их из коммита с меткой, журнал сборки открыт; у каждого файла — подписанное подтверждение происхождения: `gh attestation verify <файл> --repo oedante/OgnelissMail`, контрольные суммы — в `SHA256SUMS.txt` |
 
 Сборки Google Play и App Store делаются из того же кода, но с ключами подписи

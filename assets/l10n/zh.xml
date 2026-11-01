@@ -3000,6 +3000,8 @@
     <string name="pushWakeStatusLast">上次信号：{when}</string>
     <string name="pushWakeStatusNone">尚未注册</string>
     <string name="pushWakeStatusError">失败：{e}</string>
+    <string name="pushWakeTitleAndroid">服务器信号</string>
+    <string name="pushWakeHelpAndroid">后台应用何时可以运行由 Android 自行决定：深度休眠时会推迟后台检查，自 Android 15 起后台同步每天最多只有 6 小时。开发者的服务器（ogneliss.ru/push）按所选间隔通过 Google（Firebase Cloud Messaging）发送空的“检查邮件”信号，应用随后从本设备自行检查邮箱。发送到服务器的只有本次安装的通知令牌——没有地址、密码或邮件。深度休眠时，Android 可能会在下一个维护窗口才送达信号。需要 Google Play 服务。详情见隐私政策第 6.2 节。</string>
     <string name="mailCheckKindSignal">服务器信号</string>
     <string name="specialArchiveFolder">归档文件夹</string>
     <string name="specialJunkFolder">垃圾邮件文件夹</string>

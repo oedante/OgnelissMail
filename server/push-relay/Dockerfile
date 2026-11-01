@@ -3,7 +3,7 @@
 FROM node:24-alpine
 ENV NODE_ENV=production PORT=8788 HOST=0.0.0.0 DATA_FILE=/data/tokens.json
 WORKDIR /app
-COPY --chown=node:node package.json server.js ./
+COPY --chown=node:node package.json server.js webpush.js ./
 USER node
 EXPOSE 8788
 CMD ["node", "server.js"]

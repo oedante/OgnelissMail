@@ -195,7 +195,7 @@ detect_network() {
 
 check_sources() {
   local f
-  for f in server.js package.json Dockerfile .env.example; do
+  for f in server.js webpush.js package.json Dockerfile .env.example; do
     [ -f "$SCRIPT_DIR/$f" ] || die "нет $SCRIPT_DIR/$f — копируйте на сервер всю папку server/push-relay, а не только скрипт"
   done
   grep -q "async function probe()" "$SCRIPT_DIR/server.js" \
@@ -211,7 +211,7 @@ copy_code() {
     chown "$APP_UID:$APP_UID" "$DATA_DIR"
     chown "root:$APP_UID" "$KEYS_DIR"
   fi
-  install -m 644 "$SCRIPT_DIR/server.js" "$SCRIPT_DIR/package.json" "$SCRIPT_DIR/Dockerfile" "$APP_DIR/"
+  install -m 644 "$SCRIPT_DIR/server.js" "$SCRIPT_DIR/webpush.js" "$SCRIPT_DIR/package.json" "$SCRIPT_DIR/Dockerfile" "$APP_DIR/"
   install -m 644 "$SCRIPT_DIR/.env.example" "$APP_DIR/.env.example"
   [ -f "$SCRIPT_DIR/README.md" ] && install -m 644 "$SCRIPT_DIR/README.md" "$APP_DIR/README.md"
   printf '.env\n*.env\nkeys\ndata\n*.p8\nbackup-*\n' > "$APP_DIR/.dockerignore"; chmod 644 "$APP_DIR/.dockerignore"
@@ -391,6 +391,28 @@ put_fcm() {
   warn "исходный файл $FCM_SRC удалите: копия — в $KEYS_DIR (новый ключ при потере можно создать в консоли Firebase, старый там же отозвать)"
 }
 
+# Ключ VAPID для сигналов UnifiedPush (Android без сервисов Google, 1.10.x):
+# создаётся один раз и при обновлении не меняется — иначе установки, которые
+# зарегистрировались с прежним ключом, перестанут получать сигналы.
+put_vapid() {
+  install -d -m 750 "$KEYS_DIR"
+  local f="$KEYS_DIR/vapid.pem"
+  if [ ! -f "$f" ]; then
+    if command -v openssl >/dev/null 2>&1; then
+      openssl ecparam -name prime256v1 -genkey -noout 2>/dev/null | openssl pkcs8 -topk8 -nocrypt -out "$f" 2>/dev/null \
+        || { rm -f "$f"; warn "ключ VAPID не создан (openssl) — сигналы UnifiedPush пойдут без подписи"; return 0; }
+    else
+      warn "нет openssl — ключ VAPID не создан, сигналы UnifiedPush пойдут без подписи"
+      return 0
+    fi
+    chmod 640 "$f"
+    ok "создан ключ VAPID (UnifiedPush): $f"
+  fi
+  if [ -z "$ROOT" ]; then chown "root:$APP_UID" "$KEYS_DIR" "$f"; fi
+  env_set VAPID_PRIVATE_KEY_FILE "/keys/vapid.pem" "$ENV_FILE"
+  chmod 600 "$ENV_FILE"
+}
+
 backup_env() {
   [ -f "$ENV_FILE" ] || return 0
   local b; b="$APP_DIR/backup-$(date +%Y%m%d-%H%M%S)"
@@ -455,6 +477,7 @@ cmd_install() {
   prepare_env
   put_key
   put_fcm
+  put_vapid
   up
   key_summary
   [ "$first" = 1 ] && print_npm_steps

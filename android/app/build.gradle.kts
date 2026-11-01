@@ -88,6 +88,15 @@ dependencies {
     // enableEdgeToEdge() — рекомендация Google Play для Android 15 (рисование
     // под системными панелями с обратной совместимостью).
     implementation("androidx.activity:activity-ktx:1.10.1")
+    // Сигналы сервера на Android (1.9.x, PushWakeFcm.kt): Firebase Cloud
+    // Messaging (Apache 2.0, нужны сервисы Google Play) — без плагина
+    // google-services и google-services.json, параметры проекта из
+    // dart-defines. BoM — та же версия, что у FlutterFire (октябрь 2026).
+    implementation(platform("com.google.firebase:firebase-bom:35.1.0"))
+    implementation("com.google.firebase:firebase-messaging")
+    // Сигнал ставит разовую задачу плагина workmanager (его BackgroundWorker);
+    // версия — та же, что у плагина (workmanager_android 0.10.9).
+    implementation("androidx.work:work-runtime:2.11.2")
 }
 
 // Снятие базового профиля на телефоне (docs/guides/BASELINE_PROFILE.md).

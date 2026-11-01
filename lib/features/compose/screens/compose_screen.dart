@@ -2081,6 +2081,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                   setState(() => _control = !_control);
                 case 'translate':
                   unawaited(_translateOwn());
+                case 'dsn':
+                  setState(() => _deliveryReport = !_deliveryReport);
+                  if (_deliveryReport) showInlineNotice(l10n.tr('dsnRequestHint'));
               }
             },
             itemBuilder: (_) => [
@@ -2100,6 +2103,13 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                   icon: AppIcons.task_alt,
                   label: l10n.tr('controlOnSend'),
                   checked: _control,
+                ),
+              if (_deliveryReportAvailable)
+                AppMenuEntry(
+                  value: 'dsn',
+                  icon: AppIcons.mark_email_read,
+                  label: l10n.tr('dsnRequest'),
+                  checked: _deliveryReport,
                 ),
             ],
           ),
@@ -3447,6 +3457,19 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// «На контроле» для отправляемого письма (меню «⋮»).
   bool _control = false;
 
+  /// «Запросить подтверждение доставки» (1.9.x, 31.10.2026): DSN
+  /// NOTIFY=SUCCESS — сервер получателя сообщит, что принял письмо (это не
+  /// уведомление о прочтении). Только SMTP: Exchange шлёт лишь отчёты о
+  /// недоставке.
+  bool _deliveryReport = false;
+
+  bool get _deliveryReportAvailable {
+    final a = _fromAccount;
+    return a != null && !a.usesEas && !a.usesEws && !a.isExchange;
+  }
+
+  bool get _requestDeliveryReport => _deliveryReport && _deliveryReportAvailable;
+
   Future<void> _applyControlOnSend() async {
     final account = _fromAccount;
     if (account == null || !ref.read(settingsProvider).mailControl) return;
@@ -4415,6 +4438,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             inReplyTo: _inReplyTo,
             scheduledAt: scheduledAt,
             from: _fromOverride,
+            requestDeliveryReport: _requestDeliveryReport,
           );
       unawaited(HapticFeedback.mediumImpact());
       AppLogger.info('Письмо отложено до $scheduledAt');
@@ -4750,6 +4774,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       bodyPlain: bodyPlain,
       inReplyTo: _inReplyTo,
       window: window,
+      requestDeliveryReport: _requestDeliveryReport,
     );
     await _finishDraft();
     await _markOriginalAnswered();
@@ -5127,6 +5152,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             from: _fromOverride,
             // Не принято по размеру — письмо остаётся здесь (ниже).
             keepTooLarge: true,
+            requestDeliveryReport: _requestDeliveryReport,
           );
 
       // И при отправке, и при постановке в очередь черновик не нужен: письмо

@@ -6,7 +6,7 @@ WORKDIR /app
 COPY --chown=node:node package.json package-lock.json ./
 RUN npm ci --omit=dev --no-audit --no-fund && npm cache clean --force
 # --chown: файлы читаются пользователем node при любых правах на хосте.
-COPY --chown=node:node server.js ./
+COPY --chown=node:node server.js bimi.js ./
 USER node
 EXPOSE 8787
 CMD ["node", "server.js"]

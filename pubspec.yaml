@@ -122,6 +122,9 @@ dependencies:
   connectivity_plus: ^6.1.0
   window_manager: ^0.3.8
   system_tray: ^2.0.3
+  # Логотипы отправителей BIMI (1.9.x): отрисовка SVG без скриптов и внешних
+  # ссылок. MIT; vector_graphics* — BSD-3-Clause (docs/LICENSING.md).
+  flutter_svg: ^2.3.2
 
 # system_tray 2.0.3 (последний релиз) объявляет uuid ^3.0.6, а у нас
 # uuid ^4.5.1 — без переопределения версии не согласуются ("version solving

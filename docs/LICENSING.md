@@ -34,6 +34,7 @@ Contributions are accepted under the same license (section 5 of the license).
 | OpenDyslexic font | SIL OFL 1.1, Reserved Font Name "OpenDyslexic" | `assets/fonts/` |
 | Medeo Sans font (unmodified, github.com/DNFDEVS/medeo-font) | SIL OFL 1.1 | `assets/fonts/medeo/` |
 | Material Symbols icons | Apache-2.0 | `material_symbols_icons` |
+| flutter_svg (sender logos, BIMI) with vector_graphics, vector_graphics_codec, vector_graphics_compiler | MIT; vector_graphics*: BSD-3-Clause | pub.dev |
 | AndroidX, Kotlin, AppAuth | Apache-2.0 | Android and iOS builds |
 | Google ML Kit Translation and Language ID (`com.google.mlkit:translate` 17.0.3, `com.google.mlkit:language-id` 17.0.6) — on-device message translation | Free; ML Kit Terms of Service and Google APIs Terms of Service (closed-source binaries). Conditions: Google attribution next to translated text and in the app description/help ("Translated by Google"); no use in embedded devices (cars, TVs, appliances, speakers); ML Kit sends usage metrics (not text) to Google — mention in the privacy policy | Android build (`android/app/build.gradle.kts`) |
 | Apple Translation, NaturalLanguage, SwiftUI — on-device message translation (iOS 18+) | Part of the iOS SDK (Apple Developer Program License Agreement), free, no attribution | iOS build (`ios/Runner/AppDelegate.swift`) |
@@ -47,6 +48,17 @@ libraries and shown in the app (Settings → About → Licence texts).
 
 The server dependencies (`server/oauth-proxy`: express and its dependencies)
 are MIT, ISC and BSD-3-Clause.
+
+Every push checks these licences automatically (`tool/dev/license_check.py`
+in CI): GPL, LGPL, AGPL, SSPL, BUSL, non-commercial or unrecognised licences
+fail the build unless `tool/dev/license_allowlist.txt` lists the package with
+a reason.
+
+Tools used only by the build on GitHub Actions (not part of the app or the
+servers): OSV-Scanner and osv-scanner-action (Google, Apache-2.0) with the
+free OSV database (osv.dev) for dependency vulnerabilities, and
+android-emulator-runner (ReactiveCircus, Apache-2.0) for the Android
+emulator tests.
 
 ## 3. Microsoft Exchange protocols
 
@@ -90,6 +102,24 @@ and the push relay run by the author serve only the author's builds;
 your own version needs its own servers and OAuth registrations
 ([OWN_VERSION.md](guides/OWN_VERSION.md)).
 
+## 5. Adding a dependency
+
+Before any new dependency is added — a pub.dev package, a Gradle or
+CocoaPods library, a platform SDK or framework, a server npm package, a
+font, icons, an external service or API — its licence and terms of use are
+checked (owner's rule, 31 October 2026, after the Exchange ActiveSync patent
+pledge turned out to forbid commercial distribution):
+
+- **Paid functionality** — a paid licence, a subscription, payment per
+  request above a free quota, commercial-only terms — is not added until it
+  has been discussed with the owner.
+- **Restrictive or unclear terms** — non-commercial only, field-of-use or
+  patent conditions, copyleft (GPL, LGPL, AGPL), no licence at all — are
+  discussed with the owner too.
+- **Free functionality** is used with the licence requirements met: the
+  licence text and NOTICE shipped in the app (Settings → About → Licence
+  texts), attribution where required, and a row in the table in section 2.
+
 ---
 
 # Лицензирование (кратко)
@@ -125,3 +155,10 @@ your own version needs its own servers and OAuth registrations
   распространяет изменённую версию за деньги, оно не распространяется.
 - **Товарные знаки Microsoft** — только словами «работает с Microsoft
   Exchange», без логотипов.
+- **Новые зависимости** (пакеты, библиотеки, SDK, шрифты, внешние сервисы и
+  API) — только после проверки лицензии и условий (правило владельца
+  31.10.2026, после истории с Exchange ActiveSync). Платный функционал и
+  ограничительные или неясные условия (только некоммерческое использование,
+  патентные условия, GPL/LGPL/AGPL, нет лицензии) — сначала обсудить с
+  владельцем. Бесплатный — используем, соблюдая требования лицензии: текст
+  лицензии в приложении, атрибуция, строка в таблице раздела 2.

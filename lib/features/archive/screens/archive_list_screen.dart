@@ -22,6 +22,7 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../archive_providers.dart';
 import '../archive_sheets.dart';
 import '../../../core/theme/ogneliss_look.dart';
+import '../../../core/theme/appearance.dart' show AppearanceLook, ListDensity;
 
 class ArchiveListScreen extends ConsumerStatefulWidget {
   /// Папка архива; null — поиск по архиву.
@@ -252,15 +253,31 @@ class ArchiveMessageTile extends StatelessWidget {
     final from = head.fromLabel.isEmpty ? l10n.tr('noSender') : head.fromLabel;
     final unread = !head.isRead;
     final subject = head.subject.trim().isEmpty ? l10n.tr('noSubject') : head.subject.trim();
+    // Плотность ленты (1.9.x): поля, портрет и строки превью — как в ленте.
+    final density = AppearanceLook.of(context).density;
+    final padV = switch (density) {
+      ListDensity.compact => Space.s,
+      ListDensity.normal => Space.m,
+      ListDensity.comfortable => Space.l,
+    };
+    final previewLines = switch (density) {
+      ListDensity.compact => 0,
+      ListDensity.normal => 1,
+      ListDensity.comfortable => 2,
+    };
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, Space.m),
+        padding: EdgeInsets.fromLTRB(Space.l, padV, Space.l, padV),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           HeroEmailAvatar(
             emailId: 'ogna_${head.id}',
             hero: false,
-            radius: 20,
+            radius: switch (density) {
+              ListDensity.compact => 16,
+              ListDensity.normal => 20,
+              ListDensity.comfortable => 22,
+            },
             initial: from.characters.first.toUpperCase(),
             color: Color(avatarColorValue(head.fromEmail.isEmpty ? from : head.fromEmail)),
             email: head.fromEmail,
@@ -284,9 +301,11 @@ class ArchiveMessageTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(fontWeight: unread ? FontWeight.w600 : null)),
-              if (head.preview.trim().isNotEmpty)
+              if (previewLines > 0 && head.preview.trim().isNotEmpty)
                 Text(head.preview.trim(),
-                    maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodySmall?.copyWith(color: muted)),
+                    maxLines: previewLines,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(color: muted)),
               if (showFolder && head.folderPath.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 2),

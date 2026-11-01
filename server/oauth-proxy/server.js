@@ -12,6 +12,7 @@
 //   GET  /token?session=...                — выдать действующий access_token (с авто-refresh)
 //   POST /refresh                          — принудительное обновление (body: {session})
 //   POST /revoke                           — отозвать доступ (body: {session} | {rt, provider})
+//   GET  /bimi?d=<домен>[&s=<селектор>]    — политика DMARC и логотип BIMI (1.9.x, bimi.js)
 //
 // Требует Node.js >= 18 (встроенный fetch). Зависимость: express.
 // Все секреты — только в переменных окружения (.env), НЕ в приложении.
@@ -21,6 +22,7 @@ const express = require('express');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const { createBimi } = require('./bimi');
 
 // ── Конфигурация из окружения ──
 const PORT = parseInt(process.env.PORT || '8787', 10);
@@ -55,6 +57,10 @@ for (const name of ['STATE_SECRET', 'PROXY_API_KEY']) {
 const STATE_SECRET = process.env.STATE_SECRET;
 const STORE_PATH = process.env.STORE_PATH || '/var/lib/oauth-proxy/store.json';
 // Разрешённые схемы/URL для возврата в приложение (защита open-redirect)
+// Кэш логотипов BIMI (1.9.x) — рядом с хранилищем сессий; в контейнере
+// только для чтения запись не удастся, и кэш останется в памяти.
+const BIMI_CACHE_PATH = process.env.BIMI_CACHE_PATH || path.join(path.dirname(STORE_PATH), 'bimi-cache.json');
+const BIMI_ENABLED = process.env.BIMI !== '0';
 const ALLOWED_REDIRECTS = (process.env.ALLOWED_REDIRECTS ||
   'com.ogneliss.mail://oauth,https://mail.example.com/oauth2redirect.html')
   .split(',').map((s) => s.trim()).filter(Boolean);
@@ -424,6 +430,8 @@ router.get('/healthz', (_req, res) => res.json({
     api: fingerprint(API_KEY),
     enc: fingerprint(process.env.ENC_SECRET || process.env.STATE_SECRET),
   },
+  // Только счётчики, без доменов.
+  ...(bimi ? { bimi: bimi.stats() } : {}),
 }));
 
 // 1) Старт авторизации
@@ -732,6 +740,26 @@ router.post('/token', requireApiKey, async (req, res) => {
   }
 });
 
+// Логотипы отправителей BIMI (1.9.x, просьба владельца 31.10.2026). DNS —
+// только отсюда: домены отправителей не уходят к третьим лицам. Домен — в
+// параметре запроса, а в журнал пишется путь без параметров (см. выше);
+// счётчики — в /healthz. Ограничение — 120 запросов в минуту с адреса
+// (счётчик только в памяти, как у push-relay).
+const bimi = BIMI_ENABLED ? createBimi({ cachePath: BIMI_CACHE_PATH }) : null;
+const bimiHits = new Map();
+setInterval(() => bimiHits.clear(), 60 * 1000).unref();
+router.get('/bimi', requireApiKey, async (req, res) => {
+  if (!bimi) return res.status(404).json({ error: 'disabled' });
+  const ip = req.ip || '';
+  const hits = (bimiHits.get(ip) || 0) + 1;
+  bimiHits.set(ip, hits);
+  if (hits > 120) return res.status(429).json({ error: 'too_many_requests' });
+  const out = await bimi.lookup(req.query.d, req.query.s);
+  if (out.bad) return res.status(400).json({ error: 'bad domain' });
+  if (out.transient) return res.status(503).json({ error: 'unavailable' });
+  res.json({ policy: out.policy, logo: out.logo });
+});
+
 app.use(BASE_PATH || '/', router);
 
 // Неизвестный путь — в журнал (частая причина «не работает»: NPM пересылает
@@ -755,6 +783,7 @@ const server = app.listen(PORT, HOST, () => {
 for (const sig of ['SIGTERM', 'SIGINT']) {
   process.on(sig, () => {
     console.log(`oauth-proxy: ${sig} — остановка`);
+    if (bimi) bimi.save();
     server.close(() => process.exit(0));
     setTimeout(() => process.exit(0), 5000).unref();
   });

@@ -385,6 +385,17 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
 
       state = [...state, account];
       AppLogger.info('Аккаунт добавлен: ${account.email}');
+      // Первая синхронизация — сразу (1.9.x, журнал владельца 31.10.2026).
+      // Её ждали от проверки при возврате в приложение, но после входа через
+      // браузер (OAuth: Outlook, Gmail, Яндекс) приложение возвращается
+      // раньше, чем ящик записан, — письма появлялись только по «обновить»
+      // или через 5 минут, по таймеру.
+      final ref = _ref;
+      if (ref != null && !AppLogger.isBackground) {
+        final added = account;
+        unawaited(Future<void>(() => ref.read(syncServiceProvider).syncNewAccount(added)).catchError(
+            (Object e) => AppLogger.warning('Первая синхронизация ${SecurityUtils.maskEmail(added.email)}: $e')));
+      }
     } catch (e, stack) {
       AppLogger.error('Ошибка добавления аккаунта', e, stack);
       rethrow;

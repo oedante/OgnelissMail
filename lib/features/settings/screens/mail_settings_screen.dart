@@ -29,6 +29,7 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../mail/widgets/mail_html_view.dart' show MailHtmlView;
 import '../../compose/widgets/image_size_sheet.dart' show photoSizeLabel;
+import '../../../services/security/bimi/bimi_service.dart' show BimiResolver;
 
 class MailSettingsScreen extends ConsumerWidget {
   const MailSettingsScreen({super.key});
@@ -226,6 +227,15 @@ class MailSettingsScreen extends ConsumerWidget {
                 },
               ),
             ),
+            // Даты в тексте письма — нажимаемые (1.9.x, просьба владельца
+            // 31.10.2026): встреча, напоминание, календарь.
+            SettingsSwitchItem(
+              icon: AppIcons.event,
+              title: l10n.tr('mailDates'),
+              subtitle: l10n.tr('mailDatesDesc'),
+              value: settings.mailDates,
+              onChanged: (v) => notifier.setMailDates(v),
+            ),
           ]),
           // Бывшие «Возможности» (1.6.1): работа с письмами и их открытие.
           const MailWorkSection(),
@@ -298,6 +308,20 @@ class MailSettingsScreen extends ConsumerWidget {
               onChanged: (v) => fn.setAntiPhishing(v!),
             ),
           ]),
+          // Логотипы отправителей BIMI (1.9.x): только в сборке, знающей
+          // сервер Ogneliss, — без него функции нет.
+          if (BimiResolver.configured) ...[
+            const SizedBox(height: Space.s),
+            SettingsGroup(children: [
+              SettingsSwitchItem(
+                icon: AppIcons.badge,
+                title: l10n.tr('bimiLogos'),
+                subtitle: l10n.tr('bimiLogosDesc'),
+                value: settings.bimiLogos,
+                onChanged: notifier.setBimiLogos,
+              ),
+            ]),
+          ],
           SettingsSectionTitle(l10n.tr('fetchMode')),
           SettingsIntro(l10n.tr('fetchModeSubtitle')),
           SettingsGroup(children: [

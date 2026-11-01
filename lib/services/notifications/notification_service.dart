@@ -18,6 +18,7 @@ import '../../data/providers/shared_prefs_provider.dart';
 import 'package:flutter/services.dart';
 import 'notification_background.dart';
 import 'notification_text.dart';
+import 'messenger_notifications.dart';
 
 final notificationServiceProvider = Provider<NotificationService>((ref) => NotificationService(ref.read(sharedPrefsProvider)));
 
@@ -233,6 +234,14 @@ class NotificationService {
 
     /// Правило «без звука»: тихий канал — в шторке, без звука и вибрации.
     bool quiet = false,
+
+    /// Фото отправителя из контактов (data URI) — для вида «как в
+    /// мессенджерах» (1.9.x); нет — кружок с буквой.
+    String? senderPhoto,
+
+    /// Короткая подпись ящика («я» в беседе Android) — всегда, даже когда
+    /// ящик один и [mailboxLabel] не показывается.
+    String? accountLabel,
   }) async {
     if (_skipOnThisPlatform()) return;
     if (!_initialized) await initialize();
@@ -297,8 +306,38 @@ class NotificationService {
         subtitle: subj,
         categoryIdentifier: isInvite ? 'INVITE' : 'EMAIL', threadIdentifier: 'email_$accountId');
 
+    // Как в мессенджерах (1.9.x, просьба владельца 31.10.2026): отправитель
+    // с фото или буквой. Выключено — уведомление прежнего вида.
+    final messenger = MessengerNotify.styleOn(_prefs) && (Platform.isAndroid || Platform.isIOS);
+    final avatar = messenger
+        ? await MessengerNotify.avatar(
+            name: senderName, email: fromEmail, photo: senderPhoto,
+            highContrast: _prefs?.getBool('s_high_contrast') ?? false)
+        : null;
+    final id = notificationIdForEmail(accountId, emailId);
+    // iPhone: нативно, с INSendMessageIntent (AppDelegate.swift). Не вышло —
+    // плагином, как раньше.
+    if (messenger && Platform.isIOS) {
+      final shown = await MessengerNotify.showIos(MessengerNotify.iosArgs(
+        id: id, title: title, subtitle: subj, body: body,
+        threadId: 'email_$accountId', category: isInvite ? 'INVITE' : 'EMAIL',
+        sound: _soundOn && !silent && !quiet, badge: badge, payload: payload,
+        senderEmail: fromEmail, avatar: avatar,
+      ));
+      if (shown) return;
+    }
+    // Android: беседа для VIP — ярлык с человеком; уведомление с его id
+    // попадает в раздел «Беседы» (можно сделать приоритетным).
+    String? shortcutId;
+    if (MessengerNotify.wantsShortcut(
+        android: Platform.isAndroid, styleOn: messenger, vipConversationsOn: MessengerNotify.vipConversationsOn(_prefs),
+        isVip: isVip, email: fromEmail)) {
+      shortcutId = await MessengerNotify.pushShortcut(
+          name: senderName, email: fromEmail!, accountId: accountId, emailId: emailId, avatar: avatar);
+    }
+
     await _plugin.show(
-      notificationIdForEmail(accountId, emailId),
+      id,
       title,
       body,
       NotificationDetails(
@@ -328,11 +367,19 @@ class NotificationService {
           showWhen: true,
           // Полный текст превью по раскрытию.
           subText: subText,
-          styleInformation: BigTextStyleInformation(
-            NotificationText.big(subj, text),
-            contentTitle: title,
-            summaryText: subText,
+          styleInformation: emailAndroidStyle(
+            messenger: messenger,
+            title: title,
+            subject: subj,
+            preview: text,
+            subText: subText,
+            selfName: accountLabel ?? mailboxLabel ?? '',
+            fromEmail: fromEmail,
+            avatar: avatar,
+            isVip: isVip,
+            when: receivedAt ?? DateTime.now(),
           ),
+          shortcutId: shortcutId,
         ),
         // iPhone и Mac: отправитель — заголовок, тема — подзаголовок, текст
         // ниже (как в Почте iPhone).
@@ -340,6 +387,86 @@ class NotificationService {
         macOS: darwin,
       ),
       payload: payload,
+    );
+  }
+
+  /// «Письмо не доставлено» (1.9.x, отчёты о доставке, просьба владельца
+  /// 31.10.2026): вместо обычного уведомления о письме робота — кому не
+  /// дошло и почему. Нажатие открывает само отправленное письмо: там
+  /// «Отправить снова» и «Изменить адрес». Тихие часы действуют.
+  Future<void> showDeliveryFailureNotification({
+    required String accountId,
+    required String emailId,
+    required String folderId,
+    required String subject,
+    required String recipient,
+    required String reasonKey,
+    String? status,
+    int more = 0,
+  }) async {
+    if (_skipOnThisPlatform()) return;
+    if (!_initialized) await initialize();
+    if (_prefs != null && QuietHours.isQuietNow(_prefs)) {
+      AppLogger.info('Уведомление «письмо не доставлено» не показано: тихие часы');
+      return;
+    }
+    final title = _t('dsnNotifTitle');
+    final line = '$recipient — ${_t(reasonKey)}${status == null ? '' : ' ($status)'}${more > 0 ? ' · +$more' : ''}';
+    final subj = NotificationText.subject(subject, noSubject: _t('noSubject'));
+    final darwin = DarwinNotificationDetails(
+        presentAlert: true, presentSound: _soundOn, subtitle: subj, threadIdentifier: 'email_$accountId');
+    await _plugin.show(
+      notificationIdForEmail(accountId, emailId),
+      title,
+      line,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'email_default_${_soundOn ? 's' : 'n'}${_vibrationOn ? 'v' : 'n'}',
+          _t('ntfChMail'),
+          importance: Importance.high,
+          priority: Priority.high,
+          category: AndroidNotificationCategory.email,
+          visibility: NotificationVisibility.private,
+          groupKey: 'email_$accountId',
+          playSound: _soundOn,
+          enableVibration: _vibrationOn,
+          styleInformation: BigTextStyleInformation(NotificationText.big(subj, line), contentTitle: title),
+        ),
+        iOS: darwin,
+        macOS: darwin,
+      ),
+      payload: jsonEncode({'type': 'email', 'accountId': accountId, 'emailId': emailId, 'folderId': folderId}),
+    );
+  }
+
+  /// Вид уведомления о письме на Android. [messenger] — «как в
+  /// мессенджерах» (1.9.x): MessagingStyle, отправитель — Person с фото или
+  /// буквой, сообщение — тема и ниже начало письма. Иначе — прежний
+  /// BigTextStyle (жирным отправитель, ниже тема и текст).
+  static StyleInformation emailAndroidStyle({
+    required bool messenger,
+    required String title,
+    required String subject,
+    required String preview,
+    String? subText,
+    String selfName = '',
+    String? fromEmail,
+    Uint8List? avatar,
+    bool isVip = false,
+    required DateTime when,
+  }) {
+    if (!messenger) {
+      return BigTextStyleInformation(
+        NotificationText.big(subject, preview),
+        contentTitle: title,
+        summaryText: subText,
+      );
+    }
+    return MessengerNotify.androidStyle(
+      selfName: selfName,
+      sender: MessengerNotify.androidSender(title: title, email: fromEmail, avatar: avatar, vip: isVip),
+      text: NotificationText.big(subject, preview),
+      when: when,
     );
   }
 

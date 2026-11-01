@@ -291,6 +291,7 @@ class _TriageScreenState extends ConsumerState<TriageScreen> {
                 hero: false,
                 radius: 22,
                 email: e.from.email,
+                authResults: e.authResults,
                 initial: e.from.label.isEmpty ? '?' : initialOf(e.from.label),
                 color: HeroEmailAvatar.colorForEmail(e.from.email),
               ),
@@ -417,7 +418,7 @@ class _TriageScreenState extends ConsumerState<TriageScreen> {
                 minimumSize: const Size.fromHeight(56),
                 padding: const EdgeInsets.symmetric(horizontal: Space.xs, vertical: Space.s),
                 foregroundColor: color,
-                shape: const RoundedRectangleBorder(borderRadius: Radii.cardAll),
+                shape: RoundedRectangleBorder(borderRadius: Radii.cardAll),
               ),
               onPressed: _busy ? null : () => _act(a),
               child: Column(mainAxisSize: MainAxisSize.min, children: [

@@ -34,7 +34,7 @@ class ImapPushService {
   final Ref _ref;
   ImapPushService(this._ref);
 
-  // IDLE отдаёт Stream<int>, Ping — Stream<EasPingResult>. Нам от подписки
+  // IDLE отдаёт Stream<ImapPushEvent>, Ping — Stream<EasPingResult>. Нам от подписки
   // нужен только cancel(), поэтому храним без конкретного типа события.
   final Map<String, StreamSubscription<dynamic>> _subs = {};
   /// Аккаунты, для которых подписка СЕЙЧАС создаётся (между проверкой и
@@ -256,6 +256,8 @@ class ImapPushService {
 
     // Слушаем «Входящие»: остальные папки редко требуют мгновенности, а каждое
     // IDLE — это отдельное живое соединение (не стоит держать их пачками).
+    // Сервер с NOTIFY (RFC 5465; 1.9.x, просьба владельца 31.10.2026) по
+    // тому же соединению сообщает и об остальных синхронизируемых папках.
     final inbox = await _inboxOf(account);
     if (inbox == null) {
       AppLogger.info('IMAP push: у ${account.email} нет папки «Входящие» — пропуск');
@@ -263,14 +265,24 @@ class ImapPushService {
     }
 
     final imap = _ref.read(imapServiceProvider);
-    late final StreamSubscription<int> sub0;
-    final sub = sub0 = imap.startIdle(account, inbox.id).listen(
-      (count) async {
+    late final StreamSubscription<ImapPushEvent> sub0;
+    final sub = sub0 = imap.startIdle(account, inbox.id, watch: () => _notifyFolders(account, inbox.id)).listen(
+      (event) async {
+        final count = event.count;
+        if (event.folderId != inbox.id) {
+          // NOTIFY: изменилась другая папка — синхронизируем её, если она
+          // по-прежнему синхронизируется (выбор мог смениться).
+          final row = await _syncedFolder(account.id, event.folderId);
+          if (row == null) return;
+          AppLogger.info('IMAP push: NOTIFY — изменения в «${row.displayName}» (${account.email})');
+          unawaited(_syncCoalesced(account, _toModel(row)));
+          return;
+        }
         // count >= 0 — пришло письмо; -1 — что-то удалили. В обоих случаях
         // достаточно синхронизировать эту папку: список сам обновится через
         // поток из БД (.watch()).
         AppLogger.info('IMAP push: событие в ${account.email} '
-            '(${count >= 0 ? "EXISTS $count" : count == -1 ? "EXPUNGE" : "после переподключения"})');
+            '(${count >= 0 ? "EXISTS $count" : count == ImapPushEvent.expunged ? "EXPUNGE" : count == ImapPushEvent.changed ? "NOTIFY" : "после переподключения"})');
         unawaited(_syncCoalesced(account, inbox));
       },
       onError: (Object e) {
@@ -530,6 +542,27 @@ class ImapPushService {
     if (rows.isEmpty) return null;
     final inbox = rows.firstWhere((r) => r.id.toUpperCase() == 'INBOX', orElse: () => rows.first);
     return _toModel(inbox);
+  }
+
+  /// Папки для NOTIFY: синхронизируемые, кроме «Входящих» (их слушает IDLE).
+  /// Читается при каждом цикле IDLE — включённая папка подхватится.
+  Future<List<String>> _notifyFolders(AccountModel account, String inboxId) async {
+    final db = _ref.read(databaseProvider);
+    final rows = await (db.select(db.folders)
+          ..where((f) => f.accountId.equals(account.id))
+          ..where((f) => f.isSynced.equals(true)))
+        .get();
+    return [for (final r in rows) if (r.id != inboxId) r.id];
+  }
+
+  Future<Folder?> _syncedFolder(String accountId, String folderId) async {
+    final db = _ref.read(databaseProvider);
+    final rows = await (db.select(db.folders)
+          ..where((f) => f.accountId.equals(accountId))
+          ..where((f) => f.id.equals(folderId))
+          ..where((f) => f.isSynced.equals(true)))
+        .get();
+    return rows.firstOrNull;
   }
 
   FolderModel _toModel(Folder row) => folderFromRow(row);

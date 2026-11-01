@@ -1,4 +1,5 @@
 import Flutter
+import Intents
 import UIKit
 import SwiftUI
 import NaturalLanguage
@@ -328,6 +329,105 @@ import workmanager_apple
     if let r = registry.registrar(forPlugin: "OgnelissPhoneMirror") {
       PhoneMirrorPlugin.register(with: r.messenger())
     }
+    // Уведомления как в мессенджерах (1.9.x) — и из фоновой проверки почты.
+    if let r = registry.registrar(forPlugin: "OgnelissMessenger") {
+      AppDelegate.registerMessengerChannel(r.messenger())
+    }
+  }
+
+  // MARK: Уведомления как в мессенджерах (1.9.x, просьба владельца 31.10.2026)
+
+  /// MethodChannel 'ogneliss/messenger', «show»: уведомление о письме
+  /// показывается здесь, а не плагином, — с INSendMessageIntent
+  /// (Communication Notifications): iOS рисует фото или букву отправителя,
+  /// как в мессенджерах. Ключи userInfo — те же, что у
+  /// flutter_local_notifications: нажатие, кнопки (категории EMAIL/INVITE),
+  /// показ при открытом приложении и снятие по id обрабатывает плагин, как у
+  /// остальных уведомлений. Нет возможности «Communication Notifications» у
+  /// цели Runner (docs/guides/IOS_COMMUNICATION_NOTIFICATIONS.md) или ошибка
+  /// намерения — обычное уведомление; ответ false — показывает плагин.
+  static func registerMessengerChannel(_ messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(name: "ogneliss/messenger", binaryMessenger: messenger)
+    channel.setMethodCallHandler { call, result in
+      switch call.method {
+      case "show":
+        guard let args = call.arguments as? [String: Any] else {
+          result(false)
+          return
+        }
+        if #available(iOS 15.0, *) {
+          AppDelegate.showCommunication(args, result: result)
+        } else {
+          result(false)
+        }
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+  }
+
+  @available(iOS 15.0, *)
+  static func showCommunication(_ a: [String: Any], result: @escaping FlutterResult) {
+    guard let id = (a["id"] as? NSNumber)?.intValue, let payload = a["payload"] as? String else {
+      result(false)
+      return
+    }
+    let content = UNMutableNotificationContent()
+    content.title = a["title"] as? String ?? ""
+    content.subtitle = a["subtitle"] as? String ?? ""
+    content.body = a["body"] as? String ?? ""
+    content.threadIdentifier = a["thread"] as? String ?? ""
+    content.categoryIdentifier = a["category"] as? String ?? ""
+    if let badge = a["badge"] as? NSNumber { content.badge = badge }
+    let sound = a["sound"] as? Bool ?? false
+    if sound { content.sound = .default }
+    content.userInfo = [
+      "NotificationId": NSNumber(value: id),
+      "title": content.title,
+      "presentAlert": true,
+      "presentSound": sound,
+      "presentBadge": true,
+      "presentBanner": true,
+      "presentList": true,
+      "payload": payload,
+    ]
+    var shown: UNNotificationContent = content
+    do {
+      let intent = AppDelegate.messageIntent(a, body: content.body)
+      let interaction = INInteraction(intent: intent, response: nil)
+      interaction.direction = .incoming
+      interaction.donate(completion: nil)
+      shown = try content.updating(from: intent)
+    } catch {
+      shown = content
+    }
+    let request = UNNotificationRequest(identifier: String(id), content: shown, trigger: nil)
+    UNUserNotificationCenter.current().add(request) { error in
+      DispatchQueue.main.async { result(error == nil) }
+    }
+  }
+
+  /// Входящее «сообщение» от отправителя письма: имя, адрес, фото или
+  /// буква (PNG из Dart), беседа — по адресу.
+  static func messageIntent(_ a: [String: Any], body: String) -> INSendMessageIntent {
+    let name = a["senderName"] as? String ?? ""
+    let email = a["senderEmail"] as? String ?? ""
+    var image: INImage?
+    if let data = (a["avatar"] as? FlutterStandardTypedData)?.data, !data.isEmpty {
+      image = INImage(imageData: data)
+    }
+    let handle = INPersonHandle(value: email.isEmpty ? name : email, type: email.isEmpty ? .unknown : .emailAddress)
+    let sender = INPerson(
+      personHandle: handle, nameComponents: nil, displayName: name, image: image,
+      contactIdentifier: nil, customIdentifier: email.isEmpty ? nil : email)
+    let intent = INSendMessageIntent(
+      recipients: nil, outgoingMessageType: .outgoingMessageText, content: body,
+      speakableGroupName: nil, conversationIdentifier: a["conversation"] as? String,
+      serviceName: nil, sender: sender, attachments: nil)
+    if let image = image {
+      intent.setImage(image, forParameterNamed: \INSendMessageIntent.sender)
+    }
+    return intent
   }
 }
 

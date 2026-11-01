@@ -31,6 +31,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/theme/app_theme.dart';
+import 'core/theme/appearance.dart' show PresetSpec;
 import 'core/constants/app_constants.dart';
 import 'core/logging/app_logger.dart';
 import 'core/network/connectivity_service.dart';
@@ -412,6 +413,17 @@ class MailApp extends ConsumerWidget {
     mailPageWarm = settings.warmPage || settings.reading;
     // Шрифт интерфейса (1.8.8): его читают все темы ниже.
     AppTheme.fontFamily = AppTheme.familyFor(settings.uiFont);
+    // «Оформление» (1.9.x, просьба владельца 31.10.2026): цветовая тема,
+    // акцент, оттенок ленты, скругление, плотность, анимация открытия
+    // письма. Системное «Убрать анимацию» — только как признак (без
+    // подписки на весь MediaQuery: клавиатура перестраивала бы приложение).
+    final appearance =
+        settings.appearance(systemNoAnimations: MediaQuery.maybeDisableAnimationsOf(context) ?? false);
+    Radii.scale = appearance.radiusScale;
+    // Цвета обоев, пока обои их дают, заменяют цветовую тему и акцент — и
+    // чёрный тёмный вариант «Полночи» тоже.
+    final blackDark =
+        lightScheme == null && darkScheme == null && PresetSpec.of(appearance.preset).blackDark && !settings.highContrast;
     // Переходы между экранами — обычные (сдвиг, предиктивный «назад»);
     // «Уменьшить движение» выключает и их. Переменная пропала при удалении
     // настройки «Анимации интерфейса» — сборка 1.5.1 падала (10.10.2026).
@@ -430,16 +442,25 @@ class MailApp extends ConsumerWidget {
       // «Чтение» — своя тёплая светлая тема; высокий контраст важнее неё.
       theme: AppTheme.withTransitions(
           settings.reading && !settings.highContrast
-              ? AppTheme.readingTheme(settings.fontScale, dyslexiaFont: settings.dyslexiaFont)
+              ? AppTheme.readingTheme(settings.fontScale, dyslexiaFont: settings.dyslexiaFont, appearance: appearance)
               : AppTheme.lightTheme(settings.fontScale,
-                  highContrast: settings.highContrast, dyslexiaFont: settings.dyslexiaFont, dynamicScheme: lightScheme),
+                  highContrast: settings.highContrast,
+                  dyslexiaFont: settings.dyslexiaFont,
+                  dynamicScheme: lightScheme,
+                  appearance: appearance),
           animated),
       darkTheme: AppTheme.withTransitions(
-          settings.amoled
+          settings.amoled || blackDark
               ? AppTheme.amoledTheme(settings.fontScale,
-                  highContrast: settings.highContrast, dyslexiaFont: settings.dyslexiaFont, dynamicScheme: darkScheme)
+                  highContrast: settings.highContrast,
+                  dyslexiaFont: settings.dyslexiaFont,
+                  dynamicScheme: darkScheme,
+                  appearance: appearance)
               : AppTheme.darkTheme(settings.fontScale,
-                  highContrast: settings.highContrast, dyslexiaFont: settings.dyslexiaFont, dynamicScheme: darkScheme),
+                  highContrast: settings.highContrast,
+                  dyslexiaFont: settings.dyslexiaFont,
+                  dynamicScheme: darkScheme,
+                  appearance: appearance),
           animated),
       themeMode: settings.themeMode,
       // Плавная смена темы (светлая↔тёмная) вместо резкого переключения.

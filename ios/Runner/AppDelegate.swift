@@ -1,5 +1,11 @@
 import Flutter
+import Intents
 import UIKit
+import SwiftUI
+import NaturalLanguage
+#if canImport(Translation)
+import Translation
+#endif
 import UserNotifications
 import flutter_local_notifications
 import workmanager_apple
@@ -39,6 +45,10 @@ import workmanager_apple
     // Сигналы сервера «проверь почту» (1.7.2).
     if let r = self.registrar(forPlugin: "OgnelissPush") {
       AppDelegate.registerPushChannel(r.messenger())
+    }
+    // Перевод писем на устройстве (1.9.x, Apple Translation, iOS 18+).
+    if let r = self.registrar(forPlugin: "OgnelissTranslate") {
+      TranslationBridge.register(r.messenger())
     }
     // Холодный запуск нажатием на виджет.
     if let url = launchOptions?[.url] as? URL { _ = WidgetBridgePlugin.handle(url) }
@@ -319,5 +329,291 @@ import workmanager_apple
     if let r = registry.registrar(forPlugin: "OgnelissPhoneMirror") {
       PhoneMirrorPlugin.register(with: r.messenger())
     }
+    // Уведомления как в мессенджерах (1.9.x) — и из фоновой проверки почты.
+    if let r = registry.registrar(forPlugin: "OgnelissMessenger") {
+      AppDelegate.registerMessengerChannel(r.messenger())
+    }
+  }
+
+  // MARK: Уведомления как в мессенджерах (1.9.x, просьба владельца 31.10.2026)
+
+  /// MethodChannel 'ogneliss/messenger', «show»: уведомление о письме
+  /// показывается здесь, а не плагином, — с INSendMessageIntent
+  /// (Communication Notifications): iOS рисует фото или букву отправителя,
+  /// как в мессенджерах. Ключи userInfo — те же, что у
+  /// flutter_local_notifications: нажатие, кнопки (категории EMAIL/INVITE),
+  /// показ при открытом приложении и снятие по id обрабатывает плагин, как у
+  /// остальных уведомлений. Нет возможности «Communication Notifications» у
+  /// цели Runner (docs/guides/IOS_COMMUNICATION_NOTIFICATIONS.md) или ошибка
+  /// намерения — обычное уведомление; ответ false — показывает плагин.
+  static func registerMessengerChannel(_ messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(name: "ogneliss/messenger", binaryMessenger: messenger)
+    channel.setMethodCallHandler { call, result in
+      switch call.method {
+      case "show":
+        guard let args = call.arguments as? [String: Any] else {
+          result(false)
+          return
+        }
+        if #available(iOS 15.0, *) {
+          AppDelegate.showCommunication(args, result: result)
+        } else {
+          result(false)
+        }
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+  }
+
+  @available(iOS 15.0, *)
+  static func showCommunication(_ a: [String: Any], result: @escaping FlutterResult) {
+    guard let id = (a["id"] as? NSNumber)?.intValue, let payload = a["payload"] as? String else {
+      result(false)
+      return
+    }
+    let content = UNMutableNotificationContent()
+    content.title = a["title"] as? String ?? ""
+    content.subtitle = a["subtitle"] as? String ?? ""
+    content.body = a["body"] as? String ?? ""
+    content.threadIdentifier = a["thread"] as? String ?? ""
+    content.categoryIdentifier = a["category"] as? String ?? ""
+    if let badge = a["badge"] as? NSNumber { content.badge = badge }
+    let sound = a["sound"] as? Bool ?? false
+    if sound { content.sound = .default }
+    content.userInfo = [
+      "NotificationId": NSNumber(value: id),
+      "title": content.title,
+      "presentAlert": true,
+      "presentSound": sound,
+      "presentBadge": true,
+      "presentBanner": true,
+      "presentList": true,
+      "payload": payload,
+    ]
+    var shown: UNNotificationContent = content
+    do {
+      let intent = AppDelegate.messageIntent(a, body: content.body)
+      let interaction = INInteraction(intent: intent, response: nil)
+      interaction.direction = .incoming
+      interaction.donate(completion: nil)
+      shown = try content.updating(from: intent)
+    } catch {
+      shown = content
+    }
+    let request = UNNotificationRequest(identifier: String(id), content: shown, trigger: nil)
+    UNUserNotificationCenter.current().add(request) { error in
+      DispatchQueue.main.async { result(error == nil) }
+    }
+  }
+
+  /// Входящее «сообщение» от отправителя письма: имя, адрес, фото или
+  /// буква (PNG из Dart), беседа — по адресу.
+  static func messageIntent(_ a: [String: Any], body: String) -> INSendMessageIntent {
+    let name = a["senderName"] as? String ?? ""
+    let email = a["senderEmail"] as? String ?? ""
+    var image: INImage?
+    if let data = (a["avatar"] as? FlutterStandardTypedData)?.data, !data.isEmpty {
+      image = INImage(imageData: data)
+    }
+    let handle = INPersonHandle(value: email.isEmpty ? name : email, type: email.isEmpty ? .unknown : .emailAddress)
+    let sender = INPerson(
+      personHandle: handle, nameComponents: nil, displayName: name, image: image,
+      contactIdentifier: nil, customIdentifier: email.isEmpty ? nil : email)
+    let intent = INSendMessageIntent(
+      recipients: nil, outgoingMessageType: .outgoingMessageText, content: body,
+      speakableGroupName: nil, conversationIdentifier: a["conversation"] as? String,
+      serviceName: nil, sender: sender, attachments: nil)
+    if let image = image {
+      intent.setImage(image, forParameterNamed: \INSendMessageIntent.sender)
+    }
+    return intent
   }
 }
+
+// MARK: Перевод писем на устройстве (1.9.x, просьба владельца 31.10.2026)
+
+/// Канал 'ogneliss/translate' (Dart — lib/services/translation/translator.dart).
+/// Перевод — Apple Translation (iOS 18+): бесплатно, на устройстве, языки
+/// скачивает сама iOS (и сама спрашивает разрешение). Язык текста —
+/// NaturalLanguage, названия языков — Locale (есть на любой iOS).
+/// Сессия перевода у Apple выдаётся только виду SwiftUI (.translationTask),
+/// поэтому перевод идёт через невидимый вид 1×1 (UIHostingController)
+/// поверх экрана Flutter. Включать в Xcode ничего не нужно
+/// (docs/guides/TRANSLATION_SETUP.md).
+enum TranslationBridge {
+  static func register(_ messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(name: "ogneliss/translate", binaryMessenger: messenger)
+    channel.setMethodCallHandler { call, result in
+      let args = call.arguments as? [String: Any] ?? [:]
+      switch call.method {
+      case "detect":
+        result(detect(args["text"] as? String ?? ""))
+      case "names":
+        let display = Locale(identifier: args["display"] as? String ?? "en")
+        var names: [String: String] = [:]
+        for code in args["codes"] as? [String] ?? [] {
+          if let n = display.localizedString(forLanguageCode: code == "no" ? "nb" : code) { names[code] = n }
+        }
+        result(names)
+      case "downloaded":
+        // Языками управляет iOS (Настройки → Приложения → Перевод).
+        result(nil)
+      default:
+        #if canImport(Translation)
+        if #available(iOS 18.0, *) {
+          TranslationHost.shared.handle(call.method, args, result)
+          return
+        }
+        #endif
+        if call.method == "available" { result(false) } else { result(FlutterMethodNotImplemented) }
+      }
+    }
+  }
+
+  /// Язык текста (код вида «en», «zh-Hans») или nil — не уверены.
+  static func detect(_ text: String) -> String? {
+    let r = NLLanguageRecognizer()
+    r.processString(String(text.prefix(2000)))
+    guard let best = r.languageHypotheses(withMaximum: 1).first, best.value >= 0.5 else { return nil }
+    return best.key.rawValue
+  }
+
+  /// Код приложения → язык Apple: норвежский у Apple — «nb», китайский —
+  /// упрощённый, португальский — бразильский (как в приложении).
+  static func appleLanguage(_ code: String) -> String {
+    switch code {
+    case "no": return "nb"
+    case "zh": return "zh-Hans"
+    case "pt": return "pt-BR"
+    default: return code
+    }
+  }
+}
+
+#if canImport(Translation)
+@available(iOS 18.0, *)
+final class TranslationHost {
+  static let shared = TranslationHost()
+  private let jobs = TranslationJobs()
+  private var host: UIViewController?
+
+  func handle(_ method: String, _ args: [String: Any], _ result: @escaping FlutterResult) {
+    let fromCode = args["from"] as? String ?? ""
+    let toCode = args["to"] as? String ?? ""
+    let from = TranslationBridge.appleLanguage(fromCode)
+    let to = TranslationBridge.appleLanguage(toCode)
+    switch method {
+    case "available":
+      result(true)
+    case "languages":
+      Task {
+        let langs = await LanguageAvailability().supportedLanguages
+        let codes = Array(Set(langs.compactMap { $0.languageCode?.identifier }))
+        await MainActor.run { result(codes) }
+      }
+    case "missing":
+      Task {
+        let status = await LanguageAvailability().status(
+          from: Locale.Language(identifier: from), to: Locale.Language(identifier: to))
+        await MainActor.run {
+          switch status {
+          case .installed: result([String]())
+          case .supported: result([fromCode, toCode])
+          default: result(FlutterError(code: "unsupported", message: "\(from) → \(to)", details: nil))
+          }
+        }
+      }
+    case "download":
+      // Окно iOS «Скачать языки?» — системное, со своим размером и сетью.
+      run(from, to, result) { session in
+        try await session.prepareTranslation()
+        return nil
+      }
+    case "translate":
+      let texts = args["texts"] as? [String] ?? []
+      run(from, to, result) { session in
+        let requests = texts.enumerated().map {
+          TranslationSession.Request(sourceText: $0.element, clientIdentifier: String($0.offset))
+        }
+        var out = texts
+        for r in try await session.translations(from: requests) {
+          if let id = r.clientIdentifier, let i = Int(id), i < out.count { out[i] = r.targetText }
+        }
+        return out
+      }
+    default:
+      result(FlutterMethodNotImplemented)
+    }
+  }
+
+  /// Задание — виду SwiftUI: новая конфигурация (или invalidate той же
+  /// пары) запускает .translationTask с сессией. Вызовы Dart идут по
+  /// одному, заданий одновременно не бывает.
+  private func run(_ from: String, _ to: String, _ result: @escaping FlutterResult,
+                   _ work: @escaping (TranslationSession) async throws -> Any?) {
+    DispatchQueue.main.async {
+      guard self.attach() else {
+        result(FlutterError(code: "translate", message: "no window", details: nil))
+        return
+      }
+      self.jobs.job = { session in
+        do {
+          let r = try await work(session)
+          await MainActor.run { result(r) }
+        } catch {
+          await MainActor.run {
+            result(FlutterError(code: "translate", message: error.localizedDescription, details: nil))
+          }
+        }
+      }
+      let source = Locale.Language(identifier: from)
+      let target = Locale.Language(identifier: to)
+      if var c = self.jobs.configuration, c.source == source, c.target == target {
+        c.invalidate()
+        self.jobs.configuration = c
+      } else {
+        self.jobs.configuration = TranslationSession.Configuration(source: source, target: target)
+      }
+    }
+  }
+
+  /// Невидимый вид SwiftUI 1×1 поверх экрана Flutter (один на приложение).
+  private func attach() -> Bool {
+    if host != nil { return true }
+    let windows = UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .flatMap { $0.windows }
+    guard let root = (windows.first { $0.isKeyWindow } ?? windows.first)?.rootViewController else { return false }
+    let vc = UIHostingController(rootView: TranslationHostView(jobs: jobs))
+    vc.view.frame = CGRect(x: 0, y: 0, width: 1, height: 1)
+    vc.view.backgroundColor = .clear
+    vc.view.isUserInteractionEnabled = false
+    root.addChild(vc)
+    root.view.addSubview(vc.view)
+    vc.didMove(toParent: root)
+    host = vc
+    return true
+  }
+}
+
+@available(iOS 18.0, *)
+final class TranslationJobs: ObservableObject {
+  @Published var configuration: TranslationSession.Configuration?
+  var job: ((TranslationSession) async -> Void)?
+}
+
+@available(iOS 18.0, *)
+struct TranslationHostView: View {
+  @ObservedObject var jobs: TranslationJobs
+
+  var body: some View {
+    Color.clear
+      .translationTask(jobs.configuration) { session in
+        guard let job = jobs.job else { return }
+        jobs.job = nil
+        await job(session)
+      }
+  }
+}
+#endif

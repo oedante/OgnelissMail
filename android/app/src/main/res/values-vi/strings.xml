@@ -25,4 +25,12 @@
     <string name="widget_cal_day">Ngày</string>
     <string name="widget_cal_week">Tuần</string>
     <string name="widget_cal_month">Tháng</string>
+    <string name="shortcut_myday">Ngày của tôi</string>
+    <string name="shortcut_compose">Thư mới</string>
+    <string name="shortcut_event">Cuộc họp mới</string>
+    <string name="shortcut_reminder">Lời nhắc mới</string>
+    <string name="shortcut_unread">Chưa đọc</string>
+    <string name="shortcut_vip">Thư VIP</string>
+    <string name="shortcut_calendar">Lịch</string>
+    <string name="shortcut_tasks">Tác vụ</string>
 </resources>

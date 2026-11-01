@@ -158,6 +158,7 @@ class _MailCard extends StatelessWidget {
               initial: name.isNotEmpty ? initialOf(name) : '?',
               color: HeroEmailAvatar.colorForEmail(email.from.email),
               email: email.from.email,
+              authResults: email.authResults,
               radius: 22,
               hero: false,
             ),

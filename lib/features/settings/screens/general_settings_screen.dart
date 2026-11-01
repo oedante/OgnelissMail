@@ -1,9 +1,12 @@
 // lib/features/settings/screens/general_settings_screen.dart
 // Общие настройки: тема, язык, масштаб шрифта. Реальное применение через settingsProvider.
+// Выбор темы и цвета — на экране «Оформление» (1.9.x), здесь — строка-ссылка.
 
 import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/ui/app_radio_tile.dart';
 import 'dart:io' show Platform;
+import 'package:go_router/go_router.dart';
+import 'appearance_screen.dart' show presetLabel;
 import '../../../core/theme/app_icons.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -38,34 +41,17 @@ class GeneralSettingsScreen extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xl),
         children: [
           // ── Тема ──
+          // Тема, цвета от обоев, цветовая тема, акцент, скругление и
+          // плотность ленты — на экране «Оформление» (1.9.x, просьба
+          // владельца 31.10.2026); здесь — переход туда, без дублей.
           SettingsSectionTitle(l10n.tr('theme')),
           SettingsGroup(children: [
-            for (final t in [
-              (AppThemeChoice.system, l10n.tr('systemTheme'), null),
-              (AppThemeChoice.light, l10n.tr('lightTheme'), null),
-              (AppThemeChoice.dark, l10n.tr('darkTheme'), null),
-              (AppThemeChoice.amoled, l10n.tr('amoledTheme'), l10n.tr('amoledThemeHint')),
-              (AppThemeChoice.reading, l10n.tr('readingTheme'), l10n.tr('readingThemeHint')),
-            ])
-              AppRadioTile<AppThemeChoice>(
-                title: Text(t.$2),
-                subtitle: t.$3 == null ? null : Text(t.$3!),
-                value: t.$1,
-                groupValue: settings.themeChoice,
-                onChanged: (v) => notifier.setThemeChoice(v!),
-              ),
-            // Цвета от обоев — Android 12+ (на iOS и старых Android системной
-            // палитры нет, переключатель не показывается).
-            if (!kIsWeb && Platform.isAndroid)
-              SettingsSwitchItem(
-                icon: AppIcons.palette,
-                title: l10n.tr('dynamicColor'),
-                subtitle: l10n.tr(settings.highContrast
-                    ? 'dynamicColorHc'
-                    : (settings.reading ? 'dynamicColorReading' : 'dynamicColorDesc')),
-                value: settings.dynamicColor,
-                onChanged: (settings.highContrast || settings.reading) ? null : notifier.setDynamicColor,
-              ),
+            SettingsItem(
+              icon: AppIcons.palette,
+              title: l10n.tr('appearanceTitle'),
+              subtitle: '${_themeLabel(l10n, settings.themeChoice)} · ${presetLabel(l10n, settings.themePreset)}',
+              onTap: () => context.push('/settings/appearance'),
+            ),
           ]),
 
           // ── Экран ──
@@ -231,6 +217,14 @@ class GeneralSettingsScreen extends ConsumerWidget {
       ),
     );
   }
+
+  static String _themeLabel(AppLocalizations l10n, AppThemeChoice c) => l10n.tr(switch (c) {
+        AppThemeChoice.system => 'systemTheme',
+        AppThemeChoice.light => 'lightTheme',
+        AppThemeChoice.dark => 'darkTheme',
+        AppThemeChoice.amoled => 'amoledTheme',
+        AppThemeChoice.reading => 'readingTheme',
+      });
 
   /// Выбор языка: все языки приложения, у каждого — название на нём самом и
   /// по-английски.

@@ -25,4 +25,12 @@
     <string name="widget_cal_day">Päivä</string>
     <string name="widget_cal_week">Viikko</string>
     <string name="widget_cal_month">Kuukausi</string>
+    <string name="shortcut_myday">Oma päivä</string>
+    <string name="shortcut_compose">Uusi viesti</string>
+    <string name="shortcut_event">Uusi kokous</string>
+    <string name="shortcut_reminder">Uusi muistutus</string>
+    <string name="shortcut_unread">Lukemattomat</string>
+    <string name="shortcut_vip">VIP-viestit</string>
+    <string name="shortcut_calendar">Kalenteri</string>
+    <string name="shortcut_tasks">Tehtävät</string>
 </resources>

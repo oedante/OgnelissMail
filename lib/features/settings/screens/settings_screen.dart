@@ -110,10 +110,17 @@ class SettingsScreen extends ConsumerWidget {
           // ── Основное ──
           SettingsSectionTitle(l10n.tr('sectionGeneral')),
           SettingsGroup(children: [
+            // «Оформление» (1.9.x): тема, цвета, скругление, плотность ленты.
+            SettingsItem(
+              icon: AppIcons.format_paint,
+              title: l10n.tr('appearanceTitle'),
+              subtitle: l10n.tr('appearanceDesc'),
+              onTap: () => context.push('/settings/appearance'),
+            ),
             SettingsItem(
               icon: AppIcons.palette,
               title: l10n.tr('general'),
-              subtitle: '${l10n.tr('appearance')}, ${l10n.tr('language')}',
+              subtitle: '${l10n.tr('language')}, ${l10n.tr('fontSize')}',
               onTap: () => context.push('/settings/general'),
             ),
             // Уведомления, тихие часы, режим фокуса и VIP — на одном экране.

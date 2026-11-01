@@ -25,4 +25,12 @@
     <string name="widget_cal_day">日</string>
     <string name="widget_cal_week">週</string>
     <string name="widget_cal_month">月</string>
+    <string name="shortcut_myday">今日の予定</string>
+    <string name="shortcut_compose">新規メール</string>
+    <string name="shortcut_event">新しい会議</string>
+    <string name="shortcut_reminder">新しいリマインダー</string>
+    <string name="shortcut_unread">未読</string>
+    <string name="shortcut_vip">VIP メール</string>
+    <string name="shortcut_calendar">カレンダー</string>
+    <string name="shortcut_tasks">タスク</string>
 </resources>

@@ -86,7 +86,10 @@ class TasksScreen extends ConsumerStatefulWidget {
   final String? openAccountId;
   /// Сразу открыть новое напоминание (быстрое действие на значке).
   final bool openNew;
-  const TasksScreen({super.key, this.openTaskId, this.openAccountId, this.openNew = false});
+  /// Фраза нового напоминания от Siri или Ассистента (1.9.x): «позвонить
+  /// маме завтра в 10» — разбирается, как строка быстрого ввода.
+  final String? openText;
+  const TasksScreen({super.key, this.openTaskId, this.openAccountId, this.openNew = false, this.openText});
 
   @override
   ConsumerState<TasksScreen> createState() => _TasksScreenState();
@@ -147,7 +150,11 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final acc = widget.openAccountId;
-      _openEditor(accountId: (acc != null && acc.isNotEmpty) ? acc : _defaultAccount());
+      final text = widget.openText?.trim() ?? '';
+      _openEditor(
+        draft: text.isEmpty ? null : TaskQuickParser.parse(text),
+        accountId: (acc != null && acc.isNotEmpty) ? acc : _defaultAccount(),
+      );
     });
   }
 
@@ -155,7 +162,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   void didUpdateWidget(covariant TasksScreen old) {
     super.didUpdateWidget(old);
     // Экран уже открыт, а пришло быстрое действие — новое напоминание.
-    if (widget.openNew && !old.openNew) _openNewSoon();
+    if (widget.openNew && (!old.openNew || widget.openText != old.openText)) _openNewSoon();
     if (widget.openTaskId != null && widget.openTaskId != old.openTaskId) {
       _pendingOpen = widget.openTaskId;
       _pendingOpenAccount = widget.openAccountId;

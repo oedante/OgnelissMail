@@ -182,13 +182,16 @@ class DiagnosticsReport {
         'ключ ${AppConstants.oauthProxyApiKey.isEmpty ? 'НЕ задан' : 'задан, отпечаток ${sha256.convert(utf8.encode(AppConstants.oauthProxyApiKey)).toString().substring(0, 8)}'}'
         // Сверка с прокси: GET <адрес>/healthz → keys.api должен совпасть.
         );
-    // Сигналы сервера на iPhone (1.7.2): включены ли, регистрация, последний сигнал.
+    // Сигналы сервера на iPhone (1.7.2) и Android (FCM, 1.9.x): включены ли,
+    // регистрация, последний сигнал.
     if (PushWakeService.supported) {
       try {
         final st = ref.read(pushWakeServiceProvider).state();
         final pw = ref.read(pushWakePrefsProvider);
-        line('Сигналы сервера (iPhone): ${pw.enabled ? 'вкл' : 'выкл'}, раз в ${pw.interval} мин, '
-            'режим ${AppConstants.pushWakeMode}, адрес ${AppConstants.pushRelayUrl}; регистрация: '
+        final android = PushWakeService.platformOs == PushWakeOs.android;
+        line('Сигналы сервера (${android ? 'Android, FCM' : 'iPhone'}): ${pw.enabled ? 'вкл' : 'выкл'}, раз в ${pw.interval} мин, '
+            'режим ${android ? AppConstants.pushWakeAndroidPriority : AppConstants.pushWakeMode}, '
+            '${android ? 'проект ${AppConstants.firebaseProjectId}, ' : ''}адрес ${AppConstants.pushRelayUrl}; регистрация: '
             '${st.registered ? '${st.env}, ${st.registeredAt?.toIso8601String() ?? '?'}' : 'нет'}'
             '${st.lastWake == null ? '' : '; последний сигнал ${st.lastWake!.toIso8601String()}'}'
             '${st.lastError == null ? '' : '; ошибка: ${st.lastError}'}');

@@ -106,6 +106,8 @@ class OfflineSendService {
     /// [MessageTooLargeException] (редактор письма оставляет его открытым).
     /// false — в «не отправлено» с причиной и уведомлением.
     bool keepTooLarge = false,
+    /// «Запросить подтверждение доставки» (1.9.x, DSN NOTIFY=SUCCESS у SMTP).
+    bool requestDeliveryReport = false,
   }) =>
       FinishInBackground.guard(() => _sendOrQueue(
             accountId: accountId,
@@ -121,6 +123,7 @@ class OfflineSendService {
             remoteAttachments: remoteAttachments,
             from: from,
             keepTooLarge: keepTooLarge,
+            requestDeliveryReport: requestDeliveryReport,
           ));
 
   Future<bool> _sendOrQueue({
@@ -137,6 +140,7 @@ class OfflineSendService {
     required List<RemoteAttachment> remoteAttachments,
     required EmailAddress? from,
     required bool keepTooLarge,
+    required bool requestDeliveryReport,
   }) async {
     final connectivity = _ref.read(connectivityServiceProvider);
 
@@ -163,7 +167,7 @@ class OfflineSendService {
             AppLogger.warning('Вложения пересылаемого письма не скачаны — письмо в очереди: $e');
             await _enqueue(accountId, to, cc, bcc, subject, bodyHtml, inReplyTo,
                 attachments: attachments, importance: importance, sensitivity: sensitivity,
-                remoteAttachments: remoteAttachments, from: from);
+                remoteAttachments: remoteAttachments, from: from, dsn: requestDeliveryReport);
             _wakeAt(accountId, DateTime.now().add(const Duration(seconds: 60)));
             return false;
           }
@@ -172,7 +176,8 @@ class OfflineSendService {
         final transport = _ref.read(mailTransportFactoryProvider).forAccount(account);
         await transport.send(account, to: to, cc: cc, bcc: bcc,
             subject: subject, bodyHtml: bodyHtml, inReplyTo: inReplyTo, attachments: all, importance: importance, sensitivity: sensitivity,
-            from: from);
+            from: from,
+            requestDeliveryReport: requestDeliveryReport);
 
         AppLogger.info('Email sent: $subject');
         _afterSent(account);
@@ -190,7 +195,7 @@ class OfflineSendService {
           if (keepTooLarge) throw tooLarge;
           await _enqueue(accountId, to, cc, bcc, subject, bodyHtml, inReplyTo,
               attachments: attachments, importance: importance, sensitivity: sensitivity,
-              remoteAttachments: remoteAttachments, from: from,
+              remoteAttachments: remoteAttachments, from: from, dsn: requestDeliveryReport,
               operationType: 'send_failed',
               errorMessage: tooLargeText(_l10n(), tooLarge));
           await _notifyNotSent(accountId, 'toolarge_${DateTime.now().millisecondsSinceEpoch}', subject);
@@ -204,7 +209,7 @@ class OfflineSendService {
         if (_isUncertainTimeout(e)) {
           await _enqueue(accountId, to, cc, bcc, subject, bodyHtml, inReplyTo,
               attachments: attachments, importance: importance, sensitivity: sensitivity,
-              remoteAttachments: remoteAttachments, from: from,
+              remoteAttachments: remoteAttachments, from: from, dsn: requestDeliveryReport,
               operationType: 'send_failed',
               errorMessage: _l10n().tr('offlineErrTimeout'));
           await _notifyUncertain(accountId, 'timeout_${DateTime.now().millisecondsSinceEpoch}',
@@ -212,7 +217,7 @@ class OfflineSendService {
           return false;
         }
         await _enqueue(accountId, to, cc, bcc, subject, bodyHtml, inReplyTo, attachments: attachments, importance: importance, sensitivity: sensitivity,
-            remoteAttachments: remoteAttachments, from: from);
+            remoteAttachments: remoteAttachments, from: from, dsn: requestDeliveryReport);
         // Раньше письмо из очереди уходило только со следующей полной
         // синхронизацией (до 15 минут). Теперь — повтор через 30 секунд.
         _wakeAt(accountId, DateTime.now().add(const Duration(seconds: 30)));
@@ -221,7 +226,7 @@ class OfflineSendService {
     } else {
       // Офлайн — в очередь
       await _enqueue(accountId, to, cc, bcc, subject, bodyHtml, inReplyTo, attachments: attachments, importance: importance, sensitivity: sensitivity,
-          remoteAttachments: remoteAttachments, from: from);
+          remoteAttachments: remoteAttachments, from: from, dsn: requestDeliveryReport);
       AppLogger.info('Email queued (offline): $subject');
       return false;
     }
@@ -244,6 +249,7 @@ class OfflineSendService {
     required DateTime scheduledAt,
     List<RemoteAttachment> remoteAttachments = const [],
     EmailAddress? from,
+    bool requestDeliveryReport = false,
   }) async {
     final db = _ref.read(databaseProvider);
     // Защита от разрастания БД при длительной работе без связи: вложения
@@ -275,6 +281,7 @@ class OfflineSendService {
             if (from != null) 'from': {'email': from.email, 'displayName': from.displayName},
             if (remoteAttachments.isNotEmpty) 'remoteAttachments': _remoteToJson(remoteAttachments),
             'scheduledAt': scheduledAt.toIso8601String(),
+            if (requestDeliveryReport) 'dsn': true,
           }),
           priority: const Value(10),
           createdAt: DateTime.now(),
@@ -381,6 +388,7 @@ class OfflineSendService {
     required Duration window,
     List<RemoteAttachment> remoteAttachments = const [],
     EmailAddress? from,
+    bool requestDeliveryReport = false,
   }) async {
     final db = _ref.read(databaseProvider);
     final outboxId = 'undosend_${DateTime.now().millisecondsSinceEpoch}';
@@ -429,6 +437,7 @@ class OfflineSendService {
             if (from != null) 'from': {'email': from.email, 'displayName': from.displayName},
             if (remoteAttachments.isNotEmpty) 'remoteAttachments': _remoteToJson(remoteAttachments),
             'scheduledAt': scheduledAt.toIso8601String(),
+            if (requestDeliveryReport) 'dsn': true,
           }),
           priority: const Value(10),
           createdAt: DateTime.now(),
@@ -538,6 +547,7 @@ class OfflineSendService {
     String? errorMessage,
     List<RemoteAttachment> remoteAttachments = const [],
     EmailAddress? from,
+    bool dsn = false,
   }) async {
     final db = _ref.read(databaseProvider);
     // Защита от разрастания БД при длительной работе без связи: вложения
@@ -569,6 +579,7 @@ class OfflineSendService {
             'importance': importance,
             'sensitivity': sensitivity,
             if (from != null) 'from': {'email': from.email, 'displayName': from.displayName},
+            if (dsn) 'dsn': true,
           }),
           priority: const Value(10),
           createdAt: DateTime.now(),
@@ -742,7 +753,8 @@ class OfflineSendService {
         // (Status 118) и не отправит письмо второй раз.
         await transport.send(account, to: to, cc: cc, bcc: bcc,
             subject: subject, bodyHtml: bodyHtml, inReplyTo: inReplyTo, attachments: attachments,
-            importance: importance, sensitivity: sensitivity, clientId: 'q${op.id}', from: from);
+            importance: importance, sensitivity: sensitivity, clientId: 'q${op.id}', from: from,
+            requestDeliveryReport: payload['dsn'] == true);
 
         await (db.delete(db.syncQueue)..where((q) => q.id.equals(op.id))).go();
         // Для undo-send targetId = id письма в Исходящих — убираем его после

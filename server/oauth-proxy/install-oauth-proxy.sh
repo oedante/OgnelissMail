@@ -252,7 +252,7 @@ resolve_base_url() {
 # ── Файлы прокси из архива ──────────────────────────────────────────────────
 check_sources() {
   local f
-  for f in server.js package.json package-lock.json; do
+  for f in server.js bimi.js package.json package-lock.json; do
     [ -f "$SCRIPT_DIR/$f" ] || die "нет $SCRIPT_DIR/$f — копируйте на сервер всю папку server/oauth-proxy, а не только скрипт"
   done
   grep -q "router.post('/exchange'" "$SCRIPT_DIR/server.js" \
@@ -263,7 +263,7 @@ backup_dir() {
   BACKUP_DIR="$APP_DIR/backup-$(date +%Y%m%d-%H%M%S)"
   install -d -m 700 "$BACKUP_DIR"
   local f
-  for f in server.js package.json package-lock.json Dockerfile docker-compose.oauth.yml .env; do
+  for f in server.js bimi.js package.json package-lock.json Dockerfile docker-compose.oauth.yml .env; do
     [ -f "$APP_DIR/$f" ] && cp -p "$APP_DIR/$f" "$BACKUP_DIR/"
   done
   if [ "$MODE" = native ] && [ -f "$ENV_FILE" ]; then cp -p "$ENV_FILE" "$BACKUP_DIR/oauth-proxy.env"; fi
@@ -485,7 +485,7 @@ docker_install() {
   [ -f "$ENV_FILE" ] && first=0
   [ "$first" = 1 ] || backup_dir
 
-  install -m 644 "$SCRIPT_DIR/server.js" "$SCRIPT_DIR/package.json" "$SCRIPT_DIR/package-lock.json" "$APP_DIR/"
+  install -m 644 "$SCRIPT_DIR/server.js" "$SCRIPT_DIR/bimi.js" "$SCRIPT_DIR/package.json" "$SCRIPT_DIR/package-lock.json" "$APP_DIR/"
   install -m 644 "$SCRIPT_DIR/Dockerfile" "$APP_DIR/Dockerfile"
   printf '.env\n*.env\nbackup-*\nnode_modules\n' > "$APP_DIR/.dockerignore"; chmod 644 "$APP_DIR/.dockerignore"
 
@@ -721,12 +721,12 @@ native_install() {
 
   [ "$first" = 1 ] || backup_dir
   install -d -m 755 "$APP_DIR"
-  install -m 644 "$SCRIPT_DIR/server.js" "$SCRIPT_DIR/package.json" "$SCRIPT_DIR/package-lock.json" "$APP_DIR/"
+  install -m 644 "$SCRIPT_DIR/server.js" "$SCRIPT_DIR/bimi.js" "$SCRIPT_DIR/package.json" "$SCRIPT_DIR/package-lock.json" "$APP_DIR/"
   log "Зависимости (npm ci)"
   # umask 022: иначе (umask 077 скрипта) node_modules читает только root,
   # и служба от ogneliss-oauth не найдёт express.
   (umask 022; cd "$APP_DIR" && npm ci --omit=dev --no-audit --no-fund --loglevel=error)
-  chown -R root:root "$APP_DIR/node_modules" "$APP_DIR/server.js" "$APP_DIR/package.json" "$APP_DIR/package-lock.json"
+  chown -R root:root "$APP_DIR/node_modules" "$APP_DIR/server.js" "$APP_DIR/bimi.js" "$APP_DIR/package.json" "$APP_DIR/package-lock.json"
   chmod -R go-w,a+rX "$APP_DIR/node_modules"
   chmod 755 "$APP_DIR"
 

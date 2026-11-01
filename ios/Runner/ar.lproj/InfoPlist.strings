@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "تُستخدم الصور فقط عندما ترفقها برسالة أو تختار صورة لصندوق البريد.";
 "NSCameraUsageDescription" = "لا يستخدم Ogneliss Mail الكاميرا بنفسه. قد تطلب صفحة ويب مفتوحة من رسالة (مثل اجتماع فيديو) الوصول إليها.";
 "NSLocationWhenInUseUsageDescription" = "لا يتتبع Ogneliss Mail موقعك. قد تطلب صفحة ويب مفتوحة من رسالة الوصول إليه.";
+"siriCompose" = "رسالة جديدة";
+"siriEvent" = "حدث جديد";
+"siriReminder" = "تذكير جديد";
+"siriMyDay" = "يومي";
+"siriUnread" = "غير المقروءة";
+"siriTo" = "إلى";
+"siriSubject" = "الموضوع";
+"siriVip" = "رسائل كبار الشخصيات (VIP)";
+"siriSearch" = "البحث في البريد";
+"siriPhrase" = "ماذا ومتى";
+"siriQuery" = "البحث عن";
+"siriEventAsk" = "ما الاجتماع ومتى؟";
+"siriReminderAsk" = "بماذا أذكّرك ومتى؟";
+"siriSearchAsk" = "عمّ أبحث؟";

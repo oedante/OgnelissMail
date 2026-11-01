@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ярлыки приложения и Google Ассистент (App Actions), 1.9.x, просьба
+     владельца 31.10.2026.
+
+     Ярлыки (<shortcut>) — меню по долгому нажатию на значок и «Открой …
+     в Ogneliss Mail» у Ассистента. Первые четыре — прежние быстрые действия
+     (их больше не создаёт плагин quick_actions, иначе в меню они шли бы
+     дважды: lib/core/platform/app_shortcuts.dart). Меню значка показывает
+     обычно четыре-пять первых по рангу; на Android 7.1–9 система читает не
+     больше пяти статических ярлыков — поэтому важные идут первыми.
+     Нажатие передаёт экран в extra ogneliss_widget — тем же путём, что
+     нажатие на виджет (WidgetBridge, HomeWidgets.kt).
+
+     Возможности (<capability>) — встроенные намерения Ассистента:
+       · OPEN_APP_FEATURE — «Открой непрочитанные в Ogneliss Mail»: раздел
+         из ярлыков ниже (capability-binding, слова — app_actions.xml) или
+         просто слова человека (параметр feature);
+       · GET_THING — «Найди отчёт в Ogneliss Mail»: поиск в почте (q).
+     Обе приходят действием com.ogneliss.mail.ASSISTANT; разбирает
+     WidgetBridge.handle. CREATE_MESSAGE — для мессенджеров, встроенных
+     намерений «создать встречу / задачу» у Ассистента нет — новые письмо,
+     встреча и напоминание доступны как ярлыки. Какие фразы и на каких
+     языках понимает Ассистент (и Gemini, который его заменяет), решает
+     Google; русский язык App Actions пока не поддерживают. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <capability android:name="actions.intent.OPEN_APP_FEATURE">
+        <intent
+            android:action="com.ogneliss.mail.ASSISTANT"
+            android:targetPackage="com.ogneliss.mail"
+            android:targetClass="com.ogneliss.mail.MainActivity">
+            <parameter
+                android:name="feature"
+                android:key="feature" />
+        </intent>
+    </capability>
+
+    <capability android:name="actions.intent.GET_THING">
+        <intent
+            android:action="com.ogneliss.mail.ASSISTANT"
+            android:targetPackage="com.ogneliss.mail"
+            android:targetClass="com.ogneliss.mail.MainActivity">
+            <parameter
+                android:name="thing.name"
+                android:key="q" />
+        </intent>
+    </capability>
+
+    <shortcut
+        android:shortcutId="myday"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_myday"
+        android:shortcutShortLabel="@string/shortcut_myday"
+        android:shortcutLongLabel="@string/shortcut_myday">
+        <intent
+            android:action="com.ogneliss.mail.SHORTCUT"
+            android:targetPackage="com.ogneliss.mail"
+            android:targetClass="com.ogneliss.mail.MainActivity">
+            <extra android:name="ogneliss_widget" android:value="myday" />
+        </intent>
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding android:key="feature" android:value="@array/app_action_myday" />
+        </capability-binding>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="compose"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_compose"
+        android:shortcutShortLabel="@string/shortcut_compose"
+        android:shortcutLongLabel="@string/shortcut_compose">
+        <intent
+            android:action="com.ogneliss.mail.SHORTCUT"
+            android:targetPackage="com.ogneliss.mail"
+            android:targetClass="com.ogneliss.mail.MainActivity">
+            <extra android:name="ogneliss_widget" android:value="compose" />
+        </intent>
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding android:key="feature" android:value="@array/app_action_compose" />
+        </capability-binding>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="event"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_event"
+        android:shortcutShortLabel="@string/shortcut_event"
+        android:shortcutLongLabel="@string/shortcut_event">
+        <intent
+            android:action="com.ogneliss.mail.SHORTCUT"
+            android:targetPackage="com.ogneliss.mail"
+            android:targetClass="com.ogneliss.mail.MainActivity">
+            <extra android:name="ogneliss_widget" android:value="event" />
+        </intent>
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding android:key="feature" android:value="@array/app_action_event" />
+        </capability-binding>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="reminder"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_reminder"
+        android:shortcutShortLabel="@string/shortcut_reminder"
+        android:shortcutLongLabel="@string/shortcut_reminder">
+        <intent
+            android:action="com.ogneliss.mail.SHORTCUT"
+            android:targetPackage="com.ogneliss.mail"
+            android:targetClass="com.ogneliss.mail.MainActivity">
+            <extra android:name="ogneliss_widget" android:value="reminder" />
+        </intent>
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding android:key="feature" android:value="@array/app_action_reminder" />
+        </capability-binding>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="unread"
+        android:enabled="true"
+        android:shortcutShortLabel="@string/shortcut_unread"
+        android:shortcutLongLabel="@string/shortcut_unread">
+        <intent
+            android:action="com.ogneliss.mail.SHORTCUT"
+            android:targetPackage="com.ogneliss.mail"
+            android:targetClass="com.ogneliss.mail.MainActivity">
+            <extra android:name="ogneliss_widget" android:value="unread" />
+        </intent>
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding android:key="feature" android:value="@array/app_action_unread" />
+        </capability-binding>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="vip"
+        android:enabled="true"
+        android:shortcutShortLabel="@string/shortcut_vip"
+        android:shortcutLongLabel="@string/shortcut_vip">
+        <intent
+            android:action="com.ogneliss.mail.SHORTCUT"
+            android:targetPackage="com.ogneliss.mail"
+            android:targetClass="com.ogneliss.mail.MainActivity">
+            <extra android:name="ogneliss_widget" android:value="vip" />
+        </intent>
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding android:key="feature" android:value="@array/app_action_vip" />
+        </capability-binding>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="calendar"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_event"
+        android:shortcutShortLabel="@string/shortcut_calendar"
+        android:shortcutLongLabel="@string/shortcut_calendar">
+        <intent
+            android:action="com.ogneliss.mail.SHORTCUT"
+            android:targetPackage="com.ogneliss.mail"
+            android:targetClass="com.ogneliss.mail.MainActivity">
+            <extra android:name="ogneliss_widget" android:value="calendar" />
+        </intent>
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding android:key="feature" android:value="@array/app_action_calendar" />
+        </capability-binding>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="tasks"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_reminder"
+        android:shortcutShortLabel="@string/shortcut_tasks"
+        android:shortcutLongLabel="@string/shortcut_tasks">
+        <intent
+            android:action="com.ogneliss.mail.SHORTCUT"
+            android:targetPackage="com.ogneliss.mail"
+            android:targetClass="com.ogneliss.mail.MainActivity">
+            <extra android:name="ogneliss_widget" android:value="tasks" />
+        </intent>
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding android:key="feature" android:value="@array/app_action_tasks" />
+        </capability-binding>
+    </shortcut>
+</shortcuts>

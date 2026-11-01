@@ -520,6 +520,31 @@ class AssignmentReports extends Table {
   Set<Column> get primaryKey => {assignmentId};
 }
 
+/// Доставка отправленных писем по адресатам (1.9.x, отчёты о доставке,
+/// просьба владельца 31.10.2026): строка — последний отчёт сервера об одном
+/// адресате письма. Письмо находится по Message-ID (emails.internetMessageId):
+/// отчёт может прийти раньше, чем копия письма появится в «Отправленных».
+@DataClassName('DeliveryStatus')
+class DeliveryStatuses extends Table {
+  @override
+  String get tableName => 'delivery_status';
+
+  TextColumn get accountId => text()();
+  /// Message-ID исходного письма: без <>, нижний регистр.
+  TextColumn get messageId => text()();
+  TextColumn get recipient => text()();
+  /// failed / delayed / delivered / relayed / expanded (RFC 3464, Action).
+  TextColumn get action => text()();
+  TextColumn get status => text().nullable()();
+  TextColumn get diagnostic => text().nullable()();
+  /// Письмо-отчёт (остаётся во «Входящих», с чипом «Отчёт о доставке»).
+  TextColumn get reportEmailId => text().nullable()();
+  DateTimeColumn get reportedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {accountId, messageId, recipient};
+}
+
 // ════════════════════════ БАЗА ДАННЫХ ════════════════════════
 
 @DriftDatabase(tables: [
@@ -540,6 +565,7 @@ class AssignmentReports extends Table {
   AssignmentVotes,
   AssignmentMeetings,
   AssignmentReports,
+  DeliveryStatuses,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -548,7 +574,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 26;
+  int get schemaVersion => 27;
 
   @override
   MigrationStrategy get migration {
@@ -699,6 +725,10 @@ class AppDatabase extends _$AppDatabase {
           // Контакты коллег сверяются с адресной книгой организации (27.10.2026).
           await _addColumnIfMissing(m, contacts, contacts.dirCheckedAt);
           await _addColumnIfMissing(m, contacts, contacts.dirOrg);
+        }
+        if (from < 27) {
+          // Отчёты о доставке отправленных писем (1.9.x, 31.10.2026).
+          await m.createTable(deliveryStatuses); // CREATE TABLE IF NOT EXISTS
         }
       },
       beforeOpen: (details) async {
@@ -2233,6 +2263,82 @@ class AppDatabase extends _$AppDatabase {
   Future<void> setLaterState(String emailId, String accountId, int state, {DateTime? remindAt}) async {
     await (update(emails)..where((e) => e.id.equals(emailId) & e.accountId.equals(accountId)))
         .write(EmailsCompanion(laterState: Value(state), remindAt: Value(remindAt)));
+  }
+
+  // ─────────── Отчёты о доставке (1.9.x, 31.10.2026) ───────────
+
+  /// Сохранить отчёт о доставке. Окончательный ответ (не доставлено,
+  /// доставлено) более поздним «задерживается» не заменяется: отчёты
+  /// приходят не по порядку. Возвращает адресатов, у которых статус изменился.
+  Future<List<String>> saveDeliveryStatuses(String accountId, String messageId,
+      List<({String recipient, String action, String? status, String? diagnostic})> rows,
+      {String? reportEmailId, DateTime? at}) async {
+    final changed = <String>[];
+    await transaction(() async {
+      for (final r in rows) {
+        final old = await (select(deliveryStatuses)
+              ..where((d) =>
+                  d.accountId.equals(accountId) & d.messageId.equals(messageId) & d.recipient.equals(r.recipient)))
+            .getSingleOrNull();
+        if (old != null) {
+          if (old.action != 'delayed' && r.action == 'delayed') continue;
+          if (old.action == r.action && old.status == r.status) continue;
+        }
+        await into(deliveryStatuses).insertOnConflictUpdate(DeliveryStatusesCompanion.insert(
+          accountId: accountId,
+          messageId: messageId,
+          recipient: r.recipient,
+          action: r.action,
+          status: Value(r.status),
+          diagnostic: Value(r.diagnostic),
+          reportEmailId: Value(reportEmailId),
+          reportedAt: at ?? DateTime.now(),
+        ));
+        changed.add(r.recipient);
+      }
+    });
+    return changed;
+  }
+
+  /// Отчёты о доставке письма (по Message-ID без <>, нижний регистр).
+  Stream<List<DeliveryStatus>> watchDeliveryStatuses(String accountId, String messageId) =>
+      (select(deliveryStatuses)
+            ..where((d) => d.accountId.equals(accountId) & d.messageId.equals(messageId))
+            ..orderBy([(d) => OrderingTerm.asc(d.recipient)]))
+          .watch();
+
+  /// Недоставленные письма: «аккаунт|Message-ID» — красный значок в ленте.
+  Stream<Set<String>> watchUndelivered() => (selectOnly(deliveryStatuses, distinct: true)
+        ..addColumns([deliveryStatuses.accountId, deliveryStatuses.messageId])
+        ..where(deliveryStatuses.action.equals('failed')))
+      .map((r) => '${r.read(deliveryStatuses.accountId)}|${r.read(deliveryStatuses.messageId)}')
+      .watch()
+      .map((l) => l.toSet());
+
+  /// Message-ID письма, о котором отчёт [reportEmailId] (чип «Отчёт о доставке»).
+  Future<String?> deliveryReportTarget(String accountId, String reportEmailId) async {
+    final r = await (select(deliveryStatuses)
+          ..where((d) => d.accountId.equals(accountId) & d.reportEmailId.equals(reportEmailId))
+          ..limit(1))
+        .getSingleOrNull();
+    return r?.messageId;
+  }
+
+  /// Своё письмо по Message-ID (без <>): копия в «Отправленных» или в ленте.
+  /// Сначала — точное совпадение (индекс по internet_message_id), с <> и без.
+  Future<Email?> emailByMessageId(String accountId, String messageId) async {
+    final variants = {'<$messageId>', messageId};
+    final rows = await (select(emails)
+          ..where((e) => e.accountId.equals(accountId) & e.internetMessageId.isIn(variants))
+          ..limit(5))
+        .get();
+    if (rows.isNotEmpty) return rows.firstWhere((e) => !e.isDraft, orElse: () => rows.first);
+    // Регистр мог отличаться: сравнение без учёта регистра (редко).
+    return (select(emails)
+          ..where((e) =>
+              e.accountId.equals(accountId) & e.internetMessageId.lower().isIn(variants.map((v) => v.toLowerCase())))
+          ..limit(1))
+        .getSingleOrNull();
   }
 
   /// Отметка «На контроле». Снятие (0) убирает и срок, и список ответивших.

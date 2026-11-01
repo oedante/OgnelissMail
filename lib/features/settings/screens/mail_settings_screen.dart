@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/feature_flags_provider.dart';
 import '../widgets/feature_settings_sections.dart';
 import '../widgets/offline_store_section.dart';
+import '../widgets/translation_settings_section.dart';
 import '../providers/settings_provider.dart';
 import '../../mail/providers/startup_folder.dart';
 import '../../mail/providers/drawer_prefs.dart'
@@ -362,6 +363,8 @@ class MailSettingsScreen extends ConsumerWidget {
           // картинки — за выбранные дни (кроме «только заголовки»).
           if (settings.emailFetchMode != EmailFetchMode.headersOnly)
             const OfflineStoreSection(),
+          // Перевод писем на устройстве (1.9.x): только Android и iPhone/iPad.
+          const TranslationSettingsSection(),
         ],
       ),
     );

@@ -25,4 +25,12 @@
     <string name="widget_cal_day">Dag</string>
     <string name="widget_cal_week">Week</string>
     <string name="widget_cal_month">Maand</string>
+    <string name="shortcut_myday">Mijn dag</string>
+    <string name="shortcut_compose">Nieuw bericht</string>
+    <string name="shortcut_event">Nieuwe vergadering</string>
+    <string name="shortcut_reminder">Nieuwe herinnering</string>
+    <string name="shortcut_unread">Ongelezen</string>
+    <string name="shortcut_vip">VIP-mail</string>
+    <string name="shortcut_calendar">Agenda</string>
+    <string name="shortcut_tasks">Taken</string>
 </resources>

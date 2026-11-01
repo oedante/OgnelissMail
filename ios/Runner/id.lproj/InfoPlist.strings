@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "Foto hanya digunakan saat Anda melampirkannya ke email atau memilih foto kotak surat.";
 "NSCameraUsageDescription" = "Ogneliss Mail sendiri tidak menggunakan kamera. Halaman web yang dibuka dari email (misalnya rapat video) dapat meminta aksesnya.";
 "NSLocationWhenInUseUsageDescription" = "Ogneliss Mail tidak melacak lokasi Anda. Halaman web yang dibuka dari email dapat meminta aksesnya.";
+"siriCompose" = "Email baru";
+"siriEvent" = "Acara baru";
+"siriReminder" = "Pengingat baru";
+"siriMyDay" = "Hari saya";
+"siriUnread" = "Belum dibaca";
+"siriTo" = "Kepada";
+"siriSubject" = "Subjek";
+"siriVip" = "Email dari VIP";
+"siriSearch" = "Cari di email";
+"siriPhrase" = "Apa dan kapan";
+"siriQuery" = "Cari";
+"siriEventAsk" = "Rapat apa dan kapan?";
+"siriReminderAsk" = "Ingatkan tentang apa dan kapan?";
+"siriSearchAsk" = "Apa yang ingin dicari?";

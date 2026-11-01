@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "Zdjęcia są używane tylko wtedy, gdy dołączasz je do wiadomości lub wybierasz zdjęcie skrzynki.";
 "NSCameraUsageDescription" = "Ogneliss Mail sam nie korzysta z aparatu. Strona internetowa otwarta z wiadomości (na przykład wideospotkanie) może o niego poprosić.";
 "NSLocationWhenInUseUsageDescription" = "Ogneliss Mail nie śledzi Twojej lokalizacji. Strona internetowa otwarta z wiadomości może o nią poprosić.";
+"siriCompose" = "Nowa wiadomość";
+"siriEvent" = "Nowe wydarzenie";
+"siriReminder" = "Nowe przypomnienie";
+"siriMyDay" = "Mój dzień";
+"siriUnread" = "Nieprzeczytane";
+"siriTo" = "Do";
+"siriSubject" = "Temat";
+"siriVip" = "Poczta od VIP";
+"siriSearch" = "Szukaj w poczcie";
+"siriPhrase" = "Co i kiedy";
+"siriQuery" = "Szukaj";
+"siriEventAsk" = "Jakie spotkanie i kiedy?";
+"siriReminderAsk" = "O czym i kiedy przypomnieć?";
+"siriSearchAsk" = "Czego szukać?";

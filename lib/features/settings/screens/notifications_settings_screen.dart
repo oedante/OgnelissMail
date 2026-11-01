@@ -3,6 +3,7 @@
 
 import '../../../widgets/ui/wheel_pickers.dart';
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
@@ -23,6 +24,10 @@ import '../../../widgets/ui/app_radio_tile.dart';
 
 /// Отступ вложенных строк — по тексту строк группы.
 const _indent = Space.l + Sizes.icon + Space.l;
+
+/// Вид «как в мессенджерах» есть только на телефонах (Android, iPhone).
+bool get _mobile =>
+    !kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS);
 
 class NotificationsSettingsScreen extends ConsumerWidget {
   const NotificationsSettingsScreen({super.key});
@@ -68,6 +73,29 @@ class NotificationsSettingsScreen extends ConsumerWidget {
                   ? (v) => notifier.setNotificationVibration(v)
                   : null,
             ),
+            // Как в мессенджерах (1.9.x, просьба владельца 31.10.2026): фото
+            // или буква отправителя; на Android письма VIP — в «Беседах».
+            if (_mobile) ...[
+              SettingsSwitchItem(
+                icon: AppIcons.account_circle,
+                title: l10n.tr('notifyMessengerStyle'),
+                subtitle: l10n.tr('notifyMessengerStyleDesc'),
+                value: settings.notificationMessengerStyle,
+                onChanged: settings.notificationsEnabled
+                    ? (v) => notifier.setNotificationMessengerStyle(v)
+                    : null,
+              ),
+              if (defaultTargetPlatform == TargetPlatform.android)
+                SettingsSwitchItem(
+                  icon: AppIcons.forum,
+                  title: l10n.tr('notifyVipConversations'),
+                  subtitle: l10n.tr('notifyVipConversationsDesc'),
+                  value: settings.notificationVipConversations,
+                  onChanged: settings.notificationsEnabled && settings.notificationMessengerStyle
+                      ? (v) => notifier.setNotificationVipConversations(v)
+                      : null,
+                ),
+            ],
             // 1.6.45: проверить, что уведомления о почте доходят (тем же
             // каналом, звуком и вибрацией, что письмо).
             SettingsItem(

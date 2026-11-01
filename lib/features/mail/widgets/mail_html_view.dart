@@ -44,6 +44,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import '../../../widgets/common/mail_open_motion.dart' show MailDragCover;
 import 'package:flutter/scheduler.dart' show SchedulerBinding;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:html/dom.dart' as dom;
@@ -53,7 +54,10 @@ import '../../../core/logging/open_trace.dart';
 import '../../../services/background/work_scheduler.dart';
 import '../../../core/utils/work_isolate.dart';
 import '../../../core/security/mail_body_processor.dart';
+import '../../../core/utils/date_links.dart';
 import '../../../core/utils/linkify.dart';
+import '../../../core/utils/mail_clip.dart';
+import '../../../core/utils/mail_color_scheme.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/image_actions.dart';
@@ -77,7 +81,29 @@ class MailHtmlDocument {
   /// (width у таблиц и картинок, width/min-width в стилях); null — не задана.
   final int? declaredWidth;
 
-  const MailHtmlDocument(this.html, this.linkTexts, {this.declaredWidth});
+  /// У письма своё тёмное оформление (@media (prefers-color-scheme: dark)
+  /// в стилях, 1.9.x): в тёмной теме оно показывается вместо инверсии.
+  /// Стили письма тогда — в двух вариантах ([_csLight] / [_csDark]), один из
+  /// них выключен (media="not all"); [MailHtmlView.composeHtml] включает нужный.
+  final bool darkDesign;
+
+  /// Очень длинное письмо — показано только начало (1.9.x, [MailClip]):
+  /// под письмом — «Показать письмо целиком».
+  final bool clipped;
+
+  const MailHtmlDocument(this.html, this.linkTexts,
+      {this.declaredWidth, this.darkDesign = false, this.clipped = false});
+
+  /// Стили письма в светлом и тёмном вариантах (так их записывает разбор
+  /// HTML: атрибуты по порядку, значения в кавычках).
+  static const _csLight = '<style data-og-cs="light">';
+  static const _csLightOff = '<style data-og-cs="light" media="not all">';
+  static const _csDark = '<style data-og-cs="dark">';
+  static const _csDarkOff = '<style data-og-cs="dark" media="not all">';
+
+  /// Документ [html] (этот же, размеченный по ширине) с включённым тёмным
+  /// вариантом стилей письма.
+  static String darkStyles(String html) => html.replaceAll(_csLight, _csLightOff).replaceAll(_csDarkOff, _csDark);
 
   static const _viewportTag = '<meta name="viewport" content="width=device-width, initial-scale=1">';
 
@@ -166,15 +192,19 @@ class MailHtmlDocument {
     required bool allowRemoteImages,
     Map<String, String> inlineImages = const {},
     bool keepCid = false,
+    bool clip = false,
+    DateContext? dates,
   }) async {
     if (kIsWeb || bodyHtml.length < MailBodyProcessor.isolateThreshold) {
-      return build(bodyHtml, allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid);
+      return build(bodyHtml,
+          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip, dates: dates);
     }
     try {
       return await WorkIsolate.interactive.run(() => build(bodyHtml,
-          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid));
+          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip, dates: dates));
     } on UnsupportedError {
-      return build(bodyHtml, allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid);
+      return build(bodyHtml,
+          allowRemoteImages: allowRemoteImages, inlineImages: inlineImages, keepCid: keepCid, clip: clip, dates: dates);
     }
   }
 
@@ -182,12 +212,18 @@ class MailHtmlDocument {
   /// data URI встроенных картинок (`cid:`). [keepCid] — картинки, которых нет
   /// в [inlineImages], остаются ссылками `cid:` (скрыты стилем) и
   /// подставляются потом [withInlineImages]: документ собирается, не дожидаясь
-  /// картинок (1.5.6). Без него такие картинки убираются сразу.
+  /// картинок (1.5.6). Без него такие картинки убираются сразу. [clip] —
+  /// очень длинное письмо показать только началом ([clipped], 1.9.x): так
+  /// собирает документ экран письма; ответ, пересылка, печать и «Открыть в
+  /// браузере» берут письмо целиком. [dates] — даты в тексте письма
+  /// нажимаемые (ссылки `ogdate:`, DateLinks; 1.9.x), от даты письма.
   static MailHtmlDocument build(
     String bodyHtml, {
     required bool allowRemoteImages,
     Map<String, String> inlineImages = const {},
     bool keepCid = false,
+    bool clip = false,
+    DateContext? dates,
   }) {
     final doc = html_parser.parse(bodyHtml);
     final body = doc.body ?? dom.Element.tag('body');
@@ -199,6 +235,11 @@ class MailHtmlDocument {
       st.remove();
       body.nodes.insert(0, st);
     }
+
+    // Очень длинное письмо — только начало, по границе блока (1.9.x, просьба
+    // владельца 31.10.2026; пороги и почему — MailClip). Сразу после
+    // разбора: остальная подготовка идёт уже по короткому письму.
+    final clipped = clip && MailClip.clipDom(body, raw: bodyHtml);
 
     // Встроенные картинки: cid:xxx → data:…; неизвестные cid убираем, чтобы
     // движок не пытался их загрузить.
@@ -241,6 +282,8 @@ class MailHtmlDocument {
       if (style != st) img.attributes['style'] = style;
     }
 
+    final darkDesign = _schemeStyles(body);
+
     // Высота в долях окна (height/min-height: 100vh — «экран» рассылки,
     // 1.8.12, письмо Kaspersky 30.10.2026): окно письма растягивается под
     // содержимое, а такой блок — под окно, и после каждого замера письмо
@@ -268,8 +311,10 @@ class MailHtmlDocument {
     _trimSide(body, start: true);
     _trimSide(body, start: false);
 
-    // Ссылки и адреса почты обычным текстом — нажимаемые (1.5.10).
-    if (Linkify.mayContain(bodyHtml)) _linkifyText(body);
+    // Ссылки и адреса почты обычным текстом — нажимаемые (1.5.10); даты —
+    // тоже (1.9.x, просьба владельца 31.10.2026): ссылками `ogdate:`, их
+    // нажатие окно отдаёт приложению, как и остальные ссылки.
+    if (Linkify.mayContain(bodyHtml) || dates != null) _linkifyText(body, dates);
 
     final links = <String, String>{};
     for (final a in body.querySelectorAll('a[href]')) {
@@ -302,7 +347,53 @@ class MailHtmlDocument {
         '<meta name="referrer" content="no-referrer">'
         '<style>$_baseCss</style></head>'
         '<body>${body.innerHtml}</body></html>';
-    return MailHtmlDocument(out, links, declaredWidth: declared);
+    return MailHtmlDocument(out, links, declaredWidth: declared, darkDesign: darkDesign, clipped: clipped);
+  }
+
+  /// Стили письма с условием по схеме цветов (1.9.x, просьба владельца
+  /// 31.10.2026): условие решается здесь, а не движком окна (MailColorScheme).
+  /// Светлый вариант — всегда: и в светлой теме, и для инверсии, и для
+  /// «Исходных цветов» письмо показывается светлым на любом движке и при
+  /// любой теме системы. Есть своё тёмное оформление — рядом тёмный вариант,
+  /// выключенный (media="not all", это понимает любой движок); включает его
+  /// [MailHtmlView.composeHtml]. true — тёмное оформление есть.
+  static bool _schemeStyles(dom.Element body) {
+    final found = <(dom.Element, String)>[];
+    for (final st in body.querySelectorAll('style')) {
+      final media = st.attributes['media']?.trim() ?? '';
+      final text = st.text;
+      final inMedia = media.isNotEmpty && MailColorScheme.mentions(media);
+      if (!inMedia && !MailColorScheme.mentions(text)) continue;
+      // <style media="(prefers-color-scheme: dark)"> — тот же блок @media
+      // (и любое другое условие элемента: новый элемент — без него).
+      found.add((st, media.isNotEmpty ? '@media $media{$text}' : text));
+    }
+    if (found.isEmpty) return false;
+    final variants = [
+      for (final (st, css) in found)
+        (st, MailColorScheme.rewrite(css, dark: false).css, MailColorScheme.rewrite(css, dark: true)),
+    ];
+    final dark = variants.any((v) => v.$3.darkRules);
+    for (final (st, light, d) in variants) {
+      final parent = st.parentNode;
+      if (parent == null) continue;
+      final at = parent.nodes.indexOf(st);
+      st.remove();
+      // Новые элементы — только со своими атрибутами: по ним
+      // composeHtml находит варианты строкой.
+      final l = dom.Element.tag('style')..text = light;
+      if (dark) l.attributes['data-og-cs'] = 'light';
+      parent.nodes.insert(at, l);
+      if (dark) {
+        parent.nodes.insert(
+            at + 1,
+            dom.Element.tag('style')
+              ..attributes['data-og-cs'] = 'dark'
+              ..attributes['media'] = 'not all'
+              ..text = d.css);
+      }
+    }
+    return dark;
   }
 
   static final _maxWidthDecl =
@@ -377,11 +468,12 @@ class MailHtmlDocument {
       if (data == null) return '';
       return tag.replaceRange(s.start, s.end, ' src="$data"');
     });
-    return MailHtmlDocument(out, linkTexts, declaredWidth: declaredWidth);
+    return MailHtmlDocument(out, linkTexts, declaredWidth: declaredWidth, darkDesign: darkDesign, clipped: clipped);
   }
 
-  /// Текст вне ссылок, стилей и полей ввода: найденные адреса → `<a href>`.
-  static void _linkifyText(dom.Node node, {int depth = 0}) {
+  /// Текст вне ссылок, стилей и полей ввода: найденные адреса и даты →
+  /// `<a href>`.
+  static void _linkifyText(dom.Node node, DateContext? dates, {int depth = 0}) {
     if (depth > 64) return;
     for (final n in node.nodes.toList()) {
       if (n is dom.Element) {
@@ -389,10 +481,10 @@ class MailHtmlDocument {
         if (tag == 'a' || tag == 'style' || tag == 'script' || tag == 'textarea' || tag == 'title' || tag == 'svg') {
           continue;
         }
-        _linkifyText(n, depth: depth + 1);
+        _linkifyText(n, dates, depth: depth + 1);
       } else if (n is dom.Text) {
         final t = n.text;
-        final found = Linkify.find(t);
+        final found = DateLinks.find(t, dates);
         if (found.isEmpty) continue;
         final parent = n.parentNode!;
         var at = parent.nodes.indexOf(n);
@@ -487,6 +579,9 @@ pre,code{white-space:pre-wrap;}
    таблицу (MailHtmlDocument.build, og-brk). */
 .og-brk{overflow-wrap:anywhere !important;word-break:break-all !important;}
 a{color:#1D4F91;}
+/* Дата в тексте (1.9.x, DateLinks): цвет текста, подчёркнута пунктиром —
+   нажимается, но не спорит с оформлением письма. */
+a[href^="ogdate:"]{color:inherit !important;text-decoration:underline dotted !important;text-underline-offset:2px;}
 blockquote{margin:8px 0 8px 4px;padding-left:10px;border-left:3px solid #c7cdd6;color:#4a4f57;}
 /* Слитные рамки — у таблиц без cellspacing (Outlook, 1С); у рассылок
    cellspacing задаёт промежутки между ячейками (1.8.14: раньше слипались).
@@ -497,6 +592,28 @@ html,body{overflow-x:auto !important;}
 /* Встроенная картинка, которая ещё не подставлена: без пустого места. */
 img[src^="cid:" i]{display:none !important;}
 ''';
+}
+
+/// Наблюдатель окна письма для интеграционных тестов на эмуляторе Android
+/// (integration_test/mail_view_test.dart; 1.9.x, просьба владельца
+/// 31.10.2026): окно, загрузка, масштаб от движка, высота на экране письма.
+/// Через него тесты сверяют вписывание, высоту после «По ширине экрана» /
+/// «Обычный размер» и касания (getHitTestResult). В приложении не задан —
+/// на поведение не влияет.
+@visibleForTesting
+class MailHtmlViewProbe {
+  MailHtmlViewProbe({this.onCreated, this.onLoadStop, this.onZoomScaleChanged, this.onLayout});
+
+  final void Function(InAppWebViewController controller)? onCreated;
+  final VoidCallback? onLoadStop;
+
+  /// Как onZoomScaleChanged окна: масштаб в точках Android (с плотностью).
+  final void Function(double oldScale, double newScale)? onZoomScaleChanged;
+
+  /// Каждая сборка: высота окна на экране письма, ширина вписывания (null —
+  /// обычный масштаб), «Исходный масштаб» выбран, письмо увеличено, показано.
+  final void Function(({double height, int? fitWidth, bool actualSize, bool pinched, bool ready}) layout)?
+      onLayout;
 }
 
 /// Тело письма в WebView. Ссылки — через [onLink]; высота подстраивается под
@@ -598,6 +715,9 @@ class MailHtmlView extends StatefulWidget {
   /// Тёмная тема: письмо перекрашивается инверсией цветов (картинки
   /// возвращаются к исходным). Письма Outlook задают чёрный текст прямо в
   /// разметке — без инверсии на тёмном фоне его было бы не прочитать.
+  /// У письма со своим тёмным оформлением ([MailHtmlDocument.darkDesign],
+  /// 1.9.x) — оно, без инверсии. «Исходные цвета» письма (1.9.x) — экран
+  /// письма передаёт false и белую страницу.
   final bool dark;
   final bool allowRemoteImages;
   final void Function(String url, String? linkText) onLink;
@@ -623,7 +743,10 @@ class MailHtmlView extends StatefulWidget {
         : viewWidth > 0
             ? doc.atWidth(viewWidth.round(), zoom: zoom)
             : doc.html;
-    final out = _themed(html, dark: dark, pageColor: pageColor, textScale: textScale);
+    // Своё тёмное оформление письма (1.9.x) — вместо инверсии.
+    final own = dark && doc.darkDesign;
+    final out = _themed(own ? MailHtmlDocument.darkStyles(html) : html,
+        dark: dark, ownDark: own, pageColor: pageColor, textScale: textScale);
     if (!cidByRequest) return out;
     // Картинки cid: окно запросит само — не скрывать их.
     const show = '<style id="og-cid">img[src^="cid:" i]{display:inline !important;}</style>';
@@ -732,6 +855,11 @@ class MailHtmlView extends StatefulWidget {
   static bool fitWide = false;
   static const fitWideKey = 'mail_wide_fit';
 
+  /// Наблюдатель для интеграционных тестов ([MailHtmlViewProbe]); null в
+  /// приложении.
+  @visibleForTesting
+  static MailHtmlViewProbe? debugProbe;
+
   /// Масштаб интерфейса, который окно письма применяет само (Android,
   /// 1.8.14; 1 — масштаба нет). Окно рисуется без масштаба Flutter
   /// ([UiZoomUndo]): уменьшенное Flutter встроенное окно Android получает
@@ -756,7 +884,8 @@ class MailHtmlView extends StatefulWidget {
   }
 
   /// Оформление под тему приложения — отдельным стилем после стилей письма.
-  static String _themed(String html, {required bool dark, required Color? pageColor, required double textScale}) {
+  static String _themed(String html,
+      {required bool dark, bool ownDark = false, required Color? pageColor, required double textScale}) {
     final page = pageColor ?? Colors.white;
     // Поля слева и справа — у экрана письма (16 dp, как у шапки и плашек), а
     // не внутри документа: внутренний отступ 14px уменьшался вместе с
@@ -784,19 +913,32 @@ class MailHtmlView extends StatefulWidget {
       final pct = (textScale * 100).round().clamp(80, 300);
       css.write('html,body{-webkit-text-size-adjust:$pct% !important;}');
     }
-    if (dark) {
+    if (ownDark) {
+      // Своё тёмное оформление письма (1.9.x, просьба владельца 31.10.2026)
+      // — без инверсии. Фон — цвет страницы, только если письмо не задало
+      // свой: правило без !important, а стили письма идут после него (в
+      // теле документа) и при равной точности важнее. Текст и ссылки без
+      // своего цвета — светлые: базовые стили документа — под светлое письмо.
+      css
+        ..write('html,body{background:${_hex(page)};color:#e3e3e6;color-scheme:dark !important;}')
+        ..write('a{color:#8ab4f8;}')
+        ..write('blockquote{border-left-color:#5f6670;color:#b9bec6;}')
+        ..write('::selection{background:rgba(138,180,248,.35);}');
+    } else if (dark) {
       // Инверсия всего документа: белый фон письма становится цветом
       // страницы, чёрный текст — светлым. Фон задаётся «до инверсии» —
-      // обратным к нужному цвету.
+      // обратным к нужному цвету. Схема — светлая и у письма с
+      // «color-scheme: light dark» (1.9.x): инвертируется светлое письмо.
       final inv = Color.fromARGB(255, 255 - (page.r * 255).round(),
           255 - (page.g * 255).round(), 255 - (page.b * 255).round());
       css
         ..write('html{filter:invert(1) hue-rotate(180deg);background:${_hex(inv)} !important;}')
         ..write('body{background:transparent !important;}')
+        ..write('html,body{color-scheme:light !important;}')
         ..write('img,video,picture,svg,canvas,[style*="background-image"],[background]'
             '{filter:invert(1) hue-rotate(180deg);}');
     } else {
-      css.write('html,body{background:${_hex(page)} !important;}');
+      css.write('html,body{background:${_hex(page)} !important;color-scheme:light !important;}');
     }
     final tag = '<style id="og-theme">$css</style>';
     final i = html.indexOf('</head>');
@@ -1099,6 +1241,10 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   Animation<double>? _ownAnim;
   Animation<double>? _overAnim;
 
+  /// Свайп вниз закрывает письмо (1.9.x, «Анимация открытия письма»): пока
+  /// страница идёт за пальцем, окно скрыто, как в переходе.
+  ValueListenable<bool>? _drag;
+
   void _scheduleSnap() {
     _snapTimer?.cancel();
     _snapTimer = Timer(const Duration(milliseconds: 1200), () => unawaited(_takeSnap()));
@@ -1141,7 +1287,14 @@ class _MailHtmlViewState extends State<MailHtmlView> {
       _overAnim?.removeStatusListener(_onTransition);
       _overAnim = over?..addStatusListener(_onTransition);
     }
+    final drag = MailDragCover.of(context);
+    if (!identical(drag, _drag)) {
+      _drag?.removeListener(_onDrag);
+      _drag = drag?..addListener(_onDrag);
+    }
   }
+
+  void _onDrag() => _onTransition(AnimationStatus.completed);
 
   /// Уход с экрана («назад») или экран поверх письма — окно скрыть;
   /// вернулись — показать.
@@ -1152,8 +1305,12 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     // Без снимка не скрывать (1.5.10): на месте письма было пустое поле
     // цвета страницы (снимок ещё не сделан — первые 1,2 с после показа — или
     // не удался).
-    final covered = _ready && _web != null && _snap != null &&
-        (leaving || (over != null && over != AnimationStatus.dismissed));
+    // Свайп вниз — окно скрыто и без снимка (тогда на его месте цвет
+    // страницы): встроенное окно не должно ехать за пальцем.
+    final dragging = _drag?.value ?? false;
+    final covered = _ready &&
+        _web != null &&
+        ((_snap != null && (leaving || (over != null && over != AnimationStatus.dismissed))) || dragging);
     if (covered != _covered) setState(() => _covered = covered);
   }
 
@@ -1161,6 +1318,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   void dispose() {
     _ownAnim?.removeStatusListener(_onTransition);
     _overAnim?.removeStatusListener(_onTransition);
+    _drag?.removeListener(_onDrag);
     _snapTimer?.cancel();
     _zoomTimer?.cancel();
     _routeAnim?.removeListener(_onRouteTick);
@@ -1519,6 +1677,8 @@ class _MailHtmlViewState extends State<MailHtmlView> {
           }
         }
       }
+      MailHtmlView.debugProbe?.onLayout?.call(
+          (height: _height, fitWidth: _fitWidth, actualSize: _actualSize, pinched: _pinched, ready: _ready));
       final l10n = AppLocalizations.of(context);
       final fitLabel = l10n.tr('mailFitToWidth');
       final realLabel = l10n.tr('mailActualSize');
@@ -1761,6 +1921,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         onWebViewCreated: (c) {
           _web = c;
           OpenTrace.mark('создано');
+          MailHtmlView.debugProbe?.onCreated?.call(c);
           // Движок уже загружен этим окном — прогрев не нужен.
           MailHtmlView._warmed = true;
           final adopted = _adopted;
@@ -1792,11 +1953,13 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         onLoadStop: (controller, url) {
           OpenTrace.mark('загрузка');
           _scheduleMeasures(controller);
+          MailHtmlView.debugProbe?.onLoadStop?.call();
         },
         // Смена масштаба больше не сбрасывает таймеры показа (раньше 70 мс
         // начинались заново): до показа — заново ждать устоявшейся высоты,
         // после — только замер.
         onZoomScaleChanged: (controller, oldScale, newScale) {
+          MailHtmlView.debugProbe?.onZoomScaleChanged?.call(oldScale, newScale);
           if (_ready) {
             _onZoomed(controller, newScale);
           } else {
@@ -1864,6 +2027,13 @@ class MailWebViewPool {
 
   /// Почему последнее окно не подошло экрану письма — в замер открытия.
   static String lastMiss = '';
+
+  /// Высота документа, измеренная в запасном окне высотой 1 px (null — ещё
+  /// не измерена). Интеграционные тесты сверяют с ней высоту окна письма:
+  /// пустого поля под письмом быть не должно (1.9.x, просьба владельца
+  /// 31.10.2026).
+  @visibleForTesting
+  static double? get debugMeasuredHeight => _loaded ? _height : null;
 
   /// Окно, которое забрал экран письма, и пришла ли его загрузка до того,
   /// как виджет принял события окна на себя.

@@ -53,9 +53,12 @@ class MailSenderTitle extends StatelessWidget {
           HeroEmailAvatar(
             emailId: '${email.accountId}/${email.id}',
             hero: hero,
+            // Летит из строки ленты с «Анимацией открытия письма» (1.9.x).
+            openHero: true,
             initial: name.isNotEmpty ? initialOf(name) : '?',
             color: HeroEmailAvatar.colorForEmail(email.from.email),
             email: email.from.email,
+            authResults: email.authResults,
             radius: kMailFaceRadius,
           ),
           const SizedBox(width: Space.m),

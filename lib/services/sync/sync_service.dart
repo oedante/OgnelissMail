@@ -53,12 +53,14 @@ import '../../services/mail/imap/imap_service.dart';
 import '../../services/mail/engine/mail_engine_service.dart';
 import '../../services/notifications/notification_service.dart';
 import '../../services/notifications/notification_text.dart';
+import '../../services/notifications/messenger_notifications.dart' show MessengerNotify;
 import '../../services/rules/auto_rules_service.dart';
 import '../../widgets/common/sync_progress_indicator.dart';
 import '../../features/settings/providers/settings_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../mail/own_identity_service.dart' show ownIdentityServiceProvider;
 import '../mail/own_addresses.dart';
+import '../mail/delivery/delivery_report_service.dart';
 import '../mail/thread_linker.dart';
 import '../mail/special_folders.dart';
 import '../security/mail_classification.dart' show MailLabel;
@@ -129,7 +131,7 @@ class SyncService {
           await running.timeout(fresh ? const Duration(seconds: 20) : const Duration(minutes: 5));
         } catch (_) {}
         if (!fresh) return;
-        AppLogger.info('Синхронизация для фоновой задачи: после идущей — свой проход');
+        AppLogger.info('Синхронизация: после идущей — свой проход');
       } else {
         AppLogger.warning('Синхронизация идёт ${age.inMinutes} мин — считаю зависшей, запускаю новую');
       }
@@ -573,6 +575,16 @@ class SyncService {
     _pimForce.add(account.id);
     _folderSyncForce.add(account.id);
     return FinishInBackground.guard(() => _single(() => _syncAccountBody(account)));
+  }
+
+  /// Первая синхронизация только что добавленного ящика (1.9.x, журнал
+  /// владельца 31.10.2026: Outlook после входа — «Ещё не обновлялось», письма
+  /// только по «обновить»). Свой проход — и после уже идущей синхронизации:
+  /// та началась без этого ящика, а [syncAccount] после неё ничего не делал.
+  Future<void> syncNewAccount(AccountModel account) {
+    _pimForce.add(account.id);
+    _folderSyncForce.add(account.id);
+    return FinishInBackground.guard(() => _single(() => _syncAccountBody(account), fresh: true));
   }
 
   /// Последний FolderSync ActiveSync (папки не чаще раза в час) и ящики,
@@ -1540,8 +1552,12 @@ class SyncService {
       if (n > 0) AppLogger.info('ActiveSync ${folder.displayName}: после загрузки заново убрано устаревших писем — $n');
     }
     // Первая загрузка ящика — это не «новая почта»: без уведомлений.
-    if (received.isNotEmpty && !initial) {
-      await _notifyNewMail(account, folder, received, addedTotal, settings);
+    // Отчёты о доставке своих писем (1.9.x) — своим уведомлением.
+    if (received.isNotEmpty) {
+      final toNotify = await _deliveryReports(account, folder, received, initial ? const [] : received, settings);
+      if (toNotify.isNotEmpty && !initial) {
+        await _notifyNewMail(account, folder, toNotify, addedTotal - (received.length - toNotify.length), settings);
+      }
     }
     if (received.isNotEmpty) {
       unawaited(_prefetchAttachments(account, received, settings));
@@ -1912,7 +1928,9 @@ class SyncService {
 
       // Уведомление о новых письмах (кроме удалённых/архива/спама/служебных).
       // Первая загрузка папки — не «новая почта».
-      if (!initialLoad) await _notifyNewMail(account, folder, fresh, added, settings);
+      // Отчёты о доставке своих писем (1.9.x) — своим уведомлением.
+      final toNotify = await _deliveryReports(account, folder, fresh, initialLoad ? const [] : fresh, settings);
+      if (!initialLoad) await _notifyNewMail(account, folder, toNotify, added - (fresh.length - toNotify.length), settings);
       // Остаток на сервере (перемотка курсора или 20 страниц не хватило) —
       // догружаем сразу, а не при следующем синке.
       if (!deltaFailed && (skipDelta || !reachedLast)) {
@@ -1930,6 +1948,51 @@ class SyncService {
   }
 
   /// Message-ID писем, о которых уже уведомили (по аккаунту, последние 500).
+  /// Отчёты о доставке среди новых писем (1.9.x, просьба владельца
+  /// 31.10.2026): статусы адресатов — в delivery_status, о недоставленном
+  /// недавнем своём письме — уведомление «Письмо не доставлено». Возвращает
+  /// [notify] без отчётов, привязанных к своему письму: обычное уведомление о
+  /// письме робота вместо понятного не нужно. Любой сбой — как раньше.
+  Future<List<EmailModel>> _deliveryReports(AccountModel account, FolderModel folder, List<EmailModel> fresh,
+      List<EmailModel> notify, AppSettings settings) async {
+    if (fresh.isEmpty) return notify;
+    if (folder.type == FolderType.sent || folder.type == FolderType.drafts || folder.type == FolderType.outbox) {
+      return notify;
+    }
+    try {
+      final engine = _ref.read(mailEngineServiceProvider);
+      final handled = await DeliveryReportService.process(
+        db: _ref.read(databaseProvider),
+        account: account,
+        fresh: fresh,
+        isNew: {for (final e in notify) e.id},
+        fetchRaw: (e) async {
+          final b = await engine.fetchRawMime(account, folderId: folder.id, emailId: e.id);
+          return b == null ? null : utf8.decode(b, allowMalformed: true);
+        },
+        onFailure: (f) async {
+          if (!settings.notificationsEnabled) return;
+          final first = f.failed.first;
+          await _ref.read(notificationServiceProvider).showDeliveryFailureNotification(
+                accountId: account.id,
+                emailId: f.original.id,
+                folderId: f.original.folderId,
+                subject: f.original.subject,
+                recipient: first.recipient,
+                reasonKey: first.reason.l10nKey,
+                status: first.status,
+                more: f.failed.length - 1,
+              );
+        },
+      );
+      if (handled.isEmpty) return notify;
+      return [for (final e in notify) if (!handled.contains(e.id)) e];
+    } catch (e) {
+      AppLogger.warning('Отчёты о доставке: $e');
+      return notify;
+    }
+  }
+
   static final Map<String, List<String>> _notifiedIds = {};
 
   static bool _firstNotification(String accountId, EmailModel e) {
@@ -2080,6 +2143,11 @@ class SyncService {
 
       // Самые старые из показываемых — первыми: в шторке сверху окажется самое свежее.
       final singles = unread.take(_maxSingleNotifications).toList().reversed.toList();
+      // Фото отправителей из контактов — для уведомлений «как в
+      // мессенджерах» (1.9.x); выключено — базу не спрашиваем.
+      final photos = MessengerNotify.styleOn(_prefs)
+          ? await _senderPhotos([for (final e in singles) e.from.email])
+          : const <String, String>{};
       for (var i = 0; i < singles.length; i++) {
         final e = singles[i];
         await service.showEmailNotification(
@@ -2102,6 +2170,8 @@ class SyncService {
           // и вибрации (VIP — всё равно со звуком).
           quiet: ruled[e.id]?.notify == RuleNotify.silent || accMode == AccountNotifyMode.quiet,
           isInvite: e.meeting?.isRequest == true,
+          senderPhoto: photos[e.from.email.trim().toLowerCase()],
+          accountLabel: shortLabel,
         );
       }
 
@@ -2125,6 +2195,26 @@ class SyncService {
       }
     } catch (e) {
       AppLogger.warning('Не удалось показать уведомление: $e');
+    }
+  }
+
+  /// Фото людей по адресам (в нижнем регистре) — из контактов (CardDAV
+  /// PHOTO, Exchange Picture), как в списке писем (personPhotosProvider).
+  Future<Map<String, String>> _senderPhotos(List<String> emails) async {
+    final keys = {for (final e in emails) if (e.contains('@')) e.trim().toLowerCase()};
+    if (keys.isEmpty) return const {};
+    try {
+      final db = _ref.read(databaseProvider);
+      final rows = await (db.select(db.contacts)
+            ..where((c) => c.email.lower().isIn(keys) & c.avatarUrl.isNotNull()))
+          .get();
+      return {
+        for (final r in rows)
+          if ((r.avatarUrl ?? '').isNotEmpty) r.email.toLowerCase(): r.avatarUrl!,
+      };
+    } catch (e) {
+      AppLogger.debug('Фото для уведомлений: $e');
+      return const {};
     }
   }
 
@@ -2220,6 +2310,8 @@ class SyncService {
     // Инкрементально по UID: новые письма, флаги и удаления во всём
     // загруженном диапазоне, догрузка истории (ENGINE_AUDIT P1-11). Раньше —
     // 50 последних писем на каждом проходе, остальное было не видно.
+    // Сервер с CONDSTORE/QRESYNC отдаёт только изменения с прошлого прохода
+    // (1.9.x); HIGHESTMODSEQ хранится в том же состоянии папки.
     final stateKey = 'imap_state:${account.id}:${folder.id}';
     final known = ImapFolderState.fromJson(_prefs.getString(stateKey));
     final cutoff = _cutoffFor(account.id);
@@ -2273,10 +2365,12 @@ class SyncService {
     }
 
     // Удалённые или перенесённые на сервере: в проверенном диапазоне UID
-    // письма нет. Пустая папка на сервере — пусто и у нас.
+    // письма нет. Пустая папка на сервере — пусто и у нас. С QRESYNC сервер
+    // сам называет удалённые UID (VANISHED, 1.9.x).
     final from = delta.empty ? 0 : (delta.reset ? delta.state.minUid : delta.checkedFrom);
     final to = delta.empty ? 1 << 62 : (delta.reset ? delta.state.maxUid : delta.checkedTo);
-    if (from != null && to != null) {
+    final vanished = delta.vanished;
+    if ((from != null && to != null) || (vanished != null && vanished.isNotEmpty)) {
       // Только id: раньше здесь читались строки целиком — с текстами всех
       // писем папки, при каждой синхронизации папки.
       final local = await (db.selectOnly(db.emails)
@@ -2288,7 +2382,8 @@ class SyncService {
           .get();
       final gone = local.where((id) {
         final u = uidOf(id);
-        return u >= from && u <= to && !delta.present.contains(u);
+        if (vanished != null && vanished.contains(u)) return true;
+        return from != null && to != null && u >= from && u <= to && !delta.present.contains(u);
       }).toList();
       if (gone.isNotEmpty) {
         for (var i = 0; i < gone.length; i += 500) {
@@ -2305,13 +2400,24 @@ class SyncService {
         delta.complete ||
         (!delta.reset && older.isEmpty) ||
         (cutoff != null && older.isNotEmpty && older.every((e) => e.receivedAt.isBefore(cutoff)));
-    await _prefs.setString(
-        stateKey, jsonEncode(delta.state.copyWith(historyDone: done, syncDays: days).toJson()));
+    var state = delta.state.copyWith(historyDone: done, syncDays: days);
+    // CONDSTORE (1.9.x): письма с правками, ждущими отправки, выше не
+    // обновлялись и не удалялись. Быстрый способ увидел бы только изменения
+    // после нового HIGHESTMODSEQ — поэтому следующий проход начнёт с
+    // прежнего и заново проверит удаления. Прежний — только при том же
+    // UIDVALIDITY: номера изменений разных «поколений» папки несравнимы.
+    if (state.highestModSeq != null && await _hasLocalEdits(db, account.id, folder.id)) {
+      state = state.heldBack(
+          known != null && known.uidValidity == state.uidValidity ? known.highestModSeq : null);
+    }
+    await _prefs.setString(stateKey, jsonEncode(state.toJson()));
     // Уведомляем только о действительно новых: догруженная история и первая
     // загрузка уведомлений не дают.
     final newest = known?.maxUid ?? 1 << 62;
     final notify = fresh.where((e) => uidOf(e.id) > newest).toList();
-    if (notify.isNotEmpty) await _notifyNewMail(account, folder, notify, notify.length, settings);
+    // Отчёты о доставке своих писем (1.9.x) — своим уведомлением.
+    final toNotify = await _deliveryReports(account, folder, fresh, notify, settings);
+    if (toNotify.isNotEmpty) await _notifyNewMail(account, folder, toNotify, toNotify.length, settings);
     if (fresh.isNotEmpty) await _maybeAutoReply(account, folder, notify);
     // Тексты новых писем «Входящих» — заранее: письмо открывается сразу,
     // без секунды ожидания сервера.
@@ -2324,6 +2430,15 @@ class SyncService {
       _continuations.remove('${account.id}|${folder.id}');
     }
     return added;
+  }
+
+  /// В папке есть письма с локальными правками, ещё не отправленными на сервер.
+  Future<bool> _hasLocalEdits(AppDatabase db, String accountId, String folderId) async {
+    final r = await db.customSelect(
+      'SELECT 1 FROM emails WHERE account_id = ? AND folder_id = ? AND is_locally_modified = 1 LIMIT 1',
+      variables: [Variable.withString(accountId), Variable.withString(folderId)],
+    ).get();
+    return r.isNotEmpty;
   }
 
   /// Предзагрузка текста (без вложений, BODY.PEEK — прочитанными не

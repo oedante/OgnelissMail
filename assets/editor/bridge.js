@@ -51,6 +51,14 @@
       ed.undoManager.add();
       lastSent = ed.getContent();
     },
+    // Замена текста с возможностью отменить (перевод своего письма, 1.9.x):
+    // в отличие от set, история отмены не сбрасывается — «Отменить» в
+    // редакторе возвращает исходный текст.
+    setUndoable: function (html) {
+      if (!ed) return;
+      ed.undoManager.transact(function () { ed.setContent(html || ''); });
+      changed();
+    },
     insert: function (html) {
       if (!ed) return;
       ed.insertContent(html || '');

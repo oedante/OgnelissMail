@@ -88,7 +88,7 @@ class _FaqScreenState extends State<FaqScreen> {
                       }),
                     ),
               filled: true,
-              border: const OutlineInputBorder(borderRadius: Radii.cardAll, borderSide: BorderSide.none),
+              border: OutlineInputBorder(borderRadius: Radii.cardAll, borderSide: BorderSide.none),
             ),
             onChanged: (v) => setState(() => _q = v.trim().toLowerCase()),
           ),

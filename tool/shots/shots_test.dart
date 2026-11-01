@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_visible_for_testing_member
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 // tool/shots/shots_test.dart
 // Снимки экранов в разных темах и языках — чтобы видеть вид без телефона
 // (1.8.0: «воздушный» вид, длинные переводы, письмо справа налево).
@@ -15,6 +15,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/core/theme/app_icons.dart';
 import 'package:ogneliss/core/theme/app_theme.dart';
+import 'package:ogneliss/core/theme/appearance.dart';
 import 'package:ogneliss/core/theme/tokens.dart';
 import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/data/models/email_model.dart';
@@ -24,11 +25,13 @@ import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/archive/screens/archive_screen.dart';
 import 'package:ogneliss/features/auth/screens/login_screen.dart';
 import 'package:ogneliss/features/settings/screens/general_settings_screen.dart';
+import 'package:ogneliss/features/settings/screens/appearance_screen.dart';
 import 'package:ogneliss/features/compose/screens/compose_screen.dart';
 import 'package:ogneliss/features/mail/screens/mail_detail_screen.dart';
 import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
 import 'package:ogneliss/features/mail/widgets/mail_drawer.dart';
 import 'package:ogneliss/features/settings/screens/settings_screen.dart';
+import 'package:ogneliss/features/settings/providers/settings_provider.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/services/archive/archive_container.dart';
 import 'package:ogneliss/services/archive/archive_db.dart';
@@ -580,6 +583,76 @@ void main() {
       await _shot(tester, 'wheels_$t', const _WheelHost(), theme: _themes[t]!(),
           before: (tester) async => tester.tap(find.text('open')));
     });
+  }
+
+  // «Оформление» (1.9.x, просьба владельца 31.10.2026): экран целиком
+  // (светлая и тёмная, узкий экран с крупным шрифтом), цветовые темы,
+  // плотность ленты.
+  for (final (t, scroll) in const [('light', 0.0), ('light', 1000.0), ('dark', 0.0), ('dark', 1000.0)]) {
+    testWidgets('оформление — $t $scroll', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await _shot(tester, 'appearance_${t}_${scroll.round()}', const AppearanceScreen(),
+          theme: _themes[t]!(), db: db, prefs: prefs, before: scroll == 0
+              ? null
+              : (tester) async => tester.drag(find.byType(ListView).first, Offset(0, -scroll)));
+      await tester.runAsync(db.close);
+    });
+  }
+  for (final (dev, size, dpr, ts) in const [('320_x13', Size(320, 568), 2.0, 1.3), ('412', Size(412, 915), 2.625, 1.0)]) {
+    testWidgets('оформление — размер $dev', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await _shot(tester, 'appearance_size_$dev', const AppearanceScreen(),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, dpr: dpr, textScale: ts);
+      await _shot(tester, 'appearance_size_${dev}_lower', const AppearanceScreen(),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, dpr: dpr, textScale: ts,
+          before: (tester) async => tester.drag(find.byType(ListView).first, const Offset(0, -700)));
+      await tester.runAsync(db.close);
+    });
+  }
+  for (final (name, prefsMap, dark) in const [
+    ('forest_light', {'s_theme_preset': 'forest'}, false),
+    ('sunset_tint_light', {'s_theme_preset': 'sunset', 's_list_tint': 2}, false),
+    ('sky_large_dark', {'s_theme_preset': 'sky', 's_corners': 2}, true),
+    ('midnight_dark', {'s_theme_preset': 'midnight'}, true),
+    ('accent_custom_light', {'s_theme_preset': 'classic', 's_accent': 0xFFC2185B, 's_corners': 0}, false),
+  ]) {
+    testWidgets('цветовая тема — $name', (tester) async {
+      SharedPreferences.setMockInitialValues(prefsMap);
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      final a = SettingsNotifier(prefs).state.appearance();
+      Radii.scale = a.radiusScale;
+      addTearDown(() => Radii.scale = 1.0);
+      final theme = !dark
+          ? AppTheme.lightTheme(1.0, appearance: a)
+          : (PresetSpec.of(a.preset).blackDark
+              ? AppTheme.amoledTheme(1.0, appearance: a)
+              : AppTheme.darkTheme(1.0, appearance: a));
+      await _shot(tester, 'preset_${name}_appearance', const AppearanceScreen(), theme: theme, db: db, prefs: prefs);
+      await _shot(tester, 'preset_${name}_mail', const _MailRows(), theme: theme, db: db, prefs: prefs);
+      await tester.runAsync(db.close);
+    });
+  }
+  for (final d in ListDensity.values) {
+    for (final (dev, size, dpr, ts) in const [
+      ('320_x13', Size(320, 568), 2.0, 1.3),
+      ('360', Size(360, 780), 3.0, 1.0),
+      ('412', Size(412, 915), 2.625, 1.0),
+    ]) {
+      testWidgets('плотность ${d.name} — $dev', (tester) async {
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        final db = (await tester.runAsync(_db))!;
+        await _shot(tester, 'density_${d.name}_$dev', const _MailRows(),
+            theme: AppTheme.lightTheme(1.0, appearance: Appearance(density: d)),
+            db: db, prefs: prefs, size: size, dpr: dpr, textScale: ts);
+        await tester.runAsync(db.close);
+      });
+    }
   }
 
   for (final font in const ['roboto', 'medeo']) {

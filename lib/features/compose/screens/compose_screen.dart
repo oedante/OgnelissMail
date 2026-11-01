@@ -22,6 +22,8 @@ import '../../mail/providers/account_look.dart' show onAccountColor;
 import '../../../core/security/html_sanitizer.dart';
 import '../../../core/security/mail_body_processor.dart';
 import '../widgets/mail_editor.dart';
+import '../widgets/compose_translate.dart';
+import '../../../services/translation/translator.dart' show translationPlatformSupported;
 import '../../mail/widgets/mail_html_view.dart';
 import '../../../core/security/link_opener.dart';
 import 'dart:io';
@@ -2077,6 +2079,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                   _openField(_bccController);
                 case 'control':
                   setState(() => _control = !_control);
+                case 'translate':
+                  unawaited(_translateOwn());
+                case 'dsn':
+                  setState(() => _deliveryReport = !_deliveryReport);
+                  if (_deliveryReport) showInlineNotice(l10n.tr('dsnRequestHint'));
               }
             },
             itemBuilder: (_) => [
@@ -2084,6 +2091,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
               _menuItem('importance', AppIcons.flag, l10n.tr('importance')),
               _menuItem('groups', AppIcons.groups, l10n.tr('distributionGroups')),
               _menuItem('signature', AppIcons.draw, l10n.tr('insertSignature')),
+              // Перевод своего текста на устройстве (1.9.x).
+              if (translationPlatformSupported) _menuItem('translate', AppIcons.translate, l10n.tr('translate')),
               // S/MIME — раньше в шторке грифа (гриф убран в 1.5.9).
               if (_smimeAvailable) _menuItem('smime', AppIcons.verified_user, l10n.tr('smimeSection')),
               if (!_showBcc && _bccRecipients.isEmpty)
@@ -2094,6 +2103,13 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                   icon: AppIcons.task_alt,
                   label: l10n.tr('controlOnSend'),
                   checked: _control,
+                ),
+              if (_deliveryReportAvailable)
+                AppMenuEntry(
+                  value: 'dsn',
+                  icon: AppIcons.mark_email_read,
+                  label: l10n.tr('dsnRequest'),
+                  checked: _deliveryReport,
                 ),
             ],
           ),
@@ -3441,6 +3457,19 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// «На контроле» для отправляемого письма (меню «⋮»).
   bool _control = false;
 
+  /// «Запросить подтверждение доставки» (1.9.x, 31.10.2026): DSN
+  /// NOTIFY=SUCCESS — сервер получателя сообщит, что принял письмо (это не
+  /// уведомление о прочтении). Только SMTP: Exchange шлёт лишь отчёты о
+  /// недоставке.
+  bool _deliveryReport = false;
+
+  bool get _deliveryReportAvailable {
+    final a = _fromAccount;
+    return a != null && !a.usesEas && !a.usesEws && !a.isExchange;
+  }
+
+  bool get _requestDeliveryReport => _deliveryReport && _deliveryReportAvailable;
+
   Future<void> _applyControlOnSend() async {
     final account = _fromAccount;
     if (account == null || !ref.read(settingsProvider).mailControl) return;
@@ -3464,6 +3493,32 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       }
     } catch (_) {}
   }
+
+  /// «Перевести» (1.9.x, просьба владельца 31.10.2026): только свой текст —
+  /// подпись и цитата не переводятся; «Вернуть» или «Отменить» редактора —
+  /// прежний текст (compose_translate.dart).
+  Future<void> _translateOwn() => translateComposeBody(
+        context,
+        ref,
+        html: _useHtmlEditor,
+        readBody: () async {
+          if (!_useHtmlEditor) return _plainController.text;
+          final raw = await _editor.getHtml();
+          return raw == null ? _lastHtml : _fromEditor(raw);
+        },
+        apply: (body) {
+          if (!mounted) return;
+          if (_useHtmlEditor) {
+            unawaited(_editor.replaceHtml(_toEditor(body)));
+            _lastHtml = body;
+          } else {
+            _plainController.text = body;
+          }
+          _markDraftChanged();
+        },
+        signaturePlain: _signatureFor(_fromAccount)?.plain,
+        quoteHtml: _quoteHtml,
+      );
 
   AppMenuEntry<String> _menuItem(String value, IconData icon, String text) =>
       AppMenuEntry(value: value, icon: icon, label: text);
@@ -4383,6 +4438,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             inReplyTo: _inReplyTo,
             scheduledAt: scheduledAt,
             from: _fromOverride,
+            requestDeliveryReport: _requestDeliveryReport,
           );
       unawaited(HapticFeedback.mediumImpact());
       AppLogger.info('Письмо отложено до $scheduledAt');
@@ -4718,6 +4774,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       bodyPlain: bodyPlain,
       inReplyTo: _inReplyTo,
       window: window,
+      requestDeliveryReport: _requestDeliveryReport,
     );
     await _finishDraft();
     await _markOriginalAnswered();
@@ -5095,6 +5152,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             from: _fromOverride,
             // Не принято по размеру — письмо остаётся здесь (ниже).
             keepTooLarge: true,
+            requestDeliveryReport: _requestDeliveryReport,
           );
 
       // И при отправке, и при постановке в очередь черновик не нужен: письмо

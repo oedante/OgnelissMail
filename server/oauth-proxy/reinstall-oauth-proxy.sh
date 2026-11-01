@@ -133,7 +133,7 @@ command -v docker >/dev/null || die "Нет docker"
 if docker compose version >/dev/null 2>&1; then DC=(docker compose)
 elif command -v docker-compose >/dev/null; then DC=(docker-compose)
 else die "Нет docker compose"; fi
-for f in server.js package.json package-lock.json Dockerfile; do
+for f in server.js bimi.js package.json package-lock.json Dockerfile; do
   [ -f "$SCRIPT_DIR/$f" ] || die "Рядом со скриптом нет $f — запускайте из каталога server/oauth-proxy архива"
 done
 grep -q "authStyle: 'basic'" "$SCRIPT_DIR/server.js" || die "server.js рядом со скриптом — старый (нет Basic для Яндекса)"
@@ -443,13 +443,13 @@ fi
 step "Установка в ${APP_DIR#$ROOT}"
 gen() { head -c 48 /dev/urandom | base64 | tr -d '/+=\n' | cut -c1-48; }
 run mkdir -p "$APP_DIR"
-for f in server.js package.json package-lock.json Dockerfile; do run cp "$SCRIPT_DIR/$f" "$APP_DIR/"; done
+for f in server.js bimi.js package.json package-lock.json Dockerfile; do run cp "$SCRIPT_DIR/$f" "$APP_DIR/"; done
 # umask 077 (ради .env) дал бы файлам кода права 600: в контейнере Node
 # работает от пользователя node и не прочитал бы их («Cannot read package
 # config /app/package.json: permission denied», 07.10.2026). Код — 644,
 # каталог — 755; секреты — только .env (600), в образ он не попадает.
 run chmod 755 "$APP_DIR"
-for f in server.js package.json package-lock.json Dockerfile; do run chmod 644 "$APP_DIR/$f"; done
+for f in server.js bimi.js package.json package-lock.json Dockerfile; do run chmod 644 "$APP_DIR/$f"; done
 printf '.env\n*.env\nnode_modules\n' > "$TMP/dockerignore"
 run cp "$TMP/dockerignore" "$APP_DIR/.dockerignore"
 [ "$DRY" = 1 ] || chmod 644 "$APP_DIR/.dockerignore"

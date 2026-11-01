@@ -64,6 +64,13 @@ class CreateEventScreen extends ConsumerStatefulWidget {
   /// Описание (например, номер брони из письма).
   final String? initialDescription;
 
+  /// Событие на весь день (дата из текста письма без времени, 1.9.x).
+  final bool initialAllDay;
+
+  /// Письмо, из которого встреча (дата в тексте письма, 1.9.x): ссылка на
+  /// него без участников — в отличие от [sourceEmail].
+  final String? linkedEmailId;
+
   /// Правка существующей встречи (иначе — создание новой).
   final CalendarEvent? editEvent;
 
@@ -79,6 +86,8 @@ class CreateEventScreen extends ConsumerStatefulWidget {
     this.initialLocation,
     this.initialTitle,
     this.initialDescription,
+    this.initialAllDay = false,
+    this.linkedEmailId,
     this.editEvent,
     this.duplicateOf,
   });
@@ -338,6 +347,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       _startDate = widget.initialStart!;
       _endDate = widget.initialEnd ?? widget.initialStart!.add(defaultMeetingLength);
     }
+    if (widget.initialAllDay) _isAllDay = true;
     if (widget.initialLocation?.isNotEmpty ?? false) {
       _locationController.text = widget.initialLocation!;
     }
@@ -1271,7 +1281,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         colorValue: _selectedColor,
         isPrivate: _isPrivate,
         reminders: [for (final m in EventReminders.normalize(_reminders)) EventReminder(minutesBefore: m)],
-        linkedEmailId: widget.sourceEmail?.id,
+        linkedEmailId: widget.sourceEmail?.id ?? widget.linkedEmailId,
         responseRequested: _responseRequested,
         allowNewTimeProposal: _allowNewTime,
         createdAt: DateTime.now(),
@@ -1350,6 +1360,8 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           priority: Value(event.priority.index),
           colorValue: Value(event.colorValue),
           isPrivate: Value(event.isPrivate),
+          // Ссылка на письмо (1.9.x): «Открыть письмо» в карточке встречи.
+          linkedEmailId: Value(event.linkedEmailId),
           // Напоминания: колонка была, но в неё никто не писал — из-за этого
           // выбранное «за 15 минут» терялось и уведомление не приходило.
           // Несколько (1.7.2+110): у Exchange на сервере — ближайшее,

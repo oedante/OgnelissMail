@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "Fotoğraflar yalnızca bir iletiye eklediğinizde veya posta kutusu fotoğrafı seçtiğinizde kullanılır.";
 "NSCameraUsageDescription" = "Ogneliss Mail kamerayı kendisi kullanmaz. Bir iletiden açılan web sayfası (örneğin bir görüntülü toplantı) kamerayı isteyebilir.";
 "NSLocationWhenInUseUsageDescription" = "Ogneliss Mail konumunuzu izlemez. Bir iletiden açılan web sayfası konumu isteyebilir.";
+"siriCompose" = "Yeni e-posta";
+"siriEvent" = "Yeni etkinlik";
+"siriReminder" = "Yeni hatırlatıcı";
+"siriMyDay" = "Günüm";
+"siriUnread" = "Okunmamış";
+"siriTo" = "Kime";
+"siriSubject" = "Konu";
+"siriVip" = "VIP'lerden gelen e-postalar";
+"siriSearch" = "Postada ara";
+"siriPhrase" = "Ne ve ne zaman";
+"siriQuery" = "Aranacak";
+"siriEventAsk" = "Hangi toplantı, ne zaman?";
+"siriReminderAsk" = "Neyi ne zaman hatırlatayım?";
+"siriSearchAsk" = "Ne arayayım?";

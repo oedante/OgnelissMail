@@ -33,9 +33,19 @@ abstract final class Radii {
   /// Шторки, верх нижней панели.
   static const panel = 28.0;
 
-  static const chipAll = BorderRadius.all(Radius.circular(chip));
-  static const cardAll = BorderRadius.all(Radius.circular(card));
-  static const panelTop = BorderRadius.vertical(top: Radius.circular(panel));
+  /// Множитель скругления из «Оформления» (1.9.x, просьба владельца
+  /// 31.10.2026: малое / среднее / большое): 1 — как было. Ставит main.dart
+  /// до сборки тем (как AppTheme.fontFamily); экраны, которые строятся
+  /// заново со сменой темы, берут новый радиус сами.
+  static double scale = 1.0;
+
+  /// Радиус [base] с учётом [scale]. Шторки при большом скруглении — не
+  /// больше 32: иначе верх шторки становится «капсулой».
+  static double of(double base) => base >= panel ? (base * scale).clamp(0.0, 32.0) : base * scale;
+
+  static BorderRadius get chipAll => BorderRadius.all(Radius.circular(of(chip)));
+  static BorderRadius get cardAll => BorderRadius.all(Radius.circular(of(card)));
+  static BorderRadius get panelTop => BorderRadius.vertical(top: Radius.circular(of(panel)));
 }
 
 /// Размеры элементов.

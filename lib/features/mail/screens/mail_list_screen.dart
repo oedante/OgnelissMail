@@ -85,6 +85,8 @@ import '../widgets/account_auth_banner.dart';
 import '../widgets/auto_reply_strip.dart';
 import '../../../services/mail/own_addresses.dart';
 import '../widgets/email_list_tile.dart';
+import '../../../core/theme/appearance.dart' show AppearanceLook;
+import '../../../widgets/common/mail_open_motion.dart' show MailOpenHandoff;
 import '../widgets/mail_peek_card.dart';
 import '../widgets/peek_helpers.dart';
 import '../../../widgets/common/peek_card.dart' show peekAnchorOf;
@@ -2214,6 +2216,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       // палец уже задержался на строке — началось раньше
       // (_pressStart), повтор того же документа ничего не делает.
       _preloadOpen(context, item);
+      // Шапка письма — экрану письма сразу (1.9.x, «Анимация открытия
+      // письма»): портрету и теме из строки есть куда лететь.
+      if (AppearanceLook.of(context).openAnimation) MailOpenHandoff.put(item);
       // Соседние письма ленты — свайпом влево-вправо (1.6.49+95).
       final pager = ref.read(mailSwipePagerProvider) ? _pagerArgs(item) : null;
       if (pager != null) {

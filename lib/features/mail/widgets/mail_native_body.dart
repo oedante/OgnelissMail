@@ -23,14 +23,20 @@
 // страницы, заменяется цветом темы; выделенный маркером текст — чёрным или
 // белым по яркости маркера. Блоки <style> письма не применяются (как у
 // большинства мобильных клиентов для простых писем); письма, где без них
-// не обойтись (скрытый текст классами, @media), уходят в WebView.
+// не обойтись (скрытый текст классами, @media), уходят в WebView. Поэтому
+// и своё тёмное оформление письма (@media (prefers-color-scheme: dark),
+// 1.9.x) сюда не попадает — его применяет WebView (MailColorScheme), а
+// «Исходные цвета» нужны только там.
+//
+// Очень длинное письмо — только начало ([NativeMail.shortened], 1.9.x).
 //
 // Выключатель — «Настройки → Почта → Открытие писем → Простые письма без браузера».
 // Кнопка «Как в браузере» в письме убрана в 1.5.10: по отзывам тестировщиков
 // показ виджетами точнее и приятнее («в браузере — как рисунок»).
 //
 // Ссылки и адреса почты, написанные обычным текстом, — нажимаемые
-// (core/utils/linkify.dart, 1.5.10).
+// (core/utils/linkify.dart, 1.5.10); даты в тексте — тоже (1.9.x,
+// core/utils/date_links.dart): по тексту абзаца целиком, ссылками `ogdate:`.
 
 import 'dart:convert';
 import 'dart:typed_data';
@@ -41,7 +47,10 @@ import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
 
 import '../../../core/theme/mail_page_color.dart';
+import '../../../core/utils/date_links.dart';
+import '../../../core/utils/date_phrase.dart';
 import '../../../core/utils/linkify.dart';
+import '../../../core/utils/mail_clip.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/image_actions.dart';
@@ -154,7 +163,89 @@ class NBlock {
 
 class NativeMail {
   final List<NBlock> blocks;
-  const NativeMail(this.blocks);
+
+  /// Показано только начало очень длинного письма ([shortened]).
+  final bool clipped;
+  NativeMail(this.blocks, {this.clipped = false});
+
+  NativeMail? _short;
+
+  /// Очень длинное письмо — только начало (1.9.x, просьба владельца
+  /// 31.10.2026; пороги — MailClip): блоки письма, пока текста не больше
+  /// [MailClip.textKeep]; письмо не длиннее [MailClip.textLimit] — оно само.
+  /// Один раз на письмо: экран перестраивается часто, а MailNativeBody
+  /// узнаёт готовое дерево по тому же объекту.
+  NativeMail get shortened => _short ??= _clip();
+
+  NativeMail _clip() {
+    if (_chars(blocks, MailClip.textLimit + 1) <= MailClip.textLimit) return this;
+    var left = MailClip.textKeep;
+    final out = <NBlock>[];
+    for (final b in blocks) {
+      final n = _chars([b], left + 1);
+      if (n <= left) {
+        out.add(b);
+        left -= n;
+        continue;
+      }
+      // Блок не помещается: длинный абзац (журнал, выгрузка) — его начало.
+      if (b.kind == NBlockKind.text && left >= 2048) out.add(b._head(left));
+      break;
+    }
+    return NativeMail(out, clipped: true);
+  }
+
+  /// Знаков текста в блоках (с ячейками таблиц); считает не дальше [cap].
+  static int _chars(List<NBlock> list, int cap) {
+    var n = 0;
+    for (final b in list) {
+      for (final s in b.spans) {
+        n += s.text.length;
+      }
+      final t = b.table;
+      if (t != null) {
+        for (final r in t) {
+          for (final c in r) {
+            n += _chars(c.blocks, cap - n);
+            if (n >= cap) return n;
+          }
+        }
+      }
+      if (n >= cap) return n;
+    }
+    return n;
+  }
+}
+
+extension on NBlock {
+  /// Тот же абзац, но только первые [keep] знаков текста.
+  NBlock _head(int keep) {
+    final out = <NSpan>[];
+    var left = keep;
+    for (final s in spans) {
+      if (s.text.length <= left) {
+        out.add(s);
+        left -= s.text.length;
+        continue;
+      }
+      final t = MailClip.cutText(s.text, left);
+      if (t.isNotEmpty) {
+        out.add(NSpan(t,
+            bold: s.bold,
+            italic: s.italic,
+            underline: s.underline,
+            strike: s.strike,
+            mono: s.mono,
+            color: s.color,
+            background: s.background,
+            size: s.size,
+            href: s.href));
+      }
+      break;
+    }
+    return NBlock(
+        kind: kind, spans: out, quote: quote, list: list, bullet: bullet, align: align, after: after, pre: pre);
+  }
 }
 
 // ───────────────────────── построение (в изоляте) ─────────────────────────
@@ -175,16 +266,17 @@ final _ws = RegExp(r'[ \t\r\n\f]+');
 
 /// Простое письмо — блоки для показа виджетами; сложное — null (WebView).
 /// [html] — уже очищенный HTML (санитайзер, блокировщик трекеров).
-NativeMail? buildNativeMail(String html) => buildNativeMailWhy(html).mail;
+NativeMail? buildNativeMail(String html, {DateContext? dates}) => buildNativeMailWhy(html, dates: dates).mail;
 
 /// То же при разрешённых картинках из интернета (1.5.11): картинки
 /// http(s) — не повод уходить в браузер, приложение загрузит их само.
-NativeMail? buildNativeMailRemote(String html) => buildNativeMailWhy(html, remoteImages: true).mail;
+NativeMail? buildNativeMailRemote(String html, {DateContext? dates}) =>
+    buildNativeMailWhy(html, remoteImages: true, dates: dates).mail;
 
 /// То же и причина, по которой письмо уходит в WebView (1.5.10) — для замера
 /// открытия в журнале: «в браузере: объединённые ячейки», «…: картинка из
 /// интернета». По ним видно, что ещё стоит научиться рисовать без браузера.
-({NativeMail? mail, String? why}) buildNativeMailWhy(String html, {bool remoteImages = false}) {
+({NativeMail? mail, String? why}) buildNativeMailWhy(String html, {bool remoteImages = false, DateContext? dates}) {
   ({NativeMail? mail, String? why}) no(String why) => (mail: null, why: why);
   if (html.length > 400 * 1024) return no('больше 400 КБ');
   final doc = html_parser.parse(html);
@@ -243,11 +335,11 @@ NativeMail? buildNativeMailRemote(String html) => buildNativeMailWhy(html, remot
     }
   }
 
-  final mail = _buildBlocks(body, html);
+  final mail = _buildBlocks(body, html, dates);
   return mail == null ? no('пустое') : (mail: mail, why: null);
 }
 
-NativeMail? _buildBlocks(dom.Element body, String html) {
+NativeMail? _buildBlocks(dom.Element body, String html, DateContext? dates) {
   if (SymbolFonts.mayContain(html)) SymbolFonts.mapDom(body);
 
   final b = _Builder();
@@ -261,8 +353,98 @@ NativeMail? _buildBlocks(dom.Element body, String html) {
   while (blocks.isNotEmpty && blocks.last.isBlank) {
     blocks.removeLast();
   }
-  return blocks.isEmpty ? null : NativeMail(blocks);
+  if (blocks.isEmpty) return null;
+  return NativeMail(dates == null ? blocks : _withDates(blocks, dates));
 }
+
+/// Даты в тексте (1.9.x, DateLinks): ищутся по тексту абзаца целиком —
+/// день и время бывают в разных фрагментах («<b>завтра</b> в 15»), —
+/// фрагменты режутся по границам найденного. В ссылках даты не ищутся.
+List<NBlock> _withDates(List<NBlock> blocks, DateContext dates) => [for (final b in blocks) _blockDates(b, dates)];
+
+NBlock _blockDates(NBlock b, DateContext dates) {
+  final table = b.table;
+  if (table != null) {
+    return NBlock(
+      kind: b.kind,
+      borders: b.borders,
+      quote: b.quote,
+      list: b.list,
+      bullet: b.bullet,
+      align: b.align,
+      after: b.after,
+      pre: b.pre,
+      spans: b.spans,
+      table: [
+        for (final r in table)
+          [
+            for (final c in r)
+              NCell(_withDates(c.blocks, dates),
+                  background: c.background,
+                  flex: c.flex,
+                  rowSpan: c.rowSpan,
+                  colSpan: c.colSpan,
+                  sides: c.sides,
+                  valign: c.valign),
+          ],
+      ],
+    );
+  }
+  if (b.kind != NBlockKind.text || b.spans.isEmpty) return b;
+  final text = b.spans.map((s) => s.text).join();
+  if (!DatePhrase.mayContain(text)) return b;
+  var found = DatePhrase.find(text, ref: dates.ref, monthFirst: dates.monthFirst);
+  if (found.isEmpty) return b;
+  // Места ссылок — даты в них не нужны.
+  final links = <(int, int)>[];
+  var pos = 0;
+  for (final s in b.spans) {
+    if (s.href != null || s.image != null) links.add((pos, pos + s.text.length));
+    pos += s.text.length;
+  }
+  found = [for (final m in found) if (!links.any((l) => m.start < l.$2 && m.end > l.$1)) m];
+  if (found.isEmpty) return b;
+  final out = <NSpan>[];
+  pos = 0;
+  for (final s in b.spans) {
+    final from = pos, to = pos + s.text.length;
+    pos = to;
+    if (s.href != null || s.image != null || s.text.isEmpty) {
+      out.add(s);
+      continue;
+    }
+    var at = from;
+    for (final m in found) {
+      if (m.end <= at || m.start >= to) continue;
+      final a = m.start > at ? m.start : at;
+      final e = m.end < to ? m.end : to;
+      if (a > at) out.add(_spanText(s, s.text.substring(at - from, a - from)));
+      out.add(_spanText(s, s.text.substring(a - from, e - from), href: DateLinks.href(m)));
+      at = e;
+    }
+    if (at < to) out.add(_spanText(s, s.text.substring(at - from)));
+  }
+  return NBlock(
+      kind: b.kind,
+      spans: List.unmodifiable(out),
+      quote: b.quote,
+      list: b.list,
+      bullet: b.bullet,
+      align: b.align,
+      after: b.after,
+      pre: b.pre);
+}
+
+NSpan _spanText(NSpan s, String t, {String? href}) => NSpan(t,
+    bold: s.bold,
+    italic: s.italic,
+    underline: s.underline || href != null,
+    strike: s.strike,
+    mono: s.mono,
+    color: s.color,
+    background: s.background,
+    size: s.size,
+    href: href ?? s.href);
 
 /// Письмо со сложной вёрсткой — тоже виджетами (компьютер, 1.8.14). Окна
 /// браузера в письме на Windows, macOS и Linux нет, а прежний показ
@@ -274,19 +456,20 @@ NativeMail? _buildBlocks(dom.Element body, String html) {
 /// мобильная версия, «прехедер»; max-height:0, opacity:0, visibility:hidden
 /// в стиле блока) не показывается. Оформление целиком — «Открыть в
 /// браузере» на экране письма. null — письмо пустое или слишком большое.
-NativeMail? buildNativeMailForced(String html) => _forced(html);
+NativeMail? buildNativeMailForced(String html, {DateContext? dates}) => _forced(html, dates);
 
 /// То же при разрешённых картинках из интернета.
-NativeMail? buildNativeMailForcedRemote(String html) => _forced(html);
+NativeMail? buildNativeMailForcedRemote(String html, {DateContext? dates}) => _forced(html, dates);
 
 /// Компьютер: простое письмо — как на телефоне, сложное — упрощённо.
-NativeMail? buildNativeMailDesktop(String html) => buildNativeMail(html) ?? buildNativeMailForced(html);
+NativeMail? buildNativeMailDesktop(String html, {DateContext? dates}) =>
+    buildNativeMail(html, dates: dates) ?? buildNativeMailForced(html, dates: dates);
 
 /// То же при разрешённых картинках из интернета.
-NativeMail? buildNativeMailDesktopRemote(String html) =>
-    buildNativeMailRemote(html) ?? buildNativeMailForcedRemote(html);
+NativeMail? buildNativeMailDesktopRemote(String html, {DateContext? dates}) =>
+    buildNativeMailRemote(html, dates: dates) ?? buildNativeMailForcedRemote(html, dates: dates);
 
-NativeMail? _forced(String html) {
+NativeMail? _forced(String html, [DateContext? dates]) {
   if (html.length > 3 * 1024 * 1024) return null;
   final doc = html_parser.parse(html);
   final body = doc.body;
@@ -310,7 +493,7 @@ NativeMail? _forced(String html) {
       e.remove();
     }
   }
-  return _buildBlocks(body, html);
+  return _buildBlocks(body, html, dates);
 }
 
 final _zeroOpacity = RegExp(r'(^|;)opacity:0(\.0+)?(!important)?(;|$)');
@@ -1168,12 +1351,14 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       if (s.background != null) {
         return Color(s.background!).computeLuminance() > 0.45 ? Colors.black : Colors.white;
       }
-      if (s.href != null && s.color == null) return link;
+      // Дата в тексте (1.9.x) — цвета текста, подчёркнута пунктиром.
+      final date = s.href != null && DateLinks.isDateLink(s.href!);
+      if (s.href != null && s.color == null) return date ? null : link;
       if (s.color == null) return null;
       final c = Color(s.color!);
       // Цвет, который на фоне страницы не читается (чёрный в тёмной теме,
       // светло-серый в светлой), — цвет темы.
-      return _contrast(c, page) < 3 ? (s.href != null ? link : null) : c;
+      return _contrast(c, page) < 3 ? (s.href != null && !date ? link : null) : c;
     }
 
     // Нажатие на картинку (1.8.12): в ссылке — ссылка, иначе — картинка на
@@ -1251,6 +1436,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
           fontWeight: s.bold ? FontWeight.w700 : null,
           fontStyle: s.italic ? FontStyle.italic : null,
           decoration: deco.isEmpty ? null : TextDecoration.combine(deco),
+          decorationStyle: href != null && DateLinks.isDateLink(href) ? TextDecorationStyle.dotted : null,
           fontFamily: s.mono ? 'monospace' : null,
           fontSize: s.size == 1 ? null : base.fontSize! * s.size,
           color: textColor(s, cellBg),

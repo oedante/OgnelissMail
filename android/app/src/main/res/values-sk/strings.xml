@@ -25,4 +25,12 @@
     <string name="widget_cal_day">Deň</string>
     <string name="widget_cal_week">Týždeň</string>
     <string name="widget_cal_month">Mesiac</string>
+    <string name="shortcut_myday">Môj deň</string>
+    <string name="shortcut_compose">Nová správa</string>
+    <string name="shortcut_event">Nové stretnutie</string>
+    <string name="shortcut_reminder">Nová pripomienka</string>
+    <string name="shortcut_unread">Neprečítané</string>
+    <string name="shortcut_vip">VIP pošta</string>
+    <string name="shortcut_calendar">Kalendár</string>
+    <string name="shortcut_tasks">Úlohy</string>
 </resources>

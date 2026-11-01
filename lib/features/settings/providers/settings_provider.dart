@@ -6,13 +6,16 @@
 // - Конфигурация для каждой платформы
 
 import '../../../core/platform/orientation_policy.dart';
+import 'dart:async' show unawaited;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/theme/appearance.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart' show AppLocalizations;
+import '../../../services/notifications/messenger_notifications.dart' show MessengerNotify;
 
 /// Режим загрузки писем
 enum EmailFetchMode {
@@ -69,6 +72,9 @@ class AppSettings {
   /// «На контроле»: пункты в письме и списке, проверка ответов, раздел в
   /// «Моём дне». Выключено — всё скрыто, отметки сохраняются.
   final bool mailControl;
+  /// Даты в тексте письма — нажимаемые (1.9.x, просьба владельца
+  /// 31.10.2026): встреча, напоминание, календарь. Включено по умолчанию.
+  final bool mailDates;
   /// Вкладка «Мой день» (в «Ещё»).
   final bool myDay;
   /// Утренняя сводка — одно уведомление в [morningDigestMinutes] (минуты от
@@ -86,6 +92,22 @@ class AppSettings {
   final bool isFirstLaunch;
   final bool licenseAccepted;
 
+  // ── Оформление (1.9.x, просьба владельца 31.10.2026) ──
+  /// Цветовая тема: «Классика» — прежний вид.
+  final ThemePreset themePreset;
+  /// Свой акцент (ARGB) или null — акцент цветовой темы.
+  final int? accentColor;
+  /// Оттенок фона ленты и беседы.
+  final ListTint listTint;
+  /// Скругление карточек, шторок и «пузырей».
+  final CornerSize corners;
+  /// Плотность ленты (и строк беседы и архива).
+  final ListDensity listDensity;
+  /// Анимация открытия письма: общий портрет и тема, закрытие свайпом вниз.
+  /// Выключено по умолчанию (прежние анимации были медленными);
+  /// «Уменьшить движение» важнее.
+  final bool openAnimation;
+
   // ── Доступность ──
   final bool highContrast;
   final bool dyslexiaFont;
@@ -95,11 +117,20 @@ class AppSettings {
   /// рваными); «Уменьшить движение» и системная настройка важнее.
   final bool uiAnimations;
   final int colorBlindMode;
+  /// Логотипы отправителей BIMI вместо буквы (1.9.x, просьба владельца
+  /// 31.10.2026). Работает, только если сборка знает сервер Ogneliss
+  /// (BimiResolver.configured).
+  final bool bimiLogos;
 
   // ── Уведомления ──
   final bool notificationsEnabled;
   final bool notificationSound;
   final bool notificationVibration;
+  /// Уведомления «как в мессенджерах» (1.9.x, просьба владельца
+  /// 31.10.2026): фото или буква отправителя (MessengerNotify).
+  final bool notificationMessengerStyle;
+  /// Android: письма VIP — в разделе «Беседы» (ярлык беседы).
+  final bool notificationVipConversations;
 
   // ── Синхронизация ──
   final bool syncOnlyWifi;
@@ -156,6 +187,14 @@ class AppSettings {
   // ── Подпись ──
   final bool autoInsertSignature;
 
+  // ── Перевод писем на устройстве (1.9.x, просьба владельца 31.10.2026) ──
+  /// Предлагать перевод письма, язык которого не язык приложения.
+  final bool translateOffer;
+  /// Языки для перевода — скачивать только по Wi-Fi (Android).
+  final bool translateWifiOnly;
+  /// С этих языков перевод не предлагать.
+  final List<String> translateNever;
+
   const AppSettings({
     this.themeMode = ThemeMode.system,
     this.amoled = false,
@@ -164,6 +203,7 @@ class AppSettings {
     this.allowRotation = false,
     this.warmPage = false,
     this.mailControl = true,
+    this.mailDates = true,
     this.myDay = true,
     this.morningDigest = false,
     this.morningDigestMinutes = 8 * 60,
@@ -173,14 +213,23 @@ class AppSettings {
     this.uiFont = 'roboto',
     this.isFirstLaunch = true,
     this.licenseAccepted = false,
+    this.themePreset = ThemePreset.classic,
+    this.accentColor,
+    this.listTint = ListTint.none,
+    this.corners = CornerSize.medium,
+    this.listDensity = ListDensity.normal,
+    this.openAnimation = false,
     this.highContrast = false,
     this.dyslexiaFont = false,
     this.reduceMotion = false,
     this.uiAnimations = false,
     this.colorBlindMode = 0,
+    this.bimiLogos = true,
     this.notificationsEnabled = true,
     this.notificationSound = true,
     this.notificationVibration = true,
+    this.notificationMessengerStyle = true,
+    this.notificationVipConversations = true,
     this.syncOnlyWifi = false,
     this.backgroundKeepAlive = true,
     this.syncIntervalMinutes = 15,
@@ -203,8 +252,22 @@ class AppSettings {
     this.activeAccountId,
     this.autoLockMinutes = 5,
     this.autoInsertSignature = true,
+    this.translateOffer = true,
+    this.translateWifiOnly = true,
+    this.translateNever = const [],
     this.attachmentsWifiOnly = true,
   });
+
+  /// «Оформление» для сборки тем. [systemNoAnimations] — системное «Убрать
+  /// анимацию»: вместе с «Уменьшить движение» выключает анимацию открытия.
+  Appearance appearance({bool systemNoAnimations = false}) => Appearance(
+        preset: themePreset,
+        accent: accentColor,
+        tint: listTint,
+        corners: corners,
+        density: listDensity,
+        openAnimation: openAnimation && !reduceMotion && !systemNoAnimations,
+      );
 
   /// Текущий выбор темы из themeMode + amoled.
   AppThemeChoice get themeChoice {
@@ -226,6 +289,7 @@ class AppSettings {
     bool? allowRotation,
     bool? warmPage,
     bool? mailControl,
+    bool? mailDates,
     bool? myDay,
     bool? morningDigest,
     int? morningDigestMinutes,
@@ -235,14 +299,24 @@ class AppSettings {
     String? uiFont,
     bool? isFirstLaunch,
     bool? licenseAccepted,
+    ThemePreset? themePreset,
+    int? accentColor,
+    bool clearAccentColor = false,
+    ListTint? listTint,
+    CornerSize? corners,
+    ListDensity? listDensity,
+    bool? openAnimation,
     bool? highContrast,
     bool? dyslexiaFont,
     bool? reduceMotion,
     bool? uiAnimations,
     int? colorBlindMode,
+    bool? bimiLogos,
     bool? notificationsEnabled,
     bool? notificationSound,
     bool? notificationVibration,
+    bool? notificationMessengerStyle,
+    bool? notificationVipConversations,
     bool? syncOnlyWifi,
     bool? backgroundKeepAlive,
     int? syncIntervalMinutes,
@@ -265,6 +339,9 @@ class AppSettings {
     String? activeAccountId,
     int? autoLockMinutes,
     bool? autoInsertSignature,
+    bool? translateOffer,
+    bool? translateWifiOnly,
+    List<String>? translateNever,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -274,6 +351,7 @@ class AppSettings {
       allowRotation: allowRotation ?? this.allowRotation,
       warmPage: warmPage ?? this.warmPage,
       mailControl: mailControl ?? this.mailControl,
+      mailDates: mailDates ?? this.mailDates,
       myDay: myDay ?? this.myDay,
       morningDigest: morningDigest ?? this.morningDigest,
       morningDigestMinutes: morningDigestMinutes ?? this.morningDigestMinutes,
@@ -283,14 +361,23 @@ class AppSettings {
       uiFont: uiFont ?? this.uiFont,
       isFirstLaunch: isFirstLaunch ?? this.isFirstLaunch,
       licenseAccepted: licenseAccepted ?? this.licenseAccepted,
+      themePreset: themePreset ?? this.themePreset,
+      accentColor: clearAccentColor ? null : (accentColor ?? this.accentColor),
+      listTint: listTint ?? this.listTint,
+      corners: corners ?? this.corners,
+      listDensity: listDensity ?? this.listDensity,
+      openAnimation: openAnimation ?? this.openAnimation,
       highContrast: highContrast ?? this.highContrast,
       dyslexiaFont: dyslexiaFont ?? this.dyslexiaFont,
       reduceMotion: reduceMotion ?? this.reduceMotion,
       uiAnimations: uiAnimations ?? this.uiAnimations,
       colorBlindMode: colorBlindMode ?? this.colorBlindMode,
+      bimiLogos: bimiLogos ?? this.bimiLogos,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       notificationSound: notificationSound ?? this.notificationSound,
       notificationVibration: notificationVibration ?? this.notificationVibration,
+      notificationMessengerStyle: notificationMessengerStyle ?? this.notificationMessengerStyle,
+      notificationVipConversations: notificationVipConversations ?? this.notificationVipConversations,
       syncOnlyWifi: syncOnlyWifi ?? this.syncOnlyWifi,
       backgroundKeepAlive: backgroundKeepAlive ?? this.backgroundKeepAlive,
       syncIntervalMinutes: syncIntervalMinutes ?? this.syncIntervalMinutes,
@@ -314,6 +401,9 @@ class AppSettings {
       activeAccountId: activeAccountId ?? this.activeAccountId,
       autoLockMinutes: autoLockMinutes ?? this.autoLockMinutes,
       autoInsertSignature: autoInsertSignature ?? this.autoInsertSignature,
+      translateOffer: translateOffer ?? this.translateOffer,
+      translateWifiOnly: translateWifiOnly ?? this.translateWifiOnly,
+      translateNever: translateNever ?? this.translateNever,
     );
   }
 }
@@ -328,6 +418,7 @@ class _K {
   static const allowRotation = 's_allow_rotation';
   static const warmPage = 's_warm_page';
   static const mailControl = 's_mail_control';
+  static const mailDates = 's_mail_dates';
   static const myDay = 's_my_day';
   // Те же ключи читает ReminderSchedulerService (фоновая синхронизация).
   static const morningDigest = 's_morning_digest';
@@ -338,14 +429,25 @@ class _K {
   static const uiFont = 's_ui_font';
   static const isFirstLaunch = 's_first_launch';
   static const licenseAccepted = 's_license_accepted';
+  // «Оформление» (1.9.x): тема — по имени, остальное — номером варианта.
+  static const themePreset = 's_theme_preset';
+  static const accentColor = 's_accent';
+  static const listTint = 's_list_tint';
+  static const corners = 's_corners';
+  static const listDensity = 's_density';
+  static const openAnimation = 's_open_anim';
   static const highContrast = 's_high_contrast';
   static const dyslexiaFont = 's_dyslexia';
   static const reduceMotion = 's_reduce_motion';
   static const uiAnimations = 's_ui_animations';
   static const colorBlindMode = 's_color_blind';
+  static const bimiLogos = 's_bimi_logos';
   static const notificationsEnabled = 's_notif_on';
   static const notificationSound = 's_notif_sound';
   static const notificationVibration = 's_notif_vib';
+  // Читаются и в фоне (MessengerNotify.prefStyle / prefVipConversations).
+  static const notificationMessengerStyle = 's_notif_messenger';
+  static const notificationVipConversations = 's_notif_vip_conv';
   static const syncOnlyWifi = 's_sync_wifi';
   // v2: прежний ключ в ранних сборках включался по умолчанию, и постоянное
   // уведомление появлялось без ведома пользователя. Новый ключ — выбор
@@ -375,6 +477,9 @@ class _K {
   static const activeAccount = 's_active_acc';
   static const autoLock = 's_auto_lock';
   static const autoSignature = 's_auto_sig';
+  static const translateOffer = 's_translate_offer';
+  static const translateWifiOnly = 's_translate_wifi';
+  static const translateNever = 's_translate_never';
 }
 
 /// Провайдер настроек
@@ -411,6 +516,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       allowRotation: _p.getBool(_K.allowRotation) ?? false,
       warmPage: _p.getBool(_K.warmPage) ?? false,
       mailControl: _p.getBool(_K.mailControl) ?? true,
+      mailDates: _p.getBool(_K.mailDates) ?? true,
       myDay: _p.getBool(_K.myDay) ?? true,
       morningDigest: _p.getBool(_K.morningDigest) ?? false,
       morningDigestMinutes: _p.getInt(_K.morningDigestMinutes) ?? 8 * 60,
@@ -420,14 +526,24 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       uiFont: _p.getString(_K.uiFont) == 'medeo' ? 'medeo' : 'roboto',
       isFirstLaunch: _p.getBool(_K.isFirstLaunch) ?? true,
       licenseAccepted: _p.getBool(_K.licenseAccepted) ?? false,
+      themePreset: ThemePreset.values.asNameMap()[_p.getString(_K.themePreset)] ?? ThemePreset.classic,
+      accentColor: _p.getInt(_K.accentColor),
+      listTint: ListTint.values[(_p.getInt(_K.listTint) ?? ListTint.none.index).clamp(0, ListTint.values.length - 1)],
+      corners: CornerSize.values[(_p.getInt(_K.corners) ?? CornerSize.medium.index).clamp(0, CornerSize.values.length - 1)],
+      listDensity:
+          ListDensity.values[(_p.getInt(_K.listDensity) ?? ListDensity.normal.index).clamp(0, ListDensity.values.length - 1)],
+      openAnimation: _p.getBool(_K.openAnimation) ?? false,
       highContrast: _p.getBool(_K.highContrast) ?? false,
       dyslexiaFont: _p.getBool(_K.dyslexiaFont) ?? false,
       reduceMotion: _p.getBool(_K.reduceMotion) ?? false,
       uiAnimations: _p.getBool(_K.uiAnimations) ?? false,
       colorBlindMode: _p.getInt(_K.colorBlindMode) ?? 0,
+      bimiLogos: _p.getBool(_K.bimiLogos) ?? true,
       notificationsEnabled: _p.getBool(_K.notificationsEnabled) ?? true,
       notificationSound: _p.getBool(_K.notificationSound) ?? true,
       notificationVibration: _p.getBool(_K.notificationVibration) ?? true,
+      notificationMessengerStyle: _p.getBool(_K.notificationMessengerStyle) ?? true,
+      notificationVipConversations: _p.getBool(_K.notificationVipConversations) ?? true,
       syncOnlyWifi: _p.getBool(_K.syncOnlyWifi) ?? false,
       // По умолчанию включено: у новых ящиков режим «Мгновенно», и без
       // фоновой работы push в свёрнутом приложении не работал вовсе.
@@ -454,6 +570,9 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       activeAccountId: _p.getString(_K.activeAccount),
       autoLockMinutes: _p.getInt(_K.autoLock) ?? 5,
       autoInsertSignature: _p.getBool(_K.autoSignature) ?? true,
+      translateOffer: _p.getBool(_K.translateOffer) ?? true,
+      translateWifiOnly: _p.getBool(_K.translateWifiOnly) ?? true,
+      translateNever: _p.getStringList(_K.translateNever) ?? const [],
     );
   }
 
@@ -476,6 +595,11 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   Future<void> setMailControl(bool v) async {
     await _p.setBool(_K.mailControl, v);
     state = state.copyWith(mailControl: v);
+  }
+
+  Future<void> setMailDates(bool v) async {
+    await _p.setBool(_K.mailDates, v);
+    state = state.copyWith(mailDates: v);
   }
 
   Future<void> setMyDay(bool v) async {
@@ -561,6 +685,42 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(uiFont: value);
   }
 
+  // ── Оформление (1.9.x) ──
+  Future<void> setThemePreset(ThemePreset v) async {
+    await _p.setString(_K.themePreset, v.name);
+    state = state.copyWith(themePreset: v);
+  }
+
+  /// null — акцент цветовой темы.
+  Future<void> setAccentColor(int? v) async {
+    if (v == null) {
+      await _p.remove(_K.accentColor);
+    } else {
+      await _p.setInt(_K.accentColor, v);
+    }
+    state = state.copyWith(accentColor: v, clearAccentColor: v == null);
+  }
+
+  Future<void> setListTint(ListTint v) async {
+    await _p.setInt(_K.listTint, v.index);
+    state = state.copyWith(listTint: v);
+  }
+
+  Future<void> setCorners(CornerSize v) async {
+    await _p.setInt(_K.corners, v.index);
+    state = state.copyWith(corners: v);
+  }
+
+  Future<void> setListDensity(ListDensity v) async {
+    await _p.setInt(_K.listDensity, v.index);
+    state = state.copyWith(listDensity: v);
+  }
+
+  Future<void> setOpenAnimation(bool v) async {
+    await _p.setBool(_K.openAnimation, v);
+    state = state.copyWith(openAnimation: v);
+  }
+
   Future<void> markFirstLaunchDone() async {
     await _p.setBool(_K.isFirstLaunch, false);
     state = state.copyWith(isFirstLaunch: false);
@@ -591,6 +751,11 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(uiAnimations: v);
   }
 
+  Future<void> setBimiLogos(bool v) async {
+    await _p.setBool(_K.bimiLogos, v);
+    state = state.copyWith(bimiLogos: v);
+  }
+
   Future<void> setColorBlindMode(int v) async {
     await _p.setInt(_K.colorBlindMode, v);
     state = state.copyWith(colorBlindMode: v);
@@ -609,6 +774,19 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   Future<void> setNotificationVibration(bool v) async {
     await _p.setBool(_K.notificationVibration, v);
     state = state.copyWith(notificationVibration: v);
+  }
+
+  Future<void> setNotificationMessengerStyle(bool v) async {
+    await _p.setBool(_K.notificationMessengerStyle, v);
+    state = state.copyWith(notificationMessengerStyle: v);
+    // Без вида «как в мессенджерах» бесед нет — ярлыки VIP снимаем.
+    if (!v) unawaited(MessengerNotify.removeShortcuts());
+  }
+
+  Future<void> setNotificationVipConversations(bool v) async {
+    await _p.setBool(_K.notificationVipConversations, v);
+    state = state.copyWith(notificationVipConversations: v);
+    if (!v) unawaited(MessengerNotify.removeShortcuts());
   }
 
   Future<void> setSyncOnlyWifi(bool v) async {
@@ -737,19 +915,37 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(autoInsertSignature: v);
   }
 
+  Future<void> setTranslateOffer(bool v) async {
+    await _p.setBool(_K.translateOffer, v);
+    state = state.copyWith(translateOffer: v);
+  }
+
+  Future<void> setTranslateWifiOnly(bool v) async {
+    await _p.setBool(_K.translateWifiOnly, v);
+    state = state.copyWith(translateWifiOnly: v);
+  }
+
+  Future<void> setTranslateNever(List<String> v) async {
+    await _p.setStringList(_K.translateNever, v);
+    state = state.copyWith(translateNever: v);
+  }
+
   /// Сбросить все настройки
   Future<void> resetAll() async {
     final keys = [
       // AMOLED, «Работать в фоне» и «Вложения только по Wi-Fi» раньше
       // сбросом не затрагивались.
-      _K.amoled, _K.reading, _K.dynamicColor, _K.allowRotation, _K.warmPage, _K.mailControl, _K.myDay, _K.morningDigest, _K.morningDigestMinutes, _K.backgroundKeepAlive, _K.attachmentsWifiOnly,
+      _K.amoled, _K.reading, _K.dynamicColor, _K.allowRotation, _K.warmPage, _K.mailControl, _K.mailDates, _K.myDay, _K.morningDigest, _K.morningDigestMinutes, _K.backgroundKeepAlive, _K.attachmentsWifiOnly,
       _K.themeMode, _K.locale, _K.fontScale, _K.uiScale, _K.uiFont, _K.highContrast,
-      _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode,
+      _K.themePreset, _K.accentColor, _K.listTint, _K.corners, _K.listDensity, _K.openAnimation,
+      _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode, _K.bimiLogos,
       _K.notificationsEnabled, _K.notificationSound, _K.notificationVibration,
+      _K.notificationMessengerStyle, _K.notificationVipConversations,
       _K.syncOnlyWifi, _K.syncInterval, _K.emailFetchMode,
       _K.groupByConversation, _K.swipeLP, _K.swipeLS, _K.swipeRP, _K.swipeRS, _K.swipeCL, _K.swipeCR, _K.swipeAnim, _K.previewLines, _K.peekPreviewLines,
       _K.aiEnabled, _K.smartReplies, _K.dlpEnabled, _K.autoRules,
       _K.voiceControl, _K.activeAccount, _K.autoLock, _K.autoSignature,
+      _K.translateOffer, _K.translateWifiOnly, _K.translateNever,
     ];
     for (final key in keys) {
       await _p.remove(key);

@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "Kuvia käytetään vain, kun liität niitä viestiin tai valitset postilaatikon kuvan.";
 "NSCameraUsageDescription" = "Ogneliss Mail ei käytä kameraa itse. Viestistä avattu verkkosivu (esimerkiksi videokokous) voi pyytää sitä.";
 "NSLocationWhenInUseUsageDescription" = "Ogneliss Mail ei seuraa sijaintiasi. Viestistä avattu verkkosivu voi pyytää sitä.";
+"siriCompose" = "Uusi viesti";
+"siriEvent" = "Uusi tapahtuma";
+"siriReminder" = "Uusi muistutus";
+"siriMyDay" = "Oma päivä";
+"siriUnread" = "Lukemattomat";
+"siriTo" = "Vastaanottaja";
+"siriSubject" = "Aihe";
+"siriVip" = "VIP-henkilöiden viestit";
+"siriSearch" = "Hae postista";
+"siriPhrase" = "Mitä ja milloin";
+"siriQuery" = "Hakusana";
+"siriEventAsk" = "Mikä tapaaminen ja milloin?";
+"siriReminderAsk" = "Mistä ja milloin muistutan?";
+"siriSearchAsk" = "Mitä haetaan?";

@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "תמונות משמשות רק כשאתה מצרף אותן להודעה או בוחר תמונה לתיבת הדואר.";
 "NSCameraUsageDescription" = "האפליקציה Ogneliss Mail אינה משתמשת במצלמה בעצמה. דף אינטרנט שנפתח מהודעה (למשל פגישת וידאו) עשוי לבקש גישה אליה.";
 "NSLocationWhenInUseUsageDescription" = "האפליקציה Ogneliss Mail אינה עוקבת אחר המיקום שלך. דף אינטרנט שנפתח מהודעה עשוי לבקש גישה אליו.";
+"siriCompose" = "הודעה חדשה";
+"siriEvent" = "אירוע חדש";
+"siriReminder" = "תזכורת חדשה";
+"siriMyDay" = "היום שלי";
+"siriUnread" = "לא נקראו";
+"siriTo" = "אל";
+"siriSubject" = "נושא";
+"siriVip" = "דואר מאנשי VIP";
+"siriSearch" = "חיפוש בדואר";
+"siriPhrase" = "מה ומתי";
+"siriQuery" = "חיפוש";
+"siriEventAsk" = "איזו פגישה ומתי?";
+"siriReminderAsk" = "על מה להזכיר ומתי?";
+"siriSearchAsk" = "מה לחפש?";

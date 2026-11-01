@@ -15,5 +15,9 @@
 | `python3 tool/ui/ui_lint.py --files` | отступы и шрифты числами, цвета Material, `Icons.*` вместо `AppIcons` |
 | `python3 tool/dev/site_serve.py site/` | локальный сервер сайта с теми же адресами, что в nginx (порт 8765) |
 | `python3 tool/dev/site_shots.py /,/mail/,/mail/ru/privacy [top]` | снимки страниц (Playwright, Chromium): компьютер/телефон, светлая/тёмная; пишет PNG в текущую папку — запускать из временной папки |
+| `python3 tool/dev/license_check.py [--summary файл]` | лицензии всех зависимостей: pub (после `flutter pub get`, по LICENSE пакета) и npm серверов (package-lock.json); GPL/LGPL/AGPL, SSPL, BUSL, «некоммерческое» и нераспознанные — ошибка, кроме `tool/dev/license_allowlist.txt` (с причиной). Правило владельца 31.10.2026 — CLAUDE.md |
+| `python3 tool/dev/osv_report.py osv-results.json` | отчёт OSV-Scanner (JSON) — таблица и аннотации; ошибка — HIGH/CRITICAL с готовым исправлением; исключения — `tool/dev/osv-scanner.toml` |
+| `bash tool/dev/emulator_tests.sh [устройство]` | интеграционные тесты и замеры скорости на эмуляторе или телефоне (`integration_test/emulator_test.dart`); замеры — `tool/perf/README.md` |
+| `python3 -m unittest discover -s tool/dev -p 'test_*.py'` | проверки самих скриптов CI (лицензии, уязвимости, замеры) |
 
-После проверок — `flutter analyze` и `flutter test`: на GitHub (Actions, после каждого push в master) и у владельца перед сборкой.
+После проверок — `flutter analyze` и `flutter test`: на GitHub (Actions, после каждого push; там же лицензии и уязвимости зависимостей, эмулятор Android — по кнопке «Run workflow» с отметкой «emulator» и на метке `v*`) и у владельца перед сборкой.

@@ -25,4 +25,12 @@
     <string name="widget_cal_day">יום</string>
     <string name="widget_cal_week">שבוע</string>
     <string name="widget_cal_month">חודש</string>
+    <string name="shortcut_myday">היום שלי</string>
+    <string name="shortcut_compose">הודעה חדשה</string>
+    <string name="shortcut_event">פגישה חדשה</string>
+    <string name="shortcut_reminder">תזכורת חדשה</string>
+    <string name="shortcut_unread">לא נקראו</string>
+    <string name="shortcut_vip">דואר VIP</string>
+    <string name="shortcut_calendar">לוח שנה</string>
+    <string name="shortcut_tasks">משימות</string>
 </resources>

@@ -25,4 +25,12 @@
     <string name="widget_cal_day">Dag</string>
     <string name="widget_cal_week">Vecka</string>
     <string name="widget_cal_month">Månad</string>
+    <string name="shortcut_myday">Min dag</string>
+    <string name="shortcut_compose">Nytt meddelande</string>
+    <string name="shortcut_event">Nytt möte</string>
+    <string name="shortcut_reminder">Ny påminnelse</string>
+    <string name="shortcut_unread">Olästa</string>
+    <string name="shortcut_vip">VIP-e-post</string>
+    <string name="shortcut_calendar">Kalender</string>
+    <string name="shortcut_tasks">Uppgifter</string>
 </resources>

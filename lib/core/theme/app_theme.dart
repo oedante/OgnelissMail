@@ -4,7 +4,9 @@
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
+import 'appearance.dart';
 import 'ogneliss_look.dart';
+import 'theme_palette.dart';
 import 'tokens.dart';
 
 class AppColors {
@@ -108,8 +110,9 @@ class AppColors {
 
   /// Фон ленты писем и беседы (1.6.25, замечание владельца «интерфейс стал
   /// очень серым, беседы сливаются»): светлая тема — белый, строки разделены
-  /// тонкой линией; тёмная — на ступень светлее фона экрана.
-  static Color listFill(BuildContext c) => Theme.of(c).colorScheme.surface;
+  /// тонкой линией; тёмная — на ступень светлее фона экрана. С оттенком из
+  /// «Оформления» (1.9.x) — чуть цвета акцента поверх.
+  static Color listFill(BuildContext c) => AppearanceLook.of(c).listFill ?? Theme.of(c).colorScheme.surface;
 
   /// Подложка карточки или группы строк — отличима от фона экрана в любой
   /// теме: светлая — белая на светло-сером фоне, тёмная — на ступень светлее.
@@ -249,10 +252,91 @@ class AppTheme {
   static ThemeData withTransitions(ThemeData t, bool animated) =>
       t.copyWith(pageTransitionsTheme: animated ? _animatedTransitions : _pageTransitions);
 
+  /// «Оформление» поверх собранной темы (1.9.x, просьба владельца
+  /// 31.10.2026): плотность, оттенок ленты и анимация — расширением темы
+  /// (AppearanceLook), скругление — формой карточек, полей, кнопок, меню,
+  /// диалогов и шторок. Среднее скругление тему не трогает.
+  static ThemeData _withAppearance(ThemeData t, Appearance a, {bool tint = true}) {
+    final s = t.colorScheme;
+    final dark = s.brightness == Brightness.dark;
+    // Оттенок фона ленты — доля акцента поверх поверхности: заметно, но
+    // текст строк остаётся выше AA (проверка — theme_presets_test).
+    final alpha = switch (a.tint) {
+      ListTint.none => 0.0,
+      ListTint.subtle => dark ? 0.05 : 0.035,
+      ListTint.soft => dark ? 0.09 : 0.07,
+    };
+    final look = AppearanceLook(
+      density: a.density,
+      listFill: tint && alpha > 0 ? Color.alphaBlend(s.primary.withValues(alpha: alpha), s.surface) : null,
+      openAnimation: a.openAnimation,
+    );
+    final themed = t.copyWith(extensions: [
+      for (final e in t.extensions.values)
+        if (e is! AppearanceLook) e,
+      look,
+    ]);
+    final k = a.radiusScale;
+    return k == 1.0 ? themed : _scaledCorners(themed, k);
+  }
+
+  /// Формы темы со скруглением ×[k]. Диалоги и шторки (у Material 3 — 28)
+  /// — не больше 32, чтобы верх шторки не становился «капсулой».
+  static ThemeData _scaledCorners(ThemeData t, double k) {
+    ShapeBorder? sh(ShapeBorder? s) => s is RoundedRectangleBorder ? s.copyWith(borderRadius: s.borderRadius * k) : s;
+    OutlinedBorder? ob(OutlinedBorder? s) =>
+        s is RoundedRectangleBorder ? s.copyWith(borderRadius: s.borderRadius * k) : s;
+    InputBorder? ib(InputBorder? b) => b is OutlineInputBorder ? b.copyWith(borderRadius: b.borderRadius * k) : b;
+    ButtonStyle? btn(ButtonStyle? st) {
+      final shape = st?.shape?.resolve(const <WidgetState>{});
+      return shape == null ? st : st!.copyWith(shape: WidgetStatePropertyAll(ob(shape)));
+    }
+
+    final big = (28 * k).clamp(0.0, 32.0);
+    final menu = t.dropdownMenuTheme.menuStyle;
+    return t.copyWith(
+      cardTheme: t.cardTheme.copyWith(shape: sh(t.cardTheme.shape)),
+      inputDecorationTheme: t.inputDecorationTheme.copyWith(border: ib(t.inputDecorationTheme.border)),
+      chipTheme: t.chipTheme.copyWith(shape: ob(t.chipTheme.shape)),
+      listTileTheme: t.listTileTheme.copyWith(shape: sh(t.listTileTheme.shape)),
+      filledButtonTheme: FilledButtonThemeData(style: btn(t.filledButtonTheme.style)),
+      textButtonTheme: TextButtonThemeData(style: btn(t.textButtonTheme.style)),
+      outlinedButtonTheme: OutlinedButtonThemeData(style: btn(t.outlinedButtonTheme.style)),
+      elevatedButtonTheme: ElevatedButtonThemeData(style: btn(t.elevatedButtonTheme.style)),
+      floatingActionButtonTheme: t.floatingActionButtonTheme.copyWith(shape: sh(t.floatingActionButtonTheme.shape)),
+      popupMenuTheme: t.popupMenuTheme.copyWith(shape: sh(t.popupMenuTheme.shape)),
+      dropdownMenuTheme: menu == null
+          ? t.dropdownMenuTheme
+          : t.dropdownMenuTheme.copyWith(
+              menuStyle: menu.copyWith(
+                  shape: WidgetStatePropertyAll(ob(menu.shape?.resolve(const <WidgetState>{}))))),
+      snackBarTheme: t.snackBarTheme.copyWith(shape: sh(t.snackBarTheme.shape)),
+      dialogTheme: t.dialogTheme.copyWith(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(big))),
+      bottomSheetTheme: t.bottomSheetTheme.copyWith(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(big)))),
+    );
+  }
+
   /// [dynamicScheme] — цвета от обоев (Android 12+). Высокий контраст важнее:
-  /// с ним цвета обоев не применяются.
+  /// с ним цвета обоев не применяются. [appearance] — «Оформление» (1.9.x):
+  /// цветовая тема и акцент (не при обоях и высоком контрасте), скругление,
+  /// плотность ленты, анимация открытия письма.
   static ThemeData lightTheme(double fontScale,
-      {bool highContrast = false, bool dyslexiaFont = false, ColorScheme? dynamicScheme}) {
+          {bool highContrast = false,
+          bool dyslexiaFont = false,
+          ColorScheme? dynamicScheme,
+          Appearance appearance = Appearance.classic}) =>
+      _withAppearance(
+          _lightBase(fontScale,
+              highContrast: highContrast,
+              dyslexiaFont: dyslexiaFont,
+              dynamicScheme: dynamicScheme,
+              palette: ThemePalette.light(appearance)),
+          appearance,
+          tint: !highContrast);
+
+  static ThemeData _lightBase(double fontScale,
+      {bool highContrast = false, bool dyslexiaFont = false, ColorScheme? dynamicScheme, required ThemePalette palette}) {
     final base = ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -261,34 +345,10 @@ class AppTheme {
               primary: Color(0xFF003087),
               secondary: Color(0xFFE31E24),
             )
-          : dynamicScheme ?? ColorScheme.fromSeed(seedColor: AppColors.brandBlue).copyWith(
-              primary: AppColors.brandBlue,
-              onPrimary: Colors.white,
-              primaryContainer: const Color(0xFFD9E5F6),
-              onPrimaryContainer: const Color(0xFF0B2545),
-              secondary: const Color(0xFF4A5A70),
-              onSecondary: Colors.white,
-              // Выбранные/активные элементы (навигация, чипы) — мягкая
-              // голубая заливка с тёмно-синим текстом, без яркого акцента.
-              secondaryContainer: const Color(0xFFDCE6F3),
-              onSecondaryContainer: const Color(0xFF13263F),
-              tertiary: const Color(0xFFA35A0B),
-              onTertiary: Colors.white,
-              surface: Colors.white,
-              // Мягче (1.6.20): основной текст — тёмный графит, а не почти
-              // чёрный; вторичный светлее (5,9:1 к белому — норма AA).
-              onSurface: const Color(0xFF242A33),
-              onSurfaceVariant: const Color(0xFF5A6472),
-              surfaceContainerLowest: Colors.white,
-              surfaceContainerLow: const Color(0xFFF2F5F9),
-              surfaceContainer: const Color(0xFFF0F3F7),
-              surfaceContainerHigh: const Color(0xFFEAEEF3),
-              surfaceContainerHighest: const Color(0xFFE3E8EF),
-              outline: const Color(0xFF8A94A3),
-              outlineVariant: const Color(0xFFE1E6EC),
-            ),
+          // Цвета «Классики» (прежние) и других тем — ThemePalette (1.9.x).
+          : dynamicScheme ?? palette.scheme,
       // Фон чуть темнее (1.6.20): белые карточки отделяются тоном, без рамки.
-      scaffoldBackgroundColor: highContrast ? null : const Color(0xFFF2F5F9),
+      scaffoldBackgroundColor: highContrast ? null : palette.scaffold,
       fontFamily: (dyslexiaFont || fontScale > 1.5) ? 'OpenDyslexic' : fontFamily,
       // Один вид на всех платформах (1.6.20): плотность, размер областей
       // нажатия и «волна» при касании не зависят от ОС. По умолчанию Flutter
@@ -316,7 +376,7 @@ class AppTheme {
       // сливались с фоном (аудит цветов 10.10.2026).
       cardTheme: CardThemeData(
         elevation: 0,
-        color: highContrast ? null : Colors.white,
+        color: highContrast ? null : palette.card,
         // Без рамки (1.6.20): карточку отделяет тон фона, а не линия.
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -326,7 +386,7 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         // #E9EDF2: заметно и на фоне экрана, и на белой карточке (было
         // #EFF2F6 — 1.06:1 к фону, поле «пропадало»).
-        filled: true, fillColor: highContrast ? Colors.white : const Color(0xFFE9EDF2),
+        filled: true, fillColor: highContrast ? Colors.white : palette.inputFill,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: highContrast ? const BorderSide(color: Colors.black, width: 2) : BorderSide.none,
@@ -334,7 +394,7 @@ class AppTheme {
         contentPadding: const EdgeInsets.symmetric(horizontal: Space.l, vertical: 14),
       ),
       chipTheme: ChipThemeData(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-      dividerTheme: DividerThemeData(space: 1, thickness: highContrast ? 2 : 1, color: highContrast ? Colors.black : const Color(0xFFEBEEF2)),
+      dividerTheme: DividerThemeData(space: 1, thickness: highContrast ? 2 : 1, color: highContrast ? Colors.black : palette.divider),
       // ── Компоненты, которых не хватало: без них кнопки/переключатели/меню
       // берут дефолты Material 3 и, что важнее, НЕ учитывают высокий контраст.
       listTileTheme: ListTileThemeData(
@@ -397,7 +457,7 @@ class AppTheme {
         // Светло-серо-голубая, как фон экрана (1.8.0, «воздушный» вид, как
         // Ogneliss Dialer 1.7.0; было #E8ECF1): от белой ленты панель
         // отделяет тонкая линия сверху (AppBottomBar), а не тёмный тон.
-        backgroundColor: highContrast ? null : const Color(0xFFF7F9FC),
+        backgroundColor: highContrast ? null : palette.navBar,
         elevation: 0,
         // 80 dp по умолчанию плюс системная панель снизу давали заметную
         // пустоту под подписями. 64 dp — пилюля 56×32 и подпись.
@@ -405,8 +465,8 @@ class AppTheme {
       ),
       tabBarTheme: TabBarThemeData(
         dividerHeight: 0,
-        labelColor: highContrast ? null : AppColors.brandBlue,
-        indicatorColor: highContrast ? null : AppColors.brandBlue,
+        labelColor: highContrast ? null : palette.tab,
+        indicatorColor: highContrast ? null : palette.tab,
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
@@ -467,7 +527,21 @@ class AppTheme {
       );
 
   static ThemeData darkTheme(double fontScale,
-      {bool highContrast = false, bool dyslexiaFont = false, ColorScheme? dynamicScheme}) {
+          {bool highContrast = false,
+          bool dyslexiaFont = false,
+          ColorScheme? dynamicScheme,
+          Appearance appearance = Appearance.classic}) =>
+      _withAppearance(
+          _darkBase(fontScale,
+              highContrast: highContrast,
+              dyslexiaFont: dyslexiaFont,
+              dynamicScheme: dynamicScheme,
+              palette: ThemePalette.dark(appearance)),
+          appearance,
+          tint: !highContrast);
+
+  static ThemeData _darkBase(double fontScale,
+      {bool highContrast = false, bool dyslexiaFont = false, ColorScheme? dynamicScheme, required ThemePalette palette}) {
     final t = ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
@@ -476,29 +550,9 @@ class AppTheme {
               primary: Color(0xFF6BA3FF),
               secondary: Color(0xFFFF6B70),
             )
-          : dynamicScheme ?? ColorScheme.fromSeed(seedColor: AppColors.brandBlue, brightness: Brightness.dark).copyWith(
-              primary: const Color(0xFF9DBDEB),
-              onPrimary: const Color(0xFF0B2545),
-              primaryContainer: const Color(0xFF233E63),
-              onPrimaryContainer: const Color(0xFFD9E5F6),
-              secondary: const Color(0xFFB4C1D3),
-              onSecondary: const Color(0xFF1B2533),
-              secondaryContainer: const Color(0xFF2A3A50),
-              onSecondaryContainer: const Color(0xFFDCE6F3),
-              tertiary: const Color(0xFFF0B866),
-              onTertiary: const Color(0xFF3A2200),
-              surface: const Color(0xFF161A20),
-              onSurface: const Color(0xFFDCE1E8),
-              onSurfaceVariant: const Color(0xFFA3ACB9),
-              surfaceContainerLowest: const Color(0xFF101318),
-              surfaceContainerLow: const Color(0xFF181D24),
-              surfaceContainer: const Color(0xFF1D232B),
-              surfaceContainerHigh: const Color(0xFF242B34),
-              surfaceContainerHighest: const Color(0xFF2C343E),
-              outline: const Color(0xFF7D8796),
-              outlineVariant: const Color(0xFF2D343E),
-            ),
-      scaffoldBackgroundColor: const Color(0xFF12161B),
+          // Цвета «Классики» (прежние) и других тем — ThemePalette (1.9.x).
+          : dynamicScheme ?? palette.scheme,
+      scaffoldBackgroundColor: palette.scaffold,
       fontFamily: (dyslexiaFont || fontScale > 1.5) ? 'OpenDyslexic' : fontFamily,
       // Один вид на всех платформах (1.6.20): плотность, размер областей
       // нажатия и «волна» при касании не зависят от ОС. По умолчанию Flutter
@@ -523,7 +577,7 @@ class AppTheme {
       // surfaceContainerLow — 1.07:1 к фону).
       cardTheme: CardThemeData(
         elevation: 0,
-        color: highContrast ? null : const Color(0xFF1D232B),
+        color: highContrast ? null : palette.card,
         // Без рамки (1.6.20): карточка на ступень светлее фона и так видна.
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -531,7 +585,7 @@ class AppTheme {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        filled: true, fillColor: const Color(0xFF232A33),
+        filled: true, fillColor: palette.inputFill,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: highContrast ? const BorderSide(color: Colors.white, width: 2) : BorderSide.none,
@@ -539,7 +593,7 @@ class AppTheme {
         contentPadding: const EdgeInsets.symmetric(horizontal: Space.l, vertical: 14),
       ),
       chipTheme: ChipThemeData(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-      dividerTheme: DividerThemeData(space: 1, thickness: highContrast ? 2 : 1, color: highContrast ? Colors.white : const Color(0xFF262C35)),
+      dividerTheme: DividerThemeData(space: 1, thickness: highContrast ? 2 : 1, color: highContrast ? Colors.white : palette.divider),
       // ── Компоненты, которых не хватало: без них кнопки/переключатели/меню
       // берут дефолты Material 3 и, что важнее, НЕ учитывают высокий контраст.
       listTileTheme: ListTileThemeData(
@@ -598,7 +652,7 @@ class AppTheme {
       textSelectionTheme: highContrast ? null : _selection(Brightness.dark),
       navigationBarTheme: NavigationBarThemeData(
         // Чуть светлее фона экрана (#12161B) — панель отделена от ленты.
-        backgroundColor: highContrast ? null : const Color(0xFF1C2229),
+        backgroundColor: highContrast ? null : palette.navBar,
         elevation: 0,
         // 80 dp по умолчанию плюс системная панель снизу давали заметную
         // пустоту под подписями. 64 dp — пилюля 56×32 и подпись.
@@ -617,11 +671,26 @@ class AppTheme {
         highContrast: highContrast);
   }
 
-  /// AMOLED-тема: чистый чёрный фон (экономия батареи на OLED, максимальный контраст).
+  /// AMOLED-тема: чистый чёрный фон (экономия батареи на OLED, максимальный
+  /// контраст). С 1.9.x — и тёмный вариант цветовой темы «Полночь».
   static ThemeData amoledTheme(double fontScale,
-      {bool highContrast = false, bool dyslexiaFont = false, ColorScheme? dynamicScheme}) {
-    final dark = darkTheme(fontScale,
-        highContrast: highContrast, dyslexiaFont: dyslexiaFont, dynamicScheme: dynamicScheme);
+          {bool highContrast = false,
+          bool dyslexiaFont = false,
+          ColorScheme? dynamicScheme,
+          Appearance appearance = Appearance.classic}) =>
+      _withAppearance(
+          _amoledBase(fontScale,
+              highContrast: highContrast,
+              dyslexiaFont: dyslexiaFont,
+              dynamicScheme: dynamicScheme,
+              palette: ThemePalette.dark(appearance)),
+          appearance,
+          tint: !highContrast);
+
+  static ThemeData _amoledBase(double fontScale,
+      {bool highContrast = false, bool dyslexiaFont = false, ColorScheme? dynamicScheme, required ThemePalette palette}) {
+    final dark = _darkBase(fontScale,
+        highContrast: highContrast, dyslexiaFont: dyslexiaFont, dynamicScheme: dynamicScheme, palette: palette);
     final scheme = dark.colorScheme.copyWith(
       surface: Colors.black,
       surfaceContainerLowest: Colors.black,
@@ -668,8 +737,13 @@ class AppTheme {
   /// синего света и мягче контраст, чем белый экран. Цвет действий —
   /// приглушённый синий. Контраст: текст 13:1, вторичный текст 6.3:1,
   /// кнопка 6.7:1 (замеры 10.10.2026). Цвета обоев не применяются.
-  static ThemeData readingTheme(double fontScale, {bool dyslexiaFont = false}) {
-    final light = lightTheme(fontScale, dyslexiaFont: dyslexiaFont);
+  /// Цветовая тема и акцент к «Чтению» не применяются (у него своя
+  /// палитра); скругление, плотность и анимация из [appearance] — да.
+  static ThemeData readingTheme(double fontScale, {bool dyslexiaFont = false, Appearance appearance = Appearance.classic}) =>
+      _withAppearance(_readingBase(fontScale, dyslexiaFont: dyslexiaFont), appearance);
+
+  static ThemeData _readingBase(double fontScale, {bool dyslexiaFont = false}) {
+    final light = _lightBase(fontScale, dyslexiaFont: dyslexiaFont, palette: ThemePalette.light(Appearance.classic));
     final scheme = light.colorScheme.copyWith(
       primary: const Color(0xFF3F5D84),
       onPrimary: Colors.white,

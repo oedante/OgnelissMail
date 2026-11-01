@@ -8,6 +8,7 @@
 // - Иконки: приоритет, вложения, флаг, replied, forwarded
 
 import '../../../core/utils/text_safe.dart';
+import '../providers/delivery_status_provider.dart';
 import '../providers/conversation_mute.dart';
 import '../../../services/notifications/account_notify_mode.dart' show ConversationNotify;
 import 'package:flutter/material.dart';
@@ -35,6 +36,8 @@ import '../../settings/providers/settings_provider.dart';
 import 'preview_text.dart';
 import '../providers/pinned_mail.dart' show pinnedMailProvider;
 import '../../../core/theme/ogneliss_look.dart';
+import '../../../core/theme/appearance.dart';
+import '../../../widgets/common/mail_open_motion.dart' show MailHeroTags, MailSubjectHero;
 
 class EmailListTile extends ConsumerWidget {
   final EmailModel email;
@@ -94,6 +97,9 @@ class EmailListTile extends ConsumerWidget {
   /// и только один раз: строки, прокрученные в экран или подгруженные
   /// следующей страницей, показываются сразу (иначе список «мигает»).
   static final _sessionStart = DateTime.now();
+
+  /// Переводы строк и пробелы превью — одним пробелом (компактная строка).
+  static final _spaces = RegExp(r'\s+');
   static final _appeared = <String>{};
 
   @override
@@ -200,6 +206,9 @@ class EmailListTile extends ConsumerWidget {
       return false;
     }));
     final isOwnSent = !email.isDraft && isOwnFrom && email.to.isNotEmpty;
+    // Не доставлено хотя бы одному адресату — красный значок (1.9.x, отчёты
+    // о доставке, 31.10.2026).
+    final undelivered = isOwnSent && ref.watch(undeliveredProvider.select((v) => isUndelivered(v.value, email)));
     final ownAddress = email.from.email.toLowerCase();
 
     final accountMark = showAccountMark
@@ -207,7 +216,13 @@ class EmailListTile extends ConsumerWidget {
         : null;
 
     final showControl = ref.watch(settingsProvider.select((s) => s.mailControl));
-    final previewLines = ref.watch(settingsProvider.select((s) => s.previewLines));
+    // Плотность ленты и анимация открытия (1.9.x) — из темы: строка и так от
+    // неё зависит, новых подписок нет.
+    final look = AppearanceLook.of(context);
+    final dens = look.spec;
+    final compact = look.density == ListDensity.compact;
+    final previewLines = dens.previewFor(ref.watch(settingsProvider.select((s) => s.previewLines)));
+    final avatarSize = dens.avatarRadius * 2;
 
     // Правило «подсветить строку»: лёгкий фон цвета тега (правила на телефоне).
     final hlTags = ref.watch(highlightTagsProvider);
@@ -231,6 +246,84 @@ class EmailListTile extends ConsumerWidget {
     final showReplyDraft = replyDraft != null &&
         ref.watch(draftSubjectsProvider.select(
             (v) => v.value?.contains(ReplyDraft.bareSubject(replyDraft.subject)) ?? true));
+
+    // Метка папки — в строке превью, а не отдельной строкой: строка письма
+    // стала на треть ниже.
+    final folderBadge = showFolderBadge && (email.folderName?.isNotEmpty ?? false);
+    final Widget? badge = (accountMark == null && !folderBadge)
+        ? null
+        : Container(
+            margin: const EdgeInsets.only(left: 6),
+            constraints: BoxConstraints(maxWidth: accountMark != null ? 170 : 120),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+            decoration: BoxDecoration(
+              color: accountMark != null
+                  ? Color(accountMark.color).withValues(alpha: 0.14)
+                  : theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text.rich(
+              TextSpan(children: [
+                if (accountMark != null)
+                  TextSpan(
+                    text: accountMark.label,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: theme.brightness == Brightness.dark
+                          ? Color.lerp(Color(accountMark.color), Colors.white, 0.45)
+                          : Color(accountMark.color),
+                    ),
+                  ),
+                if (accountMark != null && folderBadge) const TextSpan(text: ' · '),
+                if (folderBadge)
+                  TextSpan(
+                    text: email.folderName!.toUpperCase() == 'INBOX'
+                        ? AppLocalizations.of(context).tr('inbox')
+                        : email.folderName!,
+                  ),
+              ]),
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          );
+    // Значки строки: закреплено, без уведомлений, вложения, флаг, ответ,
+    // пересылка — в строке превью или (компактная плотность, 1.9.x) темы.
+    final marks = <Widget>[
+      if (undelivered)
+        Padding(padding: const EdgeInsets.only(left: Space.xs),
+            child: Tooltip(
+                message: AppLocalizations.of(context).tr('dsnNotifTitle'),
+                child: const Icon(AppIcons.error, size: 15, fill: 1, color: AppColors.errorRed))),
+      if (pinned)
+        Padding(padding: const EdgeInsets.only(left: Space.xs),
+            child: Icon(AppIcons.push_pin, size: 15, fill: 1, color: theme.colorScheme.primary.withValues(alpha: 0.75))),
+      if (muted)
+        Padding(padding: const EdgeInsets.only(left: Space.xs),
+            child: Icon(AppIcons.notifications_off, size: 15, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
+      if (email.hasAttachments)
+        Padding(padding: const EdgeInsets.only(left: Space.xs),
+            child: Icon(AppIcons.attach_file, size: 15, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
+      if (email.isFlagged)
+        const Padding(padding: EdgeInsets.only(left: Space.xs),
+            child: Icon(AppIcons.flag, size: 15, fill: 1, color: AppColors.errorRed)),
+      if (email.isReplied)
+        Padding(padding: const EdgeInsets.only(left: Space.xs),
+            child: Icon(AppIcons.reply, size: 15, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
+      if (email.isForwarded)
+        Padding(padding: const EdgeInsets.only(left: Space.xs),
+            child: Icon(AppIcons.forward, size: 15, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
+    ];
+    final subject = email.subject.isEmpty ? AppLocalizations.of(context).tr('noSubject') : email.subject;
+    final subjectStyle = theme.textTheme.bodyMedium?.copyWith(
+      fontWeight: isUnread ? FontWeight.w600 : FontWeight.w400,
+    );
+    final previewStyle = theme.textTheme.bodySmall?.copyWith(
+      color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
+      fontWeight: FontWeight.w400,
+    );
 
     // Фон строки: лента — цвета поверхности (белая в светлой теме), выбранное
     // письмо — заливкой secondaryContainer, правило «подсветить» и
@@ -269,8 +362,11 @@ class EmailListTile extends ConsumerWidget {
               onSecondaryTap: onSecondaryTap,
               child: Container(
                 // Без линий строки чуть свободнее (1.8.0): 10 вместо 8.
+                // Компактная и просторная плотность (1.9.x) — свои поля.
                 padding: EdgeInsets.symmetric(
-                    vertical: OgnelissLook.of(context).outlined ? Space.s : Space.s + Space.xxs),
+                    vertical: look.density != ListDensity.normal
+                        ? dens.padV
+                        : (OgnelissLook.of(context).outlined ? Space.s : Space.s + Space.xxs)),
                 child: Row(
                   children: [
                     // Цветная полоса аккаунта слева убрана (замечание 05.10:
@@ -286,7 +382,9 @@ class EmailListTile extends ConsumerWidget {
                       tracker: onAvatarLongPress == null ? holdTracker : avatarHoldTracker,
                       child: Padding(
                       padding: const EdgeInsets.only(left: Space.l, right: Space.m),
-                      child: isInSelectionMode
+                      child: _avatarSlot(
+                        compact,
+                        isInSelectionMode
                           ? Checkbox(
                               value: isChecked,
                               onChanged: (_) => onCheckChanged?.call(),
@@ -300,7 +398,12 @@ class EmailListTile extends ConsumerWidget {
                               color: HeroEmailAvatar.colorForEmail(email.from.email),
                               email: email.from.email,
                               authResults: email.authResults,
+                              radius: dens.avatarRadius,
+                              // Летит в шапку письма (1.9.x, «Анимация
+                              // открытия письма»).
+                              openHero: true,
                             ),
+                      ),
                     ),
                     ),
                     // Отметки в поле слева от портрета: вверху — «На контроле»
@@ -387,9 +490,11 @@ class EmailListTile extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: dens.lineGap),
 
-                          // Строка 2: Тема + conversation count
+                          // Строка 2: Тема + conversation count. В компактной
+                          // плотности (1.9.x) — тема и начало текста одной
+                          // строкой, значки — в ней же.
                           Row(
                             children: [
                               if (email.isHighPriority)
@@ -398,14 +503,35 @@ class EmailListTile extends ConsumerWidget {
                                   child: Icon(AppIcons.priority_high, size: 16, color: AppColors.errorRed),
                                 ),
                               Expanded(
-                                child: Text(
-                                  email.subject.isEmpty ? AppLocalizations.of(context).tr('noSubject') : email.subject,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    fontWeight: isUnread ? FontWeight.w600 : FontWeight.w400,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                child: compact
+                                    ? Text.rich(
+                                        TextSpan(children: [
+                                          TextSpan(text: subject),
+                                          if (showReplyDraft) ...[
+                                            TextSpan(
+                                              text: ' — ${AppLocalizations.of(context).tr('draftPrefix')} ',
+                                              style: TextStyle(color: theme.colorScheme.error, fontWeight: FontWeight.w400),
+                                            ),
+                                            TextSpan(text: replyDraft.text, style: previewStyle),
+                                          ] else if (email.preview.trim().isNotEmpty)
+                                            TextSpan(
+                                                text: ' — ${email.preview.replaceAll(_spaces, ' ').trim()}',
+                                                style: previewStyle),
+                                        ]),
+                                        style: subjectStyle,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      )
+                                    : MailSubjectHero(
+                                        tag: MailHeroTags.subject(email.accountId, email.id),
+                                        enabled: look.openAnimation,
+                                        child: Text(
+                                          subject,
+                                          style: subjectStyle,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
                               ),
                               if (showConversationIndicator && convCount > 1)
                                 Container(
@@ -428,12 +554,17 @@ class EmailListTile extends ConsumerWidget {
                                     ],
                                   ),
                                 ),
+                              if (compact) ...[
+                                if (badge != null) badge,
+                                ...marks,
+                              ],
                             ],
                           ),
-                          const SizedBox(height: 2),
 
                           // Строка 3: Превью + иконки. Строк превью — по
                           // настройке (1–4, 1.6.31); метка папки — у первой.
+                          if (!compact) ...[
+                          SizedBox(height: dens.lineGap),
                           Row(
                             crossAxisAlignment: previewLines > 1 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
                             children: [
@@ -463,68 +594,11 @@ class EmailListTile extends ConsumerWidget {
                                         ),
                                       ),
                               ),
-                              // Метка папки — в строке превью, а не отдельной
-                              // строкой: строка письма стала на треть ниже.
-                              if (accountMark != null ||
-                                  (showFolderBadge && (email.folderName?.isNotEmpty ?? false)))
-                                Container(
-                                  margin: const EdgeInsets.only(left: 6),
-                                  constraints: BoxConstraints(maxWidth: accountMark != null ? 170 : 120),
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                                  decoration: BoxDecoration(
-                                    color: accountMark != null
-                                        ? Color(accountMark.color).withValues(alpha: 0.14)
-                                        : theme.colorScheme.surfaceContainerHighest,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text.rich(
-                                    TextSpan(children: [
-                                      if (accountMark != null)
-                                        TextSpan(
-                                          text: accountMark.label,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w700,
-                                            color: theme.brightness == Brightness.dark
-                                                ? Color.lerp(Color(accountMark.color), Colors.white, 0.45)
-                                                : Color(accountMark.color),
-                                          ),
-                                        ),
-                                      if (accountMark != null && showFolderBadge && (email.folderName?.isNotEmpty ?? false))
-                                        const TextSpan(text: ' · '),
-                                      if (showFolderBadge && (email.folderName?.isNotEmpty ?? false))
-                                        TextSpan(
-                                          text: email.folderName!.toUpperCase() == 'INBOX'
-                                              ? AppLocalizations.of(context).tr('inbox')
-                                              : email.folderName!,
-                                        ),
-                                    ]),
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              if (pinned)
-                                Padding(padding: const EdgeInsets.only(left: Space.xs),
-                                    child: Icon(AppIcons.push_pin, size: 15, fill: 1, color: theme.colorScheme.primary.withValues(alpha: 0.75))),
-                              if (muted)
-                                Padding(padding: const EdgeInsets.only(left: Space.xs),
-                                    child: Icon(AppIcons.notifications_off, size: 15, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
-                              if (email.hasAttachments)
-                                Padding(padding: const EdgeInsets.only(left: Space.xs),
-                                    child: Icon(AppIcons.attach_file, size: 15, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
-                              if (email.isFlagged)
-                                const Padding(padding: EdgeInsets.only(left: Space.xs),
-                                    child: Icon(AppIcons.flag, size: 15, fill: 1, color: AppColors.errorRed)),
-                              if (email.isReplied)
-                                Padding(padding: const EdgeInsets.only(left: Space.xs),
-                                    child: Icon(AppIcons.reply, size: 15, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
-                              if (email.isForwarded)
-                                Padding(padding: const EdgeInsets.only(left: Space.xs),
-                                    child: Icon(AppIcons.forward, size: 15, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
+                              if (badge != null) badge,
+                              ...marks,
                             ],
                           ),
+                          ],
 
                           // Строка 4: метка папки и теги.
                           //
@@ -576,7 +650,7 @@ class EmailListTile extends ConsumerWidget {
             // «воздушный» вид: строки разделяют поля, как в Ogneliss Dialer).
             if (OgnelissLook.of(context).outlined)
               Padding(
-                padding: const EdgeInsets.only(left: Space.l + 48 + Space.m),
+                padding: EdgeInsets.only(left: Space.l + avatarSize + Space.m),
                 child: Divider(height: 1, thickness: 1, color: theme.colorScheme.outlineVariant),
               ),
           ],
@@ -584,6 +658,11 @@ class EmailListTile extends ConsumerWidget {
       ),
     );
   }
+
+  /// Портрет (флажок выбора) в компактной плотности — по центру места
+  /// высотой 48 dp: удержание портрета — тоже область нажатия (1.9.x).
+  static Widget _avatarSlot(bool compact, Widget child) =>
+      compact ? SizedBox(height: Sizes.tapTarget, child: Center(child: child)) : child;
 
   String _initial(EmailAddress addr) {
     final name = addr.displayName ?? addr.email;

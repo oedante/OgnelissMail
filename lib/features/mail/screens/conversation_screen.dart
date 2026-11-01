@@ -58,6 +58,7 @@ import '../../../services/notifications/account_notify_mode.dart' show Conversat
 import '../providers/conversation_mute.dart';
 import '../../../widgets/ui/app_menu_button.dart';
 import 'package:intl/intl.dart' show DateFormat;
+import '../../../core/theme/appearance.dart' show AppearanceLook, ListDensity;
 
 /// Письма беседы и другие копии каждого из них (письмо самому себе лежит и в
 /// «Отправленных», и во «Входящих»: одна карточка с обеими метками папок;
@@ -526,7 +527,10 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 
         return Scaffold(
           // Светлая тема — белый фон, карточки писем на нём различимы (1.6.25).
-          backgroundColor: theme.brightness == Brightness.dark ? null : AppColors.listFill(context),
+          // Тёмная — фон экрана или оттенок из «Оформления» (1.9.x).
+          backgroundColor: theme.brightness == Brightness.dark
+              ? AppearanceLook.of(context).listFill
+              : AppColors.listFill(context),
           appBar: TextScaleCapBar(child: AppBar(
             title: Text(
               subject.isEmpty ? l10n.tr('noSubject') : subject,
@@ -674,6 +678,8 @@ class _MessageCard extends StatelessWidget {
     final scheme = theme.colorScheme;
     final unread = !email.isRead;
     final name = email.from.label;
+    // Плотность ленты (1.9.x) — и у карточек беседы: поля, портрет, строки.
+    final density = AppearanceLook.of(context).density;
     final preview = email.preview.replaceAll(RegExp(r'\s+'), ' ').trim();
     final folders = <String>{
       if ((email.folderName ?? '').isNotEmpty) email.folderName!,
@@ -690,7 +696,11 @@ class _MessageCard extends StatelessWidget {
         color: HeroEmailAvatar.colorForEmail(email.from.email),
         email: email.from.email,
         authResults: email.authResults,
-        radius: Sizes.avatar / 2,
+        radius: switch (density) {
+          ListDensity.compact => 16,
+          ListDensity.normal => Sizes.avatar / 2,
+          ListDensity.comfortable => 22,
+        },
         hero: false,
       ),
     );
@@ -713,7 +723,13 @@ class _MessageCard extends StatelessWidget {
         child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.m),
+          padding: EdgeInsets.symmetric(
+              horizontal: Space.m,
+              vertical: switch (density) {
+                ListDensity.compact => Space.s,
+                ListDensity.normal => Space.m,
+                ListDensity.comfortable => Space.l,
+              }),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             textDirection: mine ? TextDirection.rtl : TextDirection.ltr,
@@ -766,7 +782,11 @@ class _MessageCard extends StatelessWidget {
                       const SizedBox(height: Space.xs),
                       Text(
                         preview,
-                        maxLines: 3,
+                        maxLines: switch (density) {
+                          ListDensity.compact => 1,
+                          ListDensity.normal => 3,
+                          ListDensity.comfortable => 4,
+                        },
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyMedium
                             ?.copyWith(color: scheme.onSurfaceVariant),

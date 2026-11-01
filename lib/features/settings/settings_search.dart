@@ -45,8 +45,16 @@ const _entries = <_Entry>[
   // 1.7.2: сигналы сервера для проверки почты в фоне на iPhone.
   _Entry('pushWakeTitle', 'notifications', AppIcons.cloud_sync, '/settings/notifications', iosOnly: true),
   _Entry('autoReplies', 'emailSettings', AppIcons.beach_access, '/settings/auto-reply'),
+  // Оформление (1.9.x): тема и цвета перенесены из «Общих».
+  _Entry('appearanceTitle', 'settings', AppIcons.format_paint, '/settings/appearance'),
+  _Entry('theme', 'appearanceTitle', AppIcons.palette, '/settings/appearance'),
+  _Entry('apColorTheme', 'appearanceTitle', AppIcons.palette, '/settings/appearance'),
+  _Entry('apAccent', 'appearanceTitle', AppIcons.colorize, '/settings/appearance'),
+  _Entry('apListTint', 'appearanceTitle', AppIcons.format_paint, '/settings/appearance'),
+  _Entry('apCorners', 'appearanceTitle', AppIcons.rounded_corner, '/settings/appearance'),
+  _Entry('apDensity', 'appearanceTitle', AppIcons.density_medium, '/settings/appearance'),
+  _Entry('apOpenAnimation', 'appearanceTitle', AppIcons.swipe_down, '/settings/appearance'),
   // Общие
-  _Entry('theme', 'general', AppIcons.palette, '/settings/general'),
   _Entry('language', 'general', AppIcons.language, '/settings/general'),
   _Entry('fontSize', 'general', AppIcons.format_size, '/settings/general'),
   _Entry('uiFontTitle', 'general', AppIcons.font_download, '/settings/general'),
@@ -95,7 +103,7 @@ const _entries = <_Entry>[
   _Entry('weekNumbers', 'calendar', AppIcons.format_list_numbered, '/settings/calendar'),
   _Entry('defaultReminder', 'calendar', AppIcons.notifications, '/settings/calendar'),
   _Entry('eventFallbackReminder', 'calendar', AppIcons.notifications_active, '/settings/calendar'),
-  _Entry('dynamicColor', 'general', AppIcons.palette, '/settings/general'),
+  _Entry('dynamicColor', 'appearanceTitle', AppIcons.palette, '/settings/appearance'),
   _Entry('allowRotation', 'general', AppIcons.screen_rotation, '/settings/general'),
   _Entry('warmPage', 'general', AppIcons.wb_sunny, '/settings/general'),
   _Entry('eventAlarmClock', 'calendar', AppIcons.alarm, '/settings/calendar'),

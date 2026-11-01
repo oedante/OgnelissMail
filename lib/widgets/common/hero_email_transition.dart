@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 import '../../core/utils/avatar_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/appearance.dart' show AppearanceLook;
 import '../../features/settings/providers/module_settings_provider.dart' show moduleSettingsProvider;
 import '../../services/contacts/mail_contacts_service.dart' show mailContactsServiceProvider;
 import 'animated_appearance.dart' show uiAnimations;
 import 'bimi_avatar.dart';
+import 'mail_open_motion.dart' show mailAvatarShuttle;
 import 'person_photo.dart';
 
 /// Обёртка для Hero-анимации аватарки. Есть фото (контакт, аккаунт) —
@@ -33,6 +35,11 @@ class HeroEmailAvatar extends ConsumerWidget {
   /// («multiple heroes share the same tag»).
   final bool hero;
 
+  /// Портрет строки ленты и шапки письма: летит при открытии письма, если
+  /// включена «Анимация открытия письма» (1.9.x). Остальные портреты
+  /// (контакты, меню, беседа) не летают — у них ярлыки могут совпасть.
+  final bool openHero;
+
   const HeroEmailAvatar({
     super.key,
     required this.emailId,
@@ -40,6 +47,7 @@ class HeroEmailAvatar extends ConsumerWidget {
     required this.color,
     this.radius = 24,
     this.hero = true,
+    this.openHero = false,
     this.email,
     this.photo,
     this.authResults,
@@ -80,6 +88,9 @@ class HeroEmailAvatar extends ConsumerWidget {
         : (authResults != null && email != null
             ? BimiAvatar(email: email!, authResults: authResults, radius: radius, fallback: _monogram(context))
             : _monogram(context));
+    if (hero && openHero && AppearanceLook.of(context).openAnimation) {
+      return Hero(tag: 'avatar_$emailId', flightShuttleBuilder: mailAvatarShuttle, child: avatar);
+    }
     if (!hero || !uiAnimations) return avatar;
     return Hero(tag: 'avatar_$emailId', child: avatar);
   }

@@ -105,6 +105,12 @@ class MailEditorController {
 
   bool get isReady => _ready;
 
+  /// Окно редактора — для интеграционных тестов на эмуляторе
+  /// (integration_test/mail_editor_test.dart; 1.9.x, просьба владельца
+  /// 31.10.2026): положение абзаца и курсора узнаётся скриптом в окне.
+  @visibleForTesting
+  InAppWebViewController? get debugWebView => _web;
+
   Future<void> _run(String js) async {
     if (!_ready || _web == null) {
       _pending.add(js);
@@ -723,6 +729,12 @@ class MailEditorPool {
   static bool _takenReady = false;
 
   static bool takenReady(HeadlessInAppWebView v) => identical(v, _taken) && _takenReady;
+
+  /// Запасное окно создано и редактор в нём запущен — замер «Нового
+  /// сообщения» с запасным окном ждёт этого (integration_test/perf_test.dart,
+  /// 1.9.x).
+  @visibleForTesting
+  static bool get debugSpareReady => _spare != null && _ready;
 
   /// Ключ окна: язык, тема, подсказка и масштаб интерфейса (textZoom окна
   /// задаётся при создании).

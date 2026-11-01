@@ -28,6 +28,7 @@ import '../../mail/widgets/mail_peek_card.dart' show showMailPeek, PeekAction;
 import '../../mail/widgets/peek_helpers.dart' show peekCanRespondInvite, peekInviteActions;
 import '../../../widgets/common/peek_card.dart' show peekAnchorAtFinger;
 import '../widgets/event_peek.dart';
+import '../widgets/quick_event_sheet.dart';
 import '../../../core/theme/tokens.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -551,8 +552,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       unawaited(showTaskEditor(context, draft: ParsedTask(title: '', due: due)));
       return;
     }
+    // Встреча одной фразой (1.9.x): «Созвон с Анной в пятницу в 15 на час»,
+    // «Подробнее» — полный редактор.
     if (start == null) {
-      unawaited(context.push('/create-event'));
+      unawaited(showQuickEventSheet(context, day: _selectedDay));
       return;
     }
     unawaited(context.push('/create-event', extra: {

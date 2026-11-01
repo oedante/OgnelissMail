@@ -1539,6 +1539,9 @@
     <string name="safetyBannerDanger">Phishing signs — do not click links or open attachments</string>
     <string name="safetyReportPhishing">Report phishing</string>
     <string name="safetyAuthFail">Sender authentication failed</string>
+    <string name="safetyLookalikeOf">The address {domain} looks like {like}, but it is a different domain</string>
+    <string name="safetyContactImpersonation">The name matches your contact “{name}”, but the message came from another address: {email}</string>
+    <string name="safetyReplyToElsewhere">Replies will go to a different address: {email}</string>
     <string name="actionToCalendar">To calendar</string>
     <string name="actionCopy">Copy</string>
     <string name="actionCopyCode">Copy code</string>

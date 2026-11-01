@@ -145,6 +145,16 @@ class _SenderSafetyBannerState extends ConsumerState<SenderSafetyBanner> {
           .replaceAll('{name}', s.detail!)
           .replaceAll('{email}', s.extra!);
     }
+    // Похожий домен — с тем, на что похож (1.10.x).
+    if (s.reason == SafetyReason.lookalikeDomain && s.detail != null && s.extra != null) {
+      return l10n.tr('safetyLookalikeOf').replaceAll('{domain}', s.detail!).replaceAll('{like}', s.extra!);
+    }
+    if (s.reason == SafetyReason.contactImpersonation && s.detail != null && s.extra != null) {
+      return l10n.tr('safetyContactImpersonation').replaceAll('{name}', s.detail!).replaceAll('{email}', s.extra!);
+    }
+    if (s.reason == SafetyReason.replyToMismatch && s.detail != null) {
+      return l10n.tr('safetyReplyToElsewhere').replaceAll('{email}', s.detail!);
+    }
     String base;
     switch (s.reason) {
       case SafetyReason.externalSender: base = l10n.safetyExternalSender; break;
@@ -154,6 +164,8 @@ class _SenderSafetyBannerState extends ConsumerState<SenderSafetyBanner> {
       case SafetyReason.dangerousAttachment: base = l10n.safetyDangerousAttach; break;
       case SafetyReason.linkMismatch: base = l10n.safetyLinkMismatch; break;
       case SafetyReason.authenticationFail: base = l10n.safetyAuthFail; break;
+      case SafetyReason.contactImpersonation: base = l10n.safetyDisplayNameSpoof; break;
+      case SafetyReason.replyToMismatch: base = l10n.tr('safetyReplyToElsewhere').replaceAll(': {email}', ''); break;
     }
     return s.detail != null ? '$base: ${s.detail}' : base;
   }

@@ -34,4 +34,63 @@ void main() {
     expect(r?.found, 'paypal.com');
     expect(r?.address, isFalse);
   });
+
+  group('похожий домен (1.10.x)', () {
+    const like = SenderSafetyService.lookalikeOf;
+    final brands = SenderSafetyService.knownBrandDomains;
+
+    test('подделки под банк, платёжку, почту', () {
+      expect(like('paypa1.com', brands), 'paypal.com');
+      expect(like('sberbamk.ru', brands), 'sberbank.ru');
+      expect(like('sberbank-secure.ru', brands), 'sberbank.ru');
+      expect(like('secure-paypal.net', brands), 'paypal.com');
+      expect(like('rnicrosoft.com', brands), 'microsoft.com');
+      expect(like('gosuslugi-portal.ru', brands), 'gosuslugi.ru');
+    });
+
+    test('честные домены и поддомены — не подделка', () {
+      expect(like('sberbank.ru', brands), isNull);
+      expect(like('online.sberbank.ru', brands), isNull);
+      expect(like('news.ozon.ru', brands), isNull);
+      expect(like('yandex.by', brands), isNull, reason: 'другая зона того же имени');
+      expect(like('google.de', brands), isNull);
+      expect(like('acmegroup.example', brands), isNull);
+      expect(like('mts-bank.ru', brands), isNull, reason: 'короткое имя бренда — без «добавок»');
+      expect(like('vk.ru', brands), isNull);
+      expect(like('ymail.com', brands), isNull, reason: 'почта Yahoo, не подделка gmail.com');
+      expect(like('email.com', brands), isNull);
+      expect(like('inbox.ru', brands), isNull);
+      expect(like('gmaii.com', brands), 'gmail.com');
+    });
+
+    test('домены контактов', () {
+      const contacts = {'romashka-trade.ru', 'acmegroup.example'};
+      expect(like('romashka-trabe.ru', contacts), 'romashka-trade.ru');
+      expect(like('acmegr0up.example', contacts), 'acmegroup.example');
+      expect(like('romashka-trade.ru', contacts), isNull);
+    });
+  });
+
+  group('ответ на другой адрес (1.10.x)', () {
+    const rt = SenderSafetyService.replyToElsewhere;
+    test('чужая организация — предупреждение', () {
+      expect(rt('director@acmegroup.example', ['director.acme@gmail.com']), 'director.acme@gmail.com');
+    });
+    test('та же организация, рассылка или без Reply-To — нет', () {
+      expect(rt('ivanov@acmegroup.example', ['sales@mail.acmegroup.example']), isNull);
+      expect(rt('news@shop.example', ['support@helpdesk.example'], mailingList: true), isNull);
+      expect(rt('a@b.example', []), isNull);
+      expect(rt('a@b.example', ['a@b.example']), isNull);
+    });
+  });
+
+  group('имя контакта (1.10.x)', () {
+    test('нормализация и годные для сравнения имена', () {
+      expect(SenderSafetyService.normalizeName('  «Пётр  Иванов» '), 'петр иванов');
+      expect(SenderSafetyService.comparableName('петр иванов'), isTrue);
+      expect(SenderSafetyService.comparableName('анна'), isFalse);
+      expect(SenderSafetyService.comparableName('бухгалтерия'), isTrue);
+      expect(SenderSafetyService.comparableName('x@y.ru'), isFalse);
+    });
+  });
 }

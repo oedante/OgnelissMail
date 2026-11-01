@@ -1539,6 +1539,9 @@
     <string name="safetyBannerDanger">Признаки фишинга — не переходите по ссылкам и не открывайте вложения</string>
     <string name="safetyReportPhishing">Пожаловаться на фишинг</string>
     <string name="safetyAuthFail">Проверка подлинности отправителя не пройдена</string>
+    <string name="safetyLookalikeOf">Адрес {domain} похож на {like}, но это другой домен</string>
+    <string name="safetyContactImpersonation">Имя как у вашего контакта «{name}», но письмо пришло с другого адреса: {email}</string>
+    <string name="safetyReplyToElsewhere">Ответ уйдёт на другой адрес: {email}</string>
     <string name="actionToCalendar">В календарь</string>
     <string name="actionCopy">Копировать</string>
     <string name="actionCopyCode">Копировать код</string>

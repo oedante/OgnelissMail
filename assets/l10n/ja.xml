@@ -765,6 +765,8 @@
     <string name="confirmRecipients">宛先を確認</string>
     <string name="confirmRecipientsDesc">社外の宛先や大人数のリストに送信するときに警告します</string>
     <string name="antiPhishing">フィッシング対策</string>
+    <string name="bimiLogos">送信者のロゴ (BIMI)</string>
+    <string name="bimiLogosDesc">送信者のドメインは Ogneliss サーバーで確認します。アドレスやメールは送信されません</string>
     <string name="phishingOff">オフ</string>
     <string name="dangerOnly">危険なもののみ</string>
     <string name="dangerOnlyDesc">明らかな脅威のみ表示します</string>

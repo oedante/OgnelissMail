@@ -765,6 +765,8 @@
     <string name="confirmRecipients">Bekräfta mottagare</string>
     <string name="confirmRecipientsDesc">Varna vid sändning till externa mottagare eller en stor lista</string>
     <string name="antiPhishing">Nätfiskeskydd</string>
+    <string name="bimiLogos">Avsändarlogotyper (BIMI)</string>
+    <string name="bimiLogosDesc">Avsändarens domän kontrolleras via Ogneliss-servern; adresser och meddelanden skickas inte</string>
     <string name="phishingOff">Av</string>
     <string name="dangerOnly">Bara farliga</string>
     <string name="dangerOnlyDesc">Visa bara tydliga hot</string>

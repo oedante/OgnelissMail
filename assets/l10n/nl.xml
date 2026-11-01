@@ -765,6 +765,8 @@
     <string name="confirmRecipients">Ontvangers controleren</string>
     <string name="confirmRecipientsDesc">Waarschuwen bij verzenden naar externe ontvangers of een grote lijst</string>
     <string name="antiPhishing">Anti-phishing</string>
+    <string name="bimiLogos">Afzenderlogo’s (BIMI)</string>
+    <string name="bimiLogosDesc">Het domein van de afzender wordt gecontroleerd via de Ogneliss-server; adressen en berichten worden niet verzonden</string>
     <string name="phishingOff">Uitgeschakeld</string>
     <string name="dangerOnly">Alleen gevaarlijke</string>
     <string name="dangerOnlyDesc">Alleen duidelijke bedreigingen tonen</string>

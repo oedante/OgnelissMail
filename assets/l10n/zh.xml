@@ -765,6 +765,8 @@
     <string name="confirmRecipients">确认收件人</string>
     <string name="confirmRecipientsDesc">发送给外部收件人或大型列表时发出提醒</string>
     <string name="antiPhishing">反网络钓鱼</string>
+    <string name="bimiLogos">发件人标志 (BIMI)</string>
+    <string name="bimiLogosDesc">发件人域名通过 Ogneliss 服务器检查，不会发送地址和邮件</string>
     <string name="phishingOff">关闭</string>
     <string name="dangerOnly">仅危险邮件</string>
     <string name="dangerOnlyDesc">仅显示明确的威胁</string>

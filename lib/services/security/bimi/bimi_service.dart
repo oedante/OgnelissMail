@@ -177,7 +177,11 @@ class BimiResolver {
     await cache.load();
     final c = cache.lookup(domain);
     if (c.hit) return c.svg;
-    return _inflight[domain] ??= _fetch(domain).whenComplete(() => _inflight.remove(domain));
+    // Тело в фигурных скобках: remove вернул бы этот же Future, и
+    // whenComplete ждал бы сам себя.
+    return _inflight[domain] ??= _fetch(domain).whenComplete(() {
+      _inflight.remove(domain);
+    });
   }
 
   Future<String?> _fetch(String domain) async {

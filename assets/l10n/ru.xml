@@ -765,6 +765,8 @@
     <string name="confirmRecipients">Проверять получателей</string>
     <string name="confirmRecipientsDesc">Предупреждать при отправке внешним адресатам или большому списку</string>
     <string name="antiPhishing">Антифишинг</string>
+    <string name="bimiLogos">Логотипы отправителей (BIMI)</string>
+    <string name="bimiLogosDesc">Домен отправителя проверяется через сервер Ogneliss, адреса и письма не передаются</string>
     <string name="phishingOff">Выключен</string>
     <string name="dangerOnly">Только опасные</string>
     <string name="dangerOnlyDesc">Показывать лишь явные угрозы</string>

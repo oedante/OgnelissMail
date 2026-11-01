@@ -765,6 +765,8 @@
     <string name="confirmRecipients">Verifică destinatarii</string>
     <string name="confirmRecipientsDesc">Avertizează la trimiterea către destinatari externi sau către o listă mare</string>
     <string name="antiPhishing">Protecție anti-phishing</string>
+    <string name="bimiLogos">Siglele expeditorilor (BIMI)</string>
+    <string name="bimiLogosDesc">Domeniul expeditorului este verificat prin serverul Ogneliss; adresele și mesajele nu sunt trimise</string>
     <string name="phishingOff">Dezactivată</string>
     <string name="dangerOnly">Doar periculoase</string>
     <string name="dangerOnlyDesc">Afișează doar amenințările evidente</string>

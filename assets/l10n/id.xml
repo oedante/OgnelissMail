@@ -765,6 +765,8 @@
     <string name="confirmRecipients">Periksa penerima</string>
     <string name="confirmRecipientsDesc">Beri peringatan saat mengirim ke penerima eksternal atau daftar yang besar</string>
     <string name="antiPhishing">Anti-phishing</string>
+    <string name="bimiLogos">Logo pengirim (BIMI)</string>
+    <string name="bimiLogosDesc">Domain pengirim diperiksa melalui server Ogneliss; alamat dan pesan tidak dikirim</string>
     <string name="phishingOff">Nonaktif</string>
     <string name="dangerOnly">Hanya yang berbahaya</string>
     <string name="dangerOnlyDesc">Tampilkan hanya ancaman yang jelas</string>

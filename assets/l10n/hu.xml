@@ -765,6 +765,8 @@
     <string name="confirmRecipients">Címzettek megerősítése</string>
     <string name="confirmRecipientsDesc">Figyelmeztetés külső címzetteknek vagy nagy listának küldéskor</string>
     <string name="antiPhishing">Adathalászat-védelem</string>
+    <string name="bimiLogos">Feladói logók (BIMI)</string>
+    <string name="bimiLogosDesc">A feladó tartományát az Ogneliss szerver ellenőrzi; címek és üzenetek nem kerülnek továbbításra</string>
     <string name="phishingOff">Kikapcsolva</string>
     <string name="dangerOnly">Csak a veszélyesek</string>
     <string name="dangerOnlyDesc">Csak az egyértelmű fenyegetések megjelenítése</string>

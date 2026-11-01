@@ -765,6 +765,8 @@
     <string name="confirmRecipients">Controlla i destinatari</string>
     <string name="confirmRecipientsDesc">Avvisa quando invii a destinatari esterni o a un elenco numeroso</string>
     <string name="antiPhishing">Antiphishing</string>
+    <string name="bimiLogos">Loghi dei mittenti (BIMI)</string>
+    <string name="bimiLogosDesc">Il dominio del mittente viene verificato tramite il server Ogneliss; indirizzi e messaggi non vengono inviati</string>
     <string name="phishingOff">Disattivato</string>
     <string name="dangerOnly">Solo pericolosi</string>
     <string name="dangerOnlyDesc">Mostra solo le minacce evidenti</string>

@@ -765,6 +765,8 @@
     <string name="confirmRecipients">받는 사람 확인</string>
     <string name="confirmRecipientsDesc">외부 수신자나 많은 수신자에게 보낼 때 경고합니다</string>
     <string name="antiPhishing">피싱 방지</string>
+    <string name="bimiLogos">발신자 로고(BIMI)</string>
+    <string name="bimiLogosDesc">발신자 도메인은 Ogneliss 서버를 통해 확인하며 주소와 메일은 전송되지 않습니다</string>
     <string name="phishingOff">끔</string>
     <string name="dangerOnly">위험한 메일만</string>
     <string name="dangerOnlyDesc">명확한 위협만 표시합니다</string>

@@ -765,6 +765,8 @@
     <string name="confirmRecipients">Bekræft modtagere</string>
     <string name="confirmRecipientsDesc">Advar ved afsendelse til eksterne modtagere eller en stor liste</string>
     <string name="antiPhishing">Anti-phishing</string>
+    <string name="bimiLogos">Afsenderlogoer (BIMI)</string>
+    <string name="bimiLogosDesc">Afsenderens domæne kontrolleres via Ogneliss-serveren; adresser og beskeder sendes ikke</string>
     <string name="phishingOff">Slået fra</string>
     <string name="dangerOnly">Kun farlige</string>
     <string name="dangerOnlyDesc">Vis kun tydelige trusler</string>

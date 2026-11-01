@@ -765,6 +765,8 @@
     <string name="confirmRecipients">Vahvista vastaanottajat</string>
     <string name="confirmRecipientsDesc">Varoita, kun viesti lähetetään ulkoisille vastaanottajille tai suurelle joukolle</string>
     <string name="antiPhishing">Tietojenkalastelusuojaus</string>
+    <string name="bimiLogos">Lähettäjien logot (BIMI)</string>
+    <string name="bimiLogosDesc">Lähettäjän verkkotunnus tarkistetaan Ogneliss-palvelimen kautta; osoitteita ja viestejä ei lähetetä</string>
     <string name="phishingOff">Pois käytöstä</string>
     <string name="dangerOnly">Vain vaaralliset</string>
     <string name="dangerOnlyDesc">Näytä vain selvät uhat</string>

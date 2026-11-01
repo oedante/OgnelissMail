@@ -765,6 +765,8 @@
     <string name="confirmRecipients">Alıcıları kontrol et</string>
     <string name="confirmRecipientsDesc">Dış alıcılara veya büyük bir listeye gönderirken uyar</string>
     <string name="antiPhishing">Kimlik avı koruması</string>
+    <string name="bimiLogos">Gönderen logoları (BIMI)</string>
+    <string name="bimiLogosDesc">Gönderenin alan adı Ogneliss sunucusu üzerinden denetlenir; adresler ve iletiler gönderilmez</string>
     <string name="phishingOff">Kapalı</string>
     <string name="dangerOnly">Yalnızca tehlikeli olanlar</string>
     <string name="dangerOnlyDesc">Yalnızca açık tehditleri göster</string>

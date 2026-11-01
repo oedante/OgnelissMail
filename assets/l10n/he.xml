@@ -765,6 +765,8 @@
     <string name="confirmRecipients">בדוק נמענים</string>
     <string name="confirmRecipientsDesc">הצג אזהרה בשליחה לנמענים חיצוניים או לרשימה גדולה</string>
     <string name="antiPhishing">הגנה מפני פישינג</string>
+    <string name="bimiLogos">לוגו של שולחים (BIMI)</string>
+    <string name="bimiLogosDesc">הדומיין של השולח נבדק דרך שרת Ogneliss; כתובות והודעות אינן נשלחות</string>
     <string name="phishingOff">כבויה</string>
     <string name="dangerOnly">מסוכנות בלבד</string>
     <string name="dangerOnlyDesc">הצג רק איומים ברורים</string>

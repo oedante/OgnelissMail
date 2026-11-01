@@ -765,6 +765,8 @@
     <string name="confirmRecipients">Overovať príjemcov</string>
     <string name="confirmRecipientsDesc">Upozorniť pri odosielaní externým príjemcom alebo veľkému zoznamu</string>
     <string name="antiPhishing">Ochrana pred phishingom</string>
+    <string name="bimiLogos">Logá odosielateľov (BIMI)</string>
+    <string name="bimiLogosDesc">Doména odosielateľa sa overuje cez server Ogneliss, adresy ani správy sa neodosielajú</string>
     <string name="phishingOff">Vypnutá</string>
     <string name="dangerOnly">Iba nebezpečné</string>
     <string name="dangerOnlyDesc">Zobrazovať len jasné hrozby</string>

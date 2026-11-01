@@ -765,6 +765,8 @@
     <string name="confirmRecipients">التحقق من المستلمين</string>
     <string name="confirmRecipientsDesc">التنبيه عند الإرسال إلى مستلمين خارجيين أو إلى قائمة كبيرة</string>
     <string name="antiPhishing">الحماية من التصيّد</string>
+    <string name="bimiLogos">شعارات المرسلين (BIMI)</string>
+    <string name="bimiLogosDesc">يُتحقق من نطاق المرسل عبر خادم Ogneliss، ولا تُرسل العناوين أو الرسائل</string>
     <string name="phishingOff">متوقفة</string>
     <string name="dangerOnly">الخطيرة فقط</string>
     <string name="dangerOnlyDesc">عرض التهديدات الواضحة فقط</string>

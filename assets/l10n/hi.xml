@@ -765,6 +765,8 @@
     <string name="confirmRecipients">प्राप्तकर्ताओं की जांच करें</string>
     <string name="confirmRecipientsDesc">बाहरी प्राप्तकर्ताओं या बड़ी सूची को भेजते समय चेतावनी दें</string>
     <string name="antiPhishing">फ़िशिंग से सुरक्षा</string>
+    <string name="bimiLogos">प्रेषकों के लोगो (BIMI)</string>
+    <string name="bimiLogosDesc">प्रेषक का डोमेन Ogneliss सर्वर से जाँचा जाता है; पते और संदेश नहीं भेजे जाते</string>
     <string name="phishingOff">बंद</string>
     <string name="dangerOnly">केवल खतरनाक</string>
     <string name="dangerOnlyDesc">केवल स्पष्ट खतरे दिखाएं</string>

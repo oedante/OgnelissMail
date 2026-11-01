@@ -99,14 +99,30 @@ class _Probe {
   final zooms = <double>[];
   ({double height, int? fitWidth, bool actualSize, bool pinched, bool ready})? layout;
 
+  /// Журнал окна письма (MailHtmlViewProbe.onTrace) — в текст ошибки.
+  final trace = <String>[];
+
   late final probe = MailHtmlViewProbe(
     onCreated: (c) => controller = c,
     onLoadStop: () => loadStops++,
     onZoomScaleChanged: (_, n) => zooms.add(n),
     onLayout: (l) => layout = l,
+    onTrace: trace.add,
   );
 
   double get height => layout?.height ?? 0;
+
+  /// Последние строки журнала — для текста ошибки.
+  String get log => '\nЖурнал окна письма:\n  ${trace.skip(trace.length > 80 ? trace.length - 80 : 0).join('\n  ')}';
+
+  /// Провал проверки — с журналом окна письма.
+  Future<T> logged<T>(Future<T> Function() body) async {
+    try {
+      return await body();
+    } on TestFailure catch (e) {
+      throw TestFailure('${e.message}$log');
+    }
+  }
 }
 
 /// Экран письма в тесте: поля 16 dp, прокрутка по вертикали — как у экрана
@@ -200,9 +216,13 @@ void _expectScale(({double? reported, double current}) s, double expected, Strin
 
 /// Высота окна — как у документа (допуск 4 % и 16 точек): больше — пустое
 /// поле под письмом, меньше — обрезанный низ.
-void _expectHeight(double actual, double expected, String what) {
+void _expectHeight(double actual, double expected, String what, [_Probe? p]) {
   final tol = (expected * 0.04).clamp(16.0, double.infinity);
-  expect(actual, closeTo(expected, tol), reason: '$what: высота окна $actual при высоте документа $expected');
+  expect(
+    actual,
+    closeTo(expected, tol),
+    reason: '$what: высота окна $actual при высоте документа $expected${p?.log ?? ''}',
+  );
 }
 
 Future<void> _settle(WidgetTester tester, _Probe p, String what) async {
@@ -272,7 +292,7 @@ void mailViewTests() {
           expect(find.text(l10n.tr('mailActualSize')), findsNothing);
           _expectScale(await _scales(tester, p), 1.0, 'обычное письмо');
           final ref = await _referenceHeight(tester, doc, viewWidth: w, fitWidth: null, textScale: ts);
-          _expectHeight(p.height, ref, 'обычное письмо');
+          _expectHeight(p.height, ref, 'обычное письмо', p);
         }, skip: !onAndroid);
 
         testWidgets('рассылка 640 px: «По ширине экрана», «Обычный размер», «Исходный масштаб» — без пустого поля', (
@@ -292,7 +312,7 @@ void mailViewTests() {
           // Открытие: обычный масштаб (fitWide выключено), кнопка «По ширине экрана».
           expect(p.layout!.actualSize, isTrue);
           _expectScale(await _scales(tester, p), 1.0, 'открытие');
-          _expectHeight(p.height, refActual, 'открытие');
+          _expectHeight(p.height, refActual, 'открытие', p);
 
           // «По ширине экрана».
           var loads = p.loadStops;
@@ -301,7 +321,7 @@ void mailViewTests() {
           await _settle(tester, p, 'по ширине экрана');
           expect(p.layout!.fitWidth, 640);
           _expectScale(await _scales(tester, p), fit, 'по ширине экрана');
-          _expectHeight(p.height, refFit, 'по ширине экрана');
+          _expectHeight(p.height, refFit, 'по ширине экрана', p);
 
           // Увеличение (как щипком; zoomBy — родной вызов WebView, без касаний)
           // → «Обычный размер».
@@ -311,7 +331,7 @@ void mailViewTests() {
           final zoomed = await _scales(tester, p);
           expect(zoomed.current, greaterThan(fit * 1.2));
           // Высота растёт ровно с масштабом.
-          _expectHeight(p.height, refFit * zoomed.current / fit, 'увеличено');
+          _expectHeight(p.height, refFit * zoomed.current / fit, 'увеличено', p);
           expect(find.text(l10n.tr('mailZoomReset')), findsOneWidget);
 
           loads = p.loadStops;
@@ -320,7 +340,7 @@ void mailViewTests() {
           await _settle(tester, p, 'обычный размер');
           expect(p.layout!.pinched, isFalse);
           _expectScale(await _scales(tester, p), fit, 'обычный размер');
-          _expectHeight(p.height, refFit, 'обычный размер');
+          _expectHeight(p.height, refFit, 'обычный размер', p);
 
           // «Исходный масштаб» — снова 100 %.
           loads = p.loadStops;
@@ -329,7 +349,7 @@ void mailViewTests() {
           await _settle(tester, p, 'исходный масштаб');
           expect(p.layout!.actualSize, isTrue);
           _expectScale(await _scales(tester, p), 1.0, 'исходный масштаб');
-          _expectHeight(p.height, refActual, 'исходный масштаб');
+          _expectHeight(p.height, refActual, 'исходный масштаб', p);
         }, skip: !onAndroid);
 
         testWidgets('касания попадают в ссылку и картинку (getHitTestResult)', (tester) async {
@@ -350,11 +370,13 @@ void mailViewTests() {
 
           Future<InAppWebViewHitTestResult?> hitAfterTap(Offset point, InAppWebViewHitTestResultType want) async {
             await tapAtGlobal(tester, point);
-            return pollUntil<InAppWebViewHitTestResult?>(
-              tester,
-              c.getHitTestResult,
-              (r) => r?.type == want,
-              what: 'касание в $point → ${want.toNativeValue()}',
+            return p.logged(
+              () => pollUntil<InAppWebViewHitTestResult?>(
+                tester,
+                c.getHitTestResult,
+                (r) => r?.type == want,
+                what: 'касание в $point → ${want.toNativeValue()} (окно $rect, высота ${p.height})',
+              ),
             );
           }
 
@@ -365,7 +387,7 @@ void mailViewTests() {
           // Ссылка слева вверху: тип и адрес, и приложение получило нажатие.
           final r1 = await hitAfterTap(at(120, _bodyTop + 120 + 40), InAppWebViewHitTestResultType.SRC_ANCHOR_TYPE);
           expect(r1?.extra, _link1);
-          await pumpUntil(tester, () => links.contains(_link1), what: 'onLink для левой ссылки');
+          await p.logged(() => pumpUntil(tester, () => links.contains(_link1), what: 'onLink для левой ссылки'));
 
           // Ссылка справа ниже: сдвиг касаний растёт вправо и вниз — здесь он
           // был бы заметен.
@@ -374,12 +396,14 @@ void mailViewTests() {
             InAppWebViewHitTestResultType.SRC_ANCHOR_TYPE,
           );
           expect(r2?.extra, _link2);
-          await pumpUntil(tester, () => links.contains(_link2), what: 'onLink для правой ссылки');
+          await p.logged(() => pumpUntil(tester, () => links.contains(_link2), what: 'onLink для правой ссылки'));
 
           // Картинка справа: тип IMAGE, и приложение открыло её на весь экран.
           await hitAfterTap(at(cssWidth - 80, _bodyTop + 260 + 60), InAppWebViewHitTestResultType.IMAGE_TYPE);
           final viewer = find.byWidgetPredicate((w) => w.runtimeType.toString() == '_PhotoView');
-          await pumpUntil(tester, () => viewer.evaluate().isNotEmpty, what: 'картинка открыта на весь экран');
+          await p.logged(
+            () => pumpUntil(tester, () => viewer.evaluate().isNotEmpty, what: 'картинка открыта на весь экран'),
+          );
           Navigator.of(tester.element(viewer)).pop();
           await pumpUntil(tester, () => viewer.evaluate().isEmpty, what: 'просмотр картинки закрыт');
         }, skip: !onAndroid);

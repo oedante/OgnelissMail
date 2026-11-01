@@ -119,6 +119,13 @@ def test(path: str) -> None:
         starts = [i for i, l in enumerate(out) if 'EXCEPTION CAUGHT' in l]
         if starts:
             text = '\n'.join(out[starts[0]:starts[0] + 40]) + '\n' + text
+            # Целиком (с журналом окна письма из интеграционных тестов) —
+            # обычным выводом: в аннотации текст обрезан.
+            ends = [j for j in range(starts[0] + 1, len(out)) if out[j].startswith('════')]
+            block = out[starts[0]:(ends[0] + 1) if ends else starts[0] + 300]
+            print(f'::group::{name}')
+            print('\n'.join(block))
+            print('::endgroup::')
         lines.append(f'{file}: {name} — {result}\n{cut(text, 1500)}')
         if i < MAX_EACH:
             loc = f'file={esc_prop(file)}' + (f',line={line}' if line else '') if file else ''

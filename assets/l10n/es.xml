@@ -2988,6 +2988,8 @@
     <string name="pushWakeStatusLast">Última señal: {when}</string>
     <string name="pushWakeStatusNone">Aún no registrado</string>
     <string name="pushWakeStatusError">Error: {e}</string>
+    <string name="pushWakeTitleAndroid">Señales del servidor</string>
+    <string name="pushWakeHelpAndroid">Android decide por sí mismo cuándo puede funcionar una app en segundo plano: en reposo profundo aplaza las comprobaciones en segundo plano y, desde Android 15, la sincronización en segundo plano tiene como máximo 6 horas al día. El servidor del desarrollador (ogneliss.ru/push) envía a través de Google (Firebase Cloud Messaging), en el intervalo elegido, una señal vacía «revisa el correo», y la app revisa tus buzones por sí misma, desde este dispositivo. Al servidor solo se envía el token de notificaciones de esta instalación: ni direcciones, ni contraseñas, ni mensajes. En reposo profundo, Android puede entregar la señal más tarde, en la siguiente ventana de mantenimiento. Requiere los servicios de Google Play. Más detalles en la Política de privacidad, sección 6.2.</string>
     <string name="mailCheckKindSignal">señal del servidor</string>
     <string name="specialArchiveFolder">Carpeta de archivo</string>
     <string name="specialJunkFolder">Carpeta de spam</string>

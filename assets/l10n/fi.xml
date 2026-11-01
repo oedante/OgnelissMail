@@ -2988,6 +2988,8 @@
     <string name="pushWakeStatusLast">Viimeisin signaali: {when}</string>
     <string name="pushWakeStatusNone">Ei vielä rekisteröity</string>
     <string name="pushWakeStatusError">Epäonnistui: {e}</string>
+    <string name="pushWakeTitleAndroid">Palvelinsignaalit</string>
+    <string name="pushWakeHelpAndroid">Android päättää itse, milloin taustalla oleva sovellus saa toimia: syvässä lepotilassa se lykkää taustatarkistuksia, ja Android 15:stä alkaen taustasynkronointi saa enintään 6 tuntia vuorokaudessa. Kehittäjän palvelin (ogneliss.ru/push) lähettää valitulla välillä Googlen (Firebase Cloud Messaging) kautta tyhjän signaalin ”tarkista posti”, ja sovellus tarkistaa postilaatikot itse tältä laitteelta. Palvelimelle lähetetään vain tämän asennuksen ilmoitustunnus — ei osoitteita, salasanoja eikä viestejä. Syvässä lepotilassa Android voi toimittaa signaalin myöhemmin, seuraavassa huoltoikkunassa. Vaatii Google Play -palvelut. Lisätietoja tietosuojakäytännön kohdassa 6.2.</string>
     <string name="mailCheckKindSignal">palvelimen signaali</string>
     <string name="specialArchiveFolder">Arkistokansio</string>
     <string name="specialJunkFolder">Roskapostikansio</string>

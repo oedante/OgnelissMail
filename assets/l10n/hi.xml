@@ -2988,6 +2988,8 @@
     <string name="pushWakeStatusLast">आख़िरी सिग्नल: {when}</string>
     <string name="pushWakeStatusNone">अभी तक पंजीकृत नहीं</string>
     <string name="pushWakeStatusError">विफल: {e}</string>
+    <string name="pushWakeTitleAndroid">सर्वर सिग्नल</string>
+    <string name="pushWakeHelpAndroid">Android खुद तय करता है कि बैकग्राउंड में ऐप कब चल सकता है: गहरी नींद में वह बैकग्राउंड जाँच टाल देता है, और Android 15 से बैकग्राउंड सिंक को दिन में अधिकतम 6 घंटे मिलते हैं। डेवलपर का सर्वर (ogneliss.ru/push) चुने गए अंतराल पर Google (Firebase Cloud Messaging) के ज़रिए खाली «मेल जाँचें» सिग्नल भेजता है, और ऐप इसी डिवाइस से खुद आपके मेलबॉक्स जाँचता है। सर्वर को केवल इस इंस्टॉलेशन का सूचना टोकन भेजा जाता है — न पते, न पासवर्ड, न संदेश। गहरी नींद में Android सिग्नल बाद में, अगली रखरखाव अवधि में पहुँचा सकता है। Google Play सेवाएँ ज़रूरी हैं। विवरण गोपनीयता नीति, खंड 6.2 में है।</string>
     <string name="mailCheckKindSignal">सर्वर सिग्नल</string>
     <string name="specialArchiveFolder">संग्रह फ़ोल्डर</string>
     <string name="specialJunkFolder">स्पैम फ़ोल्डर</string>

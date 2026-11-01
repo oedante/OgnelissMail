@@ -2988,6 +2988,8 @@
     <string name="pushWakeStatusLast">Último sinal: {when}</string>
     <string name="pushWakeStatusNone">Ainda não registrado</string>
     <string name="pushWakeStatusError">Falha: {e}</string>
+    <string name="pushWakeTitleAndroid">Sinais do servidor</string>
+    <string name="pushWakeHelpAndroid">O Android decide sozinho quando um app em segundo plano pode funcionar: em suspensão profunda adia as verificações em segundo plano e, desde o Android 15, a sincronização em segundo plano tem no máximo 6 horas por dia. O servidor do desenvolvedor (ogneliss.ru/push) envia pelo Google (Firebase Cloud Messaging), no intervalo escolhido, um sinal vazio «verificar e-mail», e o app verifica suas caixas sozinho, a partir deste dispositivo. Ao servidor é enviado apenas o token de notificação desta instalação — sem endereços, senhas ou mensagens. Em suspensão profunda, o Android pode entregar o sinal mais tarde, na próxima janela de manutenção. Requer os serviços do Google Play. Detalhes na Política de Privacidade, seção 6.2.</string>
     <string name="mailCheckKindSignal">sinal do servidor</string>
     <string name="specialArchiveFolder">Pasta de arquivo</string>
     <string name="specialJunkFolder">Pasta de spam</string>

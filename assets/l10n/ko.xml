@@ -2975,6 +2975,8 @@
     <string name="pushWakeStatusLast">마지막 신호: {when}</string>
     <string name="pushWakeStatusNone">아직 등록되지 않음</string>
     <string name="pushWakeStatusError">실패: {e}</string>
+    <string name="pushWakeTitleAndroid">서버 신호</string>
+    <string name="pushWakeHelpAndroid">백그라운드 앱을 언제 실행할지는 Android가 스스로 결정합니다. 깊은 절전 중에는 백그라운드 확인을 미루고, Android 15부터는 백그라운드 동기화에 하루 최대 6시간만 주어집니다. 개발자 서버(ogneliss.ru/push)가 선택한 간격마다 Google(Firebase Cloud Messaging)을 통해 빈 «메일 확인» 신호를 보내면, 앱이 이 기기에서 직접 메일함을 확인합니다. 서버로는 이 설치의 알림 토큰만 전송되며 주소, 비밀번호, 메일은 전송되지 않습니다. 깊은 절전 중에는 Android가 다음 유지 관리 창에 신호를 늦게 전달할 수 있습니다. Google Play 서비스가 필요합니다. 자세한 내용은 개인정보 처리방침 6.2항을 참고하세요.</string>
     <string name="mailCheckKindSignal">서버 신호</string>
     <string name="specialArchiveFolder">보관함 폴더</string>
     <string name="specialJunkFolder">스팸 폴더</string>

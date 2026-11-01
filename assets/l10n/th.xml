@@ -2975,6 +2975,8 @@
     <string name="pushWakeStatusLast">สัญญาณล่าสุด: {when}</string>
     <string name="pushWakeStatusNone">ยังไม่ได้ลงทะเบียน</string>
     <string name="pushWakeStatusError">ล้มเหลว: {e}</string>
+    <string name="pushWakeTitleAndroid">สัญญาณจากเซิร์ฟเวอร์</string>
+    <string name="pushWakeHelpAndroid">Android ตัดสินใจเองว่าแอปในเบื้องหลังจะทำงานได้เมื่อใด: ในโหมดหลับลึกจะเลื่อนการตรวจสอบในเบื้องหลังออกไป และตั้งแต่ Android 15 การซิงค์ในเบื้องหลังได้ไม่เกิน 6 ชั่วโมงต่อวัน เซิร์ฟเวอร์ของผู้พัฒนา (ogneliss.ru/push) จะส่งสัญญาณว่าง «ตรวจสอบอีเมล» ผ่าน Google (Firebase Cloud Messaging) ตามช่วงเวลาที่เลือก และแอปจะตรวจสอบกล่องจดหมายเองจากอุปกรณ์นี้ เซิร์ฟเวอร์ได้รับเพียงโทเค็นการแจ้งเตือนของการติดตั้งนี้ — ไม่มีที่อยู่ รหัสผ่าน หรือข้อความ ในโหมดหลับลึก Android อาจส่งสัญญาณช้าลงในช่วงบำรุงรักษาถัดไป ต้องใช้บริการ Google Play รายละเอียดอยู่ในนโยบายความเป็นส่วนตัว ข้อ 6.2</string>
     <string name="mailCheckKindSignal">สัญญาณจากเซิร์ฟเวอร์</string>
     <string name="specialArchiveFolder">โฟลเดอร์เก็บถาวร</string>
     <string name="specialJunkFolder">โฟลเดอร์สแปม</string>

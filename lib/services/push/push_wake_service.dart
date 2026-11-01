@@ -17,6 +17,14 @@
 // Этап 1 — тихие сигналы (iOS пропускает 2–3 в час, сервер шлёт не чаще раза
 // в 20 минут). Этап 2 — обычные сигналы и расширение уведомлений, после
 // одобрения права Apple на фильтрацию (AppConstants.pushWakeMode = alert).
+//
+// Android (1.9.x, просьба владельца 31.10.2026) — тот же сервер и та же
+// регистрация, сигнал — через Firebase Cloud Messaging: токен FCM выдаёт
+// android/.../PushWakeFcm.kt по 'register' (с параметрами Firebase из
+// сборки), на сервер уходит с platform: android. Сигнал там ставит разовую
+// задачу WorkManager «push_wake» — проверку делает callbackDispatcher
+// (background_service.dart). Что сделать владельцу — docs/guides/
+// ANDROID_PUSH_SETUP.md.
 
 import 'dart:async';
 import 'dart:convert';
@@ -86,6 +94,9 @@ class PushWakeState {
   const PushWakeState({this.registered = false, this.env, this.registeredAt, this.lastWake, this.lastError});
 }
 
+/// Откуда сигналы: iPhone — APNs, Android — FCM.
+enum PushWakeOs { ios, android }
+
 class PushWakeService {
   static const _channel = MethodChannel('ogneliss/push');
   static const _kToken = 'push_wake_token';
@@ -93,6 +104,10 @@ class PushWakeService {
   static const _kSentAt = 'push_wake_sent_at';
   static const _kLastWake = 'push_wake_last';
   static const _kLastError = 'push_wake_error';
+
+  /// Имя проверки по сигналу на Android — в журнале фоновой работы и в
+  /// просьбе фоновой задачи к приложению (background_service.dart).
+  static const androidWakeKind = 'сигнал сервера';
 
   /// Повторная регистрация раз в сутки (при запуске приложения): сервер
   /// забывает токены, которые месяц не обновлялись (приложение удалили —
@@ -102,36 +117,73 @@ class PushWakeService {
 
   final Ref _ref;
   bool _inited = false;
-  PushWakeService(this._ref);
 
-  static bool get supported => !kIsWeb && Platform.isIOS && AppConstants.pushRelayUrl.trim().isNotEmpty;
+  /// Платформа сигналов; null — не поддерживается (в тестах задаётся явно).
+  final PushWakeOs? os;
+  final http.Client? _client;
+  PushWakeService(this._ref, {PushWakeOs? os, http.Client? client})
+      : os = os ?? platformOs,
+        _client = client;
+
+  /// iPhone — всегда (если задан адрес сервера); Android — если в сборке
+  /// заданы параметры Firebase (AppConstants.firebaseConfigured).
+  static PushWakeOs? get platformOs {
+    if (kIsWeb || AppConstants.pushRelayUrl.trim().isEmpty) return null;
+    if (Platform.isIOS) return PushWakeOs.ios;
+    if (Platform.isAndroid && AppConstants.firebaseConfigured) return PushWakeOs.android;
+    return null;
+  }
+
+  static bool get supported => platformOs != null;
 
   String get _base => AppConstants.pushRelayUrl.trim().replaceAll(RegExp(r'/+$'), '');
 
   SharedPreferences get _prefs => _ref.read(sharedPrefsProvider);
 
   Future<void> init() async {
-    if (!supported || _inited) return;
+    if (os == null || _inited) return;
     _inited = true;
     _channel.setMethodCallHandler(_onCall);
     await apply();
   }
 
   /// Применить настройки: включено — попросить токен у iOS (он придёт в
-  /// onToken, там и регистрация на сервере); выключено — снять с сервера.
+  /// onToken, там и регистрация на сервере) или у Android (возвращается
+  /// сразу); выключено — снять с сервера.
   Future<void> apply() async {
-    if (!supported) return;
+    if (os == null) return;
     final prefs = _ref.read(pushWakePrefsProvider);
     try {
       if (prefs.enabled) {
-        await _channel.invokeMethod<void>('register');
+        if (os == PushWakeOs.android) {
+          final token = await _channel.invokeMethod<String>('register', const {
+            'apiKey': AppConstants.firebaseApiKey,
+            'appId': AppConstants.firebaseAppId,
+            'senderId': AppConstants.firebaseSenderId,
+            'projectId': AppConstants.firebaseProjectId,
+          });
+          if (token != null) await _onToken(token, 'fcm');
+        } else {
+          await _channel.invokeMethod<void>('register');
+        }
       } else {
         await _unregister();
       }
+    } on PlatformException catch (e) {
+      // Android: нет сервисов Google Play (SERVICE_NOT_AVAILABLE), нет связи
+      // с Google или неверные параметры Firebase — видно под переключателем.
+      AppLogger.warning('Сигналы сервера: ${e.code} ${e.message ?? ''}');
+      if (os == PushWakeOs.android) await _prefs.setString(_kLastError, 'Android: ${e.message ?? e.code}');
     } catch (e) {
       AppLogger.warning('Сигналы сервера: $e');
     }
   }
+
+  /// Отметка «пришёл сигнал» (Android — из фоновой задачи, у которой свои
+  /// SharedPreferences: callbackDispatcher и приложение, если проверку
+  /// делает оно).
+  static Future<void> noteWake(SharedPreferences prefs) =>
+      prefs.setInt(_kLastWake, DateTime.now().millisecondsSinceEpoch);
 
   PushWakeState state() {
     final p = _prefs;
@@ -167,14 +219,22 @@ class PushWakeService {
   }
 
   Future<void> _onToken(String token, String env) async {
-    if (!RegExp(r'^[0-9a-f]{64,200}$').hasMatch(token)) return;
+    final android = os == PushWakeOs.android;
+    // Токен APNs — шестнадцатеричный; FCM — буквы, цифры, «:», «_», «-».
+    final valid = android ? RegExp(r'^[A-Za-z0-9_:\-]{32,512}$') : RegExp(r'^[0-9a-f]{64,200}$');
+    if (!valid.hasMatch(token)) return;
     // Только в отладочной сборке (из Xcode): токен — для пробного сигнала из
     // Push Notifications Console (docs/guides/IOS_PUSH_SETUP.md, п. 5). В
     // выпускаемых сборках токен в журнал не пишется.
     if (kDebugMode) AppLogger.info('Сигналы сервера (отладка): токен $token, окружение $env');
     final prefs = _ref.read(pushWakePrefsProvider);
     if (!prefs.enabled) return;
-    const mode = AppConstants.pushWakeMode == 'alert' ? 'alert' : 'silent';
+    final String mode;
+    if (android) {
+      mode = AppConstants.pushWakeAndroidPriority == 'high' ? 'high' : 'normal';
+    } else {
+      mode = AppConstants.pushWakeMode == 'alert' ? 'alert' : 'silent';
+    }
     final key = '$token|$env|${prefs.interval}|$mode';
     final p = _prefs;
     final old = p.getString(_kSent);
@@ -185,13 +245,15 @@ class PushWakeService {
     // снять, чтобы сервер не будил его зря.
     final oldToken = p.getString(_kToken);
     if (oldToken != null && oldToken != token) {
-      await _post('/unregister', {'token': oldToken});
+      await _post('/unregister', {'token': oldToken, 'platform': os!.name});
     }
     final ok = await _post('/register', {
       'token': token,
       'env': env,
       'interval': prefs.interval,
       'mode': mode,
+      // Сервер 1.9.x различает токены по нему; прежний его не читает.
+      'platform': os!.name,
     });
     if (ok) {
       await p.setString(_kToken, token);
@@ -205,7 +267,7 @@ class PushWakeService {
   Future<void> _unregister() async {
     final p = _prefs;
     final token = p.getString(_kToken);
-    if (token != null) await _post('/unregister', {'token': token});
+    if (token != null) await _post('/unregister', {'token': token, 'platform': os!.name});
     try {
       await _channel.invokeMethod<void>('unregister');
     } catch (_) {}
@@ -217,15 +279,15 @@ class PushWakeService {
 
   Future<bool> _post(String path, Map<String, Object?> body) async {
     try {
-      final r = await http
-          .post(
-            Uri.parse('$_base$path'),
-            headers: {
-              'content-type': 'application/json',
-              if (AppConstants.oauthProxyApiKey.isNotEmpty) 'x-api-key': AppConstants.oauthProxyApiKey,
-            },
-            body: jsonEncode(body),
-          )
+      final uri = Uri.parse('$_base$path');
+      final headers = {
+        'content-type': 'application/json',
+        if (AppConstants.oauthProxyApiKey.isNotEmpty) 'x-api-key': AppConstants.oauthProxyApiKey,
+      };
+      final client = _client;
+      final r = await (client == null
+              ? http.post(uri, headers: headers, body: jsonEncode(body))
+              : client.post(uri, headers: headers, body: jsonEncode(body)))
           .timeout(const Duration(seconds: 15));
       if (r.statusCode >= 200 && r.statusCode < 300) return true;
       final err = 'сервер ${path.substring(1)} → HTTP ${r.statusCode}';

@@ -35,6 +35,8 @@ Contributions are accepted under the same license (section 5 of the license).
 | Medeo Sans font (unmodified, github.com/DNFDEVS/medeo-font) | SIL OFL 1.1 | `assets/fonts/medeo/` |
 | Material Symbols icons | Apache-2.0 | `material_symbols_icons` |
 | AndroidX, Kotlin, AppAuth | Apache-2.0 | Android and iOS builds |
+| Firebase Cloud Messaging Android SDK (`com.google.firebase:firebase-messaging`, BoM 35.1.0; checked 01.11.2026) | Apache-2.0; pulls in Google Play services client libraries (proprietary, free of charge, Android SDK / Google APIs terms) | Android build only (`android/app/build.gradle.kts`); text in the app: "Firebase Cloud Messaging" |
+| Firebase Cloud Messaging service (Google) | free of charge, no paid tier or quota fees (Firebase Spark plan); Firebase / Google APIs Terms of Service | Android server signals: app and `server/push-relay` (HTTP v1 API) |
 | Russian Trusted Root CA certificates | public certificates | `assets/certs/` |
 
 There are no GPL, LGPL or AGPL dependencies. MPL-2.0 is a file-level copyleft
@@ -44,7 +46,19 @@ MPL-2.0. The full list with every license text is generated from the
 libraries and shown in the app (Settings → About → Licence texts).
 
 The server dependencies (`server/oauth-proxy`: express and its dependencies)
-are MIT, ISC and BSD-3-Clause.
+are MIT, ISC and BSD-3-Clause. `server/push-relay` has no dependencies (Node.js
+built-ins only, including the FCM OAuth2 JWT signing).
+
+Firebase on Android (1.9.x, server signals) is used through the Android SDK
+directly, not through the FlutterFire plugins `firebase_core` /
+`firebase_messaging` (BSD-3-Clause, also free): those would add the Firebase
+SDK to the iOS build (where the messaging plugin takes over the app delegate
+push callbacks used by the APNs relay) and download the Firebase C++ SDK in
+the Windows build. No `google-services.json` and no google-services Gradle
+plugin: the project options come from build-time dart-defines; without them
+nothing Firebase-related runs. The Play services dependency is the reason
+the feature needs Google Play services on the phone; UnifiedPush
+(Apache-2.0) for phones without them is a possible follow-up.
 
 ## 3. Microsoft Exchange protocols
 
@@ -100,6 +114,10 @@ your own version needs its own servers and OAuth registrations
 - **Распространяете код или свою сборку** — приложите текст лицензии,
   сохраните NOTICE и уведомления об авторских правах, пометьте изменённые
   файлы, дайте версии своё название, значок и идентификатор (TRADEMARKS.md).
+- **Firebase Cloud Messaging** (сигналы сервера на Android, 1.9.x) — сервис
+  Google бесплатный (план Spark, без платы за сообщения); библиотека Android
+  — Apache 2.0, зависит от бесплатных проприетарных сервисов Google Play.
+  Только в сборке Android; Flutter-плагины Firebase не используются.
 - **Сторонние компоненты** — BSD, MIT, Apache 2.0; enough_mail,
   enough_convert, dbus и nm — MPL 2.0 (используются без изменений); шрифты
   OpenDyslexic и Medeo Sans — OFL 1.1. GPL, LGPL и AGPL нет. Полный список с текстами

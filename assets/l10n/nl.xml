@@ -2988,6 +2988,8 @@
     <string name="pushWakeStatusLast">Laatste signaal: {when}</string>
     <string name="pushWakeStatusNone">Nog niet geregistreerd</string>
     <string name="pushWakeStatusError">Mislukt: {e}</string>
+    <string name="pushWakeTitleAndroid">Serversignalen</string>
+    <string name="pushWakeHelpAndroid">Android bepaalt zelf wanneer een app op de achtergrond mag draaien: in diepe slaap stelt het achtergrondcontroles uit, en sinds Android 15 krijgt achtergrondsynchronisatie hooguit 6 uur per dag. De server van de ontwikkelaar (ogneliss.ru/push) stuurt met het gekozen interval via Google (Firebase Cloud Messaging) een leeg signaal ‘controleer e-mail’, en de app controleert je postvakken zelf vanaf dit apparaat. Alleen het meldingstoken van deze installatie gaat naar de server — geen adressen, wachtwoorden of berichten. In diepe slaap kan Android het signaal later bezorgen, in het volgende onderhoudsvenster. Vereist Google Play-services. Details in het privacybeleid, sectie 6.2.</string>
     <string name="mailCheckKindSignal">serversignaal</string>
     <string name="specialArchiveFolder">Archiefmap</string>
     <string name="specialJunkFolder">Spammap</string>

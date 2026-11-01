@@ -2988,6 +2988,8 @@
     <string name="pushWakeStatusLast">Senaste signal: {when}</string>
     <string name="pushWakeStatusNone">Inte registrerad än</string>
     <string name="pushWakeStatusError">Misslyckades: {e}</string>
+    <string name="pushWakeTitleAndroid">Serversignaler</string>
+    <string name="pushWakeHelpAndroid">Android bestämmer själv när en app i bakgrunden får köras: i djupviloläge skjuter den upp bakgrundskontroller, och från Android 15 får bakgrundssynkronisering högst 6 timmar per dygn. Utvecklarens server (ogneliss.ru/push) skickar med valt intervall en tom signal ”kolla e-post” via Google (Firebase Cloud Messaging), och appen kontrollerar själv dina brevlådor från den här enheten. Bara den här installationens aviseringstoken skickas till servern — inga adresser, lösenord eller meddelanden. I djupviloläge kan Android leverera signalen senare, i nästa underhållsfönster. Kräver Google Play-tjänster. Detaljer finns i integritetspolicyn, avsnitt 6.2.</string>
     <string name="mailCheckKindSignal">signal från servern</string>
     <string name="specialArchiveFolder">Arkivmapp</string>
     <string name="specialJunkFolder">Skräppostmapp</string>

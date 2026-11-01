@@ -2975,6 +2975,8 @@
     <string name="pushWakeStatusLast">Sinyal terakhir: {when}</string>
     <string name="pushWakeStatusNone">Belum terdaftar</string>
     <string name="pushWakeStatusError">Gagal: {e}</string>
+    <string name="pushWakeTitleAndroid">Sinyal server</string>
+    <string name="pushWakeHelpAndroid">Android memutuskan sendiri kapan aplikasi di latar belakang boleh berjalan: saat tidur lelap, Android menunda pemeriksaan latar belakang, dan sejak Android 15 sinkronisasi latar belakang mendapat paling banyak 6 jam per hari. Server pengembang (ogneliss.ru/push) mengirim sinyal kosong «periksa email» melalui Google (Firebase Cloud Messaging) pada interval yang dipilih, dan aplikasi memeriksa kotak surat Anda sendiri dari perangkat ini. Hanya token notifikasi instalasi ini yang dikirim ke server — tanpa alamat, kata sandi, atau pesan. Saat tidur lelap, Android dapat mengirim sinyal lebih lambat, pada jendela pemeliharaan berikutnya. Memerlukan layanan Google Play. Detail ada di Kebijakan Privasi, bagian 6.2.</string>
     <string name="mailCheckKindSignal">sinyal server</string>
     <string name="specialArchiveFolder">Folder arsip</string>
     <string name="specialJunkFolder">Folder spam</string>

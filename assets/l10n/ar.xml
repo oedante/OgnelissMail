@@ -3040,6 +3040,8 @@
     <string name="pushWakeStatusLast">آخر إشارة: {when}</string>
     <string name="pushWakeStatusNone">لم يتم التسجيل بعد</string>
     <string name="pushWakeStatusError">فشل: {e}</string>
+    <string name="pushWakeTitleAndroid">إشارات الخادم</string>
+    <string name="pushWakeHelpAndroid">يقرر Android بنفسه متى يسمح للتطبيق بالعمل في الخلفية: في وضع السكون العميق يؤجل عمليات التحقق في الخلفية، ومنذ Android 15 لا تحصل المزامنة في الخلفية على أكثر من 6 ساعات يوميًا. يرسل خادم المطوّر (ogneliss.ru/push) عبر Google (Firebase Cloud Messaging) إشارة فارغة «تحقق من البريد» في الفاصل الزمني المحدد، ويتحقق التطبيق من صناديق البريد بنفسه من هذا الجهاز. لا يُرسَل إلى الخادم سوى رمز الإشعارات لهذا التثبيت — لا عناوين ولا كلمات مرور ولا رسائل. في السكون العميق قد يسلّم Android الإشارة لاحقًا، في أقرب نافذة صيانة. يتطلب خدمات Google Play. التفاصيل في سياسة الخصوصية، القسم 6.2.</string>
     <string name="mailCheckKindSignal">إشارة الخادم</string>
     <string name="specialArchiveFolder">مجلد الأرشيف</string>
     <string name="specialJunkFolder">مجلد البريد العشوائي</string>

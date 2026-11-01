@@ -4,7 +4,7 @@
 // Раньше «где включаются тихие часы» приходилось искать, открывая разделы
 // по очереди.
 
-import '../../core/constants/app_constants.dart' show kRulesAndCategoriesEnabled;
+import '../../core/constants/app_constants.dart' show AppConstants, kRulesAndCategoriesEnabled;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import '../../core/theme/app_icons.dart';
@@ -27,8 +27,11 @@ class _Entry {
 
   /// Только на iPhone и iPad (1.7.2: сигналы сервера).
   final bool iosOnly;
+
+  /// Только в сборке с параметрами Firebase (1.9.x: сигналы сервера на Android).
+  final bool firebaseOnly;
   const _Entry(this.key, this.screenKey, this.icon, this.route,
-      {this.androidOnly = false, this.mobileOnly = false, this.iosOnly = false});
+      {this.androidOnly = false, this.mobileOnly = false, this.iosOnly = false, this.firebaseOnly = false});
 }
 
 const _entries = <_Entry>[
@@ -44,6 +47,9 @@ const _entries = <_Entry>[
   _Entry('rulesSection', 'notifications', AppIcons.rule, '/vip-settings'),
   // 1.7.2: сигналы сервера для проверки почты в фоне на iPhone.
   _Entry('pushWakeTitle', 'notifications', AppIcons.cloud_sync, '/settings/notifications', iosOnly: true),
+  // 1.9.x: они же на Android (FCM).
+  _Entry('pushWakeTitleAndroid', 'notifications', AppIcons.cloud_sync, '/settings/notifications',
+      androidOnly: true, firebaseOnly: true),
   _Entry('autoReplies', 'emailSettings', AppIcons.beach_access, '/settings/auto-reply'),
   // Общие
   _Entry('theme', 'general', AppIcons.palette, '/settings/general'),
@@ -181,6 +187,7 @@ class SettingsSearchDelegate extends SearchDelegate<void> {
     final hits = [
       for (final e in _entries)
         if ((android || !e.androidOnly) && (mobile || !e.mobileOnly) && (ios || !e.iosOnly) &&
+            (AppConstants.firebaseConfigured || !e.firebaseOnly) &&
             (q.isEmpty ||
                 l10n.tr(e.key).toLowerCase().contains(q) ||
                 l10n.tr(e.screenKey).toLowerCase().contains(q)))

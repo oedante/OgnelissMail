@@ -2988,6 +2988,8 @@
     <string name="pushWakeStatusLast">Dernier signal : {when}</string>
     <string name="pushWakeStatusNone">Pas encore enregistré</string>
     <string name="pushWakeStatusError">Échec : {e}</string>
+    <string name="pushWakeTitleAndroid">Signaux du serveur</string>
+    <string name="pushWakeHelpAndroid">Android décide seul quand une application en arrière-plan peut s’exécuter : en veille profonde, il reporte les vérifications en arrière-plan, et depuis Android 15 la synchronisation en arrière-plan dispose d’au plus 6 heures par jour. Le serveur du développeur (ogneliss.ru/push) envoie via Google (Firebase Cloud Messaging), à l’intervalle choisi, un signal vide « relever le courrier », et l’application relève vos boîtes elle-même, depuis l’appareil. Seul le jeton de notification de cette installation est envoyé au serveur — ni adresses, ni mots de passe, ni messages. En veille profonde, Android peut délivrer le signal plus tard, lors de la prochaine fenêtre de maintenance. Nécessite les services Google Play. Détails dans la Politique de confidentialité, section 6.2.</string>
     <string name="mailCheckKindSignal">signal du serveur</string>
     <string name="specialArchiveFolder">Dossier d’archives</string>
     <string name="specialJunkFolder">Dossier des indésirables</string>

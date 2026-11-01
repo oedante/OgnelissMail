@@ -2975,6 +2975,8 @@
     <string name="pushWakeStatusLast">最後のシグナル：{when}</string>
     <string name="pushWakeStatusNone">まだ登録されていません</string>
     <string name="pushWakeStatusError">失敗しました：{e}</string>
+    <string name="pushWakeTitleAndroid">サーバーからのシグナル</string>
+    <string name="pushWakeHelpAndroid">バックグラウンドのアプリをいつ動かすかは Android が自分で決めます。ディープスリープ中はバックグラウンドの確認を後回しにし、Android 15 以降はバックグラウンド同期に 1 日最大 6 時間しか与えられません。開発者のサーバー（ogneliss.ru/push）が選んだ間隔で Google（Firebase Cloud Messaging）経由で空の「メールを確認」シグナルを送り、アプリはこの端末から自分でメールボックスを確認します。サーバーに送られるのはこのインストールの通知トークンだけで、アドレス、パスワード、メールは送られません。ディープスリープ中は、Android が次のメンテナンス期間にシグナルを遅れて届けることがあります。Google Play 開発者サービスが必要です。詳しくはプライバシーポリシーの 6.2 をご覧ください。</string>
     <string name="mailCheckKindSignal">サーバーからの通知</string>
     <string name="specialArchiveFolder">アーカイブフォルダー</string>
     <string name="specialJunkFolder">迷惑メールフォルダー</string>

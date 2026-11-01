@@ -2988,6 +2988,8 @@
     <string name="pushWakeStatusLast">Siste signal: {when}</string>
     <string name="pushWakeStatusNone">Ikke registrert ennå</string>
     <string name="pushWakeStatusError">Mislyktes: {e}</string>
+    <string name="pushWakeTitleAndroid">Serversignaler</string>
+    <string name="pushWakeHelpAndroid">Android bestemmer selv når en app i bakgrunnen får kjøre: i dyp hvile utsetter den bakgrunnssjekker, og fra Android 15 får bakgrunnssynkronisering høyst 6 timer i døgnet. Utviklerens server (ogneliss.ru/push) sender med valgt intervall et tomt signal «sjekk e-post» via Google (Firebase Cloud Messaging), og appen sjekker selv postkassene dine fra denne enheten. Bare varslingstokenet for denne installasjonen sendes til serveren — ingen adresser, passord eller meldinger. I dyp hvile kan Android levere signalet senere, i neste vedlikeholdsvindu. Krever Google Play-tjenester. Detaljer i personvernerklæringen, del 6.2.</string>
     <string name="mailCheckKindSignal">signal fra serveren</string>
     <string name="specialArchiveFolder">Arkivmappe</string>
     <string name="specialJunkFolder">Søppelpostmappe</string>

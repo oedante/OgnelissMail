@@ -66,6 +66,7 @@ import '../../contacts/widgets/person_card.dart';
 import '../../../services/mail/control_service.dart';
 import '../../../services/mail/later_service.dart';
 import '../widgets/later_sheet.dart';
+import '../widgets/sender_actions_sheet.dart';
 import '../../settings/screens/device_rule_screen.dart' show openDeviceRule;
 import '../../../services/mail/own_addresses.dart';
 import '../../../services/security/mail_classification.dart';
@@ -2406,6 +2407,11 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
               if (acc != null) _editCategories(context, acc, email, l10n);
             }),
           _peekAction(AppIcons.report, l10n.tr('moveToJunk'), () => _moveToJunk(email, l10n)),
+          // Заблокировать отправителя и «Чистка» (1.10.x).
+          _peekAction(AppIcons.block,
+              l10n.tr(isSenderBlocked(ref, email.from.email, email.accountId) ? 'unblockSender' : 'blockSender'),
+              () => unawaited(_blockSender(email))),
+          _peekAction(AppIcons.cleaning_services, l10n.tr('sweepShort'), () => unawaited(_sweepSender(email))),
         ]),
         PeekGroup(title: l10n.tr('actionsCreate'), items: [
           // Встреча по письму: тема, участники и текст — из письма.
@@ -3263,6 +3269,27 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       ),
     );
     _closeAfterAction();
+  }
+
+  /// Заблокировать (или разблокировать) отправителя письма (1.10.x).
+  Future<void> _blockSender(EmailModel email) async {
+    final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+    if (account == null) return;
+    final wasBlocked = isSenderBlocked(ref, email.from.email, email.accountId);
+    final msg = await blockSender(context, ref, account: account, email: email);
+    if (!mounted || msg == null) return;
+    showSenderActionResult(context, msg);
+    // Письмо заблокированного отправителя уже в «Спаме» — закрыть его.
+    if (!wasBlocked) _closeAfterAction();
+  }
+
+  /// «Чистка» по отправителю письма (1.10.x).
+  Future<void> _sweepSender(EmailModel email) async {
+    final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+    if (account == null) return;
+    final msg = await sweepSender(context, ref, account: account, email: email);
+    if (!mounted || msg == null) return;
+    showSenderActionResult(context, msg);
   }
 
   Future<void> _moveToJunk(EmailModel email, AppLocalizations l10n) async {

@@ -3,6 +3,7 @@ import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/common/gap_below.dart';
 import '../widgets/mail_check_sheet.dart' show showMailCheckSheet;
 import '../widgets/background_hint_strip.dart';
+import '../widgets/sender_actions_sheet.dart';
 import '../widgets/first_load_strip.dart';
 import '../../../core/utils/text_safe.dart';
 import '../providers/drawer_prefs.dart' show drawerPinnedProvider, menuOnRightProvider, quickFiltersProvider, mailSwipePagerProvider;
@@ -1699,6 +1700,16 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   /// Переместить письмо в «Спам». Папка ищется ПО ТИПУ: её идентификатор у
   /// разных серверов различается (EWS `junkemail`, IMAP «Спам»/«Junk»).
   /// Раньше свайп «В спам» имел пустой обработчик и ничего не делал.
+  /// Заблокировать отправителя или «Чистка» (1.10.x).
+  Future<void> _senderAction(EmailModel email, {required bool block}) async {
+    final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+    if (account == null) return;
+    final msg = block
+        ? await blockSender(context, ref, account: account, email: email)
+        : await sweepSender(context, ref, account: account, email: email);
+    if (mounted) showSenderActionResult(context, msg);
+  }
+
   Future<void> _moveToJunk(EmailModel email, AppLocalizations l10n) =>
       // С «Вернуть», как «В архив» и удаление (1.7.2+106; раньше перенос сразу).
       _moveWithUndo(email, FolderType.junk, l10n.tr('movedToJunk'), l10n.tr('junkFolderNotFound'));
@@ -2434,6 +2445,15 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           PeekAction(icon: AppIcons.inbox, label: l10n.tr('notSpam'), onTap: () => unawaited(_notJunk(email, l10n)))
         else
           PeekAction(icon: AppIcons.report, label: l10n.tr('moveToJunk'), onTap: () => unawaited(_moveToJunk(email, l10n))),
+        // Заблокировать отправителя и «Чистка» (1.10.x).
+        PeekAction(
+            icon: AppIcons.block,
+            label: l10n.tr(isSenderBlocked(ref, email.from.email, email.accountId) ? 'unblockSender' : 'blockSender'),
+            onTap: () => unawaited(_senderAction(email, block: true))),
+        PeekAction(
+            icon: AppIcons.cleaning_services,
+            label: l10n.tr('sweepShort'),
+            onTap: () => unawaited(_senderAction(email, block: false))),
         PeekAction(
           icon: AppIcons.delete,
           label: l10n.delete,

@@ -22,6 +22,8 @@ import '../../mail/providers/account_look.dart' show onAccountColor;
 import '../../../core/security/html_sanitizer.dart';
 import '../../../core/security/mail_body_processor.dart';
 import '../widgets/mail_editor.dart';
+import '../widgets/compose_translate.dart';
+import '../../../services/translation/translator.dart' show translationPlatformSupported;
 import '../../mail/widgets/mail_html_view.dart';
 import '../../../core/security/link_opener.dart';
 import 'dart:io';
@@ -2077,6 +2079,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                   _openField(_bccController);
                 case 'control':
                   setState(() => _control = !_control);
+                case 'translate':
+                  unawaited(_translateOwn());
               }
             },
             itemBuilder: (_) => [
@@ -2084,6 +2088,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
               _menuItem('importance', AppIcons.flag, l10n.tr('importance')),
               _menuItem('groups', AppIcons.groups, l10n.tr('distributionGroups')),
               _menuItem('signature', AppIcons.draw, l10n.tr('insertSignature')),
+              // Перевод своего текста на устройстве (1.9.x).
+              if (translationPlatformSupported) _menuItem('translate', AppIcons.translate, l10n.tr('translate')),
               // S/MIME — раньше в шторке грифа (гриф убран в 1.5.9).
               if (_smimeAvailable) _menuItem('smime', AppIcons.verified_user, l10n.tr('smimeSection')),
               if (!_showBcc && _bccRecipients.isEmpty)
@@ -3464,6 +3470,32 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       }
     } catch (_) {}
   }
+
+  /// «Перевести» (1.9.x, просьба владельца 31.10.2026): только свой текст —
+  /// подпись и цитата не переводятся; «Вернуть» или «Отменить» редактора —
+  /// прежний текст (compose_translate.dart).
+  Future<void> _translateOwn() => translateComposeBody(
+        context,
+        ref,
+        html: _useHtmlEditor,
+        readBody: () async {
+          if (!_useHtmlEditor) return _plainController.text;
+          final raw = await _editor.getHtml();
+          return raw == null ? _lastHtml : _fromEditor(raw);
+        },
+        apply: (body) {
+          if (!mounted) return;
+          if (_useHtmlEditor) {
+            unawaited(_editor.replaceHtml(_toEditor(body)));
+            _lastHtml = body;
+          } else {
+            _plainController.text = body;
+          }
+          _markDraftChanged();
+        },
+        signaturePlain: _signatureFor(_fromAccount)?.plain,
+        quoteHtml: _quoteHtml,
+      );
 
   AppMenuEntry<String> _menuItem(String value, IconData icon, String text) =>
       AppMenuEntry(value: value, icon: icon, label: text);

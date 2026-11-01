@@ -156,6 +156,14 @@ class AppSettings {
   // ── Подпись ──
   final bool autoInsertSignature;
 
+  // ── Перевод писем на устройстве (1.9.x, просьба владельца 31.10.2026) ──
+  /// Предлагать перевод письма, язык которого не язык приложения.
+  final bool translateOffer;
+  /// Языки для перевода — скачивать только по Wi-Fi (Android).
+  final bool translateWifiOnly;
+  /// С этих языков перевод не предлагать.
+  final List<String> translateNever;
+
   const AppSettings({
     this.themeMode = ThemeMode.system,
     this.amoled = false,
@@ -203,6 +211,9 @@ class AppSettings {
     this.activeAccountId,
     this.autoLockMinutes = 5,
     this.autoInsertSignature = true,
+    this.translateOffer = true,
+    this.translateWifiOnly = true,
+    this.translateNever = const [],
     this.attachmentsWifiOnly = true,
   });
 
@@ -265,6 +276,9 @@ class AppSettings {
     String? activeAccountId,
     int? autoLockMinutes,
     bool? autoInsertSignature,
+    bool? translateOffer,
+    bool? translateWifiOnly,
+    List<String>? translateNever,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -314,6 +328,9 @@ class AppSettings {
       activeAccountId: activeAccountId ?? this.activeAccountId,
       autoLockMinutes: autoLockMinutes ?? this.autoLockMinutes,
       autoInsertSignature: autoInsertSignature ?? this.autoInsertSignature,
+      translateOffer: translateOffer ?? this.translateOffer,
+      translateWifiOnly: translateWifiOnly ?? this.translateWifiOnly,
+      translateNever: translateNever ?? this.translateNever,
     );
   }
 }
@@ -375,6 +392,9 @@ class _K {
   static const activeAccount = 's_active_acc';
   static const autoLock = 's_auto_lock';
   static const autoSignature = 's_auto_sig';
+  static const translateOffer = 's_translate_offer';
+  static const translateWifiOnly = 's_translate_wifi';
+  static const translateNever = 's_translate_never';
 }
 
 /// Провайдер настроек
@@ -454,6 +474,9 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       activeAccountId: _p.getString(_K.activeAccount),
       autoLockMinutes: _p.getInt(_K.autoLock) ?? 5,
       autoInsertSignature: _p.getBool(_K.autoSignature) ?? true,
+      translateOffer: _p.getBool(_K.translateOffer) ?? true,
+      translateWifiOnly: _p.getBool(_K.translateWifiOnly) ?? true,
+      translateNever: _p.getStringList(_K.translateNever) ?? const [],
     );
   }
 
@@ -737,6 +760,21 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(autoInsertSignature: v);
   }
 
+  Future<void> setTranslateOffer(bool v) async {
+    await _p.setBool(_K.translateOffer, v);
+    state = state.copyWith(translateOffer: v);
+  }
+
+  Future<void> setTranslateWifiOnly(bool v) async {
+    await _p.setBool(_K.translateWifiOnly, v);
+    state = state.copyWith(translateWifiOnly: v);
+  }
+
+  Future<void> setTranslateNever(List<String> v) async {
+    await _p.setStringList(_K.translateNever, v);
+    state = state.copyWith(translateNever: v);
+  }
+
   /// Сбросить все настройки
   Future<void> resetAll() async {
     final keys = [
@@ -750,6 +788,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       _K.groupByConversation, _K.swipeLP, _K.swipeLS, _K.swipeRP, _K.swipeRS, _K.swipeCL, _K.swipeCR, _K.swipeAnim, _K.previewLines, _K.peekPreviewLines,
       _K.aiEnabled, _K.smartReplies, _K.dlpEnabled, _K.autoRules,
       _K.voiceControl, _K.activeAccount, _K.autoLock, _K.autoSignature,
+      _K.translateOffer, _K.translateWifiOnly, _K.translateNever,
     ];
     for (final key in keys) {
       await _p.remove(key);

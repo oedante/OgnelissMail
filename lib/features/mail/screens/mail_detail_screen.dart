@@ -75,6 +75,8 @@ import '../../../features/settings/providers/feature_flags_provider.dart';
 import '../../settings/widgets/feature_settings_sections.dart' show ExperimentalKeys;
 import '../widgets/linkified_text.dart';
 import '../widgets/mail_native_body.dart';
+import '../widgets/mail_translation.dart';
+import '../../../services/translation/translator.dart' show translationPlatformSupported;
 import '../widgets/mail_header.dart';
 import '../widgets/conversation_thread_view.dart';
 import '../widgets/quick_reply_bar.dart';
@@ -146,6 +148,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     with SafeAsyncState<MailDetailScreen> {
   EmailModel? _email;
   bool _isLoading = true;
+  /// Перевод письма на устройстве (1.9.x, просьба владельца 31.10.2026):
+  /// плашка «Перевести», перевод вместо текста, «Показать оригинал».
+  late final MailTranslationController _translation =
+      MailTranslationController(ref)..addListener(() => safeSetState(() {}));
   bool _isLoadingBody = false;
   bool _readReceiptHandled = false;
   bool _showQuote = false;
@@ -290,6 +296,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     _shownTimer?.cancel();
     OpenTrace.cancel();
     _quickReply.dispose();
+    _translation.dispose();
     super.dispose();
   }
 
@@ -1432,6 +1439,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // S/MIME), — после перехода на экран: тело письма появляется тогда
         // же, поэтому они не сдвигают уже видимый текст.
         final settled = _settled && !_isLoadingBody;
+        // Язык письма — когда тело готово; показ — с переводом, если он включён.
+        if (settled) _translation.detect(email);
+        final shown = _translation.apply(email);
         final bodyChildren = <Widget>[
             // ── Антифишинг: баннер безопасности отправителя (сверху письма) ──
             if (settled)
@@ -1609,6 +1619,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 ),
               ),
 
+            // ── Перевод: «Язык письма: … · Перевести» / «Показать оригинал» ──
+            if (settled) MailTranslateStrip(controller: _translation, email: email),
+
             // Плашки выше — каждая с отступом Space.s сверху и без нижнего;
             // здесь один общий отступ до вложений и текста: плашка «На
             // контроле» стояла вплотную к письму (замечание 10.10.2026).
@@ -1626,15 +1639,15 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 // линии с шапкой, плашками и «Показать переписку» (раньше
                 // WebView шёл во всю ширину с отступом внутри документа).
                 padding: const EdgeInsets.symmetric(horizontal: Space.l),
-                child: email.bodyHtml != null && email.bodyHtml!.isNotEmpty && mailWebViewSupported
-                    ? _buildWebBody(email, theme, l10n, settings)
-                    : email.bodyHtml != null && email.bodyHtml!.isNotEmpty
-                    ? _buildDesktopBody(email, theme, l10n, settings)
+                child: shown.bodyHtml != null && shown.bodyHtml!.isNotEmpty && mailWebViewSupported
+                    ? _buildWebBody(shown, theme, l10n, settings)
+                    : shown.bodyHtml != null && shown.bodyHtml!.isNotEmpty
+                    ? _buildDesktopBody(shown, theme, l10n, settings)
                     // Письмо без HTML — того же размера, что и HTML-письма
                     // (1.8.12): 15 px × шрифт системы, без уменьшения
                     // масштабом интерфейса (MailHtmlView.textScaleOf).
                     : LinkifiedText(
-                        SymbolFonts.fixPlain(email.bodyPlain ?? email.bodyPreview ?? ''),
+                        SymbolFonts.fixPlain(shown.bodyPlain ?? shown.bodyPreview ?? ''),
                         style: theme.textTheme.bodyMedium
                             ?.copyWith(fontSize: 15 * MailHtmlView.textScaleOf(context), height: 1.4),
                         textScaler: TextScaler.noScaling,
@@ -2296,6 +2309,12 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
               ShareParams(text: '${email.subject}\n\n${email.bodyPlain ?? email.bodyPreview ?? ""}'))),
         ]),
         PeekGroup(title: l10n.tr('actionsMore'), items: [
+          // Перевод на устройстве (1.9.x): то же, что кнопка плашки.
+          if (translationPlatformSupported)
+            _peekAction(AppIcons.translate, l10n.tr(_translation.showing ? 'translateShowOriginal' : 'translate'),
+                () => _translation.showing
+                    ? _translation.showOriginal()
+                    : unawaited(_translation.translate(context, email))),
           _peekAction(AppIcons.info, l10n.tr('messageDetails'),
               () => _showMessageDetails(email, l10n)),
           // «Найти документ»: все файлы этого отправителя из всех писем.

@@ -3,6 +3,7 @@ import '../widgets/mail_tips_strip.dart';
 import '../../../core/platform/file_pick.dart' show ChosenFile, FilePick;
 import '../../../core/utils/app_date_format.dart';
 import '../../../core/utils/send_later_presets.dart';
+import '../../../widgets/common/file_drop_zone.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
 import '../../../widgets/common/peek_card.dart' show PeekAction, peekAnchorOf, showHoldMenu, showPeekCard;
 import '../../../widgets/common/quick_long_press.dart' show HoldPointer, QuickLongPress;
@@ -2017,7 +2018,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _onDiscard(l10n);
       },
-      child: Scaffold(
+      // Файлы с компьютера — перетаскиванием на окно письма (1.9.x).
+      child: FileDropZone(
+        hint: l10n.tr('composeDropHint'),
+        onFiles: (paths) => unawaited(_addDroppedFiles(paths)),
+        child: Scaffold(
       // Под шторкой (подбор адресатов) или окном экран письма не подстраивается
       // под клавиатуру (1.6.19): иначе он вместе с редактором в WebView
       // перестраивался в каждом кадре её появления, и шторка ехала рывками.
@@ -2408,7 +2413,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
           ),
         ],
       ),
-    )));
+    ))));
   }
 
   /// «Отправить»: на широком экране — с подписью, на узком — значок.
@@ -5273,34 +5278,58 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   Future<void> _pickAttachments() async {
     final l10n = AppLocalizations.of(context);
-    final limit = _fromAccount != null
-        ? ref.read(attachmentLimitProvider).limitFor(_fromAccount!.id)
-        : AppConstants.maxAttachmentSize;
     try {
-      final picked = await FilePick.files();
-      var total = _attachments.fold<int>(0, (s, f) => s + f.size);
-      for (final chosen in picked) {
-        // Блокируем по СУММАРНОМУ объёму (лимит сервера), а не только по
-        // одному файлу. Строкой вверху экрана: чёрные плашки в приложении
-        // выключены, и раньше превышение лимита молча ничего не делало.
-        // Фото добавляются и сверх лимита (1.7.2+110): при отправке их можно
-        // уменьшить — строка размера покажет, на сколько письмо тяжелее.
-        if (total + chosen.size > limit && !ImageShrink.isShrinkable(chosen.name)) {
-          final mb = (limit / (1024 * 1024)).toStringAsFixed(0);
-          showInlineError(l10n.tr('attachLimitExceeded').replaceAll('{mb}', mb).replaceAll('{file}', chosen.name));
-          continue;
-        }
-        final file = await chosen.keepable();
-        total += file.size;
-        if (!mounted) return;
-        setState(() => _attachments.add(file));
-      }
-      // Файлы — в черновик (1.7.2+111).
-      if (picked.isNotEmpty) _markDraftChanged();
+      await _addChosenFiles(await FilePick.files());
     } catch (e) {
       AppLogger.warning('Вложения: выбор файлов не удался — $e');
       showInlineError('${l10n.tr('error')}: $e');
     }
+  }
+
+  /// Файлы, брошенные на окно письма с компьютера (1.9.x, просьба владельца
+  /// 31.10.2026), — вложениями, как выбранные кнопкой. Папки пропускаются.
+  Future<void> _addDroppedFiles(List<String> paths) async {
+    final files = <ChosenFile>[];
+    for (final p in paths) {
+      try {
+        final f = File(p);
+        if (!f.existsSync()) continue;
+        files.add(ChosenFile(name: p.split(Platform.pathSeparator).last, size: f.lengthSync(), path: p));
+      } catch (_) {}
+    }
+    try {
+      await _addChosenFiles(files);
+    } catch (e) {
+      AppLogger.warning('Вложения: перетащенные файлы не добавлены — $e');
+    }
+  }
+
+  /// Добавить файлы во вложения: проверка суммарного объёма, копия в
+  /// хранилище приложения, черновик.
+  Future<void> _addChosenFiles(List<ChosenFile> picked) async {
+    final l10n = AppLocalizations.of(context);
+    final limit = _fromAccount != null
+        ? ref.read(attachmentLimitProvider).limitFor(_fromAccount!.id)
+        : AppConstants.maxAttachmentSize;
+    var total = _attachments.fold<int>(0, (s, f) => s + f.size);
+    for (final chosen in picked) {
+      // Блокируем по СУММАРНОМУ объёму (лимит сервера), а не только по
+      // одному файлу. Строкой вверху экрана: чёрные плашки в приложении
+      // выключены, и раньше превышение лимита молча ничего не делало.
+      // Фото добавляются и сверх лимита (1.7.2+110): при отправке их можно
+      // уменьшить — строка размера покажет, на сколько письмо тяжелее.
+      if (total + chosen.size > limit && !ImageShrink.isShrinkable(chosen.name)) {
+        final mb = (limit / (1024 * 1024)).toStringAsFixed(0);
+        showInlineError(l10n.tr('attachLimitExceeded').replaceAll('{mb}', mb).replaceAll('{file}', chosen.name));
+        continue;
+      }
+      final file = await chosen.keepable();
+      total += file.size;
+      if (!mounted) return;
+      setState(() => _attachments.add(file));
+    }
+    // Файлы — в черновик (1.7.2+111).
+    if (picked.isNotEmpty) _markDraftChanged();
   }
 
   void _showTemplates(AppLocalizations l10n) {

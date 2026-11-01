@@ -66,6 +66,7 @@ def test(path: str) -> None:
     suites = {}   # id → path
     tests = {}    # id → (name, suiteID, line)
     errors = {}   # testID → [text]
+    prints = {}   # testID → [строки вывода теста]
     failed = []   # (testID, result)
     passed = skipped = 0
     with open(path, encoding='utf-8', errors='replace') as f:
@@ -84,6 +85,8 @@ def test(path: str) -> None:
             elif t == 'testStart':
                 s = ev.get('test') or {}
                 tests[s.get('id')] = (s.get('name') or '', s.get('suiteID'), s.get('root_line') or s.get('line'))
+            elif t == 'print':
+                prints.setdefault(ev.get('testID'), []).extend((ev.get('message') or '').splitlines())
             elif t == 'error':
                 text = (ev.get('error') or '').strip()
                 stack = (ev.get('stackTrace') or '').strip()
@@ -108,6 +111,21 @@ def test(path: str) -> None:
         name, suite_id, line = tests.get(tid, ('?', None, None))
         file = suites.get(suite_id, '')
         text = '\n'.join(errors.get(tid, []))
+        # У виджет-тестов ошибка — «Test failed. See exception logs above.»,
+        # а само исключение Flutter приходит выводом теста (print): его блок
+        # «EXCEPTION CAUGHT» — в журнал, иначе причину видно только в
+        # артефакте (01.11.2026).
+        out = prints.get(tid, [])
+        starts = [i for i, l in enumerate(out) if 'EXCEPTION CAUGHT' in l]
+        if starts:
+            text = '\n'.join(out[starts[0]:starts[0] + 40]) + '\n' + text
+            # Целиком (с журналом окна письма из интеграционных тестов) —
+            # обычным выводом: в аннотации текст обрезан.
+            ends = [j for j in range(starts[0] + 1, len(out)) if out[j].startswith('════')]
+            block = out[starts[0]:(ends[0] + 1) if ends else starts[0] + 300]
+            print(f'::group::{name}')
+            print('\n'.join(block))
+            print('::endgroup::')
         lines.append(f'{file}: {name} — {result}\n{cut(text, 1500)}')
         if i < MAX_EACH:
             loc = f'file={esc_prop(file)}' + (f',line={line}' if line else '') if file else ''

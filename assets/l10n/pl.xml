@@ -3738,4 +3738,19 @@
     <string name="ios_siriEventAsk">Jakie spotkanie i kiedy?</string>
     <string name="ios_siriReminderAsk">O czym i kiedy przypomnieć?</string>
     <string name="ios_siriSearchAsk">Czego szukać?</string>
+    <plurals name="dragNMails">
+        <item quantity="one">{n} wiadomość</item>
+        <item quantity="few">{n} wiadomości</item>
+        <item quantity="many">{n} wiadomości</item>
+        <item quantity="other">{n} wiadomości</item>
+    </plurals>
+    <plurals name="mailsMovedTo">
+        <item quantity="one">{n} wiadomość przeniesiona do „{folder}”</item>
+        <item quantity="few">{n} wiadomości przeniesione do „{folder}”</item>
+        <item quantity="many">{n} wiadomości przeniesionych do „{folder}”</item>
+        <item quantity="other">{n} wiadomości przeniesionych do „{folder}”</item>
+    </plurals>
+    <string name="composeDropHint">Upuść, aby dołączyć pliki</string>
+    <string name="openInNewWindow">Otwórz w nowym oknie</string>
+    <string name="openInMainWindow">Otwórz w głównym oknie</string>
 </resources>

@@ -3700,4 +3700,15 @@
     <string name="ios_siriEventAsk">Vilket möte, och när?</string>
     <string name="ios_siriReminderAsk">Vad ska jag påminna dig om, och när?</string>
     <string name="ios_siriSearchAsk">Vad ska jag söka efter?</string>
+    <plurals name="dragNMails">
+        <item quantity="one">{n} meddelande</item>
+        <item quantity="other">{n} meddelanden</item>
+    </plurals>
+    <plurals name="mailsMovedTo">
+        <item quantity="one">{n} meddelande flyttat till ”{folder}”</item>
+        <item quantity="other">{n} meddelanden flyttade till ”{folder}”</item>
+    </plurals>
+    <string name="composeDropHint">Släpp för att bifoga filer</string>
+    <string name="openInNewWindow">Öppna i ett nytt fönster</string>
+    <string name="openInMainWindow">Öppna i huvudfönstret</string>
 </resources>

@@ -3681,4 +3681,13 @@
     <string name="ios_siriEventAsk">Cuộc họp gì và khi nào?</string>
     <string name="ios_siriReminderAsk">Nhắc việc gì và khi nào?</string>
     <string name="ios_siriSearchAsk">Tìm gì?</string>
+    <plurals name="dragNMails">
+        <item quantity="other">{n} thư</item>
+    </plurals>
+    <plurals name="mailsMovedTo">
+        <item quantity="other">Đã chuyển {n} thư vào “{folder}”</item>
+    </plurals>
+    <string name="composeDropHint">Thả để đính kèm tệp</string>
+    <string name="openInNewWindow">Mở trong cửa sổ mới</string>
+    <string name="openInMainWindow">Mở trong cửa sổ chính</string>
 </resources>

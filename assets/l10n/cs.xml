@@ -3719,4 +3719,17 @@
     <string name="ios_siriEventAsk">Jaká schůzka a kdy?</string>
     <string name="ios_siriReminderAsk">Co a kdy vám mám připomenout?</string>
     <string name="ios_siriSearchAsk">Co mám hledat?</string>
+    <plurals name="dragNMails">
+        <item quantity="one">{n} zpráva</item>
+        <item quantity="few">{n} zprávy</item>
+        <item quantity="other">{n} zpráv</item>
+    </plurals>
+    <plurals name="mailsMovedTo">
+        <item quantity="one">{n} zpráva přesunuta do „{folder}“</item>
+        <item quantity="few">{n} zprávy přesunuty do „{folder}“</item>
+        <item quantity="other">{n} zpráv přesunuto do „{folder}“</item>
+    </plurals>
+    <string name="composeDropHint">Pusťte pro přiložení souborů</string>
+    <string name="openInNewWindow">Otevřít v novém okně</string>
+    <string name="openInMainWindow">Otevřít v hlavním okně</string>
 </resources>

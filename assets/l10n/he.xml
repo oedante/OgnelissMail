@@ -3719,4 +3719,17 @@
     <string name="ios_siriEventAsk">איזו פגישה ומתי?</string>
     <string name="ios_siriReminderAsk">על מה להזכיר ומתי?</string>
     <string name="ios_siriSearchAsk">מה לחפש?</string>
+    <plurals name="dragNMails">
+        <item quantity="one">{n} הודעה</item>
+        <item quantity="two">{n} הודעות</item>
+        <item quantity="other">{n} הודעות</item>
+    </plurals>
+    <plurals name="mailsMovedTo">
+        <item quantity="one">{n} הודעה הועברה אל “{folder}”</item>
+        <item quantity="two">{n} הודעות הועברו אל “{folder}”</item>
+        <item quantity="other">{n} הודעות הועברו אל “{folder}”</item>
+    </plurals>
+    <string name="composeDropHint">שחררו כדי לצרף קבצים</string>
+    <string name="openInNewWindow">פתיחה בחלון חדש</string>
+    <string name="openInMainWindow">פתיחה בחלון הראשי</string>
 </resources>

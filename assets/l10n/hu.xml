@@ -3700,4 +3700,15 @@
     <string name="ios_siriEventAsk">Milyen megbeszélés, és mikor?</string>
     <string name="ios_siriReminderAsk">Mire és mikor emlékeztesselek?</string>
     <string name="ios_siriSearchAsk">Mit keressek?</string>
+    <plurals name="dragNMails">
+        <item quantity="one">{n} üzenet</item>
+        <item quantity="other">{n} üzenet</item>
+    </plurals>
+    <plurals name="mailsMovedTo">
+        <item quantity="one">{n} üzenet áthelyezve a(z) „{folder}” mappába</item>
+        <item quantity="other">{n} üzenet áthelyezve a(z) „{folder}” mappába</item>
+    </plurals>
+    <string name="composeDropHint">Fájlok csatolásához engedje el itt</string>
+    <string name="openInNewWindow">Megnyitás új ablakban</string>
+    <string name="openInMainWindow">Megnyitás a főablakban</string>
 </resources>

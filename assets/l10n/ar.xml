@@ -3776,4 +3776,23 @@
     <string name="ios_siriEventAsk">ما الاجتماع ومتى؟</string>
     <string name="ios_siriReminderAsk">بماذا أذكّرك ومتى؟</string>
     <string name="ios_siriSearchAsk">عمّ أبحث؟</string>
+    <plurals name="dragNMails">
+        <item quantity="zero">{n} رسالة</item>
+        <item quantity="one">{n} رسالة</item>
+        <item quantity="two">{n} رسالتان</item>
+        <item quantity="few">{n} رسائل</item>
+        <item quantity="many">{n} رسالة</item>
+        <item quantity="other">{n} رسالة</item>
+    </plurals>
+    <plurals name="mailsMovedTo">
+        <item quantity="zero">تم نقل {n} رسالة إلى «{folder}»</item>
+        <item quantity="one">تم نقل {n} رسالة إلى «{folder}»</item>
+        <item quantity="two">تم نقل {n} رسالتين إلى «{folder}»</item>
+        <item quantity="few">تم نقل {n} رسائل إلى «{folder}»</item>
+        <item quantity="many">تم نقل {n} رسالة إلى «{folder}»</item>
+        <item quantity="other">تم نقل {n} رسالة إلى «{folder}»</item>
+    </plurals>
+    <string name="composeDropHint">أفلت لإرفاق الملفات</string>
+    <string name="openInNewWindow">فتح في نافذة جديدة</string>
+    <string name="openInMainWindow">فتح في النافذة الرئيسية</string>
 </resources>

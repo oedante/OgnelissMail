@@ -3700,4 +3700,15 @@
     <string name="ios_siriEventAsk">Hangi toplantı, ne zaman?</string>
     <string name="ios_siriReminderAsk">Neyi ne zaman hatırlatayım?</string>
     <string name="ios_siriSearchAsk">Ne arayayım?</string>
+    <plurals name="dragNMails">
+        <item quantity="one">{n} ileti</item>
+        <item quantity="other">{n} ileti</item>
+    </plurals>
+    <plurals name="mailsMovedTo">
+        <item quantity="one">{n} ileti “{folder}” klasörüne taşındı</item>
+        <item quantity="other">{n} ileti “{folder}” klasörüne taşındı</item>
+    </plurals>
+    <string name="composeDropHint">Dosya eklemek için bırakın</string>
+    <string name="openInNewWindow">Yeni pencerede aç</string>
+    <string name="openInMainWindow">Ana pencerede aç</string>
 </resources>

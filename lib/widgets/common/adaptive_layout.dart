@@ -121,7 +121,6 @@ class AdaptiveLayout extends StatefulWidget {
 class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   /// Доля ширины под список, выбранная пользователем (null — по умолчанию).
   double? _ratio;
-  bool _dragging = false;
 
   static const _minList = 280.0;
   static const _minDetail = 360.0;
@@ -206,7 +205,6 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
         }
 
         final listWidth = _listWidth(total);
-        final theme = Theme.of(context);
         return _SplitScope(
           split: true,
           child: Row(
@@ -214,48 +212,85 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
               SizedBox(width: listWidth, child: widget.body),
               // Разделитель тянется мышью и пальцем; двойное нажатие —
               // ширина по умолчанию.
-              MouseRegion(
-                cursor: SystemMouseCursors.resizeColumn,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  supportedDevices: const {
-                    PointerDeviceKind.mouse,
-                    PointerDeviceKind.touch,
-                    PointerDeviceKind.stylus,
-                    PointerDeviceKind.trackpad,
-                  },
-                  onHorizontalDragStart: (_) => setState(() => _dragging = true),
-                  onHorizontalDragUpdate: (d) => setState(() {
-                    final w = (listWidth + d.delta.dx).clamp(_minList, total - _minDetail);
-                    _ratio = w / total;
-                  }),
-                  onHorizontalDragEnd: (_) {
-                    setState(() => _dragging = false);
-                    _save();
-                  },
-                  onDoubleTap: () {
-                    setState(() => _ratio = null);
-                    final k = _prefKey;
-                    if (k != null) {
-                      SharedPreferences.getInstance().then((p) => p.remove(k)).ignore();
-                    }
-                  },
-                  child: SizedBox(
-                    width: 9,
-                    child: Center(
-                      child: Container(
-                        width: _dragging ? 3 : 1,
-                        color: _dragging ? theme.colorScheme.primary : theme.dividerColor,
-                      ),
-                    ),
-                  ),
-                ),
+              PaneSplitter(
+                onDrag: (dx) => setState(() {
+                  final w = (listWidth + dx).clamp(_minList, total - _minDetail);
+                  _ratio = w / total;
+                }),
+                onDragEnd: _save,
+                onReset: () {
+                  setState(() => _ratio = null);
+                  final k = _prefKey;
+                  if (k != null) {
+                    SharedPreferences.getInstance().then((p) => p.remove(k)).ignore();
+                  }
+                },
               ),
               Expanded(child: detail),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+/// Вертикальный разделитель панелей: тянется мышью, пальцем и пером, курсор
+/// «изменить ширину» при наведении, двойное нажатие — ширина по умолчанию.
+/// Общий у «лента | письмо» и «папки | лента» (1.9.x, просьба владельца
+/// 31.10.2026: панели на компьютере и планшете — своей ширины).
+class PaneSplitter extends StatefulWidget {
+  final ValueChanged<double> onDrag;
+  final VoidCallback? onDragEnd;
+  final VoidCallback? onReset;
+
+  const PaneSplitter({super.key, required this.onDrag, this.onDragEnd, this.onReset});
+
+  @override
+  State<PaneSplitter> createState() => _PaneSplitterState();
+}
+
+class _PaneSplitterState extends State<PaneSplitter> {
+  bool _dragging = false;
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final active = _dragging || _hover;
+    return MouseRegion(
+      cursor: SystemMouseCursors.resizeColumn,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        supportedDevices: const {
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.touch,
+          PointerDeviceKind.stylus,
+          PointerDeviceKind.trackpad,
+        },
+        onHorizontalDragStart: (_) => setState(() => _dragging = true),
+        onHorizontalDragUpdate: (d) => widget.onDrag(d.delta.dx),
+        onHorizontalDragEnd: (_) {
+          setState(() => _dragging = false);
+          widget.onDragEnd?.call();
+        },
+        onDoubleTap: widget.onReset,
+        child: SizedBox(
+          width: 9,
+          child: Center(
+            child: Container(
+              width: active ? 3 : 1,
+              color: _dragging
+                  ? theme.colorScheme.primary
+                  : _hover
+                      ? theme.colorScheme.primary.withValues(alpha: 0.5)
+                      : theme.dividerColor,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

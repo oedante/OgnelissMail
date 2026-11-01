@@ -3681,4 +3681,13 @@
     <string name="ios_siriEventAsk">Rapat apa dan kapan?</string>
     <string name="ios_siriReminderAsk">Ingatkan tentang apa dan kapan?</string>
     <string name="ios_siriSearchAsk">Apa yang ingin dicari?</string>
+    <plurals name="dragNMails">
+        <item quantity="other">{n} email</item>
+    </plurals>
+    <plurals name="mailsMovedTo">
+        <item quantity="other">{n} email dipindahkan ke “{folder}”</item>
+    </plurals>
+    <string name="composeDropHint">Lepaskan untuk melampirkan file</string>
+    <string name="openInNewWindow">Buka di jendela baru</string>
+    <string name="openInMainWindow">Buka di jendela utama</string>
 </resources>

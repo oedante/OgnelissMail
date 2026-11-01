@@ -602,7 +602,7 @@ img[src^="cid:" i]{display:none !important;}
 /// на поведение не влияет.
 @visibleForTesting
 class MailHtmlViewProbe {
-  MailHtmlViewProbe({this.onCreated, this.onLoadStop, this.onZoomScaleChanged, this.onLayout});
+  MailHtmlViewProbe({this.onCreated, this.onLoadStop, this.onZoomScaleChanged, this.onLayout, this.onTrace});
 
   final void Function(InAppWebViewController controller)? onCreated;
   final VoidCallback? onLoadStop;
@@ -614,6 +614,11 @@ class MailHtmlViewProbe {
   /// обычный масштаб), «Исходный масштаб» выбран, письмо увеличено, показано.
   final void Function(({double height, int? fitWidth, bool actualSize, bool pinched, bool ready}) layout)?
       onLayout;
+
+  /// Журнал окна: замеры высоты, масштаб от движка, показ — строкой «мс
+  /// событие». Тест выводит его, когда высота или касания не сошлись: на
+  /// эмуляторе в CI иначе не понять, откуда взялась лишняя высота.
+  final void Function(String line)? onTrace;
 }
 
 /// Тело письма в WebView. Ссылки — через [onLink]; высота подстраивается под
@@ -1139,6 +1144,14 @@ class _MailHtmlViewState extends State<MailHtmlView> {
 
   double get _effScale => _zoom ?? _scale;
 
+  /// Журнал для тестов ([MailHtmlViewProbe.onTrace]); без наблюдателя
+  /// строка не собирается.
+  final Stopwatch _traceClock = Stopwatch()..start();
+  void _trace(String Function() line) {
+    final t = MailHtmlView.debugProbe?.onTrace;
+    if (t != null) t('${_traceClock.elapsedMilliseconds} ${line()}');
+  }
+
   double get _scale => _fitWidth == null || _viewWidth <= 0 ? 1 : _viewWidth / _fitWidth!;
 
   String _htmlFor() {
@@ -1218,6 +1231,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
 
   void _markReady() {
     if (_ready || !mounted) return;
+    _trace(() => 'показ: высота $_height, замерено $_measured');
     setState(() => _ready = true);
     if (!_shownOnce) {
       _shownOnce = true;
@@ -1380,13 +1394,17 @@ class _MailHtmlViewState extends State<MailHtmlView> {
       // Android, письмо увеличено щипком: документ не ниже окна в масштабе
       // исходного, и замер давал высоту вдвое больше — она росла с каждым
       // щипком. Высоту при щипке пересчитывает [_onZoomed].
-      if (Platform.isAndroid && (_zoom ?? _scale) > _scale * 1.02) return;
+      if (Platform.isAndroid && (_zoom ?? _scale) > _scale * 1.02) {
+        _trace(() => 'замер пропущен: масштаб $_zoom > $_scale');
+        return;
+      }
       final h = await c.getContentHeight();
       if (!mounted || h == null || h <= 0) return;
       // Android отдаёт высоту в CSS-пикселях — на экране она умножается на
       // масштаб; iOS — уже в экранных точках.
       final v = (h * (Platform.isAndroid ? _effScale : 1)).toDouble().clamp(40.0, 60000.0);
       final grow = v - _height;
+      _trace(() => 'замер: $h × $_effScale = $v, окно $_height, замерено $_measured, показано $_ready');
       // Небольшой рост после первого измерения — эффект самого измерения, а
       // не содержимого; картинки и раскрытые блоки дают заметно больше.
       if (_measured && grow > 0 && grow < _height * 0.05 + 8) return;
@@ -1394,7 +1412,10 @@ class _MailHtmlViewState extends State<MailHtmlView> {
       // после — только расти: уменьшение на глазах выглядело рывком.
       if (_measured && _ready && grow < 0) return;
       _measured = true;
-      if (grow.abs() > 2) setState(() => _height = v);
+      if (grow.abs() > 2) {
+        _trace(() => 'высота → $v');
+        setState(() => _height = v);
+      }
       _heightZoom = _effScale;
       _rememberLayout();
     } catch (_) {}
@@ -1500,6 +1521,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         h = await c.getContentHeight();
       } catch (_) {}
       if (!mounted || gen != _revealGen) return;
+      _trace(() => 'ждём высоту: $h (окно $_height)');
       if (h != null && h > 0 && h == prev) {
         same++;
         final v = h * (Platform.isAndroid ? _effScale : 1);
@@ -1558,6 +1580,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     _pendingWidth = null;
     if (!mounted || w == null || (w - _viewWidth).abs() <= 1 || _viewWidth <= 0) return;
     final r = w / _viewWidth;
+    _trace(() => 'ширина $_viewWidth → $w');
     setState(() {
       _viewWidth = w;
       _pinched = false;
@@ -1621,6 +1644,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         // Окно не выше ~30 000 точек экрана: выше Android его не рисует
         // (письмо пропадало после щипка, 13.10.2026).
         final maxH = 30000 / (_mqDpr <= 0 ? 1 : _mqDpr);
+        _trace(() => 'масштаб $hz → $z: высота $_height × ${z / hz}');
         setState(() => _height = (_height * z / hz).clamp(40.0, maxH < 2000 ? 2000.0 : maxH));
         _heightZoom = z;
       } else if (!Platform.isAndroid) {
@@ -1662,6 +1686,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         if (known != null) {
           // Письмо уже показывали на этой ширине: высота и вписывание —
           // сразу, без перезагрузки документа по ширине.
+          _trace(() => 'высота с прошлого открытия: ${known.height}');
           _height = known.height;
           _fitWidth = known.fit;
           _wide = known.wide;
@@ -1922,6 +1947,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
           _web = c;
           OpenTrace.mark('создано');
           MailHtmlView.debugProbe?.onCreated?.call(c);
+          _trace(() => 'окно создано (высота $_height, ширина $_viewWidth, запасное ${_adopted != null})');
           // Движок уже загружен этим окном — прогрев не нужен.
           MailHtmlView._warmed = true;
           final adopted = _adopted;
@@ -1948,10 +1974,12 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         // Высота известна — письмо можно показать уже при первой отрисовке.
         onPageCommitVisible: (controller, url) {
           OpenTrace.mark('кадр');
+          _trace(() => 'кадр');
           if (_knownLayout && !_reloading) _markReady();
         },
         onLoadStop: (controller, url) {
           OpenTrace.mark('загрузка');
+          _trace(() => 'загрузка (окно $_height, ширина $_viewWidth)');
           _scheduleMeasures(controller);
           MailHtmlView.debugProbe?.onLoadStop?.call();
         },
@@ -1960,6 +1988,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         // после — только замер.
         onZoomScaleChanged: (controller, oldScale, newScale) {
           MailHtmlView.debugProbe?.onZoomScaleChanged?.call(oldScale, newScale);
+          _trace(() => 'масштаб движка $oldScale → $newScale (÷$_nativeDpr), показано $_ready');
           if (_ready) {
             _onZoomed(controller, newScale);
           } else {
@@ -2195,6 +2224,7 @@ class MailWebViewPool {
     if (gen != _gen) return;
     _loaded = true;
     if (prev != null && prev > 0) _height = (prev * _heightScale).clamp(40.0, 60000.0).toDouble();
+    MailHtmlView.debugProbe?.onTrace?.call('запасное окно: высота $prev × $_heightScale');
   }
 
   /// Экран письма: забрать окно, если в нём именно этот документ. Окно

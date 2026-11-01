@@ -612,6 +612,15 @@ jobs:
       id-token: write
       attestations: write
     steps:
+      # Текст страницы выпуска — «Что нового» из docs/release/STORE_NOTES_<версия>.md
+      # (1.10.0): раньше там был только список коммитов.
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: |
+            docs/release
+            tool/dev
+      - name: Release notes
+        run: python3 tool/dev/release_body.py "${{ github.ref_name }}" -o "$RUNNER_TEMP/release_body.md"
       - uses: actions/download-artifact@v4
         with:
           pattern: ogneliss-*-${{ github.sha }}
@@ -631,6 +640,7 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           name: Ogneliss Mail ${{ github.ref_name }}
+          body_path: ${{ runner.temp }}/release_body.md
           generate_release_notes: true
           files: |
             out/**/*.apk

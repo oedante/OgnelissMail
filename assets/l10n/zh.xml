@@ -3622,4 +3622,26 @@
     <string name="notifyMessengerStyleDesc">在邮件旁显示发件人的照片或首字母</string>
     <string name="notifyVipConversations">VIP 对话</string>
     <string name="notifyVipConversationsDesc">VIP 的邮件会显示在 Android 的“对话”部分，可将其设为优先</string>
+    <string name="ios_siriCompose">新邮件</string>
+    <string name="ios_siriEvent">新建日程</string>
+    <string name="ios_siriReminder">新提醒</string>
+    <string name="ios_siriMyDay">我的一天</string>
+    <string name="ios_siriUnread">未读</string>
+    <string name="ios_siriTo">收件人</string>
+    <string name="ios_siriSubject">主题</string>
+    <string name="android_shortcut_myday">我的一天</string>
+    <string name="android_shortcut_compose">新邮件</string>
+    <string name="android_shortcut_event">新会议</string>
+    <string name="android_shortcut_reminder">新提醒</string>
+    <string name="android_shortcut_unread">未读</string>
+    <string name="android_shortcut_vip">VIP 邮件</string>
+    <string name="android_shortcut_calendar">日历</string>
+    <string name="android_shortcut_tasks">任务</string>
+    <string name="ios_siriVip">VIP 邮件</string>
+    <string name="ios_siriSearch">搜索邮件</string>
+    <string name="ios_siriPhrase">内容和时间</string>
+    <string name="ios_siriQuery">搜索内容</string>
+    <string name="ios_siriEventAsk">什么会议，什么时候？</string>
+    <string name="ios_siriReminderAsk">提醒什么，什么时候？</string>
+    <string name="ios_siriSearchAsk">要搜索什么？</string>
 </resources>

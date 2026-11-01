@@ -25,5 +25,13 @@
     <string name="widget_cal_day">Day</string>
     <string name="widget_cal_week">Week</string>
     <string name="widget_cal_month">Month</string>
+    <string name="shortcut_myday">My day</string>
+    <string name="shortcut_compose">New message</string>
+    <string name="shortcut_event">New meeting</string>
+    <string name="shortcut_reminder">New reminder</string>
+    <string name="shortcut_unread">Unread</string>
+    <string name="shortcut_vip">VIP mail</string>
+    <string name="shortcut_calendar">Calendar</string>
+    <string name="shortcut_tasks">Tasks</string>
     <string name="phone_account_label" translatable="false">Ogneliss Mail</string>
 </resources>

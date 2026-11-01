@@ -3622,4 +3622,26 @@
     <string name="notifyMessengerStyleDesc">Foto atau inisial pengirim di samping pesan</string>
     <string name="notifyVipConversations">Percakapan untuk VIP</string>
     <string name="notifyVipConversationsDesc">Email dari VIP muncul di bagian Percakapan Android, tempat Anda dapat menjadikannya prioritas</string>
+    <string name="ios_siriCompose">Email baru</string>
+    <string name="ios_siriEvent">Acara baru</string>
+    <string name="ios_siriReminder">Pengingat baru</string>
+    <string name="ios_siriMyDay">Hari saya</string>
+    <string name="ios_siriUnread">Belum dibaca</string>
+    <string name="ios_siriTo">Kepada</string>
+    <string name="ios_siriSubject">Subjek</string>
+    <string name="android_shortcut_myday">Hari saya</string>
+    <string name="android_shortcut_compose">Email baru</string>
+    <string name="android_shortcut_event">Rapat baru</string>
+    <string name="android_shortcut_reminder">Pengingat baru</string>
+    <string name="android_shortcut_unread">Belum dibaca</string>
+    <string name="android_shortcut_vip">Email VIP</string>
+    <string name="android_shortcut_calendar">Kalender</string>
+    <string name="android_shortcut_tasks">Tugas</string>
+    <string name="ios_siriVip">Email dari VIP</string>
+    <string name="ios_siriSearch">Cari di email</string>
+    <string name="ios_siriPhrase">Apa dan kapan</string>
+    <string name="ios_siriQuery">Cari</string>
+    <string name="ios_siriEventAsk">Rapat apa dan kapan?</string>
+    <string name="ios_siriReminderAsk">Ingatkan tentang apa dan kapan?</string>
+    <string name="ios_siriSearchAsk">Apa yang ingin dicari?</string>
 </resources>

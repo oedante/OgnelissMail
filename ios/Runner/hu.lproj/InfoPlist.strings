@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "A fotókat csak akkor használja az alkalmazás, ha Ön üzenethez csatolja őket, vagy postafiókfotót választ.";
 "NSCameraUsageDescription" = "Az Ogneliss Mail maga nem használja a kamerát. Az üzenetből megnyitott weboldal (például egy videóértekezlet) kérheti azt.";
 "NSLocationWhenInUseUsageDescription" = "Az Ogneliss Mail nem követi a tartózkodási helyét. Az üzenetből megnyitott weboldal kérheti azt.";
+"siriCompose" = "Új üzenet";
+"siriEvent" = "Új esemény";
+"siriReminder" = "Új emlékeztető";
+"siriMyDay" = "Saját napom";
+"siriUnread" = "Olvasatlan";
+"siriTo" = "Címzett";
+"siriSubject" = "Tárgy";
+"siriVip" = "VIP-levelek";
+"siriSearch" = "Keresés a levelekben";
+"siriPhrase" = "Mit és mikor";
+"siriQuery" = "Keresett szöveg";
+"siriEventAsk" = "Milyen megbeszélés, és mikor?";
+"siriReminderAsk" = "Mire és mikor emlékeztesselek?";
+"siriSearchAsk" = "Mit keressek?";

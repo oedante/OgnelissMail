@@ -3641,4 +3641,26 @@
     <string name="notifyMessengerStyleDesc">संदेश के पास प्रेषक की फ़ोटो या पहला अक्षर</string>
     <string name="notifyVipConversations">VIP के लिए बातचीत</string>
     <string name="notifyVipConversationsDesc">VIP की मेल Android के बातचीत अनुभाग में दिखती है, जहां आप इसे प्राथमिकता दे सकते हैं</string>
+    <string name="ios_siriCompose">नया ईमेल</string>
+    <string name="ios_siriEvent">नया इवेंट</string>
+    <string name="ios_siriReminder">नया रिमाइंडर</string>
+    <string name="ios_siriMyDay">मेरा दिन</string>
+    <string name="ios_siriUnread">अपठित</string>
+    <string name="ios_siriTo">प्रति</string>
+    <string name="ios_siriSubject">विषय</string>
+    <string name="android_shortcut_myday">मेरा दिन</string>
+    <string name="android_shortcut_compose">नया ईमेल</string>
+    <string name="android_shortcut_event">नई मीटिंग</string>
+    <string name="android_shortcut_reminder">नया रिमाइंडर</string>
+    <string name="android_shortcut_unread">अपठित</string>
+    <string name="android_shortcut_vip">VIP मेल</string>
+    <string name="android_shortcut_calendar">कैलेंडर</string>
+    <string name="android_shortcut_tasks">कार्य</string>
+    <string name="ios_siriVip">VIP से मेल</string>
+    <string name="ios_siriSearch">मेल में खोजें</string>
+    <string name="ios_siriPhrase">क्या और कब</string>
+    <string name="ios_siriQuery">खोजें</string>
+    <string name="ios_siriEventAsk">कौन-सी मीटिंग और कब?</string>
+    <string name="ios_siriReminderAsk">किस बारे में और कब याद दिलाऊँ?</string>
+    <string name="ios_siriSearchAsk">क्या खोजूँ?</string>
 </resources>

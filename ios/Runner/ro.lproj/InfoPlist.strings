@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "Fotografiile sunt folosite doar când le atașezi la un mesaj sau când alegi o fotografie pentru cutia poștală.";
 "NSCameraUsageDescription" = "Ogneliss Mail nu folosește camera în mod direct. O pagină web deschisă dintr-un mesaj (de exemplu, o videoconferință) poate cere acces la ea.";
 "NSLocationWhenInUseUsageDescription" = "Ogneliss Mail nu îți urmărește locația. O pagină web deschisă dintr-un mesaj poate cere acces la ea.";
+"siriCompose" = "Mesaj nou";
+"siriEvent" = "Eveniment nou";
+"siriReminder" = "Memento nou";
+"siriMyDay" = "Ziua mea";
+"siriUnread" = "Necitite";
+"siriTo" = "Către";
+"siriSubject" = "Subiect";
+"siriVip" = "E-mailuri de la VIP";
+"siriSearch" = "Caută în e-mail";
+"siriPhrase" = "Ce și când";
+"siriQuery" = "Caută";
+"siriEventAsk" = "Ce întâlnire și când?";
+"siriReminderAsk" = "Ce să îți amintesc și când?";
+"siriSearchAsk" = "Ce să caut?";

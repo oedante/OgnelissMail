@@ -3641,4 +3641,26 @@
     <string name="notifyMessengerStyleDesc">Lähettäjän kuva tai alkukirjain viestin vieressä</string>
     <string name="notifyVipConversations">Keskustelut VIP-henkilöille</string>
     <string name="notifyVipConversationsDesc">VIP-henkilöiden posti näkyy Androidin Keskustelut-osiossa, jossa sen voi merkitä tärkeäksi</string>
+    <string name="ios_siriCompose">Uusi viesti</string>
+    <string name="ios_siriEvent">Uusi tapahtuma</string>
+    <string name="ios_siriReminder">Uusi muistutus</string>
+    <string name="ios_siriMyDay">Oma päivä</string>
+    <string name="ios_siriUnread">Lukemattomat</string>
+    <string name="ios_siriTo">Vastaanottaja</string>
+    <string name="ios_siriSubject">Aihe</string>
+    <string name="android_shortcut_myday">Oma päivä</string>
+    <string name="android_shortcut_compose">Uusi viesti</string>
+    <string name="android_shortcut_event">Uusi kokous</string>
+    <string name="android_shortcut_reminder">Uusi muistutus</string>
+    <string name="android_shortcut_unread">Lukemattomat</string>
+    <string name="android_shortcut_vip">VIP-viestit</string>
+    <string name="android_shortcut_calendar">Kalenteri</string>
+    <string name="android_shortcut_tasks">Tehtävät</string>
+    <string name="ios_siriVip">VIP-henkilöiden viestit</string>
+    <string name="ios_siriSearch">Hae postista</string>
+    <string name="ios_siriPhrase">Mitä ja milloin</string>
+    <string name="ios_siriQuery">Hakusana</string>
+    <string name="ios_siriEventAsk">Mikä tapaaminen ja milloin?</string>
+    <string name="ios_siriReminderAsk">Mistä ja milloin muistutan?</string>
+    <string name="ios_siriSearchAsk">Mitä haetaan?</string>
 </resources>

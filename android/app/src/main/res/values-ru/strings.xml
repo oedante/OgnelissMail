@@ -25,4 +25,12 @@
     <string name="widget_cal_day">День</string>
     <string name="widget_cal_week">Неделя</string>
     <string name="widget_cal_month">Месяц</string>
+    <string name="shortcut_myday">Мой день</string>
+    <string name="shortcut_compose">Написать письмо</string>
+    <string name="shortcut_event">Создать встречу</string>
+    <string name="shortcut_reminder">Создать напоминание</string>
+    <string name="shortcut_unread">Непрочитанные</string>
+    <string name="shortcut_vip">VIP-почта</string>
+    <string name="shortcut_calendar">Календарь</string>
+    <string name="shortcut_tasks">Задачи</string>
 </resources>

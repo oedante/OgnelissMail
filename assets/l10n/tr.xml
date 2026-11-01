@@ -3641,4 +3641,26 @@
     <string name="notifyMessengerStyleDesc">Mesajın yanında gönderenin fotoğrafı veya baş harfi</string>
     <string name="notifyVipConversations">VIP\'ler için görüşmeler</string>
     <string name="notifyVipConversationsDesc">VIP e-postaları Android\'in Görüşmeler bölümünde görünür ve öncelikli olarak işaretlenebilir</string>
+    <string name="ios_siriCompose">Yeni e-posta</string>
+    <string name="ios_siriEvent">Yeni etkinlik</string>
+    <string name="ios_siriReminder">Yeni hatırlatıcı</string>
+    <string name="ios_siriMyDay">Günüm</string>
+    <string name="ios_siriUnread">Okunmamış</string>
+    <string name="ios_siriTo">Kime</string>
+    <string name="ios_siriSubject">Konu</string>
+    <string name="android_shortcut_myday">Günüm</string>
+    <string name="android_shortcut_compose">Yeni ileti</string>
+    <string name="android_shortcut_event">Yeni toplantı</string>
+    <string name="android_shortcut_reminder">Yeni hatırlatıcı</string>
+    <string name="android_shortcut_unread">Okunmamış</string>
+    <string name="android_shortcut_vip">VIP e-posta</string>
+    <string name="android_shortcut_calendar">Takvim</string>
+    <string name="android_shortcut_tasks">Görevler</string>
+    <string name="ios_siriVip">VIP\'lerden gelen e-postalar</string>
+    <string name="ios_siriSearch">Postada ara</string>
+    <string name="ios_siriPhrase">Ne ve ne zaman</string>
+    <string name="ios_siriQuery">Aranacak</string>
+    <string name="ios_siriEventAsk">Hangi toplantı, ne zaman?</string>
+    <string name="ios_siriReminderAsk">Neyi ne zaman hatırlatayım?</string>
+    <string name="ios_siriSearchAsk">Ne arayayım?</string>
 </resources>

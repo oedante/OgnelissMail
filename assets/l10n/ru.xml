@@ -3679,4 +3679,26 @@
     <string name="notifyMessengerStyleDesc">Фото или буква отправителя рядом с письмом</string>
     <string name="notifyVipConversations">Беседы для VIP</string>
     <string name="notifyVipConversationsDesc">Письма VIP — в разделе «Беседы» Android: их можно сделать приоритетными</string>
+    <string name="ios_siriCompose">Новое письмо</string>
+    <string name="ios_siriEvent">Новая встреча</string>
+    <string name="ios_siriReminder">Новое напоминание</string>
+    <string name="ios_siriMyDay">Мой день</string>
+    <string name="ios_siriUnread">Непрочитанные</string>
+    <string name="ios_siriTo">Кому</string>
+    <string name="ios_siriSubject">Тема</string>
+    <string name="android_shortcut_myday">Мой день</string>
+    <string name="android_shortcut_compose">Написать письмо</string>
+    <string name="android_shortcut_event">Создать встречу</string>
+    <string name="android_shortcut_reminder">Создать напоминание</string>
+    <string name="android_shortcut_unread">Непрочитанные</string>
+    <string name="android_shortcut_vip">VIP-почта</string>
+    <string name="android_shortcut_calendar">Календарь</string>
+    <string name="android_shortcut_tasks">Задачи</string>
+    <string name="ios_siriVip">Письма от VIP</string>
+    <string name="ios_siriSearch">Найти в почте</string>
+    <string name="ios_siriPhrase">Что и когда</string>
+    <string name="ios_siriQuery">Что искать</string>
+    <string name="ios_siriEventAsk">Что за встреча и когда?</string>
+    <string name="ios_siriReminderAsk">О чём и когда напомнить?</string>
+    <string name="ios_siriSearchAsk">Что найти?</string>
 </resources>

@@ -25,4 +25,12 @@
     <string name="widget_cal_day">Hari</string>
     <string name="widget_cal_week">Minggu</string>
     <string name="widget_cal_month">Bulan</string>
+    <string name="shortcut_myday">Hari saya</string>
+    <string name="shortcut_compose">Email baru</string>
+    <string name="shortcut_event">Rapat baru</string>
+    <string name="shortcut_reminder">Pengingat baru</string>
+    <string name="shortcut_unread">Belum dibaca</string>
+    <string name="shortcut_vip">Email VIP</string>
+    <string name="shortcut_calendar">Kalender</string>
+    <string name="shortcut_tasks">Tugas</string>
 </resources>

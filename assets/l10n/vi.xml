@@ -3622,4 +3622,26 @@
     <string name="notifyMessengerStyleDesc">Ảnh hoặc chữ cái đầu của người gửi bên cạnh thư</string>
     <string name="notifyVipConversations">Cuộc trò chuyện cho VIP</string>
     <string name="notifyVipConversationsDesc">Thư từ VIP xuất hiện trong mục Cuộc trò chuyện của Android, nơi bạn có thể đặt làm ưu tiên</string>
+    <string name="ios_siriCompose">Thư mới</string>
+    <string name="ios_siriEvent">Sự kiện mới</string>
+    <string name="ios_siriReminder">Lời nhắc mới</string>
+    <string name="ios_siriMyDay">Ngày của tôi</string>
+    <string name="ios_siriUnread">Chưa đọc</string>
+    <string name="ios_siriTo">Đến</string>
+    <string name="ios_siriSubject">Chủ đề</string>
+    <string name="android_shortcut_myday">Ngày của tôi</string>
+    <string name="android_shortcut_compose">Thư mới</string>
+    <string name="android_shortcut_event">Cuộc họp mới</string>
+    <string name="android_shortcut_reminder">Lời nhắc mới</string>
+    <string name="android_shortcut_unread">Chưa đọc</string>
+    <string name="android_shortcut_vip">Thư VIP</string>
+    <string name="android_shortcut_calendar">Lịch</string>
+    <string name="android_shortcut_tasks">Tác vụ</string>
+    <string name="ios_siriVip">Thư từ VIP</string>
+    <string name="ios_siriSearch">Tìm trong thư</string>
+    <string name="ios_siriPhrase">Việc gì và khi nào</string>
+    <string name="ios_siriQuery">Tìm</string>
+    <string name="ios_siriEventAsk">Cuộc họp gì và khi nào?</string>
+    <string name="ios_siriReminderAsk">Nhắc việc gì và khi nào?</string>
+    <string name="ios_siriSearchAsk">Tìm gì?</string>
 </resources>

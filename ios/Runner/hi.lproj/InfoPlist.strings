@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "फ़ोटो का उपयोग तभी होता है जब आप उन्हें ईमेल में अटैच करते हैं या मेलबॉक्स की फ़ोटो चुनते हैं।";
 "NSCameraUsageDescription" = "Ogneliss Mail खुद कैमरे का उपयोग नहीं करता। ईमेल से खोला गया वेब पेज (उदाहरण के लिए, वीडियो मीटिंग) उसकी अनुमति मांग सकता है।";
 "NSLocationWhenInUseUsageDescription" = "Ogneliss Mail आपकी लोकेशन ट्रैक नहीं करता। ईमेल से खोला गया वेब पेज उसकी अनुमति मांग सकता है।";
+"siriCompose" = "नया ईमेल";
+"siriEvent" = "नया इवेंट";
+"siriReminder" = "नया रिमाइंडर";
+"siriMyDay" = "मेरा दिन";
+"siriUnread" = "अपठित";
+"siriTo" = "प्रति";
+"siriSubject" = "विषय";
+"siriVip" = "VIP से मेल";
+"siriSearch" = "मेल में खोजें";
+"siriPhrase" = "क्या और कब";
+"siriQuery" = "खोजें";
+"siriEventAsk" = "कौन-सी मीटिंग और कब?";
+"siriReminderAsk" = "किस बारे में और कब याद दिलाऊँ?";
+"siriSearchAsk" = "क्या खोजूँ?";

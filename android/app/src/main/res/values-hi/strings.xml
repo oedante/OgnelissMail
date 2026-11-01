@@ -25,4 +25,12 @@
     <string name="widget_cal_day">दिन</string>
     <string name="widget_cal_week">सप्ताह</string>
     <string name="widget_cal_month">महीना</string>
+    <string name="shortcut_myday">मेरा दिन</string>
+    <string name="shortcut_compose">नया ईमेल</string>
+    <string name="shortcut_event">नई मीटिंग</string>
+    <string name="shortcut_reminder">नया रिमाइंडर</string>
+    <string name="shortcut_unread">अपठित</string>
+    <string name="shortcut_vip">VIP मेल</string>
+    <string name="shortcut_calendar">कैलेंडर</string>
+    <string name="shortcut_tasks">कार्य</string>
 </resources>

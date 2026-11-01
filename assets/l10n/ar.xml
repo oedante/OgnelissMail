@@ -3717,4 +3717,26 @@
     <string name="notifyMessengerStyleDesc">صورة المرسل أو الحرف الأول من اسمه بجانب الرسالة</string>
     <string name="notifyVipConversations">محادثات لكبار الشخصيات</string>
     <string name="notifyVipConversationsDesc">يظهر بريد كبار الشخصيات في قسم المحادثات في Android، حيث يمكنك جعله ذا أولوية</string>
+    <string name="ios_siriCompose">رسالة جديدة</string>
+    <string name="ios_siriEvent">حدث جديد</string>
+    <string name="ios_siriReminder">تذكير جديد</string>
+    <string name="ios_siriMyDay">يومي</string>
+    <string name="ios_siriUnread">غير المقروءة</string>
+    <string name="ios_siriTo">إلى</string>
+    <string name="ios_siriSubject">الموضوع</string>
+    <string name="android_shortcut_myday">يومي</string>
+    <string name="android_shortcut_compose">رسالة جديدة</string>
+    <string name="android_shortcut_event">اجتماع جديد</string>
+    <string name="android_shortcut_reminder">تذكير جديد</string>
+    <string name="android_shortcut_unread">غير المقروءة</string>
+    <string name="android_shortcut_vip">بريد VIP</string>
+    <string name="android_shortcut_calendar">التقويم</string>
+    <string name="android_shortcut_tasks">المهام</string>
+    <string name="ios_siriVip">رسائل كبار الشخصيات (VIP)</string>
+    <string name="ios_siriSearch">البحث في البريد</string>
+    <string name="ios_siriPhrase">ماذا ومتى</string>
+    <string name="ios_siriQuery">البحث عن</string>
+    <string name="ios_siriEventAsk">ما الاجتماع ومتى؟</string>
+    <string name="ios_siriReminderAsk">بماذا أذكّرك ومتى؟</string>
+    <string name="ios_siriSearchAsk">عمّ أبحث؟</string>
 </resources>

@@ -25,4 +25,12 @@
     <string name="widget_cal_day">Gün</string>
     <string name="widget_cal_week">Hafta</string>
     <string name="widget_cal_month">Ay</string>
+    <string name="shortcut_myday">Günüm</string>
+    <string name="shortcut_compose">Yeni ileti</string>
+    <string name="shortcut_event">Yeni toplantı</string>
+    <string name="shortcut_reminder">Yeni hatırlatıcı</string>
+    <string name="shortcut_unread">Okunmamış</string>
+    <string name="shortcut_vip">VIP e-posta</string>
+    <string name="shortcut_calendar">Takvim</string>
+    <string name="shortcut_tasks">Görevler</string>
 </resources>

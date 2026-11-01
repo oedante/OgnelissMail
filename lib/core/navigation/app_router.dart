@@ -168,6 +168,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 openTaskId: st.uri.queryParameters['task'],
                 openAccountId: st.uri.queryParameters['accountId'],
                 openNew: st.uri.queryParameters['new'] == '1',
+                openText: st.uri.queryParameters['text'],
               )),
           GoRoute(path: '/notes', name: 'notes', builder: (_, __) => const NotesScreen()),
           GoRoute(path: '/my-day', name: 'my-day', builder: (_, __) => const MyDayScreen()),

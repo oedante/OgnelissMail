@@ -25,4 +25,12 @@
     <string name="widget_cal_day">Día</string>
     <string name="widget_cal_week">Semana</string>
     <string name="widget_cal_month">Mes</string>
+    <string name="shortcut_myday">Mi día</string>
+    <string name="shortcut_compose">Nuevo mensaje</string>
+    <string name="shortcut_event">Nueva reunión</string>
+    <string name="shortcut_reminder">Nuevo recordatorio</string>
+    <string name="shortcut_unread">No leídos</string>
+    <string name="shortcut_vip">Correo VIP</string>
+    <string name="shortcut_calendar">Calendario</string>
+    <string name="shortcut_tasks">Tareas</string>
 </resources>

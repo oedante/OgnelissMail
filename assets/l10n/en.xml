@@ -3641,4 +3641,26 @@
     <string name="notifyMessengerStyleDesc">The sender\'s photo or initial next to the message</string>
     <string name="notifyVipConversations">Conversations for VIPs</string>
     <string name="notifyVipConversationsDesc">VIP mail appears under Android Conversations, where you can mark it as priority</string>
+    <string name="ios_siriCompose">New email</string>
+    <string name="ios_siriEvent">New event</string>
+    <string name="ios_siriReminder">New reminder</string>
+    <string name="ios_siriMyDay">My day</string>
+    <string name="ios_siriUnread">Unread</string>
+    <string name="ios_siriTo">To</string>
+    <string name="ios_siriSubject">Subject</string>
+    <string name="android_shortcut_myday">My day</string>
+    <string name="android_shortcut_compose">New message</string>
+    <string name="android_shortcut_event">New meeting</string>
+    <string name="android_shortcut_reminder">New reminder</string>
+    <string name="android_shortcut_unread">Unread</string>
+    <string name="android_shortcut_vip">VIP mail</string>
+    <string name="android_shortcut_calendar">Calendar</string>
+    <string name="android_shortcut_tasks">Tasks</string>
+    <string name="ios_siriVip">Mail from VIPs</string>
+    <string name="ios_siriSearch">Search mail</string>
+    <string name="ios_siriPhrase">What and when</string>
+    <string name="ios_siriQuery">Search for</string>
+    <string name="ios_siriEventAsk">What is the meeting, and when?</string>
+    <string name="ios_siriReminderAsk">What should I remind you of, and when?</string>
+    <string name="ios_siriSearchAsk">What should I search for?</string>
 </resources>

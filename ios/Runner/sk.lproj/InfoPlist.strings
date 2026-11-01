@@ -8,3 +8,17 @@
 "NSPhotoLibraryUsageDescription" = "Fotky sa používajú iba vtedy, keď ich pripojíte k správe alebo vyberiete fotku schránky.";
 "NSCameraUsageDescription" = "Ogneliss Mail samotný fotoaparát nepoužíva. Webová stránka otvorená zo správy (napríklad videokonferencia) oň môže požiadať.";
 "NSLocationWhenInUseUsageDescription" = "Ogneliss Mail nesleduje vašu polohu. Webová stránka otvorená zo správy o ňu môže požiadať.";
+"siriCompose" = "Nová správa";
+"siriEvent" = "Nová udalosť";
+"siriReminder" = "Nová pripomienka";
+"siriMyDay" = "Môj deň";
+"siriUnread" = "Neprečítané";
+"siriTo" = "Komu";
+"siriSubject" = "Predmet";
+"siriVip" = "Pošta od VIP";
+"siriSearch" = "Hľadať v pošte";
+"siriPhrase" = "Čo a kedy";
+"siriQuery" = "Hľadať";
+"siriEventAsk" = "Aká schôdzka a kedy?";
+"siriReminderAsk" = "Čo a kedy vám mám pripomenúť?";
+"siriSearchAsk" = "Čo mám hľadať?";

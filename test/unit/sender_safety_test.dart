@@ -37,7 +37,7 @@ void main() {
 
   group('похожий домен (1.10.x)', () {
     const like = SenderSafetyService.lookalikeOf;
-    final brands = SenderSafetyService.knownBrandDomains;
+    const brands = SenderSafetyService.knownBrandDomains;
 
     test('подделки под банк, платёжку, почту', () {
       expect(like('paypa1.com', brands), 'paypal.com');

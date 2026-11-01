@@ -109,11 +109,14 @@ class AssistantAction {
         return AssistantRoute(
           Uri(
             path: '/compose',
-            queryParameters: {
-              if (accountId != null) 'accountId': accountId,
-              if (to != null) 'to': to!,
-              if (subject != null) 'subject': subject!,
-            },
+            // Без параметров — без «?» в конце.
+            queryParameters: accountId == null && to == null && subject == null
+                ? null
+                : {
+                    if (accountId != null) 'accountId': accountId,
+                    if (to != null) 'to': to!,
+                    if (subject != null) 'subject': subject!,
+                  },
           ).toString(),
           push: true,
         );

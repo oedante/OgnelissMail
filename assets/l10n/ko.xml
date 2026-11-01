@@ -3681,4 +3681,13 @@
     <string name="ios_siriEventAsk">어떤 회의를 언제 할까요?</string>
     <string name="ios_siriReminderAsk">무엇을 언제 알려 드릴까요?</string>
     <string name="ios_siriSearchAsk">무엇을 검색할까요?</string>
+    <plurals name="dragNMails">
+        <item quantity="other">메일 {n}개</item>
+    </plurals>
+    <plurals name="mailsMovedTo">
+        <item quantity="other">메일 {n}개를 “{folder}” 폴더로 이동했습니다</item>
+    </plurals>
+    <string name="composeDropHint">파일을 첨부하려면 놓으세요</string>
+    <string name="openInNewWindow">새 창에서 열기</string>
+    <string name="openInMainWindow">메인 창에서 열기</string>
 </resources>

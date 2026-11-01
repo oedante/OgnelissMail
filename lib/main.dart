@@ -20,6 +20,8 @@ import 'widgets/common/quiet_scaffold_messenger.dart';
 import 'widgets/common/inline_notice.dart' show InlineNoticeLayer;
 import 'widgets/common/animated_appearance.dart' show uiAnimations;
 import 'services/mail/own_addresses.dart';
+import 'features/mail/message_window.dart';
+import 'features/mail/message_window_host.dart';
 import 'features/mail/widgets/mail_html_view.dart' show MailHtmlView;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
@@ -76,6 +78,13 @@ late ProviderContainer globalContainer;
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
+    // Окно письма на компьютере (1.9.x): свой движок Flutter — только показ
+    // письма, без базы и служб приложения (message_window.dart).
+    final windowMail = await MessageWindow.payloadOfThisEngine();
+    if (windowMail != null) {
+      runApp(MessageWindowApp(payload: windowMail));
+      return;
+    }
     registerMailEditorLicense();
     // Google ML Kit (перевод писем на Android, 1.9.x) — условия Google.
     registerTranslationLicense();
@@ -393,6 +402,8 @@ Future<void> main() async {
         child: const MailApp(),
       ),
     );
+    // Просьбы окон писем (ответить, переслать, удалить…) — компьютер.
+    unawaited(MessageWindowHost.start(globalContainer));
   } catch (e, stack) {
     AppLogger.error('Критическая ошибка при запуске', e, stack);
     runApp(_ErrorApp(error: e.toString()));

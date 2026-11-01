@@ -3681,4 +3681,13 @@
     <string name="ios_siriEventAsk">什么会议，什么时候？</string>
     <string name="ios_siriReminderAsk">提醒什么，什么时候？</string>
     <string name="ios_siriSearchAsk">要搜索什么？</string>
+    <plurals name="dragNMails">
+        <item quantity="other">{n} 封邮件</item>
+    </plurals>
+    <plurals name="mailsMovedTo">
+        <item quantity="other">已将 {n} 封邮件移至“{folder}”</item>
+    </plurals>
+    <string name="composeDropHint">松开以添加附件</string>
+    <string name="openInNewWindow">在新窗口中打开</string>
+    <string name="openInMainWindow">在主窗口中打开</string>
 </resources>

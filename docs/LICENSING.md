@@ -40,6 +40,8 @@ Contributions are accepted under the same license (section 5 of the license).
 | Firebase Cloud Messaging service (Google) | free of charge, no paid tier or quota fees (Firebase Spark plan); Firebase / Google APIs Terms of Service | Android server signals: app and `server/push-relay` (HTTP v1 API) |
 | Google ML Kit Translation and Language ID (`com.google.mlkit:translate` 17.0.3, `com.google.mlkit:language-id` 17.0.6) — on-device message translation | Free; ML Kit Terms of Service and Google APIs Terms of Service (closed-source binaries). Conditions: Google attribution next to translated text and in the app description/help ("Translated by Google"); no use in embedded devices (cars, TVs, appliances, speakers); ML Kit sends usage metrics (not text) to Google — mention in the privacy policy | Android build (`android/app/build.gradle.kts`) |
 | Apple Translation, NaturalLanguage, SwiftUI — on-device message translation (iOS 18+) | Part of the iOS SDK (Apple Developer Program License Agreement), free, no attribution | iOS build (`ios/Runner/AppDelegate.swift`) |
+| desktop_drop 0.8.4 (MixinNetwork; checked 01.11.2026) — files dropped from Explorer/Finder onto the message window | Apache-2.0, free | pub.dev, unmodified; used on Windows, macOS and Linux only (its Android part registers a drop listener but the app does not use it) |
+| desktop_multi_window 0.3.1 (MixinNetwork; checked 01.11.2026) — a message in a separate window on Windows, macOS and Linux | Apache-2.0, free | pub.dev, unmodified; desktop only |
 | Russian Trusted Root CA certificates | public certificates | `assets/certs/` |
 
 There are no GPL, LGPL or AGPL dependencies. MPL-2.0 is a file-level copyleft

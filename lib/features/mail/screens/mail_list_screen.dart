@@ -51,7 +51,7 @@ import 'mail_list_pager.dart' show MailPagerArgs;
 import '../../../widgets/ui/confirm_dialog.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../widgets/ui/empty_state.dart';
-import 'package:flutter/rendering.dart' show RendererBinding, ScrollDirection, RenderMetaData;
+import 'package:flutter/rendering.dart' show ScrollDirection, RenderMetaData;
 import '../../../widgets/common/chrome_visibility.dart';
 import 'package:flutter/services.dart' hide UndoManager;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -68,6 +68,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../data/models/email_model.dart';
 import '../../../data/models/account_model.dart';
 import '../../../widgets/common/adaptive_layout.dart';
+import '../widgets/mail_drag.dart';
 import '../../../widgets/common/hero_email_transition.dart';
 import '../../../widgets/common/offline_indicator.dart';
 import '../../../services/mail/search_history_service.dart';
@@ -119,6 +120,14 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   /// С этой ширины области ленты папки стоят панелью слева (1.6.28):
   /// 272 dp папок + лента 340 + письмо 400 с запасом.
   static const _dockedFoldersMin = 1040.0;
+
+  /// Ширина панели папок у широкого окна: тянется разделителем, запоминается
+  /// (1.9.x, просьба владельца 31.10.2026). null — по умолчанию.
+  double? _foldersWidth;
+  static const _foldersWidthKey = 'pane_folders_width';
+  static const foldersDefaultWidth = 272.0;
+  static const foldersMinWidth = 200.0;
+  static const foldersMaxWidth = 420.0;
 
   /// Меню выдвигается справа (телефон).
   bool _menuAtEnd = false;
@@ -680,8 +689,22 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (docked) ...[
-              const SizedBox(width: 272, child: MailDrawer(docked: true)),
-              VerticalDivider(width: 1, thickness: 1, color: theme.dividerColor),
+              SizedBox(width: _dockedWidth(box.maxWidth), child: const MailDrawer(docked: true)),
+              // Ширина панели папок — разделителем (мышью и пальцем),
+              // двойное нажатие — как была.
+              PaneSplitter(
+                onDrag: (dx) => setState(() => _foldersWidth = (_dockedWidth(box.maxWidth) + dx)
+                    .clamp(foldersMinWidth, foldersMaxWidth)
+                    .toDouble()),
+                onDragEnd: () {
+                  final w = _foldersWidth;
+                  if (w != null) unawaited(ref.read(sharedPrefsProvider).setDouble(_foldersWidthKey, w));
+                },
+                onReset: () {
+                  setState(() => _foldersWidth = foldersDefaultWidth);
+                  unawaited(ref.read(sharedPrefsProvider).remove(_foldersWidthKey));
+                },
+              ),
             ],
             Expanded(child: Scaffold(
       key: _scaffoldKey,
@@ -851,6 +874,13 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         );
       }),
     );
+  }
+
+  /// Ширина панели папок: выбранная (из настроек), не больше трети окна.
+  double _dockedWidth(double total) {
+    final w = _foldersWidth ??= ref.read(sharedPrefsProvider).getDouble(_foldersWidthKey) ?? foldersDefaultWidth;
+    final max = (total / 3).clamp(foldersMinWidth, foldersMaxWidth).toDouble();
+    return w.clamp(foldersMinWidth, max).toDouble();
   }
 
   /// Архивировать выбранные письма (папка «Архив» своего аккаунта у каждого).
@@ -1477,22 +1507,32 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             )),
             ),
           ));
-          // Постоянная панель папок (широкое окно): письмо можно перетащить
-          // мышью на папку (1.6.28). Только мышью — пальцем строка, как
-          // раньше, свайпается и прокручивается.
-          // Draggable не умеет «только мышь» (supportedDevices у него нет):
-          // перетаскивание — только когда подключена мышь, иначе палец
-          // начинал бы перетаскивание вместо прокрутки.
-          if (!_foldersDocked || _selectionMode || !RendererBinding.instance.mouseTracker.mouseIsConnected) {
-            return row;
-          }
-          return Draggable<EmailModel>(
-            data: item,
-            dragAnchorStrategy: pointerDragAnchorStrategy,
-            feedback: _DragChip(subject: item.subject.isEmpty ? l10n.tr('noSubject') : item.subject),
-            childWhenDragging: Opacity(opacity: 0.4, child: row),
-            child: row,
-          );
+          // Постоянная панель папок (широкое окно): письма перетаскиваются на
+          // папку (1.6.28). 1.9.x (просьба владельца 31.10.2026): выбранные —
+          // разом; мышью — сразу, пальцем и пером — удержанием выбранной
+          // строки в режиме выбора (обычное удержание — карточка письма, а
+          // палец без удержания прокручивает и свайпает строку, как раньше).
+          if (!_foldersDocked) return row;
+          final group = _selectionMode && _selectedIds.contains(item.id);
+          if (_selectionMode && !group) return row;
+          final data = MailDragData(group ? _selectedEmails() : [item]);
+          final n = data.emails.length;
+          final feedback = _DragChip(
+              subject: n > 1
+                  ? l10n.plural('dragNMails', n)
+                  : (item.subject.isEmpty ? l10n.tr('noSubject') : item.subject),
+              many: n > 1);
+          Widget drag({required bool touch, required Widget child}) => MailDraggable(
+                touch: touch,
+                data: data,
+                feedback: feedback,
+                childWhenDragging: Opacity(opacity: 0.4, child: row),
+                onDragStarted: () => MailDrag.active.value = data,
+                onDragEnd: (_) => MailDrag.active.value = null,
+                child: child,
+              );
+          final byMouse = drag(touch: false, child: row);
+          return group ? drag(touch: true, child: byMouse) : byMouse;
         }
 
         return const SizedBox.shrink();
@@ -3374,7 +3414,10 @@ class _PinchFilterState extends State<_PinchFilter> {
 /// Подпись письма под курсором при перетаскивании на папку.
 class _DragChip extends StatelessWidget {
   final String subject;
-  const _DragChip({required this.subject});
+
+  /// Несколько писем: значок стопки, в подписи — «N писем».
+  final bool many;
+  const _DragChip({required this.subject, this.many = false});
 
   @override
   Widget build(BuildContext context) {
@@ -3388,7 +3431,7 @@ class _DragChip extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.s),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Icon(AppIcons.mail, size: 18, color: theme.colorScheme.onSecondaryContainer),
+            Icon(many ? AppIcons.all_inbox : AppIcons.mail, size: 18, color: theme.colorScheme.onSecondaryContainer),
             const SizedBox(width: Space.s),
             Flexible(
               child: Text(subject,

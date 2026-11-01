@@ -52,6 +52,7 @@ import '../../../widgets/ui/help_hint.dart' show HelpButton;
 import '../../../data/models/email_model.dart';
 import '../../../services/mail/email_actions_service.dart' show emailActionsProvider;
 import '../../../widgets/common/undo_manager.dart';
+import 'mail_drag.dart';
 import '../../../services/archive/archive_db.dart' show ArchiveFolder, ArchiveAccountInfo;
 import '../../../services/archive/archive_runner.dart' show archiveRunnerProvider;
 import '../../../services/archive/archive_vault.dart' show archiveVaultProvider;
@@ -629,7 +630,7 @@ class MailDrawer extends ConsumerWidget {
     // Шторку открываем от навигатора: выдвижное меню к тому времени закрыто.
     final rootCtx = Navigator.of(context, rootNavigator: true).context;
     final running = ref.watch(archiveRunnerProvider.select((s) => s.running));
-    final band = SectionBand(
+    final header = SectionBand(
       title: l10n.tr('ognaArchive'),
       trailing: Row(mainAxisSize: MainAxisSize.min, children: [
         if (running)
@@ -664,6 +665,8 @@ class MailDrawer extends ConsumerWidget {
         ),
       ]),
     );
+    // Постоянная панель: письма можно бросить и на «Архив Ogneliss» (1.9.x).
+    final band = docked ? _OgnaDropTarget(child: header) : header;
     if (!vault.isOpen) {
       return [
         band,
@@ -1335,9 +1338,75 @@ class _FolderDropTarget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
-    return DragTarget<EmailModel>(
-      onWillAcceptWithDetails: (d) => d.data.accountId == folder.accountId && d.data.folderId != folder.id,
-      onAcceptWithDetails: (d) => _move(context, ref, d.data),
+    return DragTarget<MailDragData>(
+      onWillAcceptWithDetails: (d) => d.data.fitsFolder(folder),
+      onAcceptWithDetails: (d) => _move(context, ref, d.data.movingTo(folder)),
+      builder: (context, candidates, _) => candidates.isNotEmpty
+          ? DecoratedBox(
+              decoration: BoxDecoration(
+                color: scheme.primary.withValues(alpha: 0.12),
+                border: Border.all(color: scheme.primary, width: 1.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: child,
+            )
+          // Пока тащат: папки, куда нельзя (другой ящик, та же папка), —
+          // приглушены.
+          : ValueListenableBuilder<MailDragData?>(
+              valueListenable: MailDrag.active,
+              child: child,
+              builder: (_, drag, c) => drag == null || drag.fitsFolder(folder) ? c! : Opacity(opacity: 0.38, child: c),
+            ),
+    );
+  }
+
+  void _move(BuildContext context, WidgetRef ref, List<EmailModel> emails) {
+    final account = ref.read(accountsProvider).where((a) => a.id == folder.accountId).firstOrNull;
+    if (account == null || emails.isEmpty) return;
+    final l10n = AppLocalizations.of(context);
+    final notifier = ref.read(emailsProvider.notifier);
+    final actions = ref.read(emailActionsProvider);
+    for (final e in emails) {
+      notifier.hideLocally(e);
+    }
+    void unhide() {
+      for (final e in emails) {
+        notifier.unhideLocally(e);
+      }
+    }
+
+    EmailUndoManager.perform(
+      context,
+      UndoableAction(
+        description: emails.length == 1
+            ? l10n.tr('emailMovedTo').replaceAll('{folder}', folder.displayName)
+            : l10n.plural('mailsMovedTo', emails.length).replaceAll('{folder}', folder.displayName),
+        execute: () async {
+          for (final e in emails) {
+            await actions.moveTo(account, e.id, e.folderId, folder.id);
+          }
+        },
+        undo: () async {},
+        onUndo: unhide,
+        onSettled: unhide,
+      ),
+    );
+  }
+}
+
+/// «Архив Ogneliss» в постоянной панели — цель перетаскивания: письма — в
+/// архив на устройстве (1.9.x, просьба владельца 31.10.2026), как «В архив
+/// Ogneliss» в меню письма.
+class _OgnaDropTarget extends ConsumerWidget {
+  final Widget child;
+  const _OgnaDropTarget({required this.child});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scheme = Theme.of(context).colorScheme;
+    return DragTarget<MailDragData>(
+      onWillAcceptWithDetails: (d) => d.data.emails.isNotEmpty,
+      onAcceptWithDetails: (d) => unawaited(_archive(context, ref, d.data.emails)),
       builder: (context, candidates, _) => candidates.isEmpty
           ? child
           : DecoratedBox(
@@ -1351,23 +1420,31 @@ class _FolderDropTarget extends ConsumerWidget {
     );
   }
 
-  void _move(BuildContext context, WidgetRef ref, EmailModel e) {
-    final account = ref.read(accountsProvider).where((a) => a.id == e.accountId).firstOrNull;
-    if (account == null) return;
+  Future<void> _archive(BuildContext context, WidgetRef ref, List<EmailModel> emails) async {
     final l10n = AppLocalizations.of(context);
+    if (!await ensureArchiveReady(context, ref)) return;
+    final db = ref.read(databaseProvider);
+    final runner = ref.read(archiveRunnerProvider.notifier);
     final notifier = ref.read(emailsProvider.notifier);
-    final actions = ref.read(emailActionsProvider);
-    notifier.hideLocally(e);
-    EmailUndoManager.perform(
-      context,
-      UndoableAction(
-        description: l10n.tr('emailMovedTo').replaceAll('{folder}', folder.displayName),
-        execute: () => actions.moveTo(account, e.id, e.folderId, folder.id),
-        undo: () async {},
-        onUndo: () => notifier.unhideLocally(e),
-        onSettled: () => notifier.unhideLocally(e),
-      ),
-    );
+    final hide = ref.read(archiveSettingsProvider).deleteFromServer;
+    final accounts = {for (final a in ref.read(accountsProvider)) a.id: a};
+    var failed = 0;
+    for (final e in emails) {
+      final a = accounts[e.accountId];
+      final row = a == null
+          ? null
+          : await (db.select(db.emails)..where((x) => x.id.equals(e.id) & x.accountId.equals(e.accountId)))
+              .getSingleOrNull();
+      if (a == null || row == null) {
+        failed++;
+        continue;
+      }
+      if (hide) notifier.hideLocally(e);
+      final r = await runner.archiveEmails(a, [row]);
+      if (hide) notifier.unhideLocally(e);
+      failed += r.failed;
+    }
+    if (failed > 0) showInlineError(l10n.tr('archiveSomeFailed').replaceAll('{n}', '$failed'));
   }
 }
 

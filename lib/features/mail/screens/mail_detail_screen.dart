@@ -14,6 +14,7 @@ import '../../../core/platform/download_saver.dart';
 import '../../../core/platform/file_opener.dart';
 import '../../../widgets/ui/section_band.dart';
 import '../../../widgets/common/peek_card.dart' show AppMenuEntry, PeekAction, PeekGroup;
+import '../message_window.dart';
 import '../widgets/mail_peek_card.dart' show showMailPeek;
 import '../widgets/unsubscribe_banner.dart';
 import '../widgets/booking_card.dart';
@@ -2430,6 +2431,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
               ShareParams(text: '${email.subject}\n\n${email.bodyPlain ?? email.bodyPreview ?? ""}'))),
         ]),
         PeekGroup(title: l10n.tr('actionsMore'), items: [
+          // Письмо в отдельном окне — компьютер (1.9.x, просьба владельца
+          // 31.10.2026).
+          if (MessageWindow.supported)
+            _peekAction(AppIcons.open_in_new, l10n.tr('openInNewWindow'), () => unawaited(_openInWindow(email))),
           // Перевод на устройстве (1.9.x): то же, что кнопка плашки.
           if (translationPlatformSupported)
             _peekAction(AppIcons.translate, l10n.tr(_translation.showing ? 'translateShowOriginal' : 'translate'),
@@ -3338,6 +3343,38 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     final r = await runner.archiveEmails(account, [row]);
     if (deleting) notifier.unhideLocally(email);
     if (r.archived == 0) showInlineError(l10n.tr('archiveOneFailed'));
+  }
+
+  /// Письмо — в отдельное окно (компьютер): окно получает письмо готовым —
+  /// очищенный текст, картинки в тексте, адресаты, вложения (message_window.dart).
+  Future<void> _openInWindow(EmailModel email) async {
+    final html = (email.bodyHtml ?? '').trim().isNotEmpty
+        ? email.bodyHtml!
+        : '<div>${const HtmlEscape().convert(email.bodyPlain ?? email.bodyPreview ?? '').replaceAll('\n', '<br>')}</div>';
+    MessageWindowPerson p(EmailAddress a) => (name: a.displayName ?? '', email: a.email);
+    try {
+      await MessageWindow.open(MessageWindowPayload(
+        accountId: email.accountId,
+        emailId: email.id,
+        folderId: email.folderId,
+        subject: email.subject,
+        from: p(email.from),
+        to: [for (final a in email.to) p(a)],
+        cc: [for (final a in email.cc) p(a)],
+        date: email.receivedAt,
+        html: html,
+        images: _inlineImages,
+        attachments: [
+          for (final a in email.attachments)
+            if (!a.isInline) (id: a.id, name: a.name, size: a.size),
+        ],
+        dark: Theme.of(context).brightness == Brightness.dark,
+        locale: Localizations.localeOf(context).languageCode,
+      ));
+    } catch (e) {
+      AppLogger.warning('Окно письма не открылось: $e');
+      if (mounted) showInlineError('${AppLocalizations.of(context).tr('error')}: $e');
+    }
   }
 
   /// Задача по письму (как свайп «Создать задачу» в списке).

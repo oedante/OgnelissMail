@@ -3654,4 +3654,8 @@
     <string name="apPreviewText2">Přístup k portálu je otevřený, heslo přijde zvlášť.</string>
     <string name="apPreviewBubbleIn">Schválíme rozpočet do pátku?</string>
     <string name="apPreviewBubbleOut">Ano, pošlu ho dnes.</string>
+    <string name="notifyMessengerStyle">Oznámení jako v messengeru</string>
+    <string name="notifyMessengerStyleDesc">Fotka nebo iniciála odesílatele vedle zprávy</string>
+    <string name="notifyVipConversations">Konverzace pro VIP</string>
+    <string name="notifyVipConversationsDesc">Pošta od VIP se zobrazí v sekci Konverzace v Androidu, kde ji lze označit jako prioritní</string>
 </resources>

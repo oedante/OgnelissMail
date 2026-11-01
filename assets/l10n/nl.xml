@@ -3635,4 +3635,8 @@
     <string name="apPreviewText2">De portaaltoegang staat open, het wachtwoord volgt apart.</string>
     <string name="apPreviewBubbleIn">Keuren we de begroting vóór vrijdag goed?</string>
     <string name="apPreviewBubbleOut">Ja, ik stuur het vandaag.</string>
+    <string name="notifyMessengerStyle">Meldingen zoals in een chat-app</string>
+    <string name="notifyMessengerStyleDesc">Foto of initiaal van de afzender naast het bericht</string>
+    <string name="notifyVipConversations">Gesprekken voor VIP\'s</string>
+    <string name="notifyVipConversationsDesc">Mail van VIP\'s verschijnt onder Gesprekken in Android, waar je deze als prioriteit kunt markeren</string>
 </resources>

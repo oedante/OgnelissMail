@@ -3635,4 +3635,8 @@
     <string name="apPreviewText2">Adgang til portalen er åben, adgangskoden kommer separat.</string>
     <string name="apPreviewBubbleIn">Kan vi godkende overslaget inden fredag?</string>
     <string name="apPreviewBubbleOut">Ja, jeg sender det i dag.</string>
+    <string name="notifyMessengerStyle">Notifikationer som i en beskedapp</string>
+    <string name="notifyMessengerStyleDesc">Afsenderens foto eller forbogstav ved beskeden</string>
+    <string name="notifyVipConversations">Samtaler for VIP\'er</string>
+    <string name="notifyVipConversationsDesc">Mail fra VIP\'er vises under Samtaler i Android, hvor du kan markere dem som prioriterede</string>
 </resources>

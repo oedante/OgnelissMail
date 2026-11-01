@@ -3673,4 +3673,8 @@
     <string name="apPreviewText2">Доступ к порталу открыт, пароль придёт отдельно.</string>
     <string name="apPreviewBubbleIn">Согласуем смету до пятницы?</string>
     <string name="apPreviewBubbleOut">Да, отправлю сегодня.</string>
+    <string name="notifyMessengerStyle">Уведомления как в мессенджерах</string>
+    <string name="notifyMessengerStyleDesc">Фото или буква отправителя рядом с письмом</string>
+    <string name="notifyVipConversations">Беседы для VIP</string>
+    <string name="notifyVipConversationsDesc">Письма VIP — в разделе «Беседы» Android: их можно сделать приоритетными</string>
 </resources>

@@ -3635,4 +3635,8 @@
     <string name="apPreviewText2">Åtkomst till portalen är klar, lösenordet kommer separat.</string>
     <string name="apPreviewBubbleIn">Kan vi godkänna kostnadsförslaget före fredag?</string>
     <string name="apPreviewBubbleOut">Ja, jag skickar det i dag.</string>
+    <string name="notifyMessengerStyle">Aviseringar som i en chattapp</string>
+    <string name="notifyMessengerStyleDesc">Avsändarens foto eller initial bredvid meddelandet</string>
+    <string name="notifyVipConversations">Konversationer för VIP</string>
+    <string name="notifyVipConversationsDesc">E-post från VIP visas under Konversationer i Android, där du kan prioritera den</string>
 </resources>

@@ -3654,4 +3654,8 @@
     <string name="apPreviewText2">הגישה לפורטל פתוחה, הסיסמה תישלח בנפרד.</string>
     <string name="apPreviewBubbleIn">נאשר את הצעת המחיר עד יום שישי?</string>
     <string name="apPreviewBubbleOut">כן, אשלח היום.</string>
+    <string name="notifyMessengerStyle">התראות בסגנון אפליקציית מסרים</string>
+    <string name="notifyMessengerStyleDesc">תמונת השולח או האות הראשונה לצד ההודעה</string>
+    <string name="notifyVipConversations">שיחות לאנשי VIP</string>
+    <string name="notifyVipConversationsDesc">דואר מאנשי VIP מופיע בקטע השיחות של Android, שם אפשר לסמן אותו כבעל עדיפות</string>
 </resources>

@@ -3616,4 +3616,8 @@
     <string name="apPreviewText2">Akses portal sudah dibuka, kata sandi dikirim terpisah.</string>
     <string name="apPreviewBubbleIn">Bisa kita setujui anggarannya sebelum Jumat?</string>
     <string name="apPreviewBubbleOut">Ya, saya kirim hari ini.</string>
+    <string name="notifyMessengerStyle">Notifikasi seperti aplikasi pesan</string>
+    <string name="notifyMessengerStyleDesc">Foto atau inisial pengirim di samping pesan</string>
+    <string name="notifyVipConversations">Percakapan untuk VIP</string>
+    <string name="notifyVipConversationsDesc">Email dari VIP muncul di bagian Percakapan Android, tempat Anda dapat menjadikannya prioritas</string>
 </resources>

@@ -3616,4 +3616,8 @@
     <string name="apPreviewText2">เปิดสิทธิ์เข้าพอร์ทัลแล้ว รหัสผ่านจะส่งแยกให้</string>
     <string name="apPreviewBubbleIn">อนุมัติใบประมาณการก่อนวันศุกร์ได้ไหม</string>
     <string name="apPreviewBubbleOut">ได้ เดี๋ยววันนี้ส่งให้</string>
+    <string name="notifyMessengerStyle">การแจ้งเตือนแบบแอปแชท</string>
+    <string name="notifyMessengerStyleDesc">รูปภาพหรืออักษรย่อของผู้ส่งข้างข้อความ</string>
+    <string name="notifyVipConversations">การสนทนาสำหรับ VIP</string>
+    <string name="notifyVipConversationsDesc">อีเมลจาก VIP จะแสดงในส่วนการสนทนาของ Android ซึ่งคุณตั้งเป็นลำดับความสำคัญได้</string>
 </resources>

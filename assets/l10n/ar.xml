@@ -3711,4 +3711,8 @@
     <string name="apPreviewText2">تم فتح الوصول إلى البوابة، وستصل كلمة المرور منفصلة.</string>
     <string name="apPreviewBubbleIn">هل نعتمد التقدير قبل الجمعة؟</string>
     <string name="apPreviewBubbleOut">نعم، سأرسله اليوم.</string>
+    <string name="notifyMessengerStyle">إشعارات بأسلوب تطبيقات المراسلة</string>
+    <string name="notifyMessengerStyleDesc">صورة المرسل أو الحرف الأول من اسمه بجانب الرسالة</string>
+    <string name="notifyVipConversations">محادثات لكبار الشخصيات</string>
+    <string name="notifyVipConversationsDesc">يظهر بريد كبار الشخصيات في قسم المحادثات في Android، حيث يمكنك جعله ذا أولوية</string>
 </resources>

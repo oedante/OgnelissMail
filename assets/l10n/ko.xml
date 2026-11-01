@@ -3616,4 +3616,8 @@
     <string name="apPreviewText2">포털 접근이 열렸고 비밀번호는 따로 보내 드립니다.</string>
     <string name="apPreviewBubbleIn">금요일까지 견적을 승인할까요?</string>
     <string name="apPreviewBubbleOut">네, 오늘 보낼게요.</string>
+    <string name="notifyMessengerStyle">메신저 스타일 알림</string>
+    <string name="notifyMessengerStyleDesc">메시지 옆에 보낸 사람의 사진 또는 이니셜 표시</string>
+    <string name="notifyVipConversations">VIP 대화</string>
+    <string name="notifyVipConversationsDesc">VIP 메일이 Android의 대화 섹션에 표시되며 우선순위로 지정할 수 있습니다</string>
 </resources>

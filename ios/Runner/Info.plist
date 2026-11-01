@@ -106,6 +106,12 @@
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
+	<!-- Уведомления как в мессенджерах (1.9.x): Communication Notifications
+	     с INSendMessageIntent (AppDelegate.showCommunication). -->
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>INSendMessageIntent</string>
+	</array>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>periodic_sync</string>

@@ -3635,4 +3635,8 @@
     <string name="apPreviewText2">Portaalin käyttö on avattu, salasana tulee erikseen.</string>
     <string name="apPreviewBubbleIn">Hyväksytäänkö kustannusarvio perjantaihin mennessä?</string>
     <string name="apPreviewBubbleOut">Kyllä, lähetän sen tänään.</string>
+    <string name="notifyMessengerStyle">Ilmoitukset kuin viestisovelluksessa</string>
+    <string name="notifyMessengerStyleDesc">Lähettäjän kuva tai alkukirjain viestin vieressä</string>
+    <string name="notifyVipConversations">Keskustelut VIP-henkilöille</string>
+    <string name="notifyVipConversationsDesc">VIP-henkilöiden posti näkyy Androidin Keskustelut-osiossa, jossa sen voi merkitä tärkeäksi</string>
 </resources>

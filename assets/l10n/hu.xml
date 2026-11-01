@@ -3635,4 +3635,8 @@
     <string name="apPreviewText2">A portál elérhető, a jelszót külön küldjük.</string>
     <string name="apPreviewBubbleIn">Jóváhagyjuk a költségvetést péntekig?</string>
     <string name="apPreviewBubbleOut">Igen, ma elküldöm.</string>
+    <string name="notifyMessengerStyle">Értesítések, mint egy üzenetküldőben</string>
+    <string name="notifyMessengerStyleDesc">A feladó fotója vagy kezdőbetűje az üzenet mellett</string>
+    <string name="notifyVipConversations">Beszélgetések VIP-eknek</string>
+    <string name="notifyVipConversationsDesc">A VIP-ek levelei az Android Beszélgetések részében jelennek meg, ahol prioritásossá tehetők</string>
 </resources>

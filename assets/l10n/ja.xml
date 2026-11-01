@@ -3616,4 +3616,8 @@
     <string name="apPreviewText2">ポータルへのアクセスを開きました。パスワードは別途送ります。</string>
     <string name="apPreviewBubbleIn">見積もりは金曜日までに承認できますか？</string>
     <string name="apPreviewBubbleOut">はい、今日送ります。</string>
+    <string name="notifyMessengerStyle">メッセージアプリ風の通知</string>
+    <string name="notifyMessengerStyleDesc">メッセージの横に送信者の写真または頭文字を表示</string>
+    <string name="notifyVipConversations">VIP との会話</string>
+    <string name="notifyVipConversationsDesc">VIP からのメールは Android の「会話」に表示され、優先に設定できます</string>
 </resources>

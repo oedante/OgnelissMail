@@ -3654,4 +3654,8 @@
     <string name="apPreviewText2">Accesul la portal este activ, parola vine separat.</string>
     <string name="apPreviewBubbleIn">Aprobăm devizul până vineri?</string>
     <string name="apPreviewBubbleOut">Da, îl trimit azi.</string>
+    <string name="notifyMessengerStyle">Notificări ca în aplicațiile de mesagerie</string>
+    <string name="notifyMessengerStyleDesc">Fotografia sau inițiala expeditorului lângă mesaj</string>
+    <string name="notifyVipConversations">Conversații pentru VIP</string>
+    <string name="notifyVipConversationsDesc">E-mailurile VIP apar la Conversații în Android, unde le puteți marca drept prioritare</string>
 </resources>

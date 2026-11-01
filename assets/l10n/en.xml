@@ -3635,4 +3635,8 @@
     <string name="apPreviewText2">Portal access is ready; the password will follow separately.</string>
     <string name="apPreviewBubbleIn">Can we approve the estimate by Friday?</string>
     <string name="apPreviewBubbleOut">Yes, I\'ll send it today.</string>
+    <string name="notifyMessengerStyle">Messenger-style notifications</string>
+    <string name="notifyMessengerStyleDesc">The sender\'s photo or initial next to the message</string>
+    <string name="notifyVipConversations">Conversations for VIPs</string>
+    <string name="notifyVipConversationsDesc">VIP mail appears under Android Conversations, where you can mark it as priority</string>
 </resources>

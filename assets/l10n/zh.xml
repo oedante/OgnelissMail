@@ -3616,4 +3616,8 @@
     <string name="apPreviewText2">门户访问已开通，密码将另行发送。</string>
     <string name="apPreviewBubbleIn">周五前能批准预算吗？</string>
     <string name="apPreviewBubbleOut">好的，今天发。</string>
+    <string name="notifyMessengerStyle">类似聊天应用的通知</string>
+    <string name="notifyMessengerStyleDesc">在邮件旁显示发件人的照片或首字母</string>
+    <string name="notifyVipConversations">VIP 对话</string>
+    <string name="notifyVipConversationsDesc">VIP 的邮件会显示在 Android 的“对话”部分，可将其设为优先</string>
 </resources>

@@ -3673,4 +3673,8 @@
     <string name="apPreviewText2">Dostęp do portalu otwarty, hasło przyjdzie osobno.</string>
     <string name="apPreviewBubbleIn">Zatwierdzimy kosztorys do piątku?</string>
     <string name="apPreviewBubbleOut">Tak, wyślę dzisiaj.</string>
+    <string name="notifyMessengerStyle">Powiadomienia jak w komunikatorze</string>
+    <string name="notifyMessengerStyleDesc">Zdjęcie lub inicjał nadawcy obok wiadomości</string>
+    <string name="notifyVipConversations">Rozmowy dla VIP</string>
+    <string name="notifyVipConversationsDesc">Poczta od VIP trafia do sekcji Rozmowy w Androidzie, gdzie można oznaczyć ją jako priorytetową</string>
 </resources>

@@ -3635,4 +3635,8 @@
     <string name="apPreviewText2">L\'accesso al portale è attivo, la password arriverà a parte.</string>
     <string name="apPreviewBubbleIn">Approviamo il preventivo entro venerdì?</string>
     <string name="apPreviewBubbleOut">Sì, lo invio oggi.</string>
+    <string name="notifyMessengerStyle">Notifiche come nelle app di messaggi</string>
+    <string name="notifyMessengerStyleDesc">La foto o l\'iniziale del mittente accanto al messaggio</string>
+    <string name="notifyVipConversations">Conversazioni per i VIP</string>
+    <string name="notifyVipConversationsDesc">La posta dei VIP compare in Conversazioni di Android, dove puoi renderla prioritaria</string>
 </resources>

@@ -3635,4 +3635,8 @@
     <string name="apPreviewText2">पोर्टल की पहुँच खुल गई है, पासवर्ड अलग से आएगा।</string>
     <string name="apPreviewBubbleIn">क्या शुक्रवार तक अनुमान मंज़ूर करें?</string>
     <string name="apPreviewBubbleOut">हाँ, आज भेज दूँगा।</string>
+    <string name="notifyMessengerStyle">मैसेंजर जैसी सूचनाएं</string>
+    <string name="notifyMessengerStyleDesc">संदेश के पास प्रेषक की फ़ोटो या पहला अक्षर</string>
+    <string name="notifyVipConversations">VIP के लिए बातचीत</string>
+    <string name="notifyVipConversationsDesc">VIP की मेल Android के बातचीत अनुभाग में दिखती है, जहां आप इसे प्राथमिकता दे सकते हैं</string>
 </resources>

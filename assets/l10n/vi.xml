@@ -3616,4 +3616,8 @@
     <string name="apPreviewText2">Đã mở quyền truy cập cổng, mật khẩu sẽ gửi riêng.</string>
     <string name="apPreviewBubbleIn">Mình duyệt dự toán trước thứ Sáu nhé?</string>
     <string name="apPreviewBubbleOut">Vâng, hôm nay tôi gửi.</string>
+    <string name="notifyMessengerStyle">Thông báo kiểu ứng dụng nhắn tin</string>
+    <string name="notifyMessengerStyleDesc">Ảnh hoặc chữ cái đầu của người gửi bên cạnh thư</string>
+    <string name="notifyVipConversations">Cuộc trò chuyện cho VIP</string>
+    <string name="notifyVipConversationsDesc">Thư từ VIP xuất hiện trong mục Cuộc trò chuyện của Android, nơi bạn có thể đặt làm ưu tiên</string>
 </resources>

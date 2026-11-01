@@ -3635,4 +3635,8 @@
     <string name="apPreviewText2">Der Portalzugang ist frei, das Passwort folgt separat.</string>
     <string name="apPreviewBubbleIn">Können wir den Kostenvoranschlag bis Freitag freigeben?</string>
     <string name="apPreviewBubbleOut">Ja, ich schicke ihn heute.</string>
+    <string name="notifyMessengerStyle">Benachrichtigungen wie im Messenger</string>
+    <string name="notifyMessengerStyleDesc">Foto oder Initiale des Absenders neben der Nachricht</string>
+    <string name="notifyVipConversations">Unterhaltungen für VIPs</string>
+    <string name="notifyVipConversationsDesc">E-Mails von VIPs erscheinen unter „Unterhaltungen“ in Android und lassen sich als vorrangig markieren</string>
 </resources>

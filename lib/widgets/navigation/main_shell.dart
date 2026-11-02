@@ -288,10 +288,6 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       body = Scaffold(
         body: _withSyncOverlay(Column(
           children: [
-            // Ошибки синхронизации (временные, с автоскрытием и кнопкой
-            // повтора). Офлайн сюда НЕ попадает — для него компактная
-            // пиктограмма в правом верхнем углу, см. OfflineIndicator.
-            const ErrorBanner(),
             if (focusState.isEnabled && focusState.isCurrentlyActive)
               _buildFocusBanner(l10n, theme),
             Expanded(
@@ -365,10 +361,6 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       body = Scaffold(
         body: _withSyncOverlay(Column(
           children: [
-            // Ошибки синхронизации (временные, с автоскрытием и кнопкой
-            // повтора). Офлайн сюда НЕ попадает — для него компактная
-            // пиктограмма в правом верхнем углу, см. OfflineIndicator.
-            const ErrorBanner(),
             if (focusState.isEnabled && focusState.isCurrentlyActive)
               _buildFocusBanner(l10n, theme),
             Expanded(child: AnimatedContentSwitcher(child: KeyedSubtree(key: ValueKey(_currentIndex), child: widget.child))),
@@ -746,7 +738,16 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
   /// часами и значками (приложение занимает весь экран, edge-to-edge).
   // Полоса синхронизации сверху убрана (05.10.2026): состояние показывает
   // SyncStatusDot рядом с названием папки.
-  Widget _withSyncOverlay(Widget child) => child;
+  /// Ошибки синхронизации (временные, с автоскрытием и кнопкой повтора) —
+  /// плашкой поверх экрана сверху (1.10.2, замечание владельца: полоса в
+  /// разметке сдвигала письмо вниз, а уходя — поднимала обратно). Офлайн
+  /// сюда не попадает — для него пиктограмма OfflineIndicator в шапке.
+  Widget _withSyncOverlay(Widget child) => Stack(
+        children: [
+          Positioned.fill(child: child),
+          const Positioned(top: 0, left: 0, right: 0, child: ErrorBanner()),
+        ],
+      );
 
   void _onTabChanged(int index) {
     if (index != _currentIndex) {

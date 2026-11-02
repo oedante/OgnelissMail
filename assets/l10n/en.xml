@@ -3054,7 +3054,15 @@
     <string name="pushWakeStatusNone">Not registered yet</string>
     <string name="pushWakeStatusError">Failed: {e}</string>
     <string name="pushWakeTitleAndroid">Server signals</string>
-    <string name="pushWakeHelpAndroid">Android decides on its own when a background app may run: in deep sleep it postpones background checks, and since Android 15 background sync gets at most 6 hours a day. The developer’s server (ogneliss.ru/push) sends an empty “check your mail” signal through Google (Firebase Cloud Messaging) at the chosen interval, and the app checks your mailboxes itself, from this device. Only this installation’s notification token is sent to the server — no addresses, passwords or messages. In deep sleep Android may deliver the signal later, in the next maintenance window. Requires Google Play services. Details are in the Privacy Policy, section 6.2.</string>
+    <string name="pushWakeHelpAndroid">Android decides on its own when a background app may run: in deep sleep it postpones background checks, and since Android 15 background sync gets at most 6 hours a day. The developer’s server (ogneliss.ru/push) sends an empty “check your mail” signal through Google (Firebase Cloud Messaging) at the chosen interval, and the app checks your mailboxes itself, from this device. Only this installation’s notification token is sent to the server — no addresses, passwords or messages. In deep sleep Android may deliver the signal later, in the next maintenance window. Without Google services — through a UnifiedPush app (for example, ntfy). Details are in the Privacy Policy, section 6.2.</string>
+    <string name="pushWakeVia">How signals arrive</string>
+    <string name="pushWakeViaHelp">Through Google (Firebase Cloud Messaging) on phones with Google Play services. Without them, through a UnifiedPush distributor app (for example, ntfy): it keeps its own connection and passes on the “check your mail” signal. The signal is encrypted with this installation’s key and contains no addresses or messages. Details: Privacy Policy, section 6.2.</string>
+    <string name="pushWakeViaGoogle">Through Google</string>
+    <string name="pushWakeViaGoogleDesc">Requires Google Play services</string>
+    <string name="pushWakeViaUp">Through {app}</string>
+    <string name="pushWakeViaUpDesc">UnifiedPush — without Google services</string>
+    <string name="pushWakeNoDistributor">Without Google services — through UnifiedPush</string>
+    <string name="pushWakeNoDistributorDesc">Install a UnifiedPush distributor app, for example ntfy (F-Droid, Google Play), then tap “Refresh”.</string>
     <string name="mailCheckKindSignal">server signal</string>
     <string name="specialArchiveFolder">Archive folder</string>
     <string name="specialJunkFolder">Junk folder</string>

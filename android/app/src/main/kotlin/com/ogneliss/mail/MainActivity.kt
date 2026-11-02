@@ -65,6 +65,7 @@ class MainActivity : FlutterFragmentActivity() {
                     // фоновый сервис и его пульс не нужны.
                     ForegroundSyncPlugin.detach(app)
                     PushWakeFcm.detach()
+                    PushWakeUnifiedPush.detach()
                     FlutterEngineCache.getInstance().remove(ENGINE_ID)
                 }
             })
@@ -80,6 +81,7 @@ class MainActivity : FlutterFragmentActivity() {
             runCatching { FileOpenBridge.register(messenger, app) }
             runCatching { TimeZoneBridge.register(messenger) }
             runCatching { PushWakeFcm.register(messenger, app) }
+            runCatching { PushWakeUnifiedPush.register(messenger, app) }
             // Перевод писем на устройстве (ML Kit, 1.9.x).
             runCatching { TranslationBridge.register(messenger) }
             runCatching { ConversationShortcuts.register(messenger, app) }
@@ -144,6 +146,8 @@ class MainActivity : FlutterFragmentActivity() {
         TimeZoneBridge.register(messenger)
         // Сигналы сервера (1.9.x): токен FCM для «будильника».
         PushWakeFcm.register(messenger, this)
+        // Без сервисов Google (1.10.x): UnifiedPush.
+        PushWakeUnifiedPush.register(messenger, this)
         TranslationBridge.register(messenger)
         // Беседы для VIP (1.9.x): ярлыки бесед уведомлений о письмах.
         ConversationShortcuts.register(messenger, this)

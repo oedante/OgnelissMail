@@ -94,6 +94,10 @@ dependencies {
     // dart-defines. BoM — та же версия, что у FlutterFire (октябрь 2026).
     implementation(platform("com.google.firebase:firebase-bom:35.1.0"))
     implementation("com.google.firebase:firebase-messaging")
+    // Сигналы сервера без сервисов Google (1.10.x, PushWakeUnifiedPush.kt):
+    // UnifiedPush connector (Apache 2.0; тянет Google Tink — Apache 2.0, и
+    // protobuf-java — BSD-3-Clause) — расшифровка Web Push на телефоне.
+    implementation("org.unifiedpush.android:connector:3.3.5")
     // Сигнал ставит разовую задачу плагина workmanager (его BackgroundWorker);
     // версия — та же, что у плагина (workmanager_android 0.10.9).
     implementation("androidx.work:work-runtime:2.11.2")

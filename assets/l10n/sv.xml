@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Öppna i huvudfönstret</string>
     <string name="notifyLinesTitle">Textrader i aviseringar</string>
     <string name="notifyLinesHint">Hur många rader av meddelandet en expanderad avisering visar. 8 och 12 rader kräver texten på enheten; annars visas början.</string>
+    <string name="tileIconOnly">Endast ikon</string>
+    <string name="tileIconText">Ikon och text</string>
+    <string name="favoritesTilesHint">Favoriter visas som paneler. Knappen före reglaget gör en panel bred (ikon och text) eller liten (endast ikon).</string>
 </resources>

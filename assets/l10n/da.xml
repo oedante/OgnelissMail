@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Åbn i hovedvinduet</string>
     <string name="notifyLinesTitle">Tekstlinjer i notifikationer</string>
     <string name="notifyLinesHint">Hvor mange linjer af beskeden en udvidet notifikation viser. 8 og 12 linjer kræver teksten på enheden; ellers vises begyndelsen.</string>
+    <string name="tileIconOnly">Kun ikon</string>
+    <string name="tileIconText">Ikon og tekst</string>
+    <string name="favoritesTilesHint">Favoritter vises som felter. Knappen før kontakten gør et felt bredt (ikon og tekst) eller lille (kun ikon).</string>
 </resources>

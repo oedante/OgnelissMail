@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Abrir en la ventana principal</string>
     <string name="notifyLinesTitle">Líneas de texto en las notificaciones</string>
     <string name="notifyLinesHint">Cuántas líneas del mensaje mostrar en una notificación desplegada. Para 8 y 12 líneas el texto debe estar en el dispositivo; si no, se muestra el comienzo.</string>
+    <string name="tileIconOnly">Solo icono</string>
+    <string name="tileIconText">Icono y texto</string>
+    <string name="favoritesTilesHint">Los favoritos se muestran como mosaicos. El botón antes del interruptor hace el mosaico ancho (icono y texto) o pequeño (solo icono).</string>
 </resources>

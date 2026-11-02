@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Avaa pääikkunassa</string>
     <string name="notifyLinesTitle">Tekstirivejä ilmoituksissa</string>
     <string name="notifyLinesHint">Montako viestin riviä avattu ilmoitus näyttää. 8 ja 12 riviä vaativat viestin tekstin laitteella; muuten näkyy alku.</string>
+    <string name="tileIconOnly">Vain kuvake</string>
+    <string name="tileIconText">Kuvake ja teksti</string>
+    <string name="favoritesTilesHint">Suosikit näkyvät ruutuina. Kytkimen edessä oleva painike tekee ruudusta leveän (kuvake ja teksti) tai pienen (vain kuvake).</string>
 </resources>

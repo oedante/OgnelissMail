@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Abrir na janela principal</string>
     <string name="notifyLinesTitle">Linhas de texto nas notificações</string>
     <string name="notifyLinesHint">Quantas linhas da mensagem mostrar na notificação expandida. Para 8 e 12 linhas o texto precisa estar no aparelho; caso contrário, aparece o início.</string>
+    <string name="tileIconOnly">Só ícone</string>
+    <string name="tileIconText">Ícone e texto</string>
+    <string name="favoritesTilesHint">Os favoritos aparecem como blocos. O botão antes do interruptor deixa o bloco largo (ícone e texto) ou pequeno (só ícone).</string>
 </resources>

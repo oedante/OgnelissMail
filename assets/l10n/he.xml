@@ -3782,4 +3782,7 @@
     <string name="openInMainWindow">פתיחה בחלון הראשי</string>
     <string name="notifyLinesTitle">שורות טקסט בהתראות</string>
     <string name="notifyLinesHint">כמה שורות מההודעה להציג בהתראה מורחבת. 8 ו-12 שורות דורשות את טקסט ההודעה במכשיר; אחרת תוצג ההתחלה.</string>
+    <string name="tileIconOnly">סמל בלבד</string>
+    <string name="tileIconText">סמל ותווית</string>
+    <string name="favoritesTilesHint">המועדפים מוצגים כאריחים. הכפתור לפני המתג הופך אריח לרחב (סמל ותווית) או לקטן (סמל בלבד).</string>
 </resources>

@@ -3803,4 +3803,7 @@
     <string name="openInMainWindow">Otwórz w głównym oknie</string>
     <string name="notifyLinesTitle">Wiersze tekstu w powiadomieniach</string>
     <string name="notifyLinesHint">Ile wierszy wiadomości pokazać w rozwiniętym powiadomieniu. Dla 8 i 12 wierszy tekst musi być na urządzeniu; inaczej widać początek.</string>
+    <string name="tileIconOnly">Tylko ikona</string>
+    <string name="tileIconText">Ikona i podpis</string>
+    <string name="favoritesTilesHint">Ulubione są kafelkami. Przycisk przed przełącznikiem robi kafelek szeroki (ikona i podpis) lub mały (tylko ikona).</string>
 </resources>

@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Ouvrir dans la fenêtre principale</string>
     <string name="notifyLinesTitle">Lignes de texte dans les notifications</string>
     <string name="notifyLinesHint">Nombre de lignes du message dans une notification développée. 8 et 12 lignes demandent le texte du message sur l’appareil ; sinon, le début s’affiche.</string>
+    <string name="tileIconOnly">Icône seule</string>
+    <string name="tileIconText">Icône et libellé</string>
+    <string name="favoritesTilesHint">Les favoris s’affichent en vignettes. Le bouton avant l’interrupteur rend une vignette large (icône et libellé) ou petite (icône seule).</string>
 </resources>

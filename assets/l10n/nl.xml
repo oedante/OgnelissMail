@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Openen in het hoofdvenster</string>
     <string name="notifyLinesTitle">Tekstregels in meldingen</string>
     <string name="notifyLinesHint">Hoeveel regels van het bericht een uitgevouwen melding toont. Voor 8 en 12 regels moet de tekst op het apparaat staan; anders zie je het begin.</string>
+    <string name="tileIconOnly">Alleen pictogram</string>
+    <string name="tileIconText">Pictogram en tekst</string>
+    <string name="favoritesTilesHint">Favorieten staan als tegels. De knop voor de schakelaar maakt een tegel breed (pictogram en tekst) of klein (alleen pictogram).</string>
 </resources>

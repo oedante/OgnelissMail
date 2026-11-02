@@ -3782,4 +3782,7 @@
     <string name="openInMainWindow">Otevřít v hlavním okně</string>
     <string name="notifyLinesTitle">Řádky textu v oznámeních</string>
     <string name="notifyLinesHint">Kolik řádků zprávy ukázat v rozbaleném oznámení. Pro 8 a 12 řádků musí být text v zařízení; jinak se zobrazí začátek.</string>
+    <string name="tileIconOnly">Jen ikona</string>
+    <string name="tileIconText">Ikona a popisek</string>
+    <string name="favoritesTilesHint">Oblíbené jsou dlaždice. Tlačítko před přepínačem udělá dlaždici širokou (ikona a popisek) nebo malou (jen ikona).</string>
 </resources>

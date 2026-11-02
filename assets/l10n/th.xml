@@ -3740,4 +3740,7 @@
     <string name="openInMainWindow">เปิดในหน้าต่างหลัก</string>
     <string name="notifyLinesTitle">จำนวนบรรทัดข้อความในการแจ้งเตือน</string>
     <string name="notifyLinesHint">จำนวนบรรทัดของข้อความที่แสดงในการแจ้งเตือนแบบขยาย 8 และ 12 บรรทัดต้องมีข้อความอยู่ในเครื่อง มิฉะนั้นจะแสดงเฉพาะตอนต้น</string>
+    <string name="tileIconOnly">เฉพาะไอคอน</string>
+    <string name="tileIconText">ไอคอนและชื่อ</string>
+    <string name="favoritesTilesHint">รายการโปรดแสดงเป็นไทล์ ปุ่มหน้าสวิตช์ใช้เลือกไทล์กว้าง (ไอคอนและชื่อ) หรือเล็ก (เฉพาะไอคอน)</string>
 </resources>

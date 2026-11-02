@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Ana pencerede aç</string>
     <string name="notifyLinesTitle">Bildirimlerde metin satırı</string>
     <string name="notifyLinesHint">Genişletilmiş bildirimde iletinin kaç satırı gösterilsin. 8 ve 12 satır için metnin cihazda olması gerekir; yoksa başı gösterilir.</string>
+    <string name="tileIconOnly">Yalnızca simge</string>
+    <string name="tileIconText">Simge ve etiket</string>
+    <string name="favoritesTilesHint">Sık kullanılanlar kutucuk olarak görünür. Anahtardan önceki düğme kutucuğu geniş (simge ve etiket) ya da küçük (yalnızca simge) yapar.</string>
 </resources>

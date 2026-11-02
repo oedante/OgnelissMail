@@ -307,6 +307,9 @@ abstract final class AppIcons {
   static const IconData vibration = Symbols.vibration_rounded;
   static const IconData videocam = Symbols.videocam_rounded;
   static const IconData view_agenda = Symbols.view_agenda_rounded;
+  // Плитки (1.10.2): «только значок» и «значок с подписью».
+  static const IconData tile_small = Symbols.crop_square_rounded;
+  static const IconData tile_wide = Symbols.crop_16_9_rounded;
   static const IconData view_column = Symbols.view_column_rounded;
   static const IconData view_day = Symbols.view_day_rounded;
   static const IconData view_module = Symbols.view_module_rounded;

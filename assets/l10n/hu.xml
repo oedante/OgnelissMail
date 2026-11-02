@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Megnyitás a főablakban</string>
     <string name="notifyLinesTitle">Szövegsorok az értesítésekben</string>
     <string name="notifyLinesHint">Hány sort mutasson az üzenetből a kinyitott értesítés. 8 és 12 sorhoz a szövegnek a készüléken kell lennie, különben az eleje látszik.</string>
+    <string name="tileIconOnly">Csak ikon</string>
+    <string name="tileIconText">Ikon és felirat</string>
+    <string name="favoritesTilesHint">A kedvencek csempékként jelennek meg. A kapcsoló előtti gomb széles (ikon és felirat) vagy kicsi (csak ikon) csempét választ.</string>
 </resources>

@@ -3740,4 +3740,7 @@
     <string name="openInMainWindow">Mở trong cửa sổ chính</string>
     <string name="notifyLinesTitle">Số dòng văn bản trong thông báo</string>
     <string name="notifyLinesHint">Số dòng của thư hiển thị trong thông báo mở rộng. 8 và 12 dòng cần có nội dung thư trên máy; nếu không sẽ hiện phần đầu.</string>
+    <string name="tileIconOnly">Chỉ biểu tượng</string>
+    <string name="tileIconText">Biểu tượng và nhãn</string>
+    <string name="favoritesTilesHint">Mục yêu thích hiển thị dạng ô. Nút trước công tắc chọn ô rộng (biểu tượng và nhãn) hoặc ô nhỏ (chỉ biểu tượng).</string>
 </resources>

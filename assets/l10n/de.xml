@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Im Hauptfenster öffnen</string>
     <string name="notifyLinesTitle">Textzeilen in Mitteilungen</string>
     <string name="notifyLinesHint">Wie viele Zeilen der Nachricht eine aufgeklappte Mitteilung zeigt. Für 8 und 12 Zeilen muss der Text auf dem Gerät sein, sonst erscheint der Anfang.</string>
+    <string name="tileIconOnly">Nur Symbol</string>
+    <string name="tileIconText">Symbol und Text</string>
+    <string name="favoritesTilesHint">Favoriten erscheinen als Kacheln. Die Taste vor dem Schalter macht eine Kachel breit (Symbol und Text) oder klein (nur Symbol).</string>
 </resources>

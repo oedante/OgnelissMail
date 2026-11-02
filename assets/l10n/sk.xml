@@ -3782,4 +3782,7 @@
     <string name="openInMainWindow">Otvoriť v hlavnom okne</string>
     <string name="notifyLinesTitle">Riadky textu v upozorneniach</string>
     <string name="notifyLinesHint">Koľko riadkov správy ukázať v rozbalenom upozornení. Pre 8 a 12 riadkov musí byť text v zariadení; inak sa zobrazí začiatok.</string>
+    <string name="tileIconOnly">Len ikona</string>
+    <string name="tileIconText">Ikona a popis</string>
+    <string name="favoritesTilesHint">Obľúbené sú dlaždice. Tlačidlo pred prepínačom urobí dlaždicu širokú (ikona a popis) alebo malú (len ikona).</string>
 </resources>

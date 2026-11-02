@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Åpne i hovedvinduet</string>
     <string name="notifyLinesTitle">Tekstlinjer i varsler</string>
     <string name="notifyLinesHint">Hvor mange linjer av meldingen et utvidet varsel viser. 8 og 12 linjer krever teksten på enheten; ellers vises begynnelsen.</string>
+    <string name="tileIconOnly">Bare ikon</string>
+    <string name="tileIconText">Ikon og tekst</string>
+    <string name="favoritesTilesHint">Favoritter vises som fliser. Knappen før bryteren gjør en flis bred (ikon og tekst) eller liten (bare ikon).</string>
 </resources>

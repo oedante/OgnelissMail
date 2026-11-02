@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">मुख्य विंडो में खोलें</string>
     <string name="notifyLinesTitle">सूचनाओं में पाठ की पंक्तियाँ</string>
     <string name="notifyLinesHint">खुली सूचना में संदेश की कितनी पंक्तियाँ दिखें। 8 और 12 पंक्तियों के लिए संदेश का पाठ डिवाइस पर होना चाहिए; नहीं तो शुरुआत दिखेगी।</string>
+    <string name="tileIconOnly">केवल आइकन</string>
+    <string name="tileIconText">आइकन और लेबल</string>
+    <string name="favoritesTilesHint">पसंदीदा टाइलों के रूप में दिखते हैं। स्विच से पहले का बटन टाइल को चौड़ा (आइकन और लेबल) या छोटा (केवल आइकन) बनाता है।</string>
 </resources>

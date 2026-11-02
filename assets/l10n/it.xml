@@ -3761,4 +3761,7 @@
     <string name="openInMainWindow">Apri nella finestra principale</string>
     <string name="notifyLinesTitle">Righe di testo nelle notifiche</string>
     <string name="notifyLinesHint">Quante righe del messaggio mostrare nella notifica espansa. Per 8 e 12 righe serve il testo sul dispositivo; altrimenti si vede l’inizio.</string>
+    <string name="tileIconOnly">Solo icona</string>
+    <string name="tileIconText">Icona ed etichetta</string>
+    <string name="favoritesTilesHint">I preferiti sono riquadri. Il pulsante prima dell’interruttore rende il riquadro largo (icona ed etichetta) o piccolo (solo icona).</string>
 </resources>

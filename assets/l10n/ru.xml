@@ -3803,4 +3803,7 @@
     <string name="openInMainWindow">Открыть в главном окне</string>
     <string name="notifyLinesTitle">Строк текста в уведомлении</string>
     <string name="notifyLinesHint">Сколько строк начала письма показать в раскрытом уведомлении. Для 8 и 12 строк нужен загруженный текст письма — иначе покажется начало.</string>
+    <string name="tileIconOnly">Только значок</string>
+    <string name="tileIconText">Значок и подпись</string>
+    <string name="favoritesTilesHint">Избранное — плитками. Кнопка перед переключателем: широкая плитка со значком и подписью или маленькая, только значок.</string>
 </resources>

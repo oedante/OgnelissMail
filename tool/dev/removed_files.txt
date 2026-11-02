@@ -4,12 +4,18 @@
 #   python3 tool/dev/removed_files.py
 android/app/src/main/kotlin/com/ogneliss/mail/SpeechRecognizerPlugin.kt
 android/app/src/main/res/values/ic_launcher_background.xml
+assets/fonts/medeo/MedeoSans-Bold.ttf
+assets/fonts/medeo/MedeoSans-Medium.ttf
+assets/fonts/medeo/MedeoSans-OFL.txt
+assets/fonts/medeo/MedeoSans-Regular.ttf
+assets/fonts/medeo/MedeoSans-SemiBold.ttf
 lib/features/assignments/providers/assignments_provider.dart
 lib/features/assignments/screens/assignment_detail_screen.dart
 lib/features/assignments/screens/assignment_list_screen.dart
 lib/features/assignments/screens/create_assignment_screen.dart
 lib/features/calendar/widgets/calendar_month_view.dart
 lib/features/calendar/widgets/calendar_views.dart
+lib/features/calendar/widgets/quick_event_sheet.dart
 lib/features/compose/widgets/recipient_chip_field.dart
 lib/features/dashboard/screens/correspondence_report_screen.dart
 lib/features/dashboard/screens/dashboard_screen.dart
@@ -24,7 +30,6 @@ lib/features/mail/widgets/smart_suggestions_bar.dart
 lib/features/mail/widgets/unsubscribe_flow.dart
 lib/features/settings/screens/ai_rules_screen.dart
 lib/features/settings/screens/classification_settings_screen.dart
-lib/features/settings/screens/experimental_settings_screen.dart
 lib/features/settings/screens/gpt_settings_screen.dart
 lib/features/settings/screens/modules_settings_screen.dart
 lib/features/subscriptions/providers/subscriptions_provider.dart
@@ -81,3 +86,4 @@ test/unit/ai_analyzer_test.dart
 test/unit/dictation_formatter_test.dart
 test/unit/mail_classification_test.dart
 test/unit/schedule_hints_test.dart
+test/widget/quick_event_sheet_test.dart

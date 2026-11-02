@@ -28,6 +28,8 @@ enum SafetyReason {
   dangerousAttachment,// исполняемое/опасное вложение
   linkMismatch,       // видимый текст ссылки не совпадает с реальным адресом
   authenticationFail, // SPF/DKIM/DMARC не прошли (из Authentication-Results)
+  contactImpersonation, // имя как у контакта, а адрес другой (1.10.x)
+  replyToMismatch,    // ответ уйдёт на адрес другой организации (1.10.x)
 }
 
 class SafetySignal {
@@ -130,8 +132,22 @@ class SenderSafetyService {
         lookalike ??= _lookalikeReason(fromDomain, o);
       }
     }
+    // 1.10.x (просьба владельца 01.11.2026): и у личных ящиков — домен в
+    // punycode или с кириллицей, и домен, похожий на домен ваших контактов
+    // или известного банка, магазина, госслужбы («sberbank-secure.ru»,
+    // «paypa1.com»). Раньше похожие домены искались только у рабочего ящика
+    // и только рядом с доменом организации.
+    String? like;
+    if (lookalike == null && fromDomain.isNotEmpty && !ours(fromDomain)) {
+      if (fromDomain.contains('xn--') || _hasCyrillic(fromDomain)) {
+        lookalike = fromDomain;
+      } else {
+        like = lookalikeOf(fromDomain, {...knownBrandDomains, ...await _contactDomains(account.id)});
+        if (like != null) lookalike = fromDomain;
+      }
+    }
     if (lookalike != null) {
-      signals.add(SafetySignal(SafetyReason.lookalikeDomain, SafetyLevel.danger, lookalike));
+      signals.add(SafetySignal(SafetyReason.lookalikeDomain, SafetyLevel.danger, lookalike, like));
     }
 
     // 3. Спуфинг отображаемого имени: в display name «спрятан» другой адрес/домен,
@@ -147,6 +163,25 @@ class SenderSafetyService {
     if (spoof != null) {
       signals.add(SafetySignal(SafetyReason.displayNameSpoof, spoof.address ? SafetyLevel.danger : SafetyLevel.warning,
           spoof.found, email.from.email));
+    }
+
+    // 3b. Имя как у вашего контакта, а адрес чужой (подмена руководителя,
+    //     коллеги, бухгалтерии — 1.10.x). Свой домен — не проверяем: там
+    //     подделку ловят SPF/DMARC.
+    if (!internal) {
+      final imp = await _contactWithSameName(account.id, email.from.displayName, email.from.email);
+      if (imp != null) {
+        signals.add(SafetySignal(SafetyReason.contactImpersonation, SafetyLevel.danger, imp, email.from.email));
+      }
+    }
+
+    // 3c. Ответ уйдёт на адрес другой организации (Reply-To). У рассылок
+    //     так бывает честно (ответы — в службу поддержки), поэтому только
+    //     у писем без List-Unsubscribe.
+    final rt = replyToElsewhere(email.from.email, [for (final a in email.replyTo) a.email],
+        mailingList: (email.listUnsubscribe ?? '').isNotEmpty);
+    if (rt != null) {
+      signals.add(SafetySignal(SafetyReason.replyToMismatch, SafetyLevel.warning, rt));
     }
 
     // 4. Опасные вложения.
@@ -174,6 +209,187 @@ class SenderSafetyService {
   }
 
   // ─────────────────────────── эвристики ───────────────────────────
+
+  /// Домены известных служб, под которые чаще всего подделываются письма:
+  /// банки, магазины, госслужбы, почта, доставка, платежи (1.10.x).
+  static const knownBrandDomains = <String>{
+    // Россия
+    'sberbank.ru', 'sber.ru', 'tbank.ru', 'tinkoff.ru', 'vtb.ru', 'alfabank.ru', 'gazprombank.ru',
+    'raiffeisen.ru', 'rshb.ru', 'pochtabank.ru', 'sovcombank.ru', 'open.ru', 'psbank.ru', 'mkb.ru',
+    'gosuslugi.ru', 'nalog.gov.ru', 'nalog.ru', 'mos.ru', 'pfr.gov.ru', 'sfr.gov.ru', 'cbr.ru',
+    'pochta.ru', 'cdek.ru', 'ozon.ru', 'wildberries.ru', 'wb.ru', 'avito.ru', 'yandex.ru', 'ya.ru',
+    'mail.ru', 'vk.com', 'mts.ru', 'megafon.ru', 'beeline.ru', 'rt.ru', 'rzd.ru', 'aeroflot.ru',
+    'kaspersky.ru', 'kaspersky.com', '1c.ru', 'hh.ru', 'dns-shop.ru', 'mvideo.ru',
+    // Мир
+    'google.com', 'gmail.com', 'apple.com', 'icloud.com', 'microsoft.com', 'outlook.com', 'live.com',
+    'office.com', 'microsoftonline.com', 'paypal.com', 'amazon.com', 'ebay.com', 'aliexpress.com',
+    'aliexpress.ru', 'facebook.com', 'instagram.com', 'whatsapp.com', 'telegram.org', 'linkedin.com',
+    'netflix.com', 'spotify.com', 'dhl.com', 'fedex.com', 'ups.com', 'booking.com', 'airbnb.com',
+    'binance.com', 'coinbase.com', 'docusign.com', 'docusign.net', 'dropbox.com', 'adobe.com',
+    'github.com', 'zoom.us', 'steampowered.com', 'visa.com', 'mastercard.com', 'americanexpress.com',
+    // Почтовые службы — и как цели подделки, и как честные домены с похожими
+    // именами (ymail.com рядом с gmail.com, email.com, inbox.ru).
+    'ymail.com', 'yahoo.com', 'hotmail.com', 'msn.com', 'aol.com', 'mail.com', 'email.com', 'gmx.com',
+    'gmx.de', 'gmx.net', 'web.de', 'inbox.ru', 'list.ru', 'bk.ru', 'internet.ru', 'rambler.ru',
+    'yandex.com', 'yandex.by', 'yandex.kz', 'yandex.ua', 'proton.me', 'protonmail.com', 'zoho.com',
+    'me.com', 'mac.com', 'qq.com', '163.com', 'naver.com', 'googlemail.com',
+  };
+
+  /// Домен, на который [domain] похож, но им не является, или null.
+  /// Сравниваются имена до зоны («sberbank» из sberbank.ru): одна опечатка
+  /// или подмена похожих знаков (0→o, 1→l, rn→m, vv→w) при длине от 5
+  /// знаков, или имя бренда с добавкой через дефис («paypal-secure.com»,
+  /// «sberbank-online.ru»). Разные зоны одного имени (yandex.ru и
+  /// yandex.by) — не подделка: так устроены честные службы.
+  static String? lookalikeOf(String domain, Set<String> legit) {
+    final d = domain.toLowerCase().trim().replaceAll(RegExp(r'\.$'), '');
+    if (d.isEmpty || legit.contains(d)) return null;
+    final dl = _label(d);
+    if (dl.length < 4) return null;
+    final dSkel = _skeleton(dl);
+    for (final l in legit) {
+      if (_sameOrg(d, l)) return null; // поддомен самой службы
+    }
+    for (final l in legit) {
+      final ll = _label(l);
+      if (ll.length < 4 || ll == dl) continue;
+      final lSkel = _skeleton(ll);
+      if (dSkel == lSkel) return l; // paypa1 → paypal, rnail → mail
+      if (ll.length >= 5 && _lev(dl, ll) == 1) return l; // sberbamk → sberbank
+      // Бренд с добавкой: «paypal-support», «secure-sberbank».
+      if (ll.length >= 5 && (dl.startsWith('$ll-') || dl.endsWith('-$ll') || dl.contains('-$ll-'))) return l;
+    }
+    return null;
+  }
+
+  /// Имя домена без зоны: «online.sberbank.ru» → «sberbank»,
+  /// «mail.example.co.uk» → «example».
+  static String _label(String domain) {
+    final p = domain.split('.');
+    if (p.length < 2) return domain;
+    const second = {'co', 'com', 'org', 'net', 'gov', 'ac', 'edu', 'msk', 'spb'};
+    if (p.length >= 3 && second.contains(p[p.length - 2]) && p.last.length == 2) return p[p.length - 3];
+    return p[p.length - 2];
+  }
+
+  /// «Скелет» имени: похожие знаки сведены к одному (1.10.x).
+  static String _skeleton(String s) => s
+      .replaceAll('rn', 'm')
+      .replaceAll('vv', 'w')
+      .replaceAll('0', 'o')
+      .replaceAll('1', 'l')
+      .replaceAll('3', 'e')
+      .replaceAll('5', 's')
+      .replaceAll('i', 'l');
+
+  static int _lev(String a, String b) {
+    final m = a.length, n = b.length;
+    if ((m - n).abs() > 1) return 2;
+    var prev = List<int>.generate(n + 1, (i) => i);
+    var cur = List<int>.filled(n + 1, 0);
+    for (var i = 1; i <= m; i++) {
+      cur[0] = i;
+      for (var j = 1; j <= n; j++) {
+        final c = a[i - 1] == b[j - 1] ? 0 : 1;
+        final x = cur[j - 1] + 1, y = prev[j] + 1, z = prev[j - 1] + c;
+        cur[j] = x < y ? (x < z ? x : z) : (y < z ? y : z);
+      }
+      final tmp = prev;
+      prev = cur;
+      cur = tmp;
+    }
+    return prev[n];
+  }
+
+  /// Адрес из Reply-To другой организации, чем отправитель, или null.
+  static String? replyToElsewhere(String from, List<String> replyTo, {bool mailingList = false}) {
+    if (mailingList || replyTo.isEmpty) return null;
+    final f = from.toLowerCase().trim();
+    final fd = f.contains('@') ? f.substring(f.lastIndexOf('@') + 1) : '';
+    if (fd.isEmpty) return null;
+    for (final r in replyTo) {
+      final a = r.toLowerCase().trim();
+      if (!a.contains('@') || a == f) continue;
+      final d = a.substring(a.lastIndexOf('@') + 1);
+      if (!_sameOrg(d, fd)) return a;
+    }
+    return null;
+  }
+
+  /// Нормализованное имя для сравнения: без кавычек, регистра и лишних
+  /// пробелов, «ё» как «е».
+  static String normalizeName(String? s) => (s ?? '')
+      .toLowerCase()
+      .replaceAll(RegExp('["\'«»]'), '')
+      .replaceAll('ё', 'е')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .trim();
+
+  /// Имя годится для сравнения с контактами: два слова или от 6 знаков, без
+  /// адреса внутри (адрес в имени ловит [displayNameSpoof]).
+  static bool comparableName(String n) =>
+      !n.contains('@') && (n.contains(' ') ? n.length >= 5 : n.length >= 6);
+
+  /// Домены контактов ящика — для «похожего домена» (кэш на 10 минут).
+  final Map<String, ({DateTime at, Set<String> domains})> _contactDomainsCache = {};
+
+  Future<Set<String>> _contactDomains(String accountId) async {
+    final hit = _contactDomainsCache[accountId];
+    if (hit != null && DateTime.now().difference(hit.at) < const Duration(minutes: 10)) return hit.domains;
+    final out = <String>{};
+    try {
+      final db = _ref.read(databaseProvider);
+      final q = db.selectOnly(db.contacts, distinct: true)
+        ..addColumns([db.contacts.email])
+        ..where(db.contacts.accountId.equals(accountId) | db.contacts.accountId.isNull())
+        ..limit(5000);
+      for (final r in await q.get()) {
+        final e = (r.read(db.contacts.email) ?? '').toLowerCase().trim();
+        final at = e.lastIndexOf('@');
+        if (at > 0 && at < e.length - 1) out.add(e.substring(at + 1));
+      }
+    } catch (_) {}
+    // Почтовые службы — не «домены контактов»: у gmail.com тысячи похожих
+    // честных доменов не бывает, но сравнивать письма с ними — дело списка брендов.
+    _contactDomainsCache[accountId] = (at: DateTime.now(), domains: out);
+    return out;
+  }
+
+  /// Контакт с тем же именем, что у отправителя, но без его адреса и не из
+  /// его организации — имя контакта (как в адресной книге) или null.
+  Future<String?> _contactWithSameName(String accountId, String? displayName, String fromEmail) async {
+    final n = normalizeName(displayName);
+    if (!comparableName(n)) return null;
+    final from = fromEmail.toLowerCase().trim();
+    final fromDomain = from.contains('@') ? from.substring(from.lastIndexOf('@') + 1) : '';
+    try {
+      final db = _ref.read(databaseProvider);
+      final rows = await (db.select(db.contacts)
+            ..where((c) =>
+                (c.accountId.equals(accountId) | c.accountId.isNull()) &
+                c.displayName.lower().equals(displayName!.toLowerCase().trim()))
+            ..limit(20))
+          .get();
+      // Сравнение — по нормализованному имени (ё/е, пробелы); запрос выше —
+      // быстрый отбор по точному имени без регистра.
+      final same = [for (final c in rows) if (normalizeName(c.displayName) == n) c];
+      if (same.isEmpty) return null;
+      for (final c in same) {
+        final emails = {
+          c.email.toLowerCase().trim(),
+          for (final a in (c.additionalEmails ?? '').split(RegExp(r'[,;\s]+'))) a.toLowerCase().trim(),
+        }..remove('');
+        if (emails.contains(from)) return null; // это он и есть
+        for (final e in emails) {
+          final d = e.contains('@') ? e.substring(e.lastIndexOf('@') + 1) : '';
+          if (d.isNotEmpty && fromDomain.isNotEmpty && _sameOrg(d, fromDomain)) return null; // новый адрес той же организации
+        }
+      }
+      return same.first.displayName;
+    } catch (_) {
+      return null;
+    }
+  }
 
   /// Разбор Authentication-Results: возвращает краткое описание провала
   /// (напр. "SPF: fail, DMARC: fail") или null, если проверки прошли/нет данных.

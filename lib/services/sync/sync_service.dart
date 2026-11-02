@@ -65,6 +65,7 @@ import '../mail/thread_linker.dart';
 import '../mail/special_folders.dart';
 import '../security/mail_classification.dart' show MailLabel;
 import '../rules/device_rules_service.dart' show deviceRulesProvider, RuleNotify, RuleOutcome;
+import '../rules/sender_rules_service.dart' show senderRulesProvider;
 import '../notifications/reminder_scheduler_service.dart';
 import '../notifications/follow_up_service.dart';
 import '../mail/oauth/oauth_service.dart';
@@ -2035,16 +2036,29 @@ class SyncService {
     if (added <= 0) return;
     var ruled = const <String, RuleOutcome>{};
     if (folder.type == FolderType.inbox) {
+      final recent = DateTime.now().subtract(const Duration(days: 2));
+      var fresh = [
+        for (final e in processed)
+          if (!e.isDraft && e.receivedAt.isAfter(recent) && !OwnAddresses.isMine(account, e.from.email)) e,
+      ];
+      // Блокировка и чистка по отправителю (1.10.x) — раньше правил VIP:
+      // письмо заблокированного отправителя уже не во «Входящих».
+      var removed = const <String, RuleOutcome>{};
+      try {
+        final senders = _ref.read(senderRulesProvider.notifier);
+        await senders.reload();
+        removed = await senders.apply(account, folder.id, fresh);
+        if (removed.isNotEmpty) fresh = [for (final e in fresh) if (!removed.containsKey(e.id)) e];
+        unawaited(senders.sweepOld(account, folder.id).catchError((Object _) => 0));
+      } catch (e) {
+        AppLogger.warning('Правила отправителей: $e');
+      }
       try {
         final rules = _ref.read(deviceRulesProvider.notifier);
         await rules.reload();
-        final recent = DateTime.now().subtract(const Duration(days: 2));
-        final fresh = [
-          for (final e in processed)
-            if (!e.isDraft && e.receivedAt.isAfter(recent) && !OwnAddresses.isMine(account, e.from.email)) e,
-        ];
-        ruled = await rules.apply(account, folder.id, fresh);
+        ruled = {...await rules.apply(account, folder.id, fresh), ...removed};
       } catch (e) {
+        ruled = removed;
         AppLogger.warning('Правила на устройстве: $e');
       }
     }

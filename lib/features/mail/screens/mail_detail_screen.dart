@@ -66,6 +66,7 @@ import '../../contacts/widgets/person_card.dart';
 import '../../../services/mail/control_service.dart';
 import '../../../services/mail/later_service.dart';
 import '../widgets/later_sheet.dart';
+import '../widgets/sender_actions_sheet.dart';
 import '../../settings/screens/device_rule_screen.dart' show openDeviceRule;
 import '../../../services/mail/own_addresses.dart';
 import '../../../services/security/mail_classification.dart';
@@ -1458,6 +1459,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         const SingleActivator(LogicalKeyboardKey.delete): () => _deleteEmail(email, l10n),
         if (!widget.embedded)
           const SingleActivator(LogicalKeyboardKey.escape): () => Navigator.of(context).maybePop(),
+        // Ещё сочетания Outlook (1.10.x, просьба владельца 02.11.2026):
+        // Ctrl+Q — прочитано, Ctrl+U — не прочитано, Insert — флажок,
+        // Backspace — в архив, Ctrl+P — печать.
+        const SingleActivator(LogicalKeyboardKey.keyQ, control: true): () => _setReadKey(email, true),
+        const SingleActivator(LogicalKeyboardKey.keyU, control: true): () => _setReadKey(email, false),
+        const SingleActivator(LogicalKeyboardKey.insert): () => _toggleFlag(email),
+        const SingleActivator(LogicalKeyboardKey.backspace): () => unawaited(_archiveEmail(email, l10n)),
+        const SingleActivator(LogicalKeyboardKey.keyP, control: true): () => unawaited(_exportPdf(email, l10n)),
       },
       child: Focus(
         autofocus: true,
@@ -2406,6 +2415,11 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
               if (acc != null) _editCategories(context, acc, email, l10n);
             }),
           _peekAction(AppIcons.report, l10n.tr('moveToJunk'), () => _moveToJunk(email, l10n)),
+          // Заблокировать отправителя и «Чистка» (1.10.x).
+          _peekAction(AppIcons.block,
+              l10n.tr(isSenderBlocked(ref, email.from.email, email.accountId) ? 'unblockSender' : 'blockSender'),
+              () => unawaited(_blockSender(email))),
+          _peekAction(AppIcons.cleaning_services, l10n.tr('sweepShort'), () => unawaited(_sweepSender(email))),
         ]),
         PeekGroup(title: l10n.tr('actionsCreate'), items: [
           // Встреча по письму: тема, участники и текст — из письма.
@@ -3263,6 +3277,37 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       ),
     );
     _closeAfterAction();
+  }
+
+  /// Ctrl+Q / Ctrl+U (как в Outlook): прочитано или не прочитано.
+  void _setReadKey(EmailModel email, bool read) {
+    if (email.isRead == read) return;
+    final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+    if (acc == null) return;
+    unawaited(ref.read(emailActionsProvider).setRead(acc, email.id, email.folderId, read));
+    ref.read(emailsProvider.notifier).applyLocalFlags(email.id, isRead: read);
+    safeSetState(() => _email = email.copyWith(isRead: read));
+  }
+
+  /// Заблокировать (или разблокировать) отправителя письма (1.10.x).
+  Future<void> _blockSender(EmailModel email) async {
+    final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+    if (account == null) return;
+    final wasBlocked = isSenderBlocked(ref, email.from.email, email.accountId);
+    final msg = await blockSender(context, ref, account: account, email: email);
+    if (!mounted || msg == null) return;
+    showSenderActionResult(context, msg);
+    // Письмо заблокированного отправителя уже в «Спаме» — закрыть его.
+    if (!wasBlocked) _closeAfterAction();
+  }
+
+  /// «Чистка» по отправителю письма (1.10.x).
+  Future<void> _sweepSender(EmailModel email) async {
+    final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+    if (account == null) return;
+    final msg = await sweepSender(context, ref, account: account, email: email);
+    if (!mounted || msg == null) return;
+    showSenderActionResult(context, msg);
   }
 
   Future<void> _moveToJunk(EmailModel email, AppLocalizations l10n) async {

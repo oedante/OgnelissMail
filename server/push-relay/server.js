@@ -26,7 +26,11 @@
 //                        Google ключи
 //
 // platform 'android' — токен FCM (регистр букв сохраняется, окружение fcm);
-// без него — токен APNs, как в 1.7.2.
+// platform 'unifiedpush' (1.10.x) — адрес Web Push от распространителя
+// UnifiedPush на телефоне без сервисов Google, с ключами {p256dh, auth}
+// (окружение up, webpush.js); без него — токен APNs, как в 1.7.2.
+//   GET  /vapid        — открытый ключ VAPID для регистрации UnifiedPush
+//                        (404 — ключ не задан, тогда регистрация без VAPID)
 //
 // Виды сигнала iPhone:
 //   silent — content-available, приоритет 5 (этап 1, без права Apple на
@@ -47,6 +51,7 @@
 // ============================================================================
 
 const http = require('http');
+const webpush = require('./webpush');
 const http2 = require('http2');
 const crypto = require('crypto');
 const fs = require('fs');
@@ -92,6 +97,21 @@ const FCM_URL = (process.env.FCM_URL || 'https://fcm.googleapis.com').replace(/\
 const FCM_SCOPE = 'https://www.googleapis.com/auth/firebase.messaging';
 // Токен FCM: буквы, цифры, «:», «_», «-» (обычно около 160 символов).
 const FCM_TOKEN_RE = /^[A-Za-z0-9_:-]{32,512}$/;
+
+// UnifiedPush (1.10.x): ключ VAPID (PEM, EC P-256) — подпись сигналов для
+// распространителей, которые её требуют. Не задан — сигналы без подписи
+// (ntfy и NextPush принимают и так).
+const VAPID_FILE = process.env.VAPID_PRIVATE_KEY_FILE || '';
+const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'https://www.ogneliss.ru';
+let vapid = null;
+try {
+  if (VAPID_FILE) vapid = webpush.loadVapid(fs.readFileSync(VAPID_FILE, 'utf8'));
+} catch (e) {
+  process.stdout.write(`${new Date().toISOString()} push-relay: ключ VAPID не прочитан — ${e.message}\n`);
+}
+// Ключи получателя: p256dh — 65 байт, auth — 16 байт (base64url).
+const UP_KEY_RE = /^[A-Za-z0-9_-]{86,88}$/;
+const UP_AUTH_RE = /^[A-Za-z0-9_-]{22,24}$/;
 
 function log(msg) {
   // Только служебные сообщения и счётчики — без токенов и IP.
@@ -380,7 +400,25 @@ function apnsGone(r) {
 }
 
 function ready(env) {
+  if (env === 'up') return true; // UnifiedPush ключей сервера не требует
   return env === 'fcm' ? fcmReady() : keyReady(env);
+}
+
+function sendAny(t, rec) {
+  if (rec.e === 'up') {
+    return webpush.send(rec, t, {
+      vapid,
+      subject: VAPID_SUBJECT,
+      urgency: rec.m === 'high' ? 'high' : 'normal',
+      ttl: (rec.i || 15) * 60,
+    });
+  }
+  return rec.e === 'fcm' ? sendFcm(t, rec) : send(t, rec);
+}
+
+function goneAny(rec, r) {
+  if (rec.e === 'up') return webpush.gone(r);
+  return rec.e === 'fcm' ? fcmGone(r) : apnsGone(r);
 }
 
 // ── Плановая отправка ──
@@ -415,16 +453,16 @@ async function tick() {
     for (let i = 0; i < due.length; i += PARALLEL) {
       await Promise.all(due.slice(i, i + PARALLEL).map(async ([t, rec]) => {
         const fcm = rec.e === 'fcm';
-        const r = fcm ? await sendFcm(t, rec) : await send(t, rec);
+        const r = await sendAny(t, rec);
         if (r.status === 200) {
           rec.l = Date.now();
           stats.sent++;
-        } else if (fcm ? fcmGone(r) : apnsGone(r)) {
+        } else if (goneAny(rec, r)) {
           tokens.delete(t);
           stats.removed++;
         } else {
           stats.failed++;
-          stats.lastError = `${fcm ? 'FCM ' : ''}${r.status} ${r.reason}`.trim();
+          stats.lastError = `${fcm ? 'FCM ' : rec.e === 'up' ? 'UnifiedPush ' : ''}${r.status} ${r.reason}`.trim();
           if (!fcm && ['ExpiredProviderToken', 'InvalidProviderToken'].includes(r.reason)) delete jwtCache[rec.e];
           // Повтор — через минуту, а не на каждом шаге (TooManyRequests,
           // QUOTA_EXCEEDED, сбой сети, ошибки Apple и Google).
@@ -505,7 +543,7 @@ function healthz(full) {
   // Снаружи — только «жива ли служба и готов ли ключ APNs»: число установок
   // посторонним знать незачем. Подробно — изнутри (install-push-relay.sh check).
   if (!full) return { ok: true, ready: keyReady('production'), fcm: fcmReady() };
-  const count = { total: tokens.size, production: 0, sandbox: 0, fcm: 0, silent: 0, alert: 0, normal: 0, high: 0 };
+  const count = { total: tokens.size, production: 0, sandbox: 0, fcm: 0, up: 0, silent: 0, alert: 0, normal: 0, high: 0 };
   for (const rec of tokens.values()) {
     count[rec.e] = (count[rec.e] || 0) + 1;
     count[rec.m] = (count[rec.m] || 0) + 1;
@@ -513,7 +551,7 @@ function healthz(full) {
   return {
     ok: true,
     tokens: count,
-    keys: { production: keyReady('production'), sandbox: keyReady('sandbox'), team: Boolean(TEAM_ID), fcm: fcmReady() },
+    keys: { production: keyReady('production'), sandbox: keyReady('sandbox'), team: Boolean(TEAM_ID), fcm: fcmReady(), vapid: Boolean(vapid) },
     topic: TOPIC,
     fcmProject: fcmReady() ? fcmAccount().project : null,
     apiKey: Boolean(API_KEY),
@@ -571,10 +609,41 @@ const server = http.createServer(async (req, res) => {
   const local = isLocal(req);
   if (req.method === 'GET' && (p === '/healthz' || p === '/')) return reply(res, 200, healthz(local));
   if (req.method === 'POST' && p === '/probe' && local) return reply(res, 200, await probe());
+  // Открытый ключ VAPID — не секрет: приложение передаёт его распространителю.
+  if (req.method === 'GET' && p === '/vapid') {
+    return vapid ? reply(res, 200, { key: vapid.publicKey }) : reply(res, 404, { error: 'no_vapid' });
+  }
   if (req.method !== 'POST' || (p !== '/register' && p !== '/unregister')) return reply(res, 404, { error: 'not_found' });
   if (API_KEY && !safeEqual(req.headers['x-api-key'] || '', API_KEY)) return reply(res, 401, { error: 'unauthorized' });
 
   const body = await readJson(req);
+  // UnifiedPush (1.10.x): токен — адрес Web Push, ключи — p256dh и auth.
+  if (body && body.platform === 'unifiedpush') {
+    const url = typeof body.token === 'string' ? body.token.trim() : '';
+    if (p === '/unregister') {
+      if (tokens.delete(url)) saveSoon();
+      return reply(res, 204);
+    }
+    const bad = await webpush.checkEndpoint(url);
+    if (bad) return reply(res, 400, { error: 'bad_endpoint', reason: bad });
+    const k = typeof body.p256dh === 'string' ? body.p256dh.trim().replace(/=+$/, '') : '';
+    const a = typeof body.auth === 'string' ? body.auth.trim().replace(/=+$/, '') : '';
+    if (!UP_KEY_RE.test(k) || !UP_AUTH_RE.test(a)) return reply(res, 400, { error: 'bad_keys' });
+    const old = tokens.get(url);
+    if (!old && tokens.size >= MAX_TOKENS) return reply(res, 503, { error: 'full' });
+    const now = Date.now();
+    tokens.set(url, {
+      e: 'up',
+      i: INTERVALS.includes(body.interval) ? body.interval : 15,
+      m: body.mode === 'high' ? 'high' : 'normal',
+      k,
+      a,
+      l: old ? old.l : now - Math.floor(Math.random() * 60 * 1000),
+      r: now,
+    });
+    saveSoon();
+    return reply(res, 204);
+  }
   // Android (1.9.x): токен FCM — с сохранением регистра букв.
   const android = Boolean(body && body.platform === 'android');
   const raw = body && typeof body.token === 'string' ? body.token.trim() : '';
@@ -625,6 +694,7 @@ if (!TEAM_ID || !keyReady('production')) {
 if (!fcmReady()) {
   log('ключ FCM не настроен (FCM_SERVICE_ACCOUNT_FILE) — регистрации Android принимаются, сигналы не отправляются');
 }
+if (!vapid) log('ключ VAPID не задан (VAPID_PRIVATE_KEY_FILE) — сигналы UnifiedPush без подписи');
 server.listen(PORT, HOST, () => log(`слушает ${HOST}:${PORT}${BASE_PATH}, тема ${TOPIC}`));
 setInterval(() => { tick(); }, TICK_MS);
 setInterval(() => {

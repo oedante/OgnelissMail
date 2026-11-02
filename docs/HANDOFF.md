@@ -83,6 +83,20 @@ SPECIAL-USE, синхронизация, QRESYNC, флаги, папки с ки
 Message-ID черновика затирался enough_mail. Exchange на настоящем сервере
 не проверялся — нужен тестовый ящик.
 
+**Добавлено в 1.10.0 (02.11.2026, до выпуска, версия та же 1.10.0+131).**
+Блокировка отправителя и чистка по отправителю (`sender_rules_service.dart`,
+шторки — `sender_actions_sheet.dart`, правило на сервере —
+`sender_block_server.dart`, список — «VIP и правила»); предупреждения о
+подделке отправителя (`sender_safety_service.dart`: похожие домены для всех
+ящиков, имя контакта с чужого адреса, Reply-To); сигналы на Android без
+сервисов Google — UnifiedPush (`PushWakeUnifiedPush.kt`, выбор в
+«Уведомления → Как приходят сигналы», сервер — `server/push-relay/webpush.js`,
+Web Push RFC 8291 + VAPID; инструкция — `guides/ANDROID_PUSH_SETUP.md`, п. 7);
+клавиши как в Outlook (`keyboard_shortcuts.dart`, экран письма). Новые
+зависимости: UnifiedPush connector 3.3.5 + Google Tink + protobuf-java
+(Apache-2.0 / BSD-3, `docs/LICENSING.md`). Политика на сайте — раздел 6.2 с
+UnifiedPush (архив сайта). Службу сигналов на сервере обновить обязательно.
+
 ## Другое открытое
 
 - **На развитие** — [plan/BACKLOG.md](plan/BACKLOG.md): несколько серверов на

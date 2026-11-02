@@ -25,6 +25,13 @@
 // задачу WorkManager «push_wake» — проверку делает callbackDispatcher
 // (background_service.dart). Что сделать владельцу — docs/guides/
 // ANDROID_PUSH_SETUP.md.
+//
+// Android без сервисов Google (1.10.x, просьба владельца 01.11.2026) —
+// UnifiedPush: распространитель на телефоне (ntfy, NextPush, Sunup…) выдаёт
+// адрес Web Push и ключи (канал 'ogneliss/unifiedpush',
+// PushWakeUnifiedPush.kt); на сервер уходят они с platform: unifiedpush, сервер
+// шлёт зашифрованный сигнал (server/push-relay/webpush.js). Способ —
+// «Настройки → Уведомления → Сигналы сервера»: Google или распространитель.
 
 import 'dart:async';
 import 'dart:convert';
@@ -94,11 +101,23 @@ class PushWakeState {
   const PushWakeState({this.registered = false, this.env, this.registeredAt, this.lastWake, this.lastError});
 }
 
-/// Откуда сигналы: iPhone — APNs, Android — FCM.
+/// Откуда сигналы: iPhone — APNs, Android — FCM или UnifiedPush.
 enum PushWakeOs { ios, android }
+
+/// Способ доставки сигналов на Android (1.10.x).
+enum PushWakeTransport { fcm, unifiedpush }
+
+/// Распространитель UnifiedPush на телефоне.
+typedef UpDistributor = ({String id, String name});
 
 class PushWakeService {
   static const _channel = MethodChannel('ogneliss/push');
+  static const _upChannel = MethodChannel('ogneliss/unifiedpush');
+  static const _kTransport = 'push_wake_transport';
+  static const _kUpDistributor = 'push_wake_up_distributor';
+  static const _kTokenPlatform = 'push_wake_token_platform';
+  static const _kVapid = 'push_wake_vapid';
+  static const _kVapidAt = 'push_wake_vapid_at';
   static const _kToken = 'push_wake_token';
   static const _kSent = 'push_wake_sent'; // «токен|окружение|интервал|режим»
   static const _kSentAt = 'push_wake_sent_at';
@@ -121,17 +140,59 @@ class PushWakeService {
   /// Платформа сигналов; null — не поддерживается (в тестах задаётся явно).
   final PushWakeOs? os;
   final http.Client? _client;
-  PushWakeService(this._ref, {PushWakeOs? os, http.Client? client})
-      : os = os ?? platformOs,
-        _client = client;
 
-  /// iPhone — всегда (если задан адрес сервера); Android — если в сборке
-  /// заданы параметры Firebase (AppConstants.firebaseConfigured).
+  /// В сборке есть параметры Firebase — можно через Google (FCM). В тестах,
+  /// где платформа задана явно, — считается есть, если не сказано иное.
+  final bool fcmAvailable;
+
+  PushWakeService(this._ref, {PushWakeOs? os, http.Client? client, bool? fcmAvailable})
+      : os = os ?? platformOs,
+        _client = client,
+        fcmAvailable = fcmAvailable ?? (os != null || AppConstants.firebaseConfigured);
+
+  /// iPhone и Android — если задан адрес сервера. На Android без параметров
+  /// Firebase в сборке сигналы идут только через UnifiedPush (1.10.x).
   static PushWakeOs? get platformOs {
     if (kIsWeb || AppConstants.pushRelayUrl.trim().isEmpty) return null;
     if (Platform.isIOS) return PushWakeOs.ios;
-    if (Platform.isAndroid && AppConstants.firebaseConfigured) return PushWakeOs.android;
+    if (Platform.isAndroid) return PushWakeOs.android;
     return null;
+  }
+
+  /// Способ доставки на Android: выбранный человеком; по умолчанию Google,
+  /// если он есть в сборке, иначе UnifiedPush.
+  PushWakeTransport get transport {
+    final v = _prefs.getString(_kTransport);
+    if (v == PushWakeTransport.unifiedpush.name) return PushWakeTransport.unifiedpush;
+    if (v == PushWakeTransport.fcm.name && fcmAvailable) return PushWakeTransport.fcm;
+    return fcmAvailable ? PushWakeTransport.fcm : PushWakeTransport.unifiedpush;
+  }
+
+  /// Выбранный распространитель UnifiedPush (пакет приложения).
+  String? get upDistributor => _prefs.getString(_kUpDistributor);
+
+  /// Установленные распространители UnifiedPush.
+  Future<List<UpDistributor>> upDistributors() async {
+    if (os != PushWakeOs.android) return const [];
+    try {
+      final r = await _upChannel.invokeListMethod<Object?>('distributors');
+      return [
+        for (final m in r ?? const [])
+          if (m is Map && '${m['id'] ?? ''}'.isNotEmpty) (id: '${m['id']}', name: '${m['name'] ?? m['id']}'),
+      ];
+    } catch (_) {
+      return const [];
+    }
+  }
+
+  /// Сменить способ доставки (Android): прежняя регистрация снимается и на
+  /// сервере, и на телефоне.
+  Future<void> useTransport(PushWakeTransport t, {String? distributor}) async {
+    if (os != PushWakeOs.android) return;
+    await _unregister();
+    await _prefs.setString(_kTransport, t.name);
+    if (distributor != null) await _prefs.setString(_kUpDistributor, distributor);
+    await apply();
   }
 
   static bool get supported => platformOs != null;
@@ -144,6 +205,7 @@ class PushWakeService {
     if (os == null || _inited) return;
     _inited = true;
     _channel.setMethodCallHandler(_onCall);
+    if (os == PushWakeOs.android) _upChannel.setMethodCallHandler(_onUpCall);
     await apply();
   }
 
@@ -155,7 +217,9 @@ class PushWakeService {
     final prefs = _ref.read(pushWakePrefsProvider);
     try {
       if (prefs.enabled) {
-        if (os == PushWakeOs.android) {
+        if (os == PushWakeOs.android && transport == PushWakeTransport.unifiedpush) {
+          await _applyUp();
+        } else if (os == PushWakeOs.android) {
           final token = await _channel.invokeMethod<String>('register', const {
             'apiKey': AppConstants.firebaseApiKey,
             'appId': AppConstants.firebaseAppId,
@@ -245,7 +309,7 @@ class PushWakeService {
     // снять, чтобы сервер не будил его зря.
     final oldToken = p.getString(_kToken);
     if (oldToken != null && oldToken != token) {
-      await _post('/unregister', {'token': oldToken, 'platform': os!.name});
+      await _post('/unregister', {'token': oldToken, 'platform': p.getString(_kTokenPlatform) ?? os!.name});
     }
     final ok = await _post('/register', {
       'token': token,
@@ -257,6 +321,7 @@ class PushWakeService {
     });
     if (ok) {
       await p.setString(_kToken, token);
+      await p.setString(_kTokenPlatform, os!.name);
       await p.setString(_kSent, key);
       await p.setInt(_kSentAt, DateTime.now().millisecondsSinceEpoch);
       await p.remove(_kLastError);
@@ -267,14 +332,128 @@ class PushWakeService {
   Future<void> _unregister() async {
     final p = _prefs;
     final token = p.getString(_kToken);
-    if (token != null) await _post('/unregister', {'token': token, 'platform': os!.name});
+    final platform = p.getString(_kTokenPlatform) ?? os!.name;
+    if (token != null) await _post('/unregister', {'token': token, 'platform': platform});
     try {
-      await _channel.invokeMethod<void>('unregister');
+      if (platform == 'unifiedpush') {
+        await _upChannel.invokeMethod<void>('unregister');
+      } else {
+        await _channel.invokeMethod<void>('unregister');
+      }
     } catch (_) {}
+    await p.remove(_kTokenPlatform);
     await p.remove(_kToken);
     await p.remove(_kSent);
     await p.remove(_kSentAt);
     await p.remove(_kLastError);
+  }
+
+  // ── UnifiedPush (Android без сервисов Google, 1.10.x) ──
+
+  /// Зарегистрироваться у выбранного распространителя. Адрес придёт в
+  /// onEndpoint; уже выданный (прошлый запуск) — сразу из «current».
+  Future<void> _applyUp() async {
+    final dist = upDistributor;
+    if (dist == null) return; // распространитель ещё не выбран — экран подскажет
+    final vapid = await _vapidKey();
+    await _upChannel.invokeMethod<void>('register', {'distributor': dist, 'vapid': ?vapid});
+    final cur = await _upChannel.invokeMapMethod<String, Object?>('current');
+    final url = cur?['url'] as String?;
+    if (url != null) {
+      await _onUpEndpoint(url, cur?['p256dh'] as String?, cur?['auth'] as String?);
+    } else if (cur?['error'] != null) {
+      await _prefs.setString(_kLastError, 'UnifiedPush: ${cur!['error']}');
+    }
+  }
+
+  /// Открытый ключ VAPID сервера (раз в сутки; нет на сервере — без него).
+  Future<String?> _vapidKey() async {
+    final p = _prefs;
+    final at = p.getInt(_kVapidAt) ?? 0;
+    if (DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(at)) < _refreshEvery && p.containsKey(_kVapid)) {
+      final v = p.getString(_kVapid) ?? '';
+      return v.isEmpty ? null : v;
+    }
+    try {
+      final uri = Uri.parse('$_base/vapid');
+      final client = _client;
+      final r = await (client == null ? http.get(uri) : client.get(uri)).timeout(const Duration(seconds: 10));
+      var key = '';
+      if (r.statusCode == 200) {
+        final k = (jsonDecode(r.body) as Map)['key'];
+        if (k is String && RegExp(r'^[A-Za-z0-9_-]{86,88}$').hasMatch(k)) key = k;
+      }
+      if (r.statusCode == 200 || r.statusCode == 404) {
+        await p.setString(_kVapid, key);
+        await p.setInt(_kVapidAt, DateTime.now().millisecondsSinceEpoch);
+      }
+      return key.isEmpty ? null : key;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _onUpEndpoint(String url, String? p256dh, String? auth) async {
+    final prefs = _ref.read(pushWakePrefsProvider);
+    if (!prefs.enabled || transport != PushWakeTransport.unifiedpush) return;
+    final u = Uri.tryParse(url);
+    if (u == null || u.scheme != 'https' || (p256dh ?? '').isEmpty || (auth ?? '').isEmpty) {
+      await _prefs.setString(_kLastError, 'UnifiedPush: адрес без шифрования');
+      return;
+    }
+    final key = '$url|up|${prefs.interval}|normal';
+    final p = _prefs;
+    final at = p.getInt(_kSentAt) ?? 0;
+    final fresh = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(at)) < _refreshEvery;
+    if (p.getString(_kSent) == key && fresh) return;
+    final oldToken = p.getString(_kToken);
+    if (oldToken != null && oldToken != url) {
+      await _post('/unregister', {'token': oldToken, 'platform': p.getString(_kTokenPlatform) ?? 'android'});
+    }
+    final ok = await _post('/register', {
+      'token': url,
+      'env': 'up',
+      'interval': prefs.interval,
+      'mode': 'normal',
+      'platform': 'unifiedpush',
+      'p256dh': p256dh,
+      'auth': auth,
+    });
+    if (ok) {
+      await p.setString(_kToken, url);
+      await p.setString(_kTokenPlatform, 'unifiedpush');
+      await p.setString(_kSent, key);
+      await p.setInt(_kSentAt, DateTime.now().millisecondsSinceEpoch);
+      await p.remove(_kLastError);
+      AppLogger.info('Сигналы сервера: регистрация — UnifiedPush, раз в ${prefs.interval} мин');
+    }
+  }
+
+  Future<dynamic> _onUpCall(MethodCall call) async {
+    final args = call.arguments;
+    switch (call.method) {
+      case 'onEndpoint':
+        if (args is Map) await _onUpEndpoint('${args['url'] ?? ''}', args['p256dh'] as String?, args['auth'] as String?);
+        return null;
+      case 'onError':
+        final reason = args is Map ? '${args['reason'] ?? ''}' : '$args';
+        AppLogger.warning('Сигналы сервера: UnifiedPush — $reason');
+        await _prefs.setString(_kLastError, 'UnifiedPush: $reason');
+        return null;
+      case 'onUnregistered':
+        // Распространитель снял регистрацию (удалён, сброшен) — снять и на сервере.
+        final p = _prefs;
+        final token = p.getString(_kToken);
+        if (token != null && p.getString(_kTokenPlatform) == 'unifiedpush') {
+          await _post('/unregister', {'token': token, 'platform': 'unifiedpush'});
+          await p.remove(_kToken);
+          await p.remove(_kTokenPlatform);
+          await p.remove(_kSent);
+          await p.remove(_kSentAt);
+        }
+        return null;
+    }
+    throw MissingPluginException(call.method);
   }
 
   Future<bool> _post(String path, Map<String, Object?> body) async {

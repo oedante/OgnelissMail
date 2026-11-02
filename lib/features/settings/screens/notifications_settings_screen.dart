@@ -130,6 +130,11 @@ class NotificationsSettingsScreen extends ConsumerWidget {
                     onChanged: (v) => ref.read(pushWakePrefsProvider.notifier).setInterval(v ?? 15),
                   ),
             ]),
+            // Android: через Google или UnifiedPush (1.10.x).
+            if (PushWakeService.platformOs == PushWakeOs.android && ref.watch(pushWakePrefsProvider).enabled) ...[
+              SettingsSectionTitle(l10n.tr('pushWakeVia'), help: l10n.tr('pushWakeViaHelp')),
+              const SettingsGroup(children: [_PushTransportPicker()]),
+            ],
           ],
           SettingsSectionTitle(l10n.tr('quietHours')),
           SettingsGroup(children: [
@@ -324,3 +329,78 @@ String _pushWakeStatus(BuildContext context, WidgetRef ref, AppLocalizations l10
   return parts.join('\n');
 }
 
+/// Способ доставки сигналов на Android: Google (FCM) или распространитель
+/// UnifiedPush (1.10.x, просьба владельца 01.11.2026).
+class _PushTransportPicker extends ConsumerStatefulWidget {
+  const _PushTransportPicker();
+
+  @override
+  ConsumerState<_PushTransportPicker> createState() => _PushTransportPickerState();
+}
+
+class _PushTransportPickerState extends ConsumerState<_PushTransportPicker> {
+  late Future<List<UpDistributor>> _list = ref.read(pushWakeServiceProvider).upDistributors();
+  bool _busy = false;
+
+  Future<void> _use(PushWakeTransport t, {String? distributor}) async {
+    setState(() => _busy = true);
+    try {
+      await ref.read(pushWakeServiceProvider).useTransport(t, distributor: distributor);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final s = ref.read(pushWakeServiceProvider);
+    final muted = Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.mutedText(context));
+    return FutureBuilder<List<UpDistributor>>(
+      future: _list,
+      builder: (context, snap) {
+        final list = snap.data ?? const <UpDistributor>[];
+        final current = s.transport == PushWakeTransport.unifiedpush ? 'up:${s.upDistributor ?? ''}' : 'fcm';
+        void pick(String? v) {
+          if (v == null || _busy || v == current) return;
+          if (v == 'fcm') {
+            unawaited(_use(PushWakeTransport.fcm));
+          } else {
+            unawaited(_use(PushWakeTransport.unifiedpush, distributor: v.substring(3)));
+          }
+        }
+
+        return Column(mainAxisSize: MainAxisSize.min, children: [
+          if (s.fcmAvailable)
+            AppRadioTile<String>(
+              title: Text(l10n.tr('pushWakeViaGoogle')),
+              subtitle: Text(l10n.tr('pushWakeViaGoogleDesc'), style: muted),
+              value: 'fcm',
+              groupValue: current,
+              onChanged: pick,
+            ),
+          for (final d in list)
+            AppRadioTile<String>(
+              title: Text(l10n.tr('pushWakeViaUp').replaceAll('{app}', d.name)),
+              subtitle: Text(l10n.tr('pushWakeViaUpDesc'), style: muted),
+              value: 'up:${d.id}',
+              groupValue: current,
+              onChanged: pick,
+            ),
+          if (snap.connectionState == ConnectionState.done && list.isEmpty)
+            ListTile(
+              leading: const Icon(AppIcons.info),
+              title: Text(l10n.tr('pushWakeNoDistributor')),
+              subtitle: Text(l10n.tr('pushWakeNoDistributorDesc'), style: muted),
+              trailing: IconButton(
+                tooltip: l10n.tr('refresh'),
+                icon: const Icon(AppIcons.refresh),
+                onPressed: () => setState(() => _list = s.upDistributors()),
+              ),
+            ),
+          if (_busy) const LinearProgressIndicator(minHeight: 2),
+        ]);
+      },
+    );
+  }
+}

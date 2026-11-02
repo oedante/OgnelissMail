@@ -17,6 +17,7 @@ import '../../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
 import '../../mail/providers/mail_providers.dart' show activeAccountProvider, accountsProvider;
 import '../../../services/mail/focus_mode_service.dart';
 import '../../../services/rules/device_rules_service.dart' show deviceRulesProvider;
+import '../../../services/rules/sender_rules_service.dart';
 import 'device_rule_screen.dart' show openDeviceRule, deviceRuleSummary;
 import '../widgets/server_filters_item.dart' show pickServerFiltersAccount;
 import '../../../services/mail/server_filters.dart' show ServerFilters;
@@ -34,6 +35,7 @@ class VipSettingsScreen extends ConsumerWidget {
     final state = ref.watch(focusModeProvider);
     final notifier = ref.read(focusModeProvider.notifier);
     final rules = ref.watch(deviceRulesProvider);
+    final senderRules = ref.watch(senderRulesProvider);
 
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(
@@ -152,6 +154,25 @@ class VipSettingsScreen extends ConsumerWidget {
             ),
           ]),
 
+          // ── Заблокированные отправители и чистка (1.10.x) ──
+          SettingsSectionTitle(l10n.tr('senderRulesSection'), help: l10n.tr('senderRulesHelp')),
+          SettingsGroup(children: [
+            if (senderRules.isEmpty)
+              SettingsItem(icon: AppIcons.block, title: l10n.tr('noSenderRules'), onTap: null),
+            for (final r in senderRules)
+              SettingsItem(
+                icon: r.action == SenderAction.block ? AppIcons.block : AppIcons.cleaning_services,
+                title: r.label,
+                subtitle: senderRuleSummary(r, l10n),
+                trailing: IconButton(
+                  tooltip: l10n.tr('senderRuleRemove'),
+                  icon: const Icon(AppIcons.close),
+                  onPressed: () => ref.read(senderRulesProvider.notifier).remove(r.id),
+                ),
+                onTap: null,
+              ),
+          ]),
+
           // ── Фильтры на сервере — в настройках каждого ящика (1.7.3) ──
           // Раньше здесь были «Правила на сервере Exchange» и «Фильтры на
           // сервере IMAP» с переключателем ящиков; теперь у каждого ящика свои
@@ -226,3 +247,11 @@ class VipSettingsScreen extends ConsumerWidget {
     }
   }
 }
+
+/// Что делает правило отправителя — строкой под адресом (1.10.x).
+String senderRuleSummary(SenderRule r, AppLocalizations l10n) => switch (r.action) {
+      SenderAction.block => l10n.tr('senderRuleBlock'),
+      SenderAction.deleteFuture => l10n.tr('senderRuleDeleteFuture'),
+      SenderAction.keepLatest => l10n.tr('senderRuleKeepLatest'),
+      SenderAction.olderThan => l10n.tr('senderRuleOlderThan').replaceAll('{days}', '${r.days}'),
+    };

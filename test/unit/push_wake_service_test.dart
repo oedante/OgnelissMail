@@ -16,6 +16,11 @@ import 'package:ogneliss/services/push/push_wake_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _channel = MethodChannel('ogneliss/push');
+const _upChannel = MethodChannel('ogneliss/unifiedpush');
+final _vapid = 'B${'A' * 86}';
+const _upUrl = 'https://ntfy.example.org/upAbCdEf0123?up=1';
+final _p256dh = 'B${'k' * 86}';
+const _auth = 'aaaaaaaaaaaaaaaaaaaaaa';
 final _fcmToken = 'dXyZ01:APA91b${'Qw_-' * 36}';
 final _fcmToken2 = 'eAbC02:APA91b${'Zx-_' * 36}';
 final _apnsToken = 'ab' * 32;
@@ -25,6 +30,9 @@ void main() {
   final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 
   late List<http.Request> posts;
+  late List<http.Request> gets;
+  late List<MethodCall> upCalls;
+  late Map<String, Object?> upCurrent;
   late List<MethodCall> calls;
   late Object? Function(MethodCall call) native;
   var status = 204;
@@ -41,6 +49,10 @@ void main() {
     SharedPreferences.setMockInitialValues(prefs);
     final p = await SharedPreferences.getInstance();
     final client = MockClient((r) async {
+      if (r.method == 'GET') {
+        gets.add(r);
+        return http.Response(jsonEncode({'key': _vapid}), 200);
+      }
       posts.add(r);
       return http.Response('', status);
     });
@@ -61,6 +73,21 @@ void main() {
 
   setUp(() {
     posts = [];
+    gets = [];
+    upCalls = [];
+    upCurrent = {'distributor': null, 'url': null};
+    messenger.setMockMethodCallHandler(_upChannel, (call) async {
+      upCalls.add(call);
+      switch (call.method) {
+        case 'distributors':
+          return [
+            {'id': 'io.heckel.ntfy', 'name': 'ntfy'},
+          ];
+        case 'current':
+          return upCurrent;
+      }
+      return null;
+    });
     calls = [];
     status = 204;
     native = (call) => call.method == 'register' ? _fcmToken : null;
@@ -70,7 +97,112 @@ void main() {
     });
   });
 
-  tearDown(() => messenger.setMockMethodCallHandler(_channel, null));
+  tearDown(() {
+    messenger.setMockMethodCallHandler(_channel, null);
+    messenger.setMockMethodCallHandler(_upChannel, null);
+  });
+
+  /// Сообщение от PushWakeUnifiedPush.kt в Dart.
+  Future<void> fromUp(String method, Object? args) async {
+    await messenger.handlePlatformMessage(
+        _upChannel.name, const StandardMethodCodec().encodeMethodCall(MethodCall(method, args)), (_) {});
+    await settle();
+  }
+
+  group('Android без сервисов Google (UnifiedPush, 1.10.x)', () {
+    test('список распространителей и выбор: регистрация с ключом VAPID, адрес с ключами — на сервер', () async {
+      final c = await make();
+      final s = c.read(pushWakeServiceProvider);
+      expect(await s.upDistributors(), [(id: 'io.heckel.ntfy', name: 'ntfy')]);
+      upCurrent = {'distributor': 'io.heckel.ntfy', 'url': _upUrl, 'p256dh': _p256dh, 'auth': _auth};
+      await s.useTransport(PushWakeTransport.unifiedpush, distributor: 'io.heckel.ntfy');
+
+      expect(s.transport, PushWakeTransport.unifiedpush);
+      expect(gets.single.url.path, endsWith('/vapid'));
+      final reg = upCalls.firstWhere((c) => c.method == 'register');
+      expect(reg.arguments, {'distributor': 'io.heckel.ntfy', 'vapid': _vapid});
+      expect(calls.where((c) => c.method == 'register'), isEmpty, reason: 'FCM не запрашивается');
+      expect(body(posts.single), {
+        'token': _upUrl,
+        'env': 'up',
+        'interval': 15,
+        'mode': 'normal',
+        'platform': 'unifiedpush',
+        'p256dh': _p256dh,
+        'auth': _auth,
+      });
+      expect(s.state().registered, isTrue);
+    });
+
+    test('адрес приходит позже (onEndpoint) — тогда и регистрация', () async {
+      final c = await make();
+      final s = c.read(pushWakeServiceProvider);
+      await s.init();
+      posts.clear();
+      await s.useTransport(PushWakeTransport.unifiedpush, distributor: 'io.heckel.ntfy');
+      expect(posts.where((r) => r.url.path.endsWith('/register')), isEmpty);
+      await fromUp('onEndpoint', {'url': _upUrl, 'p256dh': _p256dh, 'auth': _auth});
+      expect(body(posts.last)['platform'], 'unifiedpush');
+      expect(body(posts.last)['token'], _upUrl);
+    });
+
+    test('с Google на UnifiedPush: токен FCM снимается с сервера и у Android', () async {
+      final c = await make();
+      final s = c.read(pushWakeServiceProvider);
+      await s.apply(); // FCM
+      expect(body(posts.single)['platform'], 'android');
+      posts.clear();
+      calls.clear();
+      upCurrent = {'distributor': 'io.heckel.ntfy', 'url': _upUrl, 'p256dh': _p256dh, 'auth': _auth};
+      await s.useTransport(PushWakeTransport.unifiedpush, distributor: 'io.heckel.ntfy');
+      expect(posts.first.url.path, endsWith('/unregister'));
+      expect(body(posts.first), {'token': _fcmToken, 'platform': 'android'});
+      expect(calls.map((c) => c.method), contains('unregister'));
+      expect(body(posts.last)['platform'], 'unifiedpush');
+
+      // И обратно: снимается адрес UnifiedPush, у распространителя — тоже.
+      posts.clear();
+      upCalls.clear();
+      await s.useTransport(PushWakeTransport.fcm);
+      expect(body(posts.first), {'token': _upUrl, 'platform': 'unifiedpush'});
+      expect(upCalls.map((c) => c.method), contains('unregister'));
+      expect(body(posts.last)['platform'], 'android');
+    });
+
+    test('без Firebase в сборке — по умолчанию UnifiedPush; без распространителя — ничего не делается', () async {
+      SharedPreferences.setMockInitialValues({});
+      final p = await SharedPreferences.getInstance();
+      final client = MockClient((r) async {
+        posts.add(r);
+        return http.Response('', 204);
+      });
+      final c = ProviderContainer(overrides: [
+        sharedPrefsProvider.overrideWithValue(p),
+        pushWakeServiceProvider.overrideWith(
+            (ref) => PushWakeService(ref, os: PushWakeOs.android, client: client, fcmAvailable: false)),
+      ]);
+      addTearDown(c.dispose);
+      final s = c.read(pushWakeServiceProvider);
+      expect(s.transport, PushWakeTransport.unifiedpush);
+      await s.apply();
+      expect(posts, isEmpty);
+      expect(calls, isEmpty);
+      expect(upCalls.where((c) => c.method == 'register'), isEmpty);
+    });
+
+    test('ошибка распространителя видна в состоянии; адрес без шифрования не отправляется', () async {
+      final c = await make();
+      final s = c.read(pushWakeServiceProvider);
+      await s.init();
+      await s.useTransport(PushWakeTransport.unifiedpush, distributor: 'io.heckel.ntfy');
+      posts.clear();
+      await fromUp('onError', {'reason': 'VAPID_REQUIRED'});
+      expect(s.state().lastError, contains('VAPID_REQUIRED'));
+      await fromUp('onEndpoint', {'url': 'http://ntfy.example.org/up1', 'p256dh': _p256dh, 'auth': _auth});
+      await fromUp('onEndpoint', {'url': _upUrl, 'p256dh': null, 'auth': null});
+      expect(posts, isEmpty);
+    });
+  });
 
   group('Android (FCM)', () {
     test('включено: токен от Android регистрируется с platform android, окружение fcm', () async {

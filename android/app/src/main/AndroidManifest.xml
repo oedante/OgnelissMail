@@ -114,6 +114,17 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+        <!-- Сигналы сервера без сервисов Google (1.10.x): UnifiedPush —
+             распространитель на телефоне передаёт сигнал «проверь почту»
+             (PushWakeUnifiedPush.kt). Без выбранного распространителя
+             служба не запускается. -->
+        <service
+            android:name=".PushWakeUnifiedPushService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="org.unifiedpush.android.connector.PUSH_EVENT"/>
+            </intent-filter>
+        </service>
         <!-- Окно «Создать» виджета «Календарь»: встреча или задача без входа
              в приложение (QuickCreateActivity.kt). Своя задача и без следа
              в «Недавних»: после «Создать» человек остаётся на рабочем столе. -->

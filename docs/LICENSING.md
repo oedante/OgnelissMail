@@ -38,6 +38,9 @@ Contributions are accepted under the same license (section 5 of the license).
 | AndroidX, Kotlin, AppAuth | Apache-2.0 | Android and iOS builds |
 | Firebase Cloud Messaging Android SDK (`com.google.firebase:firebase-messaging`, BoM 35.1.0; checked 01.11.2026) | Apache-2.0; pulls in Google Play services client libraries (proprietary, free of charge, Android SDK / Google APIs terms) | Android build only (`android/app/build.gradle.kts`); text in the app: "Firebase Cloud Messaging" |
 | Firebase Cloud Messaging service (Google) | free of charge, no paid tier or quota fees (Firebase Spark plan); Firebase / Google APIs Terms of Service | Android server signals: app and `server/push-relay` (HTTP v1 API) |
+| UnifiedPush android-connector 3.3.5 (`org.unifiedpush.android:connector`; checked 01.11.2026) — server signals on Android without Google services | Apache-2.0, free | Android build only (`android/app/build.gradle.kts`, `PushWakeUnifiedPush.kt`); text in the app: "UnifiedPush connector" |
+| Google Tink 1.23.0, Android build (`com.google.crypto.tink:tink-android`, used by the UnifiedPush connector for Web Push decryption; the JVM build `tink` that the connector declares is excluded to avoid duplicate classes) with bundled protobuf lite (BSD-3-Clause) and its dependencies gson, error_prone_annotations (Apache-2.0), jsr305 (BSD-3-Clause) | Apache-2.0 / BSD-3-Clause, free | Android build only; texts in the app: "Tink", "Protocol Buffers" |
+| UnifiedPush distributors and push servers (ntfy, NextPush, Sunup and others) — chosen and installed by the user | the user's own apps and servers; the developer's relay only sends encrypted signals to the address they issue | not part of the app |
 | Google ML Kit Translation and Language ID (`com.google.mlkit:translate` 17.0.3, `com.google.mlkit:language-id` 17.0.6) — on-device message translation | Free; ML Kit Terms of Service and Google APIs Terms of Service (closed-source binaries). Conditions: Google attribution next to translated text and in the app description/help ("Translated by Google"); no use in embedded devices (cars, TVs, appliances, speakers); ML Kit sends usage metrics (not text) to Google — mention in the privacy policy | Android build (`android/app/build.gradle.kts`) |
 | Apple Translation, NaturalLanguage, SwiftUI — on-device message translation (iOS 18+) | Part of the iOS SDK (Apple Developer Program License Agreement), free, no attribution | iOS build (`ios/Runner/AppDelegate.swift`) |
 | desktop_drop 0.8.4 (MixinNetwork; checked 01.11.2026) — files dropped from Explorer/Finder onto the message window | Apache-2.0, free | pub.dev, unmodified; used on Windows, macOS and Linux only (its Android part registers a drop listener but the app does not use it) |
@@ -62,8 +65,8 @@ push callbacks used by the APNs relay) and download the Firebase C++ SDK in
 the Windows build. No `google-services.json` and no google-services Gradle
 plugin: the project options come from build-time dart-defines; without them
 nothing Firebase-related runs. The Play services dependency is the reason
-the feature needs Google Play services on the phone; UnifiedPush
-(Apache-2.0) for phones without them is a possible follow-up.
+the feature needs Google Play services on the phone; phones without them
+get the same signals through UnifiedPush (1.10.x, rows above).
 
 Every push checks these licences automatically (`tool/dev/license_check.py`
 in CI): GPL, LGPL, AGPL, SSPL, BUSL, non-commercial or unrecognised licences
@@ -152,6 +155,11 @@ pledge turned out to forbid commercial distribution):
   Google бесплатный (план Spark, без платы за сообщения); библиотека Android
   — Apache 2.0, зависит от бесплатных проприетарных сервисов Google Play.
   Только в сборке Android; Flutter-плагины Firebase не используются.
+- **UnifiedPush** (сигналы сервера на Android без сервисов Google, 1.10.x) —
+  библиотека android-connector (Apache 2.0) с Google Tink в Android-сборке
+  tink-android (Apache 2.0, внутри protobuf lite — BSD-3-Clause). Распространитель (ntfy и др.) человек ставит
+  сам; сервер разработчика шлёт на выданный им адрес только зашифрованный
+  сигнал.
 - **Перевод писем на устройстве** (1.9.x): на Android — Google ML Kit
   (бесплатно, условия ML Kit и Google APIs: подпись «Переведено Google» у
   перевода и упоминание Google Translate в описании и справке; ML Kit

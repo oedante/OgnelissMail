@@ -1147,9 +1147,15 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   /// Журнал для тестов ([MailHtmlViewProbe.onTrace]); без наблюдателя
   /// строка не собирается.
   final Stopwatch _traceClock = Stopwatch()..start();
+
+  /// Журнал окна — и в приложении (1.10.2): если письмо показалось позже
+  /// 2,5 с от нажатия, он уходит в журнал диагностики одной строкой.
+  final List<String> _journal = [];
+
   void _trace(String Function() line) {
-    final t = MailHtmlView.debugProbe?.onTrace;
-    if (t != null) t('${_traceClock.elapsedMilliseconds} ${line()}');
+    final s = '${_traceClock.elapsedMilliseconds} ${line()}';
+    if (_journal.length < 60) _journal.add(s);
+    MailHtmlView.debugProbe?.onTrace?.call(s);
   }
 
   double get _scale => _fitWidth == null || _viewWidth <= 0 ? 1 : _viewWidth / _fitWidth!;
@@ -1235,6 +1241,9 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     setState(() => _ready = true);
     if (!_shownOnce) {
       _shownOnce = true;
+      if (OpenTrace.elapsedMs > 2500) {
+        AppLogger.info('Окно письма, медленное открытие: ${_journal.join(' | ')}');
+      }
       OpenTrace.done();
       widget.onShown?.call();
     }

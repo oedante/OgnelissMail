@@ -3585,7 +3585,8 @@
     <string name="archiveNothingOld">선택한 기간보다 오래된 메일이 없어 보관할 항목이 없었습니다. 더 짧은 기간이나 \'모든 메일\'을 선택할 수 있습니다.</string>
     <string name="uiFontTitle">인터페이스 글꼴</string>
     <string name="uiFontRobotoHint">기존과 같이</string>
-    <string name="uiFontMedeoHint">라틴 문자와 키릴 문자용 오픈 글꼴(OFL 1.1)</string>
+    <string name="uiFontSystem">시스템</string>
+    <string name="uiFontSystemHint">기기 글꼴(다른 앱과 같음)</string>
     <string name="uiFontDyslexiaNote">난독증용 글꼴이 켜져 있습니다(접근성). 이 선택보다 우선합니다.</string>
     <string name="loginOrChoose">또는 메일 선택</string>
     <string name="folderToOgna">폴더를 Ogneliss 보관함으로</string>

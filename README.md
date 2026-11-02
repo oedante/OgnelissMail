@@ -60,7 +60,7 @@ so they cannot be compared byte for byte.
   settings; archive search, a copy for another device.
 - **Security:** S/MIME, phishing and external-sender warnings, tracker
   blocking, PIN and biometric lock.
-- 27 interface languages; interface font: Roboto or Medeo Sans.
+- 27 interface languages; interface font: Roboto, the system font or other standard fonts of the platform.
 
 ## Building
 

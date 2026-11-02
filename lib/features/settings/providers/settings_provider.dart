@@ -16,6 +16,7 @@ import '../../../core/theme/appearance.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart' show AppLocalizations;
 import '../../../services/notifications/messenger_notifications.dart' show MessengerNotify;
+import '../../../core/theme/ui_fonts.dart';
 
 /// Режим загрузки писем
 enum EmailFetchMode {
@@ -86,8 +87,10 @@ class AppSettings {
   /// Масштаб интерфейса (1.6.12): 0 — авто по ширине экрана и шрифту
   /// (UiZoom.auto), иначе — выбранный вручную (0,85…1,1).
   final double uiScale;
-  /// Шрифт интерфейса (1.8.8): 'roboto' — прежний (по умолчанию), 'medeo' —
-  /// Medeo Sans (OFL 1.1). Шрифт для дислексии и очень крупный текст важнее.
+  /// Шрифт интерфейса: 'roboto' — прежний (по умолчанию), 'system' — шрифт
+  /// устройства, остальные — шрифты платформы (UiFonts, 1.10.2; Medeo Sans
+  /// убран — прежний выбор становится Roboto). Шрифт для дислексии и очень
+  /// крупный текст важнее.
   final String uiFont;
   final bool isFirstLaunch;
   final bool licenseAccepted;
@@ -524,7 +527,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       locale: Locale(_initialLanguage(_p.getString(_K.locale))),
       fontScale: _p.getDouble(_K.fontScale) ?? 1.0,
       uiScale: _p.getDouble(_K.uiScale) ?? 0,
-      uiFont: _p.getString(_K.uiFont) == 'medeo' ? 'medeo' : 'roboto',
+      uiFont: UiFonts.ids.contains(_p.getString(_K.uiFont)) ? _p.getString(_K.uiFont)! : 'roboto',
       isFirstLaunch: _p.getBool(_K.isFirstLaunch) ?? true,
       licenseAccepted: _p.getBool(_K.licenseAccepted) ?? false,
       themePreset: ThemePreset.values.asNameMap()[_p.getString(_K.themePreset)] ?? ThemePreset.classic,
@@ -679,9 +682,9 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(uiScale: value);
   }
 
-  /// 'roboto' или 'medeo'.
+  /// Значение из UiFonts (неизвестное — Roboto).
   Future<void> setUiFont(String v) async {
-    final value = v == 'medeo' ? 'medeo' : 'roboto';
+    final value = UiFonts.ids.contains(v) ? v : 'roboto';
     await _p.setString(_K.uiFont, value);
     state = state.copyWith(uiFont: value);
   }

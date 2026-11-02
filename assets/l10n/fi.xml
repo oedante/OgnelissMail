@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">Valittua ikää vanhempia viestejä ei löytynyt – arkistoitavaa ei ollut. Valitse lyhyempi ikä tai ”Kaikki viestit”.</string>
     <string name="uiFontTitle">Käyttöliittymän fontti</string>
     <string name="uiFontRobotoHint">Kuten ennen</string>
-    <string name="uiFontMedeoHint">Avoin fontti latinalaisille ja kyrillisille merkeille (OFL 1.1)</string>
+    <string name="uiFontSystem">Järjestelmä</string>
+    <string name="uiFontSystemHint">Laitteen fontti, kuten muissa sovelluksissa</string>
     <string name="uiFontDyslexiaNote">Lukihäiriöfontti on käytössä (Esteettömyys), ja se ohittaa tämän valinnan.</string>
     <string name="loginOrChoose">tai valitse sähköposti</string>
     <string name="folderToOgna">Kansio Ogneliss-arkistoon</string>

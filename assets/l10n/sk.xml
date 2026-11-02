@@ -3623,7 +3623,8 @@
     <string name="archiveNothingOld">Nenašli sa správy staršie ako zvolený vek — nebolo čo archivovať. Zvoľte kratšiu dobu alebo „Všetky správy“.</string>
     <string name="uiFontTitle">Písmo rozhrania</string>
     <string name="uiFontRobotoHint">Ako doteraz</string>
-    <string name="uiFontMedeoHint">Otvorené písmo pre latinku a cyriliku (OFL 1.1)</string>
+    <string name="uiFontSystem">Systémové</string>
+    <string name="uiFontSystemHint">Písmo zariadenia, ako v iných aplikáciách</string>
     <string name="uiFontDyslexiaNote">Je zapnuté písmo pre dyslektikov (Dostupnosť) — má prednosť pred touto voľbou.</string>
     <string name="loginOrChoose">alebo vyberte poštu</string>
     <string name="folderToOgna">Priečinok do archívu Ogneliss</string>

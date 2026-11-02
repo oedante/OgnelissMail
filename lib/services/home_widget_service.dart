@@ -202,6 +202,8 @@ class HomeWidgetService {
       for (final e in events) {
         items.add({
           't': e.isAllDay ? l10n.tr('myDayAllDay') : hm.format(e.startTime),
+          // Весь день — значок в колонке времени виджета (1.10.2).
+          if (e.isAllDay) 'a': 1,
           's': private ? l10n.tr('widgetMeeting') : (e.title.trim().isEmpty ? '—' : e.title.trim()),
           'at': e.isAllDay ? start.millisecondsSinceEpoch : e.startTime.millisecondsSinceEpoch,
           'end': (e.isAllDay ? end : e.endTime).millisecondsSinceEpoch,
@@ -441,6 +443,8 @@ class HomeWidgetService {
           'st': st.millisecondsSinceEpoch,
           if (link != null && !private) 'join': link.url,
           't': e.isAllDay || st.isBefore(today) ? l10n.tr('myDayAllDay') : hm.format(st),
+          // Весь день — значок в колонке времени (виджеты iPhone, 1.10.2).
+          if (e.isAllDay || st.isBefore(today)) 'a': 1,
           's': private ? l10n.tr('widgetMeeting') : (e.title.trim().isEmpty ? '—' : e.title.trim()),
           'end': en.millisecondsSinceEpoch,
           'c': colors[e.accountId] ?? 0xFF5C7CFA,

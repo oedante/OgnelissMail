@@ -57,6 +57,31 @@ private let cBg = dyn(0xE6EBF2, 0x181D23)
 private let cText = dyn(0x1F2329, 0xE2E4E8)
 private let cSub = dyn(0x5B6470, 0x9AA3AE)
 private let cAccent = dyn(0x2A63A6, 0x8AB1E6)
+
+/// Время в узкой колонке строки или значок «весь день» (1.10.2: надпись
+/// «Весь день» в колонку не помещалась и обрезалась). Подпись значка —
+/// для VoiceOver.
+private struct TimeCell: View {
+  let allDay: Bool
+  let text: String
+  let width: CGFloat
+  var weight: Font.Weight = .regular
+  var color: Color = cAccent
+
+  var body: some View {
+    Group {
+      if allDay {
+        Image(systemName: "calendar")
+          .font(.system(size: 13, weight: weight))
+          .foregroundColor(color)
+          .accessibilityLabel(Text(text))
+      } else {
+        Text(text).font(.system(size: 13, weight: weight)).foregroundColor(color).lineLimit(1)
+      }
+    }
+    .frame(width: width, alignment: .leading)
+  }
+}
 // «Не обновлялось с …» (1.6.48) — как на Android.
 private let cWarn = dyn(0x7A5E00, 0xE0B03A)
 
@@ -207,7 +232,7 @@ struct MyDayView: View {
       }
       ForEach(Array(items.prefix(max).enumerated()), id: \.offset) { _, it in
         HStack(spacing: 8) {
-          Text(it.str("t")).font(.system(size: 13)).foregroundColor(cAccent).frame(width: 48, alignment: .leading)
+          TimeCell(allDay: (it["a"] as? NSNumber)?.intValue == 1, text: it.str("t"), width: 48)
           Text(it.str("s")).font(.system(size: 14)).foregroundColor(cText).lineLimit(1)
         }
       }
@@ -370,8 +395,8 @@ struct CalendarView: View {
         Link(destination: widgetURL(it.str("open"))) {
           HStack(spacing: 6) {
             Circle().fill(argb(it["c"] as? NSNumber)).frame(width: 7, height: 7)
-            Text(it.str("t")).font(.system(size: 13)).foregroundColor(cAccent)
-              .frame(width: family == .systemSmall ? 40 : 48, alignment: .leading)
+            TimeCell(allDay: (it["a"] as? NSNumber)?.intValue == 1, text: it.str("t"),
+                     width: family == .systemSmall ? 40 : 48)
             Text(it.str("s")).font(.system(size: 14)).foregroundColor(cText).lineLimit(1)
           }
         }
@@ -565,9 +590,8 @@ struct CalendarWeekView: View {
               .font(.system(size: 11, weight: .bold)).foregroundColor(cSub).padding(.top, i == 0 ? 0 : 2)
           }
           HStack(spacing: 8) {
-            Text(r.1.allDay ? j.str("allDay") : timeText(r.1.st, lang))
-              .font(.system(size: 13, weight: .semibold)).foregroundColor(cText).lineLimit(1)
-              .frame(width: 52, alignment: .leading)
+            TimeCell(allDay: r.1.allDay, text: r.1.allDay ? j.str("allDay") : timeText(r.1.st, lang),
+                     width: 52, weight: .semibold, color: cText)
             RoundedRectangle(cornerRadius: 1.5).fill(r.1.color).frame(width: 3, height: 18)
             Text(r.1.title).font(.system(size: 14)).foregroundColor(cText).lineLimit(1)
           }
@@ -844,9 +868,8 @@ struct CalendarMonthView: View {
         }
         ForEach(Array(dayEvents.prefix(weeks == 6 ? 3 : 4).enumerated()), id: \.offset) { _, e in
           HStack(spacing: 8) {
-            Text(e.allDay ? j.str("allDay") : timeText(e.st, lang))
-              .font(.system(size: 13, weight: .semibold)).foregroundColor(cText).lineLimit(1)
-              .frame(width: 52, alignment: .leading)
+            TimeCell(allDay: e.allDay, text: e.allDay ? j.str("allDay") : timeText(e.st, lang),
+                     width: 52, weight: .semibold, color: cText)
             RoundedRectangle(cornerRadius: 1.5).fill(e.color).frame(width: 3, height: 16)
             Text(e.title).font(.system(size: 14)).foregroundColor(cText).lineLimit(1)
           }

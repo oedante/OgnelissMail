@@ -3585,7 +3585,8 @@
     <string name="archiveNothingOld">ไม่พบข้อความที่เก่ากว่าอายุที่เลือก จึงไม่มีอะไรให้เก็บ เลือกช่วงที่สั้นลงหรือ \"อีเมลทั้งหมด\" ได้</string>
     <string name="uiFontTitle">แบบอักษรของอินเทอร์เฟซ</string>
     <string name="uiFontRobotoHint">แบบเดิม</string>
-    <string name="uiFontMedeoHint">แบบอักษรเปิดสำหรับอักษรละตินและซีริลลิก (OFL 1.1)</string>
+    <string name="uiFontSystem">ระบบ</string>
+    <string name="uiFontSystemHint">แบบอักษรของอุปกรณ์ เหมือนในแอปอื่น</string>
     <string name="uiFontDyslexiaNote">เปิดแบบอักษรสำหรับผู้มีภาวะดิสเล็กเซียอยู่ (การช่วยการเข้าถึง) ซึ่งมีผลก่อนตัวเลือกนี้</string>
     <string name="loginOrChoose">หรือเลือกบริการอีเมล</string>
     <string name="folderToOgna">โฟลเดอร์ไปยังคลังเก็บ Ogneliss</string>

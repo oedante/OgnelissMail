@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">Nessun messaggio più vecchio dell\'età scelta: non c\'era nulla da archiviare. Puoi scegliere un periodo più breve o «Tutti i messaggi».</string>
     <string name="uiFontTitle">Carattere dell\'interfaccia</string>
     <string name="uiFontRobotoHint">Come prima</string>
-    <string name="uiFontMedeoHint">Carattere libero per latino e cirillico (OFL 1.1)</string>
+    <string name="uiFontSystem">Di sistema</string>
+    <string name="uiFontSystemHint">Font del dispositivo, come nelle altre app</string>
     <string name="uiFontDyslexiaNote">Il carattere per la dislessia è attivo (Accessibilità) e ha la precedenza su questa scelta.</string>
     <string name="loginOrChoose">o scegli la posta</string>
     <string name="folderToOgna">Cartella nell\'archivio Ogneliss</string>

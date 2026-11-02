@@ -3585,7 +3585,8 @@
     <string name="archiveNothingOld">選んだ期間より古いメールはなく、アーカイブするものはありませんでした。期間を短くするか「すべてのメール」を選べます。</string>
     <string name="uiFontTitle">画面のフォント</string>
     <string name="uiFontRobotoHint">これまでどおり</string>
-    <string name="uiFontMedeoHint">ラテン文字とキリル文字のオープンフォント（OFL 1.1）</string>
+    <string name="uiFontSystem">システム</string>
+    <string name="uiFontSystemHint">端末のフォント（他のアプリと同じ）</string>
     <string name="uiFontDyslexiaNote">ディスレクシア向けフォントがオンです（アクセシビリティ）。こちらが優先されます。</string>
     <string name="loginOrChoose">またはメールを選択</string>
     <string name="folderToOgna">フォルダーを Ogneliss アーカイブへ</string>

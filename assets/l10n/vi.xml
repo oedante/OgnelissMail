@@ -3585,7 +3585,8 @@
     <string name="archiveNothingOld">Không tìm thấy thư cũ hơn độ tuổi đã chọn — không có gì để lưu trữ. Bạn có thể chọn khoảng ngắn hơn hoặc \"Tất cả thư\".</string>
     <string name="uiFontTitle">Phông chữ giao diện</string>
     <string name="uiFontRobotoHint">Như trước</string>
-    <string name="uiFontMedeoHint">Phông chữ mở cho chữ Latinh và Kirin (OFL 1.1)</string>
+    <string name="uiFontSystem">Hệ thống</string>
+    <string name="uiFontSystemHint">Phông chữ của thiết bị, như trong các ứng dụng khác</string>
     <string name="uiFontDyslexiaNote">Phông chữ cho người khó đọc đang bật (Trợ năng) — phông này được ưu tiên hơn lựa chọn này.</string>
     <string name="loginOrChoose">hoặc chọn dịch vụ thư</string>
     <string name="folderToOgna">Thư mục vào kho lưu trữ Ogneliss</string>

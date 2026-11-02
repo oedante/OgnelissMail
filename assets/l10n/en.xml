@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">No messages older than the chosen age were found — there was nothing to archive. You can choose a shorter age or All mail.</string>
     <string name="uiFontTitle">Interface font</string>
     <string name="uiFontRobotoHint">As before</string>
-    <string name="uiFontMedeoHint">Open font for Latin and Cyrillic (OFL 1.1)</string>
+    <string name="uiFontSystem">System</string>
+    <string name="uiFontSystemHint">Your device\'s font, as in other apps</string>
     <string name="uiFontDyslexiaNote">The dyslexia font is on (Accessibility) — it takes priority over this choice.</string>
     <string name="loginOrChoose">or choose your mail</string>
     <string name="folderToOgna">Folder to Ogneliss archive</string>

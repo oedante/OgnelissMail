@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">Seçilen yaştan eski ileti bulunamadı — arşivlenecek bir şey yoktu. Daha kısa bir süre veya \"Tüm iletiler\" seçebilirsiniz.</string>
     <string name="uiFontTitle">Arayüz yazı tipi</string>
     <string name="uiFontRobotoHint">Önceki gibi</string>
-    <string name="uiFontMedeoHint">Latin ve Kiril alfabesi için açık yazı tipi (OFL 1.1)</string>
+    <string name="uiFontSystem">Sistem</string>
+    <string name="uiFontSystemHint">Cihazın yazı tipi, diğer uygulamalardaki gibi</string>
     <string name="uiFontDyslexiaNote">Disleksi yazı tipi açık (Erişilebilirlik) — bu seçimin önüne geçer.</string>
     <string name="loginOrChoose">veya e-posta hizmetini seçin</string>
     <string name="folderToOgna">Klasörü Ogneliss arşivine</string>

@@ -2,12 +2,14 @@
 // Корпоративные темы с полной палитрой.
 
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'appearance.dart';
 import 'ogneliss_look.dart';
 import 'theme_palette.dart';
 import 'tokens.dart';
+import 'ui_fonts.dart';
 
 class AppColors {
   AppColors._();
@@ -186,20 +188,16 @@ abstract final class SwipeTone {
 class AppTheme {
   AppTheme._();
 
-  /// Шрифт интерфейса (pubspec.yaml → fonts): Roboto из пакета приложения на
-  /// всех платформах — Android, iPhone, Mac и Windows выглядят одинаково.
-  static const robotoFamily = 'AppRoboto';
+  /// Шрифт интерфейса по умолчанию (pubspec.yaml → fonts): Roboto из пакета
+  /// приложения на всех платформах — Android, iPhone, Mac и Windows
+  /// выглядят одинаково.
+  static const robotoFamily = UiFonts.robotoFamily;
 
-  /// Medeo Sans (1.8.8, OFL 1.1, github.com/DNFDEVS/medeo-font) — на выбор в
-  /// «Общих». Латиница и кириллица; остальные письменности — системным
-  /// шрифтом, как и с Roboto.
-  static const medeoFamily = 'MedeoSans';
+  /// Шрифт интерфейса, выбранный в «Общих» (`uiFont`, ui_fonts.dart);
+  /// main.dart ставит его до сборки тем. null — шрифт системы.
+  static String? fontFamily = robotoFamily;
 
-  /// Шрифт интерфейса, выбранный в «Общих» (`uiFont`); main.dart ставит его
-  /// до сборки тем.
-  static String fontFamily = robotoFamily;
-
-  static String familyFor(String uiFont) => uiFont == 'medeo' ? medeoFamily : robotoFamily;
+  static String? familyFor(String uiFont) => UiFonts.resolve(uiFont, defaultTargetPlatform).family;
 
   /// Переходы между экранами — без анимации (замечание 07.10.2026: переходы
   /// были рваными и не к месту). Прежние: Android — предиктивный «назад»,

@@ -531,6 +531,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         }
         var email = emailModelFromRow(row);
         final hasBody = (email.bodyHtml ?? '').isNotEmpty || (email.bodyPlain ?? '').isNotEmpty;
+        // Откуда тело — в замер открытия (1.10.2: письмо открывалось ~10 с,
+        // по журналу было не понять, ждали сервер или окно).
+        OpenTrace.mark(hasBody ? 'тело в базе' : 'тело с сервера');
 
         // Шапка письма — сразу, тело — когда будет готово: раньше до конца
         // подготовки (а без текста в базе — до ответа сервера) на экране был
@@ -602,11 +605,13 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             }
           }
           if (!mounted) return;
+          OpenTrace.mark('тело получено');
           _startInlineImages(email);
         }
 
         final sanitized = await _secureBody(email);
         if (!mounted) return;
+        OpenTrace.mark('тело готово');
         safeSetState(() {
           _email = sanitized;
           _isLoading = false;
@@ -1269,6 +1274,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           return QuoteSplit(html, '');
         }).then((s) {
           if (!identical(_splitSource, html)) return;
+          OpenTrace.mark('цитата');
           safeSetState(() => _split = s);
         }));
       }
@@ -1337,6 +1343,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           }).then((d) {
             _docBuilding.remove(buildKey);
             if (gen != _docGen) return;
+            OpenTrace.mark('документ');
             safeSetState(() => _baseDocs[docKey] = d);
           }));
         }

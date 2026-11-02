@@ -3585,7 +3585,8 @@
     <string name="archiveNothingOld">未找到早于所选期限的邮件，没有可归档的内容。可以选择更短的期限或“所有邮件”。</string>
     <string name="uiFontTitle">界面字体</string>
     <string name="uiFontRobotoHint">与以前相同</string>
-    <string name="uiFontMedeoHint">适用于拉丁字母和西里尔字母的开源字体（OFL 1.1）</string>
+    <string name="uiFontSystem">系统</string>
+    <string name="uiFontSystemHint">设备字体，与其他应用相同</string>
     <string name="uiFontDyslexiaNote">已开启阅读障碍字体（无障碍），它优先于此选项。</string>
     <string name="loginOrChoose">或选择邮箱</string>
     <string name="folderToOgna">文件夹存入 Ogneliss 归档</string>

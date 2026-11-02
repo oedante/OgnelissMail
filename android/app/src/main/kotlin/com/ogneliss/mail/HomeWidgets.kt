@@ -155,13 +155,25 @@ internal object WidgetUi {
     fun note(context: Context, text: CharSequence): RemoteViews =
         RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_row_more)).apply { setTextViewText(R.id.row_text, text) }
 
-    /** Строка встречи/задачи (widget_row_event). [color] — цвет ящика; [bar] — готовая метка. */
+    /**
+     * Строка встречи/задачи (widget_row_event). [color] — цвет ящика; [bar] —
+     * готовая метка. [allDay] — встреча на весь день: в колонке времени
+     * значок, а подпись («Весь день») — для TalkBack (1.10.2: надпись в
+     * 52 dp обрезалась до «Весь де…»).
+     */
     fun eventRow(
         context: Context, time: String, end: String?, title: String, sub: String?,
-        color: Int? = null, bar: Int = 0, faded: Boolean = false,
+        color: Int? = null, bar: Int = 0, faded: Boolean = false, allDay: String? = null,
     ): RemoteViews {
         val v = RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_row_event))
-        v.setTextViewText(R.id.ev_time, time)
+        if (allDay != null) {
+            v.setViewVisibility(R.id.ev_time, View.GONE)
+            v.setViewVisibility(R.id.ev_allday, View.VISIBLE)
+            v.setImageViewResource(R.id.ev_allday, drawable(context, R.drawable.widget_ic_allday))
+            v.setContentDescription(R.id.ev_allday, allDay)
+        } else {
+            v.setTextViewText(R.id.ev_time, time)
+        }
         text(v, R.id.ev_end, end)
         v.setTextViewText(R.id.ev_title, title)
         text(v, R.id.ev_sub, sub)
@@ -282,7 +294,8 @@ class MyDayWidget : OgnelissWidget() {
             val item = items[i]
             if (i > 0) v.addView(R.id.wd_list, WidgetUi.divider(context))
             v.addView(R.id.wd_list, WidgetUi.eventRow(context, item.optString("t"), null, item.optString("s"), null,
-                bar = if (item.optString("k") == "t") R.drawable.widget_bar_task else R.drawable.widget_bar_accent))
+                bar = if (item.optString("k") == "t") R.drawable.widget_bar_task else R.drawable.widget_bar_accent,
+                allDay = if (item.optInt("a") == 1) item.optString("t") else null))
         }
         if (items.size > shown) {
             v.addView(R.id.wd_list, WidgetUi.divider(context))
@@ -740,7 +753,7 @@ class CalendarWidget : OgnelissWidget() {
         }
         val end = if (whole) null else if (e.en > next) "…" else fmt.format(Date(e.en))
         return WidgetUi.eventRow(context, time, end, e.title, e.loc.ifEmpty { null }, color = e.color,
-            faded = e.en <= now)
+            faded = e.en <= now, allDay = if (whole) allDayLabel else null)
     }
 
     private fun clickable(context: Context, row: RemoteViews, id: Int, e: Ev, k: Int) {

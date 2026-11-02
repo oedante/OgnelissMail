@@ -27,19 +27,26 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/utils/app_date_format.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/utils/zip_names.dart';
 import '../../../widgets/ui/file_type_icon.dart';
 
 enum PackedKind { zip, tar, tgz, tbz, txz, gz, bz2, xz }
 
 /// Файл или папка в архиве.
 class PackedEntry {
-  /// Путь в архиве без «/» в конце: «docs/2025/отчёт.pdf».
+  /// Путь в архиве без «/» в конце: «docs/2025/отчёт.pdf» — для показа,
+  /// с распознанной кодировкой имени (1.10.2, zip_names.dart).
   final String path;
+
+  /// Путь, как его читает пакет archive, — по нему запись ищется при
+  /// распаковке (у имён в CP866 он отличается от [path]).
+  final String raw;
   final int size;
   final DateTime? modified;
   final bool encrypted;
   final bool isDir;
-  const PackedEntry(this.path, this.size, this.modified, {this.encrypted = false, this.isDir = false});
+  const PackedEntry(this.path, this.size, this.modified, {this.encrypted = false, this.isDir = false, String? raw})
+      : raw = raw ?? path;
 
   String get name => path.split('/').last;
 }
@@ -84,15 +91,30 @@ class PackedArchive {
         final input = InputFileStream(path);
         try {
           final dir = ZipDirectory()..read(input);
+          // Имена в кодировке архиватора (CP866 у «Сжатой папки» русской
+          // Windows): сырые байты — из центрального каталога, по порядку.
+          final rawNames = readZipRawNames(path);
+          final lang = Platform.localeName.split(RegExp('[_-]')).first.toLowerCase();
+          final headers = dir.fileHeaders;
+          String shown(int i) {
+            final h = headers[i];
+            if (rawNames != null && rawNames.length == headers.length) {
+              final r = rawNames[i];
+              return decodeZipName(r.bytes, flags: r.flags, unicodePath: r.unicodePath, lang: lang);
+            }
+            return fixLatin1ZipName(h.filename, lang: lang);
+          }
+
           return [
-            for (final h in dir.fileHeaders.take(maxEntries))
-              if (_clean(h.filename).isNotEmpty)
+            for (var i = 0; i < headers.length && i < maxEntries; i++)
+              if (_clean(headers[i].filename).isNotEmpty)
                 PackedEntry(
-                  _clean(h.filename),
-                  h.uncompressedSize,
-                  _dosTime(h.lastModifiedFileDate, h.lastModifiedFileTime),
-                  encrypted: h.generalPurposeBitFlag & 1 == 1,
-                  isDir: h.filename.endsWith('/') || h.filename.endsWith('\\'),
+                  _clean(shown(i)),
+                  headers[i].uncompressedSize,
+                  _dosTime(headers[i].lastModifiedFileDate, headers[i].lastModifiedFileTime),
+                  encrypted: headers[i].generalPurposeBitFlag & 1 == 1,
+                  isDir: headers[i].filename.endsWith('/') || headers[i].filename.endsWith('\\'),
+                  raw: _clean(headers[i].filename),
                 ),
           ];
         } finally {
@@ -184,7 +206,7 @@ class PackedArchive {
       final input = InputFileStream(path);
       try {
         final a = ZipDecoder().decodeStream(input, password: pw);
-        final f = a.files.where((x) => _clean(x.name) == probe.path).firstOrNull;
+        final f = a.files.where((x) => _clean(x.name) == probe.raw).firstOrNull;
         if (f == null) continue;
         f.readBytes();
         return pw;
@@ -214,7 +236,7 @@ class PackedArchive {
         final input = InputFileStream(path);
         try {
           final a = ZipDecoder().decodeStream(input, password: password);
-          final f = a.files.where((x) => _clean(x.name) == entry.path).firstOrNull;
+          final f = a.files.where((x) => _clean(x.name) == entry.raw).firstOrNull;
           if (f == null) throw const FileSystemException('not found');
           final o = OutputFileStream(out);
           try {
@@ -231,7 +253,7 @@ class PackedArchive {
       case PackedKind.tgz:
       case PackedKind.tbz:
       case PackedKind.txz:
-        final f = _tarArchive(path, kind).files.where((x) => _clean(x.name) == entry.path).firstOrNull;
+        final f = _tarArchive(path, kind).files.where((x) => _clean(x.name) == entry.raw).firstOrNull;
         if (f == null) throw const FileSystemException('not found');
         final o = OutputFileStream(out);
         try {

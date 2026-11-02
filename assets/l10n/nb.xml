@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">Fant ingen meldinger eldre enn valgt alder — det var ingenting å arkivere. Velg en kortere alder eller «Alle meldinger».</string>
     <string name="uiFontTitle">Skrifttype i grensesnittet</string>
     <string name="uiFontRobotoHint">Som før</string>
-    <string name="uiFontMedeoHint">Åpen skrifttype for latinsk og kyrillisk skrift (OFL 1.1)</string>
+    <string name="uiFontSystem">System</string>
+    <string name="uiFontSystemHint">Enhetens skrifttype, som i andre apper</string>
     <string name="uiFontDyslexiaNote">Skrifttypen for dysleksi er på (Tilgjengelighet) og går foran dette valget.</string>
     <string name="loginOrChoose">eller velg e-posttjeneste</string>
     <string name="folderToOgna">Mappe til Ogneliss-arkivet</string>

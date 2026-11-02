@@ -51,11 +51,34 @@
 
   Новые зависимости: desktop_drop 0.8.4 и desktop_multi_window 0.3.1, обе
   Apache-2.0.
+- **Блокировка отправителя** (меню письма и карточка в ленте): письма с
+  адреса или домена — в «Спам» без уведомления, уже полученные — по выбору;
+  где сервер умеет (Sieve, Exchange через Graph или EWS) — ещё и правилом на
+  сервере. Домен общей почтовой службы (gmail.com и т. п.) заблокировать
+  нельзя — только адрес.
+- **Чистка по отправителю** (как Sweep в Outlook): удалить все письма из
+  «Входящих», удалять и будущие, оставлять только последнее, удалять старше
+  10 дней. Список блокировок и правил чистки — «VIP и правила».
+- **Предупреждение о подделке отправителя:** похожие домены и у личных
+  ящиков (домены контактов, банки, магазины, госслужбы, почтовые службы;
+  punycode и кириллица в домене), имя как у контакта с чужого адреса, ответ
+  (Reply-To) на адрес другой организации.
+- **Сигналы на Android без сервисов Google — UnifiedPush:** распространитель
+  на телефоне (ntfy и др.), выбор в «Уведомления → Как приходят сигналы»;
+  сервер шлёт сигнал, зашифрованный по Web Push (RFC 8291), с подписью
+  VAPID. Новые зависимости — UnifiedPush connector 3.3.5 (Apache-2.0) с
+  Google Tink (Apache-2.0) и protobuf-java (BSD-3-Clause).
+- **Клавиши на компьютере — как в Outlook:** Ctrl+Q/U, Insert, Backspace,
+  Ctrl+P, F3, F9, Ctrl+Shift+M, Ctrl+Shift+I (к прежним Ctrl+N/R/F,
+  Ctrl+Enter, Delete).
+- **IMAP по проверке на настоящем сервере:** удаление открытой папки больше
+  не рвёт соединение; в режиме «Полное письмо с вложениями» есть список
+  вложений; Message-ID черновика сохраняется.
 - **CI:** проверка лицензий зависимостей и уязвимостей (OSV-Scanner); по
   запросу — тесты и замеры скорости на эмуляторе Android.
 - **Сервер:** OAuth-прокси с body-parser 1.20.9 и qs 6.16.2 (уязвимости
   GHSA-27r3-jxmh-p828, GHSA-6pq8-jhm2-2vcw), точка `/bimi`; служба сигналов
-  умеет FCM (`install-push-relay.sh install --fcm-service-account …`).
+  умеет FCM (`install-push-relay.sh install --fcm-service-account …`) и UnifiedPush (Web Push, ключ VAPID создаёт установщик).
 
 Файлы iOS: AppDelegate.swift (перевод, App Intents), Info.plist. Файлы
 Android: манифест, shortcuts.xml, приёмник FCM, TranslationBridge.kt.
@@ -70,9 +93,10 @@ Xcode — `guides/IOS_COMMUNICATION_NOTIFICATIONS.md`, `guides/IOS_SHORTCUTS.md`
 • Темы оформления, плотность ленты, тёмные письма без инверсии
 • Перевод писем и своего текста на устройстве (iOS 18 и новее)
 • Даты в письме нажимаются: встреча или напоминание в одно касание
+• Заблокировать отправителя и «Чистка» его писем
+• Предупреждение о подделке отправителя и похожих доменах
 • Недоставленные письма отмечены, видна причина
-• Уведомления с фото отправителя
-• Логотипы проверенных отправителей (BIMI)
+• Уведомления с фото отправителя, логотипы проверенных отправителей (BIMI)
 • Siri и «Команды»: новое письмо, встреча, непрочитанные, «Мой день»
 • iPad: панель папок своей ширины, письма перетаскиваются на папку
 • IMAP: быстрая синхронизация, новый ящик загружается сразу
@@ -81,9 +105,10 @@ Xcode — `guides/IOS_COMMUNICATION_NOTIFICATIONS.md`, `guides/IOS_SHORTCUTS.md`
 • Colour themes, list density, dark messages without inversion
 • Translate messages and your own text on the device (iOS 18 or later)
 • Tap a date in a message to create a meeting or reminder
+• Block a sender and Sweep their messages
+• Warnings about spoofed senders and lookalike domains
 • Undelivered messages are marked, with the reason
-• Notifications with the sender's photo
-• Logos of verified senders (BIMI)
+• Notifications with the sender's photo; logos of verified senders (BIMI)
 • Siri and Shortcuts: new email, meeting, unread, My Day
 • iPad: resizable folder pane, drag messages onto a folder
 • IMAP: fast sync; a new mailbox loads right away
@@ -120,24 +145,24 @@ Xcode — `guides/IOS_COMMUNICATION_NOTIFICATIONS.md`, `guides/IOS_SHORTCUTS.md`
 <ru-RU>
 • Темы оформления, плотность ленты, тёмные письма без инверсии
 • Перевод писем и своего текста на устройстве
-• Нажмите дату в письме — встреча или напоминание
-• Недоставленные письма отмечены
+• Дата в письме — встреча или напоминание в одно касание
+• Блокировка отправителя и чистка его писем
+• Предупреждение о подделке отправителя
+• Отметка у недоставленных писем, логотипы BIMI
 • Уведомления с фото отправителя
-• Логотипы проверенных отправителей (BIMI)
-• Ярлыки на значке: письмо, встреча, «Мой день»
-• Планшет: ширина панели папок, письма — перетаскиванием на папку
-• Быстрая синхронизация IMAP
+• Сигналы почты и без сервисов Google (UnifiedPush)
+• Ярлыки на значке; на планшете — панели и перетаскивание
 </ru-RU>
 <en-US>
 • Colour themes, list density, dark mail without inversion
 • Translate mail and your own text on the device
 • Tap a date in a message to add a meeting or reminder
-• Undelivered mail is marked
+• Block a sender and sweep their mail
+• Warnings about spoofed senders
+• Undelivered mail is marked; BIMI sender logos
 • Notifications with the sender's photo
-• Logos of verified senders (BIMI)
-• App icon shortcuts: new email, meeting, My day
-• Tablets: resizable folder pane, drag mail onto folders
-• Faster IMAP sync
+• Mail signals without Google services (UnifiedPush)
+• App icon shortcuts; tablets: panes and drag and drop
 </en-US>
 <de-DE>
 • Farbschemata, Listendichte, dunkle Mails ohne Invertierung

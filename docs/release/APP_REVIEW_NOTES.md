@@ -5,7 +5,7 @@ Submission». Apple просит в поле **Notes** шесть пунктов
 назначение и аудиторию, как войти, внешние сервисы, различия по регионам,
 документы для регулируемых отраслей. Текст ниже отвечает на них по порядку.
 Его нужно вставить в **App Store Connect → приложение → версия → App Review
-Information → Notes** (по-английски, до 4000 знаков; в нём ~3450). Демо-ящик
+Information → Notes** (по-английски, до 4000 знаков; в нём ~3650). Демо-ящик
 указывается в полях **Sign-In Information** той же страницы.
 
 ## Что сделать владельцу
@@ -73,8 +73,10 @@ Information → Notes** (по-английски, до 4000 знаков; в н�
 5. «Новое письмо» → адрес (можно сам демо-ящик) → тема, текст → прикрепить
    файл или фото → «Отправить».
 6. Поиск по ленте (слово из темы).
-7. Свайп по письму → «Спам» (это ответ на «механизм жалоб и блокировки»).
-   Затем открыть папку «Спам» → «Не спам».
+7. Меню письма → «Заблокировать отправителя» → «Заблокировать»: письмо
+   уходит в «Спам», новые письма с этого адреса — тоже. Это ответ Apple на
+   «механизм жалоб и блокировки». Затем открыть «Спам» → письмо → «Не
+   спам», в меню — «Разблокировать отправителя».
 8. Календарь → встреча. Контакты → контакт.
 9. Настройки → «Аккаунты» → демо-ящик → «Удалить аккаунт» → подтвердить.
    Ящик и все его данные исчезают с устройства. Это ответ на «account
@@ -105,8 +107,8 @@ Information → Notes** (по-английски, до 4000 знаков; в н�
 Ogneliss Mail is a free email, calendar and contacts client for anyone who already has an email account, personal or work. It has no accounts of its own: users connect existing mailboxes (Microsoft Exchange / Exchange Online, Gmail, Outlook.com, iCloud Mail, Yandex, Mail.ru or any IMAP/SMTP server). There is no registration, no paid content, no in-app purchases, subscriptions or ads, and no content is shared between users of the app.
 
 1. SCREEN RECORDING
-Recorded on an iPhone with the latest iOS, starting from launch: licence agreement, sign-in to the demo mailbox, inbox, reading a message and attachment, reply, new message with an attachment, search, Spam / Not spam, calendar, contacts, and removing the mailbox in Settings.
-Account creation and deletion: the app does not create accounts, so there is no registration and no provider account to delete. Settings > Accounts > (mailbox) > Delete account removes the mailbox and all its data from the device. Mail is not user-generated content shared inside the app; unwanted mail is moved to Junk with the Spam action.
+Recorded on an iPhone with the latest iOS, starting from launch: licence agreement, sign-in to the demo mailbox, inbox, reading a message and attachment, reply, new message with an attachment, search, Block sender / Not spam, calendar, contacts, and removing the mailbox in Settings.
+Account creation and deletion: the app does not create accounts, so there is no registration and no provider account to delete. Settings > Accounts > (mailbox) > Delete account removes the mailbox and all its data from the device. Mail is not user-generated content shared inside the app. Unwanted senders can be blocked (message menu > Block sender): their messages go to Junk without notifications; the list is in Settings > VIPs and rules. Messages from spoofed or lookalike senders show a warning.
 
 2. PURPOSE AND AUDIENCE
 For people and organisations that use several mailboxes, including corporate Exchange, and want one private app instead of several. Value: mail, calendar, contacts, tasks and notes of all mailboxes in one place, with work features (shared mailboxes, out-of-office replies, server rules, delivery tracking, scheduled send). Mail is stored only on the device in an encrypted database; the developer never receives messages, contacts or passwords. The app is for the general public, not for a single organisation.

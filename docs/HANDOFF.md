@@ -7,7 +7,10 @@
 что сделать владельцу перед выпуском (проверено по файлам и скриптам) —
 [release/OWNER_STEPS_1.10.0.md](release/OWNER_STEPS_1.10.0.md). Страница
 выпуска на GitHub берёт «Что нового» из этого файла (`tool/dev/release_body.py`).
-Политика конфиденциальности на сайте обновлена (редакция 1.7: сигналы на
+Приложение опубликовано в Google Play
+(play.google.com/store/apps/details?id=com.ogneliss.mail); iPhone и iPad —
+открытая бета TestFlight (testflight.apple.com/join/tpZkBsSz), обе ссылки —
+на сайте и в README (02.11.2026). Политика конфиденциальности на сайте обновлена (редакция 1.7: сигналы на
 Android через FCM, BIMI, перевод ML Kit) — в архиве сайта, сайт в репозиторий
 не кладётся. Задания агентов — [plan/agent_briefs/](plan/agent_briefs/)
 (общие правила — `common.md`).

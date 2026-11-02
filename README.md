@@ -16,7 +16,8 @@ Website: https://ogneliss.ru/mail/
 **Downloads:** [GitHub Releases](https://github.com/oedante/OgnelissMail/releases)
 — Android (APK), Windows, macOS and Linux builds made by GitHub Actions from
 a tagged commit, with `SHA256SUMS.txt` and build provenance attestations.
-Android testing on Google Play: https://play.google.com/apps/testing/com.ogneliss.mail
+Google Play: https://play.google.com/store/apps/details?id=com.ogneliss.mail
+· iPhone and iPad, open beta on TestFlight: https://testflight.apple.com/join/tpZkBsSz
 
 ## Principles
 

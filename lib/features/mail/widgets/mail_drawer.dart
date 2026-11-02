@@ -873,13 +873,13 @@ class MailDrawer extends ConsumerWidget {
               label: l10n.tr('newSubfolder'),
               onTap: () => _createFolder(context, ref, l10n, parent: folder),
             ),
-          if (!folder.isSystem && manage)
+          if (!folder.isLocked && manage)
             PeekAction(
               icon: AppIcons.drive_file_move,
               label: l10n.tr('moveFolder'),
               onTap: () => _moveFolder(context, ref, folder, l10n),
             ),
-          if (!folder.isSystem)
+          if (!folder.isLocked)
             PeekAction(
               icon: AppIcons.edit,
               label: l10n.tr('rename'),
@@ -906,7 +906,7 @@ class MailDrawer extends ConsumerWidget {
               color: AppColors.errorText(context),
               onTap: () => unawaited(_emptyFolder(context, ref, folder, l10n)),
             ),
-          if (!folder.isSystem)
+          if (!folder.isLocked)
             PeekAction(
               icon: AppIcons.delete,
               label: l10n.delete,
@@ -1246,7 +1246,8 @@ class MailDrawer extends ConsumerWidget {
       }
       ref.invalidate(foldersProvider);
     } catch (e) {
-      showInlineError('${l10n.error}: $e');
+      AppLogger.warning('Переименование папки: $e');
+      showInlineError(serverRefusalText(l10n.tr('renameRejected'), e));
     }
   }
 
@@ -1279,7 +1280,8 @@ class MailDrawer extends ConsumerWidget {
         }));
       }
     } catch (e) {
-      showInlineError('${l10n.error}: $e');
+      AppLogger.warning('Удаление папки: $e');
+      showInlineError(serverRefusalText(l10n.tr('deleteRejected'), e));
     }
   }
 
@@ -1868,4 +1870,19 @@ class _FolderOrderSheet extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Отказ сервера по-человечески (1.10.3): «Сервер отклонил удаление:
+/// Backend error» вместо «Ошибка: [UNAVAILABLE] DELETE Backend error.
+/// sc=LFtoD10d2Os0_…». Код ответа и служебный номер запроса — в журнале.
+@visibleForTesting
+String serverRefusalText(String lead, Object e) {
+  var t = '$e'
+      .replaceFirst(RegExp(r'^(Imap|Smtp|Pop)?Exception:\s*'), '')
+      .replaceAll(RegExp(r'\[[A-Z-]+\]\s*'), '')
+      .replaceAll(RegExp(r'\s*\bsc=\S+'), '')
+      .replaceFirst(RegExp(r'^(DELETE|RENAME|CREATE)\s+', caseSensitive: false), '')
+      .trim();
+  if (t.endsWith('.')) t = t.substring(0, t.length - 1);
+  return t.isEmpty ? lead : '$lead: $t';
 }

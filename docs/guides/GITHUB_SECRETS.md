@@ -33,6 +33,10 @@ variables → Actions → New repository secret**. Имя — ровно как 
 
 ### Что должно быть в `DART_DEFINES_JSON`
 
+Откуда брать каждое значение, где лежат `config/dart_defines.json` и
+`android/key.properties` и как проверить файл — подробно в
+`release/OWNER_STEPS_1.10.0.md`, шаг 1.
+
 Те же ключи, что в `config/dart_defines.example.json`, с вашими значениями:
 `OAUTH_PROXY_URL`, `OAUTH_PROXY_KEY`, `SUPPORT_EMAIL`,
 `GOOGLE_ANDROID_CLIENT_ID`, `GOOGLE_IOS_CLIENT_ID`, `GOOGLE_DESKTOP_CLIENT_ID`,

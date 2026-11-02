@@ -1,27 +1,35 @@
 # 1.10.0 — что сделать владельцу (проверено 01–02.11.2026)
 
+Сейчас у пользователей 1.8.12; после неё менялось только приложение. Здесь —
+всё, что нужно сделать от 1.8.12 до 1.10.0, в том числе первая настройка
+сигналов для iPhone (Push и ключ APNs): раньше её не делали.
+
 ## Порядок целиком
 
-1. **Сервер** — архив `ogneliss-server-1.10.0.zip`, шаг 2 ниже.
-2. **Сайт** — архив сайта и `deploy_site.sh`, шаг 5, «Политика
+1. **Apple Developer** — Push у App ID и ключ APNs, шаг 2. Около 10
+   минут; ключ нужен серверу.
+2. **Сервер** — архив `ogneliss-server-1.10.0.zip`, шаг 3. Служба сигналов
+   ставится с ключом APNs из шага 2.
+3. **Сайт** — архив сайта и `deploy_site.sh`, шаг 6, «Политика
    конфиденциальности». Политика должна быть на сайте раньше, чем вы
    отправите приложение в магазины.
-3. **Секреты GitHub** — шаг 1. Затем метка `v1.10.0` на `main`: GitHub
+4. **Секреты GitHub** — шаг 1. Затем метка `v1.10.0` на `main`: GitHub
    соберёт APK, App Bundle и сборки для компьютера и выложит страницу
    выпуска с «Что нового».
-4. **Проверка на телефоне** — шаг 7, до отправки в магазины:
+5. **Проверка на телефоне** — шаг 8, до отправки в магазины:
    - Android — APK со страницы выпуска;
    - iPhone — TestFlight.
-5. **Google Play:**
+6. **Google Play:**
    - App Bundle (`.aab`) — из артефакта сборки `ogneliss-android-…` в
      Actions или собрать из архива исходников;
    - «Что нового» — из `STORE_NOTES_1.10.0.md`;
-   - «Безопасность данных» и строка о Google Translate — шаг 5;
+   - «Безопасность данных» и строка о Google Translate — шаг 6;
    - сначала поэтапное развёртывание на 10–20 %.
-6. **App Store:**
-   - Xcode — шаг 4;
+7. **App Store:**
+   - Xcode — шаг 5, в том числе Push Notifications;
    - сборка из архива исходников → TestFlight;
    - в App Store Connect номер 1.8.12 поменять на 1.10.0;
+   - «Конфиденциальность приложения» — шаг 6;
    - Notes, демо-ящик и видео — `APP_REVIEW_NOTES.md`.
 
 Ниже по каждому шагу: что проверено в репозитории, что сделать вам и
@@ -46,7 +54,7 @@
 Что сделать:
 
 1. Вписать пять секретов.
-2. Если будет Firebase (шаг 3), добавить в `config/dart_defines.json` ключи
+2. Если будет Firebase (шаг 4), добавить в `config/dart_defines.json` ключи
    `FIREBASE_*` и обновить секрет `DART_DEFINES_JSON`.
 3. Выпуск: GitHub → Releases → Draft a new release → тег `v1.10.0` на
    `main`. Или из терминала: `git tag v1.10.0 && git push origin v1.10.0`.
@@ -63,7 +71,52 @@
 прогонов 01.11 в двух падал разный тест, третий прошёл целиком. Красный
 значок у задачи «emulator» выпуск не останавливает.
 
-## 2. Сервер
+## 2. Apple Developer: Push и ключ APNs — `guides/IOS_PUSH_SETUP.md`
+
+Без этого iPhone не получает сигналы «проверь почту». Тогда свёрнутое
+приложение проверяет почту, только когда iOS сама его разбудит, — иногда
+раз в час и реже. Остальное работает.
+
+Проверено:
+
+- приложение регистрирует токен уведомлений у службы сигналов
+  (`AppDelegate.swift`, `push_wake_service.dart`);
+- по умолчанию сигналы тихие (`PUSH_WAKE_MODE=silent` в
+  `config/dart_defines.example.json`): ни расширения уведомлений, ни
+  особого права Apple не нужно;
+- `Info.plist` уже содержит фоновый режим `remote-notification`;
+- служба шлёт сигналы с темой `com.ogneliss.mail` не чаще раза в 20 минут:
+  чаще iOS тихие сигналы всё равно придерживает.
+
+Что сделать: developer.apple.com → Account → **Certificates, Identifiers &
+Profiles**.
+
+1. **Identifiers → `com.ogneliss.mail`** → вкладка Capabilities → отметить
+   **Push Notifications** → Save. Сертификаты (кнопка Configure рядом) не
+   нужны: используем ключ.
+2. **Keys → «+»:**
+   - Key Name: `Ogneliss Push`;
+   - отметить **Apple Push Notifications service (APNs)** → Configure;
+   - Environment — **Sandbox & Production**, если есть такой вариант, иначе
+     **Production**; Key Restriction — **Team Scoped (All Topics)**;
+   - Save → Continue → **Register**.
+3. **Download** — файл `AuthKey_XXXXXXXXXX.p8`. Скачать его можно только
+   один раз. Запишите:
+   - **Key ID** — 10 символов, они же в имени файла;
+   - **Team ID** — Account → Membership details.
+4. Копию `.p8` сохраните в менеджере паролей или на зашифрованном носителе.
+   Это секрет, как `key.properties` и `*.jks`: не в проект, не в архив, не
+   в почту. При утечке — **Revoke** на той же странице и новый ключ.
+
+Ключ Production нужен для TestFlight и App Store. Ключ «Sandbox &
+Production» подходит ещё и для сборок, запущенных прямо из Xcode.
+
+Право фильтрации уведомлений (`IOS_PUSH_SETUP.md`, п. 1.1 и 1.3) для 1.10.0
+не нужно. Оно понадобится для следующего этапа — расширения уведомлений,
+которого пока нет в коде. Заявку можно подать заранее: Apple отвечает
+неделями.
+
+## 3. Сервер
 
 Отдельный архив `ogneliss-server-1.10.0.zip` (обе службы) и короткая
 памятка `СЕРВЕР_1.10.0.md` к нему. Папки те же, что `server/` в архиве
@@ -92,23 +145,80 @@ sudo bash /root/ogneliss-server/server/oauth-proxy/install-oauth-proxy.sh check
 "https://www.ogneliss.ru/oauth/bimi?d=paypal.com"`. Ответ — JSON с полями
 `policy` и `logo`.
 
-**Служба сигналов — обновить обязательно** (сигналы на Android без сервисов
-Google, UnifiedPush). Проверено:
-- `install-push-relay.sh install` копирует новый `webpush.js` и один раз
-  создаёт ключ VAPID (`keys/vapid.pem`, нужен `openssl`);
+**Служба сигналов — поставить с ключом APNs.** Она нужна и для iPhone
+(шаг 2), и для Android без сервисов Google (UnifiedPush). Проверено:
+
+- `install-push-relay.sh install` при первом запуске ставит службу в
+  `/opt/mailserver/push-relay`, берёт ключ приложения из OAuth-прокси и
+  отправляет Apple пробный сигнал, чтобы проверить ключ;
+- если служба уже стояла, та же команда обновляет её: `.env`, ключи и
+  токены остаются, прежний `.env` сохраняется в `backup-<дата>`;
+- скрипт копирует новый `webpush.js` и один раз создаёт ключ VAPID
+  (`keys/vapid.pem`, нужен `openssl`);
 - 7 автотестов проходят, в том числе шифрование по примеру из RFC 8291 и
   полный путь «регистрация → зашифрованный сигнал → удаление адреса по 410».
 
+Скопировать ключ на сервер (со своего компьютера):
+
 ```bash
-sudo bash /root/ogneliss-server/server/push-relay/install-push-relay.sh install
+scp AuthKey_XXXXXXXXXX.p8 root@СЕРВЕР:/root/
+```
+
+Установить (Team ID и имя файла — свои, из шага 2):
+
+```bash
+sudo bash /root/ogneliss-server/server/push-relay/install-push-relay.sh install \
+     --team ВАШ_TEAM_ID --key /root/AuthKey_XXXXXXXXXX.p8
+```
+
+- В выводе должна быть строка «ключ production принят Apple».
+- Затем удалите `/root/AuthKey_…p8`: копия лежит в
+  `/opt/mailserver/push-relay/keys`.
+
+Открыть адрес `/push` снаружи — Nginx Proxy Manager (панель
+`http://IP-сервера:81`). При первой установке скрипт сам об этом напомнит.
+
+1. Хост `ogneliss.ru` → Edit → вкладка **Advanced**.
+2. Если там уже есть раздел «Сигналы для iPhone» (`location ^~ /push/`) —
+   ничего не менять.
+3. Если нет — сначала скопируйте прежнее содержимое, чтобы вернуть его при
+   ошибке. Потом добавьте в конец поля этот блок (он же — в
+   `site/nginx-landing.conf` архива сайта) → Save:
+
+```nginx
+location ^~ /push/ {
+    access_log off;
+    error_log /dev/null;
+    client_max_body_size 8k;
+    set $push push-relay;
+    proxy_pass http://$push:8788;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_connect_timeout 5s;
+    proxy_read_timeout 20s;
+}
+```
+
+Журнал запросов для этого адреса выключен — так обещано в политике
+конфиденциальности (раздел 6.2).
+
+Проверить:
+
+```bash
 sudo bash /root/ogneliss-server/server/push-relay/install-push-relay.sh check
 curl https://www.ogneliss.ru/push/vapid     # ответ: {"key":"B…"}
 ```
 
-Когда будет Firebase — та же команда с `--fcm-service-account …`
+В `check` все строки должны быть с ✓. Предупреждение «ключ Firebase не
+задан» — нормально, пока нет Firebase (шаг 4).
+
+Когда будет Firebase: `sudo bash …/install-push-relay.sh key
+--fcm-service-account /root/ogneliss-firebase.json`
 (`guides/ANDROID_PUSH_SETUP.md`, п. 4).
 
-## 3. Firebase для Android — `guides/ANDROID_PUSH_SETUP.md`
+## 4. Firebase для Android — `guides/ANDROID_PUSH_SETUP.md`
 
 Теперь не обязателен: без Firebase сигналы на Android работают через
 UnifiedPush (распространитель ntfy и др. на телефоне). Firebase нужен,
@@ -124,8 +234,16 @@ UnifiedPush (распространитель ntfy и др. на телефон�
 
 Что сделать: п. 1–4 инструкции.
 
-## 4. Xcode
+## 5. Xcode
 
+- **Push Notifications** — TARGETS → Runner → Signing & Capabilities →
+  «+ Capability» → Push Notifications. Xcode сам добавит `aps-environment`
+  в `Runner.entitlements`. Там же в **Background Modes** должна стоять
+  галочка **Remote notifications**: она берётся из `Info.plist` архива.
+  Если её нет — отметить. Keychain Sharing и цель расширения уведомлений
+  из `IOS_PUSH_SETUP.md`, п. 2.1–2.2, для 1.10.0 не нужны. Новых файлов
+  Swift с 1.8.12 нет: изменились только существующие, добавлять в проект
+  ничего не нужно.
 - **Communication Notifications** — `guides/IOS_COMMUNICATION_NOTIFICATIONS.md`,
   п. 2: TARGETS → Runner → Signing & Capabilities → + Capability.
   `Info.plist` уже содержит `NSUserActivityTypes` → `INSendMessageIntent`.
@@ -137,7 +255,7 @@ UnifiedPush (распространитель ntfy и др. на телефон�
   падает с «Library not loaded: …/Translation.framework», подключить
   `Translation.framework` как Optional (`guides/TRANSLATION_SETUP.md`).
 
-## 5. Тексты для сайта и магазинов
+## 6. Тексты для сайта и магазинов
 
 ### Политика конфиденциальности
 
@@ -166,6 +284,19 @@ UnifiedPush (распространитель ntfy и др. на телефон�
 
 Сайт собран из версии 28.10 (архив сайта к 1.8.7). Если вы с тех пор
 правили сайт у себя — сверьте файл `mail_src/content_*.py`.
+
+### App Store Connect → «Конфиденциальность приложения» (App Privacy)
+
+С этой версией iPhone впервые отправляет на сервер токен уведомлений. Если
+в анкете его ещё нет, добавьте:
+
+- «Идентификаторы» → «Идентификатор устройства»;
+- цель — «Функциональность приложения»;
+- не связан с личностью пользователя;
+- не используется для отслеживания.
+
+Перевод на iPhone идёт на устройстве (Apple Translation), логотипы BIMI —
+домен чужого отправителя: в анкету они не попадают.
 
 ### Google Play → «Безопасность данных» (Data safety)
 
@@ -201,13 +332,13 @@ UnifiedPush (распространитель ntfy и др. на телефон�
 В остальных языках описания — та же фраза на языке описания или
 английская строка.
 
-## 6. Apple
+## 7. Apple
 
 Notes, демо-ящик и видео — `release/APP_REVIEW_NOTES.md`. Номер версии
 отклонённой записи в App Store Connect поменять с 1.8.12 на 1.10.0 и
 выбрать сборку 1.10.0 (131).
 
-## 7. Проверить на телефоне
+## 8. Проверить на телефоне
 
 1. **Первая загрузка нового ящика:** добавить ящик — «Входящие» заполняются
    сразу, без ожидания интервала.
@@ -244,7 +375,21 @@ Notes, демо-ящик и видео — `release/APP_REVIEW_NOTES.md`. Ном
 11. **Сигналы без Google (Android):** поставить ntfy (F-Droid или Google
     Play), в Ogneliss Mail — «Настройки → Уведомления → Как приходят сигналы
     → Через ntfy». Под переключателем — «Зарегистрировано …», через интервал
-    — «Последний сигнал …». Нужна обновлённая служба сигналов (шаг 2).
+    — «Последний сигнал …». Нужна обновлённая служба сигналов (шаг 3).
 12. **Клавиши (компьютер):** в открытом письме Ctrl+Q и Ctrl+U — прочитано
     и не прочитано, Insert — флажок, Backspace — в архив, F9 — проверить
     почту.
+13. **Сигналы сервера (iPhone, сборка из TestFlight):**
+    - «Настройки → Уведомления → Сигналы сервера (iPhone)» — под
+      переключателем «Зарегистрировано …»;
+    - на сервере `install-push-relay.sh check` — «установок 1 (production
+      1 …)»;
+    - сверните приложение (не смахивайте) на 20–40 минут — в настройках
+      появится «Последний сигнал: …»;
+    - «Не удалось: iOS: …» — у цели Runner нет Push Notifications (шаг 5);
+    - «Не удалось: … HTTP 401» — ключ приложения на сервере не совпадает со
+      сборкой: `OAUTH_PROXY_KEY` в секрете `DART_DEFINES_JSON` должен
+      совпадать с `PUSH_API_KEY` в `/opt/mailserver/push-relay/.env` (скрипт
+      берёт его из `PROXY_API_KEY` OAuth-прокси);
+    - iOS вправе придерживать тихие сигналы: энергосбережение, низкий
+      заряд, приложение давно не открывали.

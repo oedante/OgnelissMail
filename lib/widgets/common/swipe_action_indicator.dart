@@ -14,6 +14,13 @@
 //    скачков (1.6.25). Без вибрации (1.6.22, решение владельца: при разборе
 //    почты серией свайпов она утомляет).
 //
+//  · 1.10.3 (просьба владельца 02.11.2026: «анимации свайпам, не сильно
+//    отвлекающие, в бизнес-стиле»): у порога значок плавно становится
+//    залитым, за ним проступает мягкий круг цвета действия — видно, что
+//    действие сработает, если отпустить. У панели из двух кнопок (порога
+//    нет) — то же, когда панель открыта целиком. Всё по положению пальца,
+//    без пружин, вспышек и вибрации.
+//
 // Нагрузка: перерисовывается только этот маленький виджет и только пока
 // строку тянут (подписка на анимацию свайпа). Выключается настройкой
 // «Живой свайп» и «Уменьшить движение» — тогда значок просто стоит у края.
@@ -72,7 +79,30 @@ class _SwipeActionIndicatorState extends State<SwipeActionIndicator> {
       ? (widget.fromStart ? Alignment.centerLeft : Alignment.centerRight)
       : Alignment.center;
 
-  Widget _icon(double alpha) => Icon(widget.icon, size: 28, color: widget.color.withValues(alpha: alpha));
+  Widget _icon(double alpha, {double fill = 0}) =>
+      Icon(widget.icon, size: 28, fill: fill, color: widget.color.withValues(alpha: alpha));
+
+  /// Место под круг за значком: значок в центре квадрата [_haloBox], поэтому
+  /// отступ от края у анимированного значка меньше на (_haloBox − 28) / 2 —
+  /// значок стоит там же, где и без анимации.
+  static const _haloBox = 48.0;
+
+  /// Круг за значком у порога (1.10.3): 0 — нет, 1 — виден полностью.
+  /// Размер виджета постоянный — значок не сдвигается, когда круг растёт.
+  Widget _halo(double t, Widget icon) => SizedBox.square(
+        dimension: _haloBox,
+        child: Stack(alignment: Alignment.center, children: [
+          if (t > 0)
+            Transform.scale(
+              scale: 0.7 + 0.3 * t,
+              child: DecoratedBox(
+                decoration: BoxDecoration(shape: BoxShape.circle, color: widget.color.withValues(alpha: 0.14 * t)),
+                child: const SizedBox.square(dimension: _haloBox),
+              ),
+            ),
+          icon,
+        ]),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -108,8 +138,11 @@ class _SwipeActionIndicatorState extends State<SwipeActionIndicator> {
                 armT = Curves.easeInOut
                     .transform(((v - widget.extentRatio) / (arm - widget.extentRatio)).clamp(0.0, 1.0));
               }
+              // Две кнопки (порога нет): «готово» — когда панель открыта
+              // почти целиком.
+              final ready = arm != null ? armT : Curves.easeInOut.transform(((p - 0.85) / 0.15).clamp(0.0, 1.0));
               final iconAlpha = 0.45 + 0.55 * eased;
-              final scale = 0.8 + 0.2 * eased + 0.15 * armT;
+              final scale = 0.8 + 0.2 * eased + 0.08 * ready;
               final glow = 0.12 * eased + 0.10 * armT;
               return DecoratedBox(
                 decoration: BoxDecoration(
@@ -122,8 +155,10 @@ class _SwipeActionIndicatorState extends State<SwipeActionIndicator> {
                 child: Align(
                   alignment: _edge,
                   child: Padding(
-                    padding: padding,
-                    child: Transform.scale(scale: scale, child: _icon(iconAlpha)),
+                    padding: widget.atEdge
+                        ? const EdgeInsets.symmetric(horizontal: Space.xl - 4 - (_haloBox - 28) / 2)
+                        : EdgeInsets.zero,
+                    child: Transform.scale(scale: scale, child: _halo(ready, _icon(iconAlpha, fill: ready))),
                   ),
                 ),
               );

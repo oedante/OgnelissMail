@@ -321,9 +321,26 @@ sudo bash /root/ogneliss-server/server/oauth-proxy/install-oauth-proxy.sh update
 sudo bash /root/ogneliss-server/server/oauth-proxy/install-oauth-proxy.sh check
 ```
 
-Проверить снаружи, что BIMI отвечает: `curl -H "x-api-key: <OAUTH_PROXY_KEY>"
-"https://www.ogneliss.ru/oauth/bimi?d=paypal.com"`. Ответ — JSON с полями
-`policy` и `logo`.
+Проверить, что BIMI отвечает (на сервере):
+
+```bash
+sudo bash -c 'K=$(grep "^PROXY_API_KEY=" /opt/mailserver/oauth-proxy/.env | cut -d= -f2-); curl -s -H "x-api-key: $K" "https://www.ogneliss.ru/oauth/bimi?d=paypal.com"'; echo
+```
+
+Команда сама берёт ключ приложения из `.env` OAuth-прокси и на экран его
+не выводит. Если OAuth-прокси стоит без Docker, вместо
+`/opt/mailserver/oauth-proxy/.env` — `/etc/ogneliss-oauth-proxy/oauth-proxy.env`.
+
+Ответ — JSON с полями `policy` и `logo`, например
+`{"policy":"reject","logo":"<svg…"}`. Что значат другие ответы:
+
+- `{"error":"unauthorized"}` — запрос без ключа или с чужим ключом. Так
+  отвечает и браузер, если открыть адрес напрямую: BIMI отвечает только
+  приложению, чтобы сервером не пользовались посторонние. Значит, новая
+  версия OAuth-прокси уже стоит;
+- `not found: /bimi` — на сервере прежняя версия OAuth-прокси, нужен
+  `update`;
+- `{"error":"disabled"}` — в `.env` OAuth-прокси стоит `BIMI=0`.
 
 **Служба сигналов — поставить с ключами APNs и Firebase.** Она нужна для
 iPhone (шаг 2), для Android через Google (шаг 3) и для Android без сервисов
@@ -364,6 +381,18 @@ sudo bash /root/ogneliss-server/server/push-relay/install-push-relay.sh install 
 Открыть адрес `/push` снаружи — Nginx Proxy Manager (панель
 `http://IP-сервера:81`). При первой установке скрипт сам об этом напомнит.
 
+Сначала проверьте, нужно ли что-то менять: откройте в браузере
+`https://www.ogneliss.ru/push/healthz`.
+
+- **502 Bad Gateway** до установки службы или `{"ok":true,…}` после неё —
+  раздел в NPM уже есть, ничего не менять. Он входит в
+  `site/nginx-landing.conf` с 23.10.2026.
+- **Переадресация на главную, страница сайта или 404** — раздела нет,
+  добавить по пунктам ниже.
+
+Для OAuth-прокси (вход и BIMI) в NPM ничего менять не нужно: `/oauth/bimi`
+идёт тем же путём, что и вход.
+
 1. Хост `ogneliss.ru` → Edit → вкладка **Advanced**.
 2. Если там уже есть раздел «Сигналы для iPhone» (`location ^~ /push/`) —
    ничего не менять.
@@ -387,8 +416,9 @@ location ^~ /push/ {
 }
 ```
 
-Журнал запросов для этого адреса выключен — так обещано в политике
-конфиденциальности (раздел 6.2).
+Блок использует строку `resolver 127.0.0.11 …` в начале того же поля —
+она там уже есть, на ней работает весь сайт. Журнал запросов для этого
+адреса выключен — так обещано в политике конфиденциальности (раздел 6.2).
 
 Проверить:
 

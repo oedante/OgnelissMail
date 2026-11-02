@@ -16,7 +16,8 @@ IMAP/SMTP, календари и контакты по CalDAV/CardDAV. Android, 
 **Загрузки:** [GitHub Releases](https://github.com/oedante/OgnelissMail/releases)
 — Android (APK), Windows, macOS и Linux: собраны GitHub Actions из коммита с
 меткой версии, с `SHA256SUMS.txt` и подтверждением происхождения сборки.
-Тестирование Android в Google Play: https://play.google.com/apps/testing/com.ogneliss.mail
+Google Play: https://play.google.com/store/apps/details?id=com.ogneliss.mail
+· iPhone и iPad, открытая бета в TestFlight: https://testflight.apple.com/join/tpZkBsSz
 
 ## Принципы
 

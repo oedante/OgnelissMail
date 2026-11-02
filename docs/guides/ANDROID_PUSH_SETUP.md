@@ -4,6 +4,9 @@
 «Сигналы сервера» на iPhone (`IOS_PUSH_SETUP.md`), но через Firebase Cloud
 Messaging (FCM) — бесплатный сервис Google.
 
+**Для выпуска 1.10.0** — по `release/OWNER_STEPS_1.10.0.md`, шаги 3 и 4: те
+же пункты с командами для архива сервера 1.10.0.
+
 **Коротко:** п. 1–2 (консоль Firebase) → п. 3 (`config/dart_defines.json`) →
 п. 4 (ключ на сервер) → сборка → п. 5 (проверка) → п. 6 (политика, Google
 Play).
@@ -83,7 +86,8 @@ FlutterFire и без `google-services.json`).
 
 - Эти значения не секретные (они есть в каждой сборке), но
   `dart_defines.json` и так в `.gitignore`.
-- Codemagic: обновите секрет `DART_DEFINES_JSON` (содержимое файла целиком).
+- GitHub (и Codemagic, если собираете там): обновите секрет
+  `DART_DEFINES_JSON` (содержимое файла целиком).
 - `PUSH_WAKE_ANDROID_PRIORITY` — `normal` (по умолчанию) или `high` (см.
   «Приоритет сигнала» выше). Менять сервер для этого не нужно.
 - По желанию — ограничить ключ: Google Cloud Console → APIs & Services →

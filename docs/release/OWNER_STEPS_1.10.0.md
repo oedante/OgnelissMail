@@ -2,30 +2,33 @@
 
 Сейчас у пользователей 1.8.12; после неё менялось только приложение. Здесь —
 всё, что нужно сделать от 1.8.12 до 1.10.0, в том числе первая настройка
-сигналов для iPhone (Push и ключ APNs): раньше её не делали.
+сигналов сервера: для iPhone — Push и ключ APNs у Apple, для Android —
+Firebase у Google. Раньше их не настраивали.
 
 ## Порядок целиком
 
 1. **Apple Developer** — Push у App ID и ключ APNs, шаг 2. Около 10
    минут; ключ нужен серверу.
-2. **Сервер** — архив `ogneliss-server-1.10.0.zip`, шаг 3. Служба сигналов
-   ставится с ключом APNs из шага 2.
-3. **Сайт** — архив сайта и `deploy_site.sh`, шаг 6, «Политика
+2. **Firebase** — проект, приложение Android и ключ сервисного аккаунта,
+   шаг 3. Около 15 минут; ключ нужен серверу, а ключи `FIREBASE_*` — сборке.
+3. **Сервер** — архив `ogneliss-server-1.10.0.zip`, шаг 4. Служба сигналов
+   ставится сразу с ключами из шагов 2 и 3.
+4. **Сайт** — архив сайта и `deploy_site.sh`, шаг 6, «Политика
    конфиденциальности». Политика должна быть на сайте раньше, чем вы
    отправите приложение в магазины.
-4. **Секреты GitHub** — шаг 1. Затем метка `v1.10.0` на `main`: GitHub
-   соберёт APK, App Bundle и сборки для компьютера и выложит страницу
-   выпуска с «Что нового».
-5. **Проверка на телефоне** — шаг 8, до отправки в магазины:
+5. **Секреты GitHub** — шаг 1, вместе с ключами `FIREBASE_*` из шага 3.
+   Затем метка `v1.10.0` на `main`: GitHub соберёт APK, App Bundle и сборки
+   для компьютера и выложит страницу выпуска с «Что нового».
+6. **Проверка на телефоне** — шаг 8, до отправки в магазины:
    - Android — APK со страницы выпуска;
    - iPhone — TestFlight.
-6. **Google Play:**
+7. **Google Play:**
    - App Bundle (`.aab`) — из артефакта сборки `ogneliss-android-…` в
      Actions или собрать из архива исходников;
    - «Что нового» — из `STORE_NOTES_1.10.0.md`;
    - «Безопасность данных» и строка о Google Translate — шаг 6;
    - сначала поэтапное развёртывание на 10–20 %.
-7. **App Store:**
+8. **App Store:**
    - Xcode — шаг 5, в том числе Push Notifications;
    - сборка из архива исходников → TestFlight;
    - в App Store Connect номер 1.8.12 поменять на 1.10.0;
@@ -54,8 +57,8 @@
 Что сделать:
 
 1. Вписать пять секретов.
-2. Если будет Firebase (шаг 4), добавить в `config/dart_defines.json` ключи
-   `FIREBASE_*` и обновить секрет `DART_DEFINES_JSON`.
+2. Добавить в `config/dart_defines.json` четыре ключа `FIREBASE_*` из
+   шага 3 и обновить секрет `DART_DEFINES_JSON`.
 3. Выпуск: GitHub → Releases → Draft a new release → тег `v1.10.0` на
    `main`. Или из терминала: `git tag v1.10.0 && git push origin v1.10.0`.
 
@@ -116,7 +119,73 @@ Production» подходит ещё и для сборок, запущенны�
 которого пока нет в коде. Заявку можно подать заранее: Apple отвечает
 неделями.
 
-## 3. Сервер
+## 3. Firebase: сигналы для Android через Google — `guides/ANDROID_PUSH_SETUP.md`
+
+То же, что ключ APNs для iPhone, только у Google: сервис Firebase Cloud
+Messaging (FCM). Он бесплатный (план Spark), карта не нужна.
+
+Без Firebase сигналы на Android получают только те, кто сам поставит
+приложение UnifiedPush (ntfy и др.). У остальных свёрнутое приложение
+проверяет почту, только когда Android разрешит: в глубоком сне он
+откладывает проверки, а с Android 15 даёт фоновой синхронизации не больше 6
+часов в сутки.
+
+Проверено:
+
+- `firebase-messaging` подключён в Android-части (BoM 35.1.0) без
+  `google-services.json` и без Flutter-плагинов; параметры проекта
+  берутся из dart-defines `FIREBASE_*`;
+- пока этих ключей нет, варианта «Через Google» в настройках нет,
+  остальное работает;
+- с ключами сигналы по умолчанию идут через Google, UnifiedPush — по
+  выбору в настройках;
+- служба сигналов проверяет ключ сервисного аккаунта пробным сообщением
+  Google (`validate_only` — никуда не доставляется);
+- лицензии записаны в `docs/LICENSING.md`.
+
+Что сделать:
+
+1. **Проект.** console.firebase.google.com — лучше под аккаунтом
+   разработчика, а не личным:
+   - **Create a project** → имя, например `ogneliss-mail`;
+   - Google Analytics — **выключить**;
+   - Create project. План остаётся **Spark** (бесплатный).
+2. **Приложение Android.** Обзор проекта → **Add app** → значок Android:
+   - Android package name: `com.ogneliss.mail`;
+   - App nickname — любое, **SHA-1 не нужен**;
+   - **Register app** → **Download google-services.json**. Файл нужен,
+     только чтобы взять из него значения. В проект его не класть;
+   - шаги «Add Firebase SDK» пропустить: Next → Next → Continue to
+     console.
+3. **Четыре ключа в `config/dart_defines.json`.** Значения — из
+   `google-services.json` (или ⚙ Project settings → General):
+
+   | Ключ | Где в `google-services.json` |
+   |---|---|
+   | `FIREBASE_PROJECT_ID` | `project_info.project_id` |
+   | `FIREBASE_SENDER_ID` | `project_info.project_number` |
+   | `FIREBASE_APP_ID` | `client[0].client_info.mobilesdk_app_id` |
+   | `FIREBASE_API_KEY` | `client[0].api_key[0].current_key` |
+
+   - `PUSH_WAKE_ANDROID_PRIORITY` оставить `normal`;
+   - эти значения не секретные: они есть в каждой сборке;
+   - затем обновить секрет `DART_DEFINES_JSON` в GitHub (шаг 1) —
+     содержимое файла целиком. В Codemagic — тоже, если собираете там.
+     Без этого сборки по метке `v1.10.0` выйдут без сигналов через Google.
+4. **FCM API.** ⚙ Project settings → вкладка **Cloud Messaging**: строка
+   «Firebase Cloud Messaging API (V1)» должна быть *Enabled*. Если
+   *Disabled* — ⋮ → Manage API in Google Cloud Console → **Enable**. Legacy
+   API не нужен.
+5. **Ключ сервисного аккаунта — для сервера.** ⚙ Project settings →
+   вкладка **Service accounts** → Firebase Admin SDK → **Generate new
+   private key** → Generate key. Скачается JSON
+   `ogneliss-mail-…-firebase-adminsdk-….json`.
+   - Это секрет, как `.p8`: менеджер паролей, не в почту, не в проект.
+   - Утёк — Google Cloud Console → IAM & Admin → Service accounts → Keys
+     → удалить и создать новый.
+6. **Ключ на сервер** — шаг 4, той же командой, что и ключ APNs.
+
+## 4. Сервер
 
 Отдельный архив `ogneliss-server-1.10.0.zip` (обе службы) и короткая
 памятка `СЕРВЕР_1.10.0.md` к нему. Папки те же, что `server/` в архиве
@@ -145,12 +214,13 @@ sudo bash /root/ogneliss-server/server/oauth-proxy/install-oauth-proxy.sh check
 "https://www.ogneliss.ru/oauth/bimi?d=paypal.com"`. Ответ — JSON с полями
 `policy` и `logo`.
 
-**Служба сигналов — поставить с ключом APNs.** Она нужна и для iPhone
-(шаг 2), и для Android без сервисов Google (UnifiedPush). Проверено:
+**Служба сигналов — поставить с ключами APNs и Firebase.** Она нужна для
+iPhone (шаг 2), для Android через Google (шаг 3) и для Android без сервисов
+Google (UnifiedPush). Проверено:
 
 - `install-push-relay.sh install` при первом запуске ставит службу в
   `/opt/mailserver/push-relay`, берёт ключ приложения из OAuth-прокси и
-  отправляет Apple пробный сигнал, чтобы проверить ключ;
+  проверяет ключи пробными сигналами Apple и Google;
 - если служба уже стояла, та же команда обновляет её: `.env`, ключи и
   токены остаются, прежний `.env` сохраняется в `backup-<дата>`;
 - скрипт копирует новый `webpush.js` и один раз создаёт ключ VAPID
@@ -158,22 +228,27 @@ sudo bash /root/ogneliss-server/server/oauth-proxy/install-oauth-proxy.sh check
 - 7 автотестов проходят, в том числе шифрование по примеру из RFC 8291 и
   полный путь «регистрация → зашифрованный сигнал → удаление адреса по 410».
 
-Скопировать ключ на сервер (со своего компьютера):
+Скопировать ключи на сервер (со своего компьютера):
 
 ```bash
 scp AuthKey_XXXXXXXXXX.p8 root@СЕРВЕР:/root/
+scp ogneliss-mail-…-firebase-adminsdk-….json root@СЕРВЕР:/root/ogneliss-firebase.json
 ```
 
-Установить (Team ID и имя файла — свои, из шага 2):
+Установить (Team ID и имя файла `.p8` — свои, из шага 2):
 
 ```bash
 sudo bash /root/ogneliss-server/server/push-relay/install-push-relay.sh install \
-     --team ВАШ_TEAM_ID --key /root/AuthKey_XXXXXXXXXX.p8
+     --team ВАШ_TEAM_ID --key /root/AuthKey_XXXXXXXXXX.p8 \
+     --fcm-service-account /root/ogneliss-firebase.json
 ```
 
-- В выводе должна быть строка «ключ production принят Apple».
-- Затем удалите `/root/AuthKey_…p8`: копия лежит в
-  `/opt/mailserver/push-relay/keys`.
+- В выводе должны быть строки «ключ production принят Apple» и «ключ
+  Firebase принят Google».
+- Затем удалите `/root/AuthKey_…p8` и `/root/ogneliss-firebase.json`:
+  копии лежат в `/opt/mailserver/push-relay/keys`.
+- Firebase ещё не готов — запустите без строки `--fcm-service-account`, а
+  ключ добавьте позже командой `key` (ниже).
 
 Открыть адрес `/push` снаружи — Nginx Proxy Manager (панель
 `http://IP-сервера:81`). При первой установке скрипт сам об этом напомнит.
@@ -211,28 +286,12 @@ sudo bash /root/ogneliss-server/server/push-relay/install-push-relay.sh check
 curl https://www.ogneliss.ru/push/vapid     # ответ: {"key":"B…"}
 ```
 
-В `check` все строки должны быть с ✓. Предупреждение «ключ Firebase не
-задан» — нормально, пока нет Firebase (шаг 4).
+В `check` все строки должны быть с ✓. Ошибки — `server/push-relay/README.md`,
+раздел «Если не работает».
 
-Когда будет Firebase: `sudo bash …/install-push-relay.sh key
---fcm-service-account /root/ogneliss-firebase.json`
-(`guides/ANDROID_PUSH_SETUP.md`, п. 4).
-
-## 4. Firebase для Android — `guides/ANDROID_PUSH_SETUP.md`
-
-Теперь не обязателен: без Firebase сигналы на Android работают через
-UnifiedPush (распространитель ntfy и др. на телефоне). Firebase нужен,
-чтобы сигналы шли «через Google» без отдельного приложения.
-
-Проверено:
-
-- `firebase-messaging` подключён в `android/app/build.gradle.kts` (BoM
-  35.1.0) без `google-services.json`; параметры берутся из dart-defines;
-- без ключей `FIREBASE_*` сигналы на Android выключены, остальное
-  работает;
-- лицензии записаны в `docs/LICENSING.md`.
-
-Что сделать: п. 1–4 инструкции.
+Добавить или заменить ключ Firebase позже:
+`sudo bash …/install-push-relay.sh key --fcm-service-account
+/root/ogneliss-firebase.json`.
 
 ## 5. Xcode
 
@@ -354,7 +413,7 @@ Notes, демо-ящик и видео — `release/APP_REVIEW_NOTES.md`. Ном
    «Напоминание», «Копировать», «Открыть в календаре».
 5. **Уведомления (Android):** письмо от контакта с фото — в уведомлении
    крупное фото отправителя. «Настройки → Уведомления → Уведомления как в
-   мессенджерах». С Firebase — ещё «Сигналы сервера»: «Зарегистрировано …».
+   мессенджерах».
 6. **Siri и «Команды» (iPhone):** «Привет, Siri, новое письмо в Ogneliss
    Mail». В приложении «Команды» — действия Ogneliss Mail. Android:
    долгое нажатие на значок — «Написать письмо», «Создать встречу», «Мой
@@ -375,11 +434,22 @@ Notes, демо-ящик и видео — `release/APP_REVIEW_NOTES.md`. Ном
 11. **Сигналы без Google (Android):** поставить ntfy (F-Droid или Google
     Play), в Ogneliss Mail — «Настройки → Уведомления → Как приходят сигналы
     → Через ntfy». Под переключателем — «Зарегистрировано …», через интервал
-    — «Последний сигнал …». Нужна обновлённая служба сигналов (шаг 3).
+    — «Последний сигнал …». Нужна обновлённая служба сигналов (шаг 4).
 12. **Клавиши (компьютер):** в открытом письме Ctrl+Q и Ctrl+U — прочитано
     и не прочитано, Insert — флажок, Backspace — в архив, F9 — проверить
     почту.
-13. **Сигналы сервера (iPhone, сборка из TestFlight):**
+13. **Сигналы через Google (Android с сервисами Google Play, сборка с
+    ключами `FIREBASE_*`):**
+    - «Настройки → Уведомления → Сигналы сервера», «Как приходят
+      сигналы» — «Через Google»; под переключателем «Зарегистрировано …»;
+    - на сервере `install-push-relay.sh check` — «android 1»;
+    - сверните приложение (можно и смахнуть из недавних) и подождите
+      интервал — появится «Последний сигнал: …»;
+    - «Android: Firebase options are empty» — в сборке пуст один из
+      `FIREBASE_*` (шаг 3, п. 3; секрет `DART_DEFINES_JSON`);
+    - «Android: SERVICE_NOT_AVAILABLE» — на телефоне нет сервисов Google
+      Play или связи с Google.
+14. **Сигналы сервера (iPhone, сборка из TestFlight):**
     - «Настройки → Уведомления → Сигналы сервера (iPhone)» — под
       переключателем «Зарегистрировано …»;
     - на сервере `install-push-relay.sh check` — «установок 1 (production

@@ -19,8 +19,10 @@ Firebase у Google. Раньше их не настраивали.
 5. **Секреты GitHub** — шаг 1, вместе с ключами `FIREBASE_*` из шага 3.
    Затем метка `v1.10.0` на `main`: GitHub соберёт APK, App Bundle и сборки
    для компьютера и выложит страницу выпуска с «Что нового».
-6. **Проверка на телефоне** — шаг 8, до отправки в магазины:
-   - Android — APK со страницы выпуска;
+6. **Проверка на телефоне** — шаг 8, до выпуска для всех:
+   - Android — внутреннее тестирование Google Play (Internal testing) или
+     APK со страницы выпуска на телефоне без версии из Google Play (шаг 1,
+     в конце);
    - iPhone — TestFlight.
 7. **Google Play:**
    - App Bundle (`.aab`) — из артефакта сборки `ogneliss-android-…` в
@@ -44,27 +46,123 @@ Firebase у Google. Раньше их не настраивали.
 
 ## 1. Секреты GitHub — `guides/GITHUB_SECRETS.md`
 
-Проверено: инструкция совпадает с `.github/workflows/ci.yml`. Сборка читает
-ровно пять секретов:
+GitHub собирает приложение из открытого репозитория. Там нет ваших
+настроек входа и ключа подписи Android, поэтому их нужно один раз передать
+GitHub как секреты. Значение секрета после сохранения не видно никому, в
+том числе вам, и не попадает в сборки чужих копий репозитория.
 
-- `DART_DEFINES_JSON`;
-- `ANDROID_KEYSTORE_BASE64`;
-- `ANDROID_KEYSTORE_PASSWORD`;
-- `ANDROID_KEY_ALIAS`;
-- `ANDROID_KEY_PASSWORD`.
+Проверено: сборка (`.github/workflows/ci.yml`) читает ровно пять секретов,
+ключи в `config/dart_defines.example.json` совпадают с теми, что читает
+приложение.
 
-Ключи в `config/dart_defines.example.json` совпадают с теми, что читает
-приложение. Два ключа есть в коде, но в образце их нет, и они не нужны:
-`MAILRU_CLIENT_SECRET` (старый вход без прокси) и `OGNELISS_EXCHANGE` (по
-умолчанию включён).
+### Куда вписывать
 
-Что сделать:
+1. github.com → репозиторий **oedante/OgnelissMail** → вкладка
+   **Settings** (вверху справа).
+2. Слева **Secrets and variables → Actions** → кнопка **New repository
+   secret**.
+3. **Name** — имя ровно как в таблице ниже, **Secret** — значение →
+   **Add secret**.
+4. Заменить значение позже — карандаш рядом с секретом (**Update**).
 
-1. Вписать пять секретов.
-2. Добавить в `config/dart_defines.json` четыре ключа `FIREBASE_*` из
-   шага 3 и обновить секрет `DART_DEFINES_JSON`.
-3. Выпуск: GitHub → Releases → Draft a new release → тег `v1.10.0` на
-   `main`. Или из терминала: `git tag v1.10.0 && git push origin v1.10.0`.
+### Пять секретов
+
+| Секрет | Что вписать | Откуда взять |
+|---|---|---|
+| `DART_DEFINES_JSON` | содержимое файла `config/dart_defines.json` целиком, от `{` до `}` | ваш файл, см. ниже |
+| `ANDROID_KEYSTORE_BASE64` | файл ключа загрузки `upload-keystore.jks`, переведённый в одну строку base64 | см. ниже |
+| `ANDROID_KEYSTORE_PASSWORD` | пароль хранилища ключей | строка `storePassword=` в `android/key.properties` |
+| `ANDROID_KEY_ALIAS` | имя ключа, обычно `upload` | строка `keyAlias=` там же |
+| `ANDROID_KEY_PASSWORD` | пароль ключа | строка `keyPassword=` там же |
+
+**`config/dart_defines.json`** — файл с настройками сборки. Он есть только
+у вас, в папке проекта, рядом с `config/dart_defines.example.json`; в
+архиве исходников его нет, и при распаковке нового архива он не
+затирается. С ним вы собирали 1.8.12 для магазинов.
+
+1. Откройте его в текстовом редакторе. Если файла нет (папку проекта
+   заменяли целиком) — возьмите из прежней папки или из Codemagic
+   (Environment variables), если собирали там. Нет и там — скопируйте
+   `config/dart_defines.example.json` в `config/dart_defines.json` и
+   заполните по таблице ниже.
+2. Добавьте четыре ключа `FIREBASE_*` из шага 3, п. 3. Между строками —
+   запятые, после последней строки запятой нет.
+3. Проверьте, что файл читается:
+   - Windows (PowerShell, в папке проекта):
+     `Get-Content config\dart_defines.json -Raw | ConvertFrom-Json`;
+   - macOS: `python3 -m json.tool config/dart_defines.json`.
+
+   Ошибка — не хватает запятой или кавычки.
+4. Выделите всё (Ctrl+A), скопируйте и вставьте в секрет
+   `DART_DEFINES_JSON`.
+
+Что значит каждый ключ файла:
+
+| Ключ | Что это | Откуда взять |
+|---|---|---|
+| `OAUTH_PROXY_URL` | адрес сервера входа | оставить `https://www.ogneliss.ru/oauth` |
+| `OAUTH_PROXY_KEY` | ключ приложения для сервера входа и службы сигналов | на сервере: `sudo grep '^PROXY_API_KEY=' /opt/mailserver/oauth-proxy/.env` — значение после `=` (если OAuth-прокси стоит без Docker — файл `/etc/ogneliss-oauth-proxy/oauth-proxy.env`). Не совпадает с сервером — вход и сигналы отвечают «HTTP 401» |
+| `SUPPORT_EMAIL` | адресат письма «Отправить в поддержку» из журнала приложения | ваш адрес поддержки, тот же, что в Google Play |
+| `GOOGLE_ANDROID_CLIENT_ID` | вход в Gmail прямо в Google, без сервера входа — Android | console.cloud.google.com → APIs & Services → Credentials → OAuth 2.0 Client IDs → клиент типа **Android** → Client ID (`…apps.googleusercontent.com`) |
+| `GOOGLE_IOS_CLIENT_ID` | то же — iPhone и iPad | там же, клиент типа **iOS** |
+| `GOOGLE_DESKTOP_CLIENT_ID`, `GOOGLE_DESKTOP_CLIENT_SECRET` | то же — компьютер | там же, клиент типа **Desktop app** → Client ID и Client secret |
+| `MS_CLIENT_ID` | вход Outlook.com и Exchange Online (Microsoft 365) | entra.microsoft.com → App registrations → ваше приложение → Overview → **Application (client) ID** |
+| `PUSH_RELAY_URL` | адрес службы сигналов | оставить `https://www.ogneliss.ru/push` |
+| `PUSH_WAKE_MODE` | вид сигналов iPhone | оставить `silent` |
+| `FIREBASE_API_KEY`, `FIREBASE_APP_ID`, `FIREBASE_SENDER_ID`, `FIREBASE_PROJECT_ID` | Firebase для Android | шаг 3, п. 3 |
+| `PUSH_WAKE_ANDROID_PRIORITY` | приоритет сигналов Android | оставить `normal` |
+
+- Значения `GOOGLE_*` и `MS_CLIENT_ID`, которые уже есть в вашем файле, не
+  меняйте: с ними работает 1.8.12. Если какое-то пусто, вход этой службы
+  идёт через сервер входа — это тоже работает.
+- Ключи `MAILRU_CLIENT_SECRET` (старый вход без сервера) и
+  `OGNELISS_EXCHANGE` (Exchange и так включён) есть в коде, но не нужны.
+
+**Ключ подписи Android.** Это тот же ключ загрузки, которым вы подписываете
+App Bundle для Google Play.
+
+1. Найдите файл `android/key.properties` в папке проекта. В нём четыре
+   строки:
+   - `storeFile` — где лежит ключ, обычно
+     `C:\Users\<вы>\.ogneliss\upload-keystore.jks`;
+   - `keyAlias` — обычно `upload`;
+   - `storePassword` и `keyPassword` — пароли. Скрипт
+     `create_upload_key.ps1` ставит в обе строки один и тот же пароль.
+     Если строк с паролями нет (ключ создавали с `-NoSavePassword`), пароль
+     — тот, что вы вводили при создании ключа; он же в переменной
+     `OGNELISS_KEYSTORE_PASSWORD`, если собирали с ней.
+2. Переведите файл ключа в строку base64 и вставьте её в секрет
+   `ANDROID_KEYSTORE_BASE64` целиком:
+   - Windows (PowerShell):
+     `[Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:USERPROFILE\.ogneliss\upload-keystore.jks")) | Set-Clipboard`
+     — строка уже в буфере обмена, вставьте её (Ctrl+V);
+   - macOS: `base64 -i upload-keystore.jks | pbcopy`.
+3. По желанию — проверить, что ключ тот самый. Play Console → приложение →
+   «Тестирование и выпуск» → «Настройка» → «Целостность приложения» →
+   «Подписание приложений» (названия пунктов могут немного отличаться) →
+   отпечаток SHA-1 **ключа загрузки** должен совпасть с выводом
+   `keytool -list -v -keystore upload-keystore.jks -alias upload`.
+
+### Проверить секреты до выпуска
+
+GitHub → вкладка **Actions** → слева **CI/CD** → **Run workflow** → ветка
+`main`, «Собрать Android» отмечено → **Run workflow**. Через 20–25 минут
+откройте запуск → сводка (Summary): не должно быть предупреждений «Без
+DART_DEFINES_JSON» и «Без ключа подписи».
+
+### Выпуск — метка `v1.10.0`
+
+После сервера, сайта и проверки секретов:
+
+1. GitHub → **Releases** (справа на главной странице репозитория) →
+   **Draft a new release**.
+2. **Choose a tag** → впишите `v1.10.0` → «Create new tag: v1.10.0 on
+   publish». Target — `main`.
+3. Название и описание можно не заполнять: сборка сама заполнит их из
+   `STORE_NOTES_1.10.0.md`. → **Publish release**.
+
+Или из терминала в папке с клоном репозитория:
+`git tag v1.10.0 && git push origin v1.10.0`.
 
 Что собирает метка:
 
@@ -73,10 +171,19 @@ Firebase у Google. Раньше их не настраивали.
 - Windows и Linux;
 - тесты на эмуляторе.
 
-Страница выпуска появляется, если собрался Android. Тесты на эмуляторе на
-выпуск не влияют. Тест окна письма на эмуляторе иногда падает: из трёх
-прогонов 01.11 в двух падал разный тест, третий прошёл целиком. Красный
-значок у задачи «emulator» выпуск не останавливает.
+Страница выпуска с файлами появляется, если собрался Android. Тесты на
+эмуляторе на выпуск не влияют. Тест окна письма на эмуляторе иногда
+падает: из трёх прогонов 01.11 в двух падал разный тест, третий прошёл
+целиком. Красный значок у задачи «emulator» выпуск не останавливает.
+
+**APK с GitHub и версия из Google Play.** Google Play переподписывает
+приложение своим ключом, поэтому APK с GitHub не встанет поверх версии из
+Google Play («Приложение не установлено»), и наоборот. Если на телефоне
+стоит версия из Google Play, проверяйте 1.10.0 так:
+
+- загрузите App Bundle во внутреннее тестирование Google Play (Internal
+  testing) и обновитесь оттуда;
+- или проверьте APK на другом телефоне.
 
 ## 2. Apple Developer: Push и ключ APNs — `guides/IOS_PUSH_SETUP.md`
 

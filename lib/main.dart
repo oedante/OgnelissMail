@@ -130,13 +130,14 @@ Future<void> main() async {
             'Source: https://github.com/firebase/firebase-android-sdk\n'
             'Uses Google Play services (Google APIs Terms of Service).\n\n$license');
         // Сигналы без сервисов Google (UnifiedPush, 1.10.x): connector и его
-        // зависимости — Google Tink (Apache 2.0) и protobuf-java (BSD-3).
+        // зависимости — Google Tink, сборка tink-android (Apache 2.0), и
+        // protobuf lite внутри неё (BSD-3).
         yield LicenseEntryWithLineBreaks(const ['UnifiedPush connector'],
             'UnifiedPush android-connector\n'
             'Copyright UnifiedPush contributors. Licensed under the Apache License, Version 2.0.\n'
             'Source: https://codeberg.org/UnifiedPush/android-connector\n\n$license');
         yield LicenseEntryWithLineBreaks(const ['Tink'],
-            'Tink Cryptography API\n'
+            'Tink Cryptography API (tink-android)\n'
             'Copyright Google LLC. Licensed under the Apache License, Version 2.0.\n'
             'Source: https://github.com/tink-crypto/tink-java\n\n$license');
         yield const LicenseEntryWithLineBreaks(['Protocol Buffers'], _protobufLicense);
@@ -700,7 +701,7 @@ String _startLanguage(SharedPreferences prefs) {
   return AppLocalizations.supportedCodes.contains(system) ? system : 'en';
 }
 
-/// protobuf-java (BSD-3-Clause) — зависимость Google Tink (UnifiedPush, 1.10.x).
+/// Protocol Buffers (BSD-3-Clause) — protobuf lite внутри Google Tink (UnifiedPush, 1.10.x).
 const _protobufLicense = '''Protocol Buffers for Java
 Copyright 2008 Google Inc. All rights reserved.
 

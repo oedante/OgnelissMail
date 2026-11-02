@@ -58,6 +58,7 @@ import '../../core/logging/app_logger.dart';
 import '../../core/permissions/app_permissions.dart';
 import '../../services/notifications/reminder_scheduler_service.dart';
 import '../../services/archive/archive_runner.dart' show archiveRunnerProvider;
+import '../common/account_avatar.dart';
 
 class MainShell extends ConsumerStatefulWidget {
   final Widget child;
@@ -632,8 +633,11 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       for (final a in accounts)
         ActionSheetItem(
           icon: a.id == active && !all ? AppIcons.check_circle : AppIcons.forAccountType(a.type.name),
+          // Портрет ящика (1.10.3); текущий — с галочкой справа.
+          leading: AccountAvatar(account: a),
           label: a.displayName.isEmpty ? a.email : a.displayName,
           subtitle: a.email,
+          checked: a.id == active && !all,
           value: a.id,
         ),
     ]);

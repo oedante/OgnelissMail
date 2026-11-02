@@ -37,6 +37,7 @@ import '../../../data/providers/database_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../screens/tasks_screen.dart' show taskUndoBars;
 import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
+import '../../../widgets/common/account_avatar.dart';
 
 /// Задача из письма: карточка задачи с названием из темы (без «Re:»,
 /// «Fwd:»), сроком из темы («обновить до 17:00 10.10.2026» → 10.10, 17:00)
@@ -844,8 +845,7 @@ class _AccountPicker extends StatelessWidget {
             child: AppSelectField<String>(
               value: accounts.any((a) => a.id == selected) ? selected : accounts.first.id,
               entries: [
-                for (final a in accounts)
-                  AppMenuEntry(value: a.id, label: a.email, icon: AppIcons.mail, iconColor: Color(a.colorValue)),
+                for (final a in accounts) accountMenuEntry(a),
               ],
               onChanged: onChanged,
             ),

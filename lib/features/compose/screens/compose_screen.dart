@@ -105,6 +105,7 @@ import '../../mail/screens/attachment_preview_screen.dart' show PreviewItem, ope
 import 'image_edit_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../core/theme/ogneliss_look.dart';
+import '../../../widgets/common/account_avatar.dart';
 
 
 class ComposeScreen extends ConsumerStatefulWidget {
@@ -3019,9 +3020,13 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                 AppMenuEntry(
                   value: e.key,
                   label: e.alias ?? _accountName(e.account),
-                  icon: (e.account.isSharedMailbox || e.alias != null) ? AppIcons.supervisor_account : AppIcons.mail,
-                  iconColor:
-                      (e.account.isSharedMailbox || e.alias != null) ? kSharedMailboxColor : Color(e.account.colorValue),
+                  // Портрет ящика с кольцом его цвета (1.10.3: «не только
+                  // цвета, но и аватары»); общий ящик и «от имени» —
+                  // кольцо цвета общего ящика.
+                  leading: AccountAvatar(
+                    account: e.account,
+                    ringColor: (e.account.isSharedMailbox || e.alias != null) ? kSharedMailboxColor : null,
+                  ),
                   subtitle: e.alias != null
                       ? l10n.tr('fromOnBehalfVia').replaceAll('{account}', e.account.email)
                       : (_accountName(e.account) != e.account.email ? e.account.email : null),

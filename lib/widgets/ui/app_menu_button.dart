@@ -113,7 +113,10 @@ class AppSelectField<T> extends StatelessWidget {
           style: theme.textTheme.bodyLarge?.copyWith(color: enabled ? null : theme.disabledColor),
         );
     final row = Row(mainAxisSize: compact ? MainAxisSize.min : MainAxisSize.max, children: [
-      if (decoration == null && sel?.icon != null) ...[
+      if (decoration == null && sel?.leading != null) ...[
+        sel!.leading!,
+        const SizedBox(width: Space.s),
+      ] else if (decoration == null && sel?.icon != null) ...[
         Icon(sel!.icon, size: Sizes.iconRow, color: sel.iconColor ?? theme.colorScheme.onSurfaceVariant),
         const SizedBox(width: Space.s),
       ],

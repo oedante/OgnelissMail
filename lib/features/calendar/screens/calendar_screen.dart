@@ -61,6 +61,7 @@ import 'event_details_screen.dart';
 import '../../../core/permissions/app_permissions.dart';
 import '../../../services/notifications/reminder_scheduler_service.dart';
 import '../../../widgets/ui/settings_group.dart' show SettingsSectionTitle;
+import '../../../widgets/common/account_avatar.dart';
 
 export '../calendar_data.dart' show calendarEventsProvider, calendarLayersProvider, CalendarLayers;
 
@@ -901,11 +902,15 @@ class _AccountChips extends ConsumerWidget {
                       showCheckmark: false,
                       selected: !hidden.contains(a.id),
                       onSelected: (_) => n.toggle(a.id),
-                      avatar: CircleAvatar(
-                        radius: 6,
-                        backgroundColor: hidden.contains(a.id)
-                            ? theme.colorScheme.outlineVariant
-                            : Color(a.colorValue),
+                      // Портрет ящика с кольцом его цвета (1.10.3); скрытый —
+                      // бледный, с серым кольцом.
+                      avatar: Opacity(
+                        opacity: hidden.contains(a.id) ? 0.45 : 1,
+                        child: AccountAvatar(
+                          account: a,
+                          radius: 8,
+                          ringColor: hidden.contains(a.id) ? theme.colorScheme.outlineVariant : null,
+                        ),
                       ),
                       label: Text(
                         a.displayName.trim().isNotEmpty ? a.displayName.trim() : a.email.split('@').first,

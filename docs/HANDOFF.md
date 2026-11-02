@@ -91,7 +91,9 @@ Message-ID черновика затирался enough_mail. Exchange на на
 (`ReadableWidth` без `heightFactor` в bottomNavigationBar) растягивалась на
 весь экран. Backspace/Delete/Insert письма больше не срабатывают при наборе
 в поле ввода (`TypingAwareShortcuts`). Тест скорости дат — лучший из пяти
-замеров. Тесты — `test/widget/mail_bar_layout_test.dart`.
+замеров. Тесты — `test/widget/mail_bar_layout_test.dart`. Перевод письма с
+цитатой на другом языке: язык определяется по свежему тексту без цитаты
+(«Не удалось перевести» в переписке, `test/unit/translation_sample_test.dart`).
 
 **Добавлено в 1.10.0 (02.11.2026, до выпуска, версия та же 1.10.0+131).**
 Блокировка отправителя и чистка по отправителю (`sender_rules_service.dart`,

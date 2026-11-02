@@ -15,6 +15,7 @@ class ReadableWidth extends StatelessWidget {
     this.maxWidth = 860,
     this.alignment = Alignment.topCenter,
     this.fill = false,
+    this.heightFactor,
   });
 
   final Widget child;
@@ -31,10 +32,19 @@ class ReadableWidth extends StatelessWidget {
   /// и адресатов.
   final bool fill;
 
+  /// Высота по содержимому ([Align.heightFactor]). Без неё [Align] в месте с
+  /// ограниченной высотой занимает её всю: панель кнопок письма
+  /// (bottomNavigationBar) растягивалась на весь экран — кнопки вставали
+  /// наверх, под строку состояния, а белая панель закрывала письмо
+  /// (1.10.1, замечание владельца 02.11.2026: при выключенной строке
+  /// «Ответить…»).
+  final double? heightFactor;
+
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: alignment,
+      heightFactor: heightFactor,
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxWidth),
         child: fill ? SizedBox(width: double.infinity, child: child) : child,

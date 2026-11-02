@@ -56,6 +56,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../data/models/email_model.dart';
 import '../../../data/models/folder_model.dart';
 import '../../../data/models/account_model.dart';
+import '../../../widgets/common/keyboard_shortcuts.dart' show TypingAwareShortcuts;
 import '../../../widgets/common/undo_manager.dart';
 import '../providers/mail_providers.dart';
 import '../widgets/sender_safety_banner.dart';
@@ -1448,7 +1449,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // объявлены, но обработчиков не было.
     // Шапка письма закреплена, пока шрифт не очень крупный.
     final pinHeader = context.textScale <= 1.3;
-    return CallbackShortcuts(
+    return TypingAwareShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.keyR, control: true): () =>
             context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}'),
@@ -1456,17 +1457,20 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}&replyAll=true'),
         const SingleActivator(LogicalKeyboardKey.keyF, control: true): () =>
               context.push('/compose?forwardFromId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}'),
-        const SingleActivator(LogicalKeyboardKey.delete): () => _deleteEmail(email, l10n),
         if (!widget.embedded)
           const SingleActivator(LogicalKeyboardKey.escape): () => Navigator.of(context).maybePop(),
         // Ещё сочетания Outlook (1.10.x, просьба владельца 02.11.2026):
-        // Ctrl+Q — прочитано, Ctrl+U — не прочитано, Insert — флажок,
-        // Backspace — в архив, Ctrl+P — печать.
+        // Ctrl+Q — прочитано, Ctrl+U — не прочитано, Ctrl+P — печать.
         const SingleActivator(LogicalKeyboardKey.keyQ, control: true): () => _setReadKey(email, true),
         const SingleActivator(LogicalKeyboardKey.keyU, control: true): () => _setReadKey(email, false),
-        const SingleActivator(LogicalKeyboardKey.insert): () => _toggleFlag(email),
-        const SingleActivator(LogicalKeyboardKey.backspace): () => unawaited(_archiveEmail(email, l10n)),
         const SingleActivator(LogicalKeyboardKey.keyP, control: true): () => unawaited(_exportPdf(email, l10n)),
+      },
+      // Клавиши без Ctrl — не пока набирают ответ (1.10.1): Delete —
+      // удалить, Backspace — в архив, Insert — флажок.
+      plain: {
+        const SingleActivator(LogicalKeyboardKey.delete): () => _deleteEmail(email, l10n),
+        const SingleActivator(LogicalKeyboardKey.backspace): () => unawaited(_archiveEmail(email, l10n)),
+        const SingleActivator(LogicalKeyboardKey.insert): () => _toggleFlag(email),
       },
       child: Focus(
         autofocus: true,
@@ -2144,9 +2148,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // от «Удалить» было полметра.
         child: ListenableBuilder(
           listenable: _quickReply,
+          // heightFactor: 1 — панель высотой по кнопкам. Без неё Align
+          // ReadableWidth занимал всю высоту, которую Scaffold даёт
+          // bottomNavigationBar (весь экран), когда строки «Ответить…» нет
+          // (с ней панель — в Column, где высота не ограничена).
           builder: (context, _) => ReadableWidth(
             maxWidth: 600,
             fill: true,
+            heightFactor: 1,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: _barButtons(email, settings, l10n, order: order, draft: draft),

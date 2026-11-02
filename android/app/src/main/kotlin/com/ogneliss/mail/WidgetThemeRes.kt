@@ -52,6 +52,7 @@ internal object WidgetThemeRes {
         R.drawable.widget_day_sel to (R.drawable.widget_day_sel_lt to R.drawable.widget_day_sel_dk),
         R.drawable.widget_day_today to (R.drawable.widget_day_today_lt to R.drawable.widget_day_today_dk),
         R.drawable.widget_ic_add to (R.drawable.widget_ic_add_lt to R.drawable.widget_ic_add_dk),
+        R.drawable.widget_ic_allday to (R.drawable.widget_ic_allday_lt to R.drawable.widget_ic_allday_dk),
         R.drawable.widget_ic_compose to (R.drawable.widget_ic_compose_lt to R.drawable.widget_ic_compose_dk),
         R.drawable.widget_ic_next to (R.drawable.widget_ic_next_lt to R.drawable.widget_ic_next_dk),
         R.drawable.widget_ic_prev to (R.drawable.widget_ic_prev_lt to R.drawable.widget_ic_prev_dk),

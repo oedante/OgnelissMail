@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
 <!-- Строка встречи или задачи: колонка времени 52 dp · метка цвета ·
-     название и подпись (место, «весь день»). -->
+     название и подпись (место). Встреча на весь день — значок вместо
+     времени (ev_allday, 1.10.2): надпись «Весь день» в колонку не помещалась. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ev_row"
     android:layout_width="match_parent"
@@ -15,6 +16,12 @@
         android:layout_width="52dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <ImageView
+            android:id="@+id/ev_allday"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/widget_ic_allday_lt"
+            android:visibility="gone" />
         <TextView
             android:id="@+id/ev_time"
             android:layout_width="match_parent"

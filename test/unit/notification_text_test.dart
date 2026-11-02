@@ -1,5 +1,6 @@
 // Раскладка уведомления о письме (NotificationText).
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ogneliss/services/notifications/notification_text.dart';
 
 void main() {
@@ -67,5 +68,26 @@ void main() {
 
   test('строка сводки — обычным шрифтом: отправитель и тема', () {
     expect(NotificationText.summaryLine(' Иван & Co ', 'A < B '), 'Иван & Co — A < B');
+  });
+
+  // 1.10.3: строк текста в уведомлении — отдельно для рабочих и личных ящиков.
+  group('строк текста (NotificationLines)', () {
+    test('по умолчанию 5; чужое значение — тоже 5', () async {
+      SharedPreferences.setMockInitialValues({NotificationLines.prefWork: 12, NotificationLines.prefPersonal: 7});
+      final p = await SharedPreferences.getInstance();
+      expect(NotificationLines.of(p, work: true), 12);
+      expect(NotificationLines.of(p, work: false), NotificationLines.byDefault);
+      expect(NotificationLines.of(null, work: true), NotificationLines.byDefault);
+    });
+
+    test('длина текста растёт с числом строк; текст письма — для 8 и 12', () {
+      final long = List.filled(80, 'слово').join(' ');
+      final three = NotificationText.preview(long, max: NotificationLines.maxChars(3));
+      final twelve = NotificationText.preview(long, max: NotificationLines.maxChars(12));
+      expect(three.length, lessThanOrEqualTo(NotificationLines.maxChars(3) + 1));
+      expect(twelve.length, greaterThan(three.length * 3));
+      expect(NotificationLines.wantsBody(5), isFalse);
+      expect(NotificationLines.wantsBody(8), isTrue);
+    });
   });
 }

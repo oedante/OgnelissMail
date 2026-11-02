@@ -3843,4 +3843,6 @@
     <string name="composeDropHint">أفلت لإرفاق الملفات</string>
     <string name="openInNewWindow">فتح في نافذة جديدة</string>
     <string name="openInMainWindow">فتح في النافذة الرئيسية</string>
+    <string name="notifyLinesTitle">أسطر النص في الإشعارات</string>
+    <string name="notifyLinesHint">عدد أسطر الرسالة في الإشعار الموسّع. يتطلب 8 و12 سطرًا وجود نص الرسالة على الجهاز، وإلا تظهر بدايتها.</string>
 </resources>

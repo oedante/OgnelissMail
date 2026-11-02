@@ -3738,4 +3738,6 @@
     <string name="composeDropHint">ドロップしてファイルを添付</string>
     <string name="openInNewWindow">新しいウィンドウで開く</string>
     <string name="openInMainWindow">メインウィンドウで開く</string>
+    <string name="notifyLinesTitle">通知に表示する行数</string>
+    <string name="notifyLinesHint">展開した通知に表示するメール本文の行数。8 行と 12 行は本文が端末にある場合のみ。ない場合は冒頭を表示します。</string>
 </resources>

@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">Relâchez pour joindre les fichiers</string>
     <string name="openInNewWindow">Ouvrir dans une nouvelle fenêtre</string>
     <string name="openInMainWindow">Ouvrir dans la fenêtre principale</string>
+    <string name="notifyLinesTitle">Lignes de texte dans les notifications</string>
+    <string name="notifyLinesHint">Nombre de lignes du message dans une notification développée. 8 et 12 lignes demandent le texte du message sur l’appareil ; sinon, le début s’affiche.</string>
 </resources>

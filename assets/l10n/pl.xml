@@ -3801,4 +3801,6 @@
     <string name="composeDropHint">Upuść, aby dołączyć pliki</string>
     <string name="openInNewWindow">Otwórz w nowym oknie</string>
     <string name="openInMainWindow">Otwórz w głównym oknie</string>
+    <string name="notifyLinesTitle">Wiersze tekstu w powiadomieniach</string>
+    <string name="notifyLinesHint">Ile wierszy wiadomości pokazać w rozwiniętym powiadomieniu. Dla 8 i 12 wierszy tekst musi być na urządzeniu; inaczej widać początek.</string>
 </resources>

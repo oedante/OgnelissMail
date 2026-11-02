@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">Rilascia per allegare i file</string>
     <string name="openInNewWindow">Apri in una nuova finestra</string>
     <string name="openInMainWindow">Apri nella finestra principale</string>
+    <string name="notifyLinesTitle">Righe di testo nelle notifiche</string>
+    <string name="notifyLinesHint">Quante righe del messaggio mostrare nella notifica espansa. Per 8 e 12 righe serve il testo sul dispositivo; altrimenti si vede l’inizio.</string>
 </resources>

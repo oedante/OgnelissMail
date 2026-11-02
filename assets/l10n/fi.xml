@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">Pudota tiedostot liitteiksi</string>
     <string name="openInNewWindow">Avaa uudessa ikkunassa</string>
     <string name="openInMainWindow">Avaa pääikkunassa</string>
+    <string name="notifyLinesTitle">Tekstirivejä ilmoituksissa</string>
+    <string name="notifyLinesHint">Montako viestin riviä avattu ilmoitus näyttää. 8 ja 12 riviä vaativat viestin tekstin laitteella; muuten näkyy alku.</string>
 </resources>

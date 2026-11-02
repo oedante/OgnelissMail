@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">Slipp for å legge ved filer</string>
     <string name="openInNewWindow">Åpne i et nytt vindu</string>
     <string name="openInMainWindow">Åpne i hovedvinduet</string>
+    <string name="notifyLinesTitle">Tekstlinjer i varsler</string>
+    <string name="notifyLinesHint">Hvor mange linjer av meldingen et utvidet varsel viser. 8 og 12 linjer krever teksten på enheten; ellers vises begynnelsen.</string>
 </resources>

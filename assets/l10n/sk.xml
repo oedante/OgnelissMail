@@ -3780,4 +3780,6 @@
     <string name="composeDropHint">Pustite na pripojenie súborov</string>
     <string name="openInNewWindow">Otvoriť v novom okne</string>
     <string name="openInMainWindow">Otvoriť v hlavnom okne</string>
+    <string name="notifyLinesTitle">Riadky textu v upozorneniach</string>
+    <string name="notifyLinesHint">Koľko riadkov správy ukázať v rozbalenom upozornení. Pre 8 a 12 riadkov musí byť text v zariadení; inak sa zobrazí začiatok.</string>
 </resources>

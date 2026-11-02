@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">Drop to attach files</string>
     <string name="openInNewWindow">Open in a new window</string>
     <string name="openInMainWindow">Open in the main window</string>
+    <string name="notifyLinesTitle">Text lines in notifications</string>
+    <string name="notifyLinesHint">How many lines of the message to show in an expanded notification. 8 and 12 lines need the message text on the device; otherwise the beginning is shown.</string>
 </resources>

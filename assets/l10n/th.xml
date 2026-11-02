@@ -3738,4 +3738,6 @@
     <string name="composeDropHint">วางเพื่อแนบไฟล์</string>
     <string name="openInNewWindow">เปิดในหน้าต่างใหม่</string>
     <string name="openInMainWindow">เปิดในหน้าต่างหลัก</string>
+    <string name="notifyLinesTitle">จำนวนบรรทัดข้อความในการแจ้งเตือน</string>
+    <string name="notifyLinesHint">จำนวนบรรทัดของข้อความที่แสดงในการแจ้งเตือนแบบขยาย 8 และ 12 บรรทัดต้องมีข้อความอยู่ในเครื่อง มิฉะนั้นจะแสดงเฉพาะตอนต้น</string>
 </resources>

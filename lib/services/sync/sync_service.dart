@@ -2162,6 +2162,7 @@ class SyncService {
       final photos = MessengerNotify.styleOn(_prefs)
           ? await _senderPhotos([for (final e in singles) e.from.email])
           : const <String, String>{};
+      final lines = NotificationLines.of(_prefs, work: account.isWork);
       for (var i = 0; i < singles.length; i++) {
         final e = singles[i];
         await service.showEmailNotification(
@@ -2186,6 +2187,8 @@ class SyncService {
           isInvite: e.meeting?.isRequest == true,
           senderPhoto: photos[e.from.email.trim().toLowerCase()],
           accountLabel: shortLabel,
+          previewLines: lines,
+          fullText: NotificationLines.wantsBody(lines) ? e.bodyPlain : null,
         );
       }
 

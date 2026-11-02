@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">Släpp för att bifoga filer</string>
     <string name="openInNewWindow">Öppna i ett nytt fönster</string>
     <string name="openInMainWindow">Öppna i huvudfönstret</string>
+    <string name="notifyLinesTitle">Textrader i aviseringar</string>
+    <string name="notifyLinesHint">Hur många rader av meddelandet en expanderad avisering visar. 8 och 12 rader kräver texten på enheten; annars visas början.</string>
 </resources>

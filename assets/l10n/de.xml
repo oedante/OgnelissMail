@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">Loslassen, um Dateien anzuhängen</string>
     <string name="openInNewWindow">In neuem Fenster öffnen</string>
     <string name="openInMainWindow">Im Hauptfenster öffnen</string>
+    <string name="notifyLinesTitle">Textzeilen in Mitteilungen</string>
+    <string name="notifyLinesHint">Wie viele Zeilen der Nachricht eine aufgeklappte Mitteilung zeigt. Für 8 und 12 Zeilen muss der Text auf dem Gerät sein, sonst erscheint der Anfang.</string>
 </resources>

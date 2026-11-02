@@ -3801,4 +3801,6 @@
     <string name="composeDropHint">Отпустите, чтобы прикрепить файлы</string>
     <string name="openInNewWindow">Открыть в отдельном окне</string>
     <string name="openInMainWindow">Открыть в главном окне</string>
+    <string name="notifyLinesTitle">Строк текста в уведомлении</string>
+    <string name="notifyLinesHint">Сколько строк начала письма показать в раскрытом уведомлении. Для 8 и 12 строк нужен загруженный текст письма — иначе покажется начало.</string>
 </resources>

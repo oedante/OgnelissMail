@@ -3780,4 +3780,6 @@
     <string name="composeDropHint">Pusťte pro přiložení souborů</string>
     <string name="openInNewWindow">Otevřít v novém okně</string>
     <string name="openInMainWindow">Otevřít v hlavním okně</string>
+    <string name="notifyLinesTitle">Řádky textu v oznámeních</string>
+    <string name="notifyLinesHint">Kolik řádků zprávy ukázat v rozbaleném oznámení. Pro 8 a 12 řádků musí být text v zařízení; jinak se zobrazí začátek.</string>
 </resources>

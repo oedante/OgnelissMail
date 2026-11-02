@@ -3780,4 +3780,6 @@
     <string name="composeDropHint">Eliberează pentru a atașa fișiere</string>
     <string name="openInNewWindow">Deschide într-o fereastră nouă</string>
     <string name="openInMainWindow">Deschide în fereastra principală</string>
+    <string name="notifyLinesTitle">Rânduri de text în notificări</string>
+    <string name="notifyLinesHint">Câte rânduri din mesaj să arate notificarea extinsă. Pentru 8 și 12 rânduri textul trebuie să fie pe dispozitiv; altfel apare începutul.</string>
 </resources>

@@ -3738,4 +3738,6 @@
     <string name="composeDropHint">松开以添加附件</string>
     <string name="openInNewWindow">在新窗口中打开</string>
     <string name="openInMainWindow">在主窗口中打开</string>
+    <string name="notifyLinesTitle">通知中的文字行数</string>
+    <string name="notifyLinesHint">展开的通知中显示邮件正文的行数。8 行和 12 行需要正文已在设备上，否则只显示开头。</string>
 </resources>

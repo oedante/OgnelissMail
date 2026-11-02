@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">Dosya eklemek için bırakın</string>
     <string name="openInNewWindow">Yeni pencerede aç</string>
     <string name="openInMainWindow">Ana pencerede aç</string>
+    <string name="notifyLinesTitle">Bildirimlerde metin satırı</string>
+    <string name="notifyLinesHint">Genişletilmiş bildirimde iletinin kaç satırı gösterilsin. 8 ve 12 satır için metnin cihazda olması gerekir; yoksa başı gösterilir.</string>
 </resources>

@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">Fájlok csatolásához engedje el itt</string>
     <string name="openInNewWindow">Megnyitás új ablakban</string>
     <string name="openInMainWindow">Megnyitás a főablakban</string>
+    <string name="notifyLinesTitle">Szövegsorok az értesítésekben</string>
+    <string name="notifyLinesHint">Hány sort mutasson az üzenetből a kinyitott értesítés. 8 és 12 sorhoz a szövegnek a készüléken kell lennie, különben az eleje látszik.</string>
 </resources>

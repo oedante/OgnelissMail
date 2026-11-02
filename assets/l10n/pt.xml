@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">Solte para anexar arquivos</string>
     <string name="openInNewWindow">Abrir em uma nova janela</string>
     <string name="openInMainWindow">Abrir na janela principal</string>
+    <string name="notifyLinesTitle">Linhas de texto nas notificações</string>
+    <string name="notifyLinesHint">Quantas linhas da mensagem mostrar na notificação expandida. Para 8 e 12 linhas o texto precisa estar no aparelho; caso contrário, aparece o início.</string>
 </resources>

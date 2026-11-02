@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">Laat los om bestanden bij te voegen</string>
     <string name="openInNewWindow">Openen in een nieuw venster</string>
     <string name="openInMainWindow">Openen in het hoofdvenster</string>
+    <string name="notifyLinesTitle">Tekstregels in meldingen</string>
+    <string name="notifyLinesHint">Hoeveel regels van het bericht een uitgevouwen melding toont. Voor 8 en 12 regels moet de tekst op het apparaat staan; anders zie je het begin.</string>
 </resources>

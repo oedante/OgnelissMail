@@ -3738,4 +3738,6 @@
     <string name="composeDropHint">Thả để đính kèm tệp</string>
     <string name="openInNewWindow">Mở trong cửa sổ mới</string>
     <string name="openInMainWindow">Mở trong cửa sổ chính</string>
+    <string name="notifyLinesTitle">Số dòng văn bản trong thông báo</string>
+    <string name="notifyLinesHint">Số dòng của thư hiển thị trong thông báo mở rộng. 8 và 12 dòng cần có nội dung thư trên máy; nếu không sẽ hiện phần đầu.</string>
 </resources>

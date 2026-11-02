@@ -3759,4 +3759,6 @@
     <string name="composeDropHint">फ़ाइलें अटैच करने के लिए छोड़ें</string>
     <string name="openInNewWindow">नई विंडो में खोलें</string>
     <string name="openInMainWindow">मुख्य विंडो में खोलें</string>
+    <string name="notifyLinesTitle">सूचनाओं में पाठ की पंक्तियाँ</string>
+    <string name="notifyLinesHint">खुली सूचना में संदेश की कितनी पंक्तियाँ दिखें। 8 और 12 पंक्तियों के लिए संदेश का पाठ डिवाइस पर होना चाहिए; नहीं तो शुरुआत दिखेगी।</string>
 </resources>

@@ -3780,4 +3780,6 @@
     <string name="composeDropHint">שחררו כדי לצרף קבצים</string>
     <string name="openInNewWindow">פתיחה בחלון חדש</string>
     <string name="openInMainWindow">פתיחה בחלון הראשי</string>
+    <string name="notifyLinesTitle">שורות טקסט בהתראות</string>
+    <string name="notifyLinesHint">כמה שורות מההודעה להציג בהתראה מורחבת. 8 ו-12 שורות דורשות את טקסט ההודעה במכשיר; אחרת תוצג ההתחלה.</string>
 </resources>

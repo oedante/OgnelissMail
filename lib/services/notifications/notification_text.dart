@@ -14,7 +14,38 @@
 // iPhone: отправитель — заголовок, тема — подзаголовок, текст — ниже.
 // Чистые функции — проверяются тестом notification_text_test.dart.
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../core/utils/text_safe.dart' show cleanPreviewText;
+
+/// Сколько строк начала письма в раскрытом уведомлении (1.10.3, просьба
+/// владельца 02.11.2026: «увеличить количество строк… отдельно для работы и
+/// для личных»). Настройка в prefs — читается и в фоновом изоляте.
+/// Длину строки система не сообщает: считаем по ширине телефона —
+/// ~42 знака. Сколько строк поместится, решает система (Android сворачивает
+/// длинный текст, iPhone показывает его, если уведомление раскрыть).
+class NotificationLines {
+  NotificationLines._();
+
+  static const prefWork = 's_notif_lines_work';
+  static const prefPersonal = 's_notif_lines_personal';
+  static const options = [3, 5, 8, 12];
+
+  /// По умолчанию — как было: превью письма около 200 знаков.
+  static const byDefault = 5;
+  static const charsPerLine = 42;
+
+  static int of(SharedPreferences? p, {required bool work}) {
+    final v = p?.getInt(work ? prefWork : prefPersonal) ?? byDefault;
+    return options.contains(v) ? v : byDefault;
+  }
+
+  static int maxChars(int lines) => lines * charsPerLine;
+
+  /// Превью письма (около 200 знаков) хватает на [byDefault] строк; больше —
+  /// нужен текст письма, если он уже на телефоне.
+  static bool wantsBody(int lines) => lines > byDefault;
+}
 
 class NotificationText {
   NotificationText._();

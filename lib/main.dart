@@ -100,11 +100,6 @@ Future<void> main() async {
       final text = await rootBundle.loadString('assets/fonts/OpenDyslexic-OFL.txt');
       yield LicenseEntryWithLineBreaks(const ['OpenDyslexic'], text);
     });
-    // Medeo Sans — шрифт интерфейса на выбор (1.8.8), тоже OFL 1.1.
-    LicenseRegistry.addLicense(() async* {
-      final text = await rootBundle.loadString('assets/fonts/medeo/MedeoSans-OFL.txt');
-      yield LicenseEntryWithLineBreaks(const ['Medeo Sans'], text);
-    });
     // Редактор писем HugeRTE (MIT) и DOMPurify в его сборке (Apache 2.0):
     // тексты — и в «Текстах лицензий» (1.8.13), а не только в файлах
     // assets/editor.

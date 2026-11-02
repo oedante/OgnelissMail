@@ -3623,7 +3623,8 @@
     <string name="archiveNothingOld">Nu s-au găsit mesaje mai vechi decât vârsta aleasă — nu era nimic de arhivat. Alegeți o perioadă mai scurtă sau „Toate mesajele”.</string>
     <string name="uiFontTitle">Fontul interfeței</string>
     <string name="uiFontRobotoHint">Ca până acum</string>
-    <string name="uiFontMedeoHint">Font deschis pentru alfabetul latin și chirilic (OFL 1.1)</string>
+    <string name="uiFontSystem">Sistem</string>
+    <string name="uiFontSystemHint">Fontul dispozitivului, ca în alte aplicații</string>
     <string name="uiFontDyslexiaNote">Fontul pentru dislexie este activat (Accesibilitate) și are prioritate față de această alegere.</string>
     <string name="loginOrChoose">sau alegeți e-mailul</string>
     <string name="folderToOgna">Dosarul în arhiva Ogneliss</string>

@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">Geen berichten ouder dan de gekozen leeftijd gevonden — er was niets te archiveren. Kies een kortere leeftijd of ‘Alle berichten’.</string>
     <string name="uiFontTitle">Lettertype van de interface</string>
     <string name="uiFontRobotoHint">Zoals voorheen</string>
-    <string name="uiFontMedeoHint">Open lettertype voor Latijns en Cyrillisch schrift (OFL 1.1)</string>
+    <string name="uiFontSystem">Systeem</string>
+    <string name="uiFontSystemHint">Lettertype van het apparaat, zoals in andere apps</string>
     <string name="uiFontDyslexiaNote">Het dyslexielettertype staat aan (Toegankelijkheid) en gaat voor deze keuze.</string>
     <string name="loginOrChoose">of kies je e-maildienst</string>
     <string name="folderToOgna">Map naar Ogneliss-archief</string>

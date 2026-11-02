@@ -3642,7 +3642,8 @@
     <string name="archiveNothingOld">Nie znaleziono wiadomości starszych niż wybrany wiek — nie było czego archiwizować. Wybierz krótszy okres lub „Wszystkie wiadomości”.</string>
     <string name="uiFontTitle">Czcionka interfejsu</string>
     <string name="uiFontRobotoHint">Jak dotychczas</string>
-    <string name="uiFontMedeoHint">Otwarta czcionka dla alfabetu łacińskiego i cyrylicy (OFL 1.1)</string>
+    <string name="uiFontSystem">Systemowa</string>
+    <string name="uiFontSystemHint">Czcionka urządzenia, jak w innych aplikacjach</string>
     <string name="uiFontDyslexiaNote">Włączona jest czcionka dla dyslektyków (Ułatwienia dostępu) — ma pierwszeństwo przed tym wyborem.</string>
     <string name="loginOrChoose">lub wybierz pocztę</string>
     <string name="folderToOgna">Folder do archiwum Ogneliss</string>

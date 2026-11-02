@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">Não foram encontradas mensagens mais antigas do que a idade escolhida — não havia nada para arquivar. Escolha um prazo menor ou \"Todas as mensagens\".</string>
     <string name="uiFontTitle">Fonte da interface</string>
     <string name="uiFontRobotoHint">Como antes</string>
-    <string name="uiFontMedeoHint">Fonte livre para latim e cirílico (OFL 1.1)</string>
+    <string name="uiFontSystem">Do sistema</string>
+    <string name="uiFontSystemHint">Fonte do dispositivo, como nos outros apps</string>
     <string name="uiFontDyslexiaNote">A fonte para dislexia está ativada (Acessibilidade) e tem prioridade sobre esta escolha.</string>
     <string name="loginOrChoose">ou escolha o seu e-mail</string>
     <string name="folderToOgna">Pasta para o arquivo Ogneliss</string>

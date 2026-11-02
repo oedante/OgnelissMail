@@ -32,7 +32,7 @@ Contributions are accepted under the same license (section 5 of the license).
 | SQLite3 Multiple Ciphers (encrypted database) | MIT; SQLite — public domain | built by the `sqlite3` package |
 | Roboto font | Apache-2.0 | `assets/fonts/pdf/` |
 | OpenDyslexic font | SIL OFL 1.1, Reserved Font Name "OpenDyslexic" | `assets/fonts/` |
-| Medeo Sans font (unmodified, github.com/DNFDEVS/medeo-font) | SIL OFL 1.1 | `assets/fonts/medeo/` |
+| System fonts of the platform (interface font option, 1.10.2: Noto Serif and Roboto Condensed on Android; Helvetica Neue, Arial, Georgia on iOS and macOS; Arial, Calibri, Verdana, Georgia on Windows; Noto Sans, DejaVu Sans, Noto Serif on Linux) | not distributed — used from the OS | — |
 | Material Symbols icons | Apache-2.0 | `material_symbols_icons` |
 | flutter_svg (sender logos, BIMI) with vector_graphics, vector_graphics_codec, vector_graphics_compiler | MIT; vector_graphics*: BSD-3-Clause | pub.dev |
 | AndroidX, Kotlin, AppAuth | Apache-2.0 | Android and iOS builds |
@@ -169,7 +169,8 @@ pledge turned out to forbid commercial distribution):
   docs/guides/TRANSLATION_SETUP.md.
 - **Сторонние компоненты** — BSD, MIT, Apache 2.0; enough_mail,
   enough_convert, dbus и nm — MPL 2.0 (используются без изменений); шрифты
-  OpenDyslexic и Medeo Sans — OFL 1.1. GPL, LGPL и AGPL нет. Полный список с текстами
+  OpenDyslexic — OFL 1.1 (Medeo Sans убран в 1.10.2; другие шрифты на
+  выбор — системные, приложение их не распространяет). GPL, LGPL и AGPL нет. Полный список с текстами
   лицензий — в приложении: «Настройки → О приложении → Тексты лицензий».
 - **Протоколы Exchange (EAS, EWS)** реализованы самостоятельно по открытым
   спецификациям Microsoft (Open Specifications); кода Microsoft нет.

@@ -3623,7 +3623,8 @@
     <string name="archiveNothingOld">לא נמצאו הודעות ישנות מהגיל שנבחר — לא היה מה להעביר לארכיון. אפשר לבחור תקופה קצרה יותר או „כל ההודעות”.</string>
     <string name="uiFontTitle">גופן הממשק</string>
     <string name="uiFontRobotoHint">כמו קודם</string>
-    <string name="uiFontMedeoHint">גופן פתוח לאותיות לטיניות וקיריליות (OFL 1.1)</string>
+    <string name="uiFontSystem">מערכת</string>
+    <string name="uiFontSystemHint">הגופן של המכשיר, כמו ביישומים אחרים</string>
     <string name="uiFontDyslexiaNote">גופן לדיסלקציה מופעל (נגישות) — הוא קודם לבחירה הזו.</string>
     <string name="loginOrChoose">או בחרו את הדואר</string>
     <string name="folderToOgna">תיקייה לארכיון Ogneliss</string>

@@ -3585,7 +3585,8 @@
     <string name="archiveNothingOld">Tidak ditemukan pesan yang lebih lama dari usia yang dipilih — tidak ada yang perlu diarsipkan. Pilih usia yang lebih pendek atau \"Semua email\".</string>
     <string name="uiFontTitle">Font antarmuka</string>
     <string name="uiFontRobotoHint">Seperti sebelumnya</string>
-    <string name="uiFontMedeoHint">Font terbuka untuk huruf Latin dan Sirilik (OFL 1.1)</string>
+    <string name="uiFontSystem">Sistem</string>
+    <string name="uiFontSystemHint">Font perangkat, seperti di aplikasi lain</string>
     <string name="uiFontDyslexiaNote">Font disleksia aktif (Aksesibilitas) — font itu didahulukan dari pilihan ini.</string>
     <string name="loginOrChoose">atau pilih email Anda</string>
     <string name="folderToOgna">Folder ke arsip Ogneliss</string>

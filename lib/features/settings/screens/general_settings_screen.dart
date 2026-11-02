@@ -11,7 +11,6 @@ import '../../../core/theme/app_icons.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../widgets/ui/settings_group.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,6 +24,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../l10n/languages.g.dart' show kAppLanguages;
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/ui_zoom.dart';
+import '../../../core/theme/ui_fonts.dart';
 
 class GeneralSettingsScreen extends ConsumerWidget {
   const GeneralSettingsScreen({super.key});
@@ -148,19 +148,24 @@ class GeneralSettingsScreen extends ConsumerWidget {
             ),
           ]),
 
-          // ── Шрифт интерфейса (1.8.8) ──
-          // Каждый вариант подписан своим шрифтом — видно, как он выглядит.
+          // ── Шрифт интерфейса (1.8.8; с 1.10.2 — шрифты платформы) ──
+          // Каждый вариант подписан своим шрифтом — видно, как он выглядит;
+          // образец — латиница, кириллица и греческий.
           SettingsSectionTitle(l10n.tr('uiFontTitle')),
           SettingsGroup(children: [
-            for (final o in [
-              ('roboto', 'Roboto', l10n.tr('uiFontRobotoHint'), AppTheme.robotoFamily),
-              ('medeo', 'Medeo Sans', l10n.tr('uiFontMedeoHint'), AppTheme.medeoFamily),
-            ])
+            for (final f in UiFonts.forPlatform(Theme.of(context).platform))
               AppRadioTile<String>(
-                title: Text(o.$2, style: TextStyle(fontFamily: o.$4)),
-                subtitle: Text(o.$3, style: TextStyle(fontFamily: o.$4)),
-                value: o.$1,
-                groupValue: settings.uiFont,
+                title: Text(f.label ?? l10n.tr('uiFontSystem'), style: TextStyle(fontFamily: f.family)),
+                subtitle: Text(
+                  switch (f.id) {
+                    'system' => '${l10n.tr('uiFontSystemHint')} · ${UiFonts.sample}',
+                    'roboto' => '${l10n.tr('uiFontRobotoHint')} · ${UiFonts.sample}',
+                    _ => UiFonts.sample,
+                  },
+                  style: TextStyle(fontFamily: f.family),
+                ),
+                value: f.id,
+                groupValue: UiFonts.resolve(settings.uiFont, Theme.of(context).platform).id,
                 onChanged: (v) => notifier.setUiFont(v ?? 'roboto'),
               ),
             if (settings.dyslexiaFont)

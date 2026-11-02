@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">Aucun message plus ancien que l\'âge choisi — rien à archiver. Choisissez un âge plus court ou « Tous les messages ».</string>
     <string name="uiFontTitle">Police de l\'interface</string>
     <string name="uiFontRobotoHint">Comme avant</string>
-    <string name="uiFontMedeoHint">Police libre pour le latin et le cyrillique (OFL 1.1)</string>
+    <string name="uiFontSystem">Système</string>
+    <string name="uiFontSystemHint">Police de l’appareil, comme dans les autres applis</string>
     <string name="uiFontDyslexiaNote">La police pour la dyslexie est activée (Accessibilité) — elle prime sur ce choix.</string>
     <string name="loginOrChoose">ou choisissez votre messagerie</string>
     <string name="folderToOgna">Dossier vers l\'archive Ogneliss</string>

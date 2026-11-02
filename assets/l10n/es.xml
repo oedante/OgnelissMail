@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">No se encontraron mensajes anteriores a la antigüedad elegida: no había nada que archivar. Puede elegir un plazo más corto o «Todos los mensajes».</string>
     <string name="uiFontTitle">Fuente de la interfaz</string>
     <string name="uiFontRobotoHint">Como antes</string>
-    <string name="uiFontMedeoHint">Fuente libre para alfabeto latino y cirílico (OFL 1.1)</string>
+    <string name="uiFontSystem">Del sistema</string>
+    <string name="uiFontSystemHint">Fuente del dispositivo, como en otras apps</string>
     <string name="uiFontDyslexiaNote">La fuente para dislexia está activada (Accesibilidad) y tiene prioridad sobre esta opción.</string>
     <string name="loginOrChoose">o elija su correo</string>
     <string name="folderToOgna">Carpeta al archivo de Ogneliss</string>

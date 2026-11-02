@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">Inga meddelanden äldre än vald ålder hittades — det fanns inget att arkivera. Välj en kortare ålder eller ”Alla meddelanden”.</string>
     <string name="uiFontTitle">Gränssnittets typsnitt</string>
     <string name="uiFontRobotoHint">Som tidigare</string>
-    <string name="uiFontMedeoHint">Öppet typsnitt för latinska och kyrilliska tecken (OFL 1.1)</string>
+    <string name="uiFontSystem">System</string>
+    <string name="uiFontSystemHint">Enhetens typsnitt, som i andra appar</string>
     <string name="uiFontDyslexiaNote">Typsnittet för dyslexi är på (Tillgänglighet) och går före detta val.</string>
     <string name="loginOrChoose">eller välj e-posttjänst</string>
     <string name="folderToOgna">Mapp till Ogneliss-arkivet</string>

@@ -3642,7 +3642,8 @@
     <string name="archiveNothingOld">Писем старше выбранного срока не нашлось — архивировать было нечего. Можно выбрать срок меньше или «Все письма».</string>
     <string name="uiFontTitle">Шрифт интерфейса</string>
     <string name="uiFontRobotoHint">Как раньше</string>
-    <string name="uiFontMedeoHint">Открытый шрифт для латиницы и кириллицы (OFL 1.1)</string>
+    <string name="uiFontSystem">Системный</string>
+    <string name="uiFontSystemHint">Шрифт устройства, как в других приложениях</string>
     <string name="uiFontDyslexiaNote">Сейчас включён шрифт для дислексии (Специальные возможности) — он важнее этого выбора.</string>
     <string name="loginOrChoose">или выберите почту</string>
     <string name="folderToOgna">Папку в архив Ogneliss</string>

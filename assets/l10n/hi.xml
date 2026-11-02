@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">चुनी गई अवधि से पुराने संदेश नहीं मिले — संग्रहित करने के लिए कुछ नहीं था। कम अवधि या «सभी ईमेल» चुनें।</string>
     <string name="uiFontTitle">इंटरफ़ेस फ़ॉन्ट</string>
     <string name="uiFontRobotoHint">पहले जैसा</string>
-    <string name="uiFontMedeoHint">लैटिन और सिरिलिक के लिए खुला फ़ॉन्ट (OFL 1.1)</string>
+    <string name="uiFontSystem">सिस्टम</string>
+    <string name="uiFontSystemHint">डिवाइस का फ़ॉन्ट, जैसा दूसरे ऐप्स में</string>
     <string name="uiFontDyslexiaNote">डिस्लेक्सिया फ़ॉन्ट चालू है (सुलभता) — इसे इस विकल्प पर प्राथमिकता मिलती है।</string>
     <string name="loginOrChoose">या अपना मेल चुनें</string>
     <string name="folderToOgna">फ़ोल्डर को Ogneliss संग्रह में</string>

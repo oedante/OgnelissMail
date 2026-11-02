@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">Der blev ikke fundet mails ældre end den valgte alder — der var intet at arkivere. Vælg en kortere alder eller »Alle mails«.</string>
     <string name="uiFontTitle">Skrifttype i brugerfladen</string>
     <string name="uiFontRobotoHint">Som hidtil</string>
-    <string name="uiFontMedeoHint">Åben skrifttype til latinsk og kyrillisk skrift (OFL 1.1)</string>
+    <string name="uiFontSystem">System</string>
+    <string name="uiFontSystemHint">Enhedens skrifttype, som i andre apps</string>
     <string name="uiFontDyslexiaNote">Skrifttypen til ordblinde er slået til (Tilgængelighed) og har forrang for dette valg.</string>
     <string name="loginOrChoose">eller vælg din mail</string>
     <string name="folderToOgna">Mappe til Ogneliss-arkivet</string>

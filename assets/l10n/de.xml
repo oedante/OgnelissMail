@@ -3604,7 +3604,8 @@
     <string name="archiveNothingOld">Keine Nachrichten älter als das gewählte Alter gefunden — es gab nichts zu archivieren. Wählen Sie ein kürzeres Alter oder „Alle E-Mails“.</string>
     <string name="uiFontTitle">Schriftart der Oberfläche</string>
     <string name="uiFontRobotoHint">Wie bisher</string>
-    <string name="uiFontMedeoHint">Freie Schrift für Latein und Kyrillisch (OFL 1.1)</string>
+    <string name="uiFontSystem">System</string>
+    <string name="uiFontSystemHint">Schrift des Geräts, wie in anderen Apps</string>
     <string name="uiFontDyslexiaNote">Die Legasthenie-Schrift ist aktiv (Bedienungshilfen) — sie hat Vorrang vor dieser Auswahl.</string>
     <string name="loginOrChoose">oder Mail-Dienst wählen</string>
     <string name="folderToOgna">Ordner ins Ogneliss-Archiv</string>

@@ -13,15 +13,15 @@ Future<SettingsNotifier> _notifier([Map<String, Object> values = const {}]) asyn
 }
 
 void main() {
-  test('по умолчанию — «Классика», обычная плотность, анимация выключена', () async {
+  test('по умолчанию — «Классика», обычная плотность, анимация открытия письма включена (1.10.1)', () async {
     final s = (await _notifier()).state;
     expect(s.themePreset, ThemePreset.classic);
     expect(s.accentColor, isNull);
     expect(s.listTint, ListTint.none);
     expect(s.corners, CornerSize.medium);
     expect(s.listDensity, ListDensity.normal);
-    expect(s.openAnimation, isFalse);
-    expect(s.appearance(), Appearance.classic);
+    expect(s.openAnimation, isTrue);
+    expect(s.appearance(), Appearance.classic.copyWith(openAnimation: true));
     expect(s.appearance().classicColors, isTrue);
   });
 
@@ -79,11 +79,11 @@ void main() {
       's_list_tint': 2,
       's_corners': 0,
       's_density': 0,
-      's_open_anim': true,
+      's_open_anim': false,
     });
     await n.resetAll();
     final again = SettingsNotifier(await SharedPreferences.getInstance()).state;
-    expect(again.appearance(), Appearance.classic);
+    expect(again.appearance(), Appearance.classic.copyWith(openAnimation: true));
   });
 
   test('плотность: строки превью', () {

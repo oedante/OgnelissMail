@@ -104,8 +104,9 @@ class AppSettings {
   /// Плотность ленты (и строк беседы и архива).
   final ListDensity listDensity;
   /// Анимация открытия письма: общий портрет и тема, закрытие свайпом вниз.
-  /// Выключено по умолчанию (прежние анимации были медленными);
-  /// «Уменьшить движение» важнее.
+  /// Включена по умолчанию с 1.10.1 (владелец проверил на телефоне
+  /// 02.11.2026: «хорошо работают»); «Уменьшить движение» и системное
+  /// «Убрать анимацию» важнее.
   final bool openAnimation;
 
   // ── Доступность ──
@@ -218,7 +219,7 @@ class AppSettings {
     this.listTint = ListTint.none,
     this.corners = CornerSize.medium,
     this.listDensity = ListDensity.normal,
-    this.openAnimation = false,
+    this.openAnimation = true,
     this.highContrast = false,
     this.dyslexiaFont = false,
     this.reduceMotion = false,
@@ -532,7 +533,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       corners: CornerSize.values[(_p.getInt(_K.corners) ?? CornerSize.medium.index).clamp(0, CornerSize.values.length - 1)],
       listDensity:
           ListDensity.values[(_p.getInt(_K.listDensity) ?? ListDensity.normal.index).clamp(0, ListDensity.values.length - 1)],
-      openAnimation: _p.getBool(_K.openAnimation) ?? false,
+      openAnimation: _p.getBool(_K.openAnimation) ?? true,
       highContrast: _p.getBool(_K.highContrast) ?? false,
       dyslexiaFont: _p.getBool(_K.dyslexiaFont) ?? false,
       reduceMotion: _p.getBool(_K.reduceMotion) ?? false,

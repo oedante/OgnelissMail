@@ -123,7 +123,9 @@ class KeyboardShortcutsWrapper extends StatelessWidget {
           _ReplyIntent: CallbackAction<_ReplyIntent>(onInvoke: (_) { onReply?.call(); return null; }),
           _ReplyAllIntent: CallbackAction<_ReplyAllIntent>(onInvoke: (_) { onReplyAll?.call(); return null; }),
           _ForwardIntent: CallbackAction<_ForwardIntent>(onInvoke: (_) { onForward?.call(); return null; }),
-          _DeleteIntent: CallbackAction<_DeleteIntent>(onInvoke: (_) { onDelete?.call(); return null; }),
+          // Delete — только если экран его ждёт и не набирают текст: иначе
+          // клавиша не доходила до полей ввода (1.10.1).
+          _DeleteIntent: _UnlessTyping<_DeleteIntent>(onDelete),
           _SearchIntent: CallbackAction<_SearchIntent>(onInvoke: (_) { onSearch?.call(); return null; }),
           _RefreshIntent: CallbackAction<_RefreshIntent>(onInvoke: (_) { onRefresh?.call(); return null; }),
           _SwitchTabIntent: CallbackAction<_SwitchTabIntent>(onInvoke: (intent) { onSwitchTab?.call(intent.index); return null; }),
@@ -149,4 +151,61 @@ class _RefreshIntent extends Intent { const _RefreshIntent(); }
 class _SwitchTabIntent extends Intent {
   final int index;
   const _SwitchTabIntent(this.index);
+}
+
+/// Действие клавиши без Ctrl: выключено, пока в фокусе поле ввода или
+/// обработчика нет, — тогда клавиша идёт дальше, к полю.
+class _UnlessTyping<T extends Intent> extends Action<T> {
+  _UnlessTyping(this.run);
+
+  final VoidCallback? run;
+
+  @override
+  bool isEnabled(T intent) => run != null && !textInputFocused();
+
+  @override
+  Object? invoke(T intent) {
+    run?.call();
+    return null;
+  }
+}
+
+/// Поле ввода в фокусе (быстрый ответ, поиск, тема…): клавиши без Ctrl
+/// принадлежат ему.
+bool textInputFocused() {
+  final ctx = FocusManager.instance.primaryFocus?.context;
+  if (ctx == null) return false;
+  return ctx.widget is EditableText || ctx.findAncestorWidgetOfExactType<EditableText>() != null;
+}
+
+/// Горячие клавиши экрана, у которого внутри есть поле ввода (1.10.1).
+///
+/// [CallbackShortcuts] забирает клавишу раньше текстового поля под ним: в
+/// письме Backspace («в архив») и Delete («удалить») срабатывали, пока
+/// человек стирал текст в строке «Ответить…» — и с клавиатуры компьютера, и
+/// с экранной клавиатуры Android, которая шлёт Backspace клавишей, когда
+/// поле уже пусто. [plain] — клавиши без Ctrl (Delete, Backspace, Insert):
+/// пока в фокусе поле ввода, их нет вовсе, и клавиша доходит до поля.
+class TypingAwareShortcuts extends StatelessWidget {
+  const TypingAwareShortcuts({super.key, required this.bindings, required this.plain, required this.child});
+
+  /// Сочетания, которые работают всегда (Ctrl+R, Esc…).
+  final Map<ShortcutActivator, VoidCallback> bindings;
+
+  /// Клавиши, которые не трогают набор текста.
+  final Map<ShortcutActivator, VoidCallback> plain;
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+        // Меняется при каждой смене фокуса — перестраивается только список
+        // клавиш, экран под ним — нет.
+        listenable: FocusManager.instance,
+        builder: (context, child) => CallbackShortcuts(
+          bindings: {...bindings, if (!textInputFocused()) ...plain},
+          child: child!,
+        ),
+        child: child,
+      );
 }

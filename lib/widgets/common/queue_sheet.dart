@@ -34,8 +34,7 @@ Future<void> showQueueSheet(BuildContext context) async {
   // Записи удалённых аккаунтов никому не нужны и только держат счётчик.
   try {
     final container = ProviderScope.containerOf(context, listen: false);
-    await container.read(databaseProvider).customStatement(
-        'DELETE FROM sync_queue WHERE account_id NOT IN (SELECT id FROM accounts)');
+    await container.read(databaseProvider).purgeOrphanQueue();
   } catch (_) {}
   if (!context.mounted) return;
   await showAppSheet<void>(

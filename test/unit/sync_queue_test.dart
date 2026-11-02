@@ -11,6 +11,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/data/database/app_database.dart';
+import 'package:ogneliss/data/models/account_model.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/services/sync/sync_service.dart';
 
@@ -19,10 +20,16 @@ void main() {
   late ProviderContainer container;
   late SyncService sync;
 
-  setUp(() {
+  Future<void> addAccount(String id) => db.into(db.accounts).insert(AccountsCompanion.insert(
+      id: id, type: AccountType.imap.index, email: '$id@example.com', displayName: id, username: id,
+      createdAt: DateTime(2026)));
+
+  setUp(() async {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     container = ProviderContainer(overrides: [databaseProvider.overrideWithValue(db)]);
     sync = container.read(syncServiceProvider);
+    await addAccount('a1');
+    await addAccount('a2');
   });
 
   tearDown(() async {
@@ -88,5 +95,30 @@ void main() {
   test('операция без данных — пустой объект, а не null', () async {
     await sync.enqueueOperation(accountId: 'a1', operationType: 'delete', targetId: 'm9');
     expect(payloadOf((await rows()).single), isEmpty);
+  });
+
+  // 1.10.3 (замечание 02.11.2026): после удаления ящика очередь «висела» —
+  // семь переносов встали в очередь удалённого ящика, счётчик на панели их
+  // считал, а в списке отменить было нечего.
+  test('ящик удалён — операция в очередь не ставится', () async {
+    await sync.enqueueOperation(accountId: 'gone', operationType: 'move', targetId: 'm1', payload: {'toFolderId': 'T'});
+    expect(await rows(), isEmpty);
+  });
+
+  test('счётчик — только существующие ящики; очистка сирот обновляет его', () async {
+    await sync.enqueueOperation(accountId: 'a1', operationType: 'flag', targetId: 'm1', payload: {'flagged': true});
+    // Сирота из прежних версий: строка удалённого ящика.
+    await db.into(db.syncQueue).insert(SyncQueueCompanion.insert(
+        accountId: 'gone', operationType: 'move', targetId: 'm2', payloadJson: '{}', createdAt: DateTime(2026)));
+    final counts = <int>[];
+    final sub = db.watchQueueCount().listen(counts.add);
+    await pumpEventQueue();
+    expect(counts.last, 1);
+    await (db.delete(db.accounts)..where((a) => a.id.equals('a1'))).go();
+    await pumpEventQueue();
+    expect(counts.last, 0, reason: 'операции удалённого ящика не считаются');
+    expect(await db.purgeOrphanQueue(), 2);
+    expect(await rows(), isEmpty);
+    await sub.cancel();
   });
 }

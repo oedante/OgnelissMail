@@ -1,8 +1,31 @@
-# 1.10.0 — что сделать владельцу (проверено 01.11.2026)
+# 1.10.0 — что сделать владельцу (проверено 01–02.11.2026)
 
-По каждому шагу: что проверено в репозитории, что сделать вам и готовые
-тексты. Порядок — как в списке; сборку с меткой `v1.10.0` запускать после
-шагов 1–2.
+## Порядок целиком
+
+1. **Сервер** — архив `ogneliss-server-1.10.0.zip`, шаг 2 ниже.
+2. **Сайт** — архив сайта и `deploy_site.sh`, шаг 5, «Политика
+   конфиденциальности». Политика должна быть на сайте раньше, чем вы
+   отправите приложение в магазины.
+3. **Секреты GitHub** — шаг 1. Затем метка `v1.10.0` на `main`: GitHub
+   соберёт APK, App Bundle и сборки для компьютера и выложит страницу
+   выпуска с «Что нового».
+4. **Проверка на телефоне** — шаг 7, до отправки в магазины:
+   - Android — APK со страницы выпуска;
+   - iPhone — TestFlight.
+5. **Google Play:**
+   - App Bundle (`.aab`) — из артефакта сборки `ogneliss-android-…` в
+     Actions или собрать из архива исходников;
+   - «Что нового» — из `STORE_NOTES_1.10.0.md`;
+   - «Безопасность данных» и строка о Google Translate — шаг 5;
+   - сначала поэтапное развёртывание на 10–20 %.
+6. **App Store:**
+   - Xcode — шаг 4;
+   - сборка из архива исходников → TestFlight;
+   - в App Store Connect номер 1.8.12 поменять на 1.10.0;
+   - Notes, демо-ящик и видео — `APP_REVIEW_NOTES.md`.
+
+Ниже по каждому шагу: что проверено в репозитории, что сделать вам и
+готовые тексты.
 
 ## 1. Секреты GitHub — `guides/GITHUB_SECRETS.md`
 
@@ -42,6 +65,11 @@
 
 ## 2. Сервер
 
+Отдельный архив `ogneliss-server-1.10.0.zip` (обе службы) и короткая
+памятка `СЕРВЕР_1.10.0.md` к нему. Папки те же, что `server/` в архиве
+исходников. Распаковать на сервере: `unzip ogneliss-server-1.10.0.zip -d
+/root/ogneliss-server`; ниже пути — от `/root/ogneliss-server/server`.
+
 **OAuth-прокси.** Проверено:
 
 - `server/oauth-proxy/package-lock.json` — body-parser 1.20.9 и qs 6.16.2
@@ -56,9 +84,8 @@
 Обновить сервер:
 
 ```bash
-scp -r server/oauth-proxy root@СЕРВЕР:/root/
-sudo bash /root/oauth-proxy/install-oauth-proxy.sh update
-sudo bash /root/oauth-proxy/install-oauth-proxy.sh check
+sudo bash /root/ogneliss-server/server/oauth-proxy/install-oauth-proxy.sh update
+sudo bash /root/ogneliss-server/server/oauth-proxy/install-oauth-proxy.sh check
 ```
 
 Проверить снаружи, что BIMI отвечает: `curl -H "x-api-key: <OAUTH_PROXY_KEY>"
@@ -73,9 +100,8 @@ Google, UnifiedPush). Проверено:
   полный путь «регистрация → зашифрованный сигнал → удаление адреса по 410».
 
 ```bash
-scp -r server/push-relay root@СЕРВЕР:/root/
-sudo bash /root/push-relay/install-push-relay.sh install
-sudo bash /root/push-relay/install-push-relay.sh check
+sudo bash /root/ogneliss-server/server/push-relay/install-push-relay.sh install
+sudo bash /root/ogneliss-server/server/push-relay/install-push-relay.sh check
 curl https://www.ogneliss.ru/push/vapid     # ответ: {"key":"B…"}
 ```
 

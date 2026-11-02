@@ -114,25 +114,27 @@ Xcode — `guides/IOS_COMMUNICATION_NOTIFICATIONS.md`, `guides/IOS_SHORTCUTS.md`
 • IMAP: fast sync; a new mailbox loads right away
 </en-US>
 <de-DE>
-• Farbthemen, Listendichte, dunkle E-Mails ohne Invertierung
-• E-Mails und eigenen Text auf dem Gerät übersetzen (ab iOS 18)
-• Datum in einer E-Mail antippen: Termin oder Erinnerung anlegen
-• Nicht zugestellte E-Mails sind markiert, mit Grund
-• Mitteilungen mit dem Foto des Absenders
-• Logos verifizierter Absender (BIMI)
-• Siri und Kurzbefehle: neue E-Mail, Termin, Ungelesen, Mein Tag
-• iPad: Ordnerleiste in der Breite anpassbar, E-Mails auf Ordner ziehen
-• IMAP: schnelle Synchronisierung; neues Postfach lädt sofort
+• Farbschemata, Listendichte, dunkle Nachrichten ohne Invertierung
+• Nachrichten und eigene Texte auf dem Gerät übersetzen (ab iOS 18)
+• Datum in einer Nachricht antippen: Termin oder Erinnerung anlegen
+• Absender blockieren und seine Nachrichten bereinigen
+• Warnungen vor gefälschten Absendern und ähnlich aussehenden Domänen
+• Nicht zugestellte Nachrichten werden samt Grund markiert
+• Benachrichtigungen mit Foto des Absenders; Logos verifizierter Absender (BIMI)
+• Siri und Kurzbefehle: Neue E-Mail, Termin, Ungelesen, Mein Tag
+• iPad: Ordnerleiste in verstellbarer Breite, Nachrichten auf Ordner ziehen
+• IMAP: schnelle Synchronisierung; neues Postfach wird sofort geladen
 </de-DE>
 <fr-FR>
-• Thèmes de couleur, densité de la liste, messages sombres sans inversion
-• Traduction des messages et de votre texte sur l’appareil (iOS 18 ou ultérieur)
-• Touchez une date dans un message pour créer une réunion ou un rappel
-• Les messages non distribués sont signalés, avec la raison
-• Notifications avec la photo de l’expéditeur
-• Logos des expéditeurs vérifiés (BIMI)
-• Siri et Raccourcis : nouvel e-mail, réunion, non lus, Ma journée
-• iPad : volet des dossiers redimensionnable, glisser les messages sur un dossier
+• Thèmes de couleurs, densité de liste, messages sombres sans inversion
+• Traduction des messages et de vos textes sur l’appareil (iOS 18 ou ultérieur)
+• Touchez une date dans un message : réunion ou rappel en un geste
+• Bloquer un expéditeur et nettoyer ses messages
+• Alertes contre l’usurpation d’expéditeur et les domaines trompeurs
+• Messages non distribués marqués, avec la cause
+• Notifications avec photo de l’expéditeur ; logos des expéditeurs vérifiés (BIMI)
+• Siri et Raccourcis : nouveau message, événement, non lus, Ma journée
+• iPad : volet des dossiers ajustable, glisser un message vers un dossier
 • IMAP : synchronisation rapide ; une nouvelle boîte se charge aussitôt
 </fr-FR>
 ```
@@ -168,275 +170,275 @@ Xcode — `guides/IOS_COMMUNICATION_NOTIFICATIONS.md`, `guides/IOS_SHORTCUTS.md`
 • Farbschemata, Listendichte, dunkle Mails ohne Invertierung
 • Mails und eigene Texte auf dem Gerät übersetzen
 • Datum in Nachricht antippen: Termin oder Erinnerung anlegen
-• Nicht zugestellte Nachrichten sind markiert
+• Absender blockieren und seine Mails bereinigen
+• Warnungen vor gefälschten Absendern
+• Nicht zugestellte Mails markiert; BIMI-Absenderlogos
 • Benachrichtigungen mit Foto des Absenders
-• Logos verifizierter Absender (BIMI)
-• App-Verknüpfungen: Neue Nachricht, Neuer Termin, Mein Tag
-• Tablet: Ordnerleiste verstellbar, Mails in Ordner ziehen
-• Schnellere IMAP-Synchronisierung
+• Mail-Signale ohne Google-Dienste (UnifiedPush)
+• App-Verknüpfungen; Tablet: Bereiche, Drag-and-drop
 </de-DE>
 <fr-FR>
 • Thèmes de couleurs, densité de liste, e-mails sombres sans inversion
 • Traduction des e-mails et de vos textes sur l’appareil
 • Touchez une date du message : réunion ou rappel
-• Messages non distribués signalés
+• Bloquer un expéditeur et nettoyer ses e-mails
+• Alertes d’usurpation d’expéditeur
+• Messages non distribués marqués ; logos BIMI
 • Notifications avec photo de l’expéditeur
-• Logos des expéditeurs vérifiés (BIMI)
-• Raccourcis : Nouveau message, Nouvelle réunion, Ma journée
-• Tablette : volet des dossiers ajustable, e-mails glissés vers un dossier
-• Synchronisation IMAP plus rapide
+• Signaux courrier sans services Google (UnifiedPush)
+• Raccourcis de l’icône ; tablette : volets, glisser-déposer
 </fr-FR>
 <ar>
-• أنساق ألوان وكثافة قائمة البريد ورسائل داكنة بلا عكس للألوان
+• أنساق ألوان وكثافة القائمة ورسائل داكنة بلا عكس للألوان
 • ترجمة الرسائل ونصوصك على الجهاز
 • اضغط على تاريخ في الرسالة لإضافة اجتماع أو تذكير
-• تمييز الرسائل التي لم يتم تسليمها
+• حظر المرسل وتنظيف رسائله
+• تحذيرات من انتحال هوية المرسل
+• تمييز الرسائل غير المسلَّمة؛ شعارات BIMI للمرسلين
 • إشعارات مع صورة المرسل
-• شعارات المرسلين الموثوقين (BIMI)
-• اختصارات الأيقونة: رسالة جديدة، اجتماع جديد، يومي
-• الأجهزة اللوحية: عرض المجلدات قابل للتعديل وسحب الرسائل إلى المجلدات
-• مزامنة IMAP أسرع
+• إشارات البريد بدون خدمات Google (UnifiedPush)
+• اختصارات الأيقونة؛ الأجهزة اللوحية: الألواح والسحب والإفلات
 </ar>
 <hu-HU>
 • Színsémák, listasűrűség, sötét levelek inverzió nélkül
 • Levelek és saját szövegek fordítása az eszközön
 • Koppintson egy dátumra: értekezlet vagy emlékeztető
-• A ki nem kézbesített üzenetek jelölve vannak
+• Feladó letiltása és leveleinek takarítása
+• Figyelmeztetés hamisított feladóra
+• Ki nem kézbesített levelek jelölve; BIMI-logók
 • Értesítések a feladó fotójával
-• Ellenőrzött feladók logói (BIMI)
-• Ikon-parancsikonok: Új üzenet, Új értekezlet, Saját napom
-• Táblagép: átméretezhető mappasáv, levelek áthúzása mappába
-• Gyorsabb IMAP-szinkronizálás
+• Levéljelzések Google-szolgáltatások nélkül (UnifiedPush)
+• Ikon-parancsikonok; táblagép: panelek, húzás
 </hu-HU>
 <vi>
-• Chủ đề màu, mật độ danh sách thư, thư tối không đảo màu
+• Chủ đề màu, mật độ danh sách, thư tối không đảo màu
 • Dịch thư và văn bản của bạn ngay trên thiết bị
 • Chạm vào ngày trong thư để thêm cuộc họp hoặc lời nhắc
-• Thư không gửi được sẽ được đánh dấu
+• Chặn người gửi và dọn dẹp thư của họ
+• Cảnh báo người gửi giả mạo
+• Đánh dấu thư chưa gửi được; logo người gửi BIMI
 • Thông báo kèm ảnh người gửi
-• Logo của người gửi đã xác minh (BIMI)
-• Lối tắt ở biểu tượng: Thư mới, Cuộc họp mới, Ngày của tôi
-• Máy tính bảng: đổi độ rộng ngăn thư mục, kéo thư vào thư mục
-• Đồng bộ IMAP nhanh hơn
+• Tín hiệu thư không cần dịch vụ Google (UnifiedPush)
+• Lối tắt ở biểu tượng; máy tính bảng: ngăn, kéo thả
 </vi>
 <da-DK>
-• Farvetemaer, tæthed i maillisten, mørke mails uden invertering
+• Farvetemaer, listetæthed, mørke mails uden invertering
 • Oversæt mails og din egen tekst på enheden
-• Tryk på en dato i en besked for at oprette et møde eller en påmindelse
-• Beskeder, der ikke blev leveret, er markeret
+• Tryk på en dato i en besked for at tilføje et møde eller en påmindelse
+• Blokér afsender og ryd op i vedkommendes mails
+• Advarsler om falske afsendere
+• Ikke-leverede mails markeres; BIMI-logoer
 • Notifikationer med afsenderens foto
-• Logoer fra verificerede afsendere (BIMI)
-• Genveje på appikonet: Ny mail, Nyt møde, Min dag
-• Tablet: mappepanel med justerbar bredde, træk mails over i mapper
-• Hurtigere IMAP-synkronisering
+• Mailsignaler uden Google-tjenester (UnifiedPush)
+• Genveje på appikonet; tablet: paneler, træk og slip
 </da-DK>
 <iw-IL>
-• ערכות צבעים, צפיפות רשימת הדואר והודעות כהות ללא היפוך צבעים
-• תרגום הודעות והטקסט שלך במכשיר
+• ערכות צבעים, צפיפות רשימת הדואר, הודעות כהות ללא היפוך צבעים
+• תרגום הודעות והטקסט שלך ישירות במכשיר
 • הקשה על תאריך בהודעה מוסיפה פגישה או תזכורת
-• הודעות שלא נמסרו מסומנות
+• חסימת שולח וניקוי כל ההודעות שלו
+• אזהרות על שולחים מתחזים
+• הודעות שלא נמסרו מסומנות; לוגו BIMI של שולחים
 • התראות עם תמונת השולח
-• לוגו של שולחים מאומתים (BIMI)
-• קיצורי דרך בסמל האפליקציה: הודעה חדשה, פגישה חדשה, היום שלי
-• טאבלט: רוחב חלונית התיקיות ניתן לשינוי, גרירת הודעות לתיקיות
-• סנכרון IMAP מהיר יותר
+• אותות דואר גם ללא שירותי Google (UnifiedPush)
+• קיצורי דרך בסמל האפליקציה; בטאבלט: חלוניות וגרירה
 </iw-IL>
 <id>
 • Tema warna, kerapatan daftar, email gelap tanpa inversi
 • Terjemahkan email dan teks Anda sendiri di perangkat
 • Ketuk tanggal di pesan untuk menambah rapat atau pengingat
-• Pesan yang tidak terkirim diberi tanda
+• Blokir pengirim dan bersihkan emailnya
+• Peringatan pengirim palsu
+• Email tak terkirim ditandai; logo pengirim BIMI
 • Notifikasi dengan foto pengirim
-• Logo pengirim terverifikasi (BIMI)
-• Pintasan ikon aplikasi: Email baru, Rapat baru, Hari saya
-• Tablet: lebar panel folder dapat diubah, seret email ke folder
-• Sinkronisasi IMAP lebih cepat
+• Sinyal email tanpa layanan Google (UnifiedPush)
+• Pintasan ikon aplikasi; tablet: panel, seret-lepas
 </id>
 <es-ES>
-• Temas de color, densidad de lista y correo oscuro sin inversión
-• Traduce correos y tu texto en el dispositivo
-• Toca una fecha del mensaje para crear una reunión o recordatorio
-• Los correos no entregados se marcan
+• Temas de color, densidad de lista, correo oscuro sin inversión
+• Traducción de correos y textos en el dispositivo
+• Toca una fecha para crear una reunión o recordatorio
+• Bloqueo de remitentes y limpieza de sus mensajes
+• Avisos de remitentes suplantados
+• Mensajes no entregados marcados; logotipos BIMI
 • Notificaciones con la foto del remitente
-• Logotipos de remitentes verificados (BIMI)
-• Accesos directos: Nuevo mensaje, Nueva reunión, Mi día
-• Tabletas: panel de carpetas ajustable y arrastrar correos a carpetas
-• Sincronización IMAP más rápida
+• Señales de correo sin servicios de Google (UnifiedPush)
+• Atajos del icono; en tablets: paneles y arrastrar
 </es-ES>
 <it-IT>
-• Temi colori, densità dell'elenco e posta scura senza inversione
-• Traduci email e testi che scrivi sul dispositivo
-• Tocca una data nel messaggio per creare riunione o promemoria
-• Messaggi non recapitati contrassegnati
+• Temi colore, densità dell’elenco, posta scura senza inversione
+• Traduzione di posta e testi sul dispositivo
+• Tocca una data per creare riunione o promemoria
+• Blocco dei mittenti e pulizia dei loro messaggi
+• Avvisi sui mittenti falsificati
+• Messaggi non recapitati contrassegnati; loghi BIMI
 • Notifiche con la foto del mittente
-• Loghi dei mittenti verificati (BIMI)
-• Scorciatoie: Nuovo messaggio, Nuova riunione, Il mio giorno
-• Tablet: pannello cartelle regolabile, email trascinabili nelle cartelle
-• Sincronizzazione IMAP più veloce
+• Segnali di posta anche senza servizi Google (UnifiedPush)
+• Scorciatoie sull’icona; su tablet: pannelli e trascinamento
 </it-IT>
 <zh-CN>
-• 配色主题、邮件列表密度，深色邮件不再反色
-• 在设备上翻译邮件和您输入的文字
-• 点按邮件中的日期，即可创建会议或提醒
-• 未送达的邮件会有标记
-• 通知显示发件人的照片
-• 显示已验证发件人的标志 (BIMI)
-• 图标快捷方式：新邮件、新会议、我的一天
-• 平板：可拖动调整文件夹栏宽度，可将邮件拖入文件夹
-• IMAP 同步更快
+• 配色主题、列表密度、无需反色的深色邮件
+• 在设备上翻译邮件和你自己输入的文字
+• 点按邮件中的日期，即可添加会议或提醒
+• 阻止发件人并清理其邮件
+• 伪造发件人警告
+• 未送达的邮件会有标记；BIMI 发件人徽标
+• 通知显示发件人头像
+• 没有 Google 服务也能收到邮件信号（UnifiedPush）
+• 应用图标快捷方式；平板：分栏和拖放
 </zh-CN>
 <ko-KR>
-• 색상 테마, 메일 목록 밀도, 반전 없는 다크 메일
-• 메일과 직접 쓴 글을 기기에서 번역
-• 메일 속 날짜를 탭해 회의나 미리 알림 만들기
-• 전달되지 않은 메일에 표시
-• 발신자 사진이 보이는 알림
-• 확인된 발신자의 로고(BIMI)
-• 앱 아이콘 바로가기: 새 메일, 새 회의, 오늘 일정
-• 태블릿: 폴더 창 너비 조절, 메일을 폴더로 드래그
-• 더 빨라진 IMAP 동기화
+• 색상 테마, 목록 밀도, 색 반전 없는 다크 메일
+• 기기에서 메일과 직접 쓴 글 번역
+• 메일 속 날짜를 탭해 회의나 알림 추가
+• 보낸 사람 차단 및 해당 메일 정리
+• 보낸 사람 사칭 경고
+• 전달되지 않은 메일 표시, BIMI 보낸 사람 로고
+• 보낸 사람 사진이 표시되는 알림
+• Google 서비스 없이도 메일 신호 수신(UnifiedPush)
+• 앱 아이콘 바로가기, 태블릿은 패널과 끌어서 놓기
 </ko-KR>
 <nl-NL>
-• Kleurenthema's, maillijstdichtheid en donkere mail zonder inversie
-• Vertaal mail en je eigen tekst op het apparaat
-• Tik op een datum in een bericht voor een afspraak of herinnering
-• Onbezorgde berichten zijn gemarkeerd
+• Kleurthema’s, lijstdichtheid, donkere e-mail zonder inversie
+• E-mail en eigen tekst vertalen op het apparaat
+• Tik op een datum voor een afspraak of herinnering
+• Afzender blokkeren en zijn berichten opruimen
+• Waarschuwingen voor vervalste afzenders
+• Onbezorgde berichten gemarkeerd; BIMI-logo’s
 • Meldingen met de foto van de afzender
-• Logo's van geverifieerde afzenders (BIMI)
-• Snelkoppelingen: Nieuw bericht, Nieuwe vergadering, Mijn dag
-• Tablets: mappenpaneel verstelbaar, berichten naar mappen slepen
-• Snellere IMAP-synchronisatie
+• E-mailsignalen ook zonder Google-services (UnifiedPush)
+• Snelkoppelingen op het pictogram; tablet: deelvensters, slepen
 </nl-NL>
 <no-NO>
-• Fargetema, tetthet i e-postlisten og mørk e-post uten invertering
-• Oversett e-post og din egen tekst på enheten
-• Trykk på en dato i en melding for å lage et møte eller en påminnelse
-• Meldinger som ikke er levert, er merket
+• Fargetemaer, listetetthet, mørk e-post uten invertering
+• Oversett e-post og egen tekst på enheten
+• Trykk på en dato i en melding for å legge til møte eller påminnelse
+• Blokker en avsender og rydd opp i meldingene deres
+• Advarsler om forfalskede avsendere
+• Uleverte meldinger merkes; BIMI-logoer for avsendere
 • Varsler med avsenderens bilde
-• Logoer for verifiserte avsendere (BIMI)
-• Snarveier på ikonet: Ny melding, Nytt møte, Min dag
-• Nettbrett: justerbar bredde på mappepanelet, dra meldinger til mapper
-• Raskere IMAP-synkronisering
+• E-postsignaler også uten Google-tjenester (UnifiedPush)
+• Snarveier på app-ikonet; nettbrett: ruter og dra og slipp
 </no-NO>
 <pl-PL>
-• Motywy kolorów, gęstość listy i ciemne wiadomości bez inwersji
-• Tłumaczenie wiadomości i własnego tekstu na urządzeniu
-• Dotknij daty w wiadomości, aby dodać spotkanie lub przypomnienie
-• Niedostarczone wiadomości są oznaczone
+• Motywy kolorów, gęstość listy, ciemne wiadomości bez inwersji
+• Tłumaczenie wiadomości i tekstów na urządzeniu
+• Dotknij daty, by dodać spotkanie lub przypomnienie
+• Blokowanie nadawców i porządkowanie ich wiadomości
+• Ostrzeżenia o fałszywych nadawcach
+• Niedostarczone wiadomości oznaczone; logotypy BIMI
 • Powiadomienia ze zdjęciem nadawcy
-• Logo zweryfikowanych nadawców (BIMI)
-• Skróty na ikonie: Nowa wiadomość, Nowe spotkanie, Mój dzień
-• Tablet: regulowany panel folderów, przeciąganie wiadomości do folderów
-• Szybsza synchronizacja IMAP
+• Sygnały poczty także bez usług Google (UnifiedPush)
+• Skróty na ikonie; na tabletach: panele i przeciąganie
 </pl-PL>
 <pt-BR>
-• Temas de cores, densidade da lista e e-mails escuros sem inversão
-• Traduza e-mails e seu texto no dispositivo
-• Toque em uma data na mensagem para criar reunião ou lembrete
-• Mensagens não entregues ficam marcadas
+• Temas de cor, densidade da lista, e-mails escuros sem inversão
+• Tradução de e-mails e textos no dispositivo
+• Toque em uma data para criar reunião ou lembrete
+• Bloqueio de remetentes e limpeza de mensagens
+• Alertas sobre remetentes falsificados
+• Mensagens não entregues marcadas; logotipos BIMI
 • Notificações com a foto do remetente
-• Logotipos de remetentes verificados (BIMI)
-• Atalhos: Nova mensagem, Nova reunião, Meu dia
-• Tablet: painel de pastas redimensionável, arraste mensagens para pastas
-• Sincronização IMAP mais rápida
+• Sinais de e-mail também sem serviços do Google (UnifiedPush)
+• Atalhos no ícone; em tablets: painéis e arrastar e soltar
 </pt-BR>
 <ro>
-• Teme de culori, densitatea listei, mod întunecat fără inversare
-• Traducerea mesajelor și a textului scris, pe dispozitiv
-• Atingeți o dată din mesaj pentru o întâlnire sau un memento
-• Mesajele nelivrate sunt marcate
+• Teme de culoare, densitatea listei, mesaje întunecate fără inversare
+• Traducere pe dispozitiv: mesaje și textul tău
+• Atinge o dată dintr-un mesaj pentru întâlnire sau memento
+• Blocarea expeditorului și curățarea mesajelor lui
+• Avertizări la expeditori falsificați
+• Mesaje nelivrate marcate; sigle BIMI
 • Notificări cu fotografia expeditorului
-• Siglele expeditorilor verificați (BIMI)
-• Comenzi rapide pe pictogramă: Mesaj nou, Întâlnire nouă, Ziua mea
-• Tabletă: panou de dosare redimensionabil, mesaje trase pe dosare
-• Sincronizare IMAP mai rapidă
+• Semnale de e-mail și fără servicii Google (UnifiedPush)
+• Comenzi rapide pe pictogramă; tabletă: panouri, tragere
 </ro>
 <sk>
-• Farebné motívy, hustota zoznamu, tmavé správy bez inverzie farieb
-• Preklad správ a vlastného textu priamo v zariadení
-• Ťuknite na dátum v správe a pridajte stretnutie alebo pripomienku
-• Nedoručené správy sú označené
+• Farebné motívy, hustota zoznamu, tmavé správy bez inverzie
+• Preklad správ a vášho textu v zariadení
+• Ťuknutím na dátum v správe pridáte stretnutie alebo pripomienku
+• Blokovanie odosielateľa a čistenie jeho správ
+• Varovania pred sfalšovanými odosielateľmi
+• Nedoručené správy sú označené; logá odosielateľov BIMI
 • Upozornenia s fotkou odosielateľa
-• Logá overených odosielateľov (BIMI)
-• Skratky na ikone: Nová správa, Nové stretnutie, Môj deň
-• Tablety: nastaviteľná šírka panela priečinkov, presun správ ťahaním do priečinka
-• Rýchlejšia synchronizácia IMAP
+• Signály pošty aj bez služieb Google (UnifiedPush)
+• Skratky na ikone aplikácie; na tablete: panely a presúvanie
 </sk>
 <th>
-• ธีมสี ความหนาแน่นของรายการ โหมดมืดของอีเมลโดยไม่กลับสี
-• แปลอีเมลและข้อความที่คุณเขียนบนอุปกรณ์
-• แตะวันที่ในข้อความเพื่อสร้างการประชุมหรือเตือนความจำ
-• ทำเครื่องหมายอีเมลที่ส่งไม่สำเร็จ
-• การแจ้งเตือนพร้อมรูปผู้ส่ง
-• โลโก้ของผู้ส่งที่ยืนยันแล้ว (BIMI)
-• ทางลัดบนไอคอนแอป: อีเมลใหม่ การประชุมใหม่ วันของฉัน
-• แท็บเล็ต: ปรับความกว้างของแผงโฟลเดอร์ได้ ลากอีเมลไปวางบนโฟลเดอร์
-• ซิงค์ IMAP เร็วขึ้น
+• ธีมสี ความหนาแน่นของรายการ อีเมลโหมดมืดโดยไม่กลับสี
+• แปลอีเมลและข้อความของคุณบนอุปกรณ์
+• แตะวันที่ในอีเมลเพื่อเพิ่มการประชุมหรือเตือนความจำ
+• บล็อกผู้ส่งและล้างอีเมลของผู้ส่ง
+• เตือนเมื่อผู้ส่งถูกปลอมแปลง
+• ทำเครื่องหมายอีเมลที่ส่งไม่สำเร็จ โลโก้ผู้ส่ง BIMI
+• การแจ้งเตือนพร้อมรูปของผู้ส่ง
+• สัญญาณอีเมลแม้ไม่มีบริการ Google (UnifiedPush)
+• ทางลัดบนไอคอนแอป บนแท็บเล็ต: แผงและการลาก
 </th>
 <tr-TR>
-• Renk temaları, liste yoğunluğu, renk tersine çevirmeden koyu iletiler
-• İletileri ve yazdığınız metni cihazda çevirin
+• Renk temaları, liste yoğunluğu, ters çevirmesiz koyu iletiler
+• İletileri ve kendi metninizi cihazda çevirme
 • İletideki tarihe dokunup toplantı veya hatırlatıcı ekleyin
-• Teslim edilemeyen iletiler işaretlenir
-• Bildirimlerde gönderenin fotoğrafı
-• Doğrulanmış gönderen logoları (BIMI)
-• Simge kısayolları: Yeni ileti, Yeni toplantı, Günüm
-• Tablet: boyutu ayarlanabilir klasör paneli, iletileri klasöre sürükleme
-• Daha hızlı IMAP senkronizasyonu
+• Göndereni engelleme ve iletilerini temizleme
+• Sahte göndericilere karşı uyarılar
+• Teslim edilemeyen iletiler işaretlenir; BIMI logoları
+• Gönderenin fotoğrafıyla bildirimler
+• Google hizmetleri olmadan da posta sinyalleri (UnifiedPush)
+• Simge kısayolları; tablette: paneller ve sürükle-bırak
 </tr-TR>
 <fi-FI>
-• Väriteemat, luettelon tiheys, tummat viestit ilman värien kääntöä
-• Viestien ja oman tekstin käännös laitteella
+• Väriteemat, luettelon tiheys, tummat viestit ilman käänteisvärejä
+• Viestien ja oman tekstin kääntäminen laitteella
 • Napauta viestin päivämäärää ja lisää kokous tai muistutus
-• Toimittamatta jääneet viestit merkitään
-• Ilmoituksissa lähettäjän kuva
-• Vahvistettujen lähettäjien logot (BIMI)
-• Pikakuvakkeet: Uusi viesti, Uusi kokous, Oma päivä
-• Tabletti: säädettävä kansiopaneelin leveys, viestien vetäminen kansioon
-• Nopeampi IMAP-synkronointi
+• Lähettäjän esto ja hänen viestiensä siivous
+• Varoitukset väärennetyistä lähettäjistä
+• Toimittamattomat viestit merkitään; BIMI-logot
+• Ilmoitukset lähettäjän kuvalla
+• Postisignaalit ilman Google-palveluita (UnifiedPush)
+• Kuvakkeen pikavalinnat; tabletilla: ruudut, vetäminen
 </fi-FI>
 <hi-IN>
-• रंग थीम, सूची का घनत्व, रंग उलटे बिना डार्क मोड में संदेश
-• संदेश और अपने लिखे टेक्स्ट का डिवाइस पर अनुवाद
-• संदेश में तारीख पर टैप करके मीटिंग या रिमाइंडर जोड़ें
-• न पहुँचे संदेशों पर निशान
-• सूचनाओं में प्रेषक की फ़ोटो
-• सत्यापित प्रेषकों के लोगो (BIMI)
-• ऐप आइकन शॉर्टकट: नया ईमेल, नई मीटिंग, मेरा दिन
-• टैबलेट: फ़ोल्डर पैनल की चौड़ाई बदलें, संदेशों को खींचकर फ़ोल्डर में डालें
-• तेज़ IMAP सिंक
+• रंग थीम, सूची घनत्व, बिना इनवर्ज़न के डार्क मेल
+• डिवाइस पर ईमेल और अपने टेक्स्ट का अनुवाद
+• ईमेल में तारीख पर टैप करके मीटिंग या रिमाइंडर जोड़ें
+• प्रेषक को ब्लॉक करें और उसके ईमेल की सफ़ाई करें
+• नकली प्रेषकों की चेतावनियां
+• न पहुंचे ईमेल पर निशान; BIMI प्रेषक लोगो
+• प्रेषक की फ़ोटो के साथ सूचनाएं
+• Google सेवाओं के बिना भी मेल सिग्नल (UnifiedPush)
+• ऐप आइकन शॉर्टकट; टैबलेट पर: पैनल और ड्रैग-ड्रॉप
 </hi-IN>
 <cs-CZ>
-• Barevné motivy, hustota seznamu, tmavé zprávy bez inverze barev
-• Překlad zpráv a vlastního textu přímo v zařízení
-• Klepněte na datum ve zprávě a přidejte schůzku nebo připomenutí
-• Nedoručené zprávy jsou označeny
+• Barevné motivy, hustota seznamu, tmavé zprávy bez inverze
+• Překlad zpráv a vašeho textu v zařízení
+• Klepnutím na datum ve zprávě přidáte schůzku nebo připomenutí
+• Blokování odesílatele a čištění jeho zpráv
+• Varování před padělanými odesílateli
+• Nedoručené zprávy jsou označené; loga odesílatelů BIMI
 • Oznámení s fotkou odesílatele
-• Loga ověřených odesílatelů (BIMI)
-• Zkratky na ikoně: Nová zpráva, Nová schůzka, Můj den
-• Tablety: nastavitelná šířka panelu složek, přesun zpráv přetažením do složky
-• Rychlejší synchronizace IMAP
+• Signály pošty i bez služeb Google (UnifiedPush)
+• Zkratky na ikoně aplikace; na tabletu: panely a přetahování
 </cs-CZ>
 <sv-SE>
-• Färgteman, listtäthet, mörka meddelanden utan färginvertering
-• Översätt meddelanden och egen text på enheten
-• Tryck på ett datum i meddelandet för att lägga till möte eller påminnelse
-• Obeställbara meddelanden markeras
-• Aviseringar med avsändarens bild
-• Logotyper för verifierade avsändare (BIMI)
-• Genvägar på appikonen: Nytt meddelande, Nytt möte, Min dag
-• Surfplatta: justerbar bredd på mappanelen, dra meddelanden till mappar
-• Snabbare IMAP-synkronisering
+• Färgteman, listtäthet, mörk e-post utan inversion
+• Översätt e-post och din egen text på enheten
+• Tryck på ett datum i meddelandet för möte eller påminnelse
+• Blockera en avsändare och rensa dennes e-post
+• Varningar för förfalskade avsändare
+• Ej levererad e-post markeras; BIMI-logotyper
+• Aviseringar med avsändarens foto
+• E-postsignaler även utan Google-tjänster (UnifiedPush)
+• Genvägar på appikonen; på surfplatta: paneler och dra och släpp
 </sv-SE>
 <ja-JP>
-• カラーテーマ、一覧の密度、色反転なしのダークメール表示
-• メールと入力した文章を端末内で翻訳
+• カラーテーマ、リストの密度、反転しないダークメール
+• メールと入力したテキストをデバイス上で翻訳
 • メール内の日付をタップして会議やリマインダーを追加
-• 配信できなかったメールにマーク表示
-• 通知に送信者の写真を表示
-• 認証済み送信者のロゴ (BIMI)
-• アイコンのショートカット：新規メール、新しい会議、今日の予定
-• タブレット：フォルダーペインの幅を変更、メールをフォルダーにドラッグ
-• IMAP の同期が高速に
+• 差出人をブロックし、そのメールをクリーンアップ
+• なりすましの差出人を警告
+• 未配信のメールにマーク、BIMI の差出人ロゴ
+• 差出人の写真付き通知
+• Google サービスなしでもメールのシグナルを受信 (UnifiedPush)
+• アプリアイコンのショートカット、タブレットではペインとドラッグ＆ドロップ
 </ja-JP>
 ```

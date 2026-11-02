@@ -3743,4 +3743,9 @@
     <string name="tileIconOnly">아이콘만</string>
     <string name="tileIconText">아이콘과 이름</string>
     <string name="favoritesTilesHint">즐겨찾기는 타일로 표시됩니다. 스위치 앞 버튼으로 넓은 타일(아이콘과 이름) 또는 작은 타일(아이콘만)을 고릅니다.</string>
+    <string name="experimentalTitle">실험적 기능</string>
+    <string name="experimentalDesc">시험 중인 기능, 기본값은 꺼짐</string>
+    <string name="experimentalIntro">시험 중인 새 기능입니다. 기본값은 꺼짐이며 바뀌거나 기본 설정으로 옮겨지거나 없어질 수 있습니다.</string>
+    <string name="quotePeopleTitle">인용 머리글의 사람</string>
+    <string name="quotePeopleDesc">인용의 보낸 사람, 받는 사람, 참조가 사진이 있는 칩으로 표시되고 누르면 사람 카드가 열립니다. 인용을 펼쳤을 때만 작동하므로 메일 열기 속도는 그대로입니다.</string>
 </resources>

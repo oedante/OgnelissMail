@@ -40,6 +40,11 @@ class ExperimentalKeys {
   static const inlineByRequest = 'inline_by_request_on';
   /// Вид получателей в шапке письма (1.5.9): RecipientsLayout.name.
   static const recipientsLayout = 'recipients_layout';
+
+  // ── «Экспериментальный функционал» (1.10.3): по умолчанию выключено ──
+
+  /// Люди в шапках цитат — плашками с портретом (QuotePeople).
+  static const quotePeople = 'exp_quote_people';
 }
 
 mixin _Prefs<T extends ConsumerStatefulWidget> on ConsumerState<T> {

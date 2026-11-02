@@ -3743,4 +3743,9 @@
     <string name="tileIconOnly">仅图标</string>
     <string name="tileIconText">图标和名称</string>
     <string name="favoritesTilesHint">收藏以磁贴显示。开关前的按钮可选宽磁贴（图标和名称）或小磁贴（仅图标）。</string>
+    <string name="experimentalTitle">实验性功能</string>
+    <string name="experimentalDesc">试用中的功能，默认关闭</string>
+    <string name="experimentalIntro">正在试用的新功能。默认关闭，之后可能调整、移入常规设置或移除。</string>
+    <string name="quotePeopleTitle">引用标头中的联系人</string>
+    <string name="quotePeopleDesc">引用中的发件人、收件人和抄送显示为带头像的标签，点按可打开联系人卡片。仅在展开引用时生效，打开邮件的速度不受影响。</string>
 </resources>

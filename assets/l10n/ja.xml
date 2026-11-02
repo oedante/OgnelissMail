@@ -3743,4 +3743,9 @@
     <string name="tileIconOnly">アイコンのみ</string>
     <string name="tileIconText">アイコンと名前</string>
     <string name="favoritesTilesHint">お気に入りはタイルで表示されます。スイッチの前のボタンで、幅広（アイコンと名前）か小（アイコンのみ）を選びます。</string>
+    <string name="experimentalTitle">試験的な機能</string>
+    <string name="experimentalDesc">お試し中の機能（初期設定はオフ）</string>
+    <string name="experimentalIntro">試験中の新機能です。初期設定はオフで、変更されたり、通常の設定に移ったり、削除されたりすることがあります。</string>
+    <string name="quotePeopleTitle">引用ヘッダーの人物</string>
+    <string name="quotePeopleDesc">引用内の差出人・宛先・CC を写真付きのチップで表示し、タップで人物カードを開きます。引用を開いたときだけ動作するので、メールを開く速さは変わりません。</string>
 </resources>

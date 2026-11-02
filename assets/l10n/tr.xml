@@ -3764,4 +3764,9 @@
     <string name="tileIconOnly">Yalnızca simge</string>
     <string name="tileIconText">Simge ve etiket</string>
     <string name="favoritesTilesHint">Sık kullanılanlar kutucuk olarak görünür. Anahtardan önceki düğme kutucuğu geniş (simge ve etiket) ya da küçük (yalnızca simge) yapar.</string>
+    <string name="experimentalTitle">Deneysel özellikler</string>
+    <string name="experimentalDesc">Denemedeki özellikler, varsayılan olarak kapalı</string>
+    <string name="experimentalIntro">Denediğimiz yeni özellikler. Varsayılan olarak kapalıdır; değişebilir, ana ayarlara taşınabilir veya kaldırılabilir.</string>
+    <string name="quotePeopleTitle">Alıntı başlıklarındaki kişiler</string>
+    <string name="quotePeopleDesc">Alıntıdaki Kimden, Kime ve Bilgi satırları portreli etiketlere dönüşür; dokununca kişi kartı açılır. Alıntı açıkken çalışır, iletiler yine hızlı açılır.</string>
 </resources>

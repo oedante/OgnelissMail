@@ -3764,4 +3764,9 @@
     <string name="tileIconOnly">केवल आइकन</string>
     <string name="tileIconText">आइकन और लेबल</string>
     <string name="favoritesTilesHint">पसंदीदा टाइलों के रूप में दिखते हैं। स्विच से पहले का बटन टाइल को चौड़ा (आइकन और लेबल) या छोटा (केवल आइकन) बनाता है।</string>
+    <string name="experimentalTitle">प्रायोगिक सुविधाएँ</string>
+    <string name="experimentalDesc">परीक्षण में सुविधाएँ, शुरू में बंद</string>
+    <string name="experimentalIntro">नई सुविधाएँ जिन्हें हम आज़मा रहे हैं। ये शुरू में बंद रहती हैं; बदल सकती हैं, मुख्य सेटिंग्स में जा सकती हैं या हटाई जा सकती हैं।</string>
+    <string name="quotePeopleTitle">उद्धृत शीर्षों में लोग</string>
+    <string name="quotePeopleDesc">उद्धरण में प्रेषक, प्राप्तकर्ता और प्रतिलिपि फ़ोटो वाले चिप बनते हैं; टैप करने पर व्यक्ति का कार्ड खुलता है। उद्धरण खोलने पर काम करता है, संदेश उतनी ही तेज़ी से खुलते हैं।</string>
 </resources>

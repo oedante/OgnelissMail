@@ -3764,4 +3764,9 @@
     <string name="tileIconOnly">Endast ikon</string>
     <string name="tileIconText">Ikon och text</string>
     <string name="favoritesTilesHint">Favoriter visas som paneler. Knappen före reglaget gör en panel bred (ikon och text) eller liten (endast ikon).</string>
+    <string name="experimentalTitle">Experimentella funktioner</string>
+    <string name="experimentalDesc">Funktioner på prov, avstängda som standard</string>
+    <string name="experimentalIntro">Nya funktioner som vi provar. De är avstängda som standard och kan ändras, flyttas till de vanliga inställningarna eller tas bort.</string>
+    <string name="quotePeopleTitle">Personer i citerade rubriker</string>
+    <string name="quotePeopleDesc">Från, Till och Kopia i citatet visas som etiketter med porträtt; tryck för att öppna personkortet. Fungerar när citatet är utfällt, så meddelanden öppnas lika snabbt.</string>
 </resources>

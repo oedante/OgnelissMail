@@ -3764,4 +3764,9 @@
     <string name="tileIconOnly">Vain kuvake</string>
     <string name="tileIconText">Kuvake ja teksti</string>
     <string name="favoritesTilesHint">Suosikit näkyvät ruutuina. Kytkimen edessä oleva painike tekee ruudusta leveän (kuvake ja teksti) tai pienen (vain kuvake).</string>
+    <string name="experimentalTitle">Kokeelliset ominaisuudet</string>
+    <string name="experimentalDesc">Kokeiltavia ominaisuuksia, oletuksena pois</string>
+    <string name="experimentalIntro">Uusia ominaisuuksia kokeilussa. Ne ovat oletuksena pois päältä ja voivat muuttua, siirtyä tavallisiin asetuksiin tai poistua.</string>
+    <string name="quotePeopleTitle">Henkilöt lainausten otsakkeissa</string>
+    <string name="quotePeopleDesc">Lainauksen Lähettäjä, Vastaanottaja ja Kopio näkyvät tunnisteina ja kuvina; napautus avaa henkilökortin. Toimii, kun lainaus on avattu, joten viestit aukeavat yhtä nopeasti.</string>
 </resources>

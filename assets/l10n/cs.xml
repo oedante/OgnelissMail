@@ -3785,4 +3785,9 @@
     <string name="tileIconOnly">Jen ikona</string>
     <string name="tileIconText">Ikona a popisek</string>
     <string name="favoritesTilesHint">Oblíbené jsou dlaždice. Tlačítko před přepínačem udělá dlaždici širokou (ikona a popisek) nebo malou (jen ikona).</string>
+    <string name="experimentalTitle">Experimentální funkce</string>
+    <string name="experimentalDesc">Funkce na zkoušku, ve výchozím stavu vypnuté</string>
+    <string name="experimentalIntro">Nové funkce, které zkoušíme. Ve výchozím stavu jsou vypnuté; mohou se změnit, přejít do hlavního nastavení nebo zmizet.</string>
+    <string name="quotePeopleTitle">Lidé v hlavičkách citací</string>
+    <string name="quotePeopleDesc">Od, Komu a Kopie v citaci jako štítky s portrétem; klepnutí otevře kartu osoby. Funguje při rozbalené citaci, zprávy se otevírají stejně rychle.</string>
 </resources>

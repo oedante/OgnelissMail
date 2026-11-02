@@ -3764,4 +3764,9 @@
     <string name="tileIconOnly">Alleen pictogram</string>
     <string name="tileIconText">Pictogram en tekst</string>
     <string name="favoritesTilesHint">Favorieten staan als tegels. De knop voor de schakelaar maakt een tegel breed (pictogram en tekst) of klein (alleen pictogram).</string>
+    <string name="experimentalTitle">Experimentele functies</string>
+    <string name="experimentalDesc">Functies op proef, standaard uit</string>
+    <string name="experimentalIntro">Nieuwe functies die we uitproberen. Standaard uit; ze kunnen veranderen, naar de gewone instellingen gaan of verdwijnen.</string>
+    <string name="quotePeopleTitle">Personen in geciteerde kopteksten</string>
+    <string name="quotePeopleDesc">Van, Aan en Cc in een citaat worden labels met portret; tik om de persoonskaart te openen. Werkt bij een uitgevouwen citaat, berichten openen even snel.</string>
 </resources>

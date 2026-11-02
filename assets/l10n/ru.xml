@@ -3806,4 +3806,9 @@
     <string name="tileIconOnly">Только значок</string>
     <string name="tileIconText">Значок и подпись</string>
     <string name="favoritesTilesHint">Избранное — плитками. Кнопка перед переключателем: широкая плитка со значком и подписью или маленькая, только значок.</string>
+    <string name="experimentalTitle">Экспериментальный функционал</string>
+    <string name="experimentalDesc">Функции на пробе, по умолчанию выключены</string>
+    <string name="experimentalIntro">Здесь — новые функции, которые мы пробуем. По умолчанию они выключены; могут измениться, перейти в основные настройки или уйти.</string>
+    <string name="quotePeopleTitle">Люди в цитатах</string>
+    <string name="quotePeopleDesc">«От», «Кому» и «Копия» в цитате — плашками с портретом; нажатие открывает карточку человека. Работает, когда цитата раскрыта, — открытие писем не замедляется.</string>
 </resources>

@@ -3806,4 +3806,9 @@
     <string name="tileIconOnly">Tylko ikona</string>
     <string name="tileIconText">Ikona i podpis</string>
     <string name="favoritesTilesHint">Ulubione są kafelkami. Przycisk przed przełącznikiem robi kafelek szeroki (ikona i podpis) lub mały (tylko ikona).</string>
+    <string name="experimentalTitle">Funkcje eksperymentalne</string>
+    <string name="experimentalDesc">Funkcje testowe, domyślnie wyłączone</string>
+    <string name="experimentalIntro">Nowe funkcje, które testujemy. Domyślnie wyłączone; mogą się zmienić, trafić do głównych ustawień lub zniknąć.</string>
+    <string name="quotePeopleTitle">Osoby w nagłówkach cytatów</string>
+    <string name="quotePeopleDesc">Od, Do i DW w cytacie jako etykiety ze zdjęciem; dotknięcie otwiera kartę osoby. Działa po rozwinięciu cytatu, więc wiadomości otwierają się tak samo szybko.</string>
 </resources>

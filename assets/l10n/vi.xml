@@ -3743,4 +3743,9 @@
     <string name="tileIconOnly">Chỉ biểu tượng</string>
     <string name="tileIconText">Biểu tượng và nhãn</string>
     <string name="favoritesTilesHint">Mục yêu thích hiển thị dạng ô. Nút trước công tắc chọn ô rộng (biểu tượng và nhãn) hoặc ô nhỏ (chỉ biểu tượng).</string>
+    <string name="experimentalTitle">Tính năng thử nghiệm</string>
+    <string name="experimentalDesc">Tính năng đang thử, mặc định tắt</string>
+    <string name="experimentalIntro">Các tính năng mới đang thử. Mặc định tắt; có thể thay đổi, chuyển sang cài đặt chính hoặc bị gỡ bỏ.</string>
+    <string name="quotePeopleTitle">Người trong phần đầu trích dẫn</string>
+    <string name="quotePeopleDesc">Người gửi, Người nhận và Cc trong phần trích dẫn hiện thành thẻ có ảnh; chạm để mở thẻ người. Chỉ chạy khi mở rộng trích dẫn nên thư vẫn mở nhanh như trước.</string>
 </resources>

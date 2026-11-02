@@ -3764,4 +3764,9 @@
     <string name="tileIconOnly">Solo icona</string>
     <string name="tileIconText">Icona ed etichetta</string>
     <string name="favoritesTilesHint">I preferiti sono riquadri. Il pulsante prima dell’interruttore rende il riquadro largo (icona ed etichetta) o piccolo (solo icona).</string>
+    <string name="experimentalTitle">Funzioni sperimentali</string>
+    <string name="experimentalDesc">Funzioni in prova, disattivate per impostazione predefinita</string>
+    <string name="experimentalIntro">Nuove funzioni in prova. Sono disattivate per impostazione predefinita e possono cambiare, passare nelle impostazioni principali o sparire.</string>
+    <string name="quotePeopleTitle">Persone nelle intestazioni citate</string>
+    <string name="quotePeopleDesc">Da, A e Cc nella citazione diventano etichette con ritratto; toccane una per aprire la scheda. Agisce a citazione espansa, l’apertura resta veloce.</string>
 </resources>

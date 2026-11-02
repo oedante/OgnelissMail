@@ -3848,4 +3848,9 @@
     <string name="tileIconOnly">الأيقونة فقط</string>
     <string name="tileIconText">الأيقونة والتسمية</string>
     <string name="favoritesTilesHint">تظهر المفضلة كمربعات. الزر قبل المفتاح يجعل المربع عريضًا (أيقونة وتسمية) أو صغيرًا (أيقونة فقط).</string>
+    <string name="experimentalTitle">ميزات تجريبية</string>
+    <string name="experimentalDesc">ميزات قيد التجربة، معطّلة افتراضيًا</string>
+    <string name="experimentalIntro">ميزات جديدة قيد التجربة. معطّلة افتراضيًا وقد تتغير أو تنتقل إلى الإعدادات الرئيسية أو تُزال.</string>
+    <string name="quotePeopleTitle">الأشخاص في ترويسات الاقتباس</string>
+    <string name="quotePeopleDesc">تظهر سطور من وإلى ونسخة في الاقتباس كشارات بصورة؛ انقر لفتح بطاقة الشخص. تعمل عند توسيع الاقتباس، فلا يبطؤ فتح الرسائل.</string>
 </resources>

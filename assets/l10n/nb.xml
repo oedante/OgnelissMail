@@ -3764,4 +3764,9 @@
     <string name="tileIconOnly">Bare ikon</string>
     <string name="tileIconText">Ikon og tekst</string>
     <string name="favoritesTilesHint">Favoritter vises som fliser. Knappen før bryteren gjør en flis bred (ikon og tekst) eller liten (bare ikon).</string>
+    <string name="experimentalTitle">Eksperimentelle funksjoner</string>
+    <string name="experimentalDesc">Funksjoner på prøve, slått av som standard</string>
+    <string name="experimentalIntro">Nye funksjoner vi prøver ut. De er slått av som standard og kan endres, flyttes til de vanlige innstillingene eller fjernes.</string>
+    <string name="quotePeopleTitle">Personer i siterte overskrifter</string>
+    <string name="quotePeopleDesc">Fra, Til og Kopi i sitatet vises som merker med portrett; trykk for å åpne personkortet. Virker når sitatet er utvidet, så meldinger åpnes like raskt.</string>
 </resources>

@@ -3764,4 +3764,9 @@
     <string name="tileIconOnly">Só ícone</string>
     <string name="tileIconText">Ícone e texto</string>
     <string name="favoritesTilesHint">Os favoritos aparecem como blocos. O botão antes do interruptor deixa o bloco largo (ícone e texto) ou pequeno (só ícone).</string>
+    <string name="experimentalTitle">Recursos experimentais</string>
+    <string name="experimentalDesc">Recursos em teste, desativados por padrão</string>
+    <string name="experimentalIntro">Recursos novos em teste. Vêm desativados e podem mudar, ir para as configurações principais ou ser removidos.</string>
+    <string name="quotePeopleTitle">Pessoas nos cabeçalhos citados</string>
+    <string name="quotePeopleDesc">De, Para e Cc da citação viram etiquetas com retrato; toque para abrir o cartão da pessoa. Funciona com a citação aberta, sem deixar a abertura mais lenta.</string>
 </resources>

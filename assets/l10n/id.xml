@@ -3743,4 +3743,9 @@
     <string name="tileIconOnly">Hanya ikon</string>
     <string name="tileIconText">Ikon dan label</string>
     <string name="favoritesTilesHint">Favorit tampil sebagai ubin. Tombol sebelum sakelar membuat ubin lebar (ikon dan label) atau kecil (hanya ikon).</string>
+    <string name="experimentalTitle">Fitur eksperimental</string>
+    <string name="experimentalDesc">Fitur uji coba, nonaktif secara bawaan</string>
+    <string name="experimentalIntro">Fitur baru yang sedang kami coba. Nonaktif secara bawaan; bisa berubah, pindah ke pengaturan utama, atau dihapus.</string>
+    <string name="quotePeopleTitle">Orang di kepala kutipan</string>
+    <string name="quotePeopleDesc">Dari, Kepada, dan Cc dalam kutipan tampil sebagai chip dengan foto; ketuk untuk membuka kartu orang. Berfungsi saat kutipan dibuka, jadi pesan tetap cepat terbuka.</string>
 </resources>

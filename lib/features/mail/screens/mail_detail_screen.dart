@@ -122,6 +122,8 @@ import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../core/theme/ogneliss_look.dart';
 import '../../../core/theme/appearance.dart' show AppearanceLook;
 import '../../../widgets/common/mail_open_motion.dart' show MailHeroTags, MailOpenHandoff, MailSubjectHero;
+import '../../../core/utils/quote_people.dart';
+import '../../../widgets/common/person_photo.dart' show personPhotosProvider;
 
 class MailDetailScreen extends ConsumerStatefulWidget {
   final String emailId;
@@ -1024,7 +1026,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // Письмо целиком («Показать переписку») — модель строится в изоляте.
         if (_nativeBuilding.add(mode)) {
           final gen = _docGen;
-          unawaited(MailBodyProcessor.heavy(full ? html : split.reply, _nativeBuilder(_imagesAllowed, _datesFor(email)))
+          unawaited(_withQuotePeople(full ? html : split.reply, quoteShown: full && split.hasQuote)
+              .then((src) => MailBodyProcessor.heavy(src, _nativeBuilder(_imagesAllowed, _datesFor(email))))
               .then(
             (n) {
               if (gen == _docGen) safeSetState(() => _natives[mode] = n);
@@ -1094,7 +1097,38 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     return (h) => build(h, dates: dates);
   }
 
+  /// Люди в шапках цитат (1.10.3, «Экспериментальный функционал», по
+  /// умолчанию выключено): только когда цитата раскрыта — открытие письма
+  /// не замедляется. Разбор — в изоляте, как подготовка документа; не
+  /// вышло — письмо как есть.
+  Future<String> _withQuotePeople(String html, {required bool quoteShown}) async {
+    if (!quoteShown || !(ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.quotePeople) ?? false)) return html;
+    final photos = ref.read(personPhotosProvider).value ?? const <String, String>{};
+    // Только фото data: — их видно в окне письма без загрузки из сети.
+    final local = {for (final e in photos.entries) if (e.value.startsWith('data:image/')) e.key: e.value};
+    final sw = Stopwatch()..start();
+    try {
+      final out = await MailBodyProcessor.heavy(html, _quotePeopleFn(local));
+      AppLogger.debug('Люди в цитате: ${sw.elapsedMilliseconds} мс');
+      return out;
+    } catch (e) {
+      AppLogger.warning('Люди в цитате: $e');
+      return html;
+    }
+  }
+
+  /// Функция для изолята — статическая: замыкание держит только фото, а не
+  /// экран (State в изолят не передаётся).
+  static String Function(String) _quotePeopleFn(Map<String, String> photos) =>
+      (h) => QuotePeople.enrich(h, photoFor: (e) => photos[e]);
+
   void _onBodyLink(EmailModel email, String url, String? text) {
+    // Плашка человека в шапке цитаты (1.10.3, экспериментально) — карточка.
+    final person = QuotePeople.fromLink(url);
+    if (person != null) {
+      unawaited(showPersonCard(context, email: person.email, name: person.name, accountId: email.accountId));
+      return;
+    }
     if (DateLinks.isDateLink(url)) {
       final t = DateLinks.parse(url);
       if (t != null) unawaited(showDateLinkSheet(context, t, text: text, email: email));
@@ -1331,13 +1365,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         final gen = _docGen;
         final buildKey = '$gen|$docKey';
         if (_docBuilding.add(buildKey)) {
-          unawaited(MailHtmlDocument.buildAsync(
-            full ? html : split.reply,
+          unawaited(_withQuotePeople(full ? html : split.reply, quoteShown: full && split.hasQuote)
+              .then((src) => MailHtmlDocument.buildAsync(
+            src,
             allowRemoteImages: _imagesAllowed,
             keepCid: true,
             clip: docKey == baseKey,
             dates: _datesFor(email),
-          ).catchError((Object e) {
+          )).catchError((Object e) {
             AppLogger.warning('Подготовка письма к показу: $e');
             return const MailHtmlDocument('<!DOCTYPE html><html><body></body></html>', {});
           }).then((d) {

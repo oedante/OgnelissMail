@@ -3764,4 +3764,9 @@
     <string name="tileIconOnly">Csak ikon</string>
     <string name="tileIconText">Ikon és felirat</string>
     <string name="favoritesTilesHint">A kedvencek csempékként jelennek meg. A kapcsoló előtti gomb széles (ikon és felirat) vagy kicsi (csak ikon) csempét választ.</string>
+    <string name="experimentalTitle">Kísérleti funkciók</string>
+    <string name="experimentalDesc">Kipróbálható funkciók, alapból kikapcsolva</string>
+    <string name="experimentalIntro">Új funkciók, amelyeket kipróbálunk. Alapból ki vannak kapcsolva; változhatnak, átkerülhetnek a fő beállításokba vagy megszűnhetnek.</string>
+    <string name="quotePeopleTitle">Személyek az idézett fejlécekben</string>
+    <string name="quotePeopleDesc">Az idézet Feladó, Címzett és Másolat sora portrés címkékké válik; koppintással megnyílik a személy kártyája. Kinyitott idézetnél működik, a megnyitás nem lassul.</string>
 </resources>

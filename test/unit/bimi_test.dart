@@ -185,6 +185,28 @@ void main() {
       expect(r.cache.lookup('down.example').hit, isTrue, reason: 'сбой — коротко в памяти');
     });
 
+    test('счётчики для диагностики: логотип, без логотипа, ошибка, кэш (1.10.1)', () async {
+      final before = (BimiStats.requests, BimiStats.logos, BimiStats.empty, BimiStats.errors, BimiStats.cached);
+      final client = MockClient((req) async => switch (req.url.queryParameters['d']) {
+            'brand.example' => http.Response(jsonEncode({'policy': 'reject', 'logo': _logo}), 200),
+            'plain.example' => http.Response(jsonEncode({'policy': 'none', 'logo': null}), 200),
+            _ => http.Response('{"error":"unavailable"}', 503),
+          });
+      final r = resolver(client, _MemStore());
+      await r.logoFor('brand.example');
+      await r.logoFor('brand.example');
+      await r.logoFor('plain.example');
+      await r.logoFor('down.example');
+      BimiStats.eligible('brand.example');
+      expect(BimiStats.requests - before.$1, 3);
+      expect(BimiStats.logos - before.$2, 1);
+      expect(BimiStats.empty - before.$3, 1);
+      expect(BimiStats.errors - before.$4, 1);
+      expect(BimiStats.cached - before.$5, 1);
+      expect(BimiStats.summary(), contains('с логотипом'));
+      expect(BimiStats.summary(), isNot(contains('brand.example')), reason: 'домены в диагностику не пишутся');
+    });
+
     test('сервер без /bimi — запросы прекращаются', () async {
       var calls = 0;
       final client = MockClient((req) async {

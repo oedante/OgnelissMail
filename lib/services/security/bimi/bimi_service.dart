@@ -137,6 +137,36 @@ class BimiCache {
 
 /// Запросы к серверу: по одному на домен, не больше [maxConcurrent] сразу и
 /// [maxPerMinute] в минуту.
+/// Счётчики логотипов за запуск — для пакета диагностики (1.10.1: «непонятно,
+/// работает ли BIMI»). Домены не хранятся и не пишутся — только их число.
+abstract final class BimiStats {
+  /// Сколько разных доменов отправителей с «dmarc=pass» от сервера
+  /// пользователя появилось в ленте (только у них логотип возможен).
+  static final Set<int> _eligible = {};
+  static int requests = 0;
+  static int logos = 0;
+  static int empty = 0;
+  static int errors = 0;
+  static int cached = 0;
+  static int? stoppedStatus;
+
+  static void eligible(String domain) {
+    if (_eligible.length < 10000) _eligible.add(domain.hashCode);
+  }
+
+  static int get eligibleDomains => _eligible.length;
+
+  static String summary() {
+    final b = StringBuffer('доменов с подписью DMARC в ленте $eligibleDomains; '
+        'запросов к серверу $requests: с логотипом $logos, без логотипа $empty, ошибок $errors; '
+        'из кэша $cached');
+    if (stoppedStatus != null) {
+      b.write('; сервер ответил HTTP $stoppedStatus — логотипы выключены до перезапуска');
+    }
+    return b.toString();
+  }
+}
+
 class BimiResolver {
   BimiResolver({
     required String baseUrl,
@@ -176,7 +206,10 @@ class BimiResolver {
     if (_stopped) return null;
     await cache.load();
     final c = cache.lookup(domain);
-    if (c.hit) return c.svg;
+    if (c.hit) {
+      BimiStats.cached++;
+      return c.svg;
+    }
     // Тело в фигурных скобках: remove вернул бы этот же Future, и
     // whenComplete ждал бы сам себя.
     return _inflight[domain] ??= _fetch(domain).whenComplete(() {
@@ -189,6 +222,7 @@ class BimiResolver {
     try {
       if (_stopped) return null;
       final uri = Uri.parse('$_base/bimi').replace(queryParameters: {'d': domain});
+      BimiStats.requests++;
       final r = await _client
           .get(uri, headers: {'x-api-key': apiKey, 'Accept': 'application/json'})
           .timeout(const Duration(seconds: 15));
@@ -196,20 +230,29 @@ class BimiResolver {
         case 200:
           final svg = parseResponse(r.body);
           cache.put(domain, svg);
+          if (svg != null) {
+            BimiStats.logos++;
+          } else {
+            BimiStats.empty++;
+          }
           return svg;
         case 400:
+          BimiStats.empty++;
           cache.put(domain, null);
           return null;
         case 401:
         case 404:
           _stopped = true;
+          BimiStats.stoppedStatus = r.statusCode;
           AppLogger.info('BIMI: сервер не отвечает на /bimi (HTTP ${r.statusCode}) — логотипы до перезапуска выключены');
           return null;
         default:
+          BimiStats.errors++;
           cache.put(domain, null, transient: true);
           return null;
       }
     } catch (e) {
+      BimiStats.errors++;
       cache.put(domain, null, transient: true);
       return null;
     } finally {

@@ -207,13 +207,15 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
   /// Высоты оцениваются (заголовок + плитки контактов): ListView.builder с
   /// переменной высотой не даёт точного offset, но оценка попадает в нужную
   /// область, а дальше пользователь видит заголовок буквы.
-  void _jumpToLetter(List<String> keys, Map<String, List<dynamic>> grouped, String letter, {int pinned = 0}) {
+  void _jumpToLetter(List<String> keys, Map<String, List<dynamic>> grouped, String letter,
+      {int pinned = 0, int topBands = 1}) {
     // Плашка буквы (SectionBand.light: 28 + отступы 12 и 4) и строка
     // контакта (портрет 44 + отступы 8 + линия 1), 1.6.40.
     const headerHeight = 44.0;
     const tileHeight = 61.0;
     // Закреплённые (1.6.49+95) — над буквами.
-    var offset = pinned == 0 ? 0.0 : headerHeight + tileHeight * pinned;
+    // Над буквами — «Закреплённые» и «VIP» (1.10.3): по плашке на раздел.
+    var offset = pinned == 0 ? 0.0 : headerHeight * topBands + tileHeight * pinned;
     for (final k in keys) {
       if (k == letter) break;
       offset += headerHeight + tileHeight * (grouped[k]?.length ?? 0);
@@ -371,17 +373,25 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
                 // Закреплённые — отдельным разделом сверху, в буквах их нет;
                 // по алфавиту, как остальной список (1.7.1: раньше — в порядке
                 // закрепления). С 1.8.12 — и VIP (звёздочка в строке).
-                final pinKeySet = pinKeys.toSet();
-                final seen = <String>{};
-                bool top(Contact c) =>
-                    pinKeySet.contains(contactPinKey(c)) || vip.contains(c.email.trim().toLowerCase());
-                final pinned = _search.isEmpty && (pinKeys.isNotEmpty || vip.isNotEmpty)
-                    ? [
-                        for (final c in filtered)
-                          if (top(c) && seen.add(contactPinKey(c))) c,
-                      ]
-                    : <Contact>[];
-                pinned.sort((a, b) => a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));
+                // 1.10.3 (замечание владельца 03.11.2026: «открепление и
+                // закрепление не обновляется»): VIP — своим разделом под
+                // закреплёнными. Раньше VIP и закреплённые были одним
+                // разделом, и закреплённый VIP после «Открепить» оставался на
+                // месте — казалось, что ничего не произошло.
+                final showTop = _search.isEmpty && (pinKeys.isNotEmpty || vip.isNotEmpty);
+                final split = splitTopContacts<Contact>(showTop ? filtered : const [],
+                    key: contactPinKey,
+                    email: (c) => c.email,
+                    name: (c) => c.displayName,
+                    pinKeys: pinKeys.toSet(),
+                    vipEmails: vip);
+                final pinnedOnly = split.pinned;
+                final vipOnly = split.vip;
+                final topGroups = <(String, List<Contact>)>[
+                  if (pinnedOnly.isNotEmpty) (l10n.tr('pinnedBand'), pinnedOnly),
+                  if (vipOnly.isNotEmpty) (l10n.tr('vip'), vipOnly),
+                ];
+                final pinned = [...pinnedOnly, ...vipOnly];
                 final pinnedSet = {for (final c in pinned) contactPinKey(c)};
                 // Group by first letter
                 final grouped = <String, List<Contact>>{};
@@ -399,20 +409,21 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
                     Expanded(
                       child: ListView.builder(
                         controller: _listController,
-                        itemCount: keys.length + (pinned.isEmpty ? 0 : 1) + (galSection ? 1 : 0),
+                        itemCount: keys.length + topGroups.length + (galSection ? 1 : 0),
                         itemBuilder: (ctx, index) {
-                          if (galSection && index == keys.length + (pinned.isEmpty ? 0 : 1)) {
+                          if (galSection && index == keys.length + topGroups.length) {
                             return _GalSection(rows: galRows, searching: galPending, l10n: l10n);
                           }
-                          final top = pinned.isNotEmpty && index == 0;
-                          final letter = top ? '' : keys[index - (pinned.isEmpty ? 0 : 1)];
-                          final group = top ? pinned : grouped[letter]!;
+                          final top = index < topGroups.length;
+                          final letter = top ? topGroups[index].$1 : keys[index - topGroups.length];
+                          final group = top ? topGroups[index].$2 : grouped[letter]!;
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Буква — лёгкой плашкой, как даты в ленте писем.
                               SectionBand.light(
-                                  title: top ? l10n.tr('pinnedBand') : letter,
+                                  key: top ? ValueKey('contactsBand_$index') : null,
+                                  title: letter,
                                   count: group.length > 1 ? group.length : null),
                               for (final (j, c) in group.indexed) ...[
                                 _ContactTile(
@@ -444,7 +455,8 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
                         children: keys
                             .map((k) => GestureDetector(
                                   behavior: HitTestBehavior.opaque,
-                                  onTap: () => _jumpToLetter(keys, grouped, k, pinned: pinned.length),
+                                  onTap: () => _jumpToLetter(keys, grouped, k,
+                                      pinned: pinned.length, topBands: topGroups.length),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 3),
                                     child: Text(k,
@@ -870,6 +882,7 @@ class _ContactTile extends ConsumerWidget {
     // адрес). Компания у сотрудников своей организации одна и та же и
     // повторялась в каждой строке — теперь видна в карточке контакта.
     // Кнопки — меньше и на постоянных местах.
+    final pinnedHere = ref.watch(pinnedContactsProvider.select((l) => l.contains(contactPinKey(contact))));
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sub = [contact.jobTitle, contact.department, contact.company, contact.email]
@@ -906,10 +919,21 @@ class _ContactTile extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500)),
+                  Row(children: [
+                    Flexible(
+                      child: Text(name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500)),
+                    ),
+                    // Закреплён — значок после имени (1.10.3): видно, что
+                    // «Закрепить» сработало, и у VIP тоже.
+                    if (pinnedHere) ...[
+                      const SizedBox(width: Space.xs),
+                      Icon(AppIcons.push_pin,
+                          key: const ValueKey('contactPinned'), size: 14, fill: 1, color: theme.colorScheme.primary),
+                    ],
+                  ]),
                   if (sub.isNotEmpty)
                     Text(sub,
                         maxLines: 1,

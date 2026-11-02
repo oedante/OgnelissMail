@@ -36,6 +36,28 @@ class PinnedContactsNotifier extends Notifier<List<String>> {
 
 final pinnedContactsProvider = NotifierProvider<PinnedContactsNotifier, List<String>>(PinnedContactsNotifier.new);
 
+/// Разделы над буквами (1.10.3): «Закреплённые», под ними «VIP» —
+/// закреплённый VIP только в первом. Оба по алфавиту. Раньше это был один
+/// раздел, и «Открепить» у VIP ничего видимо не меняло (замечание владельца
+/// 03.11.2026). Один контакт (ящик и id) — один раз.
+({List<T> pinned, List<T> vip}) splitTopContacts<T>(
+  Iterable<T> all, {
+  required String Function(T) key,
+  required String Function(T) email,
+  required String Function(T) name,
+  required Set<String> pinKeys,
+  required Set<String> vipEmails,
+}) {
+  final seen = <String>{};
+  final pinned = [for (final c in all) if (pinKeys.contains(key(c)) && seen.add(key(c))) c];
+  final vip = [
+    for (final c in all)
+      if (vipEmails.contains(email(c).trim().toLowerCase()) && seen.add(key(c))) c,
+  ];
+  int byName(T a, T b) => name(a).toLowerCase().compareTo(name(b).toLowerCase());
+  return (pinned: pinned..sort(byName), vip: vip..sort(byName));
+}
+
 /// Адрес в списке VIP (без учёта регистра).
 bool isVipEmail(FocusModeState s, String email) {
   final e = email.trim().toLowerCase();

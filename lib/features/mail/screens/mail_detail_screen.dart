@@ -1459,6 +1459,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         const SingleActivator(LogicalKeyboardKey.delete): () => _deleteEmail(email, l10n),
         if (!widget.embedded)
           const SingleActivator(LogicalKeyboardKey.escape): () => Navigator.of(context).maybePop(),
+        // Ещё сочетания Outlook (1.10.x, просьба владельца 02.11.2026):
+        // Ctrl+Q — прочитано, Ctrl+U — не прочитано, Insert — флажок,
+        // Backspace — в архив, Ctrl+P — печать.
+        const SingleActivator(LogicalKeyboardKey.keyQ, control: true): () => _setReadKey(email, true),
+        const SingleActivator(LogicalKeyboardKey.keyU, control: true): () => _setReadKey(email, false),
+        const SingleActivator(LogicalKeyboardKey.insert): () => _toggleFlag(email),
+        const SingleActivator(LogicalKeyboardKey.backspace): () => unawaited(_archiveEmail(email, l10n)),
+        const SingleActivator(LogicalKeyboardKey.keyP, control: true): () => unawaited(_exportPdf(email, l10n)),
       },
       child: Focus(
         autofocus: true,
@@ -3269,6 +3277,16 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       ),
     );
     _closeAfterAction();
+  }
+
+  /// Ctrl+Q / Ctrl+U (как в Outlook): прочитано или не прочитано.
+  void _setReadKey(EmailModel email, bool read) {
+    if (email.isRead == read) return;
+    final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+    if (acc == null) return;
+    unawaited(ref.read(emailActionsProvider).setRead(acc, email.id, email.folderId, read));
+    ref.read(emailsProvider.notifier).applyLocalFlags(email.id, isRead: read);
+    safeSetState(() => _email = email.copyWith(isRead: read));
   }
 
   /// Заблокировать (или разблокировать) отправителя письма (1.10.x).

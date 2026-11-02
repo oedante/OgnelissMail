@@ -1,13 +1,16 @@
 // lib/widgets/common/keyboard_shortcuts.dart
-// Горячие клавиши для desktop (Windows, macOS, Linux):
-// - Ctrl+N — новое письмо
-// - Ctrl+R — ответить
-// - Ctrl+Shift+R — ответить всем
-// - Ctrl+F — переслать
-// - Ctrl+Enter — отправить
-// - Delete — удалить
-// - Ctrl+Shift+F — поиск
-// - Ctrl+1..5 — переключение вкладок
+// Горячие клавиши для desktop (Windows, macOS, Linux) — как в Outlook
+// (решение владельца 02.11.2026):
+// - Ctrl+N, Ctrl+Shift+M — новое письмо
+// - Ctrl+R — ответить, Ctrl+Shift+R — ответить всем, Ctrl+F — переслать
+// - Ctrl+Enter — отправить (экран письма)
+// - Delete — удалить, Backspace — в архив, Insert — флажок (экран письма)
+// - Ctrl+Q / Ctrl+U — прочитано / не прочитано, Ctrl+P — печать (экран письма)
+// - Ctrl+E, F3, Ctrl+Shift+F — поиск
+// - F5, F9 — проверить почту
+// - Ctrl+Shift+I — «Входящие»
+// - Ctrl+1..5 — почта, календарь, контакты, задачи…
+// - Ctrl+K — командная палитра
 // - Esc — закрыть/отмена
 
 import 'dart:io';
@@ -84,8 +87,18 @@ class KeyboardShortcutsWrapper extends StatelessWidget {
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyE):
             const _SearchIntent(),
 
-        // Обновить
+        // F3 — поиск, Ctrl+Shift+M — новое письмо откуда угодно (Outlook).
+        const SingleActivator(LogicalKeyboardKey.f3): const _SearchIntent(),
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift, LogicalKeyboardKey.keyM):
+            const _ComposeIntent(),
+        // Ctrl+Shift+I — «Входящие» (Outlook): вкладка почты.
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift, LogicalKeyboardKey.keyI):
+            const _SwitchTabIntent(0),
+
+        // Обновить; F9 — «Отправить и получить» в Outlook.
         const SingleActivator(LogicalKeyboardKey.f5):
+            const _RefreshIntent(),
+        const SingleActivator(LogicalKeyboardKey.f9):
             const _RefreshIntent(),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift, LogicalKeyboardKey.keyS):
             const _RefreshIntent(),

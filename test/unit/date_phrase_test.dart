@@ -227,13 +227,22 @@ void main() {
     final text = block.toString(); // около 115 тысяч знаков
     expect(text.length, greaterThan(100000));
     DatePhrase.find(text, ref: ref); // прогрев
-    final sw = Stopwatch()..start();
-    final found = DatePhrase.find(text, ref: ref);
-    sw.stop();
+    // Лучший из пяти замеров: при полном прогоне `flutter test` соседние
+    // тесты идут параллельно и отнимают процессор — один замер на Windows
+    // владельца (02.11.2026) дал 513 мс при 127 мс в одиночку. Минимум
+    // показывает скорость самого разбора, а не загрузку машины.
+    var best = 1 << 30;
+    var found = <DateMention>[];
+    for (var i = 0; i < 5; i++) {
+      final sw = Stopwatch()..start();
+      found = DatePhrase.find(text, ref: ref);
+      sw.stop();
+      if (sw.elapsedMilliseconds < best) best = sw.elapsedMilliseconds;
+    }
     expect(found.length, greaterThan(400));
     // Бюджет с запасом на медленную машину CI: на телефоне — заметно быстрее.
-    expect(sw.elapsedMilliseconds, lessThan(400), reason: '${sw.elapsedMilliseconds} мс');
+    expect(best, lessThan(400), reason: '$best мс');
     // ignore: avoid_print
-    print('Даты в рассылке ${text.length} знаков: ${sw.elapsedMilliseconds} мс');
+    print('Даты в рассылке ${text.length} знаков: $best мс (лучший из 5)');
   });
 }

@@ -40,6 +40,7 @@ class BimiAvatar extends ConsumerWidget {
     if (_domains.containsKey(key)) return _domains[key];
     final d = bimiDmarcDomain(authResults, email);
     _domains[key] = d;
+    if (d != null) BimiStats.eligible(d);
     if (_domains.length > 500) _domains.remove(_domains.keys.first);
     return d;
   }

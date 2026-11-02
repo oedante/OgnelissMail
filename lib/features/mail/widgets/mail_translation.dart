@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/logging/app_logger.dart';
+import '../../../core/utils/quote_splitter.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../data/models/email_model.dart';
@@ -115,7 +116,7 @@ class MailTranslationController extends ChangeNotifier {
     final settings = ref.read(settingsProvider);
     final sample = await _sample(e);
     if (sample.length < 20 || _emailId != e.id) return;
-    final lang = await t.detectLanguage(sample);
+    final lang = await _detectLang(t, e);
     if (_emailId != e.id || lang == null) return;
     from = lang;
     to = normalizeLang(_appLang());
@@ -140,12 +141,31 @@ class MailTranslationController extends ChangeNotifier {
     toName = names[tt] ?? tt;
   }
 
+  /// Образец текста для определения языка — свежий текст письма, без
+  /// цитаты (1.10.1): у ответа с цитатой на другом языке определитель ML
+  /// Kit не был уверен («und»), и перевод падал с «Не удалось перевести».
   static Future<String> _sample(EmailModel e) async {
-    final plain = e.bodyPlain?.trim() ?? '';
+    final plain = replyPartOfPlain(e.bodyPlain ?? '').trim();
     if (plain.length >= 40) return plain.length > 1500 ? plain.substring(0, 1500) : plain;
     final html = e.bodyHtml ?? '';
     if (html.isEmpty) return plain;
-    return MailBodyHeavy.sample(html);
+    final reply = await MailBodyHeavy.replySample(html);
+    return reply.length >= 20 ? reply : MailBodyHeavy.sample(html);
+  }
+
+  @visibleForTesting
+  static Future<String> debugSample(EmailModel e) => _sample(e);
+
+  /// Язык письма: по свежему тексту, а не вышло — по первым строкам (там
+  /// реже смешаны языки).
+  static Future<String?> _detectLang(Translator t, EmailModel e) async {
+    final sample = await _sample(e);
+    final lang = await t.detectLanguage(sample);
+    if (lang != null || sample.length <= 300) return lang;
+    final head = sample.substring(0, 300);
+    final again = await t.detectLanguage(head);
+    if (again == null) AppLogger.debug('Перевод: язык письма не определён (образец ${sample.length} знаков)');
+    return again;
   }
 
   /// Письмо, как его показать: с переводом или как есть.
@@ -175,7 +195,7 @@ class MailTranslationController extends ChangeNotifier {
     }
     _resetFor(e.id);
     if (from == null) {
-      final lang = await t.detectLanguage(await _sample(e));
+      final lang = await _detectLang(t, e);
       if (lang == null) {
         showInlineError(l10n.tr('translateFailed'));
         return;
@@ -264,6 +284,7 @@ class MailBodyHeavy {
   static List<String> _segments(String html) => HtmlTextSegments.parse(html).texts;
   static String _rebuild((String, List<String>) a) => HtmlTextSegments.parse(a.$1).rebuild(a.$2);
   static String _sample(String html) => visibleTextSample(html);
+  static String _replySample(String html) => visibleTextSample(splitQuotedHtml(html).reply);
 
   static Future<List<String>> segments(String html) =>
       html.length < _threshold ? SynchronousFuture(_segments(html)) : compute(_segments, html);
@@ -274,6 +295,10 @@ class MailBodyHeavy {
 
   static Future<String> sample(String html) =>
       html.length < _threshold ? SynchronousFuture(_sample(html)) : compute(_sample, html);
+
+  /// Образец свежего текста — без свёрнутой цитаты (как на экране письма).
+  static Future<String> replySample(String html) =>
+      html.length < _threshold ? SynchronousFuture(_replySample(html)) : compute(_replySample, html);
 }
 
 /// Плашка перевода над текстом письма.

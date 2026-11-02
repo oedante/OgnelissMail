@@ -237,3 +237,24 @@ void _keepFrom(dom.Node cut, dom.Element body) {
     cur = parent;
   }
 }
+
+/// Свежий текст письма без цитаты — для простого текста (1.10.1). Строки,
+/// начинающиеся с «>», пропускаются; на шапке цитаты («On … wrote:»,
+/// «… пишет:», «-----Original Message-----», «От: … Отправлено: …») текст
+/// обрывается. Перевод определяет язык письма по этой части: цитата на
+/// другом языке сбивала определение — «Не удалось перевести» (замечание
+/// владельца 02.11.2026).
+String replyPartOfPlain(String plain) {
+  final lines = plain.split('\n');
+  final out = <String>[];
+  for (var i = 0; i < lines.length; i++) {
+    final t = lines[i].trim();
+    if (t.startsWith('>')) continue;
+    if (t.isNotEmpty && _headerLine.hasMatch(t)) break;
+    if (t.isNotEmpty && _outlookHeader.hasMatch(lines.skip(i).take(6).join('\n').trim())) break;
+    out.add(lines[i]);
+  }
+  final reply = out.join('\n').trim();
+  return reply.isEmpty ? plain : reply;
+}
+

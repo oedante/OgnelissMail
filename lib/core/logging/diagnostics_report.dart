@@ -22,6 +22,8 @@ import 'package:path_provider/path_provider.dart';
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../../data/providers/database_provider.dart';
 import '../../services/mail/engine/mail_engine_service.dart';
+import '../../services/security/bimi/bimi_service.dart' show BimiResolver, BimiStats;
+import '../../features/settings/providers/settings_provider.dart' show settingsProvider;
 import '../../services/security/device_security_service.dart';
 import '../../services/security/eas_policy_store.dart';
 import '../constants/app_constants.dart';
@@ -101,6 +103,12 @@ class DiagnosticsReport {
     }
     line('Устройство: ${await _device()}');
     line('Подробный журнал: ${AppLogger.detailed ? 'до ${AppLogger.detailedUntil}' : 'выключен'}');
+    // Логотипы отправителей (1.10.1): видно, включены ли и что ответил сервер.
+    try {
+      final on = ref.read(settingsProvider).bimiLogos;
+      line('Логотипы BIMI: ${!BimiResolver.configured ? 'нет сервера в сборке (OAUTH_PROXY_URL/KEY)' : on ? 'включены' : 'выключены в настройках'}'
+          '${BimiResolver.configured && on ? '; ${BimiStats.summary()}' : ''}');
+    } catch (_) {}
     // Фоновая работа: ограничения устройства и история запусков.
     try {
       final d = await PlatformDiagnostics.collect();

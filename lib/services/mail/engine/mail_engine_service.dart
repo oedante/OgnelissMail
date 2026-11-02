@@ -1666,10 +1666,14 @@ class MailEngineService {
     final eas = await _easEngine(account);
     if (eas == null) return null;
     final e = email.toLowerCase();
+    // Адресная книга приостановлена после сбоя (502, обрыв) — ошибкой, а не
+    // «нет фото»: иначе адрес помечался бы «без фото» на неделю.
+    if (eas.galPaused) throw StateError('GAL: поиск приостановлен после сбоя');
     final list = await eas.searchGal(e, maxResults: 3, withPictures: true);
     for (final g in list) {
       if (g.email.toLowerCase() == e) return _pictureUri(g.picture);
     }
+    if (eas.galPaused) throw StateError('GAL: сервер недоступен');
     return null;
   }
 

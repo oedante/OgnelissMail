@@ -2162,6 +2162,7 @@ class SyncService {
       final photos = MessengerNotify.styleOn(_prefs)
           ? await _senderPhotos([for (final e in singles) e.from.email])
           : const <String, String>{};
+      final lines = NotificationLines.of(_prefs, work: account.isWork);
       for (var i = 0; i < singles.length; i++) {
         final e = singles[i];
         await service.showEmailNotification(
@@ -2186,6 +2187,8 @@ class SyncService {
           isInvite: e.meeting?.isRequest == true,
           senderPhoto: photos[e.from.email.trim().toLowerCase()],
           accountLabel: shortLabel,
+          previewLines: lines,
+          fullText: NotificationLines.wantsBody(lines) ? e.bodyPlain : null,
         );
       }
 
@@ -3771,6 +3774,13 @@ class SyncService {
     Map<String, dynamic>? payload,
   }) async {
     final db = _ref.read(databaseProvider);
+    // Ящик уже удалён (операция ждала сервер, пока его удаляли): ставить в
+    // очередь нечего — выполнить её некому, а счётчик очереди висел бы.
+    final alive = await (db.select(db.accounts)..where((a) => a.id.equals(accountId))).getSingleOrNull();
+    if (alive == null) {
+      AppLogger.info('Очередь: ящик $accountId удалён — операция $operationType не ставится');
+      return;
+    }
     // Повторная операция того же типа по тому же объекту обновляет уже
     // стоящую запись, а не пересоздаёт её: так сохраняется её место в
     // очереди (порядок «перенести → удалить» не переворачивается). Для

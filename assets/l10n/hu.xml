@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Megjelenítés a naptárban</string>
     <string name="mailDates">Dátumok az üzenet szövegében</string>
     <string name="mailDatesDesc">Koppintson egy dátumra: értekezlet, emlékeztető vagy az adott nap a naptárban</string>
-    <string name="quickEventTitle">Esemény egy mondatban</string>
-    <string name="quickEventHint">Például: Hívás Annával pénteken 15-kor egy órára</string>
-    <string name="quickEventMore">További részletek</string>
+    <string name="quickTaskTitle">Feladat egy mondatban</string>
+    <string name="quickTaskHint">Például: Anna felhívása holnap 15-kor !</string>
     <string name="createTask">Feladat létrehozása</string>
     <string name="date">Dátum</string>
     <string name="dayPlan">Napi terv</string>
@@ -3760,4 +3759,14 @@
     <string name="composeDropHint">Fájlok csatolásához engedje el itt</string>
     <string name="openInNewWindow">Megnyitás új ablakban</string>
     <string name="openInMainWindow">Megnyitás a főablakban</string>
+    <string name="notifyLinesTitle">Szövegsorok az értesítésekben</string>
+    <string name="notifyLinesHint">Hány sort mutasson az üzenetből a kinyitott értesítés. 8 és 12 sorhoz a szövegnek a készüléken kell lennie, különben az eleje látszik.</string>
+    <string name="tileIconOnly">Csak ikon</string>
+    <string name="tileIconText">Ikon és felirat</string>
+    <string name="favoritesTilesHint">A kedvencek csempékként jelennek meg. A kapcsoló előtti gomb széles (ikon és felirat) vagy kicsi (csak ikon) csempét választ.</string>
+    <string name="experimentalTitle">Kísérleti funkciók</string>
+    <string name="experimentalDesc">Kipróbálható funkciók, alapból kikapcsolva</string>
+    <string name="experimentalIntro">Új funkciók, amelyeket kipróbálunk. Alapból ki vannak kapcsolva; változhatnak, átkerülhetnek a fő beállításokba vagy megszűnhetnek.</string>
+    <string name="quotePeopleTitle">Személyek az idézett fejlécekben</string>
+    <string name="quotePeopleDesc">Az idézet Feladó, Címzett és Másolat sora portrés címkékké válik; koppintással megnyílik a személy kártyája. Kinyitott idézetnél működik, a megnyitás nem lassul.</string>
 </resources>

@@ -26,9 +26,7 @@ import '../ui/action_sheet.dart';
 import '../common/peek_card.dart';
 import '../common/hero_email_transition.dart' show HeroEmailAvatar;
 import '../../features/settings/providers/account_groups_provider.dart' show activeGroupIdProvider, accountGroupsProvider;
-import '../../features/tasks/widgets/task_editor_sheet.dart' show showTaskEditor;
-import '../../features/tasks/task_quick_parser.dart' show ParsedTask;
-import '../../features/calendar/widgets/quick_event_sheet.dart' show showQuickEventSheet;
+import '../../features/tasks/widgets/quick_task_sheet.dart' show showQuickTaskSheet;
 import 'dart:io';
 import '../../features/settings/providers/feature_flags_provider.dart';
 import 'package:flutter/foundation.dart';
@@ -60,6 +58,7 @@ import '../../core/logging/app_logger.dart';
 import '../../core/permissions/app_permissions.dart';
 import '../../services/notifications/reminder_scheduler_service.dart';
 import '../../services/archive/archive_runner.dart' show archiveRunnerProvider;
+import '../common/account_avatar.dart';
 
 class MainShell extends ConsumerStatefulWidget {
   final Widget child;
@@ -288,10 +287,6 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       body = Scaffold(
         body: _withSyncOverlay(Column(
           children: [
-            // Ошибки синхронизации (временные, с автоскрытием и кнопкой
-            // повтора). Офлайн сюда НЕ попадает — для него компактная
-            // пиктограмма в правом верхнем углу, см. OfflineIndicator.
-            const ErrorBanner(),
             if (focusState.isEnabled && focusState.isCurrentlyActive)
               _buildFocusBanner(l10n, theme),
             Expanded(
@@ -365,10 +360,6 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       body = Scaffold(
         body: _withSyncOverlay(Column(
           children: [
-            // Ошибки синхронизации (временные, с автоскрытием и кнопкой
-            // повтора). Офлайн сюда НЕ попадает — для него компактная
-            // пиктограмма в правом верхнем углу, см. OfflineIndicator.
-            const ErrorBanner(),
             if (focusState.isEnabled && focusState.isCurrentlyActive)
               _buildFocusBanner(l10n, theme),
             Expanded(child: AnimatedContentSwitcher(child: KeyedSubtree(key: ValueKey(_currentIndex), child: widget.child))),
@@ -642,8 +633,11 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       for (final a in accounts)
         ActionSheetItem(
           icon: a.id == active && !all ? AppIcons.check_circle : AppIcons.forAccountType(a.type.name),
+          // Портрет ящика (1.10.3); текущий — с галочкой справа.
+          leading: AccountAvatar(account: a),
           label: a.displayName.isEmpty ? a.email : a.displayName,
           subtitle: a.email,
+          checked: a.id == active && !all,
           value: a.id,
         ),
     ]);
@@ -684,14 +678,11 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
                   value: 'task'),
             ]);
             if (!mounted || !context.mounted) return;
-            // Встреча одной фразой (1.9.x), «Подробнее» — полный редактор.
-            if (kind == 'event') unawaited(showQuickEventSheet(context));
-            // Срок по умолчанию — сегодня: задача сразу видна в календаре.
-            if (kind == 'task') {
-              final now = DateTime.now();
-              unawaited(showTaskEditor(context,
-                  draft: ParsedTask(title: '', due: DateTime(now.year, now.month, now.day))));
-            }
+            // Встреча — сразу редактор (1.10.2, просьба владельца: «встречи
+            // открывать как есть»); задача — одной фразой, потом карточка
+            // задачи с заполненными полями (срок по умолчанию — сегодня).
+            if (kind == 'event') unawaited(context.push('/create-event'));
+            if (kind == 'task') unawaited(showQuickTaskSheet(context));
           });
     }
     if (path.startsWith('/contacts')) {
@@ -728,15 +719,12 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
     if (anchor == null) return;
     unawaited(showHoldMenu(context, anchor: anchor, items: [
       PeekAction(icon: AppIcons.edit, label: l10n.tr('newMessage'), onTap: () => context.push('/compose')),
-      PeekAction(icon: AppIcons.event, label: l10n.tr('createMeeting'), onTap: () => showQuickEventSheet(context)),
+      PeekAction(icon: AppIcons.event, label: l10n.tr('createMeeting'), onTap: () => context.push('/create-event')),
       PeekAction(
         icon: AppIcons.add_task,
         label: l10n.tr('newTask'),
-        onTap: () {
-          // Срок по умолчанию — сегодня, как у «+» в календаре.
-          final now = DateTime.now();
-          unawaited(showTaskEditor(context, draft: ParsedTask(title: '', due: DateTime(now.year, now.month, now.day))));
-        },
+        // Задача одной фразой (1.10.2), потом карточка задачи.
+        onTap: () => unawaited(showQuickTaskSheet(context)),
       ),
     ]));
   }
@@ -746,7 +734,16 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
   /// часами и значками (приложение занимает весь экран, edge-to-edge).
   // Полоса синхронизации сверху убрана (05.10.2026): состояние показывает
   // SyncStatusDot рядом с названием папки.
-  Widget _withSyncOverlay(Widget child) => child;
+  /// Ошибки синхронизации (временные, с автоскрытием и кнопкой повтора) —
+  /// плашкой поверх экрана сверху (1.10.2, замечание владельца: полоса в
+  /// разметке сдвигала письмо вниз, а уходя — поднимала обратно). Офлайн
+  /// сюда не попадает — для него пиктограмма OfflineIndicator в шапке.
+  Widget _withSyncOverlay(Widget child) => Stack(
+        children: [
+          Positioned.fill(child: child),
+          const Positioned(top: 0, left: 0, right: 0, child: ErrorBanner()),
+        ],
+      );
 
   void _onTabChanged(int index) {
     if (index != _currentIndex) {

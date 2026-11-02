@@ -731,10 +731,16 @@ class AppMenuEntry<T> {
   /// Уровень вложенности (дерево папок): отступ слева.
   final int indent;
 
+  /// Вместо значка — свой виджет (портрет ящика, 1.10.3: «не только цвета,
+  /// но и аватары»). Место под него — [leadingWidth].
+  final Widget? leading;
+  static const double leadingWidth = 32;
+
   const AppMenuEntry({
     required T this.value,
     required this.label,
     this.icon,
+    this.leading,
     this.iconColor,
     this.subtitle,
     this.destructive = false,
@@ -748,6 +754,7 @@ class AppMenuEntry<T> {
       : value = null,
         label = '',
         icon = null,
+        leading = null,
         iconColor = null,
         subtitle = null,
         destructive = false,
@@ -869,7 +876,7 @@ class _AnchoredMenuList<T> extends StatelessWidget {
     final scheme = theme.colorScheme;
     // Место под значок — у всех строк, если он есть хоть у одной: подписи
     // начинаются с одной линии.
-    final withIcons = entries.any((e) => e.icon != null);
+    final withIcons = entries.any((e) => e.icon != null || e.leading != null);
     final withCheck = selected != null || entries.any((e) => e.checked);
     return Material(
       color: AppColors.cardFill(context),
@@ -925,9 +932,20 @@ class _AnchoredMenuList<T> extends StatelessWidget {
                   Space.l + e.indent.clamp(0, 5) * Space.l, Space.s, Space.l, Space.s),
               child: Row(children: [
                 if (withIcons) ...[
-                  Icon(e.icon,
-                      size: Sizes.icon,
-                      color: e.iconColor ?? (e.enabled && !e.destructive ? scheme.onSurfaceVariant : fg)),
+                  if (entries.any((x) => x.leading != null))
+                    SizedBox(
+                      width: AppMenuEntry.leadingWidth,
+                      child: Center(
+                        child: e.leading ??
+                            Icon(e.icon,
+                                size: Sizes.icon,
+                                color: e.iconColor ?? (e.enabled && !e.destructive ? scheme.onSurfaceVariant : fg)),
+                      ),
+                    )
+                  else
+                    Icon(e.icon,
+                        size: Sizes.icon,
+                        color: e.iconColor ?? (e.enabled && !e.destructive ? scheme.onSurfaceVariant : fg)),
                   const SizedBox(width: Space.l),
                 ],
                 Expanded(

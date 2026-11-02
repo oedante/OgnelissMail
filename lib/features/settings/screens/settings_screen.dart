@@ -306,6 +306,13 @@ class SettingsScreen extends ConsumerWidget {
               subtitle: l10n.tr('advancedSettingsDesc'),
               onTap: () => context.push('/settings/advanced'),
             ),
+            // Функции на пробе (1.10.3), по умолчанию выключены.
+            SettingsItem(
+              icon: AppIcons.science,
+              title: l10n.tr('experimentalTitle'),
+              subtitle: l10n.tr('experimentalDesc'),
+              onTap: () => context.push('/settings/experimental'),
+            ),
           ]),
         ],
       ),

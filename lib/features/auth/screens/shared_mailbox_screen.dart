@@ -38,6 +38,7 @@ import '../../../services/mail/shared_access.dart';
 import '../../compose/widgets/people_picker_sheet.dart';
 import '../../mail/providers/mail_providers.dart';
 import '../../../widgets/common/text_scale_cap.dart';
+import '../../../widgets/common/account_avatar.dart';
 
 class SharedMailboxScreen extends ConsumerStatefulWidget {
   /// Основной ящик (из настроек ящика); null — активный.
@@ -186,8 +187,7 @@ class _SharedMailboxScreenState extends ConsumerState<SharedMailboxScreen> {
                 prefixIcon: const Icon(AppIcons.person),
               ),
               entries: [
-                for (final a in accounts)
-                  AppMenuEntry(value: a.id, label: a.email, icon: AppIcons.mail, iconColor: Color(a.colorValue)),
+                for (final a in accounts) accountMenuEntry(a),
               ],
               onChanged: done != null
                   ? null

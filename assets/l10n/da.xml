@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Vis i kalenderen</string>
     <string name="mailDates">Datoer i beskedens tekst</string>
     <string name="mailDatesDesc">Tryk på en dato for at oprette et møde, en påmindelse eller åbne dagen i kalenderen</string>
-    <string name="quickEventTitle">Begivenhed i én sætning</string>
-    <string name="quickEventHint">For eksempel: Opkald med Anna fredag kl. 15 i en time</string>
-    <string name="quickEventMore">Flere detaljer</string>
+    <string name="quickTaskTitle">Opgave i én sætning</string>
+    <string name="quickTaskHint">For eksempel: Ring til Anna i morgen kl. 15 !</string>
     <string name="createTask">Opret opgave</string>
     <string name="date">Dato</string>
     <string name="dayPlan">Dagsplan</string>
@@ -3760,4 +3759,14 @@
     <string name="composeDropHint">Slip for at vedhæfte filer</string>
     <string name="openInNewWindow">Åbn i et nyt vindue</string>
     <string name="openInMainWindow">Åbn i hovedvinduet</string>
+    <string name="notifyLinesTitle">Tekstlinjer i notifikationer</string>
+    <string name="notifyLinesHint">Hvor mange linjer af beskeden en udvidet notifikation viser. 8 og 12 linjer kræver teksten på enheden; ellers vises begyndelsen.</string>
+    <string name="tileIconOnly">Kun ikon</string>
+    <string name="tileIconText">Ikon og tekst</string>
+    <string name="favoritesTilesHint">Favoritter vises som felter. Knappen før kontakten gør et felt bredt (ikon og tekst) eller lille (kun ikon).</string>
+    <string name="experimentalTitle">Eksperimentelle funktioner</string>
+    <string name="experimentalDesc">Funktioner på prøve, slået fra som standard</string>
+    <string name="experimentalIntro">Nye funktioner, vi afprøver. De er slået fra som standard og kan ændre sig, flytte til de almindelige indstillinger eller forsvinde.</string>
+    <string name="quotePeopleTitle">Personer i citerede overskrifter</string>
+    <string name="quotePeopleDesc">Fra, Til og Cc i citatet vises som mærker med portræt; tryk for at åbne personkortet. Virker, når citatet er foldet ud, så beskeder åbner lige så hurtigt.</string>
 </resources>

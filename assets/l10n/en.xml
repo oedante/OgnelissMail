@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Show in calendar</string>
     <string name="mailDates">Dates in message text</string>
     <string name="mailDatesDesc">Tap a date to create a meeting or reminder or open that day in the calendar</string>
-    <string name="quickEventTitle">Event in one phrase</string>
-    <string name="quickEventHint">For example: Call with Anna on Friday at 3pm for an hour</string>
-    <string name="quickEventMore">More details</string>
+    <string name="quickTaskTitle">Task in one phrase</string>
+    <string name="quickTaskHint">For example: Call Anna tomorrow at 3 pm !</string>
     <string name="createTask">Create Task</string>
     <string name="date">Date</string>
     <string name="dayPlan">Day Plan</string>
@@ -3760,4 +3759,14 @@
     <string name="composeDropHint">Drop to attach files</string>
     <string name="openInNewWindow">Open in a new window</string>
     <string name="openInMainWindow">Open in the main window</string>
+    <string name="notifyLinesTitle">Text lines in notifications</string>
+    <string name="notifyLinesHint">How many lines of the message to show in an expanded notification. 8 and 12 lines need the message text on the device; otherwise the beginning is shown.</string>
+    <string name="tileIconOnly">Icon only</string>
+    <string name="tileIconText">Icon and label</string>
+    <string name="favoritesTilesHint">Favorites are shown as tiles. The button before the switch makes a tile wide (icon and label) or small (icon only).</string>
+    <string name="experimentalTitle">Experimental features</string>
+    <string name="experimentalDesc">Features on trial, off by default</string>
+    <string name="experimentalIntro">New features we are trying out. They are off by default and may change, move to the main settings or be removed.</string>
+    <string name="quotePeopleTitle">People in quoted headers</string>
+    <string name="quotePeopleDesc">From, To and Cc in a quoted message become chips with a portrait; tap one to open the person card. Works when the quote is expanded, so messages open as fast as before.</string>
 </resources>

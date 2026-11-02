@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Visa i kalendern</string>
     <string name="mailDates">Datum i meddelandetexten</string>
     <string name="mailDatesDesc">Tryck på ett datum för att skapa ett möte, en påminnelse eller öppna dagen i kalendern</string>
-    <string name="quickEventTitle">Händelse i en mening</string>
-    <string name="quickEventHint">Till exempel: Samtal med Anna på fredag kl. 15 i en timme</string>
-    <string name="quickEventMore">Fler detaljer</string>
+    <string name="quickTaskTitle">Uppgift i en mening</string>
+    <string name="quickTaskHint">Till exempel: Ring Anna i morgon kl. 15 !</string>
     <string name="createTask">Skapa uppgift</string>
     <string name="date">Datum</string>
     <string name="dayPlan">Dagsplan</string>
@@ -3760,4 +3759,14 @@
     <string name="composeDropHint">Släpp för att bifoga filer</string>
     <string name="openInNewWindow">Öppna i ett nytt fönster</string>
     <string name="openInMainWindow">Öppna i huvudfönstret</string>
+    <string name="notifyLinesTitle">Textrader i aviseringar</string>
+    <string name="notifyLinesHint">Hur många rader av meddelandet en expanderad avisering visar. 8 och 12 rader kräver texten på enheten; annars visas början.</string>
+    <string name="tileIconOnly">Endast ikon</string>
+    <string name="tileIconText">Ikon och text</string>
+    <string name="favoritesTilesHint">Favoriter visas som paneler. Knappen före reglaget gör en panel bred (ikon och text) eller liten (endast ikon).</string>
+    <string name="experimentalTitle">Experimentella funktioner</string>
+    <string name="experimentalDesc">Funktioner på prov, avstängda som standard</string>
+    <string name="experimentalIntro">Nya funktioner som vi provar. De är avstängda som standard och kan ändras, flyttas till de vanliga inställningarna eller tas bort.</string>
+    <string name="quotePeopleTitle">Personer i citerade rubriker</string>
+    <string name="quotePeopleDesc">Från, Till och Kopia i citatet visas som etiketter med porträtt; tryck för att öppna personkortet. Fungerar när citatet är utfällt, så meddelanden öppnas lika snabbt.</string>
 </resources>

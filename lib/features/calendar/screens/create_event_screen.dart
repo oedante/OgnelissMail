@@ -53,6 +53,7 @@ import '../../../data/models/account_model.dart';
 import '../../../services/calendar/event_reminders.dart';
 import '../../../widgets/ui/help_hint.dart' show TitleWithHelp;
 import '../widgets/reminder_list_editor.dart';
+import '../../../widgets/common/account_avatar.dart';
 
 class CreateEventScreen extends ConsumerStatefulWidget {
   /// Письмо-источник (если создаём из письма)
@@ -416,8 +417,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         : l10n.tr('eventCalendarPhoneOnly').replaceAll('{email}', acc.email);
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: Space.l),
-      // Значок цвета ящика — как метки ящиков в ленте и календаре.
-      leading: Icon(AppIcons.calendar_month, color: Color(acc.colorValue)),
+      // Портрет ящика с кольцом его цвета (1.10.3) — цвет как у меток
+      // ящиков в ленте и календаре.
+      leading: AccountAvatar(account: acc, radius: 14),
       title: TitleWithHelp(title, hint: l10n.tr('eventCalendarHelp')),
       subtitle: sub == null ? null : Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: pickable ? const Icon(AppIcons.arrow_drop_down) : null,
@@ -435,10 +437,8 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       selected: _account?.id,
       entries: [
         for (final a in list)
-          AppMenuEntry(
-            value: a.id,
-            icon: AppIcons.calendar_month,
-            iconColor: Color(a.colorValue),
+          accountMenuEntry(
+            a,
             label: _accountTitle(a),
             subtitle: engine.canWriteCalendar(a) ? a.email : l10n.tr('eventCalendarPhoneOnly').replaceAll('{email}', a.email),
           ),

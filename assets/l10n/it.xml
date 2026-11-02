@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Mostra nel calendario</string>
     <string name="mailDates">Date nel testo del messaggio</string>
     <string name="mailDatesDesc">Tocca una data per creare una riunione o un promemoria o aprire quel giorno nel calendario</string>
-    <string name="quickEventTitle">Evento in una frase</string>
-    <string name="quickEventHint">Ad esempio: Chiamata con Anna venerdì alle 15 per un\'ora</string>
-    <string name="quickEventMore">Più dettagli</string>
+    <string name="quickTaskTitle">Attività in una frase</string>
+    <string name="quickTaskHint">Ad esempio: Chiamare Anna domani alle 15 !</string>
     <string name="createTask">Crea attività</string>
     <string name="date">Data</string>
     <string name="dayPlan">Piano del giorno</string>
@@ -3760,4 +3759,14 @@
     <string name="composeDropHint">Rilascia per allegare i file</string>
     <string name="openInNewWindow">Apri in una nuova finestra</string>
     <string name="openInMainWindow">Apri nella finestra principale</string>
+    <string name="notifyLinesTitle">Righe di testo nelle notifiche</string>
+    <string name="notifyLinesHint">Quante righe del messaggio mostrare nella notifica espansa. Per 8 e 12 righe serve il testo sul dispositivo; altrimenti si vede l’inizio.</string>
+    <string name="tileIconOnly">Solo icona</string>
+    <string name="tileIconText">Icona ed etichetta</string>
+    <string name="favoritesTilesHint">I preferiti sono riquadri. Il pulsante prima dell’interruttore rende il riquadro largo (icona ed etichetta) o piccolo (solo icona).</string>
+    <string name="experimentalTitle">Funzioni sperimentali</string>
+    <string name="experimentalDesc">Funzioni in prova, disattivate per impostazione predefinita</string>
+    <string name="experimentalIntro">Nuove funzioni in prova. Sono disattivate per impostazione predefinita e possono cambiare, passare nelle impostazioni principali o sparire.</string>
+    <string name="quotePeopleTitle">Persone nelle intestazioni citate</string>
+    <string name="quotePeopleDesc">Da, A e Cc nella citazione diventano etichette con ritratto; toccane una per aprire la scheda. Agisce a citazione espansa, l’apertura resta veloce.</string>
 </resources>

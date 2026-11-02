@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Zobrazit v kalendáři</string>
     <string name="mailDates">Data v textu zprávy</string>
     <string name="mailDatesDesc">Klepnutím na datum vytvoříte schůzku, připomínku nebo otevřete den v kalendáři</string>
-    <string name="quickEventTitle">Událost jednou větou</string>
-    <string name="quickEventHint">Například: Hovor s Annou v pátek v 15 na hodinu</string>
-    <string name="quickEventMore">Podrobnosti</string>
+    <string name="quickTaskTitle">Úkol jednou větou</string>
+    <string name="quickTaskHint">Například: Zavolat Anně zítra v 15 !</string>
     <string name="createTask">Vytvořit úkol</string>
     <string name="date">Datum</string>
     <string name="dayPlan">Plán dne</string>
@@ -3781,4 +3780,14 @@
     <string name="composeDropHint">Pusťte pro přiložení souborů</string>
     <string name="openInNewWindow">Otevřít v novém okně</string>
     <string name="openInMainWindow">Otevřít v hlavním okně</string>
+    <string name="notifyLinesTitle">Řádky textu v oznámeních</string>
+    <string name="notifyLinesHint">Kolik řádků zprávy ukázat v rozbaleném oznámení. Pro 8 a 12 řádků musí být text v zařízení; jinak se zobrazí začátek.</string>
+    <string name="tileIconOnly">Jen ikona</string>
+    <string name="tileIconText">Ikona a popisek</string>
+    <string name="favoritesTilesHint">Oblíbené jsou dlaždice. Tlačítko před přepínačem udělá dlaždici širokou (ikona a popisek) nebo malou (jen ikona).</string>
+    <string name="experimentalTitle">Experimentální funkce</string>
+    <string name="experimentalDesc">Funkce na zkoušku, ve výchozím stavu vypnuté</string>
+    <string name="experimentalIntro">Nové funkce, které zkoušíme. Ve výchozím stavu jsou vypnuté; mohou se změnit, přejít do hlavního nastavení nebo zmizet.</string>
+    <string name="quotePeopleTitle">Lidé v hlavičkách citací</string>
+    <string name="quotePeopleDesc">Od, Komu a Kopie v citaci jako štítky s portrétem; klepnutí otevře kartu osoby. Funguje při rozbalené citaci, zprávy se otevírají stejně rychle.</string>
 </resources>

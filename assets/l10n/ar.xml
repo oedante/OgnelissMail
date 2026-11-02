@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">عرض في التقويم</string>
     <string name="mailDates">التواريخ في نص الرسالة</string>
     <string name="mailDatesDesc">اضغط على تاريخ لإنشاء اجتماع أو تذكير أو فتح ذلك اليوم في التقويم</string>
-    <string name="quickEventTitle">حدث بجملة واحدة</string>
-    <string name="quickEventHint">مثلاً: مكالمة مع آنا يوم الجمعة الساعة 3 مساءً لمدة ساعة</string>
-    <string name="quickEventMore">مزيد من التفاصيل</string>
+    <string name="quickTaskTitle">مهمة في عبارة واحدة</string>
+    <string name="quickTaskHint">مثال: الاتصال بآنا غدًا الساعة 15 !</string>
     <string name="createTask">إنشاء مهمة</string>
     <string name="date">التاريخ</string>
     <string name="dayPlan">خطة اليوم</string>
@@ -3844,4 +3843,14 @@
     <string name="composeDropHint">أفلت لإرفاق الملفات</string>
     <string name="openInNewWindow">فتح في نافذة جديدة</string>
     <string name="openInMainWindow">فتح في النافذة الرئيسية</string>
+    <string name="notifyLinesTitle">أسطر النص في الإشعارات</string>
+    <string name="notifyLinesHint">عدد أسطر الرسالة في الإشعار الموسّع. يتطلب 8 و12 سطرًا وجود نص الرسالة على الجهاز، وإلا تظهر بدايتها.</string>
+    <string name="tileIconOnly">الأيقونة فقط</string>
+    <string name="tileIconText">الأيقونة والتسمية</string>
+    <string name="favoritesTilesHint">تظهر المفضلة كمربعات. الزر قبل المفتاح يجعل المربع عريضًا (أيقونة وتسمية) أو صغيرًا (أيقونة فقط).</string>
+    <string name="experimentalTitle">ميزات تجريبية</string>
+    <string name="experimentalDesc">ميزات قيد التجربة، معطّلة افتراضيًا</string>
+    <string name="experimentalIntro">ميزات جديدة قيد التجربة. معطّلة افتراضيًا وقد تتغير أو تنتقل إلى الإعدادات الرئيسية أو تُزال.</string>
+    <string name="quotePeopleTitle">الأشخاص في ترويسات الاقتباس</string>
+    <string name="quotePeopleDesc">تظهر سطور من وإلى ونسخة في الاقتباس كشارات بصورة؛ انقر لفتح بطاقة الشخص. تعمل عند توسيع الاقتباس، فلا يبطؤ فتح الرسائل.</string>
 </resources>

@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">在日历中显示</string>
     <string name="mailDates">邮件正文中的日期</string>
     <string name="mailDatesDesc">点按日期即可创建会议、提醒或在日历中打开那一天</string>
-    <string name="quickEventTitle">一句话创建日程</string>
-    <string name="quickEventHint">例如：周五下午3点与安娜通话一小时</string>
-    <string name="quickEventMore">更多详情</string>
+    <string name="quickTaskTitle">一句话创建任务</string>
+    <string name="quickTaskHint">例如：明天15点给安娜打电话 !</string>
     <string name="createTask">创建任务</string>
     <string name="date">日期</string>
     <string name="dayPlan">今日计划</string>
@@ -3739,4 +3738,14 @@
     <string name="composeDropHint">松开以添加附件</string>
     <string name="openInNewWindow">在新窗口中打开</string>
     <string name="openInMainWindow">在主窗口中打开</string>
+    <string name="notifyLinesTitle">通知中的文字行数</string>
+    <string name="notifyLinesHint">展开的通知中显示邮件正文的行数。8 行和 12 行需要正文已在设备上，否则只显示开头。</string>
+    <string name="tileIconOnly">仅图标</string>
+    <string name="tileIconText">图标和名称</string>
+    <string name="favoritesTilesHint">收藏以磁贴显示。开关前的按钮可选宽磁贴（图标和名称）或小磁贴（仅图标）。</string>
+    <string name="experimentalTitle">实验性功能</string>
+    <string name="experimentalDesc">试用中的功能，默认关闭</string>
+    <string name="experimentalIntro">正在试用的新功能。默认关闭，之后可能调整、移入常规设置或移除。</string>
+    <string name="quotePeopleTitle">引用标头中的联系人</string>
+    <string name="quotePeopleDesc">引用中的发件人、收件人和抄送显示为带头像的标签，点按可打开联系人卡片。仅在展开引用时生效，打开邮件的速度不受影响。</string>
 </resources>

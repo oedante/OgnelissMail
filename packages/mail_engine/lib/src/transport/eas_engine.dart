@@ -2201,7 +2201,15 @@ class EasEngine implements MailEngine {
       f = {...fields, 'TimeZone': _stripTzNames(fields['TimeZone'])};
     }
     try {
-      return await withoutAttachmentsOn6(f);
+      try {
+        return await withoutAttachmentsOn6(f);
+      } on PimItemStatusError catch (e) {
+        // Весь день в виде AS 16 не принят — один повтор в прежнем виде.
+        if (e.status != '6' || !isCalendar || !_allDayFloating(f)) rethrow;
+        log.warn(_t, 'upsertPim(Calendar): Status 6 для встречи на весь день без пояса — повтор с поясом');
+        _allDayFloatingRejected = true;
+        return await withoutAttachmentsOn6(f);
+      }
     } on PimItemStatusError catch (e) {
       // Status 7 — конфликт: элемент изменился на сервере после нашего ключа,
       // и сервер (правило по умолчанию «побеждает сервер») правку не принял.
@@ -2241,6 +2249,28 @@ class EasEngine implements MailEngine {
   /// Повтор правки после конфликта (Status 7) — с правилом «побеждает клиент».
   bool _clientWins = false;
 
+  /// Сервер отверг встречу «на весь день» в виде AS 16 (без пояса, даты без
+  /// времени) — дальше в этом сеансе передаём её по-старому: пояс и полночь в UTC.
+  bool _allDayFloatingRejected = false;
+
+  bool _allDayFloating(Map<String, String?> f) =>
+      _protocolVersion.startsWith('16') && f['AllDayEvent'] == '1' && !_allDayFloatingRejected;
+
+  /// «20261102T210000Z» (местная полночь в UTC) → «20261103T000000Z»: дата
+  /// без времени для встречи на весь день (AS 16). Дата — по местному
+  /// времени устройства, где пользователь её выбрал.
+  static String? floatingDate(String? v) {
+    if (v == null) return null;
+    final m = RegExp(r'^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$').firstMatch(v);
+    if (m == null) return v;
+    final g = [for (var i = 1; i <= 6; i++) int.parse(m.group(i)!)];
+    final l = DateTime.utc(g[0], g[1], g[2], g[3], g[4], g[5]).toLocal();
+    // Полночь, сдвинутая переходом на летнее время, — ближайшая дата.
+    final d = l.hour >= 12 ? DateTime(l.year, l.month, l.day + 1) : DateTime(l.year, l.month, l.day);
+    String two(int x) => x.toString().padLeft(2, '0');
+    return '${d.year}${two(d.month)}${two(d.day)}T000000Z';
+  }
+
   Future<String?> _upsertPimOnce(String folderId,
       {required String dataClass,
       String? serverId,
@@ -2249,7 +2279,8 @@ class EasEngine implements MailEngine {
       List<({String email, String? name, bool required})> attendees = const [],
       List<String>? categories,
       Map<String, String>? recurrence,
-      List<({String name, String? contentType, Uint8List bytes})> attachments = const []}) async {
+      List<({String name, String? contentType, Uint8List bytes})> attachments = const [],
+      bool allowReset = true}) async {
     final cfg = _cfg!;
     var key = _pimSyncKeys[folderId] ?? '0';
     if (key == '0') {
@@ -2319,9 +2350,19 @@ class EasEngine implements MailEngine {
       // Календарь — в порядке схемы MS-ASCAL (Exchange проверяет порядок
       // строже, чем для контактов и задач).
       final f = Map<String, String?>.of(fields);
-      // Часовой пояс: до AS 16 обязателен при создании. Время передаём в UTC,
-      // поэтому пояс — UTC (172 нулевых байта TIME_ZONE_INFORMATION).
-      f.putIfAbsent('TimeZone', () => base64.encode(List<int>.filled(172, 0)));
+      if (_allDayFloating(f)) {
+        // Весь день в AS 16 (MS-ASCAL 2.2.2.1): без TimeZone, начало и конец —
+        // даты без времени. С поясом и полуночью в UTC Exchange 16.1 отвечал
+        // Status 6 (журнал владельца 02.11.2026).
+        f.remove('TimeZone');
+        for (final k in const ['StartTime', 'EndTime']) {
+          f[k] = floatingDate(f[k]);
+        }
+      } else {
+        // Часовой пояс: до AS 16 обязателен при создании. Время передаём в UTC,
+        // поэтому пояс — UTC (172 нулевых байта TIME_ZONE_INFORMATION).
+        f.putIfAbsent('TimeZone', () => base64.encode(List<int>.filled(172, 0)));
+      }
       void put(String k) {
         final v = f[k];
         if (v != null) appData.addChild(k, namespace: 'Calendar', text: v);
@@ -2405,7 +2446,22 @@ class EasEngine implements MailEngine {
     final newKey = col?.childText('SyncKey');
     if (newKey != null) _pimSyncKeys[folderId] = newKey;
     final colStatus = col?.childText('Status') ?? resp.root.childText('Status');
-    if (colStatus == '3') _pimSyncKeys[folderId] = '0';
+    if (colStatus == '3') {
+      // Ключ отклонён (его сбила прежняя ошибка или другое устройство):
+      // папка начинается заново, а запись повторяется один раз с новым
+      // ключом. Раньше каждая следующая попытка снова шла со старым ключом
+      // и получала Status 3 (журнал владельца 02.11.2026). Ближайшая
+      // синхронизация папки загрузит её целиком (takePimReinit).
+      _pimSyncKeys[folderId] = '0';
+      _pimReinit.add(folderId);
+      if (allowReset) {
+        log.warn(_t, 'upsertPim($dataClass): SyncKey отклонён (Status 3) — новый ключ и повтор');
+        return _upsertPimOnce(folderId,
+            dataClass: dataClass, serverId: serverId, fields: fields, body: body,
+            attendees: attendees, categories: categories, recurrence: recurrence,
+            attachments: attachments, allowReset: false);
+      }
+    }
     if (colStatus != null && colStatus != '1') {
       throw StateError('EAS Sync ($dataClass): Status=$colStatus');
     }

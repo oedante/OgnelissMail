@@ -1,13 +1,13 @@
 // lib/widgets/common/inline_notice.dart
-// Сообщение — строкой вверху экрана, в разметке, а не плашкой поверх
-// содержимого.
+// Сообщение вверху экрана. С 1.10.2 — плашкой поверх окна (раньше строкой
+// в разметке: она сдвигала экран вниз и обратно).
 //
 // Чёрные плашки (SnackBar) в приложении выключены (QuietScaffoldMessenger),
 // и вместе с «Удалено»/«Сохранено» пропадали и сообщения об ошибках: «Не
 // удалось отправить», «Превышен размер вложений», «Ошибка: …» — нажал, и
 // ничего не произошло (09.10.2026). Теперь ошибки показываются здесь:
-// спокойная строка цвета ошибки под строкой состояния, сдвигает экран вниз,
-// ничего не закрывает; убирается крестиком, нажатием или сама через 12 с.
+// спокойная плашка цвета ошибки под строкой состояния (до 1.10.2 — строка,
+// сдвигавшая экран); убирается крестиком, нажатием или сама через 12 с.
 //
 // 1.8.0 (п. 12 плана: «всплывающие сообщения внизу экрана заменить строкой
 // вверху»): все вызовы SnackBar переведены сюда. Правило:
@@ -91,85 +91,117 @@ void hideInlineError() {
 /// Убрать строку (любого вида).
 void hideInlineNotice() => hideInlineError();
 
-/// Слой над навигатором: строка сверху, под ней — приложение.
+/// Слой над навигатором: сообщение — плашкой поверх окна сверху (1.10.2,
+/// замечание владельца 02.11.2026: строка в разметке сдвигала письмо вниз,
+/// а исчезая — поднимала обратно). Приложение под плашкой не двигается;
+/// плашка выезжает сверху и уходит так же, без резких движений.
 class InlineNoticeLayer extends StatelessWidget {
   final Widget child;
   const InlineNoticeLayer({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<AppNotice?>(
-      valueListenable: appNotice,
-      // child передаётся как есть: навигатор не пересоздаётся при показе.
-      child: child,
-      builder: (context, notice, app) {
-        final scheme = Theme.of(context).colorScheme;
-        final error = notice?.kind != AppNoticeKind.info;
-        final bg = error ? scheme.errorContainer : scheme.surfaceContainerHighest;
-        final fg = error ? scheme.onErrorContainer : scheme.onSurface;
-        return Column(
-          children: [
-            AnimatedSize(
-              duration: const Duration(milliseconds: 180),
-              alignment: Alignment.topCenter,
+    return Stack(
+      children: [
+        // Приложение — всегда на месте и не пересоздаётся при показе.
+        Positioned.fill(child: child),
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: ValueListenableBuilder<AppNotice?>(
+            valueListenable: appNotice,
+            builder: (context, notice, _) => AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              reverseDuration: const Duration(milliseconds: 160),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              transitionBuilder: (w, a) => FadeTransition(
+                opacity: a,
+                child: SlideTransition(
+                  position: Tween<Offset>(begin: const Offset(0, -0.4), end: Offset.zero).animate(a),
+                  child: w,
+                ),
+              ),
               child: notice == null
-                  ? const SizedBox(width: double.infinity)
-                  : Material(
-                      color: bg,
-                      child: SafeArea(
-                        bottom: false,
-                        child: InkWell(
-                          onTap: hideInlineError,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.xs, Space.s),
-                            child: Row(
-                              children: [
-                                Icon(error ? AppIcons.error : AppIcons.info, size: 20,
-                                    color: error ? fg : scheme.primary),
-                                const SizedBox(width: Space.m),
-                                Expanded(
-                                  child: Semantics(
-                                    liveRegion: true,
-                                    child: Text(
-                                      notice.text,
-                                      maxLines: 4,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: fg),
-                                    ),
-                                  ),
-                                ),
-                                if (notice.actionLabel != null)
-                                  TextButton(
-                                    onPressed: () {
-                                      final act = notice.onAction;
-                                      hideInlineError();
-                                      act?.call();
-                                    },
-                                    child: Text(notice.actionLabel!),
-                                  ),
-                                IconButton(
-                                  visualDensity: VisualDensity.compact,
-                                  icon: Icon(AppIcons.close, size: 20, color: fg),
-                                  onPressed: hideInlineError,
-                                  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                                ),
-                              ],
-                            ),
+                  ? const SizedBox.shrink(key: ValueKey('none'))
+                  : _NoticeCard(key: ValueKey(notice.id), notice: notice),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Плашка сообщения: под строкой состояния, с полями и тенью — поверх
+/// содержимого, а не вместо него.
+class _NoticeCard extends StatelessWidget {
+  final AppNotice notice;
+  const _NoticeCard({super.key, required this.notice});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final error = notice.kind != AppNoticeKind.info;
+    final bg = error ? scheme.errorContainer : scheme.surfaceContainerHighest;
+    final fg = error ? scheme.onErrorContainer : scheme.onSurface;
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(Space.s, Space.xs, Space.s, 0),
+        child: Center(
+          child: ConstrainedBox(
+            // На планшете и компьютере — не во всю ширину окна.
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: Material(
+              color: bg,
+              elevation: 3,
+              shadowColor: Colors.black.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(12),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: hideInlineError,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.xs, Space.s),
+                  child: Row(
+                    children: [
+                      Icon(error ? AppIcons.error : AppIcons.info, size: 20, color: error ? fg : scheme.primary),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                        child: Semantics(
+                          liveRegion: true,
+                          child: Text(
+                            notice.text,
+                            maxLines: 4,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: fg),
                           ),
                         ),
                       ),
-                    ),
+                      if (notice.actionLabel != null)
+                        TextButton(
+                          onPressed: () {
+                            final act = notice.onAction;
+                            hideInlineError();
+                            act?.call();
+                          },
+                          child: Text(notice.actionLabel!),
+                        ),
+                      IconButton(
+                        visualDensity: VisualDensity.compact,
+                        icon: Icon(AppIcons.close, size: 20, color: fg),
+                        onPressed: hideInlineError,
+                        tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            // Строка заняла место строки состояния — экранам верхний отступ
-            // больше не нужен (иначе шапка опустилась бы ещё раз).
-            // Обёртка есть всегда — меняется только флаг: иначе при показе
-            // строки навигатор пересоздавался бы со всеми открытыми экранами.
-            Expanded(
-              child: MediaQuery.removePadding(context: context, removeTop: notice != null, child: app!),
-            ),
-          ],
-        );
-      },
+          ),
+        ),
+      ),
     );
   }
 }

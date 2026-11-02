@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">הצג ביומן</string>
     <string name="mailDates">תאריכים בטקסט ההודעה</string>
     <string name="mailDatesDesc">הקישו על תאריך כדי ליצור פגישה או תזכורת או לפתוח את היום ביומן</string>
-    <string name="quickEventTitle">אירוע במשפט אחד</string>
-    <string name="quickEventHint">לדוגמה: שיחה עם אנה ביום שישי ב-15 לשעה</string>
-    <string name="quickEventMore">פרטים נוספים</string>
+    <string name="quickTaskTitle">משימה במשפט אחד</string>
+    <string name="quickTaskHint">לדוגמה: להתקשר לאנה מחר ב-15 !</string>
     <string name="createTask">צור משימה</string>
     <string name="date">תאריך</string>
     <string name="dayPlan">תוכנית היום</string>
@@ -3781,4 +3780,14 @@
     <string name="composeDropHint">שחררו כדי לצרף קבצים</string>
     <string name="openInNewWindow">פתיחה בחלון חדש</string>
     <string name="openInMainWindow">פתיחה בחלון הראשי</string>
+    <string name="notifyLinesTitle">שורות טקסט בהתראות</string>
+    <string name="notifyLinesHint">כמה שורות מההודעה להציג בהתראה מורחבת. 8 ו-12 שורות דורשות את טקסט ההודעה במכשיר; אחרת תוצג ההתחלה.</string>
+    <string name="tileIconOnly">סמל בלבד</string>
+    <string name="tileIconText">סמל ותווית</string>
+    <string name="favoritesTilesHint">המועדפים מוצגים כאריחים. הכפתור לפני המתג הופך אריח לרחב (סמל ותווית) או לקטן (סמל בלבד).</string>
+    <string name="experimentalTitle">תכונות ניסיוניות</string>
+    <string name="experimentalDesc">תכונות בניסיון, כבויות כברירת מחדל</string>
+    <string name="experimentalIntro">תכונות חדשות שאנחנו מנסים. הן כבויות כברירת מחדל ועשויות להשתנות, לעבור להגדרות הראשיות או להיעלם.</string>
+    <string name="quotePeopleTitle">אנשים בכותרות של ציטוטים</string>
+    <string name="quotePeopleDesc">מאת, אל ועותק בציטוט מוצגים כתגיות עם תמונה; הקשה פותחת את כרטיס האדם. פועל כשהציטוט מורחב, כך שפתיחת הודעות לא מואטת.</string>
 </resources>

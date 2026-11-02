@@ -28,7 +28,7 @@ import '../../mail/widgets/mail_peek_card.dart' show showMailPeek, PeekAction;
 import '../../mail/widgets/peek_helpers.dart' show peekCanRespondInvite, peekInviteActions;
 import '../../../widgets/common/peek_card.dart' show peekAnchorAtFinger;
 import '../widgets/event_peek.dart';
-import '../widgets/quick_event_sheet.dart';
+import '../../tasks/widgets/quick_task_sheet.dart';
 import '../../../core/theme/tokens.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,7 +45,6 @@ import '../../../widgets/ui/action_sheet.dart';
 import '../../../data/models/task_model.dart' show taskFromRow;
 import '../../../services/tasks/task_actions_service.dart' show taskActionsProvider;
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditor;
-import '../../tasks/task_quick_parser.dart' show ParsedTask;
 import '../../settings/providers/module_settings_provider.dart';
 import '../../../widgets/navigation/panel_requests.dart' show calendarDayRequestProvider;
 import '../../../data/models/email_model.dart' show EmailMeeting;
@@ -62,6 +61,7 @@ import 'event_details_screen.dart';
 import '../../../core/permissions/app_permissions.dart';
 import '../../../services/notifications/reminder_scheduler_service.dart';
 import '../../../widgets/ui/settings_group.dart' show SettingsSectionTitle;
+import '../../../widgets/common/account_avatar.dart';
 
 export '../calendar_data.dart' show calendarEventsProvider, calendarLayersProvider, CalendarLayers;
 
@@ -549,13 +549,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       final day = start ?? _selectedDay ?? now;
       // Ячейка времени — срок со временем; кнопка дня — срок на день.
       final due = start != null && !dayOnly ? start : DateTime(day.year, day.month, day.day);
-      unawaited(showTaskEditor(context, draft: ParsedTask(title: '', due: due)));
+      // Задача одной фразой (1.10.2), потом карточка с заполненными полями.
+      unawaited(showQuickTaskSheet(context, day: day, due: due));
       return;
     }
-    // Встреча одной фразой (1.9.x): «Созвон с Анной в пятницу в 15 на час»,
-    // «Подробнее» — полный редактор.
+    // Встреча — сразу редактор (1.10.2: «Встреча одной фразой» убрана по
+    // просьбе владельца).
     if (start == null) {
-      unawaited(showQuickEventSheet(context, day: _selectedDay));
+      unawaited(context.push('/create-event'));
       return;
     }
     unawaited(context.push('/create-event', extra: {
@@ -901,11 +902,15 @@ class _AccountChips extends ConsumerWidget {
                       showCheckmark: false,
                       selected: !hidden.contains(a.id),
                       onSelected: (_) => n.toggle(a.id),
-                      avatar: CircleAvatar(
-                        radius: 6,
-                        backgroundColor: hidden.contains(a.id)
-                            ? theme.colorScheme.outlineVariant
-                            : Color(a.colorValue),
+                      // Портрет ящика с кольцом его цвета (1.10.3); скрытый —
+                      // бледный, с серым кольцом.
+                      avatar: Opacity(
+                        opacity: hidden.contains(a.id) ? 0.45 : 1,
+                        child: AccountAvatar(
+                          account: a,
+                          radius: 8,
+                          ringColor: hidden.contains(a.id) ? theme.colorScheme.outlineVariant : null,
+                        ),
                       ),
                       label: Text(
                         a.displayName.trim().isNotEmpty ? a.displayName.trim() : a.email.split('@').first,

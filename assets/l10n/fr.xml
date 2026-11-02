@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Afficher dans le calendrier</string>
     <string name="mailDates">Dates dans le texte du message</string>
     <string name="mailDatesDesc">Touchez une date pour créer une réunion, un rappel ou ouvrir ce jour dans le calendrier</string>
-    <string name="quickEventTitle">Événement en une phrase</string>
-    <string name="quickEventHint">Par exemple : Appel avec Anna vendredi à 15h pendant une heure</string>
-    <string name="quickEventMore">Plus de détails</string>
+    <string name="quickTaskTitle">Tâche en une phrase</string>
+    <string name="quickTaskHint">Par exemple : Appeler Anna demain à 15 h !</string>
     <string name="createTask">Créer une tâche</string>
     <string name="date">Date</string>
     <string name="dayPlan">Plan de la journée</string>
@@ -3760,4 +3759,14 @@
     <string name="composeDropHint">Relâchez pour joindre les fichiers</string>
     <string name="openInNewWindow">Ouvrir dans une nouvelle fenêtre</string>
     <string name="openInMainWindow">Ouvrir dans la fenêtre principale</string>
+    <string name="notifyLinesTitle">Lignes de texte dans les notifications</string>
+    <string name="notifyLinesHint">Nombre de lignes du message dans une notification développée. 8 et 12 lignes demandent le texte du message sur l’appareil ; sinon, le début s’affiche.</string>
+    <string name="tileIconOnly">Icône seule</string>
+    <string name="tileIconText">Icône et libellé</string>
+    <string name="favoritesTilesHint">Les favoris s’affichent en vignettes. Le bouton avant l’interrupteur rend une vignette large (icône et libellé) ou petite (icône seule).</string>
+    <string name="experimentalTitle">Fonctions expérimentales</string>
+    <string name="experimentalDesc">Fonctions à l’essai, désactivées par défaut</string>
+    <string name="experimentalIntro">Nouvelles fonctions à l’essai. Désactivées par défaut, elles peuvent changer, passer dans les réglages principaux ou disparaître.</string>
+    <string name="quotePeopleTitle">Personnes dans les en-têtes cités</string>
+    <string name="quotePeopleDesc">De, À et Cc dans la citation deviennent des pastilles avec portrait ; touchez-en une pour ouvrir la fiche. Actif quand la citation est développée : l’ouverture reste aussi rapide.</string>
 </resources>

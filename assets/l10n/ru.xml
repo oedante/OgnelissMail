@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Показать в календаре</string>
     <string name="mailDates">Даты в тексте письма</string>
     <string name="mailDatesDesc">Нажатие на дату — встреча, напоминание или этот день в календаре</string>
-    <string name="quickEventTitle">Встреча одной фразой</string>
-    <string name="quickEventHint">Например: Созвон с Анной в пятницу в 15 на час</string>
-    <string name="quickEventMore">Подробнее</string>
+    <string name="quickTaskTitle">Задача одной фразой</string>
+    <string name="quickTaskHint">Например: Позвонить Анне завтра в 15 !</string>
     <string name="createTask">Создать задачу</string>
     <string name="date">Дата</string>
     <string name="dayPlan">План дня</string>
@@ -3802,4 +3801,14 @@
     <string name="composeDropHint">Отпустите, чтобы прикрепить файлы</string>
     <string name="openInNewWindow">Открыть в отдельном окне</string>
     <string name="openInMainWindow">Открыть в главном окне</string>
+    <string name="notifyLinesTitle">Строк текста в уведомлении</string>
+    <string name="notifyLinesHint">Сколько строк начала письма показать в раскрытом уведомлении. Для 8 и 12 строк нужен загруженный текст письма — иначе покажется начало.</string>
+    <string name="tileIconOnly">Только значок</string>
+    <string name="tileIconText">Значок и подпись</string>
+    <string name="favoritesTilesHint">Избранное — плитками. Кнопка перед переключателем: широкая плитка со значком и подписью или маленькая, только значок.</string>
+    <string name="experimentalTitle">Экспериментальный функционал</string>
+    <string name="experimentalDesc">Функции на пробе, по умолчанию выключены</string>
+    <string name="experimentalIntro">Здесь — новые функции, которые мы пробуем. По умолчанию они выключены; могут измениться, перейти в основные настройки или уйти.</string>
+    <string name="quotePeopleTitle">Люди в цитатах</string>
+    <string name="quotePeopleDesc">«От», «Кому» и «Копия» в цитате — плашками с портретом; нажатие открывает карточку человека. Работает, когда цитата раскрыта, — открытие писем не замедляется.</string>
 </resources>

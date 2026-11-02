@@ -164,30 +164,27 @@ class DensitySpec {
   /// Между строками текста (имя, тема, превью).
   final double lineGap;
 
-  /// Сколько строк превью: null — по настройке «Строк текста» (1–4);
-  /// 0 — превью в одну строку с темой («Компактная»).
-  final int? previewLines;
-
-  /// Не меньше строк превью (в «Просторной» — две).
-  final int minPreviewLines;
+  /// «Компактная»: при одной строке текста превью идёт в строке темы.
+  final bool mergeSingleLine;
 
   const DensitySpec({
     required this.padV,
     required this.avatarRadius,
     required this.lineGap,
-    this.previewLines,
-    this.minPreviewLines = 1,
+    this.mergeSingleLine = false,
   });
 
-  /// Компактная: имя и время, ниже — тема и начало текста одной строкой;
-  /// портрет 36 dp. Строка — не ниже 48 dp (область нажатия).
-  static const compact = DensitySpec(padV: 2, avatarRadius: 18, lineGap: 1, previewLines: 0);
+  /// Компактная: имя и время, ниже — тема и начало текста одной строкой
+  /// (при «Строк текста» = 1); портрет 36 dp. Строка — не ниже 48 dp
+  /// (область нажатия).
+  static const compact = DensitySpec(padV: 2, avatarRadius: 18, lineGap: 1, mergeSingleLine: true);
 
   /// Обычная — как было до 1.9.x (поле 10 dp, в высоком контрасте — 8).
   static const normal = DensitySpec(padV: 10, avatarRadius: 24, lineGap: 2);
 
-  /// Просторная: больше воздуха, портрет крупнее, превью — от двух строк.
-  static const comfortable = DensitySpec(padV: 14, avatarRadius: 26, lineGap: 4, minPreviewLines: 2);
+  /// Просторная: больше воздуха, портрет крупнее (при выборе — две строки
+  /// текста, SettingsNotifier.setListDensity).
+  static const comfortable = DensitySpec(padV: 14, avatarRadius: 26, lineGap: 4);
 
   static DensitySpec of(ListDensity d) => switch (d) {
     ListDensity.compact => compact,
@@ -195,8 +192,14 @@ class DensitySpec {
     ListDensity.comfortable => comfortable,
   };
 
-  /// Строк превью при настройке [setting] (1–4).
-  int previewFor(int setting) => previewLines ?? math.max(setting, minPreviewLines);
+  /// Строк превью при настройке «Строк текста в ленте» [setting] (1–4); 0 —
+  /// превью в строке темы. Число строк задаёт только настройка (1.10.2,
+  /// замечание владельца: раньше «Компактная» и «Просторная» её
+  /// перекрывали, и она будто не работала); плотность — поля и портреты.
+  int previewFor(int setting) {
+    final n = setting.clamp(1, 4);
+    return mergeSingleLine && n == 1 ? 0 : n;
+  }
 }
 
 /// Плотность, оттенок ленты и анимация — в теме, чтобы виджеты не

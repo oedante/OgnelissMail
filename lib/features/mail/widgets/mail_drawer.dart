@@ -64,6 +64,7 @@ import '../../settings/screens/folder_sync_settings_screen.dart' show folderNoti
 import '../../../services/notifications/account_notify_mode.dart' show FolderNotify;
 import '../../../widgets/common/peek_card.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/common/tile_grid.dart';
 
 class MailDrawer extends ConsumerWidget {
   /// Панель на широком окне (1.6.28): стоит слева от ленты постоянно, а не
@@ -294,12 +295,37 @@ class MailDrawer extends ConsumerWidget {
       _close(context);
     }
 
-    final out = <Widget>[];
+    // Плитки в стиле «Пуска» Windows 10 (1.10.3, просьба владельца
+    // 02.11.2026): каждый пункт — значок с подписью или только значок
+    // (настройка избранного). Ключ пункта — для этого выбора.
+    final iconOnly = ref.watch(favoriteIconOnlyProvider);
+    final tiles = <TileItem>[];
+    TileItem fav(String id,
+            {required IconData icon,
+            required String label,
+            int? count,
+            Color? countColor,
+            bool isSelected = false,
+            VoidCallback? onTap,
+            bool muted = false,
+            void Function(Rect? anchor)? onLongPressAt}) =>
+        TileItem(
+          id: id,
+          icon: icon,
+          label: label,
+          count: count,
+          countColor: countColor,
+          selected: isSelected,
+          onTap: onTap,
+          muted: muted,
+          onLongPressAt: onLongPressAt,
+          iconOnly: iconOnly.contains(id),
+        );
 
     // Группы аккаунтов: между «одним ящиком» и «всеми сразу».
     // Показываем только если группы созданы — иначе лишний раздел.
     for (final g in groups) {
-      out.add(_FolderTile(
+      tiles.add(fav(FavoriteIconOnlyNotifier.groupKey(g.id),
         icon: AppIcons.folder_shared,
         label: g.name,
         isSelected: activeGroupId == g.id,
@@ -320,7 +346,7 @@ class MailDrawer extends ConsumerWidget {
     // Все аккаунты (сводная лента) — с общим числом непрочитанных: это то же
     // число, что на значке вкладки «Почта».
     if (accountCount > 1 && !hidden.contains(DrawerQuickItem.allAccounts)) {
-      out.add(_FolderTile(
+      tiles.add(fav(DrawerQuickItem.allAccounts.name,
         icon: AppIcons.all_inbox,
         label: l10n.tr('allAccounts'),
         count: ref.watch(totalUnreadCountProvider),
@@ -339,7 +365,7 @@ class MailDrawer extends ConsumerWidget {
 
     // Вся почта одного ящика — с её непрочитанными.
     if (!hidden.contains(DrawerQuickItem.allMail)) {
-      out.add(_FolderTile(
+      tiles.add(fav(DrawerQuickItem.allMail.name,
         icon: AppIcons.all_inbox,
         label: l10n.allMail,
         count: activeAccount == null
@@ -370,7 +396,7 @@ class MailDrawer extends ConsumerWidget {
     ];
     for (final (item, icon, key, f) in quick) {
       if (hidden.contains(item)) continue;
-      out.add(_FolderTile(
+      tiles.add(fav(item.name,
         icon: icon,
         label: l10n.tr(key),
         isSelected: inUnifiedView && filter == f,
@@ -381,7 +407,7 @@ class MailDrawer extends ConsumerWidget {
     // «Разобрать непрочитанные» — только из избранного, включается в его
     // настройке (решение владельца 11.10.2026).
     if (!hidden.contains(DrawerQuickItem.triage)) {
-      out.add(_FolderTile(
+      tiles.add(fav(DrawerQuickItem.triage.name,
         icon: AppIcons.playlist_add_check,
         label: l10n.tr('triageTitle'),
         isSelected: false,
@@ -397,7 +423,7 @@ class MailDrawer extends ConsumerWidget {
     // в боковой полосе разделов: в меню их не дублируем.
     final phone = AppBottomBar.inUse(context);
     if (phone && ref.watch(settingsProvider).myDay && !hidden.contains(DrawerQuickItem.myDay)) {
-      out.add(_FolderTile(
+      tiles.add(fav(DrawerQuickItem.myDay.name,
         icon: AppIcons.myDay,
         label: l10n.tr('myDay'),
         isSelected: false,
@@ -411,7 +437,7 @@ class MailDrawer extends ConsumerWidget {
     // «Файловый хаб» — все вложения всех писем (просили вынести в Избранное).
     final flags = ref.watch(featureFlagsProvider);
     if (phone && flags.showFileHub && !hidden.contains(DrawerQuickItem.fileHub)) {
-      out.add(_FolderTile(
+      tiles.add(fav(DrawerQuickItem.fileHub.name,
         icon: AppIcons.folder_copy,
         label: l10n.tr('fileHub'),
         isSelected: false,
@@ -425,7 +451,7 @@ class MailDrawer extends ConsumerWidget {
     // «Заметки» (в нижней панели их нет) и «Задачи», если их вкладка скрыта.
     // Раньше — отдельный раздел «Разделы» между избранным и папками.
     if (flags.showNotes && !hidden.contains(DrawerQuickItem.notes)) {
-      out.add(_FolderTile(
+      tiles.add(fav(DrawerQuickItem.notes.name,
         icon: AppIcons.sticky_note_2,
         label: l10n.tr('notes'),
         onTap: () {
@@ -435,7 +461,7 @@ class MailDrawer extends ConsumerWidget {
       ));
     }
     if (_tasksInMenu(context, ref) && !hidden.contains(DrawerQuickItem.tasks)) {
-      out.add(_FolderTile(
+      tiles.add(fav(DrawerQuickItem.tasks.name,
         icon: AppIcons.check_box,
         label: l10n.tasksLabel,
         onTap: () {
@@ -456,7 +482,7 @@ class MailDrawer extends ConsumerWidget {
           : ref.watch(folderUnreadProvider(activeAccount.id)).value ?? const <String, int>{};
       final tree = _FolderTreeData.build(folders, local);
       for (final f in favs) {
-        out.add(_FolderTile(
+        tiles.add(fav(FavoriteIconOnlyNotifier.folderKey(f.accountId, f.id),
           icon: f.type == FolderType.custom ? (folderIconOf(f) == AppIcons.folder ? AppIcons.folder_special : folderIconOf(f)) : folderTypeIcon(f.type),
           label: _localizedFolderName(f, l10n),
           count: _displayCount(f, tree),
@@ -472,7 +498,7 @@ class MailDrawer extends ConsumerWidget {
     // «Настройки» и выбор темы — из бывшего «Ещё» (1.6.40); тему можно
     // убрать в настройке избранного.
     if (phone && !hidden.contains(DrawerQuickItem.settings)) {
-      out.add(_FolderTile(
+      tiles.add(fav(DrawerQuickItem.settings.name,
         icon: AppIcons.settings,
         label: l10n.tr('settings'),
         isSelected: false,
@@ -482,13 +508,14 @@ class MailDrawer extends ConsumerWidget {
         },
       ));
     }
-    if (!hidden.contains(DrawerQuickItem.theme)) {
-      out.add(const Padding(
-        padding: EdgeInsets.only(top: Space.xs, bottom: Space.s),
-        child: ThemeQuickSwitch(),
-      ));
-    }
-    return out;
+    return [
+      if (tiles.isNotEmpty) TileGrid(items: tiles),
+      if (!hidden.contains(DrawerQuickItem.theme))
+        const Padding(
+          padding: EdgeInsets.only(top: Space.xs, bottom: Space.s),
+          child: ThemeQuickSwitch(),
+        ),
+    ];
   }
 
   /// «Задачи» в меню: на телефоне — если задачи включены (вкладки у них
@@ -873,13 +900,13 @@ class MailDrawer extends ConsumerWidget {
               label: l10n.tr('newSubfolder'),
               onTap: () => _createFolder(context, ref, l10n, parent: folder),
             ),
-          if (!folder.isSystem && manage)
+          if (!folder.isLocked && manage)
             PeekAction(
               icon: AppIcons.drive_file_move,
               label: l10n.tr('moveFolder'),
               onTap: () => _moveFolder(context, ref, folder, l10n),
             ),
-          if (!folder.isSystem)
+          if (!folder.isLocked)
             PeekAction(
               icon: AppIcons.edit,
               label: l10n.tr('rename'),
@@ -906,7 +933,7 @@ class MailDrawer extends ConsumerWidget {
               color: AppColors.errorText(context),
               onTap: () => unawaited(_emptyFolder(context, ref, folder, l10n)),
             ),
-          if (!folder.isSystem)
+          if (!folder.isLocked)
             PeekAction(
               icon: AppIcons.delete,
               label: l10n.delete,
@@ -1246,7 +1273,8 @@ class MailDrawer extends ConsumerWidget {
       }
       ref.invalidate(foldersProvider);
     } catch (e) {
-      showInlineError('${l10n.error}: $e');
+      AppLogger.warning('Переименование папки: $e');
+      showInlineError(serverRefusalText(l10n.tr('renameRejected'), e));
     }
   }
 
@@ -1279,7 +1307,8 @@ class MailDrawer extends ConsumerWidget {
         }));
       }
     } catch (e) {
-      showInlineError('${l10n.error}: $e');
+      AppLogger.warning('Удаление папки: $e');
+      showInlineError(serverRefusalText(l10n.tr('deleteRejected'), e));
     }
   }
 
@@ -1669,18 +1698,35 @@ class _FavoritesEditor extends ConsumerWidget {
       (DrawerQuickItem.theme, AppIcons.dark_mode, l10n.tr('drawerThemeSwitch')),
     ];
 
+    // Плитка с подписью или только значок (1.10.3) — кнопка перед
+    // переключателем; у скрытого пункта она неактивна.
+    final iconOnly = ref.watch(favoriteIconOnlyProvider);
+    Widget sizeToggle(String key, {bool enabled = true}) {
+      final small = iconOnly.contains(key);
+      return IconButton(
+        key: ValueKey('favSize_$key'),
+        tooltip: l10n.tr(small ? 'tileIconOnly' : 'tileIconText'),
+        isSelected: small,
+        icon: Icon(small ? AppIcons.tile_small : AppIcons.tile_wide),
+        onPressed: enabled ? () => ref.read(favoriteIconOnlyProvider.notifier).set(key, !small) : null,
+      );
+    }
+
     Iterable<Widget> folderRows(FolderModel f, int depth) sync* {
       yield ListTile(
         dense: true,
         contentPadding: EdgeInsets.only(left: Space.l + depth.clamp(0, 5) * 18.0, right: Space.s),
         leading: Icon(folderIconOf(f), size: 22),
         title: Text(MailDrawer._localizedFolderName(f, l10n), maxLines: 1, overflow: TextOverflow.ellipsis),
-        trailing: IconButton(
-          tooltip: f.isFavorite ? l10n.tr('removeFromFavorites') : l10n.tr('addToFavorites'),
-          icon: Icon(AppIcons.star, fill: f.isFavorite ? 1 : 0,
-              color: f.isFavorite ? theme.colorScheme.primary : null),
-          onPressed: () => MailDrawer.setFolderFavorite(ref, f, !f.isFavorite),
-        ),
+        trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+          if (f.isFavorite) sizeToggle(FavoriteIconOnlyNotifier.folderKey(f.accountId, f.id)),
+          IconButton(
+            tooltip: f.isFavorite ? l10n.tr('removeFromFavorites') : l10n.tr('addToFavorites'),
+            icon: Icon(AppIcons.star, fill: f.isFavorite ? 1 : 0,
+                color: f.isFavorite ? theme.colorScheme.primary : null),
+            onPressed: () => MailDrawer.setFolderFavorite(ref, f, !f.isFavorite),
+          ),
+        ]),
         onTap: () => MailDrawer.setFolderFavorite(ref, f, !f.isFavorite),
       );
       for (final c in tree.children[f.id] ?? const <FolderModel>[]) {
@@ -1705,13 +1751,24 @@ class _FavoritesEditor extends ConsumerWidget {
             child: Text(l10n.tr('favoritesQuick'),
                 style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.primary)),
           ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.s),
+            child: Text(l10n.tr('favoritesTilesHint'), style: theme.textTheme.bodySmall),
+          ),
           for (final (item, icon, label) in quick)
-            SwitchListTile(
+            ListTile(
               dense: true,
-              secondary: Icon(icon),
+              leading: Icon(icon),
               title: Text(label),
-              value: !hidden.contains(item),
-              onChanged: (v) => ref.read(hiddenQuickItemsProvider.notifier).setVisible(item, v),
+              onTap: () => ref.read(hiddenQuickItemsProvider.notifier).setVisible(item, hidden.contains(item)),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                // Выбор темы — не плитка, а ряд кнопок под плитками.
+                if (item != DrawerQuickItem.theme) sizeToggle(item.name, enabled: !hidden.contains(item)),
+                Switch(
+                  value: !hidden.contains(item),
+                  onChanged: (v) => ref.read(hiddenQuickItemsProvider.notifier).setVisible(item, v),
+                ),
+              ]),
             ),
           const Divider(height: 16),
           Padding(
@@ -1868,4 +1925,19 @@ class _FolderOrderSheet extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Отказ сервера по-человечески (1.10.3): «Сервер отклонил удаление:
+/// Backend error» вместо «Ошибка: [UNAVAILABLE] DELETE Backend error.
+/// sc=LFtoD10d2Os0_…». Код ответа и служебный номер запроса — в журнале.
+@visibleForTesting
+String serverRefusalText(String lead, Object e) {
+  var t = '$e'
+      .replaceFirst(RegExp(r'^(Imap|Smtp|Pop)?Exception:\s*'), '')
+      .replaceAll(RegExp(r'\[[A-Z-]+\]\s*'), '')
+      .replaceAll(RegExp(r'\s*\bsc=\S+'), '')
+      .replaceFirst(RegExp(r'^(DELETE|RENAME|CREATE)\s+', caseSensitive: false), '')
+      .trim();
+  if (t.endsWith('.')) t = t.substring(0, t.length - 1);
+  return t.isEmpty ? lead : '$lead: $t';
 }

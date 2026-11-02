@@ -192,6 +192,10 @@ class _QuickLongPressState extends State<QuickLongPress> with SingleTickerProvid
   /// доходила до конца, и строка оставалась на несколько пикселей меньше.
   void _release() {
     _pressTimer?.cancel();
+    // Палец подняли, когда строки уже нет (удержание открыло меню или экран
+    // и список перестроился): события указателя идут по прежнему маршруту,
+    // а контроллер уже освобождён — stop() падал (журнал 02.11.2026).
+    if (!mounted) return;
     final c = _press;
     if (c == null || (c.value == 0 && !c.isAnimating)) return;
     unawaited(c.animateBack(0, duration: const Duration(milliseconds: 140), curve: Curves.easeOut)

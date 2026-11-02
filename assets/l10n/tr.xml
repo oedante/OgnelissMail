@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Takvimde göster</string>
     <string name="mailDates">Mesaj metnindeki tarihler</string>
     <string name="mailDatesDesc">Toplantı, anımsatıcı oluşturmak veya o günü takvimde açmak için tarihe dokunun</string>
-    <string name="quickEventTitle">Tek cümlede etkinlik</string>
-    <string name="quickEventHint">Örneğin: Cuma saat 15\'te bir saatlik Anna ile görüşme</string>
-    <string name="quickEventMore">Daha fazla ayrıntı</string>
+    <string name="quickTaskTitle">Tek cümlede görev</string>
+    <string name="quickTaskHint">Örneğin: Yarın 15’te Anna’yı ara !</string>
     <string name="createTask">Görev oluştur</string>
     <string name="date">Tarih</string>
     <string name="dayPlan">Gün planı</string>
@@ -3760,4 +3759,14 @@
     <string name="composeDropHint">Dosya eklemek için bırakın</string>
     <string name="openInNewWindow">Yeni pencerede aç</string>
     <string name="openInMainWindow">Ana pencerede aç</string>
+    <string name="notifyLinesTitle">Bildirimlerde metin satırı</string>
+    <string name="notifyLinesHint">Genişletilmiş bildirimde iletinin kaç satırı gösterilsin. 8 ve 12 satır için metnin cihazda olması gerekir; yoksa başı gösterilir.</string>
+    <string name="tileIconOnly">Yalnızca simge</string>
+    <string name="tileIconText">Simge ve etiket</string>
+    <string name="favoritesTilesHint">Sık kullanılanlar kutucuk olarak görünür. Anahtardan önceki düğme kutucuğu geniş (simge ve etiket) ya da küçük (yalnızca simge) yapar.</string>
+    <string name="experimentalTitle">Deneysel özellikler</string>
+    <string name="experimentalDesc">Denemedeki özellikler, varsayılan olarak kapalı</string>
+    <string name="experimentalIntro">Denediğimiz yeni özellikler. Varsayılan olarak kapalıdır; değişebilir, ana ayarlara taşınabilir veya kaldırılabilir.</string>
+    <string name="quotePeopleTitle">Alıntı başlıklarındaki kişiler</string>
+    <string name="quotePeopleDesc">Alıntıdaki Kimden, Kime ve Bilgi satırları portreli etiketlere dönüşür; dokununca kişi kartı açılır. Alıntı açıkken çalışır, iletiler yine hızlı açılır.</string>
 </resources>

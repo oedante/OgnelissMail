@@ -83,6 +83,7 @@ import '../../widgets/common/text_scale_cap.dart';
 import '../../widgets/common/wide_frame.dart';
 import '../../widgets/common/mail_open_motion.dart' show MailOpenPage;
 import '../../features/settings/screens/appearance_screen.dart';
+import '../../features/settings/screens/experimental_settings_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -299,9 +300,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/settings/rules', name: 'rules', builder: (_, st) => WideFrame(child: RulesScreen(accountId: st.uri.queryParameters['accountId']))),
       GoRoute(path: '/settings/accessibility', name: 'accessibility', builder: (_, __) => const WideFrame(child: AccessibilityScreen())),
       GoRoute(path: '/settings/dlp', name: 'dlp', builder: (_, __) => const WideFrame(child: DlpSettingsScreen())),
-      // «Возможности» (до 1.6.1) — их настройки теперь в «Почте» и
-      // «Календаре»; старые ссылки ведут в «Почту».
-      GoRoute(path: '/settings/experimental', name: 'experimental', redirect: (_, __) => '/settings/mail'),
+      // «Экспериментальный функционал» (1.10.3): функции на пробе, по
+      // умолчанию выключены. Прежние «Возможности» (до 1.6.1) — в «Почте» и
+      // «Календаре».
+      GoRoute(path: '/settings/experimental', name: 'experimental',
+          builder: (_, __) => const WideFrame(child: ExperimentalSettingsScreen())),
       // Exchange на сервере: правила и «Восстановить удалённые» (EWS).
       GoRoute(path: '/settings/server-rules', name: 'server-rules', builder: (_, st) =>
           WideFrame(child: ServerRulesScreen(accountId: st.uri.queryParameters['accountId']))),

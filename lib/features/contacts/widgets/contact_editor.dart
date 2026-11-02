@@ -37,6 +37,7 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../mail/providers/mail_providers.dart';
 import '../person_names.dart' show personNamesProvider;
+import '../../../widgets/common/account_avatar.dart';
 
 /// Открыть форму. [existing] — правка, иначе — новый контакт ([email] и
 /// [name] — подстановка, например из карточки человека).
@@ -382,8 +383,7 @@ class _ContactEditorScreenState extends ConsumerState<ContactEditorScreen> {
                     child: AppSelectField<String>(
                       value: _target,
                       entries: [
-                        for (final a in accounts)
-                          AppMenuEntry(value: a.id, label: a.email, icon: AppIcons.mail, iconColor: Color(a.colorValue)),
+                        for (final a in accounts) accountMenuEntry(a),
                         AppMenuEntry(value: _localTarget, label: l10n.tr('contactLocalOnly'), icon: AppIcons.smartphone),
                       ],
                       onChanged: (v) => setState(() {

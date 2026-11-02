@@ -18,6 +18,8 @@ import '../../../services/mail/focus_mode_service.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../../services/notifications/notification_service.dart' show notificationServiceProvider;
+import '../../../services/notifications/notification_text.dart' show NotificationLines;
+import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../services/push/push_wake_service.dart';
 import '../../../core/utils/app_date_format.dart';
 import '../../../widgets/ui/app_radio_tile.dart';
@@ -96,6 +98,9 @@ class NotificationsSettingsScreen extends ConsumerWidget {
                       : null,
                 ),
             ],
+            // Строк текста в уведомлении (1.10.3, просьба владельца
+            // 02.11.2026) — отдельно для рабочих и личных ящиков.
+            if (!kIsWeb) _NotificationLinesTile(enabled: settings.notificationsEnabled),
             // 1.6.45: проверить, что уведомления о почте доходят (тем же
             // каналом, звуком и вибрацией, что письмо).
             SettingsItem(
@@ -401,6 +406,77 @@ class _PushTransportPickerState extends ConsumerState<_PushTransportPicker> {
           if (_busy) const LinearProgressIndicator(minHeight: 2),
         ]);
       },
+    );
+  }
+}
+
+/// «Строк текста в уведомлении»: рабочие и личные ящики — по ряду кнопок
+/// (NotificationLines.options). Ящик рабочий или личный — по выбору в его
+/// настройках (AccountModel.isWork).
+class _NotificationLinesTile extends ConsumerStatefulWidget {
+  final bool enabled;
+  const _NotificationLinesTile({required this.enabled});
+
+  @override
+  ConsumerState<_NotificationLinesTile> createState() => _NotificationLinesTileState();
+}
+
+class _NotificationLinesTileState extends ConsumerState<_NotificationLinesTile> {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final prefs = ref.watch(sharedPrefsProvider);
+    Widget row(String label, bool work) {
+      final v = NotificationLines.of(prefs, work: work);
+      return Padding(
+        padding: const EdgeInsets.only(top: Space.s),
+        child: Row(children: [
+          Expanded(child: Text(label, style: theme.textTheme.bodyMedium)),
+          SegmentedButton<int>(
+            key: ValueKey('notifLines_${work ? 'work' : 'personal'}'),
+            showSelectedIcon: false,
+            style: const ButtonStyle(visualDensity: VisualDensity.compact),
+            segments: [
+              for (final n in NotificationLines.options) ButtonSegment<int>(value: n, label: Text('$n')),
+            ],
+            selected: {v},
+            onSelectionChanged: widget.enabled
+                ? (sel) {
+                    unawaited(prefs.setInt(work ? NotificationLines.prefWork : NotificationLines.prefPersonal, sel.first));
+                    setState(() {});
+                  }
+                : null,
+          ),
+        ]),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, Space.m),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Icon(AppIcons.notes, size: Sizes.icon, color: theme.colorScheme.onSurfaceVariant),
+            const SizedBox(width: Space.l),
+            Expanded(child: Text(l10n.tr('notifyLinesTitle'), style: theme.textTheme.bodyLarge)),
+          ]),
+          Padding(
+            padding: const EdgeInsets.only(left: Sizes.icon + Space.l),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: Space.xs),
+                Text(l10n.tr('notifyLinesHint'),
+                    style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                row(l10n.tr('groupPresetWork'), true),
+                row(l10n.tr('groupPresetPersonal'), false),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -222,6 +222,8 @@ class EmailListTile extends ConsumerWidget {
     final dens = look.spec;
     final compact = look.density == ListDensity.compact;
     final previewLines = dens.previewFor(ref.watch(settingsProvider.select((s) => s.previewLines)));
+    // Тема и превью одной строкой — «Компактная» при одной строке текста.
+    final merged = previewLines == 0;
     final avatarSize = dens.avatarRadius * 2;
 
     // Правило «подсветить строку»: лёгкий фон цвета тега (правила на телефоне).
@@ -503,7 +505,7 @@ class EmailListTile extends ConsumerWidget {
                                   child: Icon(AppIcons.priority_high, size: 16, color: AppColors.errorRed),
                                 ),
                               Expanded(
-                                child: compact
+                                child: merged
                                     ? Text.rich(
                                         TextSpan(children: [
                                           TextSpan(text: subject),
@@ -554,7 +556,7 @@ class EmailListTile extends ConsumerWidget {
                                     ],
                                   ),
                                 ),
-                              if (compact) ...[
+                              if (merged) ...[
                                 if (badge != null) badge,
                                 ...marks,
                               ],
@@ -563,7 +565,7 @@ class EmailListTile extends ConsumerWidget {
 
                           // Строка 3: Превью + иконки. Строк превью — по
                           // настройке (1–4, 1.6.31); метка папки — у первой.
-                          if (!compact) ...[
+                          if (!merged) ...[
                           SizedBox(height: dens.lineGap),
                           Row(
                             crossAxisAlignment: previewLines > 1 ? CrossAxisAlignment.start : CrossAxisAlignment.center,

@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Afișează în calendar</string>
     <string name="mailDates">Date în textul mesajului</string>
     <string name="mailDatesDesc">Atingeți o dată pentru a crea o întâlnire, un memento sau a deschide ziua în calendar</string>
-    <string name="quickEventTitle">Eveniment într-o frază</string>
-    <string name="quickEventHint">De exemplu: Apel cu Ana vineri la 15 timp de o oră</string>
-    <string name="quickEventMore">Mai multe detalii</string>
+    <string name="quickTaskTitle">Sarcină într-o frază</string>
+    <string name="quickTaskHint">De exemplu: O sun pe Ana mâine la 15 !</string>
     <string name="createTask">Creează activitate</string>
     <string name="date">Data</string>
     <string name="dayPlan">Planul zilei</string>
@@ -3781,4 +3780,14 @@
     <string name="composeDropHint">Eliberează pentru a atașa fișiere</string>
     <string name="openInNewWindow">Deschide într-o fereastră nouă</string>
     <string name="openInMainWindow">Deschide în fereastra principală</string>
+    <string name="notifyLinesTitle">Rânduri de text în notificări</string>
+    <string name="notifyLinesHint">Câte rânduri din mesaj să arate notificarea extinsă. Pentru 8 și 12 rânduri textul trebuie să fie pe dispozitiv; altfel apare începutul.</string>
+    <string name="tileIconOnly">Doar pictogramă</string>
+    <string name="tileIconText">Pictogramă și etichetă</string>
+    <string name="favoritesTilesHint">Favoritele apar ca plăci. Butonul dinaintea comutatorului face placa lată (pictogramă și etichetă) sau mică (doar pictogramă).</string>
+    <string name="experimentalTitle">Funcții experimentale</string>
+    <string name="experimentalDesc">Funcții de probă, dezactivate implicit</string>
+    <string name="experimentalIntro">Funcții noi pe care le încercăm. Sunt dezactivate implicit și se pot schimba, pot trece în setările principale sau pot dispărea.</string>
+    <string name="quotePeopleTitle">Persoane în anteturile citate</string>
+    <string name="quotePeopleDesc">De la, Către și Cc din citat devin etichete cu portret; atingeți pentru fișa persoanei. Funcționează când citatul e extins, deschiderea nu încetinește.</string>
 </resources>

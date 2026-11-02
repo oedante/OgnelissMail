@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">カレンダーで表示</string>
     <string name="mailDates">メール本文の日付</string>
     <string name="mailDatesDesc">日付をタップして会議やリマインダーを作成、またはカレンダーでその日を表示</string>
-    <string name="quickEventTitle">一文で予定を作成</string>
-    <string name="quickEventHint">例: 金曜15時からアンナと1時間の通話</string>
-    <string name="quickEventMore">詳細</string>
+    <string name="quickTaskTitle">ひとことでタスク</string>
+    <string name="quickTaskHint">例：明日15時にアンナに電話 !</string>
     <string name="createTask">タスクを作成</string>
     <string name="date">日付</string>
     <string name="dayPlan">今日の予定</string>
@@ -3739,4 +3738,14 @@
     <string name="composeDropHint">ドロップしてファイルを添付</string>
     <string name="openInNewWindow">新しいウィンドウで開く</string>
     <string name="openInMainWindow">メインウィンドウで開く</string>
+    <string name="notifyLinesTitle">通知に表示する行数</string>
+    <string name="notifyLinesHint">展開した通知に表示するメール本文の行数。8 行と 12 行は本文が端末にある場合のみ。ない場合は冒頭を表示します。</string>
+    <string name="tileIconOnly">アイコンのみ</string>
+    <string name="tileIconText">アイコンと名前</string>
+    <string name="favoritesTilesHint">お気に入りはタイルで表示されます。スイッチの前のボタンで、幅広（アイコンと名前）か小（アイコンのみ）を選びます。</string>
+    <string name="experimentalTitle">試験的な機能</string>
+    <string name="experimentalDesc">お試し中の機能（初期設定はオフ）</string>
+    <string name="experimentalIntro">試験中の新機能です。初期設定はオフで、変更されたり、通常の設定に移ったり、削除されたりすることがあります。</string>
+    <string name="quotePeopleTitle">引用ヘッダーの人物</string>
+    <string name="quotePeopleDesc">引用内の差出人・宛先・CC を写真付きのチップで表示し、タップで人物カードを開きます。引用を開いたときだけ動作するので、メールを開く速さは変わりません。</string>
 </resources>

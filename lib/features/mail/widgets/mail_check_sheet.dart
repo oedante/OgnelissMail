@@ -37,6 +37,7 @@ import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/sync_progress_indicator.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../providers/mail_providers.dart';
+import '../../../widgets/common/account_avatar.dart';
 
 Future<void> showMailCheckSheet(BuildContext context) => showAppSheet<void>(
       context: context,
@@ -160,7 +161,7 @@ class _MailCheckSheetState extends ConsumerState<_MailCheckSheet> {
     ].join(' · ');
     final problem = a.authFailedAt != null ? l10n.tr('mailCheckAuth') : (err == null ? null : '⚠ $err');
     return SettingsItem(
-      leading: Icon(AppIcons.mail, color: Color(a.colorValue)),
+      leading: AccountAvatar(account: a, radius: 14),
       title: a.email,
       subtitle: problem == null ? line : '$line\n$problem',
       onTap: () {

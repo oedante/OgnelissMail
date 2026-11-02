@@ -17,6 +17,7 @@ import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart' show AppLocalizations;
 import '../../../services/notifications/messenger_notifications.dart' show MessengerNotify;
 import '../../../core/theme/ui_fonts.dart';
+import '../../../services/notifications/notification_text.dart' show NotificationLines;
 
 /// Режим загрузки писем
 enum EmailFetchMode {
@@ -715,9 +716,14 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(corners: v);
   }
 
+  /// Плотность ленты; число строк текста подстраивается под неё (1.10.2):
+  /// «Компактная» — одна строка (в строке темы), «Просторная» — не меньше
+  /// двух. Дальше «Строк текста в ленте» можно поменять — оно главнее.
   Future<void> setListDensity(ListDensity v) async {
     await _p.setInt(_K.listDensity, v.index);
     state = state.copyWith(listDensity: v);
+    if (v == ListDensity.compact && state.previewLines != 1) await setPreviewLines(1);
+    if (v == ListDensity.comfortable && state.previewLines < 2) await setPreviewLines(2);
   }
 
   Future<void> setOpenAnimation(bool v) async {
@@ -945,6 +951,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode, _K.bimiLogos,
       _K.notificationsEnabled, _K.notificationSound, _K.notificationVibration,
       _K.notificationMessengerStyle, _K.notificationVipConversations,
+      NotificationLines.prefWork, NotificationLines.prefPersonal,
       _K.syncOnlyWifi, _K.syncInterval, _K.emailFetchMode,
       _K.groupByConversation, _K.swipeLP, _K.swipeLS, _K.swipeRP, _K.swipeRS, _K.swipeCL, _K.swipeCR, _K.swipeAnim, _K.previewLines, _K.peekPreviewLines,
       _K.aiEnabled, _K.smartReplies, _K.dlpEnabled, _K.autoRules,

@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">แสดงในปฏิทิน</string>
     <string name="mailDates">วันที่ในข้อความอีเมล</string>
     <string name="mailDatesDesc">แตะวันที่เพื่อสร้างการประชุม การเตือน หรือเปิดวันนั้นในปฏิทิน</string>
-    <string name="quickEventTitle">กิจกรรมในประโยคเดียว</string>
-    <string name="quickEventHint">ตัวอย่าง: โทรกับแอนนาวันศุกร์ 15 นาฬิกา หนึ่งชั่วโมง</string>
-    <string name="quickEventMore">รายละเอียดเพิ่มเติม</string>
+    <string name="quickTaskTitle">งานในประโยคเดียว</string>
+    <string name="quickTaskHint">เช่น โทรหาแอนนาพรุ่งนี้ 15 นาฬิกา !</string>
     <string name="createTask">สร้างงาน</string>
     <string name="date">วันที่</string>
     <string name="dayPlan">แผนของวัน</string>
@@ -3739,4 +3738,14 @@
     <string name="composeDropHint">วางเพื่อแนบไฟล์</string>
     <string name="openInNewWindow">เปิดในหน้าต่างใหม่</string>
     <string name="openInMainWindow">เปิดในหน้าต่างหลัก</string>
+    <string name="notifyLinesTitle">จำนวนบรรทัดข้อความในการแจ้งเตือน</string>
+    <string name="notifyLinesHint">จำนวนบรรทัดของข้อความที่แสดงในการแจ้งเตือนแบบขยาย 8 และ 12 บรรทัดต้องมีข้อความอยู่ในเครื่อง มิฉะนั้นจะแสดงเฉพาะตอนต้น</string>
+    <string name="tileIconOnly">เฉพาะไอคอน</string>
+    <string name="tileIconText">ไอคอนและชื่อ</string>
+    <string name="favoritesTilesHint">รายการโปรดแสดงเป็นไทล์ ปุ่มหน้าสวิตช์ใช้เลือกไทล์กว้าง (ไอคอนและชื่อ) หรือเล็ก (เฉพาะไอคอน)</string>
+    <string name="experimentalTitle">ฟีเจอร์ทดลอง</string>
+    <string name="experimentalDesc">ฟีเจอร์ที่กำลังทดลอง ปิดไว้เป็นค่าเริ่มต้น</string>
+    <string name="experimentalIntro">ฟีเจอร์ใหม่ที่กำลังทดลอง ปิดไว้เป็นค่าเริ่มต้น อาจเปลี่ยนแปลง ย้ายไปยังการตั้งค่าหลัก หรือถูกนำออก</string>
+    <string name="quotePeopleTitle">บุคคลในหัวข้อข้อความที่อ้างถึง</string>
+    <string name="quotePeopleDesc">ผู้ส่ง ผู้รับ และสำเนาในข้อความที่อ้างถึงแสดงเป็นป้ายพร้อมรูป แตะเพื่อเปิดการ์ดบุคคล ทำงานเมื่อขยายข้อความที่อ้างถึง การเปิดอีเมลจึงยังเร็วเหมือนเดิม</string>
 </resources>

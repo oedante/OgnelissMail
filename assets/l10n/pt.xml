@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Mostrar no calendário</string>
     <string name="mailDates">Datas no texto da mensagem</string>
     <string name="mailDatesDesc">Toque numa data para criar uma reunião ou lembrete ou abrir esse dia no calendário</string>
-    <string name="quickEventTitle">Evento numa frase</string>
-    <string name="quickEventHint">Por exemplo: Chamada com Ana na sexta às 15 por uma hora</string>
-    <string name="quickEventMore">Mais detalhes</string>
+    <string name="quickTaskTitle">Tarefa numa frase</string>
+    <string name="quickTaskHint">Por exemplo: Ligar à Ana amanhã às 15 !</string>
     <string name="createTask">Criar tarefa</string>
     <string name="date">Data</string>
     <string name="dayPlan">Plano do dia</string>
@@ -3760,4 +3759,14 @@
     <string name="composeDropHint">Solte para anexar arquivos</string>
     <string name="openInNewWindow">Abrir em uma nova janela</string>
     <string name="openInMainWindow">Abrir na janela principal</string>
+    <string name="notifyLinesTitle">Linhas de texto nas notificações</string>
+    <string name="notifyLinesHint">Quantas linhas da mensagem mostrar na notificação expandida. Para 8 e 12 linhas o texto precisa estar no aparelho; caso contrário, aparece o início.</string>
+    <string name="tileIconOnly">Só ícone</string>
+    <string name="tileIconText">Ícone e texto</string>
+    <string name="favoritesTilesHint">Os favoritos aparecem como blocos. O botão antes do interruptor deixa o bloco largo (ícone e texto) ou pequeno (só ícone).</string>
+    <string name="experimentalTitle">Recursos experimentais</string>
+    <string name="experimentalDesc">Recursos em teste, desativados por padrão</string>
+    <string name="experimentalIntro">Recursos novos em teste. Vêm desativados e podem mudar, ir para as configurações principais ou ser removidos.</string>
+    <string name="quotePeopleTitle">Pessoas nos cabeçalhos citados</string>
+    <string name="quotePeopleDesc">De, Para e Cc da citação viram etiquetas com retrato; toque para abrir o cartão da pessoa. Funciona com a citação aberta, sem deixar a abertura mais lenta.</string>
 </resources>

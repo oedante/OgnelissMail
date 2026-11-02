@@ -242,6 +242,11 @@ class NotificationService {
     /// Короткая подпись ящика («я» в беседе Android) — всегда, даже когда
     /// ящик один и [mailboxLabel] не показывается.
     String? accountLabel,
+
+    /// Строк начала письма (NotificationLines, 1.10.3) и текст письма, если
+    /// он уже загружен: превью короче, чем нужно для 8 и 12 строк.
+    int previewLines = NotificationLines.byDefault,
+    String? fullText,
   }) async {
     if (_skipOnThisPlatform()) return;
     if (!_initialized) await initialize();
@@ -291,7 +296,10 @@ class NotificationService {
     final badge = await _bumpBadge();
     final title = NotificationText.title(senderName, vip: isVip, shared: isSharedMailbox);
     final subj = NotificationText.subject(subject, noSubject: _t('noSubject'));
-    final text = NotificationText.preview(preview);
+    final source = (fullText != null && fullText.trim().isNotEmpty && NotificationLines.wantsBody(previewLines))
+        ? fullText
+        : preview;
+    final text = NotificationText.preview(source, max: NotificationLines.maxChars(previewLines));
     final subText = NotificationText.subText(folder: folderLabel, mailbox: mailboxLabel);
     // Строка текста: на Android — тема (свёрнутое уведомление), на iPhone и
     // Mac тема — подзаголовок, а в тексте — начало письма и последней

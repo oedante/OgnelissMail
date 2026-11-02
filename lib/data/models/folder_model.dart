@@ -27,6 +27,16 @@ class FolderModel {
 
   bool get isSystem => type != FolderType.custom;
 
+  /// Служебная папка сервера, которую IMAP показывает как обычную: «Шаблоны»
+  /// Яндекса (Drafts|template — разделитель «|» только у Яндекса). Сервер не
+  /// даёт её удалить или переименовать: «NO [UNAVAILABLE] DELETE Backend
+  /// error» (журнал владельца 02.11.2026).
+  bool get isServerProtected =>
+      RegExp(r'^drafts\|template$', caseSensitive: false).hasMatch(serverPath ?? id);
+
+  /// Удалить, переименовать или перенести папку нельзя.
+  bool get isLocked => isSystem || isServerProtected;
+
   /// Попадает ли папка во «Всю почту» по умолчанию: входящие, отправленные,
   /// архив и свои папки — да; черновики, исходящие, корзина, спам — нет.
   /// Одно правило для IMAP, EWS и ActiveSync.

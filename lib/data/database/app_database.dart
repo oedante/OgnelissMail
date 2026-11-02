@@ -2184,10 +2184,22 @@ class AppDatabase extends _$AppDatabase {
 
   /// Число операций, ожидающих отправки (офлайн-очередь). Реактивно — чтобы
   /// индикатор в шапке обновлялся сам по мере обработки очереди.
-  Stream<int> watchQueueCount() {
-    final q = selectOnly(syncQueue)..addColumns([syncQueue.id.count()]);
-    return q.map((row) => row.read(syncQueue.id.count()) ?? 0).watchSingle();
-  }
+  /// Только операции существующих ящиков (1.10.3): операции, поставленные
+  /// уже после удаления ящика (перенос ждал сервер, пока ящик удаляли),
+  /// держали счётчик на панели, а в списке очереди их не было — отменить
+  /// было нечего (замечание владельца 02.11.2026).
+  Stream<int> watchQueueCount() => customSelect(
+        'SELECT COUNT(*) AS c FROM sync_queue WHERE account_id IN (SELECT id FROM accounts)',
+        readsFrom: {syncQueue, accounts},
+      ).map((r) => r.read<int>('c')).watchSingle();
+
+  /// Убрать операции удалённых ящиков. Через customUpdate с [updates] — иначе
+  /// подписчики (счётчик очереди) об удалении не узнают.
+  Future<int> purgeOrphanQueue() => customUpdate(
+        'DELETE FROM sync_queue WHERE account_id NOT IN (SELECT id FROM accounts)',
+        updates: {syncQueue},
+        updateKind: UpdateKind.delete,
+      );
 
   /// Письма, по которым наступило время проверить ответ (follow-up).
   ///

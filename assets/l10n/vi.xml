@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Hiển thị trong lịch</string>
     <string name="mailDates">Ngày trong nội dung thư</string>
     <string name="mailDatesDesc">Chạm vào ngày để tạo cuộc họp, lời nhắc hoặc mở ngày đó trong lịch</string>
-    <string name="quickEventTitle">Sự kiện trong một câu</string>
-    <string name="quickEventHint">Ví dụ: Gọi với Anna vào thứ Sáu lúc 15 giờ trong một giờ</string>
-    <string name="quickEventMore">Thêm chi tiết</string>
+    <string name="quickTaskTitle">Việc cần làm trong một câu</string>
+    <string name="quickTaskHint">Ví dụ: Gọi cho Anna ngày mai lúc 15 giờ !</string>
     <string name="createTask">Tạo tác vụ</string>
     <string name="date">Ngày</string>
     <string name="dayPlan">Kế hoạch trong ngày</string>
@@ -3739,4 +3738,14 @@
     <string name="composeDropHint">Thả để đính kèm tệp</string>
     <string name="openInNewWindow">Mở trong cửa sổ mới</string>
     <string name="openInMainWindow">Mở trong cửa sổ chính</string>
+    <string name="notifyLinesTitle">Số dòng văn bản trong thông báo</string>
+    <string name="notifyLinesHint">Số dòng của thư hiển thị trong thông báo mở rộng. 8 và 12 dòng cần có nội dung thư trên máy; nếu không sẽ hiện phần đầu.</string>
+    <string name="tileIconOnly">Chỉ biểu tượng</string>
+    <string name="tileIconText">Biểu tượng và nhãn</string>
+    <string name="favoritesTilesHint">Mục yêu thích hiển thị dạng ô. Nút trước công tắc chọn ô rộng (biểu tượng và nhãn) hoặc ô nhỏ (chỉ biểu tượng).</string>
+    <string name="experimentalTitle">Tính năng thử nghiệm</string>
+    <string name="experimentalDesc">Tính năng đang thử, mặc định tắt</string>
+    <string name="experimentalIntro">Các tính năng mới đang thử. Mặc định tắt; có thể thay đổi, chuyển sang cài đặt chính hoặc bị gỡ bỏ.</string>
+    <string name="quotePeopleTitle">Người trong phần đầu trích dẫn</string>
+    <string name="quotePeopleDesc">Người gửi, Người nhận và Cc trong phần trích dẫn hiện thành thẻ có ảnh; chạm để mở thẻ người. Chỉ chạy khi mở rộng trích dẫn nên thư vẫn mở nhanh như trước.</string>
 </resources>

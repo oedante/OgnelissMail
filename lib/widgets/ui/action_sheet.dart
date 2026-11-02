@@ -19,19 +19,27 @@ export '../common/peek_card.dart' show AppMenuEntry;
 
 class ActionSheetItem<T> {
   final IconData icon;
+
+  /// Вместо значка — свой виджет (портрет ящика, 1.10.3).
+  final Widget? leading;
   final String label;
   final String? subtitle;
   final T value;
   final bool destructive;
   final bool enabled;
 
+  /// Текущий выбор — галочка справа.
+  final bool checked;
+
   const ActionSheetItem({
     required this.icon,
     required this.label,
     required this.value,
+    this.leading,
     this.subtitle,
     this.destructive = false,
     this.enabled = true,
+    this.checked = false,
   });
 }
 
@@ -61,9 +69,11 @@ Future<T?> showActionSheet<T>(
           value: it.value,
           label: it.label,
           icon: it.icon,
+          leading: it.leading,
           subtitle: it.subtitle,
           destructive: it.destructive,
           enabled: it.enabled,
+          checked: it.checked,
         ),
     ],
   );

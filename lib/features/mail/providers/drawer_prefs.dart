@@ -70,6 +70,30 @@ final hiddenQuickItemsProvider =
     NotifierProvider<HiddenQuickItemsNotifier, Set<DrawerQuickItem>>(
         HiddenQuickItemsNotifier.new);
 
+/// Плитки «Избранного» (1.10.2, просьба владельца: «панелями в стиле пуска
+/// Windows 10»): ключи пунктов, показанных только значком; остальные — значок
+/// с подписью. Ключ — DrawerQuickItem.name, «group:<id>» или
+/// «folder:<ящик>/<папка>».
+class FavoriteIconOnlyNotifier extends Notifier<Set<String>> {
+  static const _k = 'drawer_fav_icon_only';
+
+  @override
+  Set<String> build() => (ref.read(sharedPrefsProvider).getStringList(_k) ?? const []).toSet();
+
+  static String folderKey(String accountId, String folderId) => 'folder:$accountId/$folderId';
+  static String groupKey(String id) => 'group:$id';
+
+  Future<void> set(String key, bool iconOnly) async {
+    final next = {...state};
+    iconOnly ? next.add(key) : next.remove(key);
+    state = next;
+    await ref.read(sharedPrefsProvider).setStringList(_k, next.toList());
+  }
+}
+
+final favoriteIconOnlyProvider =
+    NotifierProvider<FavoriteIconOnlyNotifier, Set<String>>(FavoriteIconOnlyNotifier.new);
+
 /// Свёрнутые ветки дерева папок: ключ «аккаунт|папка». По умолчанию дерево
 /// развёрнуто — как было раньше; свёрнутое запоминается между запусками.
 class CollapsedFoldersNotifier extends Notifier<Set<String>> {

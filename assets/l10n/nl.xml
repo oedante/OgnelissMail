@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Tonen in agenda</string>
     <string name="mailDates">Datums in berichttekst</string>
     <string name="mailDatesDesc">Tik op een datum voor een afspraak, herinnering of die dag in de agenda</string>
-    <string name="quickEventTitle">Afspraak in één zin</string>
-    <string name="quickEventHint">Bijvoorbeeld: Gesprek met Anna vrijdag om 15 uur voor een uur</string>
-    <string name="quickEventMore">Meer details</string>
+    <string name="quickTaskTitle">Taak in één zin</string>
+    <string name="quickTaskHint">Bijvoorbeeld: Anna morgen om 15 uur bellen !</string>
     <string name="createTask">Taak maken</string>
     <string name="date">Datum</string>
     <string name="dayPlan">Dagplanning</string>
@@ -3760,4 +3759,14 @@
     <string name="composeDropHint">Laat los om bestanden bij te voegen</string>
     <string name="openInNewWindow">Openen in een nieuw venster</string>
     <string name="openInMainWindow">Openen in het hoofdvenster</string>
+    <string name="notifyLinesTitle">Tekstregels in meldingen</string>
+    <string name="notifyLinesHint">Hoeveel regels van het bericht een uitgevouwen melding toont. Voor 8 en 12 regels moet de tekst op het apparaat staan; anders zie je het begin.</string>
+    <string name="tileIconOnly">Alleen pictogram</string>
+    <string name="tileIconText">Pictogram en tekst</string>
+    <string name="favoritesTilesHint">Favorieten staan als tegels. De knop voor de schakelaar maakt een tegel breed (pictogram en tekst) of klein (alleen pictogram).</string>
+    <string name="experimentalTitle">Experimentele functies</string>
+    <string name="experimentalDesc">Functies op proef, standaard uit</string>
+    <string name="experimentalIntro">Nieuwe functies die we uitproberen. Standaard uit; ze kunnen veranderen, naar de gewone instellingen gaan of verdwijnen.</string>
+    <string name="quotePeopleTitle">Personen in geciteerde kopteksten</string>
+    <string name="quotePeopleDesc">Van, Aan en Cc in een citaat worden labels met portret; tik om de persoonskaart te openen. Werkt bij een uitgevouwen citaat, berichten openen even snel.</string>
 </resources>

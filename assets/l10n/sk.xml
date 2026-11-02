@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Zobraziť v kalendári</string>
     <string name="mailDates">Dátumy v texte správy</string>
     <string name="mailDatesDesc">Ťuknutím na dátum vytvoríte stretnutie, pripomienku alebo otvoríte deň v kalendári</string>
-    <string name="quickEventTitle">Udalosť jednou vetou</string>
-    <string name="quickEventHint">Napríklad: Hovor s Annou v piatok o 15 na hodinu</string>
-    <string name="quickEventMore">Podrobnosti</string>
+    <string name="quickTaskTitle">Úloha jednou vetou</string>
+    <string name="quickTaskHint">Napríklad: Zavolať Anne zajtra o 15 !</string>
     <string name="createTask">Vytvoriť úlohu</string>
     <string name="date">Dátum</string>
     <string name="dayPlan">Plán dňa</string>
@@ -3781,4 +3780,14 @@
     <string name="composeDropHint">Pustite na pripojenie súborov</string>
     <string name="openInNewWindow">Otvoriť v novom okne</string>
     <string name="openInMainWindow">Otvoriť v hlavnom okne</string>
+    <string name="notifyLinesTitle">Riadky textu v upozorneniach</string>
+    <string name="notifyLinesHint">Koľko riadkov správy ukázať v rozbalenom upozornení. Pre 8 a 12 riadkov musí byť text v zariadení; inak sa zobrazí začiatok.</string>
+    <string name="tileIconOnly">Len ikona</string>
+    <string name="tileIconText">Ikona a popis</string>
+    <string name="favoritesTilesHint">Obľúbené sú dlaždice. Tlačidlo pred prepínačom urobí dlaždicu širokú (ikona a popis) alebo malú (len ikona).</string>
+    <string name="experimentalTitle">Experimentálne funkcie</string>
+    <string name="experimentalDesc">Funkcie na skúšku, predvolene vypnuté</string>
+    <string name="experimentalIntro">Nové funkcie, ktoré skúšame. Predvolene sú vypnuté; môžu sa zmeniť, prejsť do hlavných nastavení alebo zmiznúť.</string>
+    <string name="quotePeopleTitle">Ľudia v hlavičkách citácií</string>
+    <string name="quotePeopleDesc">Od, Komu a Kópia v citácii ako štítky s portrétom; ťuknutie otvorí kartu osoby. Funguje pri rozbalenej citácii, správy sa otvárajú rovnako rýchlo.</string>
 </resources>

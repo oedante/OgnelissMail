@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Pokaż w kalendarzu</string>
     <string name="mailDates">Daty w treści wiadomości</string>
     <string name="mailDatesDesc">Dotknij daty, aby utworzyć spotkanie, przypomnienie lub otworzyć ten dzień w kalendarzu</string>
-    <string name="quickEventTitle">Wydarzenie jednym zdaniem</string>
-    <string name="quickEventHint">Na przykład: Rozmowa z Anną w piątek o 15 na godzinę</string>
-    <string name="quickEventMore">Więcej szczegółów</string>
+    <string name="quickTaskTitle">Zadanie jednym zdaniem</string>
+    <string name="quickTaskHint">Na przykład: Zadzwonić do Anny jutro o 15 !</string>
     <string name="createTask">Utwórz zadanie</string>
     <string name="date">Data</string>
     <string name="dayPlan">Plan dnia</string>
@@ -3802,4 +3801,14 @@
     <string name="composeDropHint">Upuść, aby dołączyć pliki</string>
     <string name="openInNewWindow">Otwórz w nowym oknie</string>
     <string name="openInMainWindow">Otwórz w głównym oknie</string>
+    <string name="notifyLinesTitle">Wiersze tekstu w powiadomieniach</string>
+    <string name="notifyLinesHint">Ile wierszy wiadomości pokazać w rozwiniętym powiadomieniu. Dla 8 i 12 wierszy tekst musi być na urządzeniu; inaczej widać początek.</string>
+    <string name="tileIconOnly">Tylko ikona</string>
+    <string name="tileIconText">Ikona i podpis</string>
+    <string name="favoritesTilesHint">Ulubione są kafelkami. Przycisk przed przełącznikiem robi kafelek szeroki (ikona i podpis) lub mały (tylko ikona).</string>
+    <string name="experimentalTitle">Funkcje eksperymentalne</string>
+    <string name="experimentalDesc">Funkcje testowe, domyślnie wyłączone</string>
+    <string name="experimentalIntro">Nowe funkcje, które testujemy. Domyślnie wyłączone; mogą się zmienić, trafić do głównych ustawień lub zniknąć.</string>
+    <string name="quotePeopleTitle">Osoby w nagłówkach cytatów</string>
+    <string name="quotePeopleDesc">Od, Do i DW w cytacie jako etykiety ze zdjęciem; dotknięcie otwiera kartę osoby. Działa po rozwinięciu cytatu, więc wiadomości otwierają się tak samo szybko.</string>
 </resources>

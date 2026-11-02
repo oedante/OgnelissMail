@@ -1120,16 +1120,27 @@ class MailEngineService {
     final pending = _pendingPimKeys[account.id]?[dataClass]?[prefKey];
     final saved = pending ?? _prefs.getString(prefKey);
     if (saved != null && saved.isNotEmpty && saved != '0') eas.restorePimSyncKey(fid, saved);
-    final r = await op();
-    final nk = eas.pimSyncKeyFor(fid);
-    if (nk != null && nk.isNotEmpty && nk != '0' && nk != saved) {
-      if (pending != null) {
-        _pendingPimKeys[account.id]![dataClass]![prefKey] = nk;
-      } else {
-        await _prefs.setString(prefKey, nk);
+    try {
+      return await op();
+    } finally {
+      // И после ошибки: сервер мог отвергнуть сам элемент (Status 6), но
+      // ключ папки всё равно сдвинул. Раньше новый ключ терялся, следующая
+      // запись шла со старым и получала Status 3 — встречи не создавались
+      // совсем (журнал владельца 02.11.2026).
+      final nk = eas.pimSyncKeyFor(fid);
+      if (nk != null && nk.isNotEmpty && nk != saved) {
+        if (nk == '0') {
+          // Ключ отклонён и не получен заново — следующая синхронизация
+          // начнёт папку с нуля.
+          _pendingPimKeys[account.id]?[dataClass]?.remove(prefKey);
+          await _prefs.remove(prefKey);
+        } else if (pending != null) {
+          _pendingPimKeys[account.id]![dataClass]![prefKey] = nk;
+        } else {
+          await _prefs.setString(prefKey, nk);
+        }
       }
     }
-    return r;
   }
 
   Future<String?> _pimFolderId(AccountModel account, me.MailFolderType type) async {

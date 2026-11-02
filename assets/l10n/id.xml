@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Tampilkan di kalender</string>
     <string name="mailDates">Tanggal dalam teks pesan</string>
     <string name="mailDatesDesc">Ketuk tanggal untuk membuat rapat, pengingat, atau membuka hari itu di kalender</string>
-    <string name="quickEventTitle">Acara dalam satu kalimat</string>
-    <string name="quickEventHint">Misalnya: Telepon dengan Anna hari Jumat jam 15 selama satu jam</string>
-    <string name="quickEventMore">Detail lainnya</string>
+    <string name="quickTaskTitle">Tugas dalam satu kalimat</string>
+    <string name="quickTaskHint">Misalnya: Telepon Anna besok pukul 15 !</string>
     <string name="createTask">Buat tugas</string>
     <string name="date">Tanggal</string>
     <string name="dayPlan">Rencana hari ini</string>
@@ -3739,4 +3738,14 @@
     <string name="composeDropHint">Lepaskan untuk melampirkan file</string>
     <string name="openInNewWindow">Buka di jendela baru</string>
     <string name="openInMainWindow">Buka di jendela utama</string>
+    <string name="notifyLinesTitle">Baris teks di notifikasi</string>
+    <string name="notifyLinesHint">Berapa baris pesan yang ditampilkan di notifikasi yang dibuka. 8 dan 12 baris butuh teks pesan di perangkat; jika tidak, hanya awalnya yang tampil.</string>
+    <string name="tileIconOnly">Hanya ikon</string>
+    <string name="tileIconText">Ikon dan label</string>
+    <string name="favoritesTilesHint">Favorit tampil sebagai ubin. Tombol sebelum sakelar membuat ubin lebar (ikon dan label) atau kecil (hanya ikon).</string>
+    <string name="experimentalTitle">Fitur eksperimental</string>
+    <string name="experimentalDesc">Fitur uji coba, nonaktif secara bawaan</string>
+    <string name="experimentalIntro">Fitur baru yang sedang kami coba. Nonaktif secara bawaan; bisa berubah, pindah ke pengaturan utama, atau dihapus.</string>
+    <string name="quotePeopleTitle">Orang di kepala kutipan</string>
+    <string name="quotePeopleDesc">Dari, Kepada, dan Cc dalam kutipan tampil sebagai chip dengan foto; ketuk untuk membuka kartu orang. Berfungsi saat kutipan dibuka, jadi pesan tetap cepat terbuka.</string>
 </resources>

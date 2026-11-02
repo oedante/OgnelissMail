@@ -4,7 +4,7 @@
 «Сигналы сервера» на iPhone (`IOS_PUSH_SETUP.md`), но через Firebase Cloud
 Messaging (FCM) — бесплатный сервис Google.
 
-**Для выпуска 1.10.2** — по `release/OWNER_STEPS_1.10.2.md`, шаги 3 и 4: те
+**Для выпуска 1.10.3** — по `release/OWNER_STEPS_1.10.3.md`, шаги 3 и 4: те
 же пункты с командами для архива сервера 1.10.1.
 
 **Коротко:** п. 1–2 (консоль Firebase) → п. 3 (`config/dart_defines.json`) →

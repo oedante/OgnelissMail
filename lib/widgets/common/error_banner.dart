@@ -1,7 +1,7 @@
 // lib/widgets/common/error_banner.dart
-// Banner для отображения сетевых ошибок в UI.
-// Показывается вверху экрана с типом ошибки и кнопкой Retry.
-// Автоматически исчезает при восстановлении связи.
+// Плашка ошибок синхронизации: поверх экрана сверху (с 1.10.2 — не полосой
+// в разметке, которая сдвигала содержимое), с типом ошибки и кнопкой
+// «Повторить». Уходит сама через 10 с или по крестику.
 
 import 'dart:async';
 import '../../core/theme/app_icons.dart';
@@ -43,7 +43,7 @@ class ErrorBanner extends ConsumerWidget {
     // и постоянная полоса во всю ширину только мешала бы. Вместо неё —
     // компактная пиктограмма OfflineIndicator в шапке.
 
-    // Показываем ошибку если есть
+    Widget content = const SizedBox.shrink(key: ValueKey('none'));
     if (error != null) {
       // Автоскрытие через 10 сек
       Future.delayed(const Duration(seconds: 10), () {
@@ -52,8 +52,9 @@ class ErrorBanner extends ConsumerWidget {
         }
       });
 
-      return _buildBanner(
+      content = _buildBanner(
         context,
+        key: ValueKey(error.timestamp),
         icon: _iconForType(error.type),
         message: error.message,
         color: _colorForType(error.type),
@@ -74,38 +75,66 @@ class ErrorBanner extends ConsumerWidget {
       );
     }
 
-    return const SizedBox.shrink();
+    // Выезжает сверху и уходит так же, ничего не сдвигая.
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 200),
+      reverseDuration: const Duration(milliseconds: 160),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (w, a) => FadeTransition(
+        opacity: a,
+        child: SlideTransition(
+          position: Tween<Offset>(begin: const Offset(0, -0.4), end: Offset.zero).animate(a),
+          child: w,
+        ),
+      ),
+      child: content,
+    );
   }
 
   Widget _buildBanner(
     BuildContext context, {
+    Key? key,
     required IconData icon,
     required String message,
     required Color color,
     required Color textColor,
     Widget? action,
   }) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: Space.l, vertical: Space.s),
-      color: color,
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          children: [
-            Icon(icon, color: textColor, size: 18),
-            const SizedBox(width: Space.s),
-            Expanded(
-              child: Text(
-                message,
-                style: TextStyle(color: textColor, fontSize: 13, fontWeight: FontWeight.w500),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+    return SafeArea(
+      key: key,
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(Space.s, Space.xs, Space.s, 0),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: Material(
+              color: color,
+              elevation: 3,
+              shadowColor: Colors.black.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(12),
+              clipBehavior: Clip.antiAlias,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(Space.l, Space.xs, Space.xs, Space.xs),
+                child: Row(
+                  children: [
+                    Icon(icon, color: textColor, size: 18),
+                    const SizedBox(width: Space.s),
+                    Expanded(
+                      child: Text(
+                        message,
+                        style: TextStyle(color: textColor, fontSize: 13, fontWeight: FontWeight.w500),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (action != null) action,
+                  ],
+                ),
               ),
             ),
-            if (action != null) action,
-          ],
+          ),
         ),
       ),
     );

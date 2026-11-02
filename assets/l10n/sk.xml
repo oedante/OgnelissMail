@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Zobraziť v kalendári</string>
     <string name="mailDates">Dátumy v texte správy</string>
     <string name="mailDatesDesc">Ťuknutím na dátum vytvoríte stretnutie, pripomienku alebo otvoríte deň v kalendári</string>
-    <string name="quickEventTitle">Udalosť jednou vetou</string>
-    <string name="quickEventHint">Napríklad: Hovor s Annou v piatok o 15 na hodinu</string>
-    <string name="quickEventMore">Podrobnosti</string>
+    <string name="quickTaskTitle">Úloha jednou vetou</string>
+    <string name="quickTaskHint">Napríklad: Zavolať Anne zajtra o 15 !</string>
     <string name="createTask">Vytvoriť úlohu</string>
     <string name="date">Dátum</string>
     <string name="dayPlan">Plán dňa</string>

@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">在日历中显示</string>
     <string name="mailDates">邮件正文中的日期</string>
     <string name="mailDatesDesc">点按日期即可创建会议、提醒或在日历中打开那一天</string>
-    <string name="quickEventTitle">一句话创建日程</string>
-    <string name="quickEventHint">例如：周五下午3点与安娜通话一小时</string>
-    <string name="quickEventMore">更多详情</string>
+    <string name="quickTaskTitle">一句话创建任务</string>
+    <string name="quickTaskHint">例如：明天15点给安娜打电话 !</string>
     <string name="createTask">创建任务</string>
     <string name="date">日期</string>
     <string name="dayPlan">今日计划</string>

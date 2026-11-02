@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Afișează în calendar</string>
     <string name="mailDates">Date în textul mesajului</string>
     <string name="mailDatesDesc">Atingeți o dată pentru a crea o întâlnire, un memento sau a deschide ziua în calendar</string>
-    <string name="quickEventTitle">Eveniment într-o frază</string>
-    <string name="quickEventHint">De exemplu: Apel cu Ana vineri la 15 timp de o oră</string>
-    <string name="quickEventMore">Mai multe detalii</string>
+    <string name="quickTaskTitle">Sarcină într-o frază</string>
+    <string name="quickTaskHint">De exemplu: O sun pe Ana mâine la 15 !</string>
     <string name="createTask">Creează activitate</string>
     <string name="date">Data</string>
     <string name="dayPlan">Planul zilei</string>

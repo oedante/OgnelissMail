@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">कैलेंडर में दिखाएँ</string>
     <string name="mailDates">संदेश के पाठ में तारीखें</string>
     <string name="mailDatesDesc">मीटिंग, रिमाइंडर बनाने या वह दिन कैलेंडर में खोलने के लिए तारीख पर टैप करें</string>
-    <string name="quickEventTitle">एक वाक्य में इवेंट</string>
-    <string name="quickEventHint">उदाहरण: शुक्रवार को 3 बजे एक घंटे के लिए अन्ना के साथ कॉल</string>
-    <string name="quickEventMore">और विवरण</string>
+    <string name="quickTaskTitle">एक वाक्य में कार्य</string>
+    <string name="quickTaskHint">उदाहरण: कल 15 बजे अन्ना को फ़ोन करें !</string>
     <string name="createTask">कार्य बनाएं</string>
     <string name="date">तारीख़</string>
     <string name="dayPlan">दिन की योजना</string>

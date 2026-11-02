@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Näytä kalenterissa</string>
     <string name="mailDates">Päivämäärät viestin tekstissä</string>
     <string name="mailDatesDesc">Napauta päivämäärää luodaksesi kokouksen, muistutuksen tai avataksesi päivän kalenterissa</string>
-    <string name="quickEventTitle">Tapahtuma yhdellä lauseella</string>
-    <string name="quickEventHint">Esimerkiksi: Puhelu Annan kanssa perjantaina klo 15 tunnin ajan</string>
-    <string name="quickEventMore">Lisätietoja</string>
+    <string name="quickTaskTitle">Tehtävä yhdellä lauseella</string>
+    <string name="quickTaskHint">Esimerkiksi: Soita Annalle huomenna klo 15 !</string>
     <string name="createTask">Luo tehtävä</string>
     <string name="date">Päivämäärä</string>
     <string name="dayPlan">Päivän suunnitelma</string>

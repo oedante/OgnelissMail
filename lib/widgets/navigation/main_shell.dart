@@ -26,9 +26,7 @@ import '../ui/action_sheet.dart';
 import '../common/peek_card.dart';
 import '../common/hero_email_transition.dart' show HeroEmailAvatar;
 import '../../features/settings/providers/account_groups_provider.dart' show activeGroupIdProvider, accountGroupsProvider;
-import '../../features/tasks/widgets/task_editor_sheet.dart' show showTaskEditor;
-import '../../features/tasks/task_quick_parser.dart' show ParsedTask;
-import '../../features/calendar/widgets/quick_event_sheet.dart' show showQuickEventSheet;
+import '../../features/tasks/widgets/quick_task_sheet.dart' show showQuickTaskSheet;
 import 'dart:io';
 import '../../features/settings/providers/feature_flags_provider.dart';
 import 'package:flutter/foundation.dart';
@@ -676,14 +674,11 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
                   value: 'task'),
             ]);
             if (!mounted || !context.mounted) return;
-            // Встреча одной фразой (1.9.x), «Подробнее» — полный редактор.
-            if (kind == 'event') unawaited(showQuickEventSheet(context));
-            // Срок по умолчанию — сегодня: задача сразу видна в календаре.
-            if (kind == 'task') {
-              final now = DateTime.now();
-              unawaited(showTaskEditor(context,
-                  draft: ParsedTask(title: '', due: DateTime(now.year, now.month, now.day))));
-            }
+            // Встреча — сразу редактор (1.10.2, просьба владельца: «встречи
+            // открывать как есть»); задача — одной фразой, потом карточка
+            // задачи с заполненными полями (срок по умолчанию — сегодня).
+            if (kind == 'event') unawaited(context.push('/create-event'));
+            if (kind == 'task') unawaited(showQuickTaskSheet(context));
           });
     }
     if (path.startsWith('/contacts')) {
@@ -720,15 +715,12 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
     if (anchor == null) return;
     unawaited(showHoldMenu(context, anchor: anchor, items: [
       PeekAction(icon: AppIcons.edit, label: l10n.tr('newMessage'), onTap: () => context.push('/compose')),
-      PeekAction(icon: AppIcons.event, label: l10n.tr('createMeeting'), onTap: () => showQuickEventSheet(context)),
+      PeekAction(icon: AppIcons.event, label: l10n.tr('createMeeting'), onTap: () => context.push('/create-event')),
       PeekAction(
         icon: AppIcons.add_task,
         label: l10n.tr('newTask'),
-        onTap: () {
-          // Срок по умолчанию — сегодня, как у «+» в календаре.
-          final now = DateTime.now();
-          unawaited(showTaskEditor(context, draft: ParsedTask(title: '', due: DateTime(now.year, now.month, now.day))));
-        },
+        // Задача одной фразой (1.10.2), потом карточка задачи.
+        onTap: () => unawaited(showQuickTaskSheet(context)),
       ),
     ]));
   }

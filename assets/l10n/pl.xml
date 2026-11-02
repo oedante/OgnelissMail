@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Pokaż w kalendarzu</string>
     <string name="mailDates">Daty w treści wiadomości</string>
     <string name="mailDatesDesc">Dotknij daty, aby utworzyć spotkanie, przypomnienie lub otworzyć ten dzień w kalendarzu</string>
-    <string name="quickEventTitle">Wydarzenie jednym zdaniem</string>
-    <string name="quickEventHint">Na przykład: Rozmowa z Anną w piątek o 15 na godzinę</string>
-    <string name="quickEventMore">Więcej szczegółów</string>
+    <string name="quickTaskTitle">Zadanie jednym zdaniem</string>
+    <string name="quickTaskHint">Na przykład: Zadzwonić do Anny jutro o 15 !</string>
     <string name="createTask">Utwórz zadanie</string>
     <string name="date">Data</string>
     <string name="dayPlan">Plan dnia</string>

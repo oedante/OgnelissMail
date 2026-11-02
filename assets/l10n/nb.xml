@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Vis i kalenderen</string>
     <string name="mailDates">Datoer i meldingsteksten</string>
     <string name="mailDatesDesc">Trykk på en dato for å lage et møte, en påminnelse eller åpne dagen i kalenderen</string>
-    <string name="quickEventTitle">Hendelse i én setning</string>
-    <string name="quickEventHint">For eksempel: Samtale med Anna fredag kl. 15 i en time</string>
-    <string name="quickEventMore">Flere detaljer</string>
+    <string name="quickTaskTitle">Oppgave i én setning</string>
+    <string name="quickTaskHint">For eksempel: Ring Anna i morgen kl. 15 !</string>
     <string name="createTask">Opprett oppgave</string>
     <string name="date">Dato</string>
     <string name="dayPlan">Dagsplan</string>

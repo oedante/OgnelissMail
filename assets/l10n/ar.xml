@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">عرض في التقويم</string>
     <string name="mailDates">التواريخ في نص الرسالة</string>
     <string name="mailDatesDesc">اضغط على تاريخ لإنشاء اجتماع أو تذكير أو فتح ذلك اليوم في التقويم</string>
-    <string name="quickEventTitle">حدث بجملة واحدة</string>
-    <string name="quickEventHint">مثلاً: مكالمة مع آنا يوم الجمعة الساعة 3 مساءً لمدة ساعة</string>
-    <string name="quickEventMore">مزيد من التفاصيل</string>
+    <string name="quickTaskTitle">مهمة في عبارة واحدة</string>
+    <string name="quickTaskHint">مثال: الاتصال بآنا غدًا الساعة 15 !</string>
     <string name="createTask">إنشاء مهمة</string>
     <string name="date">التاريخ</string>
     <string name="dayPlan">خطة اليوم</string>

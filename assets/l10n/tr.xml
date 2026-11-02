@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Takvimde göster</string>
     <string name="mailDates">Mesaj metnindeki tarihler</string>
     <string name="mailDatesDesc">Toplantı, anımsatıcı oluşturmak veya o günü takvimde açmak için tarihe dokunun</string>
-    <string name="quickEventTitle">Tek cümlede etkinlik</string>
-    <string name="quickEventHint">Örneğin: Cuma saat 15\'te bir saatlik Anna ile görüşme</string>
-    <string name="quickEventMore">Daha fazla ayrıntı</string>
+    <string name="quickTaskTitle">Tek cümlede görev</string>
+    <string name="quickTaskHint">Örneğin: Yarın 15’te Anna’yı ara !</string>
     <string name="createTask">Görev oluştur</string>
     <string name="date">Tarih</string>
     <string name="dayPlan">Gün planı</string>

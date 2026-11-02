@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Tonen in agenda</string>
     <string name="mailDates">Datums in berichttekst</string>
     <string name="mailDatesDesc">Tik op een datum voor een afspraak, herinnering of die dag in de agenda</string>
-    <string name="quickEventTitle">Afspraak in één zin</string>
-    <string name="quickEventHint">Bijvoorbeeld: Gesprek met Anna vrijdag om 15 uur voor een uur</string>
-    <string name="quickEventMore">Meer details</string>
+    <string name="quickTaskTitle">Taak in één zin</string>
+    <string name="quickTaskHint">Bijvoorbeeld: Anna morgen om 15 uur bellen !</string>
     <string name="createTask">Taak maken</string>
     <string name="date">Datum</string>
     <string name="dayPlan">Dagplanning</string>

@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">Tampilkan di kalender</string>
     <string name="mailDates">Tanggal dalam teks pesan</string>
     <string name="mailDatesDesc">Ketuk tanggal untuk membuat rapat, pengingat, atau membuka hari itu di kalender</string>
-    <string name="quickEventTitle">Acara dalam satu kalimat</string>
-    <string name="quickEventHint">Misalnya: Telepon dengan Anna hari Jumat jam 15 selama satu jam</string>
-    <string name="quickEventMore">Detail lainnya</string>
+    <string name="quickTaskTitle">Tugas dalam satu kalimat</string>
+    <string name="quickTaskHint">Misalnya: Telepon Anna besok pukul 15 !</string>
     <string name="createTask">Buat tugas</string>
     <string name="date">Tanggal</string>
     <string name="dayPlan">Rencana hari ini</string>

@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">캘린더에서 보기</string>
     <string name="mailDates">메일 본문의 날짜</string>
     <string name="mailDatesDesc">날짜를 탭해 회의나 알림을 만들거나 캘린더에서 그날을 엽니다</string>
-    <string name="quickEventTitle">한 문장으로 일정 만들기</string>
-    <string name="quickEventHint">예: 금요일 오후 3시에 안나와 1시간 통화</string>
-    <string name="quickEventMore">자세히</string>
+    <string name="quickTaskTitle">한 문장으로 할 일</string>
+    <string name="quickTaskHint">예: 내일 15시에 안나에게 전화 !</string>
     <string name="createTask">작업 만들기</string>
     <string name="date">날짜</string>
     <string name="dayPlan">오늘의 일정</string>

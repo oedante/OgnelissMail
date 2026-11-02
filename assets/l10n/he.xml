@@ -132,9 +132,8 @@
     <string name="dateShowInCalendar">הצג ביומן</string>
     <string name="mailDates">תאריכים בטקסט ההודעה</string>
     <string name="mailDatesDesc">הקישו על תאריך כדי ליצור פגישה או תזכורת או לפתוח את היום ביומן</string>
-    <string name="quickEventTitle">אירוע במשפט אחד</string>
-    <string name="quickEventHint">לדוגמה: שיחה עם אנה ביום שישי ב-15 לשעה</string>
-    <string name="quickEventMore">פרטים נוספים</string>
+    <string name="quickTaskTitle">משימה במשפט אחד</string>
+    <string name="quickTaskHint">לדוגמה: להתקשר לאנה מחר ב-15 !</string>
     <string name="createTask">צור משימה</string>
     <string name="date">תאריך</string>
     <string name="dayPlan">תוכנית היום</string>

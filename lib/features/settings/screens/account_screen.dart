@@ -506,6 +506,10 @@ class AccountScreen extends ConsumerWidget {
   Future<void> _pickNotifyMode(
       BuildContext context, WidgetRef ref, AccountModel account, AccountNotifyMode current) async {
     final l10n = AppLocalizations.of(context);
+    // Контейнер — до ожиданий: после выбора экран мог перестроиться, и ref
+    // строки уже нельзя использовать (журнал 02.11.2026: «Using ref when a
+    // widget is unmounted»).
+    final container = ProviderScope.containerOf(context, listen: false);
     // Карточкой (1.8.8), как меню «⋮»; текущий — с галочкой.
     final picked = await showChoiceSheet<AccountNotifyMode>(
       context,
@@ -522,12 +526,15 @@ class AccountScreen extends ConsumerWidget {
       ],
     );
     if (picked == null || picked == current) return;
-    await AccountNotify.set(ref.read(sharedPrefsProvider), account.id, picked);
-    ref.read(_notifyModeProvider(account.id).notifier).state = picked;
+    await AccountNotify.set(container.read(sharedPrefsProvider), account.id, picked);
+    container.read(_notifyModeProvider(account.id).notifier).state = picked;
   }
 
   Future<void> _pickInterval(BuildContext context, WidgetRef ref, AccountModel account) async {
     final l10n = AppLocalizations.of(context);
+    // Контейнер — до первого ожидания (меню): экран могли закрыть или
+    // перестроить, пока меню было открыто (журнал 02.11.2026).
+    final container = ProviderScope.containerOf(context, listen: false);
     // Карточкой (1.8.8), как меню «⋮»; текущий — с галочкой. Последний
     // пункт — настройка расписания (значение null в меню — не выбор).
     const setup = -1;
@@ -563,11 +570,6 @@ class AccountScreen extends ConsumerWidget {
     final picked = v == null ? null : SyncInterval.values[v];
     if (picked == null || picked == account.syncInterval) return;
     final updated = account.copyWith(syncInterval: picked);
-    // Контейнер провайдеров — до ожиданий: экран могли закрыть, пока
-    // запускался push, и ref после этого уже нельзя использовать (журнал
-    // 31.10.2026: «Using ref when a widget is unmounted»).
-    if (!context.mounted) return;
-    final container = ProviderScope.containerOf(context, listen: false);
     await container.read(accountsProvider.notifier).updateAccount(updated);
     // Push включаем и выключаем сразу, не дожидаясь перезапуска.
     final push = container.read(imapPushServiceProvider);

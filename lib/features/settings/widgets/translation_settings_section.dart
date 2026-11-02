@@ -131,8 +131,11 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
                           AppLogger.warning('Перевод: удаление языка $c: $e');
                           showInlineError(l10n.tr('translateFailed'));
                         }
+                        // Лист или раздел могли закрыть, пока шло удаление
+                        // (журнал 02.11.2026: setState после закрытия).
+                        if (!mounted) return;
                         await _load();
-                        setSt(() {});
+                        if (ctx.mounted) setSt(() {});
                       },
                     ),
                   ),
@@ -150,8 +153,10 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
                   final app = normalizeLang(ref.read(settingsProvider).locale.languageCode) ?? 'en';
                   final other = lang == 'en' ? (app == 'en' ? 'ru' : app) : 'en';
                   await ensureTranslationModels(ctx, ref, from: lang, to: other);
+                  // Скачивание долгое — лист могли закрыть (журнал 02.11.2026).
+                  if (!mounted) return;
                   await _load();
-                  setSt(() {});
+                  if (ctx.mounted) setSt(() {});
                 },
               ),
             ),

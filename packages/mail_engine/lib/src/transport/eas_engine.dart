@@ -1327,9 +1327,48 @@ class EasEngine implements MailEngine {
   /// Поиск в адресной книге организации (GAL) по началу имени/фамилии/адреса
   /// — команда Search, Store=GAL. В отличие от ResolveRecipients находит и
   /// по части строки, и возвращает должность, отдел, телефоны.
-  Future<List<EasGalEntry>> searchGal(String query, {int maxResults = 30, bool withPictures = false}) async {
+  Future<List<EasGalEntry>> searchGal(String query, {int maxResults = 30, bool withPictures = false}) {
+    if (galPaused) return Future.value(const <EasGalEntry>[]);
+    return _galLimited(() => _searchGal(query, maxResults: maxResults, withPictures: withPictures));
+  }
+
+  // ── Адресная книга: не больше [_galMax] запросов сразу, пауза при сбое ──
+  // Журнал владельца (02.11.2026): встреча со 120 участниками открылась из
+  // уведомления — полные ФИО участников искались в адресной книге все сразу,
+  // 120 запросов Search за миллисекунды; шлюз перед Exchange ответил 502 на
+  // все, а следом не прошёл и ответ на приглашение. Теперь — по три, а после
+  // 502–504 или обрыва связи поиск молчит 5 минут (фото и ФИО подождут).
+  static const _galMax = 3;
+  int _galActive = 0;
+  final List<Completer<void>> _galWaiters = [];
+  DateTime? _galPausedUntil;
+
+  /// Поиск в адресной книге приостановлен после сбоя сервера или связи.
+  bool get galPaused {
+    final until = _galPausedUntil;
+    return until != null && DateTime.now().isBefore(until);
+  }
+
+  Future<T> _galLimited<T>(Future<T> Function() run) async {
+    while (_galActive >= _galMax) {
+      final c = Completer<void>();
+      _galWaiters.add(c);
+      await c.future;
+    }
+    _galActive++;
+    try {
+      return await run();
+    } finally {
+      _galActive--;
+      if (_galWaiters.isNotEmpty) _galWaiters.removeAt(0).complete();
+    }
+  }
+
+  Future<List<EasGalEntry>> _searchGal(String query, {int maxResults = 30, bool withPictures = false}) async {
     final cfg = _cfg;
     if (cfg == null || query.trim().length < 2) return const [];
+    // Пока ждали очереди, поиск могли приостановить.
+    if (galPaused) return const [];
     final root = WbxmlElement(name: 'Search', namespace: 'Search');
     final store = root.addChild('Store', namespace: 'Search');
     store.addChild('Name', namespace: 'Search', text: 'GAL');
@@ -1344,7 +1383,20 @@ class EasEngine implements MailEngine {
     }
     final resp = await _easCommand(cfg, 'Search', WbxmlDocument(root: root),
         policyKeyHeader: _policyKey ?? '0');
-    if (resp == null) return const [];
+    if (resp == null) {
+      final code = _lastStatus;
+      if (code == 0 || code == 502 || code == 503 || code == 504) {
+        if (!galPaused) {
+          log.warn(_t, 'GAL: сервер недоступен (HTTP $code) — поиск в адресной книге приостановлен на 5 мин');
+        }
+        _galPausedUntil = DateTime.now().add(const Duration(minutes: 5));
+        for (final w in _galWaiters) {
+          w.complete();
+        }
+        _galWaiters.clear();
+      }
+      return const [];
+    }
     final st = resp.root.findChild('Response')?.findChild('Store') ??
         resp.root.findChild('Store');
     final out = <EasGalEntry>[];
@@ -1673,7 +1725,18 @@ class EasEngine implements MailEngine {
     var proposed = canSend && proposedStart != null && proposedEnd != null && userResponse != 1;
     var resp = await _easCommand(cfg, 'MeetingResponse',
         build(sendResponse: sent, withProposal: proposed), policyKeyHeader: _policyKey ?? '0');
-    if (proposed && statusOf(resp) != '1') {
+    if (resp == null) {
+      // Нет ответа (обрыв связи, тайм-аут) — тот же запрос ещё раз. Раньше
+      // это считалось отказом сервера от SendResponse: повтор уходил без
+      // него, встреча принималась только в календаре, а организатор ответа
+      // не получал (журнал владельца 02.11.2026, 16:17).
+      log.warn(_t, 'MeetingResponse: нет ответа (HTTP $_lastStatus) — повтор того же запроса');
+      resp = await _easCommand(cfg, 'MeetingResponse',
+          build(sendResponse: sent, withProposal: proposed), policyKeyHeader: _policyKey ?? '0');
+    }
+    // Отказ от предложенного времени и от SendResponse — только по ответу
+    // сервера со статусом ошибки, не по обрыву связи.
+    if (proposed && resp != null && statusOf(resp) != '1') {
       // Сервер не принял предложенное время — ответ без него (время
       // вызывающий допишет в текст).
       log.warn(_t, 'MeetingResponse с новым временем: Status=${statusOf(resp)} — повтор без него');
@@ -1681,7 +1744,7 @@ class EasEngine implements MailEngine {
       resp = await _easCommand(cfg, 'MeetingResponse',
           build(sendResponse: sent, withProposal: false), policyKeyHeader: _policyKey ?? '0');
     }
-    if (sent && statusOf(resp) != '1') {
+    if (sent && resp != null && statusOf(resp) != '1') {
       // Сервер не принял SendResponse — отвечаем без него (как раньше).
       log.warn(_t, 'MeetingResponse с SendResponse: Status=${statusOf(resp)} — повтор без него');
       sent = false;

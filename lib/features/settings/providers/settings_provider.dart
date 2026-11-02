@@ -715,9 +715,14 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(corners: v);
   }
 
+  /// Плотность ленты; число строк текста подстраивается под неё (1.10.2):
+  /// «Компактная» — одна строка (в строке темы), «Просторная» — не меньше
+  /// двух. Дальше «Строк текста в ленте» можно поменять — оно главнее.
   Future<void> setListDensity(ListDensity v) async {
     await _p.setInt(_K.listDensity, v.index);
     state = state.copyWith(listDensity: v);
+    if (v == ListDensity.compact && state.previewLines != 1) await setPreviewLines(1);
+    if (v == ListDensity.comfortable && state.previewLines < 2) await setPreviewLines(2);
   }
 
   Future<void> setOpenAnimation(bool v) async {

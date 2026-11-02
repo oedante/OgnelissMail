@@ -87,10 +87,28 @@ void main() {
   });
 
   test('плотность: строки превью', () {
-    expect(DensitySpec.compact.previewFor(3), 0);
+    // Число строк задаёт настройка (1.10.2); «Компактная» при одной строке —
+    // превью в строке темы.
+    expect(DensitySpec.compact.previewFor(1), 0);
+    expect(DensitySpec.compact.previewFor(3), 3);
     expect(DensitySpec.normal.previewFor(1), 1);
     expect(DensitySpec.normal.previewFor(4), 4);
-    expect(DensitySpec.comfortable.previewFor(1), 2);
+    expect(DensitySpec.comfortable.previewFor(1), 1);
     expect(DensitySpec.comfortable.previewFor(3), 3);
+  });
+
+  test('выбор плотности подстраивает «Строк текста», а та остаётся главной (1.10.2)', () async {
+    final n = await _notifier({'s_preview_lines': 3});
+    await n.setListDensity(ListDensity.compact);
+    expect(n.state.previewLines, 1);
+    await n.setPreviewLines(2);
+    expect(n.state.listDensity, ListDensity.compact, reason: 'строки меняются, плотность — нет');
+    expect(n.state.appearance().density, ListDensity.compact);
+    await n.setListDensity(ListDensity.comfortable);
+    expect(n.state.previewLines, 2);
+    await n.setPreviewLines(1);
+    expect(n.state.previewLines, 1);
+    await n.setListDensity(ListDensity.normal);
+    expect(n.state.previewLines, 1, reason: 'обычная не трогает выбор');
   });
 }

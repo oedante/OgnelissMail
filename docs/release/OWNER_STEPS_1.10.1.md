@@ -452,6 +452,33 @@ curl https://www.ogneliss.ru/push/vapid     # ответ: {"key":"B…"}
   обычного вида.
 - **Siri и «Команды»** — включать ничего не нужно: App Intents в коде
   (`guides/IOS_SHORTCUTS.md`).
+- **App Groups** (`group.com.ogneliss.mail`) нужны только виджетам на
+  экране «Домой». Нет виджетов — эту возможность можно не включать,
+  приложение работает и без неё.
+
+**Ручной профиль подписи** (например, «ogneliss_mail_appstore»). Xcode
+пишет «Provisioning profile … doesn't include the … capability», если у
+App ID в developer.apple.com нет возможности, включённой в Xcode. Профиль
+делался для 1.8.12, без Push Notifications. Что сделать (Certificates,
+Identifiers & Profiles):
+
+1. Если включаете App Groups: **Identifiers → «+» → App Groups** →
+   Description `Ogneliss Mail`, Identifier `group.com.ogneliss.mail` →
+   Register.
+2. **Identifiers → `com.ogneliss.mail`** → отметить нужное → Save:
+   - **Push Notifications** (шаг 2) — обязательно;
+   - **Communication Notifications** — если включили её в Xcode;
+   - **App Groups** → Configure → `group.com.ogneliss.mail` — если включили.
+3. **Profiles → ogneliss_mail_appstore**: после изменения App ID он
+   становится Invalid → **Edit** → **Save** (профиль выпускается заново) →
+   **Download** → открыть скачанный файл двойным щелчком.
+4. Xcode → Settings → Accounts → команда → **Download Manual Profiles**;
+   в Signing & Capabilities выбрать профиль заново.
+
+В Xcode возможностей должно быть столько же, сколько у App ID: лишнюю
+(например, App Groups без виджетов) уберите крестиком. Проще всего —
+**Automatically manage signing**: тогда Xcode сам включает возможности у
+App ID и выпускает профили, `scripts/build_ios.sh` подписывает так же.
 - **Перевод** — Xcode 16 или новее. Проверить запуск на iOS 15–17. Если
   падает с «Library not loaded: …/Translation.framework», подключить
   `Translation.framework` как Optional (`guides/TRANSLATION_SETUP.md`).

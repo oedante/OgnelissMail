@@ -52,6 +52,9 @@ class OpenTrace {
     _marks.clear();
   }
 
+  /// Мс от нажатия; -1 — замер не идёт.
+  static int get elapsedMs => _sw.isRunning ? _sw.elapsedMilliseconds : -1;
+
   /// Замер больше не нужен (письмо без WebView, ушли с экрана).
   static void cancel() {
     _sw.stop();

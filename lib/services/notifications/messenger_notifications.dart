@@ -155,7 +155,43 @@ class MessengerNotify {
     }
   }
 
-  /// Аватар отправителя: фото из контактов, иначе кружок с буквой.
+  /// Фото в кружке: PNG [size]×[size] с прозрачными углами, середина
+  /// снимка (1.10.5, замечание владельца 03.11.2026: «в оповещениях
+  /// портреты квадратные» — оболочка nubia не скругляет значок человека, как
+  /// это делает обычный Android). Не вышло — null (тогда фото как есть).
+  static Future<Uint8List?> circlePhoto(Uint8List bytes, {int size = 192}) async {
+    ui.Codec? codec;
+    ui.Image? src;
+    ui.Picture? picture;
+    ui.Image? image;
+    try {
+      codec = await ui.instantiateImageCodec(bytes).timeout(const Duration(seconds: 2));
+      src = (await codec.getNextFrame().timeout(const Duration(seconds: 2))).image;
+      final w = src.width.toDouble(), h = src.height.toDouble();
+      final side = w < h ? w : h;
+      final from = ui.Rect.fromLTWH((w - side) / 2, (h - side) / 2, side, side);
+      final s = size.toDouble();
+      final to = ui.Rect.fromLTWH(0, 0, s, s);
+      final recorder = ui.PictureRecorder();
+      final canvas = ui.Canvas(recorder, to);
+      canvas.clipPath(ui.Path()..addOval(to));
+      canvas.drawImageRect(src, from, to, ui.Paint()..filterQuality = ui.FilterQuality.medium);
+      picture = recorder.endRecording();
+      image = await picture.toImage(size, size).timeout(const Duration(seconds: 2));
+      final data = await image.toByteData(format: ui.ImageByteFormat.png).timeout(const Duration(seconds: 2));
+      return data?.buffer.asUint8List();
+    } catch (e) {
+      AppLogger.debug('Фото для уведомления: $e');
+      return null;
+    } finally {
+      image?.dispose();
+      picture?.dispose();
+      src?.dispose();
+      codec?.dispose();
+    }
+  }
+
+  /// Аватар отправителя: фото из контактов (кружком), иначе кружок с буквой.
   static Future<Uint8List?> avatar({
     required String name,
     String? email,
@@ -163,7 +199,7 @@ class MessengerNotify {
     bool highContrast = false,
   }) async {
     final p = photoBytes(photo);
-    if (p != null) return p;
+    if (p != null) return await circlePhoto(p) ?? p;
     final c = avatarColors(email, name, highContrast: highContrast);
     return renderInitials(letter: initial(name, email), fill: c.fill, letterColor: c.letter);
   }

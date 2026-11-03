@@ -35,7 +35,7 @@ variables → Actions → New repository secret**. Имя — ровно как 
 
 Откуда брать каждое значение, где лежат `config/dart_defines.json` и
 `android/key.properties` и как проверить файл — подробно в
-`release/OWNER_STEPS_1.10.4.md`, шаг 1.
+`release/OWNER_STEPS_1.10.5.md`, шаг 1.
 
 Те же ключи, что в `config/dart_defines.example.json`, с вашими значениями:
 `OAUTH_PROXY_URL`, `OAUTH_PROXY_KEY`, `SUPPORT_EMAIL`,

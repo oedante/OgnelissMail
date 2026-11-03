@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as img;
 import 'package:ogneliss/core/utils/avatar_colors.dart';
 import 'package:ogneliss/features/settings/providers/settings_provider.dart' show AppSettings;
 import 'package:ogneliss/services/notifications/messenger_notifications.dart';
@@ -96,7 +97,28 @@ void main() {
       expect(ihdr.getUint32(4), 96);
     });
 
-    testWidgets('фото важнее буквы', (tester) async {
+    // 1.10.5 (замечание владельца 03.11.2026: «в оповещениях портреты
+    // квадратные» — оболочка nubia не скругляет значок человека).
+    testWidgets('фото — кружком: PNG с прозрачными углами, середина снимка', (tester) async {
+      final src = img.Image(width: 60, height: 40);
+      img.fill(src, color: img.ColorRgb8(200, 30, 30));
+      final png = Uint8List.fromList(img.encodePng(src));
+      final out = await tester.runAsync(() => MessengerNotify.circlePhoto(png, size: 64));
+      expect(out, isNotNull);
+      final d = img.decodePng(out!)!;
+      expect(d.width, 64);
+      expect(d.height, 64);
+      expect(d.getPixel(0, 0).a, 0, reason: 'угол прозрачный');
+      final c = d.getPixel(32, 32);
+      expect(c.a, 255);
+      expect(c.r, greaterThan(150));
+      // Через avatar() — тоже кружком.
+      final viaAvatar = await tester.runAsync(() => MessengerNotify.avatar(
+          name: 'Boss', email: 'boss@example.com', photo: 'data:image/png;base64,${base64.encode(png)}'));
+      expect(img.decodePng(viaAvatar!)!.getPixel(0, 0).a, 0);
+    });
+
+    testWidgets('фото важнее буквы (не картинка — как есть)', (tester) async {
       final bytes = Uint8List.fromList([1, 2, 3, 4]);
       final got = await tester.runAsync(() => MessengerNotify.avatar(
           name: 'Boss', email: 'boss@example.com', photo: 'data:image/png;base64,${base64.encode(bytes)}'));

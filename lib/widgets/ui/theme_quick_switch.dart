@@ -32,26 +32,45 @@ class ThemeQuickSwitch extends ConsumerWidget {
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.xs),
-      child: Row(children: [
-        for (final o in options)
-          Expanded(
-            child: _Choice(
-              icon: o.$2,
-              label: o.$3,
-              selected: o.$1 == selected,
-              onTap: () {
-                final n = ref.read(settingsProvider.notifier);
-                if (o.$1 == AppThemeChoice.dark) {
-                  // Тёмная ↔ AMOLED по очереди.
-                  n.setThemeChoice(current == AppThemeChoice.dark ? AppThemeChoice.amoled : AppThemeChoice.dark);
-                  return;
-                }
-                if (o.$1 == selected) return;
-                n.setThemeChoice(o.$1);
-              },
+      child: LayoutBuilder(builder: (context, c) {
+        // Подписи не помещаются (узкая панель папок на компьютере, 1.10.5:
+        // «Светл…») — только значки, подпись во всплывающей подсказке.
+        final style = Theme.of(context).textTheme.labelMedium;
+        final room = c.maxWidth / options.length - Space.xs * 3;
+        final scale = MediaQuery.textScalerOf(context);
+        final fits = options.every((o) {
+          final tp = TextPainter(
+            text: TextSpan(text: o.$3, style: style),
+            textDirection: Directionality.of(context),
+            textScaler: scale,
+            maxLines: 1,
+          )..layout();
+          final w = tp.width;
+          tp.dispose();
+          return w <= room;
+        });
+        return Row(children: [
+          for (final o in options)
+            Expanded(
+              child: _Choice(
+                icon: o.$2,
+                label: o.$3,
+                showLabel: fits,
+                selected: o.$1 == selected,
+                onTap: () {
+                  final n = ref.read(settingsProvider.notifier);
+                  if (o.$1 == AppThemeChoice.dark) {
+                    // Тёмная ↔ AMOLED по очереди.
+                    n.setThemeChoice(current == AppThemeChoice.dark ? AppThemeChoice.amoled : AppThemeChoice.dark);
+                    return;
+                  }
+                  if (o.$1 == selected) return;
+                  n.setThemeChoice(o.$1);
+                },
+              ),
             ),
-          ),
-      ]),
+        ]);
+      }),
     );
   }
 }
@@ -60,16 +79,23 @@ class _Choice extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool selected;
+  final bool showLabel;
   final VoidCallback onTap;
 
-  const _Choice({required this.icon, required this.label, required this.selected, required this.onTap});
+  const _Choice({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    this.showLabel = true,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final fg = selected ? scheme.onSecondaryContainer : scheme.onSurfaceVariant;
-    return Semantics(
+    final choice = Semantics(
       selected: selected,
       button: true,
       label: label,
@@ -91,11 +117,13 @@ class _Choice extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: Space.s, horizontal: Space.xs),
                 child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
                   Icon(icon, size: Sizes.iconRow, color: fg, fill: selected ? 1.0 : 0.0),
-                  const SizedBox(height: Space.xs),
-                  Text(label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelMedium?.copyWith(color: fg)),
+                  if (showLabel) ...[
+                    const SizedBox(height: Space.xs),
+                    Text(label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelMedium?.copyWith(color: fg)),
+                  ],
                 ]),
               ),
             ),
@@ -103,5 +131,6 @@ class _Choice extends StatelessWidget {
         ),
       ),
     );
+    return showLabel ? choice : Tooltip(message: label, child: choice);
   }
 }

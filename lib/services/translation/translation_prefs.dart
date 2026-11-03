@@ -25,4 +25,14 @@ class TranslationMemory {
       ComposeTranslateMode.replace;
 
   static Future<void> setMode(SharedPreferences p, ComposeTranslateMode m) => p.setString(_modeKey, m.name);
+
+  /// Показ перевода входящего письма (1.10.5, «Настройки → Перевод»):
+  /// заменить текст (по умолчанию) или оставить оба — тема и текст.
+  static const readModeKey = 'tr_read_mode';
+
+  static ComposeTranslateMode readMode(SharedPreferences? p) =>
+      ComposeTranslateMode.values.where((m) => m.name == p?.getString(readModeKey)).firstOrNull ??
+      ComposeTranslateMode.replace;
+
+  static Future<void> setReadMode(SharedPreferences p, ComposeTranslateMode m) => p.setString(readModeKey, m.name);
 }

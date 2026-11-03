@@ -5,7 +5,10 @@
 // Раньше жирной была тема — длинная («RE: FW: Согласование…»), и в шторке с
 // несколькими письмами и сводкой жирные строки шли одна за другой.
 // Раскладка:
-//   заголовок (жирный)   — отправитель (★ у VIP, 👥 у общего ящика);
+//   заголовок (жирный)   — отправитель (👥 у общего ящика);
+//   VIP (1.10.5)         — без знаков в заголовке: золотое кольцо и
+//                          звёздочка на портрете, на Android — золотой
+//                          цвет уведомления; без портрета — «VIP» в шапке;
 //   строка (свёрнуто)    — тема;
 //   раскрыто             — тема, ниже текст без цитаты и подписи;
 //   шапка уведомления    — 📁 папка (если не «Входящие») и короткая подпись
@@ -75,10 +78,15 @@ class NotificationText {
     return text;
   }
 
-  /// Заголовок — единственное жирное: кто написал, ★ у VIP, 👥 у общего
-  /// ящика.
-  static String title(String sender, {bool vip = false, bool shared = false}) =>
-      '${shared ? '👥 ' : ''}${vip ? '★ ' : ''}${sender.trim()}';
+  /// Заголовок — единственное жирное: кто написал, 👥 у общего ящика.
+  /// Звёздочки VIP в заголовке нет (1.10.5, замечание владельца 03.11.2026:
+  /// «звёздочка у VIP жирным шрифтом не очень выглядит») — VIP отмечен
+  /// портретом (MessengerNotify.avatar) и цветом, без портрета — в шапке.
+  static String title(String sender, {bool shared = false}) => '${shared ? '👥 ' : ''}${sender.trim()}';
+
+  /// Цвет уведомления VIP на Android (значок и название приложения в шапке)
+  /// и кольца портрета — золотой, как звёздочка VIP в приложении.
+  static const vipColor = 0xFFE0A100;
 
   /// Тема (или «без темы») — строка под отправителем.
   static String subject(String subject, {required String noSubject}) {
@@ -102,9 +110,12 @@ class NotificationText {
     return clash ? email.substring(at + 1) : email.substring(0, at);
   }
 
-  /// Шапка уведомления (рядом с названием приложения): папка и ящик.
-  static String? subText({String? folder, String? mailbox}) {
+  /// Шапка уведомления (рядом с названием приложения): папка и ящик. [vip]
+  /// — «VIP» первым словом, когда портрета с отметкой нет (вид «как в
+  /// мессенджерах» выключен, компьютер).
+  static String? subText({String? folder, String? mailbox, bool vip = false}) {
     final parts = [
+      if (vip) 'VIP',
       if (folder != null && folder.trim().isNotEmpty) '📁 ${folder.trim()}',
       if (mailbox != null && mailbox.trim().isNotEmpty) mailbox.trim(),
     ];

@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">Mitään ei nyt kokeilla — uudet toiminnot näkyvät täällä.</string>
     <string name="translateFrom">Käännä kielestä</string>
     <string name="translateMsgOther">Viesti toisella kielellä</string>
+    <string name="translateReadMode">Käännetyn viestin näyttäminen</string>
     <string name="favoritesOrder">Ruutujen järjestys</string>
     <string name="favoritesOrderHint">Vedä kohdetta oikealla olevasta kahvasta — valikon ruudut noudattavat tätä järjestystä.</string>
 </resources>

@@ -17,6 +17,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/painting.dart';
@@ -28,6 +29,7 @@ import '../../core/logging/app_logger.dart';
 import '../../core/utils/avatar_colors.dart';
 import '../../core/utils/text_safe.dart' show initialOf, fixUtf16;
 import 'notification_service.dart' show NotificationService;
+import 'notification_text.dart' show NotificationText;
 
 class MessengerNotify {
   MessengerNotify._();
@@ -192,16 +194,95 @@ class MessengerNotify {
   }
 
   /// Аватар отправителя: фото из контактов (кружком), иначе кружок с буквой.
+  /// [vip] — с золотым кольцом и звёздочкой (vipBadge).
   static Future<Uint8List?> avatar({
     required String name,
     String? email,
     String? photo,
     bool highContrast = false,
+    bool vip = false,
   }) async {
     final p = photoBytes(photo);
-    if (p != null) return await circlePhoto(p) ?? p;
-    final c = avatarColors(email, name, highContrast: highContrast);
-    return renderInitials(letter: initial(name, email), fill: c.fill, letterColor: c.letter);
+    Uint8List? out;
+    if (p != null) {
+      out = await circlePhoto(p) ?? p;
+    } else {
+      final c = avatarColors(email, name, highContrast: highContrast);
+      out = await renderInitials(letter: initial(name, email), fill: c.fill, letterColor: c.letter);
+    }
+    if (!vip || out == null) return out;
+    return await vipBadge(out) ?? out;
+  }
+
+  /// Отметка VIP на портрете (1.10.5, замечание владельца 03.11.2026:
+  /// «звёздочка в уведомлении у VIP жирным шрифтом не очень выглядит.
+  /// Может как-то по-другому обозначим акцент?»): золотое кольцо вокруг
+  /// кружка и золотая звёздочка в белой обводке внизу справа — как значки
+  /// на аватарах в мессенджерах. Портрет внутри кольца немного меньше.
+  /// Не вышло — null (портрет без отметки).
+  static Future<Uint8List?> vipBadge(Uint8List circle, {int size = 192}) async {
+    ui.Codec? codec;
+    ui.Image? src;
+    ui.Picture? picture;
+    ui.Image? image;
+    try {
+      codec = await ui.instantiateImageCodec(circle).timeout(const Duration(seconds: 2));
+      src = (await codec.getNextFrame().timeout(const Duration(seconds: 2))).image;
+      final s = size.toDouble();
+      const gold = ui.Color(NotificationText.vipColor);
+      final ring = s * 0.05;
+      final recorder = ui.PictureRecorder();
+      final canvas = ui.Canvas(recorder, ui.Rect.fromLTWH(0, 0, s, s));
+      // Портрет — внутри кольца с просветом.
+      final inset = ring + s * 0.025;
+      final inner = ui.Rect.fromLTWH(inset, inset, s - 2 * inset, s - 2 * inset);
+      canvas.save();
+      canvas.clipPath(ui.Path()..addOval(inner));
+      canvas.drawImageRect(src, ui.Rect.fromLTWH(0, 0, src.width.toDouble(), src.height.toDouble()), inner,
+          ui.Paint()..filterQuality = ui.FilterQuality.medium);
+      canvas.restore();
+      canvas.drawCircle(ui.Offset(s / 2, s / 2), s / 2 - ring / 2,
+          ui.Paint()
+            ..style = ui.PaintingStyle.stroke
+            ..strokeWidth = ring
+            ..color = gold
+            ..isAntiAlias = true);
+      // Звёздочка: золотой кружок в белой обводке, внутри белая звезда.
+      final c = ui.Offset(s * 0.81, s * 0.81);
+      final r = s * 0.17;
+      canvas.drawCircle(c, r, ui.Paint()..color = const ui.Color(0xFFFFFFFF));
+      canvas.drawCircle(c, r - s * 0.025, ui.Paint()..color = gold);
+      canvas.drawPath(_star(c, r * 0.62), ui.Paint()..color = const ui.Color(0xFFFFFFFF));
+      picture = recorder.endRecording();
+      image = await picture.toImage(size, size).timeout(const Duration(seconds: 2));
+      final data = await image.toByteData(format: ui.ImageByteFormat.png).timeout(const Duration(seconds: 2));
+      return data?.buffer.asUint8List();
+    } catch (e) {
+      AppLogger.debug('Отметка VIP на портрете: $e');
+      return null;
+    } finally {
+      image?.dispose();
+      picture?.dispose();
+      src?.dispose();
+      codec?.dispose();
+    }
+  }
+
+  /// Пятиконечная звезда с центром [c] и внешним радиусом [r].
+  static ui.Path _star(ui.Offset c, double r) {
+    final path = ui.Path();
+    final inner = r * 0.45;
+    for (var i = 0; i < 10; i++) {
+      final rad = i.isEven ? r : inner;
+      final a = -math.pi / 2 + i * math.pi / 5;
+      final p = ui.Offset(c.dx + rad * math.cos(a), c.dy + rad * math.sin(a));
+      if (i == 0) {
+        path.moveTo(p.dx, p.dy);
+      } else {
+        path.lineTo(p.dx, p.dy);
+      }
+    }
+    return path..close();
   }
 
   /// Отправитель для Android: имя (заголовок, как NotificationText.title),

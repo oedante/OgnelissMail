@@ -9,6 +9,11 @@
 //
 // HTML переводится по текстовым узлам (translation_text.dart): разметка,
 // ссылки, стили остаются; разбор длинных писем — вне UI-изолята.
+//
+// 1.10.5 (просьба владельца 03.11.2026): тема переводится тоже (без
+// «RE:/FW:»); «Настройки → Перевод → Показ перевода письма» — заменить
+// текст или оставить оба (сначала оригинал или сначала перевод): тема —
+// вторая строкой под первой, текст — второй под линией с подписью языка.
 
 import 'dart:async';
 
@@ -21,8 +26,10 @@ import '../../../core/utils/quote_splitter.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../data/models/email_model.dart';
+import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/translation/translation_languages.dart';
+import '../../../services/translation/translation_prefs.dart';
 import '../../../services/translation/translation_text.dart';
 import '../../../services/translation/translator.dart';
 import '../../../widgets/common/inline_notice.dart';
@@ -38,7 +45,14 @@ class _Translated {
   final String? sourcePlain;
   final String? html;
   final String? plain;
-  const _Translated(this.sourceHtml, this.sourcePlain, this.html, this.plain);
+
+  /// Тема в переводе (с прежними «RE:/FW:»); null — не переводилась.
+  final String? subject;
+
+  /// Оба текста (1.10.5): по режиму — готовый HTML или текст.
+  final Map<ComposeTranslateMode, ({String? html, String? plain})> both = {};
+
+  _Translated(this.sourceHtml, this.sourcePlain, this.html, this.plain, this.subject);
 }
 
 /// Состояние перевода открытого письма. Экран письма слушает его и
@@ -230,6 +244,49 @@ class MailTranslationController extends ChangeNotifier {
         'латиница ${share(RegExp('[A-Za-z]'))} %, кириллица ${share(RegExp('[А-Яа-яЁё]'))} %');
   }
 
+  /// Показ перевода — из настроек (читается при каждом показе: поменяли в
+  /// настройках — следующее открытие письма уже по-новому).
+  ComposeTranslateMode get mode => TranslationMemory.readMode(ref.read(sharedPrefsProvider));
+
+  /// Тема для шапки письма: с переводом — по режиму (вторая — мелко под
+  /// первой), без — как есть.
+  ({String main, String? second}) subjectFor(EmailModel e) {
+    final c = (!showing || e.id != _emailId || to == null) ? null : _cache['${e.id}|$to'];
+    return MailBilingual.subject(original: e.subject, translated: c?.subject, mode: mode);
+  }
+
+  /// Подпись второго текста в «оставить оба»: «Переведено: английский →
+  /// русский» под переводом, «Язык письма: английский» под оригиналом.
+  String _secondLabel(ComposeTranslateMode m) {
+    final l10n = _l10n;
+    if (m == ComposeTranslateMode.originalFirst) {
+      return l10n == null
+          ? '$fromName → $toName'
+          : l10n.tr('translateDone').replaceAll('{from}', fromName).replaceAll('{to}', toName);
+    }
+    return l10n == null ? fromName : l10n.tr('translateMsgLang').replaceAll('{lang}', fromName);
+  }
+
+  final Set<ComposeTranslateMode> _bothPending = {};
+
+  /// Собрать «оба текста» для режима [m] (вне UI-изолята для длинных писем).
+  Future<void> _buildBoth(_Translated c, ComposeTranslateMode m) async {
+    if (m == ComposeTranslateMode.replace || c.both.containsKey(m)) return;
+    final label = _secondLabel(m);
+    final origFirst = m == ComposeTranslateMode.originalFirst;
+    String? html;
+    String? plain;
+    final src = c.sourceHtml, tr = c.html;
+    if (src != null && src.isNotEmpty && tr != null) {
+      html = await MailBodyHeavy.bilingual(origFirst ? src : tr, origFirst ? tr : src, label);
+    }
+    final srcP = c.sourcePlain, trP = c.plain;
+    if (srcP != null && srcP.isNotEmpty && trP != null) {
+      plain = MailBilingual.plain(origFirst ? srcP : trP, origFirst ? trP : srcP, label);
+    }
+    c.both[m] = (html: html, plain: plain);
+  }
+
   /// Письмо, как его показать: с переводом или как есть.
   EmailModel apply(EmailModel e) {
     if (!showing || e.id != _emailId || to == null) return e;
@@ -242,6 +299,26 @@ class MailTranslationController extends ChangeNotifier {
       _cache.remove('${e.id}|$to');
       WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_run(e)));
       return e;
+    }
+    final m = mode;
+    if (m != ComposeTranslateMode.replace) {
+      final both = c.both[m];
+      if (both != null) {
+        return e.copyWith(bodyHtml: both.html ?? c.html ?? e.bodyHtml, bodyPlain: both.plain ?? c.plain ?? e.bodyPlain);
+      }
+      // Режим поменяли после перевода — собрать оба текста; пока — перевод.
+      if (_bothPending.add(m)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          try {
+            await _buildBoth(c, m);
+          } catch (err) {
+            AppLogger.warning('Перевод: оба текста — $err');
+          } finally {
+            _bothPending.remove(m);
+          }
+          _notify();
+        });
+      }
     }
     return e.copyWith(bodyHtml: c.html ?? e.bodyHtml, bodyPlain: c.plain ?? e.bodyPlain);
   }
@@ -280,7 +357,11 @@ class MailTranslationController extends ChangeNotifier {
       showInlineError(l10n.tr('nothingToTranslate'));
       return;
     }
-    if (_cache.containsKey('${e.id}|$to')) {
+    final cached = _cache['${e.id}|$to'];
+    if (cached != null) {
+      // Переводили раньше (за этот запуск): оба текста — для нынешнего
+      // режима показа (его могли сменить в настройках).
+      await _buildBoth(cached, mode);
       showing = true;
       phase = MailTranslationPhase.translated;
       _notify();
@@ -310,7 +391,20 @@ class MailTranslationController extends ChangeNotifier {
       if (plain != null && plain.isNotEmpty && (html == null || html.isEmpty)) {
         trPlain = await translatePlain(t, plain, from: f, to: tt);
       }
-      _cache['${e.id}|$tt'] = _Translated(html, plain, trHtml, trPlain);
+      // Тема — без «RE:/FW:» (1.10.5). Не перевелась — письмо всё равно
+      // переведено, тема как есть.
+      String? trSubject;
+      final (prefix, rest) = MailBilingual.splitSubject(e.subject);
+      if (rest.isNotEmpty) {
+        try {
+          trSubject = '$prefix${(await translatePlain(t, rest, from: f, to: tt)).trim()}';
+        } catch (err) {
+          AppLogger.warning('Перевод темы $f → $tt: $err');
+        }
+      }
+      final done = _Translated(html, plain, trHtml, trPlain, trSubject);
+      await _buildBoth(done, mode);
+      _cache['${e.id}|$tt'] = done;
       if (_emailId != e.id) return;
       showing = true;
       phase = MailTranslationPhase.translated;
@@ -367,6 +461,14 @@ class MailBodyHeavy {
 
   static Future<String> sample(String html) =>
       html.length < _threshold ? SynchronousFuture(_sample(html)) : compute(_sample, html);
+
+  static String _bilingual((String, String, String) a) => MailBilingual.html(a.$1, a.$2, a.$3);
+
+  /// Оба текста письма (1.10.5): первый, линия с подписью, второй.
+  static Future<String> bilingual(String first, String second, String label) =>
+      first.length + second.length < _threshold
+          ? SynchronousFuture(_bilingual((first, second, label)))
+          : compute(_bilingual, (first, second, label));
 
   /// Образец свежего текста — без свёрнутой цитаты (как на экране письма).
   static Future<String> replySample(String html) =>

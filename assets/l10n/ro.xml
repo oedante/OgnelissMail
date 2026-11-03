@@ -3798,6 +3798,7 @@
     <string name="experimentalEmpty">Momentan nu se testează nimic — funcțiile noi vor apărea aici.</string>
     <string name="translateFrom">Tradu din</string>
     <string name="translateMsgOther">Mesaj în altă limbă</string>
+    <string name="translateReadMode">Afișarea mesajelor traduse</string>
     <string name="favoritesOrder">Ordinea plăcilor</string>
     <string name="favoritesOrderHint">Trageți un element de mânerul din dreapta — plăcile din meniu urmează această ordine.</string>
 </resources>

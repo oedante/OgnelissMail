@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">Inget testas just nu — nya funktioner visas här.</string>
     <string name="translateFrom">Översätt från</string>
     <string name="translateMsgOther">Meddelande på ett annat språk</string>
+    <string name="translateReadMode">Visning av översatta meddelanden</string>
     <string name="favoritesOrder">Panelernas ordning</string>
     <string name="favoritesOrderHint">Dra ett objekt i handtaget till höger — panelerna i menyn följer den här ordningen.</string>
 </resources>

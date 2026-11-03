@@ -3798,6 +3798,7 @@
     <string name="experimentalEmpty">Momentálně se nic nezkouší — nové funkce se objeví tady.</string>
     <string name="translateFrom">Přeložit z</string>
     <string name="translateMsgOther">Zpráva v jiném jazyce</string>
+    <string name="translateReadMode">Zobrazení přeložené zprávy</string>
     <string name="favoritesOrder">Pořadí dlaždic</string>
     <string name="favoritesOrderHint">Přetáhněte položku za úchyt vpravo — dlaždice v nabídce budou v tomto pořadí.</string>
 </resources>

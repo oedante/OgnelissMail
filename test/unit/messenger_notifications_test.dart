@@ -118,6 +118,29 @@ void main() {
       expect(img.decodePng(viaAvatar!)!.getPixel(0, 0).a, 0);
     });
 
+    // 1.10.5 (замечание владельца 03.11.2026: «звёздочка у VIP жирным
+    // шрифтом не очень выглядит») — VIP отмечен на портрете: золотое кольцо
+    // и звёздочка внизу справа, углы прозрачные.
+    testWidgets('VIP: золотое кольцо и звёздочка на портрете', (tester) async {
+      final plain = await tester.runAsync(() => MessengerNotify.avatar(name: 'Boss', email: 'boss@example.com'));
+      final vip = await tester.runAsync(() => MessengerNotify.avatar(name: 'Boss', email: 'boss@example.com', vip: true));
+      expect(plain, isNotNull);
+      expect(vip, isNotNull);
+      final d = img.decodePng(vip!)!;
+      expect(d.width, 192);
+      expect(d.getPixel(0, 0).a, 0, reason: 'угол прозрачный');
+      bool golden(img.Pixel p) => p.a > 200 && p.r > 200 && p.g > 140 && p.g < 190 && p.b < 60;
+      expect(golden(d.getPixel(96, 3)), isTrue, reason: 'кольцо сверху');
+      expect(golden(d.getPixel(3, 96)), isTrue, reason: 'кольцо слева');
+      // Звёздочка: белая середина в золотом кружке.
+      final star = d.getPixel((192 * 0.81).round(), (192 * 0.81).round());
+      expect(star.r > 240 && star.g > 240 && star.b > 240, isTrue, reason: 'белая звезда');
+      expect(golden(d.getPixel((192 * 0.81).round(), (192 * 0.81 + 192 * 0.17 * 0.8).round())), isTrue,
+          reason: 'золотой кружок под звездой');
+      // Без VIP — без кольца.
+      expect(golden(img.decodePng(plain!)!.getPixel(96, 3)), isFalse);
+    });
+
     testWidgets('фото важнее буквы (не картинка — как есть)', (tester) async {
       final bytes = Uint8List.fromList([1, 2, 3, 4]);
       final got = await tester.runAsync(() => MessengerNotify.avatar(
@@ -129,8 +152,8 @@ void main() {
   group('Android: MessagingStyle', () {
     test('отправитель — Person с адресом, ключом беседы и фото', () {
       final avatar = Uint8List.fromList([9, 9, 9]);
-      final p = MessengerNotify.androidSender(title: '★ Boss', email: 'Boss@example.com', avatar: avatar, vip: true);
-      expect(p.name, '★ Boss');
+      final p = MessengerNotify.androidSender(title: 'Boss', email: 'Boss@example.com', avatar: avatar, vip: true);
+      expect(p.name, 'Boss');
       expect(p.uri, 'mailto:Boss@example.com');
       expect(p.key, MessengerNotify.shortcutId('boss@example.com'));
       expect(p.important, isTrue);

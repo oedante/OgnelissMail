@@ -12,6 +12,8 @@
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
 
+import '../../core/utils/quote_splitter.dart' show splitQuotedHtml;
+
 /// Куски текста HTML-письма: [texts] — что переводить, [rebuild] — тот же
 /// документ с переводом вместо исходного текста.
 class HtmlTextSegments {
@@ -273,5 +275,83 @@ class ComposeTranslation {
     final first = mode == ComposeTranslateMode.originalFirst ? own : tr;
     final second = mode == ComposeTranslateMode.originalFirst ? tr : own;
     return '$first\n\n——— $label ———\n\n${second.trimLeft()}$tail';
+  }
+}
+
+// ── Входящее письмо: тема и «оставить оба текста» (1.10.5) ─────────────
+
+/// Перевод входящего письма (1.10.5, просьба владельца 03.11.2026: «при
+/// переводе тему письма тоже нужно переводить. И оставлять два варианта,
+/// если пользователь это выбирает»): тема без «RE:/FW:» и оба текста —
+/// сначала оригинал или сначала перевод, как у своего письма.
+class MailBilingual {
+  MailBilingual._();
+
+  static final _prefix = RegExp(
+      r'^((?:\s*(?:re|fw|fwd|aw|wg|tr|sv|vs|rv|odp|отв|пер|ответ|переслать)\s*(?:\[\d+\])?\s*:\s*)+)',
+      caseSensitive: false);
+
+  /// «RE: FW: Тема» → («RE: FW: », «Тема»): приставки не переводятся.
+  static (String, String) splitSubject(String subject) {
+    final m = _prefix.firstMatch(subject);
+    if (m == null) return ('', subject.trim());
+    return (m.group(1)!, subject.substring(m.end).trim());
+  }
+
+  /// Тема: какая крупно, какая под ней мелко (null — одна тема).
+  static ({String main, String? second}) subject({
+    required String original,
+    required String? translated,
+    required ComposeTranslateMode mode,
+  }) {
+    final tr = translated?.trim() ?? '';
+    if (tr.isEmpty || tr == original.trim()) return (main: original, second: null);
+    return switch (mode) {
+      ComposeTranslateMode.replace => (main: tr, second: null),
+      ComposeTranslateMode.originalFirst => (main: original, second: tr),
+      ComposeTranslateMode.translationFirst => (main: tr, second: original),
+    };
+  }
+
+  /// Простой текст: первый, линия с подписью [label], второй.
+  static String plain(String first, String second, String label) =>
+      '${first.trimRight()}\n\n——— $label ———\n\n${second.trimLeft()}';
+
+  static String _divider(String label) => '<div><br></div>'
+      '<hr style="border:none;border-top:1px solid #d0d0d0;margin:8px 0;">'
+      '<div style="font-size:11px;color:#888888;">${ComposeTranslation._escape(label)}</div>'
+      '<div><br></div>';
+
+  /// HTML: свежий текст первого, линия с подписью [label], свежий текст
+  /// второго; цитата (переписка) — тоже обе, после них: экран письма
+  /// сворачивает её по первому маркеру, и в свёрнутом виде видны оба
+  /// ответа, а не один. Стили — из первого документа (письмо то же).
+  static String html(String first, String second, String label) {
+    final a = splitQuotedHtml(first);
+    final b = splitQuotedHtml(second);
+    final doc = html_parser.parse(a.hasQuote ? a.reply : first);
+    final body = doc.body;
+    if (body == null) return first;
+    void addAll(String fragmentHtml) {
+      final d = html_parser.parse(fragmentHtml);
+      for (final n in (d.body?.nodes.toList() ?? const <dom.Node>[])) {
+        body.append(n);
+      }
+    }
+
+    void addDivider() {
+      for (final n in html_parser.parseFragment(_divider(label)).nodes.toList()) {
+        body.append(n);
+      }
+    }
+
+    addDivider();
+    addAll(b.hasQuote ? b.reply : second);
+    if (a.hasQuote) addAll(a.quoted);
+    if (b.hasQuote) {
+      if (a.hasQuote) addDivider();
+      addAll(b.quoted);
+    }
+    return doc.outerHtml;
   }
 }

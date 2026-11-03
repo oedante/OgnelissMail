@@ -3798,6 +3798,7 @@
     <string name="experimentalEmpty">כרגע אין שום דבר בניסוי — תכונות חדשות יופיעו כאן.</string>
     <string name="translateFrom">תרגום מ-</string>
     <string name="translateMsgOther">הודעה בשפה אחרת</string>
+    <string name="translateReadMode">הצגת הודעה מתורגמת</string>
     <string name="favoritesOrder">סדר האריחים</string>
     <string name="favoritesOrderHint">גררו פריט בידית שמימין — האריחים בתפריט יופיעו בסדר הזה.</string>
 </resources>

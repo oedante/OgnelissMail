@@ -12,11 +12,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/logging/app_logger.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/translation/translation_languages.dart';
+import '../../../services/translation/translation_prefs.dart';
+import '../../../services/translation/translation_text.dart' show ComposeTranslateMode;
 import '../../../services/translation/translator.dart';
 import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/inline_notice.dart';
+import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../translation/translation_ui.dart';
 import '../providers/settings_provider.dart';
@@ -166,6 +170,32 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
     );
   }
 
+  static String _modeKey(ComposeTranslateMode m) => switch (m) {
+        ComposeTranslateMode.replace => 'translateModeReplace',
+        ComposeTranslateMode.originalFirst => 'translateModeOrigFirst',
+        ComposeTranslateMode.translationFirst => 'translateModeTransFirst',
+      };
+
+  Future<void> _pickReadMode(AppLocalizations l10n) async {
+    final prefs = ref.read(sharedPrefsProvider);
+    final cur = TranslationMemory.readMode(prefs);
+    final picked = await showActionSheet<ComposeTranslateMode>(
+      context,
+      title: l10n.tr('translateReadMode'),
+      items: [
+        for (final m in ComposeTranslateMode.values)
+          ActionSheetItem(
+            icon: m == cur ? AppIcons.radio_button_checked : AppIcons.radio_button_unchecked,
+            label: l10n.tr(_modeKey(m)),
+            value: m,
+          ),
+      ],
+    );
+    if (picked == null || !mounted) return;
+    await TranslationMemory.setReadMode(prefs, picked);
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!translationPlatformSupported || _available == null) return const SizedBox.shrink();
@@ -191,6 +221,16 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
           subtitle: l10n.tr('translateOfferDesc'),
           value: settings.translateOffer,
           onChanged: notifier.setTranslateOffer,
+        ),
+        // Показ перевода входящего письма (1.10.5, просьба владельца
+        // 03.11.2026: «оставлять два варианта, если пользователь это
+        // выбирает») — тема и текст.
+        SettingsItem(
+          key: const ValueKey('translate_read_mode'),
+          icon: AppIcons.view_agenda,
+          title: l10n.tr('translateReadMode'),
+          subtitle: l10n.tr(_modeKey(TranslationMemory.readMode(ref.read(sharedPrefsProvider)))),
+          onTap: () => unawaited(_pickReadMode(l10n)),
         ),
         SettingsItem(
           icon: AppIcons.block,

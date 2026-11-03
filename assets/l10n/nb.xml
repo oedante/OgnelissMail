@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">Ingenting er på prøve nå — nye funksjoner vises her.</string>
     <string name="translateFrom">Oversett fra</string>
     <string name="translateMsgOther">Melding på et annet språk</string>
+    <string name="translateReadMode">Visning av oversatte meldinger</string>
     <string name="favoritesOrder">Rekkefølge på fliser</string>
     <string name="favoritesOrderHint">Dra et punkt i håndtaket til høyre — flisene i menyen følger denne rekkefølgen.</string>
 </resources>

@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">Al momento non c’è nulla in prova: le nuove funzioni compariranno qui.</string>
     <string name="translateFrom">Traduci da</string>
     <string name="translateMsgOther">Messaggio in un\'altra lingua</string>
+    <string name="translateReadMode">Visualizzazione dei messaggi tradotti</string>
     <string name="favoritesOrder">Ordine dei riquadri</string>
     <string name="favoritesOrderHint">Trascina una voce dalla maniglia a destra: i riquadri del menu seguono questo ordine.</string>
 </resources>

@@ -3650,6 +3650,8 @@
     <string name="translateModelsSetting">ภาษาในอุปกรณ์</string>
     <string name="translateModelsDesc">ภาษาที่ดาวน์โหลดไว้สำหรับแปลแบบออฟไลน์</string>
     <string name="translateModelsIos">iOS จะดาวน์โหลดและลบภาษาสำหรับการแปลเอง: การตั้งค่า → แอป → แปลภาษา</string>
+    <string name="translateModelsMac">macOS ดาวน์โหลดและลบภาษาสำหรับการแปลเอง: การตั้งค่าระบบ → ทั่วไป → ภาษาและภูมิภาค → ภาษาสำหรับการแปล</string>
+    <string name="translateUnavailableMac">การแปลใช้ไม่ได้บน Mac เครื่องนี้ (ต้องใช้ macOS 15 ขึ้นไป)</string>
     <string name="translateEngineGoogle">แปลบนอุปกรณ์ด้วย Google Translate (ML Kit) ข้อความในอีเมลจะไม่ออกจากโทรศัพท์</string>
     <string name="translateEngineApple">แปลบนอุปกรณ์ด้วย Apple Translation ข้อความในอีเมลจะไม่ออกจากอุปกรณ์</string>
     <string name="translateUnavailable">การแปลใช้ไม่ได้ในอุปกรณ์นี้ (iPhone และ iPad: iOS 18 ขึ้นไป)</string>

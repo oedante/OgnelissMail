@@ -3688,6 +3688,8 @@
     <string name="translateModelsSetting">Limbi pe dispozitiv</string>
     <string name="translateModelsDesc">Limbi descărcate pentru traducere offline</string>
     <string name="translateModelsIos">iOS descarcă și șterge singur limbile de traducere: Configurări → Aplicații → Traducere.</string>
+    <string name="translateModelsMac">Limbile de traducere le descarcă și le șterge macOS: Configurări sistem → General → Limbă și regiune → Limbi de traducere.</string>
+    <string name="translateUnavailableMac">Traducerea nu este disponibilă pe acest Mac (necesită macOS 15 sau mai nou)</string>
     <string name="translateEngineGoogle">Traducere pe dispozitiv cu Google Translate (ML Kit). Textul mesajelor rămâne pe telefon.</string>
     <string name="translateEngineApple">Traducere pe dispozitiv cu Apple Translation. Textul mesajelor rămâne pe dispozitiv.</string>
     <string name="translateUnavailable">Traducerea nu este disponibilă pe acest dispozitiv (iPhone și iPad: iOS 18 sau mai nou)</string>

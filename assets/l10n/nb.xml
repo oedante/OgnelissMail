@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Språk på enheten</string>
     <string name="translateModelsDesc">Nedlastede språk for oversettelse uten nett</string>
     <string name="translateModelsIos">iOS laster ned og fjerner språk for oversettelse selv: Innstillinger → Apper → Oversett.</string>
+    <string name="translateModelsMac">macOS laster ned og fjerner oversettelsesspråk selv: Systeminnstillinger → Generelt → Språk og område → Oversettelsesspråk.</string>
+    <string name="translateUnavailableMac">Oversettelse er ikke tilgjengelig på denne Macen (krever macOS 15 eller nyere)</string>
     <string name="translateEngineGoogle">Oversettelse på enheten med Google Translate (ML Kit). Meldingsteksten blir på telefonen.</string>
     <string name="translateEngineApple">Oversettelse på enheten med Apple Translation. Meldingsteksten blir på enheten.</string>
     <string name="translateUnavailable">Oversettelse er ikke tilgjengelig på denne enheten (iPhone og iPad: iOS 18 eller nyere)</string>

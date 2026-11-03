@@ -3650,6 +3650,8 @@
     <string name="translateModelsSetting">Ngôn ngữ trên thiết bị</string>
     <string name="translateModelsDesc">Ngôn ngữ đã tải để dịch ngoại tuyến</string>
     <string name="translateModelsIos">iOS tự tải và xóa ngôn ngữ dịch: Cài đặt → Ứng dụng → Dịch thuật.</string>
+    <string name="translateModelsMac">macOS tự tải và xóa ngôn ngữ dịch: Cài đặt hệ thống → Cài đặt chung → Ngôn ngữ &amp; Vùng → Ngôn ngữ dịch.</string>
+    <string name="translateUnavailableMac">Không thể dịch trên máy Mac này (cần macOS 15 trở lên)</string>
     <string name="translateEngineGoogle">Dịch trên thiết bị bằng Google Translate (ML Kit). Nội dung thư không rời khỏi điện thoại.</string>
     <string name="translateEngineApple">Dịch trên thiết bị bằng Apple Translation. Nội dung thư không rời khỏi thiết bị.</string>
     <string name="translateUnavailable">Không thể dịch trên thiết bị này (iPhone và iPad: iOS 18 trở lên)</string>

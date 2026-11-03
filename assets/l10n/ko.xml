@@ -3650,6 +3650,8 @@
     <string name="translateModelsSetting">기기의 언어</string>
     <string name="translateModelsDesc">오프라인 번역용으로 다운로드한 언어</string>
     <string name="translateModelsIos">번역 언어는 iOS가 직접 다운로드하고 삭제합니다: 설정 → 앱 → 번역.</string>
+    <string name="translateModelsMac">번역 언어는 macOS가 직접 다운로드하고 삭제합니다: 시스템 설정 → 일반 → 언어 및 지역 → 번역 언어.</string>
+    <string name="translateUnavailableMac">이 Mac에서는 번역을 사용할 수 없습니다(macOS 15 이상 필요)</string>
     <string name="translateEngineGoogle">기기 내 번역: Google Translate(ML Kit). 메일 내용은 휴대폰 밖으로 나가지 않습니다.</string>
     <string name="translateEngineApple">기기 내 번역: Apple Translation. 메일 내용은 기기 밖으로 나가지 않습니다.</string>
     <string name="translateUnavailable">이 기기에서는 번역을 사용할 수 없습니다(iPhone 및 iPad: iOS 18 이상)</string>

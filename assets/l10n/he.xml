@@ -3688,6 +3688,8 @@
     <string name="translateModelsSetting">שפות במכשיר</string>
     <string name="translateModelsDesc">שפות שהורדו לתרגום ללא אינטרנט</string>
     <string name="translateModelsIos">iOS מוריד ומוחק שפות לתרגום בעצמו: הגדרות ← יישומים ← תרגום.</string>
+    <string name="translateModelsMac">את שפות התרגום מוריד ומסיר macOS בעצמו: הגדרות המערכת ← כללי ← שפה ואזור ← שפות תרגום.</string>
+    <string name="translateUnavailableMac">התרגום אינו זמין ב-Mac הזה (נדרש macOS 15 ואילך)</string>
     <string name="translateEngineGoogle">תרגום במכשיר באמצעות Google Translate ‏(ML Kit). טקסט ההודעות נשאר בטלפון.</string>
     <string name="translateEngineApple">תרגום במכשיר באמצעות Apple Translation. טקסט ההודעות נשאר במכשיר.</string>
     <string name="translateUnavailable">התרגום אינו זמין במכשיר זה (iPhone ו-iPad: ‏iOS 18 ואילך)</string>

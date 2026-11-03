@@ -3707,6 +3707,8 @@
     <string name="translateModelsSetting">Języki na urządzeniu</string>
     <string name="translateModelsDesc">Pobrane języki do tłumaczenia offline</string>
     <string name="translateModelsIos">Języki do tłumaczenia pobiera i usuwa iOS: Ustawienia → Aplikacje → Tłumacz.</string>
+    <string name="translateModelsMac">Języki tłumaczenia pobiera i usuwa macOS: Ustawienia systemowe → Ogólne → Język i region → Języki tłumaczenia.</string>
+    <string name="translateUnavailableMac">Tłumaczenie jest niedostępne na tym Macu (wymagany macOS 15 lub nowszy)</string>
     <string name="translateEngineGoogle">Tłumaczenie na urządzeniu: Google Translate (ML Kit). Treść wiadomości nie opuszcza telefonu.</string>
     <string name="translateEngineApple">Tłumaczenie na urządzeniu: Apple Translation. Treść wiadomości nie opuszcza urządzenia.</string>
     <string name="translateUnavailable">Tłumaczenie jest niedostępne na tym urządzeniu (iPhone i iPad: iOS 18 lub nowszy)</string>

@@ -3650,6 +3650,8 @@
     <string name="translateModelsSetting">端末の言語</string>
     <string name="translateModelsDesc">オフライン翻訳用にダウンロードした言語</string>
     <string name="translateModelsIos">翻訳用の言語は iOS がダウンロード・削除します: 設定 → アプリ → 翻訳。</string>
+    <string name="translateModelsMac">翻訳言語は macOS がダウンロードと削除を行います:システム設定 → 一般 → 言語と地域 → 翻訳言語。</string>
+    <string name="translateUnavailableMac">この Mac では翻訳を使用できません(macOS 15 以降が必要です)</string>
     <string name="translateEngineGoogle">端末上の翻訳: Google Translate（ML Kit）。メールの本文は端末から出ません。</string>
     <string name="translateEngineApple">端末上の翻訳: Apple Translation。メールの本文は端末から出ません。</string>
     <string name="translateUnavailable">この端末では翻訳を利用できません（iPhone・iPad は iOS 18 以降）</string>

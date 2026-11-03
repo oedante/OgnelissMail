@@ -3688,6 +3688,8 @@
     <string name="translateModelsSetting">Jazyky v zařízení</string>
     <string name="translateModelsDesc">Stažené jazyky pro překlad bez internetu</string>
     <string name="translateModelsIos">Jazyky pro překlad stahuje a maže iOS: Nastavení → Aplikace → Překladač.</string>
+    <string name="translateModelsMac">Jazyky pro překlad stahuje a odstraňuje macOS: Nastavení systému → Obecné → Jazyk a oblast → Jazyky překladu.</string>
+    <string name="translateUnavailableMac">Překlad není na tomto Macu k dispozici (vyžaduje macOS 15 nebo novější)</string>
     <string name="translateEngineGoogle">Překlad v zařízení: Google Translate (ML Kit). Text zpráv zůstává v telefonu.</string>
     <string name="translateEngineApple">Překlad v zařízení: Apple Translation. Text zpráv zůstává v zařízení.</string>
     <string name="translateUnavailable">Překlad není na tomto zařízení k dispozici (iPhone a iPad: iOS 18 nebo novější)</string>

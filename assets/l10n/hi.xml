@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">डिवाइस पर भाषाएँ</string>
     <string name="translateModelsDesc">बिना इंटरनेट अनुवाद के लिए डाउनलोड की गई भाषाएँ</string>
     <string name="translateModelsIos">अनुवाद की भाषाएँ iOS स्वयं डाउनलोड और हटाता है: सेटिंग्स → ऐप्स → अनुवाद।</string>
+    <string name="translateModelsMac">अनुवाद की भाषाएँ macOS स्वयं डाउनलोड और हटाता है: सिस्टम सेटिंग्स → सामान्य → भाषा और क्षेत्र → अनुवाद भाषाएँ।</string>
+    <string name="translateUnavailableMac">इस Mac पर अनुवाद उपलब्ध नहीं है (macOS 15 या बाद का आवश्यक)</string>
     <string name="translateEngineGoogle">डिवाइस पर अनुवाद Google Translate (ML Kit) द्वारा। संदेशों का टेक्स्ट फ़ोन से बाहर नहीं जाता।</string>
     <string name="translateEngineApple">डिवाइस पर अनुवाद Apple Translation द्वारा। संदेशों का टेक्स्ट डिवाइस से बाहर नहीं जाता।</string>
     <string name="translateUnavailable">इस डिवाइस पर अनुवाद उपलब्ध नहीं है (iPhone और iPad: iOS 18 या बाद का)</string>

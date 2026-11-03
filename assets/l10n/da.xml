@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Sprog på enheden</string>
     <string name="translateModelsDesc">Hentede sprog til oversættelse uden internet</string>
     <string name="translateModelsIos">iOS henter og fjerner selv sprog til oversættelse: Indstillinger → Apps → Oversæt.</string>
+    <string name="translateModelsMac">macOS henter og fjerner selv oversættelsessprog: Systemindstillinger → Generelt → Sprog og område → Oversættelsessprog.</string>
+    <string name="translateUnavailableMac">Oversættelse er ikke tilgængelig på denne Mac (kræver macOS 15 eller nyere)</string>
     <string name="translateEngineGoogle">Oversættelse på enheden med Google Translate (ML Kit). Beskedernes tekst bliver på telefonen.</string>
     <string name="translateEngineApple">Oversættelse på enheden med Apple Translation. Beskedernes tekst bliver på enheden.</string>
     <string name="translateUnavailable">Oversættelse er ikke tilgængelig på denne enhed (iPhone og iPad: iOS 18 eller nyere)</string>

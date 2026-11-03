@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Laitteen kielet</string>
     <string name="translateModelsDesc">Ladatut kielet kääntämiseen ilman verkkoa</string>
     <string name="translateModelsIos">iOS lataa ja poistaa käännöskielet itse: Asetukset → Apit → Käännä.</string>
+    <string name="translateModelsMac">macOS lataa ja poistaa käännöskielet itse: Järjestelmäasetukset → Yleiset → Kieli ja alue → Käännöskielet.</string>
+    <string name="translateUnavailableMac">Kääntäminen ei ole käytettävissä tässä Macissa (vaatii macOS 15:n tai uudemman)</string>
     <string name="translateEngineGoogle">Käännös laitteella: Google Translate (ML Kit). Viestien teksti pysyy puhelimessa.</string>
     <string name="translateEngineApple">Käännös laitteella: Apple Translation. Viestien teksti pysyy laitteessa.</string>
     <string name="translateUnavailable">Kääntäminen ei ole käytettävissä tässä laitteessa (iPhone ja iPad: iOS 18 tai uudempi)</string>

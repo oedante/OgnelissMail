@@ -3707,6 +3707,8 @@
     <string name="translateModelsSetting">Языки на устройстве</string>
     <string name="translateModelsDesc">Скачанные языки для перевода без интернета</string>
     <string name="translateModelsIos">Языки для перевода скачивает и удаляет iOS: Настройки → Приложения → Перевод.</string>
+    <string name="translateModelsMac">Языки для перевода скачивает и удаляет macOS: Системные настройки → Основные → Язык и регион → Языки перевода.</string>
+    <string name="translateUnavailableMac">Перевод недоступен на этом Mac (нужна macOS 15 и новее)</string>
     <string name="translateEngineGoogle">Перевод на устройстве — Google Translate (ML Kit). Текст писем не покидает телефон.</string>
     <string name="translateEngineApple">Перевод на устройстве — Apple Translation. Текст писем не покидает устройство.</string>
     <string name="translateUnavailable">Перевод недоступен на этом устройстве (iPhone и iPad — iOS 18 и новее)</string>

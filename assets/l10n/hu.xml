@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Nyelvek az eszközön</string>
     <string name="translateModelsDesc">Letöltött nyelvek internet nélküli fordításhoz</string>
     <string name="translateModelsIos">A fordítási nyelveket az iOS tölti le és törli: Beállítások → Appok → Fordító.</string>
+    <string name="translateModelsMac">A fordítási nyelveket a macOS tölti le és távolítja el: Rendszerbeállítások → Általános → Nyelv és régió → Fordítási nyelvek.</string>
+    <string name="translateUnavailableMac">A fordítás ezen a Macen nem érhető el (macOS 15 vagy újabb szükséges)</string>
     <string name="translateEngineGoogle">Fordítás az eszközön: Google Translate (ML Kit). Az üzenetek szövege a telefonon marad.</string>
     <string name="translateEngineApple">Fordítás az eszközön: Apple Translation. Az üzenetek szövege az eszközön marad.</string>
     <string name="translateUnavailable">A fordítás ezen az eszközön nem érhető el (iPhone és iPad: iOS 18 vagy újabb)</string>

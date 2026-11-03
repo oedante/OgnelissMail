@@ -3650,6 +3650,8 @@
     <string name="translateModelsSetting">设备上的语言</string>
     <string name="translateModelsDesc">已下载的离线翻译语言</string>
     <string name="translateModelsIos">翻译语言由 iOS 自行下载和删除：设置 → App → 翻译。</string>
+    <string name="translateModelsMac">翻译语言由 macOS 自行下载和删除:系统设置 → 通用 → 语言与地区 → 翻译语言。</string>
+    <string name="translateUnavailableMac">此 Mac 无法使用翻译(需要 macOS 15 或更高版本)</string>
     <string name="translateEngineGoogle">设备端翻译由 Google Translate（ML Kit）提供。邮件内容不会离开手机。</string>
     <string name="translateEngineApple">设备端翻译由 Apple Translation 提供。邮件内容不会离开设备。</string>
     <string name="translateUnavailable">此设备不支持翻译（iPhone 和 iPad 需 iOS 18 或更高版本）</string>

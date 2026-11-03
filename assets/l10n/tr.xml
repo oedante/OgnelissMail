@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Cihazdaki diller</string>
     <string name="translateModelsDesc">Çevrimdışı çeviri için indirilen diller</string>
     <string name="translateModelsIos">Çeviri dillerini iOS kendisi indirir ve siler: Ayarlar → Uygulamalar → Çeviri.</string>
+    <string name="translateModelsMac">Çeviri dillerini macOS kendisi indirir ve kaldırır: Sistem Ayarları → Genel → Dil ve Bölge → Çeviri Dilleri.</string>
+    <string name="translateUnavailableMac">Bu Mac’te çeviri kullanılamıyor (macOS 15 veya üstü gerekir)</string>
     <string name="translateEngineGoogle">Cihaz üzerinde çeviri: Google Translate (ML Kit). İleti metni telefondan çıkmaz.</string>
     <string name="translateEngineApple">Cihaz üzerinde çeviri: Apple Translation. İleti metni cihazdan çıkmaz.</string>
     <string name="translateUnavailable">Bu cihazda çeviri kullanılamıyor (iPhone ve iPad: iOS 18 veya üzeri)</string>

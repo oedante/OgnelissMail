@@ -38,7 +38,7 @@ Future<void> translateComposeBody(
   final t = ref.read(translatorProvider);
   final l10n = AppLocalizations.of(context);
   if (!await t.isAvailable()) {
-    showInlineError(l10n.tr('translateUnavailable'));
+    showInlineError(l10n.tr(translateUnavailableKey()));
     return;
   }
   final before = await readBody();

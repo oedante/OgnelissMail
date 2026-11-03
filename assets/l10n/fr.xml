@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Langues sur l’appareil</string>
     <string name="translateModelsDesc">Langues téléchargées pour traduire hors ligne</string>
     <string name="translateModelsIos">iOS télécharge et supprime lui-même les langues de traduction : Réglages → Apps → Traduire.</string>
+    <string name="translateModelsMac">macOS télécharge et supprime lui-même les langues de traduction : Réglages Système → Général → Langue et région → Langues de traduction.</string>
+    <string name="translateUnavailableMac">La traduction n’est pas disponible sur ce Mac (macOS 15 ou ultérieur requis)</string>
     <string name="translateEngineGoogle">Traduction sur l’appareil par Google Translate (ML Kit). Le texte des messages reste sur le téléphone.</string>
     <string name="translateEngineApple">Traduction sur l’appareil par Apple Translation. Le texte des messages reste sur l’appareil.</string>
     <string name="translateUnavailable">La traduction n’est pas disponible sur cet appareil (iPhone et iPad : iOS 18 ou ultérieur)</string>

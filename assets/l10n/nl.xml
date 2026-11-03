@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Talen op het apparaat</string>
     <string name="translateModelsDesc">Gedownloade talen voor offline vertalen</string>
     <string name="translateModelsIos">iOS downloadt en verwijdert talen voor vertaling zelf: Instellingen → Apps → Vertaal.</string>
+    <string name="translateModelsMac">macOS downloadt en verwijdert de vertaaltalen zelf: Systeeminstellingen → Algemeen → Taal en regio → Vertaaltalen.</string>
+    <string name="translateUnavailableMac">Vertalen is niet beschikbaar op deze Mac (macOS 15 of nieuwer vereist)</string>
     <string name="translateEngineGoogle">Vertaling op het apparaat door Google Translate (ML Kit). De tekst van berichten blijft op de telefoon.</string>
     <string name="translateEngineApple">Vertaling op het apparaat door Apple Translation. De tekst van berichten blijft op het apparaat.</string>
     <string name="translateUnavailable">Vertalen is niet beschikbaar op dit apparaat (iPhone en iPad: iOS 18 of nieuwer)</string>

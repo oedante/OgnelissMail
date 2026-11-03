@@ -3745,6 +3745,8 @@
     <string name="translateModelsSetting">اللغات على الجهاز</string>
     <string name="translateModelsDesc">اللغات المنزّلة للترجمة دون إنترنت</string>
     <string name="translateModelsIos">يقوم iOS بتنزيل لغات الترجمة وحذفها: الإعدادات ← التطبيقات ← الترجمة.</string>
+    <string name="translateModelsMac">يُنزِّل macOS لغات الترجمة ويحذفها بنفسه: إعدادات النظام ← عام ← اللغة والمنطقة ← لغات الترجمة.</string>
+    <string name="translateUnavailableMac">الترجمة غير متاحة على هذا الـ Mac (يلزم macOS 15 أو أحدث)</string>
     <string name="translateEngineGoogle">ترجمة على الجهاز بواسطة Google Translate (ML Kit). يبقى نص الرسائل على الهاتف.</string>
     <string name="translateEngineApple">ترجمة على الجهاز بواسطة Apple Translation. يبقى نص الرسائل على الجهاز.</string>
     <string name="translateUnavailable">الترجمة غير متاحة على هذا الجهاز (iPhone وiPad: iOS 18 أو أحدث)</string>

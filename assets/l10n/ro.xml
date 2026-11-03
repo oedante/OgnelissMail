@@ -3790,4 +3790,5 @@
     <string name="experimentalIntro">Funcții noi pe care le încercăm. Sunt dezactivate implicit și se pot schimba, pot trece în setările principale sau pot dispărea.</string>
     <string name="quotePeopleTitle">Persoane în anteturile citate</string>
     <string name="quotePeopleDesc">De la, Către și Cc din citat devin etichete cu portret; atingeți pentru fișa persoanei. Funcționează când citatul e extins, deschiderea nu încetinește.</string>
+    <string name="translateFrom">Tradu din</string>
 </resources>

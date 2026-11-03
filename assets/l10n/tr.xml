@@ -3769,4 +3769,5 @@
     <string name="experimentalIntro">Denediğimiz yeni özellikler. Varsayılan olarak kapalıdır; değişebilir, ana ayarlara taşınabilir veya kaldırılabilir.</string>
     <string name="quotePeopleTitle">Alıntı başlıklarındaki kişiler</string>
     <string name="quotePeopleDesc">Alıntıdaki Kimden, Kime ve Bilgi satırları portreli etiketlere dönüşür; dokununca kişi kartı açılır. Alıntı açıkken çalışır, iletiler yine hızlı açılır.</string>
+    <string name="translateFrom">Şu dilden çevir</string>
 </resources>

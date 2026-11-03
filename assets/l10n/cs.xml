@@ -3790,4 +3790,5 @@
     <string name="experimentalIntro">Nové funkce, které zkoušíme. Ve výchozím stavu jsou vypnuté; mohou se změnit, přejít do hlavního nastavení nebo zmizet.</string>
     <string name="quotePeopleTitle">Lidé v hlavičkách citací</string>
     <string name="quotePeopleDesc">Od, Komu a Kopie v citaci jako štítky s portrétem; klepnutí otevře kartu osoby. Funguje při rozbalené citaci, zprávy se otevírají stejně rychle.</string>
+    <string name="translateFrom">Přeložit z</string>
 </resources>

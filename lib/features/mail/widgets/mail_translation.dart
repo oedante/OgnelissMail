@@ -145,13 +145,24 @@ class MailTranslationController extends ChangeNotifier {
   /// цитаты (1.10.1): у ответа с цитатой на другом языке определитель ML
   /// Kit не был уверен («und»), и перевод падал с «Не удалось перевести».
   static Future<String> _sample(EmailModel e) async {
-    final plain = replyPartOfPlain(e.bodyPlain ?? '').trim();
+    final plain = languageSample(replyPartOfPlain(e.bodyPlain ?? ''));
     if (plain.length >= 40) return plain.length > 1500 ? plain.substring(0, 1500) : plain;
     final html = e.bodyHtml ?? '';
     if (html.isEmpty) return plain;
-    final reply = await MailBodyHeavy.replySample(html);
-    return reply.length >= 20 ? reply : MailBodyHeavy.sample(html);
+    final reply = languageSample(await MailBodyHeavy.replySample(html));
+    return reply.length >= 20 ? reply : languageSample(await MailBodyHeavy.sample(html));
   }
+
+  /// Текст для определителя языка (1.10.5): без ссылок, адресов почты и
+  /// угловых скобок — они не язык, а в коротком ответе их доля большая
+  /// (журнал владельца 03.11.2026: язык ответа со ссылками не определялся).
+  @visibleForTesting
+  static String languageSample(String s) => s
+      .replaceAll(RegExp(r'(?:https?://|www\.)\S+', caseSensitive: false), ' ')
+      .replaceAll(RegExp(r'\S+@\S+\.\S+'), ' ')
+      .replaceAll(RegExp(r'[<>\[\]]'), ' ')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .trim();
 
   @visibleForTesting
   static Future<String> debugSample(EmailModel e) => _sample(e);
@@ -164,8 +175,26 @@ class MailTranslationController extends ChangeNotifier {
     if (lang != null || sample.length <= 300) return lang;
     final head = sample.substring(0, 300);
     final again = await t.detectLanguage(head);
-    if (again == null) AppLogger.debug('Перевод: язык письма не определён (образец ${sample.length} знаков)');
+    if (again == null) _logUndetected(sample);
     return again;
+  }
+
+  /// Доля латинских букв среди букв текста (0…1).
+  @visibleForTesting
+  static double latinShare(String s) {
+    final letters = RegExp(r'\p{L}', unicode: true).allMatches(s).length;
+    if (letters == 0) return 0;
+    return RegExp('[A-Za-z]').allMatches(s).length / letters;
+  }
+
+  /// Почему язык не определён — в журнал без текста письма: длина и доля
+  /// латиницы и кириллицы (раньше — только в подробном журнале, и причину
+  /// «Не удалось перевести» было не видно).
+  static void _logUndetected(String sample) {
+    final letters = RegExp(r'\p{L}', unicode: true).allMatches(sample).length;
+    int share(RegExp re) => letters == 0 ? 0 : (re.allMatches(sample).length * 100 / letters).round();
+    AppLogger.warning('Перевод: язык письма не определён — образец ${sample.length} знаков, '
+        'латиница ${share(RegExp('[A-Za-z]'))} %, кириллица ${share(RegExp('[А-Яа-яЁё]'))} %');
   }
 
   /// Письмо, как его показать: с переводом или как есть.
@@ -195,11 +224,20 @@ class MailTranslationController extends ChangeNotifier {
     }
     _resetFor(e.id);
     if (from == null) {
-      final lang = await _detectLang(t, e);
-      if (lang == null) {
-        showInlineError(l10n.tr('translateFailed'));
-        return;
+      var lang = await _detectLang(t, e);
+      // Язык не определился — спросить, с какого переводить (1.10.5), а не
+      // «Не удалось перевести».
+      if (lang == null && context.mounted) {
+        // Текст латиницей — первым предложить английский: письма латиницей,
+        // которые определитель не узнал, чаще всего английские.
+        final sample = await _sample(e);
+        if (!context.mounted) return;
+        lang = await pickTranslationTarget(context, ref,
+            title: l10n.tr('translateFrom'),
+            source: normalizeLang(_appLang()),
+            suggested: latinShare(sample) >= 0.8 ? 'en' : null);
       }
+      if (lang == null) return;
       from = lang;
       to = normalizeLang(_appLang());
       await _loadNames(t);

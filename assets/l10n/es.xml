@@ -3769,4 +3769,5 @@
     <string name="experimentalIntro">Funciones nuevas que estamos probando. Vienen desactivadas y pueden cambiar, pasar a los ajustes principales o desaparecer.</string>
     <string name="quotePeopleTitle">Personas en los encabezados citados</string>
     <string name="quotePeopleDesc">De, Para y CC de la cita se muestran como fichas con retrato; al tocar se abre la tarjeta de la persona. Funciona con la cita desplegada, sin frenar la apertura.</string>
+    <string name="translateFrom">Traducir del</string>
 </resources>

@@ -3769,4 +3769,5 @@
     <string name="experimentalIntro">Nieuwe functies die we uitproberen. Standaard uit; ze kunnen veranderen, naar de gewone instellingen gaan of verdwijnen.</string>
     <string name="quotePeopleTitle">Personen in geciteerde kopteksten</string>
     <string name="quotePeopleDesc">Van, Aan en Cc in een citaat worden labels met portret; tik om de persoonskaart te openen. Werkt bij een uitgevouwen citaat, berichten openen even snel.</string>
+    <string name="translateFrom">Vertalen uit</string>
 </resources>

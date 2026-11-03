@@ -3748,4 +3748,5 @@
     <string name="experimentalIntro">Fitur baru yang sedang kami coba. Nonaktif secara bawaan; bisa berubah, pindah ke pengaturan utama, atau dihapus.</string>
     <string name="quotePeopleTitle">Orang di kepala kutipan</string>
     <string name="quotePeopleDesc">Dari, Kepada, dan Cc dalam kutipan tampil sebagai chip dengan foto; ketuk untuk membuka kartu orang. Berfungsi saat kutipan dibuka, jadi pesan tetap cepat terbuka.</string>
+    <string name="translateFrom">Terjemahkan dari</string>
 </resources>

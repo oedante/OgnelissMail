@@ -3748,4 +3748,5 @@
     <string name="experimentalIntro">試験中の新機能です。初期設定はオフで、変更されたり、通常の設定に移ったり、削除されたりすることがあります。</string>
     <string name="quotePeopleTitle">引用ヘッダーの人物</string>
     <string name="quotePeopleDesc">引用内の差出人・宛先・CC を写真付きのチップで表示し、タップで人物カードを開きます。引用を開いたときだけ動作するので、メールを開く速さは変わりません。</string>
+    <string name="translateFrom">翻訳元の言語</string>
 </resources>

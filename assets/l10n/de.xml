@@ -3769,4 +3769,5 @@
     <string name="experimentalIntro">Neue Funktionen, die wir ausprobieren. Sie sind standardmäßig aus und können sich ändern, in die Haupteinstellungen wandern oder entfallen.</string>
     <string name="quotePeopleTitle">Personen in Zitatköpfen</string>
     <string name="quotePeopleDesc">Von, An und Cc im Zitat werden zu Feldern mit Porträt; Tippen öffnet die Personenkarte. Wirkt nur bei aufgeklapptem Zitat, Nachrichten öffnen so schnell wie bisher.</string>
+    <string name="translateFrom">Übersetzen aus</string>
 </resources>

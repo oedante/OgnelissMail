@@ -79,9 +79,25 @@ void main() {
       expect(_cyr.hasMatch(s), isFalse, reason: s);
     });
 
-    test('письмо без цитаты — образец прежний', () async {
+    test('письмо без цитаты — образец прежний (пробелы и переводы строк — одним пробелом, 1.10.5)', () async {
       final s = await MailTranslationController.debugSample(_mail(plain: _reply));
-      expect(s, _reply);
+      expect(s, _reply.replaceAll(RegExp(r'\s+'), ' '));
     });
+  });
+
+  // 1.10.5 (журнал владельца 03.11.2026: «Письма из нескольких писем по
+  // прежнему не переводит», язык ответа со ссылками не определялся).
+  test('образец без ссылок и адресов; Gmail «On … wrote:» на двух строках — начало цитаты', () async {
+    const plain = 'Hi Oedante,\r\n\r\nCongrats! Your page is up: https://hub.example.org/contributors/oedante\r\n\r\n'
+        'Thank you! Your work helps us make the world better.\r\n\r\nIvan\r\nhttps://github.com/example/x\r\n\r\n'
+        'On Thu, 29 Oct 2026 at 21:55, Олег Ермишин\r\n<oedante@example.com> wrote:\r\n'
+        '> Hi Ivan,\r\n> От: Ivan N <founders@example.org>\r\n> Отправлено: четверг, 29 октября 2026 г. 21:50\r\n';
+    final s = await MailTranslationController.debugSample(_mail(plain: plain));
+    expect(s, startsWith('Hi Oedante, Congrats!'));
+    expect(s, isNot(contains('http')));
+    expect(s, isNot(contains('@')));
+    expect(_cyr.hasMatch(s), isFalse, reason: 'имя из «On … wrote:» на двух строках — уже цитата');
+    expect(MailTranslationController.latinShare(s), greaterThan(0.95));
+    expect(MailTranslationController.latinShare('Привет, как дела'), 0);
   });
 }

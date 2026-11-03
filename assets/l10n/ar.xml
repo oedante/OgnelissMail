@@ -3853,4 +3853,5 @@
     <string name="experimentalIntro">ميزات جديدة قيد التجربة. معطّلة افتراضيًا وقد تتغير أو تنتقل إلى الإعدادات الرئيسية أو تُزال.</string>
     <string name="quotePeopleTitle">الأشخاص في ترويسات الاقتباس</string>
     <string name="quotePeopleDesc">تظهر سطور من وإلى ونسخة في الاقتباس كشارات بصورة؛ انقر لفتح بطاقة الشخص. تعمل عند توسيع الاقتباس، فلا يبطؤ فتح الرسائل.</string>
+    <string name="translateFrom">الترجمة من</string>
 </resources>

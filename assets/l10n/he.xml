@@ -3790,4 +3790,5 @@
     <string name="experimentalIntro">תכונות חדשות שאנחנו מנסים. הן כבויות כברירת מחדל ועשויות להשתנות, לעבור להגדרות הראשיות או להיעלם.</string>
     <string name="quotePeopleTitle">אנשים בכותרות של ציטוטים</string>
     <string name="quotePeopleDesc">מאת, אל ועותק בציטוט מוצגים כתגיות עם תמונה; הקשה פותחת את כרטיס האדם. פועל כשהציטוט מורחב, כך שפתיחת הודעות לא מואטת.</string>
+    <string name="translateFrom">תרגום מ-</string>
 </resources>

@@ -39,9 +39,11 @@ void main() {
     });
   });
 
-  test('заголовок (жирный) — отправитель; VIP и общий ящик', () {
+  test('заголовок (жирный) — отправитель; общий ящик; VIP без звёздочки', () {
     expect(NotificationText.title('  Захаров О. '), 'Захаров О.');
-    expect(NotificationText.title('Захаров О.', vip: true, shared: true), '👥 ★ Захаров О.');
+    expect(NotificationText.title('Захаров О.', shared: true), '👥 Захаров О.');
+    // VIP (1.10.5) — не в заголовке: портрет и цвет, без портрета — шапка.
+    expect(NotificationText.subText(mailbox: 'i.petrov', vip: true), 'VIP · i.petrov');
   });
 
   test('тема — строкой под отправителем; без темы — подпись', () {

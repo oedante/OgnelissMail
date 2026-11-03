@@ -1,7 +1,7 @@
 // lib/services/notifications/notification_service.dart
 // Уведомления: каналы по категориям, inline reply, smart actions.
 
-import 'dart:ui' show Locale, PlatformDispatcher;
+import 'dart:ui' show Color, Locale, PlatformDispatcher;
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
@@ -294,13 +294,18 @@ class NotificationService {
     // ниже тема, в раскрытом — тема и начало текста без цитаты и подписи;
     // папка и короткая подпись ящика — в шапке уведомления.
     final badge = await _bumpBadge();
-    final title = NotificationText.title(senderName, vip: isVip, shared: isSharedMailbox);
+    final title = NotificationText.title(senderName, shared: isSharedMailbox);
     final subj = NotificationText.subject(subject, noSubject: _t('noSubject'));
     final source = (fullText != null && fullText.trim().isNotEmpty && NotificationLines.wantsBody(previewLines))
         ? fullText
         : preview;
     final text = NotificationText.preview(source, max: NotificationLines.maxChars(previewLines));
-    final subText = NotificationText.subText(folder: folderLabel, mailbox: mailboxLabel);
+    // Как в мессенджерах (1.9.x, просьба владельца 31.10.2026): отправитель
+    // с фото или буквой. Выключено — уведомление прежнего вида. VIP
+    // (1.10.5) — кольцо и звёздочка на портрете; без портрета — «VIP» в
+    // шапке.
+    final messenger = MessengerNotify.styleOn(_prefs) && (Platform.isAndroid || Platform.isIOS);
+    final subText = NotificationText.subText(folder: folderLabel, mailbox: mailboxLabel, vip: isVip && !messenger);
     // Строка текста: на Android — тема (свёрнутое уведомление), на iPhone и
     // Mac тема — подзаголовок, а в тексте — начало письма и последней
     // строкой папка и ящик (шапки, как на Android, там нет).
@@ -314,13 +319,10 @@ class NotificationService {
         subtitle: subj,
         categoryIdentifier: isInvite ? 'INVITE' : 'EMAIL', threadIdentifier: 'email_$accountId');
 
-    // Как в мессенджерах (1.9.x, просьба владельца 31.10.2026): отправитель
-    // с фото или буквой. Выключено — уведомление прежнего вида.
-    final messenger = MessengerNotify.styleOn(_prefs) && (Platform.isAndroid || Platform.isIOS);
     final avatar = messenger
         ? await MessengerNotify.avatar(
             name: senderName, email: fromEmail, photo: senderPhoto,
-            highContrast: _prefs?.getBool('s_high_contrast') ?? false)
+            highContrast: _prefs?.getBool('s_high_contrast') ?? false, vip: isVip)
         : null;
     final id = notificationIdForEmail(accountId, emailId);
     // iPhone: нативно, с INSendMessageIntent (AppDelegate.swift). Не вышло —
@@ -360,6 +362,8 @@ class NotificationService {
           importance: quiet && !isVip ? Importance.low : (isVip ? Importance.max : Importance.high),
           priority: quiet && !isVip ? Priority.low : (isVip ? Priority.max : Priority.high),
           category: AndroidNotificationCategory.email,
+          // VIP (1.10.5) — золотой значок и название приложения в шапке.
+          color: isVip ? const Color(NotificationText.vipColor) : null,
           // На экране блокировки — без отправителя и темы (они видны только
           // после разблокировки): переписка не читается с чужого стола.
           visibility: NotificationVisibility.private,

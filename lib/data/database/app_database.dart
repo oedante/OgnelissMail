@@ -1663,6 +1663,22 @@ class AppDatabase extends _$AppDatabase {
     return dedup ? rows.map((r) => dedupCopies(r)) : rows;
   }
 
+  /// Черновики ящика без тел: свои на устройстве (папка 'drafts') и из
+  /// серверных «Черновиков». Для беседы (1.10.5): черновик ответа уходит на
+  /// сервер без заголовков ответа, и в беседу по conversationId не попадает
+  /// — её экран находит его по связи «письмо → черновик» (ReplyDraft).
+  /// Черновиков единицы.
+  Stream<List<Email>> watchDraftsLight(String accountId) {
+    final draftFolders = selectOnly(folders)
+      ..addColumns([folders.id])
+      ..where(folders.accountId.equals(accountId) & folders.type.equals(2)); // FolderType.drafts
+    final q = _EmailListQuery(emails)
+      ..where((e) =>
+          e.accountId.equals(accountId) & (e.folderId.equals('drafts') | e.folderId.isInQuery(draftFolders)))
+      ..orderBy([(e) => OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)]);
+    return q.watchLight(this);
+  }
+
   /// Превью из сохранённого текста письма — начало text/plain одной строкой,
   /// не длиннее 200 символов (SQL: substr считает символы, эмодзи не рвёт).
   static const previewFromPlainSql =

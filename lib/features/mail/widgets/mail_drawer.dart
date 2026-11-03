@@ -65,6 +65,7 @@ import '../../../services/notifications/account_notify_mode.dart' show FolderNot
 import '../../../widgets/common/peek_card.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
 import '../../../widgets/common/tile_grid.dart';
+import '../../../core/utils/reorder_index.dart';
 
 class MailDrawer extends ConsumerWidget {
   /// Панель на широком окне (1.6.28): стоит слева от ленты постоянно, а не
@@ -1827,9 +1828,11 @@ class _FavoritesEditor extends ConsumerWidget {
               physics: const NeverScrollableScrollPhysics(),
               buildDefaultDragHandles: false,
               itemCount: tilesNow.length,
-              onReorderItem: (from, to) {
+              // onReorder, а не onReorderItem: см. reorder_index.dart (Аврора).
+              // ignore: deprecated_member_use
+              onReorder: (from, to) {
                 final keys = [for (final e in tilesNow) e.key];
-                keys.insert(to, keys.removeAt(from));
+                keys.insert(reorderTarget(from, to), keys.removeAt(from));
                 unawaited(ref.read(favoriteOrderProvider.notifier).set(keys));
               },
               itemBuilder: (context, i) {

@@ -38,6 +38,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../screens/tasks_screen.dart' show taskUndoBars;
 import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
 import '../../../widgets/common/account_avatar.dart';
+import '../../../core/utils/reorder_index.dart';
 
 /// Задача из письма: карточка задачи с названием из темы (без «Re:»,
 /// «Fwd:»), сроком из темы («обновить до 17:00 10.10.2026» → 10.10, 17:00)
@@ -503,10 +504,11 @@ class _TaskEditorState extends ConsumerState<TaskEditor> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               buildDefaultDragHandles: false,
-              // onReorderItem уже учитывает сдвиг индекса после удаления.
-              onReorderItem: (a, b) => setState(() {
+              // onReorder, а не onReorderItem: см. reorder_index.dart (Аврора).
+              // ignore: deprecated_member_use
+              onReorder: (a, b) => setState(() {
                 final s = _subs.removeAt(a);
-                _subs.insert(b, s);
+                _subs.insert(reorderTarget(a, b), s);
               }),
               children: [
                 for (var i = 0; i < _subs.length; i++)

@@ -123,7 +123,6 @@ import '../../../core/theme/ogneliss_look.dart';
 import '../../../core/theme/appearance.dart' show AppearanceLook;
 import '../../../widgets/common/mail_open_motion.dart' show MailHeroTags, MailOpenHandoff, MailSubjectHero;
 import '../../../core/utils/quote_people.dart';
-import '../../../widgets/common/person_photo.dart' show personPhotosProvider;
 
 class MailDetailScreen extends ConsumerStatefulWidget {
   final String emailId;
@@ -1103,12 +1102,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// вышло — письмо как есть.
   Future<String> _withQuotePeople(String html, {required bool quoteShown}) async {
     if (!quoteShown || !(ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.quotePeople) ?? false)) return html;
-    final photos = ref.read(personPhotosProvider).value ?? const <String, String>{};
-    // Только фото data: — их видно в окне письма без загрузки из сети.
-    final local = {for (final e in photos.entries) if (e.value.startsWith('data:image/')) e.key: e.value};
     final sw = Stopwatch()..start();
     try {
-      final out = await MailBodyProcessor.heavy(html, _quotePeopleFn(local));
+      final out = await MailBodyProcessor.heavy(html, QuotePeople.enrich);
       AppLogger.debug('Люди в цитате: ${sw.elapsedMilliseconds} мс');
       return out;
     } catch (e) {
@@ -1117,16 +1113,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     }
   }
 
-  /// Функция для изолята — статическая: замыкание держит только фото, а не
-  /// экран (State в изолят не передаётся).
-  static String Function(String) _quotePeopleFn(Map<String, String> photos) =>
-      (h) => QuotePeople.enrich(h, photoFor: (e) => photos[e]);
-
   void _onBodyLink(EmailModel email, String url, String? text) {
-    // Плашка человека в шапке цитаты (1.10.3, экспериментально) — карточка.
-    final person = QuotePeople.fromLink(url);
-    if (person != null) {
-      unawaited(showPersonCard(context, email: person.email, name: person.name, accountId: email.accountId));
+    // Плашка человека в шапке цитаты (1.10.3, экспериментально) — карточка;
+    // у человека без адреса карточки нет.
+    if (QuotePeople.isLink(url)) {
+      final person = QuotePeople.fromLink(url);
+      if (person != null) {
+        unawaited(showPersonCard(context, email: person.email, name: person.name, accountId: email.accountId));
+      }
       return;
     }
     if (DateLinks.isDateLink(url)) {

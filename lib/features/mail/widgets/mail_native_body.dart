@@ -50,12 +50,14 @@ import '../../../core/theme/mail_page_color.dart';
 import '../../../core/utils/date_links.dart';
 import '../../../core/utils/date_phrase.dart';
 import '../../../core/utils/linkify.dart';
+import '../../../core/utils/quote_people.dart';
 import '../../../core/utils/mail_clip.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/image_actions.dart';
 import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/pinch_zoom.dart';
+import 'quote_person_chip.dart';
 import 'span_table.dart';
 
 // ───────────────────────── модель (передаётся из изолята) ─────────────────────────
@@ -1419,8 +1421,21 @@ class _MailNativeBodyState extends State<MailNativeBody> {
           )),
         );
       }
-      TapGestureRecognizer? tap;
       final href = s.href;
+      // Человек из шапки цитаты (1.10.4, «Люди в цитатах»): плашка с
+      // портретом — тем же, что в шапке письма. Нажатие — карточка.
+      if (href != null && QuotePeople.isLink(href)) {
+        return WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: QuotePersonChip(
+            name: s.text.trim(),
+            email: QuotePeople.fromLink(href)?.email,
+            fontSize: base.fontSize! * 0.92,
+            onTap: () => widget.onLink(href, s.text.trim()),
+          ),
+        );
+      }
+      TapGestureRecognizer? tap;
       if (href != null) {
         tap = TapGestureRecognizer()..onTap = () => widget.onLink(href, s.text.trim());
         _taps.add(tap);

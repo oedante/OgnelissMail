@@ -6,10 +6,11 @@
 // портретами… сначала отключаемой функцией»).
 //
 // Строки «От: / Кому: / Копия:» (и From, To, Cc, Von, An, De, À…) в шапках
-// цитат Outlook и пересылок Gmail становятся «плашками» людей: портрет (фото
-// из контактов или буква) и имя. Нажатие — карточка человека (ссылка
-// `ogperson:`). Человек без адреса (внутренний адрес Exchange, «Хабиров
-// Ренат Фанильевич») — плашка без ссылки.
+// цитат Outlook и пересылок Gmail становятся ссылками `ogperson:` с именем;
+// экран письма рисует их «плашками» людей тем же портретом, что в шапке
+// письма (фото из контактов или буква), окно браузера — стилем документа.
+// Нажатие — карточка человека. Человек без адреса (внутренний адрес
+// Exchange, «Хабиров Ренат Фанильевич») — плашка без карточки.
 //
 // Скорость открытия письма не меняется: разбор идёт только когда цитата
 // раскрыта и функция включена; письмо разбирается по дереву HTML один раз
@@ -18,7 +19,6 @@
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
 
-import 'avatar_colors.dart';
 
 /// Человек из строки шапки: адрес может отсутствовать (внутренний Exchange).
 class QuotePerson {
@@ -91,9 +91,9 @@ class QuotePeople {
   static String _cleanName(String s) =>
       s.replaceAll(RegExp(r'\s+'), ' ').replaceAll(RegExp(r'''^[\s,;'"]+|[\s,;'"]+$'''), '').trim();
 
-  /// Шапки цитат в [html] — плашками людей. [photoFor] — фото человека по
-  /// адресу (data URI) или null. Ничего не нашлось — исходный HTML.
-  static String enrich(String html, {String? Function(String email)? photoFor}) {
+  /// Шапки цитат в [html] — ссылками на людей (плашки рисует экран письма).
+  /// Ничего не нашлось — исходный HTML.
+  static String enrich(String html) {
     if (!_mayHaveHeaders(html)) return html;
     final doc = html_parser.parse(html);
     final body = doc.body;
@@ -136,7 +136,7 @@ class QuotePeople {
         continue;
       }
       final chips = html_parser.parseFragment(
-          ' ${[for (final p in list.take(maxPeople - people)) _chip(p, photoFor)].join(' ')}');
+          ' ${[for (final p in list.take(maxPeople - people)) _chip(p)].join(' ')}');
       people += list.length;
       final anchor = plainLabelNode ?? e.node;
       final parent = anchor.parentNode;
@@ -162,25 +162,31 @@ class QuotePeople {
       .replaceAll('>', '&gt;')
       .replaceAll('"', '&quot;');
 
-  static String _chip(QuotePerson p, String? Function(String email)? photoFor) {
-    final photo = p.email == null ? null : photoFor?.call(p.email!.toLowerCase());
-    final key = p.email ?? p.name;
-    final initial = p.display.isEmpty ? '?' : String.fromCharCode(p.display.runes.first).toUpperCase();
-    final color = avatarColorValue(key) & 0xFFFFFF;
-    final hex = color.toRadixString(16).padLeft(6, '0');
-    final avatar = (photo != null && photo.startsWith('data:image/'))
-        ? '<img src="${_esc(photo)}" alt="" style="width:20px;height:20px;border-radius:50%;object-fit:cover;'
-            'vertical-align:middle;margin:0 5px 0 0;display:inline-block">'
-        : '<span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#$hex;color:#fff;'
-            'text-align:center;line-height:20px;font-size:11px;font-weight:600;vertical-align:middle;'
-            'margin:0 5px 0 0">${_esc(initial)}</span>';
-    const style = 'display:inline-block;white-space:nowrap;padding:1px 9px 1px 1px;margin:2px 1px;'
-        'border-radius:12px;background:rgba(128,128,128,0.16);color:inherit;text-decoration:none;'
-        'line-height:20px;vertical-align:middle';
-    final label = '<span style="vertical-align:middle">${_esc(p.display)}</span>';
-    if (p.email == null) return '<span class="ogperson" style="$style">$avatar$label</span>';
-    final href = '$scheme:${Uri.encodeComponent(p.email!)}?n=${Uri.encodeQueryComponent(p.name)}';
-    return '<a class="ogperson" href="${_esc(href)}" title="${_esc(p.email!)}" style="$style">$avatar$label</a>';
+  /// Простая ссылка `ogperson:` с именем (1.10.4): плашку с портретом рисует
+  /// экран письма — тем же портретом, что в шапке письма (QuotePersonChip),
+  /// а в окне браузера — стиль документа. В 1.10.3 плашка была вёрсткой
+  /// (inline-block, картинка) — письмо из-за неё переставало быть «простым»,
+  /// уходило в окно браузера и широкое уменьшалось целиком (замечание
+  /// владельца 03.11.2026: «делает письмо очень мелким»).
+  static String _chip(QuotePerson p) {
+    final href = '$scheme:${p.email == null ? '' : Uri.encodeComponent(p.email!)}'
+        '?n=${Uri.encodeQueryComponent(p.name)}';
+    return '<a href="${_esc(href)}">${_esc(p.display)}</a>';
+  }
+
+  /// Ссылка плашки человека (с адресом или без).
+  static bool isLink(String url) => url.toLowerCase().startsWith('$scheme:');
+
+  /// Имя из ссылки плашки (и у человека без адреса).
+  static String? nameOf(String url) {
+    final q = url.indexOf('?');
+    if (!isLink(url) || q < 0) return null;
+    try {
+      final n = Uri.splitQueryString(url.substring(q + 1))['n']?.trim();
+      return (n == null || n.isEmpty) ? null : n;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Адрес и имя из ссылки `ogperson:`; не она — null.

@@ -3750,4 +3750,6 @@
     <string name="quotePeopleDesc">引用中的发件人、收件人和抄送显示为带头像的标签，点按可打开联系人卡片。仅在展开引用时生效，打开邮件的速度不受影响。</string>
     <string name="translateFrom">源语言</string>
     <string name="translateMsgOther">其他语言的邮件</string>
+    <string name="favoritesOrder">磁贴顺序</string>
+    <string name="favoritesOrderHint">拖动右侧的把手调整项目，菜单中的磁贴将按此顺序排列。</string>
 </resources>

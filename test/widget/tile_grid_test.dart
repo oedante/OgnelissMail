@@ -56,4 +56,26 @@ void main() {
     addTearDown(again.dispose);
     expect(again.read(favoriteIconOnlyProvider), {key});
   });
+
+  // 1.10.5 (просьба владельца 03.11.2026): порядок плиток — свой.
+  test('порядок плиток: сохранённый, новые — следом в прежнем порядке', () async {
+    const items = ['allMail', 'unread', 'flagged', 'folder:a/INBOX', 'settings'];
+    expect(orderFavorites(items, (s) => s, const []), items);
+    expect(orderFavorites(items, (s) => s, const ['settings', 'folder:a/INBOX', 'allMail']),
+        ['settings', 'folder:a/INBOX', 'allMail', 'unread', 'flagged']);
+    // Ключи плиток, которых больше нет, не мешают.
+    expect(orderFavorites(items, (s) => s, const ['gone', 'flagged']), ['flagged', 'allMail', 'unread', 'folder:a/INBOX', 'settings']);
+
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final c = ProviderContainer(overrides: [sharedPrefsProvider.overrideWithValue(prefs)]);
+    addTearDown(c.dispose);
+    await c.read(favoriteOrderProvider.notifier).set(['settings', 'allMail']);
+    final again = ProviderContainer(overrides: [sharedPrefsProvider.overrideWithValue(prefs)]);
+    addTearDown(again.dispose);
+    expect(again.read(favoriteOrderProvider), ['settings', 'allMail']);
+    await again.read(favoriteOrderProvider.notifier).reset();
+    expect(again.read(favoriteOrderProvider), isEmpty);
+  });
 }
+

@@ -313,3 +313,42 @@ class ConfirmMailDeleteNotifier extends Notifier<bool> {
 
 final confirmMailDeleteProvider =
     NotifierProvider<ConfirmMailDeleteNotifier, bool>(ConfirmMailDeleteNotifier.new);
+
+/// Порядок плиток «Избранного» (1.10.5, просьба владельца 03.11.2026:
+/// «возможность менять порядок пунктов»): ключи плиток в нужном порядке
+/// (те же, что у [FavoriteIconOnlyNotifier]). Плитки, которых в списке нет
+/// (новые), — после упорядоченных, в обычном порядке.
+class FavoriteOrderNotifier extends Notifier<List<String>> {
+  static const _k = 'drawer_fav_order';
+
+  @override
+  List<String> build() => ref.read(sharedPrefsProvider).getStringList(_k) ?? const [];
+
+  Future<void> set(List<String> keys) async {
+    state = List.unmodifiable(keys);
+    await ref.read(sharedPrefsProvider).setStringList(_k, keys);
+  }
+
+  Future<void> reset() async {
+    state = const [];
+    await ref.read(sharedPrefsProvider).remove(_k);
+  }
+}
+
+final favoriteOrderProvider =
+    NotifierProvider<FavoriteOrderNotifier, List<String>>(FavoriteOrderNotifier.new);
+
+/// [items] в порядке [order] (по ключу [key]); не упомянутые — следом, в
+/// прежнем порядке.
+List<T> orderFavorites<T>(List<T> items, String Function(T) key, List<String> order) {
+  if (order.isEmpty) return items;
+  final pos = {for (final (i, k) in order.indexed) k: i};
+  final indexed = [for (final (i, t) in items.indexed) (i, t)];
+  indexed.sort((a, b) {
+    final pa = pos[key(a.$2)] ?? order.length + a.$1;
+    final pb = pos[key(b.$2)] ?? order.length + b.$1;
+    return pa.compareTo(pb);
+  });
+  return [for (final e in indexed) e.$2];
+}
+

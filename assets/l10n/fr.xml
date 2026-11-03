@@ -3771,4 +3771,6 @@
     <string name="quotePeopleDesc">De, À et Cc dans la citation deviennent des pastilles avec portrait ; touchez-en une pour ouvrir la fiche. Actif quand la citation est développée : l’ouverture reste aussi rapide.</string>
     <string name="translateFrom">Traduire de</string>
     <string name="translateMsgOther">Message dans une autre langue</string>
+    <string name="favoritesOrder">Ordre des vignettes</string>
+    <string name="favoritesOrderHint">Faites glisser un élément par la poignée à droite — les vignettes du menu suivent cet ordre.</string>
 </resources>

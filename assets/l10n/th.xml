@@ -3750,4 +3750,6 @@
     <string name="quotePeopleDesc">ผู้ส่ง ผู้รับ และสำเนาในข้อความที่อ้างถึงแสดงเป็นป้ายพร้อมรูป แตะเพื่อเปิดการ์ดบุคคล ทำงานเมื่อขยายข้อความที่อ้างถึง การเปิดอีเมลจึงยังเร็วเหมือนเดิม</string>
     <string name="translateFrom">แปลจาก</string>
     <string name="translateMsgOther">ข้อความเป็นภาษาอื่น</string>
+    <string name="favoritesOrder">ลำดับไทล์</string>
+    <string name="favoritesOrderHint">ลากรายการที่ที่จับด้านขวา — ไทล์ในเมนูจะเรียงตามลำดับนี้</string>
 </resources>

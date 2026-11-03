@@ -3855,4 +3855,6 @@
     <string name="quotePeopleDesc">تظهر سطور من وإلى ونسخة في الاقتباس كشارات بصورة؛ انقر لفتح بطاقة الشخص. تعمل عند توسيع الاقتباس، فلا يبطؤ فتح الرسائل.</string>
     <string name="translateFrom">الترجمة من</string>
     <string name="translateMsgOther">رسالة بلغة أخرى</string>
+    <string name="favoritesOrder">ترتيب المربعات</string>
+    <string name="favoritesOrderHint">اسحب العنصر من المقبض على اليمين — تتبع مربعات القائمة هذا الترتيب.</string>
 </resources>

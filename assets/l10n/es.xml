@@ -3771,4 +3771,6 @@
     <string name="quotePeopleDesc">De, Para y CC de la cita se muestran como fichas con retrato; al tocar se abre la tarjeta de la persona. Funciona con la cita desplegada, sin frenar la apertura.</string>
     <string name="translateFrom">Traducir del</string>
     <string name="translateMsgOther">Mensaje en otro idioma</string>
+    <string name="favoritesOrder">Orden de los mosaicos</string>
+    <string name="favoritesOrderHint">Arrastre un elemento por el asa de la derecha: los mosaicos del menú siguen este orden.</string>
 </resources>

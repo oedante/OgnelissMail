@@ -3771,4 +3771,6 @@
     <string name="quotePeopleDesc">Alıntıdaki Kimden, Kime ve Bilgi satırları portreli etiketlere dönüşür; dokununca kişi kartı açılır. Alıntı açıkken çalışır, iletiler yine hızlı açılır.</string>
     <string name="translateFrom">Şu dilden çevir</string>
     <string name="translateMsgOther">Başka dilde ileti</string>
+    <string name="favoritesOrder">Kutucuk sırası</string>
+    <string name="favoritesOrderHint">Öğeyi sağdaki tutamaçtan sürükleyin — menüdeki kutucuklar bu sırayı izler.</string>
 </resources>

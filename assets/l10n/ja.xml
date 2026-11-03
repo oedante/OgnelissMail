@@ -3750,4 +3750,6 @@
     <string name="quotePeopleDesc">引用内の差出人・宛先・CC を写真付きのチップで表示し、タップで人物カードを開きます。引用を開いたときだけ動作するので、メールを開く速さは変わりません。</string>
     <string name="translateFrom">翻訳元の言語</string>
     <string name="translateMsgOther">別の言語のメール</string>
+    <string name="favoritesOrder">タイルの順序</string>
+    <string name="favoritesOrderHint">右のハンドルで項目をドラッグすると、メニューのタイルがこの順序になります。</string>
 </resources>

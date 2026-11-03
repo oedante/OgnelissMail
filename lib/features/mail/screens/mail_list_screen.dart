@@ -123,10 +123,11 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   static const _dockedFoldersMin = 1040.0;
 
   /// Ширина панели папок у широкого окна: тянется разделителем, запоминается
-  /// (1.9.x, просьба владельца 31.10.2026). null — по умолчанию.
+  /// (1.9.x, просьба владельца 31.10.2026). null — по умолчанию: 240 (было
+  /// 272; 1.10.5, «боковая панель слева занимает слишком много места»).
   double? _foldersWidth;
   static const _foldersWidthKey = 'pane_folders_width';
-  static const foldersDefaultWidth = 272.0;
+  static const foldersDefaultWidth = 240.0;
   static const foldersMinWidth = 200.0;
   static const foldersMaxWidth = 420.0;
 

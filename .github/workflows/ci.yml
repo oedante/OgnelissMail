@@ -281,6 +281,8 @@ jobs:
       - name: Platform folder
         run: |
           [ -d macos ] || flutter create --platforms=macos --org com.ogneliss --project-name ogneliss .
+          # Значок программы вместо стандартного значка Flutter (1.10.5).
+          cp assets/branding/macos/app_icon_*.png macos/Runner/Assets.xcassets/AppIcon.appiconset/
           # Плагины — через CocoaPods, не Swift Package Manager: пакет
           # flutter_inappwebview_macos в SPM собирается под свою минимальную
           # macOS и с Xcode 26 падал на presentationAnchor; Podfile ниже задаёт
@@ -347,6 +349,10 @@ jobs:
       - name: Platform folder
         run: |
           [ -d windows ] || flutter create --platforms=windows --org com.ogneliss --project-name ogneliss .
+          # Значок программы (exe, окно, панель задач): flutter create кладёт
+          # стандартный значок Flutter — ставим свой (1.10.5, 03.11.2026;
+          # файлы — tool/branding/make_icon_v5.py desktop).
+          cp assets/icons/tray_icon.ico windows/runner/resources/app_icon.ico
           # MSVC 14.51 (Visual Studio 2026) сделал <experimental/coroutine> ошибкой
           # STL1011 — его подключают flutter_inappwebview_windows, local_auth_windows,
           # permission_handler_windows. Как в scripts/build_windows.ps1: определение

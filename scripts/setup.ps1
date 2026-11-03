@@ -243,10 +243,14 @@ $hasAndroid = Test-Path "android/app/src/main/res"
 $hasWeb = Test-Path "web/index.html"
 $hasWin = Test-Path "windows/runner/resources"
 function YN($b) { if ($b) { 'true' } else { 'false' } }
+# Android и iOS — нет: их значки (v5) уже в репозитории, их собирает
+# tool/branding/make_icon_v5.py; плагин перезаписал бы их прежним синим.
+# Windows — нет: значок программы ставится ниже из assets/icons/tray_icon.ico
+# (скруглённая плитка, все размеры), плагин сделал бы квадрат из app_icon.png.
 $iconCfg = @"
 flutter_launcher_icons:
-  android: $(YN $hasAndroid)
-  ios: $(YN $hasIos)
+  android: false
+  ios: false
   image_path: "assets/icons/app_icon.png"
   adaptive_icon_background: "#1D4F91"
   adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
@@ -256,7 +260,7 @@ flutter_launcher_icons:
     generate: $(YN $hasWeb)
     image_path: "assets/icons/app_icon.png"
   windows:
-    generate: $(YN $hasWin)
+    generate: false
     image_path: "assets/icons/app_icon.png"
     icon_size: 256
 "@
@@ -265,15 +269,21 @@ $iconCfgPath = "build/launcher_icons.yaml"
 [IO.File]::WriteAllText((Join-Path $Root $iconCfgPath), $iconCfg, (New-Object System.Text.UTF8Encoding $false))
 dart run flutter_launcher_icons -f $iconCfgPath
 if ($LASTEXITCODE -ne 0) { Warn "flutter_launcher_icons: иконки не созданы (см. вывод выше), сборка возможна и без них" }
-else { Ok "Иконки приложения: android=$(YN $hasAndroid) ios=$(YN $hasIos) web=$(YN $hasWeb) windows=$(YN $hasWin)" }
+else { Ok "Иконки приложения: web=$(YN $hasWeb)" }
+if ($hasWin) {
+  Copy-Item "assets/icons/tray_icon.ico" "windows/runner/resources/app_icon.ico" -Force
+  Ok "Значок программы Windows: assets/icons/tray_icon.ico"
+}
 
 Step "Иконки системного трея"
 $srcIcon = "assets/icons/app_icon.png"; $trayPng = "assets/icons/tray_icon.png"
 if (Test-Path $srcIcon) {
   if (-not (Test-Path $trayPng)) { Copy-Item $srcIcon $trayPng; Ok "Создан $trayPng" }
   $magick = (Get-Command magick -ErrorAction SilentlyContinue)
-  if ($magick) { & magick $srcIcon -define "icon:auto-resize=16,24,32,48,256" assets/icons/tray_icon.ico; Ok "Создан tray_icon.ico" }
-  elseif (-not (Test-Path "assets/icons/tray_icon.ico")) { Warn "ImageMagick не найден — положите assets/icons/tray_icon.ico вручную для Windows-трея" }
+  # tray_icon.ico уже в репозитории (make_icon_v5.py desktop) — создаём, только если его нет.
+  if (Test-Path "assets/icons/tray_icon.ico") { Ok "tray_icon.ico на месте" }
+  elseif ($magick) { & magick $srcIcon -define "icon:auto-resize=16,24,32,48,256" assets/icons/tray_icon.ico; Ok "Создан tray_icon.ico" }
+  else { Warn "ImageMagick не найден — положите assets/icons/tray_icon.ico вручную для Windows-трея" }
 } else { Warn "Нет $srcIcon — трей-иконки пропущены" }
 Ok "Иконки сгенерированы"
 

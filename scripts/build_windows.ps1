@@ -135,6 +135,10 @@ if (-not (Test-Path 'windows\CMakeLists.txt')) {
 } else {
   Ok 'windows\ на месте'
 }
+# Значок программы (exe, окно, панель задач): flutter create кладёт
+# стандартный значок Flutter — ставим свой при каждой сборке (1.10.5).
+Copy-Item 'assets\icons\tray_icon.ico' 'windows\runner\resources\app_icon.ico' -Force
+Ok 'Значок программы: assets\icons\tray_icon.ico'
 
 # Новые MSVC (VS 2022 17.10+, VS 2026) убрали <experimental/coroutine>, который
 # ещё подключают плагины local_auth_windows и permission_handler_windows.

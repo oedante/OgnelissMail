@@ -3757,6 +3757,21 @@
     <string name="translateFrom">원본 언어</string>
     <string name="translateMsgOther">다른 언어로 된 메일</string>
     <string name="translateReadMode">번역된 메시지 표시</string>
+    <string name="mdmTitle">조직에서 관리</string>
+    <string name="mdmDesc">이 설정은 조직이 기기 관리(MDM)로 지정했습니다.</string>
+    <string name="mdmSupport">IT 지원</string>
+    <string name="mdmBlocked">조직 정책상 허용되지 않습니다</string>
+    <string name="mdmDomainNotAllowed">조직은 다음 도메인의 사서함만 허용합니다: {domains}</string>
+    <string name="mdmPinBody">조직 정책에 따라 메일을 보호해야 합니다. {n}~6자리 PIN을 설정하세요. 앱을 열 때 입력을 요청합니다.</string>
+    <string name="mdmPinRequired">조직에서 필수로 지정</string>
+    <string name="mdmRuleAccount">사서함: {email}</string>
+    <string name="mdmRuleDomains">다음 도메인만: {domains}</string>
+    <string name="mdmRuleAppLock">앱 PIN 필수({n}자리 이상)</string>
+    <string name="mdmRuleScreenshots">스크린샷 및 화면 녹화 차단</string>
+    <string name="mdmRuleShare">공유, 파일로 저장, PDF 및 인쇄 차단</string>
+    <string name="mdmRuleOpenIn">첨부 파일은 앱에서만 열림</string>
+    <string name="mdmRuleCopy">메일 본문 복사 차단</string>
+    <string name="mdmRuleNotifications">보낸 사람과 제목 없이 알림</string>
     <string name="favoritesOrder">타일 순서</string>
     <string name="favoritesOrderHint">오른쪽 핸들로 항목을 끌면 메뉴 타일이 이 순서를 따릅니다.</string>
 </resources>

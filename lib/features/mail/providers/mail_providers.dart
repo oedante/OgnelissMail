@@ -43,6 +43,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/utils/text_entities.dart';
 import '../../../services/mail/conversation_counter.dart';
 import '../../../services/mail/focus_mode_service.dart' show focusModeProvider;
+import '../../../services/security/managed_config.dart';
 
 // ════════════════════════ АККАУНТЫ ════════════════════════
 
@@ -326,6 +327,12 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
 
   /// Добавить аккаунт (пароль сохраняется в secure storage)
   Future<void> addAccount(AccountModel account, {String? password}) async {
+    // Политика организации (MDM, 1.10.5): только ящики разрешённых доменов —
+    // при любом способе входа (пароль, Google, Microsoft…).
+    final mdm = ManagedPolicy.current;
+    if (!account.isOnlineArchive && !mdm.allowsAccount(account.email)) {
+      throw AccountNotAllowedException(domains: mdm.allowedDomains.join(', '));
+    }
     // Защита от дублей: один и тот же email повторно не добавляем. Архив
     // Exchange (1.6.49) — с адресом основного ящика: для него — по id.
     final dup = account.isOnlineArchive

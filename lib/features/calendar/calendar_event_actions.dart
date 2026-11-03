@@ -37,6 +37,7 @@ import '../../data/models/account_model.dart' show AccountModel;
 import '../../data/providers/shared_prefs_provider.dart';
 import '../../services/calendar/pending_invites.dart' show markInvitesForEvent;
 import '../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../core/platform/app_share.dart';
 
 class CalendarEventActions {
   /// Удалить событие на сервере и локально.
@@ -406,6 +407,6 @@ class CalendarEventActions {
     if ((event.location ?? '').isNotEmpty) b.write('\n${event.location}');
     if ((event.onlineMeetingUrl ?? '').isNotEmpty) b.write('\n${event.onlineMeetingUrl}');
     if ((event.description ?? '').isNotEmpty) b.write('\n\n${event.description}');
-    await SharePlus.instance.share(ShareParams(text: b.toString(), subject: event.title));
+    await appShare(ShareParams(text: b.toString(), subject: event.title));
   }
 }

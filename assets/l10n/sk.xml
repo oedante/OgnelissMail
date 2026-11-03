@@ -3799,6 +3799,21 @@
     <string name="translateFrom">Preložiť z</string>
     <string name="translateMsgOther">Správa v inom jazyku</string>
     <string name="translateReadMode">Zobrazenie preloženej správy</string>
+    <string name="mdmTitle">Spravované vašou organizáciou</string>
+    <string name="mdmDesc">Tieto nastavenia určila vaša organizácia cez správu zariadení (MDM).</string>
+    <string name="mdmSupport">IT podpora</string>
+    <string name="mdmBlocked">Zakázané zásadami vašej organizácie</string>
+    <string name="mdmDomainNotAllowed">Vaša organizácia povoľuje len schránky v doménach: {domains}</string>
+    <string name="mdmPinBody">Zásady vašej organizácie vyžadujú ochranu pošty. Nastavte PIN s {n}–6 číslicami; bude sa vyžadovať pri otvorení aplikácie.</string>
+    <string name="mdmPinRequired">Vyžaduje vaša organizácia</string>
+    <string name="mdmRuleAccount">Schránka: {email}</string>
+    <string name="mdmRuleDomains">Len schránky v: {domains}</string>
+    <string name="mdmRuleAppLock">PIN aplikácie povinný (od {n} číslic)</string>
+    <string name="mdmRuleScreenshots">Snímky a nahrávanie obrazovky zakázané</string>
+    <string name="mdmRuleShare">Zdieľanie, ukladanie do súborov, PDF a tlač zakázané</string>
+    <string name="mdmRuleOpenIn">Prílohy sa otvárajú len v aplikácii</string>
+    <string name="mdmRuleCopy">Kopírovanie textu správ zakázané</string>
+    <string name="mdmRuleNotifications">Upozornenia bez odosielateľa a predmetu</string>
     <string name="favoritesOrder">Poradie dlaždíc</string>
     <string name="favoritesOrderHint">Potiahnite položku za úchyt vpravo — dlaždice v ponuke budú v tomto poradí.</string>
 </resources>

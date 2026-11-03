@@ -3778,6 +3778,21 @@
     <string name="translateFrom">इससे अनुवाद करें</string>
     <string name="translateMsgOther">दूसरी भाषा में संदेश</string>
     <string name="translateReadMode">अनुवादित संदेश का प्रदर्शन</string>
+    <string name="mdmTitle">आपके संगठन द्वारा प्रबंधित</string>
+    <string name="mdmDesc">ये सेटिंग आपके संगठन ने डिवाइस प्रबंधन (MDM) से तय की हैं।</string>
+    <string name="mdmSupport">आईटी सहायता</string>
+    <string name="mdmBlocked">आपके संगठन की नीति इसकी अनुमति नहीं देती</string>
+    <string name="mdmDomainNotAllowed">आपका संगठन केवल इन डोमेन के मेलबॉक्स की अनुमति देता है: {domains}</string>
+    <string name="mdmPinBody">आपके संगठन की नीति के अनुसार मेल सुरक्षित होना चाहिए। {n}–6 अंकों का PIN सेट करें; ऐप खोलते समय यह पूछा जाएगा।</string>
+    <string name="mdmPinRequired">आपके संगठन द्वारा आवश्यक</string>
+    <string name="mdmRuleAccount">मेलबॉक्स: {email}</string>
+    <string name="mdmRuleDomains">केवल इन डोमेन के मेलबॉक्स: {domains}</string>
+    <string name="mdmRuleAppLock">ऐप PIN आवश्यक (कम से कम {n} अंक)</string>
+    <string name="mdmRuleScreenshots">स्क्रीनशॉट और स्क्रीन रिकॉर्डिंग अवरुद्ध</string>
+    <string name="mdmRuleShare">शेयर करना, फ़ाइलों में सहेजना, PDF और प्रिंट अवरुद्ध</string>
+    <string name="mdmRuleOpenIn">अटैचमेंट केवल ऐप में खुलते हैं</string>
+    <string name="mdmRuleCopy">संदेश का पाठ कॉपी करना अवरुद्ध</string>
+    <string name="mdmRuleNotifications">प्रेषक और विषय के बिना सूचनाएँ</string>
     <string name="favoritesOrder">टाइलों का क्रम</string>
     <string name="favoritesOrderHint">दाईं ओर के हैंडल से आइटम खींचें — मेनू की टाइलें इसी क्रम में आएँगी।</string>
 </resources>

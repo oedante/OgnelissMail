@@ -85,6 +85,8 @@ class MainActivity : FlutterFragmentActivity() {
             // Перевод писем на устройстве (ML Kit, 1.9.x).
             runCatching { TranslationBridge.register(messenger) }
             runCatching { ConversationShortcuts.register(messenger, app) }
+            // Настройки организации (MDM, 1.10.5).
+            runCatching { MdmBridge.register(messenger, app) }
             engine.dartExecutor.executeDartEntrypoint(DartExecutor.DartEntrypoint.createDefault())
             cache.put(ENGINE_ID, engine)
             return engine
@@ -153,6 +155,8 @@ class MainActivity : FlutterFragmentActivity() {
         ConversationShortcuts.register(messenger, this)
         // mailto и «Написать письмо» из других приложений.
         MailtoBridge.register(messenger)
+        // Настройки организации (MDM, 1.10.5).
+        MdmBridge.register(messenger, this)
         // Защищённые письма (ДСП, конфиденциально): запрет снимков и записи
         // экрана, показа на внешнем экране и миниатюры в недавних
         // приложениях — FLAG_SECURE окна, пока такое письмо открыто.

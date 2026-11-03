@@ -3778,6 +3778,21 @@
     <string name="translateFrom">Oversæt fra</string>
     <string name="translateMsgOther">Besked på et andet sprog</string>
     <string name="translateReadMode">Visning af oversatte beskeder</string>
+    <string name="mdmTitle">Administreres af din organisation</string>
+    <string name="mdmDesc">Din organisation har angivet disse indstillinger via enhedsadministration (MDM).</string>
+    <string name="mdmSupport">IT-support</string>
+    <string name="mdmBlocked">Ikke tilladt af din organisations politik</string>
+    <string name="mdmDomainNotAllowed">Din organisation tillader kun postkasser på disse domæner: {domains}</string>
+    <string name="mdmPinBody">Din organisations politik kræver, at din mail beskyttes. Angiv en pinkode på {n}–6 cifre; den kræves, når appen åbnes.</string>
+    <string name="mdmPinRequired">Kræves af din organisation</string>
+    <string name="mdmRuleAccount">Postkasse: {email}</string>
+    <string name="mdmRuleDomains">Kun postkasser på: {domains}</string>
+    <string name="mdmRuleAppLock">App-pinkode påkrævet ({n}+ cifre)</string>
+    <string name="mdmRuleScreenshots">Skærmbilleder og skærmoptagelse blokeret</string>
+    <string name="mdmRuleShare">Deling, gem i filer, PDF og udskrivning blokeret</string>
+    <string name="mdmRuleOpenIn">Vedhæftede filer åbnes kun i appen</string>
+    <string name="mdmRuleCopy">Kopiering af beskedtekst blokeret</string>
+    <string name="mdmRuleNotifications">Notifikationer uden afsender og emne</string>
     <string name="favoritesOrder">Rækkefølge af felter</string>
     <string name="favoritesOrderHint">Træk et punkt i håndtaget til højre — felterne i menuen følger denne rækkefølge.</string>
 </resources>

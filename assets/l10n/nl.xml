@@ -3778,6 +3778,21 @@
     <string name="translateFrom">Vertalen uit</string>
     <string name="translateMsgOther">Bericht in een andere taal</string>
     <string name="translateReadMode">Weergave van vertaalde berichten</string>
+    <string name="mdmTitle">Beheerd door je organisatie</string>
+    <string name="mdmDesc">Je organisatie heeft deze opties ingesteld via apparaatbeheer (MDM).</string>
+    <string name="mdmSupport">IT-ondersteuning</string>
+    <string name="mdmBlocked">Niet toegestaan door het beleid van je organisatie</string>
+    <string name="mdmDomainNotAllowed">Je organisatie staat alleen postvakken op deze domeinen toe: {domains}</string>
+    <string name="mdmPinBody">Het beleid van je organisatie vereist dat je e-mail is beveiligd. Stel een pincode van {n}–6 cijfers in; die wordt gevraagd bij het openen van de app.</string>
+    <string name="mdmPinRequired">Vereist door je organisatie</string>
+    <string name="mdmRuleAccount">Postvak: {email}</string>
+    <string name="mdmRuleDomains">Alleen postvakken op: {domains}</string>
+    <string name="mdmRuleAppLock">App-pincode verplicht ({n}+ cijfers)</string>
+    <string name="mdmRuleScreenshots">Schermafbeeldingen en schermopname geblokkeerd</string>
+    <string name="mdmRuleShare">Delen, opslaan in bestanden, pdf en afdrukken geblokkeerd</string>
+    <string name="mdmRuleOpenIn">Bijlagen openen alleen in de app</string>
+    <string name="mdmRuleCopy">Kopiëren van berichttekst geblokkeerd</string>
+    <string name="mdmRuleNotifications">Meldingen zonder afzender en onderwerp</string>
     <string name="favoritesOrder">Volgorde van tegels</string>
     <string name="favoritesOrderHint">Sleep een item aan de greep rechts — de tegels in het menu volgen deze volgorde.</string>
 </resources>

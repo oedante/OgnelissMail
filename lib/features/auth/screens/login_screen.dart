@@ -53,6 +53,7 @@ import '../../../widgets/ui/help_hint.dart' show TitleWithHelp;
 import '../../mail/providers/mail_providers.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/certificate_trust_dialog.dart';
+import '../../../services/security/managed_config.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   final bool isAddMode;
@@ -168,6 +169,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     if (rid != null) {
       final a = ref.read(accountsProvider).where((x) => x.id == rid).firstOrNull;
       if (a != null) _fillFrom(a);
+    } else {
+      // Ящик, заданный организацией (MDM, 1.10.5), — адрес уже вписан,
+      // остаётся пароль; ещё не добавлен — иначе пустой вход.
+      final m = ref.read(managedPolicyProvider);
+      final email = m.accountEmail;
+      if (m.hasAccount && !ref.read(accountsProvider).any((a) => a.email.toLowerCase() == email)) {
+        _emailController.text = email!;
+      }
     }
     _emailController.addListener(_onEmailChanged);
     // Ошибка прошлой попытки входа не должна встречать на новом экране входа
@@ -299,11 +308,46 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     _domainController.text = AppConstants.defaultDomain;
   }
 
+  /// Серверы, логин и домен из политики организации (MDM, 1.10.5) — для
+  /// ящика, который она задала (адрес совпадает).
+  void _applyManaged() {
+    final m = ref.read(managedPolicyProvider);
+    if (!m.hasAccount || _email.trim().toLowerCase() != m.accountEmail) return;
+    final proto = m.accountProtocol ?? 'auto';
+    if (proto == 'imap' || (proto == 'auto' && m.imapServer != null)) {
+      final smtpPort = m.smtpPort ?? 587;
+      _applyKind(MailKind.imap,
+          preset: ImapPreset(
+            imapHost: m.imapServer ?? _imapServerController.text,
+            imapPort: m.imapPort ?? 993,
+            imapEncryption: EncryptionType.ssl,
+            smtpHost: m.smtpServer ?? _smtpServerController.text,
+            smtpPort: smtpPort,
+            smtpEncryption: smtpPort == 465 ? EncryptionType.ssl : EncryptionType.starttls,
+          ));
+    } else if (kExchangeEnabled && (proto == 'exchange' || m.accountServer != null)) {
+      _applyKind(MailKind.exchange);
+    }
+    final server = m.accountServer;
+    if (server != null) _serverController.text = _cleanServer(server);
+    final user = m.accountUsername;
+    if (user != null) _usernameController.text = user;
+    final domain = m.accountDomain;
+    if (domain != null) _domainController.text = domain;
+  }
+
   /// «Далее»: узнать почту по адресу и перейти ко входу.
   Future<void> _onNext() async {
     final l10n = AppLocalizations.of(context);
     if (!_emailValid) {
       setState(() => _addressError = l10n.tr('invalidEmail'));
+      return;
+    }
+    // Политика организации (MDM, 1.10.5): только разрешённые домены.
+    final mdm = ref.read(managedPolicyProvider);
+    if (!mdm.allowsAccount(_email)) {
+      setState(() => _addressError =
+          l10n.tr('mdmDomainNotAllowed').replaceAll('{domains}', mdm.allowedDomains.join(', ')));
       return;
     }
     FocusScope.of(context).unfocus();
@@ -336,6 +380,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       _manual = false;
       _askEmail = false;
       _applyKind(guess.kind, preset: guess.imap);
+      _applyManaged();
       _step = _Step.method;
     });
     unawaited(HapticFeedback.selectionClick());

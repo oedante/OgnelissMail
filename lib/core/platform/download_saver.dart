@@ -26,6 +26,7 @@ import '../logging/app_logger.dart';
 import '../security/attachment_safety.dart' show AttachmentSafety;
 import 'file_opener.dart';
 import '../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../services/security/managed_config.dart';
 
 /// Итог сохранения: [name] — имя, под которым файл лёг (система может
 /// добавить « (1)»), [path] — полный путь там, где он известен (компьютер).
@@ -47,6 +48,8 @@ class DownloadSaver {
   /// пользователем (Android 7–9) или не удалось (причина — в журнале).
   static Future<SavedDownload?> save(String path, String name) async {
     if (!supported) return null;
+    // Политика организации (MDM, 1.10.5): сохранять в файлы нельзя.
+    if (ManagedPolicy.deny(ManagedRule.share)) return null;
     final safe = FileOpener.safeName(name).isEmpty ? p.basename(path) : FileOpener.safeName(name);
     try {
       if (Platform.isAndroid) {
@@ -80,6 +83,7 @@ class DownloadSaver {
 
   /// Сохранить файлы и сказать итог плашкой («Открыть» — у одного файла).
   static Future<void> saveWithFeedback(BuildContext context, List<({String path, String name})> items) async {
+    if (ManagedPolicy.deny(ManagedRule.share)) return;
     final l10n = AppLocalizations.of(context);
     final saved = <SavedDownload>[];
     var failed = 0;

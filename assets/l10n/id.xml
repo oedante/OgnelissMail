@@ -3757,6 +3757,21 @@
     <string name="translateFrom">Terjemahkan dari</string>
     <string name="translateMsgOther">Pesan dalam bahasa lain</string>
     <string name="translateReadMode">Tampilan pesan terjemahan</string>
+    <string name="mdmTitle">Dikelola oleh organisasi Anda</string>
+    <string name="mdmDesc">Organisasi Anda menetapkan opsi ini melalui manajemen perangkat (MDM).</string>
+    <string name="mdmSupport">Dukungan TI</string>
+    <string name="mdmBlocked">Tidak diizinkan oleh kebijakan organisasi Anda</string>
+    <string name="mdmDomainNotAllowed">Organisasi Anda hanya mengizinkan kotak surat di domain: {domains}</string>
+    <string name="mdmPinBody">Kebijakan organisasi Anda mewajibkan email dilindungi. Tetapkan PIN {n}–6 digit; PIN akan diminta saat membuka aplikasi.</string>
+    <string name="mdmPinRequired">Diwajibkan organisasi Anda</string>
+    <string name="mdmRuleAccount">Kotak surat: {email}</string>
+    <string name="mdmRuleDomains">Hanya kotak surat di: {domains}</string>
+    <string name="mdmRuleAppLock">PIN aplikasi wajib (minimal {n} digit)</string>
+    <string name="mdmRuleScreenshots">Tangkapan dan rekaman layar diblokir</string>
+    <string name="mdmRuleShare">Berbagi, simpan ke file, PDF, dan cetak diblokir</string>
+    <string name="mdmRuleOpenIn">Lampiran hanya dibuka di aplikasi</string>
+    <string name="mdmRuleCopy">Menyalin teks pesan diblokir</string>
+    <string name="mdmRuleNotifications">Notifikasi tanpa pengirim dan subjek</string>
     <string name="favoritesOrder">Urutan ubin</string>
     <string name="favoritesOrderHint">Seret item dengan pegangan di kanan — ubin di menu mengikuti urutan ini.</string>
 </resources>

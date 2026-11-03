@@ -3862,6 +3862,21 @@
     <string name="translateFrom">الترجمة من</string>
     <string name="translateMsgOther">رسالة بلغة أخرى</string>
     <string name="translateReadMode">عرض الرسالة المترجمة</string>
+    <string name="mdmTitle">تديره مؤسستك</string>
+    <string name="mdmDesc">حددت مؤسستك هذه الإعدادات عبر إدارة الأجهزة (MDM).</string>
+    <string name="mdmSupport">الدعم الفني</string>
+    <string name="mdmBlocked">غير مسموح به وفق سياسة مؤسستك</string>
+    <string name="mdmDomainNotAllowed">تسمح مؤسستك بصناديق البريد على هذه النطاقات فقط: {domains}</string>
+    <string name="mdmPinBody">تتطلب سياسة مؤسستك حماية بريدك. عيّن رمز PIN من {n} إلى 6 أرقام؛ سيُطلب عند فتح التطبيق.</string>
+    <string name="mdmPinRequired">مطلوب من مؤسستك</string>
+    <string name="mdmRuleAccount">صندوق البريد: {email}</string>
+    <string name="mdmRuleDomains">صناديق هذه النطاقات فقط: {domains}</string>
+    <string name="mdmRuleAppLock">رمز PIN للتطبيق إلزامي ({n} أرقام على الأقل)</string>
+    <string name="mdmRuleScreenshots">لقطات الشاشة وتسجيلها محظورة</string>
+    <string name="mdmRuleShare">المشاركة والحفظ في الملفات وPDF والطباعة محظورة</string>
+    <string name="mdmRuleOpenIn">تُفتح المرفقات داخل التطبيق فقط</string>
+    <string name="mdmRuleCopy">نسخ نص الرسائل محظور</string>
+    <string name="mdmRuleNotifications">إشعارات بلا مرسل ولا موضوع</string>
     <string name="favoritesOrder">ترتيب المربعات</string>
     <string name="favoritesOrderHint">اسحب العنصر من المقبض على اليمين — تتبع مربعات القائمة هذا الترتيب.</string>
 </resources>

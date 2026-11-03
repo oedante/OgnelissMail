@@ -3778,6 +3778,21 @@
     <string name="translateFrom">Translate from</string>
     <string name="translateMsgOther">Message in another language</string>
     <string name="translateReadMode">Translated message view</string>
+    <string name="mdmTitle">Managed by your organization</string>
+    <string name="mdmDesc">Your organization set these options through device management (MDM).</string>
+    <string name="mdmSupport">IT support</string>
+    <string name="mdmBlocked">Not allowed by your organization’s policy</string>
+    <string name="mdmDomainNotAllowed">Your organization allows mailboxes only on these domains: {domains}</string>
+    <string name="mdmPinBody">Your organization’s policy requires protecting your mail. Set a PIN of {n}–6 digits; it will be requested when you open the app.</string>
+    <string name="mdmPinRequired">Required by your organization</string>
+    <string name="mdmRuleAccount">Mailbox: {email}</string>
+    <string name="mdmRuleDomains">Only mailboxes on: {domains}</string>
+    <string name="mdmRuleAppLock">App PIN required ({n}+ digits)</string>
+    <string name="mdmRuleScreenshots">Screenshots and screen recording blocked</string>
+    <string name="mdmRuleShare">Share, saving to files, PDF and printing blocked</string>
+    <string name="mdmRuleOpenIn">Attachments open only in the app</string>
+    <string name="mdmRuleCopy">Copying message text blocked</string>
+    <string name="mdmRuleNotifications">Notifications without sender and subject</string>
     <string name="favoritesOrder">Tile order</string>
     <string name="favoritesOrderHint">Drag an item by the handle on the right — the menu tiles follow this order.</string>
 </resources>

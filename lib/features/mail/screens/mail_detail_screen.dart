@@ -21,6 +21,7 @@ import '../widgets/booking_card.dart';
 import '../widgets/control_sheet.dart';
 import '../../../services/mail/unsubscribe_service.dart' show encodeListUnsubscribe;
 import '../../../services/mail/reply_drafts.dart' show conversationReplyDrafts, replyDraftsProvider;
+import '../../../services/security/managed_config.dart' show ManagedPolicy, ManagedRule;
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditorForEmail;
 import '../../../core/utils/text_safe.dart';
 import '../../../core/utils/symbol_fonts.dart';
@@ -124,6 +125,7 @@ import '../../../core/theme/ogneliss_look.dart';
 import '../../../core/theme/appearance.dart' show AppearanceLook;
 import '../../../widgets/common/mail_open_motion.dart' show MailHeroTags, MailOpenHandoff, MailSubjectHero;
 import '../../../core/utils/quote_people.dart';
+import '../../../core/platform/app_share.dart';
 
 class MailDetailScreen extends ConsumerStatefulWidget {
   final String emailId;
@@ -2167,7 +2169,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // Системный лист «Поделиться» умеет и «Сохранить в Файлы» (iOS),
     // и «Загрузки»/Диск (Android).
     // Копия с именем из письма: в кэше файл лежит под служебным именем (1.6.5).
-    await SharePlus.instance.share(ShareParams(files: [XFile(await FileOpener.namedCopy(path, att.name), name: att.name)]));
+    await appShare(ShareParams(files: [XFile(await FileOpener.namedCopy(path, att.name), name: att.name)]));
   }
 
   /// Локальный путь вложения: из состояния, из кэша или скачав.
@@ -2525,7 +2527,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           // Печать — через PDF: системный просмотрщик/«Поделиться»
           // отправляет его на принтер на любой платформе.
           _peekAction(AppIcons.print, l10n.tr('print'), () => unawaited(_exportPdf(email, l10n))),
-          _peekAction(AppIcons.share, l10n.tr('share'), () => SharePlus.instance.share(
+          _peekAction(AppIcons.share, l10n.tr('share'), () => appShare(
               ShareParams(text: '${email.subject}\n\n${email.bodyPlain ?? email.bodyPreview ?? ""}'))),
         ]),
         PeekGroup(title: l10n.tr('actionsMore'), items: [
@@ -2999,6 +3001,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// Экспорт письма в PDF и системный диалог «Поделиться» (сохранить в файлы,
   /// отправить в мессенджер и т.д.). Генерация идёт в сервисе; здесь только UI.
   Future<void> _exportPdf(EmailModel email, AppLocalizations l10n) async {
+    // Политика организации (MDM, 1.10.5): PDF и печать — данные из
+    // приложения; запрещено — сразу, без подготовки файла.
+    if (ManagedPolicy.deny(ManagedRule.share)) return;
 
     // Если письмо в цепочке — спрашиваем, что сохранять. Для делопроизводства
     // обычно нужна вся переписка по вопросу, но иногда достаточно одного
@@ -3058,7 +3063,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         showInlineError(l10n.tr('pdfExportFailed'));
         return;
       }
-      await SharePlus.instance.share(ShareParams(files: [XFile(p)], subject: email.subject));
+      await appShare(ShareParams(files: [XFile(p)], subject: email.subject));
       return;
     }
 
@@ -3072,7 +3077,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       showInlineError(l10n.tr('pdfExportFailed'));
       return;
     }
-    await SharePlus.instance.share(ShareParams(files: [XFile(path)], subject: email.subject));
+    await appShare(ShareParams(files: [XFile(path)], subject: email.subject));
   }
 
   Future<void> _forwardAsEml(EmailModel email) async {
@@ -3212,7 +3217,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     final files = [
       for (final it in items) XFile(await FileOpener.namedCopy(it.path, it.name), name: it.name),
     ];
-    await SharePlus.instance.share(ShareParams(files: files, subject: email.subject));
+    await appShare(ShareParams(files: files, subject: email.subject));
   }
 
   /// winmail.dat (TNEF) — контейнер Outlook: настоящие файлы лежат ВНУТРИ.

@@ -31,6 +31,7 @@ import '../../services/mail/engine/mail_engine_service.dart';
 import '../../widgets/common/app_sheet.dart';
 import '../../widgets/common/text_scale_cap.dart';
 import '../mail/providers/mail_providers.dart';
+import '../../core/platform/app_share.dart';
 
 /// Карточка vCard 3.0 для QR и файла: только то, что нужно для звонка и
 /// письма, — короткая карточка даёт крупные, легко читаемые точки QR.
@@ -161,7 +162,7 @@ Future<void> shareContactVcf(ContactModel c) async {
   final base = (c.fullName.isNotEmpty ? c.fullName : c.displayName).replaceAll(RegExp(r'[\\/:*?"<>|]'), '_').trim();
   final file = File('${dir.path}/${base.isEmpty ? 'contact' : base}.vcf');
   await file.writeAsString(vcardOf(c));
-  await SharePlus.instance.share(ShareParams(files: [XFile(file.path, mimeType: 'text/vcard')]));
+  await appShare(ShareParams(files: [XFile(file.path, mimeType: 'text/vcard')]));
 }
 
 /// QR-код карточки любого контакта (шторка).

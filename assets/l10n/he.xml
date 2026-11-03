@@ -3799,6 +3799,21 @@
     <string name="translateFrom">תרגום מ-</string>
     <string name="translateMsgOther">הודעה בשפה אחרת</string>
     <string name="translateReadMode">הצגת הודעה מתורגמת</string>
+    <string name="mdmTitle">מנוהל על ידי הארגון שלך</string>
+    <string name="mdmDesc">הארגון שלך קבע הגדרות אלה דרך ניהול המכשירים (MDM).</string>
+    <string name="mdmSupport">תמיכת IT</string>
+    <string name="mdmBlocked">אסור לפי מדיניות הארגון שלך</string>
+    <string name="mdmDomainNotAllowed">הארגון שלך מתיר תיבות דואר רק בדומיינים: {domains}</string>
+    <string name="mdmPinBody">מדיניות הארגון שלך מחייבת להגן על הדואר. הגדר קוד PIN בן {n}–6 ספרות; הוא יידרש בפתיחת האפליקציה.</string>
+    <string name="mdmPinRequired">נדרש על ידי הארגון שלך</string>
+    <string name="mdmRuleAccount">תיבת דואר: {email}</string>
+    <string name="mdmRuleDomains">רק תיבות בדומיינים: {domains}</string>
+    <string name="mdmRuleAppLock">קוד PIN לאפליקציה חובה (לפחות {n} ספרות)</string>
+    <string name="mdmRuleScreenshots">צילומי מסך והקלטת מסך חסומים</string>
+    <string name="mdmRuleShare">שיתוף, שמירה בקבצים, PDF והדפסה חסומים</string>
+    <string name="mdmRuleOpenIn">קבצים מצורפים נפתחים רק באפליקציה</string>
+    <string name="mdmRuleCopy">העתקת טקסט ההודעות חסומה</string>
+    <string name="mdmRuleNotifications">התראות בלי שולח ונושא</string>
     <string name="favoritesOrder">סדר האריחים</string>
     <string name="favoritesOrderHint">גררו פריט בידית שמימין — האריחים בתפריט יופיעו בסדר הזה.</string>
 </resources>

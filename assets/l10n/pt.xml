@@ -3778,6 +3778,21 @@
     <string name="translateFrom">Traduzir do</string>
     <string name="translateMsgOther">Mensagem em outro idioma</string>
     <string name="translateReadMode">Exibição de mensagens traduzidas</string>
+    <string name="mdmTitle">Gerenciado pela sua organização</string>
+    <string name="mdmDesc">Sua organização definiu estas opções pelo gerenciamento de dispositivos (MDM).</string>
+    <string name="mdmSupport">Suporte de TI</string>
+    <string name="mdmBlocked">Não permitido pela política da sua organização</string>
+    <string name="mdmDomainNotAllowed">Sua organização só permite caixas destes domínios: {domains}</string>
+    <string name="mdmPinBody">A política da sua organização exige proteger seu e-mail. Defina um PIN de {n} a 6 dígitos; ele será pedido ao abrir o app.</string>
+    <string name="mdmPinRequired">Exigido pela sua organização</string>
+    <string name="mdmRuleAccount">Caixa: {email}</string>
+    <string name="mdmRuleDomains">Apenas caixas de: {domains}</string>
+    <string name="mdmRuleAppLock">PIN do app obrigatório ({n}+ dígitos)</string>
+    <string name="mdmRuleScreenshots">Capturas e gravação de tela bloqueadas</string>
+    <string name="mdmRuleShare">Compartilhar, salvar em arquivos, PDF e imprimir bloqueados</string>
+    <string name="mdmRuleOpenIn">Anexos abrem só no app</string>
+    <string name="mdmRuleCopy">Cópia do texto das mensagens bloqueada</string>
+    <string name="mdmRuleNotifications">Notificações sem remetente e assunto</string>
     <string name="favoritesOrder">Ordem dos blocos</string>
     <string name="favoritesOrderHint">Arraste um item pela alça à direita — os blocos do menu seguem esta ordem.</string>
 </resources>

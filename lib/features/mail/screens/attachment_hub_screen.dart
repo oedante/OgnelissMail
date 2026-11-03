@@ -44,6 +44,7 @@ import '../../../widgets/ui/help_hint.dart';
 import '../../../widgets/ui/section_band.dart';
 import '../../mail/providers/mail_providers.dart';
 import 'attachment_preview_screen.dart';
+import '../../../core/platform/app_share.dart';
 
 /// Модель вложения в хабе
 class AttachmentHubItem {
@@ -398,7 +399,7 @@ class _AttachmentHubScreenState extends ConsumerState<AttachmentHubScreen> with 
       await DownloadSaver.saveWithFeedback(context, [(path: path, name: item.name)]);
       return;
     }
-    await SharePlus.instance.share(ShareParams(files: [XFile(await FileOpener.namedCopy(path, item.name), name: item.name)]));
+    await appShare(ShareParams(files: [XFile(await FileOpener.namedCopy(path, item.name), name: item.name)]));
   }
 
   Future<void> _pickPeriod(AppLocalizations l10n) async {

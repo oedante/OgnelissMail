@@ -19,6 +19,7 @@ import 'package:flutter/services.dart';
 import 'notification_background.dart';
 import 'notification_text.dart';
 import 'messenger_notifications.dart';
+import '../security/managed_config.dart';
 
 final notificationServiceProvider = Provider<NotificationService>((ref) => NotificationService(ref.read(sharedPrefsProvider)));
 
@@ -256,6 +257,21 @@ class NotificationService {
       AppLogger.info('Уведомление о письме не показано: тихие часы');
       return;
     }
+    // Политика организации (MDM, 1.10.5): в уведомлении ни отправителя, ни
+    // темы, ни текста — «Новое сообщение»; быстрых ответов с текстом тоже
+    // нет. Копия политики — в prefs: уведомление показывает и фон.
+    final hideContent = ManagedPolicy.fromPrefs(_prefs).hideNotificationContent;
+    if (hideContent) {
+      senderName = _t('newMessage');
+      subject = '';
+      preview = null;
+      fullText = null;
+      senderPhoto = null;
+      fromEmail = null;
+      smartReplyLabels = const [];
+      smartReplyBodies = const [];
+      folderLabel = null;
+    }
     final payload = jsonEncode({
       'type': 'email',
       'accountId': accountId,
@@ -295,7 +311,7 @@ class NotificationService {
     // папка и короткая подпись ящика — в шапке уведомления.
     final badge = await _bumpBadge();
     final title = NotificationText.title(senderName, shared: isSharedMailbox);
-    final subj = NotificationText.subject(subject, noSubject: _t('noSubject'));
+    final subj = hideContent ? '' : NotificationText.subject(subject, noSubject: _t('noSubject'));
     final source = (fullText != null && fullText.trim().isNotEmpty && NotificationLines.wantsBody(previewLines))
         ? fullText
         : preview;
@@ -423,8 +439,11 @@ class NotificationService {
       return;
     }
     final title = _t('dsnNotifTitle');
-    final line = '$recipient — ${_t(reasonKey)}${status == null ? '' : ' ($status)'}${more > 0 ? ' · +$more' : ''}';
-    final subj = NotificationText.subject(subject, noSubject: _t('noSubject'));
+    // Политика организации (MDM): без адресата и темы — только причина.
+    final hide = ManagedPolicy.fromPrefs(_prefs).hideNotificationContent;
+    final line = '${hide ? '' : '$recipient — '}${_t(reasonKey)}${status == null ? '' : ' ($status)'}'
+        '${more > 0 ? ' · +$more' : ''}';
+    final subj = hide ? '' : NotificationText.subject(subject, noSubject: _t('noSubject'));
     final darwin = DarwinNotificationDetails(
         presentAlert: true, presentSound: _soundOn, subtitle: subj, threadIdentifier: 'email_$accountId');
     await _plugin.show(
@@ -533,6 +552,8 @@ class NotificationService {
     if (_skipOnThisPlatform()) return;
     if (!_initialized) await initialize();
     if (_prefs != null && QuietHours.isQuietNow(_prefs)) return;
+    // Политика организации (MDM): в сводке — только число писем.
+    if (ManagedPolicy.fromPrefs(_prefs).hideNotificationContent) lines = const [];
 
     final badge = await _badge();
     await _plugin.show(

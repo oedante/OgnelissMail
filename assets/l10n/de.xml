@@ -3778,6 +3778,21 @@
     <string name="translateFrom">Übersetzen aus</string>
     <string name="translateMsgOther">Nachricht in einer anderen Sprache</string>
     <string name="translateReadMode">Anzeige übersetzter Nachrichten</string>
+    <string name="mdmTitle">Von Ihrer Organisation verwaltet</string>
+    <string name="mdmDesc">Diese Einstellungen hat Ihre Organisation über die Geräteverwaltung (MDM) festgelegt.</string>
+    <string name="mdmSupport">IT-Support</string>
+    <string name="mdmBlocked">Durch die Richtlinie Ihrer Organisation nicht erlaubt</string>
+    <string name="mdmDomainNotAllowed">Ihre Organisation erlaubt Postfächer nur in diesen Domänen: {domains}</string>
+    <string name="mdmPinBody">Die Richtlinie Ihrer Organisation verlangt, Ihre E-Mails zu schützen. Legen Sie eine PIN mit {n}–6 Ziffern fest; sie wird beim Öffnen der App abgefragt.</string>
+    <string name="mdmPinRequired">Von Ihrer Organisation vorgeschrieben</string>
+    <string name="mdmRuleAccount">Postfach: {email}</string>
+    <string name="mdmRuleDomains">Nur Postfächer in: {domains}</string>
+    <string name="mdmRuleAppLock">App-PIN erforderlich (ab {n} Ziffern)</string>
+    <string name="mdmRuleScreenshots">Bildschirmfotos und -aufnahmen gesperrt</string>
+    <string name="mdmRuleShare">Teilen, Speichern in Dateien, PDF und Drucken gesperrt</string>
+    <string name="mdmRuleOpenIn">Anhänge öffnen sich nur in der App</string>
+    <string name="mdmRuleCopy">Kopieren von Nachrichtentext gesperrt</string>
+    <string name="mdmRuleNotifications">Benachrichtigungen ohne Absender und Betreff</string>
     <string name="favoritesOrder">Reihenfolge der Kacheln</string>
     <string name="favoritesOrderHint">Ziehen Sie einen Eintrag am Griff rechts — die Kacheln im Menü folgen dieser Reihenfolge.</string>
 </resources>

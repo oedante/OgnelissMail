@@ -63,6 +63,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/image_actions.dart';
 import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/ui_zoom.dart';
+import '../../../services/security/managed_config.dart';
 
 /// Где показ письма в WebView поддерживается. Остальные платформы (Linux,
 /// Windows без проверенного WebView2) — прежний рендер flutter_html.
@@ -1204,9 +1205,10 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     // Документ собирается один раз на ширину вписывания: страница
     // перестраивается при каждом замере высоты, а строка письма с
     // картинками — мегабайты.
+    final noCopy = ManagedPolicy.current.blockCopy;
     final key = '${identityHashCode(widget.document)}|$w|${_viewWidth.round()}|${_scale.toStringAsFixed(4)}|${widget.dark}|'
         '${widget.inlineRaw != null}|'
-        '${widget.textScale}|${widget.pageColor}|${MailHtmlView.webZoom}';
+        '${widget.textScale}|${widget.pageColor}|${MailHtmlView.webZoom}|$noCopy';
     final cached = _htmlMemo;
     if (cached != null && cached.$1 == key) return cached.$2;
     final out = MailHtmlView.composeHtml(widget.document,
@@ -1216,8 +1218,15 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         pageColor: widget.pageColor,
         textScale: widget.textScale,
         cidByRequest: widget.inlineRaw != null);
-    _htmlMemo = (key, out);
-    return out;
+    // Политика организации (MDM, 1.10.5): текст письма не выделяется и не
+    // копируется (и меню «Копировать» долгим нажатием не появляется).
+    final html = noCopy
+        ? out.replaceFirst('</head>',
+            '<style>*{-webkit-user-select:none!important;user-select:none!important;'
+            '-webkit-touch-callout:none!important}</style></head>')
+        : out;
+    _htmlMemo = (key, html);
+    return html;
   }
 
   (String, String)? _htmlMemo;

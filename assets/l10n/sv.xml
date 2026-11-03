@@ -3778,6 +3778,21 @@
     <string name="translateFrom">Översätt från</string>
     <string name="translateMsgOther">Meddelande på ett annat språk</string>
     <string name="translateReadMode">Visning av översatta meddelanden</string>
+    <string name="mdmTitle">Hanteras av din organisation</string>
+    <string name="mdmDesc">Din organisation har ställt in detta via enhetshantering (MDM).</string>
+    <string name="mdmSupport">IT-support</string>
+    <string name="mdmBlocked">Inte tillåtet enligt din organisations policy</string>
+    <string name="mdmDomainNotAllowed">Din organisation tillåter bara brevlådor på dessa domäner: {domains}</string>
+    <string name="mdmPinBody">Din organisations policy kräver att din e-post skyddas. Ange en pinkod på {n}–6 siffror; den efterfrågas när appen öppnas.</string>
+    <string name="mdmPinRequired">Krävs av din organisation</string>
+    <string name="mdmRuleAccount">Brevlåda: {email}</string>
+    <string name="mdmRuleDomains">Bara brevlådor på: {domains}</string>
+    <string name="mdmRuleAppLock">App-pinkod krävs ({n}+ siffror)</string>
+    <string name="mdmRuleScreenshots">Skärmbilder och skärminspelning blockerade</string>
+    <string name="mdmRuleShare">Dela, spara i filer, PDF och utskrift blockerade</string>
+    <string name="mdmRuleOpenIn">Bilagor öppnas bara i appen</string>
+    <string name="mdmRuleCopy">Kopiering av meddelandetext blockerad</string>
+    <string name="mdmRuleNotifications">Aviseringar utan avsändare och ämne</string>
     <string name="favoritesOrder">Panelernas ordning</string>
     <string name="favoritesOrderHint">Dra ett objekt i handtaget till höger — panelerna i menyn följer den här ordningen.</string>
 </resources>

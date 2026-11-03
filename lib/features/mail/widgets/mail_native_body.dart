@@ -59,6 +59,7 @@ import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/pinch_zoom.dart';
 import 'quote_person_chip.dart';
 import 'span_table.dart';
+import '../../../services/security/managed_config.dart';
 
 // ───────────────────────── модель (передаётся из изолята) ─────────────────────────
 
@@ -1554,11 +1555,12 @@ class _MailNativeBodyState extends State<MailNativeBody> {
     return children;
     }
 
+    final column = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: blocks(widget.mail.blocks, null));
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 12),
-      child: SelectionArea(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: blocks(widget.mail.blocks, null)),
-      ),
+      // Политика организации (MDM, 1.10.5): без выделения — нечего и
+      // копировать.
+      child: ManagedPolicy.current.blockCopy ? column : SelectionArea(child: column),
     );
   }
 }

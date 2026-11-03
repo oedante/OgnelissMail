@@ -3757,6 +3757,21 @@
     <string name="translateFrom">翻訳元の言語</string>
     <string name="translateMsgOther">別の言語のメール</string>
     <string name="translateReadMode">翻訳したメッセージの表示</string>
+    <string name="mdmTitle">組織による管理</string>
+    <string name="mdmDesc">これらの設定は組織がデバイス管理(MDM)で指定しました。</string>
+    <string name="mdmSupport">IT サポート</string>
+    <string name="mdmBlocked">組織のポリシーで許可されていません</string>
+    <string name="mdmDomainNotAllowed">組織が許可しているのは次のドメインのメールボックスのみです: {domains}</string>
+    <string name="mdmPinBody">組織のポリシーにより、メールの保護が必要です。{n}~6 桁の PIN を設定してください。アプリを開くときに入力を求められます。</string>
+    <string name="mdmPinRequired">組織による必須設定</string>
+    <string name="mdmRuleAccount">メールボックス: {email}</string>
+    <string name="mdmRuleDomains">次のドメインのみ: {domains}</string>
+    <string name="mdmRuleAppLock">アプリの PIN が必須({n} 桁以上)</string>
+    <string name="mdmRuleScreenshots">スクリーンショットと画面収録は禁止</string>
+    <string name="mdmRuleShare">共有・ファイルへの保存・PDF・印刷は禁止</string>
+    <string name="mdmRuleOpenIn">添付ファイルはアプリ内でのみ開きます</string>
+    <string name="mdmRuleCopy">メール本文のコピーは禁止</string>
+    <string name="mdmRuleNotifications">送信者と件名を表示しない通知</string>
     <string name="favoritesOrder">タイルの順序</string>
     <string name="favoritesOrderHint">右のハンドルで項目をドラッグすると、メニューのタイルがこの順序になります。</string>
 </resources>

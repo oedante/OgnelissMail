@@ -25,6 +25,7 @@ import '../../../services/sync/sync_service.dart' show syncServiceProvider;
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../mail/providers/mail_providers.dart';
+import '../../../core/platform/app_share.dart';
 
 class BackupScreen extends ConsumerStatefulWidget {
   const BackupScreen({super.key});
@@ -88,7 +89,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       await f.writeAsBytes(bytes, flush: true);
       if (!mounted) return;
       // «Поделиться»: сохранить в «Файлы», на Диск, отправить себе.
-      await SharePlus.instance.share(ShareParams(files: [XFile(f.path, name: name)], subject: name));
+      await appShare(ShareParams(files: [XFile(f.path, name: name)], subject: name));
       if (!mounted) return;
       setState(() => _createDone = l10n.tr('backupCreated').replaceAll('{name}', name));
     } catch (e) {

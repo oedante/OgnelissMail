@@ -3757,6 +3757,21 @@
     <string name="translateFrom">แปลจาก</string>
     <string name="translateMsgOther">ข้อความเป็นภาษาอื่น</string>
     <string name="translateReadMode">การแสดงข้อความที่แปล</string>
+    <string name="mdmTitle">จัดการโดยองค์กรของคุณ</string>
+    <string name="mdmDesc">องค์กรของคุณกำหนดการตั้งค่าเหล่านี้ผ่านระบบจัดการอุปกรณ์ (MDM)</string>
+    <string name="mdmSupport">ฝ่ายสนับสนุนไอที</string>
+    <string name="mdmBlocked">นโยบายขององค์กรไม่อนุญาต</string>
+    <string name="mdmDomainNotAllowed">องค์กรของคุณอนุญาตเฉพาะกล่องจดหมายในโดเมน: {domains}</string>
+    <string name="mdmPinBody">นโยบายขององค์กรกำหนดให้ปกป้องอีเมล ตั้ง PIN {n}–6 หลัก ระบบจะขอเมื่อเปิดแอป</string>
+    <string name="mdmPinRequired">องค์กรของคุณกำหนด</string>
+    <string name="mdmRuleAccount">กล่องจดหมาย: {email}</string>
+    <string name="mdmRuleDomains">เฉพาะกล่องจดหมายในโดเมน: {domains}</string>
+    <string name="mdmRuleAppLock">ต้องใช้ PIN ของแอป (อย่างน้อย {n} หลัก)</string>
+    <string name="mdmRuleScreenshots">ห้ามจับภาพและบันทึกหน้าจอ</string>
+    <string name="mdmRuleShare">ห้ามแชร์ บันทึกเป็นไฟล์ PDF และพิมพ์</string>
+    <string name="mdmRuleOpenIn">ไฟล์แนบเปิดได้ในแอปเท่านั้น</string>
+    <string name="mdmRuleCopy">ห้ามคัดลอกข้อความในอีเมล</string>
+    <string name="mdmRuleNotifications">การแจ้งเตือนไม่แสดงผู้ส่งและหัวเรื่อง</string>
     <string name="favoritesOrder">ลำดับไทล์</string>
     <string name="favoritesOrderHint">ลากรายการที่ที่จับด้านขวา — ไทล์ในเมนูจะเรียงตามลำดับนี้</string>
 </resources>

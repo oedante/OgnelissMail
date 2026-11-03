@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Управляемые настройки Android Enterprise (MDM, 1.10.5). Ключи — те же,
+     что в lib/services/security/managed_config.dart (ManagedKeys) и в
+     docs/guides/MDM.md; приложение читает их через RestrictionsManager
+     (MdmBridge.kt). Не переименовывать: их вводят в консолях MDM. -->
+<restrictions xmlns:android="http://schemas.android.com/apk/res/android">
+    <restriction
+        android:key="org_name"
+        android:restrictionType="string"
+        android:title="@string/mdm_org_name_title"
+        android:description="@string/mdm_org_name_desc" />
+    <restriction
+        android:key="support_contact"
+        android:restrictionType="string"
+        android:title="@string/mdm_support_contact_title"
+        android:description="@string/mdm_support_contact_desc" />
+    <restriction
+        android:key="account_email"
+        android:restrictionType="string"
+        android:title="@string/mdm_account_email_title"
+        android:description="@string/mdm_account_email_desc" />
+    <restriction
+        android:key="account_protocol"
+        android:restrictionType="choice"
+        android:title="@string/mdm_account_protocol_title"
+        android:description="@string/mdm_account_protocol_desc"
+        android:entries="@array/mdm_protocol_entries"
+        android:entryValues="@array/mdm_protocol_values"
+        android:defaultValue="auto" />
+    <restriction
+        android:key="account_server"
+        android:restrictionType="string"
+        android:title="@string/mdm_account_server_title"
+        android:description="@string/mdm_account_server_desc" />
+    <restriction
+        android:key="account_username"
+        android:restrictionType="string"
+        android:title="@string/mdm_account_username_title"
+        android:description="@string/mdm_account_username_desc" />
+    <restriction
+        android:key="account_domain"
+        android:restrictionType="string"
+        android:title="@string/mdm_account_domain_title"
+        android:description="@string/mdm_account_domain_desc" />
+    <restriction
+        android:key="imap_server"
+        android:restrictionType="string"
+        android:title="@string/mdm_imap_server_title"
+        android:description="@string/mdm_imap_server_desc" />
+    <restriction
+        android:key="imap_port"
+        android:restrictionType="integer"
+        android:title="@string/mdm_imap_port_title"
+        android:description="@string/mdm_imap_port_desc" />
+    <restriction
+        android:key="smtp_server"
+        android:restrictionType="string"
+        android:title="@string/mdm_smtp_server_title"
+        android:description="@string/mdm_smtp_server_desc" />
+    <restriction
+        android:key="smtp_port"
+        android:restrictionType="integer"
+        android:title="@string/mdm_smtp_port_title"
+        android:description="@string/mdm_smtp_port_desc" />
+    <restriction
+        android:key="allowed_domains"
+        android:restrictionType="string"
+        android:title="@string/mdm_allowed_domains_title"
+        android:description="@string/mdm_allowed_domains_desc" />
+    <restriction
+        android:key="require_app_lock"
+        android:restrictionType="bool"
+        android:title="@string/mdm_require_app_lock_title"
+        android:description="@string/mdm_require_app_lock_desc"
+        android:defaultValue="false" />
+    <restriction
+        android:key="min_pin_length"
+        android:restrictionType="integer"
+        android:title="@string/mdm_min_pin_length_title"
+        android:description="@string/mdm_min_pin_length_desc" />
+    <restriction
+        android:key="block_screenshots"
+        android:restrictionType="bool"
+        android:title="@string/mdm_block_screenshots_title"
+        android:description="@string/mdm_block_screenshots_desc"
+        android:defaultValue="false" />
+    <restriction
+        android:key="block_share"
+        android:restrictionType="bool"
+        android:title="@string/mdm_block_share_title"
+        android:description="@string/mdm_block_share_desc"
+        android:defaultValue="false" />
+    <restriction
+        android:key="block_open_in"
+        android:restrictionType="bool"
+        android:title="@string/mdm_block_open_in_title"
+        android:description="@string/mdm_block_open_in_desc"
+        android:defaultValue="false" />
+    <restriction
+        android:key="block_copy"
+        android:restrictionType="bool"
+        android:title="@string/mdm_block_copy_title"
+        android:description="@string/mdm_block_copy_desc"
+        android:defaultValue="false" />
+    <restriction
+        android:key="hide_notification_content"
+        android:restrictionType="bool"
+        android:title="@string/mdm_hide_notification_content_title"
+        android:description="@string/mdm_hide_notification_content_desc"
+        android:defaultValue="false" />
+</restrictions>

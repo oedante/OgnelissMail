@@ -3778,6 +3778,21 @@
     <string name="translateFrom">Fordítás erről</string>
     <string name="translateMsgOther">Más nyelvű üzenet</string>
     <string name="translateReadMode">Lefordított üzenet megjelenítése</string>
+    <string name="mdmTitle">A szervezete kezeli</string>
+    <string name="mdmDesc">Ezeket a beállításokat a szervezete az eszközkezelőn (MDM) keresztül adta meg.</string>
+    <string name="mdmSupport">Informatikai támogatás</string>
+    <string name="mdmBlocked">A szervezete házirendje nem engedi</string>
+    <string name="mdmDomainNotAllowed">A szervezete csak ezeken a tartományokon engedélyez postafiókot: {domains}</string>
+    <string name="mdmPinBody">A szervezete házirendje előírja a levelezés védelmét. Adjon meg {n}–6 számjegyű PIN-kódot; az alkalmazás megnyitásakor kérni fogja.</string>
+    <string name="mdmPinRequired">A szervezete előírja</string>
+    <string name="mdmRuleAccount">Postafiók: {email}</string>
+    <string name="mdmRuleDomains">Csak ezeken: {domains}</string>
+    <string name="mdmRuleAppLock">Kötelező alkalmazás-PIN (legalább {n} számjegy)</string>
+    <string name="mdmRuleScreenshots">Képernyőkép és képernyőfelvétel tiltva</string>
+    <string name="mdmRuleShare">Megosztás, mentés fájlba, PDF és nyomtatás tiltva</string>
+    <string name="mdmRuleOpenIn">A mellékletek csak az alkalmazásban nyílnak meg</string>
+    <string name="mdmRuleCopy">Az üzenetszöveg másolása tiltva</string>
+    <string name="mdmRuleNotifications">Értesítések feladó és tárgy nélkül</string>
     <string name="favoritesOrder">Csempék sorrendje</string>
     <string name="favoritesOrderHint">Húzza az elemet a jobb oldali fogantyúnál — a menü csempéi ezt a sorrendet követik.</string>
 </resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Подписи управляемых настроек в консолях MDM (1.10.5): русский. -->
+<resources>
+    <string name="mdm_org_name_title">Название организации</string>
+    <string name="mdm_org_name_desc">Показывается в «Настройки → Управляется организацией».</string>
+    <string name="mdm_support_contact_title">Контакт ИТ-поддержки</string>
+    <string name="mdm_support_contact_desc">Телефон, почта или ссылка — показывается пользователю.</string>
+    <string name="mdm_account_email_title">Адрес ящика</string>
+    <string name="mdm_account_email_desc">Вход заполняется этим адресом.</string>
+    <string name="mdm_account_protocol_title">Протокол ящика</string>
+    <string name="mdm_account_protocol_desc">auto, exchange (ActiveSync или EWS — выбирает приложение) или imap.</string>
+    <string name="mdm_account_server_title">Сервер Exchange</string>
+    <string name="mdm_account_server_desc">Адрес или URL сервера Exchange.</string>
+    <string name="mdm_account_username_title">Имя пользователя</string>
+    <string name="mdm_account_username_desc">Имя для входа, если не совпадает с адресом.</string>
+    <string name="mdm_account_domain_title">Домен</string>
+    <string name="mdm_account_domain_desc">Домен Windows для входа в Exchange.</string>
+    <string name="mdm_imap_server_title">Сервер IMAP</string>
+    <string name="mdm_imap_server_desc">Сервер IMAP для протокола imap.</string>
+    <string name="mdm_imap_port_title">Порт IMAP</string>
+    <string name="mdm_imap_port_desc">Обычно 993.</string>
+    <string name="mdm_smtp_server_title">Сервер SMTP</string>
+    <string name="mdm_smtp_server_desc">Сервер SMTP для протокола imap.</string>
+    <string name="mdm_smtp_port_title">Порт SMTP</string>
+    <string name="mdm_smtp_port_desc">Обычно 465 или 587.</string>
+    <string name="mdm_allowed_domains_title">Разрешённые домены ящиков</string>
+    <string name="mdm_allowed_domains_desc">Через запятую; другие ящики добавить нельзя. Пусто — любые.</string>
+    <string name="mdm_require_app_lock_title">Обязательный код приложения</string>
+    <string name="mdm_require_app_lock_desc">Без кода приложением пользоваться нельзя.</string>
+    <string name="mdm_min_pin_length_title">Минимальная длина кода</string>
+    <string name="mdm_min_pin_length_desc">От 4 до 6 цифр.</string>
+    <string name="mdm_block_screenshots_title">Запрет снимков экрана</string>
+    <string name="mdm_block_screenshots_desc">Снимки и запись экрана, миниатюра в «Недавних».</string>
+    <string name="mdm_block_share_title">Запрет «Поделиться» и сохранения</string>
+    <string name="mdm_block_share_desc">«Поделиться», сохранение в файлы, PDF и печать.</string>
+    <string name="mdm_block_open_in_title">Запрет открытия в других приложениях</string>
+    <string name="mdm_block_open_in_desc">Вложения открываются только внутри приложения.</string>
+    <string name="mdm_block_copy_title">Запрет копирования текста писем</string>
+    <string name="mdm_block_copy_desc">Выделение текста и «Копировать» в письмах.</string>
+    <string name="mdm_hide_notification_content_title">Уведомления без содержимого</string>
+    <string name="mdm_hide_notification_content_desc">В уведомлениях нет отправителя, темы и текста.</string>
+    <string-array name="mdm_protocol_entries">
+        <item>Автоматически</item>
+        <item>Microsoft Exchange</item>
+        <item>IMAP</item>
+    </string-array>
+</resources>

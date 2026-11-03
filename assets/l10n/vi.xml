@@ -3757,6 +3757,21 @@
     <string name="translateFrom">Dịch từ</string>
     <string name="translateMsgOther">Thư bằng ngôn ngữ khác</string>
     <string name="translateReadMode">Hiển thị thư đã dịch</string>
+    <string name="mdmTitle">Do tổ chức của bạn quản lý</string>
+    <string name="mdmDesc">Tổ chức của bạn đặt các tùy chọn này qua hệ thống quản lý thiết bị (MDM).</string>
+    <string name="mdmSupport">Hỗ trợ CNTT</string>
+    <string name="mdmBlocked">Chính sách của tổ chức không cho phép</string>
+    <string name="mdmDomainNotAllowed">Tổ chức chỉ cho phép hộp thư thuộc các tên miền: {domains}</string>
+    <string name="mdmPinBody">Chính sách của tổ chức yêu cầu bảo vệ thư. Đặt mã PIN {n}–6 chữ số; mã sẽ được hỏi khi mở ứng dụng.</string>
+    <string name="mdmPinRequired">Tổ chức của bạn yêu cầu</string>
+    <string name="mdmRuleAccount">Hộp thư: {email}</string>
+    <string name="mdmRuleDomains">Chỉ hộp thư thuộc: {domains}</string>
+    <string name="mdmRuleAppLock">Bắt buộc mã PIN ứng dụng (từ {n} chữ số)</string>
+    <string name="mdmRuleScreenshots">Chặn chụp và quay màn hình</string>
+    <string name="mdmRuleShare">Chặn chia sẻ, lưu vào tệp, PDF và in</string>
+    <string name="mdmRuleOpenIn">Tệp đính kèm chỉ mở trong ứng dụng</string>
+    <string name="mdmRuleCopy">Chặn sao chép nội dung thư</string>
+    <string name="mdmRuleNotifications">Thông báo không hiện người gửi và chủ đề</string>
     <string name="favoritesOrder">Thứ tự ô</string>
     <string name="favoritesOrderHint">Kéo mục bằng tay nắm bên phải — các ô trong menu theo thứ tự này.</string>
 </resources>

@@ -50,6 +50,10 @@ import workmanager_apple
     if let r = self.registrar(forPlugin: "OgnelissTranslate") {
       TranslationBridge.register(r.messenger())
     }
+    // Настройки организации (MDM, Managed App Configuration, 1.10.5).
+    if let r = self.registrar(forPlugin: "OgnelissMdm") {
+      AppDelegate.registerMdmChannel(r.messenger())
+    }
     // Холодный запуск нажатием на виджет.
     if let url = launchOptions?[.url] as? URL { _ = WidgetBridgePlugin.handle(url) }
 
@@ -220,6 +224,43 @@ import workmanager_apple
   static func endBackground(_ task: UIBackgroundTaskIdentifier) {
     guard task != .invalid, backgroundTasks.remove(task.rawValue) != nil else { return }
     UIApplication.shared.endBackgroundTask(task)
+  }
+
+  // MARK: Настройки организации (MDM, 1.10.5)
+
+  static var mdmChannel: FlutterMethodChannel?
+  static var mdmObserver: NSObjectProtocol?
+  static var mdmLast: NSDictionary?
+
+  /// MethodChannel 'ogneliss/mdm': «get» — словарь Managed App Configuration
+  /// (ключ com.apple.configuration.managed в UserDefaults; его кладёт MDM для
+  /// управляемого приложения), пустой — не управляется; «changed» — в Dart,
+  /// когда MDM прислал новые настройки. Ключи — docs/guides/MDM.md,
+  /// разбор — lib/services/security/managed_config.dart.
+  static func registerMdmChannel(_ messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(name: "ogneliss/mdm", binaryMessenger: messenger)
+    mdmChannel = channel
+    mdmLast = UserDefaults.standard.dictionary(forKey: "com.apple.configuration.managed") as NSDictionary?
+    channel.setMethodCallHandler { call, result in
+      switch call.method {
+      case "get":
+        result(UserDefaults.standard.dictionary(forKey: "com.apple.configuration.managed") ?? [:])
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+    if mdmObserver == nil {
+      // UserDefaults меняется и по другим причинам — сообщаем, только если
+      // изменился именно словарь организации.
+      mdmObserver = NotificationCenter.default.addObserver(
+        forName: UserDefaults.didChangeNotification, object: nil, queue: .main
+      ) { _ in
+        let now = UserDefaults.standard.dictionary(forKey: "com.apple.configuration.managed") as NSDictionary?
+        if now == AppDelegate.mdmLast { return }
+        AppDelegate.mdmLast = now
+        AppDelegate.mdmChannel?.invokeMethod("changed", arguments: nil)
+      }
+    }
   }
 
   /// MethodChannel 'ogneliss/platform': состояние фоновой работы для журнала

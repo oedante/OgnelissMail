@@ -3778,6 +3778,21 @@
     <string name="translateFrom">Käännä kielestä</string>
     <string name="translateMsgOther">Viesti toisella kielellä</string>
     <string name="translateReadMode">Käännetyn viestin näyttäminen</string>
+    <string name="mdmTitle">Organisaatiosi hallinnoima</string>
+    <string name="mdmDesc">Organisaatiosi on määrittänyt nämä asetukset laitehallinnan (MDM) kautta.</string>
+    <string name="mdmSupport">IT-tuki</string>
+    <string name="mdmBlocked">Organisaatiosi käytäntö ei salli tätä</string>
+    <string name="mdmDomainNotAllowed">Organisaatiosi sallii vain näiden verkkotunnusten postilaatikot: {domains}</string>
+    <string name="mdmPinBody">Organisaatiosi käytäntö edellyttää postin suojaamista. Aseta {n}–6 numeron PIN-koodi; se kysytään sovellusta avattaessa.</string>
+    <string name="mdmPinRequired">Organisaatiosi vaatima</string>
+    <string name="mdmRuleAccount">Postilaatikko: {email}</string>
+    <string name="mdmRuleDomains">Vain postilaatikot: {domains}</string>
+    <string name="mdmRuleAppLock">Sovelluksen PIN pakollinen (vähintään {n} numeroa)</string>
+    <string name="mdmRuleScreenshots">Kuvakaappaukset ja näytön tallennus estetty</string>
+    <string name="mdmRuleShare">Jakaminen, tallennus tiedostoihin, PDF ja tulostus estetty</string>
+    <string name="mdmRuleOpenIn">Liitteet avautuvat vain sovelluksessa</string>
+    <string name="mdmRuleCopy">Viestien tekstin kopiointi estetty</string>
+    <string name="mdmRuleNotifications">Ilmoitukset ilman lähettäjää ja aihetta</string>
     <string name="favoritesOrder">Ruutujen järjestys</string>
     <string name="favoritesOrderHint">Vedä kohdetta oikealla olevasta kahvasta — valikon ruudut noudattavat tätä järjestystä.</string>
 </resources>

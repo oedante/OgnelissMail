@@ -113,6 +113,8 @@ class _LogViewerScreenState extends ConsumerState<LogViewerScreen> {
     final l10n = AppLocalizations.of(context);
     final file = await _withBusy(() => DiagnosticsReport.build(ref));
     if (file == null) return;
+    // Журнал (без текста писем) — для поддержки: политика «Поделиться»
+    // организации его не запрещает, иначе ИТ не получит журнал.
     await SharePlus.instance.share(ShareParams(
       files: [XFile(file.path)],
       subject: l10n.tr('logSupportSubject').replaceAll('{app}', AppConstants.appName),

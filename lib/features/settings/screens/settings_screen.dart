@@ -28,6 +28,8 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../settings_search.dart';
 import '../../../core/theme/tokens.dart';
+import '../widgets/managed_policy_section.dart';
+import '../../../services/security/managed_config.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -38,6 +40,7 @@ class SettingsScreen extends ConsumerWidget {
     final accounts = ref.watch(accountsProvider);
     final settings = ref.watch(settingsProvider);
     final pinState = ref.watch(pinLockProvider);
+    final mdmPin = ref.watch(managedPolicyProvider.select((p) => p.requireAppLock));
     final focusState = ref.watch(focusModeProvider);
     final trackerState = ref.watch(trackerBlockerProvider);
 
@@ -60,6 +63,8 @@ class SettingsScreen extends ConsumerWidget {
         child: ListView(
         padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xl),
         children: [
+          // ── Управляется организацией (MDM, 1.10.5) — только если задано.
+          const ManagedPolicySection(),
           // ── Аккаунты: настройки ящика (подпись, адреса, синхронизация папок,
           // автоответ, правила, удаление) — на экране аккаунта.
           SettingsSectionTitle(l10n.tr('accounts')),
@@ -232,9 +237,10 @@ class SettingsScreen extends ConsumerWidget {
             SettingsSwitchItem(
               icon: AppIcons.pin,
               title: l10n.tr('pinLock'),
-              subtitle: l10n.tr('pinLockDesc'),
+              // Код требует организация (MDM) — выключить нельзя.
+              subtitle: mdmPin ? l10n.tr('mdmPinRequired') : l10n.tr('pinLockDesc'),
               value: pinState.isPinSet,
-              onChanged: (v) {
+              onChanged: mdmPin && pinState.isPinSet ? null : (v) {
                 if (v) {
                   _showSetPinDialog(context, ref, l10n);
                 } else {

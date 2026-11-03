@@ -94,6 +94,17 @@ class OAuthNotConfiguredException extends AuthException {
         );
 }
 
+/// Ящик на домене, который политика организации (MDM, 1.10.5) не разрешает.
+class AccountNotAllowedException extends AuthException {
+  AccountNotAllowedException({required String domains})
+      : super(
+          userMessage: 'Организация разрешает ящики только на доменах: $domains',
+          messageKey: 'mdmDomainNotAllowed',
+          messageArgs: {'domains': domains},
+          code: 'ACCOUNT_NOT_ALLOWED',
+        );
+}
+
 class AccountAlreadyExistsException extends AuthException {
   final String? email;
   const AccountAlreadyExistsException({this.email})

@@ -42,6 +42,29 @@ void main() {
     expect(d.atWidth(400), contains('width=400, initial-scale=1, minimum-scale=1, maximum-scale=4'));
   });
 
+  // 1.10.3, письмо Google Cloud: резиновая вёрстка (max-width:640px, картинка
+  // width="640" со стилем width:100%) открывалась уменьшенной «по ширине
+  // экрана» — из-за атрибута картинки и «min-width:950px» в @media.
+  test('резиновая вёрстка: картинка width=640 со стилем 100 %, @media — не шире экрана', () {
+    final d = MailHtmlDocument.build(
+        '<style>@media only screen and (min-width:950px) { .mj-column-per-100 { width:100% !important; } '
+        '.wide { width:900px !important } } table { border-spacing:0 }</style>'
+        '<div style="margin:0 auto;max-width:640px"><table width="100%"><tr><td>'
+        '<img width="640" src="https://example.com/a.png" style="height:auto;width:100%;display:block">'
+        '<a href="https://example.com" width="220" style="display:inline-block;width:auto">Кнопка</a>'
+        '</td></tr></table></div>',
+        allowRemoteImages: false);
+    expect(d.declaredWidth, isNull);
+  });
+
+  test('ширина в стиле важнее атрибута; атрибут без стиля — как раньше', () {
+    expect(MailHtmlDocument.build('<img width="200" style="width:700px" src="x">', allowRemoteImages: false).declaredWidth, 700);
+    expect(MailHtmlDocument.build('<table width="700"><tr><td>Текст</td></tr></table>', allowRemoteImages: false).declaredWidth,
+        700);
+    expect(MailHtmlDocument.build('<style>.wrap{width:680px}</style><p class="wrap">a</p>', allowRemoteImages: false)
+        .declaredWidth, 680);
+  });
+
   test('обычное письмо без размеров — не вписывается', () {
     final d = MailHtmlDocument.build('<p>Привет</p>', allowRemoteImages: false);
     expect(d.declaredWidth, isNull);

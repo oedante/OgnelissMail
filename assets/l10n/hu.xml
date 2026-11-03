@@ -3770,4 +3770,5 @@
     <string name="quotePeopleTitle">Személyek az idézett fejlécekben</string>
     <string name="quotePeopleDesc">Az idézet Feladó, Címzett és Másolat sora portrés címkékké válik; koppintással megnyílik a személy kártyája. Kinyitott idézetnél működik, a megnyitás nem lassul.</string>
     <string name="translateFrom">Fordítás erről</string>
+    <string name="translateMsgOther">Más nyelvű üzenet</string>
 </resources>

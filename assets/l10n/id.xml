@@ -3749,4 +3749,5 @@
     <string name="quotePeopleTitle">Orang di kepala kutipan</string>
     <string name="quotePeopleDesc">Dari, Kepada, dan Cc dalam kutipan tampil sebagai chip dengan foto; ketuk untuk membuka kartu orang. Berfungsi saat kutipan dibuka, jadi pesan tetap cepat terbuka.</string>
     <string name="translateFrom">Terjemahkan dari</string>
+    <string name="translateMsgOther">Pesan dalam bahasa lain</string>
 </resources>

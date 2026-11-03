@@ -3770,4 +3770,5 @@
     <string name="quotePeopleTitle">Personen in Zitatköpfen</string>
     <string name="quotePeopleDesc">Von, An und Cc im Zitat werden zu Feldern mit Porträt; Tippen öffnet die Personenkarte. Wirkt nur bei aufgeklapptem Zitat, Nachrichten öffnen so schnell wie bisher.</string>
     <string name="translateFrom">Übersetzen aus</string>
+    <string name="translateMsgOther">Nachricht in einer anderen Sprache</string>
 </resources>

@@ -3812,4 +3812,5 @@
     <string name="quotePeopleTitle">Osoby w nagłówkach cytatów</string>
     <string name="quotePeopleDesc">Od, Do i DW w cytacie jako etykiety ze zdjęciem; dotknięcie otwiera kartę osoby. Działa po rozwinięciu cytatu, więc wiadomości otwierają się tak samo szybko.</string>
     <string name="translateFrom">Tłumacz z</string>
+    <string name="translateMsgOther">Wiadomość w innym języku</string>
 </resources>

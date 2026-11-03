@@ -3749,4 +3749,5 @@
     <string name="quotePeopleTitle">Người trong phần đầu trích dẫn</string>
     <string name="quotePeopleDesc">Người gửi, Người nhận và Cc trong phần trích dẫn hiện thành thẻ có ảnh; chạm để mở thẻ người. Chỉ chạy khi mở rộng trích dẫn nên thư vẫn mở nhanh như trước.</string>
     <string name="translateFrom">Dịch từ</string>
+    <string name="translateMsgOther">Thư bằng ngôn ngữ khác</string>
 </resources>

@@ -3791,4 +3791,5 @@
     <string name="quotePeopleTitle">Persoane în anteturile citate</string>
     <string name="quotePeopleDesc">De la, Către și Cc din citat devin etichete cu portret; atingeți pentru fișa persoanei. Funcționează când citatul e extins, deschiderea nu încetinește.</string>
     <string name="translateFrom">Tradu din</string>
+    <string name="translateMsgOther">Mesaj în altă limbă</string>
 </resources>

@@ -3770,4 +3770,5 @@
     <string name="quotePeopleTitle">Personer i siterte overskrifter</string>
     <string name="quotePeopleDesc">Fra, Til og Kopi i sitatet vises som merker med portrett; trykk for å åpne personkortet. Virker når sitatet er utvidet, så meldinger åpnes like raskt.</string>
     <string name="translateFrom">Oversett fra</string>
+    <string name="translateMsgOther">Melding på et annet språk</string>
 </resources>

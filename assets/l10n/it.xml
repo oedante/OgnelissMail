@@ -3770,4 +3770,5 @@
     <string name="quotePeopleTitle">Persone nelle intestazioni citate</string>
     <string name="quotePeopleDesc">Da, A e Cc nella citazione diventano etichette con ritratto; toccane una per aprire la scheda. Agisce a citazione espansa, l’apertura resta veloce.</string>
     <string name="translateFrom">Traduci da</string>
+    <string name="translateMsgOther">Messaggio in un\'altra lingua</string>
 </resources>

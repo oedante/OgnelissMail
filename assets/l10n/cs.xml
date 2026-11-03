@@ -3791,4 +3791,5 @@
     <string name="quotePeopleTitle">Lidé v hlavičkách citací</string>
     <string name="quotePeopleDesc">Od, Komu a Kopie v citaci jako štítky s portrétem; klepnutí otevře kartu osoby. Funguje při rozbalené citaci, zprávy se otevírají stejně rychle.</string>
     <string name="translateFrom">Přeložit z</string>
+    <string name="translateMsgOther">Zpráva v jiném jazyce</string>
 </resources>

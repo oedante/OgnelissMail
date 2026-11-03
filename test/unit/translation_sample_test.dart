@@ -100,4 +100,14 @@ void main() {
     expect(MailTranslationController.latinShare(s), greaterThan(0.95));
     expect(MailTranslationController.latinShare('Привет, как дела'), 0);
   });
+
+  test('язык не определён: плашка, если письмо другим алфавитом, чем приложение', () {
+    const en = 'Hi Oedante, Congrats! Your page is up. Thank you for your work.';
+    const ru = 'Коллеги, добрый день! Файл во вложении, прошу посмотреть до пятницы.';
+    expect(MailTranslationController.otherScript(en, 'ru'), isTrue);
+    expect(MailTranslationController.otherScript(ru, 'ru'), isFalse);
+    expect(MailTranslationController.otherScript(ru, 'en'), isTrue);
+    expect(MailTranslationController.otherScript(en, 'en'), isFalse, reason: 'английский для en-приложения — не предлагаем');
+    expect(MailTranslationController.otherScript('OK', 'ru'), isFalse, reason: 'слишком коротко');
+  });
 }

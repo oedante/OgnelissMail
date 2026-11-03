@@ -59,6 +59,10 @@ class MailTranslationController extends ChangeNotifier {
   String? from;
   String? to;
   String fromName = '';
+
+  /// Язык письма не определился, но письмо явно не на языке приложения
+  /// (1.10.5): плашка «Письмо на другом языке», по нажатию — выбор языка.
+  bool unknownLang = false;
   String toName = '';
 
   /// Показан перевод (а не оригинал).
@@ -89,6 +93,7 @@ class MailTranslationController extends ChangeNotifier {
     phase = MailTranslationPhase.none;
     from = null;
     to = null;
+    unknownLang = false;
     showing = false;
     dismissed = false;
   }
@@ -117,7 +122,21 @@ class MailTranslationController extends ChangeNotifier {
     final sample = await _sample(e);
     if (sample.length < 20 || _emailId != e.id) return;
     final lang = await _detectLang(t, e);
-    if (_emailId != e.id || lang == null) return;
+    if (_emailId != e.id) return;
+    if (lang == null) {
+      // Язык не определился (письмо XERJ, 03.11.2026: не было даже кнопки
+      // «Перевести»), но письмо другим алфавитом, чем язык приложения, —
+      // плашку всё равно показать; язык спросим по нажатию.
+      if (settings.translateOffer &&
+          phase == MailTranslationPhase.none &&
+          otherScript(sample, normalizeLang(_appLang()) ?? 'en')) {
+        unknownLang = true;
+        to = normalizeLang(_appLang());
+        phase = MailTranslationPhase.offer;
+        _notify();
+      }
+      return;
+    }
     from = lang;
     to = normalizeLang(_appLang());
     final available = await t.supportedLanguages();
@@ -177,6 +196,20 @@ class MailTranslationController extends ChangeNotifier {
     final again = await t.detectLanguage(head);
     if (again == null) _logUndetected(sample);
     return again;
+  }
+
+  /// Языки приложения не латиницей: письмо латиницей для них — точно на
+  /// другом языке (и наоборот).
+  static const _nonLatinApp = {
+    'ru', 'uk', 'be', 'bg', 'sr', 'mk', 'kk', 'el', 'zh', 'ja', 'ko', 'ar', 'he', 'fa', 'hi', 'th', 'hy', 'ka',
+  };
+
+  /// Письмо другим алфавитом, чем язык приложения [appLang].
+  @visibleForTesting
+  static bool otherScript(String sample, String appLang) {
+    if (RegExp(r'\p{L}', unicode: true).allMatches(sample).length < 20) return false;
+    final latin = latinShare(sample);
+    return _nonLatinApp.contains(appLang) ? latin >= 0.8 : latin <= 0.2;
   }
 
   /// Доля латинских букв среди букв текста (0…1).
@@ -239,6 +272,7 @@ class MailTranslationController extends ChangeNotifier {
       }
       if (lang == null) return;
       from = lang;
+      unknownLang = false;
       to = normalizeLang(_appLang());
       await _loadNames(t);
     }
@@ -371,7 +405,9 @@ class MailTranslateStrip extends StatelessWidget {
           onPressed: c.showing ? c.showOriginal : c.showTranslation,
         );
       default:
-        text = l10n.tr('translateMsgLang').replaceAll('{lang}', c.fromName);
+        text = c.unknownLang
+            ? l10n.tr('translateMsgOther')
+            : l10n.tr('translateMsgLang').replaceAll('{lang}', c.fromName);
         action = BannerButton(
           label: l10n.tr('translate'),
           onPressed: () => unawaited(c.translate(context, email)),
@@ -412,10 +448,12 @@ class MailTranslateStrip extends StatelessWidget {
 
   Future<void> _more(BuildContext context, AppLocalizations l10n) async {
     final v = await showActionSheet<String>(context, items: [
-      ActionSheetItem(
-          icon: AppIcons.block,
-          label: l10n.tr('translateNeverLang').replaceAll('{lang}', controller.fromName),
-          value: 'never'),
+      // Язык не определён — «Не переводить с …» не к чему относить.
+      if (!controller.unknownLang)
+        ActionSheetItem(
+            icon: AppIcons.block,
+            label: l10n.tr('translateNeverLang').replaceAll('{lang}', controller.fromName),
+            value: 'never'),
       ActionSheetItem(icon: AppIcons.close, label: l10n.tr('close'), value: 'close'),
     ]);
     if (v == 'never') await controller.never();

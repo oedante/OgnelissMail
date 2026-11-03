@@ -3792,4 +3792,6 @@
     <string name="quotePeopleDesc">Od, Komu a Kopie v citaci jako štítky s portrétem; klepnutí otevře kartu osoby. Funguje při rozbalené citaci, zprávy se otevírají stejně rychle.</string>
     <string name="translateFrom">Přeložit z</string>
     <string name="translateMsgOther">Zpráva v jiném jazyce</string>
+    <string name="favoritesOrder">Pořadí dlaždic</string>
+    <string name="favoritesOrderHint">Přetáhněte položku za úchyt vpravo — dlaždice v nabídce budou v tomto pořadí.</string>
 </resources>

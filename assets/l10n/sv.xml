@@ -3771,4 +3771,6 @@
     <string name="quotePeopleDesc">Från, Till och Kopia i citatet visas som etiketter med porträtt; tryck för att öppna personkortet. Fungerar när citatet är utfällt, så meddelanden öppnas lika snabbt.</string>
     <string name="translateFrom">Översätt från</string>
     <string name="translateMsgOther">Meddelande på ett annat språk</string>
+    <string name="favoritesOrder">Panelernas ordning</string>
+    <string name="favoritesOrderHint">Dra ett objekt i handtaget till höger — panelerna i menyn följer den här ordningen.</string>
 </resources>

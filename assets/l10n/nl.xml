@@ -3771,4 +3771,6 @@
     <string name="quotePeopleDesc">Van, Aan en Cc in een citaat worden labels met portret; tik om de persoonskaart te openen. Werkt bij een uitgevouwen citaat, berichten openen even snel.</string>
     <string name="translateFrom">Vertalen uit</string>
     <string name="translateMsgOther">Bericht in een andere taal</string>
+    <string name="favoritesOrder">Volgorde van tegels</string>
+    <string name="favoritesOrderHint">Sleep een item aan de greep rechts — de tegels in het menu volgen deze volgorde.</string>
 </resources>

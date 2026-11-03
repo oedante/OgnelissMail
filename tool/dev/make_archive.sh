@@ -20,6 +20,14 @@
 # целиком) — project.pbxproj из git затёр у владельца настройки Xcode. Скрипт
 # теперь работает из любой копии репозитория, а не только из /home/claude/src.
 #
+# 1.10.5 (замечание владельца 03.11.2026: «в папке ios перезаписываются файлы
+# проекта Xcode — может, не добавлять их туда?»): и остальные файлы, которые
+# Xcode ведёт сам, — схема сборки, настройки рабочих пространств, права
+# виджетов (OgnelissWidgets.entitlements) — лежат в архиве не на своих
+# местах, а в ios/xcode-base/ (тот же путь внутри). Распаковка поверх папки
+# их не трогает; scripts/build_ios.sh берёт копию из xcode-base, только если
+# своего файла нет (новая папка).
+#
 # Код базы (app_database.g.dart) в архив не кладётся: его генерирует
 # build_runner под установленную версию drift (scripts/build_ios.sh,
 # build_windows.ps1, setup.sh) — файл от другой версии drift не собирается.
@@ -47,6 +55,16 @@ rm -f "$P/ios/Runner.xcodeproj/.base_seen" "$P/ios/Runner.xcodeproj/project.pbxp
   "$P/ios/Runner/Runner.entitlements" "$P/ios/Flutter/Signing.xcconfig" \
   "$P/ios/Runner.xcworkspace/contents.xcworkspacedata"
 find "$P" -name xcuserdata -prune -exec rm -rf {} +
+# Файлы, которые Xcode ведёт сам, — в ios/xcode-base/ (см. выше).
+XB="$P/ios/xcode-base"
+for f in Runner.xcodeproj/project.xcworkspace Runner.xcodeproj/xcshareddata \
+         Runner.xcworkspace/xcshareddata OgnelissWidgets/OgnelissWidgets.entitlements; do
+  if [[ -e "$P/ios/$f" ]]; then
+    mkdir -p "$XB/$(dirname "$f")"
+    mv "$P/ios/$f" "$XB/$f"
+  fi
+done
+rmdir "$P/ios/Runner.xcworkspace" 2>/dev/null || true
 # Секреты — на случай, если когда-нибудь окажутся в git.
 rm -f "$P/config/dart_defines.json"
 find "$P" \( -name key.properties -o -name '*.jks' -o -name '*.p8' -o -name .env \
@@ -58,7 +76,7 @@ rm -rf "$P/server/push-relay/data" "$P/server/push-relay/keys"
 BASE=$(unzip -l "$ZIP" | grep -c "project.pbxproj.base$" || true)
 [[ "$BASE" == 1 ]] || { echo "✗ в архиве нет ios/Runner.xcodeproj/project.pbxproj.base"; exit 1; }
 SECRETS=$(unzip -l "$ZIP" | grep -c "dart_defines.json$\|key.properties\|\.jks$\|\.p8$\|/\.env$" || true)
-XCODE=$(unzip -l "$ZIP" | grep -c "project.pbxproj$\|Runner.entitlements\|Signing.xcconfig\|xcuserdata\|Runner.xcworkspace/contents.xcworkspacedata" || true)
+XCODE=$(unzip -l "$ZIP" | grep -v "/ios/xcode-base/" | grep -c "project.pbxproj$\|Runner.entitlements\|Signing.xcconfig\|xcuserdata\|Runner.xcworkspace/contents.xcworkspacedata\|xcshareddata\|project.xcworkspace\|OgnelissWidgets.entitlements" || true)
 GEN=$(unzip -l "$ZIP" | grep -c "app_database.g.dart" || true)
 echo "$ZIP"
 echo "секретов в архиве: $SECRETS; файлов настройки Xcode: $XCODE; сгенерированного кода базы: $GEN"

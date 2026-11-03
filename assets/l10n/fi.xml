@@ -3771,4 +3771,6 @@
     <string name="quotePeopleDesc">Lainauksen Lähettäjä, Vastaanottaja ja Kopio näkyvät tunnisteina ja kuvina; napautus avaa henkilökortin. Toimii, kun lainaus on avattu, joten viestit aukeavat yhtä nopeasti.</string>
     <string name="translateFrom">Käännä kielestä</string>
     <string name="translateMsgOther">Viesti toisella kielellä</string>
+    <string name="favoritesOrder">Ruutujen järjestys</string>
+    <string name="favoritesOrderHint">Vedä kohdetta oikealla olevasta kahvasta — valikon ruudut noudattavat tätä järjestystä.</string>
 </resources>

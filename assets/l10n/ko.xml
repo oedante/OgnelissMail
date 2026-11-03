@@ -3750,4 +3750,6 @@
     <string name="quotePeopleDesc">인용의 보낸 사람, 받는 사람, 참조가 사진이 있는 칩으로 표시되고 누르면 사람 카드가 열립니다. 인용을 펼쳤을 때만 작동하므로 메일 열기 속도는 그대로입니다.</string>
     <string name="translateFrom">원본 언어</string>
     <string name="translateMsgOther">다른 언어로 된 메일</string>
+    <string name="favoritesOrder">타일 순서</string>
+    <string name="favoritesOrderHint">오른쪽 핸들로 항목을 끌면 메뉴 타일이 이 순서를 따릅니다.</string>
 </resources>

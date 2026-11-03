@@ -3771,4 +3771,6 @@
     <string name="quotePeopleDesc">Fra, Til og Cc i citatet vises som mærker med portræt; tryk for at åbne personkortet. Virker, når citatet er foldet ud, så beskeder åbner lige så hurtigt.</string>
     <string name="translateFrom">Oversæt fra</string>
     <string name="translateMsgOther">Besked på et andet sprog</string>
+    <string name="favoritesOrder">Rækkefølge af felter</string>
+    <string name="favoritesOrderHint">Træk et punkt i håndtaget til højre — felterne i menuen følger denne rækkefølge.</string>
 </resources>

@@ -3771,4 +3771,6 @@
     <string name="quotePeopleDesc">Az idézet Feladó, Címzett és Másolat sora portrés címkékké válik; koppintással megnyílik a személy kártyája. Kinyitott idézetnél működik, a megnyitás nem lassul.</string>
     <string name="translateFrom">Fordítás erről</string>
     <string name="translateMsgOther">Más nyelvű üzenet</string>
+    <string name="favoritesOrder">Csempék sorrendje</string>
+    <string name="favoritesOrderHint">Húzza az elemet a jobb oldali fogantyúnál — a menü csempéi ezt a sorrendet követik.</string>
 </resources>

@@ -3792,4 +3792,6 @@
     <string name="quotePeopleDesc">מאת, אל ועותק בציטוט מוצגים כתגיות עם תמונה; הקשה פותחת את כרטיס האדם. פועל כשהציטוט מורחב, כך שפתיחת הודעות לא מואטת.</string>
     <string name="translateFrom">תרגום מ-</string>
     <string name="translateMsgOther">הודעה בשפה אחרת</string>
+    <string name="favoritesOrder">סדר האריחים</string>
+    <string name="favoritesOrderHint">גררו פריט בידית שמימין — האריחים בתפריט יופיעו בסדר הזה.</string>
 </resources>

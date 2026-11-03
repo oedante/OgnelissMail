@@ -3813,4 +3813,6 @@
     <string name="quotePeopleDesc">«От», «Кому» и «Копия» в цитате — плашками с портретом; нажатие открывает карточку человека. Работает, когда цитата раскрыта, — открытие писем не замедляется.</string>
     <string name="translateFrom">Перевести с</string>
     <string name="translateMsgOther">Письмо на другом языке</string>
+    <string name="favoritesOrder">Порядок плиток</string>
+    <string name="favoritesOrderHint">Перетащите пункт за ручку справа — в таком порядке плитки встанут в меню.</string>
 </resources>

@@ -3771,4 +3771,6 @@
     <string name="quotePeopleDesc">De, Para e Cc da citação viram etiquetas com retrato; toque para abrir o cartão da pessoa. Funciona com a citação aberta, sem deixar a abertura mais lenta.</string>
     <string name="translateFrom">Traduzir do</string>
     <string name="translateMsgOther">Mensagem em outro idioma</string>
+    <string name="favoritesOrder">Ordem dos blocos</string>
+    <string name="favoritesOrderHint">Arraste um item pela alça à direita — os blocos do menu seguem esta ordem.</string>
 </resources>

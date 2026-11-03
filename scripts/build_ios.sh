@@ -73,6 +73,20 @@ if [[ -f "$PBX.base" ]]; then
   fi
   echo "$NEW" > ios/Runner.xcodeproj/.base_seen
 fi
+# Остальные файлы, которые ведёт Xcode (схема, настройки рабочих
+# пространств, права виджетов, 1.10.5), лежат в архиве в ios/xcode-base/:
+# распаковка поверх папки их не перезаписывает. Своего файла нет (новая
+# папка) — берём копию оттуда; есть — не трогаем.
+if [[ -d ios/xcode-base ]]; then
+  while IFS= read -r f; do
+    f="${f#./}"
+    if [[ ! -e "ios/$f" ]]; then
+      mkdir -p "ios/$(dirname "$f")"
+      cp "ios/xcode-base/$f" "ios/$f"
+      echo "Создан ios/$f из ios/xcode-base"
+    fi
+  done < <(cd ios/xcode-base && find . -type f)
+fi
 # Языки iPhone (1.8.0): InfoPlist.strings и подписи виджетов на всех языках
 # приложения — недостающие дописываются в проект Xcode (остальное в нём не
 # трогается; копия прежнего — project.pbxproj.bak).

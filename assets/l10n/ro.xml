@@ -3792,4 +3792,6 @@
     <string name="quotePeopleDesc">De la, Către și Cc din citat devin etichete cu portret; atingeți pentru fișa persoanei. Funcționează când citatul e extins, deschiderea nu încetinește.</string>
     <string name="translateFrom">Tradu din</string>
     <string name="translateMsgOther">Mesaj în altă limbă</string>
+    <string name="favoritesOrder">Ordinea plăcilor</string>
+    <string name="favoritesOrderHint">Trageți un element de mânerul din dreapta — plăcile din meniu urmează această ordine.</string>
 </resources>

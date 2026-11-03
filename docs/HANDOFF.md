@@ -93,6 +93,11 @@ Message-ID черновика затирался enough_mail. Exchange на на
 в поле ввода (`TypingAwareShortcuts`). Тест скорости дат — лучший из пяти
 замеров. Тесты — `test/widget/mail_bar_layout_test.dart`.
 
+**1.10.5 (в работе, 03.11.2026).** Архив (`tool/dev/make_archive.sh`): файлы,
+которые ведёт Xcode (схема Runner, project.xcworkspace, xcshareddata
+рабочих пространств, OgnelissWidgets.entitlements), — в `ios/xcode-base/`, не
+на своих местах; `scripts/build_ios.sh` восстанавливает только отсутствующие.
+
 **1.10.4 (03.11.2026).** Контакты: «Закреплённые» и «VIP» — разными
 разделами (`splitTopContacts`). По журналу: ответ на приглашение при обрыве
 связи повторяется с SendResponse; поиск в адресной книге — не больше трёх

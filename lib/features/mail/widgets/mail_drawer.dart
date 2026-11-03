@@ -509,7 +509,8 @@ class MailDrawer extends ConsumerWidget {
       ));
     }
     return [
-      if (tiles.isNotEmpty) TileGrid(items: tiles),
+      // Порядок — из настройки избранного (1.10.5).
+      if (tiles.isNotEmpty) TileGrid(items: orderFavorites(tiles, (t) => t.id, ref.watch(favoriteOrderProvider))),
       if (!hidden.contains(DrawerQuickItem.theme))
         const Padding(
           padding: EdgeInsets.only(top: Space.xs, bottom: Space.s),
@@ -1712,6 +1713,35 @@ class _FavoritesEditor extends ConsumerWidget {
       );
     }
 
+    // Порядок плиток (1.10.5, просьба владельца 03.11.2026): все показанные
+    // плитки — в порядке меню (группы, разделы, избранные папки,
+    // «Настройки»); перетаскиванием за ручку — свой порядок.
+    final order = ref.watch(favoriteOrderProvider);
+    const drawerOrder = [
+      DrawerQuickItem.allAccounts, DrawerQuickItem.allMail, DrawerQuickItem.unread, DrawerQuickItem.flagged,
+      DrawerQuickItem.control, DrawerQuickItem.later, DrawerQuickItem.vip, DrawerQuickItem.attachments,
+      DrawerQuickItem.triage, DrawerQuickItem.myDay, DrawerQuickItem.fileHub, DrawerQuickItem.notes,
+      DrawerQuickItem.tasks,
+    ];
+    final quickByItem = {for (final q in quick) q.$1: q};
+    final starred = folders.where((f) => f.isFavorite).toList()
+      ..sort((a, b) => MailDrawer._localizedFolderName(a, l10n).toLowerCase()
+          .compareTo(MailDrawer._localizedFolderName(b, l10n).toLowerCase()));
+    final tilesNow = orderFavorites<({String key, IconData icon, String label})>([
+      for (final g in ref.watch(accountGroupsProvider))
+        (key: FavoriteIconOnlyNotifier.groupKey(g.id), icon: AppIcons.folder_shared, label: g.name),
+      for (final item in drawerOrder)
+        if (quickByItem[item] case final q? when !hidden.contains(item)) (key: item.name, icon: q.$2, label: q.$3),
+      for (final f in starred)
+        (
+          key: FavoriteIconOnlyNotifier.folderKey(f.accountId, f.id),
+          icon: folderIconOf(f),
+          label: MailDrawer._localizedFolderName(f, l10n),
+        ),
+      if (quickByItem[DrawerQuickItem.settings] case final q? when !hidden.contains(DrawerQuickItem.settings))
+        (key: DrawerQuickItem.settings.name, icon: q.$2, label: q.$3),
+    ], (e) => e.key, order);
+
     Iterable<Widget> folderRows(FolderModel f, int depth) sync* {
       yield ListTile(
         dense: true,
@@ -1771,6 +1801,56 @@ class _FavoritesEditor extends ConsumerWidget {
               ]),
             ),
           const Divider(height: 16),
+          // Порядок плиток (1.10.5).
+          if (tilesNow.length > 1) ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(Space.l, Space.xs, Space.s, 0),
+              child: Row(children: [
+                Expanded(
+                  child: Text(l10n.tr('favoritesOrder'),
+                      style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.primary)),
+                ),
+                if (order.isNotEmpty)
+                  TextButton(
+                    onPressed: () => unawaited(ref.read(favoriteOrderProvider.notifier).reset()),
+                    child: Text(l10n.tr('reset')),
+                  ),
+              ]),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.s),
+              child: Text(l10n.tr('favoritesOrderHint'), style: theme.textTheme.bodySmall),
+            ),
+            ReorderableListView.builder(
+              key: const ValueKey('favoritesOrderList'),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              buildDefaultDragHandles: false,
+              itemCount: tilesNow.length,
+              onReorderItem: (from, to) {
+                final keys = [for (final e in tilesNow) e.key];
+                keys.insert(to, keys.removeAt(from));
+                unawaited(ref.read(favoriteOrderProvider.notifier).set(keys));
+              },
+              itemBuilder: (context, i) {
+                final e = tilesNow[i];
+                return ListTile(
+                  key: ValueKey('favOrder_${e.key}'),
+                  dense: true,
+                  leading: Icon(e.icon),
+                  title: Text(e.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+                  trailing: ReorderableDragStartListener(
+                    index: i,
+                    child: const Padding(
+                      padding: EdgeInsets.all(Space.s),
+                      child: Icon(AppIcons.drag_handle),
+                    ),
+                  ),
+                );
+              },
+            ),
+            const Divider(height: 16),
+          ],
           Padding(
             padding: const EdgeInsets.fromLTRB(Space.l, Space.xs, Space.l, Space.xs),
             child: Text(l10n.tr('favoritesFolders'),

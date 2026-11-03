@@ -3771,4 +3771,6 @@
     <string name="quotePeopleDesc">Von, An und Cc im Zitat werden zu Feldern mit Porträt; Tippen öffnet die Personenkarte. Wirkt nur bei aufgeklapptem Zitat, Nachrichten öffnen so schnell wie bisher.</string>
     <string name="translateFrom">Übersetzen aus</string>
     <string name="translateMsgOther">Nachricht in einer anderen Sprache</string>
+    <string name="favoritesOrder">Reihenfolge der Kacheln</string>
+    <string name="favoritesOrderHint">Ziehen Sie einen Eintrag am Griff rechts — die Kacheln im Menü folgen dieser Reihenfolge.</string>
 </resources>

@@ -3771,4 +3771,6 @@
     <string name="quotePeopleDesc">उद्धरण में प्रेषक, प्राप्तकर्ता और प्रतिलिपि फ़ोटो वाले चिप बनते हैं; टैप करने पर व्यक्ति का कार्ड खुलता है। उद्धरण खोलने पर काम करता है, संदेश उतनी ही तेज़ी से खुलते हैं।</string>
     <string name="translateFrom">इससे अनुवाद करें</string>
     <string name="translateMsgOther">दूसरी भाषा में संदेश</string>
+    <string name="favoritesOrder">टाइलों का क्रम</string>
+    <string name="favoritesOrderHint">दाईं ओर के हैंडल से आइटम खींचें — मेनू की टाइलें इसी क्रम में आएँगी।</string>
 </resources>

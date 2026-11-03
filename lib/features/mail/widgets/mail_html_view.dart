@@ -157,14 +157,22 @@ class MailHtmlDocument {
       return (unit.toLowerCase() == 'pt' ? v * 4 / 3 : v).round();
     }
 
+    // Резиновая ширина в стиле элемента: «width:100%», «width:auto»,
+    // «max-width:100%» — атрибут width тогда не действует (1.10.3, письмо
+    // Google Cloud: <img width="640" style="width:100%"> делало письмо
+    // «шире экрана», и оно открывалось уменьшенным, хотя вёрстка резиновая).
+    final fluid = RegExp(r'(?<![-\w])(?:max-)?width\s*:\s*(?:\d+(?:\.\d+)?%|auto)', caseSensitive: false);
+
     int? widthOf(dom.Element e) {
-      final w = e.attributes['width']?.trim();
-      if (w != null && RegExp(r'^\d+(px)?$').hasMatch(w)) return int.tryParse(w.replaceAll('px', ''));
       final st = e.attributes['style'];
       if (st != null) {
+        // Стиль важнее атрибута: ширина в px/pt — она, в % или auto — нет.
         final m = cssWidth.firstMatch(st);
         if (m != null) return toPx(m.group(1)!, m.group(2)!);
+        if (fluid.hasMatch(st)) return null;
       }
+      final w = e.attributes['width']?.trim();
+      if (w != null && RegExp(r'^\d+(px)?$').hasMatch(w)) return int.tryParse(w.replaceAll('px', ''));
       return null;
     }
 
@@ -179,11 +187,41 @@ class MailHtmlDocument {
       consider(sum);
     }
     for (final st in body.querySelectorAll('style')) {
-      for (final m in cssWidth.allMatches(st.text)) {
+      // Без блоков @media: условие «(min-width:950px)» — не ширина
+      // элемента, а правила внутри — для другого размера экрана (настольные
+      // ширины или мобильные 100 %). Раньше «min-width:950px» из условия
+      // считалось шириной вёрстки 950 px (1.10.3, письмо Google Cloud).
+      for (final m in cssWidth.allMatches(_withoutMedia(st.text))) {
         consider(toPx(m.group(1)!, m.group(2)!));
       }
     }
     return best == 0 ? null : best;
+  }
+
+  /// CSS без блоков `@media … { … }` (со вложенными скобками).
+  static String _withoutMedia(String css) {
+    final low = css.toLowerCase();
+    if (!low.contains('@media')) return css;
+    final out = StringBuffer();
+    var i = 0;
+    while (i < css.length) {
+      final at = low.indexOf('@media', i);
+      if (at < 0) {
+        out.write(css.substring(i));
+        break;
+      }
+      out.write(css.substring(i, at));
+      final open = css.indexOf('{', at);
+      if (open < 0) break;
+      var depth = 0;
+      var j = open;
+      for (; j < css.length; j++) {
+        if (css[j] == '{') depth++;
+        if (css[j] == '}' && --depth == 0) break;
+      }
+      i = j + 1;
+    }
+    return out.toString();
   }
 
   /// [build] вне UI-изолята для крупного письма.

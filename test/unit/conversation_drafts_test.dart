@@ -53,6 +53,18 @@ void main() {
       expect(found(drafts, {'a1|INBOX:7': _link('INBOX:7', conv: 't1')}), ['Drafts:9']);
     });
 
+    test('найденный — с пометкой черновика; без превью — с текстом из связи', () {
+      final d = conversationReplyDrafts(
+        drafts: [_m('Drafts:9', folder: 'Drafts', subject: 'RE: Документы')],
+        conversation: conv,
+        accountId: 'a1',
+        conversationId: 't1',
+        replyDrafts: {'a1|INBOX:2': _link('INBOX:2')},
+      ).single;
+      expect(d.isDraft, isTrue);
+      expect(d.preview, 'Тест');
+    });
+
     test('свой черновик на устройстве — по parentId, и без связи', () {
       expect(found([_m('local-1', folder: 'drafts', subject: 'RE: Документы', parent: 'INBOX:1')], {}), ['local-1']);
     });

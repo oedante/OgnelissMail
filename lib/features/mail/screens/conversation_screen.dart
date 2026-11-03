@@ -145,9 +145,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     _drafts = db.watchDraftsLight(widget.accountId).map((rows) => [for (final r in rows) emailModelFromRow(r)]);
   }
 
-  /// Письма беседы и её черновики ответов, самое новое — первым. Черновик
-  /// без начала текста в строке (с сервера приходят только заголовки) —
-  /// с текстом из связи «письмо → черновик», как «Черновик: …» в ленте.
+  /// Письма беседы и её черновики ответов, самое новое — первым.
   List<EmailModel> _withDrafts(List<EmailModel> emails, List<EmailModel>? drafts, Map<String, ReplyDraft> links) {
     if (drafts == null || drafts.isEmpty) return emails;
     final found = conversationReplyDrafts(
@@ -158,22 +156,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       replyDrafts: links,
     );
     if (found.isEmpty) return emails;
-    String? textFor(EmailModel d) {
-      final bare = ReplyDraft.bareSubject(d.subject);
-      for (final l in links.values) {
-        if (l.accountId == d.accountId && ReplyDraft.bareSubject(l.subject) == bare) return l.text;
-      }
-      return null;
-    }
-
-    return [
-      ...emails,
-      for (final d in found)
-        d.copyWith(
-          isDraft: true,
-          bodyPreview: (d.bodyPreview ?? '').trim().isEmpty ? textFor(d) : d.bodyPreview,
-        ),
-    ]..sort((a, b) => b.receivedAt.compareTo(a.receivedAt));
+    return [...emails, ...found]..sort((a, b) => b.receivedAt.compareTo(a.receivedAt));
   }
 
   void _open(EmailModel e) {

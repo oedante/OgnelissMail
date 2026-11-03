@@ -711,16 +711,13 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       // беседа — находятся по связи «письмо → черновик», как в ленте.
       final drafts = await db.watchDraftsLight(widget.accountId).first;
       if (!mounted) return;
-      emails.addAll([
-        for (final d in conversationReplyDrafts(
-          drafts: [for (final r in drafts) notifier.rowToModel(r)],
-          conversation: emails,
-          accountId: widget.accountId,
-          conversationId: conversationId,
-          replyDrafts: ref.read(replyDraftsProvider),
-        ))
-          d.copyWith(isDraft: true),
-      ]);
+      emails.addAll(conversationReplyDrafts(
+        drafts: [for (final r in drafts) notifier.rowToModel(r)],
+        conversation: emails,
+        accountId: widget.accountId,
+        conversationId: conversationId,
+        replyDrafts: ref.read(replyDraftsProvider),
+      ));
       if (emails.length <= 1) return;
 
       safeSetState(() => _conversationEmails = emails);

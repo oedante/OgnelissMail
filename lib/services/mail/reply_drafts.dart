@@ -226,7 +226,9 @@ final draftSubjectsProvider = StreamProvider<Set<String>>((ref) {
 /// по связи «письмо → черновик» ([replyDrafts]: ответ на письмо беседы или
 /// на саму беседу) и теме, а свой черновик на устройстве — и по parentId.
 /// [drafts] — черновики ящика, [conversation] — письма беседы. Черновики,
-/// которые уже в беседе, не повторяются.
+/// которые уже в беседе, не повторяются. Найденные — с пометкой черновика и,
+/// если у строки нет превью (с сервера приходят только заголовки), с
+/// началом текста из связи — как «Черновик: …» в ленте.
 List<EmailModel> conversationReplyDrafts({
   required Iterable<EmailModel> drafts,
   required Iterable<EmailModel> conversation,
@@ -240,6 +242,16 @@ List<EmailModel> conversationReplyDrafts({
       if (d.accountId == accountId && (d.conversationId == conversationId || ids.contains(d.emailId)))
         ReplyDraft.bareSubject(d.subject),
   }..remove('');
+  String? textFor(EmailModel d) {
+    final bare = ReplyDraft.bareSubject(d.subject);
+    ReplyDraft? best;
+    for (final l in replyDrafts.values) {
+      if (l.accountId != d.accountId || ReplyDraft.bareSubject(l.subject) != bare) continue;
+      if (best == null || l.at.isAfter(best.at)) best = l;
+    }
+    return best?.text;
+  }
+
   final seen = <String>{};
   return [
     for (final e in drafts)
@@ -248,6 +260,9 @@ List<EmailModel> conversationReplyDrafts({
           seen.add(e.id) &&
           ((e.parentId != null && ids.contains(e.parentId)) ||
               subjects.contains(ReplyDraft.bareSubject(e.subject))))
-        e,
+        e.copyWith(
+          isDraft: true,
+          bodyPreview: (e.bodyPreview ?? '').trim().isEmpty ? textFor(e) : e.bodyPreview,
+        ),
   ];
 }

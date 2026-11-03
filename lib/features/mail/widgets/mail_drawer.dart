@@ -33,7 +33,6 @@ import '../../../l10n/app_localizations.dart';
 import '../../settings/providers/feature_flags_provider.dart';
 import '../../../data/database/app_database.dart';
 import '../../../services/mail/engine/mail_engine_service.dart';
-import '../../../services/mail/special_folders.dart';
 import '../../../services/mail/transport_capabilities.dart';
 import '../../../services/mail/folder_actions_service.dart';
 import '../../../data/models/account_model.dart';
@@ -66,6 +65,7 @@ import '../../../widgets/common/peek_card.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
 import '../../../widgets/common/tile_grid.dart';
 import '../../../core/utils/reorder_index.dart';
+import '../providers/folder_names.dart';
 
 class MailDrawer extends ConsumerWidget {
   /// Панель на широком окне (1.6.28): стоит слева от ленты постоянно, а не
@@ -1335,27 +1335,8 @@ class MailDrawer extends ConsumerWidget {
     // по мере загрузки.
   }
 
-  static String _localizedFolderName(FolderModel folder, AppLocalizations l10n) {
-    // Маппинг по ТИПУ папки (надёжно), а не по точному имени с сервера —
-    // сервер может отдавать 'Sent'/'Отправлено'/'Trash'/'Корзина'/'Bin' и т.п.
-    switch (folder.type) {
-      case FolderType.inbox:   return l10n.inbox;
-      case FolderType.sent:    return l10n.tr('sent');
-      case FolderType.drafts:  return l10n.tr('drafts');
-      case FolderType.trash:   return l10n.tr('trash');
-      // «Спам» и «Архив» — своим названием, только если у папки стандартное
-      // имя на каком-нибудь языке: выбранная вручную «Старое» (1.7.2+106)
-      // так и называется «Старое».
-      case FolderType.junk:
-        return SpecialFolders.typeByName(folder.displayName) == FolderType.junk ? l10n.tr('junk') : folder.displayName;
-      case FolderType.archive:
-        return SpecialFolders.typeByName(folder.displayName) == FolderType.archive
-            ? l10n.tr('archive')
-            : folder.displayName;
-      case FolderType.outbox:  return l10n.tr('outbox');
-      case FolderType.custom:  return folder.displayName; // пользовательская — как на сервере
-    }
-  }
+  static String _localizedFolderName(FolderModel folder, AppLocalizations l10n) =>
+      localizedFolderName(folder, l10n);
 }
 
 /// Дерево папок: дети по родителю, корни и непрочитанные с подпапками.

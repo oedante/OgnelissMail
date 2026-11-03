@@ -620,6 +620,7 @@ a{color:#1D4F91;}
 /* Дата в тексте (1.9.x, DateLinks): цвет текста, подчёркнута пунктиром —
    нажимается, но не спорит с оформлением письма. */
 a[href^="ogdate:"]{color:inherit !important;text-decoration:underline dotted !important;text-underline-offset:2px;}
+a[href^="ogperson:"]{color:inherit !important;text-decoration:none !important;background:rgba(128,128,128,.16);border-radius:10px;padding:0 7px;white-space:nowrap;}
 blockquote{margin:8px 0 8px 4px;padding-left:10px;border-left:3px solid #c7cdd6;color:#4a4f57;}
 /* Слитные рамки — у таблиц без cellspacing (Outlook, 1С); у рассылок
    cellspacing задаёт промежутки между ячейками (1.8.14: раньше слипались).

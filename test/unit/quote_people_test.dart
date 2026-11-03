@@ -35,10 +35,13 @@ void main() {
         '<b>Отправлено:</b> среда, 28 октября 2026 г. 18:00<br>'
         '<b>Кому:</b> Олег Ермишин &lt;oedante@gmail.com&gt;<br>'
         '<b>Тема:</b> Re: EAS Client</p></div><p>Hi Oleg</p>';
-    final out = QuotePeople.enrich(html, photoFor: (e) => e == 'oedante@gmail.com' ? 'data:image/png;base64,AAAA' : null);
-    expect(RegExp('class="ogperson"').allMatches(out).length, 2);
-    expect(out, contains('href="ogperson:rkowal%40microsoft.com?n=Rob+Kowal+%28CELA%29"'));
-    expect(out, contains('src="data:image/png;base64,AAAA"'));
+    final out = QuotePeople.enrich(html);
+    expect(RegExp('href="ogperson:').allMatches(out).length, 2);
+    expect(out, contains('<a href="ogperson:rkowal%40microsoft.com?n=Rob+Kowal+%28CELA%29">Rob Kowal (CELA)</a>'));
+    // Простые ссылки, без вёрстки (1.10.4): письмо остаётся «простым» и
+    // показывается виджетами — плашки рисует экран письма.
+    expect(out, isNot(contains('inline-block')));
+    expect(out, isNot(contains('<img')));
     expect(out, contains('среда, 28 октября 2026 г. 18:00'));
     expect(out, contains('Re: EAS Client'));
     expect(out, contains('Hi Oleg'));
@@ -51,9 +54,11 @@ void main() {
         '<b>To:</b> Москотов Сергей &lt;sergey.moskotov@yamalspg.ru&gt;; Утешев Сергей &lt;Sergey.Uteshev@yamalspg.ru&gt;<br>'
         '<b>Cc:</b> Ермишин Олег Андреевич &lt;o.ermishin@yamalspg.ru&gt;</span></p>';
     final out = QuotePeople.enrich(html);
-    expect(RegExp('class="ogperson"').allMatches(out).length, 4);
-    // Без адреса — плашка без ссылки.
-    expect(out, contains('<span class="ogperson"'));
+    expect(RegExp('href="ogperson:').allMatches(out).length, 4);
+    // Без адреса — ссылка без адреса: плашка без карточки.
+    expect(out, contains('<a href="ogperson:?n=%D0%A5%D0%B0%D0%B1%D0%B8%D1%80%D0%BE%D0%B2'));
+    expect(QuotePeople.fromLink('ogperson:?n=%D0%A5'), isNull);
+    expect(QuotePeople.nameOf('ogperson:?n=%D0%A5'), 'Х');
     expect(out, contains('Thursday, October 29, 2026 8:08 AM'));
   });
 
@@ -63,7 +68,7 @@ void main() {
         '<span dir="auto">&lt;<a href="mailto:noreply@github.com">noreply@github.com</a>&gt;</span><br>'
         'Date: Fri, Oct 30, 2026<br>To: &lt;<a href="mailto:oedante@gmail.com">oedante@gmail.com</a>&gt;<br></div>';
     final out = QuotePeople.enrich(html);
-    expect(RegExp('class="ogperson"').allMatches(out).length, 2);
+    expect(RegExp('href="ogperson:').allMatches(out).length, 2);
     expect(out, contains('ogperson:noreply%40github.com?n=GitHub'));
     expect(out, isNot(contains('href="mailto:')));
     expect(out, contains('Date: Fri, Oct 30, 2026'));

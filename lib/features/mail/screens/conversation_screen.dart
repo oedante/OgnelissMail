@@ -56,6 +56,7 @@ import '../providers/drawer_prefs.dart' show convChatOrderProvider, quickReplyBa
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
 import '../../../services/notifications/account_notify_mode.dart' show ConversationNotify;
 import '../providers/conversation_mute.dart';
+import '../../../services/mail/reply_drafts.dart' show ReplyDraft, conversationReplyDrafts, replyDraftsProvider;
 import '../../../widgets/ui/app_menu_button.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import '../../../core/theme/appearance.dart' show AppearanceLook, ListDensity;
@@ -130,13 +131,49 @@ class ConversationScreen extends ConsumerStatefulWidget {
 
 class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   late final Stream<_ConvRows> _stream;
+
+  /// Черновики ящика (1.10.5): черновик ответа — в беседе, хоть на сервере
+  /// у него своя беседа (conversationReplyDrafts).
+  late final Stream<List<EmailModel>> _drafts;
   bool _busy = false;
 
   @override
   void initState() {
     super.initState();
-    _stream = _watchConversation(
-        ref.read(databaseProvider), widget.conversationId, widget.accountId);
+    final db = ref.read(databaseProvider);
+    _stream = _watchConversation(db, widget.conversationId, widget.accountId);
+    _drafts = db.watchDraftsLight(widget.accountId).map((rows) => [for (final r in rows) emailModelFromRow(r)]);
+  }
+
+  /// Письма беседы и её черновики ответов, самое новое — первым. Черновик
+  /// без начала текста в строке (с сервера приходят только заголовки) —
+  /// с текстом из связи «письмо → черновик», как «Черновик: …» в ленте.
+  List<EmailModel> _withDrafts(List<EmailModel> emails, List<EmailModel>? drafts, Map<String, ReplyDraft> links) {
+    if (drafts == null || drafts.isEmpty) return emails;
+    final found = conversationReplyDrafts(
+      drafts: drafts,
+      conversation: emails,
+      accountId: widget.accountId,
+      conversationId: widget.conversationId,
+      replyDrafts: links,
+    );
+    if (found.isEmpty) return emails;
+    String? textFor(EmailModel d) {
+      final bare = ReplyDraft.bareSubject(d.subject);
+      for (final l in links.values) {
+        if (l.accountId == d.accountId && ReplyDraft.bareSubject(l.subject) == bare) return l.text;
+      }
+      return null;
+    }
+
+    return [
+      ...emails,
+      for (final d in found)
+        d.copyWith(
+          isDraft: true,
+          bodyPreview: (d.bodyPreview ?? '').trim().isEmpty ? textFor(d) : d.bodyPreview,
+        ),
+    ]..sort((a, b) => b.receivedAt.compareTo(a.receivedAt));
   }
 
   void _open(EmailModel e) {
@@ -456,10 +493,16 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     final theme = Theme.of(context);
     final chat = ref.watch(convChatOrderProvider);
     final quickReply = ref.watch(quickReplyBarProvider);
-    return StreamBuilder<_ConvRows>(
+    final links = ref.watch(replyDraftsProvider);
+    return StreamBuilder<List<EmailModel>>(
+      stream: _drafts,
+      builder: (context, draftSnap) => StreamBuilder<_ConvRows>(
       stream: _stream,
       builder: (context, snap) {
+        // Письма беседы — для «Прочитать все», «Удалить беседу», ответа
+        // внизу; показ — с черновиками ответов (1.10.5).
         final emails = snap.data?.emails;
+        final shown = emails == null ? null : _withDrafts(emails, draftSnap.data, links);
         final copies = snap.data?.copies ?? const <String, List<EmailModel>>{};
         final subject = (emails != null && emails.isNotEmpty) ? emails.first.subject : '';
         final target = emails == null ? null : _replyTarget(emails);
@@ -474,7 +517,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         // Письмо [i] (самое новое — 0) карточкой; над ним — подпись дня,
         // если день сменился (в порядке показа).
         Widget messageAt(int i) {
-          final list = emails!;
+          final list = shown!;
           final e = list[i];
           final mine = own.contains(e.from.email.trim().toLowerCase());
           // Над письмом в показе: в «чате» — более старое (i + 1), иначе —
@@ -483,10 +526,13 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           final newDay = neighbour == null || !_sameDay(neighbour.receivedAt, e.receivedAt);
           // Свайпы в беседе — свой набор (Настройки → Свайпы → «В беседе»),
           // удержание — карточка с действиями.
+          // Черновик — без свайпов и карточки действий: нажатие открывает
+          // редактор, удалить — там же или в «Черновиках».
+          final draft = e.isDraft || e.folderId == 'drafts';
           final card = Slidable(
             key: ValueKey('conv_${e.accountId}_${e.id}'),
-            startActionPane: _pane(settings.swipeConvLeft, e, l10n, fromStart: true),
-            endActionPane: _pane(settings.swipeConvRight, e, l10n, fromStart: false),
+            startActionPane: draft ? null : _pane(settings.swipeConvLeft, e, l10n, fromStart: true),
+            endActionPane: draft ? null : _pane(settings.swipeConvRight, e, l10n, fromStart: false),
             // Касание — письмо читается из базы заранее (тело готовится при
             // нажатии).
             child: Listener(
@@ -502,7 +548,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   onTap: () => _open(e),
                   // Карточка письма с быстрыми действиями, как в ленте
                   // (1.6.30); полный список — «Ещё…».
-                  onLongPress: () => _peek(cardCtx, e, l10n),
+                  onLongPress: draft ? null : () => _peek(cardCtx, e, l10n),
                 ),
               ),
             ),
@@ -520,7 +566,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         final header = Padding(
           padding: const EdgeInsets.fromLTRB(Space.xs, 0, Space.xs, Space.s),
           child: Text(
-            l10n.tr('convCount').replaceAll('{n}', '${emails?.length ?? 0}'),
+            l10n.tr('convCount').replaceAll('{n}', '${shown?.length ?? 0}'),
             style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
         );
@@ -586,9 +632,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 preferredSize: const Size.fromHeight(2),
                 child: SizedBox(height: 2, child: _busy ? const LinearProgressIndicator(minHeight: 2) : null)),
           )),
-          body: emails == null
+          body: shown == null
               ? const Center(child: CircularProgressIndicator())
-              : emails.isEmpty
+              : shown.isEmpty
                   ? Center(
                       child: Padding(
                         padding: const EdgeInsets.all(Space.xxl),
@@ -602,11 +648,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                         reverse: chat,
                         // Шире: меньше полей по краям (замечание 07.10.2026).
                         padding: const EdgeInsets.fromLTRB(Space.s, Space.s, Space.s, Space.xl),
-                        itemCount: emails.length + 1,
+                        itemCount: shown.length + 1,
                         separatorBuilder: (_, __) => const SizedBox(height: Space.xs),
                         itemBuilder: (context, i) {
                           // Счётчик писем — вверху экрана в обоих порядках.
-                          if (chat) return i == emails.length ? header : messageAt(i);
+                          if (chat) return i == shown.length ? header : messageAt(i);
                           return i == 0 ? header : messageAt(i - 1);
                         },
                       ),
@@ -628,6 +674,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 ),
         );
       },
+      ),
     );
   }
 }
@@ -750,14 +797,30 @@ class _MessageCard extends StatelessWidget {
                             decoration: BoxDecoration(color: scheme.primary, shape: BoxShape.circle),
                           ),
                         Expanded(
-                          child: Text(
-                            name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: unread ? FontWeight.w700 : FontWeight.w500,
-                            ),
-                          ),
+                          // Черновик ответа (1.10.5) — как в ленте: «Черновик»
+                          // цветом ошибки и кому.
+                          child: (email.isDraft || email.folderId == 'drafts')
+                              ? Text.rich(
+                                  TextSpan(children: [
+                                    TextSpan(
+                                      text: AppLocalizations.of(context).tr('draft'),
+                                      style: TextStyle(color: scheme.error),
+                                    ),
+                                    if (email.to.isNotEmpty)
+                                      TextSpan(text: '  ${email.to.map((a) => a.label).join(', ')}'),
+                                  ]),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
+                                )
+                              : Text(
+                                  name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    fontWeight: unread ? FontWeight.w700 : FontWeight.w500,
+                                  ),
+                                ),
                         ),
                         if (email.hasAttachments)
                           Padding(

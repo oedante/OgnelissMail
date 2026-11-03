@@ -20,6 +20,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart' show Variable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/models/email_model.dart' show EmailModel;
 import '../../data/models/folder_model.dart' show FolderType;
 import '../../data/providers/database_provider.dart';
 import '../../data/providers/shared_prefs_provider.dart';
@@ -216,3 +217,37 @@ final draftSubjectsProvider = StreamProvider<Set<String>>((ref) {
       .watch()
       .map((rows) => {for (final r in rows) ReplyDraft.bareSubject(r.read<String>('s'))});
 });
+
+/// Черновики ответов в беседе (1.10.5, замечание владельца 03.11.2026: «в
+/// беседах не отображаются черновики. В ленте черновик видно, в папке
+/// черновик есть, а в беседе он отсутствует»). Черновик ответа хранится на
+/// сервере без заголовков ответа — у него своя беседа, и по conversationId
+/// он в эту не попадает. Находится он так же, как «Черновик: …» в ленте:
+/// по связи «письмо → черновик» ([replyDrafts]: ответ на письмо беседы или
+/// на саму беседу) и теме, а свой черновик на устройстве — и по parentId.
+/// [drafts] — черновики ящика, [conversation] — письма беседы. Черновики,
+/// которые уже в беседе, не повторяются.
+List<EmailModel> conversationReplyDrafts({
+  required Iterable<EmailModel> drafts,
+  required Iterable<EmailModel> conversation,
+  required String accountId,
+  required String conversationId,
+  required Map<String, ReplyDraft> replyDrafts,
+}) {
+  final ids = {for (final e in conversation) e.id};
+  final subjects = {
+    for (final d in replyDrafts.values)
+      if (d.accountId == accountId && (d.conversationId == conversationId || ids.contains(d.emailId)))
+        ReplyDraft.bareSubject(d.subject),
+  }..remove('');
+  final seen = <String>{};
+  return [
+    for (final e in drafts)
+      if (e.accountId == accountId &&
+          !ids.contains(e.id) &&
+          seen.add(e.id) &&
+          ((e.parentId != null && ids.contains(e.parentId)) ||
+              subjects.contains(ReplyDraft.bareSubject(e.subject))))
+        e,
+  ];
+}

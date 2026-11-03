@@ -20,6 +20,7 @@ import '../widgets/unsubscribe_banner.dart';
 import '../widgets/booking_card.dart';
 import '../widgets/control_sheet.dart';
 import '../../../services/mail/unsubscribe_service.dart' show encodeListUnsubscribe;
+import '../../../services/mail/reply_drafts.dart' show conversationReplyDrafts, replyDraftsProvider;
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditorForEmail;
 import '../../../core/utils/text_safe.dart';
 import '../../../core/utils/symbol_fonts.dart';
@@ -701,11 +702,26 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         accountId: widget.accountId,
       );
 
-      if (!mounted || rows.length <= 1) return;
+      if (!mounted) return;
       // ref после await — только пока экран открыт.
       // Конвертируем через публичный метод
       final notifier = ref.read(emailsProvider.notifier);
       final emails = rows.map((r) => notifier.rowToModel(r)).toList();
+      // Черновики ответов этой беседы (1.10.5): на сервере у них своя
+      // беседа — находятся по связи «письмо → черновик», как в ленте.
+      final drafts = await db.watchDraftsLight(widget.accountId).first;
+      if (!mounted) return;
+      emails.addAll([
+        for (final d in conversationReplyDrafts(
+          drafts: [for (final r in drafts) notifier.rowToModel(r)],
+          conversation: emails,
+          accountId: widget.accountId,
+          conversationId: conversationId,
+          replyDrafts: ref.read(replyDraftsProvider),
+        ))
+          d.copyWith(isDraft: true),
+      ]);
+      if (emails.length <= 1) return;
 
       safeSetState(() => _conversationEmails = emails);
     } catch (e) {
@@ -1838,6 +1854,12 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 emails: _conversationEmails!,
                 currentEmailId: email.id,
                 onEmailTap: (e) {
+                  // Черновик — в редактор, как из «Черновиков».
+                  if (e.isDraft) {
+                    context.push('/compose?draftId=${Uri.encodeQueryComponent(e.id)}'
+                        '&accountId=${Uri.encodeQueryComponent(e.accountId)}');
+                    return;
+                  }
                   context.push(mailOpenPath(context, e.id, accountId: e.accountId));
                 },
               ),

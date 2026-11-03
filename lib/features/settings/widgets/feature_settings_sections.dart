@@ -11,6 +11,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/ui/action_sheet.dart';
 import '../../../core/theme/app_icons.dart';
@@ -43,8 +44,26 @@ class ExperimentalKeys {
 
   // ── «Экспериментальный функционал» (1.10.3): по умолчанию выключено ──
 
-  /// Люди в шапках цитат — плашками с портретом (QuotePeople).
+  /// Люди в шапках цитат — выключатель 1.10.3–1.10.4 (в «Экспериментальном»,
+  /// по умолчанию выключено). С 1.10.5 — [quotePeopleNames]; выключенный
+  /// вручную остаётся выключенным (quotePeopleMode).
   static const quotePeople = 'exp_quote_people';
+
+  /// Люди в шапках цитат (1.10.5, «Почта → Работа с письмами»): имена
+  /// «Фамилия И.О.», полностью или выключено — QuotePeopleMode.name.
+  static const quotePeopleNames = 'quote_people_names';
+}
+
+/// Люди в шапках цитат (1.10.5, просьба владельца 03.11.2026: «режим
+/// распознавания можно включить по умолчанию… два варианта "Фамилия И.О."
+/// или "Фамилия И." и полный вариант. По умолчанию сокращённый»).
+enum QuotePeopleMode { short, full, off }
+
+QuotePeopleMode quotePeopleMode(SharedPreferences p) {
+  final v = p.getString(ExperimentalKeys.quotePeopleNames);
+  final m = QuotePeopleMode.values.where((e) => e.name == v).firstOrNull;
+  if (m != null) return m;
+  return p.getBool(ExperimentalKeys.quotePeople) == false ? QuotePeopleMode.off : QuotePeopleMode.short;
 }
 
 mixin _Prefs<T extends ConsumerStatefulWidget> on ConsumerState<T> {
@@ -96,9 +115,41 @@ class _MailWorkSectionState extends ConsumerState<MailWorkSection> with _Prefs {
     if (mounted) setState(() {});
   }
 
+  static const _quoteModeLabel = {
+    QuotePeopleMode.short: 'quotePeopleShort',
+    QuotePeopleMode.full: 'quotePeopleFull',
+    QuotePeopleMode.off: 'disabled',
+  };
+  static const _quoteModeDesc = {
+    QuotePeopleMode.short: 'quotePeopleShortDesc',
+    QuotePeopleMode.full: 'quotePeopleFullDesc',
+    QuotePeopleMode.off: 'quotePeopleOffDesc',
+  };
+
+  Future<void> _pickQuotePeople(AppLocalizations l10n) async {
+    final cur = quotePeopleMode(ref.read(sharedPrefsProvider));
+    final picked = await showActionSheet<QuotePeopleMode>(
+      context,
+      title: l10n.tr('quotePeopleTitle'),
+      items: [
+        for (final m in QuotePeopleMode.values)
+          ActionSheetItem(
+            icon: m == cur ? AppIcons.radio_button_checked : AppIcons.radio_button_unchecked,
+            label: l10n.tr(_quoteModeLabel[m]!),
+            subtitle: l10n.tr(_quoteModeDesc[m]!),
+            value: m,
+          ),
+      ],
+    );
+    if (picked == null || !mounted) return;
+    await ref.read(sharedPrefsProvider).setString(ExperimentalKeys.quotePeopleNames, picked.name);
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final quoteMode = quotePeopleMode(ref.read(sharedPrefsProvider));
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       SettingsSectionTitle(l10n.tr('expSectionMail')),
       SettingsGroup(children: [
@@ -108,6 +159,15 @@ class _MailWorkSectionState extends ConsumerState<MailWorkSection> with _Prefs {
           subtitle: l10n.tr('recip_${_recipLayout.name}'),
           hint: l10n.tr('expRecipHint'),
           onTap: () => unawaited(_pickRecipLayout(l10n)),
+        ),
+        // Люди в шапках цитат (1.10.5: из «Экспериментального», включено).
+        SettingsItem(
+          key: const ValueKey('quote_people_names'),
+          icon: AppIcons.groups,
+          title: l10n.tr('quotePeopleTitle'),
+          subtitle: l10n.tr(_quoteModeLabel[quoteMode]!),
+          hint: l10n.tr('quotePeopleDesc'),
+          onTap: () => unawaited(_pickQuotePeople(l10n)),
         ),
         SettingsSwitchItem(
           icon: AppIcons.rule,

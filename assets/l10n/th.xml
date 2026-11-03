@@ -3748,6 +3748,12 @@
     <string name="experimentalIntro">ฟีเจอร์ใหม่ที่กำลังทดลอง ปิดไว้เป็นค่าเริ่มต้น อาจเปลี่ยนแปลง ย้ายไปยังการตั้งค่าหลัก หรือถูกนำออก</string>
     <string name="quotePeopleTitle">บุคคลในหัวข้อข้อความที่อ้างถึง</string>
     <string name="quotePeopleDesc">ผู้ส่ง ผู้รับ และสำเนาในข้อความที่อ้างถึงแสดงเป็นป้ายพร้อมรูป แตะเพื่อเปิดการ์ดบุคคล ทำงานเมื่อขยายข้อความที่อ้างถึง การเปิดอีเมลจึงยังเร็วเหมือนเดิม</string>
+    <string name="quotePeopleShort">นามสกุลและอักษรย่อ</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I. (ถ้าไม่มีชื่อบิดา: Ivanov I.)</string>
+    <string name="quotePeopleFull">ชื่อเต็ม</string>
+    <string name="quotePeopleFullDesc">ตามในข้อความ: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">ผู้ส่ง ผู้รับ และสำเนาในข้อความที่อ้างถึงแสดงเป็นข้อความตามเดิม</string>
+    <string name="experimentalEmpty">ขณะนี้ไม่มีฟีเจอร์ที่อยู่ระหว่างทดลอง ฟีเจอร์ใหม่จะปรากฏที่นี่</string>
     <string name="translateFrom">แปลจาก</string>
     <string name="translateMsgOther">ข้อความเป็นภาษาอื่น</string>
     <string name="favoritesOrder">ลำดับไทล์</string>

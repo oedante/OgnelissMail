@@ -3769,6 +3769,12 @@
     <string name="experimentalIntro">Nye funksjoner vi prøver ut. De er slått av som standard og kan endres, flyttes til de vanlige innstillingene eller fjernes.</string>
     <string name="quotePeopleTitle">Personer i siterte overskrifter</string>
     <string name="quotePeopleDesc">Fra, Til og Kopi i sitatet vises som merker med portrett; trykk for å åpne personkortet. Virker når sitatet er utvidet, så meldinger åpnes like raskt.</string>
+    <string name="quotePeopleShort">Etternavn og initialer</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; uten farsnavn Ivanov I.</string>
+    <string name="quotePeopleFull">Fullt navn</string>
+    <string name="quotePeopleFullDesc">Som i meldingen: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">Fra, Til og Kopi i sitatet forblir tekst som i meldingen</string>
+    <string name="experimentalEmpty">Ingenting er på prøve nå — nye funksjoner vises her.</string>
     <string name="translateFrom">Oversett fra</string>
     <string name="translateMsgOther">Melding på et annet språk</string>
     <string name="favoritesOrder">Rekkefølge på fliser</string>

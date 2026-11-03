@@ -75,7 +75,7 @@ import '../../../services/security/smime_service.dart' show smimeServiceProvider
 import '../../settings/providers/categories_provider.dart';
 import '../../../features/settings/providers/settings_provider.dart';
 import '../../../features/settings/providers/feature_flags_provider.dart';
-import '../../settings/widgets/feature_settings_sections.dart' show ExperimentalKeys;
+import '../../settings/widgets/feature_settings_sections.dart' show ExperimentalKeys, QuotePeopleMode, quotePeopleMode;
 import '../widgets/linkified_text.dart';
 import '../widgets/mail_clipped_bar.dart';
 import '../widgets/mail_native_body.dart';
@@ -1096,15 +1096,18 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     return (h) => build(h, dates: dates);
   }
 
-  /// Люди в шапках цитат (1.10.3, «Экспериментальный функционал», по
-  /// умолчанию выключено): только когда цитата раскрыта — открытие письма
-  /// не замедляется. Разбор — в изоляте, как подготовка документа; не
-  /// вышло — письмо как есть.
+  /// Люди в шапках цитат (1.10.3; с 1.10.5 включено, имена «Фамилия
+  /// И.О.» или полностью — «Почта → Работа с письмами»): только когда
+  /// цитата раскрыта — открытие письма не замедляется. Разбор — в изоляте,
+  /// как подготовка документа; не вышло — письмо как есть.
   Future<String> _withQuotePeople(String html, {required bool quoteShown}) async {
-    if (!quoteShown || !(ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.quotePeople) ?? false)) return html;
+    if (!quoteShown) return html;
+    final mode = quotePeopleMode(ref.read(sharedPrefsProvider));
+    if (mode == QuotePeopleMode.off) return html;
     final sw = Stopwatch()..start();
     try {
-      final out = await MailBodyProcessor.heavy(html, QuotePeople.enrich);
+      final out = await MailBodyProcessor.heavy(
+          html, mode == QuotePeopleMode.short ? QuotePeople.enrichShort : QuotePeople.enrich);
       AppLogger.debug('Люди в цитате: ${sw.elapsedMilliseconds} мс');
       return out;
     } catch (e) {

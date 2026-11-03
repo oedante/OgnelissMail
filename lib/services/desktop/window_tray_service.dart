@@ -34,6 +34,17 @@ class WindowTrayService {
         await windowManager.show();
         await windowManager.focus();
       });
+      // Linux: у окна GTK из `flutter create` значка нет — панель задач
+      // показывала общий. Windows и macOS берут значок из программы (ставит
+      // сборка поверх стандартного значка Flutter). 1.10.5, замечание
+      // владельца 03.11.2026: «значок стандартный, а не приложения».
+      if (Platform.isLinux) {
+        try {
+          await windowManager.setIcon('assets/icons/window_icon.png');
+        } catch (e) {
+          AppLogger.warning('Window icon: $e');
+        }
+      }
 
       // «Закрыть = свернуть в трей» включаем ТОЛЬКО если трей поднялся.
       // Раньше перехват закрытия ставился до инициализации трея: не нашлась
@@ -61,6 +72,7 @@ class WindowTrayService {
             'windows\\runner\\resources\\app_icon.ico',
           ]
         : [
+            '$exeDir/data/flutter_assets/assets/icons/window_icon.png',
             '$exeDir/data/flutter_assets/assets/icons/app_icon.png',
             'assets/icons/app_icon.png',
           ];

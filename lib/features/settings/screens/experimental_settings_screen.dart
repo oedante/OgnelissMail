@@ -11,12 +11,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
-import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/readable_width.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
-import '../widgets/feature_settings_sections.dart' show ExperimentalKeys;
 
 class ExperimentalSettingsScreen extends ConsumerStatefulWidget {
   const ExperimentalSettingsScreen({super.key});
@@ -26,12 +24,8 @@ class ExperimentalSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _ExperimentalSettingsScreenState extends ConsumerState<ExperimentalSettingsScreen> {
-  bool _on(String key) => ref.read(sharedPrefsProvider).getBool(key) ?? false;
-
-  Future<void> _set(String key, bool v) async {
-    await ref.read(sharedPrefsProvider).setBool(key, v);
-    if (mounted) setState(() {});
-  }
+  // Выключатель функции на пробе: ref.read(sharedPrefsProvider).getBool(key)
+  // ?? false и SettingsSwitchItem (как у «Людей в цитатах» в 1.10.3).
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +43,17 @@ class _ExperimentalSettingsScreenState extends ConsumerState<ExperimentalSetting
               child: Text(l10n.tr('experimentalIntro'),
                   style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
             ),
+            // «Люди в цитатах» (1.10.3) с 1.10.5 включены по умолчанию и
+            // перешли в «Почта → Работа с письмами» (решение владельца
+            // 03.11.2026). Новые функции на пробе — здесь, выключателями.
             SettingsGroup(children: [
-              // Люди в шапках цитат (просьба владельца 02.11.2026).
-              SettingsSwitchItem(
-                key: const ValueKey('exp_quotePeople'),
-                icon: AppIcons.groups,
-                title: l10n.tr('quotePeopleTitle'),
-                subtitle: l10n.tr('quotePeopleDesc'),
-                value: _on(ExperimentalKeys.quotePeople),
-                onChanged: (v) => _set(ExperimentalKeys.quotePeople, v),
+              Padding(
+                padding: const EdgeInsets.all(Space.m),
+                child: Row(children: [
+                  Icon(AppIcons.science, color: theme.colorScheme.onSurfaceVariant),
+                  const SizedBox(width: Space.m),
+                  Expanded(child: Text(l10n.tr('experimentalEmpty'), style: theme.textTheme.bodyMedium)),
+                ]),
               ),
             ]),
           ],

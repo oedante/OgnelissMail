@@ -3,7 +3,7 @@
 // - PIN-блокировка (overlay)
 // - Keyboard shortcuts (desktop)
 // - Focus mode indicator
-// - Adaptive: phone=BottomNav, tablet=Rail, desktop=Rail+extended
+// - Adaptive: phone=BottomNav, tablet и desktop=узкий Rail с подписями
 // - Attachment hub в FAB
 // - Sync progress
 
@@ -295,11 +295,16 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
                   NavigationRail(
                     selectedIndex: _currentIndex,
                     onDestinationSelected: _onTabChanged,
-                    // Развёрнутая панель — только когда места достаточно; на
-                    // узком окне Windows она съедала треть ширины.
-                    extended: screenWidth >= 1200,
-                    minWidth: 56,
-                    minExtendedWidth: 200,
+                    // Узкая полоса с подписью под значком — всегда (1.10.5,
+                    // замечание владельца 03.11.2026: «боковая панель слева
+                    // занимает слишком много места»). Развёрнутая панель с
+                    // подписями справа на окне от 1200 занимала ~230 точек
+                    // ради четырёх пунктов — теперь ~72, остальное — ленте и
+                    // письму. Как у Outlook и Gmail на компьютере.
+                    extended: false,
+                    labelType: NavigationRailLabelType.all,
+                    minWidth: 72,
+                    groupAlignment: -1,
                     // Низкое окно (телефон боком с «Поворотом экрана», узкое
                     // окно компьютера, 1.8.13): разделы прокручиваются, а
                     // «Написать» и нижние значки остаются на месте. Раньше

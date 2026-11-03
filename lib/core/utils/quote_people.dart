@@ -19,6 +19,8 @@
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
 
+import 'person_name.dart';
+
 
 /// Человек из строки шапки: адрес может отсутствовать (внутренний Exchange).
 class QuotePerson {
@@ -91,9 +93,13 @@ class QuotePeople {
   static String _cleanName(String s) =>
       s.replaceAll(RegExp(r'\s+'), ' ').replaceAll(RegExp(r'''^[\s,;'"]+|[\s,;'"]+$'''), '').trim();
 
+  /// То же, что [enrich], с краткими именами: «Фамилия И.О.» (1.10.5, по
+  /// умолчанию). Полное имя остаётся в ссылке — для карточки человека.
+  static String enrichShort(String html) => enrich(html, shortNames: true);
+
   /// Шапки цитат в [html] — ссылками на людей (плашки рисует экран письма).
   /// Ничего не нашлось — исходный HTML.
-  static String enrich(String html) {
+  static String enrich(String html, {bool shortNames = false}) {
     if (!_mayHaveHeaders(html)) return html;
     final doc = html_parser.parse(html);
     final body = doc.body;
@@ -136,7 +142,7 @@ class QuotePeople {
         continue;
       }
       final chips = html_parser.parseFragment(
-          ' ${[for (final p in list.take(maxPeople - people)) _chip(p)].join(' ')}');
+          ' ${[for (final p in list.take(maxPeople - people)) _chip(p, shortNames)].join(' ')}');
       people += list.length;
       final anchor = plainLabelNode ?? e.node;
       final parent = anchor.parentNode;
@@ -168,10 +174,12 @@ class QuotePeople {
   /// (inline-block, картинка) — письмо из-за неё переставало быть «простым»,
   /// уходило в окно браузера и широкое уменьшалось целиком (замечание
   /// владельца 03.11.2026: «делает письмо очень мелким»).
-  static String _chip(QuotePerson p) {
+  static String _chip(QuotePerson p, bool shortNames) {
     final href = '$scheme:${p.email == null ? '' : Uri.encodeComponent(p.email!)}'
         '?n=${Uri.encodeQueryComponent(p.name)}';
-    return '<a href="${_esc(href)}">${_esc(p.display)}</a>';
+    final text = shortNames && p.name.isNotEmpty ? PersonName.display(p.name, shortForm: true) : p.display;
+    final title = text == p.display ? '' : ' title="${_esc(p.display)}"';
+    return '<a href="${_esc(href)}"$title>${_esc(text)}</a>';
   }
 
   /// Ссылка плашки человека (с адресом или без).

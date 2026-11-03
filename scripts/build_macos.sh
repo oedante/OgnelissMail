@@ -45,6 +45,9 @@ setup() {
     flutter create --platforms=macos --org com.ogneliss --project-name ogneliss . >/dev/null
   fi
 
+  # Значок программы вместо стандартного значка Flutter (1.10.5).
+  cp assets/branding/macos/app_icon_*.png macos/Runner/Assets.xcassets/AppIcon.appiconset/
+
   echo "▶ Права приложения (песочница Mac App Store)…"
   for f in macos/Runner/DebugProfile.entitlements macos/Runner/Release.entitlements; do
     [[ -f "$f" ]] || continue

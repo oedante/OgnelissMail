@@ -14,7 +14,12 @@
 
 Что пишется в build:
   assets/icons/app_icon*.png               — исходники (трей Windows, web)
-  assets/icons/tray_icon.ico               — значок трея Windows
+  assets/icons/tray_icon.ico               — значок трея Windows и значок
+                                             программы Windows (exe, окно,
+                                             панель задач; ставит сборка)
+  assets/icons/window_icon.png             — значок окна Linux (GTK)
+  assets/branding/macos/app_icon_*.png     — значки macOS (сетка Big Sur:
+                                             плитка 824 из 1024 с тенью)
   assets/brand/fox_icon.png                — знак внутри приложения (вход, «О программе»)
   android/.../drawable-*/ic_launcher_*.png — слои адаптивной иконки (108 dp)
   android/.../drawable-*/splash_fox.png    — заставка (круг со знаком)
@@ -24,6 +29,10 @@
   ios/.../LaunchImage.imageset             — заставка iOS
   site/mail/*                              — иконки сайта почты
   docs/store/icons/play-icon-512.png, docs/store/icons/app-store-icon-1024.png
+
+Только значки настольных программ (без перезаписи остального):
+
+    python3 tool/branding/make_icon_v5.py desktop [исходник.png]
 
 Знак (конверт с пламенем) вырезается из фона по цвету: прозрачность —
 по расстоянию до цвета фона, цвет краёв восстанавливается (сглаживание не
@@ -37,7 +46,7 @@ import re
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parents[2]
 SS = 2048  # рабочий размер
@@ -48,6 +57,8 @@ ROUND_W = 0.60      # ширина знака в круглом значке
 SPLASH_CIRCLE = 0.66  # круг заставки Android 12 (видна середина 2/3 холста)
 SPLASH_W = 0.40
 TILE_R = 0.225
+MAC_TILE = 824 / 1024  # плитка значка macOS в сетке Big Sur
+MAC_SIZES = (16, 32, 64, 128, 256, 512, 1024)  # имена flutter create: app_icon_<px>.png
 
 DENS = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
 IOS_ICONS = {
@@ -131,6 +142,19 @@ def place(canvas_size, mark, width_frac, bg=None, shape=None, shape_frac=1.0, ra
     return c
 
 
+def mac_tile(mark, src_w, bg):
+    """Значок macOS: скруглённая плитка 824/1024 по центру и мягкая тень
+    снизу, как у системных значков (Big Sur и новее)."""
+    tile = place(SS, mark, src_w * MAC_TILE, bg=bg, shape='rounded', shape_frac=MAC_TILE)
+    k = SS / 1024
+    shadow = Image.new('RGBA', (SS, SS), (0, 0, 0, 0))
+    a = tile.getchannel('A').point(lambda v: v * 0.30)
+    shadow.paste(Image.new('RGBA', (SS, SS), (0, 0, 0, 255)), (0, round(10 * k)), a)
+    shadow = shadow.filter(ImageFilter.GaussianBlur(10 * k))
+    shadow.alpha_composite(tile)
+    return shadow
+
+
 def down(img, n):
     return img.resize((n, n), Image.LANCZOS)
 
@@ -150,6 +174,7 @@ def masters(src_path):
         'fg': place(SS, mark, ADAPTIVE_W),
         'mono': place(SS, mono_of(mark), ADAPTIVE_W),
         'splash': place(SS, mark, SPLASH_W, bg=bg, shape='circle', shape_frac=SPLASH_CIRCLE),
+        'mac': mac_tile(mark, src_w, bg),
         'mark': mark,
     }
 
@@ -214,14 +239,34 @@ def build(m):
     (ROOT / 'site/mail/favicon.svg').write_text(svg)
     (ROOT / 'assets/branding/ogneliss-mail-icon.svg').write_text(svg)
     out += ['site/mail/favicon.svg', 'assets/branding/ogneliss-mail-icon.svg']
-    down(m['tile'], 256).save(ROOT / 'assets/icons/tray_icon.ico',
-                              sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
+    out += build_desktop(m)
 
     colors = res / 'values/colors.xml'
     txt = colors.read_text()
     txt = re.sub(r'(<color name="ic_launcher_background">)#[0-9A-Fa-f]+(</color>)',
                  rf'\g<1>{hexc(m["bgc"])}\g<2>', txt)
     colors.write_text(txt)
+    return out
+
+
+def build_desktop(m):
+    """Значки настольных программ. Папки windows/, macos/, linux/ в
+    репозитории нет — их создаёт `flutter create` при сборке со стандартным
+    значком Flutter; сборка (CI, scripts/build_windows.ps1,
+    scripts/build_macos.sh) кладёт поверх эти файлы (1.10.5, замечание
+    владельца 03.11.2026: «значок стандартный, а не приложения»)."""
+    out = []
+    p = ROOT / 'assets/icons/tray_icon.ico'
+    down(m['tile'], 256).save(p, sizes=[(16, 16), (20, 20), (24, 24), (32, 32), (40, 40), (48, 48),
+                                        (64, 64), (128, 128), (256, 256)])
+    out.append('assets/icons/tray_icon.ico')
+    down(m['tile'], 256).save(ROOT / 'assets/icons/window_icon.png', optimize=True)
+    out.append('assets/icons/window_icon.png')
+    mac = ROOT / 'assets/branding/macos'
+    mac.mkdir(parents=True, exist_ok=True)
+    for px in MAC_SIZES:
+        down(m['mac'], px).save(mac / f'app_icon_{px}.png', optimize=True)
+        out.append(f'assets/branding/macos/app_icon_{px}.png')
     return out
 
 
@@ -256,5 +301,8 @@ if __name__ == '__main__':
     ms = masters(srcp)
     if cmd == 'build':
         for p in build(ms):
+            print(p)
+    elif cmd == 'desktop':
+        for p in build_desktop(ms):
             print(p)
     preview(ms, ROOT / 'tool/branding/preview_v5.png')

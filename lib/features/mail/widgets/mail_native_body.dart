@@ -1430,6 +1430,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
           child: QuotePersonChip(
             name: s.text.trim(),
             email: QuotePeople.fromLink(href)?.email,
+            fullName: QuotePeople.nameOf(href),
             fontSize: base.fontSize! * 0.92,
             onTap: () => widget.onLink(href, s.text.trim()),
           ),

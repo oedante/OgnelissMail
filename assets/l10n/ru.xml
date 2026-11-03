@@ -3811,6 +3811,12 @@
     <string name="experimentalIntro">Здесь — новые функции, которые мы пробуем. По умолчанию они выключены; могут измениться, перейти в основные настройки или уйти.</string>
     <string name="quotePeopleTitle">Люди в цитатах</string>
     <string name="quotePeopleDesc">«От», «Кому» и «Копия» в цитате — плашками с портретом; нажатие открывает карточку человека. Работает, когда цитата раскрыта, — открытие писем не замедляется.</string>
+    <string name="quotePeopleShort">Фамилия И.О.</string>
+    <string name="quotePeopleShortDesc">Иванов И.И.; без отчества — Иванов И.</string>
+    <string name="quotePeopleFull">Полностью</string>
+    <string name="quotePeopleFullDesc">Как в письме: Иванов Иван Иванович</string>
+    <string name="quotePeopleOffDesc">«От», «Кому» и «Копия» в цитате — обычным текстом, как в письме</string>
+    <string name="experimentalEmpty">Сейчас на пробе ничего нет — новые функции появятся здесь.</string>
     <string name="translateFrom">Перевести с</string>
     <string name="translateMsgOther">Письмо на другом языке</string>
     <string name="favoritesOrder">Порядок плиток</string>

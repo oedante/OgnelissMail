@@ -3769,6 +3769,12 @@
     <string name="experimentalIntro">Nuove funzioni in prova. Sono disattivate per impostazione predefinita e possono cambiare, passare nelle impostazioni principali o sparire.</string>
     <string name="quotePeopleTitle">Persone nelle intestazioni citate</string>
     <string name="quotePeopleDesc">Da, A e Cc nella citazione diventano etichette con ritratto; toccane una per aprire la scheda. Agisce a citazione espansa, l’apertura resta veloce.</string>
+    <string name="quotePeopleShort">Cognome e iniziali</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; senza patronimico, Ivanov I.</string>
+    <string name="quotePeopleFull">Nome completo</string>
+    <string name="quotePeopleFullDesc">Come nel messaggio: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">Da, A e Cc nella citazione restano testo, come nel messaggio</string>
+    <string name="experimentalEmpty">Al momento non c’è nulla in prova: le nuove funzioni compariranno qui.</string>
     <string name="translateFrom">Traduci da</string>
     <string name="translateMsgOther">Messaggio in un\'altra lingua</string>
     <string name="favoritesOrder">Ordine dei riquadri</string>

@@ -62,6 +62,23 @@ void main() {
     expect(out, contains('Thursday, October 29, 2026 8:08 AM'));
   });
 
+  test('кратко (1.10.5, по умолчанию): «Фамилия И.О.», полное имя — в ссылке и подсказке', () {
+    const html = '<p><b>From:</b> Зибров Дмитрий Николаевич &lt;d.zibrov@example.ru&gt;<br>'
+        '<b>To:</b> Олег Ермишин &lt;o.e@example.ru&gt;; Rob Kowal &lt;rk@example.com&gt;<br>'
+        '<b>Cc:</b> Хабиров Ренат Фанильевич</p>';
+    final out = QuotePeople.enrichShort(html);
+    expect(out, contains('>Зибров Д.Н.</a>'));
+    expect(out, contains('title="Зибров Дмитрий Николаевич"'));
+    expect(out, contains('>Ермишин О.</a>'));
+    expect(out, contains('>Хабиров Р.Ф.</a>'));
+    // Латиницу без отчества не сокращаем — без подсказки.
+    expect(out, contains('<a href="ogperson:rk%40example.com?n=Rob+Kowal">Rob Kowal</a>'));
+    final zibrov = RegExp(r'href="(ogperson:d\.zibrov[^"]+)"').firstMatch(out)!.group(1)!;
+    expect(QuotePeople.nameOf(zibrov.replaceAll('&amp;', '&')), 'Зибров Дмитрий Николаевич');
+    // Полностью — как раньше.
+    expect(QuotePeople.enrich(html), contains('>Зибров Дмитрий Николаевич</a>'));
+  });
+
   test('пересылка Gmail: «From:» обычным текстом, адрес ссылкой mailto', () {
     const html = '<div class="gmail_quote">---------- Forwarded message ---------<br>'
         'From: <strong class="gmail_sendername" dir="auto">GitHub</strong> '

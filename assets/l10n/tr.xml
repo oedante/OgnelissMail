@@ -3769,6 +3769,12 @@
     <string name="experimentalIntro">Denediğimiz yeni özellikler. Varsayılan olarak kapalıdır; değişebilir, ana ayarlara taşınabilir veya kaldırılabilir.</string>
     <string name="quotePeopleTitle">Alıntı başlıklarındaki kişiler</string>
     <string name="quotePeopleDesc">Alıntıdaki Kimden, Kime ve Bilgi satırları portreli etiketlere dönüşür; dokununca kişi kartı açılır. Alıntı açıkken çalışır, iletiler yine hızlı açılır.</string>
+    <string name="quotePeopleShort">Soyadı ve baş harfler</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; baba adı yoksa Ivanov I.</string>
+    <string name="quotePeopleFull">Tam ad</string>
+    <string name="quotePeopleFullDesc">İletideki gibi: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">Alıntıdaki Kimden, Kime ve Bilgi satırları iletideki gibi metin kalır</string>
+    <string name="experimentalEmpty">Şu anda denenen bir şey yok — yeni özellikler burada görünecek.</string>
     <string name="translateFrom">Şu dilden çevir</string>
     <string name="translateMsgOther">Başka dilde ileti</string>
     <string name="favoritesOrder">Kutucuk sırası</string>

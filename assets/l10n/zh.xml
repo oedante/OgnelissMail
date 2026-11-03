@@ -3748,6 +3748,12 @@
     <string name="experimentalIntro">正在试用的新功能。默认关闭，之后可能调整、移入常规设置或移除。</string>
     <string name="quotePeopleTitle">引用标头中的联系人</string>
     <string name="quotePeopleDesc">引用中的发件人、收件人和抄送显示为带头像的标签，点按可打开联系人卡片。仅在展开引用时生效，打开邮件的速度不受影响。</string>
+    <string name="quotePeopleShort">姓氏和首字母</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.(无父称时为 Ivanov I.)</string>
+    <string name="quotePeopleFull">全名</string>
+    <string name="quotePeopleFullDesc">与邮件中相同:Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">引用中的发件人、收件人和抄送保持为原文文本</string>
+    <string name="experimentalEmpty">目前没有试用中的功能,新功能会显示在这里。</string>
     <string name="translateFrom">源语言</string>
     <string name="translateMsgOther">其他语言的邮件</string>
     <string name="favoritesOrder">磁贴顺序</string>

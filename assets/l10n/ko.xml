@@ -3748,6 +3748,12 @@
     <string name="experimentalIntro">시험 중인 새 기능입니다. 기본값은 꺼짐이며 바뀌거나 기본 설정으로 옮겨지거나 없어질 수 있습니다.</string>
     <string name="quotePeopleTitle">인용 머리글의 사람</string>
     <string name="quotePeopleDesc">인용의 보낸 사람, 받는 사람, 참조가 사진이 있는 칩으로 표시되고 누르면 사람 카드가 열립니다. 인용을 펼쳤을 때만 작동하므로 메일 열기 속도는 그대로입니다.</string>
+    <string name="quotePeopleShort">성과 이니셜</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I. (부칭이 없으면 Ivanov I.)</string>
+    <string name="quotePeopleFull">전체 이름</string>
+    <string name="quotePeopleFullDesc">메시지 그대로: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">인용의 보낸 사람, 받는 사람, 참조는 메시지 그대로 텍스트로 표시</string>
+    <string name="experimentalEmpty">지금은 시험 중인 기능이 없습니다. 새 기능은 여기에 표시됩니다.</string>
     <string name="translateFrom">원본 언어</string>
     <string name="translateMsgOther">다른 언어로 된 메일</string>
     <string name="favoritesOrder">타일 순서</string>

@@ -3748,6 +3748,12 @@
     <string name="experimentalIntro">Các tính năng mới đang thử. Mặc định tắt; có thể thay đổi, chuyển sang cài đặt chính hoặc bị gỡ bỏ.</string>
     <string name="quotePeopleTitle">Người trong phần đầu trích dẫn</string>
     <string name="quotePeopleDesc">Người gửi, Người nhận và Cc trong phần trích dẫn hiện thành thẻ có ảnh; chạm để mở thẻ người. Chỉ chạy khi mở rộng trích dẫn nên thư vẫn mở nhanh như trước.</string>
+    <string name="quotePeopleShort">Họ và chữ cái đầu</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; không có tên theo cha: Ivanov I.</string>
+    <string name="quotePeopleFull">Họ tên đầy đủ</string>
+    <string name="quotePeopleFullDesc">Như trong thư: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">Từ, Đến và Cc trong trích dẫn giữ nguyên dạng chữ như trong thư</string>
+    <string name="experimentalEmpty">Hiện không có gì đang thử nghiệm — tính năng mới sẽ xuất hiện ở đây.</string>
     <string name="translateFrom">Dịch từ</string>
     <string name="translateMsgOther">Thư bằng ngôn ngữ khác</string>
     <string name="favoritesOrder">Thứ tự ô</string>

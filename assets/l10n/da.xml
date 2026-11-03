@@ -3769,6 +3769,12 @@
     <string name="experimentalIntro">Nye funktioner, vi afprøver. De er slået fra som standard og kan ændre sig, flytte til de almindelige indstillinger eller forsvinde.</string>
     <string name="quotePeopleTitle">Personer i citerede overskrifter</string>
     <string name="quotePeopleDesc">Fra, Til og Cc i citatet vises som mærker med portræt; tryk for at åbne personkortet. Virker, når citatet er foldet ud, så beskeder åbner lige så hurtigt.</string>
+    <string name="quotePeopleShort">Efternavn og initialer</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; uden fadersnavn Ivanov I.</string>
+    <string name="quotePeopleFull">Fulde navn</string>
+    <string name="quotePeopleFullDesc">Som i beskeden: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">Fra, Til og Cc i citatet forbliver tekst som i beskeden</string>
+    <string name="experimentalEmpty">Intet er på prøve lige nu — nye funktioner vises her.</string>
     <string name="translateFrom">Oversæt fra</string>
     <string name="translateMsgOther">Besked på et andet sprog</string>
     <string name="favoritesOrder">Rækkefølge af felter</string>

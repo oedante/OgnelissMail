@@ -3790,6 +3790,12 @@
     <string name="experimentalIntro">Nové funkce, které zkoušíme. Ve výchozím stavu jsou vypnuté; mohou se změnit, přejít do hlavního nastavení nebo zmizet.</string>
     <string name="quotePeopleTitle">Lidé v hlavičkách citací</string>
     <string name="quotePeopleDesc">Od, Komu a Kopie v citaci jako štítky s portrétem; klepnutí otevře kartu osoby. Funguje při rozbalené citaci, zprávy se otevírají stejně rychle.</string>
+    <string name="quotePeopleShort">Příjmení a iniciály</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; bez jména po otci Ivanov I.</string>
+    <string name="quotePeopleFull">Celé jméno</string>
+    <string name="quotePeopleFullDesc">Jako ve zprávě: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">Od, Komu a Kopie v citaci zůstanou textem jako ve zprávě</string>
+    <string name="experimentalEmpty">Momentálně se nic nezkouší — nové funkce se objeví tady.</string>
     <string name="translateFrom">Přeložit z</string>
     <string name="translateMsgOther">Zpráva v jiném jazyce</string>
     <string name="favoritesOrder">Pořadí dlaždic</string>

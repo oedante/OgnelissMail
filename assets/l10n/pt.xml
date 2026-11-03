@@ -3769,6 +3769,12 @@
     <string name="experimentalIntro">Recursos novos em teste. Vêm desativados e podem mudar, ir para as configurações principais ou ser removidos.</string>
     <string name="quotePeopleTitle">Pessoas nos cabeçalhos citados</string>
     <string name="quotePeopleDesc">De, Para e Cc da citação viram etiquetas com retrato; toque para abrir o cartão da pessoa. Funciona com a citação aberta, sem deixar a abertura mais lenta.</string>
+    <string name="quotePeopleShort">Sobrenome e iniciais</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; sem patronímico, Ivanov I.</string>
+    <string name="quotePeopleFull">Nome completo</string>
+    <string name="quotePeopleFullDesc">Como na mensagem: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">De, Para e Cc na citação ficam como texto, como na mensagem</string>
+    <string name="experimentalEmpty">Nada em teste no momento — novas funções aparecerão aqui.</string>
     <string name="translateFrom">Traduzir do</string>
     <string name="translateMsgOther">Mensagem em outro idioma</string>
     <string name="favoritesOrder">Ordem dos blocos</string>

@@ -3790,6 +3790,12 @@
     <string name="experimentalIntro">Funcții noi pe care le încercăm. Sunt dezactivate implicit și se pot schimba, pot trece în setările principale sau pot dispărea.</string>
     <string name="quotePeopleTitle">Persoane în anteturile citate</string>
     <string name="quotePeopleDesc">De la, Către și Cc din citat devin etichete cu portret; atingeți pentru fișa persoanei. Funcționează când citatul e extins, deschiderea nu încetinește.</string>
+    <string name="quotePeopleShort">Nume și inițiale</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; fără patronimic, Ivanov I.</string>
+    <string name="quotePeopleFull">Numele complet</string>
+    <string name="quotePeopleFullDesc">Ca în mesaj: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">De la, Către și Cc din citat rămân text, ca în mesaj</string>
+    <string name="experimentalEmpty">Momentan nu se testează nimic — funcțiile noi vor apărea aici.</string>
     <string name="translateFrom">Tradu din</string>
     <string name="translateMsgOther">Mesaj în altă limbă</string>
     <string name="favoritesOrder">Ordinea plăcilor</string>

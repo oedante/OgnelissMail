@@ -147,6 +147,8 @@ const _entries = <_Entry>[
   _Entry('logsTitle', 'advancedSettings', AppIcons.bug_report, '/settings/logs'),
   // Бывшие «Возможности» (1.6.1 — в «Почте» и «Календаре»).
   _Entry('expRecipTitle', 'emailSettings', AppIcons.group, '/settings/mail'),
+  // «Люди в цитатах» (1.10.5 — из «Экспериментального» в «Почту»).
+  _Entry('quotePeopleTitle', 'emailSettings', AppIcons.groups, '/settings/mail'),
   _Entry('expRulesTitle', 'emailSettings', AppIcons.rule, '/settings/mail'),
   _Entry('expSpareTitle', 'emailSettings', AppIcons.bolt, '/settings/mail'),
   _Entry('expNativeTitle', 'emailSettings', AppIcons.article, '/settings/mail'),

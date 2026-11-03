@@ -3769,6 +3769,12 @@
     <string name="experimentalIntro">Uusia ominaisuuksia kokeilussa. Ne ovat oletuksena pois päältä ja voivat muuttua, siirtyä tavallisiin asetuksiin tai poistua.</string>
     <string name="quotePeopleTitle">Henkilöt lainausten otsakkeissa</string>
     <string name="quotePeopleDesc">Lainauksen Lähettäjä, Vastaanottaja ja Kopio näkyvät tunnisteina ja kuvina; napautus avaa henkilökortin. Toimii, kun lainaus on avattu, joten viestit aukeavat yhtä nopeasti.</string>
+    <string name="quotePeopleShort">Sukunimi ja nimikirjaimet</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; ilman isännimeä Ivanov I.</string>
+    <string name="quotePeopleFull">Koko nimi</string>
+    <string name="quotePeopleFullDesc">Kuten viestissä: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">Lähettäjä, Vastaanottaja ja Kopio jäävät lainauksessa tekstiksi kuten viestissä</string>
+    <string name="experimentalEmpty">Mitään ei nyt kokeilla — uudet toiminnot näkyvät täällä.</string>
     <string name="translateFrom">Käännä kielestä</string>
     <string name="translateMsgOther">Viesti toisella kielellä</string>
     <string name="favoritesOrder">Ruutujen järjestys</string>

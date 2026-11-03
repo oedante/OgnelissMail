@@ -21,7 +21,12 @@ class QuotePersonChip extends StatelessWidget {
   final double fontSize;
   final VoidCallback? onTap;
 
-  const QuotePersonChip({super.key, required this.name, this.email, this.fontSize = 14, this.onTap});
+  /// Полное имя, когда [name] — краткое «Фамилия И.О.» (1.10.5): для
+  /// чтения с экрана и подсказки.
+  final String? fullName;
+
+  const QuotePersonChip(
+      {super.key, required this.name, this.email, this.fontSize = 14, this.onTap, this.fullName});
 
   @override
   Widget build(BuildContext context) {
@@ -56,13 +61,15 @@ class QuotePersonChip extends StatelessWidget {
       ]),
     );
     final e = email;
-    return Semantics(
+    final full = (fullName == null || fullName!.isEmpty) ? name : fullName!;
+    final body = Semantics(
       button: e != null,
-      label: e == null ? name : '$name, $e',
+      label: e == null ? full : '$full, $e',
       excludeSemantics: true,
       child: e == null || onTap == null
           ? chip
           : InkWell(borderRadius: BorderRadius.circular(radius + 2), onTap: onTap, child: chip),
     );
+    return full == name ? body : Tooltip(message: full, child: body);
   }
 }

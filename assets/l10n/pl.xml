@@ -3811,6 +3811,12 @@
     <string name="experimentalIntro">Nowe funkcje, które testujemy. Domyślnie wyłączone; mogą się zmienić, trafić do głównych ustawień lub zniknąć.</string>
     <string name="quotePeopleTitle">Osoby w nagłówkach cytatów</string>
     <string name="quotePeopleDesc">Od, Do i DW w cytacie jako etykiety ze zdjęciem; dotknięcie otwiera kartę osoby. Działa po rozwinięciu cytatu, więc wiadomości otwierają się tak samo szybko.</string>
+    <string name="quotePeopleShort">Nazwisko i inicjały</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; bez imienia odojcowskiego — Ivanov I.</string>
+    <string name="quotePeopleFull">Pełne imię i nazwisko</string>
+    <string name="quotePeopleFullDesc">Jak w wiadomości: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">Od, Do i DW w cytacie zostają zwykłym tekstem, jak w wiadomości</string>
+    <string name="experimentalEmpty">Obecnie nic nie jest testowane — nowe funkcje pojawią się tutaj.</string>
     <string name="translateFrom">Tłumacz z</string>
     <string name="translateMsgOther">Wiadomość w innym języku</string>
     <string name="favoritesOrder">Kolejność kafelków</string>

@@ -3769,6 +3769,12 @@
     <string name="experimentalIntro">Új funkciók, amelyeket kipróbálunk. Alapból ki vannak kapcsolva; változhatnak, átkerülhetnek a fő beállításokba vagy megszűnhetnek.</string>
     <string name="quotePeopleTitle">Személyek az idézett fejlécekben</string>
     <string name="quotePeopleDesc">Az idézet Feladó, Címzett és Másolat sora portrés címkékké válik; koppintással megnyílik a személy kártyája. Kinyitott idézetnél működik, a megnyitás nem lassul.</string>
+    <string name="quotePeopleShort">Vezetéknév és kezdőbetűk</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; apai név nélkül Ivanov I.</string>
+    <string name="quotePeopleFull">Teljes név</string>
+    <string name="quotePeopleFullDesc">Ahogy az üzenetben: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">A Feladó, Címzett és Másolat az idézetben szöveg marad, mint az üzenetben</string>
+    <string name="experimentalEmpty">Most semmi sincs kipróbálás alatt — az új funkciók itt jelennek meg.</string>
     <string name="translateFrom">Fordítás erről</string>
     <string name="translateMsgOther">Más nyelvű üzenet</string>
     <string name="favoritesOrder">Csempék sorrendje</string>

@@ -3769,6 +3769,12 @@
     <string name="experimentalIntro">Nieuwe functies die we uitproberen. Standaard uit; ze kunnen veranderen, naar de gewone instellingen gaan of verdwijnen.</string>
     <string name="quotePeopleTitle">Personen in geciteerde kopteksten</string>
     <string name="quotePeopleDesc">Van, Aan en Cc in een citaat worden labels met portret; tik om de persoonskaart te openen. Werkt bij een uitgevouwen citaat, berichten openen even snel.</string>
+    <string name="quotePeopleShort">Achternaam en initialen</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; zonder patroniem Ivanov I.</string>
+    <string name="quotePeopleFull">Volledige naam</string>
+    <string name="quotePeopleFullDesc">Zoals in het bericht: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">Van, Aan en Cc in het citaat blijven gewone tekst, zoals in het bericht</string>
+    <string name="experimentalEmpty">Er wordt nu niets getest — nieuwe functies verschijnen hier.</string>
     <string name="translateFrom">Vertalen uit</string>
     <string name="translateMsgOther">Bericht in een andere taal</string>
     <string name="favoritesOrder">Volgorde van tegels</string>

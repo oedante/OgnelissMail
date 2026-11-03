@@ -3748,6 +3748,12 @@
     <string name="experimentalIntro">Fitur baru yang sedang kami coba. Nonaktif secara bawaan; bisa berubah, pindah ke pengaturan utama, atau dihapus.</string>
     <string name="quotePeopleTitle">Orang di kepala kutipan</string>
     <string name="quotePeopleDesc">Dari, Kepada, dan Cc dalam kutipan tampil sebagai chip dengan foto; ketuk untuk membuka kartu orang. Berfungsi saat kutipan dibuka, jadi pesan tetap cepat terbuka.</string>
+    <string name="quotePeopleShort">Nama keluarga dan inisial</string>
+    <string name="quotePeopleShortDesc">Ivanov I.I.; tanpa patronimik, Ivanov I.</string>
+    <string name="quotePeopleFull">Nama lengkap</string>
+    <string name="quotePeopleFullDesc">Seperti di pesan: Ivanov Ivan Ivanovich</string>
+    <string name="quotePeopleOffDesc">Dari, Kepada, dan Cc di kutipan tetap berupa teks seperti di pesan</string>
+    <string name="experimentalEmpty">Saat ini tidak ada yang diuji — fitur baru akan muncul di sini.</string>
     <string name="translateFrom">Terjemahkan dari</string>
     <string name="translateMsgOther">Pesan dalam bahasa lain</string>
     <string name="favoritesOrder">Urutan ubin</string>

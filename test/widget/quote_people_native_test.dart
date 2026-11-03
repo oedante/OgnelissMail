@@ -49,4 +49,25 @@ void main() {
     await t.tap(find.text('Хабиров Ренат Фанильевич'));
     expect(links.single, startsWith('ogperson:r.khabirov%40yamalspg.ru'));
   });
+
+  testWidgets('кратко (1.10.5, по умолчанию): «Фамилия И.О.», карточке — полное имя', (t) async {
+    final links = <String>[];
+    final mail = buildNativeMail(QuotePeople.enrichShort(_outlook))!;
+    await t.pumpWidget(ProviderScope(
+      overrides: [personPhotosProvider.overrideWith((ref) => const Stream<Map<String, String>>.empty())],
+      child: MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(child: MailNativeBody(mail: mail, onLink: (u, _) => links.add(u))),
+        ),
+      ),
+    ));
+    await t.pump();
+    expect(find.byType(QuotePersonChip), findsNWidgets(4));
+    expect(find.text('Мисюра А.А.'), findsOneWidget);
+    expect(find.text('Петрякова И.Ю.'), findsOneWidget);
+    expect(find.text('Мисюра Артем Александрович'), findsNothing);
+    expect(find.byTooltip('Мисюра Артем Александрович'), findsOneWidget);
+    await t.tap(find.text('Хабиров Р.Ф.'));
+    expect(QuotePeople.nameOf(links.single), 'Хабиров Ренат Фанильевич');
+  });
 }

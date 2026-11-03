@@ -19,7 +19,6 @@ import '../../../widgets/common/person_photo.dart';
 import '../../../services/mail/alias_service.dart' show aliasServiceProvider;
 import '../../../core/theme/app_icons.dart';
 import '../../../widgets/common/hero_email_transition.dart';
-import '../../mail/providers/account_look.dart' show onAccountColor;
 import '../../../core/security/html_sanitizer.dart';
 import '../../../core/security/mail_body_processor.dart';
 import '../widgets/mail_editor.dart';
@@ -2921,28 +2920,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     );
   }
 
-  /// Выбор отправителя списком (по нажатию на подпись «От»).
-  Future<void> _pickFromSheet(List<AccountModel> accounts, ThemeData theme) async {
-    // Карточкой (1.8.8), как меню «⋮».
-    final id = await showChoiceSheet<String>(
-      context,
-      title: AppLocalizations.of(context).tr('from'),
-      selected: _fromAccount?.id,
-      entries: [
-        for (final a in accounts)
-          AppMenuEntry(
-            value: a.id,
-            label: a.displayName,
-            subtitle: a.email,
-            icon: a.isSharedMailbox ? AppIcons.supervisor_account : AppIcons.alternate_email,
-            iconColor: a.isSharedMailbox ? kSharedMailboxColor : null,
-          ),
-      ],
-    );
-    final picked = accounts.where((a) => a.id == id).firstOrNull;
-    if (picked != null) _onFromChanged(picked);
-  }
-
   /// Имя ящика для показа: имя владельца, если оно известно, иначе адрес.
   static String _accountName(AccountModel a) {
     final n = a.displayName.trim();
@@ -2990,68 +2967,60 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     ];
     final wanted = acc == null ? null : (_fromAlias == null ? acc.id : '${acc.id}$_aliasSep$_fromAlias');
     final selKey = entries.any((e) => e.key == wanted) ? wanted : acc?.id;
-    final color = acc == null ? theme.colorScheme.primary : Color(acc.colorValue);
+    // Один портрет — в поле выбора (1.10.5, замечание владельца 03.11.2026:
+    // «два инструмента указания отправителя, два портрета рядом»). Прежний
+    // значок слева со своим списком убран: выбор — только полем, список —
+    // с портретами ящиков.
     return Row(
       children: [
-        _fieldLead(
-          label: l10n.tr('from'),
-          onTap: accounts.length > 1 ? () => _pickFromSheet(accounts, theme) : null,
-          child: PhotoRing(child: CircleAvatar(
-            radius: 14,
-            backgroundColor: color,
-            foregroundImage: photoImage(acc?.avatarUrl),
-            child: Text(
-              acc == null ? '?' : initialOf(_accountName(acc)),
-              style: TextStyle(fontSize: 12, color: onAccountColor(color)),
-            ),
-          )),
-        ),
-        const SizedBox(width: Space.s),
         Expanded(
           // Меню-карточка (1.8.8) вместо списка Material. В строке — имя
           // ящика (раньше — адрес); в меню — имя и адрес. Адреса отправки «от
           // имени» (1.6.27) — под своим ящиком, с пометкой: отправить от
           // чужого имени по невнимательности — дорогая ошибка, особенно когда
           // секретарь ведёт ящик руководителя.
-          child: AppSelectField<String>(
-            value: selKey,
-            entries: [
-              for (final e in entries)
-                AppMenuEntry(
-                  value: e.key,
-                  label: e.alias ?? _accountName(e.account),
-                  // Портрет ящика с кольцом его цвета (1.10.3: «не только
-                  // цвета, но и аватары»); общий ящик и «от имени» —
-                  // кольцо цвета общего ящика.
-                  leading: AccountAvatar(
-                    account: e.account,
-                    ringColor: (e.account.isSharedMailbox || e.alias != null) ? kSharedMailboxColor : null,
+          child: Semantics(
+            label: l10n.tr('from'),
+            child: AppSelectField<String>(
+              value: selKey,
+              entries: [
+                for (final e in entries)
+                  AppMenuEntry(
+                    value: e.key,
+                    label: e.alias ?? _accountName(e.account),
+                    // Портрет ящика с кольцом его цвета (1.10.3: «не только
+                    // цвета, но и аватары»); общий ящик и «от имени» —
+                    // кольцо цвета общего ящика.
+                    leading: AccountAvatar(
+                      account: e.account,
+                      ringColor: (e.account.isSharedMailbox || e.alias != null) ? kSharedMailboxColor : null,
+                    ),
+                    subtitle: e.alias != null
+                        ? l10n.tr('fromOnBehalfVia').replaceAll('{account}', e.account.email)
+                        : (_accountName(e.account) != e.account.email ? e.account.email : null),
                   ),
-                  subtitle: e.alias != null
-                      ? l10n.tr('fromOnBehalfVia').replaceAll('{account}', e.account.email)
-                      : (_accountName(e.account) != e.account.email ? e.account.email : null),
-                ),
-            ],
-            selectedBuilder: (_, sel) {
-              final e = entries.where((x) => x.key == sel?.value).firstOrNull;
-              if (e == null) return const SizedBox.shrink();
-              final marked = e.account.isSharedMailbox || e.alias != null;
-              return Text(
-                e.alias ?? _accountName(e.account),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: marked ? kSharedMailboxColor : null,
-                  fontWeight: marked ? FontWeight.w600 : null,
-                ),
-              );
-            },
-            onChanged: (key) {
-              final e = entries.where((x) => x.key == key).firstOrNull;
-              if (e == null) return;
-              _onFromChanged(e.account);
-              setState(() => _fromAlias = e.alias);
-            },
+              ],
+              selectedBuilder: (_, sel) {
+                final e = entries.where((x) => x.key == sel?.value).firstOrNull;
+                if (e == null) return const SizedBox.shrink();
+                final marked = e.account.isSharedMailbox || e.alias != null;
+                return Text(
+                  e.alias ?? _accountName(e.account),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: marked ? kSharedMailboxColor : null,
+                    fontWeight: marked ? FontWeight.w600 : null,
+                  ),
+                );
+              },
+              onChanged: (key) {
+                final e = entries.where((x) => x.key == key).firstOrNull;
+                if (e == null) return;
+                _onFromChanged(e.account);
+                setState(() => _fromAlias = e.alias);
+              },
+            ),
           ),
         ),
       ],

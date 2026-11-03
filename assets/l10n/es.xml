@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">Ahora no hay nada en prueba; las nuevas funciones aparecerán aquí.</string>
     <string name="translateFrom">Traducir del</string>
     <string name="translateMsgOther">Mensaje en otro idioma</string>
+    <string name="translateReadMode">Vista de mensajes traducidos</string>
     <string name="favoritesOrder">Orden de los mosaicos</string>
     <string name="favoritesOrderHint">Arrastre un elemento por el asa de la derecha: los mosaicos del menú siguen este orden.</string>
 </resources>

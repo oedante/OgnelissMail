@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">Nada em teste no momento — novas funções aparecerão aqui.</string>
     <string name="translateFrom">Traduzir do</string>
     <string name="translateMsgOther">Mensagem em outro idioma</string>
+    <string name="translateReadMode">Exibição de mensagens traduzidas</string>
     <string name="favoritesOrder">Ordem dos blocos</string>
     <string name="favoritesOrderHint">Arraste um item pela alça à direita — os blocos do menu seguem esta ordem.</string>
 </resources>

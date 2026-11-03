@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">Nothing on trial right now — new features will appear here.</string>
     <string name="translateFrom">Translate from</string>
     <string name="translateMsgOther">Message in another language</string>
+    <string name="translateReadMode">Translated message view</string>
     <string name="favoritesOrder">Tile order</string>
     <string name="favoritesOrderHint">Drag an item by the handle on the right — the menu tiles follow this order.</string>
 </resources>

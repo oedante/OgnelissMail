@@ -1594,17 +1594,34 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
               child: Semantics(
                 header: true,
                 // Тема летит из строки ленты (1.9.x, «Анимация открытия письма»).
-                child: MailSubjectHero(
-                  tag: MailHeroTags.subject(email.accountId, email.id),
-                  enabled: !widget.embedded && AppearanceLook.of(context).openAnimation,
-                  child: Text(
-                    email.subject.isEmpty ? l10n.tr('noSubject') : email.subject,
-                    // В закреплённой шапке длинная тема не занимает пол-экрана.
-                    maxLines: pinHeader ? 3 : null,
-                    overflow: pinHeader ? TextOverflow.ellipsis : null,
-                    style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                ),
+                child: Builder(builder: (context) {
+                  // С переводом (1.10.5) — тема переведена; «оставить оба» —
+                  // вторая тема мелко под первой.
+                  final subj = _translation.subjectFor(email);
+                  final main = MailSubjectHero(
+                    tag: MailHeroTags.subject(email.accountId, email.id),
+                    enabled: !widget.embedded && AppearanceLook.of(context).openAnimation,
+                    child: Text(
+                      subj.main.isEmpty ? l10n.tr('noSubject') : subj.main,
+                      // В закреплённой шапке длинная тема не занимает пол-экрана.
+                      maxLines: pinHeader ? 3 : null,
+                      overflow: pinHeader ? TextOverflow.ellipsis : null,
+                      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  );
+                  final second = subj.second;
+                  if (second == null || second.isEmpty) return main;
+                  return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    main,
+                    const SizedBox(height: Space.xs),
+                    Text(
+                      second,
+                      maxLines: pinHeader ? 2 : null,
+                      overflow: pinHeader ? TextOverflow.ellipsis : null,
+                      style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    ),
+                  ]);
+                }),
               ),
             ),
 

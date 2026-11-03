@@ -3819,6 +3819,7 @@
     <string name="experimentalEmpty">Сейчас на пробе ничего нет — новые функции появятся здесь.</string>
     <string name="translateFrom">Перевести с</string>
     <string name="translateMsgOther">Письмо на другом языке</string>
+    <string name="translateReadMode">Показ перевода письма</string>
     <string name="favoritesOrder">Порядок плиток</string>
     <string name="favoritesOrderHint">Перетащите пункт за ручку справа — в таком порядке плитки встанут в меню.</string>
 </resources>

@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">Intet er på prøve lige nu — nye funktioner vises her.</string>
     <string name="translateFrom">Oversæt fra</string>
     <string name="translateMsgOther">Besked på et andet sprog</string>
+    <string name="translateReadMode">Visning af oversatte beskeder</string>
     <string name="favoritesOrder">Rækkefølge af felter</string>
     <string name="favoritesOrderHint">Træk et punkt i håndtaget til højre — felterne i menuen følger denne rækkefølge.</string>
 </resources>

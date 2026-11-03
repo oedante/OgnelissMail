@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">Şu anda denenen bir şey yok — yeni özellikler burada görünecek.</string>
     <string name="translateFrom">Şu dilden çevir</string>
     <string name="translateMsgOther">Başka dilde ileti</string>
+    <string name="translateReadMode">Çevrilen iletinin gösterimi</string>
     <string name="favoritesOrder">Kutucuk sırası</string>
     <string name="favoritesOrderHint">Öğeyi sağdaki tutamaçtan sürükleyin — menüdeki kutucuklar bu sırayı izler.</string>
 </resources>

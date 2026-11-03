@@ -3861,6 +3861,7 @@
     <string name="experimentalEmpty">لا شيء قيد التجربة الآن — ستظهر الميزات الجديدة هنا.</string>
     <string name="translateFrom">الترجمة من</string>
     <string name="translateMsgOther">رسالة بلغة أخرى</string>
+    <string name="translateReadMode">عرض الرسالة المترجمة</string>
     <string name="favoritesOrder">ترتيب المربعات</string>
     <string name="favoritesOrderHint">اسحب العنصر من المقبض على اليمين — تتبع مربعات القائمة هذا الترتيب.</string>
 </resources>

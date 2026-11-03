@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">अभी कुछ भी परीक्षण में नहीं है — नई सुविधाएँ यहाँ दिखेंगी।</string>
     <string name="translateFrom">इससे अनुवाद करें</string>
     <string name="translateMsgOther">दूसरी भाषा में संदेश</string>
+    <string name="translateReadMode">अनुवादित संदेश का प्रदर्शन</string>
     <string name="favoritesOrder">टाइलों का क्रम</string>
     <string name="favoritesOrderHint">दाईं ओर के हैंडल से आइटम खींचें — मेनू की टाइलें इसी क्रम में आएँगी।</string>
 </resources>

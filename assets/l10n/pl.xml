@@ -3819,6 +3819,7 @@
     <string name="experimentalEmpty">Obecnie nic nie jest testowane — nowe funkcje pojawią się tutaj.</string>
     <string name="translateFrom">Tłumacz z</string>
     <string name="translateMsgOther">Wiadomość w innym języku</string>
+    <string name="translateReadMode">Wyświetlanie przetłumaczonej wiadomości</string>
     <string name="favoritesOrder">Kolejność kafelków</string>
     <string name="favoritesOrderHint">Przeciągnij element za uchwyt po prawej — kafelki w menu ułożą się w tej kolejności.</string>
 </resources>

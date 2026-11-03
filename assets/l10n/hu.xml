@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">Most semmi sincs kipróbálás alatt — az új funkciók itt jelennek meg.</string>
     <string name="translateFrom">Fordítás erről</string>
     <string name="translateMsgOther">Más nyelvű üzenet</string>
+    <string name="translateReadMode">Lefordított üzenet megjelenítése</string>
     <string name="favoritesOrder">Csempék sorrendje</string>
     <string name="favoritesOrderHint">Húzza az elemet a jobb oldali fogantyúnál — a menü csempéi ezt a sorrendet követik.</string>
 </resources>

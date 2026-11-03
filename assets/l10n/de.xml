@@ -3777,6 +3777,7 @@
     <string name="experimentalEmpty">Gerade wird nichts erprobt – neue Funktionen erscheinen hier.</string>
     <string name="translateFrom">Übersetzen aus</string>
     <string name="translateMsgOther">Nachricht in einer anderen Sprache</string>
+    <string name="translateReadMode">Anzeige übersetzter Nachrichten</string>
     <string name="favoritesOrder">Reihenfolge der Kacheln</string>
     <string name="favoritesOrderHint">Ziehen Sie einen Eintrag am Griff rechts — die Kacheln im Menü folgen dieser Reihenfolge.</string>
 </resources>

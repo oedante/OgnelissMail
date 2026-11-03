@@ -3769,4 +3769,6 @@
     <string name="experimentalIntro">New features we are trying out. They are off by default and may change, move to the main settings or be removed.</string>
     <string name="quotePeopleTitle">People in quoted headers</string>
     <string name="quotePeopleDesc">From, To and Cc in a quoted message become chips with a portrait; tap one to open the person card. Works when the quote is expanded, so messages open as fast as before.</string>
+    <string name="translateFrom">Translate from</string>
+    <string name="translateMsgOther">Message in another language</string>
 </resources>

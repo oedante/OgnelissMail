@@ -3769,4 +3769,6 @@
     <string name="experimentalIntro">Nye funktioner, vi afprøver. De er slået fra som standard og kan ændre sig, flytte til de almindelige indstillinger eller forsvinde.</string>
     <string name="quotePeopleTitle">Personer i citerede overskrifter</string>
     <string name="quotePeopleDesc">Fra, Til og Cc i citatet vises som mærker med portræt; tryk for at åbne personkortet. Virker, når citatet er foldet ud, så beskeder åbner lige så hurtigt.</string>
+    <string name="translateFrom">Oversæt fra</string>
+    <string name="translateMsgOther">Besked på et andet sprog</string>
 </resources>

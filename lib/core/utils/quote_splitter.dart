@@ -251,6 +251,9 @@ String replyPartOfPlain(String plain) {
     final t = lines[i].trim();
     if (t.startsWith('>')) continue;
     if (t.isNotEmpty && _headerLine.hasMatch(t)) break;
+    // Gmail переносит «On Thu, 29 Oct 2026 at 21:55, Имя\n<адрес> wrote:» на
+    // две строки (1.10.5, письмо владельца 03.11.2026) — проверяем и пару.
+    if (t.isNotEmpty && i + 1 < lines.length && _headerLine.hasMatch('$t ${lines[i + 1].trim()}')) break;
     if (t.isNotEmpty && _outlookHeader.hasMatch(lines.skip(i).take(6).join('\n').trim())) break;
     out.add(lines[i]);
   }

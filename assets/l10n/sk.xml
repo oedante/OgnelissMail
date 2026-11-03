@@ -3790,4 +3790,6 @@
     <string name="experimentalIntro">Nové funkcie, ktoré skúšame. Predvolene sú vypnuté; môžu sa zmeniť, prejsť do hlavných nastavení alebo zmiznúť.</string>
     <string name="quotePeopleTitle">Ľudia v hlavičkách citácií</string>
     <string name="quotePeopleDesc">Od, Komu a Kópia v citácii ako štítky s portrétom; ťuknutie otvorí kartu osoby. Funguje pri rozbalenej citácii, správy sa otvárajú rovnako rýchlo.</string>
+    <string name="translateFrom">Preložiť z</string>
+    <string name="translateMsgOther">Správa v inom jazyku</string>
 </resources>

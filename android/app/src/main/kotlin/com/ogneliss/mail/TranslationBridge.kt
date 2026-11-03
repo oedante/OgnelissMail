@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.common.model.RemoteModelManager
 import com.google.mlkit.nl.languageid.LanguageIdentification
+import com.google.mlkit.nl.languageid.LanguageIdentificationOptions
 import com.google.mlkit.nl.languageid.LanguageIdentifier
 import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.nl.translate.TranslateRemoteModel
@@ -31,6 +32,10 @@ object TranslationBridge {
     private val worker = Executors.newSingleThreadExecutor()
     private val main = Handler(Looper.getMainLooper())
     private var identifier: LanguageIdentifier? = null
+
+    /// Второй проход (1.10.5): порог уверенности ниже — для смешанного текста
+    /// (английский ответ с русскими именами и ссылками ML Kit отдавал «und»).
+    private var loose: LanguageIdentifier? = null
 
     /** Переводчики пар языков — несколько последних (создание дорогое). */
     private val translators = LinkedHashMap<String, Translator>()
@@ -105,8 +110,16 @@ object TranslationBridge {
         if (text.isBlank()) return null
         val id = identifier ?: LanguageIdentification.getClient().also { identifier = it }
         val tag = Tasks.await(id.identifyLanguage(text))
-        if (tag == "und" || tag.contains("-Latn")) return null
-        return tag
+        if (tag != "und" && !tag.contains("-Latn")) return tag
+        // Не уверен — самый вероятный язык с порогом 0,2 (письмо с цитатой на
+        // другом языке, адреса и подписи; журнал владельца 03.11.2026).
+        val l = loose ?: LanguageIdentification.getClient(
+            LanguageIdentificationOptions.Builder().setConfidenceThreshold(0.2f).build()
+        ).also { loose = it }
+        val best = Tasks.await(l.identifyPossibleLanguages(text))
+            .filter { it.languageTag != "und" && !it.languageTag.contains("-Latn") }
+            .maxByOrNull { it.confidence }
+        return best?.languageTag
     }
 
     private fun translator(from: String, to: String): Translator {

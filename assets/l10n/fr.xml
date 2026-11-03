@@ -3769,4 +3769,6 @@
     <string name="experimentalIntro">Nouvelles fonctions à l’essai. Désactivées par défaut, elles peuvent changer, passer dans les réglages principaux ou disparaître.</string>
     <string name="quotePeopleTitle">Personnes dans les en-têtes cités</string>
     <string name="quotePeopleDesc">De, À et Cc dans la citation deviennent des pastilles avec portrait ; touchez-en une pour ouvrir la fiche. Actif quand la citation est développée : l’ouverture reste aussi rapide.</string>
+    <string name="translateFrom">Traduire de</string>
+    <string name="translateMsgOther">Message dans une autre langue</string>
 </resources>

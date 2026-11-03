@@ -170,7 +170,7 @@ class _ModelDownloadDialogState extends ConsumerState<_ModelDownloadDialog> {
 
 /// «Перевести на…»: язык собеседника, недавние, остальные. null — закрыли.
 Future<String?> pickTranslationTarget(BuildContext context, WidgetRef ref,
-    {String? source, String? suggested}) async {
+    {String? source, String? suggested, String? title}) async {
   final t = ref.read(translatorProvider);
   final l10n = AppLocalizations.of(context);
   final display = l10n.locale.languageCode;
@@ -183,7 +183,7 @@ Future<String?> pickTranslationTarget(BuildContext context, WidgetRef ref,
   final recentSet = recent.map(normalizeLang).toSet();
   return showChoiceSheet<String>(
     context,
-    title: l10n.tr('translateTo'),
+    title: title ?? l10n.tr('translateTo'),
     entries: [
       for (final c in order)
         AppMenuEntry(

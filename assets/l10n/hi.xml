@@ -3769,4 +3769,6 @@
     <string name="experimentalIntro">नई सुविधाएँ जिन्हें हम आज़मा रहे हैं। ये शुरू में बंद रहती हैं; बदल सकती हैं, मुख्य सेटिंग्स में जा सकती हैं या हटाई जा सकती हैं।</string>
     <string name="quotePeopleTitle">उद्धृत शीर्षों में लोग</string>
     <string name="quotePeopleDesc">उद्धरण में प्रेषक, प्राप्तकर्ता और प्रतिलिपि फ़ोटो वाले चिप बनते हैं; टैप करने पर व्यक्ति का कार्ड खुलता है। उद्धरण खोलने पर काम करता है, संदेश उतनी ही तेज़ी से खुलते हैं।</string>
+    <string name="translateFrom">इससे अनुवाद करें</string>
+    <string name="translateMsgOther">दूसरी भाषा में संदेश</string>
 </resources>

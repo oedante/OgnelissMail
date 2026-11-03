@@ -4,7 +4,7 @@
 готов: служба `server/push-relay`, приложение, политика). Зачем и почему именно
 так — `docs/plan/IOS_BACKGROUND_DELIVERY.md`.
 
-**Для выпуска 1.10.3** — по `release/OWNER_STEPS_1.10.3.md`, шаги 2, 4 и 5
+**Для выпуска 1.10.4** — по `release/OWNER_STEPS_1.10.4.md`, шаги 2, 4 и 5
 (ключ APNs, служба сигналов, Push Notifications в Xcode): там те же пункты
 этого файла с командами для архива сервера 1.10.1.
 

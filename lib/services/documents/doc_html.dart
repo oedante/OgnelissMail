@@ -546,11 +546,12 @@ class DocHtml {
   }
 
   /// Маркер пункта списка: знак символьного шрифта — обычным знаком;
-  /// «o» шрифта Courier (так Word рисует пустой кружок) — «◦»; знак из
+  /// «o» (так Word шрифтом Courier рисует пустой кружок) — «◦»; знак из
   /// области частного использования, которого нет в таблицах, — «•».
   static String bullet(String raw, String? font) {
-    final f = (font ?? '').toLowerCase();
-    if (raw == 'o' && f.contains('courier')) return '◦';
+    // «o» без точки или скобки — всегда кружок (у готового номера RTF шрифт
+    // Courier бывает потерян): буква номером пункта так не пишется.
+    if (raw == 'o') return '◦';
     var s = symbols(raw, font);
     if (_hasPua(s)) s = s.replaceAll(RegExp('[\uF020-\uF0FF]'), '•');
     return s.trim().isEmpty ? '•' : s;

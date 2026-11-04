@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Arkivet kan ikke leses: det er skadet eller i et format appen ikke kjenner (7z, RAR). Åpne det i en annen app.</string>
     <string name="pdfProtected">PDF-en er passordbeskyttet. Åpne den i en annen app.</string>
     <string name="faq_mail_10_q">Hvilke vedlegg åpnes rett i appen?</string>
-    <string name="faq_mail_10_a">ZIP-arkiver, også passordbeskyttede, og TAR, GZ, BZ2 og XZ åpnes rett i appen: trykk på en fil i arkivet for å åpne den. PDF-er på Android, bilder, tekst og CSV, .eml-meldinger og .pkpass-billetter åpnes også i appen. På iPhone og iPad viser iOS Hurtigvisning PDF-er, bilder og Office-dokumenter. Alt annet åpnes i en passende app, og alle filer kan sendes dit med knappen øverst. 7z- og RAR-arkiver åpnes bare i en annen app.</string>
+    <string name="faq_mail_10_a">Office-dokumenter (DOCX, XLSX, PPTX), OpenDocument-filer (ODT, ODS, ODP), RTF og CSV åpnes rett i appen, skrivebeskyttet — makroer kjøres aldri; regneark vises som et rutenett med ark, presentasjoner som lysbilder. ZIP-arkiver, også passordbeskyttede, og TAR, GZ, BZ2 og XZ åpnes også i appen: trykk på en fil i arkivet for å åpne den. PDF-er på Android, bilder, tekst, .eml-meldinger og .pkpass-billetter åpnes likeså i appen. På iPhone og iPad viser iOS Hurtigvisning PDF-er, bilder, Office-dokumenter, RTF og CSV, og appen selv viser OpenDocument-filer. Gamle .doc-, .xls- og .ppt-dokumenter samt 7z- og RAR-arkiver åpnes i en annen app, og alle filer kan sendes dit med knappen øverst.</string>
     <string name="quickRepliesCardHint">Teksten settes inn i svaret – sjekk og send</string>
     <string name="translateMsgLang">Meldingens språk: {lang}</string>
     <string name="translateDone">Oversatt: {from} → {to}</string>
@@ -3816,4 +3816,6 @@
     <string name="docTypeCsv">CSV som tabell</string>
     <string name="docTypeCsvDesc">Av: som ren tekst</string>
     <string name="docTypeSlides">Presentasjoner</string>
+    <string name="faq_mail_11_q">Hvordan slår jeg av forhåndsvisning av dokumenter i appen?</string>
+    <string name="faq_mail_11_a">Innstillinger → E-post → Forhåndsvisning av dokumenter. Bryteren Dokumenter i appen slår av forhåndsvisningen helt: dokumenter åpnes igjen i appen for formatet sitt. Under den kan du slå av enkelte typer og beholde resten: tekstdokumenter, regneark, CSV som tabell (av: som ren tekst) og presentasjoner. Av et stort dokument vises begynnelsen; for å se alt åpner du det i en annen app med knappen øverst. På iPhone og iPad gjelder disse innstillingene bare OpenDocument-filer: resten viser iOS Hurtigvisning.</string>
 </resources>

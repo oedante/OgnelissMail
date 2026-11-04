@@ -3656,7 +3656,7 @@
     <string name="zipCannotRead">Arhiva nu poate fi citită: este deteriorată sau într-un format pe care aplicația nu îl cunoaște (7z, RAR). Deschide-o în altă aplicație.</string>
     <string name="pdfProtected">PDF-ul este protejat cu parolă. Deschide-l în altă aplicație.</string>
     <string name="faq_mail_10_q">Ce atașamente se deschid direct în aplicație?</string>
-    <string name="faq_mail_10_a">Arhivele ZIP, inclusiv cele protejate cu parolă, precum și TAR, GZ, BZ2 și XZ se deschid direct în aplicație: atinge un fișier din interior pentru a-l deschide. Tot în aplicație se deschid PDF-urile pe Android, imaginile, textul și CSV, mesajele .eml și biletele .pkpass. Pe iPhone și iPad, Previzualizarea iOS afișează PDF-uri, imagini și documente Office. Restul se deschide într-o aplicație potrivită, iar orice fișier poate fi trimis acolo cu butonul de sus. Arhivele 7z și RAR se deschid doar în altă aplicație.</string>
+    <string name="faq_mail_10_a">Documentele Office (DOCX, XLSX, PPTX), fișierele OpenDocument (ODT, ODS, ODP), RTF și CSV se deschid direct în aplicație, doar pentru citire — macrocomenzile nu se rulează niciodată; foile de calcul apar ca o grilă cu foi, prezentările ca diapozitive. Arhivele ZIP, inclusiv cele protejate cu parolă, precum și TAR, GZ, BZ2 și XZ se deschid tot în aplicație: atinge un fișier din interior pentru a-l deschide. PDF-urile pe Android, imaginile, textul, mesajele .eml și biletele .pkpass se deschid, de asemenea, în aplicație. Pe iPhone și iPad, Privire rapidă din iOS afișează PDF-uri, imagini, documente Office, RTF și CSV, iar aplicația însăși afișează fișierele OpenDocument. Documentele vechi .doc, .xls și .ppt și arhivele 7z și RAR se deschid în altă aplicație, iar orice fișier poate fi trimis acolo cu butonul de sus.</string>
     <string name="quickRepliesCardHint">Textul intră în răspuns — verificați și trimiteți</string>
     <string name="translateMsgLang">Limba mesajului: {lang}</string>
     <string name="translateDone">Tradus: {from} → {to}</string>
@@ -3837,4 +3837,6 @@
     <string name="docTypeCsv">CSV ca tabel</string>
     <string name="docTypeCsvDesc">Dezactivat: ca text simplu</string>
     <string name="docTypeSlides">Prezentări</string>
+    <string name="faq_mail_11_q">Cum dezactivez previzualizarea documentelor în aplicație?</string>
+    <string name="faq_mail_11_a">Setări → E-mail → Previzualizarea documentelor. Comutatorul Documente în aplicație dezactivează complet previzualizarea: documentele se deschid din nou în aplicația pentru formatul lor. Dedesubt poți dezactiva anumite tipuri și le poți păstra pe celelalte: documente text, foi de calcul, CSV ca tabel (dezactivat: ca text simplu) și prezentări. Dintr-un document mare se afișează începutul; ca să-l vezi integral, deschide-l în altă aplicație cu butonul de sus. Pe iPhone și iPad, aceste setări privesc doar fișierele OpenDocument: restul îl afișează Privire rapidă din iOS.</string>
 </resources>

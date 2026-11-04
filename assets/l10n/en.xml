@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">The archive can\'t be read: it is damaged or in a format the app doesn\'t know (7z, RAR). Open it in another app.</string>
     <string name="pdfProtected">This PDF is password-protected. Open it in another app.</string>
     <string name="faq_mail_10_q">Which attachments open right in the app?</string>
-    <string name="faq_mail_10_a">ZIP archives, including password-protected ones, and TAR, GZ, BZ2 and XZ open right in the app: tap a file inside to open it. PDFs on Android, images, text and CSV, .eml messages and .pkpass tickets also open in the app. On iPhone and iPad, iOS Quick Look shows PDFs, images and Office documents. Anything else opens in a suitable app, and any file can be sent to one with the button at the top. 7z and RAR archives open only in another app.</string>
+    <string name="faq_mail_10_a">Office documents (DOCX, XLSX, PPTX), OpenDocument files (ODT, ODS, ODP), RTF and CSV open right in the app, read-only — macros are never run; spreadsheets appear as a grid with sheets, presentations as slides. ZIP archives, including password-protected ones, and TAR, GZ, BZ2 and XZ open in the app too: tap a file inside to open it. PDFs on Android, images, text, .eml messages and .pkpass tickets also open in the app. On iPhone and iPad, iOS Quick Look shows PDFs, images, Office documents, RTF and CSV, and the app itself shows OpenDocument files. Old .doc, .xls and .ppt documents and 7z and RAR archives open in another app, and any file can be sent to one with the button at the top.</string>
     <string name="quickRepliesCardHint">The text goes into the reply — check it and send</string>
     <string name="translateMsgLang">Message language: {lang}</string>
     <string name="translateDone">Translated: {from} → {to}</string>
@@ -3816,4 +3816,6 @@
     <string name="docTypeCsv">CSV as a table</string>
     <string name="docTypeCsvDesc">When off, shown as plain text</string>
     <string name="docTypeSlides">Presentations</string>
+    <string name="faq_mail_11_q">How do I turn off document preview in the app?</string>
+    <string name="faq_mail_11_a">Settings → Mail → Document preview. The Documents in the app switch turns preview off completely: documents open in the app for their format again. Below it you can turn off some types and keep the rest: text documents, spreadsheets, CSV as a table (when off, shown as plain text) and presentations. A large document is shown from the beginning; to see all of it, open it in another app with the button at the top. On iPhone and iPad these settings only concern OpenDocument files: iOS Quick Look shows the rest.</string>
 </resources>

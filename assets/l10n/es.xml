@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">No se puede leer el archivo: está dañado o en un formato que la app no conoce (7z, RAR). Ábrelo en otra app.</string>
     <string name="pdfProtected">El PDF está protegido con contraseña. Ábrelo en otra app.</string>
     <string name="faq_mail_10_q">¿Qué adjuntos se abren directamente en la app?</string>
-    <string name="faq_mail_10_a">Los archivos ZIP, incluso con contraseña, y también TAR, GZ, BZ2 y XZ se abren directamente en la app: toca un archivo de dentro para abrirlo. Los PDF en Android, las imágenes, el texto y CSV, los mensajes .eml y las entradas .pkpass también se abren en la app. En iPhone y iPad, la Vista rápida de iOS muestra PDF, imágenes y documentos de Office. Lo demás lo abre una app adecuada, y cualquier archivo se puede enviar a ella con el botón de arriba. Los archivos 7z y RAR solo se abren en otra app.</string>
+    <string name="faq_mail_10_a">Los documentos de Office (DOCX, XLSX, PPTX), los archivos OpenDocument (ODT, ODS, ODP), RTF y CSV se abren directamente en la app, de solo lectura — las macros nunca se ejecutan; las hojas de cálculo aparecen como una cuadrícula con hojas y las presentaciones, como diapositivas. Los archivos ZIP, incluso con contraseña, así como TAR, GZ, BZ2 y XZ, también se abren en la app: toca un archivo de dentro para abrirlo. Los PDF en Android, las imágenes, el texto, los mensajes .eml y las entradas .pkpass se abren igualmente en la app. En iPhone y iPad, la Vista rápida de iOS muestra PDF, imágenes, documentos de Office, RTF y CSV, y la propia app muestra los archivos OpenDocument. Los documentos antiguos .doc, .xls y .ppt y los archivos 7z y RAR se abren en otra app, y cualquier archivo se puede enviar a ella con el botón de arriba.</string>
     <string name="quickRepliesCardHint">El texto se coloca en la respuesta: revísalo y envíalo</string>
     <string name="translateMsgLang">Idioma del mensaje: {lang}</string>
     <string name="translateDone">Traducido: {from} → {to}</string>
@@ -3816,4 +3816,6 @@
     <string name="docTypeCsv">CSV como tabla</string>
     <string name="docTypeCsvDesc">Desactivado: como texto sin formato</string>
     <string name="docTypeSlides">Presentaciones</string>
+    <string name="faq_mail_11_q">¿Cómo desactivo la vista previa de documentos en la app?</string>
+    <string name="faq_mail_11_a">Ajustes → Correo → Vista previa de documentos. El interruptor Documentos en la aplicación desactiva la vista previa por completo: los documentos vuelven a abrirse en la app de su formato. Debajo puedes desactivar algunos tipos y dejar los demás: documentos de texto, hojas de cálculo, CSV como tabla (desactivado: como texto sin formato) y presentaciones. De un documento grande se muestra el principio; para verlo completo, ábrelo en otra app con el botón de arriba. En iPhone y iPad estos ajustes solo afectan a los archivos OpenDocument: lo demás lo muestra la Vista rápida de iOS.</string>
 </resources>

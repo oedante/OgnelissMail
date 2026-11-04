@@ -69,6 +69,9 @@ class FileOpener {
   /// «Скопировать в …», и эта кнопка не срабатывала (замечание владельца
   /// 29.10.2026, ZIP из письма) — такие файлы на iPhone и iPad идут сразу в
   /// лист «Поделиться» (AttachmentSafety.openExternally).
+  /// OpenDocument (odt, ods, odp) «Просмотр» iOS тоже не показывает — их с
+  /// 1.11.x показывает само приложение (attachment_preview_screen.dart,
+  /// opensInApp); Office, RTF и CSV по-прежнему открывает «Просмотр».
   static const _quickLook = {
     'pdf',
     'doc', 'docx', 'docm', 'dot', 'dotx', 'xls', 'xlsx', 'xlsm', 'xlt', 'xltx',

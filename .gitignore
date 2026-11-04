@@ -100,3 +100,6 @@ site/
 # Код drift (build_runner) и lock-файл: CI создаёт их сам
 lib/data/database/*.g.dart
 pubspec.lock
+
+# Рабочие копии агентов Claude (git worktree) — только в контейнере сеанса.
+.claude/worktrees/

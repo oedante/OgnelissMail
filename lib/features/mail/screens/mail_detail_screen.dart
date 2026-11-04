@@ -119,6 +119,7 @@ import '../../../services/mail/attachment_cache_service.dart';
 import '../../../services/mail/tnef/tnef_decoder.dart';
 import '../../../widgets/common/app_sheet.dart';
 import '../../compose/providers/templates_provider.dart' show templatesProvider;
+import '../../compose/screens/compose_screen.dart' show ComposeScreen;
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/app_menu_button.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
@@ -128,6 +129,7 @@ import '../../../widgets/common/mail_open_motion.dart' show MailHeroTags, MailOp
 import '../../../core/utils/quote_people.dart';
 import '../../../core/platform/app_share.dart';
 import '../providers/folder_names.dart';
+import '../../../widgets/common/pane_navigator.dart';
 
 class MailDetailScreen extends ConsumerStatefulWidget {
   final String emailId;
@@ -1512,11 +1514,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     return TypingAwareShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.keyR, control: true): () =>
-            context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}'),
+            _compose({'replyToId': email.id, 'accountId': email.accountId}),
         const SingleActivator(LogicalKeyboardKey.keyR, control: true, shift: true): () =>
-            context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}&replyAll=true'),
-        const SingleActivator(LogicalKeyboardKey.keyF, control: true): () =>
-              context.push('/compose?forwardFromId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}'),
+            _compose({'replyToId': email.id, 'accountId': email.accountId, 'replyAll': 'true'}),
+        const SingleActivator(LogicalKeyboardKey.keyF, control: true): () => _forward(email),
         if (!widget.embedded)
           const SingleActivator(LogicalKeyboardKey.escape): () => Navigator.of(context).maybePop(),
         // Ещё сочетания Outlook (1.10.x, просьба владельца 02.11.2026):
@@ -2249,16 +2250,16 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   Widget _commandBar(EmailModel email, AppSettings settings, AppLocalizations l10n) {
     final draft = email.isDraft || email.folderId == 'drafts';
     final scheme = Theme.of(context).colorScheme;
-    void compose(String q) => context.push('/compose?$q&accountId=${Uri.encodeQueryComponent(email.accountId)}');
-    final id = Uri.encodeQueryComponent(email.id);
+    void compose(Map<String, String> q) => _compose({...q, 'accountId': email.accountId});
+    final id = email.id;
     final groups = <List<_Cmd>>[
       [
         if (draft)
-          _Cmd(AppIcons.edit, l10n.tr('edit'), () => compose('draftId=$id'))
+          _Cmd(AppIcons.edit, l10n.tr('edit'), () => compose({'draftId': id}))
         else ...[
-          _Cmd(AppIcons.reply, l10n.tr('reply'), () => compose('replyToId=$id'),
+          _Cmd(AppIcons.reply, l10n.tr('reply'), () => compose({'replyToId': id}),
               onLongPress: () => _showQuickReplies(email, l10n)),
-          _Cmd(AppIcons.reply_all, l10n.tr('replyAll'), () => compose('replyToId=$id&replyAll=true')),
+          _Cmd(AppIcons.reply_all, l10n.tr('replyAll'), () => compose({'replyToId': id, 'replyAll': 'true'})),
           _Cmd(AppIcons.forward, l10n.tr('forward'), () => _forward(email)),
         ],
       ],
@@ -2527,11 +2528,32 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// «Переслать»: набранный в быстром ответе текст — в начало пересылки.
   void _forward(EmailModel email) {
     final text = _quickReply.hasText ? _quickReply.take() : '';
-    context.push(Uri(path: '/compose', queryParameters: {
+    _compose({
       'forwardFromId': email.id,
       'accountId': email.accountId,
       if (text.isNotEmpty) 'quick': text,
-    }).toString());
+    });
+  }
+
+  /// Ответ, пересылка, черновик (1.11.0): на планшете и компьютере в панели
+  /// рядом с лентой — прямо в панели (как в Outlook), иначе — отдельным
+  /// экраном, как раньше.
+  void _compose(Map<String, String> q) {
+    if (PaneNavigator.isInside(context) && _wideLayout(context)) {
+      unawaited(PaneNavigator.push<void>(
+        context,
+        ComposeScreen(
+          replyToId: q['replyToId'],
+          forwardFromId: q['forwardFromId'],
+          draftId: q['draftId'],
+          accountId: q['accountId'],
+          replyAll: q['replyAll'] == 'true',
+          quickText: q['quick'],
+        ),
+      ));
+      return;
+    }
+    context.push(Uri(path: '/compose', queryParameters: q).toString());
   }
 
   /// «Удалить» под письмом (1.7.3): по умолчанию — с вопросом (письма

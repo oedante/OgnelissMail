@@ -111,6 +111,7 @@ import '../../../widgets/ui/section_band.dart';
 import '../../../core/theme/ogneliss_look.dart';
 import '../providers/folder_names.dart';
 import '../widgets/row_hover_actions.dart';
+import '../../../widgets/common/pane_navigator.dart';
 
 class MailListScreen extends ConsumerStatefulWidget {
   const MailListScreen({super.key});
@@ -893,12 +894,17 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       body: AdaptiveLayout(
         widthKey: 'mail',
         showDetail: _selectedEmailId != null,
+        // Своя навигация панели (1.11.0): ответ и пересылка — прямо в
+        // панели письма, как в Outlook.
         detailBody: _selectedEmailId != null
-            ? MailDetailScreen(
-                key: ValueKey(_selectedEmailId),
-                emailId: _selectedEmailId!,
-                accountId: _selectedAccountId ?? (account?.id ?? ''),
-                embedded: true,
+            ? PaneNavigator(
+                key: ValueKey('pane_$_selectedEmailId'),
+                child: MailDetailScreen(
+                  key: ValueKey(_selectedEmailId),
+                  emailId: _selectedEmailId!,
+                  accountId: _selectedAccountId ?? (account?.id ?? ''),
+                  embedded: true,
+                ),
               )
             : null,
         // Широкое окно: панель письма на месте и до выбора (1.6.28) —
@@ -1516,6 +1522,11 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
               isInSelectionMode: _selectionMode,
               isChecked: _selectedIds.contains(item.id),
               onCheckChanged: () => _toggleSelect(item.id),
+              // Мышь над портретом — флажок (1.11.0, как в Outlook).
+              onHoverSelect: () => setState(() {
+                _selectionMode = true;
+                _selectedIds.add(item.id);
+              }),
               onTap: () async {
                 if (_selectionMode) {
                   _toggleSelect(item.id);

@@ -91,6 +91,30 @@ class MailDrawer extends ConsumerWidget {
     final groups = ref.watch(accountGroupsProvider);
     final activeGroupId = ref.watch(activeGroupIdProvider);
 
+    // ── Избранное ──
+    List<Widget> favorites({required bool top}) => [
+            _DrawerBand(
+              shadowUp: !top,
+              title: l10n.tr('favorites'),
+              trailing: IconButton(
+                tooltip: l10n.tr('favoritesEdit'),
+                visualDensity: VisualDensity.compact,
+                icon: Icon(AppIcons.tune, size: 20, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                onPressed: () => _showFavoritesEditor(context),
+              ),
+            ),
+            // Длинное избранное (группы, разделы, папки) не вытесняет дерево
+            // папок: не выше 40 % экрана, дальше прокрутка.
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.4),
+              child: ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                children: _buildFavorites(context, ref, l10n, accounts.length, groups, activeGroupId, isAllAccounts),
+              ),
+            ),
+        ];
+
     final content = SafeArea(
         // Постоянная панель стоит справа от боковой полосы разделов:
         // системный отступ слева у неё уже учтён.
@@ -104,6 +128,10 @@ class MailDrawer extends ConsumerWidget {
             // Разделы меню — «Папки», «Избранное», «Аккаунты» — с полосой-
             // заголовком на более тёмной подложке: раньше всё сливалось в
             // один список (замечание 09.10.2026).
+            // Планшет и компьютер, закреплённая панель (1.11.0, как в
+            // Outlook): «Избранное» — сверху, над папками; на телефоне —
+            // внизу, под большим пальцем.
+            if (docked) ...favorites(top: true),
             _DrawerBand(
               title: l10n.tr('folders'),
               // Планшет и компьютер (1.6.40): значок закрепления — меню
@@ -133,27 +161,8 @@ class MailDrawer extends ConsumerWidget {
                 ],
               ),
             ),
-            // ── Избранное ──
-            _DrawerBand(
-              shadowUp: true,
-              title: l10n.tr('favorites'),
-              trailing: IconButton(
-                tooltip: l10n.tr('favoritesEdit'),
-                visualDensity: VisualDensity.compact,
-                icon: Icon(AppIcons.tune, size: 20, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
-                onPressed: () => _showFavoritesEditor(context),
-              ),
-            ),
-            // Длинное избранное (группы, разделы, папки) не вытесняет дерево
-            // папок: не выше 40 % экрана, дальше прокрутка.
-            ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.4),
-              child: ListView(
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                children: _buildFavorites(context, ref, l10n, accounts.length, groups, activeGroupId, isAllAccounts),
-              ),
-            ),
+            if (!docked) ...favorites(top: false),
+            if (docked && !ref.watch(hiddenQuickItemsProvider).contains(DrawerQuickItem.theme)) _themeSwitch,
             // «Добавить аккаунт» убран из меню: он есть в настройках
             // («Аккаунты»), а здесь занимал строку внизу (замечание 06.10.2026).
             // Ящики — ВНИЗУ, под большим пальцем (как частые кнопки в Ogneliss
@@ -277,6 +286,11 @@ class MailDrawer extends ConsumerWidget {
   }
 
   // ════════════════════════ ИЗБРАННОЕ ════════════════════════
+
+  static const _themeSwitch = Padding(
+    padding: EdgeInsets.only(top: Space.xs, bottom: Space.s),
+    child: ThemeQuickSwitch(),
+  );
 
   /// Группы аккаунтов, быстрые разделы (видимость — в настройке избранного)
   /// и избранные папки активного ящика.
@@ -512,11 +526,9 @@ class MailDrawer extends ConsumerWidget {
     return [
       // Порядок — из настройки избранного (1.10.5).
       if (tiles.isNotEmpty) TileGrid(items: orderFavorites(tiles, (t) => t.id, ref.watch(favoriteOrderProvider))),
-      if (!hidden.contains(DrawerQuickItem.theme))
-        const Padding(
-          padding: EdgeInsets.only(top: Space.xs, bottom: Space.s),
-          child: ThemeQuickSwitch(),
-        ),
+      // Выбор темы — под избранным; в закреплённой панели (избранное
+      // сверху, 1.11.0) — внизу панели, под папками.
+      if (!docked && !hidden.contains(DrawerQuickItem.theme)) _themeSwitch,
     ];
   }
 

@@ -460,6 +460,22 @@ void main() {
     });
   }
 
+  // Ответ — прямо в панели письма рядом с лентой (1.11.0, как в Outlook).
+  testWidgets('лента и ответ в панели — desktop', (tester) async {
+    SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+    final prefs = await SharedPreferences.getInstance();
+    final db = (await tester.runAsync(_db))!;
+    await tester.runAsync(() => _letter(db));
+    await tester.runAsync(() => _inbox(db));
+    await _shot(tester, 'split_reply_desktop', const MailListScreen(),
+        theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: const Size(1440, 900), before: (t) async {
+      await t.tap(find.text('Смета по ремонту насосной станции').first);
+      await _settle(t);
+      await t.tap(find.text('Ответить').first);
+    });
+    await tester.runAsync(db.close);
+  });
+
   // Письмо и ответ на планшете, компьютере и телефоне боком (1.8.13):
   // текст письма — одной колонкой с шапкой, строка ответа и кнопки — не
   // через весь экран.

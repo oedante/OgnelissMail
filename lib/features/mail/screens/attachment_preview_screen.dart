@@ -168,7 +168,7 @@ class AttachmentPreviewScreen extends StatefulWidget {
 
 
   static const _imageExt = {'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'};
-  static const _textExt = {'txt', 'log', 'csv', 'json', 'xml', 'md', 'yaml', 'yml', 'ini'};
+  static const _textExt = {'txt', 'log', 'csv', 'tsv', 'json', 'xml', 'md', 'yaml', 'yml', 'ini'};
 
   /// Все вложения письма — чтобы листать между ними, не возвращаясь назад.
   final List<PreviewItem> items;
@@ -419,6 +419,10 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   /// санитайзер, затем документ окна письма (без сети и JavaScript).
   Future<void> _loadDocument(int i) async {
     final item = widget.items[i];
+    // Строки — после initState: вкладка, открытая первой, грузится из него,
+    // а там обращаться к локализации нельзя.
+    await Future<void>.value();
+    if (!mounted) return;
     final l10n = AppLocalizations.of(context);
     try {
       final doc = await OfficeReader.readFile(item.filePath, item.fileName,
@@ -1048,8 +1052,10 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
 
   Widget _fallback(int i, bool ru, String message) {
     final l10n = AppLocalizations.of(context);
+    // Прокрутка (1.11.x): длинная причина («Документы старого формата…»)
+    // на телефоне в альбомной ориентации не помещалась.
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(Space.xxl),
         child: Column(
           mainAxisSize: MainAxisSize.min,

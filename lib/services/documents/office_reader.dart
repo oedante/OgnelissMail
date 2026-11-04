@@ -125,11 +125,12 @@ class OfficeReader {
     if (format == OfficeFormat.csv) return CsvReader.read(bytes, fileName: fileName, lang: lang);
     if (isRtf(bytes)) return RtfReader.read(bytes, lang: lang);
     if (OfficeZip.isOle(bytes)) {
-      // Составной файл OLE: у .doc/.xls/.ppt — старый формат, у .docx и
-      // других — документ с паролем на открытие (EncryptedPackage).
-      throw OfficeDocException(legacy || format == null ? OfficeDocError.legacy : OfficeDocError.encrypted);
+      // Составной файл OLE: у DOCX, XLSX, PPTX — документ с паролем на
+      // открытие (EncryptedPackage), у остальных (.doc, переименованный в
+      // .rtf или .odt) — старый формат Office.
+      const ooxml = {OfficeFormat.docx, OfficeFormat.xlsx, OfficeFormat.pptx};
+      throw OfficeDocException(ooxml.contains(format) && !legacy ? OfficeDocError.encrypted : OfficeDocError.legacy);
     }
-    if (format == OfficeFormat.rtf) throw const OfficeDocException(OfficeDocError.damaged, 'not rtf');
     if (!OfficeZip.isZip(bytes)) {
       throw OfficeDocException(legacy ? OfficeDocError.legacy : OfficeDocError.damaged, 'not a package');
     }

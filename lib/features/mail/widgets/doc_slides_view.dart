@@ -578,12 +578,79 @@ class _ShapeView extends StatelessWidget {
           child: CustomPaint(painter: _GeomPainter(s, paintFill: fill?.image == null)),
         ),
       if (s.table != null) Positioned.fill(child: _TableView(table: s.table!)),
-      if (s.text != null)
-        Positioned.fill(
-          child: _TextBoxView(body: s.text!, w: w, h: h),
-        ),
+      if (s.text != null) _text(s.text!),
     ];
     return Stack(clipBehavior: Clip.none, children: children);
+  }
+
+  /// Текст — во внутренней области формы, как в PowerPoint: у ромба,
+  /// треугольника, эллипса она меньше рамки.
+  Widget _text(DocTextBody body) {
+    final r = _textRect(shape, w, h);
+    return Positioned.fromRect(
+      rect: r,
+      child: _TextBoxView(body: body, w: r.width, h: r.height),
+    );
+  }
+}
+
+/// Область текста формы (по описаниям заготовок ECMA-376, упрощённо).
+Rect _textRect(DocShape s, double w, double h) {
+  final ss = math.min(w, h);
+  final a = s.adjust;
+  Rect ltrb(double l, double t, double r, double b) => Rect.fromLTRB(l, t, math.max(l, r), math.max(t, b));
+  switch (s.geom) {
+    case DocGeom.roundRect:
+      final i = ss * (a ?? 1 / 6).clamp(0.0, 0.5) * 0.29289;
+      return ltrb(i, i, w - i, h - i);
+    case DocGeom.ellipse:
+      return ltrb(w * 0.14645, h * 0.14645, w * 0.85355, h * 0.85355);
+    case DocGeom.diamond:
+      return ltrb(w / 4, h / 4, w * 3 / 4, h * 3 / 4);
+    case DocGeom.triangle:
+      final x1 = w * (a ?? 0.5).clamp(0.0, 1.0) / 2;
+      return ltrb(x1, h / 2, x1 + w / 2, h);
+    case DocGeom.rtTriangle:
+      return ltrb(w / 12, h * 7 / 12, w * 7 / 12, h * 11 / 12);
+    case DocGeom.parallelogram || DocGeom.hexagon:
+      final x = math.min(w / 2, ss * (a ?? 0.25)) / 2;
+      return ltrb(x, 0, w - x, h);
+    case DocGeom.trapezoid:
+      final x = math.min(w / 2, ss * (a ?? 0.25)) * 2 / 3;
+      return ltrb(x, h / 6, w - x, h);
+    case DocGeom.octagon:
+      final x = math.min(ss / 2, ss * (a ?? 0.29289)) / 2;
+      return ltrb(x, x, w - x, h - x);
+    case DocGeom.pentagon:
+      return ltrb(w * 0.19, h * 0.25, w * 0.81, h);
+    case DocGeom.homePlate:
+      final x = w - math.min(w, ss * (a ?? 0.5));
+      return ltrb(0, 0, (x + w) / 2, h);
+    case DocGeom.chevron:
+      final x = math.min(w / 2, ss * (a ?? 0.5));
+      return ltrb(x, 0, w - x, h);
+    case DocGeom.rightArrow:
+      final x = w - math.min(w, ss * (a ?? 0.5));
+      return ltrb(0, h / 4, x + (w - x) / 2, h * 3 / 4);
+    case DocGeom.leftArrow:
+      final x = math.min(w, ss * (a ?? 0.5));
+      return ltrb(x / 2, h / 4, w, h * 3 / 4);
+    case DocGeom.downArrow:
+      final y = h - math.min(h, ss * (a ?? 0.5));
+      return ltrb(w / 4, 0, w * 3 / 4, y + (h - y) / 2);
+    case DocGeom.upArrow:
+      final y = math.min(h, ss * (a ?? 0.5));
+      return ltrb(w / 4, y / 2, w * 3 / 4, h);
+    case DocGeom.leftRightArrow:
+      final x = math.min(w / 2, ss * (a ?? 0.5));
+      return ltrb(x / 2, h / 4, w - x / 2, h * 3 / 4);
+    case DocGeom.plus:
+      final x = math.min(ss / 2, ss * (a ?? 0.25));
+      return ltrb(0, x, w, h - x);
+    case DocGeom.star5:
+      return ltrb(w * 0.31, h * 0.4, w * 0.69, h * 0.75);
+    case DocGeom.rect || DocGeom.line || DocGeom.path:
+      return Rect.fromLTWH(0, 0, w, h);
   }
 }
 
@@ -1043,7 +1110,10 @@ class _ParagraphView extends StatelessWidget {
     }
     final before = p.spaceBefore * spacing, after = p.spaceAfter * spacing;
     if (before > 0 || after > 0) {
-      out = Padding(padding: EdgeInsets.only(top: before, bottom: after), child: out);
+      out = Padding(
+        padding: EdgeInsets.only(top: before, bottom: after),
+        child: out,
+      );
     }
     return out;
   }

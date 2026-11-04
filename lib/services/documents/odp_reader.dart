@@ -637,9 +637,9 @@ class _Shapes {
         final mod0 = mods.isEmpty ? null : double.tryParse(mods.first);
         flipH ^= eg?.attr('mirror-horizontal') == 'true';
         flipV = eg?.attr('mirror-vertical') == 'true';
-        if (type.startsWith('ooxml-')) {
-          final name = type.substring(6);
-          geom = docPresetGeometry[name] ?? DocGeom.rect;
+        final preset = type.startsWith('ooxml-') ? docPresetGeometry[type.substring(6)] : null;
+        if (preset != null) {
+          geom = preset;
           if (mod0 != null && (geom == DocGeom.roundRect || geom == DocGeom.homePlate || geom == DocGeom.chevron)) {
             adjust = (mod0 / 100000).clamp(0.0, 1.0);
           }
@@ -648,7 +648,10 @@ class _Shapes {
           // Параметры форм Impress — в единицах 21600 от меньшей стороны.
           if (geom == DocGeom.roundRect) adjust = ((mod0 ?? 3600) / 21600).clamp(0.0, 0.5);
         } else {
-          path = _enhancedPath(eg?.attr('enhanced-path'), eg?.attr('viewBox'));
+          // Свой контур (полилиния из PowerPoint — «ooxml-non-primitive»):
+          // числа без формул; область координат — svg:viewBox, а если он
+          // пустой — drawooo:sub-view-size.
+          path = _enhancedPath(eg?.attr('enhanced-path'), eg?.attr('viewBox'), eg?.attr('sub-view-size'));
           if (path != null) geom = DocGeom.path;
         }
     }
@@ -836,10 +839,12 @@ class _Shapes {
   }
 
   /// draw:enhanced-path без формул (только числа): M L C Z N F S, Q.
-  DocPath? _enhancedPath(String? d, String? viewBox) {
+  DocPath? _enhancedPath(String? d, String? viewBox, String? subView) {
     if (d == null || d.contains('?') || d.contains(r'$')) return null;
-    final vb = _viewBox(viewBox);
-    if (vb == null || vb[2] <= 1 || vb[3] <= 1) return null;
+    var box = _viewBox(viewBox);
+    if (box == null || box[2] <= 1 || box[3] <= 1) box = _viewBox('0 0 ${subView ?? ''}');
+    if (box == null || box[2] <= 1 || box[3] <= 1) return null;
+    final vb = box;
     final tokens = d.trim().split(RegExp(r'[\s,]+'));
     final ops = <DocPathOp>[];
     final pts = <double>[];

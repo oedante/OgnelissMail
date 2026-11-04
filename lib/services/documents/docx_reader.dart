@@ -934,9 +934,9 @@ class _Docx {
         case 'cr':
           ctx.inlines.add(const DocBreak());
         case 'noBreakHyphen':
-          _text('‑', ctx, rp);
+          _text('\u2011', ctx, rp);
         case 'softHyphen':
-          _text('­', ctx, rp);
+          _text('\u00AD', ctx, rp);
         case 'sym':
           final code = int.tryParse(k.attr('char') ?? '', radix: 16);
           if (code == null || code <= 0 || code > 0x10FFFF) break;
@@ -1001,7 +1001,7 @@ class _Docx {
   /// строка уезжала бы на следующую.
   void _tab(_ParaCtx ctx, _RPr rp) {
     if (ctx.lastTab) return;
-    _text('  ', ctx, rp);
+    _text('\u2003\u2003', ctx, rp);
     ctx.lastTab = true;
   }
 

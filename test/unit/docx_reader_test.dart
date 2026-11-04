@@ -105,7 +105,7 @@ void main() {
       }
       expect(h.indexOf('1.2.\u00A0</span>Проверка'), greaterThan(h.indexOf('1.1.\u00A0</span>Сбор данных')));
       expect(h, contains('2.\u00A0</span>Выпуск'));
-      expect(h, isNot(contains('')));
+      expect(h, isNot(contains('\uF0B7')));
     });
 
     test('таблица: colspan, rowspan, заливка, рамки «Сетка таблицы»', () {
@@ -213,7 +213,7 @@ void main() {
       expect(h, isNot(contains('старое')));
       expect(h, isNot(contains('скрытое')));
       // Две табуляции подряд — один промежуток.
-      expect(h, contains('новое  после<br>строка‑→α'));
+      expect(h, contains('новое\u2003\u2003после<br>строка\u2011→α'));
       expect(h, contains('ЗАГЛАВНЫЕ'));
       expect(h, contains('font-family:monospace">код'));
     });
@@ -281,10 +281,10 @@ void main() {
             '<w:num w:numId="2"><w:abstractNumId w:val="0"/><w:lvlOverride w:ilvl="0"><w:startOverride w:val="5"/></w:lvlOverride></w:num>',
       );
       final h = d.html;
-      expect(h, contains('а) </span>пункт а'));
-      expect(h, contains('б) </span>пункт б'));
+      expect(h, contains('а)\u00A0</span>пункт а'));
+      expect(h, contains('б)\u00A0</span>пункт б'));
       expect(h, contains('б.III римский'));
-      expect(h, contains('д) </span>с пяти'));
+      expect(h, contains('д)\u00A0</span>с пяти'));
       expect(h, contains('<p style="margin:0">нет списка'));
     });
 

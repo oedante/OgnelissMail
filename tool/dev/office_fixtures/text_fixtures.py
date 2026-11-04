@@ -320,6 +320,22 @@ def rtf_unicode():
         '}')
 
 
+def strip_thumbnail(src, dst):
+    """ODT без эскиза первой страницы (Thumbnails/) — образец втрое меньше.
+    mimetype остаётся первой записью без сжатия, как требует OpenDocument."""
+    with zipfile.ZipFile(src) as zin, zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED) as zout:
+        for item in zin.infolist():
+            if item.filename.startswith(('Thumbnails/', 'Configurations2/')):
+                continue
+            data = zin.read(item.filename)
+            if item.filename == 'META-INF/manifest.xml':
+                text = data.decode('utf-8')
+                lines = [ln for ln in text.split('\n') if 'Thumbnails/' not in ln and 'Configurations2/' not in ln]
+                data = '\n'.join(lines).encode('utf-8')
+            compress = zipfile.ZIP_STORED if item.filename == 'mimetype' else zipfile.ZIP_DEFLATED
+            zout.writestr(zipfile.ZipInfo(item.filename, date_time=item.date_time), data, compress_type=compress)
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     docx = os.path.join(OUT, 'text_sample.docx')
@@ -337,7 +353,11 @@ def main():
         for fmt in ('odt', 'rtf'):
             subprocess.run([soffice, '--headless', f'-env:UserInstallation={profile}', '--convert-to', fmt,
                             '--outdir', tmp, docx], check=True, stdout=subprocess.DEVNULL)
-            shutil.copy(os.path.join(tmp, f'text_sample.{fmt}'), os.path.join(OUT, f'text_sample.{fmt}'))
+            src = os.path.join(tmp, f'text_sample.{fmt}')
+            if fmt == 'odt':
+                strip_thumbnail(src, os.path.join(OUT, 'text_sample.odt'))
+            else:
+                shutil.copy(src, os.path.join(OUT, f'text_sample.{fmt}'))
     for name in sorted(os.listdir(OUT)):
         if name.startswith('text_'):
             print(f'{name}: {os.path.getsize(os.path.join(OUT, name))} байт')

@@ -170,6 +170,22 @@ class DocParaStyle {
     this.rtl = false,
     this.size,
   });
+
+  /// Тот же стиль с другими интервалами (интервалы между абзацами одного
+  /// стиля убираются, когда стиль так просит, — contextual spacing).
+  DocParaStyle withSpacing({double? before, double? after}) => DocParaStyle(
+    heading: heading,
+    align: align,
+    before: before ?? this.before,
+    after: after ?? this.after,
+    left: left,
+    right: right,
+    firstLine: firstLine,
+    background: background,
+    borders: borders,
+    rtl: rtl,
+    size: size,
+  );
 }
 
 /// Строчный элемент абзаца.
@@ -536,7 +552,7 @@ class DocHtml {
     final f = (font ?? '').toLowerCase();
     if (raw == 'o' && f.contains('courier')) return '◦';
     var s = symbols(raw, font);
-    if (_hasPua(s)) s = s.replaceAll(RegExp('[-]'), '•');
+    if (_hasPua(s)) s = s.replaceAll(RegExp('[\uF020-\uF0FF]'), '•');
     return s.trim().isEmpty ? '•' : s;
   }
 
@@ -548,9 +564,9 @@ class DocHtml {
       // схлопнул бы в один: все, кроме последнего, — неразрывные.
       if (spaces == 0) return;
       for (var i = 0; i < spaces - 1; i++) {
-        out.write(' ');
+        out.write('\u00A0');
       }
-      out.write(atEnd && spaces > 1 ? ' ' : ' ');
+      out.write(atEnd && spaces > 1 ? '\u00A0' : ' ');
       spaces = 0;
     }
 
@@ -585,11 +601,11 @@ class DocHtml {
                 continue;
               }
             }
-            out.write('�');
+            out.write('\uFFFD');
             continue;
           }
           if (c >= 0xDC00 && c <= 0xDFFF) {
-            out.write('�');
+            out.write('\uFFFD');
             continue;
           }
           out.writeCharCode(c);
@@ -599,12 +615,15 @@ class DocHtml {
     return out.toString();
   }
 
-  static String attr(String s) => escape(s).replaceAll('"', '&quot;').replaceAll("'", '&#39;').replaceAll(' ', ' ');
+  static String attr(String s) =>
+      escape(s).replaceAll('"', '&quot;').replaceAll("'", '&#39;').replaceAll('\u00A0', ' ');
 
   /// Отступ в pt; большой — не больше доли ширины окна.
   static String _len(double pt) {
-    if (pt.abs() <= 36) return '${num(pt)}pt';
-    return pt > 0 ? 'min(${num(pt)}pt,40%)' : 'max(${num(pt)}pt,-40%)';
+    // Десятые доли пункта: «0,111 in» у LibreOffice — 8 pt, а не 7.992pt.
+    final v = num((pt * 10).roundToDouble() / 10);
+    if (pt.abs() <= 36) return '${v}pt';
+    return pt > 0 ? 'min(${v}pt,40%)' : 'max(${v}pt,-40%)';
   }
 
   /// Основной размер шрифта: каким набрано больше всего текста.
@@ -731,7 +750,7 @@ class _Writer {
         // пробел. text-indent наследуется — в рамке он не нужен.
         out.write(
           '<span style="display:inline-block;min-width:${DocHtml.num(hang)}pt;text-indent:0'
-          '${lcss.isEmpty ? '' : ';$lcss'}">$text </span>',
+          '${lcss.isEmpty ? '' : ';$lcss'}">$text\u00A0</span>',
         );
       } else {
         out.write(lcss.isEmpty ? '$text ' : '<span style="$lcss">$text</span> ');

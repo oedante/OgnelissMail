@@ -57,12 +57,20 @@ class OdpReader {
   }
 }
 
+// Шаблоны — один раз: длины и пробелы разбираются тысячи раз на документ.
+final _lengthRe = RegExp(r'^(-?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)\s*(cm|mm|in|pt|pc|px|inch)?$');
+final _spacesRe = RegExp(r'\s+');
+final _listRe = RegExp(r'[\s,]+');
+final _wsRe = RegExp(r'[ \t\r\n]+');
+final _letterRe = RegExp(r'^[A-Za-z]$');
+final _transformRe = RegExp(r'([a-zA-Z]+)\s*\(([^)]*)\)');
+
 /// Длина ODF («1.27cm», «12pt», «10mm», «1in», «2pc», «96px») → пункты;
 /// null — не длина (проценты, пусто).
 double? _len(String? s) {
   if (s == null) return null;
   final t = s.trim();
-  final m = RegExp(r'^(-?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)\s*(cm|mm|in|pt|pc|px|inch)?$').firstMatch(t);
+  final m = _lengthRe.firstMatch(t);
   if (m == null) return null;
   final v = double.tryParse(m.group(1)!);
   if (v == null || !v.isFinite) return null;
@@ -459,9 +467,9 @@ class _Shapes {
       l[1] * r[4] + l[3] * r[5] + l[5],
     ];
     var count = 0;
-    for (final f in RegExp(r'([a-zA-Z]+)\s*\(([^)]*)\)').allMatches(s)) {
+    for (final f in _transformRe.allMatches(s)) {
       if (++count > 32) break;
-      final args = f.group(2)!.trim().split(RegExp(r'[\s,]+')).where((a) => a.isNotEmpty).toList();
+      final args = f.group(2)!.trim().split(_listRe).where((a) => a.isNotEmpty).toList();
       double arg(int i) => i < args.length ? (_len(args[i]) ?? double.tryParse(args[i]) ?? 0) : 0;
       List<double>? step;
       switch (f.group(1)) {
@@ -633,7 +641,7 @@ class _Shapes {
       case 'custom-shape':
         final eg = e.kid('enhanced-geometry');
         final type = eg?.attr('type') ?? 'rectangle';
-        final mods = (eg?.attr('modifiers') ?? '').trim().split(RegExp(r'\s+'));
+        final mods = (eg?.attr('modifiers') ?? '').trim().split(_spacesRe);
         final mod0 = mods.isEmpty ? null : double.tryParse(mods.first);
         flipH ^= eg?.attr('mirror-horizontal') == 'true';
         flipV = eg?.attr('mirror-vertical') == 'true';
@@ -700,7 +708,7 @@ class _Shapes {
 
   /// svg:viewBox «x y w h».
   static List<double>? _viewBox(String? vb) {
-    final v = (vb ?? '').trim().split(RegExp(r'[\s,]+')).map(double.tryParse).toList();
+    final v = (vb ?? '').trim().split(_listRe).map(double.tryParse).toList();
     if (v.length != 4 || v.any((x) => x == null)) return null;
     final w = v[2]!, h = v[3]!;
     return [v[0]!, v[1]!, w == 0 ? 1 : w, h == 0 ? 1 : h];
@@ -709,7 +717,7 @@ class _Shapes {
   DocPath? _points(String? points, String? viewBox, {required bool filled}) {
     final vb = _viewBox(viewBox);
     if (vb == null || points == null) return null;
-    final nums = points.trim().split(RegExp(r'[\s,]+')).map(double.tryParse).toList();
+    final nums = points.trim().split(_listRe).map(double.tryParse).toList();
     final ops = <DocPathOp>[];
     final pts = <double>[];
     for (var i = 0; i + 1 < nums.length && ops.length < 5000; i += 2) {
@@ -739,7 +747,7 @@ class _Shapes {
     double? lastC2x, lastC2y;
     double nx(double x) => (x - vb[0]) / vb[2];
     double ny(double y) => (y - vb[1]) / vb[3];
-    bool isNum(int k) => k < tokens.length && !RegExp(r'^[A-Za-z]$').hasMatch(tokens[k]);
+    bool isNum(int k) => k < tokens.length && !_letterRe.hasMatch(tokens[k]);
     double take() => double.parse(tokens[i++]);
     var filled = false;
     while (i < tokens.length && ops.length < 5000) {
@@ -845,7 +853,7 @@ class _Shapes {
     if (box == null || box[2] <= 1 || box[3] <= 1) box = _viewBox('0 0 ${subView ?? ''}');
     if (box == null || box[2] <= 1 || box[3] <= 1) return null;
     final vb = box;
-    final tokens = d.trim().split(RegExp(r'[\s,]+'));
+    final tokens = d.trim().split(_listRe);
     final ops = <DocPathOp>[];
     final pts = <double>[];
     var i = 0;
@@ -1176,7 +1184,7 @@ class _Shapes {
     for (final n in el.children) {
       if (n is XmlText || n is XmlCDATA) {
         // Пробелы ODF: подряд — как один (как в HTML), в начале абзаца — нет.
-        var t = (n.value ?? '').replaceAll(RegExp(r'[ \t\r\n]+'), ' ');
+        var t = (n.value ?? '').replaceAll(_wsRe, ' ');
         if (atStart) t = t.trimLeft();
         if (t.isEmpty) continue;
         _addRun(runs, t, tp, auto, href);
@@ -1236,7 +1244,7 @@ class _Shapes {
     } else if (pos.startsWith('sub')) {
       baseline = -33;
     } else if (pos.isNotEmpty) {
-      baseline = (_pct(pos.split(RegExp(r'\s+')).first) ?? 0).clamp(-100.0, 100.0);
+      baseline = (_pct(pos.split(_spacesRe).first) ?? 0).clamp(-100.0, 100.0);
     }
     var t = text;
     if (tp['text-transform'] == 'uppercase') t = t.toUpperCase();
@@ -1403,7 +1411,7 @@ class _Shapes {
   /// fo:border «0.5pt solid #000000».
   static DocLine? _border(String? s) {
     if (s == null) return null;
-    final parts = s.trim().split(RegExp(r'\s+'));
+    final parts = s.trim().split(_spacesRe);
     if (parts.isEmpty || parts.contains('none') || parts.contains('hidden')) return null;
     double? w;
     int? c;

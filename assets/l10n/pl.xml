@@ -3766,6 +3766,8 @@
     <string name="notifyMessengerStyleDesc">Zdjęcie lub inicjał nadawcy obok wiadomości</string>
     <string name="notifyVipConversations">Rozmowy dla VIP</string>
     <string name="notifyVipConversationsDesc">Poczta od VIP trafia do sekcji Rozmowy w Androidzie, gdzie można oznaczyć ją jako priorytetową</string>
+    <string name="notifyAllConversations">Rozmowy dla całej poczty</string>
+    <string name="notifyAllConversationsDesc">Zdjęcie nadawcy zamiast ikony aplikacji; cała poczta trafia do sekcji „Rozmowy”</string>
     <string name="ios_siriCompose">Nowa wiadomość</string>
     <string name="ios_siriEvent">Nowe wydarzenie</string>
     <string name="ios_siriReminder">Nowe przypomnienie</string>

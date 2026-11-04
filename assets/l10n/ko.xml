@@ -3709,6 +3709,8 @@
     <string name="notifyMessengerStyleDesc">메시지 옆에 보낸 사람의 사진 또는 이니셜 표시</string>
     <string name="notifyVipConversations">VIP 대화</string>
     <string name="notifyVipConversationsDesc">VIP 메일이 Android의 대화 섹션에 표시되며 우선순위로 지정할 수 있습니다</string>
+    <string name="notifyAllConversations">모든 메일을 대화로</string>
+    <string name="notifyAllConversationsDesc">앱 아이콘 대신 보낸 사람 사진을 표시하고 모든 메일을 대화에 표시합니다</string>
     <string name="ios_siriCompose">새 메일</string>
     <string name="ios_siriEvent">새 일정</string>
     <string name="ios_siriReminder">새 알림</string>

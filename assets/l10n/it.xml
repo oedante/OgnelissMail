@@ -3728,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">La foto o l\'iniziale del mittente accanto al messaggio</string>
     <string name="notifyVipConversations">Conversazioni per i VIP</string>
     <string name="notifyVipConversationsDesc">La posta dei VIP compare in Conversazioni di Android, dove puoi renderla prioritaria</string>
+    <string name="notifyAllConversations">Conversazioni per tutta la posta</string>
+    <string name="notifyAllConversationsDesc">Foto del mittente al posto dell\'icona dell\'app; tutta la posta appare in «Conversazioni»</string>
     <string name="ios_siriCompose">Nuova email</string>
     <string name="ios_siriEvent">Nuovo evento</string>
     <string name="ios_siriReminder">Nuovo promemoria</string>

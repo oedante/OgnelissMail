@@ -38,12 +38,20 @@ class MessengerNotify {
   // notificationVipConversations): настройки читаются и в фоновом изоляте.
   static const prefStyle = 's_notif_messenger';
   static const prefVipConversations = 's_notif_vip_conv';
+  static const prefAllConversations = 's_notif_all_conv';
 
   /// «Уведомления как в мессенджерах» (по умолчанию включено).
   static bool styleOn(SharedPreferences? p) => p?.getBool(prefStyle) ?? true;
 
   /// «Беседы для VIP» на Android (по умолчанию включено).
   static bool vipConversationsOn(SharedPreferences? p) => p?.getBool(prefVipConversations) ?? true;
+
+  /// «Беседы для всех писем» на Android (1.11.0, вопрос владельца 04.11.2026
+  /// «можно ли значок приложения заменить на портрет»): в свёрнутом
+  /// уведомлении слева Android рисует портрет только у беседы, у остальных —
+  /// значок приложения. По умолчанию выключено: все письма тогда — в разделе
+  /// «Беседы», выше уведомлений других приложений.
+  static bool allConversationsOn(SharedPreferences? p) => p?.getBool(prefAllConversations) ?? false;
 
   static const _channel = MethodChannel('ogneliss/messenger');
 
@@ -61,17 +69,22 @@ class MessengerNotify {
     return '$shortcutPrefix${NotificationService.stableId('conv|$e').toRadixString(36)}';
   }
 
-  /// Публиковать ли ярлык беседы: Android, оба тумблера включены, VIP с
-  /// адресом. Раздел «Беседы» требует MessagingStyle, поэтому без вида
-  /// «как в мессенджерах» ярлык не нужен.
+  /// Публиковать ли ярлык беседы: Android, вид «как в мессенджерах», письмо
+  /// с адресом отправителя и беседы для всех писем — или для VIP, если это
+  /// VIP. Раздел «Беседы» требует MessagingStyle, поэтому без вида «как в
+  /// мессенджерах» ярлык не нужен.
   static bool wantsShortcut({
     required bool android,
     required bool styleOn,
     required bool vipConversationsOn,
     required bool isVip,
+    bool allConversationsOn = false,
     String? email,
   }) =>
-      android && styleOn && vipConversationsOn && isVip && shortcutId(email) != null;
+      android &&
+      styleOn &&
+      (allConversationsOn || (vipConversationsOn && isVip)) &&
+      shortcutId(email) != null;
 
   /// Что открыть ярлыком беседы — тот же формат, что у виджета «Почта»
   /// (AppShortcuts.openType, путь /message/…): последнее письмо человека.

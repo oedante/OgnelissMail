@@ -108,7 +108,7 @@ class PlatformTranslator implements Translator {
   Future<String?> detectLanguage(String text) async {
     if (text.trim().isEmpty || !await isAvailable()) return null;
     try {
-      return normalizeLang(await _ch.invokeMethod<String>('detect', {'text': text}));
+      return refineCyrillicLang(normalizeLang(await _ch.invokeMethod<String>('detect', {'text': text})), text);
     } catch (e) {
       AppLogger.debug('Перевод: язык не определён: $e');
       return null;

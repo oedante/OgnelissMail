@@ -3728,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">Mesajın yanında gönderenin fotoğrafı veya baş harfi</string>
     <string name="notifyVipConversations">VIP\'ler için görüşmeler</string>
     <string name="notifyVipConversationsDesc">VIP e-postaları Android\'in Görüşmeler bölümünde görünür ve öncelikli olarak işaretlenebilir</string>
+    <string name="notifyAllConversations">Tüm postalar için sohbetler</string>
+    <string name="notifyAllConversationsDesc">Uygulama simgesi yerine gönderenin fotoğrafı; tüm postalar Sohbetler bölümünde görünür</string>
     <string name="ios_siriCompose">Yeni e-posta</string>
     <string name="ios_siriEvent">Yeni etkinlik</string>
     <string name="ios_siriReminder">Yeni hatırlatıcı</string>

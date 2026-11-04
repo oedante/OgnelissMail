@@ -3728,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">Afsenderens foto eller forbogstav ved beskeden</string>
     <string name="notifyVipConversations">Samtaler for VIP\'er</string>
     <string name="notifyVipConversationsDesc">Mail fra VIP\'er vises under Samtaler i Android, hvor du kan markere dem som prioriterede</string>
+    <string name="notifyAllConversations">Samtaler for al mail</string>
+    <string name="notifyAllConversationsDesc">Afsenderens billede i stedet for appikonet; al mail vises under Samtaler</string>
     <string name="ios_siriCompose">Ny mail</string>
     <string name="ios_siriEvent">Ny begivenhed</string>
     <string name="ios_siriReminder">Ny påmindelse</string>

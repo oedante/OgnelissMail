@@ -3709,6 +3709,8 @@
     <string name="notifyMessengerStyleDesc">Foto atau inisial pengirim di samping pesan</string>
     <string name="notifyVipConversations">Percakapan untuk VIP</string>
     <string name="notifyVipConversationsDesc">Email dari VIP muncul di bagian Percakapan Android, tempat Anda dapat menjadikannya prioritas</string>
+    <string name="notifyAllConversations">Percakapan untuk semua email</string>
+    <string name="notifyAllConversationsDesc">Foto pengirim, bukan ikon aplikasi; semua email muncul di Percakapan</string>
     <string name="ios_siriCompose">Email baru</string>
     <string name="ios_siriEvent">Acara baru</string>
     <string name="ios_siriReminder">Pengingat baru</string>

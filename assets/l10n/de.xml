@@ -3728,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">Foto oder Initiale des Absenders neben der Nachricht</string>
     <string name="notifyVipConversations">Unterhaltungen für VIPs</string>
     <string name="notifyVipConversationsDesc">E-Mails von VIPs erscheinen unter „Unterhaltungen“ in Android und lassen sich als vorrangig markieren</string>
+    <string name="notifyAllConversations">Unterhaltungen für alle E-Mails</string>
+    <string name="notifyAllConversationsDesc">Bild des Absenders statt des App-Symbols; alle E-Mails erscheinen unter „Unterhaltungen“</string>
     <string name="ios_siriCompose">Neue E-Mail</string>
     <string name="ios_siriEvent">Neuer Termin</string>
     <string name="ios_siriReminder">Neue Erinnerung</string>

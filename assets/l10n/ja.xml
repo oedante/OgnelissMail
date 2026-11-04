@@ -3709,6 +3709,8 @@
     <string name="notifyMessengerStyleDesc">メッセージの横に送信者の写真または頭文字を表示</string>
     <string name="notifyVipConversations">VIP との会話</string>
     <string name="notifyVipConversationsDesc">VIP からのメールは Android の「会話」に表示され、優先に設定できます</string>
+    <string name="notifyAllConversations">すべてのメールを会話に</string>
+    <string name="notifyAllConversationsDesc">アプリのアイコンの代わりに差出人の写真を表示し、すべてのメールを「会話」に表示します</string>
     <string name="ios_siriCompose">新規メール</string>
     <string name="ios_siriEvent">新しい予定</string>
     <string name="ios_siriReminder">新しいリマインダー</string>

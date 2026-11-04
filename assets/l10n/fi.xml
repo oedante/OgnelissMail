@@ -3728,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">Lähettäjän kuva tai alkukirjain viestin vieressä</string>
     <string name="notifyVipConversations">Keskustelut VIP-henkilöille</string>
     <string name="notifyVipConversationsDesc">VIP-henkilöiden posti näkyy Androidin Keskustelut-osiossa, jossa sen voi merkitä tärkeäksi</string>
+    <string name="notifyAllConversations">Keskustelut kaikille viesteille</string>
+    <string name="notifyAllConversationsDesc">Lähettäjän kuva sovelluskuvakkeen sijaan; kaikki viestit näkyvät Keskustelut-osiossa</string>
     <string name="ios_siriCompose">Uusi viesti</string>
     <string name="ios_siriEvent">Uusi tapahtuma</string>
     <string name="ios_siriReminder">Uusi muistutus</string>

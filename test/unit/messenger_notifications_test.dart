@@ -42,6 +42,19 @@ void main() {
       expect(want(email: ''), isFalse);
     });
 
+    // 1.11.0: «Беседы для всех писем» — портрет вместо значка приложения
+    // в свёрнутом уведомлении у любого письма.
+    test('беседы для всех писем — и не VIP, но с адресом и видом мессенджера', () {
+      bool want({bool all = true, bool vipConv = false, bool vip = false, bool style = true, String? email = 'a@example.com'}) =>
+          MessengerNotify.wantsShortcut(
+              android: true, styleOn: style, vipConversationsOn: vipConv, allConversationsOn: all, isVip: vip, email: email);
+      expect(want(), isTrue);
+      expect(want(all: false), isFalse);
+      expect(want(all: false, vipConv: true, vip: true), isTrue);
+      expect(want(style: false), isFalse);
+      expect(want(email: null), isFalse);
+    });
+
     test('нажатие открывает письмо — формат виджета «Почта»', () {
       final t = MessengerNotify.openTarget('acc 1', 'INBOX:42');
       final u = Uri.parse(t);
@@ -242,6 +255,11 @@ void main() {
       const s = AppSettings(isFirstLaunch: false);
       expect(s.notificationMessengerStyle, isTrue);
       expect(s.notificationVipConversations, isTrue);
+      // Беседы для всех писем — по умолчанию выключены.
+      expect(MessengerNotify.allConversationsOn(p), isFalse);
+      expect(s.notificationAllConversations, isFalse);
+      await p.setBool(MessengerNotify.prefAllConversations, true);
+      expect(MessengerNotify.allConversationsOn(p), isTrue);
     });
   });
 }

@@ -3709,6 +3709,8 @@
     <string name="notifyMessengerStyleDesc">在邮件旁显示发件人的照片或首字母</string>
     <string name="notifyVipConversations">VIP 对话</string>
     <string name="notifyVipConversationsDesc">VIP 的邮件会显示在 Android 的“对话”部分，可将其设为优先</string>
+    <string name="notifyAllConversations">所有邮件显示为对话</string>
+    <string name="notifyAllConversationsDesc">用发件人头像代替应用图标；所有邮件显示在“对话”中</string>
     <string name="ios_siriCompose">新邮件</string>
     <string name="ios_siriEvent">新建日程</string>
     <string name="ios_siriReminder">新提醒</string>

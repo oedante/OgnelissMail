@@ -3728,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">Avsändarens foto eller initial bredvid meddelandet</string>
     <string name="notifyVipConversations">Konversationer för VIP</string>
     <string name="notifyVipConversationsDesc">E-post från VIP visas under Konversationer i Android, där du kan prioritera den</string>
+    <string name="notifyAllConversations">Konversationer för all e-post</string>
+    <string name="notifyAllConversationsDesc">Avsändarens bild i stället för appikonen; all e-post visas under Konversationer</string>
     <string name="ios_siriCompose">Nytt e-postmeddelande</string>
     <string name="ios_siriEvent">Ny händelse</string>
     <string name="ios_siriReminder">Ny påminnelse</string>

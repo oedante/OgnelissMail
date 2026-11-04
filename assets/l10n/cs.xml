@@ -3747,6 +3747,8 @@
     <string name="notifyMessengerStyleDesc">Fotka nebo iniciála odesílatele vedle zprávy</string>
     <string name="notifyVipConversations">Konverzace pro VIP</string>
     <string name="notifyVipConversationsDesc">Pošta od VIP se zobrazí v sekci Konverzace v Androidu, kde ji lze označit jako prioritní</string>
+    <string name="notifyAllConversations">Konverzace pro všechny e-maily</string>
+    <string name="notifyAllConversationsDesc">Fotka odesílatele místo ikony aplikace; všechny e-maily se zobrazí v části Konverzace</string>
     <string name="ios_siriCompose">Nová zpráva</string>
     <string name="ios_siriEvent">Nová událost</string>
     <string name="ios_siriReminder">Nové připomenutí</string>

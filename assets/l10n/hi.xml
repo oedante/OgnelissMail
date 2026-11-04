@@ -3728,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">संदेश के पास प्रेषक की फ़ोटो या पहला अक्षर</string>
     <string name="notifyVipConversations">VIP के लिए बातचीत</string>
     <string name="notifyVipConversationsDesc">VIP की मेल Android के बातचीत अनुभाग में दिखती है, जहां आप इसे प्राथमिकता दे सकते हैं</string>
+    <string name="notifyAllConversations">सभी मेल के लिए बातचीत</string>
+    <string name="notifyAllConversationsDesc">ऐप आइकन के बजाय भेजने वाले की फ़ोटो; सारा मेल बातचीत में दिखता है</string>
     <string name="ios_siriCompose">नया ईमेल</string>
     <string name="ios_siriEvent">नया इवेंट</string>
     <string name="ios_siriReminder">नया रिमाइंडर</string>

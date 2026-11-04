@@ -352,12 +352,14 @@ class NotificationService {
       ));
       if (shown) return;
     }
-    // Android: беседа для VIP — ярлык с человеком; уведомление с его id
-    // попадает в раздел «Беседы» (можно сделать приоритетным).
+    // Android: беседа для VIP (или для всех писем, 1.11.0) — ярлык с
+    // человеком; уведомление с его id попадает в раздел «Беседы» (можно
+    // сделать приоритетным), а в свёрнутом слева — портрет, а не значок
+    // приложения.
     String? shortcutId;
     if (MessengerNotify.wantsShortcut(
         android: Platform.isAndroid, styleOn: messenger, vipConversationsOn: MessengerNotify.vipConversationsOn(_prefs),
-        isVip: isVip, email: fromEmail)) {
+        allConversationsOn: MessengerNotify.allConversationsOn(_prefs), isVip: isVip, email: fromEmail)) {
       shortcutId = await MessengerNotify.pushShortcut(
           name: senderName, email: fromEmail!, accountId: accountId, emailId: emailId, avatar: avatar);
     }

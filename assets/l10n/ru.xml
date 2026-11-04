@@ -3766,6 +3766,8 @@
     <string name="notifyMessengerStyleDesc">Фото или буква отправителя рядом с письмом</string>
     <string name="notifyVipConversations">Беседы для VIP</string>
     <string name="notifyVipConversationsDesc">Письма VIP — в разделе «Беседы» Android: их можно сделать приоритетными</string>
+    <string name="notifyAllConversations">Беседы для всех писем</string>
+    <string name="notifyAllConversationsDesc">Портрет отправителя вместо значка приложения; все письма — в разделе «Беседы»</string>
     <string name="ios_siriCompose">Новое письмо</string>
     <string name="ios_siriEvent">Новая встреча</string>
     <string name="ios_siriReminder">Новое напоминание</string>

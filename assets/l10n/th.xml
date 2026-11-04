@@ -3709,6 +3709,8 @@
     <string name="notifyMessengerStyleDesc">รูปภาพหรืออักษรย่อของผู้ส่งข้างข้อความ</string>
     <string name="notifyVipConversations">การสนทนาสำหรับ VIP</string>
     <string name="notifyVipConversationsDesc">อีเมลจาก VIP จะแสดงในส่วนการสนทนาของ Android ซึ่งคุณตั้งเป็นลำดับความสำคัญได้</string>
+    <string name="notifyAllConversations">การสนทนาสำหรับอีเมลทั้งหมด</string>
+    <string name="notifyAllConversationsDesc">รูปผู้ส่งแทนไอคอนแอป อีเมลทั้งหมดจะแสดงในส่วนการสนทนา</string>
     <string name="ios_siriCompose">อีเมลใหม่</string>
     <string name="ios_siriEvent">กิจกรรมใหม่</string>
     <string name="ios_siriReminder">การเตือนใหม่</string>

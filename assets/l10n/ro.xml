@@ -3747,6 +3747,8 @@
     <string name="notifyMessengerStyleDesc">Fotografia sau inițiala expeditorului lângă mesaj</string>
     <string name="notifyVipConversations">Conversații pentru VIP</string>
     <string name="notifyVipConversationsDesc">E-mailurile VIP apar la Conversații în Android, unde le puteți marca drept prioritare</string>
+    <string name="notifyAllConversations">Conversații pentru toate e-mailurile</string>
+    <string name="notifyAllConversationsDesc">Fotografia expeditorului în locul pictogramei aplicației; toate e-mailurile apar la Conversații</string>
     <string name="ios_siriCompose">Mesaj nou</string>
     <string name="ios_siriEvent">Eveniment nou</string>
     <string name="ios_siriReminder">Memento nou</string>

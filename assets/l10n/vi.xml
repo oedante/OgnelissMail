@@ -3709,6 +3709,8 @@
     <string name="notifyMessengerStyleDesc">Ảnh hoặc chữ cái đầu của người gửi bên cạnh thư</string>
     <string name="notifyVipConversations">Cuộc trò chuyện cho VIP</string>
     <string name="notifyVipConversationsDesc">Thư từ VIP xuất hiện trong mục Cuộc trò chuyện của Android, nơi bạn có thể đặt làm ưu tiên</string>
+    <string name="notifyAllConversations">Cuộc trò chuyện cho mọi thư</string>
+    <string name="notifyAllConversationsDesc">Ảnh người gửi thay cho biểu tượng ứng dụng; mọi thư hiện trong mục Cuộc trò chuyện</string>
     <string name="ios_siriCompose">Thư mới</string>
     <string name="ios_siriEvent">Sự kiện mới</string>
     <string name="ios_siriReminder">Lời nhắc mới</string>

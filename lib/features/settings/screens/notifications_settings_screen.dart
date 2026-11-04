@@ -97,6 +97,18 @@ class NotificationsSettingsScreen extends ConsumerWidget {
                       ? (v) => notifier.setNotificationVipConversations(v)
                       : null,
                 ),
+              // Портрет вместо значка приложения в свёрнутом уведомлении
+              // (1.11.0, вопрос владельца 04.11.2026).
+              if (defaultTargetPlatform == TargetPlatform.android)
+                SettingsSwitchItem(
+                  icon: AppIcons.forum,
+                  title: l10n.tr('notifyAllConversations'),
+                  subtitle: l10n.tr('notifyAllConversationsDesc'),
+                  value: settings.notificationAllConversations,
+                  onChanged: settings.notificationsEnabled && settings.notificationMessengerStyle
+                      ? (v) => notifier.setNotificationAllConversations(v)
+                      : null,
+                ),
             ],
             // Строк текста в уведомлении (1.10.3, просьба владельца
             // 02.11.2026) — отдельно для рабочих и личных ящиков.

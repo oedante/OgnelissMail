@@ -3747,6 +3747,8 @@
     <string name="notifyMessengerStyleDesc">תמונת השולח או האות הראשונה לצד ההודעה</string>
     <string name="notifyVipConversations">שיחות לאנשי VIP</string>
     <string name="notifyVipConversationsDesc">דואר מאנשי VIP מופיע בקטע השיחות של Android, שם אפשר לסמן אותו כבעל עדיפות</string>
+    <string name="notifyAllConversations">שיחות לכל הדואר</string>
+    <string name="notifyAllConversationsDesc">תמונת השולח במקום סמל האפליקציה; כל הדואר מופיע תחת שיחות</string>
     <string name="ios_siriCompose">הודעה חדשה</string>
     <string name="ios_siriEvent">אירוע חדש</string>
     <string name="ios_siriReminder">תזכורת חדשה</string>

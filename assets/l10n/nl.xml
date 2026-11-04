@@ -3728,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">Foto of initiaal van de afzender naast het bericht</string>
     <string name="notifyVipConversations">Gesprekken voor VIP\'s</string>
     <string name="notifyVipConversationsDesc">Mail van VIP\'s verschijnt onder Gesprekken in Android, waar je deze als prioriteit kunt markeren</string>
+    <string name="notifyAllConversations">Gesprekken voor alle mail</string>
+    <string name="notifyAllConversationsDesc">Foto van de afzender in plaats van het app-pictogram; alle mail verschijnt onder Gesprekken</string>
     <string name="ios_siriCompose">Nieuw bericht</string>
     <string name="ios_siriEvent">Nieuwe afspraak</string>
     <string name="ios_siriReminder">Nieuwe herinnering</string>

@@ -3728,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">A feladó fotója vagy kezdőbetűje az üzenet mellett</string>
     <string name="notifyVipConversations">Beszélgetések VIP-eknek</string>
     <string name="notifyVipConversationsDesc">A VIP-ek levelei az Android Beszélgetések részében jelennek meg, ahol prioritásossá tehetők</string>
+    <string name="notifyAllConversations">Beszélgetések minden levélhez</string>
+    <string name="notifyAllConversationsDesc">A feladó képe az alkalmazásikon helyett; minden levél a Beszélgetések között jelenik meg</string>
     <string name="ios_siriCompose">Új üzenet</string>
     <string name="ios_siriEvent">Új esemény</string>
     <string name="ios_siriReminder">Új emlékeztető</string>

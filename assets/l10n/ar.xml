@@ -3804,6 +3804,8 @@
     <string name="notifyMessengerStyleDesc">صورة المرسل أو الحرف الأول من اسمه بجانب الرسالة</string>
     <string name="notifyVipConversations">محادثات لكبار الشخصيات</string>
     <string name="notifyVipConversationsDesc">يظهر بريد كبار الشخصيات في قسم المحادثات في Android، حيث يمكنك جعله ذا أولوية</string>
+    <string name="notifyAllConversations">محادثات لكل البريد</string>
+    <string name="notifyAllConversationsDesc">صورة المرسل بدلاً من أيقونة التطبيق؛ يظهر كل البريد ضمن المحادثات</string>
     <string name="ios_siriCompose">رسالة جديدة</string>
     <string name="ios_siriEvent">حدث جديد</string>
     <string name="ios_siriReminder">تذكير جديد</string>

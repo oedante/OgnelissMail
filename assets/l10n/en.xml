@@ -3728,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">The sender\'s photo or initial next to the message</string>
     <string name="notifyVipConversations">Conversations for VIPs</string>
     <string name="notifyVipConversationsDesc">VIP mail appears under Android Conversations, where you can mark it as priority</string>
+    <string name="notifyAllConversations">Conversations for all mail</string>
+    <string name="notifyAllConversationsDesc">The sender\'s portrait instead of the app icon; all mail appears under Conversations</string>
     <string name="ios_siriCompose">New email</string>
     <string name="ios_siriEvent">New event</string>
     <string name="ios_siriReminder">New reminder</string>

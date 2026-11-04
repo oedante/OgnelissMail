@@ -3728,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">La photo ou l\'initiale de l\'expéditeur à côté du message</string>
     <string name="notifyVipConversations">Conversations pour les VIP</string>
     <string name="notifyVipConversationsDesc">Les messages des VIP apparaissent dans « Conversations » d\'Android, où vous pouvez les rendre prioritaires</string>
+    <string name="notifyAllConversations">Conversations pour tous les messages</string>
+    <string name="notifyAllConversationsDesc">Portrait de l\'expéditeur au lieu de l\'icône de l\'app ; tous les messages apparaissent dans « Conversations »</string>
     <string name="ios_siriCompose">Nouveau message</string>
     <string name="ios_siriEvent">Nouvel événement</string>
     <string name="ios_siriReminder">Nouveau rappel</string>

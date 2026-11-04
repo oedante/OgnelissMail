@@ -45,8 +45,11 @@ const faqSections = <FaqSection>[
     FaqItem('mail_8'),
     // Увеличение письма разведением пальцев (1.8.0).
     FaqItem('mail_9', route: '/settings/general'),
-    // Вложения внутри приложения (1.8.14): архивы, PDF, картинки, текст.
+    // Вложения внутри приложения (1.8.14): архивы, PDF, картинки, текст;
+    // с 1.11.x — документы Office, OpenDocument, RTF и CSV.
     FaqItem('mail_10'),
+    // Как выключить просмотр документов целиком или по видам (1.11.x).
+    FaqItem('mail_11', route: '/settings/mail'),
   ]),
   FaqSection(id: 'drafts', icon: AppIcons.drafts, items: [
     FaqItem('drafts_1'),

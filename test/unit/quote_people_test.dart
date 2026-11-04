@@ -102,4 +102,85 @@ void main() {
     expect(r.name, 'Rob Kowal');
     expect(QuotePeople.fromLink('mailto:a@b.ru'), isNull);
   });
+
+  group('подписи и дата шапки на языке приложения (1.11.x, скриншоты 04.11.2026)', () {
+    // intl ставит неразрывные пробелы («2026 г.», «14:48») — сравниваем с обычными.
+    String sp(String s) => s.replaceAll(RegExp('[\u00a0\u202f]'), ' ');
+    const ru = QuoteHeaderText('ru', {
+      'from': 'От:',
+      'sent': 'Отправлено:',
+      'to': 'Кому:',
+      'cc': 'Копия:',
+      'subject': 'Тема:',
+    });
+
+    test('Outlook по-английски: подписи и дата — по-русски, люди — плашками', () {
+      const html = '<div><p class="MsoNormal"><b>From:</b> Ганиев Руслан Рамилевич &lt;r.ganiev@corp.ru&gt;<br>'
+          '<b>Sent:</b> Thursday, October 22, 2026 2:48 PM<br>'
+          '<b>To:</b> Передерий Сергей Анатольевич &lt;s.p@corp.ru&gt;<br>'
+          '<b>Cc:</b> Жаринов Александр Вячеславович &lt;a.z@corp.ru&gt;<br>'
+          '<b>Subject:</b> SWOT закупки МТР</p></div><p>Сергей Анатольевич, добрый день!</p>';
+      final out = sp(QuotePeople.enrich(html, local: ru));
+      expect(out, contains('<b>От:</b>'));
+      expect(out, contains('<b>Отправлено:</b> четверг, 22 октября 2026 г. 14:48'));
+      expect(out, contains('<b>Кому:</b>'));
+      expect(out, contains('<b>Копия:</b>'));
+      expect(out, contains('<b>Тема:</b> SWOT закупки МТР'));
+      expect(RegExp('href="ogperson:').allMatches(out).length, 3);
+      expect(out, isNot(contains('Thursday')));
+      expect(out, contains('Сергей Анатольевич, добрый день!'));
+    });
+
+    test('без плашек людей — подписи и дата всё равно на языке приложения', () {
+      const html = '<p><b>From:</b> Зибров Дмитрий Николаевич &lt;d.z@corp.ru&gt;<br>'
+          '<b>Sent:</b> Monday, November 2, 2026 5:57 PM<br><b>Subject:</b> RE: Список</p>';
+      final out = sp(QuotePeople.enrich(html, people: false, local: ru));
+      expect(out, contains('<b>От:</b> Зибров Дмитрий Николаевич &lt;d.z@corp.ru&gt;'));
+      expect(out, contains('<b>Отправлено:</b> понедельник, 2 ноября 2026 г. 17:57'));
+      expect(out, isNot(contains('ogperson:')));
+    });
+
+    test('пересылка Gmail: подписи обычным текстом, «Date: … at 5:57 PM»', () {
+      const html = '<div class="gmail_quote">---------- Forwarded message ---------<br>'
+          'From: <strong class="gmail_sendername" dir="auto">GitHub</strong> '
+          '<span dir="auto">&lt;<a href="mailto:noreply@github.com">noreply@github.com</a>&gt;</span><br>'
+          'Date: Mon, Nov 2, 2026 at 5:57 PM<br>Subject: Your build<br>'
+          'To: &lt;<a href="mailto:oedante@gmail.com">oedante@gmail.com</a>&gt;<br></div>';
+      final out = sp(QuotePeople.enrich(html, local: ru));
+      expect(out, contains('От: '));
+      expect(out, contains('Отправлено: понедельник, 2 ноября 2026 г. 17:57'));
+      expect(out, contains('Тема: Your build'));
+      expect(out, contains('Кому: '));
+      expect(out, contains('ogperson:noreply%40github.com?n=GitHub'));
+    });
+
+    test('одна строка «Subject: …» в тексте письма — не шапка, без изменений', () {
+      const html = '<p>Subject: квартальный отчёт<br>Прошу посмотреть до пятницы.</p>';
+      expect(QuotePeople.enrich(html, people: false, local: ru), html);
+    });
+
+    test('язык приложения английский — английская шапка без изменений', () {
+      const en = QuoteHeaderText('en', {'from': 'From:', 'sent': 'Sent:', 'to': 'To:', 'cc': 'Cc:', 'subject': 'Subject:'});
+      const html = '<p><b>From:</b> A &lt;a@b.ru&gt;<br><b>Sent:</b> Thursday, October 22, 2026 2:48 PM<br>'
+          '<b>Subject:</b> Hi</p>';
+      expect(QuotePeople.enrich(html, people: false, local: en), html);
+    });
+
+    test('даты Outlook, Gmail, Apple и RFC 2822; не дата — null', () {
+      DateTime? at(String s) => QuotePeople.parseHeaderDate(s)?.at;
+      expect(at('Thursday, October 22, 2026 2:48 PM'), DateTime(2026, 10, 22, 14, 48));
+      expect(at('Thursday, October 22, 2026 12:05 AM'), DateTime(2026, 10, 22, 0, 5));
+      expect(at('Mon, Nov 2, 2026 at 5:57 PM'), DateTime(2026, 11, 2, 17, 57));
+      expect(at('2 Nov 2026 at 17:57'), DateTime(2026, 11, 2, 17, 57));
+      final rfc = QuotePeople.parseHeaderDate('Mon, 2 Nov 2026 17:57:00 +0300')!;
+      expect(rfc.at, DateTime(2026, 11, 2, 17, 57));
+      expect(rfc.rest, '+0300');
+      final noTime = QuotePeople.parseHeaderDate('Fri, Oct 30, 2026')!;
+      expect(noTime.time, isFalse);
+      expect(sp(QuotePeople.formatHeaderDate(noTime, 'ru')!), 'пятница, 30 октября 2026 г.');
+      expect(at('November 31, 2026 10:00'), isNull);
+      expect(at('Meeting on October 22, 2026'), isNull);
+      expect(at('October 22, 2026 — see agenda'), isNull);
+    });
+  });
 }

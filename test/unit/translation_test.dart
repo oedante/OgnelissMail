@@ -253,6 +253,24 @@ void main() {
       expect(refineCyrillicLang('bg', 'Вы где?'), 'bg');
     });
 
+    test('короткое русское письмо с одной «ы» — не украинский (скриншот 04.11.2026)', () {
+      // Свежий текст письма без подписи и перевода ниже — образец для ML Kit.
+      const ru = 'Добрый день, Андрей Сергеевич, Тестирую перевод письма.';
+      expect(refineCyrillicLang('uk', ru), 'ru');
+      expect(refineCyrillicLang('sr', ru), 'ru');
+      expect(refineCyrillicLang('mk', ru), 'ru');
+      // Болгарский и белорусский — по-прежнему нужны две буквы и больше.
+      expect(refineCyrillicLang('bg', ru), 'bg');
+      expect(refineCyrillicLang('be', ru), 'be');
+      // Украинский с русской фамилией: свои буквы есть — украинский.
+      const uk = 'Добрий день, Іване! Дякую за лист від Крылова, відповім завтра.';
+      expect(refineCyrillicLang('uk', uk), 'uk');
+      // Короткий украинский без «і»: русских букв нет — как сказал определитель.
+      expect(refineCyrillicLang('uk', 'Добрий день, дякую за лист, чекаю'), 'uk');
+      // Сербский: «ј», «љ», «њ» — сербский.
+      expect(refineCyrillicLang('sr', 'Поштовани, хвала на поруци, јавићу се сутра у вези са њом.'), 'sr');
+    });
+
     test('недавние: первым, без повторов, не больше max', () {
       expect(pushRecent(const ['de', 'en', 'fr'], 'en', max: 3), ['en', 'de', 'fr']);
       expect(pushRecent(const ['de', 'en', 'fr'], 'es', max: 3), ['es', 'de', 'en']);

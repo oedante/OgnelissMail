@@ -1064,11 +1064,13 @@ class _ParagraphView extends StatelessWidget {
     final bullet = p.bullet;
     Widget out;
     if (bullet != null && first != null) {
-      final size = first.size * k * bullet.sizeScale;
+      // Точка «•» у Roboto заметно мельче, чем у Arial и Calibri, — крупнее.
+      final scale = bullet.sizeScale * (bullet.text == '•' ? 1.3 : 1.0);
+      final size = first.size * k * scale;
       final style = _style(
         DocRun('', size: first.size, color: bullet.color ?? first.color, font: bullet.font ?? first.font),
-        k * bullet.sizeScale,
-        lineHeight(first.size) / bullet.sizeScale,
+        k * scale,
+        lineHeight(first.size) / scale,
       ).copyWith(fontWeight: first.bold ? FontWeight.w700 : FontWeight.w400);
       final labelWidth = math.max(-p.indent, size * (bullet.text.length > 1 ? 0.6 * bullet.text.length : 0.9));
       final label = SizedBox(

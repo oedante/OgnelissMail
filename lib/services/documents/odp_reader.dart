@@ -1269,12 +1269,15 @@ class _Shapes {
     final cols = <double>[];
     final colCellStyle = <String?>[];
     void addCol(XmlElement c) {
-      final rep = (int.tryParse(c.attr('number-columns-repeated') ?? '1') ?? 1).clamp(1, OdpReader.maxTableCols);
+      // Повтор из файла — не размер выделения памяти: не больше предела.
+      final declared = int.tryParse(c.attr('number-columns-repeated') ?? '1') ?? 1;
+      final rep = declared.clamp(1, OdpReader.maxTableCols);
       final w = _len(st.props('table-column', c.attr('style-name'), 'table-column-properties', scope)['column-width']);
       for (var i = 0; i < rep && cols.length < OdpReader.maxTableCols; i++) {
         cols.add((w ?? 0).clamp(0.0, 20000.0));
         colCellStyle.add(c.attr('default-cell-style-name'));
       }
+      if (cols.length >= OdpReader.maxTableCols && declared > rep) o._truncated = true;
     }
 
     final rowEls = <XmlElement>[];
@@ -1287,7 +1290,7 @@ class _Shapes {
           case 'table-columns' || 'table-header-columns' || 'table-column-group':
             walk(c, depth + 1);
           case 'table-row':
-            final rep = (int.tryParse(c.attr('number-rows-repeated') ?? '1') ?? 1).clamp(1, OdpReader.maxTableRows);
+            final rep = (int.tryParse(c.attr('number-rows-repeated') ?? '1') ?? 1).clamp(1, OdpReader.maxTableRows + 1);
             for (var i = 0; i < rep && rowEls.length <= OdpReader.maxTableRows; i++) {
               rowEls.add(c);
             }

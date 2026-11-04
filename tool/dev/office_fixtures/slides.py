@@ -19,6 +19,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 
 from PIL import Image, ImageDraw
 from pptx import Presentation
@@ -140,6 +141,16 @@ def soffice(src: str, fmt: str, outdir: str) -> str:
     return os.path.join(outdir, f'{base}.{fmt.split(":")[0]}')
 
 
+def repack(path: str) -> None:
+    """Recompress a ZIP package at level 9 (LibreOffice's PPTX is ~60 KB otherwise)."""
+    tmp = path + '.tmp'
+    with zipfile.ZipFile(path) as zin, zipfile.ZipFile(tmp, 'w') as zout:
+        for info in zin.infolist():
+            zout.writestr(info.filename, zin.read(info.filename), compress_type=zipfile.ZIP_DEFLATED,
+                          compresslevel=9)
+    os.replace(tmp, path)
+
+
 def main() -> int:
     os.makedirs(OUT, exist_ok=True)
     pptx = os.path.join(OUT, 'slides.pptx')
@@ -153,6 +164,7 @@ def main() -> int:
         os.makedirs(lo_dir)
         lo = soffice(odp, 'pptx', lo_dir)
         shutil.copy(lo, os.path.join(OUT, 'slides_lo.pptx'))
+    repack(os.path.join(OUT, 'slides_lo.pptx'))
     for n in ('slides.pptx', 'slides.odp', 'slides_lo.pptx'):
         print(n, os.path.getsize(os.path.join(OUT, n)))
     return 0

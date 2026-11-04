@@ -3799,4 +3799,12 @@
     <string name="mdmRuleNotifications">Gönderen ve konu olmadan bildirimler</string>
     <string name="favoritesOrder">Kutucuk sırası</string>
     <string name="favoritesOrderHint">Öğeyi sağdaki tutamaçtan sürükleyin — menüdeki kutucuklar bu sırayı izler.</string>
+    <string name="docProtected">Belge parolayla korunuyor. Başka bir uygulamada açın.</string>
+    <string name="docLegacyFormat">Uygulama eski Office 97–2003 biçimindeki belgeleri (.doc, .xls, .ppt) henüz gösteremiyor. Dosyayı başka bir uygulamada açın.</string>
+    <string name="docTooLarge">Belge önizleme için çok büyük. Başka bir uygulamada açın.</string>
+    <string name="docTruncated">Belge büyük — yalnızca başlangıcı gösteriliyor. Tamamını görmek için başka bir uygulamada açın.</string>
+    <string name="docEmpty">Belgede metin yok.</string>
+    <string name="docSheetTruncated">Sayfa büyük — yalnızca başlangıcı gösteriliyor</string>
+    <string name="docSheetEmpty">Sayfa boş</string>
+    <string name="docSlideOf">Slayt {n} / {total}</string>
 </resources>

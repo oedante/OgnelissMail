@@ -3841,4 +3841,12 @@
     <string name="mdmRuleNotifications">Powiadomienia bez nadawcy i tematu</string>
     <string name="favoritesOrder">Kolejność kafelków</string>
     <string name="favoritesOrderHint">Przeciągnij element za uchwyt po prawej — kafelki w menu ułożą się w tej kolejności.</string>
+    <string name="docProtected">Dokument jest chroniony hasłem. Otwórz go w innej aplikacji.</string>
+    <string name="docLegacyFormat">Aplikacja nie wyświetla jeszcze dokumentów w starym formacie Office 97–2003 (.doc, .xls, .ppt). Otwórz plik w innej aplikacji.</string>
+    <string name="docTooLarge">Dokument jest zbyt duży, aby go wyświetlić. Otwórz go w innej aplikacji.</string>
+    <string name="docTruncated">Dokument jest duży — wyświetlono tylko początek. Całość otworzysz w innej aplikacji.</string>
+    <string name="docEmpty">Dokument nie zawiera tekstu.</string>
+    <string name="docSheetTruncated">Arkusz jest duży — wyświetlono tylko początek</string>
+    <string name="docSheetEmpty">Arkusz jest pusty</string>
+    <string name="docSlideOf">Slajd {n} z {total}</string>
 </resources>

@@ -3778,4 +3778,12 @@
     <string name="mdmRuleNotifications">送信者と件名を表示しない通知</string>
     <string name="favoritesOrder">タイルの順序</string>
     <string name="favoritesOrderHint">右のハンドルで項目をドラッグすると、メニューのタイルがこの順序になります。</string>
+    <string name="docProtected">この文書はパスワードで保護されています。別のアプリで開いてください。</string>
+    <string name="docLegacyFormat">古い Office 97–2003 形式（.doc、.xls、.ppt）の文書はまだ表示できません。別のアプリでファイルを開いてください。</string>
+    <string name="docTooLarge">文書が大きすぎるためプレビューできません。別のアプリで開いてください。</string>
+    <string name="docTruncated">文書が大きいため、冒頭のみ表示しています。全体は別のアプリで開いてください。</string>
+    <string name="docEmpty">文書にテキストがありません。</string>
+    <string name="docSheetTruncated">シートが大きいため、先頭のみ表示しています</string>
+    <string name="docSheetEmpty">シートは空です</string>
+    <string name="docSlideOf">スライド {n}/{total}</string>
 </resources>

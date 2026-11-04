@@ -3778,4 +3778,12 @@
     <string name="mdmRuleNotifications">การแจ้งเตือนไม่แสดงผู้ส่งและหัวเรื่อง</string>
     <string name="favoritesOrder">ลำดับไทล์</string>
     <string name="favoritesOrderHint">ลากรายการที่ที่จับด้านขวา — ไทล์ในเมนูจะเรียงตามลำดับนี้</string>
+    <string name="docProtected">เอกสารนี้ป้องกันด้วยรหัสผ่าน เปิดในแอปอื่น</string>
+    <string name="docLegacyFormat">แอปยังแสดงเอกสารรูปแบบเก่า Office 97–2003 (.doc, .xls, .ppt) ไม่ได้ เปิดไฟล์ในแอปอื่น</string>
+    <string name="docTooLarge">เอกสารใหญ่เกินกว่าจะแสดงตัวอย่างได้ เปิดในแอปอื่น</string>
+    <string name="docTruncated">เอกสารมีขนาดใหญ่ — แสดงเฉพาะส่วนต้น เปิดในแอปอื่นเพื่อดูทั้งหมด</string>
+    <string name="docEmpty">เอกสารไม่มีข้อความ</string>
+    <string name="docSheetTruncated">แผ่นงานมีขนาดใหญ่ — แสดงเฉพาะส่วนต้น</string>
+    <string name="docSheetEmpty">แผ่นงานว่างเปล่า</string>
+    <string name="docSlideOf">สไลด์ {n} จาก {total}</string>
 </resources>

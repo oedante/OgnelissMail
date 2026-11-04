@@ -3778,4 +3778,12 @@
     <string name="mdmRuleNotifications">보낸 사람과 제목 없이 알림</string>
     <string name="favoritesOrder">타일 순서</string>
     <string name="favoritesOrderHint">오른쪽 핸들로 항목을 끌면 메뉴 타일이 이 순서를 따릅니다.</string>
+    <string name="docProtected">문서가 암호로 보호되어 있습니다. 다른 앱에서 여세요.</string>
+    <string name="docLegacyFormat">이전 Office 97–2003 형식(.doc, .xls, .ppt) 문서는 아직 미리 볼 수 없습니다. 다른 앱에서 파일을 여세요.</string>
+    <string name="docTooLarge">문서가 너무 커서 미리 볼 수 없습니다. 다른 앱에서 여세요.</string>
+    <string name="docTruncated">문서가 커서 앞부분만 표시됩니다. 전체를 보려면 다른 앱에서 여세요.</string>
+    <string name="docEmpty">문서에 텍스트가 없습니다.</string>
+    <string name="docSheetTruncated">시트가 커서 앞부분만 표시됩니다</string>
+    <string name="docSheetEmpty">시트가 비어 있습니다</string>
+    <string name="docSlideOf">슬라이드 {n}/{total}</string>
 </resources>

@@ -3778,4 +3778,12 @@
     <string name="mdmRuleNotifications">通知不显示发件人和主题</string>
     <string name="favoritesOrder">磁贴顺序</string>
     <string name="favoritesOrderHint">拖动右侧的把手调整项目，菜单中的磁贴将按此顺序排列。</string>
+    <string name="docProtected">文档受密码保护。请在其他应用中打开。</string>
+    <string name="docLegacyFormat">应用暂不支持预览旧版 Office 97–2003 格式（.doc、.xls、.ppt）的文档。请在其他应用中打开该文件。</string>
+    <string name="docTooLarge">文档太大，无法预览。请在其他应用中打开。</string>
+    <string name="docTruncated">文档较大，仅显示开头部分。如需查看全部内容，请在其他应用中打开。</string>
+    <string name="docEmpty">文档中没有文本。</string>
+    <string name="docSheetTruncated">工作表较大，仅显示开头部分</string>
+    <string name="docSheetEmpty">工作表为空</string>
+    <string name="docSlideOf">第 {n} 张幻灯片，共 {total} 张</string>
 </resources>

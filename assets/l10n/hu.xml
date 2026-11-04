@@ -3799,4 +3799,12 @@
     <string name="mdmRuleNotifications">Értesítések feladó és tárgy nélkül</string>
     <string name="favoritesOrder">Csempék sorrendje</string>
     <string name="favoritesOrderHint">Húzza az elemet a jobb oldali fogantyúnál — a menü csempéi ezt a sorrendet követik.</string>
+    <string name="docProtected">A dokumentum jelszóval védett. Nyissa meg egy másik alkalmazásban.</string>
+    <string name="docLegacyFormat">Az alkalmazás még nem jeleníti meg a régi Office 97–2003 formátumú dokumentumokat (.doc, .xls, .ppt). Nyissa meg a fájlt egy másik alkalmazásban.</string>
+    <string name="docTooLarge">A dokumentum túl nagy az előnézethez. Nyissa meg egy másik alkalmazásban.</string>
+    <string name="docTruncated">A dokumentum nagy – csak az eleje látható. A teljeshez nyissa meg egy másik alkalmazásban.</string>
+    <string name="docEmpty">A dokumentumban nincs szöveg.</string>
+    <string name="docSheetTruncated">A munkalap nagy – csak az eleje látható</string>
+    <string name="docSheetEmpty">A munkalap üres</string>
+    <string name="docSlideOf">{n}. dia / {total}</string>
 </resources>

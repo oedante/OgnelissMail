@@ -3778,4 +3778,12 @@
     <string name="mdmRuleNotifications">Notifikasi tanpa pengirim dan subjek</string>
     <string name="favoritesOrder">Urutan ubin</string>
     <string name="favoritesOrderHint">Seret item dengan pegangan di kanan — ubin di menu mengikuti urutan ini.</string>
+    <string name="docProtected">Dokumen dilindungi kata sandi. Buka di aplikasi lain.</string>
+    <string name="docLegacyFormat">Aplikasi belum dapat menampilkan dokumen format lama Office 97–2003 (.doc, .xls, .ppt). Buka file di aplikasi lain.</string>
+    <string name="docTooLarge">Dokumen terlalu besar untuk pratinjau. Buka di aplikasi lain.</string>
+    <string name="docTruncated">Dokumen besar — hanya bagian awal yang ditampilkan. Buka di aplikasi lain untuk melihat semuanya.</string>
+    <string name="docEmpty">Dokumen tidak berisi teks.</string>
+    <string name="docSheetTruncated">Lembar besar — hanya bagian awal yang ditampilkan</string>
+    <string name="docSheetEmpty">Lembar kosong</string>
+    <string name="docSlideOf">Slide {n} dari {total}</string>
 </resources>

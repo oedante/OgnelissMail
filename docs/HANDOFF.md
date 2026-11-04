@@ -1,11 +1,11 @@
-# HANDOFF — состояние работ (03.11.2026; 1.10.5)
+# HANDOFF — состояние работ (04.11.2026; 1.11.0)
 
 Правила для Claude — [CLAUDE.md](../CLAUDE.md) (лицензии новых зависимостей,
 версия, архив, файлы Xcode). Всё ниже — в `main` (PR #13 и ветка
-`ccr-7785ff5c-j1afzv`, 01.11.2026). **Версия 1.10.5+136** (1.10.4+135 — в тестировании с 03.11; 1.10.5 — архив для выпуска 03.11; 1.10.1+132 — в тестировании Google Play и TestFlight с 02.11; 1.10.0+131 — просьба владельца
-01.11, не выпускалась; 1.10.1–1.10.5 — просьбы 02–03.11 после проверки на телефоне): «Что нового» на 27 языках — [release/STORE_NOTES_1.10.5.md](release/STORE_NOTES_1.10.5.md),
+`ccr-7785ff5c-j1afzv`, 01.11.2026). **Версия 1.11.0+137** (просьба владельца 03.11 — выпуск в магазины; 1.10.5+136 — архив 03.11; 1.10.4+135 — в тестировании с 03.11; 1.10.1+132 — в тестировании Google Play и TestFlight с 02.11; 1.10.0+131 — просьба владельца
+01.11, не выпускалась; 1.10.1–1.10.5 — просьбы 02–03.11 после проверки на телефоне): «Что нового» на 27 языках — [release/STORE_NOTES_1.11.0.md](release/STORE_NOTES_1.11.0.md),
 что сделать владельцу перед выпуском (проверено по файлам и скриптам) —
-[release/OWNER_STEPS_1.10.5.md](release/OWNER_STEPS_1.10.5.md). Страница
+[release/OWNER_STEPS_1.11.0.md](release/OWNER_STEPS_1.11.0.md). Страница
 выпуска на GitHub берёт «Что нового» из этого файла (`tool/dev/release_body.py`).
 Приложение опубликовано в Google Play
 (play.google.com/store/apps/details?id=com.ogneliss.mail); iPhone и iPad —
@@ -93,7 +93,20 @@ Message-ID черновика затирался enough_mail. Exchange на на
 в поле ввода (`TypingAwareShortcuts`). Тест скорости дат — лучший из пяти
 замеров. Тесты — `test/widget/mail_bar_layout_test.dart`.
 
-**1.10.5 (в работе, 03.11.2026).** Архив (`tool/dev/make_archive.sh`): файлы,
+**1.11.0 (04.11.2026).** Настройки организации (MDM: Android Enterprise,
+iOS Managed App Configuration — `managed_config.dart`, `MdmBridge.kt`,
+`guides/MDM.md`). Планшет и компьютер в стиле Outlook: панель команд над
+письмом, кнопки при наведении в ленте, поле «Поиск», ответ в панели чтения
+(`PaneNavigator`), «Избранное» вверху панели папок, флажок выбора при
+наведении. Перевод на Mac (Apple Translation, macOS 15+;
+`tool/desktop/macos/MainFlutterWindow.swift`), перевод темы и режим «оба
+текста». Русский, принятый ML Kit за болгарский, — по буквам
+(`refineCyrillicLang`). «Беседы для всех писем» на Android (портрет вместо
+значка приложения). Незагрузившиеся ресурсы окна письма — в журнал
+(`MailWebViewPool.resourceError`). ОС «Аврора» — отложена
+(`guides/AURORA.md`); код собирается на её Flutter 3.41 (`reorder_index.dart`).
+
+**1.10.5 (03.11.2026).** Архив (`tool/dev/make_archive.sh`): файлы,
 которые ведёт Xcode (схема Runner, project.xcworkspace, xcshareddata
 рабочих пространств, OgnelissWidgets.entitlements), — в `ios/xcode-base/`, не
 на своих местах; `scripts/build_ios.sh` восстанавливает только отсутствующие.

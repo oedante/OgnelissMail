@@ -337,6 +337,31 @@ class OfficeSheetsDoc extends OfficeDoc {
   DocCellStyle styleOf(DocCell c) => c.style >= 0 && c.style < styles.length ? styles[c.style] : DocCellStyle.plain;
 }
 
+/// Размеры шрифтов сетки.
+class SheetFonts {
+  SheetFonts._();
+
+  /// Размер шрифта [pt] (пункты) шрифта [name] → точки сетки. Calibri и
+  /// Cambria (шрифты Excel по умолчанию) заметно уже Roboto, которым рисуется
+  /// сетка: без поправки текст не влезал бы в ширины столбцов, рассчитанные
+  /// под них. Arial и Liberation Sans (LibreOffice) — почти как Roboto.
+  static double px(double pt, String name) {
+    final n = name.toLowerCase();
+    final k = n.contains('narrow')
+        ? 0.82
+        : (n.startsWith('calibri') ||
+              n == 'candara' ||
+              n == 'corbel' ||
+              n.contains('times') ||
+              n == 'cambria' ||
+              n == 'carlito' ||
+              n == 'caladea')
+        ? 0.9
+        : (n.startsWith('aptos') ? 0.95 : 1.0);
+    return pt * 96 / 72 * k;
+  }
+}
+
 /// Адреса ячеек: «B12» ↔ строка и столбец (с 0).
 class SheetRef {
   SheetRef._();

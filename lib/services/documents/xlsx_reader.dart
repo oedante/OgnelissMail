@@ -46,19 +46,6 @@ class XlsxReader {
   /// Ширина столбца Excel (в «знаках» шрифта по умолчанию, с полями) →
   /// точки: ECMA-376 18.3.1.13 при ширине цифры 7 точек (Calibri 11).
   static double colWidthPx(double width) => (width * 7 + 0.49).floorToDouble();
-
-  /// Размер шрифта в пунктах → точки сетки. Calibri (шрифт Excel по
-  /// умолчанию) заметно уже Roboto, которым рисуется сетка: без поправки
-  /// текст не влезал бы в ширины столбцов, рассчитанные под Calibri.
-  static double fontPx(double pt, String name) {
-    final n = name.toLowerCase();
-    final k = n.contains('narrow')
-        ? 0.82
-        : (n.startsWith('calibri') || n == 'candara' || n == 'corbel' || n.contains('times') || n == 'cambria')
-        ? 0.9
-        : (n.startsWith('aptos') ? 0.95 : 1.0);
-    return pt * 96 / 72 * k;
-  }
 }
 
 class _Font {
@@ -326,6 +313,9 @@ class _Xlsx {
       if (id != null && code != null && numFmts.length < 2000) numFmts[id] = code;
     }
     bool flag(XmlElement? e) => e != null && !const ['0', 'false', 'none'].contains(e.attr('val'));
+    // Шрифт без размера (так пишут некоторые программы) — размера обычного
+    // шрифта книги (первый в списке).
+    double? defaultPx;
     fonts = [
       for (final f in (root.kid('fonts')?.kids('font') ?? const <XmlElement>[]).take(SheetLimits.maxStyles))
         _Font(
@@ -335,7 +325,10 @@ class _Xlsx {
           flag(f.kid('strike')),
           () {
             final sz = double.tryParse(f.kid('sz')?.attr('val') ?? '');
-            return sz == null || sz <= 0 || sz > 409 ? null : XlsxReader.fontPx(sz, f.kid('name')?.attr('val') ?? '');
+            final name = f.kid('name')?.attr('val') ?? '';
+            final px = sz == null || sz <= 0 || sz > 409 ? null : SheetFonts.px(sz, name);
+            defaultPx ??= px ?? SheetFonts.px(11, name.isEmpty ? 'Calibri' : name);
+            return px ?? defaultPx;
           }(),
           _color(f.kid('color'), text: true),
         ),
@@ -622,140 +615,148 @@ class _Xlsx {
       if (!sb.add(cellRow, cellCol, text, style: st, kind: kind)) stopped = true;
     }
 
-    final stopAt = SheetXml.forEach(head.bytes, (e) {
-      if (e is XmlStartElementEvent) {
-        final n = SheetXml.local(e.name);
-        if (inCell) {
-          switch (n) {
-            case 'v':
-              if (!e.isSelfClosing) inV = true;
-              hasV = true;
-            case 'is':
-              if (!e.isSelfClosing) inIs = true;
-              hasV = true;
-            case 'rPh':
-              if (!e.isSelfClosing) rph++;
-            case 't':
-              if (inIs && rph == 0 && !e.isSelfClosing) inT = true;
+    var stopAt = 0;
+    try {
+      stopAt = SheetXml.forEach(head.bytes, (e) {
+        if (e is XmlStartElementEvent) {
+          final n = SheetXml.local(e.name);
+          if (inCell) {
+            switch (n) {
+              case 'v':
+                if (!e.isSelfClosing) inV = true;
+                hasV = true;
+              case 'is':
+                if (!e.isSelfClosing) inIs = true;
+                hasV = true;
+              case 'rPh':
+                if (!e.isSelfClosing) rph++;
+              case 't':
+                if (inIs && rph == 0 && !e.isSelfClosing) inT = true;
+            }
+            return true;
           }
-          return true;
-        }
-        switch (n) {
-          case 'c':
-            if (!inData) return true;
-            final ref = SheetXml.attr(e, 'r');
-            final c = ref == null ? null : SheetRef.colOf(ref);
-            col = c ?? col + 1;
-            cellRow = row < 0 ? 0 : row;
-            cellCol = col;
-            cellType = SheetXml.attr(e, 't');
-            cellXf = int.tryParse(SheetXml.attr(e, 's') ?? '') ?? 0;
-            v.clear();
-            inl.clear();
-            hasV = false;
-            if (e.isSelfClosing) {
-              finishCell();
-            } else {
-              inCell = true;
-            }
-          case 'row':
-            if (!inData) return true;
-            final r = int.tryParse(SheetXml.attr(e, 'r') ?? '');
-            row = r != null && r > 0 ? r - 1 : row + 1;
-            col = -1;
-            if (row >= SheetLimits.maxRows) return true;
-            final hidden = _true(SheetXml.attr(e, 'hidden'));
-            final ht = double.tryParse(SheetXml.attr(e, 'ht') ?? '');
-            if (hidden) {
-              sb.rowHeight(row, 0);
-            } else if (ht != null && ht >= 0) {
-              sb.rowHeight(row, ht * 96 / 72);
-            } else if (zeroHeight) {
-              sb.rowHeight(row, defaultRowPx);
-            }
-          case 'sheetData':
-            if (!e.isSelfClosing) inData = true;
-          case 'col':
-            final min = int.tryParse(SheetXml.attr(e, 'min') ?? '') ?? 0;
-            final max = int.tryParse(SheetXml.attr(e, 'max') ?? '') ?? min;
-            final hidden = _true(SheetXml.attr(e, 'hidden'));
-            final w = double.tryParse(SheetXml.attr(e, 'width') ?? '');
-            if (min >= 1 && (hidden || w != null)) {
-              final px = hidden ? 0.0 : XlsxReader.colWidthPx(w!);
-              for (var c = min - 1; c < math.min(max, SheetLimits.maxCols); c++) {
-                sb.colWidth(c, px);
-              }
-            }
-          case 'sheetFormatPr':
-            final dh = double.tryParse(SheetXml.attr(e, 'defaultRowHeight') ?? '');
-            if (dh != null && dh > 0) defaultRowPx = dh * 96 / 72;
-            zeroHeight = _true(SheetXml.attr(e, 'zeroHeight'));
-            sb.defaultRowHeight = zeroHeight ? 0 : defaultRowPx;
-            final dw = double.tryParse(SheetXml.attr(e, 'defaultColWidth') ?? '');
-            final bw = double.tryParse(SheetXml.attr(e, 'baseColWidth') ?? '');
-            if (dw != null && dw > 0) {
-              sb.defaultColWidth = XlsxReader.colWidthPx(dw);
-            } else if (bw != null && bw > 0) {
-              sb.defaultColWidth = ((bw + 0.43) * 7 + 5).roundToDouble();
-            }
-          case 'sheetView':
-            if (!firstView) return true;
-            sb.showGrid = !const ['0', 'false'].contains(SheetXml.attr(e, 'showGridLines'));
-            if (e.isSelfClosing) firstView = false;
-          case 'pane':
-            if (!firstView) return true;
-            final state = SheetXml.attr(e, 'state') ?? '';
-            if (state.startsWith('frozen')) {
-              sb.frozenCols = (double.tryParse(SheetXml.attr(e, 'xSplit') ?? '') ?? 0).floor().clamp(
-                0,
-                SheetLimits.maxCols,
-              );
-              sb.frozenRows = (double.tryParse(SheetXml.attr(e, 'ySplit') ?? '') ?? 0).floor().clamp(
-                0,
-                SheetLimits.maxRows,
-              );
-            }
-          case 'mergeCell':
-            final m = SheetRef.range(SheetXml.attr(e, 'ref') ?? '');
-            if (m != null) sb.merge(m);
-        }
-        return true;
-      }
-      if (e is XmlEndElementEvent) {
-        final n = SheetXml.local(e.name);
-        if (inCell) {
           switch (n) {
-            case 'v':
-              inV = false;
-            case 't':
-              inT = false;
-            case 'rPh':
-              if (rph > 0) rph--;
-            case 'is':
-              inIs = false;
             case 'c':
-              inCell = false;
-              inV = inIs = inT = false;
-              rph = 0;
-              if (hasV || cellXf > 0) finishCell();
-              if (stopped) return false;
+              if (!inData) return true;
+              final ref = SheetXml.attr(e, 'r');
+              final c = ref == null ? null : SheetRef.colOf(ref);
+              col = c ?? col + 1;
+              cellRow = row < 0 ? 0 : row;
+              cellCol = col;
+              cellType = SheetXml.attr(e, 't');
+              cellXf = int.tryParse(SheetXml.attr(e, 's') ?? '') ?? 0;
+              v.clear();
+              inl.clear();
+              hasV = false;
+              if (e.isSelfClosing) {
+                finishCell();
+              } else {
+                inCell = true;
+              }
+            case 'row':
+              if (!inData) return true;
+              final r = int.tryParse(SheetXml.attr(e, 'r') ?? '');
+              row = r != null && r > 0 ? r - 1 : row + 1;
+              col = -1;
+              if (row >= SheetLimits.maxRows) return true;
+              final hidden = _true(SheetXml.attr(e, 'hidden'));
+              final ht = double.tryParse(SheetXml.attr(e, 'ht') ?? '');
+              if (hidden) {
+                sb.rowHeight(row, 0);
+              } else if (ht != null && ht >= 0) {
+                sb.rowHeight(row, ht * 96 / 72);
+              } else if (zeroHeight) {
+                sb.rowHeight(row, defaultRowPx);
+              }
+            case 'sheetData':
+              if (!e.isSelfClosing) inData = true;
+            case 'col':
+              final min = int.tryParse(SheetXml.attr(e, 'min') ?? '') ?? 0;
+              final max = int.tryParse(SheetXml.attr(e, 'max') ?? '') ?? min;
+              final hidden = _true(SheetXml.attr(e, 'hidden'));
+              final w = double.tryParse(SheetXml.attr(e, 'width') ?? '');
+              if (min >= 1 && (hidden || w != null)) {
+                final px = hidden ? 0.0 : XlsxReader.colWidthPx(w!);
+                for (var c = min - 1; c < math.min(max, SheetLimits.maxCols); c++) {
+                  sb.colWidth(c, px);
+                }
+              }
+            case 'sheetFormatPr':
+              final dh = double.tryParse(SheetXml.attr(e, 'defaultRowHeight') ?? '');
+              if (dh != null && dh > 0) defaultRowPx = dh * 96 / 72;
+              zeroHeight = _true(SheetXml.attr(e, 'zeroHeight'));
+              sb.defaultRowHeight = zeroHeight ? 0 : defaultRowPx;
+              final dw = double.tryParse(SheetXml.attr(e, 'defaultColWidth') ?? '');
+              final bw = double.tryParse(SheetXml.attr(e, 'baseColWidth') ?? '');
+              if (dw != null && dw > 0) {
+                sb.defaultColWidth = XlsxReader.colWidthPx(dw);
+              } else if (bw != null && bw > 0) {
+                sb.defaultColWidth = ((bw + 0.43) * 7 + 5).roundToDouble();
+              }
+            case 'sheetView':
+              if (!firstView) return true;
+              sb.showGrid = !const ['0', 'false'].contains(SheetXml.attr(e, 'showGridLines'));
+              if (e.isSelfClosing) firstView = false;
+            case 'pane':
+              if (!firstView) return true;
+              final state = SheetXml.attr(e, 'state') ?? '';
+              if (state.startsWith('frozen')) {
+                sb.frozenCols = (double.tryParse(SheetXml.attr(e, 'xSplit') ?? '') ?? 0).floor().clamp(
+                  0,
+                  SheetLimits.maxCols,
+                );
+                sb.frozenRows = (double.tryParse(SheetXml.attr(e, 'ySplit') ?? '') ?? 0).floor().clamp(
+                  0,
+                  SheetLimits.maxRows,
+                );
+              }
+            case 'mergeCell':
+              final m = SheetRef.range(SheetXml.attr(e, 'ref') ?? '');
+              if (m != null) sb.merge(m);
           }
           return true;
         }
-        if (n == 'sheetData') inData = false;
-        if (n == 'sheetView') firstView = false;
-        return true;
-      }
-      if (inV) {
-        if (e is XmlTextEvent && v.length < SheetLimits.maxCellText) v.write(e.value);
-      } else if (inT) {
-        if (inl.length < SheetLimits.maxCellText) {
-          if (e is XmlTextEvent) inl.write(e.value);
-          if (e is XmlCDATAEvent) inl.write(e.value);
+        if (e is XmlEndElementEvent) {
+          final n = SheetXml.local(e.name);
+          if (inCell) {
+            switch (n) {
+              case 'v':
+                inV = false;
+              case 't':
+                inT = false;
+              case 'rPh':
+                if (rph > 0) rph--;
+              case 'is':
+                inIs = false;
+              case 'c':
+                inCell = false;
+                inV = inIs = inT = false;
+                rph = 0;
+                if (hasV || cellXf > 0) finishCell();
+                if (stopped) return false;
+            }
+            return true;
+          }
+          if (n == 'sheetData') inData = false;
+          if (n == 'sheetView') firstView = false;
+          return true;
         }
-      }
-      return true;
-    });
+        if (inV) {
+          if (e is XmlTextEvent && v.length < SheetLimits.maxCellText) v.write(e.value);
+        } else if (inT) {
+          if (inl.length < SheetLimits.maxCellText) {
+            if (e is XmlTextEvent) inl.write(e.value);
+            if (e is XmlCDATAEvent) inl.write(e.value);
+          }
+        }
+        return true;
+      });
+    } on XmlException {
+      // Испорченный конец листа — показываем прочитанное; испорчен весь —
+      // лист пропускается.
+      if (sb.cellCount == 0) rethrow;
+      sb.truncated = true;
+    }
     // Остановились на пределе строк или ячеек — объединения (они после
     // данных листа) ищем в оставшихся байтах без разбора.
     if (stopped) _scanMerges(head.bytes, stopAt, sb);

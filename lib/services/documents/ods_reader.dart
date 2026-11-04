@@ -74,15 +74,23 @@ class OdsReader {
 
 /// Стиль ODS (автоматический или общий) — свойства, которые нужны сетке.
 class _OStyle {
-  _OStyle(this.name, this.family, this.parent);
+  _OStyle(this.name, this.family, this.parent, [this.dataStyle]);
   final String name;
   final String family;
   final String? parent;
+
+  /// Стиль числа (number:number-style …) — по нему цвет «[Red]» у
+  /// отрицательных.
+  final String? dataStyle;
   int? fill;
   bool fillSet = false;
   bool? bold, italic, underline, strike;
-  double? fontPx;
+  double? fontPt;
+  String? fontName;
   int? color;
+
+  /// «Цвет окна» (use-window-font-color) — автоматический цвет текста.
+  bool colorAuto = false;
   DocHAlign? h;
   DocVAlign? v;
   bool? wrap;
@@ -148,9 +156,13 @@ class _OStyle {
           strike = val != 'none';
         case 'font-size':
           final px = OdsReader.lengthPx(val);
-          if (px != null && px > 0 && px < 600) fontPx = px;
+          if (px != null && px > 0 && px < 600) fontPt = px * 72 / 96;
+        case 'font-name':
+          if (!a.name.endsWith('-complex')) fontName = val;
         case 'color':
           color = _Ods.color(val);
+        case 'use-window-font-color':
+          colorAuto = val == 'true';
       }
     }
   }
@@ -197,6 +209,27 @@ class _OStyle {
 }
 
 /// Отрезок ячеек строки: [count] одинаковых ячеек с [col].
+/// Стиль числа ODS: цвет текста и условия «value()>=0 → другой стиль» — так
+/// LibreOffice хранит «0,00;[Red]-0,00».
+class _NumStyle {
+  int? color;
+  final List<({String op, double v, String apply})> maps = [];
+
+  void child(XmlStartElementEvent e) {
+    final n = SheetXml.local(e.name);
+    if (n == 'text-properties') {
+      final c = SheetXml.attr(e, 'color');
+      if (c != null) color = _Ods.color(c);
+    } else if (n == 'map' && maps.length < 8) {
+      final m = RegExp(
+        r'value\(\)\s*(<=|>=|<>|!=|<|>|=)\s*(-?[0-9.]+)',
+      ).firstMatch(SheetXml.attr(e, 'condition') ?? '');
+      final apply = SheetXml.attr(e, 'apply-style-name');
+      if (m != null && apply != null) maps.add((op: m.group(1)!, v: double.tryParse(m.group(2)!) ?? 0, apply: apply));
+    }
+  }
+}
+
 class _Seg {
   final int col;
   final int count;
@@ -217,6 +250,8 @@ class _Ods {
   final Map<String, _OStyle> _styles = {};
   _OStyle? _default;
   final Map<String, int> _cellStyleIds = {};
+  final Map<String, _NumStyle> _num = {};
+  final Map<String, String?> _dataStyleOf = {};
 
   // Из settings.xml.
   final Map<String, ({int rows, int cols})> _frozen = {};
@@ -274,10 +309,17 @@ class _Ods {
     final styles = doc?.rootElement.kid('styles');
     if (styles == null) return;
     for (final el in styles.childElements.take(SheetLimits.maxStyles)) {
+      if (el.name.prefix == 'number' && el.local.endsWith('-style')) {
+        final ns = _num[el.attr('name') ?? ''] = _NumStyle();
+        for (final c in el.childElements) {
+          ns.child(_eventOf(c));
+        }
+        continue;
+      }
       if (el.local != 'style' && el.local != 'default-style') continue;
       final family = el.attr('family') ?? '';
       if (family != 'table-cell') continue;
-      final st = _OStyle(el.attr('name') ?? '', family, el.attr('parent-style-name'));
+      final st = _OStyle(el.attr('name') ?? '', family, el.attr('parent-style-name'), el.attr('data-style-name'));
       for (final p in el.childElements) {
         st.props(_eventOf(p));
       }
@@ -380,8 +422,17 @@ class _Ods {
       italic: pick((s) => s.italic) ?? false,
       underline: pick((s) => s.underline) ?? false,
       strike: pick((s) => s.strike) ?? false,
-      fontSize: pick((s) => s.fontPx),
-      color: pick((s) => s.color),
+      fontSize: () {
+        final pt = pick((s) => s.fontPt);
+        return pt == null ? null : SheetFonts.px(pt, pick((s) => s.fontName) ?? '');
+      }(),
+      color: () {
+        for (final s in chain) {
+          if (s.colorAuto) return null;
+          if (s.color != null) return s.color;
+        }
+        return null;
+      }(),
       fill: fill,
       hAlign: pick((s) => s.h) ?? DocHAlign.general,
       vAlign: pick((s) => s.v) ?? DocVAlign.bottom,
@@ -393,6 +444,32 @@ class _Ods {
       bottom: side((s) => s.bSet, (s) => s.b),
     );
     return _cellStyleIds[key] = book.style(style);
+  }
+
+  String? _dataStyle(String? name) => _dataStyleOf.putIfAbsent(name ?? '', () {
+    var cur = _find('table-cell', name) ?? _find('table-cell', 'Default');
+    for (var i = 0; cur != null && i < 16; i++) {
+      if (cur.dataStyle != null) return cur.dataStyle;
+      cur = cur.parent == null ? null : _find('table-cell', cur.parent);
+    }
+    return null;
+  });
+
+  int? _numColor(String? name, double v, int depth) {
+    final ns = name == null ? null : _num[name];
+    if (ns == null || depth > 4) return null;
+    for (final m in ns.maps) {
+      final hit = switch (m.op) {
+        '<' => v < m.v,
+        '<=' => v <= m.v,
+        '>' => v > m.v,
+        '>=' => v >= m.v,
+        '=' => v == m.v,
+        _ => v != m.v,
+      };
+      if (hit) return _numColor(m.apply, v, depth + 1);
+    }
+    return ns.color;
   }
 
   // ── content.xml ──
@@ -419,6 +496,7 @@ class _Ods {
 
     // Разбор стилей content.xml (автоматические).
     _OStyle? defining;
+    _NumStyle? definingNum;
     var inBody = false;
 
     // Лист.
@@ -564,7 +642,14 @@ class _Ods {
         kind = DocCellKind.boolean;
       }
       if (t.isEmpty) t = _fallback(vt, value, dateValue, timeValue, boolValue, stringValue);
-      final style = _cellStyle(cellStyleName ?? rowDefault ?? colDefault[start]);
+      final styleName = cellStyleName ?? rowDefault ?? colDefault[start];
+      var style = _cellStyle(styleName);
+      if (kind == DocCellKind.number && value != null) {
+        // Цвет из стиля числа («[Red]» у отрицательных).
+        final v = double.tryParse(value!);
+        final c = v == null ? null : _numColor(_dataStyle(styleName), v, 0);
+        if (c != null) style = book.withColor(style, c);
+      }
       if (t.isEmpty && !book.styles[style].visible) return;
       if (t.length > SheetLimits.maxCellText) t = t.substring(0, SheetLimits.maxCellText);
       segs.add(_Seg(start, math.min(cellRep, SheetLimits.maxCols - start), t, style, kind, spanC, spanR));
@@ -627,11 +712,24 @@ class _Ods {
                 inBody = true;
               case 'style':
                 final family = SheetXml.attr(e, 'family') ?? '';
-                final st = _OStyle(SheetXml.attr(e, 'name') ?? '', family, SheetXml.attr(e, 'parent-style-name'));
+                final st = _OStyle(
+                  SheetXml.attr(e, 'name') ?? '',
+                  family,
+                  SheetXml.attr(e, 'parent-style-name'),
+                  SheetXml.attr(e, 'data-style-name'),
+                );
                 if (_styles.length < SheetLimits.maxStyles * 2) _styles['$family:${st.name}'] = st;
                 defining = e.isSelfClosing ? null : st;
               default:
-                defining?.props(e);
+                if (e.name.startsWith('number:') && n.endsWith('-style')) {
+                  final ns = _NumStyle();
+                  if (_num.length < SheetLimits.maxStyles) _num[SheetXml.attr(e, 'name') ?? ''] = ns;
+                  definingNum = e.isSelfClosing ? null : ns;
+                } else if (definingNum != null) {
+                  definingNum!.child(e);
+                } else {
+                  defining?.props(e);
+                }
             }
             return true;
           }
@@ -756,6 +854,7 @@ class _Ods {
           }
           if (!inBody) {
             if (n == 'style') defining = null;
+            if (e.name.startsWith('number:') && n.endsWith('-style')) definingNum = null;
             return true;
           }
           switch (n) {
@@ -789,10 +888,11 @@ class _Ods {
       });
     } on XmlException {
       // Испорченный конец content.xml — показываем прочитанное.
-      if (sb != null) {
+      if (sb != null && sb!.cellCount > 0) {
         sb!.truncated = true;
         finishTable();
       }
+      sb = null;
       if (sheets.isEmpty) rethrow;
       book.truncated = true;
     }

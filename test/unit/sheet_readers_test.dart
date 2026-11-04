@@ -19,7 +19,7 @@ const nb = ' ';
 
 Uint8List _fixture(String name) => File('$_dir/$name').readAsBytesSync();
 
-Uint8List _zip(Map<String, String> parts, {bool storeMimetype = false}) {
+Uint8List _zip(Map<String, String> parts) {
   final a = Archive();
   parts.forEach((name, text) => a.addFile(ArchiveFile.bytes(name, utf8.encode(text))));
   return ZipEncoder().encodeBytes(a);
@@ -406,7 +406,8 @@ void main() {
 
     test('кодировки: cp1252 и cp1251 без подсказки, UTF-16', () {
       expect(CsvReader.decode(Uint8List.fromList([0x63, 0x61, 0x66, 0xE9, 0x80])), 'café€');
-      expect(CsvReader.decode(Uint8List.fromList(latin1.encode('x')..toList()), lang: 'ru'), 'x');
+      expect(CsvReader.decode(Uint8List.fromList([0xC0, 0x31]), lang: 'ru'), 'А1');
+      expect(CsvReader.decode(Uint8List.fromList([0xC0, 0x31]), lang: 'de'), 'À1');
       final cp = Uint8List.fromList([0xCF, 0xF0, 0xE8, 0xE2, 0xE5, 0xF2, 0x20, 0xEC, 0xE8, 0xF0]);
       expect(CsvReader.decode(cp), 'Привет мир');
       final u16 = Uint8List.fromList([0xFF, 0xFE, 0x41, 0x00, 0x3B, 0x00, 0x16, 0x04]);

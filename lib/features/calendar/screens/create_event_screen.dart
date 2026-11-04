@@ -609,7 +609,15 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
               secondary: Icon(AppIcons.today, color: muted),
               title: Text(l10n.tr('allDay')),
               value: _isAllDay,
-              onChanged: (v) => setState(() => _isAllDay = v),
+              onChanged: (v) => setState(() {
+                _isAllDay = v;
+                // Встреча короче суток, которая заканчивается после полуночи
+                // (вечером по умолчанию — 23:30–00:00), становится событием на
+                // её первый день, а не на два: раньше конец оставался завтра,
+                // и событие «на весь день» показывалось и следующим днём
+                // (замечание владельца 04.11.2026, календарь iCloud).
+                if (v && _endDate.difference(_startDate) < const Duration(days: 1)) _endDate = _startDate;
+              }),
             ),
             ListTile(
               contentPadding: rowPad,

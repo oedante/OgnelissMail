@@ -690,7 +690,7 @@ class _GridColors {
   Color? fill(int? argb) {
     if (argb == null) return null;
     final c = Color(argb);
-    if (dark && c.computeLuminance() > 0.9) return null;
+    if (dark && (argb & 0xFF) >= 0xF0 && ((argb >> 8) & 0xFF) >= 0xF0 && ((argb >> 16) & 0xFF) >= 0xF0) return null;
     return c;
   }
 

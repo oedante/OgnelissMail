@@ -64,9 +64,15 @@ abstract class Translator {
 }
 
 /// Перевод возможен на платформе вообще (до вопроса к движку).
-bool get translationPlatformSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+/// Android — ML Kit, iPhone и Mac (1.11.0) — Apple Translation (iOS 18+,
+/// macOS 15+). Windows и Linux — без перевода: встроенного перевода на
+/// устройстве у них нет.
+bool get translationPlatformSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS);
 
 final translatorProvider = Provider<Translator>((ref) => PlatformTranslator());
+
+/// Строка «перевод недоступен» для этой платформы (Mac — macOS 15+).
+String translateUnavailableKey() => !kIsWeb && Platform.isMacOS ? 'translateUnavailableMac' : 'translateUnavailable';
 
 /// Движок платформы через канал 'ogneliss/translate'.
 class PlatformTranslator implements Translator {
@@ -102,7 +108,7 @@ class PlatformTranslator implements Translator {
   Future<String?> detectLanguage(String text) async {
     if (text.trim().isEmpty || !await isAvailable()) return null;
     try {
-      return normalizeLang(await _ch.invokeMethod<String>('detect', {'text': text}));
+      return refineCyrillicLang(normalizeLang(await _ch.invokeMethod<String>('detect', {'text': text})), text);
     } catch (e) {
       AppLogger.debug('Перевод: язык не определён: $e');
       return null;

@@ -3650,6 +3650,8 @@
     <string name="translateModelsSetting">设备上的语言</string>
     <string name="translateModelsDesc">已下载的离线翻译语言</string>
     <string name="translateModelsIos">翻译语言由 iOS 自行下载和删除：设置 → App → 翻译。</string>
+    <string name="translateModelsMac">翻译语言由 macOS 自行下载和删除:系统设置 → 通用 → 语言与地区 → 翻译语言。</string>
+    <string name="translateUnavailableMac">此 Mac 无法使用翻译(需要 macOS 15 或更高版本)</string>
     <string name="translateEngineGoogle">设备端翻译由 Google Translate（ML Kit）提供。邮件内容不会离开手机。</string>
     <string name="translateEngineApple">设备端翻译由 Apple Translation 提供。邮件内容不会离开设备。</string>
     <string name="translateUnavailable">此设备不支持翻译（iPhone 和 iPad 需 iOS 18 或更高版本）</string>
@@ -3707,6 +3709,8 @@
     <string name="notifyMessengerStyleDesc">在邮件旁显示发件人的照片或首字母</string>
     <string name="notifyVipConversations">VIP 对话</string>
     <string name="notifyVipConversationsDesc">VIP 的邮件会显示在 Android 的“对话”部分，可将其设为优先</string>
+    <string name="notifyAllConversations">所有邮件显示为对话</string>
+    <string name="notifyAllConversationsDesc">用发件人头像代替应用图标；所有邮件显示在“对话”中</string>
     <string name="ios_siriCompose">新邮件</string>
     <string name="ios_siriEvent">新建日程</string>
     <string name="ios_siriReminder">新提醒</string>
@@ -3757,6 +3761,21 @@
     <string name="translateFrom">源语言</string>
     <string name="translateMsgOther">其他语言的邮件</string>
     <string name="translateReadMode">译文显示方式</string>
+    <string name="mdmTitle">由你的组织管理</string>
+    <string name="mdmDesc">这些设置由你的组织通过设备管理(MDM)指定。</string>
+    <string name="mdmSupport">IT 支持</string>
+    <string name="mdmBlocked">你的组织策略不允许此操作</string>
+    <string name="mdmDomainNotAllowed">你的组织只允许以下域名的邮箱:{domains}</string>
+    <string name="mdmPinBody">你的组织策略要求保护邮件。请设置 {n}–6 位 PIN,打开应用时需要输入。</string>
+    <string name="mdmPinRequired">由你的组织要求</string>
+    <string name="mdmRuleAccount">邮箱:{email}</string>
+    <string name="mdmRuleDomains">仅限以下域名的邮箱:{domains}</string>
+    <string name="mdmRuleAppLock">必须设置应用 PIN(至少 {n} 位)</string>
+    <string name="mdmRuleScreenshots">禁止截屏和录屏</string>
+    <string name="mdmRuleShare">禁止分享、保存到文件、导出 PDF 和打印</string>
+    <string name="mdmRuleOpenIn">附件只能在应用内打开</string>
+    <string name="mdmRuleCopy">禁止复制邮件文本</string>
+    <string name="mdmRuleNotifications">通知不显示发件人和主题</string>
     <string name="favoritesOrder">磁贴顺序</string>
     <string name="favoritesOrderHint">拖动右侧的把手调整项目，菜单中的磁贴将按此顺序排列。</string>
 </resources>

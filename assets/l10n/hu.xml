@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Nyelvek az eszközön</string>
     <string name="translateModelsDesc">Letöltött nyelvek internet nélküli fordításhoz</string>
     <string name="translateModelsIos">A fordítási nyelveket az iOS tölti le és törli: Beállítások → Appok → Fordító.</string>
+    <string name="translateModelsMac">A fordítási nyelveket a macOS tölti le és távolítja el: Rendszerbeállítások → Általános → Nyelv és régió → Fordítási nyelvek.</string>
+    <string name="translateUnavailableMac">A fordítás ezen a Macen nem érhető el (macOS 15 vagy újabb szükséges)</string>
     <string name="translateEngineGoogle">Fordítás az eszközön: Google Translate (ML Kit). Az üzenetek szövege a telefonon marad.</string>
     <string name="translateEngineApple">Fordítás az eszközön: Apple Translation. Az üzenetek szövege az eszközön marad.</string>
     <string name="translateUnavailable">A fordítás ezen az eszközön nem érhető el (iPhone és iPad: iOS 18 vagy újabb)</string>
@@ -3726,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">A feladó fotója vagy kezdőbetűje az üzenet mellett</string>
     <string name="notifyVipConversations">Beszélgetések VIP-eknek</string>
     <string name="notifyVipConversationsDesc">A VIP-ek levelei az Android Beszélgetések részében jelennek meg, ahol prioritásossá tehetők</string>
+    <string name="notifyAllConversations">Beszélgetések minden levélhez</string>
+    <string name="notifyAllConversationsDesc">A feladó képe az alkalmazásikon helyett; minden levél a Beszélgetések között jelenik meg</string>
     <string name="ios_siriCompose">Új üzenet</string>
     <string name="ios_siriEvent">Új esemény</string>
     <string name="ios_siriReminder">Új emlékeztető</string>
@@ -3778,6 +3782,21 @@
     <string name="translateFrom">Fordítás erről</string>
     <string name="translateMsgOther">Más nyelvű üzenet</string>
     <string name="translateReadMode">Lefordított üzenet megjelenítése</string>
+    <string name="mdmTitle">A szervezete kezeli</string>
+    <string name="mdmDesc">Ezeket a beállításokat a szervezete az eszközkezelőn (MDM) keresztül adta meg.</string>
+    <string name="mdmSupport">Informatikai támogatás</string>
+    <string name="mdmBlocked">A szervezete házirendje nem engedi</string>
+    <string name="mdmDomainNotAllowed">A szervezete csak ezeken a tartományokon engedélyez postafiókot: {domains}</string>
+    <string name="mdmPinBody">A szervezete házirendje előírja a levelezés védelmét. Adjon meg {n}–6 számjegyű PIN-kódot; az alkalmazás megnyitásakor kérni fogja.</string>
+    <string name="mdmPinRequired">A szervezete előírja</string>
+    <string name="mdmRuleAccount">Postafiók: {email}</string>
+    <string name="mdmRuleDomains">Csak ezeken: {domains}</string>
+    <string name="mdmRuleAppLock">Kötelező alkalmazás-PIN (legalább {n} számjegy)</string>
+    <string name="mdmRuleScreenshots">Képernyőkép és képernyőfelvétel tiltva</string>
+    <string name="mdmRuleShare">Megosztás, mentés fájlba, PDF és nyomtatás tiltva</string>
+    <string name="mdmRuleOpenIn">A mellékletek csak az alkalmazásban nyílnak meg</string>
+    <string name="mdmRuleCopy">Az üzenetszöveg másolása tiltva</string>
+    <string name="mdmRuleNotifications">Értesítések feladó és tárgy nélkül</string>
     <string name="favoritesOrder">Csempék sorrendje</string>
     <string name="favoritesOrderHint">Húzza az elemet a jobb oldali fogantyúnál — a menü csempéi ezt a sorrendet követik.</string>
 </resources>

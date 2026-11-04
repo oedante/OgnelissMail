@@ -63,6 +63,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/image_actions.dart';
 import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/ui_zoom.dart';
+import '../../../services/security/managed_config.dart';
 
 /// Где показ письма в WebView поддерживается. Остальные платформы (Linux,
 /// Windows без проверенного WebView2) — прежний рендер flutter_html.
@@ -1204,9 +1205,10 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     // Документ собирается один раз на ширину вписывания: страница
     // перестраивается при каждом замере высоты, а строка письма с
     // картинками — мегабайты.
+    final noCopy = ManagedPolicy.current.blockCopy;
     final key = '${identityHashCode(widget.document)}|$w|${_viewWidth.round()}|${_scale.toStringAsFixed(4)}|${widget.dark}|'
         '${widget.inlineRaw != null}|'
-        '${widget.textScale}|${widget.pageColor}|${MailHtmlView.webZoom}';
+        '${widget.textScale}|${widget.pageColor}|${MailHtmlView.webZoom}|$noCopy';
     final cached = _htmlMemo;
     if (cached != null && cached.$1 == key) return cached.$2;
     final out = MailHtmlView.composeHtml(widget.document,
@@ -1216,8 +1218,15 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         pageColor: widget.pageColor,
         textScale: widget.textScale,
         cidByRequest: widget.inlineRaw != null);
-    _htmlMemo = (key, out);
-    return out;
+    // Политика организации (MDM, 1.10.5): текст письма не выделяется и не
+    // копируется (и меню «Копировать» долгим нажатием не появляется).
+    final html = noCopy
+        ? out.replaceFirst('</head>',
+            '<style>*{-webkit-user-select:none!important;user-select:none!important;'
+            '-webkit-touch-callout:none!important}</style></head>')
+        : out;
+    _htmlMemo = (key, html);
+    return html;
   }
 
   (String, String)? _htmlMemo;
@@ -1979,6 +1988,18 @@ class _MailHtmlViewState extends State<MailHtmlView> {
           return NavigationActionPolicy.CANCEL;
         },
         onCreateWindow: (controller, action) async => false,
+        // Картинка из интернета не загрузилась — в журнал (1.11.0, письма
+        // Google Play 03.11.2026: на месте логотипа пустое поле, письмо
+        // открывалось долго; JavaScript в окне выключен, и иначе причину не
+        // увидеть).
+        onReceivedError: (controller, request, error) {
+          final s = MailWebViewPool.resourceError(request, error.description);
+          if (s != null) _trace(() => s);
+        },
+        onReceivedHttpError: (controller, request, response) {
+          final s = MailWebViewPool.resourceError(request, 'HTTP ${response.statusCode}');
+          if (s != null) _trace(() => s);
+        },
         // Встроенные картинки по запросу окна (1.5.9). Обработчики заданы,
         // только когда режим включён: заданный обработчик сам включает
         // перехват всех запросов окна.
@@ -2105,6 +2126,22 @@ class MailWebViewPool {
   /// Почему последнее окно не подошло экрану письма — в замер открытия.
   static String lastMiss = '';
 
+  /// Уже записанные в журнал «сервер|ошибка» — по разу за запуск.
+  static final Set<String> _resourceErrors = {};
+
+  /// Картинка (или другой ресурс письма) не загрузилась: строка журнала —
+  /// сервер и ошибка, без пути (в нём бывают адрес получателя и метки).
+  /// null — сам документ, адрес без сервера (data:, cid:) или уже записано.
+  static String? resourceError(WebResourceRequest request, String what) {
+    if (request.isForMainFrame ?? false) return null;
+    final host = request.url.host;
+    if (host.isEmpty) return null;
+    final line = 'не загрузилось: $host — $what';
+    if (_resourceErrors.length > 100) _resourceErrors.clear();
+    if (_resourceErrors.add('$host|$what')) AppLogger.warning('Окно письма: $line');
+    return line;
+  }
+
   /// Высота документа, измеренная в запасном окне высотой 1 px (null — ещё
   /// не измерена). Интеграционные тесты сверяют с ней высоту окна письма:
   /// пустого поля под письмом быть не должно (1.9.x, просьба владельца
@@ -2155,6 +2192,8 @@ class MailWebViewPool {
           ? NavigationActionPolicy.ALLOW
           : NavigationActionPolicy.CANCEL,
       onCreateWindow: (c, action) async => false,
+      onReceivedError: (c, request, error) => resourceError(request, error.description),
+      onReceivedHttpError: (c, request, response) => resourceError(request, 'HTTP ${response.statusCode}'),
       onPermissionRequest: (c, request) async =>
           PermissionResponse(resources: request.resources, action: PermissionResponseAction.DENY),
       // Процесс страницы упал — запасное окно больше не годится (без

@@ -15,6 +15,9 @@
 //   force-lock), если пользователь его включил; если отказался — через
 //   обязательный PIN приложения и его блокировку по бездействию.
 // - Windows и другие платформы: обязательный PIN приложения, как раньше.
+// - Политика организации через MDM (1.10.5, managed_config.dart): «код
+//   приложения обязателен» — PIN приложения на любой платформе, длина — не
+//   меньше заданной. Здесь же политика MDM загружается при запуске.
 
 import 'package:flutter/material.dart';
 import '../../core/theme/app_icons.dart';
@@ -28,6 +31,8 @@ import '../../l10n/app_localizations.dart';
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../../services/security/device_security_service.dart';
 import '../../services/security/eas_policy_store.dart';
+import '../../services/security/managed_config.dart';
+import '../../features/settings/providers/settings_provider.dart';
 import '../../services/security/pin_lock_service.dart';
 import '../../services/security/policy_compliance.dart';
 import 'pin_lock_screen.dart';
@@ -109,6 +114,10 @@ class _AppLockGateState extends ConsumerState<AppLockGate> with WidgetsBindingOb
   Widget build(BuildContext context) {
     final pin = ref.watch(pinLockProvider);
     final policy = ref.watch(easPolicyProvider);
+    // Политика организации (MDM): загружается здесь — ворота стоят над всем
+    // приложением с первого кадра.
+    final mdm = ref.watch(managedPolicyProvider);
+    ManagedPolicy.language = ref.watch(settingsProvider.select((s) => s.locale.languageCode));
     final device = _device;
     // Пока не известно состояние устройства, политику не оцениваем, но и
     // почту не показываем, если политика что-то требует.
@@ -123,11 +132,13 @@ class _AppLockGateState extends ConsumerState<AppLockGate> with WidgetsBindingOb
         deviceMode && !needDevice && compliance!.adminWanted && !_adminDeclined(policy);
     // PIN приложения обязателен: вне Android — по требованию пароля; на
     // Android — если отказались от администратора, а тайм-аут задан.
+    final mdmPin = mdm.requireAppLock;
     final needSetup = pin.loaded &&
         !pin.isPinSet &&
-        (deviceMode
-            ? compliance!.adminWanted && _adminDeclined(policy)
-            : (device != null && policy.pinRequired));
+        (mdmPin ||
+            (deviceMode
+                ? compliance!.adminWanted && _adminDeclined(policy)
+                : (device != null && policy.pinRequired)));
     final pinLocked = pin.isPinSet && pin.isLocked;
     final hide = !pin.loaded || deviceUnknown || pinLocked || needSetup || needDevice || askAdmin;
     return Listener(
@@ -159,7 +170,10 @@ class _AppLockGateState extends ConsumerState<AppLockGate> with WidgetsBindingOb
               onDecline: () => _declineAdmin(policy),
             )
           else if (needSetup)
-            _PolicyPinSetup(minLength: policy.minPinLength),
+            _PolicyPinSetup(
+              minLength: mdmPin && mdm.minPinLength > policy.minPinLength ? mdm.minPinLength : policy.minPinLength,
+              byOrganization: mdmPin && !policy.pinRequired,
+            ),
         ],
       ),
     );
@@ -353,7 +367,10 @@ class _DeviceAdminPrompt extends ConsumerWidget {
 /// ввода для курсора и меню выделения).
 class _PolicyPinSetup extends ConsumerStatefulWidget {
   final int minLength;
-  const _PolicyPinSetup({required this.minLength});
+
+  /// Требует политика организации (MDM), а не Exchange — другой текст.
+  final bool byOrganization;
+  const _PolicyPinSetup({required this.minLength, this.byOrganization = false});
 
   @override
   ConsumerState<_PolicyPinSetup> createState() => _PolicyPinSetupState();
@@ -432,7 +449,9 @@ class _PolicyPinSetupState extends ConsumerState<_PolicyPinSetup> {
                               color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                       const SizedBox(height: Space.s),
                       Text(
-                        l10n.tr('policyPinBody').replaceAll('{n}', '${widget.minLength}'),
+                        l10n
+                            .tr(widget.byOrganization ? 'mdmPinBody' : 'policyPinBody')
+                            .replaceAll('{n}', '${widget.minLength}'),
                         textAlign: TextAlign.center,
                         style: const TextStyle(color: Colors.white70),
                       ),

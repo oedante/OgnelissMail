@@ -27,6 +27,7 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/adaptive_layout.dart' show Breakpoints;
 import 'note_edit_screen.dart';
 import '../../../core/theme/ogneliss_look.dart';
+import '../../../core/platform/app_share.dart';
 
 class NotesScreen extends ConsumerStatefulWidget {
   const NotesScreen({super.key});
@@ -204,7 +205,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           if (note.title.trim().isNotEmpty) 'subject': note.title.trim(),
           if (note.body.trim().isNotEmpty) 'body': note.body.trim(),
         }).toString());
-    void share() => unawaited(SharePlus.instance.share(ShareParams(text: text, subject: title)));
+    void share() => unawaited(appShare(ShareParams(text: text, subject: title)));
     void copy() {
       unawaited(Clipboard.setData(ClipboardData(text: text)));
       unawaited(HapticFeedback.selectionClick());

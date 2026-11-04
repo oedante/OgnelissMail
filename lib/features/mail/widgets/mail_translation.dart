@@ -329,7 +329,7 @@ class MailTranslationController extends ChangeNotifier {
     final l10n = _l10n = AppLocalizations.of(context);
     _lang = ref.read(settingsProvider).locale.languageCode;
     if (!await t.isAvailable()) {
-      showInlineError(l10n.tr('translateUnavailable'));
+      showInlineError(l10n.tr(translateUnavailableKey()));
       return;
     }
     _resetFor(e.id);

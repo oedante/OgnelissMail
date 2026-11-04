@@ -3650,6 +3650,8 @@
     <string name="translateModelsSetting">ภาษาในอุปกรณ์</string>
     <string name="translateModelsDesc">ภาษาที่ดาวน์โหลดไว้สำหรับแปลแบบออฟไลน์</string>
     <string name="translateModelsIos">iOS จะดาวน์โหลดและลบภาษาสำหรับการแปลเอง: การตั้งค่า → แอป → แปลภาษา</string>
+    <string name="translateModelsMac">macOS ดาวน์โหลดและลบภาษาสำหรับการแปลเอง: การตั้งค่าระบบ → ทั่วไป → ภาษาและภูมิภาค → ภาษาสำหรับการแปล</string>
+    <string name="translateUnavailableMac">การแปลใช้ไม่ได้บน Mac เครื่องนี้ (ต้องใช้ macOS 15 ขึ้นไป)</string>
     <string name="translateEngineGoogle">แปลบนอุปกรณ์ด้วย Google Translate (ML Kit) ข้อความในอีเมลจะไม่ออกจากโทรศัพท์</string>
     <string name="translateEngineApple">แปลบนอุปกรณ์ด้วย Apple Translation ข้อความในอีเมลจะไม่ออกจากอุปกรณ์</string>
     <string name="translateUnavailable">การแปลใช้ไม่ได้ในอุปกรณ์นี้ (iPhone และ iPad: iOS 18 ขึ้นไป)</string>
@@ -3707,6 +3709,8 @@
     <string name="notifyMessengerStyleDesc">รูปภาพหรืออักษรย่อของผู้ส่งข้างข้อความ</string>
     <string name="notifyVipConversations">การสนทนาสำหรับ VIP</string>
     <string name="notifyVipConversationsDesc">อีเมลจาก VIP จะแสดงในส่วนการสนทนาของ Android ซึ่งคุณตั้งเป็นลำดับความสำคัญได้</string>
+    <string name="notifyAllConversations">การสนทนาสำหรับอีเมลทั้งหมด</string>
+    <string name="notifyAllConversationsDesc">รูปผู้ส่งแทนไอคอนแอป อีเมลทั้งหมดจะแสดงในส่วนการสนทนา</string>
     <string name="ios_siriCompose">อีเมลใหม่</string>
     <string name="ios_siriEvent">กิจกรรมใหม่</string>
     <string name="ios_siriReminder">การเตือนใหม่</string>
@@ -3757,6 +3761,21 @@
     <string name="translateFrom">แปลจาก</string>
     <string name="translateMsgOther">ข้อความเป็นภาษาอื่น</string>
     <string name="translateReadMode">การแสดงข้อความที่แปล</string>
+    <string name="mdmTitle">จัดการโดยองค์กรของคุณ</string>
+    <string name="mdmDesc">องค์กรของคุณกำหนดการตั้งค่าเหล่านี้ผ่านระบบจัดการอุปกรณ์ (MDM)</string>
+    <string name="mdmSupport">ฝ่ายสนับสนุนไอที</string>
+    <string name="mdmBlocked">นโยบายขององค์กรไม่อนุญาต</string>
+    <string name="mdmDomainNotAllowed">องค์กรของคุณอนุญาตเฉพาะกล่องจดหมายในโดเมน: {domains}</string>
+    <string name="mdmPinBody">นโยบายขององค์กรกำหนดให้ปกป้องอีเมล ตั้ง PIN {n}–6 หลัก ระบบจะขอเมื่อเปิดแอป</string>
+    <string name="mdmPinRequired">องค์กรของคุณกำหนด</string>
+    <string name="mdmRuleAccount">กล่องจดหมาย: {email}</string>
+    <string name="mdmRuleDomains">เฉพาะกล่องจดหมายในโดเมน: {domains}</string>
+    <string name="mdmRuleAppLock">ต้องใช้ PIN ของแอป (อย่างน้อย {n} หลัก)</string>
+    <string name="mdmRuleScreenshots">ห้ามจับภาพและบันทึกหน้าจอ</string>
+    <string name="mdmRuleShare">ห้ามแชร์ บันทึกเป็นไฟล์ PDF และพิมพ์</string>
+    <string name="mdmRuleOpenIn">ไฟล์แนบเปิดได้ในแอปเท่านั้น</string>
+    <string name="mdmRuleCopy">ห้ามคัดลอกข้อความในอีเมล</string>
+    <string name="mdmRuleNotifications">การแจ้งเตือนไม่แสดงผู้ส่งและหัวเรื่อง</string>
     <string name="favoritesOrder">ลำดับไทล์</string>
     <string name="favoritesOrderHint">ลากรายการที่ที่จับด้านขวา — ไทล์ในเมนูจะเรียงตามลำดับนี้</string>
 </resources>

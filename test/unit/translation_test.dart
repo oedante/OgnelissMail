@@ -224,6 +224,35 @@ void main() {
       expect(suggestRecipientLanguage(quoteLang: null, ownLang: 'ru'), isNull);
     });
 
+    // Письмо Google Play 03.11.2026: русский текст ML Kit назвал болгарским.
+    test('русский, принятый за болгарский, — по буквам «ы», «э»', () {
+      const ru = 'Здравствуйте, Ermishin Oleg! Вы указали в Play Console, что статус продавца вашего '
+          'аккаунта — non-trader. Вы несете полную ответственность за то, чтобы статус продавца и '
+          'сведения об аккаунте были точными, достоверными и актуальными. Чтобы узнать больше о '
+          'статусе продавца, необходимой информации и этапах проверки, прочитайте эту статью.';
+      expect(refineCyrillicLang('bg', ru), 'ru');
+      expect(refineCyrillicLang('mk', ru), 'ru');
+      expect(refineCyrillicLang('uk', ru), 'ru');
+      expect(refineCyrillicLang('ru', ru), 'ru');
+      expect(refineCyrillicLang('en', ru), 'en');
+      expect(refineCyrillicLang(null, ru), isNull);
+    });
+
+    test('болгарский, украинский, белорусский остаются собой', () {
+      const bg = 'Здравейте, Олег! Вие посочихте в Play Console, че статусът на продавача на вашия профил '
+          'е нетърговец. Вие носите пълна отговорност за това статусът на продавача и данните за '
+          'профила да са точни и актуални. Пишете на Иван Крылов, ако имате въпроси.';
+      const uk = 'Ви вказали в Play Console, що статус продавця вашого акаунта — не торговець. Ви несете '
+          'повну відповідальність за те, щоб статус продавця і відомості про акаунт були точними.';
+      const be = 'Вы паказалі ў Play Console, што статус прадаўца вашага акаўнта — не гандляр. Вы несяце '
+          'поўную адказнасць за тое, каб звесткі пра акаўнт былі дакладнымі і актуальнымі.';
+      expect(refineCyrillicLang('bg', bg), 'bg');
+      expect(refineCyrillicLang('uk', uk), 'uk');
+      expect(refineCyrillicLang('be', be), 'be');
+      // Короткий текст — как сказал определитель.
+      expect(refineCyrillicLang('bg', 'Вы где?'), 'bg');
+    });
+
     test('недавние: первым, без повторов, не больше max', () {
       expect(pushRecent(const ['de', 'en', 'fr'], 'en', max: 3), ['en', 'de', 'fr']);
       expect(pushRecent(const ['de', 'en', 'fr'], 'es', max: 3), ['es', 'de', 'en']);

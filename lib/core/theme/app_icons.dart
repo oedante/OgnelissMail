@@ -277,6 +277,9 @@ abstract final class AppIcons {
   static const IconData storage = Symbols.storage_rounded;
   static const IconData supervisor_account = Symbols.supervisor_account_rounded;
   static const IconData support_agent = Symbols.support_agent_rounded;
+  // Политики организации (MDM, 1.10.5).
+  static const IconData screenshot_monitor = Symbols.screenshot_monitor_rounded;
+  static const IconData open_in_new_off = Symbols.open_in_new_off_rounded;
   static const IconData swipe = Symbols.swipe_rounded;
   static const IconData sync = Symbols.sync_rounded;
   static const IconData sync_disabled = Symbols.sync_disabled_rounded;

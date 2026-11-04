@@ -26,6 +26,7 @@ import '../../services/archive/archive_settings.dart';
 import '../../services/archive/archive_vault.dart';
 import '../../widgets/common/app_sheet.dart';
 import '../../widgets/ui/app_radio_tile.dart';
+import '../../core/platform/app_share.dart';
 
 /// Архив открыт; закрыт — спросить пароль. false — архива нет или не открыли.
 Future<bool> ensureArchiveOpen(BuildContext context, WidgetRef ref) async {
@@ -222,7 +223,7 @@ class _CodeViewState extends State<_CodeView> {
       final dir = await getTemporaryDirectory();
       final f = File(p.join(dir.path, 'ogneliss-archive-recovery-code.txt'));
       await f.writeAsString(text, flush: true);
-      await SharePlus.instance.share(ShareParams(files: [XFile(f.path)], subject: l10n.tr('archiveCodeFileTitle')));
+      await appShare(ShareParams(files: [XFile(f.path)], subject: l10n.tr('archiveCodeFileTitle')));
       // Временный файл с кодом на телефоне не оставляем.
       unawaited(Future<void>.delayed(const Duration(minutes: 2), () async {
         try {
@@ -230,7 +231,7 @@ class _CodeViewState extends State<_CodeView> {
         } catch (_) {}
       }));
     } catch (_) {
-      await SharePlus.instance.share(ShareParams(text: text));
+      await appShare(ShareParams(text: text));
     }
   }
 

@@ -14,6 +14,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import 'text_scale_cap.dart';
+import '../../core/platform/app_share.dart';
 
 /// Экран просмотра PDF
 /// Использует нативный рендеринг: на Android через PdfRenderer,
@@ -86,7 +87,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
             tooltip: l10n.tr('share'),
             onPressed: () {
               HapticFeedback.selectionClick();
-              SharePlus.instance.share(ShareParams(files: [XFile(widget.filePath)], subject: widget.title));
+              appShare(ShareParams(files: [XFile(widget.filePath)], subject: widget.title));
             },
           ),
           // Открыть в системе

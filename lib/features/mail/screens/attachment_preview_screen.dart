@@ -50,6 +50,7 @@ import '../../../core/theme/mail_page_color.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import '../../../services/security/smime_service.dart';
 import '../../../services/security/smime_mime.dart';
+import '../../../core/platform/app_share.dart';
 
 enum _Kind { image, pdf, text, pass, mail, zip, other }
 
@@ -507,7 +508,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
       return;
     }
     try {
-      await SharePlus.instance.share(ShareParams(
+      await appShare(ShareParams(
           files: [XFile(await FileOpener.namedCopy(item.filePath, item.fileName), name: item.fileName)],
           subject: item.fileName));
     } catch (e) {

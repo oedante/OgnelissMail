@@ -3688,6 +3688,8 @@
     <string name="translateModelsSetting">Jazyky v zariadení</string>
     <string name="translateModelsDesc">Stiahnuté jazyky na preklad bez internetu</string>
     <string name="translateModelsIos">Jazyky na preklad sťahuje a odstraňuje iOS: Nastavenia → Aplikácie → Prekladač.</string>
+    <string name="translateModelsMac">Jazyky na preklad sťahuje a odstraňuje macOS: Systémové nastavenia → Všeobecné → Jazyk a oblasť → Jazyky prekladu.</string>
+    <string name="translateUnavailableMac">Preklad nie je na tomto Macu k dispozícii (vyžaduje macOS 15 alebo novší)</string>
     <string name="translateEngineGoogle">Preklad v zariadení: Google Translate (ML Kit). Text správ zostáva v telefóne.</string>
     <string name="translateEngineApple">Preklad v zariadení: Apple Translation. Text správ zostáva v zariadení.</string>
     <string name="translateUnavailable">Preklad nie je v tomto zariadení k dispozícii (iPhone a iPad: iOS 18 alebo novší)</string>
@@ -3745,6 +3747,8 @@
     <string name="notifyMessengerStyleDesc">Fotka alebo iniciála odosielateľa vedľa správy</string>
     <string name="notifyVipConversations">Konverzácie pre VIP</string>
     <string name="notifyVipConversationsDesc">Pošta od VIP sa zobrazí v sekcii Konverzácie v Androide, kde ju môžete označiť ako prioritnú</string>
+    <string name="notifyAllConversations">Konverzácie pre všetky e-maily</string>
+    <string name="notifyAllConversationsDesc">Fotka odosielateľa namiesto ikony aplikácie; všetky e-maily sa zobrazia v časti Konverzácie</string>
     <string name="ios_siriCompose">Nová správa</string>
     <string name="ios_siriEvent">Nová udalosť</string>
     <string name="ios_siriReminder">Nová pripomienka</string>
@@ -3799,6 +3803,21 @@
     <string name="translateFrom">Preložiť z</string>
     <string name="translateMsgOther">Správa v inom jazyku</string>
     <string name="translateReadMode">Zobrazenie preloženej správy</string>
+    <string name="mdmTitle">Spravované vašou organizáciou</string>
+    <string name="mdmDesc">Tieto nastavenia určila vaša organizácia cez správu zariadení (MDM).</string>
+    <string name="mdmSupport">IT podpora</string>
+    <string name="mdmBlocked">Zakázané zásadami vašej organizácie</string>
+    <string name="mdmDomainNotAllowed">Vaša organizácia povoľuje len schránky v doménach: {domains}</string>
+    <string name="mdmPinBody">Zásady vašej organizácie vyžadujú ochranu pošty. Nastavte PIN s {n}–6 číslicami; bude sa vyžadovať pri otvorení aplikácie.</string>
+    <string name="mdmPinRequired">Vyžaduje vaša organizácia</string>
+    <string name="mdmRuleAccount">Schránka: {email}</string>
+    <string name="mdmRuleDomains">Len schránky v: {domains}</string>
+    <string name="mdmRuleAppLock">PIN aplikácie povinný (od {n} číslic)</string>
+    <string name="mdmRuleScreenshots">Snímky a nahrávanie obrazovky zakázané</string>
+    <string name="mdmRuleShare">Zdieľanie, ukladanie do súborov, PDF a tlač zakázané</string>
+    <string name="mdmRuleOpenIn">Prílohy sa otvárajú len v aplikácii</string>
+    <string name="mdmRuleCopy">Kopírovanie textu správ zakázané</string>
+    <string name="mdmRuleNotifications">Upozornenia bez odosielateľa a predmetu</string>
     <string name="favoritesOrder">Poradie dlaždíc</string>
     <string name="favoritesOrderHint">Potiahnite položku za úchyt vpravo — dlaždice v ponuke budú v tomto poradí.</string>
 </resources>

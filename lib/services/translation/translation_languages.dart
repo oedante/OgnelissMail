@@ -27,6 +27,32 @@ const _aliases = {'iw': 'he', 'in': 'id', 'ji': 'yi', 'nb': 'no', 'nn': 'no', 'f
 /// Языки, у которых «-Latn» — их обычное письмо (не транслит).
 const _latinScript = {'sr', 'uz', 'az', 'bs', 'ms', 'tk'};
 
+/// Русский, который определитель принял за другой кириллический язык
+/// (1.11.0, письмо Google Play 03.11.2026: русский текст с вкраплениями
+/// латиницы — «Play Console», «non-trader» — ML Kit назвал болгарским).
+/// Проверка по буквам: в болгарском, македонском, сербском и украинском нет
+/// «ы», «э», «ё»; в белорусском они есть, но у него есть и «і», «ў», которых
+/// нет в русском. Пара слов с «ы» (русское имя в болгарском письме) язык не
+/// меняет: таких букв должно быть заметно больше — как в русском тексте
+/// (около 2 % букв).
+String? refineCyrillicLang(String? lang, String text) {
+  if (lang == null || !_ruLookalikes.contains(lang)) return lang;
+  final low = text.toLowerCase();
+  final letters = _cyrillic.allMatches(low).length;
+  if (letters < 20) return lang;
+  // Буквы, которых нет в русском: украинские, белорусские, сербские,
+  // македонские.
+  final foreign = _notRussian.allMatches(low).length;
+  if (foreign * 100 >= letters) return lang;
+  final russian = _onlyRussian.allMatches(low).length;
+  return russian >= 2 && russian * 200 >= letters ? 'ru' : lang;
+}
+
+const _ruLookalikes = {'bg', 'mk', 'sr', 'uk', 'be'};
+final _cyrillic = RegExp('[\u0400-\u04ff]');
+final _onlyRussian = RegExp('[ыэё]');
+final _notRussian = RegExp('[іїєґўјљњђћџѓќѕ]');
+
 /// Предлагать ли перевод входящего письма: язык определён, он не язык
 /// приложения, не в списке «не переводить», и переводчик его знает.
 bool shouldOfferTranslation({

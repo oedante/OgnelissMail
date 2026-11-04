@@ -14,8 +14,11 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../logging/app_logger.dart';
+import '../../services/security/managed_config.dart';
 
-enum OpenFileOutcome { done, noApp, error }
+/// [blocked] — запрещено политикой организации (MDM, 1.10.5): строка об
+/// этом уже показана, другой способ не предлагать.
+enum OpenFileOutcome { done, noApp, error, blocked }
 
 class FileOpener {
   FileOpener._();
@@ -27,6 +30,7 @@ class FileOpener {
   /// («acf2592652c4…pdf» вместо «УВЕДОМЛЕНИЕ Хуснутдинова….pdf», 13.10.2026):
   /// перед открытием делается копия с настоящим именем.
   static Future<OpenFileOutcome> open(String path, {String? mime, String? name}) async {
+    if (ManagedPolicy.deny(ManagedRule.openIn)) return OpenFileOutcome.blocked;
     path = await namedCopy(path, name);
     if (!kIsWeb && Platform.isAndroid) {
       try {

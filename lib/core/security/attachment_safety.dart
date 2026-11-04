@@ -26,6 +26,8 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../widgets/common/inline_notice.dart' show showInlineNotice;
+import '../platform/app_share.dart';
+import '../../services/security/managed_config.dart';
 
 enum AttachmentRisk { safe, warn, blocked }
 
@@ -114,12 +116,13 @@ class AttachmentSafety {
     // не открывают («нет прав») — об этом строка сверху.
     if (!kIsWeb && Platform.isIOS && !FileOpener.quickLookShows(fileName)) {
       if (await isEncryptedZip(path)) showInlineNotice(l10n.tr('zipEncryptedHint'));
-      await SharePlus.instance
-          .share(ShareParams(files: [XFile(await FileOpener.namedCopy(path, fileName), name: fileName)]));
+      // Это «открыть в другом приложении» — по политике организации (MDM).
+      if (ManagedPolicy.deny(ManagedRule.openIn)) return;
+      await appShare(ShareParams(files: [XFile(await FileOpener.namedCopy(path, fileName), name: fileName)]));
       return;
     }
     final res = await FileOpener.open(path, mime: mimeOf(fileName), name: fileName);
-    if (res == OpenFileOutcome.done || !context.mounted) return;
+    if (res == OpenFileOutcome.done || res == OpenFileOutcome.blocked || !context.mounted) return;
     // Приложения для формата нет или система отказала — предлагаем
     // «Поделиться»: так файл можно отправить в любое приложение (Документы,
     // Диск, мессенджер). Раньше кнопка молча ничего не делала.
@@ -135,7 +138,7 @@ class AttachmentSafety {
       ),
     );
     if (share != true) return;
-    await SharePlus.instance.share(ShareParams(files: [XFile(await FileOpener.namedCopy(path, fileName), name: fileName)]));
+    await appShare(ShareParams(files: [XFile(await FileOpener.namedCopy(path, fileName), name: fileName)]));
   }
 
   /// MIME-тип по расширению: без него часть приложений (Office, WPS)

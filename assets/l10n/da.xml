@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Sprog på enheden</string>
     <string name="translateModelsDesc">Hentede sprog til oversættelse uden internet</string>
     <string name="translateModelsIos">iOS henter og fjerner selv sprog til oversættelse: Indstillinger → Apps → Oversæt.</string>
+    <string name="translateModelsMac">macOS henter og fjerner selv oversættelsessprog: Systemindstillinger → Generelt → Sprog og område → Oversættelsessprog.</string>
+    <string name="translateUnavailableMac">Oversættelse er ikke tilgængelig på denne Mac (kræver macOS 15 eller nyere)</string>
     <string name="translateEngineGoogle">Oversættelse på enheden med Google Translate (ML Kit). Beskedernes tekst bliver på telefonen.</string>
     <string name="translateEngineApple">Oversættelse på enheden med Apple Translation. Beskedernes tekst bliver på enheden.</string>
     <string name="translateUnavailable">Oversættelse er ikke tilgængelig på denne enhed (iPhone og iPad: iOS 18 eller nyere)</string>
@@ -3726,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">Afsenderens foto eller forbogstav ved beskeden</string>
     <string name="notifyVipConversations">Samtaler for VIP\'er</string>
     <string name="notifyVipConversationsDesc">Mail fra VIP\'er vises under Samtaler i Android, hvor du kan markere dem som prioriterede</string>
+    <string name="notifyAllConversations">Samtaler for al mail</string>
+    <string name="notifyAllConversationsDesc">Afsenderens billede i stedet for appikonet; al mail vises under Samtaler</string>
     <string name="ios_siriCompose">Ny mail</string>
     <string name="ios_siriEvent">Ny begivenhed</string>
     <string name="ios_siriReminder">Ny påmindelse</string>
@@ -3778,6 +3782,21 @@
     <string name="translateFrom">Oversæt fra</string>
     <string name="translateMsgOther">Besked på et andet sprog</string>
     <string name="translateReadMode">Visning af oversatte beskeder</string>
+    <string name="mdmTitle">Administreres af din organisation</string>
+    <string name="mdmDesc">Din organisation har angivet disse indstillinger via enhedsadministration (MDM).</string>
+    <string name="mdmSupport">IT-support</string>
+    <string name="mdmBlocked">Ikke tilladt af din organisations politik</string>
+    <string name="mdmDomainNotAllowed">Din organisation tillader kun postkasser på disse domæner: {domains}</string>
+    <string name="mdmPinBody">Din organisations politik kræver, at din mail beskyttes. Angiv en pinkode på {n}–6 cifre; den kræves, når appen åbnes.</string>
+    <string name="mdmPinRequired">Kræves af din organisation</string>
+    <string name="mdmRuleAccount">Postkasse: {email}</string>
+    <string name="mdmRuleDomains">Kun postkasser på: {domains}</string>
+    <string name="mdmRuleAppLock">App-pinkode påkrævet ({n}+ cifre)</string>
+    <string name="mdmRuleScreenshots">Skærmbilleder og skærmoptagelse blokeret</string>
+    <string name="mdmRuleShare">Deling, gem i filer, PDF og udskrivning blokeret</string>
+    <string name="mdmRuleOpenIn">Vedhæftede filer åbnes kun i appen</string>
+    <string name="mdmRuleCopy">Kopiering af beskedtekst blokeret</string>
+    <string name="mdmRuleNotifications">Notifikationer uden afsender og emne</string>
     <string name="favoritesOrder">Rækkefølge af felter</string>
     <string name="favoritesOrderHint">Træk et punkt i håndtaget til højre — felterne i menuen følger denne rækkefølge.</string>
 </resources>

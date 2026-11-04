@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Laitteen kielet</string>
     <string name="translateModelsDesc">Ladatut kielet kääntämiseen ilman verkkoa</string>
     <string name="translateModelsIos">iOS lataa ja poistaa käännöskielet itse: Asetukset → Apit → Käännä.</string>
+    <string name="translateModelsMac">macOS lataa ja poistaa käännöskielet itse: Järjestelmäasetukset → Yleiset → Kieli ja alue → Käännöskielet.</string>
+    <string name="translateUnavailableMac">Kääntäminen ei ole käytettävissä tässä Macissa (vaatii macOS 15:n tai uudemman)</string>
     <string name="translateEngineGoogle">Käännös laitteella: Google Translate (ML Kit). Viestien teksti pysyy puhelimessa.</string>
     <string name="translateEngineApple">Käännös laitteella: Apple Translation. Viestien teksti pysyy laitteessa.</string>
     <string name="translateUnavailable">Kääntäminen ei ole käytettävissä tässä laitteessa (iPhone ja iPad: iOS 18 tai uudempi)</string>
@@ -3726,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">Lähettäjän kuva tai alkukirjain viestin vieressä</string>
     <string name="notifyVipConversations">Keskustelut VIP-henkilöille</string>
     <string name="notifyVipConversationsDesc">VIP-henkilöiden posti näkyy Androidin Keskustelut-osiossa, jossa sen voi merkitä tärkeäksi</string>
+    <string name="notifyAllConversations">Keskustelut kaikille viesteille</string>
+    <string name="notifyAllConversationsDesc">Lähettäjän kuva sovelluskuvakkeen sijaan; kaikki viestit näkyvät Keskustelut-osiossa</string>
     <string name="ios_siriCompose">Uusi viesti</string>
     <string name="ios_siriEvent">Uusi tapahtuma</string>
     <string name="ios_siriReminder">Uusi muistutus</string>
@@ -3778,6 +3782,21 @@
     <string name="translateFrom">Käännä kielestä</string>
     <string name="translateMsgOther">Viesti toisella kielellä</string>
     <string name="translateReadMode">Käännetyn viestin näyttäminen</string>
+    <string name="mdmTitle">Organisaatiosi hallinnoima</string>
+    <string name="mdmDesc">Organisaatiosi on määrittänyt nämä asetukset laitehallinnan (MDM) kautta.</string>
+    <string name="mdmSupport">IT-tuki</string>
+    <string name="mdmBlocked">Organisaatiosi käytäntö ei salli tätä</string>
+    <string name="mdmDomainNotAllowed">Organisaatiosi sallii vain näiden verkkotunnusten postilaatikot: {domains}</string>
+    <string name="mdmPinBody">Organisaatiosi käytäntö edellyttää postin suojaamista. Aseta {n}–6 numeron PIN-koodi; se kysytään sovellusta avattaessa.</string>
+    <string name="mdmPinRequired">Organisaatiosi vaatima</string>
+    <string name="mdmRuleAccount">Postilaatikko: {email}</string>
+    <string name="mdmRuleDomains">Vain postilaatikot: {domains}</string>
+    <string name="mdmRuleAppLock">Sovelluksen PIN pakollinen (vähintään {n} numeroa)</string>
+    <string name="mdmRuleScreenshots">Kuvakaappaukset ja näytön tallennus estetty</string>
+    <string name="mdmRuleShare">Jakaminen, tallennus tiedostoihin, PDF ja tulostus estetty</string>
+    <string name="mdmRuleOpenIn">Liitteet avautuvat vain sovelluksessa</string>
+    <string name="mdmRuleCopy">Viestien tekstin kopiointi estetty</string>
+    <string name="mdmRuleNotifications">Ilmoitukset ilman lähettäjää ja aihetta</string>
     <string name="favoritesOrder">Ruutujen järjestys</string>
     <string name="favoritesOrderHint">Vedä kohdetta oikealla olevasta kahvasta — valikon ruudut noudattavat tätä järjestystä.</string>
 </resources>

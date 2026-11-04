@@ -109,6 +109,9 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/app_menu_button.dart';
 import '../../../widgets/ui/section_band.dart';
 import '../../../core/theme/ogneliss_look.dart';
+import '../providers/folder_names.dart';
+import '../widgets/row_hover_actions.dart';
+import '../../../widgets/common/pane_navigator.dart';
 
 class MailListScreen extends ConsumerStatefulWidget {
   const MailListScreen({super.key});
@@ -494,7 +497,8 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     // Экран ушёл в режиме выбора — вернуть кнопку «Написать» оболочке.
     // Не во время демонтажа дерева: менять провайдер здесь нельзя.
     final sel = _selectionNotifier;
-    if (sel != null) Future.microtask(() => sel.state = false);
+    // Состояние могли уже освободить (закрыли всё приложение) — тогда не трогаем.
+    if (sel != null) Future.microtask(() { if (sel.mounted) sel.state = false; });
     super.dispose();
   }
 
@@ -585,12 +589,12 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       // путь «INBOX/Проекты»).
       final fid = ref.watch(selectedFolderIdProvider);
       final folders = ref.watch(foldersProvider).value ?? const <FolderModel>[];
-      title = fid == null
-          ? l10n.inbox
-          : (folders.where((f) => f.id == fid && (account == null || f.accountId == account.id))
-                  .firstOrNull
-                  ?.displayName ??
-              l10n.inbox);
+      // Имя — по типу папки, как в панели папок («Входящие», а не
+      // «INBOX» Gmail, 1.10.5).
+      final folder = fid == null
+          ? null
+          : folders.where((f) => f.id == fid && (account == null || f.accountId == account.id)).firstOrNull;
+      title = folder == null ? l10n.inbox : localizedFolderName(folder, l10n);
     }
 
     _publishSelection();
@@ -797,6 +801,38 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           // Компактная пиктограмма офлайна/очереди: скрыта, когда сеть есть и
           // очередь пуста; иначе показывает иконку и число ожидающих операций.
           const OfflineIndicator(),
+          // Планшет и компьютер (1.10.5, как в Outlook): поиск — полем в
+          // шапке ленты; нажатие открывает тот же поиск, что и значок.
+          if (!phone && !_isSearching)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Space.xs),
+              child: Material(
+                color: barTheme.colorScheme.onSurface.withValues(alpha: 0.06),
+                shape: const StadiumBorder(),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  key: const ValueKey('mail_search_pill'),
+                  onTap: () => setState(() => _isSearching = true),
+                  child: SizedBox(
+                    width: box.maxWidth >= 1200 ? 240 : 160,
+                    height: 36,
+                    child: Row(children: [
+                      const SizedBox(width: Space.m),
+                      Icon(AppIcons.search, size: 18, color: barTheme.colorScheme.onSurfaceVariant),
+                      const SizedBox(width: Space.s),
+                      Expanded(
+                        child: Text(l10n.search,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: barTheme.textTheme.bodyMedium
+                                ?.copyWith(color: barTheme.colorScheme.onSurfaceVariant)),
+                      ),
+                    ]),
+                  ),
+                ),
+              ),
+            )
+          else
           IconButton(
             tooltip: _isSearching ? l10n.tr('cancel') : l10n.search,
             icon: Icon(_isSearching ? AppIcons.close : AppIcons.search),
@@ -858,12 +894,17 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       body: AdaptiveLayout(
         widthKey: 'mail',
         showDetail: _selectedEmailId != null,
+        // Своя навигация панели (1.11.0): ответ и пересылка — прямо в
+        // панели письма, как в Outlook.
         detailBody: _selectedEmailId != null
-            ? MailDetailScreen(
-                key: ValueKey(_selectedEmailId),
-                emailId: _selectedEmailId!,
-                accountId: _selectedAccountId ?? (account?.id ?? ''),
-                embedded: true,
+            ? PaneNavigator(
+                key: ValueKey('pane_$_selectedEmailId'),
+                child: MailDetailScreen(
+                  key: ValueKey(_selectedEmailId),
+                  emailId: _selectedEmailId!,
+                  accountId: _selectedAccountId ?? (account?.id ?? ''),
+                  embedded: true,
+                ),
               )
             : null,
         // Широкое окно: панель письма на месте и до выбора (1.6.28) —
@@ -1455,7 +1496,19 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
               // это вся лента (RenderSliver, не RenderBox), и карточка по
               // удержанию падала на приведении типа — «не открывается в
               // ленте, только в беседах».
-              child: Builder(builder: (rowCtx) => EmailListTile(
+              // Наведение мыши (планшет, компьютер, 1.10.5): быстрые кнопки,
+              // как в Outlook.
+              child: RowHoverActions(
+                enabled: !_selectionMode,
+                actions: [
+                  RowHoverAction(AppIcons.delete, l10n.delete, () => unawaited(_deleteEmail(item, l10n))),
+                  RowHoverAction(AppIcons.archive, l10n.tr('archive'), () => _archiveEmail(item, l10n)),
+                  RowHoverAction(item.isRead ? AppIcons.mark_email_unread : AppIcons.mark_email_read,
+                      l10n.tr(item.isRead ? 'markUnread' : 'markRead'), () => _toggleRead(item)),
+                  RowHoverAction(AppIcons.flag, l10n.tr('flag'), () => _toggleFlag(item),
+                      selected: item.isFlagged, color: item.isFlagged ? AppColors.errorRed : null),
+                ],
+                child: Builder(builder: (rowCtx) => EmailListTile(
               email: item,
               // В «Позже» вместо даты получения — когда письмо вернётся.
               showLaterTime: ref.read(mailFilterProvider) == MailFilter.later,
@@ -1469,6 +1522,11 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
               isInSelectionMode: _selectionMode,
               isChecked: _selectedIds.contains(item.id),
               onCheckChanged: () => _toggleSelect(item.id),
+              // Мышь над портретом — флажок (1.11.0, как в Outlook).
+              onHoverSelect: () => setState(() {
+                _selectionMode = true;
+                _selectedIds.add(item.id);
+              }),
               onTap: () async {
                 if (_selectionMode) {
                   _toggleSelect(item.id);
@@ -1507,6 +1565,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                 }
               },
             )),
+              ),
             ),
           ));
           // Постоянная панель папок (широкое окно): письма перетаскиваются на
@@ -1742,7 +1801,10 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       title: AppLocalizations.of(context).tr('moveToDots'),
       entries: [
         for (final f in folders.where((f) => f.id != email.folderId))
-          AppMenuEntry(value: f.id, label: f.displayName, icon: folderIconOf(folderFromRow(f))),
+          AppMenuEntry(
+              value: f.id,
+              label: localizedFolderName(folderFromRow(f), AppLocalizations.of(context)),
+              icon: folderIconOf(folderFromRow(f))),
       ],
     );
     final target = folders.where((f) => f.id == targetId).firstOrNull;

@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Idiomas en el dispositivo</string>
     <string name="translateModelsDesc">Idiomas descargados para traducir sin conexión</string>
     <string name="translateModelsIos">iOS descarga y elimina los idiomas de traducción: Ajustes → Apps → Traducir.</string>
+    <string name="translateModelsMac">macOS descarga y elimina los idiomas de traducción: Ajustes del Sistema → General → Idioma y región → Idiomas de traducción.</string>
+    <string name="translateUnavailableMac">La traducción no está disponible en este Mac (se necesita macOS 15 o posterior)</string>
     <string name="translateEngineGoogle">Traducción en el dispositivo con Google Translate (ML Kit). El texto de los mensajes no sale del teléfono.</string>
     <string name="translateEngineApple">Traducción en el dispositivo con Apple Translation. El texto de los mensajes no sale del dispositivo.</string>
     <string name="translateUnavailable">La traducción no está disponible en este dispositivo (iPhone y iPad: iOS 18 o posterior)</string>
@@ -3726,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">La foto o inicial del remitente junto al mensaje</string>
     <string name="notifyVipConversations">Conversaciones para VIP</string>
     <string name="notifyVipConversationsDesc">El correo de los VIP aparece en Conversaciones de Android, donde puedes marcarlo como prioritario</string>
+    <string name="notifyAllConversations">Conversaciones para todo el correo</string>
+    <string name="notifyAllConversationsDesc">Foto del remitente en lugar del icono de la app; todo el correo aparece en «Conversaciones»</string>
     <string name="ios_siriCompose">Mensaje nuevo</string>
     <string name="ios_siriEvent">Nuevo evento</string>
     <string name="ios_siriReminder">Nuevo recordatorio</string>
@@ -3778,6 +3782,21 @@
     <string name="translateFrom">Traducir del</string>
     <string name="translateMsgOther">Mensaje en otro idioma</string>
     <string name="translateReadMode">Vista de mensajes traducidos</string>
+    <string name="mdmTitle">Administrado por tu organización</string>
+    <string name="mdmDesc">Tu organización configuró estas opciones mediante la gestión de dispositivos (MDM).</string>
+    <string name="mdmSupport">Soporte técnico</string>
+    <string name="mdmBlocked">No permitido por la política de tu organización</string>
+    <string name="mdmDomainNotAllowed">Tu organización solo permite buzones de estos dominios: {domains}</string>
+    <string name="mdmPinBody">La política de tu organización exige proteger tu correo. Define un PIN de {n} a 6 dígitos; se pedirá al abrir la app.</string>
+    <string name="mdmPinRequired">Lo exige tu organización</string>
+    <string name="mdmRuleAccount">Buzón: {email}</string>
+    <string name="mdmRuleDomains">Solo buzones de: {domains}</string>
+    <string name="mdmRuleAppLock">PIN de la app obligatorio ({n}+ dígitos)</string>
+    <string name="mdmRuleScreenshots">Capturas y grabación de pantalla bloqueadas</string>
+    <string name="mdmRuleShare">Compartir, guardar en archivos, PDF e imprimir bloqueados</string>
+    <string name="mdmRuleOpenIn">Los adjuntos se abren solo en la app</string>
+    <string name="mdmRuleCopy">Copiar el texto de los mensajes bloqueado</string>
+    <string name="mdmRuleNotifications">Notificaciones sin remitente ni asunto</string>
     <string name="favoritesOrder">Orden de los mosaicos</string>
     <string name="favoritesOrderHint">Arrastre un elemento por el asa de la derecha: los mosaicos del menú siguen este orden.</string>
 </resources>

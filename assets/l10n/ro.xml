@@ -3688,6 +3688,8 @@
     <string name="translateModelsSetting">Limbi pe dispozitiv</string>
     <string name="translateModelsDesc">Limbi descărcate pentru traducere offline</string>
     <string name="translateModelsIos">iOS descarcă și șterge singur limbile de traducere: Configurări → Aplicații → Traducere.</string>
+    <string name="translateModelsMac">Limbile de traducere le descarcă și le șterge macOS: Configurări sistem → General → Limbă și regiune → Limbi de traducere.</string>
+    <string name="translateUnavailableMac">Traducerea nu este disponibilă pe acest Mac (necesită macOS 15 sau mai nou)</string>
     <string name="translateEngineGoogle">Traducere pe dispozitiv cu Google Translate (ML Kit). Textul mesajelor rămâne pe telefon.</string>
     <string name="translateEngineApple">Traducere pe dispozitiv cu Apple Translation. Textul mesajelor rămâne pe dispozitiv.</string>
     <string name="translateUnavailable">Traducerea nu este disponibilă pe acest dispozitiv (iPhone și iPad: iOS 18 sau mai nou)</string>
@@ -3745,6 +3747,8 @@
     <string name="notifyMessengerStyleDesc">Fotografia sau inițiala expeditorului lângă mesaj</string>
     <string name="notifyVipConversations">Conversații pentru VIP</string>
     <string name="notifyVipConversationsDesc">E-mailurile VIP apar la Conversații în Android, unde le puteți marca drept prioritare</string>
+    <string name="notifyAllConversations">Conversații pentru toate e-mailurile</string>
+    <string name="notifyAllConversationsDesc">Fotografia expeditorului în locul pictogramei aplicației; toate e-mailurile apar la Conversații</string>
     <string name="ios_siriCompose">Mesaj nou</string>
     <string name="ios_siriEvent">Eveniment nou</string>
     <string name="ios_siriReminder">Memento nou</string>
@@ -3799,6 +3803,21 @@
     <string name="translateFrom">Tradu din</string>
     <string name="translateMsgOther">Mesaj în altă limbă</string>
     <string name="translateReadMode">Afișarea mesajelor traduse</string>
+    <string name="mdmTitle">Gestionat de organizația ta</string>
+    <string name="mdmDesc">Organizația ta a stabilit aceste opțiuni prin gestionarea dispozitivelor (MDM).</string>
+    <string name="mdmSupport">Suport IT</string>
+    <string name="mdmBlocked">Nepermis de politica organizației tale</string>
+    <string name="mdmDomainNotAllowed">Organizația ta permite doar căsuțe din aceste domenii: {domains}</string>
+    <string name="mdmPinBody">Politica organizației tale cere protejarea e-mailului. Setează un PIN de {n}–6 cifre; va fi cerut la deschiderea aplicației.</string>
+    <string name="mdmPinRequired">Cerut de organizația ta</string>
+    <string name="mdmRuleAccount">Căsuță: {email}</string>
+    <string name="mdmRuleDomains">Doar căsuțe din: {domains}</string>
+    <string name="mdmRuleAppLock">PIN de aplicație obligatoriu (minimum {n} cifre)</string>
+    <string name="mdmRuleScreenshots">Capturile și înregistrarea ecranului blocate</string>
+    <string name="mdmRuleShare">Partajarea, salvarea în fișiere, PDF și imprimarea blocate</string>
+    <string name="mdmRuleOpenIn">Atașamentele se deschid doar în aplicație</string>
+    <string name="mdmRuleCopy">Copierea textului mesajelor blocată</string>
+    <string name="mdmRuleNotifications">Notificări fără expeditor și subiect</string>
     <string name="favoritesOrder">Ordinea plăcilor</string>
     <string name="favoritesOrderHint">Trageți un element de mânerul din dreapta — plăcile din meniu urmează această ordine.</string>
 </resources>

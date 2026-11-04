@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Sprachen auf dem Gerät</string>
     <string name="translateModelsDesc">Heruntergeladene Sprachen für Offline-Übersetzung</string>
     <string name="translateModelsIos">Sprachen für die Übersetzung lädt und entfernt iOS selbst: Einstellungen → Apps → Übersetzen.</string>
+    <string name="translateModelsMac">Sprachen für die Übersetzung lädt und entfernt macOS selbst: Systemeinstellungen → Allgemein → Sprache &amp; Region → Übersetzungssprachen.</string>
+    <string name="translateUnavailableMac">Übersetzung ist auf diesem Mac nicht verfügbar (macOS 15 oder neuer erforderlich)</string>
     <string name="translateEngineGoogle">Übersetzung auf dem Gerät mit Google Translate (ML Kit). Der Nachrichtentext bleibt auf dem Telefon.</string>
     <string name="translateEngineApple">Übersetzung auf dem Gerät mit Apple Translation. Der Nachrichtentext bleibt auf dem Gerät.</string>
     <string name="translateUnavailable">Übersetzung ist auf diesem Gerät nicht verfügbar (iPhone und iPad: ab iOS 18)</string>
@@ -3726,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">Foto oder Initiale des Absenders neben der Nachricht</string>
     <string name="notifyVipConversations">Unterhaltungen für VIPs</string>
     <string name="notifyVipConversationsDesc">E-Mails von VIPs erscheinen unter „Unterhaltungen“ in Android und lassen sich als vorrangig markieren</string>
+    <string name="notifyAllConversations">Unterhaltungen für alle E-Mails</string>
+    <string name="notifyAllConversationsDesc">Bild des Absenders statt des App-Symbols; alle E-Mails erscheinen unter „Unterhaltungen“</string>
     <string name="ios_siriCompose">Neue E-Mail</string>
     <string name="ios_siriEvent">Neuer Termin</string>
     <string name="ios_siriReminder">Neue Erinnerung</string>
@@ -3778,6 +3782,21 @@
     <string name="translateFrom">Übersetzen aus</string>
     <string name="translateMsgOther">Nachricht in einer anderen Sprache</string>
     <string name="translateReadMode">Anzeige übersetzter Nachrichten</string>
+    <string name="mdmTitle">Von Ihrer Organisation verwaltet</string>
+    <string name="mdmDesc">Diese Einstellungen hat Ihre Organisation über die Geräteverwaltung (MDM) festgelegt.</string>
+    <string name="mdmSupport">IT-Support</string>
+    <string name="mdmBlocked">Durch die Richtlinie Ihrer Organisation nicht erlaubt</string>
+    <string name="mdmDomainNotAllowed">Ihre Organisation erlaubt Postfächer nur in diesen Domänen: {domains}</string>
+    <string name="mdmPinBody">Die Richtlinie Ihrer Organisation verlangt, Ihre E-Mails zu schützen. Legen Sie eine PIN mit {n}–6 Ziffern fest; sie wird beim Öffnen der App abgefragt.</string>
+    <string name="mdmPinRequired">Von Ihrer Organisation vorgeschrieben</string>
+    <string name="mdmRuleAccount">Postfach: {email}</string>
+    <string name="mdmRuleDomains">Nur Postfächer in: {domains}</string>
+    <string name="mdmRuleAppLock">App-PIN erforderlich (ab {n} Ziffern)</string>
+    <string name="mdmRuleScreenshots">Bildschirmfotos und -aufnahmen gesperrt</string>
+    <string name="mdmRuleShare">Teilen, Speichern in Dateien, PDF und Drucken gesperrt</string>
+    <string name="mdmRuleOpenIn">Anhänge öffnen sich nur in der App</string>
+    <string name="mdmRuleCopy">Kopieren von Nachrichtentext gesperrt</string>
+    <string name="mdmRuleNotifications">Benachrichtigungen ohne Absender und Betreff</string>
     <string name="favoritesOrder">Reihenfolge der Kacheln</string>
     <string name="favoritesOrderHint">Ziehen Sie einen Eintrag am Griff rechts — die Kacheln im Menü folgen dieser Reihenfolge.</string>
 </resources>

@@ -3707,6 +3707,8 @@
     <string name="translateModelsSetting">Języki na urządzeniu</string>
     <string name="translateModelsDesc">Pobrane języki do tłumaczenia offline</string>
     <string name="translateModelsIos">Języki do tłumaczenia pobiera i usuwa iOS: Ustawienia → Aplikacje → Tłumacz.</string>
+    <string name="translateModelsMac">Języki tłumaczenia pobiera i usuwa macOS: Ustawienia systemowe → Ogólne → Język i region → Języki tłumaczenia.</string>
+    <string name="translateUnavailableMac">Tłumaczenie jest niedostępne na tym Macu (wymagany macOS 15 lub nowszy)</string>
     <string name="translateEngineGoogle">Tłumaczenie na urządzeniu: Google Translate (ML Kit). Treść wiadomości nie opuszcza telefonu.</string>
     <string name="translateEngineApple">Tłumaczenie na urządzeniu: Apple Translation. Treść wiadomości nie opuszcza urządzenia.</string>
     <string name="translateUnavailable">Tłumaczenie jest niedostępne na tym urządzeniu (iPhone i iPad: iOS 18 lub nowszy)</string>
@@ -3764,6 +3766,8 @@
     <string name="notifyMessengerStyleDesc">Zdjęcie lub inicjał nadawcy obok wiadomości</string>
     <string name="notifyVipConversations">Rozmowy dla VIP</string>
     <string name="notifyVipConversationsDesc">Poczta od VIP trafia do sekcji Rozmowy w Androidzie, gdzie można oznaczyć ją jako priorytetową</string>
+    <string name="notifyAllConversations">Rozmowy dla całej poczty</string>
+    <string name="notifyAllConversationsDesc">Zdjęcie nadawcy zamiast ikony aplikacji; cała poczta trafia do sekcji „Rozmowy”</string>
     <string name="ios_siriCompose">Nowa wiadomość</string>
     <string name="ios_siriEvent">Nowe wydarzenie</string>
     <string name="ios_siriReminder">Nowe przypomnienie</string>
@@ -3820,6 +3824,21 @@
     <string name="translateFrom">Tłumacz z</string>
     <string name="translateMsgOther">Wiadomość w innym języku</string>
     <string name="translateReadMode">Wyświetlanie przetłumaczonej wiadomości</string>
+    <string name="mdmTitle">Zarządzane przez Twoją organizację</string>
+    <string name="mdmDesc">Te ustawienia określiła Twoja organizacja przez system zarządzania urządzeniami (MDM).</string>
+    <string name="mdmSupport">Pomoc IT</string>
+    <string name="mdmBlocked">Niedozwolone przez zasady Twojej organizacji</string>
+    <string name="mdmDomainNotAllowed">Twoja organizacja zezwala tylko na skrzynki w domenach: {domains}</string>
+    <string name="mdmPinBody">Zasady Twojej organizacji wymagają ochrony poczty. Ustaw PIN z {n}–6 cyfr; będzie wymagany przy otwieraniu aplikacji.</string>
+    <string name="mdmPinRequired">Wymaga Twoja organizacja</string>
+    <string name="mdmRuleAccount">Skrzynka: {email}</string>
+    <string name="mdmRuleDomains">Tylko skrzynki w: {domains}</string>
+    <string name="mdmRuleAppLock">Wymagany PIN aplikacji (od {n} cyfr)</string>
+    <string name="mdmRuleScreenshots">Zrzuty i nagrywanie ekranu zablokowane</string>
+    <string name="mdmRuleShare">Udostępnianie, zapis do plików, PDF i drukowanie zablokowane</string>
+    <string name="mdmRuleOpenIn">Załączniki otwierają się tylko w aplikacji</string>
+    <string name="mdmRuleCopy">Kopiowanie tekstu wiadomości zablokowane</string>
+    <string name="mdmRuleNotifications">Powiadomienia bez nadawcy i tematu</string>
     <string name="favoritesOrder">Kolejność kafelków</string>
     <string name="favoritesOrderHint">Przeciągnij element za uchwyt po prawej — kafelki w menu ułożą się w tej kolejności.</string>
 </resources>

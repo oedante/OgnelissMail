@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">डिवाइस पर भाषाएँ</string>
     <string name="translateModelsDesc">बिना इंटरनेट अनुवाद के लिए डाउनलोड की गई भाषाएँ</string>
     <string name="translateModelsIos">अनुवाद की भाषाएँ iOS स्वयं डाउनलोड और हटाता है: सेटिंग्स → ऐप्स → अनुवाद।</string>
+    <string name="translateModelsMac">अनुवाद की भाषाएँ macOS स्वयं डाउनलोड और हटाता है: सिस्टम सेटिंग्स → सामान्य → भाषा और क्षेत्र → अनुवाद भाषाएँ।</string>
+    <string name="translateUnavailableMac">इस Mac पर अनुवाद उपलब्ध नहीं है (macOS 15 या बाद का आवश्यक)</string>
     <string name="translateEngineGoogle">डिवाइस पर अनुवाद Google Translate (ML Kit) द्वारा। संदेशों का टेक्स्ट फ़ोन से बाहर नहीं जाता।</string>
     <string name="translateEngineApple">डिवाइस पर अनुवाद Apple Translation द्वारा। संदेशों का टेक्स्ट डिवाइस से बाहर नहीं जाता।</string>
     <string name="translateUnavailable">इस डिवाइस पर अनुवाद उपलब्ध नहीं है (iPhone और iPad: iOS 18 या बाद का)</string>
@@ -3726,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">संदेश के पास प्रेषक की फ़ोटो या पहला अक्षर</string>
     <string name="notifyVipConversations">VIP के लिए बातचीत</string>
     <string name="notifyVipConversationsDesc">VIP की मेल Android के बातचीत अनुभाग में दिखती है, जहां आप इसे प्राथमिकता दे सकते हैं</string>
+    <string name="notifyAllConversations">सभी मेल के लिए बातचीत</string>
+    <string name="notifyAllConversationsDesc">ऐप आइकन के बजाय भेजने वाले की फ़ोटो; सारा मेल बातचीत में दिखता है</string>
     <string name="ios_siriCompose">नया ईमेल</string>
     <string name="ios_siriEvent">नया इवेंट</string>
     <string name="ios_siriReminder">नया रिमाइंडर</string>
@@ -3778,6 +3782,21 @@
     <string name="translateFrom">इससे अनुवाद करें</string>
     <string name="translateMsgOther">दूसरी भाषा में संदेश</string>
     <string name="translateReadMode">अनुवादित संदेश का प्रदर्शन</string>
+    <string name="mdmTitle">आपके संगठन द्वारा प्रबंधित</string>
+    <string name="mdmDesc">ये सेटिंग आपके संगठन ने डिवाइस प्रबंधन (MDM) से तय की हैं।</string>
+    <string name="mdmSupport">आईटी सहायता</string>
+    <string name="mdmBlocked">आपके संगठन की नीति इसकी अनुमति नहीं देती</string>
+    <string name="mdmDomainNotAllowed">आपका संगठन केवल इन डोमेन के मेलबॉक्स की अनुमति देता है: {domains}</string>
+    <string name="mdmPinBody">आपके संगठन की नीति के अनुसार मेल सुरक्षित होना चाहिए। {n}–6 अंकों का PIN सेट करें; ऐप खोलते समय यह पूछा जाएगा।</string>
+    <string name="mdmPinRequired">आपके संगठन द्वारा आवश्यक</string>
+    <string name="mdmRuleAccount">मेलबॉक्स: {email}</string>
+    <string name="mdmRuleDomains">केवल इन डोमेन के मेलबॉक्स: {domains}</string>
+    <string name="mdmRuleAppLock">ऐप PIN आवश्यक (कम से कम {n} अंक)</string>
+    <string name="mdmRuleScreenshots">स्क्रीनशॉट और स्क्रीन रिकॉर्डिंग अवरुद्ध</string>
+    <string name="mdmRuleShare">शेयर करना, फ़ाइलों में सहेजना, PDF और प्रिंट अवरुद्ध</string>
+    <string name="mdmRuleOpenIn">अटैचमेंट केवल ऐप में खुलते हैं</string>
+    <string name="mdmRuleCopy">संदेश का पाठ कॉपी करना अवरुद्ध</string>
+    <string name="mdmRuleNotifications">प्रेषक और विषय के बिना सूचनाएँ</string>
     <string name="favoritesOrder">टाइलों का क्रम</string>
     <string name="favoritesOrderHint">दाईं ओर के हैंडल से आइटम खींचें — मेनू की टाइलें इसी क्रम में आएँगी।</string>
 </resources>

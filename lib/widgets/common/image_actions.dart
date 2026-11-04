@@ -20,6 +20,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../core/logging/app_logger.dart';
 import '../../core/platform/download_saver.dart';
+import '../../core/platform/app_share.dart';
 
 class ImageActions {
   ImageActions._();
@@ -116,6 +117,6 @@ class ImageActions {
   static Future<void> share(Uint8List b, {String? name}) async {
     final file = fileName(b, name: name);
     final path = await _temp(b, file);
-    await SharePlus.instance.share(ShareParams(files: [XFile(path, mimeType: typeOf(b).mime, name: file)]));
+    await appShare(ShareParams(files: [XFile(path, mimeType: typeOf(b).mime, name: file)]));
   }
 }

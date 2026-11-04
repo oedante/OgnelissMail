@@ -58,7 +58,12 @@ class RulesScreen extends ConsumerWidget {
         : ReorderableListView.builder(
             padding: const EdgeInsets.only(bottom: 80),
             itemCount: rules.length,
-            onReorderItem: (oldIndex, newIndex) {
+            // onReorder, а не onReorderItem: см. reorder_index.dart (Аврора).
+            // reorder() сам пересчитывает место вставки (индекс onReorder):
+            // с onReorderItem правило, перетащенное вниз, вставало на одно
+            // место выше.
+            // ignore: deprecated_member_use
+            onReorder: (oldIndex, newIndex) {
               HapticFeedback.mediumImpact();
               ref.read(autoRulesProvider.notifier).reorder(oldIndex, newIndex);
             },

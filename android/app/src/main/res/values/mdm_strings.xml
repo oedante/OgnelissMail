@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Подписи управляемых настроек в консолях MDM (1.10.5): английский — для остальных языков. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="mdm_org_name_title">Organization name</string>
+    <string name="mdm_org_name_desc">Shown in Settings → Managed by your organization.</string>
+    <string name="mdm_support_contact_title">IT support contact</string>
+    <string name="mdm_support_contact_desc">Phone, email or link shown to the user.</string>
+    <string name="mdm_account_email_title">Mailbox address</string>
+    <string name="mdm_account_email_desc">Pre-fills sign-in with this address.</string>
+    <string name="mdm_account_protocol_title">Mailbox protocol</string>
+    <string name="mdm_account_protocol_desc">auto, exchange (ActiveSync or EWS, chosen by the app) or imap.</string>
+    <string name="mdm_account_server_title">Exchange server</string>
+    <string name="mdm_account_server_desc">Host or URL of the Exchange server.</string>
+    <string name="mdm_account_username_title">User name</string>
+    <string name="mdm_account_username_desc">Sign-in name if it differs from the address.</string>
+    <string name="mdm_account_domain_title">Domain</string>
+    <string name="mdm_account_domain_desc">Windows domain for Exchange sign-in.</string>
+    <string name="mdm_imap_server_title">IMAP server</string>
+    <string name="mdm_imap_server_desc">IMAP host for protocol imap.</string>
+    <string name="mdm_imap_port_title">IMAP port</string>
+    <string name="mdm_imap_port_desc">Usually 993.</string>
+    <string name="mdm_smtp_server_title">SMTP server</string>
+    <string name="mdm_smtp_server_desc">SMTP host for protocol imap.</string>
+    <string name="mdm_smtp_port_title">SMTP port</string>
+    <string name="mdm_smtp_port_desc">Usually 465 or 587.</string>
+    <string name="mdm_allowed_domains_title">Allowed mailbox domains</string>
+    <string name="mdm_allowed_domains_desc">Comma-separated; other mailboxes cannot be added. Empty — any.</string>
+    <string name="mdm_require_app_lock_title">Require app PIN</string>
+    <string name="mdm_require_app_lock_desc">The app cannot be used without a PIN.</string>
+    <string name="mdm_min_pin_length_title">Minimum PIN length</string>
+    <string name="mdm_min_pin_length_desc">4 to 6 digits.</string>
+    <string name="mdm_block_screenshots_title">Block screenshots</string>
+    <string name="mdm_block_screenshots_desc">Screenshots, screen recording and app preview in Recents.</string>
+    <string name="mdm_block_share_title">Block sharing and saving</string>
+    <string name="mdm_block_share_desc">Share, save to files, PDF export and printing.</string>
+    <string name="mdm_block_open_in_title">Block opening in other apps</string>
+    <string name="mdm_block_open_in_desc">Attachments open only inside the app.</string>
+    <string name="mdm_block_copy_title">Block copying message text</string>
+    <string name="mdm_block_copy_desc">Text selection and Copy in messages.</string>
+    <string name="mdm_hide_notification_content_title">Hide notification content</string>
+    <string name="mdm_hide_notification_content_desc">Notifications show no sender, subject or text.</string>
+    <string-array name="mdm_protocol_entries">
+        <item>Automatic</item>
+        <item>Microsoft Exchange</item>
+        <item>IMAP</item>
+    </string-array>
+    <string-array name="mdm_protocol_values" translatable="false">
+        <item>auto</item>
+        <item>exchange</item>
+        <item>imap</item>
+    </string-array>
+</resources>

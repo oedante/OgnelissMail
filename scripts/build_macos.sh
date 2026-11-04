@@ -47,6 +47,8 @@ setup() {
 
   # Значок программы вместо стандартного значка Flutter (1.10.5).
   cp assets/branding/macos/app_icon_*.png macos/Runner/Assets.xcassets/AppIcon.appiconset/
+  # Окно с переводом писем (Apple Translation, macOS 15+, 1.11.0).
+  cp tool/desktop/macos/MainFlutterWindow.swift macos/Runner/MainFlutterWindow.swift
 
   echo "▶ Права приложения (песочница Mac App Store)…"
   for f in macos/Runner/DebugProfile.entitlements macos/Runner/Release.entitlements; do

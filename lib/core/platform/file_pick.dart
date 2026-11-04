@@ -20,6 +20,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path/path.dart' as p;
+import '../../services/security/managed_config.dart';
 
 export 'package:file_picker/file_picker.dart' show FileType;
 
@@ -105,6 +106,8 @@ class FilePick {
     required Uint8List bytes,
     String? dialogTitle,
   }) async {
+    // Политика организации (MDM, 1.10.5): сохранять в файлы нельзя.
+    if (ManagedPolicy.deny(ManagedRule.share)) return null;
     // type и allowedExtensions file_picker 13 в saveFile не использует
     // (устарели, уберут в 14): тип файла — по расширению в [fileName].
     final uri = await FilePicker.saveFile(

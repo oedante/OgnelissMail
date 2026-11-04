@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Langues sur l’appareil</string>
     <string name="translateModelsDesc">Langues téléchargées pour traduire hors ligne</string>
     <string name="translateModelsIos">iOS télécharge et supprime lui-même les langues de traduction : Réglages → Apps → Traduire.</string>
+    <string name="translateModelsMac">macOS télécharge et supprime lui-même les langues de traduction : Réglages Système → Général → Langue et région → Langues de traduction.</string>
+    <string name="translateUnavailableMac">La traduction n’est pas disponible sur ce Mac (macOS 15 ou ultérieur requis)</string>
     <string name="translateEngineGoogle">Traduction sur l’appareil par Google Translate (ML Kit). Le texte des messages reste sur le téléphone.</string>
     <string name="translateEngineApple">Traduction sur l’appareil par Apple Translation. Le texte des messages reste sur l’appareil.</string>
     <string name="translateUnavailable">La traduction n’est pas disponible sur cet appareil (iPhone et iPad : iOS 18 ou ultérieur)</string>
@@ -3726,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">La photo ou l\'initiale de l\'expéditeur à côté du message</string>
     <string name="notifyVipConversations">Conversations pour les VIP</string>
     <string name="notifyVipConversationsDesc">Les messages des VIP apparaissent dans « Conversations » d\'Android, où vous pouvez les rendre prioritaires</string>
+    <string name="notifyAllConversations">Conversations pour tous les messages</string>
+    <string name="notifyAllConversationsDesc">Portrait de l\'expéditeur au lieu de l\'icône de l\'app ; tous les messages apparaissent dans « Conversations »</string>
     <string name="ios_siriCompose">Nouveau message</string>
     <string name="ios_siriEvent">Nouvel événement</string>
     <string name="ios_siriReminder">Nouveau rappel</string>
@@ -3778,6 +3782,21 @@
     <string name="translateFrom">Traduire de</string>
     <string name="translateMsgOther">Message dans une autre langue</string>
     <string name="translateReadMode">Affichage des messages traduits</string>
+    <string name="mdmTitle">Géré par votre organisation</string>
+    <string name="mdmDesc">Votre organisation a défini ces options via la gestion des appareils (MDM).</string>
+    <string name="mdmSupport">Support informatique</string>
+    <string name="mdmBlocked">Interdit par la politique de votre organisation</string>
+    <string name="mdmDomainNotAllowed">Votre organisation n’autorise que les boîtes de ces domaines : {domains}</string>
+    <string name="mdmPinBody">La politique de votre organisation exige de protéger votre messagerie. Définissez un code de {n} à 6 chiffres ; il sera demandé à l’ouverture de l’app.</string>
+    <string name="mdmPinRequired">Exigé par votre organisation</string>
+    <string name="mdmRuleAccount">Boîte : {email}</string>
+    <string name="mdmRuleDomains">Seulement les boîtes de : {domains}</string>
+    <string name="mdmRuleAppLock">Code de l’app obligatoire ({n} chiffres min.)</string>
+    <string name="mdmRuleScreenshots">Captures et enregistrement d’écran bloqués</string>
+    <string name="mdmRuleShare">Partage, enregistrement dans Fichiers, PDF et impression bloqués</string>
+    <string name="mdmRuleOpenIn">Les pièces jointes s’ouvrent seulement dans l’app</string>
+    <string name="mdmRuleCopy">Copie du texte des messages bloquée</string>
+    <string name="mdmRuleNotifications">Notifications sans expéditeur ni objet</string>
     <string name="favoritesOrder">Ordre des vignettes</string>
     <string name="favoritesOrderHint">Faites glisser un élément par la poignée à droite — les vignettes du menu suivent cet ordre.</string>
 </resources>

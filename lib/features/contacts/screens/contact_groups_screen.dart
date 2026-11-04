@@ -31,6 +31,7 @@ import '../../compose/widgets/people_picker_sheet.dart';
 import '../../mail/providers/mail_providers.dart';
 import '../../../widgets/ui/settings_group.dart' show SettingsSectionTitle;
 import '../../../core/theme/ogneliss_look.dart';
+import '../../../core/platform/app_share.dart';
 
 class ContactGroupsScreen extends ConsumerWidget {
   const ContactGroupsScreen({super.key});
@@ -203,7 +204,7 @@ Future<void> shareGroup(DistributionGroup g) async {
   final safe = g.name.replaceAll(RegExp(r'[^\wА-Яа-яЁё\- ]+'), '_').trim();
   final f = File('${dir.path}/${safe.isEmpty ? 'group' : safe}.vcf');
   await f.writeAsString(groupToVcf(g), encoding: utf8);
-  await SharePlus.instance.share(ShareParams(
+  await appShare(ShareParams(
     files: [XFile(f.path, mimeType: 'text/vcard', name: '${safe.isEmpty ? 'group' : safe}.vcf')],
     subject: g.name,
     text: '${g.name}: ${g.members.map((m) => m.email).join(', ')}',

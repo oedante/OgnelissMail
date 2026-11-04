@@ -33,7 +33,6 @@ import '../../../l10n/app_localizations.dart';
 import '../../settings/providers/feature_flags_provider.dart';
 import '../../../data/database/app_database.dart';
 import '../../../services/mail/engine/mail_engine_service.dart';
-import '../../../services/mail/special_folders.dart';
 import '../../../services/mail/transport_capabilities.dart';
 import '../../../services/mail/folder_actions_service.dart';
 import '../../../data/models/account_model.dart';
@@ -65,6 +64,8 @@ import '../../../services/notifications/account_notify_mode.dart' show FolderNot
 import '../../../widgets/common/peek_card.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
 import '../../../widgets/common/tile_grid.dart';
+import '../../../core/utils/reorder_index.dart';
+import '../providers/folder_names.dart';
 
 class MailDrawer extends ConsumerWidget {
   /// Панель на широком окне (1.6.28): стоит слева от ленты постоянно, а не
@@ -90,6 +91,30 @@ class MailDrawer extends ConsumerWidget {
     final groups = ref.watch(accountGroupsProvider);
     final activeGroupId = ref.watch(activeGroupIdProvider);
 
+    // ── Избранное ──
+    List<Widget> favorites({required bool top}) => [
+            _DrawerBand(
+              shadowUp: !top,
+              title: l10n.tr('favorites'),
+              trailing: IconButton(
+                tooltip: l10n.tr('favoritesEdit'),
+                visualDensity: VisualDensity.compact,
+                icon: Icon(AppIcons.tune, size: 20, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                onPressed: () => _showFavoritesEditor(context),
+              ),
+            ),
+            // Длинное избранное (группы, разделы, папки) не вытесняет дерево
+            // папок: не выше 40 % экрана, дальше прокрутка.
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.4),
+              child: ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                children: _buildFavorites(context, ref, l10n, accounts.length, groups, activeGroupId, isAllAccounts),
+              ),
+            ),
+        ];
+
     final content = SafeArea(
         // Постоянная панель стоит справа от боковой полосы разделов:
         // системный отступ слева у неё уже учтён.
@@ -103,6 +128,10 @@ class MailDrawer extends ConsumerWidget {
             // Разделы меню — «Папки», «Избранное», «Аккаунты» — с полосой-
             // заголовком на более тёмной подложке: раньше всё сливалось в
             // один список (замечание 09.10.2026).
+            // Планшет и компьютер, закреплённая панель (1.11.0, как в
+            // Outlook): «Избранное» — сверху, над папками; на телефоне —
+            // внизу, под большим пальцем.
+            if (docked) ...favorites(top: true),
             _DrawerBand(
               title: l10n.tr('folders'),
               // Планшет и компьютер (1.6.40): значок закрепления — меню
@@ -132,27 +161,8 @@ class MailDrawer extends ConsumerWidget {
                 ],
               ),
             ),
-            // ── Избранное ──
-            _DrawerBand(
-              shadowUp: true,
-              title: l10n.tr('favorites'),
-              trailing: IconButton(
-                tooltip: l10n.tr('favoritesEdit'),
-                visualDensity: VisualDensity.compact,
-                icon: Icon(AppIcons.tune, size: 20, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
-                onPressed: () => _showFavoritesEditor(context),
-              ),
-            ),
-            // Длинное избранное (группы, разделы, папки) не вытесняет дерево
-            // папок: не выше 40 % экрана, дальше прокрутка.
-            ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.4),
-              child: ListView(
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                children: _buildFavorites(context, ref, l10n, accounts.length, groups, activeGroupId, isAllAccounts),
-              ),
-            ),
+            if (!docked) ...favorites(top: false),
+            if (docked && !ref.watch(hiddenQuickItemsProvider).contains(DrawerQuickItem.theme)) _themeSwitch,
             // «Добавить аккаунт» убран из меню: он есть в настройках
             // («Аккаунты»), а здесь занимал строку внизу (замечание 06.10.2026).
             // Ящики — ВНИЗУ, под большим пальцем (как частые кнопки в Ogneliss
@@ -276,6 +286,11 @@ class MailDrawer extends ConsumerWidget {
   }
 
   // ════════════════════════ ИЗБРАННОЕ ════════════════════════
+
+  static const _themeSwitch = Padding(
+    padding: EdgeInsets.only(top: Space.xs, bottom: Space.s),
+    child: ThemeQuickSwitch(),
+  );
 
   /// Группы аккаунтов, быстрые разделы (видимость — в настройке избранного)
   /// и избранные папки активного ящика.
@@ -511,11 +526,9 @@ class MailDrawer extends ConsumerWidget {
     return [
       // Порядок — из настройки избранного (1.10.5).
       if (tiles.isNotEmpty) TileGrid(items: orderFavorites(tiles, (t) => t.id, ref.watch(favoriteOrderProvider))),
-      if (!hidden.contains(DrawerQuickItem.theme))
-        const Padding(
-          padding: EdgeInsets.only(top: Space.xs, bottom: Space.s),
-          child: ThemeQuickSwitch(),
-        ),
+      // Выбор темы — под избранным; в закреплённой панели (избранное
+      // сверху, 1.11.0) — внизу панели, под папками.
+      if (!docked && !hidden.contains(DrawerQuickItem.theme)) _themeSwitch,
     ];
   }
 
@@ -1334,27 +1347,8 @@ class MailDrawer extends ConsumerWidget {
     // по мере загрузки.
   }
 
-  static String _localizedFolderName(FolderModel folder, AppLocalizations l10n) {
-    // Маппинг по ТИПУ папки (надёжно), а не по точному имени с сервера —
-    // сервер может отдавать 'Sent'/'Отправлено'/'Trash'/'Корзина'/'Bin' и т.п.
-    switch (folder.type) {
-      case FolderType.inbox:   return l10n.inbox;
-      case FolderType.sent:    return l10n.tr('sent');
-      case FolderType.drafts:  return l10n.tr('drafts');
-      case FolderType.trash:   return l10n.tr('trash');
-      // «Спам» и «Архив» — своим названием, только если у папки стандартное
-      // имя на каком-нибудь языке: выбранная вручную «Старое» (1.7.2+106)
-      // так и называется «Старое».
-      case FolderType.junk:
-        return SpecialFolders.typeByName(folder.displayName) == FolderType.junk ? l10n.tr('junk') : folder.displayName;
-      case FolderType.archive:
-        return SpecialFolders.typeByName(folder.displayName) == FolderType.archive
-            ? l10n.tr('archive')
-            : folder.displayName;
-      case FolderType.outbox:  return l10n.tr('outbox');
-      case FolderType.custom:  return folder.displayName; // пользовательская — как на сервере
-    }
-  }
+  static String _localizedFolderName(FolderModel folder, AppLocalizations l10n) =>
+      localizedFolderName(folder, l10n);
 }
 
 /// Дерево папок: дети по родителю, корни и непрочитанные с подпапками.
@@ -1827,9 +1821,11 @@ class _FavoritesEditor extends ConsumerWidget {
               physics: const NeverScrollableScrollPhysics(),
               buildDefaultDragHandles: false,
               itemCount: tilesNow.length,
-              onReorderItem: (from, to) {
+              // onReorder, а не onReorderItem: см. reorder_index.dart (Аврора).
+              // ignore: deprecated_member_use
+              onReorder: (from, to) {
                 final keys = [for (final e in tilesNow) e.key];
-                keys.insert(to, keys.removeAt(from));
+                keys.insert(reorderTarget(from, to), keys.removeAt(from));
                 unawaited(ref.read(favoriteOrderProvider.notifier).set(keys));
               },
               itemBuilder: (context, i) {

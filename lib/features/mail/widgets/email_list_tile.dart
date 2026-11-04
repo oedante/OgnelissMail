@@ -70,6 +70,10 @@ class EmailListTile extends ConsumerWidget {
   final bool isInSelectionMode;
   final bool isChecked;
   final VoidCallback? onCheckChanged;
+
+  /// Мышь над портретом (1.11.0, как в Outlook): вместо портрета — флажок,
+  /// нажатие выбирает письмо (режим выбора). null — без этого.
+  final VoidCallback? onHoverSelect;
   /// Список «Позже»: справа — срок возврата вместо даты получения.
   final bool showLaterTime;
 
@@ -91,6 +95,7 @@ class EmailListTile extends ConsumerWidget {
     this.isInSelectionMode = false,
     this.isChecked = false,
     this.onCheckChanged,
+    this.onHoverSelect,
   });
 
   /// Появляются плавно только письма, пришедшие за время работы приложения,
@@ -392,18 +397,21 @@ class EmailListTile extends ConsumerWidget {
                               onChanged: (_) => onCheckChanged?.call(),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                             )
-                          : HeroEmailAvatar(
-                              // id письма уникален только внутри ящика: в «Вся
-                              // почта» у двух аккаунтов может быть INBOX:123.
-                              emailId: '${email.accountId}/${email.id}',
-                              initial: _initial(email.from),
-                              color: HeroEmailAvatar.colorForEmail(email.from.email),
-                              email: email.from.email,
-                              authResults: email.authResults,
-                              radius: dens.avatarRadius,
-                              // Летит в шапку письма (1.9.x, «Анимация
-                              // открытия письма»).
-                              openHero: true,
+                          : _HoverCheck(
+                              onSelect: onHoverSelect,
+                              child: HeroEmailAvatar(
+                                // id письма уникален только внутри ящика: в «Вся
+                                // почта» у двух аккаунтов может быть INBOX:123.
+                                emailId: '${email.accountId}/${email.id}',
+                                initial: _initial(email.from),
+                                color: HeroEmailAvatar.colorForEmail(email.from.email),
+                                email: email.from.email,
+                                authResults: email.authResults,
+                                radius: dens.avatarRadius,
+                                // Летит в шапку письма (1.9.x, «Анимация
+                                // открытия письма»).
+                                openHero: true,
+                              ),
                             ),
                       ),
                     ),
@@ -705,4 +713,36 @@ class ControlRingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(ControlRingPainter old) => old.fraction != fraction || old.color != color;
+}
+
+/// Портрет строки, который под мышью становится флажком выбора (1.11.0,
+/// планшет и компьютер, как в Outlook). Пальцем — портрет, как раньше.
+class _HoverCheck extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onSelect;
+  const _HoverCheck({required this.child, this.onSelect});
+
+  @override
+  State<_HoverCheck> createState() => _HoverCheckState();
+}
+
+class _HoverCheckState extends State<_HoverCheck> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final select = widget.onSelect;
+    if (select == null) return widget.child;
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: _hover
+          ? Checkbox(
+              value: false,
+              onChanged: (_) => select(),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            )
+          : widget.child,
+    );
+  }
 }

@@ -7,6 +7,7 @@
 
 import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
 import 'package:drift/native.dart';
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,6 +29,7 @@ import 'package:ogneliss/features/settings/screens/general_settings_screen.dart'
 import 'package:ogneliss/features/settings/screens/appearance_screen.dart';
 import 'package:ogneliss/features/compose/screens/compose_screen.dart';
 import 'package:ogneliss/features/mail/screens/mail_detail_screen.dart';
+import 'package:ogneliss/features/mail/screens/mail_list_screen.dart';
 import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
 import 'package:ogneliss/features/mail/widgets/mail_drawer.dart';
 import 'package:ogneliss/features/settings/screens/settings_screen.dart';
@@ -94,6 +96,32 @@ Future<void> _letter(AppDatabase db) => db.into(db.emails).insert(EmailsCompanio
       receivedAt: DateTime(2026, 10, 27, 9, 41),
       isRead: const Value(true),
     ));
+
+/// Ещё письма во «Входящих» — для снимка ленты рядом с письмом.
+Future<void> _inbox(AppDatabase db) async {
+  final now = DateTime.now();
+  final rows = [
+    ('m1', 'Борис Орлов', 'b.orlov', 'Re: Договор поставки № 15', 'Иван Петрович, направляю исправленную редакцию договора.', 1, false, false),
+    ('m2', 'Вера Белова', 'v.belova', 'Совещание в четверг', 'Переносим на 11:00, переговорная 4.', 3, true, true),
+    ('m3', 'Сервис-деск', 'helpdesk', 'Заявка № 4821 выполнена', 'Ваша заявка на замену картриджа выполнена.', 26, true, false),
+    ('m4', 'Олег Кузнецов', 'o.kuznetsov', 'График отпусков на 2027 год', 'Коллеги, прошу до пятницы внести даты отпусков.', 50, true, false),
+  ];
+  for (final (id, name, mail, subject, preview, hours, read, flagged) in rows) {
+    await db.into(db.emails).insert(EmailsCompanion.insert(
+          id: id,
+          accountId: 'a1',
+          folderId: 'inbox',
+          fromEmail: '$mail@corp.example',
+          fromName: Value(name),
+          toRecipients: '[{"email":"i.petrov@corp.example","displayName":"Иван Петров"}]',
+          subject: subject,
+          bodyPreview: Value(preview),
+          receivedAt: now.subtract(Duration(hours: hours)),
+          isRead: Value(read),
+          isFlagged: Value(flagged),
+        ));
+  }
+}
 
 Future<void> _settle(WidgetTester tester) async {
   for (var i = 0; i < 12; i++) {
@@ -408,6 +436,45 @@ void main() {
       await tester.runAsync(db.close);
     });
   }
+
+  // Лента и письмо рядом на компьютере и планшете (1.10.5, по образцу
+  // Outlook): панель папок, лента, письмо с панелью команд.
+  for (final (name, size) in const [('desktop', Size(1440, 900)), ('tablet', Size(1194, 834))]) {
+    testWidgets('лента и письмо — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await tester.runAsync(() => _inbox(db));
+      await _shot(tester, 'split_$name', const MailListScreen(),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, before: (t) async {
+        await t.tap(find.text('Смета по ремонту насосной станции').first);
+        if (name == 'desktop') {
+          // Мышь над строкой — быстрые кнопки, как в Outlook.
+          final mouse = await t.createGesture(kind: PointerDeviceKind.mouse);
+          await mouse.addPointer(location: Offset.zero);
+          await mouse.moveTo(t.getCenter(find.text('Совещание в четверг')));
+        }
+      });
+      await tester.runAsync(db.close);
+    });
+  }
+
+  // Ответ — прямо в панели письма рядом с лентой (1.11.0, как в Outlook).
+  testWidgets('лента и ответ в панели — desktop', (tester) async {
+    SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+    final prefs = await SharedPreferences.getInstance();
+    final db = (await tester.runAsync(_db))!;
+    await tester.runAsync(() => _letter(db));
+    await tester.runAsync(() => _inbox(db));
+    await _shot(tester, 'split_reply_desktop', const MailListScreen(),
+        theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: const Size(1440, 900), before: (t) async {
+      await t.tap(find.text('Смета по ремонту насосной станции').first);
+      await _settle(t);
+      await t.tap(find.text('Ответить').first);
+    });
+    await tester.runAsync(db.close);
+  });
 
   // Письмо и ответ на планшете, компьютере и телефоне боком (1.8.13):
   // текст письма — одной колонкой с шапкой, строка ответа и кнопки — не

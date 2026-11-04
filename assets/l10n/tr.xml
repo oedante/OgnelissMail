@@ -3669,6 +3669,8 @@
     <string name="translateModelsSetting">Cihazdaki diller</string>
     <string name="translateModelsDesc">Çevrimdışı çeviri için indirilen diller</string>
     <string name="translateModelsIos">Çeviri dillerini iOS kendisi indirir ve siler: Ayarlar → Uygulamalar → Çeviri.</string>
+    <string name="translateModelsMac">Çeviri dillerini macOS kendisi indirir ve kaldırır: Sistem Ayarları → Genel → Dil ve Bölge → Çeviri Dilleri.</string>
+    <string name="translateUnavailableMac">Bu Mac’te çeviri kullanılamıyor (macOS 15 veya üstü gerekir)</string>
     <string name="translateEngineGoogle">Cihaz üzerinde çeviri: Google Translate (ML Kit). İleti metni telefondan çıkmaz.</string>
     <string name="translateEngineApple">Cihaz üzerinde çeviri: Apple Translation. İleti metni cihazdan çıkmaz.</string>
     <string name="translateUnavailable">Bu cihazda çeviri kullanılamıyor (iPhone ve iPad: iOS 18 veya üzeri)</string>
@@ -3726,6 +3728,8 @@
     <string name="notifyMessengerStyleDesc">Mesajın yanında gönderenin fotoğrafı veya baş harfi</string>
     <string name="notifyVipConversations">VIP\'ler için görüşmeler</string>
     <string name="notifyVipConversationsDesc">VIP e-postaları Android\'in Görüşmeler bölümünde görünür ve öncelikli olarak işaretlenebilir</string>
+    <string name="notifyAllConversations">Tüm postalar için sohbetler</string>
+    <string name="notifyAllConversationsDesc">Uygulama simgesi yerine gönderenin fotoğrafı; tüm postalar Sohbetler bölümünde görünür</string>
     <string name="ios_siriCompose">Yeni e-posta</string>
     <string name="ios_siriEvent">Yeni etkinlik</string>
     <string name="ios_siriReminder">Yeni hatırlatıcı</string>
@@ -3778,6 +3782,21 @@
     <string name="translateFrom">Şu dilden çevir</string>
     <string name="translateMsgOther">Başka dilde ileti</string>
     <string name="translateReadMode">Çevrilen iletinin gösterimi</string>
+    <string name="mdmTitle">Kuruluşunuz tarafından yönetiliyor</string>
+    <string name="mdmDesc">Bu ayarları kuruluşunuz cihaz yönetimi (MDM) ile belirledi.</string>
+    <string name="mdmSupport">BT desteği</string>
+    <string name="mdmBlocked">Kuruluşunuzun politikası buna izin vermiyor</string>
+    <string name="mdmDomainNotAllowed">Kuruluşunuz yalnızca şu alan adlarındaki posta kutularına izin veriyor: {domains}</string>
+    <string name="mdmPinBody">Kuruluşunuzun politikası postanızın korunmasını gerektiriyor. {n}–6 haneli bir PIN belirleyin; uygulama açılırken istenecek.</string>
+    <string name="mdmPinRequired">Kuruluşunuz gerektiriyor</string>
+    <string name="mdmRuleAccount">Posta kutusu: {email}</string>
+    <string name="mdmRuleDomains">Yalnızca şu alan adları: {domains}</string>
+    <string name="mdmRuleAppLock">Uygulama PIN’i zorunlu (en az {n} hane)</string>
+    <string name="mdmRuleScreenshots">Ekran görüntüsü ve kaydı engellendi</string>
+    <string name="mdmRuleShare">Paylaşma, dosyaya kaydetme, PDF ve yazdırma engellendi</string>
+    <string name="mdmRuleOpenIn">Ekler yalnızca uygulamada açılır</string>
+    <string name="mdmRuleCopy">İleti metnini kopyalama engellendi</string>
+    <string name="mdmRuleNotifications">Gönderen ve konu olmadan bildirimler</string>
     <string name="favoritesOrder">Kutucuk sırası</string>
     <string name="favoritesOrderHint">Öğeyi sağdaki tutamaçtan sürükleyin — menüdeki kutucuklar bu sırayı izler.</string>
 </resources>

@@ -137,6 +137,10 @@ class AppSettings {
   /// Android: письма VIP — в разделе «Беседы» (ярлык беседы).
   final bool notificationVipConversations;
 
+  /// Беседы для всех писем (Android, 1.11.0): портрет отправителя вместо
+  /// значка приложения в свёрнутом уведомлении.
+  final bool notificationAllConversations;
+
   // ── Синхронизация ──
   final bool syncOnlyWifi;
   /// Держать приложение живым в фоне (Android foreground service).
@@ -235,6 +239,7 @@ class AppSettings {
     this.notificationVibration = true,
     this.notificationMessengerStyle = true,
     this.notificationVipConversations = true,
+    this.notificationAllConversations = false,
     this.syncOnlyWifi = false,
     this.backgroundKeepAlive = true,
     this.syncIntervalMinutes = 15,
@@ -322,6 +327,7 @@ class AppSettings {
     bool? notificationVibration,
     bool? notificationMessengerStyle,
     bool? notificationVipConversations,
+    bool? notificationAllConversations,
     bool? syncOnlyWifi,
     bool? backgroundKeepAlive,
     int? syncIntervalMinutes,
@@ -383,6 +389,7 @@ class AppSettings {
       notificationVibration: notificationVibration ?? this.notificationVibration,
       notificationMessengerStyle: notificationMessengerStyle ?? this.notificationMessengerStyle,
       notificationVipConversations: notificationVipConversations ?? this.notificationVipConversations,
+      notificationAllConversations: notificationAllConversations ?? this.notificationAllConversations,
       syncOnlyWifi: syncOnlyWifi ?? this.syncOnlyWifi,
       backgroundKeepAlive: backgroundKeepAlive ?? this.backgroundKeepAlive,
       syncIntervalMinutes: syncIntervalMinutes ?? this.syncIntervalMinutes,
@@ -453,6 +460,7 @@ class _K {
   // Читаются и в фоне (MessengerNotify.prefStyle / prefVipConversations).
   static const notificationMessengerStyle = 's_notif_messenger';
   static const notificationVipConversations = 's_notif_vip_conv';
+  static const notificationAllConversations = 's_notif_all_conv';
   static const syncOnlyWifi = 's_sync_wifi';
   // v2: прежний ключ в ранних сборках включался по умолчанию, и постоянное
   // уведомление появлялось без ведома пользователя. Новый ключ — выбор
@@ -549,6 +557,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       notificationVibration: _p.getBool(_K.notificationVibration) ?? true,
       notificationMessengerStyle: _p.getBool(_K.notificationMessengerStyle) ?? true,
       notificationVipConversations: _p.getBool(_K.notificationVipConversations) ?? true,
+      notificationAllConversations: _p.getBool(_K.notificationAllConversations) ?? false,
       syncOnlyWifi: _p.getBool(_K.syncOnlyWifi) ?? false,
       // По умолчанию включено: у новых ящиков режим «Мгновенно», и без
       // фоновой работы push в свёрнутом приложении не работал вовсе.
@@ -799,6 +808,14 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     if (!v) unawaited(MessengerNotify.removeShortcuts());
   }
 
+  /// Выключили — ярлыки снимаются все; беседы VIP появятся снова со
+  /// следующим письмом VIP.
+  Future<void> setNotificationAllConversations(bool v) async {
+    await _p.setBool(_K.notificationAllConversations, v);
+    state = state.copyWith(notificationAllConversations: v);
+    if (!v) unawaited(MessengerNotify.removeShortcuts());
+  }
+
   Future<void> setSyncOnlyWifi(bool v) async {
     await _p.setBool(_K.syncOnlyWifi, v);
     state = state.copyWith(syncOnlyWifi: v);
@@ -950,7 +967,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       _K.themePreset, _K.accentColor, _K.listTint, _K.corners, _K.listDensity, _K.openAnimation,
       _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode, _K.bimiLogos,
       _K.notificationsEnabled, _K.notificationSound, _K.notificationVibration,
-      _K.notificationMessengerStyle, _K.notificationVipConversations,
+      _K.notificationMessengerStyle, _K.notificationVipConversations, _K.notificationAllConversations,
       NotificationLines.prefWork, NotificationLines.prefPersonal,
       _K.syncOnlyWifi, _K.syncInterval, _K.emailFetchMode,
       _K.groupByConversation, _K.swipeLP, _K.swipeLS, _K.swipeRP, _K.swipeRS, _K.swipeCL, _K.swipeCR, _K.swipeAnim, _K.previewLines, _K.peekPreviewLines,

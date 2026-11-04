@@ -5,7 +5,9 @@
 // iOS). На компьютере и в вебе перевода нет — раздела тоже.
 
 import 'dart:async';
+import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -206,7 +208,7 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
     if (_available == false) {
       return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         SettingsSectionTitle(l10n.tr('translateSection')),
-        SettingsIntro(l10n.tr('translateUnavailable')),
+        SettingsIntro(l10n.tr(translateUnavailableKey())),
       ]);
     }
     final never = settings.translateNever;
@@ -255,7 +257,8 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
           ),
         ],
       ]),
-      if (!t.canManageModels) SettingsIntro(l10n.tr('translateModelsIos')),
+      if (!t.canManageModels)
+        SettingsIntro(l10n.tr(!kIsWeb && Platform.isMacOS ? 'translateModelsMac' : 'translateModelsIos')),
     ]);
   }
 }

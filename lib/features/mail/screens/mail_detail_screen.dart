@@ -21,6 +21,7 @@ import '../widgets/booking_card.dart';
 import '../widgets/control_sheet.dart';
 import '../../../services/mail/unsubscribe_service.dart' show encodeListUnsubscribe;
 import '../../../services/mail/reply_drafts.dart' show conversationReplyDrafts, replyDraftsProvider;
+import '../../../services/security/managed_config.dart' show ManagedPolicy, ManagedRule;
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditorForEmail;
 import '../../../core/utils/text_safe.dart';
 import '../../../core/utils/symbol_fonts.dart';
@@ -100,9 +101,10 @@ import '../../archive/archive_sheets.dart' show ensureArchiveReady;
 import '../../../services/archive/archive_runner.dart' show archiveRunnerProvider;
 import '../../../services/archive/archive_settings.dart' show archiveSettingsProvider;
 import '../../../services/mail/special_folders.dart';
+import '../../../core/utils/folder_icons.dart';
 import '../../../services/mail/imap/imap_service.dart';
 import '../../../services/mail/email_actions_service.dart';
-import 'package:drift/drift.dart' show Value, BooleanExpressionOperators;
+import 'package:drift/drift.dart' show Value, BooleanExpressionOperators, OrderingTerm;
 import '../../../widgets/common/hero_email_transition.dart';
 import '../../../widgets/common/animated_appearance.dart';
 import '../../../core/utils/quote_splitter.dart';
@@ -117,6 +119,7 @@ import '../../../services/mail/attachment_cache_service.dart';
 import '../../../services/mail/tnef/tnef_decoder.dart';
 import '../../../widgets/common/app_sheet.dart';
 import '../../compose/providers/templates_provider.dart' show templatesProvider;
+import '../../compose/screens/compose_screen.dart' show ComposeScreen;
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/app_menu_button.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
@@ -124,6 +127,9 @@ import '../../../core/theme/ogneliss_look.dart';
 import '../../../core/theme/appearance.dart' show AppearanceLook;
 import '../../../widgets/common/mail_open_motion.dart' show MailHeroTags, MailOpenHandoff, MailSubjectHero;
 import '../../../core/utils/quote_people.dart';
+import '../../../core/platform/app_share.dart';
+import '../providers/folder_names.dart';
+import '../../../widgets/common/pane_navigator.dart';
 
 class MailDetailScreen extends ConsumerStatefulWidget {
   final String emailId;
@@ -1501,14 +1507,17 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // объявлены, но обработчиков не было.
     // Шапка письма закреплена, пока шрифт не очень крупный.
     final pinHeader = context.textScale <= 1.3;
+    // Планшет и компьютер (1.10.5, как в Outlook): панель команд с
+    // подписями — сверху, отправитель и дата — под темой, телефонной
+    // нижней панели нет.
+    final wide = _wideLayout(context);
     return TypingAwareShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.keyR, control: true): () =>
-            context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}'),
+            _compose({'replyToId': email.id, 'accountId': email.accountId}),
         const SingleActivator(LogicalKeyboardKey.keyR, control: true, shift: true): () =>
-            context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}&replyAll=true'),
-        const SingleActivator(LogicalKeyboardKey.keyF, control: true): () =>
-              context.push('/compose?forwardFromId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}'),
+            _compose({'replyToId': email.id, 'accountId': email.accountId, 'replyAll': 'true'}),
+        const SingleActivator(LogicalKeyboardKey.keyF, control: true): () => _forward(email),
         if (!widget.embedded)
           const SingleActivator(LogicalKeyboardKey.escape): () => Navigator.of(context).maybePop(),
         // Ещё сочетания Outlook (1.10.x, просьба владельца 02.11.2026):
@@ -1547,13 +1556,16 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // Отправитель — в верхней панели (1.5.9): она была пустой, а
         // отправитель занимал отдельную строку шапки под темой. Портрет —
         // того же размера, что у адресатов; ниже имени — дата (и номер
-        // письма в беседе).
-        titleSpacing: widget.embedded ? null : 0,
-        title: MailSenderTitle(email: email, hero: !widget.embedded, pagerLabel: widget.pagerLabel),
+        // письма в беседе). На широком экране — панель команд (1.10.5).
+        titleSpacing: widget.embedded || wide ? (wide ? Space.s : null) : 0,
+        title: wide
+            ? _commandBar(email, settings, l10n)
+            : MailSenderTitle(email: email, hero: !widget.embedded, pagerLabel: widget.pagerLabel),
         backgroundColor: mailPageColor(theme),
         actions: [
           // Флаг «К исполнению» — на виду: в меню «…» его не находили.
-          IconButton(
+          // На широком экране он в панели команд.
+          if (!wide) IconButton(
             tooltip: l10n.tr('flag'),
             icon: Icon(
               AppIcons.flag,
@@ -1624,6 +1636,13 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 }),
               ),
             ),
+
+            // Отправитель и дата — под темой (широкий экран, как в Outlook).
+            if (wide)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.xs),
+                child: MailSenderTitle(email: email, hero: false, pagerLabel: widget.pagerLabel),
+              ),
 
             // ── Адресаты ── (1.5.9): «Кому» и «Копия» — значками, каждый
             // список своей строкой; портреты и имена крупнее, чем были
@@ -1916,7 +1935,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       // Scaffold сама не поднимается.
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-        child: _buildBottomBar(context, theme, l10n, email, settings),
+        child: wide
+            ? _wideReplyBar(theme, email)
+            : _buildBottomBar(context, theme, l10n, email, settings),
       ),
     ),
       ),
@@ -2167,7 +2188,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // Системный лист «Поделиться» умеет и «Сохранить в Файлы» (iOS),
     // и «Загрузки»/Диск (Android).
     // Копия с именем из письма: в кэше файл лежит под служебным именем (1.6.5).
-    await SharePlus.instance.share(ShareParams(files: [XFile(await FileOpener.namedCopy(path, att.name), name: att.name)]));
+    await appShare(ShareParams(files: [XFile(await FileOpener.namedCopy(path, att.name), name: att.name)]));
   }
 
   /// Локальный путь вложения: из состояния, из кэша или скачав.
@@ -2192,6 +2213,182 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
 
 
   // ════════════════════════ НИЖНЯЯ ПАНЕЛЬ ════════════════════════
+
+  /// Широкий экран — окно планшета или компьютера (обе стороны от 600,
+  /// ширина от 840). Узкая панель письма в нём — та же раскладка: кнопки
+  /// панели команд сами переходят на значки.
+  static bool _wideLayout(BuildContext context) {
+    final s = MediaQuery.sizeOf(context);
+    return s.shortestSide >= 600 && s.width >= 840;
+  }
+
+  /// Строка «Ответить…» на широком экране (1.10.5): своя кнопка отправки
+  /// и «Ответить всем» — нижней панели с кнопками нет.
+  Widget? _wideReplyBar(ThemeData theme, EmailModel email) {
+    final draft = email.isDraft || email.folderId == 'drafts';
+    if (draft || !ref.watch(quickReplyBarProvider)) return null;
+    return ColoredBox(
+      color: mailPageColor(theme),
+      child: SafeArea(
+        top: false,
+        // Column: без неё ReadableWidth (Align) занял бы всю высоту, которую
+        // Scaffold даёт bottomNavigationBar, — весь экран.
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          ReadableWidth(
+            fill: true,
+            child: QuickReplyBar(key: ValueKey('qrw_${email.accountId}_${email.id}'), email: email),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  /// Панель команд над письмом (1.10.5, широкий экран, по образцу Outlook):
+  /// ответ, пересылка, удалить, в архив, переместить, флажок, прочитано,
+  /// позже и «Ещё» (все действия). Подписи — пока помещаются; иначе
+  /// значки с подсказками (узкая панель письма рядом с лентой).
+  Widget _commandBar(EmailModel email, AppSettings settings, AppLocalizations l10n) {
+    final draft = email.isDraft || email.folderId == 'drafts';
+    final scheme = Theme.of(context).colorScheme;
+    void compose(Map<String, String> q) => _compose({...q, 'accountId': email.accountId});
+    final id = email.id;
+    final groups = <List<_Cmd>>[
+      [
+        if (draft)
+          _Cmd(AppIcons.edit, l10n.tr('edit'), () => compose({'draftId': id}))
+        else ...[
+          _Cmd(AppIcons.reply, l10n.tr('reply'), () => compose({'replyToId': id}),
+              onLongPress: () => _showQuickReplies(email, l10n)),
+          _Cmd(AppIcons.reply_all, l10n.tr('replyAll'), () => compose({'replyToId': id, 'replyAll': 'true'})),
+          _Cmd(AppIcons.forward, l10n.tr('forward'), () => _forward(email)),
+        ],
+      ],
+      [
+        _Cmd(AppIcons.delete, l10n.delete, () => unawaited(_deleteFromBar(email, l10n))),
+        if (!draft) _Cmd(AppIcons.archive, l10n.tr('archive'), () => unawaited(_archiveEmail(email, l10n))),
+        if (!draft) _Cmd(AppIcons.drive_file_move, l10n.tr('moveTo'), () => unawaited(_moveEmail(email, l10n))),
+      ],
+      [
+        _Cmd(AppIcons.flag, l10n.tr('flag'), () => _toggleFlag(email),
+            selected: email.isFlagged, color: email.isFlagged ? AppColors.errorRed : null),
+        _Cmd(email.isRead ? AppIcons.mark_email_unread : AppIcons.mark_email_read,
+            l10n.tr(email.isRead ? 'markUnread' : 'markRead'), () => _setReadKey(email, !email.isRead)),
+        if (!draft)
+          _Cmd(AppIcons.watch_later, l10n.tr('later'), () => unawaited(_later(context, email)),
+              selected: email.laterState != 0),
+      ],
+    ];
+    final more = IconButton(
+      tooltip: l10n.tr('more'),
+      icon: const Icon(AppIcons.more_horiz),
+      onPressed: () => _showFullActionsSheet(context, l10n, email, settings),
+    );
+    final labelStyle = Theme.of(context).textTheme.labelLarge;
+    return LayoutBuilder(builder: (context, c) {
+      double textW(String t) {
+        final tp = TextPainter(
+          text: TextSpan(text: t, style: labelStyle),
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+          maxLines: 1,
+        )..layout();
+        final w = tp.width;
+        tp.dispose();
+        return w;
+      }
+
+      const iconW = 44.0, gap = 13.0, moreW = 48.0;
+      // Подписи — по важности (как в Outlook): ответ, пересылка, удалить,
+      // архив… пока помещаются; остальные — значками с подсказкой.
+      final cmds = [for (final g in groups) ...g];
+      final extra = [for (final c in cmds) 20 + 8 + 24 + textW(c.label) - iconW];
+      var used = moreW + gap * (groups.length - 1) + iconW * cmds.length;
+      final withLabel = <_Cmd>{};
+      for (var i = 0; i < cmds.length; i++) {
+        if (used + extra[i] > c.maxWidth) break;
+        used += extra[i];
+        withLabel.add(cmds[i]);
+      }
+      bool labeled(_Cmd cmd) => withLabel.contains(cmd);
+      final row = <Widget>[];
+      for (var gi = 0; gi < groups.length; gi++) {
+        if (gi > 0) {
+          row.add(Container(
+              width: 1, height: 24, margin: const EdgeInsets.symmetric(horizontal: 6), color: scheme.outlineVariant));
+        }
+        for (final cmd in groups[gi]) {
+          row.add(_commandButton(cmd, labeled(cmd), scheme));
+        }
+      }
+      row.add(more);
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(mainAxisSize: MainAxisSize.min, children: row),
+      );
+    });
+  }
+
+  Widget _commandButton(_Cmd cmd, bool labeled, ColorScheme scheme) {
+    final color = cmd.color ?? (cmd.selected ? scheme.primary : scheme.onSurface);
+    final icon = Icon(cmd.icon, size: 20, fill: cmd.selected ? 1 : 0, color: color);
+    void tap() {
+      HapticFeedback.selectionClick();
+      cmd.onTap();
+    }
+
+    final Widget button = labeled
+        ? TextButton.icon(
+            onPressed: tap,
+            onLongPress: cmd.onLongPress,
+            icon: icon,
+            label: Text(cmd.label),
+            style: TextButton.styleFrom(
+              foregroundColor: scheme.onSurface,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              visualDensity: VisualDensity.compact,
+            ),
+          )
+        : IconButton(onPressed: tap, icon: icon, tooltip: cmd.label);
+    final withLong = (!labeled && cmd.onLongPress != null)
+        ? GestureDetector(onLongPress: cmd.onLongPress, child: button)
+        : button;
+    return labeled ? Tooltip(message: cmd.label, child: withLong) : withLong;
+  }
+
+  /// «Переместить» (панель команд, 1.10.5): папки ящика этого письма.
+  Future<void> _moveEmail(EmailModel email, AppLocalizations l10n) async {
+    final db = ref.read(databaseProvider);
+    final folders = await (db.select(db.folders)
+          ..where((f) => f.accountId.equals(email.accountId))
+          ..orderBy([(f) => OrderingTerm(expression: f.sortOrder)]))
+        .get();
+    if (!mounted) return;
+    final targetId = await showChoiceSheet<String>(
+      context,
+      title: l10n.tr('moveToDots'),
+      entries: [
+        for (final f in folders.where((f) => f.id != email.folderId))
+          AppMenuEntry(value: f.id, label: localizedFolderName(folderFromRow(f), l10n), icon: folderIconOf(folderFromRow(f))),
+      ],
+    );
+    if (targetId == null || !mounted) return;
+    final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+    if (account == null) return;
+    final notifier = ref.read(emailsProvider.notifier);
+    final actions = ref.read(emailActionsProvider);
+    notifier.hideLocally(email);
+    EmailUndoManager.perform(
+      context,
+      UndoableAction(
+        description: l10n.tr('emailMoved'),
+        execute: () => actions.moveTo(account, email.id, email.folderId, targetId),
+        undo: () async {},
+        onUndo: () => notifier.unhideLocally(email),
+        onSettled: () => notifier.unhideLocally(email),
+      ),
+    );
+    _closeAfterAction();
+  }
 
   Widget _buildBottomBar(
     BuildContext context, ThemeData theme, AppLocalizations l10n,
@@ -2331,11 +2528,32 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// «Переслать»: набранный в быстром ответе текст — в начало пересылки.
   void _forward(EmailModel email) {
     final text = _quickReply.hasText ? _quickReply.take() : '';
-    context.push(Uri(path: '/compose', queryParameters: {
+    _compose({
       'forwardFromId': email.id,
       'accountId': email.accountId,
       if (text.isNotEmpty) 'quick': text,
-    }).toString());
+    });
+  }
+
+  /// Ответ, пересылка, черновик (1.11.0): на планшете и компьютере в панели
+  /// рядом с лентой — прямо в панели (как в Outlook), иначе — отдельным
+  /// экраном, как раньше.
+  void _compose(Map<String, String> q) {
+    if (PaneNavigator.isInside(context) && _wideLayout(context)) {
+      unawaited(PaneNavigator.push<void>(
+        context,
+        ComposeScreen(
+          replyToId: q['replyToId'],
+          forwardFromId: q['forwardFromId'],
+          draftId: q['draftId'],
+          accountId: q['accountId'],
+          replyAll: q['replyAll'] == 'true',
+          quickText: q['quick'],
+        ),
+      ));
+      return;
+    }
+    context.push(Uri(path: '/compose', queryParameters: q).toString());
   }
 
   /// «Удалить» под письмом (1.7.3): по умолчанию — с вопросом (письма
@@ -2525,7 +2743,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           // Печать — через PDF: системный просмотрщик/«Поделиться»
           // отправляет его на принтер на любой платформе.
           _peekAction(AppIcons.print, l10n.tr('print'), () => unawaited(_exportPdf(email, l10n))),
-          _peekAction(AppIcons.share, l10n.tr('share'), () => SharePlus.instance.share(
+          _peekAction(AppIcons.share, l10n.tr('share'), () => appShare(
               ShareParams(text: '${email.subject}\n\n${email.bodyPlain ?? email.bodyPreview ?? ""}'))),
         ]),
         PeekGroup(title: l10n.tr('actionsMore'), items: [
@@ -2999,6 +3217,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// Экспорт письма в PDF и системный диалог «Поделиться» (сохранить в файлы,
   /// отправить в мессенджер и т.д.). Генерация идёт в сервисе; здесь только UI.
   Future<void> _exportPdf(EmailModel email, AppLocalizations l10n) async {
+    // Политика организации (MDM, 1.10.5): PDF и печать — данные из
+    // приложения; запрещено — сразу, без подготовки файла.
+    if (ManagedPolicy.deny(ManagedRule.share)) return;
 
     // Если письмо в цепочке — спрашиваем, что сохранять. Для делопроизводства
     // обычно нужна вся переписка по вопросу, но иногда достаточно одного
@@ -3058,7 +3279,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         showInlineError(l10n.tr('pdfExportFailed'));
         return;
       }
-      await SharePlus.instance.share(ShareParams(files: [XFile(p)], subject: email.subject));
+      await appShare(ShareParams(files: [XFile(p)], subject: email.subject));
       return;
     }
 
@@ -3072,7 +3293,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       showInlineError(l10n.tr('pdfExportFailed'));
       return;
     }
-    await SharePlus.instance.share(ShareParams(files: [XFile(path)], subject: email.subject));
+    await appShare(ShareParams(files: [XFile(path)], subject: email.subject));
   }
 
   Future<void> _forwardAsEml(EmailModel email) async {
@@ -3212,7 +3433,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     final files = [
       for (final it in items) XFile(await FileOpener.namedCopy(it.path, it.name), name: it.name),
     ];
-    await SharePlus.instance.share(ShareParams(files: files, subject: email.subject));
+    await appShare(ShareParams(files: files, subject: email.subject));
   }
 
   /// winmail.dat (TNEF) — контейнер Outlook: настоящие файлы лежат ВНУТРИ.
@@ -3781,4 +4002,15 @@ class _DelayedSpinnerState extends State<_DelayedSpinner> {
         height: 22,
         child: _show ? const CircularProgressIndicator(strokeWidth: 2) : null,
       );
+}
+
+/// Команда панели над письмом (широкий экран, 1.10.5).
+class _Cmd {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final VoidCallback? onLongPress;
+  final bool selected;
+  final Color? color;
+  const _Cmd(this.icon, this.label, this.onTap, {this.onLongPress, this.selected = false, this.color});
 }

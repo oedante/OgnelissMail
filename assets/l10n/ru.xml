@@ -3707,6 +3707,8 @@
     <string name="translateModelsSetting">Языки на устройстве</string>
     <string name="translateModelsDesc">Скачанные языки для перевода без интернета</string>
     <string name="translateModelsIos">Языки для перевода скачивает и удаляет iOS: Настройки → Приложения → Перевод.</string>
+    <string name="translateModelsMac">Языки для перевода скачивает и удаляет macOS: Системные настройки → Основные → Язык и регион → Языки перевода.</string>
+    <string name="translateUnavailableMac">Перевод недоступен на этом Mac (нужна macOS 15 и новее)</string>
     <string name="translateEngineGoogle">Перевод на устройстве — Google Translate (ML Kit). Текст писем не покидает телефон.</string>
     <string name="translateEngineApple">Перевод на устройстве — Apple Translation. Текст писем не покидает устройство.</string>
     <string name="translateUnavailable">Перевод недоступен на этом устройстве (iPhone и iPad — iOS 18 и новее)</string>
@@ -3764,6 +3766,8 @@
     <string name="notifyMessengerStyleDesc">Фото или буква отправителя рядом с письмом</string>
     <string name="notifyVipConversations">Беседы для VIP</string>
     <string name="notifyVipConversationsDesc">Письма VIP — в разделе «Беседы» Android: их можно сделать приоритетными</string>
+    <string name="notifyAllConversations">Беседы для всех писем</string>
+    <string name="notifyAllConversationsDesc">Портрет отправителя вместо значка приложения; все письма — в разделе «Беседы»</string>
     <string name="ios_siriCompose">Новое письмо</string>
     <string name="ios_siriEvent">Новая встреча</string>
     <string name="ios_siriReminder">Новое напоминание</string>
@@ -3820,6 +3824,21 @@
     <string name="translateFrom">Перевести с</string>
     <string name="translateMsgOther">Письмо на другом языке</string>
     <string name="translateReadMode">Показ перевода письма</string>
+    <string name="mdmTitle">Управляется организацией</string>
+    <string name="mdmDesc">Эти настройки задала ваша организация через систему управления устройствами (MDM).</string>
+    <string name="mdmSupport">ИТ-поддержка</string>
+    <string name="mdmBlocked">Запрещено политикой вашей организации</string>
+    <string name="mdmDomainNotAllowed">Организация разрешает ящики только на доменах: {domains}</string>
+    <string name="mdmPinBody">Политика вашей организации требует защитить почту. Задайте PIN из {n}–6 цифр — он будет запрашиваться при входе в приложение.</string>
+    <string name="mdmPinRequired">Требует ваша организация</string>
+    <string name="mdmRuleAccount">Ящик: {email}</string>
+    <string name="mdmRuleDomains">Только ящики доменов: {domains}</string>
+    <string name="mdmRuleAppLock">Обязательный код приложения (от {n} цифр)</string>
+    <string name="mdmRuleScreenshots">Снимки и запись экрана запрещены</string>
+    <string name="mdmRuleShare">«Поделиться», сохранение в файлы, PDF и печать запрещены</string>
+    <string name="mdmRuleOpenIn">Вложения открываются только в приложении</string>
+    <string name="mdmRuleCopy">Копирование текста писем запрещено</string>
+    <string name="mdmRuleNotifications">Уведомления без отправителя и темы</string>
     <string name="favoritesOrder">Порядок плиток</string>
     <string name="favoritesOrderHint">Перетащите пункт за ручку справа — в таком порядке плитки встанут в меню.</string>
 </resources>

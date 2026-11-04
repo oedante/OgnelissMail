@@ -3745,6 +3745,8 @@
     <string name="translateModelsSetting">اللغات على الجهاز</string>
     <string name="translateModelsDesc">اللغات المنزّلة للترجمة دون إنترنت</string>
     <string name="translateModelsIos">يقوم iOS بتنزيل لغات الترجمة وحذفها: الإعدادات ← التطبيقات ← الترجمة.</string>
+    <string name="translateModelsMac">يُنزِّل macOS لغات الترجمة ويحذفها بنفسه: إعدادات النظام ← عام ← اللغة والمنطقة ← لغات الترجمة.</string>
+    <string name="translateUnavailableMac">الترجمة غير متاحة على هذا الـ Mac (يلزم macOS 15 أو أحدث)</string>
     <string name="translateEngineGoogle">ترجمة على الجهاز بواسطة Google Translate (ML Kit). يبقى نص الرسائل على الهاتف.</string>
     <string name="translateEngineApple">ترجمة على الجهاز بواسطة Apple Translation. يبقى نص الرسائل على الجهاز.</string>
     <string name="translateUnavailable">الترجمة غير متاحة على هذا الجهاز (iPhone وiPad: iOS 18 أو أحدث)</string>
@@ -3802,6 +3804,8 @@
     <string name="notifyMessengerStyleDesc">صورة المرسل أو الحرف الأول من اسمه بجانب الرسالة</string>
     <string name="notifyVipConversations">محادثات لكبار الشخصيات</string>
     <string name="notifyVipConversationsDesc">يظهر بريد كبار الشخصيات في قسم المحادثات في Android، حيث يمكنك جعله ذا أولوية</string>
+    <string name="notifyAllConversations">محادثات لكل البريد</string>
+    <string name="notifyAllConversationsDesc">صورة المرسل بدلاً من أيقونة التطبيق؛ يظهر كل البريد ضمن المحادثات</string>
     <string name="ios_siriCompose">رسالة جديدة</string>
     <string name="ios_siriEvent">حدث جديد</string>
     <string name="ios_siriReminder">تذكير جديد</string>
@@ -3862,6 +3866,21 @@
     <string name="translateFrom">الترجمة من</string>
     <string name="translateMsgOther">رسالة بلغة أخرى</string>
     <string name="translateReadMode">عرض الرسالة المترجمة</string>
+    <string name="mdmTitle">تديره مؤسستك</string>
+    <string name="mdmDesc">حددت مؤسستك هذه الإعدادات عبر إدارة الأجهزة (MDM).</string>
+    <string name="mdmSupport">الدعم الفني</string>
+    <string name="mdmBlocked">غير مسموح به وفق سياسة مؤسستك</string>
+    <string name="mdmDomainNotAllowed">تسمح مؤسستك بصناديق البريد على هذه النطاقات فقط: {domains}</string>
+    <string name="mdmPinBody">تتطلب سياسة مؤسستك حماية بريدك. عيّن رمز PIN من {n} إلى 6 أرقام؛ سيُطلب عند فتح التطبيق.</string>
+    <string name="mdmPinRequired">مطلوب من مؤسستك</string>
+    <string name="mdmRuleAccount">صندوق البريد: {email}</string>
+    <string name="mdmRuleDomains">صناديق هذه النطاقات فقط: {domains}</string>
+    <string name="mdmRuleAppLock">رمز PIN للتطبيق إلزامي ({n} أرقام على الأقل)</string>
+    <string name="mdmRuleScreenshots">لقطات الشاشة وتسجيلها محظورة</string>
+    <string name="mdmRuleShare">المشاركة والحفظ في الملفات وPDF والطباعة محظورة</string>
+    <string name="mdmRuleOpenIn">تُفتح المرفقات داخل التطبيق فقط</string>
+    <string name="mdmRuleCopy">نسخ نص الرسائل محظور</string>
+    <string name="mdmRuleNotifications">إشعارات بلا مرسل ولا موضوع</string>
     <string name="favoritesOrder">ترتيب المربعات</string>
     <string name="favoritesOrderHint">اسحب العنصر من المقبض على اليمين — تتبع مربعات القائمة هذا الترتيب.</string>
 </resources>

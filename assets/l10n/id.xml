@@ -3650,6 +3650,8 @@
     <string name="translateModelsSetting">Bahasa di perangkat</string>
     <string name="translateModelsDesc">Bahasa yang diunduh untuk terjemahan offline</string>
     <string name="translateModelsIos">Bahasa terjemahan diunduh dan dihapus oleh iOS: Pengaturan → App → Terjemahan.</string>
+    <string name="translateModelsMac">macOS mengunduh dan menghapus bahasa terjemahan sendiri: Pengaturan Sistem → Umum → Bahasa &amp; Wilayah → Bahasa Terjemahan.</string>
+    <string name="translateUnavailableMac">Terjemahan tidak tersedia di Mac ini (perlu macOS 15 atau lebih baru)</string>
     <string name="translateEngineGoogle">Terjemahan di perangkat oleh Google Translate (ML Kit). Teks pesan tetap di ponsel.</string>
     <string name="translateEngineApple">Terjemahan di perangkat oleh Apple Translation. Teks pesan tetap di perangkat.</string>
     <string name="translateUnavailable">Terjemahan tidak tersedia di perangkat ini (iPhone dan iPad: iOS 18 atau lebih baru)</string>
@@ -3707,6 +3709,8 @@
     <string name="notifyMessengerStyleDesc">Foto atau inisial pengirim di samping pesan</string>
     <string name="notifyVipConversations">Percakapan untuk VIP</string>
     <string name="notifyVipConversationsDesc">Email dari VIP muncul di bagian Percakapan Android, tempat Anda dapat menjadikannya prioritas</string>
+    <string name="notifyAllConversations">Percakapan untuk semua email</string>
+    <string name="notifyAllConversationsDesc">Foto pengirim, bukan ikon aplikasi; semua email muncul di Percakapan</string>
     <string name="ios_siriCompose">Email baru</string>
     <string name="ios_siriEvent">Acara baru</string>
     <string name="ios_siriReminder">Pengingat baru</string>
@@ -3757,6 +3761,21 @@
     <string name="translateFrom">Terjemahkan dari</string>
     <string name="translateMsgOther">Pesan dalam bahasa lain</string>
     <string name="translateReadMode">Tampilan pesan terjemahan</string>
+    <string name="mdmTitle">Dikelola oleh organisasi Anda</string>
+    <string name="mdmDesc">Organisasi Anda menetapkan opsi ini melalui manajemen perangkat (MDM).</string>
+    <string name="mdmSupport">Dukungan TI</string>
+    <string name="mdmBlocked">Tidak diizinkan oleh kebijakan organisasi Anda</string>
+    <string name="mdmDomainNotAllowed">Organisasi Anda hanya mengizinkan kotak surat di domain: {domains}</string>
+    <string name="mdmPinBody">Kebijakan organisasi Anda mewajibkan email dilindungi. Tetapkan PIN {n}–6 digit; PIN akan diminta saat membuka aplikasi.</string>
+    <string name="mdmPinRequired">Diwajibkan organisasi Anda</string>
+    <string name="mdmRuleAccount">Kotak surat: {email}</string>
+    <string name="mdmRuleDomains">Hanya kotak surat di: {domains}</string>
+    <string name="mdmRuleAppLock">PIN aplikasi wajib (minimal {n} digit)</string>
+    <string name="mdmRuleScreenshots">Tangkapan dan rekaman layar diblokir</string>
+    <string name="mdmRuleShare">Berbagi, simpan ke file, PDF, dan cetak diblokir</string>
+    <string name="mdmRuleOpenIn">Lampiran hanya dibuka di aplikasi</string>
+    <string name="mdmRuleCopy">Menyalin teks pesan diblokir</string>
+    <string name="mdmRuleNotifications">Notifikasi tanpa pengirim dan subjek</string>
     <string name="favoritesOrder">Urutan ubin</string>
     <string name="favoritesOrderHint">Seret item dengan pegangan di kanan — ubin di menu mengikuti urutan ini.</string>
 </resources>

@@ -40,6 +40,7 @@ import '../../help/faq_screen.dart' show FaqButton;
 import '../../mail/providers/mail_providers.dart' show accountsProvider;
 import '../archive_providers.dart';
 import '../archive_sheets.dart';
+import '../../../core/platform/app_share.dart';
 
 class ArchiveScreen extends ConsumerStatefulWidget {
   const ArchiveScreen({super.key});
@@ -79,7 +80,7 @@ class _ArchiveScreenState extends ConsumerState<ArchiveScreen> {
       } else {
         // «Поделиться»: Google Диск, «Файлы» (iCloud Drive), Яндекс Диск,
         // папка на телефоне, флешка — куда выберет человек.
-        final r = await SharePlus.instance.share(ShareParams(
+        final r = await appShare(ShareParams(
           files: [XFile(f.path, name: name, mimeType: 'application/octet-stream')],
           subject: name,
         ));

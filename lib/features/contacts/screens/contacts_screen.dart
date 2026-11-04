@@ -56,6 +56,7 @@ import '../../../services/mail/focus_mode_service.dart' show focusModeProvider;
 import '../../../core/utils/person_names.dart' show PersonNames;
 import '../../../core/theme/ogneliss_look.dart';
 import '../../../core/utils/mail_domains.dart' show sameOrgDomain, mailDomainOf, isPublicMailDomain;
+import '../../../core/platform/app_share.dart';
 
 class ContactsScreen extends ConsumerStatefulWidget {
   const ContactsScreen({super.key});
@@ -562,7 +563,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
           .toList();
       final svc = ref.read(contactExportProvider);
       final path = fmt == 'vcf' ? await svc.exportToVcf(models) : await svc.exportToCsv(models);
-      await SharePlus.instance.share(ShareParams(
+      await appShare(ShareParams(
         files: [XFile(path)],
         subject: l10n.tr('contactsN').replaceAll('{n}', '${models.length}'),
       ));

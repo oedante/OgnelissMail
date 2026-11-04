@@ -344,6 +344,7 @@ class DavPimService {
     for (final entry in byUid.entries) {
       final base = '${idPrefix(account.id)}${entry.key}';
       final master = entry.value.where((e) => e.recurrenceId == null).firstOrNull;
+      _logLongAllDay(entry.key, master, data);
       final overrides = entry.value.where((e) => e.recurrenceId != null).toList();
       final occs = master == null || master.cancelled
           ? null
@@ -366,6 +367,24 @@ class DavPimService {
       }
     }
     return out;
+  }
+
+  /// Событие «на весь день» длиннее суток — в журнал, один раз на событие:
+  /// даты и программа, которая его записала (PRODID), без названия
+  /// (замечание владельца 04.11.2026: события iCloud на день показывались и
+  /// следующим днём — по журналу видно, лишний день в данных сервера или
+  /// появляется у нас).
+  static final Set<String> _loggedLong = {};
+
+  static void _logLongAllDay(String uid, VEvent? ev, String data) {
+    final s = ev?.start, e = ev?.end;
+    if (ev == null || !ev.isAllDay || s == null || e == null) return;
+    final days = DateTime.utc(e.year, e.month, e.day).difference(DateTime.utc(s.year, s.month, s.day)).inDays;
+    if (days <= 1 || !_loggedLong.add(uid)) return;
+    String day(DateTime d) => '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+    final prodId = RegExp(r'^PRODID:(.*)$', multiLine: true).firstMatch(data)?.group(1)?.trim() ?? '?';
+    AppLogger.info('CalDAV: событие на весь день, $days дн.: ${day(s)} — ${day(e)} (конец не включается), '
+        '${ev.rrule != null ? 'серия, ' : ''}записано: ${prodId.length > 60 ? prodId.substring(0, 60) : prodId}');
   }
 
   /// События периода [window] со всех календарей аккаунта. [ok] = false —

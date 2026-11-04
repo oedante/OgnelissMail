@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Arkistoa ei voi lukea: se on vioittunut tai muodossa, jota sovellus ei tunne (7z, RAR). Avaa se toisessa sovelluksessa.</string>
     <string name="pdfProtected">PDF on suojattu salasanalla. Avaa se toisessa sovelluksessa.</string>
     <string name="faq_mail_10_q">Mitkä liitteet avautuvat suoraan sovelluksessa?</string>
-    <string name="faq_mail_10_a">ZIP-arkistot, myös salasanalla suojatut, sekä TAR, GZ, BZ2 ja XZ avautuvat suoraan sovelluksessa: avaa tiedosto napauttamalla sitä. Myös PDF-tiedostot Androidissa, kuvat, teksti ja CSV, .eml-viestit ja .pkpass-liput avautuvat sovelluksessa. iPhonessa ja iPadissa iOS:n pikakatselu näyttää PDF-tiedostot, kuvat ja Office-asiakirjat. Muut avaa sopiva sovellus, ja minkä tahansa tiedoston voi lähettää siihen yläreunan painikkeella. 7z- ja RAR-arkistot avautuvat vain toisessa sovelluksessa.</string>
+    <string name="faq_mail_10_a">Office-asiakirjat (DOCX, XLSX, PPTX), OpenDocument-tiedostot (ODT, ODS, ODP), RTF ja CSV avautuvat suoraan sovelluksessa vain luku -tilassa — makroja ei koskaan suoriteta; laskentataulukot näkyvät taulukoittain ruudukkona, esitykset dioina. Sovelluksessa avautuvat myös ZIP-arkistot, salasanalla suojatut mukaan lukien, sekä TAR, GZ, BZ2 ja XZ: avaa sisällä oleva tiedosto napauttamalla sitä. Lisäksi sovelluksessa avautuvat PDF-tiedostot Androidissa, kuvat, teksti, .eml-viestit ja .pkpass-liput. iPhonessa ja iPadissa iOS:n pikakatselu näyttää PDF-tiedostot, kuvat, Office-asiakirjat sekä RTF- ja CSV-tiedostot, ja sovellus itse näyttää OpenDocument-tiedostot. Vanhat .doc-, .xls- ja .ppt-asiakirjat sekä 7z- ja RAR-arkistot avautuvat toisessa sovelluksessa, ja minkä tahansa tiedoston voi lähettää toiseen sovellukseen yläreunan painikkeella.</string>
     <string name="quickRepliesCardHint">Teksti lisätään vastaukseen – tarkista ja lähetä</string>
     <string name="translateMsgLang">Viestin kieli: {lang}</string>
     <string name="translateDone">Käännetty: {from} → {to}</string>
@@ -3799,4 +3799,23 @@
     <string name="mdmRuleNotifications">Ilmoitukset ilman lähettäjää ja aihetta</string>
     <string name="favoritesOrder">Ruutujen järjestys</string>
     <string name="favoritesOrderHint">Vedä kohdetta oikealla olevasta kahvasta — valikon ruudut noudattavat tätä järjestystä.</string>
+    <string name="docProtected">Asiakirja on suojattu salasanalla. Avaa se toisessa sovelluksessa.</string>
+    <string name="docLegacyFormat">Sovellus ei vielä näytä vanhan Office 97–2003 -muodon asiakirjoja (.doc, .xls, .ppt). Avaa tiedosto toisessa sovelluksessa.</string>
+    <string name="docTooLarge">Asiakirja on liian suuri esikatseluun. Avaa se toisessa sovelluksessa.</string>
+    <string name="docTruncated">Asiakirja on suuri – vain alku näytetään. Avaa se toisessa sovelluksessa nähdäksesi kaiken.</string>
+    <string name="docEmpty">Asiakirjassa ei ole tekstiä.</string>
+    <string name="docSheetTruncated">Taulukko on suuri – vain alku näytetään</string>
+    <string name="docSheetEmpty">Taulukko on tyhjä</string>
+    <string name="docSlideOf">Dia {n}/{total}</string>
+    <string name="docPreviewSection">Asiakirjojen esikatselu</string>
+    <string name="docPreview">Asiakirjat sovelluksessa</string>
+    <string name="docPreviewDesc">Viestien asiakirjat, laskentataulukot ja esitykset avautuvat tässä ilman toista sovellusta. Pois päältä: muodon omassa sovelluksessa.</string>
+    <string name="docPreviewIosNote">iPhonessa ja iPadissa Office-, RTF- ja CSV-asiakirjat näyttää iOS:n pikakatselu. Tässä valitset, näyttääkö sovellus OpenDocument-tiedostot, joita pikakatselu ei avaa.</string>
+    <string name="docTypeText">Tekstiasiakirjat</string>
+    <string name="docTypeSheets">Laskentataulukot</string>
+    <string name="docTypeCsv">CSV taulukkona</string>
+    <string name="docTypeCsvDesc">Pois päältä: pelkkänä tekstinä</string>
+    <string name="docTypeSlides">Esitykset</string>
+    <string name="faq_mail_11_q">Miten poistan asiakirjojen esikatselun käytöstä sovelluksessa?</string>
+    <string name="faq_mail_11_a">Asetukset → Sähköposti → Asiakirjojen esikatselu. Asiakirjat sovelluksessa -kytkin poistaa esikatselun kokonaan käytöstä: asiakirjat avautuvat taas oman muotonsa sovelluksessa. Sen alla voit poistaa käytöstä yksittäisiä tyyppejä ja jättää muut: tekstiasiakirjat, laskentataulukot, CSV taulukkona (pois päältä: pelkkänä tekstinä) ja esitykset. Suuresta asiakirjasta näytetään alku; nähdäksesi kaiken avaa se toisessa sovelluksessa yläreunan painikkeella. iPhonessa ja iPadissa nämä asetukset koskevat vain OpenDocument-tiedostoja: muut näyttää iOS:n pikakatselu.</string>
 </resources>

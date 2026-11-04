@@ -6,6 +6,7 @@
 
 import 'core/platform/device_time_zone.dart';
 import 'widgets/common/scroll_edge_fade.dart';
+import 'services/documents/doc_preview_settings.dart';
 import 'services/sync/sync_schedule.dart';
 import 'core/theme/mail_page_color.dart' show mailPageWarm;
 import 'core/platform/orientation_policy.dart';
@@ -205,6 +206,8 @@ Future<void> main() async {
     OwnAddresses.load(sharedPrefs);
     // Широкие письма — по ширине экрана сразу или кнопкой (1.5.11).
     MailHtmlView.fitWide = sharedPrefs.getBool(MailHtmlView.fitWideKey) ?? false;
+    // Какие документы показывать в приложении (1.11.x).
+    DocPreviewSettings.load(sharedPrefs);
     SyncSchedule.load(sharedPrefs);
     // Имя пояса устройства — для приглашений Exchange (1.6.2).
     unawaited(DeviceTimeZone.load(sharedPrefs));

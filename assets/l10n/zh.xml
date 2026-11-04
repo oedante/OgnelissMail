@@ -3618,7 +3618,7 @@
     <string name="zipCannotRead">无法读取压缩包：文件已损坏或格式不受支持（7z、RAR）。请在其他应用中打开。</string>
     <string name="pdfProtected">此 PDF 受密码保护，请在其他应用中打开。</string>
     <string name="faq_mail_10_q">哪些附件可以直接在应用中打开？</string>
-    <string name="faq_mail_10_a">ZIP 压缩包（包括带密码的）以及 TAR、GZ、BZ2 和 XZ 可直接在应用中打开：点按其中的文件即可打开。Android 上的 PDF、图片、文本和 CSV、.eml 邮件以及 .pkpass 票券也可在应用中打开。在 iPhone 和 iPad 上，PDF、图片和 Office 文档由 iOS 的快速查看显示。其他文件由合适的应用打开，任何文件都可以通过顶部按钮发送到该应用。7z 和 RAR 压缩包只能在其他应用中打开。</string>
+    <string name="faq_mail_10_a">Office 文档（DOCX、XLSX、PPTX）、OpenDocument 文件（ODT、ODS、ODP）、RTF 和 CSV 可直接在应用中以只读方式打开——绝不会运行宏；电子表格按工作表以网格显示，演示文稿以幻灯片显示。ZIP 压缩包（包括带密码的）以及 TAR、GZ、BZ2 和 XZ 也可在应用中打开：点按其中的文件即可打开。Android 上的 PDF、图片、文本、.eml 邮件以及 .pkpass 票券同样可在应用中打开。在 iPhone 和 iPad 上，PDF、图片、Office 文档、RTF 和 CSV 由 iOS 的快速查看显示，OpenDocument 文件则由应用本身显示。旧版 .doc、.xls 和 .ppt 文档以及 7z 和 RAR 压缩包在其他应用中打开，任何文件都可以通过顶部按钮发送到其他应用。</string>
     <string name="quickRepliesCardHint">文本将放入回复中，请检查后发送</string>
     <string name="translateMsgLang">邮件语言：{lang}</string>
     <string name="translateDone">已翻译：{from} → {to}</string>
@@ -3778,4 +3778,23 @@
     <string name="mdmRuleNotifications">通知不显示发件人和主题</string>
     <string name="favoritesOrder">磁贴顺序</string>
     <string name="favoritesOrderHint">拖动右侧的把手调整项目，菜单中的磁贴将按此顺序排列。</string>
+    <string name="docProtected">文档受密码保护。请在其他应用中打开。</string>
+    <string name="docLegacyFormat">应用暂不支持预览旧版 Office 97–2003 格式（.doc、.xls、.ppt）的文档。请在其他应用中打开该文件。</string>
+    <string name="docTooLarge">文档太大，无法预览。请在其他应用中打开。</string>
+    <string name="docTruncated">文档较大，仅显示开头部分。如需查看全部内容，请在其他应用中打开。</string>
+    <string name="docEmpty">文档中没有文本。</string>
+    <string name="docSheetTruncated">工作表较大，仅显示开头部分</string>
+    <string name="docSheetEmpty">工作表为空</string>
+    <string name="docSlideOf">第 {n} 张幻灯片，共 {total} 张</string>
+    <string name="docPreviewSection">文档预览</string>
+    <string name="docPreview">在应用内查看文档</string>
+    <string name="docPreviewDesc">邮件中的文档、表格和演示文稿直接在此打开，无需其他应用。关闭后将在该格式的应用中打开。</string>
+    <string name="docPreviewIosNote">在 iPhone 和 iPad 上，Office、RTF 和 CSV 文档由 iOS 的快速查看显示。此处可选择应用是否显示快速查看无法打开的 OpenDocument 文件。</string>
+    <string name="docTypeText">文本文档</string>
+    <string name="docTypeSheets">电子表格</string>
+    <string name="docTypeCsv">以表格显示 CSV</string>
+    <string name="docTypeCsvDesc">关闭后以纯文本显示</string>
+    <string name="docTypeSlides">演示文稿</string>
+    <string name="faq_mail_11_q">如何关闭应用内的文档预览？</string>
+    <string name="faq_mail_11_a">设置 → 邮件 → 文档预览。“在应用内查看文档”开关可完全关闭预览：文档将重新在对应格式的应用中打开。其下方可以关闭部分类型、保留其余类型：文本文档、电子表格、以表格显示 CSV（关闭后以纯文本显示）和演示文稿。大型文档仅显示开头部分；如需查看全部内容，请通过顶部按钮在其他应用中打开。在 iPhone 和 iPad 上，这些设置仅适用于 OpenDocument 文件：其余文件由 iOS 的快速查看显示。</string>
 </resources>

@@ -3675,7 +3675,7 @@
     <string name="zipCannotRead">Nie można odczytać archiwum: jest uszkodzone lub w formacie, którego aplikacja nie zna (7z, RAR). Otwórz je w innej aplikacji.</string>
     <string name="pdfProtected">PDF jest chroniony hasłem. Otwórz go w innej aplikacji.</string>
     <string name="faq_mail_10_q">Które załączniki otwierają się bezpośrednio w aplikacji?</string>
-    <string name="faq_mail_10_a">Archiwa ZIP, także chronione hasłem, oraz TAR, GZ, BZ2 i XZ otwierają się bezpośrednio w aplikacji: stuknij plik w środku, aby go otworzyć. W aplikacji otwierają się też pliki PDF na Androidzie, obrazy, tekst i CSV, wiadomości .eml oraz bilety .pkpass. Na iPhonie i iPadzie podgląd iOS pokazuje pliki PDF, obrazy i dokumenty Office. Pozostałe otwiera odpowiednia aplikacja, a każdy plik można do niej wysłać przyciskiem u góry. Archiwa 7z i RAR otwierają się tylko w innej aplikacji.</string>
+    <string name="faq_mail_10_a">Dokumenty Office (DOCX, XLSX, PPTX), pliki OpenDocument (ODT, ODS, ODP), RTF i CSV otwierają się bezpośrednio w aplikacji, tylko do odczytu — makra nigdy nie są uruchamiane; arkusze kalkulacyjne wyświetlają się jako siatka z arkuszami, prezentacje jako slajdy. Archiwa ZIP, także chronione hasłem, oraz TAR, GZ, BZ2 i XZ również otwierają się w aplikacji: stuknij plik w środku, aby go otworzyć. W aplikacji otwierają się też pliki PDF na Androidzie, obrazy, tekst, wiadomości .eml oraz bilety .pkpass. Na iPhonie i iPadzie Szybki przegląd iOS pokazuje pliki PDF, obrazy, dokumenty Office, RTF i CSV, a pliki OpenDocument pokazuje sama aplikacja. Stare dokumenty .doc, .xls i .ppt oraz archiwa 7z i RAR otwierają się w innej aplikacji, a każdy plik można do niej wysłać przyciskiem u góry.</string>
     <string name="quickRepliesCardHint">Tekst trafi do odpowiedzi — sprawdź i wyślij</string>
     <string name="translateMsgLang">Język wiadomości: {lang}</string>
     <string name="translateDone">Przetłumaczono: {from} → {to}</string>
@@ -3841,4 +3841,23 @@
     <string name="mdmRuleNotifications">Powiadomienia bez nadawcy i tematu</string>
     <string name="favoritesOrder">Kolejność kafelków</string>
     <string name="favoritesOrderHint">Przeciągnij element za uchwyt po prawej — kafelki w menu ułożą się w tej kolejności.</string>
+    <string name="docProtected">Dokument jest chroniony hasłem. Otwórz go w innej aplikacji.</string>
+    <string name="docLegacyFormat">Aplikacja nie wyświetla jeszcze dokumentów w starym formacie Office 97–2003 (.doc, .xls, .ppt). Otwórz plik w innej aplikacji.</string>
+    <string name="docTooLarge">Dokument jest zbyt duży, aby go wyświetlić. Otwórz go w innej aplikacji.</string>
+    <string name="docTruncated">Dokument jest duży — wyświetlono tylko początek. Całość otworzysz w innej aplikacji.</string>
+    <string name="docEmpty">Dokument nie zawiera tekstu.</string>
+    <string name="docSheetTruncated">Arkusz jest duży — wyświetlono tylko początek</string>
+    <string name="docSheetEmpty">Arkusz jest pusty</string>
+    <string name="docSlideOf">Slajd {n} z {total}</string>
+    <string name="docPreviewSection">Podgląd dokumentów</string>
+    <string name="docPreview">Dokumenty w aplikacji</string>
+    <string name="docPreviewDesc">Dokumenty, arkusze i prezentacje z wiadomości otwierają się tutaj, bez innej aplikacji. Wyłączone — w aplikacji dla danego formatu.</string>
+    <string name="docPreviewIosNote">Na iPhonie i iPadzie dokumenty Office, RTF i CSV pokazuje Szybki przegląd iOS. Tutaj zdecydujesz, czy aplikacja ma pokazywać pliki OpenDocument, których Szybki przegląd nie otwiera.</string>
+    <string name="docTypeText">Dokumenty tekstowe</string>
+    <string name="docTypeSheets">Arkusze kalkulacyjne</string>
+    <string name="docTypeCsv">CSV jako tabela</string>
+    <string name="docTypeCsvDesc">Wyłączone — jako zwykły tekst</string>
+    <string name="docTypeSlides">Prezentacje</string>
+    <string name="faq_mail_11_q">Jak wyłączyć podgląd dokumentów w aplikacji?</string>
+    <string name="faq_mail_11_a">Ustawienia → Poczta → Podgląd dokumentów. Przełącznik Dokumenty w aplikacji wyłącza podgląd całkowicie: dokumenty znów otwierają się w aplikacji dla ich formatu. Poniżej możesz wyłączyć wybrane rodzaje i zostawić pozostałe: dokumenty tekstowe, arkusze kalkulacyjne, CSV jako tabela (wyłączone — jako zwykły tekst) i prezentacje. Z dużego dokumentu pokazywany jest początek; całość otworzysz w innej aplikacji przyciskiem u góry. Na iPhonie i iPadzie te ustawienia dotyczą tylko plików OpenDocument: resztę pokazuje Szybki przegląd iOS.</string>
 </resources>

@@ -3656,7 +3656,7 @@
     <string name="zipCannotRead">Archív sa nedá prečítať: je poškodený alebo vo formáte, ktorý aplikácia nepozná (7z, RAR). Otvorte ho v inej aplikácii.</string>
     <string name="pdfProtected">PDF je chránené heslom. Otvorte ho v inej aplikácii.</string>
     <string name="faq_mail_10_q">Ktoré prílohy sa otvoria priamo v aplikácii?</string>
-    <string name="faq_mail_10_a">Archívy ZIP, aj chránené heslom, a tiež TAR, GZ, BZ2 a XZ sa otvoria priamo v aplikácii: súbor vnútri otvoríte ťuknutím. V aplikácii sa otvoria aj PDF v Androide, obrázky, text a CSV, správy .eml a vstupenky .pkpass. Na iPhone a iPade zobrazí PDF, obrázky a dokumenty Office rýchly náhľad iOS. Ostatné otvorí vhodná aplikácia a každý súbor do nej pošlete tlačidlom hore. Archívy 7z a RAR sa otvoria len v inej aplikácii.</string>
+    <string name="faq_mail_10_a">Dokumenty Office (DOCX, XLSX, PPTX), súbory OpenDocument (ODT, ODS, ODP), RTF a CSV sa otvoria priamo v aplikácii, len na čítanie — makrá sa nikdy nespúšťajú; tabuľky sa zobrazia ako mriežka s hárkami, prezentácie ako snímky. Archívy ZIP, aj chránené heslom, a tiež TAR, GZ, BZ2 a XZ sa v aplikácii otvoria rovnako: súbor vnútri otvoríte ťuknutím. V aplikácii sa otvoria aj PDF v Androide, obrázky, text, správy .eml a vstupenky .pkpass. Na iPhone a iPade zobrazuje PDF, obrázky, dokumenty Office, RTF a CSV Rýchly náhľad systému iOS, súbory OpenDocument zobrazuje samotná aplikácia. Staré dokumenty .doc, .xls a .ppt a archívy 7z a RAR sa otvoria v inej aplikácii a každý súbor do nej pošlete tlačidlom hore.</string>
     <string name="quickRepliesCardHint">Text sa vloží do odpovede — skontrolujte a odošlite</string>
     <string name="translateMsgLang">Jazyk správy: {lang}</string>
     <string name="translateDone">Preložené: {from} → {to}</string>
@@ -3820,4 +3820,23 @@
     <string name="mdmRuleNotifications">Upozornenia bez odosielateľa a predmetu</string>
     <string name="favoritesOrder">Poradie dlaždíc</string>
     <string name="favoritesOrderHint">Potiahnite položku za úchyt vpravo — dlaždice v ponuke budú v tomto poradí.</string>
+    <string name="docProtected">Dokument je chránený heslom. Otvorte ho v inej aplikácii.</string>
+    <string name="docLegacyFormat">Aplikácia zatiaľ nezobrazuje dokumenty v starom formáte Office 97–2003 (.doc, .xls, .ppt). Otvorte súbor v inej aplikácii.</string>
+    <string name="docTooLarge">Dokument je na náhľad príliš veľký. Otvorte ho v inej aplikácii.</string>
+    <string name="docTruncated">Dokument je veľký — zobrazuje sa len začiatok. Celý ho otvoríte v inej aplikácii.</string>
+    <string name="docEmpty">Dokument neobsahuje žiadny text.</string>
+    <string name="docSheetTruncated">Hárok je veľký — zobrazuje sa len začiatok</string>
+    <string name="docSheetEmpty">Hárok je prázdny</string>
+    <string name="docSlideOf">Snímka {n} z {total}</string>
+    <string name="docPreviewSection">Náhľad dokumentov</string>
+    <string name="docPreview">Dokumenty v aplikácii</string>
+    <string name="docPreviewDesc">Dokumenty, tabuľky a prezentácie zo správ sa otvárajú priamo tu, bez inej aplikácie. Vypnuté — v aplikácii pre daný formát.</string>
+    <string name="docPreviewIosNote">Na iPhone a iPade zobrazuje dokumenty Office, RTF a CSV Rýchly náhľad systému iOS. Tu zvolíte, či má aplikácia zobrazovať súbory OpenDocument, ktoré Rýchly náhľad neotvorí.</string>
+    <string name="docTypeText">Textové dokumenty</string>
+    <string name="docTypeSheets">Tabuľky</string>
+    <string name="docTypeCsv">CSV ako tabuľka</string>
+    <string name="docTypeCsvDesc">Vypnuté — ako obyčajný text</string>
+    <string name="docTypeSlides">Prezentácie</string>
+    <string name="faq_mail_11_q">Ako vypnúť náhľad dokumentov v aplikácii?</string>
+    <string name="faq_mail_11_a">Nastavenia → Pošta → Náhľad dokumentov. Prepínač Dokumenty v aplikácii vypne náhľad úplne: dokumenty sa znova otvárajú v aplikácii pre svoj formát. Nižšie môžete vypnúť jednotlivé druhy a ostatné ponechať: textové dokumenty, tabuľky, CSV ako tabuľka (vypnuté — ako obyčajný text) a prezentácie. Z veľkého dokumentu sa zobrazí začiatok; celý ho otvoríte v inej aplikácii tlačidlom hore. Na iPhone a iPade sa tieto nastavenia týkajú len súborov OpenDocument: ostatné zobrazuje Rýchly náhľad systému iOS.</string>
 </resources>

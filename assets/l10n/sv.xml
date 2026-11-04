@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Arkivet kan inte läsas: det är skadat eller i ett format som appen inte känner till (7z, RAR). Öppna det i en annan app.</string>
     <string name="pdfProtected">PDF:en är lösenordsskyddad. Öppna den i en annan app.</string>
     <string name="faq_mail_10_q">Vilka bilagor öppnas direkt i appen?</string>
-    <string name="faq_mail_10_a">ZIP-arkiv, även lösenordsskyddade, samt TAR, GZ, BZ2 och XZ öppnas direkt i appen: tryck på en fil i arkivet för att öppna den. PDF:er på Android, bilder, text och CSV, .eml-meddelanden och .pkpass-biljetter öppnas också i appen. På iPhone och iPad visar iOS Snabbtitt PDF:er, bilder och Office-dokument. Allt annat öppnas i en lämplig app, och alla filer kan skickas dit med knappen överst. 7z- och RAR-arkiv öppnas bara i en annan app.</string>
+    <string name="faq_mail_10_a">Office-dokument (DOCX, XLSX, PPTX), OpenDocument-filer (ODT, ODS, ODP), RTF och CSV öppnas direkt i appen, skrivskyddade — makron körs aldrig; kalkylblad visas som ett rutnät med blad, presentationer som bilder. ZIP-arkiv, även lösenordsskyddade, samt TAR, GZ, BZ2 och XZ öppnas också i appen: tryck på en fil i arkivet för att öppna den. PDF:er på Android, bilder, text, .eml-meddelanden och .pkpass-biljetter öppnas likaså i appen. På iPhone och iPad visar iOS Snabbtitt PDF:er, bilder, Office-dokument, RTF och CSV, och appen själv visar OpenDocument-filer. Gamla .doc-, .xls- och .ppt-dokument samt 7z- och RAR-arkiv öppnas i en annan app, och alla filer kan skickas dit med knappen överst.</string>
     <string name="quickRepliesCardHint">Texten hamnar i svaret – kontrollera och skicka</string>
     <string name="translateMsgLang">Meddelandets språk: {lang}</string>
     <string name="translateDone">Översatt: {from} → {to}</string>
@@ -3799,4 +3799,23 @@
     <string name="mdmRuleNotifications">Aviseringar utan avsändare och ämne</string>
     <string name="favoritesOrder">Panelernas ordning</string>
     <string name="favoritesOrderHint">Dra ett objekt i handtaget till höger — panelerna i menyn följer den här ordningen.</string>
+    <string name="docProtected">Dokumentet är lösenordsskyddat. Öppna det i en annan app.</string>
+    <string name="docLegacyFormat">Appen kan ännu inte visa dokument i det gamla formatet Office 97–2003 (.doc, .xls, .ppt). Öppna filen i en annan app.</string>
+    <string name="docTooLarge">Dokumentet är för stort för förhandsvisning. Öppna det i en annan app.</string>
+    <string name="docTruncated">Dokumentet är stort – bara början visas. Öppna det i en annan app för att se allt.</string>
+    <string name="docEmpty">Dokumentet innehåller ingen text.</string>
+    <string name="docSheetTruncated">Bladet är stort – bara början visas</string>
+    <string name="docSheetEmpty">Bladet är tomt</string>
+    <string name="docSlideOf">Bild {n} av {total}</string>
+    <string name="docPreviewSection">Förhandsvisning av dokument</string>
+    <string name="docPreview">Dokument i appen</string>
+    <string name="docPreviewDesc">Dokument, kalkylblad och presentationer från meddelanden öppnas direkt här, utan annan app. Av: i appen för formatet.</string>
+    <string name="docPreviewIosNote">På iPhone och iPad visas Office-, RTF- och CSV-dokument med iOS Snabbtitt. Här väljer du om appen ska visa OpenDocument-filer, som Snabbtitt inte kan öppna.</string>
+    <string name="docTypeText">Textdokument</string>
+    <string name="docTypeSheets">Kalkylblad</string>
+    <string name="docTypeCsv">CSV som tabell</string>
+    <string name="docTypeCsvDesc">Av: som vanlig text</string>
+    <string name="docTypeSlides">Presentationer</string>
+    <string name="faq_mail_11_q">Hur stänger jag av förhandsvisning av dokument i appen?</string>
+    <string name="faq_mail_11_a">Inställningar → E-post → Förhandsvisning av dokument. Reglaget Dokument i appen stänger av förhandsvisningen helt: dokument öppnas igen i appen för deras format. Under det kan du stänga av vissa typer och behålla resten: textdokument, kalkylblad, CSV som tabell (av: som vanlig text) och presentationer. Av ett stort dokument visas början; för att se allt öppnar du det i en annan app med knappen överst. På iPhone och iPad gäller de här inställningarna bara OpenDocument-filer: resten visar iOS Snabbtitt.</string>
 </resources>

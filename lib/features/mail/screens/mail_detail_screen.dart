@@ -1118,22 +1118,36 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// Люди в шапках цитат (1.10.3; с 1.10.5 включено, имена «Фамилия
   /// И.О.» или полностью — «Почта → Работа с письмами»): только когда
   /// цитата раскрыта — открытие письма не замедляется. Разбор — в изоляте,
-  /// как подготовка документа; не вышло — письмо как есть.
+  /// как подготовка документа; не вышло — письмо как есть. Подписи шапки
+  /// («From / Sent / To / Cc / Subject») и дата — на языке приложения
+  /// (1.11.x, замечание владельца 04.11.2026) — и при выключенных плашках.
   Future<String> _withQuotePeople(String html, {required bool quoteShown}) async {
-    if (!quoteShown) return html;
+    if (!quoteShown || !mounted) return html;
     final mode = quotePeopleMode(ref.read(sharedPrefsProvider));
-    if (mode == QuotePeopleMode.off) return html;
+    final l10n = AppLocalizations.of(context);
+    final local = QuoteHeaderText(l10n.localeCode, {
+      'from': l10n.tr('quoteFrom'),
+      'sent': l10n.tr('quoteSent'),
+      'to': l10n.tr('quoteTo'),
+      'cc': l10n.tr('quoteCc'),
+      'subject': l10n.tr('quoteSubject'),
+    });
     final sw = Stopwatch()..start();
     try {
-      final out = await MailBodyProcessor.heavy(
-          html, mode == QuotePeopleMode.short ? QuotePeople.enrichShort : QuotePeople.enrich);
-      AppLogger.debug('Люди в цитате: ${sw.elapsedMilliseconds} мс');
+      final out = await MailBodyProcessor.heavy(html, _quoteHeaders(mode, local));
+      AppLogger.debug('Шапки цитат: ${sw.elapsedMilliseconds} мс');
       return out;
     } catch (e) {
-      AppLogger.warning('Люди в цитате: $e');
+      AppLogger.warning('Шапки цитат: $e');
       return html;
     }
   }
+
+  /// Обработка шапок для изолята. Статическая — как [_nativeBuilder]:
+  /// замыкание внутри метода экрана захватило бы и сам экран.
+  static String Function(String) _quoteHeaders(QuotePeopleMode mode, QuoteHeaderText local) =>
+      (h) => QuotePeople.enrich(h,
+          shortNames: mode == QuotePeopleMode.short, people: mode != QuotePeopleMode.off, local: local);
 
   void _onBodyLink(EmailModel email, String url, String? text) {
     // Плашка человека в шапке цитаты (1.10.3, экспериментально) — карточка;

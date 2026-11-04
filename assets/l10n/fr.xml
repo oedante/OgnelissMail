@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">L\'archive est illisible : elle est endommagée ou dans un format inconnu de l\'application (7z, RAR). Ouvrez-la dans une autre application.</string>
     <string name="pdfProtected">Ce PDF est protégé par un mot de passe. Ouvrez-le dans une autre application.</string>
     <string name="faq_mail_10_q">Quelles pièces jointes s\'ouvrent directement dans l\'application ?</string>
-    <string name="faq_mail_10_a">Les archives ZIP, même protégées par mot de passe, ainsi que TAR, GZ, BZ2 et XZ s\'ouvrent directement dans l\'application : touchez un fichier pour l\'ouvrir. Les PDF sur Android, les images, le texte et le CSV, les messages .eml et les billets .pkpass s\'ouvrent aussi dans l\'application. Sur iPhone et iPad, l\'aperçu d\'iOS affiche les PDF, les images et les documents Office. Le reste s\'ouvre dans une application adaptée, et tout fichier peut y être envoyé avec le bouton en haut. Les archives 7z et RAR s\'ouvrent seulement dans une autre application.</string>
+    <string name="faq_mail_10_a">Les documents Office (DOCX, XLSX, PPTX), les fichiers OpenDocument (ODT, ODS, ODP), RTF et CSV s’ouvrent directement dans l’application, en lecture seule — les macros ne sont jamais exécutées ; les feuilles de calcul s’affichent sous forme de grille avec leurs feuilles, les présentations sous forme de diapositives. Les archives ZIP, même protégées par mot de passe, ainsi que TAR, GZ, BZ2 et XZ s’ouvrent aussi dans l’application : touchez un fichier à l’intérieur pour l’ouvrir. Les PDF sur Android, les images, le texte, les messages .eml et les billets .pkpass s’ouvrent également dans l’application. Sur iPhone et iPad, Coup d’œil d’iOS affiche les PDF, les images, les documents Office, RTF et CSV, et l’application elle-même affiche les fichiers OpenDocument. Les anciens documents .doc, .xls et .ppt ainsi que les archives 7z et RAR s’ouvrent dans une autre application, et tout fichier peut y être envoyé avec le bouton en haut.</string>
     <string name="quickRepliesCardHint">Le texte est placé dans la réponse : vérifiez et envoyez</string>
     <string name="translateMsgLang">Langue du message : {lang}</string>
     <string name="translateDone">Traduit : {from} → {to}</string>
@@ -3799,4 +3799,23 @@
     <string name="mdmRuleNotifications">Notifications sans expéditeur ni objet</string>
     <string name="favoritesOrder">Ordre des vignettes</string>
     <string name="favoritesOrderHint">Faites glisser un élément par la poignée à droite — les vignettes du menu suivent cet ordre.</string>
+    <string name="docProtected">Le document est protégé par un mot de passe. Ouvrez-le dans une autre application.</string>
+    <string name="docLegacyFormat">L\'application ne peut pas encore afficher les documents au format Office 97–2003 (.doc, .xls, .ppt). Ouvrez le fichier dans une autre application.</string>
+    <string name="docTooLarge">Le document est trop volumineux pour l\'aperçu. Ouvrez-le dans une autre application.</string>
+    <string name="docTruncated">Le document est volumineux : seul le début est affiché. Ouvrez-le dans une autre application pour tout voir.</string>
+    <string name="docEmpty">Le document ne contient pas de texte.</string>
+    <string name="docSheetTruncated">La feuille est volumineuse : seul le début est affiché</string>
+    <string name="docSheetEmpty">La feuille est vide</string>
+    <string name="docSlideOf">Diapositive {n} sur {total}</string>
+    <string name="docPreviewSection">Aperçu des documents</string>
+    <string name="docPreview">Documents dans l\'application</string>
+    <string name="docPreviewDesc">Les documents, feuilles de calcul et présentations des messages s\'ouvrent ici même, sans autre application. Désactivé : dans l\'application prévue pour ce format.</string>
+    <string name="docPreviewIosNote">Sur iPhone et iPad, les documents Office, RTF et CSV sont affichés par Coup d\'œil d\'iOS. Ici, choisissez si l\'application affiche les fichiers OpenDocument, que Coup d\'œil n\'ouvre pas.</string>
+    <string name="docTypeText">Documents texte</string>
+    <string name="docTypeSheets">Feuilles de calcul</string>
+    <string name="docTypeCsv">CSV en tableau</string>
+    <string name="docTypeCsvDesc">Désactivé : en texte brut</string>
+    <string name="docTypeSlides">Présentations</string>
+    <string name="faq_mail_11_q">Comment désactiver l’aperçu des documents dans l’application ?</string>
+    <string name="faq_mail_11_a">Réglages → Messagerie → Aperçu des documents. L’interrupteur « Documents dans l’application » désactive entièrement l’aperçu : les documents s’ouvrent de nouveau dans l’application prévue pour leur format. En dessous, vous pouvez désactiver certains types et garder les autres : documents texte, feuilles de calcul, CSV en tableau (désactivé : en texte brut) et présentations. Un document volumineux s’affiche à partir du début ; pour le voir en entier, ouvrez-le dans une autre application avec le bouton en haut. Sur iPhone et iPad, ces réglages ne concernent que les fichiers OpenDocument : Coup d’œil d’iOS affiche le reste.</string>
 </resources>

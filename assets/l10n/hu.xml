@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Az archívum nem olvasható: sérült, vagy az alkalmazás által nem ismert formátumú (7z, RAR). Nyissa meg másik alkalmazásban.</string>
     <string name="pdfProtected">A PDF jelszóval védett. Nyissa meg másik alkalmazásban.</string>
     <string name="faq_mail_10_q">Mely mellékletek nyílnak meg közvetlenül az alkalmazásban?</string>
-    <string name="faq_mail_10_a">A ZIP-archívumok, a jelszóval védettek is, valamint a TAR, GZ, BZ2 és XZ közvetlenül az alkalmazásban nyílnak meg: koppintson egy fájlra a megnyitásához. Az alkalmazásban nyílnak meg a PDF-ek is Androidon, a képek, a szöveg és a CSV, az .eml levelek és a .pkpass jegyek. iPhone-on és iPaden az iOS gyorsnézete mutatja a PDF-eket, képeket és Office-dokumentumokat. Minden mást megfelelő alkalmazás nyit meg, és bármely fájl elküldhető oda a felső gombbal. A 7z- és RAR-archívumok csak másik alkalmazásban nyílnak meg.</string>
+    <string name="faq_mail_10_a">Az Office-dokumentumok (DOCX, XLSX, PPTX), az OpenDocument-fájlok (ODT, ODS, ODP), az RTF és a CSV közvetlenül az alkalmazásban nyílnak meg, csak olvasásra — a makrók sosem futnak le; a táblázatok munkalapos rácsként, a bemutatók diákként jelennek meg. A ZIP-archívumok, a jelszóval védettek is, valamint a TAR, GZ, BZ2 és XZ szintén az alkalmazásban nyílnak meg: koppintson egy benne lévő fájlra a megnyitásához. Az alkalmazásban nyílnak meg a PDF-ek is Androidon, a képek, a szöveg, az .eml levelek és a .pkpass jegyek. iPhone-on és iPaden az iOS Gyorsnézet mutatja a PDF-eket, a képeket, az Office-dokumentumokat, az RTF- és CSV-fájlokat, az OpenDocument-fájlokat pedig maga az alkalmazás. A régi .doc, .xls és .ppt dokumentumok, valamint a 7z- és RAR-archívumok másik alkalmazásban nyílnak meg, és bármely fájl elküldhető oda a felső gombbal.</string>
     <string name="quickRepliesCardHint">A szöveg a válaszba kerül – ellenőrizze és küldje el</string>
     <string name="translateMsgLang">Az üzenet nyelve: {lang}</string>
     <string name="translateDone">Lefordítva: {from} → {to}</string>
@@ -3799,4 +3799,23 @@
     <string name="mdmRuleNotifications">Értesítések feladó és tárgy nélkül</string>
     <string name="favoritesOrder">Csempék sorrendje</string>
     <string name="favoritesOrderHint">Húzza az elemet a jobb oldali fogantyúnál — a menü csempéi ezt a sorrendet követik.</string>
+    <string name="docProtected">A dokumentum jelszóval védett. Nyissa meg egy másik alkalmazásban.</string>
+    <string name="docLegacyFormat">Az alkalmazás még nem jeleníti meg a régi Office 97–2003 formátumú dokumentumokat (.doc, .xls, .ppt). Nyissa meg a fájlt egy másik alkalmazásban.</string>
+    <string name="docTooLarge">A dokumentum túl nagy az előnézethez. Nyissa meg egy másik alkalmazásban.</string>
+    <string name="docTruncated">A dokumentum nagy – csak az eleje látható. A teljeshez nyissa meg egy másik alkalmazásban.</string>
+    <string name="docEmpty">A dokumentumban nincs szöveg.</string>
+    <string name="docSheetTruncated">A munkalap nagy – csak az eleje látható</string>
+    <string name="docSheetEmpty">A munkalap üres</string>
+    <string name="docSlideOf">{n}. dia / {total}</string>
+    <string name="docPreviewSection">Dokumentumok előnézete</string>
+    <string name="docPreview">Dokumentumok az alkalmazásban</string>
+    <string name="docPreviewDesc">Az üzenetek dokumentumai, táblázatai és bemutatói itt nyílnak meg, más alkalmazás nélkül. Kikapcsolva: a formátum alkalmazásában.</string>
+    <string name="docPreviewIosNote">iPhone-on és iPaden az Office-, RTF- és CSV-dokumentumokat az iOS Gyorsnézet jeleníti meg. Itt választhatja ki, hogy az alkalmazás megjelenítse-e az OpenDocument-fájlokat, amelyeket a Gyorsnézet nem nyit meg.</string>
+    <string name="docTypeText">Szöveges dokumentumok</string>
+    <string name="docTypeSheets">Táblázatok</string>
+    <string name="docTypeCsv">CSV táblázatként</string>
+    <string name="docTypeCsvDesc">Kikapcsolva: egyszerű szövegként</string>
+    <string name="docTypeSlides">Bemutatók</string>
+    <string name="faq_mail_11_q">Hogyan kapcsolom ki a dokumentumok előnézetét az alkalmazásban?</string>
+    <string name="faq_mail_11_a">Beállítások → Levelezés → Dokumentumok előnézete. A Dokumentumok az alkalmazásban kapcsoló teljesen kikapcsolja az előnézetet: a dokumentumok ismét a formátumuk alkalmazásában nyílnak meg. Alatta egyes típusok kikapcsolhatók, a többi megtartható: szöveges dokumentumok, táblázatok, CSV táblázatként (kikapcsolva: egyszerű szövegként) és bemutatók. Nagy dokumentumból az eleje jelenik meg; a teljes dokumentum a felső gombbal nyitható meg másik alkalmazásban. iPhone-on és iPaden ezek a beállítások csak az OpenDocument-fájlokra vonatkoznak: a többit az iOS Gyorsnézet mutatja.</string>
 </resources>

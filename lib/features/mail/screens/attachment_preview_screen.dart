@@ -14,6 +14,11 @@
 //   текст       — чтение файла (с ограничением размера, чтобы не съесть память);
 //   письмо .eml — как письмо: заголовки, тело в том же защищённом WebView,
 //                 свои вложения (тоже открываются здесь же);
+//   документы   — DOCX, ODT, RTF — как письмо (HTML в том же окне); XLSX, ODS,
+//                 CSV — сеткой листа; PPTX, ODP — слайдами (1.11.x, разбор —
+//                 lib/services/documents/). iPhone и iPad: Office, RTF и CSV
+//                 — «Просмотром» iOS, OpenDocument (его «Просмотр» не
+//                 показывает) — здесь;
 //   остальное   — предложение открыть во внешнем приложении.
 
 import '../../../core/platform/download_saver.dart';
@@ -39,6 +44,16 @@ import '../widgets/mail_html_view.dart';
 import '../widgets/desktop_mail_body.dart';
 import '../widgets/pdf_view.dart';
 import '../widgets/zip_view.dart';
+import '../widgets/doc_sheet_view.dart';
+import '../widgets/doc_slides_view.dart';
+import '../../../services/documents/doc_sheets.dart';
+import '../../../services/documents/doc_slides.dart';
+import '../../../services/documents/doc_preview_settings.dart';
+import '../../../services/documents/office_document.dart';
+import '../../../services/documents/office_package.dart';
+import '../../../services/documents/office_reader.dart';
+import '../../../core/logging/app_logger.dart';
+import '../../../widgets/ui/banner_button.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../services/mail/pkpass_parser.dart';
 import '../../../services/mail/eml_reader.dart';
@@ -52,7 +67,7 @@ import '../../../services/security/smime_service.dart';
 import '../../../services/security/smime_mime.dart';
 import '../../../core/platform/app_share.dart';
 
-enum _Kind { image, pdf, text, pass, mail, zip, other }
+enum _Kind { image, pdf, text, pass, mail, zip, document, other }
 
 /// Одна вкладка предпросмотра: файл + подпись.
 class PreviewItem {
@@ -112,6 +127,28 @@ class AttachmentPreviewScreen extends StatefulWidget {
     // внутри приложения, а билет .pkpass добавляет в Wallet.
     if (PackedArchive.kindOf(name) != null) return true;
     final ios = !kIsWeb && Platform.isIOS;
+    // Документы (1.11.x, план владельца 04.11.2026): на Android и компьютере
+    // — здесь (как Outlook показывает вложение в области чтения; своя
+    // программа — кнопкой вверху). На iPhone и iPad «Просмотр» iOS
+    // показывает Office, RTF и CSV движком системы, он и остаётся; а
+    // OpenDocument он не показывает (раньше — сразу лист «Поделиться») —
+    // такие документы теперь тоже здесь. Выключенные в настройках виды
+    // (DocPreviewSettings) — как раньше: CSV — текстом ниже, остальное —
+    // своей программой.
+    final docOn = DocPreviewSettings.allows(name, mimeType: item.mimeType);
+    if (docOn && OfficeFormats.of(name, mimeType: item.mimeType) != null) {
+      return !ios || !FileOpener.quickLookShows(name);
+    }
+    // Старый .doc, который на деле RTF или DOCX (так сохраняют многие
+    // программы), — тоже документом; настоящий .doc — своей программой.
+    if (docOn && !ios && OfficeFormats.isLegacy(name)) {
+      try {
+        final head = await File(item.filePath).openRead(0, 8).fold<List<int>>(<int>[], (a, b) => a..addAll(b));
+        return OfficeReader.previews(name, head: Uint8List.fromList(head));
+      } catch (_) {
+        return false;
+      }
+    }
     if (ext == 'pdf') return NativePdf.supported;
     if (!ios && (_imageExt.contains(ext) || _textExt.contains(ext) || ext == 'pkpass')) return true;
     // Exchange отдаёт вложенное письмо и без расширения — по началу файла.
@@ -131,7 +168,7 @@ class AttachmentPreviewScreen extends StatefulWidget {
 
 
   static const _imageExt = {'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'};
-  static const _textExt = {'txt', 'log', 'csv', 'json', 'xml', 'md', 'yaml', 'yml', 'ini'};
+  static const _textExt = {'txt', 'log', 'csv', 'tsv', 'json', 'xml', 'md', 'yaml', 'yml', 'ini'};
 
   /// Все вложения письма — чтобы листать между ними, не возвращаясь назад.
   final List<PreviewItem> items;
@@ -178,6 +215,12 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   final Map<int, String> _texts = {};
   final Map<int, PkPass> _passes = {};
   final Map<int, EmlMessage> _mails = {};
+
+  /// Разобранные документы (1.11.x) и HTML текстовых — очищенный и
+  /// собранный для окна письма.
+  final Map<int, OfficeDoc> _docs = {};
+  final Map<int, String> _docHtml = {};
+  final Map<int, MailHtmlDocument> _docMail = {};
 
   /// Итог S/MIME (подпись, расшифровка) для вкладки письма.
   final Map<int, SmimeOpenResult> _smime = {};
@@ -259,6 +302,9 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         _sniffedMail.contains(i)) {
       return _Kind.mail;
     }
+    // Документ — до текста: CSV показывается таблицей, а не строками
+    // (выключено в настройках — текстом, как раньше).
+    if (DocPreviewSettings.allows(name, mimeType: widget.items[i].mimeType)) return _Kind.document;
     if (AttachmentPreviewScreen._textExt.contains(ext)) return _Kind.text;
     return _Kind.other;
   }
@@ -297,6 +343,9 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
           break;
         case _Kind.mail:
           await _loadMail(i);
+          break;
+        case _Kind.document:
+          await _loadDocument(i);
           break;
         case _Kind.other:
           // Вложенное письмо без расширения (так его отдаёт Exchange) —
@@ -365,6 +414,50 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
     _mails[i] = m;
   }
 
+  /// Разобрать документ (в изоляте, с пределами — OfficeReader) и, если он
+  /// текстовый, подготовить HTML так же, как тело вложенного письма:
+  /// санитайзер, затем документ окна письма (без сети и JavaScript).
+  Future<void> _loadDocument(int i) async {
+    final item = widget.items[i];
+    // Строки — после initState: вкладка, открытая первой, грузится из него,
+    // а там обращаться к локализации нельзя.
+    await Future<void>.value();
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
+    try {
+      final doc = await OfficeReader.readFile(item.filePath, item.fileName,
+          mimeType: item.mimeType, lang: l10n.localeCode);
+      if (doc is OfficeTextDoc) {
+        if (doc.isEmpty) {
+          _errors[i] = l10n.tr('docEmpty');
+          _plainErrors.add(i);
+          return;
+        }
+        final html = await MailBodyProcessor.heavy(doc.html, HtmlSanitizer.sanitizeKeepingStyles);
+        _docHtml[i] = html;
+        if (mailWebViewSupported) {
+          _docMail[i] = await MailHtmlDocument.buildAsync(html, allowRemoteImages: false, inlineImages: _cidImages(doc));
+        }
+      }
+      _docs[i] = doc;
+    } on OfficeDocException catch (e) {
+      AppLogger.debug('Предпросмотр документа: $e');
+      _errors[i] = switch (e.kind) {
+        OfficeDocError.encrypted => l10n.tr('docProtected'),
+        OfficeDocError.legacy => l10n.tr('docLegacyFormat'),
+        OfficeDocError.tooLarge => l10n.tr('docTooLarge'),
+        OfficeDocError.damaged => l10n.tr('fileDamaged'),
+        OfficeDocError.unsupported => l10n.tr('previewUnsupported'),
+      };
+      _plainErrors.add(i);
+    }
+  }
+
+  /// Картинки документа по ключу cid — строчными, как их ищут окно письма и
+  /// показ виджетами (Content-ID письма нормализуется так же).
+  static Map<String, String> _cidImages(OfficeTextDoc doc) =>
+      {for (final e in doc.images.entries) e.key.toLowerCase(): e.value};
+
   IconData _iconOf(int i) {
     switch (_kindOf(i)) {
       case _Kind.image:
@@ -379,6 +472,11 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         return AppIcons.confirmation_number;
       case _Kind.mail:
         return AppIcons.mail;
+      case _Kind.document:
+        final f = OfficeFormats.of(widget.items[i].fileName, mimeType: widget.items[i].mimeType);
+        if (f != null && OfficeFormats.isSheet(f)) return AppIcons.table_chart;
+        if (f != null && OfficeFormats.isSlides(f)) return AppIcons.slideshow;
+        return AppIcons.description;
       case _Kind.other:
         return AppIcons.insert_drive_file;
     }
@@ -582,6 +680,11 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         if (m == null) return const Center(child: CircularProgressIndicator());
         return _mailView(i, m, l10n);
 
+      case _Kind.document:
+        final doc = _docs[i];
+        if (doc == null) return const Center(child: CircularProgressIndicator());
+        return _documentView(i, doc, l10n);
+
       case _Kind.other:
         // Пока проверяем, не письмо ли это, — индикатор, а не «не умею».
         if (!_loaded.contains(i) || _pending.contains(i)) {
@@ -592,6 +695,78 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
             ru,
             l10n.tr('previewUnsupported'));
     }
+  }
+
+  /// Документ: текстовый — как тело письма (окно письма или виджеты на
+  /// компьютере), таблица — сеткой, презентация — слайдами. Показана только
+  /// часть — плашка сверху с другим приложением (у таблицы строка об этом —
+  /// на самом листе).
+  Widget _documentView(int i, OfficeDoc doc, AppLocalizations l10n) {
+    final note = doc.truncated && doc is! OfficeSheetsDoc ? _docTruncatedNote(i, l10n) : null;
+    if (doc is OfficeSheetsDoc) return DocSheetView(doc: doc);
+    if (doc is OfficeSlidesDoc) {
+      if (note == null) return DocSlidesView(doc: doc);
+      return Column(children: [
+        Padding(padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0), child: note),
+        Expanded(child: DocSlidesView(doc: doc)),
+      ]);
+    }
+    final theme = Theme.of(context);
+    final html = _docHtml[i] ?? '';
+    final mailDoc = _docMail[i];
+    final text = doc as OfficeTextDoc;
+    return ListView(
+      padding: const EdgeInsets.all(Space.l),
+      children: [
+        if (note != null) Padding(padding: const EdgeInsets.only(bottom: Space.m), child: note),
+        if (mailDoc != null)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: MailHtmlView(
+              key: ValueKey('doc_${i}_${theme.brightness.name}'),
+              document: mailDoc,
+              allowRemoteImages: false,
+              textScale: _fontScale,
+              pageColor: mailPageColor(theme),
+              dark: theme.brightness == Brightness.dark,
+              onLink: (url, linkText) => LinkOpener.open(context, url, linkText: linkText),
+            ),
+          )
+        else
+          DesktopMailBody(
+            html: html,
+            images: _cidImages(text),
+            textScale: _fontScale,
+            onLink: (url, linkText) => LinkOpener.open(context, url, linkText: linkText),
+          ),
+      ],
+    );
+  }
+
+  /// «Документ большой — показано только начало» и другое приложение.
+  Widget _docTruncatedNote(int i, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.xs, Space.xs),
+      decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHigh, borderRadius: BorderRadius.circular(8)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Icon(AppIcons.article, size: 18, color: muted),
+          const SizedBox(width: Space.s),
+          Expanded(child: Text(l10n.tr('docTruncated'), style: theme.textTheme.bodyMedium?.copyWith(color: muted))),
+        ]),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: BannerButton(
+            label: l10n.tr('openExternallyApp'),
+            icon: AppIcons.open_in_new,
+            onPressed: () =>
+                AttachmentSafety.openExternally(context, widget.items[i].filePath, widget.items[i].fileName),
+          ),
+        ),
+      ]),
+    );
   }
 
   /// Билет .pkpass карточкой: цвета билета, организация, лицевые поля
@@ -877,8 +1052,10 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
 
   Widget _fallback(int i, bool ru, String message) {
     final l10n = AppLocalizations.of(context);
+    // Прокрутка (1.11.x): длинная причина («Документы старого формата…»)
+    // на телефоне в альбомной ориентации не помещалась.
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(Space.xxl),
         child: Column(
           mainAxisSize: MainAxisSize.min,

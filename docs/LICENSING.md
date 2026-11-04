@@ -1,6 +1,6 @@
 # Licensing
 
-*Not legal advice. Updated 28 October 2026.*
+*Not legal advice. Updated 4 November 2026.*
 
 ## 1. Ogneliss Mail
 
@@ -139,6 +139,66 @@ pledge turned out to forbid commercial distribution):
   licence text and NOTICE shipped in the app (Settings → About → Licence
   texts), attribution where required, and a row in the table in section 2.
 
+## 6. Document formats (attachment preview, 1.11.x)
+
+Since 1.11.x the app shows attachments in DOCX, XLSX, PPTX (and their
+macro-enabled, template and slide-show variants), ODT, ODS, ODP, RTF and CSV
+read-only, inside the app. The readers (`lib/services/documents/`) are
+written for the project from the public format specifications: no code of
+Microsoft, Oracle, LibreOffice or anyone else and no new libraries. Macros
+are never run (the macro part is not even read). Checked 4 November 2026:
+
+- **Office Open XML** (ECMA-376, ISO/IEC 29500; Microsoft's notes
+  [MS-OE376], [MS-OI29500]) is on the list of specifications covered by the
+  **Microsoft Open Specification Promise** (OSP,
+  [MS-DEVCENTLP](https://learn.microsoft.com/en-us/openspecs/dev_center/ms-devcentlp/1c24c7c8-28b0-4ce1-a47d-95fe1ff504bc)):
+  "Microsoft irrevocably promises not to assert any Microsoft Necessary
+  Claims against you for making, using, selling, offering for sale,
+  importing or distributing any implementation to the extent it conforms to
+  a Covered Specification." The OSP FAQ: it "applies whether you have a full
+  or partial implementation" (a viewer is a partial one) and applies
+  "without regard to the development model … the type of copyright licenses
+  … or the business model of distributors/implementers"; it is a personal
+  promise to every implementer, including users and forks. The only
+  condition is defensive: it stops for someone who sues Microsoft over its
+  implementation of the same specification. **Unlike the Interoperability
+  Principles pledge that covers Exchange ActiveSync (section 3), the OSP has
+  no restriction on commercial distribution** — store builds, forks and
+  paid redistribution are all covered.
+- **OpenDocument** (OASIS ODF 1.0–1.3, ISO/IEC 26300) is on the same OSP
+  list. In addition the OASIS ODF TC works under the "RF on Limited Terms"
+  mode of the OASIS IPR Policy (royalty-free licences from the participants),
+  and the *Sun Microsystems OpenDocument Patent Statement* (29 September
+  2005, [oasis-open.org](https://www.oasis-open.org/committees/office/ipr.php))
+  irrevocably covenants not to enforce Sun's patents against any
+  implementation of OpenDocument (reciprocity condition only).
+- **RTF** (Microsoft Rich Text Format Specification 1.9.1) appears as
+  "[RTF]: Rich Text Format" in the Office file formats part of the OSP list.
+- **CSV** — RFC 4180 (informational); no IETF patent disclosures were found;
+  the format is decades older than any such patent.
+- The old binary formats [MS-DOC], [MS-XLS], [MS-PPT] (not implemented; the
+  app says so and offers another app) are on the OSP list too.
+- **Specification texts.** The Microsoft Open Specifications notice and the
+  Ecma and OASIS copyright policies allow using the documents to write
+  implementations. No specification text or schema is copied into the app.
+- **Trademarks.** "Microsoft", "Word", "Excel", "PowerPoint" — only in text
+  that truthfully states compatibility ("previews documents in DOCX, XLSX,
+  PPTX…", "works with documents created in Microsoft Word, Excel and
+  PowerPoint"), never in the app name, icon or screenshots, and without
+  "official" or "certified" (Microsoft trademark guidelines).
+- **How it was checked.** The cloud session's network policy blocked
+  learn.microsoft.com, oasis-open.org and ecma-international.org, so the
+  quotes above come from search-engine extracts of those primary pages, not
+  from the pages read in full. Before announcing the feature, open the OSP
+  page (covered list: Office Open XML, OpenDocument, RTF) and the Sun
+  statement by the links above and confirm.
+- **Not covered by this check:** the Exchange-specific formats [MS-OXTNEF]
+  (winmail.dat — the app already extracts files from it,
+  `lib/services/mail/tnef/tnef_decoder.dart`), [MS-OXRTFCP] (compressed RTF),
+  [MS-OXRTFEX] (HTML inside RTF) and [MS-OXMSG] (.msg). Their documents say
+  they "might be covered by" the OSP or the Community Promise; check them
+  separately.
+
 ---
 
 # Лицензирование (кратко)
@@ -184,6 +244,21 @@ pledge turned out to forbid commercial distribution):
   распространяет изменённую версию за деньги, оно не распространяется.
 - **Товарные знаки Microsoft** — только словами «работает с Microsoft
   Exchange», без логотипов.
+- **Предпросмотр документов** (1.11.x: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF,
+  CSV — только чтение, макросы не выполняются) написан самостоятельно по
+  открытым спецификациям, без чужого кода и новых библиотек. Патенты:
+  Office Open XML, OpenDocument и RTF — в списке **Open Specification
+  Promise** Microsoft (бесповоротное обещание не предъявлять патенты к любой,
+  в том числе частичной, реализации; **без условия о некоммерческом
+  распространении** — в отличие от обещания для Exchange ActiveSync; одно
+  условие — не судиться с Microsoft из-за той же спецификации); для
+  OpenDocument ещё — патентное обещание Sun (2005) и режим OASIS без
+  отчислений. CSV (RFC 4180) — патентных заявлений нет. Товарные знаки Word,
+  Excel, PowerPoint — только словами о совместимости. Цитаты сверены по
+  выдержкам поисковика: сами страницы Microsoft и OASIS сеть облачного
+  сеанса не открыла — перед объявлением функции открыть их по ссылкам из
+  раздела 6 и подтвердить. Отдельно проверить форматы Exchange: TNEF
+  (winmail.dat — его приложение уже разбирает), сжатый RTF, .msg.
 - **Новые зависимости** (пакеты, библиотеки, SDK, шрифты, внешние сервисы и
   API) — только после проверки лицензии и условий (правило владельца
   31.10.2026, после истории с Exchange ActiveSync). Платный функционал и

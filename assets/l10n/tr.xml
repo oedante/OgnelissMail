@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Arşiv okunamıyor: bozuk veya uygulamanın tanımadığı bir biçimde (7z, RAR). Başka bir uygulamada açın.</string>
     <string name="pdfProtected">PDF parolayla korunuyor. Başka bir uygulamada açın.</string>
     <string name="faq_mail_10_q">Hangi ekler doğrudan uygulamada açılır?</string>
-    <string name="faq_mail_10_a">Parolalı olanlar dahil ZIP arşivleri ile TAR, GZ, BZ2 ve XZ doğrudan uygulamada açılır: açmak için içindeki bir dosyaya dokunun. Android\'de PDF\'ler, görseller, metin ve CSV, .eml iletileri ve .pkpass biletleri de uygulamada açılır. iPhone ve iPad\'de iOS Hızlı Bakış PDF\'leri, görselleri ve Office belgelerini gösterir. Diğerleri uygun bir uygulamada açılır ve her dosya üstteki düğmeyle oraya gönderilebilir. 7z ve RAR arşivleri yalnızca başka bir uygulamada açılır.</string>
+    <string name="faq_mail_10_a">Office belgeleri (DOCX, XLSX, PPTX), OpenDocument dosyaları (ODT, ODS, ODP), RTF ve CSV doğrudan uygulamada, salt okunur olarak açılır — makrolar hiçbir zaman çalıştırılmaz; tablolar sayfalarıyla birlikte ızgara olarak, sunular slayt olarak görünür. Parolalı olanlar dahil ZIP arşivleri ile TAR, GZ, BZ2 ve XZ de uygulamada açılır: açmak için içindeki bir dosyaya dokunun. Android\'de PDF\'ler, görseller, metin, .eml iletileri ve .pkpass biletleri de uygulamada açılır. iPhone ve iPad\'de iOS Hızlı Bakış PDF\'leri, görselleri, Office belgelerini, RTF ve CSV\'yi gösterir; OpenDocument dosyalarını ise uygulamanın kendisi gösterir. Eski .doc, .xls ve .ppt belgeleri ile 7z ve RAR arşivleri başka bir uygulamada açılır ve her dosya üstteki düğmeyle oraya gönderilebilir.</string>
     <string name="quickRepliesCardHint">Metin yanıta eklenir — kontrol edip gönderin</string>
     <string name="translateMsgLang">İleti dili: {lang}</string>
     <string name="translateDone">Çevrildi: {from} → {to}</string>
@@ -3799,4 +3799,23 @@
     <string name="mdmRuleNotifications">Gönderen ve konu olmadan bildirimler</string>
     <string name="favoritesOrder">Kutucuk sırası</string>
     <string name="favoritesOrderHint">Öğeyi sağdaki tutamaçtan sürükleyin — menüdeki kutucuklar bu sırayı izler.</string>
+    <string name="docProtected">Belge parolayla korunuyor. Başka bir uygulamada açın.</string>
+    <string name="docLegacyFormat">Uygulama eski Office 97–2003 biçimindeki belgeleri (.doc, .xls, .ppt) henüz gösteremiyor. Dosyayı başka bir uygulamada açın.</string>
+    <string name="docTooLarge">Belge önizleme için çok büyük. Başka bir uygulamada açın.</string>
+    <string name="docTruncated">Belge büyük — yalnızca başlangıcı gösteriliyor. Tamamını görmek için başka bir uygulamada açın.</string>
+    <string name="docEmpty">Belgede metin yok.</string>
+    <string name="docSheetTruncated">Sayfa büyük — yalnızca başlangıcı gösteriliyor</string>
+    <string name="docSheetEmpty">Sayfa boş</string>
+    <string name="docSlideOf">Slayt {n} / {total}</string>
+    <string name="docPreviewSection">Belge önizleme</string>
+    <string name="docPreview">Belgeler uygulamada</string>
+    <string name="docPreviewDesc">İletilerdeki belgeler, tablolar ve sunular başka uygulama olmadan burada açılır. Kapalıyken o biçimin uygulamasında açılır.</string>
+    <string name="docPreviewIosNote">iPhone ve iPad\'de Office, RTF ve CSV belgelerini iOS Hızlı Bakış gösterir. Burada, Hızlı Bakış\'ın açamadığı OpenDocument dosyalarını uygulamanın gösterip göstermeyeceğini seçersiniz.</string>
+    <string name="docTypeText">Metin belgeleri</string>
+    <string name="docTypeSheets">Tablolar</string>
+    <string name="docTypeCsv">CSV tablo olarak</string>
+    <string name="docTypeCsvDesc">Kapalıyken düz metin olarak</string>
+    <string name="docTypeSlides">Sunular</string>
+    <string name="faq_mail_11_q">Uygulamadaki belge önizlemeyi nasıl kapatırım?</string>
+    <string name="faq_mail_11_a">Ayarlar → E-posta → Belge önizleme. Belgeler uygulamada anahtarı önizlemeyi tamamen kapatır: belgeler yeniden kendi biçimlerinin uygulamasında açılır. Altında bazı türleri kapatıp diğerlerini açık bırakabilirsiniz: metin belgeleri, tablolar, CSV tablo olarak (kapalıyken düz metin olarak) ve sunular. Büyük bir belgenin başlangıcı gösterilir; tamamını görmek için üstteki düğmeyle başka bir uygulamada açın. iPhone ve iPad\'de bu ayarlar yalnızca OpenDocument dosyalarını etkiler: geri kalanını iOS Hızlı Bakış gösterir.</string>
 </resources>

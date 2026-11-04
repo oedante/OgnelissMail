@@ -3656,7 +3656,7 @@
     <string name="zipCannotRead">לא ניתן לקרוא את הארכיון: הוא פגום או בפורמט שהאפליקציה אינה מכירה (7z, RAR). פתחו אותו באפליקציה אחרת.</string>
     <string name="pdfProtected">קובץ ה-PDF מוגן בסיסמה. פתחו אותו באפליקציה אחרת.</string>
     <string name="faq_mail_10_q">אילו קבצים מצורפים נפתחים ישירות באפליקציה?</string>
-    <string name="faq_mail_10_a">ארכיוני ZIP, גם כאלה המוגנים בסיסמה, וגם TAR, GZ, BZ2 ו-XZ נפתחים ישירות באפליקציה: הקישו על קובץ בתוכם כדי לפתוח אותו. גם קובצי PDF ב-Android, תמונות, טקסט ו-CSV, הודעות .eml וכרטיסי .pkpass נפתחים באפליקציה. ב-iPhone וב-iPad, התצוגה המהירה של iOS מציגה קובצי PDF, תמונות ומסמכי Office. כל השאר נפתח באפליקציה מתאימה, ואפשר לשלוח אליה כל קובץ בכפתור למעלה. ארכיוני 7z ו-RAR נפתחים רק באפליקציה אחרת.</string>
+    <string name="faq_mail_10_a">מסמכי Office (DOCX, XLSX, PPTX), קובצי OpenDocument (ODT, ODS, ODP), RTF ו-CSV נפתחים ישירות באפליקציה, לקריאה בלבד — פקודות מאקרו אף פעם לא מורצות; גיליונות אלקטרוניים מוצגים כרשת עם גיליונות, ומצגות — כשקופיות. גם ארכיוני ZIP, כולל כאלה המוגנים בסיסמה, וגם TAR, GZ, BZ2 ו-XZ נפתחים באפליקציה: הקישו על קובץ בתוכם כדי לפתוח אותו. גם קובצי PDF ב-Android, תמונות, טקסט, הודעות .eml וכרטיסי .pkpass נפתחים באפליקציה. ב-iPhone וב-iPad, התצוגה המהירה של iOS מציגה קובצי PDF, תמונות, מסמכי Office, RTF ו-CSV, ואת קובצי OpenDocument מציגה האפליקציה עצמה. מסמכים ישנים מסוג .doc, .xls ו-.ppt וארכיוני 7z ו-RAR נפתחים באפליקציה אחרת, ואפשר לשלוח אליה כל קובץ בכפתור למעלה.</string>
     <string name="quickRepliesCardHint">הטקסט ייכנס לתשובה — בדקו ושלחו</string>
     <string name="translateMsgLang">שפת ההודעה: {lang}</string>
     <string name="translateDone">תורגם: {from} ← {to}</string>
@@ -3820,4 +3820,23 @@
     <string name="mdmRuleNotifications">התראות בלי שולח ונושא</string>
     <string name="favoritesOrder">סדר האריחים</string>
     <string name="favoritesOrderHint">גררו פריט בידית שמימין — האריחים בתפריט יופיעו בסדר הזה.</string>
+    <string name="docProtected">המסמך מוגן בסיסמה. פתחו אותו באפליקציה אחרת.</string>
+    <string name="docLegacyFormat">האפליקציה עדיין לא מציגה מסמכים בתבנית הישנה של Office 97–2003 (.doc, .xls, .ppt). פתחו את הקובץ באפליקציה אחרת.</string>
+    <string name="docTooLarge">המסמך גדול מדי לתצוגה מקדימה. פתחו אותו באפליקציה אחרת.</string>
+    <string name="docTruncated">המסמך גדול — מוצגת רק ההתחלה. כדי לראות את כולו, פתחו אותו באפליקציה אחרת.</string>
+    <string name="docEmpty">אין טקסט במסמך.</string>
+    <string name="docSheetTruncated">הגיליון גדול — מוצגת רק ההתחלה</string>
+    <string name="docSheetEmpty">הגיליון ריק</string>
+    <string name="docSlideOf">שקופית {n} מתוך {total}</string>
+    <string name="docPreviewSection">תצוגה מקדימה של מסמכים</string>
+    <string name="docPreview">מסמכים באפליקציה</string>
+    <string name="docPreviewDesc">מסמכים, גיליונות ומצגות מההודעות נפתחים כאן, בלי אפליקציה אחרת. כשהאפשרות כבויה — באפליקציה של אותה תבנית.</string>
+    <string name="docPreviewIosNote">ב-iPhone וב-iPad מסמכי Office,‏ RTF ו-CSV מוצגים בתצוגה המהירה של iOS. כאן בוחרים אם האפליקציה תציג קובצי OpenDocument, שהתצוגה המהירה לא פותחת.</string>
+    <string name="docTypeText">מסמכי טקסט</string>
+    <string name="docTypeSheets">גיליונות אלקטרוניים</string>
+    <string name="docTypeCsv">CSV כטבלה</string>
+    <string name="docTypeCsvDesc">כשהאפשרות כבויה — כטקסט פשוט</string>
+    <string name="docTypeSlides">מצגות</string>
+    <string name="faq_mail_11_q">איך מכבים את התצוגה המקדימה של מסמכים באפליקציה?</string>
+    <string name="faq_mail_11_a">הגדרות → דואר → תצוגה מקדימה של מסמכים. המתג מסמכים באפליקציה מכבה את התצוגה המקדימה לגמרי: המסמכים שוב נפתחים באפליקציה של התבנית שלהם. מתחתיו אפשר לכבות סוגים מסוימים ולהשאיר את השאר: מסמכי טקסט, גיליונות אלקטרוניים, CSV כטבלה (כשהאפשרות כבויה — כטקסט פשוט) ומצגות. ממסמך גדול מוצגת ההתחלה; כדי לראות את כולו, פתחו אותו באפליקציה אחרת בכפתור למעלה. ב-iPhone וב-iPad ההגדרות האלה חלות רק על קובצי OpenDocument: את השאר מציגה התצוגה המהירה של iOS.</string>
 </resources>

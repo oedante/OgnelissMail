@@ -3786,4 +3786,13 @@
     <string name="docSheetTruncated">Trang tính lớn — chỉ hiển thị phần đầu</string>
     <string name="docSheetEmpty">Trang tính trống</string>
     <string name="docSlideOf">Trang chiếu {n}/{total}</string>
+    <string name="docPreviewSection">Xem trước tài liệu</string>
+    <string name="docPreview">Tài liệu trong ứng dụng</string>
+    <string name="docPreviewDesc">Tài liệu, bảng tính và bản trình bày trong thư mở ngay tại đây, không cần ứng dụng khác. Khi tắt — mở bằng ứng dụng cho định dạng đó.</string>
+    <string name="docPreviewIosNote">Trên iPhone và iPad, tài liệu Office, RTF và CSV được hiển thị bằng Xem nhanh của iOS. Tại đây bạn chọn ứng dụng có hiển thị tệp OpenDocument hay không — Xem nhanh không mở được chúng.</string>
+    <string name="docTypeText">Tài liệu văn bản</string>
+    <string name="docTypeSheets">Bảng tính</string>
+    <string name="docTypeCsv">CSV dạng bảng</string>
+    <string name="docTypeCsvDesc">Khi tắt — hiển thị dạng văn bản thuần</string>
+    <string name="docTypeSlides">Bản trình bày</string>
 </resources>

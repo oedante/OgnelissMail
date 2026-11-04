@@ -3828,4 +3828,13 @@
     <string name="docSheetTruncated">List je velký — zobrazuje se jen začátek</string>
     <string name="docSheetEmpty">List je prázdný</string>
     <string name="docSlideOf">Snímek {n} z {total}</string>
+    <string name="docPreviewSection">Náhled dokumentů</string>
+    <string name="docPreview">Dokumenty v aplikaci</string>
+    <string name="docPreviewDesc">Dokumenty, tabulky a prezentace ze zpráv se otevírají přímo zde, bez jiné aplikace. Vypnuto — v aplikaci pro daný formát.</string>
+    <string name="docPreviewIosNote">Na iPhonu a iPadu zobrazuje dokumenty Office, RTF a CSV Rychlý náhled systému iOS. Zde zvolíte, zda má aplikace zobrazovat soubory OpenDocument, které Rychlý náhled neotevře.</string>
+    <string name="docTypeText">Textové dokumenty</string>
+    <string name="docTypeSheets">Tabulky</string>
+    <string name="docTypeCsv">CSV jako tabulka</string>
+    <string name="docTypeCsvDesc">Vypnuto — jako prostý text</string>
+    <string name="docTypeSlides">Prezentace</string>
 </resources>

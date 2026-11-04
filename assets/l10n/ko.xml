@@ -3786,4 +3786,13 @@
     <string name="docSheetTruncated">시트가 커서 앞부분만 표시됩니다</string>
     <string name="docSheetEmpty">시트가 비어 있습니다</string>
     <string name="docSlideOf">슬라이드 {n}/{total}</string>
+    <string name="docPreviewSection">문서 미리 보기</string>
+    <string name="docPreview">앱에서 문서 보기</string>
+    <string name="docPreviewDesc">메일의 문서, 스프레드시트, 프레젠테이션을 다른 앱 없이 여기에서 엽니다. 끄면 해당 형식의 앱에서 엽니다.</string>
+    <string name="docPreviewIosNote">iPhone과 iPad에서는 Office, RTF, CSV 문서를 iOS 훑어보기로 표시합니다. 여기에서는 훑어보기로 열 수 없는 OpenDocument 파일을 앱에서 표시할지 선택합니다.</string>
+    <string name="docTypeText">텍스트 문서</string>
+    <string name="docTypeSheets">스프레드시트</string>
+    <string name="docTypeCsv">CSV를 표로 보기</string>
+    <string name="docTypeCsvDesc">끄면 일반 텍스트로 표시</string>
+    <string name="docTypeSlides">프레젠테이션</string>
 </resources>

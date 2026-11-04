@@ -3786,4 +3786,13 @@
     <string name="docSheetTruncated">シートが大きいため、先頭のみ表示しています</string>
     <string name="docSheetEmpty">シートは空です</string>
     <string name="docSlideOf">スライド {n}/{total}</string>
+    <string name="docPreviewSection">文書のプレビュー</string>
+    <string name="docPreview">アプリ内で文書を表示</string>
+    <string name="docPreviewDesc">メッセージの文書、スプレッドシート、プレゼンテーションを他のアプリを使わずにここで開きます。オフにすると、その形式のアプリで開きます。</string>
+    <string name="docPreviewIosNote">iPhone と iPad では、Office、RTF、CSV の文書は iOS のクイックルックで表示されます。ここでは、クイックルックで開けない OpenDocument ファイルをアプリで表示するかどうかを選びます。</string>
+    <string name="docTypeText">テキスト文書</string>
+    <string name="docTypeSheets">スプレッドシート</string>
+    <string name="docTypeCsv">CSV を表として表示</string>
+    <string name="docTypeCsvDesc">オフ：プレーンテキストで表示</string>
+    <string name="docTypeSlides">プレゼンテーション</string>
 </resources>

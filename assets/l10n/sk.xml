@@ -3828,4 +3828,13 @@
     <string name="docSheetTruncated">Hárok je veľký — zobrazuje sa len začiatok</string>
     <string name="docSheetEmpty">Hárok je prázdny</string>
     <string name="docSlideOf">Snímka {n} z {total}</string>
+    <string name="docPreviewSection">Náhľad dokumentov</string>
+    <string name="docPreview">Dokumenty v aplikácii</string>
+    <string name="docPreviewDesc">Dokumenty, tabuľky a prezentácie zo správ sa otvárajú priamo tu, bez inej aplikácie. Vypnuté — v aplikácii pre daný formát.</string>
+    <string name="docPreviewIosNote">Na iPhone a iPade zobrazuje dokumenty Office, RTF a CSV Rýchly náhľad systému iOS. Tu zvolíte, či má aplikácia zobrazovať súbory OpenDocument, ktoré Rýchly náhľad neotvorí.</string>
+    <string name="docTypeText">Textové dokumenty</string>
+    <string name="docTypeSheets">Tabuľky</string>
+    <string name="docTypeCsv">CSV ako tabuľka</string>
+    <string name="docTypeCsvDesc">Vypnuté — ako obyčajný text</string>
+    <string name="docTypeSlides">Prezentácie</string>
 </resources>

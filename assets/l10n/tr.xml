@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">Sayfa büyük — yalnızca başlangıcı gösteriliyor</string>
     <string name="docSheetEmpty">Sayfa boş</string>
     <string name="docSlideOf">Slayt {n} / {total}</string>
+    <string name="docPreviewSection">Belge önizleme</string>
+    <string name="docPreview">Belgeler uygulamada</string>
+    <string name="docPreviewDesc">İletilerdeki belgeler, tablolar ve sunular başka uygulama olmadan burada açılır. Kapalıyken o biçimin uygulamasında açılır.</string>
+    <string name="docPreviewIosNote">iPhone ve iPad\'de Office, RTF ve CSV belgelerini iOS Hızlı Bakış gösterir. Burada, Hızlı Bakış\'ın açamadığı OpenDocument dosyalarını uygulamanın gösterip göstermeyeceğini seçersiniz.</string>
+    <string name="docTypeText">Metin belgeleri</string>
+    <string name="docTypeSheets">Tablolar</string>
+    <string name="docTypeCsv">CSV tablo olarak</string>
+    <string name="docTypeCsvDesc">Kapalıyken düz metin olarak</string>
+    <string name="docTypeSlides">Sunular</string>
 </resources>

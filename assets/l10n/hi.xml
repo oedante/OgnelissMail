@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">शीट बड़ी है — केवल शुरुआत दिखाई गई है</string>
     <string name="docSheetEmpty">शीट खाली है</string>
     <string name="docSlideOf">स्लाइड {n} / {total}</string>
+    <string name="docPreviewSection">दस्तावेज़ पूर्वावलोकन</string>
+    <string name="docPreview">ऐप में दस्तावेज़</string>
+    <string name="docPreviewDesc">संदेशों के दस्तावेज़, स्प्रेडशीट और प्रस्तुतियाँ यहीं खुलती हैं, किसी अन्य ऐप के बिना। बंद होने पर — उस फ़ॉर्मेट के ऐप में।</string>
+    <string name="docPreviewIosNote">iPhone और iPad पर Office, RTF और CSV दस्तावेज़ iOS का Quick Look दिखाता है। यहाँ चुनें कि ऐप OpenDocument फ़ाइलें दिखाए या नहीं, जिन्हें Quick Look नहीं खोलता।</string>
+    <string name="docTypeText">टेक्स्ट दस्तावेज़</string>
+    <string name="docTypeSheets">स्प्रेडशीट</string>
+    <string name="docTypeCsv">CSV तालिका के रूप में</string>
+    <string name="docTypeCsvDesc">बंद होने पर — सादे टेक्स्ट के रूप में</string>
+    <string name="docTypeSlides">प्रस्तुतियाँ</string>
 </resources>

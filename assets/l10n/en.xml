@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">The sheet is large — only the beginning is shown</string>
     <string name="docSheetEmpty">The sheet is empty</string>
     <string name="docSlideOf">Slide {n} of {total}</string>
+    <string name="docPreviewSection">Document preview</string>
+    <string name="docPreview">Documents in the app</string>
+    <string name="docPreviewDesc">Documents, spreadsheets and presentations from messages open right here, without another app. When off, they open in the app for that format.</string>
+    <string name="docPreviewIosNote">On iPhone and iPad, Office, RTF and CSV documents are shown by iOS Quick Look. Here you choose whether the app shows OpenDocument files, which Quick Look can\'t open.</string>
+    <string name="docTypeText">Text documents</string>
+    <string name="docTypeSheets">Spreadsheets</string>
+    <string name="docTypeCsv">CSV as a table</string>
+    <string name="docTypeCsvDesc">When off, shown as plain text</string>
+    <string name="docTypeSlides">Presentations</string>
 </resources>

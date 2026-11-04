@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">Arket er stort – kun begyndelsen vises</string>
     <string name="docSheetEmpty">Arket er tomt</string>
     <string name="docSlideOf">Dias {n} af {total}</string>
+    <string name="docPreviewSection">Forhåndsvisning af dokumenter</string>
+    <string name="docPreview">Dokumenter i appen</string>
+    <string name="docPreviewDesc">Dokumenter, regneark og præsentationer fra beskeder åbnes lige her uden en anden app. Slået fra: i appen til formatet.</string>
+    <string name="docPreviewIosNote">På iPhone og iPad vises Office-, RTF- og CSV-dokumenter med iOS\' Lynoversigt. Her vælger du, om appen viser OpenDocument-filer, som Lynoversigt ikke kan åbne.</string>
+    <string name="docTypeText">Tekstdokumenter</string>
+    <string name="docTypeSheets">Regneark</string>
+    <string name="docTypeCsv">CSV som tabel</string>
+    <string name="docTypeCsvDesc">Slået fra: som ren tekst</string>
+    <string name="docTypeSlides">Præsentationer</string>
 </resources>

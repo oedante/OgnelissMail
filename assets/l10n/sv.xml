@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">Bladet är stort – bara början visas</string>
     <string name="docSheetEmpty">Bladet är tomt</string>
     <string name="docSlideOf">Bild {n} av {total}</string>
+    <string name="docPreviewSection">Förhandsvisning av dokument</string>
+    <string name="docPreview">Dokument i appen</string>
+    <string name="docPreviewDesc">Dokument, kalkylblad och presentationer från meddelanden öppnas direkt här, utan annan app. Av: i appen för formatet.</string>
+    <string name="docPreviewIosNote">På iPhone och iPad visas Office-, RTF- och CSV-dokument med iOS Snabbtitt. Här väljer du om appen ska visa OpenDocument-filer, som Snabbtitt inte kan öppna.</string>
+    <string name="docTypeText">Textdokument</string>
+    <string name="docTypeSheets">Kalkylblad</string>
+    <string name="docTypeCsv">CSV som tabell</string>
+    <string name="docTypeCsvDesc">Av: som vanlig text</string>
+    <string name="docTypeSlides">Presentationer</string>
 </resources>

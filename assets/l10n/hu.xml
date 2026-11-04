@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">A munkalap nagy – csak az eleje látható</string>
     <string name="docSheetEmpty">A munkalap üres</string>
     <string name="docSlideOf">{n}. dia / {total}</string>
+    <string name="docPreviewSection">Dokumentumok előnézete</string>
+    <string name="docPreview">Dokumentumok az alkalmazásban</string>
+    <string name="docPreviewDesc">Az üzenetek dokumentumai, táblázatai és bemutatói itt nyílnak meg, más alkalmazás nélkül. Kikapcsolva: a formátum alkalmazásában.</string>
+    <string name="docPreviewIosNote">iPhone-on és iPaden az Office-, RTF- és CSV-dokumentumokat az iOS Gyorsnézet jeleníti meg. Itt választhatja ki, hogy az alkalmazás megjelenítse-e az OpenDocument-fájlokat, amelyeket a Gyorsnézet nem nyit meg.</string>
+    <string name="docTypeText">Szöveges dokumentumok</string>
+    <string name="docTypeSheets">Táblázatok</string>
+    <string name="docTypeCsv">CSV táblázatként</string>
+    <string name="docTypeCsvDesc">Kikapcsolva: egyszerű szövegként</string>
+    <string name="docTypeSlides">Bemutatók</string>
 </resources>

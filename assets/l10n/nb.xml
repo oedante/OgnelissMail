@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">Arket er stort – bare begynnelsen vises</string>
     <string name="docSheetEmpty">Arket er tomt</string>
     <string name="docSlideOf">Lysbilde {n} av {total}</string>
+    <string name="docPreviewSection">Forhåndsvisning av dokumenter</string>
+    <string name="docPreview">Dokumenter i appen</string>
+    <string name="docPreviewDesc">Dokumenter, regneark og presentasjoner fra meldinger åpnes rett her, uten en annen app. Av: i appen for formatet.</string>
+    <string name="docPreviewIosNote">På iPhone og iPad vises Office-, RTF- og CSV-dokumenter med iOS Hurtigvisning. Her velger du om appen skal vise OpenDocument-filer, som Hurtigvisning ikke åpner.</string>
+    <string name="docTypeText">Tekstdokumenter</string>
+    <string name="docTypeSheets">Regneark</string>
+    <string name="docTypeCsv">CSV som tabell</string>
+    <string name="docTypeCsvDesc">Av: som ren tekst</string>
+    <string name="docTypeSlides">Presentasjoner</string>
 </resources>

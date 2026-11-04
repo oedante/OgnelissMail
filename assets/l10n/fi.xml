@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">Taulukko on suuri – vain alku näytetään</string>
     <string name="docSheetEmpty">Taulukko on tyhjä</string>
     <string name="docSlideOf">Dia {n}/{total}</string>
+    <string name="docPreviewSection">Asiakirjojen esikatselu</string>
+    <string name="docPreview">Asiakirjat sovelluksessa</string>
+    <string name="docPreviewDesc">Viestien asiakirjat, laskentataulukot ja esitykset avautuvat tässä ilman toista sovellusta. Pois päältä: muodon omassa sovelluksessa.</string>
+    <string name="docPreviewIosNote">iPhonessa ja iPadissa Office-, RTF- ja CSV-asiakirjat näyttää iOS:n pikakatselu. Tässä valitset, näyttääkö sovellus OpenDocument-tiedostot, joita pikakatselu ei avaa.</string>
+    <string name="docTypeText">Tekstiasiakirjat</string>
+    <string name="docTypeSheets">Laskentataulukot</string>
+    <string name="docTypeCsv">CSV taulukkona</string>
+    <string name="docTypeCsvDesc">Pois päältä: pelkkänä tekstinä</string>
+    <string name="docTypeSlides">Esitykset</string>
 </resources>

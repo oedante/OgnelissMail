@@ -3786,4 +3786,13 @@
     <string name="docSheetTruncated">工作表较大，仅显示开头部分</string>
     <string name="docSheetEmpty">工作表为空</string>
     <string name="docSlideOf">第 {n} 张幻灯片，共 {total} 张</string>
+    <string name="docPreviewSection">文档预览</string>
+    <string name="docPreview">在应用内查看文档</string>
+    <string name="docPreviewDesc">邮件中的文档、表格和演示文稿直接在此打开，无需其他应用。关闭后将在该格式的应用中打开。</string>
+    <string name="docPreviewIosNote">在 iPhone 和 iPad 上，Office、RTF 和 CSV 文档由 iOS 的快速查看显示。此处可选择应用是否显示快速查看无法打开的 OpenDocument 文件。</string>
+    <string name="docTypeText">文本文档</string>
+    <string name="docTypeSheets">电子表格</string>
+    <string name="docTypeCsv">以表格显示 CSV</string>
+    <string name="docTypeCsvDesc">关闭后以纯文本显示</string>
+    <string name="docTypeSlides">演示文稿</string>
 </resources>

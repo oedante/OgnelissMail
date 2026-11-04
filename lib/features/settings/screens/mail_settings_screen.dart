@@ -14,6 +14,7 @@ import '../../../widgets/ui/settings_group.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/feature_flags_provider.dart';
+import '../widgets/doc_preview_settings_section.dart';
 import '../widgets/feature_settings_sections.dart';
 import '../widgets/offline_store_section.dart';
 import '../widgets/translation_settings_section.dart';
@@ -322,6 +323,9 @@ class MailSettingsScreen extends ConsumerWidget {
               ),
             ]),
           ],
+          // Просмотр документов во вложениях (1.11.x, просьба владельца
+          // 04.11.2026): выключатель и виды документов.
+          const DocPreviewSettingsSection(),
           SettingsSectionTitle(l10n.tr('fetchMode')),
           SettingsIntro(l10n.tr('fetchModeSubtitle')),
           SettingsGroup(children: [

@@ -3828,4 +3828,13 @@
     <string name="docSheetTruncated">Foaia este mare — se afișează doar începutul</string>
     <string name="docSheetEmpty">Foaia este goală</string>
     <string name="docSlideOf">Diapozitivul {n} din {total}</string>
+    <string name="docPreviewSection">Previzualizarea documentelor</string>
+    <string name="docPreview">Documente în aplicație</string>
+    <string name="docPreviewDesc">Documentele, foile de calcul și prezentările din mesaje se deschid chiar aici, fără altă aplicație. Dezactivat: în aplicația pentru acel format.</string>
+    <string name="docPreviewIosNote">Pe iPhone și iPad, documentele Office, RTF și CSV sunt afișate de Privire rapidă din iOS. Aici alegeți dacă aplicația afișează fișierele OpenDocument, pe care Privirea rapidă nu le deschide.</string>
+    <string name="docTypeText">Documente text</string>
+    <string name="docTypeSheets">Foi de calcul</string>
+    <string name="docTypeCsv">CSV ca tabel</string>
+    <string name="docTypeCsvDesc">Dezactivat: ca text simplu</string>
+    <string name="docTypeSlides">Prezentări</string>
 </resources>

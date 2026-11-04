@@ -3786,4 +3786,13 @@
     <string name="docSheetTruncated">Lembar besar — hanya bagian awal yang ditampilkan</string>
     <string name="docSheetEmpty">Lembar kosong</string>
     <string name="docSlideOf">Slide {n} dari {total}</string>
+    <string name="docPreviewSection">Pratinjau dokumen</string>
+    <string name="docPreview">Dokumen di aplikasi</string>
+    <string name="docPreviewDesc">Dokumen, spreadsheet, dan presentasi dari pesan terbuka langsung di sini, tanpa aplikasi lain. Jika nonaktif — di aplikasi untuk format tersebut.</string>
+    <string name="docPreviewIosNote">Di iPhone dan iPad, dokumen Office, RTF, dan CSV ditampilkan oleh Quick Look iOS. Di sini Anda memilih apakah aplikasi menampilkan file OpenDocument, yang tidak dapat dibuka Quick Look.</string>
+    <string name="docTypeText">Dokumen teks</string>
+    <string name="docTypeSheets">Spreadsheet</string>
+    <string name="docTypeCsv">CSV sebagai tabel</string>
+    <string name="docTypeCsvDesc">Jika nonaktif — sebagai teks biasa</string>
+    <string name="docTypeSlides">Presentasi</string>
 </resources>

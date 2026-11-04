@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">La hoja es grande: solo se muestra el principio</string>
     <string name="docSheetEmpty">La hoja está vacía</string>
     <string name="docSlideOf">Diapositiva {n} de {total}</string>
+    <string name="docPreviewSection">Vista previa de documentos</string>
+    <string name="docPreview">Documentos en la aplicación</string>
+    <string name="docPreviewDesc">Los documentos, hojas de cálculo y presentaciones de los mensajes se abren aquí mismo, sin otra aplicación. Desactivado: en la aplicación para ese formato.</string>
+    <string name="docPreviewIosNote">En iPhone y iPad, los documentos de Office, RTF y CSV se muestran con Vista rápida de iOS. Aquí elige si la aplicación muestra los archivos OpenDocument, que Vista rápida no abre.</string>
+    <string name="docTypeText">Documentos de texto</string>
+    <string name="docTypeSheets">Hojas de cálculo</string>
+    <string name="docTypeCsv">CSV como tabla</string>
+    <string name="docTypeCsvDesc">Desactivado: como texto sin formato</string>
+    <string name="docTypeSlides">Presentaciones</string>
 </resources>

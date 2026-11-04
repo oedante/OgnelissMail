@@ -3849,4 +3849,13 @@
     <string name="docSheetTruncated">Лист большой — показано только начало</string>
     <string name="docSheetEmpty">Лист пуст</string>
     <string name="docSlideOf">Слайд {n} из {total}</string>
+    <string name="docPreviewSection">Просмотр документов</string>
+    <string name="docPreview">Документы в приложении</string>
+    <string name="docPreviewDesc">Документы, таблицы и презентации из писем открываются здесь же, без другой программы. Выключено — в приложении для этого формата.</string>
+    <string name="docPreviewIosNote">На iPhone и iPad документы Office, RTF и CSV показывает Просмотр iOS. Здесь — показывать ли в приложении документы OpenDocument: Просмотр их не открывает.</string>
+    <string name="docTypeText">Текстовые документы</string>
+    <string name="docTypeSheets">Таблицы</string>
+    <string name="docTypeCsv">CSV таблицей</string>
+    <string name="docTypeCsvDesc">Выключено — простым текстом</string>
+    <string name="docTypeSlides">Презентации</string>
 </resources>

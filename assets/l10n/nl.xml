@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">Het blad is groot — alleen het begin wordt getoond</string>
     <string name="docSheetEmpty">Het blad is leeg</string>
     <string name="docSlideOf">Dia {n} van {total}</string>
+    <string name="docPreviewSection">Documentvoorbeeld</string>
+    <string name="docPreview">Documenten in de app</string>
+    <string name="docPreviewDesc">Documenten, spreadsheets en presentaties uit berichten openen hier, zonder andere app. Uit: in de app voor dat formaat.</string>
+    <string name="docPreviewIosNote">Op iPhone en iPad toont Snelle weergave van iOS Office-, RTF- en CSV-documenten. Hier kiest u of de app OpenDocument-bestanden toont, die Snelle weergave niet opent.</string>
+    <string name="docTypeText">Tekstdocumenten</string>
+    <string name="docTypeSheets">Spreadsheets</string>
+    <string name="docTypeCsv">CSV als tabel</string>
+    <string name="docTypeCsvDesc">Uit: als platte tekst</string>
+    <string name="docTypeSlides">Presentaties</string>
 </resources>

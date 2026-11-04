@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">Das Blatt ist groß – nur der Anfang wird angezeigt</string>
     <string name="docSheetEmpty">Das Blatt ist leer</string>
     <string name="docSlideOf">Folie {n} von {total}</string>
+    <string name="docPreviewSection">Dokumentvorschau</string>
+    <string name="docPreview">Dokumente in der App</string>
+    <string name="docPreviewDesc">Dokumente, Tabellen und Präsentationen aus E-Mails öffnen sich direkt hier, ohne andere App. Aus: in der App für dieses Format.</string>
+    <string name="docPreviewIosNote">Auf iPhone und iPad zeigt die iOS-Übersicht Office-, RTF- und CSV-Dokumente an. Hier legen Sie fest, ob die App OpenDocument-Dateien anzeigt, die die Übersicht nicht öffnet.</string>
+    <string name="docTypeText">Textdokumente</string>
+    <string name="docTypeSheets">Tabellen</string>
+    <string name="docTypeCsv">CSV als Tabelle</string>
+    <string name="docTypeCsvDesc">Aus: als reiner Text</string>
+    <string name="docTypeSlides">Präsentationen</string>
 </resources>

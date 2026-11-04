@@ -3786,4 +3786,13 @@
     <string name="docSheetTruncated">แผ่นงานมีขนาดใหญ่ — แสดงเฉพาะส่วนต้น</string>
     <string name="docSheetEmpty">แผ่นงานว่างเปล่า</string>
     <string name="docSlideOf">สไลด์ {n} จาก {total}</string>
+    <string name="docPreviewSection">ดูตัวอย่างเอกสาร</string>
+    <string name="docPreview">เอกสารในแอป</string>
+    <string name="docPreviewDesc">เอกสาร สเปรดชีต และงานนำเสนอจากข้อความจะเปิดที่นี่ได้เลยโดยไม่ต้องใช้แอปอื่น เมื่อปิด — เปิดในแอปสำหรับรูปแบบนั้น</string>
+    <string name="docPreviewIosNote">บน iPhone และ iPad เอกสาร Office, RTF และ CSV จะแสดงด้วย Quick Look ของ iOS ที่นี่คุณเลือกได้ว่าจะให้แอปแสดงไฟล์ OpenDocument ซึ่ง Quick Look เปิดไม่ได้หรือไม่</string>
+    <string name="docTypeText">เอกสารข้อความ</string>
+    <string name="docTypeSheets">สเปรดชีต</string>
+    <string name="docTypeCsv">CSV เป็นตาราง</string>
+    <string name="docTypeCsvDesc">เมื่อปิด — แสดงเป็นข้อความธรรมดา</string>
+    <string name="docTypeSlides">งานนำเสนอ</string>
 </resources>

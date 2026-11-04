@@ -3891,4 +3891,13 @@
     <string name="docSheetTruncated">الورقة كبيرة — يُعرض أولها فقط</string>
     <string name="docSheetEmpty">الورقة فارغة</string>
     <string name="docSlideOf">الشريحة {n} من {total}</string>
+    <string name="docPreviewSection">معاينة المستندات</string>
+    <string name="docPreview">المستندات داخل التطبيق</string>
+    <string name="docPreviewDesc">تُفتح المستندات وجداول البيانات والعروض التقديمية من الرسائل هنا مباشرةً دون تطبيق آخر. عند الإيقاف: في التطبيق المخصص لهذا التنسيق.</string>
+    <string name="docPreviewIosNote">على iPhone وiPad تعرض النظرة السريعة في iOS مستندات Office وRTF وCSV. هنا تختار ما إذا كان التطبيق يعرض ملفات OpenDocument التي لا تفتحها النظرة السريعة.</string>
+    <string name="docTypeText">المستندات النصية</string>
+    <string name="docTypeSheets">جداول البيانات</string>
+    <string name="docTypeCsv">CSV كجدول</string>
+    <string name="docTypeCsvDesc">عند الإيقاف: كنص عادي</string>
+    <string name="docTypeSlides">العروض التقديمية</string>
 </resources>

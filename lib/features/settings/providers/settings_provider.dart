@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/theme/appearance.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart' show AppLocalizations;
+import '../../../services/documents/doc_preview_settings.dart';
 import '../../../services/notifications/messenger_notifications.dart' show MessengerNotify;
 import '../../../core/theme/ui_fonts.dart';
 import '../../../services/notifications/notification_text.dart' show NotificationLines;
@@ -974,10 +975,12 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       _K.aiEnabled, _K.smartReplies, _K.dlpEnabled, _K.autoRules,
       _K.voiceControl, _K.activeAccount, _K.autoLock, _K.autoSignature,
       _K.translateOffer, _K.translateWifiOnly, _K.translateNever,
+      ...DocPreviewSettings.keys,
     ];
     for (final key in keys) {
       await _p.remove(key);
     }
+    DocPreviewSettings.reset();
     state = const AppSettings(isFirstLaunch: false);
   }
 }

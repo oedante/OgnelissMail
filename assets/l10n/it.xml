@@ -3807,4 +3807,13 @@
     <string name="docSheetTruncated">Il foglio è grande: viene mostrato solo l\'inizio</string>
     <string name="docSheetEmpty">Il foglio è vuoto</string>
     <string name="docSlideOf">Diapositiva {n} di {total}</string>
+    <string name="docPreviewSection">Anteprima documenti</string>
+    <string name="docPreview">Documenti nell\'app</string>
+    <string name="docPreviewDesc">Documenti, fogli di calcolo e presentazioni dei messaggi si aprono qui, senza un\'altra app. Disattivato: nell\'app per quel formato.</string>
+    <string name="docPreviewIosNote">Su iPhone e iPad i documenti Office, RTF e CSV vengono mostrati da Quick Look di iOS. Qui scegli se l\'app mostra i file OpenDocument, che Quick Look non apre.</string>
+    <string name="docTypeText">Documenti di testo</string>
+    <string name="docTypeSheets">Fogli di calcolo</string>
+    <string name="docTypeCsv">CSV come tabella</string>
+    <string name="docTypeCsvDesc">Disattivato: come testo semplice</string>
+    <string name="docTypeSlides">Presentazioni</string>
 </resources>

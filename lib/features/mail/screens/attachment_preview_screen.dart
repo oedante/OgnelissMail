@@ -48,6 +48,7 @@ import '../widgets/doc_sheet_view.dart';
 import '../widgets/doc_slides_view.dart';
 import '../../../services/documents/doc_sheets.dart';
 import '../../../services/documents/doc_slides.dart';
+import '../../../services/documents/doc_preview_settings.dart';
 import '../../../services/documents/office_document.dart';
 import '../../../services/documents/office_package.dart';
 import '../../../services/documents/office_reader.dart';
@@ -131,11 +132,16 @@ class AttachmentPreviewScreen extends StatefulWidget {
     // программа — кнопкой вверху). На iPhone и iPad «Просмотр» iOS
     // показывает Office, RTF и CSV движком системы, он и остаётся; а
     // OpenDocument он не показывает (раньше — сразу лист «Поделиться») —
-    // такие документы теперь тоже здесь.
-    if (OfficeFormats.of(name, mimeType: item.mimeType) != null) return !ios || !FileOpener.quickLookShows(name);
+    // такие документы теперь тоже здесь. Выключенные в настройках виды
+    // (DocPreviewSettings) — как раньше: CSV — текстом ниже, остальное —
+    // своей программой.
+    final docOn = DocPreviewSettings.allows(name, mimeType: item.mimeType);
+    if (docOn && OfficeFormats.of(name, mimeType: item.mimeType) != null) {
+      return !ios || !FileOpener.quickLookShows(name);
+    }
     // Старый .doc, который на деле RTF или DOCX (так сохраняют многие
     // программы), — тоже документом; настоящий .doc — своей программой.
-    if (!ios && OfficeFormats.isLegacy(name)) {
+    if (docOn && !ios && OfficeFormats.isLegacy(name)) {
       try {
         final head = await File(item.filePath).openRead(0, 8).fold<List<int>>(<int>[], (a, b) => a..addAll(b));
         return OfficeReader.previews(name, head: Uint8List.fromList(head));
@@ -296,10 +302,9 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         _sniffedMail.contains(i)) {
       return _Kind.mail;
     }
-    // Документ — до текста: CSV показывается таблицей, а не строками.
-    if (OfficeFormats.of(name, mimeType: widget.items[i].mimeType) != null || OfficeFormats.isLegacy(name)) {
-      return _Kind.document;
-    }
+    // Документ — до текста: CSV показывается таблицей, а не строками
+    // (выключено в настройках — текстом, как раньше).
+    if (DocPreviewSettings.allows(name, mimeType: widget.items[i].mimeType)) return _Kind.document;
     if (AttachmentPreviewScreen._textExt.contains(ext)) return _Kind.text;
     return _Kind.other;
   }

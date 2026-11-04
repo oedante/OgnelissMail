@@ -35,6 +35,16 @@ const _latinScript = {'sr', 'uz', 'az', 'bs', 'ms', 'tk'};
 /// нет в русском. Пара слов с «ы» (русское имя в болгарском письме) язык не
 /// меняет: таких букв должно быть заметно больше — как в русском тексте
 /// (около 2 % букв).
+///
+/// Украинский, сербский, македонский (1.11.x, скриншот владельца 04.11.2026:
+/// «Добрый день, Андрей Сергеевич, Тестирую перевод письма» — «Язык
+/// письма: украинский»): у короткого письма «ы», «э», «ё» бывает одна, а
+/// ML Kit на коротком русском тексте часто называет украинский. В этих
+/// языках таких букв нет совсем, а своих («і», «ї», «є», «ј», «љ», «њ» …) в
+/// тексте из 20 букв почти всегда несколько. Поэтому достаточно одной
+/// русской буквы, если своих букв нет (меньше 1 %). У болгарского и
+/// белорусского — прежний порог: в болгарском много русских имён, а
+/// белорусский сам пишется с «ы», «э», «ё».
 String? refineCyrillicLang(String? lang, String text) {
   if (lang == null || !_ruLookalikes.contains(lang)) return lang;
   final low = text.toLowerCase();
@@ -45,8 +55,12 @@ String? refineCyrillicLang(String? lang, String text) {
   final foreign = _notRussian.allMatches(low).length;
   if (foreign * 100 >= letters) return lang;
   final russian = _onlyRussian.allMatches(low).length;
+  if (_noRussianLetters.contains(lang) && russian >= 1) return 'ru';
   return russian >= 2 && russian * 200 >= letters ? 'ru' : lang;
 }
+
+/// Языки, где «ы», «э», «ё» не пишутся вовсе.
+const _noRussianLetters = {'uk', 'sr', 'mk'};
 
 const _ruLookalikes = {'bg', 'mk', 'sr', 'uk', 'be'};
 final _cyrillic = RegExp('[\u0400-\u04ff]');

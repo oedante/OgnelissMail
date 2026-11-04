@@ -203,7 +203,7 @@ class MailTranslationController extends ChangeNotifier {
   /// Язык письма: по свежему тексту, а не вышло — по первым строкам (там
   /// реже смешаны языки).
   static Future<String?> _detectLang(Translator t, EmailModel e) async {
-    final sample = await _sample(e);
+    final sample = mainScriptSample(await _sample(e));
     final lang = await t.detectLanguage(sample);
     if (lang != null || sample.length <= 300) return lang;
     final head = sample.substring(0, 300);
@@ -211,6 +211,30 @@ class MailTranslationController extends ChangeNotifier {
     if (again == null) _logUndetected(sample);
     return again;
   }
+
+  /// Образец одним алфавитом (1.11.x, журнал владельца 04.11.2026: «язык
+  /// письма не определён», «Не удалось перевести», русское письмо —
+  /// «украинский»). В рабочей почте подпись часто на двух языках («С
+  /// уважением…» | «Best regards…»), письмо с переводом — тоже на двух, и на
+  /// смеси русского и английского ML Kit не уверен или называет третий
+  /// язык. Если в тексте заметно (от 15 % букв) и кириллицы, и латиницы,
+  /// язык определяется по словам того алфавита, которого больше.
+  @visibleForTesting
+  static String mainScriptSample(String s) {
+    final cyr = _cyr.allMatches(s).length;
+    final lat = _lat.allMatches(s).length;
+    final total = cyr + lat;
+    if (total < 40 || cyr * 100 < total * 15 || lat * 100 < total * 15) return s;
+    final cyrMain = cyr >= lat;
+    return s.split(RegExp(r'\s+')).where((w) {
+      final c = _cyr.allMatches(w).length;
+      final l = _lat.allMatches(w).length;
+      return cyrMain ? c > 0 && c >= l : l > 0 && l > c;
+    }).join(' ');
+  }
+
+  static final _cyr = RegExp('[\u0400-\u04ff]');
+  static final _lat = RegExp('[A-Za-z]');
 
   /// Языки приложения не латиницей: письмо латиницей для них — точно на
   /// другом языке (и наоборот).

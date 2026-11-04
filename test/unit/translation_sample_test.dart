@@ -110,4 +110,29 @@ void main() {
     expect(MailTranslationController.otherScript(en, 'en'), isFalse, reason: 'английский для en-приложения — не предлагаем');
     expect(MailTranslationController.otherScript('OK', 'ru'), isFalse, reason: 'слишком коротко');
   });
+
+  test('подпись на двух языках и письмо с переводом — язык по основному алфавиту (журнал 04.11.2026)', () {
+    const ru = 'Сергей Анатольевич, добрый день! Прошу рассмотреть текущую редакцию плана мероприятий. '
+        'С уважением, Ганиев Руслан Ведущий инженер по планированию ОАО «Ямал СПГ» Тел: +7 (495) 228 98 50 '
+        'Best regards, Ganiev Ruslan Snr.Planning Engineer JSC «Yamal LNG» Tel: +7 (495) 228 98 50';
+    final s = MailTranslationController.mainScriptSample(ru);
+    expect(s, contains('Сергей Анатольевич'));
+    expect(s, isNot(contains('Best')));
+    expect(s, isNot(contains('228')));
+    // Английское письмо с русской подписью — английский.
+    const en = 'Hello Sergey, please find attached the updated maintenance plan for the next quarter, '
+        'with all comments from the planning team included. Kind regards, John. С уважением, Иван Петров, '
+        'ведущий инженер по планированию ОАО «Ямал СПГ»';
+    final e = MailTranslationController.mainScriptSample(en);
+    expect(e, contains('Hello Sergey'));
+    expect(e, isNot(contains('уважением')));
+    // Названия латиницей в русском тексте — определяется по русским словам.
+    const brands = 'Добрый день! Высылаю отчёт по Play Console за октябрь, проверьте, пожалуйста, цифры.';
+    final b = MailTranslationController.mainScriptSample(brands);
+    expect(b, contains('Высылаю отчёт'));
+    expect(b, isNot(contains('Console')));
+    // Один алфавит — без изменений.
+    const plain = 'Добрый день! Высылаю отчёт за октябрь, проверьте, пожалуйста, цифры в таблице.';
+    expect(MailTranslationController.mainScriptSample(plain), plain);
+  });
 }

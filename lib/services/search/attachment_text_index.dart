@@ -58,6 +58,7 @@ class AttachmentTextIndex {
 
   /// Ключи кэша, которые в этом процессе уже разобраны или пропущены.
   final Set<String> _done = {};
+
   /// Очередь разбора (по порядку добавления): ключ кэша → имя вложения.
   final Map<String, String?> _queue = {};
   bool _draining = false;
@@ -132,15 +133,19 @@ class AttachmentTextIndex {
       final db = _ref.read(databaseProvider);
       final indexed = await db.ftsAttachmentsContaining(cand);
       _done.addAll(indexed);
-      final todo = [for (final k in cand.keys) if (!indexed.contains(k)) k];
+      final todo = [
+        for (final k in cand.keys)
+          if (!indexed.contains(k)) k,
+      ];
       final started = DateTime.now();
+      var tried = 0;
       final maxRun = quick ? const Duration(seconds: 40) : const Duration(minutes: 3);
       for (final k in todo.take(quick ? batchQuick : batch)) {
         if (!enabled || DateTime.now().difference(started) > maxRun) break;
-        await WorkScheduler.instance.run(WorkPriority.idle, () => _process(k, null));
-        n++;
+        tried++;
+        if (await WorkScheduler.instance.run(WorkPriority.idle, () => _process(k, null))) n++;
       }
-      if (n > 0) AppLogger.debug('Поиск по вложениям: разобрано файлов $n, ждут ${todo.length - n}');
+      if (n > 0) AppLogger.debug('Поиск по вложениям: разобрано файлов $n, ждут ${todo.length - tried}');
     } catch (e) {
       AppLogger.debug('Поиск по вложениям: $e');
     } finally {
@@ -161,39 +166,43 @@ class AttachmentTextIndex {
     }
   }
 
-  Future<void> _process(String key, String? fileName) async {
-    if (!enabled || !_done.add(key)) return;
+  /// Разобрать файл кэша [key]; true — файл прочитан.
+  Future<bool> _process(String key, String? fileName) async {
+    if (!enabled || !_done.add(key)) return false;
     final p = parseKey(key);
     final path = _ref.read(attachmentCacheProvider).pathOf(key);
-    if (p == null || path == null) return;
+    if (p == null || path == null) return false;
     try {
       final db = _ref.read(databaseProvider);
       // Имя и тип — из письма (у файла в кэше имя упрощено); письма нет
       // (черновик редактора, удалено) — нечего индексировать.
       final e = db.emails;
-      final row = await (db.selectOnly(e)
-            ..addColumns([e.attachmentsJson])
-            ..where(e.accountId.equals(p.accountId) & e.id.equals(p.emailId))
-            ..limit(1))
-          .getSingleOrNull();
-      if (row == null) return;
+      final row =
+          await (db.selectOnly(e)
+                ..addColumns([e.attachmentsJson])
+                ..where(e.accountId.equals(p.accountId) & e.id.equals(p.emailId))
+                ..limit(1))
+              .getSingleOrNull();
+      if (row == null) return false;
       final att = _attachment(row.read(e.attachmentsJson), p.attachmentId);
       final name = att?.name ?? fileName ?? nameFromPath(path);
       final mime = att?.mimeType;
-      if (AttachmentText.kindOf(name, mimeType: mime) == null) return;
+      if (AttachmentText.kindOf(name, mimeType: mime) == null) return false;
       final lang = _ref.read(settingsProvider).locale.languageCode;
       final got = await AttachmentText.extractFile(path, name, mimeType: mime, lang: lang);
       if (got.retryLater) {
         // В следующий запуск приложения — снова (файл появится, старый
         // формат Office научится читаться).
-        return;
+        return true;
       }
-      if (!enabled) return;
+      if (!enabled) return true;
       final before = await db.ftsAttachmentsText(p.accountId, p.emailId) ?? '';
       final after = merge(before, p.attachmentId, got.text);
       if (after != before) await db.setFtsAttachmentsText(p.accountId, p.emailId, after);
+      return true;
     } catch (e) {
       AppLogger.debug('Поиск по вложениям: $key — $e');
+      return false;
     }
   }
 

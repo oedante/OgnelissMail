@@ -86,7 +86,20 @@ class AttachmentText {
   static const timeout = Duration(seconds: 45);
 
   static const _textExt = {
-    'txt', 'text', 'log', 'md', 'markdown', 'ini', 'cfg', 'conf', 'json', 'xml', 'yaml', 'yml', 'ics', 'vcf',
+    'txt',
+    'text',
+    'log',
+    'md',
+    'markdown',
+    'ini',
+    'cfg',
+    'conf',
+    'json',
+    'xml',
+    'yaml',
+    'yml',
+    'ics',
+    'vcf',
   };
   static const _htmlExt = {'htm', 'html', 'xhtml'};
 
@@ -111,8 +124,7 @@ class AttachmentText {
 
   /// Текст файла [path] — в отдельном изоляте с пределом [timeout]. Ошибок
   /// не бросает: нечитаемый файл — пустой текст.
-  static Future<ExtractedText> extractFile(String path, String fileName,
-      {String? mimeType, String lang = 'en'}) async {
+  static Future<ExtractedText> extractFile(String path, String fileName, {String? mimeType, String lang = 'en'}) async {
     if (kindOf(fileName, mimeType: mimeType) == null) return ExtractedText.none;
     final port = RawReceivePort();
     final done = Completer<Object?>();
@@ -122,8 +134,14 @@ class AttachmentText {
     Isolate? isolate;
     try {
       try {
-        isolate = await Isolate.spawn(_work, (port.sendPort, path, fileName, mimeType, lang),
-            onError: port.sendPort, onExit: port.sendPort, errorsAreFatal: true, debugName: 'attachment-text');
+        isolate = await Isolate.spawn(
+          _work,
+          (port.sendPort, path, fileName, mimeType, lang),
+          onError: port.sendPort,
+          onExit: port.sendPort,
+          errorsAreFatal: true,
+          debugName: 'attachment-text',
+        );
       } on UnsupportedError {
         return await extractPath(path, fileName, mimeType: mimeType, lang: lang);
       }
@@ -152,8 +170,7 @@ class AttachmentText {
   }
 
   /// То же в текущем изоляте (тело [extractFile]; тесты).
-  static Future<ExtractedText> extractPath(String path, String fileName,
-      {String? mimeType, String lang = 'en'}) async {
+  static Future<ExtractedText> extractPath(String path, String fileName, {String? mimeType, String lang = 'en'}) async {
     var kind = kindOf(fileName, mimeType: mimeType);
     if (kind == null) return ExtractedText.none;
     final file = File(path);
@@ -261,8 +278,14 @@ class AttachmentText {
 
   /// Текст вложения внутри вложенного письма — в текущем изоляте (он уже
   /// отдельный и с пределом времени).
-  static String textOfBytes(Uint8List bytes, String fileName,
-      {String? mimeType, String lang = 'en', int depth = 1, int max = maxChars}) {
+  static String textOfBytes(
+    Uint8List bytes,
+    String fileName, {
+    String? mimeType,
+    String lang = 'en',
+    int depth = 1,
+    int max = maxChars,
+  }) {
     if (max <= 0) return '';
     try {
       var kind = kindOf(fileName, mimeType: mimeType);
@@ -282,7 +305,10 @@ class AttachmentText {
         case AttachmentTextKind.office:
         case AttachmentTextKind.sniff:
           if (bytes.length > OfficeLimits.maxFileBytes) return '';
-          return textOfDoc(OfficeReader.readBytes(bytes, fileName, mimeType: mimeType, lang: lang), max: max);
+          return textOfDoc(
+            OfficeReader.readBytes(bytes, fileName, mimeType: mimeType, lang: lang),
+            max: max,
+          );
       }
     } catch (_) {
       // Повреждённая часть вложенного письма — без её текста.
@@ -295,9 +321,39 @@ class AttachmentText {
   // ─────────────────────────── HTML и чистка ───────────────────────────
 
   static const _blockTags = {
-    'p', 'div', 'br', 'li', 'ul', 'ol', 'tr', 'td', 'th', 'table', 'thead', 'tbody', 'tfoot', 'caption',
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'blockquote', 'pre', 'section', 'article', 'header', 'footer',
-    'dt', 'dd', 'dl', 'figcaption', 'address', 'center',
+    'p',
+    'div',
+    'br',
+    'li',
+    'ul',
+    'ol',
+    'tr',
+    'td',
+    'th',
+    'table',
+    'thead',
+    'tbody',
+    'tfoot',
+    'caption',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'hr',
+    'blockquote',
+    'pre',
+    'section',
+    'article',
+    'header',
+    'footer',
+    'dt',
+    'dd',
+    'dl',
+    'figcaption',
+    'address',
+    'center',
   };
   static const _skipTags = {'script', 'style', 'head', 'title', 'template', 'noscript', 'svg', 'object'};
 
@@ -322,6 +378,13 @@ class AttachmentText {
       if (html.startsWith('<!--', lt)) {
         final c = html.indexOf('-->', lt + 4);
         i = c < 0 ? n : c + 3;
+        continue;
+      }
+      // «<» не перед буквой, «/», «!» или «?» — знак в тексте («a < b»).
+      final next = lt + 1 < n ? html.codeUnitAt(lt + 1) | 0x20 : 0;
+      if (!((next >= 0x61 && next <= 0x7A) || next == 0x2F || next == 0x21 || next == 0x3F)) {
+        emit('<');
+        i = lt + 1;
         continue;
       }
       final gt = html.indexOf('>', lt + 1);

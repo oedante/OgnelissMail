@@ -14,6 +14,13 @@
 // «RE:/FW:»); «Настройки → Перевод → Показ перевода письма» — заменить
 // текст или оставить оба (сначала оригинал или сначала перевод): тема —
 // вторая строкой под первой, текст — второй под линией с подписью языка.
+//
+// 1.12.x (просьба владельца 04.11.2026: плашка «сбоит и предлагает другие
+// языки»): перевод предлагается только с языка, в котором определитель
+// уверен (догадка — лишь для «Перевести», нажатого самим человеком); языки
+// телефона — как язык приложения; «Всегда переводить с …» — перевод сразу
+// при открытии письма. Решение — decideTranslationOffer
+// (translation_languages.dart).
 
 import 'dart:async';
 
@@ -85,6 +92,19 @@ class MailTranslationController extends ChangeNotifier {
   /// Плашку закрыли крестиком (до следующего письма).
   bool dismissed = false;
 
+  /// Перевод сделан сам, без нажатия: язык письма — в «Всегда переводить
+  /// с …» (1.12.x).
+  bool autoTranslated = false;
+
+  /// Движок перевода работает на устройстве: null — ещё не спрашивали,
+  /// false — нет (iOS до 18, Mac до 15, Android, где не запустился ML Kit):
+  /// пункт «Перевести» в меню письма можно скрыть (1.12.x).
+  bool? engineAvailable;
+
+  /// Язык письма по определителю — и уверенный, и догадка (1.12.x):
+  /// [from] — только уверенный, догадкой пользуется лишь «Перевести».
+  LangDetection? _guess;
+
   bool _disposed = false;
 
   /// Строки для сообщения об ошибке: перевод заканчивается вне build.
@@ -110,6 +130,8 @@ class MailTranslationController extends ChangeNotifier {
     unknownLang = false;
     showing = false;
     dismissed = false;
+    autoTranslated = false;
+    _guess = null;
   }
 
   /// Язык приложения — читается, пока экран жив (в build и по нажатию):
@@ -131,39 +153,93 @@ class MailTranslationController extends ChangeNotifier {
 
   Future<void> _detect(EmailModel e) async {
     final t = ref.read(translatorProvider);
-    if (!await t.isAvailable()) return;
+    // Настройки и языки телефона — до await: потом экран могли закрыть.
     final settings = ref.read(settingsProvider);
+    final known = settings.translatePhoneLangs ? deviceLanguages() : const <String>[];
+    final ok = await t.isAvailable();
+    engineAvailable = ok;
+    if (!ok || _stale(e)) return;
     final sample = await _sample(e);
-    if (sample.length < 20 || _emailId != e.id) return;
-    final lang = await _detectLang(t, e);
-    if (_emailId != e.id) return;
-    if (lang == null) {
-      // Язык не определился (письмо XERJ, 03.11.2026: не было даже кнопки
-      // «Перевести»), но письмо другим алфавитом, чем язык приложения, —
-      // плашку всё равно показать; язык спросим по нажатию.
-      if (settings.translateOffer &&
-          phase == MailTranslationPhase.none &&
-          otherScript(sample, normalizeLang(_appLang()) ?? 'en')) {
-        unknownLang = true;
-        to = normalizeLang(_appLang());
-        phase = MailTranslationPhase.offer;
-        _notify();
+    if (sample.length < 20 || _stale(e)) return;
+    final guess = _guess = await _detectLang(t, sample);
+    if (_stale(e)) return;
+    final available = await t.supportedLanguages();
+    if (_stale(e)) return;
+    final app = normalizeLang(_appLang()) ?? 'en';
+    final decision = decideTranslationOffer(
+      detected: guess?.lang,
+      confident: guess?.confident ?? false,
+      appLang: _appLang(),
+      enabled: settings.translateOffer,
+      never: settings.translateNever,
+      always: settings.translateAlways,
+      known: known,
+      available: available,
+      // Язык не определился уверенно (письмо XERJ, 03.11.2026: не было даже
+      // кнопки «Перевести»), но письмо другим алфавитом, чем язык
+      // приложения, — плашку всё равно показать; язык спросим по нажатию.
+      otherScript: otherScript(sample, app),
+    );
+    if (guess != null && guess.confident) {
+      // Уверенный язык — и для «Перевести» из меню, когда плашки нет.
+      from = guess.lang;
+      to = app;
+      await _loadNames(t);
+      if (_stale(e)) return;
+    }
+    if (phase == MailTranslationPhase.none) {
+      switch (decision) {
+        case TranslationOffer.none:
+          break;
+        case TranslationOffer.otherLanguage:
+          unknownLang = true;
+          to = app;
+          phase = MailTranslationPhase.offer;
+        case TranslationOffer.offer:
+          phase = MailTranslationPhase.offer;
+        case TranslationOffer.auto:
+          await _autoTranslate(t, e);
+          if (_stale(e)) return;
       }
+    }
+    _notify();
+  }
+
+  /// Письмо сменилось или экран закрыт — результат уже не нужен.
+  bool _stale(EmailModel e) => _disposed || _emailId != e.id;
+
+  /// «Всегда переводить с …» (1.12.x): перевод сразу, без плашки — если
+  /// языки уже на устройстве. Нет — обычная плашка «Перевести»: окно
+  /// скачивания (до 30 МБ на язык) при открытии письма было бы навязчивым.
+  Future<void> _autoTranslate(Translator t, EmailModel e) async {
+    final f = from, tt = to;
+    if (f == null || tt == null || f == tt) return;
+    final cached = _cache['${e.id}|$tt'];
+    if (cached != null) {
+      await _buildBoth(cached, mode);
+      showing = true;
+      autoTranslated = true;
+      phase = MailTranslationPhase.translated;
       return;
     }
-    from = lang;
-    to = normalizeLang(_appLang());
-    final available = await t.supportedLanguages();
-    if (_emailId != e.id) return;
-    await _loadNames(t);
-    final offer = shouldOfferTranslation(
-        detected: lang,
-        appLang: _appLang(),
-        enabled: settings.translateOffer,
-        never: settings.translateNever,
-        available: available);
-    if (phase == MailTranslationPhase.none && offer) phase = MailTranslationPhase.offer;
-    _notify();
+    var missing = const <String>[];
+    try {
+      missing = await t.missingModels(f, tt);
+    } catch (err) {
+      AppLogger.warning('Перевод: языки $f → $tt: $err');
+      missing = [f];
+    }
+    if (_stale(e)) return;
+    if (missing.isNotEmpty) {
+      phase = MailTranslationPhase.offer;
+      return;
+    }
+    // Строки (подпись «оставить оба») — без экрана: перевод начат не им.
+    final l10n = _l10n;
+    if (l10n == null || l10n.locale.languageCode != _appLang()) _l10n = await AppLocalizations.load(_appLang());
+    if (_stale(e)) return;
+    autoTranslated = true;
+    await _run(e, quiet: true);
   }
 
   Future<void> _loadNames(Translator t) async {
@@ -200,16 +276,19 @@ class MailTranslationController extends ChangeNotifier {
   @visibleForTesting
   static Future<String> debugSample(EmailModel e) => _sample(e);
 
-  /// Язык письма: по свежему тексту, а не вышло — по первым строкам (там
-  /// реже смешаны языки).
-  static Future<String?> _detectLang(Translator t, EmailModel e) async {
-    final sample = mainScriptSample(await _sample(e));
-    final lang = await t.detectLanguage(sample);
-    if (lang != null || sample.length <= 300) return lang;
-    final head = sample.substring(0, 300);
-    final again = await t.detectLanguage(head);
-    if (again == null) _logUndetected(sample);
-    return again;
+  /// Язык письма: по свежему тексту ([sample] — из [_sample]), а не вышло
+  /// уверенно — по первым строкам (там реже смешаны языки). Уверенный ответ
+  /// лучше догадки (1.12.x).
+  static Future<LangDetection?> _detectLang(Translator t, String sample) async {
+    final s = mainScriptSample(sample);
+    final first = await t.identifyLanguage(s);
+    var r = first;
+    if (first?.confident != true && s.length > 300) {
+      final again = await t.identifyLanguage(s.substring(0, 300));
+      r = again?.confident == true ? again : first ?? again;
+    }
+    if (r?.confident != true) _logUndetected(s, r?.lang);
+    return r;
   }
 
   /// Образец одним алфавитом (1.11.x, журнал владельца 04.11.2026: «язык
@@ -260,11 +339,13 @@ class MailTranslationController extends ChangeNotifier {
 
   /// Почему язык не определён — в журнал без текста письма: длина и доля
   /// латиницы и кириллицы (раньше — только в подробном журнале, и причину
-  /// «Не удалось перевести» было не видно).
-  static void _logUndetected(String sample) {
+  /// «Не удалось перевести» было не видно). Догадка [guess] (1.12.x) — тоже:
+  /// по ней перевод не предлагается.
+  static void _logUndetected(String sample, [String? guess]) {
     final letters = RegExp(r'\p{L}', unicode: true).allMatches(sample).length;
     int share(RegExp re) => letters == 0 ? 0 : (re.allMatches(sample).length * 100 / letters).round();
-    AppLogger.warning('Перевод: язык письма не определён — образец ${sample.length} знаков, '
+    final what = guess == null ? 'не определён' : 'не уверен (догадка $guess)';
+    AppLogger.warning('Перевод: язык письма $what — образец ${sample.length} знаков, '
         'латиница ${share(RegExp('[A-Za-z]'))} %, кириллица ${share(RegExp('[А-Яа-яЁё]'))} %');
   }
 
@@ -353,23 +434,28 @@ class MailTranslationController extends ChangeNotifier {
     final l10n = _l10n = AppLocalizations.of(context);
     _lang = ref.read(settingsProvider).locale.languageCode;
     if (!await t.isAvailable()) {
+      engineAvailable = false;
       showInlineError(l10n.tr(translateUnavailableKey()));
       return;
     }
+    engineAvailable = true;
     _resetFor(e.id);
     if (from == null) {
-      var lang = await _detectLang(t, e);
+      // Перевести нажал сам человек — годится и догадка определителя
+      // (1.12.x): плашки по ней нет, но перевод письма с цитатой и ссылками
+      // на другом языке так работал с 1.10.5.
+      final sample = await _sample(e);
+      var lang = (_guess ?? await _detectLang(t, sample))?.lang;
       // Язык не определился — спросить, с какого переводить (1.10.5), а не
       // «Не удалось перевести».
       if (lang == null && context.mounted) {
         // Текст латиницей — первым предложить английский: письма латиницей,
         // которые определитель не узнал, чаще всего английские.
-        final sample = await _sample(e);
-        if (!context.mounted) return;
         lang = await pickTranslationTarget(context, ref,
             title: l10n.tr('translateFrom'),
             source: normalizeLang(_appLang()),
-            suggested: latinShare(sample) >= 0.8 ? 'en' : null);
+            suggested: latinShare(sample) >= 0.8 ? 'en' : null,
+            suggestedLabel: l10n.tr('translateLikelyLang'));
       }
       if (lang == null) return;
       from = lang;
@@ -396,10 +482,46 @@ class MailTranslationController extends ChangeNotifier {
     await _run(e);
   }
 
-  Future<void> _run(EmailModel e) async {
+  /// «Указать язык письма» (меню плашки перевода, 1.12.x): определитель
+  /// ошибся или не уверен — язык выбирает человек, письмо переводится с него
+  /// заново (прежний перевод с другого языка забывается).
+  Future<void> translateFromPicked(BuildContext context, EmailModel e) async {
+    final t = ref.read(translatorProvider);
+    final l10n = _l10n = AppLocalizations.of(context);
+    _lang = ref.read(settingsProvider).locale.languageCode;
+    if (!await t.isAvailable()) {
+      engineAvailable = false;
+      showInlineError(l10n.tr(translateUnavailableKey()));
+      return;
+    }
+    _resetFor(e.id);
+    final sample = await _sample(e);
+    if (!context.mounted) return;
+    final app = normalizeLang(_appLang());
+    final lang = await pickTranslationTarget(context, ref,
+        title: l10n.tr('translateFrom'),
+        source: app,
+        suggested: from ?? _guess?.lang ?? (latinShare(sample) >= 0.8 ? 'en' : null),
+        suggestedLabel: l10n.tr('translateLikelyLang'));
+    if (lang == null || !context.mounted || _disposed) return;
+    // Кэш — по языку перевода: перевод с прежнего языка не годится.
+    if (lang != from) _cache.remove('${e.id}|$app');
+    from = lang;
+    unknownLang = false;
+    to = app;
+    await _loadNames(t);
+    if (!context.mounted) return;
+    await translate(context, e);
+  }
+
+  /// [quiet] — перевод начат не человеком («Всегда переводить с …»):
+  /// ошибка — без сообщения, просто плашка «Перевести».
+  Future<void> _run(EmailModel e, {bool quiet = false}) async {
     final f = from, tt = to;
     if (f == null || tt == null || _disposed) return;
     final t = ref.read(translatorProvider);
+    // Режим показа — до await: после него экран могли закрыть (ref нельзя).
+    final m = mode;
     phase = MailTranslationPhase.working;
     _notify();
     try {
@@ -427,15 +549,16 @@ class MailTranslationController extends ChangeNotifier {
         }
       }
       final done = _Translated(html, plain, trHtml, trPlain, trSubject);
-      await _buildBoth(done, mode);
+      await _buildBoth(done, m);
       _cache['${e.id}|$tt'] = done;
       if (_emailId != e.id) return;
       showing = true;
       phase = MailTranslationPhase.translated;
     } catch (err) {
       AppLogger.warning('Перевод письма $f → $tt: $err');
+      if (_disposed) return;
       final l10n = _l10n;
-      if (l10n != null) showInlineError(l10n.tr('translateFailed'));
+      if (l10n != null && !quiet) showInlineError(l10n.tr('translateFailed'));
       phase = showing ? MailTranslationPhase.translated : MailTranslationPhase.offer;
     }
     _notify();
@@ -459,11 +582,61 @@ class MailTranslationController extends ChangeNotifier {
   /// «Не переводить с этого языка» — в настройки, плашка закрывается.
   Future<void> never() async {
     final f = from;
-    if (f == null) return;
-    final n = ref.read(settingsProvider.notifier);
+    if (f != null) await neverTranslateFrom(f);
+  }
+
+  /// Язык письма — в «Всегда переводить с …»: меню плашки показывает
+  /// «Не переводить автоматически» вместо «Всегда переводить» (1.12.x).
+  bool get alwaysFromCurrent {
+    final f = from;
+    return f != null && ref.read(settingsProvider).translateAlways.map(normalizeLang).contains(f);
+  }
+
+  /// «Не переводить с языка [lang]» (меню плашки, 1.12.x): язык — в
+  /// «Не переводить с языков» (и из «Всегда переводить»), плашка
+  /// закрывается, на экране — оригинал.
+  Future<void> neverTranslateFrom(String lang) async {
     final list = ref.read(settingsProvider).translateNever;
-    await n.setTranslateNever([...list.where((x) => x != f), f]);
+    await ref.read(settingsProvider.notifier).setTranslateNever(withLang(list, lang));
+    showing = false;
     dismiss();
+  }
+
+  /// «Всегда переводить с языка [lang]» (меню плашки, 1.12.x): язык — в
+  /// «Всегда переводить с языков» (и из «Не переводить»). Письма на нём
+  /// дальше переводятся сразу при открытии; с [context] и [email]
+  /// переводится и это письмо (окно скачивания языков, если их ещё нет).
+  Future<void> alwaysTranslateFrom(String lang, {BuildContext? context, EmailModel? email}) async {
+    final n = normalizeLang(lang);
+    if (n == null) return;
+    final t = ref.read(translatorProvider);
+    final list = ref.read(settingsProvider).translateAlways;
+    await ref.read(settingsProvider.notifier).setTranslateAlways(withLang(list, n));
+    dismissed = false;
+    if (context != null && email != null && context.mounted && !_disposed && email.id == _emailId && !showing) {
+      if (from == null || from == n) {
+        if (from == null) {
+          // Язык письма не был известен — теперь это выбранный.
+          from = n;
+          to = normalizeLang(_appLang());
+          unknownLang = false;
+          await _loadNames(t);
+          if (!context.mounted) return;
+        }
+        await translate(context, email);
+        return;
+      }
+    }
+    _notify();
+  }
+
+  /// «Не переводить автоматически» (меню плашки, 1.12.x): язык уходит из
+  /// «Всегда переводить с языков»; перевод на экране остаётся.
+  Future<void> stopAlwaysTranslateFrom(String lang) async {
+    final list = ref.read(settingsProvider).translateAlways;
+    await ref.read(settingsProvider.notifier).setTranslateAlways(withoutLang(list, lang));
+    autoTranslated = false;
+    _notify();
   }
 }
 

@@ -22,6 +22,8 @@ class FakeTranslator implements Translator {
   @override
   Future<String?> detectLanguage(String text) async => 'en';
   @override
+  Future<LangDetection?> identifyLanguage(String text) async => (lang: 'en', confident: true);
+  @override
   Future<List<String>> supportedLanguages() async => const ['en', 'ru', 'de'];
   @override
   Future<Map<String, String>> languageNames(List<String> codes, String displayLang) async => const {};

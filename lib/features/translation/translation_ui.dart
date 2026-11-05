@@ -120,7 +120,9 @@ class _ModelDownloadDialogState extends ConsumerState<_ModelDownloadDialog> {
       if (mounted) {
         setState(() {
           _busy = false;
-          _error = l10n.tr('translateFailed');
+          // Не «Не удалось перевести» (1.12.x): не скачались языки — нет
+          // сети или ML Kit не может скачать модель на этом телефоне.
+          _error = l10n.tr('translateDownloadFailed');
         });
       }
     }
@@ -169,8 +171,10 @@ class _ModelDownloadDialogState extends ConsumerState<_ModelDownloadDialog> {
 }
 
 /// «Перевести на…»: язык собеседника, недавние, остальные. null — закрыли.
+/// [suggestedLabel] — подпись первого языка вместо «Язык собеседника»
+/// (выбор языка письма, 1.12.x: там первым — догадка определителя).
 Future<String?> pickTranslationTarget(BuildContext context, WidgetRef ref,
-    {String? source, String? suggested, String? title}) async {
+    {String? source, String? suggested, String? title, String? suggestedLabel}) async {
   final t = ref.read(translatorProvider);
   final l10n = AppLocalizations.of(context);
   final display = l10n.locale.languageCode;
@@ -191,7 +195,7 @@ Future<String?> pickTranslationTarget(BuildContext context, WidgetRef ref,
           label: capitalizeLangName(names[c] ?? c),
           icon: AppIcons.translate,
           subtitle: c == normalizeLang(suggested)
-              ? l10n.tr('translateSuggested')
+              ? suggestedLabel ?? l10n.tr('translateSuggested')
               : recentSet.contains(c)
                   ? l10n.tr('translateRecentLang')
                   : null,

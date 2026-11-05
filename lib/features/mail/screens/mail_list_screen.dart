@@ -25,6 +25,7 @@ import '../../../services/archive/archive_runner.dart' show archiveRunnerProvide
 import '../../../services/archive/archive_settings.dart' show archiveSettingsProvider;
 import '../widgets/mail_html_view.dart' show MailHtmlView, MailWebViewPool;
 import '../../../widgets/common/swipe_action_indicator.dart';
+import '../../../widgets/common/slidable_spring_back.dart';
 import '../../compose/widgets/mail_editor.dart' show MailEditorPool, warmUpMailEditor;
 import '../../../services/mail/conversation_counter.dart';
 import 'dart:async';
@@ -1477,7 +1478,10 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       itemBuilder: (context, index) => _RowMark(index: index, marks: _rowMarks, child: _itemAt(context, index)),
     );
     return Stack(children: [
-      KeyedSubtree(key: _listBoxKey, child: list),
+      // Открытой остаётся только одна строка (панель из двух кнопок): свайп
+      // другой строки или касание ленты закрывает прежнюю — раньше в ленте
+      // могло висеть сразу несколько полуоткрытых писем.
+      KeyedSubtree(key: _listBoxKey, child: SlidableAutoCloseBehavior(child: list)),
       // «↑ N новых» (1.6.48, как кнопка новых сообщений в Telegram): ниже
       // плавающей даты, чтобы не закрывать её.
       Positioned(
@@ -1809,7 +1813,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       fromStart: fromStart,
       atEdge: singleAction,
       extentRatio: singleAction ? 0.28 : 0.5,
-      armAt: singleAction ? 0.4 : null,
+      armAt: singleAction ? _swipeArmAt : null,
     );
 
     final actions = <CustomSlidableAction>[
@@ -1839,7 +1843,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
               // По умолчанию строку нужно было протянуть на 75 % ширины —
               // почти через весь экран. 40 %: отпустили дальше — строка
               // сама доезжает до конца и действие срабатывает.
-              dismissThreshold: 0.4,
+              dismissThreshold: _swipeArmAt,
               dismissalDuration: const Duration(milliseconds: 220),
               resizeDuration: const Duration(milliseconds: 220),
               closeOnCancel: true,
@@ -1861,9 +1865,16 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
               onDismissed: () => _executeSwipeAction(action, email, l10n),
             )
           : null,
-      children: actions,
+      // Не дотянули до порога — строка возвращается на место, а не остаётся
+      // полуоткрытой (1.14.0: «свайпы зависают на середине»).
+      children: single
+          ? [SlidableSpringBack(dismissThreshold: _swipeArmAt, child: actions.single)]
+          : actions,
     );
   }
+
+  /// Порог полного свайпа при одном действии на стороне (доля ширины строки).
+  static const _swipeArmAt = 0.4;
 
   /// Выбор «вся беседа / только письмо», сделанный до ухода строки при
   /// полном свайпе.

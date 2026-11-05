@@ -230,6 +230,9 @@ class _MailNoticeBarState extends State<MailNoticeBar> with SingleTickerProvider
                   ]),
                 ),
               );
+        final panel = shown == null
+            ? const SizedBox(width: double.infinity)
+            : KeyedSubtree(key: ValueKey('notice-open-${shown.id}'), child: shown.expanded!(context));
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
           row,
           if (note != null)
@@ -239,20 +242,21 @@ class _MailNoticeBarState extends State<MailNoticeBar> with SingleTickerProvider
                   style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
             ),
           // Раскрытая плашка: плавно выезжает под строкой; смена одной на
-          // другую — плавно по высоте.
+          // другую — плавно по высоте. Без анимации — без AnimatedSize: с
+          // нулевой длительностью он перестраивается посреди своей вёрстки.
           SizeTransition(
             sizeFactor: _curve,
             alignment: Alignment.topCenter,
             child: FadeTransition(
               opacity: _curve,
-              child: AnimatedSize(
-                duration: _anim.duration ?? _duration,
-                curve: Curves.easeOutCubic,
-                alignment: Alignment.topCenter,
-                child: shown == null
-                    ? const SizedBox(width: double.infinity)
-                    : KeyedSubtree(key: ValueKey('notice-open-${shown.id}'), child: shown.expanded!(context)),
-              ),
+              child: _anim.duration == Duration.zero
+                  ? panel
+                  : AnimatedSize(
+                      duration: _duration,
+                      curve: Curves.easeOutCubic,
+                      alignment: Alignment.topCenter,
+                      child: panel,
+                    ),
             ),
           ),
         ]);

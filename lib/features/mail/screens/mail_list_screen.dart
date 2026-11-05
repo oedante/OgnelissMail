@@ -112,6 +112,8 @@ import '../../../core/theme/ogneliss_look.dart';
 import '../providers/folder_names.dart';
 import '../widgets/row_hover_actions.dart';
 import '../../../widgets/common/pane_navigator.dart';
+import '../../../widgets/common/keyboard_shortcuts.dart' show textInputFocused;
+import '../providers/reading_pane.dart';
 
 class MailListScreen extends ConsumerStatefulWidget {
   const MailListScreen({super.key});
@@ -213,6 +215,14 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   Timer? _floatHide;
   final Set<String> _selectedIds = {};
   String? _selectedAccountId;
+
+  /// Последнее нажатое письмо — откуда Shift+нажатие отмечает письма
+  /// подряд (1.12.x, выбор как в Outlook).
+  String? _selectAnchor;
+
+  /// Фокус клавиатуры ленты (1.12.x): Ctrl+A, Esc и Delete выбора доходят
+  /// до ленты, только когда фокус в ней (или в письме рядом).
+  final _listFocus = FocusNode(debugLabel: 'mail_list', skipTraversal: true);
 
   /// «Назад» ленты (выбор → поиск → папка/фильтр → наверх) — его вызывает и
   /// оболочка через [mailBackRequestProvider].
@@ -494,6 +504,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     _floatVisible.dispose();
     _newAbove.dispose();
     _searchController.dispose();
+    _listFocus.dispose();
     // Экран ушёл в режиме выбора — вернуть кнопку «Написать» оболочке.
     // Не во время демонтажа дерева: менять провайдер здесь нельзя.
     final sel = _selectionNotifier;
@@ -691,7 +702,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         _foldersDocked = docked;
         // Сторона меню на телефоне — по настройке (по умолчанию слева).
         _menuAtEnd = phone && ref.watch(menuOnRightProvider);
-        return Row(
+        final row = Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (docked) ...[
@@ -856,6 +867,15 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             itemBuilder: (ctx) => [
               AppMenuEntry(value: 'sort', icon: AppIcons.sort, label: l10n.tr('sortBy')),
               AppMenuEntry(value: 'select_all', icon: AppIcons.select_all, label: l10n.tr('selectAll')),
+              // «Область чтения» (1.12.x) — на планшете и компьютере, как
+              // «Вид → Область чтения» в Outlook.
+              if (!phone)
+                AppMenuEntry(
+                  value: 'reading_pane',
+                  icon: AppIcons.vertical_split,
+                  label: l10n.tr('readingPane'),
+                  subtitle: readingPaneLabel(l10n, ref.read(readingPaneProvider)).label,
+                ),
               AppMenuEntry(value: 'mark_all_read', icon: AppIcons.done_all, label: l10n.tr('markAllRead')),
               AppMenuEntry(value: 'read_where_cc', icon: AppIcons.mark_email_read, label: l10n.tr('markReadWhereCc')),
               // «Очистить» — только в Корзине и Спаме, и именно открытую
@@ -910,13 +930,127 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         // Широкое окно: панель письма на месте и до выбора (1.6.28) —
         // лента не меняет ширину при первом нажатии.
         placeholder: _DetailPlaceholder(text: l10n.selectEmailPrompt),
-        body: _withBottomStrips(_buildBody(emailState, theme, l10n, settings)),
+        // «Область чтения» (1.12.x, как в Outlook): справа, снизу или
+        // скрыта. Телефон — как раньше.
+        position: phone ? PanePosition.right : ref.watch(readingPaneProvider),
+        body: Focus(
+          focusNode: _listFocus,
+          child: _withBottomStrips(_buildBody(emailState, theme, l10n, settings)),
+        ),
       ),
     )),
           ],
         );
+        if (phone) return row;
+        // Планшет и компьютер (1.12.x, выбор как в Outlook): Ctrl+A (Cmd+A)
+        // — все загруженные письма, Esc — снять выбор, Delete — удалить
+        // выбранные. Нажатие мышью в ленте или папках отдаёт фокус ленте,
+        // если он был выше (оболочка): иначе клавиши до неё не доходят.
+        return Listener(
+          behavior: HitTestBehavior.translucent,
+          onPointerDown: (_) => _claimKeys(),
+          child: ListenableBuilder(
+            // Смена фокуса (поле ввода, выделение текста письма) — только
+            // список клавиш, экран под ним не перестраивается.
+            listenable: FocusManager.instance,
+            builder: (context, child) => CallbackShortcuts(bindings: _listKeys(inSelection), child: child!),
+            child: row,
+          ),
+        );
       }),
     );
+  }
+
+  // ════════════════ ВЫБОР С КЛАВИАТУРЫ И МЫШЬЮ (1.12.x) ════════════════
+  // Просьба владельца 04.11.2026 («UI планшетов и десктопа с референсом как
+  // Outlook»): Ctrl (Cmd на Mac и iPad) + нажатие — отметить письмо или
+  // снять отметку, Shift + нажатие — письма подряд от последнего нажатого,
+  // Ctrl+A — все загруженные, Esc — снять выбор. Это тот же режим выбора, что
+  // по удержанию портрета: те же флажки, панель действий и меню. Пальцем —
+  // как раньше.
+
+  /// Клавиши ленты. Пока в фокусе поле ввода или выделен текст письма,
+  /// клавиши — их: Ctrl+A выделяет текст, а не письма.
+  Map<ShortcutActivator, VoidCallback> _listKeys(bool inSelection) {
+    if (textInputFocused() || _textSelectionFocused()) return const {};
+    return {
+      const SingleActivator(LogicalKeyboardKey.keyA, control: true): _selectAllByKey,
+      const SingleActivator(LogicalKeyboardKey.keyA, meta: true): _selectAllByKey,
+      if (inSelection) ...{
+        const SingleActivator(LogicalKeyboardKey.escape): _exitSelection,
+        const SingleActivator(LogicalKeyboardKey.delete): () => unawaited(_bulkDelete()),
+      },
+    };
+  }
+
+  /// Фокус — в выделенном тексте (письмо в панели, SelectionArea).
+  static bool _textSelectionFocused() {
+    final ctx = FocusManager.instance.primaryFocus?.context;
+    if (ctx == null) return false;
+    return ctx.widget is SelectableRegion || ctx.findAncestorWidgetOfExactType<SelectableRegion>() != null;
+  }
+
+  /// Фокус — ленте, если он сейчас выше неё (оболочка, ничего не выбрано).
+  /// Письмо в панели, поле ввода и выделенный текст фокус не теряют.
+  void _claimKeys() {
+    final p = FocusManager.instance.primaryFocus;
+    if (p == _listFocus) return;
+    if (p == null || _listFocus.ancestors.contains(p)) _listFocus.requestFocus();
+  }
+
+  /// Выбор сменился мышью или клавиатурой — фокус ленте: Esc и Delete
+  /// относятся к выбранным письмам, а не к письму в панели. Поле ввода
+  /// (поиск) фокус не теряет — экранная клавиатура не прячется.
+  void _focusList() {
+    if (AppBottomBar.inUse(context) || textInputFocused()) return;
+    _listFocus.requestFocus();
+  }
+
+  void _selectAllByKey() {
+    setState(() => _selectionMode = true);
+    _selectAllLoaded();
+  }
+
+  /// Письма ленты по порядку — для Shift+нажатия.
+  List<String> _rowOrder() => [
+        for (final x in _cachedGrouped ?? const <dynamic>[])
+          if (x is EmailModel) x.id,
+      ];
+
+  /// Нажатие на строку с Ctrl (Cmd) или Shift: true — выбор изменён, письмо
+  /// не открывается. Без клавиш — false (обычное нажатие). Письмо в панели
+  /// рядом — уже «выбранное», как в Outlook: первое Ctrl+нажатие отмечает
+  /// и его, Shift+нажатие отмечает письма от него. Shift — отмеченные
+  /// заменяются диапазоном, Ctrl+Shift — диапазон добавляется к ним.
+  /// [rowContext] — context строки (под AdaptiveLayout: рядом ли панель).
+  bool _modifierTap(BuildContext rowContext, EmailModel item) {
+    if (AppBottomBar.inUse(context)) return false;
+    final kb = HardwareKeyboard.instance;
+    final apple = switch (Theme.of(context).platform) {
+      TargetPlatform.macOS || TargetPlatform.iOS => true,
+      _ => false,
+    };
+    final toggle = apple ? kb.isMetaPressed : kb.isControlPressed;
+    final range = kb.isShiftPressed;
+    if (!toggle && !range) return false;
+    final order = _rowOrder();
+    final open = AdaptiveLayout.isSplit(rowContext) && order.contains(_selectedEmailId) ? _selectedEmailId : null;
+    final anchor = order.contains(_selectAnchor) ? _selectAnchor : open;
+    final a = anchor == null ? -1 : order.indexOf(anchor);
+    final b = order.indexOf(item.id);
+    setState(() {
+      if (range && a >= 0 && b >= 0) {
+        if (!toggle) _selectedIds.clear();
+        _selectedIds.addAll(order.sublist(a < b ? a : b, (a < b ? b : a) + 1));
+      } else {
+        if (_selectedIds.isEmpty && open != null && open != item.id) _selectedIds.add(open);
+        if (!_selectedIds.remove(item.id)) _selectedIds.add(item.id);
+        _selectAnchor = item.id;
+      }
+      _selectionMode = _selectedIds.isNotEmpty;
+    });
+    _focusList();
+    return true;
   }
 
   /// Ширина панели папок: выбранная (из настроек), не больше трети окна.
@@ -1521,13 +1655,24 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
               isSelected: _selectedEmailId == item.id,
               isInSelectionMode: _selectionMode,
               isChecked: _selectedIds.contains(item.id),
-              onCheckChanged: () => _toggleSelect(item.id),
+              // Флажок с Shift — письма подряд, как нажатие на строку (1.12.x).
+              onCheckChanged: () {
+                if (!_modifierTap(context, item)) _toggleSelect(item.id);
+              },
               // Мышь над портретом — флажок (1.11.0, как в Outlook).
-              onHoverSelect: () => setState(() {
-                _selectionMode = true;
-                _selectedIds.add(item.id);
-              }),
+              onHoverSelect: () {
+                if (_modifierTap(context, item)) return;
+                setState(() {
+                  _selectionMode = true;
+                  _selectedIds.add(item.id);
+                  _selectAnchor = item.id;
+                });
+                _focusList();
+              },
               onTap: () async {
+                // Ctrl (Cmd) и Shift — выбор, как в Outlook (1.12.x).
+                if (_modifierTap(context, item)) return;
+                _selectAnchor = item.id;
                 if (_selectionMode) {
                   _toggleSelect(item.id);
                   return;
@@ -2041,6 +2186,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
 
   void _toggleSelect(String id) {
     setState(() {
+      _selectAnchor = id;
       if (_selectedIds.contains(id)) {
         _selectedIds.remove(id);
         if (_selectedIds.isEmpty) _selectionMode = false;
@@ -2048,6 +2194,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         _selectedIds.add(id);
       }
     });
+    _focusList();
   }
 
   void _exitSelection() => setState(() { _selectionMode = false; _selectedIds.clear(); });
@@ -3001,6 +3148,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       case 'select_all':
         setState(() => _selectionMode = true);
         _selectAllLoaded();
+        break;
+      case 'reading_pane':
+        unawaited(pickReadingPane(context, ref));
         break;
     }
   }

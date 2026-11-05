@@ -3821,7 +3821,7 @@
     <string name="favoritesOrder">Pořadí dlaždic</string>
     <string name="favoritesOrderHint">Přetáhněte položku za úchyt vpravo — dlaždice v nabídce budou v tomto pořadí.</string>
     <string name="docProtected">Dokument je chráněn heslem. Otevřete jej v jiné aplikaci.</string>
-    <string name="docLegacyFormat">Aplikace zatím neumí zobrazit dokumenty ve starém formátu Office 97–2003 (.doc, .xls, .ppt). Otevřete soubor v jiné aplikaci.</string>
+    <string name="docLegacyFormat">Aplikace nezobrazí dokumenty ve starých formátech Office (Word, Excel a PowerPoint 95 a starší). Otevřete soubor v jiné aplikaci.</string>
     <string name="docTooLarge">Dokument je pro náhled příliš velký. Otevřete jej v jiné aplikaci.</string>
     <string name="docTruncated">Dokument je velký — zobrazuje se jen začátek. Celý jej otevřete v jiné aplikaci.</string>
     <string name="docEmpty">Dokument neobsahuje žádný text.</string>

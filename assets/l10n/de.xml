@@ -3800,7 +3800,7 @@
     <string name="favoritesOrder">Reihenfolge der Kacheln</string>
     <string name="favoritesOrderHint">Ziehen Sie einen Eintrag am Griff rechts — die Kacheln im Menü folgen dieser Reihenfolge.</string>
     <string name="docProtected">Das Dokument ist kennwortgeschützt. Öffnen Sie es in einer anderen App.</string>
-    <string name="docLegacyFormat">Dokumente im alten Format Office 97–2003 (.doc, .xls, .ppt) kann die App noch nicht anzeigen. Öffnen Sie die Datei in einer anderen App.</string>
+    <string name="docLegacyFormat">Dokumente in alten Office-Formaten (Word, Excel und PowerPoint 95 und älter) kann die App nicht anzeigen. Öffnen Sie die Datei in einer anderen App.</string>
     <string name="docTooLarge">Das Dokument ist für die Vorschau zu groß. Öffnen Sie es in einer anderen App.</string>
     <string name="docTruncated">Das Dokument ist groß – nur der Anfang wird angezeigt. Vollständig sehen Sie es in einer anderen App.</string>
     <string name="docEmpty">Das Dokument enthält keinen Text.</string>

@@ -3779,7 +3779,7 @@
     <string name="favoritesOrder">磁贴顺序</string>
     <string name="favoritesOrderHint">拖动右侧的把手调整项目，菜单中的磁贴将按此顺序排列。</string>
     <string name="docProtected">文档受密码保护。请在其他应用中打开。</string>
-    <string name="docLegacyFormat">应用暂不支持预览旧版 Office 97–2003 格式（.doc、.xls、.ppt）的文档。请在其他应用中打开该文件。</string>
+    <string name="docLegacyFormat">应用无法显示旧版 Office 格式（Word、Excel 和 PowerPoint 95 及更早版本）的文档。请在其他应用中打开文件。</string>
     <string name="docTooLarge">文档太大，无法预览。请在其他应用中打开。</string>
     <string name="docTruncated">文档较大，仅显示开头部分。如需查看全部内容，请在其他应用中打开。</string>
     <string name="docEmpty">文档中没有文本。</string>

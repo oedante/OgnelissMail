@@ -3800,7 +3800,7 @@
     <string name="favoritesOrder">Ordine dei riquadri</string>
     <string name="favoritesOrderHint">Trascina una voce dalla maniglia a destra: i riquadri del menu seguono questo ordine.</string>
     <string name="docProtected">Il documento è protetto da password. Aprilo in un\'altra app.</string>
-    <string name="docLegacyFormat">L\'app non può ancora mostrare documenti nel vecchio formato Office 97–2003 (.doc, .xls, .ppt). Apri il file in un\'altra app.</string>
+    <string name="docLegacyFormat">L\'app non può mostrare documenti nei vecchi formati Office (Word, Excel e PowerPoint 95 e precedenti). Apri il file in un\'altra app.</string>
     <string name="docTooLarge">Il documento è troppo grande per l\'anteprima. Aprilo in un\'altra app.</string>
     <string name="docTruncated">Il documento è grande: viene mostrato solo l\'inizio. Aprilo in un\'altra app per vederlo tutto.</string>
     <string name="docEmpty">Il documento non contiene testo.</string>

@@ -3821,7 +3821,7 @@
     <string name="favoritesOrder">סדר האריחים</string>
     <string name="favoritesOrderHint">גררו פריט בידית שמימין — האריחים בתפריט יופיעו בסדר הזה.</string>
     <string name="docProtected">המסמך מוגן בסיסמה. פתחו אותו באפליקציה אחרת.</string>
-    <string name="docLegacyFormat">האפליקציה עדיין לא מציגה מסמכים בתבנית הישנה של Office 97–2003 (.doc, .xls, .ppt). פתחו את הקובץ באפליקציה אחרת.</string>
+    <string name="docLegacyFormat">האפליקציה לא מציגה מסמכים בפורמטים ישנים של Office ‏(Word,‏ Excel ו-PowerPoint 95 ומטה). פתחו את הקובץ באפליקציה אחרת.</string>
     <string name="docTooLarge">המסמך גדול מדי לתצוגה מקדימה. פתחו אותו באפליקציה אחרת.</string>
     <string name="docTruncated">המסמך גדול — מוצגת רק ההתחלה. כדי לראות את כולו, פתחו אותו באפליקציה אחרת.</string>
     <string name="docEmpty">אין טקסט במסמך.</string>

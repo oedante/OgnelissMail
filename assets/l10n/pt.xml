@@ -3800,7 +3800,7 @@
     <string name="favoritesOrder">Ordem dos blocos</string>
     <string name="favoritesOrderHint">Arraste um item pela alça à direita — os blocos do menu seguem esta ordem.</string>
     <string name="docProtected">O documento está protegido por senha. Abra-o em outro aplicativo.</string>
-    <string name="docLegacyFormat">O aplicativo ainda não exibe documentos no formato antigo do Office 97–2003 (.doc, .xls, .ppt). Abra o arquivo em outro aplicativo.</string>
+    <string name="docLegacyFormat">O app não mostra documentos em formatos antigos do Office (Word, Excel e PowerPoint 95 e anteriores). Abra o arquivo em outro app.</string>
     <string name="docTooLarge">O documento é grande demais para a pré-visualização. Abra-o em outro aplicativo.</string>
     <string name="docTruncated">O documento é grande — só o início é exibido. Abra-o em outro aplicativo para vê-lo inteiro.</string>
     <string name="docEmpty">O documento não contém texto.</string>

@@ -3800,7 +3800,7 @@
     <string name="favoritesOrder">टाइलों का क्रम</string>
     <string name="favoritesOrderHint">दाईं ओर के हैंडल से आइटम खींचें — मेनू की टाइलें इसी क्रम में आएँगी।</string>
     <string name="docProtected">दस्तावेज़ पासवर्ड से सुरक्षित है। इसे किसी अन्य ऐप में खोलें।</string>
-    <string name="docLegacyFormat">ऐप अभी पुराने Office 97–2003 फ़ॉर्मेट (.doc, .xls, .ppt) के दस्तावेज़ नहीं दिखा सकता। फ़ाइल को किसी अन्य ऐप में खोलें।</string>
+    <string name="docLegacyFormat">ऐप पुराने Office फ़ॉर्मैट (Word, Excel और PowerPoint 95 और पहले) के दस्तावेज़ नहीं दिखा सकता। फ़ाइल किसी दूसरे ऐप में खोलें।</string>
     <string name="docTooLarge">दस्तावेज़ पूर्वावलोकन के लिए बहुत बड़ा है। इसे किसी अन्य ऐप में खोलें।</string>
     <string name="docTruncated">दस्तावेज़ बड़ा है — केवल शुरुआत दिखाई गई है। पूरा देखने के लिए इसे किसी अन्य ऐप में खोलें।</string>
     <string name="docEmpty">दस्तावेज़ में कोई टेक्स्ट नहीं है।</string>

@@ -3800,7 +3800,7 @@
     <string name="favoritesOrder">Panelernas ordning</string>
     <string name="favoritesOrderHint">Dra ett objekt i handtaget till höger — panelerna i menyn följer den här ordningen.</string>
     <string name="docProtected">Dokumentet är lösenordsskyddat. Öppna det i en annan app.</string>
-    <string name="docLegacyFormat">Appen kan ännu inte visa dokument i det gamla formatet Office 97–2003 (.doc, .xls, .ppt). Öppna filen i en annan app.</string>
+    <string name="docLegacyFormat">Appen kan inte visa dokument i gamla Office-format (Word, Excel och PowerPoint 95 och äldre). Öppna filen i en annan app.</string>
     <string name="docTooLarge">Dokumentet är för stort för förhandsvisning. Öppna det i en annan app.</string>
     <string name="docTruncated">Dokumentet är stort – bara början visas. Öppna det i en annan app för att se allt.</string>
     <string name="docEmpty">Dokumentet innehåller ingen text.</string>

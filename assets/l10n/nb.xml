@@ -3800,7 +3800,7 @@
     <string name="favoritesOrder">Rekkefølge på fliser</string>
     <string name="favoritesOrderHint">Dra et punkt i håndtaket til høyre — flisene i menyen følger denne rekkefølgen.</string>
     <string name="docProtected">Dokumentet er passordbeskyttet. Åpne det i en annen app.</string>
-    <string name="docLegacyFormat">Appen kan ennå ikke vise dokumenter i det gamle Office 97–2003-formatet (.doc, .xls, .ppt). Åpne filen i en annen app.</string>
+    <string name="docLegacyFormat">Appen kan ikke vise dokumenter i gamle Office-formater (Word, Excel og PowerPoint 95 og eldre). Åpne filen i en annen app.</string>
     <string name="docTooLarge">Dokumentet er for stort til forhåndsvisning. Åpne det i en annen app.</string>
     <string name="docTruncated">Dokumentet er stort – bare begynnelsen vises. Åpne det i en annen app for å se alt.</string>
     <string name="docEmpty">Dokumentet inneholder ingen tekst.</string>

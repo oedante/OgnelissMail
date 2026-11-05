@@ -10,6 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/services/documents/office_reader.dart';
 import 'package:ogneliss/services/search/attachment_text.dart';
 
+import 'msg_builder.dart';
+
 Uint8List _fx(String name) => File('test/fixtures/office/$name').readAsBytesSync();
 
 /// Письмо RFC 822 с текстом и вложениями (имя, тип, байты).
@@ -197,5 +199,26 @@ void main() {
     // Файла нет (кэш очистила система) — попробовать позже.
     final gone = await AttachmentText.extractFile('${dir.path}/нет.txt', 'нет.txt');
     expect(gone.retryLater, isTrue);
+  });
+
+  test('1.14.0: старые .doc и .xls и письмо Outlook .msg — с текстом', () async {
+    final doc = write('Отчёт.doc', _fx('text_sample.doc'));
+    final d = await AttachmentText.extractFile(doc.path, 'Отчёт.doc', lang: 'ru');
+    expect(d.text, contains('Отчёт о работе отдела'));
+    expect(d.retryLater, isFalse);
+
+    final xls = write('Смета.xls', _fx('sheet_sample.xls'));
+    expect((await AttachmentText.extractFile(xls.path, 'Смета.xls', lang: 'ru')).text, contains('Справочник'));
+
+    final m = MsgBuilder();
+    m.props
+      ..str(0x0037, 'Счёт за ноябрь')
+      ..str(0x0C1A, 'Бухгалтерия')
+      ..str(0x5D01, 'buh@example.org')
+      ..str(0x1000, 'Оплата по договору поставки до пятницы');
+    final msg = write('Счёт.msg', m.build());
+    final t = await AttachmentText.extractFile(msg.path, 'Счёт.msg', lang: 'ru');
+    expect(t.text, contains('Счёт за ноябрь'));
+    expect(t.text, contains('договору поставки'));
   });
 }

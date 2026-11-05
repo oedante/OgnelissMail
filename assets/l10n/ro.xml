@@ -3821,7 +3821,7 @@
     <string name="favoritesOrder">Ordinea plăcilor</string>
     <string name="favoritesOrderHint">Trageți un element de mânerul din dreapta — plăcile din meniu urmează această ordine.</string>
     <string name="docProtected">Documentul este protejat prin parolă. Deschideți-l în altă aplicație.</string>
-    <string name="docLegacyFormat">Aplicația nu poate afișa încă documente în vechiul format Office 97–2003 (.doc, .xls, .ppt). Deschideți fișierul în altă aplicație.</string>
+    <string name="docLegacyFormat">Aplicația nu afișează documente în formate Office vechi (Word, Excel și PowerPoint 95 și mai vechi). Deschide fișierul în altă aplicație.</string>
     <string name="docTooLarge">Documentul este prea mare pentru previzualizare. Deschideți-l în altă aplicație.</string>
     <string name="docTruncated">Documentul este mare — se afișează doar începutul. Deschideți-l în altă aplicație pentru a-l vedea integral.</string>
     <string name="docEmpty">Documentul nu conține text.</string>

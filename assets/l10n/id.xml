@@ -3779,7 +3779,7 @@
     <string name="favoritesOrder">Urutan ubin</string>
     <string name="favoritesOrderHint">Seret item dengan pegangan di kanan — ubin di menu mengikuti urutan ini.</string>
     <string name="docProtected">Dokumen dilindungi kata sandi. Buka di aplikasi lain.</string>
-    <string name="docLegacyFormat">Aplikasi belum dapat menampilkan dokumen format lama Office 97–2003 (.doc, .xls, .ppt). Buka file di aplikasi lain.</string>
+    <string name="docLegacyFormat">Aplikasi tidak dapat menampilkan dokumen format Office lama (Word, Excel, dan PowerPoint 95 atau lebih lama). Buka file di aplikasi lain.</string>
     <string name="docTooLarge">Dokumen terlalu besar untuk pratinjau. Buka di aplikasi lain.</string>
     <string name="docTruncated">Dokumen besar — hanya bagian awal yang ditampilkan. Buka di aplikasi lain untuk melihat semuanya.</string>
     <string name="docEmpty">Dokumen tidak berisi teks.</string>

@@ -3800,7 +3800,7 @@
     <string name="favoritesOrder">Orden de los mosaicos</string>
     <string name="favoritesOrderHint">Arrastre un elemento por el asa de la derecha: los mosaicos del menú siguen este orden.</string>
     <string name="docProtected">El documento está protegido con contraseña. Ábralo en otra aplicación.</string>
-    <string name="docLegacyFormat">La aplicación aún no puede mostrar documentos en el formato antiguo de Office 97–2003 (.doc, .xls, .ppt). Abra el archivo en otra aplicación.</string>
+    <string name="docLegacyFormat">La app no puede mostrar documentos en formatos antiguos de Office (Word, Excel y PowerPoint 95 y anteriores). Abre el archivo en otra app.</string>
     <string name="docTooLarge">El documento es demasiado grande para la vista previa. Ábralo en otra aplicación.</string>
     <string name="docTruncated">El documento es grande: solo se muestra el principio. Ábralo en otra aplicación para verlo completo.</string>
     <string name="docEmpty">El documento no contiene texto.</string>

@@ -32,6 +32,7 @@ import '../documents/office_package.dart';
 import '../documents/office_reader.dart';
 import '../documents/text_doc_reader.dart';
 import '../mail/eml_reader.dart';
+import '../mail/msg_reader.dart';
 
 /// Как читается вложение.
 enum AttachmentTextKind {
@@ -111,7 +112,10 @@ class AttachmentText {
     }
     final ext = OfficeFormats.extOf(fileName);
     final mt = (mimeType ?? '').toLowerCase().split(';').first.trim();
-    if (ext == 'eml' || mt == 'message/rfc822') return AttachmentTextKind.eml;
+    // Письмо Outlook .msg (1.14.0) разбирается в то же письмо, что .eml.
+    if (ext == 'eml' || mt == 'message/rfc822' || MsgReader.isMsgName(fileName, mimeType: mimeType)) {
+      return AttachmentTextKind.eml;
+    }
     if (_htmlExt.contains(ext)) return AttachmentTextKind.html;
     if (_textExt.contains(ext)) return AttachmentTextKind.text;
     if (ext.isEmpty || ext.length > 8) {
@@ -189,10 +193,10 @@ class AttachmentText {
         try {
           final doc = await OfficeReader.readFile(path, fileName, mimeType: mimeType, lang: lang);
           return ExtractedText(textOfDoc(doc));
-        } on OfficeDocException catch (e) {
-          // Старый двоичный Office: читатели для него появятся в следующих
-          // версиях (через тот же OfficeReader) — тогда файл и прочитается.
-          return e.kind == OfficeDocError.legacy ? ExtractedText.later : ExtractedText.none;
+        } on OfficeDocException {
+          // С 1.14.0 .doc/.xls/.ppt читаются; «legacy» — только Office 95 и
+          // раньше, читателя для них не будет: текста нет.
+          return ExtractedText.none;
         }
       case AttachmentTextKind.text:
         return ExtractedText(clean(_decode(_head(file, _textBytes), lang, len > _textBytes)));
@@ -200,7 +204,7 @@ class AttachmentText {
         return ExtractedText(htmlToText(_decode(_head(file, _htmlBytes), lang, len > _htmlBytes)));
       case AttachmentTextKind.eml:
         if (len > maxEmlBytes) return ExtractedText.none;
-        return ExtractedText(textOfEml(EmlReader.parse(file.readAsBytesSync()), lang: lang));
+        return ExtractedText(textOfEml(_mail(file.readAsBytesSync(), fileName, mimeType, lang), lang: lang));
     }
   }
 
@@ -217,6 +221,10 @@ class AttachmentText {
       raf.closeSync();
     }
   }
+
+  /// Вложенное письмо: .msg — читателем Outlook, остальное — как .eml.
+  static EmlMessage _mail(Uint8List bytes, String fileName, String? mimeType, String lang) =>
+      MsgReader.isMsgName(fileName, mimeType: mimeType) ? MsgReader.read(bytes, lang: lang) : EmlReader.parse(bytes);
 
   // Та же кодировка, что в предпросмотре (UTF-8, 1251, KOI8-R, DOS 866).
   static String _decode(Uint8List b, String lang, bool truncated) =>
@@ -302,7 +310,7 @@ class AttachmentText {
           return htmlToText(_decode(_cut(bytes, _htmlBytes), lang, bytes.length > _htmlBytes), max: max);
         case AttachmentTextKind.eml:
           if (depth >= maxDepth || bytes.length > maxEmlBytes) return '';
-          return textOfEml(EmlReader.parse(bytes), max: max, lang: lang, depth: depth + 1);
+          return textOfEml(_mail(bytes, fileName, mimeType, lang), max: max, lang: lang, depth: depth + 1);
         case AttachmentTextKind.office:
         case AttachmentTextKind.sniff:
           if (bytes.length > OfficeLimits.maxFileBytes) return '';

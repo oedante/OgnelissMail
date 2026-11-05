@@ -3800,7 +3800,7 @@
     <string name="favoritesOrder">Tile order</string>
     <string name="favoritesOrderHint">Drag an item by the handle on the right — the menu tiles follow this order.</string>
     <string name="docProtected">The document is password-protected. Open it in another app.</string>
-    <string name="docLegacyFormat">The app can\'t preview documents in the old Office 97–2003 format (.doc, .xls, .ppt) yet. Open the file in another app.</string>
+    <string name="docLegacyFormat">The app can\'t preview documents in old Office formats (Word, Excel and PowerPoint 95 and earlier). Open the file in another app.</string>
     <string name="docTooLarge">The document is too large to preview. Open it in another app.</string>
     <string name="docTruncated">The document is large — only the beginning is shown. Open it in another app to see all of it.</string>
     <string name="docEmpty">The document has no text.</string>

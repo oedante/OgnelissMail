@@ -3800,7 +3800,7 @@
     <string name="favoritesOrder">Volgorde van tegels</string>
     <string name="favoritesOrderHint">Sleep een item aan de greep rechts — de tegels in het menu volgen deze volgorde.</string>
     <string name="docProtected">Het document is met een wachtwoord beveiligd. Open het in een andere app.</string>
-    <string name="docLegacyFormat">De app kan documenten in het oude Office 97–2003-formaat (.doc, .xls, .ppt) nog niet weergeven. Open het bestand in een andere app.</string>
+    <string name="docLegacyFormat">De app kan documenten in oude Office-indelingen (Word, Excel en PowerPoint 95 en ouder) niet tonen. Open het bestand in een andere app.</string>
     <string name="docTooLarge">Het document is te groot voor een voorbeeld. Open het in een andere app.</string>
     <string name="docTruncated">Het document is groot — alleen het begin wordt getoond. Open het in een andere app om alles te zien.</string>
     <string name="docEmpty">Het document bevat geen tekst.</string>

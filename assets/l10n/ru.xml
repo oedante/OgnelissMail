@@ -3842,7 +3842,7 @@
     <string name="favoritesOrder">Порядок плиток</string>
     <string name="favoritesOrderHint">Перетащите пункт за ручку справа — в таком порядке плитки встанут в меню.</string>
     <string name="docProtected">Документ защищён паролем. Откройте его в другом приложении.</string>
-    <string name="docLegacyFormat">Документы старого формата Office 97–2003 (.doc, .xls, .ppt) приложение пока не показывает. Откройте файл в другом приложении.</string>
+    <string name="docLegacyFormat">Документы в старом формате Office (Word, Excel и PowerPoint 95 и раньше) приложение не показывает. Откройте файл в другом приложении.</string>
     <string name="docTooLarge">Документ слишком большой для предпросмотра. Откройте его в другом приложении.</string>
     <string name="docTruncated">Документ большой — показано только начало. Целиком — в другом приложении.</string>
     <string name="docEmpty">В документе нет текста.</string>

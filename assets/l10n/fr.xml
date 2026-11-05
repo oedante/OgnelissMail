@@ -3800,7 +3800,7 @@
     <string name="favoritesOrder">Ordre des vignettes</string>
     <string name="favoritesOrderHint">Faites glisser un élément par la poignée à droite — les vignettes du menu suivent cet ordre.</string>
     <string name="docProtected">Le document est protégé par un mot de passe. Ouvrez-le dans une autre application.</string>
-    <string name="docLegacyFormat">L\'application ne peut pas encore afficher les documents au format Office 97–2003 (.doc, .xls, .ppt). Ouvrez le fichier dans une autre application.</string>
+    <string name="docLegacyFormat">L\'app ne peut pas afficher les documents aux anciens formats Office (Word, Excel et PowerPoint 95 et antérieurs). Ouvrez le fichier dans une autre app.</string>
     <string name="docTooLarge">Le document est trop volumineux pour l\'aperçu. Ouvrez-le dans une autre application.</string>
     <string name="docTruncated">Le document est volumineux : seul le début est affiché. Ouvrez-le dans une autre application pour tout voir.</string>
     <string name="docEmpty">Le document ne contient pas de texte.</string>

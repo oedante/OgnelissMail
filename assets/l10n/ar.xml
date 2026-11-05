@@ -3884,7 +3884,7 @@
     <string name="favoritesOrder">ترتيب المربعات</string>
     <string name="favoritesOrderHint">اسحب العنصر من المقبض على اليمين — تتبع مربعات القائمة هذا الترتيب.</string>
     <string name="docProtected">المستند محمي بكلمة مرور. افتحه في تطبيق آخر.</string>
-    <string name="docLegacyFormat">لا يعرض التطبيق بعدُ مستندات تنسيق Office 97–2003 القديم (.doc و.xls و.ppt). افتح الملف في تطبيق آخر.</string>
+    <string name="docLegacyFormat">لا يعرض التطبيق المستندات بتنسيقات Office القديمة (Word وExcel وPowerPoint 95 وما قبله). افتح الملف في تطبيق آخر.</string>
     <string name="docTooLarge">المستند كبير جدًا للمعاينة. افتحه في تطبيق آخر.</string>
     <string name="docTruncated">المستند كبير — يُعرض أوله فقط. افتحه في تطبيق آخر لرؤيته كاملًا.</string>
     <string name="docEmpty">لا يحتوي المستند على نص.</string>

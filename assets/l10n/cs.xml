@@ -3258,7 +3258,7 @@
     <string name="faq_notify_2_q">Jak vypnu oznámení pro jednu složku?</string>
     <string name="faq_notify_2_a">Nastavení → účet → Synchronizace složek: zvonek vedle přepínače složky zapne nebo vypne oznámení o nových zprávách v ní (včetně podsložek) a složka se dál synchronizuje. Nabídka ⋮ obsahuje Oznámení: všechny složky a Oznámení: žádné složky. Pro složky Odeslané, Koncepty, Odstraněná pošta a Nevyžádaná pošta se oznámení nezobrazují nikdy.</string>
     <string name="faq_notify_3_q">Proč chodí oznámení na Androidu se zpožděním?</string>
-    <string name="faq_notify_3_a">Někteří výrobci telefonů (Xiaomi, Huawei, nubia a další) zastavují aplikace na pozadí. Povolte automatické spouštění a neomezené využití baterie: Nastavení → Rozšířená nastavení → Oprávnění.</string>
+    <string name="faq_notify_3_a">Po přidání schránky aplikace sama zkontroluje, co tento telefon potřebuje pro oznámení o nových zprávách, a ukáže to jako jediný krok: oznámení, neomezené využití baterie, přesná připomenutí a obrazovku automatického spouštění v nadstavbě výrobce (Xiaomi, Huawei, Samsung, nubia a další). Tlačítko Povolit vše postupně otevře potřebné systémové obrazovky. Bez služeb Google chodí signály o nových zprávách přes aplikaci UnifiedPush (například ntfy) a bez ní se pošta kontroluje podle plánu. Stejný seznam: Nastavení → Rozšířená nastavení → Oprávnění.</string>
     <string name="faq_notify_4_q">Jak zjistím, že oznámení fungují?</string>
     <string name="faq_notify_4_a">Nastavení → Oznámení → Odeslat testovací oznámení.</string>
     <string name="faq_notify_5_q">Jak se vyhnu oznámením v noci?</string>
@@ -3877,4 +3877,12 @@
     <string name="searchAttachmentsText">Hledat v textu příloh</string>
     <string name="searchAttachmentsTextDesc">Hledání najde slova ve stažených přílohách: dokumentech, tabulkách, prezentacích, textových souborech a přiložených zprávách</string>
     <string name="searchFoundInAttachment">V příloze: {text}</string>
+    <string name="faq_mail_12_q">Jak najdu zprávu podle textu v příloze?</string>
+    <string name="faq_mail_12_a">Hledání najde slova i uvnitř stažených příloh: v dokumentech Office a OpenDocument, RTF, tabulkách CSV, prezentacích, textových souborech a přiložených zprávách. Ve výsledcích má taková zpráva řádek „V příloze: …“ s nalezeným místem. Příloha musí být stažená – otevřená nebo načtená spolu se zprávou; v PDF se zatím nehledá. Vypnutí: Nastavení → Pošta → Hledat v textu příloh.</string>
+    <string name="faq_mail_13_q">Co jsou ikony pod záhlavím zprávy?</string>
+    <string name="faq_mail_13_a">Údaje o zprávě – překlad, odhlášení odběru, skryté obrázky, žádost o potvrzení o přečtení, doručení, podpis, důležitost, štítky – jsou shrnuty do jednoho řádku ikon. Klepnutí na ikonu rozbalí podrobnosti s tlačítky, další klepnutí je sbalí. Ikony překladu a obrázků fungují hned: přeloží zprávu nebo zobrazí obrázky, ostatní možnosti jsou v nabídce ▾ nebo pod dlouhým stisknutím. Upozornění na podvrženého odesílatele a pozvánky na schůzky zůstávají celými kartami.</string>
+    <string name="faq_mail_14_q">Jak uspořádat obrazovku tabletu nebo počítače jako v Outlooku?</string>
+    <string name="faq_mail_14_a">Podokno čtení lze umístit vpravo, dole nebo skrýt: Nastavení → Vzhled → Podokno čtení nebo nabídka ⋮ nad seznamem. Více zpráv se vybírá jako v Outlooku: Ctrl + kliknutí (na Macu a iPadu Cmd) – po jedné, Shift – rozsah, Ctrl+A – všechny načtené, Esc – zrušit výběr, Delete – smazat vybrané. Příloha se otevře přímo v podokně čtení a Zpět vrátí ke zprávě.</string>
+    <string name="faq_mail_15_q">Jak nechat zprávy přeložit hned při otevření?</string>
+    <string name="faq_mail_15_a">Klepněte na ▾ u ikony překladu a vyberte Vždy překládat z jazyka … – zprávy v tomto jazyce se pak budou otevírat rovnou přeložené, originál zobrazíte stejnou ikonou. Seznam jazyků: Nastavení → Pošta → Překlad → Vždy překládat z jazyků. Překlad se nabízí, jen když je jazyk zprávy rozpoznán s jistotou, a nenabízí se pro jazyky telefonu (vypíná se tamtéž: Jazyky telefonu – nenabízet překlad).</string>
 </resources>

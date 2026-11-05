@@ -3232,7 +3232,7 @@
     <string name="faq_notify_2_q">Làm thế nào để tắt thông báo cho một thư mục?</string>
     <string name="faq_notify_2_a">Cài đặt → tài khoản → Đồng bộ thư mục: biểu tượng chuông bên cạnh công tắc của thư mục bật hoặc tắt thông báo về thư mới của thư mục đó (kể cả thư mục con), và thư mục vẫn tiếp tục đồng bộ. Menu ⋮ có Thông báo: tất cả thư mục và Thông báo: không thư mục nào. Không bao giờ có thông báo cho Đã gửi, Thư nháp, Thùng rác hoặc Thư rác.</string>
     <string name="faq_notify_3_q">Vì sao thông báo bị chậm trên Android?</string>
-    <string name="faq_notify_3_a">Một số nhà sản xuất điện thoại (Xiaomi, Huawei, nubia và các hãng khác) dừng ứng dụng chạy nền. Hãy cho phép tự khởi động và dùng pin không hạn chế: Cài đặt → Cài đặt nâng cao → Quyền.</string>
+    <string name="faq_notify_3_a">Sau khi bạn thêm hộp thư, ứng dụng tự kiểm tra xem điện thoại này cần gì để nhận thông báo thư mới và gộp tất cả thành một bước: thông báo, dùng pin không hạn chế, nhắc nhở chính xác và màn hình tự khởi động trong hệ thống của nhà sản xuất (Xiaomi, Huawei, Samsung, nubia và các hãng khác). Nút Cho phép tất cả lần lượt mở các màn hình hệ thống cần thiết. Không có dịch vụ Google, tín hiệu thư mới đến qua ứng dụng UnifiedPush (ví dụ ntfy), còn nếu không có ứng dụng đó thì thư được kiểm tra theo lịch. Cùng danh sách đó: Cài đặt → Cài đặt nâng cao → Quyền.</string>
     <string name="faq_notify_4_q">Làm thế nào để kiểm tra thông báo có hoạt động không?</string>
     <string name="faq_notify_4_a">Cài đặt → Thông báo → Gửi thông báo thử.</string>
     <string name="faq_notify_5_q">Làm thế nào để không nhận thông báo vào ban đêm?</string>
@@ -3835,4 +3835,12 @@
     <string name="searchAttachmentsText">Tìm trong nội dung tệp đính kèm</string>
     <string name="searchAttachmentsTextDesc">Tìm kiếm thấy từ trong tệp đính kèm đã tải xuống: tài liệu, bảng tính, bản trình bày, tệp văn bản và thư đính kèm</string>
     <string name="searchFoundInAttachment">Trong tệp đính kèm: {text}</string>
+    <string name="faq_mail_12_q">Làm thế nào để tìm thư theo nội dung trong tệp đính kèm?</string>
+    <string name="faq_mail_12_a">Tìm kiếm cũng thấy từ ngữ bên trong các tệp đính kèm đã tải xuống: tài liệu Office và OpenDocument, RTF, bảng CSV, bản trình bày, tệp văn bản và thư đính kèm. Trong kết quả, thư như vậy có dòng “Trong tệp đính kèm: …” kèm đoạn tìm thấy. Tệp đính kèm phải được tải xuống — đã mở hoặc đã tải cùng với thư; hiện chưa tìm được trong PDF. Để tắt: Cài đặt → Thư → Tìm trong nội dung tệp đính kèm.</string>
+    <string name="faq_mail_13_q">Các biểu tượng dưới phần đầu thư là gì?</string>
+    <string name="faq_mail_13_a">Thông tin về thư — bản dịch, hủy đăng ký nhận tin, hình ảnh bị ẩn, yêu cầu xác nhận đã đọc, trạng thái gửi, chữ ký, mức độ quan trọng, thẻ — được gom vào một hàng biểu tượng. Chạm vào biểu tượng sẽ mở chi tiết kèm các nút, chạm lần nữa sẽ thu gọn lại. Biểu tượng dịch và hình ảnh có tác dụng ngay: dịch thư hoặc hiện hình ảnh, còn các tùy chọn khác nằm trong menu ▾ hoặc khi nhấn giữ. Cảnh báo người gửi giả mạo và lời mời họp vẫn hiển thị dạng thẻ đầy đủ.</string>
+    <string name="faq_mail_14_q">Làm thế nào để bố trí màn hình máy tính bảng hoặc máy tính giống Outlook?</string>
+    <string name="faq_mail_14_a">Ngăn đọc có thể đặt bên phải, bên dưới hoặc ẩn đi: Cài đặt → Giao diện → Ngăn đọc hoặc menu ⋮ phía trên danh sách. Chọn nhiều thư giống như trong Outlook: Ctrl + nhấp (trên Mac và iPad là Cmd) — từng thư, Shift — một dãy liên tiếp, Ctrl+A — tất cả thư đã tải, Esc — bỏ chọn, Delete — xóa các thư đã chọn. Tệp đính kèm mở ngay trong ngăn đọc, và Quay lại sẽ đưa bạn về thư.</string>
+    <string name="faq_mail_15_q">Làm thế nào để dịch thư ngay khi mở?</string>
+    <string name="faq_mail_15_a">Chạm vào ▾ cạnh biểu tượng dịch và chọn Luôn dịch từ … — thư bằng ngôn ngữ đó sẽ mở ra đã được dịch sẵn; bản gốc xem bằng chính biểu tượng đó. Danh sách ngôn ngữ: Cài đặt → Thư → Dịch → Luôn dịch từ. Bản dịch chỉ được đề xuất khi ngôn ngữ của thư được nhận diện chắc chắn, và không được đề xuất cho các ngôn ngữ của điện thoại (tắt ở cùng chỗ đó: Ngôn ngữ của điện thoại — không đề xuất dịch).</string>
 </resources>

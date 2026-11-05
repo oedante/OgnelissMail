@@ -3232,7 +3232,7 @@
     <string name="faq_notify_2_q">如何关闭某个文件夹的通知？</string>
     <string name="faq_notify_2_a">设置 → 账户 → 文件夹同步：文件夹开关旁的铃铛可开启或关闭该文件夹新邮件的通知（包括子文件夹），文件夹仍会继续同步。⋮ 菜单中有“通知：所有文件夹”和“通知：无文件夹”。已发送邮件、草稿、已删除邮件和垃圾邮件永远不会有通知。</string>
     <string name="faq_notify_3_q">为什么 Android 上的通知不能及时到达？</string>
-    <string name="faq_notify_3_a">部分手机厂商（小米、华为、努比亚等）会在后台停止应用。请允许自启动并允许不受限制地使用电池：设置 → 高级设置 → 权限。</string>
+    <string name="faq_notify_3_a">添加邮箱后，应用会自动检查这部手机接收新邮件通知还需要什么，并在一个步骤中列出：通知、不受限制地使用电池、精确提醒，以及您手机厂商系统的自启动界面（Xiaomi、Huawei、Samsung、nubia 等）。“全部允许”按钮会依次打开所需的系统界面。没有 Google 服务时，新邮件信号通过 UnifiedPush 应用（例如 ntfy）送达；如果也没有该应用，则按计划检查邮件。同一列表：设置 → 高级设置 → 权限。</string>
     <string name="faq_notify_4_q">如何检查通知是否正常工作？</string>
     <string name="faq_notify_4_a">设置 → 通知 → 发送测试通知。</string>
     <string name="faq_notify_5_q">如何在夜间不接收通知？</string>
@@ -3835,4 +3835,12 @@
     <string name="searchAttachmentsText">搜索附件中的文字</string>
     <string name="searchAttachmentsTextDesc">搜索也能找到已下载附件中的文字：文档、表格、演示文稿、文本文件和附带的邮件</string>
     <string name="searchFoundInAttachment">在附件中：{text}</string>
+    <string name="faq_mail_12_q">如何通过附件中的文字查找邮件？</string>
+    <string name="faq_mail_12_a">搜索也能找到已下载附件中的文字：Office 和 OpenDocument 文档、RTF、CSV 表格、演示文稿、文本文件以及附带的邮件。在搜索结果中，这类邮件会显示“在附件中：…”一行，并附有找到的位置。附件必须已下载——即打开过，或随邮件一起下载；暂不支持搜索 PDF。关闭方法：设置 → 邮件 → 搜索附件中的文字。</string>
+    <string name="faq_mail_13_q">邮件头下方的图标是什么？</string>
+    <string name="faq_mail_13_a">邮件的相关信息——翻译、退订、隐藏的图片、已读回执请求、送达状态、签名、重要性、标签——都汇集在一行图标中。点按图标会展开带按钮的详细信息，再点按一次即可收起。翻译和图片图标会直接生效：翻译邮件或显示图片，其他选项则在 ▾ 菜单中或通过长按选择。伪造发件人警告和会议邀请仍以完整卡片显示。</string>
+    <string name="faq_mail_14_q">如何像 Outlook 一样布置平板电脑或电脑的屏幕？</string>
+    <string name="faq_mail_14_a">阅读窗格可以放在右侧或底部，也可以隐藏：设置 → 外观 → 阅读窗格，或列表上方的 ⋮ 菜单。可以像在 Outlook 中一样选择多封邮件：Ctrl + 点击（在 Mac 和 iPad 上为 Cmd）逐封选择，Shift 连续选择，Ctrl+A 选择所有已加载的邮件，Esc 取消选择，Delete 删除所选邮件。附件直接在阅读窗格中打开，“返回”可回到邮件。</string>
+    <string name="faq_mail_15_q">如何在打开邮件时立即翻译？</string>
+    <string name="faq_mail_15_a">点按翻译图标旁的 ▾，选择“始终翻译…”——该语言的邮件打开时即显示译文，点按同一图标可查看原文。语言列表：设置 → 邮件 → 翻译 → 始终翻译以下语言。只有在能确定识别邮件语言时才会提示翻译，且不会为手机语言提示翻译（可在同一处关闭：“手机语言不提示翻译”）。</string>
 </resources>

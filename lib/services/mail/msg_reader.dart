@@ -203,6 +203,7 @@ class MsgReader {
           while (j < rtf.length && (rtf[j] == 0x20 || rtf[j] == 0x0D || rtf[j] == 0x0A)) {
             j++;
           }
+          if (j < rtf.length && rtf[j] == 0x5C) j++;
           final m = _word(rtf, j);
           if (m != null && (m.word == 'htmltag' || m.word == 'mhtmltag')) {
             final n = m.param ?? -1;
@@ -359,6 +360,12 @@ class MsgReader {
     out.write('Subject: ${enc(m.subject)}\r\n');
     if (m.date != null) out.write('Date: ${_rfcDate(m.date!.toUtc())}\r\n');
     const boundary = '----=_ogneliss_msg_part';
+    if (m.html == null && m.plain == null && m.inlineImages.isEmpty && m.attachments.isEmpty) {
+      // Пустое письмо — простым текстом: «multipart» без частей читается
+      // как странное вложение.
+      out.write('MIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n');
+      return Uint8List.fromList(utf8.encode(out.toString()));
+    }
     out.write('MIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary="$boundary"\r\n\r\n');
     void part(String type, List<int> bytes, {String? name, String? cid, bool inline = false}) {
       out.write('--$boundary\r\nContent-Type: $type');

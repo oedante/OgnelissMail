@@ -59,6 +59,7 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/pane_navigator.dart';
 import '../../../services/mail/pkpass_parser.dart';
 import '../../../services/mail/eml_reader.dart';
+import '../../../services/mail/msg_reader.dart';
 import '../../../core/security/html_sanitizer.dart';
 import '../../../core/security/mail_body_processor.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError;
@@ -131,6 +132,9 @@ class AttachmentPreviewScreen extends StatefulWidget {
     final ext = name.contains('.') ? name.split('.').last : '';
     final ct = item.mimeType?.toLowerCase() ?? '';
     if (ext == 'eml' || ext == 'p7m' || ct.contains('pkcs7-mime') || ct == 'message/rfc822') return true;
+    // Письмо Outlook .msg (1.12.x, просьба владельца 05.11.2026) — тоже
+    // письмом, на всех устройствах: «Просмотр» iOS и Android его не открывают.
+    if (MsgReader.isMsgName(name, mimeType: ct)) return true;
     // 1.8.14 (просьба пользователей через владельца 29.10.2026): архивы — в
     // приложении везде; PDF — на Android (системный PdfRenderer); картинки,
     // текст и билеты — на Android и компьютере. iPhone и iPad показывают
@@ -312,6 +316,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         ext == 'p7m' ||
         (widget.items[i].mimeType?.toLowerCase().contains('pkcs7-mime') ?? false) ||
         widget.items[i].mimeType?.toLowerCase() == 'message/rfc822' ||
+        MsgReader.isMsgName(name, mimeType: widget.items[i].mimeType) ||
         _sniffedMail.contains(i)) {
       return _Kind.mail;
     }
@@ -385,6 +390,18 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   /// письмо крупное.
   Future<void> _loadMail(int i) async {
     var bytes = await File(widget.items[i].filePath).readAsBytes();
+    // Письмо Outlook (.msg — составной файл OLE): свой разбор, тот же показ.
+    if (MsgReader.isMsgName(widget.items[i].fileName, mimeType: widget.items[i].mimeType) || OfficeZip.isOle(bytes)) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
+      try {
+        await _showMail(i, await MsgReader.readAsync(bytes, lang: l10n.localeCode));
+      } on OfficeDocException catch (e) {
+        _errors[i] = e.kind == OfficeDocError.tooLarge ? l10n.tr('docTooLarge') : l10n.tr('fileDamaged');
+        _plainErrors.add(i);
+      }
+      return;
+    }
     // S/MIME: зашифрованное (smime.p7m) или подписанное письмо — расшифровать
     // своим сертификатом и проверить подпись, показать то, что внутри.
     final item = widget.items[i];
@@ -408,7 +425,11 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
       bytes = SmimeMime.asMessage(r.entity,
           subject: widget.emailSubject, from: widget.emailFrom, date: widget.emailDate);
     }
-    final m = await EmlReader.parseAsync(bytes);
+    await _showMail(i, await EmlReader.parseAsync(bytes));
+  }
+
+  /// Тело разобранного письма — к показу (санитайзер, окно письма).
+  Future<void> _showMail(int i, EmlMessage m) async {
     String? html;
     if ((m.html ?? '').trim().isNotEmpty) {
       // Стили письма — и на компьютере (1.8.14): по ним показ виджетами
@@ -1035,7 +1056,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   IconData _iconForName(String name, String contentType) {
     final ext = name.contains('.') ? name.split('.').last.toLowerCase() : '';
     final ct = contentType.toLowerCase();
-    if (ext == 'eml' || ct == 'message/rfc822') return AppIcons.mail;
+    if (ext == 'eml' || ext == 'msg' || ct == 'message/rfc822' || ct.contains('vnd.ms-outlook')) return AppIcons.mail;
     if (ext == 'pdf') return AppIcons.picture_as_pdf;
     if (ct.startsWith('image/')) return AppIcons.image;
     return AppIcons.insert_drive_file;

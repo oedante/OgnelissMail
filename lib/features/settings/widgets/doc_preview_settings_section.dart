@@ -31,7 +31,7 @@ class _DocPreviewSettingsSectionState extends ConsumerState<DocPreviewSettingsSe
   /// Форматы вида — под названием переключателя (названия форматов не
   /// переводятся).
   static String _formats(DocPreviewType t) => switch (t) {
-        DocPreviewType.text => _ios ? 'ODT' : 'DOCX, ODT, RTF',
+        DocPreviewType.text => _ios ? 'ODT, TXT, Markdown' : 'DOCX, ODT, RTF, TXT, Markdown',
         DocPreviewType.sheets => _ios ? 'ODS' : 'XLSX, ODS',
         DocPreviewType.csv => 'CSV, TSV',
         DocPreviewType.slides => _ios ? 'ODP' : 'PPTX, ODP',

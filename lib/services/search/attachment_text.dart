@@ -25,12 +25,12 @@ import 'dart:isolate';
 import 'dart:typed_data';
 
 import '../../core/utils/text_safe.dart';
-import '../documents/csv_reader.dart';
 import '../documents/doc_sheets.dart';
 import '../documents/doc_slides.dart' show OfficeSlidesDoc;
 import '../documents/office_document.dart';
 import '../documents/office_package.dart';
 import '../documents/office_reader.dart';
+import '../documents/text_doc_reader.dart';
 import '../mail/eml_reader.dart';
 
 /// Как читается вложение.
@@ -218,8 +218,9 @@ class AttachmentText {
     }
   }
 
+  // Та же кодировка, что в предпросмотре (UTF-8, 1251, KOI8-R, DOS 866).
   static String _decode(Uint8List b, String lang, bool truncated) =>
-      CsvReader.decode(b, lang: lang, truncated: truncated);
+      TextDocReader.decode(b, lang: lang, truncated: truncated);
 
   // ─────────────────────────── из разобранного ───────────────────────────
 

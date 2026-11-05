@@ -45,6 +45,7 @@ Contributions are accepted under the same license (section 5 of the license).
 | Apple Translation, NaturalLanguage, SwiftUI — on-device message translation (iOS 18+) | Part of the iOS SDK (Apple Developer Program License Agreement), free, no attribution | iOS build (`ios/Runner/AppDelegate.swift`) |
 | desktop_drop 0.8.4 (MixinNetwork; checked 01.11.2026) — files dropped from Explorer/Finder onto the message window | Apache-2.0, free | pub.dev, unmodified; used on Windows, macOS and Linux only (its Android part registers a drop listener but the app does not use it) |
 | desktop_multi_window 0.3.1 (MixinNetwork; checked 01.11.2026) — a message in a separate window on Windows, macOS and Linux | Apache-2.0, free | pub.dev, unmodified; desktop only |
+| markdown 7.3.1 (Dart team, dart-lang/tools; checked 05.11.2026) — Markdown attachments (.md) shown as formatted documents in the attachment preview | BSD-3-Clause, free | pub.dev, unmodified; licence text in the app (Settings → About → Licence texts) comes from the package |
 | Russian Trusted Root CA certificates | public certificates | `assets/certs/` |
 
 There are no GPL, LGPL or AGPL dependencies. MPL-2.0 is a file-level copyleft

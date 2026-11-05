@@ -236,8 +236,9 @@ class _Xls {
     if (w.length < 8) throw const OfficeDocException(OfficeDocError.damaged, 'short workbook');
     final type = u16(0);
     // BOF у BIFF2–4 — другие записи, у BIFF5 версия 0x0500.
-    if (type == 0x0009 || type == 0x0209 || type == 0x0409)
+    if (type == 0x0009 || type == 0x0209 || type == 0x0409) {
       throw const OfficeDocException(OfficeDocError.legacy, 'biff4');
+    }
     if (type != _bof) throw const OfficeDocException(OfficeDocError.damaged, 'no bof');
     if (u16(4) != 0x0600) throw OfficeDocException(OfficeDocError.legacy, 'biff ${u16(4).toRadixString(16)}');
     final globalsEnd = _globals();

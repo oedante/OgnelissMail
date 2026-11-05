@@ -512,12 +512,15 @@ enum TranslationBridge {
     }
   }
 
-  /// Язык текста (код вида «en», «zh-Hans») или nil — не уверены.
-  static func detect(_ text: String) -> String? {
+  /// Язык текста: ["lang": код вида «en», «zh-Hans», "confident": уверены
+  /// ли] или nil — не определён. Уверены — гипотеза от 0,5; слабее (от 0,2,
+  /// как у ML Kit на Android) — догадка: перевод по ней не предлагается
+  /// (1.12.x), но «Перевести» из меню письма ею пользуется.
+  static func detect(_ text: String) -> [String: Any]? {
     let r = NLLanguageRecognizer()
     r.processString(String(text.prefix(2000)))
-    guard let best = r.languageHypotheses(withMaximum: 1).first, best.value >= 0.5 else { return nil }
-    return best.key.rawValue
+    guard let best = r.languageHypotheses(withMaximum: 1).first, best.value >= 0.2 else { return nil }
+    return ["lang": best.key.rawValue, "confident": best.value >= 0.5]
   }
 
   /// Код приложения → язык Apple: норвежский у Apple — «nb», китайский —

@@ -65,12 +65,14 @@ enum TranslationBridge {
     }
   }
 
-  /// Язык текста (код вида «en», «zh-Hans») или nil — не уверены.
-  static func detect(_ text: String) -> String? {
+  /// Язык текста: ["lang": код, "confident": уверены ли] или nil (как на
+  /// iPhone, 1.12.x): от 0,5 — уверены, от 0,2 — догадка (только для
+  /// «Перевести» из меню письма, без плашки-предложения).
+  static func detect(_ text: String) -> [String: Any]? {
     let r = NLLanguageRecognizer()
     r.processString(String(text.prefix(2000)))
-    guard let best = r.languageHypotheses(withMaximum: 1).first, best.value >= 0.5 else { return nil }
-    return best.key.rawValue
+    guard let best = r.languageHypotheses(withMaximum: 1).first, best.value >= 0.2 else { return nil }
+    return ["lang": best.key.rawValue, "confident": best.value >= 0.5]
   }
 
   /// Код приложения → язык Apple (как на iPhone).

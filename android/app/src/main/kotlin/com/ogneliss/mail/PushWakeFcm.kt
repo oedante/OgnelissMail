@@ -26,6 +26,7 @@ package com.ogneliss.mail
 //    Android даёт её запустить и в глубоком сне.
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -55,6 +56,9 @@ object PushWakeFcm {
 
     /** Уникальное имя работы: сигналы, пришедшие разом, — одна проверка. */
     private const val WORK = "ogneliss_push_wake"
+
+    /** Пакет сервисов Google Play (у microG — то же имя). */
+    private const val GMS = "com.google.android.gms"
 
     /** Канал главного движка — через него новый токен доходит до Dart. */
     @Volatile
@@ -88,6 +92,12 @@ object PushWakeFcm {
                         }
                     }
                 }
+                // Есть ли сервисы Google Play (1.12.x, просьба владельца
+                // 05.11.2026: «с сервисами Google и без них … пользователь не
+                // должен думать»). Без них FCM токен не выдаст — Dart сразу
+                // выбирает UnifiedPush или проверки по расписанию, без ошибки
+                // «SERVICE_NOT_AVAILABLE» под переключателем.
+                "googleServices" -> result.success(googleServices(app))
                 // Выключили: токен отзываем, чтобы Google не доставлял сигналы,
                 // даже если сервер ещё не узнал о выключении.
                 "unregister" -> {
@@ -104,6 +114,31 @@ object PushWakeFcm {
                 else -> result.notImplemented()
             }
         }
+    }
+
+    /**
+     * Сервисы Google Play на телефоне: "ok" — установлены и включены (так же
+     * выглядит microG), "disabled" — выключены в настройках, "missing" — нет
+     * (Huawei и Honor с HMS, LineageOS, GrapheneOS без «песочницы» Google,
+     * /e/OS без microG). Пакет виден приложению — <queries> в манифесте.
+     */
+    fun googleServices(context: Context): String = try {
+        @Suppress("DEPRECATION")
+        val info = context.packageManager.getApplicationInfo(GMS, 0)
+        if (info.enabled) "ok" else "disabled"
+    } catch (e: PackageManager.NameNotFoundException) {
+        "missing"
+    } catch (e: Exception) {
+        "unknown"
+    }
+
+    /** Версия сервисов Google Play (или microG) — для журнала; null — нет. */
+    fun googleServicesVersion(context: Context): String? = try {
+        @Suppress("DEPRECATION")
+        val info = context.packageManager.getPackageInfo(GMS, 0)
+        info.versionName
+    } catch (e: Exception) {
+        null
     }
 
     /** Движок уничтожен — новый токен возьмёт регистрация при запуске. */

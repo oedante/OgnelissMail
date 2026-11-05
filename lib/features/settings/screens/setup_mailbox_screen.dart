@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/permissions/app_permissions.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
@@ -41,6 +42,14 @@ class _SetupMailboxScreenState extends ConsumerState<SetupMailboxScreen> {
       _busy = true;
       _error = null;
     });
+    // Контакты и календарь спрашиваются здесь, когда их включают (1.12.x:
+    // в шаге разрешений их больше нет). Запрещено навсегда — настройки.
+    if (on && !await AppPermissions.ensure(context, contacts ? AppPermission.contacts : AppPermission.calendar,
+        explain: false)) {
+      if (mounted) setState(() => _busy = false);
+      return;
+    }
+    if (!mounted) return;
     final svc = ref.read(phoneMirrorProvider);
     final ok = contacts ? await svc.setContacts(account, on) : await svc.setCalendar(account, on);
     if (!mounted) return;

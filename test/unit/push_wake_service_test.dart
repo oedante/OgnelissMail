@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:ogneliss/core/platform/device_readiness.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/services/background/background_service.dart' show backgroundTaskInfo;
 import 'package:ogneliss/services/push/push_wake_service.dart';
@@ -33,6 +34,7 @@ void main() {
   late List<http.Request> gets;
   late List<MethodCall> upCalls;
   late Map<String, Object?> upCurrent;
+  late List<Map<String, String>> dists;
   late List<MethodCall> calls;
   late Object? Function(MethodCall call) native;
   var status = 204;
@@ -45,7 +47,8 @@ void main() {
     }
   }
 
-  Future<ProviderContainer> make({PushWakeOs os = PushWakeOs.android, Map<String, Object> prefs = const {}}) async {
+  Future<ProviderContainer> make(
+      {PushWakeOs os = PushWakeOs.android, Map<String, Object> prefs = const {}, String? gms}) async {
     SharedPreferences.setMockInitialValues(prefs);
     final p = await SharedPreferences.getInstance();
     final client = MockClient((r) async {
@@ -58,7 +61,7 @@ void main() {
     });
     final c = ProviderContainer(overrides: [
       sharedPrefsProvider.overrideWithValue(p),
-      pushWakeServiceProvider.overrideWith((ref) => PushWakeService(ref, os: os, client: client)),
+      pushWakeServiceProvider.overrideWith((ref) => PushWakeService(ref, os: os, client: client, googleServices: gms)),
     ]);
     addTearDown(c.dispose);
     return c;
@@ -76,13 +79,14 @@ void main() {
     gets = [];
     upCalls = [];
     upCurrent = {'distributor': null, 'url': null};
+    dists = [
+      {'id': 'io.heckel.ntfy', 'name': 'ntfy'},
+    ];
     messenger.setMockMethodCallHandler(_upChannel, (call) async {
       upCalls.add(call);
       switch (call.method) {
         case 'distributors':
-          return [
-            {'id': 'io.heckel.ntfy', 'name': 'ntfy'},
-          ];
+          return dists;
         case 'current':
           return upCurrent;
       }
@@ -170,6 +174,7 @@ void main() {
     });
 
     test('без Firebase в сборке — по умолчанию UnifiedPush; без распространителя — ничего не делается', () async {
+      dists = [];
       SharedPreferences.setMockInitialValues({});
       final p = await SharedPreferences.getInstance();
       final client = MockClient((r) async {
@@ -276,15 +281,68 @@ void main() {
       expect(body(posts[2])['platform'], 'android');
     });
 
-    test('нет сервисов Google Play — ошибка видна в состоянии, на сервер ничего', () async {
-      native = (call) => throw PlatformException(code: 'token', message: 'SERVICE_NOT_AVAILABLE');
+    test('Google не выдал токен (выбор сам) — не ошибка: UnifiedPush через единственный распространитель', () async {
+      native = (call) => call.method == 'register'
+          ? throw PlatformException(code: 'token', message: 'SERVICE_NOT_AVAILABLE')
+          : null;
+      upCurrent = {'distributor': 'io.heckel.ntfy', 'url': _upUrl, 'p256dh': _p256dh, 'auth': _auth};
       final c = await make();
       final s = c.read(pushWakeServiceProvider);
       await s.apply();
 
+      expect(s.state().lastError, isNull, reason: 'под переключателем — без «Не удалось»');
+      expect(s.transport, PushWakeTransport.unifiedpush);
+      expect(s.upDistributor, 'io.heckel.ntfy');
+      expect(upCalls.firstWhere((c) => c.method == 'register').arguments, containsPair('distributor', 'io.heckel.ntfy'));
+      expect(body(posts.single)['platform'], 'unifiedpush');
+      expect(await s.signalChannel(), SignalChannel.unifiedPush);
+    });
+
+    test('Google не выдал токен, распространителя нет — проверки по расписанию, без ошибки', () async {
+      dists = [];
+      native = (call) => call.method == 'register'
+          ? throw PlatformException(code: 'token', message: 'MISSING_INSTANCEID_SERVICE')
+          : null;
+      final c = await make();
+      final s = c.read(pushWakeServiceProvider);
+      await s.apply();
+      expect(posts, isEmpty);
+      expect(s.state().registered, isFalse);
+      expect(s.state().lastError, isNull);
+      expect(await s.signalChannel(), SignalChannel.periodicOnly);
+
+      // Сутки без Google, потом — снова попытка.
+      calls.clear();
+      await s.apply();
+      expect(calls.where((c) => c.method == 'register'), isEmpty);
+      final old = DateTime.now().subtract(const Duration(days: 2)).millisecondsSinceEpoch;
+      await c.read(sharedPrefsProvider).setInt('push_wake_fcm_failed_at', old);
+      await s.apply();
+      expect(calls.where((c) => c.method == 'register'), hasLength(1));
+    });
+
+    test('Google выбран человеком — ошибка видна в состоянии, на сервер ничего', () async {
+      native = (call) => call.method == 'register'
+          ? throw PlatformException(code: 'token', message: 'SERVICE_NOT_AVAILABLE')
+          : null;
+      final c = await make();
+      final s = c.read(pushWakeServiceProvider);
+      await s.useTransport(PushWakeTransport.fcm);
+
       expect(posts, isEmpty);
       expect(s.state().registered, isFalse);
       expect(s.state().lastError, 'Android: SERVICE_NOT_AVAILABLE');
+    });
+
+    test('ошибка параметров Firebase — видна и при выборе самим приложением', () async {
+      native = (call) => call.method == 'register'
+          ? throw PlatformException(code: 'config', message: 'Firebase options are empty')
+          : null;
+      final c = await make();
+      final s = c.read(pushWakeServiceProvider);
+      await s.apply();
+      expect(s.state().lastError, 'Android: Firebase options are empty');
+      expect(upCalls.where((c) => c.method == 'register'), isEmpty);
     });
 
     test('сервер отказал — не зарегистрировано, ошибка в состоянии', () async {
@@ -301,6 +359,56 @@ void main() {
       final c = await make();
       await c.read(pushWakeServiceProvider).apply();
       expect(posts, isEmpty);
+    });
+  });
+
+  group('без сервисов Google Play на телефоне (1.12.x)', () {
+    test('нет пакета Google — FCM не запрашивается, пункта «Через Google» нет, сигналы через ntfy', () async {
+      native = (call) => switch (call.method) {
+            'googleServices' => 'missing',
+            'register' => _fcmToken,
+            _ => null,
+          };
+      upCurrent = {'distributor': 'io.heckel.ntfy', 'url': _upUrl, 'p256dh': _p256dh, 'auth': _auth};
+      final c = await make();
+      final s = c.read(pushWakeServiceProvider);
+      await s.init();
+      expect(calls.map((c) => c.method), isNot(contains('register')));
+      expect(s.fcmUsable, isFalse);
+      expect(s.transport, PushWakeTransport.unifiedpush);
+      expect(body(posts.single)['platform'], 'unifiedpush');
+      expect(s.state().lastError, isNull);
+    });
+
+    test('несколько распространителей — выбирает человек; выбранный удалён — будто его нет', () async {
+      dists = [
+        {'id': 'io.heckel.ntfy', 'name': 'ntfy'},
+        {'id': 'org.unifiedpush.distributor.nextpush', 'name': 'NextPush'},
+      ];
+      final c = await make(gms: 'missing');
+      final s = c.read(pushWakeServiceProvider);
+      await s.apply();
+      expect(upCalls.where((c) => c.method == 'register'), isEmpty);
+      expect(s.upDistributor, isNull);
+      expect(await s.signalChannel(), SignalChannel.chooseDistributor);
+
+      await c.read(sharedPrefsProvider).setString('push_wake_up_distributor', 'com.example.removed');
+      expect(await s.signalChannel(), SignalChannel.chooseDistributor);
+    });
+
+    test('выбор сам: Google — только если он есть на телефоне и недавно не отказал', () {
+      expect(PushWakeService.autoTransport(fcmUsable: true), PushWakeTransport.fcm);
+      expect(PushWakeService.autoTransport(fcmUsable: false), PushWakeTransport.unifiedpush);
+      expect(PushWakeService.autoTransport(fcmUsable: true, fcmFailedRecently: true), PushWakeTransport.unifiedpush);
+    });
+
+    test('сигналы выключены — способа нет; с Google — google', () async {
+      final c = await make(gms: 'ok');
+      final s = c.read(pushWakeServiceProvider);
+      expect(await s.signalChannel(), SignalChannel.google);
+      await c.read(pushWakePrefsProvider.notifier).setEnabled(false);
+      await settle();
+      expect(await s.signalChannel(), SignalChannel.off);
     });
   });
 
@@ -321,6 +429,7 @@ void main() {
         'mode': 'silent',
         'platform': 'ios',
       });
+      expect(await c.read(pushWakeServiceProvider).signalChannel(), SignalChannel.apple);
     });
   });
 

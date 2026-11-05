@@ -133,7 +133,15 @@ object ForegroundSyncPlugin {
                         context.startActivity(i)
                         result.success(true)
                     } catch (e: Exception) {
-                        result.error("OPEN_FAILED", e.message, null)
+                        // Списка «Оптимизация батареи» нет в части оболочек
+                        // (1.12.x, аудит устройств) — кнопка ничего не
+                        // открывала. Тогда сведения о приложении: там на
+                        // Android 12+ «Батарея → Без ограничений».
+                        if (BackgroundDiagnostics.openAppDetails(context)) {
+                            result.success(true)
+                        } else {
+                            result.error("OPEN_FAILED", e.message, null)
+                        }
                     }
                 }
                 // Все уведомления приложения (1.6.44): там включают выключенную

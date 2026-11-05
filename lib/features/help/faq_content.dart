@@ -50,6 +50,12 @@ const faqSections = <FaqSection>[
     FaqItem('mail_10'),
     // Как выключить просмотр документов целиком или по видам (1.11.x).
     FaqItem('mail_11', route: '/settings/mail'),
+    // 1.14.0: поиск по тексту вложений, сведения о письме значками,
+    // планшет и компьютер как Outlook, «всегда переводить с языка».
+    FaqItem('mail_12', route: '/settings/mail'),
+    FaqItem('mail_13'),
+    FaqItem('mail_14', route: '/settings/appearance'),
+    FaqItem('mail_15', route: '/settings/mail'),
   ]),
   FaqSection(id: 'drafts', icon: AppIcons.drafts, items: [
     FaqItem('drafts_1'),

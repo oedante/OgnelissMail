@@ -493,7 +493,10 @@ class _Doc {
   }
 
   void _readLists() {
-    final lst = _tablePart(73);
+    // Уровни списков (LVL) лежат сразу за PlfLst, но в его длину не входят:
+    // читаем до конца потока таблиц.
+    final at = _fcLcb(73);
+    final lst = at.lcb == 0 || at.fc >= table.length ? null : Uint8List.sublistView(table, at.fc);
     if (lst != null && lst.length >= 2) {
       final bd = ByteData.sublistView(lst);
       final count = math.min(bd.getInt16(0, Endian.little), 2048);

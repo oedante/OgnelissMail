@@ -326,6 +326,18 @@ class MailSettingsScreen extends ConsumerWidget {
           // Просмотр документов во вложениях (1.11.x, просьба владельца
           // 04.11.2026): выключатель и виды документов.
           const DocPreviewSettingsSection(),
+          // Поиск по тексту загруженных вложений (1.12.x, просьба владельца
+          // 04.11.2026) — от просмотра документов не зависит.
+          const SizedBox(height: Space.s),
+          SettingsGroup(children: [
+            SettingsSwitchItem(
+              icon: AppIcons.manage_search,
+              title: l10n.tr('searchAttachmentsText'),
+              subtitle: l10n.tr('searchAttachmentsTextDesc'),
+              value: settings.searchAttachments,
+              onChanged: notifier.setSearchAttachments,
+            ),
+          ]),
           SettingsSectionTitle(l10n.tr('fetchMode')),
           SettingsIntro(l10n.tr('fetchModeSubtitle')),
           SettingsGroup(children: [

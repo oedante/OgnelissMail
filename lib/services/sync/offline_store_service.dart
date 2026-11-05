@@ -36,6 +36,7 @@
 //   · открытие письма приостанавливает докачку на несколько секунд;
 //   · проход, которому нечего делать, повторяется не чаще раза в 2 минуты.
 
+import 'dart:async' show unawaited;
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
@@ -59,6 +60,7 @@ import '../mail/attachment_cache_service.dart';
 import '../mail/engine/mail_engine_service.dart';
 import '../background/work_scheduler.dart';
 import '../mail/imap/imap_service.dart';
+import '../search/attachment_text_index.dart';
 
 final offlineStoreProvider = Provider<OfflineStoreService>((ref) => OfflineStoreService(ref));
 
@@ -182,6 +184,11 @@ class OfflineStoreService {
       // Тексты, сохранённые при открытии письма, — в поиск и превью (без
       // сети и при любом режиме загрузки).
       final indexed = await _catchUpIndex(account, budget);
+      // Текст вложений, которые уже в кэше, — в поиск (1.12.x): понемногу,
+      // в фоне на батарее — меньше, на экономии заряда — нет.
+      if (budget.images) {
+        unawaited(_ref.read(attachmentTextIndexProvider).backfill(account.id, quick: budget.since != null));
+      }
       final limit = bodyLimit(_ref.read(settingsProvider).emailFetchMode);
       if (limit == 0 || !_online) return;
       final started = DateTime.now();

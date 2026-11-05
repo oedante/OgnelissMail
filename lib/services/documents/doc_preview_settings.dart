@@ -71,25 +71,19 @@ class DocPreviewSettings {
     await p.setBool(typeKey(t), v);
   }
 
+  /// Старые .doc, .xls, .ppt (1.12.x) — тем же видом, что DOCX, XLSX, PPTX:
+  /// отдельного выключателя у них нет.
   static DocPreviewType typeOf(OfficeFormat f) => switch (f) {
-        OfficeFormat.docx || OfficeFormat.odt || OfficeFormat.rtf => DocPreviewType.text,
-        OfficeFormat.xlsx || OfficeFormat.ods => DocPreviewType.sheets,
+        OfficeFormat.docx || OfficeFormat.odt || OfficeFormat.rtf || OfficeFormat.doc => DocPreviewType.text,
+        OfficeFormat.xlsx || OfficeFormat.ods || OfficeFormat.xls => DocPreviewType.sheets,
         OfficeFormat.csv => DocPreviewType.csv,
-        OfficeFormat.pptx || OfficeFormat.odp => DocPreviewType.slides,
+        OfficeFormat.pptx || OfficeFormat.odp || OfficeFormat.ppt => DocPreviewType.slides,
       };
 
-  /// Вид документа по имени файла и MIME-типу, в том числе старые .doc/.xls/
-  /// .ppt (их экран показывает строкой «старый формат» или, если внутри на
-  /// деле RTF или DOCX, документом); null — не документ.
+  /// Вид документа по имени файла и MIME-типу; null — не документ.
   static DocPreviewType? typeOfName(String fileName, {String? mimeType}) {
     final f = OfficeFormats.of(fileName, mimeType: mimeType);
-    if (f != null) return typeOf(f);
-    return switch (OfficeFormats.extOf(fileName)) {
-      'doc' || 'dot' => DocPreviewType.text,
-      'xls' || 'xlt' => DocPreviewType.sheets,
-      'ppt' || 'pps' || 'pot' => DocPreviewType.slides,
-      _ => null,
-    };
+    return f == null ? null : typeOf(f);
   }
 
   /// Показывать ли файл предпросмотром документа (по виду и настройкам).

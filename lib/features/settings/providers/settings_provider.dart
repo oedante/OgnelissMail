@@ -155,6 +155,12 @@ class AppSettings {
   /// «полное письмо с вложениями»: по мобильной сети это дорого и незаметно
   /// съедает трафик.
   final bool attachmentsWifiOnly;
+
+  /// «Искать в тексте вложений» (1.12.x, просьба владельца 04.11.2026):
+  /// текст загруженных документов, таблиц, презентаций и вложенных писем —
+  /// в поисковый индекс (AttachmentTextIndex). Выключено — текст вложений
+  /// из индекса убирается.
+  final bool searchAttachments;
   final bool groupByConversation;
 
   // ── Свайпы ──
@@ -267,6 +273,7 @@ class AppSettings {
     this.translateWifiOnly = true,
     this.translateNever = const [],
     this.attachmentsWifiOnly = true,
+    this.searchAttachments = true,
   });
 
   /// «Оформление» для сборки тем. [systemNoAnimations] — системное «Убрать
@@ -293,6 +300,7 @@ class AppSettings {
 
   AppSettings copyWith({
     bool? attachmentsWifiOnly,
+    bool? searchAttachments,
     ThemeMode? themeMode,
     bool? amoled,
     bool? reading,
@@ -396,6 +404,7 @@ class AppSettings {
       syncIntervalMinutes: syncIntervalMinutes ?? this.syncIntervalMinutes,
       emailFetchMode: emailFetchMode ?? this.emailFetchMode,
       attachmentsWifiOnly: attachmentsWifiOnly ?? this.attachmentsWifiOnly,
+      searchAttachments: searchAttachments ?? this.searchAttachments,
       groupByConversation: groupByConversation ?? this.groupByConversation,
       swipeLeftPrimary: swipeLeftPrimary ?? this.swipeLeftPrimary,
       swipeLeftSecondary: swipeLeftSecondary ?? this.swipeLeftSecondary,
@@ -470,6 +479,7 @@ class _K {
   static const syncInterval = 's_sync_interval';
   static const emailFetchMode = 's_fetch_mode';
   static const attachmentsWifiOnly = 's_att_wifi_only';
+  static const searchAttachments = 's_search_attachments';
   static const groupByConversation = 's_group_conv';
   static const swipeLP = 's_swipe_lp';
   static const swipeLS = 's_swipe_ls';
@@ -567,6 +577,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       syncIntervalMinutes: _p.getInt(_K.syncInterval) ?? 15,
       emailFetchMode: EmailFetchMode.values[(_p.getInt(_K.emailFetchMode) ?? 1).clamp(0, 5)],
       attachmentsWifiOnly: _p.getBool(_K.attachmentsWifiOnly) ?? true,
+      searchAttachments: _p.getBool(_K.searchAttachments) ?? true,
       groupByConversation: _p.getBool(_K.groupByConversation) ?? true,
       swipeLeftPrimary: SwipeAction.values[_p.getInt(_K.swipeLP) ?? 0],
       swipeLeftSecondary: SwipeAction.values[_p.getInt(_K.swipeLS) ?? 1],
@@ -842,6 +853,11 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(attachmentsWifiOnly: v);
   }
 
+  Future<void> setSearchAttachments(bool v) async {
+    await _p.setBool(_K.searchAttachments, v);
+    state = state.copyWith(searchAttachments: v);
+  }
+
   Future<void> setPreviewLines(int v) async {
     final n = v.clamp(1, 4);
     await _p.setInt(_K.previewLines, n);
@@ -971,6 +987,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       _K.notificationMessengerStyle, _K.notificationVipConversations, _K.notificationAllConversations,
       NotificationLines.prefWork, NotificationLines.prefPersonal,
       _K.syncOnlyWifi, _K.syncInterval, _K.emailFetchMode,
+      _K.searchAttachments,
       _K.groupByConversation, _K.swipeLP, _K.swipeLS, _K.swipeRP, _K.swipeRS, _K.swipeCL, _K.swipeCR, _K.swipeAnim, _K.previewLines, _K.peekPreviewLines,
       _K.aiEnabled, _K.smartReplies, _K.dlpEnabled, _K.autoRules,
       _K.voiceControl, _K.activeAccount, _K.autoLock, _K.autoSignature,

@@ -125,10 +125,17 @@ class NotificationService {
 
     tzdata.initializeTimeZones(); // база часовых поясов для отложенных уведомлений
     const androidInit = AndroidInitializationSettings('@drawable/ic_stat_notify');
+    // iPhone и iPad (1.12.x, аудит устройств, просьба владельца 05.11.2026):
+    // разрешение на уведомления при запуске не спрашивается — системный
+    // вопрос появлялся на заставке до входа в ящик, без пояснения, а в
+    // фоновой задаче задать его нельзя. Спрашивает шаг первой настройки
+    // после входа (AppPermissions, permission_handler: alert, badge, sound)
+    // и строка «Включить» в ленте. Mac — как раньше: экрана разрешений там нет.
+    final askNow = kIsWeb || !Platform.isIOS;
     final iosInit = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
+      requestAlertPermission: askNow,
+      requestBadgePermission: askNow,
+      requestSoundPermission: askNow,
       notificationCategories: [
         DarwinNotificationCategory('EMAIL', actions: [
           // Ответ прямо из уведомления, как на Android (quick_reply с полем ввода).

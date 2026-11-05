@@ -32,12 +32,19 @@
 // PushWakeUnifiedPush.kt); на сервер уходят они с platform: unifiedpush, сервер
 // шлёт зашифрованный сигнал (server/push-relay/webpush.js). Способ —
 // «Настройки → Уведомления → Сигналы сервера»: Google или распространитель.
+//
+// Выбор сам (1.12.x, просьба владельца 05.11.2026: «с сервисами Google и
+// без них … пользователь не должен думать»): пока человек не выбрал способ,
+// Google — если на телефоне есть сервисы Google Play (PushWakeFcm.
+// googleServices) и они выдают токен; иначе — распространитель UnifiedPush,
+// если он один (несколько — выбирает человек); нет ни того, ни другого —
+// почта проверяется по расписанию, и это не ошибка под переключателем.
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb, visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -45,6 +52,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/logging/app_logger.dart';
+import '../../core/platform/device_readiness.dart';
 import '../../data/providers/database_provider.dart';
 import '../../data/providers/shared_prefs_provider.dart';
 import '../background/background_journal.dart';
@@ -124,6 +132,10 @@ class PushWakeService {
   static const _kLastWake = 'push_wake_last';
   static const _kLastError = 'push_wake_error';
 
+  /// Когда Google в последний раз не выдал токен при выборе «сам» (1.12.x):
+  /// сутки после этого — без Google, затем попытка снова.
+  static const _kFcmFailedAt = 'push_wake_fcm_failed_at';
+
   /// Имя проверки по сигналу на Android — в журнале фоновой работы и в
   /// просьбе фоновой задачи к приложению (background_service.dart).
   static const androidWakeKind = 'сигнал сервера';
@@ -145,10 +157,34 @@ class PushWakeService {
   /// где платформа задана явно, — считается есть, если не сказано иное.
   final bool fcmAvailable;
 
-  PushWakeService(this._ref, {PushWakeOs? os, http.Client? client, bool? fcmAvailable})
+  /// Сервисы Google Play на телефоне (Android): 'ok', 'missing',
+  /// 'disabled', 'unknown'; null — ещё не спрашивали (тогда пробуем Google).
+  String? _gms;
+
+  PushWakeService(this._ref, {PushWakeOs? os, http.Client? client, bool? fcmAvailable, String? googleServices})
       : os = os ?? platformOs,
         _client = client,
+        _gms = googleServices,
         fcmAvailable = fcmAvailable ?? (os != null || AppConstants.firebaseConfigured);
+
+  /// Через Google можно: Firebase в сборке и сервисы Google Play на
+  /// телефоне (или о них ещё не известно). Иначе пункта «Через Google» в
+  /// настройках нет.
+  bool get fcmUsable => fcmAvailable && _gms != 'missing' && _gms != 'disabled';
+
+  bool get _fcmFailedRecently {
+    final at = _prefs.getInt(_kFcmFailedAt);
+    if (at == null) return false;
+    return DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(at)) < _refreshEvery;
+  }
+
+  /// Способ выбран человеком (а не приложением само).
+  bool get _explicit => _prefs.getString(_kTransport) != null;
+
+  /// Выбор способа самим приложением (без выбора человека).
+  @visibleForTesting
+  static PushWakeTransport autoTransport({required bool fcmUsable, bool fcmFailedRecently = false}) =>
+      fcmUsable && !fcmFailedRecently ? PushWakeTransport.fcm : PushWakeTransport.unifiedpush;
 
   /// iPhone и Android — если задан адрес сервера. На Android без параметров
   /// Firebase в сборке сигналы идут только через UnifiedPush (1.10.x).
@@ -159,13 +195,50 @@ class PushWakeService {
     return null;
   }
 
-  /// Способ доставки на Android: выбранный человеком; по умолчанию Google,
-  /// если он есть в сборке, иначе UnifiedPush.
+  /// Способ доставки на Android: выбранный человеком; иначе — сам
+  /// ([autoTransport]): Google, если он есть в сборке и на телефоне,
+  /// иначе UnifiedPush.
   PushWakeTransport get transport {
     final v = _prefs.getString(_kTransport);
     if (v == PushWakeTransport.unifiedpush.name) return PushWakeTransport.unifiedpush;
-    if (v == PushWakeTransport.fcm.name && fcmAvailable) return PushWakeTransport.fcm;
-    return fcmAvailable ? PushWakeTransport.fcm : PushWakeTransport.unifiedpush;
+    if (v == PushWakeTransport.fcm.name && fcmUsable) return PushWakeTransport.fcm;
+    return autoTransport(fcmUsable: fcmUsable, fcmFailedRecently: _fcmFailedRecently);
+  }
+
+  /// Как свёрнутое приложение узнаёт о письмах (шаг первой настройки,
+  /// экран «Разрешения», 1.12.x).
+  Future<SignalChannel> signalChannel() async {
+    if (os == null) return SignalChannel.off;
+    final enabled = _ref.read(pushWakePrefsProvider).enabled;
+    if (os == PushWakeOs.ios) return enabled ? SignalChannel.apple : SignalChannel.off;
+    final fcm = transport == PushWakeTransport.fcm;
+    if (!enabled || fcm) {
+      return DeviceReadiness.androidSignal(enabled: enabled, transportFcm: fcm, distributor: null, distributors: 0);
+    }
+    // Выбранный распространитель могли удалить — тогда его будто и нет.
+    final list = await upDistributors();
+    final chosen = upDistributor;
+    final dist = list.any((d) => d.id == chosen) ? chosen : null;
+    return DeviceReadiness.androidSignal(
+        enabled: enabled, transportFcm: false, distributor: dist, distributors: list.length);
+  }
+
+  /// Сервисы Google Play на телефоне (Android) — один раз за запуск.
+  Future<String> _googleServices() async {
+    try {
+      return await _channel.invokeMethod<String>('googleServices') ?? 'unknown';
+    } catch (_) {
+      // Старая сборка без метода — как раньше, пробуем Google.
+      return 'unknown';
+    }
+  }
+
+  /// Google не выдал токен, потому что его сервисов нет или они неполные
+  /// (microG без «Облачных сообщений», нет входа в аккаунт Google).
+  static bool _noGoogle(PlatformException e) {
+    final m = '${e.code} ${e.message ?? ''}'.toUpperCase();
+    return const ['SERVICE_NOT_AVAILABLE', 'MISSING_INSTANCEID_SERVICE', 'AUTHENTICATION_FAILED',
+      'PHONE_REGISTRATION_ERROR', 'GOOGLE PLAY SERVICES'].any(m.contains);
   }
 
   /// Выбранный распространитель UnifiedPush (пакет приложения).
@@ -205,7 +278,14 @@ class PushWakeService {
     if (os == null || _inited) return;
     _inited = true;
     _channel.setMethodCallHandler(_onCall);
-    if (os == PushWakeOs.android) _upChannel.setMethodCallHandler(_onUpCall);
+    if (os == PushWakeOs.android) {
+      _upChannel.setMethodCallHandler(_onUpCall);
+      _gms ??= await _googleServices();
+      if (_gms == 'missing' || _gms == 'disabled') {
+        AppLogger.info('Сигналы сервера: сервисов Google Play нет ($_gms) — '
+            '${upDistributor != null ? 'UnifiedPush' : 'UnifiedPush, если есть распространитель, иначе проверки по расписанию'}');
+      }
+    }
     await apply();
   }
 
@@ -220,13 +300,29 @@ class PushWakeService {
         if (os == PushWakeOs.android && transport == PushWakeTransport.unifiedpush) {
           await _applyUp();
         } else if (os == PushWakeOs.android) {
-          final token = await _channel.invokeMethod<String>('register', const {
-            'apiKey': AppConstants.firebaseApiKey,
-            'appId': AppConstants.firebaseAppId,
-            'senderId': AppConstants.firebaseSenderId,
-            'projectId': AppConstants.firebaseProjectId,
-          });
-          if (token != null) await _onToken(token, 'fcm');
+          final String? token;
+          try {
+            token = await _channel.invokeMethod<String>('register', const {
+              'apiKey': AppConstants.firebaseApiKey,
+              'appId': AppConstants.firebaseAppId,
+              'senderId': AppConstants.firebaseSenderId,
+              'projectId': AppConstants.firebaseProjectId,
+            });
+          } on PlatformException catch (e) {
+            if (_explicit || !_noGoogle(e)) rethrow;
+            // Способ выбирает приложение (1.12.x): сервисов Google нет или
+            // они неполные — не ошибка. Сутки — через UnifiedPush (если
+            // есть распространитель) или по расписанию, потом снова Google.
+            AppLogger.info('Сигналы сервера: Google не выдал токен (${e.message ?? e.code}) — без Google');
+            await _prefs.setInt(_kFcmFailedAt, DateTime.now().millisecondsSinceEpoch);
+            await _prefs.remove(_kLastError);
+            await _applyUp();
+            return;
+          }
+          if (token != null) {
+            await _prefs.remove(_kFcmFailedAt);
+            await _onToken(token, 'fcm');
+          }
         } else {
           await _channel.invokeMethod<void>('register');
         }
@@ -353,8 +449,16 @@ class PushWakeService {
   /// Зарегистрироваться у выбранного распространителя. Адрес придёт в
   /// onEndpoint; уже выданный (прошлый запуск) — сразу из «current».
   Future<void> _applyUp() async {
-    final dist = upDistributor;
-    if (dist == null) return; // распространитель ещё не выбран — экран подскажет
+    var dist = upDistributor;
+    if (dist == null) {
+      // Выбор сам (1.12.x): распространитель один — он; нет или несколько —
+      // подскажет экран (несколько — выбирает человек, как велит UnifiedPush).
+      final list = await upDistributors();
+      if (list.length != 1) return;
+      dist = list.single.id;
+      await _prefs.setString(_kUpDistributor, dist);
+      AppLogger.info('Сигналы сервера: UnifiedPush через ${list.single.name} (выбрано само)');
+    }
     final vapid = await _vapidKey();
     await _upChannel.invokeMethod<void>('register', {'distributor': dist, 'vapid': ?vapid});
     final cur = await _upChannel.invokeMapMethod<String, Object?>('current');

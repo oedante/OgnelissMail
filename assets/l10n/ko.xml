@@ -3618,7 +3618,7 @@
     <string name="zipCannotRead">압축 파일을 읽을 수 없습니다. 손상되었거나 앱이 지원하지 않는 형식입니다(7z, RAR). 다른 앱에서 여세요.</string>
     <string name="pdfProtected">PDF가 암호로 보호되어 있습니다. 다른 앱에서 여세요.</string>
     <string name="faq_mail_10_q">앱에서 바로 열리는 첨부 파일은 무엇인가요?</string>
-    <string name="faq_mail_10_a">Office 문서(DOCX, XLSX, PPTX), OpenDocument 파일(ODT, ODS, ODP), RTF와 CSV는 앱에서 바로 읽기 전용으로 열리며, 매크로는 절대 실행되지 않습니다. 스프레드시트는 시트가 있는 격자로, 프레젠테이션은 슬라이드로 표시됩니다. 암호가 걸린 것을 포함한 ZIP 압축 파일과 TAR, GZ, BZ2, XZ도 앱에서 열립니다. 안의 파일을 탭하면 열립니다. Android의 PDF, 이미지, 텍스트, .eml 메일, .pkpass 티켓도 앱에서 열립니다. iPhone과 iPad에서는 iOS 훑어보기가 PDF, 이미지, Office 문서, RTF, CSV를 보여 주고, OpenDocument 파일은 앱이 직접 보여 줍니다. 이전 .doc, .xls, .ppt 문서와 7z, RAR 압축 파일은 다른 앱에서 열리며, 위쪽 버튼으로 어떤 파일이든 다른 앱으로 보낼 수 있습니다.</string>
+    <string name="faq_mail_10_a">Office 문서(새 형식 DOCX, XLSX, PPTX와 이전 형식 DOC, XLS, PPT), OpenDocument 파일(ODT, ODS, ODP), RTF, CSV, 텍스트 파일, Markdown은 앱에서 바로 읽기 전용으로 열리며, 매크로는 절대 실행되지 않습니다. 스프레드시트는 시트가 있는 격자로, 프레젠테이션은 슬라이드로, Markdown은 서식이 적용된 텍스트로 표시됩니다. .eml 메일과 Outlook .msg 메일은 첨부 파일까지 포함해 일반 메일처럼 열립니다. 암호가 걸린 것을 포함한 ZIP 압축 파일과 TAR, GZ, BZ2, XZ도 앱에서 열립니다. 안의 파일을 탭하면 열립니다. Android의 PDF, 이미지, .pkpass 티켓도 앱에서 열립니다. iPhone과 iPad에서는 iOS 훑어보기가 PDF, 이미지, Office 문서, RTF, CSV를 보여 주고, OpenDocument 파일, 텍스트 파일, Markdown, 메일은 앱이 직접 보여 줍니다. Office 95 이하의 문서와 7z, RAR 압축 파일은 다른 앱에서 열리며, 위쪽 버튼으로 어떤 파일이든 다른 앱으로 보낼 수 있습니다.</string>
     <string name="quickRepliesCardHint">텍스트가 답장에 들어갑니다. 확인 후 보내세요</string>
     <string name="translateMsgLang">메일 언어: {lang}</string>
     <string name="translateDone">번역됨: {from} → {to}</string>
@@ -3796,7 +3796,7 @@
     <string name="docTypeCsvDesc">끄면 일반 텍스트로 표시</string>
     <string name="docTypeSlides">프레젠테이션</string>
     <string name="faq_mail_11_q">앱의 문서 미리 보기를 끄려면 어떻게 하나요?</string>
-    <string name="faq_mail_11_a">설정 → 메일 → 문서 미리 보기. 앱에서 문서 보기 스위치는 미리 보기를 완전히 꺼요. 그러면 문서가 다시 해당 형식의 앱에서 열려요. 그 아래에서 일부 종류만 끄고 나머지는 유지할 수 있어요: 텍스트 문서, 스프레드시트, CSV를 표로 보기(끄면 일반 텍스트로 표시), 프레젠테이션. 큰 문서는 앞부분이 표시되며, 전체를 보려면 위쪽 버튼으로 다른 앱에서 여세요. iPhone과 iPad에서는 이 설정이 OpenDocument 파일에만 적용돼요. 나머지는 iOS 훑어보기가 보여 줘요.</string>
+    <string name="faq_mail_11_a">설정 → 메일 → 문서 미리 보기. 앱에서 문서 보기 스위치는 미리 보기를 완전히 꺼요. 그러면 문서가 다시 해당 형식의 앱에서 열려요. 그 아래에서 일부 종류만 끄고 나머지는 유지할 수 있어요: 텍스트 문서(TXT와 Markdown 포함), 스프레드시트, CSV를 표로 보기, 프레젠테이션. 이전 DOC, XLS, PPT도 같은 종류에 속해요. 끈 종류는 해당 형식의 앱에서 열리고, TXT, Markdown, CSV는 일반 텍스트로 표시돼요. 큰 문서는 앞부분이 표시되며, 전체를 보려면 위쪽 버튼으로 다른 앱에서 여세요. iPhone과 iPad에서는 이 설정이 OpenDocument, TXT, Markdown 파일에 적용돼요. 나머지는 iOS 훑어보기가 보여 줘요.</string>
     <string name="translatePhoneLangs">휴대전화 언어는 번역 제안 안 함</string>
     <string name="translatePhoneLangsMac">Mac 언어는 번역 제안 안 함</string>
     <string name="translatePhoneLangsDesc">기기 설정의 언어</string>

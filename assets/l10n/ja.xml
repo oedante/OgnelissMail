@@ -3618,7 +3618,7 @@
     <string name="zipCannotRead">アーカイブを読み込めません。破損しているか、アプリが対応していない形式です（7z、RAR）。別のアプリで開いてください。</string>
     <string name="pdfProtected">このPDFはパスワードで保護されています。別のアプリで開いてください。</string>
     <string name="faq_mail_10_q">アプリ内で直接開ける添付ファイルは？</string>
-    <string name="faq_mail_10_a">Office 文書（DOCX、XLSX、PPTX）、OpenDocument ファイル（ODT、ODS、ODP）、RTF、CSV はアプリ内で直接開けます。読み取り専用で、マクロが実行されることはありません。スプレッドシートはシートごとのグリッドで、プレゼンテーションはスライドで表示されます。パスワード付きを含む ZIP アーカイブと、TAR、GZ、BZ2、XZ もアプリ内で開けます。中のファイルをタップすると開きます。Android の PDF、画像、テキスト、.eml メール、.pkpass チケットもアプリ内で開けます。iPhone と iPad では、PDF、画像、Office 文書、RTF、CSV を iOS のクイックルックで表示し、OpenDocument ファイルはアプリ自体で表示します。古い .doc、.xls、.ppt 文書と 7z、RAR のアーカイブは別のアプリで開き、上部のボタンでどのファイルも別のアプリに送れます。</string>
+    <string name="faq_mail_10_a">Office 文書（新しい DOCX、XLSX、PPTX と古い DOC、XLS、PPT）、OpenDocument ファイル（ODT、ODS、ODP）、RTF、CSV、テキストファイル、Markdown はアプリ内で直接開けます。読み取り専用で、マクロが実行されることはありません。スプレッドシートはシートごとのグリッドで、プレゼンテーションはスライドで、Markdown は書式付きのテキストで表示されます。.eml メールと Outlook の .msg メールは、添付ファイルも含めて通常のメールと同じように開きます。パスワード付きを含む ZIP アーカイブと、TAR、GZ、BZ2、XZ もアプリ内で開けます。中のファイルをタップすると開きます。Android の PDF、画像、.pkpass チケットもアプリ内で開けます。iPhone と iPad では、PDF、画像、Office 文書、RTF、CSV を iOS のクイックルックで表示し、OpenDocument ファイル、テキストファイル、Markdown、メールはアプリ自体で表示します。Office 95 以前の文書と 7z、RAR のアーカイブは別のアプリで開き、上部のボタンでどのファイルも別のアプリに送れます。</string>
     <string name="quickRepliesCardHint">テキストが返信に入ります。確認して送信してください</string>
     <string name="translateMsgLang">メールの言語: {lang}</string>
     <string name="translateDone">翻訳済み: {from} → {to}</string>
@@ -3796,7 +3796,7 @@
     <string name="docTypeCsvDesc">オフ：プレーンテキストで表示</string>
     <string name="docTypeSlides">プレゼンテーション</string>
     <string name="faq_mail_11_q">アプリ内の文書のプレビューをオフにするには？</string>
-    <string name="faq_mail_11_a">設定 → メール → 文書のプレビュー。「アプリ内で文書を表示」スイッチで、プレビューを完全にオフにできます。オフにすると、文書は再びその形式のアプリで開きます。その下では、一部の種類だけをオフにして、残りはそのままにできます：テキスト文書、スプレッドシート、CSV を表として表示（オフ：プレーンテキストで表示）、プレゼンテーション。大きな文書は冒頭を表示します。全体を見るには、上部のボタンで別のアプリで開いてください。iPhone と iPad では、これらの設定は OpenDocument ファイルにのみ適用されます。それ以外は iOS のクイックルックで表示されます。</string>
+    <string name="faq_mail_11_a">設定 → メール → 文書のプレビュー。「アプリ内で文書を表示」スイッチで、プレビューを完全にオフにできます。オフにすると、文書は再びその形式のアプリで開きます。その下では、一部の種類だけをオフにして、残りはそのままにできます：テキスト文書（TXT と Markdown を含む）、スプレッドシート、CSV を表として表示、プレゼンテーション。古い DOC、XLS、PPT も同じ種類に含まれます。オフにした種類はその形式のアプリで開きますが、TXT、Markdown、CSV はプレーンテキストで表示されます。大きな文書は冒頭を表示します。全体を見るには、上部のボタンで別のアプリで開いてください。iPhone と iPad では、これらの設定は OpenDocument、TXT、Markdown のファイルに適用されます。それ以外は iOS のクイックルックで表示されます。</string>
     <string name="translatePhoneLangs">スマートフォンの言語は翻訳を提案しない</string>
     <string name="translatePhoneLangsMac">Macの言語は翻訳を提案しない</string>
     <string name="translatePhoneLangsDesc">端末の設定の言語</string>

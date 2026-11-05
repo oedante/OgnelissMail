@@ -209,6 +209,95 @@ void main() {
       expect(shouldOfferTranslation(detected: 'no', appLang: 'nb', enabled: true, never: const [], available: av), isFalse);
     });
 
+    // 1.12.x (просьба владельца 04.11.2026: плашка «сбоит и предлагает
+    // другие языки»).
+    group('решение о переводе', () {
+      const av = ['en', 'ru', 'de', 'uk'];
+      TranslationOffer d(String? lang,
+              {bool confident = true,
+              String app = 'ru',
+              bool enabled = true,
+              List<String> never = const [],
+              List<String> always = const [],
+              List<String> known = const [],
+              bool otherScript = false}) =>
+          decideTranslationOffer(
+              detected: lang,
+              confident: confident,
+              appLang: app,
+              enabled: enabled,
+              never: never,
+              always: always,
+              known: known,
+              available: av,
+              otherScript: otherScript);
+
+      test('уверенный язык — предложить; догадка — нет', () {
+        expect(d('en'), TranslationOffer.offer);
+        expect(d('en', confident: false), TranslationOffer.none);
+        // Русское письмо, которое ML Kit неуверенно назвал украинским.
+        expect(d('uk', confident: false), TranslationOffer.none);
+        expect(d(null), TranslationOffer.none);
+      });
+
+      test('язык не определён уверенно, но другой алфавит — «Письмо на другом языке»', () {
+        expect(d(null, otherScript: true), TranslationOffer.otherLanguage);
+        expect(d('en', confident: false, otherScript: true), TranslationOffer.otherLanguage);
+        expect(d(null, otherScript: true, enabled: false), TranslationOffer.none);
+        // Догадка — язык телефона или «не переводить»: не предлагать и так.
+        expect(d('en', confident: false, otherScript: true, known: const ['en']), TranslationOffer.none);
+        expect(d('en', confident: false, otherScript: true, never: const ['en']), TranslationOffer.none);
+        // По догадке не переводится сам даже язык из «Всегда переводить».
+        expect(d('en', confident: false, otherScript: true, always: const ['en']), TranslationOffer.otherLanguage);
+      });
+
+      test('язык приложения и языки телефона — не предлагать', () {
+        expect(d('ru'), TranslationOffer.none);
+        expect(d('no', app: 'nb'), TranslationOffer.none);
+        expect(d('en', known: const ['ru', 'en']), TranslationOffer.none);
+        expect(d('de', known: const ['ru', 'en']), TranslationOffer.offer);
+      });
+
+      test('«не переводить» и «всегда переводить»', () {
+        expect(d('en', never: const ['en']), TranslationOffer.none);
+        expect(d('en', always: const ['en']), TranslationOffer.auto);
+        // Свой выбор — и для языка телефона, и при выключенном предложении.
+        expect(d('en', always: const ['en'], known: const ['en']), TranslationOffer.auto);
+        expect(d('en', always: const ['en'], enabled: false), TranslationOffer.auto);
+        expect(d('en', enabled: false), TranslationOffer.none);
+        // «Не переводить» сильнее; язык приложения не переводится.
+        expect(d('en', always: const ['en'], never: const ['en']), TranslationOffer.none);
+        expect(d('ru', always: const ['ru']), TranslationOffer.none);
+        // Переводчик не знает языка — ни предложения, ни перевода.
+        expect(d('ja', always: const ['ja']), TranslationOffer.none);
+      });
+
+      test('прежний shouldOfferTranslation — уверенный язык', () {
+        expect(shouldOfferTranslation(detected: 'en', appLang: 'ru', enabled: true, never: const [], available: av),
+            isTrue);
+      });
+
+      test('списки языков: без повторов, по алфавиту', () {
+        expect(withLang(const ['de', 'en'], 'en'), ['de', 'en']);
+        expect(withLang(const ['en'], 'nb'), ['en', 'no']);
+        expect(withoutLang(const ['de', 'en'], 'en'), ['de']);
+      });
+    });
+
+    test('ответ определителя платформы: язык и уверенность', () {
+      expect(PlatformTranslator.parseDetection({'lang': 'en', 'confident': true}, 'Hello'),
+          (lang: 'en', confident: true));
+      expect(PlatformTranslator.parseDetection({'lang': 'pt-BR', 'confident': false}, 'Olá'),
+          (lang: 'pt', confident: false));
+      // Прежняя сборка платформы — строка, как раньше уверенный язык.
+      expect(PlatformTranslator.parseDetection('de', 'Hallo'), (lang: 'de', confident: true));
+      expect(PlatformTranslator.parseDetection(null, 'x'), isNull);
+      expect(PlatformTranslator.parseDetection({'lang': 'und', 'confident': false}, 'x'), isNull);
+      // Русский, принятый за украинский, — русский; уверенность та же.
+      expect(PlatformTranslator.parseDetection({'lang': 'uk', 'confident': false}, 'Добрый день, Андрей Сергеевич, Тестирую перевод письма.'),
+          (lang: 'ru', confident: false));
+    });
+
     test('порядок языков: собеседник, недавние, остальные по названию', () {
       final r = orderTargetLanguages(
         available: const ['ru', 'en', 'de', 'fr', 'es'],

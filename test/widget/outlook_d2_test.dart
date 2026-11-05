@@ -363,7 +363,9 @@ void main() {
 
     setUp(() {
       dir = Directory.systemTemp.createTempSync('d2_att');
-      path = '${dir.path}/smeta.txt';
+      // .log — простым текстом сразу (.txt с 1.14.0 разбирается документом
+      // в отдельном потоке, а здесь проверяется только место показа).
+      path = '${dir.path}/smeta.log';
       File(path).writeAsStringSync('Смета на ремонт кровли');
     });
     tearDown(() => dir.deleteSync(recursive: true));
@@ -373,8 +375,8 @@ void main() {
         builder: (context) => Scaffold(
           body: Center(
             child: TextButton(
-              onPressed: () => openAttachment(context, PreviewItem(filePath: path, fileName: 'smeta.txt')),
-              child: const Text('ПИСЬМО: открыть smeta.txt'),
+              onPressed: () => openAttachment(context, PreviewItem(filePath: path, fileName: 'smeta.log')),
+              child: const Text('ПИСЬМО: открыть smeta.log'),
             ),
           ),
         ),
@@ -399,7 +401,7 @@ void main() {
 
     Future<void> open(WidgetTester tester) async {
       await tester.pumpAndSettle();
-      await tester.tap(find.text('ПИСЬМО: открыть smeta.txt'));
+      await tester.tap(find.text('ПИСЬМО: открыть smeta.log'));
       for (var i = 0; i < 6; i++) {
         await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 30)));
         await tester.pump(const Duration(milliseconds: 100));
@@ -424,7 +426,7 @@ void main() {
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       expect(preview, findsNothing);
-      expect(find.text('ПИСЬМО: открыть smeta.txt'), findsOneWidget);
+      expect(find.text('ПИСЬМО: открыть smeta.log'), findsOneWidget);
     });
 
     testWidgets('вне панели — отдельным экраном, как раньше', (tester) async {

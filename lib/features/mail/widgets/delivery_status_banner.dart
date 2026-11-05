@@ -5,6 +5,10 @@
 // «Изменить адрес»; «Задерживается…»; «Доставлено на сервер получателя»
 // (с оговоркой: это не уведомление о прочтении). На самом письме-отчёте —
 // чип «Отчёт о доставке», он открывает своё письмо.
+//
+// 1.12.x (просьба владельца 04.11.2026, плашки «съедают место»): в письме —
+// чип строки сведений ([noticeOf]): «Не доставлено» цветом ошибки,
+// «Задерживается», «Доставлено»; плашка — по нажатию на чип.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +24,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/delivery/delivery_report.dart';
 import '../../../services/mail/delivery/delivery_report_service.dart';
 import '../providers/delivery_status_provider.dart';
+import 'mail_notice_bar.dart';
 
 class DeliveryStatusBanner extends ConsumerWidget {
   final EmailModel email;
@@ -38,6 +43,40 @@ class DeliveryStatusBanner extends ConsumerWidget {
         '${l10n.tr('dsnDelayed').replaceAll('{addr}', s.recipient)} — ${l10n.tr(reason.l10nKey)}',
       _ => l10n.tr('dsnDelivered').replaceAll('{addr}', s.recipient),
     };
+  }
+
+  /// Чип строки сведений письма: по худшему состоянию адресатов; на
+  /// письме-отчёте — «Отчёт о доставке» (открывает своё письмо). null — о
+  /// доставке сказать нечего. [context] — экрана письма (по нему переход).
+  static MailNotice? noticeOf(BuildContext context, WidgetRef ref, EmailModel email) {
+    final key = deliveryKeyOf(email);
+    final rows = key == null ? const <DeliveryStatus>[] : (ref.watch(deliveryStatusesProvider(key)).value ?? const []);
+    final l10n = AppLocalizations.of(context);
+    if (rows.isEmpty) {
+      final original =
+          ref.watch(deliveryReportOriginalProvider((accountId: email.accountId, emailId: email.id))).value;
+      if (original == null || original.id == email.id) return null;
+      return MailNotice(
+        id: 'delivery',
+        icon: AppIcons.report,
+        label: l10n.tr('dsnReportChip'),
+        detail: original.subject.isEmpty ? null : '${l10n.tr('dsnReportChip')}: ${original.subject}',
+        onTap: () => context.push(messagePath(original.id, accountId: original.accountId)),
+      );
+    }
+    final failed = rows.any((r) => r.action == 'failed');
+    final delayed = rows.any((r) => r.action == 'delayed');
+    return MailNotice(
+      id: 'delivery',
+      icon: failed ? AppIcons.error : (delayed ? AppIcons.schedule : AppIcons.mark_email_read),
+      iconColor: failed
+          ? null
+          : (delayed ? AppColors.accentOrangeText(context) : AppColors.successText(context)),
+      label: l10n.tr(failed ? 'noticeDsnFailed' : (delayed ? 'noticeDsnDelayed' : 'noticeDsnDelivered')),
+      detail: [for (final r in rows) lineFor(l10n, r)].join('\n'),
+      tone: failed ? MailNoticeTone.warning : MailNoticeTone.neutral,
+      expanded: (_) => DeliveryStatusBanner(email: email),
+    );
   }
 
   @override

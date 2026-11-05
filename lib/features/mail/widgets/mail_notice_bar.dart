@@ -299,11 +299,14 @@ class _NoticeChip extends StatelessWidget {
     // Высота — по шрифту: при крупном тексте чип растёт, а не обрезает надпись.
     final height = math.max(32.0, MediaQuery.textScalerOf(context).scale(20) + Space.s);
     final full = n.detail ?? n.label;
+    // Значок растёт с крупным шрифтом (не больше 24), иначе рядом с текстом
+    // ×1,6 он теряется.
+    final iconSize = MediaQuery.textScalerOf(context).scale(16).clamp(16.0, 24.0);
     final lead = n.busy
-        ? SizedBox.square(dimension: 14, child: CircularProgressIndicator(strokeWidth: 2, color: fg))
+        ? SizedBox.square(dimension: iconSize - 2, child: CircularProgressIndicator(strokeWidth: 2, color: fg))
         : n.icon == null
             ? null
-            : Icon(n.icon, size: 16, color: n.iconColor ?? icon, fill: n.iconFilled ? 1 : 0);
+            : Icon(n.icon, size: iconSize, color: n.iconColor ?? icon, fill: n.iconFilled ? 1 : 0);
     final menu = onMenu;
     final main = Semantics(
       container: true,

@@ -21,6 +21,9 @@ import java.util.TimeZone
 object DeviceCalendarPlugin {
     private const val CHANNEL = "ogneliss/device_calendar"
 
+    /** Свой календарь на телефоне без календарей (см. [createLocalCalendar]). */
+    private const val LOCAL_NAME = "Ogneliss Mail"
+
     fun register(messenger: BinaryMessenger, context: Context) {
         MethodChannel(messenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
@@ -41,7 +44,7 @@ object DeviceCalendarPlugin {
 
     /// Записывает событие в первый доступный на запись календарь устройства.
     private fun addEvent(context: Context, m: Map<String, Any?>): Boolean {
-        val calendarId = firstWritableCalendarId(context) ?: return false
+        val calendarId = firstWritableCalendarId(context) ?: createLocalCalendar(context) ?: return false
         val cr = context.contentResolver
         val tz = TimeZone.getDefault().id
 
@@ -78,28 +81,80 @@ object DeviceCalendarPlugin {
 
     /// ID первого календаря, доступного на запись (уровень доступа владельца/
     /// редактора). Возвращает null, если таких нет.
+    ///
+    /// 1.12.x (аудит устройств): видимые и синхронизируемые — раньше
+    /// скрытых (событие в скрытом календаре человек не увидит); свои
+    /// календари ящиков (учётная запись «Ogneliss Mail», PhoneMirrorPlugin)
+    /// не берутся — они только для чтения и перезаписываются.
     private fun firstWritableCalendarId(context: Context): Long? {
         val projection = arrayOf(
             CalendarContract.Calendars._ID,
             CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL,
             CalendarContract.Calendars.IS_PRIMARY,
+            CalendarContract.Calendars.VISIBLE,
+            CalendarContract.Calendars.SYNC_EVENTS,
+            CalendarContract.Calendars.ACCOUNT_TYPE,
         )
         context.contentResolver.query(
             CalendarContract.Calendars.CONTENT_URI, projection, null, null, null,
         )?.use { c ->
+            var firstShown: Long? = null
             var firstWritable: Long? = null
             while (c.moveToNext()) {
                 val id = c.getLong(0)
                 val access = c.getInt(1)
                 val isPrimary = c.getInt(2) == 1
+                val shown = c.getInt(3) == 1 && c.getInt(4) == 1
+                if (c.getString(5) == OGNELISS_ACCOUNT_TYPE) continue
                 val writable = access >= CalendarContract.Calendars.CAL_ACCESS_CONTRIBUTOR
                 if (writable) {
-                    if (isPrimary) return id // основной — приоритетно
+                    if (isPrimary && shown) return id // основной — приоритетно
+                    if (shown && firstShown == null) firstShown = id
                     if (firstWritable == null) firstWritable = id
                 }
             }
-            return firstWritable
+            return firstShown ?: firstWritable
         }
         return null
+    }
+
+    /**
+     * Календарь «Ogneliss Mail» на самом телефоне (1.12.x): на прошивках без
+     * сервисов Google (LineageOS, /e/OS, GrapheneOS, Huawei без входа в
+     * облако) календарей бывает ноль — выгрузка молча возвращала 0. Локальный
+     * календарь (ACCOUNT_TYPE_LOCAL) показывают «Календарь» Android, Etar и
+     * календари оболочек; на сервер он не синхронизируется. Повторно — тот же.
+     */
+    private fun createLocalCalendar(context: Context): Long? = try {
+        val cr = context.contentResolver
+        val uri = CalendarContract.Calendars.CONTENT_URI.buildUpon()
+            .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
+            .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, LOCAL_NAME)
+            .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, CalendarContract.ACCOUNT_TYPE_LOCAL)
+            .build()
+        val existing = cr.query(
+            CalendarContract.Calendars.CONTENT_URI,
+            arrayOf(CalendarContract.Calendars._ID),
+            "${CalendarContract.Calendars.ACCOUNT_NAME} = ? AND ${CalendarContract.Calendars.ACCOUNT_TYPE} = ?",
+            arrayOf(LOCAL_NAME, CalendarContract.ACCOUNT_TYPE_LOCAL),
+            null,
+        )?.use { c -> if (c.moveToFirst()) c.getLong(0) else null }
+        existing ?: run {
+            val values = ContentValues().apply {
+                put(CalendarContract.Calendars.ACCOUNT_NAME, LOCAL_NAME)
+                put(CalendarContract.Calendars.ACCOUNT_TYPE, CalendarContract.ACCOUNT_TYPE_LOCAL)
+                put(CalendarContract.Calendars.NAME, LOCAL_NAME)
+                put(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, LOCAL_NAME)
+                put(CalendarContract.Calendars.CALENDAR_COLOR, 0xFF1D4F91.toInt()) // brandBlue
+                put(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL, CalendarContract.Calendars.CAL_ACCESS_OWNER)
+                put(CalendarContract.Calendars.OWNER_ACCOUNT, LOCAL_NAME)
+                put(CalendarContract.Calendars.VISIBLE, 1)
+                put(CalendarContract.Calendars.SYNC_EVENTS, 1)
+                put(CalendarContract.Calendars.CALENDAR_TIME_ZONE, TimeZone.getDefault().id)
+            }
+            cr.insert(uri, values)?.let { ContentUris.parseId(it) }
+        }
+    } catch (e: Exception) {
+        null
     }
 }

@@ -1,6 +1,6 @@
 # Licensing
 
-*Not legal advice. Updated 4 November 2026.*
+*Not legal advice. Updated 5 November 2026.*
 
 ## 1. Ogneliss Mail
 
@@ -176,8 +176,18 @@ are never run (the macro part is not even read). Checked 4 November 2026:
   "[RTF]: Rich Text Format" in the Office file formats part of the OSP list.
 - **CSV** — RFC 4180 (informational); no IETF patent disclosures were found;
   the format is decades older than any such patent.
-- The old binary formats [MS-DOC], [MS-XLS], [MS-PPT] (not implemented; the
-  app says so and offers another app) are on the OSP list too.
+- **Old binary formats** (preview since 1.13.x): [MS-DOC] (.doc), [MS-XLS]
+  (.xls), [MS-PPT] (.ppt, text first) and their container [MS-CFB] (Compound
+  File Binary) are on the OSP list ("Office Binary File Formats"), checked
+  05.11.2026 by copies of the list (SheetJS references, Wikipedia mirror of
+  the OSP article) — the same terms as above, no commercial restriction.
+- **Outlook messages (.msg)** — [MS-OXMSG] with compressed RTF [MS-OXRTFCP]
+  (preview since 1.13.x): the owner's information of 05.11.2026 — MS-OXMSG
+  is on the OSP list in "Office Binary and other File Formats"
+  ([OSP page](https://learn.microsoft.com/en-us/openspecs/dev_center/ms-devcentlp/1c24c7c8-28b0-4ce1-a47d-95fe1ff504bc),
+  [MS-OXMSG](https://learn.microsoft.com/en-us/openspecs/exchange_server_protocols/ms-oxmsg/b812bc47-4397-4a15-b03d-84aa20be866f)).
+  The Library of Congress format description also says Microsoft claims no
+  patents in the MSG format. Decision of the owner: implement.
 - **Specification texts.** The Microsoft Open Specifications notice and the
   Ecma and OASIS copyright policies allow using the documents to write
   implementations. No specification text or schema is copied into the app.
@@ -192,12 +202,10 @@ are never run (the macro part is not even read). Checked 4 November 2026:
   from the pages read in full. Before announcing the feature, open the OSP
   page (covered list: Office Open XML, OpenDocument, RTF) and the Sun
   statement by the links above and confirm.
-- **Not covered by this check:** the Exchange-specific formats [MS-OXTNEF]
-  (winmail.dat — the app already extracts files from it,
-  `lib/services/mail/tnef/tnef_decoder.dart`), [MS-OXRTFCP] (compressed RTF),
-  [MS-OXRTFEX] (HTML inside RTF) and [MS-OXMSG] (.msg). Their documents say
-  they "might be covered by" the OSP or the Community Promise; check them
-  separately.
+- **Not covered by this check:** [MS-OXTNEF] (winmail.dat — the app
+  already extracts files from it, `lib/services/mail/tnef/tnef_decoder.dart`)
+  and [MS-OXRTFEX] (HTML inside RTF). Their documents say they "might be
+  covered by" the OSP or the Community Promise; check them separately.
 
 ---
 
@@ -257,8 +265,11 @@ are never run (the macro part is not even read). Checked 4 November 2026:
   Excel, PowerPoint — только словами о совместимости. Цитаты сверены по
   выдержкам поисковика: сами страницы Microsoft и OASIS сеть облачного
   сеанса не открыла — перед объявлением функции открыть их по ссылкам из
-  раздела 6 и подтвердить. Отдельно проверить форматы Exchange: TNEF
-  (winmail.dat — его приложение уже разбирает), сжатый RTF, .msg.
+  раздела 6 и подтвердить. Старые .doc, .xls, .ppt (и контейнер MS-CFB) —
+  тоже в списке OSP (по копиям списка, 05.11.2026); письма Outlook .msg
+  (MS-OXMSG) — в списке OSP по данным владельца (05.11.2026, решение —
+  делать). Отдельно проверить TNEF (winmail.dat — его приложение уже
+  разбирает).
 - **Новые зависимости** (пакеты, библиотеки, SDK, шрифты, внешние сервисы и
   API) — только после проверки лицензии и условий (правило владельца
   31.10.2026, после истории с Exchange ActiveSync). Платный функционал и

@@ -76,9 +76,10 @@ void main() {
     expect(await inApp('доклад.pptx'), isFalse);
   });
 
-  test('старый .doc: RTF внутри — документом, настоящий .doc — своей программой', () async {
+  test('старый .doc (и RTF под этим именем) — документом (1.12.x), выключено — своей программой', () async {
     expect(await inApp('письмо.doc', utf8.encode(r'{\rtf1\ansi Привет}')), isTrue);
-    expect(await inApp('старый.doc', const [0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1]), isFalse);
+    expect(await inApp('старый.doc', const [0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1]), isTrue);
+    expect(await inApp('выгрузка.xls', const [0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1]), isTrue);
     await DocPreviewSettings.setType(prefs, DocPreviewType.text, false);
     expect(await inApp('письмо.doc', utf8.encode(r'{\rtf1\ansi Привет}')), isFalse);
   });

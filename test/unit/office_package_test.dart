@@ -124,7 +124,11 @@ void main() {
     expect(OfficeFormats.of('письмо.rtf'), OfficeFormat.rtf);
     expect(OfficeFormats.of('attachment', mimeType: 'application/vnd.oasis.opendocument.spreadsheet; name=x'),
         OfficeFormat.ods);
-    expect(OfficeFormats.of('старый.doc'), isNull);
+    // Office 97–2003 — тоже форматы (1.12.x): разбор — по содержимому.
+    expect(OfficeFormats.of('старый.doc'), OfficeFormat.doc);
+    expect(OfficeFormats.of('выгрузка.XLS'), OfficeFormat.xls);
+    expect(OfficeFormats.of('показ.pps'), OfficeFormat.ppt);
+    expect(OfficeFormats.of('attachment', mimeType: 'application/msword'), OfficeFormat.doc);
     expect(OfficeFormats.isLegacy('старый.doc'), isTrue);
     expect(OfficeFormats.of('фото.jpg'), isNull);
   });

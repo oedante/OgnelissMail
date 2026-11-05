@@ -3245,7 +3245,7 @@
     <string name="faq_notify_2_q">Hvordan slår jeg av varsler for én mappe?</string>
     <string name="faq_notify_2_a">Innstillinger → konto → Mappesynkronisering: Bjellen ved siden av mappens bryter slår varsler om nye meldinger i den (med undermapper) på eller av, og mappen synkroniseres fortsatt. Menyen ⋮ har Varsler: alle mapper og Varsler: ingen mapper. Det kommer aldri varsler for Sendt, Utkast, Slettede elementer eller Søppelpost.</string>
     <string name="faq_notify_3_q">Hvorfor kommer varsler sent på Android?</string>
-    <string name="faq_notify_3_a">Noen telefonprodusenter (Xiaomi, Huawei, nubia og andre) stopper apper i bakgrunnen. Tillat autostart og ubegrenset batteribruk: Innstillinger → Avanserte innstillinger → Tillatelser.</string>
+    <string name="faq_notify_3_a">Når du har lagt til en postboks, sjekker appen selv hva denne telefonen trenger for varsler om nye meldinger, og viser det som ett trinn: varsler, ubegrenset batteribruk, nøyaktige påminnelser og autostartskjermen i produsentens system (Xiaomi, Huawei, Samsung, nubia og andre). Knappen Tillat alle åpner de nødvendige systemskjermene etter tur. Uten Google-tjenester kommer signaler om nye meldinger via en UnifiedPush-app (for eksempel ntfy); uten en slik app sjekkes e-posten etter en tidsplan. Samme liste: Innstillinger → Avanserte innstillinger → Tillatelser.</string>
     <string name="faq_notify_4_q">Hvordan sjekker jeg at varsler fungerer?</string>
     <string name="faq_notify_4_a">Innstillinger → Varsler → Send et testvarsel.</string>
     <string name="faq_notify_5_q">Hvordan slipper jeg varsler om natten?</string>
@@ -3856,4 +3856,12 @@
     <string name="searchAttachmentsText">Søk i tekst i vedlegg</string>
     <string name="searchAttachmentsTextDesc">Søket finner ord i nedlastede vedlegg: dokumenter, regneark, presentasjoner, tekstfiler og vedlagte meldinger</string>
     <string name="searchFoundInAttachment">I vedlegg: {text}</string>
+    <string name="faq_mail_12_q">Hvordan finner jeg en melding ut fra tekst i et vedlegg?</string>
+    <string name="faq_mail_12_a">Søket finner ord også inne i nedlastede vedlegg: Office- og OpenDocument-dokumenter, RTF, CSV-tabeller, presentasjoner, tekstfiler og vedlagte meldinger. I resultatene har en slik melding linjen «I vedlegg: …» med treffet. Vedlegget må være lastet ned – åpnet eller hentet sammen med meldingen; det søkes ennå ikke i PDF-er. Slå av: Innstillinger → E-post → Søk i tekst i vedlegg.</string>
+    <string name="faq_mail_13_q">Hva er ikonene under meldingshodet?</string>
+    <string name="faq_mail_13_a">Opplysninger om meldingen – oversettelse, avmelding fra nyhetsbrev, skjulte bilder, forespørsel om lesebekreftelse, levering, signatur, viktighet, tagger – er samlet i én rad med ikoner. Et trykk på et ikon folder ut detaljene med knapper, et nytt trykk folder dem sammen. Ikonene for oversettelse og bilder virker med en gang: de oversetter meldingen eller viser bildene, og de øvrige valgene finnes i menyen ▾ eller med et langt trykk. Advarselen om falsk avsender og møteinvitasjoner forblir fullstendige kort.</string>
+    <string name="faq_mail_14_q">Hvordan setter jeg opp skjermen på nettbrett eller datamaskin som i Outlook?</string>
+    <string name="faq_mail_14_a">Leseruten kan plasseres til høyre, nederst eller skjules: Innstillinger → Utseende → Leserute eller menyen ⋮ over listen. Flere meldinger velges som i Outlook: Ctrl + klikk (på Mac og iPad Cmd) – én om gangen, Shift – et område, Ctrl+A – alle innlastede, Esc – fjern markeringen, Delete – slett de valgte. Et vedlegg åpnes rett i leseruten, og Tilbake går tilbake til meldingen.</string>
+    <string name="faq_mail_15_q">Hvordan får jeg meldinger oversatt med en gang de åpnes?</string>
+    <string name="faq_mail_15_a">Trykk på ▾ ved oversettelsesikonet og velg Oversett alltid fra … – meldinger på det språket åpnes da ferdig oversatt; originalen vises med samme ikon. Listen over språk: Innstillinger → E-post → Oversettelse → Oversett alltid fra. Oversettelse tilbys bare når språket i meldingen er gjenkjent med sikkerhet, og ikke for telefonens språk (slås av samme sted: Telefonens språk – ikke tilby oversettelse).</string>
 </resources>

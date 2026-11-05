@@ -3245,7 +3245,7 @@
     <string name="faq_notify_2_q">Hur stänger jag av aviseringar för en mapp?</string>
     <string name="faq_notify_2_a">Inställningar → konto → Mappsynkronisering: Klockan bredvid mappens reglage slår på eller av aviseringar om nya meddelanden i den (med undermappar), och mappen synkroniseras fortfarande. Menyn ⋮ har Aviseringar: alla mappar och Aviseringar: inga mappar. Det kommer aldrig aviseringar för Skickat, Utkast, Borttagna objekt eller Skräppost.</string>
     <string name="faq_notify_3_q">Varför kommer aviseringar sent på Android?</string>
-    <string name="faq_notify_3_a">Vissa telefontillverkare (Xiaomi, Huawei, nubia och andra) stoppar appar i bakgrunden. Tillåt autostart och obegränsad batterianvändning: Inställningar → Avancerade inställningar → Behörigheter.</string>
+    <string name="faq_notify_3_a">När du har lagt till en postlåda kontrollerar appen själv vad den här telefonen behöver för aviseringar om nya meddelanden och visar det som ett enda steg: aviseringar, obegränsad batterianvändning, exakta påminnelser och autostartskärmen i din tillverkares system (Xiaomi, Huawei, Samsung, nubia och andra). Knappen Tillåt alla öppnar de systemskärmar som behövs, en i taget. Utan Googles tjänster kommer signaler om nya meddelanden via en UnifiedPush-app (till exempel ntfy); utan en sådan kontrolleras e-posten enligt schema. Samma lista: Inställningar → Avancerade inställningar → Behörigheter.</string>
     <string name="faq_notify_4_q">Hur kontrollerar jag att aviseringarna fungerar?</string>
     <string name="faq_notify_4_a">Inställningar → Aviseringar → Skicka en testavisering.</string>
     <string name="faq_notify_5_q">Hur slipper jag aviseringar på natten?</string>
@@ -3856,4 +3856,12 @@
     <string name="searchAttachmentsText">Sök i bilagornas text</string>
     <string name="searchAttachmentsTextDesc">Sökningen hittar ord i nedladdade bilagor: dokument, kalkylblad, presentationer, textfiler och bifogade meddelanden</string>
     <string name="searchFoundInAttachment">I bilaga: {text}</string>
+    <string name="faq_mail_12_q">Hur hittar jag ett meddelande via text i en bilaga?</string>
+    <string name="faq_mail_12_a">Sökningen hittar ord även i nedladdade bilagor: Office- och OpenDocument-dokument, RTF, CSV-tabeller, presentationer, textfiler och bifogade meddelanden. I resultaten visar ett sådant meddelande raden ”I bilaga: …” med träffen. Bilagan måste vara nedladdad – öppnad eller hämtad tillsammans med meddelandet; i PDF:er söks det inte än. Stäng av: Inställningar → E-post → Sök i bilagornas text.</string>
+    <string name="faq_mail_13_q">Vad betyder ikonerna under meddelandehuvudet?</string>
+    <string name="faq_mail_13_a">Uppgifter om meddelandet – översättning, avregistrering från nyhetsbrev, dolda bilder, begäran om läskvitto, leverans, signatur, prioritet, taggar – är samlade i en enda rad ikoner. Ett tryck på en ikon fäller ut detaljerna med knappar, ett nytt tryck fäller ihop dem. Ikonerna för översättning och bilder verkar direkt: de översätter meddelandet eller visar bilderna, och övriga val finns i menyn ▾ eller med en lång tryckning. Varningen för förfalskad avsändare och mötesinbjudningar visas fortfarande som fullständiga kort.</string>
+    <string name="faq_mail_14_q">Hur ordnar jag skärmen på en surfplatta eller dator som i Outlook?</string>
+    <string name="faq_mail_14_a">Läsfönstret kan placeras till höger, nederst eller döljas: Inställningar → Utseende → Läsfönster eller menyn ⋮ ovanför listan. Flera meddelanden markeras som i Outlook: Ctrl + klick (på Mac och iPad Cmd) – ett i taget, Shift – ett intervall, Ctrl+A – alla inlästa, Esc – avmarkera, Delete – ta bort de markerade. En bilaga öppnas direkt i läsfönstret, och Tillbaka går tillbaka till meddelandet.</string>
+    <string name="faq_mail_15_q">Hur översätter jag meddelanden direkt när de öppnas?</string>
+    <string name="faq_mail_15_a">Tryck på ▾ vid översättningsikonen och välj Översätt alltid från … – meddelanden på det språket öppnas sedan redan översatta; originalet visas med samma ikon. Listan över språk: Inställningar → E-post → Översättning → Översätt alltid från. Översättning erbjuds bara när meddelandets språk har identifierats säkert, och inte för telefonens språk (stängs av på samma ställe: Telefonens språk – erbjud inte översättning).</string>
 </resources>

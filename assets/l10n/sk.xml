@@ -3258,7 +3258,7 @@
     <string name="faq_notify_2_q">Ako vypnúť upozornenia pre jeden priečinok?</string>
     <string name="faq_notify_2_a">Nastavenia → účet → Synchronizácia priečinkov: zvonček vedľa prepínača priečinka zapína alebo vypína upozornenia na jeho nové správy (aj s podpriečinkami) a priečinok sa naďalej synchronizuje. Ponuka ⋮ obsahuje Upozornenia: všetky priečinky a Upozornenia: žiadne priečinky. Pre priečinky Odoslané, Koncepty, Odstránená pošta a Nevyžiadaná pošta sa upozornenia nezobrazujú nikdy.</string>
     <string name="faq_notify_3_q">Prečo upozornenia v systéme Android chodia neskoro?</string>
-    <string name="faq_notify_3_a">Niektorí výrobcovia telefónov (Xiaomi, Huawei, nubia a ďalší) zastavujú aplikácie na pozadí. Povoľte automatické spúšťanie a neobmedzené používanie batérie: Nastavenia → Rozšírené nastavenia → Povolenia.</string>
+    <string name="faq_notify_3_a">Po pridaní schránky aplikácia sama skontroluje, čo tento telefón potrebuje na upozornenia na nové správy, a ukáže to ako jediný krok: upozornenia, neobmedzené používanie batérie, presné pripomienky a obrazovku automatického spúšťania v nadstavbe výrobcu (Xiaomi, Huawei, Samsung, nubia a ďalší). Tlačidlo Povoliť všetko postupne otvorí potrebné systémové obrazovky. Bez služieb Google prichádzajú signály o nových správach cez aplikáciu UnifiedPush (napríklad ntfy) a bez nej sa pošta kontroluje podľa plánu. Rovnaký zoznam: Nastavenia → Rozšírené nastavenia → Povolenia.</string>
     <string name="faq_notify_4_q">Ako overiť, že upozornenia fungujú?</string>
     <string name="faq_notify_4_a">Nastavenia → Upozornenia → Odoslať testovacie upozornenie.</string>
     <string name="faq_notify_5_q">Ako nedostávať upozornenia v noci?</string>
@@ -3877,4 +3877,12 @@
     <string name="searchAttachmentsText">Hľadať v texte príloh</string>
     <string name="searchAttachmentsTextDesc">Vyhľadávanie nájde slová v stiahnutých prílohách: dokumentoch, tabuľkách, prezentáciách, textových súboroch a priložených správach</string>
     <string name="searchFoundInAttachment">V prílohe: {text}</string>
+    <string name="faq_mail_12_q">Ako nájsť správu podľa textu v prílohe?</string>
+    <string name="faq_mail_12_a">Vyhľadávanie nájde slová aj vnútri stiahnutých príloh: v dokumentoch Office a OpenDocument, RTF, tabuľkách CSV, prezentáciách, textových súboroch a priložených správach. Vo výsledkoch má taká správa riadok „V prílohe: …“ s nájdeným miestom. Príloha musí byť stiahnutá — otvorená alebo načítaná spolu so správou; v PDF sa zatiaľ nehľadá. Vypnutie: Nastavenia → Pošta → Hľadať v texte príloh.</string>
+    <string name="faq_mail_13_q">Čo sú ikony pod hlavičkou správy?</string>
+    <string name="faq_mail_13_a">Údaje o správe — preklad, odhlásenie odberu, skryté obrázky, žiadosť o potvrdenie o prečítaní, doručenie, podpis, dôležitosť, štítky — sú zhrnuté do jedného riadka ikon. Ťuknutie na ikonu rozbalí podrobnosti s tlačidlami, ďalšie ťuknutie ich zbalí. Ikony prekladu a obrázkov fungujú hneď: preložia správu alebo zobrazia obrázky, ostatné možnosti sú v ponuke ▾ alebo pod dlhým stlačením. Upozornenie na podvrhnutého odosielateľa a pozvánky na schôdzky zostávajú celými kartami.</string>
+    <string name="faq_mail_14_q">Ako usporiadať obrazovku tabletu alebo počítača ako v Outlooku?</string>
+    <string name="faq_mail_14_a">Tablu na čítanie možno umiestniť vpravo, dole alebo skryť: Nastavenia → Vzhľad → Tabla na čítanie alebo ponuka ⋮ nad zoznamom. Viac správ sa vyberá ako v Outlooku: Ctrl + kliknutie (na Macu a iPade Cmd) — po jednej, Shift — rozsah, Ctrl+A — všetky načítané, Esc — zrušiť výber, Delete — odstrániť vybrané. Príloha sa otvorí priamo v table na čítanie a Späť vráti k správe.</string>
+    <string name="faq_mail_15_q">Ako nechať správy preložiť hneď pri otvorení?</string>
+    <string name="faq_mail_15_a">Ťuknite na ▾ pri ikone prekladu a vyberte Vždy prekladať z jazyka … — správy v tomto jazyku sa potom budú otvárať rovno preložené, originál zobrazíte tou istou ikonou. Zoznam jazykov: Nastavenia → Pošta → Preklad → Vždy prekladať z jazykov. Preklad sa ponúka, len keď je jazyk správy rozpoznaný s istotou, a neponúka sa pre jazyky telefónu (vypína sa na tom istom mieste: Jazyky telefónu – neponúkať preklad).</string>
 </resources>

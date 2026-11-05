@@ -3245,7 +3245,7 @@
     <string name="faq_notify_2_q">Hvordan slår jeg notifikationer fra for én mappe?</string>
     <string name="faq_notify_2_a">Indstillinger → konto → Mappesynkronisering: Klokken ved siden af mappens til/fra-knap slår notifikationer om nye mails i den til eller fra (med undermapper), og mappen bliver ved med at synkronisere. Menuen ⋮ har Notifikationer: alle mapper og Notifikationer: ingen mapper. Der er aldrig notifikationer for Sendt, Kladder, Slettet post eller Uønsket mail.</string>
     <string name="faq_notify_3_q">Hvorfor kommer notifikationer sent på Android?</string>
-    <string name="faq_notify_3_a">Nogle telefonproducenter (Xiaomi, Huawei, nubia og andre) stopper apps i baggrunden. Tillad autostart og ubegrænset batteriforbrug: Indstillinger → Avancerede indstillinger → Tilladelser.</string>
+    <string name="faq_notify_3_a">Når du har tilføjet en postkasse, tjekker appen selv, hvad denne telefon har brug for til notifikationer om nye mails, og viser det som ét trin: notifikationer, ubegrænset batteriforbrug, præcise påmindelser og autostartskærmen i din producents system (Xiaomi, Huawei, Samsung, nubia og andre). Knappen Tillad alle åbner de nødvendige systemskærme en efter en. Uden Google-tjenester kommer signaler om nye mails via en UnifiedPush-app (for eksempel ntfy); uden den tjekkes mail efter en tidsplan. Samme liste: Indstillinger → Avancerede indstillinger → Tilladelser.</string>
     <string name="faq_notify_4_q">Hvordan kontrollerer jeg, at notifikationer virker?</string>
     <string name="faq_notify_4_a">Indstillinger → Notifikationer → Send en testnotifikation.</string>
     <string name="faq_notify_5_q">Hvordan undgår jeg notifikationer om natten?</string>
@@ -3856,4 +3856,12 @@
     <string name="searchAttachmentsText">Søg i tekst i vedhæftede filer</string>
     <string name="searchAttachmentsTextDesc">Søgningen finder ord i downloadede vedhæftede filer: dokumenter, regneark, præsentationer, tekstfiler og vedhæftede beskeder</string>
     <string name="searchFoundInAttachment">I vedhæftet fil: {text}</string>
+    <string name="faq_mail_12_q">Hvordan finder jeg en mail ud fra tekst i en vedhæftet fil?</string>
+    <string name="faq_mail_12_a">Søgningen finder også ord inde i downloadede vedhæftede filer: Office- og OpenDocument-dokumenter, RTF, CSV-tabeller, præsentationer, tekstfiler og vedhæftede mails. I resultaterne har sådan en mail linjen »I vedhæftet fil: …« med det fundne sted. Den vedhæftede fil skal være downloadet – åbnet eller hentet sammen med mailen; der søges endnu ikke i PDF\'er. Slå fra: Indstillinger → Mail → Søg i tekst i vedhæftede filer.</string>
+    <string name="faq_mail_13_q">Hvad er ikonerne under mailhovedet?</string>
+    <string name="faq_mail_13_a">Oplysninger om mailen – oversættelse, afmelding af nyhedsbrev, skjulte billeder, anmodning om læsekvittering, levering, signatur, vigtighed, tags – er samlet i én række ikoner. Et tryk på et ikon folder detaljerne med knapper ud, et nyt tryk folder dem sammen. Ikonerne for oversættelse og billeder virker med det samme: de oversætter mailen eller viser billederne, og de øvrige valg findes i menuen ▾ eller med et langt tryk. Advarslen om falsk afsender og mødeinvitationer forbliver fulde kort.</string>
+    <string name="faq_mail_14_q">Hvordan indretter jeg skærmen på en tablet eller computer som i Outlook?</string>
+    <string name="faq_mail_14_a">Læseruden kan placeres til højre, nederst eller skjules: Indstillinger → Udseende → Læserude eller menuen ⋮ over listen. Flere mails vælges som i Outlook: Ctrl + klik (på Mac og iPad Cmd) – én ad gangen, Shift – et område, Ctrl+A – alle indlæste, Esc – fjern markeringen, Delete – slet de valgte. En vedhæftet fil åbnes direkte i læseruden, og Tilbage fører tilbage til mailen.</string>
+    <string name="faq_mail_15_q">Hvordan får jeg mails oversat, så snart de åbnes?</string>
+    <string name="faq_mail_15_a">Tryk på ▾ ved oversættelsesikonet, og vælg Oversæt altid fra … – mails på det sprog åbnes så allerede oversat; originalen vises med samme ikon. Listen over sprog: Indstillinger → Mail → Oversættelse → Oversæt altid fra. Oversættelse tilbydes kun, når mailens sprog er genkendt med sikkerhed, og ikke for telefonens sprog (slås fra samme sted: Telefonens sprog – tilbyd ikke oversættelse).</string>
 </resources>

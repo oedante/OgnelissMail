@@ -3245,7 +3245,7 @@
     <string name="faq_notify_2_q">Tek bir klasör için bildirimleri nasıl kapatırım?</string>
     <string name="faq_notify_2_a">Ayarlar → hesap → Klasör senkronizasyonu: bir klasörün anahtarının yanındaki zil, o klasördeki yeni iletilerin bildirimlerini (alt klasörlerle birlikte) açar veya kapatır; klasör senkronize olmaya devam eder. ⋮ menüsünde Bildirimler: tüm klasörler ve Bildirimler: hiçbir klasör seçenekleri bulunur. Gönderilenler, Taslaklar, Silinmiş öğeler veya Gereksiz e-posta için hiçbir zaman bildirim gelmez.</string>
     <string name="faq_notify_3_q">Android\'de bildirimler neden hemen gelmiyor?</string>
-    <string name="faq_notify_3_a">Bazı telefon üreticileri (Xiaomi, Huawei, nubia ve diğerleri) uygulamaları arka planda durdurur. Otomatik başlatmaya ve sınırsız pil kullanımına izin verin: Ayarlar → Gelişmiş ayarlar → İzinler.</string>
+    <string name="faq_notify_3_a">Bir posta kutusu ekledikten sonra uygulama, bu telefonun yeni ileti bildirimleri için neye ihtiyacı olduğunu kendisi denetler ve bunu tek bir adımda gösterir: bildirimler, sınırsız pil kullanımı, tam zamanlı hatırlatıcılar ve üreticinizin sistemindeki otomatik başlatma ekranı (Xiaomi, Huawei, Samsung, nubia ve diğerleri). Tümüne izin ver düğmesi gereken sistem ekranlarını sırayla açar. Google hizmetleri olmadan yeni ileti sinyalleri bir UnifiedPush uygulaması (örneğin ntfy) üzerinden gelir; o da yoksa posta bir programa göre denetlenir. Aynı liste: Ayarlar → Gelişmiş ayarlar → İzinler.</string>
     <string name="faq_notify_4_q">Bildirimlerin çalıştığını nasıl denetlerim?</string>
     <string name="faq_notify_4_a">Ayarlar → Bildirimler → Test bildirimi gönder.</string>
     <string name="faq_notify_5_q">Geceleri bildirim almayı nasıl durdururum?</string>
@@ -3856,4 +3856,12 @@
     <string name="searchAttachmentsText">Ek metinlerinde ara</string>
     <string name="searchAttachmentsTextDesc">Arama, indirilen eklerdeki kelimeleri de bulur: belgeler, tablolar, sunular, metin dosyaları ve ekli iletiler</string>
     <string name="searchFoundInAttachment">Ekte: {text}</string>
+    <string name="faq_mail_12_q">Bir iletiyi ekindeki metne göre nasıl bulurum?</string>
+    <string name="faq_mail_12_a">Arama, indirilen eklerin içindeki kelimeleri de bulur: Office ve OpenDocument belgeleri, RTF, CSV tabloları, sunular, metin dosyaları ve ekli iletiler. Sonuçlarda böyle bir iletide, bulunan yeri gösteren “Ekte: …” satırı yer alır. Ekin indirilmiş olması gerekir — açılmış ya da iletiyle birlikte yüklenmiş; PDF\'lerde henüz arama yapılmaz. Kapatmak için: Ayarlar → E-posta → Ek metinlerinde ara.</string>
+    <string name="faq_mail_13_q">İleti başlığının altındaki simgeler nedir?</string>
+    <string name="faq_mail_13_a">İletiyle ilgili bilgiler — çeviri, abonelikten çıkma, gizlenen resimler, okundu bilgisi isteği, teslim durumu, imza, önem, etiketler — tek bir simge satırında toplanır. Bir simgeye dokunmak ayrıntıları düğmeleriyle birlikte açar, yeniden dokunmak kapatır. Çeviri ve resim simgeleri hemen işe yarar: iletiyi çevirir ya da resimleri gösterir; diğer seçenekler ▾ menüsünde veya uzun basınca çıkar. Sahte gönderen uyarısı ve toplantı davetleri tam kart olarak kalır.</string>
+    <string name="faq_mail_14_q">Tablet veya bilgisayar ekranını Outlook\'taki gibi nasıl düzenlerim?</string>
+    <string name="faq_mail_14_a">Okuma bölmesi sağa ya da alta yerleştirilebilir veya gizlenebilir: Ayarlar → Görünüm → Okuma bölmesi ya da listenin üstündeki ⋮ menüsü. Birden çok ileti Outlook\'taki gibi seçilir: Ctrl + tıklama (Mac ve iPad\'de Cmd) — tek tek, Shift — art arda, Ctrl+A — yüklenenlerin tümü, Esc — seçimi kaldır, Delete — seçilenleri sil. Ek doğrudan okuma bölmesinde açılır, Geri ise iletiye döndürür.</string>
+    <string name="faq_mail_15_q">İletiler açıldığında hemen nasıl çevrilir?</string>
+    <string name="faq_mail_15_a">Çeviri simgesinin yanındaki ▾ düğmesine dokunun ve … dilinden her zaman çevir seçeneğini seçin — o dildeki iletiler artık çevrilmiş olarak açılır; aslı aynı simgeyle görüntülenir. Dil listesi: Ayarlar → E-posta → Çeviri → Şu dillerden her zaman çevir. Çeviri yalnızca iletinin dili kesin olarak belirlendiğinde önerilir ve telefon dilleri için önerilmez (aynı yerden kapatılabilir: Telefon dilleri: çeviri önerme).</string>
 </resources>

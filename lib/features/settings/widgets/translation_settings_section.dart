@@ -3,6 +3,10 @@
 // предлагать ли перевод писем, с каких языков не переводить, скачивание
 // языков только по Wi-Fi, скачанные языки (Android; на iPhone ими управляет
 // iOS). На компьютере и в вебе перевода нет — раздела тоже.
+//
+// 1.12.x (просьба владельца 04.11.2026): «Языки телефона — не предлагать
+// перевод» (по умолчанию включено) и «Всегда переводить с языков» — письмо
+// на них переводится сразу при открытии.
 
 import 'dart:async';
 import 'dart:io' show Platform;
@@ -73,9 +77,12 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
 
   String _name(String c) => capitalizeLangName(_names[c] ?? c);
 
-  /// Выбор языков «не переводить» — списком с галочками.
-  Future<void> _pickNever(AppLocalizations l10n) async {
-    final selected = {...ref.read(settingsProvider).translateNever};
+  /// Выбор языков списком с галочками: «не переводить» и (1.12.x)
+  /// «всегда переводить» — одно окно. Язык не бывает в обоих списках:
+  /// отмеченный здесь уходит из другого (SettingsNotifier).
+  Future<void> _pickLangs(AppLocalizations l10n,
+      {required String title, required List<String> selected, required Future<void> Function(List<String>) save}) async {
+    final picked = {...selected};
     await showAppSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -84,16 +91,16 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
         builder: (ctx, setSt) => ConstrainedBox(
           constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.75),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            SettingsSectionTitle(l10n.tr('translateNeverSetting')),
+            SettingsSectionTitle(title),
             Flexible(
               child: ListView(shrinkWrap: true, children: [
                 for (final c in _languages)
                   CheckboxListTile(
                     title: Text(_name(c)),
-                    value: selected.contains(c),
+                    value: picked.contains(c),
                     onChanged: (v) {
-                      setSt(() => v == true ? selected.add(c) : selected.remove(c));
-                      unawaited(ref.read(settingsProvider.notifier).setTranslateNever(selected.toList()..sort()));
+                      setSt(() => v == true ? picked.add(c) : picked.remove(c));
+                      unawaited(save(picked.toList()..sort()));
                     },
                   ),
               ]),
@@ -102,6 +109,16 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
         ),
       ),
     );
+  }
+
+  /// Подпись «Языки телефона»: какие это языки (кроме языка приложения и
+  /// тех, что переводчик не знает — с них перевод и так не предлагается).
+  String _phoneLangsSubtitle(AppLocalizations l10n, String? app) {
+    final names = [
+      for (final c in deviceLanguages())
+        if (c != app && _languages.contains(c)) _name(c),
+    ];
+    return names.isEmpty ? l10n.tr('translatePhoneLangsDesc') : names.join(', ');
   }
 
   /// Скачанные языки: удалить или скачать ещё один.
@@ -212,6 +229,8 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
       ]);
     }
     final never = settings.translateNever;
+    final always = settings.translateAlways;
+    final app = normalizeLang(settings.locale.languageCode);
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       SettingsSectionTitle(l10n.tr('translateSection')),
       // Условия ML Kit: в справке приложения — что перевод от Google.
@@ -223,6 +242,17 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
           subtitle: l10n.tr('translateOfferDesc'),
           value: settings.translateOffer,
           onChanged: notifier.setTranslateOffer,
+        ),
+        // Языки телефона — как язык приложения (1.12.x): человек их знает,
+        // предлагать перевод с них незачем. Только для предложения —
+        // «Всегда переводить с …» работает и для них.
+        SettingsSwitchItem(
+          key: const ValueKey('translate_phone_langs'),
+          icon: AppIcons.language,
+          title: l10n.tr(!kIsWeb && Platform.isMacOS ? 'translatePhoneLangsMac' : 'translatePhoneLangs'),
+          subtitle: _phoneLangsSubtitle(l10n, app),
+          value: settings.translatePhoneLangs,
+          onChanged: settings.translateOffer ? notifier.setTranslatePhoneLangs : null,
         ),
         // Показ перевода входящего письма (1.10.5, просьба владельца
         // 03.11.2026: «оставлять два варианта, если пользователь это
@@ -238,7 +268,18 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
           icon: AppIcons.block,
           title: l10n.tr('translateNeverSetting'),
           subtitle: never.isEmpty ? l10n.tr('none') : never.map(_name).join(', '),
-          onTap: () => unawaited(_pickNever(l10n)),
+          onTap: () => unawaited(_pickLangs(l10n,
+              title: l10n.tr('translateNeverSetting'), selected: never, save: notifier.setTranslateNever)),
+        ),
+        // «Всегда переводить с языков» (1.12.x): перевод сразу при открытии
+        // письма, «Показать оригинал» — на плашке.
+        SettingsItem(
+          key: const ValueKey('translate_always'),
+          icon: AppIcons.auto_mode,
+          title: l10n.tr('translateAlwaysSetting'),
+          subtitle: always.isEmpty ? l10n.tr('translateAlwaysDesc') : always.map(_name).join(', '),
+          onTap: () => unawaited(_pickLangs(l10n,
+              title: l10n.tr('translateAlwaysSetting'), selected: always, save: notifier.setTranslateAlways)),
         ),
         if (t.canManageModels) ...[
           SettingsSwitchItem(

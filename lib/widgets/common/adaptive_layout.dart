@@ -14,6 +14,12 @@
 //  · складной телефон: вертикальный сгиб («книжка») — список слева от него,
 //    панель справа; горизонтальный («ноутбук», полураскрыт на столе) —
 //    список сверху, панель снизу; на сам сгиб ничего не попадает.
+//
+// 1.12.x (просьба владельца 04.11.2026, «Область чтения» Outlook): панель
+// письма справа (как раньше), снизу — лента сверху во всю ширину, письмо под
+// ней, высота ленты тянется горизонтальным разделителем и запоминается; или
+// скрыта — лента во всю ширину, письмо открывается отдельным экраном, как на
+// телефоне ([PanePosition]).
 
 import 'dart:ui' show DisplayFeatureType;
 
@@ -29,6 +35,11 @@ class Breakpoints {
   /// С этой ширины области — список и панель рядом.
   static const double split = 720;
 }
+
+/// Где панель рядом с лентой на широкой области (1.12.x, «Область чтения»
+/// Outlook): справа, снизу или скрыта. На узкой области панели нет при
+/// любом выборе — телефон не меняется.
+enum PanePosition { right, bottom, hidden }
 
 /// Сообщает потомкам, показаны ли список и панель рядом.
 class _SplitScope extends InheritedWidget {
@@ -53,6 +64,9 @@ class AdaptiveLayout extends StatefulWidget {
   /// список занимает всю ширину (как раньше).
   final Widget? placeholder;
 
+  /// Где панель (1.12.x): справа (по умолчанию), снизу или скрыта.
+  final PanePosition position;
+
   const AdaptiveLayout({
     super.key,
     required this.body,
@@ -61,6 +75,7 @@ class AdaptiveLayout extends StatefulWidget {
     this.splitRatio = 0.38,
     this.widthKey,
     this.placeholder,
+    this.position = PanePosition.right,
   });
 
   /// Список и панель сейчас рядом (вызывать из потомков списка): нажатие на
@@ -122,10 +137,20 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   /// Доля ширины под список, выбранная пользователем (null — по умолчанию).
   double? _ratio;
 
+  /// Доля высоты под список, когда панель снизу (1.12.x; null — по
+  /// умолчанию). Запоминается отдельно от ширины.
+  double? _vRatio;
+
   static const _minList = 280.0;
   static const _minDetail = 360.0;
 
+  /// Панель снизу: лента не ниже 160 (три-четыре строки), письмо — 280
+  /// (шапка, панель команд и начало текста). Окно ниже — панель справа.
+  static const _minListH = 160.0;
+  static const _minDetailH = 280.0;
+
   String? get _prefKey => widget.widthKey == null ? null : 'split_ratio_${widget.widthKey}';
+  String? get _vPrefKey => widget.widthKey == null ? null : 'split_ratio_v_${widget.widthKey}';
 
   @override
   void initState() {
@@ -139,18 +164,33 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     try {
       final p = await SharedPreferences.getInstance();
       final v = p.getDouble(k);
-      if (v != null && mounted) setState(() => _ratio = v);
+      final h = p.getDouble(_vPrefKey!);
+      if ((v != null || h != null) && mounted) {
+        setState(() {
+          _ratio = v;
+          _vRatio = h;
+        });
+      }
     } catch (_) {}
   }
 
-  Future<void> _save() async {
-    final k = _prefKey;
-    final v = _ratio;
+  Future<void> _save() => _store(_prefKey, _ratio);
+  Future<void> _saveV() => _store(_vPrefKey, _vRatio);
+
+  Future<void> _store(String? k, double? v) async {
     if (k == null || v == null) return;
     try {
       final p = await SharedPreferences.getInstance();
       await p.setDouble(k, v);
     } catch (_) {}
+  }
+
+  /// Двойное нажатие на разделитель — размер по умолчанию.
+  void _reset(String? k, VoidCallback clear) {
+    setState(clear);
+    if (k != null) {
+      SharedPreferences.getInstance().then((p) => p.remove(k)).ignore();
+    }
   }
 
   double _listWidth(double total) {
@@ -160,10 +200,27 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     return w.clamp(_minList, max < _minList ? _minList : max);
   }
 
+  /// Высота ленты над панелью снизу: по умолчанию 40 % — письму место под
+  /// шапку, панель команд и текст (как у Outlook «Снизу»).
+  double _listHeight(double total) {
+    final h = _vRatio == null ? total * 0.4 : total * _vRatio!;
+    final max = total - _minDetailH;
+    return h.clamp(_minListH, max < _minListH ? _minListH : max);
+  }
+
+  /// Панель снизу помещается по высоте [h] (9 — разделитель).
+  static bool _fitsBottom(double h) => h.isFinite && h >= _minListH + _minDetailH + 9;
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        // «Скрыта» (1.12.x): лента во всю ширину и до выбора, и после —
+        // нажатие на строку открывает письмо отдельным экраном (isSplit —
+        // false), как на телефоне.
+        if (widget.position == PanePosition.hidden) {
+          return _SplitScope(split: false, child: widget.body);
+        }
         final total = constraints.maxWidth;
         final detail = (widget.showDetail ? widget.detailBody : null) ?? widget.placeholder;
         final split = AdaptiveLayout.canSplit(total) && detail != null;
@@ -204,6 +261,31 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
           );
         }
 
+        // «Снизу» (1.12.x): лента сверху во всю ширину, письмо под ней;
+        // разделитель тянется вверх-вниз. Низкое окно — панель справа.
+        final height = constraints.maxHeight;
+        if (widget.position == PanePosition.bottom && _fitsBottom(height)) {
+          final listHeight = _listHeight(height);
+          return _SplitScope(
+            split: true,
+            child: Column(
+              children: [
+                SizedBox(height: listHeight, child: widget.body),
+                PaneSplitter(
+                  axis: Axis.vertical,
+                  onDrag: (dy) => setState(() {
+                    final h = (listHeight + dy).clamp(_minListH, height - _minDetailH);
+                    _vRatio = h / height;
+                  }),
+                  onDragEnd: _saveV,
+                  onReset: () => _reset(_vPrefKey, () => _vRatio = null),
+                ),
+                Expanded(child: detail),
+              ],
+            ),
+          );
+        }
+
         final listWidth = _listWidth(total);
         return _SplitScope(
           split: true,
@@ -218,13 +300,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   _ratio = w / total;
                 }),
                 onDragEnd: _save,
-                onReset: () {
-                  setState(() => _ratio = null);
-                  final k = _prefKey;
-                  if (k != null) {
-                    SharedPreferences.getInstance().then((p) => p.remove(k)).ignore();
-                  }
-                },
+                onReset: () => _reset(_prefKey, () => _ratio = null),
               ),
               Expanded(child: detail),
             ],
@@ -239,12 +315,18 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
 /// «изменить ширину» при наведении, двойное нажатие — ширина по умолчанию.
 /// Общий у «лента | письмо» и «папки | лента» (1.9.x, просьба владельца
 /// 31.10.2026: панели на компьютере и планшете — своей ширины).
+/// [axis] Axis.vertical — горизонтальная полоса между лентой и письмом под
+/// ней, тянется вверх-вниз (1.12.x, «Область чтения: снизу»).
 class PaneSplitter extends StatefulWidget {
   final ValueChanged<double> onDrag;
   final VoidCallback? onDragEnd;
   final VoidCallback? onReset;
 
-  const PaneSplitter({super.key, required this.onDrag, this.onDragEnd, this.onReset});
+  /// Что меняет перетаскивание: horizontal — ширину (полоса вертикальная),
+  /// vertical — высоту (полоса горизонтальная).
+  final Axis axis;
+
+  const PaneSplitter({super.key, required this.onDrag, this.onDragEnd, this.onReset, this.axis = Axis.horizontal});
 
   @override
   State<PaneSplitter> createState() => _PaneSplitterState();
@@ -258,8 +340,24 @@ class _PaneSplitterState extends State<PaneSplitter> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final active = _dragging || _hover;
+    final across = widget.axis == Axis.horizontal;
+    void start(DragStartDetails _) => setState(() => _dragging = true);
+    void end(DragEndDetails _) {
+      setState(() => _dragging = false);
+      widget.onDragEnd?.call();
+    }
+
+    final line = Container(
+      width: across ? (active ? 3 : 1) : null,
+      height: across ? null : (active ? 3 : 1),
+      color: _dragging
+          ? theme.colorScheme.primary
+          : _hover
+              ? theme.colorScheme.primary.withValues(alpha: 0.5)
+              : theme.dividerColor,
+    );
     return MouseRegion(
-      cursor: SystemMouseCursors.resizeColumn,
+      cursor: across ? SystemMouseCursors.resizeColumn : SystemMouseCursors.resizeRow,
       onEnter: (_) => setState(() => _hover = true),
       onExit: (_) => setState(() => _hover = false),
       child: GestureDetector(
@@ -270,25 +368,17 @@ class _PaneSplitterState extends State<PaneSplitter> {
           PointerDeviceKind.stylus,
           PointerDeviceKind.trackpad,
         },
-        onHorizontalDragStart: (_) => setState(() => _dragging = true),
-        onHorizontalDragUpdate: (d) => widget.onDrag(d.delta.dx),
-        onHorizontalDragEnd: (_) {
-          setState(() => _dragging = false);
-          widget.onDragEnd?.call();
-        },
+        onHorizontalDragStart: across ? start : null,
+        onHorizontalDragUpdate: across ? (d) => widget.onDrag(d.delta.dx) : null,
+        onHorizontalDragEnd: across ? end : null,
+        onVerticalDragStart: across ? null : start,
+        onVerticalDragUpdate: across ? null : (d) => widget.onDrag(d.delta.dy),
+        onVerticalDragEnd: across ? null : end,
         onDoubleTap: widget.onReset,
         child: SizedBox(
-          width: 9,
-          child: Center(
-            child: Container(
-              width: active ? 3 : 1,
-              color: _dragging
-                  ? theme.colorScheme.primary
-                  : _hover
-                      ? theme.colorScheme.primary.withValues(alpha: 0.5)
-                      : theme.dividerColor,
-            ),
-          ),
+          width: across ? 9 : null,
+          height: across ? null : 9,
+          child: Center(child: line),
         ),
       ),
     );

@@ -7,6 +7,15 @@
 // пояснениями, кнопка «Разрешить всё» и «Продолжить». Администратор
 // устройства показывается, только если его требует политика ящика Exchange
 // (тайм-аут блокировки экрана).
+//
+// 1.12.x (аудит устройств, просьба владельца 05.11.2026: «пользователь не
+// должен думать, что ему включить»): в режиме настройки — только то, чего
+// не хватает этому устройству для уведомлений (AppPermissions.setup и
+// DeviceReadiness): без контактов и календаря (их спросят, когда включат),
+// уже выданное не показывается. «Разрешить всё» доходит и до экрана
+// оболочки производителя (автозапуск), а способ сигналов сервера —
+// строкой: несколько приложений UnifiedPush — выбрать, нет ни Google, ни
+// распространителя — что почта проверяется по расписанию.
 
 import 'dart:async';
 
@@ -18,7 +27,9 @@ import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart' show openAppSettings;
 
 import '../../../core/permissions/app_permissions.dart';
+import '../../../core/platform/device_readiness.dart';
 import '../../../core/platform/platform_diagnostics.dart';
+import '../../../services/push/push_wake_service.dart' show PushWakeService, pushWakeServiceProvider;
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../services/background/foreground_sync_controller.dart';
 import '../../../core/theme/app_theme.dart';
@@ -50,10 +61,15 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
   static Map<AppPermission, AppPermissionState>? _lastStates;
   static DeviceSecurityStatus? _lastDevice;
   static Map<String, dynamic> _lastDiag = const {};
+  static SignalChannel _lastSignal = SignalChannel.off;
 
   Map<AppPermission, AppPermissionState> _states = _lastStates ?? {};
   DeviceSecurityStatus? _device = _lastDevice;
   Map<String, dynamic> _diag = _lastDiag;
+
+  /// Как свёрнутое приложение узнаёт о письмах (Android: Google,
+  /// UnifiedPush или только по расписанию), 1.12.x.
+  SignalChannel _signal = _lastSignal;
   bool _busy = false;
   // Пока состояние не прочитано, список не строится: иначе на миг
   // появлялись кнопка «Разрешить всё» и неприменимые разрешения, а затем
@@ -91,6 +107,7 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
         .firstOrNull;
     if (next == null) {
       _chainSpecial = false;
+      await _openOemOnce();
       return;
     }
     // Тот же экран повторно не открываем, если человек вернулся, не разрешив.
@@ -100,6 +117,7 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
           .firstOrNull;
       if (rest == null) {
         _chainSpecial = false;
+        await _openOemOnce();
         return;
       }
       _specialAsked.add(rest.id);
@@ -112,6 +130,18 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
 
   final Set<AppPermission> _specialAsked = {};
 
+  /// Первая настройка (1.12.x): после разрешений «Разрешить всё» открывает
+  /// и экран оболочки производителя (автозапуск, работа в фоне) — один раз:
+  /// узнать, что там включено, приложение не может.
+  bool _oemOpened = false;
+
+  Future<void> _openOemOnce() async {
+    if (!widget.setup || _oemOpened || !mounted || !PlatformDiagnostics.hasOemManager(_diag)) return;
+    _oemOpened = true;
+    final opened = await PlatformDiagnostics.openOemSettings();
+    if (opened.isEmpty) await openAppSettings();
+  }
+
   Future<void> _reload() async {
     if (!mounted) return;
     // Сведения о прошивке и ограничениях фона — без ожидания: им нужен
@@ -120,6 +150,12 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
       _lastDiag = diag;
       if (mounted) setState(() => _diag = diag);
     }));
+    if (PushWakeService.supported) {
+      unawaited(ref.read(pushWakeServiceProvider).signalChannel().then((s) {
+        _lastSignal = s;
+        if (mounted && s != _signal) setState(() => _signal = s);
+      }).catchError((Object _) {}));
+    }
     final ids = [for (final i in AppPermissions.all) i.id];
     final results = await Future.wait([for (final id in ids) AppPermissions.state(id)]);
     final m = <AppPermission, AppPermissionState>{
@@ -155,7 +191,7 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
   Future<void> _allowAll() async {
     setState(() => _busy = true);
     try {
-      await AppPermissions.requestAllDialogs(context);
+      await AppPermissions.requestAllDialogs(context, only: widget.setup ? AppPermissions.setup : null);
       await _reload();
       // Особый доступ — системный экран; после возврата список обновится.
       if (!mounted) return;
@@ -183,6 +219,9 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
     final theme = Theme.of(context);
     final visible = AppPermissions.all
         .where((i) => _states[i.id] != AppPermissionState.notApplicable)
+        // Первая настройка — только нужное для уведомлений и ещё не выданное.
+        .where((i) => !widget.setup ||
+            (AppPermissions.setup.contains(i.id) && _states[i.id] != AppPermissionState.granted))
         .toList();
     final adminIdle = _adminIdleSeconds();
     final anyMissing = visible.any((i) => _states[i.id] != AppPermissionState.granted);
@@ -219,16 +258,19 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
                       ..._backgroundGroup(context, l10n),
 
                       // ── Разрешения: переключатель = выдано ли ──
-                      SettingsSectionTitle(l10n.tr('permissions')),
-                      SettingsGroup(children: [
-                        for (final i in visible) _tile(context, l10n, i),
-                        if (adminIdle != null) _adminTile(context, l10n, adminIdle),
-                        SettingsItem(
-                          icon: AppIcons.open_in_new,
-                          title: l10n.tr('permOpenSettings'),
-                          onTap: () => openAppSettings(),
-                        ),
-                      ]),
+                      if (!widget.setup || visible.isNotEmpty || adminIdle != null) ...[
+                        SettingsSectionTitle(l10n.tr('permissions')),
+                        SettingsGroup(children: [
+                          for (final i in visible) _tile(context, l10n, i),
+                          if (adminIdle != null) _adminTile(context, l10n, adminIdle),
+                          if (!widget.setup)
+                            SettingsItem(
+                              icon: AppIcons.open_in_new,
+                              title: l10n.tr('permOpenSettings'),
+                              onTap: () => openAppSettings(),
+                            ),
+                        ]),
+                      ],
                       if (anyMissing) ...[
                         const SizedBox(height: Space.m),
                         FilledButton.icon(
@@ -321,7 +363,14 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
     // ForegroundSyncController._checkFrozen).
     final prefs = ref.read(sharedPrefsProvider);
     final frozen = ForegroundSyncController.frozenRecently(prefs);
-    if (issues.isEmpty && !frozen) return const [];
+    // Способ сигналов сервера (Android, 1.12.x): выбрать распространитель
+    // или знать, что почта проверяется по расписанию.
+    final signalStep = Platform.isAndroid
+        ? DeviceReadiness.steps(_diag, ios: false, signal: _signal)
+            .where((s) => s == ReadyStep.chooseSignals || s == ReadyStep.periodicOnly)
+            .firstOrNull
+        : null;
+    if (issues.isEmpty && !frozen && signalStep == null) return const [];
     final family = PlatformDiagnostics.family(_diag);
     final oemKey = switch (family) {
       'xiaomi' => 'bgOemXiaomi',
@@ -381,6 +430,12 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
             BgIssue.iosLowPower => row(AppIcons.battery_saver, l10n.tr('bgPowerSaveTitle'), l10n.tr('bgIosLowPowerBody')),
             _ => const SizedBox.shrink(),
           }),
+        if (signalStep == ReadyStep.chooseSignals)
+          row(AppIcons.cloud_sync, l10n.tr('setupSignalsChooseTitle'), l10n.tr('setupSignalsChooseBody'),
+              onTap: () => context.push('/settings/notifications'), warn: true),
+        if (signalStep == ReadyStep.periodicOnly)
+          row(AppIcons.cloud_sync, l10n.tr('setupSignalsPeriodicTitle'), l10n.tr('pushWakeStatusPeriodic'),
+              onTap: () => context.push('/settings/notifications')),
       ]),
     ];
   }

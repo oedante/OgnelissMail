@@ -13,6 +13,7 @@ import '../../../services/device/phone_mirror_service.dart';
 import '../../../core/constants/app_constants.dart' show kRulesAndCategoriesEnabled;
 import '../../../core/utils/text_safe.dart';
 import 'dart:async';
+import '../../../core/permissions/app_permissions.dart';
 import '../../../core/theme/app_icons.dart';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -1245,6 +1246,15 @@ class _PhoneMirrorSectionState extends ConsumerState<_PhoneMirrorSection> {
       _busy = true;
       _error = null;
     });
+    // Разрешение — через общий порядок (1.12.x, аудит устройств): запрещено
+    // навсегда — предложить настройки телефона, а не молча «Не удалось».
+    // Пояснение — уже в подсказке переключателя.
+    if (on && !await AppPermissions.ensure(context, contacts ? AppPermission.contacts : AppPermission.calendar,
+        explain: false)) {
+      if (mounted) setState(() => _busy = false);
+      return;
+    }
+    if (!mounted) return;
     final svc = ref.read(phoneMirrorProvider);
     final ok = contacts
         ? await svc.setContacts(widget.account, on)

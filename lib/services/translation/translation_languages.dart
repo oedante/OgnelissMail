@@ -75,14 +75,78 @@ bool shouldOfferTranslation({
   required bool enabled,
   required Iterable<String> never,
   required Iterable<String> available,
+}) =>
+    decideTranslationOffer(
+        detected: detected, confident: true, appLang: appLang, enabled: enabled, never: never, available: available) ==
+    TranslationOffer.offer;
+
+/// Что делать с переводом открытого письма (1.12.x).
+enum TranslationOffer {
+  /// Ничего: язык приложения или знакомый, перевод не предлагать.
+  none,
+
+  /// Плашка «Язык письма: … · Перевести».
+  offer,
+
+  /// Плашка «Письмо на другом языке» — язык не определён уверенно, но
+  /// письмо другим алфавитом, чем приложение; язык — по нажатию.
+  otherLanguage,
+
+  /// «Всегда переводить с …»: перевод сразу, без плашки-предложения.
+  auto,
+}
+
+/// Решение о переводе входящего письма (1.12.x, просьба владельца
+/// 04.11.2026: плашка «сбоит и предлагает другие языки»).
+///
+/// Перевод предлагается только с языка, в котором определитель уверен
+/// ([confident]): слабая догадка (ML Kit с порогом 0,2) на письме с
+/// цитатой, подписью на двух языках или ссылками называла чужой язык.
+/// Без уверенного языка — только «Письмо на другом языке» ([otherScript]:
+/// письмо другим алфавитом, чем приложение), и не с языка из списков
+/// «не переводить» и знакомых ([known] — языки телефона).
+///
+/// «Всегда переводить с …» ([always]) — выбор самого человека: работает и
+/// при выключенном «Предлагать перевод», и для языка телефона, но не для
+/// «не переводить» и не по догадке.
+TranslationOffer decideTranslationOffer({
+  required String? detected,
+  required bool confident,
+  required String appLang,
+  required bool enabled,
+  required Iterable<String> never,
+  Iterable<String> always = const [],
+  Iterable<String> known = const [],
+  required Iterable<String> available,
+  bool otherScript = false,
 }) {
-  if (!enabled) return false;
   final d = normalizeLang(detected);
   final app = normalizeLang(appLang);
-  if (d == null || app == null || d == app) return false;
-  if (never.map(normalizeLang).contains(d)) return false;
+  if (app == null) return TranslationOffer.none;
+  bool listed(Iterable<String> list) => d != null && list.map(normalizeLang).contains(d);
+  if (d == null || !confident) {
+    if (!enabled || !otherScript || listed(never) || listed(known)) return TranslationOffer.none;
+    return TranslationOffer.otherLanguage;
+  }
+  if (d == app || listed(never)) return TranslationOffer.none;
   final av = available.map(normalizeLang).toSet();
-  return av.contains(d) && av.contains(app);
+  if (!av.contains(d) || !av.contains(app)) return TranslationOffer.none;
+  if (listed(always)) return TranslationOffer.auto;
+  if (!enabled || listed(known)) return TranslationOffer.none;
+  return TranslationOffer.offer;
+}
+
+/// Список языков [list] с [lang] (без повторов, по алфавиту) — для
+/// «не переводить» и «всегда переводить».
+List<String> withLang(Iterable<String> list, String lang) {
+  final n = normalizeLang(lang) ?? lang;
+  return {...list.map((c) => normalizeLang(c) ?? c), n}.toList()..sort();
+}
+
+/// Список языков [list] без [lang].
+List<String> withoutLang(Iterable<String> list, String lang) {
+  final n = normalizeLang(lang) ?? lang;
+  return [for (final c in list) if ((normalizeLang(c) ?? c) != n) c];
 }
 
 /// Порядок языков в выборе «Перевести на…»: язык собеседника ([suggested],

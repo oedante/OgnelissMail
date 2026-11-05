@@ -155,6 +155,12 @@ class AppSettings {
   /// «полное письмо с вложениями»: по мобильной сети это дорого и незаметно
   /// съедает трафик.
   final bool attachmentsWifiOnly;
+
+  /// «Искать в тексте вложений» (1.12.x, просьба владельца 04.11.2026):
+  /// текст загруженных документов, таблиц, презентаций и вложенных писем —
+  /// в поисковый индекс (AttachmentTextIndex). Выключено — текст вложений
+  /// из индекса убирается.
+  final bool searchAttachments;
   final bool groupByConversation;
 
   // ── Свайпы ──
@@ -200,6 +206,11 @@ class AppSettings {
   // ── Перевод писем на устройстве (1.9.x, просьба владельца 31.10.2026) ──
   /// Предлагать перевод письма, язык которого не язык приложения.
   final bool translateOffer;
+  /// Языки телефона — как язык приложения: перевод с них не предлагать
+  /// (1.12.x, просьба владельца 04.11.2026).
+  final bool translatePhoneLangs;
+  /// С этих языков письмо переводится сразу, без предложения (1.12.x).
+  final List<String> translateAlways;
   /// Языки для перевода — скачивать только по Wi-Fi (Android).
   final bool translateWifiOnly;
   /// С этих языков перевод не предлагать.
@@ -264,9 +275,12 @@ class AppSettings {
     this.autoLockMinutes = 5,
     this.autoInsertSignature = true,
     this.translateOffer = true,
+    this.translatePhoneLangs = true,
+    this.translateAlways = const [],
     this.translateWifiOnly = true,
     this.translateNever = const [],
     this.attachmentsWifiOnly = true,
+    this.searchAttachments = true,
   });
 
   /// «Оформление» для сборки тем. [systemNoAnimations] — системное «Убрать
@@ -293,6 +307,7 @@ class AppSettings {
 
   AppSettings copyWith({
     bool? attachmentsWifiOnly,
+    bool? searchAttachments,
     ThemeMode? themeMode,
     bool? amoled,
     bool? reading,
@@ -352,6 +367,8 @@ class AppSettings {
     int? autoLockMinutes,
     bool? autoInsertSignature,
     bool? translateOffer,
+    bool? translatePhoneLangs,
+    List<String>? translateAlways,
     bool? translateWifiOnly,
     List<String>? translateNever,
   }) {
@@ -396,6 +413,7 @@ class AppSettings {
       syncIntervalMinutes: syncIntervalMinutes ?? this.syncIntervalMinutes,
       emailFetchMode: emailFetchMode ?? this.emailFetchMode,
       attachmentsWifiOnly: attachmentsWifiOnly ?? this.attachmentsWifiOnly,
+      searchAttachments: searchAttachments ?? this.searchAttachments,
       groupByConversation: groupByConversation ?? this.groupByConversation,
       swipeLeftPrimary: swipeLeftPrimary ?? this.swipeLeftPrimary,
       swipeLeftSecondary: swipeLeftSecondary ?? this.swipeLeftSecondary,
@@ -415,6 +433,8 @@ class AppSettings {
       autoLockMinutes: autoLockMinutes ?? this.autoLockMinutes,
       autoInsertSignature: autoInsertSignature ?? this.autoInsertSignature,
       translateOffer: translateOffer ?? this.translateOffer,
+      translatePhoneLangs: translatePhoneLangs ?? this.translatePhoneLangs,
+      translateAlways: translateAlways ?? this.translateAlways,
       translateWifiOnly: translateWifiOnly ?? this.translateWifiOnly,
       translateNever: translateNever ?? this.translateNever,
     );
@@ -470,6 +490,7 @@ class _K {
   static const syncInterval = 's_sync_interval';
   static const emailFetchMode = 's_fetch_mode';
   static const attachmentsWifiOnly = 's_att_wifi_only';
+  static const searchAttachments = 's_search_attachments';
   static const groupByConversation = 's_group_conv';
   static const swipeLP = 's_swipe_lp';
   static const swipeLS = 's_swipe_ls';
@@ -492,6 +513,8 @@ class _K {
   static const autoLock = 's_auto_lock';
   static const autoSignature = 's_auto_sig';
   static const translateOffer = 's_translate_offer';
+  static const translatePhoneLangs = 's_translate_phone_langs';
+  static const translateAlways = 's_translate_always';
   static const translateWifiOnly = 's_translate_wifi';
   static const translateNever = 's_translate_never';
 }
@@ -567,6 +590,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       syncIntervalMinutes: _p.getInt(_K.syncInterval) ?? 15,
       emailFetchMode: EmailFetchMode.values[(_p.getInt(_K.emailFetchMode) ?? 1).clamp(0, 5)],
       attachmentsWifiOnly: _p.getBool(_K.attachmentsWifiOnly) ?? true,
+      searchAttachments: _p.getBool(_K.searchAttachments) ?? true,
       groupByConversation: _p.getBool(_K.groupByConversation) ?? true,
       swipeLeftPrimary: SwipeAction.values[_p.getInt(_K.swipeLP) ?? 0],
       swipeLeftSecondary: SwipeAction.values[_p.getInt(_K.swipeLS) ?? 1],
@@ -586,6 +610,8 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       autoLockMinutes: _p.getInt(_K.autoLock) ?? 5,
       autoInsertSignature: _p.getBool(_K.autoSignature) ?? true,
       translateOffer: _p.getBool(_K.translateOffer) ?? true,
+      translatePhoneLangs: _p.getBool(_K.translatePhoneLangs) ?? true,
+      translateAlways: _p.getStringList(_K.translateAlways) ?? const [],
       translateWifiOnly: _p.getBool(_K.translateWifiOnly) ?? true,
       translateNever: _p.getStringList(_K.translateNever) ?? const [],
     );
@@ -842,6 +868,11 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(attachmentsWifiOnly: v);
   }
 
+  Future<void> setSearchAttachments(bool v) async {
+    await _p.setBool(_K.searchAttachments, v);
+    state = state.copyWith(searchAttachments: v);
+  }
+
   Future<void> setPreviewLines(int v) async {
     final n = v.clamp(1, 4);
     await _p.setInt(_K.previewLines, n);
@@ -948,14 +979,31 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(translateOffer: v);
   }
 
+  Future<void> setTranslatePhoneLangs(bool v) async {
+    await _p.setBool(_K.translatePhoneLangs, v);
+    state = state.copyWith(translatePhoneLangs: v);
+  }
+
+  /// «Всегда переводить с …» (1.12.x): язык не бывает в обоих списках —
+  /// добавленный сюда уходит из «Не переводить с языков».
+  Future<void> setTranslateAlways(List<String> v) async {
+    final never = state.translateNever.where((c) => !v.contains(c)).toList();
+    await _p.setStringList(_K.translateAlways, v);
+    if (never.length != state.translateNever.length) await _p.setStringList(_K.translateNever, never);
+    state = state.copyWith(translateAlways: v, translateNever: never);
+  }
+
   Future<void> setTranslateWifiOnly(bool v) async {
     await _p.setBool(_K.translateWifiOnly, v);
     state = state.copyWith(translateWifiOnly: v);
   }
 
   Future<void> setTranslateNever(List<String> v) async {
+    // Язык из «Не переводить» уходит из «Всегда переводить» (1.12.x).
+    final always = state.translateAlways.where((c) => !v.contains(c)).toList();
     await _p.setStringList(_K.translateNever, v);
-    state = state.copyWith(translateNever: v);
+    if (always.length != state.translateAlways.length) await _p.setStringList(_K.translateAlways, always);
+    state = state.copyWith(translateNever: v, translateAlways: always);
   }
 
   /// Сбросить все настройки
@@ -971,10 +1019,11 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       _K.notificationMessengerStyle, _K.notificationVipConversations, _K.notificationAllConversations,
       NotificationLines.prefWork, NotificationLines.prefPersonal,
       _K.syncOnlyWifi, _K.syncInterval, _K.emailFetchMode,
+      _K.searchAttachments,
       _K.groupByConversation, _K.swipeLP, _K.swipeLS, _K.swipeRP, _K.swipeRS, _K.swipeCL, _K.swipeCR, _K.swipeAnim, _K.previewLines, _K.peekPreviewLines,
       _K.aiEnabled, _K.smartReplies, _K.dlpEnabled, _K.autoRules,
       _K.voiceControl, _K.activeAccount, _K.autoLock, _K.autoSignature,
-      _K.translateOffer, _K.translateWifiOnly, _K.translateNever,
+      _K.translateOffer, _K.translatePhoneLangs, _K.translateAlways, _K.translateWifiOnly, _K.translateNever,
       ...DocPreviewSettings.keys,
     ];
     for (final key in keys) {

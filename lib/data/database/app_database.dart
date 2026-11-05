@@ -885,21 +885,97 @@ class AppDatabase extends _$AppDatabase {
     String attachmentsText = '',
   }) async {
     if (accountId == null) {
+      var keep = attachmentsText;
+      if (keep.isEmpty) {
+        final prev = await customSelect('SELECT attachments_text AS t FROM emails_fts WHERE email_id = ? LIMIT 1',
+            variables: [Variable.withString(emailId)]).getSingleOrNull();
+        keep = (prev?.data['t'] as String?) ?? '';
+      }
       await customStatement('DELETE FROM emails_fts WHERE email_id = ?', [emailId]);
       await customStatement(
         'INSERT INTO emails_fts(email_id, subject, from_text, body, attachments_text) VALUES (?, ?, ?, ?, ?)',
-        [emailId, subject, fromText, body, attachmentsText],
+        [emailId, subject, fromText, body, keep],
       );
       return;
     }
     final rowId = ftsRowId(accountId, emailId);
-    await customStatement('DELETE FROM emails_fts WHERE rowid = ?', [rowId]);
+    // Текст вложений (1.12.x, поиск по тексту вложений, просьба владельца
+    // 04.11.2026) извлекается отдельно, после загрузки файла, а письмо
+    // переиндексируется при каждом сохранении (синхронизация, докачка
+    // текста): пустой [attachmentsText] — «не менять», прежний остаётся.
+    // Одним запросом: значения VALUES вычисляются до замены строки.
     await customStatement(
-      'INSERT INTO emails_fts(rowid, email_id, account_id, subject, from_text, body, attachments_text) '
-      'VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [rowId, emailId, accountId, subject, fromText, body, attachmentsText],
+      'INSERT OR REPLACE INTO emails_fts(rowid, email_id, account_id, subject, from_text, body, attachments_text) '
+      'VALUES (?, ?, ?, ?, ?, ?, $_keepAttachmentsSql)',
+      [rowId, emailId, accountId, subject, fromText, body, attachmentsText, rowId],
     );
   }
+
+  /// Новый текст вложений, а пустой — прежний из строки индекса (параметры:
+  /// текст, rowid).
+  static const _keepAttachmentsSql =
+      "COALESCE(NULLIF(?, ''), (SELECT f.attachments_text FROM emails_fts f WHERE f.rowid = ?), '')";
+
+  /// Текст вложений письма в поисковом индексе; null — строки нет.
+  Future<String?> ftsAttachmentsText(String accountId, String emailId) async {
+    final r = await customSelect('SELECT attachments_text AS t FROM emails_fts WHERE rowid = ?',
+        variables: [Variable.withInt(ftsRowId(accountId, emailId))]).getSingleOrNull();
+    if (r == null) return null;
+    return (r.data['t'] as String?) ?? '';
+  }
+
+  /// Записать текст вложений письма. Строки индекса ещё нет (письмо не
+  /// проиндексировано) — создаётся с темой и отправителем из таблицы писем,
+  /// текст письма добавит обычная индексация. Письма нет — ничего.
+  Future<void> setFtsAttachmentsText(String accountId, String emailId, String text) async {
+    final rowId = ftsRowId(accountId, emailId);
+    await transaction(() async {
+      final n = await customUpdate('UPDATE emails_fts SET attachments_text = ? WHERE rowid = ?',
+          variables: [Variable.withString(text), Variable.withInt(rowId)], updates: {});
+      if (n > 0 || text.isEmpty) return;
+      await customStatement(
+        'INSERT INTO emails_fts(rowid, email_id, account_id, subject, from_text, body, attachments_text) '
+        "SELECT ?, e.id, e.account_id, e.subject, COALESCE(e.from_name, '') || ' ' || e.from_email, '', ? "
+        'FROM emails e WHERE e.id = ? AND e.account_id = ? LIMIT 1',
+        [rowId, text, emailId, accountId],
+      );
+    });
+  }
+
+  /// Какие пары (письмо, метка) уже есть в тексте вложений индекса: ключи
+  /// [needles] (произвольные), значение — (аккаунт, письмо, метка). Одним
+  /// запросом на порцию, без чтения самих текстов.
+  Future<Set<String>> ftsAttachmentsContaining(
+      Map<String, ({String accountId, String emailId, String needle})> needles) async {
+    final out = <String>{};
+    final entries = needles.entries.toList();
+    for (var i = 0; i < entries.length; i += 200) {
+      final chunk = entries.sublist(i, min(i + 200, entries.length));
+      final values = List.filled(chunk.length, '(?, ?, ?)').join(', ');
+      final rows = await customSelect(
+        'WITH k(key, rid, needle) AS (VALUES $values) '
+        'SELECT k.key AS key FROM k JOIN emails_fts f ON f.rowid = k.rid '
+        'WHERE instr(f.attachments_text, k.needle) > 0',
+        variables: [
+          for (final e in chunk) ...[
+            Variable.withString(e.key),
+            Variable.withInt(ftsRowId(e.value.accountId, e.value.emailId)),
+            Variable.withString(e.value.needle),
+          ],
+        ],
+      ).get();
+      for (final r in rows) {
+        out.add(r.data['key'] as String);
+      }
+    }
+    return out;
+  }
+
+  /// Убрать текст вложений из всего индекса (выключили «Искать в тексте
+  /// вложений»). Возвращает число писем.
+  Future<int> clearFtsAttachmentsText() => customUpdate(
+      "UPDATE emails_fts SET attachments_text = '' WHERE attachments_text <> ''",
+      updates: {});
 
   Future<void> removeEmailFts(String emailId, {String? accountId}) async {
     if (accountId != null) {
@@ -1126,6 +1202,45 @@ class AppDatabase extends _$AppDatabase {
       // FTS недоступен/ошибка синтаксиса — откат на LIKE ниже
     }
     return searchEmails(accountId: accountId, query: query, limit: limit);
+  }
+
+  /// Найденные письма [ids], у которых совпадение — только в тексте вложений
+  /// (тема, отправитель и текст письма запросу не отвечают): id → фрагмент
+  /// текста вложения вокруг найденного (1.12.x, поиск по тексту вложений,
+  /// просьба владельца 04.11.2026). Строка результата поиска показывает его
+  /// вместо начала письма — видно, почему письмо найдено.
+  Future<Map<String, String>> ftsAttachmentHits({
+    required String accountId,
+    required String query,
+    required List<String> ids,
+  }) async {
+    final words = query
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .map((w) => '"${w.replaceAll('"', '')}"*')
+        .toList();
+    if (words.isEmpty || ids.isEmpty) return const {};
+    final all = words.join(' ');
+    final out = <String, String>{};
+    try {
+      for (var i = 0; i < ids.length; i += 200) {
+        final chunk = ids.sublist(i, min(i + 200, ids.length));
+        final rows = await customSelect(
+          "SELECT f.email_id AS eid, snippet(emails_fts, 5, '', '', '…', 12) AS s FROM emails_fts f "
+          'WHERE f.emails_fts MATCH ? AND f.rowid IN (${chunk.map((id) => ftsRowId(accountId, id)).join(', ')}) '
+          'AND f.rowid NOT IN (SELECT m.rowid FROM emails_fts m WHERE m.emails_fts MATCH ?)',
+          variables: [Variable.withString(all), Variable.withString('{subject from_text body} : ($all)')],
+        ).get();
+        for (final r in rows) {
+          final s = ((r.data['s'] as String?) ?? '').replaceAll(RegExp(r'[\u0000-\u001F]+'), ' ');
+          out[r.data['eid'] as String] = s.replaceAll(RegExp(r'\s+'), ' ').trim();
+        }
+      }
+    } catch (e) {
+      // Ошибка запроса — результаты показываются как обычно.
+    }
+    return out;
   }
 
   /// Добавить столбец, если его ещё нет (повторный запуск шага безопасен).
@@ -2043,11 +2158,11 @@ class AppDatabase extends _$AppDatabase {
     await batch((b) {
       for (final i in items) {
         final rowId = ftsRowId(accountId, i.emailId);
-        b.customStatement('DELETE FROM emails_fts WHERE rowid = ?', [rowId]);
+        // Текст вложений, извлечённый раньше, остаётся (см. indexEmailFts).
         b.customStatement(
-          'INSERT INTO emails_fts(rowid, email_id, account_id, subject, from_text, body, attachments_text) '
-          'VALUES (?, ?, ?, ?, ?, ?, ?)',
-          [rowId, i.emailId, accountId, i.subject, i.fromText, i.body, ''],
+          'INSERT OR REPLACE INTO emails_fts(rowid, email_id, account_id, subject, from_text, body, attachments_text) '
+          'VALUES (?, ?, ?, ?, ?, ?, $_keepAttachmentsSql)',
+          [rowId, i.emailId, accountId, i.subject, i.fromText, i.body, '', rowId],
         );
       }
     });

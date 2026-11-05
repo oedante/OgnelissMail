@@ -44,6 +44,7 @@ import '../../../core/utils/text_entities.dart';
 import '../../../services/mail/conversation_counter.dart';
 import '../../../services/mail/focus_mode_service.dart' show focusModeProvider;
 import '../../../services/security/managed_config.dart';
+import '../../../l10n/app_localizations.dart';
 
 // ════════════════════════ АККАУНТЫ ════════════════════════
 
@@ -1248,7 +1249,28 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
         rows = await db.searchEmailsFts(accountId: account!.id, query: q, limit: 100);
       }
       if (seq != _searchSeq || !mounted) return;
-      final emails = _dedupByMessageId(rows.cast<Email>()).map((r) => _rowToListModel(r)).toList();
+      final found = _dedupByMessageId(rows.cast<Email>());
+      // Найдено только в тексте вложения (1.12.x, поиск по тексту вложений):
+      // вместо начала письма — фрагмент вложения, видно, почему письмо в
+      // результатах.
+      final inAttachment = <String, String>{};
+      final byAccount = <String, List<String>>{};
+      for (final r in found) {
+        byAccount.putIfAbsent(r.accountId, () => []).add(r.id);
+      }
+      for (final e in byAccount.entries) {
+        final hits = await db.ftsAttachmentHits(accountId: e.key, query: q, ids: e.value);
+        hits.forEach((id, s) => inAttachment['${e.key}|$id'] = s);
+      }
+      if (seq != _searchSeq || !mounted) return;
+      final l10n = inAttachment.isEmpty ? null : AppLocalizations(ref.read(settingsProvider).locale);
+      final emails = [
+        for (final r in found)
+          if (inAttachment['${r.accountId}|${r.id}'] case final s? when l10n != null)
+            _rowToListModel(r).copyWith(bodyPreview: l10n.tr('searchFoundInAttachment').replaceAll('{text}', s))
+          else
+            _rowToListModel(r),
+      ];
       // Найденное на телефоне — сразу; серверный поиск — когда пользователь
       // перестал печатать (ещё 0,7 с): иначе каждая пауза в наборе уходила
       // запросом на сервер и занимала соединение ящика (у IMAP — единственное).

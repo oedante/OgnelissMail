@@ -11,6 +11,12 @@
 //    предлагаем открыть настройки приложения;
 //  · после входа в первый ящик один раз показываем экран «Разрешения»
 //    (maybeShowSetup): все разрешения с пояснением и «Разрешить всё».
+//    С 1.12.x (аудит устройств, просьба владельца 05.11.2026) — только то,
+//    что нужно ЭТОМУ устройству, чтобы о письмах оно сообщало вовремя
+//    (DeviceReadiness): уведомления, работа в фоне, экран оболочки
+//    производителя, способ сигналов, точные напоминания. Контакты и
+//    календарь спрашиваются, когда их включают («В телефоне», выгрузка);
+//    всё уже в порядке — шага нет.
 //
 // Все разрешения с состоянием и кнопками — экран «Настройки → Разрешения».
 
@@ -20,12 +26,16 @@ import '../theme/app_icons.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show MethodChannel;
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../logging/app_logger.dart';
+import '../platform/device_readiness.dart';
+import '../platform/platform_diagnostics.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/push/push_wake_service.dart' show PushWakeService, pushWakeServiceProvider;
 
 enum AppPermission {
   notifications,
@@ -68,6 +78,11 @@ class AppPermissions {
   ];
 
   static AppPermissionInfo info(AppPermission p) => all.firstWhere((i) => i.id == p);
+
+  /// Шаг первой настройки (1.12.x): разрешения, без которых о письмах и
+  /// встречах устройство вовремя не сообщит. Контакты и календарь — по
+  /// месту, когда их включают.
+  static const setup = {AppPermission.notifications, AppPermission.exactAlarms, AppPermission.battery};
 
   /// Разрешения ОС есть только на мобильных платформах.
   static bool get supported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
@@ -207,11 +222,16 @@ class AppPermissions {
     if (prefs.getBool(_setupShownKey) ?? false) return;
     var missing = false;
     if (supported) {
-      for (final i in all) {
-        if (await state(i.id) case AppPermissionState.denied || AppPermissionState.blocked) {
+      for (final p in setup) {
+        if (await state(p) case AppPermissionState.denied || AppPermissionState.blocked) {
           missing = true;
           break;
         }
+      }
+      // Остальное, что нужно устройству (1.12.x): «Батарея → Ограничено»,
+      // оболочка производителя, выбор распространителя UnifiedPush.
+      if (!missing && context.mounted) {
+        missing = DeviceReadiness.needsAction(await readiness(context));
       }
     }
     await prefs.setBool(_setupShownKey, true);
@@ -219,11 +239,27 @@ class AppPermissions {
     await GoRouter.of(context).push(missing ? '/settings/permissions?setup=1' : '/setup/mailbox');
   }
 
+  /// Что нужно этому устройству (DeviceReadiness): состояние системы и
+  /// способ сигналов сервера.
+  static Future<List<ReadyStep>> readiness(BuildContext context) async {
+    if (!supported) return const [];
+    final container = ProviderScope.containerOf(context, listen: false);
+    final diag = await PlatformDiagnostics.collect(light: true);
+    var signal = SignalChannel.off;
+    if (PushWakeService.supported) {
+      try {
+        signal = await container.read(pushWakeServiceProvider).signalChannel();
+      } catch (_) {}
+    }
+    return DeviceReadiness.steps(diag, ios: Platform.isIOS, signal: signal);
+  }
+
   /// «Разрешить всё»: системные диалоги подряд (уведомления, контакты,
   /// календарь) — пояснения уже на экране. Особый доступ (точные будильники,
   /// работа в фоне) открывает отдельные экраны Android — по кнопкам.
-  static Future<void> requestAllDialogs(BuildContext context) async {
-    for (final i in all.where((i) => !i.special)) {
+  /// [only] — только эти (шаг первой настройки, 1.12.x).
+  static Future<void> requestAllDialogs(BuildContext context, {Set<AppPermission>? only}) async {
+    for (final i in all.where((i) => !i.special && (only == null || only.contains(i.id)))) {
       if (!context.mounted) return;
       if (await state(i.id) == AppPermissionState.denied && context.mounted) {
         await ensure(context, i.id, explain: false);

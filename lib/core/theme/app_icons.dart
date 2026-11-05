@@ -310,6 +310,11 @@ abstract final class AppIcons {
   static const IconData vibration = Symbols.vibration_rounded;
   static const IconData videocam = Symbols.videocam_rounded;
   static const IconData view_agenda = Symbols.view_agenda_rounded;
+  // «Область чтения» (1.12.x): справа, снизу, скрыта.
+  static const IconData vertical_split = Symbols.vertical_split_rounded;
+  static const IconData dock_to_right = Symbols.dock_to_right_rounded;
+  static const IconData dock_to_bottom = Symbols.dock_to_bottom_rounded;
+  static const IconData right_panel_close = Symbols.right_panel_close_rounded;
   // Плитки (1.10.2): «только значок» и «значок с подписью».
   static const IconData tile_small = Symbols.crop_square_rounded;
   static const IconData tile_wide = Symbols.crop_16_9_rounded;

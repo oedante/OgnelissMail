@@ -52,9 +52,11 @@ import '../../../services/documents/doc_preview_settings.dart';
 import '../../../services/documents/office_document.dart';
 import '../../../services/documents/office_package.dart';
 import '../../../services/documents/office_reader.dart';
+import '../../../services/documents/text_doc_reader.dart';
 import '../../../core/logging/app_logger.dart';
 import '../../../widgets/ui/banner_button.dart';
 import '../../../widgets/common/text_scale_cap.dart';
+import '../../../widgets/common/pane_navigator.dart';
 import '../../../services/mail/pkpass_parser.dart';
 import '../../../services/mail/eml_reader.dart';
 import '../../../core/security/html_sanitizer.dart';
@@ -98,15 +100,24 @@ Future<void> openAttachment(
 }) async {
   if (await AttachmentPreviewScreen.opensInApp(item)) {
     if (!context.mounted) return;
-    await Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => AttachmentPreviewScreen(
-        items: [item],
-        emailSubject: emailSubject,
-        accountId: accountId,
-        emailFrom: emailFrom,
-        emailDate: emailDate,
-      ),
-    ));
+    final screen = AttachmentPreviewScreen(
+      items: [item],
+      emailSubject: emailSubject,
+      accountId: accountId,
+      emailFrom: emailFrom,
+      emailDate: emailDate,
+    );
+    // Письмо в панели рядом с лентой (1.12.x, просьба владельца 04.11.2026,
+    // как в Outlook): вложение — в той же панели, «Назад» возвращает к
+    // письму, лента и папки остаются на месте. Раньше туда же попадало
+    // неявно (ближний Navigator — панели); теперь явно и с тем же мягким
+    // появлением, что ответ и пересылка в панели. Иначе — отдельным
+    // экраном, как раньше.
+    if (PaneNavigator.isInside(context)) {
+      await PaneNavigator.push<void>(context, screen);
+      return;
+    }
+    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
     return;
   }
   if (!context.mounted) return;
@@ -140,6 +151,9 @@ class AttachmentPreviewScreen extends StatefulWidget {
     // (настоящий Word 97, RTF или DOCX под старым именем). На iPhone и iPad
     // их, как и раньше, показывает «Просмотр» iOS.
     final docOn = DocPreviewSettings.allows(name, mimeType: item.mimeType);
+    // .txt и Markdown (1.14.0) — здесь на всех устройствах: «Просмотр» iOS
+    // Markdown не оформляет и путает кодировку русских файлов (Windows-1251).
+    if (_textDocOn(item)) return true;
     if (docOn && OfficeFormats.of(name, mimeType: item.mimeType) != null) {
       return !ios || !FileOpener.quickLookShows(name);
     }
@@ -160,6 +174,11 @@ class AttachmentPreviewScreen extends StatefulWidget {
     return false;
   }
 
+
+  /// .txt и .md показываются документом (вид «Текстовые документы»
+  /// включён); выключен — .txt и .md простым текстом, как раньше.
+  static bool _textDocOn(PreviewItem item) =>
+      TextDocReader.handles(item.fileName, mimeType: item.mimeType) && DocPreviewSettings.isOn(DocPreviewType.text);
 
   static const _imageExt = {'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'};
   static const _textExt = {'txt', 'log', 'csv', 'tsv', 'json', 'xml', 'md', 'yaml', 'yml', 'ini'};
@@ -298,6 +317,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
     }
     // Документ — до текста: CSV показывается таблицей, а не строками
     // (выключено в настройках — текстом, как раньше).
+    if (AttachmentPreviewScreen._textDocOn(widget.items[i])) return _Kind.document;
     if (DocPreviewSettings.allows(name, mimeType: widget.items[i].mimeType)) return _Kind.document;
     if (AttachmentPreviewScreen._textExt.contains(ext)) return _Kind.text;
     return _Kind.other;
@@ -316,12 +336,12 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         case _Kind.text:
           final f = File(item.filePath);
           final len = await f.length();
-          final raw = len > _maxTextBytes
-              ? await f
-                  .openRead(0, _maxTextBytes)
-                  .transform(const Utf8Decoder(allowMalformed: true))
-                  .join()
-              : await f.readAsString();
+          // Кодировка — по содержимому (1.14.0): раньше только UTF-8, и
+          // журнал или выгрузка в Windows-1251 показывались «кракозябрами».
+          final bytes = len > _maxTextBytes
+              ? Uint8List.fromList(await f.openRead(0, _maxTextBytes).fold<List<int>>(<int>[], (a, b) => a..addAll(b)))
+              : await f.readAsBytes();
+          final raw = TextDocReader.decode(bytes, truncated: len > _maxTextBytes);
           _texts[i] = len > _maxTextBytes ? '$raw\n\n…' : raw;
           break;
         case _Kind.pass:
@@ -419,8 +439,21 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
     if (!mounted) return;
     final l10n = AppLocalizations.of(context);
     try {
-      final doc = await OfficeReader.readFile(item.filePath, item.fileName,
-          mimeType: item.mimeType, lang: l10n.localeCode);
+      final OfficeDoc doc;
+      if (TextDocReader.handles(item.fileName, mimeType: item.mimeType)) {
+        try {
+          doc = await TextDocReader.readFile(item.filePath, item.fileName,
+              mimeType: item.mimeType, lang: l10n.localeCode);
+        } catch (e) {
+          AppLogger.debug('Предпросмотр текста: $e');
+          _errors[i] = l10n.tr('fileDamaged');
+          _plainErrors.add(i);
+          return;
+        }
+      } else {
+        doc = await OfficeReader.readFile(item.filePath, item.fileName,
+            mimeType: item.mimeType, lang: l10n.localeCode);
+      }
       if (doc is OfficeTextDoc) {
         if (doc.isEmpty) {
           _errors[i] = l10n.tr('docEmpty');

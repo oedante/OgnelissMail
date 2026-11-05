@@ -90,7 +90,24 @@ UnifiedPush). Новая зависимость — `markdown` 7.3.1 (BSD-3-Clau
 • Notification permission is asked after you add a mailbox, in one setup step
 • Fixed: swiping a message could get stuck halfway
 </en-US>
-@@AS_DE_FR@@
+<de-DE>
+• Nachrichtendetails als Symbolzeile unter dem Nachrichtenkopf: Übersetzung, Abbestellen, Bilder, Tags
+• Die Suche findet Wörter auch in heruntergeladenen Anhängen
+• Outlook-Nachrichten (.msg), Textdateien und Markdown direkt in der App
+• Übersetzung: „Immer aus … übersetzen“, keine Vorschläge für die Sprachen des Geräts
+• iPad: Lesebereich rechts, unten oder ausgeblendet; Nachrichten mit Cmd und Shift auswählen; Anhänge im Lesebereich
+• Erlaubnis für Benachrichtigungen nach dem Hinzufügen eines Kontos, in einem Einrichtungsschritt
+• Behoben: Wischen über eine Nachricht konnte auf halbem Weg hängen bleiben
+</de-DE>
+<fr-FR>
+• Détails du message en une rangée d’icônes sous l’en-tête : traduction, désabonnement, images, balises
+• La recherche trouve aussi les mots dans les pièces jointes téléchargées
+• Messages Outlook (.msg), fichiers texte et Markdown directement dans l’app
+• Traduction : « Toujours traduire depuis » une langue, aucune proposition pour les langues de l’appareil
+• iPad : volet de lecture à droite, en bas ou masqué ; sélection des messages avec Cmd et Shift ; pièces jointes dans le volet de lecture
+• Autorisation des notifications après l’ajout d’un compte, en une seule étape de configuration
+• Corrigé : le balayage d’un message pouvait se bloquer à mi-chemin
+</fr-FR>
 ```
 
 ## Google Play — все 27 языков (одним полем)
@@ -118,5 +135,254 @@ UnifiedPush). Новая зависимость — `markdown` 7.3.1 (BSD-3-Clau
 • One-step notification setup, also without Google services
 • Fixed: swiping a message could get stuck halfway
 </en-US>
-@@GP_OTHERS@@
+<de-DE>
+• Nachrichtendetails als Symbolzeile unter dem Nachrichtenkopf
+• Suche im Text von Anhängen
+• Alte DOC-, XLS- und PPT-Dateien sowie TXT und Markdown direkt in der App
+• Outlook-Nachrichten (.msg) öffnen sich wie normale Nachrichten
+• Übersetzung: „Immer aus … übersetzen“, weniger unnötige Vorschläge
+• Tablet: Lesebereich unten oder ausgeblendet, Auswahl wie in Outlook
+• Benachrichtigungen in einem Schritt einrichten, auch ohne Google-Dienste
+• Behoben: Wischen über eine Nachricht konnte auf halbem Weg hängen bleiben
+</de-DE>
+<fr-FR>
+• Détails du message en une rangée d’icônes sous l’en-tête
+• Recherche dans le texte des pièces jointes
+• Anciens fichiers DOC, XLS, PPT, ainsi que TXT et Markdown, directement dans l’app
+• Les messages Outlook (.msg) s’ouvrent comme les autres
+• Traduction : « Toujours traduire depuis » une langue, moins de propositions inutiles
+• Tablette : volet de lecture en bas ou masqué, sélection comme dans Outlook
+• Notifications configurées en une étape, même sans services Google
+• Corrigé : le balayage d’un message pouvait se bloquer à mi-chemin
+</fr-FR>
+<ar>
+• تفاصيل الرسالة في صف من الرموز أسفل الترويسة
+• البحث في نص المرفقات
+• ملفات DOC وXLS وPPT القديمة، وكذلك TXT وMarkdown، داخل التطبيق مباشرةً
+• تُفتح رسائل Outlook ‏(.msg) كأي رسالة أخرى
+• الترجمة: خيار «الترجمة دائمًا من» لغة معيّنة، مع تقليل الاقتراحات غير الضرورية
+• الجهاز اللوحي: جزء القراءة في الأسفل أو مخفي، وتحديد الرسائل كما في Outlook
+• إعداد الإشعارات بخطوة واحدة، حتى بدون خدمات Google
+• تم الإصلاح: كان التمرير السريع على الرسالة قد يتوقف في المنتصف
+</ar>
+<hu-HU>
+• Az üzenet adatai ikonsorként a fejléc alatt
+• Keresés a mellékletek szövegében
+• Régi DOC-, XLS- és PPT-fájlok, valamint TXT és Markdown közvetlenül az alkalmazásban
+• Az Outlook-üzenetek (.msg) a többi üzenethez hasonlóan nyílnak meg
+• Fordítás: „Mindig fordítson erről: …”, kevesebb fölösleges felajánlás
+• Táblagép: olvasóablak alul vagy elrejtve, kijelölés, mint az Outlookban
+• Értesítések beállítása egy lépésben, Google-szolgáltatások nélkül is
+• Javítva: az üzenet elhúzása félúton elakadhatott
+</hu-HU>
+<vi>
+• Thông tin thư hiển thị thành một hàng biểu tượng dưới phần đầu thư
+• Tìm trong nội dung tệp đính kèm
+• Tệp DOC, XLS, PPT cũ cùng TXT và Markdown mở ngay trong ứng dụng
+• Thư Outlook (.msg) mở như thư thông thường
+• Dịch: tùy chọn “Luôn dịch từ” một ngôn ngữ, bớt gợi ý dịch không cần thiết
+• Máy tính bảng: ngăn đọc ở dưới hoặc ẩn, chọn thư như trong Outlook
+• Thiết lập thông báo chỉ trong một bước, kể cả khi không có dịch vụ Google
+• Đã sửa: thao tác vuốt thư có thể bị kẹt giữa chừng
+</vi>
+<da-DK>
+• Oplysninger om beskeden som en række ikoner under mailhovedet
+• Søgning i tekst i vedhæftede filer
+• Gamle DOC-, XLS- og PPT-filer samt TXT og Markdown direkte i appen
+• Outlook-beskeder (.msg) åbnes som almindelige beskeder
+• Oversættelse: „Oversæt altid fra“ et sprog, færre unødvendige forslag
+• Tablet: læserude nederst eller skjult, markering som i Outlook
+• Notifikationer sættes op i ét trin, også uden Google-tjenester
+• Rettet: stryg på en besked kunne gå i stå halvvejs
+</da-DK>
+<iw-IL>
+• פרטי ההודעה כשורת סמלים מתחת לכותרת ההודעה
+• חיפוש בטקסט של קבצים מצורפים
+• קובצי DOC,‏ XLS,‏ PPT ישנים, וגם TXT ו-Markdown, ישירות באפליקציה
+• הודעות Outlook ‏(.msg) נפתחות כמו כל הודעה אחרת
+• תרגום: אפשרות לתרגם תמיד משפה מסוימת, ופחות הצעות תרגום מיותרות
+• טאבלט: חלונית הקריאה למטה או מוסתרת, בחירת הודעות כמו ב-Outlook
+• הגדרת התראות בשלב אחד, גם ללא שירותי Google
+• תוקן: החלקה על הודעה עלולה הייתה להיתקע באמצע
+</iw-IL>
+<id>
+• Info pesan sebagai deretan ikon di bawah header
+• Pencarian di teks lampiran
+• File DOC, XLS, PPT lama, serta TXT dan Markdown, langsung di aplikasi
+• Pesan Outlook (.msg) terbuka seperti pesan biasa
+• Terjemahan: opsi “Selalu terjemahkan dari” suatu bahasa, tanpa tawaran terjemahan yang tidak perlu
+• Tablet: panel baca di bawah atau disembunyikan, pilih pesan seperti di Outlook
+• Notifikasi diatur dalam satu langkah, juga tanpa layanan Google
+• Diperbaiki: geser pesan bisa macet di tengah jalan
+</id>
+<es-ES>
+• Detalles del mensaje en una fila de iconos bajo el encabezado
+• Búsqueda en el texto de los adjuntos
+• Archivos DOC, XLS y PPT antiguos, además de TXT y Markdown, en la propia app
+• Los mensajes de Outlook (.msg) se abren como cualquier otro
+• Traducción: opción «Traducir siempre del…», menos sugerencias innecesarias
+• Tableta: panel de lectura abajo u oculto, selección como en Outlook
+• Notificaciones configuradas en un solo paso, también sin servicios de Google
+• Corregido: deslizar un mensaje podía quedarse atascado a mitad de camino
+</es-ES>
+<it-IT>
+• Dettagli del messaggio in una riga di icone sotto l’intestazione
+• Ricerca nel testo degli allegati
+• Vecchi file DOC, XLS, PPT, oltre a TXT e Markdown, direttamente nell’app
+• I messaggi Outlook (.msg) si aprono come tutti gli altri
+• Traduzione: opzione «Traduci sempre da…», meno proposte superflue
+• Tablet: riquadro di lettura in basso o nascosto, selezione come in Outlook
+• Notifiche configurate in un solo passaggio, anche senza servizi Google
+• Corretto: lo scorrimento di un messaggio poteva bloccarsi a metà
+</it-IT>
+<zh-CN>
+• 邮件信息以一排小图标显示在邮件头下方
+• 搜索附件中的文字
+• 旧版 DOC、XLS、PPT 文件以及 TXT 和 Markdown 可直接在应用内打开
+• Outlook 邮件（.msg）像普通邮件一样打开
+• 翻译：可对某种语言选择“始终翻译”，减少不必要的翻译提示
+• 平板：阅读窗格可置于底部或隐藏，像 Outlook 一样选择邮件
+• 一步完成通知设置，没有 Google 服务也可以
+• 修复：滑动邮件时可能卡在一半的问题
+</zh-CN>
+<ko-KR>
+• 메일 정보를 헤더 아래 아이콘 한 줄로 표시
+• 첨부 파일 텍스트에서도 검색
+• 이전 형식의 DOC, XLS, PPT 파일과 TXT, Markdown을 앱에서 바로 열기
+• Outlook 메일(.msg)을 일반 메일처럼 열기
+• 번역: 특정 언어는 ‘항상 번역’ 옵션, 불필요한 번역 제안 감소
+• 태블릿: 읽기 창을 아래에 두거나 숨기기, Outlook처럼 메일 선택
+• 알림을 한 단계로 설정, Google 서비스 없이도 가능
+• 수정: 메일을 스와이프하면 중간에 멈출 수 있던 문제
+</ko-KR>
+<nl-NL>
+• Berichtinformatie als een rij pictogrammen onder de kop
+• Zoeken in de tekst van bijlagen
+• Oude DOC-, XLS- en PPT-bestanden, plus TXT en Markdown, direct in de app
+• Outlook-berichten (.msg) openen als gewone berichten
+• Vertaling: ‘Altijd vertalen uit het …’, minder onnodige voorstellen
+• Tablet: leesvenster onderaan of verborgen, selecteren zoals in Outlook
+• Meldingen in één stap instellen, ook zonder Google-services
+• Opgelost: vegen over een bericht kon halverwege blijven hangen
+</nl-NL>
+<no-NO>
+• Meldingsdetaljer som en rad ikoner under meldingshodet
+• Søk i tekst i vedlegg
+• Gamle DOC-, XLS- og PPT-filer samt TXT og Markdown rett i appen
+• Outlook-meldinger (.msg) åpnes som vanlige meldinger
+• Oversettelse: «Oversett alltid fra» et språk, færre unødvendige forslag
+• Nettbrett: leserute nederst eller skjult, markering som i Outlook
+• Varsler settes opp i ett trinn, også uten Google-tjenester
+• Rettet: sveip på en melding kunne stoppe opp halvveis
+</no-NO>
+<pl-PL>
+• Informacje o wiadomości jako rząd ikon pod nagłówkiem
+• Wyszukiwanie w tekście załączników
+• Stare pliki DOC, XLS, PPT, a także TXT i Markdown bezpośrednio w aplikacji
+• Wiadomości Outlook (.msg) otwierają się jak zwykłe wiadomości
+• Tłumaczenie: „Zawsze tłumacz z języka…”, mniej zbędnych propozycji
+• Tablet: okienko odczytu na dole lub ukryte, zaznaczanie jak w Outlooku
+• Powiadomienia konfigurowane w jednym kroku, także bez usług Google
+• Naprawiono: przesunięcie wiadomości mogło zatrzymać się w połowie
+</pl-PL>
+<pt-BR>
+• Detalhes da mensagem em uma linha de ícones abaixo do cabeçalho
+• Pesquisa no texto dos anexos
+• Arquivos DOC, XLS e PPT antigos, além de TXT e Markdown, no próprio app
+• Mensagens do Outlook (.msg) abrem como qualquer outra
+• Tradução: opção “Traduzir sempre de” um idioma, menos sugestões desnecessárias
+• Tablet: painel de leitura embaixo ou oculto, seleção como no Outlook
+• Notificações configuradas em uma etapa, também sem serviços do Google
+• Corrigido: deslizar uma mensagem podia travar no meio
+</pt-BR>
+<ro>
+• Detaliile mesajului într-un rând de pictograme sub antet
+• Căutare în textul atașamentelor
+• Fișiere vechi DOC, XLS, PPT, plus TXT și Markdown, direct în aplicație
+• Mesajele Outlook (.msg) se deschid ca oricare altele
+• Traducere: „Tradu întotdeauna din” o limbă, mai puține propuneri inutile
+• Tabletă: panoul de citire jos sau ascuns, selectare ca în Outlook
+• Notificări configurate într-un singur pas, și fără serviciile Google
+• Corectat: glisarea unui mesaj se putea bloca la jumătate
+</ro>
+<sk>
+• Informácie o správe ako rad ikon pod hlavičkou
+• Hľadanie v texte príloh
+• Staré súbory DOC, XLS, PPT, ako aj TXT a Markdown priamo v aplikácii
+• Správy Outlook (.msg) sa otvoria ako bežné správy
+• Preklad: „Vždy prekladať z jazyka…“, menej zbytočných ponúk
+• Tablet: tabla na čítanie dole alebo skrytá, výber ako v Outlooku
+• Upozornenia nastavíte v jednom kroku, aj bez služieb Google
+• Opravené: potiahnutie správy sa mohlo zaseknúť v polovici
+</sk>
+<th>
+• ข้อมูลของอีเมลแสดงเป็นไอคอนแถวเดียวใต้ส่วนหัว
+• ค้นหาในข้อความของไฟล์แนบ
+• เปิดไฟล์ DOC, XLS, PPT รุ่นเก่า รวมถึง TXT และ Markdown ในแอปได้ทันที
+• อีเมล Outlook (.msg) เปิดได้เหมือนอีเมลทั่วไป
+• การแปล: ตัวเลือก “แปลจากภาษานี้เสมอ” และเสนอแปลเฉพาะเมื่อจำเป็น
+• แท็บเล็ต: บานหน้าต่างการอ่านอยู่ด้านล่างหรือซ่อนได้ เลือกอีเมลแบบ Outlook
+• ตั้งค่าการแจ้งเตือนได้ในขั้นตอนเดียว แม้ไม่มีบริการ Google
+• แก้ไข: การปัดอีเมลอาจค้างอยู่กลางทาง
+</th>
+<tr-TR>
+• İleti bilgileri, başlığın altında tek sıra simge hâlinde
+• Ek metinlerinde arama
+• Eski DOC, XLS, PPT dosyaları ile TXT ve Markdown doğrudan uygulamada
+• Outlook iletileri (.msg) normal iletiler gibi açılır
+• Çeviri: “Bu dilden her zaman çevir” seçeneği, daha az gereksiz öneri
+• Tablet: okuma bölmesi altta veya gizli, Outlook’taki gibi seçim
+• Bildirimler tek adımda ayarlanır, Google hizmetleri olmadan da
+• Düzeltildi: iletiyi kaydırma yarı yolda takılabiliyordu
+</tr-TR>
+<fi-FI>
+• Viestin tiedot kuvakerivinä otsikkotietojen alla
+• Haku liitteiden tekstistä
+• Vanhat DOC-, XLS- ja PPT-tiedostot sekä TXT ja Markdown suoraan sovelluksessa
+• Outlook-viestit (.msg) avautuvat kuten muutkin viestit
+• Käännös: ”Käännä aina kielestä …”, vähemmän turhia käännösehdotuksia
+• Tabletti: lukuruutu alhaalla tai piilossa, valinta kuten Outlookissa
+• Ilmoitusten asetukset yhdessä vaiheessa, myös ilman Google-palveluita
+• Korjattu: viestin pyyhkäisy saattoi jäädä puolitiehen
+</fi-FI>
+<hi-IN>
+• ईमेल की जानकारी हेडर के नीचे आइकन की एक पंक्ति में
+• अटैचमेंट के टेक्स्ट में खोज
+• पुरानी DOC, XLS, PPT फ़ाइलें, साथ ही TXT और Markdown, सीधे ऐप में
+• Outlook ईमेल (.msg) सामान्य ईमेल की तरह खुलते हैं
+• अनुवाद: किसी भाषा से “हमेशा अनुवाद करें” विकल्प, बेवजह के सुझाव कम
+• टैबलेट: पठन फलक नीचे या छिपा हुआ, Outlook की तरह ईमेल का चयन
+• एक ही चरण में सूचनाओं का सेटअप, Google सेवाओं के बिना भी
+• ठीक किया गया: ईमेल पर स्वाइप बीच में अटक सकता था
+</hi-IN>
+<cs-CZ>
+• Informace o zprávě jako řada ikon pod záhlavím
+• Hledání v textu příloh
+• Staré soubory DOC, XLS, PPT a také TXT a Markdown přímo v aplikaci
+• Zprávy Outlook (.msg) se otevírají jako běžné zprávy
+• Překlad: „Vždy překládat z jazyka…“, méně zbytečných nabídek
+• Tablet: podokno čtení dole nebo skryté, výběr jako v Outlooku
+• Oznámení nastavíte v jednom kroku, i bez služeb Google
+• Opraveno: přejetí zprávy se mohlo zaseknout v polovině
+</cs-CZ>
+<sv-SE>
+• Information om meddelandet som en rad ikoner under meddelandehuvudet
+• Sökning i bilagornas text
+• Gamla DOC-, XLS- och PPT-filer samt TXT och Markdown direkt i appen
+• Outlook-meddelanden (.msg) öppnas som vanliga meddelanden
+• Översättning: ”Översätt alltid från” ett språk, färre onödiga förslag
+• Surfplatta: läsfönster nederst eller dolt, markering som i Outlook
+• Aviseringar ställs in i ett steg, även utan Google-tjänster
+• Åtgärdat: svep på ett meddelande kunde fastna halvvägs
+</sv-SE>
+<ja-JP>
+• メールの情報をヘッダーの下に小さなアイコンの列で表示
+• 添付ファイルのテキストも検索
+• 旧形式の DOC・XLS・PPT と TXT・Markdown をアプリ内で表示
+• Outlook のメール（.msg）を通常のメールと同様に表示
+• 翻訳：言語ごとに「常に翻訳する」を設定可能、不要な翻訳の提案を削減
+• タブレット：閲覧ウィンドウを下に表示または非表示、Outlook のようにメールを選択
+• 通知の設定がワンステップで完了、Google サービスなしでも可能
+• 修正：メールのスワイプが途中で止まることがある問題
+</ja-JP>
 ```

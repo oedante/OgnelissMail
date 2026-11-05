@@ -55,6 +55,7 @@ import '../../../services/documents/office_reader.dart';
 import '../../../core/logging/app_logger.dart';
 import '../../../widgets/ui/banner_button.dart';
 import '../../../widgets/common/text_scale_cap.dart';
+import '../../../widgets/common/pane_navigator.dart';
 import '../../../services/mail/pkpass_parser.dart';
 import '../../../services/mail/eml_reader.dart';
 import '../../../core/security/html_sanitizer.dart';
@@ -98,15 +99,24 @@ Future<void> openAttachment(
 }) async {
   if (await AttachmentPreviewScreen.opensInApp(item)) {
     if (!context.mounted) return;
-    await Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => AttachmentPreviewScreen(
-        items: [item],
-        emailSubject: emailSubject,
-        accountId: accountId,
-        emailFrom: emailFrom,
-        emailDate: emailDate,
-      ),
-    ));
+    final screen = AttachmentPreviewScreen(
+      items: [item],
+      emailSubject: emailSubject,
+      accountId: accountId,
+      emailFrom: emailFrom,
+      emailDate: emailDate,
+    );
+    // Письмо в панели рядом с лентой (1.12.x, просьба владельца 04.11.2026,
+    // как в Outlook): вложение — в той же панели, «Назад» возвращает к
+    // письму, лента и папки остаются на месте. Раньше туда же попадало
+    // неявно (ближний Navigator — панели); теперь явно и с тем же мягким
+    // появлением, что ответ и пересылка в панели. Иначе — отдельным
+    // экраном, как раньше.
+    if (PaneNavigator.isInside(context)) {
+      await PaneNavigator.push<void>(context, screen);
+      return;
+    }
+    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
     return;
   }
   if (!context.mounted) return;

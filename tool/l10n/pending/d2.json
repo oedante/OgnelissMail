@@ -1,0 +1,77 @@
+{
+  "readingPane": {
+    "ru": "Область чтения", "en": "Reading pane", "de": "Lesebereich", "fr": "Volet de lecture",
+    "es": "Panel de lectura", "it": "Riquadro di lettura", "pt": "Painel de leitura", "nl": "Leesvenster",
+    "pl": "Okienko odczytu", "cs": "Podokno čtení", "sk": "Tabla na čítanie", "da": "Læserude",
+    "sv": "Läsfönster", "nb": "Leserute", "fi": "Lukuruutu", "hu": "Olvasóablak", "ro": "Panou de citire",
+    "tr": "Okuma bölmesi", "ar": "جزء القراءة", "he": "חלונית קריאה", "hi": "पठन फलक",
+    "id": "Panel baca", "ja": "閲覧ウィンドウ", "ko": "읽기 창", "th": "บานหน้าต่างการอ่าน",
+    "vi": "Ngăn đọc", "zh": "阅读窗格"
+  },
+  "readingPaneRight": {
+    "ru": "Справа", "en": "Right", "de": "Rechts", "fr": "À droite", "es": "A la derecha",
+    "it": "A destra", "pt": "À direita", "nl": "Rechts", "pl": "Po prawej", "cs": "Vpravo",
+    "sk": "Vpravo", "da": "Til højre", "sv": "Till höger", "nb": "Til høyre", "fi": "Oikealla",
+    "hu": "Jobb oldalon", "ro": "În dreapta", "tr": "Sağda", "ar": "على اليمين", "he": "מימין",
+    "hi": "दाईं ओर", "id": "Di kanan", "ja": "右", "ko": "오른쪽", "th": "ด้านขวา", "vi": "Bên phải",
+    "zh": "右侧"
+  },
+  "readingPaneBottom": {
+    "ru": "Снизу", "en": "Bottom", "de": "Unten", "fr": "En bas", "es": "Abajo", "it": "In basso",
+    "pt": "Abaixo", "nl": "Onder", "pl": "Na dole", "cs": "Dole", "sk": "Dole", "da": "Nederst",
+    "sv": "Nederst", "nb": "Nederst", "fi": "Alhaalla", "hu": "Alul", "ro": "Jos", "tr": "Altta",
+    "ar": "في الأسفل", "he": "למטה", "hi": "नीचे", "id": "Di bawah", "ja": "下", "ko": "아래쪽",
+    "th": "ด้านล่าง", "vi": "Bên dưới", "zh": "底部"
+  },
+  "readingPaneHidden": {
+    "ru": "Скрыта", "en": "Hidden", "de": "Ausgeblendet", "fr": "Masqué", "es": "Oculto",
+    "it": "Nascosto", "pt": "Oculto", "nl": "Verborgen", "pl": "Ukryte", "cs": "Skryté", "sk": "Skrytá",
+    "da": "Skjult", "sv": "Dold", "nb": "Skjult", "fi": "Piilotettu", "hu": "Rejtett", "ro": "Ascuns",
+    "tr": "Gizli", "ar": "مخفي", "he": "מוסתרת", "hi": "छिपा हुआ", "id": "Disembunyikan", "ja": "非表示",
+    "ko": "숨김", "th": "ซ่อน", "vi": "Ẩn", "zh": "隐藏"
+  },
+  "readingPaneBottomHint": {
+    "ru": "Лента сверху, письмо под ней", "en": "Message list on top, message below",
+    "de": "Liste oben, Nachricht darunter", "fr": "Liste en haut, message en dessous",
+    "es": "Lista arriba, mensaje debajo", "it": "Elenco in alto, messaggio sotto",
+    "pt": "Lista em cima, mensagem embaixo", "nl": "Lijst boven, bericht eronder",
+    "pl": "Lista u góry, wiadomość pod nią", "cs": "Seznam nahoře, zpráva pod ním",
+    "sk": "Zoznam hore, správa pod ním", "da": "Listen øverst, beskeden nedenunder",
+    "sv": "Listan överst, meddelandet under", "nb": "Listen øverst, meldingen under",
+    "fi": "Luettelo ylhäällä, viesti sen alla", "hu": "Fent a lista, alatta az üzenet",
+    "ro": "Lista sus, mesajul dedesubt", "tr": "Liste üstte, ileti altında",
+    "ar": "القائمة في الأعلى والرسالة أسفلها", "he": "הרשימה למעלה, ההודעה מתחתיה",
+    "hi": "ऊपर सूची, नीचे संदेश", "id": "Daftar di atas, pesan di bawahnya", "ja": "上に一覧、下にメッセージ",
+    "ko": "위에 목록, 아래에 메시지", "th": "รายการอยู่ด้านบน ข้อความอยู่ด้านล่าง",
+    "vi": "Danh sách ở trên, thư ở dưới", "zh": "列表在上，邮件在下"
+  },
+  "readingPaneHiddenHint": {
+    "ru": "Лента во всю ширину, письмо открывается отдельным экраном",
+    "en": "Full-width list; messages open on their own screen",
+    "de": "Liste in voller Breite, Nachrichten öffnen sich in eigener Ansicht",
+    "fr": "Liste sur toute la largeur, le message s'ouvre dans son propre écran",
+    "es": "Lista a todo el ancho; el mensaje se abre en su propia pantalla",
+    "it": "Elenco a tutta larghezza, il messaggio si apre in una schermata a parte",
+    "pt": "Lista em largura total; a mensagem abre em uma tela própria",
+    "nl": "Lijst over de volle breedte, bericht opent in een eigen scherm",
+    "pl": "Lista na całą szerokość, wiadomość otwiera się na osobnym ekranie",
+    "cs": "Seznam přes celou šířku, zpráva se otevře na samostatné obrazovce",
+    "sk": "Zoznam na celú šírku, správa sa otvorí na samostatnej obrazovke",
+    "da": "Listen i fuld bredde, beskeden åbnes på sin egen skærm",
+    "sv": "Listan i full bredd, meddelandet öppnas i en egen vy",
+    "nb": "Listen i full bredde, meldingen åpnes på egen skjerm",
+    "fi": "Luettelo koko leveydellä, viesti avautuu omaan näkymäänsä",
+    "hu": "Teljes szélességű lista, az üzenet külön képernyőn nyílik meg",
+    "ro": "Listă pe toată lățimea, mesajul se deschide pe un ecran separat",
+    "tr": "Liste tam genişlikte, ileti ayrı ekranda açılır",
+    "ar": "القائمة بعرض كامل، وتُفتح الرسالة في شاشة مستقلة",
+    "he": "רשימה ברוחב מלא, ההודעה נפתחת במסך נפרד",
+    "hi": "पूरी चौड़ाई में सूची, संदेश अलग स्क्रीन पर खुलता है",
+    "id": "Daftar selebar layar, pesan dibuka di layar tersendiri",
+    "ja": "一覧を全幅で表示し、メッセージは別の画面で開きます",
+    "ko": "목록을 전체 너비로 표시하고 메시지는 별도 화면에서 엽니다",
+    "th": "รายการเต็มความกว้าง ข้อความเปิดในหน้าจอแยก",
+    "vi": "Danh sách toàn chiều rộng, thư mở trên màn hình riêng",
+    "zh": "列表全宽显示，邮件在单独的界面中打开"
+  }
+}

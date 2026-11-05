@@ -689,10 +689,15 @@ class NotificationService {
     required String body,
     required DateTime when,
     String? payload,
-  }) => _schedule(
+  }) {
+    // Политика организации «без содержимого» (MDM, 1.10.5) — и в
+    // напоминании «Посмотреть позже» (1.12.x, аудит экрана блокировки):
+    // там отправитель и тема письма.
+    final hide = ManagedPolicy.fromPrefs(_prefs).hideNotificationContent;
+    return _schedule(
         id: id,
-        title: title,
-        body: body,
+        title: hide ? _t('ntfChSnooze') : title,
+        body: hide ? _t('newMessage') : body,
         when: when,
         channelId: 'email_reminders',
         channelName: _t('ntfChSnooze'),
@@ -704,6 +709,7 @@ class NotificationService {
           AndroidNotificationAction('later_tomorrow', _t('laterTomorrow')),
         ],
       );
+  }
 
   /// Напоминание о встрече: срабатывает за `minutesBefore` до начала.
   /// Тихие часы намеренно НЕ применяются — встречу пропускать нельзя.

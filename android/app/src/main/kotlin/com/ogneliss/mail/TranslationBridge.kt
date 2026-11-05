@@ -17,6 +17,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodChannel
 import java.util.Locale
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * Перевод писем на устройстве (1.9.x, просьба владельца 31.10.2026) —
@@ -40,13 +41,18 @@ object TranslationBridge {
     /** Переводчики пар языков — несколько последних (создание дорогое). */
     private val translators = LinkedHashMap<String, Translator>()
 
+    /** ML Kit работает на этом телефоне (проверка — один раз за запуск). */
+    private var works: Boolean? = null
+
     fun register(messenger: BinaryMessenger) {
         MethodChannel(messenger, "ogneliss/translate").setMethodCallHandler { call, result ->
             worker.execute {
                 try {
                     val r = handle(call.method, call.arguments as? Map<*, *> ?: emptyMap<String, Any>())
                     main.post { if (r === NotImplemented) result.notImplemented() else result.success(r) }
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
+                    // И ошибки загрузки библиотеки ML Kit (UnsatisfiedLinkError —
+                    // не Exception): без ответа вызов Dart ждал бы вечно.
                     main.post { result.error("translate", e.message ?: e.toString(), null) }
                 }
             }
@@ -56,7 +62,7 @@ object TranslationBridge {
     private object NotImplemented
 
     private fun handle(method: String, a: Map<*, *>): Any? = when (method) {
-        "available" -> true
+        "available" -> available()
         "languages" -> TranslateLanguage.getAllLanguages()
         "detect" -> detect(a["text"] as? String ?: "")
         "names" -> {
@@ -103,14 +109,31 @@ object TranslationBridge {
     }
 
     /**
-     * Язык текста: код BCP-47 или null («und» — не определён; «ru-Latn» —
-     * русский латиницей, такой текст переводчику не назвать).
+     * Перевод работает (1.12.x): определитель языка отвечает. На телефоне,
+     * где ML Kit не запускается (нет библиотеки под процессор, урезанная
+     * прошивка), раньше «Перевести» было, а каждый перевод падал; теперь
+     * Dart скрывает предложение и пишет «Перевод недоступен». Ждём не
+     * дольше 10 секунд: зависший ML Kit не должен держать поток канала.
      */
-    private fun detect(text: String): String? {
+    private fun available(): Boolean = works ?: runCatching {
+        val id = identifier ?: LanguageIdentification.getClient().also { identifier = it }
+        Tasks.await(id.identifyLanguage("Hello, how are you today?"), 10, TimeUnit.SECONDS)
+        true
+    }.getOrDefault(false).also { works = it }
+
+    /**
+     * Язык текста: {lang: код BCP-47, confident: уверен ли ML Kit} или null
+     * («und» — не определён; «ru-Latn» — русский латиницей, такой текст
+     * переводчику не назвать). Уверен — язык выше порога 0,5
+     * (identifyLanguage); догадка с порогом 0,2 — confident: false: по ней
+     * перевод не предлагается (1.12.x, плашка называла чужие языки), но
+     * «Перевести» из меню письма ею пользуется.
+     */
+    private fun detect(text: String): Map<String, Any>? {
         if (text.isBlank()) return null
         val id = identifier ?: LanguageIdentification.getClient().also { identifier = it }
         val tag = Tasks.await(id.identifyLanguage(text))
-        if (tag != "und" && !tag.contains("-Latn")) return tag
+        if (tag != "und" && !tag.contains("-Latn")) return mapOf("lang" to tag, "confident" to true)
         // Не уверен — самый вероятный язык с порогом 0,2 (письмо с цитатой на
         // другом языке, адреса и подписи; журнал владельца 03.11.2026).
         val l = loose ?: LanguageIdentification.getClient(
@@ -119,7 +142,7 @@ object TranslationBridge {
         val best = Tasks.await(l.identifyPossibleLanguages(text))
             .filter { it.languageTag != "und" && !it.languageTag.contains("-Latn") }
             .maxByOrNull { it.confidence }
-        return best?.languageTag
+        return best?.let { mapOf("lang" to it.languageTag, "confident" to false) }
     }
 
     private fun translator(from: String, to: String): Translator {

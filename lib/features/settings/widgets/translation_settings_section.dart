@@ -81,7 +81,9 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
   /// «всегда переводить» — одно окно. Язык не бывает в обоих списках:
   /// отмеченный здесь уходит из другого (SettingsNotifier).
   Future<void> _pickLangs(AppLocalizations l10n,
-      {required String title, required List<String> selected, required Future<void> Function(List<String>) save}) async {
+      {required String title,
+      required List<String> selected,
+      required Future<void> Function(List<String>) save}) async {
     final picked = {...selected};
     await showAppSheet<void>(
       context: context,

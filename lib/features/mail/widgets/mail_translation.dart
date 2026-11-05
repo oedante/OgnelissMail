@@ -158,7 +158,12 @@ class MailTranslationController extends ChangeNotifier {
     final known = settings.translatePhoneLangs ? deviceLanguages() : const <String>[];
     final ok = await t.isAvailable();
     engineAvailable = ok;
-    if (!ok || _stale(e)) return;
+    if (!ok) {
+      // Меню письма может скрыть «Перевести» (1.12.x).
+      _notify();
+      return;
+    }
+    if (_stale(e)) return;
     final sample = await _sample(e);
     if (sample.length < 20 || _stale(e)) return;
     final guess = _guess = await _detectLang(t, sample);
@@ -345,7 +350,9 @@ class MailTranslationController extends ChangeNotifier {
     final letters = RegExp(r'\p{L}', unicode: true).allMatches(sample).length;
     int share(RegExp re) => letters == 0 ? 0 : (re.allMatches(sample).length * 100 / letters).round();
     final what = guess == null ? 'не определён' : 'не уверен (догадка $guess)';
-    AppLogger.warning('Перевод: язык письма $what — образец ${sample.length} знаков, '
+    // Догадка — обычное дело (короткий ответ, подпись): не предупреждение.
+    final log = guess == null ? AppLogger.warning : AppLogger.info;
+    log('Перевод: язык письма $what — образец ${sample.length} знаков, '
         'латиница ${share(RegExp('[A-Za-z]'))} %, кириллица ${share(RegExp('[А-Яа-яЁё]'))} %');
   }
 

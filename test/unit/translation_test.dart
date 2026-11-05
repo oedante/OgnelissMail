@@ -294,8 +294,8 @@ void main() {
       expect(PlatformTranslator.parseDetection(null, 'x'), isNull);
       expect(PlatformTranslator.parseDetection({'lang': 'und', 'confident': false}, 'x'), isNull);
       // Русский, принятый за украинский, — русский; уверенность та же.
-      expect(PlatformTranslator.parseDetection({'lang': 'uk', 'confident': false}, 'Добрый день, Андрей Сергеевич, Тестирую перевод письма.'),
-          (lang: 'ru', confident: false));
+      const ru = 'Добрый день, Андрей Сергеевич, Тестирую перевод письма.';
+      expect(PlatformTranslator.parseDetection({'lang': 'uk', 'confident': false}, ru), (lang: 'ru', confident: false));
     });
 
     test('порядок языков: собеседник, недавние, остальные по названию', () {

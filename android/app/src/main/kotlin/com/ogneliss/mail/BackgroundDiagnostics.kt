@@ -50,6 +50,16 @@ object BackgroundDiagnostics {
 
     private fun detectRom(): Pair<String, String> {
         val checks = listOf(
+            // Сборки без оболочки производителя (1.12.x, просьба владельца
+            // 05.11.2026): LineageOS и основанные на ней (/e/OS, DivestOS,
+            // crDroid), CalyxOS — на телефонах Xiaomi, Samsung, OnePlus и др.
+            // «Оптимизатора» производителя там нет, и подсказка про его
+            // автозапуск была бы ложной (Dart: PlatformDiagnostics.customRom).
+            // Проверяются первыми: свойства оболочки в таких сборках не
+            // ставятся, а свойства LineageOS в оболочках — тем более.
+            "LineageOS" to "ro.lineage.build.version",
+            "LineageOS" to "ro.cm.build.version",
+            "CalyxOS" to "ro.calyxos.version",
             "HyperOS" to "ro.mi.os.version.name",
             "MIUI" to "ro.miui.ui.version.name",
             "MagicOS" to "ro.build.version.magic",
@@ -144,6 +154,11 @@ object BackgroundDiagnostics {
         }
         out["foregroundService"] = SyncForegroundService.running
         out["networkBlocked"] = networkBlocked(ctx)
+        // Сервисы Google Play (1.12.x): без них сигналы — через UnifiedPush
+        // или только проверки по расписанию; версия — для журнала (у microG
+        // тот же пакет).
+        out["gms"] = PushWakeFcm.googleServices(ctx)
+        if (full) out["gmsVersion"] = PushWakeFcm.googleServicesVersion(ctx)
         return out
     }
 
@@ -283,6 +298,7 @@ object BackgroundDiagnostics {
             ComponentName("com.miui.powerkeeper", "com.miui.powerkeeper.ui.HiddenAppsConfigActivity"),
             // Huawei / Honor
             ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity"),
+            ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.appcontrol.activity.StartupAppControlActivity"),
             ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"),
             ComponentName("com.hihonor.systemmanager", "com.hihonor.systemmanager.startupmgr.ui.StartupNormalAppListActivity"),
             // OPPO / realme / OnePlus (ColorOS, OxygenOS 12+)
@@ -304,24 +320,31 @@ object BackgroundDiagnostics {
             // ASUS, Meizu
             ComponentName("com.asus.mobilemanager", "com.asus.mobilemanager.autostart.AutoStartActivity"),
             ComponentName("com.meizu.safe", "com.meizu.safe.permission.SmartBGActivity"),
+            // TECNO / Infinix / itel (HiOS, XOS — Transsion), 1.12.x
+            ComponentName("com.transsion.phonemaster", "com.cyin.himgr.autostart.AutoStartActivity"),
         )
         val maker = Build.MANUFACTURER.lowercase()
-        val ordered = candidates.sortedByDescending { c ->
-            val p = c.packageName
-            when {
-                maker.contains("xiaomi") || maker.contains("redmi") || maker.contains("poco") -> p.startsWith("com.miui")
-                maker.contains("huawei") -> p.startsWith("com.huawei")
-                maker.contains("honor") -> p.startsWith("com.hihonor") || p.startsWith("com.huawei")
-                maker.contains("oppo") || maker.contains("realme") || maker.contains("oneplus") ->
-                    p.startsWith("com.coloros") || p.startsWith("com.oplus") || p.startsWith("com.oppo") || p.startsWith("com.oneplus")
-                maker.contains("vivo") || maker.contains("iqoo") -> p.startsWith("com.vivo") || p.startsWith("com.iqoo")
-                maker.contains("samsung") -> p.startsWith("com.samsung")
-                maker.contains("zte") || maker.contains("nubia") -> p.startsWith("com.zte") || p.startsWith("cn.nubia")
-                maker.contains("asus") -> p.startsWith("com.asus")
-                maker.contains("meizu") -> p.startsWith("com.meizu")
-                else -> false
-            }
+        fun ours(p: String): Boolean? = when {
+            maker.contains("xiaomi") || maker.contains("redmi") || maker.contains("poco") -> p.startsWith("com.miui")
+            maker.contains("huawei") -> p.startsWith("com.huawei")
+            maker.contains("honor") -> p.startsWith("com.hihonor") || p.startsWith("com.huawei")
+            maker.contains("oppo") || maker.contains("realme") || maker.contains("oneplus") ->
+                p.startsWith("com.coloros") || p.startsWith("com.oplus") || p.startsWith("com.oppo") || p.startsWith("com.oneplus")
+            maker.contains("vivo") || maker.contains("iqoo") -> p.startsWith("com.vivo") || p.startsWith("com.iqoo")
+            maker.contains("samsung") -> p.startsWith("com.samsung")
+            maker.contains("zte") || maker.contains("nubia") -> p.startsWith("com.zte") || p.startsWith("cn.nubia")
+            maker.contains("asus") -> p.startsWith("com.asus")
+            maker.contains("meizu") -> p.startsWith("com.meizu")
+            maker.contains("tecno") || maker.contains("infinix") || maker.contains("itel") -> p.startsWith("com.transsion")
+            else -> null
         }
+        // Производитель известен — только его экраны (1.12.x): чужие пакеты
+        // на этом телефоне взяться неоткуда, а сборка без оболочки
+        // (LineageOS на Xiaomi и т. п.) сразу получает сведения о
+        // приложении. Неизвестный производитель — все по очереди, как раньше.
+        val known = ours("") != null
+        val ordered = if (known) candidates.filter { ours(it.packageName) == true }
+            else candidates
         for (c in ordered) {
             try {
                 val i = Intent().setComponent(c).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

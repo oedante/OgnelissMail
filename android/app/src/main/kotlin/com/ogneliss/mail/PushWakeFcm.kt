@@ -135,7 +135,8 @@ object PushWakeFcm {
     /** Версия сервисов Google Play (или microG) — для журнала; null — нет. */
     fun googleServicesVersion(context: Context): String? = try {
         @Suppress("DEPRECATION")
-        context.packageManager.getPackageInfo(GMS, 0).versionName
+        val info = context.packageManager.getPackageInfo(GMS, 0)
+        info.versionName
     } catch (e: Exception) {
         null
     }

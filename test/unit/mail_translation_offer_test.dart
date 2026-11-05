@@ -57,23 +57,28 @@ class _Fake implements Translator {
 }
 
 EmailModel _mail(String id, String html) => EmailModel(
-      id: id,
-      accountId: 'a1',
-      folderId: 'INBOX',
-      from: const EmailAddress(email: 'sender@example.org'),
-      to: const [EmailAddress(email: 'me@example.org')],
-      subject: 'Quarterly report',
-      receivedAt: DateTime(2026, 11, 4, 10),
-      bodyHtml: html,
-    );
+  id: id,
+  accountId: 'a1',
+  folderId: 'INBOX',
+  from: const EmailAddress(email: 'sender@example.org'),
+  to: const [EmailAddress(email: 'me@example.org')],
+  subject: 'Quarterly report',
+  receivedAt: DateTime(2026, 11, 4, 10),
+  bodyHtml: html,
+);
 
 final _en = _mail('en1', '<p>Please find attached the quarterly report and let me know what you think about it.</p>');
 final _de = _mail('de1', '<p>Anbei finden Sie den Quartalsbericht, bitte teilen Sie mir Ihre Meinung dazu mit.</p>');
 
 typedef _Ctx = ({MailTranslationController c, BuildContext ctx, ProviderContainer container});
 
-Future<_Ctx> _pump(WidgetTester t, Translator fake,
-    {String app = 'ru', List<Locale> phone = const [Locale('ru')], Map<String, Object> prefs = const {}}) async {
+Future<_Ctx> _pump(
+  WidgetTester t,
+  Translator fake, {
+  String app = 'ru',
+  List<Locale> phone = const [Locale('ru')],
+  Map<String, Object> prefs = const {},
+}) async {
   debugTranslationPlatformOverride = true;
   addTearDown(() => debugTranslationPlatformOverride = null);
   t.platformDispatcher.localesTestValue = phone;
@@ -82,31 +87,34 @@ Future<_Ctx> _pump(WidgetTester t, Translator fake,
   final sp = await SharedPreferences.getInstance();
   late MailTranslationController c;
   late BuildContext ctx;
-  final container = ProviderContainer(overrides: [
-    sharedPrefsProvider.overrideWithValue(sp),
-    translatorProvider.overrideWithValue(fake),
-  ]);
+  final container = ProviderContainer(
+    overrides: [sharedPrefsProvider.overrideWithValue(sp), translatorProvider.overrideWithValue(fake)],
+  );
   addTearDown(container.dispose);
-  await t.pumpWidget(UncontrolledProviderScope(
-    container: container,
-    child: MaterialApp(
-      locale: Locale(app),
-      supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      home: Scaffold(
-        body: Consumer(builder: (context, ref, _) {
-          c = MailTranslationController(ref);
-          ctx = context;
-          return const SizedBox();
-        }),
+  await t.pumpWidget(
+    UncontrolledProviderScope(
+      container: container,
+      child: MaterialApp(
+        locale: Locale(app),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: Scaffold(
+          body: Consumer(
+            builder: (context, ref, _) {
+              c = MailTranslationController(ref);
+              ctx = context;
+              return const SizedBox();
+            },
+          ),
+        ),
       ),
     ),
-  ));
+  );
   await t.pumpAndSettle();
   addTearDown(c.dispose);
   return (c: c, ctx: ctx, container: container);
@@ -163,25 +171,37 @@ void main() {
   });
 
   testWidgets('языки телефона: переключатель выключен — предлагать', (t) async {
-    final off = await _pump(t, _Fake((lang: 'en', confident: true)),
-        phone: const [Locale('ru'), Locale('en', 'US')], prefs: const {'s_translate_phone_langs': false});
+    final off = await _pump(
+      t,
+      _Fake((lang: 'en', confident: true)),
+      phone: const [Locale('ru'), Locale('en', 'US')],
+      prefs: const {'s_translate_phone_langs': false},
+    );
     await _detect(t, off.c, _en);
     expect(off.c.phase, MailTranslationPhase.offer);
   });
 
   testWidgets('«Не переводить с …» — без плашки', (t) async {
-    final s = await _pump(t, _Fake((lang: 'en', confident: true)), prefs: const {
-      's_translate_never': ['en'],
-    });
+    final s = await _pump(
+      t,
+      _Fake((lang: 'en', confident: true)),
+      prefs: const {
+        's_translate_never': ['en'],
+      },
+    );
     await _detect(t, s.c, _en);
     expect(s.c.phase, MailTranslationPhase.none);
   });
 
   testWidgets('«Всегда переводить с …» — перевод сразу, без предложения; «Оригинал» есть', (t) async {
     final fake = _Fake((lang: 'en', confident: true));
-    final s = await _pump(t, fake, prefs: const {
-      's_translate_always': ['en'],
-    });
+    final s = await _pump(
+      t,
+      fake,
+      prefs: const {
+        's_translate_always': ['en'],
+      },
+    );
     await _detect(t, s.c, _en);
     expect(s.c.phase, MailTranslationPhase.translated);
     expect(s.c.showing, isTrue);
@@ -195,9 +215,15 @@ void main() {
 
   testWidgets('«Всегда переводить» по догадке не переводит сам', (t) async {
     final fake = _Fake((lang: 'de', confident: false));
-    final s = await _pump(t, fake, app: 'en', phone: const [Locale('en')], prefs: const {
-      's_translate_always': ['de'],
-    });
+    final s = await _pump(
+      t,
+      fake,
+      app: 'en',
+      phone: const [Locale('en')],
+      prefs: const {
+        's_translate_always': ['de'],
+      },
+    );
     await _detect(t, s.c, _de);
     expect(s.c.phase, MailTranslationPhase.none);
     expect(fake.translateCalls, 0);
@@ -205,9 +231,13 @@ void main() {
 
   testWidgets('«Всегда переводить», языков на устройстве нет — плашка, без окна скачивания', (t) async {
     final fake = _Fake((lang: 'en', confident: true), missing: const ['en']);
-    final s = await _pump(t, fake, prefs: const {
-      's_translate_always': ['en'],
-    });
+    final s = await _pump(
+      t,
+      fake,
+      prefs: const {
+        's_translate_always': ['en'],
+      },
+    );
     // Своё письмо: переводы за запуск общие, переведённое раньше — из памяти.
     final mail = _mail('en2', _en.bodyHtml!);
     await _detect(t, s.c, mail);
@@ -217,9 +247,13 @@ void main() {
   });
 
   testWidgets('меню плашки: «Всегда переводить с …» переводит письмо и запоминает язык', (t) async {
-    final s = await _pump(t, _Fake((lang: 'en', confident: true)), prefs: const {
-      's_translate_never': ['de'],
-    });
+    final s = await _pump(
+      t,
+      _Fake((lang: 'en', confident: true)),
+      prefs: const {
+        's_translate_never': ['de'],
+      },
+    );
     await _detect(t, s.c, _en);
     expect(s.c.phase, MailTranslationPhase.offer);
     expect(s.c.alwaysFromCurrent, isFalse);
@@ -236,9 +270,13 @@ void main() {
   });
 
   testWidgets('меню плашки: «Не переводить с …» — из «Всегда», плашка закрыта, оригинал', (t) async {
-    final s = await _pump(t, _Fake((lang: 'en', confident: true)), prefs: const {
-      's_translate_always': ['en', 'de'],
-    });
+    final s = await _pump(
+      t,
+      _Fake((lang: 'en', confident: true)),
+      prefs: const {
+        's_translate_always': ['en', 'de'],
+      },
+    );
     await _detect(t, s.c, _en);
     expect(s.c.showing, isTrue);
     await t.runAsync(() => s.c.neverTranslateFrom('en'));

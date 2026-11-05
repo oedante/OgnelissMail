@@ -290,6 +290,44 @@ void main() {
     expect(find.textContaining('Перевести'), findsNothing);
   });
 
+  testWidgets('перевод: «Всегда переводить с …» ↔ «Не переводить автоматически», «Указать язык письма»', (t) async {
+    late MailTranslationController c;
+    await _pump(t, (_) => _TranslateHost(onController: (x) => c = x));
+    c
+      ..phase = MailTranslationPhase.offer
+      ..from = 'en'
+      ..fromName = 'английский'
+      ..showOriginal();
+    await t.pump();
+    await t.tap(find.byTooltip('Ещё'));
+    await t.pumpAndSettle();
+    expect(find.text('Указать язык письма'), findsOneWidget);
+    await t.tap(find.text('Всегда переводить с языка «английский»'));
+    await t.pumpAndSettle();
+    expect(c.alwaysFromCurrent, isTrue);
+
+    await t.tap(find.byTooltip('Ещё'));
+    await t.pumpAndSettle();
+    expect(find.text('Всегда переводить с языка «английский»'), findsNothing);
+    await t.tap(find.text('Не переводить автоматически'));
+    await t.pumpAndSettle();
+    expect(c.alwaysFromCurrent, isFalse);
+  });
+
+  testWidgets('перевод: движка на устройстве нет — чипа нет', (t) async {
+    late MailTranslationController c;
+    await _pump(t, (_) => _TranslateHost(onController: (x) => c = x));
+    c
+      ..phase = MailTranslationPhase.offer
+      ..from = 'en'
+      ..fromName = 'английский'
+      ..engineAvailable = false
+      ..showOriginal();
+    await t.pump();
+    expect(find.textContaining('Перевести'), findsNothing);
+    expect(find.byType(MailNoticeBar), findsOneWidget);
+  });
+
   testWidgets('доставка: «Не доставлено» цветом ошибки, раскрытие — прежняя плашка с действиями', (t) async {
     await _pump(
       t,

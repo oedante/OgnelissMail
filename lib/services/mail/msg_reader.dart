@@ -81,7 +81,7 @@ class MsgReader {
     try {
       final cfb = CfbFile.open(data);
       if (!isMsg(cfb)) throw const OfficeDocException(OfficeDocError.damaged, 'not a msg');
-      return _Msg(cfb, cfb.root, 32, lang, 0).read();
+      return _Msg(cfb, cfb.root, 32, lang, 0, _Budget()).read();
     } on OfficeDocException {
       rethrow;
     } catch (e) {
@@ -403,9 +403,21 @@ class MsgReader {
   }
 }
 
+/// Байты вложений, которые письмо отдаёт наружу (с вложенными письмами,
+/// перекодированными в .eml, — на каждом уровне заново): без предела
+/// вложенность умножала бы один и тот же файл.
+class _Budget {
+  int left = 64 * 1024 * 1024;
+  bool take(int n) {
+    if (n > left) return false;
+    left -= n;
+    return true;
+  }
+}
+
 /// Одно письмо: корень файла или вложенное (хранилище вложения).
 class _Msg {
-  _Msg(this.cfb, this.storage, this.headerSize, this.lang, this.depth) {
+  _Msg(this.cfb, this.storage, this.headerSize, this.lang, this.depth, this.budget) {
     _props = _readProps(storage, headerSize);
   }
 
@@ -414,6 +426,7 @@ class _Msg {
   final int headerSize;
   final String lang;
   final int depth;
+  final _Budget budget;
   late final Map<int, int> _props;
 
   // Номера свойств ([MS-OXPROPS]).
@@ -672,18 +685,19 @@ class _Msg {
       if (method == 5 || (obj != null && obj.isStorage && obj.child('__properties_version1.0') != null)) {
         if (obj == null || !obj.isStorage || depth + 1 > MsgReader.maxDepth) continue;
         try {
-          final inner = _Msg(cfb, obj, 24, lang, depth + 1).read();
+          final inner = _Msg(cfb, obj, 24, lang, depth + 1, budget).read();
           final title = inner.subject.trim().isEmpty ? fileName : inner.subject.trim();
-          attachments.add(
-            EmlPart(name: '${_safeName(title)}.eml', contentType: 'message/rfc822', bytes: MsgReader.toEml(inner)),
-          );
+          final eml = MsgReader.toEml(inner);
+          if (budget.take(eml.length)) {
+            attachments.add(EmlPart(name: '${_safeName(title)}.eml', contentType: 'message/rfc822', bytes: eml));
+          }
         } on OfficeDocException catch (e) {
           if (e.kind == OfficeDocError.tooLarge) rethrow;
         }
         continue;
       }
       final data = _stream(a, _attachData, 0x0102);
-      if (data == null) continue;
+      if (data == null || !budget.take(data.length)) continue;
       final type = mime.isNotEmpty ? mime : _mimeOf(fileName);
       if (cid != null && type.startsWith('image/') && data.length <= MsgReader._maxInlineBytes) {
         inline[cid] = 'data:$type;base64,${base64Encode(data)}';

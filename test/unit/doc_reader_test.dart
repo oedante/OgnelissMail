@@ -20,7 +20,7 @@ Matcher _error(OfficeDocError kind) => throwsA(isA<OfficeDocException>().having(
 /// Документ Word 97 из кусков текста: (текст, «сжатый»). FIB — с нужными
 /// полями, таблица кусков — в «1Table»; ни стилей, ни FKP (всё по умолчанию).
 Uint8List _doc(List<(String, bool)> pieces, {int ident = 0xA5EC, int flags = 0x0200, List<int>? clx}) {
-  final wd = ByteData(0x2000);
+  final wd = ByteData(0x800 + pieces.fold<int>(0, (a, p) => a + p.$1.length * 2 + 0x200));
   wd.setUint16(0, ident, Endian.little);
   wd.setUint16(2, 0x00C1, Endian.little);
   wd.setUint16(0x0A, flags, Endian.little);
@@ -126,6 +126,14 @@ void main() {
             ))
             .build();
     expect(() => DocReader.read(CfbFile.open(noTable)), _error(OfficeDocError.damaged));
+  });
+
+  test('абзац без конца и тысячи вложенных полей — в пределах текста', () {
+    final long = DocReader.read(CfbFile.open(_doc([('${'Длинный текст ' * 20000}\r', false)])));
+    expect(long.truncated, isTrue);
+    expect(long.html.length, lessThan(300000));
+    final fields = DocReader.read(CfbFile.open(_doc([('${'\x13' * 3000}код\x14итог${'\x15' * 3000}\r', false)])));
+    expect(fields.html, isNot(contains('код')));
   });
 
   test('куски за пределами потока и огромные CP — без падения и без зависания', () {

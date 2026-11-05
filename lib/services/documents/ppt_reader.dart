@@ -191,6 +191,11 @@ class _Ppt {
   bool _truncated = false;
   double width = 720, height = 540;
 
+  /// Знаков текста на всю презентацию: один и тот же текст списка слайдов
+  /// могут показывать сотни фигур (OutlineTextRefAtom) — без предела это
+  /// гигабайты строк из файла в мегабайт.
+  int _textLeft = 2000000;
+
   int u16(int at) => bd.getUint16(at, Endian.little);
   int i16(int at) => bd.getInt16(at, Endian.little);
   int u32(int at) => bd.getUint32(at, Endian.little);
@@ -847,7 +852,8 @@ class _Ppt {
       }
     }
     final rot = (o.values[0x0004] ?? 0).toSigned(32) / 65536;
-    final body = text == null || text.text.isEmpty ? null : _body(text, o, m, placeholder);
+    if (text != null && text.text.isNotEmpty && _textLeft <= 0) _truncated = true;
+    final body = text == null || text.text.isEmpty || _textLeft <= 0 ? null : _body(text, o, m, placeholder);
     final geom = _geoms[type];
     // Линия не заливается; свой контур (так пишет и LibreOffice) — по вершинам.
     if (geom == DocGeom.line) fill = null;
@@ -997,7 +1003,12 @@ class _Ppt {
 
   DocTextBody _body(_Text t, _Opt o, _Master m, bool placeholder) {
     final paragraphs = <DocParagraph>[];
-    final text = t.text;
+    var text = t.text;
+    if (text.length > _textLeft) {
+      text = text.substring(0, math.max(0, _textLeft));
+      _truncated = true;
+    }
+    _textLeft -= text.length;
     final title = t.type == 0 || t.type == 6;
     var start = 0;
     var pIndex = 0, pLeft = t.pf.isEmpty ? 0 : t.pf.first.count;

@@ -905,7 +905,12 @@ class _Doc {
     final out = <DocBlock>[];
     final tables = <_TableB>[];
     var raws = <_Raw>[];
+    // Знаков в собираемом абзаце: абзац без конца (32 МБ текста подряд) не
+    // должен целиком лечь в память раньше, чем его обрежет предел текста.
+    var rawChars = 0;
     final fields = <_Field>[];
+    // Поля глубже предела — только счётчиком (их коды и так не видны).
+    var deepFields = 0;
     final quick = <int, _Chp>{};
 
     List<DocBlock> target() => tables.isEmpty ? out : tables.last.cell;
@@ -943,10 +948,12 @@ class _Doc {
         t.cells = [];
         t.cell = [];
         raws = [];
+        rawChars = 0;
         return;
       }
       if (budget.block()) _paragraph(raws, istd, pap, markRun, target());
       raws = [];
+      rawChars = 0;
       final cellEnd = depth > 0 && (depth == 1 ? cellMark : pap.innerCell);
       if (cellEnd) {
         final t = tables.last;
@@ -985,8 +992,17 @@ class _Doc {
         final text = StringBuffer();
         void flush() {
           if (text.isNotEmpty) {
+            rawChars += text.length;
             raws.add(_RawText(text.toString(), runIdx, href()));
             text.clear();
+            if (rawChars > budget.max - budget.used) {
+              // Больше, чем ещё можно показать: абзац — сейчас (его обрежет
+              // предел текста), дальше не читаем.
+              if (budget.block()) _paragraph(raws, 0, _papOfStyle(0), -1, target());
+              raws = [];
+              rawChars = 0;
+              budget.truncated = true;
+            }
           }
         }
 
@@ -997,10 +1013,15 @@ class _Doc {
           switch (c) {
             case 0x13:
               flush();
-              fields.add(_Field());
+              if (fields.length >= OfficeLimits.maxDepth) {
+                deepFields++;
+              } else {
+                fields.add(_Field());
+              }
               continue;
             case 0x14:
               flush();
+              if (deepFields > 0) continue;
               if (fields.isNotEmpty) {
                 final fl = fields.last;
                 fl.code = false;
@@ -1009,7 +1030,11 @@ class _Doc {
               continue;
             case 0x15:
               flush();
-              if (fields.isNotEmpty) fields.removeLast();
+              if (deepFields > 0) {
+                deepFields--;
+              } else if (fields.isNotEmpty) {
+                fields.removeLast();
+              }
               continue;
           }
           if (fields.any((fl) => fl.code)) {

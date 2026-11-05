@@ -31,10 +31,12 @@ class _DocPreviewSettingsSectionState extends ConsumerState<DocPreviewSettingsSe
   /// Форматы вида — под названием переключателя (названия форматов не
   /// переводятся).
   static String _formats(DocPreviewType t) => switch (t) {
-        DocPreviewType.text => _ios ? 'ODT, TXT, Markdown' : 'DOCX, ODT, RTF, TXT, Markdown',
-        DocPreviewType.sheets => _ios ? 'ODS' : 'XLSX, ODS',
+        // Старые DOC, XLS, PPT (1.14.0) — в своих видах; на iPhone и iPad
+        // их, как и новые форматы Office, показывает «Просмотр» iOS.
+        DocPreviewType.text => _ios ? 'ODT, TXT, Markdown' : 'DOCX, DOC, ODT, RTF, TXT, Markdown',
+        DocPreviewType.sheets => _ios ? 'ODS' : 'XLSX, XLS, ODS',
         DocPreviewType.csv => 'CSV, TSV',
-        DocPreviewType.slides => _ios ? 'ODP' : 'PPTX, ODP',
+        DocPreviewType.slides => _ios ? 'ODP' : 'PPTX, PPT, ODP',
       };
 
   @override

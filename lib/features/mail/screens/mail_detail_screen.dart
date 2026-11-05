@@ -19,7 +19,7 @@ import '../widgets/mail_peek_card.dart' show showMailPeek;
 import '../widgets/unsubscribe_banner.dart';
 import '../widgets/booking_card.dart';
 import '../widgets/control_sheet.dart';
-import '../../../services/mail/unsubscribe_service.dart' show encodeListUnsubscribe;
+import '../../../services/mail/unsubscribe_service.dart' show encodeListUnsubscribe, ListUnsubscribe;
 import '../../../services/mail/reply_drafts.dart' show conversationReplyDrafts, replyDraftsProvider;
 import '../../../services/security/managed_config.dart' show ManagedPolicy, ManagedRule;
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditorForEmail;
@@ -95,6 +95,8 @@ import '../../../widgets/common/readable_width.dart';
 import '../providers/conversation_mute.dart';
 import '../widgets/read_receipt_banner.dart';
 import '../widgets/delivery_status_banner.dart';
+import '../widgets/mail_notice_bar.dart';
+import '../../../services/security/sender_safety_service.dart' show senderSafetyServiceProvider, SafetyLevel;
 import '../../../data/database/app_database.dart';
 import '../../../data/providers/database_provider.dart';
 import '../../archive/archive_sheets.dart' show ensureArchiveReady;
@@ -121,7 +123,6 @@ import '../../../widgets/common/app_sheet.dart';
 import '../../compose/providers/templates_provider.dart' show templatesProvider;
 import '../../compose/screens/compose_screen.dart' show ComposeScreen;
 import '../../../widgets/common/text_scale_cap.dart';
-import '../../../widgets/ui/app_menu_button.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../core/theme/ogneliss_look.dart';
 import '../../../core/theme/appearance.dart' show AppearanceLook;
@@ -1685,7 +1686,26 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         if (settled) _translation.detect(email);
         final shown = _translation.apply(email);
         final bodyChildren = <Widget>[
-            // ── Антифишинг: баннер безопасности отправителя (сверху письма) ──
+            // ── Строка сведений (1.12.x, просьба владельца 04.11.2026) ──
+            // Перевод, «Отписаться», скрытые изображения, уведомление о
+            // прочтении, «На контроле», «Позже», доставка, S/MIME, важность,
+            // «Спам»/«Корзина», теги и категории — одной строкой чипов под
+            // шапкой, а не стопкой плашек во всю ширину («съедают место»).
+            // Нажатие на чип раскрывает прежнюю плашку с её кнопками. Свой
+            // Consumer: отчёты о доставке перестраивают только строку.
+            Consumer(
+              key: ValueKey('notices|${email.accountId}|${email.id}'),
+              builder: (_, r, __) => MailNoticeBar(
+                notices: _notices(r, email, settled: settled, mailControl: settings.mailControl),
+                // Планшет и компьютер — перенос строк, телефон — прокрутка вбок.
+                wrap: wide || widget.embedded,
+                note: settled ? MailTranslateNotice.note(context, _translation) : null,
+              ),
+            ),
+
+            // ── Антифишинг: баннер безопасности отправителя ──
+            // Карточкой, как раньше: предупреждение о подделке должно быть на
+            // виду, а не в чипе (1.12.x).
             if (settled)
               Builder(builder: (_) {
                 final matches = ref.read(accountsProvider).where((a) => a.id == email.accountId);
@@ -1693,7 +1713,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 return SenderSafetyBanner(account: matches.first, email: email);
               }),
 
-            // ── Приглашение на встречу ──
+            // ── Приглашение на встречу ── (карточка с кнопками ответа)
             if (settled)
               Builder(builder: (_) {
                 final matches = ref.read(accountsProvider).where((a) => a.id == email.accountId);
@@ -1709,163 +1729,6 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                     ? const SizedBox.shrink()
                     : BookingCards(account: acc, email: email, rawHtml: _rawBodyHtml);
               }),
-
-            // ── Спам / Корзина: «Не спам», «Восстановить» ──
-            if (settled) _restoreBanner(email, theme, l10n),
-
-            // ── S/MIME: зашифрованное письмо — тело в smime.p7m ──
-            if (settled && _smimeP7m(email) != null) _smimeEncryptedBanner(email, theme, l10n),
-            // ── S/MIME: обычное подписанное письмо (подпись — smime.p7s) ──
-            if (settled && _smimeP7m(email) == null && _smimeP7s(email) != null)
-              _smimeSignatureBanner(email, theme, l10n),
-
-            // ── «На контроле» ──
-            if (email.controlState != 0 && ref.watch(settingsProvider).mailControl)
-              _controlBanner(email, theme, l10n),
-
-            // ── «Позже»: отложено до … (письмо открыто из списка «Позже») ──
-            if (email.laterState == LaterState.waiting) _laterBanner(email, theme, l10n),
-
-            // ── Рассылка: «Отписаться» (по заголовку List-Unsubscribe) ──
-            if (email.listUnsubscribe != null)
-              Builder(builder: (context) {
-                final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
-                return acc == null ? const SizedBox.shrink() : UnsubscribeBanner(account: acc, email: email);
-              }),
-
-            // ── Баннер высокой важности ──
-            if (email.isHighPriority)
-              Container(
-                margin: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
-                padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.errorRed.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(AppIcons.priority_high, size: 16, color: AppColors.errorRed),
-                    const SizedBox(width: 6),
-                    Text(l10n.tr('highImportanceLabel'),
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(color: AppColors.errorText(context))),
-                  ],
-                ),
-              ),
-
-            // ── Теги и категории Outlook ──
-            // Одна строка чипов и только когда есть что показать: пустые
-            // строки «Без тегов» / «Без категорий» занимали треть экрана
-            // (замечание 05.10). Добавить — «Ещё» в нижней панели; нажатие на
-            // чип открывает тот же выбор.
-            Builder(builder: (_) {
-              final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
-              final showCats = account != null && account.isMsExchange && email.categories.isNotEmpty;
-              if (email.tags.isEmpty && !showCats) return const SizedBox.shrink();
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
-                child: Wrap(
-                  spacing: Space.xs,
-                  runSpacing: Space.xs,
-                  children: [
-                    for (final tag in email.tags)
-                      ActionChip(
-                        label: Text(tag, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: AppTheme.getTagColor(tag))),
-                        backgroundColor: AppTheme.getTagColor(tag).withValues(alpha: 0.1),
-                        side: BorderSide.none,
-                        visualDensity: VisualDensity.compact,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        tooltip: l10n.tr('editTags'),
-                        onPressed: () => _editTags(context, email, l10n),
-                      ),
-                    if (showCats)
-                      for (final c in email.categories)
-                        ActionChip(
-                          avatar: Icon(AppIcons.label, size: 14, color: AppColors.accentOrangeText(context)),
-                          label: Text(c, style: Theme.of(context).textTheme.labelMedium),
-                          side: BorderSide.none,
-                          visualDensity: VisualDensity.compact,
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          tooltip: l10n.tr('outlookCategories'),
-                          onPressed: () => _editCategories(context, account, email, l10n),
-                        ),
-                  ],
-                ),
-              );
-            }),
-            if (email.readReceiptRequested && !_readReceiptHandled)
-              ReadReceiptBanner(
-                senderName: email.from.label,
-                onSend: () {
-                  _sendReadReceipt(email);
-                  setState(() => _readReceiptHandled = true);
-                },
-                onDismiss: () => setState(() => _readReceiptHandled = true),
-              ),
-            // Доставка своего письма по отчётам сервера; на письме-отчёте —
-            // чип «Отчёт о доставке» (1.9.x, 31.10.2026).
-            DeliveryStatusBanner(email: email),
-
-
-            // ── Внешние изображения скрыты ──
-            // Одна строка: что скрыто, «Показать» и меню с остальным
-            // («Всегда от этого домена», «Что заблокировано» — там же
-            // подробности). Раньше плашка в три строки с тремя кнопками
-            // занимала пол-экрана (замечание 09.10.2026).
-            if (!_isLoadingBody && !_imagesAllowed && (_externalImagesBlocked > 0 || _blockedItems.isNotEmpty))
-              Padding(
-                padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
-                child: Material(
-                  color: theme.colorScheme.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(8),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minHeight: 40),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: Space.m),
-                      child: Row(
-                        children: [
-                          Icon(AppIcons.image_not_supported, size: 18,
-                              color: theme.colorScheme.onSurfaceVariant),
-                          const SizedBox(width: Space.s),
-                          Expanded(
-                            child: Text(
-                              _externalImagesBlocked > 0
-                                  ? l10n.tr('imagesBlockedShort')
-                                  : l10n.tr('trackersBlockedN').replaceAll(
-                                      '{n}', '${_blockedItems.where((i) => i.reason != BlockReason.external).length}'),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                            ),
-                          ),
-                          if (_externalImagesBlocked > 0)
-                            TextButton(
-                              style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
-                              onPressed: _allowImages,
-                              child: Text(l10n.tr('showImages')),
-                            ),
-                          AppMenuButton<String>(
-                            tooltip: l10n.tr('more'),
-                            icon: Icon(AppIcons.more_vert, size: 20, color: theme.colorScheme.onSurfaceVariant),
-                            onSelected: (v) {
-                              if (v == 'always') _allowImages(always: true);
-                              if (v == 'what') _showBlocked(l10n);
-                            },
-                            itemBuilder: (_) => [
-                              if (_externalImagesBlocked > 0)
-                                AppMenuEntry(value: 'always', icon: AppIcons.image, label: l10n.tr('alwaysFromSender')),
-                              AppMenuEntry(value: 'what', icon: AppIcons.info, label: l10n.tr('whatWasBlocked')),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-            // ── Перевод: «Язык письма: … · Перевести» / «Показать оригинал» ──
-            if (settled) MailTranslateStrip(controller: _translation, email: email),
 
             // Плашки выше — каждая с отступом Space.s сверху и без нижнего;
             // здесь один общий отступ до вложений и текста: плашка «На
@@ -1956,6 +1819,214 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     ),
       ),
     );
+  }
+
+  // ════════════════════════ СТРОКА СВЕДЕНИЙ ════════════════════════
+
+  /// Чипы строки сведений (1.12.x, просьба владельца 04.11.2026: плашки
+  /// «съедают место»). Порядок: что можно сделать (перевод, отписка,
+  /// изображения, уведомление о прочтении), состояние (контроль, «Позже»,
+  /// доставка, S/MIME, важность, «Спам»), теги и категории. Условия показа —
+  /// те же, что у прежних плашек; раскрытый чип — та же плашка с кнопками.
+  /// [r] — ref строки (Consumer): отчёты о доставке перестраивают только её.
+  List<MailNotice> _notices(WidgetRef r, EmailModel email, {required bool settled, required bool mailControl}) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+
+    // Рассылка: «Отписаться» (по заголовку List-Unsubscribe) — после
+    // проверки отправителя: при подозрении на подделку чипа нет.
+    final unsub = settled && acc != null ? ListUnsubscribe.parse(email.listUnsubscribe) : null;
+    final unsubOk = unsub != null && acc != null && _unsubscribeAllowed(acc, email);
+
+    // Внешние изображения скрыты: «Показать изображения» — сразу; «Всегда от
+    // этого домена» и «Что заблокировано» — в меню чипа.
+    final imagesHidden =
+        !_isLoadingBody && !_imagesAllowed && (_externalImagesBlocked > 0 || _blockedItems.isNotEmpty);
+    final trackers = _blockedItems.where((i) => i.reason != BlockReason.external).length;
+
+    final p7m = settled ? _smimeP7m(email) : null;
+    final sig = settled && p7m == null && _smimeP7s(email) != null ? _sigView(email, l10n) : null;
+    final folder = settled ? _folderTypeNow(email) : null;
+    final junk = folder == FolderType.junk;
+    final showCats = acc != null && acc.isMsExchange && email.categories.isNotEmpty;
+    final laterAt = email.remindAt?.toLocal();
+    final control = email.controlState != 0 && mailControl ? _controlParts(email, l10n) : null;
+
+    return [
+      // ── Перевод: «Перевести · английский» ↔ «Оригинал» ──
+      if (settled) ?MailTranslateNotice.of(context, _translation, email),
+
+      if (unsubOk)
+        MailNotice(
+          id: 'unsubscribe',
+          icon: AppIcons.unsubscribe,
+          label: l10n.tr(isUnsubscribed(ref, email.from.email) ? 'noticeUnsubscribed' : 'unsubscribe'),
+          detail: l10n.tr('mailingList').replaceAll('{name}', unsub.listName ?? email.from.label),
+          expanded: (_) => UnsubscribeBanner(account: acc, email: email, onDone: () => safeSetState(() {})),
+        ),
+
+      if (imagesHidden && _externalImagesBlocked > 0)
+        MailNotice(
+          id: 'images',
+          icon: AppIcons.image_not_supported,
+          label: l10n.tr('noticeShowImages'),
+          detail: l10n.tr('imagesBlocked'),
+          onTap: _allowImages,
+          menu: [
+            AppMenuEntry(value: 'always', icon: AppIcons.image, label: l10n.tr('alwaysFromSender')),
+            AppMenuEntry(value: 'what', icon: AppIcons.info, label: l10n.tr('whatWasBlocked')),
+          ],
+          onMenu: (v) {
+            if (v == 'always') _allowImages(always: true);
+            if (v == 'what') _showBlocked(l10n);
+          },
+        )
+      else if (imagesHidden)
+        // Только трекеры (картинок показать нечего) — нажатие: что заблокировано.
+        MailNotice(
+          id: 'images',
+          icon: AppIcons.visibility_off,
+          label: l10n.tr('trackersBlockedN').replaceAll('{n}', '$trackers'),
+          detail: '${l10n.tr('trackersBlockedN').replaceAll('{n}', '$trackers')}. ${l10n.tr('whatWasBlocked')}',
+          onTap: () => _showBlocked(l10n),
+        ),
+
+      if (email.readReceiptRequested && !_readReceiptHandled)
+        MailNotice(
+          id: 'readReceipt',
+          icon: AppIcons.mark_email_read,
+          label: l10n.tr('noticeReadReceipt'),
+          detail: l10n.tr('readReceiptRequested').replaceAll('{name}', email.from.label),
+          expanded: (_) => ReadReceiptBanner(
+            senderName: email.from.label,
+            onSend: () {
+              _sendReadReceipt(email);
+              setState(() => _readReceiptHandled = true);
+            },
+            onDismiss: () => setState(() => _readReceiptHandled = true),
+          ),
+        ),
+
+      // ── «На контроле»: «Нужно ответить · срок завтра» ──
+      if (control != null)
+        MailNotice(
+          id: 'control',
+          icon: AppIcons.task_alt,
+          iconColor: email.controlState == ControlState.done
+              ? AppColors.successText(context)
+              : theme.colorScheme.primary,
+          iconFilled: email.controlState == ControlState.done,
+          label: [
+            control.first,
+            if (email.controlState != ControlState.done && email.followUpAt != null) control.last,
+          ].join(' · '),
+          detail: control.join(' · '),
+          expanded: (_) => _controlBanner(email, theme, l10n),
+        ),
+
+      // ── «Позже: завтра, 09:00» (письмо открыто из списка «Позже») ──
+      if (email.laterState == LaterState.waiting)
+        MailNotice(
+          id: 'later',
+          icon: AppIcons.watch_later,
+          iconColor: _laterColor,
+          iconFilled: true,
+          label: laterAt == null
+              ? l10n.tr('later')
+              : l10n.tr('noticeLaterUntil').replaceAll('{when}', laterWhenLabel(laterAt, l10n)),
+          detail: _laterText(email, l10n),
+          expanded: (_) => _laterBanner(email, theme, l10n),
+        ),
+
+      // ── Доставка своего письма; на письме-отчёте — «Отчёт о доставке» ──
+      ?DeliveryStatusBanner.noticeOf(context, r, email),
+
+      // ── S/MIME: зашифрованное письмо (тело в smime.p7m) или подпись ──
+      if (p7m != null)
+        MailNotice(
+          id: 'smime',
+          icon: AppIcons.lock,
+          iconColor: theme.colorScheme.primary,
+          label: l10n.tr('noticeEncrypted'),
+          detail: l10n.tr('smimeEncryptedMail'),
+          busy: _attachmentStates[p7m.id]?.isDownloading ?? false,
+          expanded: (_) => _smimeEncryptedBanner(email, theme, l10n),
+        )
+      else if (sig != null)
+        MailNotice(
+          id: 'smime',
+          icon: sig.icon,
+          iconColor: sig.tone == MailNoticeTone.warning ? null : sig.color,
+          label: sig.chip,
+          detail: '${sig.title}. ${sig.sub}',
+          tone: sig.tone,
+          busy: sig.busy,
+          expanded: (_) => _smimeSignatureBanner(email, theme, l10n),
+        ),
+
+      // ── Высокая важность: нажатие — выбор важности (как в меню письма) ──
+      if (email.isHighPriority)
+        MailNotice(
+          id: 'importance',
+          icon: AppIcons.priority_high,
+          iconColor: AppColors.errorText(context),
+          label: l10n.tr('highImportanceLabel'),
+          detail: '${l10n.tr('highImportanceLabel')} · ${l10n.tr('importance')}',
+          onTap: () => unawaited(_pickImportance(email, l10n)),
+        ),
+
+      // ── Спам / Корзина: «Не спам», «Восстановить» — в раскрытой плашке ──
+      if (folder == FolderType.junk || folder == FolderType.trash)
+        MailNotice(
+          id: 'folder',
+          icon: junk ? AppIcons.report : AppIcons.delete,
+          label: l10n.tr(junk ? 'spam' : 'trash'),
+          detail: l10n.tr(junk ? 'inJunkFolder' : 'inTrashFolder'),
+          expanded: (_) => _restoreBanner(email, junk, theme, l10n),
+        ),
+
+      // ── Теги и категории Outlook ── (раньше — своей строкой чипов, 05.10):
+      // нажатие открывает тот же выбор, добавить — «Ещё» в нижней панели.
+      for (final tag in email.tags)
+        MailNotice(
+          id: 'tag:$tag',
+          label: tag,
+          color: AppTheme.getTagColor(tag),
+          detail: '$tag · ${l10n.tr('editTags')}',
+          onTap: () => _editTags(context, email, l10n),
+        ),
+      if (showCats)
+        for (final c in email.categories)
+          MailNotice(
+            id: 'cat:$c',
+            icon: AppIcons.label,
+            iconColor: AppColors.accentOrangeText(context),
+            label: c,
+            detail: '$c · ${l10n.tr('outlookCategories')}',
+            onTap: () => _editCategories(context, acc, email, l10n),
+          ),
+    ];
+  }
+
+  /// Проверка отправителя для «Отписаться» — один раз на письмо (результат
+  /// проверки сервис помнит): при подозрении на подделку не было плашки, нет
+  /// и чипа. Не удалась проверка — чип есть, как была плашка.
+  String? _unsubCheckFor;
+  bool _unsubSafe = false;
+
+  bool _unsubscribeAllowed(AccountModel acc, EmailModel email) {
+    final key = '${acc.id}|${email.id}';
+    if (_unsubCheckFor != key) {
+      _unsubCheckFor = key;
+      _unsubSafe = false;
+      ref.read(senderSafetyServiceProvider).analyze(acc, email).then((report) {
+        if (_unsubCheckFor == key) safeSetState(() => _unsubSafe = report.level != SafetyLevel.danger);
+      }, onError: (Object e) {
+        if (_unsubCheckFor == key) safeSetState(() => _unsubSafe = true);
+      });
+    }
+    return _unsubSafe;
   }
 
   // ════════════════════════ ВЛОЖЕНИЯ ════════════════════════
@@ -2865,9 +2936,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     safeSetState(() => _email = (_email ?? email).copyWith(controlState: next));
   }
 
-  Widget _controlBanner(EmailModel email, ThemeData theme, AppLocalizations l10n) {
+  /// Текст «На контроле»: состояние, кто ответил, кого ждём, срок. Первая
+  /// часть и срок — надпись чипа строки сведений (1.12.x), всё — плашка.
+  List<String> _controlParts(EmailModel email, AppLocalizations l10n) {
     final done = email.controlState == ControlState.done;
-    final color = done ? AppColors.successText(context) : theme.colorScheme.primary;
     final base = l10n.tr(done
         ? 'controlDone'
         : (email.controlState == ControlState.awaitingReply ? 'controlAwaiting' : 'controlMustReply'));
@@ -2888,6 +2960,13 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     if (!done && email.followUpAt != null) {
       parts.add(l10n.tr('controlUntil').replaceAll('{when}', controlDeadlineLabel(email.followUpAt!.toLocal(), l10n)));
     }
+    return parts;
+  }
+
+  Widget _controlBanner(EmailModel email, ThemeData theme, AppLocalizations l10n) {
+    final done = email.controlState == ControlState.done;
+    final color = done ? AppColors.successText(context) : theme.colorScheme.primary;
+    final parts = _controlParts(email, l10n);
     return Container(
       margin: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
       padding: bannerPadding,
@@ -2910,10 +2989,17 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     );
   }
 
-  Widget _laterBanner(EmailModel email, ThemeData theme, AppLocalizations l10n) {
-    const color = Color(0xFF7B61B8);
+  static const _laterColor = Color(0xFF7B61B8);
+
+  /// Текст плашки «Позже»: «Отложено до …» или «Без даты».
+  String _laterText(EmailModel email, AppLocalizations l10n) {
     final at = email.remindAt?.toLocal();
-    final text = at == null ? l10n.tr('laterNoDate') : l10n.tr('laterUntil').replaceAll('{when}', laterWhenLabel(at, l10n));
+    return at == null ? l10n.tr('laterNoDate') : l10n.tr('laterUntil').replaceAll('{when}', laterWhenLabel(at, l10n));
+  }
+
+  Widget _laterBanner(EmailModel email, ThemeData theme, AppLocalizations l10n) {
+    const color = _laterColor;
+    final text = _laterText(email, l10n);
     return Container(
       margin: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
       padding: bannerPadding,
@@ -3550,30 +3636,40 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     return _folderType!;
   }
 
+  /// Тип папки письма, когда он прочитан из базы ([_folderTypeOf]): по нему
+  /// чип «Спам» / «Корзина» строки сведений (1.12.x). Пока не прочитан — null.
+  String? _folderTypeReadFor;
+  FolderType? _folderTypeRead;
+
+  FolderType? _folderTypeNow(EmailModel email) {
+    final key = '${email.accountId}|${email.folderId}';
+    if (_folderTypeReadFor != key) {
+      _folderTypeReadFor = key;
+      _folderTypeRead = null;
+      _folderTypeOf(email).then((t) {
+        if (_folderTypeReadFor == key && t != _folderTypeRead) safeSetState(() => _folderTypeRead = t);
+      }, onError: (Object e) => AppLogger.debug('Папка письма: $e'));
+    }
+    return _folderTypeRead;
+  }
+
   /// Письмо попало в спам или корзину по ошибке — вернуть во «Входящие».
-  Widget _restoreBanner(EmailModel email, ThemeData theme, AppLocalizations l10n) {
-    return FutureBuilder<FolderType?>(
-      future: _folderTypeOf(email),
-      builder: (context, snap) {
-        final t = snap.data;
-        if (t != FolderType.junk && t != FolderType.trash) return const SizedBox.shrink();
-        final junk = t == FolderType.junk;
-        return Container(
-          margin: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.s),
-          padding: bannerPadding,
-          constraints: const BoxConstraints(minHeight: bannerMinHeight),
-          decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHigh, borderRadius: Radii.cardAll),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Icon(junk ? AppIcons.report : AppIcons.delete, size: Sizes.iconRow, color: AppColors.mutedText(context)),
-            const SizedBox(width: Space.s),
-            Expanded(child: Text(l10n.tr(junk ? 'inJunkFolder' : 'inTrashFolder'), style: theme.textTheme.bodyMedium)),
-            BannerButton(
-              onPressed: () => unawaited(_restoreToInbox(email, l10n)),
-              label: l10n.tr(junk ? 'notSpam' : 'restoreToInbox'),
-            ),
-          ]),
-        );
-      },
+  /// Плашка раскрывается из чипа «Спам» / «Корзина» (1.12.x).
+  Widget _restoreBanner(EmailModel email, bool junk, ThemeData theme, AppLocalizations l10n) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
+      padding: bannerPadding,
+      constraints: const BoxConstraints(minHeight: bannerMinHeight),
+      decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHigh, borderRadius: Radii.cardAll),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Icon(junk ? AppIcons.report : AppIcons.delete, size: Sizes.iconRow, color: AppColors.mutedText(context)),
+        const SizedBox(width: Space.s),
+        Expanded(child: Text(l10n.tr(junk ? 'inJunkFolder' : 'inTrashFolder'), style: theme.textTheme.bodyMedium)),
+        BannerButton(
+          onPressed: () => unawaited(_restoreToInbox(email, l10n)),
+          label: l10n.tr(junk ? 'notSpam' : 'restoreToInbox'),
+        ),
+      ]),
     );
   }
 
@@ -3797,8 +3893,11 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     }
   }
 
-  Widget _smimeSignatureBanner(EmailModel email, ThemeData theme, AppLocalizations l10n) {
-    // Проверка — один раз на письмо, после первого кадра (письмо уже видно).
+  /// Подпись S/MIME — значок, цвет, текст плашки и надпись чипа строки
+  /// сведений (1.12.x). Проверка — один раз на письмо, после первого кадра
+  /// (письмо уже видно): её запускает чип, плашка раскрывается по нажатию.
+  ({IconData icon, Color color, String title, String sub, String chip, MailNoticeTone tone, bool busy})
+      _sigView(EmailModel email, AppLocalizations l10n) {
     if (_sigFor != email.id && !_sigChecking) {
       _sigFor = email.id;
       _sig = null;
@@ -3813,16 +3912,22 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     final Color color;
     final String title;
     final String sub;
+    var chip = l10n.tr('noticeSigOk');
+    var tone = MailNoticeTone.neutral;
+    var busy = false;
     if (_sigChecking || (s == null && _sigError == null)) {
       icon = AppIcons.verified_user;
       color = AppColors.mutedText(context);
       title = l10n.tr('smimeSignedMail');
       sub = l10n.tr('smimeSigChecking');
+      chip = sub;
+      busy = true;
     } else if (s == null) {
       icon = AppIcons.verified_user;
       color = AppColors.mutedText(context);
       title = l10n.tr('smimeSignedMail');
       sub = _sigError == 'network' ? l10n.tr('smimeSigFailed') : l10n.tr('smimeSigUnknown').replaceAll('{reason}', _sigError ?? '');
+      chip = l10n.tr('noticeSigUnchecked');
     } else {
       final name = s.signer?.commonName ?? s.signer?.emails.firstOrNull ?? '';
       icon = ok ? AppIcons.verified_user : AppIcons.warning;
@@ -3836,10 +3941,20 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           : notSelf
               ? l10n.tr('smimeSigNotSelf').replaceAll('{email}', signerMail.join(', '))
               : l10n.tr('smimeSigOk');
+      // Подпись не сходится — цветом ошибки; подписал другой адрес — с
+      // предупреждающим значком.
+      chip = l10n.tr(!ok ? 'noticeSigBad' : (notSelf ? 'noticeSigOther' : 'noticeSigOk'));
+      if (!ok) tone = MailNoticeTone.warning;
     }
-    final retry = !_sigChecking && s == null && _sigError == 'network';
+    return (icon: icon, color: color, title: title, sub: sub, chip: chip, tone: tone, busy: busy);
+  }
+
+  Widget _smimeSignatureBanner(EmailModel email, ThemeData theme, AppLocalizations l10n) {
+    final v = _sigView(email, l10n);
+    final icon = v.icon, color = v.color, title = v.title, sub = v.sub;
+    final retry = !_sigChecking && _sig == null && _sigError == 'network';
     return Container(
-      margin: const EdgeInsets.only(left: Space.l, right: Space.l, bottom: Space.s),
+      margin: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
       padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.xs, Space.s),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh,
@@ -3869,7 +3984,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     final att = _smimeP7m(email)!;
     final busy = _attachmentStates[att.id]?.isDownloading ?? false;
     return Container(
-      margin: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.s),
+      margin: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
       padding: const EdgeInsets.fromLTRB(Space.m, Space.xs, Space.xs, Space.xs),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh,

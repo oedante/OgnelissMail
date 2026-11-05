@@ -1,7 +1,8 @@
 // Предпросмотр документов в экране вложений (1.11.x, план владельца
 // 04.11.2026): DOCX — текстом (на компьютере и в тестах — виджетами),
-// XLSX — сеткой листов, PPTX — слайдами; документ с паролем и старый .doc —
+// XLSX — сеткой листов, PPTX — слайдами; документ с паролем и Word 6/95 —
 // понятной строкой и кнопкой другого приложения; формат — по содержимому.
+// С 1.12.x и старые .doc, .xls, .ppt (Office 97–2003) — так же, как новые.
 
 import 'dart:io';
 
@@ -14,6 +15,8 @@ import 'package:ogneliss/features/mail/screens/attachment_preview_screen.dart';
 import 'package:ogneliss/features/mail/widgets/doc_sheet_view.dart';
 import 'package:ogneliss/features/mail/widgets/doc_slides_view.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
+
+import '../unit/cfb_writer.dart';
 
 Future<void> _pump(WidgetTester tester, PreviewItem item, bool Function() ready) async {
   await tester.pumpWidget(MaterialApp(
@@ -93,21 +96,57 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('документ с паролем и старый .doc — понятная строка и другое приложение', (tester) async {
-    const ole = [0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1];
+  testWidgets('документ с паролем и Word 6/95 — понятная строка и другое приложение', (tester) async {
     final protected = File('${dir.path}/Зарплата.docx');
-    await tester.runAsync(() => protected.writeAsBytes([...ole, ...List.filled(1024, 0)]));
+    final encrypted = (CfbWriter()
+          ..add('EncryptionInfo', List.filled(200, 1))
+          ..add('EncryptedPackage', List.filled(5000, 2)))
+        .build();
+    await tester.runAsync(() => protected.writeAsBytes(encrypted));
     await _pump(tester, PreviewItem(filePath: protected.path, fileName: 'Зарплата.docx'),
         () => find.textContaining('защищён паролем').evaluate().isNotEmpty);
     expect(find.textContaining('защищён паролем'), findsOneWidget);
     expect(find.text('Открыть во внешнем приложении'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
 
-    final legacy = File('${dir.path}/Приказ.doc');
-    await tester.runAsync(() => legacy.writeAsBytes([...ole, ...List.filled(1024, 0)]));
-    await _pump(tester, PreviewItem(filePath: legacy.path, fileName: 'Приказ.doc'),
-        () => find.textContaining('старого формата').evaluate().isNotEmpty);
-    expect(find.textContaining('старого формата'), findsOneWidget);
+    // Word 6/95: подпись FIB 0xA5DC — старый формат (строка — та, что про
+    // «не показывает»: её текст уточняется в tool/l10n/pending/o4.json).
+    final word95 = File('${dir.path}/Приказ.doc');
+    final fib = List<int>.filled(1024, 0)
+      ..[0] = 0xDC
+      ..[1] = 0xA5
+      ..[2] = 0x65;
+    await tester.runAsync(() => word95.writeAsBytes((CfbWriter()..add('WordDocument', fib)).build()));
+    bool legacyShown() => find
+        .byWidgetPredicate((w) => w is Text && (w.data ?? '').contains('Office') && (w.data ?? '').contains('не показывает'))
+        .evaluate()
+        .isNotEmpty;
+    await _pump(tester, PreviewItem(filePath: word95.path, fileName: 'Приказ.doc'), legacyShown);
+    expect(legacyShown(), isTrue);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('Word 97–2003 (.doc) — текст документа', (tester) async {
+    final item = await copy(tester, 'text_sample.doc', 'Приказ.doc');
+    await _pump(tester, item, () => find.textContaining('Отчёт о работе отдела').evaluate().isNotEmpty);
+    expect(tester.takeException(), isNull);
+    expect(find.textContaining('Отчёт о работе отдела'), findsWidgets);
+    expect(find.textContaining('не показывает'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('Excel 97–2003 (.xls) — сетка, PowerPoint 97–2003 (.ppt) — слайды', (tester) async {
+    final xls = await copy(tester, 'sheet_sample.xls', 'Выгрузка из 1С.xls');
+    await _pump(tester, xls, () => find.byType(DocSheetView).evaluate().isNotEmpty);
+    expect(tester.takeException(), isNull);
+    expect(find.byType(DocSheetView), findsOneWidget);
+    expect(find.text('Справочник'), findsWidgets);
+    await tester.pumpWidget(const SizedBox());
+
+    final ppt = await copy(tester, 'slides.ppt', 'Доклад.ppt');
+    await _pump(tester, ppt, () => find.byType(DocSlidesView).evaluate().isNotEmpty);
+    expect(tester.takeException(), isNull);
+    expect(find.byType(DocSlidesView), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
 

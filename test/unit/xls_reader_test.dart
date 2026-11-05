@@ -106,7 +106,7 @@ void main() {
   test('ручная книга: SST с CONTINUE посреди строки, формула со строкой, RK, закрепление', () {
     // «Кириллица» начинается в SST, обрывается и продолжается в CONTINUE с
     // флагом UTF-16; вторая строка — «сжатая» латиница.
-    final s1 = 'Кириллица';
+    const s1 = 'Кириллица';
     final sst = [..._u32(3), ..._u32(2), ..._u16(s1.length), 1, for (final c in s1.codeUnits.take(4)) ..._u16(c)];
     final cont = [1, for (final c in s1.codeUnits.skip(4)) ..._u16(c), ..._str('plain')];
     final globals = [..._rec(0x0022, _u16(0)), ..._rec(0x00FC, sst), ..._rec(0x003C, cont)];

@@ -5,19 +5,22 @@
 //
 // Разбор — свой, по открытым спецификациям форматов (ECMA-376 / ISO/IEC
 // 29500 — Office Open XML; OASIS OpenDocument / ISO/IEC 26300; RTF 1.9.1;
-// RFC 4180 — CSV), без сторонних библиотек; патентные условия — в
-// docs/LICENSING.md. Только чтение: документ не меняется и не сохраняется,
+// RFC 4180 — CSV; с 1.12.x и старые двоичные Office 97–2003 — [MS-CFB],
+// [MS-DOC], [MS-XLS], [MS-PPT], [MS-ODRAW] по Open Specification Promise),
+// без сторонних библиотек; патентные условия — в docs/LICENSING.md. Только чтение: документ не меняется и не сохраняется,
 // макросы не выполняются (их предпросмотр просто не читает).
 //
 // Что получается:
-//  · текстовый документ (DOCX, ODT, RTF) — HTML ([OfficeTextDoc]): его
+//  · текстовый документ (DOCX, ODT, RTF, DOC) — HTML ([OfficeTextDoc]): его
 //    показывает то же защищённое окно, что и письмо (без JavaScript и сети,
 //    очистка санитайзером, тёмная тема, масштаб), на компьютере — виджетами;
-//  · таблица (XLSX, ODS, CSV) — листы ячеек (doc_sheets.dart), сеткой;
-//  · презентация (PPTX, ODP) — слайды с фигурами (doc_slides.dart).
+//  · таблица (XLSX, ODS, CSV, XLS) — листы ячеек (doc_sheets.dart), сеткой;
+//  · презентация (PPTX, ODP, PPT) — слайды с фигурами (doc_slides.dart).
 
-/// Формат документа по способу разбора.
-enum OfficeFormat { docx, odt, rtf, xlsx, ods, csv, pptx, odp }
+/// Формат документа по способу разбора. [doc], [xls], [ppt] — двоичные
+/// Office 97–2003 (составной файл OLE): какой из трёх на самом деле, решает
+/// содержимое файла (OfficeReader), а не расширение.
+enum OfficeFormat { docx, odt, rtf, xlsx, ods, csv, pptx, odp, doc, xls, ppt }
 
 /// Разобранный документ.
 abstract class OfficeDoc {
@@ -65,6 +68,10 @@ class OfficeFormats {
     'pptx': OfficeFormat.pptx, 'pptm': OfficeFormat.pptx, 'ppsx': OfficeFormat.pptx, 'ppsm': OfficeFormat.pptx,
     'potx': OfficeFormat.pptx, 'potm': OfficeFormat.pptx,
     'odp': OfficeFormat.odp, 'otp': OfficeFormat.odp,
+    // Office 97–2003 (1.12.x, просьба владельца 04.11.2026).
+    'doc': OfficeFormat.doc, 'dot': OfficeFormat.doc,
+    'xls': OfficeFormat.xls, 'xlt': OfficeFormat.xls,
+    'ppt': OfficeFormat.ppt, 'pps': OfficeFormat.ppt, 'pot': OfficeFormat.ppt,
   };
 
   static const _byMime = {
@@ -82,10 +89,14 @@ class OfficeFormats {
     'application/vnd.openxmlformats-officedocument.presentationml.slideshow': OfficeFormat.pptx,
     'application/vnd.ms-powerpoint.presentation.macroenabled.12': OfficeFormat.pptx,
     'application/vnd.oasis.opendocument.presentation': OfficeFormat.odp,
+    'application/msword': OfficeFormat.doc,
+    'application/vnd.ms-excel': OfficeFormat.xls,
+    'application/vnd.ms-powerpoint': OfficeFormat.ppt,
   };
 
-  /// Двоичные форматы Office 97–2003: пока не показываются — экран говорит
-  /// об этом прямо, а не «формат не поддерживается».
+  /// Двоичные форматы Office 97–2003. С 1.12.x показываются (Word 97+,
+  /// Excel 97+ — BIFF8, PowerPoint 97+); более старые версии (Word 6/95,
+  /// Excel 5/95) — строкой «старый формат».
   static const legacyExt = {'doc', 'dot', 'xls', 'xlt', 'ppt', 'pps', 'pot'};
 
   static String extOf(String fileName) {
@@ -107,7 +118,9 @@ class OfficeFormats {
   static bool isLegacy(String fileName) => legacyExt.contains(extOf(fileName));
 
   /// Текстовый документ, таблица, презентация.
-  static bool isText(OfficeFormat f) => f == OfficeFormat.docx || f == OfficeFormat.odt || f == OfficeFormat.rtf;
-  static bool isSheet(OfficeFormat f) => f == OfficeFormat.xlsx || f == OfficeFormat.ods || f == OfficeFormat.csv;
-  static bool isSlides(OfficeFormat f) => f == OfficeFormat.pptx || f == OfficeFormat.odp;
+  static bool isText(OfficeFormat f) =>
+      f == OfficeFormat.docx || f == OfficeFormat.odt || f == OfficeFormat.rtf || f == OfficeFormat.doc;
+  static bool isSheet(OfficeFormat f) =>
+      f == OfficeFormat.xlsx || f == OfficeFormat.ods || f == OfficeFormat.csv || f == OfficeFormat.xls;
+  static bool isSlides(OfficeFormat f) => f == OfficeFormat.pptx || f == OfficeFormat.odp || f == OfficeFormat.ppt;
 }

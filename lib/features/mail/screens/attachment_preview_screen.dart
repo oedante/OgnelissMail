@@ -135,19 +135,13 @@ class AttachmentPreviewScreen extends StatefulWidget {
     // такие документы теперь тоже здесь. Выключенные в настройках виды
     // (DocPreviewSettings) — как раньше: CSV — текстом ниже, остальное —
     // своей программой.
+    // Старые .doc, .xls, .ppt (1.12.x, просьба владельца 04.11.2026) — тоже
+    // здесь: OfficeFormats знает их как форматы, разбор — по содержимому
+    // (настоящий Word 97, RTF или DOCX под старым именем). На iPhone и iPad
+    // их, как и раньше, показывает «Просмотр» iOS.
     final docOn = DocPreviewSettings.allows(name, mimeType: item.mimeType);
     if (docOn && OfficeFormats.of(name, mimeType: item.mimeType) != null) {
       return !ios || !FileOpener.quickLookShows(name);
-    }
-    // Старый .doc, который на деле RTF или DOCX (так сохраняют многие
-    // программы), — тоже документом; настоящий .doc — своей программой.
-    if (docOn && !ios && OfficeFormats.isLegacy(name)) {
-      try {
-        final head = await File(item.filePath).openRead(0, 8).fold<List<int>>(<int>[], (a, b) => a..addAll(b));
-        return OfficeReader.previews(name, head: Uint8List.fromList(head));
-      } catch (_) {
-        return false;
-      }
     }
     if (ext == 'pdf') return NativePdf.supported;
     if (!ios && (_imageExt.contains(ext) || _textExt.contains(ext) || ext == 'pkpass')) return true;

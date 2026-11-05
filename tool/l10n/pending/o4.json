@@ -1,0 +1,31 @@
+{
+  "docLegacyFormat": {
+    "ru": "Документы в старом формате Office (Word, Excel и PowerPoint 95 и раньше) приложение не показывает. Откройте файл в другом приложении.",
+    "en": "The app can't preview documents in old Office formats (Word, Excel and PowerPoint 95 and earlier). Open the file in another app.",
+    "de": "Dokumente in alten Office-Formaten (Word, Excel und PowerPoint 95 und älter) kann die App nicht anzeigen. Öffnen Sie die Datei in einer anderen App.",
+    "fr": "L'app ne peut pas afficher les documents aux anciens formats Office (Word, Excel et PowerPoint 95 et antérieurs). Ouvrez le fichier dans une autre app.",
+    "es": "La app no puede mostrar documentos en formatos antiguos de Office (Word, Excel y PowerPoint 95 y anteriores). Abre el archivo en otra app.",
+    "it": "L'app non può mostrare documenti nei vecchi formati Office (Word, Excel e PowerPoint 95 e precedenti). Apri il file in un'altra app.",
+    "pt": "O app não mostra documentos em formatos antigos do Office (Word, Excel e PowerPoint 95 e anteriores). Abra o arquivo em outro app.",
+    "nl": "De app kan documenten in oude Office-indelingen (Word, Excel en PowerPoint 95 en ouder) niet tonen. Open het bestand in een andere app.",
+    "pl": "Aplikacja nie wyświetla dokumentów w starych formatach Office (Word, Excel i PowerPoint 95 i starsze). Otwórz plik w innej aplikacji.",
+    "cs": "Aplikace nezobrazí dokumenty ve starých formátech Office (Word, Excel a PowerPoint 95 a starší). Otevřete soubor v jiné aplikaci.",
+    "sk": "Aplikácia nezobrazí dokumenty v starých formátoch Office (Word, Excel a PowerPoint 95 a staršie). Otvorte súbor v inej aplikácii.",
+    "hu": "Az app nem jeleníti meg a régi Office-formátumú dokumentumokat (Word, Excel és PowerPoint 95 és korábbi). Nyissa meg a fájlt egy másik appban.",
+    "ro": "Aplicația nu afișează documente în formate Office vechi (Word, Excel și PowerPoint 95 și mai vechi). Deschide fișierul în altă aplicație.",
+    "sv": "Appen kan inte visa dokument i gamla Office-format (Word, Excel och PowerPoint 95 och äldre). Öppna filen i en annan app.",
+    "da": "Appen kan ikke vise dokumenter i gamle Office-formater (Word, Excel og PowerPoint 95 og ældre). Åbn filen i en anden app.",
+    "nb": "Appen kan ikke vise dokumenter i gamle Office-formater (Word, Excel og PowerPoint 95 og eldre). Åpne filen i en annen app.",
+    "fi": "Sovellus ei näytä vanhoissa Office-muodoissa olevia asiakirjoja (Word, Excel ja PowerPoint 95 ja vanhemmat). Avaa tiedosto toisessa sovelluksessa.",
+    "tr": "Uygulama eski Office biçimlerindeki belgeleri (Word, Excel ve PowerPoint 95 ve öncesi) gösteremez. Dosyayı başka bir uygulamada açın.",
+    "ar": "لا يعرض التطبيق المستندات بتنسيقات Office القديمة (Word وExcel وPowerPoint 95 وما قبله). افتح الملف في تطبيق آخر.",
+    "he": "האפליקציה לא מציגה מסמכים בפורמטים ישנים של Office ‏(Word,‏ Excel ו-PowerPoint 95 ומטה). פתחו את הקובץ באפליקציה אחרת.",
+    "hi": "ऐप पुराने Office फ़ॉर्मैट (Word, Excel और PowerPoint 95 और पहले) के दस्तावेज़ नहीं दिखा सकता। फ़ाइल किसी दूसरे ऐप में खोलें।",
+    "id": "Aplikasi tidak dapat menampilkan dokumen format Office lama (Word, Excel, dan PowerPoint 95 atau lebih lama). Buka file di aplikasi lain.",
+    "vi": "Ứng dụng không hiển thị được tài liệu định dạng Office cũ (Word, Excel và PowerPoint 95 trở về trước). Hãy mở tệp bằng ứng dụng khác.",
+    "th": "แอปแสดงเอกสารรูปแบบ Office เก่า (Word, Excel และ PowerPoint 95 หรือเก่ากว่า) ไม่ได้ เปิดไฟล์ในแอปอื่น",
+    "ja": "古い Office 形式（Word、Excel、PowerPoint 95 以前）の文書はアプリで表示できません。別のアプリでファイルを開いてください。",
+    "ko": "이전 Office 형식(Word, Excel, PowerPoint 95 이하) 문서는 앱에서 표시할 수 없습니다. 다른 앱에서 파일을 여세요.",
+    "zh": "应用无法显示旧版 Office 格式（Word、Excel 和 PowerPoint 95 及更早版本）的文档。请在其他应用中打开文件。"
+  }
+}

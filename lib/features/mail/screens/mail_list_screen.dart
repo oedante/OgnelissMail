@@ -504,6 +504,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     _floatVisible.dispose();
     _newAbove.dispose();
     _searchController.dispose();
+    // Набранный поиск ещё ждал паузы (300 мс), а лента ушла — без отмены
+    // таймер обращался к ушедшему экрану (1.12.x).
+    _searchDebounce?.cancel();
     _listFocus.dispose();
     // Экран ушёл в режиме выбора — вернуть кнопку «Написать» оболочке.
     // Не во время демонтажа дерева: менять провайдер здесь нельзя.

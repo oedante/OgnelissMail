@@ -681,15 +681,17 @@ class MailBodyHeavy {
 /// Перевод в строке сведений письма (1.12.x, просьба владельца 04.11.2026:
 /// плашки «съедают место»). Вместо плашки «Язык письма: … · Перевести» —
 /// чип «Перевести · английский»: нажатие переводит, и чип становится
-/// «Оригинал» (нажатие возвращает оригинал, ещё раз — перевод). «Не
-/// переводить с …» и «Закрыть» — «▾» на чипе или долгое нажатие.
+/// «Оригинал» (нажатие возвращает оригинал, ещё раз — перевод). Остальное —
+/// «▾» на чипе или долгое нажатие: «Всегда переводить с …» / «Не
+/// переводить автоматически», «Не переводить с …», «Указать язык письма»,
+/// «Закрыть».
 abstract final class MailTranslateNotice {
   static const id = 'translate';
 
   /// Чип перевода; null — предлагать нечего (язык приложения, перевод
-  /// выключен, чип закрыли).
+  /// выключен, нет движка перевода на устройстве, чип закрыли).
   static MailNotice? of(BuildContext context, MailTranslationController c, EmailModel email) {
-    if (c.dismissed || c.phase == MailTranslationPhase.none) return null;
+    if (c.dismissed || c.phase == MailTranslationPhase.none || c.engineAvailable == false) return null;
     final l10n = AppLocalizations.of(context);
     final offer = c.unknownLang
         ? l10n.tr('translate')
@@ -697,59 +699,96 @@ abstract final class MailTranslateNotice {
     final msgLang = c.unknownLang
         ? l10n.tr('translateMsgOther')
         : l10n.tr('translateMsgLang').replaceAll('{lang}', c.fromName);
-    switch (c.phase) {
-      case MailTranslationPhase.working:
-        return MailNotice(
-          id: id,
-          icon: AppIcons.translate,
-          label: l10n.tr('translateWorking'),
-          tone: MailNoticeTone.info,
-          busy: true,
-          // Пока переводится — нажимать нечего (и не раскрывать).
-          onTap: () {},
-        );
-      case MailTranslationPhase.translated:
-        final done = l10n.tr('translateDone').replaceAll('{from}', c.fromName).replaceAll('{to}', c.toName);
-        return c.showing
-            ? MailNotice(
-                id: id,
-                icon: AppIcons.translate,
-                label: l10n.tr('noticeOriginal'),
-                detail: '$done. ${l10n.tr('translateShowOriginal')}',
-                tone: MailNoticeTone.info,
-                onTap: c.showOriginal,
-              )
-            : MailNotice(
-                id: id,
-                icon: AppIcons.translate,
-                label: offer,
-                detail: '$msgLang. ${l10n.tr('translateShowTranslation')}',
-                tone: MailNoticeTone.info,
-                onTap: c.showTranslation,
-              );
-      default:
-        return MailNotice(
-          id: id,
-          icon: AppIcons.translate,
-          label: offer,
-          detail: msgLang,
-          tone: MailNoticeTone.info,
-          onTap: () => unawaited(c.translate(context, email)),
-          menu: [
-            // Язык не определён — «Не переводить с …» не к чему относить.
-            if (!c.unknownLang)
-              AppMenuEntry(
-                  value: 'never',
-                  icon: AppIcons.block,
-                  label: l10n.tr('translateNeverLang').replaceAll('{lang}', c.fromName)),
-            AppMenuEntry(value: 'close', icon: AppIcons.close, label: l10n.tr('close')),
-          ],
-          onMenu: (v) {
-            if (v == 'never') unawaited(c.never());
-            if (v == 'close') c.dismiss();
-          },
-        );
+    if (c.phase == MailTranslationPhase.working) {
+      return MailNotice(
+        id: id,
+        icon: AppIcons.translate,
+        label: l10n.tr('translateWorking'),
+        tone: MailNoticeTone.info,
+        busy: true,
+        // Пока переводится — нажимать нечего (и не раскрывать).
+        onTap: () {},
+      );
     }
+    final (menu, onMenu) = _options(context, c, email, l10n);
+    if (c.phase == MailTranslationPhase.translated) {
+      final done = l10n.tr('translateDone').replaceAll('{from}', c.fromName).replaceAll('{to}', c.toName);
+      return c.showing
+          ? MailNotice(
+              id: id,
+              icon: AppIcons.translate,
+              label: l10n.tr('noticeOriginal'),
+              detail: '$done. ${l10n.tr('translateShowOriginal')}',
+              tone: MailNoticeTone.info,
+              onTap: c.showOriginal,
+              menu: menu,
+              onMenu: onMenu,
+            )
+          : MailNotice(
+              id: id,
+              icon: AppIcons.translate,
+              label: offer,
+              detail: '$msgLang. ${l10n.tr('translateShowTranslation')}',
+              tone: MailNoticeTone.info,
+              onTap: c.showTranslation,
+              menu: menu,
+              onMenu: onMenu,
+            );
+    }
+    return MailNotice(
+      id: id,
+      icon: AppIcons.translate,
+      label: offer,
+      detail: msgLang,
+      tone: MailNoticeTone.info,
+      onTap: () => unawaited(c.translate(context, email)),
+      menu: menu,
+      onMenu: onMenu,
+    );
+  }
+
+  /// Варианты чипа («▾», долгое нажатие). Язык известен — «Всегда
+  /// переводить с …» (или «Не переводить автоматически», если он уже в
+  /// списке) и «Не переводить с …»; всегда — «Указать язык письма»;
+  /// «Закрыть» — пока на экране оригинал (с переводом закрыть чип — значит
+  /// остаться без «Оригинала»).
+  static (List<AppMenuEntry<String>>, ValueChanged<String>) _options(
+      BuildContext context, MailTranslationController c, EmailModel email, AppLocalizations l10n) {
+    final lang = c.unknownLang ? null : c.from;
+    final always = lang != null && c.alwaysFromCurrent;
+    final menu = <AppMenuEntry<String>>[
+      if (lang != null) ...[
+        always
+            ? AppMenuEntry(value: 'stopAlways', icon: AppIcons.sync_disabled, label: l10n.tr('translateStopAlways'))
+            : AppMenuEntry(
+                value: 'always',
+                icon: AppIcons.auto_mode,
+                label: l10n.tr('translateAlwaysLang').replaceAll('{lang}', c.fromName)),
+        AppMenuEntry(
+            value: 'never',
+            icon: AppIcons.block,
+            label: l10n.tr('translateNeverLang').replaceAll('{lang}', c.fromName)),
+      ],
+      AppMenuEntry(value: 'pick', icon: AppIcons.language, label: l10n.tr('translateChooseLang')),
+      if (!c.showing) AppMenuEntry(value: 'close', icon: AppIcons.close, label: l10n.tr('close')),
+    ];
+    void onMenu(String v) {
+      final f = c.from;
+      switch (v) {
+        case 'always' when f != null:
+          unawaited(c.alwaysTranslateFrom(f, context: context, email: email));
+        case 'stopAlways' when f != null:
+          unawaited(c.stopAlwaysTranslateFrom(f));
+        case 'never' when f != null:
+          unawaited(c.neverTranslateFrom(f));
+        case 'pick':
+          unawaited(c.translateFromPicked(context, email));
+        case 'close':
+          c.dismiss();
+      }
+    }
+
+    return (menu, onMenu);
   }
 
   /// Подпись под строкой сведений, пока показан перевод: условия ML Kit —

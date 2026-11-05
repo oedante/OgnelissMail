@@ -2836,8 +2836,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           // 31.10.2026).
           if (MessageWindow.supported)
             _peekAction(AppIcons.open_in_new, l10n.tr('openInNewWindow'), () => unawaited(_openInWindow(email))),
-          // Перевод на устройстве (1.9.x): то же, что кнопка плашки.
-          if (translationPlatformSupported)
+          // Перевод на устройстве (1.9.x): то же, что чип строки сведений.
+          // Движка перевода нет (iOS до 18, Mac до 15, ML Kit не запустился)
+          // — пункта нет (1.12.x).
+          if (translationPlatformSupported && _translation.engineAvailable != false)
             _peekAction(AppIcons.translate, l10n.tr(_translation.showing ? 'translateShowOriginal' : 'translate'),
                 () => _translation.showing
                     ? _translation.showOriginal()

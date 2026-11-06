@@ -193,6 +193,9 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
     final key = [
       _search.isNotEmpty,
       _filter,
+      // Звёздочка и закрепление меняют состав запроса (VIP из переписки).
+      ref.read(focusModeProvider).vipEmails.join(','),
+      ref.read(pinnedContactsProvider).join(','),
       scopeIds.join(','),
       ref.read(moduleSettingsProvider).contactSort.name,
       identityHashCode(db),
@@ -637,9 +640,18 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
     // Тип запроса указан явно: с dynamic замыкание where получало тип
     // (dynamic) => dynamic, и drift падал при открытии экрана («is not a
     // subtype of ($ContactsTable) => Expression<bool>»).
+    // VIP и закреплённые из переписки (1.14.0, замечание владельца
+    // 06.11.2026: «не все контакты со звёздочкой добавляются в VIP»):
+    // собранные из писем адреса без ящика список области не показывал,
+    // и звёздочка, поставленная в поиске, в раздел VIP не попадала.
+    final vipLower = [for (final e in ref.read(focusModeProvider).vipEmails) e.trim().toLowerCase()];
+    final pinnedNoAccount = [
+      for (final k in ref.read(pinnedContactsProvider))
+        if (k.startsWith('|')) k.substring(1),
+    ];
     void applyScope(SimpleSelectStatement<$ContactsTable, Contact> q) {
       if (scopeIds.isNotEmpty) {
-        q.where((c) => c.accountId.isIn(scopeIds));
+        q.where((c) => contactsScopeFilter(c, scopeIds, vipLower: vipLower, pinnedNoAccount: pinnedNoAccount));
       }
     }
     if (_search.isNotEmpty) {
@@ -700,6 +712,15 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
     }
   }
 }
+
+/// Контакты области списка: ящики [scopeIds] и, из собранных в переписке
+/// (без ящика), — VIP ([vipLower], адреса строчными) и закреплённые
+/// ([pinnedNoAccount], id). 1.14.0: раньше вторые не показывались вовсе.
+@visibleForTesting
+Expression<bool> contactsScopeFilter($ContactsTable c, List<String> scopeIds,
+        {required List<String> vipLower, required List<String> pinnedNoAccount}) =>
+    c.accountId.isIn(scopeIds) |
+    (c.accountId.isNull() & (c.email.lower().isIn(vipLower) | c.id.isIn(pinnedNoAccount)));
 
 /// Раздел «Адресная книга организации» в результатах поиска (1.7.2):
 /// люди из Exchange, которых нет в контактах на телефоне. Нажатие — карточка

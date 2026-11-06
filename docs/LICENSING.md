@@ -204,8 +204,8 @@ are never run (the macro part is not even read). Checked 4 November 2026:
   from the pages read in full. Before announcing the feature, open the OSP
   page (covered list: Office Open XML, OpenDocument, RTF) and the Sun
   statement by the links above and confirm.
-- **Not covered by this check — owner to confirm before the 1.14.0
-  release:** [MS-OXRTFEX] (HTML that Outlook encapsulates in RTF, `\fromhtml1`)
+- **Accepted by the owner (06.11.2026: checked, widely used in open
+  source):** [MS-OXRTFEX] (HTML that Outlook encapsulates in RTF, `\fromhtml1`)
   — the .msg reader uses it to show such bodies as HTML
   (`MsgReader.htmlFromRtf`, one call site in `msg_reader.dart`). Its
   document says it "might be covered by" the OSP or the Community Promise;
@@ -277,10 +277,9 @@ are never run (the macro part is not even read). Checked 4 November 2026:
   раздела 6 и подтвердить. Старые .doc, .xls, .ppt (1.14.0; контейнер
   MS-CFB, рисунки MS-ODRAW) — тоже в списке OSP (по копиям списка,
   05.11.2026); письма Outlook .msg (MS-OXMSG, сжатый RTF MS-OXRTFCP) — в
-  списке OSP по данным владельца (05.11.2026, решение — делать). **Владельцу
-  подтвердить до выпуска 1.14.0:** MS-OXRTFEX (HTML внутри RTF у писем
-  .msg) — проверить не удалось; если не входит в OSP, этот путь
-  отключается одной строкой (тело покажется через RTF). Отдельно проверить
+  списке OSP по данным владельца (05.11.2026, решение — делать). MS-OXRTFEX (HTML
+  внутри RTF у писем .msg) — владелец проверил 06.11.2026 («многие
+  используют в open source»), решение — оставить. Отдельно проверить
   TNEF (winmail.dat — его приложение уже разбирает).
 - **Новые зависимости** (пакеты, библиотеки, SDK, шрифты, внешние сервисы и
   API) — только после проверки лицензии и условий (правило владельца

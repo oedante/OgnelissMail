@@ -30,7 +30,9 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:intl/date_symbol_data_local.dart' show initializeDateFormatting;
 import 'package:intl/intl.dart' show DateFormat;
 
+import 'avatar_colors.dart';
 import 'person_name.dart';
+import 'text_safe.dart' show initialOf;
 
 
 /// Человек из строки шапки: адрес может отсутствовать (внутренний Exchange).
@@ -213,7 +215,14 @@ class QuotePeople {
         '?n=${Uri.encodeQueryComponent(p.name)}';
     final text = shortNames && p.name.isNotEmpty ? PersonName.display(p.name, shortForm: true) : p.display;
     final title = text == p.display ? '' : ' title="${_esc(p.display)}"';
-    return '<a href="${_esc(href)}"$title>${_esc(text)}</a>';
+    // Кружок с буквой — в окне браузера (1.14.0, замечание владельца
+    // 06.11.2026: в широком письме у плашек не было портретов): та же
+    // буква и тот же цвет, что у QuotePersonChip; рисует CSS окна письма
+    // (::before), простой показ этих атрибутов не видит.
+    final key = (p.email ?? p.name).toLowerCase();
+    final rgb = (avatarColorValue(key) & 0xFFFFFF).toRadixString(16).padLeft(6, '0');
+    final letter = initialOf(p.name.isNotEmpty ? p.name : (p.email ?? '?'));
+    return '<a href="${_esc(href)}" data-i="${_esc(letter)}" style="--c:#$rgb"$title>${_esc(text)}</a>';
   }
 
   /// Ссылка плашки человека (с адресом или без).

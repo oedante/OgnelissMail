@@ -37,7 +37,7 @@ void main() {
         '<b>Тема:</b> Re: EAS Client</p></div><p>Hi Oleg</p>';
     final out = QuotePeople.enrich(html);
     expect(RegExp('href="ogperson:').allMatches(out).length, 2);
-    expect(out, contains('<a href="ogperson:rkowal%40microsoft.com?n=Rob+Kowal+%28CELA%29">Rob Kowal (CELA)</a>'));
+    expect(out, contains('<a href="ogperson:rkowal%40microsoft.com?n=Rob+Kowal+%28CELA%29" data-i=')); expect(out, contains('">Rob Kowal (CELA)</a>'));
     // Простые ссылки, без вёрстки (1.10.4): письмо остаётся «простым» и
     // показывается виджетами — плашки рисует экран письма.
     expect(out, isNot(contains('inline-block')));
@@ -72,7 +72,7 @@ void main() {
     expect(out, contains('>Ермишин О.</a>'));
     expect(out, contains('>Хабиров Р.Ф.</a>'));
     // Латиницу без отчества не сокращаем — без подсказки.
-    expect(out, contains('<a href="ogperson:rk%40example.com?n=Rob+Kowal">Rob Kowal</a>'));
+    expect(out, contains('<a href="ogperson:rk%40example.com?n=Rob+Kowal" data-i=')); expect(out, contains('">Rob Kowal</a>'));
     final zibrov = RegExp(r'href="(ogperson:d\.zibrov[^"]+)"').firstMatch(out)!.group(1)!;
     expect(QuotePeople.nameOf(zibrov.replaceAll('&amp;', '&')), 'Зибров Дмитрий Николаевич');
     // Полностью — как раньше.
@@ -102,6 +102,12 @@ void main() {
     expect(RegExp('href="ogperson:').allMatches(out).length, 1 + 73 + 13);
     expect(out, contains('ogperson:to72%40example.ru'), reason: 'последний из «Кому» на месте');
     expect(out, contains('ogperson:cc12%40example.ru'), reason: '«Копия» — тоже плашками');
+  });
+
+  test('1.14.0: плашка для окна браузера — буква и цвет человека', () {
+    final out = QuotePeople.enrich('<p><b>Кому:</b> Иванов Николай &lt;n.ivanov@example.ru&gt;</p>');
+    expect(out, contains('data-i="И"'));
+    expect(RegExp(r'style="--c:#[0-9a-f]{6}"').hasMatch(out), isTrue);
   });
 
   test('строка сверх предела остаётся текстом целиком', () {

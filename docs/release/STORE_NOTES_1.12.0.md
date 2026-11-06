@@ -4,12 +4,11 @@
 магазины). Архив 1.11.0 (137) — `STORE_NOTES_1.11.0.md`; что вошло в 1.11.0
 и раньше — там.
 
-Тексты для магазинов — тот же общий список с 1.8.12 (у пользователей
-магазинов пока она) и главное из 1.12.0 первой строкой. В Google Play
-строка «Уведомления с фото отправителя» уступила место документам (предел
-— 500 знаков на язык, здесь не длиннее 480). На iPhone и iPad документы
-Office, RTF и CSV по-прежнему показывает Просмотр iOS, поэтому в App Store
-новое — документы OpenDocument и шапки цитат.
+Тексты для магазинов — только то, что действительно ново в 1.12.0:
+новое, исправленное и обновлённое (решение владельца 04.11.2026: «не копируй
+старый текст»). На iPhone и iPad документы Office, RTF и CSV по-прежнему
+показывает Просмотр iOS, поэтому в App Store из документов — только
+OpenDocument.
 
 Добавлено и исправлено в 1.12.0 (после архива 1.11.0):
 
@@ -59,68 +58,32 @@ Runner.entitlements и Info.plist не менялись; в Xcode включат
 
 ```
 <ru-RU>
-• Документы OpenDocument (ODT, ODS, ODP) — прямо в почте; просмотр отключается в настройках
-• Шапки цитат и дата отправки — на языке приложения
-• Для компаний: настройки организации из MDM (Managed App Configuration)
-• iPad в стиле Outlook: команды над письмом, ответ рядом с письмом
-• Перевод писем вместе с темой и своего текста на устройстве (iOS 18 и новее)
-• Темы оформления, плотность ленты, тёмные письма без инверсии
-• Даты в письме нажимаются: встреча или напоминание в одно касание
-• Заблокировать отправителя и «Чистка» его писем
-• Предупреждение о подделке отправителя и похожих доменах
-• Недоставленные письма отмечены, видна причина
-• Уведомления с фото отправителя, логотипы проверенных отправителей (BIMI)
-• Siri и «Команды»: новое письмо, встреча, непрочитанные, «Мой день»
-• iPad: панель папок своей ширины, письма перетаскиваются на папку
-• IMAP: быстрая синхронизация, новый ящик загружается сразу
+• Документы OpenDocument (ODT, ODS, ODP) — прямо в почте: тексты, таблицы с листами, презентации слайдами
+• Просмотр документов отключается целиком или по видам (Настройки → Почта)
+• Шапки цитат (От, Кому, Отправлено) и даты — на языке приложения
+• Точнее определяется язык письма для перевода
+• Исправлено: событие на весь день могло растянуться на два дня
 </ru-RU>
 <en-US>
-• OpenDocument files (ODT, ODS, ODP) open right in the app; preview can be turned off in Settings
-• Quoted message headers and dates in the app’s language
-• For businesses: organisation settings via MDM (Managed App Configuration)
-• iPad in Outlook style: commands above the message, reply right next to it
-• Translate messages with their subject, and your own text, on the device (iOS 18 or later)
-• Colour themes, list density, dark messages without inversion
-• Tap a date in a message to create a meeting or reminder
-• Block a sender and Sweep their messages
-• Warnings about spoofed senders and lookalike domains
-• Undelivered messages are marked, with the reason
-• Notifications with the sender's photo; logos of verified senders (BIMI)
-• Siri and Shortcuts: new email, meeting, unread, My Day
-• iPad: resizable folder pane, drag messages onto a folder
-• IMAP: fast sync; a new mailbox loads right away
+• OpenDocument files (ODT, ODS, ODP) right in the app: text, spreadsheets with sheets, slides
+• Document preview can be turned off entirely or by type (Settings → Mail)
+• Quoted message headers (From, To, Sent) and dates in the app’s language
+• More accurate language detection for translation
+• Fixed: an all-day event could stretch over two days
 </en-US>
 <de-DE>
-• OpenDocument-Dateien (ODT, ODS, ODP) direkt in der App; Vorschau in den Einstellungen abschaltbar
-• Kopfzeilen zitierter Nachrichten samt Datum in der Sprache der App
-• Für Unternehmen: Einstellungen der Organisation per MDM (Managed App Configuration)
-• iPad im Outlook-Stil: Befehle über der Nachricht, Antwort direkt daneben
-• Nachrichten samt Betreff und eigene Texte auf dem Gerät übersetzen (ab iOS 18)
-• Farbschemata, Listendichte, dunkle Nachrichten ohne Invertierung
-• Datum in einer Nachricht antippen: Termin oder Erinnerung anlegen
-• Absender blockieren und seine Nachrichten bereinigen
-• Warnungen vor gefälschten Absendern und ähnlich aussehenden Domänen
-• Nicht zugestellte Nachrichten werden samt Grund markiert
-• Benachrichtigungen mit Foto des Absenders; Logos verifizierter Absender (BIMI)
-• Siri und Kurzbefehle: Neue E-Mail, Termin, Ungelesen, Mein Tag
-• iPad: Ordnerleiste in verstellbarer Breite, Nachrichten auf Ordner ziehen
-• IMAP: schnelle Synchronisierung; neues Postfach wird sofort geladen
+• OpenDocument-Dateien (ODT, ODS, ODP) direkt in der App: Texte, Tabellen mit Blättern, Folien
+• Dokumentvorschau ganz oder je Dateityp abschaltbar (Einstellungen → E-Mail)
+• Kopfzeilen zitierter Nachrichten (Von, An, Gesendet) und Datum in der App-Sprache
+• Genauere Spracherkennung für die Übersetzung
+• Behoben: Ganztägige Termine konnten sich über zwei Tage erstrecken
 </de-DE>
 <fr-FR>
-• Fichiers OpenDocument (ODT, ODS, ODP) ouverts dans l’app ; aperçu désactivable dans les Réglages
-• En-têtes et dates des messages cités dans la langue de l’app
-• Entreprises : réglages de l’organisation par MDM (Managed App Configuration)
-• iPad façon Outlook : commandes au-dessus du message, réponse juste à côté
-• Traduction des messages (objet compris) et de vos textes sur l’appareil (iOS 18 ou ultérieur)
-• Thèmes de couleurs, densité de liste, messages sombres sans inversion
-• Touchez une date dans un message : réunion ou rappel en un geste
-• Bloquer un expéditeur et nettoyer ses messages
-• Alertes contre l’usurpation d’expéditeur et les domaines trompeurs
-• Messages non distribués marqués, avec la cause
-• Notifications avec photo de l’expéditeur ; logos des expéditeurs vérifiés (BIMI)
-• Siri et Raccourcis : nouveau message, événement, non lus, Ma journée
-• iPad : volet des dossiers ajustable, glisser un message vers un dossier
-• IMAP : synchronisation rapide ; une nouvelle boîte se charge aussitôt
+• Fichiers OpenDocument (ODT, ODS, ODP) directement dans l’app : textes, tableurs avec leurs feuilles, diapositives
+• Aperçu des documents désactivable en entier ou par type (Réglages → Messagerie)
+• En-têtes des messages cités (De, À, Envoyé) et dates dans la langue de l’app
+• Détection plus précise de la langue pour la traduction
+• Corrigé : un événement sur toute la journée pouvait s’étendre sur deux jours
 </fr-FR>
 ```
 
@@ -130,300 +93,219 @@ Runner.entitlements и Info.plist не менялись; в Xcode включат
 
 ```
 <ru-RU>
-• Документы DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF и CSV — прямо в почте
-• Для компаний: настройки из MDM
-• Планшет и компьютер в стиле Outlook
-• Перевод писем с темой и своего текста на устройстве
-• Темы оформления, плотность ленты, тёмные письма без инверсии
-• Дата в письме — встреча или напоминание в одно касание
-• Блокировка отправителя и чистка его писем
-• Предупреждение о подделке отправителя
-• Сигналы почты и без сервисов Google (UnifiedPush)
+• Документы прямо в почте: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF и CSV
+• Таблицы — с листами, презентации — слайдами
+• Просмотр документов отключается целиком или по видам
+• Шапки цитат (От, Кому, Отправлено) и даты — на языке приложения
+• Точнее определяется язык письма для перевода
+• Исправлено: событие на весь день могло растянуться на два дня
 </ru-RU>
 <en-US>
-• DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF and CSV files open right in the app
-• For businesses: settings via MDM
-• Outlook-style layout on tablets and computers
-• Translate mail (subject too) and your own text on the device
-• Colour themes, list density, dark mail without inversion
-• Tap a date in a message to add a meeting or reminder
-• Block a sender and sweep their mail
-• Warnings about spoofed senders
-• Mail signals without Google services (UnifiedPush)
+• Documents right in the app: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF and CSV
+• Spreadsheets with their sheets, presentations as slides
+• Document preview can be turned off entirely or by type
+• Quoted message headers (From, To, Sent) and dates in the app’s language
+• More accurate language detection for translation
+• Fixed: an all-day event could stretch over two days
 </en-US>
 <de-DE>
-• DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF und CSV direkt in der App
-• Für Unternehmen: Einstellungen per MDM
-• Tablet und Computer im Outlook-Stil
-• Mails samt Betreff und eigene Texte auf dem Gerät übersetzen
-• Farbschemata, Listendichte, dunkle Mails ohne Invertierung
-• Datum in Nachricht antippen: Termin oder Erinnerung anlegen
-• Absender blockieren und seine Mails bereinigen
-• Warnungen vor gefälschten Absendern
-• Mail-Signale ohne Google-Dienste (UnifiedPush)
+• Dokumente direkt in der App: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF und CSV
+• Tabellen mit ihren Blättern, Präsentationen als Folien
+• Dokumentvorschau ganz oder je Dateityp abschaltbar
+• Kopfzeilen zitierter Nachrichten (Von, An, Gesendet) und Datum in der App-Sprache
+• Genauere Spracherkennung für die Übersetzung
+• Behoben: Ganztägige Termine konnten sich über zwei Tage erstrecken
 </de-DE>
 <fr-FR>
-• Fichiers DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF et CSV ouverts dans l’app
-• Entreprises : réglages par MDM
-• Tablette et ordinateur façon Outlook
-• Traduction des e-mails (objet compris) et de vos textes sur l’appareil
-• Thèmes de couleurs, densité de liste, e-mails sombres sans inversion
-• Touchez une date du message : réunion ou rappel
-• Bloquer un expéditeur et nettoyer ses e-mails
-• Alertes d’usurpation d’expéditeur
-• Signaux courrier sans services Google (UnifiedPush)
+• Documents directement dans l’app : DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF et CSV
+• Tableurs avec leurs feuilles, présentations en diapositives
+• Aperçu des documents désactivable en entier ou par type
+• En-têtes des messages cités (De, À, Envoyé) et dates dans la langue de l’app
+• Détection plus précise de la langue pour la traduction
+• Corrigé : un événement sur toute la journée pouvait s’étendre sur deux jours
 </fr-FR>
 <ar>
-• فتح ملفات DOCX وXLSX وPPTX وODT وODS وODP وRTF وCSV داخل التطبيق
-• للشركات: إعدادات عبر MDM
-• الجهاز اللوحي والكمبيوتر بأسلوب Outlook
-• ترجمة الرسائل مع موضوعها ونصوصك على الجهاز
-• أنساق ألوان وكثافة القائمة ورسائل داكنة بلا عكس للألوان
-• اضغط على تاريخ في الرسالة لإضافة اجتماع أو تذكير
-• حظر المرسل وتنظيف رسائله
-• تحذيرات من انتحال هوية المرسل
-• إشارات البريد بدون خدمات Google (UnifiedPush)
+• المستندات داخل التطبيق مباشرةً: DOCX وXLSX وPPTX وODT وODS وODP وRTF وCSV
+• جداول البيانات مع أوراقها والعروض التقديمية كشرائح
+• يمكن إيقاف معاينة المستندات كليًا أو حسب النوع
+• رؤوس الرسائل المقتبسة (من، إلى، أُرسلت) والتواريخ بلغة التطبيق
+• تحديد أدق للغة الرسالة عند الترجمة
+• تم الإصلاح: قد يمتد حدث طوال اليوم على يومين
 </ar>
 <hu-HU>
-• DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF és CSV fájlok az alkalmazásban
-• Cégeknek: beállítások MDM-ből
-• Táblagépen és számítógépen Outlook-stílus
-• Levelek (tárggyal együtt) és saját szövegek fordítása az eszközön
-• Színsémák, listasűrűség, sötét levelek inverzió nélkül
-• Koppintson egy dátumra: értekezlet vagy emlékeztető
-• Feladó letiltása és leveleinek takarítása
-• Figyelmeztetés hamisított feladóra
-• Levéljelzések Google-szolgáltatások nélkül (UnifiedPush)
+• Dokumentumok közvetlenül az alkalmazásban: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF és CSV
+• Táblázatok munkalapokkal, bemutatók diákként
+• A dokumentumok előnézete teljesen vagy típusonként kikapcsolható
+• Az idézett üzenetek fejléce (Feladó, Címzett, Elküldve) és a dátumok az alkalmazás nyelvén
+• Pontosabb nyelvfelismerés a fordításhoz
+• Javítva: az egész napos esemény két napra nyúlhatott
 </hu-HU>
 <vi>
-• Mở tệp DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF và CSV ngay trong ứng dụng
-• Cho doanh nghiệp: cấu hình qua MDM
-• Máy tính bảng và máy tính kiểu Outlook
-• Dịch thư (cả tiêu đề) và văn bản của bạn ngay trên thiết bị
-• Chủ đề màu, mật độ danh sách, thư tối không đảo màu
-• Chạm vào ngày trong thư để thêm cuộc họp hoặc lời nhắc
-• Chặn người gửi và dọn dẹp thư của họ
-• Cảnh báo người gửi giả mạo
-• Tín hiệu thư không cần dịch vụ Google (UnifiedPush)
+• Xem tài liệu ngay trong ứng dụng: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF và CSV
+• Bảng tính kèm các trang tính, bản trình bày theo từng trang chiếu
+• Có thể tắt xem trước tài liệu hoàn toàn hoặc theo loại
+• Phần đầu thư được trích dẫn (Từ, Đến, Đã gửi) và ngày tháng theo ngôn ngữ ứng dụng
+• Nhận diện ngôn ngữ chính xác hơn khi dịch
+• Đã sửa: sự kiện cả ngày có thể kéo dài sang hai ngày
 </vi>
 <da-DK>
-• DOCX-, XLSX-, PPTX-, ODT-, ODS-, ODP-, RTF- og CSV-filer åbnes i appen
-• Til virksomheder: indstillinger via MDM
-• Tablet og computer i Outlook-stil
-• Oversæt mails med emne og din egen tekst på enheden
-• Farvetemaer, listetæthed, mørke mails uden invertering
-• Tryk på en dato i en besked for at tilføje et møde eller en påmindelse
-• Blokér afsender og ryd op i vedkommendes mails
-• Advarsler om falske afsendere
-• Mailsignaler uden Google-tjenester (UnifiedPush)
+• Dokumenter direkte i appen: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF og CSV
+• Regneark med faner, præsentationer som dias
+• Forhåndsvisning af dokumenter kan slås helt fra eller pr. type
+• Overskrifter i citerede beskeder (Fra, Til, Sendt) og datoer på appens sprog
+• Mere præcis sproggenkendelse til oversættelse
+• Rettet: en heldagsbegivenhed kunne strække sig over to dage
 </da-DK>
 <iw-IL>
-• קובצי DOCX,‏ XLSX,‏ PPTX,‏ ODT,‏ ODS,‏ ODP,‏ RTF ו-CSV נפתחים באפליקציה
-• לעסקים: הגדרות דרך MDM
-• טאבלט ומחשב בסגנון Outlook
-• תרגום הודעות כולל הנושא, וגם הטקסט שלך, במכשיר
-• ערכות צבעים, צפיפות רשימת הדואר, הודעות כהות ללא היפוך צבעים
-• הקשה על תאריך בהודעה מוסיפה פגישה או תזכורת
-• חסימת שולח וניקוי כל ההודעות שלו
-• אזהרות על שולחים מתחזים
-• אותות דואר גם ללא שירותי Google (UnifiedPush)
+• מסמכים ישירות באפליקציה: DOCX,‏ XLSX,‏ PPTX,‏ ODT,‏ ODS,‏ ODP,‏ RTF ו-CSV
+• גיליונות אלקטרוניים עם הגיליונות שלהם, מצגות כשקופיות
+• אפשר לכבות את התצוגה המקדימה של מסמכים לגמרי או לפי סוג
+• כותרות של הודעות מצוטטות (מאת, אל, נשלח) ותאריכים בשפת האפליקציה
+• זיהוי שפה מדויק יותר לתרגום
+• תוקן: אירוע של יום שלם עלול היה להימשך יומיים
 </iw-IL>
 <id>
-• File DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF, dan CSV terbuka di aplikasi
-• Untuk perusahaan: pengaturan lewat MDM
-• Tablet dan komputer bergaya Outlook
-• Terjemahkan email beserta subjeknya dan teks Anda di perangkat
-• Tema warna, kerapatan daftar, email gelap tanpa inversi
-• Ketuk tanggal di pesan untuk menambah rapat atau pengingat
-• Blokir pengirim dan bersihkan emailnya
-• Peringatan pengirim palsu
-• Sinyal email tanpa layanan Google (UnifiedPush)
+• Dokumen langsung di aplikasi: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF, dan CSV
+• Spreadsheet lengkap dengan lembarnya, presentasi sebagai slide
+• Pratinjau dokumen dapat dimatikan seluruhnya atau per jenis
+• Header pesan yang dikutip (Dari, Kepada, Dikirim) dan tanggal dalam bahasa aplikasi
+• Deteksi bahasa yang lebih akurat untuk terjemahan
+• Diperbaiki: acara sepanjang hari bisa terbentang dua hari
 </id>
 <es-ES>
-• Archivos DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF y CSV en la propia app
-• Para empresas: ajustes mediante MDM
-• Tableta y ordenador al estilo Outlook
-• Traduce correos (también el asunto) y tu texto en el dispositivo
-• Temas de color, densidad de lista, correo oscuro sin inversión
-• Toca una fecha para crear una reunión o recordatorio
-• Bloqueo de remitentes y limpieza de sus mensajes
-• Avisos de remitentes suplantados
-• Señales de correo sin servicios de Google (UnifiedPush)
+• Documentos en la propia app: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF y CSV
+• Hojas de cálculo con sus hojas, presentaciones en diapositivas
+• Vista previa de documentos desactivable por completo o por tipo
+• Encabezados de mensajes citados (De, Para, Enviado) y fechas en el idioma de la app
+• Detección del idioma más precisa para traducir
+• Corregido: un evento de todo el día podía ocupar dos días
 </es-ES>
 <it-IT>
-• File DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF e CSV aperti nell’app
-• Per le aziende: impostazioni tramite MDM
-• Tablet e computer in stile Outlook
-• Traduci le email (anche l’oggetto) e il tuo testo sul dispositivo
-• Temi colore, densità dell’elenco, posta scura senza inversione
-• Tocca una data per creare riunione o promemoria
-• Blocco dei mittenti e pulizia dei loro messaggi
-• Avvisi sui mittenti falsificati
-• Segnali di posta anche senza servizi Google (UnifiedPush)
+• Documenti direttamente nell’app: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF e CSV
+• Fogli di calcolo con i loro fogli, presentazioni in diapositive
+• Anteprima dei documenti disattivabile del tutto o per tipo
+• Intestazioni dei messaggi citati (Da, A, Inviato) e date nella lingua dell’app
+• Rilevamento della lingua più preciso per la traduzione
+• Corretto: un evento di tutto il giorno poteva occupare due giorni
 </it-IT>
 <zh-CN>
-• 直接在应用内打开 DOCX、XLSX、PPTX、ODT、ODS、ODP、RTF 和 CSV 文件
-• 企业：通过 MDM 下发设置
-• 平板和电脑采用 Outlook 式布局
-• 在设备上翻译邮件（含主题）和你写的文字
-• 配色主题、列表密度、无需反色的深色邮件
-• 点按邮件中的日期，即可添加会议或提醒
-• 阻止发件人并清理其邮件
-• 伪造发件人警告
-• 没有 Google 服务也能收到邮件信号（UnifiedPush）
+• 直接在应用内查看文档：DOCX、XLSX、PPTX、ODT、ODS、ODP、RTF 和 CSV
+• 表格按工作表显示，演示文稿按幻灯片显示
+• 可完全关闭或按类型关闭文档预览
+• 引用邮件的标头（发件人、收件人、发送时间）和日期以应用语言显示
+• 翻译时更准确地识别语言
+• 修复：全天事件可能跨越两天的问题
 </zh-CN>
 <ko-KR>
-• DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF, CSV 파일을 앱에서 바로 보기
-• 기업용: MDM으로 설정 배포
-• 태블릿과 컴퓨터에서 Outlook 스타일
-• 기기에서 메일(제목 포함)과 내 글 번역
-• 색상 테마, 목록 밀도, 색 반전 없는 다크 메일
-• 메일 속 날짜를 탭해 회의나 알림 추가
-• 보낸 사람 차단 및 해당 메일 정리
-• 보낸 사람 사칭 경고
-• Google 서비스 없이도 메일 신호 수신(UnifiedPush)
+• 앱에서 바로 문서 보기: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF, CSV
+• 시트가 있는 스프레드시트, 슬라이드로 보는 프레젠테이션
+• 문서 미리 보기를 전체 또는 종류별로 끌 수 있음
+• 인용된 메일의 머리글(보낸 사람, 받는 사람, 보낸 날짜)과 날짜를 앱 언어로 표시
+• 번역을 위한 언어 감지 정확도 향상
+• 수정: 종일 일정이 이틀에 걸쳐 표시될 수 있던 문제
 </ko-KR>
 <nl-NL>
-• DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF en CSV direct in de app
-• Voor bedrijven: instellingen via MDM
-• Tablet en computer in Outlook-stijl
-• Vertaal mail (ook het onderwerp) en je eigen tekst op het apparaat
-• Kleurthema’s, lijstdichtheid, donkere e-mail zonder inversie
-• Tik op een datum voor een afspraak of herinnering
-• Afzender blokkeren en zijn berichten opruimen
-• Waarschuwingen voor vervalste afzenders
-• E-mailsignalen ook zonder Google-services (UnifiedPush)
+• Documenten direct in de app: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF en CSV
+• Spreadsheets met tabbladen, presentaties als dia’s
+• Documentvoorbeeld helemaal of per type uit te schakelen
+• Kopteksten van geciteerde berichten (Van, Aan, Verzonden) en datums in de taal van de app
+• Nauwkeurigere taalherkenning voor vertaling
+• Opgelost: een evenement van de hele dag kon twee dagen beslaan
 </nl-NL>
 <no-NO>
-• DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF og CSV rett i appen
-• For bedrifter: innstillinger via MDM
-• Nettbrett og datamaskin i Outlook-stil
-• Oversett e-post med emne og din egen tekst på enheten
-• Fargetemaer, listetetthet, mørk e-post uten invertering
-• Trykk på en dato i en melding for å legge til møte eller påminnelse
-• Blokker en avsender og rydd opp i meldingene deres
-• Advarsler om forfalskede avsendere
-• E-postsignaler også uten Google-tjenester (UnifiedPush)
+• Dokumenter rett i appen: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF og CSV
+• Regneark med faner, presentasjoner som lysbilder
+• Forhåndsvisning av dokumenter kan slås av helt eller per type
+• Overskrifter i siterte meldinger (Fra, Til, Sendt) og datoer på appens språk
+• Mer presis språkgjenkjenning for oversettelse
+• Rettet: en heldagshendelse kunne strekke seg over to dager
 </no-NO>
 <pl-PL>
-• Pliki DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF i CSV otwierane w aplikacji
-• Dla firm: ustawienia z MDM
-• Tablet i komputer w stylu Outlooka
-• Tłumaczenie poczty (z tematem) i własnego tekstu na urządzeniu
-• Motywy kolorów, gęstość listy, ciemne wiadomości bez inwersji
-• Dotknij daty, by dodać spotkanie lub przypomnienie
-• Blokowanie nadawców i porządkowanie ich wiadomości
-• Ostrzeżenia o fałszywych nadawcach
-• Sygnały poczty także bez usług Google (UnifiedPush)
+• Dokumenty bezpośrednio w aplikacji: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF i CSV
+• Arkusze z zakładkami, prezentacje jako slajdy
+• Podgląd dokumentów można wyłączyć całkowicie lub dla wybranych typów
+• Nagłówki cytowanych wiadomości (Od, Do, Wysłano) i daty w języku aplikacji
+• Dokładniejsze rozpoznawanie języka do tłumaczenia
+• Naprawiono: wydarzenie całodniowe mogło zajmować dwa dni
 </pl-PL>
 <pt-BR>
-• DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF e CSV abertos no app
-• Para empresas: configurações via MDM
-• Tablet e computador no estilo Outlook
-• Traduza e-mails (com o assunto) e seu próprio texto no aparelho
-• Temas de cor, densidade da lista, e-mails escuros sem inversão
-• Toque em uma data para criar reunião ou lembrete
-• Bloqueio de remetentes e limpeza de mensagens
-• Alertas sobre remetentes falsificados
-• Sinais de e-mail também sem serviços do Google (UnifiedPush)
+• Documentos no próprio app: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF e CSV
+• Planilhas com suas abas, apresentações em slides
+• Pré-visualização de documentos desativável por completo ou por tipo
+• Cabeçalhos de mensagens citadas (De, Para, Enviado) e datas no idioma do app
+• Detecção de idioma mais precisa para a tradução
+• Corrigido: um evento de dia inteiro podia ocupar dois dias
 </pt-BR>
 <ro>
-• DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF, CSV în aplicație
-• Pentru companii: setări prin MDM
-• Tabletă și computer în stil Outlook
-• Traducerea e-mailurilor (cu subiect) și a textului tău pe dispozitiv
-• Teme de culoare, densitatea listei, mesaje întunecate fără inversare
-• Atinge o dată dintr-un mesaj pentru întâlnire sau memento
-• Blocarea expeditorului și curățarea mesajelor lui
-• Avertizări la expeditori falsificați
-• Semnale de e-mail și fără servicii Google (UnifiedPush)
+• Documente direct în aplicație: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF și CSV
+• Foi de calcul cu file, prezentări ca diapozitive
+• Previzualizarea documentelor se poate dezactiva complet sau pe tipuri
+• Antetele mesajelor citate (De la, Către, Trimis) și datele în limba aplicației
+• Detectare mai precisă a limbii pentru traducere
+• Corectat: un eveniment de o zi întreagă se putea întinde pe două zile
 </ro>
 <sk>
-• Súbory DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF a CSV priamo v aplikácii
-• Pre firmy: nastavenia cez MDM
-• Tablet a počítač v štýle Outlooku
-• Preklad e-mailov aj s predmetom a vlastného textu v zariadení
-• Farebné motívy, hustota zoznamu, tmavé správy bez inverzie
-• Ťuknutím na dátum v správe pridáte stretnutie alebo pripomienku
-• Blokovanie odosielateľa a čistenie jeho správ
-• Varovania pred sfalšovanými odosielateľmi
-• Signály pošty aj bez služieb Google (UnifiedPush)
+• Dokumenty priamo v aplikácii: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF a CSV
+• Tabuľky s hárkami, prezentácie ako snímky
+• Náhľad dokumentov sa dá vypnúť celý alebo podľa typu
+• Hlavičky citovaných správ (Od, Komu, Odoslané) a dátumy v jazyku aplikácie
+• Presnejšie rozpoznanie jazyka na preklad
+• Opravené: celodenná udalosť sa mohla roztiahnuť na dva dni
 </sk>
 <th>
-• เปิดไฟล์ DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF และ CSV ในแอปได้ทันที
-• สำหรับองค์กร: ตั้งค่าผ่าน MDM
-• แท็บเล็ตและคอมพิวเตอร์สไตล์ Outlook
-• แปลอีเมลพร้อมหัวเรื่องและข้อความของคุณบนอุปกรณ์
-• ธีมสี ความหนาแน่นของรายการ อีเมลโหมดมืดโดยไม่กลับสี
-• แตะวันที่ในอีเมลเพื่อเพิ่มการประชุมหรือเตือนความจำ
-• บล็อกผู้ส่งและล้างอีเมลของผู้ส่ง
-• เตือนเมื่อผู้ส่งถูกปลอมแปลง
-• สัญญาณอีเมลแม้ไม่มีบริการ Google (UnifiedPush)
+• เปิดเอกสารในแอปได้ทันที: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF และ CSV
+• สเปรดชีตแสดงพร้อมแผ่นงาน งานนำเสนอแสดงเป็นสไลด์
+• ปิดการแสดงตัวอย่างเอกสารได้ทั้งหมดหรือตามประเภท
+• ส่วนหัวของข้อความที่อ้างถึง (จาก ถึง ส่งเมื่อ) และวันที่เป็นภาษาของแอป
+• ตรวจจับภาษาเพื่อการแปลได้แม่นยำขึ้น
+• แก้ไข: กิจกรรมตลอดวันอาจแสดงยาวสองวัน
 </th>
 <tr-TR>
-• DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF ve CSV dosyaları uygulamada açılır
-• Şirketler için: MDM ile ayarlar
-• Tablet ve bilgisayarda Outlook tarzı
-• Postaları (konu dahil) ve kendi metninizi cihazda çevirin
-• Renk temaları, liste yoğunluğu, ters çevirmesiz koyu iletiler
-• İletideki tarihe dokunup toplantı veya hatırlatıcı ekleyin
-• Göndereni engelleme ve iletilerini temizleme
-• Sahte göndericilere karşı uyarılar
-• Google hizmetleri olmadan da posta sinyalleri (UnifiedPush)
+• Belgeler doğrudan uygulamada: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF ve CSV
+• Sayfalarıyla tablolar, slayt olarak sunular
+• Belge önizlemesi tamamen veya türe göre kapatılabilir
+• Alıntılanan iletilerin üst bilgileri (Kimden, Kime, Gönderildi) ve tarihler uygulamanın dilinde
+• Çeviri için daha doğru dil algılama
+• Düzeltildi: tüm gün süren bir etkinlik iki güne yayılabiliyordu
 </tr-TR>
 <fi-FI>
-• DOCX-, XLSX-, PPTX-, ODT-, ODS-, ODP-, RTF- ja CSV-tiedostot sovelluksessa
-• Yrityksille: asetukset MDM:n kautta
-• Tabletti ja tietokone Outlook-tyyliin
-• Käännä viestit aiheineen ja oma tekstisi laitteella
-• Väriteemat, luettelon tiheys, tummat viestit ilman käänteisvärejä
-• Napauta viestin päivämäärää ja lisää kokous tai muistutus
-• Lähettäjän esto ja hänen viestiensä siivous
-• Varoitukset väärennetyistä lähettäjistä
-• Postisignaalit ilman Google-palveluita (UnifiedPush)
+• Asiakirjat suoraan sovelluksessa: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF ja CSV
+• Laskentataulukot välilehtineen, esitykset dioina
+• Asiakirjojen esikatselun voi poistaa käytöstä kokonaan tai tyypeittäin
+• Lainattujen viestien otsikot (Lähettäjä, Vastaanottaja, Lähetetty) ja päivämäärät sovelluksen kielellä
+• Tarkempi kielen tunnistus käännöstä varten
+• Korjattu: koko päivän tapahtuma saattoi venyä kahdelle päivälle
 </fi-FI>
 <hi-IN>
-• DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF और CSV फ़ाइलें सीधे ऐप में
-• कंपनियों के लिए: MDM से सेटिंग्स
-• टैबलेट और कंप्यूटर पर Outlook जैसा लेआउट
-• मेल (विषय सहित) और अपना टेक्स्ट डिवाइस पर अनुवाद करें
-• रंग थीम, सूची घनत्व, बिना इनवर्ज़न के डार्क मेल
-• ईमेल में तारीख पर टैप करके मीटिंग या रिमाइंडर जोड़ें
-• प्रेषक को ब्लॉक करें और उसके ईमेल की सफ़ाई करें
-• नकली प्रेषकों की चेतावनियां
-• Google सेवाओं के बिना भी मेल सिग्नल (UnifiedPush)
+• दस्तावेज़ सीधे ऐप में: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF और CSV
+• शीट के साथ स्प्रेडशीट, स्लाइड के रूप में प्रस्तुतियाँ
+• दस्तावेज़ पूर्वावलोकन पूरी तरह या प्रकार के अनुसार बंद किया जा सकता है
+• उद्धृत संदेशों के हेडर (प्रेषक, प्राप्तकर्ता, भेजा गया) और तिथियाँ ऐप की भाषा में
+• अनुवाद के लिए भाषा की अधिक सटीक पहचान
+• ठीक किया गया: पूरे दिन का इवेंट दो दिनों तक फैल सकता था
 </hi-IN>
 <cs-CZ>
-• Soubory DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF a CSV přímo v aplikaci
-• Pro firmy: nastavení přes MDM
-• Tablet a počítač ve stylu Outlooku
-• Překlad e-mailů i s předmětem a vlastního textu v zařízení
-• Barevné motivy, hustota seznamu, tmavé zprávy bez inverze
-• Klepnutím na datum ve zprávě přidáte schůzku nebo připomenutí
-• Blokování odesílatele a čištění jeho zpráv
-• Varování před padělanými odesílateli
-• Signály pošty i bez služeb Google (UnifiedPush)
+• Dokumenty přímo v aplikaci: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF a CSV
+• Tabulky s listy, prezentace jako snímky
+• Náhled dokumentů lze vypnout celý nebo podle typu
+• Záhlaví citovaných zpráv (Od, Komu, Odesláno) a data v jazyce aplikace
+• Přesnější rozpoznání jazyka pro překlad
+• Opraveno: celodenní událost se mohla roztáhnout na dva dny
 </cs-CZ>
 <sv-SE>
-• DOCX-, XLSX-, PPTX-, ODT-, ODS-, ODP-, RTF- och CSV-filer öppnas i appen
-• För företag: inställningar via MDM
-• Surfplatta och dator i Outlook-stil
-• Översätt mejl med ämnesrad och din egen text på enheten
-• Färgteman, listtäthet, mörk e-post utan inversion
-• Tryck på ett datum i meddelandet för möte eller påminnelse
-• Blockera en avsändare och rensa dennes e-post
-• Varningar för förfalskade avsändare
-• E-postsignaler även utan Google-tjänster (UnifiedPush)
+• Dokument direkt i appen: DOCX, XLSX, PPTX, ODT, ODS, ODP, RTF och CSV
+• Kalkylblad med flikar, presentationer som bilder
+• Förhandsvisning av dokument kan stängas av helt eller per typ
+• Rubriker i citerade meddelanden (Från, Till, Skickat) och datum på appens språk
+• Säkrare språkigenkänning för översättning
+• Åtgärdat: en heldagshändelse kunde sträcka sig över två dagar
 </sv-SE>
 <ja-JP>
-• DOCX・XLSX・PPTX・ODT・ODS・ODP・RTF・CSV ファイルをアプリ内で表示
-• 企業向け：MDM で設定を配布
-• タブレットとパソコンで Outlook 風の画面
-• メール（件名も）と自分の文章を端末内で翻訳
-• カラーテーマ、リストの密度、反転しないダークメール
-• メール内の日付をタップして会議やリマインダーを追加
-• 差出人をブロックし、そのメールをクリーンアップ
-• なりすましの差出人を警告
-• Google サービスなしでもメールのシグナルを受信 (UnifiedPush)
+• アプリ内で文書を表示：DOCX・XLSX・PPTX・ODT・ODS・ODP・RTF・CSV
+• スプレッドシートはシート付き、プレゼンテーションはスライドで表示
+• 文書のプレビューは全体または種類ごとにオフにできます
+• 引用メッセージのヘッダー（差出人・宛先・送信日時）と日付をアプリの言語で表示
+• 翻訳のための言語判定がより正確に
+• 修正：終日の予定が2日間にまたがることがある問題
 </ja-JP>
 ```

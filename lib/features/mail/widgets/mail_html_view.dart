@@ -622,6 +622,8 @@ a{color:#1D4F91;}
    нажимается, но не спорит с оформлением письма. */
 a[href^="ogdate:"]{color:inherit !important;text-decoration:underline dotted !important;text-underline-offset:2px;}
 a[href^="ogperson:"]{color:inherit !important;text-decoration:none !important;background:rgba(128,128,128,.16);border-radius:10px;padding:0 7px;white-space:nowrap;}
+a[href^="ogperson:"][data-i]{padding-left:2px;}
+a[href^="ogperson:"][data-i]::before{content:attr(data-i);display:inline-block;width:1.45em;height:1.45em;line-height:1.45em;border-radius:50%;background:var(--c,#7d6456);color:#fff;font-size:.78em;font-weight:600;text-align:center;margin-right:.4em;vertical-align:.08em;}
 blockquote{margin:8px 0 8px 4px;padding-left:10px;border-left:3px solid #c7cdd6;color:#4a4f57;}
 /* Слитные рамки — у таблиц без cellspacing (Outlook, 1С); у рассылок
    cellspacing задаёт промежутки между ячейками (1.8.14: раньше слипались).

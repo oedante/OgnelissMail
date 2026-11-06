@@ -37,7 +37,7 @@ void main() {
         '<b>Тема:</b> Re: EAS Client</p></div><p>Hi Oleg</p>';
     final out = QuotePeople.enrich(html);
     expect(RegExp('href="ogperson:').allMatches(out).length, 2);
-    expect(out, contains('<a href="ogperson:rkowal%40microsoft.com?n=Rob+Kowal+%28CELA%29">Rob Kowal (CELA)</a>'));
+    expect(out, contains('<a href="ogperson:rkowal%40microsoft.com?n=Rob+Kowal+%28CELA%29" data-i=')); expect(out, contains('">Rob Kowal (CELA)</a>'));
     // Простые ссылки, без вёрстки (1.10.4): письмо остаётся «простым» и
     // показывается виджетами — плашки рисует экран письма.
     expect(out, isNot(contains('inline-block')));
@@ -72,7 +72,7 @@ void main() {
     expect(out, contains('>Ермишин О.</a>'));
     expect(out, contains('>Хабиров Р.Ф.</a>'));
     // Латиницу без отчества не сокращаем — без подсказки.
-    expect(out, contains('<a href="ogperson:rk%40example.com?n=Rob+Kowal">Rob Kowal</a>'));
+    expect(out, contains('<a href="ogperson:rk%40example.com?n=Rob+Kowal" data-i=')); expect(out, contains('">Rob Kowal</a>'));
     final zibrov = RegExp(r'href="(ogperson:d\.zibrov[^"]+)"').firstMatch(out)!.group(1)!;
     expect(QuotePeople.nameOf(zibrov.replaceAll('&amp;', '&')), 'Зибров Дмитрий Николаевич');
     // Полностью — как раньше.
@@ -89,6 +89,33 @@ void main() {
     expect(out, contains('ogperson:noreply%40github.com?n=GitHub'));
     expect(out, isNot(contains('href="mailto:')));
     expect(out, contains('Date: Fri, Oct 30, 2026'));
+  });
+
+  test('1.14.0: длинная «Кому» (73 человека) и «Копия» — все плашками, никто не пропадает', () {
+    String people(String p, int n) => [for (var i = 0; i < n; i++) '$p$i Иван Петрович &lt;$p$i@example.ru&gt;'].join('; ');
+    final html = '<p><b>От:</b> Еремина Екатерина &lt;e@example.ru&gt;<br>'
+        '<b>Отправлено:</b> пятница, 6 ноября 2026 г. 09:05<br>'
+        '<b>Кому:</b> ${people('to', 73)}<br>'
+        '<b>Копия:</b> ${people('cc', 13)}<br>'
+        '<b>Тема:</b> МСК-СБТ заезд 18.11</p>';
+    final out = QuotePeople.enrich(html);
+    expect(RegExp('href="ogperson:').allMatches(out).length, 1 + 73 + 13);
+    expect(out, contains('ogperson:to72%40example.ru'), reason: 'последний из «Кому» на месте');
+    expect(out, contains('ogperson:cc12%40example.ru'), reason: '«Копия» — тоже плашками');
+  });
+
+  test('1.14.0: плашка для окна браузера — буква и цвет человека', () {
+    final out = QuotePeople.enrich('<p><b>Кому:</b> Иванов Николай &lt;n.ivanov@example.ru&gt;</p>');
+    expect(out, contains('data-i="И"'));
+    expect(RegExp(r'style="--c:#[0-9a-f]{6}"').hasMatch(out), isTrue);
+  });
+
+  test('строка сверх предела остаётся текстом целиком', () {
+    final names = [for (var i = 0; i < QuotePeople.maxPeople + 5; i++) 'p$i@example.ru'].join('; ');
+    final out = QuotePeople.enrich('<p><b>Кому:</b> $names<br><b>Копия:</b> a@example.ru</p>');
+    expect(out, contains('p${QuotePeople.maxPeople + 4}@example.ru'), reason: 'никто не пропал');
+    expect(out, isNot(contains('ogperson:p0%40')), reason: 'длинная строка — без плашек');
+    expect(out, contains('ogperson:a%40example.ru'), reason: 'следующая строка — плашками');
   });
 
   test('«To: всем сотрудникам» в тексте письма — без изменений', () {

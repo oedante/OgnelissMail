@@ -73,8 +73,12 @@ void main() {
     await t.tap(find.text('Тест'));
     expect(opened, ['2', 'd']);
 
-    // Стрелка — больше текста, письмо не открывается.
-    await t.tap(find.byTooltip('Развернуть').first);
+    // Новые сверху (1.14.0): последнее письмо выше первого.
+    expect(t.getTopLeft(find.text('Hi Oedante, One more thing.')).dy,
+        lessThan(t.getTopLeft(find.text('Hi Oedante, Congrats! Your page is up.')).dy));
+
+    // Стрелка — больше текста, письмо не открывается (самое старое — внизу).
+    await t.tap(find.byTooltip('Развернуть').last);
     await t.pumpAndSettle();
     expect(find.text('Hi Oedante,\nCongrats! Your page is up.'), findsOneWidget);
     expect(opened, ['2', 'd']);

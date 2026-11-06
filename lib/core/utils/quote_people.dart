@@ -30,7 +30,9 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:intl/date_symbol_data_local.dart' show initializeDateFormatting;
 import 'package:intl/intl.dart' show DateFormat;
 
+import 'avatar_colors.dart';
 import 'person_name.dart';
+import 'text_safe.dart' show initialOf;
 
 
 /// Человек из строки шапки: адрес может отсутствовать (внутренний Exchange).
@@ -73,8 +75,12 @@ class QuotePeople {
   );
 
   /// Не больше стольких плашек в письме: огромные списки рассылки остаются
-  /// текстом.
-  static const maxPeople = 60;
+  /// текстом. 1.14.0 (письмо владельца 06.11.2026, «Кому» — 73 человека):
+  /// было 60, и строка, не влезавшая в остаток, обрезалась — люди сверх
+  /// предела пропадали из шапки, а «Копия» оставалась текстом. Теперь
+  /// предел больше, а строка, которая в него не помещается, остаётся
+  /// текстом целиком — никто не теряется.
+  static const maxPeople = 300;
 
   /// Разобрать значение строки: «Имя <адрес>; Имя <адрес>», «адрес, адрес»,
   /// «Имя [mailto:адрес]», «Имя» без адреса.
@@ -167,12 +173,11 @@ class QuotePeople {
       // Подпись обычным текстом («To: всем сотрудникам» в самом письме) —
       // только с адресами: без них это скорее фраза, а не шапка цитаты.
       if (plainLabelNode != null) list.removeWhere((p) => p.email == null);
-      if (list.isEmpty) {
+      if (list.isEmpty || people + list.length > maxPeople) {
         if (plainLabelNode != null) plainLabelNode.data += plainRest;
         continue;
       }
-      final chips = html_parser.parseFragment(
-          ' ${[for (final p in list.take(maxPeople - people)) _chip(p, shortNames)].join(' ')}');
+      final chips = html_parser.parseFragment(' ${[for (final p in list) _chip(p, shortNames)].join(' ')}');
       people += list.length;
       final anchor = plainLabelNode ?? e.node;
       final parent = anchor.parentNode;
@@ -210,7 +215,14 @@ class QuotePeople {
         '?n=${Uri.encodeQueryComponent(p.name)}';
     final text = shortNames && p.name.isNotEmpty ? PersonName.display(p.name, shortForm: true) : p.display;
     final title = text == p.display ? '' : ' title="${_esc(p.display)}"';
-    return '<a href="${_esc(href)}"$title>${_esc(text)}</a>';
+    // Кружок с буквой — в окне браузера (1.14.0, замечание владельца
+    // 06.11.2026: в широком письме у плашек не было портретов): та же
+    // буква и тот же цвет, что у QuotePersonChip; рисует CSS окна письма
+    // (::before), простой показ этих атрибутов не видит.
+    final key = (p.email ?? p.name).toLowerCase();
+    final rgb = (avatarColorValue(key) & 0xFFFFFF).toRadixString(16).padLeft(6, '0');
+    final letter = initialOf(p.name.isNotEmpty ? p.name : (p.email ?? '?'));
+    return '<a href="${_esc(href)}" data-i="${_esc(letter)}" style="--c:#$rgb"$title>${_esc(text)}</a>';
   }
 
   /// Ссылка плашки человека (с адресом или без).

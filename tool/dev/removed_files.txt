@@ -87,3 +87,9 @@ test/unit/dictation_formatter_test.dart
 test/unit/mail_classification_test.dart
 test/unit/schedule_hints_test.dart
 test/widget/quick_event_sheet_test.dart
+tool/l10n/pending/a2.json
+tool/l10n/pending/d2.json
+tool/l10n/pending/o4.json
+tool/l10n/pending/s2.json
+tool/l10n/pending/t2.json
+tool/l10n/pending/u2.json

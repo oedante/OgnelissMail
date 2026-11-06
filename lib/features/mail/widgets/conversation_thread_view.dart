@@ -51,7 +51,9 @@ class _ConversationThreadViewState extends State<ConversationThreadView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final sorted = List<EmailModel>.from(widget.emails)..sort((a, b) => a.receivedAt.compareTo(b.receivedAt));
+    // Новые сверху (1.14.0, просьба владельца 06.11.2026) — как в ленте:
+    // последний ответ виден первым, без прокрутки через всю беседу.
+    final sorted = List<EmailModel>.from(widget.emails)..sort((a, b) => b.receivedAt.compareTo(a.receivedAt));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

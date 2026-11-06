@@ -73,8 +73,12 @@ class QuotePeople {
   );
 
   /// Не больше стольких плашек в письме: огромные списки рассылки остаются
-  /// текстом.
-  static const maxPeople = 60;
+  /// текстом. 1.14.0 (письмо владельца 06.11.2026, «Кому» — 73 человека):
+  /// было 60, и строка, не влезавшая в остаток, обрезалась — люди сверх
+  /// предела пропадали из шапки, а «Копия» оставалась текстом. Теперь
+  /// предел больше, а строка, которая в него не помещается, остаётся
+  /// текстом целиком — никто не теряется.
+  static const maxPeople = 300;
 
   /// Разобрать значение строки: «Имя <адрес>; Имя <адрес>», «адрес, адрес»,
   /// «Имя [mailto:адрес]», «Имя» без адреса.
@@ -167,12 +171,11 @@ class QuotePeople {
       // Подпись обычным текстом («To: всем сотрудникам» в самом письме) —
       // только с адресами: без них это скорее фраза, а не шапка цитаты.
       if (plainLabelNode != null) list.removeWhere((p) => p.email == null);
-      if (list.isEmpty) {
+      if (list.isEmpty || people + list.length > maxPeople) {
         if (plainLabelNode != null) plainLabelNode.data += plainRest;
         continue;
       }
-      final chips = html_parser.parseFragment(
-          ' ${[for (final p in list.take(maxPeople - people)) _chip(p, shortNames)].join(' ')}');
+      final chips = html_parser.parseFragment(' ${[for (final p in list) _chip(p, shortNames)].join(' ')}');
       people += list.length;
       final anchor = plainLabelNode ?? e.node;
       final parent = anchor.parentNode;

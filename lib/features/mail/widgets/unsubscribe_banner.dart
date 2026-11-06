@@ -105,7 +105,11 @@ Future<bool?> runUnsubscribe(
 class UnsubscribeBanner extends ConsumerStatefulWidget {
   final AccountModel account;
   final EmailModel email;
-  const UnsubscribeBanner({super.key, required this.account, required this.email});
+
+  /// Отписались (1.12.x): чип строки сведений письма меняет надпись на «Вы
+  /// отписались».
+  final VoidCallback? onDone;
+  const UnsubscribeBanner({super.key, required this.account, required this.email, this.onDone});
 
   @override
   ConsumerState<UnsubscribeBanner> createState() => _UnsubscribeBannerState();
@@ -146,6 +150,7 @@ class _UnsubscribeBannerState extends ConsumerState<UnsubscribeBanner> {
         _error = l10n.tr('unsubscribeFailed');
       }
     });
+    if (r) widget.onDone?.call();
   }
 
   @override

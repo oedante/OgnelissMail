@@ -74,17 +74,28 @@ class PlatformDiagnostics {
   }
 
   /// Семейство прошивки для подсказок: xiaomi, huawei, honor, oppo, oneplus,
-  /// realme, vivo, samsung, zte, nubia, asus, meizu, pixel, other.
+  /// realme, vivo, samsung, zte, nubia, asus, meizu, tecno (с Infinix и
+  /// itel), pixel, motorola, sony, nokia, lenovo, nothing, fairphone, other.
+  ///
+  /// 1.12.x: по словам производителя и марки, а не по подстроке — «itel»
+  /// иначе нашёлся бы внутри чужого названия.
   static String family(Map<String, dynamic> d) {
-    final m = '${d['manufacturer'] ?? ''} ${d['brand'] ?? ''}'.toLowerCase();
+    final words = '${d['manufacturer'] ?? ''} ${d['brand'] ?? ''}'
+        .toLowerCase()
+        .split(RegExp(r'[^a-z0-9]+'))
+        .where((w) => w.isNotEmpty)
+        .toSet();
     const keys = ['xiaomi', 'redmi', 'poco', 'huawei', 'honor', 'oneplus', 'oppo', 'realme',
-      'vivo', 'iqoo', 'samsung', 'nubia', 'zte', 'asus', 'meizu', 'google', 'motorola', 'tecno', 'infinix'];
+      'vivo', 'iqoo', 'samsung', 'nubia', 'zte', 'asus', 'meizu', 'google', 'motorola', 'tecno', 'infinix',
+      'itel', 'sony', 'nokia', 'hmd', 'lenovo', 'nothing', 'fairphone'];
     for (final k in keys) {
-      if (m.contains(k)) {
+      if (words.contains(k)) {
         return switch (k) {
           'redmi' || 'poco' => 'xiaomi',
           'iqoo' => 'vivo',
           'google' => 'pixel',
+          'infinix' || 'itel' => 'tecno',
+          'hmd' => 'nokia',
           _ => k,
         };
       }
@@ -92,12 +103,29 @@ class PlatformDiagnostics {
     return 'other';
   }
 
+  /// Сборка без оболочки производителя (1.12.x): LineageOS (и /e/OS,
+  /// DivestOS, crDroid на её основе), CalyxOS — BackgroundDiagnostics.kt
+  /// узнаёт их по системным свойствам раньше оболочек.
+  static bool customRom(Map<String, dynamic> d) => const {'LineageOS', 'CalyxOS'}.contains(d['rom']);
+
   /// Производители с собственным «оптимизатором», который закрывает
-  /// приложения в фоне (по опыту dontkillmyapp.com).
-  static bool hasOemManager(Map<String, dynamic> d) => const {
+  /// приложения в фоне (по опыту dontkillmyapp.com). Сборка без оболочки
+  /// на их телефоне (LineageOS на Xiaomi) — без «оптимизатора»: ни
+  /// подсказки, ни кнопки, которой нечего открыть.
+  static bool hasOemManager(Map<String, dynamic> d) =>
+      !customRom(d) &&
+      const {
         'xiaomi', 'huawei', 'honor', 'oppo', 'oneplus', 'realme', 'vivo',
-        'samsung', 'zte', 'nubia', 'asus', 'meizu', 'tecno', 'infinix',
+        'samsung', 'zte', 'nubia', 'asus', 'meizu', 'tecno',
       }.contains(family(d));
+
+  /// Сервисы Google Play на телефоне (Android, 1.12.x): false — нет или
+  /// выключены (Huawei и Honor с HMS, сборки без Google); null — не известно.
+  static bool? googleServices(Map<String, dynamic> d) => switch (d['gms']) {
+        'ok' => true,
+        'missing' || 'disabled' => false,
+        _ => null,
+      };
 
   /// Android: категория «Почта» выключена в настройках уведомлений телефона
   /// (1.6.44). Разрешение на уведомления при этом есть, и прежняя проверка
@@ -113,11 +141,18 @@ class PlatformDiagnostics {
     return mail.isNotEmpty && mail.every((c) => c['importance'] == 0);
   }
 
-  static List<BgIssue> issues(Map<String, dynamic> d) {
+  /// [ios] — для тестов (по умолчанию — платформа, на которой запущено).
+  static List<BgIssue> issues(Map<String, dynamic> d, {bool? ios}) {
     final out = <BgIssue>[];
     if (d.isEmpty) return out;
-    if (Platform.isIOS) {
-      if (d['notifications'] == 'denied') out.add(BgIssue.notificationsOff);
+    if (ios ?? Platform.isIOS) {
+      // 1.12.x: при запуске iPhone больше не спрашивает разрешение сам
+      // (системный вопрос появлялся до входа в ящик, без пояснения) —
+      // «ещё не спрошено» тоже значит «о письмах не сообщит»: строка
+      // «Включить» в ленте и шаг первой настройки задают вопрос сами.
+      if (d['notifications'] == 'denied' || d['notifications'] == 'notDetermined') {
+        out.add(BgIssue.notificationsOff);
+      }
       if (d['backgroundRefresh'] != null && d['backgroundRefresh'] != 'available') out.add(BgIssue.iosRefreshOff);
       if (d['lowPowerMode'] == true) out.add(BgIssue.iosLowPower);
       return out;
@@ -160,7 +195,8 @@ class PlatformDiagnostics {
         'экран: ${d['interactive'] == true ? 'вкл' : 'выкл'}${d['deviceIdleMode'] == true ? ' (Doze)' : ''}, '
         'заряд ${d['batteryPct']}%${d['charging'] == true ? ' (заряжается)' : ''}, '
         'служба: ${d['foregroundService'] == true ? 'работает' : 'нет'}'
-        '${d['networkBlocked'] == true ? ', сеть: ЗАКРЫТА системой' : ''}';
+        '${d['networkBlocked'] == true ? ', сеть: ЗАКРЫТА системой' : ''}'
+        '${d['gms'] != null ? ', сервисы Google: ${d['gms']}${d['gmsVersion'] != null ? ' ${d['gmsVersion']}' : ''}' : ''}';
   }
 
   /// Короткое состояние для каждой фоновой задачи в журнале.

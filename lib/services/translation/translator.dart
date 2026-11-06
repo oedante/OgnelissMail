@@ -28,8 +28,14 @@ abstract class Translator {
   /// Перевод работает на этом устройстве.
   Future<bool> isAvailable();
 
-  /// Язык текста (код вида «en») или null — не определён.
+  /// Язык текста (код вида «en») или null — не определён. Догадка
+  /// определителя без уверенности — тоже язык (перевод своего письма).
   Future<String?> detectLanguage(String text);
+
+  /// Язык текста и уверен ли в нём определитель (1.12.x, просьба владельца
+  /// 04.11.2026). Перевод письма предлагается только при уверенном языке;
+  /// догадка годится, когда человек сам нажал «Перевести».
+  Future<LangDetection?> identifyLanguage(String text);
 
   /// Языки, с которыми работает движок.
   Future<List<String>> supportedLanguages();
@@ -67,12 +73,35 @@ abstract class Translator {
 /// Android — ML Kit, iPhone и Mac (1.11.0) — Apple Translation (iOS 18+,
 /// macOS 15+). Windows и Linux — без перевода: встроенного перевода на
 /// устройстве у них нет.
-bool get translationPlatformSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS);
+bool get translationPlatformSupported =>
+    debugTranslationPlatformOverride ?? (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS));
+
+/// Тесты (1.12.x): перевод «есть на платформе» и в тестах на Linux —
+/// проверить плашку и раздел настроек с подделкой движка.
+@visibleForTesting
+bool? debugTranslationPlatformOverride;
 
 final translatorProvider = Provider<Translator>((ref) => PlatformTranslator());
 
-/// Строка «перевод недоступен» для этой платформы (Mac — macOS 15+).
-String translateUnavailableKey() => !kIsWeb && Platform.isMacOS ? 'translateUnavailableMac' : 'translateUnavailable';
+/// Язык текста по определителю: [confident] — уверен (ML Kit — язык выше
+/// порога 0,5; Apple — гипотеза от 0,5), иначе это лучшая догадка.
+typedef LangDetection = ({String lang, bool confident});
+
+/// Строка «перевод недоступен» для этой платформы (Mac — macOS 15+;
+/// Android — не запустился ML Kit, 1.12.x: прежняя строка говорила про iOS).
+String translateUnavailableKey() => kIsWeb
+    ? 'translateUnavailable'
+    : Platform.isMacOS
+        ? 'translateUnavailableMac'
+        : Platform.isAndroid
+            ? 'translateUnavailableAndroid'
+            : 'translateUnavailable';
+
+/// Языки телефона (1.12.x, просьба владельца 04.11.2026) — из настроек
+/// системы, в виде [normalizeLang]: с них перевод не предлагается
+/// («Настройки → Перевод → Языки телефона»), как и с языка приложения.
+List<String> deviceLanguages() =>
+    {for (final l in ServicesBinding.instance.platformDispatcher.locales) ?normalizeLang(l.languageCode)}.toList();
 
 /// Движок платформы через канал 'ogneliss/translate'.
 class PlatformTranslator implements Translator {
@@ -105,14 +134,35 @@ class PlatformTranslator implements Translator {
   }
 
   @override
-  Future<String?> detectLanguage(String text) async {
+  Future<String?> detectLanguage(String text) async => (await identifyLanguage(text))?.lang;
+
+  @override
+  Future<LangDetection?> identifyLanguage(String text) async {
     if (text.trim().isEmpty || !await isAvailable()) return null;
     try {
-      return refineCyrillicLang(normalizeLang(await _ch.invokeMethod<String>('detect', {'text': text})), text);
+      return parseDetection(await _ch.invokeMethod<Object?>('detect', {'text': text}), text);
     } catch (e) {
       AppLogger.debug('Перевод: язык не определён: $e');
       return null;
     }
+  }
+
+  /// Ответ 'detect' (1.12.x): {lang, confident}; строка — от прежней
+  /// сборки платформы (Mac из tool/desktop), считается уверенной, как
+  /// раньше. Русский, принятый за соседний кириллический, — русский
+  /// (уверенность та же).
+  @visibleForTesting
+  static LangDetection? parseDetection(Object? r, String text) {
+    final String? code;
+    var confident = true;
+    if (r is Map) {
+      code = r['lang'] as String?;
+      confident = r['confident'] == true;
+    } else {
+      code = r as String?;
+    }
+    final lang = refineCyrillicLang(normalizeLang(code), text);
+    return lang == null ? null : (lang: lang, confident: confident);
   }
 
   @override

@@ -1,6 +1,6 @@
 # Licensing
 
-*Not legal advice. Updated 4 November 2026.*
+*Not legal advice. Updated 5 November 2026.*
 
 ## 1. Ogneliss Mail
 
@@ -45,6 +45,7 @@ Contributions are accepted under the same license (section 5 of the license).
 | Apple Translation, NaturalLanguage, SwiftUI — on-device message translation (iOS 18+) | Part of the iOS SDK (Apple Developer Program License Agreement), free, no attribution | iOS build (`ios/Runner/AppDelegate.swift`) |
 | desktop_drop 0.8.4 (MixinNetwork; checked 01.11.2026) — files dropped from Explorer/Finder onto the message window | Apache-2.0, free | pub.dev, unmodified; used on Windows, macOS and Linux only (its Android part registers a drop listener but the app does not use it) |
 | desktop_multi_window 0.3.1 (MixinNetwork; checked 01.11.2026) — a message in a separate window on Windows, macOS and Linux | Apache-2.0, free | pub.dev, unmodified; desktop only |
+| markdown 7.3.1 (Dart team, dart-lang/tools; checked 05.11.2026) — Markdown attachments (.md) shown as formatted documents in the attachment preview | BSD-3-Clause, free | pub.dev, unmodified; licence text in the app (Settings → About → Licence texts) comes from the package |
 | Russian Trusted Root CA certificates | public certificates | `assets/certs/` |
 
 There are no GPL, LGPL or AGPL dependencies. MPL-2.0 is a file-level copyleft
@@ -139,7 +140,7 @@ pledge turned out to forbid commercial distribution):
   licence text and NOTICE shipped in the app (Settings → About → Licence
   texts), attribution where required, and a row in the table in section 2.
 
-## 6. Document formats (attachment preview, 1.11.x)
+## 6. Document formats (attachment preview, 1.11.x; old formats and .msg — 1.14.0)
 
 Since 1.11.x the app shows attachments in DOCX, XLSX, PPTX (and their
 macro-enabled, template and slide-show variants), ODT, ODS, ODP, RTF and CSV
@@ -176,8 +177,19 @@ are never run (the macro part is not even read). Checked 4 November 2026:
   "[RTF]: Rich Text Format" in the Office file formats part of the OSP list.
 - **CSV** — RFC 4180 (informational); no IETF patent disclosures were found;
   the format is decades older than any such patent.
-- The old binary formats [MS-DOC], [MS-XLS], [MS-PPT] (not implemented; the
-  app says so and offers another app) are on the OSP list too.
+- **Old binary formats** (preview since 1.14.0): [MS-DOC] (.doc), [MS-XLS]
+  (.xls), [MS-PPT] (.ppt, text first), their pictures [MS-ODRAW] (OfficeArt)
+  and their container [MS-CFB] (Compound File Binary) are on the OSP list ("Office Binary File Formats"), checked
+  05.11.2026 by copies of the list (SheetJS references, Wikipedia mirror of
+  the OSP article) — the same terms as above, no commercial restriction.
+- **Outlook messages (.msg)** — [MS-OXMSG] with compressed RTF [MS-OXRTFCP]
+  and the property numbers of [MS-OXPROPS] (preview since 1.14.0,
+  `lib/services/mail/msg_reader.dart`): the owner's information of 05.11.2026 — MS-OXMSG
+  is on the OSP list in "Office Binary and other File Formats"
+  ([OSP page](https://learn.microsoft.com/en-us/openspecs/dev_center/ms-devcentlp/1c24c7c8-28b0-4ce1-a47d-95fe1ff504bc),
+  [MS-OXMSG](https://learn.microsoft.com/en-us/openspecs/exchange_server_protocols/ms-oxmsg/b812bc47-4397-4a15-b03d-84aa20be866f)).
+  The Library of Congress format description also says Microsoft claims no
+  patents in the MSG format. Decision of the owner: implement.
 - **Specification texts.** The Microsoft Open Specifications notice and the
   Ecma and OASIS copyright policies allow using the documents to write
   implementations. No specification text or schema is copied into the app.
@@ -192,12 +204,17 @@ are never run (the macro part is not even read). Checked 4 November 2026:
   from the pages read in full. Before announcing the feature, open the OSP
   page (covered list: Office Open XML, OpenDocument, RTF) and the Sun
   statement by the links above and confirm.
-- **Not covered by this check:** the Exchange-specific formats [MS-OXTNEF]
-  (winmail.dat — the app already extracts files from it,
-  `lib/services/mail/tnef/tnef_decoder.dart`), [MS-OXRTFCP] (compressed RTF),
-  [MS-OXRTFEX] (HTML inside RTF) and [MS-OXMSG] (.msg). Their documents say
-  they "might be covered by" the OSP or the Community Promise; check them
-  separately.
+- **Accepted by the owner (06.11.2026: checked, widely used in open
+  source):** [MS-OXRTFEX] (HTML that Outlook encapsulates in RTF, `\fromhtml1`)
+  — the .msg reader uses it to show such bodies as HTML
+  (`MsgReader.htmlFromRtf`, one call site in `msg_reader.dart`). Its
+  document says it "might be covered by" the OSP or the Community Promise;
+  learn.microsoft.com was blocked in the cloud session and search results
+  did not confirm it (05.11.2026). If it is not covered, drop that call:
+  such bodies are then shown through the RTF reader (RTF is on the OSP
+  list). [MS-OXPROPS] is used only as a table of property numbers. Also
+  unchecked: [MS-OXTNEF] (winmail.dat — the app already extracts files from
+  it, `lib/services/mail/tnef/tnef_decoder.dart`).
 
 ---
 
@@ -257,8 +274,13 @@ are never run (the macro part is not even read). Checked 4 November 2026:
   Excel, PowerPoint — только словами о совместимости. Цитаты сверены по
   выдержкам поисковика: сами страницы Microsoft и OASIS сеть облачного
   сеанса не открыла — перед объявлением функции открыть их по ссылкам из
-  раздела 6 и подтвердить. Отдельно проверить форматы Exchange: TNEF
-  (winmail.dat — его приложение уже разбирает), сжатый RTF, .msg.
+  раздела 6 и подтвердить. Старые .doc, .xls, .ppt (1.14.0; контейнер
+  MS-CFB, рисунки MS-ODRAW) — тоже в списке OSP (по копиям списка,
+  05.11.2026); письма Outlook .msg (MS-OXMSG, сжатый RTF MS-OXRTFCP) — в
+  списке OSP по данным владельца (05.11.2026, решение — делать). MS-OXRTFEX (HTML
+  внутри RTF у писем .msg) — владелец проверил 06.11.2026 («многие
+  используют в open source»), решение — оставить. Отдельно проверить
+  TNEF (winmail.dat — его приложение уже разбирает).
 - **Новые зависимости** (пакеты, библиотеки, SDK, шрифты, внешние сервисы и
   API) — только после проверки лицензии и условий (правило владельца
   31.10.2026, после истории с Exchange ActiveSync). Платный функционал и

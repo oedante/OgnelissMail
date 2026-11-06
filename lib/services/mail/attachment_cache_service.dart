@@ -120,6 +120,16 @@ class AttachmentCacheService {
   /// записи и писать индекс).
   bool has(String attachmentId) => _index.containsKey(attachmentId);
 
+  /// Путь к файлу записи — тоже без отметки «открывали» (поиск по тексту
+  /// вложений читает файлы в фоне и не должен продлевать им жизнь).
+  String? pathOf(String attachmentId) => _index[attachmentId]?.path;
+
+  /// Положенные в кэш файлы — поиск по тексту вложений (1.12.x, просьба
+  /// владельца 04.11.2026) извлекает их текст сразу после загрузки, в каком
+  /// бы месте приложения файл ни скачали.
+  Stream<CachedAttachment> get added => _added.stream;
+  final StreamController<CachedAttachment> _added = StreamController<CachedAttachment>.broadcast();
+
   Future<String?> get(String attachmentId) async {
     final entry = _index[attachmentId];
     if (entry == null) return null;
@@ -200,6 +210,9 @@ class AttachmentCacheService {
       _persistSoon();
     } else {
       await _persist();
+    }
+    if (_added.hasListener && _index[attachmentId]?.path == path) {
+      _added.add(CachedAttachment(attachmentId, fileName, path));
     }
     return path;
   }
@@ -397,6 +410,15 @@ class AttachmentCacheService {
     await prefs.setString(_kIndex,
         jsonEncode(_index.map((k, v) => MapEntry(k, v.toJson()))));
   }
+}
+
+/// Файл, только что положенный в кэш: ключ («аккаунт|письмо|вложение»),
+/// имя вложения, путь.
+class CachedAttachment {
+  final String key;
+  final String fileName;
+  final String path;
+  const CachedAttachment(this.key, this.fileName, this.path);
 }
 
 class _CacheEntry {

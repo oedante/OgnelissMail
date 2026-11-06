@@ -52,11 +52,14 @@ import '../../../services/documents/doc_preview_settings.dart';
 import '../../../services/documents/office_document.dart';
 import '../../../services/documents/office_package.dart';
 import '../../../services/documents/office_reader.dart';
+import '../../../services/documents/text_doc_reader.dart';
 import '../../../core/logging/app_logger.dart';
 import '../../../widgets/ui/banner_button.dart';
 import '../../../widgets/common/text_scale_cap.dart';
+import '../../../widgets/common/pane_navigator.dart';
 import '../../../services/mail/pkpass_parser.dart';
 import '../../../services/mail/eml_reader.dart';
+import '../../../services/mail/msg_reader.dart';
 import '../../../core/security/html_sanitizer.dart';
 import '../../../core/security/mail_body_processor.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError;
@@ -98,15 +101,24 @@ Future<void> openAttachment(
 }) async {
   if (await AttachmentPreviewScreen.opensInApp(item)) {
     if (!context.mounted) return;
-    await Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => AttachmentPreviewScreen(
-        items: [item],
-        emailSubject: emailSubject,
-        accountId: accountId,
-        emailFrom: emailFrom,
-        emailDate: emailDate,
-      ),
-    ));
+    final screen = AttachmentPreviewScreen(
+      items: [item],
+      emailSubject: emailSubject,
+      accountId: accountId,
+      emailFrom: emailFrom,
+      emailDate: emailDate,
+    );
+    // Письмо в панели рядом с лентой (1.12.x, просьба владельца 04.11.2026,
+    // как в Outlook): вложение — в той же панели, «Назад» возвращает к
+    // письму, лента и папки остаются на месте. Раньше туда же попадало
+    // неявно (ближний Navigator — панели); теперь явно и с тем же мягким
+    // появлением, что ответ и пересылка в панели. Иначе — отдельным
+    // экраном, как раньше.
+    if (PaneNavigator.isInside(context)) {
+      await PaneNavigator.push<void>(context, screen);
+      return;
+    }
+    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
     return;
   }
   if (!context.mounted) return;
@@ -120,6 +132,9 @@ class AttachmentPreviewScreen extends StatefulWidget {
     final ext = name.contains('.') ? name.split('.').last : '';
     final ct = item.mimeType?.toLowerCase() ?? '';
     if (ext == 'eml' || ext == 'p7m' || ct.contains('pkcs7-mime') || ct == 'message/rfc822') return true;
+    // Письмо Outlook .msg (1.12.x, просьба владельца 05.11.2026) — тоже
+    // письмом, на всех устройствах: «Просмотр» iOS и Android его не открывают.
+    if (MsgReader.isMsgName(name, mimeType: ct)) return true;
     // 1.8.14 (просьба пользователей через владельца 29.10.2026): архивы — в
     // приложении везде; PDF — на Android (системный PdfRenderer); картинки,
     // текст и билеты — на Android и компьютере. iPhone и iPad показывают
@@ -135,19 +150,16 @@ class AttachmentPreviewScreen extends StatefulWidget {
     // такие документы теперь тоже здесь. Выключенные в настройках виды
     // (DocPreviewSettings) — как раньше: CSV — текстом ниже, остальное —
     // своей программой.
+    // Старые .doc, .xls, .ppt (1.12.x, просьба владельца 04.11.2026) — тоже
+    // здесь: OfficeFormats знает их как форматы, разбор — по содержимому
+    // (настоящий Word 97, RTF или DOCX под старым именем). На iPhone и iPad
+    // их, как и раньше, показывает «Просмотр» iOS.
     final docOn = DocPreviewSettings.allows(name, mimeType: item.mimeType);
+    // .txt и Markdown (1.14.0) — здесь на всех устройствах: «Просмотр» iOS
+    // Markdown не оформляет и путает кодировку русских файлов (Windows-1251).
+    if (_textDocOn(item)) return true;
     if (docOn && OfficeFormats.of(name, mimeType: item.mimeType) != null) {
       return !ios || !FileOpener.quickLookShows(name);
-    }
-    // Старый .doc, который на деле RTF или DOCX (так сохраняют многие
-    // программы), — тоже документом; настоящий .doc — своей программой.
-    if (docOn && !ios && OfficeFormats.isLegacy(name)) {
-      try {
-        final head = await File(item.filePath).openRead(0, 8).fold<List<int>>(<int>[], (a, b) => a..addAll(b));
-        return OfficeReader.previews(name, head: Uint8List.fromList(head));
-      } catch (_) {
-        return false;
-      }
     }
     if (ext == 'pdf') return NativePdf.supported;
     if (!ios && (_imageExt.contains(ext) || _textExt.contains(ext) || ext == 'pkpass')) return true;
@@ -166,6 +178,11 @@ class AttachmentPreviewScreen extends StatefulWidget {
     return false;
   }
 
+
+  /// .txt и .md показываются документом (вид «Текстовые документы»
+  /// включён); выключен — .txt и .md простым текстом, как раньше.
+  static bool _textDocOn(PreviewItem item) =>
+      TextDocReader.handles(item.fileName, mimeType: item.mimeType) && DocPreviewSettings.isOn(DocPreviewType.text);
 
   static const _imageExt = {'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'};
   static const _textExt = {'txt', 'log', 'csv', 'tsv', 'json', 'xml', 'md', 'yaml', 'yml', 'ini'};
@@ -299,11 +316,13 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         ext == 'p7m' ||
         (widget.items[i].mimeType?.toLowerCase().contains('pkcs7-mime') ?? false) ||
         widget.items[i].mimeType?.toLowerCase() == 'message/rfc822' ||
+        MsgReader.isMsgName(name, mimeType: widget.items[i].mimeType) ||
         _sniffedMail.contains(i)) {
       return _Kind.mail;
     }
     // Документ — до текста: CSV показывается таблицей, а не строками
     // (выключено в настройках — текстом, как раньше).
+    if (AttachmentPreviewScreen._textDocOn(widget.items[i])) return _Kind.document;
     if (DocPreviewSettings.allows(name, mimeType: widget.items[i].mimeType)) return _Kind.document;
     if (AttachmentPreviewScreen._textExt.contains(ext)) return _Kind.text;
     return _Kind.other;
@@ -322,12 +341,12 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         case _Kind.text:
           final f = File(item.filePath);
           final len = await f.length();
-          final raw = len > _maxTextBytes
-              ? await f
-                  .openRead(0, _maxTextBytes)
-                  .transform(const Utf8Decoder(allowMalformed: true))
-                  .join()
-              : await f.readAsString();
+          // Кодировка — по содержимому (1.14.0): раньше только UTF-8, и
+          // журнал или выгрузка в Windows-1251 показывались «кракозябрами».
+          final bytes = len > _maxTextBytes
+              ? Uint8List.fromList(await f.openRead(0, _maxTextBytes).fold<List<int>>(<int>[], (a, b) => a..addAll(b)))
+              : await f.readAsBytes();
+          final raw = TextDocReader.decode(bytes, truncated: len > _maxTextBytes);
           _texts[i] = len > _maxTextBytes ? '$raw\n\n…' : raw;
           break;
         case _Kind.pass:
@@ -371,6 +390,18 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   /// письмо крупное.
   Future<void> _loadMail(int i) async {
     var bytes = await File(widget.items[i].filePath).readAsBytes();
+    // Письмо Outlook (.msg — составной файл OLE): свой разбор, тот же показ.
+    if (MsgReader.isMsgName(widget.items[i].fileName, mimeType: widget.items[i].mimeType) || OfficeZip.isOle(bytes)) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
+      try {
+        await _showMail(i, await MsgReader.readAsync(bytes, lang: l10n.localeCode));
+      } on OfficeDocException catch (e) {
+        _errors[i] = e.kind == OfficeDocError.tooLarge ? l10n.tr('docTooLarge') : l10n.tr('fileDamaged');
+        _plainErrors.add(i);
+      }
+      return;
+    }
     // S/MIME: зашифрованное (smime.p7m) или подписанное письмо — расшифровать
     // своим сертификатом и проверить подпись, показать то, что внутри.
     final item = widget.items[i];
@@ -394,7 +425,11 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
       bytes = SmimeMime.asMessage(r.entity,
           subject: widget.emailSubject, from: widget.emailFrom, date: widget.emailDate);
     }
-    final m = await EmlReader.parseAsync(bytes);
+    await _showMail(i, await EmlReader.parseAsync(bytes));
+  }
+
+  /// Тело разобранного письма — к показу (санитайзер, окно письма).
+  Future<void> _showMail(int i, EmlMessage m) async {
     String? html;
     if ((m.html ?? '').trim().isNotEmpty) {
       // Стили письма — и на компьютере (1.8.14): по ним показ виджетами
@@ -425,8 +460,21 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
     if (!mounted) return;
     final l10n = AppLocalizations.of(context);
     try {
-      final doc = await OfficeReader.readFile(item.filePath, item.fileName,
-          mimeType: item.mimeType, lang: l10n.localeCode);
+      final OfficeDoc doc;
+      if (TextDocReader.handles(item.fileName, mimeType: item.mimeType)) {
+        try {
+          doc = await TextDocReader.readFile(item.filePath, item.fileName,
+              mimeType: item.mimeType, lang: l10n.localeCode);
+        } catch (e) {
+          AppLogger.debug('Предпросмотр текста: $e');
+          _errors[i] = l10n.tr('fileDamaged');
+          _plainErrors.add(i);
+          return;
+        }
+      } else {
+        doc = await OfficeReader.readFile(item.filePath, item.fileName,
+            mimeType: item.mimeType, lang: l10n.localeCode);
+      }
       if (doc is OfficeTextDoc) {
         if (doc.isEmpty) {
           _errors[i] = l10n.tr('docEmpty');
@@ -1008,7 +1056,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   IconData _iconForName(String name, String contentType) {
     final ext = name.contains('.') ? name.split('.').last.toLowerCase() : '';
     final ct = contentType.toLowerCase();
-    if (ext == 'eml' || ct == 'message/rfc822') return AppIcons.mail;
+    if (ext == 'eml' || ext == 'msg' || ct == 'message/rfc822' || ct.contains('vnd.ms-outlook')) return AppIcons.mail;
     if (ext == 'pdf') return AppIcons.picture_as_pdf;
     if (ct.startsWith('image/')) return AppIcons.image;
     return AppIcons.insert_drive_file;

@@ -7,7 +7,11 @@
 // письма бывает назван неправильно («отчёт.doc», который на деле RTF или
 // DOCX; таблица OpenDocument с расширением .xlsx). Расширение — подсказка,
 // решает начало файла (ZIP, OLE, «{\rtf») и устройство пакета (запись
-// mimetype у OpenDocument, главная часть у Office Open XML).
+// mimetype у OpenDocument, главная часть у Office Open XML). Составной файл
+// OLE (1.12.x, просьба владельца 04.11.2026) — по своим потокам:
+// «WordDocument» — Word 97–2003, «Workbook» — Excel, «PowerPoint Document»
+// — PowerPoint (так .doc, переименованный в .xls, всё равно открывается),
+// «EncryptedPackage» — документ OOXML с паролем.
 //
 // Разбор идёт в отдельном изоляте с пределом времени: документ из чужого
 // письма может быть сделан так, чтобы разбор шёл бесконечно долго, — такой
@@ -19,15 +23,19 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 
+import 'cfb_reader.dart';
 import 'csv_reader.dart';
+import 'doc_reader.dart';
 import 'docx_reader.dart';
 import 'odp_reader.dart';
 import 'ods_reader.dart';
 import 'odt_reader.dart';
 import 'office_document.dart';
 import 'office_package.dart';
+import 'ppt_reader.dart';
 import 'pptx_reader.dart';
 import 'rtf_reader.dart';
+import 'xls_reader.dart';
 import 'xlsx_reader.dart';
 
 class OfficeReader {
@@ -42,13 +50,8 @@ class OfficeReader {
       head.length >= 5 && head[0] == 0x7B && head[1] == 0x5C && head[2] == 0x72 && head[3] == 0x74 && head[4] == 0x66;
 
   /// Показывается ли файл предпросмотром документа: известный формат по
-  /// имени или MIME-типу, а старый .doc — если внутри на деле RTF или DOCX
-  /// ([head] — начало файла; без него старые форматы — нет).
-  static bool previews(String fileName, {String? mimeType, Uint8List? head}) {
-    if (OfficeFormats.of(fileName, mimeType: mimeType) != null) return true;
-    if (head == null || !OfficeFormats.isLegacy(fileName)) return false;
-    return isRtf(head) || OfficeZip.isZip(head);
-  }
+  /// имени или MIME-типу (с 1.12.x — и старые .doc, .xls, .ppt).
+  static bool previews(String fileName, {String? mimeType}) => OfficeFormats.of(fileName, mimeType: mimeType) != null;
 
   /// Разобрать файл [path] в отдельном изоляте. [lang] — язык приложения
   /// (разделители чисел и даты в таблицах, кодовая страница RTF и CSV без
@@ -124,15 +127,11 @@ class OfficeReader {
     final legacy = OfficeFormats.isLegacy(fileName);
     if (format == OfficeFormat.csv) return CsvReader.read(bytes, fileName: fileName, lang: lang);
     if (isRtf(bytes)) return RtfReader.read(bytes, lang: lang);
-    if (OfficeZip.isOle(bytes)) {
-      // Составной файл OLE: у DOCX, XLSX, PPTX — документ с паролем на
-      // открытие (EncryptedPackage), у остальных (.doc, переименованный в
-      // .rtf или .odt) — старый формат Office.
-      const ooxml = {OfficeFormat.docx, OfficeFormat.xlsx, OfficeFormat.pptx};
-      throw OfficeDocException(ooxml.contains(format) && !legacy ? OfficeDocError.encrypted : OfficeDocError.legacy);
-    }
+    if (OfficeZip.isOle(bytes)) return readOle(CfbFile.open(bytes), lang: lang);
     if (!OfficeZip.isZip(bytes)) {
-      throw OfficeDocException(legacy ? OfficeDocError.legacy : OfficeDocError.damaged, 'not a package');
+      // «.doc», который не OLE, не RTF и не ZIP (текст, HTML под чужим
+      // расширением), — не документ Office.
+      throw OfficeDocException(legacy ? OfficeDocError.unsupported : OfficeDocError.damaged, 'not a package');
     }
     final zip = OfficeZip.open(bytes);
     switch (_packageFormat(zip) ?? format) {
@@ -150,9 +149,26 @@ class OfficeReader {
         return OdpReader.read(zip);
       case OfficeFormat.csv:
       case OfficeFormat.rtf:
+      case OfficeFormat.doc:
+      case OfficeFormat.xls:
+      case OfficeFormat.ppt:
       case null:
         throw const OfficeDocException(OfficeDocError.unsupported, 'package');
     }
+  }
+
+  /// Составной файл OLE — по его потокам, а не по расширению.
+  static OfficeDoc readOle(CfbFile cfb, {String lang = 'en'}) {
+    // Документ OOXML с паролем на открытие (ECMA-376, часть 2: Agile или
+    // Standard Encryption) — пакет зашифрован целиком.
+    if (cfb.hasStream('EncryptedPackage') || cfb.entry('\u0006DataSpaces') != null) {
+      throw const OfficeDocException(OfficeDocError.encrypted, 'ooxml');
+    }
+    if (DocReader.isWordDocument(cfb)) return DocReader.read(cfb);
+    if (XlsReader.isWorkbook(cfb)) return XlsReader.read(cfb, lang: lang);
+    if (PptReader.isPresentation(cfb)) return PptReader.read(cfb);
+    // Другие составные файлы (Visio, Publisher, письмо Outlook…) — не документ.
+    throw const OfficeDocException(OfficeDocError.unsupported, 'ole');
   }
 
   /// Формат по устройству пакета: mimetype у OpenDocument, главная часть у

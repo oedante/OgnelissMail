@@ -330,9 +330,20 @@ String _weekdayShort(int weekday, AppLocalizations l10n) {
 
 /// Строка под переключателем сигналов: пояснение и состояние регистрации.
 String _pushWakeStatus(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
-  final st = ref.read(pushWakeServiceProvider).state();
+  final svc = ref.read(pushWakeServiceProvider);
+  final st = svc.state();
   final parts = <String>[l10n.tr('pushWakeDesc')];
   if (!ref.read(pushWakePrefsProvider).enabled) return parts.first;
+  // Android без сервисов Google и без распространителя (1.12.x): не ошибка
+  // и не «ещё не зарегистрировано», а как есть — почта проверяется по
+  // расписанию; что поставить для сигналов — в «Как приходят сигналы».
+  if (svc.os == PushWakeOs.android &&
+      svc.transport == PushWakeTransport.unifiedpush &&
+      svc.upDistributor == null &&
+      !st.registered) {
+    parts.add(l10n.tr('pushWakeStatusPeriodic'));
+    return parts.join('\n');
+  }
   if (st.lastError != null && !st.registered) {
     parts.add(l10n.tr('pushWakeStatusError').replaceAll('{e}', st.lastError!));
   } else if (st.registered && st.registeredAt != null) {
@@ -388,7 +399,9 @@ class _PushTransportPickerState extends ConsumerState<_PushTransportPicker> {
         }
 
         return Column(mainAxisSize: MainAxisSize.min, children: [
-          if (s.fcmAvailable)
+          // Нет сервисов Google Play на телефоне (1.12.x) — и пункта нет:
+          // через Google сигналы не придут.
+          if (s.fcmUsable)
             AppRadioTile<String>(
               title: Text(l10n.tr('pushWakeViaGoogle')),
               subtitle: Text(l10n.tr('pushWakeViaGoogleDesc'), style: muted),

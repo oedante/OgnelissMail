@@ -819,7 +819,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           const OfflineIndicator(),
           // Планшет и компьютер (1.10.5, как в Outlook): поиск — полем в
           // шапке ленты; нажатие открывает тот же поиск, что и значок.
-          if (!phone && !_isSearching)
+          // Узкое окно без нижней панели (внешний экран складного, окно
+          // в разделённом экране) — значком: поле съедало название ящика.
+          if (!phone && !_isSearching && box.maxWidth >= Breakpoints.phone)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Space.xs),
               child: Material(

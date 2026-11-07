@@ -7,6 +7,8 @@
 
 import 'dart:async';
 
+import 'dart:ui' as ui;
+
 import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
@@ -151,10 +153,21 @@ Future<void> _shot(
   // на разных размерах. null — без них (прежние снимки).
   double? textScale,
   double dpr = 2,
+  // Сгиб складного экрана в логических точках (снимки флипов и фолдов).
+  Rect? fold,
 }) async {
   FlutterSecureStorage.setMockInitialValues({});
   tester.view.physicalSize = size * dpr;
   tester.view.devicePixelRatio = dpr;
+  if (fold != null) {
+    tester.view.displayFeatures = [
+      ui.DisplayFeature(
+        bounds: fold, // FlutterView.displayFeatures — в логических точках
+        type: ui.DisplayFeatureType.fold,
+        state: ui.DisplayFeatureState.postureHalfOpened,
+      ),
+    ];
+  }
   addTearDown(tester.view.reset);
   await tester.pumpWidget(ProviderScope(
     overrides: [
@@ -501,6 +514,36 @@ void main() {
           await mouse.moveTo(t.getCenter(find.text('Совещание в четверг')));
         }
       });
+      await tester.runAsync(db.close);
+    });
+  }
+
+  // Складные (07.11.2026, пункт 10 владельца): Galaxy Z Fold — внешний
+  // экран (узкий и высокий) и внутренний (почти квадрат, сгиб посередине, в
+  // крупном и обычном масштабе), Pixel Fold — внутренний «альбомный»,
+  // Z Flip — раскрыт (обычный высокий телефон) и полураскрыт «ноутбуком».
+  for (final (name, size, fold) in const [
+    ('fold_cover', Size(344, 882), null),
+    ('fold_inner', Size(884, 1104), Rect.fromLTRB(442, 0, 442, 1104)),
+    ('fold_inner_large', Size(673, 841), Rect.fromLTRB(336, 0, 336, 841)),
+    ('pixel_fold', Size(841, 701), Rect.fromLTRB(420, 0, 420, 701)),
+    ('flip_open', Size(412, 1006), null),
+    ('flip_half', Size(412, 1006), Rect.fromLTRB(0, 503, 412, 503)),
+  ]) {
+    testWidgets('складные — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await tester.runAsync(() => _inbox(db));
+      await _shot(tester, '${name}_inbox', const MailListScreen(),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, fold: fold, textScale: 1.0, before: (t) async {
+        if (size.width >= 600) await t.tap(find.text('Смета по ремонту насосной станции').first);
+      });
+      await _shot(tester, '${name}_letter', const MailDetailScreen(emailId: 'e1', accountId: 'a1'),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, fold: fold, textScale: 1.0);
+      await _shot(tester, '${name}_reply', const ComposeScreen(accountId: 'a1', replyToId: 'e1', replyAll: true),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, fold: fold, textScale: 1.0);
       await tester.runAsync(db.close);
     });
   }

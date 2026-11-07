@@ -248,6 +248,7 @@ abstract final class AppIcons {
   static const IconData report = Symbols.report_rounded;
   static const IconData rss_feed = Symbols.rss_feed_rounded;
   static const IconData rotate_90_degrees_ccw = Symbols.rotate_90_degrees_ccw_rounded;
+  static const IconData rotate_90_degrees_cw = Symbols.rotate_90_degrees_cw_rounded;
   static const IconData rule = Symbols.rule_rounded;
   static const IconData save = Symbols.save_rounded;
   static const IconData save_alt = Symbols.save_alt_rounded;

@@ -3145,6 +3145,8 @@
     <string name="attCompress">Comprimi</string>
     <string name="attCropRotate">Ritaglia e ruota</string>
     <string name="imageRotate">Ruota</string>
+    <string name="pdfRotatePage">Ruota pagina</string>
+    <string name="pdfRotateAll">Ruota tutte le pagine</string>
     <string name="imageEditHint">Trascina gli angoli o i bordi del riquadro per ritagliare</string>
     <string name="imageEditHintCircle">Sposta il cerchio o trascina un angolo: così apparirà la foto nel ritratto</string>
     <string name="photoCirclePreview">Così apparirà la foto nell\'elenco, nel messaggio e nella scheda</string>

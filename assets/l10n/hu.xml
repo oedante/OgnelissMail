@@ -3145,6 +3145,8 @@
     <string name="attCompress">Tömörítés</string>
     <string name="attCropRotate">Vágás és forgatás</string>
     <string name="imageRotate">Forgatás</string>
+    <string name="pdfRotatePage">Oldal elforgatása</string>
+    <string name="pdfRotateAll">Összes oldal elforgatása</string>
     <string name="imageEditHint">Húzza a keret sarkait vagy szélét a vágáshoz</string>
     <string name="imageEditHintCircle">Mozgassa a kört vagy húzza a sarkát – így fog kinézni a fotó a portréban</string>
     <string name="photoCirclePreview">Így néz ki a fotó a listában, az üzenetben és a kártyán</string>

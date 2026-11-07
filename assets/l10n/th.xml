@@ -3132,6 +3132,8 @@
     <string name="attCompress">บีบอัด</string>
     <string name="attCropRotate">ครอบตัดและหมุน</string>
     <string name="imageRotate">หมุน</string>
+    <string name="pdfRotatePage">หมุนหน้า</string>
+    <string name="pdfRotateAll">หมุนทุกหน้า</string>
     <string name="imageEditHint">ลากมุมหรือขอบของกรอบเพื่อครอบตัด</string>
     <string name="imageEditHintCircle">เลื่อนวงกลมหรือลากมุม — รูปจะแสดงในภาพโปรไฟล์แบบนี้</string>
     <string name="photoCirclePreview">รูปจะแสดงในรายการ ข้อความ และการ์ดแบบนี้</string>

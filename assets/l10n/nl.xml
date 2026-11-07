@@ -3145,6 +3145,8 @@
     <string name="attCompress">Comprimeren</string>
     <string name="attCropRotate">Bijsnijden en draaien</string>
     <string name="imageRotate">Draaien</string>
+    <string name="pdfRotatePage">Pagina draaien</string>
+    <string name="pdfRotateAll">Alle pagina’s draaien</string>
     <string name="imageEditHint">Sleep de hoeken of randen van het kader om bij te snijden</string>
     <string name="imageEditHintCircle">Verschuif de cirkel of sleep aan een hoek – zo komt de foto in het portret</string>
     <string name="photoCirclePreview">Zo ziet de foto eruit in de lijst, het bericht en de kaart</string>

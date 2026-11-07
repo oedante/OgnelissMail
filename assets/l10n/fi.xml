@@ -3145,6 +3145,8 @@
     <string name="attCompress">Pienennä</string>
     <string name="attCropRotate">Rajaa ja kierrä</string>
     <string name="imageRotate">Kierrä</string>
+    <string name="pdfRotatePage">Kierrä sivu</string>
+    <string name="pdfRotateAll">Kierrä kaikki sivut</string>
     <string name="imageEditHint">Rajaa vetämällä kehyksen kulmista tai reunoista</string>
     <string name="imageEditHintCircle">Siirrä ympyrää tai vedä kulmasta – näin kuva näkyy muotokuvassa</string>
     <string name="photoCirclePreview">Näin kuva näkyy luettelossa, viestissä ja kortissa</string>

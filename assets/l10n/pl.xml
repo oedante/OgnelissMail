@@ -3171,6 +3171,8 @@
     <string name="attCompress">Kompresuj</string>
     <string name="attCropRotate">Przytnij i obróć</string>
     <string name="imageRotate">Obróć</string>
+    <string name="pdfRotatePage">Obróć stronę</string>
+    <string name="pdfRotateAll">Obróć wszystkie strony</string>
     <string name="imageEditHint">Przeciągnij rogi lub krawędzie ramki, aby przyciąć</string>
     <string name="imageEditHintCircle">Przesuń okrąg lub pociągnij za róg — tak zdjęcie będzie wyglądać w portrecie</string>
     <string name="photoCirclePreview">Tak zdjęcie będzie wyglądać na liście, w wiadomości i na karcie</string>

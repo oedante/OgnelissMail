@@ -3158,6 +3158,8 @@
     <string name="attCompress">דחוס</string>
     <string name="attCropRotate">חתוך וסובב</string>
     <string name="imageRotate">סובב</string>
+    <string name="pdfRotatePage">סיבוב העמוד</string>
+    <string name="pdfRotateAll">סיבוב כל העמודים</string>
     <string name="imageEditHint">גרור את הפינות או הקצוות של המסגרת כדי לחתוך</string>
     <string name="imageEditHintCircle">הזיזו את העיגול או גררו פינה — כך התמונה תיראה בדיוקן</string>
     <string name="photoCirclePreview">כך התמונה תיראה ברשימה, בהודעה ובכרטיס</string>

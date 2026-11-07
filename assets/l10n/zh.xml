@@ -3132,6 +3132,8 @@
     <string name="attCompress">压缩</string>
     <string name="attCropRotate">裁剪和旋转</string>
     <string name="imageRotate">旋转</string>
+    <string name="pdfRotatePage">旋转页面</string>
+    <string name="pdfRotateAll">旋转所有页面</string>
     <string name="imageEditHint">拖动边框的角或边来裁剪</string>
     <string name="imageEditHintCircle">移动圆圈或拖动角 — 头像中的照片将如此显示</string>
     <string name="photoCirclePreview">照片在列表、邮件和名片中的样子</string>

@@ -3132,6 +3132,8 @@
     <string name="attCompress">圧縮</string>
     <string name="attCropRotate">切り抜きと回転</string>
     <string name="imageRotate">回転</string>
+    <string name="pdfRotatePage">ページを回転</string>
+    <string name="pdfRotateAll">すべてのページを回転</string>
     <string name="imageEditHint">枠の角や辺をドラッグして切り抜きます</string>
     <string name="imageEditHintCircle">円を動かすか角をドラッグ — ポートレートではこのように表示されます</string>
     <string name="photoCirclePreview">一覧、メッセージ、カードでの表示</string>

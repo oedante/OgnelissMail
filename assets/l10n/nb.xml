@@ -3145,6 +3145,8 @@
     <string name="attCompress">Komprimer</string>
     <string name="attCropRotate">Beskjær og roter</string>
     <string name="imageRotate">Roter</string>
+    <string name="pdfRotatePage">Roter side</string>
+    <string name="pdfRotateAll">Roter alle sider</string>
     <string name="imageEditHint">Dra i hjørnene eller kantene på rammen for å beskjære</string>
     <string name="imageEditHintCircle">Flytt sirkelen eller dra i et hjørne – slik ser bildet ut i portrettet</string>
     <string name="photoCirclePreview">Slik ser bildet ut i listen, meldingen og kortet</string>

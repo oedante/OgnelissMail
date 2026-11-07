@@ -3132,6 +3132,8 @@
     <string name="attCompress">Kompres</string>
     <string name="attCropRotate">Pangkas dan putar</string>
     <string name="imageRotate">Putar</string>
+    <string name="pdfRotatePage">Putar halaman</string>
+    <string name="pdfRotateAll">Putar semua halaman</string>
     <string name="imageEditHint">Seret sudut atau tepi bingkai untuk memangkas</string>
     <string name="imageEditHintCircle">Geser lingkaran atau tarik sudutnya — begini foto akan tampil di potret</string>
     <string name="photoCirclePreview">Begini foto akan tampil di daftar, pesan, dan kartu</string>

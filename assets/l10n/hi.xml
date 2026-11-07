@@ -3145,6 +3145,8 @@
     <string name="attCompress">कंप्रेस करें</string>
     <string name="attCropRotate">क्रॉप करें और घुमाएं</string>
     <string name="imageRotate">घुमाएं</string>
+    <string name="pdfRotatePage">पेज घुमाएँ</string>
+    <string name="pdfRotateAll">सभी पेज घुमाएँ</string>
     <string name="imageEditHint">क्रॉप करने के लिए फ़्रेम के कोने या किनारे खींचें</string>
     <string name="imageEditHintCircle">वृत्त खिसकाएँ या कोना खींचें — पोर्ट्रेट में फ़ोटो ऐसी दिखेगी</string>
     <string name="photoCirclePreview">सूची, संदेश और कार्ड में फ़ोटो ऐसी दिखेगी</string>

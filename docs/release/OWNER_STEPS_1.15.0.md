@@ -41,7 +41,9 @@ Rust (1.97.1) и цели сборки он скачает сам при пер�
   вариант по умолчанию. Visual Studio с C++ у вас уже есть (её требует
   Flutter для Windows). Откройте новое окно PowerShell, проверка:
   `rustup --version`.
-- **Linux:** та же команда, что для Mac.
+- **Linux:** та же команда, что для Mac; для ядра нужны и заголовки GTK
+  (`sudo apt install libgtk-3-dev pkg-config` — те же, что для сборки
+  приложения под Linux), в том числе для `flutter test`.
 - **GitHub Actions:** rustup на сборщиках GitHub уже есть — ничего делать
   не нужно.
 

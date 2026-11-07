@@ -29,7 +29,7 @@ import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/image_edit.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError;
+import '../../../widgets/common/inline_notice.dart' show quietError;
 
 /// Что тянут пальцем: угол, край или всю рамку.
 enum _Grip { topLeft, topRight, bottomLeft, bottomRight, left, top, right, bottom, move }
@@ -238,7 +238,7 @@ class _ImageEditScreenState extends State<ImageEditScreen> {
     if (!mounted) return;
     if (r == null) {
       setState(() => _busy = false);
-      showInlineError(l10n.tr('imageEditFailed'));
+      quietError(l10n.tr('imageEditFailed'));
       return;
     }
     Navigator.of(context).pop(r);

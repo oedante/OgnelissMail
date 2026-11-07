@@ -26,7 +26,7 @@ import '../../../data/providers/database_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/offline_send_service.dart';
 import '../../../widgets/common/app_sheet.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError;
+import '../../../widgets/common/inline_notice.dart' show quietError;
 import '../../../widgets/ui/confirm_dialog.dart';
 import '../../../widgets/ui/section_band.dart';
 import '../../../widgets/ui/wheel_pickers.dart';
@@ -210,13 +210,13 @@ class _ScheduledSheet extends ConsumerWidget {
     );
     if (picked == null) return;
     ScheduledSendsCache.dirty.add(s.queueId);
-    if (!await service.rescheduleQueued(s.queueId, picked)) showInlineError(l10n.tr('schedGone'));
+    if (!await service.rescheduleQueued(s.queueId, picked)) quietError(l10n.tr('schedGone'));
   }
 
   Future<void> _sendNow(WidgetRef ref, ScheduledSend s, AppLocalizations l10n) async {
     ScheduledSendsCache.dirty.add(s.queueId);
     if (!await ref.read(offlineSendProvider).rescheduleQueued(s.queueId, DateTime.now())) {
-      showInlineError(l10n.tr('schedGone'));
+      quietError(l10n.tr('schedGone'));
     }
   }
 
@@ -228,7 +228,7 @@ class _ScheduledSheet extends ConsumerWidget {
         message: s.subject.isEmpty ? l10n.tr('noSubject') : s.subject,
         action: l10n.tr('myDayDeferredCancel'));
     if (!ok) return;
-    if (!await service.cancelQueued(s.queueId)) showInlineError(l10n.tr('schedGone'));
+    if (!await service.cancelQueued(s.queueId)) quietError(l10n.tr('schedGone'));
   }
 
   @override

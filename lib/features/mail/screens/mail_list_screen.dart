@@ -84,7 +84,7 @@ import '../providers/mail_providers.dart';
 import '../../../core/utils/folder_icons.dart';
 import '../../../services/mail/folder_actions_service.dart';
 import '../../../features/settings/providers/settings_provider.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice, quietError, quietNotice;
 import '../widgets/account_auth_banner.dart';
 import '../widgets/auto_reply_strip.dart';
 import '../../../services/mail/own_addresses.dart';
@@ -1097,7 +1097,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       if (noFolder) {
         showInlineError(l10n.tr('archiveFolderNotFound'));
       } else if (skipped > 0) {
-        showInlineError(l10n.tr('bulkMoveSkipped').replaceAll('{n}', '$skipped'));
+        quietError(l10n.tr('bulkMoveSkipped').replaceAll('{n}', '$skipped'));
       }
     });
   }
@@ -1123,7 +1123,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       final r = await runner.archiveEmails(a, [row]);
       failed += r.failed;
     }, emails: emails, done: () {
-      if (failed > 0) showInlineError(l10n.tr('archiveSomeFailed').replaceAll('{n}', '$failed'));
+      if (failed > 0) quietError(l10n.tr('archiveSomeFailed').replaceAll('{n}', '$failed'));
     });
   }
 
@@ -1579,7 +1579,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                     onPressed: (_) async {
                       final ok = await ref.read(offlineSendProvider).cancelUndoSend(item.id);
                       await ref.read(emailsProvider.notifier).refresh();
-                      showInlineNotice(ok ? l10n.tr('cancelledToDrafts') : l10n.tr('alreadySent'));
+                      quietNotice(ok ? l10n.tr('cancelledToDrafts') : l10n.tr('alreadySent'));
                     },
                     backgroundColor: SwipeTone.of(context, AppColors.errorRed).$1,
                     foregroundColor: SwipeTone.of(context, AppColors.errorRed).$2,
@@ -2408,7 +2408,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       }
       await actions.moveTo(a, e.id, e.folderId, to);
     }, done: () {
-      if (skipped > 0) showInlineError(l10n.tr('bulkMoveSkipped').replaceAll('{n}', '$skipped'));
+      if (skipped > 0) quietError(l10n.tr('bulkMoveSkipped').replaceAll('{n}', '$skipped'));
     });
   }
 
@@ -3067,7 +3067,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   Future<void> _showTagPicker(EmailModel email, AppLocalizations l10n) async {
     final tags = ref.read(categoriesProvider);
     if (tags.isEmpty) {
-      showInlineNotice(l10n.tr('noTags'));
+      quietNotice(l10n.tr('noTags'));
       return;
     }
     final t = await showChoiceSheet<String>(
@@ -3288,7 +3288,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     final list = state.emails.where(inCcOnly).toList();
     final ids = [for (final e in list) e.id];
     if (ids.isEmpty) {
-      showInlineNotice(l10n.tr('nothingToMark'));
+      quietNotice(l10n.tr('nothingToMark'));
       return;
     }
 
@@ -3345,7 +3345,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     try {
       final (done, total) = await ref.read(folderActionsProvider).emptyFolder(account, folder);
       if (mounted && done < total) {
-        showInlineError('${l10n.error}: ${total - done}');
+        quietError('${l10n.error}: ${total - done}');
       }
     } catch (e) {
       AppLogger.warning('Очистка папки: $e');

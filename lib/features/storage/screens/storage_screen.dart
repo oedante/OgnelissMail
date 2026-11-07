@@ -27,7 +27,7 @@ import '../../../services/mail/attachment_cache_service.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart' show SettingsSectionTitle;
 import '../../../core/utils/format_bytes.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show showInlineNotice, quietNotice;
 
 class StorageScreen extends ConsumerStatefulWidget {
   const StorageScreen({super.key});
@@ -160,7 +160,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     if (!mounted) return;
 
     if (st.count == 0) {
-      showInlineNotice(l10n.tr('noMatchingMail'));
+      quietNotice(l10n.tr('noMatchingMail'));
       return;
     }
 

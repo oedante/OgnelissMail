@@ -58,7 +58,28 @@ void _show(AppNotice n, Duration duration) {
 
 String _clip(String t) => t.length > 300 ? '${t.substring(0, 300)}…' : t;
 
-/// Показать ошибку строкой вверху экрана.
+/// Правило владельца 08.11.2026: пользователю показываются только
+/// критические ошибки — когда нужны его действия или есть риск потерять
+/// данные (письмо не ушло, черновик не сохранён, нужно войти снова, нет
+/// папки «Архив», файл, которого человек ждёт, не открылся). Остальное
+/// приложение выполняет повторно или пропускает молча — [quietError] и
+/// [quietNotice], только в журнал (docs/guides/ERRORS.md).
+
+/// Некритичная ошибка: не показывается, только в журнал.
+void quietError(String text) {
+  final t = text.trim();
+  if (t.isEmpty) return;
+  AppLogger.info('Не показано (некритично): $t');
+}
+
+/// Пояснение, без которого можно обойтись: не показывается, только в журнал.
+void quietNotice(String text) {
+  final t = text.trim();
+  if (t.isEmpty) return;
+  AppLogger.info('Не показано (пояснение): $t');
+}
+
+/// Показать КРИТИЧЕСКУЮ ошибку строкой вверху экрана (см. правило выше).
 void showInlineError(String text) {
   final t = text.trim();
   if (t.isEmpty) return;

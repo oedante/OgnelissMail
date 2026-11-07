@@ -47,7 +47,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../services/export/email_pdf_service.dart';
 
 import '../../../core/theme/tokens.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice, quietError, quietNotice;
 import '../../../core/theme/app_theme.dart';
 import '../../../core/logging/app_logger.dart';
 import '../../../core/logging/open_trace.dart';
@@ -1318,10 +1318,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       final f = File('${dir.path}${Platform.pathSeparator}ogneliss-mail-view.html');
       await f.writeAsString(page, flush: true);
       final ok = await launchUrl(Uri.file(f.path), mode: LaunchMode.externalApplication);
-      if (!ok && mounted) showInlineError(AppLocalizations.of(context).tr('mailOpenInBrowserFailed'));
+      if (!ok && mounted) quietError(AppLocalizations.of(context).tr('mailOpenInBrowserFailed'));
     } catch (e) {
       AppLogger.warning('Письмо в браузере: $e');
-      if (mounted) showInlineError(AppLocalizations.of(context).tr('mailOpenInBrowserFailed'));
+      if (mounted) quietError(AppLocalizations.of(context).tr('mailOpenInBrowserFailed'));
     }
   }
 
@@ -2326,7 +2326,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       // «Bad state: EAS: ItemOperations Fetch Status=6» (журнал владельца
       // 08.11.2026; синхронизация следом удаляет письмо и у нас).
       final gone = RegExp(r'ItemOperations Fetch Status=(6|15)\b').hasMatch('$e');
-      if (mounted) showInlineError(gone ? l10n.tr('attachmentGoneOnServer') : '${l10n.tr('error')}: $e');
+      if (mounted) quietError(gone ? l10n.tr('attachmentGoneOnServer') : '${l10n.tr('error')}: $e');
     }
   }
 
@@ -3137,7 +3137,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       if (ok) {
         showInlineNotice(l10n.tr('recallSent'));
       } else {
-        showInlineError(l10n.tr('recallUnavailable'));
+        quietError(l10n.tr('recallUnavailable'));
       }
     } catch (e) {
       showInlineError('${l10n.error}: $e');
@@ -3443,7 +3443,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       }
     }
 
-    showInlineNotice(l10n.tr('preparingPdf'));
+    quietNotice(l10n.tr('preparingPdf'));
     final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
     final labelsMap = {
       'from': l10n.tr('from'),
@@ -3521,7 +3521,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           '/compose?accountId=${Uri.encodeQueryComponent(email.accountId)}&attachments=${Uri.encodeComponent(file.path)}'));
     } catch (e) {
       if (mounted) {
-        showInlineError('$e');
+        quietError('$e');
       }
     }
   }
@@ -3572,7 +3572,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     if (failed == 0) {
       showInlineNotice(l10n.tr('downloadedN').replaceAll('{done}', '$done'));
     } else {
-      showInlineError(l10n.tr('downloadedNFailed').replaceAll('{done}', '$done').replaceAll('{failed}', '$failed'));
+      quietError(l10n.tr('downloadedNFailed').replaceAll('{done}', '$done').replaceAll('{failed}', '$failed'));
     }
   }
 
@@ -3919,7 +3919,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       ));
     } catch (e) {
       AppLogger.warning('Окно письма не открылось: $e');
-      if (mounted) showInlineError('${AppLocalizations.of(context).tr('error')}: $e');
+      if (mounted) quietError('${AppLocalizations.of(context).tr('error')}: $e');
     }
   }
 

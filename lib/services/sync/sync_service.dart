@@ -19,7 +19,7 @@ import '../../core/utils/text_safe.dart';
 import '../contacts/mail_contacts_service.dart';
 import '../contacts/colleague_directory.dart';
 import '../../core/utils/mail_domains.dart' show mailDomainOf, isPublicMailDomain;
-import '../../core/errors/app_exceptions.dart' show looksLikeAuthError, OAuthRefreshFailure;
+import '../../core/errors/app_exceptions.dart' show looksLikeAuthError, looksTransientError, OAuthRefreshFailure;
 import '../mail/offline_send_service.dart';
 import '../mail/draft_sync_service.dart';
 import '../mail/dav/dav_pim_service.dart';
@@ -358,11 +358,19 @@ class SyncService {
     // протокола) или синхронизировались частично. Раньше итог был «успех»
     // при любой ошибке, кроме неверного пароля, — отсюда жалобы «почта не
     // приходит», хотя приложение показывало, что всё обновлено.
+    // Временные сбои (сеть, сервер недоступен или перегружен) — только в
+    // журнал: приложение повторит само, человеку делать нечего (правило
+    // владельца 08.11.2026). Красная точка — когда нужны его действия.
     final failed = <String>[
       for (final a in accounts)
-        if (_accountErrors[a.id] != null) '${a.email}: ${_accountErrors[a.id]}'
-        else if (_partialErrors[a.id] != null) '${a.email} (${_l10n().tr('syncSomeFolders')}): ${_partialErrors[a.id]}',
+        if (_accountErrors[a.id] != null && !looksTransientError(_accountErrors[a.id]!)) '${a.email}: ${_accountErrors[a.id]}'
+        else if (_partialErrors[a.id] != null && !looksTransientError(_partialErrors[a.id]!))
+          '${a.email} (${_l10n().tr('syncSomeFolders')}): ${_partialErrors[a.id]}',
     ];
+    for (final a in accounts) {
+      final e = _accountErrors[a.id] ?? _partialErrors[a.id];
+      if (e != null && looksTransientError(e)) AppLogger.info('Синхронизация ${a.email}: временный сбой, повтор позже — $e');
+    }
     final busy = <String>[];
     for (final a in accounts) {
       final until = engine.serverBusyUntil(a.id);
@@ -372,16 +380,15 @@ class SyncService {
     }
     // Сводка режима фокуса — и при частичных ошибках ящиков.
     unawaited(_releaseFocusDigest());
-    if (busy.isEmpty && failed.isEmpty) {
+    // Exchange попросил подождать — тоже временное: только в журнал.
+    if (busy.isNotEmpty) AppLogger.info('${_l10n().tr('syncServerBusy')}: ${busy.join('; ')}');
+    if (failed.isEmpty) {
       _ref.read(syncStatusProvider.notifier).state = SyncStatus.success;
       _ref.read(syncMessageProvider.notifier).state = null;
       return;
     }
     _ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
-    _ref.read(syncMessageProvider.notifier).state = [
-      if (failed.isNotEmpty) '${_l10n().tr('syncFailedFor')}: ${failed.join('; ')}',
-      if (busy.isNotEmpty) '${_l10n().tr('syncServerBusy')}: ${busy.join('; ')}',
-    ].join('\n');
+    _ref.read(syncMessageProvider.notifier).state = '${_l10n().tr('syncFailedFor')}: ${failed.join('; ')}';
   }
 
   /// Ошибка синхронизации по ящику (последний проход) — для экрана аккаунта
@@ -1010,8 +1017,9 @@ class SyncService {
           // неудачный вход, а их серверы считают (до блокировки).
           final exp = await _ref.read(secureStorageProvider).getTokenExpiry(account.id);
           if (exp == null || DateTime.now().isAfter(exp)) {
+            // Сервер входа недоступен — не ошибка для человека (правило
+            // 08.11.2026): ящик проверится, когда сервер вернётся.
             AppLogger.warning('Синхронизация ${account.email} пропущена: $e');
-            _ref.read(syncMessageProvider.notifier).state = '${account.email}: ${e.reason}';
             return;
           }
           AppLogger.warning('Токен ${account.email} не обновлён, текущий ещё действует: ${e.reason}');

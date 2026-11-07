@@ -15,6 +15,16 @@ Android через FCM, BIMI, перевод ML Kit) — в архиве сай�
 не кладётся. Задания агентов — [plan/agent_briefs/](plan/agent_briefs/)
 (общие правила — `common.md`).
 
+## После 1.15.0 (07–08.11.2026) — план и что сделано
+
+План по аудитам, журналу владельца и внешнему аудиту — [plan/PLAN_2026-11.md](plan/PLAN_2026-11.md)
+(необходимое и желательное). Погода — через прокси на сервере
+(`server/weather-proxy`, развернуть владельцу), условия и политика —
+[guides/WEATHER.md](guides/WEATHER.md). Складные (Z Fold, Pixel Fold,
+Z Flip) — снимки в `tool/shots` («складные — …»). Облачная среда «Ogneliss
+Mail» (личная, 07.11): доступ к api.met.no, nominatim, operations.osmfoundation.org
+и скрипт подготовки (Flutter 3.47.8 в /opt/fl).
+
 ## Список владельца от 31.10.2026 (19 пунктов)
 
 | Пункт | Состояние |

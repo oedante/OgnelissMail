@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">The archive can\'t be read: it is damaged or in a format the app doesn\'t know (7z, RAR). Open it in another app.</string>
     <string name="pdfProtected">This PDF is password-protected. Open it in another app.</string>
     <string name="faq_mail_10_q">Which attachments open right in the app?</string>
-    <string name="faq_mail_10_a">Office documents, both new (DOCX, XLSX, PPTX) and old (DOC, XLS, PPT), OpenDocument files (ODT, ODS, ODP), RTF, CSV, text files and Markdown open right in the app, read-only — macros are never run; spreadsheets appear as a grid with sheets, presentations as slides, Markdown as formatted text. Both .eml and Outlook .msg messages open like ordinary messages, with their own attachments. ZIP archives, including password-protected ones, and TAR, GZ, BZ2 and XZ open in the app too: tap a file inside to open it. PDFs on Android, images and .pkpass tickets also open in the app. On iPhone and iPad, iOS Quick Look shows PDFs, images, Office documents, RTF and CSV, and the app itself shows OpenDocument files, text files, Markdown and messages. Documents from Office 95 and earlier, as well as 7z and RAR archives, open in another app, and any file can be sent to one with the button at the top.</string>
+    <string name="faq_mail_10_a">Office documents, both new (DOCX, XLSX, PPTX) and old (DOC, XLS, PPT), OpenDocument files (ODT, ODS, ODP), RTF, CSV, text files and Markdown open right in the app, read-only — macros are never run; spreadsheets appear as a grid with sheets, presentations as slides, Markdown as formatted text. Both .eml and Outlook .msg messages open like ordinary messages, with their own attachments. ZIP archives, including password-protected ones, and TAR, GZ, BZ2 and XZ open in the app too: tap a file inside to open it. PDFs on Android, images and .pkpass tickets also open in the app. On iPhone and iPad, iOS Quick Look shows PDFs, images, Office documents, RTF and CSV, and the app itself shows OpenDocument files, text files, Markdown and messages. Word and PowerPoint 95 and earlier documents, Excel 4 and earlier workbooks, as well as 7z and RAR archives, open in another app, and any file can be sent to one with the button at the top.</string>
     <string name="quickRepliesCardHint">The text goes into the reply — check it and send</string>
     <string name="translateMsgLang">Message language: {lang}</string>
     <string name="translateDone">Translated: {from} → {to}</string>
@@ -3800,13 +3800,14 @@
     <string name="favoritesOrder">Tile order</string>
     <string name="favoritesOrderHint">Drag an item by the handle on the right — the menu tiles follow this order.</string>
     <string name="docProtected">The document is password-protected. Open it in another app.</string>
-    <string name="docLegacyFormat">The app can\'t preview documents in old Office formats (Word, Excel and PowerPoint 95 and earlier). Open the file in another app.</string>
+    <string name="docLegacyFormat">The app can\'t preview documents in old Office formats (Word and PowerPoint 95 and earlier, Excel 4 and earlier). Open the file in another app.</string>
     <string name="docTooLarge">The document is too large to preview. Open it in another app.</string>
     <string name="docTruncated">The document is large — only the beginning is shown. Open it in another app to see all of it.</string>
     <string name="docEmpty">The document has no text.</string>
     <string name="docSheetTruncated">The sheet is large — only the beginning is shown</string>
     <string name="docSheetEmpty">The sheet is empty</string>
     <string name="docSlideOf">Slide {n} of {total}</string>
+    <string name="docSlideNotes">Speaker notes</string>
     <string name="docPreviewSection">Document preview</string>
     <string name="docPreview">Documents in the app</string>
     <string name="docPreviewDesc">Documents, spreadsheets and presentations from messages open right here, without another app. When off, they open in the app for that format.</string>

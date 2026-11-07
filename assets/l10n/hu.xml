@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Az archívum nem olvasható: sérült, vagy az alkalmazás által nem ismert formátumú (7z, RAR). Nyissa meg másik alkalmazásban.</string>
     <string name="pdfProtected">A PDF jelszóval védett. Nyissa meg másik alkalmazásban.</string>
     <string name="faq_mail_10_q">Mely mellékletek nyílnak meg közvetlenül az alkalmazásban?</string>
-    <string name="faq_mail_10_a">Az új (DOCX, XLSX, PPTX) és a régi (DOC, XLS, PPT) Office-dokumentumok, az OpenDocument-fájlok (ODT, ODS, ODP), az RTF, a CSV, a szövegfájlok és a Markdown közvetlenül az alkalmazásban nyílnak meg, csak olvasásra — a makrók sosem futnak le; a táblázatok munkalapos rácsként, a bemutatók diákként, a Markdown-fájlok formázott szövegként jelennek meg. Az .eml levelek és az Outlookból származó .msg levelek hagyományos levélként nyílnak meg, saját mellékleteikkel együtt. A ZIP-archívumok, a jelszóval védettek is, valamint a TAR, GZ, BZ2 és XZ szintén az alkalmazásban nyílnak meg: koppintson egy benne lévő fájlra a megnyitásához. Az alkalmazásban nyílnak meg a PDF-ek is Androidon, a képek és a .pkpass jegyek. iPhone-on és iPaden az iOS Gyorsnézet mutatja a PDF-eket, a képeket, az Office-dokumentumokat, az RTF- és CSV-fájlokat, az OpenDocument-fájlokat, a szövegfájlokat, a Markdownt és a leveleket pedig maga az alkalmazás. Az Office 95-ös és régebbi dokumentumok, valamint a 7z- és RAR-archívumok másik alkalmazásban nyílnak meg, és bármely fájl elküldhető oda a felső gombbal.</string>
+    <string name="faq_mail_10_a">Az új (DOCX, XLSX, PPTX) és a régi (DOC, XLS, PPT) Office-dokumentumok, az OpenDocument-fájlok (ODT, ODS, ODP), az RTF, a CSV, a szövegfájlok és a Markdown közvetlenül az alkalmazásban nyílnak meg, csak olvasásra — a makrók sosem futnak le; a táblázatok munkalapos rácsként, a bemutatók diákként, a Markdown-fájlok formázott szövegként jelennek meg. Az .eml levelek és az Outlookból származó .msg levelek hagyományos levélként nyílnak meg, saját mellékleteikkel együtt. A ZIP-archívumok, a jelszóval védettek is, valamint a TAR, GZ, BZ2 és XZ szintén az alkalmazásban nyílnak meg: koppintson egy benne lévő fájlra a megnyitásához. Az alkalmazásban nyílnak meg a PDF-ek is Androidon, a képek és a .pkpass jegyek. iPhone-on és iPaden az iOS Gyorsnézet mutatja a PDF-eket, a képeket, az Office-dokumentumokat, az RTF- és CSV-fájlokat, az OpenDocument-fájlokat, a szövegfájlokat, a Markdownt és a leveleket pedig maga az alkalmazás. A Word és PowerPoint 95-ös és régebbi dokumentumok, az Excel 4-es és régebbi munkafüzetek, valamint a 7z- és RAR-archívumok másik alkalmazásban nyílnak meg, és bármely fájl elküldhető oda a felső gombbal.</string>
     <string name="quickRepliesCardHint">A szöveg a válaszba kerül – ellenőrizze és küldje el</string>
     <string name="translateMsgLang">Az üzenet nyelve: {lang}</string>
     <string name="translateDone">Lefordítva: {from} → {to}</string>
@@ -3800,13 +3800,14 @@
     <string name="favoritesOrder">Csempék sorrendje</string>
     <string name="favoritesOrderHint">Húzza az elemet a jobb oldali fogantyúnál — a menü csempéi ezt a sorrendet követik.</string>
     <string name="docProtected">A dokumentum jelszóval védett. Nyissa meg egy másik alkalmazásban.</string>
-    <string name="docLegacyFormat">Az app nem jeleníti meg a régi Office-formátumú dokumentumokat (Word, Excel és PowerPoint 95 és korábbi). Nyissa meg a fájlt egy másik appban.</string>
+    <string name="docLegacyFormat">Az app nem jeleníti meg a régi Office-formátumú dokumentumokat (Word és PowerPoint 95 és korábbi, Excel 4 és korábbi). Nyissa meg a fájlt egy másik appban.</string>
     <string name="docTooLarge">A dokumentum túl nagy az előnézethez. Nyissa meg egy másik alkalmazásban.</string>
     <string name="docTruncated">A dokumentum nagy – csak az eleje látható. A teljeshez nyissa meg egy másik alkalmazásban.</string>
     <string name="docEmpty">A dokumentumban nincs szöveg.</string>
     <string name="docSheetTruncated">A munkalap nagy – csak az eleje látható</string>
     <string name="docSheetEmpty">A munkalap üres</string>
     <string name="docSlideOf">{n}. dia / {total}</string>
+    <string name="docSlideNotes">Előadói jegyzetek</string>
     <string name="docPreviewSection">Dokumentumok előnézete</string>
     <string name="docPreview">Dokumentumok az alkalmazásban</string>
     <string name="docPreviewDesc">Az üzenetek dokumentumai, táblázatai és bemutatói itt nyílnak meg, más alkalmazás nélkül. Kikapcsolva: a formátum alkalmazásában.</string>

@@ -16,8 +16,9 @@
 //    prstClr и поправки lumMod/lumOff/tint/shade/alpha;
 //  · фигуры образца и макета (не заполнители) рисуются под фигурами слайда.
 // Диаграммы (графики) не рисуются — на их месте плашка; SmartArt — по
-// сохранённому рисунку (ppt/diagrams/drawing*.xml), если он есть. Заметки,
-// анимация и переходы не читаются.
+// сохранённому рисунку (ppt/diagrams/drawing*.xml), если он есть. Заметки
+// докладчика (1.15.1) — текст заполнителя body страницы заметок (связь
+// notesSlide слайда). Анимация и переходы не читаются.
 //
 // Всё в файле — чужое: части читаются только через OfficeZip (пределы
 // распакованного), вложенность групп — не глубже OfficeLimits.maxDepth,
@@ -341,8 +342,11 @@ class _Pptx {
     if (_bool(root.attr('show')) == false) return null;
     final rels = zip.rels(part);
     _Layout? layout;
+    var notes = '';
     for (final r in rels.values) {
-      if (!r.external && r.isType('slideLayout')) layout = _layout(r.target);
+      if (r.external) continue;
+      if (r.isType('slideLayout')) layout = _layout(r.target);
+      if (r.isType('notesSlide')) notes = _notes(r.target);
     }
     final master = layout?.master;
     final theme = master?.theme ?? _Theme.fallback;
@@ -390,7 +394,44 @@ class _Pptx {
       shapes.removeRange(OfficeSlidesDoc.maxShapes, shapes.length);
       _truncated = true;
     }
-    return DocSlide(background: bg, shapes: shapes);
+    return DocSlide(background: bg, shapes: shapes, notes: notes);
+  }
+
+  /// Текст заметок докладчика: заполнитель body страницы заметок.
+  String _notes(String part) {
+    final XmlElement? root;
+    try {
+      root = zip.readXml(part)?.rootElement;
+    } on OfficeDocException catch (e) {
+      if (e.kind == OfficeDocError.tooLarge) _truncated = true;
+      return '';
+    }
+    final tree = root?.kid('cSld')?.kid('spTree');
+    if (tree == null) return '';
+    final out = StringBuffer();
+    void walk(XmlElement g, int depth) {
+      if (depth > OfficeLimits.maxDepth) return;
+      for (final e in g.childElements) {
+        if (out.length > DocSlide.maxNotes) return;
+        if (e.local == 'grpSp') {
+          walk(e, depth + 1);
+        } else if (e.local == 'sp' && e.kid('nvSpPr')?.kid('nvPr')?.kid('ph')?.attr('type') == 'body') {
+          for (final p in e.kid('txBody')?.kids('p') ?? const <XmlElement>[]) {
+            if (out.isNotEmpty) out.write('\n');
+            for (final r in p.childElements) {
+              if (r.local == 'br') {
+                out.write('\n');
+              } else if (r.local == 'r' || r.local == 'fld') {
+                out.write(r.kid('t')?.innerText ?? '');
+              }
+            }
+          }
+        }
+      }
+    }
+
+    walk(tree, 0);
+    return DocSlide.cleanNotes(out.toString());
   }
 }
 

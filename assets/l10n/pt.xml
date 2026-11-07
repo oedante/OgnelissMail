@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Não é possível ler o arquivo compactado: ele está danificado ou em um formato que o app não conhece (7z, RAR). Abra em outro app.</string>
     <string name="pdfProtected">O PDF é protegido por senha. Abra em outro app.</string>
     <string name="faq_mail_10_q">Quais anexos abrem direto no app?</string>
-    <string name="faq_mail_10_a">Documentos do Office, novos (DOCX, XLSX, PPTX) e antigos (DOC, XLS, PPT), arquivos OpenDocument (ODT, ODS, ODP), RTF, CSV, arquivos de texto e Markdown abrem direto no app, somente leitura — macros nunca são executadas; planilhas aparecem como uma grade com abas, apresentações como slides e Markdown como texto formatado. Mensagens .eml e mensagens do Outlook .msg abrem como mensagens comuns, com seus anexos. Arquivos ZIP, inclusive com senha, além de TAR, GZ, BZ2 e XZ também abrem no app: toque em um arquivo dentro deles para abri-lo. PDFs no Android, imagens e ingressos .pkpass também abrem no app. No iPhone e no iPad, a Visualização Rápida do iOS mostra PDFs, imagens, documentos do Office, RTF e CSV, e o próprio app mostra os arquivos OpenDocument, arquivos de texto, Markdown e mensagens. Documentos do Office 95 e anteriores e arquivos 7z e RAR abrem em outro app, e qualquer arquivo pode ser enviado a ele pelo botão no topo.</string>
+    <string name="faq_mail_10_a">Documentos do Office, novos (DOCX, XLSX, PPTX) e antigos (DOC, XLS, PPT), arquivos OpenDocument (ODT, ODS, ODP), RTF, CSV, arquivos de texto e Markdown abrem direto no app, somente leitura — macros nunca são executadas; planilhas aparecem como uma grade com abas, apresentações como slides e Markdown como texto formatado. Mensagens .eml e mensagens do Outlook .msg abrem como mensagens comuns, com seus anexos. Arquivos ZIP, inclusive com senha, além de TAR, GZ, BZ2 e XZ também abrem no app: toque em um arquivo dentro deles para abri-lo. PDFs no Android, imagens e ingressos .pkpass também abrem no app. No iPhone e no iPad, a Visualização Rápida do iOS mostra PDFs, imagens, documentos do Office, RTF e CSV, e o próprio app mostra os arquivos OpenDocument, arquivos de texto, Markdown e mensagens. Documentos do Word e PowerPoint 95 e anteriores, pastas do Excel 4 e anteriores e arquivos 7z e RAR abrem em outro app, e qualquer arquivo pode ser enviado a ele pelo botão no topo.</string>
     <string name="quickRepliesCardHint">O texto entra na resposta — verifique e envie</string>
     <string name="translateMsgLang">Idioma da mensagem: {lang}</string>
     <string name="translateDone">Traduzido: {from} → {to}</string>
@@ -3800,13 +3800,14 @@
     <string name="favoritesOrder">Ordem dos blocos</string>
     <string name="favoritesOrderHint">Arraste um item pela alça à direita — os blocos do menu seguem esta ordem.</string>
     <string name="docProtected">O documento está protegido por senha. Abra-o em outro aplicativo.</string>
-    <string name="docLegacyFormat">O app não mostra documentos em formatos antigos do Office (Word, Excel e PowerPoint 95 e anteriores). Abra o arquivo em outro app.</string>
+    <string name="docLegacyFormat">O app não mostra documentos em formatos antigos do Office (Word e PowerPoint 95 e anteriores, Excel 4 e anteriores). Abra o arquivo em outro app.</string>
     <string name="docTooLarge">O documento é grande demais para a pré-visualização. Abra-o em outro aplicativo.</string>
     <string name="docTruncated">O documento é grande — só o início é exibido. Abra-o em outro aplicativo para vê-lo inteiro.</string>
     <string name="docEmpty">O documento não contém texto.</string>
     <string name="docSheetTruncated">A planilha é grande — só o início é exibido</string>
     <string name="docSheetEmpty">A planilha está vazia</string>
     <string name="docSlideOf">Slide {n} de {total}</string>
+    <string name="docSlideNotes">Notas do apresentador</string>
     <string name="docPreviewSection">Pré-visualização de documentos</string>
     <string name="docPreview">Documentos no aplicativo</string>
     <string name="docPreviewDesc">Documentos, planilhas e apresentações das mensagens abrem aqui mesmo, sem outro aplicativo. Desativado: no aplicativo desse formato.</string>

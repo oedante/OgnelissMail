@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ogneliss/core/theme/app_icons.dart';
 import 'package:ogneliss/core/theme/app_theme.dart';
 import 'package:ogneliss/features/mail/widgets/doc_slides_view.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
@@ -67,6 +68,19 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(DocSlidesFullScreen), findsNothing);
     expect(find.byType(DocSlidesView), findsOneWidget);
+  });
+
+  testWidgets('заметки докладчика — под слайдом, с подписью; диаграмма — плашкой', (tester) async {
+    final notesDoc = PptxReader.read(
+      OfficeZip.open(File('test/fixtures/office/pptx_notes_chart.pptx').readAsBytesSync()),
+    );
+    await _pump(tester, notesDoc);
+    expect(find.text('Заметки докладчика'), findsOneWidget);
+    expect(find.text('Сказать про новых клиентов из Казани'), findsOneWidget);
+    expect(find.byIcon(AppIcons.bar_chart), findsOneWidget);
+    // Без заметок карточки нет.
+    await _pump(tester, doc);
+    expect(find.text('Заметки докладчика'), findsNothing);
   });
 
   testWidgets('тёмная тема: слайд остаётся белым', (tester) async {

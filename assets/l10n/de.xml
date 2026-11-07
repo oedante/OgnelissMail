@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Das Archiv lässt sich nicht lesen: Es ist beschädigt oder in einem Format, das die App nicht kennt (7z, RAR). Öffnen Sie es in einer anderen App.</string>
     <string name="pdfProtected">Das PDF ist passwortgeschützt. Öffnen Sie es in einer anderen App.</string>
     <string name="faq_mail_10_q">Welche Anhänge öffnen sich direkt in der App?</string>
-    <string name="faq_mail_10_a">Office-Dokumente, neue (DOCX, XLSX, PPTX) wie alte (DOC, XLS, PPT), OpenDocument-Dateien (ODT, ODS, ODP), RTF, CSV, Textdateien und Markdown öffnen sich direkt in der App, schreibgeschützt — Makros werden nie ausgeführt; Tabellen erscheinen als Raster mit Blättern, Präsentationen als Folien, Markdown als formatierter Text. Nachrichten im .eml-Format und Outlook-Nachrichten im .msg-Format öffnen sich wie normale Nachrichten, samt ihren Anhängen. ZIP-Archive, auch passwortgeschützte, sowie TAR, GZ, BZ2 und XZ öffnen sich ebenfalls in der App: Tippen Sie auf eine Datei darin, um sie zu öffnen. PDFs auf Android, Bilder und .pkpass-Tickets öffnen sich auch in der App. Auf iPhone und iPad zeigt die iOS-Übersicht PDFs, Bilder, Office-Dokumente, RTF und CSV, und die App selbst zeigt OpenDocument-Dateien, Textdateien, Markdown und Nachrichten. Dokumente aus Office 95 und älter sowie 7z- und RAR-Archive öffnen sich in einer anderen App, und jede Datei lässt sich mit der Schaltfläche oben an eine App senden.</string>
+    <string name="faq_mail_10_a">Office-Dokumente, neue (DOCX, XLSX, PPTX) wie alte (DOC, XLS, PPT), OpenDocument-Dateien (ODT, ODS, ODP), RTF, CSV, Textdateien und Markdown öffnen sich direkt in der App, schreibgeschützt — Makros werden nie ausgeführt; Tabellen erscheinen als Raster mit Blättern, Präsentationen als Folien, Markdown als formatierter Text. Nachrichten im .eml-Format und Outlook-Nachrichten im .msg-Format öffnen sich wie normale Nachrichten, samt ihren Anhängen. ZIP-Archive, auch passwortgeschützte, sowie TAR, GZ, BZ2 und XZ öffnen sich ebenfalls in der App: Tippen Sie auf eine Datei darin, um sie zu öffnen. PDFs auf Android, Bilder und .pkpass-Tickets öffnen sich auch in der App. Auf iPhone und iPad zeigt die iOS-Übersicht PDFs, Bilder, Office-Dokumente, RTF und CSV, und die App selbst zeigt OpenDocument-Dateien, Textdateien, Markdown und Nachrichten. Dokumente aus Word und PowerPoint 95 und älter, Arbeitsmappen aus Excel 4 und älter sowie 7z- und RAR-Archive öffnen sich in einer anderen App, und jede Datei lässt sich mit der Schaltfläche oben an eine App senden.</string>
     <string name="quickRepliesCardHint">Der Text kommt in die Antwort – prüfen und senden</string>
     <string name="translateMsgLang">Sprache der Nachricht: {lang}</string>
     <string name="translateDone">Übersetzt: {from} → {to}</string>
@@ -3800,13 +3800,14 @@
     <string name="favoritesOrder">Reihenfolge der Kacheln</string>
     <string name="favoritesOrderHint">Ziehen Sie einen Eintrag am Griff rechts — die Kacheln im Menü folgen dieser Reihenfolge.</string>
     <string name="docProtected">Das Dokument ist kennwortgeschützt. Öffnen Sie es in einer anderen App.</string>
-    <string name="docLegacyFormat">Dokumente in alten Office-Formaten (Word, Excel und PowerPoint 95 und älter) kann die App nicht anzeigen. Öffnen Sie die Datei in einer anderen App.</string>
+    <string name="docLegacyFormat">Dokumente in alten Office-Formaten (Word und PowerPoint 95 und älter, Excel 4 und älter) kann die App nicht anzeigen. Öffnen Sie die Datei in einer anderen App.</string>
     <string name="docTooLarge">Das Dokument ist für die Vorschau zu groß. Öffnen Sie es in einer anderen App.</string>
     <string name="docTruncated">Das Dokument ist groß – nur der Anfang wird angezeigt. Vollständig sehen Sie es in einer anderen App.</string>
     <string name="docEmpty">Das Dokument enthält keinen Text.</string>
     <string name="docSheetTruncated">Das Blatt ist groß – nur der Anfang wird angezeigt</string>
     <string name="docSheetEmpty">Das Blatt ist leer</string>
     <string name="docSlideOf">Folie {n} von {total}</string>
+    <string name="docSlideNotes">Notizen des Vortragenden</string>
     <string name="docPreviewSection">Dokumentvorschau</string>
     <string name="docPreview">Dokumente in der App</string>
     <string name="docPreviewDesc">Dokumente, Tabellen und Präsentationen aus E-Mails öffnen sich direkt hier, ohne andere App. Aus: in der App für dieses Format.</string>

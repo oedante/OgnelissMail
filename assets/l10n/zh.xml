@@ -3618,7 +3618,7 @@
     <string name="zipCannotRead">无法读取压缩包：文件已损坏或格式不受支持（7z、RAR）。请在其他应用中打开。</string>
     <string name="pdfProtected">此 PDF 受密码保护，请在其他应用中打开。</string>
     <string name="faq_mail_10_q">哪些附件可以直接在应用中打开？</string>
-    <string name="faq_mail_10_a">新旧 Office 文档（DOCX、XLSX、PPTX 以及 DOC、XLS、PPT）、OpenDocument 文件（ODT、ODS、ODP）、RTF、CSV、文本文件和 Markdown 可直接在应用中以只读方式打开——绝不会运行宏；电子表格按工作表以网格显示，演示文稿以幻灯片显示，Markdown 以带格式的文本显示。.eml 邮件和 Outlook .msg 邮件像普通邮件一样打开，并带有各自的附件。ZIP 压缩包（包括带密码的）以及 TAR、GZ、BZ2 和 XZ 也可在应用中打开：点按其中的文件即可打开。Android 上的 PDF、图片以及 .pkpass 票券同样可在应用中打开。在 iPhone 和 iPad 上，PDF、图片、Office 文档、RTF 和 CSV 由 iOS 的快速查看显示，OpenDocument 文件、文本文件、Markdown 和邮件则由应用本身显示。Office 95 及更早版本的文档以及 7z 和 RAR 压缩包在其他应用中打开，任何文件都可以通过顶部按钮发送到其他应用。</string>
+    <string name="faq_mail_10_a">新旧 Office 文档（DOCX、XLSX、PPTX 以及 DOC、XLS、PPT）、OpenDocument 文件（ODT、ODS、ODP）、RTF、CSV、文本文件和 Markdown 可直接在应用中以只读方式打开——绝不会运行宏；电子表格按工作表以网格显示，演示文稿以幻灯片显示，Markdown 以带格式的文本显示。.eml 邮件和 Outlook .msg 邮件像普通邮件一样打开，并带有各自的附件。ZIP 压缩包（包括带密码的）以及 TAR、GZ、BZ2 和 XZ 也可在应用中打开：点按其中的文件即可打开。Android 上的 PDF、图片以及 .pkpass 票券同样可在应用中打开。在 iPhone 和 iPad 上，PDF、图片、Office 文档、RTF 和 CSV 由 iOS 的快速查看显示，OpenDocument 文件、文本文件、Markdown 和邮件则由应用本身显示。Word 和 PowerPoint 95 及更早版本的文档、Excel 4 及更早版本的工作簿以及 7z 和 RAR 压缩包在其他应用中打开，任何文件都可以通过顶部按钮发送到其他应用。</string>
     <string name="quickRepliesCardHint">文本将放入回复中，请检查后发送</string>
     <string name="translateMsgLang">邮件语言：{lang}</string>
     <string name="translateDone">已翻译：{from} → {to}</string>
@@ -3779,13 +3779,14 @@
     <string name="favoritesOrder">磁贴顺序</string>
     <string name="favoritesOrderHint">拖动右侧的把手调整项目，菜单中的磁贴将按此顺序排列。</string>
     <string name="docProtected">文档受密码保护。请在其他应用中打开。</string>
-    <string name="docLegacyFormat">应用无法显示旧版 Office 格式（Word、Excel 和 PowerPoint 95 及更早版本）的文档。请在其他应用中打开文件。</string>
+    <string name="docLegacyFormat">应用无法显示旧版 Office 格式（Word 和 PowerPoint 95 及更早版本、Excel 4 及更早版本）的文档。请在其他应用中打开文件。</string>
     <string name="docTooLarge">文档太大，无法预览。请在其他应用中打开。</string>
     <string name="docTruncated">文档较大，仅显示开头部分。如需查看全部内容，请在其他应用中打开。</string>
     <string name="docEmpty">文档中没有文本。</string>
     <string name="docSheetTruncated">工作表较大，仅显示开头部分</string>
     <string name="docSheetEmpty">工作表为空</string>
     <string name="docSlideOf">第 {n} 张幻灯片，共 {total} 张</string>
+    <string name="docSlideNotes">演讲者备注</string>
     <string name="docPreviewSection">文档预览</string>
     <string name="docPreview">在应用内查看文档</string>
     <string name="docPreviewDesc">邮件中的文档、表格和演示文稿直接在此打开，无需其他应用。关闭后将在该格式的应用中打开。</string>

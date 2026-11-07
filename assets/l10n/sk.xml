@@ -3656,7 +3656,7 @@
     <string name="zipCannotRead">Archív sa nedá prečítať: je poškodený alebo vo formáte, ktorý aplikácia nepozná (7z, RAR). Otvorte ho v inej aplikácii.</string>
     <string name="pdfProtected">PDF je chránené heslom. Otvorte ho v inej aplikácii.</string>
     <string name="faq_mail_10_q">Ktoré prílohy sa otvoria priamo v aplikácii?</string>
-    <string name="faq_mail_10_a">Dokumenty Office, nové (DOCX, XLSX, PPTX) aj staré (DOC, XLS, PPT), súbory OpenDocument (ODT, ODS, ODP), RTF, CSV, textové súbory a Markdown sa otvoria priamo v aplikácii, len na čítanie — makrá sa nikdy nespúšťajú; tabuľky sa zobrazia ako mriežka s hárkami, prezentácie ako snímky, Markdown ako formátovaný text. Správy .eml a správy Outlooku .msg sa otvoria ako bežné správy, aj s vlastnými prílohami. Archívy ZIP, aj chránené heslom, a tiež TAR, GZ, BZ2 a XZ sa v aplikácii otvoria rovnako: súbor vnútri otvoríte ťuknutím. V aplikácii sa otvoria aj PDF v Androide, obrázky a vstupenky .pkpass. Na iPhone a iPade zobrazuje PDF, obrázky, dokumenty Office, RTF a CSV Rýchly náhľad systému iOS, súbory OpenDocument, textové súbory, Markdown a správy zobrazuje samotná aplikácia. Dokumenty z Office 95 a starších a archívy 7z a RAR sa otvoria v inej aplikácii a každý súbor do nej pošlete tlačidlom hore.</string>
+    <string name="faq_mail_10_a">Dokumenty Office, nové (DOCX, XLSX, PPTX) aj staré (DOC, XLS, PPT), súbory OpenDocument (ODT, ODS, ODP), RTF, CSV, textové súbory a Markdown sa otvoria priamo v aplikácii, len na čítanie — makrá sa nikdy nespúšťajú; tabuľky sa zobrazia ako mriežka s hárkami, prezentácie ako snímky, Markdown ako formátovaný text. Správy .eml a správy Outlooku .msg sa otvoria ako bežné správy, aj s vlastnými prílohami. Archívy ZIP, aj chránené heslom, a tiež TAR, GZ, BZ2 a XZ sa v aplikácii otvoria rovnako: súbor vnútri otvoríte ťuknutím. V aplikácii sa otvoria aj PDF v Androide, obrázky a vstupenky .pkpass. Na iPhone a iPade zobrazuje PDF, obrázky, dokumenty Office, RTF a CSV Rýchly náhľad systému iOS, súbory OpenDocument, textové súbory, Markdown a správy zobrazuje samotná aplikácia. Dokumenty z Word a PowerPoint 95 a starších, zošity z Excel 4 a starších a archívy 7z a RAR sa otvoria v inej aplikácii a každý súbor do nej pošlete tlačidlom hore.</string>
     <string name="quickRepliesCardHint">Text sa vloží do odpovede — skontrolujte a odošlite</string>
     <string name="translateMsgLang">Jazyk správy: {lang}</string>
     <string name="translateDone">Preložené: {from} → {to}</string>
@@ -3821,13 +3821,14 @@
     <string name="favoritesOrder">Poradie dlaždíc</string>
     <string name="favoritesOrderHint">Potiahnite položku za úchyt vpravo — dlaždice v ponuke budú v tomto poradí.</string>
     <string name="docProtected">Dokument je chránený heslom. Otvorte ho v inej aplikácii.</string>
-    <string name="docLegacyFormat">Aplikácia nezobrazí dokumenty v starých formátoch Office (Word, Excel a PowerPoint 95 a staršie). Otvorte súbor v inej aplikácii.</string>
+    <string name="docLegacyFormat">Aplikácia nezobrazí dokumenty v starých formátoch Office (Word a PowerPoint 95 a staršie, Excel 4 a staršie). Otvorte súbor v inej aplikácii.</string>
     <string name="docTooLarge">Dokument je na náhľad príliš veľký. Otvorte ho v inej aplikácii.</string>
     <string name="docTruncated">Dokument je veľký — zobrazuje sa len začiatok. Celý ho otvoríte v inej aplikácii.</string>
     <string name="docEmpty">Dokument neobsahuje žiadny text.</string>
     <string name="docSheetTruncated">Hárok je veľký — zobrazuje sa len začiatok</string>
     <string name="docSheetEmpty">Hárok je prázdny</string>
     <string name="docSlideOf">Snímka {n} z {total}</string>
+    <string name="docSlideNotes">Poznámky rečníka</string>
     <string name="docPreviewSection">Náhľad dokumentov</string>
     <string name="docPreview">Dokumenty v aplikácii</string>
     <string name="docPreviewDesc">Dokumenty, tabuľky a prezentácie zo správ sa otvárajú priamo tu, bez inej aplikácie. Vypnuté — v aplikácii pre daný formát.</string>

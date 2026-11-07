@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Impossibile leggere l\'archivio: è danneggiato o in un formato che l\'app non conosce (7z, RAR). Aprilo in un\'altra app.</string>
     <string name="pdfProtected">Il PDF è protetto da password. Aprilo in un\'altra app.</string>
     <string name="faq_mail_10_q">Quali allegati si aprono direttamente nell\'app?</string>
-    <string name="faq_mail_10_a">I documenti Office, sia nuovi (DOCX, XLSX, PPTX) sia vecchi (DOC, XLS, PPT), i file OpenDocument (ODT, ODS, ODP), RTF, CSV, i file di testo e Markdown si aprono direttamente nell\'app, in sola lettura — le macro non vengono mai eseguite; i fogli di calcolo appaiono come una griglia con i loro fogli, le presentazioni come diapositive, il Markdown come testo formattato. I messaggi .eml e i messaggi Outlook .msg si aprono come normali messaggi, con i loro allegati. Anche gli archivi ZIP, pure quelli protetti da password, e TAR, GZ, BZ2 e XZ si aprono nell\'app: tocca un file all\'interno per aprirlo. Nell\'app si aprono anche i PDF su Android, le immagini e i biglietti .pkpass. Su iPhone e iPad, Quick Look di iOS mostra PDF, immagini, documenti Office, RTF e CSV, e l\'app stessa mostra i file OpenDocument, i file di testo, il Markdown e i messaggi. I documenti di Office 95 e precedenti e gli archivi 7z e RAR si aprono in un\'altra app, e qualsiasi file può esserle inviato con il pulsante in alto.</string>
+    <string name="faq_mail_10_a">I documenti Office, sia nuovi (DOCX, XLSX, PPTX) sia vecchi (DOC, XLS, PPT), i file OpenDocument (ODT, ODS, ODP), RTF, CSV, i file di testo e Markdown si aprono direttamente nell\'app, in sola lettura — le macro non vengono mai eseguite; i fogli di calcolo appaiono come una griglia con i loro fogli, le presentazioni come diapositive, il Markdown come testo formattato. I messaggi .eml e i messaggi Outlook .msg si aprono come normali messaggi, con i loro allegati. Anche gli archivi ZIP, pure quelli protetti da password, e TAR, GZ, BZ2 e XZ si aprono nell\'app: tocca un file all\'interno per aprirlo. Nell\'app si aprono anche i PDF su Android, le immagini e i biglietti .pkpass. Su iPhone e iPad, Quick Look di iOS mostra PDF, immagini, documenti Office, RTF e CSV, e l\'app stessa mostra i file OpenDocument, i file di testo, il Markdown e i messaggi. I documenti di Word e PowerPoint 95 e precedenti, le cartelle di Excel 4 e precedenti e gli archivi 7z e RAR si aprono in un\'altra app, e qualsiasi file può esserle inviato con il pulsante in alto.</string>
     <string name="quickRepliesCardHint">Il testo va nella risposta: controlla e invia</string>
     <string name="translateMsgLang">Lingua del messaggio: {lang}</string>
     <string name="translateDone">Tradotto: {from} → {to}</string>
@@ -3800,13 +3800,14 @@
     <string name="favoritesOrder">Ordine dei riquadri</string>
     <string name="favoritesOrderHint">Trascina una voce dalla maniglia a destra: i riquadri del menu seguono questo ordine.</string>
     <string name="docProtected">Il documento è protetto da password. Aprilo in un\'altra app.</string>
-    <string name="docLegacyFormat">L\'app non può mostrare documenti nei vecchi formati Office (Word, Excel e PowerPoint 95 e precedenti). Apri il file in un\'altra app.</string>
+    <string name="docLegacyFormat">L\'app non può mostrare documenti nei vecchi formati Office (Word e PowerPoint 95 e precedenti, Excel 4 e precedenti). Apri il file in un\'altra app.</string>
     <string name="docTooLarge">Il documento è troppo grande per l\'anteprima. Aprilo in un\'altra app.</string>
     <string name="docTruncated">Il documento è grande: viene mostrato solo l\'inizio. Aprilo in un\'altra app per vederlo tutto.</string>
     <string name="docEmpty">Il documento non contiene testo.</string>
     <string name="docSheetTruncated">Il foglio è grande: viene mostrato solo l\'inizio</string>
     <string name="docSheetEmpty">Il foglio è vuoto</string>
     <string name="docSlideOf">Diapositiva {n} di {total}</string>
+    <string name="docSlideNotes">Note del relatore</string>
     <string name="docPreviewSection">Anteprima documenti</string>
     <string name="docPreview">Documenti nell\'app</string>
     <string name="docPreviewDesc">Documenti, fogli di calcolo e presentazioni dei messaggi si aprono qui, senza un\'altra app. Disattivato: nell\'app per quel formato.</string>

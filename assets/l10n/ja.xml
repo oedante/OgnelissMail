@@ -3618,7 +3618,7 @@
     <string name="zipCannotRead">アーカイブを読み込めません。破損しているか、アプリが対応していない形式です（7z、RAR）。別のアプリで開いてください。</string>
     <string name="pdfProtected">このPDFはパスワードで保護されています。別のアプリで開いてください。</string>
     <string name="faq_mail_10_q">アプリ内で直接開ける添付ファイルは？</string>
-    <string name="faq_mail_10_a">Office 文書（新しい DOCX、XLSX、PPTX と古い DOC、XLS、PPT）、OpenDocument ファイル（ODT、ODS、ODP）、RTF、CSV、テキストファイル、Markdown はアプリ内で直接開けます。読み取り専用で、マクロが実行されることはありません。スプレッドシートはシートごとのグリッドで、プレゼンテーションはスライドで、Markdown は書式付きのテキストで表示されます。.eml メールと Outlook の .msg メールは、添付ファイルも含めて通常のメールと同じように開きます。パスワード付きを含む ZIP アーカイブと、TAR、GZ、BZ2、XZ もアプリ内で開けます。中のファイルをタップすると開きます。Android の PDF、画像、.pkpass チケットもアプリ内で開けます。iPhone と iPad では、PDF、画像、Office 文書、RTF、CSV を iOS のクイックルックで表示し、OpenDocument ファイル、テキストファイル、Markdown、メールはアプリ自体で表示します。Office 95 以前の文書と 7z、RAR のアーカイブは別のアプリで開き、上部のボタンでどのファイルも別のアプリに送れます。</string>
+    <string name="faq_mail_10_a">Office 文書（新しい DOCX、XLSX、PPTX と古い DOC、XLS、PPT）、OpenDocument ファイル（ODT、ODS、ODP）、RTF、CSV、テキストファイル、Markdown はアプリ内で直接開けます。読み取り専用で、マクロが実行されることはありません。スプレッドシートはシートごとのグリッドで、プレゼンテーションはスライドで、Markdown は書式付きのテキストで表示されます。.eml メールと Outlook の .msg メールは、添付ファイルも含めて通常のメールと同じように開きます。パスワード付きを含む ZIP アーカイブと、TAR、GZ、BZ2、XZ もアプリ内で開けます。中のファイルをタップすると開きます。Android の PDF、画像、.pkpass チケットもアプリ内で開けます。iPhone と iPad では、PDF、画像、Office 文書、RTF、CSV を iOS のクイックルックで表示し、OpenDocument ファイル、テキストファイル、Markdown、メールはアプリ自体で表示します。Word と PowerPoint 95 以前の文書、Excel 4 以前のブックと 7z、RAR のアーカイブは別のアプリで開き、上部のボタンでどのファイルも別のアプリに送れます。</string>
     <string name="quickRepliesCardHint">テキストが返信に入ります。確認して送信してください</string>
     <string name="translateMsgLang">メールの言語: {lang}</string>
     <string name="translateDone">翻訳済み: {from} → {to}</string>
@@ -3779,13 +3779,14 @@
     <string name="favoritesOrder">タイルの順序</string>
     <string name="favoritesOrderHint">右のハンドルで項目をドラッグすると、メニューのタイルがこの順序になります。</string>
     <string name="docProtected">この文書はパスワードで保護されています。別のアプリで開いてください。</string>
-    <string name="docLegacyFormat">古い Office 形式（Word、Excel、PowerPoint 95 以前）の文書はアプリで表示できません。別のアプリでファイルを開いてください。</string>
+    <string name="docLegacyFormat">古い Office 形式（Word と PowerPoint 95 以前、Excel 4 以前）の文書はアプリで表示できません。別のアプリでファイルを開いてください。</string>
     <string name="docTooLarge">文書が大きすぎるためプレビューできません。別のアプリで開いてください。</string>
     <string name="docTruncated">文書が大きいため、冒頭のみ表示しています。全体は別のアプリで開いてください。</string>
     <string name="docEmpty">文書にテキストがありません。</string>
     <string name="docSheetTruncated">シートが大きいため、先頭のみ表示しています</string>
     <string name="docSheetEmpty">シートは空です</string>
     <string name="docSlideOf">スライド {n}/{total}</string>
+    <string name="docSlideNotes">発表者のノート</string>
     <string name="docPreviewSection">文書のプレビュー</string>
     <string name="docPreview">アプリ内で文書を表示</string>
     <string name="docPreviewDesc">メッセージの文書、スプレッドシート、プレゼンテーションを他のアプリを使わずにここで開きます。オフにすると、その形式のアプリで開きます。</string>

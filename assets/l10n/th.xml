@@ -3618,7 +3618,7 @@
     <string name="zipCannotRead">อ่านไฟล์บีบอัดไม่ได้ เนื่องจากไฟล์เสียหายหรือเป็นรูปแบบที่แอปไม่รู้จัก (7z, RAR) โปรดเปิดในแอปอื่น</string>
     <string name="pdfProtected">PDF นี้มีรหัสผ่านป้องกัน โปรดเปิดในแอปอื่น</string>
     <string name="faq_mail_10_q">ไฟล์แนบแบบใดเปิดในแอปได้โดยตรง</string>
-    <string name="faq_mail_10_a">เอกสาร Office ทั้งแบบใหม่ (DOCX, XLSX, PPTX) และแบบเก่า (DOC, XLS, PPT) ไฟล์ OpenDocument (ODT, ODS, ODP) RTF, CSV ไฟล์ข้อความ และ Markdown เปิดในแอปได้โดยตรงแบบอ่านอย่างเดียว — ไม่มีการเรียกใช้มาโครเลย สเปรดชีตแสดงเป็นตารางแยกตามแผ่นงาน งานนำเสนอแสดงเป็นสไลด์ และ Markdown แสดงเป็นข้อความที่จัดรูปแบบแล้ว อีเมล .eml และอีเมล Outlook .msg เปิดได้เหมือนอีเมลทั่วไป พร้อมไฟล์แนบของตัวเอง ไฟล์บีบอัด ZIP รวมถึงแบบมีรหัสผ่าน และ TAR, GZ, BZ2, XZ ก็เปิดในแอปได้เช่นกัน แตะไฟล์ด้านในเพื่อเปิด PDF บน Android รูปภาพ และตั๋ว .pkpass ก็เปิดในแอปได้ด้วย บน iPhone และ iPad Quick Look ของ iOS จะแสดง PDF รูปภาพ เอกสาร Office, RTF และ CSV ส่วนไฟล์ OpenDocument ไฟล์ข้อความ Markdown และอีเมล แอปจะแสดงเอง เอกสาร Office 95 หรือเก่ากว่า รวมถึงไฟล์บีบอัด 7z และ RAR จะเปิดในแอปอื่น และส่งไฟล์ใดก็ได้ไปยังแอปนั้นด้วยปุ่มด้านบน</string>
+    <string name="faq_mail_10_a">เอกสาร Office ทั้งแบบใหม่ (DOCX, XLSX, PPTX) และแบบเก่า (DOC, XLS, PPT) ไฟล์ OpenDocument (ODT, ODS, ODP) RTF, CSV ไฟล์ข้อความ และ Markdown เปิดในแอปได้โดยตรงแบบอ่านอย่างเดียว — ไม่มีการเรียกใช้มาโครเลย สเปรดชีตแสดงเป็นตารางแยกตามแผ่นงาน งานนำเสนอแสดงเป็นสไลด์ และ Markdown แสดงเป็นข้อความที่จัดรูปแบบแล้ว อีเมล .eml และอีเมล Outlook .msg เปิดได้เหมือนอีเมลทั่วไป พร้อมไฟล์แนบของตัวเอง ไฟล์บีบอัด ZIP รวมถึงแบบมีรหัสผ่าน และ TAR, GZ, BZ2, XZ ก็เปิดในแอปได้เช่นกัน แตะไฟล์ด้านในเพื่อเปิด PDF บน Android รูปภาพ และตั๋ว .pkpass ก็เปิดในแอปได้ด้วย บน iPhone และ iPad Quick Look ของ iOS จะแสดง PDF รูปภาพ เอกสาร Office, RTF และ CSV ส่วนไฟล์ OpenDocument ไฟล์ข้อความ Markdown และอีเมล แอปจะแสดงเอง เอกสาร Word และ PowerPoint 95 หรือเก่ากว่า เวิร์กบุ๊ก Excel 4 หรือเก่ากว่า รวมถึงไฟล์บีบอัด 7z และ RAR จะเปิดในแอปอื่น และส่งไฟล์ใดก็ได้ไปยังแอปนั้นด้วยปุ่มด้านบน</string>
     <string name="quickRepliesCardHint">ข้อความจะอยู่ในคำตอบ — ตรวจสอบแล้วส่ง</string>
     <string name="translateMsgLang">ภาษาของข้อความ: {lang}</string>
     <string name="translateDone">แปลแล้ว: {from} → {to}</string>
@@ -3779,13 +3779,14 @@
     <string name="favoritesOrder">ลำดับไทล์</string>
     <string name="favoritesOrderHint">ลากรายการที่ที่จับด้านขวา — ไทล์ในเมนูจะเรียงตามลำดับนี้</string>
     <string name="docProtected">เอกสารนี้ป้องกันด้วยรหัสผ่าน เปิดในแอปอื่น</string>
-    <string name="docLegacyFormat">แอปแสดงเอกสารรูปแบบ Office เก่า (Word, Excel และ PowerPoint 95 หรือเก่ากว่า) ไม่ได้ เปิดไฟล์ในแอปอื่น</string>
+    <string name="docLegacyFormat">แอปแสดงเอกสารรูปแบบ Office เก่า (Word และ PowerPoint 95 หรือเก่ากว่า, Excel 4 หรือเก่ากว่า) ไม่ได้ เปิดไฟล์ในแอปอื่น</string>
     <string name="docTooLarge">เอกสารใหญ่เกินกว่าจะแสดงตัวอย่างได้ เปิดในแอปอื่น</string>
     <string name="docTruncated">เอกสารมีขนาดใหญ่ — แสดงเฉพาะส่วนต้น เปิดในแอปอื่นเพื่อดูทั้งหมด</string>
     <string name="docEmpty">เอกสารไม่มีข้อความ</string>
     <string name="docSheetTruncated">แผ่นงานมีขนาดใหญ่ — แสดงเฉพาะส่วนต้น</string>
     <string name="docSheetEmpty">แผ่นงานว่างเปล่า</string>
     <string name="docSlideOf">สไลด์ {n} จาก {total}</string>
+    <string name="docSlideNotes">บันทึกย่อของผู้บรรยาย</string>
     <string name="docPreviewSection">ดูตัวอย่างเอกสาร</string>
     <string name="docPreview">เอกสารในแอป</string>
     <string name="docPreviewDesc">เอกสาร สเปรดชีต และงานนำเสนอจากข้อความจะเปิดที่นี่ได้เลยโดยไม่ต้องใช้แอปอื่น เมื่อปิด — เปิดในแอปสำหรับรูปแบบนั้น</string>

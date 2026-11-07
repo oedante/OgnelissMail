@@ -16,7 +16,9 @@
 //    рисуется плашкой), draw:custom-shape (форма — по draw:type), draw:rect,
 //    draw:ellipse, draw:line, draw:polygon, draw:path, draw:g; поворот —
 //    draw:transform.
-// Анимация, заметки и формулы своих форм (draw:equation) не читаются.
+// Заметки докладчика (1.15.1) — текст рамки presentation:class="notes" в
+// presentation:notes слайда. Анимация и формулы своих форм (draw:equation)
+// не читаются.
 //
 // Файл — чужой: части — только через OfficeZip (пределы распакованного),
 // повторы (table:number-columns-repeated) и вложенность ограничены, внешние
@@ -322,7 +324,45 @@ class _Odp {
       shapes.removeRange(OfficeSlidesDoc.maxShapes, shapes.length);
       _truncated = true;
     }
-    return DocSlide(background: bg, shapes: shapes);
+    return DocSlide(background: bg, shapes: shapes, notes: _notes(page));
+  }
+
+  /// Текст заметок докладчика слайда [page].
+  static String _notes(XmlElement page) {
+    final notes = page.kid('notes');
+    if (notes == null) return '';
+    final out = StringBuffer();
+    void text(XmlNode n, int depth) {
+      if (depth > OfficeLimits.maxDepth || out.length > DocSlide.maxNotes) return;
+      for (final c in n.children) {
+        if (c is XmlText) {
+          out.write(c.value.replaceAll(RegExp(r'\s+'), ' '));
+        } else if (c is XmlElement) {
+          switch (c.local) {
+            case 'p' || 'h':
+              if (out.isNotEmpty) out.write('\n');
+              text(c, depth + 1);
+            case 's':
+              out.write(' ' * (int.tryParse(c.attr('c') ?? '') ?? 1).clamp(1, 100));
+            case 'tab':
+              out.write('\t');
+            case 'line-break':
+              out.write('\n');
+            case 'note' || 'annotation' || 'tracked-changes':
+              break;
+            default:
+              text(c, depth + 1);
+          }
+        }
+      }
+    }
+
+    for (final f in notes.kids('frame')) {
+      if (f.attr('class') != 'notes') continue;
+      final box = f.kid('text-box');
+      if (box != null) text(box, 0);
+    }
+    return DocSlide.cleanNotes(out.toString());
   }
 
   /// Заливка из свойств (graphic-properties, drawing-page-properties).

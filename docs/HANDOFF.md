@@ -178,9 +178,17 @@ super_drag_and_drop 0.10.0-dev.2 (MIT; ядро на Rust собирается �
   (Word 97+), `ppt_reader.dart` (текст и фигуры), `office_art.dart`
   (MS-ODRAW), `msg_reader.dart` (MS-OXMSG, MS-OXRTFCP, MS-OXRTFEX) — всё
   по спецификациям, без сторонних библиотек; пределы против враждебных
-  файлов. `legacy` теперь — только Office 95 и старше. Не сделано: Excel с
-  паролем (в т. ч. VelvetSweatshop), BIFF5 (Excel 95, выгрузки 1С 7.7),
-  колонтитулы и примечания .doc, заметки и диаграммы .ppt. MS-OXRTFEX —
+  файлов. `legacy` — Word и PowerPoint 95 и старше, Excel 4 и старше.
+  1.15.1: `xls_crypt.dart` — книги с RC4 и RC4 CryptoAPI ([MS-OFFCRYPTO]):
+  стандартный пароль VelvetSweatshop открывается сам, свой пароль —
+  «защищён»; BIFF5 (Excel 5/95, выгрузки 1С 7.7: кодовая страница CODEPAGE,
+  поток «Book»); колонтитулы и примечания .doc (PlcfHdd, PlcfandRef/Txt,
+  автор из GrpXstAtnOwners); заметки докладчика (.ppt, PPTX, ODP —
+  `DocSlide.notes`, под слайдом и в поиске) и плашка со значком на месте
+  диаграммы .ppt, если её картинка не PNG/JPEG (обычно EMF; вид — по
+  ExOleObjAtom, имени программы или CompObj хранилища). EMF/WMF не
+  рисуются. Образцы — `test/fixtures/office` (LibreOffice, свой BIFF5,
+  четыре файла Apache POI — Apache-2.0, README там же). MS-OXRTFEX —
   владелец проверил 06.11.2026, оставлено (`LICENSING.md`, раздел 6). Настоящих файлов Outlook .msg в тестах
   нет — только собранные `test/unit/msg_builder.dart`.
 - Текст и Markdown: `text_doc_reader.dart` (кодировка по содержимому —
@@ -190,8 +198,12 @@ super_drag_and_drop 0.10.0-dev.2 (MIT; ядро на Rust собирается �
 - S2: текст скачанных вложений — в `emails_fts.attachments_text`
   (`attachment_text.dart`, `attachment_text_index.dart`), разделы с
   невидимыми метками, дозагрузка после синхронизации, «Во вложении: …» в
-  результатах, настройка «Искать в тексте вложений». PDF не индексируется
-  (нет читателя PDF). При смене id письма на сервере текст вложений теряется.
+  результатах, настройка «Искать в тексте вложений». 1.15.1: текст PDF
+  (`pdf_text.dart`: потоки, шрифты ToUnicode/WinAnsi/Differences, защита
+  без пароля на открытие — RC4, AES-128/256; сканы и PDF с паролем — без
+  текста); при смене id письма на сервере (MOVE, UIDVALIDITY) текст
+  вложений переносится (`renameEmailFts`, по Message-ID —
+  `keepAttachmentsTextForReturn`).
 - A2: `device_readiness.dart` — один шаг настройки после добавления ящика;
   выбор канала сигналов без участия человека (FCM при сервисах Google,
   иначе единственный UnifiedPush, иначе расписание без ошибки; сбой Google —

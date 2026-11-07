@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">No se puede leer el archivo: está dañado o en un formato que la app no conoce (7z, RAR). Ábrelo en otra app.</string>
     <string name="pdfProtected">El PDF está protegido con contraseña. Ábrelo en otra app.</string>
     <string name="faq_mail_10_q">¿Qué adjuntos se abren directamente en la app?</string>
-    <string name="faq_mail_10_a">Los documentos de Office, tanto nuevos (DOCX, XLSX, PPTX) como antiguos (DOC, XLS, PPT), los archivos OpenDocument (ODT, ODS, ODP), RTF, CSV, los archivos de texto y Markdown se abren directamente en la app, de solo lectura — las macros nunca se ejecutan; las hojas de cálculo aparecen como una cuadrícula con hojas; las presentaciones, como diapositivas, y el Markdown, como texto con formato. Los mensajes .eml y los mensajes .msg de Outlook se abren como mensajes normales, con sus adjuntos. Los archivos ZIP, incluso con contraseña, así como TAR, GZ, BZ2 y XZ, también se abren en la app: toca un archivo de dentro para abrirlo. Los PDF en Android, las imágenes y las entradas .pkpass se abren igualmente en la app. En iPhone y iPad, la Vista rápida de iOS muestra PDF, imágenes, documentos de Office, RTF y CSV, y la propia app muestra los archivos OpenDocument, los archivos de texto, Markdown y los mensajes. Los documentos de Office 95 y anteriores y los archivos 7z y RAR se abren en otra app, y cualquier archivo se puede enviar a ella con el botón de arriba.</string>
+    <string name="faq_mail_10_a">Los documentos de Office, tanto nuevos (DOCX, XLSX, PPTX) como antiguos (DOC, XLS, PPT), los archivos OpenDocument (ODT, ODS, ODP), RTF, CSV, los archivos de texto y Markdown se abren directamente en la app, de solo lectura — las macros nunca se ejecutan; las hojas de cálculo aparecen como una cuadrícula con hojas; las presentaciones, como diapositivas, y el Markdown, como texto con formato. Los mensajes .eml y los mensajes .msg de Outlook se abren como mensajes normales, con sus adjuntos. Los archivos ZIP, incluso con contraseña, así como TAR, GZ, BZ2 y XZ, también se abren en la app: toca un archivo de dentro para abrirlo. Los PDF en Android, las imágenes y las entradas .pkpass se abren igualmente en la app. En iPhone y iPad, la Vista rápida de iOS muestra PDF, imágenes, documentos de Office, RTF y CSV, y la propia app muestra los archivos OpenDocument, los archivos de texto, Markdown y los mensajes. Los documentos de Word y PowerPoint 95 y anteriores, los libros de Excel 4 y anteriores y los archivos 7z y RAR se abren en otra app, y cualquier archivo se puede enviar a ella con el botón de arriba.</string>
     <string name="quickRepliesCardHint">El texto se coloca en la respuesta: revísalo y envíalo</string>
     <string name="translateMsgLang">Idioma del mensaje: {lang}</string>
     <string name="translateDone">Traducido: {from} → {to}</string>
@@ -3800,13 +3800,14 @@
     <string name="favoritesOrder">Orden de los mosaicos</string>
     <string name="favoritesOrderHint">Arrastre un elemento por el asa de la derecha: los mosaicos del menú siguen este orden.</string>
     <string name="docProtected">El documento está protegido con contraseña. Ábralo en otra aplicación.</string>
-    <string name="docLegacyFormat">La app no puede mostrar documentos en formatos antiguos de Office (Word, Excel y PowerPoint 95 y anteriores). Abre el archivo en otra app.</string>
+    <string name="docLegacyFormat">La app no puede mostrar documentos en formatos antiguos de Office (Word y PowerPoint 95 y anteriores, Excel 4 y anteriores). Abre el archivo en otra app.</string>
     <string name="docTooLarge">El documento es demasiado grande para la vista previa. Ábralo en otra aplicación.</string>
     <string name="docTruncated">El documento es grande: solo se muestra el principio. Ábralo en otra aplicación para verlo completo.</string>
     <string name="docEmpty">El documento no contiene texto.</string>
     <string name="docSheetTruncated">La hoja es grande: solo se muestra el principio</string>
     <string name="docSheetEmpty">La hoja está vacía</string>
     <string name="docSlideOf">Diapositiva {n} de {total}</string>
+    <string name="docSlideNotes">Notas del orador</string>
     <string name="docPreviewSection">Vista previa de documentos</string>
     <string name="docPreview">Documentos en la aplicación</string>
     <string name="docPreviewDesc">Los documentos, hojas de cálculo y presentaciones de los mensajes se abren aquí mismo, sin otra aplicación. Desactivado: en la aplicación para ese formato.</string>

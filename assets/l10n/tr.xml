@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Arşiv okunamıyor: bozuk veya uygulamanın tanımadığı bir biçimde (7z, RAR). Başka bir uygulamada açın.</string>
     <string name="pdfProtected">PDF parolayla korunuyor. Başka bir uygulamada açın.</string>
     <string name="faq_mail_10_q">Hangi ekler doğrudan uygulamada açılır?</string>
-    <string name="faq_mail_10_a">Hem yeni (DOCX, XLSX, PPTX) hem eski (DOC, XLS, PPT) Office belgeleri, OpenDocument dosyaları (ODT, ODS, ODP), RTF, CSV, metin dosyaları ve Markdown doğrudan uygulamada, salt okunur olarak açılır — makrolar hiçbir zaman çalıştırılmaz; tablolar sayfalarıyla birlikte ızgara olarak, sunular slayt olarak, Markdown biçimlendirilmiş metin olarak görünür. Outlook .msg iletileri ile .eml iletileri, kendi ekleriyle birlikte normal iletiler gibi açılır. Parolalı olanlar dahil ZIP arşivleri ile TAR, GZ, BZ2 ve XZ de uygulamada açılır: açmak için içindeki bir dosyaya dokunun. Android\'de PDF\'ler, görseller ve .pkpass biletleri de uygulamada açılır. iPhone ve iPad\'de iOS Hızlı Bakış PDF\'leri, görselleri, Office belgelerini, RTF ve CSV\'yi gösterir; OpenDocument dosyalarını, metin dosyalarını, Markdown\'ı ve iletileri ise uygulamanın kendisi gösterir. Office 95 ve öncesine ait belgeler ile 7z ve RAR arşivleri başka bir uygulamada açılır ve her dosya üstteki düğmeyle oraya gönderilebilir.</string>
+    <string name="faq_mail_10_a">Hem yeni (DOCX, XLSX, PPTX) hem eski (DOC, XLS, PPT) Office belgeleri, OpenDocument dosyaları (ODT, ODS, ODP), RTF, CSV, metin dosyaları ve Markdown doğrudan uygulamada, salt okunur olarak açılır — makrolar hiçbir zaman çalıştırılmaz; tablolar sayfalarıyla birlikte ızgara olarak, sunular slayt olarak, Markdown biçimlendirilmiş metin olarak görünür. Outlook .msg iletileri ile .eml iletileri, kendi ekleriyle birlikte normal iletiler gibi açılır. Parolalı olanlar dahil ZIP arşivleri ile TAR, GZ, BZ2 ve XZ de uygulamada açılır: açmak için içindeki bir dosyaya dokunun. Android\'de PDF\'ler, görseller ve .pkpass biletleri de uygulamada açılır. iPhone ve iPad\'de iOS Hızlı Bakış PDF\'leri, görselleri, Office belgelerini, RTF ve CSV\'yi gösterir; OpenDocument dosyalarını, metin dosyalarını, Markdown\'ı ve iletileri ise uygulamanın kendisi gösterir. Word ve PowerPoint 95 ve öncesine ait belgeler, Excel 4 ve öncesine ait çalışma kitapları ile 7z ve RAR arşivleri başka bir uygulamada açılır ve her dosya üstteki düğmeyle oraya gönderilebilir.</string>
     <string name="quickRepliesCardHint">Metin yanıta eklenir — kontrol edip gönderin</string>
     <string name="translateMsgLang">İleti dili: {lang}</string>
     <string name="translateDone">Çevrildi: {from} → {to}</string>
@@ -3800,13 +3800,14 @@
     <string name="favoritesOrder">Kutucuk sırası</string>
     <string name="favoritesOrderHint">Öğeyi sağdaki tutamaçtan sürükleyin — menüdeki kutucuklar bu sırayı izler.</string>
     <string name="docProtected">Belge parolayla korunuyor. Başka bir uygulamada açın.</string>
-    <string name="docLegacyFormat">Uygulama eski Office biçimlerindeki belgeleri (Word, Excel ve PowerPoint 95 ve öncesi) gösteremez. Dosyayı başka bir uygulamada açın.</string>
+    <string name="docLegacyFormat">Uygulama eski Office biçimlerindeki belgeleri (Word ve PowerPoint 95 ve öncesi, Excel 4 ve öncesi) gösteremez. Dosyayı başka bir uygulamada açın.</string>
     <string name="docTooLarge">Belge önizleme için çok büyük. Başka bir uygulamada açın.</string>
     <string name="docTruncated">Belge büyük — yalnızca başlangıcı gösteriliyor. Tamamını görmek için başka bir uygulamada açın.</string>
     <string name="docEmpty">Belgede metin yok.</string>
     <string name="docSheetTruncated">Sayfa büyük — yalnızca başlangıcı gösteriliyor</string>
     <string name="docSheetEmpty">Sayfa boş</string>
     <string name="docSlideOf">Slayt {n} / {total}</string>
+    <string name="docSlideNotes">Konuşmacı notları</string>
     <string name="docPreviewSection">Belge önizleme</string>
     <string name="docPreview">Belgeler uygulamada</string>
     <string name="docPreviewDesc">İletilerdeki belgeler, tablolar ve sunular başka uygulama olmadan burada açılır. Kapalıyken o biçimin uygulamasında açılır.</string>

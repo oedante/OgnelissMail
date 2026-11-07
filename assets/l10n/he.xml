@@ -3656,7 +3656,7 @@
     <string name="zipCannotRead">לא ניתן לקרוא את הארכיון: הוא פגום או בפורמט שהאפליקציה אינה מכירה (7z, RAR). פתחו אותו באפליקציה אחרת.</string>
     <string name="pdfProtected">קובץ ה-PDF מוגן בסיסמה. פתחו אותו באפליקציה אחרת.</string>
     <string name="faq_mail_10_q">אילו קבצים מצורפים נפתחים ישירות באפליקציה?</string>
-    <string name="faq_mail_10_a">מסמכי Office, חדשים (DOCX, XLSX, PPTX) וישנים (DOC, XLS, PPT), קובצי OpenDocument (ODT, ODS, ODP), RTF, CSV, קובצי טקסט ו-Markdown נפתחים ישירות באפליקציה, לקריאה בלבד — פקודות מאקרו אף פעם לא מורצות; גיליונות אלקטרוניים מוצגים כרשת עם גיליונות, מצגות — כשקופיות, ו-Markdown — כטקסט מעוצב. הודעות .eml והודעות Outlook בפורמט .msg נפתחות כהודעות רגילות, עם הקבצים המצורפים שלהן. גם ארכיוני ZIP, כולל כאלה המוגנים בסיסמה, וגם TAR, GZ, BZ2 ו-XZ נפתחים באפליקציה: הקישו על קובץ בתוכם כדי לפתוח אותו. גם קובצי PDF ב-Android, תמונות וכרטיסי .pkpass נפתחים באפליקציה. ב-iPhone וב-iPad, התצוגה המהירה של iOS מציגה קובצי PDF, תמונות, מסמכי Office, RTF ו-CSV, ואת קובצי OpenDocument, קובצי הטקסט, Markdown וההודעות מציגה האפליקציה עצמה. מסמכים של Office 95 ומטה וארכיוני 7z ו-RAR נפתחים באפליקציה אחרת, ואפשר לשלוח אליה כל קובץ בכפתור למעלה.</string>
+    <string name="faq_mail_10_a">מסמכי Office, חדשים (DOCX, XLSX, PPTX) וישנים (DOC, XLS, PPT), קובצי OpenDocument (ODT, ODS, ODP), RTF, CSV, קובצי טקסט ו-Markdown נפתחים ישירות באפליקציה, לקריאה בלבד — פקודות מאקרו אף פעם לא מורצות; גיליונות אלקטרוניים מוצגים כרשת עם גיליונות, מצגות — כשקופיות, ו-Markdown — כטקסט מעוצב. הודעות .eml והודעות Outlook בפורמט .msg נפתחות כהודעות רגילות, עם הקבצים המצורפים שלהן. גם ארכיוני ZIP, כולל כאלה המוגנים בסיסמה, וגם TAR, GZ, BZ2 ו-XZ נפתחים באפליקציה: הקישו על קובץ בתוכם כדי לפתוח אותו. גם קובצי PDF ב-Android, תמונות וכרטיסי .pkpass נפתחים באפליקציה. ב-iPhone וב-iPad, התצוגה המהירה של iOS מציגה קובצי PDF, תמונות, מסמכי Office, RTF ו-CSV, ואת קובצי OpenDocument, קובצי הטקסט, Markdown וההודעות מציגה האפליקציה עצמה. מסמכים של Word ו-PowerPoint 95 ומטה, חוברות Excel 4 ומטה וארכיוני 7z ו-RAR נפתחים באפליקציה אחרת, ואפשר לשלוח אליה כל קובץ בכפתור למעלה.</string>
     <string name="quickRepliesCardHint">הטקסט ייכנס לתשובה — בדקו ושלחו</string>
     <string name="translateMsgLang">שפת ההודעה: {lang}</string>
     <string name="translateDone">תורגם: {from} ← {to}</string>
@@ -3821,13 +3821,14 @@
     <string name="favoritesOrder">סדר האריחים</string>
     <string name="favoritesOrderHint">גררו פריט בידית שמימין — האריחים בתפריט יופיעו בסדר הזה.</string>
     <string name="docProtected">המסמך מוגן בסיסמה. פתחו אותו באפליקציה אחרת.</string>
-    <string name="docLegacyFormat">האפליקציה לא מציגה מסמכים בפורמטים ישנים של Office ‏(Word,‏ Excel ו-PowerPoint 95 ומטה). פתחו את הקובץ באפליקציה אחרת.</string>
+    <string name="docLegacyFormat">האפליקציה לא מציגה מסמכים בפורמטים ישנים של Office ‏(Word ו-PowerPoint 95 ומטה, Excel 4 ומטה). פתחו את הקובץ באפליקציה אחרת.</string>
     <string name="docTooLarge">המסמך גדול מדי לתצוגה מקדימה. פתחו אותו באפליקציה אחרת.</string>
     <string name="docTruncated">המסמך גדול — מוצגת רק ההתחלה. כדי לראות את כולו, פתחו אותו באפליקציה אחרת.</string>
     <string name="docEmpty">אין טקסט במסמך.</string>
     <string name="docSheetTruncated">הגיליון גדול — מוצגת רק ההתחלה</string>
     <string name="docSheetEmpty">הגיליון ריק</string>
     <string name="docSlideOf">שקופית {n} מתוך {total}</string>
+    <string name="docSlideNotes">הערות הדובר</string>
     <string name="docPreviewSection">תצוגה מקדימה של מסמכים</string>
     <string name="docPreview">מסמכים באפליקציה</string>
     <string name="docPreviewDesc">מסמכים, גיליונות ומצגות מההודעות נפתחים כאן, בלי אפליקציה אחרת. כשהאפשרות כבויה — באפליקציה של אותה תבנית.</string>

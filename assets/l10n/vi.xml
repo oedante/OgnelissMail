@@ -3618,7 +3618,7 @@
     <string name="zipCannotRead">Không đọc được tệp nén: tệp bị hỏng hoặc ở định dạng ứng dụng không hỗ trợ (7z, RAR). Hãy mở bằng ứng dụng khác.</string>
     <string name="pdfProtected">Tệp PDF được bảo vệ bằng mật khẩu. Hãy mở bằng ứng dụng khác.</string>
     <string name="faq_mail_10_q">Tệp đính kèm nào mở ngay trong ứng dụng?</string>
-    <string name="faq_mail_10_a">Tài liệu Office, cả mới (DOCX, XLSX, PPTX) lẫn cũ (DOC, XLS, PPT), tệp OpenDocument (ODT, ODS, ODP), RTF, CSV, tệp văn bản và Markdown mở ngay trong ứng dụng, ở chế độ chỉ đọc — macro không bao giờ được chạy; bảng tính hiển thị dạng lưới theo từng trang tính, bản trình bày hiển thị dạng trang chiếu, Markdown hiển thị dạng văn bản có định dạng. Thư .eml và thư Outlook .msg mở như thư thông thường, kèm cả tệp đính kèm của chúng. Tệp nén ZIP, kể cả có mật khẩu, cùng TAR, GZ, BZ2 và XZ cũng mở trong ứng dụng: chạm vào tệp bên trong để mở. Ngoài ra, PDF trên Android, ảnh và vé .pkpass cũng mở trong ứng dụng. Trên iPhone và iPad, Xem nhanh của iOS hiển thị PDF, ảnh, tài liệu Office, RTF và CSV, còn tệp OpenDocument, tệp văn bản, Markdown và thư do chính ứng dụng hiển thị. Tài liệu Office 95 trở về trước cùng tệp nén 7z và RAR mở bằng ứng dụng khác, và có thể gửi mọi tệp tới ứng dụng đó bằng nút ở trên cùng.</string>
+    <string name="faq_mail_10_a">Tài liệu Office, cả mới (DOCX, XLSX, PPTX) lẫn cũ (DOC, XLS, PPT), tệp OpenDocument (ODT, ODS, ODP), RTF, CSV, tệp văn bản và Markdown mở ngay trong ứng dụng, ở chế độ chỉ đọc — macro không bao giờ được chạy; bảng tính hiển thị dạng lưới theo từng trang tính, bản trình bày hiển thị dạng trang chiếu, Markdown hiển thị dạng văn bản có định dạng. Thư .eml và thư Outlook .msg mở như thư thông thường, kèm cả tệp đính kèm của chúng. Tệp nén ZIP, kể cả có mật khẩu, cùng TAR, GZ, BZ2 và XZ cũng mở trong ứng dụng: chạm vào tệp bên trong để mở. Ngoài ra, PDF trên Android, ảnh và vé .pkpass cũng mở trong ứng dụng. Trên iPhone và iPad, Xem nhanh của iOS hiển thị PDF, ảnh, tài liệu Office, RTF và CSV, còn tệp OpenDocument, tệp văn bản, Markdown và thư do chính ứng dụng hiển thị. Tài liệu Word và PowerPoint 95 trở về trước, sổ làm việc Excel 4 trở về trước cùng tệp nén 7z và RAR mở bằng ứng dụng khác, và có thể gửi mọi tệp tới ứng dụng đó bằng nút ở trên cùng.</string>
     <string name="quickRepliesCardHint">Văn bản được đưa vào thư trả lời — kiểm tra rồi gửi</string>
     <string name="translateMsgLang">Ngôn ngữ thư: {lang}</string>
     <string name="translateDone">Đã dịch: {from} → {to}</string>
@@ -3779,13 +3779,14 @@
     <string name="favoritesOrder">Thứ tự ô</string>
     <string name="favoritesOrderHint">Kéo mục bằng tay nắm bên phải — các ô trong menu theo thứ tự này.</string>
     <string name="docProtected">Tài liệu được bảo vệ bằng mật khẩu. Hãy mở bằng ứng dụng khác.</string>
-    <string name="docLegacyFormat">Ứng dụng không hiển thị được tài liệu định dạng Office cũ (Word, Excel và PowerPoint 95 trở về trước). Hãy mở tệp bằng ứng dụng khác.</string>
+    <string name="docLegacyFormat">Ứng dụng không hiển thị được tài liệu định dạng Office cũ (Word và PowerPoint 95 trở về trước, Excel 4 trở về trước). Hãy mở tệp bằng ứng dụng khác.</string>
     <string name="docTooLarge">Tài liệu quá lớn để xem trước. Hãy mở bằng ứng dụng khác.</string>
     <string name="docTruncated">Tài liệu lớn — chỉ hiển thị phần đầu. Hãy mở bằng ứng dụng khác để xem toàn bộ.</string>
     <string name="docEmpty">Tài liệu không có văn bản.</string>
     <string name="docSheetTruncated">Trang tính lớn — chỉ hiển thị phần đầu</string>
     <string name="docSheetEmpty">Trang tính trống</string>
     <string name="docSlideOf">Trang chiếu {n}/{total}</string>
+    <string name="docSlideNotes">Ghi chú của diễn giả</string>
     <string name="docPreviewSection">Xem trước tài liệu</string>
     <string name="docPreview">Tài liệu trong ứng dụng</string>
     <string name="docPreviewDesc">Tài liệu, bảng tính và bản trình bày trong thư mở ngay tại đây, không cần ứng dụng khác. Khi tắt — mở bằng ứng dụng cho định dạng đó.</string>

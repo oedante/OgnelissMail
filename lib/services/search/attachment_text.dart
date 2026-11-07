@@ -277,6 +277,8 @@ class AttachmentText {
           out.line(t);
           if (out.full) break;
         }
+        // Заметки докладчика — тоже текст презентации.
+        if (slide.notes.isNotEmpty && !out.full) out.line(slide.notes);
       }
     }
     return out.result;

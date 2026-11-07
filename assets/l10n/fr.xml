@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">L\'archive est illisible : elle est endommagée ou dans un format inconnu de l\'application (7z, RAR). Ouvrez-la dans une autre application.</string>
     <string name="pdfProtected">Ce PDF est protégé par un mot de passe. Ouvrez-le dans une autre application.</string>
     <string name="faq_mail_10_q">Quelles pièces jointes s\'ouvrent directement dans l\'application ?</string>
-    <string name="faq_mail_10_a">Les documents Office, récents (DOCX, XLSX, PPTX) comme anciens (DOC, XLS, PPT), les fichiers OpenDocument (ODT, ODS, ODP), RTF, CSV, les fichiers texte et Markdown s’ouvrent directement dans l’application, en lecture seule — les macros ne sont jamais exécutées ; les feuilles de calcul s’affichent sous forme de grille avec leurs feuilles, les présentations sous forme de diapositives, le Markdown sous forme de texte mis en forme. Les messages .eml et les messages Outlook .msg s’ouvrent comme des messages ordinaires, avec leurs pièces jointes. Les archives ZIP, même protégées par mot de passe, ainsi que TAR, GZ, BZ2 et XZ s’ouvrent aussi dans l’application : touchez un fichier à l’intérieur pour l’ouvrir. Les PDF sur Android, les images et les billets .pkpass s’ouvrent également dans l’application. Sur iPhone et iPad, Coup d’œil d’iOS affiche les PDF, les images, les documents Office, RTF et CSV, et l’application elle-même affiche les fichiers OpenDocument, les fichiers texte, le Markdown et les messages. Les documents d’Office 95 et versions antérieures ainsi que les archives 7z et RAR s’ouvrent dans une autre application, et tout fichier peut y être envoyé avec le bouton en haut.</string>
+    <string name="faq_mail_10_a">Les documents Office, récents (DOCX, XLSX, PPTX) comme anciens (DOC, XLS, PPT), les fichiers OpenDocument (ODT, ODS, ODP), RTF, CSV, les fichiers texte et Markdown s’ouvrent directement dans l’application, en lecture seule — les macros ne sont jamais exécutées ; les feuilles de calcul s’affichent sous forme de grille avec leurs feuilles, les présentations sous forme de diapositives, le Markdown sous forme de texte mis en forme. Les messages .eml et les messages Outlook .msg s’ouvrent comme des messages ordinaires, avec leurs pièces jointes. Les archives ZIP, même protégées par mot de passe, ainsi que TAR, GZ, BZ2 et XZ s’ouvrent aussi dans l’application : touchez un fichier à l’intérieur pour l’ouvrir. Les PDF sur Android, les images et les billets .pkpass s’ouvrent également dans l’application. Sur iPhone et iPad, Coup d’œil d’iOS affiche les PDF, les images, les documents Office, RTF et CSV, et l’application elle-même affiche les fichiers OpenDocument, les fichiers texte, le Markdown et les messages. Les documents Word et PowerPoint 95 et antérieurs, les classeurs Excel 4 et antérieurs ainsi que les archives 7z et RAR s’ouvrent dans une autre application, et tout fichier peut y être envoyé avec le bouton en haut.</string>
     <string name="quickRepliesCardHint">Le texte est placé dans la réponse : vérifiez et envoyez</string>
     <string name="translateMsgLang">Langue du message : {lang}</string>
     <string name="translateDone">Traduit : {from} → {to}</string>
@@ -3800,13 +3800,14 @@
     <string name="favoritesOrder">Ordre des vignettes</string>
     <string name="favoritesOrderHint">Faites glisser un élément par la poignée à droite — les vignettes du menu suivent cet ordre.</string>
     <string name="docProtected">Le document est protégé par un mot de passe. Ouvrez-le dans une autre application.</string>
-    <string name="docLegacyFormat">L\'app ne peut pas afficher les documents aux anciens formats Office (Word, Excel et PowerPoint 95 et antérieurs). Ouvrez le fichier dans une autre app.</string>
+    <string name="docLegacyFormat">L\'app ne peut pas afficher les documents aux anciens formats Office (Word et PowerPoint 95 et antérieurs, Excel 4 et antérieurs). Ouvrez le fichier dans une autre app.</string>
     <string name="docTooLarge">Le document est trop volumineux pour l\'aperçu. Ouvrez-le dans une autre application.</string>
     <string name="docTruncated">Le document est volumineux : seul le début est affiché. Ouvrez-le dans une autre application pour tout voir.</string>
     <string name="docEmpty">Le document ne contient pas de texte.</string>
     <string name="docSheetTruncated">La feuille est volumineuse : seul le début est affiché</string>
     <string name="docSheetEmpty">La feuille est vide</string>
     <string name="docSlideOf">Diapositive {n} sur {total}</string>
+    <string name="docSlideNotes">Notes du présentateur</string>
     <string name="docPreviewSection">Aperçu des documents</string>
     <string name="docPreview">Documents dans l\'application</string>
     <string name="docPreviewDesc">Les documents, feuilles de calcul et présentations des messages s\'ouvrent ici même, sans autre application. Désactivé : dans l\'application prévue pour ce format.</string>

@@ -45,7 +45,34 @@ class DocSlide {
   /// Фигуры снизу вверх: образец, макет, сам слайд.
   final List<DocShape> shapes;
 
-  const DocSlide({this.background, this.shapes = const []});
+  /// Заметки докладчика — простой текст, абзацы через «\n»; '' — нет.
+  final String notes;
+
+  const DocSlide({this.background, this.shapes = const [], this.notes = ''});
+
+  /// Заметки докладчика не длиннее — дальше обрезаются.
+  static const maxNotes = 20000;
+
+  /// Текст заметок: переводы строк единые, пустые строки по краям и
+  /// подряд — убраны; длиннее [maxNotes] — обрезан.
+  static String cleanNotes(String raw) {
+    final lines = raw
+        .replaceAll('\r\n', '\n')
+        .replaceAll(RegExp('[\r\u000B\u2028\u2029]'), '\n')
+        .split('\n')
+        .map((l) => l.trimRight())
+        .toList();
+    final out = <String>[];
+    for (final l in lines) {
+      if (l.isEmpty && (out.isEmpty || out.last.isEmpty)) continue;
+      out.add(l);
+    }
+    while (out.isNotEmpty && out.last.isEmpty) {
+      out.removeLast();
+    }
+    final text = out.join('\n');
+    return text.length > maxNotes ? text.substring(0, maxNotes) : text;
+  }
 }
 
 /// Заливка: цвет, градиент или картинка.

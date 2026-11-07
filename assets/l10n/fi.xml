@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Arkistoa ei voi lukea: se on vioittunut tai muodossa, jota sovellus ei tunne (7z, RAR). Avaa se toisessa sovelluksessa.</string>
     <string name="pdfProtected">PDF on suojattu salasanalla. Avaa se toisessa sovelluksessa.</string>
     <string name="faq_mail_10_q">Mitkä liitteet avautuvat suoraan sovelluksessa?</string>
-    <string name="faq_mail_10_a">Office-asiakirjat, sekä uudet (DOCX, XLSX, PPTX) että vanhat (DOC, XLS, PPT), OpenDocument-tiedostot (ODT, ODS, ODP), RTF, CSV, tekstitiedostot ja Markdown avautuvat suoraan sovelluksessa vain luku -tilassa — makroja ei koskaan suoriteta; laskentataulukot näkyvät taulukoittain ruudukkona, esitykset dioina ja Markdown muotoiltuna tekstinä. Viestit .eml-muodossa ja Outlookin .msg-viestit avautuvat tavallisten viestien tapaan liitteineen. Sovelluksessa avautuvat myös ZIP-arkistot, salasanalla suojatut mukaan lukien, sekä TAR, GZ, BZ2 ja XZ: avaa sisällä oleva tiedosto napauttamalla sitä. Lisäksi sovelluksessa avautuvat PDF-tiedostot Androidissa, kuvat ja .pkpass-liput. iPhonessa ja iPadissa iOS:n pikakatselu näyttää PDF-tiedostot, kuvat, Office-asiakirjat sekä RTF- ja CSV-tiedostot, ja sovellus itse näyttää OpenDocument-tiedostot, tekstitiedostot, Markdownin ja viestit. Office 95:n ja sitä vanhempien versioiden asiakirjat sekä 7z- ja RAR-arkistot avautuvat toisessa sovelluksessa, ja minkä tahansa tiedoston voi lähettää toiseen sovellukseen yläreunan painikkeella.</string>
+    <string name="faq_mail_10_a">Office-asiakirjat, sekä uudet (DOCX, XLSX, PPTX) että vanhat (DOC, XLS, PPT), OpenDocument-tiedostot (ODT, ODS, ODP), RTF, CSV, tekstitiedostot ja Markdown avautuvat suoraan sovelluksessa vain luku -tilassa — makroja ei koskaan suoriteta; laskentataulukot näkyvät taulukoittain ruudukkona, esitykset dioina ja Markdown muotoiltuna tekstinä. Viestit .eml-muodossa ja Outlookin .msg-viestit avautuvat tavallisten viestien tapaan liitteineen. Sovelluksessa avautuvat myös ZIP-arkistot, salasanalla suojatut mukaan lukien, sekä TAR, GZ, BZ2 ja XZ: avaa sisällä oleva tiedosto napauttamalla sitä. Lisäksi sovelluksessa avautuvat PDF-tiedostot Androidissa, kuvat ja .pkpass-liput. iPhonessa ja iPadissa iOS:n pikakatselu näyttää PDF-tiedostot, kuvat, Office-asiakirjat sekä RTF- ja CSV-tiedostot, ja sovellus itse näyttää OpenDocument-tiedostot, tekstitiedostot, Markdownin ja viestit. Word- ja PowerPoint 95:n ja vanhempien asiakirjat, Excel 4:n ja vanhempien työkirjat sekä 7z- ja RAR-arkistot avautuvat toisessa sovelluksessa, ja minkä tahansa tiedoston voi lähettää toiseen sovellukseen yläreunan painikkeella.</string>
     <string name="quickRepliesCardHint">Teksti lisätään vastaukseen – tarkista ja lähetä</string>
     <string name="translateMsgLang">Viestin kieli: {lang}</string>
     <string name="translateDone">Käännetty: {from} → {to}</string>
@@ -3800,13 +3800,14 @@
     <string name="favoritesOrder">Ruutujen järjestys</string>
     <string name="favoritesOrderHint">Vedä kohdetta oikealla olevasta kahvasta — valikon ruudut noudattavat tätä järjestystä.</string>
     <string name="docProtected">Asiakirja on suojattu salasanalla. Avaa se toisessa sovelluksessa.</string>
-    <string name="docLegacyFormat">Sovellus ei näytä vanhoissa Office-muodoissa olevia asiakirjoja (Word, Excel ja PowerPoint 95 ja vanhemmat). Avaa tiedosto toisessa sovelluksessa.</string>
+    <string name="docLegacyFormat">Sovellus ei näytä vanhoissa Office-muodoissa olevia asiakirjoja (Word ja PowerPoint 95 ja vanhemmat, Excel 4 ja vanhemmat). Avaa tiedosto toisessa sovelluksessa.</string>
     <string name="docTooLarge">Asiakirja on liian suuri esikatseluun. Avaa se toisessa sovelluksessa.</string>
     <string name="docTruncated">Asiakirja on suuri – vain alku näytetään. Avaa se toisessa sovelluksessa nähdäksesi kaiken.</string>
     <string name="docEmpty">Asiakirjassa ei ole tekstiä.</string>
     <string name="docSheetTruncated">Taulukko on suuri – vain alku näytetään</string>
     <string name="docSheetEmpty">Taulukko on tyhjä</string>
     <string name="docSlideOf">Dia {n}/{total}</string>
+    <string name="docSlideNotes">Puhujan muistiinpanot</string>
     <string name="docPreviewSection">Asiakirjojen esikatselu</string>
     <string name="docPreview">Asiakirjat sovelluksessa</string>
     <string name="docPreviewDesc">Viestien asiakirjat, laskentataulukot ja esitykset avautuvat tässä ilman toista sovellusta. Pois päältä: muodon omassa sovelluksessa.</string>

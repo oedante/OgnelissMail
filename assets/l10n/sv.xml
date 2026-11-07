@@ -3637,7 +3637,7 @@
     <string name="zipCannotRead">Arkivet kan inte läsas: det är skadat eller i ett format som appen inte känner till (7z, RAR). Öppna det i en annan app.</string>
     <string name="pdfProtected">PDF:en är lösenordsskyddad. Öppna den i en annan app.</string>
     <string name="faq_mail_10_q">Vilka bilagor öppnas direkt i appen?</string>
-    <string name="faq_mail_10_a">Office-dokument, både nya (DOCX, XLSX, PPTX) och gamla (DOC, XLS, PPT), OpenDocument-filer (ODT, ODS, ODP), RTF, CSV, textfiler och Markdown öppnas direkt i appen, skrivskyddade — makron körs aldrig; kalkylblad visas som ett rutnät med blad, presentationer som bilder och Markdown som formaterad text. Meddelanden i .eml och Outlook-meddelanden i .msg öppnas som vanliga meddelanden, med sina bilagor. ZIP-arkiv, även lösenordsskyddade, samt TAR, GZ, BZ2 och XZ öppnas också i appen: tryck på en fil i arkivet för att öppna den. PDF:er på Android, bilder och .pkpass-biljetter öppnas likaså i appen. På iPhone och iPad visar iOS Snabbtitt PDF:er, bilder, Office-dokument, RTF och CSV, och appen själv visar OpenDocument-filer, textfiler, Markdown och meddelanden. Dokument från Office 95 och äldre samt 7z- och RAR-arkiv öppnas i en annan app, och alla filer kan skickas dit med knappen överst.</string>
+    <string name="faq_mail_10_a">Office-dokument, både nya (DOCX, XLSX, PPTX) och gamla (DOC, XLS, PPT), OpenDocument-filer (ODT, ODS, ODP), RTF, CSV, textfiler och Markdown öppnas direkt i appen, skrivskyddade — makron körs aldrig; kalkylblad visas som ett rutnät med blad, presentationer som bilder och Markdown som formaterad text. Meddelanden i .eml och Outlook-meddelanden i .msg öppnas som vanliga meddelanden, med sina bilagor. ZIP-arkiv, även lösenordsskyddade, samt TAR, GZ, BZ2 och XZ öppnas också i appen: tryck på en fil i arkivet för att öppna den. PDF:er på Android, bilder och .pkpass-biljetter öppnas likaså i appen. På iPhone och iPad visar iOS Snabbtitt PDF:er, bilder, Office-dokument, RTF och CSV, och appen själv visar OpenDocument-filer, textfiler, Markdown och meddelanden. Dokument från Word och PowerPoint 95 och äldre, arbetsböcker från Excel 4 och äldre samt 7z- och RAR-arkiv öppnas i en annan app, och alla filer kan skickas dit med knappen överst.</string>
     <string name="quickRepliesCardHint">Texten hamnar i svaret – kontrollera och skicka</string>
     <string name="translateMsgLang">Meddelandets språk: {lang}</string>
     <string name="translateDone">Översatt: {from} → {to}</string>
@@ -3800,13 +3800,14 @@
     <string name="favoritesOrder">Panelernas ordning</string>
     <string name="favoritesOrderHint">Dra ett objekt i handtaget till höger — panelerna i menyn följer den här ordningen.</string>
     <string name="docProtected">Dokumentet är lösenordsskyddat. Öppna det i en annan app.</string>
-    <string name="docLegacyFormat">Appen kan inte visa dokument i gamla Office-format (Word, Excel och PowerPoint 95 och äldre). Öppna filen i en annan app.</string>
+    <string name="docLegacyFormat">Appen kan inte visa dokument i gamla Office-format (Word och PowerPoint 95 och äldre, Excel 4 och äldre). Öppna filen i en annan app.</string>
     <string name="docTooLarge">Dokumentet är för stort för förhandsvisning. Öppna det i en annan app.</string>
     <string name="docTruncated">Dokumentet är stort – bara början visas. Öppna det i en annan app för att se allt.</string>
     <string name="docEmpty">Dokumentet innehåller ingen text.</string>
     <string name="docSheetTruncated">Bladet är stort – bara början visas</string>
     <string name="docSheetEmpty">Bladet är tomt</string>
     <string name="docSlideOf">Bild {n} av {total}</string>
+    <string name="docSlideNotes">Talaranteckningar</string>
     <string name="docPreviewSection">Förhandsvisning av dokument</string>
     <string name="docPreview">Dokument i appen</string>
     <string name="docPreviewDesc">Dokument, kalkylblad och presentationer från meddelanden öppnas direkt här, utan annan app. Av: i appen för formatet.</string>

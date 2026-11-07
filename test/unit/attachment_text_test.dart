@@ -110,6 +110,11 @@ void main() {
       expect(t, contains('Спасибо!'), reason: f);
       expect('\n$t\n'.split('\nКвартальный отчёт\n').length, 2, reason: f);
     }
+    for (final f in ['ppt_notes_chart.ppt', 'pptx_notes_chart.pptx', 'odp_notes_chart.odp']) {
+      final t = await text(f, _fx(f));
+      expect(t, contains('Итоги квартала'), reason: f);
+      expect(t, contains('Сказать про новых клиентов из Казани'), reason: '$f: заметки докладчика ищутся');
+    }
   });
 
   test('текстовый файл: UTF-8 и Windows-1251, без управляющих знаков', () async {

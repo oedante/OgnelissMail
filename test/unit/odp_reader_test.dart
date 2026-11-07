@@ -234,4 +234,16 @@ void main() {
       expect(_withText(doc.slides.single, 'Скрипт').text!.paragraphs.single.runs.single.href, isNull);
     });
   });
+
+  test('заметки докладчика (presentation:notes) и диаграмма — плашкой', () {
+    final d = OdpReader.read(OfficeZip.open(File('test/fixtures/office/odp_notes_chart.odp').readAsBytesSync()));
+    final slide = d.slides.single;
+    expect(slide.notes, 'Сказать про новых клиентов из Казани');
+    expect(slide.shapes.any((s) => s.embed == DocEmbed.chart), isTrue);
+  });
+
+  test('заметки: пустые строки по краям и подряд убраны, переводы строк едины', () {
+    expect(DocSlide.cleanNotes('\r\nПервая\r\r\n\nВторая  \u000BТретья\n\n'), 'Первая\n\nВторая\nТретья');
+    expect(DocSlide.cleanNotes('x' * (DocSlide.maxNotes + 10)).length, DocSlide.maxNotes);
+  });
 }

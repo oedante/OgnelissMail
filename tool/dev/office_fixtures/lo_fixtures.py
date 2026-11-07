@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 """Образцы старых форматов Office из LibreOffice (1.15.1): книга Excel 97 со
-стандартным паролем «VelvetSweatshop» и с паролем на открытие, Word 97 с колонтитулами и примечанием, PowerPoint 97 с заметками
-докладчика и диаграммой.
+стандартным паролем «VelvetSweatshop» и с паролем на открытие, Word 97 с
+колонтитулами и примечанием, презентация с заметками докладчика и
+диаграммой — PowerPoint 97 (.ppt), PPTX и ODP.
 
     soffice --headless --accept="socket,host=localhost,port=2002;urp;" &
-    python3 tool/dev/office_fixtures/lo_fixtures.py test/fixtures/office
+    python3 tool/dev/office_fixtures/lo_fixtures.py test/fixtures/office [calc] [writer] [impress]
+
+Без перечня — все образцы. Из .ppt убираются потоки свойств документа
+(strip_summary из legacy_fixtures.py): LibreOffice кладёт туда миниатюру
+слайда, и файл весит полмегабайта.
 
 Нужны LibreOffice и его модуль uno (только для этого скрипта). Тексты —
 свои. Excel 95 LibreOffice больше не записывает — книгу BIFF5 с кодовой
@@ -17,6 +22,9 @@ import time
 
 import uno  # pylint: disable=import-error
 from com.sun.star.beans import PropertyValue  # pylint: disable=import-error
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from legacy_fixtures import strip_summary  # noqa: E402  pylint: disable=wrong-import-position
 
 
 def props(**kw):
@@ -119,16 +127,20 @@ def impress(desktop, out):
         model.HasMainTitle = True
         model.Title.String = 'Выручка по городам'
     doc.storeToURL(url(os.path.join(out, 'ppt_notes_chart.ppt')), props(FilterName='MS PowerPoint 97'))
+    strip_summary(os.path.join(out, 'ppt_notes_chart.ppt'))
+    doc.storeToURL(url(os.path.join(out, 'pptx_notes_chart.pptx')), props(FilterName='Impress Office Open XML'))
+    doc.storeToURL(url(os.path.join(out, 'odp_notes_chart.odp')), props(FilterName='impress8'))
     doc.close(True)
 
 
 def main():
     out = sys.argv[1] if len(sys.argv) > 1 else 'test/fixtures/office'
+    only = set(sys.argv[2:]) or {'calc', 'writer', 'impress'}
     os.makedirs(out, exist_ok=True)
     desktop = connect()
-    calc(desktop, out)
-    writer(desktop, out)
-    impress(desktop, out)
+    for name, make in [('calc', calc), ('writer', writer), ('impress', impress)]:
+        if name in only:
+            make(desktop, out)
     print('готово:', out)
     return 0
 

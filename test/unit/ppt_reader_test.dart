@@ -191,4 +191,18 @@ void main() {
             .build();
     expect(() => PptReader.read(CfbFile.open(junk)), _error(OfficeDocError.legacy));
   });
+
+  test('заметки докладчика и диаграмма LibreOffice (OLE, картинка EMF) — плашкой', () {
+    final d = PptReader.read(CfbFile.open(File('test/fixtures/office/ppt_notes_chart.ppt').readAsBytesSync()));
+    final slide = d.slides.single;
+    expect(slide.notes, 'Сказать про новых клиентов из Казани');
+    final text = slide.shapes.map((s) => s.plainText).join('\n');
+    expect(text, contains('Итоги квартала'));
+    expect(text, isNot(contains('Сказать про')), reason: 'заметки — не на слайде');
+    expect(
+      slide.shapes.where((s) => s.embed == DocEmbed.chart).length,
+      1,
+      reason: 'CompObj: LibreOffice.ChartDocument',
+    );
+  });
 }

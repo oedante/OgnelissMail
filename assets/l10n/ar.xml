@@ -3713,7 +3713,7 @@
     <string name="zipCannotRead">تعذرت قراءة الأرشيف: إنه تالف أو بتنسيق لا يعرفه التطبيق (7z، RAR). افتحه في تطبيق آخر.</string>
     <string name="pdfProtected">ملف PDF محمي بكلمة مرور. افتحه في تطبيق آخر.</string>
     <string name="faq_mail_10_q">ما المرفقات التي تُفتح داخل التطبيق مباشرة؟</string>
-    <string name="faq_mail_10_a">تُفتح مستندات Office الحديثة (DOCX وXLSX وPPTX) والقديمة (DOC وXLS وPPT) وملفات OpenDocument (ODT وODS وODP) وRTF وCSV والملفات النصية وMarkdown داخل التطبيق مباشرة للقراءة فقط — ولا تُشغَّل وحدات الماكرو أبدًا؛ وتظهر جداول البيانات في شكل شبكة بأوراقها، والعروض التقديمية في شكل شرائح، وMarkdown في شكل نص منسّق. وتُفتح رسائل .eml ورسائل Outlook بصيغة .msg كرسائل عادية مع مرفقاتها. وتُفتح كذلك داخل التطبيق أرشيفات ZIP، ومنها المحمية بكلمة مرور، وTAR وGZ وBZ2 وXZ: اضغط على ملف بداخلها لفتحه. وتُفتح أيضًا داخل التطبيق ملفات PDF على Android والصور وتذاكر .pkpass. وعلى iPhone وiPad تعرض النظرة السريعة في iOS ملفات PDF والصور ومستندات Office وRTF وCSV، ويعرض التطبيق نفسه ملفات OpenDocument والملفات النصية وMarkdown والرسائل. أما مستندات Office 95 وما قبله وأرشيفات 7z وRAR فتُفتح في تطبيق آخر، ويمكن إرسال أي ملف إليه بالزر في الأعلى.</string>
+    <string name="faq_mail_10_a">تُفتح مستندات Office الحديثة (DOCX وXLSX وPPTX) والقديمة (DOC وXLS وPPT) وملفات OpenDocument (ODT وODS وODP) وRTF وCSV والملفات النصية وMarkdown داخل التطبيق مباشرة للقراءة فقط — ولا تُشغَّل وحدات الماكرو أبدًا؛ وتظهر جداول البيانات في شكل شبكة بأوراقها، والعروض التقديمية في شكل شرائح، وMarkdown في شكل نص منسّق. وتُفتح رسائل .eml ورسائل Outlook بصيغة .msg كرسائل عادية مع مرفقاتها. وتُفتح كذلك داخل التطبيق أرشيفات ZIP، ومنها المحمية بكلمة مرور، وTAR وGZ وBZ2 وXZ: اضغط على ملف بداخلها لفتحه. وتُفتح أيضًا داخل التطبيق ملفات PDF على Android والصور وتذاكر .pkpass. وعلى iPhone وiPad تعرض النظرة السريعة في iOS ملفات PDF والصور ومستندات Office وRTF وCSV، ويعرض التطبيق نفسه ملفات OpenDocument والملفات النصية وMarkdown والرسائل. أما مستندات Word وPowerPoint 95 وما قبله ومصنفات Excel 4 وما قبله وأرشيفات 7z وRAR فتُفتح في تطبيق آخر، ويمكن إرسال أي ملف إليه بالزر في الأعلى.</string>
     <string name="quickRepliesCardHint">يُضاف النص إلى الرد — راجعه ثم أرسله</string>
     <string name="translateMsgLang">لغة الرسالة: {lang}</string>
     <string name="translateDone">تمت الترجمة: {from} ← {to}</string>
@@ -3884,13 +3884,14 @@
     <string name="favoritesOrder">ترتيب المربعات</string>
     <string name="favoritesOrderHint">اسحب العنصر من المقبض على اليمين — تتبع مربعات القائمة هذا الترتيب.</string>
     <string name="docProtected">المستند محمي بكلمة مرور. افتحه في تطبيق آخر.</string>
-    <string name="docLegacyFormat">لا يعرض التطبيق المستندات بتنسيقات Office القديمة (Word وExcel وPowerPoint 95 وما قبله). افتح الملف في تطبيق آخر.</string>
+    <string name="docLegacyFormat">لا يعرض التطبيق المستندات بتنسيقات Office القديمة (Word وPowerPoint 95 وما قبله، وExcel 4 وما قبله). افتح الملف في تطبيق آخر.</string>
     <string name="docTooLarge">المستند كبير جدًا للمعاينة. افتحه في تطبيق آخر.</string>
     <string name="docTruncated">المستند كبير — يُعرض أوله فقط. افتحه في تطبيق آخر لرؤيته كاملًا.</string>
     <string name="docEmpty">لا يحتوي المستند على نص.</string>
     <string name="docSheetTruncated">الورقة كبيرة — يُعرض أولها فقط</string>
     <string name="docSheetEmpty">الورقة فارغة</string>
     <string name="docSlideOf">الشريحة {n} من {total}</string>
+    <string name="docSlideNotes">ملاحظات المتحدث</string>
     <string name="docPreviewSection">معاينة المستندات</string>
     <string name="docPreview">المستندات داخل التطبيق</string>
     <string name="docPreviewDesc">تُفتح المستندات وجداول البيانات والعروض التقديمية من الرسائل هنا مباشرةً دون تطبيق آخر. عند الإيقاف: في التطبيق المخصص لهذا التنسيق.</string>

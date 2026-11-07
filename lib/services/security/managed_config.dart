@@ -59,10 +59,14 @@ class ManagedKeys {
   static const blockCopy = 'block_copy';
   static const hideNotificationContent = 'hide_notification_content';
 
+  /// Погода в «Моём дне» — запрос к внешним сервисам (MET Norway,
+  /// OpenStreetMap); 1.15.1.
+  static const blockWeather = 'block_weather';
+
   static const all = [
     orgName, supportContact, accountEmail, accountProtocol, accountServer, accountUsername, accountDomain,
     imapServer, imapPort, smtpServer, smtpPort, allowedDomains, requireAppLock, minPinLength,
-    blockScreenshots, blockShare, blockOpenIn, blockCopy, hideNotificationContent,
+    blockScreenshots, blockShare, blockOpenIn, blockCopy, hideNotificationContent, blockWeather,
   ];
 }
 
@@ -91,6 +95,7 @@ class ManagedPolicy {
     this.blockOpenIn = false,
     this.blockCopy = false,
     this.hideNotificationContent = false,
+    this.blockWeather = false,
   });
 
   static const none = ManagedPolicy();
@@ -128,6 +133,9 @@ class ManagedPolicy {
 
   /// Уведомление без отправителя, темы и текста — «Новое сообщение».
   final bool hideNotificationContent;
+
+  /// Погоды в «Моём дне» нет (запросы к внешним сервисам запрещены).
+  final bool blockWeather;
 
   /// Организация задала хоть что-то.
   bool get isManaged => this != none;
@@ -214,6 +222,7 @@ class ManagedPolicy {
       blockOpenIn: _bool(v(ManagedKeys.blockOpenIn)),
       blockCopy: _bool(v(ManagedKeys.blockCopy)),
       hideNotificationContent: _bool(v(ManagedKeys.hideNotificationContent)),
+      blockWeather: _bool(v(ManagedKeys.blockWeather)),
     );
   }
 
@@ -237,6 +246,7 @@ class ManagedPolicy {
         if (blockOpenIn) ManagedKeys.blockOpenIn: true,
         if (blockCopy) ManagedKeys.blockCopy: true,
         if (hideNotificationContent) ManagedKeys.hideNotificationContent: true,
+        if (blockWeather) ManagedKeys.blockWeather: true,
       };
 
   @override

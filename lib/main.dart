@@ -7,6 +7,7 @@
 import 'core/platform/native_drag_drop.dart';
 import 'core/platform/device_time_zone.dart';
 import 'widgets/common/scroll_edge_fade.dart';
+import 'services/weather/weather_service.dart' show WeatherApi;
 import 'services/documents/doc_preview_settings.dart';
 import 'services/sync/sync_schedule.dart';
 import 'core/theme/mail_page_color.dart' show mailPageWarm;
@@ -93,6 +94,23 @@ Future<void> main() async {
     NativeDragDrop.registerLicenses();
     // Google ML Kit (перевод писем на Android, 1.9.x) — условия Google.
     registerTranslationLicense();
+    // Погода в «Моём дне» (1.15.1): данные MET Norway (CC BY 4.0, NLOD 2.0) и
+    // поиск города в OpenStreetMap (Nominatim, ODbL) — подписи источников.
+    // Пока владелец не принял условия сервисов, погоды нет — и строк тоже.
+    if (WeatherApi.termsAccepted) {
+      LicenseRegistry.addLicense(() async* {
+        yield const LicenseEntryWithLineBreaks(['MET Norway (weather data)'],
+            'Weather forecasts in My Day come from the Norwegian Meteorological Institute '
+            '(MET Norway), Locationforecast 2.0, used free of charge under its Terms of Service.\n'
+            'Data licence: Creative Commons Attribution 4.0 International (CC BY 4.0) and the '
+            'Norwegian Licence for Open Government Data (NLOD) 2.0.\n'
+            'https://api.met.no/doc/License');
+        yield const LicenseEntryWithLineBreaks(['OpenStreetMap (Nominatim)'],
+            'City search for the weather uses Nominatim. Data © OpenStreetMap contributors, '
+            'available under the Open Database License (ODbL) 1.0.\n'
+            'https://www.openstreetmap.org/copyright');
+      });
+    }
     // Шрифт интерфейса Roboto (Apache 2.0) — на странице «Лицензии».
     LicenseRegistry.addLicense(() async* {
       final text = await rootBundle.loadString('assets/fonts/pdf/Roboto-LICENSE.txt');

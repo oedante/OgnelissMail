@@ -328,6 +328,18 @@ abstract final class AppIcons {
   static const IconData warning = Symbols.warning_rounded;
   static const IconData waving_hand = Symbols.waving_hand_rounded;
   static const IconData wb_sunny = Symbols.wb_sunny_rounded;
+  // Погода в «Моём дне» (1.15.1).
+  static const IconData clear_day = Symbols.clear_day_rounded;
+  static const IconData clear_night = Symbols.clear_night_rounded;
+  static const IconData partly_cloudy_day = Symbols.partly_cloudy_day_rounded;
+  static const IconData partly_cloudy_night = Symbols.partly_cloudy_night_rounded;
+  static const IconData foggy = Symbols.foggy_rounded;
+  static const IconData rainy = Symbols.rainy_rounded;
+  static const IconData rainy_light = Symbols.rainy_light_rounded;
+  static const IconData rainy_heavy = Symbols.rainy_heavy_rounded;
+  static const IconData weather_mix = Symbols.weather_mix_rounded;
+  static const IconData weather_snowy = Symbols.weather_snowy_rounded;
+  static const IconData thunderstorm = Symbols.thunderstorm_rounded;
   static const IconData wifi = Symbols.wifi_rounded;
   static const IconData wifi_off = Symbols.wifi_off_rounded;
   static const IconData window = Symbols.window_rounded;

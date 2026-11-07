@@ -5,6 +5,8 @@
 //   flutter test tool/shots --update-goldens   → tool/shots/out/*.png
 // Обычный `flutter test` (папка test/) эти снимки не запускает.
 
+import 'dart:async';
+
 import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
@@ -33,6 +35,9 @@ import 'package:ogneliss/features/mail/screens/mail_list_screen.dart';
 import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
 import 'package:ogneliss/features/mail/widgets/mail_drawer.dart';
 import 'package:ogneliss/features/settings/screens/settings_screen.dart';
+import 'package:ogneliss/features/my_day/my_day_screen.dart';
+import 'package:ogneliss/features/my_day/weather_view.dart' show showWeatherSheet;
+import 'package:ogneliss/services/weather/weather_service.dart';
 import 'package:ogneliss/features/settings/providers/settings_provider.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/services/archive/archive_container.dart';
@@ -433,6 +438,46 @@ void main() {
       await tester.runAsync(() => _letter(db));
       await _shot(tester, 'reply_$t', const ComposeScreen(accountId: 'a1', replyToId: 'e1', replyAll: true),
           theme: _themes[t]!(), db: db, prefs: prefs);
+      await tester.runAsync(db.close);
+    });
+  }
+
+  // «Мой день»: перелистывающиеся часы и погода (1.15.1).
+  WeatherForecast fakeWeather() {
+    final now = DateTime.now();
+    return WeatherForecast(
+      now: WeatherPoint(at: now, temp: 3.4, kind: WeatherKind.partlyCloudy),
+      min: -1,
+      max: 5,
+      fetchedAt: now.subtract(const Duration(minutes: 4)),
+      hours: [
+        for (var i = 1; i <= 8; i++)
+          WeatherPoint(
+            at: DateTime(now.year, now.month, now.day, now.hour + i),
+            temp: 3.4 + i * (i.isEven ? 0.6 : -0.4),
+            kind: const [WeatherKind.cloudy, WeatherKind.lightRain, WeatherKind.rain, WeatherKind.partlyCloudy][i % 4],
+          ),
+      ],
+    );
+  }
+  for (final t in const ['light', 'dark']) {
+    testWidgets('мой день с погодой — $t', (tester) async {
+      SharedPreferences.setMockInitialValues({
+        's_active_account': 'a1',
+        'weather_on': true,
+        'weather_place_v1': '{"name":"Казань","region":"Республика Татарстан, Россия","lat":55.8,"lon":49.11}',
+      });
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      final extra = [
+        weatherApprovedProvider.overrideWithValue(true),
+        weatherProvider.overrideWith((ref) async => fakeWeather()),
+      ];
+      await _shot(tester, 'my_day_weather_$t', const MyDayScreen(), theme: _themes[t]!(), db: db, prefs: prefs, extra: extra);
+      await _shot(tester, 'weather_sheet_$t', const MyDayScreen(),
+          theme: _themes[t]!(), db: db, prefs: prefs, extra: extra, before: (tt) async {
+        unawaited(showWeatherSheet(tt.element(find.byType(MyDayScreen))));
+      });
       await tester.runAsync(db.close);
     });
   }

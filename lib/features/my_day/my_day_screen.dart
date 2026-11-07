@@ -67,6 +67,9 @@ import '../settings/providers/settings_provider.dart';
 import '../tasks/widgets/task_editor_sheet.dart' show showTaskEditor;
 
 import 'day_stats.dart';
+import 'flip_clock.dart';
+import 'weather_view.dart';
+import '../../services/weather/weather_service.dart' show weatherProvider;
 import '../../core/theme/ogneliss_look.dart';
 
 part 'my_day_board.dart';
@@ -404,7 +407,11 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
       final state = WidgetsBinding.instance.lifecycleState;
       if (state != null && state != AppLifecycleState.resumed) return;
       _ticks++;
-      if (_ticks % 20 == 0) ref.invalidate(_myDayProvider);
+      if (_ticks % 20 == 0) {
+        ref.invalidate(_myDayProvider);
+        // Погода — из кэша до срока ответа сервиса, потом с сервера.
+        ref.invalidate(weatherProvider);
+      }
       setState(() {});
     });
   }
@@ -432,6 +439,13 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
           ],
         ),
         actions: [
+          // Погода (1.15.1): включить — выбор города; включена — прогноз.
+          if (weatherAllowed(ref))
+            IconButton(
+              tooltip: l10n.tr('weather'),
+              icon: const Icon(AppIcons.partly_cloudy_day),
+              onPressed: () => unawaited(showWeatherSheet(context)),
+            ),
           IconButton(
             tooltip: l10n.tr(_board ? 'myDayViewList' : 'myDayViewBoard'),
             icon: Icon(_board ? AppIcons.view_agenda : AppIcons.view_column),
@@ -468,11 +482,18 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
     final nothing = slots.isEmpty && overdue.isEmpty && work.isEmpty && d.vip.isEmpty && d.unreadTotal == 0 &&
         d.deferred.isEmpty;
     if (nothing) {
-      return EmptyState(
-        icon: AppIcons.wb_sunny,
-        title: l10n.tr('myDayClear'),
-        message: l10n.tr('myDayEmptyHint'),
-        scrollable: true,
+      // Часы и погода — и в пустой день (1.15.1), под ними — «Ничего».
+      return ListView(
+        padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xxl),
+        children: [
+          _nowCard(context, d, const [], now, l10n),
+          const SizedBox(height: Space.xl),
+          EmptyState(
+            icon: AppIcons.wb_sunny,
+            title: l10n.tr('myDayClear'),
+            message: l10n.tr('myDayEmptyHint'),
+          ),
+        ],
       );
     }
     // Расписание по частям дня.
@@ -574,18 +595,19 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
         borderRadius: Radii.cardAll,
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(crossAxisAlignment: CrossAxisAlignment.baseline, textBaseline: TextBaseline.alphabetic, children: [
-          Text(t.format(now), style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w600)),
-          const SizedBox(width: Space.m),
-          Expanded(
-            child: Text(
-              counts.isNotEmpty
-                  ? counts.join(' · ')
-                  : (next == null && live.isEmpty ? l10n.tr('myDayNothingAhead') : ''),
-              style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.mutedText(context)),
-            ),
-          ),
+        // Часы — перелистывающиеся (1.15.1), справа — погода, если включена.
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          FlipClock(height: 40, reduceMotion: ref.watch(settingsProvider).reduceMotion),
+          const Spacer(),
+          const WeatherChip(),
         ]),
+        if (counts.isNotEmpty || (next == null && live.isEmpty)) ...[
+          const SizedBox(height: Space.s),
+          Text(
+            counts.isNotEmpty ? counts.join(' · ') : l10n.tr('myDayNothingAhead'),
+            style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.mutedText(context)),
+          ),
+        ],
         const SizedBox(height: Space.s),
         for (final s in live)
           _nowLine(context, AppIcons.play_circle, AppColors.successText(context),

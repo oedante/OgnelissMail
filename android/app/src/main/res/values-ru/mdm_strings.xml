@@ -39,6 +39,8 @@
     <string name="mdm_block_copy_desc">Выделение текста и «Копировать» в письмах.</string>
     <string name="mdm_hide_notification_content_title">Уведомления без содержимого</string>
     <string name="mdm_hide_notification_content_desc">В уведомлениях нет отправителя, темы и текста.</string>
+    <string name="mdm_block_weather_title">Запретить погоду</string>
+    <string name="mdm_block_weather_desc">В «Моём дне» нет погоды: приложение не обращается к сервисам погоды (MET Norway) и поиска города (OpenStreetMap).</string>
     <string-array name="mdm_protocol_entries">
         <item>Автоматически</item>
         <item>Microsoft Exchange</item>

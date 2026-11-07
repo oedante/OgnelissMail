@@ -143,6 +143,31 @@
 
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+	<!-- Сцены UIScene (1.15.1, Apple TN3187: с SDK после iOS 26 приложение
+	     без сцен не запускается). Одна сцена (несколько окон на iPad — потом,
+	     docs/guides/IPAD_WINDOWS.md); делегат — SceneDelegate в
+	     AppDelegate.swift, окно — из раскадровки Main. -->
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>UIWindowScene</string>
+					<key>UISceneConfigurationName</key>
+					<string>flutter</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>

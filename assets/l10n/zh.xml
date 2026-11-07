@@ -3135,6 +3135,7 @@
     <string name="pdfRotatePage">旋转页面</string>
     <string name="pdfRotateAll">旋转所有页面</string>
     <string name="attachmentGoneOnServer">服务器上已没有该附件：邮件已被删除或移动。请刷新文件夹。</string>
+    <string name="oauthServerDown">Ogneliss 登录服务器暂时不可用。请稍后重试，或使用应用专用密码 (IMAP) 添加邮箱。</string>
     <string name="imageEditHint">拖动边框的角或边来裁剪</string>
     <string name="imageEditHintCircle">移动圆圈或拖动角 — 头像中的照片将如此显示</string>
     <string name="photoCirclePreview">照片在列表、邮件和名片中的样子</string>

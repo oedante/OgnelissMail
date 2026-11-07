@@ -3148,6 +3148,7 @@
     <string name="pdfRotatePage">Seite drehen</string>
     <string name="pdfRotateAll">Alle Seiten drehen</string>
     <string name="attachmentGoneOnServer">Der Anhang ist nicht mehr auf dem Server: Die Nachricht wurde gelöscht oder verschoben. Ordner aktualisieren.</string>
+    <string name="oauthServerDown">Der Ogneliss-Anmeldeserver ist gerade nicht erreichbar. Später erneut versuchen oder das Postfach mit einem App-Passwort (IMAP) hinzufügen.</string>
     <string name="imageEditHint">Ziehen Sie an den Ecken oder Rändern des Rahmens, um zuzuschneiden</string>
     <string name="imageEditHintCircle">Kreis verschieben oder an einer Ecke ziehen – so erscheint das Foto im Porträt</string>
     <string name="photoCirclePreview">So sieht das Foto in der Liste, der Nachricht und der Karte aus</string>

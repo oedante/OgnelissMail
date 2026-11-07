@@ -3148,6 +3148,7 @@
     <string name="pdfRotatePage">Roter side</string>
     <string name="pdfRotateAll">Roter alle sider</string>
     <string name="attachmentGoneOnServer">Vedlegget finnes ikke lenger på serveren: meldingen er slettet eller flyttet. Oppdater mappen.</string>
+    <string name="oauthServerDown">Ogneliss-påloggingsserveren er ikke tilgjengelig nå. Prøv igjen senere, eller legg til postkassen med et app-passord (IMAP).</string>
     <string name="imageEditHint">Dra i hjørnene eller kantene på rammen for å beskjære</string>
     <string name="imageEditHintCircle">Flytt sirkelen eller dra i et hjørne – slik ser bildet ut i portrettet</string>
     <string name="photoCirclePreview">Slik ser bildet ut i listen, meldingen og kortet</string>

@@ -3148,6 +3148,7 @@
     <string name="pdfRotatePage">Girar página</string>
     <string name="pdfRotateAll">Girar todas las páginas</string>
     <string name="attachmentGoneOnServer">El adjunto ya no está en el servidor: el mensaje se eliminó o se movió. Actualice la carpeta.</string>
+    <string name="oauthServerDown">El servidor de inicio de sesión de Ogneliss no está disponible. Inténtelo más tarde o añada el buzón con una contraseña de aplicación (IMAP).</string>
     <string name="imageEditHint">Arrastra las esquinas o los bordes del marco para recortar</string>
     <string name="imageEditHintCircle">Mueva el círculo o arrastre una esquina: así se verá la foto en el retrato</string>
     <string name="photoCirclePreview">Así se verá la foto en la lista, el mensaje y la ficha</string>

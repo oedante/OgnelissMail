@@ -3148,6 +3148,7 @@
     <string name="pdfRotatePage">Pagina draaien</string>
     <string name="pdfRotateAll">Alle pagina’s draaien</string>
     <string name="attachmentGoneOnServer">De bijlage staat niet meer op de server: het bericht is verwijderd of verplaatst. Vernieuw de map.</string>
+    <string name="oauthServerDown">De aanmeldserver van Ogneliss is nu niet bereikbaar. Probeer het later opnieuw of voeg de mailbox toe met een app-wachtwoord (IMAP).</string>
     <string name="imageEditHint">Sleep de hoeken of randen van het kader om bij te snijden</string>
     <string name="imageEditHintCircle">Verschuif de cirkel of sleep aan een hoek – zo komt de foto in het portret</string>
     <string name="photoCirclePreview">Zo ziet de foto eruit in de lijst, het bericht en de kaart</string>

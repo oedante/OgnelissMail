@@ -3148,6 +3148,7 @@
     <string name="pdfRotatePage">पेज घुमाएँ</string>
     <string name="pdfRotateAll">सभी पेज घुमाएँ</string>
     <string name="attachmentGoneOnServer">अटैचमेंट अब सर्वर पर नहीं है: संदेश हटाया या स्थानांतरित किया गया। फ़ोल्डर रीफ़्रेश करें।</string>
+    <string name="oauthServerDown">Ogneliss साइन-इन सर्वर अभी उपलब्ध नहीं है। बाद में फिर कोशिश करें या मेलबॉक्स को ऐप पासवर्ड (IMAP) से जोड़ें।</string>
     <string name="imageEditHint">क्रॉप करने के लिए फ़्रेम के कोने या किनारे खींचें</string>
     <string name="imageEditHintCircle">वृत्त खिसकाएँ या कोना खींचें — पोर्ट्रेट में फ़ोटो ऐसी दिखेगी</string>
     <string name="photoCirclePreview">सूची, संदेश और कार्ड में फ़ोटो ऐसी दिखेगी</string>

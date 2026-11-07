@@ -3135,6 +3135,7 @@
     <string name="pdfRotatePage">ページを回転</string>
     <string name="pdfRotateAll">すべてのページを回転</string>
     <string name="attachmentGoneOnServer">添付ファイルはサーバーにありません。メッセージは削除または移動されました。フォルダーを更新してください。</string>
+    <string name="oauthServerDown">Ogneliss のサインインサーバーは現在利用できません。後でもう一度試すか、アプリ パスワード (IMAP) でメールボックスを追加してください。</string>
     <string name="imageEditHint">枠の角や辺をドラッグして切り抜きます</string>
     <string name="imageEditHintCircle">円を動かすか角をドラッグ — ポートレートではこのように表示されます</string>
     <string name="photoCirclePreview">一覧、メッセージ、カードでの表示</string>

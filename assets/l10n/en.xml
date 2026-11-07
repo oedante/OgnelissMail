@@ -3148,6 +3148,7 @@
     <string name="pdfRotatePage">Rotate page</string>
     <string name="pdfRotateAll">Rotate all pages</string>
     <string name="attachmentGoneOnServer">The attachment is no longer on the server: the message was deleted or moved. Refresh the folder.</string>
+    <string name="oauthServerDown">The Ogneliss sign-in server is unavailable right now. Try again later or add the mailbox with an app password (IMAP).</string>
     <string name="imageEditHint">Drag the corners or edges of the frame to crop</string>
     <string name="imageEditHintCircle">Move the circle or drag a corner — this is how the photo will look in the portrait</string>
     <string name="photoCirclePreview">How the photo will look in the list, the message and the card</string>

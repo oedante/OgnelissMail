@@ -3161,6 +3161,7 @@
     <string name="pdfRotatePage">Rotește pagina</string>
     <string name="pdfRotateAll">Rotește toate paginile</string>
     <string name="attachmentGoneOnServer">Atașamentul nu mai este pe server: mesajul a fost șters sau mutat. Actualizați dosarul.</string>
+    <string name="oauthServerDown">Serverul de conectare Ogneliss nu este disponibil acum. Încercați mai târziu sau adăugați căsuța cu o parolă de aplicație (IMAP).</string>
     <string name="imageEditHint">Trage de colțurile sau de marginile cadrului pentru a decupa</string>
     <string name="imageEditHintCircle">Mutați cercul sau trageți de un colț — așa va arăta fotografia în portret</string>
     <string name="photoCirclePreview">Așa va arăta fotografia în listă, în mesaj și pe fișă</string>

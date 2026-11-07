@@ -3161,6 +3161,7 @@
     <string name="pdfRotatePage">סיבוב העמוד</string>
     <string name="pdfRotateAll">סיבוב כל העמודים</string>
     <string name="attachmentGoneOnServer">הקובץ המצורף כבר לא בשרת: ההודעה נמחקה או הועברה. רעננו את התיקייה.</string>
+    <string name="oauthServerDown">שרת הכניסה של Ogneliss אינו זמין כרגע. נסו שוב מאוחר יותר או הוסיפו את התיבה עם סיסמת אפליקציה (IMAP).</string>
     <string name="imageEditHint">גרור את הפינות או הקצוות של המסגרת כדי לחתוך</string>
     <string name="imageEditHintCircle">הזיזו את העיגול או גררו פינה — כך התמונה תיראה בדיוקן</string>
     <string name="photoCirclePreview">כך התמונה תיראה ברשימה, בהודעה ובכרטיס</string>

@@ -3148,6 +3148,7 @@
     <string name="pdfRotatePage">Kierrä sivu</string>
     <string name="pdfRotateAll">Kierrä kaikki sivut</string>
     <string name="attachmentGoneOnServer">Liitettä ei enää ole palvelimella: viesti on poistettu tai siirretty. Päivitä kansio.</string>
+    <string name="oauthServerDown">Ogneliss-kirjautumispalvelin ei ole nyt käytettävissä. Yritä myöhemmin tai lisää postilaatikko sovellussalasanalla (IMAP).</string>
     <string name="imageEditHint">Rajaa vetämällä kehyksen kulmista tai reunoista</string>
     <string name="imageEditHintCircle">Siirrä ympyrää tai vedä kulmasta – näin kuva näkyy muotokuvassa</string>
     <string name="photoCirclePreview">Näin kuva näkyy luettelossa, viestissä ja kortissa</string>

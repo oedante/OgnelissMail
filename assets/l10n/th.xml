@@ -3135,6 +3135,7 @@
     <string name="pdfRotatePage">หมุนหน้า</string>
     <string name="pdfRotateAll">หมุนทุกหน้า</string>
     <string name="attachmentGoneOnServer">ไม่มีไฟล์แนบบนเซิร์ฟเวอร์แล้ว: ข้อความถูกลบหรือย้าย โปรดรีเฟรชโฟลเดอร์</string>
+    <string name="oauthServerDown">เซิร์ฟเวอร์ลงชื่อเข้าใช้ Ogneliss ไม่พร้อมใช้งานในขณะนี้ ลองอีกครั้งภายหลังหรือเพิ่มกล่องจดหมายด้วยรหัสผ่านแอป (IMAP)</string>
     <string name="imageEditHint">ลากมุมหรือขอบของกรอบเพื่อครอบตัด</string>
     <string name="imageEditHintCircle">เลื่อนวงกลมหรือลากมุม — รูปจะแสดงในภาพโปรไฟล์แบบนี้</string>
     <string name="photoCirclePreview">รูปจะแสดงในรายการ ข้อความ และการ์ดแบบนี้</string>

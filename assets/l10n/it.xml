@@ -3148,6 +3148,7 @@
     <string name="pdfRotatePage">Ruota pagina</string>
     <string name="pdfRotateAll">Ruota tutte le pagine</string>
     <string name="attachmentGoneOnServer">L’allegato non è più sul server: il messaggio è stato eliminato o spostato. Aggiorna la cartella.</string>
+    <string name="oauthServerDown">Il server di accesso Ogneliss non è disponibile. Riprova più tardi o aggiungi la casella con una password per app (IMAP).</string>
     <string name="imageEditHint">Trascina gli angoli o i bordi del riquadro per ritagliare</string>
     <string name="imageEditHintCircle">Sposta il cerchio o trascina un angolo: così apparirà la foto nel ritratto</string>
     <string name="photoCirclePreview">Così apparirà la foto nell\'elenco, nel messaggio e nella scheda</string>

@@ -3148,6 +3148,7 @@
     <string name="pdfRotatePage">Oldal elforgatása</string>
     <string name="pdfRotateAll">Összes oldal elforgatása</string>
     <string name="attachmentGoneOnServer">A melléklet már nincs a szerveren: az üzenetet törölték vagy áthelyezték. Frissítse a mappát.</string>
+    <string name="oauthServerDown">Az Ogneliss bejelentkezési szervere most nem érhető el. Próbálja később, vagy adja hozzá a postafiókot alkalmazásjelszóval (IMAP).</string>
     <string name="imageEditHint">Húzza a keret sarkait vagy szélét a vágáshoz</string>
     <string name="imageEditHintCircle">Mozgassa a kört vagy húzza a sarkát – így fog kinézni a fotó a portréban</string>
     <string name="photoCirclePreview">Így néz ki a fotó a listában, az üzenetben és a kártyán</string>

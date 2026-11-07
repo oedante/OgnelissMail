@@ -3174,6 +3174,7 @@
     <string name="pdfRotatePage">Повернуть страницу</string>
     <string name="pdfRotateAll">Повернуть все страницы</string>
     <string name="attachmentGoneOnServer">Вложения нет на сервере: письмо удалено или перемещено. Обновите папку.</string>
+    <string name="oauthServerDown">Сервер входа Ogneliss сейчас недоступен. Попробуйте позже или подключите ящик по паролю приложения (IMAP).</string>
     <string name="imageEditHint">Потяните за углы или края рамки, чтобы обрезать</string>
     <string name="imageEditHintCircle">Передвиньте круг или потяните за угол — так фото будет в портрете</string>
     <string name="photoCirclePreview">Так фото будет выглядеть в ленте, письме и карточке</string>

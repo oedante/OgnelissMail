@@ -3834,6 +3834,9 @@
     <string name="noticeOriginal">Original</string>
     <string name="noticeUnsubscribed">Inscrição cancelada</string>
     <string name="noticeShowImages">Mostrar imagens</string>
+    <string name="noticeSafetyDanger">Sinais de phishing</string>
+    <string name="noticeSafetyCaution">Cuidado</string>
+    <string name="noticeSafetyExternal">Remetente externo</string>
     <string name="noticeReadReceipt">Confirmação de leitura</string>
     <string name="noticeLaterUntil">Mais tarde: {when}</string>
     <string name="noticeDsnFailed">Não entregue</string>

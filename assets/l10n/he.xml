@@ -3855,6 +3855,9 @@
     <string name="noticeOriginal">מקור</string>
     <string name="noticeUnsubscribed">המנוי בוטל</string>
     <string name="noticeShowImages">הצג תמונות</string>
+    <string name="noticeSafetyDanger">סימני פישינג</string>
+    <string name="noticeSafetyCaution">זהירות</string>
+    <string name="noticeSafetyExternal">שולח חיצוני</string>
     <string name="noticeReadReceipt">אישור קריאה</string>
     <string name="noticeLaterUntil">מאוחר יותר: {when}</string>
     <string name="noticeDsnFailed">לא נמסר</string>

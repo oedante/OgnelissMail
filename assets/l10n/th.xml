@@ -3813,6 +3813,9 @@
     <string name="noticeOriginal">ต้นฉบับ</string>
     <string name="noticeUnsubscribed">เลิกรับแล้ว</string>
     <string name="noticeShowImages">แสดงรูปภาพ</string>
+    <string name="noticeSafetyDanger">สัญญาณฟิชชิง</string>
+    <string name="noticeSafetyCaution">ระวัง</string>
+    <string name="noticeSafetyExternal">ผู้ส่งภายนอก</string>
     <string name="noticeReadReceipt">การยืนยันการอ่าน</string>
     <string name="noticeLaterUntil">ภายหลัง: {when}</string>
     <string name="noticeDsnFailed">ส่งไม่สำเร็จ</string>

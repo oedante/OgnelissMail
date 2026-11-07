@@ -3813,6 +3813,9 @@
     <string name="noticeOriginal">원문</string>
     <string name="noticeUnsubscribed">수신 거부됨</string>
     <string name="noticeShowImages">이미지 표시</string>
+    <string name="noticeSafetyDanger">피싱 징후</string>
+    <string name="noticeSafetyCaution">주의</string>
+    <string name="noticeSafetyExternal">외부 발신자</string>
     <string name="noticeReadReceipt">읽음 확인</string>
     <string name="noticeLaterUntil">나중에: {when}</string>
     <string name="noticeDsnFailed">전달 안 됨</string>

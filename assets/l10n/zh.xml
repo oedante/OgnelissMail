@@ -3813,6 +3813,9 @@
     <string name="noticeOriginal">原文</string>
     <string name="noticeUnsubscribed">已退订</string>
     <string name="noticeShowImages">显示图片</string>
+    <string name="noticeSafetyDanger">网络钓鱼迹象</string>
+    <string name="noticeSafetyCaution">请注意</string>
+    <string name="noticeSafetyExternal">外部发件人</string>
     <string name="noticeReadReceipt">已读回执</string>
     <string name="noticeLaterUntil">稍后：{when}</string>
     <string name="noticeDsnFailed">未送达</string>

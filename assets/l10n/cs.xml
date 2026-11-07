@@ -3855,6 +3855,9 @@
     <string name="noticeOriginal">Originál</string>
     <string name="noticeUnsubscribed">Odhlášeno</string>
     <string name="noticeShowImages">Zobrazit obrázky</string>
+    <string name="noticeSafetyDanger">Známky phishingu</string>
+    <string name="noticeSafetyCaution">Pozor</string>
+    <string name="noticeSafetyExternal">Externí odesílatel</string>
     <string name="noticeReadReceipt">Potvrzení o přečtení</string>
     <string name="noticeLaterUntil">Později: {when}</string>
     <string name="noticeDsnFailed">Nedoručeno</string>

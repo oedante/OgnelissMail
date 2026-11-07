@@ -3813,6 +3813,9 @@
     <string name="noticeOriginal">原文</string>
     <string name="noticeUnsubscribed">配信停止済み</string>
     <string name="noticeShowImages">画像を表示</string>
+    <string name="noticeSafetyDanger">フィッシングの兆候</string>
+    <string name="noticeSafetyCaution">注意</string>
+    <string name="noticeSafetyExternal">外部の送信者</string>
     <string name="noticeReadReceipt">開封確認</string>
     <string name="noticeLaterUntil">後で: {when}</string>
     <string name="noticeDsnFailed">未配信</string>

@@ -3834,6 +3834,9 @@
     <string name="noticeOriginal">Origineel</string>
     <string name="noticeUnsubscribed">Uitgeschreven</string>
     <string name="noticeShowImages">Afbeeldingen tonen</string>
+    <string name="noticeSafetyDanger">Phishingsignalen</string>
+    <string name="noticeSafetyCaution">Let op</string>
+    <string name="noticeSafetyExternal">Externe afzender</string>
     <string name="noticeReadReceipt">Leesbevestiging</string>
     <string name="noticeLaterUntil">Later: {when}</string>
     <string name="noticeDsnFailed">Niet afgeleverd</string>

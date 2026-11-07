@@ -3813,6 +3813,9 @@
     <string name="noticeOriginal">Asli</string>
     <string name="noticeUnsubscribed">Sudah berhenti berlangganan</string>
     <string name="noticeShowImages">Tampilkan gambar</string>
+    <string name="noticeSafetyDanger">Tanda phishing</string>
+    <string name="noticeSafetyCaution">Hati-hati</string>
+    <string name="noticeSafetyExternal">Pengirim eksternal</string>
     <string name="noticeReadReceipt">Tanda terima baca</string>
     <string name="noticeLaterUntil">Nanti: {when}</string>
     <string name="noticeDsnFailed">Tidak terkirim</string>

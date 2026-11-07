@@ -14,7 +14,7 @@
 //
 // iPad: отдельные окна (несколько сцен) — не сделаны. План (движок на окно
 // из FlutterEngineGroup, та же строка письма) и шаги в Xcode —
-// docs/guides/IPAD_WINDOWS.md; сначала обязателен переход на сцены UIScene.
+// docs/guides/IPAD_WINDOWS.md; переход на сцены UIScene (шаг 0) уже сделан.
 
 import 'dart:async';
 import 'dart:convert';

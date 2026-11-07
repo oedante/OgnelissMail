@@ -25,7 +25,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const _body = 'Добрый день! Прошу согласовать смету до пятницы.';
 
-Future<AppDatabase> _db() async {
+Future<AppDatabase> _db({String? kind}) async {
   final db = AppDatabase.forTesting(NativeDatabase.memory());
   await db
       .into(db.accounts)
@@ -33,6 +33,7 @@ Future<AppDatabase> _db() async {
         AccountsCompanion.insert(
           id: 'a1',
           type: 7,
+          accountKind: Value(kind),
           email: 'me@corp.example',
           displayName: 'Я',
           username: 'me',
@@ -73,6 +74,26 @@ Future<AppDatabase> _db() async {
               {'id': '2', 'name': 'Смета.xlsx', 'mimeType': 'application/vnd.ms-excel', 'size': 18432},
             ]),
           ),
+        ),
+      );
+  // Письмо от внешнего отправителя (другой домен).
+  await db
+      .into(db.emails)
+      .insert(
+        EmailsCompanion.insert(
+          id: 'INBOX:43',
+          accountId: 'a1',
+          folderId: 'INBOX',
+          fromEmail: 'sales@partner.example',
+          fromName: const Value('Отдел продаж'),
+          toRecipients: jsonEncode([
+            {'email': 'me@corp.example', 'displayName': 'Я'},
+          ]),
+          subject: 'Коммерческое предложение',
+          bodyPlain: const Value('Предлагаем сотрудничество.'),
+          bodyPreview: const Value('Предлагаем сотрудничество.'),
+          receivedAt: DateTime(2026, 11, 6, 11, 0),
+          isRead: const Value(true),
         ),
       );
   return db;
@@ -143,6 +164,26 @@ void main() {
     expect(find.text('УПОРЯДОЧИТЬ'), findsOneWidget);
     expect(find.text('Переместить'), findsOneWidget);
     expect(find.text('Ответить всем'), findsWidgets);
+    expect(tester.takeException(), isNull);
+    await _done(tester, db);
+  });
+
+  testWidgets('предупреждение об отправителе — пилюлей в строке сведений, карточка — по нажатию', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2340);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.reset);
+    // Антифишинг «все предупреждения»; рабочий ящик.
+    SharedPreferences.setMockInitialValues({'ff_antiphishing': 2});
+    final prefs = await SharedPreferences.getInstance();
+    final db = (await tester.runAsync(() => _db(kind: 'work')))!;
+    await tester.pumpWidget(_app(db, prefs, const MailDetailScreen(emailId: 'INBOX:43', accountId: 'a1')));
+    await _settle(tester, rounds: 16);
+
+    expect(find.text('Внешний отправитель'), findsOneWidget, reason: 'пилюля');
+    expect(find.text('Внешний отправитель (вне вашей организации)'), findsNothing, reason: 'карточки над письмом нет');
+    await tester.tap(find.text('Внешний отправитель'));
+    await _settle(tester, rounds: 4);
+    expect(find.text('Внешний отправитель (вне вашей организации)'), findsWidgets, reason: 'карточка раскрыта');
     expect(tester.takeException(), isNull);
     await _done(tester, db);
   });

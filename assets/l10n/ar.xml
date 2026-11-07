@@ -3918,6 +3918,9 @@
     <string name="noticeOriginal">الأصل</string>
     <string name="noticeUnsubscribed">تم إلغاء الاشتراك</string>
     <string name="noticeShowImages">عرض الصور</string>
+    <string name="noticeSafetyDanger">علامات تصيد احتيالي</string>
+    <string name="noticeSafetyCaution">انتبه</string>
+    <string name="noticeSafetyExternal">مرسل خارجي</string>
     <string name="noticeReadReceipt">إشعار القراءة</string>
     <string name="noticeLaterUntil">لاحقًا: {when}</string>
     <string name="noticeDsnFailed">لم يتم التسليم</string>

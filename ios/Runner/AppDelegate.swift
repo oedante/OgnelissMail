@@ -25,37 +25,23 @@ import workmanager_apple
 //    Apple для «будильника» (server/push-relay) и пробуждение по его
 //    сигналу: проверку почты делает Dart (PushWakeService). Нужны
 //    Push Notifications у цели Runner в Xcode (docs/guides/IOS_PUSH_SETUP.md).
+//  · Сцены UIScene (1.15.1, Apple TN3187: с SDK после iOS 26 приложение без
+//    сцен не запускается; docs/guides/IPAD_WINDOWS.md): окно и движок Flutter
+//    создаёт сцена (Info.plist → UIApplicationSceneManifest, раскадровка
+//    Main), поэтому плагины и свои каналы регистрируются, когда движок готов,
+//    — в didInitializeImplicitFlutterEngine, а не при запуске. Ссылки (виджет,
+//    «Поделиться», вход) и быстрые действия приходят сцене — SceneDelegate
+//    ниже. Здесь остаётся то, что относится ко всему приложению: связка
+//    ключей, резервные копии, фоновые задачи, делегат уведомлений, токен
+//    и сигналы APNs.
 @main
-@objc class AppDelegate: FlutterAppDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     AppDelegate.firstLaunchCleanup()
     AppDelegate.excludeDataFromBackup()
-    GeneratedPluginRegistrant.register(with: self)
-    AppDelegate.registerAppChannels(self)
-    if let r = self.registrar(forPlugin: "OgnelissPlatform") {
-      AppDelegate.registerPlatformChannel(r.messenger())
-    }
-    // Виджеты iPhone: данные — в App Group, нажатия — сюда (WidgetBridgePlugin).
-    if let r = self.registrar(forPlugin: "OgnelissWidget") {
-      WidgetBridgePlugin.register(with: r.messenger(), main: true)
-    }
-    // Сигналы сервера «проверь почту» (1.7.2).
-    if let r = self.registrar(forPlugin: "OgnelissPush") {
-      AppDelegate.registerPushChannel(r.messenger())
-    }
-    // Перевод писем на устройстве (1.9.x, Apple Translation, iOS 18+).
-    if let r = self.registrar(forPlugin: "OgnelissTranslate") {
-      TranslationBridge.register(r.messenger())
-    }
-    // Настройки организации (MDM, Managed App Configuration, 1.10.5).
-    if let r = self.registrar(forPlugin: "OgnelissMdm") {
-      AppDelegate.registerMdmChannel(r.messenger())
-    }
-    // Холодный запуск нажатием на виджет.
-    if let url = launchOptions?[.url] as? URL { _ = WidgetBridgePlugin.handle(url) }
 
     // Фоновый движок (workmanager, действия из уведомлений) — те же плагины
     // и каналы, иначе синхронизация в фоне не нашла бы, например, хранилище.
@@ -83,14 +69,31 @@ import workmanager_apple
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-  /// Нажатие на виджет (com.ogneliss.mail://widget?t=…), когда приложение
-  /// уже запущено. Остальные ссылки — плагинам (вход OAuth и т. п.).
-  override func application(
-    _ app: UIApplication, open url: URL,
-    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
-  ) -> Bool {
-    if WidgetBridgePlugin.handle(url) { return true }
-    return super.application(app, open: url, options: options)
+  /// Движок Flutter главного окна создан (сцена загрузила раскадровку Main):
+  /// плагины пакетов и свои каналы. Порядок — как был при запуске.
+  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    let registry = engineBridge.pluginRegistry
+    GeneratedPluginRegistrant.register(with: registry)
+    AppDelegate.registerAppChannels(registry)
+    if let r = registry.registrar(forPlugin: "OgnelissPlatform") {
+      AppDelegate.registerPlatformChannel(r.messenger())
+    }
+    // Виджеты iPhone: данные — в App Group, нажатия — сюда (WidgetBridgePlugin).
+    if let r = registry.registrar(forPlugin: "OgnelissWidget") {
+      WidgetBridgePlugin.register(with: r.messenger(), main: true)
+    }
+    // Сигналы сервера «проверь почту» (1.7.2).
+    if let r = registry.registrar(forPlugin: "OgnelissPush") {
+      AppDelegate.registerPushChannel(r.messenger())
+    }
+    // Перевод писем на устройстве (1.9.x, Apple Translation, iOS 18+).
+    if let r = registry.registrar(forPlugin: "OgnelissTranslate") {
+      TranslationBridge.register(r.messenger())
+    }
+    // Настройки организации (MDM, Managed App Configuration, 1.10.5).
+    if let r = registry.registrar(forPlugin: "OgnelissMdm") {
+      AppDelegate.registerMdmChannel(r.messenger())
+    }
   }
 
   // MARK: Сигналы сервера (1.7.2)
@@ -661,3 +664,78 @@ struct TranslationHostView: View {
   }
 }
 #endif
+
+// MARK: Сцена главного окна (1.15.1)
+//
+// Своя сцена вместо FlutterSceneDelegate — чтобы ловить нажатия на виджет
+// (com.ogneliss.mail://widget?t=…): раньше их получал AppDelegate
+// (application(_:open:options:) и launchOptions[.url]), со сценами ссылки
+// приходят сюда. Все события сцены передаются плагинам Flutter так же, как
+// это делает FlutterSceneDelegate (FlutterSceneLifeCycleProvider, способ из
+// руководства Flutter «If you can't subclass FlutterSceneDelegate»): ссылки
+// «Поделиться» (receive_sharing_intent), быстрые действия значка
+// (quick_actions), продолжение действий. Окно создаёт UIKit из раскадровки
+// Main (Info.plist → UISceneStoryboardFile). Класс — в этом файле: новый файл
+// потребовал бы правки project.pbxproj. В Info.plist —
+// $(PRODUCT_MODULE_NAME).SceneDelegate.
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, FlutterSceneLifeCycleProvider {
+  var window: UIWindow?
+  let sceneLifeCycleDelegate = FlutterPluginSceneLifeCycleDelegate()
+
+  func scene(
+    _ scene: UIScene,
+    willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions
+  ) {
+    // Холодный запуск нажатием на виджет.
+    for context in connectionOptions.urlContexts {
+      _ = WidgetBridgePlugin.handle(context.url)
+    }
+    sceneLifeCycleDelegate.scene(scene, willConnectTo: session, options: connectionOptions)
+  }
+
+  func sceneDidDisconnect(_ scene: UIScene) {
+    sceneLifeCycleDelegate.sceneDidDisconnect(scene)
+  }
+
+  func sceneWillEnterForeground(_ scene: UIScene) {
+    sceneLifeCycleDelegate.sceneWillEnterForeground(scene)
+  }
+
+  func sceneDidBecomeActive(_ scene: UIScene) {
+    sceneLifeCycleDelegate.sceneDidBecomeActive(scene)
+  }
+
+  func sceneWillResignActive(_ scene: UIScene) {
+    sceneLifeCycleDelegate.sceneWillResignActive(scene)
+  }
+
+  func sceneDidEnterBackground(_ scene: UIScene) {
+    sceneLifeCycleDelegate.sceneDidEnterBackground(scene)
+  }
+
+  /// Нажатие на виджет, когда приложение уже запущено; остальные ссылки
+  /// («Поделиться», вход) — плагинам.
+  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    let rest = URLContexts.filter { !WidgetBridgePlugin.handle($0.url) }
+    if !rest.isEmpty {
+      sceneLifeCycleDelegate.scene(scene, openURLContexts: rest)
+    }
+  }
+
+  func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    sceneLifeCycleDelegate.scene(scene, continue: userActivity)
+  }
+
+  func windowScene(
+    _ windowScene: UIWindowScene,
+    performActionFor shortcutItem: UIApplicationShortcutItem,
+    completionHandler: @escaping (Bool) -> Void
+  ) {
+    sceneLifeCycleDelegate.windowScene(
+      windowScene,
+      performActionFor: shortcutItem,
+      completionHandler: completionHandler
+    )
+  }
+}

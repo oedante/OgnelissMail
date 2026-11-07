@@ -3855,6 +3855,9 @@
     <string name="noticeOriginal">Original</string>
     <string name="noticeUnsubscribed">Dezabonat</string>
     <string name="noticeShowImages">Afișează imaginile</string>
+    <string name="noticeSafetyDanger">Semne de phishing</string>
+    <string name="noticeSafetyCaution">Atenție</string>
+    <string name="noticeSafetyExternal">Expeditor extern</string>
     <string name="noticeReadReceipt">Confirmare de citire</string>
     <string name="noticeLaterUntil">Mai târziu: {when}</string>
     <string name="noticeDsnFailed">Nelivrat</string>

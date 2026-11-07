@@ -2,6 +2,9 @@
 // перетаскивание писем на папку, разделитель панелей, файлы на окно письма,
 // письмо в отдельном окне.
 
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:path/path.dart' as p;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -14,7 +17,7 @@ import 'package:ogneliss/features/mail/widgets/mail_drag.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/widgets/common/adaptive_layout.dart';
 import 'package:ogneliss/widgets/common/file_drop_zone.dart';
-import 'package:super_clipboard/super_clipboard.dart' show DataReader, ReadProgress;
+import 'package:super_clipboard/super_clipboard.dart' show DataReader, DataReaderFile, ReadProgress;
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 
 EmailModel _mail(String id, {String account = 'a1', String folder = 'INBOX'}) => EmailModel(
@@ -138,6 +141,29 @@ void main() {
     expect(paths, ['/tmp/smeta.xlsx', '/tmp/photo.jpg']);
   });
 
+  // 1.15.1: iPad, Android, вложение из Outlook — файл без пути: содержимое
+  // во временную папку под своим именем; текст и ссылки файлом не считаются.
+  test('файл без пути — во временную папку; текст — не файл', () async {
+    final dir = Directory.systemTemp.createTempSync('drop_test');
+    addTearDown(() => dir.deleteSync(recursive: true));
+    final items = [
+      _DroppedItem(null, formats: const ['application/pdf'], content: [1, 2, 3], name: 'Смета: итог.pdf'),
+      _DroppedItem(null, formats: const ['text/plain', 'public.utf8-plain-text'], content: [65]),
+      _DroppedItem(Uri.file('/tmp/photo.jpg')),
+      _DroppedItem(null, formats: const ['image/jpeg'], content: [9, 9]),
+    ];
+    expect(looksLikeFile(items[0]), isTrue);
+    expect(looksLikeFile(items[1]), isFalse);
+    expect(looksLikeFile(items[2]), isTrue);
+    final paths = await receiveDroppedFiles(items, into: dir);
+    expect(paths, hasLength(3));
+    expect(p.basename(paths[0]), 'Смета_ итог.pdf');
+    expect(File(paths[0]).readAsBytesSync(), [1, 2, 3]);
+    expect(paths[1], '/tmp/photo.jpg');
+    // Без имени — «file-N».
+    expect(p.basename(paths[2]), 'file-4');
+  });
+
   testWidgets('без нативной части перетаскивания — окно как было', (tester) async {
     await tester.pumpWidget(MaterialApp(
       home: FileDropZone(hint: 'Отпустите', onFiles: (_) {}, child: const Text('письмо')),
@@ -203,34 +229,69 @@ void main() {
 
 /// Брошенный элемент с адресом файла (или без него) — для [droppedPaths].
 class _DroppedItem extends DropItem {
-  _DroppedItem(this.uri);
+  _DroppedItem(this.uri, {this.formats = const [], this.content, this.name});
   final Uri? uri;
+  final List<String> formats;
+
+  /// Содержимое файла без пути (iPad, Android, «виртуальный» файл).
+  final List<int>? content;
+  final String? name;
 
   @override
-  bool canProvide(DataFormat f) => uri != null;
+  bool canProvide(DataFormat f) => uri != null && f == Formats.fileUri;
 
   @override
-  DataReader? get dataReader => uri == null ? null : _Reader(uri!);
+  DataReader? get dataReader => uri == null && content == null ? null : _Reader(uri, content, name);
 
   @override
   Object? get localData => null;
 
   @override
-  List<String> get platformFormats => const [];
+  List<String> get platformFormats => formats;
 }
 
 class _Reader implements DataReader {
-  _Reader(this.uri);
-  final Uri uri;
+  _Reader(this.uri, this.content, this.name);
+  final Uri? uri;
+  final List<int>? content;
+  final String? name;
 
   @override
-  bool canProvide(DataFormat format) => true;
+  bool canProvide(DataFormat format) => uri != null && format == Formats.fileUri;
 
   @override
   ReadProgress? getValue<T extends Object>(ValueFormat<T> format, onValue, {onError}) {
+    if (uri == null) return null;
     onValue(uri as T);
     return _Progress();
   }
+
+  @override
+  ReadProgress? getFile(FileFormat? format, onFile, {onError, allowVirtualFiles = true, synthesizeFilesFromURIs = true}) {
+    final c = content;
+    if (c == null) return null;
+    onFile(_File(name, c));
+    return _Progress();
+  }
+
+  @override
+  Future<String?> getSuggestedName() async => null;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _File implements DataReaderFile {
+  _File(this.fileName, this.content);
+  @override
+  final String? fileName;
+  final List<int> content;
+
+  @override
+  int? get fileSize => content.length;
+
+  @override
+  Stream<Uint8List> getStream() => Stream.value(Uint8List.fromList(content));
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

@@ -47,6 +47,11 @@ if (-not (Get-Command flutter -ErrorAction SilentlyContinue)) {
 }
 flutter --version | Select-Object -First 1
 Ok "Flutter найден"
+# Rust (rustup) — ядро перетаскивания вложений (super_drag_and_drop, 1.15.0)
+# собирается из исходников; нужную версию Rust rustup скачает сам.
+if (-not (Get-Command rustup -ErrorAction SilentlyContinue) -and -not (Test-Path "$env:USERPROFILE\.cargo\bin\rustup.exe")) {
+  Die 'Нет Rust (rustup). Установите rustup-init.exe с https://rustup.rs (вариант по умолчанию, с Visual Studio Build Tools).'
+}
 
 if ($IconsOnly) {
   Step "Перегенерация иконок (только иконки)"

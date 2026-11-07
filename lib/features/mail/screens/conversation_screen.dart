@@ -47,6 +47,7 @@ import 'mail_detail_screen.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/swipe_action_indicator.dart';
 import '../widgets/mail_peek_card.dart';
+import '../widgets/move_folder_picker.dart';
 import '../../../services/mail/own_addresses.dart';
 import '../../../widgets/common/quick_long_press.dart';
 import '../../../widgets/common/peek_card.dart' show peekAnchorOf;
@@ -288,6 +289,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         SwipeAction.archive => (AppIcons.archive, l10n.tr('archive'), AppColors.primaryBlue),
         SwipeAction.delete => (AppIcons.delete, l10n.delete, AppColors.errorRed),
         SwipeAction.moveToJunk => (AppIcons.block, l10n.tr('moveToJunk'), AppColors.accentOrange),
+        SwipeAction.moveTo => (AppIcons.drive_file_move, l10n.tr('moveTo'), AppColors.primaryBlue),
         SwipeAction.snooze => (AppIcons.watch_later, l10n.tr('later'), AppColors.accentOrange),
         SwipeAction.control => (AppIcons.task_alt, l10n.tr(e.controlState == 0 ? 'controlSet' : 'controlClear'), AppColors.successGreen),
         SwipeAction.reply => (AppIcons.reply, l10n.tr('reply'), AppColors.primaryBlue),
@@ -319,6 +321,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           if (junk != null && junk != e.folderId) await actions.moveTo(account, e.id, e.folderId, junk);
         case SwipeAction.delete:
           await actions.delete(account, e.id, e.folderId);
+        // «Переместить» (1.15.0, замечание владельца 07.11.2026: в беседе его
+        // не было) — папки ящика письма.
+        case SwipeAction.moveTo:
+          final to = mounted ? await pickMoveFolder(context, ref, e) : null;
+          if (to != null && to != e.folderId) await actions.moveTo(account, e.id, e.folderId, to);
         case SwipeAction.snooze:
           if (mounted) await postponeEmails(context, ref, [e]);
         case SwipeAction.control:
@@ -435,6 +442,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         if (control) act(SwipeAction.control),
       ]),
       PeekGroup(title: l10n.tr('peekGroupMove'), items: [
+        if (!(e.isDraft || e.folderId == 'drafts')) act(SwipeAction.moveTo),
         act(SwipeAction.archive),
         act(SwipeAction.moveToJunk),
         act(SwipeAction.delete),

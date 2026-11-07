@@ -1,6 +1,7 @@
 // lib/features/mail/screens/mail_list_screen.dart
 import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/common/gap_below.dart';
+import '../widgets/move_folder_picker.dart';
 import '../widgets/mail_check_sheet.dart' show showMailCheckSheet;
 import '../widgets/background_hint_strip.dart';
 import '../widgets/sender_actions_sheet.dart';
@@ -76,7 +77,7 @@ import '../../../widgets/common/offline_indicator.dart';
 import '../../../services/mail/search_history_service.dart';
 import '../../../widgets/common/undo_manager.dart';
 import '../../../data/models/folder_model.dart';
-import 'package:drift/drift.dart' show BooleanExpressionOperators, OrderingTerm;
+import 'package:drift/drift.dart' show BooleanExpressionOperators;
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditorForEmail;
 import '../providers/conversation_mute.dart';
 import '../providers/mail_providers.dart';
@@ -1946,31 +1947,11 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
 
   /// Переместить ОДНО письмо в выбранную папку (свайп «Переместить»).
   Future<void> _moveSingle(EmailModel email, AppLocalizations l10n) async {
-    // Папки аккаунта ПИСЬМА из базы: foldersProvider знает только активный.
-    final db = ref.read(databaseProvider);
-    final folders = await (db.select(db.folders)
-          ..where((f) => f.accountId.equals(email.accountId))
-          ..orderBy([(f) => OrderingTerm(expression: f.sortOrder)]))
-        .get();
-    if (!mounted) return;
-    // Карточкой (1.8.8), как меню «⋮». Только папки аккаунта этого
-    // письма: переместить письмо между ящиками разных серверов нельзя.
-    final targetId = await showChoiceSheet<String>(
-      context,
-      title: AppLocalizations.of(context).tr('moveToDots'),
-      entries: [
-        for (final f in folders.where((f) => f.id != email.folderId))
-          AppMenuEntry(
-              value: f.id,
-              label: localizedFolderName(folderFromRow(f), AppLocalizations.of(context)),
-              icon: folderIconOf(folderFromRow(f))),
-      ],
-    );
-    final target = folders.where((f) => f.id == targetId).firstOrNull;
-    if (target == null || !mounted) return;
+    final targetId = await pickMoveFolder(context, ref, email);
+    if (targetId == null || !mounted) return;
     final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
     if (account == null) return;
-    await ref.read(emailActionsProvider).moveTo(account, email.id, email.folderId, target.id);
+    await ref.read(emailActionsProvider).moveTo(account, email.id, email.folderId, targetId);
   }
 
   /// «Посмотреть позже» — свайпом, без открытия письма.

@@ -1,6 +1,6 @@
 # Licensing
 
-*Not legal advice. Updated 5 November 2026.*
+*Not legal advice. Updated 7 November 2026.*
 
 ## 1. Ogneliss Mail
 
@@ -43,7 +43,10 @@ Contributions are accepted under the same license (section 5 of the license).
 | UnifiedPush distributors and push servers (ntfy, NextPush, Sunup and others) — chosen and installed by the user | the user's own apps and servers; the developer's relay only sends encrypted signals to the address they issue | not part of the app |
 | Google ML Kit Translation and Language ID (`com.google.mlkit:translate` 17.0.3, `com.google.mlkit:language-id` 17.0.6) — on-device message translation | Free; ML Kit Terms of Service and Google APIs Terms of Service (closed-source binaries). Conditions: Google attribution next to translated text and in the app description/help ("Translated by Google"); no use in embedded devices (cars, TVs, appliances, speakers); ML Kit sends usage metrics (not text) to Google — mention in the privacy policy | Android build (`android/app/build.gradle.kts`) |
 | Apple Translation, NaturalLanguage, SwiftUI — on-device message translation (iOS 18+) | Part of the iOS SDK (Apple Developer Program License Agreement), free, no attribution | iOS build (`ios/Runner/AppDelegate.swift`) |
-| desktop_drop 0.8.4 (MixinNetwork; checked 01.11.2026) — files dropped from Explorer/Finder onto the message window | Apache-2.0, free | pub.dev, unmodified; used on Windows, macOS and Linux only (its Android part registers a drop listener but the app does not use it) |
+| super_drag_and_drop 0.10.0-dev.2 with super_clipboard and super_native_extensions 0.10.0-dev.2 (Superlist, Matej Knopp), irondash_engine_context 0.6.0-dev.0, irondash_message_channel 0.8.0-dev.0, pixel_snap 0.1.5 (Matej Knopp); checked 07.11.2026 — dragging an attachment out of a message (Explorer, Finder, another app) and files dropped onto the message window (replaces desktop_drop since 1.15.0) | MIT, free | pub.dev, unmodified; licence texts in the app come from the packages |
+| Rust crates compiled into the native core of super_native_extensions (201 crates from its `Cargo.lock`: Rust standard ecosystem, gtk-rs, windows-rs, objc2, jni and others; checked 07.11.2026) | MIT, Apache-2.0, MIT OR Apache-2.0, Unlicense OR MIT, Zlib, BSL-1.0 (ryu: Apache-2.0 OR BSL-1.0), Unicode-DFS-2016 (unicode-ident), Apache-2.0 WITH LLVM-exception (target-lexicon, build step only); `colored` 2.1.0 — MPL-2.0 (used unmodified, by the package's logger); free | built from source at app build time (needs rustup); texts in the app: "super_native_extensions (Rust)", collected by `tool/dev/rust_licenses.py` into `assets/licenses/rust_crates.json` |
+| native_toolchain_rust 1.0.6 (Gregory Conrad), hooks (Dart team) — build tooling for the Rust core, not shipped in the app | MIT; hooks: BSD-3-Clause | pub.dev, build time only |
+| Rust toolchain (rustup, rustc, cargo) — compiler used at build time, not shipped | MIT OR Apache-2.0, free | installed by the developer (https://rustup.rs) |
 | desktop_multi_window 0.3.1 (MixinNetwork; checked 01.11.2026) — a message in a separate window on Windows, macOS and Linux | Apache-2.0, free | pub.dev, unmodified; desktop only |
 | markdown 7.3.1 (Dart team, dart-lang/tools; checked 05.11.2026) — Markdown attachments (.md) shown as formatted documents in the attachment preview | BSD-3-Clause, free | pub.dev, unmodified; licence text in the app (Settings → About → Licence texts) comes from the package |
 | Russian Trusted Root CA certificates | public certificates | `assets/certs/` |

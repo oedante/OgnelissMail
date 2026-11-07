@@ -4,7 +4,6 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/core/theme/app_icons.dart';
@@ -15,6 +14,8 @@ import 'package:ogneliss/features/mail/widgets/mail_drag.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/widgets/common/adaptive_layout.dart';
 import 'package:ogneliss/widgets/common/file_drop_zone.dart';
+import 'package:super_clipboard/super_clipboard.dart' show DataReader, ReadProgress;
+import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 
 EmailModel _mail(String id, {String account = 'a1', String folder = 'INBOX'}) => EmailModel(
       id: id,
@@ -124,25 +125,25 @@ void main() {
     expect(reset, 1);
   });
 
-  testWidgets('файлы на окно (компьютер): пути — в onFiles', (tester) async {
-    final got = <String>[];
+  // 1.15.0: приём — пакетом super_drag_and_drop (вместо desktop_drop). Его
+  // нативной части в тестах нет: проверяется разбор брошенного и что без
+  // неё окно письма остаётся как есть.
+  test('файлы на окно (компьютер): пути file:// — в список, прочее — нет', () async {
+    final paths = await droppedPaths([
+      _DroppedItem(Uri.file('/tmp/smeta.xlsx')),
+      _DroppedItem(Uri.parse('https://example.com/a.pdf')),
+      _DroppedItem(null),
+      _DroppedItem(Uri.file('/tmp/photo.jpg')),
+    ]);
+    expect(paths, ['/tmp/smeta.xlsx', '/tmp/photo.jpg']);
+  });
+
+  testWidgets('без нативной части перетаскивания — окно как было', (tester) async {
     await tester.pumpWidget(MaterialApp(
-      home: FileDropZone(
-        hint: 'Отпустите, чтобы прикрепить файлы',
-        onFiles: got.addAll,
-        child: const SizedBox.expand(),
-      ),
+      home: FileDropZone(hint: 'Отпустите', onFiles: (_) {}, child: const Text('письмо')),
     ));
-    if (!FileDropZone.supported) return; // тесты идут на Linux — поддержано
-    Future<void> send(String method, Object? args) => tester.binding.defaultBinaryMessenger.handlePlatformMessage(
-        'desktop_drop', const StandardMethodCodec().encodeMethodCall(MethodCall(method, args)), (_) {});
-    await send('entered', [100.0, 100.0]);
-    await tester.pump();
-    expect(find.text('Отпустите, чтобы прикрепить файлы'), findsOneWidget);
-    await send('performOperation', ['/tmp/smeta.xlsx', '/tmp/photo.jpg']);
-    await tester.pump();
-    expect(got, ['/tmp/smeta.xlsx', '/tmp/photo.jpg']);
-    expect(find.text('Отпустите, чтобы прикрепить файлы'), findsNothing);
+    expect(FileDropZone.supported, isFalse);
+    expect(find.text('письмо'), findsOneWidget);
   });
 
   group('письмо в отдельном окне', () {
@@ -198,4 +199,44 @@ void main() {
       expect(asked.last.$2['emailId'], 'INBOX:7');
     });
   });
+}
+
+/// Брошенный элемент с адресом файла (или без него) — для [droppedPaths].
+class _DroppedItem extends DropItem {
+  _DroppedItem(this.uri);
+  final Uri? uri;
+
+  @override
+  bool canProvide(DataFormat f) => uri != null;
+
+  @override
+  DataReader? get dataReader => uri == null ? null : _Reader(uri!);
+
+  @override
+  Object? get localData => null;
+
+  @override
+  List<String> get platformFormats => const [];
+}
+
+class _Reader implements DataReader {
+  _Reader(this.uri);
+  final Uri uri;
+
+  @override
+  bool canProvide(DataFormat format) => true;
+
+  @override
+  ReadProgress? getValue<T extends Object>(ValueFormat<T> format, onValue, {onError}) {
+    onValue(uri as T);
+    return _Progress();
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _Progress implements ReadProgress {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

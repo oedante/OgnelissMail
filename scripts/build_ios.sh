@@ -45,6 +45,10 @@ say "Окружение"
 xcodebuild -version >/dev/null 2>&1 || fail "Нет Xcode. App Store → Xcode, затем: sudo xcodebuild -license accept && xcodebuild -runFirstLaunch"
 xcodebuild -version | head -1
 command -v flutter >/dev/null || fail "Нет flutter в PATH (brew install --cask flutter или git clone -b stable https://github.com/flutter/flutter)"
+# Rust (rustup) — ядро перетаскивания вложений (super_drag_and_drop, 1.15.0)
+# собирается из исходников; нужную версию Rust rustup скачает сам.
+command -v rustup >/dev/null 2>&1 || [ -x "$HOME/.cargo/bin/rustup" ] || {
+  echo "Нет Rust (rustup). Установите: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh  (или https://rustup.rs)"; exit 1; }
 FV=$(flutter --version 2>/dev/null | head -1 | awk '{print $2}')
 echo "Flutter $FV"
 case "$FV" in 3.3[89]*|3.[4-9]*|[4-9].*) ;; *) fail "Нужен Flutter 3.38 или новее (сейчас $FV): flutter upgrade" ;; esac

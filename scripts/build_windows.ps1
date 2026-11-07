@@ -74,6 +74,11 @@ Step 'Проверка окружения'
 if (-not (Get-Command flutter -ErrorAction SilentlyContinue)) {
   Fail 'Flutter не найден в PATH. Установите Flutter SDK (см. docs\guides\BUILD_WINDOWS.md, шаг 1).'
 }
+# Rust (rustup) — ядро перетаскивания вложений (super_drag_and_drop, 1.15.0)
+# собирается из исходников; нужную версию Rust rustup скачает сам.
+if (-not (Get-Command rustup -ErrorAction SilentlyContinue) -and -not (Test-Path "$env:USERPROFILE\.cargo\bin\rustup.exe")) {
+  Fail 'Нет Rust (rustup). Установите rustup-init.exe с https://rustup.rs (вариант по умолчанию, с Visual Studio Build Tools).'
+}
 $verJson = (& flutter --version --machine 2>$null) -join "`n"
 try {
   $ver = $verJson | ConvertFrom-Json

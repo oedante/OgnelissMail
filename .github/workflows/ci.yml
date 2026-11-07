@@ -103,6 +103,12 @@ jobs:
           python3 tool/dev/ci_annotate.py analyze analyze.txt
           exit $code
 
+      # flutter test собирает и нативные части пакетов (build hooks): ядро
+      # перетаскивания super_native_extensions (Rust, 1.15.0) для Linux
+      # ищет GTK — без libgtk-3-dev сборка ядра и тесты падали.
+      - name: Linux libraries for native test builds
+        run: sudo apt-get update -q && sudo apt-get install -y -q libgtk-3-dev pkg-config
+
       # Тесты — и когда анализатор нашёл предупреждения: их результат нужен
       # отдельно.
       - name: Run tests
@@ -126,6 +132,9 @@ jobs:
         run: |
           python3 -m unittest discover -s tool/dev -p 'test_*.py'
           python3 tool/dev/license_check.py --summary "$GITHUB_STEP_SUMMARY"
+          # Лицензии Rust-крейтов ядра перетаскивания (1.15.0): список в
+          # assets/licenses/rust_crates.json совпадает с Cargo.lock пакета.
+          python3 tool/dev/rust_licenses.py --check
 
       # Уязвимости (OSV-Scanner, Google, Apache-2.0; база osv.dev): lock-файлы
       # приложения (pubspec.lock создаёт pub get) и серверов. Новый сервер с
@@ -464,6 +473,10 @@ jobs:
 
       - name: Generate code
         run: dart run build_runner build --delete-conflicting-outputs
+
+      # Ядро перетаскивания (Rust) собирается и для flutter test — нужен GTK.
+      - name: Linux libraries for native test builds
+        run: sudo apt-get update -q && sudo apt-get install -y -q libgtk-3-dev pkg-config
 
       - name: Screens
         run: |

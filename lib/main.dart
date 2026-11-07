@@ -4,6 +4,7 @@
 // Инициализирует БД, SecureStorage, уведомления, фоновые задачи.
 // Поддержка Android, iOS, Windows, macOS, Linux.
 
+import 'core/platform/native_drag_drop.dart';
 import 'core/platform/device_time_zone.dart';
 import 'widgets/common/scroll_edge_fade.dart';
 import 'services/documents/doc_preview_settings.dart';
@@ -88,6 +89,8 @@ Future<void> main() async {
       return;
     }
     registerMailEditorLicense();
+    // Ядро перетаскивания на Rust (super_drag_and_drop, 1.15.0): лицензии крейтов.
+    NativeDragDrop.registerLicenses();
     // Google ML Kit (перевод писем на Android, 1.9.x) — условия Google.
     registerTranslationLicense();
     // Шрифт интерфейса Roboto (Apache 2.0) — на странице «Лицензии».

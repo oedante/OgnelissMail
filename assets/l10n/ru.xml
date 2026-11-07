@@ -3876,6 +3876,9 @@
     <string name="noticeOriginal">Оригинал</string>
     <string name="noticeUnsubscribed">Вы отписались</string>
     <string name="noticeShowImages">Показать изображения</string>
+    <string name="noticeSafetyDanger">Признаки фишинга</string>
+    <string name="noticeSafetyCaution">Осторожно</string>
+    <string name="noticeSafetyExternal">Внешний отправитель</string>
     <string name="noticeReadReceipt">Уведомление о прочтении</string>
     <string name="noticeLaterUntil">Позже: {when}</string>
     <string name="noticeDsnFailed">Не доставлено</string>

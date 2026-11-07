@@ -7,7 +7,8 @@ import 'package:ogneliss/features/mail/widgets/mail_html_view.dart';
 const _photo = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD';
 
 MailHtmlDocument _doc() {
-  const html = '<p>Ответ</p><div>'
+  const html =
+      '<p>Ответ</p><div>'
       '<p><b>От:</b> Петров Иван &lt;ivan.petrov@corp.example&gt;</p>'
       '<p><b>Кому:</b> Сидорова Анна &lt;anna@corp.example&gt;; Петров Иван &lt;ivan.petrov@corp.example&gt;</p>'
       '<p><b>Копия:</b> Хабиров Ренат Фанильевич</p>'
@@ -42,7 +43,14 @@ void main() {
     final d = _doc().withPeoplePhotos(const {'anna@corp.example': _photo});
     final dark = MailHtmlView.composeHtml(d, viewWidth: 400, fitWidth: null, dark: true, pageColor: null, textScale: 1);
     expect(dark, contains('--og-ph:invert(1)'));
-    final light = MailHtmlView.composeHtml(d, viewWidth: 400, fitWidth: null, dark: false, pageColor: null, textScale: 1);
+    final light = MailHtmlView.composeHtml(
+      d,
+      viewWidth: 400,
+      fitWidth: null,
+      dark: false,
+      pageColor: null,
+      textScale: 1,
+    );
     expect(light, isNot(contains('--og-ph:invert')));
   });
 }

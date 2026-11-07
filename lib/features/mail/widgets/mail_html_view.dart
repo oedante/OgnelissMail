@@ -723,6 +723,75 @@ class MailHtmlViewProbe {
   final void Function(String line)? onTrace;
 }
 
+/// Что окно письма может сделать с масштабом прямо сейчас (1.15.1).
+enum MailScaleAction {
+  /// Письмо не шире экрана и не увеличено — делать нечего.
+  none,
+
+  /// Широкое письмо вписано по ширине экрана — «Исходный масштаб».
+  actualSize,
+
+  /// Широкое письмо в исходном масштабе — «По ширине экрана».
+  fitToWidth,
+
+  /// Увеличено щипком — «Обычный размер».
+  reset,
+}
+
+/// Переключатель масштаба письма для строки сведений экрана (1.15.1,
+/// замечание владельца 07.11.2026: «масштаб, отписка, предупреждения — в
+/// пилюли над текстом, где перевод, иначе они увеличивают длину письма»).
+/// Окно сообщает, что доступно ([action]), экран рисует пилюлю и по нажатию
+/// вызывает [run]. Без него окно, как раньше, рисует кнопку строкой над
+/// письмом.
+class MailScaleControl extends ChangeNotifier {
+  MailScaleAction _action = MailScaleAction.none;
+  VoidCallback? _run;
+  Object? _owner;
+  bool _pending = false;
+
+  MailScaleAction get action => _action;
+
+  /// Выполнить доступное действие (нет — ничего).
+  void run() => _run?.call();
+
+  /// Окно [owner] сообщает действие. Слушатели узнают после кадра: окно
+  /// сообщает во время своей сборки, когда перестраивать нельзя.
+  void report(Object owner, MailScaleAction action, VoidCallback? run) {
+    _owner = owner;
+    _run = action == MailScaleAction.none ? null : run;
+    _set(action);
+  }
+
+  /// Окно [owner] закрыто: действие снимается, если его сообщило оно, а не
+  /// уже новое окно (новое строится раньше, чем закрывается прежнее).
+  void release(Object owner) {
+    if (!identical(owner, _owner)) return;
+    _owner = null;
+    _run = null;
+    _set(MailScaleAction.none);
+  }
+
+  void _set(MailScaleAction action) {
+    if (action == _action) return;
+    _action = action;
+    if (_pending) return;
+    _pending = true;
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _pending = false;
+      if (!_disposed) notifyListeners();
+    });
+  }
+
+  bool _disposed = false;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+}
+
 /// Тело письма в WebView. Ссылки — через [onLink]; высота подстраивается под
 /// содержимое.
 class MailHtmlView extends StatefulWidget {
@@ -737,7 +806,12 @@ class MailHtmlView extends StatefulWidget {
     this.active = true,
     this.onShown,
     this.inlineRaw,
+    this.scaleControl,
   });
+
+  /// Переключатель масштаба — пилюлей в строке сведений экрана; null —
+  /// кнопкой строкой над письмом.
+  final MailScaleControl? scaleControl;
 
   /// Встроенные картинки по запросу окна (1.5.9, «Настройки → Почта →
   /// Открытие писем → Картинки письма отдельно»): документ оставляет адреса `cid:`, окно
@@ -1463,6 +1537,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
 
   @override
   void dispose() {
+    widget.scaleControl?.release(this);
     _ownAnim?.removeStatusListener(_onTransition);
     _overAnim?.removeStatusListener(_onTransition);
     _drag?.removeListener(_onDrag);
@@ -1870,6 +1945,22 @@ class _MailHtmlViewState extends State<MailHtmlView> {
       }
       MailHtmlView.debugProbe?.onLayout?.call(
           (height: _height, fitWidth: _fitWidth, actualSize: _actualSize, pinched: _pinched, ready: _ready));
+      final control = widget.scaleControl;
+      if (control != null) {
+        // Пилюлей в строке сведений экрана (1.15.1).
+        control.report(
+          this,
+          _pinched
+              ? MailScaleAction.reset
+              : !_wide
+                  ? MailScaleAction.none
+                  : _actualSize
+                      ? MailScaleAction.fitToWidth
+                      : MailScaleAction.actualSize,
+          () => unawaited(_pinched ? _resetZoom() : _toggleScale()),
+        );
+        return _webView();
+      }
       final l10n = AppLocalizations.of(context);
       final fitLabel = l10n.tr('mailFitToWidth');
       final realLabel = l10n.tr('mailActualSize');

@@ -99,7 +99,7 @@ import '../providers/conversation_mute.dart';
 import '../widgets/read_receipt_banner.dart';
 import '../widgets/delivery_status_banner.dart';
 import '../widgets/mail_notice_bar.dart';
-import '../../../services/security/sender_safety_service.dart' show senderSafetyServiceProvider, SafetyLevel;
+import '../../../services/security/sender_safety_service.dart' show senderSafetyServiceProvider, SafetyLevel, SenderSafetyReport;
 import '../../../data/database/app_database.dart';
 import '../../../data/providers/database_provider.dart';
 import '../../archive/archive_sheets.dart' show ensureArchiveReady;
@@ -173,6 +173,16 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   bool _isLoading = true;
   /// Перевод письма на устройстве (1.9.x, просьба владельца 31.10.2026):
   /// плашка «Перевести», перевод вместо текста, «Показать оригинал».
+  /// Масштаб широкого письма — пилюлей в строке сведений (1.15.1): окно
+  /// письма сообщает, что доступно, строка рисует.
+  final MailScaleControl _scale = MailScaleControl();
+
+  /// Проверка отправителя (антифишинг) для пилюли предупреждения (1.15.1):
+  /// раньше её считала карточка над письмом. Ключ — то, от чего проверка
+  /// зависит: тело (ссылки), вложения, заголовки подлинности.
+  String _safetyKey = '';
+  SenderSafetyReport? _safety;
+
   late final MailTranslationController _translation =
       MailTranslationController(ref)..addListener(() => safeSetState(() {}));
   bool _isLoadingBody = false;
@@ -328,6 +338,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     OpenTrace.cancel();
     _quickReply.dispose();
     _translation.dispose();
+    _scale.dispose();
     super.dispose();
   }
 
@@ -1463,6 +1474,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           dark: dark && !original,
           onShown: _onBodyShown,
           inlineRaw: byRequest ? _inlineRaw : null,
+          scaleControl: _scale,
           onLink: (url, text) => _onBodyLink(email, url, text),
         ),
         if (doc.clipped) MailClippedBar(onShowWhole: _onShowWhole, busy: _showWhole),
@@ -1705,6 +1717,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         final settled = _settled && !_isLoadingBody;
         // Язык письма — когда тело готово; показ — с переводом, если он включён.
         if (settled) _translation.detect(email);
+        if (settled) _checkSafety(email);
         final shown = _translation.apply(email);
         final bodyChildren = <Widget>[
             // ── Строка сведений (1.12.x, просьба владельца 04.11.2026) ──
@@ -1714,25 +1727,21 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             // шапкой, а не стопкой плашек во всю ширину («съедают место»).
             // Нажатие на чип раскрывает прежнюю плашку с её кнопками. Свой
             // Consumer: отчёты о доставке перестраивают только строку.
+            // Масштаб широкого письма и предупреждение об отправителе — тоже
+            // чипами этой строки (1.15.1, замечание владельца 07.11.2026:
+            // строками над письмом они увеличивали его длину).
             Consumer(
               key: ValueKey('notices|${email.accountId}|${email.id}'),
-              builder: (_, r, __) => MailNoticeBar(
-                notices: _notices(r, email, settled: settled, mailControl: settings.mailControl),
-                // Планшет и компьютер — перенос строк, телефон — прокрутка вбок.
-                wrap: wide || widget.embedded,
-                note: settled ? MailTranslateNotice.note(context, _translation) : null,
+              builder: (_, r, __) => ListenableBuilder(
+                listenable: _scale,
+                builder: (_, __) => MailNoticeBar(
+                  notices: _notices(r, email, settled: settled, mailControl: settings.mailControl),
+                  // Планшет и компьютер — перенос строк, телефон — прокрутка вбок.
+                  wrap: wide || widget.embedded,
+                  note: settled ? MailTranslateNotice.note(context, _translation) : null,
+                ),
               ),
             ),
-
-            // ── Антифишинг: баннер безопасности отправителя ──
-            // Карточкой, как раньше: предупреждение о подделке должно быть на
-            // виду, а не в чипе (1.12.x).
-            if (settled)
-              Builder(builder: (_) {
-                final matches = ref.read(accountsProvider).where((a) => a.id == email.accountId);
-                if (matches.isEmpty) return const SizedBox.shrink();
-                return SenderSafetyBanner(account: matches.first, email: email);
-              }),
 
             // ── Приглашение на встречу ── (карточка с кнопками ответа)
             if (settled)
@@ -1874,9 +1883,39 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     final laterAt = email.remindAt?.toLocal();
     final control = email.controlState != 0 && mailControl ? _controlParts(email, l10n) : null;
 
+    // Предупреждение об отправителе (антифишинг): первым — его видно сразу;
+    // карточка с причинами и «Пожаловаться» — по нажатию.
+    final safety = settled ? _safety : null;
+    final safetyLevel = SenderSafetyBanner.pillLevel(safety, r.watch(featureFlagsProvider));
+    final scale = _scale.action;
+
     return [
+      if (safety != null && safetyLevel != null && acc != null)
+        MailNotice(
+          id: 'safety',
+          icon: SenderSafetyBanner.iconOf(safetyLevel),
+          color: SenderSafetyBanner.colorOf(safetyLevel),
+          iconFilled: safetyLevel == SafetyLevel.danger,
+          label: SenderSafetyBanner.pillLabel(safetyLevel, l10n),
+          detail: SenderSafetyBanner.summary(safety, l10n),
+          expanded: (_) => SenderSafetyBanner(account: acc, email: email, report: safety),
+        ),
+
       // ── Перевод: «Перевести · английский» ↔ «Оригинал» ──
       if (settled) ?MailTranslateNotice.of(context, _translation, email),
+
+      // ── Масштаб широкого письма (было кнопкой строкой над письмом) ──
+      if (scale != MailScaleAction.none)
+        MailNotice(
+          id: 'scale',
+          icon: scale == MailScaleAction.actualSize ? AppIcons.zoom_in : AppIcons.fit_screen,
+          label: l10n.tr(switch (scale) {
+            MailScaleAction.actualSize => 'mailActualSize',
+            MailScaleAction.fitToWidth => 'mailFitToWidth',
+            _ => 'mailZoomReset',
+          }),
+          onTap: _scale.run,
+        ),
 
       if (unsubOk)
         MailNotice(
@@ -2028,6 +2067,22 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             onTap: () => _editCategories(context, acc, email, l10n),
           ),
     ];
+  }
+
+  /// Проверка отправителя для пилюли предупреждения — один раз на письмо
+  /// и заново, только когда пришло то, от чего она зависит (как считала
+  /// прежняя карточка).
+  void _checkSafety(EmailModel e) {
+    final acc = ref.read(accountsProvider).where((a) => a.id == e.accountId).firstOrNull;
+    if (acc == null) return;
+    final key = '${acc.id}|${e.id}|${e.from.email}|${e.bodyHtml?.length ?? e.bodyPlain?.length ?? 0}'
+        '|${e.attachments.length}|${e.authResults?.length ?? 0}';
+    if (key == _safetyKey) return;
+    _safetyKey = key;
+    ref.read(senderSafetyServiceProvider).analyze(acc, e).then((r) {
+      if (!mounted || _safetyKey != key) return;
+      safeSetState(() => _safety = r);
+    }, onError: (Object err) => AppLogger.debug('Проверка отправителя: $err'));
   }
 
   /// Проверка отправителя для «Отписаться» — один раз на письмо (результат

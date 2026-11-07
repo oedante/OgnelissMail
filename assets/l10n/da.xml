@@ -3834,6 +3834,9 @@
     <string name="noticeOriginal">Original</string>
     <string name="noticeUnsubscribed">Afmeldt</string>
     <string name="noticeShowImages">Vis billeder</string>
+    <string name="noticeSafetyDanger">Tegn på phishing</string>
+    <string name="noticeSafetyCaution">Vær forsigtig</string>
+    <string name="noticeSafetyExternal">Ekstern afsender</string>
     <string name="noticeReadReceipt">Læsekvittering</string>
     <string name="noticeLaterUntil">Senere: {when}</string>
     <string name="noticeDsnFailed">Ikke leveret</string>

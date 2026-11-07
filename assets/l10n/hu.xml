@@ -3834,6 +3834,9 @@
     <string name="noticeOriginal">Eredeti</string>
     <string name="noticeUnsubscribed">Leiratkozva</string>
     <string name="noticeShowImages">Képek megjelenítése</string>
+    <string name="noticeSafetyDanger">Adathalászat jelei</string>
+    <string name="noticeSafetyCaution">Vigyázat</string>
+    <string name="noticeSafetyExternal">Külső feladó</string>
     <string name="noticeReadReceipt">Olvasási visszaigazolás</string>
     <string name="noticeLaterUntil">Később: {when}</string>
     <string name="noticeDsnFailed">Nem kézbesített</string>

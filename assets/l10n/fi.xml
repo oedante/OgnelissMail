@@ -3834,6 +3834,9 @@
     <string name="noticeOriginal">Alkuperäinen</string>
     <string name="noticeUnsubscribed">Tilaus peruttu</string>
     <string name="noticeShowImages">Näytä kuvat</string>
+    <string name="noticeSafetyDanger">Tietojenkalastelun merkkejä</string>
+    <string name="noticeSafetyCaution">Ole varovainen</string>
+    <string name="noticeSafetyExternal">Ulkoinen lähettäjä</string>
     <string name="noticeReadReceipt">Lukukuittaus</string>
     <string name="noticeLaterUntil">Myöhemmin: {when}</string>
     <string name="noticeDsnFailed">Ei toimitettu</string>

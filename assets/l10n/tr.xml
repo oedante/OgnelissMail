@@ -3834,6 +3834,9 @@
     <string name="noticeOriginal">Orijinal</string>
     <string name="noticeUnsubscribed">Abonelikten çıkıldı</string>
     <string name="noticeShowImages">Resimleri göster</string>
+    <string name="noticeSafetyDanger">Kimlik avı belirtileri</string>
+    <string name="noticeSafetyCaution">Dikkat</string>
+    <string name="noticeSafetyExternal">Harici gönderen</string>
     <string name="noticeReadReceipt">Okundu bilgisi</string>
     <string name="noticeLaterUntil">Sonra: {when}</string>
     <string name="noticeDsnFailed">Teslim edilemedi</string>

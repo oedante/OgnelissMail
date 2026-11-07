@@ -3813,6 +3813,9 @@
     <string name="noticeOriginal">Bản gốc</string>
     <string name="noticeUnsubscribed">Đã hủy đăng ký</string>
     <string name="noticeShowImages">Hiện hình ảnh</string>
+    <string name="noticeSafetyDanger">Dấu hiệu lừa đảo</string>
+    <string name="noticeSafetyCaution">Hãy cẩn thận</string>
+    <string name="noticeSafetyExternal">Người gửi bên ngoài</string>
     <string name="noticeReadReceipt">Xác nhận đã đọc</string>
     <string name="noticeLaterUntil">Để sau: {when}</string>
     <string name="noticeDsnFailed">Chưa gửi được</string>

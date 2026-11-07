@@ -3876,6 +3876,9 @@
     <string name="noticeOriginal">Oryginał</string>
     <string name="noticeUnsubscribed">Wypisano</string>
     <string name="noticeShowImages">Pokaż obrazy</string>
+    <string name="noticeSafetyDanger">Oznaki phishingu</string>
+    <string name="noticeSafetyCaution">Uwaga</string>
+    <string name="noticeSafetyExternal">Nadawca zewnętrzny</string>
     <string name="noticeReadReceipt">Potwierdzenie odczytu</string>
     <string name="noticeLaterUntil">Później: {when}</string>
     <string name="noticeDsnFailed">Nie doręczono</string>

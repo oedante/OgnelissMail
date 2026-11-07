@@ -3834,6 +3834,9 @@
     <string name="noticeOriginal">Original</string>
     <string name="noticeUnsubscribed">Avregistrerad</string>
     <string name="noticeShowImages">Visa bilder</string>
+    <string name="noticeSafetyDanger">Tecken på nätfiske</string>
+    <string name="noticeSafetyCaution">Var försiktig</string>
+    <string name="noticeSafetyExternal">Extern avsändare</string>
     <string name="noticeReadReceipt">Läskvitto</string>
     <string name="noticeLaterUntil">Senare: {when}</string>
     <string name="noticeDsnFailed">Inte levererat</string>

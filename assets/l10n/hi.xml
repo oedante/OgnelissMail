@@ -3834,6 +3834,9 @@
     <string name="noticeOriginal">मूल</string>
     <string name="noticeUnsubscribed">सदस्यता छोड़ दी</string>
     <string name="noticeShowImages">चित्र दिखाएं</string>
+    <string name="noticeSafetyDanger">फ़िशिंग के संकेत</string>
+    <string name="noticeSafetyCaution">सावधान</string>
+    <string name="noticeSafetyExternal">बाहरी प्रेषक</string>
     <string name="noticeReadReceipt">पठन रसीद</string>
     <string name="noticeLaterUntil">बाद में: {when}</string>
     <string name="noticeDsnFailed">डिलीवर नहीं हुआ</string>

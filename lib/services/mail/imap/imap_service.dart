@@ -52,22 +52,25 @@ final imapServiceProvider = Provider<ImapService>((ref) {
   service.onMoved = (accountId, oldId, toFolderId, newId) async {
     try {
       final db = ref.read(databaseProvider);
-      await db.removeEmailFts(oldId, accountId: accountId);
       if (newId != null) {
         await (db.update(db.emails)
               ..where((e) => e.accountId.equals(accountId) & e.id.equals(oldId)))
             .write(EmailsCompanion(id: Value(newId), folderId: Value(toFolderId)));
         final row = await db.getEmailById(newId, accountId: accountId);
         if (row != null) {
-          await db.indexEmailFts(
-            emailId: newId,
-            accountId: accountId,
-            subject: row.subject,
-            fromText: '${row.fromName ?? ''} ${row.fromEmail}',
-            body: row.bodyPlain ?? row.bodyPreview ?? '',
-          );
+          // Текст вложений — с письмом под новым номером (1.15.1).
+          await db.renameEmailFts(accountId, oldId, newId,
+              subject: row.subject,
+              fromText: '${row.fromName ?? ''} ${row.fromEmail}',
+              body: row.bodyPlain ?? row.bodyPreview ?? '');
+        } else {
+          await db.removeEmailFts(oldId, accountId: accountId);
         }
       } else {
+        // Письмо придёт синхронизацией папки назначения — текст его вложений
+        // вернётся к нему по Message-ID (1.15.1).
+        await db.keepAttachmentsTextForReturn(accountId, oldId);
+        await db.removeEmailFts(oldId, accountId: accountId);
         await (db.delete(db.emails)
               ..where((e) => e.accountId.equals(accountId) & e.id.equals(oldId)))
             .go();

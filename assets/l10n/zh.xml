@@ -3836,7 +3836,7 @@
     <string name="searchAttachmentsTextDesc">搜索也能找到已下载附件中的文字：文档、表格、演示文稿、文本文件和附带的邮件</string>
     <string name="searchFoundInAttachment">在附件中：{text}</string>
     <string name="faq_mail_12_q">如何通过附件中的文字查找邮件？</string>
-    <string name="faq_mail_12_a">搜索也能找到已下载附件中的文字：Office 和 OpenDocument 文档、RTF、CSV 表格、演示文稿、文本文件以及附带的邮件。在搜索结果中，这类邮件会显示“在附件中：…”一行，并附有找到的位置。附件必须已下载——即打开过，或随邮件一起下载；暂不支持搜索 PDF。关闭方法：设置 → 邮件 → 搜索附件中的文字。</string>
+    <string name="faq_mail_12_a">搜索也能找到已下载附件中的文字：Office 和 OpenDocument 文档、RTF、PDF、CSV 表格、演示文稿、文本文件以及附带的邮件。在搜索结果中，这类邮件会显示“在附件中：…”一行，并附有找到的位置。附件必须已下载——即打开过，或随邮件一起下载。设有打开密码的 PDF 和不含文字的扫描件不会被搜索。关闭方法：设置 → 邮件 → 搜索附件中的文字。</string>
     <string name="faq_mail_13_q">邮件头下方的图标是什么？</string>
     <string name="faq_mail_13_a">邮件的相关信息——翻译、退订、隐藏的图片、已读回执请求、送达状态、签名、重要性、标签——都汇集在一行图标中。点按图标会展开带按钮的详细信息，再点按一次即可收起。翻译和图片图标会直接生效：翻译邮件或显示图片，其他选项则在 ▾ 菜单中或通过长按选择。伪造发件人警告和会议邀请仍以完整卡片显示。</string>
     <string name="faq_mail_14_q">如何像 Outlook 一样布置平板电脑或电脑的屏幕？</string>

@@ -10,8 +10,8 @@
 // туда, ищутся без изменений здесь. Из результата берётся только текст:
 // абзацы документа (HTML → текст), ячейки таблицы строка за строкой, надписи
 // слайдов. Текстовые файлы, HTML и вложенные письма (.eml) читаются здесь.
-// PDF не читается: своего разбора PDF в приложении нет, а новых библиотек
-// без решения владельца не подключаем.
+// PDF (1.15.1) — свой разбор текста PDF (pdf_text.dart), без сторонних
+// библиотек: по тексту страниц, и защищённые без пароля на открытие.
 //
 // Файл — из чужого письма: всё делается в отдельном изоляте ([extractFile]),
 // который останавливается по пределу времени; текст — не длиннее
@@ -30,6 +30,7 @@ import '../documents/doc_slides.dart' show OfficeSlidesDoc;
 import '../documents/office_document.dart';
 import '../documents/office_package.dart';
 import '../documents/office_reader.dart';
+import '../documents/pdf_text.dart';
 import '../documents/text_doc_reader.dart';
 import '../mail/eml_reader.dart';
 import '../mail/msg_reader.dart';
@@ -51,6 +52,9 @@ enum AttachmentTextKind {
   /// Без расширения: письмо (так Exchange отдаёт вложенные письма) или
   /// документ — по началу файла.
   sniff,
+
+  /// PDF (1.15.1).
+  pdf,
 }
 
 /// Извлечённый текст. [retryLater] — текста сейчас не получить, но позже
@@ -105,8 +109,12 @@ class AttachmentText {
   static const _htmlExt = {'htm', 'html', 'xhtml'};
 
   /// Как читать вложение [fileName] с MIME-типом [mimeType]; null — текста
-  /// из такого файла не извлечь (картинки, архивы, PDF…).
+  /// из такого файла не извлечь (картинки, архивы…).
   static AttachmentTextKind? kindOf(String fileName, {String? mimeType}) {
+    final mtPdf = (mimeType ?? '').toLowerCase().split(';').first.trim();
+    if (OfficeFormats.extOf(fileName) == 'pdf' || mtPdf == 'application/pdf' || mtPdf == 'application/x-pdf') {
+      return AttachmentTextKind.pdf;
+    }
     if (OfficeFormats.of(fileName, mimeType: mimeType) != null || OfficeFormats.isLegacy(fileName)) {
       return AttachmentTextKind.office;
     }
@@ -185,9 +193,15 @@ class AttachmentText {
       return ExtractedText.later;
     }
     if (kind == AttachmentTextKind.sniff) {
-      kind = EmlReader.looksLikeEml(_head(file, 4096)) ? AttachmentTextKind.eml : AttachmentTextKind.office;
+      final head = _head(file, 4096);
+      kind = EmlReader.looksLikeEml(head)
+          ? AttachmentTextKind.eml
+          : (PdfText.looksLikePdf(head) ? AttachmentTextKind.pdf : AttachmentTextKind.office);
     }
     switch (kind) {
+      case AttachmentTextKind.pdf:
+        if (len > PdfText.maxBytes) return ExtractedText.none;
+        return ExtractedText(clean(PdfText.extract(file.readAsBytesSync(), maxChars: maxChars)));
       case AttachmentTextKind.office:
       case AttachmentTextKind.sniff:
         try {
@@ -299,11 +313,16 @@ class AttachmentText {
     try {
       var kind = kindOf(fileName, mimeType: mimeType);
       if (kind == AttachmentTextKind.sniff) {
-        kind = EmlReader.looksLikeEml(_cut(bytes, 4096)) ? AttachmentTextKind.eml : AttachmentTextKind.office;
+        final head = _cut(bytes, 4096);
+        kind = EmlReader.looksLikeEml(head)
+            ? AttachmentTextKind.eml
+            : (PdfText.looksLikePdf(head) ? AttachmentTextKind.pdf : AttachmentTextKind.office);
       }
       switch (kind) {
         case null:
           return '';
+        case AttachmentTextKind.pdf:
+          return clean(PdfText.extract(bytes, maxChars: max), max: max);
         case AttachmentTextKind.text:
           return clean(_decode(_cut(bytes, _textBytes), lang, bytes.length > _textBytes), max: max);
         case AttachmentTextKind.html:

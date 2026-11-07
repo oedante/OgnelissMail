@@ -72,7 +72,7 @@ void main() {
     expect(AttachmentText.kindOf('Сообщение', mimeType: 'message/rfc822'), AttachmentTextKind.eml);
     expect(AttachmentText.kindOf('readme', mimeType: 'text/plain'), AttachmentTextKind.text);
     expect(AttachmentText.kindOf('ATT00001'), AttachmentTextKind.sniff);
-    for (final n in ['photo.jpg', 'image001.png', 'archive.zip', 'scan.pdf', 'setup.exe']) {
+    for (final n in ['photo.jpg', 'image001.png', 'archive.zip', 'setup.exe']) {
       expect(AttachmentText.kindOf(n), isNull, reason: n);
     }
   });

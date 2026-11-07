@@ -4105,16 +4105,13 @@ class SyncService {
       await (db.update(db.syncQueue)
             ..where((q) => q.accountId.equals(accountId) & q.targetId.equals(oldId)))
           .write(SyncQueueCompanion(targetId: Value(newId)));
-      await db.removeEmailFts(oldId, accountId: accountId);
       final row = await db.getEmailById(newId, accountId: accountId);
       if (row != null) {
-        await db.indexEmailFts(
-          emailId: newId,
-          accountId: accountId,
-          subject: row.subject,
-          fromText: '${row.fromName ?? ''} ${row.fromEmail}',
-          body: row.bodyPlain ?? row.bodyPreview ?? '',
-        );
+        // Текст вложений — с письмом под новым номером (1.15.1).
+        await db.renameEmailFts(accountId, oldId, newId,
+            subject: row.subject, fromText: '${row.fromName ?? ''} ${row.fromEmail}', body: row.bodyPlain ?? row.bodyPreview ?? '');
+      } else {
+        await db.removeEmailFts(oldId, accountId: accountId);
       }
     } catch (e) {
       // Строка с новым id уже пришла синхронизацией — старая лишняя.

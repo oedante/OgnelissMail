@@ -3618,7 +3618,7 @@
     <string name="zipCannotRead">Không đọc được tệp nén: tệp bị hỏng hoặc ở định dạng ứng dụng không hỗ trợ (7z, RAR). Hãy mở bằng ứng dụng khác.</string>
     <string name="pdfProtected">Tệp PDF được bảo vệ bằng mật khẩu. Hãy mở bằng ứng dụng khác.</string>
     <string name="faq_mail_10_q">Tệp đính kèm nào mở ngay trong ứng dụng?</string>
-    <string name="faq_mail_10_a">Tài liệu Office, cả mới (DOCX, XLSX, PPTX) lẫn cũ (DOC, XLS, PPT), tệp OpenDocument (ODT, ODS, ODP), RTF, CSV, tệp văn bản và Markdown mở ngay trong ứng dụng, ở chế độ chỉ đọc — macro không bao giờ được chạy; bảng tính hiển thị dạng lưới theo từng trang tính, bản trình bày hiển thị dạng trang chiếu, Markdown hiển thị dạng văn bản có định dạng. Thư .eml và thư Outlook .msg mở như thư thông thường, kèm cả tệp đính kèm của chúng. Tệp nén ZIP, kể cả có mật khẩu, cùng TAR, GZ, BZ2 và XZ cũng mở trong ứng dụng: chạm vào tệp bên trong để mở. Ngoài ra, PDF trên Android, ảnh và vé .pkpass cũng mở trong ứng dụng. Trên iPhone và iPad, Xem nhanh của iOS hiển thị PDF, ảnh, tài liệu Office, RTF và CSV, còn tệp OpenDocument, tệp văn bản, Markdown và thư do chính ứng dụng hiển thị. Tài liệu Office 95 trở về trước cùng tệp nén 7z và RAR mở bằng ứng dụng khác, và có thể gửi mọi tệp tới ứng dụng đó bằng nút ở trên cùng.</string>
+    <string name="faq_mail_10_a">Tài liệu Office, cả mới (DOCX, XLSX, PPTX) lẫn cũ (DOC, XLS, PPT), tệp OpenDocument (ODT, ODS, ODP), RTF, CSV, tệp văn bản và Markdown mở ngay trong ứng dụng, ở chế độ chỉ đọc — macro không bao giờ được chạy; bảng tính hiển thị dạng lưới theo từng trang tính, bản trình bày hiển thị dạng trang chiếu, Markdown hiển thị dạng văn bản có định dạng. Thư .eml và thư Outlook .msg mở như thư thông thường, kèm cả tệp đính kèm của chúng. Tệp nén ZIP, kể cả có mật khẩu, cùng TAR, GZ, BZ2 và XZ cũng mở trong ứng dụng: chạm vào tệp bên trong để mở. Ngoài ra, PDF trên Android, ảnh và vé .pkpass cũng mở trong ứng dụng. Trên iPhone và iPad, Xem nhanh của iOS hiển thị PDF, ảnh, tài liệu Office, RTF và CSV, còn tệp OpenDocument, tệp văn bản, Markdown và thư do chính ứng dụng hiển thị. Tài liệu Word và PowerPoint 95 trở về trước, sổ làm việc Excel 4 trở về trước cùng tệp nén 7z và RAR mở bằng ứng dụng khác, và có thể gửi mọi tệp tới ứng dụng đó bằng nút ở trên cùng.</string>
     <string name="quickRepliesCardHint">Văn bản được đưa vào thư trả lời — kiểm tra rồi gửi</string>
     <string name="translateMsgLang">Ngôn ngữ thư: {lang}</string>
     <string name="translateDone">Đã dịch: {from} → {to}</string>
@@ -3779,13 +3779,14 @@
     <string name="favoritesOrder">Thứ tự ô</string>
     <string name="favoritesOrderHint">Kéo mục bằng tay nắm bên phải — các ô trong menu theo thứ tự này.</string>
     <string name="docProtected">Tài liệu được bảo vệ bằng mật khẩu. Hãy mở bằng ứng dụng khác.</string>
-    <string name="docLegacyFormat">Ứng dụng không hiển thị được tài liệu định dạng Office cũ (Word, Excel và PowerPoint 95 trở về trước). Hãy mở tệp bằng ứng dụng khác.</string>
+    <string name="docLegacyFormat">Ứng dụng không hiển thị được tài liệu định dạng Office cũ (Word và PowerPoint 95 trở về trước, Excel 4 trở về trước). Hãy mở tệp bằng ứng dụng khác.</string>
     <string name="docTooLarge">Tài liệu quá lớn để xem trước. Hãy mở bằng ứng dụng khác.</string>
     <string name="docTruncated">Tài liệu lớn — chỉ hiển thị phần đầu. Hãy mở bằng ứng dụng khác để xem toàn bộ.</string>
     <string name="docEmpty">Tài liệu không có văn bản.</string>
     <string name="docSheetTruncated">Trang tính lớn — chỉ hiển thị phần đầu</string>
     <string name="docSheetEmpty">Trang tính trống</string>
     <string name="docSlideOf">Trang chiếu {n}/{total}</string>
+    <string name="docSlideNotes">Ghi chú của diễn giả</string>
     <string name="docPreviewSection">Xem trước tài liệu</string>
     <string name="docPreview">Tài liệu trong ứng dụng</string>
     <string name="docPreviewDesc">Tài liệu, bảng tính và bản trình bày trong thư mở ngay tại đây, không cần ứng dụng khác. Khi tắt — mở bằng ứng dụng cho định dạng đó.</string>
@@ -3836,7 +3837,7 @@
     <string name="searchAttachmentsTextDesc">Tìm kiếm thấy từ trong tệp đính kèm đã tải xuống: tài liệu, bảng tính, bản trình bày, tệp văn bản và thư đính kèm</string>
     <string name="searchFoundInAttachment">Trong tệp đính kèm: {text}</string>
     <string name="faq_mail_12_q">Làm thế nào để tìm thư theo nội dung trong tệp đính kèm?</string>
-    <string name="faq_mail_12_a">Tìm kiếm cũng thấy từ ngữ bên trong các tệp đính kèm đã tải xuống: tài liệu Office và OpenDocument, RTF, bảng CSV, bản trình bày, tệp văn bản và thư đính kèm. Trong kết quả, thư như vậy có dòng “Trong tệp đính kèm: …” kèm đoạn tìm thấy. Tệp đính kèm phải được tải xuống — đã mở hoặc đã tải cùng với thư; hiện chưa tìm được trong PDF. Để tắt: Cài đặt → Thư → Tìm trong nội dung tệp đính kèm.</string>
+    <string name="faq_mail_12_a">Tìm kiếm cũng thấy từ ngữ bên trong các tệp đính kèm đã tải xuống: tài liệu Office và OpenDocument, RTF, PDF, bảng CSV, bản trình bày, tệp văn bản và thư đính kèm. Trong kết quả, thư như vậy có dòng “Trong tệp đính kèm: …” kèm đoạn tìm thấy. Tệp đính kèm phải được tải xuống — đã mở hoặc đã tải cùng với thư. Không tìm trong PDF có mật khẩu mở và bản quét không có lớp văn bản. Để tắt: Cài đặt → Thư → Tìm trong nội dung tệp đính kèm.</string>
     <string name="faq_mail_13_q">Các biểu tượng dưới phần đầu thư là gì?</string>
     <string name="faq_mail_13_a">Thông tin về thư — bản dịch, hủy đăng ký nhận tin, hình ảnh bị ẩn, yêu cầu xác nhận đã đọc, trạng thái gửi, chữ ký, mức độ quan trọng, thẻ — được gom vào một hàng biểu tượng. Chạm vào biểu tượng sẽ mở chi tiết kèm các nút, chạm lần nữa sẽ thu gọn lại. Biểu tượng dịch và hình ảnh có tác dụng ngay: dịch thư hoặc hiện hình ảnh, còn các tùy chọn khác nằm trong menu ▾ hoặc khi nhấn giữ. Cảnh báo người gửi giả mạo và lời mời họp vẫn hiển thị dạng thẻ đầy đủ.</string>
     <string name="faq_mail_14_q">Làm thế nào để bố trí màn hình máy tính bảng hoặc máy tính giống Outlook?</string>

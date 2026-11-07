@@ -24,9 +24,13 @@
 // страниц и разделов — чертой; сноски и концевые сноски — под чертой в
 // конце; встроенные картинки PNG/JPEG/BMP. Исправления — принятыми,
 // скрытый текст — не показывается.
-// Не показываются: колонтитулы, примечания, надписи и фигуры (они вне
-// основного текста), EMF/WMF, табуляция (пробелом), «быстро сохранённые»
-// изменения кусков (Prm), поля страницы.
+// Колонтитулы (1.15.1) — серым вверху и внизу документа, одинаковые — один
+// раз (PlcfHdd: по 6 частей на раздел — верхний и нижний для чётных,
+// нечётных и первой страницы); примечания (1.15.1) — под чертой после
+// сносок: автор (GrpXstAtnOwners) и текст (PlcfandRef, PlcfandTxt).
+// Не показываются: надписи и фигуры (они вне основного текста), EMF/WMF,
+// табуляция (пробелом), «быстро сохранённые» изменения кусков (Prm), поля
+// страницы.
 //
 // Word 6/95 и старше — [OfficeDocError.legacy]; документ с паролем (или
 // «XOR-обфускацией») — [OfficeDocError.encrypted]. Все смещения и длины —
@@ -326,7 +330,15 @@ class _Doc {
       if (budget.full) break;
       notes.addAll(n());
     }
-    return DocHtml.render(body, notes: notes, images: images.map, truncated: budget.truncated || head.truncated);
+    final (header, footer) = budget.full ? (const <DocBlock>[], const <DocBlock>[]) : _headersFooters();
+    final comments = budget.full ? const <DocBlock>[] : _comments();
+    return DocHtml.render(body,
+        notes: notes,
+        header: header,
+        footer: footer,
+        comments: comments,
+        images: images.map,
+        truncated: budget.truncated || head.truncated);
   }
 
   // ── Куски текста ──
@@ -898,6 +910,100 @@ class _Doc {
       });
     }
     return out;
+  }
+
+  /// Колонтитулы: верхние и нижние части всех разделов (PlcfHdd, часть FIB
+  /// 11), одинаковые по тексту — один раз.
+  (List<DocBlock>, List<DocBlock>) _headersFooters() {
+    final plc = _tablePart(11);
+    if (plc == null || ccpHdd <= 0 || plc.length < 8 * 4) return (const [], const []);
+    final bd = ByteData.sublistView(plc);
+    final base = ccpText + ccpFtn;
+    final end = base + ccpHdd;
+    final n = math.min(plc.length ~/ 4, 6 + 6 * 64);
+    final header = <DocBlock>[], footer = <DocBlock>[];
+    final seen = <String>{};
+    // Первые 6 частей — разделители сносок; дальше по 6 на раздел.
+    for (var i = 6; i + 1 < n && !budget.full; i++) {
+      final from = base + bd.getUint32(i * 4, Endian.little);
+      final to = math.min(end, base + bd.getUint32((i + 1) * 4, Endian.little));
+      if (to - from <= 1 || from < base) continue;
+      final blocks = _trimEmpty(_range(from, to));
+      final key = _plain(blocks);
+      if (key.isEmpty || !seen.add(key)) continue;
+      final kind = (i - 6) % 6;
+      (kind == 2 || kind == 3 || kind == 5 ? footer : header).addAll(blocks);
+    }
+    return (header, footer);
+  }
+
+  /// Примечания: автор и текст (PlcfandRef — 4, PlcfandTxt — 5,
+  /// GrpXstAtnOwners — 36).
+  List<DocBlock> _comments() {
+    final ref = _tablePart(4), txt = _tablePart(5);
+    if (ref == null || txt == null || ccpAtn <= 0 || ref.length < 4 + 30) return const [];
+    final rbd = ByteData.sublistView(ref), tbd = ByteData.sublistView(txt);
+    final n = math.min((ref.length - 4) ~/ 34, 10000);
+    final owners = <String>[];
+    final o = _tablePart(36);
+    if (o != null) {
+      final obd = ByteData.sublistView(o);
+      var p = 0;
+      while (p + 2 <= o.length && owners.length < 10000) {
+        final cch = obd.getUint16(p, Endian.little);
+        final end = p + 2 + cch * 2;
+        if (end > o.length) break;
+        owners.add(String.fromCharCodes([for (var q = p + 2; q < end; q += 2) obd.getUint16(q, Endian.little)]));
+        p = end;
+      }
+    }
+    final base = ccpText + ccpFtn + ccpHdd;
+    final out = <DocBlock>[];
+    for (var i = 0; i < n && !budget.full; i++) {
+      if ((i + 2) * 4 > txt.length) break;
+      final ibst = rbd.getUint16((n + 1) * 4 + i * 30 + 20, Endian.little);
+      final author = ibst < owners.length ? owners[ibst].trim() : '';
+      final from = base + tbd.getUint32(i * 4, Endian.little);
+      final to = math.min(base + ccpAtn, base + tbd.getUint32((i + 1) * 4, Endian.little));
+      if (to <= from) continue;
+      final blocks = _trimEmpty(_range(from, to));
+      if (blocks.isEmpty) continue;
+      if (author.isNotEmpty && blocks.first is DocPara) {
+        final p = blocks.first as DocPara;
+        blocks[0] = DocPara(p.style, [DocText('$author: ', const DocFont(bold: true)), ...p.inlines]);
+      }
+      out.addAll(blocks);
+    }
+    return out;
+  }
+
+  /// Без пустых абзацев в начале и в конце (каждая часть колонтитула и
+  /// примечания кончается своим знаком абзаца).
+  static List<DocBlock> _trimEmpty(List<DocBlock> blocks) {
+    bool empty(DocBlock b) => b is DocPara && _plain([b]).isEmpty;
+    var from = 0, to = blocks.length;
+    while (from < to && empty(blocks[from])) {
+      from++;
+    }
+    while (to > from && empty(blocks[to - 1])) {
+      to--;
+    }
+    return blocks.sublist(from, to);
+  }
+
+  /// Текст блоков без оформления — сравнить колонтитулы разных разделов.
+  static String _plain(List<DocBlock> blocks) {
+    final b = StringBuffer();
+    for (final x in blocks) {
+      if (x is DocPara) {
+        for (final i in x.inlines) {
+          if (i is DocText) b.write(i.text);
+        }
+      } else if (x is DocTable) {
+        b.write('\u0001${x.rows.length}');
+      }
+    }
+    return b.toString().trim();
   }
 
   /// Блоки текста [from, to) (основной текст или одна сноска).

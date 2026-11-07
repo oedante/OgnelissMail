@@ -899,6 +899,15 @@ class AppDatabase extends _$AppDatabase {
       return;
     }
     final rowId = ftsRowId(accountId, emailId);
+    // Письмо вернулось под новым номером (перенос без UIDPLUS: сервер не
+    // сказал новый UID, письмо пришло синхронизацией папки) — текст его
+    // вложений, запомненный при переносе (1.15.1).
+    if (attachmentsText.isEmpty && _movedAttachmentsText.isNotEmpty) {
+      final r = await customSelect('SELECT internet_message_id AS m FROM emails WHERE id = ? AND account_id = ? LIMIT 1',
+          variables: [Variable.withString(emailId), Variable.withString(accountId)]).getSingleOrNull();
+      final mid = (r?.data['m'] as String?)?.trim().toLowerCase() ?? '';
+      if (mid.contains('@')) attachmentsText = _movedAttachmentsText.remove('$accountId|$mid') ?? '';
+    }
     // Текст вложений (1.12.x, поиск по тексту вложений, просьба владельца
     // 04.11.2026) извлекается отдельно, после загрузки файла, а письмо
     // переиндексируется при каждом сохранении (синхронизация, докачка
@@ -909,6 +918,41 @@ class AppDatabase extends _$AppDatabase {
       'VALUES (?, ?, ?, ?, ?, ?, $_keepAttachmentsSql)',
       [rowId, emailId, accountId, subject, fromText, body, attachmentsText, rowId],
     );
+  }
+
+  /// Текст вложений писем, перенесённых без нового номера от сервера: до
+  /// прихода письма синхронизацией (ключ — аккаунт и Message-ID). В памяти:
+  /// письмо обычно приходит той же синхронизацией.
+  final Map<String, String> _movedAttachmentsText = {};
+
+  /// Письмо получило на сервере новый номер (перенос в другую папку, EWS):
+  /// строка индекса — под новым номером, текст вложений (его извлекали
+  /// отдельно, из файлов) — с ней (1.15.1; раньше терялся).
+  Future<void> renameEmailFts(
+    String accountId,
+    String oldId,
+    String newId, {
+    required String subject,
+    required String fromText,
+    required String body,
+  }) async {
+    final text = await ftsAttachmentsText(accountId, oldId) ?? '';
+    await removeEmailFts(oldId, accountId: accountId);
+    await indexEmailFts(
+        emailId: newId, accountId: accountId, subject: subject, fromText: fromText, body: body, attachmentsText: text);
+  }
+
+  /// Письмо убирается до прихода под новым номером (перенос, сервер нового
+  /// номера не сказал): запомнить текст его вложений по Message-ID.
+  Future<void> keepAttachmentsTextForReturn(String accountId, String emailId) async {
+    final r = await customSelect('SELECT internet_message_id AS m FROM emails WHERE id = ? AND account_id = ? LIMIT 1',
+        variables: [Variable.withString(emailId), Variable.withString(accountId)]).getSingleOrNull();
+    final mid = (r?.data['m'] as String?)?.trim().toLowerCase() ?? '';
+    if (!mid.contains('@')) return;
+    final text = await ftsAttachmentsText(accountId, emailId) ?? '';
+    if (text.isEmpty) return;
+    if (_movedAttachmentsText.length >= 500) _movedAttachmentsText.remove(_movedAttachmentsText.keys.first);
+    _movedAttachmentsText['$accountId|$mid'] = text;
   }
 
   /// Новый текст вложений, а пустой — прежний из строки индекса (параметры:

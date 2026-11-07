@@ -3656,7 +3656,7 @@
     <string name="zipCannotRead">Archiv nelze přečíst: je poškozený nebo ve formátu, který aplikace nezná (7z, RAR). Otevřete ho v jiné aplikaci.</string>
     <string name="pdfProtected">PDF je chráněno heslem. Otevřete ho v jiné aplikaci.</string>
     <string name="faq_mail_10_q">Které přílohy se otevřou přímo v aplikaci?</string>
-    <string name="faq_mail_10_a">Dokumenty Office, nové (DOCX, XLSX, PPTX) i staré (DOC, XLS, PPT), soubory OpenDocument (ODT, ODS, ODP), RTF, CSV, textové soubory a Markdown se otevřou přímo v aplikaci, jen pro čtení — makra se nikdy nespouštějí; tabulky se zobrazí jako mřížka s listy, prezentace jako snímky, Markdown jako formátovaný text. Zprávy .eml a zprávy Outlooku .msg se otevřou jako běžné zprávy, i s vlastními přílohami. Archivy ZIP, i chráněné heslem, a také TAR, GZ, BZ2 a XZ se v aplikaci otevřou rovněž: soubor uvnitř otevřete klepnutím. V aplikaci se otevřou i PDF na Androidu, obrázky a vstupenky .pkpass. Na iPhonu a iPadu zobrazuje PDF, obrázky, dokumenty Office, RTF a CSV Rychlý náhled systému iOS, soubory OpenDocument, textové soubory, Markdown a zprávy zobrazuje samotná aplikace. Dokumenty z Office 95 a starších a archivy 7z a RAR se otevřou v jiné aplikaci a každý soubor do ní pošlete tlačítkem nahoře.</string>
+    <string name="faq_mail_10_a">Dokumenty Office, nové (DOCX, XLSX, PPTX) i staré (DOC, XLS, PPT), soubory OpenDocument (ODT, ODS, ODP), RTF, CSV, textové soubory a Markdown se otevřou přímo v aplikaci, jen pro čtení — makra se nikdy nespouštějí; tabulky se zobrazí jako mřížka s listy, prezentace jako snímky, Markdown jako formátovaný text. Zprávy .eml a zprávy Outlooku .msg se otevřou jako běžné zprávy, i s vlastními přílohami. Archivy ZIP, i chráněné heslem, a také TAR, GZ, BZ2 a XZ se v aplikaci otevřou rovněž: soubor uvnitř otevřete klepnutím. V aplikaci se otevřou i PDF na Androidu, obrázky a vstupenky .pkpass. Na iPhonu a iPadu zobrazuje PDF, obrázky, dokumenty Office, RTF a CSV Rychlý náhled systému iOS, soubory OpenDocument, textové soubory, Markdown a zprávy zobrazuje samotná aplikace. Dokumenty z Word a PowerPoint 95 a starších, sešity z Excel 4 a starších a archivy 7z a RAR se otevřou v jiné aplikaci a každý soubor do ní pošlete tlačítkem nahoře.</string>
     <string name="quickRepliesCardHint">Text se vloží do odpovědi — zkontrolujte a odešlete</string>
     <string name="translateMsgLang">Jazyk zprávy: {lang}</string>
     <string name="translateDone">Přeloženo: {from} → {to}</string>
@@ -3821,13 +3821,14 @@
     <string name="favoritesOrder">Pořadí dlaždic</string>
     <string name="favoritesOrderHint">Přetáhněte položku za úchyt vpravo — dlaždice v nabídce budou v tomto pořadí.</string>
     <string name="docProtected">Dokument je chráněn heslem. Otevřete jej v jiné aplikaci.</string>
-    <string name="docLegacyFormat">Aplikace nezobrazí dokumenty ve starých formátech Office (Word, Excel a PowerPoint 95 a starší). Otevřete soubor v jiné aplikaci.</string>
+    <string name="docLegacyFormat">Aplikace nezobrazí dokumenty ve starých formátech Office (Word a PowerPoint 95 a starší, Excel 4 a starší). Otevřete soubor v jiné aplikaci.</string>
     <string name="docTooLarge">Dokument je pro náhled příliš velký. Otevřete jej v jiné aplikaci.</string>
     <string name="docTruncated">Dokument je velký — zobrazuje se jen začátek. Celý jej otevřete v jiné aplikaci.</string>
     <string name="docEmpty">Dokument neobsahuje žádný text.</string>
     <string name="docSheetTruncated">List je velký — zobrazuje se jen začátek</string>
     <string name="docSheetEmpty">List je prázdný</string>
     <string name="docSlideOf">Snímek {n} z {total}</string>
+    <string name="docSlideNotes">Poznámky řečníka</string>
     <string name="docPreviewSection">Náhled dokumentů</string>
     <string name="docPreview">Dokumenty v aplikaci</string>
     <string name="docPreviewDesc">Dokumenty, tabulky a prezentace ze zpráv se otevírají přímo zde, bez jiné aplikace. Vypnuto — v aplikaci pro daný formát.</string>
@@ -3878,7 +3879,7 @@
     <string name="searchAttachmentsTextDesc">Hledání najde slova ve stažených přílohách: dokumentech, tabulkách, prezentacích, textových souborech a přiložených zprávách</string>
     <string name="searchFoundInAttachment">V příloze: {text}</string>
     <string name="faq_mail_12_q">Jak najdu zprávu podle textu v příloze?</string>
-    <string name="faq_mail_12_a">Hledání najde slova i uvnitř stažených příloh: v dokumentech Office a OpenDocument, RTF, tabulkách CSV, prezentacích, textových souborech a přiložených zprávách. Ve výsledcích má taková zpráva řádek „V příloze: …“ s nalezeným místem. Příloha musí být stažená – otevřená nebo načtená spolu se zprávou; v PDF se zatím nehledá. Vypnutí: Nastavení → Pošta → Hledat v textu příloh.</string>
+    <string name="faq_mail_12_a">Hledání najde slova i uvnitř stažených příloh: v dokumentech Office a OpenDocument, RTF, PDF, tabulkách CSV, prezentacích, textových souborech a přiložených zprávách. Ve výsledcích má taková zpráva řádek „V příloze: …“ s nalezeným místem. Příloha musí být stažená – otevřená nebo načtená spolu se zprávou. V PDF s heslem pro otevření a ve skenech bez textu se nehledá. Vypnutí: Nastavení → Pošta → Hledat v textu příloh.</string>
     <string name="faq_mail_13_q">Co jsou ikony pod záhlavím zprávy?</string>
     <string name="faq_mail_13_a">Údaje o zprávě – překlad, odhlášení odběru, skryté obrázky, žádost o potvrzení o přečtení, doručení, podpis, důležitost, štítky – jsou shrnuty do jednoho řádku ikon. Klepnutí na ikonu rozbalí podrobnosti s tlačítky, další klepnutí je sbalí. Ikony překladu a obrázků fungují hned: přeloží zprávu nebo zobrazí obrázky, ostatní možnosti jsou v nabídce ▾ nebo pod dlouhým stisknutím. Upozornění na podvrženého odesílatele a pozvánky na schůzky zůstávají celými kartami.</string>
     <string name="faq_mail_14_q">Jak uspořádat obrazovku tabletu nebo počítače jako v Outlooku?</string>

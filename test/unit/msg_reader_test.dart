@@ -6,6 +6,7 @@
 // письмо — файлом .eml; испорченные и нарочно сделанные файлы — без падения.
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -250,5 +251,62 @@ void main() {
       depth++;
     }
     expect(depth, MsgReader.maxDepth);
+  });
+
+  // Настоящие письма Outlook из тестовых данных Apache POI (Apache-2.0,
+  // test/fixtures/msg/README.md), а не собранные msg_builder.dart.
+  group('настоящие письма Outlook (Apache POI)', () {
+    EmlMessage read(String name) => MsgReader.read(File('test/fixtures/msg/$name').readAsBytesSync(), lang: 'ru');
+
+    test('8-битные строки в Windows-1251 (кодовая страница письма), получатель с адресом', () {
+      final m = read('poi_cyrillic_message.msg');
+      expect(m.subject, 'Автоматический ответ подсистемы обмена данными ФГУП "Почта России".');
+      expect(m.from.single.email, 'no-reply@niips.ru');
+      expect(m.to.single.name, 'Свиридов Дмитрий Владимирович');
+      expect(m.to.single.email, 'sviridov@niips.ru');
+      expect(m.plain, startsWith('Ваше сообщение с темой "FW: RTM" было успешно получено'));
+      expect(m.date, DateTime.utc(2010, 5, 18, 7, 38, 39));
+    });
+
+    test('французская тема, два вложения, имя без кавычек Outlook', () {
+      final m = read('poi_attachment_test_msg.msg');
+      expect(m.subject, 'test pièce jointe 1');
+      expect(m.from.single.label, 'Nicolas1 23456 <nicolas1.23456@free.fr>');
+      expect(m.to.single.name, 'nicolas1.23456@free.fr', reason: 'кавычки вокруг имени убраны');
+      expect(m.plain?.trim(), 'contenu');
+      final names = {for (final a in m.attachments) a.name: a};
+      expect(names.keys, containsAll(['pj1.txt', 'test-unicode.doc']));
+      expect(names['pj1.txt']!.contentType, 'text/plain');
+      expect(names['test-unicode.doc']!.bytes.length, 24064);
+    });
+
+    test('Unicode, HTML из RTF и картинка в тексте по Content-ID', () {
+      final m = read('poi_example_received_unicode.msg');
+      expect(m.subject, 'This is a test message please ignore');
+      expect(m.to.map((a) => a.name), ['Ashutosh Dandavate', 'Paul Holmes-Higgin', 'Mike Farman']);
+      expect(m.html, contains('cid:716052216@11012010-3410'));
+      expect(m.inlineImages.keys, ['716052216@11012010-3410']);
+      expect(m.attachments, isEmpty, reason: 'картинка — в тексте, не вложением');
+    });
+
+    test('Exchange: отправитель без SMTP в свойствах — адрес из заголовков или только имя', () {
+      final o = read('poi_outlook_30_msg.msg');
+      expect(o.from.single.label, 'Cramer, Nick <nick.cramer@pnl.gov>');
+      expect(o.to.length, 18);
+      expect(o.html, isNotNull);
+      expect(o.plain, contains('I am shutting down the IN-SPIRE servers'));
+      final q = read('poi_quick.msg');
+      expect(q.subject, 'Test the content transformer');
+      expect(q.from.single.name, 'Kevin Roast');
+      expect(q.plain?.trim(), 'The quick brown fox jumps over the lazy dog');
+    });
+
+    test('в .eml и обратно: тема, адреса и вложения сохраняются', () {
+      final m = read('poi_attachment_test_msg.msg');
+      final back = EmlReader.parse(MsgReader.toEml(m));
+      expect(back.subject, m.subject);
+      expect(back.from.single.email, 'nicolas1.23456@free.fr');
+      expect(back.attachments.map((a) => a.name), containsAll(['pj1.txt', 'test-unicode.doc']));
+    });
   });
 }

@@ -17,9 +17,16 @@
 // оформление), объединения (MergeCells), сетка и закрепление (Window2, Pane).
 // Формулы не вычисляются: показывается сохранённое значение, как в XLSX.
 //
-// Книга с паролем на открытие (запись FilePass) — [OfficeDocError.encrypted];
-// Excel 5/95 и старше (BIFF5–BIFF2: поток «Book», другая версия в BOF) —
-// [OfficeDocError.legacy], как раньше. Диаграммы, картинки, примечания,
+// Книга с записью FilePass (1.15.1): Excel шифрует и книги без пароля на
+// открытие — стандартным паролем «VelvetSweatshop» (защита структуры,
+// «только чтение»); такие расшифровываются (xls_crypt.dart). С настоящим
+// паролем на открытие — [OfficeDocError.encrypted].
+//
+// Excel 5/95 (BIFF5, 1.15.1: выгрузки 1С 7.7 и старые бланки): поток «Book»
+// или «Workbook» с версией 0x0500 в BOF. Строки — однобайтовые в кодовой
+// странице книги (запись CodePage, у русских — 1251), без общей таблицы
+// строк; у XF другая раскладка рамок и заливки; объединений ячеек нет.
+// Excel 4 и старше (BIFF2–4) — [OfficeDocError.legacy]. Диаграммы, картинки, примечания,
 // условное форматирование, гиперссылки — не показываются. Пределы — как у
 // XLSX ([SheetLimits]); записям и объявленным в них количествам не верим:
 // всё читается в пределах самих данных записи.
@@ -28,9 +35,11 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'cfb_reader.dart';
+import 'doc_codepages.dart';
 import 'doc_sheets.dart';
 import 'office_package.dart';
 import 'sheet_format.dart';
+import 'xls_crypt.dart';
 import 'xlsx_reader.dart';
 
 class XlsReader {
@@ -39,10 +48,11 @@ class XlsReader {
   /// Похоже на книгу Excel: в файле есть поток книги (BIFF8 или старше).
   static bool isWorkbook(CfbFile cfb) => cfb.hasStream('Workbook') || cfb.hasStream('Book');
 
-  /// Разобрать книгу. Ошибки — только [OfficeDocException].
-  static OfficeSheetsDoc read(CfbFile cfb, {String lang = 'en'}) {
+  /// Разобрать книгу. Ошибки — только [OfficeDocException]. [password] —
+  /// для зашифрованной книги (по умолчанию стандартный пароль Excel).
+  static OfficeSheetsDoc read(CfbFile cfb, {String lang = 'en', String password = XlsCrypt.defaultPassword}) {
     try {
-      return _Xls(cfb, SheetLocale.of(lang)).read();
+      return _Xls(cfb, SheetLocale.of(lang), password).read();
     } on OfficeDocException {
       rethrow;
     } catch (e) {
@@ -84,6 +94,7 @@ const _defaultRowHeight = 0x0225;
 const _mergeCells = 0x00E5;
 const _window2 = 0x023E;
 const _pane = 0x0041;
+const _codePage = 0x0042;
 
 class _Font {
   final bool b, i, u, s;
@@ -154,6 +165,17 @@ class _Chunks {
   int u16() => byte() | (byte() << 8);
   int u32() => u16() | (u16() << 16);
 
+  /// [n] байт подряд (через границы частей); лишнее сверх предела знаков
+  /// ячейки пропускается.
+  List<int> bytes(int n) {
+    final out = <int>[];
+    for (var k = 0; k < n && !atEnd; k++) {
+      final b = byte();
+      if (out.length < SheetLimits.maxCellText) out.add(b);
+    }
+    return out;
+  }
+
   void skip(int n) {
     var left = n;
     while (left > 0 && !atEnd) {
@@ -199,10 +221,18 @@ class _Chunks {
 }
 
 class _Xls {
-  _Xls(this.cfb, this.loc);
+  _Xls(this.cfb, this.loc, this.password);
 
   final CfbFile cfb;
   final SheetLocale loc;
+  final String password;
+
+  /// Excel 5/95: строки однобайтовые в кодовой странице [cp].
+  bool biff5 = false;
+  int cp = 1252;
+
+  /// Книга была зашифрована и расшифрована: запись FilePass — пропустить.
+  bool decrypted = false;
   final book = DocBookBuilder();
 
   late Uint8List w;
@@ -223,13 +253,10 @@ class _Xls {
   int u32(int at) => bd.getUint32(at, Endian.little);
 
   OfficeSheetsDoc read() {
-    final entry = cfb.entry('Workbook');
-    if (entry == null || !entry.isStream) {
-      // Excel 5/95 пишет поток «Book» (BIFF5) — старый формат.
-      if (cfb.hasStream('Book')) throw const OfficeDocException(OfficeDocError.legacy, 'biff5');
-      throw const OfficeDocException(OfficeDocError.damaged, 'no workbook');
-    }
-    final head = cfb.readHead('Workbook', OfficeLimits.maxPartBytes)!;
+    // Excel 5/95 пишет поток «Book».
+    final name = cfb.entry('Workbook')?.isStream == true ? 'Workbook' : (cfb.hasStream('Book') ? 'Book' : null);
+    if (name == null) throw const OfficeDocException(OfficeDocError.damaged, 'no workbook');
+    final head = cfb.readHead(name, OfficeLimits.maxPartBytes)!;
     w = head.bytes;
     bd = ByteData.sublistView(w);
     if (head.truncated) book.truncated = true;
@@ -240,7 +267,20 @@ class _Xls {
       throw const OfficeDocException(OfficeDocError.legacy, 'biff4');
     }
     if (type != _bof) throw const OfficeDocException(OfficeDocError.damaged, 'no bof');
-    if (u16(4) != 0x0600) throw OfficeDocException(OfficeDocError.legacy, 'biff ${u16(4).toRadixString(16)}');
+    final version = u16(4);
+    if (version == 0x0500) {
+      biff5 = true;
+      cp = DocCodePages.forLanguage(loc.lang);
+    } else if (version != 0x0600) {
+      throw OfficeDocException(OfficeDocError.legacy, 'biff ${version.toRadixString(16)}');
+    }
+    if (!biff5 && XlsCrypt.isEncrypted(w)) {
+      final plain = XlsCrypt.decrypt(w, password: password);
+      if (plain == null) throw OfficeDocException(OfficeDocError.encrypted, 'xls ${XlsCrypt.describe(w)}');
+      w = plain;
+      bd = ByteData.sublistView(w);
+      decrypted = true;
+    }
     final globalsEnd = _globals();
 
     // Листы — по смещениям из BoundSheet8; смещение не на BOF — по порядку
@@ -321,7 +361,9 @@ class _Xls {
         case _eof:
           return --depth > 0;
         case _filePass:
-          throw const OfficeDocException(OfficeDocError.encrypted, 'xls filepass');
+          if (!decrypted) throw const OfficeDocException(OfficeDocError.encrypted, 'xls filepass');
+        case _codePage:
+          if (len >= 2) cp = _codePageOf(u16(at)) ?? cp;
         case _date1904:
           if (len >= 2) date1904 = u16(at) == 1;
         case _window1:
@@ -329,13 +371,14 @@ class _Xls {
         case _font:
           if (len >= 14 && fonts.length < SheetLimits.maxStyles) fonts.add(_readFont(at, len));
         case _formatRec:
-          if (len >= 5 && formats.length < 2000) {
+          if (len >= 3 && formats.length < 2000) {
             final c = _Chunks([Uint8List.sublistView(w, at + 2, at + len)]);
-            final cch = c.u16();
-            formats[u16(at)] = c.chars(cch, c.byte() & 1 == 1);
+            final cch = biff5 ? c.byte() : c.u16();
+            formats[u16(at)] = _str(c, cch);
           }
         case _xf:
-          if (len >= 20 && xfs.length < SheetLimits.maxStyles * 4) xfs.add(_readXf(at));
+          if (biff5 && len >= 16 && xfs.length < SheetLimits.maxStyles * 4) xfs.add(_readXf5(at));
+          if (!biff5 && len >= 20 && xfs.length < SheetLimits.maxStyles * 4) xfs.add(_readXf(at));
         case _palette:
           if (len >= 2) {
             final n = math.min(u16(at), math.min(56, (len - 2) ~/ 4));
@@ -351,7 +394,7 @@ class _Xls {
             final dt = w[at + 5];
             final c = _Chunks([Uint8List.sublistView(w, at + 6, at + len)]);
             final cch = c.byte();
-            final name = c.chars(cch, c.byte() & 1 == 1).trim();
+            final name = _str(c, cch).trim();
             // Только видимые рабочие листы: диаграммы, модули VBA и листы
             // макросов Excel 4 — не таблицы.
             if (!hidden && dt == 0) {
@@ -381,7 +424,7 @@ class _Xls {
     if (len >= 16) {
       final c = _Chunks([Uint8List.sublistView(w, at + 14, at + len)]);
       final cch = c.byte();
-      name = c.chars(cch, c.byte() & 1 == 1);
+      name = _str(c, cch);
     }
     final px = height <= 0 || height > 409 ? SheetFonts.px(10, name) : SheetFonts.px(height, name);
     return _Font(bls >= 600, grbit & 0x2 != 0, uls != 0, grbit & 0x8 != 0, px, icv);
@@ -410,6 +453,48 @@ class _Xls {
       (b2 >> 26) & 0x3F,
       c & 0x7F,
       (c >> 7) & 0x7F,
+    );
+  }
+
+  /// Строка после длины: BIFF8 — байт флагов и знаки (UTF-16 или младшие
+  /// байты), BIFF5 — байты в кодовой странице книги.
+  String _str(_Chunks c, int cch) => biff5 ? DocCodePages.decode(c.bytes(cch), cp) : c.chars(cch, c.byte() & 1 == 1);
+
+  /// Номер кодовой страницы из записи CodePage (BIFF2–5 писали 0x8001 для
+  /// 1252); 1200 (UTF-16) и неизвестные — null.
+  static int? _codePageOf(int v) {
+    final cp = switch (v) {
+      0x8001 || 0x04E4 => 1252,
+      0x8000 => 10000,
+      _ => v,
+    };
+    return DocCodePages.known(cp) ? cp : null;
+  }
+
+  /// XF Excel 5/95: шрифт, формат, выравнивание; рамки и заливка —
+  /// в 8 байтах после выравнивания.
+  _Xf _readXf5(int at) {
+    final align = w[at + 6];
+    final a = u32(at + 8);
+    final b = u32(at + 12);
+    return _Xf(
+      u16(at),
+      u16(at + 2),
+      align & 7,
+      (align >> 4) & 7,
+      0,
+      align & 0x8 != 0,
+      (b >> 3) & 7,
+      (b >> 6) & 7,
+      b & 7,
+      (a >> 22) & 7,
+      (b >> 16) & 0x7F,
+      (b >> 23) & 0x7F,
+      (b >> 9) & 0x7F,
+      (a >> 25) & 0x7F,
+      (a >> 16) & 0x3F,
+      a & 0x7F,
+      (a >> 7) & 0x7F,
     );
   }
 
@@ -612,7 +697,7 @@ class _Xls {
           if (len >= 9) {
             final c = _Chunks([Uint8List.sublistView(w, at + 6, at + len)]);
             final cch = c.u16();
-            cell(u16(at), u16(at + 2), u16(at + 4), _lines(c.chars(cch, c.byte() & 1 == 1)), DocCellKind.text);
+            cell(u16(at), u16(at + 2), u16(at + 4), _lines(_str(c, cch)), DocCellKind.text);
           }
         case _number:
           if (len >= 14) number(u16(at), u16(at + 2), u16(at + 4), bd.getFloat64(at + 6, Endian.little));
@@ -661,7 +746,7 @@ class _Xls {
           if (strRow >= 0 && len >= 3) {
             final c = _withContinues(at, len, at + len);
             final cch = c.u16();
-            cell(strRow, strCol, strXf, _lines(c.chars(cch, c.byte() & 1 == 1)), DocCellKind.text);
+            cell(strRow, strCol, strXf, _lines(_str(c, cch)), DocCellKind.text);
           }
           strRow = -1;
         case _blank:

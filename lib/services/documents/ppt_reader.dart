@@ -19,14 +19,26 @@
 // заполнителя может лежать и в списке SlideListWithText — по
 // OutlineTextRefAtom). Группы раскрываются в координаты слайда.
 //
-// Не показываются: заметки, анимация, гиперссылки в тексте, диаграммы и
-// внедрённые объекты (их картинка-заменитель — если это PNG/JPEG), свои
-// контуры фигур (рисуются прямоугольником), EMF/WMF. Скрытые слайды — без
-// них. Пароль — [OfficeDocError.encrypted]; PowerPoint 95 и старше —
+// Заметки докладчика (1.15.1): у слайда в SlideAtom — номер страницы
+// заметок, по списку заметок (SlideListWithText, вид 2) — её постоянный
+// объект NotesContainer; текст — в фигуре-заполнителе «текст заметок»
+// (PT_NotesBody или TextHeaderAtom вида «заметки»).
+//
+// Диаграммы и внедрённые объекты (OLE): показывается их картинка-заменитель,
+// если это PNG/JPEG; иначе (обычно EMF) — плашка со значком по виду объекта
+// (1.15.1): ссылка фигуры ExObjRefAtom → объект из ExObjList → подвид
+// ExOleObjAtom (Graph, ExcelChart, OrgChart, звук), имя программы
+// (MSGraph.Chart, Excel.Chart) или, если их нет (так пишет LibreOffice), —
+// поток CompObj внутри хранилища объекта (ExOleObjStg, сжатого zlib).
+//
+// Не показываются: анимация, гиперссылки в тексте, содержимое диаграмм и
+// внедрённых объектов, свои контуры фигур (рисуются прямоугольником),
+// EMF/WMF. Скрытые слайды — без них. Пароль — [OfficeDocError.encrypted]; PowerPoint 95 и старше —
 // [OfficeDocError.legacy]. Смещения, длины и количества — из чужого файла:
 // всё проверяется по границам, петли в цепочке правок и группах —
 // с пределом.
 
+import 'dart:io' show RawZLibFilter;
 import 'dart:math' as math;
 import 'dart:typed_data';
 
@@ -78,6 +90,21 @@ const _rtOutlineTextRef = 0x0F9E;
 const _rtDrawing = 0x040C;
 const _rtDrawingGroup = 0x040B;
 const _rtPlaceholder = 0x0BC3;
+const _rtNotes = 0x03F0;
+const _rtExObjList = 0x0409;
+const _rtExEmbed = 0x0FCC;
+const _rtExLink = 0x0FCE;
+const _rtExControl = 0x0FEE;
+const _rtExOleObjAtom = 0x0FC3;
+const _rtExOleObjStg = 0x1011;
+const _rtExObjRef = 0x0BC1;
+const _rtCString = 0x0FBA;
+const _rtExVideo = 0x1005;
+const _rtExMediaAtom = 0x1004;
+
+/// Звук и видео в ExObjList: ExAviMovie, ExMCIMovie, ExMIDIAudio,
+/// ExCDAudio, ExWAVAudioLink, ExWAVAudioEmbedded.
+const _rtMedia = {0x1006, 0x1007, 0x100D, 0x100E, 0x100F, 0x1010};
 
 /// Свойства абзаца (TextPFException); null — не задано.
 class _Pf {
@@ -191,6 +218,13 @@ class _Ppt {
   bool _truncated = false;
   double width = 720, height = 540;
 
+  /// Страницы заметок: номер (slideId из списка заметок) → постоянный объект.
+  final _notesIds = <int, int>{};
+
+  /// Внедрённые и связанные объекты: exObjId → запись из ExObjList.
+  final _exObjs = <int, ArtRecord>{};
+  final _embedKinds = <int, DocEmbed>{};
+
   /// Знаков текста на всю презентацию: один и тот же текст списка слайдов
   /// могут показывать сотни фигур (OutlineTextRefAtom) — без предела это
   /// гигабайты строк из файла в мегабайт.
@@ -256,6 +290,7 @@ class _Ppt {
       }
     }
     _readDrawingGroup(doc);
+    _readExObjs(doc);
 
     // Образцы: идентификатор слайда → постоянный объект.
     final masterIds = <int, int>{};
@@ -272,6 +307,12 @@ class _Ppt {
             slideRefs.add((u32(a.at), <_Text>[]));
           } else if (slideRefs.isNotEmpty) {
             _collectText(a, slideRefs.last.$2);
+          }
+        }
+      } else if (list.inst == 2) {
+        for (final a in kids(list)) {
+          if (a.type == _rtSlidePersist && a.len >= 16 && _notesIds.length < 10000) {
+            _notesIds[u32(a.at + 12)] = u32(a.at);
           }
         }
       }
@@ -560,8 +601,10 @@ class _Ppt {
     final atom = kid(r, _rtSlideAtom);
     var flags = 7;
     var masterId = 0;
+    var notesId = 0;
     if (atom != null && atom.len >= 22) {
       masterId = u32(atom.at + 12);
+      notesId = u32(atom.at + 16);
       flags = u16(atom.at + 20);
     }
     final m = _master(masterId, masterIds);
@@ -577,7 +620,172 @@ class _Ppt {
       final own = _drawing(drawing, local, shapes, outline);
       if (flags & 4 == 0 && own != null) bg = own;
     }
-    return DocSlide(background: bg, shapes: shapes);
+    return DocSlide(background: bg, shapes: shapes, notes: _notes(notesId));
+  }
+
+  // ── Заметки докладчика ──
+
+  /// Текст заметок к слайду: страница заметок [notesId] → её фигуры →
+  /// текст заполнителя «текст заметок». '' — заметок нет.
+  String _notes(int notesId) {
+    if (notesId == 0 || _textLeft <= 0) return '';
+    final pid = _notesIds[notesId];
+    final off = pid == null ? null : persist[pid];
+    final r = off == null ? null : rec(off);
+    if (r == null || r.type != _rtNotes) return '';
+    final drawing = kid(r, _rtDrawing);
+    final dg = drawing == null ? null : kid(drawing, 0xF002);
+    if (dg == null) return '';
+    final parts = <String>[];
+    void walk(ArtRecord g, int depth) {
+      if (depth > OfficeLimits.maxDepth) return;
+      for (final k in kids(g)) {
+        if (parts.length >= 50) return;
+        if (k.type == 0xF003) {
+          walk(k, depth + 1);
+        } else if (k.type == 0xF004) {
+          final t = _notesBody(k);
+          if (t != null && t.trim().isNotEmpty) parts.add(t);
+        }
+      }
+    }
+
+    walk(dg, 0);
+    final text = DocSlide.cleanNotes(parts.join('\n'));
+    _textLeft -= text.length;
+    return text;
+  }
+
+  /// Текст фигуры страницы заметок, если это «текст заметок»; иначе null
+  /// (картинка слайда, номер страницы, колонтитулы).
+  String? _notesBody(ArtRecord sp) {
+    final box = kid(sp, 0xF00D);
+    if (box == null) return null;
+    final data = kid(sp, 0xF011);
+    final ph = data == null ? null : kid(data, _rtPlaceholder);
+    // OEPlaceholderAtom: положение (4 байта), вид заполнителя (1 байт).
+    var notes = ph != null && ph.len >= 5 && s[ph.at + 4] == 0x0C;
+    final out = StringBuffer();
+    for (final k in kids(box)) {
+      if (k.type == _rtTextHeader && k.len >= 4) {
+        if (u32(k.at) == 2) notes = true;
+      } else if (k.type == _rtTextChars || k.type == _rtTextBytes) {
+        out.write(_chars(k));
+      }
+    }
+    return notes ? out.toString() : null;
+  }
+
+  // ── Внедрённые объекты ──
+
+  void _readExObjs(ArtRecord doc) {
+    final list = kid(doc, _rtExObjList);
+    if (list == null) return;
+    for (final e in kids(list)) {
+      if (_exObjs.length >= 10000) break;
+      if (e.type == _rtExEmbed || e.type == _rtExLink || e.type == _rtExControl) {
+        final a = kid(e, _rtExOleObjAtom);
+        if (a != null && a.len >= 24) _exObjs.putIfAbsent(u32(a.at + 8), () => e);
+      } else if (_rtMedia.contains(e.type)) {
+        final video = kid(e, _rtExVideo);
+        final a = kid(video ?? e, _rtExMediaAtom);
+        if (a != null && a.len >= 4) _exObjs.putIfAbsent(u32(a.at), () => e);
+      }
+    }
+  }
+
+  /// Вид объекта [id] для плашки на месте его картинки.
+  DocEmbed _embedKind(int id) => _embedKinds.putIfAbsent(id, () {
+    final e = _exObjs[id];
+    if (e == null) return DocEmbed.object;
+    if (_rtMedia.contains(e.type)) return DocEmbed.media;
+    final a = kid(e, _rtExOleObjAtom)!;
+    // ExOleObjAtom.subType: 4 — Graph, 5 — OrgChart, 8 — звук,
+    // 0x0E — диаграмма Excel, 0x0F — проигрыватель.
+    switch (u32(a.at + 12)) {
+      case 4 || 0x0E:
+        return DocEmbed.chart;
+      case 5:
+        return DocEmbed.diagram;
+      case 8 || 0x0F:
+        return DocEmbed.media;
+    }
+    final names = StringBuffer();
+    for (final k in kids(e)) {
+      if (k.type == _rtCString) names.write(' ${_chars(k)}');
+    }
+    final byName = _kindByName(names.toString());
+    if (byName != null) return byName;
+    if (e.type == _rtExEmbed) {
+      final off = persist[u32(a.at + 16)];
+      final st = off == null ? null : rec(off);
+      if (st != null && st.type == _rtExOleObjStg) {
+        final kind = _kindByName(_compObj(st) ?? '');
+        if (kind != null) return kind;
+      }
+    }
+    return DocEmbed.object;
+  });
+
+  static DocEmbed? _kindByName(String name) {
+    final n = name.toLowerCase();
+    if (n.contains('orgchart') || n.contains('orgplus')) return DocEmbed.diagram;
+    if (n.contains('chart') || n.contains('msgraph')) return DocEmbed.chart;
+    return null;
+  }
+
+  /// Строки потока «\u0001CompObj» хранилища объекта (имя и вид
+  /// программы); null — не прочитать.
+  String? _compObj(ArtRecord st) {
+    const limit = 8 * 1024 * 1024;
+    Uint8List? raw;
+    if (st.inst == 1) {
+      // Сжатое: размер после распаковки (4 байта) и поток zlib.
+      if (st.len < 6 || u32(st.at) > limit) return null;
+      raw = _inflate(Uint8List.sublistView(s, st.at + 4, st.end), limit);
+    } else {
+      raw = Uint8List.sublistView(s, st.at, st.end);
+    }
+    if (raw == null) return null;
+    try {
+      final c = CfbFile.open(raw).read('\u0001CompObj', max: 4096);
+      if (c == null) return null;
+      return String.fromCharCodes([for (final b in c) b >= 0x20 && b < 0x7F ? b : 0x20]);
+    } on OfficeDocException {
+      return null;
+    } on RangeError {
+      return null;
+    }
+  }
+
+  /// Распаковка zlib с пределом на результат; null — испорчено или больше.
+  static Uint8List? _inflate(Uint8List b, int limit) {
+    final filter = RawZLibFilter.inflateFilter();
+    final out = BytesBuilder(copy: false);
+    var total = 0;
+    bool drain({bool end = false}) {
+      while (true) {
+        final chunk = filter.processed(flush: false, end: end);
+        if (chunk == null || chunk.isEmpty) return true;
+        total += chunk.length;
+        if (total > limit) return false;
+        out.add(chunk);
+      }
+    }
+
+    try {
+      const step = 16 * 1024;
+      for (var i = 0; i < b.length; i += step) {
+        filter.process(b, i, math.min(b.length, i + step));
+        if (!drain()) return null;
+      }
+      if (!drain(end: true)) return null;
+    } catch (_) {
+      // Оборванный поток: что успели распаковать (каталог хранилища может
+      // быть и в начале).
+      if (total == 0) return null;
+    }
+    return out.takeBytes();
   }
 
   /// Текст заполнителя из списка слайдов (заголовок текста, знаки, стиль).
@@ -837,6 +1045,10 @@ class _Ppt {
       final img = pib == null ? null : _blip(pib);
       if (img != null) picture = DocPicture(img);
     }
+    // Внедрённый объект без картинки, которую можно показать, — плашка.
+    DocEmbed? embed;
+    final ref = data == null || picture != null ? null : kid(data, _rtExObjRef);
+    if (ref != null && ref.len >= 4) embed = _embedKind(u32(ref.at));
 
     _Text? text;
     if (textBox != null) {
@@ -858,7 +1070,7 @@ class _Ppt {
     // Линия не заливается; свой контур (так пишет и LibreOffice) — по вершинам.
     if (geom == DocGeom.line) fill = null;
     final path = geom == null && picture == null ? _path(src) : null;
-    if (fill == null && line == null && picture == null && body == null) return null;
+    if (fill == null && line == null && picture == null && body == null && embed == null) return null;
     out.add(
       DocShape(
         x: box.x,
@@ -874,6 +1086,7 @@ class _Ppt {
         line: line,
         picture: picture,
         text: body,
+        embed: embed,
       ),
     );
     return null;

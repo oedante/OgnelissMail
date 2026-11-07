@@ -1132,6 +1132,18 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   /// несколько десятков точек при неизменном тексте (замечание 08.10.2026).
   bool _measured = false;
   final List<Timer> _timers = [];
+
+  /// Высота окна до того, как приложение само его уменьшило (вписывание по
+  /// ширине, «Обычный размер», поворот). Android меняет размер встроенного
+  /// окна не сразу, а документ не бывает ниже окна: первые замеры после
+  /// перезагрузки возвращали прежнюю высоту окна, она принималась за высоту
+  /// письма — и окно снова вырастало, под письмом оставалось пустое поле
+  /// (эмулятор, прогон 41469766084: окно 849 при документе 503). Такие замеры
+  /// не принимаются, пока окно не уменьшится на самом деле ([_staleWaits]
+  /// раз, потом — как есть).
+  double? _shrunkFrom;
+  int _staleWaits = 0;
+  static const _maxStaleWaits = 15;
   InAppWebViewController? _web;
 
   /// Ширина экрана для письма (логические пиксели).
@@ -1464,6 +1476,17 @@ class _MailHtmlViewState extends State<MailHtmlView> {
       final v = (h * (Platform.isAndroid ? _effScale : 1)).toDouble().clamp(40.0, 60000.0);
       final grow = v - _height;
       _trace(() => 'замер: $h × $_effScale = $v, окно $_height, замерено $_measured, показано $_ready');
+      if (_shrunkFrom != null) {
+        if (_isStaleWindow(v) && _staleWaits < _maxStaleWaits) {
+          _staleWaits++;
+          _trace(() => 'это прежняя высота окна ($_shrunkFrom): окно ещё не уменьшилось, замер позже');
+          _timers.add(Timer(const Duration(milliseconds: 100), () {
+            if (mounted && !_reloading) unawaited(_measure(c));
+          }));
+          return;
+        }
+        _shrunkFrom = null;
+      }
       // Небольшой рост после первого измерения — эффект самого измерения, а
       // не содержимого; картинки и раскрытые блоки дают заметно больше.
       if (_measured && grow > 0 && grow < _height * 0.05 + 8) return;
@@ -1489,7 +1512,9 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     setState(() {
       // Высота — под исходный масштаб: замер её не уменьшил бы (документ не
       // ниже окна), под письмом оставалось пустое поле.
+      final from = _height;
       _height = (_height * _scale / _effScale).clamp(40.0, 60000.0);
+      _noteShrink(from);
       _pinched = false;
       _zoom = null;
       _heightZoom = 0;
@@ -1513,7 +1538,11 @@ class _MailHtmlViewState extends State<MailHtmlView> {
       // «По ширине экрана» — письмо мельче: высота уменьшается сразу (замер
       // её не уменьшил бы — документ не ниже окна, под письмом оставалось
       // пустое поле); больше — поднимут замеры.
-      if (_scale < was) _height = (_height * _scale / was).clamp(40.0, 60000.0);
+      if (_scale < was) {
+        final from = _height;
+        _height = (_height * _scale / was).clamp(40.0, 60000.0);
+        _noteShrink(from);
+      }
       _pinched = false;
       _zoom = null;
       _heightZoom = 0;
@@ -1584,7 +1613,7 @@ class _MailHtmlViewState extends State<MailHtmlView> {
       if (h != null && h > 0 && h == prev) {
         same++;
         final v = h * (Platform.isAndroid ? _effScale : 1);
-        final likeWindow = (v - _height).abs() <= 2;
+        final likeWindow = (v - _height).abs() <= 2 || _isStaleWindow(v.toDouble());
         if (!likeWindow || same >= 2) break;
       } else {
         same = 0;
@@ -1629,6 +1658,20 @@ class _MailHtmlViewState extends State<MailHtmlView> {
     return s.isEmpty || s == 'about' || s == 'data';
   }
 
+  /// Окно уменьшено приложением с высоты [from] (Android): замеры, равные
+  /// ей, — прежнее окно, а не письмо ([_shrunkFrom]).
+  void _noteShrink(double from) {
+    if (!Platform.isAndroid || from <= _height + 2) return;
+    _shrunkFrom = from;
+    _staleWaits = 0;
+  }
+
+  /// Замер [v] — высота окна, которое ещё не уменьшилось.
+  bool _isStaleWindow(double v) {
+    final from = _shrunkFrom;
+    return from != null && (v - from).abs() <= 3;
+  }
+
   /// Ширина окна письма изменилась: разметить и вписать письмо заново под
   /// новую ширину (1.5.10). Высота — заведомо не больше будущей (документ
   /// WebView не бывает ниже окна: завышенную высоту замер не уменьшил бы),
@@ -1661,7 +1704,9 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         // Стало широким после поворота — по правилу открытия (1.5.11).
         if (_wide && !wasWide) _actualSize = !MailHtmlView.fitWide;
         _fitWidth = _wide && !_actualSize ? t : null;
+        final from = _height;
         _height = (_height * (r < 1 ? r : 1 / r)).clamp(40.0, 60000.0);
+        _noteShrink(from);
         _measured = false;
         _knownLayout = false;
       }

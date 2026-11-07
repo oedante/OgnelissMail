@@ -324,4 +324,11 @@ void main() {
       expect(ps[1].runs.single.baseline, 30);
     });
   });
+
+  test('заметки докладчика (notesSlide) и диаграмма — плашкой', () {
+    final d = PptxReader.read(OfficeZip.open(File('test/fixtures/office/pptx_notes_chart.pptx').readAsBytesSync()));
+    final slide = d.slides.single;
+    expect(slide.notes, 'Сказать про новых клиентов из Казани');
+    expect(slide.shapes.any((s) => s.embed == DocEmbed.chart), isTrue);
+  });
 }

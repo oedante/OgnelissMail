@@ -216,6 +216,40 @@ void main() {
     });
   });
 
+  // 1.15.1: письмо получило на сервере новый номер — текст вложений не
+  // теряется.
+  group('новый номер письма', () {
+    test('переименование: текст вложений — у письма под новым номером', () async {
+      await _mail(db, 'INBOX:7', subject: 'Смета');
+      await db.indexEmailFts(emailId: 'INBOX:7', accountId: 'a1', subject: 'Смета', fromText: 's', body: 'тело');
+      await db.setFtsAttachmentsText('a1', 'INBOX:7', 'ракетостроение');
+      await db.customStatement("UPDATE emails SET id = 'Archive:3' WHERE id = 'INBOX:7'");
+      await db.renameEmailFts('a1', 'INBOX:7', 'Archive:3', subject: 'Смета', fromText: 's', body: 'тело');
+      expect(await db.ftsAttachmentsText('a1', 'INBOX:7'), isNull);
+      expect(await db.ftsAttachmentsText('a1', 'Archive:3'), 'ракетостроение');
+    });
+
+    test('перенос без нового номера: текст возвращается по Message-ID', () async {
+      await _mail(db, 'INBOX:8', subject: 'Счёт');
+      await db.customStatement("UPDATE emails SET internet_message_id = '<A1@Example.com>' WHERE id = 'INBOX:8'");
+      await db.indexEmailFts(emailId: 'INBOX:8', accountId: 'a1', subject: 'Счёт', fromText: 's', body: 'тело');
+      await db.setFtsAttachmentsText('a1', 'INBOX:8', 'аккредитив');
+      await db.keepAttachmentsTextForReturn('a1', 'INBOX:8');
+      await db.removeEmailFts('INBOX:8', accountId: 'a1');
+      await db.customStatement("DELETE FROM emails WHERE id = 'INBOX:8'");
+      // Письмо пришло синхронизацией папки назначения под новым номером.
+      await _mail(db, 'Archive:9', subject: 'Счёт');
+      await db.customStatement("UPDATE emails SET internet_message_id = '<a1@example.com>' WHERE id = 'Archive:9'");
+      await db.indexEmailFts(emailId: 'Archive:9', accountId: 'a1', subject: 'Счёт', fromText: 's', body: 'тело');
+      expect(await db.ftsAttachmentsText('a1', 'Archive:9'), 'аккредитив');
+      // Один раз: следующее письмо с тем же Message-ID текст не получает.
+      await _mail(db, 'Other:1', subject: 'Копия');
+      await db.customStatement("UPDATE emails SET internet_message_id = '<a1@example.com>' WHERE id = 'Other:1'");
+      await db.indexEmailFts(emailId: 'Other:1', accountId: 'a1', subject: 'Копия', fromText: 's', body: 'тело');
+      expect(await db.ftsAttachmentsText('a1', 'Other:1'), '');
+    });
+  });
+
   group('служба', () {
     late ProviderContainer c;
     late Map<String, String> files;

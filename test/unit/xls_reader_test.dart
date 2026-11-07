@@ -165,14 +165,61 @@ void main() {
     expect((s.frozenRows, s.frozenCols), (1, 1));
   });
 
-  test('пароль — «защищён», Excel 5/95 — «старый формат»', () {
+  test('обфускация XOR — «защищён», Excel 4 — «старый формат», пустая книга 5/95 — без листов', () {
     final encrypted = Uint8List.fromList([..._bof(0x0005), ..._rec(0x002F, List.filled(54, 0)), ..._eof()]);
     expect(() => XlsReader.read(CfbFile.open(_xls(encrypted))), _error(OfficeDocError.encrypted));
     final biff5 = Uint8List.fromList([..._bof(0x0005, vers: 0x0500), ..._eof()]);
-    expect(() => XlsReader.read(CfbFile.open(_xls(biff5, stream: 'Book'))), _error(OfficeDocError.legacy));
-    expect(() => XlsReader.read(CfbFile.open(_xls(biff5))), _error(OfficeDocError.legacy));
+    expect(XlsReader.read(CfbFile.open(_xls(biff5, stream: 'Book'))).sheets, isEmpty);
     final biff4 = Uint8List.fromList(_rec(0x0409, List.filled(6, 0)));
     expect(() => XlsReader.read(CfbFile.open(_xls(biff4))), _error(OfficeDocError.legacy));
+  });
+
+  // 1.15.1: образцы — LibreOffice (tool/dev/office_fixtures/lo_fixtures.py),
+  // своя книга Excel 95 (biff5_fixture.py) и тестовые файлы Apache POI
+  // (Apache License 2.0, test/fixtures/office/README.md).
+  OfficeSheetsDoc file(String name, {String? password}) {
+    final cfb = CfbFile.open(File('test/fixtures/office/$name').readAsBytesSync());
+    return password == null ? XlsReader.read(cfb, lang: 'ru') : XlsReader.read(cfb, lang: 'ru', password: password);
+  }
+
+  test('книга со стандартным паролем Excel (VelvetSweatshop) открывается без вопросов', () {
+    final d = file('velvet.xls');
+    expect(d.sheets.map((s) => s.name), ['Смета', 'Склад']);
+    final s = d.sheets.first;
+    expect(s.cell(1, 0)!.text, 'Кирпич облицовочный');
+    expect(s.cell(1, 1)!.text, '1200');
+    expect(s.cell(3, 2)!.text, '59400', reason: 'сохранённое значение формулы');
+  });
+
+  test('книга с паролем на открытие — «защищена»', () {
+    expect(() => file('xls_password.xls'), _error(OfficeDocError.encrypted));
+    expect(() => file('poi_password.xls'), _error(OfficeDocError.encrypted));
+  });
+
+  test('расшифровка — книги Excel: RC4 и RC4 CryptoAPI (свой пароль из тестов POI)', () {
+    final rc4 = file('poi_password.xls', password: 'password');
+    expect(rc4.sheets.first.rows.expand((r) => r).map((c) => c.text).join(' '), contains('A ZIP bomb is a variant'));
+    final capi = file('poi_cryptoapi.xls', password: 'freedom');
+    expect(capi.sheets.first.cell(0, 0)!.text, 'hello there!');
+  });
+
+  test('Excel 5/95: кириллица в кодовой странице 1251, формат, жирный, формула со строкой', () {
+    final d = file('excel95_cp1251.xls');
+    expect(d.sheets.map((s) => s.name), ['Смета', 'Склад']);
+    final s = d.sheets.first;
+    expect(s.cell(0, 0)!.text, 'Наименование');
+    expect(d.styleOf(s.cell(0, 0)!).bold, isTrue);
+    expect(s.cell(1, 0)!.text, 'Кирпич облицовочный');
+    expect(s.cell(1, 2)!.text, '35,50');
+    expect(s.cell(3, 0)!.text, 'Итого по смете');
+    expect(d.sheets[1].cell(0, 0)!.text, 'Остатки на 01.11.2026');
+  });
+
+  test('Excel 5 из Excel для Mac (POI) и поток «BOOK» заглавными', () {
+    final mac = file('poi_excel5.xls');
+    expect(mac.sheets.first.cell(0, 0)!.text, 'Sample Excel Worksheet - Numbers and their Squares');
+    final caps = file('poi_book_caps.xls');
+    expect(caps.sheets.first.cell(0, 0)!.text, startsWith('301. Exposures by Counterparty'));
   });
 
   test('испорченные записи: огромные количества, смещения вне потока, обрыв', () {

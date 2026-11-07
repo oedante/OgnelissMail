@@ -664,19 +664,40 @@ class DocHtml {
     return best;
   }
 
-  /// HTML документа: [blocks], под чертой — [notes] (сноски).
+  /// HTML документа: [blocks], под чертой — [notes] (сноски) и
+  /// [comments] (примечания); [header] и [footer] — колонтитулы серым
+  /// вверху и внизу (1.15.1).
   static OfficeTextDoc render(
     List<DocBlock> blocks, {
     List<DocBlock> notes = const [],
+    List<DocBlock> header = const [],
+    List<DocBlock> footer = const [],
+    List<DocBlock> comments = const [],
     Map<String, String> images = const {},
     bool truncated = false,
   }) {
     final base = _baseSize([...blocks, ...notes]);
     final w = _Writer(base);
+    if (header.isNotEmpty) {
+      w.out.write('<div style="color:#808080;font-size:85%;border-bottom:1px solid #d0d0d0;margin-bottom:12pt">');
+      w.blocks(header, 0);
+      w.out.write('</div>');
+    }
     w.blocks(blocks, 0);
     if (notes.isNotEmpty) {
       w.out.write('<hr style="border:0;border-top:1px solid #a0a0a0;width:33%;margin:12pt auto 6pt 0">');
       w.blocks(notes, 0);
+    }
+    if (comments.isNotEmpty) {
+      w.out.write('<div style="background:#fff8d6;color:#303030;border-left:3px solid #e0b000;'
+          'padding:4pt 8pt;margin:12pt 0">');
+      w.blocks(comments, 0);
+      w.out.write('</div>');
+    }
+    if (footer.isNotEmpty) {
+      w.out.write('<div style="color:#808080;font-size:85%;border-top:1px solid #d0d0d0;margin-top:12pt">');
+      w.blocks(footer, 0);
+      w.out.write('</div>');
     }
     return OfficeTextDoc(w.out.toString(), images: Map.unmodifiable(images), truncated: truncated);
   }

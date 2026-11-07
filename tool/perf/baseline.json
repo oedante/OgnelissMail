@@ -1,13 +1,13 @@
 {
-  "_comment": "База замеров скорости на эмуляторе Android (задача emulator в CI, integration_test/perf_test.dart), мс. Отладочная сборка, API 34 x86_64, программная графика. Ошибка — замер больше базы вдвое. Обновить — tool/perf/README.md. 01.11.2026: по первому прогону на GitHub (31.10, сборка 41215110507, коммит d1882954) — замеры × 1,5, вверх до 50 мс.",
+  "_comment": "База замеров скорости на эмуляторе Android (задача emulator в CI, integration_test/perf_test.dart), мс. Отладочная сборка, API 34 x86_64, программная графика. Ошибка — замер больше базы вдвое. Обновить — tool/perf/README.md. 07.11.2026: медиана трёх зелёных прогонов 02–07.11 (41469766084, 42364013006, 42371549454) × 1,5, вверх до 50 мс — один прогон слишком шумит (первое «Новое сообщение» 2,1–6,4 с).",
   "metrics": {
-    "app_first_frame_ms": 13900,
-    "app_first_screen_ms": 17100,
-    "compose_first_ms": 6900,
-    "compose_ms": 3900,
-    "compose_spare_ms": 1600,
-    "mail_open_first_ms": 7000,
-    "mail_open_ms": 1650,
-    "mail_open_spare_ms": 950
+    "app_first_frame_ms": 16100,
+    "app_first_screen_ms": 18650,
+    "compose_first_ms": 4400,
+    "compose_ms": 3450,
+    "compose_spare_ms": 1250,
+    "mail_open_first_ms": 7600,
+    "mail_open_ms": 2000,
+    "mail_open_spare_ms": 900
   }
 }

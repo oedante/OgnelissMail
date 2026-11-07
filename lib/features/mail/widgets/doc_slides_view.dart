@@ -9,6 +9,9 @@
 //    номер «3 / 12»; строятся только видимые слайды (ListView.builder);
 //    список листается только по вертикали — боковые жесты остаются у
 //    PageView экрана вложений;
+//  · заметки докладчика (1.15.1) — под номером слайда, текстом, который
+//    можно выделить; если заметок нет ни у одного слайда, высота строки
+//    списка известна заранее (prototypeItem);
 //  · слайд — Stack размером со слайд в пунктах, уменьшенный FittedBox: шрифты
 //    и положения масштабируются вместе; текст может выходить за рамку фигуры
 //    (как в PowerPoint), но не за край слайда;
@@ -85,6 +88,7 @@ class _DocSlidesViewState extends State<DocSlidesView> {
       return EmptyState(icon: AppIcons.slideshow, title: AppLocalizations.of(context).tr('docEmpty'));
     }
     final total = doc.slides.length;
+    final hasNotes = doc.slides.any((s) => s.notes.isNotEmpty);
     final labelStyle = theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant);
     return ColoredBox(
       color: theme.colorScheme.surfaceContainerHighest,
@@ -116,9 +120,17 @@ class _DocSlidesViewState extends State<DocSlidesView> {
                           ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: Space.xs, bottom: Space.m),
+                    padding: EdgeInsets.only(
+                      top: Space.xs,
+                      bottom: !prototype && doc.slides[i].notes.isNotEmpty ? Space.s : Space.m,
+                    ),
                     child: ExcludeSemantics(child: Text('${i + 1} / $total', style: labelStyle)),
                   ),
+                  if (!prototype && doc.slides[i].notes.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: Space.m),
+                      child: _NotesCard(notes: doc.slides[i].notes),
+                    ),
                 ],
               ),
             ),
@@ -131,7 +143,8 @@ class _DocSlidesViewState extends State<DocSlidesView> {
               itemCount: total,
               // Все слайды одного размера — высота строки известна заранее:
               // полоса прокрутки и переход к концу точны и без построения.
-              prototypeItem: item(0, prototype: true),
+              // С заметками строки разной высоты.
+              prototypeItem: hasNotes ? null : item(0, prototype: true),
               itemBuilder: (context, i) => item(i),
             ),
           );
@@ -921,6 +934,38 @@ class _PictureView extends StatelessWidget {
           );
     if (shape.geom == DocGeom.rect) return ClipRect(child: cropped);
     return ClipPath(clipper: _GeomClipper(shape), child: cropped);
+  }
+}
+
+/// Заметки докладчика под слайдом: заголовок и текст, который можно выделить.
+class _NotesCard extends StatelessWidget {
+  const _NotesCard({required this.notes});
+  final String notes;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(Space.m),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: Radii.chipAll,
+        border: Border.all(color: scheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context).tr('docSlideNotes'),
+            style: theme.textTheme.labelMedium?.copyWith(color: scheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: Space.xs),
+          SelectableText(notes, style: theme.textTheme.bodyMedium),
+        ],
+      ),
+    );
   }
 }
 

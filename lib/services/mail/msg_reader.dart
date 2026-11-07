@@ -509,6 +509,14 @@ class _Msg {
     return null;
   }
 
+  /// Outlook берёт имя в одинарные кавычки, когда это адрес или имя из
+  /// автозаполнения ('Paul Holmes-Higgin', 'user@example.com'): без них.
+  static String _unquote(String s) {
+    final t = s.trim();
+    if (t.length > 2 && t.startsWith("'") && t.endsWith("'")) return t.substring(1, t.length - 1).trim();
+    return t;
+  }
+
   static String _trimNul(String s) {
     var end = s.length;
     while (end > 0 && s.codeUnitAt(end - 1) == 0) {
@@ -577,7 +585,7 @@ class _Msg {
     }
 
     // Отправитель.
-    final name = _string(_senderName) ?? _string(_reprName) ?? '';
+    final name = _unquote(_string(_senderName) ?? _string(_reprName) ?? '');
     String? email = _string(_senderSmtp) ?? _string(_reprSmtp);
     if (email == null) {
       final type = (_string(_senderType) ?? '').toUpperCase();
@@ -602,7 +610,7 @@ class _Msg {
     for (final r in recips) {
       final props = _readProps(r, 8);
       final kind = props[(_recipType << 16) | 0x0003] ?? 1;
-      final n = _string(_displayName, r) ?? '';
+      final n = _unquote(_string(_displayName, r) ?? '');
       var e = _string(_smtp, r);
       if (e == null) {
         final type = (_string(_addrType, r) ?? '').toUpperCase();
@@ -620,7 +628,7 @@ class _Msg {
     if (recips.isEmpty) {
       List<EmlAddress> names(String? s) => [
         for (final p in (s ?? '').split(';'))
-          if (p.trim().isNotEmpty) EmlAddress(p.trim(), ''),
+          if (p.trim().isNotEmpty) EmlAddress(_unquote(p.trim()), ''),
       ];
       to.addAll(fromHeaders?.to.isNotEmpty ?? false ? fromHeaders!.to : names(_string(_displayTo)));
       cc.addAll(fromHeaders?.cc.isNotEmpty ?? false ? fromHeaders!.cc : names(_string(_displayCc)));

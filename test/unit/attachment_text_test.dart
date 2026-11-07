@@ -72,7 +72,7 @@ void main() {
     expect(AttachmentText.kindOf('Сообщение', mimeType: 'message/rfc822'), AttachmentTextKind.eml);
     expect(AttachmentText.kindOf('readme', mimeType: 'text/plain'), AttachmentTextKind.text);
     expect(AttachmentText.kindOf('ATT00001'), AttachmentTextKind.sniff);
-    for (final n in ['photo.jpg', 'image001.png', 'archive.zip', 'scan.pdf', 'setup.exe']) {
+    for (final n in ['photo.jpg', 'image001.png', 'archive.zip', 'setup.exe']) {
       expect(AttachmentText.kindOf(n), isNull, reason: n);
     }
   });
@@ -109,6 +109,11 @@ void main() {
       expect(t, contains('Казань'), reason: f);
       expect(t, contains('Спасибо!'), reason: f);
       expect('\n$t\n'.split('\nКвартальный отчёт\n').length, 2, reason: f);
+    }
+    for (final f in ['ppt_notes_chart.ppt', 'pptx_notes_chart.pptx', 'odp_notes_chart.odp']) {
+      final t = await text(f, _fx(f));
+      expect(t, contains('Итоги квартала'), reason: f);
+      expect(t, contains('Сказать про новых клиентов из Казани'), reason: '$f: заметки докладчика ищутся');
     }
   });
 

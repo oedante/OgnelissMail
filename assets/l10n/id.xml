@@ -3618,7 +3618,7 @@
     <string name="zipCannotRead">Arsip tidak dapat dibaca: rusak atau dalam format yang tidak dikenal aplikasi (7z, RAR). Buka di aplikasi lain.</string>
     <string name="pdfProtected">PDF dilindungi kata sandi. Buka di aplikasi lain.</string>
     <string name="faq_mail_10_q">Lampiran apa yang terbuka langsung di aplikasi?</string>
-    <string name="faq_mail_10_a">Dokumen Office, baik yang baru (DOCX, XLSX, PPTX) maupun yang lama (DOC, XLS, PPT), file OpenDocument (ODT, ODS, ODP), RTF, CSV, file teks, dan Markdown terbuka langsung di aplikasi, hanya untuk dibaca — makro tidak pernah dijalankan; spreadsheet tampil sebagai kisi dengan lembar-lembarnya, presentasi sebagai slide, dan Markdown sebagai teks berformat. Pesan .eml dan pesan Outlook .msg terbuka seperti email biasa, lengkap dengan lampirannya. Arsip ZIP, termasuk yang memakai kata sandi, serta TAR, GZ, BZ2, dan XZ juga terbuka di aplikasi: ketuk file di dalamnya untuk membukanya. Selain itu, PDF di Android, gambar, serta tiket .pkpass terbuka di aplikasi. Di iPhone dan iPad, Quick Look iOS menampilkan PDF, gambar, dokumen Office, RTF, dan CSV, sedangkan file OpenDocument, file teks, Markdown, dan email ditampilkan oleh aplikasi itu sendiri. Dokumen Office 95 atau lebih lama serta arsip 7z dan RAR terbuka di aplikasi lain, dan file apa pun bisa dikirim ke sana dengan tombol di atas.</string>
+    <string name="faq_mail_10_a">Dokumen Office, baik yang baru (DOCX, XLSX, PPTX) maupun yang lama (DOC, XLS, PPT), file OpenDocument (ODT, ODS, ODP), RTF, CSV, file teks, dan Markdown terbuka langsung di aplikasi, hanya untuk dibaca — makro tidak pernah dijalankan; spreadsheet tampil sebagai kisi dengan lembar-lembarnya, presentasi sebagai slide, dan Markdown sebagai teks berformat. Pesan .eml dan pesan Outlook .msg terbuka seperti email biasa, lengkap dengan lampirannya. Arsip ZIP, termasuk yang memakai kata sandi, serta TAR, GZ, BZ2, dan XZ juga terbuka di aplikasi: ketuk file di dalamnya untuk membukanya. Selain itu, PDF di Android, gambar, serta tiket .pkpass terbuka di aplikasi. Di iPhone dan iPad, Quick Look iOS menampilkan PDF, gambar, dokumen Office, RTF, dan CSV, sedangkan file OpenDocument, file teks, Markdown, dan email ditampilkan oleh aplikasi itu sendiri. Dokumen Word dan PowerPoint 95 atau lebih lama, buku kerja Excel 4 atau lebih lama serta arsip 7z dan RAR terbuka di aplikasi lain, dan file apa pun bisa dikirim ke sana dengan tombol di atas.</string>
     <string name="quickRepliesCardHint">Teks dimasukkan ke balasan — periksa lalu kirim</string>
     <string name="translateMsgLang">Bahasa pesan: {lang}</string>
     <string name="translateDone">Diterjemahkan: {from} → {to}</string>
@@ -3779,13 +3779,14 @@
     <string name="favoritesOrder">Urutan ubin</string>
     <string name="favoritesOrderHint">Seret item dengan pegangan di kanan — ubin di menu mengikuti urutan ini.</string>
     <string name="docProtected">Dokumen dilindungi kata sandi. Buka di aplikasi lain.</string>
-    <string name="docLegacyFormat">Aplikasi tidak dapat menampilkan dokumen format Office lama (Word, Excel, dan PowerPoint 95 atau lebih lama). Buka file di aplikasi lain.</string>
+    <string name="docLegacyFormat">Aplikasi tidak dapat menampilkan dokumen format Office lama (Word dan PowerPoint 95 atau lebih lama, Excel 4 atau lebih lama). Buka file di aplikasi lain.</string>
     <string name="docTooLarge">Dokumen terlalu besar untuk pratinjau. Buka di aplikasi lain.</string>
     <string name="docTruncated">Dokumen besar — hanya bagian awal yang ditampilkan. Buka di aplikasi lain untuk melihat semuanya.</string>
     <string name="docEmpty">Dokumen tidak berisi teks.</string>
     <string name="docSheetTruncated">Lembar besar — hanya bagian awal yang ditampilkan</string>
     <string name="docSheetEmpty">Lembar kosong</string>
     <string name="docSlideOf">Slide {n} dari {total}</string>
+    <string name="docSlideNotes">Catatan pembicara</string>
     <string name="docPreviewSection">Pratinjau dokumen</string>
     <string name="docPreview">Dokumen di aplikasi</string>
     <string name="docPreviewDesc">Dokumen, spreadsheet, dan presentasi dari pesan terbuka langsung di sini, tanpa aplikasi lain. Jika nonaktif — di aplikasi untuk format tersebut.</string>
@@ -3836,7 +3837,7 @@
     <string name="searchAttachmentsTextDesc">Pencarian menemukan kata di lampiran yang diunduh: dokumen, spreadsheet, presentasi, file teks, dan pesan terlampir</string>
     <string name="searchFoundInAttachment">Di lampiran: {text}</string>
     <string name="faq_mail_12_q">Bagaimana cara menemukan email berdasarkan teks di lampiran?</string>
-    <string name="faq_mail_12_a">Pencarian juga menemukan kata di dalam lampiran yang sudah diunduh: dokumen Office dan OpenDocument, RTF, tabel CSV, presentasi, file teks, dan email terlampir. Di hasil pencarian, email seperti itu menampilkan baris “Di lampiran: …” beserta bagian yang ditemukan. Lampiran harus sudah diunduh — dibuka atau dimuat bersama email; PDF belum bisa dicari. Untuk mematikan: Pengaturan → Email → Cari di teks lampiran.</string>
+    <string name="faq_mail_12_a">Pencarian juga menemukan kata di dalam lampiran yang sudah diunduh: dokumen Office dan OpenDocument, RTF, PDF, tabel CSV, presentasi, file teks, dan email terlampir. Di hasil pencarian, email seperti itu menampilkan baris “Di lampiran: …” beserta bagian yang ditemukan. Lampiran harus sudah diunduh — dibuka atau dimuat bersama email. PDF dengan kata sandi pembuka dan hasil pindaian tanpa teks tidak dicari. Untuk mematikan: Pengaturan → Email → Cari di teks lampiran.</string>
     <string name="faq_mail_13_q">Apa arti ikon di bawah header email?</string>
     <string name="faq_mail_13_a">Informasi tentang email — terjemahan, berhenti berlangganan, gambar tersembunyi, permintaan tanda terima baca, pengiriman, tanda tangan, tingkat kepentingan, tag — dikumpulkan dalam satu baris ikon. Mengetuk ikon akan membuka detail beserta tombolnya, mengetuk lagi akan menutupnya. Ikon terjemahan dan gambar langsung bekerja: menerjemahkan email atau menampilkan gambar, sedangkan opsi lainnya ada di menu ▾ atau dengan tekan lama. Peringatan pengirim palsu dan undangan rapat tetap tampil sebagai kartu lengkap.</string>
     <string name="faq_mail_14_q">Bagaimana cara menata layar tablet atau komputer seperti di Outlook?</string>

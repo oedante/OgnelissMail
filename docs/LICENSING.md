@@ -193,6 +193,27 @@ are never run (the macro part is not even read). Checked 4 November 2026:
   [MS-OXMSG](https://learn.microsoft.com/en-us/openspecs/exchange_server_protocols/ms-oxmsg/b812bc47-4397-4a15-b03d-84aa20be866f)).
   The Library of Congress format description also says Microsoft claims no
   patents in the MSG format. Decision of the owner: implement.
+- **Encrypted old Excel books (1.15.1)** — [MS-OFFCRYPTO] RC4 and RC4
+  CryptoAPI, used to open books protected with Excel's default password
+  "VelvetSweatshop" (`lib/services/documents/xls_crypt.dart`; MD5, SHA-1
+  and RC4 from the `crypto` and `pointycastle` packages already in the
+  app). MS-OFFCRYPTO is listed under the Open Specification Promise in the
+  SheetJS references page and in a 2011 LibreOffice list post quoting
+  Microsoft's Office file formats page (checked 07.11.2026 by search
+  extracts; learn.microsoft.com was blocked) — confirm on the OSP page
+  together with the entries above.
+- **PDF text for search (1.15.1)** — `lib/services/documents/pdf_text.dart`
+  reads text streams, fonts and the standard security handler (RC4,
+  AES-128, AES-256) after ISO 32000-1 (PDF 1.7). Adobe's *Public Patent
+  License* for ISO 32000-1:2008 grants a royalty-free licence under Adobe's
+  essential claims to compliant implementations (defensive termination
+  only). The AES-256 "revision 6" key derivation comes from ISO 32000-2
+  (PDF 2.0); its patent declarations were not checked — to confirm. No
+  library is used; nothing of the PDF is rendered.
+- **Test files from Apache POI** — four .xls and five Outlook .msg files
+  from the Apache POI test data (Apache License 2.0) are used only by the
+  tests and are not in the app (`test/fixtures/office/README.md`,
+  `test/fixtures/msg/README.md`, attribution there).
 - **Specification texts.** The Microsoft Open Specifications notice and the
   Ecma and OASIS copyright policies allow using the documents to write
   implementations. No specification text or schema is copied into the app.

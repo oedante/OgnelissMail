@@ -3675,7 +3675,7 @@
     <string name="zipCannotRead">Nie można odczytać archiwum: jest uszkodzone lub w formacie, którego aplikacja nie zna (7z, RAR). Otwórz je w innej aplikacji.</string>
     <string name="pdfProtected">PDF jest chroniony hasłem. Otwórz go w innej aplikacji.</string>
     <string name="faq_mail_10_q">Które załączniki otwierają się bezpośrednio w aplikacji?</string>
-    <string name="faq_mail_10_a">Dokumenty Office, zarówno nowe (DOCX, XLSX, PPTX), jak i stare (DOC, XLS, PPT), pliki OpenDocument (ODT, ODS, ODP), RTF, CSV, pliki tekstowe i Markdown otwierają się bezpośrednio w aplikacji, tylko do odczytu — makra nigdy nie są uruchamiane; arkusze kalkulacyjne wyświetlają się jako siatka z arkuszami, prezentacje jako slajdy, a Markdown jako sformatowany tekst. Wiadomości .eml i wiadomości Outlooka .msg otwierają się jak zwykłe wiadomości, z własnymi załącznikami. Archiwa ZIP, także chronione hasłem, oraz TAR, GZ, BZ2 i XZ również otwierają się w aplikacji: stuknij plik w środku, aby go otworzyć. W aplikacji otwierają się też pliki PDF na Androidzie, obrazy oraz bilety .pkpass. Na iPhonie i iPadzie Szybki przegląd iOS pokazuje pliki PDF, obrazy, dokumenty Office, RTF i CSV, a pliki OpenDocument, pliki tekstowe, Markdown i wiadomości pokazuje sama aplikacja. Dokumenty z Office 95 i starszych oraz archiwa 7z i RAR otwierają się w innej aplikacji, a każdy plik można do niej wysłać przyciskiem u góry.</string>
+    <string name="faq_mail_10_a">Dokumenty Office, zarówno nowe (DOCX, XLSX, PPTX), jak i stare (DOC, XLS, PPT), pliki OpenDocument (ODT, ODS, ODP), RTF, CSV, pliki tekstowe i Markdown otwierają się bezpośrednio w aplikacji, tylko do odczytu — makra nigdy nie są uruchamiane; arkusze kalkulacyjne wyświetlają się jako siatka z arkuszami, prezentacje jako slajdy, a Markdown jako sformatowany tekst. Wiadomości .eml i wiadomości Outlooka .msg otwierają się jak zwykłe wiadomości, z własnymi załącznikami. Archiwa ZIP, także chronione hasłem, oraz TAR, GZ, BZ2 i XZ również otwierają się w aplikacji: stuknij plik w środku, aby go otworzyć. W aplikacji otwierają się też pliki PDF na Androidzie, obrazy oraz bilety .pkpass. Na iPhonie i iPadzie Szybki przegląd iOS pokazuje pliki PDF, obrazy, dokumenty Office, RTF i CSV, a pliki OpenDocument, pliki tekstowe, Markdown i wiadomości pokazuje sama aplikacja. Dokumenty z Word i PowerPoint 95 i starszych, skoroszyty z Excel 4 i starszych oraz archiwa 7z i RAR otwierają się w innej aplikacji, a każdy plik można do niej wysłać przyciskiem u góry.</string>
     <string name="quickRepliesCardHint">Tekst trafi do odpowiedzi — sprawdź i wyślij</string>
     <string name="translateMsgLang">Język wiadomości: {lang}</string>
     <string name="translateDone">Przetłumaczono: {from} → {to}</string>
@@ -3842,13 +3842,14 @@
     <string name="favoritesOrder">Kolejność kafelków</string>
     <string name="favoritesOrderHint">Przeciągnij element za uchwyt po prawej — kafelki w menu ułożą się w tej kolejności.</string>
     <string name="docProtected">Dokument jest chroniony hasłem. Otwórz go w innej aplikacji.</string>
-    <string name="docLegacyFormat">Aplikacja nie wyświetla dokumentów w starych formatach Office (Word, Excel i PowerPoint 95 i starsze). Otwórz plik w innej aplikacji.</string>
+    <string name="docLegacyFormat">Aplikacja nie wyświetla dokumentów w starych formatach Office (Word i PowerPoint 95 i starsze, Excel 4 i starsze). Otwórz plik w innej aplikacji.</string>
     <string name="docTooLarge">Dokument jest zbyt duży, aby go wyświetlić. Otwórz go w innej aplikacji.</string>
     <string name="docTruncated">Dokument jest duży — wyświetlono tylko początek. Całość otworzysz w innej aplikacji.</string>
     <string name="docEmpty">Dokument nie zawiera tekstu.</string>
     <string name="docSheetTruncated">Arkusz jest duży — wyświetlono tylko początek</string>
     <string name="docSheetEmpty">Arkusz jest pusty</string>
     <string name="docSlideOf">Slajd {n} z {total}</string>
+    <string name="docSlideNotes">Notatki prelegenta</string>
     <string name="docPreviewSection">Podgląd dokumentów</string>
     <string name="docPreview">Dokumenty w aplikacji</string>
     <string name="docPreviewDesc">Dokumenty, arkusze i prezentacje z wiadomości otwierają się tutaj, bez innej aplikacji. Wyłączone — w aplikacji dla danego formatu.</string>
@@ -3899,7 +3900,7 @@
     <string name="searchAttachmentsTextDesc">Wyszukiwanie znajduje słowa w pobranych załącznikach: dokumentach, arkuszach, prezentacjach, plikach tekstowych i załączonych wiadomościach</string>
     <string name="searchFoundInAttachment">W załączniku: {text}</string>
     <string name="faq_mail_12_q">Jak znaleźć wiadomość po tekście w załączniku?</string>
-    <string name="faq_mail_12_a">Wyszukiwanie znajduje słowa także wewnątrz pobranych załączników: w dokumentach Office i OpenDocument, RTF, tabelach CSV, prezentacjach, plikach tekstowych i załączonych wiadomościach. W wynikach taka wiadomość ma wiersz „W załączniku: …” ze znalezionym fragmentem. Załącznik musi być już pobrany — otwarty lub ściągnięty razem z wiadomością; w plikach PDF wyszukiwanie jeszcze nie działa. Wyłączanie: Ustawienia → Poczta → Szukaj w tekście załączników.</string>
+    <string name="faq_mail_12_a">Wyszukiwanie znajduje słowa także wewnątrz pobranych załączników: w dokumentach Office i OpenDocument, RTF, PDF, tabelach CSV, prezentacjach, plikach tekstowych i załączonych wiadomościach. W wynikach taka wiadomość ma wiersz „W załączniku: …” ze znalezionym fragmentem. Załącznik musi być już pobrany — otwarty lub ściągnięty razem z wiadomością. Pliki PDF z hasłem otwarcia i skany bez warstwy tekstowej nie są przeszukiwane. Wyłączanie: Ustawienia → Poczta → Szukaj w tekście załączników.</string>
     <string name="faq_mail_13_q">Co to za ikony pod nagłówkiem wiadomości?</string>
     <string name="faq_mail_13_a">Informacje o wiadomości — tłumaczenie, rezygnacja z subskrypcji, ukryte obrazy, prośba o potwierdzenie odczytu, doręczenie, podpis, ważność, tagi — są zebrane w jednym rzędzie ikon. Dotknięcie ikony rozwija szczegóły z przyciskami, ponowne — zwija. Ikony tłumaczenia i obrazów działają od razu: tłumaczą wiadomość lub pokazują obrazy, a pozostałe opcje są w menu ▾ albo pod długim naciśnięciem. Ostrzeżenie o podrobionym nadawcy i zaproszenia na spotkania pozostają pełnymi kartami.</string>
     <string name="faq_mail_14_q">Jak urządzić ekran tabletu lub komputera jak w Outlooku?</string>

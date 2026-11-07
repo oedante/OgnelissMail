@@ -110,6 +110,21 @@ void main() {
     expect(d.html, isNot(contains('HYPERLINK')));
   });
 
+  // 1.15.1: образец LibreOffice (tool/dev/office_fixtures/lo_fixtures.py).
+  test('колонтитулы — вверху и внизу, примечание — с автором', () {
+    final doc = DocReader.read(CfbFile.open(File('test/fixtures/office/doc_header_comment.doc').readAsBytesSync()));
+    final html = doc.html;
+    final header = html.indexOf('ООО «Ромашка» — конфиденциально');
+    final body = html.indexOf('Договор поставки № 17');
+    final comment = html.indexOf('Проверить сроки оплаты');
+    final footer = html.indexOf('Страница договора');
+    expect([header, body, comment, footer].every((i) => i >= 0), isTrue, reason: html);
+    expect(header < body && body < comment && comment < footer, isTrue);
+    expect(html, contains('Иванов: '));
+    // Пустые абзацы на краях колонтитула не выводятся.
+    expect(html, isNot(contains('конфиденциально</p><p style="margin:0">&nbsp;</p></div>')));
+  });
+
   test('пароль, Word 6/95, нет таблицы, испорченная таблица кусков', () {
     final ok = [('Текст\r', false)];
     expect(() => DocReader.read(CfbFile.open(_doc(ok, flags: 0x0300))), _error(OfficeDocError.encrypted));

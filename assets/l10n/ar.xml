@@ -3172,6 +3172,8 @@
     <string name="attCropRotate">اقتصاص وتدوير</string>
     <string name="imageRotate">تدوير</string>
     <string name="imageEditHint">اسحب زوايا الإطار أو حوافه للاقتصاص</string>
+    <string name="imageEditHintCircle">حرّك الدائرة أو اسحب أحد الأركان — هكذا ستظهر الصورة في الصورة الشخصية</string>
+    <string name="photoCirclePreview">هكذا ستبدو الصورة في القائمة والرسالة والبطاقة</string>
     <string name="imageEditFailed">تعذّر تعديل الصورة</string>
     <string name="imageEditLoadFailed">تعذّر فتح الصورة للتعديل</string>
     <string name="imageCompressNoGain">لم يصغر حجم الصورة — تُركت كما هي</string>

@@ -3120,6 +3120,8 @@
     <string name="attCropRotate">Ritaglia e ruota</string>
     <string name="imageRotate">Ruota</string>
     <string name="imageEditHint">Trascina gli angoli o i bordi del riquadro per ritagliare</string>
+    <string name="imageEditHintCircle">Sposta il cerchio o trascina un angolo: così apparirà la foto nel ritratto</string>
+    <string name="photoCirclePreview">Così apparirà la foto nell\'elenco, nel messaggio e nella scheda</string>
     <string name="imageEditFailed">Impossibile modificare la foto</string>
     <string name="imageEditLoadFailed">Impossibile aprire la foto per la modifica</string>
     <string name="imageCompressNoGain">La foto non è diventata più piccola: lasciata com\'è</string>

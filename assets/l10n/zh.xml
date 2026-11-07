@@ -3107,6 +3107,8 @@
     <string name="attCropRotate">裁剪和旋转</string>
     <string name="imageRotate">旋转</string>
     <string name="imageEditHint">拖动边框的角或边来裁剪</string>
+    <string name="imageEditHintCircle">移动圆圈或拖动角 — 头像中的照片将如此显示</string>
+    <string name="photoCirclePreview">照片在列表、邮件和名片中的样子</string>
     <string name="imageEditFailed">无法编辑照片</string>
     <string name="imageEditLoadFailed">无法打开照片进行编辑</string>
     <string name="imageCompressNoGain">照片没有变小，已保持原样</string>

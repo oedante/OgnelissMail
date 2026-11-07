@@ -3120,6 +3120,8 @@
     <string name="attCropRotate">Rajaa ja kierrä</string>
     <string name="imageRotate">Kierrä</string>
     <string name="imageEditHint">Rajaa vetämällä kehyksen kulmista tai reunoista</string>
+    <string name="imageEditHintCircle">Siirrä ympyrää tai vedä kulmasta – näin kuva näkyy muotokuvassa</string>
+    <string name="photoCirclePreview">Näin kuva näkyy luettelossa, viestissä ja kortissa</string>
     <string name="imageEditFailed">Kuvan muokkaaminen epäonnistui</string>
     <string name="imageEditLoadFailed">Kuvaa ei voitu avata muokattavaksi</string>
     <string name="imageCompressNoGain">Kuva ei pienentynyt – jätettiin ennalleen</string>

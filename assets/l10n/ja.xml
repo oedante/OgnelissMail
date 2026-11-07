@@ -3107,6 +3107,8 @@
     <string name="attCropRotate">切り抜きと回転</string>
     <string name="imageRotate">回転</string>
     <string name="imageEditHint">枠の角や辺をドラッグして切り抜きます</string>
+    <string name="imageEditHintCircle">円を動かすか角をドラッグ — ポートレートではこのように表示されます</string>
+    <string name="photoCirclePreview">一覧、メッセージ、カードでの表示</string>
     <string name="imageEditFailed">写真を編集できませんでした</string>
     <string name="imageEditLoadFailed">編集する写真を開けませんでした</string>
     <string name="imageCompressNoGain">写真は小さくならなかったため、そのままにしました</string>

@@ -3120,6 +3120,8 @@
     <string name="attCropRotate">Crop and rotate</string>
     <string name="imageRotate">Rotate</string>
     <string name="imageEditHint">Drag the corners or edges of the frame to crop</string>
+    <string name="imageEditHintCircle">Move the circle or drag a corner — this is how the photo will look in the portrait</string>
+    <string name="photoCirclePreview">How the photo will look in the list, the message and the card</string>
     <string name="imageEditFailed">Couldn\'t edit the photo</string>
     <string name="imageEditLoadFailed">Couldn\'t open the photo for editing</string>
     <string name="imageCompressNoGain">The photo didn\'t get smaller — kept as is</string>

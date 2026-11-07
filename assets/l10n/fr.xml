@@ -3120,6 +3120,8 @@
     <string name="attCropRotate">Recadrer et pivoter</string>
     <string name="imageRotate">Pivoter</string>
     <string name="imageEditHint">Faites glisser les coins ou les bords du cadre pour recadrer</string>
+    <string name="imageEditHintCircle">Déplacez le cercle ou tirez un coin : c\'est ainsi que la photo apparaîtra dans le portrait</string>
+    <string name="photoCirclePreview">Aperçu de la photo dans la liste, le message et la fiche</string>
     <string name="imageEditFailed">Impossible de modifier la photo</string>
     <string name="imageEditLoadFailed">Impossible d\'ouvrir la photo pour la modifier</string>
     <string name="imageCompressNoGain">La photo n\'est pas plus petite — laissée telle quelle</string>

@@ -3120,6 +3120,8 @@
     <string name="attCropRotate">Kırp ve döndür</string>
     <string name="imageRotate">Döndür</string>
     <string name="imageEditHint">Kırpmak için çerçevenin köşelerini veya kenarlarını sürükleyin</string>
+    <string name="imageEditHintCircle">Daireyi taşıyın veya bir köşeden sürükleyin — fotoğraf portrede böyle görünecek</string>
+    <string name="photoCirclePreview">Fotoğrafın listede, iletide ve kartta görünümü</string>
     <string name="imageEditFailed">Fotoğraf düzenlenemedi</string>
     <string name="imageEditLoadFailed">Fotoğraf düzenleme için açılamadı</string>
     <string name="imageCompressNoGain">Fotoğraf küçülmedi — olduğu gibi bırakıldı</string>

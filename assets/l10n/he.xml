@@ -3133,6 +3133,8 @@
     <string name="attCropRotate">חתוך וסובב</string>
     <string name="imageRotate">סובב</string>
     <string name="imageEditHint">גרור את הפינות או הקצוות של המסגרת כדי לחתוך</string>
+    <string name="imageEditHintCircle">הזיזו את העיגול או גררו פינה — כך התמונה תיראה בדיוקן</string>
+    <string name="photoCirclePreview">כך התמונה תיראה ברשימה, בהודעה ובכרטיס</string>
     <string name="imageEditFailed">לא ניתן היה לערוך את התמונה</string>
     <string name="imageEditLoadFailed">לא ניתן היה לפתוח את התמונה לעריכה</string>
     <string name="imageCompressNoGain">התמונה לא הוקטנה – נשארה כפי שהיא</string>

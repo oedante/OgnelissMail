@@ -3120,6 +3120,8 @@
     <string name="attCropRotate">Recortar y girar</string>
     <string name="imageRotate">Girar</string>
     <string name="imageEditHint">Arrastra las esquinas o los bordes del marco para recortar</string>
+    <string name="imageEditHintCircle">Mueva el círculo o arrastre una esquina: así se verá la foto en el retrato</string>
+    <string name="photoCirclePreview">Así se verá la foto en la lista, el mensaje y la ficha</string>
     <string name="imageEditFailed">No se pudo editar la foto</string>
     <string name="imageEditLoadFailed">No se pudo abrir la foto para editarla</string>
     <string name="imageCompressNoGain">La foto no ha reducido su tamaño: se deja como está</string>

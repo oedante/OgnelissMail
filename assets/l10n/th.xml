@@ -3107,6 +3107,8 @@
     <string name="attCropRotate">ครอบตัดและหมุน</string>
     <string name="imageRotate">หมุน</string>
     <string name="imageEditHint">ลากมุมหรือขอบของกรอบเพื่อครอบตัด</string>
+    <string name="imageEditHintCircle">เลื่อนวงกลมหรือลากมุม — รูปจะแสดงในภาพโปรไฟล์แบบนี้</string>
+    <string name="photoCirclePreview">รูปจะแสดงในรายการ ข้อความ และการ์ดแบบนี้</string>
     <string name="imageEditFailed">แก้ไขรูปภาพไม่สำเร็จ</string>
     <string name="imageEditLoadFailed">เปิดรูปภาพเพื่อแก้ไขไม่สำเร็จ</string>
     <string name="imageCompressNoGain">รูปภาพไม่เล็กลง จึงคงไว้ตามเดิม</string>

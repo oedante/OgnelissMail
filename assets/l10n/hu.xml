@@ -3120,6 +3120,8 @@
     <string name="attCropRotate">Vágás és forgatás</string>
     <string name="imageRotate">Forgatás</string>
     <string name="imageEditHint">Húzza a keret sarkait vagy szélét a vágáshoz</string>
+    <string name="imageEditHintCircle">Mozgassa a kört vagy húzza a sarkát – így fog kinézni a fotó a portréban</string>
+    <string name="photoCirclePreview">Így néz ki a fotó a listában, az üzenetben és a kártyán</string>
     <string name="imageEditFailed">Nem sikerült szerkeszteni a fotót</string>
     <string name="imageEditLoadFailed">Nem sikerült megnyitni a fotót szerkesztésre</string>
     <string name="imageCompressNoGain">A fotó nem lett kisebb – változatlanul hagytuk</string>

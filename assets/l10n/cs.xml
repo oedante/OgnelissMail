@@ -3133,6 +3133,8 @@
     <string name="attCropRotate">Oříznout a otočit</string>
     <string name="imageRotate">Otočit</string>
     <string name="imageEditHint">Ořízněte tažením za rohy nebo okraje rámečku</string>
+    <string name="imageEditHintCircle">Posuňte kruh nebo táhněte za roh – tak bude fotka vypadat v portrétu</string>
+    <string name="photoCirclePreview">Takto bude fotka vypadat v seznamu, zprávě a kartě</string>
     <string name="imageEditFailed">Fotku se nepodařilo upravit</string>
     <string name="imageEditLoadFailed">Fotku se nepodařilo otevřít k úpravě</string>
     <string name="imageCompressNoGain">Fotka se nezmenšila – zůstala beze změny</string>

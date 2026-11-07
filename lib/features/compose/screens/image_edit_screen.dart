@@ -9,6 +9,13 @@
 // снимком; «Сбросить» — как было. «Готово» — правка применяется
 // (`ImageEdit.apply`), экран возвращает новое имя и байты; ничего не
 // меняли или «×» — null.
+//
+// Круглый режим ([circle], 1.15.1, просьба владельца 07.11.2026: «при выборе
+// фото контакта — обрезка и поворот, как для фото в письме, но с просмотром,
+// как оно будет смотреться в круге»): рамка квадратная (тянется за углы,
+// двигается целиком), вне круга — затемнение, под снимком — живой просмотр в
+// кружках тех размеров, что в ленте, шапке письма и карточке человека.
+// «Готово» без правки возвращает исходный снимок (а не null — это отмена).
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -30,14 +37,19 @@ enum _Grip { topLeft, topRight, bottomLeft, bottomRight, left, top, right, botto
 class ImageEditScreen extends StatefulWidget {
   final Uint8List bytes;
   final String name;
-  const ImageEditScreen({super.key, required this.bytes, required this.name});
 
-  /// Открыть редактор. null — ничего не меняли или передумали.
+  /// Круглый портрет (фото ящика, контакта): квадратная рамка, круг и
+  /// просмотр в кружках.
+  final bool circle;
+  const ImageEditScreen({super.key, required this.bytes, required this.name, this.circle = false});
+
+  /// Открыть редактор. null — ничего не меняли или передумали; в круглом
+  /// режиме null — только отмена.
   static Future<({String name, Uint8List bytes})?> open(BuildContext context,
-          {required Uint8List bytes, required String name}) =>
+          {required Uint8List bytes, required String name, bool circle = false}) =>
       Navigator.of(context).push<({String name, Uint8List bytes})>(MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (_) => ImageEditScreen(bytes: bytes, name: name),
+        builder: (_) => ImageEditScreen(bytes: bytes, name: name, circle: circle),
       ));
 
   @override
@@ -79,7 +91,10 @@ class _ImageEditScreenState extends State<ImageEditScreen> {
         frame.image.dispose();
         return;
       }
-      setState(() => _image = frame.image);
+      setState(() {
+        _image = frame.image;
+        if (widget.circle) _crop = _centerSquare();
+      });
     } catch (e) {
       AppLogger.warning('Правка фото: «${widget.name}» не открылось — $e');
       if (mounted) setState(() => _failed = true);
@@ -90,6 +105,22 @@ class _ImageEditScreenState extends State<ImageEditScreen> {
   void dispose() {
     _image?.dispose();
     super.dispose();
+  }
+
+  /// Размер повёрнутого снимка в точках.
+  Size get _rotated {
+    final image = _image!;
+    return _turns.isOdd
+        ? Size(image.height.toDouble(), image.width.toDouble())
+        : Size(image.width.toDouble(), image.height.toDouble());
+  }
+
+  /// Наибольший квадрат по центру повёрнутого снимка — в долях.
+  Rect _centerSquare() {
+    final r = _rotated;
+    final side = math.min(r.width, r.height);
+    final w = side / r.width, h = side / r.height;
+    return Rect.fromLTWH((1 - w) / 2, (1 - h) / 2, w, h);
   }
 
   /// Место снимка в области [box]: целиком, по центру, с полями под углы рамки.
@@ -122,6 +153,8 @@ class _ImageEditScreenState extends State<ImageEditScreen> {
     if (near(c.topRight)) return _Grip.topRight;
     if (near(c.bottomLeft)) return _Grip.bottomLeft;
     if (near(c.bottomRight)) return _Grip.bottomRight;
+    // Круг — только углы и перенос: край квадрата поменял бы пропорции.
+    if (widget.circle) return c.inflate(edge).contains(p) ? _Grip.move : null;
     final inV = p.dy >= c.top - edge && p.dy <= c.bottom + edge;
     final inH = p.dx >= c.left - edge && p.dx <= c.right + edge;
     if (inV && (p.dx - c.left).abs() <= edge) return _Grip.left;
@@ -152,6 +185,22 @@ class _ImageEditScreenState extends State<ImageEditScreen> {
       t = _limit(t + dy, 0, 1 - h);
       r = l + w;
       b = t + h;
+    } else if (widget.circle) {
+      // Квадрат на экране (снимок вписан без искажения): угол тянется по
+      // диагонали, противоположный стоит на месте.
+      final c = _cropOnScreen(d);
+      final sx = moveR ? 1.0 : -1.0, sy = moveB ? 1.0 : -1.0;
+      final anchor = Offset(moveR ? c.left : c.right, moveB ? c.top : c.bottom);
+      final room = math.min(
+        moveR ? d.right - anchor.dx : anchor.dx - d.left,
+        moveB ? d.bottom - anchor.dy : anchor.dy - d.top,
+      );
+      final side = _limit(c.width + (sx * delta.dx + sy * delta.dy) / 2, math.min(48.0, room), room);
+      final sq = Rect.fromPoints(anchor, anchor.translate(sx * side, sy * side));
+      l = (sq.left - d.left) / d.width;
+      r = (sq.right - d.left) / d.width;
+      t = (sq.top - d.top) / d.height;
+      b = (sq.bottom - d.top) / d.height;
     } else {
       if (moveL) l = _limit(l + dx, 0, r - minW);
       if (moveR) r = _limit(r + dx, l + minW, 1);
@@ -173,12 +222,14 @@ class _ImageEditScreenState extends State<ImageEditScreen> {
     setState(() {
       _turns = 0;
       _crop = ImageEdit.full;
+      if (widget.circle && _image != null) _crop = _centerSquare();
     });
   }
 
   Future<void> _done() async {
     if (!_changed) {
-      Navigator.of(context).pop();
+      // Круг: «Готово» без правки (квадратный снимок) — снимок как есть.
+      Navigator.of(context).pop(widget.circle ? (name: widget.name, bytes: widget.bytes) : null);
       return;
     }
     final l10n = AppLocalizations.of(context);
@@ -256,6 +307,7 @@ class _ImageEditScreenState extends State<ImageEditScreen> {
                               dest: _dest,
                               crop: _cropOnScreen(_dest),
                               grid: _grip != null,
+                              circle: widget.circle,
                             ),
                           ),
                         );
@@ -266,7 +318,11 @@ class _ImageEditScreenState extends State<ImageEditScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(Space.m, Space.xs, Space.m, Space.s),
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Text(l10n.tr('imageEditHint'),
+                if (widget.circle && image != null) ...[
+                  _CirclePreview(image: image, turns: _turns, crop: _crop),
+                  const SizedBox(height: Space.s),
+                ],
+                Text(l10n.tr(widget.circle ? 'imageEditHintCircle' : 'imageEditHint'),
                     textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: muted)),
                 const SizedBox(height: Space.s),
                 Row(
@@ -331,16 +387,96 @@ class _ToolButton extends StatelessWidget {
   }
 }
 
+/// Просмотр портрета: выбранный квадрат в кружках тех размеров, что в ленте
+/// (40), шапке письма (56) и карточке человека (88).
+class _CirclePreview extends StatelessWidget {
+  final ui.Image image;
+  final int turns;
+  final Rect crop;
+  const _CirclePreview({required this.image, required this.turns, required this.crop});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Semantics(
+      label: l10n.tr('photoCirclePreview'),
+      image: true,
+      excludeSemantics: true,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          for (final d in const [40.0, 56.0, 88.0]) ...[
+            if (d != 40) const SizedBox(width: Space.l),
+            Container(
+              width: d,
+              height: d,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
+              ),
+              child: CustomPaint(painter: _CirclePainter(image: image, turns: turns, crop: crop)),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Квадрат [crop] (доли повёрнутого снимка) — в круг на весь холст.
+class _CirclePainter extends CustomPainter {
+  final ui.Image image;
+  final int turns;
+  final Rect crop;
+  _CirclePainter({required this.image, required this.turns, required this.crop});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final odd = turns.isOdd;
+    final rw = (odd ? image.height : image.width).toDouble();
+    final rh = (odd ? image.width : image.height).toDouble();
+    final cw = crop.width * rw, ch = crop.height * rh;
+    if (cw <= 0 || ch <= 0) return;
+    final k = math.max(size.width / cw, size.height / ch);
+    final whole = Rect.fromLTWH(-crop.left * rw * k, -crop.top * rh * k, rw * k, rh * k);
+    canvas.save();
+    canvas.clipPath(Path()..addOval(Offset.zero & size));
+    canvas.translate(whole.center.dx, whole.center.dy);
+    canvas.rotate(turns * math.pi / 2);
+    final w = odd ? whole.height : whole.width;
+    final h = odd ? whole.width : whole.height;
+    canvas.drawImageRect(
+      image,
+      Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+      Rect.fromCenter(center: Offset.zero, width: w, height: h),
+      Paint()..filterQuality = FilterQuality.medium,
+    );
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(_CirclePainter old) => old.image != image || old.turns != turns || old.crop != crop;
+}
+
 /// Снимок с поворотом и рамка обрезки: снаружи затемнение, углы — уголками,
-/// пока тянут — сетка третей.
+/// пока тянут — сетка третей. [circle] — затемнение вне круга, вписанного в
+/// рамку.
 class _EditPainter extends CustomPainter {
   final ui.Image image;
   final int turns;
   final Rect dest;
   final Rect crop;
   final bool grid;
+  final bool circle;
 
-  _EditPainter({required this.image, required this.turns, required this.dest, required this.crop, required this.grid});
+  _EditPainter(
+      {required this.image,
+      required this.turns,
+      required this.dest,
+      required this.crop,
+      required this.grid,
+      this.circle = false});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -358,14 +494,23 @@ class _EditPainter extends CustomPainter {
     );
     canvas.restore();
 
-    // Затемнение вне рамки.
+    // Затемнение вне рамки (круга).
     canvas.drawPath(
       Path()
         ..fillType = PathFillType.evenOdd
         ..addRect(dest)
-        ..addRect(crop),
-      Paint()..color = Colors.black.withValues(alpha: 0.55),
+        ..addPath(circle ? (Path()..addOval(crop)) : (Path()..addRect(crop)), Offset.zero),
+      Paint()..color = Colors.black.withValues(alpha: circle ? 0.65 : 0.55),
     );
+    if (circle) {
+      canvas.drawOval(
+        crop,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5
+          ..color = Colors.white.withValues(alpha: 0.9),
+      );
+    }
     canvas.drawRect(
       crop,
       Paint()
@@ -404,5 +549,10 @@ class _EditPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_EditPainter old) =>
-      old.image != image || old.turns != turns || old.dest != dest || old.crop != crop || old.grid != grid;
+      old.image != image ||
+      old.turns != turns ||
+      old.dest != dest ||
+      old.crop != crop ||
+      old.grid != grid ||
+      old.circle != circle;
 }

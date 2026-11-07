@@ -3120,6 +3120,8 @@
     <string name="attCropRotate">Beskjær og roter</string>
     <string name="imageRotate">Roter</string>
     <string name="imageEditHint">Dra i hjørnene eller kantene på rammen for å beskjære</string>
+    <string name="imageEditHintCircle">Flytt sirkelen eller dra i et hjørne – slik ser bildet ut i portrettet</string>
+    <string name="photoCirclePreview">Slik ser bildet ut i listen, meldingen og kortet</string>
     <string name="imageEditFailed">Kunne ikke redigere bildet</string>
     <string name="imageEditLoadFailed">Kunne ikke åpne bildet for redigering</string>
     <string name="imageCompressNoGain">Bildet ble ikke mindre – beholdt som det er</string>

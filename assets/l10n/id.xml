@@ -3107,6 +3107,8 @@
     <string name="attCropRotate">Pangkas dan putar</string>
     <string name="imageRotate">Putar</string>
     <string name="imageEditHint">Seret sudut atau tepi bingkai untuk memangkas</string>
+    <string name="imageEditHintCircle">Geser lingkaran atau tarik sudutnya — begini foto akan tampil di potret</string>
+    <string name="photoCirclePreview">Begini foto akan tampil di daftar, pesan, dan kartu</string>
     <string name="imageEditFailed">Tidak dapat mengedit foto</string>
     <string name="imageEditLoadFailed">Tidak dapat membuka foto untuk diedit</string>
     <string name="imageCompressNoGain">Ukuran foto tidak mengecil — dibiarkan apa adanya</string>

@@ -3120,6 +3120,8 @@
     <string name="attCropRotate">Bijsnijden en draaien</string>
     <string name="imageRotate">Draaien</string>
     <string name="imageEditHint">Sleep de hoeken of randen van het kader om bij te snijden</string>
+    <string name="imageEditHintCircle">Verschuif de cirkel of sleep aan een hoek – zo komt de foto in het portret</string>
+    <string name="photoCirclePreview">Zo ziet de foto eruit in de lijst, het bericht en de kaart</string>
     <string name="imageEditFailed">De foto kan niet worden bewerkt</string>
     <string name="imageEditLoadFailed">De foto kan niet worden geopend voor bewerking</string>
     <string name="imageCompressNoGain">De foto is niet kleiner geworden en is ongewijzigd gelaten</string>

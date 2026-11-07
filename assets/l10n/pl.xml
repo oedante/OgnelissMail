@@ -3146,6 +3146,8 @@
     <string name="attCropRotate">Przytnij i obróć</string>
     <string name="imageRotate">Obróć</string>
     <string name="imageEditHint">Przeciągnij rogi lub krawędzie ramki, aby przyciąć</string>
+    <string name="imageEditHintCircle">Przesuń okrąg lub pociągnij za róg — tak zdjęcie będzie wyglądać w portrecie</string>
+    <string name="photoCirclePreview">Tak zdjęcie będzie wyglądać na liście, w wiadomości i na karcie</string>
     <string name="imageEditFailed">Nie udało się edytować zdjęcia</string>
     <string name="imageEditLoadFailed">Nie udało się otworzyć zdjęcia do edycji</string>
     <string name="imageCompressNoGain">Zdjęcie nie zmniejszyło się — zostawiono bez zmian</string>

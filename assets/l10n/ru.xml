@@ -3146,6 +3146,8 @@
     <string name="attCropRotate">Обрезать и повернуть</string>
     <string name="imageRotate">Повернуть</string>
     <string name="imageEditHint">Потяните за углы или края рамки, чтобы обрезать</string>
+    <string name="imageEditHintCircle">Передвиньте круг или потяните за угол — так фото будет в портрете</string>
+    <string name="photoCirclePreview">Так фото будет выглядеть в ленте, письме и карточке</string>
     <string name="imageEditFailed">Не удалось изменить фото</string>
     <string name="imageEditLoadFailed">Не удалось открыть фото для правки</string>
     <string name="imageCompressNoGain">Фото не стало меньше — оставлено как есть</string>

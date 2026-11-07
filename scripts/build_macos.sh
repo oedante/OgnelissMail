@@ -28,6 +28,10 @@ done
 
 [[ "$(uname)" == "Darwin" ]] || { echo "Сборка для Mac — только на macOS."; exit 1; }
 command -v flutter >/dev/null || { echo "Flutter не найден (brew install --cask flutter)."; exit 1; }
+# Rust (rustup) — ядро перетаскивания вложений (super_drag_and_drop, 1.15.0)
+# собирается из исходников; нужную версию Rust rustup скачает сам.
+command -v rustup >/dev/null 2>&1 || [ -x "$HOME/.cargo/bin/rustup" ] || {
+  echo "Нет Rust (rustup). Установите: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh  (или https://rustup.rs)"; exit 1; }
 
 # Файлы, удалённые из проекта, но оставшиеся после распаковки архива поверх
 # папки, — убрать (как scripts/remove_stale_files.ps1 на Windows).

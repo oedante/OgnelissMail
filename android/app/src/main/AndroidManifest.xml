@@ -281,6 +281,17 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_open_paths" />
         </provider>
+        <!-- Перетаскивание вложения в другое приложение (super_drag_and_drop,
+             1.15.0): содержимое файла отдаётся через этот провайдер по адресу
+             content://, права на адрес система выдаёт приложению, куда его
+             бросили (DRAG_FLAG_GLOBAL_URI_READ). Пакет советует
+             exported="true"; закрыт, как FileProvider выше: чужие приложения
+             не читают данные перетаскивания, угадав адрес. -->
+        <provider
+            android:name="com.superlist.super_native_extensions.DataProvider"
+            android:authorities="${applicationId}.SuperClipboardDataProvider"
+            android:exported="false"
+            android:grantUriPermissions="true" />
 
         <activity
             android:name="com.linusu.flutter_web_auth_2.CallbackActivity"

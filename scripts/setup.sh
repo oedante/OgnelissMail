@@ -66,6 +66,10 @@ ok "ОС: $OS · платформы: $PLATFORMS"
 # ── 1. Проверка инструментов ──
 step "Проверка Flutter и Dart"
 command -v flutter >/dev/null 2>&1 || die "Flutter не найден в PATH. Установите: https://docs.flutter.dev/get-started/install"
+# Rust (rustup) — ядро перетаскивания вложений (super_drag_and_drop, 1.15.0):
+# без него не собирается приложение и не идут тесты (flutter test).
+command -v rustup >/dev/null 2>&1 || [ -x "$HOME/.cargo/bin/rustup" ] || \
+  die "Нет Rust (rustup). Установите: https://rustup.rs (нужную версию Rust rustup скачает сам)"
 command -v dart >/dev/null 2>&1 || warn "dart не в PATH отдельно (обычно идёт с Flutter) — продолжаем"
 flutter --version | head -1 || true
 ok "Flutter найден"

@@ -32,6 +32,7 @@ import 'dart:convert';
 import 'dart:io';
 import '../../../services/mail/transport_capabilities.dart';
 import '../../../services/mail/engine/mail_engine_service.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import '../../../widgets/ui/file_type_icon.dart';
 import '../../../widgets/ui/action_sheet.dart';
@@ -90,6 +91,8 @@ import '../widgets/quick_reply_bar.dart';
 import '../providers/drawer_prefs.dart'
     show quickReplyBarProvider, mailBarOrderProvider, MailBarAction, confirmMailDeleteProvider;
 import '../../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
+import '../widgets/attachment_drag_out.dart';
+import '../widgets/move_folder_picker.dart';
 import '../widgets/mail_html_view.dart';
 import '../../../widgets/common/readable_width.dart';
 import '../providers/conversation_mute.dart';
@@ -103,10 +106,9 @@ import '../../archive/archive_sheets.dart' show ensureArchiveReady;
 import '../../../services/archive/archive_runner.dart' show archiveRunnerProvider;
 import '../../../services/archive/archive_settings.dart' show archiveSettingsProvider;
 import '../../../services/mail/special_folders.dart';
-import '../../../core/utils/folder_icons.dart';
 import '../../../services/mail/imap/imap_service.dart';
 import '../../../services/mail/email_actions_service.dart';
-import 'package:drift/drift.dart' show Value, BooleanExpressionOperators, OrderingTerm;
+import 'package:drift/drift.dart' show Value, BooleanExpressionOperators;
 import '../../../widgets/common/hero_email_transition.dart';
 import '../../../widgets/common/animated_appearance.dart';
 import '../../../core/utils/quote_splitter.dart';
@@ -129,7 +131,6 @@ import '../../../core/theme/appearance.dart' show AppearanceLook;
 import '../../../widgets/common/mail_open_motion.dart' show MailHeroTags, MailOpenHandoff, MailSubjectHero;
 import '../../../core/utils/quote_people.dart';
 import '../../../core/platform/app_share.dart';
-import '../providers/folder_names.dart';
 import '../../../widgets/common/pane_navigator.dart';
 
 class MailDetailScreen extends ConsumerStatefulWidget {
@@ -2113,7 +2114,17 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   Widget _attachmentChip(EmailAttachment att, ThemeData theme, AppLocalizations l10n) {
     final state = _attachmentStates[att.id] ?? const _AttachmentState();
     final scheme = theme.colorScheme;
-    return Semantics(
+    // Перетаскивание наружу (1.15.0): на сенсорном экране его начинает
+    // удержание — лист действий тогда, когда вложение удержали и отпустили
+    // на месте (AttachmentDragSource.onHoldWithoutMove).
+    final drag = AttachmentDragOut.available(context);
+    final touchDrag = drag && AttachmentDragOut.touchDrag(defaultTargetPlatform);
+    return AttachmentDragSource(
+      attachment: att,
+      localPath: () => _attachmentStates[att.id]?.localPath,
+      fetch: () => _ensureLocal(att),
+      onHoldWithoutMove: () => unawaited(_onAttachmentLongPress(att, l10n)),
+      child: Semantics(
       label: '${l10n.tr('downloadAttachment')}: ${att.name}, ${att.sizeFormatted}',
       button: true,
       child: Material(
@@ -2125,7 +2136,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           // Долгое нажатие — шторка: просмотр, открыть в другом приложении,
           // поделиться/сохранить (раньше одиночное вложение можно было только
           // открыть; «сохранить» было лишь для всех сразу).
-          onLongPress: () => _onAttachmentLongPress(att, l10n),
+          onLongPress: touchDrag ? null : () => _onAttachmentLongPress(att, l10n),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(Space.s, Space.xs, Space.m, Space.xs),
             child: Row(
@@ -2157,6 +2168,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             ),
           ),
         ),
+      ),
       ),
     );
   }
@@ -2440,22 +2452,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     return labeled ? Tooltip(message: cmd.label, child: withLong) : withLong;
   }
 
-  /// «Переместить» (панель команд, 1.10.5): папки ящика этого письма.
+  /// «Переместить» (панель команд, 1.10.5; «Ещё» на телефоне, 1.15.0):
+  /// папки ящика этого письма.
   Future<void> _moveEmail(EmailModel email, AppLocalizations l10n) async {
-    final db = ref.read(databaseProvider);
-    final folders = await (db.select(db.folders)
-          ..where((f) => f.accountId.equals(email.accountId))
-          ..orderBy([(f) => OrderingTerm(expression: f.sortOrder)]))
-        .get();
-    if (!mounted) return;
-    final targetId = await showChoiceSheet<String>(
-      context,
-      title: l10n.tr('moveToDots'),
-      entries: [
-        for (final f in folders.where((f) => f.id != email.folderId))
-          AppMenuEntry(value: f.id, label: localizedFolderName(folderFromRow(f), l10n), icon: folderIconOf(folderFromRow(f))),
-      ],
-    );
+    final targetId = await pickMoveFolder(context, ref, email);
     if (targetId == null || !mounted) return;
     final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
     if (account == null) return;
@@ -2772,6 +2772,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         ]),
         PeekGroup(title: l10n.tr('actionsOrganize'), items: [
           _peekAction(AppIcons.archive, l10n.tr('archive'), () => _archiveEmail(email, l10n)),
+          // «Переместить» (1.15.0, замечание владельца 07.11.2026: в письме
+          // на телефоне его не было — только на панели команд компьютера).
+          if (!(email.isDraft || email.folderId == 'drafts'))
+            _peekAction(AppIcons.drive_file_move, l10n.tr('moveTo'), () => unawaited(_moveEmail(email, l10n))),
           _peekAction(email.isRead ? AppIcons.mark_email_unread : AppIcons.mark_email_read,
               email.isRead ? l10n.tr('markUnread') : l10n.tr('markRead'), () {
             final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;

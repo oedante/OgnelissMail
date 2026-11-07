@@ -1,7 +1,7 @@
 name: ogneliss
 description: Ogneliss Mail — почтовый клиент для Exchange, Gmail, Яндекс и Mail.ru
 publish_to: "none"
-version: 1.14.0+140
+version: 1.15.0+141
 
 environment:
   # Dart 3.10+: этого требует sqlite3 3.x (через drift 2.32+). Flutter 3.38+.
@@ -125,8 +125,15 @@ dependencies:
   # Логотипы отправителей BIMI (1.9.x): отрисовка SVG без скриптов и внешних
   # ссылок. MIT; vector_graphics* — BSD-3-Clause (docs/LICENSING.md).
   flutter_svg: ^2.3.2
-  desktop_drop: ^0.8.4
   desktop_multi_window: ^0.3.1
+  # Перетаскивание вложения из письма наружу — в Проводник, Finder, другое
+  # приложение (1.15.0, решение владельца 07.11.2026). MIT; ядро на Rust
+  # (super_native_extensions, готовые библиотеки качает cargokit при сборке).
+  # 0.10.0-dev: 0.9.1 не совместим с device_info_plus 13.
+  super_drag_and_drop: 0.10.0-dev.2
+  # Свои форматы файлов (SimpleFileFormat) и «виртуальный файл» — из
+  # super_clipboard, на котором стоит super_drag_and_drop (MIT, та же версия).
+  super_clipboard: 0.10.0-dev.2
   markdown: ^7.3.1
 
 # system_tray 2.0.3 (последний релиз) объявляет uuid ^3.0.6, а у нас
@@ -219,6 +226,8 @@ flutter:
     - NOTICE
     # Редактор писем HugeRTE — tool/editor/build_editor.sh
     - assets/editor/
+    # Лицензии Rust-крейтов ядра перетаскивания (1.15.0, tool/dev/rust_licenses.py).
+    - assets/licenses/
   fonts:
     # Шрифт интерфейса — один на всех платформах (1.6.20): иначе iPhone и Mac
     # показывали бы SF, Windows — Segoe UI, Android — Roboto, и вид

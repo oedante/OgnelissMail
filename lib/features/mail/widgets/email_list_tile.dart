@@ -236,11 +236,12 @@ class EmailListTile extends ConsumerWidget {
     final hlTag = hlTags.isEmpty ? null : email.tags.where(hlTags.contains).firstOrNull;
     final hlColor = hlTag == null ? null : AppTheme.getTagColor(hlTag).withValues(alpha: 0.08);
 
-    // Счётчик бесед
-    final convCounts = ref.watch(conversationCountProvider);
-    final convCount = email.conversationId != null
-        ? (convCounts[conversationKey(email.accountId, email.conversationId!)] ?? 1)
-        : 1;
+    // Счётчик бесед — только своей (07.11.2026, аудит микрофризов: строка
+    // следила за всей картой, и при каждом её обновлении перестраивались
+    // все видимые строки).
+    final convKey = email.conversationId == null ? null : conversationKey(email.accountId, email.conversationId!);
+    final convCount =
+        convKey == null ? 1 : ref.watch(conversationCountProvider.select((m) => m[convKey] ?? 1));
 
     // Начат и не отправлен ответ на это письмо (на свёрнутой беседе — на
     // любое её письмо): в строке превью «Черновик: …», как в Telegram

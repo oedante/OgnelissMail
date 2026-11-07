@@ -519,7 +519,17 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   }
 
   /// Подгрузка следующей страницы при скролле
+  DateTime _lastScrollHold = DateTime(0);
+
   void _onScroll() {
+    // Листают ленту — фоновая синхронизация уступает (07.11.2026, аудит
+    // микрофризов: пауза была только при открытии письма, а при прокрутке
+    // шли три папки параллельно). Продлевается, пока прокрутка идёт.
+    final now = DateTime.now();
+    if (now.difference(_lastScrollHold) > const Duration(milliseconds: 300)) {
+      _lastScrollHold = now;
+      WorkScheduler.instance.hold(const Duration(milliseconds: 800));
+    }
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 300) {
       ref.read(emailsProvider.notifier).loadNextPage();

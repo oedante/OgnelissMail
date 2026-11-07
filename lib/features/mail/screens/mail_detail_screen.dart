@@ -130,6 +130,9 @@ import '../../../core/theme/ogneliss_look.dart';
 import '../../../core/theme/appearance.dart' show AppearanceLook;
 import '../../../widgets/common/mail_open_motion.dart' show MailHeroTags, MailOpenHandoff, MailSubjectHero;
 import '../../../core/utils/quote_people.dart';
+import '../../../widgets/common/person_photo.dart' show personPhotosProvider;
+import '../../settings/providers/module_settings_provider.dart' show moduleSettingsProvider;
+import '../../../services/contacts/mail_contacts_service.dart' show mailContactsServiceProvider;
 import '../../../core/platform/app_share.dart';
 import '../../../widgets/common/pane_navigator.dart';
 
@@ -1108,6 +1111,23 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   // встречу / Напоминание / Скопировать / Показать в календаре».
   DateContext? _datesFor(EmailModel email) => ref.read(mailOpenCacheProvider).datesFor(email);
 
+  /// Фото людей в плашках цитаты для окна браузера (1.15.1): те же, что у
+  /// плашек простого письма и в шапке (карта фото); у кого фото ещё нет —
+  /// запрос в адресную книгу организации, как это делает портрет в ленте.
+  /// Документ не перезагружается, когда фото придут позже: они будут при
+  /// следующем открытии.
+  MailHtmlDocument _withPeoplePhotos(MailHtmlDocument doc) {
+    final emails = doc.peopleEmails;
+    if (emails.isEmpty || !ref.read(moduleSettingsProvider).showContactPhotos) return doc;
+    final photos = ref.read(personPhotosProvider).value;
+    if (photos == null) return doc;
+    final contacts = ref.read(mailContactsServiceProvider);
+    for (final e in emails) {
+      if (!photos.containsKey(e)) contacts.requestPhoto(e);
+    }
+    return doc.withPeoplePhotos(photos);
+  }
+
   /// Разбор простого письма для изолята. Статический: замыкание внутри
   /// метода экрана захватило бы и сам экран, а его в изолят не передать.
   static NativeMail? Function(String) _nativeBuilder(bool remote, DateContext? dates) {
@@ -1385,7 +1405,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // Картинки — строкой в готовый документ (без разбора HTML).
     MailHtmlDocument withImages(String k, MailHtmlDocument base) =>
         _webDocs['${k}_${byRequest ? 'req' : _inlineImages.length}'] ??=
-            _hasCid && !byRequest ? base.withInlineImages(_inlineImages) : base;
+            _withPeoplePhotos(_hasCid && !byRequest ? base.withInlineImages(_inlineImages) : base);
     var doc = _webDocs['${docKey}_${byRequest ? 'req' : _inlineImages.length}'];
     if (doc == null) {
       final base = _baseDocs[docKey];

@@ -510,6 +510,66 @@ class MailHtmlDocument {
     return MailHtmlDocument(out, linkTexts, declaredWidth: declaredWidth, darkDesign: darkDesign, clipped: clipped);
   }
 
+  static final _personHref = RegExp(r'''href="ogperson:([^"?]+)\?''', caseSensitive: false);
+  static final _photoData = RegExp(r'^data:image/(?:png|jpe?g|gif|webp);base64,[A-Za-z0-9+/=]+$');
+
+  /// Фото — не больше стольких людей и знаков data URI на документ: фото
+  /// Exchange 240×240 — 15–35 тысяч знаков; огромная рассылка остаётся
+  /// буквами.
+  static const maxPeoplePhotos = 40;
+  static const maxPeoplePhotoChars = 900000;
+
+  /// Адреса людей в плашках цитаты (строчными, без повторов).
+  List<String> get peopleEmails {
+    if (!html.contains('ogperson:')) return const [];
+    final out = <String>{};
+    for (final m in _personHref.allMatches(html)) {
+      try {
+        out.add(Uri.decodeComponent(m.group(1)!).toLowerCase());
+      } catch (_) {}
+      if (out.length >= 300) break;
+    }
+    return out.toList();
+  }
+
+  /// Портреты людей в плашках цитаты (1.15.1, замечание владельца
+  /// 07.11.2026: в письме, которое показывает окно браузера, у плашек были
+  /// только буквы, а в простом письме — фото). Фото из карты «адрес → data
+  /// URI» (контакты, адресная книга организации) — фоном кружка плашки
+  /// (::before), буква скрывается; одно правило на человека, плашки не
+  /// меняются. Только data: — сеть окну закрыта. Строковая вставка в
+  /// готовый документ, без разбора HTML.
+  MailHtmlDocument withPeoplePhotos(Map<String, String> photos) {
+    if (photos.isEmpty || !html.contains('ogperson:')) return this;
+    final rules = StringBuffer();
+    final seen = <String>{};
+    var count = 0, chars = 0;
+    for (final m in _personHref.allMatches(html)) {
+      final enc = m.group(1)!;
+      if (!seen.add(enc)) continue;
+      String email;
+      try {
+        email = Uri.decodeComponent(enc).toLowerCase();
+      } catch (_) {
+        continue;
+      }
+      // В значении селектора — только знаки адреса после encodeComponent.
+      if (enc.contains(RegExp(r'''["\\<>]'''))) continue;
+      final p = photos[email];
+      if (p == null || !_photoData.hasMatch(p)) continue;
+      if (count >= maxPeoplePhotos || chars + p.length > maxPeoplePhotoChars) break;
+      count++;
+      chars += p.length;
+      rules.write('a[href^="ogperson:$enc?" i][data-i]::before{background:url("$p") center/cover no-repeat;'
+          'color:transparent !important;filter:var(--og-ph,none);}');
+    }
+    if (rules.isEmpty) return this;
+    final tag = '<style id="og-people">$rules</style>';
+    final i = html.indexOf('</head>');
+    final out = i < 0 ? '$tag$html' : '${html.substring(0, i)}$tag${html.substring(i)}';
+    return MailHtmlDocument(out, linkTexts, declaredWidth: declaredWidth, darkDesign: darkDesign, clipped: clipped);
+  }
+
   /// Текст вне ссылок, стилей и полей ввода: найденные адреса и даты →
   /// `<a href>`.
   static void _linkifyText(dom.Node node, DateContext? dates, {int depth = 0}) {
@@ -983,7 +1043,9 @@ class MailHtmlView extends StatefulWidget {
         ..write('body{background:transparent !important;}')
         ..write('html,body{color-scheme:light !important;}')
         ..write('img,video,picture,svg,canvas,[style*="background-image"],[background]'
-            '{filter:invert(1) hue-rotate(180deg);}');
+            '{filter:invert(1) hue-rotate(180deg);}')
+        // Фото людей в плашках цитаты (withPeoplePhotos) — тоже обратно.
+        ..write(':root{--og-ph:invert(1) hue-rotate(180deg);}');
     } else {
       css.write('html,body{background:${_hex(page)} !important;color-scheme:light !important;}');
     }

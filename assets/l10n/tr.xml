@@ -3147,6 +3147,7 @@
     <string name="imageRotate">Döndür</string>
     <string name="pdfRotatePage">Sayfayı döndür</string>
     <string name="pdfRotateAll">Tüm sayfaları döndür</string>
+    <string name="attachmentGoneOnServer">Ek artık sunucuda yok: ileti silinmiş veya taşınmış. Klasörü yenileyin.</string>
     <string name="imageEditHint">Kırpmak için çerçevenin köşelerini veya kenarlarını sürükleyin</string>
     <string name="imageEditHintCircle">Daireyi taşıyın veya bir köşeden sürükleyin — fotoğraf portrede böyle görünecek</string>
     <string name="photoCirclePreview">Fotoğrafın listede, iletide ve kartta görünümü</string>

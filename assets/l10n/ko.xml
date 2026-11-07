@@ -3134,6 +3134,7 @@
     <string name="imageRotate">회전</string>
     <string name="pdfRotatePage">페이지 회전</string>
     <string name="pdfRotateAll">모든 페이지 회전</string>
+    <string name="attachmentGoneOnServer">첨부 파일이 서버에 없습니다. 메시지가 삭제되었거나 이동되었습니다. 폴더를 새로 고치세요.</string>
     <string name="imageEditHint">프레임의 모서리나 가장자리를 드래그해서 자르세요</string>
     <string name="imageEditHintCircle">원을 옮기거나 모서리를 끌어 보세요 — 프로필 사진은 이렇게 보입니다</string>
     <string name="photoCirclePreview">목록, 메일, 카드에서 사진이 보이는 모습</string>

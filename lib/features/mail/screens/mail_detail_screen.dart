@@ -2321,7 +2321,12 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         _attachmentStates[att.id] = _AttachmentState(error: e.toString());
       });
 
-      if (mounted) showInlineError('${l10n.tr('error')}: $e');
+      // Письма уже нет на сервере (ActiveSync ItemOperations Status 6 —
+      // «объект не найден», 15 — неверный id): понятной строкой, а не
+      // «Bad state: EAS: ItemOperations Fetch Status=6» (журнал владельца
+      // 08.11.2026; синхронизация следом удаляет письмо и у нас).
+      final gone = RegExp(r'ItemOperations Fetch Status=(6|15)\b').hasMatch('$e');
+      if (mounted) showInlineError(gone ? l10n.tr('attachmentGoneOnServer') : '${l10n.tr('error')}: $e');
     }
   }
 

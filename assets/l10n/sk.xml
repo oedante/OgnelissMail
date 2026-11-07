@@ -3160,6 +3160,7 @@
     <string name="imageRotate">Otočiť</string>
     <string name="pdfRotatePage">Otočiť stranu</string>
     <string name="pdfRotateAll">Otočiť všetky strany</string>
+    <string name="attachmentGoneOnServer">Príloha už na serveri nie je: správa bola odstránená alebo presunutá. Obnovte priečinok.</string>
     <string name="imageEditHint">Orežte potiahnutím za rohy alebo okraje rámika</string>
     <string name="imageEditHintCircle">Posuňte kruh alebo potiahnite za roh – takto bude fotka vyzerať v portréte</string>
     <string name="photoCirclePreview">Takto bude fotka vyzerať v zozname, správe a karte</string>

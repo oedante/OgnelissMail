@@ -3173,6 +3173,7 @@
     <string name="imageRotate">Obróć</string>
     <string name="pdfRotatePage">Obróć stronę</string>
     <string name="pdfRotateAll">Obróć wszystkie strony</string>
+    <string name="attachmentGoneOnServer">Załącznika nie ma już na serwerze: wiadomość usunięto lub przeniesiono. Odśwież folder.</string>
     <string name="imageEditHint">Przeciągnij rogi lub krawędzie ramki, aby przyciąć</string>
     <string name="imageEditHintCircle">Przesuń okrąg lub pociągnij za róg — tak zdjęcie będzie wyglądać w portrecie</string>
     <string name="photoCirclePreview">Tak zdjęcie będzie wyglądać na liście, w wiadomości i na karcie</string>

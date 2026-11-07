@@ -39,13 +39,7 @@ class EwsEngine implements MailEngine {
   SecurityPolicy? get policy => null;
 
 
-  String _authUser(AccountConfig cfg) {
-    if (cfg.domain != null && cfg.domain!.isNotEmpty) {
-      final user = cfg.email.contains('@') ? cfg.email.split('@').first : cfg.email;
-      return '${cfg.domain}\\$user';
-    }
-    return cfg.email;
-  }
+  String _authUser(AccountConfig cfg) => cfg.exchangeLogin;
 
   String _basicAuth(AccountConfig cfg) =>
       'Basic ${base64.encode(utf8.encode('${_authUser(cfg)}:${cfg.password ?? ''}'))}';

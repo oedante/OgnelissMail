@@ -3147,6 +3147,7 @@
     <string name="imageRotate">Pivoter</string>
     <string name="pdfRotatePage">Faire pivoter la page</string>
     <string name="pdfRotateAll">Faire pivoter toutes les pages</string>
+    <string name="attachmentGoneOnServer">La pièce jointe n’est plus sur le serveur : le message a été supprimé ou déplacé. Actualisez le dossier.</string>
     <string name="imageEditHint">Faites glisser les coins ou les bords du cadre pour recadrer</string>
     <string name="imageEditHintCircle">Déplacez le cercle ou tirez un coin : c\'est ainsi que la photo apparaîtra dans le portrait</string>
     <string name="photoCirclePreview">Aperçu de la photo dans la liste, le message et la fiche</string>

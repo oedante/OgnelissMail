@@ -3199,6 +3199,7 @@
     <string name="imageRotate">تدوير</string>
     <string name="pdfRotatePage">تدوير الصفحة</string>
     <string name="pdfRotateAll">تدوير كل الصفحات</string>
+    <string name="attachmentGoneOnServer">لم يعد المرفق على الخادم: حُذفت الرسالة أو نُقلت. حدّث المجلد.</string>
     <string name="imageEditHint">اسحب زوايا الإطار أو حوافه للاقتصاص</string>
     <string name="imageEditHintCircle">حرّك الدائرة أو اسحب أحد الأركان — هكذا ستظهر الصورة في الصورة الشخصية</string>
     <string name="photoCirclePreview">هكذا ستبدو الصورة في القائمة والرسالة والبطاقة</string>

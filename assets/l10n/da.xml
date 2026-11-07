@@ -3147,6 +3147,7 @@
     <string name="imageRotate">Roter</string>
     <string name="pdfRotatePage">Rotér side</string>
     <string name="pdfRotateAll">Rotér alle sider</string>
+    <string name="attachmentGoneOnServer">Vedhæftningen findes ikke længere på serveren: beskeden er slettet eller flyttet. Opdater mappen.</string>
     <string name="imageEditHint">Træk i rammens hjørner eller kanter for at beskære</string>
     <string name="imageEditHintCircle">Flyt cirklen eller træk i et hjørne – sådan ser billedet ud i portrættet</string>
     <string name="photoCirclePreview">Sådan ser billedet ud på listen, i beskeden og på kortet</string>

@@ -3147,6 +3147,7 @@
     <string name="imageRotate">Girar</string>
     <string name="pdfRotatePage">Rodar página</string>
     <string name="pdfRotateAll">Rodar todas as páginas</string>
+    <string name="attachmentGoneOnServer">O anexo já não está no servidor: a mensagem foi eliminada ou movida. Atualize a pasta.</string>
     <string name="imageEditHint">Arraste os cantos ou as bordas da moldura para cortar</string>
     <string name="imageEditHintCircle">Mova o círculo ou arraste um canto — assim a foto aparecerá no retrato</string>
     <string name="photoCirclePreview">Assim a foto aparecerá na lista, na mensagem e no cartão</string>

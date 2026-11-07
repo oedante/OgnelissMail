@@ -3160,6 +3160,7 @@
     <string name="imageRotate">Otočit</string>
     <string name="pdfRotatePage">Otočit stránku</string>
     <string name="pdfRotateAll">Otočit všechny stránky</string>
+    <string name="attachmentGoneOnServer">Příloha už na serveru není: zpráva byla smazána nebo přesunuta. Obnovte složku.</string>
     <string name="imageEditHint">Ořízněte tažením za rohy nebo okraje rámečku</string>
     <string name="imageEditHintCircle">Posuňte kruh nebo táhněte za roh – tak bude fotka vypadat v portrétu</string>
     <string name="photoCirclePreview">Takto bude fotka vypadat v seznamu, zprávě a kartě</string>

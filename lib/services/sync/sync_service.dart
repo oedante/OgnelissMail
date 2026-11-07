@@ -559,6 +559,14 @@ class SyncService {
         checked += part.length;
       }
     } catch (e) {
+      // Фоновая проверка закончилась, пока шла сверка: службы приложения
+      // уже закрыты (журнал владельца 08.11.2026: 13 раз «Cannot use the
+      // Ref … after it has been disposed»). Не ошибка — продолжит следующая
+      // проверка, без часовой паузы.
+      if ('$e'.contains('after it has been disposed')) {
+        AppLogger.info('Коллеги из адресной книги: проверка закончилась раньше сверки — продолжим в следующий раз');
+        return;
+      }
       _dirPauseUntil[account.id] = DateTime.now().add(const Duration(hours: 1));
       AppLogger.warning('Коллеги из адресной книги: $e — пауза на час');
     } finally {

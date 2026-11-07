@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Przesunięcie w lewo</string>
     <string name="swipeFirstAction">Pierwsza czynność</string>
     <string name="swipeSecondAction">Druga czynność</string>
-    <string name="swipeSingleHint">Gdy przypisana jest jedna czynność, pełne przesunięcie wykonuje ją od razu. Przy dwóch przyciski się otwierają i czekają na Twój wybór.</string>
+    <string name="swipeSingleHint">Krótkie przesunięcie pokazuje przyciski, długie od razu wykonuje pierwszą akcję. Przy jednej akcji wystarczy mniej więcej pół wiersza.</string>
     <string name="filterToMe">Do mnie</string>
     <string name="recentSearches">Ostatnie wyszukiwania</string>
     <string name="draft">Wersja robocza</string>

@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">बाईं ओर स्वाइप</string>
     <string name="swipeFirstAction">पहली कार्रवाई</string>
     <string name="swipeSecondAction">दूसरी कार्रवाई</string>
-    <string name="swipeSingleHint">एक कार्रवाई चुनी हो तो पूरा स्वाइप करने पर वह तुरंत हो जाती है। दो कार्रवाइयां हों तो बटन खुलते हैं और आपके चुनाव का इंतज़ार करते हैं।</string>
+    <string name="swipeSingleHint">छोटा स्वाइप बटन दिखाता है, लंबा स्वाइप पहली कार्रवाई तुरंत करता है। एक ही कार्रवाई हो तो लगभग आधी पंक्ति काफ़ी है।</string>
     <string name="filterToMe">सीधे मुझे</string>
     <string name="recentSearches">हाल की खोजें</string>
     <string name="draft">ड्राफ़्ट</string>

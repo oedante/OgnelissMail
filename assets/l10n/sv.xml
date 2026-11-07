@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Svep åt vänster</string>
     <string name="swipeFirstAction">Första åtgärden</string>
     <string name="swipeSecondAction">Andra åtgärden</string>
-    <string name="swipeSingleHint">Med en åtgärd utförs den direkt vid ett helt svep. Med två öppnas knapparna och väntar på ditt val.</string>
+    <string name="swipeSingleHint">Ett kort svep visar knapparna, ett långt utför direkt den första åtgärden. Med en åtgärd räcker ungefär halva raden.</string>
     <string name="filterToMe">Till mig</string>
     <string name="recentSearches">Senaste sökningar</string>
     <string name="draft">Utkast</string>

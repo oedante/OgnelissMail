@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">ปัดไปทางซ้าย</string>
     <string name="swipeFirstAction">การทำงานแรก</string>
     <string name="swipeSecondAction">การทำงานที่สอง</string>
-    <string name="swipeSingleHint">หากกำหนดการทำงานเดียว การปัดสุดจะทำงานทันที หากกำหนดสองอย่าง ปุ่มจะเปิดออกและรอให้คุณเลือก</string>
+    <string name="swipeSingleHint">ปัดสั้นเพื่อแสดงปุ่ม ปัดยาวเพื่อทำการกระทำแรกทันที หากมีการกระทำเดียว ปัดประมาณครึ่งแถวก็พอ</string>
     <string name="filterToMe">ถึงฉัน</string>
     <string name="recentSearches">การค้นหาล่าสุด</string>
     <string name="draft">ฉบับร่าง</string>

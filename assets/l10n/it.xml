@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Scorri a sinistra</string>
     <string name="swipeFirstAction">Prima azione</string>
     <string name="swipeSecondAction">Seconda azione</string>
-    <string name="swipeSingleHint">Con una sola azione assegnata, scorrendo fino in fondo viene eseguita subito. Con due, i pulsanti si aprono e attendono la tua scelta.</string>
+    <string name="swipeSingleHint">Uno scorrimento breve mostra i pulsanti, uno lungo esegue subito la prima azione. Con una sola azione basta circa metà riga.</string>
     <string name="filterToMe">Per me</string>
     <string name="recentSearches">Ricerche recenti</string>
     <string name="draft">Bozza</string>

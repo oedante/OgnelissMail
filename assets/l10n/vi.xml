@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Vuốt sang trái</string>
     <string name="swipeFirstAction">Thao tác đầu tiên</string>
     <string name="swipeSecondAction">Thao tác thứ hai</string>
-    <string name="swipeSingleHint">Khi chỉ có một thao tác, vuốt hết cỡ sẽ thực hiện ngay. Khi có hai thao tác, các nút sẽ mở ra và chờ bạn chọn.</string>
+    <string name="swipeSingleHint">Vuốt ngắn để hiện các nút, vuốt dài để thực hiện ngay thao tác đầu tiên. Nếu chỉ có một thao tác, vuốt khoảng nửa hàng là đủ.</string>
     <string name="filterToMe">Gửi riêng cho tôi</string>
     <string name="recentSearches">Tìm kiếm gần đây</string>
     <string name="draft">Thư nháp</string>

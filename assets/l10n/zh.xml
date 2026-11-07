@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">左滑</string>
     <string name="swipeFirstAction">第一个操作</string>
     <string name="swipeSecondAction">第二个操作</string>
-    <string name="swipeSingleHint">只设置一个操作时，完全滑动会立即执行。设置两个操作时，按钮会展开，等待你选择。</string>
+    <string name="swipeSingleHint">短滑显示按钮，长滑立即执行第一个操作。只有一个操作时，滑过约半行即可。</string>
     <string name="filterToMe">发给我</string>
     <string name="recentSearches">最近搜索</string>
     <string name="draft">草稿</string>

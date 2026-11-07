@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">החלקה שמאלה</string>
     <string name="swipeFirstAction">פעולה ראשונה</string>
     <string name="swipeSecondAction">פעולה שנייה</string>
-    <string name="swipeSingleHint">כשמוגדרת פעולה אחת, החלקה מלאה מבצעת אותה מיד. כששתי פעולות מוגדרות, הכפתורים נפתחים וממתינים לבחירתכם.</string>
+    <string name="swipeSingleHint">החלקה קצרה מציגה את הכפתורים, החלקה ארוכה מבצעת מיד את הפעולה הראשונה. עם פעולה אחת מספיק בערך חצי שורה.</string>
     <string name="filterToMe">אליי אישית</string>
     <string name="recentSearches">חיפושים אחרונים</string>
     <string name="draft">טיוטה</string>

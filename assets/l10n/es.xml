@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Deslizar a la izquierda</string>
     <string name="swipeFirstAction">Primera acción</string>
     <string name="swipeSecondAction">Segunda acción</string>
-    <string name="swipeSingleHint">Con una sola acción asignada, un deslizamiento completo la ejecuta de inmediato. Con dos, los botones se abren y esperan tu elección.</string>
+    <string name="swipeSingleHint">Un deslizamiento corto muestra los botones; uno largo ejecuta al instante la primera acción. Con una sola acción basta con media fila.</string>
     <string name="filterToMe">Para mí</string>
     <string name="recentSearches">Búsquedas recientes</string>
     <string name="draft">Borrador</string>

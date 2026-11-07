@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Glisare spre stânga</string>
     <string name="swipeFirstAction">Prima acțiune</string>
     <string name="swipeSecondAction">A doua acțiune</string>
-    <string name="swipeSingleHint">Dacă este setată o singură acțiune, glisarea completă o execută imediat. Dacă sunt două, butoanele se deschid și așteaptă alegerea dvs.</string>
+    <string name="swipeSingleHint">O glisare scurtă afișează butoanele, una lungă execută imediat prima acțiune. Cu o singură acțiune ajunge cam jumătate de rând.</string>
     <string name="filterToMe">Pentru mine personal</string>
     <string name="recentSearches">Căutări recente</string>
     <string name="draft">Ciornă</string>

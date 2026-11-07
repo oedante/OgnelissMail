@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Nach links wischen</string>
     <string name="swipeFirstAction">Erste Aktion</string>
     <string name="swipeSecondAction">Zweite Aktion</string>
-    <string name="swipeSingleHint">Bei einer zugewiesenen Aktion wird sie durch vollständiges Wischen sofort ausgeführt. Bei zwei werden die Schaltflächen eingeblendet und warten auf Ihre Auswahl.</string>
+    <string name="swipeSingleHint">Kurz wischen zeigt die Schaltflächen, lang wischen führt sofort die erste Aktion aus. Bei nur einer Aktion genügt etwa die halbe Zeile.</string>
     <string name="filterToMe">An mich</string>
     <string name="recentSearches">Letzte Suchen</string>
     <string name="draft">Entwurf</string>

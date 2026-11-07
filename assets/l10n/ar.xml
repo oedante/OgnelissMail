@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">تمرير سريع لليسار</string>
     <string name="swipeFirstAction">الإجراء الأول</string>
     <string name="swipeSecondAction">الإجراء الثاني</string>
-    <string name="swipeSingleHint">عند تعيين إجراء واحد، ينفّذه التمرير الكامل فورًا. وعند تعيين إجراءين، تُفتح الأزرار وتنتظر اختيارك.</string>
+    <string name="swipeSingleHint">السحب القصير يُظهر الأزرار، والسحب الطويل ينفّذ الإجراء الأول فورًا. مع إجراء واحد يكفي نحو نصف السطر.</string>
     <string name="filterToMe">موجهة إليّ مباشرة</string>
     <string name="recentSearches">عمليات البحث الأخيرة</string>
     <string name="draft">مسودة</string>

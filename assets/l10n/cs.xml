@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Přejetí doleva</string>
     <string name="swipeFirstAction">První akce</string>
     <string name="swipeSecondAction">Druhá akce</string>
-    <string name="swipeSingleHint">Při jedné akci ji úplné přejetí provede okamžitě. Při dvou se otevřou tlačítka a čekají na vaši volbu.</string>
+    <string name="swipeSingleHint">Krátké přejetí ukáže tlačítka, dlouhé hned provede první akci. Při jedné akci stačí zhruba půl řádku.</string>
     <string name="filterToMe">Mně osobně</string>
     <string name="recentSearches">Poslední hledání</string>
     <string name="draft">Koncept</string>

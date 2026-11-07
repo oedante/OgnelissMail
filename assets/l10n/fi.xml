@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Pyyhkäisy vasemmalle</string>
     <string name="swipeFirstAction">Ensimmäinen toiminto</string>
     <string name="swipeSecondAction">Toinen toiminto</string>
-    <string name="swipeSingleHint">Kun toimintoja on yksi, täysi pyyhkäisy suorittaa sen heti. Kun toimintoja on kaksi, painikkeet aukeavat ja odottavat valintaasi.</string>
+    <string name="swipeSingleHint">Lyhyt pyyhkäisy näyttää painikkeet, pitkä suorittaa heti ensimmäisen toiminnon. Yhdellä toiminnolla riittää noin puoli riviä.</string>
     <string name="filterToMe">Minulle</string>
     <string name="recentSearches">Viimeaikaiset haut</string>
     <string name="draft">Luonnos</string>

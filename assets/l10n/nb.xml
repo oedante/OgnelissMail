@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Sveip til venstre</string>
     <string name="swipeFirstAction">Første handling</string>
     <string name="swipeSecondAction">Andre handling</string>
-    <string name="swipeSingleHint">Med én handling utføres den med en gang ved et fullt sveip. Med to åpnes knappene, og du velger selv.</string>
+    <string name="swipeSingleHint">Et kort sveip viser knappene, et langt utfører straks den første handlingen. Med én handling holder det med omtrent en halv rad.</string>
     <string name="filterToMe">Til meg</string>
     <string name="recentSearches">Siste søk</string>
     <string name="draft">Utkast</string>

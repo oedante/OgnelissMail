@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Geser ke kiri</string>
     <string name="swipeFirstAction">Tindakan pertama</string>
     <string name="swipeSecondAction">Tindakan kedua</string>
-    <string name="swipeSingleHint">Jika hanya ada satu tindakan, geser penuh langsung menjalankannya. Jika ada dua, tombol akan terbuka dan menunggu pilihan Anda.</string>
+    <string name="swipeSingleHint">Usapan pendek menampilkan tombol, usapan panjang langsung menjalankan tindakan pertama. Dengan satu tindakan, cukup sekitar setengah baris.</string>
     <string name="filterToMe">Khusus untuk saya</string>
     <string name="recentSearches">Pencarian terbaru</string>
     <string name="draft">Draf</string>

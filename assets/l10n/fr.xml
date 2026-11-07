@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Balayer vers la gauche</string>
     <string name="swipeFirstAction">Première action</string>
     <string name="swipeSecondAction">Seconde action</string>
-    <string name="swipeSingleHint">Avec une seule action, un balayage complet l’exécute immédiatement. Avec deux, les boutons s’affichent et attendent votre choix.</string>
+    <string name="swipeSingleHint">Un balayage court affiche les boutons, un balayage long exécute aussitôt la première action. Avec une seule action, la moitié de la ligne suffit.</string>
     <string name="filterToMe">À moi</string>
     <string name="recentSearches">Recherches récentes</string>
     <string name="draft">Brouillon</string>

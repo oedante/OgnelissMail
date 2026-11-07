@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Elhúzás balra</string>
     <string name="swipeFirstAction">Első művelet</string>
     <string name="swipeSecondAction">Második művelet</string>
-    <string name="swipeSingleHint">Egy művelet esetén a teljes elhúzás azonnal végrehajtja azt. Két művelet esetén a gombok megnyílnak, és a választásra várnak.</string>
+    <string name="swipeSingleHint">A rövid húzás megjeleníti a gombokat, a hosszú azonnal végrehajtja az első műveletet. Egy műveletnél nagyjából fél sor elég.</string>
     <string name="filterToMe">Nekem címzett</string>
     <string name="recentSearches">Legutóbbi keresések</string>
     <string name="draft">Piszkozat</string>

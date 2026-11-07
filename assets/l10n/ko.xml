@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">왼쪽으로 쓸기</string>
     <string name="swipeFirstAction">첫 번째 동작</string>
     <string name="swipeSecondAction">두 번째 동작</string>
-    <string name="swipeSingleHint">동작을 하나만 지정하면 끝까지 쓸어서 바로 실행해요. 두 개를 지정하면 버튼이 열리고 선택을 기다려요.</string>
+    <string name="swipeSingleHint">짧게 밀면 버튼이 나타나고, 길게 밀면 첫 번째 동작을 바로 실행합니다. 동작이 하나면 행의 절반 정도만 밀어도 됩니다.</string>
     <string name="filterToMe">나에게 직접</string>
     <string name="recentSearches">최근 검색</string>
     <string name="draft">임시 보관</string>

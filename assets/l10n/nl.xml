@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Naar links vegen</string>
     <string name="swipeFirstAction">Eerste actie</string>
     <string name="swipeSecondAction">Tweede actie</string>
-    <string name="swipeSingleHint">Met één toegewezen actie voert een volledige veegbeweging die meteen uit. Bij twee acties openen de knoppen en wachten ze op je keuze.</string>
+    <string name="swipeSingleHint">Kort vegen toont de knoppen, lang vegen voert meteen de eerste actie uit. Met één actie is ongeveer een halve rij genoeg.</string>
     <string name="filterToMe">Aan mij</string>
     <string name="recentSearches">Recente zoekopdrachten</string>
     <string name="draft">Concept</string>

@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Stryg til venstre</string>
     <string name="swipeFirstAction">Første handling</string>
     <string name="swipeSecondAction">Anden handling</string>
-    <string name="swipeSingleHint">Med én handling udføres den med det samme ved et fuldt stryg. Med to åbnes knapperne, og du vælger selv.</string>
+    <string name="swipeSingleHint">Et kort stryg viser knapperne, et langt udfører straks den første handling. Med én handling er cirka en halv række nok.</string>
     <string name="filterToMe">Til mig</string>
     <string name="recentSearches">Seneste søgninger</string>
     <string name="draft">Kladde</string>

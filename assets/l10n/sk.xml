@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Potiahnutie doľava</string>
     <string name="swipeFirstAction">Prvá akcia</string>
     <string name="swipeSecondAction">Druhá akcia</string>
-    <string name="swipeSingleHint">Ak je priradená jedna akcia, úplné potiahnutie ju vykoná hneď. Pri dvoch sa otvoria tlačidlá a počkajú na váš výber.</string>
+    <string name="swipeSingleHint">Krátke potiahnutie ukáže tlačidlá, dlhé hneď vykoná prvú akciu. Pri jednej akcii stačí zhruba pol riadka.</string>
     <string name="filterToMe">Mne osobne</string>
     <string name="recentSearches">Nedávne hľadania</string>
     <string name="draft">Koncept</string>

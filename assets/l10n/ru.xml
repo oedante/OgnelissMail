@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Свайп влево</string>
     <string name="swipeFirstAction">Первое действие</string>
     <string name="swipeSecondAction">Второе действие</string>
-    <string name="swipeSingleHint">Если назначено одно действие — полный свайп выполнит его сразу. Если два — кнопки раскроются и подождут выбора.</string>
+    <string name="swipeSingleHint">Короткий свайп открывает кнопки, длинный сразу выполняет первое действие. Если действие одно — оно выполняется уже с середины строки.</string>
     <string name="filterToMe">Мне лично</string>
     <string name="recentSearches">Недавние запросы</string>
     <string name="draft">Черновик</string>

@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">Swipe left</string>
     <string name="swipeFirstAction">First action</string>
     <string name="swipeSecondAction">Second action</string>
-    <string name="swipeSingleHint">With one action assigned, a full swipe performs it immediately. With two, the buttons open and wait for your choice.</string>
+    <string name="swipeSingleHint">A short swipe shows the buttons, a long swipe performs the first action at once. With one action, it runs from about the middle of the row.</string>
     <string name="filterToMe">To me</string>
     <string name="recentSearches">Recent searches</string>
     <string name="draft">Draft</string>

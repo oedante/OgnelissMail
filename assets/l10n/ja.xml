@@ -1638,7 +1638,7 @@
     <string name="swipeLeft">左にスワイプ</string>
     <string name="swipeFirstAction">1つ目の操作</string>
     <string name="swipeSecondAction">2つ目の操作</string>
-    <string name="swipeSingleHint">操作を1つ割り当てると、最後までスワイプしてすぐに実行できます。2つ割り当てると、ボタンが開いて選択を待ちます。</string>
+    <string name="swipeSingleHint">短くスワイプするとボタンが表示され、長くスワイプすると最初の操作をすぐに実行します。操作が1つなら行の半分ほどで実行されます。</string>
     <string name="filterToMe">自分宛て</string>
     <string name="recentSearches">最近の検索</string>
     <string name="draft">下書き</string>

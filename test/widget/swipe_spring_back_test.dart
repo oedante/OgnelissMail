@@ -49,6 +49,17 @@ Widget _twoRow(_Row r, String title) => Slidable(
       startActionPane: ActionPane(
         motion: const DrawerMotion(),
         extentRatio: 0.5,
+        // Как в ленте с 07.11.2026: длинный свайп (от 75 %) — основное
+        // действие, короткий — кнопки.
+        dismissible: DismissiblePane(
+          dismissThreshold: 0.75,
+          closeOnCancel: true,
+          confirmDismiss: () async {
+            r.fired++;
+            return false;
+          },
+          onDismissed: () => r.dismissed++,
+        ),
         children: [
           SlidableAction(onPressed: (_) {}, icon: Icons.done),
           SlidableAction(onPressed: (_) {}, icon: Icons.flag),
@@ -169,5 +180,13 @@ void main() {
     await _dragHoldRelease(tester, 'Второе', 0.4);
     expect(_ratio(b), closeTo(0.5, 0.001));
     expect(_ratio(a), 0, reason: 'прежняя строка закрылась');
+  });
+
+  testWidgets('две кнопки: длинный свайп сразу выполняет основное действие', (tester) async {
+    final r = _Row();
+    await _host(tester, [_twoRow(r, 'Письмо')]);
+    await _dragHoldRelease(tester, 'Письмо', 0.85);
+    expect(r.fired, 1, reason: 'раньше длинный свайп при двух действиях не делал ничего');
+    expect(_ratio(r), 0);
   });
 }

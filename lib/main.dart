@@ -245,17 +245,21 @@ Future<void> main() async {
       await pinningService.setTrustedCaDomains(
           <String>[]);
     }
-    // Автоматически доверяем self-signed сертификату настроенного OAuth-прокси
-    // (его URL пользователь задал сам через --dart-define, поэтому это безопасно
-    // и нужно, чтобы обновление токенов через https://<proxy>/token работало).
+    // Сертификат OAuth-прокси проверяется как у любого сайта (07.11.2026,
+    // аудит безопасности): раньше хост прокси попадал в «доверенные домены»
+    // и для него принимался ЛЮБОЙ сертификат — подмена в чужом Wi-Fi
+    // получала бы refresh-токены. У ogneliss.ru — настоящий сертификат
+    // (GlobalSign). Своя сборка с самоподписанным прокси — только явно:
+    // --dart-define=OAUTH_PROXY_SELF_SIGNED=true (docs/guides/OWN_VERSION.md).
     if (AppConstants.oauthProxyBaseUrl.isNotEmpty) {
       try {
         final proxyHost = Uri.parse(AppConstants.oauthProxyBaseUrl).host;
         if (proxyHost.isNotEmpty) {
-          // Только сам хост прокси, без поддоменов: раньше доверие
-          // распространялось на *.домен — и на почтовый сервер того же домена.
+          // Убрать доверие, сохранённое прежними версиями.
           await pinningService.removeTrustedCaDomain(proxyHost);
-          await pinningService.ensureTrustedCaDomain(proxyHost, exactHost: true);
+          if (AppConstants.oauthProxySelfSigned) {
+            await pinningService.ensureTrustedCaDomain(proxyHost, exactHost: true);
+          }
         }
       } catch (_) {}
     }

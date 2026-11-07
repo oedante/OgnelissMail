@@ -43,6 +43,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/utils/text_entities.dart';
 import '../../../services/mail/conversation_counter.dart';
 import '../../../services/mail/focus_mode_service.dart' show focusModeProvider;
+import '../../../services/security/smime_service.dart' show smimeServiceProvider;
 import '../../../services/security/managed_config.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -460,6 +461,11 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
       }
       await _secureStorage.deleteAccountTokens(accountId);
       await _secureStorage.deleteAccountPassword(accountId);
+      // Закрытый ключ S/MIME и пароль к нему (07.11.2026, аудит: оставались
+      // в защищённом хранилище после удаления ящика).
+      try {
+        await _ref?.read(smimeServiceProvider).removeIdentity(accountId);
+      } catch (_) {}
       await clearSyncState(accountId);
       await DavPimService.forgetAccount(accountId);
       await OwnAddresses.forget(accountId);

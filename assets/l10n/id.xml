@@ -2289,8 +2289,8 @@
     <string name="weatherNotFound">Tidak ditemukan apa pun</string>
     <string name="weatherSearchFailed">Pencarian gagal — periksa koneksi</string>
     <string name="weatherSearchOff">Pencarian kota tidak tersedia saat ini</string>
-    <string name="weatherSearchNote">Kota dicari di OpenStreetMap dan prakiraan berasal dari MET Norway. Mereka hanya menerima nama dan koordinat kota serta, seperti situs web mana pun, alamat IP Anda.</string>
-    <string name="weatherOsmAttribution">Pencarian: © kontributor OpenStreetMap</string>
+    <string name="weatherSearchNote">Pencarian kota dan prakiraan melalui server Ogneliss: layanan cuaca tidak melihat Anda maupun alamat IP Anda. Lokasi ponsel tidak digunakan.</string>
+    <string name="weatherCitiesAttribution">Kota: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">Data: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">Ganti kota</string>
     <string name="weatherTurnOff">Matikan cuaca</string>

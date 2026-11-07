@@ -2313,8 +2313,8 @@
     <string name="weatherNotFound">Nic nie znaleziono</string>
     <string name="weatherSearchFailed">Wyszukiwanie nie powiodło się — sprawdź połączenie</string>
     <string name="weatherSearchOff">Wyszukiwanie miast jest teraz niedostępne</string>
-    <string name="weatherSearchNote">Miasto jest wyszukiwane w OpenStreetMap, prognoza pochodzi z MET Norway. Otrzymują tylko nazwę i współrzędne miasta oraz, jak każda strona, Twój adres IP.</string>
-    <string name="weatherOsmAttribution">Wyszukiwanie: © współtwórcy OpenStreetMap</string>
+    <string name="weatherSearchNote">Wyszukiwanie miasta i prognoza idą przez serwer Ogneliss: serwisy pogodowe nie widzą ani Ciebie, ani Twojego adresu IP. Lokalizacja telefonu nie jest używana.</string>
+    <string name="weatherCitiesAttribution">Miasta: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">Dane: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">Zmień miasto</string>
     <string name="weatherTurnOff">Wyłącz pogodę</string>

@@ -2289,8 +2289,8 @@
     <string name="weatherNotFound">ไม่พบอะไรเลย</string>
     <string name="weatherSearchFailed">ค้นหาไม่สำเร็จ — ตรวจสอบการเชื่อมต่อ</string>
     <string name="weatherSearchOff">ไม่สามารถค้นหาเมืองได้ในขณะนี้</string>
-    <string name="weatherSearchNote">ค้นหาเมืองใน OpenStreetMap และพยากรณ์มาจาก MET Norway บริการเหล่านี้ได้รับเพียงชื่อและพิกัดของเมือง และที่อยู่ IP ของคุณเช่นเดียวกับเว็บไซต์ทั่วไป</string>
-    <string name="weatherOsmAttribution">ค้นหา: © ผู้ร่วมพัฒนา OpenStreetMap</string>
+    <string name="weatherSearchNote">การค้นหาเมืองและพยากรณ์ผ่านเซิร์ฟเวอร์ Ogneliss: บริการสภาพอากาศไม่เห็นทั้งตัวคุณและที่อยู่ IP ของคุณ ไม่ใช้ตำแหน่งของโทรศัพท์</string>
+    <string name="weatherCitiesAttribution">เมือง: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">ข้อมูล: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">เปลี่ยนเมือง</string>
     <string name="weatherTurnOff">ปิดสภาพอากาศ</string>

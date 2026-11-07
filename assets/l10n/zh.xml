@@ -2289,8 +2289,8 @@
     <string name="weatherNotFound">未找到任何结果</string>
     <string name="weatherSearchFailed">搜索失败 — 请检查网络连接</string>
     <string name="weatherSearchOff">城市搜索暂不可用</string>
-    <string name="weatherSearchNote">城市在 OpenStreetMap 中查找，预报来自 MET Norway。它们只会收到城市名称和坐标，以及与访问任何网站一样的 IP 地址。</string>
-    <string name="weatherOsmAttribution">搜索：© OpenStreetMap 贡献者</string>
+    <string name="weatherSearchNote">城市搜索和预报都经由 Ogneliss 服务器：天气服务看不到您，也看不到您的 IP 地址。不使用手机位置。</string>
+    <string name="weatherCitiesAttribution">城市：GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">数据：MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">更换城市</string>
     <string name="weatherTurnOff">关闭天气</string>

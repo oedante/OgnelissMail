@@ -2305,8 +2305,8 @@
     <string name="weatherNotFound">Nu s-a găsit nimic</string>
     <string name="weatherSearchFailed">Căutarea a eșuat — verificați conexiunea</string>
     <string name="weatherSearchOff">Căutarea orașelor nu este disponibilă acum</string>
-    <string name="weatherSearchNote">Orașul este căutat în OpenStreetMap, iar prognoza vine de la MET Norway. Primesc doar numele și coordonatele orașului și, ca orice site, adresa dvs. IP.</string>
-    <string name="weatherOsmAttribution">Căutare: © contribuitorii OpenStreetMap</string>
+    <string name="weatherSearchNote">Căutarea orașului și prognoza trec prin serverul Ogneliss: serviciile meteo nu vă văd nici pe dvs., nici adresa IP. Locația telefonului nu este folosită.</string>
+    <string name="weatherCitiesAttribution">Orașe: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">Date: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">Schimbă orașul</string>
     <string name="weatherTurnOff">Dezactivează vremea</string>

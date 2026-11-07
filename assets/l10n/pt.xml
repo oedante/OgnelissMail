@@ -2297,8 +2297,8 @@
     <string name="weatherNotFound">Nada encontrado</string>
     <string name="weatherSearchFailed">A pesquisa falhou — verifique a ligação</string>
     <string name="weatherSearchOff">A pesquisa de cidades não está disponível agora</string>
-    <string name="weatherSearchNote">A cidade é procurada no OpenStreetMap e a previsão vem do MET Norway. Recebem apenas o nome e as coordenadas da cidade e, como qualquer site, o seu endereço IP.</string>
-    <string name="weatherOsmAttribution">Pesquisa: © colaboradores do OpenStreetMap</string>
+    <string name="weatherSearchNote">A pesquisa de cidade e a previsão passam pelo servidor Ogneliss: os serviços meteorológicos não veem nem a si nem o seu endereço IP. A localização do telefone não é usada.</string>
+    <string name="weatherCitiesAttribution">Cidades: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">Dados: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">Mudar de cidade</string>
     <string name="weatherTurnOff">Desativar o tempo</string>

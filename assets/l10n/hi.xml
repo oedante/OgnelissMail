@@ -2297,8 +2297,8 @@
     <string name="weatherNotFound">कुछ नहीं मिला</string>
     <string name="weatherSearchFailed">खोज विफल — कनेक्शन जाँचें</string>
     <string name="weatherSearchOff">शहर खोज अभी उपलब्ध नहीं है</string>
-    <string name="weatherSearchNote">शहर OpenStreetMap में खोजा जाता है और पूर्वानुमान MET Norway से आता है। उन्हें केवल शहर का नाम और निर्देशांक मिलते हैं, और किसी भी वेबसाइट की तरह आपका IP पता।</string>
-    <string name="weatherOsmAttribution">खोज: © OpenStreetMap योगदानकर्ता</string>
+    <string name="weatherSearchNote">शहर की खोज और पूर्वानुमान Ogneliss सर्वर के ज़रिए होते हैं: मौसम सेवाएँ न आपको देखती हैं न आपका IP पता। फ़ोन का स्थान उपयोग नहीं होता।</string>
+    <string name="weatherCitiesAttribution">शहर: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">डेटा: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">शहर बदलें</string>
     <string name="weatherTurnOff">मौसम बंद करें</string>

@@ -2,21 +2,22 @@
 // Погода в «Моём дне» (1.15.1, просьба владельца 07.11.2026: «в мой день
 // добавить погоду»). Выключена по умолчанию; включается выбором города.
 //
+// 07.11.2026 (решение владельца: условия MET приняты, данные пользователей
+// сторонним сервисам не передаются) — и прогноз, и поиск города идут через
+// прокси на сервере Ogneliss (server/weather-proxy); MET Norway видит только
+// сервер, поиск города наружу не уходит (список GeoNames на сервере).
+//
 // Откуда данные (условия проверены 07.11.2026, docs/LICENSING.md, раздел 2):
-//  · прогноз — MET Norway, Locationforecast 2.0 «compact»
-//    (api.met.no/weatherapi/locationforecast/2.0/compact): бесплатно, в том
-//    числе для коммерческих приложений; данные — CC BY 4.0 (подпись «Данные:
-//    MET Norway» — в окне погоды). Условия: опознавательный User-Agent с
-//    адресом проекта, не больше 4 знаков после запятой в координатах,
-//    кэширование по заголовку Expires и If-Modified-Since;
-//  · поиск города — Nominatim (OpenStreetMap): только по нажатию «Найти»
-//    (не подсказки на каждую букву), не чаще раза в секунду, свой
-//    User-Agent; данные — ODbL (подпись «© участники OpenStreetMap» — в
-//    окне поиска).
-// Адреса обоих сервисов можно сменить или выключить без обновления
-// приложения (условие Nominatim: «switch the service at our request at any
-// time … without requiring a software update»): файл services.json на сайте
-// проекта, см. [WeatherEndpoints] и docs/guides/WEATHER.md.
+//  · прогноз — MET Norway, Locationforecast 2.0 «compact», через прокси:
+//    бесплатно, в том числе для коммерческих приложений; данные — CC BY 4.0
+//    и NLOD 2.0 (подпись «Данные: MET Norway» со ссылкой — в окне погоды).
+//    Условия MET (User-Agent, не больше 4 знаков в координатах, Expires и
+//    If-Modified-Since, 429) соблюдают и прокси, и приложение;
+//  · поиск города — список GeoNames (CC BY 4.0) на сервере Ogneliss, только
+//    по нажатию «Найти» (подпись «Города: GeoNames» — в окне поиска).
+// Адреса обоих можно сменить или выключить без обновления приложения:
+// файл services.json на сайте проекта, см. [WeatherEndpoints] и
+// docs/guides/WEATHER.md.
 // Местоположение телефона не используется: город выбирает человек. В
 // запросы уходят только название города (поиск) и его координаты,
 // округлённые до сотых (~1 км), — без адресов, имён и идентификаторов.
@@ -87,15 +88,21 @@ class WeatherApi {
   WeatherApi._();
 
   /// Условия MET Norway (обязательное соглашение, которое должен прочитать и
-  /// принять человек с полномочиями, раздел «Use of AI agents») и правила
-  /// Nominatim («deliberate, informed decision» разработчика) принял
-  /// владелец проекта. Пока false — погоды в приложении нет совсем (ни
-  /// кнопки, ни запросов). Поставить true — после решения владельца,
-  /// docs/guides/WEATHER.md, раздел 1.
-  static const termsAccepted = false;
+  /// принять человек с полномочиями, раздел «Use of AI agents») владелец
+  /// проекта принял 07.11.2026 — с условием «данные пользователей не
+  /// передаём». Поэтому приложение ходит не к MET Norway, а к прокси на
+  /// сервере Ogneliss (server/weather-proxy): MET видит только сервер.
+  /// Nominatim не используется — поиск города по списку GeoNames на том же
+  /// сервере. false — погоды нет совсем (ни кнопки, ни запросов).
+  static const termsAccepted = true;
 
-  static const metUrl = 'https://api.met.no/weatherapi/locationforecast/2.0/compact';
-  static const nominatimUrl = 'https://nominatim.openstreetmap.org/search';
+  /// Прогноз — через прокси на сервере Ogneliss (тело — ответ MET Norway
+  /// Locationforecast 2.0 «compact» как есть).
+  static const metUrl = 'https://www.ogneliss.ru/weather/forecast';
+
+  /// Поиск города — там же, по списку GeoNames (ответ — как у Nominatim
+  /// format=jsonv2, разбор [parseNominatim]).
+  static const nominatimUrl = 'https://www.ogneliss.ru/weather/search';
 
   /// User-Agent по условиям обоих сервисов: приложение, версия, адрес проекта.
   static String get userAgent {

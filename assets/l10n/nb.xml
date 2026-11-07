@@ -2297,8 +2297,8 @@
     <string name="weatherNotFound">Fant ingenting</string>
     <string name="weatherSearchFailed">Søket mislyktes — sjekk tilkoblingen</string>
     <string name="weatherSearchOff">Bysøk er ikke tilgjengelig nå</string>
-    <string name="weatherSearchNote">Byen slås opp i OpenStreetMap, og varselet kommer fra MET Norway. De får bare byens navn og koordinater og, som ethvert nettsted, IP-adressen din.</string>
-    <string name="weatherOsmAttribution">Søk: © OpenStreetMap-bidragsytere</string>
+    <string name="weatherSearchNote">Bysøk og varsel går via Ogneliss-serveren: værtjenester ser verken deg eller IP-adressen din. Telefonens posisjon brukes ikke.</string>
+    <string name="weatherCitiesAttribution">Byer: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">Data: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">Bytt by</string>
     <string name="weatherTurnOff">Slå av været</string>

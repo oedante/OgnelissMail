@@ -114,7 +114,7 @@ void main() {
     late SharedPreferences prefs;
     late List<http.Request> all;
     // Запросы прогноза (без services.json с сайта проекта).
-    List<http.Request> met() => [for (final r in all) if (r.url.host == 'api.met.no') r];
+    List<http.Request> met() => [for (final r in all) if (r.url.path.endsWith('/weather/forecast')) r];
     var status = 200;
     var expires = '';
     String? services; // null — файла на сайте нет (404)
@@ -217,9 +217,15 @@ void main() {
       expect(all.last.url.queryParameters, {'lat': '55.8', 'lon': '49.11'});
     });
 
-    test('условия не приняты владельцем — погоды нет и запросов нет', () async {
+    test('прогноз — через сервер Ogneliss, не напрямую к MET Norway', () async {
       await WeatherSettingsNotifier(prefs).setPlace(const WeatherPlace(name: 'Казань', lat: 55.8, lon: 49.11));
-      expect(WeatherApi.termsAccepted, isFalse, reason: 'включает владелец, docs/guides/WEATHER.md');
+      expect(await make().read(weatherProvider.future), isNotNull);
+      expect(all.where((r) => r.url.host == 'api.met.no'), isEmpty, reason: 'данные пользователей — не сторонним сервисам');
+      expect(met().single.url.host, 'www.ogneliss.ru');
+    });
+
+    test('погода выключена флагом — погоды нет и запросов нет', () async {
+      await WeatherSettingsNotifier(prefs).setPlace(const WeatherPlace(name: 'Казань', lat: 55.8, lon: 49.11));
       expect(await make(approved: false).read(weatherProvider.future), isNull);
       expect(all, isEmpty);
     });

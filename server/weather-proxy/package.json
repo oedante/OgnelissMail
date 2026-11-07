@@ -1,0 +1,10 @@
+{
+  "name": "ogneliss-weather-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ogneliss Mail: прогноз MET Norway и поиск городов GeoNames через сервер — без данных пользователей у сторонних сервисов",
+  "main": "server.js",
+  "engines": { "node": ">=20" },
+  "scripts": { "start": "node server.js", "test": "node --test" },
+  "license": "Apache-2.0"
+}

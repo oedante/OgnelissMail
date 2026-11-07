@@ -2289,8 +2289,8 @@
     <string name="weatherNotFound">Không tìm thấy gì</string>
     <string name="weatherSearchFailed">Tìm kiếm thất bại — kiểm tra kết nối</string>
     <string name="weatherSearchOff">Hiện không thể tìm thành phố</string>
-    <string name="weatherSearchNote">Thành phố được tìm trên OpenStreetMap, dự báo lấy từ MET Norway. Họ chỉ nhận tên và tọa độ thành phố và, như mọi trang web, địa chỉ IP của bạn.</string>
-    <string name="weatherOsmAttribution">Tìm kiếm: © những người đóng góp OpenStreetMap</string>
+    <string name="weatherSearchNote">Tìm thành phố và dự báo đi qua máy chủ Ogneliss: dịch vụ thời tiết không thấy bạn lẫn địa chỉ IP của bạn. Không dùng vị trí điện thoại.</string>
+    <string name="weatherCitiesAttribution">Thành phố: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">Dữ liệu: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">Đổi thành phố</string>
     <string name="weatherTurnOff">Tắt thời tiết</string>

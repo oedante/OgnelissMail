@@ -95,7 +95,7 @@ Future<void> main() async {
     // Google ML Kit (перевод писем на Android, 1.9.x) — условия Google.
     registerTranslationLicense();
     // Погода в «Моём дне» (1.15.1): данные MET Norway (CC BY 4.0, NLOD 2.0) и
-    // поиск города в OpenStreetMap (Nominatim, ODbL) — подписи источников.
+    // города GeoNames (CC BY 4.0) — через сервер Ogneliss; подписи источников.
     // Пока владелец не принял условия сервисов, погоды нет — и строк тоже.
     if (WeatherApi.termsAccepted) {
       LicenseRegistry.addLicense(() async* {
@@ -105,10 +105,10 @@ Future<void> main() async {
             'Data licence: Creative Commons Attribution 4.0 International (CC BY 4.0) and the '
             'Norwegian Licence for Open Government Data (NLOD) 2.0.\n'
             'https://api.met.no/doc/License');
-        yield const LicenseEntryWithLineBreaks(['OpenStreetMap (Nominatim)'],
-            'City search for the weather uses Nominatim. Data © OpenStreetMap contributors, '
-            'available under the Open Database License (ODbL) 1.0.\n'
-            'https://www.openstreetmap.org/copyright');
+        yield const LicenseEntryWithLineBreaks(['GeoNames (city search)'],
+            'City search for the weather uses the GeoNames geographical database '
+            '(cities15000), licensed under Creative Commons Attribution 4.0 (CC BY 4.0).\n'
+            'https://www.geonames.org/');
       });
     }
     // Шрифт интерфейса Roboto (Apache 2.0) — на странице «Лицензии».

@@ -2297,8 +2297,8 @@
     <string name="weatherNotFound">Hiçbir şey bulunamadı</string>
     <string name="weatherSearchFailed">Arama başarısız — bağlantıyı kontrol edin</string>
     <string name="weatherSearchOff">Şehir araması şu anda kullanılamıyor</string>
-    <string name="weatherSearchNote">Şehir OpenStreetMap\'te aranır, tahmin MET Norway\'den gelir. Yalnızca şehrin adı ve koordinatları ile, her web sitesinde olduğu gibi, IP adresiniz iletilir.</string>
-    <string name="weatherOsmAttribution">Arama: © OpenStreetMap katkıda bulunanlar</string>
+    <string name="weatherSearchNote">Şehir araması ve tahmin Ogneliss sunucusu üzerinden yapılır: hava durumu hizmetleri ne sizi ne de IP adresinizi görür. Telefonun konumu kullanılmaz.</string>
+    <string name="weatherCitiesAttribution">Şehirler: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">Veriler: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">Şehri değiştir</string>
     <string name="weatherTurnOff">Hava durumunu kapat</string>

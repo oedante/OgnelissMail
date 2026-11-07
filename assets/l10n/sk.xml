@@ -2305,8 +2305,8 @@
     <string name="weatherNotFound">Nič sa nenašlo</string>
     <string name="weatherSearchFailed">Hľadanie zlyhalo — skontrolujte pripojenie</string>
     <string name="weatherSearchOff">Hľadanie miest teraz nie je k dispozícii</string>
-    <string name="weatherSearchNote">Mesto sa hľadá v OpenStreetMap, predpoveď pochádza z MET Norway. Dostávajú len názov a súradnice mesta a, ako každý web, vašu IP adresu.</string>
-    <string name="weatherOsmAttribution">Hľadanie: © prispievatelia OpenStreetMap</string>
+    <string name="weatherSearchNote">Hľadanie mesta aj predpoveď idú cez server Ogneliss: služby počasia nevidia vás ani vašu IP adresu. Poloha telefónu sa nepoužíva.</string>
+    <string name="weatherCitiesAttribution">Mestá: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">Údaje: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">Zmeniť mesto</string>
     <string name="weatherTurnOff">Vypnúť počasie</string>

@@ -2313,8 +2313,8 @@
     <string name="weatherNotFound">Ничего не нашлось</string>
     <string name="weatherSearchFailed">Поиск не удался — проверьте интернет</string>
     <string name="weatherSearchOff">Поиск города сейчас недоступен</string>
-    <string name="weatherSearchNote">Город ищется в OpenStreetMap, прогноз — в MET Norway. Им уходят только название и координаты города и, как при открытии любого сайта, адрес IP.</string>
-    <string name="weatherOsmAttribution">Поиск: © участники OpenStreetMap</string>
+    <string name="weatherSearchNote">Город ищется, а прогноз запрашивается через сервер Ogneliss: сервисы погоды не видят ни вас, ни ваш адрес IP. Местоположение телефона не используется.</string>
+    <string name="weatherCitiesAttribution">Города: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">Данные: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">Сменить город</string>
     <string name="weatherTurnOff">Выключить погоду</string>

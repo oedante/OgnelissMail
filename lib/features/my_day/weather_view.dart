@@ -1,7 +1,7 @@
 // lib/features/my_day/weather_view.dart
 // Погода в «Моём дне» (1.15.1, просьба владельца 07.11.2026): значок и
 // температура в карточке «Сейчас», по нажатию — прогноз по часам, источник
-// данных, смена города и выключение. Город — поиском (OpenStreetMap), без
+// данных, смена города и выключение. Город — поиском (GeoNames на сервере Ogneliss), без
 // местоположения телефона. Данные — services/weather/weather_service.dart.
 
 import 'dart:async';
@@ -69,7 +69,7 @@ String _when(DateTime at, AppLocalizations l10n) {
 }
 
 /// Подпись источника со ссылкой на условия (CC BY 4.0 — «provide a link to
-/// the license»; OpenStreetMap — страница copyright).
+/// the license»; GeoNames — CC BY 4.0, ссылка на сайт).
 class _SourceLink extends StatelessWidget {
   final String text;
   final String url;
@@ -255,7 +255,7 @@ class _WeatherSheet extends ConsumerWidget {
   }
 }
 
-/// Выбор города: поиск по нажатию «Найти» (условие OpenStreetMap — не
+/// Выбор города: поиск по нажатию «Найти» (как было с OpenStreetMap — не
 /// подсказки на каждую букву), список найденного.
 Future<void> showWeatherPlacePicker(BuildContext context) => showAppSheet<void>(
       context: context,
@@ -279,8 +279,7 @@ class _PlacePickerState extends ConsumerState<_PlacePicker> {
   bool _off = false;
   DateTime? _last;
 
-  /// Найденное за время работы приложения: тот же запрос — без сети
-  /// (Nominatim считает повторы одинаковых запросов неисправностью).
+  /// Найденное за время работы приложения: тот же запрос — без сети.
   static final _memo = <String, List<WeatherPlace>>{};
 
   @override
@@ -292,7 +291,7 @@ class _PlacePickerState extends ConsumerState<_PlacePicker> {
   Future<void> _search() async {
     final q = _query.text.trim();
     if (q.isEmpty || _busy) return;
-    // Не чаще раза в секунду (условие Nominatim).
+    // Не чаще раза в секунду (бережём сервер Ogneliss).
     final last = _last;
     if (last != null && DateTime.now().difference(last) < const Duration(seconds: 1)) return;
     _last = DateTime.now();
@@ -396,7 +395,7 @@ class _PlacePickerState extends ConsumerState<_PlacePicker> {
             ),
           ),
         const SizedBox(height: Space.s),
-        _SourceLink(l10n.tr('weatherOsmAttribution'), 'https://www.openstreetmap.org/copyright'),
+        _SourceLink(l10n.tr('weatherCitiesAttribution'), 'https://www.geonames.org/'),
       ]),
     );
   }

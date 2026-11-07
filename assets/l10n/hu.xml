@@ -2297,8 +2297,8 @@
     <string name="weatherNotFound">Nincs találat</string>
     <string name="weatherSearchFailed">A keresés nem sikerült — ellenőrizze a kapcsolatot</string>
     <string name="weatherSearchOff">A városkeresés most nem érhető el</string>
-    <string name="weatherSearchNote">A várost az OpenStreetMapben keressük, az előrejelzés a MET Norwaytől jön. Csak a város nevét és koordinátáit kapják meg, és – mint bármely webhely – az IP-címét.</string>
-    <string name="weatherOsmAttribution">Keresés: © OpenStreetMap közreműködők</string>
+    <string name="weatherSearchNote">A városkeresés és az előrejelzés az Ogneliss szerveren keresztül megy: az időjárás-szolgáltatások nem látják sem önt, sem az IP-címét. A telefon helyét nem használjuk.</string>
+    <string name="weatherCitiesAttribution">Városok: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">Adatok: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">Másik város</string>
     <string name="weatherTurnOff">Időjárás kikapcsolása</string>

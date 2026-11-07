@@ -2305,8 +2305,8 @@
     <string name="weatherNotFound">לא נמצא דבר</string>
     <string name="weatherSearchFailed">החיפוש נכשל — בדקו את החיבור</string>
     <string name="weatherSearchOff">חיפוש ערים אינו זמין כרגע</string>
-    <string name="weatherSearchNote">העיר נמצאת ב-OpenStreetMap והתחזית מגיעה מ-MET Norway. הם מקבלים רק את שם העיר והקואורדינטות שלה, וכמו כל אתר — את כתובת ה-IP שלכם.</string>
-    <string name="weatherOsmAttribution">חיפוש: © התורמים של OpenStreetMap</string>
+    <string name="weatherSearchNote">חיפוש העיר והתחזית עוברים דרך שרת Ogneliss: שירותי מזג האוויר לא רואים אתכם ולא את כתובת ה-IP שלכם. מיקום הטלפון אינו בשימוש.</string>
+    <string name="weatherCitiesAttribution">ערים: GeoNames (CC BY 4.0)</string>
     <string name="weatherMetAttribution">נתונים: MET Norway (CC BY 4.0)</string>
     <string name="weatherChangePlace">החלפת עיר</string>
     <string name="weatherTurnOff">כיבוי מזג האוויר</string>

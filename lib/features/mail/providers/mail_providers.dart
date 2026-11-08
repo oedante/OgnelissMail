@@ -782,7 +782,34 @@ Stream<List<FolderModel>> _watchFolders(AppDatabase db, String accountId) {
         ..where((f) => f.accountId.equals(accountId))
         ..orderBy([(f) => OrderingTerm(expression: f.sortOrder, mode: OrderingMode.asc)]))
       .watch()
-      .map((rows) => rows.map(folderFromRow).toList());
+      .map((rows) => rows.map(folderFromRow).toList())
+      // Таблица папок меняется после каждой синхронизации (ключи, время),
+      // а то, что видно в меню, — редко: без сравнения меню папок и всё,
+      // что от него зависит, перестраивались на каждую синхронизацию (план
+      // 08.11.2026 п. 3).
+      .distinct(_sameFolders);
+}
+
+bool _sameFolders(List<FolderModel> a, List<FolderModel> b) {
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    final x = a[i], y = b[i];
+    if (x.id != y.id ||
+        x.parentId != y.parentId ||
+        x.displayName != y.displayName ||
+        x.type != y.type ||
+        x.serverPath != y.serverPath ||
+        x.unreadCount != y.unreadCount ||
+        x.totalCount != y.totalCount ||
+        x.showInUnified != y.showInUnified ||
+        x.isFavorite != y.isFavorite ||
+        x.sortOrder != y.sortOrder ||
+        x.isSynced != y.isSynced ||
+        x.iconName != y.iconName) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /// Папки активного аккаунта. Поток, а не разовый запрос: избранное,

@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">一年</string>
     <string name="syncPeriodAll">全部时间</string>
     <string name="lastSyncNever">尚未同步</string>
-    <string name="accSectionSync">同步</string>
+    <string name="accSectionSync">接收</string>
     <string name="accSectionMail">邮件</string>
     <string name="accSectionAccount">账户</string>
     <string name="orgPolicy">组织要求</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">不显示照片，只显示发给谁：“您”、抄送中的“您”，或第一位收件人</string>
     <string name="recip_list">列表</string>
     <string name="recip_list_desc">每位收件人单独一行并附照片（收件人最多三位，抄送最多两位）</string>
-    <string name="expSpareTitle">提前准备邮件窗口</string>
+    <string name="expSpareTitle">更快打开邮件</string>
     <string name="expSpareDesc">屏幕打开的同时加载邮件</string>
     <string name="expSpareHint">始终保留一个不可见的浏览器窗口。当您在列表中点按邮件时，邮件会在屏幕滑入的同时加载，使屏幕提前准备好内容。速度更快，但该窗口会一直占用少量内存。如果邮件在某些设备上显示异常（出现空白、高度错误），请关闭此选项。</string>
     <string name="expNativeTitle">简单邮件不使用浏览器</string>
@@ -3065,7 +3065,7 @@
     <string name="folderNotifyAll">通知：所有文件夹</string>
     <string name="folderNotifyNone">通知：无文件夹</string>
     <string name="peekControlOff">取消跟进</string>
-    <string name="pushWakeTitle">服务器信号（iPhone）</string>
+    <string name="pushWakeTitle">后台检查邮件（iPhone）</string>
     <string name="pushWakeSwitch">收到服务器信号时检查邮件</string>
     <string name="pushWakeDesc">应用会在后台更频繁地被唤醒。服务器只知道通知令牌，不会获取任何地址或邮件。</string>
     <string name="pushWakeHelp">iOS 会自行决定何时在后台唤醒应用——有时每小时一次，甚至更少。开发者的服务器（ogneliss.ru/push）会按所选间隔通过 Apple 发送一个空的“检查邮件”信号，应用则在此设备上自行检查您的邮箱。服务器只会收到此安装实例的通知令牌，不会收到地址、密码或邮件。当 iOS 只接受静默信号时，每小时最多放行 2–3 个（即最多每 20 分钟一次），并且不会唤醒被上滑关闭的应用。详情请见隐私政策第 6.2 节。</string>
@@ -3530,6 +3530,11 @@
     <string name="advancedSettingsDesc">同步与后台运行、证书、数据保护、应用模块、日志、重置</string>
     <string name="sectionData">数据</string>
     <string name="sectionHelp">帮助</string>
+    <string name="sectionLookLanguage">外观和语言</string>
+    <string name="sectionModules">分区</string>
+    <string name="sectionPrivacy">隐私</string>
+    <string name="sectionStorageData">数据和存储</string>
+    <string name="sectionSystemHelp">系统和帮助</string>
     <string name="sectionBackground">后台运行</string>
     <string name="sectionApp">应用</string>
     <string name="folderNotifyTurnOn">开启通知</string>

@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Một năm</string>
     <string name="syncPeriodAll">Toàn bộ thời gian</string>
     <string name="lastSyncNever">chưa lần nào</string>
-    <string name="accSectionSync">Đồng bộ</string>
+    <string name="accSectionSync">Nhận thư</string>
     <string name="accSectionMail">Thư</string>
     <string name="accSectionAccount">Tài khoản</string>
     <string name="orgPolicy">Yêu cầu của tổ chức</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Không có ảnh, chỉ cho biết thư gửi cho ai: “bạn”, “bạn” trong Cc hoặc người nhận đầu tiên</string>
     <string name="recip_list">Danh sách</string>
     <string name="recip_list_desc">Mỗi người nhận một dòng kèm ảnh (tối đa ba người trong Đến, hai người trong Cc)</string>
-    <string name="expSpareTitle">Chuẩn bị sẵn cửa sổ thư</string>
+    <string name="expSpareTitle">Mở thư nhanh hơn</string>
     <string name="expSpareDesc">Thư được tải trong lúc màn hình mở ra</string>
     <string name="expSpareHint">Một cửa sổ trình duyệt ẩn luôn được giữ sẵn. Khi bạn nhấn vào thư trong danh sách, thư được tải trong lúc màn hình trượt vào, nên màn hình có sẵn nội dung. Nhanh hơn, nhưng cửa sổ này luôn chiếm một ít bộ nhớ. Nếu thư hiển thị sai trên thiết bị nào đó (khoảng trống, chiều cao sai), hãy tắt tùy chọn này.</string>
     <string name="expNativeTitle">Thư đơn giản không cần trình duyệt</string>
@@ -2488,7 +2488,7 @@
     <string name="expBoardTitle">Bảng trong Ngày của tôi</string>
     <string name="expBoardDesc">Sắp tới · Đang xử lý · Xong</string>
     <string name="expBoardHint">Tác vụ hôm nay theo cột. Nhấn giữ để kéo hoặc dùng menu ⋮. Cuộc họp đã qua tự chuyển sang Xong, còn tác vụ và lời nhắc chỉ chuyển thủ công. Cũng có thể bật ở màn hình Ngày của tôi.</string>
-    <string name="expHubTitle">Trung tâm lịch</string>
+    <string name="expHubTitle">Một lịch cho mọi hộp thư</string>
     <string name="expHubDesc">Tất cả tài khoản trong một lịch</string>
     <string name="expHubHint">Lịch hiển thị cuộc họp của tất cả tài khoản cùng lúc; tắt tài khoản bằng các nhãn phía trên lịch (nhấn giữ — chỉ giữ tài khoản này). Khi tắt — lịch theo tài khoản đang chọn trong Thư.</string>
     <string name="expEasSessionTitle">Kết nối Exchange nhanh</string>
@@ -3065,7 +3065,7 @@
     <string name="folderNotifyAll">Thông báo: tất cả thư mục</string>
     <string name="folderNotifyNone">Thông báo: không có thư mục nào</string>
     <string name="peekControlOff">Ngừng theo dõi</string>
-    <string name="pushWakeTitle">Tín hiệu từ máy chủ (iPhone)</string>
+    <string name="pushWakeTitle">Kiểm tra thư ở chế độ nền (iPhone)</string>
     <string name="pushWakeSwitch">Kiểm tra thư khi có tín hiệu từ máy chủ</string>
     <string name="pushWakeDesc">Ứng dụng thức dậy thường xuyên hơn khi chạy nền. Máy chủ chỉ biết token thông báo — không có địa chỉ, không có thư.</string>
     <string name="pushWakeHelp">iOS tự quyết định khi nào đánh thức ứng dụng chạy nền — đôi khi một giờ một lần hoặc thưa hơn. Máy chủ của nhà phát triển (ogneliss.ru/push) gửi tín hiệu trống “kiểm tra thư” qua Apple theo khoảng thời gian đã chọn, còn ứng dụng tự kiểm tra các hộp thư ngay trên thiết bị này. Máy chủ chỉ nhận mã thông báo của bản cài đặt này — không có địa chỉ, mật khẩu hay thư. Khi iOS chỉ chấp nhận tín hiệu im lặng, hệ thống cho qua tối đa 2–3 tín hiệu mỗi giờ (tức là nhiều nhất 20 phút một lần) và không đánh thức ứng dụng đã bị vuốt đóng. Chi tiết có trong Chính sách quyền riêng tư, mục 6.2.</string>
@@ -3074,7 +3074,7 @@
     <string name="pushWakeStatusLast">Tín hiệu gần nhất: {when}</string>
     <string name="pushWakeStatusNone">Chưa đăng ký</string>
     <string name="pushWakeStatusError">Không thành công: {e}</string>
-    <string name="pushWakeTitleAndroid">Tín hiệu từ máy chủ</string>
+    <string name="pushWakeTitleAndroid">Kiểm tra thư ở chế độ nền</string>
     <string name="pushWakeHelpAndroid">Android tự quyết định khi nào ứng dụng chạy nền được hoạt động: khi ngủ sâu, Android hoãn các lần kiểm tra nền, và từ Android 15 việc đồng bộ nền chỉ được tối đa 6 giờ mỗi ngày. Máy chủ của nhà phát triển (ogneliss.ru/push) gửi tín hiệu trống «kiểm tra thư» qua Google (Firebase Cloud Messaging) theo khoảng thời gian đã chọn, và ứng dụng tự kiểm tra hộp thư từ chính thiết bị này. Chỉ mã thông báo của lần cài đặt này được gửi đến máy chủ — không có địa chỉ, mật khẩu hay thư. Khi ngủ sâu, Android có thể chuyển tín hiệu muộn hơn, vào khoảng bảo trì tiếp theo. Khi không có dịch vụ Google — qua ứng dụng UnifiedPush (ví dụ ntfy). Chi tiết trong Chính sách quyền riêng tư, mục 6.2.</string>
     <string name="pushWakeVia">Cách nhận tín hiệu</string>
     <string name="pushWakeViaHelp">Qua Google (Firebase Cloud Messaging) trên điện thoại có dịch vụ Google Play. Nếu không có, qua ứng dụng phân phối UnifiedPush (ví dụ ntfy): ứng dụng này tự duy trì kết nối và chuyển tiếp tín hiệu “kiểm tra thư”. Tín hiệu được mã hóa bằng khóa của lần cài đặt này và không chứa địa chỉ hay thư. Chi tiết trong Chính sách quyền riêng tư, mục 6.2.</string>
@@ -3530,6 +3530,11 @@
     <string name="advancedSettingsDesc">Đồng bộ và hoạt động nền, chứng chỉ, bảo vệ dữ liệu, các mục của ứng dụng, nhật ký, đặt lại</string>
     <string name="sectionData">Dữ liệu</string>
     <string name="sectionHelp">Trợ giúp</string>
+    <string name="sectionLookLanguage">Giao diện và ngôn ngữ</string>
+    <string name="sectionModules">Mục</string>
+    <string name="sectionPrivacy">Quyền riêng tư</string>
+    <string name="sectionStorageData">Dữ liệu và bộ nhớ</string>
+    <string name="sectionSystemHelp">Hệ thống và trợ giúp</string>
     <string name="sectionBackground">Hoạt động nền</string>
     <string name="sectionApp">Ứng dụng</string>
     <string name="folderNotifyTurnOn">Bật thông báo</string>

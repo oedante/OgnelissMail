@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">1년</string>
     <string name="syncPeriodAll">전체 기간</string>
     <string name="lastSyncNever">아직 없음</string>
-    <string name="accSectionSync">동기화</string>
+    <string name="accSectionSync">수신</string>
     <string name="accSectionMail">메일</string>
     <string name="accSectionAccount">계정</string>
     <string name="orgPolicy">조직 요구 사항</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">사진 없이 누구에게 온 메일인지만 표시: “나”, 참조의 “나”, 또는 첫 번째 받는 사람</string>
     <string name="recip_list">목록</string>
     <string name="recip_list_desc">받는 사람마다 사진과 함께 한 줄씩 표시(받는 사람 최대 3명, 참조 최대 2명)</string>
-    <string name="expSpareTitle">메일 창 미리 준비</string>
+    <string name="expSpareTitle">메시지 빠르게 열기</string>
     <string name="expSpareDesc">화면이 열리는 동안 메일을 불러옵니다</string>
     <string name="expSpareHint">보이지 않는 브라우저 창 하나를 항상 준비해 둡니다. 목록에서 메일을 탭하면 화면이 넘어오는 동안 메일을 불러와 화면이 바로 준비됩니다. 더 빠르지만 이 창이 항상 메모리를 조금 사용합니다. 일부 기기에서 메일이 올바르게 표시되지 않으면(빈 공간, 잘못된 높이) 이 기능을 끄세요.</string>
     <string name="expNativeTitle">간단한 메일은 브라우저 없이 표시</string>
@@ -2488,7 +2488,7 @@
     <string name="expBoardTitle">“내 하루”의 보드</string>
     <string name="expBoardDesc">예정 · 진행 중 · 완료</string>
     <string name="expBoardHint">오늘의 작업을 열로 표시해요. 길게 눌러 드래그하거나 ⋮ 메뉴를 사용하세요. 지난 회의는 저절로 “완료”로 이동하고, 작업과 미리 알림은 직접 옮겨야 해요. “내 하루” 화면에서도 전환할 수 있어요.</string>
-    <string name="expHubTitle">캘린더 허브</string>
+    <string name="expHubTitle">모든 메일함을 하나의 캘린더로</string>
     <string name="expHubDesc">모든 계정을 하나의 캘린더에</string>
     <string name="expHubHint">캘린더에 모든 계정의 회의가 한꺼번에 표시돼요. 위쪽 칩으로 계정을 끌 수 있어요(길게 누르면 해당 계정만 표시). 끄면 캘린더는 메일에서 선택한 계정을 따라가요.</string>
     <string name="expEasSessionTitle">Exchange 빠른 연결</string>
@@ -3065,7 +3065,7 @@
     <string name="folderNotifyAll">알림: 모든 폴더</string>
     <string name="folderNotifyNone">알림: 폴더 없음</string>
     <string name="peekControlOff">추적 해제</string>
-    <string name="pushWakeTitle">서버 신호(iPhone)</string>
+    <string name="pushWakeTitle">백그라운드 메일 확인(iPhone)</string>
     <string name="pushWakeSwitch">서버 신호가 오면 메일 확인</string>
     <string name="pushWakeDesc">앱이 백그라운드에서 더 자주 깨어납니다. 서버는 알림 토큰만 알 뿐, 주소나 메일은 알지 못합니다.</string>
     <string name="pushWakeHelp">iOS는 백그라운드에서 앱을 언제 깨울지 스스로 결정하며, 때로는 한 시간에 한 번 또는 그보다 드물게 깨워요. 개발자의 서버(ogneliss.ru/push)가 선택한 간격으로 Apple을 통해 비어 있는 “메일 확인” 신호를 보내면, 앱이 이 기기에서 직접 메일함을 확인해요. 서버로 전송되는 것은 이 설치본의 알림 토큰뿐이며, 주소와 비밀번호, 메일은 전송되지 않아요. iOS가 무음 신호만 허용하는 동안에는 시간당 최대 2~3개만 통과시키며(즉 최대 20분에 한 번), 스와이프로 종료한 앱은 깨우지 않아요. 자세한 내용은 개인정보 처리방침 6.2항을 참고하세요.</string>
@@ -3295,7 +3295,7 @@
     <string name="faq_tasks_3_a">메모를 길게 누르면 편집, 메일로 보내기, 공유, 복사, 삭제를 할 수 있습니다.</string>
     <string name="faq_notify_title">알림 및 백그라운드</string>
     <string name="faq_notify_1_q">iPhone에서 알림이 늦게 오는 이유는 무엇인가요?</string>
-    <string name="faq_notify_1_a">앱이 열려 있는 동안에는 메일이 즉시 도착합니다. 백그라운드에 있을 때는 iOS가 앱을 깨울 시점을 스스로 결정합니다. 앱을 매일 사용하면 더 자주 깨우고, 저전력 모드이거나 배터리가 부족하면 덜 자주 깨웁니다. 앱이 더 자주 깨어나게 하려면 설정 → 알림에서 “서버 신호(iPhone)”를 켜 두세요. 개발자의 서버가 사용자가 선택한 간격으로 Apple을 통해 빈 “메일 확인” 신호를 보내고, 앱이 이 기기에서 직접 메일함을 확인합니다. 서버로는 알림 토큰만 전송됩니다. 앱 전환기에서 위로 쓸어 앱을 종료하지 마세요. 종료하면 앱을 다시 열 때까지 iOS가 스스로도, 신호로도 앱을 깨우지 않습니다. iOS 설정에서 Ogneliss Mail의 “백그라운드 앱 새로 고침”이 켜져 있는지 확인하세요.</string>
+    <string name="faq_notify_1_a">앱이 열려 있는 동안에는 메일이 즉시 도착합니다. 백그라운드에 있을 때는 iOS가 앱을 깨울 시점을 스스로 결정합니다. 앱을 매일 사용하면 더 자주 깨우고, 저전력 모드이거나 배터리가 부족하면 덜 자주 깨웁니다. 앱이 더 자주 깨어나게 하려면 설정 → 알림에서 “백그라운드 메일 확인(iPhone)”를 켜 두세요. 개발자의 서버가 사용자가 선택한 간격으로 Apple을 통해 빈 “메일 확인” 신호를 보내고, 앱이 이 기기에서 직접 메일함을 확인합니다. 서버로는 알림 토큰만 전송됩니다. 앱 전환기에서 위로 쓸어 앱을 종료하지 마세요. 종료하면 앱을 다시 열 때까지 iOS가 스스로도, 신호로도 앱을 깨우지 않습니다. iOS 설정에서 Ogneliss Mail의 “백그라운드 앱 새로 고침”이 켜져 있는지 확인하세요.</string>
     <string name="faq_notify_2_q">폴더 하나의 알림을 끄려면 어떻게 하나요?</string>
     <string name="faq_notify_2_a">설정 → 계정 → 폴더 동기화: 폴더 스위치 옆의 종 아이콘으로 해당 폴더(하위 폴더 포함)의 새 메일 알림을 켜거나 끌 수 있으며, 폴더는 계속 동기화됩니다. ⋮ 메뉴에는 “알림: 모든 폴더”와 “알림: 폴더 없음”이 있습니다. 보낸 편지함, 임시 보관함, 휴지통, 스팸에는 알림이 오지 않습니다.</string>
     <string name="faq_notify_3_q">Android에서 알림이 바로 오지 않는 이유는 무엇인가요?</string>
@@ -3530,6 +3530,11 @@
     <string name="advancedSettingsDesc">동기화 및 백그라운드 작업, 인증서, 데이터 보호, 앱 섹션, 로그, 초기화</string>
     <string name="sectionData">데이터</string>
     <string name="sectionHelp">도움말</string>
+    <string name="sectionLookLanguage">모양 및 언어</string>
+    <string name="sectionModules">섹션</string>
+    <string name="sectionPrivacy">개인정보</string>
+    <string name="sectionStorageData">데이터 및 저장공간</string>
+    <string name="sectionSystemHelp">시스템 및 도움말</string>
     <string name="sectionBackground">백그라운드 작업</string>
     <string name="sectionApp">앱</string>
     <string name="folderNotifyTurnOn">알림 켜기</string>

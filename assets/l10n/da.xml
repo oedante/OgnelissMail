@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Ét år</string>
     <string name="syncPeriodAll">Hele perioden</string>
     <string name="lastSyncNever">endnu ikke</string>
-    <string name="accSectionSync">Synkronisering</string>
+    <string name="accSectionSync">Modtagelse</string>
     <string name="accSectionMail">Mails</string>
     <string name="accSectionAccount">Konto</string>
     <string name="orgPolicy">Organisationens krav</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Ingen fotos, det vigtige er, hvem mailen er til: »dig«, »dig« i Cc eller den første modtager</string>
     <string name="recip_list">Liste</string>
     <string name="recip_list_desc">Hver modtager på sin egen linje med foto (op til tre i Til, to i Cc)</string>
-    <string name="expSpareTitle">Mailvindue på forhånd</string>
+    <string name="expSpareTitle">Hurtigere åbning af beskeder</string>
     <string name="expSpareDesc">Mailen indlæses, mens skærmen åbnes</string>
     <string name="expSpareHint">Ét usynligt browservindue holdes klar. Når du trykker på en mail på listen, indlæser det mailen, mens skærmen glider ind, så skærmen får den klar. Hurtigere, men vinduet bruger altid lidt hukommelse. Hvis en mail vises forkert på en enhed (tomt område, forkert højde), skal du slå det fra.</string>
     <string name="expNativeTitle">Enkle mails uden browser</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Tavle i Min dag</string>
     <string name="expBoardDesc">Kommende · I gang · Færdig</string>
     <string name="expBoardHint">Dagens opgaver i kolonner. Træk med et langt tryk, eller brug menuen ⋮. Afholdte møder flyttes til Færdig af sig selv, opgaver og påmindelser kun manuelt. Kan også slås til på skærmen Min dag.</string>
-    <string name="expHubTitle">Kalenderhub</string>
+    <string name="expHubTitle">Én kalender for alle postkasser</string>
     <string name="expHubDesc">Alle konti i én kalender</string>
     <string name="expHubHint">Kalenderen viser møder fra alle konti på én gang; slå konti fra med chips over den (langt tryk — kun denne). Slået fra — kalenderen følger den konto, der er valgt i Mail.</string>
     <string name="expEasSessionTitle">Hurtig Exchange-forbindelse</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Notifikationer: alle mapper</string>
     <string name="folderNotifyNone">Notifikationer: ingen mapper</string>
     <string name="peekControlOff">Stop overvågning</string>
-    <string name="pushWakeTitle">Serversignaler (iPhone)</string>
+    <string name="pushWakeTitle">Tjek af mail i baggrunden (iPhone)</string>
     <string name="pushWakeSwitch">Tjek mail ved serversignal</string>
     <string name="pushWakeDesc">Appen vågner oftere i baggrunden. Serveren kender kun notifikationstokenet – ingen adresser, ingen mails.</string>
     <string name="pushWakeHelp">iOS bestemmer selv, hvornår en app vækkes i baggrunden – nogle gange én gang i timen eller sjældnere. Udviklerens server (ogneliss.ru/push) sender med det valgte interval et tomt »tjek din mail«-signal via Apple, og appen tjekker selv dine postkasser fra denne enhed. Kun denne installations notifikationstoken sendes til serveren – ingen adresser, adgangskoder eller mails. Så længe iOS kun accepterer lydløse signaler, lader det højst 2–3 slippe igennem i timen (altså højst hvert 20. minut) og vækker ikke en app, der er lukket ved at stryge den væk. Detaljer findes i privatlivspolitikken, afsnit 6.2.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Seneste signal: {when}</string>
     <string name="pushWakeStatusNone">Endnu ikke registreret</string>
     <string name="pushWakeStatusError">Mislykkedes: {e}</string>
-    <string name="pushWakeTitleAndroid">Serversignaler</string>
+    <string name="pushWakeTitleAndroid">Tjek af mail i baggrunden</string>
     <string name="pushWakeHelpAndroid">Android bestemmer selv, hvornår en app i baggrunden må køre: i dyb dvale udsætter den baggrundstjek, og fra Android 15 får baggrundssynkronisering højst 6 timer i døgnet. Udviklerens server (ogneliss.ru/push) sender med det valgte interval et tomt signal “tjek mail” via Google (Firebase Cloud Messaging), og appen tjekker selv dine postkasser fra denne enhed. Kun denne installations notifikationstoken sendes til serveren — ingen adresser, adgangskoder eller beskeder. I dyb dvale kan Android levere signalet senere, i det næste vedligeholdelsesvindue. Uden Google-tjenester sker det via en UnifiedPush-app (f.eks. ntfy). Detaljer står i privatlivspolitikken, afsnit 6.2.</string>
     <string name="pushWakeVia">Sådan kommer signalerne</string>
     <string name="pushWakeViaHelp">Via Google (Firebase Cloud Messaging) på telefoner med Google Play-tjenester. Uden dem via en UnifiedPush-distributørapp (f.eks. ntfy): den har sin egen forbindelse og videresender signalet »tjek mail«. Signalet er krypteret med denne installations nøgle og indeholder hverken adresser eller mails. Detaljer står i privatlivspolitikken, afsnit 6.2.</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">Hold fingeren på noten: rediger, send som mail, del, kopier eller slet.</string>
     <string name="faq_notify_title">Notifikationer og baggrund</string>
     <string name="faq_notify_1_q">Hvorfor kommer notifikationer sent på iPhone?</string>
-    <string name="faq_notify_1_a">Mens appen er åben, kommer mails med det samme. Når den kører i baggrunden, bestemmer iOS selv, hvornår den vækkes: oftere, hvis du bruger appen hver dag, sjældnere i Strømsparetilstand eller når batteriet er lavt. Hvis du vil have den vækket oftere, så lad Serversignaler (iPhone) være slået til under Indstillinger → Notifikationer: Udviklerens server sender et tomt »tjek din mail«-signal via Apple med det interval, du vælger, og appen tjekker selv dine postkasser fra denne enhed. Kun notifikationstokenet sendes til serveren. Luk ikke appen ved at stryge den væk i appvælgeren: Derefter vækker iOS den hverken af sig selv eller med et signal, før du åbner appen igen. Kontrollér, at Opdatering af app i baggrunden er slået til for Ogneliss Mail i iOS-indstillingerne.</string>
+    <string name="faq_notify_1_a">Mens appen er åben, kommer mails med det samme. Når den kører i baggrunden, bestemmer iOS selv, hvornår den vækkes: oftere, hvis du bruger appen hver dag, sjældnere i Strømsparetilstand eller når batteriet er lavt. Hvis du vil have den vækket oftere, så lad Tjek af mail i baggrunden (iPhone) være slået til under Indstillinger → Notifikationer: Udviklerens server sender et tomt »tjek din mail«-signal via Apple med det interval, du vælger, og appen tjekker selv dine postkasser fra denne enhed. Kun notifikationstokenet sendes til serveren. Luk ikke appen ved at stryge den væk i appvælgeren: Derefter vækker iOS den hverken af sig selv eller med et signal, før du åbner appen igen. Kontrollér, at Opdatering af app i baggrunden er slået til for Ogneliss Mail i iOS-indstillingerne.</string>
     <string name="faq_notify_2_q">Hvordan slår jeg notifikationer fra for én mappe?</string>
     <string name="faq_notify_2_a">Indstillinger → konto → Mappesynkronisering: Klokken ved siden af mappens til/fra-knap slår notifikationer om nye mails i den til eller fra (med undermapper), og mappen bliver ved med at synkronisere. Menuen ⋮ har Notifikationer: alle mapper og Notifikationer: ingen mapper. Der er aldrig notifikationer for Sendt, Kladder, Slettet post eller Uønsket mail.</string>
     <string name="faq_notify_3_q">Hvorfor kommer notifikationer sent på Android?</string>
@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Synkronisering og baggrundsarbejde, certifikater, databeskyttelse, appens sektioner, log, nulstilling</string>
     <string name="sectionData">Data</string>
     <string name="sectionHelp">Hjælp</string>
+    <string name="sectionLookLanguage">Udseende og sprog</string>
+    <string name="sectionModules">Sektioner</string>
+    <string name="sectionPrivacy">Privatliv</string>
+    <string name="sectionStorageData">Data og lagerplads</string>
+    <string name="sectionSystemHelp">System og hjælp</string>
     <string name="sectionBackground">Baggrundsarbejde</string>
     <string name="sectionApp">App</string>
     <string name="folderNotifyTurnOn">Slå notifikationer til</string>

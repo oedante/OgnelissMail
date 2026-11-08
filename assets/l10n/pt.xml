@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Um ano</string>
     <string name="syncPeriodAll">Todo o período</string>
     <string name="lastSyncNever">ainda não</string>
-    <string name="accSectionSync">Sincronização</string>
+    <string name="accSectionSync">Receção</string>
     <string name="accSectionMail">Mensagens</string>
     <string name="accSectionAccount">Conta</string>
     <string name="orgPolicy">Requisitos da organização</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Sem fotos, o que importa é para quem é: “você”, “você” em Cc ou o primeiro destinatário</string>
     <string name="recip_list">Lista</string>
     <string name="recip_list_desc">Cada destinatário em sua própria linha, com foto (até três em Para e dois em Cc)</string>
-    <string name="expSpareTitle">Janela da mensagem antecipada</string>
+    <string name="expSpareTitle">Abertura rápida de mensagens</string>
     <string name="expSpareDesc">A mensagem carrega enquanto a tela abre</string>
     <string name="expSpareHint">Uma janela de navegador invisível é mantida pronta. Ao tocar em uma mensagem na lista, ela carrega a mensagem enquanto a tela desliza, de modo que a tela já a recebe pronta. É mais rápido, mas a janela sempre usa um pouco de memória. Se em algum dispositivo uma mensagem aparecer incorretamente (espaço em branco, altura errada), desative esta opção.</string>
     <string name="expNativeTitle">Mensagens simples sem navegador</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Quadro em Meu dia</string>
     <string name="expBoardDesc">Próximos · Em andamento · Concluído</string>
     <string name="expBoardHint">As tarefas de hoje em colunas. Arraste com um toque longo ou use o menu ⋮. As reuniões passadas vão para Concluído sozinhas; as tarefas e os lembretes, somente manualmente. Também pode ser ativado na tela Meu dia.</string>
-    <string name="expHubTitle">Central do calendário</string>
+    <string name="expHubTitle">Um calendário para todas as caixas</string>
     <string name="expHubDesc">Todas as contas em um só calendário</string>
     <string name="expHubHint">O calendário mostra as reuniões de todas as contas ao mesmo tempo; desative contas com os chips acima dele (toque longo: somente esta). Desativado: o calendário segue a conta escolhida em E-mail.</string>
     <string name="expEasSessionTitle">Conexão rápida com o Exchange</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Notificações: todas as pastas</string>
     <string name="folderNotifyNone">Notificações: nenhuma pasta</string>
     <string name="peekControlOff">Parar de acompanhar</string>
-    <string name="pushWakeTitle">Sinais do servidor (iPhone)</string>
+    <string name="pushWakeTitle">Verificação em segundo plano (iPhone)</string>
     <string name="pushWakeSwitch">Verificar e-mails por sinal do servidor</string>
     <string name="pushWakeDesc">O app é ativado com mais frequência em segundo plano. O servidor só conhece o token de notificação: sem endereços e sem mensagens.</string>
     <string name="pushWakeHelp">O iOS decide por conta própria quando ativar um app em segundo plano: às vezes uma vez por hora ou com menos frequência. O servidor do desenvolvedor (ogneliss.ru/push) envia pela Apple, no intervalo escolhido, um sinal vazio de “verifique seu e-mail”, e o app verifica suas caixas de correio por conta própria, a partir deste dispositivo. Para o servidor vai apenas o token de notificação desta instalação: sem endereços, senhas ou mensagens. Enquanto o iOS aceita apenas sinais silenciosos, ele permite no máximo 2–3 por hora (ou seja, no máximo a cada 20 minutos) e não ativa um app fechado com um deslize. Os detalhes estão na Política de Privacidade, seção 6.2.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Último sinal: {when}</string>
     <string name="pushWakeStatusNone">Ainda não registrado</string>
     <string name="pushWakeStatusError">Falha: {e}</string>
-    <string name="pushWakeTitleAndroid">Sinais do servidor</string>
+    <string name="pushWakeTitleAndroid">Verificação em segundo plano</string>
     <string name="pushWakeHelpAndroid">O Android decide sozinho quando um app em segundo plano pode funcionar: em suspensão profunda adia as verificações em segundo plano e, desde o Android 15, a sincronização em segundo plano tem no máximo 6 horas por dia. O servidor do desenvolvedor (ogneliss.ru/push) envia pelo Google (Firebase Cloud Messaging), no intervalo escolhido, um sinal vazio «verificar e-mail», e o app verifica suas caixas sozinho, a partir deste dispositivo. Ao servidor é enviado apenas o token de notificação desta instalação — sem endereços, senhas ou mensagens. Em suspensão profunda, o Android pode entregar o sinal mais tarde, na próxima janela de manutenção. Sem os serviços do Google, por um app do UnifiedPush (por exemplo, o ntfy). Detalhes na Política de Privacidade, seção 6.2.</string>
     <string name="pushWakeVia">Como os sinais chegam</string>
     <string name="pushWakeViaHelp">Via Google (Firebase Cloud Messaging) em celulares com os serviços do Google Play. Sem eles, por um app distribuidor do UnifiedPush (por exemplo, o ntfy): ele mantém a própria conexão e repassa o sinal «verificar e-mail». O sinal é criptografado com a chave desta instalação e não contém endereços nem mensagens. Detalhes na Política de Privacidade, seção 6.2.</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">Mantenha pressionada a nota: editar, enviar por e-mail, compartilhar, copiar ou excluir.</string>
     <string name="faq_notify_title">Notificações e segundo plano</string>
     <string name="faq_notify_1_q">Por que as notificações chegam atrasadas no iPhone?</string>
-    <string name="faq_notify_1_a">Enquanto o app está aberto, o e-mail chega imediatamente. Quando ele está em segundo plano, o iOS decide por conta própria quando ativá-lo: com mais frequência se você usa o app todos os dias, com menos frequência no Modo de Pouca Energia ou com a bateria fraca. Para que ele seja ativado com mais frequência, mantenha os Sinais do servidor (iPhone) ativados em Configurações → Notificações: o servidor do desenvolvedor envia pela Apple um sinal vazio de “verifique seu e-mail” no intervalo que você escolher, e o app verifica suas caixas de correio por conta própria, a partir deste dispositivo; apenas o token de notificação é enviado ao servidor. Não feche o app deslizando-o no alternador de apps: depois disso, o iOS não o ativa nem por conta própria nem por sinal até você abrir o app de novo. Verifique se a Atualização em Segundo Plano está ativada para o Ogneliss Mail nos Ajustes do iOS.</string>
+    <string name="faq_notify_1_a">Enquanto o app está aberto, o e-mail chega imediatamente. Quando ele está em segundo plano, o iOS decide por conta própria quando ativá-lo: com mais frequência se você usa o app todos os dias, com menos frequência no Modo de Pouca Energia ou com a bateria fraca. Para que ele seja ativado com mais frequência, mantenha os Verificação em segundo plano (iPhone) ativados em Configurações → Notificações: o servidor do desenvolvedor envia pela Apple um sinal vazio de “verifique seu e-mail” no intervalo que você escolher, e o app verifica suas caixas de correio por conta própria, a partir deste dispositivo; apenas o token de notificação é enviado ao servidor. Não feche o app deslizando-o no alternador de apps: depois disso, o iOS não o ativa nem por conta própria nem por sinal até você abrir o app de novo. Verifique se a Atualização em Segundo Plano está ativada para o Ogneliss Mail nos Ajustes do iOS.</string>
     <string name="faq_notify_2_q">Como desativar as notificações de uma pasta?</string>
     <string name="faq_notify_2_a">Configurações → conta → Sincronização de pastas: o sino ao lado do botão de uma pasta ativa ou desativa as notificações de suas novas mensagens (com as subpastas), e a pasta continua sincronizando. O menu ⋮ tem Notificações: todas as pastas e Notificações: nenhuma pasta. Nunca há notificações para Enviados, Rascunhos, Itens excluídos ou Lixo eletrônico.</string>
     <string name="faq_notify_3_q">Por que as notificações atrasam no Android?</string>
@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Sincronização e trabalho em segundo plano, certificados, proteção de dados, seções do app, registro, redefinição</string>
     <string name="sectionData">Dados</string>
     <string name="sectionHelp">Ajuda</string>
+    <string name="sectionLookLanguage">Aspeto e idioma</string>
+    <string name="sectionModules">Secções</string>
+    <string name="sectionPrivacy">Privacidade</string>
+    <string name="sectionStorageData">Dados e armazenamento</string>
+    <string name="sectionSystemHelp">Sistema e ajuda</string>
     <string name="sectionBackground">Trabalho em segundo plano</string>
     <string name="sectionApp">Aplicativo</string>
     <string name="folderNotifyTurnOn">Ativar notificações</string>

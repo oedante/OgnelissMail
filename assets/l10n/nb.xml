@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Ett år</string>
     <string name="syncPeriodAll">Hele perioden</string>
     <string name="lastSyncNever">ikke ennå</string>
-    <string name="accSectionSync">Synkronisering</string>
+    <string name="accSectionSync">Mottak</string>
     <string name="accSectionMail">Meldinger</string>
     <string name="accSectionAccount">Konto</string>
     <string name="orgPolicy">Organisasjonens krav</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Ingen bilder, det viktige er hvem meldingen er til: «deg», «deg» i Kopi eller første mottaker</string>
     <string name="recip_list">Liste</string>
     <string name="recip_list_desc">Hver mottaker på sin egen linje med bilde (opptil tre i Til, to i Kopi)</string>
-    <string name="expSpareTitle">Meldingsvindu på forhånd</string>
+    <string name="expSpareTitle">Raskere åpning av meldinger</string>
     <string name="expSpareDesc">Meldingen lastes mens skjermen åpnes</string>
     <string name="expSpareHint">Ett usynlig nettleservindu holdes klart. Når du trykker på en melding i listen, laster det meldingen mens skjermen glir inn, slik at skjermen får den ferdig. Raskere, men vinduet bruker alltid litt minne. Hvis en melding vises feil på en enhet (tomt område, feil høyde), slå dette av.</string>
     <string name="expNativeTitle">Enkle meldinger uten nettleser</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Tavle i Min dag</string>
     <string name="expBoardDesc">Kommende · Under arbeid · Ferdig</string>
     <string name="expBoardHint">Dagens oppgaver i kolonner. Dra med et langt trykk eller bruk ⋮-menyen. Avholdte møter flyttes til Ferdig av seg selv, oppgaver og påminnelser bare manuelt. Kan også slås på på skjermen Min dag.</string>
-    <string name="expHubTitle">Kalenderhub</string>
+    <string name="expHubTitle">Én kalender for alle postkasser</string>
     <string name="expHubDesc">Alle kontoer i én kalender</string>
     <string name="expHubHint">Kalenderen viser møter fra alle kontoer samtidig; slå av kontoer med brikkene over den (langt trykk — bare denne). Av — kalenderen følger kontoen som er valgt i E-post.</string>
     <string name="expEasSessionTitle">Rask Exchange-tilkobling</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Varsler: alle mapper</string>
     <string name="folderNotifyNone">Varsler: ingen mapper</string>
     <string name="peekControlOff">Slutt å overvåke</string>
-    <string name="pushWakeTitle">Serversignaler (iPhone)</string>
+    <string name="pushWakeTitle">E-postsjekk i bakgrunnen (iPhone)</string>
     <string name="pushWakeSwitch">Se etter e-post ved serversignal</string>
     <string name="pushWakeDesc">Appen våkner oftere i bakgrunnen. Serveren kjenner bare varslingstokenet – ingen adresser, ingen meldinger.</string>
     <string name="pushWakeHelp">iOS bestemmer selv når en app skal vekkes i bakgrunnen – noen ganger én gang i timen eller sjeldnere. Utviklerens server (ogneliss.ru/push) sender et tomt «sjekk e-posten»-signal via Apple med det valgte intervallet, og appen sjekker postboksene dine selv, fra denne enheten. Bare denne installasjonens varseltoken sendes til serveren – ingen adresser, passord eller meldinger. Så lenge iOS bare godtar stille signaler, slipper det gjennom høyst 2–3 per time (altså høyst hvert 20. minutt) og vekker ikke en app som er lukket ved å sveipe den bort. Detaljer finnes i personvernerklæringen, avsnitt 6.2.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Siste signal: {when}</string>
     <string name="pushWakeStatusNone">Ikke registrert ennå</string>
     <string name="pushWakeStatusError">Mislyktes: {e}</string>
-    <string name="pushWakeTitleAndroid">Serversignaler</string>
+    <string name="pushWakeTitleAndroid">E-postsjekk i bakgrunnen</string>
     <string name="pushWakeHelpAndroid">Android bestemmer selv når en app i bakgrunnen får kjøre: i dyp hvile utsetter den bakgrunnssjekker, og fra Android 15 får bakgrunnssynkronisering høyst 6 timer i døgnet. Utviklerens server (ogneliss.ru/push) sender med valgt intervall et tomt signal «sjekk e-post» via Google (Firebase Cloud Messaging), og appen sjekker selv postkassene dine fra denne enheten. Bare varslingstokenet for denne installasjonen sendes til serveren — ingen adresser, passord eller meldinger. I dyp hvile kan Android levere signalet senere, i neste vedlikeholdsvindu. Uten Google-tjenester går det via en UnifiedPush-app (for eksempel ntfy). Detaljer i personvernerklæringen, del 6.2.</string>
     <string name="pushWakeVia">Hvordan signalene kommer</string>
     <string name="pushWakeViaHelp">Via Google (Firebase Cloud Messaging) på telefoner med Google Play-tjenester. Uten dem går det via en UnifiedPush-distributørapp (for eksempel ntfy): den holder sin egen tilkobling og videresender signalet «sjekk e-post». Signalet er kryptert med nøkkelen til denne installasjonen og inneholder ingen adresser eller meldinger. Detaljer i personvernerklæringen, del 6.2.</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">Trykk og hold på notatet: rediger, send som e-post, del, kopier eller slett.</string>
     <string name="faq_notify_title">Varsler og bakgrunn</string>
     <string name="faq_notify_1_q">Hvorfor kommer varsler sent på iPhone?</string>
-    <string name="faq_notify_1_a">Mens appen er åpen, kommer e-post med en gang. Når den ligger i bakgrunnen, bestemmer iOS selv når den skal vekkes: oftere hvis du bruker appen hver dag, sjeldnere i Lavstrømmodus eller når batteriet er lavt. For at den skal vekkes oftere, la Serversignaler (iPhone) stå på i Innstillinger → Varsler: utviklerens server sender et tomt «sjekk e-posten»-signal via Apple med intervallet du velger, og appen sjekker postboksene dine selv, fra denne enheten. Bare varseltokenet sendes til serveren. Ikke lukk appen ved å sveipe den bort i appvelgeren: Etter det vekker iOS den verken av seg selv eller med et signal før du åpner appen igjen. Sjekk at Bakgrunnsoppdatering er slått på for Ogneliss Mail i iOS-innstillingene.</string>
+    <string name="faq_notify_1_a">Mens appen er åpen, kommer e-post med en gang. Når den ligger i bakgrunnen, bestemmer iOS selv når den skal vekkes: oftere hvis du bruker appen hver dag, sjeldnere i Lavstrømmodus eller når batteriet er lavt. For at den skal vekkes oftere, la E-postsjekk i bakgrunnen (iPhone) stå på i Innstillinger → Varsler: utviklerens server sender et tomt «sjekk e-posten»-signal via Apple med intervallet du velger, og appen sjekker postboksene dine selv, fra denne enheten. Bare varseltokenet sendes til serveren. Ikke lukk appen ved å sveipe den bort i appvelgeren: Etter det vekker iOS den verken av seg selv eller med et signal før du åpner appen igjen. Sjekk at Bakgrunnsoppdatering er slått på for Ogneliss Mail i iOS-innstillingene.</string>
     <string name="faq_notify_2_q">Hvordan slår jeg av varsler for én mappe?</string>
     <string name="faq_notify_2_a">Innstillinger → konto → Mappesynkronisering: Bjellen ved siden av mappens bryter slår varsler om nye meldinger i den (med undermapper) på eller av, og mappen synkroniseres fortsatt. Menyen ⋮ har Varsler: alle mapper og Varsler: ingen mapper. Det kommer aldri varsler for Sendt, Utkast, Slettede elementer eller Søppelpost.</string>
     <string name="faq_notify_3_q">Hvorfor kommer varsler sent på Android?</string>
@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Synkronisering og bakgrunnsarbeid, sertifikater, databeskyttelse, appdeler, logg, tilbakestilling</string>
     <string name="sectionData">Data</string>
     <string name="sectionHelp">Hjelp</string>
+    <string name="sectionLookLanguage">Utseende og språk</string>
+    <string name="sectionModules">Deler</string>
+    <string name="sectionPrivacy">Personvern</string>
+    <string name="sectionStorageData">Data og lagring</string>
+    <string name="sectionSystemHelp">System og hjelp</string>
     <string name="sectionBackground">Bakgrunnsarbeid</string>
     <string name="sectionApp">App</string>
     <string name="folderNotifyTurnOn">Slå på varsler</string>

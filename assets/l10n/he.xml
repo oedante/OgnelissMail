@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">שנה</string>
     <string name="syncPeriodAll">כל התקופה</string>
     <string name="lastSyncNever">עדיין לא</string>
-    <string name="accSectionSync">סנכרון</string>
+    <string name="accSectionSync">קבלה</string>
     <string name="accSectionMail">הודעות</string>
     <string name="accSectionAccount">חשבון</string>
     <string name="orgPolicy">דרישות הארגון</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">ללא תמונות, העיקר למי ההודעה מיועדת: ״אליך״, ״אליך״ בעותק, או הנמען הראשון</string>
     <string name="recip_list">רשימה</string>
     <string name="recip_list_desc">כל נמען בשורה נפרדת עם תמונה (עד שלושה באל, שניים בעותק)</string>
-    <string name="expSpareTitle">חלון ההודעה מראש</string>
+    <string name="expSpareTitle">פתיחת הודעות מהירה יותר</string>
     <string name="expSpareDesc">ההודעה נטענת בזמן שהמסך נפתח</string>
     <string name="expSpareHint">חלון דפדפן בלתי נראה אחד מוחזק מוכן. כשמקישים על הודעה ברשימה, הוא טוען את ההודעה בזמן שהמסך נכנס, כך שהמסך מקבל אותה מוכנה. זה מהיר יותר, אבל החלון תמיד תופס מעט זיכרון. אם הודעה מוצגת באופן שגוי במכשיר מסוים (רווח ריק, גובה שגוי), כבה אפשרות זו.</string>
     <string name="expNativeTitle">הודעות פשוטות ללא דפדפן</string>
@@ -2512,7 +2512,7 @@
     <string name="expBoardTitle">לוח ב״היום שלי״</string>
     <string name="expBoardDesc">בקרוב · בטיפול · הושלם</string>
     <string name="expBoardHint">משימות היום בעמודות. גרור בלחיצה ארוכה או השתמש בתפריט ⋮. פגישות שהסתיימו עוברות ל״הושלם״ מעצמן, משימות ותזכורות — רק ידנית. אפשר להפעיל גם במסך היום שלי.</string>
-    <string name="expHubTitle">מרכז לוח שנה</string>
+    <string name="expHubTitle">לוח שנה אחד לכל התיבות</string>
     <string name="expHubDesc">כל החשבונות בלוח שנה אחד</string>
     <string name="expHubHint">לוח השנה מציג פגישות מכל החשבונות בבת אחת; אפשר לכבות חשבונות בצ׳יפים שמעליו (לחיצה ארוכה — רק הזה). כבוי — לוח השנה עוקב אחרי החשבון שנבחר בדואר.</string>
     <string name="expEasSessionTitle">חיבור מהיר ל-Exchange</string>
@@ -3091,7 +3091,7 @@
     <string name="folderNotifyAll">התראות: כל התיקיות</string>
     <string name="folderNotifyNone">התראות: אף תיקייה</string>
     <string name="peekControlOff">הסר ממעקב</string>
-    <string name="pushWakeTitle">אותות מהשרת (iPhone)</string>
+    <string name="pushWakeTitle">בדיקת דואר ברקע (iPhone)</string>
     <string name="pushWakeSwitch">בדוק דואר לפי אות מהשרת</string>
     <string name="pushWakeDesc">האפליקציה מתעוררת בתדירות גבוהה יותר ברקע. השרת מכיר רק את אסימון ההתראות – ללא כתובות וללא הודעות.</string>
     <string name="pushWakeHelp">מערכת iOS מחליטה בעצמה מתי להעיר אפליקציה ברקע — לפעמים פעם בשעה או לעתים רחוקות יותר. השרת של המפתח (ogneliss.ru/push) שולח דרך Apple, במרווח שנבחר, אות ריק “בדוק דואר”, והאפליקציה בודקת בעצמה את תיבות הדואר, מהמכשיר הזה. לשרת נשלח רק אסימון ההתראות של ההתקנה הזו — ללא כתובות, סיסמאות או הודעות. כל עוד iOS מקבלת רק אותות שקטים, היא מעבירה לכל היותר 2–3 בשעה (כלומר לכל היותר אחד כל 20 דקות) ואינה מעירה אפליקציה שנסגרה בהחלקה. פרטים נוספים במדיניות הפרטיות, סעיף 6.2.</string>
@@ -3100,7 +3100,7 @@
     <string name="pushWakeStatusLast">האות האחרון: {when}</string>
     <string name="pushWakeStatusNone">עדיין לא נרשם</string>
     <string name="pushWakeStatusError">נכשל: {e}</string>
-    <string name="pushWakeTitleAndroid">אותות מהשרת</string>
+    <string name="pushWakeTitleAndroid">בדיקת דואר ברקע</string>
     <string name="pushWakeHelpAndroid">Android מחליט בעצמו מתי אפליקציה ברקע רשאית לפעול: בשינה עמוקה הוא דוחה בדיקות ברקע, ומאז Android 15 הסנכרון ברקע מקבל לכל היותר 6 שעות ביממה. שרת המפתח (ogneliss.ru/push) שולח דרך Google (Firebase Cloud Messaging), במרווח שנבחר, אות ריק „בדוק דואר”, והאפליקציה בודקת את תיבות הדואר בעצמה, מהמכשיר הזה. לשרת נשלח רק אסימון ההתראות של התקנה זו — ללא כתובות, סיסמאות או הודעות. בשינה עמוקה Android עשוי למסור את האות מאוחר יותר, בחלון התחזוקה הקרוב. בלי שירותי Google — דרך אפליקציית UnifiedPush (לדוגמה ntfy). פרטים במדיניות הפרטיות, סעיף 6.2.</string>
     <string name="pushWakeVia">כיצד מגיעים האותות</string>
     <string name="pushWakeViaHelp">דרך Google (Firebase Cloud Messaging) בטלפונים עם שירותי Google Play. בלעדיהם — דרך אפליקציית מפיץ של UnifiedPush (לדוגמה ntfy): היא שומרת חיבור משלה ומעבירה את האות “בדוק דואר”. האות מוצפן במפתח של התקנה זו ואינו כולל כתובות או הודעות. פרטים במדיניות הפרטיות, סעיף 6.2.</string>
@@ -3321,7 +3321,7 @@
     <string name="faq_tasks_3_a">הקש והחזק את ההערה: ערוך, שלח באימייל, שתף, העתק או מחק.</string>
     <string name="faq_notify_title">התראות ורקע</string>
     <string name="faq_notify_1_q">למה ב-iPhone ההתראות מגיעות באיחור?</string>
-    <string name="faq_notify_1_a">כשהאפליקציה פתוחה, הדואר מגיע מיד. כשהיא ברקע, מערכת iOS מחליטה בעצמה מתי להעיר אותה: לעיתים קרובות יותר אם משתמשים באפליקציה כל יום, לעיתים רחוקות יותר במצב חיסכון בסוללה או כשהסוללה חלשה. כדי שהאפליקציה תתעורר לעיתים קרובות יותר, השאר מופעל את אותות מהשרת (iPhone) ב-הגדרות → התראות: השרת של המפתח שולח דרך Apple, במרווח שבחרת, אות ריק של “בדוק דואר”, והאפליקציה בודקת את תיבות הדואר בעצמה, מהמכשיר הזה; לשרת נשלח רק אסימון ההתראות. אל תסגור את האפליקציה בהחלקה במעבר בין אפליקציות: אחרי זה מערכת iOS לא מעירה אותה לא מעצמה ולא באות, עד שתפתח אותה שוב. ודא שרענון אפליקציות ברקע מופעל עבור Ogneliss Mail בהגדרות iOS.</string>
+    <string name="faq_notify_1_a">כשהאפליקציה פתוחה, הדואר מגיע מיד. כשהיא ברקע, מערכת iOS מחליטה בעצמה מתי להעיר אותה: לעיתים קרובות יותר אם משתמשים באפליקציה כל יום, לעיתים רחוקות יותר במצב חיסכון בסוללה או כשהסוללה חלשה. כדי שהאפליקציה תתעורר לעיתים קרובות יותר, השאר מופעל את בדיקת דואר ברקע (iPhone) ב-הגדרות → התראות: השרת של המפתח שולח דרך Apple, במרווח שבחרת, אות ריק של “בדוק דואר”, והאפליקציה בודקת את תיבות הדואר בעצמה, מהמכשיר הזה; לשרת נשלח רק אסימון ההתראות. אל תסגור את האפליקציה בהחלקה במעבר בין אפליקציות: אחרי זה מערכת iOS לא מעירה אותה לא מעצמה ולא באות, עד שתפתח אותה שוב. ודא שרענון אפליקציות ברקע מופעל עבור Ogneliss Mail בהגדרות iOS.</string>
     <string name="faq_notify_2_q">איך מכבים התראות לתיקייה אחת?</string>
     <string name="faq_notify_2_a">הגדרות → חשבון → סנכרון תיקיות: הפעמון ליד המתג של תיקייה מפעיל או מכבה התראות על הודעות חדשות בה (כולל תיקיות משנה), והתיקייה ממשיכה להסתנכרן. בתפריט ⋮ יש התראות: כל התיקיות והתראות: אין תיקיות. אף פעם אין התראות עבור נשלחו, טיוטות, פריטים שנמחקו או דואר זבל.</string>
     <string name="faq_notify_3_q">למה ב-Android ההתראות מגיעות באיחור?</string>
@@ -3568,6 +3568,11 @@
     <string name="advancedSettingsDesc">סנכרון ועבודה ברקע, אישורים, הגנה על נתונים, חלקי האפליקציה, יומן רישום, איפוס</string>
     <string name="sectionData">נתונים</string>
     <string name="sectionHelp">עזרה</string>
+    <string name="sectionLookLanguage">מראה ושפה</string>
+    <string name="sectionModules">מדורים</string>
+    <string name="sectionPrivacy">פרטיות</string>
+    <string name="sectionStorageData">נתונים ואחסון</string>
+    <string name="sectionSystemHelp">מערכת ועזרה</string>
     <string name="sectionBackground">עבודה ברקע</string>
     <string name="sectionApp">אפליקציה</string>
     <string name="folderNotifyTurnOn">הפעלת התראות</string>
@@ -3943,7 +3948,7 @@
     <string name="readingPaneHidden">מוסתרת</string>
     <string name="readingPaneBottomHint">הרשימה למעלה, ההודעה מתחתיה</string>
     <string name="readingPaneHiddenHint">רשימה ברוחב מלא, ההודעה נפתחת במסך נפרד</string>
-    <string name="pushWakeStatusPeriodic">בלי שירותי Google הדואר נבדק לפי לוח זמנים — כל 15 דקות, ופחות בשינה עמוקה. לאותות מהשרת התקינו אפליקציית UnifiedPush כמו ntfy.</string>
+    <string name="pushWakeStatusPeriodic">בלי שירותי Google הדואר נבדק לפי לוח זמנים — כל 15 דקות, ופחות בשינה עמוקה. לבדיקת דואר ברקע התקינו אפליקציית UnifiedPush כמו ntfy.</string>
     <string name="setupSignalsChooseTitle">בחרו אפליקציה לאותות</string>
     <string name="setupSignalsChooseBody">מותקנות כמה אפליקציות UnifiedPush. בחרו איזו מעבירה את אות השרת „בדוק דואר” — כך הטלפון יודיע על דואר חדש גם בשינה עמוקה.</string>
     <string name="setupSignalsPeriodicTitle">בלי שירותי Google</string>

@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">One year</string>
     <string name="syncPeriodAll">All time</string>
     <string name="lastSyncNever">not yet</string>
-    <string name="accSectionSync">Synchronization</string>
+    <string name="accSectionSync">Receiving</string>
     <string name="accSectionMail">Messages</string>
     <string name="accSectionAccount">Account</string>
     <string name="orgPolicy">Organization requirements</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">No photos, what matters is who it is for: “you”, “you” in Cc, or the first recipient</string>
     <string name="recip_list">List</string>
     <string name="recip_list_desc">Each recipient on its own line with a photo (up to three in To, two in Cc)</string>
-    <string name="expSpareTitle">Mail window in advance</string>
+    <string name="expSpareTitle">Faster message opening</string>
     <string name="expSpareDesc">The message loads while the screen opens</string>
     <string name="expSpareHint">One invisible browser window is kept ready. When you tap a message in the list, it loads the message while the screen slides in, so the screen gets it ready. Faster, but the window always uses a little memory. If a message shows incorrectly on some device (blank space, wrong height), turn this off.</string>
     <string name="expNativeTitle">Simple messages without browser</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Board in My Day</string>
     <string name="expBoardDesc">Upcoming · In progress · Done</string>
     <string name="expBoardHint">Today’s tasks in columns. Drag with a long press or use the ⋮ menu. Past meetings move to Done on their own, tasks and reminders only by hand. Can also be switched on the My Day screen.</string>
-    <string name="expHubTitle">Calendar hub</string>
+    <string name="expHubTitle">One calendar for all mailboxes</string>
     <string name="expHubDesc">All accounts in one calendar</string>
     <string name="expHubHint">The calendar shows meetings of all accounts at once; turn accounts off with the chips above it (long press — only this one). Off — the calendar follows the account chosen in Mail.</string>
     <string name="expEasSessionTitle">Fast Exchange connection</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Notifications: all folders</string>
     <string name="folderNotifyNone">Notifications: no folders</string>
     <string name="peekControlOff">Stop follow-up</string>
-    <string name="pushWakeTitle">Server signals (iPhone)</string>
+    <string name="pushWakeTitle">Background mail check (iPhone)</string>
     <string name="pushWakeSwitch">Check mail on a server signal</string>
     <string name="pushWakeDesc">The app wakes up more often in the background. The server knows only the notification token — no addresses, no messages.</string>
     <string name="pushWakeHelp">iOS decides on its own when to wake an app in the background — sometimes once an hour or less often. The developer’s server (ogneliss.ru/push) sends an empty “check your mail” signal through Apple at the chosen interval, and the app checks your mailboxes itself, from this device. Only this installation’s notification token is sent to the server — no addresses, passwords or messages. While iOS accepts only silent signals, it lets through no more than 2–3 per hour (so at most every 20 minutes) and does not wake an app closed by swiping. Details are in the Privacy Policy, section 6.2.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Last signal: {when}</string>
     <string name="pushWakeStatusNone">Not registered yet</string>
     <string name="pushWakeStatusError">Failed: {e}</string>
-    <string name="pushWakeTitleAndroid">Server signals</string>
+    <string name="pushWakeTitleAndroid">Background mail check</string>
     <string name="pushWakeHelpAndroid">Android decides on its own when a background app may run: in deep sleep it postpones background checks, and since Android 15 background sync gets at most 6 hours a day. The developer’s server (ogneliss.ru/push) sends an empty “check your mail” signal through Google (Firebase Cloud Messaging) at the chosen interval, and the app checks your mailboxes itself, from this device. Only this installation’s notification token is sent to the server — no addresses, passwords or messages. In deep sleep Android may deliver the signal later, in the next maintenance window. Without Google services — through a UnifiedPush app (for example, ntfy). Details are in the Privacy Policy, section 6.2.</string>
     <string name="pushWakeVia">How signals arrive</string>
     <string name="pushWakeViaHelp">Through Google (Firebase Cloud Messaging) on phones with Google Play services. Without them, through a UnifiedPush distributor app (for example, ntfy): it keeps its own connection and passes on the “check your mail” signal. The signal is encrypted with this installation’s key and contains no addresses or messages. Details: Privacy Policy, section 6.2.</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">Long-press the note: edit, send by email, share, copy or delete.</string>
     <string name="faq_notify_title">Notifications and background</string>
     <string name="faq_notify_1_q">Why do notifications arrive late on iPhone?</string>
-    <string name="faq_notify_1_a">While the app is open, mail arrives immediately. When it is in the background, iOS decides on its own when to wake it: more often if you use the app every day, less often in Low Power Mode or when the battery is low. To make it wake up more often, keep Server signals (iPhone) on in Settings → Notifications: the developer’s server sends an empty “check your mail” signal through Apple at the interval you choose, and the app checks your mailboxes itself, from this device; only the notification token is sent to the server. Don’t close the app by swiping it away in the app switcher: after that iOS wakes it neither on its own nor by a signal until you open the app again. Make sure Background App Refresh is on for Ogneliss Mail in iOS Settings.</string>
+    <string name="faq_notify_1_a">While the app is open, mail arrives immediately. When it is in the background, iOS decides on its own when to wake it: more often if you use the app every day, less often in Low Power Mode or when the battery is low. To make it wake up more often, keep Background mail check (iPhone) on in Settings → Notifications: the developer’s server sends an empty “check your mail” signal through Apple at the interval you choose, and the app checks your mailboxes itself, from this device; only the notification token is sent to the server. Don’t close the app by swiping it away in the app switcher: after that iOS wakes it neither on its own nor by a signal until you open the app again. Make sure Background App Refresh is on for Ogneliss Mail in iOS Settings.</string>
     <string name="faq_notify_2_q">How do I turn off notifications for one folder?</string>
     <string name="faq_notify_2_a">Settings → account → Folder sync: the bell next to a folder’s switch turns notifications about its new messages on or off (with subfolders), and the folder keeps syncing. The ⋮ menu has Notifications: all folders and Notifications: no folders. There are never notifications for Sent, Drafts, Deleted Items or Junk.</string>
     <string name="faq_notify_3_q">Why are notifications delayed on Android?</string>
@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Sync and background work, certificates, data protection, app sections, log, reset</string>
     <string name="sectionData">Data</string>
     <string name="sectionHelp">Help</string>
+    <string name="sectionLookLanguage">Look and language</string>
+    <string name="sectionModules">Sections</string>
+    <string name="sectionPrivacy">Privacy</string>
+    <string name="sectionStorageData">Data and storage</string>
+    <string name="sectionSystemHelp">System and help</string>
     <string name="sectionBackground">Background work</string>
     <string name="sectionApp">App</string>
     <string name="folderNotifyTurnOn">Turn on notifications</string>

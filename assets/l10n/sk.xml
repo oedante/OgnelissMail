@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Rok</string>
     <string name="syncPeriodAll">Celé obdobie</string>
     <string name="lastSyncNever">zatiaľ nie</string>
-    <string name="accSectionSync">Synchronizácia</string>
+    <string name="accSectionSync">Príjem</string>
     <string name="accSectionMail">Správy</string>
     <string name="accSectionAccount">Účet</string>
     <string name="orgPolicy">Požiadavky organizácie</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Bez fotiek, dôležité je, komu je správa určená: „vám“, „vám“ v kópii alebo prvý príjemca</string>
     <string name="recip_list">Zoznam</string>
     <string name="recip_list_desc">Každý príjemca na samostatnom riadku s fotkou (až traja v poli Komu, dvaja v kópii)</string>
-    <string name="expSpareTitle">Okno správy vopred</string>
+    <string name="expSpareTitle">Rýchlejšie otváranie správ</string>
     <string name="expSpareDesc">Správa sa načíta počas otvárania obrazovky</string>
     <string name="expSpareHint">Jedno neviditeľné okno prehliadača je pripravené vopred. Keď klepnete na správu v zozname, načíta ju počas posúvania obrazovky, takže obrazovka ju má pripravenú. Je to rýchlejšie, ale okno stále využíva trochu pamäte. Ak sa správa v niektorom zariadení zobrazuje nesprávne (prázdne miesto, zlá výška), túto možnosť vypnite.</string>
     <string name="expNativeTitle">Jednoduché správy bez prehliadača</string>
@@ -2512,7 +2512,7 @@
     <string name="expBoardTitle">Tabuľa v časti Môj deň</string>
     <string name="expBoardDesc">Nadchádzajúce · Rozpracované · Hotovo</string>
     <string name="expBoardHint">Dnešné úlohy v stĺpcoch. Presúvajte dlhým podržaním alebo cez ponuku ⋮. Minulé stretnutia sa presunú do stĺpca Hotovo samy, úlohy a pripomienky iba ručne. Dá sa prepnúť aj na obrazovke Môj deň.</string>
-    <string name="expHubTitle">Centrum kalendára</string>
+    <string name="expHubTitle">Jeden kalendár všetkých schránok</string>
     <string name="expHubDesc">Všetky účty v jednom kalendári</string>
     <string name="expHubHint">Kalendár zobrazuje stretnutia zo všetkých účtov naraz; účty vypnete čipmi nad ním (dlhé podržanie — iba tento). Vypnuté — kalendár sleduje účet vybraný v časti Pošta.</string>
     <string name="expEasSessionTitle">Rýchle pripojenie Exchange</string>
@@ -3091,7 +3091,7 @@
     <string name="folderNotifyAll">Upozornenia: všetky priečinky</string>
     <string name="folderNotifyNone">Upozornenia: žiadny priečinok</string>
     <string name="peekControlOff">Prestať sledovať</string>
-    <string name="pushWakeTitle">Signály zo servera (iPhone)</string>
+    <string name="pushWakeTitle">Kontrola pošty na pozadí (iPhone)</string>
     <string name="pushWakeSwitch">Kontrolovať poštu podľa signálu zo servera</string>
     <string name="pushWakeDesc">Aplikácia sa na pozadí prebúdza častejšie. Server pozná iba token upozornení – žiadne adresy ani správy.</string>
     <string name="pushWakeHelp">iOS sám rozhoduje, kedy v pozadí prebudí aplikáciu — niekedy raz za hodinu alebo ešte menej často. Server vývojára (ogneliss.ru/push) cez Apple v zvolenom intervale posiela prázdny signál „skontrolujte poštu“ a aplikácia si schránky skontroluje sama, z tohto zariadenia. Na server sa odosiela iba token upozornení tejto inštalácie — žiadne adresy, heslá ani správy. Kým iOS prijíma iba tiché signály, prepustí ich najviac 2–3 za hodinu (teda najviac každých 20 minút) a neprebudí aplikáciu zatvorenú potiahnutím. Podrobnosti sú v Zásadách ochrany osobných údajov, časť 6.2.</string>
@@ -3100,7 +3100,7 @@
     <string name="pushWakeStatusLast">Posledný signál: {when}</string>
     <string name="pushWakeStatusNone">Zatiaľ nezaregistrované</string>
     <string name="pushWakeStatusError">Nepodarilo sa: {e}</string>
-    <string name="pushWakeTitleAndroid">Signály zo servera</string>
+    <string name="pushWakeTitleAndroid">Kontrola pošty na pozadí</string>
     <string name="pushWakeHelpAndroid">Android sám rozhoduje, kedy môže aplikácia na pozadí bežať: v hlbokom spánku odkladá kontroly na pozadí a od Androidu 15 dostáva synchronizácia na pozadí najviac 6 hodín denne. Server vývojára (ogneliss.ru/push) vo zvolenom intervale posiela cez Google (Firebase Cloud Messaging) prázdny signál „skontroluj poštu“ a aplikácia schránky skontroluje sama, z tohto zariadenia. Na server sa odosiela len token upozornení tejto inštalácie — žiadne adresy, heslá ani správy. V hlbokom spánku môže Android signál doručiť neskôr, v najbližšom okne údržby. Bez služieb Google — cez aplikáciu UnifiedPush (napríklad ntfy). Podrobnosti sú v Zásadách ochrany súkromia, oddiel 6.2.</string>
     <string name="pushWakeVia">Ako prichádzajú signály</string>
     <string name="pushWakeViaHelp">Cez Google (Firebase Cloud Messaging) na telefónoch so službami Google Play. Bez nich cez aplikáciu distribútora UnifiedPush (napríklad ntfy): drží si vlastné spojenie a odovzdáva signál „skontroluj poštu“. Signál je zašifrovaný kľúčom tejto inštalácie a neobsahuje adresy ani správy. Podrobnosti: Zásady ochrany osobných údajov, časť 6.2.</string>
@@ -3321,7 +3321,7 @@
     <string name="faq_tasks_3_a">Dlho podržte poznámku: upraviť, odoslať e-mailom, zdieľať, kopírovať alebo odstrániť.</string>
     <string name="faq_notify_title">Upozornenia a pozadie</string>
     <string name="faq_notify_1_q">Prečo upozornenia na iPhone chodia s oneskorením?</string>
-    <string name="faq_notify_1_a">Kým je aplikácia otvorená, pošta prichádza okamžite. Keď je na pozadí, iOS sám rozhoduje, kedy ju prebudí: častejšie, ak aplikáciu používate každý deň, zriedkavejšie v režime nízkej spotreby alebo pri slabej batérii. Aby sa budila častejšie, nechajte v Nastavenia → Upozornenia zapnuté Signály zo servera (iPhone): server vývojára cez Apple pošle v zvolenom intervale prázdny signál „skontrolujte poštu“ a aplikácia si schránky skontroluje sama, z tohto zariadenia; na server sa odosiela iba token upozornení. Nezatvárajte aplikáciu potiahnutím v prepínači aplikácií: potom ju iOS neprebudí ani sám, ani signálom, kým aplikáciu znova neotvoríte. Skontrolujte, či je v Nastaveniach iOS zapnuté Obnovenie aplikácií na pozadí pre Ogneliss Mail.</string>
+    <string name="faq_notify_1_a">Kým je aplikácia otvorená, pošta prichádza okamžite. Keď je na pozadí, iOS sám rozhoduje, kedy ju prebudí: častejšie, ak aplikáciu používate každý deň, zriedkavejšie v režime nízkej spotreby alebo pri slabej batérii. Aby sa budila častejšie, nechajte v Nastavenia → Upozornenia zapnuté Kontrola pošty na pozadí (iPhone): server vývojára cez Apple pošle v zvolenom intervale prázdny signál „skontrolujte poštu“ a aplikácia si schránky skontroluje sama, z tohto zariadenia; na server sa odosiela iba token upozornení. Nezatvárajte aplikáciu potiahnutím v prepínači aplikácií: potom ju iOS neprebudí ani sám, ani signálom, kým aplikáciu znova neotvoríte. Skontrolujte, či je v Nastaveniach iOS zapnuté Obnovenie aplikácií na pozadí pre Ogneliss Mail.</string>
     <string name="faq_notify_2_q">Ako vypnúť upozornenia pre jeden priečinok?</string>
     <string name="faq_notify_2_a">Nastavenia → účet → Synchronizácia priečinkov: zvonček vedľa prepínača priečinka zapína alebo vypína upozornenia na jeho nové správy (aj s podpriečinkami) a priečinok sa naďalej synchronizuje. Ponuka ⋮ obsahuje Upozornenia: všetky priečinky a Upozornenia: žiadne priečinky. Pre priečinky Odoslané, Koncepty, Odstránená pošta a Nevyžiadaná pošta sa upozornenia nezobrazujú nikdy.</string>
     <string name="faq_notify_3_q">Prečo upozornenia v systéme Android chodia neskoro?</string>
@@ -3568,6 +3568,11 @@
     <string name="advancedSettingsDesc">Synchronizácia a práca na pozadí, certifikáty, ochrana údajov, sekcie aplikácie, protokol, reset</string>
     <string name="sectionData">Údaje</string>
     <string name="sectionHelp">Pomoc</string>
+    <string name="sectionLookLanguage">Vzhľad a jazyk</string>
+    <string name="sectionModules">Sekcie</string>
+    <string name="sectionPrivacy">Súkromie</string>
+    <string name="sectionStorageData">Údaje a úložisko</string>
+    <string name="sectionSystemHelp">Systém a pomocník</string>
     <string name="sectionBackground">Práca na pozadí</string>
     <string name="sectionApp">Aplikácia</string>
     <string name="folderNotifyTurnOn">Zapnúť upozornenia</string>

@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Bir yıl</string>
     <string name="syncPeriodAll">Tüm zamanlar</string>
     <string name="lastSyncNever">henüz yok</string>
-    <string name="accSectionSync">Senkronizasyon</string>
+    <string name="accSectionSync">Alma</string>
     <string name="accSectionMail">İletiler</string>
     <string name="accSectionAccount">Hesap</string>
     <string name="orgPolicy">Kuruluş gereksinimleri</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Fotoğrafsız, önemli olan iletinin kime gittiği: “siz”, Bilgi\'de “siz” veya ilk alıcı</string>
     <string name="recip_list">Liste</string>
     <string name="recip_list_desc">Her alıcı kendi satırında fotoğrafla (Kime\'de üç, Bilgi\'de iki kişiye kadar)</string>
-    <string name="expSpareTitle">İleti penceresi önceden</string>
+    <string name="expSpareTitle">Daha hızlı ileti açma</string>
     <string name="expSpareDesc">İleti, ekran açılırken yüklenir</string>
     <string name="expSpareHint">Görünmez bir tarayıcı penceresi hazır tutulur. Listede bir iletiye dokunduğunuzda ekran kayarken iletiyi yükler, böylece ekran iletiyi hazır bulur. Daha hızlıdır ancak pencere her zaman biraz bellek kullanır. Bir cihazda ileti yanlış görünürse (boşluk, hatalı yükseklik) bunu kapatın.</string>
     <string name="expNativeTitle">Basit iletiler tarayıcısız</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Günüm\'de pano</string>
     <string name="expBoardDesc">Yaklaşanlar · Devam edenler · Tamamlandı</string>
     <string name="expBoardHint">Bugünün görevleri sütunlarda. Uzun basarak sürükleyin veya ⋮ menüsünü kullanın. Geçmiş toplantılar kendiliğinden Tamamlandı\'ya geçer, görevler ve hatırlatıcılar yalnızca elle. Günüm ekranından da açılabilir.</string>
-    <string name="expHubTitle">Takvim merkezi</string>
+    <string name="expHubTitle">Tüm posta kutuları için tek takvim</string>
     <string name="expHubDesc">Tüm hesaplar tek takvimde</string>
     <string name="expHubHint">Takvim tüm hesapların toplantılarını aynı anda gösterir; hesapları üstündeki çiplerle kapatın (uzun basış — yalnızca bu hesap). Kapalıyken takvim, E-posta\'da seçili hesabı izler.</string>
     <string name="expEasSessionTitle">Hızlı Exchange bağlantısı</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Bildirimler: tüm klasörler</string>
     <string name="folderNotifyNone">Bildirimler: hiçbir klasör</string>
     <string name="peekControlOff">Takibi bırak</string>
-    <string name="pushWakeTitle">Sunucu sinyalleri (iPhone)</string>
+    <string name="pushWakeTitle">Arka planda posta denetimi (iPhone)</string>
     <string name="pushWakeSwitch">E-postaları sunucu sinyaliyle kontrol et</string>
     <string name="pushWakeDesc">Uygulama arka planda daha sık uyanır. Sunucu yalnızca bildirim belirtecini bilir; adresleri ve iletileri bilmez.</string>
     <string name="pushWakeHelp">iOS, bir uygulamayı arka planda ne zaman uyandıracağına kendisi karar verir: bazen saatte bir kez ya da daha seyrek. Geliştiricinin sunucusu (ogneliss.ru/push), seçilen aralıkla Apple üzerinden boş bir “postanı kontrol et” sinyali gönderir ve uygulama posta kutularınızı bu cihazdan kendisi kontrol eder. Sunucuya yalnızca bu kurulumun bildirim belirteci gönderilir; adresler, şifreler veya iletiler gönderilmez. iOS yalnızca sessiz sinyalleri kabul ettiği sürece saatte en fazla 2–3 sinyale izin verir (yani en fazla her 20 dakikada bir) ve kaydırılarak kapatılmış bir uygulamayı uyandırmaz. Ayrıntılar Gizlilik Politikası\'nın 6.2 bölümündedir.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Son sinyal: {when}</string>
     <string name="pushWakeStatusNone">Henüz kayıtlı değil</string>
     <string name="pushWakeStatusError">Hata: {e}</string>
-    <string name="pushWakeTitleAndroid">Sunucu sinyalleri</string>
+    <string name="pushWakeTitleAndroid">Arka planda posta denetimi</string>
     <string name="pushWakeHelpAndroid">Android, arka plandaki bir uygulamanın ne zaman çalışabileceğine kendisi karar verir: derin uykuda arka plan denetimlerini erteler ve Android 15’ten beri arka plan eşitlemesine günde en fazla 6 saat verilir. Geliştiricinin sunucusu (ogneliss.ru/push) seçilen aralıkla Google (Firebase Cloud Messaging) üzerinden boş bir «postayı denetle» sinyali gönderir ve uygulama posta kutularınızı bu cihazdan kendisi denetler. Sunucuya yalnızca bu kurulumun bildirim belirteci gönderilir — adres, parola veya ileti gönderilmez. Derin uykuda Android sinyali daha sonra, bir sonraki bakım aralığında iletebilir. Google hizmetleri yoksa sinyal bir UnifiedPush uygulaması (örneğin ntfy) üzerinden gelir. Ayrıntılar Gizlilik Politikası’nın 6.2 bölümündedir.</string>
     <string name="pushWakeVia">Sinyaller nasıl gelir</string>
     <string name="pushWakeViaHelp">Google Play hizmetleri olan telefonlarda Google (Firebase Cloud Messaging) üzerinden. Bunlar yoksa bir UnifiedPush dağıtıcı uygulaması (örneğin ntfy) üzerinden: kendi bağlantısını sürdürür ve “postayı denetle” sinyalini iletir. Sinyal bu kurulumun anahtarıyla şifrelenir; adres veya ileti içermez. Ayrıntılar: Gizlilik Politikası, bölüm 6.2.</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">Nota uzun basın: düzenleyin, e-postayla gönderin, paylaşın, kopyalayın veya silin.</string>
     <string name="faq_notify_title">Bildirimler ve arka plan</string>
     <string name="faq_notify_1_q">iPhone\'da bildirimler neden geç geliyor?</string>
-    <string name="faq_notify_1_a">Uygulama açıkken posta hemen gelir. Arka plandayken iOS uygulamayı ne zaman uyandıracağına kendisi karar verir: uygulamayı her gün kullanıyorsanız daha sık, Düşük Güç Modu\'nda veya pil azken daha seyrek. Daha sık uyanmasını sağlamak için Ayarlar → Bildirimler bölümünde Sunucu sinyalleri (iPhone) seçeneğini açık tutun: geliştiricinin sunucusu, seçtiğiniz aralıkla Apple üzerinden boş bir “postanızı denetleyin” sinyali gönderir ve uygulama posta kutularınızı bu cihazdan kendisi denetler; sunucuya yalnızca bildirim belirteci gönderilir. Uygulamayı uygulama değiştiriciden kaydırarak kapatmayın: bundan sonra iOS uygulamayı siz yeniden açana kadar ne kendiliğinden ne de sinyalle uyandırır. iOS Ayarları\'nda Ogneliss Mail için Arka Planda Uygulama Yenileme\'nin açık olduğundan emin olun.</string>
+    <string name="faq_notify_1_a">Uygulama açıkken posta hemen gelir. Arka plandayken iOS uygulamayı ne zaman uyandıracağına kendisi karar verir: uygulamayı her gün kullanıyorsanız daha sık, Düşük Güç Modu\'nda veya pil azken daha seyrek. Daha sık uyanmasını sağlamak için Ayarlar → Bildirimler bölümünde Arka planda posta denetimi (iPhone) seçeneğini açık tutun: geliştiricinin sunucusu, seçtiğiniz aralıkla Apple üzerinden boş bir “postanızı denetleyin” sinyali gönderir ve uygulama posta kutularınızı bu cihazdan kendisi denetler; sunucuya yalnızca bildirim belirteci gönderilir. Uygulamayı uygulama değiştiriciden kaydırarak kapatmayın: bundan sonra iOS uygulamayı siz yeniden açana kadar ne kendiliğinden ne de sinyalle uyandırır. iOS Ayarları\'nda Ogneliss Mail için Arka Planda Uygulama Yenileme\'nin açık olduğundan emin olun.</string>
     <string name="faq_notify_2_q">Tek bir klasör için bildirimleri nasıl kapatırım?</string>
     <string name="faq_notify_2_a">Ayarlar → hesap → Klasör senkronizasyonu: bir klasörün anahtarının yanındaki zil, o klasördeki yeni iletilerin bildirimlerini (alt klasörlerle birlikte) açar veya kapatır; klasör senkronize olmaya devam eder. ⋮ menüsünde Bildirimler: tüm klasörler ve Bildirimler: hiçbir klasör seçenekleri bulunur. Gönderilenler, Taslaklar, Silinmiş öğeler veya Gereksiz e-posta için hiçbir zaman bildirim gelmez.</string>
     <string name="faq_notify_3_q">Android\'de bildirimler neden hemen gelmiyor?</string>
@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Senkronizasyon ve arka plan çalışması, sertifikalar, veri koruması, uygulama bölümleri, günlük, sıfırlama</string>
     <string name="sectionData">Veriler</string>
     <string name="sectionHelp">Yardım</string>
+    <string name="sectionLookLanguage">Görünüm ve dil</string>
+    <string name="sectionModules">Bölümler</string>
+    <string name="sectionPrivacy">Gizlilik</string>
+    <string name="sectionStorageData">Veri ve depolama</string>
+    <string name="sectionSystemHelp">Sistem ve yardım</string>
     <string name="sectionBackground">Arka plan çalışması</string>
     <string name="sectionApp">Uygulama</string>
     <string name="folderNotifyTurnOn">Bildirimleri aç</string>
@@ -3922,7 +3927,7 @@
     <string name="readingPaneHidden">Gizli</string>
     <string name="readingPaneBottomHint">Liste üstte, ileti altında</string>
     <string name="readingPaneHiddenHint">Liste tam genişlikte, ileti ayrı ekranda açılır</string>
-    <string name="pushWakeStatusPeriodic">Google hizmetleri olmadan posta bir programa göre denetlenir — 15 dakikada bir, derin uykuda daha seyrek. Sunucu sinyalleri için ntfy gibi bir UnifiedPush uygulaması yükleyin.</string>
+    <string name="pushWakeStatusPeriodic">Google hizmetleri olmadan posta bir programa göre denetlenir — 15 dakikada bir, derin uykuda daha seyrek. Arka planda posta denetimi için ntfy gibi bir UnifiedPush uygulaması yükleyin.</string>
     <string name="setupSignalsChooseTitle">Sinyaller için uygulama seçin</string>
     <string name="setupSignalsChooseBody">Birden fazla UnifiedPush uygulaması yüklü. Sunucunun \"postayı denetle\" sinyalini hangisinin ileteceğini seçin; böylece telefon derin uykuda da yeni postayı bildirir.</string>
     <string name="setupSignalsPeriodicTitle">Google hizmetleri yok</string>

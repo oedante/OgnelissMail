@@ -46,6 +46,102 @@ class LinkOpener {
       RegExp(r'(?:https?://)?((?:[a-z0-9-]+\.)+[a-z]{2,})(?:[/:?#]|$|\s)', caseSensitive: false);
   static final _ipHost = RegExp(r'^\d{1,3}(\.\d{1,3}){3}$');
 
+  /// Домен, похожий на чужой (план 08.11.2026 п. 2): в одной части адреса
+  /// латиница вместе с кириллицей («paypаl.com» с русской «а»), буквы других
+  /// алфавитов, или кириллическая часть под латинской зоной («аррlе.com»
+  /// русскими буквами). Кириллический сайт в кириллической зоне («сайт.рф»)
+  /// — обычный. Части в punycode (xn--…) раскодируются; не раскодировались —
+  /// подозрительно. Раньше подозрительной считалась любая часть xn--, в том
+  /// числе каждый сайт .рф, а домен кириллицей без punycode — нет.
+  @visibleForTesting
+  static bool confusableHost(String host) {
+    final labels = <String>[];
+    for (final raw in host.toLowerCase().split('.')) {
+      var label = raw;
+      if (label.startsWith('xn--')) {
+        final d = _punyDecode(label.substring(4));
+        if (d == null) return true;
+        label = d;
+      } else if (label.contains('%')) {
+        try {
+          label = Uri.decodeComponent(label);
+        } catch (_) {
+          return true;
+        }
+      }
+      labels.add(label);
+    }
+    if (labels.isEmpty) return false;
+    final tldCyrillic = _cyr.hasMatch(labels.last);
+    for (final l in labels) {
+      final latin = _latin.hasMatch(l);
+      final cyr = _cyr.hasMatch(l);
+      if (latin && cyr) return true;
+      if (_otherScript.hasMatch(l)) return true;
+      if (cyr && !tldCyrillic) return true;
+    }
+    return false;
+  }
+
+  static final _latin = RegExp('[a-z]');
+  static final _cyr = RegExp('[Ѐ-ӿ]');
+  // Не ASCII и не кириллица (греческий, армянский, полноширинные и т. п.).
+  static final _otherScript = RegExp('[^\u0000-\u007FЀ-ӿ]');
+
+  /// Punycode (RFC 3492) → строка; null — неверная запись.
+  static String? _punyDecode(String input) {
+    const base = 36, tMin = 1, tMax = 26, skew = 38, damp = 700;
+    var n = 128, i = 0, bias = 72;
+    final out = <int>[];
+    final delim = input.lastIndexOf('-');
+    if (delim > 0) {
+      for (final c in input.substring(0, delim).codeUnits) {
+        if (c >= 0x80) return null;
+        out.add(c);
+      }
+    }
+    var pos = delim > 0 ? delim + 1 : 0;
+    int adapt(int delta, int numPoints, bool first) {
+      delta = first ? delta ~/ damp : delta ~/ 2;
+      delta += delta ~/ numPoints;
+      var k = 0;
+      while (delta > ((base - tMin) * tMax) ~/ 2) {
+        delta ~/= base - tMin;
+        k += base;
+      }
+      return k + (base - tMin + 1) * delta ~/ (delta + skew);
+    }
+
+    while (pos < input.length) {
+      final oldi = i;
+      var w = 1;
+      for (var k = base;; k += base) {
+        if (pos >= input.length) return null;
+        final c = input.codeUnitAt(pos++);
+        final digit = c >= 0x30 && c <= 0x39
+            ? c - 22
+            : c >= 0x61 && c <= 0x7a
+                ? c - 0x61
+                : c >= 0x41 && c <= 0x5a
+                    ? c - 0x41
+                    : -1;
+        if (digit < 0) return null;
+        i += digit * w;
+        final t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+        if (digit < t) break;
+        w *= base - t;
+        if (w > 0x7fffffff) return null;
+      }
+      bias = adapt(i - oldi, out.length + 1, oldi == 0);
+      n += i ~/ (out.length + 1);
+      i %= out.length + 1;
+      if (n > 0x10FFFF) return null;
+      out.insert(i, n);
+      i++;
+    }
+    return String.fromCharCodes(out);
+  }
+
   /// Проверка ссылки (без UI) — отдельно, чтобы покрыть тестами.
   static LinkCheck? check(String url, {String? linkText}) {
     final uri = Uri.tryParse(url.trim());
@@ -71,8 +167,7 @@ class LinkOpener {
       textMismatch: mismatch,
       shownDomain: shown,
       insecure: uri.scheme == 'http',
-      suspiciousHost: _ipHost.hasMatch(host) || host.split('.').any((p) => p.startsWith('xn--')) ||
-          uri.userInfo.isNotEmpty,
+      suspiciousHost: _ipHost.hasMatch(host) || confusableHost(host) || uri.userInfo.isNotEmpty,
     );
   }
 

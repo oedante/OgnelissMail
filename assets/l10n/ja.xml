@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">1年</string>
     <string name="syncPeriodAll">すべての期間</string>
     <string name="lastSyncNever">まだ同期していません</string>
-    <string name="accSectionSync">同期</string>
+    <string name="accSectionSync">受信</string>
     <string name="accSectionMail">メール</string>
     <string name="accSectionAccount">アカウント</string>
     <string name="orgPolicy">組織の要件</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">写真なしで、誰宛てかを表示：「あなた」、Cc の「あなた」、または最初の宛先</string>
     <string name="recip_list">リスト</string>
     <string name="recip_list_desc">宛先ごとに写真付きで1行ずつ表示（宛先は最大3人、Cc は最大2人）</string>
-    <string name="expSpareTitle">メール画面を事前に準備</string>
+    <string name="expSpareTitle">メッセージをすばやく開く</string>
     <string name="expSpareDesc">画面を開く間にメールを読み込みます</string>
     <string name="expSpareHint">見えないブラウザウィンドウを1つ待機させておきます。リストでメールをタップすると、画面が表示される間にメールを読み込み、画面の準備を済ませます。より速くなりますが、このウィンドウは常に少量のメモリを使用します。一部のデバイスでメールが正しく表示されない場合（空白や高さの誤りなど）は、オフにしてください。</string>
     <string name="expNativeTitle">シンプルなメールはブラウザなしで表示</string>
@@ -2488,7 +2488,7 @@
     <string name="expBoardTitle">「今日の予定」のボード</string>
     <string name="expBoardDesc">予定 · 対応中 · 完了</string>
     <string name="expBoardHint">今日のタスクを列で表示します。長押ししてドラッグするか、⋮ メニューを使います。終了した会議は自動で「完了」に移動しますが、タスクとリマインダーは手動でのみ移動します。「今日の予定」画面でも切り替えられます。</string>
-    <string name="expHubTitle">カレンダーハブ</string>
+    <string name="expHubTitle">すべてのメールボックスを1つのカレンダーに</string>
     <string name="expHubDesc">すべてのアカウントを1つのカレンダーに</string>
     <string name="expHubHint">カレンダーにはすべてのアカウントの会議が同時に表示されます。上のチップでアカウントをオフにできます（長押しすると、そのアカウントのみ）。オフにすると、カレンダーはメールで選択中のアカウントに従います。</string>
     <string name="expEasSessionTitle">Exchangeの高速接続</string>
@@ -3065,7 +3065,7 @@
     <string name="folderNotifyAll">通知: すべてのフォルダー</string>
     <string name="folderNotifyNone">通知: フォルダーなし</string>
     <string name="peekControlOff">追跡を解除</string>
-    <string name="pushWakeTitle">サーバーからのシグナル（iPhone）</string>
+    <string name="pushWakeTitle">バックグラウンドでのメール確認（iPhone）</string>
     <string name="pushWakeSwitch">サーバーのシグナルでメールを確認</string>
     <string name="pushWakeDesc">アプリがバックグラウンドでより頻繁に起動します。サーバーが把握するのは通知トークンだけで、アドレスやメールは一切送られません。</string>
     <string name="pushWakeHelp">iOSは、バックグラウンドのアプリをいつ起動するかを自分で判断します。1時間に1回程度、またはそれより少ないこともあります。開発元のサーバー（ogneliss.ru/push）が、選択した間隔でApple経由で「メールを確認」という空の信号を送り、アプリはこのデバイスから自分でメールボックスを確認します。サーバーに送られるのは、このインストールの通知トークンだけで、アドレス、パスワード、メールは送られません。iOSがサイレント信号のみを受け付ける場合、通すのは1時間に2〜3回までで（つまり20分に1回まで）、スワイプで終了したアプリは起動されません。詳細はプライバシーポリシーの6.2項をご覧ください。</string>
@@ -3074,7 +3074,7 @@
     <string name="pushWakeStatusLast">最後のシグナル：{when}</string>
     <string name="pushWakeStatusNone">まだ登録されていません</string>
     <string name="pushWakeStatusError">失敗しました：{e}</string>
-    <string name="pushWakeTitleAndroid">サーバーからのシグナル</string>
+    <string name="pushWakeTitleAndroid">バックグラウンドでのメール確認</string>
     <string name="pushWakeHelpAndroid">バックグラウンドのアプリをいつ動かすかは Android が自分で決めます。ディープスリープ中はバックグラウンドの確認を後回しにし、Android 15 以降はバックグラウンド同期に 1 日最大 6 時間しか与えられません。開発者のサーバー（ogneliss.ru/push）が選んだ間隔で Google（Firebase Cloud Messaging）経由で空の「メールを確認」シグナルを送り、アプリはこの端末から自分でメールボックスを確認します。サーバーに送られるのはこのインストールの通知トークンだけで、アドレス、パスワード、メールは送られません。ディープスリープ中は、Android が次のメンテナンス期間にシグナルを遅れて届けることがあります。Google のサービスがない場合は、UnifiedPush アプリ（ntfy など）経由で届きます。詳しくはプライバシーポリシーの 6.2 をご覧ください。</string>
     <string name="pushWakeVia">シグナルの届き方</string>
     <string name="pushWakeViaHelp">Google Play 開発者サービスがあるスマートフォンでは、Google（Firebase Cloud Messaging）経由で届きます。ない場合は、UnifiedPush ディストリビューターアプリ（ntfy など）経由で届きます。このアプリが独自の接続を保ち、「メールを確認」シグナルを中継します。シグナルはこのインストール固有の鍵で暗号化されており、アドレスやメールは含まれません。詳しくはプライバシーポリシーの 6.2 をご覧ください。</string>
@@ -3530,6 +3530,11 @@
     <string name="advancedSettingsDesc">同期とバックグラウンド動作、証明書、データ保護、アプリのセクション、ログ、リセット</string>
     <string name="sectionData">データ</string>
     <string name="sectionHelp">ヘルプ</string>
+    <string name="sectionLookLanguage">表示と言語</string>
+    <string name="sectionModules">セクション</string>
+    <string name="sectionPrivacy">プライバシー</string>
+    <string name="sectionStorageData">データとストレージ</string>
+    <string name="sectionSystemHelp">システムとヘルプ</string>
     <string name="sectionBackground">バックグラウンド動作</string>
     <string name="sectionApp">アプリ</string>
     <string name="folderNotifyTurnOn">通知をオンにする</string>

@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Rok</string>
     <string name="syncPeriodAll">Cały okres</string>
     <string name="lastSyncNever">jeszcze nie było</string>
-    <string name="accSectionSync">Synchronizacja</string>
+    <string name="accSectionSync">Odbieranie</string>
     <string name="accSectionMail">Wiadomości</string>
     <string name="accSectionAccount">Konto</string>
     <string name="orgPolicy">Wymagania organizacji</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Bez zdjęć, liczy się to, do kogo jest wiadomość: „Ty”, „Ty” w DW lub pierwszy odbiorca</string>
     <string name="recip_list">Lista</string>
     <string name="recip_list_desc">Każdy odbiorca w osobnym wierszu ze zdjęciem (do trzech w Do i dwóch w DW)</string>
-    <string name="expSpareTitle">Okno wiadomości z wyprzedzeniem</string>
+    <string name="expSpareTitle">Szybsze otwieranie wiadomości</string>
     <string name="expSpareDesc">Wiadomość ładuje się podczas otwierania ekranu</string>
     <string name="expSpareHint">Jedno niewidoczne okno przeglądarki jest trzymane w gotowości. Po dotknięciu wiadomości na liście ładuje ona wiadomość, gdy ekran się wsuwa, więc ekran dostaje ją gotową. Jest szybciej, ale okno zawsze zajmuje trochę pamięci. Jeśli na jakimś urządzeniu wiadomość wyświetla się nieprawidłowo (puste miejsce, zła wysokość), wyłącz tę opcję.</string>
     <string name="expNativeTitle">Proste wiadomości bez przeglądarki</string>
@@ -2524,7 +2524,7 @@
     <string name="expBoardTitle">Tablica w Moim dniu</string>
     <string name="expBoardDesc">Nadchodzące · W toku · Gotowe</string>
     <string name="expBoardHint">Dzisiejsze zadania w kolumnach. Przeciągaj po dłuższym przytrzymaniu lub użyj menu ⋮. Minione spotkania przechodzą do Gotowych same, zadania i przypomnienia tylko ręcznie. Można to też włączyć na ekranie Mój dzień.</string>
-    <string name="expHubTitle">Centrum kalendarza</string>
+    <string name="expHubTitle">Jeden kalendarz wszystkich skrzynek</string>
     <string name="expHubDesc">Wszystkie konta w jednym kalendarzu</string>
     <string name="expHubHint">Kalendarz pokazuje spotkania ze wszystkich kont naraz; wyłączaj konta chipami nad nim (długie przytrzymanie — tylko to konto). Wyłączone — kalendarz podąża za kontem wybranym w Poczcie.</string>
     <string name="expEasSessionTitle">Szybkie połączenie z Exchange</string>
@@ -3104,7 +3104,7 @@
     <string name="folderNotifyAll">Powiadomienia: wszystkie foldery</string>
     <string name="folderNotifyNone">Powiadomienia: żaden folder</string>
     <string name="peekControlOff">Przestań śledzić</string>
-    <string name="pushWakeTitle">Sygnały z serwera (iPhone)</string>
+    <string name="pushWakeTitle">Sprawdzanie poczty w tle (iPhone)</string>
     <string name="pushWakeSwitch">Sprawdzaj pocztę po sygnale z serwera</string>
     <string name="pushWakeDesc">Aplikacja częściej budzi się w tle. Serwer zna tylko token powiadomień: żadnych adresów ani wiadomości.</string>
     <string name="pushWakeHelp">iOS sam decyduje, kiedy wybudzić aplikację w tle — czasem raz na godzinę lub rzadziej. Serwer dewelopera (ogneliss.ru/push) wysyła przez Apple, w wybranym odstępie, pusty sygnał „sprawdź pocztę”, a aplikacja sama sprawdza Twoje skrzynki, z tego urządzenia. Na serwer trafia tylko token powiadomień tej instalacji — bez adresów, haseł i wiadomości. Dopóki iOS przyjmuje tylko ciche sygnały, przepuszcza nie więcej niż 2–3 na godzinę (czyli co najwyżej co 20 minut) i nie wybudza aplikacji zamkniętej przez przesunięcie. Szczegóły znajdziesz w Polityce prywatności, w sekcji 6.2.</string>
@@ -3113,7 +3113,7 @@
     <string name="pushWakeStatusLast">Ostatni sygnał: {when}</string>
     <string name="pushWakeStatusNone">Jeszcze nie zarejestrowano</string>
     <string name="pushWakeStatusError">Błąd: {e}</string>
-    <string name="pushWakeTitleAndroid">Sygnały z serwera</string>
+    <string name="pushWakeTitleAndroid">Sprawdzanie poczty w tle</string>
     <string name="pushWakeHelpAndroid">Android sam decyduje, kiedy aplikacja w tle może działać: w głębokim uśpieniu odkłada sprawdzanie w tle, a od Androida 15 synchronizacja w tle dostaje najwyżej 6 godzin na dobę. Serwer dewelopera (ogneliss.ru/push) w wybranym odstępie wysyła przez Google (Firebase Cloud Messaging) pusty sygnał „sprawdź pocztę”, a aplikacja sama sprawdza skrzynki z tego urządzenia. Na serwer trafia tylko token powiadomień tej instalacji — bez adresów, haseł i wiadomości. W głębokim uśpieniu Android może dostarczyć sygnał później, w najbliższym oknie konserwacji. Bez usług Google — przez aplikację UnifiedPush (na przykład ntfy). Szczegóły w Polityce prywatności, sekcja 6.2.</string>
     <string name="pushWakeVia">Jak przychodzą sygnały</string>
     <string name="pushWakeViaHelp">Przez Google (Firebase Cloud Messaging) na telefonach z usługami Google Play. Bez nich — przez aplikację-dystrybutora UnifiedPush (na przykład ntfy): utrzymuje własne połączenie i przekazuje sygnał „sprawdź pocztę”. Sygnał jest szyfrowany kluczem tej instalacji i nie zawiera adresów ani wiadomości. Szczegóły w Polityce prywatności, sekcja 6.2.</string>
@@ -3334,7 +3334,7 @@
     <string name="faq_tasks_3_a">Przytrzymaj notatkę: edytuj, wyślij e-mailem, udostępnij, skopiuj lub usuń.</string>
     <string name="faq_notify_title">Powiadomienia i tło</string>
     <string name="faq_notify_1_q">Dlaczego powiadomienia na iPhonie przychodzą z opóźnieniem?</string>
-    <string name="faq_notify_1_a">Gdy aplikacja jest otwarta, poczta przychodzi natychmiast. Gdy działa w tle, iOS sam decyduje, kiedy ją wybudzić: częściej, jeśli korzystasz z aplikacji codziennie, rzadziej w trybie niskiego zużycia energii lub przy słabej baterii. Aby wybudzała się częściej, pozostaw włączone Sygnały z serwera (iPhone) w Ustawienia → Powiadomienia: serwer dewelopera wysyła przez Apple pusty sygnał „sprawdź pocztę” w wybranym przez Ciebie odstępie, a aplikacja sama sprawdza Twoje skrzynki z tego urządzenia; na serwer trafia tylko token powiadomień. Nie zamykaj aplikacji przez przesunięcie jej w przełączniku aplikacji: potem iOS nie wybudza jej ani sam, ani sygnałem, dopóki jej nie otworzysz ponownie. Upewnij się, że Odświeżanie aplikacji w tle jest włączone dla Ogneliss Mail w Ustawieniach iOS.</string>
+    <string name="faq_notify_1_a">Gdy aplikacja jest otwarta, poczta przychodzi natychmiast. Gdy działa w tle, iOS sam decyduje, kiedy ją wybudzić: częściej, jeśli korzystasz z aplikacji codziennie, rzadziej w trybie niskiego zużycia energii lub przy słabej baterii. Aby wybudzała się częściej, pozostaw włączone Sprawdzanie poczty w tle (iPhone) w Ustawienia → Powiadomienia: serwer dewelopera wysyła przez Apple pusty sygnał „sprawdź pocztę” w wybranym przez Ciebie odstępie, a aplikacja sama sprawdza Twoje skrzynki z tego urządzenia; na serwer trafia tylko token powiadomień. Nie zamykaj aplikacji przez przesunięcie jej w przełączniku aplikacji: potem iOS nie wybudza jej ani sam, ani sygnałem, dopóki jej nie otworzysz ponownie. Upewnij się, że Odświeżanie aplikacji w tle jest włączone dla Ogneliss Mail w Ustawieniach iOS.</string>
     <string name="faq_notify_2_q">Jak wyłączyć powiadomienia dla jednego folderu?</string>
     <string name="faq_notify_2_a">Ustawienia → konto → Synchronizacja folderów: dzwonek obok przełącznika folderu włącza lub wyłącza powiadomienia o jego nowych wiadomościach (razem z podfolderami), a folder nadal się synchronizuje. Menu ⋮ zawiera Powiadomienia: wszystkie foldery i Powiadomienia: brak folderów. Nigdy nie ma powiadomień dla folderów Wysłane, Wersje robocze, Elementy usunięte ani Wiadomości-śmieci.</string>
     <string name="faq_notify_3_q">Dlaczego powiadomienia na Androidzie przychodzą z opóźnieniem?</string>
@@ -3587,6 +3587,11 @@
     <string name="advancedSettingsDesc">Synchronizacja i praca w tle, certyfikaty, ochrona danych, sekcje aplikacji, dziennik, resetowanie</string>
     <string name="sectionData">Dane</string>
     <string name="sectionHelp">Pomoc</string>
+    <string name="sectionLookLanguage">Wygląd i język</string>
+    <string name="sectionModules">Sekcje</string>
+    <string name="sectionPrivacy">Prywatność</string>
+    <string name="sectionStorageData">Dane i miejsce</string>
+    <string name="sectionSystemHelp">System i pomoc</string>
     <string name="sectionBackground">Praca w tle</string>
     <string name="sectionApp">Aplikacja</string>
     <string name="folderNotifyTurnOn">Włącz powiadomienia</string>

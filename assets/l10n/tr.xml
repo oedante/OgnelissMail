@@ -3955,4 +3955,10 @@
     <string name="convFilesNone">Bu konuşmada dosya yok</string>
     <string name="convLinksNone">Bu konuşmada bağlantı yok</string>
     <string name="convFileRetry">İndirilemedi — yeniden denemek için dokunun</string>
+    <string name="findInMail">İletide bul</string>
+    <string name="findInMailHint">İletideki metin</string>
+    <string name="findNone">Bulunamadı</string>
+    <string name="findCount">{n}/{m}</string>
+    <string name="findPrev">Önceki</string>
+    <string name="findNext">Sonraki</string>
 </resources>

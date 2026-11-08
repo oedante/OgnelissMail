@@ -3934,4 +3934,10 @@
     <string name="convFilesNone">Không có tệp trong cuộc hội thoại này</string>
     <string name="convLinksNone">Không có liên kết trong cuộc hội thoại này</string>
     <string name="convFileRetry">Tải xuống không thành công — nhấn để thử lại</string>
+    <string name="findInMail">Tìm trong thư</string>
+    <string name="findInMailHint">Văn bản trong thư</string>
+    <string name="findNone">Không tìm thấy</string>
+    <string name="findCount">{n}/{m}</string>
+    <string name="findPrev">Trước</string>
+    <string name="findNext">Tiếp</string>
 </resources>

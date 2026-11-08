@@ -3976,4 +3976,10 @@
     <string name="convFilesNone">אין קבצים בשיחה הזו</string>
     <string name="convLinksNone">אין קישורים בשיחה הזו</string>
     <string name="convFileRetry">ההורדה נכשלה — הקישו כדי לנסות שוב</string>
+    <string name="findInMail">חיפוש בהודעה</string>
+    <string name="findInMailHint">טקסט בהודעה</string>
+    <string name="findNone">לא נמצא</string>
+    <string name="findCount">{n} מתוך {m}</string>
+    <string name="findPrev">הקודם</string>
+    <string name="findNext">הבא</string>
 </resources>

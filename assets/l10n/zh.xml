@@ -3934,4 +3934,10 @@
     <string name="convFilesNone">此对话中没有文件</string>
     <string name="convLinksNone">此对话中没有链接</string>
     <string name="convFileRetry">下载失败——点按重试</string>
+    <string name="findInMail">在邮件中查找</string>
+    <string name="findInMailHint">邮件中的文字</string>
+    <string name="findNone">未找到</string>
+    <string name="findCount">第 {n} 个，共 {m} 个</string>
+    <string name="findPrev">上一个</string>
+    <string name="findNext">下一个</string>
 </resources>

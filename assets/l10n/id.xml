@@ -3934,4 +3934,10 @@
     <string name="convFilesNone">Tidak ada file dalam percakapan ini</string>
     <string name="convLinksNone">Tidak ada tautan dalam percakapan ini</string>
     <string name="convFileRetry">Gagal mengunduh — ketuk untuk mencoba lagi</string>
+    <string name="findInMail">Cari di pesan</string>
+    <string name="findInMailHint">Teks di pesan</string>
+    <string name="findNone">Tidak ditemukan</string>
+    <string name="findCount">{n} dari {m}</string>
+    <string name="findPrev">Sebelumnya</string>
+    <string name="findNext">Berikutnya</string>
 </resources>

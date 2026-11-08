@@ -3955,4 +3955,10 @@
     <string name="convFilesNone">Nessun file in questa conversazione</string>
     <string name="convLinksNone">Nessun link in questa conversazione</string>
     <string name="convFileRetry">Download non riuscito: tocca per riprovare</string>
+    <string name="findInMail">Trova nel messaggio</string>
+    <string name="findInMailHint">Testo nel messaggio</string>
+    <string name="findNone">Nessun risultato</string>
+    <string name="findCount">{n} di {m}</string>
+    <string name="findPrev">Precedente</string>
+    <string name="findNext">Successivo</string>
 </resources>

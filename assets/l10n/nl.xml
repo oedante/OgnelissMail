@@ -3955,4 +3955,10 @@
     <string name="convFilesNone">Geen bestanden in dit gesprek</string>
     <string name="convLinksNone">Geen links in dit gesprek</string>
     <string name="convFileRetry">Downloaden mislukt — tik om opnieuw te proberen</string>
+    <string name="findInMail">Zoeken in bericht</string>
+    <string name="findInMailHint">Tekst in het bericht</string>
+    <string name="findNone">Niet gevonden</string>
+    <string name="findCount">{n} van {m}</string>
+    <string name="findPrev">Vorige</string>
+    <string name="findNext">Volgende</string>
 </resources>

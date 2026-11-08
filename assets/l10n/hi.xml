@@ -3955,4 +3955,10 @@
     <string name="convFilesNone">इस बातचीत में कोई फ़ाइल नहीं है</string>
     <string name="convLinksNone">इस बातचीत में कोई लिंक नहीं है</string>
     <string name="convFileRetry">डाउनलोड नहीं हुआ — फिर से कोशिश करने के लिए टैप करें</string>
+    <string name="findInMail">संदेश में खोजें</string>
+    <string name="findInMailHint">संदेश में टेक्स्ट</string>
+    <string name="findNone">नहीं मिला</string>
+    <string name="findCount">{m} में से {n}</string>
+    <string name="findPrev">पिछला</string>
+    <string name="findNext">अगला</string>
 </resources>

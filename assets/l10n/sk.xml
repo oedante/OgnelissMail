@@ -3976,4 +3976,10 @@
     <string name="convFilesNone">V tejto konverzácii nie sú žiadne súbory</string>
     <string name="convLinksNone">V tejto konverzácii nie sú žiadne odkazy</string>
     <string name="convFileRetry">Stiahnutie zlyhalo — ťuknutím to skúste znova</string>
+    <string name="findInMail">Nájsť v správe</string>
+    <string name="findInMailHint">Text v správe</string>
+    <string name="findNone">Nenašlo sa</string>
+    <string name="findCount">{n} z {m}</string>
+    <string name="findPrev">Predchádzajúce</string>
+    <string name="findNext">Nasledujúce</string>
 </resources>

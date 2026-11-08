@@ -3955,4 +3955,10 @@
     <string name="convFilesNone">Tässä keskustelussa ei ole tiedostoja</string>
     <string name="convLinksNone">Tässä keskustelussa ei ole linkkejä</string>
     <string name="convFileRetry">Lataus epäonnistui — yritä uudelleen napauttamalla</string>
+    <string name="findInMail">Etsi viestistä</string>
+    <string name="findInMailHint">Teksti viestissä</string>
+    <string name="findNone">Ei löytynyt</string>
+    <string name="findCount">{n}/{m}</string>
+    <string name="findPrev">Edellinen</string>
+    <string name="findNext">Seuraava</string>
 </resources>

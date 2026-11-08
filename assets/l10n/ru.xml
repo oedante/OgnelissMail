@@ -3997,4 +3997,10 @@
     <string name="convFilesNone">В письмах беседы нет файлов</string>
     <string name="convLinksNone">В письмах беседы нет ссылок</string>
     <string name="convFileRetry">Не скачалось — нажмите, чтобы повторить</string>
+    <string name="findInMail">Найти в письме</string>
+    <string name="findInMailHint">Текст в письме</string>
+    <string name="findNone">Не найдено</string>
+    <string name="findCount">{n} из {m}</string>
+    <string name="findPrev">Предыдущее</string>
+    <string name="findNext">Следующее</string>
 </resources>

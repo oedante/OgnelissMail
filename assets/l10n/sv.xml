@@ -3955,4 +3955,10 @@
     <string name="convFilesNone">Inga filer i den här konversationen</string>
     <string name="convLinksNone">Inga länkar i den här konversationen</string>
     <string name="convFileRetry">Hämtningen misslyckades — tryck för att försöka igen</string>
+    <string name="findInMail">Sök i meddelandet</string>
+    <string name="findInMailHint">Text i meddelandet</string>
+    <string name="findNone">Hittades inte</string>
+    <string name="findCount">{n} av {m}</string>
+    <string name="findPrev">Föregående</string>
+    <string name="findNext">Nästa</string>
 </resources>

@@ -3955,4 +3955,10 @@
     <string name="convFilesNone">Ingen filer i denne samtale</string>
     <string name="convLinksNone">Ingen links i denne samtale</string>
     <string name="convFileRetry">Download mislykkedes — tryk for at prøve igen</string>
+    <string name="findInMail">Find i meddelelsen</string>
+    <string name="findInMailHint">Tekst i meddelelsen</string>
+    <string name="findNone">Ikke fundet</string>
+    <string name="findCount">{n} af {m}</string>
+    <string name="findPrev">Forrige</string>
+    <string name="findNext">Næste</string>
 </resources>

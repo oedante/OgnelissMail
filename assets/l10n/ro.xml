@@ -3976,4 +3976,10 @@
     <string name="convFilesNone">Nu există fișiere în această conversație</string>
     <string name="convLinksNone">Nu există linkuri în această conversație</string>
     <string name="convFileRetry">Descărcarea a eșuat — atingeți pentru a reîncerca</string>
+    <string name="findInMail">Caută în mesaj</string>
+    <string name="findInMailHint">Text din mesaj</string>
+    <string name="findNone">Nu s-a găsit</string>
+    <string name="findCount">{n} din {m}</string>
+    <string name="findPrev">Anteriorul</string>
+    <string name="findNext">Următorul</string>
 </resources>

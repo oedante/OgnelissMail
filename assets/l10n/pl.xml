@@ -3997,4 +3997,10 @@
     <string name="convFilesNone">Brak plików w tej rozmowie</string>
     <string name="convLinksNone">Brak linków w tej rozmowie</string>
     <string name="convFileRetry">Nie udało się pobrać — dotknij, aby spróbować ponownie</string>
+    <string name="findInMail">Znajdź w wiadomości</string>
+    <string name="findInMailHint">Tekst w wiadomości</string>
+    <string name="findNone">Nie znaleziono</string>
+    <string name="findCount">{n} z {m}</string>
+    <string name="findPrev">Poprzednie</string>
+    <string name="findNext">Następne</string>
 </resources>

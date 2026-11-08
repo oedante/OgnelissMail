@@ -3934,4 +3934,10 @@
     <string name="convFilesNone">この会話にファイルはありません</string>
     <string name="convLinksNone">この会話にリンクはありません</string>
     <string name="convFileRetry">ダウンロードできませんでした。タップして再試行</string>
+    <string name="findInMail">メッセージ内を検索</string>
+    <string name="findInMailHint">メッセージ内のテキスト</string>
+    <string name="findNone">見つかりません</string>
+    <string name="findCount">{n}/{m}</string>
+    <string name="findPrev">前へ</string>
+    <string name="findNext">次へ</string>
 </resources>

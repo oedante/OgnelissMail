@@ -3955,4 +3955,10 @@
     <string name="convFilesNone">Ebben a beszélgetésben nincsenek fájlok</string>
     <string name="convLinksNone">Ebben a beszélgetésben nincsenek hivatkozások</string>
     <string name="convFileRetry">A letöltés nem sikerült — koppintson az újrapróbáláshoz</string>
+    <string name="findInMail">Keresés az üzenetben</string>
+    <string name="findInMailHint">Szöveg az üzenetben</string>
+    <string name="findNone">Nincs találat</string>
+    <string name="findCount">{n}/{m}</string>
+    <string name="findPrev">Előző</string>
+    <string name="findNext">Következő</string>
 </resources>

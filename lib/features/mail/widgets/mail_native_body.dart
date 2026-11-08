@@ -58,6 +58,7 @@ import '../../../widgets/common/image_actions.dart';
 import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/pinch_zoom.dart';
 import 'quote_person_chip.dart';
+import 'mail_find.dart';
 import 'span_table.dart';
 import '../../../services/security/managed_config.dart';
 
@@ -1160,6 +1161,7 @@ class MailNativeBody extends StatefulWidget {
     this.textScale = 1,
     this.onShown,
     this.onQuoteReply,
+    this.find,
   });
 
   final NativeMail mail;
@@ -1173,6 +1175,9 @@ class MailNativeBody extends StatefulWidget {
   /// «Ответить с цитатой» в меню выделенного текста (2.0.0); null — пункта нет.
   final void Function(String text)? onQuoteReply;
 
+  /// Поиск в письме (2.2.0): совпадения — фоном, текущее — ярче.
+  final MailFindController? find;
+
   @override
   State<MailNativeBody> createState() => _MailNativeBodyState();
 }
@@ -1184,6 +1189,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
   @override
   void initState() {
     super.initState();
+    widget.find?.addListener(_onFind);
     // Письмо видно в первом же кадре экрана.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) widget.onShown?.call();
@@ -1191,12 +1197,29 @@ class _MailNativeBodyState extends State<MailNativeBody> {
   }
 
   @override
+  void didUpdateWidget(covariant MailNativeBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.find != widget.find) {
+      oldWidget.find?.removeListener(_onFind);
+      widget.find?.addListener(_onFind);
+    }
+  }
+
+  @override
   void dispose() {
+    widget.find?.removeListener(_onFind);
     for (final t in _taps) {
       t.dispose();
     }
     super.dispose();
   }
+
+  void _onFind() {
+    if (mounted) setState(() {});
+  }
+
+  /// Совпадение, к которому уже прокручено («запрос|номер»).
+  String? _revealed;
 
   /// Таблица письма: места ячеек в сетке — как у браузера (ячейка встаёт
   /// в первую свободную колонку строки), доли колонок — по ширинам ячеек
@@ -1341,6 +1364,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
   Map<String, String>? _bImages;
   double? _bScale;
   ThemeData? _bTheme;
+  String? _bFind;
 
   @override
   Widget build(BuildContext context) {
@@ -1358,14 +1382,21 @@ class _MailNativeBodyState extends State<MailNativeBody> {
         identical(_bMail, widget.mail) &&
         identical(_bImages, widget.images) &&
         _bScale == widget.textScale &&
-        identical(_bTheme, theme)) {
+        identical(_bTheme, theme) &&
+        _bFind == _findKey) {
       return cached;
     }
     _bMail = widget.mail;
     _bImages = widget.images;
     _bScale = widget.textScale;
     _bTheme = theme;
+    _bFind = _findKey;
     return _built = _build(theme);
+  }
+
+  String? get _findKey {
+    final f = widget.find;
+    return f == null || !f.active ? null : '${f.query}|${f.current}';
   }
 
   Widget _build(ThemeData theme) {
@@ -1432,7 +1463,8 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       );
     }
 
-    InlineSpan span(NSpan s, Color? cellBg) {
+    // [text] — часть текста отрезка, [mark] — фон совпадения поиска.
+    InlineSpan span(NSpan s, Color? cellBg, {String? text, Color? mark}) {
       if (s.image != null) {
         final src = s.image!;
         // Картинка из интернета (разрешены — письмо собрано с ними, 1.5.11).
@@ -1501,7 +1533,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
         if (s.strike) TextDecoration.lineThrough,
       ];
       return TextSpan(
-        text: s.text,
+        text: text ?? s.text,
         recognizer: tap,
         style: TextStyle(
           fontWeight: s.bold ? FontWeight.w700 : null,
@@ -1510,10 +1542,41 @@ class _MailNativeBodyState extends State<MailNativeBody> {
           decorationStyle: href != null && DateLinks.isDateLink(href) ? TextDecorationStyle.dotted : null,
           fontFamily: s.mono ? 'monospace' : null,
           fontSize: s.size == 1 ? null : base.fontSize! * s.size,
-          color: textColor(s, cellBg),
-          backgroundColor: s.background == null ? null : Color(s.background!),
+          color: mark != null ? Colors.black : textColor(s, cellBg),
+          backgroundColor: mark ?? (s.background == null ? null : Color(s.background!)),
         ),
       );
+    }
+
+    // Поиск в письме (2.2.0): совпадения абзаца — фоном, номера — сквозные
+    // по письму в порядке показа (таблицы — по строкам); у абзаца с текущим
+    // совпадением — ключ, чтобы прокрутить к нему.
+    final find = widget.find;
+    final q = find != null && find.active ? find.query : '';
+    var found = 0;
+    GlobalKey? curKey;
+    var curRange = (0, 0);
+    List<InlineSpan>? marked(List<NSpan> spans, Color? cellBg) {
+      if (q.isEmpty) return null;
+      // Картинка и плашка человека — один знак, как в RenderParagraph.
+      final runs = [
+        for (final s in spans) s.image != null || (s.href != null && QuotePeople.isLink(s.href!)) ? '\uFFFC' : s.text,
+      ];
+      final ranges = findRanges(runs.join(), q);
+      if (ranges.isEmpty) return null;
+      final cur = find!.current - found;
+      found += ranges.length;
+      if (cur >= 0 && cur < ranges.length) {
+        curKey = GlobalKey();
+        curRange = ranges[cur];
+      }
+      return [
+        for (final p in splitByMatches(runs, ranges))
+          runs[p.run] == '\uFFFC'
+              ? span(spans[p.run], cellBg)
+              : span(spans[p.run], cellBg,
+                  text: p.text, mark: p.match == null ? null : findMarkColor(current: p.match == cur)),
+      ];
     }
 
     final quoteLine = theme.colorScheme.outlineVariant;
@@ -1531,8 +1594,11 @@ class _MailNativeBodyState extends State<MailNativeBody> {
         final after = bl.after * base.fontSize! * 1.4;
         if (after > 0) w = Padding(padding: EdgeInsets.only(bottom: after), child: w);
       } else {
+        final before = curKey;
+        final hits = marked(bl.spans, cellBg);
         final text = Text.rich(
-          TextSpan(children: [for (final s in bl.spans) span(s, cellBg)]),
+          TextSpan(children: hits ?? [for (final s in bl.spans) span(s, cellBg)]),
+          key: identical(curKey, before) ? null : curKey,
           style: base,
           textScaler: TextScaler.noScaling,
           softWrap: true,
@@ -1566,6 +1632,22 @@ class _MailNativeBodyState extends State<MailNativeBody> {
     }
 
     final column = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: blocks(widget.mail.blocks, null));
+    if (find != null) {
+      // После кадра: сколько нашлось — строке поиска, текущее — на экран.
+      final total = found;
+      final key = curKey;
+      final range = curRange;
+      final sig = q.isEmpty ? null : '$q|${find.current}';
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || widget.find != find) return;
+        if (q.isNotEmpty) find.report(total);
+        if (key != null && sig != _revealed) {
+          _revealed = sig;
+          revealMatch(key, range.$1, range.$2);
+        }
+        if (sig == null) _revealed = null;
+      });
+    }
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 12),
       // Политика организации (MDM, 1.10.5): без выделения — нечего и

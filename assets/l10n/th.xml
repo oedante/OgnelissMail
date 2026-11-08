@@ -3934,4 +3934,10 @@
     <string name="convFilesNone">ไม่มีไฟล์ในการสนทนานี้</string>
     <string name="convLinksNone">ไม่มีลิงก์ในการสนทนานี้</string>
     <string name="convFileRetry">ดาวน์โหลดไม่สำเร็จ — แตะเพื่อลองอีกครั้ง</string>
+    <string name="findInMail">ค้นหาในข้อความ</string>
+    <string name="findInMailHint">ข้อความในจดหมาย</string>
+    <string name="findNone">ไม่พบ</string>
+    <string name="findCount">{n} จาก {m}</string>
+    <string name="findPrev">ก่อนหน้า</string>
+    <string name="findNext">ถัดไป</string>
 </resources>

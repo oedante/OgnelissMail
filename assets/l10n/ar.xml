@@ -4039,4 +4039,10 @@
     <string name="convFilesNone">لا توجد ملفات في هذه المحادثة</string>
     <string name="convLinksNone">لا توجد روابط في هذه المحادثة</string>
     <string name="convFileRetry">تعذّر التنزيل — اضغط للمحاولة مرة أخرى</string>
+    <string name="findInMail">البحث في الرسالة</string>
+    <string name="findInMailHint">نص في الرسالة</string>
+    <string name="findNone">لم يتم العثور</string>
+    <string name="findCount">{n} من {m}</string>
+    <string name="findPrev">السابق</string>
+    <string name="findNext">التالي</string>
 </resources>

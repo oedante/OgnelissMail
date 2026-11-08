@@ -25,12 +25,22 @@ import '../../services/mail/own_identity_service.dart' show ownAddressesRevision
 final personPhotosProvider = StreamProvider<Map<String, String>>((ref) {
   final db = ref.watch(databaseProvider);
   ref.watch(ownAddressesRevisionProvider);
-  final contacts = (db.select(db.contacts)..where((c) => c.avatarUrl.isNotNull())).watch();
+  // Только адрес и фото (план 08.11.2026 п. 3): строки контактов целиком —
+  // заметки, адреса, телефоны — читались на каждое изменение адресной книги.
+  final ct = db.contacts;
+  final contacts = (db.selectOnly(ct)
+        ..addColumns([ct.email, ct.avatarUrl])
+        ..where(ct.avatarUrl.isNotNull()))
+      .watch();
   // Фото ящиков — тоже живым потоком: выбранное своё фото сразу становится
   // фото владельца во всей почте (список, письмо, беседа, подсказки).
   // Раньше карта пересобиралась только при изменении контактов, и в
   // письмах оставалось старое фото из адресной книги.
-  final accounts = (db.select(db.accounts)..where((a) => a.avatarUrl.isNotNull())).watch();
+  final at = db.accounts;
+  final accounts = (db.selectOnly(at)
+        ..addColumns([at.id, at.email, at.avatarUrl])
+        ..where(at.avatarUrl.isNotNull()))
+      .watch();
   Map<String, String>? lastContacts;
   Map<String, String>? lastAccounts;
   final out = StreamController<Map<String, String>>();
@@ -49,7 +59,8 @@ final personPhotosProvider = StreamProvider<Map<String, String>>((ref) {
   final s1 = contacts.listen((rows) {
     lastContacts = {
       for (final r in rows)
-        if (r.email.isNotEmpty && (r.avatarUrl ?? '').isNotEmpty) r.email.toLowerCase(): r.avatarUrl!,
+        if ((r.read(ct.email) ?? '').isNotEmpty && (r.read(ct.avatarUrl) ?? '').isNotEmpty)
+          r.read(ct.email)!.toLowerCase(): r.read(ct.avatarUrl)!,
     };
     emit();
   }, onError: out.addError);
@@ -59,9 +70,9 @@ final personPhotosProvider = StreamProvider<Map<String, String>>((ref) {
     // фото из адресной книги, а выбранное — нет).
     lastAccounts = {
       for (final a in rows)
-        if ((a.avatarUrl ?? '').isNotEmpty) ...{
-          a.email.toLowerCase(): a.avatarUrl!,
-          for (final e in OwnAddresses.extraFor(a.id)) e: a.avatarUrl!,
+        if ((a.read(at.avatarUrl) ?? '').isNotEmpty) ...{
+          (a.read(at.email) ?? '').toLowerCase(): a.read(at.avatarUrl)!,
+          for (final e in OwnAddresses.extraFor(a.read(at.id) ?? '')) e: a.read(at.avatarUrl)!,
         },
     };
     emit();

@@ -12,6 +12,7 @@
 import 'dart:async';
 import 'dart:io' show SocketException;
 import 'dart:typed_data';
+import 'package:mail_engine/mail_engine.dart' show decodeBase64Off;
 import 'package:xml/xml.dart';
 
 import 'ews_directory_extras.dart';
@@ -1118,7 +1119,7 @@ class EwsService {
         .firstOrNull
         ?.innerText;
     if (b64 == null || b64.trim().isEmpty) return null;
-    return base64.decode(b64.replaceAll(RegExp(r'\s'), ''));
+    return decodeBase64Off(b64);
   }
 
   /// Проверить ответ операции: ResponseClass="Error" во ВСЕХ сообщениях
@@ -1707,7 +1708,7 @@ class EwsService {
     // Большие вложения по мобильной сети — не меньше 5 минут.
     final xmlDoc = await _soapRequest(account, body,
         timeoutSeconds: AppConstants.ewsTimeoutSeconds < 300 ? 300 : AppConstants.ewsTimeoutSeconds);
-    return EwsXmlParser.parseAttachmentContent(xmlDoc);
+    return decodeBase64Off(EwsXmlParser.attachmentContentText(xmlDoc));
   }
 
   // ════════════════════════ CLEANUP ════════════════════════

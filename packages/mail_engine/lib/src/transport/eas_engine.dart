@@ -18,6 +18,7 @@ import '../debug_log.dart';
 import '../mail_engine.dart';
 import '../models/models.dart';
 import 'autodiscover.dart';
+import 'base64_off.dart';
 import 'wbxml_codec.dart';
 
 /// Коды команд EAS (MS-ASHTTP) для Base64 command line.
@@ -2876,7 +2877,7 @@ class EasEngine implements MailEngine {
     if (opaque != null && opaque.isNotEmpty) return opaque;
     final text = dataEl?.text;
     if (text != null && text.isNotEmpty) {
-      return base64.decode(text.replaceAll(RegExp(r'\s'), ''));
+      return decodeBase64Off(text);
     }
     throw StateError('EAS: в ответе нет данных вложения');
   }
@@ -2922,7 +2923,7 @@ class EasEngine implements MailEngine {
       final text = dataEl?.text;
       if (text != null && text.isNotEmpty) {
         try {
-          out[ref] = base64.decode(text.replaceAll(RegExp(r'\s'), ''));
+          out[ref] = await decodeBase64Off(text);
         } catch (_) {}
       }
     }

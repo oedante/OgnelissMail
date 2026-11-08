@@ -53,6 +53,8 @@ exec > >(tee -a "$LOG") 2>&1
 say() { printf '\n== %s\n' "$*"; }
 warn() { printf '!! %s\n' "$*"; }
 fail() { printf '\n✗ %s\nПолный журнал: %s\n' "$*" "$LOG"; exit 1; }
+# Упала команда (flutter, dart) — где искать подробности.
+trap 'printf "\n✗ Сборка остановилась (код %s). Полный журнал: %s\n" "$?" "$LOG"' ERR
 
 VER=$(grep '^version:' pubspec.yaml | awk '{print $2}')
 echo "Ogneliss Mail $VER — сборка для Android"

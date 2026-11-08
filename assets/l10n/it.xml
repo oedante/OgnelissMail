@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Un anno</string>
     <string name="syncPeriodAll">Tutto il periodo</string>
     <string name="lastSyncNever">mai</string>
-    <string name="accSectionSync">Sincronizzazione</string>
+    <string name="accSectionSync">Ricezione</string>
     <string name="accSectionMail">Messaggi</string>
     <string name="accSectionAccount">Account</string>
     <string name="orgPolicy">Requisiti dell\'organizzazione</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Senza foto, conta a chi è destinato: “te”, “te” in Cc o il primo destinatario</string>
     <string name="recip_list">Elenco</string>
     <string name="recip_list_desc">Ogni destinatario su una riga propria con foto (fino a tre in A e due in Cc)</string>
-    <string name="expSpareTitle">Finestra del messaggio in anticipo</string>
+    <string name="expSpareTitle">Apertura rapida dei messaggi</string>
     <string name="expSpareDesc">Il messaggio si carica mentre si apre la schermata</string>
     <string name="expSpareHint">Una finestra del browser invisibile è tenuta pronta. Quando tocchi un messaggio nell\'elenco, carica il messaggio mentre la schermata scorre, così la schermata lo ha già pronto. È più veloce, ma la finestra usa sempre un po\' di memoria. Se su qualche dispositivo un messaggio appare in modo errato (spazio vuoto, altezza sbagliata), disattiva questa opzione.</string>
     <string name="expNativeTitle">Messaggi semplici senza browser</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Bacheca in Il mio giorno</string>
     <string name="expBoardDesc">In programma · In corso · Completati</string>
     <string name="expBoardHint">Le attività di oggi in colonne. Trascina con una pressione prolungata o usa il menu ⋮. Le riunioni passate passano in Completati da sole, le attività e i promemoria solo a mano. Si può attivare anche nella schermata Il mio giorno.</string>
-    <string name="expHubTitle">Hub del calendario</string>
+    <string name="expHubTitle">Un calendario per tutte le caselle</string>
     <string name="expHubDesc">Tutti gli account in un solo calendario</string>
     <string name="expHubHint">Il calendario mostra insieme le riunioni di tutti gli account; disattiva gli account con i chip sopra (pressione prolungata: solo questo). Disattivato: il calendario segue l’account scelto in Posta.</string>
     <string name="expEasSessionTitle">Connessione rapida a Exchange</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Notifiche: tutte le cartelle</string>
     <string name="folderNotifyNone">Notifiche: nessuna cartella</string>
     <string name="peekControlOff">Smetti di monitorare</string>
-    <string name="pushWakeTitle">Segnali del server (iPhone)</string>
+    <string name="pushWakeTitle">Controllo posta in background (iPhone)</string>
     <string name="pushWakeSwitch">Controlla la posta al segnale del server</string>
     <string name="pushWakeDesc">L\'app si attiva più spesso in background. Il server conosce solo il token di notifica: nessun indirizzo, nessun messaggio.</string>
     <string name="pushWakeHelp">iOS decide da solo quando riattivare un\'app in background: a volte una volta all\'ora o meno spesso. Il server dello sviluppatore (ogneliss.ru/push) invia tramite Apple, all\'intervallo scelto, un segnale vuoto «controlla la posta», e l\'app controlla da sola le tue cassette postali, da questo dispositivo. Al server viene inviato solo il token di notifica di questa installazione: nessun indirizzo, password o messaggio. Finché iOS accetta solo segnali silenziosi, ne lascia passare non più di 2–3 all\'ora (cioè al massimo uno ogni 20 minuti) e non riattiva un\'app chiusa con uno scorrimento. I dettagli sono nell\'Informativa sulla privacy, sezione 6.2.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Ultimo segnale: {when}</string>
     <string name="pushWakeStatusNone">Non ancora registrato</string>
     <string name="pushWakeStatusError">Errore: {e}</string>
-    <string name="pushWakeTitleAndroid">Segnali del server</string>
+    <string name="pushWakeTitleAndroid">Controllo posta in background</string>
     <string name="pushWakeHelpAndroid">Android decide da solo quando un’app in background può funzionare: nel sonno profondo rimanda i controlli in background e, da Android 15, la sincronizzazione in background ha al massimo 6 ore al giorno. Il server dello sviluppatore (ogneliss.ru/push) invia tramite Google (Firebase Cloud Messaging), all’intervallo scelto, un segnale vuoto «controlla la posta», e l’app controlla da sola le tue cassette postali, da questo dispositivo. Al server viene inviato solo il token di notifica di questa installazione: nessun indirizzo, password o messaggio. Nel sonno profondo Android può consegnare il segnale più tardi, nella successiva finestra di manutenzione. Senza i servizi Google, tramite un’app UnifiedPush (ad esempio ntfy). Dettagli nell’Informativa sulla privacy, sezione 6.2.</string>
     <string name="pushWakeVia">Come arrivano i segnali</string>
     <string name="pushWakeViaHelp">Tramite Google (Firebase Cloud Messaging) sui telefoni con i servizi Google Play. Senza di essi, tramite un’app distributore UnifiedPush (ad esempio ntfy): mantiene una propria connessione e inoltra il segnale «controlla la posta». Il segnale è cifrato con la chiave di questa installazione e non contiene indirizzi né messaggi. Dettagli nell’Informativa sulla privacy, sezione 6.2.</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">Tieni premuta la nota: modifica, invia per email, condividi, copia o elimina.</string>
     <string name="faq_notify_title">Notifiche e background</string>
     <string name="faq_notify_1_q">Perché le notifiche arrivano in ritardo su iPhone?</string>
-    <string name="faq_notify_1_a">Quando l\'app è aperta, la posta arriva subito. Quando è in background, iOS decide da solo quando attivarla: più spesso se usi l\'app ogni giorno, meno spesso in modalità Risparmio Energetico o con la batteria scarica. Per farla attivare più spesso, lascia attivi i Segnali del server (iPhone) in Impostazioni → Notifiche: il server dello sviluppatore invia tramite Apple un segnale vuoto «controlla la posta» all\'intervallo che scegli, e l\'app controlla da sola le tue cassette postali, da questo dispositivo; al server viene inviato solo il token delle notifiche. Non chiudere l\'app scorrendola via nel selettore app: dopo, iOS non la attiva né da solo né con un segnale finché non riapri l\'app. Verifica che l\'opzione Aggiorna app in background sia attiva per Ogneliss Mail nelle Impostazioni di iOS.</string>
+    <string name="faq_notify_1_a">Quando l\'app è aperta, la posta arriva subito. Quando è in background, iOS decide da solo quando attivarla: più spesso se usi l\'app ogni giorno, meno spesso in modalità Risparmio Energetico o con la batteria scarica. Per farla attivare più spesso, lascia attivi i Controllo posta in background (iPhone) in Impostazioni → Notifiche: il server dello sviluppatore invia tramite Apple un segnale vuoto «controlla la posta» all\'intervallo che scegli, e l\'app controlla da sola le tue cassette postali, da questo dispositivo; al server viene inviato solo il token delle notifiche. Non chiudere l\'app scorrendola via nel selettore app: dopo, iOS non la attiva né da solo né con un segnale finché non riapri l\'app. Verifica che l\'opzione Aggiorna app in background sia attiva per Ogneliss Mail nelle Impostazioni di iOS.</string>
     <string name="faq_notify_2_q">Come disattivo le notifiche per una cartella?</string>
     <string name="faq_notify_2_a">Impostazioni → account → Sincronizzazione cartelle: la campanella accanto all\'interruttore di una cartella attiva o disattiva le notifiche per i suoi nuovi messaggi (con le sottocartelle), e la cartella continua a sincronizzarsi. Il menu ⋮ ha Notifiche: tutte le cartelle e Notifiche: nessuna cartella. Non ci sono mai notifiche per Posta inviata, Bozze, Posta eliminata o Posta indesiderata.</string>
     <string name="faq_notify_3_q">Perché le notifiche arrivano in ritardo su Android?</string>

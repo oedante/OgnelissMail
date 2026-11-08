@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Ein Jahr</string>
     <string name="syncPeriodAll">Gesamter Zeitraum</string>
     <string name="lastSyncNever">noch nicht</string>
-    <string name="accSectionSync">Synchronisierung</string>
+    <string name="accSectionSync">Empfang</string>
     <string name="accSectionMail">Nachrichten</string>
     <string name="accSectionAccount">Konto</string>
     <string name="orgPolicy">Anforderungen der Organisation</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Ohne Fotos, wichtig ist an wen: „Ihnen“, „Ihnen“ in Cc oder der erste Empfänger</string>
     <string name="recip_list">Liste</string>
     <string name="recip_list_desc">Jeder Empfänger in eigener Zeile mit Foto (bis zu drei in An, zwei in Cc)</string>
-    <string name="expSpareTitle">Mailfenster im Voraus</string>
+    <string name="expSpareTitle">Schnelleres Öffnen von E-Mails</string>
     <string name="expSpareDesc">Die Nachricht lädt, während sich der Bildschirm öffnet</string>
     <string name="expSpareHint">Ein unsichtbares Browserfenster wird bereitgehalten. Beim Tippen auf eine Nachricht lädt es sie, während der Bildschirm einfährt. Schneller, belegt aber immer etwas Speicher. Wird eine Nachricht falsch angezeigt (leere Fläche, falsche Höhe), ausschalten.</string>
     <string name="expNativeTitle">Einfache Nachrichten ohne Browser</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Board in „Mein Tag“</string>
     <string name="expBoardDesc">Anstehend · In Arbeit · Erledigt</string>
     <string name="expBoardHint">Aufgaben des Tages in Spalten. Ziehen per langem Drücken oder Menü ⋮. Vergangene Termine wandern selbst nach „Erledigt“, Aufgaben nur manuell.</string>
-    <string name="expHubTitle">Kalender-Hub</string>
+    <string name="expHubTitle">Ein Kalender für alle Postfächer</string>
     <string name="expHubDesc">Alle Konten in einem Kalender</string>
     <string name="expHubHint">Der Kalender zeigt Termine aller Konten; Konten per Chip darüber ausblenden (langes Drücken — nur dieses). Aus — der Kalender folgt dem in Mail gewählten Konto.</string>
     <string name="expEasSessionTitle">Schnelle Exchange-Verbindung</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Benachrichtigungen: alle Ordner</string>
     <string name="folderNotifyNone">Benachrichtigungen: keine Ordner</string>
     <string name="peekControlOff">Nicht verfolgen</string>
-    <string name="pushWakeTitle">Serversignale (iPhone)</string>
+    <string name="pushWakeTitle">Mailabruf im Hintergrund (iPhone)</string>
     <string name="pushWakeSwitch">E-Mails auf Serversignal prüfen</string>
     <string name="pushWakeDesc">Die App wird im Hintergrund öfter geweckt. Der Server kennt nur das Benachrichtigungs-Token — keine Adressen, keine E-Mails.</string>
     <string name="pushWakeHelp">iOS entscheidet selbst, wann eine App im Hintergrund geweckt wird — manchmal einmal pro Stunde oder seltener. Der Server des Entwicklers (ogneliss.ru/push) sendet im gewählten Intervall über Apple ein leeres Signal „E-Mails prüfen“, und die App prüft Ihre Postfächer selbst vom Gerät aus. An den Server geht nur das Benachrichtigungs-Token dieser Installation — keine Adressen, Passwörter oder E-Mails. Solange iOS nur stille Signale annimmt, lässt es höchstens 2–3 pro Stunde durch (also höchstens alle 20 Minuten) und weckt keine App, die durch Wegwischen geschlossen wurde. Einzelheiten stehen in der Datenschutzerklärung, Abschnitt 6.2.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Letztes Signal: {when}</string>
     <string name="pushWakeStatusNone">Noch nicht registriert</string>
     <string name="pushWakeStatusError">Fehlgeschlagen: {e}</string>
-    <string name="pushWakeTitleAndroid">Serversignale</string>
+    <string name="pushWakeTitleAndroid">Mailabruf im Hintergrund</string>
     <string name="pushWakeHelpAndroid">Android entscheidet selbst, wann eine App im Hintergrund laufen darf: Im Tiefschlaf verschiebt es Hintergrundprüfungen, und seit Android 15 bekommt die Hintergrundsynchronisierung höchstens 6 Stunden pro Tag. Der Server des Entwicklers (ogneliss.ru/push) sendet im gewählten Intervall über Google (Firebase Cloud Messaging) ein leeres Signal „E-Mails prüfen“, und die App prüft Ihre Postfächer selbst vom Gerät aus. An den Server geht nur das Benachrichtigungs-Token dieser Installation — keine Adressen, Passwörter oder Nachrichten. Im Tiefschlaf kann Android das Signal später zustellen, im nächsten Wartungsfenster. Ohne Google-Dienste — über eine UnifiedPush-App (zum Beispiel ntfy). Details in der Datenschutzerklärung, Abschnitt 6.2.</string>
     <string name="pushWakeVia">So kommen die Signale an</string>
     <string name="pushWakeViaHelp">Über Google (Firebase Cloud Messaging) auf Smartphones mit Google Play-Diensten. Ohne diese über eine UnifiedPush-Distributor-App (zum Beispiel ntfy): Sie hält ihre eigene Verbindung und leitet das Signal „E-Mails prüfen“ weiter. Das Signal ist mit dem Schlüssel dieser Installation verschlüsselt und enthält weder Adressen noch Nachrichten. Details in der Datenschutzerklärung, Abschnitt 6.2.</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">Notiz lange tippen: bearbeiten, per E-Mail senden, teilen, kopieren oder löschen.</string>
     <string name="faq_notify_title">Benachrichtigungen und Hintergrund</string>
     <string name="faq_notify_1_q">Warum kommen Benachrichtigungen auf dem iPhone verspätet?</string>
-    <string name="faq_notify_1_a">Solange die App geöffnet ist, kommt E-Mail sofort. Im Hintergrund entscheidet iOS selbst, wann es die App weckt: öfter, wenn Sie die App täglich nutzen, seltener im Stromsparmodus oder bei niedrigem Akkustand. Damit sie öfter geweckt wird, lassen Sie „Serversignale (iPhone)“ unter Einstellungen → Benachrichtigungen eingeschaltet: Der Server des Entwicklers sendet im gewählten Intervall über Apple ein leeres Signal „E-Mails prüfen“, und die App prüft Ihre Postfächer selbst vom Gerät aus; an den Server geht nur das Benachrichtigungs-Token. Schließen Sie die App nicht durch Wegwischen im App-Umschalter: danach weckt iOS sie weder selbst noch per Signal, bis Sie die App wieder öffnen. Prüfen Sie, dass „Hintergrundaktualisierung“ für Ogneliss Mail in den iOS-Einstellungen an ist.</string>
+    <string name="faq_notify_1_a">Solange die App geöffnet ist, kommt E-Mail sofort. Im Hintergrund entscheidet iOS selbst, wann es die App weckt: öfter, wenn Sie die App täglich nutzen, seltener im Stromsparmodus oder bei niedrigem Akkustand. Damit sie öfter geweckt wird, lassen Sie „Mailabruf im Hintergrund (iPhone)“ unter Einstellungen → Benachrichtigungen eingeschaltet: Der Server des Entwicklers sendet im gewählten Intervall über Apple ein leeres Signal „E-Mails prüfen“, und die App prüft Ihre Postfächer selbst vom Gerät aus; an den Server geht nur das Benachrichtigungs-Token. Schließen Sie die App nicht durch Wegwischen im App-Umschalter: danach weckt iOS sie weder selbst noch per Signal, bis Sie die App wieder öffnen. Prüfen Sie, dass „Hintergrundaktualisierung“ für Ogneliss Mail in den iOS-Einstellungen an ist.</string>
     <string name="faq_notify_2_q">Wie schalte ich Benachrichtigungen für einen Ordner aus?</string>
     <string name="faq_notify_2_a">Einstellungen → Konto → „Ordnersynchronisierung“: Die Glocke neben dem Schalter eines Ordners schaltet Benachrichtigungen über seine neuen Nachrichten ein oder aus (mit Unterordnern), der Ordner wird weiter synchronisiert. Im Menü „⋮“ gibt es „Benachrichtigungen: alle Ordner“ und „Benachrichtigungen: keine Ordner“. Für Gesendet, Entwürfe, Papierkorb und Spam gibt es nie Benachrichtigungen.</string>
     <string name="faq_notify_3_q">Warum kommen Benachrichtigungen unter Android verspätet?</string>
@@ -3927,7 +3927,7 @@
     <string name="readingPaneHidden">Ausgeblendet</string>
     <string name="readingPaneBottomHint">Liste oben, Nachricht darunter</string>
     <string name="readingPaneHiddenHint">Liste in voller Breite, Nachrichten öffnen sich in eigener Ansicht</string>
-    <string name="pushWakeStatusPeriodic">Ohne Google-Dienste wird E-Mail nach Zeitplan abgerufen – alle 15 Minuten, im Tiefschlaf seltener. Für Serversignale eine UnifiedPush-App wie ntfy installieren.</string>
+    <string name="pushWakeStatusPeriodic">Ohne Google-Dienste wird E-Mail nach Zeitplan abgerufen – alle 15 Minuten, im Tiefschlaf seltener. Für Mailabruf im Hintergrund eine UnifiedPush-App wie ntfy installieren.</string>
     <string name="setupSignalsChooseTitle">App für Signale wählen</string>
     <string name="setupSignalsChooseBody">Mehrere UnifiedPush-Apps sind installiert. Wählen Sie, welche das Serversignal „E-Mail prüfen“ zustellt – dann meldet das Telefon neue E-Mails auch im Tiefschlaf.</string>
     <string name="setupSignalsPeriodicTitle">Ohne Google-Dienste</string>

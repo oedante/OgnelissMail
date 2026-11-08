@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Eén jaar</string>
     <string name="syncPeriodAll">Alles</string>
     <string name="lastSyncNever">nog niet</string>
-    <string name="accSectionSync">Synchronisatie</string>
+    <string name="accSectionSync">Ontvangen</string>
     <string name="accSectionMail">Berichten</string>
     <string name="accSectionAccount">Account</string>
     <string name="orgPolicy">Vereisten van de organisatie</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Zonder foto\'s, waar het om gaat is voor wie het is: “jou”, “jou” in Cc of de eerste ontvanger</string>
     <string name="recip_list">Lijst</string>
     <string name="recip_list_desc">Elke ontvanger op een eigen regel met foto (maximaal drie bij Aan, twee bij Cc)</string>
-    <string name="expSpareTitle">Berichtvenster vooraf</string>
+    <string name="expSpareTitle">Sneller berichten openen</string>
     <string name="expSpareDesc">Het bericht laadt terwijl het scherm opent</string>
     <string name="expSpareHint">Er wordt één onzichtbaar browservenster klaargehouden. Als je in de lijst op een bericht tikt, laadt het venster het bericht terwijl het scherm inschuift, zodat het scherm het al klaar heeft. Sneller, maar het venster gebruikt altijd wat geheugen. Als een bericht op een apparaat verkeerd wordt weergegeven (lege ruimte, verkeerde hoogte), zet je dit uit.</string>
     <string name="expNativeTitle">Eenvoudige berichten zonder browser</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Bord in Mijn dag</string>
     <string name="expBoardDesc">Gepland · In behandeling · Klaar</string>
     <string name="expBoardHint">De taken van vandaag in kolommen. Sleep met lang indrukken of gebruik het menu ⋮. Verlopen vergaderingen gaan vanzelf naar Klaar, taken en herinneringen alleen met de hand. Ook aan te zetten op het scherm Mijn dag.</string>
-    <string name="expHubTitle">Agendacentrum</string>
+    <string name="expHubTitle">Eén agenda voor alle mailboxen</string>
     <string name="expHubDesc">Alle accounts in één agenda</string>
     <string name="expHubHint">De agenda toont de vergaderingen van alle accounts tegelijk; zet accounts uit met de chips erboven (lang indrukken — alleen deze). Uit — de agenda volgt het account dat in E-mail is gekozen.</string>
     <string name="expEasSessionTitle">Snelle Exchange-verbinding</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Meldingen: alle mappen</string>
     <string name="folderNotifyNone">Meldingen: geen enkele map</string>
     <string name="peekControlOff">Niet meer in de gaten houden</string>
-    <string name="pushWakeTitle">Serversignalen (iPhone)</string>
+    <string name="pushWakeTitle">Mail controleren op de achtergrond (iPhone)</string>
     <string name="pushWakeSwitch">E-mail controleren bij een serversignaal</string>
     <string name="pushWakeDesc">De app wordt vaker op de achtergrond wakker gemaakt. De server kent alleen het meldingstoken — geen adressen, geen berichten.</string>
     <string name="pushWakeHelp">iOS bepaalt zelf wanneer een app op de achtergrond wordt gewekt — soms één keer per uur of minder vaak. De server van de ontwikkelaar (ogneliss.ru/push) stuurt via Apple op het gekozen interval een leeg signaal “controleer je e-mail”, en de app controleert je mailboxen zelf, vanaf dit apparaat. Naar de server gaat alleen het meldingstoken van deze installatie — geen adressen, wachtwoorden of berichten. Zolang iOS alleen stille signalen accepteert, laat het er maximaal 2–3 per uur door (dus hooguit elke 20 minuten) en wekt het geen app die met een veeg is gesloten. Details staan in het Privacybeleid, sectie 6.2.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Laatste signaal: {when}</string>
     <string name="pushWakeStatusNone">Nog niet geregistreerd</string>
     <string name="pushWakeStatusError">Mislukt: {e}</string>
-    <string name="pushWakeTitleAndroid">Serversignalen</string>
+    <string name="pushWakeTitleAndroid">Mail controleren op de achtergrond</string>
     <string name="pushWakeHelpAndroid">Android bepaalt zelf wanneer een app op de achtergrond mag draaien: in diepe slaap stelt het achtergrondcontroles uit, en sinds Android 15 krijgt achtergrondsynchronisatie hooguit 6 uur per dag. De server van de ontwikkelaar (ogneliss.ru/push) stuurt met het gekozen interval via Google (Firebase Cloud Messaging) een leeg signaal ‘controleer e-mail’, en de app controleert je postvakken zelf vanaf dit apparaat. Alleen het meldingstoken van deze installatie gaat naar de server — geen adressen, wachtwoorden of berichten. In diepe slaap kan Android het signaal later bezorgen, in het volgende onderhoudsvenster. Zonder Google-services via een UnifiedPush-app (bijvoorbeeld ntfy). Details in het privacybeleid, sectie 6.2.</string>
     <string name="pushWakeVia">Hoe signalen binnenkomen</string>
     <string name="pushWakeViaHelp">Via Google (Firebase Cloud Messaging) op telefoons met Google Play-services. Zonder die services via een UnifiedPush-distributor-app (bijvoorbeeld ntfy): die houdt een eigen verbinding open en geeft het signaal “controleer e-mail” door. Het signaal is versleuteld met de sleutel van deze installatie en bevat geen adressen of berichten. Details in het privacybeleid, sectie 6.2.</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">Houd de notitie ingedrukt: bewerken, per e-mail verzenden, delen, kopiëren of verwijderen.</string>
     <string name="faq_notify_title">Meldingen en achtergrond</string>
     <string name="faq_notify_1_q">Waarom komen meldingen op de iPhone te laat binnen?</string>
-    <string name="faq_notify_1_a">Zolang de app open is, komt e-mail direct binnen. Staat de app op de achtergrond, dan bepaalt iOS zelf wanneer hij wordt gewekt: vaker als je de app elke dag gebruikt, minder vaak in de Stroombesparingsmodus of bij een bijna lege batterij. Laat om hem vaker te wekken Serversignalen (iPhone) aan staan in Instellingen → Meldingen: de server van de ontwikkelaar stuurt via Apple met het gekozen interval een leeg ‘controleer je e-mail’-signaal en de app controleert zelf je mailboxen, vanaf dit apparaat; er wordt alleen het meldingstoken naar de server gestuurd. Sluit de app niet af door hem weg te vegen in de appkiezer: daarna wekt iOS hem niet meer, niet uit zichzelf en niet via een signaal, tot je de app weer opent. Controleer of Ververs op achtergrond aan staat voor Ogneliss Mail in de iOS-instellingen.</string>
+    <string name="faq_notify_1_a">Zolang de app open is, komt e-mail direct binnen. Staat de app op de achtergrond, dan bepaalt iOS zelf wanneer hij wordt gewekt: vaker als je de app elke dag gebruikt, minder vaak in de Stroombesparingsmodus of bij een bijna lege batterij. Laat om hem vaker te wekken Mail controleren op de achtergrond (iPhone) aan staan in Instellingen → Meldingen: de server van de ontwikkelaar stuurt via Apple met het gekozen interval een leeg ‘controleer je e-mail’-signaal en de app controleert zelf je mailboxen, vanaf dit apparaat; er wordt alleen het meldingstoken naar de server gestuurd. Sluit de app niet af door hem weg te vegen in de appkiezer: daarna wekt iOS hem niet meer, niet uit zichzelf en niet via een signaal, tot je de app weer opent. Controleer of Ververs op achtergrond aan staat voor Ogneliss Mail in de iOS-instellingen.</string>
     <string name="faq_notify_2_q">Hoe zet ik meldingen uit voor één map?</string>
     <string name="faq_notify_2_a">Instellingen → account → Mapsynchronisatie: de bel naast de schakelaar van een map zet meldingen over nieuwe berichten in die map (met submappen) aan of uit, en de map blijft synchroniseren. Het menu ⋮ heeft Meldingen: alle mappen en Meldingen: geen mappen. Er zijn nooit meldingen voor Verzonden, Concepten, Verwijderde items of Ongewenste e-mail.</string>
     <string name="faq_notify_3_q">Waarom komen meldingen op Android niet meteen binnen?</string>

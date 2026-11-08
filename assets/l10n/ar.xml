@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">سنة واحدة</string>
     <string name="syncPeriodAll">كل الفترات</string>
     <string name="lastSyncNever">لم تتم بعد</string>
-    <string name="accSectionSync">المزامنة</string>
+    <string name="accSectionSync">الاستلام</string>
     <string name="accSectionMail">الرسائل</string>
     <string name="accSectionAccount">الحساب</string>
     <string name="orgPolicy">متطلبات المؤسسة</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">بلا صور، المهم لمن الرسالة: «إليك» أو «إليك» في النسخة أو المستلم الأول</string>
     <string name="recip_list">قائمة</string>
     <string name="recip_list_desc">كل مستلم في سطر مستقل مع صورة (حتى ثلاثة في «إلى» واثنان في «نسخة»)</string>
-    <string name="expSpareTitle">نافذة الرسالة مسبقًا</string>
+    <string name="expSpareTitle">فتح أسرع للرسائل</string>
     <string name="expSpareDesc">تُحمَّل الرسالة أثناء فتح الشاشة</string>
     <string name="expSpareHint">تُبقى نافذة متصفح واحدة غير مرئية جاهزة. عند الضغط على رسالة في القائمة، تحمّلها أثناء انزلاق الشاشة، فتجدها الشاشة جاهزة. هذا أسرع، لكن النافذة تستهلك دائمًا قدرًا قليلًا من الذاكرة. إذا ظهرت رسالة بشكل غير صحيح على جهاز ما (فراغ أو ارتفاع خاطئ)، فأوقف هذا الخيار.</string>
     <string name="expNativeTitle">الرسائل البسيطة بلا متصفح</string>
@@ -2548,7 +2548,7 @@
     <string name="expBoardTitle">اللوحة في «يومي»</string>
     <string name="expBoardDesc">القادمة · قيد التنفيذ · تم</string>
     <string name="expBoardHint">مهام اليوم في أعمدة. اسحب بالضغط المطوّل أو استخدم قائمة ⋮. تنتقل الاجتماعات المنتهية إلى «تم» تلقائيًا، أما المهام والتذكيرات فيدويًا فقط. يمكن التبديل أيضًا من شاشة «يومي».</string>
-    <string name="expHubTitle">مركز التقويم</string>
+    <string name="expHubTitle">تقويم واحد لكل صناديق البريد</string>
     <string name="expHubDesc">كل الحسابات في تقويم واحد</string>
     <string name="expHubHint">يعرض التقويم اجتماعات كل الحسابات معًا؛ أوقف الحسابات بالرقائق فوقه (ضغطة مطوّلة — هذا الحساب فقط). عند الإيقاف — يتبع التقويم الحساب المختار في البريد.</string>
     <string name="expEasSessionTitle">اتصال Exchange سريع</string>
@@ -3130,7 +3130,7 @@
     <string name="folderNotifyAll">الإشعارات: كل المجلدات</string>
     <string name="folderNotifyNone">الإشعارات: لا مجلد</string>
     <string name="peekControlOff">إيقاف المتابعة</string>
-    <string name="pushWakeTitle">إشارات الخادم (iPhone)</string>
+    <string name="pushWakeTitle">فحص البريد في الخلفية (iPhone)</string>
     <string name="pushWakeSwitch">التحقق من البريد عند وصول إشارة من الخادم</string>
     <string name="pushWakeDesc">يستيقظ التطبيق بشكل أكثر تكرارًا في الخلفية. لا يعرف الخادم سوى رمز الإشعارات — بلا عناوين وبلا رسائل.</string>
     <string name="pushWakeHelp">يقرر نظام iOS بنفسه متى يوقظ تطبيقًا في الخلفية — أحيانًا مرة في الساعة أو أقل. يرسل خادم المطوّر (ogneliss.ru/push) عبر Apple، بالفاصل الزمني المختار، إشارة فارغة «تحقق من البريد»، ثم يفحص التطبيق صناديق بريدك بنفسه، من هذا الجهاز. لا يُرسل إلى الخادم سوى رمز الإشعارات الخاص بهذا التثبيت — بلا عناوين أو كلمات مرور أو رسائل. وما دام iOS يقبل الإشارات الصامتة فقط، فإنه يمرّر منها 2–3 في الساعة على الأكثر (أي كل 20 دقيقة على الأكثر) ولا يوقظ تطبيقًا أُغلق بالتمرير. التفاصيل في سياسة الخصوصية، القسم 6.2.</string>
@@ -3139,7 +3139,7 @@
     <string name="pushWakeStatusLast">آخر إشارة: {when}</string>
     <string name="pushWakeStatusNone">لم يتم التسجيل بعد</string>
     <string name="pushWakeStatusError">فشل: {e}</string>
-    <string name="pushWakeTitleAndroid">إشارات الخادم</string>
+    <string name="pushWakeTitleAndroid">فحص البريد في الخلفية</string>
     <string name="pushWakeHelpAndroid">يقرر Android بنفسه متى يسمح للتطبيق بالعمل في الخلفية: في وضع السكون العميق يؤجل عمليات التحقق في الخلفية، ومنذ Android 15 لا تحصل المزامنة في الخلفية على أكثر من 6 ساعات يوميًا. يرسل خادم المطوّر (ogneliss.ru/push) عبر Google (Firebase Cloud Messaging) إشارة فارغة «تحقق من البريد» في الفاصل الزمني المحدد، ويتحقق التطبيق من صناديق البريد بنفسه من هذا الجهاز. لا يُرسَل إلى الخادم سوى رمز الإشعارات لهذا التثبيت — لا عناوين ولا كلمات مرور ولا رسائل. في السكون العميق قد يسلّم Android الإشارة لاحقًا، في أقرب نافذة صيانة. وبدون خدمات Google — عبر تطبيق UnifiedPush (مثل ntfy). التفاصيل في سياسة الخصوصية، القسم 6.2.</string>
     <string name="pushWakeVia">كيف تصل الإشارات</string>
     <string name="pushWakeViaHelp">عبر Google (Firebase Cloud Messaging) على الهواتف التي تتوفر فيها خدمات Google Play. وبدونها عبر تطبيق موزّع UnifiedPush (مثل ntfy): يحتفظ باتصاله الخاص ويمرّر إشارة «تحقق من البريد». الإشارة مشفّرة بمفتاح هذا التثبيت ولا تحتوي على عناوين ولا رسائل. التفاصيل في سياسة الخصوصية، القسم 6.2.</string>
@@ -3360,7 +3360,7 @@
     <string name="faq_tasks_3_a">اضغط مطولًا على الملاحظة: تعديل، إرسال بالبريد الإلكتروني، مشاركة، نسخ أو حذف.</string>
     <string name="faq_notify_title">الإشعارات والخلفية</string>
     <string name="faq_notify_1_q">لماذا تصل الإشعارات متأخرة على iPhone؟</string>
-    <string name="faq_notify_1_a">ما دام التطبيق مفتوحًا يصل البريد فورًا. أما عندما يكون في الخلفية فيقرر iOS بنفسه متى يوقظه: بتكرار أكبر إذا كنت تستخدم التطبيق يوميًا، وبتكرار أقل في وضع توفير الطاقة أو عندما تكون البطارية منخفضة. لكي يستيقظ التطبيق بتكرار أكبر، أبقِ خيار إشارات الخادم (iPhone) مفعّلًا في الإعدادات → الإشعارات: يرسل خادم المطوّر عبر Apple، بالفاصل الزمني الذي تختاره، إشارة فارغة «تحقّق من بريدك»، ويتحقق التطبيق من صناديق بريدك بنفسه، من هذا الجهاز؛ ولا يُرسَل إلى الخادم سوى رمز الإشعارات. لا تغلق التطبيق بسحبه في مبدّل التطبيقات: بعد ذلك لا يوقظه iOS لا من تلقاء نفسه ولا بإشارة حتى تفتح التطبيق مرة أخرى. تأكد من تفعيل تحديث التطبيقات في الخلفية لـ Ogneliss Mail في إعدادات iOS.</string>
+    <string name="faq_notify_1_a">ما دام التطبيق مفتوحًا يصل البريد فورًا. أما عندما يكون في الخلفية فيقرر iOS بنفسه متى يوقظه: بتكرار أكبر إذا كنت تستخدم التطبيق يوميًا، وبتكرار أقل في وضع توفير الطاقة أو عندما تكون البطارية منخفضة. لكي يستيقظ التطبيق بتكرار أكبر، أبقِ خيار فحص البريد في الخلفية (iPhone) مفعّلًا في الإعدادات → الإشعارات: يرسل خادم المطوّر عبر Apple، بالفاصل الزمني الذي تختاره، إشارة فارغة «تحقّق من بريدك»، ويتحقق التطبيق من صناديق بريدك بنفسه، من هذا الجهاز؛ ولا يُرسَل إلى الخادم سوى رمز الإشعارات. لا تغلق التطبيق بسحبه في مبدّل التطبيقات: بعد ذلك لا يوقظه iOS لا من تلقاء نفسه ولا بإشارة حتى تفتح التطبيق مرة أخرى. تأكد من تفعيل تحديث التطبيقات في الخلفية لـ Ogneliss Mail في إعدادات iOS.</string>
     <string name="faq_notify_2_q">كيف أوقف الإشعارات لمجلد واحد؟</string>
     <string name="faq_notify_2_a">الإعدادات → الحساب → مزامنة المجلدات: يعمل الجرس بجانب مفتاح المجلد على تشغيل إشعارات رسائله الجديدة أو إيقافها (مع المجلدات الفرعية)، ويستمر المجلد في المزامنة. تحتوي القائمة ⋮ على الإشعارات: كل المجلدات والإشعارات: بلا مجلدات. لا توجد إشعارات أبدًا للمرسلة أو المسودات أو العناصر المحذوفة أو البريد الإلكتروني غير الهام.</string>
     <string name="faq_notify_3_q">لماذا تتأخر الإشعارات على Android؟</string>
@@ -4011,7 +4011,7 @@
     <string name="readingPaneHidden">مخفي</string>
     <string name="readingPaneBottomHint">القائمة في الأعلى والرسالة أسفلها</string>
     <string name="readingPaneHiddenHint">القائمة بعرض كامل، وتُفتح الرسالة في شاشة مستقلة</string>
-    <string name="pushWakeStatusPeriodic">بدون خدمات Google يُفحص البريد وفق جدول — كل 15 دقيقة، وأقل في السكون العميق. لإشارات الخادم ثبّت تطبيق UnifiedPush مثل ntfy.</string>
+    <string name="pushWakeStatusPeriodic">بدون خدمات Google يُفحص البريد وفق جدول — كل 15 دقيقة، وأقل في السكون العميق. لفحص البريد في الخلفية ثبّت تطبيق UnifiedPush مثل ntfy.</string>
     <string name="setupSignalsChooseTitle">اختر تطبيقًا للإشارات</string>
     <string name="setupSignalsChooseBody">عدة تطبيقات UnifiedPush مثبّتة. اختر التطبيق الذي يوصل إشارة «افحص البريد» من الخادم، فيُعلمك الهاتف بالبريد حتى في السكون العميق.</string>
     <string name="setupSignalsPeriodicTitle">بدون خدمات Google</string>

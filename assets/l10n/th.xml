@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">1 ปี</string>
     <string name="syncPeriodAll">ทั้งหมด</string>
     <string name="lastSyncNever">ยังไม่มี</string>
-    <string name="accSectionSync">การซิงค์</string>
+    <string name="accSectionSync">การรับ</string>
     <string name="accSectionMail">อีเมล</string>
     <string name="accSectionAccount">บัญชี</string>
     <string name="orgPolicy">ข้อกำหนดขององค์กร</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">ไม่มีรูป เน้นว่าส่งถึงใคร: “คุณ”, “คุณ” ในสำเนา หรือผู้รับคนแรก</string>
     <string name="recip_list">รายการ</string>
     <string name="recip_list_desc">ผู้รับแต่ละคนอยู่ในบรรทัดของตนพร้อมรูป (สูงสุดสามคนใน ถึง และสองคนใน สำเนา)</string>
-    <string name="expSpareTitle">เตรียมหน้าต่างอีเมลล่วงหน้า</string>
+    <string name="expSpareTitle">เปิดข้อความเร็วขึ้น</string>
     <string name="expSpareDesc">อีเมลโหลดระหว่างที่หน้าจอกำลังเปิด</string>
     <string name="expSpareHint">แอปจะเตรียมหน้าต่างเบราว์เซอร์ที่มองไม่เห็นไว้หนึ่งหน้าต่างเสมอ เมื่อคุณแตะอีเมลในรายการ อีเมลจะโหลดระหว่างที่หน้าจอเลื่อนเข้ามา หน้าจอจึงพร้อมแสดงทันที เร็วขึ้น แต่หน้าต่างนี้จะใช้หน่วยความจำเล็กน้อยตลอดเวลา หากอีเมลแสดงผลไม่ถูกต้องบนอุปกรณ์บางเครื่อง (มีช่องว่าง ความสูงผิด) ให้ปิดตัวเลือกนี้</string>
     <string name="expNativeTitle">อีเมลแบบง่ายโดยไม่ใช้เบราว์เซอร์</string>
@@ -2488,7 +2488,7 @@
     <string name="expBoardTitle">บอร์ดใน วันของฉัน</string>
     <string name="expBoardDesc">กำลังจะมาถึง · กำลังดำเนินการ · เสร็จแล้ว</string>
     <string name="expBoardHint">งานของวันนี้แบ่งเป็นคอลัมน์ กดค้างเพื่อลาก หรือใช้เมนู ⋮ การประชุมที่ผ่านไปแล้วจะย้ายไปเสร็จแล้วเอง ส่วนงานและการเตือนต้องย้ายเองเท่านั้น สลับได้ที่หน้าจอ วันของฉัน ด้วย</string>
-    <string name="expHubTitle">ศูนย์รวมปฏิทิน</string>
+    <string name="expHubTitle">ปฏิทินเดียวสำหรับทุกกล่องจดหมาย</string>
     <string name="expHubDesc">ทุกบัญชีในปฏิทินเดียว</string>
     <string name="expHubHint">ปฏิทินแสดงการประชุมของทุกบัญชีพร้อมกัน ปิดบัญชีได้ด้วยชิปเหนือปฏิทิน (กดค้าง — แสดงเฉพาะบัญชีนี้) เมื่อปิด — ปฏิทินจะตามบัญชีที่เลือกไว้ในอีเมล</string>
     <string name="expEasSessionTitle">การเชื่อมต่อ Exchange แบบเร็ว</string>
@@ -3065,8 +3065,8 @@
     <string name="folderNotifyAll">การแจ้งเตือน: ทุกโฟลเดอร์</string>
     <string name="folderNotifyNone">การแจ้งเตือน: ไม่มีโฟลเดอร์</string>
     <string name="peekControlOff">เลิกติดตาม</string>
-    <string name="pushWakeTitle">สัญญาณจากเซิร์ฟเวอร์ (iPhone)</string>
-    <string name="pushWakeSwitch">ตรวจสอบอีเมลเมื่อได้รับสัญญาณจากเซิร์ฟเวอร์</string>
+    <string name="pushWakeTitle">ตรวจอีเมลเบื้องหลัง (iPhone)</string>
+    <string name="pushWakeSwitch">ตรวจสอบอีเมลเมื่อได้รับตรวจอีเมลเบื้องหลัง</string>
     <string name="pushWakeDesc">แอปจะถูกปลุกในเบื้องหลังบ่อยขึ้น เซิร์ฟเวอร์รู้เพียงโทเค็นการแจ้งเตือนเท่านั้น ไม่มีที่อยู่อีเมลและไม่มีข้อความ</string>
     <string name="pushWakeHelp">iOS ตัดสินใจเองว่าจะปลุกแอปในเบื้องหลังเมื่อใด — บางครั้งชั่วโมงละครั้งหรือนานกว่านั้น เซิร์ฟเวอร์ของนักพัฒนา (ogneliss.ru/push) จะส่งสัญญาณเปล่า “ตรวจสอบอีเมล” ผ่าน Apple ตามช่วงเวลาที่เลือก แล้วแอปจะตรวจสอบกล่องอีเมลของคุณเองจากอุปกรณ์นี้ เซิร์ฟเวอร์ได้รับเพียงโทเค็นการแจ้งเตือนของการติดตั้งนี้ — ไม่มีที่อยู่ รหัสผ่าน หรืออีเมล ขณะที่ iOS รับเฉพาะสัญญาณเงียบ ระบบจะปล่อยผ่านไม่เกิน 2–3 ครั้งต่อชั่วโมง (คือทุก 20 นาทีอย่างมาก) และจะไม่ปลุกแอปที่ถูกปัดปิดไป รายละเอียดอยู่ในนโยบายความเป็นส่วนตัว ข้อ 6.2</string>
     <string name="pushWakeEvery">ทุก {n} นาที</string>
@@ -3074,7 +3074,7 @@
     <string name="pushWakeStatusLast">สัญญาณล่าสุด: {when}</string>
     <string name="pushWakeStatusNone">ยังไม่ได้ลงทะเบียน</string>
     <string name="pushWakeStatusError">ล้มเหลว: {e}</string>
-    <string name="pushWakeTitleAndroid">สัญญาณจากเซิร์ฟเวอร์</string>
+    <string name="pushWakeTitleAndroid">ตรวจอีเมลเบื้องหลัง</string>
     <string name="pushWakeHelpAndroid">Android ตัดสินใจเองว่าแอปในเบื้องหลังจะทำงานได้เมื่อใด: ในโหมดหลับลึกจะเลื่อนการตรวจสอบในเบื้องหลังออกไป และตั้งแต่ Android 15 การซิงค์ในเบื้องหลังได้ไม่เกิน 6 ชั่วโมงต่อวัน เซิร์ฟเวอร์ของผู้พัฒนา (ogneliss.ru/push) จะส่งสัญญาณว่าง «ตรวจสอบอีเมล» ผ่าน Google (Firebase Cloud Messaging) ตามช่วงเวลาที่เลือก และแอปจะตรวจสอบกล่องจดหมายเองจากอุปกรณ์นี้ เซิร์ฟเวอร์ได้รับเพียงโทเค็นการแจ้งเตือนของการติดตั้งนี้ — ไม่มีที่อยู่ รหัสผ่าน หรือข้อความ ในโหมดหลับลึก Android อาจส่งสัญญาณช้าลงในช่วงบำรุงรักษาถัดไป หากไม่มีบริการ Google สัญญาณจะมาผ่านแอป UnifiedPush (เช่น ntfy) รายละเอียดอยู่ในนโยบายความเป็นส่วนตัว ข้อ 6.2</string>
     <string name="pushWakeVia">สัญญาณมาถึงอย่างไร</string>
     <string name="pushWakeViaHelp">ผ่าน Google (Firebase Cloud Messaging) บนโทรศัพท์ที่มีบริการ Google Play หากไม่มี จะผ่านแอปตัวกระจาย UnifiedPush (เช่น ntfy) ซึ่งคงการเชื่อมต่อของตัวเองไว้และส่งต่อสัญญาณ “ตรวจสอบอีเมล” สัญญาณถูกเข้ารหัสด้วยคีย์ของการติดตั้งนี้ และไม่มีที่อยู่หรืออีเมล รายละเอียดอยู่ในนโยบายความเป็นส่วนตัว ข้อ 6.2</string>
@@ -3084,7 +3084,7 @@
     <string name="pushWakeViaUpDesc">UnifiedPush — ไม่ใช้บริการ Google</string>
     <string name="pushWakeNoDistributor">ไม่ใช้บริการ Google — ผ่าน UnifiedPush</string>
     <string name="pushWakeNoDistributorDesc">ติดตั้งแอปตัวกระจาย UnifiedPush เช่น ntfy (F-Droid, Google Play) แล้วแตะ “รีเฟรช”</string>
-    <string name="mailCheckKindSignal">สัญญาณจากเซิร์ฟเวอร์</string>
+    <string name="mailCheckKindSignal">ตรวจอีเมลเบื้องหลัง</string>
     <string name="specialArchiveFolder">โฟลเดอร์เก็บถาวร</string>
     <string name="specialJunkFolder">โฟลเดอร์สแปม</string>
     <string name="specialFolderAuto">{name} · พบโดยอัตโนมัติ</string>
@@ -3906,7 +3906,7 @@
     <string name="readingPaneHidden">ซ่อน</string>
     <string name="readingPaneBottomHint">รายการอยู่ด้านบน ข้อความอยู่ด้านล่าง</string>
     <string name="readingPaneHiddenHint">รายการเต็มความกว้าง ข้อความเปิดในหน้าจอแยก</string>
-    <string name="pushWakeStatusPeriodic">หากไม่มีบริการ Google ระบบจะตรวจอีเมลตามกำหนด — ทุก 15 นาที และน้อยลงขณะหลับลึก หากต้องการสัญญาณจากเซิร์ฟเวอร์ ให้ติดตั้งแอป UnifiedPush เช่น ntfy</string>
+    <string name="pushWakeStatusPeriodic">หากไม่มีบริการ Google ระบบจะตรวจอีเมลตามกำหนด — ทุก 15 นาที และน้อยลงขณะหลับลึก หากต้องการตรวจอีเมลเบื้องหลัง ให้ติดตั้งแอป UnifiedPush เช่น ntfy</string>
     <string name="setupSignalsChooseTitle">เลือกแอปสำหรับสัญญาณ</string>
     <string name="setupSignalsChooseBody">มีแอป UnifiedPush ติดตั้งอยู่หลายแอป เลือกแอปที่ส่งสัญญาณ «ตรวจอีเมล» จากเซิร์ฟเวอร์ แล้วโทรศัพท์จะแจ้งอีเมลใหม่แม้ขณะหลับลึก</string>
     <string name="setupSignalsPeriodicTitle">ไม่มีบริการ Google</string>

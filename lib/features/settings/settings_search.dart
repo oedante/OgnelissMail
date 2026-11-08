@@ -123,7 +123,7 @@ const _entries = <_Entry>[
   // 1.8.0: синхронизация, фон, сертификаты, защита данных, журнал, сброс —
   // в «Расширенных настройках».
   _Entry('advancedSettings', 'settings', AppIcons.tune, '/settings/advanced'),
-  _Entry('permissions', 'advancedSettings', AppIcons.admin_panel_settings, '/settings/permissions'),
+  _Entry('permissions', 'sectionPrivacy', AppIcons.admin_panel_settings, '/settings/permissions'),
   _Entry('autoSyncAll', 'advancedSettings', AppIcons.sync, '/settings/advanced'),
   _Entry('scheduleTitle', 'advancedSettings', AppIcons.schedule, '/settings/delivery-schedule'),
   _Entry('checkScheduled', 'advancedSettings', AppIcons.schedule, '/settings/delivery-schedule'),
@@ -138,8 +138,8 @@ const _entries = <_Entry>[
   _Entry('signatures', 'emailSettings', AppIcons.draw, '/settings/signatures'),
   _Entry('syncPeriod', 'accounts', AppIcons.date_range, '/settings/accounts'),
   _Entry('vipRulesTitle', 'sectionMail', AppIcons.rule, '/vip-settings'),
-  _Entry('connectionSecurity', 'advancedSettings', AppIcons.verified_user, '/settings/security'),
-  _Entry('dlpTitle', 'advancedSettings', AppIcons.shield, '/settings/dlp'),
+  _Entry('connectionSecurity', 'sectionPrivacy', AppIcons.verified_user, '/settings/security'),
+  _Entry('dlpTitle', 'sectionPrivacy', AppIcons.shield, '/settings/dlp'),
   _Entry('syncConflicts', 'advancedSettings', AppIcons.sync_problem, '/settings/conflicts'),
   _Entry('resetApp', 'advancedSettings', AppIcons.delete_forever, '/settings/advanced'),
   _Entry('profileFeatures', 'advancedSettings', AppIcons.widgets, '/settings/profile'),

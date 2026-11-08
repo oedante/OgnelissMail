@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">एक साल</string>
     <string name="syncPeriodAll">पूरी अवधि</string>
     <string name="lastSyncNever">अभी तक नहीं</string>
-    <string name="accSectionSync">सिंक्रनाइज़ेशन</string>
+    <string name="accSectionSync">प्राप्त करना</string>
     <string name="accSectionMail">ईमेल</string>
     <string name="accSectionAccount">खाता</string>
     <string name="orgPolicy">संगठन की आवश्यकताएं</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">फ़ोटो के बिना, ज़रूरी यह है कि ईमेल किसके लिए है: “आपको”, Cc में “आपको”, या पहला प्राप्तकर्ता</string>
     <string name="recip_list">सूची</string>
     <string name="recip_list_desc">हर प्राप्तकर्ता अलग पंक्ति में फ़ोटो के साथ (प्रति में तीन तक, Cc में दो तक)</string>
-    <string name="expSpareTitle">ईमेल की विंडो पहले से तैयार</string>
+    <string name="expSpareTitle">संदेश तेज़ी से खोलें</string>
     <string name="expSpareDesc">स्क्रीन खुलते समय ईमेल लोड होता है</string>
     <string name="expSpareHint">एक अदृश्य ब्राउज़र विंडो तैयार रखी जाती है। सूची में ईमेल पर टैप करने पर स्क्रीन के खुलते समय वह ईमेल को लोड कर लेती है, इसलिए स्क्रीन को वह तैयार मिलता है। यह तेज़ है, लेकिन विंडो हमेशा थोड़ी मेमोरी लेती है। अगर किसी डिवाइस पर ईमेल गलत दिखे (खाली जगह, गलत ऊंचाई), तो इसे बंद करें।</string>
     <string name="expNativeTitle">सरल ईमेल बिना ब्राउज़र के</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">“मेरा दिन” में बोर्ड</string>
     <string name="expBoardDesc">आगामी · जारी है · पूरा हुआ</string>
     <string name="expBoardHint">आज के कार्य कॉलम में। देर तक दबाकर खींचें या ⋮ मेनू इस्तेमाल करें। बीती मीटिंग अपने आप “पूरा हुआ” में चली जाती हैं, कार्य और रिमाइंडर केवल हाथ से। इसे “मेरा दिन” स्क्रीन पर भी चालू किया जा सकता है।</string>
-    <string name="expHubTitle">कैलेंडर हब</string>
+    <string name="expHubTitle">सभी मेलबॉक्स के लिए एक कैलेंडर</string>
     <string name="expHubDesc">सभी खाते एक कैलेंडर में</string>
     <string name="expHubHint">कैलेंडर सभी खातों की मीटिंग एक साथ दिखाता है; ऊपर के चिप से खाते बंद करें (देर तक दबाएं — केवल यही खाता)। बंद होने पर कैलेंडर मेल में चुने खाते के अनुसार चलता है।</string>
     <string name="expEasSessionTitle">तेज़ Exchange कनेक्शन</string>
@@ -3078,8 +3078,8 @@
     <string name="folderNotifyAll">सूचनाएं: सभी फ़ोल्डर</string>
     <string name="folderNotifyNone">सूचनाएं: कोई फ़ोल्डर नहीं</string>
     <string name="peekControlOff">निगरानी बंद करें</string>
-    <string name="pushWakeTitle">सर्वर सिग्नल (iPhone)</string>
-    <string name="pushWakeSwitch">सर्वर सिग्नल मिलने पर मेल जांचें</string>
+    <string name="pushWakeTitle">बैकग्राउंड में मेल जाँच (iPhone)</string>
+    <string name="pushWakeSwitch">बैकग्राउंड में मेल जाँच मिलने पर मेल जांचें</string>
     <string name="pushWakeDesc">ऐप बैकग्राउंड में ज़्यादा बार सक्रिय होता है। सर्वर को केवल सूचना टोकन पता होता है — कोई पते नहीं, कोई ईमेल नहीं।</string>
     <string name="pushWakeHelp">iOS खुद तय करता है कि बैकग्राउंड में किसी ऐप को कब जगाना है — कभी घंटे में एक बार या उससे भी कम। डेवलपर का सर्वर (ogneliss.ru/push) चुने गए अंतराल पर Apple के ज़रिए एक खाली संकेत “मेल जांचें” भेजता है, और ऐप आपके मेलबॉक्स खुद जांचता है, इसी डिवाइस से। सर्वर को सिर्फ़ इस इंस्टॉलेशन का सूचना टोकन भेजा जाता है — कोई पता, पासवर्ड या ईमेल नहीं। जब तक iOS सिर्फ़ साइलेंट संकेत स्वीकार करता है, वह प्रति घंटे ज़्यादा से ज़्यादा 2–3 संकेत जाने देता है (यानी ज़्यादा से ज़्यादा हर 20 मिनट में एक) और स्वाइप करके बंद किए गए ऐप को नहीं जगाता। विवरण गोपनीयता नीति के खंड 6.2 में हैं।</string>
     <string name="pushWakeEvery">हर {n} मिनट में</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">आख़िरी सिग्नल: {when}</string>
     <string name="pushWakeStatusNone">अभी तक पंजीकृत नहीं</string>
     <string name="pushWakeStatusError">विफल: {e}</string>
-    <string name="pushWakeTitleAndroid">सर्वर सिग्नल</string>
+    <string name="pushWakeTitleAndroid">बैकग्राउंड में मेल जाँच</string>
     <string name="pushWakeHelpAndroid">Android खुद तय करता है कि बैकग्राउंड में ऐप कब चल सकता है: गहरी नींद में वह बैकग्राउंड जाँच टाल देता है, और Android 15 से बैकग्राउंड सिंक को दिन में अधिकतम 6 घंटे मिलते हैं। डेवलपर का सर्वर (ogneliss.ru/push) चुने गए अंतराल पर Google (Firebase Cloud Messaging) के ज़रिए खाली «मेल जाँचें» सिग्नल भेजता है, और ऐप इसी डिवाइस से खुद आपके मेलबॉक्स जाँचता है। सर्वर को केवल इस इंस्टॉलेशन का सूचना टोकन भेजा जाता है — न पते, न पासवर्ड, न संदेश। गहरी नींद में Android सिग्नल बाद में, अगली रखरखाव अवधि में पहुँचा सकता है। Google सेवाओं के बिना — UnifiedPush ऐप (जैसे ntfy) के ज़रिए। विवरण गोपनीयता नीति, खंड 6.2 में है।</string>
     <string name="pushWakeVia">सिग्नल कैसे पहुंचते हैं</string>
     <string name="pushWakeViaHelp">Google (Firebase Cloud Messaging) के ज़रिए — उन फ़ोन पर जिनमें Google Play सेवाएँ हैं। उनके बिना — UnifiedPush डिस्ट्रीब्यूटर ऐप (जैसे ntfy) के ज़रिए: वह अपना कनेक्शन खुद बनाए रखता है और “मेल जांचें” सिग्नल आगे पहुंचाता है। सिग्नल इस इंस्टॉलेशन की कुंजी से एन्क्रिप्ट होता है और उसमें कोई पता या ईमेल नहीं होता। विवरण: गोपनीयता नीति, खंड 6.2।</string>
@@ -3097,7 +3097,7 @@
     <string name="pushWakeViaUpDesc">UnifiedPush — Google सेवाओं के बिना</string>
     <string name="pushWakeNoDistributor">Google सेवाओं के बिना — UnifiedPush के ज़रिए</string>
     <string name="pushWakeNoDistributorDesc">UnifiedPush डिस्ट्रीब्यूटर ऐप इंस्टॉल करें, जैसे ntfy (F-Droid, Google Play), फिर “रीफ़्रेश करें” पर टैप करें।</string>
-    <string name="mailCheckKindSignal">सर्वर सिग्नल</string>
+    <string name="mailCheckKindSignal">बैकग्राउंड में मेल जाँच</string>
     <string name="specialArchiveFolder">संग्रह फ़ोल्डर</string>
     <string name="specialJunkFolder">स्पैम फ़ोल्डर</string>
     <string name="specialFolderAuto">{name} · अपने आप मिला</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">नोट को देर तक दबाएं: संपादित करें, ईमेल से भेजें, शेयर करें, कॉपी करें या मिटाएं।</string>
     <string name="faq_notify_title">सूचनाएं और बैकग्राउंड</string>
     <string name="faq_notify_1_q">iPhone पर सूचनाएं देर से क्यों आती हैं?</string>
-    <string name="faq_notify_1_a">ऐप खुला होने पर मेल तुरंत आता है। बैकग्राउंड में होने पर iOS खुद तय करता है कि उसे कब जगाना है: अगर आप ऐप रोज़ इस्तेमाल करते हैं तो ज़्यादा बार, लो पावर मोड में या बैटरी कम होने पर कम बार। इसे ज़्यादा बार जगाने के लिए सेटिंग → सूचनाएं में सर्वर सिग्नल (iPhone) चालू रखें: डेवलपर का सर्वर Apple के ज़रिए आपके चुने अंतराल पर एक खाली “मेल जांचें” सिग्नल भेजता है, और ऐप आपके मेलबॉक्स खुद जांचता है, इसी डिवाइस से; सर्वर को सिर्फ़ सूचना टोकन भेजा जाता है। ऐप स्विचर में स्वाइप करके ऐप बंद न करें: उसके बाद जब तक आप ऐप फिर से नहीं खोलते, iOS उसे न अपने आप जगाता है और न सिग्नल से। iOS सेटिंग में Ogneliss Mail के लिए बैकग्राउंड ऐप रीफ़्रेश चालू होना सुनिश्चित करें।</string>
+    <string name="faq_notify_1_a">ऐप खुला होने पर मेल तुरंत आता है। बैकग्राउंड में होने पर iOS खुद तय करता है कि उसे कब जगाना है: अगर आप ऐप रोज़ इस्तेमाल करते हैं तो ज़्यादा बार, लो पावर मोड में या बैटरी कम होने पर कम बार। इसे ज़्यादा बार जगाने के लिए सेटिंग → सूचनाएं में बैकग्राउंड में मेल जाँच (iPhone) चालू रखें: डेवलपर का सर्वर Apple के ज़रिए आपके चुने अंतराल पर एक खाली “मेल जांचें” सिग्नल भेजता है, और ऐप आपके मेलबॉक्स खुद जांचता है, इसी डिवाइस से; सर्वर को सिर्फ़ सूचना टोकन भेजा जाता है। ऐप स्विचर में स्वाइप करके ऐप बंद न करें: उसके बाद जब तक आप ऐप फिर से नहीं खोलते, iOS उसे न अपने आप जगाता है और न सिग्नल से। iOS सेटिंग में Ogneliss Mail के लिए बैकग्राउंड ऐप रीफ़्रेश चालू होना सुनिश्चित करें।</string>
     <string name="faq_notify_2_q">एक फ़ोल्डर की सूचनाएं कैसे बंद करें?</string>
     <string name="faq_notify_2_a">सेटिंग → खाता → फ़ोल्डर सिंक: फ़ोल्डर के स्विच के पास की घंटी उसके नए ईमेल की सूचनाएं (सबफ़ोल्डर सहित) चालू या बंद करती है, और फ़ोल्डर सिंक होता रहता है। ⋮ मेनू में सूचनाएं: सभी फ़ोल्डर और सूचनाएं: कोई फ़ोल्डर नहीं हैं। भेजे गए, ड्राफ़्ट, हटाए गए आइटम और जंक ईमेल के लिए सूचनाएं कभी नहीं आतीं।</string>
     <string name="faq_notify_3_q">Android पर सूचनाएं तुरंत क्यों नहीं आतीं?</string>
@@ -3927,7 +3927,7 @@
     <string name="readingPaneHidden">छिपा हुआ</string>
     <string name="readingPaneBottomHint">ऊपर सूची, नीचे संदेश</string>
     <string name="readingPaneHiddenHint">पूरी चौड़ाई में सूची, संदेश अलग स्क्रीन पर खुलता है</string>
-    <string name="pushWakeStatusPeriodic">Google सेवाओं के बिना मेल समय-सारिणी से जाँचा जाता है — हर 15 मिनट, गहरी नींद में कम। सर्वर सिग्नल के लिए ntfy जैसा UnifiedPush ऐप इंस्टॉल करें।</string>
+    <string name="pushWakeStatusPeriodic">Google सेवाओं के बिना मेल समय-सारिणी से जाँचा जाता है — हर 15 मिनट, गहरी नींद में कम। बैकग्राउंड में मेल जाँच के लिए ntfy जैसा UnifiedPush ऐप इंस्टॉल करें।</string>
     <string name="setupSignalsChooseTitle">सिग्नल के लिए ऐप चुनें</string>
     <string name="setupSignalsChooseBody">कई UnifiedPush ऐप इंस्टॉल हैं। चुनें कि सर्वर का «मेल जाँचें» सिग्नल कौन-सा ऐप पहुँचाए — तब फ़ोन गहरी नींद में भी नए मेल की सूचना देगा।</string>
     <string name="setupSignalsPeriodicTitle">Google सेवाओं के बिना</string>

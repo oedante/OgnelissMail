@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Un año</string>
     <string name="syncPeriodAll">Todo el periodo</string>
     <string name="lastSyncNever">aún no</string>
-    <string name="accSectionSync">Sincronización</string>
+    <string name="accSectionSync">Recepción</string>
     <string name="accSectionMail">Mensajes</string>
     <string name="accSectionAccount">Cuenta</string>
     <string name="orgPolicy">Requisitos de la organización</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Sin fotos, lo importante es para quién es: “tú”, “tú” en Cc o el primer destinatario</string>
     <string name="recip_list">Lista</string>
     <string name="recip_list_desc">Cada destinatario en su propia línea con foto (hasta tres en Para y dos en Cc)</string>
-    <string name="expSpareTitle">Ventana del mensaje por adelantado</string>
+    <string name="expSpareTitle">Apertura rápida de mensajes</string>
     <string name="expSpareDesc">El mensaje se carga mientras se abre la pantalla</string>
     <string name="expSpareHint">Se mantiene lista una ventana de navegador invisible. Al tocar un mensaje de la lista, carga el mensaje mientras la pantalla se desliza, así que la pantalla ya lo tiene preparado. Es más rápido, pero la ventana siempre usa algo de memoria. Si en algún dispositivo un mensaje se ve mal (espacio en blanco, altura incorrecta), desactiva esta opción.</string>
     <string name="expNativeTitle">Mensajes sencillos sin navegador</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Tablero en Mi día</string>
     <string name="expBoardDesc">Próximamente · En curso · Hecho</string>
     <string name="expBoardHint">Las tareas de hoy en columnas. Arrastra con una pulsación larga o usa el menú ⋮. Las reuniones pasadas pasan a Hecho solas; las tareas y los recordatorios, solo a mano. También se puede activar en la pantalla Mi día.</string>
-    <string name="expHubTitle">Centro del calendario</string>
+    <string name="expHubTitle">Un calendario para todos los buzones</string>
     <string name="expHubDesc">Todas las cuentas en un solo calendario</string>
     <string name="expHubHint">El calendario muestra a la vez las reuniones de todas las cuentas; desactiva cuentas con los chips de encima (pulsación larga: solo esta). Desactivado: el calendario sigue la cuenta elegida en Correo.</string>
     <string name="expEasSessionTitle">Conexión rápida a Exchange</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Notificaciones: todas las carpetas</string>
     <string name="folderNotifyNone">Notificaciones: ninguna carpeta</string>
     <string name="peekControlOff">Quitar seguimiento</string>
-    <string name="pushWakeTitle">Señales del servidor (iPhone)</string>
+    <string name="pushWakeTitle">Comprobación en segundo plano (iPhone)</string>
     <string name="pushWakeSwitch">Comprobar el correo con la señal del servidor</string>
     <string name="pushWakeDesc">La app se activa con más frecuencia en segundo plano. El servidor solo conoce el token de notificación: ni direcciones ni mensajes.</string>
     <string name="pushWakeHelp">iOS decide por su cuenta cuándo activar una app en segundo plano: a veces una vez por hora o con menos frecuencia. El servidor del desarrollador (ogneliss.ru/push) envía a través de Apple, con el intervalo elegido, una señal vacía de «revisa tu correo», y la app revisa tus buzones por sí misma, desde este dispositivo. Al servidor solo se envía el token de notificaciones de esta instalación: ni direcciones, ni contraseñas, ni mensajes. Mientras iOS admite solo señales silenciosas, deja pasar no más de 2–3 por hora (es decir, como máximo cada 20 minutos) y no activa una app cerrada deslizándola. Los detalles están en la Política de privacidad, apartado 6.2.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Última señal: {when}</string>
     <string name="pushWakeStatusNone">Aún no registrado</string>
     <string name="pushWakeStatusError">Error: {e}</string>
-    <string name="pushWakeTitleAndroid">Señales del servidor</string>
+    <string name="pushWakeTitleAndroid">Comprobación en segundo plano</string>
     <string name="pushWakeHelpAndroid">Android decide por sí mismo cuándo puede funcionar una app en segundo plano: en reposo profundo aplaza las comprobaciones en segundo plano y, desde Android 15, la sincronización en segundo plano tiene como máximo 6 horas al día. El servidor del desarrollador (ogneliss.ru/push) envía a través de Google (Firebase Cloud Messaging), en el intervalo elegido, una señal vacía «revisa el correo», y la app revisa tus buzones por sí misma, desde este dispositivo. Al servidor solo se envía el token de notificaciones de esta instalación: ni direcciones, ni contraseñas, ni mensajes. En reposo profundo, Android puede entregar la señal más tarde, en la siguiente ventana de mantenimiento. Sin los servicios de Google, mediante una app de UnifiedPush (por ejemplo, ntfy). Más detalles en la Política de privacidad, sección 6.2.</string>
     <string name="pushWakeVia">Cómo llegan las señales</string>
     <string name="pushWakeViaHelp">A través de Google (Firebase Cloud Messaging) en teléfonos con servicios de Google Play. Sin ellos, mediante una app distribuidora de UnifiedPush (por ejemplo, ntfy): mantiene su propia conexión y transmite la señal «revisa el correo». La señal se cifra con la clave de esta instalación y no contiene direcciones ni mensajes. Más detalles en la Política de privacidad, sección 6.2.</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">Mantén pulsada la nota: editar, enviar por correo, compartir, copiar o eliminar.</string>
     <string name="faq_notify_title">Notificaciones y segundo plano</string>
     <string name="faq_notify_1_q">¿Por qué las notificaciones llegan con retraso en el iPhone?</string>
-    <string name="faq_notify_1_a">Mientras la aplicación está abierta, el correo llega al instante. Cuando está en segundo plano, iOS decide por su cuenta cuándo activarla: con más frecuencia si usas la aplicación a diario, con menos en el modo de bajo consumo o con la batería baja. Para que se active más a menudo, deja activadas las Señales del servidor (iPhone) en Ajustes → Notificaciones: el servidor del desarrollador envía a través de Apple una señal vacía de «revisa tu correo» con el intervalo que elijas, y la aplicación comprueba tus buzones por sí misma, desde este dispositivo; al servidor solo se envía el token de notificaciones. No cierres la aplicación deslizándola en el selector de apps: después, iOS no la activa ni por sí solo ni mediante una señal hasta que vuelvas a abrirla. Comprueba que la Actualización en segundo plano esté activada para Ogneliss Mail en los Ajustes de iOS.</string>
+    <string name="faq_notify_1_a">Mientras la aplicación está abierta, el correo llega al instante. Cuando está en segundo plano, iOS decide por su cuenta cuándo activarla: con más frecuencia si usas la aplicación a diario, con menos en el modo de bajo consumo o con la batería baja. Para que se active más a menudo, deja activadas las Comprobación en segundo plano (iPhone) en Ajustes → Notificaciones: el servidor del desarrollador envía a través de Apple una señal vacía de «revisa tu correo» con el intervalo que elijas, y la aplicación comprueba tus buzones por sí misma, desde este dispositivo; al servidor solo se envía el token de notificaciones. No cierres la aplicación deslizándola en el selector de apps: después, iOS no la activa ni por sí solo ni mediante una señal hasta que vuelvas a abrirla. Comprueba que la Actualización en segundo plano esté activada para Ogneliss Mail en los Ajustes de iOS.</string>
     <string name="faq_notify_2_q">¿Cómo desactivo las notificaciones de una carpeta?</string>
     <string name="faq_notify_2_a">Ajustes → cuenta → Sincronización de carpetas: la campana junto al interruptor de una carpeta activa o desactiva las notificaciones de sus mensajes nuevos (con las subcarpetas), y la carpeta sigue sincronizándose. El menú ⋮ tiene Notificaciones: todas las carpetas y Notificaciones: ninguna carpeta. Nunca hay notificaciones para Enviados, Borradores, Elementos eliminados ni Correo no deseado.</string>
     <string name="faq_notify_3_q">¿Por qué las notificaciones no llegan al instante en Android?</string>

@@ -10,7 +10,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/ui/action_sheet.dart';
@@ -177,13 +176,8 @@ class _MailWorkSectionState extends ConsumerState<MailWorkSection> with _Prefs {
           value: pref(ExperimentalKeys.deviceRules),
           onChanged: (v) => setPref(ExperimentalKeys.deviceRules, v),
         ),
-        SettingsItem(
-          icon: AppIcons.schedule,
-          title: l10n.tr('scheduleTitle'),
-          subtitle: l10n.tr('expScheduleDesc'),
-          hint: l10n.tr('expScheduleHint'),
-          onTap: () => context.push('/settings/delivery-schedule'),
-        ),
+        // «Расписание доставки» — в «Расширенных» (синхронизация) и у ящика
+        // при выборе «по расписанию» (перегруппировка 08.11.2026).
       ]),
     ]);
   }

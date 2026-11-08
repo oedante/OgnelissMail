@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Yksi vuosi</string>
     <string name="syncPeriodAll">Koko ajanjakso</string>
     <string name="lastSyncNever">ei vielä</string>
-    <string name="accSectionSync">Synkronointi</string>
+    <string name="accSectionSync">Vastaanotto</string>
     <string name="accSectionMail">Viestit</string>
     <string name="accSectionAccount">Tili</string>
     <string name="orgPolicy">Organisaation vaatimukset</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Ei kuvia, tärkeintä on, kenelle viesti on: ”sinä”, ”sinä” kopiona tai ensimmäinen vastaanottaja</string>
     <string name="recip_list">Luettelo</string>
     <string name="recip_list_desc">Jokainen vastaanottaja omalla rivillään kuvan kanssa (enintään kolme Vastaanottajassa, kaksi Kopiossa)</string>
-    <string name="expSpareTitle">Viestiikkuna etukäteen</string>
+    <string name="expSpareTitle">Nopeampi viestien avaaminen</string>
     <string name="expSpareDesc">Viesti latautuu, kun näyttö avautuu</string>
     <string name="expSpareHint">Yksi näkymätön selainikkuna pidetään valmiina. Kun napautat viestiä luettelossa, se lataa viestin samalla, kun näyttö liukuu esiin, jolloin näyttö saa sen valmiina. Nopeampi, mutta ikkuna käyttää aina hieman muistia. Jos viesti näkyy väärin jollakin laitteella (tyhjää tilaa, väärä korkeus), poista tämä käytöstä.</string>
     <string name="expNativeTitle">Yksinkertaiset viestit ilman selainta</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Taulu Omassa päivässä</string>
     <string name="expBoardDesc">Tulossa · Työn alla · Valmis</string>
     <string name="expBoardHint">Päivän tehtävät sarakkeissa. Vedä pitkällä painalluksella tai käytä ⋮-valikkoa. Menneet kokoukset siirtyvät itsestään kohtaan Valmis, tehtävät ja muistutukset vain käsin. Voidaan ottaa käyttöön myös Oma päivä -näytöllä.</string>
-    <string name="expHubTitle">Kalenterikeskus</string>
+    <string name="expHubTitle">Yksi kalenteri kaikille postilaatikoille</string>
     <string name="expHubDesc">Kaikki tilit yhdessä kalenterissa</string>
     <string name="expHubHint">Kalenteri näyttää kaikkien tilien kokoukset kerralla; poista tilejä käytöstä sen yllä olevilla chipeillä (pitkä painallus — vain tämä). Pois käytöstä — kalenteri seuraa Sähköpostissa valittua tiliä.</string>
     <string name="expEasSessionTitle">Nopea Exchange-yhteys</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Ilmoitukset: kaikki kansiot</string>
     <string name="folderNotifyNone">Ilmoitukset: ei yhtään kansiota</string>
     <string name="peekControlOff">Poista seurannasta</string>
-    <string name="pushWakeTitle">Palvelinsignaalit (iPhone)</string>
+    <string name="pushWakeTitle">Postin tarkistus taustalla (iPhone)</string>
     <string name="pushWakeSwitch">Tarkista sähköposti palvelinsignaalin perusteella</string>
     <string name="pushWakeDesc">Sovellus herää taustalla useammin. Palvelin tuntee vain ilmoitustunnisteen – ei osoitteita eikä viestejä.</string>
     <string name="pushWakeHelp">iOS päättää itse, milloin sovellus herätetään taustalla – joskus kerran tunnissa tai harvemmin. Kehittäjän palvelin (ogneliss.ru/push) lähettää valitulla välillä Applen kautta tyhjän ”tarkista sähköposti” -signaalin, ja sovellus tarkistaa postilaatikkosi itse tältä laitteelta. Palvelimelle lähetetään vain tämän asennuksen ilmoitustunnus – ei osoitteita, salasanoja eikä viestejä. Niin kauan kuin iOS hyväksyy vain äänettömiä signaaleja, se päästää läpi enintään 2–3 tunnissa (eli enintään 20 minuutin välein) eikä herätä sovellusta, joka on suljettu pyyhkäisemällä pois. Lisätietoja on tietosuojakäytännössä, kohdassa 6.2.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Viimeisin signaali: {when}</string>
     <string name="pushWakeStatusNone">Ei vielä rekisteröity</string>
     <string name="pushWakeStatusError">Epäonnistui: {e}</string>
-    <string name="pushWakeTitleAndroid">Palvelinsignaalit</string>
+    <string name="pushWakeTitleAndroid">Postin tarkistus taustalla</string>
     <string name="pushWakeHelpAndroid">Android päättää itse, milloin taustalla oleva sovellus saa toimia: syvässä lepotilassa se lykkää taustatarkistuksia, ja Android 15:stä alkaen taustasynkronointi saa enintään 6 tuntia vuorokaudessa. Kehittäjän palvelin (ogneliss.ru/push) lähettää valitulla välillä Googlen (Firebase Cloud Messaging) kautta tyhjän signaalin ”tarkista posti”, ja sovellus tarkistaa postilaatikot itse tältä laitteelta. Palvelimelle lähetetään vain tämän asennuksen ilmoitustunnus — ei osoitteita, salasanoja eikä viestejä. Syvässä lepotilassa Android voi toimittaa signaalin myöhemmin, seuraavassa huoltoikkunassa. Ilman Google-palveluita — UnifiedPush-sovelluksen (esimerkiksi ntfy) kautta. Lisätietoja tietosuojakäytännön kohdassa 6.2.</string>
     <string name="pushWakeVia">Miten signaalit saapuvat</string>
     <string name="pushWakeViaHelp">Googlen (Firebase Cloud Messaging) kautta puhelimissa, joissa on Google Play -palvelut. Ilman niitä UnifiedPush-jakelusovelluksen (esimerkiksi ntfy) kautta: se pitää yllä omaa yhteyttään ja välittää ”tarkista posti” -signaalin. Signaali on salattu tämän asennuksen avaimella, eikä se sisällä osoitteita tai viestejä. Lisätietoja: tietosuojakäytäntö, kohta 6.2.</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">Paina muistiinpanoa pitkään: muokkaa, lähetä sähköpostilla, jaa, kopioi tai poista.</string>
     <string name="faq_notify_title">Ilmoitukset ja tausta</string>
     <string name="faq_notify_1_q">Miksi ilmoitukset saapuvat iPhonessa myöhässä?</string>
-    <string name="faq_notify_1_a">Kun sovellus on auki, posti saapuu heti. Kun se on taustalla, iOS päättää itse, milloin se herätetään: useammin, jos käytät sovellusta päivittäin, harvemmin Virransäästötilassa tai kun akku on vähissä. Jotta se heräisi useammin, pidä Palvelinsignaalit (iPhone) päällä kohdassa Asetukset → Ilmoitukset: kehittäjän palvelin lähettää Applen kautta tyhjän ”tarkista postisi” -signaalin valitsemallasi välein, ja sovellus tarkistaa postilaatikkosi itse tältä laitteelta. Palvelimelle lähetetään vain ilmoitustunnus. Älä sulje sovellusta pyyhkäisemällä sitä pois sovellusvalitsimessa: sen jälkeen iOS ei herätä sitä itse eikä signaalilla, ennen kuin avaat sovelluksen uudelleen. Varmista, että Taustapäivitys on päällä Ogneliss Mailille iOS:n asetuksissa.</string>
+    <string name="faq_notify_1_a">Kun sovellus on auki, posti saapuu heti. Kun se on taustalla, iOS päättää itse, milloin se herätetään: useammin, jos käytät sovellusta päivittäin, harvemmin Virransäästötilassa tai kun akku on vähissä. Jotta se heräisi useammin, pidä Postin tarkistus taustalla (iPhone) päällä kohdassa Asetukset → Ilmoitukset: kehittäjän palvelin lähettää Applen kautta tyhjän ”tarkista postisi” -signaalin valitsemallasi välein, ja sovellus tarkistaa postilaatikkosi itse tältä laitteelta. Palvelimelle lähetetään vain ilmoitustunnus. Älä sulje sovellusta pyyhkäisemällä sitä pois sovellusvalitsimessa: sen jälkeen iOS ei herätä sitä itse eikä signaalilla, ennen kuin avaat sovelluksen uudelleen. Varmista, että Taustapäivitys on päällä Ogneliss Mailille iOS:n asetuksissa.</string>
     <string name="faq_notify_2_q">Miten poistan ilmoitukset käytöstä yhdeltä kansiolta?</string>
     <string name="faq_notify_2_a">Asetukset → tili → Kansioiden synkronointi: kansion kytkimen vieressä oleva kello ottaa kansion (alikansioineen) uusien viestien ilmoitukset käyttöön tai pois käytöstä, ja kansio synkronoidaan edelleen. ⋮-valikossa on Ilmoitukset: kaikki kansiot ja Ilmoitukset: ei kansioita. Kansioista Lähetetyt, Luonnokset, Poistetut ja Roskaposti ei tule koskaan ilmoituksia.</string>
     <string name="faq_notify_3_q">Miksi ilmoitukset saapuvat Androidissa myöhässä?</string>

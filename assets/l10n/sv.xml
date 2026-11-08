@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Ett år</string>
     <string name="syncPeriodAll">Hela perioden</string>
     <string name="lastSyncNever">inte ännu</string>
-    <string name="accSectionSync">Synkronisering</string>
+    <string name="accSectionSync">Mottagning</string>
     <string name="accSectionMail">Meddelanden</string>
     <string name="accSectionAccount">Konto</string>
     <string name="orgPolicy">Organisationens krav</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Inga foton, det viktiga är vem meddelandet är till: ”dig”, ”dig” i Kopia eller den första mottagaren</string>
     <string name="recip_list">Lista</string>
     <string name="recip_list_desc">Varje mottagare på en egen rad med foto (upp till tre i Till, två i Kopia)</string>
-    <string name="expSpareTitle">Meddelandefönster i förväg</string>
+    <string name="expSpareTitle">Snabbare öppning av meddelanden</string>
     <string name="expSpareDesc">Meddelandet läses in medan skärmen öppnas</string>
     <string name="expSpareHint">Ett osynligt webbläsarfönster hålls redo. När du trycker på ett meddelande i listan läser det in meddelandet medan skärmen glider in, så att skärmen får det färdigt. Snabbare, men fönstret använder alltid lite minne. Om ett meddelande visas fel på någon enhet (tomt utrymme, fel höjd), stäng av detta.</string>
     <string name="expNativeTitle">Enkla meddelanden utan webbläsare</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Tavla i Min dag</string>
     <string name="expBoardDesc">Kommande · Pågår · Klart</string>
     <string name="expBoardHint">Dagens uppgifter i kolumner. Dra med ett långt tryck eller använd menyn ⋮. Genomförda möten flyttas till Klart av sig själva, uppgifter och påminnelser bara manuellt. Kan också slås på på skärmen Min dag.</string>
-    <string name="expHubTitle">Kalenderhubb</string>
+    <string name="expHubTitle">En kalender för alla brevlådor</string>
     <string name="expHubDesc">Alla konton i en kalender</string>
     <string name="expHubHint">Kalendern visar möten från alla konton samtidigt; stäng av konton med brickorna ovanför (långt tryck — bara det här). Av — kalendern följer kontot som valts i E-post.</string>
     <string name="expEasSessionTitle">Snabb Exchange-anslutning</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Aviseringar: alla mappar</string>
     <string name="folderNotifyNone">Aviseringar: inga mappar</string>
     <string name="peekControlOff">Sluta bevaka</string>
-    <string name="pushWakeTitle">Serversignaler (iPhone)</string>
+    <string name="pushWakeTitle">E-postkontroll i bakgrunden (iPhone)</string>
     <string name="pushWakeSwitch">Kontrollera e-post vid serversignal</string>
     <string name="pushWakeDesc">Appen väcks oftare i bakgrunden. Servern känner bara till aviseringstoken – inga adresser, inga meddelanden.</string>
     <string name="pushWakeHelp">iOS bestämmer själv när en app ska väckas i bakgrunden – ibland en gång i timmen eller mer sällan. Utvecklarens server (ogneliss.ru/push) skickar en tom ”kolla e-posten”-signal via Apple med det valda intervallet, och appen kontrollerar dina postlådor själv, från den här enheten. Bara den här installationens aviseringstoken skickas till servern – inga adresser, lösenord eller meddelanden. Så länge iOS bara accepterar tysta signaler släpper det igenom högst 2–3 per timme (alltså högst var 20:e minut) och väcker inte en app som har stängts genom att svepa bort den. Mer information finns i integritetspolicyn, avsnitt 6.2.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Senaste signal: {when}</string>
     <string name="pushWakeStatusNone">Inte registrerad än</string>
     <string name="pushWakeStatusError">Misslyckades: {e}</string>
-    <string name="pushWakeTitleAndroid">Serversignaler</string>
+    <string name="pushWakeTitleAndroid">E-postkontroll i bakgrunden</string>
     <string name="pushWakeHelpAndroid">Android bestämmer själv när en app i bakgrunden får köras: i djupviloläge skjuter den upp bakgrundskontroller, och från Android 15 får bakgrundssynkronisering högst 6 timmar per dygn. Utvecklarens server (ogneliss.ru/push) skickar med valt intervall en tom signal ”kolla e-post” via Google (Firebase Cloud Messaging), och appen kontrollerar själv dina brevlådor från den här enheten. Bara den här installationens aviseringstoken skickas till servern — inga adresser, lösenord eller meddelanden. I djupviloläge kan Android leverera signalen senare, i nästa underhållsfönster. Utan Google-tjänster — via en UnifiedPush-app (till exempel ntfy). Detaljer finns i integritetspolicyn, avsnitt 6.2.</string>
     <string name="pushWakeVia">Hur signalerna kommer fram</string>
     <string name="pushWakeViaHelp">Via Google (Firebase Cloud Messaging) på telefoner med Google Play-tjänster. Utan dem via en UnifiedPush-distributörsapp (till exempel ntfy): den håller sin egen anslutning och vidarebefordrar signalen ”kolla e-post”. Signalen är krypterad med den här installationens nyckel och innehåller inga adresser eller meddelanden. Detaljer: integritetspolicyn, avsnitt 6.2.</string>
@@ -3308,7 +3308,7 @@
     <string name="faq_tasks_3_a">Tryck länge på anteckningen: redigera, skicka med e-post, dela, kopiera eller ta bort.</string>
     <string name="faq_notify_title">Aviseringar och bakgrund</string>
     <string name="faq_notify_1_q">Varför kommer aviseringar sent på iPhone?</string>
-    <string name="faq_notify_1_a">Medan appen är öppen kommer e-post direkt. När den ligger i bakgrunden bestämmer iOS själv när den ska väckas: oftare om du använder appen varje dag, mer sällan i Lågeffektläge eller när batteriet är lågt. För att den ska väckas oftare, låt Serversignaler (iPhone) vara på under Inställningar → Aviseringar: Utvecklarens server skickar en tom ”kolla din e-post”-signal via Apple med det intervall du väljer, och appen kontrollerar dina postlådor själv, från den här enheten. Bara aviseringstoken skickas till servern. Stäng inte appen genom att svepa bort den i appväljaren: Efter det väcker iOS den varken av sig själv eller med en signal förrän du öppnar appen igen. Kontrollera att Bakgrundsuppdatering är på för Ogneliss Mail i iOS-inställningarna.</string>
+    <string name="faq_notify_1_a">Medan appen är öppen kommer e-post direkt. När den ligger i bakgrunden bestämmer iOS själv när den ska väckas: oftare om du använder appen varje dag, mer sällan i Lågeffektläge eller när batteriet är lågt. För att den ska väckas oftare, låt E-postkontroll i bakgrunden (iPhone) vara på under Inställningar → Aviseringar: Utvecklarens server skickar en tom ”kolla din e-post”-signal via Apple med det intervall du väljer, och appen kontrollerar dina postlådor själv, från den här enheten. Bara aviseringstoken skickas till servern. Stäng inte appen genom att svepa bort den i appväljaren: Efter det väcker iOS den varken av sig själv eller med en signal förrän du öppnar appen igen. Kontrollera att Bakgrundsuppdatering är på för Ogneliss Mail i iOS-inställningarna.</string>
     <string name="faq_notify_2_q">Hur stänger jag av aviseringar för en mapp?</string>
     <string name="faq_notify_2_a">Inställningar → konto → Mappsynkronisering: Klockan bredvid mappens reglage slår på eller av aviseringar om nya meddelanden i den (med undermappar), och mappen synkroniseras fortfarande. Menyn ⋮ har Aviseringar: alla mappar och Aviseringar: inga mappar. Det kommer aldrig aviseringar för Skickat, Utkast, Borttagna objekt eller Skräppost.</string>
     <string name="faq_notify_3_q">Varför kommer aviseringar sent på Android?</string>

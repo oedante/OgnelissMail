@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/theme/app_theme.dart';
-import 'package:go_router/go_router.dart';
 import '../../help/faq_screen.dart' show FaqButton;
 import '../../../l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -262,15 +261,8 @@ class NotificationsSettingsScreen extends ConsumerWidget {
             ),
           ],
           ]),
-          SettingsSectionTitle(l10n.tr('notifySectionImportant')),
-          SettingsGroup(children: [
-            SettingsItem(
-              leading: const Icon(AppIcons.star, color: AppColors.brandAmber),
-              title: l10n.tr('vipRulesTitle'),
-              subtitle: l10n.tr('vipRulesDesc'),
-              onTap: () => context.push('/vip-settings'),
-            ),
-          ]),
+          // «VIP и правила» — на главном экране, в «Почте» (перегруппировка
+          // 08.11.2026): здесь повторялись.
         ],
       ),
     );

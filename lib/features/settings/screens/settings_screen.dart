@@ -267,6 +267,12 @@ class SettingsScreen extends ConsumerWidget {
               subtitle: l10n.tr('connectionSecurityDesc'),
               onTap: () => context.push('/settings/security'),
             ),
+            SettingsItem(
+              icon: AppIcons.shield,
+              title: l10n.tr('dlpTitle'),
+              subtitle: l10n.tr('dlpSettingsDesc'),
+              onTap: () => context.push('/settings/dlp'),
+            ),
             // Система замораживает приложение — подсказка прямо в строке.
             SettingsItem(
               icon: AppIcons.admin_panel_settings,

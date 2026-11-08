@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Egy év</string>
     <string name="syncPeriodAll">Teljes időszak</string>
     <string name="lastSyncNever">még nem történt</string>
-    <string name="accSectionSync">Szinkronizálás</string>
+    <string name="accSectionSync">Fogadás</string>
     <string name="accSectionMail">Üzenetek</string>
     <string name="accSectionAccount">Fiók</string>
     <string name="orgPolicy">Szervezeti követelmények</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Fotók nélkül, az számít, kinek szól: „Ön”, „Ön” a Másolatban vagy az első címzett</string>
     <string name="recip_list">Lista</string>
     <string name="recip_list_desc">Minden címzett külön sorban, fotóval (legfeljebb három a Címzettben, kettő a Másolatban)</string>
-    <string name="expSpareTitle">Üzenetablak előre</string>
+    <string name="expSpareTitle">Gyorsabb üzenetmegnyitás</string>
     <string name="expSpareDesc">Az üzenet betöltődik, miközben a képernyő megnyílik</string>
     <string name="expSpareHint">Egy láthatatlan böngészőablak készenlétben marad. Amikor a listában egy üzenetre koppint, az ablak betölti az üzenetet, amíg a képernyő becsúszik, így a képernyő készen kapja. Gyorsabb, de az ablak mindig foglal egy kis memóriát. Ha egy üzenet hibásan jelenik meg valamelyik eszközön (üres hely, rossz magasság), kapcsolja ki.</string>
     <string name="expNativeTitle">Egyszerű üzenetek böngésző nélkül</string>
@@ -2500,7 +2500,7 @@
     <string name="expBoardTitle">Tábla a Saját napomban</string>
     <string name="expBoardDesc">Közelgő · Folyamatban · Kész</string>
     <string name="expBoardHint">A mai feladatok oszlopokban. Húzza hosszú lenyomással, vagy használja a ⋮ menüt. A lezajlott értekezletek maguktól átkerülnek a Kész oszlopba, a feladatok és emlékeztetők csak kézzel. A Saját napom képernyőn is bekapcsolható.</string>
-    <string name="expHubTitle">Naptárközpont</string>
+    <string name="expHubTitle">Egy naptár az összes postafiókhoz</string>
     <string name="expHubDesc">Minden fiók egy naptárban</string>
     <string name="expHubHint">A naptár egyszerre mutatja az összes fiók értekezleteit; a fiókokat a fölötte lévő címkékkel kapcsolhatja ki (hosszú lenyomás — csak ez marad). Kikapcsolva a naptár a Levelezésben kiválasztott fiókot követi.</string>
     <string name="expEasSessionTitle">Gyors Exchange-kapcsolat</string>
@@ -3078,7 +3078,7 @@
     <string name="folderNotifyAll">Értesítések: minden mappa</string>
     <string name="folderNotifyNone">Értesítések: egyik mappa sem</string>
     <string name="peekControlOff">Követés leállítása</string>
-    <string name="pushWakeTitle">Szerverjelzések (iPhone)</string>
+    <string name="pushWakeTitle">Levelek ellenőrzése a háttérben (iPhone)</string>
     <string name="pushWakeSwitch">Üzenetek ellenőrzése szerverjelzésre</string>
     <string name="pushWakeDesc">Az alkalmazás gyakrabban ébred fel a háttérben. A szerver csak az értesítési tokent ismeri – címeket és üzeneteket nem.</string>
     <string name="pushWakeHelp">Az iOS maga dönti el, mikor ébreszt fel egy alkalmazást a háttérben – néha óránként egyszer vagy ritkábban. A fejlesztő szervere (ogneliss.ru/push) a választott időközönként egy üres „nézd meg a leveleket” jelzést küld az Apple-en keresztül, az alkalmazás pedig maga ellenőrzi a postafiókjaidat, ezen az eszközön. A szerverre csak ennek a telepítésnek az értesítési tokenje kerül – nem küldünk címeket, jelszavakat vagy üzeneteket. Amíg az iOS csak néma jelzéseket fogad el, óránként legfeljebb 2–3-at enged át (vagyis legfeljebb 20 percenként), és nem ébreszt fel egy elhúzással bezárt alkalmazást. A részletek az Adatvédelmi irányelvek 6.2. szakaszában találhatók.</string>
@@ -3087,7 +3087,7 @@
     <string name="pushWakeStatusLast">Utolsó jelzés: {when}</string>
     <string name="pushWakeStatusNone">Még nincs regisztrálva</string>
     <string name="pushWakeStatusError">Sikertelen: {e}</string>
-    <string name="pushWakeTitleAndroid">Szerverjelzések</string>
+    <string name="pushWakeTitleAndroid">Levelek ellenőrzése a háttérben</string>
     <string name="pushWakeHelpAndroid">Az Android maga dönti el, mikor futhat a háttérben lévő alkalmazás: mély alvásban elhalasztja a háttérellenőrzéseket, és az Android 15 óta a háttérszinkronizálás naponta legfeljebb 6 órát kap. A fejlesztő szervere (ogneliss.ru/push) a választott időközönként a Google-on (Firebase Cloud Messaging) keresztül üres „levelek ellenőrzése” jelzést küld, és az alkalmazás maga ellenőrzi a postafiókokat erről az eszközről. A szerverre csak a telepítés értesítési tokenje kerül — se címek, se jelszavak, se levelek. Mély alvásban az Android később, a következő karbantartási ablakban is kézbesítheti a jelzést. Google-szolgáltatások nélkül egy UnifiedPush-alkalmazáson keresztül (például ntfy). Részletek az Adatvédelmi irányelvek 6.2. pontjában.</string>
     <string name="pushWakeVia">A jelzések megérkezésének módja</string>
     <string name="pushWakeViaHelp">A Google-on (Firebase Cloud Messaging) keresztül, Google Play-szolgáltatásokkal rendelkező telefonokon. Ezek nélkül egy UnifiedPush-disztribútor alkalmazáson keresztül (például ntfy): saját kapcsolatot tart fenn, és továbbítja a „levelek ellenőrzése” jelzést. A jelzést a telepítés kulcsa titkosítja, és nem tartalmaz sem címeket, sem üzeneteket. Részletek az Adatvédelmi irányelvek 6.2. pontjában.</string>

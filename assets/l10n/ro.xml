@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Un an</string>
     <string name="syncPeriodAll">Toată perioada</string>
     <string name="lastSyncNever">încă nu</string>
-    <string name="accSectionSync">Sincronizare</string>
+    <string name="accSectionSync">Primire</string>
     <string name="accSectionMail">Mesaje</string>
     <string name="accSectionAccount">Cont</string>
     <string name="orgPolicy">Cerințele organizației</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Fără fotografii, important este cui îi este adresat: „ție”, „ție” în Cc sau primul destinatar</string>
     <string name="recip_list">Listă</string>
     <string name="recip_list_desc">Fiecare destinatar pe un rând separat, cu fotografie (până la trei în Către, doi în Cc)</string>
-    <string name="expSpareTitle">Fereastra mesajului în avans</string>
+    <string name="expSpareTitle">Deschidere mai rapidă a mesajelor</string>
     <string name="expSpareDesc">Mesajul se încarcă în timp ce se deschide ecranul</string>
     <string name="expSpareHint">O fereastră de browser invizibilă este ținută pregătită. Când atingi un mesaj din listă, acesta se încarcă în timp ce ecranul glisează, astfel încât ecranul îl are gata. Este mai rapid, dar fereastra folosește mereu puțină memorie. Dacă un mesaj se afișează incorect pe un dispozitiv (spațiu gol, înălțime greșită), dezactivează această opțiune.</string>
     <string name="expNativeTitle">Mesaje simple fără browser</string>
@@ -2512,7 +2512,7 @@
     <string name="expBoardTitle">Tablă în Ziua mea</string>
     <string name="expBoardDesc">De urmat · În lucru · Finalizat</string>
     <string name="expBoardHint">Activitățile de azi pe coloane. Trage cu atingere lungă sau folosește meniul ⋮. Întâlnirile trecute trec singure la Finalizat, activitățile și memento-urile doar manual. Poate fi comutată și pe ecranul Ziua mea.</string>
-    <string name="expHubTitle">Hub calendar</string>
+    <string name="expHubTitle">Un calendar pentru toate căsuțele</string>
     <string name="expHubDesc">Toate conturile într-un singur calendar</string>
     <string name="expHubHint">Calendarul arată întâlnirile din toate conturile deodată; dezactivează conturile cu chipurile de deasupra (atingere lungă — doar acesta). Dezactivat — calendarul urmează contul ales în E-mail.</string>
     <string name="expEasSessionTitle">Conexiune rapidă Exchange</string>
@@ -3091,7 +3091,7 @@
     <string name="folderNotifyAll">Notificări: toate dosarele</string>
     <string name="folderNotifyNone">Notificări: niciun dosar</string>
     <string name="peekControlOff">Nu mai urmări</string>
-    <string name="pushWakeTitle">Semnale de la server (iPhone)</string>
+    <string name="pushWakeTitle">Verificare e-mail în fundal (iPhone)</string>
     <string name="pushWakeSwitch">Verifică e-mailul la semnalul serverului</string>
     <string name="pushWakeDesc">Aplicația se trezește mai des în fundal. Serverul cunoaște doar tokenul de notificare — fără adrese, fără mesaje.</string>
     <string name="pushWakeHelp">iOS decide singur când trezește o aplicație în fundal — uneori o dată pe oră sau mai rar. Serverul dezvoltatorului (ogneliss.ru/push) trimite prin Apple, la intervalul ales, un semnal gol „verifică e-mailul”, iar aplicația își verifică singură cutiile poștale, de pe acest dispozitiv. Pe server se trimite doar tokenul de notificări al acestei instalări — fără adrese, parole sau mesaje. Cât timp iOS acceptă doar semnale silențioase, lasă să treacă cel mult 2–3 pe oră (adică cel mult o dată la 20 de minute) și nu trezește o aplicație închisă prin glisare. Detalii găsești în Politica de confidențialitate, secțiunea 6.2.</string>
@@ -3100,7 +3100,7 @@
     <string name="pushWakeStatusLast">Ultimul semnal: {when}</string>
     <string name="pushWakeStatusNone">Încă neînregistrat</string>
     <string name="pushWakeStatusError">Eșec: {e}</string>
-    <string name="pushWakeTitleAndroid">Semnale de la server</string>
+    <string name="pushWakeTitleAndroid">Verificare e-mail în fundal</string>
     <string name="pushWakeHelpAndroid">Android decide singur când poate rula o aplicație în fundal: în somn profund amână verificările în fundal, iar de la Android 15 sincronizarea în fundal primește cel mult 6 ore pe zi. Serverul dezvoltatorului (ogneliss.ru/push) trimite prin Google (Firebase Cloud Messaging), la intervalul ales, un semnal gol „verifică e-mailul”, iar aplicația verifică singură căsuțele, de pe acest dispozitiv. Către server se trimite doar tokenul de notificare al acestei instalări — fără adrese, parole sau mesaje. În somn profund, Android poate livra semnalul mai târziu, în următoarea fereastră de întreținere. Fără serviciile Google — printr-o aplicație UnifiedPush (de exemplu, ntfy). Detalii în Politica de confidențialitate, secțiunea 6.2.</string>
     <string name="pushWakeVia">Cum sosesc semnalele</string>
     <string name="pushWakeViaHelp">Prin Google (Firebase Cloud Messaging), pe telefoanele cu serviciile Google Play. Fără acestea, printr-o aplicație distribuitor UnifiedPush (de exemplu, ntfy): ea își menține propria conexiune și transmite semnalul „verifică e-mailul”. Semnalul este criptat cu cheia acestei instalări și nu conține adrese sau mesaje. Detalii: Politica de confidențialitate, secțiunea 6.2.</string>

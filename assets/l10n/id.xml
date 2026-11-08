@@ -1203,7 +1203,7 @@
     <string name="syncPeriodYear">Satu tahun</string>
     <string name="syncPeriodAll">Semua waktu</string>
     <string name="lastSyncNever">belum pernah</string>
-    <string name="accSectionSync">Sinkronisasi</string>
+    <string name="accSectionSync">Penerimaan</string>
     <string name="accSectionMail">Email</string>
     <string name="accSectionAccount">Akun</string>
     <string name="orgPolicy">Persyaratan organisasi</string>
@@ -1252,7 +1252,7 @@
     <string name="recip_line_desc">Tanpa foto, yang penting untuk siapa email ini: “Anda”, “Anda” di Cc, atau penerima pertama</string>
     <string name="recip_list">Daftar</string>
     <string name="recip_list_desc">Setiap penerima di barisnya sendiri dengan foto (hingga tiga di Kepada, dua di Cc)</string>
-    <string name="expSpareTitle">Jendela email disiapkan lebih awal</string>
+    <string name="expSpareTitle">Pembukaan pesan lebih cepat</string>
     <string name="expSpareDesc">Email dimuat saat layar dibuka</string>
     <string name="expSpareHint">Satu jendela browser tak terlihat disiapkan lebih awal. Saat Anda mengetuk email di daftar, jendela itu memuat email selagi layar bergeser masuk, sehingga layar sudah siap. Lebih cepat, tetapi jendela selalu memakai sedikit memori. Jika email tampil tidak benar di suatu perangkat (ruang kosong, tinggi salah), matikan opsi ini.</string>
     <string name="expNativeTitle">Email sederhana tanpa browser</string>
@@ -2488,7 +2488,7 @@
     <string name="expBoardTitle">Papan di Hari saya</string>
     <string name="expBoardDesc">Akan datang · Diproses · Selesai</string>
     <string name="expBoardHint">Tugas hari ini dalam kolom. Seret dengan menekan lama atau gunakan menu ⋮. Rapat yang sudah lewat pindah ke Selesai sendiri, tugas dan pengingat hanya secara manual. Bisa juga diaktifkan di layar Hari saya.</string>
-    <string name="expHubTitle">Hub kalender</string>
+    <string name="expHubTitle">Satu kalender untuk semua kotak surat</string>
     <string name="expHubDesc">Semua akun dalam satu kalender</string>
     <string name="expHubHint">Kalender menampilkan rapat dari semua akun sekaligus; nonaktifkan akun dengan chip di atasnya (tekan lama — hanya akun ini). Nonaktif — kalender mengikuti akun yang dipilih di Email.</string>
     <string name="expEasSessionTitle">Koneksi Exchange cepat</string>
@@ -3065,7 +3065,7 @@
     <string name="folderNotifyAll">Notifikasi: semua folder</string>
     <string name="folderNotifyNone">Notifikasi: tanpa folder</string>
     <string name="peekControlOff">Berhenti memantau</string>
-    <string name="pushWakeTitle">Sinyal server (iPhone)</string>
+    <string name="pushWakeTitle">Pemeriksaan email di latar belakang (iPhone)</string>
     <string name="pushWakeSwitch">Periksa email saat ada sinyal server</string>
     <string name="pushWakeDesc">Aplikasi lebih sering aktif di latar belakang. Server hanya mengetahui token notifikasi — tanpa alamat, tanpa email.</string>
     <string name="pushWakeHelp">iOS menentukan sendiri kapan membangunkan aplikasi di latar belakang — kadang sekali sejam atau lebih jarang. Server pengembang (ogneliss.ru/push) mengirim sinyal kosong “periksa email” melalui Apple pada interval yang dipilih, lalu aplikasi memeriksa kotak surat Anda sendiri, dari perangkat ini. Yang dikirim ke server hanya token notifikasi instalasi ini — tanpa alamat, kata sandi, atau email. Selama iOS hanya menerima sinyal senyap, iOS hanya meloloskan paling banyak 2–3 sinyal per jam (jadi paling sering setiap 20 menit) dan tidak membangunkan aplikasi yang ditutup dengan menggesernya. Detailnya ada di Kebijakan Privasi, bagian 6.2.</string>
@@ -3074,7 +3074,7 @@
     <string name="pushWakeStatusLast">Sinyal terakhir: {when}</string>
     <string name="pushWakeStatusNone">Belum terdaftar</string>
     <string name="pushWakeStatusError">Gagal: {e}</string>
-    <string name="pushWakeTitleAndroid">Sinyal server</string>
+    <string name="pushWakeTitleAndroid">Pemeriksaan email di latar belakang</string>
     <string name="pushWakeHelpAndroid">Android memutuskan sendiri kapan aplikasi di latar belakang boleh berjalan: saat tidur lelap, Android menunda pemeriksaan latar belakang, dan sejak Android 15 sinkronisasi latar belakang mendapat paling banyak 6 jam per hari. Server pengembang (ogneliss.ru/push) mengirim sinyal kosong «periksa email» melalui Google (Firebase Cloud Messaging) pada interval yang dipilih, dan aplikasi memeriksa kotak surat Anda sendiri dari perangkat ini. Hanya token notifikasi instalasi ini yang dikirim ke server — tanpa alamat, kata sandi, atau pesan. Saat tidur lelap, Android dapat mengirim sinyal lebih lambat, pada jendela pemeliharaan berikutnya. Tanpa layanan Google — melalui aplikasi UnifiedPush (misalnya ntfy). Detail ada di Kebijakan Privasi, bagian 6.2.</string>
     <string name="pushWakeVia">Cara sinyal diterima</string>
     <string name="pushWakeViaHelp">Melalui Google (Firebase Cloud Messaging) di ponsel dengan layanan Google Play. Tanpa layanan itu, melalui aplikasi distributor UnifiedPush (misalnya ntfy): aplikasi tersebut menjaga koneksinya sendiri dan meneruskan sinyal “periksa email”. Sinyal dienkripsi dengan kunci instalasi ini dan tidak berisi alamat atau pesan. Detail ada di Kebijakan Privasi, bagian 6.2.</string>
@@ -3295,7 +3295,7 @@
     <string name="faq_tasks_3_a">Tekan lama catatan: edit, kirim lewat email, bagikan, salin, atau hapus.</string>
     <string name="faq_notify_title">Notifikasi dan latar belakang</string>
     <string name="faq_notify_1_q">Mengapa notifikasi terlambat di iPhone?</string>
-    <string name="faq_notify_1_a">Saat aplikasi terbuka, email masuk seketika. Saat berada di latar belakang, iOS menentukan sendiri kapan membangunkannya: lebih sering jika Anda memakai aplikasi setiap hari, lebih jarang dalam Mode Daya Rendah atau saat baterai hampir habis. Agar aplikasi lebih sering bangun, biarkan Sinyal server (iPhone) tetap aktif di Pengaturan → Notifikasi: server pengembang mengirim sinyal kosong “periksa email” melalui Apple pada interval yang Anda pilih, dan aplikasi memeriksa kotak surat Anda sendiri, dari perangkat ini; hanya token notifikasi yang dikirim ke server. Jangan menutup aplikasi dengan menggesernya di pengalih aplikasi: setelah itu iOS tidak membangunkannya, baik sendiri maupun lewat sinyal, sampai Anda membuka aplikasi lagi. Pastikan Penyegaran App di Latar Belakang aktif untuk Ogneliss Mail di Pengaturan iOS.</string>
+    <string name="faq_notify_1_a">Saat aplikasi terbuka, email masuk seketika. Saat berada di latar belakang, iOS menentukan sendiri kapan membangunkannya: lebih sering jika Anda memakai aplikasi setiap hari, lebih jarang dalam Mode Daya Rendah atau saat baterai hampir habis. Agar aplikasi lebih sering bangun, biarkan Pemeriksaan email di latar belakang (iPhone) tetap aktif di Pengaturan → Notifikasi: server pengembang mengirim sinyal kosong “periksa email” melalui Apple pada interval yang Anda pilih, dan aplikasi memeriksa kotak surat Anda sendiri, dari perangkat ini; hanya token notifikasi yang dikirim ke server. Jangan menutup aplikasi dengan menggesernya di pengalih aplikasi: setelah itu iOS tidak membangunkannya, baik sendiri maupun lewat sinyal, sampai Anda membuka aplikasi lagi. Pastikan Penyegaran App di Latar Belakang aktif untuk Ogneliss Mail di Pengaturan iOS.</string>
     <string name="faq_notify_2_q">Bagaimana cara mematikan notifikasi untuk satu folder?</string>
     <string name="faq_notify_2_a">Pengaturan → akun → Sinkronisasi folder: lonceng di samping sakelar folder mengaktifkan atau menonaktifkan notifikasi email barunya (beserta subfolder), dan folder tetap disinkronkan. Menu ⋮ berisi Notifikasi: semua folder dan Notifikasi: tanpa folder. Tidak pernah ada notifikasi untuk Terkirim, Draf, Item yang dihapus, atau Email sampah.</string>
     <string name="faq_notify_3_q">Mengapa notifikasi tertunda di Android?</string>

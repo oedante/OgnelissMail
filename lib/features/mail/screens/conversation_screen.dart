@@ -145,7 +145,13 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     super.initState();
     final db = ref.read(databaseProvider);
     _stream = _watchConversation(db, widget.conversationId, widget.accountId);
-    _drafts = db.watchDraftsLight(widget.accountId).map((rows) => [for (final r in rows) emailModelFromRow(r)]);
+    // Таблица писем меняется при каждой синхронизации — экран беседы
+    // перестраивается, только когда черновики правда изменились (2.0.0,
+    // план 08.11.2026, «черновики беседы — distinct»).
+    _drafts = db
+        .watchDraftsLight(widget.accountId)
+        .map((rows) => [for (final r in rows) emailModelFromRow(r)])
+        .distinct(sameDraftList);
   }
 
   /// Письма беседы и её черновики ответов, самое новое — первым.
@@ -1060,3 +1066,23 @@ class _ConversationPagerScreenState extends ConsumerState<ConversationPagerScree
     );
   }
 }
+
+/// Списки черновиков одинаковы для экрана беседы: те же письма с теми же
+/// темой, текстом-превью, датой и папкой.
+@visibleForTesting
+bool sameDraftList(List<EmailModel> a, List<EmailModel> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    final x = a[i], y = b[i];
+    if (x.id != y.id ||
+        x.receivedAt != y.receivedAt ||
+        x.subject != y.subject ||
+        x.preview != y.preview ||
+        x.folderId != y.folderId) {
+      return false;
+    }
+  }
+  return true;
+}
+

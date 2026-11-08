@@ -50,6 +50,8 @@ class Autodiscover {
       String? ewsUrl;
       String? easUrl;
       var currentEmail = email;
+      // Серверы, уже попросившие вход (401): им запрос сразу с паролем.
+      final authHosts = <String>{};
 
       Future<void> tryAll(List<String> urls) async {
         for (final start in urls) {
@@ -59,12 +61,12 @@ class Autodiscover {
             final r = await _tryPox(client,
                 url: url, email: currentEmail, authHeader: authHeader, userAgent: userAgent,
                 requestNs: _outlookReq, responseSchema: _outlookResp,
-                extract: _extractEwsUrl, log: log, timeout: timeout);
+                extract: _extractEwsUrl, log: log, timeout: timeout, authHosts: authHosts);
             ewsUrl ??= r.value;
             final r2 = await _tryPox(client,
                 url: url, email: currentEmail, authHeader: authHeader, userAgent: userAgent,
                 requestNs: _mobileReq, responseSchema: _mobileResp,
-                extract: _extractEasUrl, log: log, timeout: timeout);
+                extract: _extractEasUrl, log: log, timeout: timeout, authHosts: authHosts);
             easUrl ??= r2.value;
             if (ewsUrl != null && easUrl != null) break;
             // Перенаправление на другой адрес почты (redirectAddr) —
@@ -163,6 +165,7 @@ class Autodiscover {
     required String? Function(XmlDocument) extract,
     required List<String> log,
     required Duration timeout,
+    Set<String>? authHosts,
   }) async {
     final body = '<?xml version="1.0" encoding="utf-8"?>'
         '<Autodiscover xmlns="$requestNs">'
@@ -170,11 +173,24 @@ class Autodiscover {
         '<AcceptableResponseSchema>$responseSchema</AcceptableResponseSchema>'
         '</Request></Autodiscover>';
     try {
-      final resp = await client.post(Uri.parse(url), headers: {
-        'Authorization': authHeader,
-        'Content-Type': 'text/xml; charset=utf-8',
-        'User-Agent': userAgent,
-      }, body: body).timeout(timeout);
+      // Сначала без пароля (план 08.11.2026 п. 1): корневой домен почты
+      // (https://<домен>/Autodiscover) часто у стороннего хостинга сайта, и
+      // пароль домена уходил ему первым же запросом. Учётные данные — только
+      // серверу, который сам попросил вход (401), тем же адресом.
+      final uri = Uri.parse(url);
+      final host = uri.host.toLowerCase();
+      Future<http.Response> post({required bool auth}) => client.post(uri, headers: {
+            if (auth) 'Authorization': authHeader,
+            'Content-Type': 'text/xml; charset=utf-8',
+            'User-Agent': userAgent,
+          }, body: body).timeout(timeout);
+      final known = authHosts?.contains(host) ?? false;
+      var resp = await post(auth: known);
+      if (!known && resp.statusCode == 401) {
+        authHosts?.add(host);
+        log.add('Autodiscover $url → 401, вход по паролю');
+        resp = await post(auth: true);
+      }
       if (resp.statusCode == 200) {
         final doc = XmlDocument.parse(resp.body);
         // <Action>redirectAddr</Action><RedirectAddr>…</RedirectAddr>
@@ -198,7 +214,7 @@ class Autodiscover {
       const moved = {301, 302, 307, 308};
       final loc = resp.headers['location'];
       if (moved.contains(resp.statusCode) && loc != null && loc.isNotEmpty) {
-        final next = Uri.parse(url).resolve(loc).toString();
+        final next = uri.resolve(loc).toString();
         log.add('Autodiscover $url → HTTP ${resp.statusCode} на $next');
         if (next.startsWith('https://')) return (value: null, redirectAddr: null, redirectUrl: next);
         return (value: null, redirectAddr: null, redirectUrl: null);

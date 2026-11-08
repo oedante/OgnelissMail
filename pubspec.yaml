@@ -1,7 +1,7 @@
 name: ogneliss
 description: Ogneliss Mail — почтовый клиент для Exchange, Gmail, Яндекс и Mail.ru
 publish_to: "none"
-version: 2.1.0+145
+version: 2.2.0+146
 
 environment:
   # Dart 3.10+: этого требует sqlite3 3.x (через drift 2.32+). Flutter 3.38+.
@@ -176,7 +176,8 @@ dev_dependencies:
 
 flutter_launcher_icons:
   # Все значки (Android, iOS, сайт, магазины) генерирует
-  # tool/branding/make_icon_v5.py build — запускать плагин не нужно, он
+  # tool/branding/make_icon_v6.py build (светлая иконка с 08.11.2026; v5 —
+  # прежняя тёмная) — запускать плагин не нужно, он
   # перезаписал бы ресурсы. Ниже — прежние настройки для справки. iOS: Xcode-проекта (Assets.xcassets) в репозитории
   # нет — плагин падал с PathNotFoundException. Включить после
   # `flutter create --platforms=ios .`

@@ -36,6 +36,18 @@ Outlook («=====» у предупреждения о внешнем отпра�
 администратора — строго всегда (сделано, `installStrictPinning`, Android и
 iPhone — в плагине ogneliss_native_http).
 
+08.11.2026, вечер (сборка у владельца, 2.0.0+144): `flutter analyze` и
+компиляция падали на `zip_view.dart` (`writeRange`/`writeZeros` нет в
+суперклассе) — `pubspec.lock` владельца держал archive 4.5.2, а код
+написан под 4.6 (на GitHub pub ставит свежие версии, лок в архив не входит).
+Теперь `pubspec.yaml` требует archive ^4.6.0, а скрипты сборки — новый
+`build_android.bat` (`scripts/build_android.ps1`, `.sh`), `build_ios.sh`,
+`build_windows.ps1` — ставят пакеты как на GitHub (`flutter pub upgrade`;
+`-KeepLock` / `--keep-lock` — свои версии). «[SEVERE] RustBuilder: Failed
+to find lib.name» — не ошибка: native_toolchain_rust 1.0.6 берёт
+package.name и продолжает; 1.0.7 без этого сообщения требует code_assets 2,
+а irondash_engine_context 0.6.0-dev.0 (super_drag_and_drop) — 1.x.
+
 ## Общая дизайн-система Dialer и Mail (07.11.2026)
 
 Решение владельца 07.11.2026: Dialer и Mail — одинаковый интерфейс и схожий

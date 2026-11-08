@@ -19,6 +19,8 @@
 | Что | Команда |
 |---|---|
 | Подготовка (один раз и после обновления архива) | `powershell -ExecutionPolicy Bypass -File scripts\setup.ps1 -Platforms "android,windows"` |
+| **Сборка Android одной командой** (AAB и APK → `build\out\`) | `build_android.bat` · только APK — `build_android.bat -Target apk` · на телефоне — `build_android.bat -Run` |
+| Пакеты — как в сборке на GitHub (после распаковки нового архива) | `flutter pub upgrade` |
 | Запуск под Windows | `flutter run -d windows --dart-define-from-file=config/dart_defines.json` |
 | Список устройств и эмуляторов | `flutter devices` · `flutter emulators` |
 | Запуск эмулятора | `flutter emulators --launch <id>` |
@@ -276,6 +278,14 @@ $env:OGNELISS_KEYSTORE_PASSWORD = "<пароль>"
    Если `keytool` не в PATH:
    `& "$env:ProgramFiles\Android\Android Studio\jbr\bin\keytool.exe" -printcert -jarfile …`
 
+Или одной командой — **`build_android.bat`** (`scripts\build_android.ps1`;
+на Mac и Linux — `scripts/build_android.sh`): обновит пакеты до версий
+проверочной сборки на GitHub, сгенерирует код базы, проверит код и соберёт
+App Bundle и APK; копии с номером версии — `build\out\ogneliss-mail-<версия>.aab`
+и `.apk`, журнал — `build\logs\`. Параметры: `-Target aab|apk`, `-Run`
+(запуск на телефоне или эмуляторе, `-Device <id>`), `-Clean`, `-Test`,
+`-KeepLock` (оставить свои версии пакетов).
+
 Другие варианты:
 
 - APK для установки вручную или в RuStore:
@@ -366,6 +376,8 @@ $env:OGNELISS_KEYSTORE_PASSWORD = "<пароль>"
 | `Keystore was tampered with, or password was incorrect` | Неверный пароль в `android\key.properties` или в `OGNELISS_KEYSTORE_PASSWORD` |
 | Play Console: «подписано не тем ключом» | Сборка подписана отладочным ключом — нет `android\key.properties`; или загружен ключ не того проекта |
 | Play Console: «version code уже используется» | Увеличьте число после `+` в `version:` в `pubspec.yaml` |
+| `The method 'writeRange' isn't defined in a superclass of 'CappedOutputFileStream'` (и `writeZeros`) | Старый `pubspec.lock` держит `archive` 4.5 (нужен 4.6): `flutter pub upgrade` или `build_android.bat`. С 2.0.0 (08.11.2026) `pubspec.yaml` требует 4.6, и хватает `flutter pub get` |
+| `[SEVERE] RustBuilder: Failed to find lib.name in …super_native_extensions…\rust\Cargo.toml` и `type 'Null' is not a subtype of type 'String'` | Не ошибка: native_toolchain_rust 1.0.6 так сообщает, что в Cargo.toml нет `lib.name`, и берёт `package.name` — сборка идёт дальше. Если сборка всё же упала, причина — в строках **после** этих сообщений. Версия 1.0.7 без сообщения пока недоступна: ей нужен code_assets 2, а irondash_engine_context из super_drag_and_drop требует 1.x |
 | Android Studio открыла папку `android\` как отдельный проект | Закройте её и откройте корень проекта, иначе не будет Flutter-запуска и hot reload |
 | Вход Google/Яндекс: «собрано без ключа OAuth-прокси» | Впишите `OAUTH_PROXY_KEY` в `config\dart_defines.json` и перезапустите |
 
@@ -378,7 +390,7 @@ $env:OGNELISS_KEYSTORE_PASSWORD = "<пароль>"
 | `android/app/src/main/kotlin/com/ogneliss/mail/` | нативная часть Android (контакты, календарь, речь, фон, «Поделиться», безопасность устройства) |
 | `android/app/build.gradle.kts` | пакет `com.ogneliss.mail`, подпись, minSdk |
 | `config/dart_defines.json` | адрес и ключ OAuth-прокси (в git не попадает) |
-| `scripts/` | `setup.ps1`, `build_windows.ps1`, `create_upload_key.ps1` |
+| `scripts/` | `setup.ps1`, `build_android.ps1`, `build_windows.ps1`, `create_upload_key.ps1` |
 | `server/oauth-proxy/` | OAuth-прокси и его установщик (`OAUTH_PROXY_DEBIAN.md`) |
 | `test/` | модульные тесты |
 | `docs/` | документация, аудит |

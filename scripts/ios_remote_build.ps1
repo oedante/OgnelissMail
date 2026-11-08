@@ -18,8 +18,9 @@
   .\scripts\ios_remote_build.ps1            # IPA
   .\scripts\ios_remote_build.ps1 -Upload    # IPA и выгрузка в TestFlight
   .\scripts\ios_remote_build.ps1 -Check     # проверить окружение Mac
+  .\scripts\ios_remote_build.ps1 -KeepLock  # не обновлять версии пакетов на Mac
 #>
-param([switch]$Upload, [switch]$Check)
+param([switch]$Upload, [switch]$Check, [switch]$KeepLock)
 $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $PSScriptRoot
 Set-Location $Root
@@ -55,6 +56,7 @@ ssh $target "mkdir -p ~/$dir && tar -xzf /tmp/ogneliss-ios.tgz -C ~/$dir && rm /
 Remove-Item $tmp
 
 $buildArgs = if ($Check) { '--check' } elseif ($Upload) { '--upload' } else { '' }
+if ($KeepLock -and -not $Check) { $buildArgs = "$buildArgs --keep-lock".Trim() }
 $envs = @("export LANG=en_US.UTF-8", 'export PATH="$HOME/flutter/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"')
 if ($cfg.teamId) { $envs += "export TEAM_ID=$($cfg.teamId)" }
 if ($cfg.ascKeyId) { $envs += "export ASC_KEY_ID=$($cfg.ascKeyId)"; $envs += "export ASC_ISSUER_ID=$($cfg.ascIssuerId)" }

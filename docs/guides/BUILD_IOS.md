@@ -39,7 +39,8 @@ scripts/build_ios.sh --team ABCDE12345       # запомнить Team ID (devel
 scripts/build_ios.sh --run                   # запуск на iPhone (по кабелю) или в симуляторе
 ```
 
-Скрипт сам выполнит `flutter pub get`, сгенерирует код базы
+Скрипт сам обновит пакеты до версий проверочной сборки на GitHub
+(`flutter pub upgrade`; `--keep-lock` — оставить свои), сгенерирует код базы
 (`build_runner`, если его нет) и `pod install`. Не запускайте на Mac
 `scripts/setup.sh` — он для первичного создания платформ, iOS-проект уже есть.
 

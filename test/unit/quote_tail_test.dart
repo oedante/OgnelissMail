@@ -4,10 +4,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/core/utils/quote_splitter.dart';
 
-final _disclaimerRu = 'Данное сообщение и любые приложения к нему являются конфиденциальными и предназначены '
+const _disclaimerRu = 'Данное сообщение и любые приложения к нему являются конфиденциальными и предназначены '
     'исключительно для адресата. Если вы получили это сообщение по ошибке, пожалуйста, сообщите отправителю '
     'и удалите его. Любое использование, распространение или копирование сообщения запрещено.';
-final _disclaimerEn = 'This e-mail and any attachments are confidential and intended solely for the addressee. '
+const _disclaimerEn = 'This e-mail and any attachments are confidential and intended solely for the addressee. '
     'If you have received this e-mail in error, please notify the sender and delete it. Any use, disclosure '
     'or copying of this message is prohibited.';
 final _longSig = List.filled(12, 'Иванов Иван Иванович, ведущий инженер, отдел эксплуатации, тел. +7 495 000-00-00').join('<br>');

@@ -4033,4 +4033,10 @@
     <string name="quickReplyPhoto">صورة</string>
     <string name="quickReplyAdd">صورة أو ملف أو قالب</string>
     <string name="quickReplyRemoveFile">إزالة من الرد</string>
+    <string name="convFilesTitle">الملفات والروابط</string>
+    <string name="convFilesTab">الملفات</string>
+    <string name="convLinksTab">الروابط</string>
+    <string name="convFilesNone">لا توجد ملفات في هذه المحادثة</string>
+    <string name="convLinksNone">لا توجد روابط في هذه المحادثة</string>
+    <string name="convFileRetry">تعذّر التنزيل — اضغط للمحاولة مرة أخرى</string>
 </resources>

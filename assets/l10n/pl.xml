@@ -3991,4 +3991,10 @@
     <string name="quickReplyPhoto">Zdjęcie</string>
     <string name="quickReplyAdd">Zdjęcie, plik lub szablon</string>
     <string name="quickReplyRemoveFile">Usuń z odpowiedzi</string>
+    <string name="convFilesTitle">Pliki i linki</string>
+    <string name="convFilesTab">Pliki</string>
+    <string name="convLinksTab">Linki</string>
+    <string name="convFilesNone">Brak plików w tej rozmowie</string>
+    <string name="convLinksNone">Brak linków w tej rozmowie</string>
+    <string name="convFileRetry">Nie udało się pobrać — dotknij, aby spróbować ponownie</string>
 </resources>

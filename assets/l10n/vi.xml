@@ -3928,4 +3928,10 @@
     <string name="quickReplyPhoto">Ảnh</string>
     <string name="quickReplyAdd">Ảnh, tệp hoặc mẫu</string>
     <string name="quickReplyRemoveFile">Xóa khỏi trả lời</string>
+    <string name="convFilesTitle">Tệp và liên kết</string>
+    <string name="convFilesTab">Tệp</string>
+    <string name="convLinksTab">Liên kết</string>
+    <string name="convFilesNone">Không có tệp trong cuộc hội thoại này</string>
+    <string name="convLinksNone">Không có liên kết trong cuộc hội thoại này</string>
+    <string name="convFileRetry">Tải xuống không thành công — nhấn để thử lại</string>
 </resources>

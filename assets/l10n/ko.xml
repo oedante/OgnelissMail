@@ -3928,4 +3928,10 @@
     <string name="quickReplyPhoto">사진</string>
     <string name="quickReplyAdd">사진, 파일 또는 템플릿</string>
     <string name="quickReplyRemoveFile">답장에서 제거</string>
+    <string name="convFilesTitle">파일 및 링크</string>
+    <string name="convFilesTab">파일</string>
+    <string name="convLinksTab">링크</string>
+    <string name="convFilesNone">이 대화에는 파일이 없습니다</string>
+    <string name="convLinksNone">이 대화에는 링크가 없습니다</string>
+    <string name="convFileRetry">다운로드하지 못했습니다. 다시 시도하려면 탭하세요</string>
 </resources>

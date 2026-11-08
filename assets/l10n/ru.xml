@@ -3991,4 +3991,10 @@
     <string name="quickReplyPhoto">Фото</string>
     <string name="quickReplyAdd">Фото, файл или шаблон</string>
     <string name="quickReplyRemoveFile">Убрать из ответа</string>
+    <string name="convFilesTitle">Файлы и ссылки</string>
+    <string name="convFilesTab">Файлы</string>
+    <string name="convLinksTab">Ссылки</string>
+    <string name="convFilesNone">В письмах беседы нет файлов</string>
+    <string name="convLinksNone">В письмах беседы нет ссылок</string>
+    <string name="convFileRetry">Не скачалось — нажмите, чтобы повторить</string>
 </resources>

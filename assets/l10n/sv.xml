@@ -3949,4 +3949,10 @@
     <string name="quickReplyPhoto">Foto</string>
     <string name="quickReplyAdd">Foto, fil eller mall</string>
     <string name="quickReplyRemoveFile">Ta bort från svaret</string>
+    <string name="convFilesTitle">Filer och länkar</string>
+    <string name="convFilesTab">Filer</string>
+    <string name="convLinksTab">Länkar</string>
+    <string name="convFilesNone">Inga filer i den här konversationen</string>
+    <string name="convLinksNone">Inga länkar i den här konversationen</string>
+    <string name="convFileRetry">Hämtningen misslyckades — tryck för att försöka igen</string>
 </resources>

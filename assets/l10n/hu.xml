@@ -3949,4 +3949,10 @@
     <string name="quickReplyPhoto">Fotó</string>
     <string name="quickReplyAdd">Fotó, fájl vagy sablon</string>
     <string name="quickReplyRemoveFile">Eltávolítás a válaszból</string>
+    <string name="convFilesTitle">Fájlok és hivatkozások</string>
+    <string name="convFilesTab">Fájlok</string>
+    <string name="convLinksTab">Hivatkozások</string>
+    <string name="convFilesNone">Ebben a beszélgetésben nincsenek fájlok</string>
+    <string name="convLinksNone">Ebben a beszélgetésben nincsenek hivatkozások</string>
+    <string name="convFileRetry">A letöltés nem sikerült — koppintson az újrapróbáláshoz</string>
 </resources>

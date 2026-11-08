@@ -3928,4 +3928,10 @@
     <string name="quickReplyPhoto">写真</string>
     <string name="quickReplyAdd">写真、ファイル、テンプレート</string>
     <string name="quickReplyRemoveFile">返信から削除</string>
+    <string name="convFilesTitle">ファイルとリンク</string>
+    <string name="convFilesTab">ファイル</string>
+    <string name="convLinksTab">リンク</string>
+    <string name="convFilesNone">この会話にファイルはありません</string>
+    <string name="convLinksNone">この会話にリンクはありません</string>
+    <string name="convFileRetry">ダウンロードできませんでした。タップして再試行</string>
 </resources>

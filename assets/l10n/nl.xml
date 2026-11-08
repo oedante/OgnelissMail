@@ -3949,4 +3949,10 @@
     <string name="quickReplyPhoto">Foto</string>
     <string name="quickReplyAdd">Foto, bestand of sjabloon</string>
     <string name="quickReplyRemoveFile">Verwijderen uit antwoord</string>
+    <string name="convFilesTitle">Bestanden en links</string>
+    <string name="convFilesTab">Bestanden</string>
+    <string name="convLinksTab">Links</string>
+    <string name="convFilesNone">Geen bestanden in dit gesprek</string>
+    <string name="convLinksNone">Geen links in dit gesprek</string>
+    <string name="convFileRetry">Downloaden mislukt — tik om opnieuw te proberen</string>
 </resources>

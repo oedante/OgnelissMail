@@ -3949,4 +3949,10 @@
     <string name="quickReplyPhoto">Foto</string>
     <string name="quickReplyAdd">Foto, archivo o plantilla</string>
     <string name="quickReplyRemoveFile">Quitar de la respuesta</string>
+    <string name="convFilesTitle">Archivos y enlaces</string>
+    <string name="convFilesTab">Archivos</string>
+    <string name="convLinksTab">Enlaces</string>
+    <string name="convFilesNone">No hay archivos en esta conversación</string>
+    <string name="convLinksNone">No hay enlaces en esta conversación</string>
+    <string name="convFileRetry">No se pudo descargar: toca para reintentar</string>
 </resources>

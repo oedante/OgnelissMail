@@ -3970,4 +3970,10 @@
     <string name="quickReplyPhoto">Fotka</string>
     <string name="quickReplyAdd">Fotka, súbor alebo šablóna</string>
     <string name="quickReplyRemoveFile">Odstrániť z odpovede</string>
+    <string name="convFilesTitle">Súbory a odkazy</string>
+    <string name="convFilesTab">Súbory</string>
+    <string name="convLinksTab">Odkazy</string>
+    <string name="convFilesNone">V tejto konverzácii nie sú žiadne súbory</string>
+    <string name="convLinksNone">V tejto konverzácii nie sú žiadne odkazy</string>
+    <string name="convFileRetry">Stiahnutie zlyhalo — ťuknutím to skúste znova</string>
 </resources>

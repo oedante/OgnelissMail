@@ -3928,4 +3928,10 @@
     <string name="quickReplyPhoto">รูปภาพ</string>
     <string name="quickReplyAdd">รูปภาพ ไฟล์ หรือเทมเพลต</string>
     <string name="quickReplyRemoveFile">นำออกจากคำตอบ</string>
+    <string name="convFilesTitle">ไฟล์และลิงก์</string>
+    <string name="convFilesTab">ไฟล์</string>
+    <string name="convLinksTab">ลิงก์</string>
+    <string name="convFilesNone">ไม่มีไฟล์ในการสนทนานี้</string>
+    <string name="convLinksNone">ไม่มีลิงก์ในการสนทนานี้</string>
+    <string name="convFileRetry">ดาวน์โหลดไม่สำเร็จ — แตะเพื่อลองอีกครั้ง</string>
 </resources>

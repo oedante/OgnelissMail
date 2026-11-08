@@ -3949,4 +3949,10 @@
     <string name="quickReplyPhoto">Kuva</string>
     <string name="quickReplyAdd">Kuva, tiedosto tai pohja</string>
     <string name="quickReplyRemoveFile">Poista vastauksesta</string>
+    <string name="convFilesTitle">Tiedostot ja linkit</string>
+    <string name="convFilesTab">Tiedostot</string>
+    <string name="convLinksTab">Linkit</string>
+    <string name="convFilesNone">Tässä keskustelussa ei ole tiedostoja</string>
+    <string name="convLinksNone">Tässä keskustelussa ei ole linkkejä</string>
+    <string name="convFileRetry">Lataus epäonnistui — yritä uudelleen napauttamalla</string>
 </resources>

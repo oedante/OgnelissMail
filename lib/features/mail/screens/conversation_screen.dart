@@ -45,6 +45,7 @@ import '../../settings/providers/settings_provider.dart';
 import '../../settings/screens/swipe_settings_screen.dart' show conversationSwipeActions;
 import '../widgets/control_sheet.dart' show applyControl, ControlChoice;
 import '../widgets/later_sheet.dart' show postponeEmails;
+import 'conversation_files_screen.dart' show openConversationFiles;
 import 'mail_detail_screen.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/swipe_action_indicator.dart';
@@ -639,6 +640,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   tooltip: l10n.tr('more'),
                   onSelected: (v) {
                     switch (v) {
+                      case 'files':
+                        unawaited(openConversationFiles(context,
+                            conversationId: widget.conversationId, accountId: widget.accountId));
                       case 'order':
                         unawaited(ref.read(convChatOrderProvider.notifier).set(!chat));
                       case 'mute':
@@ -650,6 +654,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     }
                   },
                   itemBuilder: (_) => [
+                    // Файлы и ссылки беседы (2.2.0, план 08.11.2026).
+                    AppMenuEntry(value: 'files', icon: AppIcons.attach_file, label: l10n.tr('convFilesTitle')),
                     AppMenuEntry(value: 'order', icon: AppIcons.forum, label: l10n.tr('convChatOrder'), checked: chat),
                     AppMenuEntry(
                       value: 'mute',

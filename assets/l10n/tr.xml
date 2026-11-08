@@ -3949,4 +3949,10 @@
     <string name="quickReplyPhoto">Fotoğraf</string>
     <string name="quickReplyAdd">Fotoğraf, dosya veya şablon</string>
     <string name="quickReplyRemoveFile">Yanıttan kaldır</string>
+    <string name="convFilesTitle">Dosyalar ve bağlantılar</string>
+    <string name="convFilesTab">Dosyalar</string>
+    <string name="convLinksTab">Bağlantılar</string>
+    <string name="convFilesNone">Bu konuşmada dosya yok</string>
+    <string name="convLinksNone">Bu konuşmada bağlantı yok</string>
+    <string name="convFileRetry">İndirilemedi — yeniden denemek için dokunun</string>
 </resources>

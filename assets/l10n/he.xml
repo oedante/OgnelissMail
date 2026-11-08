@@ -3970,4 +3970,10 @@
     <string name="quickReplyPhoto">תמונה</string>
     <string name="quickReplyAdd">תמונה, קובץ או תבנית</string>
     <string name="quickReplyRemoveFile">הסרה מהתשובה</string>
+    <string name="convFilesTitle">קבצים וקישורים</string>
+    <string name="convFilesTab">קבצים</string>
+    <string name="convLinksTab">קישורים</string>
+    <string name="convFilesNone">אין קבצים בשיחה הזו</string>
+    <string name="convLinksNone">אין קישורים בשיחה הזו</string>
+    <string name="convFileRetry">ההורדה נכשלה — הקישו כדי לנסות שוב</string>
 </resources>

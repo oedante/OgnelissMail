@@ -3928,4 +3928,10 @@
     <string name="quickReplyPhoto">Foto</string>
     <string name="quickReplyAdd">Foto, file, atau template</string>
     <string name="quickReplyRemoveFile">Hapus dari balasan</string>
+    <string name="convFilesTitle">File dan tautan</string>
+    <string name="convFilesTab">File</string>
+    <string name="convLinksTab">Tautan</string>
+    <string name="convFilesNone">Tidak ada file dalam percakapan ini</string>
+    <string name="convLinksNone">Tidak ada tautan dalam percakapan ini</string>
+    <string name="convFileRetry">Gagal mengunduh — ketuk untuk mencoba lagi</string>
 </resources>

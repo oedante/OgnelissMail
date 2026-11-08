@@ -3949,4 +3949,10 @@
     <string name="quickReplyPhoto">Bilde</string>
     <string name="quickReplyAdd">Bilde, fil eller mal</string>
     <string name="quickReplyRemoveFile">Fjern fra svaret</string>
+    <string name="convFilesTitle">Filer og lenker</string>
+    <string name="convFilesTab">Filer</string>
+    <string name="convLinksTab">Lenker</string>
+    <string name="convFilesNone">Ingen filer i denne samtalen</string>
+    <string name="convLinksNone">Ingen lenker i denne samtalen</string>
+    <string name="convFileRetry">Nedlastingen mislyktes — trykk for å prøve igjen</string>
 </resources>

@@ -5,7 +5,29 @@
 `STORE_NOTES_2.0.0.md`). Номер — просьба владельца 08.11.2026 (1.15.2 не
 выпускалась).
 
-**У Apple и Google нового нет:** `project.pbxproj`, `Runner.entitlements`,
+**Google Play — новое (решение владельца 08.11.2026): декларация типа
+службы.** Служба почты теперь типа `specialUse` вместо `dataSync` (у
+`dataSync` на Android 15+ лимит 6 часов в сутки — после него письма
+приходили с задержкой). Перед загрузкой сборки:
+
+1. Play Console → Ogneliss Mail → **Содержание приложения** (App content) →
+   **Разрешения на службы переднего плана** (Foreground service
+   permissions) → **Начать** / **Изменить**.
+2. Отметить **Особое использование** (Special use); прежнюю отметку
+   «Синхронизация данных» (Data sync) снять — это разрешение из сборки
+   убрано.
+3. Описание задачи (по-английски), например: *«The app keeps the mail
+   server's push connection (IMAP IDLE, Exchange ActiveSync Ping, EWS
+   notifications) open while it is in the background, so that new email
+   arrives and the user is notified immediately. The user turns this on
+   with the "Instant" sync option for a mailbox; a persistent notification
+   shows that it is running and can be hidden.»*
+4. Если просят видео: короткая запись экрана — включить «Мгновенно» у
+   ящика, свернуть приложение, прислать себе письмо, показать уведомление.
+5. Если Google откажет — напишите: верну `dataSync` (пульс без службы из
+   2.0.0 и тогда будит проверку раз в 15 минут).
+
+**У Apple нового нет:** `project.pbxproj`, `Runner.entitlements`,
 `Info.plist` не менялись, прав и разрешений не добавилось. В Xcode
 включать ничего не нужно: новые виджеты — в той же цели `OgnelissWidgets`,
 App Group та же. **Секреты GitHub — без изменений.** На сервере — ничего

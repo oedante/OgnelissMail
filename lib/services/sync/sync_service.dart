@@ -162,6 +162,32 @@ class SyncService {
     }
   }
 
+  /// Push этого ящика — IMAP IDLE только «Входящих» (сервер не принял
+  /// NOTIFY или ещё не включён).
+  bool imapPushInboxOnly(AccountModel a) =>
+      !a.usesEas && !a.usesEws && !a.isExchange && !_ref.read(imapServiceProvider).notifyCovers(a.id);
+
+  /// У ящика есть синхронизируемые папки, кроме «Входящих», с уведомлениями
+  /// о новых письмах (не выключены колокольчиком; отправленные, черновики,
+  /// корзина и спам не считаются — о них уведомлений не бывает).
+  Future<bool> _notifiesOutsideInbox(AccountModel a) async {
+    try {
+      final db = _ref.read(databaseProvider);
+      final prefs = _ref.read(sharedPrefsProvider);
+      final rows = await (db.select(db.folders)
+            ..where((f) => f.accountId.equals(a.id) & f.isSynced.equals(true)))
+          .get();
+      for (final r in rows) {
+        final f = folderFromRow(r);
+        if (f.type == FolderType.inbox || r.id.toUpperCase() == 'INBOX') continue;
+        if (FolderNotify.neverTypes.contains(f.type)) continue;
+        if (FolderNotify.isMuted(prefs, a.id, r.id)) continue;
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  }
+
   Future<void> _syncAllBody({required bool scheduled, required bool respectInterval}) async {
     // Плановый тик (раз в 5 минут) обычно ничего не делает — ящикам ещё рано.
     // Индикатор синхронизации включается, только когда работа есть: раньше
@@ -203,8 +229,13 @@ class SyncService {
             // раз в 30 минут вместо 15 (папки без push и PIM). Экономия
             // заряда без потери доставки.
             final alive = pushLastAlive(a.id);
-            final pushOk = SyncSchedule.pushNow(a) &&
+            var pushOk = SyncSchedule.pushNow(a) &&
                 alive != null && DateTime.now().difference(alive) < const Duration(minutes: 5);
+            // IMAP без NOTIFY (Gmail, Яндекс): push слышит только «Входящие».
+            // Письма, которые фильтры сервера раскладывают по другим папкам
+            // с уведомлениями, ловит только эта проверка — для них 15 минут,
+            // а не 30 (2.0.0, решение владельца 08.11.2026).
+            if (pushOk && imapPushInboxOnly(a) && await _notifiesOutsideInbox(a)) pushOk = false;
             final minutes = switch (a.syncInterval) {
               SyncInterval.minutes5 => 5,
               SyncInterval.minutes30 => 30,

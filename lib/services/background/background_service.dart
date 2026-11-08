@@ -979,7 +979,10 @@ class BackgroundService {
           frequency: Duration(minutes: periodMinutes),
           constraints: Constraints(
             networkType: settings.syncOnlyWifi ? NetworkType.unmetered : NetworkType.connected,
-            requiresBatteryNotLow: true,
+            // Без условия «заряд не низкий» (2.0.0, решение владельца
+            // 08.11.2026): при заряде ниже ~15% плановой проверки не было
+            // вовсе, и письма не приходили. Проверка лёгкая, а в режиме
+            // энергосбережения Android её и так ограничивает.
           ),
           existingWorkPolicy: ExistingPeriodicWorkPolicy.update,
         );

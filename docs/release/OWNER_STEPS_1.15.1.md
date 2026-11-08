@@ -78,7 +78,22 @@ Ogneliss, сторонние службы не видят IP; сервер ни�
 наблюдение раз в 5 минут (cron) — `install-weather-proxy.sh check`,
 `install-push-relay.sh check`, `curl -fsS https://ogneliss.ru/oauth/healthz`.
 
-## 4. Проверка на телефоне
+## 4. TestFlight: iPhone, iPad и Mac (Intel и M)
+
+Подробно — `docs/guides/TESTFLIGHT.md` (Xcode руками, скрипт, ключ API,
+что нужно для выгрузки из GitHub Actions). Кратко, на Mac:
+
+```bash
+scripts/build_ios.sh --upload      # iPhone и iPad
+scripts/build_macos.sh --upload    # Mac: одна сборка для Intel и Apple Silicon
+```
+
+Один раз до первой Mac-сборки: `scripts/build_macos.sh --setup`, Team в
+`macos/Runner.xcworkspace`, и в App Store Connect у карточки приложения
+**«+» → macOS** с версией 1.15.1. Через Xcode: устройство **Any Mac (Apple
+Silicon, Intel)** → Product → Archive → Distribute App → App Store Connect.
+
+## 5. Проверка на телефоне
 
 1. **Свайпы**: короткий — кнопки, длинный — первое действие сразу; в
    «Удалённых» вопрос «удалить навсегда?» — до того, как строка ушла;

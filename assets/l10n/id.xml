@@ -3925,4 +3925,7 @@
     <string name="showSignatureTail">Tampilkan tanda tangan dan pemberitahuan</string>
     <string name="hideSignatureTail">Sembunyikan tanda tangan dan pemberitahuan</string>
     <string name="replyWithQuote">Balas dengan kutipan</string>
+    <string name="quickReplyPhoto">Foto</string>
+    <string name="quickReplyAdd">Foto, file, atau template</string>
+    <string name="quickReplyRemoveFile">Hapus dari balasan</string>
 </resources>

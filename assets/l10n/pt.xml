@@ -3946,4 +3946,7 @@
     <string name="showSignatureTail">Mostrar assinatura e aviso</string>
     <string name="hideSignatureTail">Ocultar assinatura e aviso</string>
     <string name="replyWithQuote">Responder com citação</string>
+    <string name="quickReplyPhoto">Foto</string>
+    <string name="quickReplyAdd">Foto, arquivo ou modelo</string>
+    <string name="quickReplyRemoveFile">Remover da resposta</string>
 </resources>

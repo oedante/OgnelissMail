@@ -3925,4 +3925,7 @@
     <string name="showSignatureTail">署名と注意書きを表示</string>
     <string name="hideSignatureTail">署名と注意書きを隠す</string>
     <string name="replyWithQuote">引用して返信</string>
+    <string name="quickReplyPhoto">写真</string>
+    <string name="quickReplyAdd">写真、ファイル、テンプレート</string>
+    <string name="quickReplyRemoveFile">返信から削除</string>
 </resources>

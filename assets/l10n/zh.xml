@@ -3925,4 +3925,7 @@
     <string name="showSignatureTail">显示签名和声明</string>
     <string name="hideSignatureTail">隐藏签名和声明</string>
     <string name="replyWithQuote">引用回复</string>
+    <string name="quickReplyPhoto">照片</string>
+    <string name="quickReplyAdd">照片、文件或模板</string>
+    <string name="quickReplyRemoveFile">从回复中移除</string>
 </resources>

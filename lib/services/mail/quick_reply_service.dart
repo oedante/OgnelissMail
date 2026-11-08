@@ -6,6 +6,7 @@
 // пропадёт. Цепочка — References исходного письма и его Message-ID.
 
 import 'dart:convert' show HtmlEscape, jsonEncode;
+import 'dart:typed_data' show Uint8List;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +41,8 @@ class QuickReplyService {
     required String subject,
     required String text,
     String? originalEmailId,
+    /// Фото и файлы («+» в строке ответа, 2.2.0); текст тогда может быть пуст.
+    List<({String name, String? contentType, Uint8List bytes})> attachments = const [],
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final db = _ref.read(databaseProvider);
@@ -55,7 +58,7 @@ class QuickReplyService {
     final body = const HtmlEscape().convert(text.trim()).replaceAll('\n', '<br>');
     final html = '<html><body>'
         '${greeting.isEmpty ? '' : '<div>${const HtmlEscape().convert(greeting)}</div><div><br></div>'}'
-        '<div>$body</div><div><br></div>'
+        '${body.isEmpty ? '' : '<div>$body</div><div><br></div>'}'
         '<div>$signature</div>'
         '</body></html>';
     // Цепочка «References родителя + его Message-ID» (1.8.13), как у ответа
@@ -74,11 +77,18 @@ class QuickReplyService {
           subject: SubjectPrefix.reply(subject),
           bodyHtml: html,
           inReplyTo: messageId,
+          attachments: attachments,
         );
-    AppLogger.info(sent ? 'Быстрый ответ отправлен' : 'Быстрый ответ — в очереди (нет сети)');
+    AppLogger.info('${sent ? 'Быстрый ответ отправлен' : 'Быстрый ответ — в очереди (нет сети)'}'
+        '${attachments.isEmpty ? '' : ', вложений: ${attachments.length}'}');
     if (sent) {
       await _showInConversation(account, originalEmailId,
-          to: to, cc: cc, subject: SubjectPrefix.reply(subject), html: html, text: text.trim());
+          to: to,
+          cc: cc,
+          subject: SubjectPrefix.reply(subject),
+          html: html,
+          text: text.trim(),
+          hasAttachments: attachments.isNotEmpty);
     }
     return sent;
   }
@@ -94,7 +104,8 @@ class QuickReplyService {
       required List<EmailAddress> cc,
       required String subject,
       required String html,
-      required String text}) async {
+      required String text,
+      bool hasAttachments = false}) async {
     try {
       final db = _ref.read(databaseProvider);
       final orig = originalEmailId == null ? null : await db.getEmailById(originalEmailId, accountId: account.id);
@@ -125,6 +136,7 @@ class QuickReplyService {
             subject: subject,
             bodyHtml: Value(html),
             bodyPreview: Value(text.length > 200 ? text.substring(0, 200) : text),
+            hasAttachments: Value(hasAttachments),
             receivedAt: now,
             sentAt: Value(now),
             isRead: const Value(true),

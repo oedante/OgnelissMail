@@ -4030,4 +4030,7 @@
     <string name="showSignatureTail">إظهار التوقيع والإشعار</string>
     <string name="hideSignatureTail">إخفاء التوقيع والإشعار</string>
     <string name="replyWithQuote">الرد مع الاقتباس</string>
+    <string name="quickReplyPhoto">صورة</string>
+    <string name="quickReplyAdd">صورة أو ملف أو قالب</string>
+    <string name="quickReplyRemoveFile">إزالة من الرد</string>
 </resources>

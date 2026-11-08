@@ -3967,4 +3967,7 @@
     <string name="showSignatureTail">Zobrazit podpis a upozornění</string>
     <string name="hideSignatureTail">Skrýt podpis a upozornění</string>
     <string name="replyWithQuote">Odpovědět s citací</string>
+    <string name="quickReplyPhoto">Fotka</string>
+    <string name="quickReplyAdd">Fotka, soubor nebo šablona</string>
+    <string name="quickReplyRemoveFile">Odebrat z odpovědi</string>
 </resources>

@@ -3925,4 +3925,7 @@
     <string name="showSignatureTail">서명 및 고지 보기</string>
     <string name="hideSignatureTail">서명 및 고지 숨기기</string>
     <string name="replyWithQuote">인용하여 답장</string>
+    <string name="quickReplyPhoto">사진</string>
+    <string name="quickReplyAdd">사진, 파일 또는 템플릿</string>
+    <string name="quickReplyRemoveFile">답장에서 제거</string>
 </resources>

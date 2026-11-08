@@ -3967,4 +3967,7 @@
     <string name="showSignatureTail">הצג חתימה והודעה</string>
     <string name="hideSignatureTail">הסתר חתימה והודעה</string>
     <string name="replyWithQuote">השב עם ציטוט</string>
+    <string name="quickReplyPhoto">תמונה</string>
+    <string name="quickReplyAdd">תמונה, קובץ או תבנית</string>
+    <string name="quickReplyRemoveFile">הסרה מהתשובה</string>
 </resources>

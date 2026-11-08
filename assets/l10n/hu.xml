@@ -3946,4 +3946,7 @@
     <string name="showSignatureTail">Aláírás és nyilatkozat megjelenítése</string>
     <string name="hideSignatureTail">Aláírás és nyilatkozat elrejtése</string>
     <string name="replyWithQuote">Válasz idézettel</string>
+    <string name="quickReplyPhoto">Fotó</string>
+    <string name="quickReplyAdd">Fotó, fájl vagy sablon</string>
+    <string name="quickReplyRemoveFile">Eltávolítás a válaszból</string>
 </resources>

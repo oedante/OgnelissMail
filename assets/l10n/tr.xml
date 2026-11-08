@@ -3946,4 +3946,7 @@
     <string name="showSignatureTail">İmzayı ve bildirimi göster</string>
     <string name="hideSignatureTail">İmzayı ve bildirimi gizle</string>
     <string name="replyWithQuote">Alıntıyla yanıtla</string>
+    <string name="quickReplyPhoto">Fotoğraf</string>
+    <string name="quickReplyAdd">Fotoğraf, dosya veya şablon</string>
+    <string name="quickReplyRemoveFile">Yanıttan kaldır</string>
 </resources>

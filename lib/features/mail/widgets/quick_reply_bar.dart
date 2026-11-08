@@ -15,21 +15,37 @@
 //  · в беседе (кнопок под письмом нет) — своя круглая кнопка: поле пусто —
 //    полный редактор, текст набран — отправить; слева — переключатель
 //    «Ответить всем» (по умолчанию — только отправителю).
+//
+// 2.2.0 (план 08.11.2026, «из мессенджеров»): «+» слева — фото, файл,
+// шаблон. Выбранное — плашками над полем, уходит с ответом; ответ может
+// быть и без текста. Размер фото — как в редакторе письма: настройка
+// «Размер фото при отправке» или шторка «Как есть / 75% / 50% / 25%».
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/logging/app_logger.dart';
+import '../../../core/platform/file_pick.dart';
+import '../../../core/security/attachment_safety.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../core/utils/format_bytes.dart';
 import '../../../data/models/email_model.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../services/mail/image_shrink.dart';
 import '../../../services/mail/own_addresses.dart';
 import '../../../services/mail/quick_reply_service.dart';
 import '../../../widgets/common/haptic_wrapper.dart';
+import '../../../widgets/ui/action_sheet.dart';
+import '../../compose/providers/attachment_limit_provider.dart';
+import '../../compose/providers/templates_provider.dart';
+import '../../compose/widgets/image_size_sheet.dart';
+import '../../settings/providers/feature_flags_provider.dart';
 import '../providers/mail_providers.dart' show accountsProvider;
 
 /// Связь строки быстрого ответа с кнопками под письмом (1.7.3): кнопки
@@ -37,8 +53,9 @@ import '../providers/mail_providers.dart' show accountsProvider;
 class QuickReplyController extends ChangeNotifier {
   _QuickReplyBarState? _bar;
 
-  /// В поле есть текст — «Ответить» отправит его, а не откроет редактор.
-  bool get hasText => _bar?._hasText ?? false;
+  /// В поле есть текст или вложения («+», 2.2.0) — «Ответить» отправит их,
+  /// а не откроет редактор.
+  bool get hasText => _bar?._hasContent ?? false;
 
   /// Идёт отправка.
   bool get sending => _bar?._sending ?? false;
@@ -76,11 +93,17 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
   /// «Ответить всем» (1.6.49) — переключатель в беседе.
   bool _all = false;
 
-  /// Был ли текст при прошлой проверке — кнопкам под письмом сообщается
-  /// только смена «пусто ↔ есть текст», а не каждая буква.
+  /// Фото и файлы ответа («+», 2.2.0).
+  final List<ChosenFile> _files = [];
+
+  /// Было ли что отправить при прошлой проверке — кнопкам под письмом
+  /// сообщается только смена «пусто ↔ есть текст», а не каждая буква.
   bool _hadText = false;
 
   bool get _hasText => _text.text.trim().isNotEmpty;
+
+  /// Есть что отправить: текст или вложения.
+  bool get _hasContent => _hasText || _files.isNotEmpty;
 
   @override
   void initState() {
@@ -107,7 +130,7 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
   }
 
   void _onText() {
-    final has = _hasText;
+    final has = _hasContent;
     if (has == _hadText) return;
     _hadText = has;
     if (mounted) setState(() {});
@@ -143,18 +166,22 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
   Future<void> _send({bool? all}) async {
     final l10n = AppLocalizations.of(context);
     final text = _text.text.trim();
-    if (text.isEmpty || _sending) return;
+    if ((text.isEmpty && _files.isEmpty) || _sending) return;
     final e = widget.email;
     final account = ref.read(accountsProvider).where((a) => a.id == e.accountId).firstOrNull;
     final r = _recipients((all ?? _all) && _canAll());
     final to = r.to;
     if (account == null || to.isEmpty) return;
+    final scale = await _photoScale();
+    if (scale == null || !mounted) return;
     setState(() {
       _sending = true;
       _error = null;
     });
     widget.controller?._changed();
     try {
+      final files = await _collect(scale);
+      if (files == null) return;
       await ref.read(quickReplyServiceProvider).send(
             account: account,
             to: to,
@@ -162,9 +189,12 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
             subject: e.subject,
             text: text,
             originalEmailId: e.id,
+            attachments: files,
           );
       if (!mounted) return;
       _text.clear();
+      setState(_files.clear);
+      _onText();
       FocusScope.of(context).unfocus();
       unawaited(HapticHelper.success());
     } catch (err) {
@@ -178,6 +208,139 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
     }
   }
 
+  /// Размер фото (1 — как есть), как в редакторе письма (1.7.2+109):
+  /// «Размер фото при отправке» в настройках или шторка. Фото мало (меньше
+  /// [ImageShrink.askFromBytes] вместе) — как есть. null — шторку смахнули.
+  Future<double?> _photoScale() async {
+    final images = [
+      for (final f in _files)
+        if (ImageShrink.isShrinkable(f.name)) (name: f.name, size: f.size),
+    ];
+    final total = images.fold<int>(0, (s, f) => s + f.size);
+    if (images.isEmpty || total < ImageShrink.askFromBytes) return 1;
+    final fixed = ref.read(featureFlagsProvider).photoSize;
+    if (fixed != 0) return fixed / 100;
+    final other = _files.fold<int>(0, (s, f) => s + f.size) - total;
+    return showImageSizeSheet(context, images,
+        other: other, limit: ref.read(attachmentLimitProvider).limitFor(widget.email.accountId));
+  }
+
+  /// Байты вложений для отправки, фото — уменьшенные до [scale]. Файла уже
+  /// нет на устройстве — строка под полем, ответ не уходит (null).
+  Future<List<({String name, String? contentType, Uint8List bytes})>?> _collect(double scale) async {
+    final l10n = AppLocalizations.of(context);
+    final out = <({String name, String? contentType, Uint8List bytes})>[];
+    for (final f in List.of(_files)) {
+      Uint8List bytes;
+      try {
+        bytes = await f.readBytes();
+      } catch (_) {
+        if (mounted) setState(() => _error = l10n.tr('attachFileMissing').replaceAll('{file}', f.name));
+        return null;
+      }
+      var name = f.name;
+      if (scale < 1 && ImageShrink.isShrinkable(name)) {
+        final r = await ImageShrink.shrink(name, bytes, scale);
+        name = r.name;
+        bytes = r.bytes;
+      }
+      out.add((name: name, contentType: AttachmentSafety.mimeOf(name), bytes: bytes));
+    }
+    return out;
+  }
+
+  /// «+»: фото, файл или шаблон.
+  Future<void> _plus() async {
+    final l10n = AppLocalizations.of(context);
+    final what = await showChoiceSheet<String>(
+      context,
+      entries: [
+        AppMenuEntry(value: 'photo', label: l10n.tr('quickReplyPhoto'), icon: AppIcons.photo_library),
+        AppMenuEntry(value: 'file', label: l10n.tr('attachFile'), icon: AppIcons.attach_file),
+        AppMenuEntry(value: 'template', label: l10n.tr('insertTemplate'), icon: AppIcons.article),
+      ],
+    );
+    if (!mounted || what == null) return;
+    if (what == 'template') return _template();
+    List<ChosenFile> picked;
+    try {
+      picked = await FilePick.files(type: what == 'photo' ? FileType.image : FileType.any);
+    } catch (e) {
+      AppLogger.warning('Быстрый ответ: выбор файлов не удался — $e');
+      return;
+    }
+    await _addFiles(picked);
+  }
+
+  /// Добавить файлы: суммарно — не больше лимита ящика (фото — можно, их
+  /// уменьшит выбор размера при отправке), как в редакторе письма.
+  Future<void> _addFiles(List<ChosenFile> picked) async {
+    final l10n = AppLocalizations.of(context);
+    final limit = ref.read(attachmentLimitProvider).limitFor(widget.email.accountId);
+    var total = _files.fold<int>(0, (s, f) => s + f.size);
+    String? error;
+    for (final chosen in picked) {
+      if (total + chosen.size > limit && !ImageShrink.isShrinkable(chosen.name)) {
+        final mb = (limit / (1024 * 1024)).toStringAsFixed(0);
+        error = l10n.tr('attachLimitExceeded').replaceAll('{mb}', mb).replaceAll('{file}', chosen.name);
+        continue;
+      }
+      final ChosenFile file;
+      try {
+        file = await chosen.keepable();
+      } catch (e) {
+        AppLogger.warning('Быстрый ответ: файл «${chosen.name}» не прочитан — $e');
+        continue;
+      }
+      total += file.size;
+      if (!mounted) return;
+      setState(() => _files.add(file));
+    }
+    if (!mounted) return;
+    setState(() => _error = error);
+    _onText();
+  }
+
+  void _removeFile(ChosenFile f) {
+    setState(() => _files.remove(f));
+    _onText();
+  }
+
+  /// Шаблон ответа (с подстановкой полей) — в поле, на место курсора.
+  Future<void> _template() async {
+    final l10n = AppLocalizations.of(context);
+    final templates = [for (final t in ref.read(templatesProvider)) t.resolve(l10n.tr)];
+    if (templates.isEmpty) {
+      setState(() => _error = l10n.tr('noTemplates'));
+      return;
+    }
+    final i = await showChoiceSheet<int>(
+      context,
+      title: l10n.tr('insertTemplate'),
+      entries: [
+        for (final (i, t) in templates.indexed)
+          AppMenuEntry(
+            value: i,
+            label: t.title,
+            icon: AppIcons.article,
+            subtitle: t.body.length > 80 ? '${t.body.substring(0, 80).trim()}…' : t.body,
+          ),
+      ],
+    );
+    if (i == null || !mounted) return;
+    final account = ref.read(accountsProvider).where((a) => a.id == widget.email.accountId).firstOrNull;
+    final text = applyPlaceholders(templates[i].body,
+        name: account?.displayName, email: account?.email, phone: ref.read(signatureProvider).phone);
+    final v = _text.value;
+    final sel = v.selection;
+    final start = sel.isValid ? sel.start : v.text.length;
+    final end = sel.isValid ? sel.end : v.text.length;
+    _text.value = TextEditingValue(
+      text: v.text.replaceRange(start, end, text),
+      selection: TextSelection.collapsed(offset: start + text.length),
+    );
+  }
+
   /// Набранный текст — забрать и очистить поле.
   String _take() {
     final text = _text.text.trim();
@@ -187,7 +350,11 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
 
   void _clear() {
     _text.clear();
-    setState(() => _error = null);
+    setState(() {
+      _files.clear();
+      _error = null;
+    });
+    _onText();
   }
 
   /// Полный редактор ответа (с набранным текстом, если он есть).
@@ -214,7 +381,7 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
     final all = _all && canAll;
     final r = _recipients(all);
     final who = r.to.isEmpty ? '' : r.to.first.label;
-    final hasText = _hasText;
+    final hasText = _hasContent;
     final hint = all
         ? l10n.tr('quickReplyHintAll').replaceAll('{n}', '${r.to.length + r.cc.length}')
         : who.isEmpty
@@ -234,11 +401,36 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
           shadowColor: Colors.black.withValues(alpha: 0.3),
           borderRadius: Radii.cardAll,
           clipBehavior: Clip.antiAlias,
-          child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          // Фото и файлы ответа — плашками над полем.
+          if (_files.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(Space.s, Space.s, Space.s, 0),
+              child: Wrap(spacing: Space.xs, runSpacing: Space.xs, children: [
+                for (final f in _files)
+                  InputChip(
+                    avatar: Icon(ImageShrink.isShrinkable(f.name) ? AppIcons.image : AppIcons.attach_file,
+                        size: Sizes.iconRow),
+                    label: Text('${f.name} · ${formatBytes(f.size, l10n)}', overflow: TextOverflow.ellipsis),
+                    onDeleted: _sending ? null : () => _removeFile(f),
+                    deleteButtonTooltipMessage: l10n.tr('quickReplyRemoveFile'),
+                  ),
+              ]),
+            ),
+          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            // «+»: фото, файл, шаблон (2.2.0).
+            Padding(
+              padding: const EdgeInsets.only(left: Space.xs, bottom: Space.xs),
+              child: IconButton(
+                tooltip: l10n.tr('quickReplyAdd'),
+                icon: const Icon(AppIcons.add),
+                onPressed: _sending ? null : () => unawaited(_plus()),
+              ),
+            ),
             // Ответить всем / только отправителю (беседа).
             if (canAll)
               Padding(
-                padding: const EdgeInsets.only(left: Space.xs, bottom: Space.xs),
+                padding: const EdgeInsets.only(bottom: Space.xs),
                 child: IconButton(
                   tooltip: l10n.tr(all ? 'quickReplyToSender' : 'replyAll'),
                   isSelected: all,
@@ -266,7 +458,7 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.fromLTRB(canAll ? Space.xs : Space.l, Space.m, Space.s, Space.m),
+                  contentPadding: const EdgeInsets.fromLTRB(Space.xs, Space.m, Space.s, Space.m),
                 ),
               ),
             ),
@@ -291,6 +483,7 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
                   icon: _sending ? spinner : Icon(hasText ? AppIcons.send : AppIcons.open_in_full),
                 ),
               ),
+          ]),
           ]),
         ),
         if (_error != null)

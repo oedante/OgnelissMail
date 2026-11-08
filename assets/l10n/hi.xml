@@ -3946,4 +3946,7 @@
     <string name="showSignatureTail">हस्ताक्षर और सूचना दिखाएँ</string>
     <string name="hideSignatureTail">हस्ताक्षर और सूचना छिपाएँ</string>
     <string name="replyWithQuote">उद्धरण के साथ जवाब दें</string>
+    <string name="quickReplyPhoto">फ़ोटो</string>
+    <string name="quickReplyAdd">फ़ोटो, फ़ाइल या टेम्पलेट</string>
+    <string name="quickReplyRemoveFile">जवाब से हटाएँ</string>
 </resources>

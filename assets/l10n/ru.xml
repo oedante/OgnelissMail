@@ -3988,4 +3988,7 @@
     <string name="showSignatureTail">Показать подпись и уведомление</string>
     <string name="hideSignatureTail">Скрыть подпись и уведомление</string>
     <string name="replyWithQuote">Ответить с цитатой</string>
+    <string name="quickReplyPhoto">Фото</string>
+    <string name="quickReplyAdd">Фото, файл или шаблон</string>
+    <string name="quickReplyRemoveFile">Убрать из ответа</string>
 </resources>

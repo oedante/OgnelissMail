@@ -3946,4 +3946,7 @@
     <string name="showSignatureTail">Visa signatur och meddelande</string>
     <string name="hideSignatureTail">Dölj signatur och meddelande</string>
     <string name="replyWithQuote">Svara med citat</string>
+    <string name="quickReplyPhoto">Foto</string>
+    <string name="quickReplyAdd">Foto, fil eller mall</string>
+    <string name="quickReplyRemoveFile">Ta bort från svaret</string>
 </resources>

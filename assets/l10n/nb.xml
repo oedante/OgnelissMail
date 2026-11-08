@@ -3946,4 +3946,7 @@
     <string name="showSignatureTail">Vis signatur og merknad</string>
     <string name="hideSignatureTail">Skjul signatur og merknad</string>
     <string name="replyWithQuote">Svar med sitat</string>
+    <string name="quickReplyPhoto">Bilde</string>
+    <string name="quickReplyAdd">Bilde, fil eller mal</string>
+    <string name="quickReplyRemoveFile">Fjern fra svaret</string>
 </resources>

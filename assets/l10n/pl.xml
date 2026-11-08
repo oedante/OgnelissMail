@@ -3988,4 +3988,7 @@
     <string name="showSignatureTail">Pokaż podpis i zastrzeżenie</string>
     <string name="hideSignatureTail">Ukryj podpis i zastrzeżenie</string>
     <string name="replyWithQuote">Odpowiedz z cytatem</string>
+    <string name="quickReplyPhoto">Zdjęcie</string>
+    <string name="quickReplyAdd">Zdjęcie, plik lub szablon</string>
+    <string name="quickReplyRemoveFile">Usuń z odpowiedzi</string>
 </resources>

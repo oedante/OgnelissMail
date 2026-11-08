@@ -3925,4 +3925,7 @@
     <string name="showSignatureTail">Hiện chữ ký và thông báo</string>
     <string name="hideSignatureTail">Ẩn chữ ký và thông báo</string>
     <string name="replyWithQuote">Trả lời kèm trích dẫn</string>
+    <string name="quickReplyPhoto">Ảnh</string>
+    <string name="quickReplyAdd">Ảnh, tệp hoặc mẫu</string>
+    <string name="quickReplyRemoveFile">Xóa khỏi trả lời</string>
 </resources>

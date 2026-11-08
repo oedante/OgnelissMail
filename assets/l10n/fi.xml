@@ -3946,4 +3946,7 @@
     <string name="showSignatureTail">Näytä allekirjoitus ja ilmoitus</string>
     <string name="hideSignatureTail">Piilota allekirjoitus ja ilmoitus</string>
     <string name="replyWithQuote">Vastaa lainauksella</string>
+    <string name="quickReplyPhoto">Kuva</string>
+    <string name="quickReplyAdd">Kuva, tiedosto tai pohja</string>
+    <string name="quickReplyRemoveFile">Poista vastauksesta</string>
 </resources>

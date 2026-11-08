@@ -3967,4 +3967,7 @@
     <string name="showSignatureTail">Afișează semnătura și notificarea</string>
     <string name="hideSignatureTail">Ascunde semnătura și notificarea</string>
     <string name="replyWithQuote">Răspunde cu citat</string>
+    <string name="quickReplyPhoto">Fotografie</string>
+    <string name="quickReplyAdd">Fotografie, fișier sau șablon</string>
+    <string name="quickReplyRemoveFile">Elimină din răspuns</string>
 </resources>

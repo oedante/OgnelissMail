@@ -234,4 +234,32 @@ void main() {
       expect(peak, 2);
     });
   });
+
+  group('2.0.0: заголовок — только от сервера своего ящика', () {
+    final own = ownMailServerDomains([
+      (email: 'o.e@yamalspg.ru', hosts: ['https://mail.yamalspg.ru/EWS/Exchange.asmx', null]),
+      (email: 'me@gmail.com', hosts: ['imap.gmail.com']),
+      (email: 'me@yandex.ru', hosts: ['imap.yandex.ru']),
+    ]);
+
+    test('домены ящиков, их серверов и подписей крупных служб', () {
+      expect(own, containsAll(['yamalspg.ru', 'gmail.com', 'google.com', 'yandex.ru', 'yandex.net']));
+    });
+
+    test('свой сервер — логотип; чужой верхний заголовок — нет', () {
+      const pass = 'dmarc=pass header.from=bank.ru';
+      expect(bimiDmarcDomain('mx.google.com; $pass', 'info@bank.ru', ownServers: own), 'bank.ru');
+      expect(bimiDmarcDomain('mxfront1o.mail.yandex.net; $pass', 'info@bank.ru', ownServers: own), 'bank.ru');
+      expect(bimiDmarcDomain('mx1.attacker.example; $pass', 'info@bank.ru', ownServers: own), isNull,
+          reason: 'Exchange организации заголовок не ставит — верхний написал чужой сервер');
+      expect(bimiDmarcDomain('google.com.attacker.example; $pass', 'info@bank.ru', ownServers: own), isNull);
+    });
+
+    test('authserv-id с версией и точкой в конце', () {
+      expect(isOwnAuthServ('mx.google.com 1', own), isTrue);
+      expect(isOwnAuthServ('mail.yamalspg.ru.', own), isTrue);
+      expect(isOwnAuthServ('notyamalspg.ru', own), isFalse);
+    });
+  });
 }
+

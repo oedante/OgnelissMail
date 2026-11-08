@@ -18,10 +18,17 @@ import 'package:xml/xml.dart';
 /// [authResults] — значение верхнего заголовка, как его хранит база (IMAP
 /// берёт первый заголовок). ActiveSync склеивает одноимённые заголовки
 /// через «; » — тогда учитывается только первый из склеенных.
-String? bimiDmarcDomain(String? authResults, String fromEmail) {
+///
+/// [ownServers] — домены серверов ящиков пользователя ([ownMailServerDomains]):
+/// заголовок учитывается, только если его поставил один из них (2.0.0, план
+/// 08.11.2026, «Authentication-Results — только от своего сервера»). Сервер,
+/// который сам заголовок не пишет (часто — Exchange в организации), оставлял
+/// верхним чужой — его мог написать сервер отправителя, и подделка получала
+/// логотип банка. null — без этой проверки (тесты правил разбора).
+String? bimiDmarcDomain(String? authResults, String fromEmail, {Set<String>? ownServers}) {
   final domain = bimiFromDomain(fromEmail);
   if (domain == null) return null;
-  final parts = trustedAuthResultParts(authResults);
+  final parts = trustedAuthResultParts(authResults, ownServers: ownServers);
   if (parts == null) return null;
   var pass = false;
   for (final p in parts) {
@@ -38,7 +45,7 @@ String? bimiDmarcDomain(String? authResults, String fromEmail) {
 
 /// Проверки (resinfo) из верхнего заголовка без комментариев; null —
 /// заголовка нет или он не похож на Authentication-Results (RFC 8601).
-List<String>? trustedAuthResultParts(String? authResults) {
+List<String>? trustedAuthResultParts(String? authResults, {Set<String>? ownServers}) {
   var a = (authResults ?? '').trim();
   if (a.isEmpty || a == 'none') return null;
   // Комментарии в скобках: «dmarc=pass (p=REJECT …)» — политика в
@@ -50,6 +57,7 @@ List<String>? trustedAuthResultParts(String? authResults) {
   // Первая часть — authserv-id (имя сервера, без «=»). У запасного
   // Received-SPF и «spf=…» из EWS его нет — это не Authentication-Results.
   if (parts.first.isEmpty || parts.first.contains('=')) return null;
+  if (ownServers != null && !isOwnAuthServ(parts.first, ownServers)) return null;
   final out = <String>[];
   for (final p in parts.skip(1)) {
     if (p.isEmpty) continue;
@@ -60,6 +68,76 @@ List<String>? trustedAuthResultParts(String? authResults) {
     out.add(p);
   }
   return out;
+}
+
+/// authserv-id (первая часть заголовка, «mx.google.com» или «mx.google.com 1»)
+/// — сервер одного из ящиков пользователя: совпадает с доменом из
+/// [ownServers] или оканчивается на «.домен».
+bool isOwnAuthServ(String authServId, Set<String> ownServers) {
+  final id = authServId.trim().split(RegExp(r'\s+')).first.toLowerCase().replaceAll(RegExp(r'\.$'), '');
+  if (id.isEmpty) return false;
+  return ownServers.any((d) => id == d || id.endsWith('.$d'));
+}
+
+/// Домены серверов ящиков: домен адреса ящика и базовые домены его серверов
+/// (IMAP, EWS, ActiveSync), у крупных почтовых служб — и домены, которыми
+/// подписаны их заголовки (Gmail — google.com, Яндекс — yandex.net, iCloud —
+/// apple.com, Outlook.com — outlook.com).
+Set<String> ownMailServerDomains(Iterable<({String email, List<String?> hosts})> accounts) {
+  final out = <String>{};
+  for (final a in accounts) {
+    final at = a.email.lastIndexOf('@');
+    final mailDomain = at < 0 ? '' : a.email.substring(at + 1).trim().toLowerCase();
+    final bases = <String>{
+      if (mailDomain.isNotEmpty) mailDomain,
+      for (final h in a.hosts)
+        if (_hostOf(h) case final host? when host.contains('.')) _baseDomain(host),
+    };
+    out.addAll(bases);
+    for (final b in bases) {
+      out.addAll(_providerAliases[b] ?? const <String>[]);
+    }
+  }
+  out.removeWhere((d) => !d.contains('.'));
+  return out;
+}
+
+const _providerAliases = <String, List<String>>{
+  'gmail.com': ['google.com'],
+  'googlemail.com': ['google.com'],
+  'yandex.ru': ['yandex.net'],
+  'ya.ru': ['yandex.net', 'yandex.ru'],
+  'yandex.com': ['yandex.net'],
+  'icloud.com': ['apple.com'],
+  'me.com': ['apple.com', 'icloud.com'],
+  'mac.com': ['apple.com', 'icloud.com'],
+  'hotmail.com': ['outlook.com'],
+  'live.com': ['outlook.com'],
+  'office365.com': ['outlook.com'],
+  'bk.ru': ['mail.ru'],
+  'inbox.ru': ['mail.ru'],
+  'list.ru': ['mail.ru'],
+};
+
+/// Узел из адреса сервера: «https://mail.org.ru/EWS/Exchange.asmx» →
+/// «mail.org.ru»; «imap.yandex.ru» — как есть.
+String? _hostOf(String? s) {
+  var v = (s ?? '').trim().toLowerCase();
+  if (v.isEmpty) return null;
+  final scheme = v.indexOf('://');
+  if (scheme >= 0) v = v.substring(scheme + 3);
+  v = v.split('/').first.split(':').first;
+  return v.isEmpty ? null : v;
+}
+
+/// Базовый домен узла: последние две части, у «co.uk», «com.ru» и подобных —
+/// три.
+String _baseDomain(String host) {
+  final l = host.split('.');
+  if (l.length <= 2) return host;
+  const second = {'co', 'com', 'net', 'org', 'gov', 'edu', 'ac', 'msk', 'spb'};
+  final n = second.contains(l[l.length - 2]) && l.last.length == 2 ? 3 : 2;
+  return l.sublist(l.length - n).join('.');
 }
 
 /// Домен из адреса: только ASCII-домен (IDN — в punycode), иначе null.

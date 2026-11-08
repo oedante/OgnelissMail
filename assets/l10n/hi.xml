@@ -1973,6 +1973,9 @@
     <string name="authExCert">सर्वर का सर्टिफ़िकेट सत्यापित नहीं हो सका ({hosts})।</string>
     <string name="authEx403">सर्वर ने कनेक्शन अस्वीकार कर दिया (403)। साइन-इन की उन्नत सेटिंग में “{setting}” चालू करें या अपने IT विभाग से संपर्क करें: हो सकता है मोबाइल पर मेल का एक्सेस ब्लॉक हो।</string>
     <string name="authExGeneric">Exchange से कनेक्ट नहीं हो सका ({hosts})। अपना यूज़रनेम, पासवर्ड, सर्वर का पता और कंपनी नेटवर्क/VPN से पहुंच जांचें।</string>
+    <string name="authExDeviceBlocked">Exchange इस डिवाइस को अनुमति नहीं दे रहा: व्यवस्थापक ने इसे ब्लॉक किया है या अभी स्वीकृत नहीं किया। Exchange (मोबाइल डिवाइस) में डिवाइस की अनुमति के लिए IT विभाग से संपर्क करें।</string>
+    <string name="authExDeviceLimit">आपके मेलबॉक्स में फ़ोन और टैबलेट की सीमा पूरी हो गई है। वेब पर Outlook में पुराने डिवाइस हटाएँ (सेटिंग्स → सामान्य → मोबाइल डिवाइस) या IT विभाग से संपर्क करें।</string>
+    <string name="authExSyncDisabled">Exchange में आपके मेलबॉक्स के लिए फ़ोन से सिंक (ActiveSync) बंद है। IT विभाग से संपर्क करें।</string>
     <string name="authUnsupportedOAuth">असमर्थित OAuth प्रदाता</string>
     <string name="authOAuthNoEmail">साइन इन हो गया, लेकिन सेवा ने ईमेल पता नहीं दिया। जांच लें कि ऐप को आपके ईमेल पते का एक्सेस देने की अनुमति है।</string>
     <string name="authOAuthImapRejected">साइन इन हो गया, लेकिन मेल सर्वर (IMAP) ने कनेक्शन अस्वीकार कर दिया।</string>

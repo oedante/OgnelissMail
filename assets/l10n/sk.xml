@@ -1981,6 +1981,9 @@
     <string name="authExCert">Certifikát servera sa nepodarilo overiť ({hosts}).</string>
     <string name="authEx403">Server odmietol pripojenie (403). Zapnite „{setting}“ v rozšírených nastaveniach prihlásenia alebo sa obráťte na svoje IT oddelenie: mobilný prístup k pošte môže byť zablokovaný.</string>
     <string name="authExGeneric">Nepodarilo sa pripojiť k Exchange ({hosts}). Skontrolujte meno používateľa, heslo, adresu servera a prístup z firemnej siete/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange toto zariadenie nepúšťa: správca ho zablokoval alebo ho ešte neschválil. Obráťte sa na IT, aby zariadenie v Exchange (mobilné zariadenia) povolili.</string>
+    <string name="authExDeviceLimit">Vaša schránka dosiahla limit telefónov a tabletov. Odstráňte staré zariadenia v Outlooku na webe (Nastavenia → Všeobecné → Mobilné zariadenia) alebo sa obráťte na IT.</string>
+    <string name="authExSyncDisabled">Synchronizácia z telefónov (ActiveSync) je pre vašu schránku v Exchange vypnutá. Obráťte sa na IT.</string>
     <string name="authUnsupportedOAuth">Nepodporovaný poskytovateľ OAuth</string>
     <string name="authOAuthNoEmail">Prihlásenie prebehlo, ale služba neposkytla e-mailovú adresu. Skontrolujte, či má aplikácia povolený prístup k vašej e-mailovej adrese.</string>
     <string name="authOAuthImapRejected">Prihlásenie prebehlo, ale poštový server (IMAP) odmietol pripojenie.</string>

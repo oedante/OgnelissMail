@@ -1973,6 +1973,9 @@
     <string name="authExCert">Palvelimen varmennetta ei voitu tarkistaa ({hosts}).</string>
     <string name="authEx403">Palvelin hylkäsi yhteyden (403). Ota käyttöön ”{setting}” kirjautumisen lisäasetuksissa tai ota yhteyttä IT-osastoon: sähköpostin käyttö mobiililaitteilla voi olla estetty.</string>
     <string name="authExGeneric">Exchangeen ei saatu yhteyttä ({hosts}). Tarkista käyttäjänimi, salasana, palvelimen osoite ja pääsy yrityksen verkosta/VPN:stä.</string>
+    <string name="authExDeviceBlocked">Exchange ei päästä tätä laitetta: järjestelmänvalvoja on estänyt sen tai ei ole vielä hyväksynyt sitä. Pyydä IT-tukea sallimaan laite Exchangessa (mobiililaitteet).</string>
+    <string name="authExDeviceLimit">Postilaatikkosi on saavuttanut puhelinten ja tablettien enimmäismäärän. Poista vanhoja laitteita Outlookin verkkoversiossa (Asetukset → Yleiset → Mobiililaitteet) tai ota yhteyttä IT-tukeen.</string>
+    <string name="authExSyncDisabled">Synkronointi puhelimista (ActiveSync) on poistettu käytöstä postilaatikollesi Exchangessa. Ota yhteyttä IT-tukeen.</string>
     <string name="authUnsupportedOAuth">OAuth-palveluntarjoajaa ei tueta</string>
     <string name="authOAuthNoEmail">Kirjautuminen onnistui, mutta palvelu ei antanut sähköpostiosoitetta. Varmista, että sovellus saa käyttää sähköpostiosoitettasi.</string>
     <string name="authOAuthImapRejected">Kirjautuminen onnistui, mutta sähköpostipalvelin (IMAP) hylkäsi yhteyden.</string>

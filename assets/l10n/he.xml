@@ -1981,6 +1981,9 @@
     <string name="authExCert">לא ניתן לאמת את אישור השרת ({hosts}).</string>
     <string name="authEx403">השרת סירב לחיבור (403). הפעל את “{setting}” בהגדרות המתקדמות של הכניסה או פנה למחלקת ה-IT: ייתכן שהגישה לדואר מהנייד חסומה.</string>
     <string name="authExGeneric">לא ניתן להתחבר ל-Exchange ({hosts}). בדקו את שם המשתמש, הסיסמה, כתובת השרת והגישה מהרשת הארגונית/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange לא מאפשר את המכשיר הזה: מנהל חסם אותו או עדיין לא אישר אותו. פנו למחלקת ה-IT כדי לאשר את המכשיר ב-Exchange (מכשירים ניידים).</string>
+    <string name="authExDeviceLimit">תיבת הדואר שלך הגיעה למגבלת הטלפונים והטאבלטים. הסירו מכשירים ישנים ב-Outlook באינטרנט (הגדרות ← כללי ← מכשירים ניידים) או פנו למחלקת ה-IT.</string>
+    <string name="authExSyncDisabled">הסנכרון מטלפונים (ActiveSync) כבוי עבור תיבת הדואר שלך ב-Exchange. פנו למחלקת ה-IT.</string>
     <string name="authUnsupportedOAuth">ספק OAuth לא נתמך</string>
     <string name="authOAuthNoEmail">נכנסת, אך השירות לא סיפק כתובת אימייל. ודא שהאפליקציה מורשית לגשת לכתובת האימייל שלך.</string>
     <string name="authOAuthImapRejected">נכנסת, אך שרת הדואר (IMAP) סירב לחיבור.</string>

@@ -1973,6 +1973,9 @@
     <string name="authExCert">Sunucu sertifikası doğrulanamadı ({hosts}).</string>
     <string name="authEx403">Sunucu bağlantıyı reddetti (403). Gelişmiş oturum açma ayarlarında “{setting}” seçeneğini açın veya BT departmanınıza başvurun: mobil posta erişimi engellenmiş olabilir.</string>
     <string name="authExGeneric">Exchange\'e bağlanılamadı ({hosts}). Kullanıcı adınızı, şifrenizi, sunucu adresini ve kurumsal ağ/VPN erişimini kontrol edin.</string>
+    <string name="authExDeviceBlocked">Exchange bu cihazı kabul etmiyor: bir yönetici onu engelledi veya henüz onaylamadı. Cihaza Exchange’de (mobil cihazlar) izin verilmesi için BT birimine başvurun.</string>
+    <string name="authExDeviceLimit">Posta kutunuz telefon ve tablet sınırına ulaştı. Web üzerinde Outlook’ta eski cihazları kaldırın (Ayarlar → Genel → Mobil cihazlar) veya BT birimine başvurun.</string>
+    <string name="authExSyncDisabled">Posta kutunuz için Exchange’de telefondan eşitleme (ActiveSync) kapalı. BT birimine başvurun.</string>
     <string name="authUnsupportedOAuth">Desteklenmeyen OAuth sağlayıcısı</string>
     <string name="authOAuthNoEmail">Oturum açıldı ancak hizmet bir e-posta adresi vermedi. Uygulamanın e-posta adresinize erişmesine izin verildiğinden emin olun.</string>
     <string name="authOAuthImapRejected">Oturum açıldı ancak posta sunucusu (IMAP) bağlantıyı reddetti.</string>

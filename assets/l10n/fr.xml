@@ -1973,6 +1973,9 @@
     <string name="authExCert">Impossible de vérifier le certificat du serveur ({hosts}).</string>
     <string name="authEx403">Le serveur a refusé la connexion (403). Activez « {setting} » dans les paramètres de connexion avancés ou contactez le service informatique : l’accès mobile à la messagerie est peut-être bloqué.</string>
     <string name="authExGeneric">Impossible de se connecter à Exchange ({hosts}). Vérifiez l’identifiant, le mot de passe, l’adresse du serveur et l’accès depuis le réseau de l’entreprise ou le VPN.</string>
+    <string name="authExDeviceBlocked">Exchange refuse cet appareil : un administrateur l’a bloqué ou ne l’a pas encore approuvé. Contactez votre service informatique pour autoriser l’appareil dans Exchange (appareils mobiles).</string>
+    <string name="authExDeviceLimit">Votre boîte a atteint sa limite de téléphones et de tablettes. Supprimez les anciens appareils dans Outlook sur le web (Paramètres → Général → Appareils mobiles) ou contactez votre service informatique.</string>
+    <string name="authExSyncDisabled">La synchronisation depuis les téléphones (ActiveSync) est désactivée pour votre boîte dans Exchange. Contactez votre service informatique.</string>
     <string name="authUnsupportedOAuth">Fournisseur OAuth non pris en charge</string>
     <string name="authOAuthNoEmail">Connexion réussie, mais le service n’a pas fourni d’adresse e-mail. Vérifiez que l’application est autorisée à accéder à votre adresse e-mail.</string>
     <string name="authOAuthImapRejected">Connexion réussie, mais le serveur de messagerie (IMAP) a refusé la connexion.</string>

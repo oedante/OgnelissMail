@@ -1973,6 +1973,9 @@
     <string name="authExCert">Het servercertificaat kon niet worden gecontroleerd ({hosts}).</string>
     <string name="authEx403">De server heeft de verbinding geweigerd (403). Schakel ‘{setting}’ in bij de geavanceerde inloginstellingen of neem contact op met je IT-afdeling: toegang tot e-mail via mobiel is mogelijk geblokkeerd.</string>
     <string name="authExGeneric">Kan geen verbinding maken met Exchange ({hosts}). Controleer je gebruikersnaam, wachtwoord, serveradres en toegang vanaf het bedrijfsnetwerk/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange laat dit apparaat niet toe: een beheerder heeft het geblokkeerd of nog niet goedgekeurd. Neem contact op met IT om het apparaat in Exchange (mobiele apparaten) toe te staan.</string>
+    <string name="authExDeviceLimit">Je mailbox heeft het maximale aantal telefoons en tablets bereikt. Verwijder oude apparaten in Outlook op het web (Instellingen → Algemeen → Mobiele apparaten) of neem contact op met IT.</string>
+    <string name="authExSyncDisabled">Synchronisatie vanaf telefoons (ActiveSync) is uitgeschakeld voor je mailbox in Exchange. Neem contact op met IT.</string>
     <string name="authUnsupportedOAuth">Niet-ondersteunde OAuth-provider</string>
     <string name="authOAuthNoEmail">Je bent ingelogd, maar de dienst heeft geen e-mailadres doorgegeven. Controleer of de app toegang heeft tot je e-mailadres.</string>
     <string name="authOAuthImapRejected">Je bent ingelogd, maar de mailserver (IMAP) heeft de verbinding geweigerd.</string>

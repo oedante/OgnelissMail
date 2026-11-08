@@ -1973,6 +1973,9 @@
     <string name="authExCert">Serverens certifikat kunne ikke verificeres ({hosts}).</string>
     <string name="authEx403">Serveren afviste forbindelsen (403). Slå “{setting}” til i de avancerede indstillinger for login, eller kontakt din it-afdeling: adgang til mail fra mobile enheder kan være blokeret.</string>
     <string name="authExGeneric">Kunne ikke oprette forbindelse til Exchange ({hosts}). Tjek brugernavn, adgangskode, serveradresse og adgang fra firmanetværket/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange lukker ikke denne enhed ind: en administrator har blokeret den eller endnu ikke godkendt den. Kontakt IT, så enheden tillades i Exchange (mobilenheder).</string>
+    <string name="authExDeviceLimit">Din postkasse har nået grænsen for telefoner og tablets. Fjern gamle enheder i Outlook på internettet (Indstillinger → Generelt → Mobilenheder), eller kontakt IT.</string>
+    <string name="authExSyncDisabled">Synkronisering fra telefoner (ActiveSync) er slået fra for din postkasse i Exchange. Kontakt IT.</string>
     <string name="authUnsupportedOAuth">OAuth-udbyder understøttes ikke</string>
     <string name="authOAuthNoEmail">Du er logget ind, men tjenesten gav ikke en mailadresse. Kontroller, at appen har tilladelse til at få adgang til din mailadresse.</string>
     <string name="authOAuthImapRejected">Du er logget ind, men mailserveren (IMAP) afviste forbindelsen.</string>

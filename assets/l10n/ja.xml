@@ -1965,6 +1965,9 @@
     <string name="authExCert">サーバー証明書を確認できませんでした ({hosts})。</string>
     <string name="authEx403">サーバーが接続を拒否しました（403）。詳細なサインイン設定で「{setting}」をオンにするか、IT 部門にお問い合わせください。モバイルからのメールアクセスがブロックされている可能性があります。</string>
     <string name="authExGeneric">Exchange に接続できませんでした ({hosts})。ユーザー名、パスワード、サーバーのアドレス、および社内ネットワーク/VPN からのアクセスを確認してください。</string>
+    <string name="authExDeviceBlocked">Exchange がこのデバイスを許可していません。管理者がブロックしたか、まだ承認していません。Exchange（モバイル デバイス）でデバイスを許可するよう IT 部門に連絡してください。</string>
+    <string name="authExDeviceLimit">メールボックスのスマートフォンとタブレットの上限に達しました。Outlook on the web（設定 → 全般 → モバイル デバイス）で古いデバイスを削除するか、IT 部門に連絡してください。</string>
+    <string name="authExSyncDisabled">Exchange でこのメールボックスのスマートフォンからの同期（ActiveSync）が無効になっています。IT 部門に連絡してください。</string>
     <string name="authUnsupportedOAuth">サポートされていない OAuth プロバイダー</string>
     <string name="authOAuthNoEmail">サインインしましたが、サービスからメールアドレスが提供されませんでした。アプリにメールアドレスへのアクセスが許可されているか確認してください。</string>
     <string name="authOAuthImapRejected">サインインしましたが、メールサーバー（IMAP）が接続を拒否しました。</string>

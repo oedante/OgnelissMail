@@ -1989,6 +1989,9 @@
     <string name="authExCert">Nie udało się zweryfikować certyfikatu serwera ({hosts}).</string>
     <string name="authEx403">Serwer odmówił połączenia (403). Włącz „{setting}” w zaawansowanych ustawieniach logowania lub skontaktuj się z działem IT: dostęp do poczty z urządzeń mobilnych może być zablokowany.</string>
     <string name="authExGeneric">Nie udało się połączyć z Exchange ({hosts}). Sprawdź nazwę użytkownika, hasło, adres serwera i dostęp z sieci firmowej/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange nie wpuszcza tego urządzenia: administrator je zablokował lub jeszcze nie zatwierdził. Skontaktuj się z działem IT, aby zezwolił na urządzenie w Exchange (urządzenia przenośne).</string>
+    <string name="authExDeviceLimit">Twoja skrzynka osiągnęła limit telefonów i tabletów. Usuń stare urządzenia w Outlooku w przeglądarce (Ustawienia → Ogólne → Urządzenia przenośne) lub skontaktuj się z działem IT.</string>
+    <string name="authExSyncDisabled">Synchronizacja z telefonów (ActiveSync) jest wyłączona dla Twojej skrzynki w Exchange. Skontaktuj się z działem IT.</string>
     <string name="authUnsupportedOAuth">Nieobsługiwany dostawca OAuth</string>
     <string name="authOAuthNoEmail">Zalogowano, ale usługa nie podała adresu e-mail. Upewnij się, że aplikacja ma zgodę na dostęp do adresu e-mail.</string>
     <string name="authOAuthImapRejected">Zalogowano, ale serwer poczty (IMAP) odrzucił połączenie.</string>

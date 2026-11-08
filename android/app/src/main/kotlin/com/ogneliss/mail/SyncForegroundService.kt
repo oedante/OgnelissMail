@@ -74,18 +74,27 @@ class SyncForegroundService : Service() {
     // сутки. По истечении система вызывает onTimeout, и сервис обязан
     // остановиться за несколько секунд — иначе приложение аварийно завершится.
     // Дальше почту проверяет плановая фоновая задача (WorkManager).
+    // 2.0.0: пульс после этого НЕ снимается — он продолжает будить проверку
+    // почты срочной задачей WorkManager (SyncHeartbeatReceiver, режим без
+    // службы). Раньше после 6 часов служба и пульс останавливались до
+    // следующего открытия приложения, а плановую задачу Android в глубоком
+    // сне откладывает — письма приходили с задержкой в часы.
     override fun onTimeout(startId: Int, fgsType: Int) {
         running = false
-        SyncHeartbeat.cancel(applicationContext)
+        keepHeartbeat = true
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
     override fun onDestroy() {
         running = false
-        SyncHeartbeat.cancel(applicationContext)
+        if (!keepHeartbeat) SyncHeartbeat.cancel(applicationContext)
+        keepHeartbeat = false
         super.onDestroy()
     }
+
+    /** Остановка по лимиту Android 15: пульс остаётся (см. [onTimeout]). */
+    private var keepHeartbeat = false
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // Android 15+ (замечание Google Play 14.10.2026): службу типа dataSync

@@ -34,7 +34,7 @@ import java.io.InputStreamReader
 
 object BackgroundDiagnostics {
 
-    private fun prop(name: String): String = try {
+    internal fun prop(name: String): String = try {
         val p = Runtime.getRuntime().exec(arrayOf("getprop", name))
         BufferedReader(InputStreamReader(p.inputStream)).use { it.readLine()?.trim() ?: "" }
     } catch (e: Exception) {

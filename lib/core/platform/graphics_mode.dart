@@ -38,6 +38,9 @@ class GraphicsState {
   /// lowRamDevice, appLimitMb, appPssMb.
   final Map<String, Object?> memory;
 
+  /// Чип, драйвер EGL и Vulkan: «чип mt6765, EGL mali, Vulkan 1.1+».
+  final String? gpu;
+
   const GraphicsState({
     required this.mode,
     required this.active,
@@ -47,11 +50,13 @@ class GraphicsState {
     this.autoAt,
     this.autoReason,
     this.memory = const {},
+    this.gpu,
   });
 
   factory GraphicsState.fromMap(Map<Object?, Object?> m) {
     final at = (m['autoAt'] as num?)?.toInt() ?? 0;
     final mem = m['memory'];
+    final gpu = (m['gpu'] as String?)?.trim();
     return GraphicsState(
       mode: m['mode'] as String? ?? 'auto',
       active: m['active'] as String? ?? 'impeller',
@@ -61,6 +66,7 @@ class GraphicsState {
       autoAt: at > 0 ? DateTime.fromMillisecondsSinceEpoch(at) : null,
       autoReason: m['autoReason'] as String?,
       memory: mem is Map ? {for (final e in mem.entries) '${e.key}': e.value} : const {},
+      gpu: gpu == null || gpu.isEmpty ? null : gpu,
     );
   }
 
@@ -141,6 +147,7 @@ class GraphicsMode {
     if (s.autoSkia && s.active == 'skia' && s.autoReason != null) {
       AppLogger.info('Графика: причина перехода на Skia — ${s.autoReason}');
     }
+    if (s.gpu != null) AppLogger.info('Видео: ${s.gpu}');
     final mem = s.memorySummary;
     if (mem.isNotEmpty) AppLogger.info('Память: $mem');
   }

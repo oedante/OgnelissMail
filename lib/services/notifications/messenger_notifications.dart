@@ -17,9 +17,11 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show Platform;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -131,6 +133,28 @@ class MessengerNotify {
     }
   }
 
+  /// Android: аватар рисует сама система — Canvas в памяти, без видеокарты
+  /// (плагин ogneliss_native_http, AvatarPainter.java; 08.11.2026).
+  /// Flutter рисует картинку видеокартой, а уведомление строится, когда
+  /// приложение свёрнуто: журнал владельца (HUAWEI DEL-LX9) — уведомление о
+  /// письме и через 2,4 с падение Impeller на OpenGL ES при копировании
+  /// картинки (blit_pass_gles.cc). На iPhone и Mac — Flutter (Metal).
+  static const _avatarChannel = MethodChannel('ogneliss/avatar');
+
+  static bool get _nativeAvatars => !kIsWeb && Platform.isAndroid;
+
+  /// null — не вышло; тогда уведомление без нашего рисунка (Android
+  /// нарисует свою букву), но не видеокартой Flutter.
+  static Future<Uint8List?> _native(String method, Map<String, Object?> args) async {
+    try {
+      final r = await _avatarChannel.invokeMethod<Uint8List>(method, args).timeout(const Duration(seconds: 3));
+      return r == null || r.isEmpty ? null : r;
+    } catch (e) {
+      AppLogger.debug('Аватар уведомления ($method): $e');
+      return null;
+    }
+  }
+
   /// Кружок с буквой в PNG ([size]×[size], прозрачные углы). Не вышло
   /// (нет отрисовки в фоне) — null: Android нарисует свою букву, iPhone
   /// покажет уведомление без фото.
@@ -140,6 +164,9 @@ class MessengerNotify {
     required int letterColor,
     int size = 192,
   }) async {
+    if (_nativeAvatars) {
+      return _native('initials', {'letter': fixUtf16(letter), 'fill': fill, 'letterColor': letterColor, 'size': size});
+    }
     ui.Picture? picture;
     ui.Image? image;
     try {
@@ -175,6 +202,7 @@ class MessengerNotify {
   /// портреты квадратные» — оболочка nubia не скругляет значок человека, как
   /// это делает обычный Android). Не вышло — null (тогда фото как есть).
   static Future<Uint8List?> circlePhoto(Uint8List bytes, {int size = 192}) async {
+    if (_nativeAvatars) return _native('circle', {'bytes': bytes, 'size': size});
     ui.Codec? codec;
     ui.Image? src;
     ui.Picture? picture;
@@ -234,6 +262,9 @@ class MessengerNotify {
   /// на аватарах в мессенджерах. Портрет внутри кольца немного меньше.
   /// Не вышло — null (портрет без отметки).
   static Future<Uint8List?> vipBadge(Uint8List circle, {int size = 192}) async {
+    if (_nativeAvatars) {
+      return _native('vip', {'bytes': circle, 'gold': NotificationText.vipColor, 'size': size});
+    }
     ui.Codec? codec;
     ui.Image? src;
     ui.Picture? picture;

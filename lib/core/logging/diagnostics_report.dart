@@ -123,6 +123,7 @@ class DiagnosticsReport {
       final g = await GraphicsMode.state();
       if (g != null) {
         line('Графика: ${g.summary}');
+        if (g.gpu != null) line('Видео: ${g.gpu}');
         if (g.memorySummary.isNotEmpty) line('Память: ${g.memorySummary}');
       }
       final sp = await SharedPreferences.getInstance();

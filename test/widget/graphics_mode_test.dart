@@ -55,6 +55,7 @@ Map<Object?, Object?> _afterCrash({String mode = 'auto', String next = 'skia'}) 
         'appLimitMb': 256,
         'appPssMb': 183,
       },
+      'gpu': 'чип mt6765, EGL mali, Vulkan 1.1+',
     };
 
 void main() {
@@ -68,6 +69,7 @@ void main() {
       expect(s.summary, 'Skia (совместимость), автоматически после сбоя Impeller 2026-11-08T09:59');
       expect(s.memorySummary,
           'всего 3712 МБ, свободно 905 МБ (порог 216), мало: нет; приложению до 256 МБ, занято 183 МБ');
+      expect(s.gpu, 'чип mt6765, EGL mali, Vulkan 1.1+');
     });
 
     test('Impeller с известным путём; выбор вступит после перезапуска', () {
@@ -82,6 +84,7 @@ void main() {
       expect(s.restartNeeded, isTrue);
       expect(s.autoAt, isNull);
       expect(s.memorySummary, isEmpty);
+      expect(s.gpu, isNull);
       expect(s.summary, 'Impeller (OpenGLES), выбрано вручную; после перезапуска — Skia');
     });
 

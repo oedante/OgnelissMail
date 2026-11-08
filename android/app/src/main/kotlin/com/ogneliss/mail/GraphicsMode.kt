@@ -35,6 +35,7 @@ import android.app.Application
 import android.app.ApplicationExitInfo
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Debug
 import android.os.Handler
@@ -63,6 +64,9 @@ object GraphicsMode {
     /** «Impeller (OpenGLES)» / «(Vulkan)» — из сообщения движка, если удалось прочитать. */
     @Volatile
     private var backend: String? = null
+
+    @Volatile
+    private var gpuCache: String? = null
 
     private fun prefs(c: Context) = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
@@ -164,6 +168,7 @@ object GraphicsMode {
     private fun state(c: Context, readLog: Boolean = true): Map<String, Any?> {
         val p = prefs(c)
         if (readLog && active == "impeller" && backend == null) backend = readBackend()
+        if (readLog && gpuCache == null) gpuCache = gpu(c)
         return mapOf(
             "mode" to mode(c),
             "active" to active,
@@ -173,7 +178,30 @@ object GraphicsMode {
             "autoAt" to p.getLong(KEY_AUTO_AT, 0L),
             "autoReason" to p.getString(KEY_AUTO_WHY, null),
             "memory" to memory(c),
+            "gpu" to gpuCache,
         )
+    }
+
+    /**
+     * Чип, графический драйвер и Vulkan (08.11.2026): Impeller рисует через
+     * Vulkan 1.1, а без него (или с драйвером из чёрного списка Flutter) —
+     * через OpenGL ES, где и случился сбой. Строка — для журнала.
+     */
+    private fun gpu(c: Context): String = try {
+        val parts = mutableListOf<String>()
+        BackgroundDiagnostics.prop("ro.board.platform").takeIf { it.isNotEmpty() }?.let { parts.add("чип $it") }
+        BackgroundDiagnostics.prop("ro.hardware.egl").takeIf { it.isNotEmpty() }?.let { parts.add("EGL $it") }
+        BackgroundDiagnostics.prop("ro.hardware.vulkan").takeIf { it.isNotEmpty() }?.let { parts.add("драйвер Vulkan $it") }
+        val pm = c.packageManager
+        val vk = when {
+            pm.hasSystemFeature(PackageManager.FEATURE_VULKAN_HARDWARE_VERSION, 0x401000) -> "1.1+"
+            pm.hasSystemFeature(PackageManager.FEATURE_VULKAN_HARDWARE_VERSION, 0x400000) -> "1.0"
+            else -> "нет"
+        }
+        parts.add("Vulkan $vk")
+        parts.joinToString(", ")
+    } catch (e: Throwable) {
+        ""
     }
 
     /**

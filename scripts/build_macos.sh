@@ -107,10 +107,22 @@ setup() {
 
 prepare() {
   [[ -d macos ]] || setup
-  flutter pub get >/dev/null
+  # Шаги — с выводом и понятной ошибкой: 09.11.2026 pod install с выводом в
+  # /dev/null падал молча, и скрипт заканчивался сразу после build_runner.
+  echo "▶ Пакеты (flutter pub get)…"
+  flutter pub get || { echo "✗ flutter pub get не прошёл — ошибка выше."; exit 1; }
   # Код базы — всегда заново, под установленную версию drift (см. build_ios.sh).
-  dart run build_runner build --delete-conflicting-outputs
-  (cd macos && pod install --repo-update >/dev/null)
+  # «W These options have been removed … --delete-conflicting-outputs» —
+  # предупреждение нового build_runner, не ошибка (старые без ключа спрашивают).
+  echo "▶ Код базы (build_runner)…"
+  dart run build_runner build --delete-conflicting-outputs || { echo "✗ build_runner не прошёл — ошибка выше."; exit 1; }
+  echo "▶ CocoaPods (pod install)…"
+  if ! (cd macos && pod install --repo-update); then
+    echo "✗ pod install не прошёл — причина в строках с [!] выше."
+    echo "  Частое: «required a higher minimum deployment target» — поднимите platform :osx в macos/Podfile;"
+    echo "  «CDN: trunk … failed» — нет сети до cdn.cocoapods.org, повторите позже."
+    exit 1
+  fi
 }
 
 DEFINES=()

@@ -7,7 +7,8 @@
     1. проверяет Flutter (Dart 3.10+), Visual Studio, режим разработчика, NuGet;
     2. создаёт папку windows\ (если её нет) и правит windows\CMakeLists.txt
        под новые версии MSVC;
-    3. flutter pub get → генерация кода БД (build_runner) → иконки;
+    3. пакеты (flutter pub upgrade — те же версии, что в сборке на GitHub;
+       -KeepLock — свои, flutter pub get) → код БД (build_runner) → иконки;
     4. flutter analyze (отчёт в файл, сборку не останавливает);
     5. flutter build windows (или flutter run -d windows с ключом -Run).
   Весь вывод пишется в build\logs\build_windows_<время>.log — этот файл
@@ -18,12 +19,14 @@
   .\scripts\build_windows.ps1 -Run         # отладочный запуск (горячая перезагрузка)
   .\scripts\build_windows.ps1 -Clean       # flutter clean перед сборкой
   .\scripts\build_windows.ps1 -SkipAnalyze # без flutter analyze (быстрее)
+  .\scripts\build_windows.ps1 -KeepLock    # не обновлять версии пакетов
 #>
 param(
   [switch]$Run,
   [switch]$Clean,
   [switch]$SkipAnalyze,
   [switch]$SkipIcons,
+  [switch]$KeepLock,
   [ValidateSet('release', 'debug', 'profile')]
   [string]$Mode = 'release'
 )
@@ -208,11 +211,19 @@ Patch-File 'windows\CMakeLists.txt' @{
 }
 
 # ── 4. Зависимости и генерация кода ──────────────────────────────────────────
-Step 'flutter pub get'
-Exec 'flutter pub get' { flutter pub get } | Out-Null
+# pubspec.lock в архив не входит, а прежний держал старые версии пакетов:
+# 08.11.2026 закреплённый archive 4.5.2 сломал сборку («writeRange isn't
+# defined in a superclass»). По умолчанию — те же версии, что в сборке на GitHub.
+if ($KeepLock) {
+  Step 'Пакеты: flutter pub get (свои версии из pubspec.lock)'
+  Exec 'flutter pub get' { flutter pub get } | Out-Null
+} else {
+  Step 'Пакеты: flutter pub upgrade (те же версии, что в сборке на GitHub)'
+  Exec 'flutter pub upgrade' { flutter pub upgrade } | Out-Null
+}
 
 Step 'Генерация кода БД (drift / build_runner)'
-Exec 'build_runner' { dart run build_runner build } | Out-Null
+Exec 'build_runner' { dart run build_runner build --delete-conflicting-outputs } | Out-Null
 if (-not (Test-Path 'lib\data\database\app_database.g.dart')) {
   Fail 'app_database.g.dart не сгенерирован — смотрите ошибки build_runner выше'
 }
@@ -273,6 +284,7 @@ if ($Run) {
 }
 
 Step "flutter build windows --$Mode"
+Write-Host 'Сообщения «[SEVERE] RustBuilder: Failed to find lib.name …» — не ошибка, сборка продолжается.' -ForegroundColor Gray
 Exec 'flutter build windows' { flutter build windows "--$Mode" @defines } | Out-Null
 $cfg = (Get-Culture).TextInfo.ToTitleCase($Mode)
 $out = Join-Path $Root "build\windows\x64\runner\$cfg"

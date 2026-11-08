@@ -3,6 +3,20 @@
 > **Windows — проще всего:** `build_windows.bat` в корне проекта
 > (обёртка над `scripts/build_windows.ps1`). Подробности —
 > [`docs/guides/BUILD_WINDOWS.md`](../docs/guides/BUILD_WINDOWS.md).
+>
+> **Android:** `build_android.bat` в корне (Windows, обёртка над
+> `scripts/build_android.ps1`) или `scripts/build_android.sh` (Mac, Linux) —
+> App Bundle и APK в `build/out/`. Подробности —
+> [`docs/guides/ANDROID_STUDIO.md`](../docs/guides/ANDROID_STUDIO.md), раздел 8.
+>
+> **iPhone и iPad:** `scripts/build_ios.sh` на Mac или
+> `scripts/ios_remote_build.ps1` с Windows по SSH — IPA для TestFlight.
+> Подробности — [`docs/guides/BUILD_IOS.md`](../docs/guides/BUILD_IOS.md).
+>
+> Скрипты сборки ставят пакеты тех же версий, что проверочная сборка на
+> GitHub (`flutter pub upgrade`): `pubspec.lock` в архив не входит, а
+> прежний мог держать старые версии. Оставить свои — `-KeepLock` /
+> `--keep-lock`.
 
 Подготовка окружения перед первой компиляцией.
 

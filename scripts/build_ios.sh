@@ -6,8 +6,14 @@
 #   scripts/build_ios.sh                      IPA для TestFlight / App Store
 #   scripts/build_ios.sh --upload             IPA и выгрузка в App Store Connect (TestFlight)
 #   scripts/build_ios.sh --team ABCDE12345    запомнить команду разработчика (один раз)
-#   scripts/build_ios.sh --prepare            только подготовить (pub get, pod install, подпись)
+#   scripts/build_ios.sh --prepare            только подготовить (пакеты, pod install, подпись)
 #                                             — дальше Product → Archive в Xcode
+#   scripts/build_ios.sh --keep-lock          не обновлять версии пакетов (flutter pub get)
+#
+# Пакеты — те же версии, что в проверочной сборке на GitHub (flutter pub
+# upgrade): pubspec.lock в архив не входит, а прежний держал старые версии —
+# 08.11.2026 закреплённый archive 4.5.2 сломал сборку («writeRange isn't
+# defined in a superclass»).
 #
 # Команда разработчика хранится ВНЕ проекта: ~/.ogneliss/ios_signing.xcconfig.
 # Новый архив проекта её не затирает — при каждом запуске скрипт копирует её
@@ -26,8 +32,10 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 MODE=build
+KEEP_LOCK=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --keep-lock) KEEP_LOCK=1 ;;
     --check) MODE=check ;;
     --run) MODE=run ;;
     --prepare) MODE=prepare ;;
@@ -135,13 +143,17 @@ else
 fi
 
 say "Зависимости"
-flutter pub get
+if [[ "$KEEP_LOCK" == 1 ]]; then flutter pub get; else flutter pub upgrade; fi
 # Код базы (drift) — всегда заново, под установленную версию drift: файл,
 # сгенерированный другой версией drift_dev, не собирается («Method not found:
 # '$_getPrefetchedDataByColumns'», 29.10.2026 — в архиве лежал файл от drift
 # 2.35.3, а на Mac стоял 2.35.2). Без изменений — секунды.
 dart run build_runner build --delete-conflicting-outputs
 (cd ios && pod install --repo-update)
+# native_toolchain_rust 1.0.6 пишет «[SEVERE] RustBuilder: Failed to find
+# lib.name … type 'Null' is not a subtype of type 'String'», когда в Cargo.toml
+# нет lib.name, — и берёт package.name. Это не ошибка, сборка идёт дальше.
+echo "Сообщения «[SEVERE] RustBuilder: Failed to find lib.name …» при сборке — не ошибка."
 
 if [[ -n "${KEYCHAIN_PASSWORD:-}" ]]; then
   security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$HOME/Library/Keychains/login.keychain-db"

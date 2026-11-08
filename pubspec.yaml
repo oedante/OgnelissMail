@@ -46,7 +46,10 @@ dependencies:
   # 4.5+: этого требует свежий image (4.12 — archive ^4.5.0). Используемый
   # API (Archive, ArchiveFile, ZipEncoder/ZipDecoder) в 4.x не менялся.
   # Конфликт с pdf 3.12 снят переопределением ниже (dependency_overrides).
-  archive: ^4.5.1
+  # 4.6+: CappedOutputFileStream (zip_view.dart) перекрывает writeRange и
+  # writeZeros, которых в 4.5 нет. 08.11.2026 у владельца pubspec.lock держал
+  # 4.5.2 — сборка падала («writeRange isn't defined in a superclass»).
+  archive: ^4.6.0
   # 2.2.x (форк, затем слит) заменил eventBus на eventStream — IMAP IDLE
   # (imap_service.startIdle) написан под 2.1.x. Переход на 2.2 — в TECH_DEBT.
   enough_mail: ">=2.1.6 <2.2.0"
@@ -158,7 +161,8 @@ dependency_overrides:
   # 3.12 archive импортируется только в веб-сборке (io/js.dart); на Android,
   # iOS и Windows сжатие идёт через dart:io zlib. Между 3.12 и 3.13 код pdf,
   # связанный с archive, не менялся — изменилась только граница версии.
-  archive: ^4.5.1
+  # ^4.6.0 — как в dependencies выше (переопределение задаёт версию само).
+  archive: ^4.6.0
 
 dev_dependencies:
   integration_test:

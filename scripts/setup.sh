@@ -215,7 +215,7 @@ SRC_ICON="assets/icons/app_icon.png"
 TRAY_PNG="assets/icons/tray_icon.png"
 if [ -f "$SRC_ICON" ]; then
   [ -f "$TRAY_PNG" ] || { cp "$SRC_ICON" "$TRAY_PNG"; ok "Создан $TRAY_PNG (из app_icon.png)"; }
-  # tray_icon.ico уже в репозитории (tool/branding/make_icon_v5.py desktop):
+  # tray_icon.ico уже в репозитории (tool/branding/make_icon_v6.py desktop):
   # создаём, только если его нет — квадрат из app_icon.png хуже готового.
   if [ -f assets/icons/tray_icon.ico ]; then
     ok "assets/icons/tray_icon.ico на месте"

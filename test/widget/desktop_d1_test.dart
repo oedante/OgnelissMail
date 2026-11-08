@@ -131,14 +131,18 @@ void main() {
   // 1.15.0: приём — пакетом super_drag_and_drop (вместо desktop_drop). Его
   // нативной части в тестах нет: проверяется разбор брошенного и что без
   // неё окно письма остаётся как есть.
+  // Ожидаемый путь — через toFilePath(), как в коде: на Windows
+  // file:///tmp/photo.jpg — это \tmp\photo.jpg (08.11.2026, тест у владельца).
   test('файлы на окно (компьютер): пути file:// — в список, прочее — нет', () async {
+    final smeta = Uri.file('/tmp/smeta.xlsx');
+    final photo = Uri.file('/tmp/photo.jpg');
     final paths = await droppedPaths([
-      _DroppedItem(Uri.file('/tmp/smeta.xlsx')),
+      _DroppedItem(smeta),
       _DroppedItem(Uri.parse('https://example.com/a.pdf')),
       _DroppedItem(null),
-      _DroppedItem(Uri.file('/tmp/photo.jpg')),
+      _DroppedItem(photo),
     ]);
-    expect(paths, ['/tmp/smeta.xlsx', '/tmp/photo.jpg']);
+    expect(paths, [smeta.toFilePath(), photo.toFilePath()]);
   });
 
   // 1.15.1: iPad, Android, вложение из Outlook — файл без пути: содержимое
@@ -146,10 +150,11 @@ void main() {
   test('файл без пути — во временную папку; текст — не файл', () async {
     final dir = Directory.systemTemp.createTempSync('drop_test');
     addTearDown(() => dir.deleteSync(recursive: true));
+    final photo = Uri.file('/tmp/photo.jpg');
     final items = [
       _DroppedItem(null, formats: const ['application/pdf'], content: [1, 2, 3], name: 'Смета: итог.pdf'),
       _DroppedItem(null, formats: const ['text/plain', 'public.utf8-plain-text'], content: [65]),
-      _DroppedItem(Uri.file('/tmp/photo.jpg')),
+      _DroppedItem(photo),
       _DroppedItem(null, formats: const ['image/jpeg'], content: [9, 9]),
     ];
     expect(looksLikeFile(items[0]), isTrue);
@@ -159,7 +164,7 @@ void main() {
     expect(paths, hasLength(3));
     expect(p.basename(paths[0]), 'Смета_ итог.pdf');
     expect(File(paths[0]).readAsBytesSync(), [1, 2, 3]);
-    expect(paths[1], '/tmp/photo.jpg');
+    expect(paths[1], photo.toFilePath());
     // Без имени — «file-N».
     expect(p.basename(paths[2]), 'file-4');
   });

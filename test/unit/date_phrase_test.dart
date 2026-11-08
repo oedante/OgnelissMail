@@ -240,8 +240,11 @@ void main() {
       if (sw.elapsedMilliseconds < best) best = sw.elapsedMilliseconds;
     }
     expect(found.length, greaterThan(400));
-    // Бюджет с запасом на медленную машину CI: на телефоне — заметно быстрее.
-    expect(best, lessThan(400), reason: '$best мс');
+    // Бюджет — от поломки, а не от загрузки машины: в одиночку ~100–130 мс,
+    // а при полном прогоне на Windows владельца (08.11.2026) даже лучший из
+    // пяти замеров был 500 мс (порог 400 не выдержал). Перебор в регулярном
+    // выражении или квадратичный разбор на 115 тысячах знаков — это секунды.
+    expect(best, lessThan(2000), reason: '$best мс');
     // ignore: avoid_print
     print('Даты в рассылке ${text.length} знаков: $best мс (лучший из 5)');
   });

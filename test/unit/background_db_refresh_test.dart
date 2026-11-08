@@ -36,6 +36,10 @@ void main() {
   late AppDatabase app; // соединение приложения
   late AppDatabase bg; // соединение фоновой задачи
 
+  // Два соединения к одной базе — суть теста; предупреждение drift о
+  // повторной базе здесь только засоряет вывод.
+  setUpAll(() => driftRuntimeOptions.dontWarnAboutMultipleDatabases = true);
+
   setUp(() async {
     dir = await Directory.systemTemp.createTemp('ogneliss_bg_refresh');
     final file = File('${dir.path}/m.db');

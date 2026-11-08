@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Anteckningar</string>
     <string name="widget_note_new">Ny anteckning</string>
     <string name="widget_notes_desc">Dina senaste anteckningar och en knapp för en ny</string>
+    <string name="widget_count_label">Olästa</string>
+    <string name="widget_count_desc">Antal olästa mejl; tryck för att öppna inkorgen</string>
     <string name="widget_prev">Föregående</string>
     <string name="widget_next">Nästa</string>
     <string name="widget_cal_day">Dag</string>

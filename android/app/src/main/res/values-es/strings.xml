@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Notas</string>
     <string name="widget_note_new">Nueva nota</string>
     <string name="widget_notes_desc">Tus últimas notas y un botón para crear una nueva</string>
+    <string name="widget_count_label">No leídos</string>
+    <string name="widget_count_desc">Número de correos no leídos; toca para abrir la bandeja de entrada</string>
     <string name="widget_prev">Anterior</string>
     <string name="widget_next">Siguiente</string>
     <string name="widget_cal_day">Día</string>

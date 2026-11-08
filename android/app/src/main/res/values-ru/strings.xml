@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Заметки</string>
     <string name="widget_note_new">Новая заметка</string>
     <string name="widget_notes_desc">Последние заметки и кнопка новой заметки</string>
+    <string name="widget_count_label">Непрочитанные</string>
+    <string name="widget_count_desc">Число непрочитанных писем; нажатие открывает «Входящие»</string>
     <string name="widget_prev">Назад</string>
     <string name="widget_next">Вперёд</string>
     <string name="widget_cal_day">День</string>

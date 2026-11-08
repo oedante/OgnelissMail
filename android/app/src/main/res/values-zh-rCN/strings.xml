@@ -20,6 +20,8 @@
     <string name="widget_notes_label">笔记</string>
     <string name="widget_note_new">新建笔记</string>
     <string name="widget_notes_desc">最新笔记和新建笔记按钮</string>
+    <string name="widget_count_label">未读</string>
+    <string name="widget_count_desc">未读邮件数；点按打开收件箱</string>
     <string name="widget_prev">上一个</string>
     <string name="widget_next">下一个</string>
     <string name="widget_cal_day">日</string>

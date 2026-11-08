@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Note</string>
     <string name="widget_note_new">Notă nouă</string>
     <string name="widget_notes_desc">Cele mai recente note ale tale și un buton pentru una nouă</string>
+    <string name="widget_count_label">Necitite</string>
+    <string name="widget_count_desc">Numărul de e-mailuri necitite; atingeți pentru a deschide Mesaje primite</string>
     <string name="widget_prev">Înapoi</string>
     <string name="widget_next">Înainte</string>
     <string name="widget_cal_day">Zi</string>

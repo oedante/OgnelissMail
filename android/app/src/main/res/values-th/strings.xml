@@ -20,6 +20,8 @@
     <string name="widget_notes_label">โน้ต</string>
     <string name="widget_note_new">โน้ตใหม่</string>
     <string name="widget_notes_desc">โน้ตล่าสุดของคุณและปุ่มสำหรับสร้างโน้ตใหม่</string>
+    <string name="widget_count_label">ยังไม่อ่าน</string>
+    <string name="widget_count_desc">จำนวนอีเมลที่ยังไม่อ่าน แตะเพื่อเปิดกล่องจดหมายเข้า</string>
     <string name="widget_prev">ก่อนหน้า</string>
     <string name="widget_next">ถัดไป</string>
     <string name="widget_cal_day">วัน</string>

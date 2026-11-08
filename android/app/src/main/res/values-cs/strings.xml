@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Poznámky</string>
     <string name="widget_note_new">Nová poznámka</string>
     <string name="widget_notes_desc">Vaše nejnovější poznámky a tlačítko pro novou</string>
+    <string name="widget_count_label">Nepřečtené</string>
+    <string name="widget_count_desc">Počet nepřečtených e-mailů; klepnutím otevřete Doručenou poštu</string>
     <string name="widget_prev">Předchozí</string>
     <string name="widget_next">Další</string>
     <string name="widget_cal_day">Den</string>

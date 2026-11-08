@@ -20,6 +20,8 @@
     <string name="widget_notes_label">メモ</string>
     <string name="widget_note_new">新しいメモ</string>
     <string name="widget_notes_desc">最新のメモと新規作成ボタン</string>
+    <string name="widget_count_label">未読</string>
+    <string name="widget_count_desc">未読メールの数。タップで受信トレイを開きます</string>
     <string name="widget_prev">前へ</string>
     <string name="widget_next">次へ</string>
     <string name="widget_cal_day">日</string>

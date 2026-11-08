@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Noter</string>
     <string name="widget_note_new">Ny note</string>
     <string name="widget_notes_desc">Dine seneste noter og en knap til en ny</string>
+    <string name="widget_count_label">Ulæste</string>
+    <string name="widget_count_desc">Antal ulæste e-mails; tryk for at åbne indbakken</string>
     <string name="widget_prev">Forrige</string>
     <string name="widget_next">Næste</string>
     <string name="widget_cal_day">Dag</string>

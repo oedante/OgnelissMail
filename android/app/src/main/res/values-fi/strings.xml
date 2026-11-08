@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Muistiinpanot</string>
     <string name="widget_note_new">Uusi muistiinpano</string>
     <string name="widget_notes_desc">Uusimmat muistiinpanosi ja painike uutta varten</string>
+    <string name="widget_count_label">Lukemattomat</string>
+    <string name="widget_count_desc">Lukemattomien viestien määrä; avaa saapuneet napauttamalla</string>
     <string name="widget_prev">Edellinen</string>
     <string name="widget_next">Seuraava</string>
     <string name="widget_cal_day">Päivä</string>

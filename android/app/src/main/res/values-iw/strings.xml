@@ -20,6 +20,8 @@
     <string name="widget_notes_label">הערות</string>
     <string name="widget_note_new">הערה חדשה</string>
     <string name="widget_notes_desc">ההערות האחרונות שלכם וכפתור להערה חדשה</string>
+    <string name="widget_count_label">לא נקראו</string>
+    <string name="widget_count_desc">מספר ההודעות שלא נקראו; הקישו לפתיחת תיבת הדואר הנכנס</string>
     <string name="widget_prev">הקודם</string>
     <string name="widget_next">הבא</string>
     <string name="widget_cal_day">יום</string>

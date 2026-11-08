@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Notizen</string>
     <string name="widget_note_new">Neue Notiz</string>
     <string name="widget_notes_desc">Ihre neuesten Notizen und eine Taste für eine neue</string>
+    <string name="widget_count_label">Ungelesen</string>
+    <string name="widget_count_desc">Anzahl ungelesener E-Mails; Tippen öffnet den Posteingang</string>
     <string name="widget_prev">Zurück</string>
     <string name="widget_next">Weiter</string>
     <string name="widget_cal_day">Tag</string>

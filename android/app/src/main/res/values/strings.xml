@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Notes</string>
     <string name="widget_note_new">New note</string>
     <string name="widget_notes_desc">Your latest notes and a button for a new one</string>
+    <string name="widget_count_label">Unread</string>
+    <string name="widget_count_desc">Number of unread emails; tap to open the inbox</string>
     <string name="widget_prev">Previous</string>
     <string name="widget_next">Next</string>
     <string name="widget_cal_day">Day</string>

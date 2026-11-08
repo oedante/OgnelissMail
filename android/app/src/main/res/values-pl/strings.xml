@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Notatki</string>
     <string name="widget_note_new">Nowa notatka</string>
     <string name="widget_notes_desc">Najnowsze notatki i przycisk nowej notatki</string>
+    <string name="widget_count_label">Nieprzeczytane</string>
+    <string name="widget_count_desc">Liczba nieprzeczytanych wiadomości; dotknij, aby otworzyć Odebrane</string>
     <string name="widget_prev">Wstecz</string>
     <string name="widget_next">Dalej</string>
     <string name="widget_cal_day">Dzień</string>

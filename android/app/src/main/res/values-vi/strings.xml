@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Ghi chú</string>
     <string name="widget_note_new">Ghi chú mới</string>
     <string name="widget_notes_desc">Ghi chú mới nhất của bạn và nút tạo ghi chú mới</string>
+    <string name="widget_count_label">Chưa đọc</string>
+    <string name="widget_count_desc">Số email chưa đọc; chạm để mở hộp thư đến</string>
     <string name="widget_prev">Trước</string>
     <string name="widget_next">Tiếp</string>
     <string name="widget_cal_day">Ngày</string>

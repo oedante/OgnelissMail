@@ -30,7 +30,8 @@ import java.util.Date
 import java.util.Locale
 
 /*
- * Виджеты на рабочем столе: «Мой день», «Почта», «Календарь», «Заметки».
+ * Виджеты на рабочем столе: «Мой день», «Почта», «Непрочитанные» (1×1),
+ * «Календарь», «Заметки».
  *
  * Данные готовит приложение (lib/services/home_widget_service.dart) и пишет
  * JSON в SharedPreferences Flutter (ключи flutter.widget_*): переведённые
@@ -405,6 +406,7 @@ class MailWidget : OgnelissWidget() {
         }
         edit.commit()
         runCatching { refreshAll(context.applicationContext) }
+        runCatching { MailCountWidget.refreshAll(context.applicationContext) }
         val engine = FlutterEngineCache.getInstance().get(MainActivity.ENGINE_ID)
         if (engine != null) {
             runCatching { MethodChannel(engine.dartExecutor.binaryMessenger, "ogneliss/widget").invokeMethod("mailAction", null) }
@@ -1071,6 +1073,35 @@ class NotesWidget : OgnelissWidget() {
     }
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// «Непрочитанные» 1×1
+// ════════════════════════════════════════════════════════════════════════
+
+/**
+ * Мини-виджет 1×1 (план 08.11.2026, п. 8.5): значок почты и число
+ * непрочитанных — то же, что в шапке виджета «Почта» (тот же JSON
+ * flutter.widget_mail и тот же фильтр). Нажатие — «Входящие». Обновляется
+ * вместе с «Почтой» (refresh канала ogneliss/widget и действия в виджете).
+ */
+class MailCountWidget : OgnelissWidget() {
+    companion object {
+        private const val KEY = "flutter.widget_mail"
+        fun refreshAll(context: Context) = MailCountWidget().drawAll(context)
+    }
+
+    override fun render(context: Context, manager: AppWidgetManager, id: Int): RemoteViews {
+        val v = RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_mail_count))
+        WidgetUi.background(context, v, R.id.mc_root)
+        val json = WidgetUi.json(context, KEY)
+        val count = json?.optString("count").orEmpty()
+        WidgetUi.text(v, R.id.mc_count, count)
+        val label = context.getString(R.string.widget_count_label)
+        v.setContentDescription(R.id.mc_root, if (count.isEmpty()) label else "$label: $count")
+        v.setOnClickPendingIntent(R.id.mc_root, WidgetBridge.open(context, "mail", WidgetUi.req(id, 0, 1)))
+        return v
+    }
+}
+
 /**
  * Канал ogneliss/widget: «refresh» — перерисовать виджеты; «take» — какой
  * экран открыть по нажатию на виджет (холодный запуск). Если приложение уже
@@ -1091,6 +1122,7 @@ object WidgetBridge {
                     "refresh" -> {
                         runCatching { MyDayWidget.refreshAll(app) }
                         runCatching { MailWidget.refreshAll(app) }
+                        runCatching { MailCountWidget.refreshAll(app) }
                         runCatching { CalendarWidget.refreshAll(app) }
                         runCatching { NotesWidget.refreshAll(app) }
                         result.success(null)

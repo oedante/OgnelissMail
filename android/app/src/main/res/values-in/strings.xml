@@ -20,6 +20,8 @@
     <string name="widget_notes_label">Catatan</string>
     <string name="widget_note_new">Catatan baru</string>
     <string name="widget_notes_desc">Catatan terbaru Anda dan tombol untuk catatan baru</string>
+    <string name="widget_count_label">Belum dibaca</string>
+    <string name="widget_count_desc">Jumlah email belum dibaca; ketuk untuk membuka kotak masuk</string>
     <string name="widget_prev">Sebelumnya</string>
     <string name="widget_next">Berikutnya</string>
     <string name="widget_cal_day">Hari</string>

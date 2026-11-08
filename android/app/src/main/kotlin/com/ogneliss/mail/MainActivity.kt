@@ -87,6 +87,8 @@ class MainActivity : FlutterFragmentActivity() {
             runCatching { ConversationShortcuts.register(messenger, app) }
             // Настройки организации (MDM, 1.10.5).
             runCatching { MdmBridge.register(messenger, app) }
+            // Движок рисования и перезапуск (GraphicsMode.kt, 08.11.2026).
+            runCatching { GraphicsMode.register(messenger, app) }
             engine.dartExecutor.executeDartEntrypoint(DartExecutor.DartEntrypoint.createDefault())
             cache.put(ENGINE_ID, engine)
             return engine

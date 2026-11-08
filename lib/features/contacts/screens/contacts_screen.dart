@@ -50,7 +50,7 @@ import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../person_names.dart';
 import '../contact_prefs.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, quietError, quietNotice;
 import '../../../widgets/ui/app_menu_button.dart';
 import '../../../services/mail/focus_mode_service.dart' show focusModeProvider;
 import '../../../core/utils/person_names.dart' show PersonNames;
@@ -534,7 +534,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
       }
     } catch (e) {
       AppLogger.warning('Обновление контактов: $e');
-      showInlineError(l10n.tr('contactsResyncFailed'));
+      quietError(l10n.tr('contactsResyncFailed'));
     }
   }
 
@@ -543,7 +543,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
     try {
       final rows = await db.select(db.contacts).get();
       if (rows.isEmpty) {
-        showInlineNotice(l10n.tr('noContactsToExport'));
+        quietNotice(l10n.tr('noContactsToExport'));
         return;
       }
       final models = rows

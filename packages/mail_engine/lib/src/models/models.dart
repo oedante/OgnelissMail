@@ -93,6 +93,11 @@ class AccountConfig {
   final Future<String?> Function({bool force})? oauthTokenSource;
   final AuthKind authKind;
   final String? domain; // Exchange: msk
+
+  /// Имя для входа, если оно не адрес (07.11.2026, аудит: «ivanov_ii» при
+  /// адресе i.ivanov@corp.ru; ключ MDM account_username). null или равно
+  /// адресу — вход по адресу или ДОМЕН\часть-до-@, как раньше.
+  final String? username;
   final String? exchangeServer; // если известен заранее
   final String? imapHost;
   final int imapPort;
@@ -110,6 +115,7 @@ class AccountConfig {
     this.oauthTokenSource,
     this.authKind = AuthKind.basic,
     this.domain,
+    this.username,
     this.exchangeServer,
     this.imapHost,
     this.imapPort = 993,
@@ -182,10 +188,30 @@ class AccountConfig {
   final Map<String, String>? extraHeaders;
 }
 extension AccountConfigCopy on AccountConfig {
+  /// Логин для входа Exchange (Basic, NTLM): имя для входа, если задано и не
+  /// совпадает с адресом (ДОМЕН\имя или имя@домен — как ввели; просто имя —
+  /// с доменом, если он задан), иначе ДОМЕН\часть-адреса-до-@ или адрес.
+  String get exchangeLogin {
+    final u = (username ?? '').trim();
+    final local = email.contains('@') ? email.split('@').first : email;
+    // Приложение по умолчанию сохраняет как имя часть адреса до @ — это «не
+    // задано» (вход как раньше: адрес или ДОМЕН\часть-до-@).
+    if (u.isNotEmpty && u.toLowerCase() != email.toLowerCase() && u.toLowerCase() != local.toLowerCase()) {
+      if (u.contains('\\') || u.contains('@')) return u;
+      final d = domain;
+      return (d != null && d.isNotEmpty) ? '$d\\$u' : u;
+    }
+    if (domain != null && domain!.isNotEmpty) {
+      final user = email.contains('@') ? email.split('@').first : email;
+      return '$domain\\$user';
+    }
+    return email;
+  }
+
   AccountConfig withUserAgent(String ua) => AccountConfig(
         email: email, password: password, oauthAccessToken: oauthAccessToken,
         oauthRefreshToken: oauthRefreshToken, oauthTokenSource: oauthTokenSource,
-        authKind: authKind, domain: domain,
+        authKind: authKind, domain: domain, username: username,
         exchangeServer: exchangeServer, imapHost: imapHost, imapPort: imapPort,
         imapSsl: imapSsl, smtpHost: smtpHost, smtpPort: smtpPort,
         forceTransport: forceTransport, userAgent: ua, deviceType: deviceType, deviceId: deviceId,

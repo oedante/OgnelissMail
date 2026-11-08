@@ -30,6 +30,7 @@ import '../constants/app_constants.dart';
 import '../security/certificate_pinning_service.dart';
 import 'app_logger.dart';
 import '../platform/platform_diagnostics.dart';
+import '../platform/graphics_mode.dart';
 import '../../services/background/background_journal.dart';
 import '../../services/notifications/account_notify_mode.dart';
 import '../../services/background/foreground_sync_controller.dart';
@@ -116,6 +117,14 @@ class DiagnosticsReport {
         line('Платформа: ${PlatformDiagnostics.summary(d)}');
         final iss = PlatformDiagnostics.issues(d);
         line('Ограничения фоновой работы: ${iss.isEmpty ? 'не обнаружены' : iss.map((e) => e.name).join(', ')}');
+      }
+      // Движок рисования и память (08.11.2026): чёрный экран на Huawei —
+      // падение Impeller; видно, на чём рисуем и хватает ли памяти.
+      final g = await GraphicsMode.state();
+      if (g != null) {
+        line('Графика: ${g.summary}');
+        if (g.gpu != null) line('Видео: ${g.gpu}');
+        if (g.memorySummary.isNotEmpty) line('Память: ${g.memorySummary}');
       }
       final sp = await SharedPreferences.getInstance();
       final frozenN = sp.getInt(ForegroundSyncController.frozenCountKey) ?? 0;

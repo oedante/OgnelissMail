@@ -62,7 +62,7 @@ import '../../../core/theme/ogneliss_look.dart';
 import '../../settings/screens/folder_sync_settings_screen.dart' show folderNotifyOffProvider;
 import '../../../services/notifications/account_notify_mode.dart' show FolderNotify;
 import '../../../widgets/common/peek_card.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice, quietError, quietNotice;
 import '../../../widgets/common/tile_grid.dart';
 import '../../../core/utils/reorder_index.dart';
 import '../providers/folder_names.dart';
@@ -1040,7 +1040,7 @@ class MailDrawer extends ConsumerWidget {
       ),
     );
     if (ok != true) return;
-    showInlineNotice(l10n.tr('folderToOgnaStarted'));
+    quietNotice(l10n.tr('folderToOgnaStarted'));
     final r = await ref.read(archiveRunnerProvider.notifier).archiveFolder(account, folder.id);
     if (r.errorKey != null && r.mails == 0) {
       showInlineError(l10n.tr(r.errorKey!));
@@ -1071,7 +1071,7 @@ class MailDrawer extends ConsumerWidget {
     if (ok != true) return;
     final (done, total) = await ref.read(folderActionsProvider).emptyFolder(account, folder);
     if (done < total) {
-      showInlineError('${l10n.error}: ${total - done}');
+      quietError('${l10n.error}: ${total - done}');
     }
     unawaited(ref.read(emailsProvider.notifier).refresh());
   }
@@ -1468,7 +1468,7 @@ class _OgnaDropTarget extends ConsumerWidget {
       if (hide) notifier.unhideLocally(e);
       failed += r.failed;
     }
-    if (failed > 0) showInlineError(l10n.tr('archiveSomeFailed').replaceAll('{n}', '$failed'));
+    if (failed > 0) quietError(l10n.tr('archiveSomeFailed').replaceAll('{n}', '$failed'));
   }
 }
 

@@ -35,6 +35,15 @@ ImageProvider? fullPhotoImage(String? photo) {
   return null;
 }
 
+/// Не декодировать картинку больше [maxSide] точек по длинной стороне
+/// (08.11.2026, чёрный экран на Huawei: падение графики при передаче
+/// картинки в видеопамять). Фото 50 Мп (8160×6120) в полном размере —
+/// ~200 МБ памяти видеокарты, 108 Мп — ~430 МБ; 4096 точек — до 64 МБ и всё
+/// ещё чётко при увеличении пальцами. Меньшие картинки — как есть.
+ImageProvider limitDecode(ImageProvider image, {int maxSide = 4096}) => image is ResizeImage
+    ? image
+    : ResizeImage(image, width: maxSide, height: maxSide, policy: ResizeImagePolicy.fit);
+
 Future<void> showPhotoViewer(BuildContext context, {required String photo, String? title}) {
   final image = fullPhotoImage(photo);
   if (image == null) return Future.value();
@@ -65,12 +74,26 @@ Future<void> showImageViewer(BuildContext context, ImageProvider image,
   );
 }
 
-class _PhotoView extends StatelessWidget {
+class _PhotoView extends StatefulWidget {
   final ImageProvider image;
   final String? title;
   final Future<Uint8List?> Function()? bytes;
   final String? name;
   const _PhotoView({required this.image, this.title, this.bytes, this.name});
+
+  @override
+  State<_PhotoView> createState() => _PhotoViewState();
+}
+
+class _PhotoViewState extends State<_PhotoView> {
+  /// Поворот при просмотре (07.11.2026): четверти оборота по часовой;
+  /// «Сохранить» и «Поделиться» отдают исходную картинку.
+  int _turns = 0;
+
+  ImageProvider get image => widget.image;
+  String? get title => widget.title;
+  Future<Uint8List?> Function()? get bytes => widget.bytes;
+  String? get name => widget.name;
 
   Future<void> _act(BuildContext context, String what) async {
     final l10n = AppLocalizations.of(context);
@@ -112,7 +135,10 @@ class _PhotoView extends StatelessWidget {
                   child: Semantics(
                     image: true,
                     label: title,
-                    child: Image(image: image, fit: BoxFit.contain, gaplessPlayback: true),
+                    child: RotatedBox(
+                      quarterTurns: _turns,
+                      child: Image(image: limitDecode(image), fit: BoxFit.contain, gaplessPlayback: true),
+                    ),
                   ),
                 ),
               ),
@@ -136,6 +162,12 @@ class _PhotoView extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white)),
+              ),
+              IconButton(
+                tooltip: AppLocalizations.of(context).tr('imageRotate'),
+                color: Colors.white,
+                icon: const Icon(AppIcons.rotate_90_degrees_cw),
+                onPressed: () => setState(() => _turns = (_turns + 1) % 4),
               ),
               // Копировать, сохранить, поделиться (1.8.12).
               if (bytes != null) ...[

@@ -25,7 +25,7 @@ import '../platform/file_opener.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../widgets/common/inline_notice.dart' show showInlineNotice;
+import '../../widgets/common/inline_notice.dart' show quietNotice;
 import '../platform/app_share.dart';
 import '../../services/security/managed_config.dart';
 
@@ -115,7 +115,7 @@ class AttachmentSafety {
     // работала (замечание владельца 29.10.2026). Архив с паролем «Файлы»
     // не открывают («нет прав») — об этом строка сверху.
     if (!kIsWeb && Platform.isIOS && !FileOpener.quickLookShows(fileName)) {
-      if (await isEncryptedZip(path)) showInlineNotice(l10n.tr('zipEncryptedHint'));
+      if (await isEncryptedZip(path)) quietNotice(l10n.tr('zipEncryptedHint'));
       // Это «открыть в другом приложении» — по политике организации (MDM).
       if (ManagedPolicy.deny(ManagedRule.openIn)) return;
       await appShare(ShareParams(files: [XFile(await FileOpener.namedCopy(path, fileName), name: fileName)]));

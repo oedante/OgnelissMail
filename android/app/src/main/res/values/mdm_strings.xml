@@ -39,6 +39,8 @@
     <string name="mdm_block_copy_desc">Text selection and Copy in messages.</string>
     <string name="mdm_hide_notification_content_title">Hide notification content</string>
     <string name="mdm_hide_notification_content_desc">Notifications show no sender, subject or text.</string>
+    <string name="mdm_block_weather_title">Block weather</string>
+    <string name="mdm_block_weather_desc">No weather in My Day: the app does not contact the weather (MET Norway) and city search (OpenStreetMap) services.</string>
     <string-array name="mdm_protocol_entries">
         <item>Automatic</item>
         <item>Microsoft Exchange</item>

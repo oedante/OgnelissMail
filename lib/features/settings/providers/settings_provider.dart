@@ -108,11 +108,6 @@ class AppSettings {
   final CornerSize corners;
   /// Плотность ленты (и строк беседы и архива).
   final ListDensity listDensity;
-  /// Анимация открытия письма: общий портрет и тема, закрытие свайпом вниз.
-  /// Включена по умолчанию с 1.10.1 (владелец проверил на телефоне
-  /// 02.11.2026: «хорошо работают»); «Уменьшить движение» и системное
-  /// «Убрать анимацию» важнее.
-  final bool openAnimation;
 
   // ── Доступность ──
   final bool highContrast;
@@ -239,7 +234,6 @@ class AppSettings {
     this.listTint = ListTint.none,
     this.corners = CornerSize.medium,
     this.listDensity = ListDensity.normal,
-    this.openAnimation = true,
     this.highContrast = false,
     this.dyslexiaFont = false,
     this.reduceMotion = false,
@@ -283,15 +277,16 @@ class AppSettings {
     this.searchAttachments = true,
   });
 
-  /// «Оформление» для сборки тем. [systemNoAnimations] — системное «Убрать
-  /// анимацию»: вместе с «Уменьшить движение» выключает анимацию открытия.
+  /// «Оформление» для сборки тем. Анимации открытия письма (портрет и тема
+  /// перелетают в шапку, закрытие свайпом вниз) больше нет — решение
+  /// владельца 07.11.2026: «непонятная и раздражает»; письмо открывается
+  /// обычным переходом. [systemNoAnimations] оставлен для вызовов.
   Appearance appearance({bool systemNoAnimations = false}) => Appearance(
         preset: themePreset,
         accent: accentColor,
         tint: listTint,
         corners: corners,
         density: listDensity,
-        openAnimation: openAnimation && !reduceMotion && !systemNoAnimations,
       );
 
   /// Текущий выбор темы из themeMode + amoled.
@@ -331,7 +326,6 @@ class AppSettings {
     ListTint? listTint,
     CornerSize? corners,
     ListDensity? listDensity,
-    bool? openAnimation,
     bool? highContrast,
     bool? dyslexiaFont,
     bool? reduceMotion,
@@ -395,7 +389,6 @@ class AppSettings {
       listTint: listTint ?? this.listTint,
       corners: corners ?? this.corners,
       listDensity: listDensity ?? this.listDensity,
-      openAnimation: openAnimation ?? this.openAnimation,
       highContrast: highContrast ?? this.highContrast,
       dyslexiaFont: dyslexiaFont ?? this.dyslexiaFont,
       reduceMotion: reduceMotion ?? this.reduceMotion,
@@ -468,6 +461,8 @@ class _K {
   static const listTint = 's_list_tint';
   static const corners = 's_corners';
   static const listDensity = 's_density';
+  /// Прежняя «Анимация открытия письма» (убрана 07.11.2026) — стирается
+  /// при сбросе настроек.
   static const openAnimation = 's_open_anim';
   static const highContrast = 's_high_contrast';
   static const dyslexiaFont = 's_dyslexia';
@@ -569,7 +564,6 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       corners: CornerSize.values[(_p.getInt(_K.corners) ?? CornerSize.medium.index).clamp(0, CornerSize.values.length - 1)],
       listDensity:
           ListDensity.values[(_p.getInt(_K.listDensity) ?? ListDensity.normal.index).clamp(0, ListDensity.values.length - 1)],
-      openAnimation: _p.getBool(_K.openAnimation) ?? true,
       highContrast: _p.getBool(_K.highContrast) ?? false,
       dyslexiaFont: _p.getBool(_K.dyslexiaFont) ?? false,
       reduceMotion: _p.getBool(_K.reduceMotion) ?? false,
@@ -760,11 +754,6 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(listDensity: v);
     if (v == ListDensity.compact && state.previewLines != 1) await setPreviewLines(1);
     if (v == ListDensity.comfortable && state.previewLines < 2) await setPreviewLines(2);
-  }
-
-  Future<void> setOpenAnimation(bool v) async {
-    await _p.setBool(_K.openAnimation, v);
-    state = state.copyWith(openAnimation: v);
   }
 
   Future<void> markFirstLaunchDone() async {

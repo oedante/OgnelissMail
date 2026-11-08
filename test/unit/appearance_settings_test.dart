@@ -20,8 +20,7 @@ void main() {
     expect(s.listTint, ListTint.none);
     expect(s.corners, CornerSize.medium);
     expect(s.listDensity, ListDensity.normal);
-    expect(s.openAnimation, isTrue);
-    expect(s.appearance(), Appearance.classic.copyWith(openAnimation: true));
+    expect(s.appearance(), Appearance.classic);
     expect(s.appearance().classicColors, isTrue);
   });
 
@@ -32,7 +31,6 @@ void main() {
     await n.setListTint(ListTint.soft);
     await n.setCorners(CornerSize.large);
     await n.setListDensity(ListDensity.compact);
-    await n.setOpenAnimation(true);
 
     final again = SettingsNotifier(await SharedPreferences.getInstance()).state;
     expect(again.themePreset, ThemePreset.forest);
@@ -40,8 +38,6 @@ void main() {
     expect(again.listTint, ListTint.soft);
     expect(again.corners, CornerSize.large);
     expect(again.listDensity, ListDensity.compact);
-    expect(again.openAnimation, isTrue);
-    expect(again.appearance().openAnimation, isTrue);
   });
 
   test('акцент «как в теме» стирает свой цвет', () async {
@@ -53,15 +49,10 @@ void main() {
     expect(again.accentColor, isNull);
   });
 
-  test('анимация открытия уступает «Уменьшить движение» и системному «Убрать анимацию»', () async {
+  test('анимации открытия письма нет (убрана 07.11.2026), даже если прежде была включена', () async {
     final n = await _notifier({'s_open_anim': true});
-    expect(n.state.appearance().openAnimation, isTrue);
-    expect(n.state.appearance(systemNoAnimations: true).openAnimation, isFalse);
-    await n.setReduceMotion(true);
     expect(n.state.appearance().openAnimation, isFalse);
-    // Настройка не теряется: выключили «Уменьшить движение» — снова работает.
-    await n.setReduceMotion(false);
-    expect(n.state.appearance().openAnimation, isTrue);
+    expect(n.state.appearance(systemNoAnimations: true).openAnimation, isFalse);
   });
 
   test('неизвестная тема — «Классика», номер вне списка — ближайший вариант', () async {
@@ -83,7 +74,7 @@ void main() {
     });
     await n.resetAll();
     final again = SettingsNotifier(await SharedPreferences.getInstance()).state;
-    expect(again.appearance(), Appearance.classic.copyWith(openAnimation: true));
+    expect(again.appearance(), Appearance.classic);
   });
 
   test('плотность: строки превью', () {

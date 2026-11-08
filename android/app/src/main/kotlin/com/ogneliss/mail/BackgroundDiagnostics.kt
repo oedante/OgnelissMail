@@ -34,7 +34,7 @@ import java.io.InputStreamReader
 
 object BackgroundDiagnostics {
 
-    private fun prop(name: String): String = try {
+    internal fun prop(name: String): String = try {
         val p = Runtime.getRuntime().exec(arrayOf("getprop", name))
         BufferedReader(InputStreamReader(p.inputStream)).use { it.readLine()?.trim() ?: "" }
     } catch (e: Exception) {
@@ -206,7 +206,7 @@ object BackgroundDiagnostics {
      * закрывало приложение) показал только «crash_native» — без места
      * падения. Ни писем, ни адресов в этой записи нет: только код.
      */
-    private fun crashTrace(info: ApplicationExitInfo): String? {
+    internal fun crashTrace(info: ApplicationExitInfo): String? {
         if (info.reason != ApplicationExitInfo.REASON_CRASH_NATIVE) return null
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return null
         return try {
@@ -273,6 +273,7 @@ object BackgroundDiagnostics {
                         "importance" to it.importance,
                         "description" to (it.description ?: ""),
                         "pss" to it.pss,
+                        "rss" to it.rss,
                         "process" to (it.processName ?: ""),
                         "pid" to it.pid,
                         "trace" to crashTrace(it),

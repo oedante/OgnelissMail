@@ -56,7 +56,6 @@ const _entries = <_Entry>[
   _Entry('apListTint', 'appearanceTitle', AppIcons.format_paint, '/settings/appearance'),
   _Entry('apCorners', 'appearanceTitle', AppIcons.rounded_corner, '/settings/appearance'),
   _Entry('apDensity', 'appearanceTitle', AppIcons.density_medium, '/settings/appearance'),
-  _Entry('apOpenAnimation', 'appearanceTitle', AppIcons.swipe_down, '/settings/appearance'),
   // Общие
   _Entry('language', 'general', AppIcons.language, '/settings/general'),
   _Entry('fontSize', 'general', AppIcons.format_size, '/settings/general'),

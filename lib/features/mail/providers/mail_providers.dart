@@ -43,6 +43,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/utils/text_entities.dart';
 import '../../../services/mail/conversation_counter.dart';
 import '../../../services/mail/focus_mode_service.dart' show focusModeProvider;
+import '../../../services/security/smime_service.dart' show smimeServiceProvider;
 import '../../../services/security/managed_config.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -460,6 +461,11 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
       }
       await _secureStorage.deleteAccountTokens(accountId);
       await _secureStorage.deleteAccountPassword(accountId);
+      // Закрытый ключ S/MIME и пароль к нему (07.11.2026, аудит: оставались
+      // в защищённом хранилище после удаления ящика).
+      try {
+        await _ref?.read(smimeServiceProvider).removeIdentity(accountId);
+      } catch (_) {}
       await clearSyncState(accountId);
       await DavPimService.forgetAccount(accountId);
       await OwnAddresses.forget(accountId);
@@ -1018,14 +1024,39 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
         .where((e) => _hidden.isEmpty || !_hidden.contains('${e.accountId}|${e.id}')))
         .toList();
     if (groupByConversation) filtered = _collapseConversations(filtered);
+    final models = _modelsFor(filtered);
+    final hasMore = rows.length >= _window && _window < _maxInMemory;
+    final page = (_window ~/ _pageSize) - 1;
+    // Ничего не изменилось — состояние прежнее (07.11.2026, аудит
+    // микрофризов): drift присылает выборку на любую запись в таблицу
+    // писем, и во время синхронизации лента целиком перестраивалась до
+    // 4 раз в секунду, даже когда видимые письма те же. Модели
+    // переиспользуются (_modelsFor), поэтому сравнение — по ссылкам.
+    final old = state;
+    if (!old.isLoading &&
+        !old.isLoadingMore &&
+        old.error == null &&
+        old.hasMore == hasMore &&
+        old.currentPage == page &&
+        _sameModels(old.emails, models)) {
+      return;
+    }
     state = EmailListState(
-      emails: _modelsFor(filtered),
+      emails: models,
       isLoading: false,
       isLoadingMore: false,
       // Окно заполнено — вероятно, в БД есть ещё.
-      hasMore: rows.length >= _window && _window < _maxInMemory,
-      currentPage: (_window ~/ _pageSize) - 1,
+      hasMore: hasMore,
+      currentPage: page,
     );
+  }
+
+  static bool _sameModels(List<EmailModel> a, List<EmailModel> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (!identical(a[i], b[i])) return false;
+    }
+    return true;
   }
 
   /// Одно письмо — одна строка: у Gmail письмо с ярлыком лежит и во

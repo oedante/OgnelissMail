@@ -6,6 +6,8 @@
 // Оба экрана подписаны на БД: прочтение, удаление и новое письмо в беседе
 // видны сразу, без перезагрузки.
 
+import '../../../widgets/common/undo_strip.dart';
+import '../../../widgets/common/undo_manager.dart';
 import '../../../core/utils/text_safe.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/foundation.dart' show listEquals;
@@ -297,6 +299,23 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         _ => (AppIcons.more_horiz, '', AppColors.infoBlue),
       };
 
+  /// Убранные свайпом письма до конца окна «Вернуть» (07.11.2026: в беседе
+  /// удаление, архив и спам выполнялись сразу и без отмены, в ленте — с ней).
+  final Set<String> _hidden = {};
+
+  /// Перенос с «Вернуть», как в ленте: письмо сразу скрыто, перенос — через
+  /// 7 секунд, «Вернуть» показывает его снова.
+  void _moveWithUndo(EmailModel e, String text, Future<void> Function() execute) {
+    setState(() => _hidden.add(e.id));
+    void show() {
+      if (mounted) setState(() => _hidden.remove(e.id));
+    }
+    EmailUndoManager.perform(
+      context,
+      UndoableAction(description: text, execute: execute, undo: () async {}, onUndo: show, onSettled: show),
+    );
+  }
+
   Future<void> _run(SwipeAction a, EmailModel e, AppLocalizations l10n) async {
     final account = ref.read(accountsProvider).where((x) => x.id == e.accountId).firstOrNull;
     if (account == null) return;
@@ -314,13 +333,17 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         case SwipeAction.archive:
           final to = await SpecialFolders.resolve(db, ref.read(sharedPrefsProvider), e.accountId, SpecialKind.archive);
           if (to == null) showInlineError(l10n.tr('archiveFolderNotFound'));
-          if (to != null && to != e.folderId) await actions.moveTo(account, e.id, e.folderId, to);
+          if (to != null && to != e.folderId) {
+            _moveWithUndo(e, l10n.tr('emailMoved'), () => actions.moveTo(account, e.id, e.folderId, to));
+          }
         case SwipeAction.moveToJunk:
           final junk = await SpecialFolders.resolve(db, ref.read(sharedPrefsProvider), e.accountId, SpecialKind.junk);
           if (junk == null) showInlineError(l10n.tr('junkFolderNotFound'));
-          if (junk != null && junk != e.folderId) await actions.moveTo(account, e.id, e.folderId, junk);
+          if (junk != null && junk != e.folderId) {
+            _moveWithUndo(e, l10n.tr('movedToJunk'), () => actions.moveTo(account, e.id, e.folderId, junk));
+          }
         case SwipeAction.delete:
-          await actions.delete(account, e.id, e.folderId);
+          _moveWithUndo(e, l10n.tr('emailDeleted'), () => actions.delete(account, e.id, e.folderId));
         // «Переместить» (1.15.0, замечание владельца 07.11.2026: в беседе его
         // не было) — папки ящика письма.
         case SwipeAction.moveTo:
@@ -492,7 +515,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       builder: (context, snap) {
         // Письма беседы — для «Прочитать все», «Удалить беседу», ответа
         // внизу; показ — с черновиками ответов (1.10.5).
-        final emails = snap.data?.emails;
+        // Письма, убранные свайпом и ждущие «Вернуть», — не показывать.
+        final emails = snap.data?.emails.where((e) => !_hidden.contains(e.id)).toList();
         final shown = emails == null ? null : _withDrafts(emails, draftSnap.data, links);
         final copies = snap.data?.copies ?? const <String, List<EmailModel>>{};
         final subject = (emails != null && emails.isNotEmpty) ? emails.first.subject : '';
@@ -623,7 +647,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 preferredSize: const Size.fromHeight(2),
                 child: SizedBox(height: 2, child: _busy ? const LinearProgressIndicator(minHeight: 2) : null)),
           )),
-          body: shown == null
+          body: Stack(fit: StackFit.expand, children: [
+            shown == null
               ? const Center(child: CircularProgressIndicator())
               : shown.isEmpty
                   ? Center(
@@ -648,6 +673,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                         },
                       ),
                     ),
+            // «Письмо удалено · Вернуть» — как в ленте, поверх списка внизу.
+            const Positioned(left: 0, right: 0, bottom: Space.s, child: UndoStrip()),
+          ]),
           // Строка ответа на последнее письмо (1.6.49, как в мессенджере);
           // поднимается над клавиатурой.
           bottomNavigationBar: (target == null || !quickReply)

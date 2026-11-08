@@ -63,17 +63,24 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
 
     private MethodChannel channel;
+    // Аватар для уведомлений без видеокарты (AvatarPainter, 08.11.2026) —
+    // тоже во всех движках, поэтому в этом же плагине.
+    private MethodChannel avatarChannel;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
         channel = new MethodChannel(binding.getBinaryMessenger(), CHANNEL);
         channel.setMethodCallHandler(this);
+        avatarChannel = new MethodChannel(binding.getBinaryMessenger(), AvatarPainter.CHANNEL);
+        avatarChannel.setMethodCallHandler(new AvatarPainter());
     }
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         if (channel != null) channel.setMethodCallHandler(null);
         channel = null;
+        if (avatarChannel != null) avatarChannel.setMethodCallHandler(null);
+        avatarChannel = null;
     }
 
     @Override

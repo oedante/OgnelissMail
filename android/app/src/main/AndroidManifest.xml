@@ -46,7 +46,7 @@
 
     <application
         android:label="Ogneliss Mail"
-        android:name="${applicationName}"
+        android:name=".OgnelissApplication"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:usesCleartextTraffic="false"
@@ -145,6 +145,16 @@
             android:excludeFromRecents="true"
             android:taskAffinity="com.ogneliss.mail.quickcreate"
             android:windowSoftInputMode="stateVisible|adjustResize" />
+        <!-- Перезапуск приложения (RestartActivity.kt, 08.11.2026): отдельный
+             процесс, чтобы главный мог завершиться и стартовать заново с
+             другим движком рисования. Прозрачная, без следа в «Недавних». -->
+        <activity
+            android:name=".RestartActivity"
+            android:process=":restart"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true" />
         <!-- Виджет «Мой день» на рабочем столе (MyDayWidget.kt). -->
         <receiver
             android:name=".MyDayWidget"

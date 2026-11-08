@@ -441,7 +441,7 @@ class MailTranslationController extends ChangeNotifier {
     _lang = ref.read(settingsProvider).locale.languageCode;
     if (!await t.isAvailable()) {
       engineAvailable = false;
-      showInlineError(l10n.tr(translateUnavailableKey()));
+      quietError(l10n.tr(translateUnavailableKey()));
       return;
     }
     engineAvailable = true;
@@ -470,7 +470,7 @@ class MailTranslationController extends ChangeNotifier {
       await _loadNames(t);
     }
     if (from == to) {
-      showInlineError(l10n.tr('nothingToTranslate'));
+      quietError(l10n.tr('nothingToTranslate'));
       return;
     }
     final cached = _cache['${e.id}|$to'];
@@ -497,7 +497,7 @@ class MailTranslationController extends ChangeNotifier {
     _lang = ref.read(settingsProvider).locale.languageCode;
     if (!await t.isAvailable()) {
       engineAvailable = false;
-      showInlineError(l10n.tr(translateUnavailableKey()));
+      quietError(l10n.tr(translateUnavailableKey()));
       return;
     }
     _resetFor(e.id);
@@ -564,7 +564,7 @@ class MailTranslationController extends ChangeNotifier {
       AppLogger.warning('Перевод письма $f → $tt: $err');
       if (_disposed) return;
       final l10n = _l10n;
-      if (l10n != null && !quiet) showInlineError(l10n.tr('translateFailed'));
+      if (l10n != null && !quiet) quietError(l10n.tr('translateFailed'));
       phase = showing ? MailTranslationPhase.translated : MailTranslationPhase.offer;
     }
     _notify();

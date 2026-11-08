@@ -7,6 +7,7 @@
 import 'core/platform/native_drag_drop.dart';
 import 'core/platform/device_time_zone.dart';
 import 'widgets/common/scroll_edge_fade.dart';
+import 'services/weather/weather_service.dart' show WeatherApi;
 import 'services/documents/doc_preview_settings.dart';
 import 'services/sync/sync_schedule.dart';
 import 'core/theme/mail_page_color.dart' show mailPageWarm;
@@ -93,6 +94,23 @@ Future<void> main() async {
     NativeDragDrop.registerLicenses();
     // Google ML Kit (перевод писем на Android, 1.9.x) — условия Google.
     registerTranslationLicense();
+    // Погода в «Моём дне» (1.15.1): данные MET Norway (CC BY 4.0, NLOD 2.0) и
+    // города GeoNames (CC BY 4.0) — через сервер Ogneliss; подписи источников.
+    // Пока владелец не принял условия сервисов, погоды нет — и строк тоже.
+    if (WeatherApi.termsAccepted) {
+      LicenseRegistry.addLicense(() async* {
+        yield const LicenseEntryWithLineBreaks(['MET Norway (weather data)'],
+            'Weather forecasts in My Day come from the Norwegian Meteorological Institute '
+            '(MET Norway), Locationforecast 2.0, used free of charge under its Terms of Service.\n'
+            'Data licence: Creative Commons Attribution 4.0 International (CC BY 4.0) and the '
+            'Norwegian Licence for Open Government Data (NLOD) 2.0.\n'
+            'https://api.met.no/doc/License');
+        yield const LicenseEntryWithLineBreaks(['GeoNames (city search)'],
+            'City search for the weather uses the GeoNames geographical database '
+            '(cities15000), licensed under Creative Commons Attribution 4.0 (CC BY 4.0).\n'
+            'https://www.geonames.org/');
+      });
+    }
     // Шрифт интерфейса Roboto (Apache 2.0) — на странице «Лицензии».
     LicenseRegistry.addLicense(() async* {
       final text = await rootBundle.loadString('assets/fonts/pdf/Roboto-LICENSE.txt');
@@ -227,17 +245,21 @@ Future<void> main() async {
       await pinningService.setTrustedCaDomains(
           <String>[]);
     }
-    // Автоматически доверяем self-signed сертификату настроенного OAuth-прокси
-    // (его URL пользователь задал сам через --dart-define, поэтому это безопасно
-    // и нужно, чтобы обновление токенов через https://<proxy>/token работало).
+    // Сертификат OAuth-прокси проверяется как у любого сайта (07.11.2026,
+    // аудит безопасности): раньше хост прокси попадал в «доверенные домены»
+    // и для него принимался ЛЮБОЙ сертификат — подмена в чужом Wi-Fi
+    // получала бы refresh-токены. У ogneliss.ru — настоящий сертификат
+    // (GlobalSign). Своя сборка с самоподписанным прокси — только явно:
+    // --dart-define=OAUTH_PROXY_SELF_SIGNED=true (docs/guides/OWN_VERSION.md).
     if (AppConstants.oauthProxyBaseUrl.isNotEmpty) {
       try {
         final proxyHost = Uri.parse(AppConstants.oauthProxyBaseUrl).host;
         if (proxyHost.isNotEmpty) {
-          // Только сам хост прокси, без поддоменов: раньше доверие
-          // распространялось на *.домен — и на почтовый сервер того же домена.
+          // Убрать доверие, сохранённое прежними версиями.
           await pinningService.removeTrustedCaDomain(proxyHost);
-          await pinningService.ensureTrustedCaDomain(proxyHost, exactHost: true);
+          if (AppConstants.oauthProxySelfSigned) {
+            await pinningService.ensureTrustedCaDomain(proxyHost, exactHost: true);
+          }
         }
       } catch (_) {}
     }

@@ -56,7 +56,7 @@ Future<bool> ensureTranslationModels(BuildContext context, WidgetRef ref,
     missing = await t.missingModels(from, to);
   } catch (e) {
     AppLogger.warning('Перевод: языки $from → $to: $e');
-    showInlineError(l10n.tr('translateFailed'));
+    quietError(l10n.tr('translateFailed'));
     return false;
   }
   if (missing.isEmpty) return true;

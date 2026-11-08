@@ -220,8 +220,14 @@ class OAuthService {
   /// и так каждые несколько минут).
   static final Map<String, ({DateTime until, OAuthRefreshFailure failure})> _cooldown = {};
 
+  /// Подряд временных сбоев обновления по ящику (для растущей паузы).
+  static final Map<String, int> _tempFailures = {};
+
   /// Сбросить паузу (после «Войти снова»).
-  static void clearRefreshFailure(String accountId) => _cooldown.remove(accountId);
+  static void clearRefreshFailure(String accountId) {
+    _cooldown.remove(accountId);
+    _tempFailures.remove(accountId);
+  }
 
   Future<void> ensureValidToken(AccountModel account, {bool force = false}) {
     final cd = _cooldown[account.id];
@@ -231,7 +237,9 @@ class OAuthService {
     }
     final running = _inflight[account.id];
     if (running != null) return running;
-    final f = _ensureValidToken(account, force: force);
+    final f = _ensureValidToken(account, force: force).then((_) {
+      _tempFailures.remove(account.id);
+    });
     _inflight[account.id] = f;
     return f.whenComplete(() => _inflight.remove(account.id));
   }
@@ -323,10 +331,14 @@ class OAuthService {
       // через 3 мин и только тогда просит войти заново; дальше ящик с
       // отметкой «требуется вход» не синхронизируется), сбой прокси или
       // настройки — 10 мин, сеть — 1 мин.
+      // Временный сбой (сервер входа или сеть недоступны) — пауза растёт:
+      // 1, 2, 5, 10, 15 минут (08.11.2026: ogneliss.ru был недоступен по
+      // часу, и каждый ящик стучался в него каждую минуту).
+      final n = e.temporary ? (_tempFailures[account.id] = (_tempFailures[account.id] ?? 0) + 1) : 0;
       final pause = e.needsSignIn
           ? const Duration(minutes: 2)
           : e.temporary
-              ? const Duration(minutes: 1)
+              ? Duration(minutes: const [1, 2, 5, 10, 15][(n - 1).clamp(0, 4)])
               : const Duration(minutes: 10);
       _cooldown[account.id] = (until: DateTime.now().add(pause), failure: e);
       AppLogger.error('Token refresh failed: ${account.email} — ${e.reason}'

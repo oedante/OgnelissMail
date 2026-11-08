@@ -23,7 +23,7 @@ import '../widgets/server_filters_item.dart' show pickServerFiltersAccount;
 import '../../../services/mail/server_filters.dart' show ServerFilters;
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice, quietNotice;
 import '../../../widgets/ui/app_menu_button.dart';
 
 class VipSettingsScreen extends ConsumerWidget {
@@ -235,7 +235,7 @@ class VipSettingsScreen extends ConsumerWidget {
       final data = await Clipboard.getData(Clipboard.kTextPlain);
       final text = data?.text ?? '';
       if (text.isEmpty) {
-        showInlineNotice(l10n.tr('clipboardEmpty'));
+        quietNotice(l10n.tr('clipboardEmpty'));
         return;
       }
       final n = await notifier.importVipJson(text);

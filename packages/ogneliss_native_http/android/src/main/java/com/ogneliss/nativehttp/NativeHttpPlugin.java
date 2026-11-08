@@ -63,17 +63,24 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
 
     private MethodChannel channel;
+    // Аватар для уведомлений без видеокарты (AvatarPainter, 08.11.2026) —
+    // тоже во всех движках, поэтому в этом же плагине.
+    private MethodChannel avatarChannel;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
         channel = new MethodChannel(binding.getBinaryMessenger(), CHANNEL);
         channel.setMethodCallHandler(this);
+        avatarChannel = new MethodChannel(binding.getBinaryMessenger(), AvatarPainter.CHANNEL);
+        avatarChannel.setMethodCallHandler(new AvatarPainter());
     }
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         if (channel != null) channel.setMethodCallHandler(null);
         channel = null;
+        if (avatarChannel != null) avatarChannel.setMethodCallHandler(null);
+        avatarChannel = null;
     }
 
     @Override
@@ -109,6 +116,12 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
         final Set<String> trusted = new HashSet<>(trustedList);
         final Boolean acceptAnyArg = call.argument("acceptAny");
         final boolean acceptAny = acceptAnyArg != null && acceptAnyArg;
+        // Закрепление администратора (08.11.2026): сверяется и после успешной
+        // системной проверки. strict=false — правил нет.
+        final Boolean strictArg = call.argument("strict");
+        final boolean strict = strictArg != null && strictArg;
+        final Set<String> strictPins = new HashSet<>(orDefault(call.<List<String>>argument("strictSha256"),
+                Collections.<String>emptyList()));
         // Дополнительные ЦС приложения (встроенные Минцифры, импортированные).
         final List<byte[]> extraCas = orDefault(call.<List<byte[]>>argument("extraCas"),
                 Collections.<byte[]>emptyList());
@@ -117,7 +130,8 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
             final X509Certificate[] rejected = new X509Certificate[1];
             try {
                 final Map<String, Object> res =
-                        send(method, url, headers, body, timeoutMs, trusted, acceptAny, extraCas, rejected);
+                        send(method, url, headers, body, timeoutMs, trusted, acceptAny, extraCas,
+                                strict, strictPins, rejected);
                 MAIN.post(() -> result.success(res));
             } catch (Exception e) {
                 final String msg = e.getClass().getSimpleName() + ": " + e.getMessage();
@@ -151,10 +165,12 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
             String method, String url, Map<String, String> headers,
             byte[] body, int timeoutMs,
             Set<String> trusted, boolean acceptAny, List<byte[]> extraCas,
+            boolean strict, Set<String> strictPins,
             X509Certificate[] rejected) throws Exception {
         final HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         if (conn instanceof HttpsURLConnection) {
-            ((HttpsURLConnection) conn).setSSLSocketFactory(sslFactory(trusted, acceptAny, extraCas, rejected));
+            ((HttpsURLConnection) conn).setSSLSocketFactory(
+                    sslFactory(trusted, acceptAny, extraCas, strict, strictPins, rejected));
         }
         try {
             conn.setInstanceFollowRedirects(false);
@@ -224,6 +240,7 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
      */
     private static SSLSocketFactory sslFactory(
             Set<String> trusted, boolean acceptAny, List<byte[]> extraCas,
+            boolean strict, Set<String> strictPins,
             X509Certificate[] rejected) throws Exception {
         final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init((KeyStore) null);
@@ -246,6 +263,25 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
 
             @Override
             public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                verify(chain, authType);
+                // Закрепление администратора — и когда сертификат принят
+                // системой (ЦС, установленный пользователем или профилем).
+                if (strict && chain != null && chain.length > 0) {
+                    String fp = null;
+                    try {
+                        fp = Base64.encodeToString(
+                                MessageDigest.getInstance("SHA-256").digest(chain[0].getEncoded()), Base64.NO_WRAP);
+                    } catch (Exception ignored) {
+                        // нет отпечатка — не совпадает
+                    }
+                    if (fp == null || !strictPins.contains(fp)) {
+                        rejected[0] = chain[0];
+                        throw new CertificateException("Сертификат не совпадает с закреплённым (правило администратора)");
+                    }
+                }
+            }
+
+            private void verify(X509Certificate[] chain, String authType) throws CertificateException {
                 try {
                     system.checkServerTrusted(chain, authType);
                 } catch (CertificateException e) {

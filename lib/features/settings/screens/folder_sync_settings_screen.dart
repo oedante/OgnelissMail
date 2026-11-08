@@ -34,7 +34,7 @@ import '../../mail/providers/mail_providers.dart';
 import '../../mail/folder_order.dart' show hideUnsyncedFoldersProvider;
 import '../../../services/sync/sync_service.dart';
 import '../../../widgets/common/text_scale_cap.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice, quietNotice;
 import '../../../widgets/ui/app_menu_button.dart';
 
 /// Выключенные уведомления папок («ящик|папка»).
@@ -244,7 +244,7 @@ class FolderSyncSettingsScreen extends ConsumerWidget {
     }
 
     if (context.mounted && ids.length > 1) {
-      showInlineNotice(l10n.tr('toggledWithSubfolders')
+      quietNotice(l10n.tr('toggledWithSubfolders')
           .replaceAll('{state}', value ? l10n.tr('enabledState') : l10n.tr('disabledState'))
           .replaceAll('{n}', '${ids.length}'));
     }
@@ -311,7 +311,7 @@ class FolderSyncSettingsScreen extends ConsumerWidget {
     final n = await ref.read(databaseProvider).countLocalFolderEmails(account.id, off);
     if (!context.mounted) return;
     if (n == 0) {
-      showInlineNotice(l10n.tr('folderCleanupNothing'));
+      quietNotice(l10n.tr('folderCleanupNothing'));
       return;
     }
     final ok = await showDialog<bool>(

@@ -182,6 +182,33 @@ bool looksLikeAuthError(Object e) {
 }
 
 
+/// Временный сбой — сеть, сервер недоступен или перегружен, прокси входа
+/// не отвечает (08.11.2026, правило владельца: такие ошибки пользователю не
+/// показываются — приложение само повторит позже; журнал владельца:
+/// «Connection refused», «Network is unreachable», «HTTP 502/504»).
+bool looksTransientError(Object e) {
+  final s = e.toString().toLowerCase();
+  if (RegExp(r'\b(408|425|429|500|502|503|504)\b').hasMatch(s)) return true;
+  return s.contains('socketexception') ||
+      s.contains('connection refused') ||
+      s.contains('connection reset') ||
+      s.contains('connection closed') ||
+      s.contains('connection failed') ||
+      s.contains('connection abort') ||
+      s.contains('network is unreachable') ||
+      s.contains('no route to host') ||
+      s.contains('failed host lookup') ||
+      s.contains('timeoutexception') ||
+      s.contains('timed out') ||
+      s.contains('http 0') ||
+      s.contains('нет ответа') ||
+      s.contains('нет сети') ||
+      s.contains('прокси недоступен') ||
+      s.contains('сбой прокси') ||
+      s.contains('server busy') ||
+      s.contains('serverbusy');
+}
+
 /// Не удалось обновить OAuth-токен.
 ///
 /// [needsSignIn] — вход отозван или истёк (invalid_grant, нечитаемый вход на

@@ -22,6 +22,7 @@
 // адреса. На шаге 2 у рабочей почты — переключатель «Exchange | IMAP»:
 // протокол, который узнали по адресу, видно и можно сменить.
 
+import '../../../widgets/ui/confirm_dialog.dart';
 import '../../../core/constants/exchange_feature.dart';
 import 'dart:async';
 
@@ -103,6 +104,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     EncryptionType.starttls: 587,
     EncryptionType.none: 25,
   };
+
+  /// Подключение без шифрования: пароль и письма — открытым текстом.
+  Future<bool> _confirmPlaintext() {
+    final l10n = AppLocalizations.of(context);
+    return confirmDestructive(context,
+        title: l10n.tr('plaintextTitle'), message: l10n.tr('plaintextBody'), action: l10n.tr('plaintextAction'));
+  }
 
   /// Подставляет стандартный порт для выбранного шифрования, НО только если
   /// текущее значение — тоже стандартное (т.е. пользователь не вписал свой порт
@@ -1142,7 +1150,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 AppMenuEntry(value: EncryptionType.starttls, label: 'STARTTLS'),
                 AppMenuEntry(value: EncryptionType.none, label: 'None'),
               ],
-              onChanged: (v) {
+              onChanged: (v) async {
+                // Без шифрования пароль уходит открытым текстом (08.11.2026,
+                // аудит безопасности) — только после явного согласия.
+                if (v == EncryptionType.none && !await _confirmPlaintext()) return;
+                if (!mounted) return;
                 setState(() {
                   _imapEncryption = v;
                   _applyStandardPort(_imapPortController, _imapStandardPorts, v);
@@ -1166,7 +1178,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 AppMenuEntry(value: EncryptionType.starttls, label: 'STARTTLS'),
                 AppMenuEntry(value: EncryptionType.none, label: 'None'),
               ],
-              onChanged: (v) {
+              onChanged: (v) async {
+                // Без шифрования пароль уходит открытым текстом (08.11.2026,
+                // аудит безопасности) — только после явного согласия.
+                if (v == EncryptionType.none && !await _confirmPlaintext()) return;
+                if (!mounted) return;
                 setState(() {
                   _smtpEncryption = v;
                   _applyStandardPort(_smtpPortController, _smtpStandardPorts, v);

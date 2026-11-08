@@ -6,6 +6,8 @@
 // Оба экрана подписаны на БД: прочтение, удаление и новое письмо в беседе
 // видны сразу, без перезагрузки.
 
+import '../../../widgets/common/undo_strip.dart';
+import '../../../widgets/common/undo_manager.dart';
 import '../../../core/utils/text_safe.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/foundation.dart' show listEquals;
@@ -138,12 +140,22 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   late final Stream<List<EmailModel>> _drafts;
   bool _busy = false;
 
+  /// Письмо, на которое отвечает строка внизу после свайпа «Ответить» (2.0.0,
+  /// план 08.11.2026, как в мессенджере); null — самое новое.
+  EmailModel? _replyTo;
+
   @override
   void initState() {
     super.initState();
     final db = ref.read(databaseProvider);
     _stream = _watchConversation(db, widget.conversationId, widget.accountId);
-    _drafts = db.watchDraftsLight(widget.accountId).map((rows) => [for (final r in rows) emailModelFromRow(r)]);
+    // Таблица писем меняется при каждой синхронизации — экран беседы
+    // перестраивается, только когда черновики правда изменились (2.0.0,
+    // план 08.11.2026, «черновики беседы — distinct»).
+    _drafts = db
+        .watchDraftsLight(widget.accountId)
+        .map((rows) => [for (final r in rows) emailModelFromRow(r)])
+        .distinct(sameDraftList);
   }
 
   /// Письма беседы и её черновики ответов, самое новое — первым.
@@ -297,6 +309,23 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         _ => (AppIcons.more_horiz, '', AppColors.infoBlue),
       };
 
+  /// Убранные свайпом письма до конца окна «Вернуть» (07.11.2026: в беседе
+  /// удаление, архив и спам выполнялись сразу и без отмены, в ленте — с ней).
+  final Set<String> _hidden = {};
+
+  /// Перенос с «Вернуть», как в ленте: письмо сразу скрыто, перенос — через
+  /// 7 секунд, «Вернуть» показывает его снова.
+  void _moveWithUndo(EmailModel e, String text, Future<void> Function() execute) {
+    setState(() => _hidden.add(e.id));
+    void show() {
+      if (mounted) setState(() => _hidden.remove(e.id));
+    }
+    EmailUndoManager.perform(
+      context,
+      UndoableAction(description: text, execute: execute, undo: () async {}, onUndo: show, onSettled: show),
+    );
+  }
+
   Future<void> _run(SwipeAction a, EmailModel e, AppLocalizations l10n) async {
     final account = ref.read(accountsProvider).where((x) => x.id == e.accountId).firstOrNull;
     if (account == null) return;
@@ -314,13 +343,17 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         case SwipeAction.archive:
           final to = await SpecialFolders.resolve(db, ref.read(sharedPrefsProvider), e.accountId, SpecialKind.archive);
           if (to == null) showInlineError(l10n.tr('archiveFolderNotFound'));
-          if (to != null && to != e.folderId) await actions.moveTo(account, e.id, e.folderId, to);
+          if (to != null && to != e.folderId) {
+            _moveWithUndo(e, l10n.tr('emailMoved'), () => actions.moveTo(account, e.id, e.folderId, to));
+          }
         case SwipeAction.moveToJunk:
           final junk = await SpecialFolders.resolve(db, ref.read(sharedPrefsProvider), e.accountId, SpecialKind.junk);
           if (junk == null) showInlineError(l10n.tr('junkFolderNotFound'));
-          if (junk != null && junk != e.folderId) await actions.moveTo(account, e.id, e.folderId, junk);
+          if (junk != null && junk != e.folderId) {
+            _moveWithUndo(e, l10n.tr('movedToJunk'), () => actions.moveTo(account, e.id, e.folderId, junk));
+          }
         case SwipeAction.delete:
-          await actions.delete(account, e.id, e.folderId);
+          _moveWithUndo(e, l10n.tr('emailDeleted'), () => actions.delete(account, e.id, e.folderId));
         // «Переместить» (1.15.0, замечание владельца 07.11.2026: в беседе его
         // не было) — папки ящика письма.
         case SwipeAction.moveTo:
@@ -331,7 +364,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         case SwipeAction.control:
           await applyControl(ref, e, ControlChoice(clear: e.controlState != 0));
         case SwipeAction.reply:
-          if (mounted) {
+          // Строка ответа внизу — ответ именно на это письмо (как в
+          // мессенджере); без неё — редактор, как раньше.
+          if (mounted && ref.read(quickReplyBarProvider)) {
+            setState(() => _replyTo = e);
+          } else if (mounted) {
             unawaited(context.push('/compose?replyToId=${Uri.encodeQueryComponent(e.id)}'
                 '&accountId=${Uri.encodeQueryComponent(e.accountId)}'));
           }
@@ -492,11 +529,16 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       builder: (context, snap) {
         // Письма беседы — для «Прочитать все», «Удалить беседу», ответа
         // внизу; показ — с черновиками ответов (1.10.5).
-        final emails = snap.data?.emails;
+        // Письма, убранные свайпом и ждущие «Вернуть», — не показывать.
+        final emails = snap.data?.emails.where((e) => !_hidden.contains(e.id)).toList();
         final shown = emails == null ? null : _withDrafts(emails, draftSnap.data, links);
         final copies = snap.data?.copies ?? const <String, List<EmailModel>>{};
         final subject = (emails != null && emails.isNotEmpty) ? emails.first.subject : '';
-        final target = emails == null ? null : _replyTarget(emails);
+        final latest = emails == null ? null : _replyTarget(emails);
+        final picked = _replyTo == null || emails == null
+            ? null
+            : emails.where((x) => x.id == _replyTo!.id && x.accountId == _replyTo!.accountId).firstOrNull;
+        final target = picked ?? latest;
         final hasUnread = emails != null && emails.any((e) => !e.isRead);
         final own = {
           for (final a in ref.watch(accountsProvider)) ...OwnAddresses.of(a),
@@ -623,7 +665,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 preferredSize: const Size.fromHeight(2),
                 child: SizedBox(height: 2, child: _busy ? const LinearProgressIndicator(minHeight: 2) : null)),
           )),
-          body: shown == null
+          body: Stack(fit: StackFit.expand, children: [
+            shown == null
               ? const Center(child: CircularProgressIndicator())
               : shown.isEmpty
                   ? Center(
@@ -648,6 +691,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                         },
                       ),
                     ),
+            // «Письмо удалено · Вернуть» — как в ленте, поверх списка внизу.
+            const Positioned(left: 0, right: 0, bottom: Space.s, child: UndoStrip()),
+          ]),
           // Строка ответа на последнее письмо (1.6.49, как в мессенджере);
           // поднимается над клавиатурой.
           bottomNavigationBar: (target == null || !quickReply)
@@ -659,7 +705,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     // Плавающая карточка (1.7.3) — отступы у неё свои.
                     child: SafeArea(
                       top: false,
-                      child: QuickReplyBar(key: ValueKey('qr_conv_${target.accountId}_${target.id}'), email: target),
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        if (picked != null && picked.id != latest?.id)
+                          _ReplyToStrip(email: picked, onClear: () => setState(() => _replyTo = null)),
+                        QuickReplyBar(key: ValueKey('qr_conv_${target.accountId}_${target.id}'), email: target),
+                      ]),
                     ),
                   ),
                 ),
@@ -671,6 +721,48 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 }
 
 /// Подпись дня посередине, как в Telegram.
+/// «Ответ на письмо от …» над строкой ответа: свайпом выбрано не самое
+/// новое письмо беседы; крестик — снова отвечать на последнее.
+class _ReplyToStrip extends StatelessWidget {
+  final EmailModel email;
+  final VoidCallback onClear;
+  const _ReplyToStrip({required this.email, required this.onClear});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final preview = email.preview.replaceAll(RegExp(r'\s+'), ' ').trim();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(Space.l, Space.xs, Space.xs, 0),
+      child: Row(children: [
+        Container(width: 3, height: 32, color: theme.colorScheme.primary),
+        const SizedBox(width: Space.s),
+        Icon(AppIcons.reply, size: 18, color: theme.colorScheme.primary),
+        const SizedBox(width: Space.s),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+            Text(l10n.tr('convReplyTo').replaceAll('{name}', email.from.label),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.primary)),
+            if (preview.isNotEmpty)
+              Text(preview,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+          ]),
+        ),
+        IconButton(
+          tooltip: l10n.tr('cancel'),
+          icon: const Icon(AppIcons.close, size: 20),
+          onPressed: onClear,
+        ),
+      ]),
+    );
+  }
+}
+
 class _DayChip extends StatelessWidget {
   final String label;
   const _DayChip({required this.label});
@@ -1032,3 +1124,23 @@ class _ConversationPagerScreenState extends ConsumerState<ConversationPagerScree
     );
   }
 }
+
+/// Списки черновиков одинаковы для экрана беседы: те же письма с теми же
+/// темой, текстом-превью, датой и папкой.
+@visibleForTesting
+bool sameDraftList(List<EmailModel> a, List<EmailModel> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    final x = a[i], y = b[i];
+    if (x.id != y.id ||
+        x.receivedAt != y.receivedAt ||
+        x.subject != y.subject ||
+        x.preview != y.preview ||
+        x.folderId != y.folderId) {
+      return false;
+    }
+  }
+  return true;
+}
+

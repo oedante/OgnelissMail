@@ -84,7 +84,7 @@ import '../providers/mail_providers.dart';
 import '../../../core/utils/folder_icons.dart';
 import '../../../services/mail/folder_actions_service.dart';
 import '../../../features/settings/providers/settings_provider.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice, quietError, quietNotice;
 import '../widgets/account_auth_banner.dart';
 import '../widgets/auto_reply_strip.dart';
 import '../../../services/mail/own_addresses.dart';
@@ -519,7 +519,17 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   }
 
   /// Подгрузка следующей страницы при скролле
+  DateTime _lastScrollHold = DateTime(0);
+
   void _onScroll() {
+    // Листают ленту — фоновая синхронизация уступает (07.11.2026, аудит
+    // микрофризов: пауза была только при открытии письма, а при прокрутке
+    // шли три папки параллельно). Продлевается, пока прокрутка идёт.
+    final now = DateTime.now();
+    if (now.difference(_lastScrollHold) > const Duration(milliseconds: 300)) {
+      _lastScrollHold = now;
+      WorkScheduler.instance.hold(const Duration(milliseconds: 800));
+    }
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 300) {
       ref.read(emailsProvider.notifier).loadNextPage();
@@ -819,7 +829,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           const OfflineIndicator(),
           // Планшет и компьютер (1.10.5, как в Outlook): поиск — полем в
           // шапке ленты; нажатие открывает тот же поиск, что и значок.
-          if (!phone && !_isSearching)
+          // Узкое окно без нижней панели (внешний экран складного, окно
+          // в разделённом экране) — значком: поле съедало название ящика.
+          if (!phone && !_isSearching && box.maxWidth >= Breakpoints.phone)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Space.xs),
               child: Material(
@@ -1085,7 +1097,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       if (noFolder) {
         showInlineError(l10n.tr('archiveFolderNotFound'));
       } else if (skipped > 0) {
-        showInlineError(l10n.tr('bulkMoveSkipped').replaceAll('{n}', '$skipped'));
+        quietError(l10n.tr('bulkMoveSkipped').replaceAll('{n}', '$skipped'));
       }
     });
   }
@@ -1111,7 +1123,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       final r = await runner.archiveEmails(a, [row]);
       failed += r.failed;
     }, emails: emails, done: () {
-      if (failed > 0) showInlineError(l10n.tr('archiveSomeFailed').replaceAll('{n}', '$failed'));
+      if (failed > 0) quietError(l10n.tr('archiveSomeFailed').replaceAll('{n}', '$failed'));
     });
   }
 
@@ -1532,6 +1544,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         // Заданы в _buildEmailList до построения строк (без «??»: тип
         // провайдера шире, и анализатор считал результат nullable).
         final AppSettings settings = _itemSettings!;
+        final rtl = Directionality.of(context).name == 'rtl'; // TextDirection — и в intl
         final l10n = AppLocalizations.of(context);
         final EmailListState emailState = _itemState!;
         final grouped = _cachedGrouped ?? const [];
@@ -1566,7 +1579,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                     onPressed: (_) async {
                       final ok = await ref.read(offlineSendProvider).cancelUndoSend(item.id);
                       await ref.read(emailsProvider.notifier).refresh();
-                      showInlineNotice(ok ? l10n.tr('cancelledToDrafts') : l10n.tr('alreadySent'));
+                      quietNotice(ok ? l10n.tr('cancelledToDrafts') : l10n.tr('alreadySent'));
                     },
                     backgroundColor: SwipeTone.of(context, AppColors.errorRed).$1,
                     foregroundColor: SwipeTone.of(context, AppColors.errorRed).$2,
@@ -1599,22 +1612,30 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             behavior: HitTestBehavior.translucent,
             child: Slidable(
             key: ValueKey('${item.id}_${item.accountId}'),
+            // В режиме выбора свайп не действует (07.11.2026): он делал
+            // действие над одним письмом, а не над выбранными.
+            enabled: !_selectionMode,
             // Свайп влево и вправо настраиваются независимо.
             //
             // Поведение зависит от числа назначенных действий:
             //  · одно действие — полный свайп выполняет его СРАЗУ, ждать выбора
             //    не нужно (быстрый разбор почты одним движением);
-            //  · два действия — кнопки раскрываются и ждут выбора.
+            //  · два действия (07.11.2026, «свайпы странно себя ведут»):
+            //    короткий свайп раскрывает обе кнопки, длинный — сразу
+            //    выполняет основное (как в Почте iOS и Spark). Раньше длинный
+            //    свайп при двух действиях не делал ничего.
+            // «Свайп вправо» в настройках — всегда движение пальца вправо:
+            // при письме справа налево (арабский, иврит) стороны меняются.
             startActionPane: _buildActionPane(
-              primary: settings.swipeLeftPrimary,
-              secondary: settings.swipeLeftSecondary,
+              primary: rtl ? settings.swipeRightPrimary : settings.swipeLeftPrimary,
+              secondary: rtl ? settings.swipeRightSecondary : settings.swipeLeftSecondary,
               email: item,
               l10n: l10n,
               fromStart: true,
             ),
             endActionPane: _buildActionPane(
-              primary: settings.swipeRightPrimary,
-              secondary: settings.swipeRightSecondary,
+              primary: rtl ? settings.swipeLeftPrimary : settings.swipeRightPrimary,
+              secondary: rtl ? settings.swipeLeftSecondary : settings.swipeRightSecondary,
               email: item,
               l10n: l10n,
               fromStart: false,
@@ -1814,13 +1835,16 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       fromStart: fromStart,
       atEdge: singleAction,
       extentRatio: singleAction ? 0.28 : 0.5,
-      armAt: singleAction ? _swipeArmAt : null,
+      // Две кнопки: основная (у края) подрастает к порогу длинного свайпа —
+      // видно, что сработает она; вторая — без порога.
+      armAt: singleAction ? _swipeArmAt : _swipeArmAtPair,
     );
 
     final actions = <CustomSlidableAction>[
       if (hasPrimary) _buildSwipeAction(primary, email, l10n, isPrimary: true),
-      if (hasSecondary) _buildSwipeAction(secondary, email, l10n, isPrimary: false),
     ];
+    if (!singleAction) _pane = (fromStart: fromStart, atEdge: false, extentRatio: 0.5, armAt: null);
+    if (hasSecondary) actions.add(_buildSwipeAction(secondary, email, l10n, isPrimary: false));
 
     // Одно действие — выполняем сразу при полном свайпе. Строка «уходит»
     // из списка только для действий, которые убирают письмо из папки
@@ -1839,33 +1863,28 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       // только при длинном свайпе). Два действия — как раньше.
       motion: single ? const BehindMotion() : const DrawerMotion(),
       extentRatio: single ? 0.28 : 0.5,
-      dismissible: single
-          ? DismissiblePane(
-              // По умолчанию строку нужно было протянуть на 75 % ширины —
-              // почти через весь экран. 40 %: отпустили дальше — строка
-              // сама доезжает до конца и действие срабатывает.
-              dismissThreshold: _swipeArmAt,
-              dismissalDuration: const Duration(milliseconds: 220),
-              resizeDuration: const Duration(milliseconds: 220),
-              closeOnCancel: true,
-              // Удаление беседы из нескольких писем — сначала вопрос: строка
-              // уходит, только когда выбор сделан (1.6.26).
-              confirmDismiss: removes
-                  ? (action == SwipeAction.delete && _conversationSize(email) > 1
-                      ? () async {
-                          final whole = await _askDeleteScope(l10n, _conversationSize(email));
-                          if (whole == null) return false;
-                          _deleteScope[_scopeKey(email)] = whole;
-                          return true;
-                        }
-                      : null)
-                  : () async {
-                      _executeSwipeAction(action, email, l10n);
-                      return false;
-                    },
-              onDismissed: () => _executeSwipeAction(action, email, l10n),
-            )
-          : null,
+      // Полный свайп выполняет действие у края (при двух — основное):
+      // при одном — с 40 % ширины, при двух — с 75 % (до этого — кнопки).
+      dismissible: DismissiblePane(
+        // По умолчанию строку нужно было протянуть на 75 % ширины —
+        // почти через весь экран. 40 %: отпустили дальше — строка
+        // сама доезжает до конца и действие срабатывает.
+        dismissThreshold: single ? _swipeArmAt : _swipeArmAtPair,
+        dismissalDuration: const Duration(milliseconds: 220),
+        resizeDuration: const Duration(milliseconds: 220),
+        closeOnCancel: true,
+        // Строка уходит из ленты, только когда всё решено (07.11.2026):
+        // раньше в «Удалённых» строка сначала исчезала, а «Удалить
+        // навсегда?» спрашивалось потом — при «Отмене» оставалась пустая
+        // полоса; так же без папки «Архив» или «Спам».
+        confirmDismiss: removes
+            ? () => _confirmSwipeRemoval(action, email, l10n)
+            : () async {
+                _executeSwipeAction(action, email, l10n);
+                return false;
+              },
+        onDismissed: () => _executeSwipeAction(action, email, l10n),
+      ),
       // Не дотянули до порога — строка возвращается на место, а не остаётся
       // полуоткрытой (1.14.0: «свайпы зависают на середине»).
       children: single
@@ -1876,6 +1895,55 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
 
   /// Порог полного свайпа при одном действии на стороне (доля ширины строки).
   static const _swipeArmAt = 0.4;
+
+  /// Порог при двух действиях: дальше раскрытых кнопок (50 %).
+  static const _swipeArmAtPair = 0.75;
+
+  /// Удаление в «Удалённых» уже подтверждено до ухода строки.
+  final Set<String> _foreverConfirmed = {};
+
+  /// Можно ли убрать строку полным свайпом: все вопросы — до ухода строки.
+  Future<bool> _confirmSwipeRemoval(SwipeAction action, EmailModel email, AppLocalizations l10n) async {
+    final type = switch (action) {
+      SwipeAction.archive => FolderType.archive,
+      SwipeAction.moveToJunk => FolderType.junk,
+      _ => FolderType.trash,
+    };
+    final targetId = await _folderOfType(email.accountId, type);
+    if (!mounted) return false;
+    if (action == SwipeAction.delete) {
+      // Уже в «Удалённых» — навсегда, только после подтверждения.
+      if (targetId != null && email.folderId == targetId) {
+        final ok = await _askDeleteForever(email, l10n);
+        if (ok) _foreverConfirmed.add(_scopeKey(email));
+        return ok;
+      }
+      // Беседа из нескольких писем — сначала «всю или письмо» (1.6.26).
+      final n = _conversationSize(email);
+      if (n > 1) {
+        final whole = await _askDeleteScope(l10n, n);
+        if (whole == null) return false;
+        _deleteScope[_scopeKey(email)] = whole;
+        return true;
+      }
+    }
+    if (targetId == null) {
+      showInlineError(l10n.tr(switch (action) {
+        SwipeAction.archive => 'archiveFolderNotFound',
+        SwipeAction.moveToJunk => 'junkFolderNotFound',
+        _ => 'trashFolderNotFound',
+      }));
+      return false;
+    }
+    // Уже в этой папке («В архив» в «Архиве») — строке уходить незачем.
+    return targetId != email.folderId;
+  }
+
+  Future<bool> _askDeleteForever(EmailModel email, AppLocalizations l10n) => confirmDestructive(context,
+      title: l10n.tr('deleteForeverTitle'),
+      message: l10n.tr((ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull?.isMsExchange ?? false)
+          ? 'deleteForeverBodyExchange'
+          : 'deleteForeverBody'));
 
   /// Выбор «вся беседа / только письмо», сделанный до ухода строки при
   /// полном свайпе.
@@ -2340,7 +2408,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       }
       await actions.moveTo(a, e.id, e.folderId, to);
     }, done: () {
-      if (skipped > 0) showInlineError(l10n.tr('bulkMoveSkipped').replaceAll('{n}', '$skipped'));
+      if (skipped > 0) quietError(l10n.tr('bulkMoveSkipped').replaceAll('{n}', '$skipped'));
     });
   }
 
@@ -2885,11 +2953,8 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     // Уже в «Удалённых» — удаляем окончательно, но только после подтверждения.
     if (trashId != null && email.folderId == trashId) {
       if (!mounted) return;
-      final ok = await confirmDestructive(context,
-          title: l10n.tr('deleteForeverTitle'),
-          message: l10n.tr((ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull?.isMsExchange ?? false)
-              ? 'deleteForeverBodyExchange'
-              : 'deleteForeverBody'));
+      // Свайпом уже спросили (до ухода строки) — второй раз не спрашивать.
+      final ok = _foreverConfirmed.remove(_scopeKey(email)) || await _askDeleteForever(email, l10n);
       if (!ok) return;
       final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
       if (account == null) return;
@@ -3002,7 +3067,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   Future<void> _showTagPicker(EmailModel email, AppLocalizations l10n) async {
     final tags = ref.read(categoriesProvider);
     if (tags.isEmpty) {
-      showInlineNotice(l10n.tr('noTags'));
+      quietNotice(l10n.tr('noTags'));
       return;
     }
     final t = await showChoiceSheet<String>(
@@ -3223,7 +3288,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     final list = state.emails.where(inCcOnly).toList();
     final ids = [for (final e in list) e.id];
     if (ids.isEmpty) {
-      showInlineNotice(l10n.tr('nothingToMark'));
+      quietNotice(l10n.tr('nothingToMark'));
       return;
     }
 
@@ -3280,7 +3345,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     try {
       final (done, total) = await ref.read(folderActionsProvider).emptyFolder(account, folder);
       if (mounted && done < total) {
-        showInlineError('${l10n.error}: ${total - done}');
+        quietError('${l10n.error}: ${total - done}');
       }
     } catch (e) {
       AppLogger.warning('Очистка папки: $e');

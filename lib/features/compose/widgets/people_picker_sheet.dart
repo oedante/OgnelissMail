@@ -23,7 +23,7 @@ import '../../../services/contacts/person_name_directory.dart';
 import '../../../services/mail/engine/mail_engine_service.dart';
 import '../../../widgets/common/person_photo.dart';
 import '../providers/distribution_groups_provider.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show quietNotice;
 import '../../contacts/person_names.dart' show normalizePersonName;
 
 /// Открыть выбор людей. Возвращает выбранных (может быть пусто).
@@ -274,7 +274,7 @@ class _PeoplePickerState extends ConsumerState<_PeoplePicker> {
       final r = await ref.read(mailEngineServiceProvider).departmentColleagues(acc);
       if (!mounted) return;
       if (r.people.isEmpty) {
-        showInlineNotice(AppLocalizations.of(context).tr('myDepartmentNone'));
+        quietNotice(AppLocalizations.of(context).tr('myDepartmentNone'));
         return;
       }
       // Отмечены сразу — коллеги с тем же полем «Офис», что у вас; остальные

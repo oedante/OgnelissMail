@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Строка задачи виджета «Задачи»: галочка «Выполнено» · название и срок
+     (просроченный — цветом предупреждения). Нажатие на строку — задача. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tk_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="46dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+    <ImageView
+        android:id="@+id/tk_done"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="4dp"
+        android:padding="9dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/widget_ic_done" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <TextView android:id="@+id/tk_text" style="@style/WidgetRowTitle" />
+        <TextView android:id="@+id/tk_due" style="@style/WidgetRowSub" android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/ru.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Непрочитанные</string>
+    <string name="widget_count_desc">Число непрочитанных писем; нажатие открывает «Входящие»</string>
+    <string name="widget_tasks_label">Задачи</string>
+    <string name="widget_tasks_desc">Открытые задачи с галочкой и кнопка новой задачи</string>
+    <string name="widget_task_new">Новая задача</string>
     <string name="device_admin_label">Ogneliss Mail: блокировка экрана</string>
     <string name="device_admin_description">Применяет тайм-аут блокировки экрана, который требует сервер Exchange вашей организации. Ogneliss Mail не может стереть устройство или изменить пароль.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>

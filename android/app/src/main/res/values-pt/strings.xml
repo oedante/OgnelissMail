@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/pt.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Não lidos</string>
+    <string name="widget_count_desc">Número de emails não lidos; toque para abrir a caixa de entrada</string>
+    <string name="widget_tasks_label">Tarefas</string>
+    <string name="widget_tasks_desc">Tarefas abertas com visto e um botão para nova tarefa</string>
+    <string name="widget_task_new">Nova tarefa</string>
     <string name="device_admin_label">Ogneliss Mail: bloqueio de tela</string>
     <string name="device_admin_description">Aplica o tempo limite de bloqueio de tela exigido pelo servidor Exchange da sua organização. O Ogneliss Mail não pode apagar seu dispositivo nem alterar sua senha.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>

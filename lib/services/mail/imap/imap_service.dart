@@ -7,6 +7,7 @@
 // - Chunked download для больших вложений
 // - Reconnect при разрыве
 
+import 'dart:isolate';
 import '../../../core/utils/text_safe.dart';
 import '../../../core/errors/app_exceptions.dart' show looksLikeAuthError, PushAuthFailure, OAuthRefreshFailure;
 import 'dart:async';
@@ -1607,6 +1608,11 @@ class ImapService {
   /// Аккаунты, о включении NOTIFY у которых уже написано в журнал.
   final Set<String> _notifyLogged = {};
 
+  /// Push ящика следит и за остальными папками (сервер принял NOTIFY), а не
+  /// только за «Входящими» (2.0.0: от этого зависит интервал плановой
+  /// проверки остальных папок, SyncService).
+  bool notifyCovers(String accountId) => _notifyLogged.contains(accountId) && !_notifyOff.contains(accountId);
+
   /// Push для папки: поток отдаёт событие с числом писем в папке при
   /// EXISTS, [ImapPushEvent.expunged] при EXPUNGE и
   /// [ImapPushEvent.reconnected] после переподключения (письма, пришедшие
@@ -2358,11 +2364,14 @@ class ImapService {
       final raw = part.mimeData;
       Uint8List? data;
       if (encoding != null) {
+        // Большие вложения — в отдельном изоляте (08.11.2026, аудит
+        // микрофризов: 20 МБ base64 раскодировались в главном потоке —
+        // замирание на сотни мс при открытии вложения).
         if (raw is TextMimeData) {
-          data = MailCodec.decodeBinary(raw.text, encoding);
+          data = await _decodeOffThread(text: raw.text, encoding: encoding);
         } else if (raw is BinaryMimeData) {
           data = (encoding == 'base64' || encoding == 'quoted-printable')
-              ? MailCodec.decodeBinary(latin1.decode(raw.data, allowInvalid: true), encoding)
+              ? await _decodeOffThread(bytes: raw.data, encoding: encoding)
               : raw.data;
         }
       }
@@ -2824,4 +2833,14 @@ List<String> imapSearchVariants(String q, {required bool gmail}) {
       ? 'CHARSET UTF-8 X-GM-RAW "$q"'
       : 'CHARSET UTF-8 OR OR SUBJECT "$q" FROM "$q" TO "$q"';
   return [literal, quoted];
+}
+
+/// Раскодировать часть письма (base64, quoted-printable); от 256 КБ — в
+/// отдельном изоляте, чтобы не замирал интерфейс.
+Future<Uint8List?> _decodeOffThread({String? text, Uint8List? bytes, required String encoding}) {
+  Uint8List? work() =>
+      MailCodec.decodeBinary(text ?? latin1.decode(bytes ?? Uint8List(0), allowInvalid: true), encoding);
+  final size = text?.length ?? bytes?.length ?? 0;
+  if (size < 256 * 1024) return Future.value(work());
+  return Isolate.run(work);
 }

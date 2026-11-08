@@ -38,14 +38,14 @@ Future<void> translateComposeBody(
   final t = ref.read(translatorProvider);
   final l10n = AppLocalizations.of(context);
   if (!await t.isAvailable()) {
-    showInlineError(l10n.tr(translateUnavailableKey()));
+    quietError(l10n.tr(translateUnavailableKey()));
     return;
   }
   final before = await readBody();
   final split = html ? ComposeTranslation.splitOwn(before) : ComposeTranslation.splitOwnPlain(before, signaturePlain);
   final ownText = html ? visibleTextSample(split.own) : split.own.trim();
   if (!worthTranslating(ownText)) {
-    showInlineError(l10n.tr('nothingToTranslate'));
+    quietError(l10n.tr('nothingToTranslate'));
     return;
   }
   final appLang = normalizeLang(l10n.locale.languageCode) ?? 'en';
@@ -61,7 +61,7 @@ Future<void> translateComposeBody(
   final mode = await pickComposeTranslateMode(context, ref);
   if (mode == null || !context.mounted) return;
   if (!await ensureTranslationModels(context, ref, from: source, to: target)) return;
-  showInlineNotice(l10n.tr('translateWorking'));
+  quietNotice(l10n.tr('translateWorking'));
   try {
     final translated = html
         ? await translateHtml(t, split.own, from: source, to: target)
@@ -83,6 +83,6 @@ Future<void> translateComposeBody(
     );
   } catch (e) {
     AppLogger.warning('Перевод своего письма $source → $target: $e');
-    showInlineError(l10n.tr('translateFailed'));
+    quietError(l10n.tr('translateFailed'));
   }
 }

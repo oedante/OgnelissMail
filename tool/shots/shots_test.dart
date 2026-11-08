@@ -5,6 +5,10 @@
 //   flutter test tool/shots --update-goldens   → tool/shots/out/*.png
 // Обычный `flutter test` (папка test/) эти снимки не запускает.
 
+import 'dart:async';
+
+import 'dart:ui' as ui;
+
 import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
@@ -33,6 +37,9 @@ import 'package:ogneliss/features/mail/screens/mail_list_screen.dart';
 import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
 import 'package:ogneliss/features/mail/widgets/mail_drawer.dart';
 import 'package:ogneliss/features/settings/screens/settings_screen.dart';
+import 'package:ogneliss/features/my_day/my_day_screen.dart';
+import 'package:ogneliss/features/my_day/weather_view.dart' show showWeatherSheet;
+import 'package:ogneliss/services/weather/weather_service.dart';
 import 'package:ogneliss/features/settings/providers/settings_provider.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/services/archive/archive_container.dart';
@@ -146,10 +153,21 @@ Future<void> _shot(
   // на разных размерах. null — без них (прежние снимки).
   double? textScale,
   double dpr = 2,
+  // Сгиб складного экрана в логических точках (снимки флипов и фолдов).
+  Rect? fold,
 }) async {
   FlutterSecureStorage.setMockInitialValues({});
   tester.view.physicalSize = size * dpr;
   tester.view.devicePixelRatio = dpr;
+  if (fold != null) {
+    tester.view.displayFeatures = [
+      ui.DisplayFeature(
+        bounds: fold, // FlutterView.displayFeatures — в логических точках
+        type: ui.DisplayFeatureType.fold,
+        state: ui.DisplayFeatureState.postureHalfOpened,
+      ),
+    ];
+  }
   addTearDown(tester.view.reset);
   await tester.pumpWidget(ProviderScope(
     overrides: [
@@ -437,6 +455,46 @@ void main() {
     });
   }
 
+  // «Мой день»: перелистывающиеся часы и погода (1.15.1).
+  WeatherForecast fakeWeather() {
+    final now = DateTime.now();
+    return WeatherForecast(
+      now: WeatherPoint(at: now, temp: 3.4, kind: WeatherKind.partlyCloudy),
+      min: -1,
+      max: 5,
+      fetchedAt: now.subtract(const Duration(minutes: 4)),
+      hours: [
+        for (var i = 1; i <= 8; i++)
+          WeatherPoint(
+            at: DateTime(now.year, now.month, now.day, now.hour + i),
+            temp: 3.4 + i * (i.isEven ? 0.6 : -0.4),
+            kind: const [WeatherKind.cloudy, WeatherKind.lightRain, WeatherKind.rain, WeatherKind.partlyCloudy][i % 4],
+          ),
+      ],
+    );
+  }
+  for (final t in const ['light', 'dark']) {
+    testWidgets('мой день с погодой — $t', (tester) async {
+      SharedPreferences.setMockInitialValues({
+        's_active_account': 'a1',
+        'weather_on': true,
+        'weather_place_v1': '{"name":"Казань","region":"Республика Татарстан, Россия","lat":55.8,"lon":49.11}',
+      });
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      final extra = [
+        weatherApprovedProvider.overrideWithValue(true),
+        weatherProvider.overrideWith((ref) async => fakeWeather()),
+      ];
+      await _shot(tester, 'my_day_weather_$t', const MyDayScreen(), theme: _themes[t]!(), db: db, prefs: prefs, extra: extra);
+      await _shot(tester, 'weather_sheet_$t', const MyDayScreen(),
+          theme: _themes[t]!(), db: db, prefs: prefs, extra: extra, before: (tt) async {
+        unawaited(showWeatherSheet(tt.element(find.byType(MyDayScreen))));
+      });
+      await tester.runAsync(db.close);
+    });
+  }
+
   // Лента и письмо рядом на компьютере и планшете (1.10.5, по образцу
   // Outlook): панель папок, лента, письмо с панелью команд.
   for (final (name, size) in const [('desktop', Size(1440, 900)), ('tablet', Size(1194, 834))]) {
@@ -456,6 +514,36 @@ void main() {
           await mouse.moveTo(t.getCenter(find.text('Совещание в четверг')));
         }
       });
+      await tester.runAsync(db.close);
+    });
+  }
+
+  // Складные (07.11.2026, пункт 10 владельца): Galaxy Z Fold — внешний
+  // экран (узкий и высокий) и внутренний (почти квадрат, сгиб посередине, в
+  // крупном и обычном масштабе), Pixel Fold — внутренний «альбомный»,
+  // Z Flip — раскрыт (обычный высокий телефон) и полураскрыт «ноутбуком».
+  for (final (name, size, fold) in const [
+    ('fold_cover', Size(344, 882), null),
+    ('fold_inner', Size(884, 1104), Rect.fromLTRB(442, 0, 442, 1104)),
+    ('fold_inner_large', Size(673, 841), Rect.fromLTRB(336, 0, 336, 841)),
+    ('pixel_fold', Size(841, 701), Rect.fromLTRB(420, 0, 420, 701)),
+    ('flip_open', Size(412, 1006), null),
+    ('flip_half', Size(412, 1006), Rect.fromLTRB(0, 503, 412, 503)),
+  ]) {
+    testWidgets('складные — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await tester.runAsync(() => _inbox(db));
+      await _shot(tester, '${name}_inbox', const MailListScreen(),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, fold: fold, textScale: 1.0, before: (t) async {
+        if (size.width >= 600) await t.tap(find.text('Смета по ремонту насосной станции').first);
+      });
+      await _shot(tester, '${name}_letter', const MailDetailScreen(emailId: 'e1', accountId: 'a1'),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, fold: fold, textScale: 1.0);
+      await _shot(tester, '${name}_reply', const ComposeScreen(accountId: 'a1', replyToId: 'e1', replyAll: true),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, fold: fold, textScale: 1.0);
       await tester.runAsync(db.close);
     });
   }

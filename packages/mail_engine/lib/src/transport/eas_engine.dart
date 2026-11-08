@@ -18,6 +18,7 @@ import '../debug_log.dart';
 import '../mail_engine.dart';
 import '../models/models.dart';
 import 'autodiscover.dart';
+import 'base64_off.dart';
 import 'wbxml_codec.dart';
 
 /// Коды команд EAS (MS-ASHTTP) для Base64 command line.
@@ -97,15 +98,44 @@ class EasEngine implements MailEngine {
   static void Function(String email, RemoteWipeKind kind)? remoteWipeHandler;
 
   RemoteWipeKind? _remoteWipe;
+
+  // ── Блокировка со стороны Exchange (план 08.11.2026 п. 1) ──
+  // Устройство заблокировано, предел числа устройств, ActiveSync отключён
+  // (общие коды состояния MS-ASCMD 2.2.2). Раньше — пустой ящик без
+  // объяснения и Provision за Provision (449). Теперь — понятная ошибка
+  // подключения и пауза: до действия администратора команды не отправляются
+  // (повтор не раньше чем через [blockedPause]).
+  static const blockingStatuses = <String, String>{
+    '126': 'для пользователя отключена синхронизация ActiveSync',
+    '127': 'ящик на сервере, который не синхронизирует это устройство',
+    '128': 'ящик на старом сервере — синхронизация ActiveSync невозможна',
+    '129': 'устройство заблокировано для этого пользователя или ждёт разрешения администратора',
+    '130': 'доступ запрещён',
+    '131': 'пользователь отключён',
+    '177': 'достигнут предел числа устройств пользователя',
+  };
+  static const blockedPause = Duration(minutes: 30);
+  String? _blockedStatus;
+  DateTime? _blockedUntil;
+
+  /// Текст ошибки блокировки: «EAS Status 129: …» (приложение узнаёт код).
+  String? get blockedError =>
+      _blockedStatus == null ? null : 'EAS Status $_blockedStatus: ${blockingStatuses[_blockedStatus]}';
+
+  /// Ответ с кодом блокировки — запомнить; true — команда заблокирована.
+  bool _noteBlocked(String cmd, WbxmlDocument? r) {
+    if (r == null) return false;
+    final top = r.root.childText('Status');
+    if (top == null || !blockingStatuses.containsKey(top)) return false;
+    _blockedStatus = top;
+    _blockedUntil = DateTime.now().add(blockedPause);
+    log.error(_t, '$cmd → Status $top: ${blockingStatuses[top]} — команды приостановлены на '
+        '${blockedPause.inMinutes} мин (нужно действие администратора)');
+    return true;
+  }
   RemoteWipeKind? get remoteWipe => _remoteWipe;
 
-  String _authUser(AccountConfig cfg) {
-    if (cfg.domain != null && cfg.domain!.isNotEmpty) {
-      final user = cfg.email.contains('@') ? cfg.email.split('@').first : cfg.email;
-      return '${cfg.domain}\\$user';
-    }
-    return cfg.email;
-  }
+  String _authUser(AccountConfig cfg) => cfg.exchangeLogin;
 
   String _basicAuth(AccountConfig cfg) =>
       'Basic ${base64.encode(utf8.encode('${_authUser(cfg)}:${cfg.password ?? ''}'))}';
@@ -382,6 +412,10 @@ class EasEngine implements MailEngine {
               log: [log.dump()],
             );
           }
+          final blocked = blockedError;
+          if (!provOk && blocked != null) {
+            return ConnectResult(success: false, error: blocked, log: [log.dump()]);
+          }
           if (!provOk && (_lastStatus == 0 || _lastStatus >= 500)) {
             // Временный сбой: подключение — в следующий раз, без работы
             // «вслепую» без ключа политики.
@@ -439,7 +473,10 @@ class EasEngine implements MailEngine {
       log.warn(_t, 'Provision: временный сбой (HTTP $_lastStatus) — версия протокола не меняется.');
     }
     final knows141 = _protocolVersions.isEmpty || _protocolVersions.contains('14.1');
-    if (!ok && !transient && !_lastWasWaf && !_noPolicy && _protocolVersion != '14.1' && knows141) {
+    // Блокировка Exchange (Status 129 и т. п.) — версия протокола тут ни при
+    // чём, откат только сбросил бы состояние синхронизации.
+    if (!ok && !transient && !_lastWasWaf && !_noPolicy && _blockedStatus == null &&
+        _protocolVersion != '14.1' && knows141) {
       log.warn(_t, 'Provision на $_protocolVersion не дал ключ — пробуем 14.1.');
       _protocolVersion = '14.1';
       // Форму командной строки, заданную явно, при откате сохраняем.
@@ -805,7 +842,19 @@ class EasEngine implements MailEngine {
   Future<WbxmlDocument?> _easCommand(
     AccountConfig cfg, String cmd, WbxmlDocument body,
     {required String policyKeyHeader, Duration timeout = const Duration(seconds: 30)}) async {
+    final until = _blockedUntil;
+    if (until != null && DateTime.now().isBefore(until)) {
+      log.debug(_t, '$cmd: пропуск — ${blockedError ?? 'блокировка Exchange'}');
+      return null;
+    }
     var r = await _easCommandOnce(cfg, cmd, body, policyKeyHeader: policyKeyHeader, timeout: timeout);
+    if (_noteBlocked(cmd, r)) return r;
+    if (r != null && _blockedStatus != null) {
+      // Администратор снял блокировку — работаем как обычно.
+      log.info(_t, 'Блокировка Exchange (Status $_blockedStatus) снята');
+      _blockedStatus = null;
+      _blockedUntil = null;
+    }
     // Шлюз перед Exchange (nginx + ServicePipe) отвечает 403 на серию частых
     // запросов: по журналу другого клиента — после 5–10 команд подряд с
     // интервалом меньше секунды, причём в эти же секунды блокируется и
@@ -2828,7 +2877,7 @@ class EasEngine implements MailEngine {
     if (opaque != null && opaque.isNotEmpty) return opaque;
     final text = dataEl?.text;
     if (text != null && text.isNotEmpty) {
-      return base64.decode(text.replaceAll(RegExp(r'\s'), ''));
+      return decodeBase64Off(text);
     }
     throw StateError('EAS: в ответе нет данных вложения');
   }
@@ -2874,7 +2923,7 @@ class EasEngine implements MailEngine {
       final text = dataEl?.text;
       if (text != null && text.isNotEmpty) {
         try {
-          out[ref] = base64.decode(text.replaceAll(RegExp(r'\s'), ''));
+          out[ref] = await decodeBase64Off(text);
         } catch (_) {}
       }
     }

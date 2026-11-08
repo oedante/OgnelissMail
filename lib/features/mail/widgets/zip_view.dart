@@ -16,6 +16,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart' show sha1;
@@ -64,6 +65,14 @@ class PackedArchive {
 
   /// Больше — не распаковывается.
   static const maxEntryBytes = 2 * 1024 * 1024 * 1024;
+
+  /// Предел распакованного (2.0.0, план 08.11.2026, «архив-бомба»): файл из
+  /// архива и распакованный .tar внутри .tar.gz/.bz2/.xz пишутся на диск со
+  /// счётчиком байтов и обрываются на этом размере. Раньше .tar.gz
+  /// распаковывался целиком в память — архив в несколько килобайт мог
+  /// развернуться в гигабайты и уронить приложение, а .gz и файл из .zip
+  /// писались на диск без предела (заголовок ZIP о размере может лгать).
+  static int maxUnpackedBytes = 1024 * 1024 * 1024;
 
   /// Больше записей — оглавление обрезается.
   static const maxEntries = 20000;
@@ -141,13 +150,58 @@ class PackedArchive {
 
   static Archive _tarArchive(String path, PackedKind kind) {
     if (kind == PackedKind.tar) return TarDecoder().decodeStream(InputFileStream(path));
-    final bytes = File(path).readAsBytesSync();
-    final tar = switch (kind) {
-      PackedKind.tgz => const GZipDecoder().decodeBytes(bytes),
-      PackedKind.tbz => BZip2Decoder().decodeBytes(bytes),
-      _ => XZDecoder().decodeBytes(bytes),
-    };
-    return TarDecoder().decodeBytes(tar);
+    return TarDecoder().decodeStream(InputFileStream(_unpackedTar(path, kind)));
+  }
+
+  /// Сжатый .tar — потоком во временный файл со счётчиком (не в память);
+  /// один раз на архив: оглавление и распаковка файлов берут готовый.
+  static String _unpackedTar(String path, PackedKind kind) {
+    final f = File(path);
+    final stat = f.statSync();
+    final key = sha1.convert(utf8.encode('$path|${stat.size}|${stat.modified.millisecondsSinceEpoch}')).toString();
+    final dir = Directory('${Directory.systemTemp.path}${Platform.pathSeparator}ogneliss_tar');
+    dir.createSync(recursive: true);
+    final out = File('${dir.path}${Platform.pathSeparator}$key.tar');
+    if (out.existsSync() && out.lengthSync() > 0) return out.path;
+    // Старше суток — убрать.
+    final old = DateTime.now().subtract(const Duration(days: 1));
+    for (final e in dir.listSync()) {
+      try {
+        if (e is File && e.statSync().modified.isBefore(old)) e.deleteSync();
+      } catch (_) {}
+    }
+    final tmp = '${out.path}.part';
+    decompressToFile(path, kind, tmp);
+    File(tmp).renameSync(out.path);
+    return out.path;
+  }
+
+  /// Распаковать сжатый поток [path] в [dest] не больше [cap] байт (по
+  /// умолчанию [maxUnpackedBytes]); больше — ошибка, недописанный файл
+  /// удаляется.
+  @visibleForTesting
+  static void decompressToFile(String path, PackedKind kind, String dest, {int? cap}) {
+    final input = InputFileStream(path);
+    final o = CappedOutputFileStream(dest, cap ?? maxUnpackedBytes);
+    try {
+      switch (kind) {
+        case PackedKind.gz || PackedKind.tgz:
+          const GZipDecoder().decodeStream(input, o);
+        case PackedKind.bz2 || PackedKind.tbz:
+          BZip2Decoder().decodeStream(input, o);
+        default:
+          XZDecoder().decodeStream(input, o);
+      }
+    } catch (_) {
+      o.closeSync();
+      try {
+        File(dest).deleteSync();
+      } catch (_) {}
+      rethrow;
+    } finally {
+      input.closeSync();
+    }
+    o.closeSync();
   }
 
   /// Путь без корня, «..» и «.»; «\» Windows — «/».
@@ -238,7 +292,7 @@ class PackedArchive {
           final a = ZipDecoder().decodeStream(input, password: password);
           final f = a.files.where((x) => _clean(x.name) == entry.raw).firstOrNull;
           if (f == null) throw const FileSystemException('not found');
-          final o = OutputFileStream(out);
+          final o = CappedOutputFileStream(out, maxUnpackedBytes);
           try {
             f.writeContent(o);
           } on ArchiveException {
@@ -255,7 +309,7 @@ class PackedArchive {
       case PackedKind.txz:
         final f = _tarArchive(path, kind).files.where((x) => _clean(x.name) == entry.raw).firstOrNull;
         if (f == null) throw const FileSystemException('not found');
-        final o = OutputFileStream(out);
+        final o = CappedOutputFileStream(out, maxUnpackedBytes);
         try {
           f.writeContent(o);
         } finally {
@@ -264,24 +318,7 @@ class PackedArchive {
       case PackedKind.gz:
       case PackedKind.bz2:
       case PackedKind.xz:
-        final o = OutputFileStream(out);
-        try {
-          final input = InputFileStream(path);
-          try {
-            switch (kind) {
-              case PackedKind.gz:
-                const GZipDecoder().decodeStream(input, o);
-              case PackedKind.bz2:
-                BZip2Decoder().decodeStream(input, o);
-              default:
-                XZDecoder().decodeStream(input, o);
-            }
-          } finally {
-            input.closeSync();
-          }
-        } finally {
-          o.closeSync();
-        }
+        decompressToFile(path, kind, out);
     }
     return out;
   }
@@ -528,3 +565,53 @@ class _ZipViewState extends State<ZipView> {
     );
   }
 }
+
+/// Файл на диске со счётчиком записанного: больше [cap] байт — ошибка
+/// «слишком большой» (FileSystemException('too large'), как у записи
+/// больше [PackedArchive.maxEntryBytes]), запись обрывается.
+class CappedOutputFileStream extends OutputFileStream {
+  CappedOutputFileStream(String path, this.cap) : super.withFileHandle(FileHandle(path, mode: FileAccess.write));
+
+  final int cap;
+
+  void _check() {
+    if (length > cap) throw const FileSystemException('too large');
+  }
+
+  @override
+  void writeByte(int value) {
+    super.writeByte(value);
+    _check();
+  }
+
+  @override
+  void writeBytes(List<int> bytes, {int? length}) {
+    super.writeBytes(bytes, length: length);
+    _check();
+  }
+
+  @override
+  void writeRange(Uint8List bytes, int start, int end) {
+    super.writeRange(bytes, start, end);
+    _check();
+  }
+
+  @override
+  void writeZeros(int count) {
+    super.writeZeros(count);
+    _check();
+  }
+
+  @override
+  void writeStream(InputStream stream) {
+    super.writeStream(stream);
+    _check();
+  }
+
+  @override
+  void writeBackReference(int distance, int count) {
+    super.writeBackReference(distance, count);
+    _check();
+  }
+}
+

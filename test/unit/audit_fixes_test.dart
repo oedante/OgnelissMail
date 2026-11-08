@@ -228,4 +228,26 @@ void main() {
       }
     });
   });
+  // 07.11.2026, аудит безопасности: «</style» собирался заново после одного
+  // прохода очистки CSS — разметка из письма обходила очистку.
+  group('очистка CSS до неизменности', () {
+    test('«<</style/style» и сущности не закрывают блок стилей', () {
+      const evil = '<style>a{color:red}<</sty&#108;e/style><div id="x">x</div>'
+          '<meta http-equiv="refresh" content="0;url=data:text/html,hi"></style><p>ok</p>';
+      final out = HtmlSanitizer.sanitizeKeepingStyles(evil);
+      final style = RegExp(r'<style>([\s\S]*?)</style>', caseSensitive: false).firstMatch(out)?.group(1) ?? '';
+      expect(style.toLowerCase(), isNot(contains('</style')));
+      expect(style, isNot(contains('<')));
+      // Остаток — экранированный текст внутри стилей («\\3c meta…»), не тег.
+      expect(out.toLowerCase(), isNot(contains('<meta')));
+      expect(out.toLowerCase(), isNot(contains('<div')));
+    });
+
+    test('вложенные «javascript:» и «expression(» вырезаются целиком', () {
+      final css = HtmlSanitizer.cleanCss('a{background:url(javajavascript:script:alert(1))}'
+          'b{width:expexpression(1)ression(2)}');
+      expect(css.toLowerCase(), isNot(contains('javascript:')));
+      expect(css.toLowerCase(), isNot(contains('expression(')));
+    });
+  });
 }

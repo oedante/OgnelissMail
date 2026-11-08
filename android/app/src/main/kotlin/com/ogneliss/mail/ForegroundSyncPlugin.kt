@@ -113,6 +113,9 @@ object ForegroundSyncPlugin {
                 "stop" -> {
                     try {
                         SyncForegroundService.stop(context.applicationContext)
+                        // Фоновая работа выключена приложением — и пульс без
+                        // службы (после лимита Android 15) больше не нужен.
+                        SyncHeartbeat.cancel(context.applicationContext)
                         result.success(true)
                     } catch (e: Exception) {
                         result.error("STOP_FAILED", e.message, null)

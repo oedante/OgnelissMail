@@ -462,6 +462,9 @@ class MailEngineService {
       oauthTokenSource: account.isExchangeOnlineOAuth ? tokenSource : null,
       authKind: authKind,
       domain: account.domain,
+      // Имя для входа, если оно не адрес (07.11.2026, аудит: раньше движок
+      // его не получал — вход шёл по адресу и сервер отвечал 401).
+      username: account.username,
       exchangeServer: account.exchangeServer,
       imapHost: account.imapServer,
       imapPort: account.imapPort ?? 993,

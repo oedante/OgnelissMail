@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Мини-виджет «Непрочитанные»: 1×1. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="40dp"
+    android:minHeight="40dp"
+    android:targetCellWidth="1"
+    android:targetCellHeight="1"
+    android:resizeMode="none"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/widget_mail_count"
+    android:previewLayout="@layout/widget_mail_count"
+    android:description="@string/widget_count_desc"
+    android:widgetCategory="home_screen" />

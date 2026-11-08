@@ -59,10 +59,14 @@ class ManagedKeys {
   static const blockCopy = 'block_copy';
   static const hideNotificationContent = 'hide_notification_content';
 
+  /// Погода в «Моём дне» — запрос к внешним сервисам (MET Norway,
+  /// OpenStreetMap); 1.15.1.
+  static const blockWeather = 'block_weather';
+
   static const all = [
     orgName, supportContact, accountEmail, accountProtocol, accountServer, accountUsername, accountDomain,
     imapServer, imapPort, smtpServer, smtpPort, allowedDomains, requireAppLock, minPinLength,
-    blockScreenshots, blockShare, blockOpenIn, blockCopy, hideNotificationContent,
+    blockScreenshots, blockShare, blockOpenIn, blockCopy, hideNotificationContent, blockWeather,
   ];
 }
 
@@ -91,6 +95,7 @@ class ManagedPolicy {
     this.blockOpenIn = false,
     this.blockCopy = false,
     this.hideNotificationContent = false,
+    this.blockWeather = false,
   });
 
   static const none = ManagedPolicy();
@@ -128,6 +133,9 @@ class ManagedPolicy {
 
   /// Уведомление без отправителя, темы и текста — «Новое сообщение».
   final bool hideNotificationContent;
+
+  /// Погоды в «Моём дне» нет (запросы к внешним сервисам запрещены).
+  final bool blockWeather;
 
   /// Организация задала хоть что-то.
   bool get isManaged => this != none;
@@ -214,6 +222,7 @@ class ManagedPolicy {
       blockOpenIn: _bool(v(ManagedKeys.blockOpenIn)),
       blockCopy: _bool(v(ManagedKeys.blockCopy)),
       hideNotificationContent: _bool(v(ManagedKeys.hideNotificationContent)),
+      blockWeather: _bool(v(ManagedKeys.blockWeather)),
     );
   }
 
@@ -237,6 +246,7 @@ class ManagedPolicy {
         if (blockOpenIn) ManagedKeys.blockOpenIn: true,
         if (blockCopy) ManagedKeys.blockCopy: true,
         if (hideNotificationContent) ManagedKeys.hideNotificationContent: true,
+        if (blockWeather) ManagedKeys.blockWeather: true,
       };
 
   @override
@@ -263,6 +273,10 @@ class ManagedPolicy {
   /// Нынешняя политика — для кода без дерева виджетов (открыть файл,
   /// «Поделиться»). Обновляет [ManagedPolicyNotifier].
   static ManagedPolicy current = none;
+
+  /// Список разрешённых доменов изменился (план 08.11.2026 п. 1): список
+  /// ящиков перечитывается — `allowed_domains` действует и на добавленные.
+  static final allowedDomainsChanged = ValueNotifier<int>(0);
 
   /// Действие запрещено политикой: строка «Запрещено организацией» вверху
   /// экрана; true — действие не выполнять.
@@ -337,13 +351,27 @@ class ManagedConfigService {
   }
 
   /// Запрет снимков экрана (Android — FLAG_SECURE окна; iPhone такого
-  /// запрета не даёт).
-  static Future<void> setSecureWindow(bool on) async {
-    if (kIsWeb || !Platform.isAndroid) return;
+  /// запрета не даёт — там заслонка в списке недавних приложений).
+  static Future<void> setSecureWindow(bool on) => secureFor('mdm', on);
+
+  /// Причины запрета снимков: организация (MDM) и PIN приложения
+  /// (08.11.2026, аудит безопасности: с PIN почта была видна в списке
+  /// недавних приложений). Запрет действует, пока есть хоть одна причина.
+  static final Set<String> _secureReasons = {};
+
+  static Future<void> secureFor(String reason, bool on) async {
+    final before = _secureReasons.isNotEmpty;
+    if (on) {
+      _secureReasons.add(reason);
+    } else {
+      _secureReasons.remove(reason);
+    }
+    final now = _secureReasons.isNotEmpty;
+    if (now == before || kIsWeb || !(Platform.isAndroid || Platform.isIOS)) return;
     try {
-      await const MethodChannel('ogneliss/secure_window').invokeMethod<void>('setSecure', on);
+      await const MethodChannel('ogneliss/secure_window').invokeMethod<void>('setSecure', now);
     } catch (e) {
-      AppLogger.debug('MDM: запрет снимков экрана: $e');
+      AppLogger.debug('Запрет снимков экрана: $e');
     }
   }
 }
@@ -367,7 +395,9 @@ class ManagedPolicyNotifier extends Notifier<ManagedPolicy> {
 
   Future<void> refresh() async {
     final p = await _svc.load();
+    final domainsChanged = !listEquals(ManagedPolicy.current.allowedDomains, p.allowedDomains);
     ManagedPolicy.current = p;
+    if (domainsChanged) ManagedPolicy.allowedDomainsChanged.value++;
     if (p.blockScreenshots != _secure) {
       _secure = p.blockScreenshots;
       await ManagedConfigService.setSecureWindow(_secure);

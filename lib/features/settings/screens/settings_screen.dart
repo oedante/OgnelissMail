@@ -104,6 +104,15 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle: l10n.tr('exchangeHiddenDesc'),
                 onTap: null,
               ),
+            // Правила организации (MDM allowed_domains, план 08.11.2026 п. 1):
+            // ящики чужих доменов скрыты, данные остаются.
+            if (hiddenByPolicyAccounts.isNotEmpty)
+              SettingsItem(
+                icon: AppIcons.info,
+                title: l10n.tr('policyHiddenTitle').replaceAll('{n}', '${hiddenByPolicyAccounts.length}'),
+                subtitle: l10n.tr('policyHiddenDesc').replaceAll('{list}', hiddenByPolicyAccounts.join(', ')),
+                onTap: null,
+              ),
             SettingsItem(
               icon: AppIcons.folder_shared,
               title: l10n.tr('accountGroups'),
@@ -112,8 +121,8 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ]),
 
-          // ── Основное ──
-          SettingsSectionTitle(l10n.tr('sectionGeneral')),
+          // ── Вид и язык (перегруппировка, согласовано владельцем 08.11.2026) ──
+          SettingsSectionTitle(l10n.tr('sectionLookLanguage')),
           SettingsGroup(children: [
             // «Оформление» (1.9.x): тема, цвета, скругление, плотность ленты.
             SettingsItem(
@@ -128,6 +137,17 @@ class SettingsScreen extends ConsumerWidget {
               subtitle: '${l10n.tr('language')}, ${l10n.tr('fontSize')}',
               onTap: () => context.push('/settings/general'),
             ),
+            SettingsItem(
+              icon: AppIcons.accessibility_new,
+              title: l10n.tr('accessibility'),
+              subtitle: l10n.tr('highContrast'),
+              onTap: () => context.push('/settings/accessibility'),
+            ),
+          ]),
+
+          // ── Уведомления ──
+          SettingsSectionTitle(l10n.tr('notifications')),
+          SettingsGroup(children: [
             // Уведомления, тихие часы, режим фокуса и VIP — на одном экране.
             SettingsItem(
               icon: AppIcons.notifications,
@@ -137,21 +157,6 @@ class SettingsScreen extends ConsumerWidget {
                 if (focusState.isEnabled) '${l10n.tr('focusMode')}: ${focusState.deliveryTimes.join(', ')}',
               ].join(' · '),
               onTap: () => context.push('/settings/notifications'),
-            ),
-            // Система замораживает приложение — «Разрешения» прямо здесь, с
-            // подсказкой (обычно они в «Расширенных настройках»).
-            if (ForegroundSyncController.frozenRecently(ref.read(sharedPrefsProvider)))
-              SettingsItem(
-                icon: AppIcons.admin_panel_settings,
-                title: l10n.tr('permissions'),
-                subtitle: '⚠ ${l10n.tr('bgFrozenTitle')}',
-                onTap: () => context.push('/settings/permissions'),
-              ),
-            SettingsItem(
-              icon: AppIcons.accessibility_new,
-              title: l10n.tr('accessibility'),
-              subtitle: l10n.tr('highContrast'),
-              onTap: () => context.push('/settings/accessibility'),
             ),
           ]),
 
@@ -200,7 +205,7 @@ class SettingsScreen extends ConsumerWidget {
           ]),
 
           // ── Разделы ──
-          SettingsSectionTitle(l10n.tr('modules')),
+          SettingsSectionTitle(l10n.tr('sectionModules')),
           SettingsGroup(children: [
             SettingsItem(
               icon: AppIcons.calendar_today,
@@ -229,8 +234,9 @@ class SettingsScreen extends ConsumerWidget {
               ),
           ]),
 
-          // ── Защита ──
-          SettingsSectionTitle(l10n.tr('security')),
+          // ── Конфиденциальность: PIN, трекеры, безопасность соединения,
+          // разрешения (перегруппировка 08.11.2026) ──
+          SettingsSectionTitle(l10n.tr('sectionPrivacy')),
           SettingsGroup(children: [
             // Код при входе. Отпечаток или лицо — кнопкой на экране кода
             // (раньше — отдельная шторка с неактивной строкой «Биометрия»).
@@ -255,10 +261,31 @@ class SettingsScreen extends ConsumerWidget {
               onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const TrackerSettingsScreen())),
             ),
+            SettingsItem(
+              icon: AppIcons.verified_user,
+              title: l10n.tr('connectionSecurity'),
+              subtitle: l10n.tr('connectionSecurityDesc'),
+              onTap: () => context.push('/settings/security'),
+            ),
+            SettingsItem(
+              icon: AppIcons.shield,
+              title: l10n.tr('dlpTitle'),
+              subtitle: l10n.tr('dlpSettingsDesc'),
+              onTap: () => context.push('/settings/dlp'),
+            ),
+            // Система замораживает приложение — подсказка прямо в строке.
+            SettingsItem(
+              icon: AppIcons.admin_panel_settings,
+              title: l10n.tr('permissions'),
+              subtitle: ForegroundSyncController.frozenRecently(ref.read(sharedPrefsProvider))
+                  ? '⚠ ${l10n.tr('bgFrozenTitle')}'
+                  : l10n.tr('permissionsDesc'),
+              onTap: () => context.push('/settings/permissions'),
+            ),
           ]),
 
-          // ── Данные ──
-          SettingsSectionTitle(l10n.tr('sectionData')),
+          // ── Данные и место ──
+          SettingsSectionTitle(l10n.tr('sectionStorageData')),
           SettingsGroup(children: [
             // Архив Ogneliss (1.7.3): старая почта, встречи, задачи,
             // контакты и настройки — в зашифрованный архив на устройстве.
@@ -283,9 +310,23 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ]),
 
-          // ── Справка ──
-          SettingsSectionTitle(l10n.tr('sectionHelp')),
+          // ── Система и справка: синхронизация, фон, журнал (в «Расширенных»),
+          // экспериментальное, вопросы и ответы, о приложении ──
+          SettingsSectionTitle(l10n.tr('sectionSystemHelp')),
           SettingsGroup(children: [
+            SettingsItem(
+              icon: AppIcons.tune,
+              title: l10n.tr('advancedSettings'),
+              subtitle: l10n.tr('advancedSettingsDesc'),
+              onTap: () => context.push('/settings/advanced'),
+            ),
+            // Функции на пробе (1.10.3), по умолчанию выключены.
+            SettingsItem(
+              icon: AppIcons.science,
+              title: l10n.tr('experimentalTitle'),
+              subtitle: l10n.tr('experimentalDesc'),
+              onTap: () => context.push('/settings/experimental'),
+            ),
             // Вопросы и ответы по разделам приложения и настройкам (1.7.1).
             SettingsItem(
               icon: AppIcons.help,
@@ -301,25 +342,6 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ]),
 
-          // ── Расширенные настройки (1.8.0, решение владельца 26.10.2026):
-          // синхронизация и фон, сертификаты, защита данных, разделы
-          // приложения, журнал, сброс — то, что нужно редко.
-          const SizedBox(height: Space.l),
-          SettingsGroup(children: [
-            SettingsItem(
-              icon: AppIcons.tune,
-              title: l10n.tr('advancedSettings'),
-              subtitle: l10n.tr('advancedSettingsDesc'),
-              onTap: () => context.push('/settings/advanced'),
-            ),
-            // Функции на пробе (1.10.3), по умолчанию выключены.
-            SettingsItem(
-              icon: AppIcons.science,
-              title: l10n.tr('experimentalTitle'),
-              subtitle: l10n.tr('experimentalDesc'),
-              onTap: () => context.push('/settings/experimental'),
-            ),
-          ]),
         ],
       ),
       ),

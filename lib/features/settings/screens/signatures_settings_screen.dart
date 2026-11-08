@@ -20,7 +20,7 @@ import '../../../widgets/common/app_sheet.dart';
 import '../../../services/mail/greeting_mode.dart';
 import '../../../core/utils/greeting_helper.dart';
 import '../../../widgets/common/text_scale_cap.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show showInlineNotice, quietError, quietNotice;
 import '../../../widgets/ui/app_menu_button.dart';
 
 class SignaturesSettingsScreen extends ConsumerWidget {
@@ -252,12 +252,12 @@ class SignaturesSettingsScreen extends ConsumerWidget {
                   onPressed: () async {
                     final account = ref.read(accountOrActiveProvider(accountId));
                     if (account == null) return;
-                    showInlineNotice(l10n.tr('importingSignature'));
+                    quietNotice(l10n.tr('importingSignature'));
                     final imported =
                         await ref.read(signatureImportServiceProvider).importSignature(account);
                     if (!ctx.mounted) return;
                     if (imported == null) {
-                      showInlineError(l10n.tr('signatureNotFound'));
+                      quietError(l10n.tr('signatureNotFound'));
                     } else {
                       if (useHtml && !editorFailed) {
                         unawaited(htmlController.setHtml(imported.html));

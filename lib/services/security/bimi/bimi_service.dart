@@ -201,9 +201,15 @@ class BimiResolver {
   // спрашивать: иначе каждое письмо давало бы по запросу.
   bool _stopped = false;
 
+  /// До этого времени сервер не спрашивать (был недоступен).
+  DateTime _pauseUntil = DateTime(0);
+
   /// Логотип домена (очищенный SVG) или null. Не бросает исключений.
   Future<String?> logoFor(String domain) async {
     if (_stopped) return null;
+    // Сервер недоступен — 10 минут не спрашивать (08.11.2026: иначе каждое
+    // письмо нового отправителя ждало тайм-аута 15 с).
+    if (DateTime.now().isBefore(_pauseUntil)) return null;
     await cache.load();
     final c = cache.lookup(domain);
     if (c.hit) {
@@ -253,7 +259,8 @@ class BimiResolver {
       }
     } catch (e) {
       BimiStats.errors++;
-      cache.put(domain, null, transient: true);
+      _pauseUntil = DateTime.now().add(const Duration(minutes: 10));
+      AppLogger.info('BIMI: сервер не отвечает ($e) — логотипы 10 минут не запрашиваются');
       return null;
     } finally {
       _release();

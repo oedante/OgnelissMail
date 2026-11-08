@@ -9,6 +9,7 @@
 
 import '../push/push_wake_service.dart' show PushWakeService, pushWakeServiceProvider;
 import '../calendar/quick_create_service.dart' show quickCreateProvider;
+import '../widget_mail_actions.dart' show widgetMailActionsProvider;
 import '../sync/sync_schedule.dart';
 import 'dart:async';
 import 'dart:isolate';
@@ -32,11 +33,13 @@ import '../../services/notifications/reminder_scheduler_service.dart' show remin
 import 'foreground_sync_controller.dart';
 import 'background_journal.dart';
 import '../../core/platform/platform_diagnostics.dart';
+import '../../core/platform/graphics_mode.dart';
 import '../../core/platform/finish_in_background.dart';
 import '../../services/mail/oauth/oauth_service.dart';
 import '../../features/mail/providers/mail_providers.dart';
 import '../../features/settings/providers/settings_provider.dart';
 import '../../data/database/app_database.dart';
+import 'package:drift/drift.dart' show TableUpdate;
 import '../../data/providers/database_provider.dart';
 import '../../data/providers/shared_prefs_provider.dart';
 import '../../core/device/device_user_agent.dart';
@@ -74,6 +77,49 @@ const _mainPortName = 'ogneliss_main_tasks_v1';
 
 /// Прежняя отметка «приложение работает само» (до 1.6.43) — только убрать.
 const _legacyAliveKey = 'bg_main_alive_at';
+
+/// Одна фоновая проверка за раз на устройстве (2.0.0, требование владельца
+/// 08.11.2026: «сигналы не должны мешать друг другу, накладываться»). Без
+/// приложения в процессе плановая задача, сигнал сервера и пульс без службы
+/// (Android) или «Обновление» и «Обработка» (iOS) могли проверять почту
+/// одновременно — каждая в своём движке, и служебные шаги (напоминания,
+/// очередь виджета) шли параллельно. Аренда в той же таблице, что аренды
+/// ящиков: вставка-с-условием атомарна между изолятами (отметка в
+/// настройках, как раньше на iOS, — нет: две задачи могли прочитать её
+/// пустой одновременно). Вторая задача сразу выходит — проверку уже делает
+/// первая.
+const bgCheckLeaseKey = '__bg_check__';
+
+/// Владелец аренды фоновой проверки — этот изолят (номер процесса — как у
+/// аренды ящиков: аренду мёртвого процесса забирают сразу).
+final String _bgCheckOwner = () {
+  var proc = '';
+  try {
+    proc = 'p$pid:';
+  } catch (_) {}
+  return '${proc}bg_${DateTime.now().microsecondsSinceEpoch}_${identityHashCode(Object())}';
+}();
+
+/// Когда закончилась последняя фоновая проверка (любым источником). Её читает
+/// и пульс без службы на Android (SyncHeartbeat.kt): свежая — движок ради
+/// пустого прохода не поднимается.
+const bgCheckDoneKey = 'bg_check_done_at';
+
+/// Взять аренду фоновой проверки на [ttl]; false — идёт другая.
+@visibleForTesting
+Future<bool> acquireBackgroundCheck(AppDatabase db, Duration ttl, {String? owner}) =>
+    db.tryAcquireSyncLease(bgCheckLeaseKey, owner ?? _bgCheckOwner, ttl);
+
+@visibleForTesting
+Future<void> releaseBackgroundCheck(AppDatabase db, {String? owner}) =>
+    db.releaseSyncLease(bgCheckLeaseKey, owner ?? _bgCheckOwner);
+
+Future<void> _markBackgroundCheckDone() async {
+  try {
+    final p = await SharedPreferences.getInstance();
+    await p.setInt(bgCheckDoneKey, DateTime.now().millisecondsSinceEpoch);
+  } catch (_) {}
+}
 
 /// Лимит фоновой задачи: WorkManager обрывает работу через ~10 мин; iOS даёт
 /// «Обновлению контента» ~30 с, «Обработке» — минуты. Сигнал сервера на
@@ -141,12 +187,15 @@ Future<bool> _delegateToMain(String kind, DateTime wokeAt, Duration limit) async
       // iOS: у «Обновления контента» каждая секунда на счету.
       await ack.future.timeout(Duration(seconds: Platform.isIOS ? 3 : 8));
     } on TimeoutException {
-      // Порт остался от закрытого движка приложения (процесс жив, окна и
-      // Dart приложения уже нет) — имя убираем, проверяет сама задача.
+      // Приложение не ответило — проверяет сама задача. Имя порта НЕ
+      // убираем (08.11.2026): чаще всего приложение просто было занято, и
+      // без имени все следующие сигналы и плановые проверки шли мимо него —
+      // параллельно с ним, а записанные ими письма приложение не видело
+      // (уведомления базы между изолятами не ходят), пока процесс не
+      // перезапустится. Если движка приложения и правда нет, задача
+      // потеряет лишь эти секунды ожидания. По окончании задача сообщит
+      // приложению, что база изменилась ([notifyMainDbChanged]).
       AppLogger.warning('$kind: приложение не ответило — проверка в фоновой задаче');
-      try {
-        IsolateNameServer.removePortNameMapping(_mainPortName);
-      } catch (_) {}
       return false;
     }
     await BackgroundJournal.track(kind, () async {
@@ -168,6 +217,19 @@ Future<bool> _delegateToMain(String kind, DateTime wokeAt, Duration limit) async
     await sub.cancel();
     inbox.close();
   }
+}
+
+/// Фоновая задача проверила почту сама — сообщить приложению (если его
+/// изолят жив в этом процессе), что база изменилась (08.11.2026). Изменения,
+/// записанные другим изолятом через своё соединение с базой, потоки
+/// запросов приложения не замечают: открытый список оставался прежним, а
+/// следующие проверки приложения новых писем уже не находили — они в базе.
+void notifyMainDbChanged(String kind) {
+  try {
+    final main = IsolateNameServer.lookupPortByName(_mainPortName);
+    main?.send(const <String, Object?>{'dbChanged': true});
+    if (main != null) AppLogger.info('$kind: приложению — база обновлена');
+  } catch (_) {}
 }
 
 /// Callback WorkManager (top-level, entry-point для фонового ИЗОЛЯТА).
@@ -212,8 +274,16 @@ void callbackDispatcher() {
     if (!kIsWeb && Platform.isIOS) {
       return _runIosTask(taskName, wokeAt);
     }
+    var busy = false;
     try {
       await BackgroundJournal.track(_taskKind(taskName), () => runInBackgroundContainer((container) async {
+        // Одна фоновая проверка за раз: другая задача уже проверяет — выход.
+        final db = container.read(databaseProvider);
+        if (!await acquireBackgroundCheck(db, _taskLimit(taskName) + const Duration(minutes: 1))) {
+          busy = true;
+          return;
+        }
+        try {
         // Лимит задачи WorkManager ~10 мин — держим синк заведомо короче
         // (сигнал сервера — 3 мин, _taskLimit).
         await container
@@ -238,7 +308,25 @@ void callbackDispatcher() {
         } catch (e) {
           AppLogger.warning('BG виджет: $e');
         }
+        // «Прочитано» и «В архив», нажатые в виджете «Почта».
+        try {
+          await container.read(widgetMailActionsProvider).drain();
+        } catch (e) {
+          AppLogger.warning('BG виджет почты: $e');
+        }
+        } finally {
+          try {
+            await releaseBackgroundCheck(db);
+          } catch (_) {}
+        }
       }), withState: false);
+      if (busy) {
+        await BackgroundJournal.note(_taskKind(taskName), 'пропуск: уже идёт другая фоновая проверка');
+        AppLogger.flushNow();
+        return true;
+      }
+      await _markBackgroundCheckDone();
+      notifyMainDbChanged(_taskKind(taskName));
       return true;
     } catch (e, stack) {
       AppLogger.error('WorkManager: фоновый синк не удался', e, stack);
@@ -282,10 +370,20 @@ Future<bool> _runIosTask(String taskName, DateTime wokeAt) async {
   // Лимит — от пробуждения: запуск движка задачи и попытка передать
   // проверку приложению уже заняли часть времени iOS.
   final limit = _leftOf(_taskLimit(taskName), wokeAt);
+  var busy = false;
   try {
     await BackgroundJournal.track(kind, () async {
       try {
         await runInBackgroundContainer((container) async {
+          // Отметка в настройках выше — быстрый отсев без подъёма базы; она
+          // не атомарна (две задачи могли прочитать её пустой разом), а
+          // аренда в базе — да (2.0.0, общая с Android).
+          final db = container.read(databaseProvider);
+          if (!await acquireBackgroundCheck(db, limit + const Duration(minutes: 1))) {
+            busy = true;
+            return;
+          }
+          try {
           final sync = container.read(syncServiceProvider);
           // 1. «Входящие» всех ящиков — первыми.
           await sync.quickInboxSync();
@@ -303,12 +401,28 @@ Future<bool> _runIosTask(String taskName, DateTime wokeAt) async {
           } catch (e) {
             AppLogger.warning('BG виджет: $e');
           }
+          try {
+            await container.read(widgetMailActionsProvider).drain();
+          } catch (e) {
+            AppLogger.warning('BG виджет почты: $e');
+          }
+          } finally {
+            try {
+              await releaseBackgroundCheck(db);
+            } catch (_) {}
+          }
         }).timeout(limit);
       } on TimeoutException {
         // Не ошибка: что не успели — в следующее пробуждение.
         AppLogger.info('$kind: время вышло — остальное в следующий раз');
       }
     }, withState: false, describe: (_) => 'от пробуждения ${DateTime.now().difference(wokeAt).inSeconds} с');
+    if (busy) {
+      await BackgroundJournal.note(kind, 'пропуск: уже идёт другая фоновая проверка');
+      return true;
+    }
+    await _markBackgroundCheckDone();
+    notifyMainDbChanged(kind);
     return true;
   } catch (e) {
     AppLogger.warning('$kind: $e (от пробуждения ${DateTime.now().difference(wokeAt).inSeconds} с)');
@@ -379,7 +493,7 @@ class BackgroundService {
   Timer? _cacheCleanupTimer;
   Timer? _foregroundSyncTimer;
   DateTime _lastActivity = DateTime.now();
-  DateTime _lastForegroundSync = DateTime.fromMillisecondsSinceEpoch(0);
+  DateTime _lastResumeSync = DateTime.fromMillisecondsSinceEpoch(0);
   bool _initialized = false;
   bool _autoLockLogged = false;
 
@@ -451,6 +565,8 @@ class BackgroundService {
                 at: DateTime.fromMillisecondsSinceEpoch(e['ts'] as int));
           }
           await BackgroundJournal.note('запуск', 'приложение запущено');
+          // Чем рисуем и сколько памяти (08.11.2026, чёрный экран на Huawei).
+          await GraphicsMode.logStartup();
         } catch (e) {
           AppLogger.debug('Диагностика платформы: $e');
         }
@@ -509,6 +625,10 @@ class BackgroundService {
 
   void _onTaskRequest(dynamic msg) {
     if (msg is! Map) return;
+    if (msg['dbChanged'] == true) {
+      refreshFromDatabase('фоновая задача записала изменения');
+      return;
+    }
     final reply = msg['reply'];
     if (reply is! SendPort) return;
     reply.send(const <String, Object?>{'ack': true});
@@ -532,6 +652,25 @@ class BackgroundService {
       onError: (Object e) =>
           reply.send(<String, Object?>{'done': true, 'what': 'ошибка: ${cutSafe('$e'.split('\n').first, 120)}'}),
     ));
+  }
+
+  /// Перечитать открытые списки из базы (08.11.2026): изменения, записанные
+  /// фоновой задачей в своём изоляте, потоки запросов приложения сами не
+  /// видят. Не чаще раза в 5 секунд — дёшево: перечитываются только
+  /// открытые сейчас запросы.
+  DateTime _dbRefreshedAt = DateTime.fromMillisecondsSinceEpoch(0);
+
+  void refreshFromDatabase(String why) {
+    final now = DateTime.now();
+    if (now.difference(_dbRefreshedAt) < const Duration(seconds: 5)) return;
+    _dbRefreshedAt = now;
+    try {
+      final db = _ref.read(databaseProvider);
+      db.notifyUpdates({for (final t in db.allTables) TableUpdate.onTable(t)});
+      AppLogger.debug('Списки перечитаны из базы: $why');
+    } catch (e) {
+      AppLogger.debug('Перечитать списки: $e');
+    }
   }
 
   /// Сигнал сервера на iPhone (1.7.2, `PushWakeService`): та же проверка,
@@ -597,6 +736,11 @@ class BackgroundService {
       } catch (e) {
         AppLogger.warning('$kind: виджет — $e');
       }
+      try {
+        await _ref.read(widgetMailActionsProvider).drain();
+      } catch (e) {
+        AppLogger.warning('$kind: виджет почты — $e');
+      }
     }
 
     try {
@@ -608,6 +752,9 @@ class BackgroundService {
       // Строки журнала — на диск: после задачи система снова усыпит процесс.
       AppLogger.flushNow();
     }
+    // Отметка «проверка была» — и когда её сделало приложение по просьбе
+    // фоновой задачи (её читает пульс без службы, SyncHeartbeat.kt).
+    await _markBackgroundCheckDone();
     final s = DateTime.now().difference(started).inMilliseconds / 1000;
     return 'за ${s.toStringAsFixed(1)} с';
   }
@@ -644,6 +791,9 @@ class BackgroundService {
   /// могли умереть по таймауту NAT. Проверяем push, «толкаем» IDLE и
   /// выполняем плановую проверку ящиков, у которых подошёл интервал.
   Future<void> onHeartbeat() => BackgroundJournal.track('пульс', () async {
+        // Имя порта для фоновых задач — на месте (08.11.2026): его могла
+        // убрать задача прежней версии, не дождавшись ответа.
+        _listenBackgroundTasks();
         try {
           await _ref.read(imapPushServiceProvider).ensureAlive(poke: true, reason: 'пульс');
         } catch (e) {
@@ -701,6 +851,9 @@ class BackgroundService {
   Future<void> onResume() async {
     // Имя порта могла убрать фоновая задача, не дождавшись ответа.
     _listenBackgroundTasks();
+    // На экране — то, что в базе сейчас, в том числе записанное фоновой
+    // задачей, пока приложение было свёрнуто (08.11.2026).
+    refreshFromDatabase('возврат в приложение');
     if (_ref.read(settingsProvider).syncIntervalMinutes < 0) return;
     try {
       await _ref.read(imapPushServiceProvider).ensureAlive(poke: true, reason: 'возврат в приложение');
@@ -733,6 +886,7 @@ class BackgroundService {
           AppLogger.debug('Таймер синхронизации: приложение свёрнуто (iOS) — проверку делает фоновая задача');
           return;
         }
+        _listenBackgroundTasks();
         if (await _networkClosedInBackground()) return;
         try {
           await _ref.read(imapPushServiceProvider).ensureAlive();
@@ -747,7 +901,7 @@ class BackgroundService {
   }
 
   Future<void> _foregroundSync({bool respectInterval = true}) async {
-    _lastForegroundSync = DateTime.now();
+    if (!respectInterval) _lastResumeSync = DateTime.now();
     try {
       await _ref.read(syncServiceProvider)
           .syncAll(scheduled: true, respectInterval: respectInterval);
@@ -761,8 +915,15 @@ class BackgroundService {
   /// раза в 2 минуты — чтобы частые переключения не били по сети/серверу.
   /// Раньше при возврате синк не запускался — свежая почта появлялась только на
   /// следующем тике таймера (до `syncIntervalMinutes` ожидания).
+  ///
+  /// Пауза считается только от такой же полной проверки (08.11.2026). Прежде
+  /// её отсчитывал и тик таймера раз в 5 минут — он идёт и в свёрнутом
+  /// приложении, пока служба почты держит процесс, и пропускает ящики «ещё
+  /// не пора» (с живым push — 30 минут). Открыли приложение в пределах двух
+  /// минут после тика — не проверялось ничего.
   Future<void> syncOnResume() async {
-    if (DateTime.now().difference(_lastForegroundSync) < const Duration(minutes: 2)) {
+    if (DateTime.now().difference(_lastResumeSync) < const Duration(minutes: 2)) {
+      AppLogger.debug('Возврат в приложение: полная проверка была меньше 2 мин назад');
       return;
     }
     // При возврате в приложение — свежая почта всех аккаунтов, кроме тех,
@@ -818,7 +979,10 @@ class BackgroundService {
           frequency: Duration(minutes: periodMinutes),
           constraints: Constraints(
             networkType: settings.syncOnlyWifi ? NetworkType.unmetered : NetworkType.connected,
-            requiresBatteryNotLow: true,
+            // Без условия «заряд не низкий» (2.0.0, решение владельца
+            // 08.11.2026): при заряде ниже ~15% плановой проверки не было
+            // вовсе, и письма не приходили. Проверка лёгкая, а в режиме
+            // энергосбережения Android её и так ограничивает.
           ),
           existingWorkPolicy: ExistingPeriodicWorkPolicy.update,
         );

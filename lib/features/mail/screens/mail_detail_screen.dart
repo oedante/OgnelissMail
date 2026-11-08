@@ -47,7 +47,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../services/export/email_pdf_service.dart';
 
 import '../../../core/theme/tokens.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice, quietError, quietNotice;
 import '../../../core/theme/app_theme.dart';
 import '../../../core/logging/app_logger.dart';
 import '../../../core/logging/open_trace.dart';
@@ -1109,9 +1109,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             _onBodyShown();
           },
           onLink: (url, text) => _onBodyLink(email, url, text),
+          onQuoteReply: (text) => _replyWithFragment(email, text),
         ),
         if (n.clipped) MailClippedBar(onShowWhole: _onShowWhole),
-        if (split.hasQuote) _quoteToggle(theme, l10n),
+        if (split.hasQuote) _quoteToggle(theme, l10n, tailOnly: split.tailOnly),
       ],
     );
   }
@@ -1214,28 +1215,41 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   String _plainText = '';
   String? _plainShort;
 
+  /// Свежий текст письма без HTML и его начало, если он очень длинный;
+  /// цитата «>» и длинная подпись «-- » свёрнуты (план 08.11.2026, п. 5).
+  QuoteSplit _plainSplit = QuoteSplit('', '');
+  String? _plainReplyShort;
+
   Widget _plainBody(EmailModel email, ThemeData theme) {
     final src = email.bodyPlain ?? email.bodyPreview ?? '';
     if (!identical(_plainFor, src)) {
       _plainFor = src;
       _plainText = SymbolFonts.fixPlain(src);
       _plainShort = MailClip.clipText(_plainText);
+      _plainSplit = splitQuotedPlain(_plainText);
+      _plainReplyShort = _plainSplit.hasQuote ? MailClip.clipText(_plainSplit.reply) : null;
     }
-    final short = _showWhole ? null : _plainShort;
+    final folded = _plainSplit.hasQuote && !_showQuote;
+    final shownText = folded ? _plainSplit.reply : _plainText;
+    final short = _showWhole ? null : (folded ? _plainReplyShort : _plainShort);
     // Письмо без HTML — того же размера, что и HTML-письма (1.8.12): 15 px ×
     // шрифт системы, без уменьшения масштабом интерфейса
     // (MailHtmlView.textScaleOf).
     final text = LinkifiedText(
-      short ?? _plainText,
+      short ?? shownText,
       style: theme.textTheme.bodyMedium?.copyWith(fontSize: 15 * MailHtmlView.textScaleOf(context), height: 1.4),
       textScaler: TextScaler.noScaling,
       dates: _datesFor(email),
       onLink: (url, text) => _onBodyLink(email, url, text),
     );
-    if (short == null) return text;
+    if (short == null && !_plainSplit.hasQuote) return text;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [text, MailClippedBar(onShowWhole: _onShowWhole)],
+      children: [
+        text,
+        if (short != null) MailClippedBar(onShowWhole: _onShowWhole),
+        if (_plainSplit.hasQuote) _quoteToggle(theme, AppLocalizations.of(context), tailOnly: _plainSplit.tailOnly),
+      ],
     );
   }
 
@@ -1318,10 +1332,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       final f = File('${dir.path}${Platform.pathSeparator}ogneliss-mail-view.html');
       await f.writeAsString(page, flush: true);
       final ok = await launchUrl(Uri.file(f.path), mode: LaunchMode.externalApplication);
-      if (!ok && mounted) showInlineError(AppLocalizations.of(context).tr('mailOpenInBrowserFailed'));
+      if (!ok && mounted) quietError(AppLocalizations.of(context).tr('mailOpenInBrowserFailed'));
     } catch (e) {
       AppLogger.warning('Письмо в браузере: $e');
-      if (mounted) showInlineError(AppLocalizations.of(context).tr('mailOpenInBrowserFailed'));
+      if (mounted) quietError(AppLocalizations.of(context).tr('mailOpenInBrowserFailed'));
     }
   }
 
@@ -1478,13 +1492,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           onLink: (url, text) => _onBodyLink(email, url, text),
         ),
         if (doc.clipped) MailClippedBar(onShowWhole: _onShowWhole, busy: _showWhole),
-        if (split.hasQuote) _quoteToggle(theme, l10n),
+        if (split.hasQuote) _quoteToggle(theme, l10n, tailOnly: split.tailOnly),
       ],
     );
   }
 
-  /// Кнопка «Показать / скрыть переписку».
-  Widget _quoteToggle(ThemeData theme, AppLocalizations l10n) => Align(
+  /// Кнопка «Показать / скрыть переписку»; [tailOnly] — свёрнута только
+  /// подпись или юридическое уведомление (2.0.0).
+  Widget _quoteToggle(ThemeData theme, AppLocalizations l10n, {bool tailOnly = false}) => Align(
         alignment: Alignment.centerLeft,
         child: InkWell(
           borderRadius: BorderRadius.circular(6),
@@ -1503,7 +1518,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                     size: 16, color: theme.colorScheme.onSurfaceVariant),
                 const SizedBox(width: Space.xs),
                 Text(
-                  _showQuote ? l10n.tr('hideQuoted') : l10n.tr('showQuoted'),
+                  tailOnly
+                      ? l10n.tr(_showQuote ? 'hideSignatureTail' : 'showSignatureTail')
+                      : (_showQuote ? l10n.tr('hideQuoted') : l10n.tr('showQuoted')),
                   style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               ],
@@ -2321,7 +2338,12 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         _attachmentStates[att.id] = _AttachmentState(error: e.toString());
       });
 
-      if (mounted) showInlineError('${l10n.tr('error')}: $e');
+      // Письма уже нет на сервере (ActiveSync ItemOperations Status 6 —
+      // «объект не найден», 15 — неверный id): понятной строкой, а не
+      // «Bad state: EAS: ItemOperations Fetch Status=6» (журнал владельца
+      // 08.11.2026; синхронизация следом удаляет письмо и у нас).
+      final gone = RegExp(r'ItemOperations Fetch Status=(6|15)\b').hasMatch('$e');
+      if (mounted) quietError(gone ? l10n.tr('attachmentGoneOnServer') : '${l10n.tr('error')}: $e');
     }
   }
 
@@ -2708,12 +2730,25 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           draftId: q['draftId'],
           accountId: q['accountId'],
           replyAll: q['replyAll'] == 'true',
+          quoteFragment: q['fragment'],
           quickText: q['quick'],
         ),
       ));
       return;
     }
     context.push(Uri(path: '/compose', queryParameters: q).toString());
+  }
+
+  /// «Ответить с цитатой» из меню выделенного текста письма (2.0.0): ответ
+  /// отправителю, в цитате — только выделенное.
+  void _replyWithFragment(EmailModel email, String text) {
+    final t = text.trim();
+    if (t.isEmpty) return;
+    _compose({
+      'replyToId': email.id,
+      'accountId': email.accountId,
+      'fragment': t.length > 4000 ? t.substring(0, 4000) : t,
+    });
   }
 
   /// «Удалить» под письмом (1.7.3): по умолчанию — с вопросом (письма
@@ -3132,7 +3167,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       if (ok) {
         showInlineNotice(l10n.tr('recallSent'));
       } else {
-        showInlineError(l10n.tr('recallUnavailable'));
+        quietError(l10n.tr('recallUnavailable'));
       }
     } catch (e) {
       showInlineError('${l10n.error}: $e');
@@ -3438,7 +3473,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       }
     }
 
-    showInlineNotice(l10n.tr('preparingPdf'));
+    quietNotice(l10n.tr('preparingPdf'));
     final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
     final labelsMap = {
       'from': l10n.tr('from'),
@@ -3516,7 +3551,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           '/compose?accountId=${Uri.encodeQueryComponent(email.accountId)}&attachments=${Uri.encodeComponent(file.path)}'));
     } catch (e) {
       if (mounted) {
-        showInlineError('$e');
+        quietError('$e');
       }
     }
   }
@@ -3567,7 +3602,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     if (failed == 0) {
       showInlineNotice(l10n.tr('downloadedN').replaceAll('{done}', '$done'));
     } else {
-      showInlineError(l10n.tr('downloadedNFailed').replaceAll('{done}', '$done').replaceAll('{failed}', '$failed'));
+      quietError(l10n.tr('downloadedNFailed').replaceAll('{done}', '$done').replaceAll('{failed}', '$failed'));
     }
   }
 
@@ -3914,7 +3949,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       ));
     } catch (e) {
       AppLogger.warning('Окно письма не открылось: $e');
-      if (mounted) showInlineError('${AppLocalizations.of(context).tr('error')}: $e');
+      if (mounted) quietError('${AppLocalizations.of(context).tr('error')}: $e');
     }
   }
 

@@ -43,7 +43,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/utils/text_entities.dart';
 import '../../../services/mail/conversation_counter.dart';
 import '../../../services/mail/focus_mode_service.dart' show focusModeProvider;
+import '../../../services/security/smime_service.dart' show smimeServiceProvider;
 import '../../../services/security/managed_config.dart';
+import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
 
 // ════════════════════════ АККАУНТЫ ════════════════════════
@@ -70,11 +72,21 @@ final laterRevisionProvider = StateProvider<int>((ref) => 0);
 /// Сколько ящиков Exchange скрыто в сборке без Exchange (1.8.5).
 int hiddenExchangeAccounts = 0;
 
+/// Ящики, скрытые правилами организации (MDM `allowed_domains`, план
+/// 08.11.2026 п. 1): адреса для пояснения в настройках. Данные остаются на
+/// устройстве и вернутся, если организация разрешит домен.
+List<String> hiddenByPolicyAccounts = const [];
+
 final accountsProvider =
     StateNotifierProvider<AccountsNotifier, List<AccountModel>>((ref) {
   final db = ref.watch(databaseProvider);
   final secureStorage = ref.watch(secureStorageProvider);
-  return AccountsNotifier(db, secureStorage, ref);
+  final notifier = AccountsNotifier(db, secureStorage, ref);
+  // Организация поменяла список разрешённых доменов — список ящиков заново.
+  void onDomains() => unawaited(notifier.reload());
+  ManagedPolicy.allowedDomainsChanged.addListener(onDomains);
+  ref.onDispose(() => ManagedPolicy.allowedDomainsChanged.removeListener(onDomains));
+  return notifier;
 });
 
 /// Текущий активный аккаунт
@@ -142,6 +154,18 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
     _loadAccounts();
   }
 
+  /// Правила организации сейчас: в приложении — от уведомителя правил, в
+  /// фоновом изоляте (он их не читает) — сохранённые.
+  ManagedPolicy _policy() {
+    if (ManagedPolicy.current.isManaged) return ManagedPolicy.current;
+    try {
+      final prefs = _ref?.read(sharedPrefsProvider);
+      return ManagedPolicy.fromPrefs(prefs);
+    } catch (_) {
+      return ManagedPolicy.current;
+    }
+  }
+
   /// Публичная загрузка аккаунтов из БД (await). Нужна фоновому изоляту
   /// (WorkManager): там контейнер создаётся заново и конструкторная загрузка
   /// (`_loadAccounts`) ещё не завершена к моменту синка.
@@ -178,7 +202,24 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
       final hidden = rows.where((r) => exchangeHidden(AccountType.values[r.type])).length;
       hiddenExchangeAccounts = hidden;
 
-      state = rows.where((r) => !exchangeHidden(AccountType.values[r.type])).map((row) => AccountModel(
+      // Правила организации (MDM, план 08.11.2026 п. 1): `allowed_domains`
+      // действует и на уже добавленные ящики, не только при добавлении.
+      // Ящик чужого домена скрыт и не синхронизируется; данные остаются.
+      // В фоновом изоляте правила — из сохранённых (ManagedPolicy.fromPrefs):
+      // уведомлений от системы там нет.
+      final policy = _policy();
+      final blocked = [
+        for (final r in rows)
+          if (!exchangeHidden(AccountType.values[r.type]) && !policy.allowsAccount(r.email)) r.email,
+      ];
+      hiddenByPolicyAccounts = List.unmodifiable(blocked);
+      if (blocked.isNotEmpty) {
+        AppLogger.info('Ящики скрыты правилами организации: ${blocked.length}');
+      }
+
+      state = rows
+          .where((r) => !exchangeHidden(AccountType.values[r.type]) && policy.allowsAccount(r.email))
+          .map((row) => AccountModel(
             id: row.id,
             type: AccountType.values[row.type],
             email: row.email,
@@ -460,6 +501,11 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
       }
       await _secureStorage.deleteAccountTokens(accountId);
       await _secureStorage.deleteAccountPassword(accountId);
+      // Закрытый ключ S/MIME и пароль к нему (07.11.2026, аудит: оставались
+      // в защищённом хранилище после удаления ящика).
+      try {
+        await _ref?.read(smimeServiceProvider).removeIdentity(accountId);
+      } catch (_) {}
       await clearSyncState(accountId);
       await DavPimService.forgetAccount(accountId);
       await OwnAddresses.forget(accountId);
@@ -736,7 +782,34 @@ Stream<List<FolderModel>> _watchFolders(AppDatabase db, String accountId) {
         ..where((f) => f.accountId.equals(accountId))
         ..orderBy([(f) => OrderingTerm(expression: f.sortOrder, mode: OrderingMode.asc)]))
       .watch()
-      .map((rows) => rows.map(folderFromRow).toList());
+      .map((rows) => rows.map(folderFromRow).toList())
+      // Таблица папок меняется после каждой синхронизации (ключи, время),
+      // а то, что видно в меню, — редко: без сравнения меню папок и всё,
+      // что от него зависит, перестраивались на каждую синхронизацию (план
+      // 08.11.2026 п. 3).
+      .distinct(_sameFolders);
+}
+
+bool _sameFolders(List<FolderModel> a, List<FolderModel> b) {
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    final x = a[i], y = b[i];
+    if (x.id != y.id ||
+        x.parentId != y.parentId ||
+        x.displayName != y.displayName ||
+        x.type != y.type ||
+        x.serverPath != y.serverPath ||
+        x.unreadCount != y.unreadCount ||
+        x.totalCount != y.totalCount ||
+        x.showInUnified != y.showInUnified ||
+        x.isFavorite != y.isFavorite ||
+        x.sortOrder != y.sortOrder ||
+        x.isSynced != y.isSynced ||
+        x.iconName != y.iconName) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /// Папки активного аккаунта. Поток, а не разовый запрос: избранное,
@@ -1018,14 +1091,39 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
         .where((e) => _hidden.isEmpty || !_hidden.contains('${e.accountId}|${e.id}')))
         .toList();
     if (groupByConversation) filtered = _collapseConversations(filtered);
+    final models = _modelsFor(filtered);
+    final hasMore = rows.length >= _window && _window < _maxInMemory;
+    final page = (_window ~/ _pageSize) - 1;
+    // Ничего не изменилось — состояние прежнее (07.11.2026, аудит
+    // микрофризов): drift присылает выборку на любую запись в таблицу
+    // писем, и во время синхронизации лента целиком перестраивалась до
+    // 4 раз в секунду, даже когда видимые письма те же. Модели
+    // переиспользуются (_modelsFor), поэтому сравнение — по ссылкам.
+    final old = state;
+    if (!old.isLoading &&
+        !old.isLoadingMore &&
+        old.error == null &&
+        old.hasMore == hasMore &&
+        old.currentPage == page &&
+        _sameModels(old.emails, models)) {
+      return;
+    }
     state = EmailListState(
-      emails: _modelsFor(filtered),
+      emails: models,
       isLoading: false,
       isLoadingMore: false,
       // Окно заполнено — вероятно, в БД есть ещё.
-      hasMore: rows.length >= _window && _window < _maxInMemory,
-      currentPage: (_window ~/ _pageSize) - 1,
+      hasMore: hasMore,
+      currentPage: page,
     );
+  }
+
+  static bool _sameModels(List<EmailModel> a, List<EmailModel> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (!identical(a[i], b[i])) return false;
+    }
+    return true;
   }
 
   /// Одно письмо — одна строка: у Gmail письмо с ярлыком лежит и во

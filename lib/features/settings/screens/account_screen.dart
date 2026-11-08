@@ -52,6 +52,7 @@ import '../../../services/security/eas_policy_store.dart';
 import '../../../services/sync/imap_push_service.dart';
 import '../../../data/models/account_model.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../compose/screens/image_edit_screen.dart' show ImageEditScreen;
 import '../../../services/mail/dav/dav_pim_service.dart';
 import '../../../widgets/common/hero_email_transition.dart';
 import '../../mail/providers/mail_providers.dart';
@@ -884,13 +885,22 @@ class AccountScreen extends ConsumerWidget {
     // путь) выбор молча ничего не делал. Теперь: байты или чтение по пути,
     // ошибки — в журнал и сообщением.
     Uint8List? bytes;
+    var name = 'photo.jpg';
     try {
       final f = await FilePick.file(type: FileType.image);
       if (f == null) return; // выбор отменён
       bytes = await f.readBytes();
+      name = f.name;
       AppLogger.info('Фото аккаунта: выбран файл ${f.name}, ${bytes.length} байт');
     } catch (e) {
       AppLogger.warning('Фото аккаунта: выбор не удался — $e');
+    }
+    if (bytes != null && bytes.isNotEmpty && context.mounted) {
+      // Обрезка и поворот с просмотром в круге (1.15.1, просьба владельца
+      // 07.11.2026). «×» — фото не меняется.
+      final edited = await ImageEditScreen.open(context, bytes: bytes, name: name, circle: true);
+      if (edited == null) return;
+      bytes = edited.bytes;
     }
     if (bytes == null || bytes.isEmpty) {
       // Строкой вверху экрана: чёрные плашки в приложении выключены, и

@@ -12,6 +12,9 @@
 //    страницы перерисовываются в нужной резкости (не размытым растром);
 //  · в памяти — несколько последних страниц, остальные освобождаются;
 //  · номер страницы — внизу, пока листают;
+//  · поворот (07.11.2026, просьба владельца): текущей страницы или всех на
+//    четверть оборота по часовой — для сканов, положенных боком
+//    ([PdfViewController]); только при просмотре, файл не меняется;
 //  · PDF с паролем системный PdfRenderer не открывает — [onUnsupported],
 //    экран предлагает другое приложение.
 
@@ -71,10 +74,27 @@ class NativePdf {
   }
 }
 
+/// Поворот страниц из кнопок экрана (вне [PdfView]).
+class PdfViewController extends ChangeNotifier {
+  _PdfViewState? _state;
+
+  /// Страниц в документе (0 — ещё не открыт).
+  int get pageCount => _state?._doc?.sizes.length ?? 0;
+
+  /// Повернуть страницу, что сейчас посередине экрана.
+  void rotatePage() => _state?._rotate(all: false);
+
+  /// Повернуть все страницы.
+  void rotateAll() => _state?._rotate(all: true);
+
+  void _changed() => notifyListeners();
+}
+
 class PdfView extends StatefulWidget {
-  const PdfView({super.key, required this.path, required this.onUnsupported});
+  const PdfView({super.key, required this.path, required this.onUnsupported, this.controller});
 
   final String path;
+  final PdfViewController? controller;
 
   /// PDF не открылся (пароль, повреждён): [protected] — защищён паролем.
   final void Function(bool protected, Object error) onUnsupported;
@@ -109,11 +129,63 @@ class _PdfViewState extends State<PdfView> {
   Timer? _pageTimer;
   Offset? _doubleTapAt;
 
+  /// Поворот страниц в четвертях оборота по часовой (нет в карте — 0).
+  final Map<int, int> _turns = {};
+
   @override
   void initState() {
     super.initState();
+    widget.controller?._state = this;
     unawaited(_open());
   }
+
+  @override
+  void didUpdateWidget(PdfView old) {
+    super.didUpdateWidget(old);
+    if (old.controller != widget.controller) {
+      if (old.controller?._state == this) old.controller!._state = null;
+      widget.controller?._state = this;
+    }
+  }
+
+  bool _sideways(int i) => (_turns[i] ?? 0).isOdd;
+
+  /// Размер страницы на экране (с учётом поворота) в точках PDF.
+  Size _shown(int i) {
+    final s = _doc!.sizes[i];
+    return _sideways(i) ? Size(s.height, s.width) : s;
+  }
+
+  void _rotate({required bool all}) {
+    final d = _doc;
+    if (d == null || !mounted) return;
+    final p = _page;
+    final pages = all ? List.generate(d.sizes.length, (i) => i) : [p];
+    // Та же страница остаётся на месте экрана после перестройки.
+    final s = _scale;
+    final m = _tc.value.clone();
+    final offsetInPage = _tops.isEmpty ? 0.0 : _view.top - _tops[p];
+    for (final i in pages) {
+      final t = ((_turns[i] ?? 0) + 1) % 4;
+      if (t == 0) {
+        _turns.remove(i);
+      } else {
+        _turns[i] = t;
+      }
+      // Растр той же ширины уже не подходит по высоте — перерисовать.
+      _images.remove(i)?.image.dispose();
+    }
+    _layoutWidth = 0; // перестроить раскладку
+    _layout(_lastBoxWidth);
+    final top = (_tops[p] + offsetInPage.clamp(0.0, _pageHeight(p))).clamp(0.0, math.max(0.0, _contentHeight - _viewportHeight / s));
+    m.setTranslationRaw(m.getTranslation().x, -top * s, 0);
+    _tc.value = m;
+    setState(() {});
+    widget.controller?._changed();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _request());
+  }
+
+  double _lastBoxWidth = 0;
 
   Future<void> _open() async {
     try {
@@ -128,6 +200,7 @@ class _PdfViewState extends State<PdfView> {
         return;
       }
       setState(() => _doc = d);
+      widget.controller?._changed();
     } on PlatformException catch (e) {
       if (mounted) widget.onUnsupported(e.code == 'protected', e);
     } catch (e) {
@@ -137,6 +210,7 @@ class _PdfViewState extends State<PdfView> {
 
   @override
   void dispose() {
+    if (widget.controller?._state == this) widget.controller!._state = null;
     _pageTimer?.cancel();
     _tc.dispose();
     for (final v in _images.values) {
@@ -155,7 +229,8 @@ class _PdfViewState extends State<PdfView> {
     final pw = width - 2 * _margin;
     final tops = <double>[];
     var y = _gap;
-    for (final s in d.sizes) {
+    for (var i = 0; i < d.sizes.length; i++) {
+      final s = _shown(i);
       tops.add(y);
       y += pw * s.height / (s.width <= 0 ? 1 : s.width) + _gap;
     }
@@ -164,7 +239,7 @@ class _PdfViewState extends State<PdfView> {
   }
 
   double _pageHeight(int i) {
-    final s = _doc!.sizes[i];
+    final s = _shown(i);
     return (_layoutWidth - 2 * _margin) * s.height / (s.width <= 0 ? 1 : s.width);
   }
 
@@ -186,18 +261,23 @@ class _PdfViewState extends State<PdfView> {
 
   double get _scale => _tc.value.getMaxScaleOnAxis();
 
-  int _targetWidth() {
+  /// Ширина растра страницы [i]: повёрнутая боком рисуется шириной, равной
+  /// её высоте на экране (после поворота она станет шириной).
+  int _targetWidth(int i) {
     final dpr = MediaQuery.devicePixelRatioOf(context);
-    final base = (_layoutWidth - 2 * _margin) * dpr;
-    final s = _scale;
-    final step = _steps.firstWhere((x) => x >= s - 0.05, orElse: () => _steps.last);
+    var base = (_layoutWidth - 2 * _margin) * dpr;
+    if (_sideways(i)) {
+      final s = _doc!.sizes[i];
+      base = base * s.width / (s.height <= 0 ? 1 : s.height);
+    }
+    final sc = _scale;
+    final step = _steps.firstWhere((x) => x >= sc - 0.05, orElse: () => _steps.last);
     return math.min((base * step).round(), 4096);
   }
 
   void _request() {
     final d = _doc;
     if (d == null || _interacting || !mounted) return;
-    final want = _targetWidth();
     final visible = _visible();
     // Сначала видимые — по близости к середине экрана.
     final mid = _view.center.dy;
@@ -206,6 +286,7 @@ class _PdfViewState extends State<PdfView> {
     for (final i in visible) {
       if (_inFlight.length >= 2) break;
       if (_inFlight.contains(i)) continue;
+      final want = _targetWidth(i);
       final have = _images[i];
       if (have != null && have.width >= want * 0.9) continue;
       _inFlight.add(i);
@@ -277,6 +358,7 @@ class _PdfViewState extends State<PdfView> {
     if (d == null) return const Center(child: CircularProgressIndicator());
     final theme = Theme.of(context);
     return LayoutBuilder(builder: (context, box) {
+      _lastBoxWidth = box.maxWidth;
       _layout(box.maxWidth);
       _viewportHeight = box.maxHeight;
       return Stack(children: [
@@ -325,7 +407,11 @@ class _PdfViewState extends State<PdfView> {
                             ]),
                             child: _images[i] == null
                                 ? null
-                                : RawImage(image: _images[i]!.image, fit: BoxFit.fill, filterQuality: FilterQuality.medium),
+                                : RotatedBox(
+                                    quarterTurns: _turns[i] ?? 0,
+                                    child: RawImage(
+                                        image: _images[i]!.image, fit: BoxFit.fill, filterQuality: FilterQuality.medium),
+                                  ),
                           ),
                         ),
                     ]),

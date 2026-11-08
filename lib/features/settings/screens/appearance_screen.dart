@@ -220,22 +220,6 @@ class AppearanceScreen extends ConsumerWidget {
               ],
             ),
           ],
-
-          // ── Движение ──
-          SettingsSectionTitle(l10n.tr('a11yMotion')),
-          SettingsGroup(
-            children: [
-              // Выключено по умолчанию: прежние анимации были медленными.
-              // «Уменьшить движение» (Специальные возможности) важнее.
-              SettingsSwitchItem(
-                icon: AppIcons.swipe_down,
-                title: l10n.tr('apOpenAnimation'),
-                subtitle: l10n.tr(settings.reduceMotion ? 'apOpenAnimationReduced' : 'apOpenAnimationDesc'),
-                value: settings.openAnimation && !settings.reduceMotion,
-                onChanged: settings.reduceMotion ? null : notifier.setOpenAnimation,
-              ),
-            ],
-          ),
         ],
       ),
     );

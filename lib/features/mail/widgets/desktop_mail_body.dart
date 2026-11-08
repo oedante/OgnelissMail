@@ -19,6 +19,7 @@ class DesktopMailBody extends StatefulWidget {
     required this.html,
     required this.onLink,
     this.images = const {},
+    this.onQuoteReply,
     this.textScale = 1,
   });
 
@@ -28,6 +29,9 @@ class DesktopMailBody extends StatefulWidget {
 
   /// Встроенные картинки: Content-ID (нижний регистр, без «<>») → data URI.
   final Map<String, String> images;
+
+  /// «Ответить с цитатой» в меню выделенного текста (2.0.0).
+  final void Function(String text)? onQuoteReply;
   final double textScale;
 
   @override
@@ -70,8 +74,12 @@ class _DesktopMailBodyState extends State<DesktopMailBody> {
         final m = snap.data;
         if (m != null) {
           final shown = _whole ? m : m.shortened;
-          final body =
-              MailNativeBody(mail: shown, images: widget.images, textScale: widget.textScale, onLink: widget.onLink);
+          final body = MailNativeBody(
+              mail: shown,
+              images: widget.images,
+              textScale: widget.textScale,
+              onLink: widget.onLink,
+              onQuoteReply: widget.onQuoteReply);
           if (!shown.clipped) return body;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

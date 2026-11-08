@@ -107,6 +107,10 @@
    (`OAUTH_PROXY_SETUP.md`, для Debian — `OAUTH_PROXY_DEBIAN.md`).
 3. В `config/dart_defines.json` (образец — `config/dart_defines.example.json`)
    укажите свой `OAUTH_PROXY_URL` и идентификаторы клиентов.
+4. Сертификат прокси проверяется как у любого сайта — нужен настоящий
+   (Let's Encrypt или купленный). Только для проверочной сборки с
+   самоподписанным: `"OAUTH_PROXY_SELF_SIGNED": "true"` — тогда приложение
+   примет любой сертификат этого хоста; в выпуск так не собирать.
 
 ## 6. Сигналы для iPhone (по необходимости)
 

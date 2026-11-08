@@ -39,14 +39,18 @@
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" tools:node="remove"/>
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" tools:node="remove"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
+    <!-- 2.0.0 (решение владельца 08.11.2026): тип specialUse вместо dataSync —
+         у dataSync на Android 15+ лимит 6 часов в сутки, после него почта
+         приходила с задержкой. Нужна декларация в Play Console (Содержание
+         приложения → Разрешения на службы переднего плана). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
     <!-- Политика Exchange «нужен пароль устройства»: узнать сложность блокировки
          экрана (Android 10+). Обычное разрешение, запрос у пользователя не нужен. -->
     <uses-permission android:name="android.permission.REQUEST_PASSWORD_COMPLEXITY"/>
 
     <application
         android:label="Ogneliss Mail"
-        android:name="${applicationName}"
+        android:name=".OgnelissApplication"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:usesCleartextTraffic="false"
@@ -108,12 +112,19 @@
         </activity>
         <meta-data android:name="flutterEmbedding" android:value="2"/>
 
-        <!-- Foreground service: удержание процесса для синхронизации, пока
-             приложение свёрнуто (тип dataSync — Android 14+). -->
+        <!-- Foreground service: удержание процесса для мгновенной доставки
+             почты (IMAP IDLE, ActiveSync Ping, EWS), пока приложение свёрнуто.
+             Тип specialUse (Android 14+; 2.0.0, вместо dataSync с лимитом
+             6 часов в сутки на Android 15+); пояснение для Google Play — в
+             свойстве ниже. -->
         <service
             android:name=".SyncForegroundService"
             android:exported="false"
-            android:foregroundServiceType="dataSync"/>
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Instant delivery of new email: keeps the mail server push connection (IMAP IDLE, Exchange ActiveSync Ping, EWS notifications) open while the app is in the background, so new messages arrive and are notified immediately."/>
+        </service>
         <!-- Сигналы сервера (1.9.x): сообщение FCM «проверь почту» ставит
              проверку в WorkManager (PushWakeFcm.kt). Без параметров Firebase
              в сборке сообщений нет и служба не запускается. -->
@@ -145,6 +156,16 @@
             android:excludeFromRecents="true"
             android:taskAffinity="com.ogneliss.mail.quickcreate"
             android:windowSoftInputMode="stateVisible|adjustResize" />
+        <!-- Перезапуск приложения (RestartActivity.kt, 08.11.2026): отдельный
+             процесс, чтобы главный мог завершиться и стартовать заново с
+             другим движком рисования. Прозрачная, без следа в «Недавних». -->
+        <activity
+            android:name=".RestartActivity"
+            android:process=":restart"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true" />
         <!-- Виджет «Мой день» на рабочем столе (MyDayWidget.kt). -->
         <receiver
             android:name=".MyDayWidget"
@@ -168,6 +189,42 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_mail_info" />
+        </receiver>
+        <!-- Виджет «Задачи» (TasksWidget в HomeWidgets.kt, 08.11.2026). -->
+        <receiver
+            android:name=".TasksWidget"
+            android:label="@string/widget_tasks_label"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_tasks_info" />
+        </receiver>
+        <!-- Что показывает виджет «Почта» (MailWidgetConfigActivity.kt,
+             08.11.2026): при добавлении и по «Настроить» в меню виджета. -->
+        <activity
+            android:name=".MailWidgetConfigActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:taskAffinity="com.ogneliss.mail.widgetconfig"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <!-- Мини-виджет 1×1 «Непрочитанные» (MailCountWidget в HomeWidgets.kt). -->
+        <receiver
+            android:name=".MailCountWidget"
+            android:label="@string/widget_count_label"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_mail_count_info" />
         </receiver>
         <!-- Виджет «Календарь» (CalendarWidget в HomeWidgets.kt). -->
         <receiver

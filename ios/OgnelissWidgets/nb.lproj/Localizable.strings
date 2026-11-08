@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/nb.xml — не править вручную. */
+"tasks_label" = "Oppgaver";
+"tasks_desc" = "Åpne oppgaver med hake og en knapp for ny oppgave";
+"mailpick_label" = "E-post: valgfri";
+"mailpick_desc" = "Uleste e-poster fra valgt postkasse eller filter";
+"mailpick_param" = "Vis";
 "open_app" = "Åpne Ogneliss Mail for å fylle ut widgeten";
 "myday_label" = "Min dag";
 "myday_desc" = "Dagens møter og oppgaver, uleste og fulgte e-poster";

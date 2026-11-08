@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/sk.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Neprečítané</string>
+    <string name="widget_count_desc">Počet neprečítaných e-mailov; ťuknutím otvoríte Doručenú poštu</string>
+    <string name="widget_tasks_label">Úlohy</string>
+    <string name="widget_tasks_desc">Otvorené úlohy so zaškrtnutím a tlačidlom pre novú úlohu</string>
+    <string name="widget_task_new">Nová úloha</string>
     <string name="device_admin_label">Ogneliss Mail: zámok obrazovky</string>
     <string name="device_admin_description">Uplatňuje časový limit zámku obrazovky, ktorý vyžaduje server Exchange vašej organizácie. Ogneliss Mail nemôže vymazať vaše zariadenie ani zmeniť vaše heslo.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>

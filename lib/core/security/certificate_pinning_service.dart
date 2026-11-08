@@ -41,6 +41,14 @@ class PinRule {
         'includeSubdomains': includeSubdomains,
       };
 
+  /// Закрепление администратора («Безопасность → Закрепление сертификатов»,
+  /// домен без «=») — проверяется всегда, и когда системная проверка
+  /// сертификата прошла (решение владельца 08.11.2026). Сертификат, принятый
+  /// пользователем в диалоге «Доверять?» (`=хост`), — только когда системная
+  /// проверка не прошла: иначе после смены самоподписанного сертификата
+  /// сервера на обычный вход закрылся бы до удаления правила.
+  bool get strict => !domain.startsWith('=');
+
   factory PinRule.fromJson(Map<String, dynamic> j) => PinRule(
         domain: j['domain'] as String,
         sha256Fingerprints:
@@ -272,10 +280,14 @@ class CertificatePinningService {
   /// [host]: отпечатки (base64 SHA-256) из правил хоста и признак «любой
   /// сертификат» (доверенный корпоративный домен; режим «принимать все» в
   /// отладочной сборке). Логика та же, что в [evaluate].
-  ({List<String> fingerprints, bool acceptAny}) nativeTrustFor(String rawHost) {
+  ///
+  /// [strict] — отпечатки закрепления администратора (см. [strictPinsFor]):
+  /// сетевой стек проверяет их и после успешной системной проверки; null —
+  /// строгих правил нет.
+  ({List<String> fingerprints, bool acceptAny, List<String>? strict}) nativeTrustFor(String rawHost) {
     final host = rawHost.toLowerCase();
     if (_mode == PinningMode.off && !kReleaseMode) {
-      return (fingerprints: const <String>[], acceptAny: true);
+      return (fingerprints: const <String>[], acceptAny: true, strict: null);
     }
     final fps = <String>{};
     var anyRule = false;
@@ -284,9 +296,45 @@ class CertificatePinningService {
       anyRule = true;
       fps.addAll(rule.sha256Fingerprints);
     }
-    if (anyRule) return (fingerprints: fps.toList(), acceptAny: false);
+    final strict = strictPinsFor(host)?.toList();
+    if (anyRule) return (fingerprints: fps.toList(), acceptAny: false, strict: strict);
     final trustedDomain = _trustedCaDomains.any((d) => _domainMatches(host, d, true));
-    return (fingerprints: const <String>[], acceptAny: trustedDomain);
+    return (fingerprints: const <String>[], acceptAny: trustedDomain, strict: strict);
+  }
+
+  /// Отпечатки, допустимые для [rawHost] по строгим правилам (закрепление
+  /// администратора): сертификат должен быть в КАЖДОМ подходящем правиле —
+  /// пересечение. null — строгих правил для хоста нет.
+  Set<String>? strictPinsFor(String rawHost) {
+    if (_mode == PinningMode.off && !kReleaseMode) return null;
+    final host = rawHost.toLowerCase();
+    Set<String>? out;
+    for (final rule in _rules) {
+      if (!rule.strict || !_domainMatches(host, rule.domain, rule.includeSubdomains)) continue;
+      final fps = rule.sha256Fingerprints.toSet();
+      out = out == null ? fps : out.intersection(fps);
+    }
+    return out;
+  }
+
+  /// Проверка закрепления после установленного соединения — и когда
+  /// системная проверка сертификата прошла (обычный ЦС или установленный
+  /// пользователем). false — отпечаток не совпал: соединение закрывается,
+  /// отказ запоминается для экрана входа (несовпадение — «возможен
+  /// перехват», доверять не предлагается).
+  bool checkStrict(X509Certificate cert, String host, int port) =>
+      checkStrictDer(cert.der, host, port,
+          subject: cert.subject, issuer: cert.issuer, validFrom: cert.startValidity, validTo: cert.endValidity);
+
+  bool checkStrictDer(List<int> der, String host, int port,
+      {String subject = '', String issuer = '', DateTime? validFrom, DateTime? validTo}) {
+    final pins = strictPinsFor(host);
+    if (pins == null) return true;
+    final info = _CertInfo(der, subject, issuer, validFrom ?? DateTime(2000), validTo ?? DateTime(2000));
+    if (pins.contains(info.fingerprint)) return true;
+    AppLogger.warning('Cert pinning MISMATCH для $host (строгое правило): получен ${info.fingerprint}');
+    _remember(info, host, port, pinMismatch: true);
+    return false;
   }
 
   bool _evaluateInfo(_CertInfo cert, String host, int port) {

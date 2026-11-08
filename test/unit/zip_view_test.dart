@@ -84,4 +84,26 @@ void main() {
     expect(File(await PackedArchive.extract(gz, PackedKind.gz, one.single, '${dir.path}/g')).readAsStringSync(),
         'строка');
   });
+
+  test('2.0.0: «архив-бомба» — распаковка обрывается на пределе, файл не остаётся', () {
+    // 8 МБ нулей сжимаются в несколько килобайт.
+    final bomb = write('bomb.gz', const GZipEncoder().encodeBytes(List<int>.filled(8 * 1024 * 1024, 0)));
+    expect(File(bomb).lengthSync(), lessThan(64 * 1024));
+    final dest = '${dir.path}/bomb.out';
+    expect(() => PackedArchive.decompressToFile(bomb, PackedKind.gz, dest, cap: 1024 * 1024),
+        throwsA(isA<FileSystemException>()));
+    expect(File(dest).existsSync(), isFalse);
+    // В пределе — распаковывается целиком.
+    PackedArchive.decompressToFile(bomb, PackedKind.gz, dest, cap: 16 * 1024 * 1024);
+    expect(File(dest).lengthSync(), 8 * 1024 * 1024);
+  });
+
+  test('ограничитель записи считает все виды записи', () {
+    final o = CappedOutputFileStream('${dir.path}/cap.bin', 10);
+    o.writeBytes([1, 2, 3, 4, 5]);
+    o.writeByte(6);
+    expect(() => o.writeBytes([7, 8, 9, 10, 11]), throwsA(isA<FileSystemException>()));
+    o.closeSync();
+  });
 }
+

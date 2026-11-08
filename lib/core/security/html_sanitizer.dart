@@ -200,10 +200,20 @@ class HtmlSanitizer {
   /// Очистка текста таблицы стилей (см. [sanitizeKeepingStyles]).
   static String cleanCss(String css) {
     var out = _decodeEntities(css);
-    out = out.replaceAll(_cssImport, '').replaceAll(_cssCode, '');
-    // «</style» внутри CSS закрыл бы блок и открыл разметку.
-    return out.replaceAll(RegExp(r'</\s*style', caseSensitive: false), '');
+    // До неизменности (07.11.2026, аудит безопасности): один проход
+    // оставлял «</style» из «<</style/style» и «javascript:» из
+    // «javajavascript:script:».
+    for (var i = 0; i < 8; i++) {
+      final next = out.replaceAll(_cssImport, '').replaceAll(_cssCode, '').replaceAll(_styleClose, '');
+      if (next == out) break;
+      out = next;
+    }
+    // «<» в CSS не нужен (только в строках content) — экранирование CSS:
+    // никакой «</style» не закроет блок и не откроет разметку.
+    return out.replaceAll('<', r'\3c ');
   }
+
+  static final _styleClose = RegExp(r'</\s*style', caseSensitive: false);
 
   /// Для редакторов, подставляющих HTML в строку JavaScript (так работал
   /// прежний Summernote; MailEditor передаёт строки как JSON): после очистки ещё и

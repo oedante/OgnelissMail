@@ -342,6 +342,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
         ? ''
         : '\n\n${l10n.tr('authErrDetails').replaceAll('{err}', err)}';
     String msg(String key) => l10n.tr(key).replaceAll('{hosts}', hosts) + tech;
+    // Блокировка в Exchange (EAS Status 126–131, 177; план 08.11.2026 п. 1):
+    // пароль верный — нужен администратор или удаление старых устройств.
+    final blocked = RegExp(r'eas status (\d{3})').firstMatch(e)?.group(1);
+    if (blocked == '129') return msg('authExDeviceBlocked');
+    if (blocked == '177') return msg('authExDeviceLimit');
+    if (blocked != null) return msg('authExSyncDisabled');
     if (e.contains('401') || e.contains('unauthorized') || e.contains('учётн')) {
       return msg('authExBadCredentials');
     }

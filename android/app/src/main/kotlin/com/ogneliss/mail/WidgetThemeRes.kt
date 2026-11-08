@@ -8,6 +8,7 @@ internal object WidgetThemeRes {
         R.layout.widget_calendar to (R.layout.widget_calendar_lt to R.layout.widget_calendar_dk),
         R.layout.widget_divider to (R.layout.widget_divider_lt to R.layout.widget_divider_dk),
         R.layout.widget_mail to (R.layout.widget_mail_lt to R.layout.widget_mail_dk),
+        R.layout.widget_mail_count to (R.layout.widget_mail_count_lt to R.layout.widget_mail_count_dk),
         R.layout.widget_month_head to (R.layout.widget_month_head_lt to R.layout.widget_month_head_dk),
         R.layout.widget_month_row to (R.layout.widget_month_row_lt to R.layout.widget_month_row_dk),
         R.layout.widget_month_row_fixed to (R.layout.widget_month_row_fixed_lt to R.layout.widget_month_row_fixed_dk),
@@ -20,6 +21,8 @@ internal object WidgetThemeRes {
         R.layout.widget_row_mail to (R.layout.widget_row_mail_lt to R.layout.widget_row_mail_dk),
         R.layout.widget_row_more to (R.layout.widget_row_more_lt to R.layout.widget_row_more_dk),
         R.layout.widget_row_note to (R.layout.widget_row_note_lt to R.layout.widget_row_note_dk),
+        R.layout.widget_row_task to (R.layout.widget_row_task_lt to R.layout.widget_row_task_dk),
+        R.layout.widget_tasks to (R.layout.widget_tasks_lt to R.layout.widget_tasks_dk),
         R.layout.widget_week_row to (R.layout.widget_week_row_lt to R.layout.widget_week_row_dk),
     )
 
@@ -53,7 +56,10 @@ internal object WidgetThemeRes {
         R.drawable.widget_day_today to (R.drawable.widget_day_today_lt to R.drawable.widget_day_today_dk),
         R.drawable.widget_ic_add to (R.drawable.widget_ic_add_lt to R.drawable.widget_ic_add_dk),
         R.drawable.widget_ic_allday to (R.drawable.widget_ic_allday_lt to R.drawable.widget_ic_allday_dk),
+        R.drawable.widget_ic_archive to (R.drawable.widget_ic_archive_lt to R.drawable.widget_ic_archive_dk),
         R.drawable.widget_ic_compose to (R.drawable.widget_ic_compose_lt to R.drawable.widget_ic_compose_dk),
+        R.drawable.widget_ic_done to (R.drawable.widget_ic_done_lt to R.drawable.widget_ic_done_dk),
+        R.drawable.widget_ic_mail to (R.drawable.widget_ic_mail_lt to R.drawable.widget_ic_mail_dk),
         R.drawable.widget_ic_next to (R.drawable.widget_ic_next_lt to R.drawable.widget_ic_next_dk),
         R.drawable.widget_ic_prev to (R.drawable.widget_ic_prev_lt to R.drawable.widget_ic_prev_dk),
         R.drawable.widget_join_bg to (R.drawable.widget_join_bg_lt to R.drawable.widget_join_bg_dk),

@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/sk.xml — не править вручную. */
+"tasks_label" = "Úlohy";
+"tasks_desc" = "Otvorené úlohy so zaškrtnutím a tlačidlom pre novú úlohu";
+"mailpick_label" = "Pošta: výber";
+"mailpick_desc" = "Neprečítané e-maily vybranej schránky alebo filtra";
+"mailpick_param" = "Zobraziť";
 "open_app" = "Miniaplikáciu vyplníte otvorením Ogneliss Mail";
 "myday_label" = "Môj deň";
 "myday_desc" = "Dnešné stretnutia a úlohy, neprečítané a sledované správy";

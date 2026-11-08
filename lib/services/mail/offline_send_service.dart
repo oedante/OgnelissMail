@@ -5,6 +5,7 @@
 // - Статус: pending / sending / sent / failed
 // - Уведомление при успешной отправке
 
+import 'dart:math' as math;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show File;
@@ -143,6 +144,12 @@ class OfflineSendService {
     required bool requestDeliveryReport,
   }) async {
     final connectivity = _ref.read(connectivityServiceProvider);
+    // Один ClientId на письмо с первой попытки (07.11.2026, аудит): сервер
+    // ActiveSync по нему узнаёт повтор (Status 118) и не отправит дважды.
+    // Раньше первая отправка шла без ClientId, а очередь — с новым «q<id>»:
+    // при обрыве VPN после приёма письма получатель мог получить дубль.
+    final clientId = 'm${DateTime.now().microsecondsSinceEpoch.toRadixString(36)}'
+        '${math.Random().nextInt(0x7fffffff).toRadixString(36)}';
 
     if (connectivity.isConnected) {
       // Онлайн — отправляем сразу
@@ -176,7 +183,7 @@ class OfflineSendService {
         final transport = _ref.read(mailTransportFactoryProvider).forAccount(account);
         await transport.send(account, to: to, cc: cc, bcc: bcc,
             subject: subject, bodyHtml: bodyHtml, inReplyTo: inReplyTo, attachments: all, importance: importance, sensitivity: sensitivity,
-            from: from,
+            from: from, clientId: clientId,
             requestDeliveryReport: requestDeliveryReport);
 
         AppLogger.info('Email sent: $subject');
@@ -206,7 +213,10 @@ class OfflineSendService {
         // отправка из очереди дала бы получателю дубль. Кладём письмо в
         // «не отправлено» (видно и можно отправить заново) и просим проверить
         // «Отправленные».
-        if (_isUncertainTimeout(e)) {
+        // ActiveSync — повтор безопасен: тот же ClientId, сервер узнает
+        // уже принятое письмо.
+        final eas = _ref.read(accountsProvider).where((a) => a.id == accountId).firstOrNull?.usesEas ?? false;
+        if (_isUncertainTimeout(e) && !eas) {
           await _enqueue(accountId, to, cc, bcc, subject, bodyHtml, inReplyTo,
               attachments: attachments, importance: importance, sensitivity: sensitivity,
               remoteAttachments: remoteAttachments, from: from, dsn: requestDeliveryReport,
@@ -217,7 +227,7 @@ class OfflineSendService {
           return false;
         }
         await _enqueue(accountId, to, cc, bcc, subject, bodyHtml, inReplyTo, attachments: attachments, importance: importance, sensitivity: sensitivity,
-            remoteAttachments: remoteAttachments, from: from, dsn: requestDeliveryReport);
+            remoteAttachments: remoteAttachments, from: from, dsn: requestDeliveryReport, clientId: clientId);
         // Раньше письмо из очереди уходило только со следующей полной
         // синхронизацией (до 15 минут). Теперь — повтор через 30 секунд.
         _wakeAt(accountId, DateTime.now().add(const Duration(seconds: 30)));
@@ -548,6 +558,7 @@ class OfflineSendService {
     List<RemoteAttachment> remoteAttachments = const [],
     EmailAddress? from,
     bool dsn = false,
+    String? clientId,
   }) async {
     final db = _ref.read(databaseProvider);
     // Защита от разрастания БД при длительной работе без связи: вложения
@@ -580,6 +591,7 @@ class OfflineSendService {
             'sensitivity': sensitivity,
             if (from != null) 'from': {'email': from.email, 'displayName': from.displayName},
             if (dsn) 'dsn': true,
+            if (clientId != null) 'clientId': clientId,
           }),
           priority: const Value(10),
           createdAt: DateTime.now(),
@@ -753,7 +765,8 @@ class OfflineSendService {
         // (Status 118) и не отправит письмо второй раз.
         await transport.send(account, to: to, cc: cc, bcc: bcc,
             subject: subject, bodyHtml: bodyHtml, inReplyTo: inReplyTo, attachments: attachments,
-            importance: importance, sensitivity: sensitivity, clientId: 'q${op.id}', from: from,
+            importance: importance, sensitivity: sensitivity,
+            clientId: (payload['clientId'] as String?) ?? 'q${op.id}', from: from,
             requestDeliveryReport: payload['dsn'] == true);
 
         await (db.delete(db.syncQueue)..where((q) => q.id.equals(op.id))).go();
@@ -973,7 +986,9 @@ class OfflineSendService {
         e.contains('timeout') || e.contains('timed out') ||
         e.contains('socket') || e.contains('connection') ||
         e.contains('network') || e.contains('bad gateway') ||
-        e.contains('unavailable');
+        e.contains('unavailable') ||
+        // Нет ответа сервера (обрыв VPN, Wi-Fi): «HTTP 0» у ActiveSync.
+        e.contains('http 0');
   }
 
   /// Количество писем в очереди отправки

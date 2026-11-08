@@ -4,19 +4,18 @@
 // разнести по категориям»). Здесь то, что нужно редко: общий выключатель
 // синхронизации и расписание доставки, конфликты синхронизации, разрешения
 // и работа в фоне, проверка сертификатов, защита данных при отправке,
-// разделы приложения, журнал и сброс.
+// разделы приложения, графика (Android), журнал и сброс.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/platform/graphics_mode.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
-import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/background/background_service.dart';
-import '../../../services/background/foreground_sync_controller.dart';
 import '../../../services/security/remote_wipe_service.dart';
 import '../../../services/sync/imap_push_service.dart';
 import '../../../services/sync/sync_schedule.dart';
@@ -24,6 +23,7 @@ import '../../../widgets/common/readable_width.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../providers/settings_provider.dart';
+import '../widgets/graphics_item.dart';
 import 'delivery_schedule_screen.dart' show scheduleDaysLabel, deliveryScheduleRevisionProvider;
 
 class AdvancedSettingsScreen extends ConsumerWidget {
@@ -80,38 +80,9 @@ class AdvancedSettingsScreen extends ConsumerWidget {
               ),
             ]),
 
-            // ── Работа в фоне ──
-            SettingsSectionTitle(l10n.tr('sectionBackground')),
-            SettingsGroup(children: [
-              // «Работать в фоне», «Скрыть уведомление о работе в фоне» и
-              // «Обновление в фоне» (iOS) — на экране «Разрешения».
-              SettingsItem(
-                icon: AppIcons.admin_panel_settings,
-                title: l10n.tr('permissions'),
-                // Замечено замораживание в фоне — подсказка прямо здесь.
-                subtitle: ForegroundSyncController.frozenRecently(ref.read(sharedPrefsProvider))
-                    ? '⚠ ${l10n.tr('bgFrozenTitle')}'
-                    : l10n.tr('permissionsDesc'),
-                onTap: () => context.push('/settings/permissions'),
-              ),
-            ]),
-
-            // ── Безопасность ──
-            SettingsSectionTitle(l10n.tr('security')),
-            SettingsGroup(children: [
-              SettingsItem(
-                icon: AppIcons.verified_user,
-                title: l10n.tr('connectionSecurity'),
-                subtitle: l10n.tr('connectionSecurityDesc'),
-                onTap: () => context.push('/settings/security'),
-              ),
-              SettingsItem(
-                icon: AppIcons.shield,
-                title: l10n.tr('dlpTitle'),
-                subtitle: l10n.tr('dlpSettingsDesc'),
-                onTap: () => context.push('/settings/dlp'),
-              ),
-            ]),
+            // «Разрешения», безопасность соединения и защита данных (DLP) —
+            // на главном экране, в «Конфиденциальности» (перегруппировка
+            // 08.11.2026): здесь они повторялись.
 
             // ── Приложение ──
             SettingsSectionTitle(l10n.tr('sectionApp')),
@@ -122,6 +93,8 @@ class AdvancedSettingsScreen extends ConsumerWidget {
                 subtitle: l10n.tr('profileFeaturesDesc'),
                 onTap: () => context.push('/settings/profile'),
               ),
+              // Движок рисования (Android, 08.11.2026: чёрный экран на Huawei).
+              if (GraphicsMode.supported) const GraphicsItem(),
               SettingsItem(
                 icon: AppIcons.bug_report,
                 title: l10n.tr('logsTitle'),

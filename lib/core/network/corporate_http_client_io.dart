@@ -7,6 +7,7 @@ import 'package:http/io_client.dart';
 import '../device/device_user_agent.dart';
 import 'certificate_pinning_bridge.dart';
 import 'native_android_http_client.dart';
+import 'strict_pinning.dart';
 
 /// HTTP-клиент движка почты. Решение о сертификате, который не прошёл
 /// системную проверку, принимает CertificatePinningService — как у всех
@@ -16,11 +17,16 @@ import 'native_android_http_client.dart';
 /// внутреннего центра (или без промежуточного) был невозможен.
 http.Client createCorporateHttpClient({bool? compat}) {
   final hc = HttpClient();
-  hc.badCertificateCallback = (X509Certificate cert, String host, int port) {
+  bool decide(X509Certificate cert, String host, int port) {
     final svc = CertificatePinningBridge.instance;
     if (svc == null) return false; // до инициализации — строгая проверка
     return svc.evaluate(cert, host, port);
-  };
+  }
+
+  hc.badCertificateCallback = decide;
+  // Закрепление администратора — и при успешной системной проверке (фоновый
+  // изолят может работать без AppHttpOverrides).
+  installStrictPinning(hc, onBadCertificate: decide);
   final io = IOClient(hc);
   // Режим «Совместимость со шлюзом» на Android: запросы через сетевой стек
   // системы (TLS как у почтовых приложений Android). Принятые вручную

@@ -100,6 +100,7 @@ abstract final class AppIcons {
   static const IconData delete_forever = Symbols.delete_forever_rounded;
   static const IconData delete_sweep = Symbols.delete_sweep_rounded;
   static const IconData description = Symbols.description_rounded;
+  static const IconData display_settings = Symbols.display_settings_rounded;
   static const IconData dns = Symbols.dns_rounded;
   static const IconData do_not_disturb_on = Symbols.do_not_disturb_on_rounded;
   static const IconData document_scanner = Symbols.document_scanner_rounded;
@@ -248,6 +249,7 @@ abstract final class AppIcons {
   static const IconData report = Symbols.report_rounded;
   static const IconData rss_feed = Symbols.rss_feed_rounded;
   static const IconData rotate_90_degrees_ccw = Symbols.rotate_90_degrees_ccw_rounded;
+  static const IconData rotate_90_degrees_cw = Symbols.rotate_90_degrees_cw_rounded;
   static const IconData rule = Symbols.rule_rounded;
   static const IconData save = Symbols.save_rounded;
   static const IconData save_alt = Symbols.save_alt_rounded;
@@ -328,6 +330,18 @@ abstract final class AppIcons {
   static const IconData warning = Symbols.warning_rounded;
   static const IconData waving_hand = Symbols.waving_hand_rounded;
   static const IconData wb_sunny = Symbols.wb_sunny_rounded;
+  // Погода в «Моём дне» (1.15.1).
+  static const IconData clear_day = Symbols.clear_day_rounded;
+  static const IconData clear_night = Symbols.clear_night_rounded;
+  static const IconData partly_cloudy_day = Symbols.partly_cloudy_day_rounded;
+  static const IconData partly_cloudy_night = Symbols.partly_cloudy_night_rounded;
+  static const IconData foggy = Symbols.foggy_rounded;
+  static const IconData rainy = Symbols.rainy_rounded;
+  static const IconData rainy_light = Symbols.rainy_light_rounded;
+  static const IconData rainy_heavy = Symbols.rainy_heavy_rounded;
+  static const IconData weather_mix = Symbols.weather_mix_rounded;
+  static const IconData weather_snowy = Symbols.weather_snowy_rounded;
+  static const IconData thunderstorm = Symbols.thunderstorm_rounded;
   static const IconData wifi = Symbols.wifi_rounded;
   static const IconData wifi_off = Symbols.wifi_off_rounded;
   static const IconData window = Symbols.window_rounded;

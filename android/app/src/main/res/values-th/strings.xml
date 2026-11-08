@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/th.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">ยังไม่อ่าน</string>
+    <string name="widget_count_desc">จำนวนอีเมลที่ยังไม่อ่าน แตะเพื่อเปิดกล่องจดหมายเข้า</string>
+    <string name="widget_tasks_label">งาน</string>
+    <string name="widget_tasks_desc">งานที่ยังไม่เสร็จพร้อมช่องติ๊กและปุ่มงานใหม่</string>
+    <string name="widget_task_new">งานใหม่</string>
     <string name="device_admin_label">Ogneliss Mail: ล็อกหน้าจอ</string>
     <string name="device_admin_description">ใช้เวลาหมดอายุของการล็อกหน้าจอตามที่เซิร์ฟเวอร์ Exchange ขององค์กรกำหนด Ogneliss Mail ไม่สามารถลบข้อมูลในอุปกรณ์หรือเปลี่ยนรหัสผ่านของคุณได้</string>
     <string name="bg_sync_title">Ogneliss Mail</string>

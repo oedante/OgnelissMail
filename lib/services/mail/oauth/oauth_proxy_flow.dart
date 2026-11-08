@@ -89,6 +89,23 @@ class OAuthProxyFlow {
     }
   }
 
+  /// Отвечает ли сервер входа: любой ответ HTTP — да (даже 404 старого
+  /// сервера без /healthz), нет соединения или тайм-аут — нет.
+  static Future<bool> reachable(String base) async {
+    final client = HttpClient()..connectionTimeout = const Duration(seconds: 8);
+    try {
+      final req = await client.getUrl(Uri.parse('$base/healthz'));
+      final resp = await req.close().timeout(const Duration(seconds: 10));
+      await resp.drain<void>();
+      return true;
+    } catch (e) {
+      AppLogger.info('OAuth: сервер входа не отвечает ($e)');
+      return false;
+    } finally {
+      client.close(force: true);
+    }
+  }
+
   /// Адрес страницы входа службы (1.8.0). Сервер входа отвечает на
   /// /oauth/<служба>/login переадресацией (302) на страницу службы со своими
   /// client_id и state; приложение берёт этот адрес, не переходя по нему, и
@@ -143,6 +160,18 @@ class OAuthProxyFlow {
         userMessage: 'OAuth ($provider): приложение собрано без ключа OAuth-прокси '
             '(OAUTH_PROXY_KEY). Обратитесь к администратору.',
         messageKey: 'oauthNoProxyKey',
+        messageArgs: {'provider': provider},
+      );
+    }
+    // Сервер входа недоступен (08.11.2026, «что делать, если ogneliss.ru
+    // недоступен») — сразу понятной строкой, а не браузером со страницей
+    // «сайт недоступен».
+    if (!await reachable(base)) {
+      AppLogger.warning('OAuth ($provider): сервер входа $base не отвечает — вход отложен');
+      throw errors.AuthException(
+        userMessage: 'Сервер входа Ogneliss сейчас недоступен. Попробуйте позже '
+            'или подключите ящик по паролю приложения (IMAP).',
+        messageKey: 'oauthServerDown',
         messageArgs: {'provider': provider},
       );
     }

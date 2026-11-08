@@ -19,7 +19,7 @@ import '../../core/utils/text_safe.dart';
 import '../contacts/mail_contacts_service.dart';
 import '../contacts/colleague_directory.dart';
 import '../../core/utils/mail_domains.dart' show mailDomainOf, isPublicMailDomain;
-import '../../core/errors/app_exceptions.dart' show looksLikeAuthError, OAuthRefreshFailure;
+import '../../core/errors/app_exceptions.dart' show looksLikeAuthError, looksTransientError, OAuthRefreshFailure;
 import '../mail/offline_send_service.dart';
 import '../mail/draft_sync_service.dart';
 import '../mail/dav/dav_pim_service.dart';
@@ -33,7 +33,9 @@ import '../mail/email_actions_service.dart' show emailActionsProvider;
 import 'package:http/http.dart' as http;
 import 'package:drift/drift.dart';
 import 'package:flutter/widgets.dart' show WidgetsBinding, AppLifecycleState;
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'push_health.dart';
+import 'single_pass.dart';
 import '../../data/models/note_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -99,58 +101,16 @@ final syncServiceProvider = Provider<SyncService>((ref) {
 
 class SyncService {
   final Ref _ref;
-  bool _isSyncing = false;
+  /// Одна синхронизация за раз в изоляте — см. [SinglePass].
+  final SinglePass _pass = SinglePass();
 
   /// Идёт ли сейчас синхронизация (для индикаторов и сторожа push).
-  bool get isSyncing => _isSyncing;
+  bool get isSyncing => _pass.running;
 
   /// Сколько идёт текущий проход; null — не идёт (сторож самовосстановления,
   /// 1.6.48: не мешать обычному проходу, но заметить зависший).
-  Duration? get runningFor => _inFlight == null ? null : DateTime.now().difference(_inFlightSince);
-  Future<void>? _inFlight;
-  DateTime _inFlightSince = DateTime.fromMillisecondsSinceEpoch(0);
+  Duration? get runningFor => _pass.runningFor;
 
-  /// Одна синхронизация за раз в изоляте. Раньше вызов при идущей
-  /// синхронизации молча возвращался: обновление жестом гасло сразу и
-  /// «не срабатывало», «Полная пересинхронизация» ничего не делала, а при
-  /// зависшей синхронизации не работало вообще ничего до перезапуска.
-  /// Теперь второй вызов ждёт идущую (индикатор крутится до конца), а
-  /// идущую дольше 20 минут считает зависшей и запускает новую.
-  ///
-  /// [fresh] (1.6.43, фоновая задача): идущая синхронизация могла начаться
-  /// до того, как система заморозила процесс, и висит на мёртвом запросе
-  /// (журнал iPhone 18.10: FolderSync начат при пробуждении в 16:12, ответ
-  /// «таймаут» — лишь в 16:27, при следующем пробуждении). Ждём её не больше
-  /// 20 секунд и затем делаем свой проход — фоновой задаче нужен результат
-  /// сейчас, пока система даёт процессу сеть.
-  Future<void> _single(Future<void> Function() body, {bool fresh = false}) async {
-    final running = _inFlight;
-    if (running != null) {
-      final age = DateTime.now().difference(_inFlightSince);
-      if (age < const Duration(minutes: 20)) {
-        try {
-          await running.timeout(fresh ? const Duration(seconds: 20) : const Duration(minutes: 5));
-        } catch (_) {}
-        if (!fresh) return;
-        AppLogger.info('Синхронизация: после идущей — свой проход');
-      } else {
-        AppLogger.warning('Синхронизация идёт ${age.inMinutes} мин — считаю зависшей, запускаю новую');
-      }
-    }
-    final done = Completer<void>();
-    _inFlight = done.future;
-    _inFlightSince = DateTime.now();
-    _isSyncing = true;
-    try {
-      await body();
-    } finally {
-      if (identical(_inFlight, done.future)) {
-        _inFlight = null;
-        _isSyncing = false;
-      }
-      done.complete();
-    }
-  }
   /// Параллельные папки синхронизации — через общий планировщик (1.5.9):
   /// не больше трёх (как раньше `_maxParallel`), пока открыто письмо — одна.
   /// Раньше ожидание места было опросом каждые 50 мс: таймер будил главный
@@ -166,10 +126,18 @@ class SyncService {
   /// пользователя): учитываются настройки аккаунта «Проверка почты» и
   /// «Только по Wi‑Fi». [respectInterval] — пропускать аккаунты, которые
   /// синхронизировались недавно (меньше их интервала назад). [fresh] — см.
-  /// [_single]: не довольствоваться уже идущей синхронизацией.
+  /// [SinglePass]: не довольствоваться уже идущей синхронизацией.
   Future<void> syncAll({bool scheduled = false, bool respectInterval = false, bool fresh = false}) =>
       FinishInBackground.guard(
-          () => _single(() => _syncAllBody(scheduled: scheduled, respectInterval: respectInterval), fresh: fresh));
+          () {
+            final scope = respectInterval
+                ? PassScope.due
+                : scheduled
+                    ? PassScope.scheduled
+                    : PassScope.all;
+            return _pass.run(() => _syncAllBody(scheduled: scheduled, respectInterval: respectInterval),
+                fresh: fresh, needs: scope, covers: scope);
+          });
 
   /// Окно доставки режима фокуса — одно сводное уведомление о письмах,
   /// пришедших в тишине. Фокус выключили — тоже показываем, чтобы не потерять.
@@ -192,6 +160,32 @@ class SyncService {
     } catch (e) {
       AppLogger.debug('Сводка фокуса: $e');
     }
+  }
+
+  /// Push этого ящика — IMAP IDLE только «Входящих» (сервер не принял
+  /// NOTIFY или ещё не включён).
+  bool imapPushInboxOnly(AccountModel a) =>
+      !a.usesEas && !a.usesEws && !a.isExchange && !_ref.read(imapServiceProvider).notifyCovers(a.id);
+
+  /// У ящика есть синхронизируемые папки, кроме «Входящих», с уведомлениями
+  /// о новых письмах (не выключены колокольчиком; отправленные, черновики,
+  /// корзина и спам не считаются — о них уведомлений не бывает).
+  Future<bool> _notifiesOutsideInbox(AccountModel a) async {
+    try {
+      final db = _ref.read(databaseProvider);
+      final prefs = _ref.read(sharedPrefsProvider);
+      final rows = await (db.select(db.folders)
+            ..where((f) => f.accountId.equals(a.id) & f.isSynced.equals(true)))
+          .get();
+      for (final r in rows) {
+        final f = folderFromRow(r);
+        if (f.type == FolderType.inbox || r.id.toUpperCase() == 'INBOX') continue;
+        if (FolderNotify.neverTypes.contains(f.type)) continue;
+        if (FolderNotify.isMuted(prefs, a.id, r.id)) continue;
+        return true;
+      }
+    } catch (_) {}
+    return false;
   }
 
   Future<void> _syncAllBody({required bool scheduled, required bool respectInterval}) async {
@@ -235,8 +229,13 @@ class SyncService {
             // раз в 30 минут вместо 15 (папки без push и PIM). Экономия
             // заряда без потери доставки.
             final alive = pushLastAlive(a.id);
-            final pushOk = SyncSchedule.pushNow(a) &&
+            var pushOk = SyncSchedule.pushNow(a) &&
                 alive != null && DateTime.now().difference(alive) < const Duration(minutes: 5);
+            // IMAP без NOTIFY (Gmail, Яндекс): push слышит только «Входящие».
+            // Письма, которые фильтры сервера раскладывают по другим папкам
+            // с уведомлениями, ловит только эта проверка — для них 15 минут,
+            // а не 30 (2.0.0, решение владельца 08.11.2026).
+            if (pushOk && imapPushInboxOnly(a) && await _notifiesOutsideInbox(a)) pushOk = false;
             final minutes = switch (a.syncInterval) {
               SyncInterval.minutes5 => 5,
               SyncInterval.minutes30 => 30,
@@ -358,11 +357,19 @@ class SyncService {
     // протокола) или синхронизировались частично. Раньше итог был «успех»
     // при любой ошибке, кроме неверного пароля, — отсюда жалобы «почта не
     // приходит», хотя приложение показывало, что всё обновлено.
+    // Временные сбои (сеть, сервер недоступен или перегружен) — только в
+    // журнал: приложение повторит само, человеку делать нечего (правило
+    // владельца 08.11.2026). Красная точка — когда нужны его действия.
     final failed = <String>[
       for (final a in accounts)
-        if (_accountErrors[a.id] != null) '${a.email}: ${_accountErrors[a.id]}'
-        else if (_partialErrors[a.id] != null) '${a.email} (${_l10n().tr('syncSomeFolders')}): ${_partialErrors[a.id]}',
+        if (_accountErrors[a.id] != null && !looksTransientError(_accountErrors[a.id]!)) '${a.email}: ${_accountErrors[a.id]}'
+        else if (_partialErrors[a.id] != null && !looksTransientError(_partialErrors[a.id]!))
+          '${a.email} (${_l10n().tr('syncSomeFolders')}): ${_partialErrors[a.id]}',
     ];
+    for (final a in accounts) {
+      final e = _accountErrors[a.id] ?? _partialErrors[a.id];
+      if (e != null && looksTransientError(e)) AppLogger.info('Синхронизация ${a.email}: временный сбой, повтор позже — $e');
+    }
     final busy = <String>[];
     for (final a in accounts) {
       final until = engine.serverBusyUntil(a.id);
@@ -372,16 +379,15 @@ class SyncService {
     }
     // Сводка режима фокуса — и при частичных ошибках ящиков.
     unawaited(_releaseFocusDigest());
-    if (busy.isEmpty && failed.isEmpty) {
+    // Exchange попросил подождать — тоже временное: только в журнал.
+    if (busy.isNotEmpty) AppLogger.info('${_l10n().tr('syncServerBusy')}: ${busy.join('; ')}');
+    if (failed.isEmpty) {
       _ref.read(syncStatusProvider.notifier).state = SyncStatus.success;
       _ref.read(syncMessageProvider.notifier).state = null;
       return;
     }
     _ref.read(syncStatusProvider.notifier).state = SyncStatus.error;
-    _ref.read(syncMessageProvider.notifier).state = [
-      if (failed.isNotEmpty) '${_l10n().tr('syncFailedFor')}: ${failed.join('; ')}',
-      if (busy.isNotEmpty) '${_l10n().tr('syncServerBusy')}: ${busy.join('; ')}',
-    ].join('\n');
+    _ref.read(syncMessageProvider.notifier).state = '${_l10n().tr('syncFailedFor')}: ${failed.join('; ')}';
   }
 
   /// Ошибка синхронизации по ящику (последний проход) — для экрана аккаунта
@@ -559,6 +565,14 @@ class SyncService {
         checked += part.length;
       }
     } catch (e) {
+      // Фоновая проверка закончилась, пока шла сверка: службы приложения
+      // уже закрыты (журнал владельца 08.11.2026: 13 раз «Cannot use the
+      // Ref … after it has been disposed»). Не ошибка — продолжит следующая
+      // проверка, без часовой паузы.
+      if ('$e'.contains('after it has been disposed')) {
+        AppLogger.info('Коллеги из адресной книги: проверка закончилась раньше сверки — продолжим в следующий раз');
+        return;
+      }
       _dirPauseUntil[account.id] = DateTime.now().add(const Duration(hours: 1));
       AppLogger.warning('Коллеги из адресной книги: $e — пауза на час');
     } finally {
@@ -575,7 +589,7 @@ class SyncService {
   Future<void> syncAccount(AccountModel account) {
     _pimForce.add(account.id);
     _folderSyncForce.add(account.id);
-    return FinishInBackground.guard(() => _single(() => _syncAccountBody(account)));
+    return FinishInBackground.guard(() => _pass.run(() => _syncAccountBody(account), needs: PassScope.all));
   }
 
   /// Первая синхронизация только что добавленного ящика (1.9.x, журнал
@@ -585,7 +599,7 @@ class SyncService {
   Future<void> syncNewAccount(AccountModel account) {
     _pimForce.add(account.id);
     _folderSyncForce.add(account.id);
-    return FinishInBackground.guard(() => _single(() => _syncAccountBody(account), fresh: true));
+    return FinishInBackground.guard(() => _pass.run(() => _syncAccountBody(account), fresh: true));
   }
 
   /// Последний FolderSync ActiveSync (папки не чаще раза в час) и ящики,
@@ -713,6 +727,19 @@ class SyncService {
     return d.inMinutes > 0 ? '${d.inMinutes} мин ${d.inSeconds % 60} с' : '${d.inSeconds} с';
   }
 
+  /// Ждать аренду ящика, пока её держит другой изолят: каждые [step], не
+  /// дольше [max]. true — аренда получена.
+  @visibleForTesting
+  static Future<bool> waitForLease(Future<bool> Function() tryAcquire,
+      {Duration max = const Duration(seconds: 60), Duration step = const Duration(seconds: 3)}) async {
+    final until = DateTime.now().add(max);
+    while (DateTime.now().isBefore(until)) {
+      await Future<void>.delayed(step);
+      if (await tryAcquire()) return true;
+    }
+    return false;
+  }
+
   Future<T?> _exclusive<T>(String accountId, Future<T> Function() action) async {
     final previous = _accountLocks[accountId];
     final gate = Completer<void>();
@@ -734,6 +761,22 @@ class SyncService {
       try {
         leased = await db.tryAcquireSyncLease(accountId, _leaseOwner, _leaseTtl);
       } catch (_) {/* нет таблицы аренды — работаем без неё */}
+      // Приложение (не фоновая задача): ящик держит фоновая задача — ждём
+      // её до минуты и проверяем сами, а не пропускаем (08.11.2026, вопрос
+      // владельца «не мешают ли механизмы друг другу»). С сигналами сервера
+      // через Firebase фоновая задача часто идёт как раз тогда, когда
+      // приложение открывают: проверка при открытии пропускала ящик, а
+      // записанное задачей открытый список не видел — почта «замирала».
+      if (!leased && !AppLogger.isBackground) {
+        leased = await waitForLease(() async {
+          try {
+            return await db.tryAcquireSyncLease(accountId, _leaseOwner, _leaseTtl);
+          } catch (_) {
+            return true;
+          }
+        });
+        if (leased) AppLogger.info('Синхронизация $accountId: фоновая проверка закончила — продолжаю в приложении');
+      }
       if (!leased) {
         var where = '';
         try {
@@ -1002,8 +1045,9 @@ class SyncService {
           // неудачный вход, а их серверы считают (до блокировки).
           final exp = await _ref.read(secureStorageProvider).getTokenExpiry(account.id);
           if (exp == null || DateTime.now().isAfter(exp)) {
+            // Сервер входа недоступен — не ошибка для человека (правило
+            // 08.11.2026): ящик проверится, когда сервер вернётся.
             AppLogger.warning('Синхронизация ${account.email} пропущена: $e');
-            _ref.read(syncMessageProvider.notifier).state = '${account.email}: ${e.reason}';
             return;
           }
           AppLogger.warning('Токен ${account.email} не обновлён, текущий ещё действует: ${e.reason}');

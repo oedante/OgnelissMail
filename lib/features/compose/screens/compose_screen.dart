@@ -4,7 +4,7 @@ import '../../../core/platform/file_pick.dart' show ChosenFile, FilePick;
 import '../../../core/utils/app_date_format.dart';
 import '../../../core/utils/send_later_presets.dart';
 import '../../../widgets/common/file_drop_zone.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice, quietError, quietNotice;
 import '../../../widgets/common/peek_card.dart' show PeekAction, peekAnchorOf, showHoldMenu, showPeekCard;
 import '../../../widgets/common/quick_long_press.dart' show HoldPointer, QuickLongPress;
 import '../../contacts/person_names.dart' show personNamesProvider, normalizePersonName, bestPersonName;
@@ -108,11 +108,42 @@ import '../../../widgets/common/account_avatar.dart';
 
 
 class ComposeScreen extends ConsumerStatefulWidget {
+  /// Картинки, вставленные в текст (data: — мегабайты base64), без самих
+  /// данных: подписи «не тронуто» и текст письма их не учитывают, а
+  /// регулярные выражения шли бы по всем мегабайтам на каждую проверку
+  /// (план 08.11.2026 п. 3). Поиск конца — indexOf той же кавычки.
+  @visibleForTesting
+  static String withoutDataUris(String html) {
+    var i = html.indexOf('data:');
+    if (i < 0) return html;
+    final out = StringBuffer();
+    var from = 0;
+    while (i >= 0) {
+      final q = i > 0 ? html[i - 1] : '';
+      final end = q == '"' || q == "'" ? html.indexOf(q, i) : -1;
+      if (end < 0) {
+        i = html.indexOf('data:', i + 5);
+        continue;
+      }
+      out
+        ..write(html.substring(from, i))
+        ..write('data:');
+      from = end;
+      i = html.indexOf('data:', end);
+    }
+    out.write(html.substring(from));
+    return out.toString();
+  }
+
   final String? replyToId;
   final String? forwardFromId;
   final String? draftId;
   final String? accountId;
   final bool replyAll;
+
+  /// Ответ на фрагмент (2.0.0, план 08.11.2026, «из мессенджеров»): в ответ
+  /// цитируется только выделенный в письме текст, а не всё письмо.
+  final String? quoteFragment;
   final String? sharedBody;
   /// Быстрый ответ: текст между приветствием и подписью (вместо пустой
   /// средней строки), курсор — после него.
@@ -134,6 +165,7 @@ class ComposeScreen extends ConsumerStatefulWidget {
     super.key,
     this.replyToId,
     this.forwardFromId,
+    this.quoteFragment,
     this.draftId,
     this.accountId,
     this.replyAll = false,
@@ -540,7 +572,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   bool get _isPristine =>
       _pristineSig != null && _sig(_useHtmlEditor ? _lastHtml : _plainController.text) == _pristineSig;
   static String _plainText(String body) =>
-      _htmlToPlain(body).replaceAll(RegExp(r'\s+'), ' ').trim();
+      _htmlToPlain(ComposeScreen.withoutDataUris(body)).replaceAll(RegExp(r'\s+'), ' ').trim();
+
+
 
   /// Панель форматирования: на телефоне скрыта (стиль — в настройках
   /// аккаунта), на планшете и компьютере видна. null — ещё не определено.
@@ -836,7 +870,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   void _markDraftChanged() {
     if (_sentOrDiscarded) return;
-    _autosave?.updateDraft(_snapshot());
+    // Снимок — когда нужен (таймер, «Сохранить», выход), а не на каждое
+    // нажатие клавиши (план 08.11.2026 п. 3).
+    _autosave?.markChanged(() => _snapshot());
   }
 
   /// Черновик записан (таймер или кнопка «Сохранить»): подпись «Сохранено ·
@@ -1139,9 +1175,13 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       // Цитата — только после очистки по белому списку (письма ActiveSync и
       // IMAP хранятся без очистки). Стили оригинала сохраняются: без них
       // вёрстка Outlook (таблицы, отступы) у получателя разваливается.
-      final quotedBody = row.bodyHtml != null
-          ? await MailBodyProcessor.heavy(row.bodyHtml!, HtmlSanitizer.sanitizeKeepingStyles)
-          : (row.bodyPlain != null ? '<pre>${_esc(row.bodyPlain!)}</pre>' : '');
+      final fragment = widget.forwardFromId == null ? widget.quoteFragment?.trim() : null;
+      final quotedBody = fragment != null && fragment.isNotEmpty
+          // Только выделенное: абзацы и переносы строк — как в письме.
+          ? ReplyBuilder.fragmentBody(fragment)
+          : row.bodyHtml != null
+              ? await MailBodyProcessor.heavy(row.bodyHtml!, HtmlSanitizer.sanitizeKeepingStyles)
+              : (row.bodyPlain != null ? '<pre>${_esc(row.bodyPlain!)}</pre>' : '');
       if (!mounted) return;
       final quote = ReplyBuilder.quote(header, quotedBody);
       _quoteHeader = header;
@@ -2088,7 +2128,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                   unawaited(_translateOwn());
                 case 'dsn':
                   setState(() => _deliveryReport = !_deliveryReport);
-                  if (_deliveryReport) showInlineNotice(l10n.tr('dsnRequestHint'));
+                  if (_deliveryReport) quietNotice(l10n.tr('dsnRequestHint'));
               }
             },
             itemBuilder: (_) => [
@@ -2792,7 +2832,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
           '${(bytes.length / 1048576).toStringAsFixed(1)} МБ');
       final r = await ImageShrink.shrink(f.name, bytes, scale);
       if (identical(r.bytes, bytes)) {
-        showInlineError(l10n.tr('imageCompressNoGain'));
+        quietError(l10n.tr('imageCompressNoGain'));
         return;
       }
       final path = await _writeTemp(r.name, r.bytes);
@@ -2801,7 +2841,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
           '${(bytes.length / 1048576).toStringAsFixed(1)} → ${(r.bytes.length / 1048576).toStringAsFixed(1)} МБ');
     } catch (e) {
       AppLogger.warning('Фото не уменьшено: $e');
-      showInlineError(l10n.tr('imageEditFailed'));
+      quietError(l10n.tr('imageEditFailed'));
     } finally {
       if (mounted) setState(() => _editingFiles.remove(f));
     }
@@ -2827,7 +2867,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       _replaceFile(f, ChosenFile(name: r.name, size: r.bytes.length, path: path));
     } catch (e) {
       AppLogger.warning('Правка фото не сохранена: $e');
-      showInlineError(l10n.tr('imageEditFailed'));
+      quietError(l10n.tr('imageEditFailed'));
     } finally {
       if (mounted) setState(() => _editingFiles.remove(f));
     }
@@ -3536,7 +3576,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     _markDraftChanged();
     final snap = _snapshot();
     if (snap.isEmpty) {
-      showInlineError(l10n.tr('draftNothingToSave'));
+      quietError(l10n.tr('draftNothingToSave'));
       return;
     }
     final ok = await (_autosave?.forceSave() ?? Future.value(false));
@@ -3937,7 +3977,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         .where((s) => acc == null || s.accountId == null || s.accountId == acc.id)
         .toList();
     if (sigs.isEmpty) {
-      showInlineNotice(l10n.tr('noSignaturesCompose'));
+      quietNotice(l10n.tr('noSignaturesCompose'));
       return;
     }
     // Карточкой (1.8.8), как меню «⋮».
@@ -4110,11 +4150,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       final members = await ref.read(mailEngineServiceProvider).expandGroup(acc, group.email);
       if (!mounted) return;
       if (members == null) {
-        showInlineError(l10n.tr('groupExpandUnavailable'));
+        quietError(l10n.tr('groupExpandUnavailable'));
         return;
       }
       if (members.isEmpty) {
-        showInlineNotice(l10n.tr('groupExpandEmpty'));
+        quietNotice(l10n.tr('groupExpandEmpty'));
         return;
       }
       var added = 0;
@@ -4138,7 +4178,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       if (recipients == _toRecipients) _updateGreeting();
       showInlineNotice(l10n.tr('groupExpanded').replaceAll('{n}', '$added'));
     } catch (e) {
-      if (mounted) showInlineError('${l10n.error}: $e');
+      if (mounted) quietError('${l10n.error}: $e');
     }
   }
 
@@ -5146,7 +5186,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         if (sent) {
           AppLogger.info(l10n.tr('emailSent'));
         } else {
-          showInlineNotice(remote.isNotEmpty ? l10n.tr('attPendingQueued') : l10n.tr('queuedOutbox'));
+          quietNotice(remote.isNotEmpty ? l10n.tr('attPendingQueued') : l10n.tr('queuedOutbox'));
         }
         Navigator.of(context).pop();
       }
@@ -5224,7 +5264,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     final l10n = AppLocalizations.of(context);
     final templates = [for (final t in ref.read(templatesProvider)) t.resolve(l10n.tr)];
     if (templates.isEmpty) {
-      showInlineNotice(l10n.tr('noTemplates'));
+      quietNotice(l10n.tr('noTemplates'));
       return;
     }
     // Карточкой (1.8.8), как меню «⋮».
@@ -5256,7 +5296,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       await _addChosenFiles(await FilePick.files());
     } catch (e) {
       AppLogger.warning('Вложения: выбор файлов не удался — $e');
-      showInlineError('${l10n.tr('error')}: $e');
+      quietError('${l10n.tr('error')}: $e');
     }
   }
 

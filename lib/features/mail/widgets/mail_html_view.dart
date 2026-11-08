@@ -58,6 +58,7 @@ import '../../../core/utils/date_links.dart';
 import '../../../core/utils/linkify.dart';
 import '../../../core/utils/mail_clip.dart';
 import '../../../core/utils/mail_color_scheme.dart';
+import '../../../core/utils/mail_dark_canvas.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/image_actions.dart';
@@ -83,7 +84,8 @@ class MailHtmlDocument {
   final int? declaredWidth;
 
   /// У письма своё тёмное оформление (@media (prefers-color-scheme: dark)
-  /// в стилях, 1.9.x): в тёмной теме оно показывается вместо инверсии.
+  /// в стилях, 1.9.x) или оно и так тёмное ([MailDarkCanvas]): в тёмной
+  /// теме оно показывается вместо инверсии.
   /// Стили письма тогда — в двух вариантах ([_csLight] / [_csDark]), один из
   /// них выключен (media="not all"); [MailHtmlView.composeHtml] включает нужный.
   final bool darkDesign;
@@ -256,6 +258,11 @@ class MailHtmlDocument {
   /// собирает документ экран письма; ответ, пересылка, печать и «Открыть в
   /// браузере» берут письмо целиком. [dates] — даты в тексте письма
   /// нажимаемые (ссылки `ogdate:`, DateLinks; 1.9.x), от даты письма.
+  /// Картинки http:// — по https:// (только Android: там http запрещён
+  /// системой; на других платформах http работает, и переводить не нужно).
+  @visibleForTesting
+  static bool upgradeHttpImages = !kIsWeb && Platform.isAndroid;
+
   static MailHtmlDocument build(
     String bodyHtml, {
     required bool allowRemoteImages,
@@ -321,7 +328,16 @@ class MailHtmlDocument {
       if (style != st) img.attributes['style'] = style;
     }
 
-    final darkDesign = _schemeStyles(body);
+    // Фоновые картинки из правил <style> (класс, id) — пометка, чтобы
+    // инверсия тёмной темы вернула их к исходным цветам, как картинки и фоны
+    // в style элемента (план 08.11.2026, п. 5: «картинки-фоны не показывать
+    // негативом»).
+    _markStyleBackgrounds(body);
+
+    // Своё тёмное оформление (@media prefers-color-scheme) или письмо и так
+    // тёмное (рассылка на чёрном фоне, план 08.11.2026 п. 5): в тёмной теме
+    // — как есть, без инверсии, иначе тёмное письмо становилось светлым.
+    final darkDesign = _schemeStyles(body) || MailDarkCanvas.isDark(doc, body);
 
     // Высота в долях окна (height/min-height: 100vh — «экран» рассылки,
     // 1.8.12, письмо Kaspersky 30.10.2026): окно письма растягивается под
@@ -355,6 +371,16 @@ class MailHtmlDocument {
     // нажатие окно отдаёт приложению, как и остальные ссылки.
     if (Linkify.mayContain(bodyHtml) || dates != null) _linkifyText(body, dates);
 
+    // Длинное «слово» без пробелов в ячейке таблицы (08.11.2026, письмо
+    // владельца): Outlook обрамляет предупреждение «Это сообщение от
+    // внешнего отправителя!» строками из 83 знаков «=». Ячейка раздвигалась
+    // под такую строку, таблица выходила шире экрана, и после «Показать
+    // цитируемую переписку» письмо уходило за правый край. Объявленных
+    // размеров у такого письма нет — на Android его нечем было вписать.
+    // Теперь разделитель — одной строкой по ширине экрана, другое длинное
+    // слово в ячейке переносится, только если не помещается.
+    _wrapLongTokens(body);
+
     final links = <String, String>{};
     for (final a in body.querySelectorAll('a[href]')) {
       final href = a.attributes['href']!.trim();
@@ -375,9 +401,14 @@ class MailHtmlDocument {
     // cid: — встроенные картинки, которые окно получает по запросу
     // (MailHtmlView.inlineRaw); без обработчика такие адреса не загружаются.
     final img = allowRemoteImages ? 'data: cid: https: http:' : 'data: cid:';
+    // Картинки по http:// (план 08.11.2026 п. 5): Android запрещает
+    // незашифрованные загрузки, и такие картинки не показывались вовсе
+    // (журнал: taxcom.ru). Движок окна запрашивает их по https:// — у
+    // большинства почтовых сервисов картинки есть и там.
+    final upgrade = allowRemoteImages && upgradeHttpImages ? '; upgrade-insecure-requests' : '';
     final csp = "default-src 'none'; img-src $img; style-src 'unsafe-inline'; "
         "font-src 'none'; media-src 'none'; frame-src 'none'; child-src 'none'; "
-        "object-src 'none'; script-src 'none'; form-action 'none'; base-uri 'none'";
+        "object-src 'none'; script-src 'none'; form-action 'none'; base-uri 'none'$upgrade";
 
     final declared = _declaredWidth(body);
     final out = '<!DOCTYPE html><html><head><meta charset="utf-8">'
@@ -570,6 +601,105 @@ class MailHtmlDocument {
     return MailHtmlDocument(out, linkTexts, declaredWidth: declaredWidth, darkDesign: darkDesign, clipped: clipped);
   }
 
+  static final _cssRule = RegExp(r'([^{}]+)\{([^{}]*)\}');
+  static final _bgImage = RegExp(r'background(?:-image)?\s*:[^;]*url\(', caseSensitive: false);
+
+  /// Элементы, которым правило из <style> задаёт фоновую картинку, —
+  /// `data-og-bgimg`. Только простые селекторы (без :hover и т. п.), не
+  /// больше 40; селектор, который разборщик не понял, пропускается.
+  static void _markStyleBackgrounds(dom.Element body) {
+    var left = 40;
+    for (final st in body.querySelectorAll('style')) {
+      final css = st.text;
+      if (!css.contains('url(')) continue;
+      for (final m in _cssRule.allMatches(css)) {
+        if (!_bgImage.hasMatch(m.group(2)!)) continue;
+        for (final raw in m.group(1)!.split(',')) {
+          final sel = raw.trim();
+          if (sel.isEmpty || sel.startsWith('@') || sel.contains(':') || left <= 0) continue;
+          left--;
+          try {
+            for (final e in body.querySelectorAll(sel)) {
+              e.attributes['data-og-bgimg'] = '';
+            }
+          } catch (_) {/* селектор не понят — пропускаем */}
+        }
+      }
+    }
+  }
+
+  /// Длинное слово: не меньше 24 знаков без мест переноса. Неразрывный
+  /// пробел (&nbsp;) — тоже не место переноса: строка через &nbsp; так же
+  /// раздвигает ячейку.
+  static final _longToken = RegExp(r'[^ \t\n\r\f]{24,}');
+
+  /// Строка-разделитель: одни знаки, без букв и цифр («=====», «-----»).
+  static final _ruleToken = RegExp(r'^[^\p{L}\p{N}\s]+$', unicode: true);
+
+  static const _blockTags = {
+    'p', 'div', 'td', 'th', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'center', 'body', 'pre',
+  };
+
+  /// Длинные слова (08.11.2026):
+  /// - строка-разделитель, занимающая весь абзац, → `<span class="og-rule">`:
+  ///   одна строка, обрезанная по ширине, как в Outlook (где угодно);
+  /// - другое длинное слово в ячейке таблицы → `<span class="og-wrap">`:
+  ///   переносится в любом месте, но только если не помещается.
+  /// Вне таблиц длинное слово и так переносится (overflow-wrap окна
+  /// письма); ссылки — своим правилом (og-brk).
+  static void _wrapLongTokens(dom.Node node, {bool inCell = false, int depth = 0}) {
+    if (depth > 64) return;
+    for (final n in node.nodes.toList()) {
+      if (n is dom.Element) {
+        final tag = n.localName ?? '';
+        if (tag == 'a' || tag == 'style' || tag == 'script' || tag == 'textarea' || tag == 'title' || tag == 'svg') {
+          continue;
+        }
+        if (n.classes.contains('og-wrap') || n.classes.contains('og-rule')) continue;
+        _wrapLongTokens(n, inCell: inCell || tag == 'td' || tag == 'th', depth: depth + 1);
+      } else if (n is dom.Text) {
+        final t = n.text;
+        if (t.length < 24) continue;
+        final spans = <(int, int, String)>[];
+        for (final m in _longToken.allMatches(t)) {
+          final word = m[0]!;
+          final cls = _ruleToken.hasMatch(word) && _wholeBlock(n, word)
+              ? 'og-rule'
+              : inCell
+                  ? 'og-wrap'
+                  : null;
+          if (cls != null) spans.add((m.start, m.end, cls));
+        }
+        if (spans.isEmpty) continue;
+        final parent = n.parentNode!;
+        var at = parent.nodes.indexOf(n);
+        n.remove();
+        var pos = 0;
+        void put(dom.Node x) => parent.nodes.insert(at++, x);
+        for (final (start, end, cls) in spans) {
+          if (start > pos) put(dom.Text(t.substring(pos, start)));
+          put(dom.Element.tag('span')
+            ..classes.add(cls)
+            ..append(dom.Text(t.substring(start, end))));
+          pos = end;
+        }
+        if (pos < t.length) put(dom.Text(t.substring(pos)));
+      }
+    }
+  }
+
+  /// [word] — весь текст ближайшего блока (абзаца, ячейки), где лежит [n]:
+  /// разделитель отдельной строкой, а не посреди фразы.
+  static bool _wholeBlock(dom.Text n, String word) {
+    var e = n.parent;
+    var guard = 0;
+    while (e != null && !_blockTags.contains(e.localName) && guard++ < 16) {
+      e = e.parent;
+    }
+    if (e == null || e.localName == 'pre') return false;
+    return e.text.replaceAll('\u00a0', ' ').trim() == word;
+  }
+
   /// Текст вне ссылок, стилей и полей ввода: найденные адреса и даты →
   /// `<a href>`.
   static void _linkifyText(dom.Node node, DateContext? dates, {int depth = 0}) {
@@ -677,6 +807,13 @@ pre,code{white-space:pre-wrap;}
 /* Длинный адрес текстом ссылки — переносится где угодно и не раздвигает
    таблицу (MailHtmlDocument.build, og-brk). */
 .og-brk{overflow-wrap:anywhere !important;word-break:break-all !important;}
+/* Длинное слово в ячейке таблицы — переносится, только если не
+   помещается, и не раздвигает таблицу (MailHtmlDocument._wrapLongTokens). word-break:break-word — для
+   iOS 15.0–15.3, где overflow-wrap:anywhere ещё нет. */
+.og-wrap{word-break:break-word;overflow-wrap:anywhere !important;}
+/* Строка-разделитель («=====» на всю строку) — одной строкой, обрезанной по
+   ширине: ширина 0 не раздвигает таблицу, min-width — во всю строку. */
+.og-rule{display:block;width:0;min-width:100%;overflow:hidden;white-space:nowrap;}
 a{color:#1D4F91;}
 /* Дата в тексте (1.9.x, DateLinks): цвет текста, подчёркнута пунктиром —
    нажимается, но не спорит с оформлением письма. */
@@ -1116,7 +1253,7 @@ class MailHtmlView extends StatefulWidget {
         ..write('html{filter:invert(1) hue-rotate(180deg);background:${_hex(inv)} !important;}')
         ..write('body{background:transparent !important;}')
         ..write('html,body{color-scheme:light !important;}')
-        ..write('img,video,picture,svg,canvas,[style*="background-image"],[background]'
+        ..write('img,video,picture,svg,canvas,[style*="background-image"],[background],[data-og-bgimg]'
             '{filter:invert(1) hue-rotate(180deg);}')
         // Фото людей в плашках цитаты (withPeoplePhotos) — тоже обратно.
         ..write(':root{--og-ph:invert(1) hue-rotate(180deg);}');

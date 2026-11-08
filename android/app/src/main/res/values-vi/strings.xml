@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/vi.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Chưa đọc</string>
+    <string name="widget_count_desc">Số email chưa đọc; chạm để mở hộp thư đến</string>
+    <string name="widget_tasks_label">Công việc</string>
+    <string name="widget_tasks_desc">Công việc đang mở có dấu tích và nút công việc mới</string>
+    <string name="widget_task_new">Tác vụ mới</string>
     <string name="device_admin_label">Ogneliss Mail: khóa màn hình</string>
     <string name="device_admin_description">Áp dụng thời gian chờ khóa màn hình theo yêu cầu của máy chủ Exchange của tổ chức bạn. Ogneliss Mail không thể xóa dữ liệu thiết bị hay đổi mật khẩu của bạn.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>

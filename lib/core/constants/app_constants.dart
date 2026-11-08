@@ -98,6 +98,10 @@ class AppConstants {
   // Если задан baseUrl — обмен/refresh токенов идёт через корпоративный прокси
   // (секреты на сервере, пользователь не логинится заново). Пусто = выключено.
   static const oauthProxyBaseUrl = String.fromEnvironment('OAUTH_PROXY_URL', defaultValue: 'https://ogneliss.ru');
+
+  /// Своя сборка с самоподписанным сертификатом OAuth-прокси: принимать его
+  /// сертификат без проверки. По умолчанию — нет (у ogneliss.ru настоящий).
+  static const oauthProxySelfSigned = bool.fromEnvironment('OAUTH_PROXY_SELF_SIGNED');
   static const oauthProxyApiKey = String.fromEnvironment('OAUTH_PROXY_KEY', defaultValue: '');
   static const oauthProxyRedirect = 'com.ogneliss.mail://oauth';
 

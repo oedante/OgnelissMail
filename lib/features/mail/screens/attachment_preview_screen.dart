@@ -57,6 +57,7 @@ import '../../../core/logging/app_logger.dart';
 import '../../../widgets/ui/banner_button.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/pane_navigator.dart';
+import '../../../widgets/common/photo_viewer.dart' show limitDecode;
 import '../../../services/mail/pkpass_parser.dart';
 import '../../../services/mail/eml_reader.dart';
 import '../../../services/mail/msg_reader.dart';
@@ -262,6 +263,11 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
 
   static const _maxTextBytes = 512 * 1024;
 
+  /// Поворот при просмотре (07.11.2026): картинки — четверти оборота по
+  /// вкладкам, PDF — страницы через [PdfViewController]. Файл не меняется.
+  final Map<int, int> _imageTurns = {};
+  final Map<int, PdfViewController> _pdf = {};
+
   /// Есть ли вкладка письма и на сколько из-за неё смещены вложения.
   bool get _hasEmailTab => widget.emailHtml != null;
   int get _offset => _hasEmailTab ? 1 : 0;
@@ -300,7 +306,50 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   void dispose() {
     _tabs.dispose();
     _pages.dispose();
+    for (final c in _pdf.values) {
+      c.dispose();
+    }
     super.dispose();
+  }
+
+  /// Кнопка поворота для картинки и PDF (на Android, где PDF — свой).
+  Widget? _rotateAction(int i, AppLocalizations l10n) {
+    if (_errors.containsKey(i)) return null;
+    switch (_kindOf(i)) {
+      case _Kind.image:
+        return IconButton(
+          icon: const Icon(AppIcons.rotate_90_degrees_cw),
+          tooltip: l10n.tr('imageRotate'),
+          onPressed: () => setState(() => _imageTurns[i] = ((_imageTurns[i] ?? 0) + 1) % 4),
+        );
+      case _Kind.pdf:
+        if (!NativePdf.supported) return null;
+        final c = _pdf.putIfAbsent(i, PdfViewController.new);
+        return ListenableBuilder(
+          listenable: c,
+          builder: (context, _) {
+            if (c.pageCount == 0) return const SizedBox.shrink();
+            if (c.pageCount == 1) {
+              return IconButton(
+                icon: const Icon(AppIcons.rotate_90_degrees_cw),
+                tooltip: l10n.tr('pdfRotatePage'),
+                onPressed: c.rotatePage,
+              );
+            }
+            return PopupMenuButton<bool>(
+              icon: const Icon(AppIcons.rotate_90_degrees_cw),
+              tooltip: l10n.tr('imageRotate'),
+              onSelected: (all) => all ? c.rotateAll() : c.rotatePage(),
+              itemBuilder: (_) => [
+                PopupMenuItem(value: false, child: Text(l10n.tr('pdfRotatePage'))),
+                PopupMenuItem(value: true, child: Text(l10n.tr('pdfRotateAll'))),
+              ],
+            );
+          },
+        );
+      default:
+        return null;
+    }
   }
 
   _Kind _kindOf(int i) {
@@ -555,6 +604,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         actions: [
           // На вкладке письма файловых действий нет.
           if (current != null) ...[
+            ?_rotateAction(attIdx!, l10n),
             IconButton(
               icon: const Icon(AppIcons.save_alt),
               tooltip: l10n.tr('save'),
@@ -675,10 +725,16 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         return InteractiveViewer(
           maxScale: 6,
           child: Center(
-            child: Image.file(
-              File(widget.items[i].filePath),
-              errorBuilder: (_, e, __) =>
-                  _fallback(i, ru, l10n.tr('fileDamaged')),
+            child: RotatedBox(
+              quarterTurns: _imageTurns[i] ?? 0,
+              // Не больше 4096 точек по длинной стороне (limitDecode,
+              // 08.11.2026): фото с камеры 50–108 Мп иначе занимало сотни
+              // мегабайт видеопамяти.
+              child: Image(
+                image: limitDecode(FileImage(File(widget.items[i].filePath))),
+                errorBuilder: (_, e, __) =>
+                    _fallback(i, ru, l10n.tr('fileDamaged')),
+              ),
             ),
           ),
         );
@@ -691,6 +747,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         if (!NativePdf.supported) return _fallback(i, ru, l10n.tr('previewUnsupported'));
         return PdfView(
           path: widget.items[i].filePath,
+          controller: _pdf.putIfAbsent(i, PdfViewController.new),
           onUnsupported: (protected, e) => setState(() {
             _errors[i] = protected ? l10n.tr('pdfProtected') : l10n.tr('fileDamaged');
             _plainErrors.add(i);

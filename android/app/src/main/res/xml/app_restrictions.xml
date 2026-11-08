@@ -108,4 +108,10 @@
         android:title="@string/mdm_hide_notification_content_title"
         android:description="@string/mdm_hide_notification_content_desc"
         android:defaultValue="false" />
+    <restriction
+        android:key="block_weather"
+        android:restrictionType="bool"
+        android:title="@string/mdm_block_weather_title"
+        android:description="@string/mdm_block_weather_desc"
+        android:defaultValue="false" />
 </restrictions>

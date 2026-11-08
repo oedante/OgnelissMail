@@ -2,7 +2,8 @@
 <!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
 <!-- Строка встречи или задачи: колонка времени 52 dp · метка цвета ·
      название и подпись (место). Встреча на весь день — значок вместо
-     времени (ev_allday, 1.10.2): надпись «Весь день» в колонку не помещалась. -->
+     времени (ev_allday, 1.10.2): надпись «Весь день» в колонку не помещалась.
+     У задачи в «Моём дне» справа — галочка «Выполнено» (ev_done). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ev_row"
     android:layout_width="match_parent"
@@ -50,4 +51,14 @@
         <TextView android:id="@+id/ev_title" style="@style/WidgetRowTitleLt" />
         <TextView android:id="@+id/ev_sub" style="@style/WidgetRowSubLt" android:visibility="gone" />
     </LinearLayout>
+    <!-- Галочка «Выполнено» у задачи в «Моём дне» (08.11.2026, план п. 8.2). -->
+    <ImageView
+        android:id="@+id/ev_done"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="4dp"
+        android:padding="9dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/widget_ic_done_lt"
+        android:visibility="gone" />
 </LinearLayout>

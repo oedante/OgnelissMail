@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/hu.xml — не править вручную. */
+"tasks_label" = "Feladatok";
+"tasks_desc" = "Nyitott feladatok pipával és új feladat gombbal";
+"mailpick_label" = "Levelek: választható";
+"mailpick_desc" = "A választott fiók vagy szűrő olvasatlan levelei";
+"mailpick_param" = "Megjelenítés";
 "open_app" = "A widget kitöltéséhez nyisd meg az Ogneliss Mailt";
 "myday_label" = "Saját napom";
 "myday_desc" = "A mai megbeszélések és feladatok, olvasatlan és követett levelek";

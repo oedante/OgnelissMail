@@ -39,7 +39,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/email_actions_service.dart';
 import '../../../services/mail/special_folders.dart';
 import '../../../widgets/common/hero_email_transition.dart';
-import '../../../widgets/common/inline_notice.dart' show showInlineError;
+import '../../../widgets/common/inline_notice.dart' show showInlineError, quietError;
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/empty_state.dart';
 import '../../settings/providers/account_groups_provider.dart' show activeGroupAccountIdsProvider;
@@ -171,7 +171,7 @@ class _TriageScreenState extends ConsumerState<TriageScreen> {
       }
       if (mounted) _next(act);
     } catch (e) {
-      showInlineError('${l10n.tr('error')}: $e');
+      quietError('${l10n.tr('error')}: $e');
     } finally {
       if (mounted) setState(() => _busy = false);
     }

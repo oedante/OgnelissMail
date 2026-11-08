@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/he.xml — не править вручную. */
+"tasks_label" = "משימות";
+"tasks_desc" = "משימות פתוחות עם סימון וכפתור למשימה חדשה";
+"mailpick_label" = "דואר: לבחירה";
+"mailpick_desc" = "הודעות שלא נקראו מתיבת הדואר או מהמסנן שתבחרו";
+"mailpick_param" = "הצג";
 "open_app" = "פתחו את Ogneliss Mail כדי למלא את הווידג'ט";
 "myday_label" = "היום שלי";
 "myday_desc" = "הפגישות והמשימות של היום, הודעות שלא נקראו והודעות במעקב";

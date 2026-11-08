@@ -1159,6 +1159,7 @@ class MailNativeBody extends StatefulWidget {
     this.images = const {},
     this.textScale = 1,
     this.onShown,
+    this.onQuoteReply,
   });
 
   final NativeMail mail;
@@ -1168,6 +1169,9 @@ class MailNativeBody extends StatefulWidget {
   final Map<String, String> images;
   final double textScale;
   final VoidCallback? onShown;
+
+  /// «Ответить с цитатой» в меню выделенного текста (2.0.0); null — пункта нет.
+  final void Function(String text)? onQuoteReply;
 
   @override
   State<MailNativeBody> createState() => _MailNativeBodyState();
@@ -1364,6 +1368,19 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       return _contrast(c, page) < 3 ? (s.href != null && !date ? link : null) : c;
     }
 
+    // Картинки в тексте декодируются не больше ширины экрана в точках
+    // (08.11.2026, чёрный экран на Huawei — падение графики при передаче
+    // картинки в видеопамять): фото с камеры 4000×3000 в письме занимало
+    // ~64 МБ видеопамяти, в беседе с несколькими фото — сотни. На весь экран
+    // по нажатию — по-прежнему крупно (showImageViewer, до 4096 точек).
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    final screenPx = (MediaQuery.sizeOf(context).width * dpr).ceil();
+    int cacheW(double? w) {
+      if (w == null || w <= 0) return screenPx;
+      final px = (w * dpr).ceil();
+      return px < screenPx ? px : screenPx;
+    }
+
     // Нажатие на картинку (1.8.12): в ссылке — ссылка, иначе — картинка на
     // весь экран с увеличением («иногда они мелкие», замечание 30.10.2026).
     // Копировать, сохранить, поделиться — из просмотра (данные картинки).
@@ -1398,6 +1415,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
                 src,
                 width: w,
                 height: w == null ? h : null,
+                cacheWidth: cacheW(w),
                 fit: BoxFit.contain,
                 gaplessPlayback: true,
                 // Пока грузится — место по размерам из письма, чтобы текст
@@ -1418,7 +1436,11 @@ class _MailNativeBodyState extends State<MailNativeBody> {
           child: tappable(s, MemoryImage(b), ConstrainedBox(
             constraints: BoxConstraints(maxWidth: w ?? double.infinity),
             child: Image.memory(b,
-                width: w, height: w == null ? s.imageHeight : null, fit: BoxFit.contain, gaplessPlayback: true),
+                width: w,
+                height: w == null ? s.imageHeight : null,
+                cacheWidth: cacheW(w),
+                fit: BoxFit.contain,
+                gaplessPlayback: true),
           )),
         );
       }
@@ -1560,7 +1582,53 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       padding: const EdgeInsets.only(top: 4, bottom: 12),
       // Политика организации (MDM, 1.10.5): без выделения — нечего и
       // копировать.
-      child: ManagedPolicy.current.blockCopy ? column : SelectionArea(child: column),
+      child: ManagedPolicy.current.blockCopy ? column : quoteReplySelectionArea(column, widget.onQuoteReply),
+    );
+  }
+}
+
+/// Выделение текста с пунктом «Ответить с цитатой» (2.0.0, план 08.11.2026:
+/// ответ на фрагмент, как в мессенджере). Без [onQuoteReply] — обычное
+/// выделение.
+Widget quoteReplySelectionArea(Widget child, void Function(String text)? onQuoteReply) {
+  if (onQuoteReply == null) return SelectionArea(child: child);
+  return _QuoteReplySelection(onQuoteReply: onQuoteReply, child: child);
+}
+
+class _QuoteReplySelection extends StatefulWidget {
+  final Widget child;
+  final void Function(String text) onQuoteReply;
+  const _QuoteReplySelection({required this.child, required this.onQuoteReply});
+
+  @override
+  State<_QuoteReplySelection> createState() => _QuoteReplySelectionState();
+}
+
+class _QuoteReplySelectionState extends State<_QuoteReplySelection> {
+  String _selected = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return SelectionArea(
+      onSelectionChanged: (content) => _selected = content?.plainText ?? '',
+      contextMenuBuilder: (context, state) {
+        final items = [
+          ...state.contextMenuButtonItems,
+          if (_selected.trim().isNotEmpty)
+            ContextMenuButtonItem(
+              label: l10n.tr('replyWithQuote'),
+              onPressed: () {
+                final text = _selected;
+                ContextMenuController.removeAny();
+                state.clearSelection();
+                widget.onQuoteReply(text);
+              },
+            ),
+        ];
+        return AdaptiveTextSelectionToolbar.buttonItems(anchors: state.contextMenuAnchors, buttonItems: items);
+      },
+      child: widget.child,
     );
   }
 }

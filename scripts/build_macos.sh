@@ -5,10 +5,18 @@
 #                                              (песочница, сеть, связка ключей, схема входа OAuth)
 #   scripts/build_macos.sh --run               запуск на этом Mac (debug)
 #   scripts/build_macos.sh                     сборка release → build/macos/Build/Products/Release/*.app
+#   scripts/build_macos.sh --archive           архив для Mac App Store (Intel + Apple Silicon)
+#                                              и открыть его в Xcode (Organizer → Distribute App)
+#   scripts/build_macos.sh --upload            архив и сразу выгрузка в App Store Connect (TestFlight)
 #
-# Выгрузка в Mac App Store — через Xcode: macos/Runner.xcworkspace →
-# Product → Archive → Distribute App → App Store Connect. Подробно —
-# docs/guides/BUILD_ALL_PLATFORMS.md, раздел «Mac».
+# Сборка универсальная: одно приложение для Mac с Intel и с Apple Silicon (M1
+# и новее); скрипт проверяет это (lipo) после архива.
+# Команда разработчика — та же, что у iPhone (~/.ogneliss/ios_signing.xcconfig,
+# scripts/build_ios.sh --team) или TEAM_ID=ABCDE12345.
+# Ключ App Store Connect API (по желанию, иначе — учётная запись Xcode):
+#   ASC_KEY_ID, ASC_ISSUER_ID; файл ~/.appstoreconnect/private_keys/AuthKey_<ASC_KEY_ID>.p8
+# KEYCHAIN_PASSWORD — пароль входа на Mac, если сборка идёт по SSH.
+# Подробно — docs/guides/TESTFLIGHT.md и BUILD_ALL_PLATFORMS.md, раздел «Mac».
 #
 # Папка macos/ в архив проекта не входит: она создаётся на Mac этим скриптом
 # и дальше живёт у вас (подпись и настройки Xcode не затираются новым архивом).
@@ -21,6 +29,9 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --setup) MODE=setup ;;
     --run) MODE=run ;;
+    --archive) MODE=archive ;;
+    --upload) MODE=upload ;;
+    --team) TEAM_ID="$2"; shift ;;
     *) echo "Неизвестный параметр: $1"; exit 2 ;;
   esac
   shift
@@ -109,8 +120,96 @@ else
   echo "⚠ config/dart_defines.json нет — вход через Google/Яндекс работать не будет (Exchange и IMAP — да)."
 fi
 
+# Архив для Mac App Store (TestFlight) — 08.11.2026, просьба владельца
+# «как отправить в TestFlight сборку для macOS (Intel и M)».
+ARCHIVE=build/macos/archive/Runner.xcarchive
+AUTH=()
+if [[ -n "${ASC_KEY_ID:-}" && -n "${ASC_ISSUER_ID:-}" ]]; then
+  KEYFILE="$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+  [[ -f "$KEYFILE" ]] || { echo "Нет файла ключа $KEYFILE"; exit 1; }
+  AUTH=(-authenticationKeyPath "$KEYFILE" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
+fi
+
+team_id() {
+  if [[ -n "${TEAM_ID:-}" ]]; then echo "$TEAM_ID"; return; fi
+  sed -n 's/^DEVELOPMENT_TEAM *= *//p' "$HOME/.ogneliss/ios_signing.xcconfig" 2>/dev/null | head -1 || true
+}
+
+archive_mac() {
+  prepare
+  if [[ -n "${KEYCHAIN_PASSWORD:-}" ]]; then
+    security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$HOME/Library/Keychains/login.keychain-db"
+  fi
+  # Rust (ядро перетаскивания вложений) — для обеих архитектур Mac.
+  if command -v rustup >/dev/null 2>&1; then
+    rustup target add aarch64-apple-darwin x86_64-apple-darwin >/dev/null || true
+  fi
+  # Версия, номер сборки и dart-define попадают в настройки Xcode (Flutter/ephemeral).
+  flutter build macos --release ${DEFINES[@]+"${DEFINES[@]}"}
+  local team
+  team=$(team_id)
+  [[ -n "$team" ]] || echo "⚠ Команда не задана: --team ABCDE12345 или Team в Xcode (Signing & Capabilities)."
+  rm -rf "$ARCHIVE"
+  echo "▶ Архив (Intel + Apple Silicon)…"
+  xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner -configuration Release \
+    -destination 'generic/platform=macOS' -archivePath "$ARCHIVE" \
+    ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO ${team:+DEVELOPMENT_TEAM=$team} \
+    -allowProvisioningUpdates ${AUTH[@]+"${AUTH[@]}"} archive
+  local app bin archs
+  app=$(ls -d "$ARCHIVE"/Products/Applications/*.app | head -1)
+  bin="$app/Contents/MacOS/$("$PB" -c 'Print :CFBundleExecutable' "$app/Contents/Info.plist")"
+  archs=$(lipo -archs "$bin")
+  echo "Архитектуры: $archs"
+  if [[ "$archs" != *x86_64* || "$archs" != *arm64* ]]; then
+    echo "✗ Сборка не универсальная — на Mac с Intel или с M она не запустится."
+    exit 1
+  fi
+  echo "✓ Архив: $ARCHIVE ($("$PB" -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")," \
+    "сборка $("$PB" -c 'Print :CFBundleVersion' "$app/Contents/Info.plist"))"
+}
+
+export_mac() { # $1: upload | export
+  local team opts
+  team=$(team_id)
+  opts="$(mktemp -d)/ExportOptions.plist"
+  cat > "$opts" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>method</key><string>app-store-connect</string>
+  <key>destination</key><string>$1</string>
+  <key>signingStyle</key><string>automatic</string>
+  ${team:+<key>teamID</key><string>$team</string>}
+  <key>manageAppVersionAndBuildNumber</key><false/>
+  <key>uploadSymbols</key><true/>
+</dict>
+</plist>
+PLIST
+  xcodebuild -exportArchive -archivePath "$ARCHIVE" -exportOptionsPlist "$opts" \
+    -exportPath build/macos/export -allowProvisioningUpdates ${AUTH[@]+"${AUTH[@]}"}
+}
+
 case "$MODE" in
   setup) setup ;;
+  archive)
+    archive_mac
+    echo "Открываю архив в Xcode: Distribute App → App Store Connect → Upload."
+    open "$ARCHIVE" || true
+    ;;
+  upload)
+    archive_mac
+    echo "▶ Выгрузка в App Store Connect…"
+    if export_mac upload; then
+      echo "✓ Загружено: через 10–30 минут сборка появится в App Store Connect → TestFlight (macOS)."
+    else
+      echo "✗ Выгрузка не прошла. Архив готов — открываю в Xcode: Distribute App → App Store Connect."
+      echo "  Частые причины: не выбрана команда; в App Store Connect у приложения нет платформы macOS"
+      echo "  (карточка → «+» → macOS); номер сборки уже загружен (поднимите build в pubspec.yaml)."
+      open "$ARCHIVE" || true
+      exit 1
+    fi
+    ;;
   run) prepare; flutter run -d macos ${DEFINES[@]+"${DEFINES[@]}"} ;;
   build)
     prepare

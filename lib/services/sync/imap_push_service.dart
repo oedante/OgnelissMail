@@ -417,9 +417,13 @@ class ImapPushService {
   /// Сколько push может молчать, прежде чем сторож сочтёт его зависшим.
   /// IMAP: цикл 9 мин + проверки; EAS: Ping 8 мин + 60 с; EWS: поток до
   /// 30 мин (ConnectionTimeout) + переподписка.
+  // EAS — дольше самого длинного Ping (до 1680 с = 28 мин, интервал
+  // подбирается под шлюз, mail_engine_service): при 25 минутах сторож
+  // (пульс, таймер, фоновая задача) обрывал исправный долгий Ping и
+  // начинал новый (08.11.2026).
   static Duration _maxSilence(_PushKind k) => switch (k) {
         _PushKind.imap => const Duration(minutes: 25),
-        _PushKind.eas => const Duration(minutes: 25),
+        _PushKind.eas => const Duration(minutes: 32),
         _PushKind.ews => const Duration(minutes: 45),
       };
 

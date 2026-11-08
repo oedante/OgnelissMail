@@ -90,6 +90,13 @@ class AdaptiveLayout extends StatefulWidget {
   /// Хватит ли области шириной [width] на список и панель.
   static bool canSplit(double width) => width >= Breakpoints.split;
 
+  /// Делить ли область: по ширине или по вертикальному сгибу складного
+  /// (07.11.2026: внутренний экран Galaxy Z Fold в крупном масштабе — около
+  /// 670 точек, меньше [Breakpoints.split]; лента шла через сгиб, теперь
+  /// лента — слева от сгиба, письмо — справа).
+  static bool canSplitHere(BuildContext context, double width) =>
+      canSplit(width) || (width >= Breakpoints.phone && verticalHinge(context, width) != null);
+
   /// Вертикальный сгиб или шарнир экрана внутри области шириной [width]
   /// (её левый край — у правого края боковой навигации): положение и ширина
   /// относительно области. null — сгиба нет или он горизонтальный («ноутбук»).
@@ -223,7 +230,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
         }
         final total = constraints.maxWidth;
         final detail = (widget.showDetail ? widget.detailBody : null) ?? widget.placeholder;
-        final split = AdaptiveLayout.canSplit(total) && detail != null;
+        final split = AdaptiveLayout.canSplitHere(context, total) && detail != null;
         if (!split) {
           // Складной телефон «ноутбуком» (полураскрыт на столе): лента
           // сверху, письмо снизу, сгиб между ними — даже на узкой ширине.
@@ -242,7 +249,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
           }
           // Места на две панели хватает, но выбирать ещё нечего: нажатие на
           // строку откроет её в панели.
-          return _SplitScope(split: AdaptiveLayout.canSplit(total), child: widget.body);
+          return _SplitScope(split: AdaptiveLayout.canSplitHere(context, total), child: widget.body);
         }
 
         // Складной телефон «книжкой»: вертикальный сгиб — список слева от

@@ -69,10 +69,12 @@ open macos/Runner.xcworkspace   # Runner → Signing & Capabilities → Team
 
 Каждая версия:
 ```bash
-scripts/build_macos.sh --run    # проверить на этом Mac
-scripts/build_macos.sh          # release-сборка
-open macos/Runner.xcworkspace   # Product → Archive → Distribute App → App Store Connect
+scripts/build_macos.sh --run      # проверить на этом Mac
+scripts/build_macos.sh --upload   # универсальный архив (Intel + M) и выгрузка в TestFlight
+# или вручную: open macos/Runner.xcworkspace → Any Mac (Apple Silicon, Intel)
+#              → Product → Archive → Distribute App → App Store Connect
 ```
+Подробно (Xcode, скрипт, ключ API, GitHub Actions) — `docs/guides/TESTFLIGHT.md`.
 В App Store Connect: в карточке приложения **«+» платформа → macOS**,
 скриншоты Mac (от 1280×800, лучше 2880×1800), та же политика и тексты.
 «Экспортное соответствие» — как для iPhone (`APP_STORE.md`, §6).

@@ -20,6 +20,7 @@ import 'package:local_auth/local_auth.dart';
 import '../../core/logging/app_logger.dart';
 import '../../core/security/secure_storage_service.dart';
 import '../../core/security/security_utils.dart';
+import 'managed_config.dart' show ManagedConfigService;
 
 final pinLockProvider = StateNotifierProvider<PinLockNotifier, PinLockState>((ref) {
   final secureStorage = ref.watch(secureStorageProvider);
@@ -50,7 +51,8 @@ class PinLockState {
     this.pinLength = 4,
   });
 
-  bool get isBlocked => blockedUntil != null && DateTime.now().isBefore(blockedUntil!);
+  bool get isBlocked =>
+      (blockedUntil != null && DateTime.now().isBefore(blockedUntil!)) || PinLockNotifier.blockedByUptime;
 
   PinLockState copyWith({
     bool? loaded,
@@ -100,7 +102,19 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
 
   Future<void> _load() async {
     try {
-      final hash = await _storage.read(_pinHashKey);
+      // Хранилище ключей сразу после перезагрузки или обновления системы
+      // бывает недоступно доли секунды (08.11.2026, аудит безопасности:
+      // при ошибке приложение открывалось без PIN) — несколько повторов.
+      String? hash;
+      for (var i = 0;; i++) {
+        try {
+          hash = await _storage.read(_pinHashKey);
+          break;
+        } catch (e) {
+          if (i >= 4) rethrow;
+          await Future<void>.delayed(Duration(milliseconds: 300 * (i + 1)));
+        }
+      }
       final isSet = hash != null && hash.isNotEmpty;
       final len = int.tryParse(await _storage.read(_pinLenKey) ?? '') ?? 4;
       final failed = int.tryParse(await _storage.read(_failedKey) ?? '') ?? 0;
@@ -117,6 +131,8 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
         pinLength: len.clamp(4, 6),
       );
       _scheduleUnblock();
+      // С PIN — без снимков экрана и миниатюры в недавних приложениях.
+      unawaited(ManagedConfigService.secureFor('pin', isSet));
     } catch (e) {
       AppLogger.warning('PIN: не удалось прочитать состояние: $e');
       // Хранилище недоступно: безопаснее считать, что PIN не задан, чем
@@ -157,11 +173,21 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
         loaded: true, isPinSet: true, isLocked: false, pinLength: pin.length,
         failedAttempts: 0, clearBlock: true);
     recordActivity();
+    unawaited(ManagedConfigService.secureFor('pin', true));
     AppLogger.info('PIN установлен');
     return true;
   }
 
+  /// Пауза после неверных попыток по монотонному времени процесса.
+  static Stopwatch? _blockClock;
+  static Duration _blockFor = Duration.zero;
+  static bool get blockedByUptime {
+    final c = _blockClock;
+    return c != null && c.elapsed < _blockFor;
+  }
+
   Future<void> _resetFailures() async {
+    _blockClock = null;
     await _storage.delete(_failedKey);
     await _storage.delete(_blockedKey);
   }
@@ -189,6 +215,10 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
       // 30 с, 60 с, 120 с … но не больше часа.
       final seconds = math.min(3600, 30 * (1 << math.min(7, attempts - maxAttempts)));
       until = DateTime.now().add(Duration(seconds: seconds));
+      // И по монотонному времени (08.11.2026, аудит): перевод часов вперёд
+      // не снимает паузу, пока приложение работает.
+      _blockClock = Stopwatch()..start();
+      _blockFor = Duration(seconds: seconds);
     }
     await _storage.write(_failedKey, '$attempts');
     if (until != null) {
@@ -209,6 +239,7 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
     await _resetFailures();
     _unblockTimer?.cancel();
     state = const PinLockState(loaded: true);
+    unawaited(ManagedConfigService.secureFor('pin', false));
     AppLogger.info('PIN removed');
   }
 

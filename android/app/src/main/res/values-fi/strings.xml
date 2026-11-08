@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/fi.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Lukemattomat</string>
+    <string name="widget_count_desc">Lukemattomien viestien määrä; avaa saapuneet napauttamalla</string>
+    <string name="widget_tasks_label">Tehtävät</string>
+    <string name="widget_tasks_desc">Avoimet tehtävät valintamerkillä ja painike uudelle tehtävälle</string>
+    <string name="widget_task_new">Uusi tehtävä</string>
     <string name="device_admin_label">Ogneliss Mail: näytön lukitus</string>
     <string name="device_admin_description">Ottaa käyttöön organisaatiosi Exchange-palvelimen vaatiman näytön lukituksen aikakatkaisun. Ogneliss Mail ei voi tyhjentää laitettasi tai vaihtaa salasanaasi.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/he.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">לא נקראו</string>
+    <string name="widget_count_desc">מספר ההודעות שלא נקראו; הקישו לפתיחת תיבת הדואר הנכנס</string>
+    <string name="widget_tasks_label">משימות</string>
+    <string name="widget_tasks_desc">משימות פתוחות עם סימון וכפתור למשימה חדשה</string>
+    <string name="widget_task_new">משימה חדשה</string>
     <string name="device_admin_label">Ogneliss Mail: נעילת מסך</string>
     <string name="device_admin_description">מחיל את זמן הנעילה של המסך שנדרש על ידי שרת ה-Exchange של הארגון שלכם. Ogneliss Mail אינו יכול למחוק את המכשיר שלכם או לשנות את הסיסמה שלכם.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>

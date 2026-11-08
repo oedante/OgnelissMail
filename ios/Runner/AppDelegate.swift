@@ -362,7 +362,23 @@ import workmanager_apple
 
   /// Каналы приложения (не пакеты): MethodChannel 'ogneliss/device_calendar'
   /// и 'ogneliss/device_contacts' — зеркала Android-плагинов.
+  /// Заслонка в списке недавних приложений (08.11.2026, аудит безопасности):
+  /// включает Dart, когда задан PIN или организация запретила снимки
+  /// (канал ogneliss/secure_window — тот же, что FLAG_SECURE на Android).
+  static var secureSnapshot = false
+
   static func registerAppChannels(_ registry: FlutterPluginRegistry) {
+    if let r = registry.registrar(forPlugin: "OgnelissSecureWindow") {
+      FlutterMethodChannel(name: "ogneliss/secure_window", binaryMessenger: r.messenger())
+        .setMethodCallHandler { call, result in
+          if call.method == "setSecure" {
+            AppDelegate.secureSnapshot = (call.arguments as? Bool) ?? false
+            result(nil)
+          } else {
+            result(FlutterMethodNotImplemented)
+          }
+        }
+    }
     if let r = registry.registrar(forPlugin: "OgnelissDeviceCalendar") {
       DeviceCalendarPlugin.register(with: r.messenger())
     }
@@ -703,12 +719,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FlutterSceneLifeCyclePr
   }
 
   func sceneDidBecomeActive(_ scene: UIScene) {
+    cover?.removeFromSuperview()
+    cover = nil
     sceneLifeCycleDelegate.sceneDidBecomeActive(scene)
   }
 
   func sceneWillResignActive(_ scene: UIScene) {
+    // С PIN или запретом снимков — письма не видны в списке недавних.
+    if AppDelegate.secureSnapshot, cover == nil, let w = window {
+      let v = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
+      v.frame = w.bounds
+      v.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+      w.addSubview(v)
+      cover = v
+    }
     sceneLifeCycleDelegate.sceneWillResignActive(scene)
   }
+
+  /// Заслонка поверх окна, пока приложение не активно.
+  private var cover: UIView?
 
   func sceneDidEnterBackground(_ scene: UIScene) {
     sceneLifeCycleDelegate.sceneDidEnterBackground(scene)

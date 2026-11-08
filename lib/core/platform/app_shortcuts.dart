@@ -115,6 +115,18 @@ class AppShortcuts {
       }
       return;
     }
+    // Задача из виджета «Задачи»: «task?id=…&acc=…»; «newtask» — новая
+    // (08.11.2026).
+    if (type.startsWith('task?')) {
+      final q = Uri.parse(type).queryParameters;
+      final id = q['id'];
+      if (id != null && id.isNotEmpty) router.go(tasksPath(openTaskId: id, accountId: q['acc']));
+      return;
+    }
+    if (type == 'newtask') {
+      router.go(Uri(path: '/tasks', queryParameters: {'new': '1'}).toString());
+      return;
+    }
     // Раздел «Заметки» выключен (1.5.9) — виджет и ярлык ведут в почту.
     if ((type.startsWith('note?') || type == 'newnote' || type == 'notes') &&
         !container.read(featureFlagsProvider).showNotes) {

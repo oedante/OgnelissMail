@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/nl.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Ongelezen</string>
+    <string name="widget_count_desc">Aantal ongelezen e-mails; tik om het Postvak IN te openen</string>
+    <string name="widget_tasks_label">Taken</string>
+    <string name="widget_tasks_desc">Open taken met vinkje en een knop voor een nieuwe taak</string>
+    <string name="widget_task_new">Nieuwe taak</string>
     <string name="device_admin_label">Ogneliss Mail: schermvergrendeling</string>
     <string name="device_admin_description">Past de time-out voor schermvergrendeling toe die de Exchange-server van je organisatie vereist. Ogneliss Mail kan je apparaat niet wissen en je wachtwoord niet wijzigen.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>

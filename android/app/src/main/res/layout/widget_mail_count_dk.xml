@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
+<!-- Мини-виджет 1×1 «Непрочитанные» (MailCountWidget, план 08.11.2026,
+     п. 8.5): значок почты и число непрочитанных во «Входящих» всех ящиков
+     (с учётом фильтра виджета «Почта»); нажатие — «Входящие». -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mc_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg_dk"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="6dp">
+    <ImageView
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/widget_ic_mail_dk" />
+    <TextView
+        android:id="@+id/mc_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:maxLines="1"
+        android:textColor="@color/widget_text_dk"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+</LinearLayout>

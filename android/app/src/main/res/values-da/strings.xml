@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/da.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Ulæste</string>
+    <string name="widget_count_desc">Antal ulæste e-mails; tryk for at åbne indbakken</string>
+    <string name="widget_tasks_label">Opgaver</string>
+    <string name="widget_tasks_desc">Åbne opgaver med flueben og en knap til en ny opgave</string>
+    <string name="widget_task_new">Ny opgave</string>
     <string name="device_admin_label">Ogneliss Mail: skærmlås</string>
     <string name="device_admin_description">Anvender den tidsgrænse for skærmlås, som din organisations Exchange-server kræver. Ogneliss Mail kan ikke slette dine data på enheden eller ændre din adgangskode.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>

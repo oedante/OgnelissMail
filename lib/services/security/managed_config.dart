@@ -347,13 +347,27 @@ class ManagedConfigService {
   }
 
   /// Запрет снимков экрана (Android — FLAG_SECURE окна; iPhone такого
-  /// запрета не даёт).
-  static Future<void> setSecureWindow(bool on) async {
-    if (kIsWeb || !Platform.isAndroid) return;
+  /// запрета не даёт — там заслонка в списке недавних приложений).
+  static Future<void> setSecureWindow(bool on) => secureFor('mdm', on);
+
+  /// Причины запрета снимков: организация (MDM) и PIN приложения
+  /// (08.11.2026, аудит безопасности: с PIN почта была видна в списке
+  /// недавних приложений). Запрет действует, пока есть хоть одна причина.
+  static final Set<String> _secureReasons = {};
+
+  static Future<void> secureFor(String reason, bool on) async {
+    final before = _secureReasons.isNotEmpty;
+    if (on) {
+      _secureReasons.add(reason);
+    } else {
+      _secureReasons.remove(reason);
+    }
+    final now = _secureReasons.isNotEmpty;
+    if (now == before || kIsWeb || !(Platform.isAndroid || Platform.isIOS)) return;
     try {
-      await const MethodChannel('ogneliss/secure_window').invokeMethod<void>('setSecure', on);
+      await const MethodChannel('ogneliss/secure_window').invokeMethod<void>('setSecure', now);
     } catch (e) {
-      AppLogger.debug('MDM: запрет снимков экрана: $e');
+      AppLogger.debug('Запрет снимков экрана: $e');
     }
   }
 }

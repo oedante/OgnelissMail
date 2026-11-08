@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/id.xml — не править вручную. */
+"tasks_label" = "Tugas";
+"tasks_desc" = "Tugas terbuka dengan centang dan tombol tugas baru";
+"mailpick_label" = "Email: pilihan";
+"mailpick_desc" = "Email belum dibaca dari kotak surat atau filter pilihan Anda";
+"mailpick_param" = "Tampilkan";
 "open_app" = "Buka Ogneliss Mail untuk mengisi widget";
 "myday_label" = "Hari saya";
 "myday_desc" = "Rapat dan tugas hari ini, email belum dibaca dan yang dipantau";

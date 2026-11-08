@@ -46,6 +46,13 @@ enum WidgetBridgePlugin {
         let t = pending
         pending = nil
         result(t)
+      case "takeMailQueue":
+        // «Прочитано» и «В архив», нажатые в виджете «Почта» (08.11.2026):
+        // очередь кладёт MailActionIntent расширения в общую группу.
+        let d = UserDefaults(suiteName: appGroup)
+        let q = d?.string(forKey: "widget_mail_queue")
+        d?.removeObject(forKey: "widget_mail_queue")
+        result(q)
       default:
         result(FlutterMethodNotImplemented)
       }

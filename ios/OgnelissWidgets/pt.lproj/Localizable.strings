@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/pt.xml — не править вручную. */
+"tasks_label" = "Tarefas";
+"tasks_desc" = "Tarefas abertas com visto e um botão para nova tarefa";
+"mailpick_label" = "Correio: à escolha";
+"mailpick_desc" = "Emails não lidos da caixa ou do filtro que escolher";
+"mailpick_param" = "Mostrar";
 "open_app" = "Abra o Ogneliss Mail para preencher o widget";
 "myday_label" = "Meu dia";
 "myday_desc" = "Reuniões e tarefas de hoje, e-mails não lidos e acompanhados";

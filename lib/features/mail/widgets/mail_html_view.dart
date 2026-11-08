@@ -355,6 +355,16 @@ class MailHtmlDocument {
     // нажатие окно отдаёт приложению, как и остальные ссылки.
     if (Linkify.mayContain(bodyHtml) || dates != null) _linkifyText(body, dates);
 
+    // Длинное «слово» без пробелов в ячейке таблицы (08.11.2026, письмо
+    // владельца): Outlook обрамляет предупреждение «Это сообщение от
+    // внешнего отправителя!» строками из 83 знаков «=». Ячейка раздвигалась
+    // под такую строку, таблица выходила шире экрана, и после «Показать
+    // цитируемую переписку» письмо уходило за правый край. Объявленных
+    // размеров у такого письма нет — на Android его нечем было вписать.
+    // Теперь разделитель — одной строкой по ширине экрана, другое длинное
+    // слово в ячейке переносится, только если не помещается.
+    _wrapLongTokens(body);
+
     final links = <String, String>{};
     for (final a in body.querySelectorAll('a[href]')) {
       final href = a.attributes['href']!.trim();
@@ -570,6 +580,78 @@ class MailHtmlDocument {
     return MailHtmlDocument(out, linkTexts, declaredWidth: declaredWidth, darkDesign: darkDesign, clipped: clipped);
   }
 
+  /// Длинное слово: не меньше 24 знаков без мест переноса. Неразрывный
+  /// пробел (&nbsp;) — тоже не место переноса: строка через &nbsp; так же
+  /// раздвигает ячейку.
+  static final _longToken = RegExp(r'[^ \t\n\r\f]{24,}');
+
+  /// Строка-разделитель: одни знаки, без букв и цифр («=====», «-----»).
+  static final _ruleToken = RegExp(r'^[^\p{L}\p{N}\s]+$', unicode: true);
+
+  static const _blockTags = {
+    'p', 'div', 'td', 'th', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'center', 'body', 'pre',
+  };
+
+  /// Длинные слова (08.11.2026):
+  /// - строка-разделитель, занимающая весь абзац, → `<span class="og-rule">`:
+  ///   одна строка, обрезанная по ширине, как в Outlook (где угодно);
+  /// - другое длинное слово в ячейке таблицы → `<span class="og-wrap">`:
+  ///   переносится в любом месте, но только если не помещается.
+  /// Вне таблиц длинное слово и так переносится (overflow-wrap окна
+  /// письма); ссылки — своим правилом (og-brk).
+  static void _wrapLongTokens(dom.Node node, {bool inCell = false, int depth = 0}) {
+    if (depth > 64) return;
+    for (final n in node.nodes.toList()) {
+      if (n is dom.Element) {
+        final tag = n.localName ?? '';
+        if (tag == 'a' || tag == 'style' || tag == 'script' || tag == 'textarea' || tag == 'title' || tag == 'svg') {
+          continue;
+        }
+        if (n.classes.contains('og-wrap') || n.classes.contains('og-rule')) continue;
+        _wrapLongTokens(n, inCell: inCell || tag == 'td' || tag == 'th', depth: depth + 1);
+      } else if (n is dom.Text) {
+        final t = n.text;
+        if (t.length < 24) continue;
+        final spans = <(int, int, String)>[];
+        for (final m in _longToken.allMatches(t)) {
+          final word = m[0]!;
+          final cls = _ruleToken.hasMatch(word) && _wholeBlock(n, word)
+              ? 'og-rule'
+              : inCell
+                  ? 'og-wrap'
+                  : null;
+          if (cls != null) spans.add((m.start, m.end, cls));
+        }
+        if (spans.isEmpty) continue;
+        final parent = n.parentNode!;
+        var at = parent.nodes.indexOf(n);
+        n.remove();
+        var pos = 0;
+        void put(dom.Node x) => parent.nodes.insert(at++, x);
+        for (final (start, end, cls) in spans) {
+          if (start > pos) put(dom.Text(t.substring(pos, start)));
+          put(dom.Element.tag('span')
+            ..classes.add(cls)
+            ..append(dom.Text(t.substring(start, end))));
+          pos = end;
+        }
+        if (pos < t.length) put(dom.Text(t.substring(pos)));
+      }
+    }
+  }
+
+  /// [word] — весь текст ближайшего блока (абзаца, ячейки), где лежит [n]:
+  /// разделитель отдельной строкой, а не посреди фразы.
+  static bool _wholeBlock(dom.Text n, String word) {
+    var e = n.parent;
+    var guard = 0;
+    while (e != null && !_blockTags.contains(e.localName) && guard++ < 16) {
+      e = e.parent;
+    }
+    if (e == null || e.localName == 'pre') return false;
+    return e.text.replaceAll('\u00a0', ' ').trim() == word;
+  }
+
   /// Текст вне ссылок, стилей и полей ввода: найденные адреса и даты →
   /// `<a href>`.
   static void _linkifyText(dom.Node node, DateContext? dates, {int depth = 0}) {
@@ -677,6 +759,13 @@ pre,code{white-space:pre-wrap;}
 /* Длинный адрес текстом ссылки — переносится где угодно и не раздвигает
    таблицу (MailHtmlDocument.build, og-brk). */
 .og-brk{overflow-wrap:anywhere !important;word-break:break-all !important;}
+/* Длинное слово в ячейке таблицы — переносится, только если не
+   помещается, и не раздвигает таблицу (MailHtmlDocument._wrapLongTokens). word-break:break-word — для
+   iOS 15.0–15.3, где overflow-wrap:anywhere ещё нет. */
+.og-wrap{word-break:break-word;overflow-wrap:anywhere !important;}
+/* Строка-разделитель («=====» на всю строку) — одной строкой, обрезанной по
+   ширине: ширина 0 не раздвигает таблицу, min-width — во всю строку. */
+.og-rule{display:block;width:0;min-width:100%;overflow:hidden;white-space:nowrap;}
 a{color:#1D4F91;}
 /* Дата в тексте (1.9.x, DateLinks): цвет текста, подчёркнута пунктиром —
    нажимается, но не спорит с оформлением письма. */

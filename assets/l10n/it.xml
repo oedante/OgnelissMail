@@ -3642,6 +3642,8 @@
     <string name="onboardingDesc3NoEx">PIN e impronta digitale, avvisi anti-phishing, blocco dei tracker nelle email.\n\nLa posta arriva dal tuo server direttamente sul tuo dispositivo.</string>
     <string name="exchangeHiddenTitle">Cassette postali Exchange nascoste: {n}</string>
     <string name="exchangeHiddenDesc">Exchange non è supportato in questa versione. Le cassette postali e i loro dati restano su questo dispositivo e torneranno in una versione con Exchange. Puoi aggiungere la posta tramite IMAP.</string>
+    <string name="policyHiddenTitle">Nascoste dalla tua organizzazione: {n}</string>
+    <string name="policyHiddenDesc">La tua organizzazione consente solo caselle dei propri domini. Nascoste: {list}. I dati restano sul dispositivo e torneranno se il dominio viene consentito.</string>
     <string name="sourceCode">Codice sorgente</string>
     <string name="sourceCodeDesc">GitHub: leggi, compila, contribuisci</string>
     <string name="archiveMergeTitle">Unisci con una copia</string>

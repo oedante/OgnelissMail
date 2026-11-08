@@ -3642,6 +3642,8 @@
     <string name="onboardingDesc3NoEx">PIN e impressão digital, avisos de phishing, bloqueio de rastreadores nos e-mails.\n\nO e-mail vai do seu servidor direto para o seu dispositivo.</string>
     <string name="exchangeHiddenTitle">Caixas de correio do Exchange ocultas: {n}</string>
     <string name="exchangeHiddenDesc">O Exchange não é compatível com esta versão. As caixas de correio e os dados delas permanecem neste dispositivo e voltarão em uma versão com Exchange. Você pode adicionar o e-mail via IMAP.</string>
+    <string name="policyHiddenTitle">Ocultas pela sua organização: {n}</string>
+    <string name="policyHiddenDesc">A sua organização só permite caixas dos próprios domínios. Ocultas: {list}. Os dados ficam no dispositivo e voltarão se o domínio for permitido.</string>
     <string name="sourceCode">Código-fonte</string>
     <string name="sourceCodeDesc">GitHub: ler, compilar, contribuir</string>
     <string name="archiveMergeTitle">Mesclar com uma cópia</string>

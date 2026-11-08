@@ -3642,6 +3642,8 @@
     <string name="onboardingDesc3NoEx">PIN og fingeraftryk, advarsler om phishing, blokering af sporing i mails.\n\nMails går direkte fra din server til din enhed.</string>
     <string name="exchangeHiddenTitle">Exchange-postkasser skjult: {n}</string>
     <string name="exchangeHiddenDesc">Exchange understøttes ikke i denne version. Postkasserne og deres data bliver på denne enhed og vender tilbage i en version med Exchange. Du kan tilføje mailen via IMAP.</string>
+    <string name="policyHiddenTitle">Skjult af din organisation: {n}</string>
+    <string name="policyHiddenDesc">Din organisation tillader kun postkasser fra egne domæner. Skjult: {list}. Dataene bliver på enheden og vender tilbage, hvis domænet tillades.</string>
     <string name="sourceCode">Kildekode</string>
     <string name="sourceCodeDesc">GitHub: læs, byg, bidrag</string>
     <string name="archiveMergeTitle">Flet med en kopi</string>

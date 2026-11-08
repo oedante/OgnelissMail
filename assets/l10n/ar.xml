@@ -3718,6 +3718,8 @@
     <string name="onboardingDesc3NoEx">PIN وبصمة الإصبع وتحذيرات من التصيّد الاحتيالي وحظر أدوات التتبع في الرسائل.\n\nيصل البريد من خادمك مباشرة إلى جهازك.</string>
     <string name="exchangeHiddenTitle">صناديق بريد Exchange المخفية: {n}</string>
     <string name="exchangeHiddenDesc">Exchange غير مدعوم في هذا الإصدار. تبقى صناديق البريد وبياناتها على هذا الجهاز وستعود في إصدار يدعم Exchange. يمكنك إضافة البريد عبر IMAP.</string>
+    <string name="policyHiddenTitle">أخفتها مؤسستك: {n}</string>
+    <string name="policyHiddenDesc">تسمح مؤسستك فقط بصناديق البريد التابعة لنطاقاتها. المخفية: {list}. تبقى البيانات على الجهاز وستعود إذا سُمح بالنطاق.</string>
     <string name="sourceCode">الشفرة المصدرية</string>
     <string name="sourceCodeDesc">GitHub: القراءة والبناء والمساهمة</string>
     <string name="archiveMergeTitle">دمج مع نسخة</string>

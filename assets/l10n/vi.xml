@@ -3623,6 +3623,8 @@
     <string name="onboardingDesc3NoEx">PIN và vân tay, cảnh báo lừa đảo, chặn trình theo dõi trong email.\n\nThư đi từ máy chủ của bạn thẳng đến thiết bị của bạn.</string>
     <string name="exchangeHiddenTitle">Hộp thư Exchange đã bị ẩn: {n}</string>
     <string name="exchangeHiddenDesc">Phiên bản này không hỗ trợ Exchange. Các hộp thư và dữ liệu của chúng vẫn ở trên thiết bị này và sẽ xuất hiện lại trong phiên bản có Exchange. Bạn có thể thêm thư qua IMAP.</string>
+    <string name="policyHiddenTitle">Bị tổ chức của bạn ẩn: {n}</string>
+    <string name="policyHiddenDesc">Tổ chức của bạn chỉ cho phép hộp thư thuộc tên miền của mình. Đã ẩn: {list}. Dữ liệu vẫn nằm trên thiết bị và sẽ quay lại nếu tên miền được cho phép.</string>
     <string name="sourceCode">Mã nguồn</string>
     <string name="sourceCodeDesc">GitHub: xem, biên dịch, đóng góp</string>
     <string name="archiveMergeTitle">Hợp nhất với bản sao</string>

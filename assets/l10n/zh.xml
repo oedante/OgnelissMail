@@ -3623,6 +3623,8 @@
     <string name="onboardingDesc3NoEx">PIN 和指纹、网络钓鱼警告、拦截邮件中的追踪器。\n\n邮件从你的服务器直接送到你的设备。</string>
     <string name="exchangeHiddenTitle">已隐藏的 Exchange 邮箱：{n}</string>
     <string name="exchangeHiddenDesc">此版本不支持 Exchange。这些邮箱及其数据仍保留在此设备上，将在支持 Exchange 的版本中恢复。你可以改用 IMAP 添加该邮箱。</string>
+    <string name="policyHiddenTitle">已被你的组织隐藏：{n}</string>
+    <string name="policyHiddenDesc">你的组织只允许其自有域名的邮箱。已隐藏：{list}。数据仍保留在此设备上，域名获准后会恢复。</string>
     <string name="sourceCode">源代码</string>
     <string name="sourceCodeDesc">GitHub：阅读、构建、参与贡献</string>
     <string name="archiveMergeTitle">与副本合并</string>

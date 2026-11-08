@@ -3642,6 +3642,8 @@
     <string name="onboardingDesc3NoEx">PIN-koodi ja sormenjälki, tietojenkalasteluvaroitukset, seurannan esto sähköposteissa.\n\nPosti kulkee palvelimeltasi suoraan laitteellesi.</string>
     <string name="exchangeHiddenTitle">Exchange-postilaatikoita piilotettu: {n}</string>
     <string name="exchangeHiddenDesc">Exchangea ei tueta tässä versiossa. Postilaatikot ja niiden tiedot pysyvät tällä laitteella ja palaavat Exchange-tuen sisältävässä versiossa. Voit lisätä postin IMAP-yhteydellä.</string>
+    <string name="policyHiddenTitle">Organisaatiosi piilottama: {n}</string>
+    <string name="policyHiddenDesc">Organisaatiosi sallii vain omien verkkotunnustensa postilaatikot. Piilotettu: {list}. Tiedot jäävät laitteeseen ja palaavat, jos verkkotunnus sallitaan.</string>
     <string name="sourceCode">Lähdekoodi</string>
     <string name="sourceCodeDesc">GitHub: lue, käännä, osallistu</string>
     <string name="archiveMergeTitle">Sulauta kopion kanssa</string>

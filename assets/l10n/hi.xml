@@ -3642,6 +3642,8 @@
     <string name="onboardingDesc3NoEx">PIN और फ़िंगरप्रिंट, फ़िशिंग की चेतावनियां, ईमेल में ट्रैकर ब्लॉक करना.\n\nमेल आपके सर्वर से सीधे आपके डिवाइस पर आता है.</string>
     <string name="exchangeHiddenTitle">Exchange मेलबॉक्स छिपे हैं: {n}</string>
     <string name="exchangeHiddenDesc">इस वर्शन में Exchange सपोर्ट नहीं है. मेलबॉक्स और उनका डेटा इस डिवाइस पर रहेंगे और Exchange वाले वर्शन में वापस आ जाएंगे. आप IMAP के ज़रिए मेल जोड़ सकते हैं.</string>
+    <string name="policyHiddenTitle">आपके संगठन द्वारा छिपाए गए: {n}</string>
+    <string name="policyHiddenDesc">आपका संगठन केवल अपने डोमेन के मेलबॉक्स की अनुमति देता है। छिपाए गए: {list}। डेटा इस डिवाइस पर बना रहता है और डोमेन की अनुमति मिलने पर लौट आएगा।</string>
     <string name="sourceCode">सोर्स कोड</string>
     <string name="sourceCodeDesc">GitHub: पढ़ें, बनाएँ, योगदान दें</string>
     <string name="archiveMergeTitle">कॉपी के साथ मर्ज करें</string>

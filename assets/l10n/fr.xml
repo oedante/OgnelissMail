@@ -3642,6 +3642,8 @@
     <string name="onboardingDesc3NoEx">PIN et empreinte, alertes d’hameçonnage, blocage des traqueurs.\n\nLe courrier va de votre serveur directement sur votre appareil.</string>
     <string name="exchangeHiddenTitle">Boîtes Exchange masquées : {n}</string>
     <string name="exchangeHiddenDesc">Exchange n\'est pas pris en charge dans cette version. Les boîtes et leurs données restent sur l\'appareil et reviendront dans une version avec Exchange. Vous pouvez ajouter la messagerie en IMAP.</string>
+    <string name="policyHiddenTitle">Masqués par votre organisation : {n}</string>
+    <string name="policyHiddenDesc">Votre organisation n’autorise que les boîtes de ses propres domaines. Masquées : {list}. Les données restent sur l’appareil et reviendront si le domaine est autorisé.</string>
     <string name="sourceCode">Code source</string>
     <string name="sourceCodeDesc">GitHub : lire, compiler, contribuer</string>
     <string name="archiveMergeTitle">Fusionner avec une copie</string>

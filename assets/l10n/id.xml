@@ -3623,6 +3623,8 @@
     <string name="onboardingDesc3NoEx">PIN dan sidik jari, peringatan phishing, pemblokiran pelacak di email.\n\nEmail masuk dari server langsung ke perangkat.</string>
     <string name="exchangeHiddenTitle">Kotak surat Exchange disembunyikan: {n}</string>
     <string name="exchangeHiddenDesc">Exchange tidak didukung di versi ini. Kotak surat dan datanya tetap berada di perangkat ini dan akan kembali di versi yang mendukung Exchange. Email dapat ditambahkan lewat IMAP.</string>
+    <string name="policyHiddenTitle">Disembunyikan oleh organisasi Anda: {n}</string>
+    <string name="policyHiddenDesc">Organisasi Anda hanya mengizinkan kotak surat dari domainnya sendiri. Disembunyikan: {list}. Data tetap ada di perangkat dan akan kembali jika domain diizinkan.</string>
     <string name="sourceCode">Kode sumber</string>
     <string name="sourceCodeDesc">GitHub: baca, build, berkontribusi</string>
     <string name="archiveMergeTitle">Gabungkan dengan salinan</string>

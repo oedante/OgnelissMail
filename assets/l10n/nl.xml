@@ -3642,6 +3642,8 @@
     <string name="onboardingDesc3NoEx">PIN en vingerafdruk, phishingwaarschuwingen, blokkering van trackers in e-mails.\n\nE-mail gaat rechtstreeks van je server naar je apparaat.</string>
     <string name="exchangeHiddenTitle">Exchange-mailboxen verborgen: {n}</string>
     <string name="exchangeHiddenDesc">Exchange wordt in deze versie niet ondersteund. De mailboxen en hun gegevens blijven op dit apparaat en komen terug in een versie met Exchange. Je kunt de e-mail toevoegen via IMAP.</string>
+    <string name="policyHiddenTitle">Verborgen door je organisatie: {n}</string>
+    <string name="policyHiddenDesc">Je organisatie staat alleen mailboxen van eigen domeinen toe. Verborgen: {list}. De gegevens blijven op het apparaat en komen terug als het domein wordt toegestaan.</string>
     <string name="sourceCode">Broncode</string>
     <string name="sourceCodeDesc">GitHub: lezen, bouwen, bijdragen</string>
     <string name="archiveMergeTitle">Samenvoegen met een kopie</string>

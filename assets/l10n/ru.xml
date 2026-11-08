@@ -3680,6 +3680,8 @@
     <string name="onboardingDesc3NoEx">PIN-код и отпечаток, предупреждения о фишинге, блокировка трекеров в письмах.\n\nПочта идёт с вашего сервера прямо на ваше устройство.</string>
     <string name="exchangeHiddenTitle">Ящики Exchange скрыты: {n}</string>
     <string name="exchangeHiddenDesc">В этой версии Exchange не поддерживается. Ящики и их данные остались на устройстве и вернутся в версии с Exchange. Почту можно подключить по IMAP.</string>
+    <string name="policyHiddenTitle">Скрыто правилами организации: {n}</string>
+    <string name="policyHiddenDesc">Организация разрешает только ящики своих доменов. Скрыты: {list}. Данные остались на устройстве и вернутся, если домен разрешат.</string>
     <string name="sourceCode">Исходный код</string>
     <string name="sourceCodeDesc">GitHub: читать, собирать, предлагать правки</string>
     <string name="archiveMergeTitle">Объединить с копией</string>

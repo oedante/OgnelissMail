@@ -3623,6 +3623,8 @@
     <string name="onboardingDesc3NoEx">PIN と指紋認証、フィッシング警告、メール内のトラッカーのブロック。\n\nメールはサーバーからデバイスに直接届きます。</string>
     <string name="exchangeHiddenTitle">非表示の Exchange メールボックス：{n} 件</string>
     <string name="exchangeHiddenDesc">このバージョンでは Exchange に対応していません。メールボックスとそのデータはこのデバイスに残り、Exchange に対応するバージョンで戻ります。IMAP でメールを追加することもできます。</string>
+    <string name="policyHiddenTitle">組織により非表示: {n}</string>
+    <string name="policyHiddenDesc">組織は自社ドメインのメールボックスのみ許可しています。非表示: {list}。データはこのデバイスに残り、ドメインが許可されると戻ります。</string>
     <string name="sourceCode">ソースコード</string>
     <string name="sourceCodeDesc">GitHub: 閲覧・ビルド・貢献</string>
     <string name="archiveMergeTitle">コピーと統合</string>

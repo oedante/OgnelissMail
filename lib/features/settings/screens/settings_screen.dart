@@ -104,6 +104,15 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle: l10n.tr('exchangeHiddenDesc'),
                 onTap: null,
               ),
+            // Правила организации (MDM allowed_domains, план 08.11.2026 п. 1):
+            // ящики чужих доменов скрыты, данные остаются.
+            if (hiddenByPolicyAccounts.isNotEmpty)
+              SettingsItem(
+                icon: AppIcons.info,
+                title: l10n.tr('policyHiddenTitle').replaceAll('{n}', '${hiddenByPolicyAccounts.length}'),
+                subtitle: l10n.tr('policyHiddenDesc').replaceAll('{list}', hiddenByPolicyAccounts.join(', ')),
+                onTap: null,
+              ),
             SettingsItem(
               icon: AppIcons.folder_shared,
               title: l10n.tr('accountGroups'),

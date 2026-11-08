@@ -3623,6 +3623,8 @@
     <string name="onboardingDesc3NoEx">PIN과 지문, 피싱 경고, 메일 속 추적기 차단.\n\n메일은 서버에서 기기로 바로 전달됩니다.</string>
     <string name="exchangeHiddenTitle">숨겨진 Exchange 메일 계정: {n}개</string>
     <string name="exchangeHiddenDesc">이 버전에서는 Exchange를 지원하지 않습니다. 메일 계정과 해당 데이터는 이 기기에 남아 있으며 Exchange를 지원하는 버전에서 다시 나타납니다. IMAP으로 메일을 추가할 수 있습니다.</string>
+    <string name="policyHiddenTitle">조직에서 숨김: {n}</string>
+    <string name="policyHiddenDesc">조직에서 자체 도메인의 메일함만 허용합니다. 숨김: {list}. 데이터는 이 기기에 남아 있으며 도메인이 허용되면 다시 표시됩니다.</string>
     <string name="sourceCode">소스 코드</string>
     <string name="sourceCodeDesc">GitHub: 보기, 빌드, 기여</string>
     <string name="archiveMergeTitle">사본과 병합</string>

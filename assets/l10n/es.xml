@@ -3642,6 +3642,8 @@
     <string name="onboardingDesc3NoEx">PIN y huella dactilar, avisos de phishing, bloqueo de rastreadores en los correos.\n\nEl correo va de tu servidor directamente a tu dispositivo.</string>
     <string name="exchangeHiddenTitle">Buzones de Exchange ocultos: {n}</string>
     <string name="exchangeHiddenDesc">Exchange no es compatible con esta versión. Los buzones y sus datos permanecen en este dispositivo y volverán en una versión con Exchange. Puedes añadir el correo mediante IMAP.</string>
+    <string name="policyHiddenTitle">Ocultos por tu organización: {n}</string>
+    <string name="policyHiddenDesc">Tu organización solo permite buzones de sus propios dominios. Ocultos: {list}. Los datos permanecen en el dispositivo y volverán si se permite el dominio.</string>
     <string name="sourceCode">Código fuente</string>
     <string name="sourceCodeDesc">GitHub: leer, compilar, contribuir</string>
     <string name="archiveMergeTitle">Combinar con una copia</string>

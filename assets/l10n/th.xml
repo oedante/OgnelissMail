@@ -3623,6 +3623,8 @@
     <string name="onboardingDesc3NoEx">PIN และลายนิ้วมือ คำเตือนฟิชชิง การบล็อกตัวติดตามในอีเมล\n\nอีเมลมาจากเซิร์ฟเวอร์ของคุณถึงอุปกรณ์ของคุณโดยตรง</string>
     <string name="exchangeHiddenTitle">ซ่อนกล่องจดหมาย Exchange ไว้: {n}</string>
     <string name="exchangeHiddenDesc">เวอร์ชันนี้ไม่รองรับ Exchange กล่องจดหมายและข้อมูลของกล่องจดหมายเหล่านี้ยังอยู่บนอุปกรณ์นี้ และจะกลับมาในเวอร์ชันที่รองรับ Exchange คุณเพิ่มอีเมลผ่าน IMAP ได้</string>
+    <string name="policyHiddenTitle">ถูกซ่อนโดยองค์กรของคุณ: {n}</string>
+    <string name="policyHiddenDesc">องค์กรของคุณอนุญาตเฉพาะกล่องจดหมายของโดเมนตนเอง ซ่อนแล้ว: {list} ข้อมูลยังอยู่บนอุปกรณ์และจะกลับมาหากโดเมนได้รับอนุญาต</string>
     <string name="sourceCode">ซอร์สโค้ด</string>
     <string name="sourceCodeDesc">GitHub: อ่าน สร้าง ร่วมพัฒนา</string>
     <string name="archiveMergeTitle">รวมกับสำเนา</string>

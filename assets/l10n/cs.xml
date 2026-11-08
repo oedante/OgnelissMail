@@ -3661,6 +3661,8 @@
     <string name="onboardingDesc3NoEx">PIN a otisk prstu, upozornění na phishing, blokování sledování v e-mailech.\n\nPošta jde z vašeho serveru přímo do vašeho zařízení.</string>
     <string name="exchangeHiddenTitle">Skryté schránky Exchange: {n}</string>
     <string name="exchangeHiddenDesc">Exchange není v této verzi podporován. Schránky a jejich data zůstanou na tomto zařízení a vrátí se ve verzi s Exchange. Poštu můžete přidat přes IMAP.</string>
+    <string name="policyHiddenTitle">Skryto vaší organizací: {n}</string>
+    <string name="policyHiddenDesc">Vaše organizace povoluje jen schránky vlastních domén. Skryté: {list}. Data zůstávají v zařízení a vrátí se, pokud bude doména povolena.</string>
     <string name="sourceCode">Zdrojový kód</string>
     <string name="sourceCodeDesc">GitHub: číst, sestavit, přispět</string>
     <string name="archiveMergeTitle">Sloučit s kopií</string>

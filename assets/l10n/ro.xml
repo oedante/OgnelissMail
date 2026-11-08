@@ -3661,6 +3661,8 @@
     <string name="onboardingDesc3NoEx">PIN și amprentă, avertismente de phishing, blocarea trackerelor din e-mailuri.\n\nE-mailurile ajung de pe serverul tău direct pe dispozitiv.</string>
     <string name="exchangeHiddenTitle">Cutii poștale Exchange ascunse: {n}</string>
     <string name="exchangeHiddenDesc">Exchange nu este acceptat în această versiune. Cutiile poștale și datele lor rămân pe acest dispozitiv și vor reveni într-o versiune cu Exchange. Poți adăuga e-mailul prin IMAP.</string>
+    <string name="policyHiddenTitle">Ascunse de organizația ta: {n}</string>
+    <string name="policyHiddenDesc">Organizația ta permite doar cutii poștale din propriile domenii. Ascunse: {list}. Datele rămân pe dispozitiv și vor reveni dacă domeniul este permis.</string>
     <string name="sourceCode">Cod sursă</string>
     <string name="sourceCodeDesc">GitHub: citește, compilează, contribuie</string>
     <string name="archiveMergeTitle">Îmbină cu o copie</string>

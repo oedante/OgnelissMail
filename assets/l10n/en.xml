@@ -3642,6 +3642,8 @@
     <string name="onboardingDesc3NoEx">PIN and fingerprint, phishing warnings, tracker blocking in emails.\n\nMail goes from your server straight to your device.</string>
     <string name="exchangeHiddenTitle">Exchange mailboxes hidden: {n}</string>
     <string name="exchangeHiddenDesc">Exchange isn\'t supported in this version. The mailboxes and their data stay on this device and will return in a version with Exchange. You can add the mail via IMAP.</string>
+    <string name="policyHiddenTitle">Hidden by your organization: {n}</string>
+    <string name="policyHiddenDesc">Your organization allows only mailboxes of its own domains. Hidden: {list}. The data stays on this device and will return if the domain is allowed.</string>
     <string name="sourceCode">Source code</string>
     <string name="sourceCodeDesc">GitHub: read, build, contribute</string>
     <string name="archiveMergeTitle">Merge with a copy</string>

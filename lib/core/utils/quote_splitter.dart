@@ -57,6 +57,11 @@ QuoteSplit splitQuotedHtml(String html) {
     final marker = _findMarker(body);
     if (marker == null) return QuoteSplit(html, '');
     final cut = _cutPoint(marker, body);
+    // Ответ под цитатой (Gmail, Thunderbird, Apple Mail при ответе снизу,
+    // или ответы вперемежку с цитатой): свёрнутая цитата спрятала бы и
+    // свежий текст под ней — показываем письмо целиком (план 08.11.2026,
+    // п. 5).
+    if (_freshTextAfter(marker, cut, body)) return QuoteSplit(html, '');
     final path = _pathFrom(body, cut);
     if (path == null) return QuoteSplit(html, '');
 
@@ -157,6 +162,66 @@ dom.Element? _nextElementWithText(dom.Element el) {
 }
 
 bool _hasMedia(dom.Element el) => el.querySelector('img') != null;
+
+/// Сколько знаков свежего текста под цитатой достаточно, чтобы не
+/// сворачивать: меньше — подпись вроде «Иван» или «--».
+const _freshMin = 20;
+
+/// Цитата — «контейнер» (blockquote, gmail_quote и т. п., или строка
+/// «… wrote:» перед blockquote), а после неё есть свежий текст вне цитат.
+/// Шапка Outlook («От: … Отправлено: …», линия, «-----Original Message-----»)
+/// так не проверяется: после неё идёт само старое письмо, без рамки.
+bool _freshTextAfter(dom.Element marker, dom.Element cut, dom.Element body) {
+  dom.Element region;
+  if (_isQuoteBox(marker)) {
+    region = cut;
+  } else if (marker.classes.contains('moz-cite-prefix') || _isWroteLine(marker)) {
+    // «On … wrote:» / moz-cite-prefix, а за ним — сама цитата.
+    final next = _nextElementWithText(marker);
+    if (next == null || !_isQuoteBox(next)) return false;
+    region = next;
+    // Разрез по таблице — тогда граница цитаты — сама таблица.
+    if (!identical(cut, marker)) region = cut;
+  } else {
+    return false;
+  }
+  var fresh = 0;
+  dom.Node? cur = region;
+  while (cur != null && cur != body) {
+    final parent = cur.parentNode;
+    if (parent == null) break;
+    final idx = parent.nodes.indexOf(cur);
+    for (var i = idx + 1; i < parent.nodes.length; i++) {
+      fresh += _freshLen(parent.nodes[i]);
+      if (fresh >= _freshMin) return true;
+    }
+    cur = parent;
+  }
+  return false;
+}
+
+bool _isQuoteBox(dom.Element el) =>
+    el.localName == 'blockquote' ||
+    _quoteClasses.any((c) => c != 'moz-cite-prefix' && c != 'OutlookMessageHeader' && el.classes.contains(c));
+
+bool _isWroteLine(dom.Element el) {
+  final lead = _lead(el);
+  return lead.length <= 200 &&
+      RegExp(r'(?:wrote|пишет|написал(?:\(а\)|а)?|schrieb|a écrit)\s*:\s*$', caseSensitive: false).hasMatch(lead);
+}
+
+/// Текст узла вне цитат (вложенные blockquote и т. п. не считаются).
+int _freshLen(dom.Node n) {
+  if (n is dom.Text) return n.text.replaceAll(RegExp(r'[\s\u00a0]+'), '').length;
+  if (n is! dom.Element) return 0;
+  final tag = n.localName;
+  if (tag == 'style' || tag == 'script' || _isQuoteBox(n)) return 0;
+  var len = 0;
+  for (final c in n.nodes) {
+    len += _freshLen(c);
+  }
+  return len;
+}
 
 // ── Точка разреза ─────────────────────────────────────────────────────────
 
@@ -261,3 +326,68 @@ String replyPartOfPlain(String plain) {
   return reply.isEmpty ? plain : reply;
 }
 
+
+/// Письмо без HTML: свежий текст и свёрнутая часть (план 08.11.2026, п. 5:
+/// «простой текст — сворачивать «>» и подпись «-- »»). Свёрнутая часть
+/// начинается с шапки цитаты («On … wrote:», «… пишет:», «От: …
+/// Отправлено: …», «-----Original Message-----»), с первой строки «>» или
+/// с подписи «-- » (RFC 3676), если за ней цитата или подпись длинная.
+/// Не сворачивается: нечего показать до разреза; ответ под цитатой «>»
+/// (свежий текст после строк «>»). Нечего сворачивать — quoted пустая.
+QuoteSplit splitQuotedPlain(String plain) {
+  final lines = plain.split('\n');
+  int? quoteAt;
+  var outlook = false;
+  for (var i = 0; i < lines.length; i++) {
+    final t = lines[i].trim();
+    if (t.isEmpty) continue;
+    if (t.startsWith('>')) {
+      quoteAt = i;
+      break;
+    }
+    if (_headerLine.hasMatch(t) ||
+        (i + 1 < lines.length && _headerLine.hasMatch('$t ${lines[i + 1].trim()}'))) {
+      quoteAt = i;
+      break;
+    }
+    if (_outlookHeader.hasMatch(lines.skip(i).take(6).join('\n').trim())) {
+      quoteAt = i;
+      outlook = true;
+      break;
+    }
+  }
+  int? sigAt;
+  for (var i = 0; i < (quoteAt ?? lines.length); i++) {
+    if (lines[i].trimRight() == '--') {
+      sigAt = i;
+      break;
+    }
+  }
+  // Подпись сворачивается, если за ней цитата или в ней больше 4 строк
+  // (реклама, подвал рассылки); короткая подпись — имя, телефон — видна.
+  if (sigAt != null && quoteAt == null) {
+    final sigLines = lines.skip(sigAt + 1).where((l) => l.trim().isNotEmpty).length;
+    if (sigLines <= 4) sigAt = null;
+  }
+  final cut = sigAt ?? quoteAt;
+  if (cut == null) return QuoteSplit(plain, '');
+  final reply = lines.take(cut).join('\n').trimRight();
+  if (reply.trim().isEmpty) return QuoteSplit(plain, '');
+  // Ответ под цитатой «>»: свежий текст после строк «>» (до подписи).
+  if (quoteAt != null && !outlook && sigAt == null) {
+    var seenQuote = false;
+    var fresh = 0;
+    for (var i = quoteAt; i < lines.length; i++) {
+      final t = lines[i].trim();
+      if (t.startsWith('>')) {
+        seenQuote = true;
+        continue;
+      }
+      if (t == '--' || lines[i].trimRight() == '--') break;
+      if (!seenQuote || t.isEmpty || _headerLine.hasMatch(t)) continue;
+      fresh += t.replaceAll(RegExp(r'\s+'), '').length;
+      if (fresh >= _freshMin) return QuoteSplit(plain, '');
+    }
+  }
+  return QuoteSplit(reply, lines.skip(cut).join('\n'));
+}

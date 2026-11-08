@@ -58,6 +58,7 @@ import '../../../core/utils/date_links.dart';
 import '../../../core/utils/linkify.dart';
 import '../../../core/utils/mail_clip.dart';
 import '../../../core/utils/mail_color_scheme.dart';
+import '../../../core/utils/mail_dark_canvas.dart';
 import '../../../core/utils/symbol_fonts.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/image_actions.dart';
@@ -83,7 +84,8 @@ class MailHtmlDocument {
   final int? declaredWidth;
 
   /// У письма своё тёмное оформление (@media (prefers-color-scheme: dark)
-  /// в стилях, 1.9.x): в тёмной теме оно показывается вместо инверсии.
+  /// в стилях, 1.9.x) или оно и так тёмное ([MailDarkCanvas]): в тёмной
+  /// теме оно показывается вместо инверсии.
   /// Стили письма тогда — в двух вариантах ([_csLight] / [_csDark]), один из
   /// них выключен (media="not all"); [MailHtmlView.composeHtml] включает нужный.
   final bool darkDesign;
@@ -321,7 +323,16 @@ class MailHtmlDocument {
       if (style != st) img.attributes['style'] = style;
     }
 
-    final darkDesign = _schemeStyles(body);
+    // Фоновые картинки из правил <style> (класс, id) — пометка, чтобы
+    // инверсия тёмной темы вернула их к исходным цветам, как картинки и фоны
+    // в style элемента (план 08.11.2026, п. 5: «картинки-фоны не показывать
+    // негативом»).
+    _markStyleBackgrounds(body);
+
+    // Своё тёмное оформление (@media prefers-color-scheme) или письмо и так
+    // тёмное (рассылка на чёрном фоне, план 08.11.2026 п. 5): в тёмной теме
+    // — как есть, без инверсии, иначе тёмное письмо становилось светлым.
+    final darkDesign = _schemeStyles(body) || MailDarkCanvas.isDark(doc, body);
 
     // Высота в долях окна (height/min-height: 100vh — «экран» рассылки,
     // 1.8.12, письмо Kaspersky 30.10.2026): окно письма растягивается под
@@ -578,6 +589,33 @@ class MailHtmlDocument {
     final i = html.indexOf('</head>');
     final out = i < 0 ? '$tag$html' : '${html.substring(0, i)}$tag${html.substring(i)}';
     return MailHtmlDocument(out, linkTexts, declaredWidth: declaredWidth, darkDesign: darkDesign, clipped: clipped);
+  }
+
+  static final _cssRule = RegExp(r'([^{}]+)\{([^{}]*)\}');
+  static final _bgImage = RegExp(r'background(?:-image)?\s*:[^;]*url\(', caseSensitive: false);
+
+  /// Элементы, которым правило из <style> задаёт фоновую картинку, —
+  /// `data-og-bgimg`. Только простые селекторы (без :hover и т. п.), не
+  /// больше 40; селектор, который разборщик не понял, пропускается.
+  static void _markStyleBackgrounds(dom.Element body) {
+    var left = 40;
+    for (final st in body.querySelectorAll('style')) {
+      final css = st.text;
+      if (!css.contains('url(')) continue;
+      for (final m in _cssRule.allMatches(css)) {
+        if (!_bgImage.hasMatch(m.group(2)!)) continue;
+        for (final raw in m.group(1)!.split(',')) {
+          final sel = raw.trim();
+          if (sel.isEmpty || sel.startsWith('@') || sel.contains(':') || left <= 0) continue;
+          left--;
+          try {
+            for (final e in body.querySelectorAll(sel)) {
+              e.attributes['data-og-bgimg'] = '';
+            }
+          } catch (_) {/* селектор не понят — пропускаем */}
+        }
+      }
+    }
   }
 
   /// Длинное слово: не меньше 24 знаков без мест переноса. Неразрывный
@@ -1205,7 +1243,7 @@ class MailHtmlView extends StatefulWidget {
         ..write('html{filter:invert(1) hue-rotate(180deg);background:${_hex(inv)} !important;}')
         ..write('body{background:transparent !important;}')
         ..write('html,body{color-scheme:light !important;}')
-        ..write('img,video,picture,svg,canvas,[style*="background-image"],[background]'
+        ..write('img,video,picture,svg,canvas,[style*="background-image"],[background],[data-og-bgimg]'
             '{filter:invert(1) hue-rotate(180deg);}')
         // Фото людей в плашках цитаты (withPeoplePhotos) — тоже обратно.
         ..write(':root{--og-ph:invert(1) hue-rotate(180deg);}');

@@ -411,7 +411,7 @@ class BackgroundService {
   Timer? _cacheCleanupTimer;
   Timer? _foregroundSyncTimer;
   DateTime _lastActivity = DateTime.now();
-  DateTime _lastForegroundSync = DateTime.fromMillisecondsSinceEpoch(0);
+  DateTime _lastResumeSync = DateTime.fromMillisecondsSinceEpoch(0);
   bool _initialized = false;
   bool _autoLockLogged = false;
 
@@ -816,7 +816,7 @@ class BackgroundService {
   }
 
   Future<void> _foregroundSync({bool respectInterval = true}) async {
-    _lastForegroundSync = DateTime.now();
+    if (!respectInterval) _lastResumeSync = DateTime.now();
     try {
       await _ref.read(syncServiceProvider)
           .syncAll(scheduled: true, respectInterval: respectInterval);
@@ -830,8 +830,15 @@ class BackgroundService {
   /// раза в 2 минуты — чтобы частые переключения не били по сети/серверу.
   /// Раньше при возврате синк не запускался — свежая почта появлялась только на
   /// следующем тике таймера (до `syncIntervalMinutes` ожидания).
+  ///
+  /// Пауза считается только от такой же полной проверки (08.11.2026). Прежде
+  /// её отсчитывал и тик таймера раз в 5 минут — он идёт и в свёрнутом
+  /// приложении, пока служба почты держит процесс, и пропускает ящики «ещё
+  /// не пора» (с живым push — 30 минут). Открыли приложение в пределах двух
+  /// минут после тика — не проверялось ничего.
   Future<void> syncOnResume() async {
-    if (DateTime.now().difference(_lastForegroundSync) < const Duration(minutes: 2)) {
+    if (DateTime.now().difference(_lastResumeSync) < const Duration(minutes: 2)) {
+      AppLogger.debug('Возврат в приложение: полная проверка была меньше 2 мин назад');
       return;
     }
     // При возврате в приложение — свежая почта всех аккаунтов, кроме тех,

@@ -19,6 +19,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/services/background/background_service.dart' show notifyMainDbChanged;
+import 'package:ogneliss/services/sync/sync_service.dart' show SyncService;
 
 Future<void> _mail(AppDatabase db, String id) => db.into(db.emails).insert(EmailsCompanion.insert(
       id: id,
@@ -92,6 +93,23 @@ void main() {
     });
     notifyMainDbChanged('WorkManager');
     expect(await got.future.timeout(const Duration(seconds: 2)), {'dbChanged': true});
+  });
+
+  test('ящик занят фоновой задачей — приложение ждёт её, а не пропускает', () async {
+    var calls = 0;
+    // Задача отпускает ящик на третьей попытке.
+    final ok = await SyncService.waitForLease(() async => ++calls >= 3,
+        max: const Duration(seconds: 2), step: const Duration(milliseconds: 10));
+    expect(ok, isTrue);
+    expect(calls, 3);
+  });
+
+  test('задача держит ящик дольше предела — пропуск, без зависания', () async {
+    final sw = Stopwatch()..start();
+    final ok = await SyncService.waitForLease(() async => false,
+        max: const Duration(milliseconds: 100), step: const Duration(milliseconds: 20));
+    expect(ok, isFalse);
+    expect(sw.elapsed, lessThan(const Duration(seconds: 2)));
   });
 
   test('приложения в процессе нет — сообщать некому, без ошибок', () {

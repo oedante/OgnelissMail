@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Senkronizasyon ve arka plan çalışması, sertifikalar, veri koruması, uygulama bölümleri, günlük, sıfırlama</string>
     <string name="sectionData">Veriler</string>
     <string name="sectionHelp">Yardım</string>
+    <string name="sectionLookLanguage">Görünüm ve dil</string>
+    <string name="sectionModules">Bölümler</string>
+    <string name="sectionPrivacy">Gizlilik</string>
+    <string name="sectionStorageData">Veri ve depolama</string>
+    <string name="sectionSystemHelp">Sistem ve yardım</string>
     <string name="sectionBackground">Arka plan çalışması</string>
     <string name="sectionApp">Uygulama</string>
     <string name="folderNotifyTurnOn">Bildirimleri aç</string>

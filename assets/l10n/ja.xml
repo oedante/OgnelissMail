@@ -3530,6 +3530,11 @@
     <string name="advancedSettingsDesc">同期とバックグラウンド動作、証明書、データ保護、アプリのセクション、ログ、リセット</string>
     <string name="sectionData">データ</string>
     <string name="sectionHelp">ヘルプ</string>
+    <string name="sectionLookLanguage">表示と言語</string>
+    <string name="sectionModules">セクション</string>
+    <string name="sectionPrivacy">プライバシー</string>
+    <string name="sectionStorageData">データとストレージ</string>
+    <string name="sectionSystemHelp">システムとヘルプ</string>
     <string name="sectionBackground">バックグラウンド動作</string>
     <string name="sectionApp">アプリ</string>
     <string name="folderNotifyTurnOn">通知をオンにする</string>

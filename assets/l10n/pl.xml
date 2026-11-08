@@ -3587,6 +3587,11 @@
     <string name="advancedSettingsDesc">Synchronizacja i praca w tle, certyfikaty, ochrona danych, sekcje aplikacji, dziennik, resetowanie</string>
     <string name="sectionData">Dane</string>
     <string name="sectionHelp">Pomoc</string>
+    <string name="sectionLookLanguage">Wygląd i język</string>
+    <string name="sectionModules">Sekcje</string>
+    <string name="sectionPrivacy">Prywatność</string>
+    <string name="sectionStorageData">Dane i miejsce</string>
+    <string name="sectionSystemHelp">System i pomoc</string>
     <string name="sectionBackground">Praca w tle</string>
     <string name="sectionApp">Aplikacja</string>
     <string name="folderNotifyTurnOn">Włącz powiadomienia</string>

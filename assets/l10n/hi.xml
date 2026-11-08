@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">सिंक और बैकग्राउंड कार्य, प्रमाणपत्र, डेटा सुरक्षा, ऐप के अनुभाग, लॉग, रीसेट</string>
     <string name="sectionData">डेटा</string>
     <string name="sectionHelp">सहायता</string>
+    <string name="sectionLookLanguage">रूप और भाषा</string>
+    <string name="sectionModules">अनुभाग</string>
+    <string name="sectionPrivacy">गोपनीयता</string>
+    <string name="sectionStorageData">डेटा और संग्रहण</string>
+    <string name="sectionSystemHelp">सिस्टम और सहायता</string>
     <string name="sectionBackground">बैकग्राउंड कार्य</string>
     <string name="sectionApp">ऐप</string>
     <string name="folderNotifyTurnOn">सूचनाएं चालू करें</string>

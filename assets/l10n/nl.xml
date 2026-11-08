@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Synchronisatie en achtergrondwerk, certificaten, gegevensbescherming, appsecties, logboek, resetten</string>
     <string name="sectionData">Gegevens</string>
     <string name="sectionHelp">Help</string>
+    <string name="sectionLookLanguage">Weergave en taal</string>
+    <string name="sectionModules">Onderdelen</string>
+    <string name="sectionPrivacy">Privacy</string>
+    <string name="sectionStorageData">Gegevens en opslag</string>
+    <string name="sectionSystemHelp">Systeem en hulp</string>
     <string name="sectionBackground">Achtergrondwerk</string>
     <string name="sectionApp">App</string>
     <string name="folderNotifyTurnOn">Meldingen aanzetten</string>

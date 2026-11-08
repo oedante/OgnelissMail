@@ -3530,6 +3530,11 @@
     <string name="advancedSettingsDesc">동기화 및 백그라운드 작업, 인증서, 데이터 보호, 앱 섹션, 로그, 초기화</string>
     <string name="sectionData">데이터</string>
     <string name="sectionHelp">도움말</string>
+    <string name="sectionLookLanguage">모양 및 언어</string>
+    <string name="sectionModules">섹션</string>
+    <string name="sectionPrivacy">개인정보</string>
+    <string name="sectionStorageData">데이터 및 저장공간</string>
+    <string name="sectionSystemHelp">시스템 및 도움말</string>
     <string name="sectionBackground">백그라운드 작업</string>
     <string name="sectionApp">앱</string>
     <string name="folderNotifyTurnOn">알림 켜기</string>

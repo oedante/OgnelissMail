@@ -3530,6 +3530,11 @@
     <string name="advancedSettingsDesc">Đồng bộ và hoạt động nền, chứng chỉ, bảo vệ dữ liệu, các mục của ứng dụng, nhật ký, đặt lại</string>
     <string name="sectionData">Dữ liệu</string>
     <string name="sectionHelp">Trợ giúp</string>
+    <string name="sectionLookLanguage">Giao diện và ngôn ngữ</string>
+    <string name="sectionModules">Mục</string>
+    <string name="sectionPrivacy">Quyền riêng tư</string>
+    <string name="sectionStorageData">Dữ liệu và bộ nhớ</string>
+    <string name="sectionSystemHelp">Hệ thống và trợ giúp</string>
     <string name="sectionBackground">Hoạt động nền</string>
     <string name="sectionApp">Ứng dụng</string>
     <string name="folderNotifyTurnOn">Bật thông báo</string>

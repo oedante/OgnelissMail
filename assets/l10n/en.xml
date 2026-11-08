@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Sync and background work, certificates, data protection, app sections, log, reset</string>
     <string name="sectionData">Data</string>
     <string name="sectionHelp">Help</string>
+    <string name="sectionLookLanguage">Look and language</string>
+    <string name="sectionModules">Sections</string>
+    <string name="sectionPrivacy">Privacy</string>
+    <string name="sectionStorageData">Data and storage</string>
+    <string name="sectionSystemHelp">System and help</string>
     <string name="sectionBackground">Background work</string>
     <string name="sectionApp">App</string>
     <string name="folderNotifyTurnOn">Turn on notifications</string>

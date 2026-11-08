@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Synkronointi ja taustatoiminta, varmenteet, tietosuoja, sovelluksen osiot, loki, nollaus</string>
     <string name="sectionData">Tiedot</string>
     <string name="sectionHelp">Ohje</string>
+    <string name="sectionLookLanguage">Ulkoasu ja kieli</string>
+    <string name="sectionModules">Osiot</string>
+    <string name="sectionPrivacy">Yksityisyys</string>
+    <string name="sectionStorageData">Tiedot ja tallennustila</string>
+    <string name="sectionSystemHelp">Järjestelmä ja ohje</string>
     <string name="sectionBackground">Taustatoiminta</string>
     <string name="sectionApp">Sovellus</string>
     <string name="folderNotifyTurnOn">Ota ilmoitukset käyttöön</string>

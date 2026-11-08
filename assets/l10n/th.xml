@@ -3530,6 +3530,11 @@
     <string name="advancedSettingsDesc">การซิงค์และงานเบื้องหลัง ใบรับรอง การปกป้องข้อมูล ส่วนต่าง ๆ ของแอป บันทึกการทำงาน การรีเซ็ต</string>
     <string name="sectionData">ข้อมูล</string>
     <string name="sectionHelp">ความช่วยเหลือ</string>
+    <string name="sectionLookLanguage">รูปลักษณ์และภาษา</string>
+    <string name="sectionModules">ส่วนต่าง ๆ</string>
+    <string name="sectionPrivacy">ความเป็นส่วนตัว</string>
+    <string name="sectionStorageData">ข้อมูลและพื้นที่</string>
+    <string name="sectionSystemHelp">ระบบและวิธีใช้</string>
     <string name="sectionBackground">การทำงานเบื้องหลัง</string>
     <string name="sectionApp">แอป</string>
     <string name="folderNotifyTurnOn">เปิดการแจ้งเตือน</string>

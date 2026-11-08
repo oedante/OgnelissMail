@@ -129,9 +129,9 @@ const _entries = <_Entry>[
   _Entry('checkScheduled', 'advancedSettings', AppIcons.schedule, '/settings/delivery-schedule'),
   _Entry('runInBackground', 'permissions', AppIcons.cloud_sync, '/settings/permissions'),
   _Entry('bgNotifHide', 'permissions', AppIcons.notifications_off, '/settings/permissions'),
-  _Entry('pinLock', 'security', AppIcons.pin, '/settings'),
+  _Entry('pinLock', 'sectionPrivacy', AppIcons.pin, '/settings'),
   // План 08.11.2026 п. 4: настройки, которых не было в поиске.
-  _Entry('trackerBlocker', 'security', AppIcons.visibility_off, '/settings'),
+  _Entry('trackerBlocker', 'sectionPrivacy', AppIcons.visibility_off, '/settings'),
   _Entry('bimiLogos', 'emailSettings', AppIcons.verified, '/settings/mail'),
   _Entry('readingPane', 'appearanceTitle', AppIcons.vertical_split, '/settings/appearance'),
   _Entry('uiScaleTitle', 'general', AppIcons.zoom_in, '/settings/general'),

@@ -53,6 +53,10 @@
   PIN-коде — размытие содержимого в переключателе приложений iPhone;
   надёжнее чтение ключа PIN из хранилища Android.
 - **Скорость**: крупные части писем IMAP разбираются вне главного потока.
+- **Настройки — 8 разделов** (согласовано владельцем 08.11): Аккаунты,
+  Вид и язык, Уведомления, Почта, Разделы, Конфиденциальность (PIN,
+  трекеры, безопасность соединения, разрешения), Данные и место, Система
+  и справка (расширенные, экспериментальное, вопросы, о приложении).
 - **Отображение писем** (08.11): длинная строка без пробелов в таблице
   (рамка «=====» у предупреждения Outlook о внешнем отправителе) больше не
   выводит письмо за правый край после «Показать цитируемую переписку» —
@@ -74,24 +78,28 @@
 • Новые виджеты: «Задачи» и «Почта: выбор» — свой ящик или фильтр (iOS 17)
 • Экран блокировки: непрочитанные и последнее письмо
 • Письма, полученные в фоне, сразу видны в списке
+• Настройки — 8 понятных разделов
 </ru-RU>
 <en-US>
 • Widgets: Read and Archive right in the Mail widget, a check for tasks (iOS 17)
 • New widgets: Tasks and “Mail: choose” with its own mailbox or filter (iOS 17)
 • Lock Screen: unread count and the latest email
 • Mail received in the background shows up in the list right away
+• Settings in 8 clear sections
 </en-US>
 <de-DE>
 • Widgets: „Gelesen“ und „Archivieren“ direkt im E-Mail-Widget, Häkchen für Aufgaben (iOS 17)
 • Neue Widgets: Aufgaben und „E-Mail: Auswahl“ mit eigenem Postfach oder Filter (iOS 17)
 • Sperrbildschirm: Ungelesene und die neueste E-Mail
 • Im Hintergrund empfangene E-Mails erscheinen sofort in der Liste
+• Einstellungen in 8 klaren Bereichen
 </de-DE>
 <fr-FR>
 • Widgets : « Lu » et « Archiver » directement dans le widget Courrier, case pour les tâches (iOS 17)
 • Nouveaux widgets : Tâches et « Courrier : au choix » avec sa boîte ou son filtre (iOS 17)
 • Écran verrouillé : non lus et dernier message
 • Les messages reçus en arrière-plan apparaissent aussitôt dans la liste
+• Réglages en 8 sections claires
 </fr-FR>
 ```
 

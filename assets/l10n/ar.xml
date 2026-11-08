@@ -3625,6 +3625,11 @@
     <string name="advancedSettingsDesc">المزامنة والعمل في الخلفية، الشهادات، حماية البيانات، أقسام التطبيق، السجلات، إعادة الضبط</string>
     <string name="sectionData">البيانات</string>
     <string name="sectionHelp">المساعدة</string>
+    <string name="sectionLookLanguage">المظهر واللغة</string>
+    <string name="sectionModules">الأقسام</string>
+    <string name="sectionPrivacy">الخصوصية</string>
+    <string name="sectionStorageData">البيانات والتخزين</string>
+    <string name="sectionSystemHelp">النظام والمساعدة</string>
     <string name="sectionBackground">العمل في الخلفية</string>
     <string name="sectionApp">التطبيق</string>
     <string name="folderNotifyTurnOn">تفعيل الإشعارات</string>

@@ -3568,6 +3568,11 @@
     <string name="advancedSettingsDesc">סנכרון ועבודה ברקע, אישורים, הגנה על נתונים, חלקי האפליקציה, יומן רישום, איפוס</string>
     <string name="sectionData">נתונים</string>
     <string name="sectionHelp">עזרה</string>
+    <string name="sectionLookLanguage">מראה ושפה</string>
+    <string name="sectionModules">מדורים</string>
+    <string name="sectionPrivacy">פרטיות</string>
+    <string name="sectionStorageData">נתונים ואחסון</string>
+    <string name="sectionSystemHelp">מערכת ועזרה</string>
     <string name="sectionBackground">עבודה ברקע</string>
     <string name="sectionApp">אפליקציה</string>
     <string name="folderNotifyTurnOn">הפעלת התראות</string>

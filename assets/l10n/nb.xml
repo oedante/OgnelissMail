@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Synkronisering og bakgrunnsarbeid, sertifikater, databeskyttelse, appdeler, logg, tilbakestilling</string>
     <string name="sectionData">Data</string>
     <string name="sectionHelp">Hjelp</string>
+    <string name="sectionLookLanguage">Utseende og språk</string>
+    <string name="sectionModules">Deler</string>
+    <string name="sectionPrivacy">Personvern</string>
+    <string name="sectionStorageData">Data og lagring</string>
+    <string name="sectionSystemHelp">System og hjelp</string>
     <string name="sectionBackground">Bakgrunnsarbeid</string>
     <string name="sectionApp">App</string>
     <string name="folderNotifyTurnOn">Slå på varsler</string>

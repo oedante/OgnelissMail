@@ -3568,6 +3568,11 @@
     <string name="advancedSettingsDesc">Sincronizare și lucru în fundal, certificate, protecția datelor, secțiunile aplicației, jurnal, resetare</string>
     <string name="sectionData">Date</string>
     <string name="sectionHelp">Ajutor</string>
+    <string name="sectionLookLanguage">Aspect și limbă</string>
+    <string name="sectionModules">Secțiuni</string>
+    <string name="sectionPrivacy">Confidențialitate</string>
+    <string name="sectionStorageData">Date și spațiu</string>
+    <string name="sectionSystemHelp">Sistem și ajutor</string>
     <string name="sectionBackground">Lucru în fundal</string>
     <string name="sectionApp">Aplicație</string>
     <string name="folderNotifyTurnOn">Activează notificările</string>

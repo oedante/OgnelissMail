@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Szinkronizálás és háttérmunka, tanúsítványok, adatvédelem, alkalmazásrészek, napló, alaphelyzetbe állítás</string>
     <string name="sectionData">Adatok</string>
     <string name="sectionHelp">Súgó</string>
+    <string name="sectionLookLanguage">Megjelenés és nyelv</string>
+    <string name="sectionModules">Részek</string>
+    <string name="sectionPrivacy">Adatvédelem</string>
+    <string name="sectionStorageData">Adatok és tárhely</string>
+    <string name="sectionSystemHelp">Rendszer és súgó</string>
     <string name="sectionBackground">Háttérmunka</string>
     <string name="sectionApp">Alkalmazás</string>
     <string name="folderNotifyTurnOn">Értesítések bekapcsolása</string>

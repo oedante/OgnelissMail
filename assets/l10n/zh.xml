@@ -3530,6 +3530,11 @@
     <string name="advancedSettingsDesc">同步与后台运行、证书、数据保护、应用模块、日志、重置</string>
     <string name="sectionData">数据</string>
     <string name="sectionHelp">帮助</string>
+    <string name="sectionLookLanguage">外观和语言</string>
+    <string name="sectionModules">分区</string>
+    <string name="sectionPrivacy">隐私</string>
+    <string name="sectionStorageData">数据和存储</string>
+    <string name="sectionSystemHelp">系统和帮助</string>
     <string name="sectionBackground">后台运行</string>
     <string name="sectionApp">应用</string>
     <string name="folderNotifyTurnOn">开启通知</string>

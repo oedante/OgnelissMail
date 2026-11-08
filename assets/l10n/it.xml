@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Sincronizzazione e lavoro in background, certificati, protezione dei dati, sezioni dell\'app, log, reimpostazione</string>
     <string name="sectionData">Dati</string>
     <string name="sectionHelp">Guida</string>
+    <string name="sectionLookLanguage">Aspetto e lingua</string>
+    <string name="sectionModules">Sezioni</string>
+    <string name="sectionPrivacy">Privacy</string>
+    <string name="sectionStorageData">Dati e spazio</string>
+    <string name="sectionSystemHelp">Sistema e guida</string>
     <string name="sectionBackground">Lavoro in background</string>
     <string name="sectionApp">App</string>
     <string name="folderNotifyTurnOn">Attiva le notifiche</string>

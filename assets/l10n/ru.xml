@@ -3587,6 +3587,11 @@
     <string name="advancedSettingsDesc">Синхронизация и работа в фоне, сертификаты, защита данных, разделы приложения, журнал, сброс</string>
     <string name="sectionData">Данные</string>
     <string name="sectionHelp">Справка</string>
+    <string name="sectionLookLanguage">Вид и язык</string>
+    <string name="sectionModules">Разделы</string>
+    <string name="sectionPrivacy">Конфиденциальность</string>
+    <string name="sectionStorageData">Данные и место</string>
+    <string name="sectionSystemHelp">Система и справка</string>
     <string name="sectionBackground">Работа в фоне</string>
     <string name="sectionApp">Приложение</string>
     <string name="folderNotifyTurnOn">Включить уведомления</string>

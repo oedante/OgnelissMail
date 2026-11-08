@@ -3568,6 +3568,11 @@
     <string name="advancedSettingsDesc">Synchronizace a práce na pozadí, certifikáty, ochrana dat, sekce aplikace, protokol, reset</string>
     <string name="sectionData">Data</string>
     <string name="sectionHelp">Nápověda</string>
+    <string name="sectionLookLanguage">Vzhled a jazyk</string>
+    <string name="sectionModules">Sekce</string>
+    <string name="sectionPrivacy">Soukromí</string>
+    <string name="sectionStorageData">Data a úložiště</string>
+    <string name="sectionSystemHelp">Systém a nápověda</string>
     <string name="sectionBackground">Práce na pozadí</string>
     <string name="sectionApp">Aplikace</string>
     <string name="folderNotifyTurnOn">Zapnout oznámení</string>

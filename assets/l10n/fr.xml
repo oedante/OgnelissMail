@@ -3549,6 +3549,11 @@
     <string name="advancedSettingsDesc">Synchronisation et arrière-plan, certificats, protection des données, sections de l’app, journal, réinitialisation</string>
     <string name="sectionData">Données</string>
     <string name="sectionHelp">Aide</string>
+    <string name="sectionLookLanguage">Apparence et langue</string>
+    <string name="sectionModules">Sections</string>
+    <string name="sectionPrivacy">Confidentialité</string>
+    <string name="sectionStorageData">Données et stockage</string>
+    <string name="sectionSystemHelp">Système et aide</string>
     <string name="sectionBackground">Arrière-plan</string>
     <string name="sectionApp">Application</string>
     <string name="folderNotifyTurnOn">Activer les notifications</string>

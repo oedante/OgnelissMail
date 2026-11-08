@@ -3530,6 +3530,11 @@
     <string name="advancedSettingsDesc">Sinkronisasi dan proses latar belakang, sertifikat, perlindungan data, bagian aplikasi, log, reset</string>
     <string name="sectionData">Data</string>
     <string name="sectionHelp">Bantuan</string>
+    <string name="sectionLookLanguage">Tampilan dan bahasa</string>
+    <string name="sectionModules">Bagian</string>
+    <string name="sectionPrivacy">Privasi</string>
+    <string name="sectionStorageData">Data dan penyimpanan</string>
+    <string name="sectionSystemHelp">Sistem dan bantuan</string>
     <string name="sectionBackground">Proses latar belakang</string>
     <string name="sectionApp">Aplikasi</string>
     <string name="folderNotifyTurnOn">Aktifkan notifikasi</string>

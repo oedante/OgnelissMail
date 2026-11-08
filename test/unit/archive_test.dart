@@ -221,6 +221,9 @@ void main() {
     late ArchiveDb here;
     late ArchiveDb copy;
     setUp(() {
+      // Две базы архива (своя и копия) — суть теста; предупреждение drift о
+      // повторной базе здесь только засоряет вывод.
+      driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
       here = ArchiveDb(NativeDatabase.memory());
       copy = ArchiveDb(NativeDatabase.memory());
     });

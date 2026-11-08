@@ -3943,4 +3943,6 @@
     <string name="faq_mail_15_q">Hoe laat ik berichten meteen bij het openen vertalen?</string>
     <string name="faq_mail_15_a">Tik op ▾ bij het vertaalpictogram en kies Altijd vertalen uit het … — berichten in die taal openen dan meteen vertaald; het origineel toon je met hetzelfde pictogram. Lijst met talen: Instellingen → E-mail → Vertaling → Altijd vertalen uit. Vertaling wordt alleen aangeboden als de taal van het bericht met zekerheid is herkend, en niet voor de talen van de telefoon (uit te zetten op dezelfde plek: Talen van de telefoon: geen vertaling aanbieden).</string>
     <string name="convReplyTo">Antwoord aan {name}</string>
+    <string name="showSignatureTail">Handtekening en melding tonen</string>
+    <string name="hideSignatureTail">Handtekening en melding verbergen</string>
 </resources>

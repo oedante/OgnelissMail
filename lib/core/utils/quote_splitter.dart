@@ -26,7 +26,12 @@ import 'package:html/parser.dart' as html_parser;
 class QuoteSplit {
   final String reply;
   final String quoted;
-  QuoteSplit(this.reply, this.quoted);
+
+  /// Свёрнута только подпись или юридическое уведомление в конце письма —
+  /// цитаты нет (2.0.0, план 08.11.2026, п. 5): кнопка — «Показать подпись
+  /// и уведомление», а не «цитируемую переписку».
+  final bool tailOnly;
+  QuoteSplit(this.reply, this.quoted, {this.tailOnly = false});
 
   /// Есть что сворачивать. Раньше сравнивалась длина HTML цитаты (> 12
   /// символов) — а у пустой цитаты одна обёртка `<html><body>…` длиннее, и
@@ -55,37 +60,170 @@ QuoteSplit splitQuotedHtml(String html) {
     final body = doc.body;
     if (body == null) return QuoteSplit(html, '');
     final marker = _findMarker(body);
-    if (marker == null) return QuoteSplit(html, '');
-    final cut = _cutPoint(marker, body);
-    // Ответ под цитатой (Gmail, Thunderbird, Apple Mail при ответе снизу,
-    // или ответы вперемежку с цитатой): свёрнутая цитата спрятала бы и
-    // свежий текст под ней — показываем письмо целиком (план 08.11.2026,
-    // п. 5).
-    if (_freshTextAfter(marker, cut, body)) return QuoteSplit(html, '');
+    dom.Element? quoteCut;
+    if (marker != null) {
+      quoteCut = _cutPoint(marker, body);
+      // Ответ под цитатой (Gmail, Thunderbird, Apple Mail при ответе снизу,
+      // или ответы вперемежку с цитатой): свёрнутая цитата спрятала бы и
+      // свежий текст под ней — показываем письмо целиком (план 08.11.2026,
+      // п. 5).
+      if (_freshTextAfter(marker, quoteCut, body)) return QuoteSplit(html, '');
+    }
+    // Длинная подпись или юридическое уведомление в конце ответа (2.0.0) —
+    // сворачиваются вместе с цитатой под ними; не получилось (над ними
+    // почти нет текста) — разрез, как раньше, по цитате.
+    final tail = _findTail(body, quoteCut);
+    if (tail != null) {
+      final tailCut = _cutPoint(tail, body);
+      // Подпись внутри таблицы-вёрстки, где и сам ответ: разрез по таблице
+      // спрятал бы письмо — не сворачиваем.
+      final ownCut = identical(tailCut, tail) || _textLen(tailCut) <= _textLen(tail) + _freshMin;
+      final split = ownCut ? _splitAt(doc, html, tailCut, tailOnly: marker == null, reuse: false) : null;
+      if (split != null) return split;
+    }
+    if (quoteCut == null) return QuoteSplit(html, '');
+    return _splitAt(doc, html, quoteCut) ?? QuoteSplit(html, '');
+  } catch (_) {
+    return QuoteSplit(html, '');
+  }
+}
+
+/// Разрезать документ [doc] по узлу [cut]: ответ — до него, свёрнутая часть
+/// — с него. null — разрез не годится (нечего показать до него).
+QuoteSplit? _splitAt(dom.Document doc, String html, dom.Element cut, {bool tailOnly = false, bool reuse = true}) {
+  try {
+    final body = doc.body!;
     final path = _pathFrom(body, cut);
-    if (path == null) return QuoteSplit(html, '');
+    if (path == null) return null;
 
     // Один разбор вместо трёх (1.5.9): «ответ» режется на копии дерева,
     // «цитата» — на самом разобранном документе (путь к разрезу посчитан
     // до изменений). Клонирование дерева заметно дешевле повторного
     // разбора длинной цепочки Outlook.
     final replyDoc = doc.clone(true);
-    final quotedDoc = doc;
+    // Попытка по подписи может не подойти — тогда документ нужен целым для
+    // разреза по цитате ([reuse] = false: свёрнутая часть — на копии).
+    final quotedDoc = reuse ? doc : doc.clone(true);
     final replyCut = _nodeAt(replyDoc.body!, path);
     final quotedCut = _nodeAt(quotedDoc.body!, path);
-    if (replyCut == null || quotedCut == null) return QuoteSplit(html, '');
+    if (replyCut == null || quotedCut == null) return null;
 
     _keepBefore(replyCut, replyDoc.body!);
     _keepFrom(quotedCut, quotedDoc.body!);
 
     final replyText = replyDoc.body!.text.replaceAll(RegExp(r'\s+'), '');
     // Перед маркером нет текста — это пересылка без комментария: сворачивать
-    // нечего, иначе письмо открылось бы пустым.
-    if (replyText.isEmpty && !_hasMedia(replyDoc.body!)) return QuoteSplit(html, '');
-    return QuoteSplit(replyDoc.outerHtml, quotedDoc.outerHtml);
+    // нечего, иначе письмо открылось бы пустым. Подпись сворачиваем, только
+    // если над ней есть сам ответ.
+    if (replyText.isEmpty && !_hasMedia(replyDoc.body!)) return null;
+    if (tailOnly && replyText.length < _freshMin && !_hasMedia(replyDoc.body!)) return null;
+    // Разрез по подписи захватил бы и сам ответ (таблица-вёрстка вокруг
+    // всего письма) — не годится.
+    if (tailOnly && replyText.length < 2 * _freshMin) return null;
+    return QuoteSplit(replyDoc.outerHtml, quotedDoc.outerHtml, tailOnly: tailOnly);
   } catch (_) {
-    return QuoteSplit(html, '');
+    return null;
   }
+}
+
+// ── Подпись и юридическое уведомление ────────────────────────────────────
+
+/// Блоки подписи почтовых программ: Gmail, Outlook (веб и новый), Thunderbird.
+bool _isSignatureBox(dom.Element el) {
+  final id = el.id.toLowerCase();
+  if (id == 'signature' || id == 'signature_bookmark' || id == 'appendonsend_signature') return true;
+  if (el.attributes['data-smartmail'] == 'gmail_signature') return true;
+  return el.classes.contains('gmail_signature') ||
+      el.classes.contains('moz-signature') ||
+      el.classes.contains('signature');
+}
+
+/// Подпись короче — видна целиком (имя, должность, телефон).
+const _signatureMin = 300;
+
+/// Начало юридического уведомления (ru, en, de, fr) — в первых знаках блока.
+final _disclaimerLead = RegExp(
+  r'(конфиденциальн|данное (?:электронное )?(?:сообщение|письмо)|настоящее (?:электронное )?(?:сообщение|письмо)'
+  r'|это (?:электронное )?(?:сообщение|письмо) и (?:все|любые)|если вы получили это (?:сообщение|письмо) по ошибке'
+  r'|уведомление о конфиденциальности|отказ от ответственности'
+  r'|confidential|this (?:e-?mail|message)(?: and any| \(including| may contain| is intended| contains)'
+  r'|the information (?:contained )?in this (?:e-?mail|message)|disclaimer|if you (?:have )?received this (?:e-?mail|message) in error'
+  r'|diese e-?mail (?:enthält|kann)|vertraulich|ce (?:message|courriel) (?:et|est|peut)|confidentialité)',
+  caseSensitive: false,
+);
+
+/// Юридическое уведомление: начинается одной из фраз и длиннее короткой
+/// пометки «Конфиденциально».
+bool _isDisclaimer(dom.Element el) {
+  final text = el.text.replaceAll(RegExp(r'[\s\u00a0]+'), ' ').trim();
+  if (text.length < 150 || text.length > 8000) return false;
+  final head = text.length > 160 ? text.substring(0, 160) : text;
+  return _disclaimerLead.hasMatch(head);
+}
+
+/// Начало хвоста письма — длинной подписи или уведомления — перед цитатой
+/// ([quoteCut]; null — цитаты нет): после хвоста до цитаты (или до конца
+/// письма) почти нет текста. null — хвоста нет.
+dom.Element? _findTail(dom.Element body, dom.Element? quoteCut) {
+  final all = body.querySelectorAll('div, p, table, span, td');
+  for (final el in all) {
+    if (quoteCut != null) {
+      // Только до цитаты: дальше — сама цитата и её элементы.
+      if (identical(el, quoteCut) || _contains(quoteCut, el)) break;
+      // Обёртка вокруг цитаты — не хвост.
+      if (_contains(el, quoteCut)) continue;
+    }
+    final isTail = (_isSignatureBox(el) && _textLen(el) >= _signatureMin) || _isDisclaimer(el);
+    if (!isTail) continue;
+    if (_textAfter(el, body, quoteCut) < _freshMin) return el;
+  }
+  return null;
+}
+
+bool _contains(dom.Element outer, dom.Node inner) {
+  dom.Node? cur = inner.parentNode;
+  while (cur != null) {
+    if (identical(cur, outer)) return true;
+    cur = cur.parentNode;
+  }
+  return false;
+}
+
+int _textLen(dom.Element el) => el.text.replaceAll(RegExp(r'[\s\u00a0]+'), '').length;
+
+/// Текст после [el] (вне его) до [stop] или до конца [body].
+int _textAfter(dom.Element el, dom.Element body, dom.Element? stop) {
+  var len = 0;
+  dom.Node? cur = el;
+  while (cur != null && cur != body) {
+    final parent = cur.parentNode;
+    if (parent == null) break;
+    final idx = parent.nodes.indexOf(cur);
+    for (var i = idx + 1; i < parent.nodes.length; i++) {
+      final n = parent.nodes[i];
+      if (stop != null && (identical(n, stop) || (n is dom.Element && _contains(n, stop)))) {
+        // Дошли до цитаты (или до её обёртки — тогда считаем только текст
+        // до неё внутри обёртки).
+        if (n is dom.Element && !identical(n, stop)) len += _textBefore(n, stop);
+        return len;
+      }
+      len += n is dom.Text ? n.text.replaceAll(RegExp(r'[\s\u00a0]+'), '').length : (n is dom.Element ? _textLen(n) : 0);
+      if (len >= _freshMin) return len;
+    }
+    cur = parent;
+  }
+  return len;
+}
+
+/// Текст внутри [wrap] до узла [stop].
+int _textBefore(dom.Element wrap, dom.Element stop) {
+  var len = 0;
+  for (final n in wrap.nodes) {
+    if (identical(n, stop)) return len;
+    if (n is dom.Element && _contains(n, stop)) return len + _textBefore(n, stop);
+    len += n is dom.Text ? n.text.replaceAll(RegExp(r'[\s\u00a0]+'), '').length : (n is dom.Element ? _textLen(n) : 0);
+  }
+  return len;
 }
 
 // ── Поиск маркера ─────────────────────────────────────────────────────────
@@ -389,5 +527,5 @@ QuoteSplit splitQuotedPlain(String plain) {
       if (fresh >= _freshMin) return QuoteSplit(plain, '');
     }
   }
-  return QuoteSplit(reply, lines.skip(cut).join('\n'));
+  return QuoteSplit(reply, lines.skip(cut).join('\n'), tailOnly: sigAt != null && quoteAt == null);
 }

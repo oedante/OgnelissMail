@@ -3943,4 +3943,6 @@
     <string name="faq_mail_15_q">Miten saan viestit käännetyiksi heti avattaessa?</string>
     <string name="faq_mail_15_a">Napauta käännöskuvakkeen vieressä ▾ ja valitse Käännä aina kielestä … – sillä kielellä kirjoitetut viestit avautuvat jatkossa valmiiksi käännettyinä; alkuperäisen saa näkyviin samalla kuvakkeella. Kieliluettelo: Asetukset → Sähköposti → Käännös → Käännä aina kielistä. Käännöstä tarjotaan vain, kun viestin kieli on tunnistettu varmasti, eikä puhelimen kielille (tämän voi poistaa käytöstä samassa paikassa: Puhelimen kielet – älä tarjoa käännöstä).</string>
     <string name="convReplyTo">Vastaus: {name}</string>
+    <string name="showSignatureTail">Näytä allekirjoitus ja ilmoitus</string>
+    <string name="hideSignatureTail">Piilota allekirjoitus ja ilmoitus</string>
 </resources>

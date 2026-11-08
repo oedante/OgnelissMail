@@ -3964,4 +3964,6 @@
     <string name="faq_mail_15_q">Ako nechať správy preložiť hneď pri otvorení?</string>
     <string name="faq_mail_15_a">Ťuknite na ▾ pri ikone prekladu a vyberte Vždy prekladať z jazyka … — správy v tomto jazyku sa potom budú otvárať rovno preložené, originál zobrazíte tou istou ikonou. Zoznam jazykov: Nastavenia → Pošta → Preklad → Vždy prekladať z jazykov. Preklad sa ponúka, len keď je jazyk správy rozpoznaný s istotou, a neponúka sa pre jazyky telefónu (vypína sa na tom istom mieste: Jazyky telefónu – neponúkať preklad).</string>
     <string name="convReplyTo">Odpoveď pre {name}</string>
+    <string name="showSignatureTail">Zobraziť podpis a upozornenie</string>
+    <string name="hideSignatureTail">Skryť podpis a upozornenie</string>
 </resources>

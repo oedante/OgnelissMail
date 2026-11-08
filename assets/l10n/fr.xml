@@ -3943,4 +3943,6 @@
     <string name="faq_mail_15_q">Comment traduire les messages dès leur ouverture ?</string>
     <string name="faq_mail_15_a">Touchez ▾ à côté de l’icône de traduction et choisissez « Toujours traduire depuis : … » — les messages dans cette langue s’ouvriront déjà traduits ; la même icône affiche l’original. Liste des langues : Paramètres → Courrier → Traduction → « Toujours traduire depuis ». La traduction n’est proposée que si la langue du message est détectée avec certitude, et elle ne l’est pas pour les langues du téléphone (désactivable au même endroit : « Langues du téléphone — ne pas proposer de traduction »).</string>
     <string name="convReplyTo">Réponse à {name}</string>
+    <string name="showSignatureTail">Afficher la signature et l’avertissement</string>
+    <string name="hideSignatureTail">Masquer la signature et l’avertissement</string>
 </resources>

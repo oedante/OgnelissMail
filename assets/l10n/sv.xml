@@ -3943,4 +3943,6 @@
     <string name="faq_mail_15_q">Hur översätter jag meddelanden direkt när de öppnas?</string>
     <string name="faq_mail_15_a">Tryck på ▾ vid översättningsikonen och välj Översätt alltid från … – meddelanden på det språket öppnas sedan redan översatta; originalet visas med samma ikon. Listan över språk: Inställningar → E-post → Översättning → Översätt alltid från. Översättning erbjuds bara när meddelandets språk har identifierats säkert, och inte för telefonens språk (stängs av på samma ställe: Telefonens språk – erbjud inte översättning).</string>
     <string name="convReplyTo">Svar till {name}</string>
+    <string name="showSignatureTail">Visa signatur och meddelande</string>
+    <string name="hideSignatureTail">Dölj signatur och meddelande</string>
 </resources>

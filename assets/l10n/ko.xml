@@ -3922,4 +3922,6 @@
     <string name="faq_mail_15_q">메일을 열 때 바로 번역되게 하려면 어떻게 하나요?</string>
     <string name="faq_mail_15_a">번역 아이콘 옆의 ▾를 탭하고 “…는 항상 번역”을 선택하면 해당 언어의 메일이 처음부터 번역된 상태로 열립니다. 원문은 같은 아이콘으로 볼 수 있습니다. 언어 목록: 설정 → 메일 → 번역 → 항상 번역할 언어. 번역은 메일의 언어가 확실히 감지된 경우에만 제안되며, 휴대전화 언어에는 제안되지 않습니다(같은 곳의 “휴대전화 언어는 번역 제안 안 함”에서 끌 수 있습니다).</string>
     <string name="convReplyTo">{name}에게 답장</string>
+    <string name="showSignatureTail">서명 및 고지 보기</string>
+    <string name="hideSignatureTail">서명 및 고지 숨기기</string>
 </resources>

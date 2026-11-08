@@ -3943,4 +3943,6 @@
     <string name="faq_mail_15_q">Wie lasse ich Nachrichten gleich beim Öffnen übersetzen?</string>
     <string name="faq_mail_15_a">Tippen Sie beim Übersetzungssymbol auf ▾ und wählen Sie „Immer aus … übersetzen“ — Nachrichten in dieser Sprache öffnen sich dann gleich übersetzt, das Original zeigt dasselbe Symbol. Liste der Sprachen: Einstellungen → E-Mail → Übersetzung → „Immer übersetzen aus“. Eine Übersetzung wird nur angeboten, wenn die Sprache der Nachricht sicher erkannt ist, und nicht für die Sprachen des Telefons (abschaltbar an derselben Stelle: „Sprachen des Telefons – keine Übersetzung anbieten“).</string>
     <string name="convReplyTo">Antwort an {name}</string>
+    <string name="showSignatureTail">Signatur und Hinweis anzeigen</string>
+    <string name="hideSignatureTail">Signatur und Hinweis ausblenden</string>
 </resources>

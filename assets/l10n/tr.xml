@@ -3943,4 +3943,6 @@
     <string name="faq_mail_15_q">İletiler açıldığında hemen nasıl çevrilir?</string>
     <string name="faq_mail_15_a">Çeviri simgesinin yanındaki ▾ düğmesine dokunun ve … dilinden her zaman çevir seçeneğini seçin — o dildeki iletiler artık çevrilmiş olarak açılır; aslı aynı simgeyle görüntülenir. Dil listesi: Ayarlar → E-posta → Çeviri → Şu dillerden her zaman çevir. Çeviri yalnızca iletinin dili kesin olarak belirlendiğinde önerilir ve telefon dilleri için önerilmez (aynı yerden kapatılabilir: Telefon dilleri: çeviri önerme).</string>
     <string name="convReplyTo">Yanıt: {name}</string>
+    <string name="showSignatureTail">İmzayı ve bildirimi göster</string>
+    <string name="hideSignatureTail">İmzayı ve bildirimi gizle</string>
 </resources>

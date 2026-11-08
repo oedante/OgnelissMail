@@ -3943,4 +3943,6 @@
     <string name="faq_mail_15_q">Como traduzir as mensagens assim que são abertas?</string>
     <string name="faq_mail_15_a">Toque em ▾ ao lado do ícone de tradução e escolha Traduzir sempre de … — as mensagens nesse idioma passarão a abrir já traduzidas; o original aparece pelo mesmo ícone. Lista de idiomas: Configurações → E-mail → Tradução → Traduzir sempre de. A tradução só é oferecida quando o idioma da mensagem é detectado com segurança, e não é oferecida para os idiomas do telefone (dá para desativar no mesmo lugar: Idiomas do telefone: não oferecer tradução).</string>
     <string name="convReplyTo">Resposta para {name}</string>
+    <string name="showSignatureTail">Mostrar assinatura e aviso</string>
+    <string name="hideSignatureTail">Ocultar assinatura e aviso</string>
 </resources>

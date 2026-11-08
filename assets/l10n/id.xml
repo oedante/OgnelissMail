@@ -3922,4 +3922,6 @@
     <string name="faq_mail_15_q">Bagaimana cara menerjemahkan email langsung saat dibuka?</string>
     <string name="faq_mail_15_a">Ketuk ▾ di samping ikon terjemahan lalu pilih Selalu terjemahkan dari … — email dalam bahasa itu akan langsung terbuka dalam terjemahan; teks aslinya ditampilkan dengan ikon yang sama. Daftar bahasa: Pengaturan → Email → Terjemahan → Selalu terjemahkan dari. Terjemahan hanya ditawarkan jika bahasa email terdeteksi dengan yakin, dan tidak ditawarkan untuk bahasa ponsel (bisa dimatikan di tempat yang sama: Bahasa ponsel — jangan tawarkan terjemahan).</string>
     <string name="convReplyTo">Balas ke {name}</string>
+    <string name="showSignatureTail">Tampilkan tanda tangan dan pemberitahuan</string>
+    <string name="hideSignatureTail">Sembunyikan tanda tangan dan pemberitahuan</string>
 </resources>

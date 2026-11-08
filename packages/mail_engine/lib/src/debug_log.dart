@@ -148,6 +148,16 @@ class DebugLog {
 }
 
 /// Краткое текстовое дерево WBXML-элемента (для дампа).
+/// Элементы WBXML с содержимым писем и людей — в журнал не пишутся.
+const _private = {
+  'Data', 'Body', 'Preview', 'Subject', 'MIMEData', 'ConversationIndex', 'DisplayTo', 'ThreadTopic',
+  'From', 'To', 'Cc', 'Bcc', 'ReplyTo', 'Sender', 'Location', 'OrganizerName', 'OrganizerEmail',
+  'Email', 'Email1Address', 'Email2Address', 'Email3Address', 'FileAs', 'FirstName', 'LastName',
+  'MiddleName', 'MobilePhoneNumber', 'BusinessPhoneNumber', 'HomePhoneNumber', 'Picture', 'Mime',
+  'ReplyMessage', 'Attendee', 'Alias', 'Phone', 'HomePhone', 'MobilePhone',
+  'Office', 'Title', 'Company',
+};
+
 String wbxmlTree(dynamic element, {int indent = 0}) {
   // element ожидается WbxmlElement (name, text, children).
   final pad = '  ' * indent;
@@ -156,7 +166,12 @@ String wbxmlTree(dynamic element, {int indent = 0}) {
   final children = (element.children as List?) ?? const [];
   final sb = StringBuffer();
   sb.write('$pad<$name>');
-  if (text != null && text.isNotEmpty) sb.write(' "$text"');
+  if (text != null && text.isNotEmpty) {
+    // Подробный журнал без содержимого писем (план 08.11.2026 п. 2): текст
+    // письма, вложения, MIME, тема, превью и адреса — только длиной. Журнал
+    // пересылают в поддержку; структуры ответа для разбора достаточно.
+    sb.write(_private.contains(name) ? ' «…${text.length} знаков»' : ' "$text"');
+  }
   sb.write('\n');
   for (final c in children) {
     sb.write(wbxmlTree(c, indent: indent + 1));

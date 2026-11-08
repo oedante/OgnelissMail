@@ -258,6 +258,11 @@ class MailHtmlDocument {
   /// собирает документ экран письма; ответ, пересылка, печать и «Открыть в
   /// браузере» берут письмо целиком. [dates] — даты в тексте письма
   /// нажимаемые (ссылки `ogdate:`, DateLinks; 1.9.x), от даты письма.
+  /// Картинки http:// — по https:// (только Android: там http запрещён
+  /// системой; на других платформах http работает, и переводить не нужно).
+  @visibleForTesting
+  static bool upgradeHttpImages = !kIsWeb && Platform.isAndroid;
+
   static MailHtmlDocument build(
     String bodyHtml, {
     required bool allowRemoteImages,
@@ -396,9 +401,14 @@ class MailHtmlDocument {
     // cid: — встроенные картинки, которые окно получает по запросу
     // (MailHtmlView.inlineRaw); без обработчика такие адреса не загружаются.
     final img = allowRemoteImages ? 'data: cid: https: http:' : 'data: cid:';
+    // Картинки по http:// (план 08.11.2026 п. 5): Android запрещает
+    // незашифрованные загрузки, и такие картинки не показывались вовсе
+    // (журнал: taxcom.ru). Движок окна запрашивает их по https:// — у
+    // большинства почтовых сервисов картинки есть и там.
+    final upgrade = allowRemoteImages && upgradeHttpImages ? '; upgrade-insecure-requests' : '';
     final csp = "default-src 'none'; img-src $img; style-src 'unsafe-inline'; "
         "font-src 'none'; media-src 'none'; frame-src 'none'; child-src 'none'; "
-        "object-src 'none'; script-src 'none'; form-action 'none'; base-uri 'none'";
+        "object-src 'none'; script-src 'none'; form-action 'none'; base-uri 'none'$upgrade";
 
     final declared = _declaredWidth(body);
     final out = '<!DOCTYPE html><html><head><meta charset="utf-8">'

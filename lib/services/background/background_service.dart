@@ -39,6 +39,7 @@ import '../../services/mail/oauth/oauth_service.dart';
 import '../../features/mail/providers/mail_providers.dart';
 import '../../features/settings/providers/settings_provider.dart';
 import '../../data/database/app_database.dart';
+import 'package:drift/drift.dart' show TableUpdate;
 import '../../data/providers/database_provider.dart';
 import '../../data/providers/shared_prefs_provider.dart';
 import '../../core/device/device_user_agent.dart';
@@ -143,12 +144,15 @@ Future<bool> _delegateToMain(String kind, DateTime wokeAt, Duration limit) async
       // iOS: у «Обновления контента» каждая секунда на счету.
       await ack.future.timeout(Duration(seconds: Platform.isIOS ? 3 : 8));
     } on TimeoutException {
-      // Порт остался от закрытого движка приложения (процесс жив, окна и
-      // Dart приложения уже нет) — имя убираем, проверяет сама задача.
+      // Приложение не ответило — проверяет сама задача. Имя порта НЕ
+      // убираем (08.11.2026): чаще всего приложение просто было занято, и
+      // без имени все следующие сигналы и плановые проверки шли мимо него —
+      // параллельно с ним, а записанные ими письма приложение не видело
+      // (уведомления базы между изолятами не ходят), пока процесс не
+      // перезапустится. Если движка приложения и правда нет, задача
+      // потеряет лишь эти секунды ожидания. По окончании задача сообщит
+      // приложению, что база изменилась ([notifyMainDbChanged]).
       AppLogger.warning('$kind: приложение не ответило — проверка в фоновой задаче');
-      try {
-        IsolateNameServer.removePortNameMapping(_mainPortName);
-      } catch (_) {}
       return false;
     }
     await BackgroundJournal.track(kind, () async {
@@ -170,6 +174,19 @@ Future<bool> _delegateToMain(String kind, DateTime wokeAt, Duration limit) async
     await sub.cancel();
     inbox.close();
   }
+}
+
+/// Фоновая задача проверила почту сама — сообщить приложению (если его
+/// изолят жив в этом процессе), что база изменилась (08.11.2026). Изменения,
+/// записанные другим изолятом через своё соединение с базой, потоки
+/// запросов приложения не замечают: открытый список оставался прежним, а
+/// следующие проверки приложения новых писем уже не находили — они в базе.
+void notifyMainDbChanged(String kind) {
+  try {
+    final main = IsolateNameServer.lookupPortByName(_mainPortName);
+    main?.send(const <String, Object?>{'dbChanged': true});
+    if (main != null) AppLogger.info('$kind: приложению — база обновлена');
+  } catch (_) {}
 }
 
 /// Callback WorkManager (top-level, entry-point для фонового ИЗОЛЯТА).
@@ -247,6 +264,7 @@ void callbackDispatcher() {
           AppLogger.warning('BG виджет почты: $e');
         }
       }), withState: false);
+      notifyMainDbChanged(_taskKind(taskName));
       return true;
     } catch (e, stack) {
       AppLogger.error('WorkManager: фоновый синк не удался', e, stack);
@@ -322,6 +340,7 @@ Future<bool> _runIosTask(String taskName, DateTime wokeAt) async {
         AppLogger.info('$kind: время вышло — остальное в следующий раз');
       }
     }, withState: false, describe: (_) => 'от пробуждения ${DateTime.now().difference(wokeAt).inSeconds} с');
+    notifyMainDbChanged(kind);
     return true;
   } catch (e) {
     AppLogger.warning('$kind: $e (от пробуждения ${DateTime.now().difference(wokeAt).inSeconds} с)');
@@ -524,6 +543,10 @@ class BackgroundService {
 
   void _onTaskRequest(dynamic msg) {
     if (msg is! Map) return;
+    if (msg['dbChanged'] == true) {
+      refreshFromDatabase('фоновая задача записала изменения');
+      return;
+    }
     final reply = msg['reply'];
     if (reply is! SendPort) return;
     reply.send(const <String, Object?>{'ack': true});
@@ -547,6 +570,25 @@ class BackgroundService {
       onError: (Object e) =>
           reply.send(<String, Object?>{'done': true, 'what': 'ошибка: ${cutSafe('$e'.split('\n').first, 120)}'}),
     ));
+  }
+
+  /// Перечитать открытые списки из базы (08.11.2026): изменения, записанные
+  /// фоновой задачей в своём изоляте, потоки запросов приложения сами не
+  /// видят. Не чаще раза в 5 секунд — дёшево: перечитываются только
+  /// открытые сейчас запросы.
+  DateTime _dbRefreshedAt = DateTime.fromMillisecondsSinceEpoch(0);
+
+  void refreshFromDatabase(String why) {
+    final now = DateTime.now();
+    if (now.difference(_dbRefreshedAt) < const Duration(seconds: 5)) return;
+    _dbRefreshedAt = now;
+    try {
+      final db = _ref.read(databaseProvider);
+      db.notifyUpdates({for (final t in db.allTables) TableUpdate.onTable(t)});
+      AppLogger.debug('Списки перечитаны из базы: $why');
+    } catch (e) {
+      AppLogger.debug('Перечитать списки: $e');
+    }
   }
 
   /// Сигнал сервера на iPhone (1.7.2, `PushWakeService`): та же проверка,
@@ -664,6 +706,9 @@ class BackgroundService {
   /// могли умереть по таймауту NAT. Проверяем push, «толкаем» IDLE и
   /// выполняем плановую проверку ящиков, у которых подошёл интервал.
   Future<void> onHeartbeat() => BackgroundJournal.track('пульс', () async {
+        // Имя порта для фоновых задач — на месте (08.11.2026): его могла
+        // убрать задача прежней версии, не дождавшись ответа.
+        _listenBackgroundTasks();
         try {
           await _ref.read(imapPushServiceProvider).ensureAlive(poke: true, reason: 'пульс');
         } catch (e) {
@@ -721,6 +766,9 @@ class BackgroundService {
   Future<void> onResume() async {
     // Имя порта могла убрать фоновая задача, не дождавшись ответа.
     _listenBackgroundTasks();
+    // На экране — то, что в базе сейчас, в том числе записанное фоновой
+    // задачей, пока приложение было свёрнуто (08.11.2026).
+    refreshFromDatabase('возврат в приложение');
     if (_ref.read(settingsProvider).syncIntervalMinutes < 0) return;
     try {
       await _ref.read(imapPushServiceProvider).ensureAlive(poke: true, reason: 'возврат в приложение');
@@ -753,6 +801,7 @@ class BackgroundService {
           AppLogger.debug('Таймер синхронизации: приложение свёрнуто (iOS) — проверку делает фоновая задача');
           return;
         }
+        _listenBackgroundTasks();
         if (await _networkClosedInBackground()) return;
         try {
           await _ref.read(imapPushServiceProvider).ensureAlive();

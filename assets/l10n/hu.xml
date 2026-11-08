@@ -1973,6 +1973,9 @@
     <string name="authExCert">A szerver tanúsítványát nem sikerült ellenőrizni ({hosts}).</string>
     <string name="authEx403">A kiszolgáló elutasította a kapcsolatot (403). Kapcsolja be a(z) „{setting}” beállítást a bejelentkezés speciális beállításai között, vagy forduljon az IT-osztályhoz: a levelezés mobil elérése le lehet tiltva.</string>
     <string name="authExGeneric">Nem sikerült csatlakozni az Exchange-hez ({hosts}). Ellenőrizze a felhasználónevet, a jelszót, a szerver címét és a vállalati hálózatról/VPN-en keresztüli hozzáférést.</string>
+    <string name="authExDeviceBlocked">Az Exchange nem engedi be ezt az eszközt: a rendszergazda letiltotta vagy még nem hagyta jóvá. Forduljon az informatikához, hogy engedélyezzék az eszközt az Exchange-ben (mobileszközök).</string>
+    <string name="authExDeviceLimit">A postafiókja elérte a telefonok és táblagépek korlátját. Távolítsa el a régi eszközöket a webes Outlookban (Beállítások → Általános → Mobileszközök), vagy forduljon az informatikához.</string>
+    <string name="authExSyncDisabled">A telefonos szinkronizálás (ActiveSync) ki van kapcsolva a postafiókjához az Exchange-ben. Forduljon az informatikához.</string>
     <string name="authUnsupportedOAuth">Nem támogatott OAuth-szolgáltató</string>
     <string name="authOAuthNoEmail">A bejelentkezés sikerült, de a szolgáltatás nem adott meg e-mail-címet. Ellenőrizze, hogy az alkalmazás hozzáférhet-e az e-mail-címéhez.</string>
     <string name="authOAuthImapRejected">A bejelentkezés sikerült, de a levelezőszerver (IMAP) elutasította a kapcsolatot.</string>
@@ -3642,6 +3645,8 @@
     <string name="onboardingDesc3NoEx">PIN-kód és ujjlenyomat, adathalászat elleni figyelmeztetések, nyomkövetők blokkolása az e-mailekben.\n\nA levelek közvetlenül a kiszolgálóról kerülnek az eszközre.</string>
     <string name="exchangeHiddenTitle">Rejtett Exchange-postafiókok: {n}</string>
     <string name="exchangeHiddenDesc">Az Exchange nem támogatott ebben a verzióban. A postafiókok és adataik ezen az eszközön maradnak, és az Exchange-et támogató verzióban újra megjelennek. A levelezést IMAP-on keresztül hozzáadhatja.</string>
+    <string name="policyHiddenTitle">A szervezete elrejtette: {n}</string>
+    <string name="policyHiddenDesc">A szervezete csak a saját tartományai postafiókjait engedélyezi. Elrejtve: {list}. Az adatok az eszközön maradnak, és visszatérnek, ha a tartományt engedélyezik.</string>
     <string name="sourceCode">Forráskód</string>
     <string name="sourceCodeDesc">GitHub: olvasás, fordítás, hozzájárulás</string>
     <string name="archiveMergeTitle">Egyesítés másolattal</string>

@@ -1981,6 +1981,9 @@
     <string name="authExCert">Certifikát servera sa nepodarilo overiť ({hosts}).</string>
     <string name="authEx403">Server odmietol pripojenie (403). Zapnite „{setting}“ v rozšírených nastaveniach prihlásenia alebo sa obráťte na svoje IT oddelenie: mobilný prístup k pošte môže byť zablokovaný.</string>
     <string name="authExGeneric">Nepodarilo sa pripojiť k Exchange ({hosts}). Skontrolujte meno používateľa, heslo, adresu servera a prístup z firemnej siete/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange toto zariadenie nepúšťa: správca ho zablokoval alebo ho ešte neschválil. Obráťte sa na IT, aby zariadenie v Exchange (mobilné zariadenia) povolili.</string>
+    <string name="authExDeviceLimit">Vaša schránka dosiahla limit telefónov a tabletov. Odstráňte staré zariadenia v Outlooku na webe (Nastavenia → Všeobecné → Mobilné zariadenia) alebo sa obráťte na IT.</string>
+    <string name="authExSyncDisabled">Synchronizácia z telefónov (ActiveSync) je pre vašu schránku v Exchange vypnutá. Obráťte sa na IT.</string>
     <string name="authUnsupportedOAuth">Nepodporovaný poskytovateľ OAuth</string>
     <string name="authOAuthNoEmail">Prihlásenie prebehlo, ale služba neposkytla e-mailovú adresu. Skontrolujte, či má aplikácia povolený prístup k vašej e-mailovej adrese.</string>
     <string name="authOAuthImapRejected">Prihlásenie prebehlo, ale poštový server (IMAP) odmietol pripojenie.</string>
@@ -3661,6 +3664,8 @@
     <string name="onboardingDesc3NoEx">PIN a odtlačok prsta, upozornenia na phishing, blokovanie sledovacích prvkov v e-mailoch.\n\nPošta ide z vášho servera priamo do zariadenia.</string>
     <string name="exchangeHiddenTitle">Skryté schránky Exchange: {n}</string>
     <string name="exchangeHiddenDesc">Exchange sa v tejto verzii nepodporuje. Schránky a ich dáta zostávajú v tomto zariadení a vrátia sa vo verzii s podporou Exchange. Poštu môžete pridať cez IMAP.</string>
+    <string name="policyHiddenTitle">Skryté vašou organizáciou: {n}</string>
+    <string name="policyHiddenDesc">Vaša organizácia povoľuje len schránky vlastných domén. Skryté: {list}. Údaje zostávajú v zariadení a vrátia sa, ak bude doména povolená.</string>
     <string name="sourceCode">Zdrojový kód</string>
     <string name="sourceCodeDesc">GitHub: čítať, zostaviť, prispieť</string>
     <string name="archiveMergeTitle">Zlúčiť s kópiou</string>

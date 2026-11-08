@@ -45,6 +45,7 @@ import '../../../services/mail/conversation_counter.dart';
 import '../../../services/mail/focus_mode_service.dart' show focusModeProvider;
 import '../../../services/security/smime_service.dart' show smimeServiceProvider;
 import '../../../services/security/managed_config.dart';
+import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
 
 // ════════════════════════ АККАУНТЫ ════════════════════════
@@ -71,11 +72,21 @@ final laterRevisionProvider = StateProvider<int>((ref) => 0);
 /// Сколько ящиков Exchange скрыто в сборке без Exchange (1.8.5).
 int hiddenExchangeAccounts = 0;
 
+/// Ящики, скрытые правилами организации (MDM `allowed_domains`, план
+/// 08.11.2026 п. 1): адреса для пояснения в настройках. Данные остаются на
+/// устройстве и вернутся, если организация разрешит домен.
+List<String> hiddenByPolicyAccounts = const [];
+
 final accountsProvider =
     StateNotifierProvider<AccountsNotifier, List<AccountModel>>((ref) {
   final db = ref.watch(databaseProvider);
   final secureStorage = ref.watch(secureStorageProvider);
-  return AccountsNotifier(db, secureStorage, ref);
+  final notifier = AccountsNotifier(db, secureStorage, ref);
+  // Организация поменяла список разрешённых доменов — список ящиков заново.
+  void onDomains() => unawaited(notifier.reload());
+  ManagedPolicy.allowedDomainsChanged.addListener(onDomains);
+  ref.onDispose(() => ManagedPolicy.allowedDomainsChanged.removeListener(onDomains));
+  return notifier;
 });
 
 /// Текущий активный аккаунт
@@ -143,6 +154,18 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
     _loadAccounts();
   }
 
+  /// Правила организации сейчас: в приложении — от уведомителя правил, в
+  /// фоновом изоляте (он их не читает) — сохранённые.
+  ManagedPolicy _policy() {
+    if (ManagedPolicy.current.isManaged) return ManagedPolicy.current;
+    try {
+      final prefs = _ref?.read(sharedPrefsProvider);
+      return ManagedPolicy.fromPrefs(prefs);
+    } catch (_) {
+      return ManagedPolicy.current;
+    }
+  }
+
   /// Публичная загрузка аккаунтов из БД (await). Нужна фоновому изоляту
   /// (WorkManager): там контейнер создаётся заново и конструкторная загрузка
   /// (`_loadAccounts`) ещё не завершена к моменту синка.
@@ -179,7 +202,24 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
       final hidden = rows.where((r) => exchangeHidden(AccountType.values[r.type])).length;
       hiddenExchangeAccounts = hidden;
 
-      state = rows.where((r) => !exchangeHidden(AccountType.values[r.type])).map((row) => AccountModel(
+      // Правила организации (MDM, план 08.11.2026 п. 1): `allowed_domains`
+      // действует и на уже добавленные ящики, не только при добавлении.
+      // Ящик чужого домена скрыт и не синхронизируется; данные остаются.
+      // В фоновом изоляте правила — из сохранённых (ManagedPolicy.fromPrefs):
+      // уведомлений от системы там нет.
+      final policy = _policy();
+      final blocked = [
+        for (final r in rows)
+          if (!exchangeHidden(AccountType.values[r.type]) && !policy.allowsAccount(r.email)) r.email,
+      ];
+      hiddenByPolicyAccounts = List.unmodifiable(blocked);
+      if (blocked.isNotEmpty) {
+        AppLogger.info('Ящики скрыты правилами организации: ${blocked.length}');
+      }
+
+      state = rows
+          .where((r) => !exchangeHidden(AccountType.values[r.type]) && policy.allowsAccount(r.email))
+          .map((row) => AccountModel(
             id: row.id,
             type: AccountType.values[row.type],
             email: row.email,

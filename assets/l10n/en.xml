@@ -1973,6 +1973,9 @@
     <string name="authExCert">Could not verify the server certificate ({hosts}).</string>
     <string name="authEx403">The server refused the connection (403). Turn on “{setting}” in the advanced sign-in settings or contact your IT department: mobile mail access may be blocked.</string>
     <string name="authExGeneric">Could not connect to Exchange ({hosts}). Check your username, password, server address and access from the corporate network/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange does not let this device in: an administrator blocked it or has not approved it yet. Contact your IT department to allow the device in Exchange (mobile devices).</string>
+    <string name="authExDeviceLimit">Your mailbox has reached its limit of phones and tablets. Remove old devices in Outlook on the web (Settings → General → Mobile devices) or contact your IT department.</string>
+    <string name="authExSyncDisabled">Syncing from phones (ActiveSync) is turned off for your mailbox in Exchange. Contact your IT department.</string>
     <string name="authUnsupportedOAuth">Unsupported OAuth provider</string>
     <string name="authOAuthNoEmail">Signed in, but the service did not provide an email address. Make sure the app is allowed to access your email address.</string>
     <string name="authOAuthImapRejected">Signed in, but the mail server (IMAP) refused the connection.</string>
@@ -3642,6 +3645,8 @@
     <string name="onboardingDesc3NoEx">PIN and fingerprint, phishing warnings, tracker blocking in emails.\n\nMail goes from your server straight to your device.</string>
     <string name="exchangeHiddenTitle">Exchange mailboxes hidden: {n}</string>
     <string name="exchangeHiddenDesc">Exchange isn\'t supported in this version. The mailboxes and their data stay on this device and will return in a version with Exchange. You can add the mail via IMAP.</string>
+    <string name="policyHiddenTitle">Hidden by your organization: {n}</string>
+    <string name="policyHiddenDesc">Your organization allows only mailboxes of its own domains. Hidden: {list}. The data stays on this device and will return if the domain is allowed.</string>
     <string name="sourceCode">Source code</string>
     <string name="sourceCodeDesc">GitHub: read, build, contribute</string>
     <string name="archiveMergeTitle">Merge with a copy</string>

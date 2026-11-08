@@ -1965,6 +1965,9 @@
     <string name="authExCert">ไม่สามารถตรวจสอบใบรับรองของเซิร์ฟเวอร์ ({hosts})</string>
     <string name="authEx403">เซิร์ฟเวอร์ปฏิเสธการเชื่อมต่อ (403) เปิด “{setting}” ในการตั้งค่าการลงชื่อเข้าใช้ขั้นสูง หรือติดต่อฝ่ายไอที: อาจมีการบล็อกการเข้าถึงอีเมลบนมือถือ</string>
     <string name="authExGeneric">ไม่สามารถเชื่อมต่อกับ Exchange ({hosts}) ตรวจสอบชื่อผู้ใช้ รหัสผ่าน ที่อยู่เซิร์ฟเวอร์ และการเข้าถึงจากเครือข่ายองค์กร/VPN</string>
+    <string name="authExDeviceBlocked">Exchange ไม่อนุญาตอุปกรณ์นี้: ผู้ดูแลระบบบล็อกไว้หรือยังไม่อนุมัติ โปรดติดต่อฝ่ายไอทีเพื่ออนุญาตอุปกรณ์ใน Exchange (อุปกรณ์เคลื่อนที่)</string>
+    <string name="authExDeviceLimit">กล่องจดหมายของคุณมีโทรศัพท์และแท็บเล็ตครบตามจำนวนสูงสุดแล้ว โปรดลบอุปกรณ์เก่าใน Outlook บนเว็บ (การตั้งค่า → ทั่วไป → อุปกรณ์เคลื่อนที่) หรือติดต่อฝ่ายไอที</string>
+    <string name="authExSyncDisabled">การซิงค์จากโทรศัพท์ (ActiveSync) ถูกปิดสำหรับกล่องจดหมายของคุณใน Exchange โปรดติดต่อฝ่ายไอที</string>
     <string name="authUnsupportedOAuth">ไม่รองรับผู้ให้บริการ OAuth นี้</string>
     <string name="authOAuthNoEmail">ลงชื่อเข้าใช้แล้ว แต่บริการไม่ได้ให้ที่อยู่อีเมลมา โปรดตรวจสอบว่าอนุญาตให้แอปเข้าถึงที่อยู่อีเมลของคุณแล้ว</string>
     <string name="authOAuthImapRejected">ลงชื่อเข้าใช้แล้ว แต่เซิร์ฟเวอร์อีเมล (IMAP) ปฏิเสธการเชื่อมต่อ</string>
@@ -3623,6 +3626,8 @@
     <string name="onboardingDesc3NoEx">PIN และลายนิ้วมือ คำเตือนฟิชชิง การบล็อกตัวติดตามในอีเมล\n\nอีเมลมาจากเซิร์ฟเวอร์ของคุณถึงอุปกรณ์ของคุณโดยตรง</string>
     <string name="exchangeHiddenTitle">ซ่อนกล่องจดหมาย Exchange ไว้: {n}</string>
     <string name="exchangeHiddenDesc">เวอร์ชันนี้ไม่รองรับ Exchange กล่องจดหมายและข้อมูลของกล่องจดหมายเหล่านี้ยังอยู่บนอุปกรณ์นี้ และจะกลับมาในเวอร์ชันที่รองรับ Exchange คุณเพิ่มอีเมลผ่าน IMAP ได้</string>
+    <string name="policyHiddenTitle">ถูกซ่อนโดยองค์กรของคุณ: {n}</string>
+    <string name="policyHiddenDesc">องค์กรของคุณอนุญาตเฉพาะกล่องจดหมายของโดเมนตนเอง ซ่อนแล้ว: {list} ข้อมูลยังอยู่บนอุปกรณ์และจะกลับมาหากโดเมนได้รับอนุญาต</string>
     <string name="sourceCode">ซอร์สโค้ด</string>
     <string name="sourceCodeDesc">GitHub: อ่าน สร้าง ร่วมพัฒนา</string>
     <string name="archiveMergeTitle">รวมกับสำเนา</string>

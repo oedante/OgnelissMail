@@ -274,6 +274,10 @@ class ManagedPolicy {
   /// «Поделиться»). Обновляет [ManagedPolicyNotifier].
   static ManagedPolicy current = none;
 
+  /// Список разрешённых доменов изменился (план 08.11.2026 п. 1): список
+  /// ящиков перечитывается — `allowed_domains` действует и на добавленные.
+  static final allowedDomainsChanged = ValueNotifier<int>(0);
+
   /// Действие запрещено политикой: строка «Запрещено организацией» вверху
   /// экрана; true — действие не выполнять.
   static bool deny(ManagedRule rule) {
@@ -391,7 +395,9 @@ class ManagedPolicyNotifier extends Notifier<ManagedPolicy> {
 
   Future<void> refresh() async {
     final p = await _svc.load();
+    final domainsChanged = !listEquals(ManagedPolicy.current.allowedDomains, p.allowedDomains);
     ManagedPolicy.current = p;
+    if (domainsChanged) ManagedPolicy.allowedDomainsChanged.value++;
     if (p.blockScreenshots != _secure) {
       _secure = p.blockScreenshots;
       await ManagedConfigService.setSecureWindow(_secure);

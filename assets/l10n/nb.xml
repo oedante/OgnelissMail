@@ -1973,6 +1973,9 @@
     <string name="authExCert">Kunne ikke verifisere serversertifikatet ({hosts}).</string>
     <string name="authEx403">Serveren avviste tilkoblingen (403). Slå på «{setting}» i de avanserte påloggingsinnstillingene, eller kontakt IT-avdelingen: tilgang til e-post fra mobile enheter kan være blokkert.</string>
     <string name="authExGeneric">Kunne ikke koble til Exchange ({hosts}). Sjekk brukernavn, passord, serveradresse og tilgang fra bedriftsnettverket/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange slipper ikke inn denne enheten: en administrator har blokkert den eller ikke godkjent den ennå. Kontakt IT for å tillate enheten i Exchange (mobile enheter).</string>
+    <string name="authExDeviceLimit">Postkassen din har nådd grensen for telefoner og nettbrett. Fjern gamle enheter i Outlook på nettet (Innstillinger → Generelt → Mobile enheter), eller kontakt IT.</string>
+    <string name="authExSyncDisabled">Synkronisering fra telefoner (ActiveSync) er slått av for postkassen din i Exchange. Kontakt IT.</string>
     <string name="authUnsupportedOAuth">OAuth-leverandøren støttes ikke</string>
     <string name="authOAuthNoEmail">Du er pålogget, men tjenesten oppga ikke noen e-postadresse. Sjekk at appen har tillatelse til å få tilgang til e-postadressen din.</string>
     <string name="authOAuthImapRejected">Du er pålogget, men e-postserveren (IMAP) avviste tilkoblingen.</string>
@@ -3642,6 +3645,8 @@
     <string name="onboardingDesc3NoEx">PIN og fingeravtrykk, advarsler mot phishing, blokkering av sporing i e-poster.\n\nE-post går rett fra serveren din til enheten din.</string>
     <string name="exchangeHiddenTitle">Exchange-postbokser skjult: {n}</string>
     <string name="exchangeHiddenDesc">Exchange støttes ikke i denne versjonen. Postboksene og dataene deres blir på denne enheten og kommer tilbake i en versjon med Exchange. Du kan legge til e-posten via IMAP.</string>
+    <string name="policyHiddenTitle">Skjult av organisasjonen din: {n}</string>
+    <string name="policyHiddenDesc">Organisasjonen din tillater bare postkasser fra egne domener. Skjult: {list}. Dataene blir værende på enheten og kommer tilbake hvis domenet tillates.</string>
     <string name="sourceCode">Kildekode</string>
     <string name="sourceCodeDesc">GitHub: les, bygg, bidra</string>
     <string name="archiveMergeTitle">Slå sammen med en kopi</string>

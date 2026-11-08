@@ -1973,6 +1973,9 @@
     <string name="authExCert">Det gick inte att verifiera servercertifikatet ({hosts}).</string>
     <string name="authEx403">Servern avvisade anslutningen (403). Aktivera ”{setting}” i de avancerade inloggningsinställningarna eller kontakta it-avdelningen: åtkomst till e-post från mobila enheter kan vara blockerad.</string>
     <string name="authExGeneric">Det gick inte att ansluta till Exchange ({hosts}). Kontrollera användarnamn, lösenord, serveradress och åtkomst från företagsnätverket/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange släpper inte in den här enheten: en administratör har spärrat den eller inte godkänt den ännu. Kontakta IT så att enheten tillåts i Exchange (mobila enheter).</string>
+    <string name="authExDeviceLimit">Din brevlåda har nått gränsen för telefoner och surfplattor. Ta bort gamla enheter i Outlook på webben (Inställningar → Allmänt → Mobila enheter) eller kontakta IT.</string>
+    <string name="authExSyncDisabled">Synkronisering från telefoner (ActiveSync) är avstängd för din brevlåda i Exchange. Kontakta IT.</string>
     <string name="authUnsupportedOAuth">OAuth-leverantören stöds inte</string>
     <string name="authOAuthNoEmail">Du är inloggad, men tjänsten lämnade ingen e-postadress. Kontrollera att appen har behörighet att komma åt din e-postadress.</string>
     <string name="authOAuthImapRejected">Du är inloggad, men e-postservern (IMAP) avvisade anslutningen.</string>
@@ -3642,6 +3645,8 @@
     <string name="onboardingDesc3NoEx">PIN och fingeravtryck, varningar för nätfiske, blockering av spårning i e-post.\n\nE-posten går direkt från din server till din enhet.</string>
     <string name="exchangeHiddenTitle">Exchange-postlådor dolda: {n}</string>
     <string name="exchangeHiddenDesc">Exchange stöds inte i den här versionen. Postlådorna och deras data finns kvar på den här enheten och kommer tillbaka i en version med Exchange. Du kan lägga till e-posten via IMAP.</string>
+    <string name="policyHiddenTitle">Dolda av din organisation: {n}</string>
+    <string name="policyHiddenDesc">Din organisation tillåter bara brevlådor i egna domäner. Dolda: {list}. Data finns kvar på enheten och kommer tillbaka om domänen tillåts.</string>
     <string name="sourceCode">Källkod</string>
     <string name="sourceCodeDesc">GitHub: läs, bygg, bidra</string>
     <string name="archiveMergeTitle">Slå ihop med en kopia</string>

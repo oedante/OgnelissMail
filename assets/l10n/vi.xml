@@ -1965,6 +1965,9 @@
     <string name="authExCert">Không thể xác minh chứng chỉ máy chủ ({hosts}).</string>
     <string name="authEx403">Máy chủ từ chối kết nối (403). Hãy bật “{setting}” trong cài đặt đăng nhập nâng cao hoặc liên hệ bộ phận CNTT của bạn: quyền truy cập thư trên thiết bị di động có thể đã bị chặn.</string>
     <string name="authExGeneric">Không thể kết nối với Exchange ({hosts}). Hãy kiểm tra tên người dùng, mật khẩu, địa chỉ máy chủ và quyền truy cập từ mạng công ty/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange không cho thiết bị này truy cập: quản trị viên đã chặn hoặc chưa phê duyệt. Hãy liên hệ bộ phận CNTT để cho phép thiết bị trong Exchange (thiết bị di động).</string>
+    <string name="authExDeviceLimit">Hộp thư của bạn đã đạt giới hạn số điện thoại và máy tính bảng. Hãy xóa thiết bị cũ trong Outlook trên web (Cài đặt → Chung → Thiết bị di động) hoặc liên hệ bộ phận CNTT.</string>
+    <string name="authExSyncDisabled">Đồng bộ từ điện thoại (ActiveSync) đã bị tắt cho hộp thư của bạn trong Exchange. Hãy liên hệ bộ phận CNTT.</string>
     <string name="authUnsupportedOAuth">Nhà cung cấp OAuth không được hỗ trợ</string>
     <string name="authOAuthNoEmail">Đã đăng nhập, nhưng dịch vụ không cung cấp địa chỉ email. Hãy đảm bảo ứng dụng được phép truy cập địa chỉ email của bạn.</string>
     <string name="authOAuthImapRejected">Đã đăng nhập, nhưng máy chủ thư (IMAP) đã từ chối kết nối.</string>
@@ -3623,6 +3626,8 @@
     <string name="onboardingDesc3NoEx">PIN và vân tay, cảnh báo lừa đảo, chặn trình theo dõi trong email.\n\nThư đi từ máy chủ của bạn thẳng đến thiết bị của bạn.</string>
     <string name="exchangeHiddenTitle">Hộp thư Exchange đã bị ẩn: {n}</string>
     <string name="exchangeHiddenDesc">Phiên bản này không hỗ trợ Exchange. Các hộp thư và dữ liệu của chúng vẫn ở trên thiết bị này và sẽ xuất hiện lại trong phiên bản có Exchange. Bạn có thể thêm thư qua IMAP.</string>
+    <string name="policyHiddenTitle">Bị tổ chức của bạn ẩn: {n}</string>
+    <string name="policyHiddenDesc">Tổ chức của bạn chỉ cho phép hộp thư thuộc tên miền của mình. Đã ẩn: {list}. Dữ liệu vẫn nằm trên thiết bị và sẽ quay lại nếu tên miền được cho phép.</string>
     <string name="sourceCode">Mã nguồn</string>
     <string name="sourceCodeDesc">GitHub: xem, biên dịch, đóng góp</string>
     <string name="archiveMergeTitle">Hợp nhất với bản sao</string>

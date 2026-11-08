@@ -42,6 +42,10 @@ class NativeAndroidHttpClient extends http.BaseClient {
         'timeoutMs': 20 * 60 * 1000,
         'trustedSha256': trust?.fingerprints ?? const <String>[],
         'acceptAny': trust?.acceptAny ?? false,
+        // Закрепление администратора: сверяется и после успешной системной
+        // проверки (решение владельца 08.11.2026). Пусто — правил нет.
+        'strictSha256': trust?.strict ?? const <String>[],
+        'strict': trust?.strict != null,
         'extraCas': TrustedCaStore.instance?.extraForNativeHost(request.url.host) ?? const <Uint8List>[],
       });
     } on MissingPluginException {

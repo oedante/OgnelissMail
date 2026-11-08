@@ -1981,6 +1981,9 @@
     <string name="authExCert">לא ניתן לאמת את אישור השרת ({hosts}).</string>
     <string name="authEx403">השרת סירב לחיבור (403). הפעל את “{setting}” בהגדרות המתקדמות של הכניסה או פנה למחלקת ה-IT: ייתכן שהגישה לדואר מהנייד חסומה.</string>
     <string name="authExGeneric">לא ניתן להתחבר ל-Exchange ({hosts}). בדקו את שם המשתמש, הסיסמה, כתובת השרת והגישה מהרשת הארגונית/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange לא מאפשר את המכשיר הזה: מנהל חסם אותו או עדיין לא אישר אותו. פנו למחלקת ה-IT כדי לאשר את המכשיר ב-Exchange (מכשירים ניידים).</string>
+    <string name="authExDeviceLimit">תיבת הדואר שלך הגיעה למגבלת הטלפונים והטאבלטים. הסירו מכשירים ישנים ב-Outlook באינטרנט (הגדרות ← כללי ← מכשירים ניידים) או פנו למחלקת ה-IT.</string>
+    <string name="authExSyncDisabled">הסנכרון מטלפונים (ActiveSync) כבוי עבור תיבת הדואר שלך ב-Exchange. פנו למחלקת ה-IT.</string>
     <string name="authUnsupportedOAuth">ספק OAuth לא נתמך</string>
     <string name="authOAuthNoEmail">נכנסת, אך השירות לא סיפק כתובת אימייל. ודא שהאפליקציה מורשית לגשת לכתובת האימייל שלך.</string>
     <string name="authOAuthImapRejected">נכנסת, אך שרת הדואר (IMAP) סירב לחיבור.</string>
@@ -3661,6 +3664,8 @@
     <string name="onboardingDesc3NoEx">PIN וטביעת אצבע, התראות על פישינג, חסימת רכיבי מעקב באימיילים.\n\nהדואר עובר מהשרת שלך ישירות למכשיר.</string>
     <string name="exchangeHiddenTitle">תיבות דואר של Exchange מוסתרות: {n}</string>
     <string name="exchangeHiddenDesc">Exchange אינו נתמך בגרסה הזאת. תיבות הדואר והנתונים שלהן נשארים במכשיר הזה ויחזרו בגרסה עם Exchange. אפשר להוסיף את הדואר דרך IMAP.</string>
+    <string name="policyHiddenTitle">הוסתרו על ידי הארגון שלך: {n}</string>
+    <string name="policyHiddenDesc">הארגון שלך מתיר רק תיבות דואר מהדומיינים שלו. הוסתרו: {list}. הנתונים נשארים במכשיר ויחזרו אם הדומיין יאושר.</string>
     <string name="sourceCode">קוד מקור</string>
     <string name="sourceCodeDesc">GitHub: לקרוא, לבנות, לתרום</string>
     <string name="archiveMergeTitle">מזג עם עותק</string>

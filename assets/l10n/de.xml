@@ -1973,6 +1973,9 @@
     <string name="authExCert">Das Serverzertifikat konnte nicht überprüft werden ({hosts}).</string>
     <string name="authEx403">Der Server hat die Verbindung abgelehnt (403). Aktivieren Sie „{setting}“ in den erweiterten Anmeldeeinstellungen oder wenden Sie sich an die IT-Abteilung: Der mobile E-Mail-Zugriff ist möglicherweise gesperrt.</string>
     <string name="authExGeneric">Verbindung zu Exchange fehlgeschlagen ({hosts}). Prüfen Sie Benutzername, Passwort, Serveradresse und den Zugang über Firmennetz/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange lässt dieses Gerät nicht zu: Ein Administrator hat es gesperrt oder noch nicht freigegeben. Wenden Sie sich an die IT, damit das Gerät in Exchange (Mobilgeräte) zugelassen wird.</string>
+    <string name="authExDeviceLimit">Ihr Postfach hat die maximale Anzahl an Telefonen und Tablets erreicht. Entfernen Sie alte Geräte in Outlook im Web (Einstellungen → Allgemein → Mobilgeräte) oder wenden Sie sich an die IT.</string>
+    <string name="authExSyncDisabled">Die Synchronisierung mit Telefonen (ActiveSync) ist für Ihr Postfach in Exchange deaktiviert. Wenden Sie sich an die IT.</string>
     <string name="authUnsupportedOAuth">Nicht unterstützter OAuth-Anbieter</string>
     <string name="authOAuthNoEmail">Angemeldet, aber der Dienst hat keine E-Mail-Adresse übermittelt. Prüfen Sie, ob die App auf die E-Mail-Adresse zugreifen darf.</string>
     <string name="authOAuthImapRejected">Angemeldet, aber der Mailserver (IMAP) hat die Verbindung abgelehnt.</string>
@@ -3642,6 +3645,8 @@
     <string name="onboardingDesc3NoEx">PIN und Fingerabdruck, Phishing-Warnungen, Tracker-Blockierung.\n\nDie Mail kommt direkt von Ihrem Server auf Ihr Gerät.</string>
     <string name="exchangeHiddenTitle">Exchange-Postfächer ausgeblendet: {n}</string>
     <string name="exchangeHiddenDesc">Exchange wird in dieser Version nicht unterstützt. Die Postfächer und ihre Daten bleiben auf dem Gerät und kehren in einer Version mit Exchange zurück. Sie können die E-Mail per IMAP hinzufügen.</string>
+    <string name="policyHiddenTitle">Von Ihrer Organisation ausgeblendet: {n}</string>
+    <string name="policyHiddenDesc">Ihre Organisation erlaubt nur Postfächer eigener Domains. Ausgeblendet: {list}. Die Daten bleiben auf dem Gerät und kehren zurück, wenn die Domain erlaubt wird.</string>
     <string name="sourceCode">Quellcode</string>
     <string name="sourceCodeDesc">GitHub: lesen, bauen, mitwirken</string>
     <string name="archiveMergeTitle">Mit einer Kopie zusammenführen</string>

@@ -1965,6 +1965,9 @@
     <string name="authExCert">서버 인증서를 확인하지 못했어요({hosts}).</string>
     <string name="authEx403">서버에서 연결을 거부했습니다(403). 고급 로그인 설정에서 ‘{setting}’ 옵션을 켜거나 IT 부서에 문의하세요. 모바일 메일 접근이 차단되었을 수 있습니다.</string>
     <string name="authExGeneric">Exchange({hosts})에 연결하지 못했어요. 사용자 이름, 비밀번호, 서버 주소, 회사 네트워크/VPN에서의 접근 여부를 확인하세요.</string>
+    <string name="authExDeviceBlocked">Exchange에서 이 기기를 허용하지 않습니다. 관리자가 차단했거나 아직 승인하지 않았습니다. Exchange(모바일 장치)에서 기기를 허용하도록 IT 부서에 문의하세요.</string>
+    <string name="authExDeviceLimit">메일함의 휴대폰 및 태블릿 수가 한도에 도달했습니다. 웹용 Outlook(설정 → 일반 → 모바일 장치)에서 오래된 기기를 제거하거나 IT 부서에 문의하세요.</string>
+    <string name="authExSyncDisabled">Exchange에서 이 메일함의 휴대폰 동기화(ActiveSync)가 꺼져 있습니다. IT 부서에 문의하세요.</string>
     <string name="authUnsupportedOAuth">지원하지 않는 OAuth 제공업체</string>
     <string name="authOAuthNoEmail">로그인했지만 서비스에서 이메일 주소를 제공하지 않았습니다. 앱이 이메일 주소에 접근할 수 있도록 허용되어 있는지 확인하세요.</string>
     <string name="authOAuthImapRejected">로그인했지만 메일 서버(IMAP)에서 연결을 거부했습니다.</string>
@@ -3623,6 +3626,8 @@
     <string name="onboardingDesc3NoEx">PIN과 지문, 피싱 경고, 메일 속 추적기 차단.\n\n메일은 서버에서 기기로 바로 전달됩니다.</string>
     <string name="exchangeHiddenTitle">숨겨진 Exchange 메일 계정: {n}개</string>
     <string name="exchangeHiddenDesc">이 버전에서는 Exchange를 지원하지 않습니다. 메일 계정과 해당 데이터는 이 기기에 남아 있으며 Exchange를 지원하는 버전에서 다시 나타납니다. IMAP으로 메일을 추가할 수 있습니다.</string>
+    <string name="policyHiddenTitle">조직에서 숨김: {n}</string>
+    <string name="policyHiddenDesc">조직에서 자체 도메인의 메일함만 허용합니다. 숨김: {list}. 데이터는 이 기기에 남아 있으며 도메인이 허용되면 다시 표시됩니다.</string>
     <string name="sourceCode">소스 코드</string>
     <string name="sourceCodeDesc">GitHub: 보기, 빌드, 기여</string>
     <string name="archiveMergeTitle">사본과 병합</string>

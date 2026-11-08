@@ -1973,6 +1973,9 @@
     <string name="authExCert">Impossibile verificare il certificato del server ({hosts}).</string>
     <string name="authEx403">Il server ha rifiutato la connessione (403). Attiva “{setting}” nelle impostazioni avanzate di accesso o contatta il reparto IT: l\'accesso alla posta da dispositivi mobili potrebbe essere bloccato.</string>
     <string name="authExGeneric">Impossibile connettersi a Exchange ({hosts}). Controlla nome utente, password, indirizzo del server e accesso dalla rete aziendale/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange non accetta questo dispositivo: un amministratore lo ha bloccato o non lo ha ancora approvato. Contatta l’IT per consentire il dispositivo in Exchange (dispositivi mobili).</string>
+    <string name="authExDeviceLimit">La tua casella ha raggiunto il limite di telefoni e tablet. Rimuovi i vecchi dispositivi in Outlook sul web (Impostazioni → Generale → Dispositivi mobili) o contatta l’IT.</string>
+    <string name="authExSyncDisabled">La sincronizzazione dai telefoni (ActiveSync) è disattivata per la tua casella in Exchange. Contatta l’IT.</string>
     <string name="authUnsupportedOAuth">Provider OAuth non supportato</string>
     <string name="authOAuthNoEmail">Accesso eseguito, ma il servizio non ha fornito un indirizzo email. Verifica che l\'app abbia il permesso di accedere al tuo indirizzo email.</string>
     <string name="authOAuthImapRejected">Accesso eseguito, ma il server di posta (IMAP) ha rifiutato la connessione.</string>
@@ -3642,6 +3645,8 @@
     <string name="onboardingDesc3NoEx">PIN e impronta digitale, avvisi anti-phishing, blocco dei tracker nelle email.\n\nLa posta arriva dal tuo server direttamente sul tuo dispositivo.</string>
     <string name="exchangeHiddenTitle">Cassette postali Exchange nascoste: {n}</string>
     <string name="exchangeHiddenDesc">Exchange non è supportato in questa versione. Le cassette postali e i loro dati restano su questo dispositivo e torneranno in una versione con Exchange. Puoi aggiungere la posta tramite IMAP.</string>
+    <string name="policyHiddenTitle">Nascoste dalla tua organizzazione: {n}</string>
+    <string name="policyHiddenDesc">La tua organizzazione consente solo caselle dei propri domini. Nascoste: {list}. I dati restano sul dispositivo e torneranno se il dominio viene consentito.</string>
     <string name="sourceCode">Codice sorgente</string>
     <string name="sourceCodeDesc">GitHub: leggi, compila, contribuisci</string>
     <string name="archiveMergeTitle">Unisci con una copia</string>

@@ -1973,6 +1973,9 @@
     <string name="authExCert">Não foi possível verificar o certificado do servidor ({hosts}).</string>
     <string name="authEx403">O servidor recusou a conexão (403). Ative “{setting}” nas configurações avançadas de login ou fale com o departamento de TI: o acesso ao e-mail por dispositivos móveis pode estar bloqueado.</string>
     <string name="authExGeneric">Não foi possível conectar ao Exchange ({hosts}). Verifique o seu nome de usuário, a senha, o endereço do servidor e o acesso pela rede corporativa/VPN.</string>
+    <string name="authExDeviceBlocked">O Exchange não aceita este dispositivo: um administrador bloqueou-o ou ainda não o aprovou. Contacte a equipa de TI para permitir o dispositivo no Exchange (dispositivos móveis).</string>
+    <string name="authExDeviceLimit">A sua caixa atingiu o limite de telemóveis e tablets. Remova dispositivos antigos no Outlook na Web (Definições → Geral → Dispositivos móveis) ou contacte a equipa de TI.</string>
+    <string name="authExSyncDisabled">A sincronização a partir de telemóveis (ActiveSync) está desativada para a sua caixa no Exchange. Contacte a equipa de TI.</string>
     <string name="authUnsupportedOAuth">Provedor de OAuth não compatível</string>
     <string name="authOAuthNoEmail">Você fez login, mas o serviço não informou um endereço de e-mail. Verifique se o app tem permissão para acessar o seu endereço de e-mail.</string>
     <string name="authOAuthImapRejected">Você fez login, mas o servidor de e-mail (IMAP) recusou a conexão.</string>
@@ -3642,6 +3645,8 @@
     <string name="onboardingDesc3NoEx">PIN e impressão digital, avisos de phishing, bloqueio de rastreadores nos e-mails.\n\nO e-mail vai do seu servidor direto para o seu dispositivo.</string>
     <string name="exchangeHiddenTitle">Caixas de correio do Exchange ocultas: {n}</string>
     <string name="exchangeHiddenDesc">O Exchange não é compatível com esta versão. As caixas de correio e os dados delas permanecem neste dispositivo e voltarão em uma versão com Exchange. Você pode adicionar o e-mail via IMAP.</string>
+    <string name="policyHiddenTitle">Ocultas pela sua organização: {n}</string>
+    <string name="policyHiddenDesc">A sua organização só permite caixas dos próprios domínios. Ocultas: {list}. Os dados ficam no dispositivo e voltarão se o domínio for permitido.</string>
     <string name="sourceCode">Código-fonte</string>
     <string name="sourceCodeDesc">GitHub: ler, compilar, contribuir</string>
     <string name="archiveMergeTitle">Mesclar com uma cópia</string>

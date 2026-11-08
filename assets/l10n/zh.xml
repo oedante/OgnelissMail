@@ -1965,6 +1965,9 @@
     <string name="authExCert">无法验证服务器证书（{hosts}）。</string>
     <string name="authEx403">服务器拒绝了连接（403）。请在高级登录设置中开启“{setting}”，或联系 IT 部门：移动端邮件访问可能已被禁止。</string>
     <string name="authExGeneric">无法连接到 Exchange（{hosts}）。请检查用户名、密码、服务器地址，以及能否从公司网络/VPN 访问。</string>
+    <string name="authExDeviceBlocked">Exchange 不允许此设备：管理员已将其阻止或尚未批准。请联系 IT 部门在 Exchange（移动设备）中允许此设备。</string>
+    <string name="authExDeviceLimit">你的邮箱已达到手机和平板电脑数量上限。请在网页版 Outlook（设置 → 常规 → 移动设备）中删除旧设备，或联系 IT 部门。</string>
+    <string name="authExSyncDisabled">Exchange 中已为你的邮箱关闭手机同步（ActiveSync）。请联系 IT 部门。</string>
     <string name="authUnsupportedOAuth">不支持的 OAuth 提供方</string>
     <string name="authOAuthNoEmail">已登录，但服务未提供电子邮件地址。请确认已允许应用访问您的电子邮件地址。</string>
     <string name="authOAuthImapRejected">已登录，但邮件服务器（IMAP）拒绝了连接。</string>
@@ -3623,6 +3626,8 @@
     <string name="onboardingDesc3NoEx">PIN 和指纹、网络钓鱼警告、拦截邮件中的追踪器。\n\n邮件从你的服务器直接送到你的设备。</string>
     <string name="exchangeHiddenTitle">已隐藏的 Exchange 邮箱：{n}</string>
     <string name="exchangeHiddenDesc">此版本不支持 Exchange。这些邮箱及其数据仍保留在此设备上，将在支持 Exchange 的版本中恢复。你可以改用 IMAP 添加该邮箱。</string>
+    <string name="policyHiddenTitle">已被你的组织隐藏：{n}</string>
+    <string name="policyHiddenDesc">你的组织只允许其自有域名的邮箱。已隐藏：{list}。数据仍保留在此设备上，域名获准后会恢复。</string>
     <string name="sourceCode">源代码</string>
     <string name="sourceCodeDesc">GitHub：阅读、构建、参与贡献</string>
     <string name="archiveMergeTitle">与副本合并</string>

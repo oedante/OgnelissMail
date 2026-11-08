@@ -453,7 +453,12 @@ class EwsXmlParser {
 
   // ════════════════════════ ATTACHMENT ════════════════════════
 
-  static Uint8List parseAttachmentContent(XmlDocument doc) {
+  static Uint8List parseAttachmentContent(XmlDocument doc) =>
+      base64.decode(attachmentContentText(doc).replaceAll(RegExp(r'\s'), ''));
+
+  /// Текст base64 вложения: раскодирует вызывающий — большое вне главного
+  /// потока (decodeBase64Off, план 08.11.2026 п. 3).
+  static String attachmentContentText(XmlDocument doc) {
     // FileAttachment → Content; вложенное письмо (ItemAttachment) → MimeContent.
     final content = doc.findAllElements('Content').firstOrNull?.innerText ??
         doc.findAllElements('MimeContent').firstOrNull?.innerText;
@@ -461,7 +466,7 @@ class EwsXmlParser {
       final code = doc.findAllElements('ResponseCode').firstOrNull?.innerText;
       throw Exception('EWS: вложение не получено${code != null ? ' ($code)' : ''}');
     }
-    return base64.decode(content.replaceAll(RegExp(r'\s'), ''));
+    return content;
   }
 
   // ════════════════════════ CONTACTS (ResolveNames) ════════════════════════

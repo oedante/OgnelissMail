@@ -2005,6 +2005,9 @@
     <string name="authExCert">تعذّر التحقق من شهادة الخادم ({hosts}).</string>
     <string name="authEx403">رفض الخادم الاتصال (403). فعّل «{setting}» في إعدادات تسجيل الدخول المتقدمة أو تواصل مع قسم تقنية المعلومات لديك: قد يكون الوصول إلى البريد من الأجهزة المحمولة محظورًا.</string>
     <string name="authExGeneric">تعذّر الاتصال بـ Exchange ({hosts}). تحقق من اسم المستخدم وكلمة المرور وعنوان الخادم والوصول من شبكة الشركة/VPN.</string>
+    <string name="authExDeviceBlocked">لا يسمح Exchange بهذا الجهاز: حظره المسؤول أو لم يوافق عليه بعد. تواصل مع قسم تقنية المعلومات للسماح بالجهاز في Exchange (الأجهزة المحمولة).</string>
+    <string name="authExDeviceLimit">بلغ صندوق بريدك الحد الأقصى للهواتف والأجهزة اللوحية. أزل الأجهزة القديمة في Outlook على الويب (الإعدادات ← عام ← الأجهزة المحمولة) أو تواصل مع قسم تقنية المعلومات.</string>
+    <string name="authExSyncDisabled">المزامنة من الهواتف (ActiveSync) معطلة لصندوق بريدك في Exchange. تواصل مع قسم تقنية المعلومات.</string>
     <string name="authUnsupportedOAuth">مزوّد OAuth غير مدعوم</string>
     <string name="authOAuthNoEmail">تم تسجيل الدخول، لكن الخدمة لم تقدّم عنوان بريد إلكتروني. تأكد من السماح للتطبيق بالوصول إلى عنوان بريدك الإلكتروني.</string>
     <string name="authOAuthImapRejected">تم تسجيل الدخول، لكن خادم البريد (IMAP) رفض الاتصال.</string>
@@ -3718,6 +3721,8 @@
     <string name="onboardingDesc3NoEx">PIN وبصمة الإصبع وتحذيرات من التصيّد الاحتيالي وحظر أدوات التتبع في الرسائل.\n\nيصل البريد من خادمك مباشرة إلى جهازك.</string>
     <string name="exchangeHiddenTitle">صناديق بريد Exchange المخفية: {n}</string>
     <string name="exchangeHiddenDesc">Exchange غير مدعوم في هذا الإصدار. تبقى صناديق البريد وبياناتها على هذا الجهاز وستعود في إصدار يدعم Exchange. يمكنك إضافة البريد عبر IMAP.</string>
+    <string name="policyHiddenTitle">أخفتها مؤسستك: {n}</string>
+    <string name="policyHiddenDesc">تسمح مؤسستك فقط بصناديق البريد التابعة لنطاقاتها. المخفية: {list}. تبقى البيانات على الجهاز وستعود إذا سُمح بالنطاق.</string>
     <string name="sourceCode">الشفرة المصدرية</string>
     <string name="sourceCodeDesc">GitHub: القراءة والبناء والمساهمة</string>
     <string name="archiveMergeTitle">دمج مع نسخة</string>

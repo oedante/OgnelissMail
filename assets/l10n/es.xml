@@ -1973,6 +1973,9 @@
     <string name="authExCert">No se pudo verificar el certificado del servidor ({hosts}).</string>
     <string name="authEx403">El servidor rechazó la conexión (403). Activa “{setting}” en los ajustes avanzados de inicio de sesión o contacta con tu departamento de TI: puede que el acceso al correo desde móviles esté bloqueado.</string>
     <string name="authExGeneric">No se pudo conectar con Exchange ({hosts}). Comprueba tu nombre de usuario, contraseña, la dirección del servidor y el acceso desde la red corporativa/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange no admite este dispositivo: un administrador lo bloqueó o aún no lo aprobó. Contacta con tu departamento de TI para que permita el dispositivo en Exchange (dispositivos móviles).</string>
+    <string name="authExDeviceLimit">Tu buzón alcanzó el límite de teléfonos y tabletas. Elimina dispositivos antiguos en Outlook en la web (Configuración → General → Dispositivos móviles) o contacta con TI.</string>
+    <string name="authExSyncDisabled">La sincronización desde teléfonos (ActiveSync) está desactivada para tu buzón en Exchange. Contacta con tu departamento de TI.</string>
     <string name="authUnsupportedOAuth">Proveedor de OAuth no compatible</string>
     <string name="authOAuthNoEmail">Has iniciado sesión, pero el servicio no proporcionó una dirección de correo. Comprueba que la aplicación tenga permiso para acceder a tu dirección de correo.</string>
     <string name="authOAuthImapRejected">Has iniciado sesión, pero el servidor de correo (IMAP) rechazó la conexión.</string>
@@ -3642,6 +3645,8 @@
     <string name="onboardingDesc3NoEx">PIN y huella dactilar, avisos de phishing, bloqueo de rastreadores en los correos.\n\nEl correo va de tu servidor directamente a tu dispositivo.</string>
     <string name="exchangeHiddenTitle">Buzones de Exchange ocultos: {n}</string>
     <string name="exchangeHiddenDesc">Exchange no es compatible con esta versión. Los buzones y sus datos permanecen en este dispositivo y volverán en una versión con Exchange. Puedes añadir el correo mediante IMAP.</string>
+    <string name="policyHiddenTitle">Ocultos por tu organización: {n}</string>
+    <string name="policyHiddenDesc">Tu organización solo permite buzones de sus propios dominios. Ocultos: {list}. Los datos permanecen en el dispositivo y volverán si se permite el dominio.</string>
     <string name="sourceCode">Código fuente</string>
     <string name="sourceCodeDesc">GitHub: leer, compilar, contribuir</string>
     <string name="archiveMergeTitle">Combinar con una copia</string>

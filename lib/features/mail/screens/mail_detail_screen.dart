@@ -1214,28 +1214,41 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   String _plainText = '';
   String? _plainShort;
 
+  /// Свежий текст письма без HTML и его начало, если он очень длинный;
+  /// цитата «>» и длинная подпись «-- » свёрнуты (план 08.11.2026, п. 5).
+  QuoteSplit _plainSplit = QuoteSplit('', '');
+  String? _plainReplyShort;
+
   Widget _plainBody(EmailModel email, ThemeData theme) {
     final src = email.bodyPlain ?? email.bodyPreview ?? '';
     if (!identical(_plainFor, src)) {
       _plainFor = src;
       _plainText = SymbolFonts.fixPlain(src);
       _plainShort = MailClip.clipText(_plainText);
+      _plainSplit = splitQuotedPlain(_plainText);
+      _plainReplyShort = _plainSplit.hasQuote ? MailClip.clipText(_plainSplit.reply) : null;
     }
-    final short = _showWhole ? null : _plainShort;
+    final folded = _plainSplit.hasQuote && !_showQuote;
+    final shownText = folded ? _plainSplit.reply : _plainText;
+    final short = _showWhole ? null : (folded ? _plainReplyShort : _plainShort);
     // Письмо без HTML — того же размера, что и HTML-письма (1.8.12): 15 px ×
     // шрифт системы, без уменьшения масштабом интерфейса
     // (MailHtmlView.textScaleOf).
     final text = LinkifiedText(
-      short ?? _plainText,
+      short ?? shownText,
       style: theme.textTheme.bodyMedium?.copyWith(fontSize: 15 * MailHtmlView.textScaleOf(context), height: 1.4),
       textScaler: TextScaler.noScaling,
       dates: _datesFor(email),
       onLink: (url, text) => _onBodyLink(email, url, text),
     );
-    if (short == null) return text;
+    if (short == null && !_plainSplit.hasQuote) return text;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [text, MailClippedBar(onShowWhole: _onShowWhole)],
+      children: [
+        text,
+        if (short != null) MailClippedBar(onShowWhole: _onShowWhole),
+        if (_plainSplit.hasQuote) _quoteToggle(theme, AppLocalizations.of(context)),
+      ],
     );
   }
 

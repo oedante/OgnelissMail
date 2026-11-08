@@ -1981,6 +1981,9 @@
     <string name="authExCert">Certificatul serverului nu a putut fi verificat ({hosts}).</string>
     <string name="authEx403">Serverul a refuzat conexiunea (403). Activează „{setting}” în setările avansate de conectare sau contactează departamentul IT: accesul mobil la e-mail poate fi blocat.</string>
     <string name="authExGeneric">Nu s-a putut face conectarea la Exchange ({hosts}). Verificați numele de utilizator, parola, adresa serverului și accesul din rețeaua corporativă/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange nu permite acest dispozitiv: un administrator l-a blocat sau încă nu l-a aprobat. Contactați departamentul IT pentru a permite dispozitivul în Exchange (dispozitive mobile).</string>
+    <string name="authExDeviceLimit">Cutia poștală a atins limita de telefoane și tablete. Eliminați dispozitivele vechi în Outlook pe web (Setări → General → Dispozitive mobile) sau contactați departamentul IT.</string>
+    <string name="authExSyncDisabled">Sincronizarea de pe telefoane (ActiveSync) este dezactivată pentru cutia dvs. în Exchange. Contactați departamentul IT.</string>
     <string name="authUnsupportedOAuth">Furnizor OAuth neacceptat</string>
     <string name="authOAuthNoEmail">Te-ai conectat, dar serviciul nu a furnizat o adresă de e-mail. Asigură-te că aplicația are permisiunea de a accesa adresa ta de e-mail.</string>
     <string name="authOAuthImapRejected">Te-ai conectat, dar serverul de e-mail (IMAP) a refuzat conexiunea.</string>
@@ -3661,6 +3664,8 @@
     <string name="onboardingDesc3NoEx">PIN și amprentă, avertismente de phishing, blocarea trackerelor din e-mailuri.\n\nE-mailurile ajung de pe serverul tău direct pe dispozitiv.</string>
     <string name="exchangeHiddenTitle">Cutii poștale Exchange ascunse: {n}</string>
     <string name="exchangeHiddenDesc">Exchange nu este acceptat în această versiune. Cutiile poștale și datele lor rămân pe acest dispozitiv și vor reveni într-o versiune cu Exchange. Poți adăuga e-mailul prin IMAP.</string>
+    <string name="policyHiddenTitle">Ascunse de organizația ta: {n}</string>
+    <string name="policyHiddenDesc">Organizația ta permite doar cutii poștale din propriile domenii. Ascunse: {list}. Datele rămân pe dispozitiv și vor reveni dacă domeniul este permis.</string>
     <string name="sourceCode">Cod sursă</string>
     <string name="sourceCodeDesc">GitHub: citește, compilează, contribuie</string>
     <string name="archiveMergeTitle">Îmbină cu o copie</string>

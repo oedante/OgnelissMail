@@ -22,6 +22,9 @@ public class NativeHttpPlugin: NSObject, FlutterPlugin, URLSessionDelegate, URLS
     let fingerprints: Set<String>
     let acceptAny: Bool
     let extraCas: [SecCertificate]
+    /// Закрепление администратора (08.11.2026): сверяется и после успешной
+    /// системной проверки. nil — правил нет.
+    let strict: Set<String>?
   }
 
   private let lock = NSLock()
@@ -79,7 +82,8 @@ public class NativeHttpPlugin: NSObject, FlutterPlugin, URLSessionDelegate, URLS
     trust[host] = Trust(
       fingerprints: Set((args["trustedSha256"] as? [String]) ?? []),
       acceptAny: (args["acceptAny"] as? Bool) ?? false,
-      extraCas: cas)
+      extraCas: cas,
+      strict: ((args["strict"] as? Bool) ?? false) ? Set((args["strictSha256"] as? [String]) ?? []) : nil)
     lock.unlock()
 
     // Номер задачи — через объект-ссылку, а не захваченную переменную
@@ -185,17 +189,40 @@ public class NativeHttpPlugin: NSObject, FlutterPlugin, URLSessionDelegate, URLS
       completionHandler(.performDefaultHandling, nil)
       return
     }
-    if SecTrustEvaluateWithError(serverTrust, nil) {
-      completionHandler(.useCredential, URLCredential(trust: serverTrust))
-      return
-    }
     let host = challenge.protectionSpace.host.lowercased()
     lock.lock()
     let rule = trust[host]
     lock.unlock()
+    // Принять — но сначала закрепление администратора: оно сверяется и
+    // когда системная проверка прошла (ЦС из профиля на устройстве).
+    let accept: () -> Void = { [weak self] in
+      if let strict = rule?.strict {
+        var fp = ""
+        var der = Data()
+        var subject = host
+        if let chain = SecTrustCopyCertificateChain(serverTrust) as? [SecCertificate], let leaf = chain.first {
+          der = SecCertificateCopyData(leaf) as Data
+          subject = (SecCertificateCopySubjectSummary(leaf) as String?) ?? host
+          fp = Data(SHA256.hash(data: der)).base64EncodedString()
+        }
+        if !strict.contains(fp) {
+          NSLog("[native_http] %@: отпечаток %@ не совпадает с закреплённым (правило администратора)", host, fp)
+          self?.lock.lock()
+          self?.failed[host] = (der, subject, fp, strict.joined(separator: ", "))
+          self?.lock.unlock()
+          completionHandler(.cancelAuthenticationChallenge, nil)
+          return
+        }
+      }
+      completionHandler(.useCredential, URLCredential(trust: serverTrust))
+    }
+    if SecTrustEvaluateWithError(serverTrust, nil) {
+      accept()
+      return
+    }
     if let rule = rule {
       if rule.acceptAny {
-        completionHandler(.useCredential, URLCredential(trust: serverTrust))
+        accept()
         return
       }
       // Дополнительные ЦС приложения — вместе с системными корнями.
@@ -203,7 +230,7 @@ public class NativeHttpPlugin: NSObject, FlutterPlugin, URLSessionDelegate, URLS
         SecTrustSetAnchorCertificates(serverTrust, rule.extraCas as CFArray)
         SecTrustSetAnchorCertificatesOnly(serverTrust, false)
         if SecTrustEvaluateWithError(serverTrust, nil) {
-          completionHandler(.useCredential, URLCredential(trust: serverTrust))
+          accept()
           return
         }
       }
@@ -217,7 +244,7 @@ public class NativeHttpPlugin: NSObject, FlutterPlugin, URLSessionDelegate, URLS
       leafFp = Data(SHA256.hash(data: leafDer)).base64EncodedString()
       if let rule = rule, rule.fingerprints.contains(leafFp) {
         NSLog("[native_http] %@: доверяем по отпечатку листа", host)
-        completionHandler(.useCredential, URLCredential(trust: serverTrust))
+        accept()
         return
       }
     }

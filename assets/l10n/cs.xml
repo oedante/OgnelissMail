@@ -1981,6 +1981,9 @@
     <string name="authExCert">Certifikát serveru se nepodařilo ověřit ({hosts}).</string>
     <string name="authEx403">Server odmítl připojení (403). Zapněte „{setting}“ v rozšířených nastaveních přihlášení nebo se obraťte na své IT oddělení: mobilní přístup k poště může být zablokován.</string>
     <string name="authExGeneric">K Exchange se nepodařilo připojit ({hosts}). Zkontrolujte uživatelské jméno, heslo, adresu serveru a přístup z firemní sítě/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange toto zařízení nepouští: správce ho zablokoval nebo ho ještě neschválil. Obraťte se na IT, aby zařízení v Exchange (mobilní zařízení) povolili.</string>
+    <string name="authExDeviceLimit">Vaše schránka dosáhla limitu telefonů a tabletů. Odeberte stará zařízení v Outlooku na webu (Nastavení → Obecné → Mobilní zařízení) nebo se obraťte na IT.</string>
+    <string name="authExSyncDisabled">Synchronizace z telefonů (ActiveSync) je pro vaši schránku v Exchange vypnutá. Obraťte se na IT.</string>
     <string name="authUnsupportedOAuth">Nepodporovaný poskytovatel OAuth</string>
     <string name="authOAuthNoEmail">Přihlášení proběhlo, ale služba neposkytla e-mailovou adresu. Zkontrolujte, zda má aplikace povolen přístup k vaší e-mailové adrese.</string>
     <string name="authOAuthImapRejected">Přihlášení proběhlo, ale poštovní server (IMAP) odmítl připojení.</string>
@@ -3661,6 +3664,8 @@
     <string name="onboardingDesc3NoEx">PIN a otisk prstu, upozornění na phishing, blokování sledování v e-mailech.\n\nPošta jde z vašeho serveru přímo do vašeho zařízení.</string>
     <string name="exchangeHiddenTitle">Skryté schránky Exchange: {n}</string>
     <string name="exchangeHiddenDesc">Exchange není v této verzi podporován. Schránky a jejich data zůstanou na tomto zařízení a vrátí se ve verzi s Exchange. Poštu můžete přidat přes IMAP.</string>
+    <string name="policyHiddenTitle">Skryto vaší organizací: {n}</string>
+    <string name="policyHiddenDesc">Vaše organizace povoluje jen schránky vlastních domén. Skryté: {list}. Data zůstávají v zařízení a vrátí se, pokud bude doména povolena.</string>
     <string name="sourceCode">Zdrojový kód</string>
     <string name="sourceCodeDesc">GitHub: číst, sestavit, přispět</string>
     <string name="archiveMergeTitle">Sloučit s kopií</string>

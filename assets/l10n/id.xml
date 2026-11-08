@@ -1965,6 +1965,9 @@
     <string name="authExCert">Sertifikat server tidak dapat diverifikasi ({hosts}).</string>
     <string name="authEx403">Server menolak koneksi (403). Aktifkan “{setting}” di pengaturan masuk lanjutan atau hubungi departemen TI Anda: akses email seluler mungkin diblokir.</string>
     <string name="authExGeneric">Tidak dapat terhubung ke Exchange ({hosts}). Periksa nama pengguna, kata sandi, alamat server, dan akses dari jaringan perusahaan/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange tidak mengizinkan perangkat ini: administrator memblokirnya atau belum menyetujuinya. Hubungi tim TI agar perangkat diizinkan di Exchange (perangkat seluler).</string>
+    <string name="authExDeviceLimit">Kotak surat Anda mencapai batas jumlah ponsel dan tablet. Hapus perangkat lama di Outlook web (Pengaturan → Umum → Perangkat seluler) atau hubungi tim TI.</string>
+    <string name="authExSyncDisabled">Sinkronisasi dari ponsel (ActiveSync) dimatikan untuk kotak surat Anda di Exchange. Hubungi tim TI.</string>
     <string name="authUnsupportedOAuth">Penyedia OAuth tidak didukung</string>
     <string name="authOAuthNoEmail">Berhasil masuk, tetapi layanan tidak memberikan alamat email. Pastikan aplikasi diizinkan mengakses alamat email Anda.</string>
     <string name="authOAuthImapRejected">Berhasil masuk, tetapi server email (IMAP) menolak koneksi.</string>
@@ -3623,6 +3626,8 @@
     <string name="onboardingDesc3NoEx">PIN dan sidik jari, peringatan phishing, pemblokiran pelacak di email.\n\nEmail masuk dari server langsung ke perangkat.</string>
     <string name="exchangeHiddenTitle">Kotak surat Exchange disembunyikan: {n}</string>
     <string name="exchangeHiddenDesc">Exchange tidak didukung di versi ini. Kotak surat dan datanya tetap berada di perangkat ini dan akan kembali di versi yang mendukung Exchange. Email dapat ditambahkan lewat IMAP.</string>
+    <string name="policyHiddenTitle">Disembunyikan oleh organisasi Anda: {n}</string>
+    <string name="policyHiddenDesc">Organisasi Anda hanya mengizinkan kotak surat dari domainnya sendiri. Disembunyikan: {list}. Data tetap ada di perangkat dan akan kembali jika domain diizinkan.</string>
     <string name="sourceCode">Kode sumber</string>
     <string name="sourceCodeDesc">GitHub: baca, build, berkontribusi</string>
     <string name="archiveMergeTitle">Gabungkan dengan salinan</string>

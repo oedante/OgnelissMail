@@ -1973,6 +1973,9 @@
     <string name="authExCert">Het servercertificaat kon niet worden gecontroleerd ({hosts}).</string>
     <string name="authEx403">De server heeft de verbinding geweigerd (403). Schakel ‘{setting}’ in bij de geavanceerde inloginstellingen of neem contact op met je IT-afdeling: toegang tot e-mail via mobiel is mogelijk geblokkeerd.</string>
     <string name="authExGeneric">Kan geen verbinding maken met Exchange ({hosts}). Controleer je gebruikersnaam, wachtwoord, serveradres en toegang vanaf het bedrijfsnetwerk/VPN.</string>
+    <string name="authExDeviceBlocked">Exchange laat dit apparaat niet toe: een beheerder heeft het geblokkeerd of nog niet goedgekeurd. Neem contact op met IT om het apparaat in Exchange (mobiele apparaten) toe te staan.</string>
+    <string name="authExDeviceLimit">Je mailbox heeft het maximale aantal telefoons en tablets bereikt. Verwijder oude apparaten in Outlook op het web (Instellingen → Algemeen → Mobiele apparaten) of neem contact op met IT.</string>
+    <string name="authExSyncDisabled">Synchronisatie vanaf telefoons (ActiveSync) is uitgeschakeld voor je mailbox in Exchange. Neem contact op met IT.</string>
     <string name="authUnsupportedOAuth">Niet-ondersteunde OAuth-provider</string>
     <string name="authOAuthNoEmail">Je bent ingelogd, maar de dienst heeft geen e-mailadres doorgegeven. Controleer of de app toegang heeft tot je e-mailadres.</string>
     <string name="authOAuthImapRejected">Je bent ingelogd, maar de mailserver (IMAP) heeft de verbinding geweigerd.</string>
@@ -3642,6 +3645,8 @@
     <string name="onboardingDesc3NoEx">PIN en vingerafdruk, phishingwaarschuwingen, blokkering van trackers in e-mails.\n\nE-mail gaat rechtstreeks van je server naar je apparaat.</string>
     <string name="exchangeHiddenTitle">Exchange-mailboxen verborgen: {n}</string>
     <string name="exchangeHiddenDesc">Exchange wordt in deze versie niet ondersteund. De mailboxen en hun gegevens blijven op dit apparaat en komen terug in een versie met Exchange. Je kunt de e-mail toevoegen via IMAP.</string>
+    <string name="policyHiddenTitle">Verborgen door je organisatie: {n}</string>
+    <string name="policyHiddenDesc">Je organisatie staat alleen mailboxen van eigen domeinen toe. Verborgen: {list}. De gegevens blijven op het apparaat en komen terug als het domein wordt toegestaan.</string>
     <string name="sourceCode">Broncode</string>
     <string name="sourceCodeDesc">GitHub: lezen, bouwen, bijdragen</string>
     <string name="archiveMergeTitle">Samenvoegen met een kopie</string>

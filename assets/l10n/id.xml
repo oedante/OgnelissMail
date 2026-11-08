@@ -3139,7 +3139,7 @@
     <string name="graphicsTitle">Grafis</string>
     <string name="graphicsHelp">Jika layar menjadi hitam atau aplikasi tertutup saat melihat lampiran, pilih “Kompatibilitas”. Setelah kegagalan seperti itu, aplikasi beralih sendiri.</string>
     <string name="graphicsAuto">Otomatis</string>
-    <string name="graphicsAutoDesc">Mesin baru; kompatibilitas setelah kegagalan grafis</string>
+    <string name="graphicsAutoDesc">Kompatibilitas di ponsel yang mesin barunya kurang andal, dan setelah kegagalan</string>
     <string name="graphicsSkia">Kompatibilitas (Skia)</string>
     <string name="graphicsSkiaDesc">Lebih andal di sebagian ponsel</string>
     <string name="graphicsImpeller">Mesin baru (Impeller)</string>

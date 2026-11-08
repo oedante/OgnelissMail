@@ -55,6 +55,15 @@ object GraphicsMode {
     private const val KEY_AUTO_AT = "auto_at"
     private const val KEY_AUTO_WHY = "auto_reason"
     private const val KEY_SCANNED = "scanned_to"
+    private const val KEY_GLES_FP = "gles_fingerprint"
+    private const val KEY_GLES_WHY = "gles_reason"
+
+    /** Чипы, на которых Flutter не включает Vulkan (kBadSocs, Flutter 3.47). */
+    private val BAD_SOCS = setOf(
+        "exynos7870", "exynos7880", "exynos7872", "exynos7884", "exynos7885", "exynos7904",
+        "exynos8890", "exynos8895", "exynos9609", "exynos9610", "exynos9611", "exynos9810",
+        "exynos9820", "exynos9825", "rk30sdk",
+    )
 
     /** Движок этого процесса: skia — выключили Impeller флагом. */
     @Volatile
@@ -72,14 +81,64 @@ object GraphicsMode {
 
     fun mode(c: Context): String = prefs(c).getString(KEY_MODE, "auto") ?: "auto"
 
-    /** Рисовать ли через Skia при следующем запуске процесса. */
+    /**
+     * Рисовать ли через Skia при следующем запуске процесса. «Автоматически»
+     * — Skia после падения Impeller и там, где Impeller рисовал бы через
+     * OpenGL ES (glesReason): уточнение владельца 08.11.2026 — чёрный экран
+     * при ответе или пересылке после просмотра файла, без падения процесса,
+     * то есть по одним падениям такой телефон не распознать.
+     */
     fun wantSkia(c: Context): Boolean {
         val p = prefs(c)
         return when (mode(c)) {
             "skia" -> true
             "impeller" -> false
-            else -> p.getBoolean(KEY_AUTO, false)
+            else -> p.getBoolean(KEY_AUTO, false) || glesReason(c) != null
         }
+    }
+
+    /**
+     * Почему Impeller на этом телефоне рисовал бы через OpenGL ES, а не
+     * Vulkan; null — Vulkan. Те же правила, что у Flutter 3.47
+     * (engine/…/android/android_context_dynamic_impeller.cc): Huawei («AHB
+     * imports do not consistently work»), MediaTek с прошивкой до API 32,
+     * эмулятор, чипы из списка Flutter, нет Vulkan 1.1. Ниже Android 10
+     * Flutter и так рисует через Skia. Считается один раз на версию прошивки
+     * (getprop — отдельные процессы, не на каждый запуск).
+     */
+    fun glesReason(c: Context): String? {
+        val p = prefs(c)
+        val fp = Build.FINGERPRINT ?: ""
+        if (p.getString(KEY_GLES_FP, null) == fp) {
+            return p.getString(KEY_GLES_WHY, "").orEmpty().ifEmpty { null }
+        }
+        val why = try {
+            detectGles(c).orEmpty()
+        } catch (e: Throwable) {
+            ""
+        }
+        p.edit().putString(KEY_GLES_FP, fp).putString(KEY_GLES_WHY, why).apply()
+        return why.ifEmpty { null }
+    }
+
+    private fun detectGles(c: Context): String? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
+        val prop = BackgroundDiagnostics::prop
+        val hw = prop("ro.hardware")
+        if (hw == "goldfish" || hw == "ranchu" || hw == "qemu" || Build.MODEL.contains("gphone")) {
+            return "эмулятор"
+        }
+        if (prop("ro.com.google.clientidbase") == "android-huawei") return "Huawei"
+        val vendorSdk = prop("ro.vendor.build.version.sdk").toIntOrNull() ?: Build.VERSION.SDK_INT
+        if (vendorSdk < 32 && prop("ro.vendor.mediatek.platform").isNotEmpty()) {
+            return "MediaTek, прошивка API $vendorSdk"
+        }
+        val board = prop("ro.product.board")
+        if (board in BAD_SOCS) return "чип $board"
+        if (!c.packageManager.hasSystemFeature(PackageManager.FEATURE_VULKAN_HARDWARE_VERSION, 0x401000)) {
+            return "нет Vulkan 1.1"
+        }
+        return null
     }
 
     /**
@@ -177,6 +236,7 @@ object GraphicsMode {
             "autoSkia" to p.getBoolean(KEY_AUTO, false),
             "autoAt" to p.getLong(KEY_AUTO_AT, 0L),
             "autoReason" to p.getString(KEY_AUTO_WHY, null),
+            "glesReason" to glesReason(c),
             "memory" to memory(c),
             "gpu" to gpuCache,
         )

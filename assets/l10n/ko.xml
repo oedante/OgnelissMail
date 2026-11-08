@@ -3139,7 +3139,7 @@
     <string name="graphicsTitle">그래픽</string>
     <string name="graphicsHelp">첨부 파일을 보는 중 화면이 검게 되거나 앱이 닫히면 “호환성”을 선택하세요. 이런 오류가 생기면 앱이 자동으로 전환합니다.</string>
     <string name="graphicsAuto">자동</string>
-    <string name="graphicsAutoDesc">새 엔진, 그래픽 오류 후에는 호환성</string>
+    <string name="graphicsAutoDesc">새 엔진이 불안정한 휴대폰과 오류 후에는 호환성</string>
     <string name="graphicsSkia">호환성 (Skia)</string>
     <string name="graphicsSkiaDesc">일부 휴대폰에서 더 안정적</string>
     <string name="graphicsImpeller">새 엔진 (Impeller)</string>

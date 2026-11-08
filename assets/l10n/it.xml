@@ -3152,7 +3152,7 @@
     <string name="graphicsTitle">Grafica</string>
     <string name="graphicsHelp">Se lo schermo diventa nero o l’app si chiude mentre guardi gli allegati, scegli «Compatibilità». Dopo un errore simile l’app passa da sola a questa modalità.</string>
     <string name="graphicsAuto">Automatico</string>
-    <string name="graphicsAutoDesc">Nuovo motore; compatibilità dopo un errore grafico</string>
+    <string name="graphicsAutoDesc">Compatibilità sui telefoni dove il nuovo motore non è affidabile e dopo un errore</string>
     <string name="graphicsSkia">Compatibilità (Skia)</string>
     <string name="graphicsSkiaDesc">Più affidabile su alcuni telefoni</string>
     <string name="graphicsImpeller">Nuovo motore (Impeller)</string>

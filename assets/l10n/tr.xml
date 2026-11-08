@@ -3152,7 +3152,7 @@
     <string name="graphicsTitle">Grafik</string>
     <string name="graphicsHelp">Ekler görüntülenirken ekran kararırsa veya uygulama kapanırsa “Uyumluluk” seçeneğini seçin. Böyle bir hatadan sonra uygulama buna kendisi geçer.</string>
     <string name="graphicsAuto">Otomatik</string>
-    <string name="graphicsAutoDesc">Yeni motor; grafik hatasından sonra uyumluluk</string>
+    <string name="graphicsAutoDesc">Yeni motorun güvenilmez olduğu telefonlarda ve hatadan sonra uyumluluk</string>
     <string name="graphicsSkia">Uyumluluk (Skia)</string>
     <string name="graphicsSkiaDesc">Bazı telefonlarda daha güvenilir</string>
     <string name="graphicsImpeller">Yeni motor (Impeller)</string>

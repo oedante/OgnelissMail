@@ -3139,7 +3139,7 @@
     <string name="graphicsTitle">グラフィックス</string>
     <string name="graphicsHelp">添付ファイルの表示中に画面が黒くなったりアプリが閉じたりする場合は「互換モード」を選んでください。このような障害の後は、アプリが自動で切り替えます。</string>
     <string name="graphicsAuto">自動</string>
-    <string name="graphicsAutoDesc">新しいエンジン、グラフィック障害の後は互換モード</string>
+    <string name="graphicsAutoDesc">新しいエンジンが不安定な端末と障害の後は互換モード</string>
     <string name="graphicsSkia">互換モード (Skia)</string>
     <string name="graphicsSkiaDesc">一部の端末でより安定</string>
     <string name="graphicsImpeller">新しいエンジン (Impeller)</string>

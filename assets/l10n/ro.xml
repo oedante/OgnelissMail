@@ -3165,7 +3165,7 @@
     <string name="graphicsTitle">Grafică</string>
     <string name="graphicsHelp">Dacă ecranul devine negru sau aplicația se închide când vizualizați atașamente, alegeți „Compatibilitate”. După o astfel de defecțiune, aplicația trece singură la ea.</string>
     <string name="graphicsAuto">Automat</string>
-    <string name="graphicsAutoDesc">Motor nou; compatibilitate după o eroare grafică</string>
+    <string name="graphicsAutoDesc">Compatibilitate pe telefoanele unde motorul nou nu este fiabil și după o eroare</string>
     <string name="graphicsSkia">Compatibilitate (Skia)</string>
     <string name="graphicsSkiaDesc">Mai fiabil pe unele telefoane</string>
     <string name="graphicsImpeller">Motor nou (Impeller)</string>

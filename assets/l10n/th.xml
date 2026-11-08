@@ -3139,7 +3139,7 @@
     <string name="graphicsTitle">กราฟิก</string>
     <string name="graphicsHelp">หากหน้าจอเป็นสีดำหรือแอปปิดขณะดูไฟล์แนบ ให้เลือก “ความเข้ากันได้” หลังเกิดปัญหาเช่นนี้ แอปจะเปลี่ยนไปใช้เอง</string>
     <string name="graphicsAuto">อัตโนมัติ</string>
-    <string name="graphicsAutoDesc">เอนจินใหม่ ใช้ความเข้ากันได้หลังกราฟิกขัดข้อง</string>
+    <string name="graphicsAutoDesc">ใช้ความเข้ากันได้ในโทรศัพท์ที่เอนจินใหม่ไม่เสถียร และหลังขัดข้อง</string>
     <string name="graphicsSkia">ความเข้ากันได้ (Skia)</string>
     <string name="graphicsSkiaDesc">เสถียรกว่าในโทรศัพท์บางรุ่น</string>
     <string name="graphicsImpeller">เอนจินใหม่ (Impeller)</string>

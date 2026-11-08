@@ -3152,7 +3152,7 @@
     <string name="graphicsTitle">Graphics</string>
     <string name="graphicsHelp">If the screen goes black or the app closes while viewing attachments, choose “Compatibility”. After such a failure the app switches to it on its own.</string>
     <string name="graphicsAuto">Automatic</string>
-    <string name="graphicsAutoDesc">New engine; compatibility after a graphics failure</string>
+    <string name="graphicsAutoDesc">Compatibility on phones where the new engine is unreliable, and after a failure</string>
     <string name="graphicsSkia">Compatibility (Skia)</string>
     <string name="graphicsSkiaDesc">More reliable on some phones</string>
     <string name="graphicsImpeller">New engine (Impeller)</string>

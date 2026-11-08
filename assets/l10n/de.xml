@@ -3152,7 +3152,7 @@
     <string name="graphicsTitle">Grafik</string>
     <string name="graphicsHelp">Wenn der Bildschirm schwarz wird oder die App beim Ansehen von Anhängen schließt, wählen Sie „Kompatibilität“. Nach einem solchen Fehler wechselt die App selbst dorthin.</string>
     <string name="graphicsAuto">Automatisch</string>
-    <string name="graphicsAutoDesc">Neue Engine; nach einem Grafikfehler Kompatibilität</string>
+    <string name="graphicsAutoDesc">Kompatibilität auf Telefonen, auf denen die neue Engine unzuverlässig ist, und nach einem Fehler</string>
     <string name="graphicsSkia">Kompatibilität (Skia)</string>
     <string name="graphicsSkiaDesc">Zuverlässiger auf manchen Telefonen</string>
     <string name="graphicsImpeller">Neue Engine (Impeller)</string>

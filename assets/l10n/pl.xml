@@ -3178,7 +3178,7 @@
     <string name="graphicsTitle">Grafika</string>
     <string name="graphicsHelp">Jeśli ekran robi się czarny lub aplikacja zamyka się podczas przeglądania załączników, wybierz „Zgodność”. Po takiej awarii aplikacja przełącza się sama.</string>
     <string name="graphicsAuto">Automatycznie</string>
-    <string name="graphicsAutoDesc">Nowy silnik; po awarii grafiki — zgodność</string>
+    <string name="graphicsAutoDesc">Zgodność na telefonach, gdzie nowy silnik jest zawodny, i po awarii</string>
     <string name="graphicsSkia">Zgodność (Skia)</string>
     <string name="graphicsSkiaDesc">Niezawodniej działa na części telefonów</string>
     <string name="graphicsImpeller">Nowy silnik (Impeller)</string>

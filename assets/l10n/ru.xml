@@ -3178,7 +3178,7 @@
     <string name="graphicsTitle">Графика</string>
     <string name="graphicsHelp">Если экран становится чёрным или приложение закрывается при просмотре вложений, выберите «Совместимость». После такого сбоя приложение переходит на неё само.</string>
     <string name="graphicsAuto">Автоматически</string>
-    <string name="graphicsAutoDesc">Новый движок; после сбоя графики — совместимость</string>
+    <string name="graphicsAutoDesc">Совместимость на телефонах, где новый движок ненадёжен, и после сбоя</string>
     <string name="graphicsSkia">Совместимость (Skia)</string>
     <string name="graphicsSkiaDesc">Надёжнее на части телефонов</string>
     <string name="graphicsImpeller">Новый движок (Impeller)</string>

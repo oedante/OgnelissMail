@@ -3152,7 +3152,7 @@
     <string name="graphicsTitle">Graphisme</string>
     <string name="graphicsHelp">Si l’écran devient noir ou si l’application se ferme pendant l’affichage des pièces jointes, choisissez « Compatibilité ». Après une telle panne, l’application y passe d’elle-même.</string>
     <string name="graphicsAuto">Automatique</string>
-    <string name="graphicsAutoDesc">Nouveau moteur ; compatibilité après une panne graphique</string>
+    <string name="graphicsAutoDesc">Compatibilité sur les téléphones où le nouveau moteur n’est pas fiable, et après une panne</string>
     <string name="graphicsSkia">Compatibilité (Skia)</string>
     <string name="graphicsSkiaDesc">Plus fiable sur certains téléphones</string>
     <string name="graphicsImpeller">Nouveau moteur (Impeller)</string>

@@ -3204,7 +3204,7 @@
     <string name="graphicsTitle">الرسومات</string>
     <string name="graphicsHelp">إذا أصبحت الشاشة سوداء أو أُغلق التطبيق أثناء عرض المرفقات، فاختر «التوافق». بعد عطل كهذا ينتقل التطبيق إليه تلقائيًا.</string>
     <string name="graphicsAuto">تلقائي</string>
-    <string name="graphicsAutoDesc">محرك جديد؛ التوافق بعد عطل في الرسومات</string>
+    <string name="graphicsAutoDesc">التوافق على الهواتف التي لا يكون فيها المحرك الجديد موثوقًا، وبعد أي عطل</string>
     <string name="graphicsSkia">التوافق (Skia)</string>
     <string name="graphicsSkiaDesc">أكثر موثوقية على بعض الهواتف</string>
     <string name="graphicsImpeller">محرك جديد (Impeller)</string>

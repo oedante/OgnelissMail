@@ -3139,7 +3139,7 @@
     <string name="graphicsTitle">Đồ họa</string>
     <string name="graphicsHelp">Nếu màn hình chuyển đen hoặc ứng dụng tự đóng khi xem tệp đính kèm, hãy chọn “Tương thích”. Sau lỗi như vậy, ứng dụng tự chuyển sang chế độ này.</string>
     <string name="graphicsAuto">Tự động</string>
-    <string name="graphicsAutoDesc">Bộ máy mới; tương thích sau lỗi đồ họa</string>
+    <string name="graphicsAutoDesc">Tương thích trên điện thoại mà bộ máy mới không ổn định, và sau lỗi</string>
     <string name="graphicsSkia">Tương thích (Skia)</string>
     <string name="graphicsSkiaDesc">Ổn định hơn trên một số điện thoại</string>
     <string name="graphicsImpeller">Bộ máy mới (Impeller)</string>

@@ -3152,7 +3152,7 @@
     <string name="graphicsTitle">Grafika</string>
     <string name="graphicsHelp">Ha a képernyő elfeketedik, vagy az alkalmazás bezárul mellékletek megtekintésekor, válassza a „Kompatibilitás” lehetőséget. Ilyen hiba után az alkalmazás magától átvált.</string>
     <string name="graphicsAuto">Automatikus</string>
-    <string name="graphicsAutoDesc">Új motor; grafikai hiba után kompatibilitás</string>
+    <string name="graphicsAutoDesc">Kompatibilitás azokon a telefonokon, ahol az új motor megbízhatatlan, és hiba után</string>
     <string name="graphicsSkia">Kompatibilitás (Skia)</string>
     <string name="graphicsSkiaDesc">Megbízhatóbb egyes telefonokon</string>
     <string name="graphicsImpeller">Új motor (Impeller)</string>

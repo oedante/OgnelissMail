@@ -3152,7 +3152,7 @@
     <string name="graphicsTitle">Grafiikka</string>
     <string name="graphicsHelp">Jos näyttö muuttuu mustaksi tai sovellus sulkeutuu liitteitä katsellessa, valitse ”Yhteensopivuus”. Tällaisen vian jälkeen sovellus vaihtaa siihen itse.</string>
     <string name="graphicsAuto">Automaattinen</string>
-    <string name="graphicsAutoDesc">Uusi moottori; grafiikkavian jälkeen yhteensopivuus</string>
+    <string name="graphicsAutoDesc">Yhteensopivuus puhelimissa, joissa uusi moottori on epäluotettava, ja vian jälkeen</string>
     <string name="graphicsSkia">Yhteensopivuus (Skia)</string>
     <string name="graphicsSkiaDesc">Luotettavampi joillakin puhelimilla</string>
     <string name="graphicsImpeller">Uusi moottori (Impeller)</string>

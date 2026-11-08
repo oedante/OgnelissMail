@@ -3152,7 +3152,7 @@
     <string name="graphicsTitle">Grafische weergave</string>
     <string name="graphicsHelp">Wordt het scherm zwart of sluit de app bij het bekijken van bijlagen, kies dan ‘Compatibiliteit’. Na zo’n storing schakelt de app er zelf naar over.</string>
     <string name="graphicsAuto">Automatisch</string>
-    <string name="graphicsAutoDesc">Nieuwe engine; compatibiliteit na een grafische storing</string>
+    <string name="graphicsAutoDesc">Compatibiliteit op telefoons waar de nieuwe engine onbetrouwbaar is, en na een storing</string>
     <string name="graphicsSkia">Compatibiliteit (Skia)</string>
     <string name="graphicsSkiaDesc">Betrouwbaarder op sommige telefoons</string>
     <string name="graphicsImpeller">Nieuwe engine (Impeller)</string>

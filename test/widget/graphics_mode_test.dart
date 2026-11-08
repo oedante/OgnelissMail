@@ -88,6 +88,20 @@ void main() {
       expect(s.summary, 'Impeller (OpenGLES), выбрано вручную; после перезапуска — Skia');
     });
 
+    test('Huawei: Impeller был бы на OpenGL ES — Skia сразу, без сбоя', () {
+      final s = GraphicsState.fromMap({
+        'mode': 'auto',
+        'active': 'skia',
+        'next': 'skia',
+        'glesReason': 'Huawei',
+        'autoSkia': false,
+      });
+      expect(s.glesReason, 'Huawei');
+      expect(s.restartNeeded, isFalse);
+      expect(s.summary, 'Skia (совместимость), автоматически: Impeller здесь работал бы через OpenGL ES (Huawei)');
+      expect(GraphicsState.fromMap(const {'glesReason': ''}).glesReason, isNull);
+    });
+
     test('пустой ответ — значения по умолчанию', () {
       final s = GraphicsState.fromMap(const {});
       expect(s.mode, 'auto');

@@ -47,6 +47,38 @@ Check failed: result. Must be able to encode GL commands without error.
 правка фото (`image_edit.dart`). Если на каком-то телефоне упадёт и там —
 сработает переход на Skia (ниже).
 
+## Чёрный экран при ответе или пересылке после просмотра файла
+
+Уточнение владельца 08.11.2026: «после чтения файла с последующим пересылом
+или ответом зависает в чёрный экран». Окно ответа — редактор письма во
+встроенном браузере (`mail_editor.dart`, InAppWebView): это **платформенное
+окно** Android поверх Flutter (hybrid composition). Чтобы показать его,
+Flutter перестраивает свою поверхность рисования — а перед этим просмотр
+вложения (картинки, страницы PDF) занял видеопамять. На Impeller с OpenGL ES
+это и даёт чёрный экран **без падения процесса**, поэтому переход на Skia
+«после сбоя» здесь не срабатывал бы.
+
+Кто рисует через OpenGL ES, Flutter решает сам
+(`engine/…/android/android_context_dynamic_impeller.cc`, Flutter 3.47):
+- **Huawei** — всегда OpenGL ES (`ro.com.google.clientidbase =
+  android-huawei`, в коде Flutter: «AHB imports do not consistently work»);
+- MediaTek с прошивкой ниже API 32, эмуляторы, чипы из списка Flutter
+  (часть Exynos, rk30sdk), телефоны без Vulkan 1.1;
+- ниже Android 10 Flutter и так рисует через Skia.
+
+Поэтому «Автоматически» теперь выбирает **Skia сразу** на телефонах, где
+Impeller работал бы через OpenGL ES (те же правила в `GraphicsMode.kt`,
+`glesReason`), и после любого падения Impeller. Телефоны с Vulkan остаются
+на Impeller. На HUAWEI DEL-LX9 1.15.1 с первого запуска рисует через Skia —
+вручную ничего включать не нужно.
+
+**При обновлении Flutter** проверить: движок пишет в журнал «Impeller
+opt-out deprecated… These options are going to go away in an upcoming
+Flutter release». Пока флаг `--enable-impeller=false` есть — всё работает.
+Если в новой версии его уберут, перед обновлением нужно проверить на Huawei
+ответ и пересылку после просмотра вложения (или остаться на версии Flutter
+с флагом).
+
 ## Разбор, присланный владельцем 08.11.2026 — что совпало
 
 1. *Нет Vulkan → OpenGL ES, где Impeller менее надёжен* — совпадает с
@@ -59,9 +91,9 @@ Check failed: result. Must be able to encode GL commands without error.
    показывает.
 3. *Вызовы рисования без окна (свёрнуто), в том числе `Image.toByteData()`*
    — **совпало точнее всего**: см. раздел выше, исправлено.
-4. *Внешние текстуры и WebView* — WebView в приложении есть (письма в
-   HTML, если включено). Отдельных признаков в журнале нет; Skia работает с
-   ним надёжно — это покрывает переход на Skia.
+4. *Внешние текстуры и WebView* — **совпало с уточнением владельца**:
+   окно ответа и пересылки — WebView (платформенное окно); чёрный экран —
+   там. См. раздел выше: на таких телефонах теперь сразу Skia.
 
 ## Нехватка памяти?
 
@@ -75,7 +107,8 @@ Check failed: result. Must be able to encode GL commands without error.
 1. **Движок.** При запуске приложение смотрит, как завершался процесс
    (Android 11+). Нашлось падение в Impeller — на этом телефоне дальше
    рисуем через Skia (флаг движка `--enable-impeller=false`,
-   `GraphicsMode.kt`, `OgnelissApplication.kt`). Проверка — при каждом
+   `GraphicsMode.kt`, `OgnelissApplication.kt`); а там, где Impeller
+   работал бы через OpenGL ES (Huawei и др., раздел выше), — сразу. Проверка — при каждом
    запуске процесса: система хранит только последние ~16 завершений на
    приложение (вместе с процессами WebView), поэтому сбой 08.11 на телефоне
    владельца к установке 1.15.1 может уже выпасть из списка — тогда один

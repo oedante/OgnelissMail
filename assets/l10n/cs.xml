@@ -3165,7 +3165,7 @@
     <string name="graphicsTitle">Grafika</string>
     <string name="graphicsHelp">Pokud obrazovka zčerná nebo se aplikace při prohlížení příloh zavře, zvolte „Kompatibilita“. Po takovém selhání se aplikace přepne sama.</string>
     <string name="graphicsAuto">Automaticky</string>
-    <string name="graphicsAutoDesc">Nové jádro; po selhání grafiky kompatibilita</string>
+    <string name="graphicsAutoDesc">Kompatibilita na telefonech, kde nové jádro není spolehlivé, a po selhání</string>
     <string name="graphicsSkia">Kompatibilita (Skia)</string>
     <string name="graphicsSkiaDesc">Spolehlivější na některých telefonech</string>
     <string name="graphicsImpeller">Nové jádro (Impeller)</string>

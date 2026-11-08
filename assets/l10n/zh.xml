@@ -3139,7 +3139,7 @@
     <string name="graphicsTitle">图形</string>
     <string name="graphicsHelp">如果查看附件时屏幕变黑或应用关闭，请选择“兼容模式”。发生此类故障后，应用会自动切换。</string>
     <string name="graphicsAuto">自动</string>
-    <string name="graphicsAutoDesc">新引擎；图形故障后使用兼容模式</string>
+    <string name="graphicsAutoDesc">在新引擎不稳定的手机上以及故障后使用兼容模式</string>
     <string name="graphicsSkia">兼容模式 (Skia)</string>
     <string name="graphicsSkiaDesc">在部分手机上更稳定</string>
     <string name="graphicsImpeller">新引擎 (Impeller)</string>

@@ -3152,7 +3152,7 @@
     <string name="graphicsTitle">Grafikk</string>
     <string name="graphicsHelp">Hvis skjermen blir svart eller appen lukkes mens du ser på vedlegg, velg «Kompatibilitet». Etter en slik feil bytter appen selv.</string>
     <string name="graphicsAuto">Automatisk</string>
-    <string name="graphicsAutoDesc">Ny motor; kompatibilitet etter en grafikkfeil</string>
+    <string name="graphicsAutoDesc">Kompatibilitet på telefoner der den nye motoren er upålitelig, og etter en feil</string>
     <string name="graphicsSkia">Kompatibilitet (Skia)</string>
     <string name="graphicsSkiaDesc">Mer pålitelig på noen telefoner</string>
     <string name="graphicsImpeller">Ny motor (Impeller)</string>

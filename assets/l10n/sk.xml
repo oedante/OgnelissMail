@@ -3165,7 +3165,7 @@
     <string name="graphicsTitle">Grafika</string>
     <string name="graphicsHelp">Ak obrazovka sčernie alebo sa aplikácia pri prezeraní príloh zatvorí, zvoľte „Kompatibilita“. Po takom zlyhaní sa aplikácia prepne sama.</string>
     <string name="graphicsAuto">Automaticky</string>
-    <string name="graphicsAutoDesc">Nové jadro; po zlyhaní grafiky kompatibilita</string>
+    <string name="graphicsAutoDesc">Kompatibilita na telefónoch, kde nové jadro nie je spoľahlivé, a po zlyhaní</string>
     <string name="graphicsSkia">Kompatibilita (Skia)</string>
     <string name="graphicsSkiaDesc">Spoľahlivejšie na niektorých telefónoch</string>
     <string name="graphicsImpeller">Nové jadro (Impeller)</string>

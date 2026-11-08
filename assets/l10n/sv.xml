@@ -3152,7 +3152,7 @@
     <string name="graphicsTitle">Grafik</string>
     <string name="graphicsHelp">Om skärmen blir svart eller appen stängs när du visar bilagor, välj ”Kompatibilitet”. Efter ett sådant fel byter appen själv.</string>
     <string name="graphicsAuto">Automatiskt</string>
-    <string name="graphicsAutoDesc">Ny motor; kompatibilitet efter ett grafikfel</string>
+    <string name="graphicsAutoDesc">Kompatibilitet på telefoner där den nya motorn är opålitlig, och efter ett fel</string>
     <string name="graphicsSkia">Kompatibilitet (Skia)</string>
     <string name="graphicsSkiaDesc">Pålitligare på vissa telefoner</string>
     <string name="graphicsImpeller">Ny motor (Impeller)</string>

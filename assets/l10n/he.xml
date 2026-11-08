@@ -3165,7 +3165,7 @@
     <string name="graphicsTitle">גרפיקה</string>
     <string name="graphicsHelp">אם המסך נעשה שחור או שהאפליקציה נסגרת בזמן הצגת קבצים מצורפים, בחרו „תאימות”. אחרי תקלה כזו האפליקציה עוברת אליה בעצמה.</string>
     <string name="graphicsAuto">אוטומטי</string>
-    <string name="graphicsAutoDesc">מנוע חדש; תאימות אחרי תקלה גרפית</string>
+    <string name="graphicsAutoDesc">תאימות בטלפונים שבהם המנוע החדש אינו אמין, ואחרי תקלה</string>
     <string name="graphicsSkia">תאימות (Skia)</string>
     <string name="graphicsSkiaDesc">אמין יותר בחלק מהטלפונים</string>
     <string name="graphicsImpeller">מנוע חדש (Impeller)</string>

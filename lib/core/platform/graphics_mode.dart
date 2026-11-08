@@ -29,6 +29,10 @@ class GraphicsState {
   /// Путь Impeller из журнала движка: «OpenGLES», «Vulkan» (если известен).
   final String? backend;
 
+  /// Почему Impeller здесь рисовал бы через OpenGL ES («Huawei», «нет
+  /// Vulkan 1.1»…); null — Vulkan. В режиме «Автоматически» тогда — Skia.
+  final String? glesReason;
+
   /// «Автоматически» перешло на Skia после падения Impeller.
   final bool autoSkia;
   final DateTime? autoAt;
@@ -46,6 +50,7 @@ class GraphicsState {
     required this.active,
     required this.next,
     this.backend,
+    this.glesReason,
     this.autoSkia = false,
     this.autoAt,
     this.autoReason,
@@ -57,11 +62,13 @@ class GraphicsState {
     final at = (m['autoAt'] as num?)?.toInt() ?? 0;
     final mem = m['memory'];
     final gpu = (m['gpu'] as String?)?.trim();
+    final gles = (m['glesReason'] as String?)?.trim();
     return GraphicsState(
       mode: m['mode'] as String? ?? 'auto',
       active: m['active'] as String? ?? 'impeller',
       next: m['next'] as String? ?? 'impeller',
       backend: m['backend'] as String?,
+      glesReason: gles == null || gles.isEmpty ? null : gles,
       autoSkia: m['autoSkia'] == true,
       autoAt: at > 0 ? DateTime.fromMillisecondsSinceEpoch(at) : null,
       autoReason: m['autoReason'] as String?,
@@ -80,7 +87,11 @@ class GraphicsState {
     b.write(switch (mode) {
       'skia' => ', выбрано вручную',
       'impeller' => ', Impeller выбран вручную',
-      _ => autoSkia ? ', автоматически после сбоя Impeller' : ', автоматически',
+      _ => autoSkia
+          ? ', автоматически после сбоя Impeller'
+          : glesReason != null
+              ? ', автоматически: Impeller здесь работал бы через OpenGL ES ($glesReason)'
+              : ', автоматически',
     });
     if (autoSkia && autoAt != null) b.write(' ${autoAt!.toIso8601String().substring(0, 16)}');
     if (restartNeeded) b.write('; после перезапуска — ${next == 'skia' ? 'Skia' : 'Impeller'}');

@@ -3152,7 +3152,7 @@
     <string name="graphicsTitle">Gráficos</string>
     <string name="graphicsHelp">Se o ecrã ficar preto ou a aplicação fechar ao ver anexos, escolha «Compatibilidade». Após uma falha assim, a aplicação muda sozinha.</string>
     <string name="graphicsAuto">Automático</string>
-    <string name="graphicsAutoDesc">Motor novo; compatibilidade após uma falha gráfica</string>
+    <string name="graphicsAutoDesc">Compatibilidade nos telefones onde o motor novo não é fiável e após uma falha</string>
     <string name="graphicsSkia">Compatibilidade (Skia)</string>
     <string name="graphicsSkiaDesc">Mais fiável em alguns telefones</string>
     <string name="graphicsImpeller">Motor novo (Impeller)</string>

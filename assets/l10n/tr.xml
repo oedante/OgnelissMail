@@ -3056,6 +3056,12 @@
     <string name="widgetThemeSystem">Sistem</string>
     <string name="widgetThemeLight">Açık</string>
     <string name="widgetThemeDark">Koyu</string>
+    <string name="widgetMailTitle">“Posta” widget’ı</string>
+    <string name="widgetMailHelp">Ana ekrandaki Posta widget’ının hangi iletileri gösterdiği. Widget’ta iletinin yanındaki düğmeler: “Okundu” ve “Arşivle”.</string>
+    <string name="widgetMailAll">Gelen Kutusu’nda okunmamış</string>
+    <string name="widgetMailVip">VIP — okunmamış</string>
+    <string name="widgetMailFlagged">Bayraklı</string>
+    <string name="widgetMailControl">Takipte</string>
     <string name="faqTitle">Sorular ve yanıtlar</string>
     <string name="faqDesc">Posta, takvim, kişiler, widget\'lar ve ayarlar nasıl kullanılır</string>
     <string name="faqSearchHint">Sorularda ara</string>
@@ -3161,6 +3167,9 @@
     <string name="graphicsAfterCrash">{date} tarihindeki hatadan sonra</string>
     <string name="graphicsRestartNeeded">Değişiklik uygulama yeniden başlatıldığında geçerli olur.</string>
     <string name="graphicsRestart">Yeniden başlat</string>
+    <string name="plaintextTitle">Şifreleme olmadan bağlanılsın mı?</string>
+    <string name="plaintextBody">Parola ve iletiler düz metin olarak gider — aynı ağdaki herkes okuyabilir. Yalnızca kuruluşun iç ağındaki, başka seçeneği olmayan bir sunucu için seçin.</string>
+    <string name="plaintextAction">Şifrelemesiz</string>
     <string name="imageEditHint">Kırpmak için çerçevenin köşelerini veya kenarlarını sürükleyin</string>
     <string name="imageEditHintCircle">Daireyi taşıyın veya bir köşeden sürükleyin — fotoğraf portrede böyle görünecek</string>
     <string name="photoCirclePreview">Fotoğrafın listede, iletide ve kartta görünümü</string>

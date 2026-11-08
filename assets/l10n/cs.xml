@@ -3069,6 +3069,12 @@
     <string name="widgetThemeSystem">Podle systému</string>
     <string name="widgetThemeLight">Světlý</string>
     <string name="widgetThemeDark">Tmavý</string>
+    <string name="widgetMailTitle">Widget „Pošta“</string>
+    <string name="widgetMailHelp">Které zprávy widget Pošta na ploše zobrazuje. Tlačítka u zprávy ve widgetu: „Přečteno“ a „Archivovat“.</string>
+    <string name="widgetMailAll">Nepřečtené v Doručené poště</string>
+    <string name="widgetMailVip">VIP — nepřečtené</string>
+    <string name="widgetMailFlagged">S příznakem</string>
+    <string name="widgetMailControl">Ke kontrole</string>
     <string name="faqTitle">Otázky a odpovědi</string>
     <string name="faqDesc">Jak používat poštu, kalendář, kontakty, widgety a nastavení</string>
     <string name="faqSearchHint">Hledat v otázkách</string>
@@ -3174,6 +3180,9 @@
     <string name="graphicsAfterCrash">po selhání {date}</string>
     <string name="graphicsRestartNeeded">Změna se projeví po restartu aplikace.</string>
     <string name="graphicsRestart">Restartovat</string>
+    <string name="plaintextTitle">Připojit bez šifrování?</string>
+    <string name="plaintextBody">Heslo a zprávy půjdou sítí jako prostý text — kdokoli ve stejné síti je může přečíst. Zvolte jen pro server ve vnitřní síti organizace bez jiné možnosti.</string>
+    <string name="plaintextAction">Bez šifrování</string>
     <string name="imageEditHint">Ořízněte tažením za rohy nebo okraje rámečku</string>
     <string name="imageEditHintCircle">Posuňte kruh nebo táhněte za roh – tak bude fotka vypadat v portrétu</string>
     <string name="photoCirclePreview">Takto bude fotka vypadat v seznamu, zprávě a kartě</string>

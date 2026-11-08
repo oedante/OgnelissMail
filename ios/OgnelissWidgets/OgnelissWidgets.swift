@@ -293,11 +293,147 @@ private func updatedText(_ j: [String: Any], now: Date) -> (String, Bool)? {
   return text.isEmpty ? nil : (text, stale)
 }
 
+/// «Прочитано» или «В архив» у письма в виджете (08.11.2026, iOS 17 и
+/// новее): строка сразу уходит из виджета, действие — в очередь общей
+/// группы; приложение выполняет его при запуске или фоновой проверке
+/// (lib/services/widget_mail_actions.dart, канал takeMailQueue).
+@available(iOS 17.0, *)
+struct MailActionIntent: AppIntent {
+  static let title: LocalizedStringResource = "Mail action"
+  static let isDiscoverable = false
+
+  @Parameter(title: "Action") var op: String
+  @Parameter(title: "Message") var mailId: String
+  @Parameter(title: "Mailbox") var acc: String
+
+  init() {}
+  init(op: String, mailId: String, acc: String) {
+    self.op = op
+    self.mailId = mailId
+    self.acc = acc
+  }
+
+  func perform() async throws -> some IntentResult {
+    let d = UserDefaults(suiteName: appGroup)
+    var queue: [[String: Any]] = []
+    if let raw = d?.string(forKey: "widget_mail_queue"), let data = raw.data(using: .utf8),
+       let arr = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
+      queue = arr
+    }
+    queue.append(["op": op, "id": mailId, "acc": acc, "at": Date().timeIntervalSince1970 * 1000])
+    if let data = try? JSONSerialization.data(withJSONObject: queue), let s = String(data: data, encoding: .utf8) {
+      d?.set(s, forKey: "widget_mail_queue")
+    }
+    // Строка — сразу из виджета, счётчик — на одно меньше.
+    if var j = loadJSON("widget_mail") {
+      let items = j.items("items")
+      let left = items.filter { !($0.str("id") == mailId && $0.str("acc") == acc) }
+      if left.count != items.count {
+        j["items"] = left
+        if let n = Int(j.str("count")) { j["count"] = n > 1 ? String(n - 1) : "" }
+        if let data = try? JSONSerialization.data(withJSONObject: j), let s = String(data: data, encoding: .utf8) {
+          d?.set(s, forKey: "widget_mail")
+        }
+      }
+    }
+    return .result()
+  }
+}
+
+/// Значки флажка и вложения перед строкой текста письма.
+private func rowMarks(_ it: [String: Any]) -> String {
+  ((it["fl"] as? NSNumber)?.intValue == 1 ? "⚑ " : "") + ((it["att"] as? NSNumber)?.intValue == 1 ? "📎 " : "")
+}
+
+/// Кнопки «Прочитано» и «В архив» строки письма (iOS 17+, письма с id).
+private struct MailRowActions: View {
+  let item: [String: Any]
+  var body: some View {
+    if #available(iOSApplicationExtension 17.0, *) {
+      if !item.str("id").isEmpty && !item.str("acc").isEmpty {
+      HStack(spacing: 2) {
+        Button(intent: MailActionIntent(op: "read", mailId: item.str("id"), acc: item.str("acc"))) {
+          Image(systemName: "checkmark.circle").font(.system(size: 15)).foregroundColor(cSub).frame(width: 26, height: 24)
+        }
+        .buttonStyle(.plain)
+        Button(intent: MailActionIntent(op: "archive", mailId: item.str("id"), acc: item.str("acc"))) {
+          Image(systemName: "archivebox").font(.system(size: 15)).foregroundColor(cSub).frame(width: 26, height: 24)
+        }
+        .buttonStyle(.plain)
+      }
+      }
+    }
+  }
+}
+
+/// Экран блокировки и StandBy (08.11.2026, план п. 8.3, iOS 16+): кружок —
+/// значок и число непрочитанных, строка — число и последнее письмо, надпись
+/// над часами — число и отправитель. Отправитель и тема — privacySensitive:
+/// на заблокированном телефоне система скрывает их, если так настроено.
+@available(iOSApplicationExtension 16.0, *)
+private struct MailAccessoryView: View {
+  let j: [String: Any]
+  let family: WidgetFamily
+
+  var body: some View {
+    let count = j.str("count")
+    let first = j.items("items").first
+    switch family {
+    case .accessoryCircular:
+      ZStack {
+        AccessoryWidgetBackground()
+        VStack(spacing: 0) {
+          Image(systemName: "envelope").font(.system(size: 13, weight: .semibold))
+          Text(count.isEmpty ? "0" : count).font(.system(size: 17, weight: .bold)).minimumScaleFactor(0.5)
+        }
+      }
+    case .accessoryInline:
+      if let f = first, !count.isEmpty {
+        Label("\(count) · \(f.str("f"))", systemImage: "envelope").privacySensitive()
+      } else {
+        Label(j.str("empty"), systemImage: "envelope")
+      }
+    default:
+      VStack(alignment: .leading, spacing: 1) {
+        Label(count.isEmpty ? j.str("empty") : count, systemImage: "envelope")
+          .font(.system(size: 14, weight: .semibold))
+        if let f = first {
+          Text(f.str("f")).font(.system(size: 13, weight: .semibold)).lineLimit(1).privacySensitive()
+          if !f.str("s").isEmpty {
+            Text(f.str("s")).font(.system(size: 12)).lineLimit(1).privacySensitive()
+          }
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+    }
+  }
+}
+
+private func isAccessory(_ family: WidgetFamily) -> Bool {
+  if #available(iOSApplicationExtension 16.0, *) {
+    return family == .accessoryCircular || family == .accessoryRectangular || family == .accessoryInline
+  }
+  return false
+}
+
 struct MailView: View {
   let entry: JSONEntry
   @Environment(\.widgetFamily) var family
 
   var body: some View {
+    if isAccessory(family) {
+      if #available(iOSApplicationExtension 16.0, *) {
+        MailAccessoryView(j: entry.json ?? [:], family: family)
+          .widgetURL(widgetURL("mail"))
+          .widgetBackground()
+      }
+    } else {
+      full
+    }
+  }
+
+  @ViewBuilder
+  private var full: some View {
     let j = entry.json ?? [:]
     let items = j.items("items")
     let max = rowsFor(family, small: 2, medium: 3, large: 4)
@@ -310,20 +446,32 @@ struct MailView: View {
         Text(j.str("empty")).font(.system(size: 13)).foregroundColor(cSub)
       }
       ForEach(Array(items.prefix(max).enumerated()), id: \.offset) { _, it in
-        Link(destination: widgetURL(it.str("open"))) {
-          if family == .systemSmall {
+        if family == .systemSmall {
+          Link(destination: widgetURL(it.str("open"))) {
             VStack(alignment: .leading, spacing: 0) {
               Text(it.str("f")).font(.system(size: 13, weight: .bold)).foregroundColor(cText).lineLimit(1)
               Text(it.str("s")).font(.system(size: 12)).foregroundColor(cSub).lineLimit(1)
             }
-          } else {
-            HStack(spacing: 8) {
-              Text(it.str("f")).font(.system(size: 14, weight: .bold)).foregroundColor(cText).lineLimit(1)
-                .frame(maxWidth: 110, alignment: .leading)
-              Text(it.str("s")).font(.system(size: 14)).foregroundColor(cText).lineLimit(1)
-              Spacer(minLength: 4)
-              Text(it.str("t")).font(.system(size: 12)).foregroundColor(cSub)
+          }
+        } else {
+          // Ссылка — только на текст: кнопки рядом, не внутри ссылки.
+          HStack(spacing: 8) {
+            Link(destination: widgetURL(it.str("open"))) {
+              VStack(alignment: .leading, spacing: 1) {
+                HStack(spacing: 8) {
+                  Text(it.str("f")).font(.system(size: 14, weight: .bold)).foregroundColor(cText).lineLimit(1)
+                    .frame(maxWidth: 110, alignment: .leading)
+                  Text(it.str("s")).font(.system(size: 14)).foregroundColor(cText).lineLimit(1)
+                  Spacer(minLength: 4)
+                  Text(it.str("t")).font(.system(size: 12)).foregroundColor(cSub)
+                }
+                // Большой виджет — ещё строка текста письма и значки (08.11.2026).
+                if family == .systemLarge, !(rowMarks(it) + it.str("p")).isEmpty {
+                  Text(rowMarks(it) + it.str("p")).font(.system(size: 12)).foregroundColor(cSub).lineLimit(1)
+                }
+              }
             }
+            MailRowActions(item: it)
           }
         }
       }
@@ -349,7 +497,16 @@ struct MailWidget: Widget {
     }
     .configurationDisplayName(NSLocalizedString("mail_label", comment: ""))
     .description(NSLocalizedString("mail_desc", comment: ""))
-    .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+    .supportedFamilies(mailFamilies)
+  }
+
+  /// С iOS 16 — и экран блокировки (кружок, строка, надпись над часами).
+  private var mailFamilies: [WidgetFamily] {
+    var f: [WidgetFamily] = [.systemSmall, .systemMedium, .systemLarge]
+    if #available(iOSApplicationExtension 16.0, *) {
+      f += [.accessoryCircular, .accessoryRectangular, .accessoryInline]
+    }
+    return f
   }
 }
 

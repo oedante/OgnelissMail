@@ -3056,6 +3056,12 @@
     <string name="widgetThemeSystem">Systeem</string>
     <string name="widgetThemeLight">Licht</string>
     <string name="widgetThemeDark">Donker</string>
+    <string name="widgetMailTitle">Widget ‘Mail’</string>
+    <string name="widgetMailHelp">Welke berichten de Mail-widget op het startscherm toont. Knoppen naast een bericht in de widget: ‘Gelezen’ en ‘Archiveren’.</string>
+    <string name="widgetMailAll">Ongelezen in Postvak IN</string>
+    <string name="widgetMailVip">VIP — ongelezen</string>
+    <string name="widgetMailFlagged">Gemarkeerd</string>
+    <string name="widgetMailControl">In opvolging</string>
     <string name="faqTitle">Vragen en antwoorden</string>
     <string name="faqDesc">Hoe je e-mail, agenda, contacten, widgets en instellingen gebruikt</string>
     <string name="faqSearchHint">Vragen zoeken</string>
@@ -3161,6 +3167,9 @@
     <string name="graphicsAfterCrash">na de storing van {date}</string>
     <string name="graphicsRestartNeeded">De wijziging gaat in na het herstarten van de app.</string>
     <string name="graphicsRestart">Herstarten</string>
+    <string name="plaintextTitle">Verbinden zonder versleuteling?</string>
+    <string name="plaintextBody">Wachtwoord en berichten gaan als platte tekst over het netwerk — iedereen op hetzelfde netwerk kan ze lezen. Kies dit alleen voor een server op het interne netwerk van de organisatie zonder andere optie.</string>
+    <string name="plaintextAction">Zonder versleuteling</string>
     <string name="imageEditHint">Sleep de hoeken of randen van het kader om bij te snijden</string>
     <string name="imageEditHintCircle">Verschuif de cirkel of sleep aan een hoek – zo komt de foto in het portret</string>
     <string name="photoCirclePreview">Zo ziet de foto eruit in de lijst, het bericht en de kaart</string>

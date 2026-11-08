@@ -3056,6 +3056,12 @@
     <string name="widgetThemeSystem">Sistema</string>
     <string name="widgetThemeLight">Chiaro</string>
     <string name="widgetThemeDark">Scuro</string>
+    <string name="widgetMailTitle">Widget «Posta»</string>
+    <string name="widgetMailHelp">Quali messaggi mostra il widget Posta nella schermata Home. Pulsanti accanto a un messaggio nel widget: «Letto» e «Archivia».</string>
+    <string name="widgetMailAll">Non letti in Posta in arrivo</string>
+    <string name="widgetMailVip">VIP — non letti</string>
+    <string name="widgetMailFlagged">Contrassegnati</string>
+    <string name="widgetMailControl">In verifica</string>
     <string name="faqTitle">Domande e risposte</string>
     <string name="faqDesc">Come usare posta, calendario, contatti, widget e impostazioni</string>
     <string name="faqSearchHint">Cerca nelle domande</string>
@@ -3161,6 +3167,9 @@
     <string name="graphicsAfterCrash">dopo l’errore del {date}</string>
     <string name="graphicsRestartNeeded">La modifica sarà applicata al riavvio dell’app.</string>
     <string name="graphicsRestart">Riavvia</string>
+    <string name="plaintextTitle">Connettersi senza crittografia?</string>
+    <string name="plaintextBody">Password e messaggi viaggeranno in chiaro: chiunque sulla stessa rete potrà leggerli. Sceglilo solo per un server nella rete interna dell’organizzazione senza altre opzioni.</string>
+    <string name="plaintextAction">Senza crittografia</string>
     <string name="imageEditHint">Trascina gli angoli o i bordi del riquadro per ritagliare</string>
     <string name="imageEditHintCircle">Sposta il cerchio o trascina un angolo: così apparirà la foto nel ritratto</string>
     <string name="photoCirclePreview">Così apparirà la foto nell\'elenco, nel messaggio e nella scheda</string>

@@ -3043,6 +3043,12 @@
     <string name="widgetThemeSystem">시스템</string>
     <string name="widgetThemeLight">라이트</string>
     <string name="widgetThemeDark">다크</string>
+    <string name="widgetMailTitle">“메일” 위젯</string>
+    <string name="widgetMailHelp">홈 화면의 메일 위젯에 표시할 메시지. 위젯에서 메시지 옆 버튼: “읽음”과 “보관”.</string>
+    <string name="widgetMailAll">받은편지함의 읽지 않은 메일</string>
+    <string name="widgetMailVip">VIP — 읽지 않음</string>
+    <string name="widgetMailFlagged">플래그 지정됨</string>
+    <string name="widgetMailControl">후속 조치 중</string>
     <string name="faqTitle">질문과 답변</string>
     <string name="faqDesc">메일, 캘린더, 연락처, 위젯, 설정 사용 방법</string>
     <string name="faqSearchHint">질문 검색</string>
@@ -3148,6 +3154,9 @@
     <string name="graphicsAfterCrash">{date} 오류 이후</string>
     <string name="graphicsRestartNeeded">변경 사항은 앱을 다시 시작하면 적용됩니다.</string>
     <string name="graphicsRestart">다시 시작</string>
+    <string name="plaintextTitle">암호화 없이 연결할까요?</string>
+    <string name="plaintextBody">비밀번호와 메일이 평문으로 전송되어 같은 네트워크의 누구나 읽을 수 있습니다. 다른 방법이 없는 조직 내부 네트워크의 서버에만 선택하세요.</string>
+    <string name="plaintextAction">암호화 없음</string>
     <string name="imageEditHint">프레임의 모서리나 가장자리를 드래그해서 자르세요</string>
     <string name="imageEditHintCircle">원을 옮기거나 모서리를 끌어 보세요 — 프로필 사진은 이렇게 보입니다</string>
     <string name="photoCirclePreview">목록, 메일, 카드에서 사진이 보이는 모습</string>

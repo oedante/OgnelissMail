@@ -3043,6 +3043,12 @@
     <string name="widgetThemeSystem">ตามระบบ</string>
     <string name="widgetThemeLight">สว่าง</string>
     <string name="widgetThemeDark">มืด</string>
+    <string name="widgetMailTitle">วิดเจ็ต “อีเมล”</string>
+    <string name="widgetMailHelp">ข้อความที่วิดเจ็ตอีเมลบนหน้าจอหลักแสดง ปุ่มข้างข้อความในวิดเจ็ต: “อ่านแล้ว” และ “เก็บถาวร”</string>
+    <string name="widgetMailAll">ยังไม่อ่านในกล่องจดหมายเข้า</string>
+    <string name="widgetMailVip">VIP — ยังไม่อ่าน</string>
+    <string name="widgetMailFlagged">ติดธง</string>
+    <string name="widgetMailControl">อยู่ระหว่างติดตาม</string>
     <string name="faqTitle">คำถามและคำตอบ</string>
     <string name="faqDesc">วิธีใช้อีเมล ปฏิทิน รายชื่อติดต่อ วิดเจ็ต และการตั้งค่า</string>
     <string name="faqSearchHint">ค้นหาคำถาม</string>
@@ -3148,6 +3154,9 @@
     <string name="graphicsAfterCrash">หลังขัดข้องเมื่อ {date}</string>
     <string name="graphicsRestartNeeded">การเปลี่ยนแปลงจะมีผลหลังรีสตาร์ทแอป</string>
     <string name="graphicsRestart">รีสตาร์ท</string>
+    <string name="plaintextTitle">เชื่อมต่อโดยไม่เข้ารหัสหรือไม่</string>
+    <string name="plaintextBody">รหัสผ่านและอีเมลจะส่งเป็นข้อความธรรมดา ใครก็ตามในเครือข่ายเดียวกันอ่านได้ เลือกเฉพาะเซิร์ฟเวอร์ในเครือข่ายภายในขององค์กรเมื่อไม่มีทางเลือกอื่น</string>
+    <string name="plaintextAction">ไม่เข้ารหัส</string>
     <string name="imageEditHint">ลากมุมหรือขอบของกรอบเพื่อครอบตัด</string>
     <string name="imageEditHintCircle">เลื่อนวงกลมหรือลากมุม — รูปจะแสดงในภาพโปรไฟล์แบบนี้</string>
     <string name="photoCirclePreview">รูปจะแสดงในรายการ ข้อความ และการ์ดแบบนี้</string>

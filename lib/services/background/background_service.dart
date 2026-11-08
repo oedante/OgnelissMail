@@ -9,6 +9,7 @@
 
 import '../push/push_wake_service.dart' show PushWakeService, pushWakeServiceProvider;
 import '../calendar/quick_create_service.dart' show quickCreateProvider;
+import '../widget_mail_actions.dart' show widgetMailActionsProvider;
 import '../sync/sync_schedule.dart';
 import 'dart:async';
 import 'dart:isolate';
@@ -239,6 +240,12 @@ void callbackDispatcher() {
         } catch (e) {
           AppLogger.warning('BG виджет: $e');
         }
+        // «Прочитано» и «В архив», нажатые в виджете «Почта».
+        try {
+          await container.read(widgetMailActionsProvider).drain();
+        } catch (e) {
+          AppLogger.warning('BG виджет почты: $e');
+        }
       }), withState: false);
       return true;
     } catch (e, stack) {
@@ -303,6 +310,11 @@ Future<bool> _runIosTask(String taskName, DateTime wokeAt) async {
             await container.read(quickCreateProvider).drain();
           } catch (e) {
             AppLogger.warning('BG виджет: $e');
+          }
+          try {
+            await container.read(widgetMailActionsProvider).drain();
+          } catch (e) {
+            AppLogger.warning('BG виджет почты: $e');
           }
         }).timeout(limit);
       } on TimeoutException {
@@ -599,6 +611,11 @@ class BackgroundService {
         await _ref.read(quickCreateProvider).drain();
       } catch (e) {
         AppLogger.warning('$kind: виджет — $e');
+      }
+      try {
+        await _ref.read(widgetMailActionsProvider).drain();
+      } catch (e) {
+        AppLogger.warning('$kind: виджет почты — $e');
       }
     }
 

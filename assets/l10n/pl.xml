@@ -3082,6 +3082,12 @@
     <string name="widgetThemeSystem">Systemowy</string>
     <string name="widgetThemeLight">Jasny</string>
     <string name="widgetThemeDark">Ciemny</string>
+    <string name="widgetMailTitle">Widżet „Poczta”</string>
+    <string name="widgetMailHelp">Które wiadomości pokazuje widżet Poczta na ekranie głównym. Przyciski przy wiadomości w widżecie: „Przeczytane” i „Archiwizuj”.</string>
+    <string name="widgetMailAll">Nieprzeczytane w Odebranych</string>
+    <string name="widgetMailVip">VIP — nieprzeczytane</string>
+    <string name="widgetMailFlagged">Oflagowane</string>
+    <string name="widgetMailControl">Pod kontrolą</string>
     <string name="faqTitle">Pytania i odpowiedzi</string>
     <string name="faqDesc">Jak korzystać z poczty, kalendarza, kontaktów, widżetów i ustawień</string>
     <string name="faqSearchHint">Szukaj pytań</string>
@@ -3187,6 +3193,9 @@
     <string name="graphicsAfterCrash">po awarii {date}</string>
     <string name="graphicsRestartNeeded">Zmiana zacznie działać po ponownym uruchomieniu aplikacji.</string>
     <string name="graphicsRestart">Uruchom ponownie</string>
+    <string name="plaintextTitle">Połączyć bez szyfrowania?</string>
+    <string name="plaintextBody">Hasło i wiadomości pójdą otwartym tekstem — każdy w tej samej sieci może je odczytać. Wybierz tylko dla serwera w sieci wewnętrznej organizacji, gdy nie ma innej opcji.</string>
+    <string name="plaintextAction">Bez szyfrowania</string>
     <string name="imageEditHint">Przeciągnij rogi lub krawędzie ramki, aby przyciąć</string>
     <string name="imageEditHintCircle">Przesuń okrąg lub pociągnij za róg — tak zdjęcie będzie wyglądać w portrecie</string>
     <string name="photoCirclePreview">Tak zdjęcie będzie wyglądać na liście, w wiadomości i na karcie</string>

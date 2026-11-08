@@ -3056,6 +3056,12 @@
     <string name="widgetThemeSystem">System</string>
     <string name="widgetThemeLight">Ljust</string>
     <string name="widgetThemeDark">Mörkt</string>
+    <string name="widgetMailTitle">Widget ”E-post”</string>
+    <string name="widgetMailHelp">Vilka meddelanden E-post-widgeten på hemskärmen visar. Knappar vid ett meddelande i widgeten: ”Läst” och ”Arkivera”.</string>
+    <string name="widgetMailAll">Olästa i Inkorgen</string>
+    <string name="widgetMailVip">VIP — olästa</string>
+    <string name="widgetMailFlagged">Flaggade</string>
+    <string name="widgetMailControl">För uppföljning</string>
     <string name="faqTitle">Frågor och svar</string>
     <string name="faqDesc">Så använder du e-post, kalender, kontakter, widgetar och inställningar</string>
     <string name="faqSearchHint">Sök bland frågor</string>
@@ -3161,6 +3167,9 @@
     <string name="graphicsAfterCrash">efter felet {date}</string>
     <string name="graphicsRestartNeeded">Ändringen gäller när appen har startats om.</string>
     <string name="graphicsRestart">Starta om</string>
+    <string name="plaintextTitle">Ansluta utan kryptering?</string>
+    <string name="plaintextBody">Lösenord och meddelanden skickas i klartext — alla i samma nätverk kan läsa dem. Välj bara för en server i organisationens interna nätverk utan andra alternativ.</string>
+    <string name="plaintextAction">Utan kryptering</string>
     <string name="imageEditHint">Dra i ramens hörn eller kanter för att beskära</string>
     <string name="imageEditHintCircle">Flytta cirkeln eller dra i ett hörn – så här ser fotot ut i porträttet</string>
     <string name="photoCirclePreview">Så här ser fotot ut i listan, meddelandet och kortet</string>

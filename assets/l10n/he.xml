@@ -3069,6 +3069,12 @@
     <string name="widgetThemeSystem">כמו במערכת</string>
     <string name="widgetThemeLight">בהירה</string>
     <string name="widgetThemeDark">כהה</string>
+    <string name="widgetMailTitle">הווידג׳ט ״דואר״</string>
+    <string name="widgetMailHelp">אילו הודעות מציג ווידג׳ט הדואר במסך הבית. כפתורים ליד הודעה בווידג׳ט: ״נקראה״ ו״העברה לארכיון״.</string>
+    <string name="widgetMailAll">לא נקראו בתיבת הדואר הנכנס</string>
+    <string name="widgetMailVip">VIP — לא נקראו</string>
+    <string name="widgetMailFlagged">מסומנות בדגל</string>
+    <string name="widgetMailControl">במעקב</string>
     <string name="faqTitle">שאלות ותשובות</string>
     <string name="faqDesc">איך להשתמש בדואר, בלוח השנה, באנשי הקשר, בווידג\'טים ובהגדרות</string>
     <string name="faqSearchHint">חיפוש שאלות</string>
@@ -3174,6 +3180,9 @@
     <string name="graphicsAfterCrash">אחרי התקלה ב־{date}</string>
     <string name="graphicsRestartNeeded">השינוי ייכנס לתוקף אחרי הפעלה מחדש של האפליקציה.</string>
     <string name="graphicsRestart">הפעלה מחדש</string>
+    <string name="plaintextTitle">להתחבר בלי הצפנה?</string>
+    <string name="plaintextBody">הסיסמה וההודעות יעברו כטקסט גלוי — כל אחד באותה רשת יוכל לקרוא אותם. בחרו רק לשרת ברשת הפנימית של הארגון כשאין אפשרות אחרת.</string>
+    <string name="plaintextAction">בלי הצפנה</string>
     <string name="imageEditHint">גרור את הפינות או הקצוות של המסגרת כדי לחתוך</string>
     <string name="imageEditHintCircle">הזיזו את העיגול או גררו פינה — כך התמונה תיראה בדיוקן</string>
     <string name="photoCirclePreview">כך התמונה תיראה ברשימה, בהודעה ובכרטיס</string>

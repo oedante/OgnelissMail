@@ -3056,6 +3056,12 @@
     <string name="widgetThemeSystem">Sistema</string>
     <string name="widgetThemeLight">Claro</string>
     <string name="widgetThemeDark">Oscuro</string>
+    <string name="widgetMailTitle">Widget «Correo»</string>
+    <string name="widgetMailHelp">Qué mensajes muestra el widget Correo en la pantalla de inicio. Botones junto a un mensaje en el widget: «Leído» y «Archivar».</string>
+    <string name="widgetMailAll">No leídos en la bandeja de entrada</string>
+    <string name="widgetMailVip">VIP — no leídos</string>
+    <string name="widgetMailFlagged">Con marca</string>
+    <string name="widgetMailControl">En seguimiento</string>
     <string name="faqTitle">Preguntas y respuestas</string>
     <string name="faqDesc">Cómo usar el correo, el calendario, los contactos, los widgets y los ajustes</string>
     <string name="faqSearchHint">Buscar preguntas</string>
@@ -3161,6 +3167,9 @@
     <string name="graphicsAfterCrash">tras el fallo del {date}</string>
     <string name="graphicsRestartNeeded">El cambio se aplicará al reiniciar la aplicación.</string>
     <string name="graphicsRestart">Reiniciar</string>
+    <string name="plaintextTitle">¿Conectar sin cifrado?</string>
+    <string name="plaintextBody">La contraseña y los mensajes viajarán en texto plano: cualquiera en la misma red podrá leerlos. Elíjalo solo para un servidor de la red interna de la organización sin otra opción.</string>
+    <string name="plaintextAction">Sin cifrado</string>
     <string name="imageEditHint">Arrastra las esquinas o los bordes del marco para recortar</string>
     <string name="imageEditHintCircle">Mueva el círculo o arrastre una esquina: así se verá la foto en el retrato</string>
     <string name="photoCirclePreview">Así se verá la foto en la lista, el mensaje y la ficha</string>

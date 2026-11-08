@@ -30,7 +30,7 @@ import '../data/database/app_database.dart';
 import '../data/models/account_model.dart' show AccountModel;
 import '../data/models/folder_model.dart' show FolderType;
 import '../data/providers/database_provider.dart';
-import '../features/settings/providers/widget_prefs.dart' show WidgetThemeNotifier, widgetThemeProvider;
+import '../features/settings/providers/widget_prefs.dart' show WidgetMailFilterNotifier, WidgetThemeNotifier, widgetThemeProvider;
 import '../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../features/settings/providers/settings_provider.dart';
 import 'security/pin_lock_service.dart' show pinLockProvider;
@@ -138,7 +138,16 @@ class HomeWidgetService {
       // Доска включена в «Моём дне» — виджет тоже показывает колонки.
       final board = prefs.getBool('myday_board') ?? false;
       final json = jsonEncode(await _build(db, ids, l10n, showControl, now, private, board: board));
-      final mail = jsonEncode(await _buildMail(db, ids, l10n, now, private, labels, colors, staleMin));
+      // Что показывает виджет «Почта» (08.11.2026, план п. 8.1): все
+      // входящие, VIP, с флажком, «На контроле» или один ящик.
+      final mailFilter = prefs.getString(mailFilterKey) ?? 'all';
+      List<String> vip = const [];
+      try {
+        final fm = jsonDecode(prefs.getString('focus_mode') ?? '{}');
+        vip = [for (final v in (fm is Map ? (fm['vipEmails'] as List?) ?? const [] : const [])) '$v'.toLowerCase()];
+      } catch (_) {}
+      final mail = jsonEncode(
+          await _buildMailFiltered(db, ids, l10n, now, private, labels, colors, staleMin, mailFilter, vip));
       // Календарь — те ящики, что включены в «хабе» календаря в приложении.
       final hidden = {...?prefs.getStringList('cal_hidden_accounts')};
       final calIds = [for (final id in ids) if (!hidden.contains(id)) id];
@@ -319,13 +328,28 @@ class HomeWidgetService {
 
   /// Виджет «Почта»: непрочитанные во «Входящих» по ящикам и четыре
   /// последних непрочитанных письма (нажатие — письмо).
-  static Future<Map<String, Object?>> _buildMail(AppDatabase db, List<String> ids, AppLocalizations l10n,
-      DateTime now, bool private, Map<String, String> labels,
-      [Map<String, int> colors = const {}, Map<String, int> staleMin = const {}]) async {
+  /// Ключ настройки «что показывать» виджета «Почта».
+  static const mailFilterKey = 'widget_mail_filter';
+
+  static Future<Map<String, Object?>> _buildMailFiltered(AppDatabase db, List<String> allIds, AppLocalizations l10n,
+      DateTime now, bool private, Map<String, String> labels, Map<String, int> colors, Map<String, int> staleMin,
+      String filter, List<String> vip) async {
+    // Один ящик — только он (если ещё есть); VIP без адресов — как «все».
+    final one = filter.startsWith('acc:') ? filter.substring(4) : null;
+    final ids = one != null && allIds.contains(one) ? [one] : allIds;
+    final kind = one != null ? 'all' : (filter == 'vip' && vip.isEmpty ? 'all' : filter);
     final rows = <Map<String, Object?>>[];
     final perAccount = <String, int>{};
     var total = 0;
-    if (ids.isNotEmpty) {
+    if (ids.isNotEmpty && kind != 'all') {
+      final picked = await _filteredMail(db, ids, kind, vip);
+      total = picked.length;
+      for (final m in picked) {
+        perAccount[m.accountId] = (perAccount[m.accountId] ?? 0) + 1;
+      }
+      _addMailRows(rows, picked.take(10), ids, now, private, labels, colors);
+    }
+    if (ids.isNotEmpty && kind == 'all') {
       final inboxes = await (db.select(db.folders)
             ..where((f) => f.accountId.isIn(ids) & f.type.equals(FolderType.inbox.index)))
           .get();
@@ -353,19 +377,7 @@ class HomeWidgetService {
               // виджета (до 10), iPhone — первые строки.
               ..limit(10))
             .get();
-        final today = DateTime(now.year, now.month, now.day);
-        for (final m in latest) {
-          final at = m.receivedAt;
-          final name = (m.fromName ?? '').trim().isNotEmpty ? m.fromName!.trim() : m.fromEmail;
-          rows.add({
-            'f': private ? (labels[m.accountId] ?? '') : name,
-            's': private ? '' : (m.subject.trim().isEmpty ? '—' : m.subject.trim()),
-            't': at.isBefore(today) ? DateFormat('dd.MM').format(at) : DateFormat('HH:mm').format(at),
-            // Цвет ящика — метка слева от письма (несколько ящиков).
-            if (ids.length > 1 && colors[m.accountId] != null) 'c': colors[m.accountId],
-            'open': Uri(path: 'email', queryParameters: {'id': m.id, 'acc': m.accountId}).toString(),
-          });
-        }
+        _addMailRows(rows, latest, ids, now, private, labels, colors);
       }
     }
     // Когда почта обновлялась (1.6.48): по самому давнему ящику с
@@ -388,8 +400,14 @@ class HomeWidgetService {
         }
       }
     }
+    final suffix = switch (kind) {
+      'vip' => 'VIP',
+      'flagged' => l10n.tr('widgetMailFlagged'),
+      'control' => l10n.tr('widgetMailControl'),
+      _ => one != null && ids.length == 1 ? (labels[one] ?? '') : '',
+    };
     return {
-      'title': l10n.tr('mail'),
+      'title': suffix.isEmpty ? l10n.tr('mail') : '${l10n.tr('mail')} · $suffix',
       'lang': l10n.locale.languageCode,
       if (upd != null) 'upd': upd,
       if (staleAt != null) 'staleAt': staleAt,
@@ -405,7 +423,74 @@ class HomeWidgetService {
           if ((perAccount[id] ?? 0) > 0) '${labels[id] ?? ''} ${perAccount[id]}',
       ].join(' · '),
       'items': rows,
+      // Подписи кнопок строки (для озвучивания) — на языке приложения.
+      'actRead': l10n.tr('markRead'),
+      'actArchive': l10n.tr('archive'),
     };
+  }
+
+  static void _addMailRows(List<Map<String, Object?>> rows, Iterable<Email> mails, List<String> ids, DateTime now,
+      bool private, Map<String, String> labels, Map<String, int> colors) {
+final today = DateTime(now.year, now.month, now.day);
+for (final m in mails) {
+      final at = m.receivedAt;
+      final name = (m.fromName ?? '').trim().isNotEmpty ? m.fromName!.trim() : m.fromEmail;
+      rows.add({
+        'f': private ? (labels[m.accountId] ?? '') : name,
+        's': private ? '' : (m.subject.trim().isEmpty ? '—' : m.subject.trim()),
+        't': at.isBefore(today) ? DateFormat('dd.MM').format(at) : DateFormat('HH:mm').format(at),
+        // Цвет ящика — метка слева от письма (несколько ящиков).
+        if (ids.length > 1 && colors[m.accountId] != null) 'c': colors[m.accountId],
+        'open': Uri(path: 'email', queryParameters: {'id': m.id, 'acc': m.accountId}).toString(),
+        // Для «Прочитано» и «В архив» в самом виджете (08.11.2026).
+        'id': m.id,
+        'acc': m.accountId,
+        // Строка текста письма и значки (вложение, флажок) — как в
+        // виджетах Outlook и Gmail; в режиме приватности — нет.
+        if (!private) 'p': _previewLine(m.bodyPlain),
+        if (!private && m.hasAttachments) 'att': 1,
+        if (m.isFlagged) 'fl': 1,
+      });
+    }
+  }
+
+  /// Письма для виджета по фильтру: «vip» — непрочитанные от VIP во
+  /// «Входящих», «flagged» — с флажком (любые), «control» — «На контроле»
+  /// (ещё не исполненные). Новые сверху.
+  static Future<List<Email>> _filteredMail(AppDatabase db, List<String> ids, String kind, List<String> vip) async {
+    if (kind == 'control') {
+      final all = await db.controlledEmails(accountIds: ids);
+      return [for (final m in all) if (m.controlState != ControlState.done) m];
+    }
+    final inboxes = await (db.select(db.folders)
+          ..where((f) => f.accountId.isIn(ids) & f.type.equals(FolderType.inbox.index)))
+        .get();
+    final inboxIds = [for (final f in inboxes) f.id];
+    if (inboxIds.isEmpty) return const [];
+    final q = db.select(db.emails)
+      ..where((e) => e.accountId.isIn(ids) & e.folderId.isIn(inboxIds))
+      ..orderBy([(e) => OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)])
+      ..limit(100);
+    if (kind == 'flagged') {
+      q.where((e) => e.isFlagged.equals(true));
+    } else {
+      q.where((e) => e.isRead.equals(false) & e.fromEmail.lower().isIn(vip));
+    }
+    return q.get();
+  }
+
+  /// Первая строка текста письма для виджета: без пустых строк, цитат и
+  /// лишних пробелов, не длиннее 120 знаков.
+  static String _previewLine(String? plain) {
+    if (plain == null || plain.isEmpty) return '';
+    final lines = plain
+        .split('\n')
+        .map((l) => l.trim())
+        .where((l) => l.isNotEmpty && !l.startsWith('>'))
+        .take(3)
+        .join(' ')
+        .replaceAll(RegExp(r'\s+'), ' ');
+    return lines.length > 120 ? '${lines.substring(0, 120)}…' : lines;
   }
 
   /// Виджет «Календарь»: встречи всех включённых ящиков на 14 дней вперёд,
@@ -572,9 +657,14 @@ class HomeWidgetService {
 
   /// Разбор очереди «Создать» из виджета (подключается в main).
   static Future<void> Function()? onCreate;
+
+  /// Нажали «Прочитано» или «В архив» у письма в виджете «Почта».
+  static Future<void> Function()? onMailAction;
   static StreamSubscription<Set<TableUpdate>>? _notesSub;
   static Future<void> init(ProviderContainer container, Future<void> Function(String type) open) async {
     if (!_supported) return;
+    // Сменили «что показывает виджет „Почта“» — данные сразу.
+    WidgetMailFilterNotifier.onChanged = (ref) => updateFrom(ref, force: true);
     _life ??= AppLifecycleListener(
       onHide: () => updateFromContainer(container, force: true),
       onResume: () => updateFromContainer(container),
@@ -608,11 +698,25 @@ class HomeWidgetService {
       } else if (call.method == 'create') {
         // Окно виджета «Создать» положило встречу или задачу в очередь.
         await onCreate?.call();
+      } else if (call.method == 'mailAction') {
+        await onMailAction?.call();
       }
       return null;
     });
     final t = await _take();
     if (t != null) await open(t);
+  }
+
+  /// iPhone: очередь «Прочитано»/«В архив» виджета — из общей группы
+  /// (MailActionIntent расширения), забирается и очищается. Android пишет
+  /// очередь прямо в SharedPreferences — там null.
+  static Future<String?> takeIosMailQueue() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) return null;
+    try {
+      return await _channel.invokeMethod<String>('takeMailQueue');
+    } catch (_) {
+      return null;
+    }
   }
 
   static Future<String?> _take() async {

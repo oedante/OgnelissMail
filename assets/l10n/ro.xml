@@ -3069,6 +3069,12 @@
     <string name="widgetThemeSystem">Sistem</string>
     <string name="widgetThemeLight">Luminoasă</string>
     <string name="widgetThemeDark">Întunecată</string>
+    <string name="widgetMailTitle">Widget „E-mail”</string>
+    <string name="widgetMailHelp">Ce mesaje afișează widgetul E-mail pe ecranul de pornire. Butoane lângă un mesaj în widget: „Citit” și „Arhivează”.</string>
+    <string name="widgetMailAll">Necitite în Inbox</string>
+    <string name="widgetMailVip">VIP — necitite</string>
+    <string name="widgetMailFlagged">Cu semnalizare</string>
+    <string name="widgetMailControl">În urmărire</string>
     <string name="faqTitle">Întrebări și răspunsuri</string>
     <string name="faqDesc">Cum folosești e-mailul, calendarul, contactele, widgeturile și setările</string>
     <string name="faqSearchHint">Caută întrebări</string>
@@ -3174,6 +3180,9 @@
     <string name="graphicsAfterCrash">după eroarea din {date}</string>
     <string name="graphicsRestartNeeded">Modificarea se aplică după repornirea aplicației.</string>
     <string name="graphicsRestart">Repornește</string>
+    <string name="plaintextTitle">Conectare fără criptare?</string>
+    <string name="plaintextBody">Parola și mesajele vor circula ca text simplu — oricine din aceeași rețea le poate citi. Alegeți doar pentru un server din rețeaua internă a organizației, fără altă opțiune.</string>
+    <string name="plaintextAction">Fără criptare</string>
     <string name="imageEditHint">Trage de colțurile sau de marginile cadrului pentru a decupa</string>
     <string name="imageEditHintCircle">Mutați cercul sau trageți de un colț — așa va arăta fotografia în portret</string>
     <string name="photoCirclePreview">Așa va arăta fotografia în listă, în mesaj și pe fișă</string>

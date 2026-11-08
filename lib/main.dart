@@ -7,6 +7,7 @@
 import 'core/platform/native_drag_drop.dart';
 import 'core/platform/device_time_zone.dart';
 import 'widgets/common/scroll_edge_fade.dart';
+import 'services/widget_mail_actions.dart' show widgetMailActionsProvider;
 import 'services/weather/weather_service.dart' show WeatherApi;
 import 'services/documents/doc_preview_settings.dart';
 import 'services/sync/sync_schedule.dart';
@@ -430,6 +431,10 @@ Future<void> main() async {
     // (аккаунты грузятся асинхронно — разбор чуть позже).
     HomeWidgetService.onCreate = () => globalContainer.read(quickCreateProvider).drain();
     unawaited(Future<void>.delayed(const Duration(seconds: 3), () => globalContainer.read(quickCreateProvider).drain()));
+    // «Прочитано» и «В архив» из виджета «Почта» (08.11.2026): вызов из
+    // виджета и очередь, накопленная раньше.
+    HomeWidgetService.onMailAction = () => globalContainer.read(widgetMailActionsProvider).drain();
+    unawaited(Future<void>.delayed(const Duration(seconds: 3), () => globalContainer.read(widgetMailActionsProvider).drain()));
 
     // Цвет значков системных панелей задаётся по теме в MailApp.builder
     // (раньше всегда тёмные — в тёмной теме их не было видно).

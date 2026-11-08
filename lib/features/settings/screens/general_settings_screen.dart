@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/settings_provider.dart';
 import '../providers/widget_prefs.dart';
+import '../../mail/providers/mail_providers.dart' show accountsProvider;
 import '../../mail/providers/drawer_prefs.dart' show menuOnRightProvider;
 import '../../../widgets/navigation/app_bottom_bar.dart' show AppBottomBar;
 import '../../help/faq_screen.dart' show FaqButton;
@@ -92,6 +93,26 @@ class GeneralSettingsScreen extends ConsumerWidget {
                   value: o.$1,
                   groupValue: ref.watch(widgetThemeProvider),
                   onChanged: (v) => ref.read(widgetThemeProvider.notifier).set(v ?? 0),
+                ),
+            ]),
+          ],
+          // Что показывает виджет «Почта» (08.11.2026).
+          if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) ...[
+            SettingsSectionTitle(l10n.tr('widgetMailTitle'), help: l10n.tr('widgetMailHelp')),
+            SettingsGroup(children: [
+              for (final o in [
+                ('all', l10n.tr('widgetMailAll')),
+                ('vip', l10n.tr('widgetMailVip')),
+                ('flagged', l10n.tr('widgetMailFlagged')),
+                ('control', l10n.tr('widgetMailControl')),
+                for (final a in ref.watch(accountsProvider).where((a) => a.isActive))
+                  ('acc:${a.id}', a.email),
+              ])
+                AppRadioTile<String>(
+                  title: Text(o.$2, maxLines: 1, overflow: TextOverflow.ellipsis),
+                  value: o.$1,
+                  groupValue: ref.watch(widgetMailFilterProvider),
+                  onChanged: (v) => ref.read(widgetMailFilterProvider.notifier).set(v ?? 'all'),
                 ),
             ]),
           ],

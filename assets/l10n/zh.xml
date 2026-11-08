@@ -3043,6 +3043,12 @@
     <string name="widgetThemeSystem">跟随系统</string>
     <string name="widgetThemeLight">浅色</string>
     <string name="widgetThemeDark">深色</string>
+    <string name="widgetMailTitle">“邮件”小组件</string>
+    <string name="widgetMailHelp">主屏幕上的邮件小组件显示哪些邮件。小组件中邮件旁的按钮：“已读”和“归档”。</string>
+    <string name="widgetMailAll">收件箱中的未读邮件</string>
+    <string name="widgetMailVip">VIP — 未读</string>
+    <string name="widgetMailFlagged">已标记</string>
+    <string name="widgetMailControl">跟进中</string>
     <string name="faqTitle">问题与解答</string>
     <string name="faqDesc">如何使用邮件、日历、联系人、小组件和设置</string>
     <string name="faqSearchHint">搜索问题</string>
@@ -3148,6 +3154,9 @@
     <string name="graphicsAfterCrash">{date} 故障后</string>
     <string name="graphicsRestartNeeded">更改将在应用重启后生效。</string>
     <string name="graphicsRestart">重启</string>
+    <string name="plaintextTitle">不加密连接？</string>
+    <string name="plaintextBody">密码和邮件将以明文传输——同一网络中的任何人都能读取。仅在组织内网的服务器且别无选择时使用。</string>
+    <string name="plaintextAction">不加密</string>
     <string name="imageEditHint">拖动边框的角或边来裁剪</string>
     <string name="imageEditHintCircle">移动圆圈或拖动角 — 头像中的照片将如此显示</string>
     <string name="photoCirclePreview">照片在列表、邮件和名片中的样子</string>

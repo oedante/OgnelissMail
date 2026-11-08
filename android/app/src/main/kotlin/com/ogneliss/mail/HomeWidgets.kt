@@ -19,8 +19,10 @@ import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import android.view.View
 import android.widget.RemoteViews
+import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodChannel
+import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -358,7 +360,70 @@ class MyDayWidget : OgnelissWidget() {
 class MailWidget : OgnelissWidget() {
     companion object {
         private const val KEY = "flutter.widget_mail"
+        private const val PREFS = "FlutterSharedPreferences"
+        /** Очередь «Прочитано»/«В архив» для Dart (lib/services/widget_mail_actions.dart). */
+        private const val QUEUE = "flutter.widget_mail_queue"
+        private const val ACTION_MAIL = "com.ogneliss.mail.MAIL_ACT"
         fun refreshAll(context: Context) = MailWidget().drawAll(context)
+    }
+
+    /**
+     * «Прочитано» или «В архив» у письма (08.11.2026, план п. 8.2): строка
+     * сразу уходит из виджета, счётчик уменьшается, действие — в очередь;
+     * Dart выполняет его тем же путём, что в приложении: движок работает —
+     * сразу (вызов «mailAction»), иначе он запускается (как окно «Создать»).
+     */
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != ACTION_MAIL) {
+            super.onReceive(context, intent)
+            return
+        }
+        val op = intent.getStringExtra("op") ?: return
+        val mailId = intent.getStringExtra("id") ?: return
+        val acc = intent.getStringExtra("acc") ?: return
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val queue = prefs.getString(QUEUE, null)?.let { runCatching { JSONArray(it) }.getOrNull() } ?: JSONArray()
+        queue.put(JSONObject().put("op", op).put("id", mailId).put("acc", acc).put("at", System.currentTimeMillis()))
+        val edit = prefs.edit().putString(QUEUE, queue.toString())
+        // Строка — сразу из виджета (до ответа сервера).
+        WidgetUi.json(context, KEY)?.let { json ->
+            val items = json.optJSONArray("items")
+            if (items != null) {
+                val left = JSONArray()
+                var removed = false
+                for (i in 0 until items.length()) {
+                    val it = items.optJSONObject(i) ?: continue
+                    if (it.optString("id") == mailId && it.optString("acc") == acc) removed = true else left.put(it)
+                }
+                if (removed) {
+                    json.put("items", left)
+                    val n = json.optString("count").toIntOrNull()
+                    if (n != null) json.put("count", if (n > 1) (n - 1).toString() else "")
+                    edit.putString(KEY, json.toString())
+                }
+            }
+        }
+        edit.commit()
+        runCatching { refreshAll(context.applicationContext) }
+        val engine = FlutterEngineCache.getInstance().get(MainActivity.ENGINE_ID)
+        if (engine != null) {
+            runCatching { MethodChannel(engine.dartExecutor.binaryMessenger, "ogneliss/widget").invokeMethod("mailAction", null) }
+        } else {
+            runCatching { MainActivity.ensureEngine(context.applicationContext) }
+        }
+    }
+
+    private fun act(context: Context, widgetId: Int, op: String, item: JSONObject, k: Int): PendingIntent {
+        val intent = Intent(context, MailWidget::class.java).apply {
+            action = ACTION_MAIL
+            // Своё data на каждое письмо и действие: иначе система склеит PendingIntent.
+            data = android.net.Uri.parse("ogneliss-mail://$op/${item.optString("acc")}/${item.optString("id")}")
+            putExtra("op", op)
+            putExtra("id", item.optString("id"))
+            putExtra("acc", item.optString("acc"))
+        }
+        return PendingIntent.getBroadcast(context, WidgetUi.req(widgetId, if (op == "read") 40 else 70, k), intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
     /**
@@ -411,8 +476,10 @@ class MailWidget : OgnelissWidget() {
             return v
         }
         val height = WidgetUi.heightDp(context, manager, id, 180)
+        // Со строкой текста письма строка выше (08.11.2026).
+        val withPreview = (0 until items.length()).any { items.optJSONObject(it)?.optString("p").orEmpty().isNotEmpty() }
         val cap = WidgetUi.fit(height - WidgetUi.PAD - WidgetUi.HEADER - WidgetUi.GAP - WidgetUi.CARD_PAD -
-            (if (footer.isNotEmpty()) WidgetUi.FOOTER else 0), 53, 10)
+            (if (footer.isNotEmpty()) WidgetUi.FOOTER else 0), if (withPreview) 70 else 53, 10)
         for (i in 0 until minOf(items.length(), cap)) {
             val item = items.optJSONObject(i) ?: continue
             if (i > 0) v.addView(R.id.mail_list, WidgetUi.divider(context))
@@ -428,6 +495,19 @@ class MailWidget : OgnelissWidget() {
             val open = item.optString("open")
             if (open.isNotEmpty()) {
                 row.setOnClickPendingIntent(R.id.ml_row, WidgetBridge.open(context, open, WidgetUi.req(id, 10, i)))
+            }
+            // Строка текста и значки вложения и флажка (08.11.2026).
+            val marks = (if (item.optInt("fl") == 1) "⚑ " else "") + (if (item.optInt("att") == 1) "📎 " else "")
+            WidgetUi.text(row, R.id.ml_prev, (marks + item.optString("p")).trim())
+            // «Прочитано» и «В архив» — у писем с id (данные 1.15.1 и новее).
+            if (item.optString("id").isNotEmpty() && item.optString("acc").isNotEmpty()) {
+                row.setOnClickPendingIntent(R.id.ml_read, act(context, id, "read", item, i))
+                row.setOnClickPendingIntent(R.id.ml_archive, act(context, id, "archive", item, i))
+                row.setContentDescription(R.id.ml_read, json?.optString("actRead").orEmpty())
+                row.setContentDescription(R.id.ml_archive, json?.optString("actArchive").orEmpty())
+            } else {
+                row.setViewVisibility(R.id.ml_read, View.GONE)
+                row.setViewVisibility(R.id.ml_archive, View.GONE)
             }
             v.addView(R.id.mail_list, row)
         }

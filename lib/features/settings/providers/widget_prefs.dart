@@ -60,3 +60,25 @@ class WidgetThemeNotifier extends Notifier<int> {
 }
 
 final widgetThemeProvider = NotifierProvider<WidgetThemeNotifier, int>(WidgetThemeNotifier.new);
+
+/// Что показывает виджет «Почта» (08.11.2026, план п. 8.1, как в Outlook и
+/// Gmail): «all» — непрочитанные во «Входящих» всех ящиков, «vip» —
+/// непрочитанные от VIP, «flagged» — с флажком, «control» — «На контроле»,
+/// «acc:<id>» — один ящик. Одна настройка на все виджеты «Почта».
+class WidgetMailFilterNotifier extends Notifier<String> {
+  static const key = 'widget_mail_filter';
+
+  @override
+  String build() => ref.read(sharedPrefsProvider).getString(key) ?? 'all';
+
+  Future<void> set(String v) async {
+    state = v;
+    await ref.read(sharedPrefsProvider).setString(key, v);
+    await onChanged?.call(ref);
+  }
+
+  /// Пересобрать данные виджетов (задаёт приложение: HomeWidgetService).
+  static Future<void> Function(Ref ref)? onChanged;
+}
+
+final widgetMailFilterProvider = NotifierProvider<WidgetMailFilterNotifier, String>(WidgetMailFilterNotifier.new);

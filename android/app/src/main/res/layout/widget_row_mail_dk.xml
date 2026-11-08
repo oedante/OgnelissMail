@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
-<!-- Строка письма: метка цвета ящика · отправитель и время · тема. -->
+<!-- Строка письма: метка цвета ящика · отправитель и время · тема · строка
+     текста (08.11.2026) · «Прочитано» и «В архив» справа. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ml_row"
     android:layout_width="match_parent"
@@ -43,5 +44,25 @@
                 android:textSize="12sp" />
         </LinearLayout>
         <TextView android:id="@+id/ml_subj" style="@style/WidgetRowSubDk" android:textSize="13sp" />
+        <TextView
+            android:id="@+id/ml_prev"
+            style="@style/WidgetRowSubDk"
+            android:textSize="12sp"
+            android:visibility="gone" />
     </LinearLayout>
+    <ImageView
+        android:id="@+id/ml_read"
+        android:layout_width="36dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="4dp"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/widget_ic_done_dk" />
+    <ImageView
+        android:id="@+id/ml_archive"
+        android:layout_width="36dp"
+        android:layout_height="40dp"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/widget_ic_archive_dk" />
 </LinearLayout>

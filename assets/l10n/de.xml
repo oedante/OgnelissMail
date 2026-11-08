@@ -3056,6 +3056,12 @@
     <string name="widgetThemeSystem">Wie System</string>
     <string name="widgetThemeLight">Hell</string>
     <string name="widgetThemeDark">Dunkel</string>
+    <string name="widgetMailTitle">Widget „E-Mail“</string>
+    <string name="widgetMailHelp">Welche Nachrichten das E-Mail-Widget auf dem Startbildschirm zeigt. Schaltflächen neben einer Nachricht im Widget: „Gelesen“ und „Archivieren“.</string>
+    <string name="widgetMailAll">Ungelesen im Posteingang</string>
+    <string name="widgetMailVip">VIP – ungelesen</string>
+    <string name="widgetMailFlagged">Markiert</string>
+    <string name="widgetMailControl">Zur Nachverfolgung</string>
     <string name="faqTitle">Fragen und Antworten</string>
     <string name="faqDesc">So nutzen Sie E-Mail, Kalender, Kontakte, Widgets und Einstellungen</string>
     <string name="faqSearchHint">Fragen durchsuchen</string>
@@ -3161,6 +3167,9 @@
     <string name="graphicsAfterCrash">nach dem Fehler am {date}</string>
     <string name="graphicsRestartNeeded">Die Änderung gilt nach dem Neustart der App.</string>
     <string name="graphicsRestart">Neu starten</string>
+    <string name="plaintextTitle">Ohne Verschlüsselung verbinden?</string>
+    <string name="plaintextBody">Passwort und Nachrichten werden im Klartext übertragen – jeder im selben Netz kann sie lesen. Nur für einen Server im internen Netz der Organisation ohne andere Möglichkeit wählen.</string>
+    <string name="plaintextAction">Ohne Verschlüsselung</string>
     <string name="imageEditHint">Ziehen Sie an den Ecken oder Rändern des Rahmens, um zuzuschneiden</string>
     <string name="imageEditHintCircle">Kreis verschieben oder an einer Ecke ziehen – so erscheint das Foto im Porträt</string>
     <string name="photoCirclePreview">So sieht das Foto in der Liste, der Nachricht und der Karte aus</string>

@@ -3056,6 +3056,12 @@
     <string name="widgetThemeSystem">System</string>
     <string name="widgetThemeLight">Lyst</string>
     <string name="widgetThemeDark">Mørkt</string>
+    <string name="widgetMailTitle">Widget «E-post»</string>
+    <string name="widgetMailHelp">Hvilke meldinger E-post-widgeten på startskjermen viser. Knapper ved en melding i widgeten: «Lest» og «Arkiver».</string>
+    <string name="widgetMailAll">Uleste i Innboks</string>
+    <string name="widgetMailVip">VIP — uleste</string>
+    <string name="widgetMailFlagged">Flagget</string>
+    <string name="widgetMailControl">Til oppfølging</string>
     <string name="faqTitle">Spørsmål og svar</string>
     <string name="faqDesc">Slik bruker du e-post, kalender, kontakter, widgeter og innstillinger</string>
     <string name="faqSearchHint">Søk i spørsmål</string>
@@ -3161,6 +3167,9 @@
     <string name="graphicsAfterCrash">etter feilen {date}</string>
     <string name="graphicsRestartNeeded">Endringen gjelder etter at appen er startet på nytt.</string>
     <string name="graphicsRestart">Start på nytt</string>
+    <string name="plaintextTitle">Koble til uten kryptering?</string>
+    <string name="plaintextBody">Passord og meldinger sendes i klartekst — alle på samme nettverk kan lese dem. Velg bare for en server på organisasjonens interne nettverk uten andre muligheter.</string>
+    <string name="plaintextAction">Uten kryptering</string>
     <string name="imageEditHint">Dra i hjørnene eller kantene på rammen for å beskjære</string>
     <string name="imageEditHintCircle">Flytt sirkelen eller dra i et hjørne – slik ser bildet ut i portrettet</string>
     <string name="photoCirclePreview">Slik ser bildet ut i listen, meldingen og kortet</string>

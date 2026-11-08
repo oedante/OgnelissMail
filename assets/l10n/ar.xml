@@ -3108,6 +3108,12 @@
     <string name="widgetThemeSystem">النظام</string>
     <string name="widgetThemeLight">فاتح</string>
     <string name="widgetThemeDark">داكن</string>
+    <string name="widgetMailTitle">أداة «البريد»</string>
+    <string name="widgetMailHelp">الرسائل التي تعرضها أداة البريد على الشاشة الرئيسية. أزرار بجانب الرسالة في الأداة: «مقروءة» و«أرشفة».</string>
+    <string name="widgetMailAll">غير المقروءة في الوارد</string>
+    <string name="widgetMailVip">VIP — غير المقروءة</string>
+    <string name="widgetMailFlagged">موسومة بعلم</string>
+    <string name="widgetMailControl">قيد المتابعة</string>
     <string name="faqTitle">الأسئلة والأجوبة</string>
     <string name="faqDesc">كيفية استخدام البريد والتقويم وجهات الاتصال والأدوات والإعدادات</string>
     <string name="faqSearchHint">البحث في الأسئلة</string>
@@ -3213,6 +3219,9 @@
     <string name="graphicsAfterCrash">بعد عطل {date}</string>
     <string name="graphicsRestartNeeded">يسري التغيير بعد إعادة تشغيل التطبيق.</string>
     <string name="graphicsRestart">إعادة التشغيل</string>
+    <string name="plaintextTitle">الاتصال دون تشفير؟</string>
+    <string name="plaintextBody">ستنتقل كلمة المرور والرسائل نصًا واضحًا — يمكن لأي شخص على الشبكة نفسها قراءتها. اختر ذلك فقط لخادم في الشبكة الداخلية للمؤسسة عند عدم وجود خيار آخر.</string>
+    <string name="plaintextAction">دون تشفير</string>
     <string name="imageEditHint">اسحب زوايا الإطار أو حوافه للاقتصاص</string>
     <string name="imageEditHintCircle">حرّك الدائرة أو اسحب أحد الأركان — هكذا ستظهر الصورة في الصورة الشخصية</string>
     <string name="photoCirclePreview">هكذا ستبدو الصورة في القائمة والرسالة والبطاقة</string>

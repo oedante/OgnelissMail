@@ -3056,6 +3056,12 @@
     <string name="widgetThemeSystem">System</string>
     <string name="widgetThemeLight">Light</string>
     <string name="widgetThemeDark">Dark</string>
+    <string name="widgetMailTitle">Mail widget</string>
+    <string name="widgetMailHelp">Which messages the Mail widget on the home screen shows. Buttons next to a message in the widget: “Read” and “Archive”.</string>
+    <string name="widgetMailAll">Unread in Inbox</string>
+    <string name="widgetMailVip">VIP — unread</string>
+    <string name="widgetMailFlagged">Flagged</string>
+    <string name="widgetMailControl">On follow-up</string>
     <string name="faqTitle">Questions and answers</string>
     <string name="faqDesc">How to use mail, calendar, contacts, widgets and settings</string>
     <string name="faqSearchHint">Search questions</string>
@@ -3161,6 +3167,9 @@
     <string name="graphicsAfterCrash">after the failure on {date}</string>
     <string name="graphicsRestartNeeded">The change takes effect after the app restarts.</string>
     <string name="graphicsRestart">Restart</string>
+    <string name="plaintextTitle">Connect without encryption?</string>
+    <string name="plaintextBody">Your password and messages will travel in plain text — anyone on the same network can read them. Choose this only for a server on your organization’s internal network with no other option.</string>
+    <string name="plaintextAction">No encryption</string>
     <string name="imageEditHint">Drag the corners or edges of the frame to crop</string>
     <string name="imageEditHintCircle">Move the circle or drag a corner — this is how the photo will look in the portrait</string>
     <string name="photoCirclePreview">How the photo will look in the list, the message and the card</string>

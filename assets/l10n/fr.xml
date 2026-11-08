@@ -3056,6 +3056,12 @@
     <string name="widgetThemeSystem">Comme le système</string>
     <string name="widgetThemeLight">Clair</string>
     <string name="widgetThemeDark">Sombre</string>
+    <string name="widgetMailTitle">Widget « Mail »</string>
+    <string name="widgetMailHelp">Les messages affichés par le widget Mail sur l’écran d’accueil. Boutons à côté d’un message dans le widget : « Lu » et « Archiver ».</string>
+    <string name="widgetMailAll">Non lus dans la boîte de réception</string>
+    <string name="widgetMailVip">VIP — non lus</string>
+    <string name="widgetMailFlagged">Avec drapeau</string>
+    <string name="widgetMailControl">En suivi</string>
     <string name="faqTitle">Questions et réponses</string>
     <string name="faqDesc">Utiliser la messagerie, l’agenda, les contacts, les widgets et les réglages</string>
     <string name="faqSearchHint">Rechercher dans les questions</string>
@@ -3161,6 +3167,9 @@
     <string name="graphicsAfterCrash">après la panne du {date}</string>
     <string name="graphicsRestartNeeded">La modification s’appliquera après le redémarrage de l’application.</string>
     <string name="graphicsRestart">Redémarrer</string>
+    <string name="plaintextTitle">Se connecter sans chiffrement ?</string>
+    <string name="plaintextBody">Le mot de passe et les messages circuleront en clair : toute personne sur le même réseau pourra les lire. À choisir uniquement pour un serveur du réseau interne de l’organisation, sans autre option.</string>
+    <string name="plaintextAction">Sans chiffrement</string>
     <string name="imageEditHint">Faites glisser les coins ou les bords du cadre pour recadrer</string>
     <string name="imageEditHintCircle">Déplacez le cercle ou tirez un coin : c\'est ainsi que la photo apparaîtra dans le portrait</string>
     <string name="photoCirclePreview">Aperçu de la photo dans la liste, le message et la fiche</string>

@@ -238,6 +238,9 @@ class HomeWidgetService {
           // Задача без времени — до конца дня; со временем — час после.
           'end': (hasTime ? at.add(const Duration(hours: 1)) : end).millisecondsSinceEpoch,
           'k': 't',
+          // Галочка «Выполнено» в виджете (08.11.2026): по ним Dart найдёт задачу.
+          'id': t.id,
+          'acc': t.accountId,
           // «В работе» — на доске в своей колонке, не в «Предстоит».
           if (t.status == 1) 'ip': true,
         });
@@ -304,6 +307,8 @@ class HomeWidgetService {
       'date': date,
       'empty': l10n.tr('myDayNoMore'),
       'compose': l10n.tr('shortcutCompose'),
+      // Подпись галочки у задачи (для TalkBack/VoiceOver).
+      'done': l10n.tr('taskMarkDone'),
       'unread': unread > 0 ? l10n.tr('myDayUnreadCount').replaceAll('{n}', '$unread') : '',
       'work': work > 0 ? l10n.tr('myDayInWorkCount').replaceAll('{n}', '$work') : '',
       'items': items.take(12).toList(),

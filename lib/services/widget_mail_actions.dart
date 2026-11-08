@@ -1,7 +1,8 @@
 // lib/services/widget_mail_actions.dart
-// Действия с письмом прямо в виджете «Почта» (план 08.11.2026, п. 8.2,
-// решение владельца: «Виджеты — согласен»): «Прочитано» и «В архив» у строки
-// письма, без входа в приложение.
+// Действия прямо в виджетах (план 08.11.2026, п. 8.2, решение владельца:
+// «Виджеты — согласен»): «Прочитано» и «В архив» у строки письма в виджете
+// «Почта», галочка «Выполнено» у задачи в «Моём дне» (op «task») — без
+// входа в приложение.
 //
 // Как устроено (тот же путь, что у окна «Создать» виджета календаря,
 // quick_create_service.dart):
@@ -29,6 +30,8 @@ import '../features/mail/providers/mail_providers.dart' show accountsProvider;
 import 'home_widget_service.dart';
 import 'mail/email_actions_service.dart';
 import 'mail/special_folders.dart';
+import '../data/models/task_model.dart' show TaskStatus;
+import 'tasks/task_actions_service.dart';
 
 final widgetMailActionsProvider = Provider<WidgetMailActions>((ref) => WidgetMailActions(ref));
 
@@ -102,6 +105,19 @@ class WidgetMailActions {
     final op = m['op'] as String;
     final id = m['id'] as String;
     final accId = m['acc'] as String;
+    if (op == 'task') {
+      // Галочка у задачи в «Моём дне» (08.11.2026): тем же путём, что в
+      // приложении — локально сразу, на сервер с синхронизацией.
+      final db = _ref.read(databaseProvider);
+      final t = await (db.select(db.tasks)
+            ..where((x) => x.id.equals(id) & x.accountId.equals(accId))
+            ..limit(1))
+          .getSingleOrNull();
+      if (t == null) return false; // задачу уже удалили
+      if (t.status == TaskStatus.completed.index) return true; // уже выполнена
+      await _ref.read(taskActionsProvider).setDone(accId, id, true);
+      return true;
+    }
     final account = _ref.read(accountsProvider).where((a) => a.id == accId).firstOrNull;
     if (account == null) return false;
     final db = _ref.read(databaseProvider);

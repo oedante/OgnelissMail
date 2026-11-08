@@ -251,7 +251,64 @@ abstract class OgnelissWidget : AppWidgetProvider() {
 class MyDayWidget : OgnelissWidget() {
     companion object {
         private const val KEY = "flutter.widget_myday"
+        /** Та же очередь, что у «Прочитано»/«В архив» (WidgetMailActions в Dart). */
+        private const val QUEUE = "flutter.widget_mail_queue"
+        private const val PREFS = "FlutterSharedPreferences"
+        private const val ACTION_TASK = "com.ogneliss.mail.TASK_DONE"
         fun refreshAll(context: Context) = MyDayWidget().drawAll(context)
+    }
+
+    /**
+     * Галочка «Выполнено» у задачи (08.11.2026, план п. 8.2): задача сразу
+     * уходит из виджета, отметка — в очередь; Dart отмечает её тем же путём,
+     * что в приложении (TaskActionsService.setDone, с синхронизацией).
+     */
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != ACTION_TASK) {
+            super.onReceive(context, intent)
+            return
+        }
+        val taskId = intent.getStringExtra("id") ?: return
+        val acc = intent.getStringExtra("acc") ?: return
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val queue = prefs.getString(QUEUE, null)?.let { runCatching { JSONArray(it) }.getOrNull() } ?: JSONArray()
+        queue.put(JSONObject().put("op", "task").put("id", taskId).put("acc", acc).put("at", System.currentTimeMillis()))
+        val edit = prefs.edit().putString(QUEUE, queue.toString())
+        WidgetUi.json(context, KEY)?.let { json ->
+            val items = json.optJSONArray("items")
+            if (items != null) {
+                val left = JSONArray()
+                var removed = false
+                for (i in 0 until items.length()) {
+                    val it = items.optJSONObject(i) ?: continue
+                    if (it.optString("k") == "t" && it.optString("id") == taskId && it.optString("acc") == acc) removed = true
+                    else left.put(it)
+                }
+                if (removed) {
+                    json.put("items", left)
+                    edit.putString(KEY, json.toString())
+                }
+            }
+        }
+        edit.commit()
+        runCatching { refreshAll(context.applicationContext) }
+        val engine = FlutterEngineCache.getInstance().get(MainActivity.ENGINE_ID)
+        if (engine != null) {
+            runCatching { MethodChannel(engine.dartExecutor.binaryMessenger, "ogneliss/widget").invokeMethod("mailAction", null) }
+        } else {
+            runCatching { MainActivity.ensureEngine(context.applicationContext) }
+        }
+    }
+
+    private fun doneIntent(context: Context, item: JSONObject): PendingIntent {
+        val intent = Intent(context, MyDayWidget::class.java).apply {
+            action = ACTION_TASK
+            data = android.net.Uri.parse("ogneliss-task://done/${item.optString("acc")}/${item.optString("id")}")
+            putExtra("id", item.optString("id"))
+            putExtra("acc", item.optString("acc"))
+        }
+        return PendingIntent.getBroadcast(context, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
     override fun render(context: Context, manager: AppWidgetManager, id: Int): RemoteViews {
@@ -296,9 +353,16 @@ class MyDayWidget : OgnelissWidget() {
         for (i in 0 until shown) {
             val item = items[i]
             if (i > 0) v.addView(R.id.wd_list, WidgetUi.divider(context))
-            v.addView(R.id.wd_list, WidgetUi.eventRow(context, item.optString("t"), null, item.optString("s"), null,
+            val row = WidgetUi.eventRow(context, item.optString("t"), null, item.optString("s"), null,
                 bar = if (item.optString("k") == "t") R.drawable.widget_bar_task else R.drawable.widget_bar_accent,
-                allDay = if (item.optInt("a") == 1) item.optString("t") else null))
+                allDay = if (item.optInt("a") == 1) item.optString("t") else null)
+            if (item.optString("k") == "t" && item.optString("id").isNotEmpty() && item.optString("acc").isNotEmpty()) {
+                row.setViewVisibility(R.id.ev_done, View.VISIBLE)
+                row.setImageViewResource(R.id.ev_done, WidgetUi.drawable(context, R.drawable.widget_ic_done))
+                row.setContentDescription(R.id.ev_done, json?.optString("done").orEmpty())
+                row.setOnClickPendingIntent(R.id.ev_done, doneIntent(context, item))
+            }
+            v.addView(R.id.wd_list, row)
         }
         if (items.size > shown) {
             v.addView(R.id.wd_list, WidgetUi.divider(context))

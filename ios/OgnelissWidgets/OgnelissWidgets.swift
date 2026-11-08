@@ -234,6 +234,10 @@ struct MyDayView: View {
         HStack(spacing: 8) {
           TimeCell(allDay: (it["a"] as? NSNumber)?.intValue == 1, text: it.str("t"), width: 48)
           Text(it.str("s")).font(.system(size: 14)).foregroundColor(cText).lineLimit(1)
+          if it.str("k") == "t" {
+            Spacer(minLength: 4)
+            TaskDoneButton(item: it, label: j.str("done"))
+          }
         }
       }
       Spacer(minLength: 0)
@@ -343,6 +347,65 @@ struct MailActionIntent: AppIntent {
 /// Значки флажка и вложения перед строкой текста письма.
 private func rowMarks(_ it: [String: Any]) -> String {
   ((it["fl"] as? NSNumber)?.intValue == 1 ? "⚑ " : "") + ((it["att"] as? NSNumber)?.intValue == 1 ? "📎 " : "")
+}
+
+/// Галочка «Выполнено» у задачи в «Моём дне» (08.11.2026, план п. 8.2):
+/// задача сразу уходит из виджета, отметка — в общую очередь (op «task»);
+/// приложение отмечает её тем же путём, что на экране задач
+/// (lib/services/widget_mail_actions.dart).
+@available(iOS 17.0, *)
+struct TaskDoneIntent: AppIntent {
+  static let title: LocalizedStringResource = "Task done"
+  static let isDiscoverable = false
+
+  @Parameter(title: "Task") var taskId: String
+  @Parameter(title: "Account") var acc: String
+
+  init() {}
+  init(taskId: String, acc: String) {
+    self.taskId = taskId
+    self.acc = acc
+  }
+
+  func perform() async throws -> some IntentResult {
+    let d = UserDefaults(suiteName: appGroup)
+    var queue: [[String: Any]] = []
+    if let raw = d?.string(forKey: "widget_mail_queue"), let data = raw.data(using: .utf8),
+       let arr = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
+      queue = arr
+    }
+    queue.append(["op": "task", "id": taskId, "acc": acc, "at": Date().timeIntervalSince1970 * 1000])
+    if let data = try? JSONSerialization.data(withJSONObject: queue), let s = String(data: data, encoding: .utf8) {
+      d?.set(s, forKey: "widget_mail_queue")
+    }
+    if var j = loadJSON("widget_myday") {
+      let items = j.items("items")
+      let left = items.filter { !($0.str("k") == "t" && $0.str("id") == taskId && $0.str("acc") == acc) }
+      if left.count != items.count {
+        j["items"] = left
+        if let data = try? JSONSerialization.data(withJSONObject: j), let s = String(data: data, encoding: .utf8) {
+          d?.set(s, forKey: "widget_myday")
+        }
+      }
+    }
+    return .result()
+  }
+}
+
+private struct TaskDoneButton: View {
+  let item: [String: Any]
+  let label: String
+  var body: some View {
+    if #available(iOSApplicationExtension 17.0, *) {
+      if !item.str("id").isEmpty && !item.str("acc").isEmpty {
+        Button(intent: TaskDoneIntent(taskId: item.str("id"), acc: item.str("acc"))) {
+          Image(systemName: "circle").font(.system(size: 15)).foregroundColor(cSub).frame(width: 26, height: 24)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+      }
+    }
+  }
 }
 
 /// Кнопки «Прочитано» и «В архив» строки письма (iOS 17+, письма с id).

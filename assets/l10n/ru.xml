@@ -3987,4 +3987,5 @@
     <string name="convReplyTo">Ответ на письмо от {name}</string>
     <string name="showSignatureTail">Показать подпись и уведомление</string>
     <string name="hideSignatureTail">Скрыть подпись и уведомление</string>
+    <string name="replyWithQuote">Ответить с цитатой</string>
 </resources>

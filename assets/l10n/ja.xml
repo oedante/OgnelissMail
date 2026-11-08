@@ -3924,4 +3924,5 @@
     <string name="convReplyTo">{name} への返信</string>
     <string name="showSignatureTail">署名と注意書きを表示</string>
     <string name="hideSignatureTail">署名と注意書きを隠す</string>
+    <string name="replyWithQuote">引用して返信</string>
 </resources>

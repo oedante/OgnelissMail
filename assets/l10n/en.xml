@@ -3945,4 +3945,5 @@
     <string name="convReplyTo">Reply to {name}</string>
     <string name="showSignatureTail">Show signature and notice</string>
     <string name="hideSignatureTail">Hide signature and notice</string>
+    <string name="replyWithQuote">Reply with quote</string>
 </resources>

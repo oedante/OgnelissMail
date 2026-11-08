@@ -3966,4 +3966,5 @@
     <string name="convReplyTo">תשובה ל־{name}</string>
     <string name="showSignatureTail">הצג חתימה והודעה</string>
     <string name="hideSignatureTail">הסתר חתימה והודעה</string>
+    <string name="replyWithQuote">השב עם ציטוט</string>
 </resources>

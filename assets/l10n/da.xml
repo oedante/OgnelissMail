@@ -3945,4 +3945,5 @@
     <string name="convReplyTo">Svar til {name}</string>
     <string name="showSignatureTail">Vis signatur og meddelelse</string>
     <string name="hideSignatureTail">Skjul signatur og meddelelse</string>
+    <string name="replyWithQuote">Svar med citat</string>
 </resources>

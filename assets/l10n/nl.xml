@@ -3945,4 +3945,5 @@
     <string name="convReplyTo">Antwoord aan {name}</string>
     <string name="showSignatureTail">Handtekening en melding tonen</string>
     <string name="hideSignatureTail">Handtekening en melding verbergen</string>
+    <string name="replyWithQuote">Antwoorden met citaat</string>
 </resources>

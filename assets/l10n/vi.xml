@@ -3924,4 +3924,5 @@
     <string name="convReplyTo">Trả lời {name}</string>
     <string name="showSignatureTail">Hiện chữ ký và thông báo</string>
     <string name="hideSignatureTail">Ẩn chữ ký và thông báo</string>
+    <string name="replyWithQuote">Trả lời kèm trích dẫn</string>
 </resources>

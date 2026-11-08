@@ -3924,4 +3924,5 @@
     <string name="convReplyTo">ตอบกลับ {name}</string>
     <string name="showSignatureTail">แสดงลายเซ็นและประกาศ</string>
     <string name="hideSignatureTail">ซ่อนลายเซ็นและประกาศ</string>
+    <string name="replyWithQuote">ตอบกลับพร้อมอ้างอิง</string>
 </resources>

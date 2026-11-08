@@ -3945,4 +3945,5 @@
     <string name="convReplyTo">Vastaus: {name}</string>
     <string name="showSignatureTail">Näytä allekirjoitus ja ilmoitus</string>
     <string name="hideSignatureTail">Piilota allekirjoitus ja ilmoitus</string>
+    <string name="replyWithQuote">Vastaa lainauksella</string>
 </resources>

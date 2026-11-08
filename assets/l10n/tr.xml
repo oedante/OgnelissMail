@@ -3945,4 +3945,5 @@
     <string name="convReplyTo">Yanıt: {name}</string>
     <string name="showSignatureTail">İmzayı ve bildirimi göster</string>
     <string name="hideSignatureTail">İmzayı ve bildirimi gizle</string>
+    <string name="replyWithQuote">Alıntıyla yanıtla</string>
 </resources>

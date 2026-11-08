@@ -1109,6 +1109,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             _onBodyShown();
           },
           onLink: (url, text) => _onBodyLink(email, url, text),
+          onQuoteReply: (text) => _replyWithFragment(email, text),
         ),
         if (n.clipped) MailClippedBar(onShowWhole: _onShowWhole),
         if (split.hasQuote) _quoteToggle(theme, l10n, tailOnly: split.tailOnly),
@@ -2729,12 +2730,25 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           draftId: q['draftId'],
           accountId: q['accountId'],
           replyAll: q['replyAll'] == 'true',
+          quoteFragment: q['fragment'],
           quickText: q['quick'],
         ),
       ));
       return;
     }
     context.push(Uri(path: '/compose', queryParameters: q).toString());
+  }
+
+  /// «Ответить с цитатой» из меню выделенного текста письма (2.0.0): ответ
+  /// отправителю, в цитате — только выделенное.
+  void _replyWithFragment(EmailModel email, String text) {
+    final t = text.trim();
+    if (t.isEmpty) return;
+    _compose({
+      'replyToId': email.id,
+      'accountId': email.accountId,
+      'fragment': t.length > 4000 ? t.substring(0, 4000) : t,
+    });
   }
 
   /// «Удалить» под письмом (1.7.3): по умолчанию — с вопросом (письма

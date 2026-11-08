@@ -3945,4 +3945,5 @@
     <string name="convReplyTo">{name} को जवाब</string>
     <string name="showSignatureTail">हस्ताक्षर और सूचना दिखाएँ</string>
     <string name="hideSignatureTail">हस्ताक्षर और सूचना छिपाएँ</string>
+    <string name="replyWithQuote">उद्धरण के साथ जवाब दें</string>
 </resources>

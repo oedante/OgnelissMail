@@ -3945,4 +3945,5 @@
     <string name="convReplyTo">Válasz neki: {name}</string>
     <string name="showSignatureTail">Aláírás és nyilatkozat megjelenítése</string>
     <string name="hideSignatureTail">Aláírás és nyilatkozat elrejtése</string>
+    <string name="replyWithQuote">Válasz idézettel</string>
 </resources>

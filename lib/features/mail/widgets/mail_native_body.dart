@@ -1159,6 +1159,7 @@ class MailNativeBody extends StatefulWidget {
     this.images = const {},
     this.textScale = 1,
     this.onShown,
+    this.onQuoteReply,
   });
 
   final NativeMail mail;
@@ -1168,6 +1169,9 @@ class MailNativeBody extends StatefulWidget {
   final Map<String, String> images;
   final double textScale;
   final VoidCallback? onShown;
+
+  /// «Ответить с цитатой» в меню выделенного текста (2.0.0); null — пункта нет.
+  final void Function(String text)? onQuoteReply;
 
   @override
   State<MailNativeBody> createState() => _MailNativeBodyState();
@@ -1578,7 +1582,53 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       padding: const EdgeInsets.only(top: 4, bottom: 12),
       // Политика организации (MDM, 1.10.5): без выделения — нечего и
       // копировать.
-      child: ManagedPolicy.current.blockCopy ? column : SelectionArea(child: column),
+      child: ManagedPolicy.current.blockCopy ? column : quoteReplySelectionArea(column, widget.onQuoteReply),
+    );
+  }
+}
+
+/// Выделение текста с пунктом «Ответить с цитатой» (2.0.0, план 08.11.2026:
+/// ответ на фрагмент, как в мессенджере). Без [onQuoteReply] — обычное
+/// выделение.
+Widget quoteReplySelectionArea(Widget child, void Function(String text)? onQuoteReply) {
+  if (onQuoteReply == null) return SelectionArea(child: child);
+  return _QuoteReplySelection(onQuoteReply: onQuoteReply, child: child);
+}
+
+class _QuoteReplySelection extends StatefulWidget {
+  final Widget child;
+  final void Function(String text) onQuoteReply;
+  const _QuoteReplySelection({required this.child, required this.onQuoteReply});
+
+  @override
+  State<_QuoteReplySelection> createState() => _QuoteReplySelectionState();
+}
+
+class _QuoteReplySelectionState extends State<_QuoteReplySelection> {
+  String _selected = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return SelectionArea(
+      onSelectionChanged: (content) => _selected = content?.plainText ?? '',
+      contextMenuBuilder: (context, state) {
+        final items = [
+          ...state.contextMenuButtonItems,
+          if (_selected.trim().isNotEmpty)
+            ContextMenuButtonItem(
+              label: l10n.tr('replyWithQuote'),
+              onPressed: () {
+                final text = _selected;
+                ContextMenuController.removeAny();
+                state.clearSelection();
+                widget.onQuoteReply(text);
+              },
+            ),
+        ];
+        return AdaptiveTextSelectionToolbar.buttonItems(anchors: state.contextMenuAnchors, buttonItems: items);
+      },
+      child: widget.child,
     );
   }
 }

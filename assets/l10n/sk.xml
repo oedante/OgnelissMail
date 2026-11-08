@@ -3966,4 +3966,5 @@
     <string name="convReplyTo">Odpoveď pre {name}</string>
     <string name="showSignatureTail">Zobraziť podpis a upozornenie</string>
     <string name="hideSignatureTail">Skryť podpis a upozornenie</string>
+    <string name="replyWithQuote">Odpovedať s citáciou</string>
 </resources>

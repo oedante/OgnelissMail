@@ -4029,4 +4029,5 @@
     <string name="convReplyTo">رد على {name}</string>
     <string name="showSignatureTail">إظهار التوقيع والإشعار</string>
     <string name="hideSignatureTail">إخفاء التوقيع والإشعار</string>
+    <string name="replyWithQuote">الرد مع الاقتباس</string>
 </resources>

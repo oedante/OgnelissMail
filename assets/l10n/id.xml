@@ -3924,4 +3924,5 @@
     <string name="convReplyTo">Balas ke {name}</string>
     <string name="showSignatureTail">Tampilkan tanda tangan dan pemberitahuan</string>
     <string name="hideSignatureTail">Sembunyikan tanda tangan dan pemberitahuan</string>
+    <string name="replyWithQuote">Balas dengan kutipan</string>
 </resources>

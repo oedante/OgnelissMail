@@ -212,6 +212,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             sharedAttachments: (state.uri.queryParameters['attachments'] ?? '')
                 .split('|').where((s) => s.isNotEmpty).toList(),
             replyAll: state.uri.queryParameters['replyAll'] == 'true',
+            quoteFragment: state.uri.queryParameters['fragment'],
             quickText: state.uri.queryParameters['quick'],
           )),
         ),

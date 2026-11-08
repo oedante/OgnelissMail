@@ -3945,4 +3945,5 @@
     <string name="convReplyTo">Réponse à {name}</string>
     <string name="showSignatureTail">Afficher la signature et l’avertissement</string>
     <string name="hideSignatureTail">Masquer la signature et l’avertissement</string>
+    <string name="replyWithQuote">Répondre avec citation</string>
 </resources>

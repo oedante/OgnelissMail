@@ -3924,4 +3924,5 @@
     <string name="convReplyTo">回复 {name}</string>
     <string name="showSignatureTail">显示签名和声明</string>
     <string name="hideSignatureTail">隐藏签名和声明</string>
+    <string name="replyWithQuote">引用回复</string>
 </resources>

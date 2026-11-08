@@ -1198,14 +1198,22 @@ class _MailNativeBodyState extends State<MailNativeBody> {
     super.dispose();
   }
 
-  /// Таблица с объединёнными ячейками: места ячеек в сетке — как у
-  /// браузера (ячейка встаёт в первую свободную колонку строки), доли
-  /// колонок — по ширинам ячеек без объединения колонок.
+  /// Таблица письма: места ячеек в сетке — как у браузера (ячейка встаёт
+  /// в первую свободную колонку строки), доли колонок — по ширинам ячеек
+  /// без объединения колонок, но колонка не уже своего самого длинного
+  /// слова ([fitColumnWidths]). С 2.2.0 — и простые таблицы (раньше —
+  /// Table из Flutter строго по долям: подпись Outlook из двух колонок
+  /// шириной 300 и 1614 точек рвала слова левой колонки по буквам).
+  ///
+  /// Рамки — как border-collapse в браузере: линию между ячейками рисует
+  /// одна из них (правая — своей левой стороной, нижняя — верхней), если
+  /// она есть у любой из двух; края — и по рамке самой таблицы.
   Widget _spanTable(NBlock bl, ThemeData theme, Color? cellBg,
       List<Widget> Function(List<NBlock>, Color?) blocks) {
     final rows = bl.table!;
     final busy = <int, Set<int>>{};
-    final placed = <({NCell cell, int row, int col})>[];
+    final at = <(int, int), int>{};
+    final placed = <({NCell cell, int row, int col, int rowSpan})>[];
     var cols = 0;
     for (var r = 0; r < rows.length; r++) {
       var c = 0;
@@ -1217,9 +1225,10 @@ class _MailNativeBodyState extends State<MailNativeBody> {
         for (var i = 0; i < rs; i++) {
           for (var j = 0; j < cell.colSpan; j++) {
             (busy[r + i] ??= <int>{}).add(c + j);
+            at[(r + i, c + j)] = placed.length;
           }
         }
-        placed.add((cell: cell, row: r, col: c));
+        placed.add((cell: cell, row: r, col: c, rowSpan: rs));
         c += cell.colSpan;
         if (c > cols) cols = c;
       }
@@ -1230,45 +1239,68 @@ class _MailNativeBodyState extends State<MailNativeBody> {
     }
     // Не у всех колонок ширина задана — поровну.
     final widths = flex.every((f) => f > 0) ? flex : List<double>.filled(cols, 1);
+    bool has(int? i, int bit) => i != null && placed[i].cell.sides & bit != 0;
+    bool frame(int bit) => bl.borders & bit != 0;
+    int sidesOf(({NCell cell, int row, int col, int rowSpan}) p) {
+      final own = p.cell.sides;
+      final right = p.col + p.cell.colSpan;
+      final below = p.row + p.rowSpan;
+      var out = 0;
+      if (own & kBorderTop != 0 || (p.row == 0 ? frame(kBorderTop) : has(at[(p.row - 1, p.col)], kBorderBottom))) {
+        out |= kBorderTop;
+      }
+      if (own & kBorderLeft != 0 || (p.col == 0 ? frame(kBorderLeft) : has(at[(p.row, p.col - 1)], kBorderRight))) {
+        out |= kBorderLeft;
+      }
+      // Правая и нижняя — только на краю таблицы или когда соседа нет.
+      final ownRight = own & kBorderRight != 0;
+      if (right >= cols ? ownRight || frame(kBorderRight) : ownRight && at[(p.row, right)] == null) {
+        out |= kBorderRight;
+      }
+      final ownBottom = own & kBorderBottom != 0;
+      if (below >= rows.length ? ownBottom || frame(kBorderBottom) : ownBottom && at[(below, p.col)] == null) {
+        out |= kBorderBottom;
+      }
+      return out;
+    }
+
     final line = BorderSide(color: theme.dividerColor, width: 0.8);
     BorderSide side(int sides, int bit) => sides & bit != 0 ? line : BorderSide.none;
-    return SpanTable(
-      rows: rows.length,
-      columnFlex: widths,
-      children: [
-        for (final p in placed)
-          SpanCell(
-            row: p.row,
-            col: p.col,
-            rowSpan: p.cell.rowSpan.clamp(1, rows.length - p.row),
-            colSpan: p.cell.colSpan,
-            child: Container(
-              decoration: BoxDecoration(
-                color: p.cell.background == null ? null : Color(p.cell.background!),
-                border: p.cell.sides == 0
-                    ? null
-                    : Border(
-                        top: side(p.cell.sides, kBorderTop),
-                        right: side(p.cell.sides, kBorderRight),
-                        bottom: side(p.cell.sides, kBorderBottom),
-                        left: side(p.cell.sides, kBorderLeft),
-                      ),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
-              alignment: switch (p.cell.valign) {
-                1 => Alignment.centerLeft,
-                2 => Alignment.bottomLeft,
-                _ => Alignment.topLeft,
-              },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: blocks(p.cell.blocks, p.cell.background == null ? cellBg : Color(p.cell.background!)),
-              ),
-            ),
+    final cells = <Widget>[];
+    for (final p in placed) {
+      final sd = sidesOf(p);
+      cells.add(SpanCell(
+        row: p.row,
+        col: p.col,
+        rowSpan: p.rowSpan,
+        colSpan: p.cell.colSpan,
+        child: Container(
+          decoration: BoxDecoration(
+            color: p.cell.background == null ? null : Color(p.cell.background!),
+            border: sd == 0
+                ? null
+                : Border(
+                    top: side(sd, kBorderTop),
+                    right: side(sd, kBorderRight),
+                    bottom: side(sd, kBorderBottom),
+                    left: side(sd, kBorderLeft),
+                  ),
           ),
-      ],
-    );
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+          alignment: switch (p.cell.valign) {
+            1 => Alignment.centerLeft,
+            2 => Alignment.bottomLeft,
+            _ => Alignment.topLeft,
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: blocks(p.cell.blocks, p.cell.background == null ? cellBg : Color(p.cell.background!)),
+          ),
+        ),
+      ));
+    }
+    return SpanTable(rows: rows.length, columnFlex: widths, children: cells);
   }
 
   Uint8List? _bytes(String src) {
@@ -1492,54 +1524,10 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       Widget w;
       if (bl.kind == NBlockKind.hr) {
         w = Divider(height: 16, thickness: 1, color: theme.dividerColor);
-      } else if (bl.kind == NBlockKind.table && bl.table!.any((r) => r.any((c) => c.rowSpan > 1 || c.colSpan > 1))) {
-        // Объединённые ячейки (1.5.11) — своя раскладка, рамки — у ячеек.
-        w = _spanTable(bl, theme, cellBg, blocks);
-        final after = bl.after * base.fontSize! * 1.4;
-        if (after > 0) w = Padding(padding: EdgeInsets.only(bottom: after), child: w);
       } else if (bl.kind == NBlockKind.table) {
-        final rows = bl.table!;
-        final cols = rows.fold<int>(0, (m, r) => r.length > m ? r.length : m);
-        // Доли колонок — по ширинам первой строки, если заданы у всех ячеек.
-        final first = rows.first;
-        final widths = first.length == cols && first.every((c) => c.flex > 1)
-            ? [for (final c in first) c.flex]
-            : List<double>.filled(cols, 1);
-        w = Table(
-          border: bl.border
-              ? () {
-                  final line = BorderSide(color: theme.dividerColor, width: 0.8);
-                  BorderSide side(int bit) => bl.borders & bit != 0 ? line : BorderSide.none;
-                  return TableBorder(
-                    top: side(kBorderTop),
-                    right: side(kBorderRight),
-                    bottom: side(kBorderBottom),
-                    left: side(kBorderLeft),
-                    horizontalInside: side(kBorderInsideH),
-                    verticalInside: side(kBorderInsideV),
-                  );
-                }()
-              : null,
-          columnWidths: {for (var i = 0; i < cols; i++) i: FlexColumnWidth(widths[i])},
-          defaultVerticalAlignment: TableCellVerticalAlignment.top,
-          children: [
-            for (final r in rows)
-              TableRow(children: [
-                for (var i = 0; i < cols; i++)
-                  i < r.length
-                      ? Container(
-                          color: r[i].background == null ? null : Color(r[i].background!),
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: blocks(r[i].blocks,
-                                r[i].background == null ? cellBg : Color(r[i].background!)),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-              ]),
-          ],
-        );
+        // Таблица (1.5.9; объединённые ячейки — 1.5.11; одна раскладка для
+        // всех — 2.2.0): колонки не уже своих слов, рамки — у ячеек.
+        w = _spanTable(bl, theme, cellBg, blocks);
         final after = bl.after * base.fontSize! * 1.4;
         if (after > 0) w = Padding(padding: EdgeInsets.only(bottom: after), child: w);
       } else {

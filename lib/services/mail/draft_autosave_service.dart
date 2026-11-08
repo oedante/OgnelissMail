@@ -128,8 +128,28 @@ class DraftAutosaveService {
 
   DraftAutosaveService(this._db);
 
+  /// Снимок черновика строится лениво (план 08.11.2026 п. 3): правка в
+  /// редакторе только отмечает изменение, а снимок — подпись «не тронуто» и
+  /// всё письмо с картинками data: — собирается, когда нужен (таймер,
+  /// «Сохранить», выход), а не на каждое нажатие клавиши.
+  DraftData Function()? _builder;
+
+  /// Текущий черновик: сначала — собрать отложенный снимок.
+  DraftData? get _draftNow {
+    final b = _builder;
+    if (b != null) {
+      _builder = null;
+      try {
+        _currentDraft = b();
+      } catch (e) {
+        AppLogger.warning('Автосохранение: снимок не собран — $e');
+      }
+    }
+    return _currentDraft;
+  }
+
   /// Есть изменения, ещё не записанные в базу.
-  bool get hasUnsavedChanges => _hasChanges && !(_currentDraft?.isEmpty ?? true);
+  bool get hasUnsavedChanges => _hasChanges && !(_draftNow?.isEmpty ?? true);
 
   /// Начать автосохранение для нового черновика
   void startAutosave(DraftData draft) {
@@ -139,7 +159,8 @@ class DraftAutosaveService {
 
     _autosaveTimer?.cancel();
     _autosaveTimer = Timer.periodic(_autosaveInterval, (_) {
-      final d = _currentDraft;
+      if (!_hasChanges) return;
+      final d = _draftNow;
       if (_hasChanges && d != null && !d.isEmpty) {
         unawaited(_saveDraft(d));
         _hasChanges = false;
@@ -149,14 +170,21 @@ class DraftAutosaveService {
 
   /// Обновить данные черновика (вызывается при каждом изменении)
   void updateDraft(DraftData draft) {
+    _builder = null;
     _currentDraft = draft;
+    _hasChanges = true;
+  }
+
+  /// Отметить изменение; снимок [build] соберётся, когда понадобится.
+  void markChanged(DraftData Function() build) {
+    _builder = build;
     _hasChanges = true;
   }
 
   /// Принудительное сохранение (кнопка «Сохранить», выход). true — записан.
   /// Снимок берётся синхронно, до первого await.
   Future<bool> forceSave() async {
-    final d = _currentDraft;
+    final d = _draftNow;
     if (d == null || d.isEmpty) return false;
     _hasChanges = false;
     return _saveDraft(d);
@@ -285,6 +313,7 @@ class DraftAutosaveService {
   void stopAutosave() {
     _autosaveTimer?.cancel();
     _autosaveTimer = null;
+    _builder = null;
     _currentDraft = null;
     _hasChanges = false;
     savedAt.value = null;

@@ -108,6 +108,33 @@ import '../../../widgets/common/account_avatar.dart';
 
 
 class ComposeScreen extends ConsumerStatefulWidget {
+  /// Картинки, вставленные в текст (data: — мегабайты base64), без самих
+  /// данных: подписи «не тронуто» и текст письма их не учитывают, а
+  /// регулярные выражения шли бы по всем мегабайтам на каждую проверку
+  /// (план 08.11.2026 п. 3). Поиск конца — indexOf той же кавычки.
+  @visibleForTesting
+  static String withoutDataUris(String html) {
+    var i = html.indexOf('data:');
+    if (i < 0) return html;
+    final out = StringBuffer();
+    var from = 0;
+    while (i >= 0) {
+      final q = i > 0 ? html[i - 1] : '';
+      final end = q == '"' || q == "'" ? html.indexOf(q, i) : -1;
+      if (end < 0) {
+        i = html.indexOf('data:', i + 5);
+        continue;
+      }
+      out
+        ..write(html.substring(from, i))
+        ..write('data:');
+      from = end;
+      i = html.indexOf('data:', end);
+    }
+    out.write(html.substring(from));
+    return out.toString();
+  }
+
   final String? replyToId;
   final String? forwardFromId;
   final String? draftId;
@@ -540,7 +567,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   bool get _isPristine =>
       _pristineSig != null && _sig(_useHtmlEditor ? _lastHtml : _plainController.text) == _pristineSig;
   static String _plainText(String body) =>
-      _htmlToPlain(body).replaceAll(RegExp(r'\s+'), ' ').trim();
+      _htmlToPlain(ComposeScreen.withoutDataUris(body)).replaceAll(RegExp(r'\s+'), ' ').trim();
+
+
 
   /// Панель форматирования: на телефоне скрыта (стиль — в настройках
   /// аккаунта), на планшете и компьютере видна. null — ещё не определено.
@@ -836,7 +865,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   void _markDraftChanged() {
     if (_sentOrDiscarded) return;
-    _autosave?.updateDraft(_snapshot());
+    // Снимок — когда нужен (таймер, «Сохранить», выход), а не на каждое
+    // нажатие клавиши (план 08.11.2026 п. 3).
+    _autosave?.markChanged(() => _snapshot());
   }
 
   /// Черновик записан (таймер или кнопка «Сохранить»): подпись «Сохранено ·

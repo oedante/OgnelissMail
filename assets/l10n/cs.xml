@@ -3963,4 +3963,8 @@
     <string name="faq_mail_14_a">Podokno čtení lze umístit vpravo, dole nebo skrýt: Nastavení → Vzhled → Podokno čtení nebo nabídka ⋮ nad seznamem. Více zpráv se vybírá jako v Outlooku: Ctrl + kliknutí (na Macu a iPadu Cmd) – po jedné, Shift – rozsah, Ctrl+A – všechny načtené, Esc – zrušit výběr, Delete – smazat vybrané. Příloha se otevře přímo v podokně čtení a Zpět vrátí ke zprávě.</string>
     <string name="faq_mail_15_q">Jak nechat zprávy přeložit hned při otevření?</string>
     <string name="faq_mail_15_a">Klepněte na ▾ u ikony překladu a vyberte Vždy překládat z jazyka … – zprávy v tomto jazyce se pak budou otevírat rovnou přeložené, originál zobrazíte stejnou ikonou. Seznam jazyků: Nastavení → Pošta → Překlad → Vždy překládat z jazyků. Překlad se nabízí, jen když je jazyk zprávy rozpoznán s jistotou, a nenabízí se pro jazyky telefonu (vypíná se tamtéž: Jazyky telefonu – nenabízet překlad).</string>
+    <string name="convReplyTo">Odpověď pro {name}</string>
+    <string name="showSignatureTail">Zobrazit podpis a upozornění</string>
+    <string name="hideSignatureTail">Skrýt podpis a upozornění</string>
+    <string name="replyWithQuote">Odpovědět s citací</string>
 </resources>

@@ -3921,4 +3921,8 @@
     <string name="faq_mail_14_a">Ngăn đọc có thể đặt bên phải, bên dưới hoặc ẩn đi: Cài đặt → Giao diện → Ngăn đọc hoặc menu ⋮ phía trên danh sách. Chọn nhiều thư giống như trong Outlook: Ctrl + nhấp (trên Mac và iPad là Cmd) — từng thư, Shift — một dãy liên tiếp, Ctrl+A — tất cả thư đã tải, Esc — bỏ chọn, Delete — xóa các thư đã chọn. Tệp đính kèm mở ngay trong ngăn đọc, và Quay lại sẽ đưa bạn về thư.</string>
     <string name="faq_mail_15_q">Làm thế nào để dịch thư ngay khi mở?</string>
     <string name="faq_mail_15_a">Chạm vào ▾ cạnh biểu tượng dịch và chọn Luôn dịch từ … — thư bằng ngôn ngữ đó sẽ mở ra đã được dịch sẵn; bản gốc xem bằng chính biểu tượng đó. Danh sách ngôn ngữ: Cài đặt → Thư → Dịch → Luôn dịch từ. Bản dịch chỉ được đề xuất khi ngôn ngữ của thư được nhận diện chắc chắn, và không được đề xuất cho các ngôn ngữ của điện thoại (tắt ở cùng chỗ đó: Ngôn ngữ của điện thoại — không đề xuất dịch).</string>
+    <string name="convReplyTo">Trả lời {name}</string>
+    <string name="showSignatureTail">Hiện chữ ký và thông báo</string>
+    <string name="hideSignatureTail">Ẩn chữ ký và thông báo</string>
+    <string name="replyWithQuote">Trả lời kèm trích dẫn</string>
 </resources>

@@ -6,6 +6,7 @@
 
 import 'dart:convert';
 
+import 'package:drift/drift.dart' show TypedResult;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/models/email_model.dart';
@@ -92,13 +93,19 @@ final pinnedEmailsProvider = StreamProvider.autoDispose<List<(PinRef, EmailModel
   final db = ref.watch(databaseProvider);
   final ids = {for (final p in pins) p.emailId};
   // Таблица писем во время синхронизации меняется десятки раз в секунду:
-  // дальше пропускаются только изменения самих закреплённых писем.
-  String sig(List<dynamic> rows) => [
-        for (final r in rows)
-          '${r.accountId}|${r.id}|${r.isRead}|${r.isFlagged}|${r.controlState}|${r.laterState}|${r.folderId}|${r.subject.hashCode}',
+  // дальше пропускаются только изменения самих закреплённых писем. 2.0.0
+  // (план 08.11.2026, «закреплённые письма — без тел»): при каждом
+  // изменении таблицы читаются только короткие поля (без тел писем), а
+  // целые строки — только когда закреплённые письма правда изменились.
+  final t = db.emails;
+  final cols = [t.accountId, t.id, t.isRead, t.isFlagged, t.controlState, t.laterState, t.folderId, t.subject];
+  String sig(List<TypedResult> rows) => [
+        for (final r in rows) [for (final c in cols) r.read(c)].join('|'),
       ].join(';');
   String? last;
-  return (db.select(db.emails)..where((e) => e.id.isIn(ids)))
+  return (db.selectOnly(t)
+        ..addColumns(cols)
+        ..where(t.id.isIn(ids)))
       .watch()
       .where((rows) {
         final s = sig(rows);
@@ -106,7 +113,8 @@ final pinnedEmailsProvider = StreamProvider.autoDispose<List<(PinRef, EmailModel
         last = s;
         return true;
       })
-      .map((rows) {
+      .asyncMap((_) async {
+        final rows = await (db.select(t)..where((e) => e.id.isIn(ids))).get();
         final byKey = {for (final r in rows) '${r.accountId}|${r.id}': r};
         return [
           for (final p in pins)

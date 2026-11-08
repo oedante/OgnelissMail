@@ -116,6 +116,14 @@ class ReplyBuilder {
   /// Шапка и исходное письмо целиком — без отступа-цитаты, как в Outlook.
   static String quote(String header, String originalHtml) => '$header<div>$originalHtml</div>';
 
+  /// Тело цитаты из выделенного фрагмента (2.0.0, «Ответить с цитатой»):
+  /// абзацы — по пустым строкам, переносы строк — как в письме, текст
+  /// экранирован.
+  static String fragmentBody(String text) => [
+        for (final para in text.trim().split(RegExp(r'\n\s*\n')))
+          if (para.trim().isNotEmpty) '<p>${_esc(para.trim()).replaceAll('\n', '<br>')}</p>',
+      ].join();
+
   static String _esc(String s) =>
       s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 }

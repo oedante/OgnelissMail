@@ -24,9 +24,30 @@ import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
 import android.os.SystemClock
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
+import dev.fluttercommunity.workmanager.BackgroundWorker
 
 object SyncHeartbeat {
     private const val INTERVAL_MS = 10 * 60 * 1000L
+
+    /**
+     * Пульс без службы (2.0.0): служба остановлена не приложением — лимит
+     * Android 15 (6 часов в сутки) или процесс выгружен системой. Будильник
+     * остаётся и раз в 15 минут (как плановая задача, но и в глубоком сне)
+     * ставит срочную задачу проверки почты. Снимается явной остановкой
+     * фоновой работы из приложения и при следующем запуске службы.
+     */
+    private const val STANDBY_INTERVAL_MS = 15 * 60 * 1000L
+    private const val STANDBY_WORK = "ogneliss_heartbeat_check"
+
+    /** Задача Dart — та же, что у плановой проверки (BackgroundService). */
+    private const val STANDBY_TASK = "periodic_sync"
     /** Сколько держим процессор ради одного пульса (Dart отвечает раньше). */
     const val MAX_WORK_MS = 2 * 60 * 1000L
     private const val REQUEST_CODE = 4712
@@ -59,10 +80,10 @@ object SyncHeartbeat {
             flags or PendingIntent.FLAG_IMMUTABLE,
         )
 
-    fun schedule(context: Context) {
+    fun schedule(context: Context, standby: Boolean = false) {
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pi = pending(context, PendingIntent.FLAG_UPDATE_CURRENT) ?: return
-        val at = SystemClock.elapsedRealtime() + INTERVAL_MS
+        val at = SystemClock.elapsedRealtime() + if (standby) STANDBY_INTERVAL_MS else INTERVAL_MS
         try {
             val exact = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || am.canScheduleExactAlarms()
             if (exact) {
@@ -79,6 +100,39 @@ object SyncHeartbeat {
         expectedAt = at
     }
 
+    /**
+     * Проверка была недавно (любым путём: плановая задача, сигнал сервера,
+     * приложение) — пульс без службы движок ради пустого прохода не поднимает.
+     * Отметку пишет Dart (BackgroundService, ключ bg_check_done_at) в
+     * SharedPreferences Flutter.
+     */
+    private const val RECENT_CHECK_MS = 10 * 60 * 1000L
+
+    private fun checkedRecently(context: Context): Boolean = try {
+        val p = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+        val last = p.getLong("flutter.bg_check_done_at", 0L)
+        val age = System.currentTimeMillis() - last
+        last > 0L && age in 0L until RECENT_CHECK_MS
+    } catch (e: Exception) {
+        false
+    }
+
+    /** Срочная задача проверки почты (без службы); одна на все пульсы. */
+    fun wakeCheck(context: Context) {
+        if (checkedRecently(context)) return
+        try {
+            val request = OneTimeWorkRequest.Builder(BackgroundWorker::class.java)
+                .setInputData(Data.Builder().putString(BackgroundWorker.DART_TASK_KEY, STANDBY_TASK).build())
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                request.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            }
+            WorkManager.getInstance(context)
+                .enqueueUniqueWork(STANDBY_WORK, ExistingWorkPolicy.KEEP, request.build())
+        } catch (e: Exception) {
+        }
+    }
+
     fun cancel(context: Context) {
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         expectedAt = 0L
@@ -91,9 +145,15 @@ object SyncHeartbeat {
 class SyncHeartbeatReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         val app = context.applicationContext
-        // Сервис остановлен (приложение закрыли, лимит Android 15) — пульс не
-        // нужен: дальше почту проверяет WorkManager.
-        if (!SyncForegroundService.running) return
+        // Службы нет, а будильник есть — значит, её остановило не приложение
+        // (явная остановка снимает будильник): лимит Android 15 или процесс
+        // выгружен. Дальше — пульс без службы: срочная задача проверки почты
+        // раз в 15 минут, и в глубоком сне (2.0.0).
+        if (!SyncForegroundService.running) {
+            SyncHeartbeat.schedule(app, standby = true)
+            SyncHeartbeat.wakeCheck(app)
+            return
+        }
         // Опоздание — до перестановки будильника (она сбрасывает ожидание).
         val args = mapOf<String, Any>("lateMs" to SyncHeartbeat.lateMs(), "exact" to SyncHeartbeat.lastExact)
         SyncHeartbeat.schedule(app) // следующий — сразу, до работы

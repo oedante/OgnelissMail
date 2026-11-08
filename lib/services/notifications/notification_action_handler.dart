@@ -65,6 +65,16 @@ class NotificationActionHandler {
     String? inputText,
   ) async {
     if (payload == null) return true;
+    // PIN приложения (2.0.0, план 08.11.2026): кнопки письма и приглашения
+    // при заданном PIN не действуют — ответ, удаление и «Принять» из шторки
+    // обходили бы блокировку. Уведомления, показанные до установки PIN, ещё
+    // с кнопками — их нажатие ничего не делает (и не откладывается).
+    try {
+      if (NotificationPinGuard.blocks(actionId, await SharedPreferences.getInstance())) {
+        AppLogger.info('Действие уведомления $actionId: задан PIN — не выполняется');
+        return true;
+      }
+    } catch (_) {}
 
     try {
       final data = jsonDecode(payload) as Map<String, dynamic>;
@@ -446,3 +456,28 @@ class NotificationActionHandler {
     return null;
   }
 }
+
+/// Кнопки уведомлений при заданном PIN приложения (2.0.0): действия с
+/// письмом и приглашением без входа в приложение не выполняются, а сами
+/// кнопки у таких уведомлений не показываются. Отложить напоминание и
+/// «Подключиться» (открывает приложение) остаются.
+class NotificationPinGuard {
+  NotificationPinGuard._();
+
+  /// Признак «PIN задан» (PinLockNotifier держит его вне хранилища ключей).
+  static const pinSetKey = 'app_pin_set';
+
+  static bool pinSet(SharedPreferences? prefs) => prefs?.getBool(pinSetKey) == true;
+
+  static bool _mailAction(String id) =>
+      id == 'quick_reply' ||
+      id.startsWith('smart_reply_') ||
+      id == 'mark_read' ||
+      id == 'delete' ||
+      id == 'archive' ||
+      id == 'flag' ||
+      id.startsWith('invite_');
+
+  static bool blocks(String actionId, SharedPreferences? prefs) => pinSet(prefs) && _mailAction(actionId);
+}
+

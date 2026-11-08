@@ -1109,9 +1109,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             _onBodyShown();
           },
           onLink: (url, text) => _onBodyLink(email, url, text),
+          onQuoteReply: (text) => _replyWithFragment(email, text),
         ),
         if (n.clipped) MailClippedBar(onShowWhole: _onShowWhole),
-        if (split.hasQuote) _quoteToggle(theme, l10n),
+        if (split.hasQuote) _quoteToggle(theme, l10n, tailOnly: split.tailOnly),
       ],
     );
   }
@@ -1247,7 +1248,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       children: [
         text,
         if (short != null) MailClippedBar(onShowWhole: _onShowWhole),
-        if (_plainSplit.hasQuote) _quoteToggle(theme, AppLocalizations.of(context)),
+        if (_plainSplit.hasQuote) _quoteToggle(theme, AppLocalizations.of(context), tailOnly: _plainSplit.tailOnly),
       ],
     );
   }
@@ -1491,13 +1492,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           onLink: (url, text) => _onBodyLink(email, url, text),
         ),
         if (doc.clipped) MailClippedBar(onShowWhole: _onShowWhole, busy: _showWhole),
-        if (split.hasQuote) _quoteToggle(theme, l10n),
+        if (split.hasQuote) _quoteToggle(theme, l10n, tailOnly: split.tailOnly),
       ],
     );
   }
 
-  /// Кнопка «Показать / скрыть переписку».
-  Widget _quoteToggle(ThemeData theme, AppLocalizations l10n) => Align(
+  /// Кнопка «Показать / скрыть переписку»; [tailOnly] — свёрнута только
+  /// подпись или юридическое уведомление (2.0.0).
+  Widget _quoteToggle(ThemeData theme, AppLocalizations l10n, {bool tailOnly = false}) => Align(
         alignment: Alignment.centerLeft,
         child: InkWell(
           borderRadius: BorderRadius.circular(6),
@@ -1516,7 +1518,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                     size: 16, color: theme.colorScheme.onSurfaceVariant),
                 const SizedBox(width: Space.xs),
                 Text(
-                  _showQuote ? l10n.tr('hideQuoted') : l10n.tr('showQuoted'),
+                  tailOnly
+                      ? l10n.tr(_showQuote ? 'hideSignatureTail' : 'showSignatureTail')
+                      : (_showQuote ? l10n.tr('hideQuoted') : l10n.tr('showQuoted')),
                   style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               ],
@@ -2726,12 +2730,25 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           draftId: q['draftId'],
           accountId: q['accountId'],
           replyAll: q['replyAll'] == 'true',
+          quoteFragment: q['fragment'],
           quickText: q['quick'],
         ),
       ));
       return;
     }
     context.push(Uri(path: '/compose', queryParameters: q).toString());
+  }
+
+  /// «Ответить с цитатой» из меню выделенного текста письма (2.0.0): ответ
+  /// отправителю, в цитате — только выделенное.
+  void _replyWithFragment(EmailModel email, String text) {
+    final t = text.trim();
+    if (t.isEmpty) return;
+    _compose({
+      'replyToId': email.id,
+      'accountId': email.accountId,
+      'fragment': t.length > 4000 ? t.substring(0, 4000) : t,
+    });
   }
 
   /// «Удалить» под письмом (1.7.3): по умолчанию — с вопросом (письма

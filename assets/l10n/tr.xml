@@ -3942,4 +3942,8 @@
     <string name="faq_mail_14_a">Okuma bölmesi sağa ya da alta yerleştirilebilir veya gizlenebilir: Ayarlar → Görünüm → Okuma bölmesi ya da listenin üstündeki ⋮ menüsü. Birden çok ileti Outlook\'taki gibi seçilir: Ctrl + tıklama (Mac ve iPad\'de Cmd) — tek tek, Shift — art arda, Ctrl+A — yüklenenlerin tümü, Esc — seçimi kaldır, Delete — seçilenleri sil. Ek doğrudan okuma bölmesinde açılır, Geri ise iletiye döndürür.</string>
     <string name="faq_mail_15_q">İletiler açıldığında hemen nasıl çevrilir?</string>
     <string name="faq_mail_15_a">Çeviri simgesinin yanındaki ▾ düğmesine dokunun ve … dilinden her zaman çevir seçeneğini seçin — o dildeki iletiler artık çevrilmiş olarak açılır; aslı aynı simgeyle görüntülenir. Dil listesi: Ayarlar → E-posta → Çeviri → Şu dillerden her zaman çevir. Çeviri yalnızca iletinin dili kesin olarak belirlendiğinde önerilir ve telefon dilleri için önerilmez (aynı yerden kapatılabilir: Telefon dilleri: çeviri önerme).</string>
+    <string name="convReplyTo">Yanıt: {name}</string>
+    <string name="showSignatureTail">İmzayı ve bildirimi göster</string>
+    <string name="hideSignatureTail">İmzayı ve bildirimi gizle</string>
+    <string name="replyWithQuote">Alıntıyla yanıtla</string>
 </resources>

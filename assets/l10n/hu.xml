@@ -3942,4 +3942,8 @@
     <string name="faq_mail_14_a">Az olvasóablak jobbra vagy alulra helyezhető, vagy elrejthető: Beállítások → Megjelenés → Olvasóablak, vagy a lista feletti ⋮ menü. Több üzenet úgy jelölhető ki, mint az Outlookban: Ctrl + kattintás (Macen és iPaden Cmd) – egyenként, Shift – egy tartomány, Ctrl+A – az összes betöltött, Esc – kijelölés megszüntetése, Delete – a kijelöltek törlése. A melléklet közvetlenül az olvasóablakban nyílik meg, a Vissza pedig visszavisz az üzenethez.</string>
     <string name="faq_mail_15_q">Hogyan fordíthatók le az üzenetek rögtön megnyitáskor?</string>
     <string name="faq_mail_15_a">Koppintson a fordítás ikonja melletti ▾ jelre, és válassza a „Mindig fordítson erről: …” lehetőséget – az ezen a nyelven írt üzenetek ezután eleve lefordítva nyílnak meg, az eredetit ugyanez az ikon mutatja meg. A nyelvek listája: Beállítások → Levelezés → Fordítás → Mindig fordítson ezekből. Az alkalmazás csak akkor ajánl fordítást, ha az üzenet nyelve biztosan felismerhető, a telefon nyelveinél pedig nem (ez ugyanott kikapcsolható: A telefon nyelvei – ne ajánljon fordítást).</string>
+    <string name="convReplyTo">Válasz neki: {name}</string>
+    <string name="showSignatureTail">Aláírás és nyilatkozat megjelenítése</string>
+    <string name="hideSignatureTail">Aláírás és nyilatkozat elrejtése</string>
+    <string name="replyWithQuote">Válasz idézettel</string>
 </resources>

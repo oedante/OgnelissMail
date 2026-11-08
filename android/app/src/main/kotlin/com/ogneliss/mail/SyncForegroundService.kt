@@ -70,22 +70,31 @@ class SyncForegroundService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    // Android 15+: сервис типа dataSync может работать не больше 6 часов в
-    // сутки. По истечении система вызывает onTimeout, и сервис обязан
-    // остановиться за несколько секунд — иначе приложение аварийно завершится.
-    // Дальше почту проверяет плановая фоновая задача (WorkManager).
+    // Лимит времени службы. До 2.0.0 тип был dataSync: на Android 15+ — не
+    // больше 6 часов в сутки, по истечении система вызывает onTimeout, и
+    // служба обязана остановиться за несколько секунд (иначе приложение
+    // аварийно завершится). У specialUse (с 2.0.0) лимита нет; обработчик
+    // оставлен на случай, если тип придётся вернуть (отказ Google Play).
+    // Пульс после этого НЕ снимается — он продолжает будить проверку почты
+    // срочной задачей WorkManager (SyncHeartbeatReceiver, режим без службы);
+    // раньше служба и пульс останавливались до следующего открытия
+    // приложения, а плановую задачу Android в глубоком сне откладывает.
     override fun onTimeout(startId: Int, fgsType: Int) {
         running = false
-        SyncHeartbeat.cancel(applicationContext)
+        keepHeartbeat = true
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
     override fun onDestroy() {
         running = false
-        SyncHeartbeat.cancel(applicationContext)
+        if (!keepHeartbeat) SyncHeartbeat.cancel(applicationContext)
+        keepHeartbeat = false
         super.onDestroy()
     }
+
+    /** Остановка по лимиту Android 15: пульс остаётся (см. [onTimeout]). */
+    private var keepHeartbeat = false
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // Android 15+ (замечание Google Play 14.10.2026): службу типа dataSync
@@ -102,7 +111,9 @@ class SyncForegroundService : Service() {
         val notification = buildNotification()
         try {
             if (Build.VERSION.SDK_INT >= 34) {
-                startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+                // 2.0.0: specialUse вместо dataSync — без лимита 6 часов в
+                // сутки (Android 15+); декларация — в Play Console.
+                startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
             } else {
                 startForeground(NOTIF_ID, notification)
             }

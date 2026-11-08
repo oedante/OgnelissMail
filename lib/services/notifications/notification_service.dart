@@ -11,6 +11,7 @@ import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/logging/app_logger.dart';
+import 'notification_action_handler.dart' show NotificationPinGuard;
 import '../../l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/settings/providers/quiet_hours_provider.dart';
@@ -288,7 +289,12 @@ class NotificationService {
       'subject': subject,
       'smartReplies': smartReplyBodies,
     });
-    final actions = isInvite
+    // PIN приложения (2.0.0): без кнопок — нажатие открывает приложение, и
+    // оно спрашивает PIN (NotificationPinGuard).
+    final pinLocked = NotificationPinGuard.pinSet(_prefs);
+    final actions = pinLocked
+        ? <AndroidNotificationAction>[]
+        : isInvite
         ? <AndroidNotificationAction>[
             AndroidNotificationAction('invite_accept', _t('accept')),
             AndroidNotificationAction('invite_tentative', _t('meetingTentative')),
@@ -302,7 +308,7 @@ class NotificationService {
       AndroidNotificationAction('quick_reply', _t('ntfReply'),
           inputs: [AndroidNotificationActionInput(label: _t('ntfReplyInput'))]),
     ];
-    if (!isInvite) {
+    if (!isInvite && !pinLocked) {
       for (var i = 0; i < smartReplyLabels.length && i < 2; i++) {
         actions.add(AndroidNotificationAction('smart_reply_$i', smartReplyLabels[i]));
       }

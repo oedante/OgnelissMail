@@ -3942,4 +3942,8 @@
     <string name="faq_mail_14_a">Läsfönstret kan placeras till höger, nederst eller döljas: Inställningar → Utseende → Läsfönster eller menyn ⋮ ovanför listan. Flera meddelanden markeras som i Outlook: Ctrl + klick (på Mac och iPad Cmd) – ett i taget, Shift – ett intervall, Ctrl+A – alla inlästa, Esc – avmarkera, Delete – ta bort de markerade. En bilaga öppnas direkt i läsfönstret, och Tillbaka går tillbaka till meddelandet.</string>
     <string name="faq_mail_15_q">Hur översätter jag meddelanden direkt när de öppnas?</string>
     <string name="faq_mail_15_a">Tryck på ▾ vid översättningsikonen och välj Översätt alltid från … – meddelanden på det språket öppnas sedan redan översatta; originalet visas med samma ikon. Listan över språk: Inställningar → E-post → Översättning → Översätt alltid från. Översättning erbjuds bara när meddelandets språk har identifierats säkert, och inte för telefonens språk (stängs av på samma ställe: Telefonens språk – erbjud inte översättning).</string>
+    <string name="convReplyTo">Svar till {name}</string>
+    <string name="showSignatureTail">Visa signatur och meddelande</string>
+    <string name="hideSignatureTail">Dölj signatur och meddelande</string>
+    <string name="replyWithQuote">Svara med citat</string>
 </resources>

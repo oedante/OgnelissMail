@@ -3942,4 +3942,8 @@
     <string name="faq_mail_14_a">Læseruden kan placeres til højre, nederst eller skjules: Indstillinger → Udseende → Læserude eller menuen ⋮ over listen. Flere mails vælges som i Outlook: Ctrl + klik (på Mac og iPad Cmd) – én ad gangen, Shift – et område, Ctrl+A – alle indlæste, Esc – fjern markeringen, Delete – slet de valgte. En vedhæftet fil åbnes direkte i læseruden, og Tilbage fører tilbage til mailen.</string>
     <string name="faq_mail_15_q">Hvordan får jeg mails oversat, så snart de åbnes?</string>
     <string name="faq_mail_15_a">Tryk på ▾ ved oversættelsesikonet, og vælg Oversæt altid fra … – mails på det sprog åbnes så allerede oversat; originalen vises med samme ikon. Listen over sprog: Indstillinger → Mail → Oversættelse → Oversæt altid fra. Oversættelse tilbydes kun, når mailens sprog er genkendt med sikkerhed, og ikke for telefonens sprog (slås fra samme sted: Telefonens sprog – tilbyd ikke oversættelse).</string>
+    <string name="convReplyTo">Svar til {name}</string>
+    <string name="showSignatureTail">Vis signatur og meddelelse</string>
+    <string name="hideSignatureTail">Skjul signatur og meddelelse</string>
+    <string name="replyWithQuote">Svar med citat</string>
 </resources>

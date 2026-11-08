@@ -7,9 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../../services/security/bimi/bimi_rules.dart';
 import '../../services/security/bimi/bimi_service.dart';
 import 'person_photo.dart' show PhotoRing;
+
+/// Домены серверов ящиков пользователя: логотипу верим, только если
+/// Authentication-Results поставил один из них (2.0.0).
+final bimiOwnServersProvider = Provider<Set<String>>((ref) => ownMailServerDomains([
+      for (final a in ref.watch(accountsProvider))
+        (email: a.email, hosts: [a.imapServer, a.ewsUrl, a.exchangeServer, a.smtpServer]),
+    ]));
 
 class BimiAvatar extends ConsumerWidget {
   const BimiAvatar({
@@ -34,11 +42,11 @@ class BimiAvatar extends ConsumerWidget {
   // запоминается (адрес и заголовок у письма не меняются).
   static final _domains = <String, String?>{};
 
-  static String? _domainFor(String email, String? authResults) {
+  static String? _domainFor(String email, String? authResults, Set<String> own) {
     if (authResults == null || authResults.isEmpty) return null;
-    final key = '$email\n$authResults';
+    final key = '$email\n$authResults\n${own.length}';
     if (_domains.containsKey(key)) return _domains[key];
-    final d = bimiDmarcDomain(authResults, email);
+    final d = bimiDmarcDomain(authResults, email, ownServers: own);
     _domains[key] = d;
     if (d != null) BimiStats.eligible(d);
     if (_domains.length > 500) _domains.remove(_domains.keys.first);
@@ -48,7 +56,7 @@ class BimiAvatar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (!BimiResolver.configured) return fallback;
-    final domain = _domainFor(email, authResults);
+    final domain = _domainFor(email, authResults, ref.watch(bimiOwnServersProvider));
     if (domain == null) return fallback;
     final svg = ref.watch(bimiLogoProvider(domain)).value;
     if (svg == null) return fallback;

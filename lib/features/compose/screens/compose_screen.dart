@@ -140,6 +140,10 @@ class ComposeScreen extends ConsumerStatefulWidget {
   final String? draftId;
   final String? accountId;
   final bool replyAll;
+
+  /// Ответ на фрагмент (2.0.0, план 08.11.2026, «из мессенджеров»): в ответ
+  /// цитируется только выделенный в письме текст, а не всё письмо.
+  final String? quoteFragment;
   final String? sharedBody;
   /// Быстрый ответ: текст между приветствием и подписью (вместо пустой
   /// средней строки), курсор — после него.
@@ -161,6 +165,7 @@ class ComposeScreen extends ConsumerStatefulWidget {
     super.key,
     this.replyToId,
     this.forwardFromId,
+    this.quoteFragment,
     this.draftId,
     this.accountId,
     this.replyAll = false,
@@ -1170,9 +1175,13 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       // Цитата — только после очистки по белому списку (письма ActiveSync и
       // IMAP хранятся без очистки). Стили оригинала сохраняются: без них
       // вёрстка Outlook (таблицы, отступы) у получателя разваливается.
-      final quotedBody = row.bodyHtml != null
-          ? await MailBodyProcessor.heavy(row.bodyHtml!, HtmlSanitizer.sanitizeKeepingStyles)
-          : (row.bodyPlain != null ? '<pre>${_esc(row.bodyPlain!)}</pre>' : '');
+      final fragment = widget.forwardFromId == null ? widget.quoteFragment?.trim() : null;
+      final quotedBody = fragment != null && fragment.isNotEmpty
+          // Только выделенное: абзацы и переносы строк — как в письме.
+          ? ReplyBuilder.fragmentBody(fragment)
+          : row.bodyHtml != null
+              ? await MailBodyProcessor.heavy(row.bodyHtml!, HtmlSanitizer.sanitizeKeepingStyles)
+              : (row.bodyPlain != null ? '<pre>${_esc(row.bodyPlain!)}</pre>' : '');
       if (!mounted) return;
       final quote = ReplyBuilder.quote(header, quotedBody);
       _quoteHeader = header;

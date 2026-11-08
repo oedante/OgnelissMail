@@ -3942,4 +3942,8 @@
     <string name="faq_mail_14_a">Il riquadro di lettura si mette a destra, in basso o si nasconde: Impostazioni → Aspetto → Riquadro di lettura, oppure il menu ⋮ sopra l\'elenco. Più messaggi si selezionano come in Outlook: Ctrl + clic (Cmd su Mac e iPad) — uno alla volta, Shift — un intervallo, Ctrl+A — tutti quelli caricati, Esc — annulla la selezione, Delete — elimina i selezionati. Un allegato si apre direttamente nel riquadro di lettura, e Indietro riporta al messaggio.</string>
     <string name="faq_mail_15_q">Come faccio a tradurre i messaggi appena li apro?</string>
     <string name="faq_mail_15_a">Tocca ▾ accanto all\'icona di traduzione e scegli Traduci sempre da … — i messaggi in quella lingua si apriranno già tradotti; l\'originale si mostra con la stessa icona. Elenco delle lingue: Impostazioni → Posta → Traduzione → Traduci sempre da. La traduzione viene proposta solo quando la lingua del messaggio è riconosciuta con sicurezza, e non per le lingue del telefono (si disattiva nello stesso punto: Lingue del telefono: non proporre la traduzione).</string>
+    <string name="convReplyTo">Risposta a {name}</string>
+    <string name="showSignatureTail">Mostra firma e avviso</string>
+    <string name="hideSignatureTail">Nascondi firma e avviso</string>
+    <string name="replyWithQuote">Rispondi con citazione</string>
 </resources>

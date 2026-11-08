@@ -78,6 +78,49 @@ const _mainPortName = 'ogneliss_main_tasks_v1';
 /// Прежняя отметка «приложение работает само» (до 1.6.43) — только убрать.
 const _legacyAliveKey = 'bg_main_alive_at';
 
+/// Одна фоновая проверка за раз на устройстве (2.0.0, требование владельца
+/// 08.11.2026: «сигналы не должны мешать друг другу, накладываться»). Без
+/// приложения в процессе плановая задача, сигнал сервера и пульс без службы
+/// (Android) или «Обновление» и «Обработка» (iOS) могли проверять почту
+/// одновременно — каждая в своём движке, и служебные шаги (напоминания,
+/// очередь виджета) шли параллельно. Аренда в той же таблице, что аренды
+/// ящиков: вставка-с-условием атомарна между изолятами (отметка в
+/// настройках, как раньше на iOS, — нет: две задачи могли прочитать её
+/// пустой одновременно). Вторая задача сразу выходит — проверку уже делает
+/// первая.
+const bgCheckLeaseKey = '__bg_check__';
+
+/// Владелец аренды фоновой проверки — этот изолят (номер процесса — как у
+/// аренды ящиков: аренду мёртвого процесса забирают сразу).
+final String _bgCheckOwner = () {
+  var proc = '';
+  try {
+    proc = 'p$pid:';
+  } catch (_) {}
+  return '${proc}bg_${DateTime.now().microsecondsSinceEpoch}_${identityHashCode(Object())}';
+}();
+
+/// Когда закончилась последняя фоновая проверка (любым источником). Её читает
+/// и пульс без службы на Android (SyncHeartbeat.kt): свежая — движок ради
+/// пустого прохода не поднимается.
+const bgCheckDoneKey = 'bg_check_done_at';
+
+/// Взять аренду фоновой проверки на [ttl]; false — идёт другая.
+@visibleForTesting
+Future<bool> acquireBackgroundCheck(AppDatabase db, Duration ttl, {String? owner}) =>
+    db.tryAcquireSyncLease(bgCheckLeaseKey, owner ?? _bgCheckOwner, ttl);
+
+@visibleForTesting
+Future<void> releaseBackgroundCheck(AppDatabase db, {String? owner}) =>
+    db.releaseSyncLease(bgCheckLeaseKey, owner ?? _bgCheckOwner);
+
+Future<void> _markBackgroundCheckDone() async {
+  try {
+    final p = await SharedPreferences.getInstance();
+    await p.setInt(bgCheckDoneKey, DateTime.now().millisecondsSinceEpoch);
+  } catch (_) {}
+}
+
 /// Лимит фоновой задачи: WorkManager обрывает работу через ~10 мин; iOS даёт
 /// «Обновлению контента» ~30 с, «Обработке» — минуты. Сигнал сервера на
 /// Android — 3 минуты: срочную задачу (высокий приоритет FCM) система
@@ -231,8 +274,16 @@ void callbackDispatcher() {
     if (!kIsWeb && Platform.isIOS) {
       return _runIosTask(taskName, wokeAt);
     }
+    var busy = false;
     try {
       await BackgroundJournal.track(_taskKind(taskName), () => runInBackgroundContainer((container) async {
+        // Одна фоновая проверка за раз: другая задача уже проверяет — выход.
+        final db = container.read(databaseProvider);
+        if (!await acquireBackgroundCheck(db, _taskLimit(taskName) + const Duration(minutes: 1))) {
+          busy = true;
+          return;
+        }
+        try {
         // Лимит задачи WorkManager ~10 мин — держим синк заведомо короче
         // (сигнал сервера — 3 мин, _taskLimit).
         await container
@@ -263,7 +314,18 @@ void callbackDispatcher() {
         } catch (e) {
           AppLogger.warning('BG виджет почты: $e');
         }
+        } finally {
+          try {
+            await releaseBackgroundCheck(db);
+          } catch (_) {}
+        }
       }), withState: false);
+      if (busy) {
+        await BackgroundJournal.note(_taskKind(taskName), 'пропуск: уже идёт другая фоновая проверка');
+        AppLogger.flushNow();
+        return true;
+      }
+      await _markBackgroundCheckDone();
       notifyMainDbChanged(_taskKind(taskName));
       return true;
     } catch (e, stack) {
@@ -308,10 +370,20 @@ Future<bool> _runIosTask(String taskName, DateTime wokeAt) async {
   // Лимит — от пробуждения: запуск движка задачи и попытка передать
   // проверку приложению уже заняли часть времени iOS.
   final limit = _leftOf(_taskLimit(taskName), wokeAt);
+  var busy = false;
   try {
     await BackgroundJournal.track(kind, () async {
       try {
         await runInBackgroundContainer((container) async {
+          // Отметка в настройках выше — быстрый отсев без подъёма базы; она
+          // не атомарна (две задачи могли прочитать её пустой разом), а
+          // аренда в базе — да (2.0.0, общая с Android).
+          final db = container.read(databaseProvider);
+          if (!await acquireBackgroundCheck(db, limit + const Duration(minutes: 1))) {
+            busy = true;
+            return;
+          }
+          try {
           final sync = container.read(syncServiceProvider);
           // 1. «Входящие» всех ящиков — первыми.
           await sync.quickInboxSync();
@@ -334,12 +406,22 @@ Future<bool> _runIosTask(String taskName, DateTime wokeAt) async {
           } catch (e) {
             AppLogger.warning('BG виджет почты: $e');
           }
+          } finally {
+            try {
+              await releaseBackgroundCheck(db);
+            } catch (_) {}
+          }
         }).timeout(limit);
       } on TimeoutException {
         // Не ошибка: что не успели — в следующее пробуждение.
         AppLogger.info('$kind: время вышло — остальное в следующий раз');
       }
     }, withState: false, describe: (_) => 'от пробуждения ${DateTime.now().difference(wokeAt).inSeconds} с');
+    if (busy) {
+      await BackgroundJournal.note(kind, 'пропуск: уже идёт другая фоновая проверка');
+      return true;
+    }
+    await _markBackgroundCheckDone();
     notifyMainDbChanged(kind);
     return true;
   } catch (e) {
@@ -670,6 +752,9 @@ class BackgroundService {
       // Строки журнала — на диск: после задачи система снова усыпит процесс.
       AppLogger.flushNow();
     }
+    // Отметка «проверка была» — и когда её сделало приложение по просьбе
+    // фоновой задачи (её читает пульс без службы, SyncHeartbeat.kt).
+    await _markBackgroundCheckDone();
     final s = DateTime.now().difference(started).inMilliseconds / 1000;
     return 'за ${s.toStringAsFixed(1)} с';
   }
@@ -894,7 +979,10 @@ class BackgroundService {
           frequency: Duration(minutes: periodMinutes),
           constraints: Constraints(
             networkType: settings.syncOnlyWifi ? NetworkType.unmetered : NetworkType.connected,
-            requiresBatteryNotLow: true,
+            // Без условия «заряд не низкий» (2.0.0, решение владельца
+            // 08.11.2026): при заряде ниже ~15% плановой проверки не было
+            // вовсе, и письма не приходили. Проверка лёгкая, а в режиме
+            // энергосбережения Android её и так ограничивает.
           ),
           existingWorkPolicy: ExistingPeriodicWorkPolicy.update,
         );

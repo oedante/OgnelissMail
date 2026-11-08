@@ -1608,6 +1608,11 @@ class ImapService {
   /// Аккаунты, о включении NOTIFY у которых уже написано в журнал.
   final Set<String> _notifyLogged = {};
 
+  /// Push ящика следит и за остальными папками (сервер принял NOTIFY), а не
+  /// только за «Входящими» (2.0.0: от этого зависит интервал плановой
+  /// проверки остальных папок, SyncService).
+  bool notifyCovers(String accountId) => _notifyLogged.contains(accountId) && !_notifyOff.contains(accountId);
+
   /// Push для папки: поток отдаёт событие с числом писем в папке при
   /// EXISTS, [ImapPushEvent.expunged] при EXPUNGE и
   /// [ImapPushEvent.reconnected] после переподключения (письма, пришедшие

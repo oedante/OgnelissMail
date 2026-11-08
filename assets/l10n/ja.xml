@@ -3921,4 +3921,8 @@
     <string name="faq_mail_14_a">閲覧ウィンドウは右か下に配置するか、非表示にできます：設定 → 外観 → 閲覧ウィンドウ、またはリスト上部の ⋮ メニュー。複数のメールは Outlook と同じように選択できます：Ctrl + クリック（Mac と iPad では Cmd）で 1 通ずつ、Shift で連続した範囲、Ctrl+A で読み込み済みのすべて、Esc で選択解除、Delete で選択したメールを削除。添付ファイルは閲覧ウィンドウ内で直接開き、「戻る」でメールに戻ります。</string>
     <string name="faq_mail_15_q">メールを開いたときにすぐ翻訳するには？</string>
     <string name="faq_mail_15_a">翻訳アイコンの横の ▾ をタップし、「…は常に翻訳する」を選ぶと、その言語のメールは最初から翻訳された状態で開きます。原文は同じアイコンで表示できます。言語の一覧：設定 → メール → 翻訳 → 常に翻訳する言語。翻訳が提案されるのは、メールの言語を確実に判別できた場合だけで、スマートフォンの言語では提案されません（同じ場所の「スマートフォンの言語は翻訳を提案しない」でオフにできます）。</string>
+    <string name="convReplyTo">{name} への返信</string>
+    <string name="showSignatureTail">署名と注意書きを表示</string>
+    <string name="hideSignatureTail">署名と注意書きを隠す</string>
+    <string name="replyWithQuote">引用して返信</string>
 </resources>

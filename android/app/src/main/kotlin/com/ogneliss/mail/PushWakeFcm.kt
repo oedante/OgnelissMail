@@ -189,9 +189,15 @@ object PushWakeFcm {
         val request = OneTimeWorkRequest.Builder(BackgroundWorker::class.java)
             .setInputData(Data.Builder().putString(BackgroundWorker.DART_TASK_KEY, TASK).build())
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
-        // До Android 12 срочная задача идёт через службу переднего плана, а
-        // фоновый обработчик плагина её не поддерживает — там обычная.
-        if (high && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        // Срочная задача (2.0.0): на любой сигнал, не только высокого
+        // приоритета FCM. Обычную разовую задачу Android откладывает по
+        // «корзине» приложения (у редко открываемого — на часы), и сигнал
+        // сервера UnifiedPush или FCM обычного приоритета, уже дошедший до
+        // телефона, ждал ещё. Срочная идёт сразу, пока хватает квоты; квота
+        // кончилась — выполнится как обычная. До Android 12 срочная задача
+        // идёт через службу переднего плана, а фоновый обработчик плагина её
+        // не поддерживает — там обычная. [high] — только для журнала.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             request.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
         }
         // KEEP: проверка уже ждёт или идёт — второй не нужно.

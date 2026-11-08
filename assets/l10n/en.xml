@@ -3942,4 +3942,8 @@
     <string name="faq_mail_14_a">The reading pane can be on the right, at the bottom or hidden: Settings → Appearance → Reading pane, or the ⋮ menu above the message list. Select several messages as in Outlook: Ctrl-click (Cmd on Mac and iPad) for one at a time, Shift for a range, Ctrl+A for all loaded messages, Esc to clear the selection, Delete to delete the selected ones. An attachment opens right in the reading pane, and Back returns to the message.</string>
     <string name="faq_mail_15_q">How do I translate messages as soon as they open?</string>
     <string name="faq_mail_15_a">Tap ▾ next to the translation icon and choose Always translate from … — messages in that language will open already translated; the same icon shows the original. The list of languages: Settings → Mail → Translation → Always translate from. Translation is offered only when the message’s language is detected with confidence, and not for your phone’s languages (you can turn this off in the same place: Phone languages — don’t offer translation).</string>
+    <string name="convReplyTo">Reply to {name}</string>
+    <string name="showSignatureTail">Show signature and notice</string>
+    <string name="hideSignatureTail">Hide signature and notice</string>
+    <string name="replyWithQuote">Reply with quote</string>
 </resources>

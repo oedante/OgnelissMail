@@ -100,8 +100,26 @@ object SyncHeartbeat {
         expectedAt = at
     }
 
+    /**
+     * Проверка была недавно (любым путём: плановая задача, сигнал сервера,
+     * приложение) — пульс без службы движок ради пустого прохода не поднимает.
+     * Отметку пишет Dart (BackgroundService, ключ bg_check_done_at) в
+     * SharedPreferences Flutter.
+     */
+    private const val RECENT_CHECK_MS = 10 * 60 * 1000L
+
+    private fun checkedRecently(context: Context): Boolean = try {
+        val p = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+        val last = p.getLong("flutter.bg_check_done_at", 0L)
+        val age = System.currentTimeMillis() - last
+        last > 0L && age in 0L until RECENT_CHECK_MS
+    } catch (e: Exception) {
+        false
+    }
+
     /** Срочная задача проверки почты (без службы); одна на все пульсы. */
     fun wakeCheck(context: Context) {
+        if (checkedRecently(context)) return
         try {
             val request = OneTimeWorkRequest.Builder(BackgroundWorker::class.java)
                 .setInputData(Data.Builder().putString(BackgroundWorker.DART_TASK_KEY, STANDBY_TASK).build())

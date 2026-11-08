@@ -3942,4 +3942,5 @@
     <string name="faq_mail_14_a">Het leesvenster zet je rechts of onder, of je verbergt het: Instellingen → Weergave → Leesvenster of het menu ⋮ boven de lijst. Meerdere berichten selecteer je zoals in Outlook: Ctrl + klik (op Mac en iPad Cmd) — één voor één, Shift — een reeks, Ctrl+A — alle geladen berichten, Esc — selectie opheffen, Delete — geselecteerde verwijderen. Een bijlage opent direct in het leesvenster en Terug brengt je terug naar het bericht.</string>
     <string name="faq_mail_15_q">Hoe laat ik berichten meteen bij het openen vertalen?</string>
     <string name="faq_mail_15_a">Tik op ▾ bij het vertaalpictogram en kies Altijd vertalen uit het … — berichten in die taal openen dan meteen vertaald; het origineel toon je met hetzelfde pictogram. Lijst met talen: Instellingen → E-mail → Vertaling → Altijd vertalen uit. Vertaling wordt alleen aangeboden als de taal van het bericht met zekerheid is herkend, en niet voor de talen van de telefoon (uit te zetten op dezelfde plek: Talen van de telefoon: geen vertaling aanbieden).</string>
+    <string name="convReplyTo">Antwoord aan {name}</string>
 </resources>

@@ -3963,4 +3963,5 @@
     <string name="faq_mail_14_a">Panoul de citire se pune în dreapta, jos sau se ascunde: Setări → Aspect → Panou de citire sau meniul ⋮ de deasupra listei. Mai multe mesaje se selectează ca în Outlook: Ctrl + clic (pe Mac și iPad, Cmd) — câte unul, Shift — un interval, Ctrl+A — toate cele încărcate, Esc — anulează selecția, Delete — șterge mesajele selectate. Un atașament se deschide direct în panoul de citire, iar Înapoi te duce înapoi la mesaj.</string>
     <string name="faq_mail_15_q">Cum traduc mesajele imediat ce le deschid?</string>
     <string name="faq_mail_15_a">Atinge ▾ de lângă pictograma de traducere și alege Tradu întotdeauna din … — mesajele în limba respectivă se vor deschide deja traduse; originalul îl vezi cu aceeași pictogramă. Lista limbilor: Setări → E-mail → Traducere → Tradu întotdeauna din. Traducerea este oferită doar când limba mesajului e detectată cu siguranță și nu e oferită pentru limbile telefonului (se dezactivează tot acolo: Limbile telefonului – nu oferi traducere).</string>
+    <string name="convReplyTo">Răspuns către {name}</string>
 </resources>

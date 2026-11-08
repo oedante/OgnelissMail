@@ -3921,4 +3921,5 @@
     <string name="faq_mail_14_a">阅读窗格可以放在右侧或底部，也可以隐藏：设置 → 外观 → 阅读窗格，或列表上方的 ⋮ 菜单。可以像在 Outlook 中一样选择多封邮件：Ctrl + 点击（在 Mac 和 iPad 上为 Cmd）逐封选择，Shift 连续选择，Ctrl+A 选择所有已加载的邮件，Esc 取消选择，Delete 删除所选邮件。附件直接在阅读窗格中打开，“返回”可回到邮件。</string>
     <string name="faq_mail_15_q">如何在打开邮件时立即翻译？</string>
     <string name="faq_mail_15_a">点按翻译图标旁的 ▾，选择“始终翻译…”——该语言的邮件打开时即显示译文，点按同一图标可查看原文。语言列表：设置 → 邮件 → 翻译 → 始终翻译以下语言。只有在能确定识别邮件语言时才会提示翻译，且不会为手机语言提示翻译（可在同一处关闭：“手机语言不提示翻译”）。</string>
+    <string name="convReplyTo">回复 {name}</string>
 </resources>

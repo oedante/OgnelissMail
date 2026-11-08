@@ -3942,4 +3942,5 @@
     <string name="faq_mail_14_a">El panel de lectura se coloca a la derecha, abajo o se oculta: Ajustes → Apariencia → Panel de lectura, o el menú ⋮ sobre la lista. Varios mensajes se seleccionan como en Outlook: Ctrl + clic (Cmd en Mac y iPad) — de uno en uno, Shift — un rango seguido, Ctrl+A — todos los cargados, Esc — quitar la selección, Delete — eliminar los seleccionados. Un adjunto se abre directamente en el panel de lectura, y Atrás vuelve al mensaje.</string>
     <string name="faq_mail_15_q">¿Cómo traduzco los mensajes nada más abrirlos?</string>
     <string name="faq_mail_15_a">Toca ▾ junto al icono de traducción y elige Traducir siempre del … — los mensajes en ese idioma se abrirán ya traducidos; el original se muestra con el mismo icono. Lista de idiomas: Ajustes → Correo → Traducción → Traducir siempre del. La traducción solo se ofrece cuando el idioma del mensaje se detecta con seguridad, y no se ofrece para los idiomas del teléfono (se desactiva en el mismo sitio: Idiomas del teléfono: no ofrecer traducción).</string>
+    <string name="convReplyTo">Respuesta a {name}</string>
 </resources>

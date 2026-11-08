@@ -3984,4 +3984,5 @@
     <string name="faq_mail_14_a">Okienko odczytu można ustawić po prawej, na dole albo ukryć: Ustawienia → Wygląd → Okienko odczytu lub menu ⋮ nad listą. Wiele wiadomości zaznacza się jak w Outlooku: Ctrl + kliknięcie (na Macu i iPadzie Cmd) — pojedynczo, Shift — zakres, Ctrl+A — wszystkie wczytane, Esc — anuluj zaznaczenie, Delete — usuń zaznaczone. Załącznik otwiera się bezpośrednio w okienku odczytu, a Wstecz wraca do wiadomości.</string>
     <string name="faq_mail_15_q">Jak tłumaczyć wiadomości od razu po otwarciu?</string>
     <string name="faq_mail_15_a">Dotknij ▾ przy ikonie tłumaczenia i wybierz Zawsze tłumacz z języka … — wiadomości w tym języku będą się otwierać już przetłumaczone; oryginał pokaże ta sama ikona. Lista języków: Ustawienia → Poczta → Tłumaczenie → Zawsze tłumacz z języków. Tłumaczenie jest proponowane tylko wtedy, gdy język wiadomości został rozpoznany z pewnością, i nie dla języków telefonu (wyłącza się to w tym samym miejscu: Języki telefonu — nie proponuj tłumaczenia).</string>
+    <string name="convReplyTo">Odpowiedź do {name}</string>
 </resources>

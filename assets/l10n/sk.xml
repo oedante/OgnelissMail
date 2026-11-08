@@ -3963,4 +3963,5 @@
     <string name="faq_mail_14_a">Tablu na čítanie možno umiestniť vpravo, dole alebo skryť: Nastavenia → Vzhľad → Tabla na čítanie alebo ponuka ⋮ nad zoznamom. Viac správ sa vyberá ako v Outlooku: Ctrl + kliknutie (na Macu a iPade Cmd) — po jednej, Shift — rozsah, Ctrl+A — všetky načítané, Esc — zrušiť výber, Delete — odstrániť vybrané. Príloha sa otvorí priamo v table na čítanie a Späť vráti k správe.</string>
     <string name="faq_mail_15_q">Ako nechať správy preložiť hneď pri otvorení?</string>
     <string name="faq_mail_15_a">Ťuknite na ▾ pri ikone prekladu a vyberte Vždy prekladať z jazyka … — správy v tomto jazyku sa potom budú otvárať rovno preložené, originál zobrazíte tou istou ikonou. Zoznam jazykov: Nastavenia → Pošta → Preklad → Vždy prekladať z jazykov. Preklad sa ponúka, len keď je jazyk správy rozpoznaný s istotou, a neponúka sa pre jazyky telefónu (vypína sa na tom istom mieste: Jazyky telefónu – neponúkať preklad).</string>
+    <string name="convReplyTo">Odpoveď pre {name}</string>
 </resources>

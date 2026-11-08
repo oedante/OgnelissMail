@@ -3921,4 +3921,5 @@
     <string name="faq_mail_14_a">Panel baca bisa diletakkan di kanan, di bawah, atau disembunyikan: Pengaturan → Tampilan → Panel baca atau menu ⋮ di atas daftar. Beberapa email dipilih seperti di Outlook: Ctrl + klik (di Mac dan iPad, Cmd) — satu per satu, Shift — berurutan, Ctrl+A — semua yang dimuat, Esc — batalkan pilihan, Delete — hapus yang dipilih. Lampiran terbuka langsung di panel baca, dan Kembali membawa Anda kembali ke email.</string>
     <string name="faq_mail_15_q">Bagaimana cara menerjemahkan email langsung saat dibuka?</string>
     <string name="faq_mail_15_a">Ketuk ▾ di samping ikon terjemahan lalu pilih Selalu terjemahkan dari … — email dalam bahasa itu akan langsung terbuka dalam terjemahan; teks aslinya ditampilkan dengan ikon yang sama. Daftar bahasa: Pengaturan → Email → Terjemahan → Selalu terjemahkan dari. Terjemahan hanya ditawarkan jika bahasa email terdeteksi dengan yakin, dan tidak ditawarkan untuk bahasa ponsel (bisa dimatikan di tempat yang sama: Bahasa ponsel — jangan tawarkan terjemahan).</string>
+    <string name="convReplyTo">Balas ke {name}</string>
 </resources>

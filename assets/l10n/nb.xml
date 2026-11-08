@@ -3942,4 +3942,5 @@
     <string name="faq_mail_14_a">Leseruten kan plasseres til høyre, nederst eller skjules: Innstillinger → Utseende → Leserute eller menyen ⋮ over listen. Flere meldinger velges som i Outlook: Ctrl + klikk (på Mac og iPad Cmd) – én om gangen, Shift – et område, Ctrl+A – alle innlastede, Esc – fjern markeringen, Delete – slett de valgte. Et vedlegg åpnes rett i leseruten, og Tilbake går tilbake til meldingen.</string>
     <string name="faq_mail_15_q">Hvordan får jeg meldinger oversatt med en gang de åpnes?</string>
     <string name="faq_mail_15_a">Trykk på ▾ ved oversettelsesikonet og velg Oversett alltid fra … – meldinger på det språket åpnes da ferdig oversatt; originalen vises med samme ikon. Listen over språk: Innstillinger → E-post → Oversettelse → Oversett alltid fra. Oversettelse tilbys bare når språket i meldingen er gjenkjent med sikkerhet, og ikke for telefonens språk (slås av samme sted: Telefonens språk – ikke tilby oversettelse).</string>
+    <string name="convReplyTo">Svar til {name}</string>
 </resources>

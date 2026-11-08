@@ -3942,4 +3942,5 @@
     <string name="faq_mail_14_a">O painel de leitura pode ficar à direita, abaixo ou oculto: Configurações → Aparência → Painel de leitura, ou o menu ⋮ acima da lista. Várias mensagens são selecionadas como no Outlook: Ctrl + clique (no Mac e no iPad, Cmd) — uma por uma, Shift — um intervalo, Ctrl+A — todas as carregadas, Esc — limpar a seleção, Delete — excluir as selecionadas. Um anexo abre direto no painel de leitura, e Voltar retorna à mensagem.</string>
     <string name="faq_mail_15_q">Como traduzir as mensagens assim que são abertas?</string>
     <string name="faq_mail_15_a">Toque em ▾ ao lado do ícone de tradução e escolha Traduzir sempre de … — as mensagens nesse idioma passarão a abrir já traduzidas; o original aparece pelo mesmo ícone. Lista de idiomas: Configurações → E-mail → Tradução → Traduzir sempre de. A tradução só é oferecida quando o idioma da mensagem é detectado com segurança, e não é oferecida para os idiomas do telefone (dá para desativar no mesmo lugar: Idiomas do telefone: não oferecer tradução).</string>
+    <string name="convReplyTo">Resposta para {name}</string>
 </resources>

@@ -8,6 +8,8 @@
 #   scripts/build_macos.sh --archive           архив для Mac App Store (Intel + Apple Silicon)
 #                                              и открыть его в Xcode (Organizer → Distribute App)
 #   scripts/build_macos.sh --upload            архив и сразу выгрузка в App Store Connect (TestFlight)
+#   scripts/build_macos.sh --team ABCDE12345   запомнить команду разработчика (та же, что у iPhone)
+#   scripts/build_macos.sh --keep-lock         не обновлять версии пакетов (flutter pub get)
 #
 # Сборка универсальная: одно приложение для Mac с Intel и с Apple Silicon (M1
 # и новее); скрипт проверяет это (lipo) после архива.
@@ -25,6 +27,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 MODE=build
+KEEP_LOCK=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --setup) MODE=setup ;;
@@ -32,6 +35,7 @@ while [[ $# -gt 0 ]]; do
     --archive) MODE=archive ;;
     --upload) MODE=upload ;;
     --team) TEAM_ID="$2"; shift ;;
+    --keep-lock) KEEP_LOCK=1 ;;
     *) echo "Неизвестный параметр: $1"; exit 2 ;;
   esac
   shift
@@ -111,8 +115,15 @@ prepare() {
   [[ -d macos ]] || setup
   # Шаги — с выводом и понятной ошибкой: 09.11.2026 pod install с выводом в
   # /dev/null падал молча, и скрипт заканчивался сразу после build_runner.
-  echo "▶ Пакеты (flutter pub get)…"
-  flutter pub get || { echo "✗ flutter pub get не прошёл — ошибка выше."; exit 1; }
+  # Пакеты — те же версии, что в сборке на GitHub (как build_ios.sh): у
+  # pubspec.lock на Mac были свои, старые версии (09.11.2026).
+  if [[ "$KEEP_LOCK" == 1 ]]; then
+    echo "▶ Пакеты (flutter pub get, свои версии)…"
+    flutter pub get || { echo "✗ flutter pub get не прошёл — ошибка выше."; exit 1; }
+  else
+    echo "▶ Пакеты (flutter pub upgrade — как в сборке на GitHub)…"
+    flutter pub upgrade || { echo "✗ flutter pub upgrade не прошёл — ошибка выше."; exit 1; }
+  fi
   # Код базы — всегда заново, под установленную версию drift (см. build_ios.sh).
   # «W These options have been removed … --delete-conflicting-outputs» —
   # предупреждение нового build_runner, не ошибка (старые без ключа спрашивают).
@@ -149,8 +160,32 @@ team_id() {
   sed -n 's/^DEVELOPMENT_TEAM *= *//p' "$HOME/.ogneliss/ios_signing.xcconfig" 2>/dev/null | head -1 || true
 }
 
+# Команда разработчика — в macos/Runner/Configs/AppInfo.xcconfig (настройки
+# только цели Runner, как делает Xcode при выборе Team). Без неё сборка
+# падала: «"Runner" has entitlements that require signing with a development
+# certificate» — песочница и связка ключей требуют подписи командой
+# (09.11.2026). --team запоминается вне проекта, как у build_ios.sh.
+signing() {
+  local team keep="$HOME/.ogneliss/ios_signing.xcconfig" cfg=macos/Runner/Configs/AppInfo.xcconfig
+  if [[ -n "${TEAM_ID:-}" && ! -f "$keep" ]]; then
+    mkdir -p "$(dirname "$keep")"
+    printf 'DEVELOPMENT_TEAM = %s\nCODE_SIGN_STYLE = Automatic\n' "$TEAM_ID" > "$keep"
+  fi
+  team=$(team_id)
+  if [[ -z "$team" ]]; then
+    echo "✗ Команда разработчика не задана: scripts/build_macos.sh --team ABCDE12345 --upload"
+    echo "  (Team ID: developer.apple.com → Account → Membership details) или Team в Xcode."
+    exit 1
+  fi
+  [[ -f "$cfg" ]] || { echo "✗ Нет $cfg — сначала scripts/build_macos.sh --setup"; exit 1; }
+  sed -i '' -E '/^\/\/ Ogneliss: подпись/d;/^DEVELOPMENT_TEAM *=/d;/^CODE_SIGN_STYLE *=/d;/^CODE_SIGN_IDENTITY *=/d' "$cfg"
+  printf '// Ogneliss: подпись (scripts/build_macos.sh)\nDEVELOPMENT_TEAM = %s\nCODE_SIGN_STYLE = Automatic\nCODE_SIGN_IDENTITY = Apple Development\n' "$team" >> "$cfg"
+  echo "Подпись: команда $team"
+}
+
 archive_mac() {
   prepare
+  signing
   if [[ -n "${KEYCHAIN_PASSWORD:-}" ]]; then
     security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$HOME/Library/Keychains/login.keychain-db"
   fi
@@ -158,8 +193,10 @@ archive_mac() {
   if command -v rustup >/dev/null 2>&1; then
     rustup target add aarch64-apple-darwin x86_64-apple-darwin >/dev/null || true
   fi
-  # Версия, номер сборки и dart-define попадают в настройки Xcode (Flutter/ephemeral).
-  flutter build macos --release ${DEFINES[@]+"${DEFINES[@]}"}
+  # Версия, номер сборки и dart-define — в настройки Xcode (Flutter/ephemeral).
+  # Собирает и подписывает xcodebuild ниже: у него -allowProvisioningUpdates,
+  # и профиль для песочницы и связки ключей он создаёт сам (как build_ios.sh).
+  flutter build macos --config-only --release ${DEFINES[@]+"${DEFINES[@]}"}
   local team
   team=$(team_id)
   [[ -n "$team" ]] || echo "⚠ Команда не задана: --team ABCDE12345 или Team в Xcode (Signing & Capabilities)."
@@ -224,9 +261,10 @@ case "$MODE" in
       exit 1
     fi
     ;;
-  run) prepare; flutter run -d macos ${DEFINES[@]+"${DEFINES[@]}"} ;;
+  run) prepare; signing; flutter run -d macos ${DEFINES[@]+"${DEFINES[@]}"} ;;
   build)
     prepare
+    signing
     flutter build macos --release ${DEFINES[@]+"${DEFINES[@]}"}
     echo "✓ Готово: build/macos/Build/Products/Release/"
     echo "  Для Mac App Store: open macos/Runner.xcworkspace → Product → Archive."

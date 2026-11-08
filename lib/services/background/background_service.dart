@@ -32,6 +32,7 @@ import '../../services/notifications/reminder_scheduler_service.dart' show remin
 import 'foreground_sync_controller.dart';
 import 'background_journal.dart';
 import '../../core/platform/platform_diagnostics.dart';
+import '../../core/platform/graphics_mode.dart';
 import '../../core/platform/finish_in_background.dart';
 import '../../services/mail/oauth/oauth_service.dart';
 import '../../features/mail/providers/mail_providers.dart';
@@ -451,6 +452,8 @@ class BackgroundService {
                 at: DateTime.fromMillisecondsSinceEpoch(e['ts'] as int));
           }
           await BackgroundJournal.note('запуск', 'приложение запущено');
+          // Чем рисуем и сколько памяти (08.11.2026, чёрный экран на Huawei).
+          await GraphicsMode.logStartup();
         } catch (e) {
           AppLogger.debug('Диагностика платформы: $e');
         }

@@ -32,6 +32,12 @@
   прокрутке.
 - По журналу владельца: «Коллеги из адресной книги» после фона; понятная
   строка для вложения письма, удалённого на сервере.
+- **Чёрный экран на Android** (журнал владельца 08.11.2026, HUAWEI
+  DEL-LX9): движок рисования Impeller на OpenGL ES падал при передаче
+  картинки в видеопамять. После такого падения приложение само рисует через
+  Skia; ручной выбор и перезапуск — «Настройки → Расширенные → Графика»;
+  картинки в письме и во вложениях декодируются под размер экрана; в
+  диагностике — движок и память. Подробно — `docs/guides/GRAPHICS.md`.
 
 Зависимости: новых пакетов нет. Внешние данные: MET Norway (CC BY 4.0,
 NLOD 2.0 — условия приняты владельцем 07.11.2026) и GeoNames (CC BY 4.0) —
@@ -39,7 +45,9 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 «Тексты лицензий»; `LICENSING.md`, раздел 2.
 
 Платформы: `project.pbxproj`, `Runner.entitlements`, `Info.plist` не
-менялись; в Xcode включать ничего не нужно.
+менялись; в Xcode включать ничего не нужно. Android: в манифесте свой класс
+приложения (`OgnelissApplication`) и прозрачное окно перезапуска
+(`RestartActivity`, отдельный процесс) — новых разрешений нет.
 
 ## App Store — iPhone и iPad (ru, en, de, fr)
 
@@ -86,6 +94,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Длинный свайп сразу выполняет первое действие
 • Складные телефоны: список и письмо по сгибу экрана
 • Меньше лишних сообщений об ошибках, лента плавнее
+• Исправлен чёрный экран на некоторых телефонах после просмотра вложений
 </ru-RU>
 <en-US>
 • My Day: flip clock and weather — via the Ogneliss server, without your data
@@ -94,6 +103,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • A long swipe runs the first action at once
 • Foldable phones: list and message split at the fold
 • Fewer needless error messages, smoother list
+• Fixed a black screen on some phones after viewing attachments
 </en-US>
 <de-DE>
 • „Mein Tag“: Klappuhr und Wetter – über den Ogneliss-Server, ohne Ihre Daten
@@ -102,6 +112,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Langes Wischen führt sofort die erste Aktion aus
 • Faltbare Telefone: Liste und Nachricht am Falz geteilt
 • Weniger unnötige Fehlermeldungen, flüssigere Liste
+• Schwarzer Bildschirm auf manchen Telefonen nach dem Ansehen von Anhängen behoben
 </de-DE>
 <fr-FR>
 • « Ma journée » : horloge à volets et météo – via le serveur Ogneliss, sans vos données
@@ -110,6 +121,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Un balayage long exécute aussitôt la première action
 • Téléphones pliables : liste et message de part et d’autre du pli
 • Moins de messages d’erreur inutiles, liste plus fluide
+• Correction de l’écran noir sur certains téléphones après l’affichage de pièces jointes
 </fr-FR>
 <ar>
 • «يومي»: ساعة قلّابة وطقس — عبر خادم Ogneliss دون بياناتك
@@ -118,6 +130,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • السحب الطويل ينفّذ الإجراء الأول فورًا
 • الهواتف القابلة للطي: القائمة والرسالة على جانبي الطي
 • رسائل خطأ أقل وقائمة أكثر سلاسة
+• إصلاح الشاشة السوداء على بعض الهواتف بعد عرض المرفقات
 </ar>
 <hu-HU>
 • „Napom”: lapozós óra és időjárás – az Ogneliss szerverén át, az ön adatai nélkül
@@ -126,6 +139,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • A hosszú húzás azonnal végrehajtja az első műveletet
 • Összehajtható telefonok: lista és levél a hajtás két oldalán
 • Kevesebb fölösleges hibaüzenet, gördülékenyebb lista
+• Javítva a fekete képernyő egyes telefonokon mellékletek megtekintése után
 </hu-HU>
 <vi>
 • “Ngày của tôi”: đồng hồ lật và thời tiết — qua máy chủ Ogneliss, không dùng dữ liệu của bạn
@@ -134,6 +148,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Vuốt dài để thực hiện ngay thao tác đầu tiên
 • Điện thoại gập: danh sách và thư chia theo nếp gập
 • Ít thông báo lỗi thừa hơn, danh sách mượt hơn
+• Sửa lỗi màn hình đen trên một số điện thoại sau khi xem tệp đính kèm
 </vi>
 <da-DK>
 • “Min dag”: vippeur og vejr – via Ogneliss-serveren, uden dine data
@@ -142,6 +157,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Et langt stryg udfører straks den første handling
 • Foldbare telefoner: liste og mail delt ved folden
 • Færre unødvendige fejlbeskeder, glattere liste
+• Rettet sort skærm på nogle telefoner efter visning af vedhæftninger
 </da-DK>
 <iw-IL>
 • ״היום שלי״: שעון מתהפך ומזג אוויר — דרך שרת Ogneliss, בלי הנתונים שלכם
@@ -150,6 +166,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • החלקה ארוכה מבצעת מיד את הפעולה הראשונה
 • טלפונים מתקפלים: רשימה והודעה משני צדי הקפל
 • פחות הודעות שגיאה מיותרות, רשימה חלקה יותר
+• תוקן מסך שחור בחלק מהטלפונים אחרי הצגת קבצים מצורפים
 </iw-IL>
 <id>
 • “Hari Saya”: jam balik dan cuaca — lewat server Ogneliss, tanpa data Anda
@@ -158,6 +175,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Usapan panjang langsung menjalankan tindakan pertama
 • Ponsel lipat: daftar dan email terbagi di lipatan
 • Lebih sedikit pesan galat yang tidak perlu, daftar lebih mulus
+• Memperbaiki layar hitam di sebagian ponsel setelah melihat lampiran
 </id>
 <es-ES>
 • «Mi día»: reloj de paletas y tiempo — a través del servidor de Ogneliss, sin sus datos
@@ -166,6 +184,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Un deslizamiento largo ejecuta al instante la primera acción
 • Plegables: lista y correo a cada lado del pliegue
 • Menos mensajes de error innecesarios, lista más fluida
+• Corregida la pantalla negra en algunos teléfonos tras ver adjuntos
 </es-ES>
 <it-IT>
 • «La mia giornata»: orologio a palette e meteo — tramite il server Ogneliss, senza i tuoi dati
@@ -174,6 +193,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Uno scorrimento lungo esegue subito la prima azione
 • Pieghevoli: elenco ed email ai due lati della piega
 • Meno messaggi di errore inutili, elenco più fluido
+• Risolto lo schermo nero su alcuni telefoni dopo la visualizzazione degli allegati
 </it-IT>
 <zh-CN>
 • “我的一天”：翻页时钟和天气——经由 Ogneliss 服务器，不使用您的数据
@@ -182,6 +202,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • 长滑立即执行第一个操作
 • 折叠屏手机：列表和邮件沿折痕分开
 • 更少多余的错误提示，列表更流畅
+• 修复部分手机查看附件后黑屏的问题
 </zh-CN>
 <ko-KR>
 • “나의 하루”: 플립 시계와 날씨 — Ogneliss 서버를 거쳐, 사용자 데이터 없이
@@ -190,6 +211,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • 길게 밀면 첫 번째 동작을 바로 실행
 • 폴더블 휴대폰: 접는 부분을 기준으로 목록과 메일 분할
 • 불필요한 오류 메시지 감소, 더 부드러운 목록
+• 일부 휴대폰에서 첨부 파일을 본 뒤 화면이 검게 되는 문제 수정
 </ko-KR>
 <nl-NL>
 • ‘Mijn dag’: klapklok en weer – via de Ogneliss-server, zonder uw gegevens
@@ -198,6 +220,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Lang vegen voert meteen de eerste actie uit
 • Vouwbare telefoons: lijst en mail aan weerszijden van de vouw
 • Minder onnodige foutmeldingen, soepelere lijst
+• Zwart scherm op sommige telefoons na het bekijken van bijlagen opgelost
 </nl-NL>
 <no-NO>
 • «Min dag»: vippeklokke og vær – via Ogneliss-serveren, uten dine data
@@ -206,6 +229,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Et langt sveip utfører straks den første handlingen
 • Sammenleggbare telefoner: liste og e-post delt ved bretten
 • Færre unødvendige feilmeldinger, jevnere liste
+• Rettet svart skjerm på noen telefoner etter visning av vedlegg
 </no-NO>
 <pl-PL>
 • „Mój dzień”: zegar z klapkami i pogoda — przez serwer Ogneliss, bez Twoich danych
@@ -214,6 +238,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Długie przesunięcie od razu wykonuje pierwszą akcję
 • Składane telefony: lista i wiadomość po obu stronach zgięcia
 • Mniej zbędnych komunikatów o błędach, płynniejsza lista
+• Naprawiono czarny ekran na niektórych telefonach po przeglądaniu załączników
 </pl-PL>
 <pt-BR>
 • “Meu dia”: relógio de palhetas e clima — pelo servidor Ogneliss, sem seus dados
@@ -222,6 +247,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Um deslize longo executa na hora a primeira ação
 • Celulares dobráveis: lista e e-mail divididos na dobra
 • Menos mensagens de erro desnecessárias, lista mais fluida
+• Corrigida a tela preta em alguns celulares após visualizar anexos
 </pt-BR>
 <ro>
 • „Ziua mea”: ceas cu palete și vremea — prin serverul Ogneliss, fără datele tale
@@ -230,6 +256,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • O glisare lungă execută imediat prima acțiune
 • Telefoane pliabile: listă și e-mail de o parte și de alta a pliului
 • Mai puține mesaje de eroare inutile, listă mai fluidă
+• Remediat ecranul negru pe unele telefoane după vizualizarea atașamentelor
 </ro>
 <sk>
 • „Môj deň“: preklápacie hodiny a počasie – cez server Ogneliss, bez vašich údajov
@@ -238,6 +265,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Dlhé potiahnutie hneď vykoná prvú akciu
 • Skladacie telefóny: zoznam a e-mail rozdelené pri ohybe
 • Menej zbytočných chybových hlásení, plynulejší zoznam
+• Opravená čierna obrazovka na niektorých telefónoch po zobrazení príloh
 </sk>
 <th>
 • “วันของฉัน”: นาฬิกาพลิกและสภาพอากาศ — ผ่านเซิร์ฟเวอร์ Ogneliss ไม่ใช้ข้อมูลของคุณ
@@ -246,6 +274,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • ปัดยาวเพื่อทำการกระทำแรกทันที
 • โทรศัพท์พับได้: รายการและอีเมลแบ่งตามรอยพับ
 • ข้อความข้อผิดพลาดที่ไม่จำเป็นน้อยลง รายการลื่นขึ้น
+• แก้ไขหน้าจอดำในโทรศัพท์บางรุ่นหลังดูไฟล์แนบ
 </th>
 <tr-TR>
 • “Günüm”: çevirmeli saat ve hava durumu — Ogneliss sunucusu üzerinden, verileriniz olmadan
@@ -254,6 +283,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Uzun kaydırma ilk işlemi hemen yapar
 • Katlanabilir telefonlar: liste ve ileti katın iki yanında
 • Daha az gereksiz hata mesajı, daha akıcı liste
+• Bazı telefonlarda ekleri görüntüledikten sonra oluşan siyah ekran düzeltildi
 </tr-TR>
 <fi-FI>
 • ”Oma päivä”: kääntölehtikello ja sää – Ogneliss-palvelimen kautta, ilman tietojasi
@@ -262,6 +292,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Pitkä pyyhkäisy suorittaa heti ensimmäisen toiminnon
 • Taitettavat puhelimet: lista ja viesti taitoksen eri puolilla
 • Vähemmän turhia virheilmoituksia, sujuvampi lista
+• Korjattu musta näyttö joillakin puhelimilla liitteiden katselun jälkeen
 </fi-FI>
 <hi-IN>
 • “मेरा दिन”: फ़्लिप घड़ी और मौसम — Ogneliss सर्वर से, आपके डेटा के बिना
@@ -270,6 +301,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • लंबा स्वाइप पहली कार्रवाई तुरंत करता है
 • फ़ोल्ड होने वाले फ़ोन: मोड़ पर सूची और मेल अलग
 • कम अनावश्यक त्रुटि संदेश, सूची अधिक सहज
+• कुछ फ़ोनों पर अटैचमेंट देखने के बाद काली स्क्रीन की समस्या ठीक की गई
 </hi-IN>
 <cs-CZ>
 • „Můj den“: překlápěcí hodiny a počasí – přes server Ogneliss, bez vašich dat
@@ -278,6 +310,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Dlouhé přejetí hned provede první akci
 • Skládací telefony: seznam a e-mail rozdělené v ohybu
 • Méně zbytečných chybových hlášení, plynulejší seznam
+• Opravena černá obrazovka na některých telefonech po zobrazení příloh
 </cs-CZ>
 <sv-SE>
 • ”Min dag”: vippklocka och väder – via Ogneliss-servern, utan dina data
@@ -286,6 +319,7 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • Ett långt svep utför direkt den första åtgärden
 • Vikbara telefoner: lista och mejl delade vid vecket
 • Färre onödiga felmeddelanden, smidigare lista
+• Åtgärdat svart skärm på vissa telefoner efter visning av bilagor
 </sv-SE>
 <ja-JP>
 • 「マイデイ」: パタパタ時計と天気 — Ogneliss サーバー経由、あなたのデータは使いません
@@ -294,5 +328,6 @@ NLOD 2.0 — условия приняты владельцем 07.11.2026) и G
 • 長くスワイプすると最初の操作をすぐに実行
 • 折りたたみスマホ: 折り目で一覧とメールを分割
 • 不要なエラー表示を減らし、一覧がよりなめらかに
+• 一部の端末で添付ファイルの表示後に画面が黒くなる問題を修正
 </ja-JP>
 ```

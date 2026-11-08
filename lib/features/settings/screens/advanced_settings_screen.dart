@@ -4,12 +4,13 @@
 // разнести по категориям»). Здесь то, что нужно редко: общий выключатель
 // синхронизации и расписание доставки, конфликты синхронизации, разрешения
 // и работа в фоне, проверка сертификатов, защита данных при отправке,
-// разделы приложения, журнал и сброс.
+// разделы приложения, графика (Android), журнал и сброс.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/platform/graphics_mode.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
@@ -24,6 +25,7 @@ import '../../../widgets/common/readable_width.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../providers/settings_provider.dart';
+import '../widgets/graphics_item.dart';
 import 'delivery_schedule_screen.dart' show scheduleDaysLabel, deliveryScheduleRevisionProvider;
 
 class AdvancedSettingsScreen extends ConsumerWidget {
@@ -122,6 +124,8 @@ class AdvancedSettingsScreen extends ConsumerWidget {
                 subtitle: l10n.tr('profileFeaturesDesc'),
                 onTap: () => context.push('/settings/profile'),
               ),
+              // Движок рисования (Android, 08.11.2026: чёрный экран на Huawei).
+              if (GraphicsMode.supported) const GraphicsItem(),
               SettingsItem(
                 icon: AppIcons.bug_report,
                 title: l10n.tr('logsTitle'),

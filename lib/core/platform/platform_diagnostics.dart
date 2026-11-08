@@ -267,6 +267,9 @@ class PlatformDiagnostics {
       AppLogger.info('Процесс был завершён ${at.toIso8601String().substring(0, 19)}: '
           '${exitReasonText('${e['reason']}')} [${e['reason']}, importance ${e['importance']}'
           '${e['pid'] != null ? ', pid ${e['pid']}' : ''}'
+          // Память процесса в момент завершения (08.11.2026, «не из-за нехватки
+          // ли памяти?»): PSS/RSS из записи системы, в мегабайтах.
+          '${_memMb(e['pss'], e['rss'])}'
           '${(e['process'] as String?)?.isNotEmpty == true ? ', ${e['process']}' : ''}'
           '${(e['description'] as String?)?.isNotEmpty == true ? ', ${e['description']}' : ''}]');
       // Падение в машинном коде (1.7.2+114): сигнал, причина и библиотеки
@@ -275,6 +278,13 @@ class PlatformDiagnostics {
       if (trace != null && trace.isNotEmpty) AppLogger.warning('Сбой в машинном коде: $trace');
     }
     return exits;
+  }
+
+  static String _memMb(Object? pss, Object? rss) {
+    final p = pss is num ? pss.toInt() : 0;
+    final r = rss is num ? rss.toInt() : 0;
+    if (p <= 0 && r <= 0) return '';
+    return ', память${p > 0 ? ' pss ${p ~/ 1024} МБ' : ''}${r > 0 ? ' rss ${r ~/ 1024} МБ' : ''}';
   }
 
   /// Открыть экран автозапуска/фоновой работы производителя (Android).

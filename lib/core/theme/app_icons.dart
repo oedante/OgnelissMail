@@ -100,6 +100,7 @@ abstract final class AppIcons {
   static const IconData delete_forever = Symbols.delete_forever_rounded;
   static const IconData delete_sweep = Symbols.delete_sweep_rounded;
   static const IconData description = Symbols.description_rounded;
+  static const IconData display_settings = Symbols.display_settings_rounded;
   static const IconData dns = Symbols.dns_rounded;
   static const IconData do_not_disturb_on = Symbols.do_not_disturb_on_rounded;
   static const IconData document_scanner = Symbols.document_scanner_rounded;

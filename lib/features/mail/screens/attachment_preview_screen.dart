@@ -57,6 +57,7 @@ import '../../../core/logging/app_logger.dart';
 import '../../../widgets/ui/banner_button.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/pane_navigator.dart';
+import '../../../widgets/common/photo_viewer.dart' show limitDecode;
 import '../../../services/mail/pkpass_parser.dart';
 import '../../../services/mail/eml_reader.dart';
 import '../../../services/mail/msg_reader.dart';
@@ -726,8 +727,11 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
           child: Center(
             child: RotatedBox(
               quarterTurns: _imageTurns[i] ?? 0,
-              child: Image.file(
-                File(widget.items[i].filePath),
+              // Не больше 4096 точек по длинной стороне (limitDecode,
+              // 08.11.2026): фото с камеры 50–108 Мп иначе занимало сотни
+              // мегабайт видеопамяти.
+              child: Image(
+                image: limitDecode(FileImage(File(widget.items[i].filePath))),
                 errorBuilder: (_, e, __) =>
                     _fallback(i, ru, l10n.tr('fileDamaged')),
               ),

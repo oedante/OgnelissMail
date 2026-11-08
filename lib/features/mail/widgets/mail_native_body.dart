@@ -1364,6 +1364,19 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       return _contrast(c, page) < 3 ? (s.href != null && !date ? link : null) : c;
     }
 
+    // Картинки в тексте декодируются не больше ширины экрана в точках
+    // (08.11.2026, чёрный экран на Huawei — падение графики при передаче
+    // картинки в видеопамять): фото с камеры 4000×3000 в письме занимало
+    // ~64 МБ видеопамяти, в беседе с несколькими фото — сотни. На весь экран
+    // по нажатию — по-прежнему крупно (showImageViewer, до 4096 точек).
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    final screenPx = (MediaQuery.sizeOf(context).width * dpr).ceil();
+    int cacheW(double? w) {
+      if (w == null || w <= 0) return screenPx;
+      final px = (w * dpr).ceil();
+      return px < screenPx ? px : screenPx;
+    }
+
     // Нажатие на картинку (1.8.12): в ссылке — ссылка, иначе — картинка на
     // весь экран с увеличением («иногда они мелкие», замечание 30.10.2026).
     // Копировать, сохранить, поделиться — из просмотра (данные картинки).
@@ -1398,6 +1411,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
                 src,
                 width: w,
                 height: w == null ? h : null,
+                cacheWidth: cacheW(w),
                 fit: BoxFit.contain,
                 gaplessPlayback: true,
                 // Пока грузится — место по размерам из письма, чтобы текст
@@ -1418,7 +1432,11 @@ class _MailNativeBodyState extends State<MailNativeBody> {
           child: tappable(s, MemoryImage(b), ConstrainedBox(
             constraints: BoxConstraints(maxWidth: w ?? double.infinity),
             child: Image.memory(b,
-                width: w, height: w == null ? s.imageHeight : null, fit: BoxFit.contain, gaplessPlayback: true),
+                width: w,
+                height: w == null ? s.imageHeight : null,
+                cacheWidth: cacheW(w),
+                fit: BoxFit.contain,
+                gaplessPlayback: true),
           )),
         );
       }

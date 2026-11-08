@@ -35,6 +35,15 @@ ImageProvider? fullPhotoImage(String? photo) {
   return null;
 }
 
+/// Не декодировать картинку больше [maxSide] точек по длинной стороне
+/// (08.11.2026, чёрный экран на Huawei: падение графики при передаче
+/// картинки в видеопамять). Фото 50 Мп (8160×6120) в полном размере —
+/// ~200 МБ памяти видеокарты, 108 Мп — ~430 МБ; 4096 точек — до 64 МБ и всё
+/// ещё чётко при увеличении пальцами. Меньшие картинки — как есть.
+ImageProvider limitDecode(ImageProvider image, {int maxSide = 4096}) => image is ResizeImage
+    ? image
+    : ResizeImage(image, width: maxSide, height: maxSide, policy: ResizeImagePolicy.fit);
+
 Future<void> showPhotoViewer(BuildContext context, {required String photo, String? title}) {
   final image = fullPhotoImage(photo);
   if (image == null) return Future.value();
@@ -128,7 +137,7 @@ class _PhotoViewState extends State<_PhotoView> {
                     label: title,
                     child: RotatedBox(
                       quarterTurns: _turns,
-                      child: Image(image: image, fit: BoxFit.contain, gaplessPlayback: true),
+                      child: Image(image: limitDecode(image), fit: BoxFit.contain, gaplessPlayback: true),
                     ),
                   ),
                 ),

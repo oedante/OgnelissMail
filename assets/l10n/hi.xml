@@ -3961,4 +3961,6 @@
     <string name="findCount">{m} में से {n}</string>
     <string name="findPrev">पिछला</string>
     <string name="findNext">अगला</string>
+    <string name="convFind">बातचीत में खोजें</string>
+    <string name="convFindHint">बातचीत के संदेशों में टेक्स्ट</string>
 </resources>

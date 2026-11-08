@@ -3982,4 +3982,6 @@
     <string name="findCount">{n} מתוך {m}</string>
     <string name="findPrev">הקודם</string>
     <string name="findNext">הבא</string>
+    <string name="convFind">חיפוש בשיחה</string>
+    <string name="convFindHint">טקסט בהודעות השיחה</string>
 </resources>

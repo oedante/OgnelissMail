@@ -4003,4 +4003,6 @@
     <string name="findCount">{n} z {m}</string>
     <string name="findPrev">Poprzednie</string>
     <string name="findNext">Następne</string>
+    <string name="convFind">Znajdź w rozmowie</string>
+    <string name="convFindHint">Tekst w rozmowie</string>
 </resources>

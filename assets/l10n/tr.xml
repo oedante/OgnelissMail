@@ -3961,4 +3961,6 @@
     <string name="findCount">{n}/{m}</string>
     <string name="findPrev">Önceki</string>
     <string name="findNext">Sonraki</string>
+    <string name="convFind">Konuşmada bul</string>
+    <string name="convFindHint">Konuşmadaki metin</string>
 </resources>

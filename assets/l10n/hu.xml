@@ -3961,4 +3961,6 @@
     <string name="findCount">{n}/{m}</string>
     <string name="findPrev">Előző</string>
     <string name="findNext">Következő</string>
+    <string name="convFind">Keresés a beszélgetésben</string>
+    <string name="convFindHint">Szöveg a beszélgetés üzeneteiben</string>
 </resources>

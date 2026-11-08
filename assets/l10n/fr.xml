@@ -3961,4 +3961,6 @@
     <string name="findCount">{n} sur {m}</string>
     <string name="findPrev">Précédent</string>
     <string name="findNext">Suivant</string>
+    <string name="convFind">Rechercher dans la conversation</string>
+    <string name="convFindHint">Texte de la conversation</string>
 </resources>

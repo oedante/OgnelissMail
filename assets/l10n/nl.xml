@@ -3961,4 +3961,6 @@
     <string name="findCount">{n} van {m}</string>
     <string name="findPrev">Vorige</string>
     <string name="findNext">Volgende</string>
+    <string name="convFind">Zoeken in gesprek</string>
+    <string name="convFindHint">Tekst in het gesprek</string>
 </resources>

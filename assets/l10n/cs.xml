@@ -3982,4 +3982,6 @@
     <string name="findCount">{n} z {m}</string>
     <string name="findPrev">Předchozí</string>
     <string name="findNext">Další</string>
+    <string name="convFind">Najít v konverzaci</string>
+    <string name="convFindHint">Text ve zprávách konverzace</string>
 </resources>

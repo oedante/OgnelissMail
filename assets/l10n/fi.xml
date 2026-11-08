@@ -3961,4 +3961,6 @@
     <string name="findCount">{n}/{m}</string>
     <string name="findPrev">Edellinen</string>
     <string name="findNext">Seuraava</string>
+    <string name="convFind">Etsi keskustelusta</string>
+    <string name="convFindHint">Teksti keskustelun viesteissä</string>
 </resources>

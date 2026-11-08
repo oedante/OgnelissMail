@@ -3940,4 +3940,6 @@
     <string name="findCount">第 {n} 个，共 {m} 个</string>
     <string name="findPrev">上一个</string>
     <string name="findNext">下一个</string>
+    <string name="convFind">在对话中查找</string>
+    <string name="convFindHint">对话中的文字</string>
 </resources>

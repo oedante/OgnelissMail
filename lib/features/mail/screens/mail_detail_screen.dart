@@ -153,6 +153,9 @@ class MailDetailScreen extends ConsumerStatefulWidget {
   /// страницы.
   final bool active;
 
+  /// Поиск по беседе (2.2.0): письмо открывается с этим поиском.
+  final String? findQuery;
+
   const MailDetailScreen({
     super.key,
     required this.emailId,
@@ -162,6 +165,7 @@ class MailDetailScreen extends ConsumerStatefulWidget {
     this.onPrev,
     this.onNext,
     this.active = true,
+    this.findQuery,
   });
 
   @override
@@ -188,11 +192,12 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       MailTranslationController(ref)..addListener(() => safeSetState(() {}));
   bool _isLoadingBody = false;
   bool _readReceiptHandled = false;
-  bool _showQuote = false;
+  late bool _showQuote = (widget.findQuery ?? '').trim().isNotEmpty;
 
-  /// Поиск в письме (2.2.0, план 08.11.2026): строка под заголовком.
+  /// Поиск в письме (2.2.0, план 08.11.2026): строка под заголовком;
+  /// из поиска по беседе — сразу открыта, с тем же запросом.
   final MailFindController _find = MailFindController();
-  bool _findOpen = false;
+  late bool _findOpen = (widget.findQuery ?? '').trim().isNotEmpty;
 
   /// Открыть поиск: письмо — целиком и с перепиской, чтобы искалось всё.
   void _openFind() {
@@ -1227,7 +1232,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   // Огромные рассылки, цепочки с цитатами, журналы показываются началом
   // (пороги — MailClip), под ним — «Показать письмо целиком». Ответ,
   // пересылка, печать и PDF берут письмо целиком: обрезается только показ.
-  bool _showWhole = false;
+  late bool _showWhole = (widget.findQuery ?? '').trim().isNotEmpty;
 
   void _onShowWhole() => safeSetState(() => _showWhole = true);
 
@@ -1679,7 +1684,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           ],
         ],
         // Поиск в письме (2.2.0) — строкой под заголовком.
-        bottom: _findOpen ? MailFindBar(controller: _find, onClose: _closeFind) : null,
+        bottom: _findOpen ? MailFindBar(controller: _find, onClose: _closeFind, initial: widget.findQuery) : null,
       )),
       backgroundColor: mailPageColor(theme),
       // Ответ — кнопками нижней панели. Плавающая кнопка быстрого ответа

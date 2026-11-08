@@ -174,7 +174,10 @@ class MailFindBar extends StatefulWidget implements PreferredSizeWidget {
   final MailFindController controller;
   final VoidCallback onClose;
   final String? initial;
-  const MailFindBar({super.key, required this.controller, required this.onClose, this.initial});
+
+  /// Подсказка в пустом поле; null — «Текст в письме».
+  final String? hint;
+  const MailFindBar({super.key, required this.controller, required this.onClose, this.initial, this.hint});
 
   @override
   Size get preferredSize => const Size.fromHeight(height);
@@ -241,7 +244,7 @@ class _MailFindBarState extends State<MailFindBar> {
             },
             decoration: InputDecoration(
               isDense: true,
-              hintText: l10n.tr('findInMailHint'),
+              hintText: widget.hint ?? l10n.tr('findInMailHint'),
               prefixIcon: const Icon(AppIcons.search, size: Sizes.iconRow),
               border: InputBorder.none,
               enabledBorder: InputBorder.none,

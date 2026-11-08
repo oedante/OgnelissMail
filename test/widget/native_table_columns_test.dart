@@ -129,7 +129,7 @@ void main() {
     await _show(t, '<table border="1"><tr><td>а</td><td>б</td></tr><tr><td>в</td><td>г</td></tr></table>');
     final cells = t.widgetList<SpanCell>(find.byType(SpanCell)).toList();
     expect(cells, hasLength(4));
-    final none = BorderSide.none;
+    const none = BorderSide.none;
     final b0 = _border(cells[0])! as Border;
     expect(b0.top, isNot(none));
     expect(b0.left, isNot(none));

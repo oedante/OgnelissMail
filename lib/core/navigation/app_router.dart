@@ -156,6 +156,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                         conversationId: state.pathParameters['convId']!,
                         emailId: state.pathParameters['emailId']!,
                         accountId: state.uri.queryParameters['accountId'] ?? '',
+                        find: state.uri.queryParameters['find'],
                       ),
                     ),
                   ),
@@ -468,6 +469,8 @@ String conversationPath(String conversationId, {required String accountId}) =>
 
 /// Письмо беседы с листанием «i / N».
 String conversationMessagePath(String conversationId, String emailId,
-        {required String accountId}) =>
+        {required String accountId, String? find}) =>
     '/mail/conversation/${Uri.encodeComponent(conversationId)}/${Uri.encodeComponent(emailId)}'
-    '?accountId=${Uri.encodeQueryComponent(accountId)}';
+    '?accountId=${Uri.encodeQueryComponent(accountId)}'
+    // Поиск по беседе (2.2.0): письмо открывается с тем же поиском.
+    '${find == null || find.trim().isEmpty ? '' : '&find=${Uri.encodeQueryComponent(find.trim())}'}';

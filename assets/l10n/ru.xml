@@ -4003,4 +4003,6 @@
     <string name="findCount">{n} из {m}</string>
     <string name="findPrev">Предыдущее</string>
     <string name="findNext">Следующее</string>
+    <string name="convFind">Найти в беседе</string>
+    <string name="convFindHint">Текст в письмах беседы</string>
 </resources>

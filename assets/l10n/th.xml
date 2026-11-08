@@ -3940,4 +3940,6 @@
     <string name="findCount">{n} จาก {m}</string>
     <string name="findPrev">ก่อนหน้า</string>
     <string name="findNext">ถัดไป</string>
+    <string name="convFind">ค้นหาในการสนทนา</string>
+    <string name="convFindHint">ข้อความในการสนทนา</string>
 </resources>

@@ -4045,4 +4045,6 @@
     <string name="findCount">{n} من {m}</string>
     <string name="findPrev">السابق</string>
     <string name="findNext">التالي</string>
+    <string name="convFind">البحث في المحادثة</string>
+    <string name="convFindHint">نص في رسائل المحادثة</string>
 </resources>

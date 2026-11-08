@@ -3940,4 +3940,6 @@
     <string name="findCount">{n}/{m}</string>
     <string name="findPrev">前へ</string>
     <string name="findNext">次へ</string>
+    <string name="convFind">会話内を検索</string>
+    <string name="convFindHint">会話のメッセージ内のテキスト</string>
 </resources>

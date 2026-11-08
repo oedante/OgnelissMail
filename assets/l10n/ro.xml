@@ -3982,4 +3982,6 @@
     <string name="findCount">{n} din {m}</string>
     <string name="findPrev">Anteriorul</string>
     <string name="findNext">Următorul</string>
+    <string name="convFind">Caută în conversație</string>
+    <string name="convFindHint">Text din conversație</string>
 </resources>

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Сборка Ogneliss Mail для Mac (macOS 11+, Apple Silicon и Intel).
+# Сборка Ogneliss Mail для Mac (macOS 12+, Apple Silicon и Intel).
 #
 #   scripts/build_macos.sh --setup             один раз: создать папку macos/ и настроить её
 #                                              (песочница, сеть, связка ключей, схема входа OAuth)
@@ -97,9 +97,11 @@ setup() {
     grep -q '^PRODUCT_COPYRIGHT' "$cfg" && sed -i '' -E 's/^PRODUCT_COPYRIGHT = .*/PRODUCT_COPYRIGHT = © Ogneliss/' "$cfg"
   fi
 
-  echo "▶ Минимальная macOS — 11.0 (нужно редактору письма и уведомлениям)…"
-  [[ -f macos/Podfile ]] && sed -i '' -E "s/^#? *platform :osx, '[0-9.]+'/platform :osx, '11.0'/" macos/Podfile
-  sed -i '' -E 's/MACOSX_DEPLOYMENT_TARGET = [0-9.]+;/MACOSX_DEPLOYMENT_TARGET = 11.0;/g' macos/Runner.xcodeproj/project.pbxproj
+  # 12.0 — минимум Flutter 3.47 (его шаблоны и FlutterMacOS): с 11.0 pod install
+  # падал «required a higher minimum deployment target» (09.11.2026).
+  echo "▶ Минимальная macOS — 12.0 (минимум Flutter)…"
+  [[ -f macos/Podfile ]] && sed -i '' -E "s/^#? *platform :osx, '[0-9.]+'/platform :osx, '12.0'/" macos/Podfile
+  sed -i '' -E 's/MACOSX_DEPLOYMENT_TARGET = [0-9.]+;/MACOSX_DEPLOYMENT_TARGET = 12.0;/g' macos/Runner.xcodeproj/project.pbxproj
 
   echo "✓ macOS настроен. Команду разработчика выберите один раз в Xcode:"
   echo "  open macos/Runner.xcworkspace → Runner → Signing & Capabilities → Team."

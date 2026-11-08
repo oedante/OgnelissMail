@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/sv.xml — не править вручную. */
+"tasks_label" = "Uppgifter";
+"tasks_desc" = "Öppna uppgifter med bock och en knapp för ny uppgift";
+"mailpick_label" = "Mejl: valfri";
+"mailpick_desc" = "Olästa mejl från vald brevlåda eller valt filter";
+"mailpick_param" = "Visa";
 "open_app" = "Öppna Ogneliss Mail för att fylla i widgeten";
 "myday_label" = "Min dag";
 "myday_desc" = "Dagens möten och uppgifter, olästa och följda e-postmeddelanden";

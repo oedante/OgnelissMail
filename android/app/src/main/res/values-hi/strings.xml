@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/hi.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">अपठित</string>
+    <string name="widget_count_desc">अपठित ईमेल की संख्या; इनबॉक्स खोलने के लिए टैप करें</string>
+    <string name="widget_tasks_label">कार्य</string>
+    <string name="widget_tasks_desc">टिक के साथ खुले कार्य और नए कार्य का बटन</string>
+    <string name="widget_task_new">नया कार्य</string>
     <string name="device_admin_label">Ogneliss Mail: स्क्रीन लॉक</string>
     <string name="device_admin_description">आपके संगठन के Exchange सर्वर द्वारा आवश्यक स्क्रीन लॉक टाइमआउट लागू करता है। Ogneliss Mail आपके डिवाइस का डेटा मिटा नहीं सकता और आपका पासवर्ड नहीं बदल सकता।</string>
     <string name="bg_sync_title">Ogneliss Mail</string>
@@ -20,8 +25,6 @@
     <string name="widget_notes_label">नोट</string>
     <string name="widget_note_new">नया नोट</string>
     <string name="widget_notes_desc">आपके नवीनतम नोट और नया नोट बनाने का बटन</string>
-    <string name="widget_count_label">अपठित</string>
-    <string name="widget_count_desc">अपठित ईमेल की संख्या; इनबॉक्स खोलने के लिए टैप करें</string>
     <string name="widget_prev">पिछला</string>
     <string name="widget_next">अगला</string>
     <string name="widget_cal_day">दिन</string>

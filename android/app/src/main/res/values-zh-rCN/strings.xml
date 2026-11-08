@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/zh.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">未读</string>
+    <string name="widget_count_desc">未读邮件数；点按打开收件箱</string>
+    <string name="widget_tasks_label">任务</string>
+    <string name="widget_tasks_desc">带勾选的未完成任务和新建任务按钮</string>
+    <string name="widget_task_new">新建任务</string>
     <string name="device_admin_label">Ogneliss Mail：屏幕锁定</string>
     <string name="device_admin_description">应用你所在组织的 Exchange 服务器要求的屏幕锁定超时设置。Ogneliss Mail 无法清除你的设备数据，也无法更改你的密码。</string>
     <string name="bg_sync_title">Ogneliss Mail</string>
@@ -20,8 +25,6 @@
     <string name="widget_notes_label">笔记</string>
     <string name="widget_note_new">新建笔记</string>
     <string name="widget_notes_desc">最新笔记和新建笔记按钮</string>
-    <string name="widget_count_label">未读</string>
-    <string name="widget_count_desc">未读邮件数；点按打开收件箱</string>
     <string name="widget_prev">上一个</string>
     <string name="widget_next">下一个</string>
     <string name="widget_cal_day">日</string>

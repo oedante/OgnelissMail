@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/hi.xml — не править вручную. */
+"tasks_label" = "कार्य";
+"tasks_desc" = "टिक के साथ खुले कार्य और नए कार्य का बटन";
+"mailpick_label" = "मेल: चुनें";
+"mailpick_desc" = "आपके चुने मेलबॉक्स या फ़िल्टर के अपठित ईमेल";
+"mailpick_param" = "दिखाएँ";
 "open_app" = "विजेट भरने के लिए Ogneliss Mail खोलें";
 "myday_label" = "मेरा दिन";
 "myday_desc" = "आज की मीटिंग और कार्य, अपठित और ट्रैक किए गए ईमेल";

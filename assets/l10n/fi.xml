@@ -3167,6 +3167,17 @@
     <string name="graphicsAfterCrash">vian jälkeen {date}</string>
     <string name="graphicsRestartNeeded">Muutos tulee voimaan, kun sovellus käynnistetään uudelleen.</string>
     <string name="graphicsRestart">Käynnistä uudelleen</string>
+    <string name="android_widget_count_label">Lukemattomat</string>
+    <string name="android_widget_count_desc">Lukemattomien viestien määrä; avaa saapuneet napauttamalla</string>
+    <string name="android_widget_tasks_label">Tehtävät</string>
+    <string name="android_widget_tasks_desc">Avoimet tehtävät valintamerkillä ja painike uudelle tehtävälle</string>
+    <string name="android_widget_task_new">Uusi tehtävä</string>
+    <string name="ioswidget_tasks_label">Tehtävät</string>
+    <string name="ioswidget_tasks_desc">Avoimet tehtävät valintamerkillä ja painike uudelle tehtävälle</string>
+    <string name="ioswidget_mailpick_label">Posti: valinta</string>
+    <string name="ioswidget_mailpick_desc">Valitun postilaatikon tai suodattimen lukemattomat viestit</string>
+    <string name="ioswidget_mailpick_param">Näytä</string>
+    <string name="widgetTasksLocked">Tehtävät piilotettu: sovellus on suojattu PIN-koodilla</string>
     <string name="plaintextTitle">Yhdistetäänkö ilman salausta?</string>
     <string name="plaintextBody">Salasana ja viestit kulkevat selväkielisinä — kuka tahansa samassa verkossa voi lukea ne. Valitse vain organisaation sisäverkon palvelimelle, jos muuta vaihtoehtoa ei ole.</string>
     <string name="plaintextAction">Ilman salausta</string>

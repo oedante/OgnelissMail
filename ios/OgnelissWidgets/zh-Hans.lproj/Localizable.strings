@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/zh.xml — не править вручную. */
+"tasks_label" = "任务";
+"tasks_desc" = "带勾选的未完成任务和新建任务按钮";
+"mailpick_label" = "邮件：自选";
+"mailpick_desc" = "所选邮箱或筛选条件中的未读邮件";
+"mailpick_param" = "显示";
 "open_app" = "打开 Ogneliss Mail 以填充小组件";
 "myday_label" = "我的一天";
 "myday_desc" = "今天的会议和任务、未读邮件和跟踪邮件";

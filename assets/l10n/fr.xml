@@ -3167,6 +3167,17 @@
     <string name="graphicsAfterCrash">après la panne du {date}</string>
     <string name="graphicsRestartNeeded">La modification s’appliquera après le redémarrage de l’application.</string>
     <string name="graphicsRestart">Redémarrer</string>
+    <string name="android_widget_count_label">Non lus</string>
+    <string name="android_widget_count_desc">Nombre de messages non lus ; touchez pour ouvrir la boîte de réception</string>
+    <string name="android_widget_tasks_label">Tâches</string>
+    <string name="android_widget_tasks_desc">Tâches ouvertes avec case à cocher et bouton pour une nouvelle tâche</string>
+    <string name="android_widget_task_new">Nouvelle tâche</string>
+    <string name="ioswidget_tasks_label">Tâches</string>
+    <string name="ioswidget_tasks_desc">Tâches ouvertes avec case à cocher et bouton pour une nouvelle tâche</string>
+    <string name="ioswidget_mailpick_label">Courrier : au choix</string>
+    <string name="ioswidget_mailpick_desc">Messages non lus de la boîte ou du filtre choisi</string>
+    <string name="ioswidget_mailpick_param">Afficher</string>
+    <string name="widgetTasksLocked">Tâches masquées : l’application est protégée par un code PIN</string>
     <string name="plaintextTitle">Se connecter sans chiffrement ?</string>
     <string name="plaintextBody">Le mot de passe et les messages circuleront en clair : toute personne sur le même réseau pourra les lire. À choisir uniquement pour un serveur du réseau interne de l’organisation, sans autre option.</string>
     <string name="plaintextAction">Sans chiffrement</string>

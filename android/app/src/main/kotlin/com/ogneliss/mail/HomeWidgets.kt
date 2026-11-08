@@ -31,7 +31,7 @@ import java.util.Locale
 
 /*
  * Виджеты на рабочем столе: «Мой день», «Почта», «Непрочитанные» (1×1),
- * «Календарь», «Заметки».
+ * «Календарь», «Заметки», «Задачи».
  *
  * Данные готовит приложение (lib/services/home_widget_service.dart) и пишет
  * JSON в SharedPreferences Flutter (ключи flutter.widget_*): переведённые
@@ -425,6 +425,13 @@ class MyDayWidget : OgnelissWidget() {
 class MailWidget : OgnelissWidget() {
     companion object {
         private const val KEY = "flutter.widget_mail"
+        /** Данные по фильтру (HomeWidgetService.mailKeyFor в Dart). */
+        private const val VARIANT = "flutter.widget_mail_f_"
+        const val FILTER_PREFIX = "mail_filter_"
+
+        /** Ключ данных этого виджета, если у него свой фильтр. */
+        fun instanceKey(context: Context, id: Int): String? =
+            WidgetUi.state(context).getString(FILTER_PREFIX + id, null)?.let { VARIANT + it.replace(':', '_') }
         private const val PREFS = "FlutterSharedPreferences"
         /** Очередь «Прочитано»/«В архив» для Dart (lib/services/widget_mail_actions.dart). */
         private const val QUEUE = "flutter.widget_mail_queue"
@@ -450,21 +457,25 @@ class MailWidget : OgnelissWidget() {
         val queue = prefs.getString(QUEUE, null)?.let { runCatching { JSONArray(it) }.getOrNull() } ?: JSONArray()
         queue.put(JSONObject().put("op", op).put("id", mailId).put("acc", acc).put("at", System.currentTimeMillis()))
         val edit = prefs.edit().putString(QUEUE, queue.toString())
-        // Строка — сразу из виджета (до ответа сервера).
-        WidgetUi.json(context, KEY)?.let { json ->
-            val items = json.optJSONArray("items")
-            if (items != null) {
-                val left = JSONArray()
-                var removed = false
-                for (i in 0 until items.length()) {
-                    val it = items.optJSONObject(i) ?: continue
-                    if (it.optString("id") == mailId && it.optString("acc") == acc) removed = true else left.put(it)
-                }
-                if (removed) {
-                    json.put("items", left)
-                    val n = json.optString("count").toIntOrNull()
-                    if (n != null) json.put("count", if (n > 1) (n - 1).toString() else "")
-                    edit.putString(KEY, json.toString())
+        // Строка — сразу из виджета (до ответа сервера), во всех вариантах
+        // данных: у виджетов может быть свой фильтр.
+        val keys = listOf(KEY) + prefs.all.keys.filter { it.startsWith(VARIANT) }
+        for (key in keys) {
+            WidgetUi.json(context, key)?.let { json ->
+                val items = json.optJSONArray("items")
+                if (items != null) {
+                    val left = JSONArray()
+                    var removed = false
+                    for (i in 0 until items.length()) {
+                        val it = items.optJSONObject(i) ?: continue
+                        if (it.optString("id") == mailId && it.optString("acc") == acc) removed = true else left.put(it)
+                    }
+                    if (removed) {
+                        json.put("items", left)
+                        val n = json.optString("count").toIntOrNull()
+                        if (n != null) json.put("count", if (n > 1) (n - 1).toString() else "")
+                        edit.putString(key, json.toString())
+                    }
                 }
             }
         }
@@ -521,10 +532,19 @@ class MailWidget : OgnelissWidget() {
         WidgetUi.textColor(context, v, R.id.mail_sub, if (stale) R.color.widget_warn else R.color.widget_sub)
     }
 
+    /** Виджет убрали — его фильтр больше не нужен. */
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        val e = WidgetUi.state(context).edit()
+        for (id in appWidgetIds) e.remove(FILTER_PREFIX + id)
+        e.apply()
+    }
+
     override fun render(context: Context, manager: AppWidgetManager, id: Int): RemoteViews {
         val v = RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_mail))
         WidgetUi.background(context, v, R.id.mail_root, R.id.mail_list)
-        val json = WidgetUi.json(context, KEY)
+        // Свой фильтр у этого виджета (MailWidgetConfigActivity) — его
+        // данные; нет — как в настройках приложения (08.11.2026).
+        val json = instanceKey(context, id)?.let { WidgetUi.json(context, it) } ?: WidgetUi.json(context, KEY)
         json?.optString("title")?.takeIf { it.isNotEmpty() }?.let { v.setTextViewText(R.id.mail_title, it) }
         WidgetUi.text(v, R.id.mail_badge, json?.optString("count"))
         val footer = json?.optString("accounts").orEmpty()
@@ -1138,6 +1158,127 @@ class NotesWidget : OgnelissWidget() {
 }
 
 // ════════════════════════════════════════════════════════════════════════
+// «Задачи»
+// ════════════════════════════════════════════════════════════════════════
+
+/**
+ * «Задачи» (08.11.2026, план п. 8.4): открытые задачи всех ящиков —
+ * просроченные и с ближайшим сроком сверху. Галочка — «Выполнено» (та же
+ * очередь, что у «Моего дня»: Dart отмечает задачу TaskActionsService.setDone),
+ * строка — задача в приложении, «+» — окно «Создать» в режиме задачи.
+ */
+class TasksWidget : OgnelissWidget() {
+    companion object {
+        private const val KEY = "flutter.widget_tasks"
+        private const val MYDAY = "flutter.widget_myday"
+        private const val QUEUE = "flutter.widget_mail_queue"
+        private const val PREFS = "FlutterSharedPreferences"
+        private const val ACTION_TASK = "com.ogneliss.mail.TASKS_DONE"
+        fun refreshAll(context: Context) = TasksWidget().drawAll(context)
+    }
+
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != ACTION_TASK) {
+            super.onReceive(context, intent)
+            return
+        }
+        val taskId = intent.getStringExtra("id") ?: return
+        val acc = intent.getStringExtra("acc") ?: return
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val queue = prefs.getString(QUEUE, null)?.let { runCatching { JSONArray(it) }.getOrNull() } ?: JSONArray()
+        queue.put(JSONObject().put("op", "task").put("id", taskId).put("acc", acc).put("at", System.currentTimeMillis()))
+        val edit = prefs.edit().putString(QUEUE, queue.toString())
+        // Задача — сразу из обоих виджетов («Задачи» и «Мой день»).
+        for (key in listOf(KEY, MYDAY)) {
+            WidgetUi.json(context, key)?.let { json ->
+                val items = json.optJSONArray("items") ?: return@let
+                val left = JSONArray()
+                var removed = false
+                for (i in 0 until items.length()) {
+                    val it = items.optJSONObject(i) ?: continue
+                    if (it.optString("k") == "t" && it.optString("id") == taskId && it.optString("acc") == acc) removed = true
+                    else left.put(it)
+                }
+                if (removed) {
+                    json.put("items", left)
+                    if (key == KEY) {
+                        val n = json.optString("count").toIntOrNull()
+                        if (n != null) json.put("count", if (n > 1) (n - 1).toString() else "")
+                    }
+                    edit.putString(key, json.toString())
+                }
+            }
+        }
+        edit.commit()
+        runCatching { refreshAll(context.applicationContext) }
+        runCatching { MyDayWidget.refreshAll(context.applicationContext) }
+        val engine = FlutterEngineCache.getInstance().get(MainActivity.ENGINE_ID)
+        if (engine != null) {
+            runCatching { MethodChannel(engine.dartExecutor.binaryMessenger, "ogneliss/widget").invokeMethod("mailAction", null) }
+        } else {
+            runCatching { MainActivity.ensureEngine(context.applicationContext) }
+        }
+    }
+
+    private fun doneIntent(context: Context, item: JSONObject): PendingIntent {
+        val intent = Intent(context, TasksWidget::class.java).apply {
+            action = ACTION_TASK
+            data = android.net.Uri.parse("ogneliss-tasks://done/${item.optString("acc")}/${item.optString("id")}")
+            putExtra("id", item.optString("id"))
+            putExtra("acc", item.optString("acc"))
+        }
+        return PendingIntent.getBroadcast(context, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+    }
+
+    override fun render(context: Context, manager: AppWidgetManager, id: Int): RemoteViews {
+        val v = RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_tasks))
+        WidgetUi.background(context, v, R.id.tk_root, R.id.tk_list)
+        val json = WidgetUi.json(context, KEY)
+        json?.optString("title")?.takeIf { it.isNotEmpty() }?.let { v.setTextViewText(R.id.tk_title, it) }
+        WidgetUi.text(v, R.id.tk_badge, json?.optString("count"))
+        v.setContentDescription(R.id.tk_action, json?.optString("add").orEmpty())
+        v.setOnClickPendingIntent(R.id.tk_root, WidgetBridge.open(context, "tasks", WidgetUi.req(id, 0, 1)))
+        v.setOnClickPendingIntent(R.id.tk_action, PendingIntent.getActivity(context, WidgetUi.req(id, 0, 2),
+            QuickCreateActivity.intent(context, System.currentTimeMillis()).apply {
+                putExtra(QuickCreateActivity.EXTRA_TASK, true)
+                data = android.net.Uri.parse("ogneliss-widget://newtask/$id")
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+
+        v.removeAllViews(R.id.tk_list)
+        val items = json?.optJSONArray("items")
+        if (items == null || items.length() == 0) {
+            v.addView(R.id.tk_list, WidgetUi.note(context,
+                json?.optString("empty")?.takeIf { it.isNotEmpty() } ?: context.getString(R.string.widget_open_app)))
+            return v
+        }
+        val height = WidgetUi.heightDp(context, manager, id, 180)
+        val cap = WidgetUi.fit(height - WidgetUi.PAD - WidgetUi.HEADER - WidgetUi.GAP - WidgetUi.CARD_PAD, 47, 12)
+        val done = json.optString("done")
+        for (i in 0 until minOf(items.length(), cap)) {
+            val item = items.optJSONObject(i) ?: continue
+            if (i > 0) v.addView(R.id.tk_list, WidgetUi.divider(context))
+            val row = RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_row_task))
+            row.setTextViewText(R.id.tk_text, item.optString("s"))
+            WidgetUi.text(row, R.id.tk_due, item.optString("d"))
+            if (item.optBoolean("od")) WidgetUi.textColor(context, row, R.id.tk_due, R.color.widget_warn)
+            row.setImageViewResource(R.id.tk_done, WidgetUi.drawable(context, R.drawable.widget_ic_done))
+            row.setContentDescription(R.id.tk_done, done)
+            if (item.optString("id").isNotEmpty() && item.optString("acc").isNotEmpty()) {
+                row.setOnClickPendingIntent(R.id.tk_done, doneIntent(context, item))
+            }
+            val open = item.optString("open")
+            if (open.isNotEmpty()) {
+                row.setOnClickPendingIntent(R.id.tk_row, WidgetBridge.open(context, open, WidgetUi.req(id, 10, i)))
+            }
+            v.addView(R.id.tk_list, row)
+        }
+        return v
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════════
 // «Непрочитанные» 1×1
 // ════════════════════════════════════════════════════════════════════════
 
@@ -1187,6 +1328,7 @@ object WidgetBridge {
                         runCatching { MyDayWidget.refreshAll(app) }
                         runCatching { MailWidget.refreshAll(app) }
                         runCatching { MailCountWidget.refreshAll(app) }
+                        runCatching { TasksWidget.refreshAll(app) }
                         runCatching { CalendarWidget.refreshAll(app) }
                         runCatching { NotesWidget.refreshAll(app) }
                         result.success(null)

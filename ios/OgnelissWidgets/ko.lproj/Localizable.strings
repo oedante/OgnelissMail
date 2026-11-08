@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/ko.xml — не править вручную. */
+"tasks_label" = "할 일";
+"tasks_desc" = "체크 표시가 있는 열린 할 일과 새 할 일 버튼";
+"mailpick_label" = "메일: 선택";
+"mailpick_desc" = "선택한 메일함 또는 필터의 읽지 않은 메일";
+"mailpick_param" = "표시";
 "open_app" = "위젯을 채우려면 Ogneliss Mail을 여세요";
 "myday_label" = "나의 하루";
 "myday_desc" = "오늘의 회의와 할 일, 읽지 않은 메일 및 추적 중인 메일";

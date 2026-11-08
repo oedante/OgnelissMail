@@ -378,13 +378,16 @@ struct TaskDoneIntent: AppIntent {
     if let data = try? JSONSerialization.data(withJSONObject: queue), let s = String(data: data, encoding: .utf8) {
       d?.set(s, forKey: "widget_mail_queue")
     }
-    if var j = loadJSON("widget_myday") {
+    // Задача — сразу из обоих виджетов: «Мой день» и «Задачи».
+    for key in ["widget_myday", "widget_tasks"] {
+      guard var j = loadJSON(key) else { continue }
       let items = j.items("items")
       let left = items.filter { !($0.str("k") == "t" && $0.str("id") == taskId && $0.str("acc") == acc) }
       if left.count != items.count {
         j["items"] = left
+        if key == "widget_tasks", let n = Int(j.str("count")) { j["count"] = n > 1 ? String(n - 1) : "" }
         if let data = try? JSONSerialization.data(withJSONObject: j), let s = String(data: data, encoding: .utf8) {
-          d?.set(s, forKey: "widget_myday")
+          d?.set(s, forKey: key)
         }
       }
     }
@@ -683,6 +686,132 @@ struct NotesWidget: Widget {
     }
     .configurationDisplayName(NSLocalizedString("notes_label", comment: ""))
     .description(NSLocalizedString("notes_desc", comment: ""))
+    .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+  }
+}
+
+// MARK: - «Задачи» (08.11.2026, план п. 8.4)
+
+/// Открытые задачи всех ящиков: галочка «Выполнено» (iOS 17+), название и
+/// срок (просроченный — цветом предупреждения), «+» — новая задача.
+struct TasksView: View {
+  let entry: JSONEntry
+  @Environment(\.widgetFamily) var family
+
+  var body: some View {
+    let j = entry.json ?? [:]
+    let items = j.items("items")
+    let max = rowsFor(family, small: 3, medium: 3, large: 8)
+    VStack(alignment: .leading, spacing: 6) {
+      Header(title: j.str("title").isEmpty ? "Tasks" : j.str("title"), sub: j.str("count"),
+             action: "newtask", actionIcon: "plus")
+      if entry.json == nil {
+        Text(NSLocalizedString("open_app", comment: "")).font(.system(size: 13)).foregroundColor(cSub)
+      } else if items.isEmpty {
+        Text(j.str("empty")).font(.system(size: 13)).foregroundColor(cSub)
+      }
+      ForEach(Array(items.prefix(max).enumerated()), id: \.offset) { _, it in
+        HStack(spacing: 6) {
+          TaskDoneButton(item: it, label: j.str("done"))
+          Link(destination: widgetURL(it.str("open"))) {
+            VStack(alignment: .leading, spacing: 1) {
+              Text(it.str("s")).font(.system(size: 14)).foregroundColor(cText).lineLimit(1)
+              if !it.str("d").isEmpty {
+                Text(it.str("d")).font(.system(size: 12))
+                  .foregroundColor((it["od"] as? Bool) == true ? cWarn : cSub).lineLimit(1)
+              }
+            }
+          }
+          Spacer(minLength: 0)
+        }
+      }
+      Spacer(minLength: 0)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .widgetURL(widgetURL("tasks"))
+    .widgetBackground()
+  }
+}
+
+struct TasksWidget: Widget {
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: "OgnelissTasks", provider: JSONProvider(key: "widget_tasks")) {
+      TasksView(entry: $0)
+    }
+    .configurationDisplayName(NSLocalizedString("tasks_label", comment: ""))
+    .description(NSLocalizedString("tasks_desc", comment: ""))
+    .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+  }
+}
+
+// MARK: - «Почта: выбор» (08.11.2026, план п. 8.1, iOS 17+)
+
+/// Вариант «Почты» для этого виджета: все, VIP, с флажком, «На контроле»
+/// или один ящик. Список и подписи — от приложения (App Group,
+/// widget_mail_filters), данные по варианту — widget_mail_f_<вариант>
+/// (HomeWidgetService.mailKeyFor). Обычный виджет «Почта» по-прежнему
+/// показывает то, что выбрано в настройках приложения.
+@available(iOS 17.0, *)
+struct MailFilterEntity: AppEntity {
+  static let typeDisplayRepresentation: TypeDisplayRepresentation = "Mail"
+  static let defaultQuery = MailFilterQuery()
+  let id: String
+  let title: String
+  var displayRepresentation: DisplayRepresentation { DisplayRepresentation(title: "\(title)") }
+}
+
+@available(iOS 17.0, *)
+struct MailFilterQuery: EntityQuery {
+  func all() -> [MailFilterEntity] {
+    guard let j = loadJSON("widget_mail_filters") else { return [] }
+    return j.items("items").compactMap { it in
+      let f = it.str("f")
+      return f.isEmpty ? nil : MailFilterEntity(id: f, title: it.str("t").isEmpty ? f : it.str("t"))
+    }
+  }
+  func entities(for identifiers: [String]) async throws -> [MailFilterEntity] {
+    all().filter { identifiers.contains($0.id) }
+  }
+  func suggestedEntities() async throws -> [MailFilterEntity] { all() }
+  func defaultResult() async -> MailFilterEntity? { all().first }
+}
+
+@available(iOS 17.0, *)
+struct MailFilterIntent: WidgetConfigurationIntent {
+  static let title: LocalizedStringResource = "mailpick_label"
+  @Parameter(title: "mailpick_param") var filter: MailFilterEntity?
+  init() {}
+}
+
+@available(iOS 17.0, *)
+struct MailFilterProvider: AppIntentTimelineProvider {
+  private func key(_ c: MailFilterIntent) -> String {
+    guard let f = c.filter?.id, !f.isEmpty else { return "widget_mail" }
+    return "widget_mail_f_" + f.replacingOccurrences(of: ":", with: "_")
+  }
+  private func json(_ c: MailFilterIntent) -> [String: Any]? { loadJSON(key(c)) ?? loadJSON("widget_mail") }
+
+  func placeholder(in context: Context) -> JSONEntry { JSONEntry(date: Date(), json: nil) }
+
+  func snapshot(for configuration: MailFilterIntent, in context: Context) async -> JSONEntry {
+    JSONEntry(date: Date(), json: json(configuration))
+  }
+
+  func timeline(for configuration: MailFilterIntent, in context: Context) async -> Timeline<JSONEntry> {
+    let now = Date()
+    return Timeline(entries: [JSONEntry(date: now, json: json(configuration))],
+                    policy: .after(now.addingTimeInterval(30 * 60)))
+  }
+}
+
+@available(iOS 17.0, *)
+struct MailPickWidget: Widget {
+  var body: some WidgetConfiguration {
+    AppIntentConfiguration(kind: "OgnelissMailPick", intent: MailFilterIntent.self, provider: MailFilterProvider()) {
+      MailView(entry: $0)
+    }
+    .configurationDisplayName(NSLocalizedString("mailpick_label", comment: ""))
+    .description(NSLocalizedString("mailpick_desc", comment: ""))
     .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
   }
 }
@@ -1121,6 +1250,10 @@ struct OgnelissWidgets: WidgetBundle {
   var body: some Widget {
     MyDayWidget()
     MailWidget()
+    if #available(iOSApplicationExtension 17.0, *) {
+      MailPickWidget()
+    }
+    TasksWidget()
     CalendarWidget()
     CalendarWeekWidget()
     CalendarMonthWidget()

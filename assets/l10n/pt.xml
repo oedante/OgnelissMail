@@ -3167,6 +3167,17 @@
     <string name="graphicsAfterCrash">após a falha de {date}</string>
     <string name="graphicsRestartNeeded">A alteração aplica-se após reiniciar a aplicação.</string>
     <string name="graphicsRestart">Reiniciar</string>
+    <string name="android_widget_count_label">Não lidos</string>
+    <string name="android_widget_count_desc">Número de emails não lidos; toque para abrir a caixa de entrada</string>
+    <string name="android_widget_tasks_label">Tarefas</string>
+    <string name="android_widget_tasks_desc">Tarefas abertas com visto e um botão para nova tarefa</string>
+    <string name="android_widget_task_new">Nova tarefa</string>
+    <string name="ioswidget_tasks_label">Tarefas</string>
+    <string name="ioswidget_tasks_desc">Tarefas abertas com visto e um botão para nova tarefa</string>
+    <string name="ioswidget_mailpick_label">Correio: à escolha</string>
+    <string name="ioswidget_mailpick_desc">Emails não lidos da caixa ou do filtro que escolher</string>
+    <string name="ioswidget_mailpick_param">Mostrar</string>
+    <string name="widgetTasksLocked">Tarefas ocultas: a aplicação está protegida por PIN</string>
     <string name="plaintextTitle">Ligar sem encriptação?</string>
     <string name="plaintextBody">A palavra-passe e as mensagens passarão em texto simples — qualquer pessoa na mesma rede pode lê-las. Escolha apenas para um servidor na rede interna da organização, sem outra opção.</string>
     <string name="plaintextAction">Sem encriptação</string>

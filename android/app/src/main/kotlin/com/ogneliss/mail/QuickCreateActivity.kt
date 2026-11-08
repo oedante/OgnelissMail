@@ -47,6 +47,8 @@ class QuickCreateActivity : Activity() {
         private const val QUEUE = "flutter.widget_create_queue"
         private const val CAL = "flutter.widget_calendar"
         const val EXTRA_DAY = "day"
+        /** Сразу в режиме задачи (виджет «Задачи», 08.11.2026). */
+        const val EXTRA_TASK = "task"
 
         fun intent(context: Context, day: Long): Intent =
             Intent(context, QuickCreateActivity::class.java).apply {
@@ -110,6 +112,9 @@ class QuickCreateActivity : Activity() {
         findViewById<RadioGroup>(R.id.qc_kind).setOnCheckedChangeListener { _, id ->
             task = id == R.id.qc_task
             refresh()
+        }
+        if (intent.getBooleanExtra(EXTRA_TASK, false)) {
+            findViewById<RadioButton>(R.id.qc_task).isChecked = true
         }
         findViewById<CheckBox>(R.id.qc_allday).setOnCheckedChangeListener { _, v -> allDay = v; refresh() }
         findViewById<CheckBox>(R.id.qc_nodate).setOnCheckedChangeListener { _, v -> noDate = v; refresh() }

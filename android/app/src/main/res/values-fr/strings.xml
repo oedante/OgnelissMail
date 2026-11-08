@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/fr.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Non lus</string>
+    <string name="widget_count_desc">Nombre de messages non lus ; touchez pour ouvrir la boîte de réception</string>
+    <string name="widget_tasks_label">Tâches</string>
+    <string name="widget_tasks_desc">Tâches ouvertes avec case à cocher et bouton pour une nouvelle tâche</string>
+    <string name="widget_task_new">Nouvelle tâche</string>
     <string name="device_admin_label">Ogneliss Mail : verrouillage de l\'écran</string>
     <string name="device_admin_description">Applique le délai de verrouillage de l\'écran exigé par le serveur Exchange de votre organisation. Ogneliss Mail ne peut ni effacer votre appareil ni modifier votre mot de passe.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>
@@ -20,8 +25,6 @@
     <string name="widget_notes_label">Notes</string>
     <string name="widget_note_new">Nouvelle note</string>
     <string name="widget_notes_desc">Vos dernières notes et un bouton pour en créer une</string>
-    <string name="widget_count_label">Non lus</string>
-    <string name="widget_count_desc">Nombre de messages non lus ; touchez pour ouvrir la boîte de réception</string>
     <string name="widget_prev">Précédent</string>
     <string name="widget_next">Suivant</string>
     <string name="widget_cal_day">Jour</string>

@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/ro.xml — не править вручную. */
+"tasks_label" = "Sarcini";
+"tasks_desc" = "Sarcini deschise cu bifă și un buton pentru o sarcină nouă";
+"mailpick_label" = "E-mail: la alegere";
+"mailpick_desc" = "E-mailuri necitite din căsuța sau filtrul ales";
+"mailpick_param" = "Afișează";
 "open_app" = "Deschide Ogneliss Mail pentru a completa widgetul";
 "myday_label" = "Ziua mea";
 "myday_desc" = "Întâlnirile și sarcinile de azi, mesajele necitite și urmărite";

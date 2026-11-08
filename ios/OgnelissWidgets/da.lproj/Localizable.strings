@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/da.xml — не править вручную. */
+"tasks_label" = "Opgaver";
+"tasks_desc" = "Åbne opgaver med flueben og en knap til en ny opgave";
+"mailpick_label" = "Mail: valgfri";
+"mailpick_desc" = "Ulæste e-mails fra den valgte postkasse eller det valgte filter";
+"mailpick_param" = "Vis";
 "open_app" = "Åbn Ogneliss Mail for at udfylde widget’en";
 "myday_label" = "Min dag";
 "myday_desc" = "Dagens møder og opgaver, ulæste og fulgte mails";

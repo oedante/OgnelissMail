@@ -3167,6 +3167,17 @@
     <string name="graphicsAfterCrash">hiba után ({date})</string>
     <string name="graphicsRestartNeeded">A módosítás az alkalmazás újraindítása után lép életbe.</string>
     <string name="graphicsRestart">Újraindítás</string>
+    <string name="android_widget_count_label">Olvasatlan</string>
+    <string name="android_widget_count_desc">Olvasatlan levelek száma; koppintson a beérkezett levelek megnyitásához</string>
+    <string name="android_widget_tasks_label">Feladatok</string>
+    <string name="android_widget_tasks_desc">Nyitott feladatok pipával és új feladat gombbal</string>
+    <string name="android_widget_task_new">Új feladat</string>
+    <string name="ioswidget_tasks_label">Feladatok</string>
+    <string name="ioswidget_tasks_desc">Nyitott feladatok pipával és új feladat gombbal</string>
+    <string name="ioswidget_mailpick_label">Levelek: választható</string>
+    <string name="ioswidget_mailpick_desc">A választott fiók vagy szűrő olvasatlan levelei</string>
+    <string name="ioswidget_mailpick_param">Megjelenítés</string>
+    <string name="widgetTasksLocked">Feladatok elrejtve: az alkalmazás PIN-kóddal védett</string>
     <string name="plaintextTitle">Csatlakozás titkosítás nélkül?</string>
     <string name="plaintextBody">A jelszó és a levelek nyílt szövegként mennek — ugyanazon a hálózaton bárki elolvashatja őket. Csak a szervezet belső hálózatán lévő szerverhez válassza, ha nincs más lehetőség.</string>
     <string name="plaintextAction">Titkosítás nélkül</string>

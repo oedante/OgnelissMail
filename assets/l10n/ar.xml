@@ -3219,6 +3219,17 @@
     <string name="graphicsAfterCrash">بعد عطل {date}</string>
     <string name="graphicsRestartNeeded">يسري التغيير بعد إعادة تشغيل التطبيق.</string>
     <string name="graphicsRestart">إعادة التشغيل</string>
+    <string name="android_widget_count_label">غير المقروءة</string>
+    <string name="android_widget_count_desc">عدد الرسائل غير المقروءة؛ انقر لفتح البريد الوارد</string>
+    <string name="android_widget_tasks_label">المهام</string>
+    <string name="android_widget_tasks_desc">المهام المفتوحة مع علامة إنجاز وزر لمهمة جديدة</string>
+    <string name="android_widget_task_new">مهمة جديدة</string>
+    <string name="ioswidget_tasks_label">المهام</string>
+    <string name="ioswidget_tasks_desc">المهام المفتوحة مع علامة إنجاز وزر لمهمة جديدة</string>
+    <string name="ioswidget_mailpick_label">البريد: حسب الاختيار</string>
+    <string name="ioswidget_mailpick_desc">الرسائل غير المقروءة من صندوق البريد أو عامل التصفية الذي تختاره</string>
+    <string name="ioswidget_mailpick_param">عرض</string>
+    <string name="widgetTasksLocked">المهام مخفية: التطبيق محمي برمز PIN</string>
     <string name="plaintextTitle">الاتصال دون تشفير؟</string>
     <string name="plaintextBody">ستنتقل كلمة المرور والرسائل نصًا واضحًا — يمكن لأي شخص على الشبكة نفسها قراءتها. اختر ذلك فقط لخادم في الشبكة الداخلية للمؤسسة عند عدم وجود خيار آخر.</string>
     <string name="plaintextAction">دون تشفير</string>

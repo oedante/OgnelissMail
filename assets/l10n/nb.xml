@@ -3167,6 +3167,17 @@
     <string name="graphicsAfterCrash">etter feilen {date}</string>
     <string name="graphicsRestartNeeded">Endringen gjelder etter at appen er startet på nytt.</string>
     <string name="graphicsRestart">Start på nytt</string>
+    <string name="android_widget_count_label">Uleste</string>
+    <string name="android_widget_count_desc">Antall uleste e-poster; trykk for å åpne innboksen</string>
+    <string name="android_widget_tasks_label">Oppgaver</string>
+    <string name="android_widget_tasks_desc">Åpne oppgaver med hake og en knapp for ny oppgave</string>
+    <string name="android_widget_task_new">Ny oppgave</string>
+    <string name="ioswidget_tasks_label">Oppgaver</string>
+    <string name="ioswidget_tasks_desc">Åpne oppgaver med hake og en knapp for ny oppgave</string>
+    <string name="ioswidget_mailpick_label">E-post: valgfri</string>
+    <string name="ioswidget_mailpick_desc">Uleste e-poster fra valgt postkasse eller filter</string>
+    <string name="ioswidget_mailpick_param">Vis</string>
+    <string name="widgetTasksLocked">Oppgaver skjult: appen er beskyttet med PIN-kode</string>
     <string name="plaintextTitle">Koble til uten kryptering?</string>
     <string name="plaintextBody">Passord og meldinger sendes i klartekst — alle på samme nettverk kan lese dem. Velg bare for en server på organisasjonens interne nettverk uten andre muligheter.</string>
     <string name="plaintextAction">Uten kryptering</string>

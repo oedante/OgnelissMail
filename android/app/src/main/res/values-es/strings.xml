@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/es.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">No leídos</string>
+    <string name="widget_count_desc">Número de correos no leídos; toca para abrir la bandeja de entrada</string>
+    <string name="widget_tasks_label">Tareas</string>
+    <string name="widget_tasks_desc">Tareas abiertas con casilla y un botón para una tarea nueva</string>
+    <string name="widget_task_new">Nueva tarea</string>
     <string name="device_admin_label">Ogneliss Mail: bloqueo de pantalla</string>
     <string name="device_admin_description">Aplica el tiempo de bloqueo de pantalla que exige el servidor Exchange de tu organización. Ogneliss Mail no puede borrar tu dispositivo ni cambiar tu contraseña.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>
@@ -20,8 +25,6 @@
     <string name="widget_notes_label">Notas</string>
     <string name="widget_note_new">Nueva nota</string>
     <string name="widget_notes_desc">Tus últimas notas y un botón para crear una nueva</string>
-    <string name="widget_count_label">No leídos</string>
-    <string name="widget_count_desc">Número de correos no leídos; toca para abrir la bandeja de entrada</string>
     <string name="widget_prev">Anterior</string>
     <string name="widget_next">Siguiente</string>
     <string name="widget_cal_day">Día</string>

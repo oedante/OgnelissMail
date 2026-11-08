@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/vi.xml — не править вручную. */
+"tasks_label" = "Công việc";
+"tasks_desc" = "Công việc đang mở có dấu tích và nút công việc mới";
+"mailpick_label" = "Thư: tùy chọn";
+"mailpick_desc" = "Thư chưa đọc của hộp thư hoặc bộ lọc bạn chọn";
+"mailpick_param" = "Hiển thị";
 "open_app" = "Mở Ogneliss Mail để điền widget";
 "myday_label" = "Ngày của tôi";
 "myday_desc" = "Cuộc họp và công việc hôm nay, thư chưa đọc và thư đang theo dõi";

@@ -179,6 +179,30 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_mail_info" />
         </receiver>
+        <!-- Виджет «Задачи» (TasksWidget в HomeWidgets.kt, 08.11.2026). -->
+        <receiver
+            android:name=".TasksWidget"
+            android:label="@string/widget_tasks_label"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_tasks_info" />
+        </receiver>
+        <!-- Что показывает виджет «Почта» (MailWidgetConfigActivity.kt,
+             08.11.2026): при добавлении и по «Настроить» в меню виджета. -->
+        <activity
+            android:name=".MailWidgetConfigActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:taskAffinity="com.ogneliss.mail.widgetconfig"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
         <!-- Мини-виджет 1×1 «Непрочитанные» (MailCountWidget в HomeWidgets.kt). -->
         <receiver
             android:name=".MailCountWidget"

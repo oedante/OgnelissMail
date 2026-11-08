@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/tr.xml — не править вручную. */
+"tasks_label" = "Görevler";
+"tasks_desc" = "İşaret kutulu açık görevler ve yeni görev düğmesi";
+"mailpick_label" = "Posta: seçmeli";
+"mailpick_desc" = "Seçtiğiniz posta kutusunun veya filtrenin okunmamış e-postaları";
+"mailpick_param" = "Göster";
 "open_app" = "Widget’ı doldurmak için Ogneliss Mail’i açın";
 "myday_label" = "Günüm";
 "myday_desc" = "Bugünün toplantıları ve görevleri, okunmamış ve takipteki e-postalar";

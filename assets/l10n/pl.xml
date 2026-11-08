@@ -3193,6 +3193,17 @@
     <string name="graphicsAfterCrash">po awarii {date}</string>
     <string name="graphicsRestartNeeded">Zmiana zacznie działać po ponownym uruchomieniu aplikacji.</string>
     <string name="graphicsRestart">Uruchom ponownie</string>
+    <string name="android_widget_count_label">Nieprzeczytane</string>
+    <string name="android_widget_count_desc">Liczba nieprzeczytanych wiadomości; dotknij, aby otworzyć Odebrane</string>
+    <string name="android_widget_tasks_label">Zadania</string>
+    <string name="android_widget_tasks_desc">Otwarte zadania z polem wyboru i przyciskiem nowego zadania</string>
+    <string name="android_widget_task_new">Nowe zadanie</string>
+    <string name="ioswidget_tasks_label">Zadania</string>
+    <string name="ioswidget_tasks_desc">Otwarte zadania z polem wyboru i przyciskiem nowego zadania</string>
+    <string name="ioswidget_mailpick_label">Poczta: do wyboru</string>
+    <string name="ioswidget_mailpick_desc">Nieprzeczytane wiadomości wybranej skrzynki lub filtra</string>
+    <string name="ioswidget_mailpick_param">Pokaż</string>
+    <string name="widgetTasksLocked">Zadania ukryte: aplikacja jest chroniona PIN-em</string>
     <string name="plaintextTitle">Połączyć bez szyfrowania?</string>
     <string name="plaintextBody">Hasło i wiadomości pójdą otwartym tekstem — każdy w tej samej sieci może je odczytać. Wybierz tylko dla serwera w sieci wewnętrznej organizacji, gdy nie ma innej opcji.</string>
     <string name="plaintextAction">Bez szyfrowania</string>

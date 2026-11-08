@@ -3167,6 +3167,17 @@
     <string name="graphicsAfterCrash">efter felet {date}</string>
     <string name="graphicsRestartNeeded">Ändringen gäller när appen har startats om.</string>
     <string name="graphicsRestart">Starta om</string>
+    <string name="android_widget_count_label">Olästa</string>
+    <string name="android_widget_count_desc">Antal olästa mejl; tryck för att öppna inkorgen</string>
+    <string name="android_widget_tasks_label">Uppgifter</string>
+    <string name="android_widget_tasks_desc">Öppna uppgifter med bock och en knapp för ny uppgift</string>
+    <string name="android_widget_task_new">Ny uppgift</string>
+    <string name="ioswidget_tasks_label">Uppgifter</string>
+    <string name="ioswidget_tasks_desc">Öppna uppgifter med bock och en knapp för ny uppgift</string>
+    <string name="ioswidget_mailpick_label">Mejl: valfri</string>
+    <string name="ioswidget_mailpick_desc">Olästa mejl från vald brevlåda eller valt filter</string>
+    <string name="ioswidget_mailpick_param">Visa</string>
+    <string name="widgetTasksLocked">Uppgifter dolda: appen är skyddad med PIN-kod</string>
     <string name="plaintextTitle">Ansluta utan kryptering?</string>
     <string name="plaintextBody">Lösenord och meddelanden skickas i klartext — alla i samma nätverk kan läsa dem. Välj bara för en server i organisationens interna nätverk utan andra alternativ.</string>
     <string name="plaintextAction">Utan kryptering</string>

@@ -3167,6 +3167,17 @@
     <string name="graphicsAfterCrash">{date} की गड़बड़ी के बाद</string>
     <string name="graphicsRestartNeeded">बदलाव ऐप को फिर से शुरू करने के बाद लागू होगा।</string>
     <string name="graphicsRestart">फिर से शुरू करें</string>
+    <string name="android_widget_count_label">अपठित</string>
+    <string name="android_widget_count_desc">अपठित ईमेल की संख्या; इनबॉक्स खोलने के लिए टैप करें</string>
+    <string name="android_widget_tasks_label">कार्य</string>
+    <string name="android_widget_tasks_desc">टिक के साथ खुले कार्य और नए कार्य का बटन</string>
+    <string name="android_widget_task_new">नया कार्य</string>
+    <string name="ioswidget_tasks_label">कार्य</string>
+    <string name="ioswidget_tasks_desc">टिक के साथ खुले कार्य और नए कार्य का बटन</string>
+    <string name="ioswidget_mailpick_label">मेल: चुनें</string>
+    <string name="ioswidget_mailpick_desc">आपके चुने मेलबॉक्स या फ़िल्टर के अपठित ईमेल</string>
+    <string name="ioswidget_mailpick_param">दिखाएँ</string>
+    <string name="widgetTasksLocked">कार्य छिपे हैं: ऐप PIN से सुरक्षित है</string>
     <string name="plaintextTitle">बिना एन्क्रिप्शन के कनेक्ट करें?</string>
     <string name="plaintextBody">पासवर्ड और संदेश सादे पाठ में जाएँगे — उसी नेटवर्क पर कोई भी उन्हें पढ़ सकता है। इसे केवल संगठन के आंतरिक नेटवर्क के सर्वर के लिए चुनें जब कोई और विकल्प न हो।</string>
     <string name="plaintextAction">बिना एन्क्रिप्शन</string>

@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/pl.xml — не править вручную. */
+"tasks_label" = "Zadania";
+"tasks_desc" = "Otwarte zadania z polem wyboru i przyciskiem nowego zadania";
+"mailpick_label" = "Poczta: do wyboru";
+"mailpick_desc" = "Nieprzeczytane wiadomości wybranej skrzynki lub filtra";
+"mailpick_param" = "Pokaż";
 "open_app" = "Otwórz Ogneliss Mail, aby wypełnić widżet";
 "myday_label" = "Mój dzień";
 "myday_desc" = "Dzisiejsze spotkania i zadania, nieprzeczytane i śledzone wiadomości";

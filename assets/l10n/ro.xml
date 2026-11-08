@@ -3180,6 +3180,17 @@
     <string name="graphicsAfterCrash">după eroarea din {date}</string>
     <string name="graphicsRestartNeeded">Modificarea se aplică după repornirea aplicației.</string>
     <string name="graphicsRestart">Repornește</string>
+    <string name="android_widget_count_label">Necitite</string>
+    <string name="android_widget_count_desc">Numărul de e-mailuri necitite; atingeți pentru a deschide Mesaje primite</string>
+    <string name="android_widget_tasks_label">Sarcini</string>
+    <string name="android_widget_tasks_desc">Sarcini deschise cu bifă și un buton pentru o sarcină nouă</string>
+    <string name="android_widget_task_new">Activitate nouă</string>
+    <string name="ioswidget_tasks_label">Sarcini</string>
+    <string name="ioswidget_tasks_desc">Sarcini deschise cu bifă și un buton pentru o sarcină nouă</string>
+    <string name="ioswidget_mailpick_label">E-mail: la alegere</string>
+    <string name="ioswidget_mailpick_desc">E-mailuri necitite din căsuța sau filtrul ales</string>
+    <string name="ioswidget_mailpick_param">Afișează</string>
+    <string name="widgetTasksLocked">Sarcini ascunse: aplicația este protejată cu PIN</string>
     <string name="plaintextTitle">Conectare fără criptare?</string>
     <string name="plaintextBody">Parola și mesajele vor circula ca text simplu — oricine din aceeași rețea le poate citi. Alegeți doar pentru un server din rețeaua internă a organizației, fără altă opțiune.</string>
     <string name="plaintextAction">Fără criptare</string>

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/sv.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Olästa</string>
+    <string name="widget_count_desc">Antal olästa mejl; tryck för att öppna inkorgen</string>
+    <string name="widget_tasks_label">Uppgifter</string>
+    <string name="widget_tasks_desc">Öppna uppgifter med bock och en knapp för ny uppgift</string>
+    <string name="widget_task_new">Ny uppgift</string>
     <string name="device_admin_label">Ogneliss Mail: skärmlås</string>
     <string name="device_admin_description">Tillämpar den tidsgräns för skärmlås som din organisations Exchange-server kräver. Ogneliss Mail kan inte radera din enhet eller ändra ditt lösenord.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>
@@ -20,8 +25,6 @@
     <string name="widget_notes_label">Anteckningar</string>
     <string name="widget_note_new">Ny anteckning</string>
     <string name="widget_notes_desc">Dina senaste anteckningar och en knapp för en ny</string>
-    <string name="widget_count_label">Olästa</string>
-    <string name="widget_count_desc">Antal olästa mejl; tryck för att öppna inkorgen</string>
     <string name="widget_prev">Föregående</string>
     <string name="widget_next">Nästa</string>
     <string name="widget_cal_day">Dag</string>

@@ -3193,6 +3193,17 @@
     <string name="graphicsAfterCrash">после сбоя {date}</string>
     <string name="graphicsRestartNeeded">Изменение применится после перезапуска приложения.</string>
     <string name="graphicsRestart">Перезапустить</string>
+    <string name="android_widget_count_label">Непрочитанные</string>
+    <string name="android_widget_count_desc">Число непрочитанных писем; нажатие открывает «Входящие»</string>
+    <string name="android_widget_tasks_label">Задачи</string>
+    <string name="android_widget_tasks_desc">Открытые задачи с галочкой и кнопка новой задачи</string>
+    <string name="android_widget_task_new">Новая задача</string>
+    <string name="ioswidget_tasks_label">Задачи</string>
+    <string name="ioswidget_tasks_desc">Открытые задачи с галочкой и кнопка новой задачи</string>
+    <string name="ioswidget_mailpick_label">Почта: выбор</string>
+    <string name="ioswidget_mailpick_desc">Непрочитанные письма ящика или фильтра, который вы выберете</string>
+    <string name="ioswidget_mailpick_param">Показывать</string>
+    <string name="widgetTasksLocked">Задачи скрыты: в приложении включён PIN-код</string>
     <string name="plaintextTitle">Подключаться без шифрования?</string>
     <string name="plaintextBody">Пароль и письма пойдут по сети открытым текстом — их сможет прочитать любой в той же сети. Выбирайте, только если сервер во внутренней сети организации и других вариантов нет.</string>
     <string name="plaintextAction">Без шифрования</string>

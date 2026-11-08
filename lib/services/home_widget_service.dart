@@ -47,6 +47,13 @@ class HomeWidgetService {
   static const mailKey = 'widget_mail';
   static const calendarKey = 'widget_calendar';
   static const notesKey = 'widget_notes';
+  static const tasksKey = 'widget_tasks';
+
+  /// Варианты «Почты» для виджетов со своим фильтром (08.11.2026, план
+  /// п. 8.1): Android — фильтр выбирается при добавлении виджета, iPhone
+  /// (iOS 17+) — виджет «Почта: выбор». Ключ данных — по фильтру.
+  static const mailFiltersKey = 'widget_mail_filters';
+  static String mailKeyFor(String filter) => 'widget_mail_f_${filter.replaceAll(':', '_')}';
   static const _channel = MethodChannel('ogneliss/widget');
   static String? _lastJson;
   static DateTime? _lastAt;
@@ -153,17 +160,51 @@ class HomeWidgetService {
       final calIds = [for (final id in ids) if (!hidden.contains(id)) id];
       final cal = jsonEncode(await _buildCalendar(db, calIds, l10n, now, private, colors, labels, ids, activeAccountId));
       final notes = jsonEncode(await _buildNotes(db, l10n, private));
-      if (json + mail + cal + notes == _lastJson && !force) return;
-      _lastJson = json + mail + cal + notes;
+      final tasks = jsonEncode(await _buildTasks(db, ids, l10n, now, private));
+      // Все варианты «Почты» для виджетов со своим фильтром (запросы
+      // короткие: по 10 писем на вариант).
+      final filters = <(String, String)>[
+        ('all', l10n.tr('widgetMailAll')),
+        ('vip', l10n.tr('widgetMailVip')),
+        ('flagged', l10n.tr('widgetMailFlagged')),
+        if (showControl) ('control', l10n.tr('widgetMailControl')),
+        for (final id in ids) ('acc:$id', labels[id] ?? id),
+      ];
+      final variants = <String, String>{
+        mailFiltersKey: jsonEncode({
+          'title': l10n.tr('widgetMailTitle'),
+          'items': [for (final f in filters) {'f': f.$1, 't': f.$2}],
+        }),
+      };
+      for (final f in filters) {
+        variants[mailKeyFor(f.$1)] = f.$1 == mailFilter
+            ? mail
+            : jsonEncode(
+                await _buildMailFiltered(db, ids, l10n, now, private, labels, colors, staleMin, f.$1, vip));
+      }
+      final all = json + mail + cal + notes + tasks + variants.values.join();
+      if (all == _lastJson && !force) return;
+      _lastJson = all;
       await prefs.setString(notesKey, notes);
       await prefs.setString(prefKey, json);
       await prefs.setString(mailKey, mail);
       await prefs.setString(calendarKey, cal);
+      await prefs.setString(tasksKey, tasks);
+      for (final e in variants.entries) {
+        await prefs.setString(e.key, e.value);
+      }
       // iPhone: расширение виджетов читает общий контейнер App Group, а не
       // настройки приложения — те же JSON передаются туда.
       if (_ios) {
         try {
-          for (final e in {prefKey: json, mailKey: mail, calendarKey: cal, notesKey: notes}.entries) {
+          for (final e in {
+            prefKey: json,
+            mailKey: mail,
+            calendarKey: cal,
+            notesKey: notes,
+            tasksKey: tasks,
+            ...variants,
+          }.entries) {
             await _channel.invokeMethod<void>('save', {'key': e.key, 'json': e.value});
           }
         } on MissingPluginException {
@@ -652,6 +693,69 @@ for (final m in mails) {
       'count': total > 0 ? '$total' : '',
       'empty': private ? l10n.tr('widgetNotesLocked') : l10n.tr('widgetNoNotes'),
       'add': l10n.tr('newNote'),
+      'items': items,
+    };
+  }
+
+  /// Виджет «Задачи» (08.11.2026, план п. 8.4): открытые задачи всех
+  /// ящиков — сначала просроченные и с ближайшим сроком, потом без срока;
+  /// у каждой — галочка «Выполнено» (та же очередь, что у «Моего дня»).
+  /// С PIN-кодом названия не передаются.
+  static Future<Map<String, Object?>> _buildTasks(
+      AppDatabase db, List<String> ids, AppLocalizations l10n, DateTime now, bool private) async {
+    final rows = ids.isEmpty
+        ? const <Task>[]
+        : await (db.select(db.tasks)
+              ..where((t) => t.accountId.isIn(ids))
+              ..where((t) => t.status.isNotIn(const [2, 3])))
+            .get();
+    final today = DateTime(now.year, now.month, now.day);
+    DateTime? when(Task t) => t.dueDate ?? t.reminderAt;
+    rows.sort((a, b) {
+      final wa = when(a), wb = when(b);
+      if (wa != null && wb != null) return wa.compareTo(wb);
+      if (wa != null) return -1;
+      if (wb != null) return 1;
+      if (a.isFlagged != b.isFlagged) return a.isFlagged ? -1 : 1;
+      return b.createdAt.compareTo(a.createdAt);
+    });
+    String due(DateTime d) {
+      final day = DateTime(d.year, d.month, d.day);
+      final diff = day.difference(today).inDays;
+      final hasTime = d.hour != 0 || d.minute != 0;
+      final time = hasTime ? ' ${DateFormat('HH:mm').format(d)}' : '';
+      if (diff < 0) return l10n.tr('overdue');
+      if (diff == 0) return '${l10n.tr('today')}$time';
+      if (diff == 1) return '${l10n.tr('tomorrow')}$time';
+      try {
+        return DateFormat('d MMM', l10n.locale.languageCode).format(d);
+      } catch (_) {
+        return '${d.day}.${d.month.toString().padLeft(2, '0')}';
+      }
+    }
+
+    final items = <Map<String, Object?>>[];
+    if (!private) {
+      for (final t in rows.take(12)) {
+        final w = when(t);
+        items.add({
+          's': t.title.trim().isEmpty ? '—' : t.title.trim(),
+          if (w != null) 'd': due(w),
+          if (w != null && w.isBefore(today)) 'od': true,
+          if (t.isFlagged) 'fl': true,
+          'k': 't',
+          'id': t.id,
+          'acc': t.accountId,
+          'open': Uri(path: 'task', queryParameters: {'id': t.id, 'acc': t.accountId}).toString(),
+        });
+      }
+    }
+    return {
+      'title': l10n.tr('tasksLabel'),
+      'count': rows.isNotEmpty ? '${rows.length}' : '',
+      'empty': private ? l10n.tr('widgetTasksLocked') : l10n.tr('noTasks'),
+      'add': l10n.tr('newTask'),
+      'done': l10n.tr('taskMarkDone'),
       'items': items,
     };
   }

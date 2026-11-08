@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/de.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Ungelesen</string>
+    <string name="widget_count_desc">Anzahl ungelesener E-Mails; Tippen öffnet den Posteingang</string>
+    <string name="widget_tasks_label">Aufgaben</string>
+    <string name="widget_tasks_desc">Offene Aufgaben mit Häkchen und eine Schaltfläche für neue Aufgaben</string>
+    <string name="widget_task_new">Neue Aufgabe</string>
     <string name="device_admin_label">Ogneliss Mail: Bildschirmsperre</string>
     <string name="device_admin_description">Wendet das vom Exchange-Server Ihrer Organisation geforderte Zeitlimit für die Bildschirmsperre an. Ogneliss Mail kann Ihr Gerät weder löschen noch das Passwort ändern.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>
@@ -20,8 +25,6 @@
     <string name="widget_notes_label">Notizen</string>
     <string name="widget_note_new">Neue Notiz</string>
     <string name="widget_notes_desc">Ihre neuesten Notizen und eine Taste für eine neue</string>
-    <string name="widget_count_label">Ungelesen</string>
-    <string name="widget_count_desc">Anzahl ungelesener E-Mails; Tippen öffnet den Posteingang</string>
     <string name="widget_prev">Zurück</string>
     <string name="widget_next">Weiter</string>
     <string name="widget_cal_day">Tag</string>

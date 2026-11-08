@@ -3154,6 +3154,17 @@
     <string name="graphicsAfterCrash">sau lỗi ngày {date}</string>
     <string name="graphicsRestartNeeded">Thay đổi có hiệu lực sau khi khởi động lại ứng dụng.</string>
     <string name="graphicsRestart">Khởi động lại</string>
+    <string name="android_widget_count_label">Chưa đọc</string>
+    <string name="android_widget_count_desc">Số email chưa đọc; chạm để mở hộp thư đến</string>
+    <string name="android_widget_tasks_label">Công việc</string>
+    <string name="android_widget_tasks_desc">Công việc đang mở có dấu tích và nút công việc mới</string>
+    <string name="android_widget_task_new">Tác vụ mới</string>
+    <string name="ioswidget_tasks_label">Công việc</string>
+    <string name="ioswidget_tasks_desc">Công việc đang mở có dấu tích và nút công việc mới</string>
+    <string name="ioswidget_mailpick_label">Thư: tùy chọn</string>
+    <string name="ioswidget_mailpick_desc">Thư chưa đọc của hộp thư hoặc bộ lọc bạn chọn</string>
+    <string name="ioswidget_mailpick_param">Hiển thị</string>
+    <string name="widgetTasksLocked">Công việc bị ẩn: ứng dụng được bảo vệ bằng PIN</string>
     <string name="plaintextTitle">Kết nối không mã hóa?</string>
     <string name="plaintextBody">Mật khẩu và thư sẽ đi dưới dạng văn bản thường — bất kỳ ai trong cùng mạng đều đọc được. Chỉ chọn cho máy chủ trong mạng nội bộ của tổ chức khi không có lựa chọn khác.</string>
     <string name="plaintextAction">Không mã hóa</string>

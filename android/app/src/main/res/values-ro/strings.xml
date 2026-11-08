@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/ro.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Necitite</string>
+    <string name="widget_count_desc">Numărul de e-mailuri necitite; atingeți pentru a deschide Mesaje primite</string>
+    <string name="widget_tasks_label">Sarcini</string>
+    <string name="widget_tasks_desc">Sarcini deschise cu bifă și un buton pentru o sarcină nouă</string>
+    <string name="widget_task_new">Activitate nouă</string>
     <string name="device_admin_label">Ogneliss Mail: blocarea ecranului</string>
     <string name="device_admin_description">Aplică timpul de blocare a ecranului cerut de serverul Exchange al organizației tale. Ogneliss Mail nu poate șterge datele dispozitivului și nu poate schimba parola ta.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>
@@ -20,8 +25,6 @@
     <string name="widget_notes_label">Note</string>
     <string name="widget_note_new">Notă nouă</string>
     <string name="widget_notes_desc">Cele mai recente note ale tale și un buton pentru una nouă</string>
-    <string name="widget_count_label">Necitite</string>
-    <string name="widget_count_desc">Numărul de e-mailuri necitite; atingeți pentru a deschide Mesaje primite</string>
     <string name="widget_prev">Înapoi</string>
     <string name="widget_next">Înainte</string>
     <string name="widget_cal_day">Zi</string>

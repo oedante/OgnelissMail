@@ -3167,6 +3167,17 @@
     <string name="graphicsAfterCrash">{date} tarihindeki hatadan sonra</string>
     <string name="graphicsRestartNeeded">Değişiklik uygulama yeniden başlatıldığında geçerli olur.</string>
     <string name="graphicsRestart">Yeniden başlat</string>
+    <string name="android_widget_count_label">Okunmamış</string>
+    <string name="android_widget_count_desc">Okunmamış e-posta sayısı; gelen kutusunu açmak için dokunun</string>
+    <string name="android_widget_tasks_label">Görevler</string>
+    <string name="android_widget_tasks_desc">İşaret kutulu açık görevler ve yeni görev düğmesi</string>
+    <string name="android_widget_task_new">Yeni görev</string>
+    <string name="ioswidget_tasks_label">Görevler</string>
+    <string name="ioswidget_tasks_desc">İşaret kutulu açık görevler ve yeni görev düğmesi</string>
+    <string name="ioswidget_mailpick_label">Posta: seçmeli</string>
+    <string name="ioswidget_mailpick_desc">Seçtiğiniz posta kutusunun veya filtrenin okunmamış e-postaları</string>
+    <string name="ioswidget_mailpick_param">Göster</string>
+    <string name="widgetTasksLocked">Görevler gizli: uygulama PIN ile korunuyor</string>
     <string name="plaintextTitle">Şifreleme olmadan bağlanılsın mı?</string>
     <string name="plaintextBody">Parola ve iletiler düz metin olarak gider — aynı ağdaki herkes okuyabilir. Yalnızca kuruluşun iç ağındaki, başka seçeneği olmayan bir sunucu için seçin.</string>
     <string name="plaintextAction">Şifrelemesiz</string>

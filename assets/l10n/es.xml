@@ -3167,6 +3167,17 @@
     <string name="graphicsAfterCrash">tras el fallo del {date}</string>
     <string name="graphicsRestartNeeded">El cambio se aplicará al reiniciar la aplicación.</string>
     <string name="graphicsRestart">Reiniciar</string>
+    <string name="android_widget_count_label">No leídos</string>
+    <string name="android_widget_count_desc">Número de correos no leídos; toca para abrir la bandeja de entrada</string>
+    <string name="android_widget_tasks_label">Tareas</string>
+    <string name="android_widget_tasks_desc">Tareas abiertas con casilla y un botón para una tarea nueva</string>
+    <string name="android_widget_task_new">Nueva tarea</string>
+    <string name="ioswidget_tasks_label">Tareas</string>
+    <string name="ioswidget_tasks_desc">Tareas abiertas con casilla y un botón para una tarea nueva</string>
+    <string name="ioswidget_mailpick_label">Correo: a elegir</string>
+    <string name="ioswidget_mailpick_desc">Correos no leídos del buzón o filtro que elijas</string>
+    <string name="ioswidget_mailpick_param">Mostrar</string>
+    <string name="widgetTasksLocked">Tareas ocultas: la app está protegida con PIN</string>
     <string name="plaintextTitle">¿Conectar sin cifrado?</string>
     <string name="plaintextBody">La contraseña y los mensajes viajarán en texto plano: cualquiera en la misma red podrá leerlos. Elíjalo solo para un servidor de la red interna de la organización sin otra opción.</string>
     <string name="plaintextAction">Sin cifrado</string>

@@ -21,6 +21,8 @@ internal object WidgetThemeRes {
         R.layout.widget_row_mail to (R.layout.widget_row_mail_lt to R.layout.widget_row_mail_dk),
         R.layout.widget_row_more to (R.layout.widget_row_more_lt to R.layout.widget_row_more_dk),
         R.layout.widget_row_note to (R.layout.widget_row_note_lt to R.layout.widget_row_note_dk),
+        R.layout.widget_row_task to (R.layout.widget_row_task_lt to R.layout.widget_row_task_dk),
+        R.layout.widget_tasks to (R.layout.widget_tasks_lt to R.layout.widget_tasks_dk),
         R.layout.widget_week_row to (R.layout.widget_week_row_lt to R.layout.widget_week_row_dk),
     )
 

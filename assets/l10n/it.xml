@@ -3167,6 +3167,17 @@
     <string name="graphicsAfterCrash">dopo l’errore del {date}</string>
     <string name="graphicsRestartNeeded">La modifica sarà applicata al riavvio dell’app.</string>
     <string name="graphicsRestart">Riavvia</string>
+    <string name="android_widget_count_label">Non letti</string>
+    <string name="android_widget_count_desc">Numero di email non lette; tocca per aprire la posta in arrivo</string>
+    <string name="android_widget_tasks_label">Attività</string>
+    <string name="android_widget_tasks_desc">Attività aperte con spunta e un pulsante per una nuova attività</string>
+    <string name="android_widget_task_new">Nuova attività</string>
+    <string name="ioswidget_tasks_label">Attività</string>
+    <string name="ioswidget_tasks_desc">Attività aperte con spunta e un pulsante per una nuova attività</string>
+    <string name="ioswidget_mailpick_label">Posta: a scelta</string>
+    <string name="ioswidget_mailpick_desc">Email non lette della casella o del filtro scelto</string>
+    <string name="ioswidget_mailpick_param">Mostra</string>
+    <string name="widgetTasksLocked">Attività nascoste: l’app è protetta da PIN</string>
     <string name="plaintextTitle">Connettersi senza crittografia?</string>
     <string name="plaintextBody">Password e messaggi viaggeranno in chiaro: chiunque sulla stessa rete potrà leggerli. Sceglilo solo per un server nella rete interna dell’organizzazione senza altre opzioni.</string>
     <string name="plaintextAction">Senza crittografia</string>

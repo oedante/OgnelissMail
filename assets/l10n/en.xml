@@ -3167,6 +3167,17 @@
     <string name="graphicsAfterCrash">after the failure on {date}</string>
     <string name="graphicsRestartNeeded">The change takes effect after the app restarts.</string>
     <string name="graphicsRestart">Restart</string>
+    <string name="android_widget_count_label">Unread</string>
+    <string name="android_widget_count_desc">Number of unread emails; tap to open the inbox</string>
+    <string name="android_widget_tasks_label">Tasks</string>
+    <string name="android_widget_tasks_desc">Open tasks with a check button and a button for a new task</string>
+    <string name="android_widget_task_new">New task</string>
+    <string name="ioswidget_tasks_label">Tasks</string>
+    <string name="ioswidget_tasks_desc">Open tasks with a check button and a button for a new task</string>
+    <string name="ioswidget_mailpick_label">Mail: choose</string>
+    <string name="ioswidget_mailpick_desc">Unread mail of the mailbox or filter you choose</string>
+    <string name="ioswidget_mailpick_param">Show</string>
+    <string name="widgetTasksLocked">Tasks are hidden: the app is PIN-protected</string>
     <string name="plaintextTitle">Connect without encryption?</string>
     <string name="plaintextBody">Your password and messages will travel in plain text — anyone on the same network can read them. Choose this only for a server on your organization’s internal network with no other option.</string>
     <string name="plaintextAction">No encryption</string>

@@ -3180,6 +3180,17 @@
     <string name="graphicsAfterCrash">po selhání {date}</string>
     <string name="graphicsRestartNeeded">Změna se projeví po restartu aplikace.</string>
     <string name="graphicsRestart">Restartovat</string>
+    <string name="android_widget_count_label">Nepřečtené</string>
+    <string name="android_widget_count_desc">Počet nepřečtených e-mailů; klepnutím otevřete Doručenou poštu</string>
+    <string name="android_widget_tasks_label">Úkoly</string>
+    <string name="android_widget_tasks_desc">Otevřené úkoly se zaškrtnutím a tlačítkem pro nový úkol</string>
+    <string name="android_widget_task_new">Nový úkol</string>
+    <string name="ioswidget_tasks_label">Úkoly</string>
+    <string name="ioswidget_tasks_desc">Otevřené úkoly se zaškrtnutím a tlačítkem pro nový úkol</string>
+    <string name="ioswidget_mailpick_label">Pošta: výběr</string>
+    <string name="ioswidget_mailpick_desc">Nepřečtené e-maily vybrané schránky nebo filtru</string>
+    <string name="ioswidget_mailpick_param">Zobrazit</string>
+    <string name="widgetTasksLocked">Úkoly skryty: aplikace je chráněna PIN</string>
     <string name="plaintextTitle">Připojit bez šifrování?</string>
     <string name="plaintextBody">Heslo a zprávy půjdou sítí jako prostý text — kdokoli ve stejné síti je může přečíst. Zvolte jen pro server ve vnitřní síti organizace bez jiné možnosti.</string>
     <string name="plaintextAction">Bez šifrování</string>

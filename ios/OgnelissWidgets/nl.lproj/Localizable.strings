@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/nl.xml — не править вручную. */
+"tasks_label" = "Taken";
+"tasks_desc" = "Open taken met vinkje en een knop voor een nieuwe taak";
+"mailpick_label" = "Mail: naar keuze";
+"mailpick_desc" = "Ongelezen e-mails van het gekozen postvak of filter";
+"mailpick_param" = "Tonen";
 "open_app" = "Open Ogneliss Mail om de widget te vullen";
 "myday_label" = "Mijn dag";
 "myday_desc" = "Vergaderingen en taken van vandaag, ongelezen en gevolgde e-mails";

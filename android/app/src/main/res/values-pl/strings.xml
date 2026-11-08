@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Создано tool/l10n/l10n.py gen из assets/l10n/pl.xml (ключи android_*) — не править вручную. -->
 <resources>
+    <string name="widget_count_label">Nieprzeczytane</string>
+    <string name="widget_count_desc">Liczba nieprzeczytanych wiadomości; dotknij, aby otworzyć Odebrane</string>
+    <string name="widget_tasks_label">Zadania</string>
+    <string name="widget_tasks_desc">Otwarte zadania z polem wyboru i przyciskiem nowego zadania</string>
+    <string name="widget_task_new">Nowe zadanie</string>
     <string name="device_admin_label">Ogneliss Mail: blokada ekranu</string>
     <string name="device_admin_description">Stosuje limit czasu blokady ekranu wymagany przez serwer Exchange Twojej organizacji. Ogneliss Mail nie może wymazać danych z urządzenia ani zmienić hasła.</string>
     <string name="bg_sync_title">Ogneliss Mail</string>
@@ -20,8 +25,6 @@
     <string name="widget_notes_label">Notatki</string>
     <string name="widget_note_new">Nowa notatka</string>
     <string name="widget_notes_desc">Najnowsze notatki i przycisk nowej notatki</string>
-    <string name="widget_count_label">Nieprzeczytane</string>
-    <string name="widget_count_desc">Liczba nieprzeczytanych wiadomości; dotknij, aby otworzyć Odebrane</string>
     <string name="widget_prev">Wstecz</string>
     <string name="widget_next">Dalej</string>
     <string name="widget_cal_day">Dzień</string>

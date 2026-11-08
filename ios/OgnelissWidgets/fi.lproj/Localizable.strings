@@ -1,4 +1,9 @@
 /* Виджеты Ogneliss Mail Создано tool/l10n/l10n.py gen из assets/l10n/fi.xml — не править вручную. */
+"tasks_label" = "Tehtävät";
+"tasks_desc" = "Avoimet tehtävät valintamerkillä ja painike uudelle tehtävälle";
+"mailpick_label" = "Posti: valinta";
+"mailpick_desc" = "Valitun postilaatikon tai suodattimen lukemattomat viestit";
+"mailpick_param" = "Näytä";
 "open_app" = "Avaa Ogneliss Mail täyttääksesi widgetin";
 "myday_label" = "Oma päivä";
 "myday_desc" = "Tämän päivän kokoukset ja tehtävät, lukemattomat ja seurattavat viestit";

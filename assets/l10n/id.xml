@@ -3154,6 +3154,17 @@
     <string name="graphicsAfterCrash">setelah kegagalan pada {date}</string>
     <string name="graphicsRestartNeeded">Perubahan berlaku setelah aplikasi dimulai ulang.</string>
     <string name="graphicsRestart">Mulai ulang</string>
+    <string name="android_widget_count_label">Belum dibaca</string>
+    <string name="android_widget_count_desc">Jumlah email belum dibaca; ketuk untuk membuka kotak masuk</string>
+    <string name="android_widget_tasks_label">Tugas</string>
+    <string name="android_widget_tasks_desc">Tugas terbuka dengan centang dan tombol tugas baru</string>
+    <string name="android_widget_task_new">Tugas baru</string>
+    <string name="ioswidget_tasks_label">Tugas</string>
+    <string name="ioswidget_tasks_desc">Tugas terbuka dengan centang dan tombol tugas baru</string>
+    <string name="ioswidget_mailpick_label">Email: pilihan</string>
+    <string name="ioswidget_mailpick_desc">Email belum dibaca dari kotak surat atau filter pilihan Anda</string>
+    <string name="ioswidget_mailpick_param">Tampilkan</string>
+    <string name="widgetTasksLocked">Tugas disembunyikan: aplikasi dilindungi PIN</string>
     <string name="plaintextTitle">Sambungkan tanpa enkripsi?</string>
     <string name="plaintextBody">Kata sandi dan pesan akan dikirim sebagai teks biasa — siapa pun di jaringan yang sama dapat membacanya. Pilih hanya untuk server di jaringan internal organisasi tanpa pilihan lain.</string>
     <string name="plaintextAction">Tanpa enkripsi</string>

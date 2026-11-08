@@ -12,6 +12,8 @@
 //   пауза 30 с, дальше каждая ошибка удваивает её (до часа).
 
 import 'dart:async';
+
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math' as math;
 
 import 'package:flutter_riverpod/legacy.dart';
@@ -20,11 +22,16 @@ import 'package:local_auth/local_auth.dart';
 import '../../core/logging/app_logger.dart';
 import '../../core/security/secure_storage_service.dart';
 import '../../core/security/security_utils.dart';
+import '../../data/providers/shared_prefs_provider.dart';
 import 'managed_config.dart' show ManagedConfigService;
 
 final pinLockProvider = StateNotifierProvider<PinLockNotifier, PinLockState>((ref) {
   final secureStorage = ref.watch(secureStorageProvider);
-  return PinLockNotifier(secureStorage);
+  SharedPreferences? prefs;
+  try {
+    prefs = ref.watch(sharedPrefsProvider);
+  } catch (_) {/* тесты без настроек */}
+  return PinLockNotifier(secureStorage, prefs);
 });
 
 class PinLockState {
@@ -82,6 +89,30 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
   static const _failedKey = 'app_pin_failed';
   static const _blockedKey = 'app_pin_blocked_until';
 
+  /// Признак «PIN задан» и его длина — вне хранилища ключей (план 08.11.2026
+  /// п. 2): если хранилище не читается (сразу после перезагрузки, сбой
+  /// Keystore), приложение не открывается без PIN, а остаётся закрытым и
+  /// перечитывает хранилище при каждой попытке. Сам PIN и соль — только в
+  /// хранилище ключей.
+  static const _markerKey = 'app_pin_set';
+  static const _markerLenKey = 'app_pin_len_hint';
+  final SharedPreferences? _prefs;
+
+  /// Хранилище ключей не прочиталось при запуске, а PIN был задан.
+  bool _storageFailed = false;
+
+  void _setMarker(bool isSet, [int? len]) {
+    final p = _prefs;
+    if (p == null) return;
+    if (isSet) {
+      unawaited(p.setBool(_markerKey, true));
+      if (len != null) unawaited(p.setInt(_markerLenKey, len));
+    } else {
+      unawaited(p.remove(_markerKey));
+      unawaited(p.remove(_markerLenKey));
+    }
+  }
+
   static const maxAttempts = 5;
 
   /// Сколько приложение может пробыть свёрнутым без повторного ввода PIN.
@@ -93,7 +124,7 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
   Duration? _idleTimeout;
   DateTime? _backgroundSince;
 
-  PinLockNotifier(this._storage) : super(const PinLockState()) {
+  PinLockNotifier(this._storage, [this._prefs]) : super(const PinLockState()) {
     _load();
   }
 
@@ -131,13 +162,29 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
         pinLength: len.clamp(4, 6),
       );
       _scheduleUnblock();
+      _storageFailed = false;
+      _setMarker(isSet, len.clamp(4, 6));
       // С PIN — без снимков экрана и миниатюры в недавних приложениях.
       unawaited(ManagedConfigService.secureFor('pin', isSet));
     } catch (e) {
       AppLogger.warning('PIN: не удалось прочитать состояние: $e');
-      // Хранилище недоступно: безопаснее считать, что PIN не задан, чем
-      // навсегда закрыть пользователю доступ к почте.
-      if (mounted) state = state.copyWith(loaded: true);
+      if (_prefs?.getBool(_markerKey) == true) {
+        // PIN был задан: без него не открываем (план 08.11.2026 п. 2). Ввод
+        // PIN перечитает хранилище; есть и вход по биометрии.
+        _storageFailed = true;
+        if (mounted) {
+          state = PinLockState(
+            loaded: true,
+            isPinSet: true,
+            isLocked: true,
+            pinLength: (_prefs?.getInt(_markerLenKey) ?? 4).clamp(4, 6),
+          );
+        }
+        unawaited(ManagedConfigService.secureFor('pin', true));
+      } else if (mounted) {
+        // PIN не задавался — открываем как обычно.
+        state = state.copyWith(loaded: true);
+      }
     } finally {
       if (!_ready.isCompleted) _ready.complete();
     }
@@ -168,6 +215,8 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
     await _storage.write(_pinSaltKey, salt);
     await _storage.write(_pinLenKey, '${pin.length}');
     await _resetFailures();
+    _storageFailed = false;
+    _setMarker(true, pin.length);
 
     state = state.copyWith(
         loaded: true, isPinSet: true, isLocked: false, pinLength: pin.length,
@@ -196,8 +245,28 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
   Future<bool> verifyPin(String pin) async {
     if (state.isBlocked) return false;
 
-    final storedHash = await _storage.read(_pinHashKey);
-    final salt = await _storage.read(_pinSaltKey);
+    String? storedHash;
+    String? salt;
+    try {
+      storedHash = await _storage.read(_pinHashKey);
+      salt = await _storage.read(_pinSaltKey);
+    } catch (e) {
+      // Хранилище ключей всё ещё недоступно — это не ошибка ввода: попытка
+      // не засчитывается, приложение остаётся закрытым.
+      AppLogger.warning('PIN: хранилище недоступно при проверке: $e');
+      return false;
+    }
+    if (_storageFailed) {
+      _storageFailed = false;
+      if (storedHash == null || salt == null) {
+        // Хранилище прочиталось, а PIN в нём нет (данные приложения
+        // сброшены системой) — PIN не задан.
+        _setMarker(false);
+        if (mounted) state = const PinLockState(loaded: true);
+        unawaited(ManagedConfigService.secureFor('pin', false));
+        return true;
+      }
+    }
     if (storedHash == null || salt == null) return false;
 
     final inputHash = SecurityUtils.hashWithSalt(pin, salt);
@@ -237,6 +306,7 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
     await _storage.delete(_pinSaltKey);
     await _storage.delete(_pinLenKey);
     await _resetFailures();
+    _setMarker(false);
     _unblockTimer?.cancel();
     state = const PinLockState(loaded: true);
     unawaited(ManagedConfigService.secureFor('pin', false));

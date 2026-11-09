@@ -3952,4 +3952,7 @@
     <string name="readReceiptAllDesc">すべてのメッセージで受信者に開封確認を求めます。確認されると ✓✓ が表示されます。受信者は拒否できます。個別のメッセージはエディターの ⋮ メニューで</string>
     <string name="convToLatest">最新のメッセージへ</string>
     <string name="convNewMessages">新着メッセージ: {n}</string>
+    <string name="andMoreN">他 {n} 件</string>
+    <string name="meetingFreeThen">この時間は空いています</string>
+    <string name="meetingOneOccurrence">定期的な会議の 1 回分</string>
 </resources>

@@ -4015,4 +4015,7 @@
     <string name="readReceiptAllDesc">Каждое письмо просит адресата сообщить о прочтении — тогда у письма ✓✓. Адресат может отказаться. Для одного письма — в меню ⋮ редактора</string>
     <string name="convToLatest">К последнему письму</string>
     <string name="convNewMessages">Новые письма: {n}</string>
+    <string name="andMoreN">и ещё {n}</string>
+    <string name="meetingFreeThen">В это время вы свободны</string>
+    <string name="meetingOneOccurrence">Одна встреча из серии</string>
 </resources>

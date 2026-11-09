@@ -3973,4 +3973,7 @@
     <string name="readReceiptAllDesc">Jokainen viesti pyytää vastaanottajaa kuittaamaan lukemisen — silloin näkyy ✓✓. Vastaanottaja voi kieltäytyä. Yksittäiselle viestille — editorin ⋮-valikossa</string>
     <string name="convToLatest">Uusimpaan viestiin</string>
     <string name="convNewMessages">Uusia viestejä: {n}</string>
+    <string name="andMoreN">ja {n} muuta</string>
+    <string name="meetingFreeThen">Olet vapaana tähän aikaan</string>
+    <string name="meetingOneOccurrence">Yksi sarjan kokouksista</string>
 </resources>

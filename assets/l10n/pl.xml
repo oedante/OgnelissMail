@@ -4015,4 +4015,7 @@
     <string name="readReceiptAllDesc">Każda wiadomość prosi odbiorcę o potwierdzenie przeczytania — wtedy widać ✓✓. Odbiorca może odmówić. Dla jednej wiadomości — w menu ⋮ edytora</string>
     <string name="convToLatest">Do najnowszej wiadomości</string>
     <string name="convNewMessages">Nowe wiadomości: {n}</string>
+    <string name="andMoreN">i jeszcze {n}</string>
+    <string name="meetingFreeThen">W tym czasie jesteś wolny</string>
+    <string name="meetingOneOccurrence">Jedno spotkanie z serii</string>
 </resources>

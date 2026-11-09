@@ -3973,4 +3973,7 @@
     <string name="readReceiptAllDesc">Jede Nachricht bittet den Empfänger um Lesebestätigung — dann zeigt sie ✓✓. Der Empfänger kann ablehnen. Für eine Nachricht — im Menü ⋮ des Editors</string>
     <string name="convToLatest">Zur neuesten Nachricht</string>
     <string name="convNewMessages">Neue Nachrichten: {n}</string>
+    <string name="andMoreN">und {n} weitere</string>
+    <string name="meetingFreeThen">Sie sind zu dieser Zeit frei</string>
+    <string name="meetingOneOccurrence">Ein Termin einer Serie</string>
 </resources>

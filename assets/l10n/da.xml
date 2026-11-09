@@ -3973,4 +3973,7 @@
     <string name="readReceiptAllDesc">Hver meddelelse beder modtageren bekræfte læsning — så vises ✓✓. Modtageren kan afvise. For én meddelelse — i editorens ⋮-menu</string>
     <string name="convToLatest">Gå til nyeste meddelelse</string>
     <string name="convNewMessages">Nye meddelelser: {n}</string>
+    <string name="andMoreN">og {n} til</string>
+    <string name="meetingFreeThen">Du er ledig på dette tidspunkt</string>
+    <string name="meetingOneOccurrence">Et møde i en serie</string>
 </resources>

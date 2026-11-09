@@ -3973,4 +3973,7 @@
     <string name="readReceiptAllDesc">Each message asks the recipient to confirm reading — then the message shows ✓✓. The recipient may decline. For a single message — in the editor ⋮ menu</string>
     <string name="convToLatest">Go to latest message</string>
     <string name="convNewMessages">New messages: {n}</string>
+    <string name="andMoreN">and {n} more</string>
+    <string name="meetingFreeThen">You\'re free at this time</string>
+    <string name="meetingOneOccurrence">One meeting of a series</string>
 </resources>

@@ -3973,4 +3973,7 @@
     <string name="readReceiptAllDesc">Ogni messaggio chiede al destinatario di confermare la lettura: allora mostra ✓✓. Il destinatario può rifiutare. Per un solo messaggio, nel menu ⋮ dell\'editor</string>
     <string name="convToLatest">Vai all\'ultimo messaggio</string>
     <string name="convNewMessages">Nuovi messaggi: {n}</string>
+    <string name="andMoreN">e altri {n}</string>
+    <string name="meetingFreeThen">Sei libero a quest\'ora</string>
+    <string name="meetingOneOccurrence">Una riunione di una serie</string>
 </resources>

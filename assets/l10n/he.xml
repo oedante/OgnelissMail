@@ -3994,4 +3994,7 @@
     <string name="readReceiptAllDesc">כל הודעה מבקשת מהנמען לאשר קריאה — ואז מוצג ✓✓. הנמען יכול לסרב. להודעה אחת — בתפריט ⋮ של העורך</string>
     <string name="convToLatest">להודעה האחרונה</string>
     <string name="convNewMessages">הודעות חדשות: {n}</string>
+    <string name="andMoreN">ועוד {n}</string>
+    <string name="meetingFreeThen">את/ה פנוי/ה בזמן הזה</string>
+    <string name="meetingOneOccurrence">פגישה אחת מסדרה</string>
 </resources>

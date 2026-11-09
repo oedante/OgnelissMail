@@ -3973,4 +3973,7 @@
     <string name="readReceiptAllDesc">Her ileti alıcıdan okunduğunu onaylamasını ister — o zaman ✓✓ görünür. Alıcı reddedebilir. Tek bir ileti için — düzenleyicinin ⋮ menüsünde</string>
     <string name="convToLatest">En son iletiye git</string>
     <string name="convNewMessages">Yeni iletiler: {n}</string>
+    <string name="andMoreN">ve {n} tane daha</string>
+    <string name="meetingFreeThen">Bu saatte müsaitsiniz</string>
+    <string name="meetingOneOccurrence">Serideki bir toplantı</string>
 </resources>

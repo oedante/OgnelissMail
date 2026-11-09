@@ -3994,4 +3994,7 @@
     <string name="readReceiptAllDesc">Každá správa žiada príjemcu o potvrdenie prečítania — potom sa zobrazí ✓✓. Príjemca môže odmietnuť. Pre jednu správu — v ponuke ⋮ editora</string>
     <string name="convToLatest">Na najnovšiu správu</string>
     <string name="convNewMessages">Nové správy: {n}</string>
+    <string name="andMoreN">a ďalšie {n}</string>
+    <string name="meetingFreeThen">V tomto čase máte voľno</string>
+    <string name="meetingOneOccurrence">Jedna schôdza zo série</string>
 </resources>

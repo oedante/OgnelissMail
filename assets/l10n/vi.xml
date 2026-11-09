@@ -3952,4 +3952,7 @@
     <string name="readReceiptAllDesc">Mỗi thư yêu cầu người nhận xác nhận đã đọc — khi đó thư hiện ✓✓. Người nhận có thể từ chối. Cho một thư — trong menu ⋮ của trình soạn</string>
     <string name="convToLatest">Đến thư mới nhất</string>
     <string name="convNewMessages">Thư mới: {n}</string>
+    <string name="andMoreN">và {n} khác</string>
+    <string name="meetingFreeThen">Bạn rảnh vào giờ này</string>
+    <string name="meetingOneOccurrence">Một cuộc họp trong chuỗi</string>
 </resources>

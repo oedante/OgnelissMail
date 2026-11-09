@@ -3994,4 +3994,7 @@
     <string name="readReceiptAllDesc">Fiecare mesaj cere destinatarului confirmarea citirii — atunci apare ✓✓. Destinatarul poate refuza. Pentru un singur mesaj — în meniul ⋮ al editorului</string>
     <string name="convToLatest">Mergi la cel mai recent mesaj</string>
     <string name="convNewMessages">Mesaje noi: {n}</string>
+    <string name="andMoreN">și încă {n}</string>
+    <string name="meetingFreeThen">Sunteți liber la această oră</string>
+    <string name="meetingOneOccurrence">O întâlnire dintr-o serie</string>
 </resources>

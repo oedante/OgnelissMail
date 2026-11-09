@@ -3952,4 +3952,7 @@
     <string name="readReceiptAllDesc">每封邮件都会请收件人确认已读，确认后显示 ✓✓。收件人可以拒绝。仅针对一封邮件——在编辑器的 ⋮ 菜单中</string>
     <string name="convToLatest">转到最新邮件</string>
     <string name="convNewMessages">新邮件：{n}</string>
+    <string name="andMoreN">还有 {n} 个</string>
+    <string name="meetingFreeThen">您在此时间有空</string>
+    <string name="meetingOneOccurrence">系列中的一次会议</string>
 </resources>

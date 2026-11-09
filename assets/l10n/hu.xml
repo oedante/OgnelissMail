@@ -3973,4 +3973,7 @@
     <string name="readReceiptAllDesc">Minden üzenet olvasási visszaigazolást kér a címzettől — ekkor ✓✓ látható. A címzett elutasíthatja. Egy üzenethez — a szerkesztő ⋮ menüjében</string>
     <string name="convToLatest">Ugrás a legújabb üzenethez</string>
     <string name="convNewMessages">Új üzenetek: {n}</string>
+    <string name="andMoreN">és még {n}</string>
+    <string name="meetingFreeThen">Ebben az időpontban szabad</string>
+    <string name="meetingOneOccurrence">Egy értekezlet a sorozatból</string>
 </resources>

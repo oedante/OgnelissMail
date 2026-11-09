@@ -3952,4 +3952,7 @@
     <string name="readReceiptAllDesc">모든 메시지가 수신자에게 읽음 확인을 요청합니다. 확인되면 ✓✓가 표시됩니다. 수신자는 거부할 수 있습니다. 메시지 하나만은 편집기의 ⋮ 메뉴에서</string>
     <string name="convToLatest">최신 메시지로 이동</string>
     <string name="convNewMessages">새 메시지: {n}</string>
+    <string name="andMoreN">외 {n}개</string>
+    <string name="meetingFreeThen">이 시간에는 일정이 없습니다</string>
+    <string name="meetingOneOccurrence">반복 모임 중 1회</string>
 </resources>

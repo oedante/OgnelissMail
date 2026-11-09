@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Действия по свайпу в списке писем. Можно назначить по два действия на каждую сторону.</string>
     <string name="swipeRight">Свайп вправо</string>
     <string name="swipeLeft">Свайп влево</string>
-    <string name="swipeFirstAction">Первое действие</string>
-    <string name="swipeSecondAction">Второе действие</string>
-    <string name="swipeSingleHint">Короткий свайп открывает кнопки, длинный сразу выполняет первое действие. Если действие одно — оно выполняется уже с середины строки.</string>
+    <string name="swipeFirstAction">Короткий свайп</string>
+    <string name="swipeSecondAction">Длинный свайп</string>
+    <string name="swipeSingleHint">Протяните строку и отпустите — действие выполнится. Короткий свайп — первое действие, длинный — второе: значок и подпись подскажут, что сработает. Не дотянули — строка вернётся на место. После действия на строке видно, что сделано, там же — «Отменить».</string>
     <string name="filterToMe">Мне лично</string>
     <string name="recentSearches">Недавние запросы</string>
     <string name="draft">Черновик</string>

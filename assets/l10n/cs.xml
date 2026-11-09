@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Akce přejetí v seznamu zpráv. Až dvě akce na každé straně.</string>
     <string name="swipeRight">Přejetí doprava</string>
     <string name="swipeLeft">Přejetí doleva</string>
-    <string name="swipeFirstAction">První akce</string>
-    <string name="swipeSecondAction">Druhá akce</string>
-    <string name="swipeSingleHint">Krátké přejetí ukáže tlačítka, dlouhé hned provede první akci. Při jedné akci stačí zhruba půl řádku.</string>
+    <string name="swipeFirstAction">Krátké přejetí</string>
+    <string name="swipeSecondAction">Dlouhé přejetí</string>
+    <string name="swipeSingleHint">Přetáhněte řádek a pusťte – akce se provede. Krátké přejetí spustí první akci, dlouhé druhou; ikona a popisek ukážou kterou. Pustíte-li příliš brzy, řádek se vrátí. Poté řádek ukáže, co se stalo, i s tlačítkem Zpět.</string>
     <string name="filterToMe">Mně osobně</string>
     <string name="recentSearches">Poslední hledání</string>
     <string name="draft">Koncept</string>

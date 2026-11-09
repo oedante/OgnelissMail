@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Azioni di scorrimento nell\'elenco dei messaggi. Fino a due azioni per lato.</string>
     <string name="swipeRight">Scorri a destra</string>
     <string name="swipeLeft">Scorri a sinistra</string>
-    <string name="swipeFirstAction">Prima azione</string>
-    <string name="swipeSecondAction">Seconda azione</string>
-    <string name="swipeSingleHint">Uno scorrimento breve mostra i pulsanti, uno lungo esegue subito la prima azione. Con una sola azione basta circa metà riga.</string>
+    <string name="swipeFirstAction">Scorrimento breve</string>
+    <string name="swipeSecondAction">Scorrimento lungo</string>
+    <string name="swipeSingleHint">Trascina una riga e rilascia: l’azione viene eseguita. Uno scorrimento breve esegue la prima azione, uno lungo la seconda; icona ed etichetta indicano quale. Rilasciata troppo presto, la riga torna al suo posto. Poi la riga mostra cosa è stato fatto, con Annulla.</string>
     <string name="filterToMe">Per me</string>
     <string name="recentSearches">Ricerche recenti</string>
     <string name="draft">Bozza</string>

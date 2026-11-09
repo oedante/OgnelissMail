@@ -1636,9 +1636,9 @@
     <string name="swipeHint">การดำเนินการเมื่อปัดในรายการอีเมล ได้สูงสุดสองการดำเนินการต่อด้าน</string>
     <string name="swipeRight">ปัดไปทางขวา</string>
     <string name="swipeLeft">ปัดไปทางซ้าย</string>
-    <string name="swipeFirstAction">การทำงานแรก</string>
-    <string name="swipeSecondAction">การทำงานที่สอง</string>
-    <string name="swipeSingleHint">ปัดสั้นเพื่อแสดงปุ่ม ปัดยาวเพื่อทำการกระทำแรกทันที หากมีการกระทำเดียว ปัดประมาณครึ่งแถวก็พอ</string>
+    <string name="swipeFirstAction">ปัดสั้น</string>
+    <string name="swipeSecondAction">ปัดยาว</string>
+    <string name="swipeSingleHint">ลากแถวแล้วปล่อยเพื่อทำคำสั่ง ปัดสั้นทำคำสั่งแรก ปัดยาวทำคำสั่งที่สอง ไอคอนและข้อความจะบอกว่าจะทำคำสั่งใด ถ้าปล่อยเร็วเกินไป แถวจะกลับที่เดิม หลังจากนั้นแถวจะแสดงสิ่งที่ทำ พร้อมปุ่ม «เลิกทำ»</string>
     <string name="filterToMe">ถึงฉัน</string>
     <string name="recentSearches">การค้นหาล่าสุด</string>
     <string name="draft">ฉบับร่าง</string>

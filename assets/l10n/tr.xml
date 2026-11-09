@@ -1636,9 +1636,9 @@
     <string name="swipeHint">İleti listesinde kaydırma eylemleri. Her yan için en fazla iki eylem.</string>
     <string name="swipeRight">Sağa kaydır</string>
     <string name="swipeLeft">Sola kaydır</string>
-    <string name="swipeFirstAction">Birinci eylem</string>
-    <string name="swipeSecondAction">İkinci eylem</string>
-    <string name="swipeSingleHint">Kısa kaydırma düğmeleri gösterir, uzun kaydırma ilk işlemi hemen yapar. Tek işlem varsa satırın yarısı kadar kaydırmak yeterlidir.</string>
+    <string name="swipeFirstAction">Kısa kaydırma</string>
+    <string name="swipeSecondAction">Uzun kaydırma</string>
+    <string name="swipeSingleHint">Bir satırı sürükleyip bırakın, işlem yapılır. Kısa kaydırma ilk işlemi, uzun kaydırma ikinci işlemi yapar; simge ve etiket hangisinin yapılacağını gösterir. Erken bırakırsanız satır yerine döner. Ardından satırda ne yapıldığı ve Geri al düğmesi görünür.</string>
     <string name="filterToMe">Bana</string>
     <string name="recentSearches">Son aramalar</string>
     <string name="draft">Taslak</string>

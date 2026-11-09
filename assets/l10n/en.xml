@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Swipe actions in the message list. Up to two actions per side.</string>
     <string name="swipeRight">Swipe right</string>
     <string name="swipeLeft">Swipe left</string>
-    <string name="swipeFirstAction">First action</string>
-    <string name="swipeSecondAction">Second action</string>
-    <string name="swipeSingleHint">A short swipe shows the buttons, a long swipe performs the first action at once. With one action, it runs from about the middle of the row.</string>
+    <string name="swipeFirstAction">Short swipe</string>
+    <string name="swipeSecondAction">Long swipe</string>
+    <string name="swipeSingleHint">Drag a row and let go to run the action. A short swipe runs the first action, a long one the second; the icon and label show which one will run. Let go too early and the row springs back. Afterwards the row shows what was done, with Undo.</string>
     <string name="filterToMe">To me</string>
     <string name="recentSearches">Recent searches</string>
     <string name="draft">Draft</string>

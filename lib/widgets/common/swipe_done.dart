@@ -8,8 +8,10 @@
 //
 // Только для действий, после которых письмо остаётся на месте (прочитано,
 // флажок, контроль): архив, удаление и спам убирают строку и показывают
-// «Вернуть». Плашка не принимает касаний и не сдвигает строку; «Уменьшить
-// движение» — без анимации появления.
+// «Вернуть». Плашка не сдвигает строку; касания принимает только кнопка
+// «Отменить» на другом краю (2.2.0, решение владельца: отмена для любого
+// свайпа) — строку под плашкой можно снова тянуть. «Уменьшить движение» —
+// без анимации появления.
 
 import 'dart:async';
 
@@ -34,7 +36,11 @@ class SwipeDoneEvent {
 
   /// Плашка у края, с которого тянули (true — слева).
   final bool fromStart;
-  const SwipeDoneEvent(this.id, {required this.icon, required this.label, required this.color, this.fromStart = true});
+
+  /// «Отменить» — вернуть как было; null — без кнопки.
+  final VoidCallback? onUndo;
+  const SwipeDoneEvent(this.id,
+      {required this.icon, required this.label, required this.color, this.fromStart = true, this.onUndo});
 }
 
 class SwipeDone {
@@ -43,8 +49,9 @@ class SwipeDone {
   /// Последнее событие; строки слушают и показывают своё.
   static final events = ValueNotifier<SwipeDoneEvent?>(null);
 
-  /// Сколько держится плашка.
+  /// Сколько держится плашка (с «Отменить» — дольше: успеть нажать).
   static const hold = Duration(milliseconds: 1100);
+  static const holdWithUndo = Duration(milliseconds: 2600);
 
   /// Показать результат на строке [SwipeDoneEvent.id] и сказать его диктору.
   static void show(BuildContext context, SwipeDoneEvent e) {
@@ -59,23 +66,33 @@ class SwipeDone {
 /// [control] — её отметка «На контроле» до действия. Для действий, которые
 /// убирают письмо или открывают окно, — ничего.
 void showSwipeDone(BuildContext context, SwipeAction a, EmailModel e, AppLocalizations l10n,
-    {required String id, bool? read, int? control, bool fromStart = true}) {
+    {required String id, bool? read, int? control, bool fromStart = true, VoidCallback? onUndo}) {
   final SwipeDoneEvent? ev = switch (a) {
     SwipeAction.markRead => (read ?? e.isRead)
         ? SwipeDoneEvent(id,
-            icon: AppIcons.mark_email_unread, label: l10n.tr('swipeDoneUnread'), color: AppColors.infoBlue, fromStart: fromStart)
+            icon: AppIcons.mark_email_unread,
+            label: l10n.tr('swipeDoneUnread'),
+            color: AppColors.infoBlue,
+            fromStart: fromStart,
+            onUndo: onUndo)
         : SwipeDoneEvent(id,
-            icon: AppIcons.mark_email_read, label: l10n.tr('swipeDoneRead'), color: AppColors.infoBlue, fromStart: fromStart),
+            icon: AppIcons.mark_email_read,
+            label: l10n.tr('swipeDoneRead'),
+            color: AppColors.infoBlue,
+            fromStart: fromStart,
+            onUndo: onUndo),
     SwipeAction.flag => SwipeDoneEvent(id,
         icon: AppIcons.flag,
         label: l10n.tr(e.isFlagged ? 'swipeDoneUnflag' : 'swipeDoneFlag'),
         color: AppColors.warningYellow,
-        fromStart: fromStart),
+        fromStart: fromStart,
+        onUndo: onUndo),
     SwipeAction.control => SwipeDoneEvent(id,
         icon: (control ?? e.controlState) != 0 ? AppIcons.bookmark_remove : AppIcons.bookmark_added,
         label: l10n.tr((control ?? e.controlState) != 0 ? 'swipeDoneControlOff' : 'swipeDoneControl'),
         color: AppColors.successGreen,
-        fromStart: fromStart),
+        fromStart: fromStart,
+        onUndo: onUndo),
     _ => null,
   };
   if (ev != null) SwipeDone.show(context, ev);
@@ -119,17 +136,28 @@ class _SwipeDoneOverlayState extends State<SwipeDoneOverlay> with SingleTickerPr
     } else {
       unawaited(_c.forward(from: _c.value));
     }
-    _timer = Timer(SwipeDone.hold, () {
-      if (!mounted) return;
-      if (reduce) {
-        _c.value = 0;
-        setState(() => _event = null);
-      } else {
-        unawaited(_c.reverse().then((_) {
-          if (mounted) setState(() => _event = null);
-        }));
-      }
-    });
+    _timer = Timer(e.onUndo != null ? SwipeDone.holdWithUndo : SwipeDone.hold, _hide);
+  }
+
+  void _hide() {
+    if (!mounted) return;
+    final reduce = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    if (reduce) {
+      _c.value = 0;
+      setState(() => _event = null);
+    } else {
+      unawaited(_c.reverse().then((_) {
+        if (mounted) setState(() => _event = null);
+      }));
+    }
+  }
+
+  void _undo() {
+    final e = _event;
+    _timer?.cancel();
+    e?.onUndo?.call();
+    _c.value = 0;
+    setState(() => _event = null);
   }
 
   @override
@@ -187,6 +215,28 @@ class _SwipeDoneOverlayState extends State<SwipeDoneOverlay> with SingleTickerPr
           ),
         ),
       ),
+      if (e.onUndo != null)
+        PositionedDirectional(
+          top: 0,
+          bottom: 0,
+          start: e.fromStart ? null : 0,
+          end: e.fromStart ? 0 : null,
+          child: FadeTransition(
+            opacity: _c,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Space.s),
+                child: FilledButton.tonalIcon(
+                  key: const ValueKey('swipe_undo'),
+                  style: FilledButton.styleFrom(backgroundColor: bg, foregroundColor: fg, visualDensity: VisualDensity.compact),
+                  onPressed: _undo,
+                  icon: const Icon(AppIcons.undo, size: Sizes.iconInline + 2),
+                  label: Text(AppLocalizations.of(context).tr('undo')),
+                ),
+              ),
+            ),
+          ),
+        ),
     ]);
   }
 }

@@ -1,6 +1,7 @@
 // lib/features/mail/screens/mail_list_screen.dart
 import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/common/swipe_done.dart';
+import '../../../widgets/common/swipe_hint.dart';
 import '../../../widgets/common/gap_below.dart';
 import '../widgets/move_folder_picker.dart';
 import '../widgets/mail_check_sheet.dart' show showMailCheckSheet;
@@ -1657,7 +1658,16 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             // Касание строки (палец ещё на экране) — письмо читается из базы
             // заранее; тело готовится при нажатии (касанием начинается и
             // прокрутка ленты — готовить каждое письмо под пальцем незачем).
-            child: Listener(
+            // Подсказка о свайпах — один раз, на первой строке (2.2.0).
+            child: SwipeHint(
+              prefs: ref.read(sharedPrefsProvider),
+              start: !_selectionMode &&
+                  ((rtl ? settings.swipeRightPrimary : settings.swipeLeftPrimary) != SwipeAction.none ||
+                      (rtl ? settings.swipeRightSecondary : settings.swipeLeftSecondary) != SwipeAction.none),
+              end: !_selectionMode &&
+                  ((rtl ? settings.swipeLeftPrimary : settings.swipeRightPrimary) != SwipeAction.none ||
+                      (rtl ? settings.swipeLeftSecondary : settings.swipeRightSecondary) != SwipeAction.none),
+              child: Listener(
               onPointerDown: (ev) {
                 if (_selectionMode) return;
                 ref.read(mailOpenCacheProvider).prefetch(item.accountId, item.id, body: false);
@@ -1753,7 +1763,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                 }
               },
             )),
-              ),
+              )),
             ),
           )));
           // Постоянная панель папок (широкое окно): письма перетаскиваются на
@@ -1823,12 +1833,12 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
 
   /// Собирает панель свайпа из назначенных действий.
   ///
-  /// Поведение зависит от их числа:
-  ///  · **одно действие** — полный свайп выполняет его СРАЗУ (`DismissiblePane`).
-  ///    При разборе почты это главное: одно движение — письмо обработано;
-  ///  · **два действия** — кнопки раскрываются и ждут выбора. Автосрабатывания
-  ///    нет намеренно: когда вариантов несколько, случайный сильный свайп не
-  ///    должен что-то удалять.
+  /// Одно правило (2.2.0, решение владельца 09.11.2026): протянул до порога
+  /// и отпустил — действие выполнено, полуоткрытых кнопок нет. Два действия
+  /// на стороне — по расстоянию: короткий свайп (от 40 % ширины) — первое,
+  /// длинный (от 70 %) — второе; значок, подпись и цвет меняются, пока
+  /// тянешь (SwipeActionIndicator). Раньше при двух действиях короткий свайп
+  /// раскрывал кнопки и они ждали нажатия.
   ///
   /// Возвращает null, если действий не назначено — тогда свайп в эту сторону
   /// просто не работает.
@@ -1842,76 +1852,70 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     final hasPrimary = primary != SwipeAction.none;
     final hasSecondary = secondary != SwipeAction.none;
     if (!hasPrimary && !hasSecondary) return null;
+    final first = hasPrimary ? primary : secondary;
+    final second = hasPrimary && hasSecondary ? secondary : null;
 
-    // Вид значков этой панели (1.6.21): сторона, одно/два действия, порог.
-    final singleAction = hasPrimary != hasSecondary;
-    _pane = (
-      fromStart: fromStart,
-      atEdge: singleAction,
-      extentRatio: singleAction ? 0.28 : 0.5,
-      // Две кнопки: основная (у края) подрастает к порогу длинного свайпа —
-      // видно, что сработает она; вторая — без порога.
-      armAt: singleAction ? _swipeArmAt : _swipeArmAtPair,
-    );
+    _pane = (fromStart: fromStart, atEdge: true, extentRatio: 0.28, armAt: _swipeArmAt);
+    // Вид второго действия — тем же построителем кнопки (_swipe запоминает
+    // значок, подпись и цвет).
+    SwipeStep? secondStep;
+    if (second != null) {
+      _buildSwipeAction(second, email, l10n, isPrimary: false);
+      final look = _lastLook;
+      if (look != null) {
+        final (bg, fg) = SwipeTone.of(context, look.base);
+        secondStep = SwipeStep(icon: look.icon, label: look.label, color: fg, background: bg, at: _swipeSecondAt);
+      }
+    }
+    _secondStep = secondStep;
+    final button = _buildSwipeAction(first, email, l10n, isPrimary: true);
+    _secondStep = null;
 
-    final actions = <CustomSlidableAction>[
-      if (hasPrimary) _buildSwipeAction(primary, email, l10n, isPrimary: true),
-    ];
-    if (!singleAction) _pane = (fromStart: fromStart, atEdge: false, extentRatio: 0.5, armAt: null);
-    if (hasSecondary) actions.add(_buildSwipeAction(secondary, email, l10n, isPrimary: false));
-
-    // Одно действие — выполняем сразу при полном свайпе. Строка «уходит»
-    // из списка только для действий, которые убирают письмо из папки
-    // (архив, удаление, спам). Для остальных (прочитано, флаг, ответ…)
-    // раньше строка тоже схлопывалась и оставалась пустым местом до
-    // перерисовки — теперь действие выполняется, а строка возвращается.
-    final single = actions.length == 1;
-    final action = hasPrimary ? primary : secondary;
-    final removes = action == SwipeAction.archive ||
-        action == SwipeAction.delete ||
-        action == SwipeAction.moveToJunk;
+    final stage = SwipeStage();
+    SwipeAction chosen() => second != null && stage.position >= _swipeSecondAt ? second : first;
+    bool removes(SwipeAction a) =>
+        a == SwipeAction.archive || a == SwipeAction.delete || a == SwipeAction.moveToJunk;
     return ActionPane(
-      // Одно действие — панель стоит на месте, строка отъезжает и открывает
-      // её от края, где и стоит значок: он виден с первых миллиметров
-      // (1.6.21; с DrawerMotion значок выезжал вместе с панелью и был виден
-      // только при длинном свайпе). Два действия — как раньше.
-      motion: single ? const BehindMotion() : const DrawerMotion(),
-      extentRatio: single ? 0.28 : 0.5,
-      // Полный свайп выполняет действие у края (при двух — основное):
-      // при одном — с 40 % ширины, при двух — с 75 % (до этого — кнопки).
+      // Панель стоит на месте, строка отъезжает и открывает её от края, где и
+      // стоит значок: он виден с первых миллиметров (1.6.21).
+      motion: const BehindMotion(),
+      extentRatio: 0.28,
       dismissible: DismissiblePane(
-        // По умолчанию строку нужно было протянуть на 75 % ширины —
-        // почти через весь экран. 40 %: отпустили дальше — строка
-        // сама доезжает до конца и действие срабатывает.
-        dismissThreshold: single ? _swipeArmAt : _swipeArmAtPair,
+        // Отпустили дальше 40 % — строка сама доезжает до конца и действие
+        // срабатывает (по умолчанию было 75 %).
+        dismissThreshold: _swipeArmAt,
         dismissalDuration: const Duration(milliseconds: 220),
         resizeDuration: const Duration(milliseconds: 220),
         closeOnCancel: true,
         // Строка уходит из ленты, только когда всё решено (07.11.2026):
-        // раньше в «Удалённых» строка сначала исчезала, а «Удалить
-        // навсегда?» спрашивалось потом — при «Отмене» оставалась пустая
-        // полоса; так же без папки «Архив» или «Спам».
-        confirmDismiss: removes
-            ? () => _confirmSwipeRemoval(action, email, l10n)
-            : () async {
-                _executeSwipeAction(action, email, l10n);
-                return false;
-              },
-        onDismissed: () => _executeSwipeAction(action, email, l10n),
+        // «Удалить навсегда?», нет папки «Архив» — вопрос до ухода строки.
+        // Действие выбирается по месту, где строку отпустили (stage).
+        confirmDismiss: () async {
+          final a = chosen();
+          stage.chosen = a;
+          if (removes(a)) return _confirmSwipeRemoval(a, email, l10n);
+          _executeSwipeAction(a, email, l10n);
+          return false;
+        },
+        onDismissed: () => _executeSwipeAction(stage.chosen as SwipeAction? ?? first, email, l10n),
       ),
       // Не дотянули до порога — строка возвращается на место, а не остаётся
       // полуоткрытой (1.14.0: «свайпы зависают на середине»).
-      children: single
-          ? [SlidableSpringBack(dismissThreshold: _swipeArmAt, child: actions.single)]
-          : actions,
+      children: [SlidableSpringBack(dismissThreshold: _swipeArmAt, stage: stage, child: button)],
     );
   }
 
-  /// Порог полного свайпа при одном действии на стороне (доля ширины строки).
+  /// Порог свайпа (доля ширины строки): отсюда срабатывает первое действие.
   static const _swipeArmAt = 0.4;
 
-  /// Порог при двух действиях: дальше раскрытых кнопок (50 %).
-  static const _swipeArmAtPair = 0.75;
+  /// Длинный свайп — второе действие стороны.
+  static const _swipeSecondAt = 0.7;
+
+  /// Второе действие для значка панели, которая сейчас собирается.
+  SwipeStep? _secondStep;
+
+  /// Вид последней собранной кнопки свайпа (для [SwipeStep]).
+  ({IconData icon, String label, Color base})? _lastLook;
 
   /// Удаление в «Удалённых» уже подтверждено до ухода строки.
   final Set<String> _foreverConfirmed = {};
@@ -1967,9 +1971,15 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   /// Выполнить действие свайпа напрямую (полный свайп при одном действии).
   /// Логика та же, что у кнопки, — вынесена, чтобы не расходилась.
   void _executeSwipeAction(SwipeAction action, EmailModel email, AppLocalizations l10n) {
-    // Строка вернулась на место — на секунду результат поверх (2.2.0).
+    // Строка вернулась на место — на секунду результат поверх (2.2.0) и
+    // «Отменить».
+    final wasRead = !_rowUnread(email);
+    final wasControl = _rowControl(email);
     showSwipeDone(context, action, email, l10n,
-        id: 'list/${email.accountId}/${email.id}', read: !_rowUnread(email), control: _rowControl(email));
+        id: 'list/${email.accountId}/${email.id}',
+        read: wasRead,
+        control: wasControl,
+        onUndo: () => unawaited(_undoSwipe(action, email, wasRead: wasRead, wasControl: wasControl)));
     switch (action) {
       case SwipeAction.markRead:
         _toggleRead(email);
@@ -1999,6 +2009,38 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         unawaited(_bulkOgna(emails: [email]));
       case SwipeAction.none:
         break;
+    }
+  }
+
+  /// «Отменить» на плашке свайпа (2.2.0): вернуть прочитанность, флажок,
+  /// «На контроле» письма строки, как было до свайпа.
+  Future<void> _undoSwipe(SwipeAction action, EmailModel email, {required bool wasRead, required int wasControl}) async {
+    final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull ??
+        ref.read(activeAccountProvider);
+    if (account == null) return;
+    final notifier = ref.read(emailsProvider.notifier);
+    final actions = ref.read(emailActionsProvider);
+    try {
+      switch (action) {
+        case SwipeAction.markRead:
+          notifier.applyLocalFlags(email.id, isRead: wasRead);
+          await actions.setRead(account, email.id, email.folderId, wasRead);
+          notifier.invalidateConversationSizes();
+        case SwipeAction.flag:
+          notifier.applyLocalFlags(email.id, isFlagged: email.isFlagged);
+          await actions.setFlag(account, email.id, email.folderId, email.isFlagged);
+        case SwipeAction.control:
+          final db = ref.read(databaseProvider);
+          final restore = wasControl == 0 ? ControlState.none : (email.controlState != 0 ? email.controlState : wasControl);
+          await db.setControlState(email.id, email.accountId, restore);
+          notifier.applyLocalFlags(email.id, controlState: restore);
+          notifier.invalidateConversationSizes();
+          ref.read(controlRevisionProvider.notifier).state++;
+        default:
+          break;
+      }
+    } catch (e) {
+      AppLogger.warning('Свайп: отмена ${action.name}: $e');
     }
   }
 
@@ -2228,6 +2270,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     required IconData icon,
     required String label,
   }) {
+    _lastLook = (icon: icon, label: label, base: backgroundColor);
     // Спокойные тональные цвета вместо насыщенной заливки с белым значком.
     final (bg, fg) = SwipeTone.of(context, backgroundColor);
     final settings = ref.read(settingsProvider);
@@ -2250,6 +2293,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             extentRatio: pane.extentRatio,
             armAt: pane.armAt,
             animated: settings.swipeAnimated && !settings.reduceMotion,
+            second: _secondStep,
           ),
         ),
       ),

@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Akcje przesunięcia na liście wiadomości. Do dwóch akcji na stronę.</string>
     <string name="swipeRight">Przesunięcie w prawo</string>
     <string name="swipeLeft">Przesunięcie w lewo</string>
-    <string name="swipeFirstAction">Pierwsza czynność</string>
-    <string name="swipeSecondAction">Druga czynność</string>
-    <string name="swipeSingleHint">Krótkie przesunięcie pokazuje przyciski, długie od razu wykonuje pierwszą akcję. Przy jednej akcji wystarczy mniej więcej pół wiersza.</string>
+    <string name="swipeFirstAction">Krótkie przesunięcie</string>
+    <string name="swipeSecondAction">Długie przesunięcie</string>
+    <string name="swipeSingleHint">Przeciągnij wiersz i puść – akcja zostanie wykonana. Krótkie przesunięcie wykonuje pierwszą akcję, długie – drugą; ikona i podpis pokazują którą. Puszczony za wcześnie wiersz wraca na miejsce. Potem wiersz pokazuje, co zrobiono, z przyciskiem Cofnij.</string>
     <string name="filterToMe">Do mnie</string>
     <string name="recentSearches">Ostatnie wyszukiwania</string>
     <string name="draft">Wersja robocza</string>

@@ -51,6 +51,7 @@ import 'mail_detail_screen.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/swipe_action_indicator.dart';
 import '../../../widgets/common/swipe_done.dart';
+import '../../../widgets/common/slidable_spring_back.dart';
 import '../providers/folder_names.dart' show localizedFolderName;
 import '../widgets/mail_peek_card.dart';
 import '../widgets/move_folder_picker.dart';
@@ -382,8 +383,12 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               },
         onDismissed: () => unawaited(_run(a, e, l10n)),
       ),
+      // Не дотянули до порога — строка возвращается, кнопка не остаётся
+      // открытой (одно правило свайпов, 2.2.0).
       children: [
-        CustomSlidableAction(
+        SlidableSpringBack(
+          dismissThreshold: 0.4,
+          child: CustomSlidableAction(
           onPressed: (_) => unawaited(_run(a, e, l10n)),
           backgroundColor: tone.$1,
           foregroundColor: tone.$2,
@@ -404,6 +409,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               ),
             ),
           ),
+        ),
         ),
       ],
     );
@@ -450,7 +456,10 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     final actions = ref.read(emailActionsProvider);
     final db = ref.read(databaseProvider);
     unawaited(HapticFeedback.selectionClick());
-    if (mounted) showSwipeDone(context, a, e, l10n, id: 'conv/${e.accountId}/${e.id}', control: e.controlState);
+    if (mounted) {
+      showSwipeDone(context, a, e, l10n,
+          id: 'conv/${e.accountId}/${e.id}', control: e.controlState, onUndo: () => unawaited(_undo(a, e)));
+    }
     try {
       switch (a) {
         case SwipeAction.markRead:
@@ -501,6 +510,30 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       }
     } catch (err) {
       AppLogger.warning('Беседа — действие ${a.name}: $err');
+    }
+  }
+
+  /// «Отменить» на плашке свайпа (2.2.0): как было до действия.
+  Future<void> _undo(SwipeAction a, EmailModel e) async {
+    final account = ref.read(accountsProvider).where((x) => x.id == e.accountId).firstOrNull;
+    if (account == null) return;
+    final actions = ref.read(emailActionsProvider);
+    try {
+      switch (a) {
+        case SwipeAction.markRead:
+          await actions.setRead(account, e.id, e.folderId, e.isRead);
+        case SwipeAction.flag:
+          await actions.setFlag(account, e.id, e.folderId, e.isFlagged);
+        case SwipeAction.control:
+          final db = ref.read(databaseProvider);
+          await db.setControlState(e.id, e.accountId, e.controlState);
+          ref.read(emailsProvider.notifier).applyLocalFlags(e.id, controlState: e.controlState);
+          ref.read(controlRevisionProvider.notifier).state++;
+        default:
+          break;
+      }
+    } catch (err) {
+      AppLogger.warning('Беседа — отмена ${a.name}: $err');
     }
   }
 

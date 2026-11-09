@@ -29,7 +29,12 @@ class SlidableSpringBack extends StatefulWidget {
   final double dismissThreshold;
   final Widget child;
 
-  const SlidableSpringBack({super.key, required this.dismissThreshold, required this.child});
+  /// Где строка сейчас (доля ширины) — для выбора действия по месту, где
+  /// её отпустили (2.2.0: короткий свайп — первое действие, длинный —
+  /// второе). Последнее значение до конца жеста — место отпускания.
+  final SwipeStage? stage;
+
+  const SlidableSpringBack({super.key, required this.dismissThreshold, required this.child, this.stage});
 
   @override
   State<SlidableSpringBack> createState() => _SlidableSpringBackState();
@@ -49,11 +54,20 @@ class _SlidableSpringBackState extends State<SlidableSpringBack> {
     // вызывается после них и отменяет начатое ими открытие.
     c?.endGesture.addListener(_onEndGesture);
     c?.animation.addStatusListener(_onStatus);
+    c?.animation.addListener(_onMove);
   }
 
   void _detach() {
     _controller?.endGesture.removeListener(_onEndGesture);
     _controller?.animation.removeStatusListener(_onStatus);
+    _controller?.animation.removeListener(_onMove);
+  }
+
+  /// Где строка сейчас. DismissiblePane спрашивает confirmDismiss сразу при
+  /// отпускании, до следующего кадра, — тогда здесь место отпускания.
+  void _onMove() {
+    final c = _controller;
+    if (c != null) widget.stage?.position = c.animation.value;
   }
 
   @override
@@ -84,6 +98,15 @@ class _SlidableSpringBackState extends State<SlidableSpringBack> {
 
   @override
   Widget build(BuildContext context) => widget.child;
+}
+
+/// Положение строки для выбора действия свайпа (см. [SlidableSpringBack.stage]).
+class SwipeStage {
+  /// Доля ширины строки сейчас (при отпускании — место отпускания).
+  double position = 0;
+
+  /// Действие, выбранное при отпускании (для onDismissed после ухода строки).
+  Object? chosen;
 }
 
 /// Вернётся ли строка на место сразу, если отпустить её в положении

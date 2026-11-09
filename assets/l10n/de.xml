@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Wischaktionen in der E-Mail-Liste. Bis zu zwei Aktionen pro Seite.</string>
     <string name="swipeRight">Nach rechts wischen</string>
     <string name="swipeLeft">Nach links wischen</string>
-    <string name="swipeFirstAction">Erste Aktion</string>
-    <string name="swipeSecondAction">Zweite Aktion</string>
-    <string name="swipeSingleHint">Kurz wischen zeigt die Schaltflächen, lang wischen führt sofort die erste Aktion aus. Bei nur einer Aktion genügt etwa die halbe Zeile.</string>
+    <string name="swipeFirstAction">Kurzes Wischen</string>
+    <string name="swipeSecondAction">Langes Wischen</string>
+    <string name="swipeSingleHint">Zeile ziehen und loslassen – die Aktion wird ausgeführt. Kurzes Wischen führt die erste Aktion aus, langes die zweite; Symbol und Beschriftung zeigen, welche. Zu früh losgelassen – die Zeile springt zurück. Danach zeigt die Zeile, was erledigt wurde, mit „Rückgängig“.</string>
     <string name="filterToMe">An mich</string>
     <string name="recentSearches">Letzte Suchen</string>
     <string name="draft">Entwurf</string>

@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Handlinger ved stryg i maillisten. Op til to handlinger på hver side.</string>
     <string name="swipeRight">Stryg til højre</string>
     <string name="swipeLeft">Stryg til venstre</string>
-    <string name="swipeFirstAction">Første handling</string>
-    <string name="swipeSecondAction">Anden handling</string>
-    <string name="swipeSingleHint">Et kort stryg viser knapperne, et langt udfører straks den første handling. Med én handling er cirka en halv række nok.</string>
+    <string name="swipeFirstAction">Kort swipe</string>
+    <string name="swipeSecondAction">Langt swipe</string>
+    <string name="swipeSingleHint">Træk en række og slip – handlingen udføres. Et kort swipe kører den første handling, et langt den anden; ikonet og teksten viser hvilken. Slipper du for tidligt, springer rækken tilbage. Bagefter viser rækken, hvad der skete, med Fortryd.</string>
     <string name="filterToMe">Til mig</string>
     <string name="recentSearches">Seneste søgninger</string>
     <string name="draft">Kladde</string>

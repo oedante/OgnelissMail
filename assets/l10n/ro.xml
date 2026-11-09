@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Acțiuni de glisare în lista de mesaje. Cel mult două acțiuni pe parte.</string>
     <string name="swipeRight">Glisare spre dreapta</string>
     <string name="swipeLeft">Glisare spre stânga</string>
-    <string name="swipeFirstAction">Prima acțiune</string>
-    <string name="swipeSecondAction">A doua acțiune</string>
-    <string name="swipeSingleHint">O glisare scurtă afișează butoanele, una lungă execută imediat prima acțiune. Cu o singură acțiune ajunge cam jumătate de rând.</string>
+    <string name="swipeFirstAction">Glisare scurtă</string>
+    <string name="swipeSecondAction">Glisare lungă</string>
+    <string name="swipeSingleHint">Trageți un rând și eliberați – acțiunea se execută. Glisarea scurtă rulează prima acțiune, cea lungă pe a doua; pictograma și eticheta arată care. Eliberat prea devreme, rândul revine la loc. Apoi rândul arată ce s-a făcut, cu Anulează.</string>
     <string name="filterToMe">Pentru mine personal</string>
     <string name="recentSearches">Căutări recente</string>
     <string name="draft">Ciornă</string>

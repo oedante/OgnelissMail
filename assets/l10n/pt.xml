@@ -3963,4 +3963,6 @@
     <string name="findNext">Próximo</string>
     <string name="convFind">Localizar na conversa</string>
     <string name="convFindHint">Texto na conversa</string>
+    <string name="mentionsFilter">Menções</string>
+    <string name="mentionedYou">Você foi mencionado</string>
 </resources>

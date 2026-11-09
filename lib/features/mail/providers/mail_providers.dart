@@ -877,7 +877,7 @@ const int _maxInMemory = 2000;
 /// `toMe` отвечает на частый вопрос при разборе: «что адресовано лично мне, а
 /// что прислали для сведения». Письма, где пользователь только в копии, обычно
 /// достаточно просмотреть — а личные требуют ответа.
-enum MailFilter { none, unread, flagged, vip, attachments, toMe, today, control, later }
+enum MailFilter { none, unread, flagged, vip, attachments, toMe, today, control, later, mentions }
 final mailFilterProvider = StateProvider<MailFilter>((ref) => MailFilter.none);
 /// Фильтр по тегу (null = нет). Ортогонален mailFilterProvider.
 final tagFilterProvider = StateProvider<String?>((ref) => null);
@@ -995,6 +995,7 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
       control: filter == MailFilter.control,
       later: filter == MailFilter.later,
       attachments: filter == MailFilter.attachments,
+      mentions: filter == MailFilter.mentions,
       vip: filter == MailFilter.vip,
       vipEmails: filter == MailFilter.vip
           ? [for (final v in ref.read(focusModeProvider).vipEmails) v.trim().toLowerCase()]
@@ -1229,6 +1230,7 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
           case MailFilter.control: return e.controlState > 0;
           case MailFilter.later: return e.laterState > 0;
           case MailFilter.attachments: return e.hasAttachments;
+          case MailFilter.mentions: return e.mentionsMe == true;
           case MailFilter.vip:
             return true; // отбор — в SQL (_sqlFilter: список VIP)
           case MailFilter.toMe:
@@ -1615,6 +1617,7 @@ EmailModel emailModelFromRow(Email row) {
     isReplied: row.isReplied,
     isForwarded: row.isForwarded,
     hasAttachments: row.hasAttachments,
+    mentionsMe: row.mentionsMe == true,
     priority: EmailPriority.values[row.priority],
     status: EmailStatus.values[row.status],
     tags: row.tagsStr?.split(';').where((s) => s.isNotEmpty).toList() ?? [],

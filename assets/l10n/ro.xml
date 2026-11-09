@@ -3984,4 +3984,6 @@
     <string name="findNext">Următorul</string>
     <string name="convFind">Caută în conversație</string>
     <string name="convFindHint">Text din conversație</string>
+    <string name="mentionsFilter">Mențiuni</string>
+    <string name="mentionedYou">Ați fost menționat</string>
 </resources>

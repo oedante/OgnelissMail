@@ -3963,4 +3963,6 @@
     <string name="findNext">Sonraki</string>
     <string name="convFind">Konuşmada bul</string>
     <string name="convFindHint">Konuşmadaki metin</string>
+    <string name="mentionsFilter">Bahsetmeler</string>
+    <string name="mentionedYou">Sizden bahsedildi</string>
 </resources>

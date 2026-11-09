@@ -4005,4 +4005,6 @@
     <string name="findNext">Следующее</string>
     <string name="convFind">Найти в беседе</string>
     <string name="convFindHint">Текст в письмах беседы</string>
+    <string name="mentionsFilter">Упоминания</string>
+    <string name="mentionedYou">Вас упомянули в письме</string>
 </resources>

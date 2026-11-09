@@ -3942,4 +3942,6 @@
     <string name="findNext">다음</string>
     <string name="convFind">대화에서 찾기</string>
     <string name="convFindHint">대화 메시지의 텍스트</string>
+    <string name="mentionsFilter">멘션</string>
+    <string name="mentionedYou">회원님이 언급되었습니다</string>
 </resources>

@@ -3963,4 +3963,6 @@
     <string name="findNext">Seuraava</string>
     <string name="convFind">Etsi keskustelusta</string>
     <string name="convFindHint">Teksti keskustelun viesteissä</string>
+    <string name="mentionsFilter">Maininnat</string>
+    <string name="mentionedYou">Sinut mainittiin</string>
 </resources>

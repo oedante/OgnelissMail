@@ -3984,4 +3984,6 @@
     <string name="findNext">הבא</string>
     <string name="convFind">חיפוש בשיחה</string>
     <string name="convFindHint">טקסט בהודעות השיחה</string>
+    <string name="mentionsFilter">אזכורים</string>
+    <string name="mentionedYou">אוזכרת בהודעה</string>
 </resources>

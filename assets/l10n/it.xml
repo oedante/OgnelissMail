@@ -3963,4 +3963,6 @@
     <string name="findNext">Successivo</string>
     <string name="convFind">Trova nella conversazione</string>
     <string name="convFindHint">Testo nella conversazione</string>
+    <string name="mentionsFilter">Menzioni</string>
+    <string name="mentionedYou">Sei stato menzionato</string>
 </resources>

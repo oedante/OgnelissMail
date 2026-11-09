@@ -3942,4 +3942,6 @@
     <string name="findNext">Berikutnya</string>
     <string name="convFind">Cari di percakapan</string>
     <string name="convFindHint">Teks di percakapan</string>
+    <string name="mentionsFilter">Sebutan</string>
+    <string name="mentionedYou">Anda disebut</string>
 </resources>

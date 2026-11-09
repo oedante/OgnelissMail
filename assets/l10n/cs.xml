@@ -3984,4 +3984,6 @@
     <string name="findNext">Další</string>
     <string name="convFind">Najít v konverzaci</string>
     <string name="convFindHint">Text ve zprávách konverzace</string>
+    <string name="mentionsFilter">Zmínky</string>
+    <string name="mentionedYou">Byli jste zmíněni</string>
 </resources>

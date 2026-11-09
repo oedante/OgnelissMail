@@ -3963,4 +3963,6 @@
     <string name="findNext">Nästa</string>
     <string name="convFind">Sök i konversationen</string>
     <string name="convFindHint">Text i konversationen</string>
+    <string name="mentionsFilter">Omnämnanden</string>
+    <string name="mentionedYou">Du nämndes</string>
 </resources>

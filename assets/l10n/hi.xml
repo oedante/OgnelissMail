@@ -3963,4 +3963,6 @@
     <string name="findNext">अगला</string>
     <string name="convFind">बातचीत में खोजें</string>
     <string name="convFindHint">बातचीत के संदेशों में टेक्स्ट</string>
+    <string name="mentionsFilter">उल्लेख</string>
+    <string name="mentionedYou">आपका उल्लेख किया गया</string>
 </resources>

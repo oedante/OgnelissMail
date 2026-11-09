@@ -300,6 +300,12 @@ class EmailListTile extends ConsumerWidget {
     // Значки строки: закреплено, без уведомлений, вложения, флаг, ответ,
     // пересылка — в строке превью или (компактная плотность, 1.9.x) темы.
     final marks = <Widget>[
+      // @-упоминание (2.2.0, план 08.11.2026): вас упомянули в письме.
+      if (email.mentionsMe)
+        Padding(padding: const EdgeInsets.only(left: Space.xs),
+            child: Tooltip(
+                message: AppLocalizations.of(context).tr('mentionedYou'),
+                child: Icon(AppIcons.alternate_email, size: 15, weight: 700, color: theme.colorScheme.primary))),
       if (undelivered)
         Padding(padding: const EdgeInsets.only(left: Space.xs),
             child: Tooltip(

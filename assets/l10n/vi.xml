@@ -3942,4 +3942,6 @@
     <string name="findNext">Tiếp</string>
     <string name="convFind">Tìm trong cuộc hội thoại</string>
     <string name="convFindHint">Văn bản trong cuộc hội thoại</string>
+    <string name="mentionsFilter">Lượt nhắc đến</string>
+    <string name="mentionedYou">Bạn được nhắc đến</string>
 </resources>

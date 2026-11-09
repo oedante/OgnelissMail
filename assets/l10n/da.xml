@@ -3963,4 +3963,6 @@
     <string name="findNext">Næste</string>
     <string name="convFind">Find i samtalen</string>
     <string name="convFindHint">Tekst i samtalens meddelelser</string>
+    <string name="mentionsFilter">Omtaler</string>
+    <string name="mentionedYou">Du blev nævnt</string>
 </resources>

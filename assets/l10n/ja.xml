@@ -3942,4 +3942,6 @@
     <string name="findNext">次へ</string>
     <string name="convFind">会話内を検索</string>
     <string name="convFindHint">会話のメッセージ内のテキスト</string>
+    <string name="mentionsFilter">メンション</string>
+    <string name="mentionedYou">あなたがメンションされました</string>
 </resources>

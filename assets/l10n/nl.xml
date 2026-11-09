@@ -3963,4 +3963,6 @@
     <string name="findNext">Volgende</string>
     <string name="convFind">Zoeken in gesprek</string>
     <string name="convFindHint">Tekst in het gesprek</string>
+    <string name="mentionsFilter">Vermeldingen</string>
+    <string name="mentionedYou">U bent vermeld</string>
 </resources>

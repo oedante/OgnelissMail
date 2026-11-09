@@ -1,15 +1,17 @@
 // lib/services/assignments/assignment_codec.dart
 // Письмо поручения (план 08.11.2026 п. 10, решения владельца 09.11.2026).
 // Транспорт — обычная почта: исполнитель читает поручение в любой почте и
-// отвечает словами. Связь писем с поручением:
-//  · метка в теме «[OGN-7F3K2Q9XHMRT]» — её сохраняют ответы любой почты, даже
-//    если цепочка писем у сервера разорвалась;
-//  · скрытая строка в HTML «ogneliss-task;v=1;id=…;due=…;to=…» — у
-//    исполнителя с Ogneliss Mail поручение появляется само, со сроком;
-//  · ответ кнопкой из Ogneliss Mail — строка «ogneliss-status;id=…;s=…»:
+// отвечает словами. Тема — обычная («Поручение: что — до 12.11»), без
+// служебных меток (решение владельца 09.11.2026: метка портила вид письма).
+// Связь писем с поручением — в теле:
+//  · технический тег «OGN-7F3K2Q9XHMRT» мелким серым в подписи письма —
+//    его цитирует ответ из любой почты; удалили цитату — ответ находится
+//    по цепочке писем (In-Reply-To, References, беседа — assignment_store);
+//  · пустой элемент с атрибутом data-ogneliss-task (срок, исполнитель,
+//    название) — у исполнителя с Ogneliss Mail поручение появляется само.
+//    Текста у него нет: в почте без HTML ничего лишнего не видно;
+//  · ответ кнопкой из Ogneliss Mail — атрибут data-ogneliss-status:
 //    точнее слов («Принято», «Готово» — assignment_phrases.dart).
-// Ничего не прячется от почтовых шлюзов и архива: метка видна в теме,
-// строки — обычный текст письма.
 
 import 'dart:math';
 
@@ -66,22 +68,31 @@ abstract final class AssignmentCodec {
     return List.generate(idLength, (_) => _alphabet[r.nextInt(_alphabet.length)]).join();
   }
 
-  static final _tokenRe = RegExp(r'\[OGN-([2-9A-HJKMNP-TV-Z]{12})\]');
+  static const _code = r'[2-9A-HJKMNP-TV-Z]{12}';
+  static final _tagRe = RegExp('OGN-($_code)(?![0-9A-Z])');
 
-  /// Метка в теме письма.
-  static String token(String id) => '[OGN-$id]';
+  /// Технический тег в теле письма.
+  static String tag(String id) => 'OGN-$id';
 
-  /// Код поручения из темы (и «Re: …», «Fwd: …»); null — не поручение.
-  static String? idFromSubject(String subject) => _tokenRe.firstMatch(subject)?.group(1);
+  /// Код поручения по тегу в теле (HTML или текст, и в цитате ответа);
+  /// null — не поручение. Первый тег — самого нового письма цепочки.
+  static String? idFromBody(String? body) {
+    if (body == null || body.isEmpty) return null;
+    final m = _statusRe.firstMatch(body) ?? _taskRe.firstMatch(body);
+    if (m != null) {
+      final id = _fields(m.group(1))['id'];
+      if (id != null && RegExp('^$_code\$').hasMatch(id)) return id;
+    }
+    return _tagRe.firstMatch(body)?.group(1);
+  }
 
-  /// Тема: «Поручение: {что} — до {срок} [OGN-…]».
-  static String subject({required String prefix, required String title, String? due, required String id}) {
+  /// Тема: «Поручение: {что} — до {срок}» — без служебных меток.
+  static String subject({required String prefix, required String title, String? due}) {
     final t = title.trim().replaceAll(RegExp(r'\s+'), ' ');
     final short = t.length > 120 ? '${t.substring(0, 117)}…' : t;
     return [
       '$prefix: $short',
       if (due != null && due.isNotEmpty) ' — $due',
-      ' ${token(id)}',
     ].join();
   }
 
@@ -96,10 +107,9 @@ abstract final class AssignmentCodec {
 
   static String _clean(String s) => s.replaceAll(RegExp(r'[;\r\n]'), ' ').trim();
 
-  /// Скрытая строка поручения (в HTML письма).
+  /// Отметка поручения: пустой элемент с атрибутом (в HTML письма).
   static String taskMarker({required String id, DateTime? due, String? to, String? title, String? ev}) {
     final parts = [
-      'ogneliss-task',
       'v=1',
       'id=$id',
       if (ev != null) 'ev=${_clean(ev)}',
@@ -107,49 +117,58 @@ abstract final class AssignmentCodec {
       if (to != null && to.isNotEmpty) 'to=${_clean(to.toLowerCase())}',
       if (title != null && title.trim().isNotEmpty) 'ti=${Uri.encodeComponent(title.trim())}',
     ];
-    return _hidden(parts.join(';'));
+    return _marker('data-ogneliss-task', parts.join(';'));
   }
 
-  /// Скрытая строка статуса (в ответе исполнителя или поручившего).
-  static String statusMarker(String id, int status, {String? ev}) => _hidden(
-      'ogneliss-status;v=1;id=$id;s=${AssignmentStatus.code(status)}${ev == null ? '' : ';ev=${_clean(ev)}'}');
+  /// Отметка статуса (в ответе исполнителя или поручившего).
+  static String statusMarker(String id, int status, {String? ev}) => _marker('data-ogneliss-status',
+      'v=1;id=$id;s=${AssignmentStatus.code(status)}${ev == null ? '' : ';ev=${_clean(ev)}'}');
 
-  static String _hidden(String text) =>
-      '<div style="display:none;font-size:0;line-height:0;max-height:0;overflow:hidden;mso-hide:all">${_esc(text)}</div>';
+  /// Пустой невидимый элемент: в тексте письма и в его текстовой версии
+  /// (почта без HTML) от него ничего нет.
+  static String _marker(String attr, String value) =>
+      '<span $attr="${_esc(value)}" style="display:none"></span>';
 
-  static final _taskRe = RegExp(r'ogneliss-task;v=1;id=([2-9A-HJKMNP-TV-Z]{12})((?:;[a-z]+=[^;<"\s]*)*)');
-  static final _statusRe = RegExp(r'ogneliss-status;v=1;id=([2-9A-HJKMNP-TV-Z]{12})((?:;[a-z]+=[^;<"\s]*)*)');
+  static final _taskRe = RegExp(r'data-ogneliss-task="([^"]*)"');
+  static final _statusRe = RegExp(r'data-ogneliss-status="([^"]*)"');
 
-  static Map<String, String> _fields(String? tail) {
+  static String _unesc(String s) =>
+      s.replaceAll('&quot;', '"').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&');
+
+  static Map<String, String> _fields(String? value) {
     final fields = <String, String>{};
-    for (final kv in (tail ?? '').split(';')) {
+    for (final kv in _unesc(value ?? '').split(';')) {
       final i = kv.indexOf('=');
       if (i > 0) fields[kv.substring(0, i)] = kv.substring(i + 1);
     }
     return fields;
   }
 
-  /// Отметка поручения в тексте письма (HTML или простом).
+  /// Отметка поручения в HTML письма.
   static TaskMarker? parseTask(String body) {
     final m = _taskRe.firstMatch(body);
     if (m == null) return null;
-    final fields = _fields(m.group(2));
+    final fields = _fields(m.group(1));
+    final id = fields['id'];
+    if (id == null || !RegExp('^$_code\$').hasMatch(id)) return null;
     final due = DateTime.tryParse(fields['due'] ?? '');
     String? title;
     try {
       final t = fields['ti'];
       if (t != null && t.isNotEmpty) title = Uri.decodeComponent(t);
     } catch (_) {}
-    return (id: m.group(1)!, due: due, to: fields['to'], title: title, ev: fields['ev']);
+    return (id: id, due: due, to: fields['to'], title: title, ev: fields['ev']);
   }
 
   /// Отметка статуса в ответе.
   static StatusMarker? parseStatus(String body) {
     final m = _statusRe.firstMatch(body);
     if (m == null) return null;
-    final fields = _fields(m.group(2));
+    final fields = _fields(m.group(1));
+    final id = fields['id'];
     final s = AssignmentStatus.fromCode(fields['s'] ?? '');
-    return s == null ? null : (id: m.group(1)!, status: s, ev: fields['ev']);
+    if (id == null || s == null || !RegExp('^$_code\$').hasMatch(id)) return null;
+    return (id: id, status: s, ev: fields['ev']);
   }
 
   /// Текст письма поручения (HTML). Строки — на языке поручившего.
@@ -185,16 +204,16 @@ abstract final class AssignmentCodec {
       }
     }
     b
-      ..write('<p style="color:#888;font-size:smaller">— ${_esc(footer)}</p>')
+      ..write('<p style="color:#888;font-size:smaller">— ${_esc(footer)} ${tag(id)}</p>')
       ..write(taskMarker(id: id, due: due, to: to, title: title, ev: ev));
     return b.toString();
   }
 }
 
-/// Название поручения из темы письма без отметки: «Re: Поручение: собрать
-/// даты — до 12.11 [OGN-…]» → «собрать даты».
+/// Название поручения из темы письма: «Re: Поручение: собрать даты — до
+/// 12.11» → «собрать даты».
 String assignmentTitleFromSubject(String subject) {
-  var s = subject.replaceAll(RegExp(r'\[OGN-[^\]]*\]'), '').trim();
+  var s = subject.trim();
   s = s.replaceFirst(RegExp(r'^((re|fw|fwd|aw|wg|sv|vs|tr|rv|ответ|отв|пересл)\s*(\[\d+\])?\s*:\s*)+', caseSensitive: false), '');
   final colon = s.indexOf(': ');
   if (colon > 0 && colon < 30) s = s.substring(colon + 2);
@@ -204,12 +223,12 @@ String assignmentTitleFromSubject(String subject) {
 }
 
 /// Короткое письмо по поручению (ответ исполнителя, «принято», «вернул»,
-/// напоминание, новый срок): текст и скрытая отметка.
-String assignmentNoteHtml(String text, String marker) {
+/// напоминание, новый срок): текст, технический тег и отметка.
+String assignmentNoteHtml(String text, String marker, String id) {
   final esc = text
       .replaceAll('&', '&amp;')
       .replaceAll('<', '&lt;')
       .replaceAll('>', '&gt;')
       .replaceAll('\n', '<br>');
-  return '<p>$esc</p>$marker';
+  return '<p>$esc</p><p style="color:#999;font-size:smaller">${AssignmentCodec.tag(id)}</p>$marker';
 }

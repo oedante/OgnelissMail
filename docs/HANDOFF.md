@@ -371,8 +371,9 @@ UnifiedPush (архив сайта). Службу сигналов на серв
   `features/tasks/widgets/task_peek.dart` (общая с «Задачами»), перенос
   срока — `TaskActionsService.reschedule`. Список «Моего дня» убран
   (с ним — VIP, непрочитанные, «Отложенные» и плитки итогов дня).
-- Поручения: `services/assignments/` (метка [OGN-…], отметки
-  ogneliss-task/ogneliss-status, словарь фраз на 27 языках, разбор после
+- Поручения: `services/assignments/` (тег OGN-… в теле письма, тема —
+  обычная; отметки data-ogneliss-task/status; связь ответов — тег в цитате
+  или цепочка писем; словарь фраз на 27 языках, разбор после
   синхронизации — `AssignmentService.scanAfterSync`), экраны —
   `features/assignments/`. Таблицы `Assignments`,
   `AssignmentParticipants`, `AssignmentEvents` — прежние (без миграции);

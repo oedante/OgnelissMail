@@ -1918,7 +1918,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// Плашка поручения: у исполнителя — «Поручение · до …» с кнопками
   /// «Принять в работу», «Готово», «Вопрос»; у поручившего — статус.
   MailNotice? _assignmentNotice(WidgetRef r, EmailModel email, AppLocalizations l10n) {
-    final id = AssignmentCodec.idFromSubject(email.subject);
+    final id = AssignmentCodec.idFromBody(email.bodyHtml) ?? AssignmentCodec.idFromBody(email.bodyPlain);
     if (id == null) return null;
     final v = (r.watch(assignmentsProvider).value ?? const <AssignmentView>[]).where((x) => x.id == id).firstOrNull;
     if (v == null) return null;
@@ -1979,7 +1979,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           expanded: (_) => SenderSafetyBanner(account: acc, email: email, report: safety),
         ),
 
-      // ── Поручение (2.2.0): письмо с меткой [OGN-…] ──
+      // ── Поручение (2.2.0): письмо с тегом OGN-… в теле ──
       ?_assignmentNotice(r, email, l10n),
 
       // ── Перевод: «Перевести · английский» ↔ «Оригинал» ──

@@ -3,7 +3,7 @@
 // AssignmentEvents — app_database.dart) и разбор писем поручений после
 // синхронизации. Без Riverpod: разбор идёт и в фоновой синхронизации.
 //
-//  · письмо с меткой [OGN-…] и отметкой «ogneliss-task» от другого человека
+//  · письмо с тегом OGN-… и отметкой data-ogneliss-task от другого человека
 //    мне — поручение «Мне поручили»; моё такое письмо (с другого
 //    устройства) — «Я поручил», поручения видны на всех устройствах;
 //  · ответ исполнителя на моё поручение — в историю, статус: по отметке
@@ -20,6 +20,7 @@ import 'package:html/parser.dart' as html_parser;
 
 import '../../core/logging/app_logger.dart';
 import '../../core/utils/quote_splitter.dart';
+import '../../core/utils/subject_prefix.dart';
 import '../../data/database/app_database.dart';
 import 'assignment_codec.dart';
 import 'assignment_phrases.dart';
@@ -227,18 +228,35 @@ abstract final class AssignmentStore {
 
   /// Разобрать письма поручений, пришедшие после [since]. [mine] — ящик →
   /// все мои адреса (нижний регистр). Возвращает число изменений.
+  ///
+  /// Письмо поручения — по техническому тегу OGN-… в теле (в ответе — в
+  /// цитате) или по цепочке: ответ на письмо поручения (In-Reply-To,
+  /// References) и та же беседа сервера — если цитату удалили.
   static Future<int> scan(AppDatabase db, Map<String, Set<String>> mine, {required DateTime since}) async {
     if (mine.isEmpty) return 0;
     var changes = 0;
     try {
+      final links = await _threadLinks(db, mine.keys);
+      final refs = links.byMessageId.keys.take(100).toList();
+      final convs = links.byConversation.keys.map((k) => k.split('|').last).toSet().toList();
       final rows = await (db.select(db.emails)
-            ..where((e) =>
-                e.accountId.isIn(mine.keys) & e.receivedAt.isBiggerThanValue(since) & e.subject.like('%[OGN-%'))
+            ..where((e) {
+              Expression<bool> hit = e.bodyHtml.like('%OGN-%') | e.bodyPlain.like('%OGN-%');
+              if (convs.isNotEmpty) hit = hit | e.conversationId.isIn(convs);
+              for (final r in refs) {
+                hit = hit | e.referencesStr.like('%$r%');
+              }
+              return e.accountId.isIn(mine.keys) & e.receivedAt.isBiggerThanValue(since) & hit;
+            })
             ..orderBy([(e) => OrderingTerm(expression: e.receivedAt)])
             ..limit(500))
           .get();
       for (final e in rows) {
-        if (await _apply(db, e, mine[e.accountId] ?? const {})) changes++;
+        final id = AssignmentCodec.idFromBody(e.bodyHtml) ??
+            AssignmentCodec.idFromBody(e.bodyPlain) ??
+            links.of(e);
+        if (id == null) continue;
+        if (await _apply(db, e, mine[e.accountId] ?? const {}, id)) changes++;
       }
     } catch (err) {
       AppLogger.warning('Поручения: разбор писем — $err');
@@ -247,9 +265,39 @@ abstract final class AssignmentStore {
     return changes;
   }
 
-  static Future<bool> _apply(AppDatabase db, Email e, Set<String> me) async {
-    final id = AssignmentCodec.idFromSubject(e.subject);
-    if (id == null) return false;
+  /// Письма действующих поручений (отправленное поручение, полученное,
+  /// ответы): Message-ID и беседа → код поручения.
+  static Future<_Links> _threadLinks(AppDatabase db, Iterable<String> accountIds) async {
+    final active = await (db.select(db.assignments)
+          ..where((a) =>
+              a.accountId.isIn(accountIds) &
+              a.status.isIn(const [AssignmentStatus.open, AssignmentStatus.inProgress, AssignmentStatus.review])))
+        .get();
+    final links = _Links();
+    if (active.isEmpty) return links;
+    final events = await (db.select(db.assignmentEvents)
+          ..where((x) => x.assignmentId.isIn([for (final a in active) a.id]) & x.sourceEmailId.isNotNull()))
+        .get();
+    final byMail = {for (final x in events) x.sourceEmailId!: x.assignmentId};
+    if (byMail.isEmpty) return links;
+    final mails = await (db.select(db.emails)..where((e) => e.id.isIn(byMail.keys))).get();
+    for (final m in mails) {
+      final id = byMail[m.id];
+      if (id == null) continue;
+      final mid = _msgId(m.internetMessageId);
+      if (mid != null) links.byMessageId[mid] = id;
+      final conv = (m.conversationId ?? '').trim();
+      if (conv.isNotEmpty) links.byConversation['${m.accountId}|$conv'] = id;
+    }
+    return links;
+  }
+
+  static String? _msgId(String? raw) {
+    final s = (raw ?? '').trim().replaceAll('<', '').replaceAll('>', '');
+    return s.contains('@') ? s.toLowerCase() : null;
+  }
+
+  static Future<bool> _apply(AppDatabase db, Email e, Set<String> me, String id) async {
     var evId = 'mail:${e.accountId}:${e.id}';
     final seen = await (db.select(db.assignmentEvents)
           ..where((x) => x.id.equals(evId) | x.sourceEmailId.equals(e.id))
@@ -260,13 +308,21 @@ abstract final class AssignmentStore {
     final fromMe = me.contains(from);
     final html = e.bodyHtml ?? '';
     final plain = e.bodyPlain ?? '';
-    final task = AssignmentCodec.parseTask(html) ?? AssignmentCodec.parseTask(plain);
-    final st = AssignmentCodec.parseStatus(html) ?? AssignmentCodec.parseStatus(plain);
+    // Отметки — только из свежей части письма: в цитате ответа — отметки
+    // прежних писем поручения.
+    var freshHtml = html;
+    if (html.trim().isNotEmpty) {
+      try {
+        freshHtml = splitQuotedHtml(html).reply;
+      } catch (_) {}
+    }
+    final task = AssignmentCodec.parseTask(freshHtml);
+    final st = AssignmentCodec.parseStatus(freshHtml);
     final at = e.receivedAt;
     // Письмо с id события: уже записано (отправлено отсюда) — только
     // привязать письмо; иначе — записать под этим id (одно и то же событие
     // на всех устройствах).
-    final ev = st?.ev ?? task?.ev;
+    final ev = (st?.id == id ? st?.ev : null) ?? (task?.id == id ? task?.ev : null);
     if (ev != null) {
       final local = await (db.select(db.assignmentEvents)..where((x) => x.id.equals(ev))).getSingleOrNull();
       if (local != null) {
@@ -279,10 +335,17 @@ abstract final class AssignmentStore {
     final a = await byId(db, id);
 
     if (a == null) {
-      // Новое поручение: отметка с тем же кодом обязательна (метка в теме
-      // без отметки — просто письмо).
-      if (task == null || task.id != id) return false;
-      final to = task.to;
+      // Новое поручение — по отметке; сервер её убрал — по тегу в свежей
+      // части письма, если это не ответ и не пересылка, а я — в «Кому».
+      var t = task?.id == id ? task : null;
+      if (t == null) {
+        final fresh = freshText(html, plain);
+        final isNew = SubjectPrefix.strip(e.subject) == e.subject.trim();
+        final toMe = me.firstWhere((m) => e.toRecipients.toLowerCase().contains(m), orElse: () => '');
+        if (fromMe || !isNew || toMe.isEmpty || AssignmentCodec.idFromBody(fresh) != id) return false;
+        t = (id: id, due: null, to: toMe, title: null, ev: null);
+      }
+      final to = t.to;
       // Поручено не мне (я в копии) — не моё поручение.
       if (!fromMe && to != null && !me.contains(to)) return false;
       String? toName;
@@ -296,12 +359,12 @@ abstract final class AssignmentStore {
       await insert(db,
           id: id,
           accountId: e.accountId,
-          title: (task.title ?? '').trim().isNotEmpty ? task.title!.trim() : assignmentTitleFromSubject(e.subject),
+          title: (t.title ?? '').trim().isNotEmpty ? t.title!.trim() : assignmentTitleFromSubject(e.subject),
           ownerEmail: from,
           ownerName: e.fromName,
           assigneeEmail: assignee,
           assigneeName: toName,
-          due: task.due,
+          due: t.due,
           sourceEmailId: e.id,
           at: at,
           outgoing: fromMe,
@@ -368,5 +431,22 @@ abstract final class AssignmentStore {
       }
     } catch (_) {}
     return null;
+  }
+}
+
+class _Links {
+  final byMessageId = <String, String>{};
+  final byConversation = <String, String>{};
+
+  /// Код поручения по цепочке письма [e]: ответ на его письмо или та же беседа.
+  String? of(Email e) {
+    for (final r in (e.referencesStr ?? '').split(RegExp(r'[\s,]+'))) {
+      final m = r.replaceAll('<', '').replaceAll('>', '').trim().toLowerCase();
+      if (!m.contains('@')) continue;
+      final id = byMessageId[m];
+      if (id != null) return id;
+    }
+    final conv = (e.conversationId ?? '').trim();
+    return conv.isEmpty ? null : byConversation['${e.accountId}|$conv'];
   }
 }

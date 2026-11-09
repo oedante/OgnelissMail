@@ -8,7 +8,7 @@
 
 import 'dart:async';
 
-import 'package:drift/drift.dart' show TableUpdateQuery;
+import 'package:drift/drift.dart' show BooleanExpressionOperators, OrderingMode, OrderingTerm, TableUpdateQuery;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
@@ -139,15 +139,20 @@ class AssignmentService {
       );
       await _send(account, to,
           subject: AssignmentCodec.subject(
-              prefix: l10n.tr('assignSubject'), title: title, due: due == null ? null : _dueShort(due), id: id),
+              prefix: l10n.tr('assignSubject'),
+              title: title,
+              due: due == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(due))),
           html: body);
       ids.add(id);
     }
     return ids;
   }
 
-  String _subject(AssignmentView v, AppLocalizations l10n) =>
-      'Re: ${AssignmentCodec.subject(prefix: l10n.tr('assignSubject'), title: v.row.title, due: v.due == null ? null : _dueShort(v.due!), id: v.id)}';
+  String _subject(AssignmentView v, AppLocalizations l10n) => 'Re: ${AssignmentCodec.subject(
+        prefix: l10n.tr('assignSubject'),
+        title: v.row.title,
+        due: v.due == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(v.due!)),
+      )}';
 
   Future<void> _send(AccountModel account, EmailAddress to,
       {required String subject, required String html, String? inReplyTo}) async {
@@ -171,15 +176,22 @@ class AssignmentService {
     final email = v.otherEmail;
     if (account == null || email == null || email.isEmpty) return;
     final name = v.outgoing ? v.assignee?.displayName : v.owner?.displayName;
+    // Ответ — в ту же цепочку: на последнее письмо поручения (полученное
+    // или своё отправленное, когда оно пришло в «Отправленные»).
     String? inReplyTo;
-    final src = v.row.sourceEmailId;
-    if (!v.outgoing && src != null) {
-      try {
-        inReplyTo = (await _db.getEmailById(src, accountId: v.row.accountId))?.internetMessageId;
-      } catch (_) {}
-    }
+    try {
+      final linked = await (_db.select(_db.assignmentEvents)
+            ..where((x) => x.assignmentId.equals(v.id) & x.sourceEmailId.isNotNull())
+            ..orderBy([(x) => OrderingTerm(expression: x.createdAt, mode: OrderingMode.desc)])
+            ..limit(1))
+          .getSingleOrNull();
+      final mailId = linked?.sourceEmailId;
+      if (mailId != null) {
+        inReplyTo = (await _db.getEmailById(mailId, accountId: v.row.accountId))?.internetMessageId;
+      }
+    } catch (_) {}
     await _send(account, EmailAddress(email: email, displayName: name),
-        subject: _subject(v, _l10n()), html: assignmentNoteHtml(text, marker), inReplyTo: inReplyTo);
+        subject: _subject(v, _l10n()), html: assignmentNoteHtml(text, marker, v.id), inReplyTo: inReplyTo);
   }
 
   Future<void> _record(AssignmentView v, String ev, String type, Map<String, Object?> payload) =>

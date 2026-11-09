@@ -2,7 +2,7 @@
 // Письмо поручения (план 08.11.2026 п. 10, решения владельца 09.11.2026).
 // Транспорт — обычная почта: исполнитель читает поручение в любой почте и
 // отвечает словами. Связь писем с поручением:
-//  · метка в теме «[OGN-7F3K2Q9X]» — её сохраняют ответы любой почты, даже
+//  · метка в теме «[OGN-7F3K2Q9XHMRT]» — её сохраняют ответы любой почты, даже
 //    если цепочка писем у сервера разорвалась;
 //  · скрытая строка в HTML «ogneliss-task;v=1;id=…;due=…;to=…» — у
 //    исполнителя с Ogneliss Mail поручение появляется само, со сроком;
@@ -53,13 +53,20 @@ abstract final class AssignmentCodec {
   // Без похожих знаков (I, L, O, U, 0, 1) — код читают люди.
   static const _alphabet = '23456789ABCDEFGHJKMNPQRSTVWXYZ';
 
-  /// Новый код поручения: 8 знаков (30^8 ≈ 6,5·10^11).
+  /// Длина кода поручения.
+  static const idLength = 12;
+
+  /// Новый код поручения: 12 случайных знаков из криптостойкого генератора
+  /// (30^12 ≈ 5·10^17, около 59 бит). Совпадение кодов двух поручений в
+  /// одном ящике — меньше миллионной доли даже при миллионе поручений;
+  /// кроме того, письмо относится к поручению, только если пришло от его
+  /// участника (assignment_store.dart).
   static String newId([Random? random]) {
     final r = random ?? Random.secure();
-    return List.generate(8, (_) => _alphabet[r.nextInt(_alphabet.length)]).join();
+    return List.generate(idLength, (_) => _alphabet[r.nextInt(_alphabet.length)]).join();
   }
 
-  static final _tokenRe = RegExp(r'\[OGN-([2-9A-HJKMNP-TV-Z]{8})\]');
+  static final _tokenRe = RegExp(r'\[OGN-([2-9A-HJKMNP-TV-Z]{12})\]');
 
   /// Метка в теме письма.
   static String token(String id) => '[OGN-$id]';
@@ -110,8 +117,8 @@ abstract final class AssignmentCodec {
   static String _hidden(String text) =>
       '<div style="display:none;font-size:0;line-height:0;max-height:0;overflow:hidden;mso-hide:all">${_esc(text)}</div>';
 
-  static final _taskRe = RegExp(r'ogneliss-task;v=1;id=([2-9A-HJKMNP-TV-Z]{8})((?:;[a-z]+=[^;<"\s]*)*)');
-  static final _statusRe = RegExp(r'ogneliss-status;v=1;id=([2-9A-HJKMNP-TV-Z]{8})((?:;[a-z]+=[^;<"\s]*)*)');
+  static final _taskRe = RegExp(r'ogneliss-task;v=1;id=([2-9A-HJKMNP-TV-Z]{12})((?:;[a-z]+=[^;<"\s]*)*)');
+  static final _statusRe = RegExp(r'ogneliss-status;v=1;id=([2-9A-HJKMNP-TV-Z]{12})((?:;[a-z]+=[^;<"\s]*)*)');
 
   static Map<String, String> _fields(String? tail) {
     final fields = <String, String>{};

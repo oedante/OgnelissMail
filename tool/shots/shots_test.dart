@@ -520,25 +520,25 @@ void main() {
               due: due,
               at: now.subtract(const Duration(days: 1)),
               outgoing: mine).then((_) => AssignmentStore.update(db, id, status: status));
-      await a('AAAAAAAA', 'Согласовать договор поставки № 15', 'b.orlov@corp.example', 'Борис Орлов',
+      await a('AAAAAAAAAAAA', 'Согласовать договор поставки № 15', 'b.orlov@corp.example', 'Борис Орлов',
           d0.subtract(const Duration(days: 1)), AssignmentStatus.inProgress);
-      await a('BBBBBBBB', 'Отчёт отдела за октябрь', 'v.belova@corp.example', 'Вера Белова', d0, AssignmentStatus.review);
-      await a('CCCCCCCC', 'Собрать даты отпусков отдела', 'v.belova@corp.example', 'Вера Белова',
+      await a('BBBBBBBBBBBB', 'Отчёт отдела за октябрь', 'v.belova@corp.example', 'Вера Белова', d0, AssignmentStatus.review);
+      await a('CCCCCCCCCCCC', 'Собрать даты отпусков отдела', 'v.belova@corp.example', 'Вера Белова',
           d0.add(const Duration(days: 2)), AssignmentStatus.inProgress);
-      await a('DDDDDDDD', 'Обновить договор аренды', 'e.sokolova@corp.example', 'Елена Соколова',
+      await a('DDDDDDDDDDDD', 'Обновить договор аренды', 'e.sokolova@corp.example', 'Елена Соколова',
           d0.add(const Duration(days: 4)), AssignmentStatus.open);
-      await a('EEEEEEEE', 'Инвентаризация склада', 'd.kuznetsov@corp.example', 'Дмитрий Кузнецов', null,
+      await a('EEEEEEEEEEEE', 'Инвентаризация склада', 'd.kuznetsov@corp.example', 'Дмитрий Кузнецов', null,
           AssignmentStatus.open);
-      await a('FFFFFFFF', 'Подготовить справку для аудита', 'a.smirnova@corp.example', 'Анна Смирнова',
+      await a('FFFFFFFFFFFF', 'Подготовить справку для аудита', 'a.smirnova@corp.example', 'Анна Смирнова',
           d0.add(const Duration(days: 1)), AssignmentStatus.open, mine: false);
       await AssignmentStore.addEvent(db,
-          id: 'm1', assignmentId: 'CCCCCCCC', type: 'message', author: 'v.belova@corp.example',
+          id: 'm1', assignmentId: 'CCCCCCCCCCCC', type: 'message', author: 'v.belova@corp.example',
           at: now.subtract(const Duration(hours: 20)), outgoing: false,
           payload: {'text': 'Принято, сделаю к среде', 'status': AssignmentStatus.inProgress});
       return db;
     }))!;
     await _shot(tester, 'assignments_list', const AssignmentsScreen(), theme: _themes['light']!(), db: db, prefs: prefs);
-    await _shot(tester, 'assignment_card', const AssignmentScreen(id: 'CCCCCCCC'),
+    await _shot(tester, 'assignment_card', const AssignmentScreen(id: 'CCCCCCCCCCCC'),
         theme: _themes['light']!(), db: db, prefs: prefs);
     await tester.runAsync(db.close);
   });

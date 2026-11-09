@@ -48,25 +48,27 @@ void main() {
   });
 
   group('метка и отметки', () {
-    test('код: 8 знаков без похожих букв; тема — с меткой', () {
+    test('код: 12 случайных знаков без похожих букв; тема — с меткой', () {
       final id = AssignmentCodec.newId();
-      expect(id, matches(RegExp(r'^[2-9A-HJKMNP-TV-Z]{8}$')));
+      expect(id, matches(RegExp(r'^[2-9A-HJKMNP-TV-Z]{12}$')));
+      expect({for (var i = 0; i < 1000; i++) AssignmentCodec.newId()}, hasLength(1000));
       final s = AssignmentCodec.subject(prefix: 'Поручение', title: 'Собрать даты отпусков', due: '12.11', id: id);
       expect(s, 'Поручение: Собрать даты отпусков — 12.11 [OGN-$id]');
       expect(AssignmentCodec.idFromSubject('RE: Fwd: $s'), id);
       expect(AssignmentCodec.idFromSubject('Без метки [OGN-0000]'), isNull);
+      expect(AssignmentCodec.idFromSubject('Короткий код [OGN-ABCDEFGH]'), isNull);
       expect(assignmentTitleFromSubject('Re: $s'), 'Собрать даты отпусков');
     });
 
     test('отметка поручения и статуса — туда и обратно', () {
-      final html = '<p>текст</p>${AssignmentCodec.taskMarker(id: 'ABCDEFGH', due: DateTime(2026, 11, 12), to: 'Vera@Corp.ru', title: 'Даты; отпуска', ev: 'created:ABCDEFGH')}';
+      final html = '<p>текст</p>${AssignmentCodec.taskMarker(id: 'ABCDEFGHJKMN', due: DateTime(2026, 11, 12), to: 'Vera@Corp.ru', title: 'Даты; отпуска', ev: 'created:ABCDEFGHJKMN')}';
       final t = AssignmentCodec.parseTask(html)!;
-      expect(t.id, 'ABCDEFGH');
+      expect(t.id, 'ABCDEFGHJKMN');
       expect(t.due, DateTime(2026, 11, 12));
       expect(t.to, 'vera@corp.ru');
       expect(t.title, 'Даты; отпуска');
-      expect(t.ev, 'created:ABCDEFGH');
-      final st = AssignmentCodec.parseStatus(AssignmentCodec.statusMarker('ABCDEFGH', AssignmentStatus.review, ev: 'ev:1'))!;
+      expect(t.ev, 'created:ABCDEFGHJKMN');
+      final st = AssignmentCodec.parseStatus(AssignmentCodec.statusMarker('ABCDEFGHJKMN', AssignmentStatus.review, ev: 'ev:1'))!;
       expect(st.status, AssignmentStatus.review);
       expect(st.ev, 'ev:1');
       expect(AssignmentCodec.parseTask('<p>обычное письмо</p>'), isNull);
@@ -108,7 +110,7 @@ void main() {
 
     test('ответы исполнителя двигают статус вперёд, повторный разбор ничего не меняет', () async {
       await AssignmentStore.insert(db,
-          id: 'ABCDEFGH',
+          id: 'ABCDEFGHJKMN',
           accountId: 'a1',
           title: 'Собрать даты',
           ownerEmail: boss,
@@ -116,31 +118,31 @@ void main() {
           assigneeName: 'Вера Белова',
           at: t0,
           outgoing: true);
-      const subj = 'RE: Поручение: Собрать даты [OGN-ABCDEFGH]';
+      const subj = 'RE: Поручение: Собрать даты [OGN-ABCDEFGHJKMN]';
       await mail('a1', vera, subj, '<p>Принято, сделаю к среде</p>', t0.add(const Duration(minutes: 20)));
       expect(await AssignmentStore.scan(db, mineBoss, since: t0), 1);
-      expect((await AssignmentStore.byId(db, 'ABCDEFGH'))!.status, AssignmentStatus.inProgress);
+      expect((await AssignmentStore.byId(db, 'ABCDEFGHJKMN'))!.status, AssignmentStatus.inProgress);
 
       await mail('a1', vera, subj, '<p>Готово.</p><blockquote>Принято, сделаю к среде</blockquote>',
           t0.add(const Duration(hours: 2)));
       expect(await AssignmentStore.scan(db, mineBoss, since: t0), 1);
-      expect((await AssignmentStore.byId(db, 'ABCDEFGH'))!.status, AssignmentStatus.review);
+      expect((await AssignmentStore.byId(db, 'ABCDEFGHJKMN'))!.status, AssignmentStatus.review);
 
       // Слова не возвращают статус назад.
       await mail('a1', vera, subj, '<p>Принято</p>', t0.add(const Duration(hours: 3)));
       await AssignmentStore.scan(db, mineBoss, since: t0);
-      expect((await AssignmentStore.byId(db, 'ABCDEFGH'))!.status, AssignmentStatus.review);
+      expect((await AssignmentStore.byId(db, 'ABCDEFGHJKMN'))!.status, AssignmentStatus.review);
 
       expect(await AssignmentStore.scan(db, mineBoss, since: t0), 0, reason: 'письма уже разобраны');
       final list = await AssignmentStore.all(db, mineBoss);
       expect(list.single.outgoing, isTrue);
       expect(list.single.otherName, 'Вера Белова');
-      expect((await AssignmentStore.events(db, 'ABCDEFGH')).length, 4, reason: 'создано и три ответа');
+      expect((await AssignmentStore.events(db, 'ABCDEFGHJKMN')).length, 4, reason: 'создано и три ответа');
     });
 
     test('у исполнителя: поручение появляется само; поручено не мне — нет', () async {
       final html = AssignmentCodec.body(
-        id: 'KMNPQRST',
+        id: 'KMNPQRSTVWXY',
         greeting: 'Вера, добрый день!',
         whatLabel: 'Поручение:',
         what: 'Собрать даты отпусков',
@@ -149,9 +151,9 @@ void main() {
         to: vera,
         title: 'Собрать даты отпусков',
       );
-      await mail('a2', boss, 'Поручение: Собрать даты отпусков — 12.11 [OGN-KMNPQRST]', html, t0);
-      final other = html.replaceAll('KMNPQRST', 'VWXYZ234').replaceAll(vera, 'dmitry@corp.ru');
-      await mail('a2', boss, 'Поручение: Склад [OGN-VWXYZ234]', other, t0);
+      await mail('a2', boss, 'Поручение: Собрать даты отпусков — 12.11 [OGN-KMNPQRSTVWXY]', html, t0);
+      final other = html.replaceAll('KMNPQRSTVWXY', 'VWXYZ2345678').replaceAll(vera, 'dmitry@corp.ru');
+      await mail('a2', boss, 'Поручение: Склад [OGN-VWXYZ2345678]', other, t0);
       expect(await AssignmentStore.scan(db, mineVera, since: t0.subtract(const Duration(days: 1))), 1);
       final list = await AssignmentStore.all(db, mineVera);
       expect(list, hasLength(1));
@@ -162,22 +164,31 @@ void main() {
       expect(v.otherEmail, boss);
 
       // Поручивший принял работу — отметкой статуса.
-      await mail('a2', boss, 'Re: Поручение: Собрать даты отпусков [OGN-KMNPQRST]',
-          assignmentNoteHtml('Работа принята', AssignmentCodec.statusMarker('KMNPQRST', AssignmentStatus.done)),
+      await mail('a2', boss, 'Re: Поручение: Собрать даты отпусков [OGN-KMNPQRSTVWXY]',
+          assignmentNoteHtml('Работа принята', AssignmentCodec.statusMarker('KMNPQRSTVWXY', AssignmentStatus.done)),
           t0.add(const Duration(days: 1)));
       await AssignmentStore.scan(db, mineVera, since: t0);
-      expect((await AssignmentStore.byId(db, 'KMNPQRST'))!.status, AssignmentStatus.done);
+      expect((await AssignmentStore.byId(db, 'KMNPQRSTVWXY'))!.status, AssignmentStatus.done);
+    });
+
+    test('письмо не от участника с тем же кодом — не трогает поручение', () async {
+      await AssignmentStore.insert(db,
+          id: 'ABCDEFGHJKMN', accountId: 'a1', title: 'Т', ownerEmail: boss, assigneeEmail: vera, at: t0, outgoing: true);
+      await mail('a1', 'stranger@other.org', 'Re: Поручение: Т [OGN-ABCDEFGHJKMN]', '<p>Готово</p>',
+          t0.add(const Duration(minutes: 5)));
+      expect(await AssignmentStore.scan(db, mineBoss, since: t0), 0);
+      expect((await AssignmentStore.byId(db, 'ABCDEFGHJKMN'))!.status, AssignmentStatus.open);
     });
 
     test('своё отправленное письмо не задваивает историю', () async {
       await AssignmentStore.insert(db,
-          id: 'ABCDEFGH', accountId: 'a1', title: 'Т', ownerEmail: boss, assigneeEmail: vera, at: t0, outgoing: true,
-          eventId: 'created:ABCDEFGH');
+          id: 'ABCDEFGHJKMN', accountId: 'a1', title: 'Т', ownerEmail: boss, assigneeEmail: vera, at: t0, outgoing: true,
+          eventId: 'created:ABCDEFGHJKMN');
       final html = AssignmentCodec.body(
-          id: 'ABCDEFGH', greeting: 'Г', whatLabel: 'П:', what: 'Т', footer: 'Ф', to: vera, ev: 'created:ABCDEFGH');
-      await mail('a1', boss, 'Поручение: Т [OGN-ABCDEFGH]', html, t0.add(const Duration(minutes: 1)));
+          id: 'ABCDEFGHJKMN', greeting: 'Г', whatLabel: 'П:', what: 'Т', footer: 'Ф', to: vera, ev: 'created:ABCDEFGHJKMN');
+      await mail('a1', boss, 'Поручение: Т [OGN-ABCDEFGHJKMN]', html, t0.add(const Duration(minutes: 1)));
       expect(await AssignmentStore.scan(db, mineBoss, since: t0.subtract(const Duration(days: 1))), 0);
-      expect((await AssignmentStore.events(db, 'ABCDEFGH')).length, 1);
+      expect((await AssignmentStore.events(db, 'ABCDEFGHJKMN')).length, 1);
     });
   });
 }

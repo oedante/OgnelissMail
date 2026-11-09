@@ -309,6 +309,14 @@ abstract final class AssignmentStore {
       return true;
     }
 
+    // Письмо относится к поручению, только если оно от участника (поручивший,
+    // исполнитель или я с другого устройства): чужое поручение с тем же
+    // кодом (почти невозможно, но не исключено) ничего не меняет.
+    if (!fromMe) {
+      final people = await (db.select(db.assignmentParticipants)..where((p) => p.assignmentId.equals(id))).get();
+      final known = {a.ownerEmail.toLowerCase(), for (final p in people) p.email.toLowerCase()};
+      if (!known.contains(from)) return false;
+    }
     final outgoing = me.contains(a.ownerEmail.toLowerCase());
     int? next;
     if (st != null && st.id == id) {

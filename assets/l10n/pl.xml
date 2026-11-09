@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Akcje przesunięcia na liście wiadomości. Do dwóch akcji na stronę.</string>
     <string name="swipeRight">Przesunięcie w prawo</string>
     <string name="swipeLeft">Przesunięcie w lewo</string>
-    <string name="swipeFirstAction">Pierwsza czynność</string>
-    <string name="swipeSecondAction">Druga czynność</string>
-    <string name="swipeSingleHint">Krótkie przesunięcie pokazuje przyciski, długie od razu wykonuje pierwszą akcję. Przy jednej akcji wystarczy mniej więcej pół wiersza.</string>
+    <string name="swipeFirstAction">Krótkie przesunięcie</string>
+    <string name="swipeSecondAction">Długie przesunięcie</string>
+    <string name="swipeSingleHint">Przeciągnij wiersz i puść – akcja zostanie wykonana. Krótkie przesunięcie wykonuje pierwszą akcję, długie – drugą; ikona i podpis pokazują którą. Puszczony za wcześnie wiersz wraca na miejsce. Potem wiersz pokazuje, co zrobiono, z przyciskiem Cofnij.</string>
     <string name="filterToMe">Do mnie</string>
     <string name="recentSearches">Ostatnie wyszukiwania</string>
     <string name="draft">Wersja robocza</string>
@@ -4104,4 +4104,10 @@
     <string name="assignEvReminder">Przypomnienie wysłane</string>
     <string name="translateEngineBergamot">Tłumaczenie na komputerze – Bergamot (Mozilla). Tekst wiadomości nie opuszcza komputera; języki są pobierane z serwera Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Języki Windows – nie proponuj tłumaczenia</string>
+    <string name="swipeDoneRead">Oznaczono jako przeczytane</string>
+    <string name="swipeDoneUnread">Oznaczono jako nieprzeczytane</string>
+    <string name="swipeDoneFlag">Oznaczono flagą</string>
+    <string name="swipeDoneUnflag">Flaga usunięta</string>
+    <string name="swipeDoneControl">Pod kontrolą</string>
+    <string name="swipeDoneControlOff">Zdjęto z kontroli</string>
 </resources>

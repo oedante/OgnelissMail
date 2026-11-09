@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Aksi geser di daftar email. Maksimal dua aksi per sisi.</string>
     <string name="swipeRight">Geser ke kanan</string>
     <string name="swipeLeft">Geser ke kiri</string>
-    <string name="swipeFirstAction">Tindakan pertama</string>
-    <string name="swipeSecondAction">Tindakan kedua</string>
-    <string name="swipeSingleHint">Usapan pendek menampilkan tombol, usapan panjang langsung menjalankan tindakan pertama. Dengan satu tindakan, cukup sekitar setengah baris.</string>
+    <string name="swipeFirstAction">Usap pendek</string>
+    <string name="swipeSecondAction">Usap panjang</string>
+    <string name="swipeSingleHint">Seret baris lalu lepaskan untuk menjalankan tindakan. Usap pendek menjalankan tindakan pertama, usap panjang yang kedua; ikon dan label menunjukkan yang mana. Jika dilepas terlalu cepat, baris kembali. Setelahnya baris menunjukkan apa yang dilakukan, dengan Urungkan.</string>
     <string name="filterToMe">Khusus untuk saya</string>
     <string name="recentSearches">Pencarian terbaru</string>
     <string name="draft">Draf</string>
@@ -4041,4 +4041,10 @@
     <string name="assignEvReminder">Pengingat terkirim</string>
     <string name="translateEngineBergamot">Terjemahan di komputer oleh Bergamot (Mozilla). Teks email tidak meninggalkan komputer; bahasa diunduh dari server Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Bahasa Windows — jangan tawarkan terjemahan</string>
+    <string name="swipeDoneRead">Ditandai sudah dibaca</string>
+    <string name="swipeDoneUnread">Ditandai belum dibaca</string>
+    <string name="swipeDoneFlag">Diberi bendera</string>
+    <string name="swipeDoneUnflag">Bendera dihapus</string>
+    <string name="swipeDoneControl">Ditindaklanjuti</string>
+    <string name="swipeDoneControlOff">Tindak lanjut dihapus</string>
 </resources>

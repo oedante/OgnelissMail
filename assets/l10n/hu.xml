@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Elhúzással végrehajtható műveletek az üzenetlistában. Oldalanként legfeljebb két művelet.</string>
     <string name="swipeRight">Elhúzás jobbra</string>
     <string name="swipeLeft">Elhúzás balra</string>
-    <string name="swipeFirstAction">Első művelet</string>
-    <string name="swipeSecondAction">Második művelet</string>
-    <string name="swipeSingleHint">A rövid húzás megjeleníti a gombokat, a hosszú azonnal végrehajtja az első műveletet. Egy műveletnél nagyjából fél sor elég.</string>
+    <string name="swipeFirstAction">Rövid húzás</string>
+    <string name="swipeSecondAction">Hosszú húzás</string>
+    <string name="swipeSingleHint">Húzza el a sort, majd engedje el – a művelet lefut. A rövid húzás az első, a hosszú a második műveletet indítja; az ikon és a felirat mutatja, melyiket. Ha túl korán engedi el, a sor visszaugrik. Utána a soron látszik, mi történt, Visszavonás gombbal.</string>
     <string name="filterToMe">Nekem címzett</string>
     <string name="recentSearches">Legutóbbi keresések</string>
     <string name="draft">Piszkozat</string>
@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">Emlékeztető elküldve</string>
     <string name="translateEngineBergamot">Fordítás a számítógépen: Bergamot (Mozilla). A levelek szövege nem hagyja el a számítógépet; a nyelvek az Ogneliss-kiszolgálóról töltődnek le.</string>
     <string name="translatePhoneLangsWindows">Windows nyelvei – ne ajánljon fordítást</string>
+    <string name="swipeDoneRead">Olvasottnak jelölve</string>
+    <string name="swipeDoneUnread">Olvasatlannak jelölve</string>
+    <string name="swipeDoneFlag">Megjelölve</string>
+    <string name="swipeDoneUnflag">Jelölés eltávolítva</string>
+    <string name="swipeDoneControl">Nyomon követve</string>
+    <string name="swipeDoneControlOff">Nyomon követés megszüntetve</string>
 </resources>

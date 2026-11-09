@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Åtgärder vid svep i meddelandelistan. Högst två åtgärder per sida.</string>
     <string name="swipeRight">Svep åt höger</string>
     <string name="swipeLeft">Svep åt vänster</string>
-    <string name="swipeFirstAction">Första åtgärden</string>
-    <string name="swipeSecondAction">Andra åtgärden</string>
-    <string name="swipeSingleHint">Ett kort svep visar knapparna, ett långt utför direkt den första åtgärden. Med en åtgärd räcker ungefär halva raden.</string>
+    <string name="swipeFirstAction">Kort svep</string>
+    <string name="swipeSecondAction">Långt svep</string>
+    <string name="swipeSingleHint">Dra en rad och släpp – åtgärden utförs. Ett kort svep kör den första åtgärden, ett långt den andra; ikonen och texten visar vilken. Släpper du för tidigt fjädrar raden tillbaka. Efteråt visar raden vad som gjordes, med Ångra.</string>
     <string name="filterToMe">Till mig</string>
     <string name="recentSearches">Senaste sökningar</string>
     <string name="draft">Utkast</string>
@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">Påminnelse skickad</string>
     <string name="translateEngineBergamot">Översättning på datorn med Bergamot (Mozilla). Texten i mejlen lämnar inte datorn; språk hämtas från Ogneliss-servern.</string>
     <string name="translatePhoneLangsWindows">Windows-språk – föreslå inte översättning</string>
+    <string name="swipeDoneRead">Markerat som läst</string>
+    <string name="swipeDoneUnread">Markerat som oläst</string>
+    <string name="swipeDoneFlag">Flaggat</string>
+    <string name="swipeDoneUnflag">Flagga borttagen</string>
+    <string name="swipeDoneControl">Bevakas</string>
+    <string name="swipeDoneControlOff">Bevakning borttagen</string>
 </resources>

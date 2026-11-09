@@ -368,6 +368,7 @@ abstract final class AppIcons {
   static const IconData screen_rotation = Symbols.screen_rotation_rounded;
   static const IconData bookmark = Symbols.bookmark_rounded;
   static const IconData bookmark_added = Symbols.bookmark_added_rounded;
+  static const IconData bookmark_remove = Symbols.bookmark_remove_rounded;
   static const IconData play_circle = Symbols.play_circle_rounded;
   static const IconData more_time = Symbols.more_time_rounded;
   static const IconData next_week = Symbols.next_week_rounded;

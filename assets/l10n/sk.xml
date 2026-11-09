@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Akcie potiahnutia v zozname správ. Najviac dve akcie na každej strane.</string>
     <string name="swipeRight">Potiahnutie doprava</string>
     <string name="swipeLeft">Potiahnutie doľava</string>
-    <string name="swipeFirstAction">Prvá akcia</string>
-    <string name="swipeSecondAction">Druhá akcia</string>
-    <string name="swipeSingleHint">Krátke potiahnutie ukáže tlačidlá, dlhé hneď vykoná prvú akciu. Pri jednej akcii stačí zhruba pol riadka.</string>
+    <string name="swipeFirstAction">Krátke potiahnutie</string>
+    <string name="swipeSecondAction">Dlhé potiahnutie</string>
+    <string name="swipeSingleHint">Potiahnite riadok a pustite – akcia sa vykoná. Krátke potiahnutie spustí prvú akciu, dlhé druhú; ikona a popis ukážu ktorú. Ak pustíte príliš skoro, riadok sa vráti. Potom riadok ukáže, čo sa stalo, aj s tlačidlom Späť.</string>
     <string name="filterToMe">Mne osobne</string>
     <string name="recentSearches">Nedávne hľadania</string>
     <string name="draft">Koncept</string>
@@ -4083,4 +4083,10 @@
     <string name="assignEvReminder">Pripomienka odoslaná</string>
     <string name="translateEngineBergamot">Preklad v počítači – Bergamot (Mozilla). Text e-mailov neopúšťa počítač, jazyky sa sťahujú zo servera Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Jazyky Windows – neponúkať preklad</string>
+    <string name="swipeDoneRead">Označené ako prečítané</string>
+    <string name="swipeDoneUnread">Označené ako neprečítané</string>
+    <string name="swipeDoneFlag">Označené vlajkou</string>
+    <string name="swipeDoneUnflag">Vlajka odstránená</string>
+    <string name="swipeDoneControl">Vo sledovaní</string>
+    <string name="swipeDoneControlOff">Sledovanie zrušené</string>
 </resources>

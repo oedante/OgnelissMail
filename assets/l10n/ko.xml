@@ -1636,9 +1636,9 @@
     <string name="swipeHint">메일 목록의 스와이프 동작이에요. 한쪽에 최대 두 가지까지 설정할 수 있어요.</string>
     <string name="swipeRight">오른쪽으로 쓸기</string>
     <string name="swipeLeft">왼쪽으로 쓸기</string>
-    <string name="swipeFirstAction">첫 번째 동작</string>
-    <string name="swipeSecondAction">두 번째 동작</string>
-    <string name="swipeSingleHint">짧게 밀면 버튼이 나타나고, 길게 밀면 첫 번째 동작을 바로 실행합니다. 동작이 하나면 행의 절반 정도만 밀어도 됩니다.</string>
+    <string name="swipeFirstAction">짧게 밀기</string>
+    <string name="swipeSecondAction">길게 밀기</string>
+    <string name="swipeSingleHint">행을 끌었다가 놓으면 작업이 실행됩니다. 짧게 밀면 첫 번째, 길게 밀면 두 번째 작업이 실행되며 아이콘과 이름으로 어떤 작업인지 알 수 있습니다. 덜 끌고 놓으면 행이 제자리로 돌아갑니다. 실행 후 행에 결과와 「실행 취소」가 표시됩니다.</string>
     <string name="filterToMe">나에게 직접</string>
     <string name="recentSearches">최근 검색</string>
     <string name="draft">임시 보관</string>
@@ -4041,4 +4041,10 @@
     <string name="assignEvReminder">알림 발송됨</string>
     <string name="translateEngineBergamot">컴퓨터에서 Bergamot(Mozilla)으로 번역합니다. 메일 본문은 컴퓨터 밖으로 나가지 않으며, 언어는 Ogneliss 서버에서 다운로드됩니다.</string>
     <string name="translatePhoneLangsWindows">Windows 언어 — 번역 제안 안 함</string>
+    <string name="swipeDoneRead">읽음으로 표시됨</string>
+    <string name="swipeDoneUnread">읽지 않음으로 표시됨</string>
+    <string name="swipeDoneFlag">플래그 지정됨</string>
+    <string name="swipeDoneUnflag">플래그 해제됨</string>
+    <string name="swipeDoneControl">후속 확인 중</string>
+    <string name="swipeDoneControlOff">후속 확인 해제됨</string>
 </resources>

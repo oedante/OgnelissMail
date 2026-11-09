@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Acciones de deslizamiento en la lista de mensajes. Hasta dos acciones por lado.</string>
     <string name="swipeRight">Deslizar a la derecha</string>
     <string name="swipeLeft">Deslizar a la izquierda</string>
-    <string name="swipeFirstAction">Primera acción</string>
-    <string name="swipeSecondAction">Segunda acción</string>
-    <string name="swipeSingleHint">Un deslizamiento corto muestra los botones; uno largo ejecuta al instante la primera acción. Con una sola acción basta con media fila.</string>
+    <string name="swipeFirstAction">Deslizamiento corto</string>
+    <string name="swipeSecondAction">Deslizamiento largo</string>
+    <string name="swipeSingleHint">Arrastra una fila y suéltala para ejecutar la acción. Un deslizamiento corto ejecuta la primera acción y uno largo la segunda; el icono y la etiqueta indican cuál. Si la sueltas antes de tiempo, la fila vuelve a su sitio. Después, la fila muestra lo que se hizo, con Deshacer.</string>
     <string name="filterToMe">Para mí</string>
     <string name="recentSearches">Búsquedas recientes</string>
     <string name="draft">Borrador</string>
@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">Recordatorio enviado</string>
     <string name="translateEngineBergamot">Traducción en el ordenador con Bergamot (Mozilla). El texto de los correos no sale del ordenador; los idiomas se descargan del servidor de Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Idiomas de Windows: no ofrecer traducción</string>
+    <string name="swipeDoneRead">Marcado como leído</string>
+    <string name="swipeDoneUnread">Marcado como no leído</string>
+    <string name="swipeDoneFlag">Marcado con bandera</string>
+    <string name="swipeDoneUnflag">Bandera quitada</string>
+    <string name="swipeDoneControl">En seguimiento</string>
+    <string name="swipeDoneControlOff">Seguimiento quitado</string>
 </resources>

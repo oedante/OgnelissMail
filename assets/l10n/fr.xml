@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Actions de balayage dans la liste des messages. Jusqu’à deux actions par côté.</string>
     <string name="swipeRight">Balayer vers la droite</string>
     <string name="swipeLeft">Balayer vers la gauche</string>
-    <string name="swipeFirstAction">Première action</string>
-    <string name="swipeSecondAction">Seconde action</string>
-    <string name="swipeSingleHint">Un balayage court affiche les boutons, un balayage long exécute aussitôt la première action. Avec une seule action, la moitié de la ligne suffit.</string>
+    <string name="swipeFirstAction">Balayage court</string>
+    <string name="swipeSecondAction">Balayage long</string>
+    <string name="swipeSingleHint">Faites glisser une ligne puis relâchez : l’action s’exécute. Un balayage court lance la première action, un long la seconde ; l’icône et le libellé indiquent laquelle. Relâchée trop tôt, la ligne revient en place. Ensuite, la ligne indique ce qui a été fait, avec « Annuler ».</string>
     <string name="filterToMe">À moi</string>
     <string name="recentSearches">Recherches récentes</string>
     <string name="draft">Brouillon</string>
@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">Rappel envoyé</string>
     <string name="translateEngineBergamot">Traduction sur l’ordinateur par Bergamot (Mozilla). Le texte des e-mails ne quitte pas l’ordinateur ; les langues sont téléchargées depuis le serveur Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Langues de Windows — ne pas proposer de traduction</string>
+    <string name="swipeDoneRead">Marqué comme lu</string>
+    <string name="swipeDoneUnread">Marqué comme non lu</string>
+    <string name="swipeDoneFlag">Signalé</string>
+    <string name="swipeDoneUnflag">Signalement retiré</string>
+    <string name="swipeDoneControl">En suivi</string>
+    <string name="swipeDoneControlOff">Suivi retiré</string>
 </resources>

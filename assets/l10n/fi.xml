@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Pyyhkäisytoiminnot viestiluettelossa. Enintään kaksi toimintoa per puoli.</string>
     <string name="swipeRight">Pyyhkäisy oikealle</string>
     <string name="swipeLeft">Pyyhkäisy vasemmalle</string>
-    <string name="swipeFirstAction">Ensimmäinen toiminto</string>
-    <string name="swipeSecondAction">Toinen toiminto</string>
-    <string name="swipeSingleHint">Lyhyt pyyhkäisy näyttää painikkeet, pitkä suorittaa heti ensimmäisen toiminnon. Yhdellä toiminnolla riittää noin puoli riviä.</string>
+    <string name="swipeFirstAction">Lyhyt pyyhkäisy</string>
+    <string name="swipeSecondAction">Pitkä pyyhkäisy</string>
+    <string name="swipeSingleHint">Vedä riviä ja päästä irti – toiminto suoritetaan. Lyhyt pyyhkäisy tekee ensimmäisen toiminnon, pitkä toisen; kuvake ja teksti näyttävät kumman. Liian aikaisin irrotettu rivi palaa paikalleen. Sen jälkeen rivillä näkyy, mitä tehtiin, ja Kumoa.</string>
     <string name="filterToMe">Minulle</string>
     <string name="recentSearches">Viimeaikaiset haut</string>
     <string name="draft">Luonnos</string>
@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">Muistutus lähetetty</string>
     <string name="translateEngineBergamot">Käännös tietokoneella: Bergamot (Mozilla). Viestien teksti ei poistu tietokoneelta; kielet ladataan Ogneliss-palvelimelta.</string>
     <string name="translatePhoneLangsWindows">Windowsin kielet – älä ehdota käännöstä</string>
+    <string name="swipeDoneRead">Merkitty luetuksi</string>
+    <string name="swipeDoneUnread">Merkitty lukemattomaksi</string>
+    <string name="swipeDoneFlag">Liputettu</string>
+    <string name="swipeDoneUnflag">Lippu poistettu</string>
+    <string name="swipeDoneControl">Seurannassa</string>
+    <string name="swipeDoneControlOff">Seuranta poistettu</string>
 </resources>

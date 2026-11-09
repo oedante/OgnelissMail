@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Thao tác vuốt trong danh sách thư. Tối đa hai thao tác mỗi bên.</string>
     <string name="swipeRight">Vuốt sang phải</string>
     <string name="swipeLeft">Vuốt sang trái</string>
-    <string name="swipeFirstAction">Thao tác đầu tiên</string>
-    <string name="swipeSecondAction">Thao tác thứ hai</string>
-    <string name="swipeSingleHint">Vuốt ngắn để hiện các nút, vuốt dài để thực hiện ngay thao tác đầu tiên. Nếu chỉ có một thao tác, vuốt khoảng nửa hàng là đủ.</string>
+    <string name="swipeFirstAction">Vuốt ngắn</string>
+    <string name="swipeSecondAction">Vuốt dài</string>
+    <string name="swipeSingleHint">Kéo một dòng rồi thả để thực hiện thao tác. Vuốt ngắn thực hiện thao tác thứ nhất, vuốt dài thực hiện thao tác thứ hai; biểu tượng và nhãn cho biết thao tác nào. Thả quá sớm thì dòng trở lại chỗ cũ. Sau đó dòng hiển thị việc đã làm, kèm Hoàn tác.</string>
     <string name="filterToMe">Gửi riêng cho tôi</string>
     <string name="recentSearches">Tìm kiếm gần đây</string>
     <string name="draft">Thư nháp</string>
@@ -4041,4 +4041,10 @@
     <string name="assignEvReminder">Đã gửi lời nhắc</string>
     <string name="translateEngineBergamot">Dịch trên máy tính bằng Bergamot (Mozilla). Nội dung thư không rời khỏi máy tính; ngôn ngữ được tải về từ máy chủ Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Ngôn ngữ của Windows — không đề xuất dịch</string>
+    <string name="swipeDoneRead">Đã đánh dấu là đã đọc</string>
+    <string name="swipeDoneUnread">Đã đánh dấu là chưa đọc</string>
+    <string name="swipeDoneFlag">Đã gắn cờ</string>
+    <string name="swipeDoneUnflag">Đã bỏ gắn cờ</string>
+    <string name="swipeDoneControl">Đang theo dõi</string>
+    <string name="swipeDoneControlOff">Đã bỏ theo dõi</string>
 </resources>

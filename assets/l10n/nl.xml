@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Veegacties in de berichtenlijst. Maximaal twee acties per kant.</string>
     <string name="swipeRight">Naar rechts vegen</string>
     <string name="swipeLeft">Naar links vegen</string>
-    <string name="swipeFirstAction">Eerste actie</string>
-    <string name="swipeSecondAction">Tweede actie</string>
-    <string name="swipeSingleHint">Kort vegen toont de knoppen, lang vegen voert meteen de eerste actie uit. Met één actie is ongeveer een halve rij genoeg.</string>
+    <string name="swipeFirstAction">Korte veeg</string>
+    <string name="swipeSecondAction">Lange veeg</string>
+    <string name="swipeSingleHint">Sleep een rij en laat los: de actie wordt uitgevoerd. Een korte veeg voert de eerste actie uit, een lange de tweede; pictogram en tekst tonen welke. Te vroeg losgelaten? Dan veert de rij terug. Daarna toont de rij wat er is gedaan, met Ongedaan maken.</string>
     <string name="filterToMe">Aan mij</string>
     <string name="recentSearches">Recente zoekopdrachten</string>
     <string name="draft">Concept</string>
@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">Herinnering verzonden</string>
     <string name="translateEngineBergamot">Vertaling op de computer door Bergamot (Mozilla). De tekst van e-mails verlaat de computer niet; talen worden gedownload van de Ogneliss-server.</string>
     <string name="translatePhoneLangsWindows">Windows-talen — geen vertaling aanbieden</string>
+    <string name="swipeDoneRead">Gemarkeerd als gelezen</string>
+    <string name="swipeDoneUnread">Gemarkeerd als ongelezen</string>
+    <string name="swipeDoneFlag">Gemarkeerd met vlag</string>
+    <string name="swipeDoneUnflag">Vlag verwijderd</string>
+    <string name="swipeDoneControl">Wordt opgevolgd</string>
+    <string name="swipeDoneControlOff">Opvolging verwijderd</string>
 </resources>

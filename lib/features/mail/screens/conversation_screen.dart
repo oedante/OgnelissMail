@@ -10,7 +10,7 @@ import '../../../widgets/common/undo_strip.dart';
 import '../../../widgets/common/undo_manager.dart';
 import '../../../core/utils/text_safe.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:flutter/foundation.dart' show compute, listEquals;
+import 'package:flutter/foundation.dart' show compute, listEquals, visibleForTesting;
 import 'package:html/parser.dart' as html_parser;
 import 'package:flutter/material.dart';
 import '../../contacts/widgets/person_card.dart';
@@ -50,6 +50,9 @@ import 'conversation_files_screen.dart' show openConversationFiles;
 import 'mail_detail_screen.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/swipe_action_indicator.dart';
+import '../../../widgets/common/swipe_done.dart';
+import '../../../widgets/common/slidable_spring_back.dart';
+import '../providers/folder_names.dart' show localizedFolderName;
 import '../widgets/mail_peek_card.dart';
 import '../widgets/move_folder_picker.dart';
 import '../../../services/mail/own_addresses.dart';
@@ -380,10 +383,14 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               },
         onDismissed: () => unawaited(_run(a, e, l10n)),
       ),
+      // Не дотянули до порога — строка возвращается, кнопка не остаётся
+      // открытой (одно правило свайпов, 2.2.0).
       children: [
-        CustomSlidableAction(
+        SlidableSpringBack(
+          dismissThreshold: 0.4,
+          child: CustomSlidableAction(
           onPressed: (_) => unawaited(_run(a, e, l10n)),
-          backgroundColor: tone.$1,
+          backgroundColor: Colors.transparent,
           foregroundColor: tone.$2,
           padding: EdgeInsets.zero,
           child: Semantics(
@@ -398,10 +405,12 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 atEdge: true,
                 extentRatio: 0.28,
                 armAt: 0.4,
+                background: tone.$1,
                 animated: settings.swipeAnimated && !settings.reduceMotion,
               ),
             ),
           ),
+        ),
         ),
       ],
     );
@@ -448,6 +457,10 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     final actions = ref.read(emailActionsProvider);
     final db = ref.read(databaseProvider);
     unawaited(HapticFeedback.selectionClick());
+    if (mounted) {
+      showSwipeDone(context, a, e, l10n,
+          id: 'conv/${e.accountId}/${e.id}', control: e.controlState, onUndo: () => unawaited(_undo(a, e)));
+    }
     try {
       switch (a) {
         case SwipeAction.markRead:
@@ -498,6 +511,30 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       }
     } catch (err) {
       AppLogger.warning('Беседа — действие ${a.name}: $err');
+    }
+  }
+
+  /// «Отменить» на плашке свайпа (2.2.0): как было до действия.
+  Future<void> _undo(SwipeAction a, EmailModel e) async {
+    final account = ref.read(accountsProvider).where((x) => x.id == e.accountId).firstOrNull;
+    if (account == null) return;
+    final actions = ref.read(emailActionsProvider);
+    try {
+      switch (a) {
+        case SwipeAction.markRead:
+          await actions.setRead(account, e.id, e.folderId, e.isRead);
+        case SwipeAction.flag:
+          await actions.setFlag(account, e.id, e.folderId, e.isFlagged);
+        case SwipeAction.control:
+          final db = ref.read(databaseProvider);
+          await db.setControlState(e.id, e.accountId, e.controlState);
+          ref.read(emailsProvider.notifier).applyLocalFlags(e.id, controlState: e.controlState);
+          ref.read(controlRevisionProvider.notifier).state++;
+        default:
+          break;
+      }
+    } catch (err) {
+      AppLogger.warning('Беседа — отмена ${a.name}: $err');
     }
   }
 
@@ -695,6 +732,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 
         // ✓/✓✓ своих писем — по отчётам о доставке и прочтении (2.2.0).
         final ticks = ref.watch(deliveryTicksProvider).value;
+        final folderById = {
+          for (final f in ref.watch(accountFoldersProvider(widget.accountId)).value ?? const <FolderModel>[]) f.id: f,
+        };
 
         Widget messageAt(int i) {
           final list = shown!;
@@ -709,7 +749,10 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           // Черновик — без свайпов и карточки действий: нажатие открывает
           // редактор, удалить — там же или в «Черновиках».
           final draft = e.isDraft || e.folderId == 'drafts';
-          final card = Slidable(
+          final card = SwipeDoneOverlay(
+            id: 'conv/${e.accountId}/${e.id}',
+            borderRadius: Radii.cardAll,
+            child: Slidable(
             key: ValueKey('conv_${e.accountId}_${e.id}'),
             startActionPane: draft ? null : _pane(settings.swipeConvLeft, e, l10n, fromStart: true),
             endActionPane: draft ? null : _pane(settings.swipeConvRight, e, l10n, fromStart: false),
@@ -722,10 +765,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   email: e,
                   mine: mine,
                   tick: mine ? deliveryTickOf(ticks, e) : null,
-                  alsoIn: [
-                    for (final c in copies[e.id] ?? const <EmailModel>[])
-                      if ((c.folderName ?? '').isNotEmpty) c.folderName!,
-                  ],
+                  folders: conversationFolderChips([e, ...?copies[e.id]], folderById, mine: mine, l10n: l10n),
+                  control: settings.mailControl ? e.controlState : 0,
                   onTap: () => _open(e),
                   // Карточка письма с быстрыми действиями, как в ленте
                   // (1.6.30); полный список — «Ещё…».
@@ -733,6 +774,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 ),
               ),
             ),
+          ),
           );
           // Поиск по беседе: письмо с совпадением — рамкой (текущее — цветом
           // акцента), без совпадения — приглушено.
@@ -994,6 +1036,36 @@ class _DayChip extends StatelessWidget {
   }
 }
 
+/// Подписи папок у письма беседы (2.2.0, снимок владельца 09.11.2026:
+/// «Входящие» стояли на каждом письме, в том числе на своих, а «Sent» —
+/// именем с сервера). Обычное место письма не подписывается: входящее — во
+/// «Входящих», своё — в «Отправленных» или во «Входящих» (копия себе);
+/// черновики и исходящие — своей строкой. Остальные папки (архив, корзина,
+/// спам, свои) — названием по типу папки на языке приложения.
+@visibleForTesting
+List<String> conversationFolderChips(List<EmailModel> copies, Map<String, FolderModel> folderById,
+    {required bool mine, required AppLocalizations l10n}) {
+  final out = <String>[];
+  for (final c in copies) {
+    final f = folderById[c.folderId];
+    final type = f?.type ?? _folderTypeByName(c.folderId, c.folderName) ?? FolderType.custom;
+    if (type == FolderType.inbox || type == FolderType.drafts || type == FolderType.outbox) continue;
+    if (mine && type == FolderType.sent) continue;
+    final label = f != null ? localizedFolderName(f, l10n) : (c.folderName ?? '').trim();
+    if (label.isNotEmpty && !out.contains(label)) out.add(label);
+  }
+  return out;
+}
+
+/// Тип папки, которой нет в списке папок ящика (ещё не прочитан): по id и
+/// имени с сервера.
+FolderType? _folderTypeByName(String id, String? name) {
+  final n = '${name ?? ''} $id'.toLowerCase();
+  if (id.toUpperCase() == 'INBOX' || n.contains('inbox') || n.contains('входящ')) return FolderType.inbox;
+  if (n.contains('sent') || n.contains('отправлен')) return FolderType.sent;
+  return SpecialFolders.typeByName(name ?? '');
+}
+
 /// Карточка письма в беседе: аватар, отправитель, время, три строки текста,
 /// метка папки (в беседе бывают письма из «Входящих» и «Отправленных»).
 /// Свои письма — фото справа и с лёгким оттенком, входящие — фото слева:
@@ -1004,8 +1076,12 @@ class _MessageCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
 
-  /// Другие папки, где лежит копия этого письма (письмо самому себе).
-  final List<String> alsoIn;
+  /// Папки письма и его копий, которые стоит назвать
+  /// ([conversationFolderChips]): без «Входящих» и без «Отправленных» у своих.
+  final List<String> folders;
+
+  /// «На контроле» (0 — нет): отметка, как в ленте.
+  final int control;
 
   /// Своё письмо (2.2.0): false — доставлено (✓), true — прочитано (✓✓),
   /// null — отчётов нет.
@@ -1016,7 +1092,8 @@ class _MessageCard extends StatelessWidget {
       required this.mine,
       required this.onTap,
       this.onLongPress,
-      this.alsoIn = const [],
+      this.folders = const [],
+      this.control = 0,
       this.tick});
 
   @override
@@ -1028,10 +1105,6 @@ class _MessageCard extends StatelessWidget {
     // Плотность ленты (1.9.x) — и у карточек беседы: поля, портрет, строки.
     final density = AppearanceLook.of(context).density;
     final preview = email.preview.replaceAll(RegExp(r'\s+'), ' ').trim();
-    final folders = <String>{
-      if ((email.folderName ?? '').isNotEmpty) email.folderName!,
-      ...alsoIn,
-    };
     // Фото — в серой рамке (её рисует HeroEmailAvatar для всех портретов).
     // Нажатие на аватар — карточка отправителя (должность, отдел, телефоны).
     final avatar = GestureDetector(
@@ -1133,6 +1206,23 @@ class _MessageCard extends StatelessWidget {
                             padding: const EdgeInsets.only(left: Space.xs),
                             child: Icon(AppIcons.flag, size: Sizes.iconInline, fill: 1, color: scheme.error),
                           ),
+                        // «На контроле» (2.2.0, замечание владельца 09.11.2026:
+                        // в беседе отметки не было) — как в ленте.
+                        if (control != 0)
+                          Padding(
+                            key: const ValueKey('conv_control_mark'),
+                            padding: const EdgeInsets.only(left: Space.xs),
+                            child: Icon(
+                              control == 3 ? AppIcons.bookmark_added : AppIcons.bookmark,
+                              size: Sizes.iconInline,
+                              fill: 1,
+                              color: switch (control) {
+                                3 => AppColors.successText(context),
+                                2 => AppColors.accentOrange,
+                                _ => scheme.primary,
+                              },
+                            ),
+                          ),
                         const SizedBox(width: Space.s),
                         if (tick != null)
                           Padding(
@@ -1176,7 +1266,7 @@ class _MessageCard extends StatelessWidget {
                               borderRadius: Radii.chipAll,
                             ),
                             child: Text(
-                              f.toUpperCase() == 'INBOX' ? AppLocalizations.of(context).tr('inbox') : f,
+                              f,
                               style: theme.textTheme.labelSmall?.copyWith(color: scheme.onSecondaryContainer),
                             ),
                           ),

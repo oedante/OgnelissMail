@@ -3997,4 +3997,21 @@
     <string name="andMoreN">a další {n}</string>
     <string name="meetingFreeThen">V tuto dobu máte volno</string>
     <string name="meetingOneOccurrence">Jedna schůzka ze série</string>
+    <string name="mdmRuleSyncDays">Pošta v zařízení: nejvýše {n} dní</string>
+    <string name="mdmRuleAttachments">Přílohy nelze v zařízení otevřít ani uložit</string>
+    <string name="mdmRulePinTimeout">Zamknutí po {n} min nečinnosti</string>
+    <string name="mdmRuleNoBiometrics">Pouze kód aplikace, bez otisku a obličeje</string>
+    <string name="mdmRuleExternal">Bez externích služeb: počasí, loga, signály a přihlášení přes server Ogneliss</string>
+    <string name="mdmSyncLimit">Organizace omezila období: {period}</string>
+    <string name="mdmTlsRequired">Organizace vyžaduje šifrované spojení, ale {host} je bez SSL/STARTTLS. Zapněte SSL nebo STARTTLS v nastavení schránky</string>
+    <string name="mdmAccountLocked">Schránku spravuje organizace</string>
+    <string name="mdmAccountLockedDesc">Odebrat ji nebo změnit server či přihlášení může jen IT oddělení</string>
+    <string name="mdmRuleAccountLocked">Schránka organizace je uzamčena</string>
+    <string name="mdmRuleTransport">Exchange pouze přes {t}</string>
+    <string name="mdmRuleTls">Pouze šifrovaná spojení</string>
+    <string name="mdmRuleOrgCa">Certifikáty organizace jsou důvěryhodné</string>
+    <string name="mdmRuleNoUserCerts">Certifikátům nemůžete důvěřovat sami</string>
+    <string name="mdmRuleDeviceContacts">Kontakty se nekopírují do Kontaktů zařízení</string>
+    <string name="mdmRuleDeviceCalendar">Události se nekopírují do Kalendáře zařízení</string>
+    <string name="mdmLoginServerBlocked">Organizace zakázala přihlášení přes server Ogneliss. Přidejte schránku s heslem aplikace (IMAP/SMTP).</string>
 </resources>

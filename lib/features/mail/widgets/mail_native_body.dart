@@ -59,6 +59,7 @@ import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/pinch_zoom.dart';
 import 'quote_person_chip.dart';
 import 'mail_find.dart';
+import 'mail_html_view.dart' show MailScaleAction, MailScaleControl;
 import 'span_table.dart';
 import '../../../services/security/managed_config.dart';
 
@@ -1202,6 +1203,7 @@ class MailNativeBody extends StatefulWidget {
     this.onShown,
     this.onQuoteReply,
     this.find,
+    this.scaleControl,
   });
 
   final NativeMail mail;
@@ -1217,6 +1219,10 @@ class MailNativeBody extends StatefulWidget {
 
   /// Поиск в письме (2.2.0): совпадения — фоном, текущее — ярче.
   final MailFindController? find;
+
+  /// «Обычный размер» после увеличения щипком — пилюлей в строке сведений
+  /// экрана (2.2.0); null — кнопкой над письмом, как раньше.
+  final MailScaleControl? scaleControl;
 
   @override
   State<MailNativeBody> createState() => _MailNativeBodyState();
@@ -1247,6 +1253,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
 
   @override
   void dispose() {
+    widget.scaleControl?.release(this);
     widget.find?.removeListener(_onFind);
     for (final t in _taps) {
       t.dispose();
@@ -1410,8 +1417,12 @@ class _MailNativeBodyState extends State<MailNativeBody> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     // Увеличение разведением пальцев (1.8.0): мелкие таблицы и картинки.
+    final scale = widget.scaleControl;
     return PinchZoom(
       resetLabel: AppLocalizations.of(context).tr('mailZoomReset'),
+      onZoomChanged: scale == null
+          ? null
+          : (reset) => scale.report(this, reset == null ? MailScaleAction.none : MailScaleAction.reset, reset),
       child: _body(theme),
     );
   }

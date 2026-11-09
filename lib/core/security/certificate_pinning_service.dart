@@ -11,6 +11,7 @@
 // Это даёт вариативность: одно приложение работает в любой организации,
 // домен и отпечатки задаются администратором/пользователем, не зашиты в код.
 
+import '../../services/security/managed_config.dart' show ManagedPolicy, ManagedRule;
 import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
@@ -179,6 +180,15 @@ class CertificatePinningService {
     return false;
   }
 
+  /// Пользователь может сам доверять сертификатам (MDM
+  /// allow_user_cert_trust, 2.2.0). Нет — его решения не действуют: ни
+  /// принятые в «Доверять?» сертификаты (правила `=хост`), ни «доверенные
+  /// домены»; закрепление администратора проверяется как обычно.
+  static bool get _userTrust => ManagedPolicy.current.allowUserCertTrust;
+
+  Iterable<PinRule> get _activeRules => _userTrust ? _rules : _rules.where((r) => r.strict);
+  List<String> get _activeCaDomains => _userTrust ? _trustedCaDomains : const [];
+
   /// Вычислить base64 SHA-256 отпечаток DER-сертификата.
   static String fingerprintOf(X509Certificate cert) {
     return base64.encode(sha256.convert(cert.der).bytes);
@@ -230,6 +240,9 @@ class CertificatePinningService {
   /// сертификата при перехвате трафика сюда не пройдёт: отпечаток не совпадёт.
   /// Сервер сменит сертификат — пользователь увидит тот же диалог снова.
   Future<void> trustCertificate(RejectedCertificate c) async {
+    // Организация запретила доверять сертификатам самому (MDM
+    // allow_user_cert_trust, 2.2.0) — с объяснением строкой.
+    if (ManagedPolicy.deny(ManagedRule.certTrust)) return;
     final domain = '=${c.host}';
     final existing = _rules.where((r) => r.domain == domain).expand((r) => r.sha256Fingerprints);
     await addRule(PinRule(
@@ -259,7 +272,7 @@ class CertificatePinningService {
 
   bool _hasRuleFor(String rawHost) {
     final host = rawHost.toLowerCase();
-    return _rules.any((r) => _domainMatches(host, r.domain, r.includeSubdomains));
+    return _activeRules.any((r) => _domainMatches(host, r.domain, r.includeSubdomains));
   }
 
   /// То же для сертификата, отклонённого сетевым стеком Android (режим
@@ -291,14 +304,14 @@ class CertificatePinningService {
     }
     final fps = <String>{};
     var anyRule = false;
-    for (final rule in _rules) {
+    for (final rule in _activeRules) {
       if (!_domainMatches(host, rule.domain, rule.includeSubdomains)) continue;
       anyRule = true;
       fps.addAll(rule.sha256Fingerprints);
     }
     final strict = strictPinsFor(host)?.toList();
     if (anyRule) return (fingerprints: fps.toList(), acceptAny: false, strict: strict);
-    final trustedDomain = _trustedCaDomains.any((d) => _domainMatches(host, d, true));
+    final trustedDomain = _activeCaDomains.any((d) => _domainMatches(host, d, true));
     return (fingerprints: const <String>[], acceptAny: trustedDomain, strict: strict);
   }
 
@@ -351,7 +364,7 @@ class CertificatePinningService {
     final host = rawHost.toLowerCase();
     String? fp;
     bool? result;
-    for (final rule in _rules) {
+    for (final rule in _activeRules) {
       if (!_domainMatches(host, rule.domain, rule.includeSubdomains)) continue;
       fp ??= cert.fingerprint;
       if (!rule.sha256Fingerprints.contains(fp)) {
@@ -375,7 +388,7 @@ class CertificatePinningService {
         // Для доверенных корп. доменов — принимаем (user CA уже в системе),
         // для остальных badCertificateCallback вызывается только при ошибке
         // проверки, поэтому здесь — отказ (стандартная строгая проверка).
-        for (final d in _trustedCaDomains) {
+        for (final d in _activeCaDomains) {
           if (_domainMatches(host, d, true)) return true;
         }
         return false;
@@ -383,7 +396,7 @@ class CertificatePinningService {
         // Правило для хоста
         if (byRule != null) return byRule;
         // Нет правила для хоста — доверяем системному стору / trustedCa
-        for (final d in _trustedCaDomains) {
+        for (final d in _activeCaDomains) {
           if (_domainMatches(host, d, true)) return true;
         }
         return false;

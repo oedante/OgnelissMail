@@ -40,6 +40,7 @@
 // если он один (несколько — выбирает человек); нет ни того, ни другого —
 // почта проверяется по расписанию, и это не ошибка под переключателем.
 
+import '../security/managed_config.dart' show ManagedPolicy, managedPolicyProvider;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
@@ -278,6 +279,11 @@ class PushWakeService {
     if (os == null || _inited) return;
     _inited = true;
     _channel.setMethodCallHandler(_onCall);
+    // Политика организации сменилась (внешние службы запретили или
+    // разрешили) — снять регистрацию на сервере или вернуть её.
+    _ref.listen<bool>(managedPolicyProvider.select((p) => p.blockExternalServices), (prev, next) {
+      if (prev != next) unawaited(apply());
+    });
     if (os == PushWakeOs.android) {
       _upChannel.setMethodCallHandler(_onUpCall);
       _gms ??= await _googleServices();
@@ -295,8 +301,12 @@ class PushWakeService {
   Future<void> apply() async {
     if (os == null) return;
     final prefs = _ref.read(pushWakePrefsProvider);
+    // Организация запретила внешние службы (MDM block_external_services,
+    // 2.2.0): сигналы через сервер Ogneliss — нет, почта приходит по
+    // проверкам и соединению с сервером почты.
+    final allowed = !ManagedPolicy.current.blockExternalServices;
     try {
-      if (prefs.enabled) {
+      if (prefs.enabled && allowed) {
         if (os == PushWakeOs.android && transport == PushWakeTransport.unifiedpush) {
           await _applyUp();
         } else if (os == PushWakeOs.android) {

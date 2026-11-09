@@ -8,6 +8,7 @@
 // - Регистрация всех фоновых задач
 
 import '../push/push_wake_service.dart' show PushWakeService, pushWakeServiceProvider;
+import '../security/managed_feedback.dart';
 import '../calendar/quick_create_service.dart' show quickCreateProvider;
 import '../widget_mail_actions.dart' show widgetMailActionsProvider;
 import '../sync/sync_schedule.dart';
@@ -540,6 +541,10 @@ class BackgroundService {
       // 2a. Сигналы сервера «проверь почту»: iPhone (1.7.2), Android (1.9.x,
       // если в сборке есть параметры Firebase).
       unawaited(_ref.read(pushWakeServiceProvider).init());
+
+      // 2b. Отчёт консоли MDM (Android Enterprise, 2.2.0): настройки
+      // организации приняты, ящик и PIN — для ИТ-службы.
+      _ref.read(managedFeedbackProvider);
 
       // 3. Таймеры в foreground
       _startTokenRefreshTimer();

@@ -3955,4 +3955,21 @@
     <string name="andMoreN">他 {n} 件</string>
     <string name="meetingFreeThen">この時間は空いています</string>
     <string name="meetingOneOccurrence">定期的な会議の 1 回分</string>
+    <string name="mdmRuleSyncDays">端末上のメール: 最大 {n} 日</string>
+    <string name="mdmRuleAttachments">添付ファイルを端末で開いたり保存したりできません</string>
+    <string name="mdmRulePinTimeout">操作がないと {n} 分後にロック</string>
+    <string name="mdmRuleNoBiometrics">アプリのコードのみ（指紋・顔は不可）</string>
+    <string name="mdmRuleExternal">外部サービスなし: 天気、ロゴ、通知シグナル、Ogneliss サーバー経由のサインイン</string>
+    <string name="mdmSyncLimit">組織により期間が制限されています: {period}</string>
+    <string name="mdmTlsRequired">組織は暗号化接続を必須にしていますが、{host} は SSL/STARTTLS なしです。メールボックスの設定で SSL か STARTTLS をオンにしてください</string>
+    <string name="mdmAccountLocked">組織が管理するメールボックス</string>
+    <string name="mdmAccountLockedDesc">削除やサーバー・サインインの変更は IT 部門のみが行えます</string>
+    <string name="mdmRuleAccountLocked">組織のメールボックスは固定されています</string>
+    <string name="mdmRuleTransport">Exchange は {t} のみ</string>
+    <string name="mdmRuleTls">暗号化接続のみ</string>
+    <string name="mdmRuleOrgCa">組織の証明書を信頼</string>
+    <string name="mdmRuleNoUserCerts">証明書を自分で信頼することはできません</string>
+    <string name="mdmRuleDeviceContacts">連絡先は端末の連絡先にコピーされません</string>
+    <string name="mdmRuleDeviceCalendar">予定は端末のカレンダーにコピーされません</string>
+    <string name="mdmLoginServerBlocked">組織が Ogneliss サーバー経由のサインインを禁止しています。アプリパスワード (IMAP/SMTP) でメールボックスを追加してください。</string>
 </resources>

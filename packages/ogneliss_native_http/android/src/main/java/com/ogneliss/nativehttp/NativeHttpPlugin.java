@@ -125,13 +125,18 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
         // Дополнительные ЦС приложения (встроенные Минцифры, импортированные).
         final List<byte[]> extraCas = orDefault(call.<List<byte[]>>argument("extraCas"),
                 Collections.<byte[]>emptyList());
+        // Организация запретила доверять сертификатам самому (MDM
+        // allow_user_cert_trust, 2.2.0): только системные ЦС, без
+        // установленных на устройство пользователем.
+        final Boolean systemOnlyArg = call.argument("systemOnly");
+        final boolean systemOnly = systemOnlyArg != null && systemOnlyArg;
 
         POOL.execute(() -> {
             final X509Certificate[] rejected = new X509Certificate[1];
             try {
                 final Map<String, Object> res =
                         send(method, url, headers, body, timeoutMs, trusted, acceptAny, extraCas,
-                                strict, strictPins, rejected);
+                                strict, strictPins, systemOnly, rejected);
                 MAIN.post(() -> result.success(res));
             } catch (Exception e) {
                 final String msg = e.getClass().getSimpleName() + ": " + e.getMessage();
@@ -165,12 +170,12 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
             String method, String url, Map<String, String> headers,
             byte[] body, int timeoutMs,
             Set<String> trusted, boolean acceptAny, List<byte[]> extraCas,
-            boolean strict, Set<String> strictPins,
+            boolean strict, Set<String> strictPins, boolean systemOnly,
             X509Certificate[] rejected) throws Exception {
         final HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         if (conn instanceof HttpsURLConnection) {
             ((HttpsURLConnection) conn).setSSLSocketFactory(
-                    sslFactory(trusted, acceptAny, extraCas, strict, strictPins, rejected));
+                    sslFactory(trusted, acceptAny, extraCas, strict, strictPins, systemOnly, rejected));
         }
         try {
             conn.setInstanceFollowRedirects(false);
@@ -240,10 +245,12 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
      */
     private static SSLSocketFactory sslFactory(
             Set<String> trusted, boolean acceptAny, List<byte[]> extraCas,
-            boolean strict, Set<String> strictPins,
+            boolean strict, Set<String> strictPins, boolean systemOnly,
             X509Certificate[] rejected) throws Exception {
         final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        tmf.init((KeyStore) null);
+        // По умолчанию — как велит network_security_config (системные и
+        // установленные пользователем); systemOnly — только системные.
+        tmf.init(systemOnly ? systemCaStore() : (KeyStore) null);
         X509TrustManager sys = null;
         for (TrustManager t : tmf.getTrustManagers()) {
             if (t instanceof X509TrustManager) {
@@ -337,6 +344,22 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /** Только системные ЦС (AndroidCAStore, «system:…»), без установленных пользователем. */
+    private static KeyStore systemCaStore() throws Exception {
+        final KeyStore android = KeyStore.getInstance("AndroidCAStore");
+        android.load(null, null);
+        final KeyStore out = KeyStore.getInstance(KeyStore.getDefaultType());
+        out.load(null, null);
+        final Enumeration<String> aliases = android.aliases();
+        while (aliases.hasMoreElements()) {
+            final String alias = aliases.nextElement();
+            if (!alias.startsWith("system:")) continue;
+            final java.security.cert.Certificate c = android.getCertificate(alias);
+            if (c != null) out.setCertificateEntry(alias, c);
+        }
+        return out;
     }
 
     /** Сертификаты ЦС, установленные пользователем (AndroidCAStore, «user:…»). */

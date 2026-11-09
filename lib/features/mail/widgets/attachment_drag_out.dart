@@ -148,6 +148,8 @@ class AttachmentDragSource extends StatelessWidget {
   }
 
   Future<DragItem?> _item(DragItemRequest request) async {
+    // Организация запретила вложения на устройстве (MDM block_attachment_download).
+    if (ManagedPolicy.deny(ManagedRule.attachments)) return null;
     final att = attachment;
     final platform = defaultTargetPlatform;
     final item = DragItem(suggestedName: att.name);

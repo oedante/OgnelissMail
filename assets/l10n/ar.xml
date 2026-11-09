@@ -4060,4 +4060,21 @@
     <string name="andMoreN">و{n} آخرون</string>
     <string name="meetingFreeThen">أنت متاح في هذا الوقت</string>
     <string name="meetingOneOccurrence">اجتماع واحد من سلسلة</string>
+    <string name="mdmRuleSyncDays">البريد على الجهاز: حتى {n} يومًا</string>
+    <string name="mdmRuleAttachments">لا يمكن فتح المرفقات أو حفظها على الجهاز</string>
+    <string name="mdmRulePinTimeout">القفل بعد {n} دقيقة من عدم النشاط</string>
+    <string name="mdmRuleNoBiometrics">رمز التطبيق فقط، دون بصمة أو وجه</string>
+    <string name="mdmRuleExternal">دون خدمات خارجية: الطقس والشعارات والإشارات وتسجيل الدخول عبر خادم Ogneliss</string>
+    <string name="mdmSyncLimit">حددت مؤسستك الفترة: {period}</string>
+    <string name="mdmTlsRequired">تتطلب مؤسستك اتصالًا مشفرًا، لكن الخادم {host} دون SSL/STARTTLS. فعّل SSL أو STARTTLS في إعدادات صندوق البريد</string>
+    <string name="mdmAccountLocked">صندوق البريد مُدار من مؤسستك</string>
+    <string name="mdmAccountLockedDesc">يمكن لقسم تقنية المعلومات فقط إزالته أو تغيير خادمه أو تسجيل الدخول</string>
+    <string name="mdmRuleAccountLocked">صندوق بريد المؤسسة مثبت</string>
+    <string name="mdmRuleTransport">Exchange عبر {t} فقط</string>
+    <string name="mdmRuleTls">اتصالات مشفرة فقط</string>
+    <string name="mdmRuleOrgCa">شهادات المؤسسة موثوقة</string>
+    <string name="mdmRuleNoUserCerts">لا يمكنك الوثوق بالشهادات بنفسك</string>
+    <string name="mdmRuleDeviceContacts">لا تُنسخ جهات الاتصال إلى جهات اتصال الجهاز</string>
+    <string name="mdmRuleDeviceCalendar">لا تُنسخ الأحداث إلى تقويم الجهاز</string>
+    <string name="mdmLoginServerBlocked">حظرت مؤسستك تسجيل الدخول عبر خادم Ogneliss. أضف صندوق البريد بكلمة مرور التطبيق (IMAP/SMTP).</string>
 </resources>

@@ -4018,4 +4018,21 @@
     <string name="andMoreN">i jeszcze {n}</string>
     <string name="meetingFreeThen">W tym czasie jesteś wolny</string>
     <string name="meetingOneOccurrence">Jedno spotkanie z serii</string>
+    <string name="mdmRuleSyncDays">Poczta na urządzeniu: najwyżej {n} dni</string>
+    <string name="mdmRuleAttachments">Załączników nie można otworzyć ani zapisać na urządzeniu</string>
+    <string name="mdmRulePinTimeout">Blokada po {n} min bezczynności</string>
+    <string name="mdmRuleNoBiometrics">Tylko kod aplikacji, bez odcisku palca i twarzy</string>
+    <string name="mdmRuleExternal">Bez usług zewnętrznych: pogody, logo, sygnałów i logowania przez serwer Ogneliss</string>
+    <string name="mdmSyncLimit">Organizacja ograniczyła okres: {period}</string>
+    <string name="mdmTlsRequired">Organizacja wymaga szyfrowanego połączenia, a serwer {host} nie ma SSL/STARTTLS. Włącz SSL lub STARTTLS w ustawieniach skrzynki</string>
+    <string name="mdmAccountLocked">Skrzynką zarządza organizacja</string>
+    <string name="mdmAccountLockedDesc">Usunąć ją lub zmienić serwer czy logowanie może tylko dział IT</string>
+    <string name="mdmRuleAccountLocked">Skrzynka organizacji jest zablokowana</string>
+    <string name="mdmRuleTransport">Exchange tylko przez {t}</string>
+    <string name="mdmRuleTls">Tylko szyfrowane połączenia</string>
+    <string name="mdmRuleOrgCa">Certyfikaty organizacji są zaufane</string>
+    <string name="mdmRuleNoUserCerts">Nie możesz samodzielnie ufać certyfikatom</string>
+    <string name="mdmRuleDeviceContacts">Kontakty nie są kopiowane do Kontaktów urządzenia</string>
+    <string name="mdmRuleDeviceCalendar">Wydarzenia nie są kopiowane do Kalendarza urządzenia</string>
+    <string name="mdmLoginServerBlocked">Organizacja zablokowała logowanie przez serwer Ogneliss. Dodaj skrzynkę z hasłem aplikacji (IMAP/SMTP).</string>
 </resources>

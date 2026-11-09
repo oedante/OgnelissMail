@@ -243,7 +243,8 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
                 : null,
             syncInterval: SyncInterval.values[row.syncInterval],
             syncOnlyWifi: row.syncOnlyWifi,
-            syncDays: row.syncDays,
+            // Предел организации (MDM max_sync_days, 2.2.0).
+            syncDays: _policy().capSyncDays(row.syncDays),
             isActive: row.isActive,
             authFailedAt: row.authFailedAt,
             sharedMailboxEmail: row.sharedMailboxEmail,
@@ -459,6 +460,13 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
   /// поисковый индекс, состояние синхронизации и кэш вложений тоже удаляются:
   /// данные ящика не должны оставаться на устройстве после его удаления.
   Future<void> removeAccount(String accountId) async {
+    // Ящик организации закреплён (MDM account_locked): не удаляется ни
+    // откуда (экран ящика, меню, ссылки).
+    final locked = state.where((a) => a.id == accountId).firstOrNull;
+    if (locked != null && _policy().lockedAccount(locked.email)) {
+      AppLogger.info('MDM: ящик организации закреплён — не удаляется');
+      return;
+    }
     // Общие ящики, открытые через этот аккаунт, без его пароля не работают —
     // удаляются вместе с ним.
     for (final child in state.where((a) => a.parentAccountId == accountId).toList()) {

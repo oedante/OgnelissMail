@@ -3976,4 +3976,21 @@
     <string name="andMoreN">e altri {n}</string>
     <string name="meetingFreeThen">Sei libero a quest\'ora</string>
     <string name="meetingOneOccurrence">Una riunione di una serie</string>
+    <string name="mdmRuleSyncDays">Posta sul dispositivo: al massimo {n} giorni</string>
+    <string name="mdmRuleAttachments">Gli allegati non possono essere aperti né salvati sul dispositivo</string>
+    <string name="mdmRulePinTimeout">Blocco dopo {n} min di inattività</string>
+    <string name="mdmRuleNoBiometrics">Solo codice dell\'app, senza impronta né volto</string>
+    <string name="mdmRuleExternal">Senza servizi esterni: meteo, loghi, segnali e accesso tramite il server Ogneliss</string>
+    <string name="mdmSyncLimit">La tua organizzazione limita il periodo: {period}</string>
+    <string name="mdmTlsRequired">La tua organizzazione richiede una connessione cifrata, ma {host} non ha SSL/STARTTLS. Attiva SSL o STARTTLS nelle impostazioni della casella</string>
+    <string name="mdmAccountLocked">Casella gestita dalla tua organizzazione</string>
+    <string name="mdmAccountLockedDesc">Solo il reparto IT può rimuoverla o cambiarne server o accesso</string>
+    <string name="mdmRuleAccountLocked">La casella dell\'organizzazione è bloccata</string>
+    <string name="mdmRuleTransport">Exchange solo tramite {t}</string>
+    <string name="mdmRuleTls">Solo connessioni cifrate</string>
+    <string name="mdmRuleOrgCa">I certificati dell\'organizzazione sono attendibili</string>
+    <string name="mdmRuleNoUserCerts">Non puoi considerare attendibili i certificati da solo</string>
+    <string name="mdmRuleDeviceContacts">I contatti non vengono copiati nei Contatti del dispositivo</string>
+    <string name="mdmRuleDeviceCalendar">Gli eventi non vengono copiati nel Calendario del dispositivo</string>
+    <string name="mdmLoginServerBlocked">La tua organizzazione ha bloccato l\'accesso tramite il server Ogneliss. Aggiungi la casella con una password per app (IMAP/SMTP).</string>
 </resources>

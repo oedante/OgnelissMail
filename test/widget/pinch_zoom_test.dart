@@ -2,6 +2,9 @@
 // возвращается к обычному размеру; одним пальцем экран листается.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ogneliss/core/theme/app_icons.dart';
+import 'package:ogneliss/features/mail/widgets/mail_html_view.dart' show MailScaleAction, MailScaleControl;
+import 'package:ogneliss/features/mail/widgets/mail_native_body.dart';
 import 'package:ogneliss/widgets/common/pinch_zoom.dart';
 
 Widget _host() => const MaterialApp(
@@ -57,4 +60,69 @@ void main() {
     expect(find.text('Обычный размер'), findsNothing);
     expect(tester.getSize(find.byType(PinchZoom)).height, 100);
   });
+
+  testWidgets('слушатель есть — своей кнопки нет, «Обычный размер» — у него', (tester) async {
+    VoidCallback? reset;
+    var calls = 0;
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: SingleChildScrollView(
+          child: PinchZoom(
+            resetLabel: 'Обычный размер',
+            onZoomChanged: (r) {
+              calls++;
+              reset = r;
+            },
+            child: const SizedBox(height: 100, child: Text('Таблица')),
+          ),
+        ),
+      ),
+    ));
+    await _pinch(tester, find.text('Таблица'));
+    expect(find.text('Обычный размер'), findsNothing);
+    expect(reset, isNotNull);
+    expect(calls, 1, reason: 'сообщает только смену «увеличено»');
+    reset!();
+    await tester.pumpAndSettle();
+    expect(reset, isNull);
+    expect(calls, 2);
+    expect(tester.getSize(find.byType(PinchZoom)).height, 100);
+  });
+
+  testWidgets('простой показ письма — «Обычный размер» пилюлей экрана', (tester) async {
+    final control = MailScaleControl();
+    addTearDown(control.dispose);
+    final mail = buildNativeMailForced('<p>Коллеги, замечание учтено.</p><table><tr><td>ДКС</td></tr></table>')!;
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: SingleChildScrollView(
+          child: MailNativeBody(mail: mail, onLink: (_, _) {}, scaleControl: control),
+        ),
+      ),
+    ));
+    await tester.pump();
+    expect(control.action, MailScaleAction.none);
+    await _pinch(tester, find.byType(MailNativeBody));
+    expect(control.action, MailScaleAction.reset);
+    expect(find.byIcon(AppIcons.fit_screen), findsNothing, reason: 'кнопки над письмом нет');
+    control.run();
+    await tester.pumpAndSettle();
+    expect(control.action, MailScaleAction.none);
+  });
+}
+
+// 2.2.0 (просьба владельца 09.11.2026): «Обычный размер» — пилюлей в строке
+// сведений экрана, а не кнопкой над письмом, которая смещалась при
+// перемещении по письму.
+Future<void> _pinch(WidgetTester tester, Finder target) async {
+  final c = tester.getCenter(target);
+  final a = await tester.startGesture(c - const Offset(20, 0), pointer: 11);
+  final b = await tester.startGesture(c + const Offset(20, 0), pointer: 12);
+  await tester.pump();
+  await a.moveBy(const Offset(-40, 0));
+  await b.moveBy(const Offset(40, 0));
+  await tester.pump();
+  await a.up();
+  await b.up();
+  await tester.pumpAndSettle();
 }

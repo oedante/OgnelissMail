@@ -108,6 +108,9 @@ dependencies {
     // Сигнал ставит разовую задачу плагина workmanager (его BackgroundWorker);
     // версия — та же, что у плагина (workmanager_android 0.10.9).
     implementation("androidx.work:work-runtime:2.11.2")
+    // Отчёт консоли MDM (2.2.0, MdmBridge.kt): KeyedAppStates Android
+    // Enterprise — androidx.enterprise:enterprise-feedback (Apache 2.0).
+    implementation("androidx.enterprise:enterprise-feedback:1.1.0")
     // Перевод писем на устройстве (1.9.x, просьба владельца 31.10.2026):
     // Google ML Kit — бесплатно (условия ML Kit и Google APIs, подпись
     // «Google» у перевода; docs/LICENSING.md). Модели языков скачиваются при

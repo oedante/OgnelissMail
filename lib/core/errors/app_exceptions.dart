@@ -94,6 +94,17 @@ class OAuthNotConfiguredException extends AuthException {
         );
 }
 
+/// Вход через сервер Ogneliss, а организация запретила внешние службы (MDM
+/// block_external_services, 2.2.0).
+class LoginServerBlockedException extends AuthException {
+  const LoginServerBlockedException()
+      : super(
+          userMessage: 'Организация запретила вход через сервер Ogneliss. Добавьте ящик по паролю приложения (IMAP/SMTP).',
+          messageKey: 'mdmLoginServerBlocked',
+          code: 'LOGIN_SERVER_BLOCKED',
+        );
+}
+
 /// Ящик на домене, который политика организации (MDM, 1.10.5) не разрешает.
 class AccountNotAllowedException extends AuthException {
   AccountNotAllowedException({required String domains})
@@ -102,6 +113,18 @@ class AccountNotAllowedException extends AuthException {
           messageKey: 'mdmDomainNotAllowed',
           messageArgs: {'domains': domains},
           code: 'ACCOUNT_NOT_ALLOWED',
+        );
+}
+
+/// Сервер почты без шифрования, а организация требует TLS (MDM
+/// require_tls, 2.2.0).
+class TlsRequiredException extends AppException {
+  TlsRequiredException({required String host})
+      : super(
+          userMessage: 'Организация требует шифрованное соединение: $host — без SSL/STARTTLS',
+          messageKey: 'mdmTlsRequired',
+          messageArgs: {'host': host},
+          code: 'TLS_REQUIRED',
         );
 }
 

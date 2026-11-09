@@ -34,6 +34,21 @@ class ManagedPolicySection extends ConsumerWidget {
         if (p.blockOpenIn) (AppIcons.open_in_new_off, l10n.tr('mdmRuleOpenIn')),
         if (p.blockCopy) (AppIcons.content_copy, l10n.tr('mdmRuleCopy')),
         if (p.hideNotificationContent) (AppIcons.notifications_off, l10n.tr('mdmRuleNotifications')),
+        // 2.2.0 (план 08.11.2026 п. 1).
+        if (p.maxSyncDays != null) (AppIcons.history, l10n.tr('mdmRuleSyncDays').replaceAll('{n}', '${p.maxSyncDays}')),
+        if (p.blockAttachmentDownload) (AppIcons.attach_file, l10n.tr('mdmRuleAttachments')),
+        if (p.pinTimeoutMinutes != null)
+          (AppIcons.lock_clock, l10n.tr('mdmRulePinTimeout').replaceAll('{n}', '${p.pinTimeoutMinutes}')),
+        if (!p.allowBiometrics) (AppIcons.fingerprint, l10n.tr('mdmRuleNoBiometrics')),
+        if (p.blockExternalServices) (AppIcons.cloud_off, l10n.tr('mdmRuleExternal')),
+        if (p.accountLocked && p.hasAccount) (AppIcons.lock, l10n.tr('mdmRuleAccountLocked')),
+        if (p.accountTransport != null)
+          (AppIcons.dns, l10n.tr('mdmRuleTransport').replaceAll('{t}', p.accountTransport == 'eas' ? 'ActiveSync' : 'EWS')),
+        if (p.requireTls) (AppIcons.lock, l10n.tr('mdmRuleTls')),
+        if (p.trustedCaPem != null) (AppIcons.verified_user, l10n.tr('mdmRuleOrgCa')),
+        if (!p.allowUserCertTrust) (AppIcons.no_encryption, l10n.tr('mdmRuleNoUserCerts')),
+        if (p.blockDeviceContacts) (AppIcons.contacts, l10n.tr('mdmRuleDeviceContacts')),
+        if (p.blockDeviceCalendar) (AppIcons.event_busy, l10n.tr('mdmRuleDeviceCalendar')),
       ];
 
   /// Ссылка для контакта поддержки: адрес — письмо, телефон — звонок,

@@ -3,6 +3,7 @@
 // Минцифры, сертификаты ЦС с устройства, импорт своих и сохранение файла для
 // установки на устройство (требование ИБ — ЦС ставится в систему).
 
+import '../../../services/security/managed_config.dart' show ManagedPolicy, ManagedRule;
 import 'dart:io' show Platform;
 import '../../../core/theme/app_icons.dart';
 
@@ -63,6 +64,8 @@ class _CaCertificatesSectionState extends State<CaCertificatesSection>
 
   Future<void> _import() async {
     final l10n = AppLocalizations.of(context);
+    // Организация запретила доверять сертификатам самому (MDM, 2.2.0).
+    if (ManagedPolicy.deny(ManagedRule.certTrust)) return;
     final file = await FilePick.file();
     if (file == null || _store == null) return;
     final bytes = await file.readBytes();
@@ -177,7 +180,8 @@ class _CaCertificatesSectionState extends State<CaCertificatesSection>
         // Встроенные: Минцифры. На других языках интерфейса — только если
         // включено (выключить), 1.7.3: пункт о российских сертификатах пугал
         // пользователей из других стран.
-        if (l10n.isRussian || store.bundledEnabled)
+        // Организация запретила доверять самому (MDM) — пункта нет.
+        if (store.userTrustAllowed && (l10n.isRussian || store.bundledEnabled))
         SettingsGroup(children: [
           SwitchListTile(
             secondary: const Icon(AppIcons.account_balance),
@@ -204,7 +208,9 @@ class _CaCertificatesSectionState extends State<CaCertificatesSection>
                   ? l10n.tr('caDeviceCount').replaceAll('{n}', '${store.device.length}')
                   : l10n.tr('caDeviceDesc')),
               value: store.deviceEnabled,
-              onChanged: (v) async {
+              onChanged: !store.userTrustAllowed
+                  ? null
+                  : (v) async {
                 await store.setDeviceEnabled(v);
                 if (!v) _restartNote();
                 if (mounted) setState(() {});

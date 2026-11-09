@@ -161,6 +161,11 @@ Future<void> main() async {
             'Copyright Google LLC. Licensed under the Apache License, Version 2.0.\n'
             'Source: https://github.com/tink-crypto/tink-java\n\n$license');
         yield const LicenseEntryWithLineBreaks(['Protocol Buffers'], _protobufLicense);
+        // Отчёт консоли MDM (2.2.0, MdmBridge.kt): KeyedAppStates.
+        yield LicenseEntryWithLineBreaks(const ['AndroidX Enterprise Feedback'],
+            'androidx.enterprise:enterprise-feedback 1.1.0 (Android Jetpack)\n'
+            'Copyright The Android Open Source Project. Licensed under the Apache License, Version 2.0.\n'
+            'Source: https://android.googlesource.com/platform/frameworks/support/+/androidx-main/enterprise\n\n$license');
       });
     }
     LicenseRegistry.addLicense(() async* {

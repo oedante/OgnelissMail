@@ -49,6 +49,7 @@ import '../../../services/mail/signature_service.dart';
 import '../../../services/mail/compose_style_service.dart';
 import '../../../widgets/common/app_sheet.dart';
 import '../../../services/security/eas_policy_store.dart';
+import '../../../services/security/managed_config.dart' show ManagedPolicy;
 import '../../../services/sync/imap_push_service.dart';
 import '../../../data/models/account_model.dart';
 import '../../../l10n/app_localizations.dart';
@@ -277,6 +278,18 @@ class AccountScreen extends ConsumerWidget {
           ]),
           const SizedBox(height: Space.l),
 
+          // Ящик организации закреплён (MDM account_locked, 2.2.0) — не
+          // удалить: вместо кнопки — пояснение.
+          if (ManagedPolicy.current.lockedAccount(account.email))
+            SettingsGroup(children: [
+              SettingsItem(
+                icon: AppIcons.lock,
+                title: l10n.tr('mdmAccountLocked'),
+                subtitle: l10n.tr('mdmAccountLockedDesc'),
+                onTap: null,
+              ),
+            ])
+          else
           SettingsGroup(children: [
             SettingsItem(
               icon: AppIcons.delete,
@@ -325,7 +338,10 @@ class AccountScreen extends ConsumerWidget {
               icon: AppIcons.dns,
               title: l10n.tr('server'),
               subtitle: _serverText(account, l10n),
-              onTap: account.usesOAuthTokens ? null : () => _editServer(context, ref, account),
+              // Сервер и вход ящика организации меняет только она (MDM).
+              onTap: account.usesOAuthTokens || ManagedPolicy.current.lockedAccount(account.email)
+                  ? null
+                  : () => _editServer(context, ref, account),
             ),
             SettingsItem(
               icon: AppIcons.key,
@@ -352,7 +368,9 @@ class AccountScreen extends ConsumerWidget {
             // выключить): пункт о российских сертификатах пугал пользователей
             // из других стран (1.7.3, решение владельца 25.10.2026).
             if (TrustedCaStore.instance case final store?
-                when l10n.isRussian || store.bundledEnabled || store.mincifryForAccount(account.id))
+                // Организация запретила доверять самому (MDM) — пункта нет.
+                when store.userTrustAllowed &&
+                    (l10n.isRussian || store.bundledEnabled || store.mincifryForAccount(account.id)))
               StatefulBuilder(
                 builder: (ctx, setLocal) => SwitchListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: Space.l),
@@ -990,8 +1008,13 @@ class AccountScreen extends ConsumerWidget {
   /// подпись «полгода» показывалась и для трёх месяцев.
   Future<void> _pickPeriod(BuildContext context, WidgetRef ref, AccountModel account) async {
     final l10n = AppLocalizations.of(context);
-    var all = account.syncDays <= 0;
-    var months = all ? 12.0 : _monthsOf(account.syncDays).toDouble();
+    // Предел организации (MDM max_sync_days, 2.2.0): «весь период» нельзя,
+    // ползунок — не дальше предела.
+    final cap = ManagedPolicy.current.maxSyncDays;
+    final capMonths = cap == null ? 24 : _monthsOf(cap).clamp(1, 24);
+    var all = cap == null && account.syncDays <= 0;
+    var months = (all || account.syncDays <= 0 ? 12.0 : _monthsOf(account.syncDays).toDouble())
+        .clamp(1.0, capMonths.toDouble());
     final picked = await showAppSheet<int>(
       context: context,
       showDragHandle: true,
@@ -1009,9 +1032,11 @@ class AccountScreen extends ConsumerWidget {
                 ),
                 SwitchListTile(
                   title: Text(l10n.tr('syncPeriodAll')),
-                  subtitle: Text(l10n.tr('syncPeriodAllDesc')),
+                  subtitle: Text(cap == null
+                      ? l10n.tr('syncPeriodAllDesc')
+                      : l10n.tr('mdmSyncLimit').replaceAll('{period}', _periodLabel(cap, l10n))),
                   value: all,
-                  onChanged: (v) => setLocal(() => all = v),
+                  onChanged: cap != null ? null : (v) => setLocal(() => all = v),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
@@ -1031,10 +1056,10 @@ class AccountScreen extends ConsumerWidget {
                 Slider(
                   value: months,
                   min: 1,
-                  max: 24,
-                  divisions: 23,
+                  max: capMonths.toDouble(),
+                  divisions: capMonths > 1 ? capMonths - 1 : null,
                   label: _periodLabel(_daysOf(months.round()), l10n),
-                  onChanged: all ? null : (v) => setLocal(() => months = v),
+                  onChanged: all || capMonths <= 1 ? null : (v) => setLocal(() => months = v),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: Space.xl),
@@ -1042,7 +1067,7 @@ class AccountScreen extends ConsumerWidget {
                     children: [
                       Text(_periodLabel(_daysOf(1), l10n), style: theme.textTheme.bodySmall),
                       const Spacer(),
-                      Text(_periodLabel(_daysOf(24), l10n), style: theme.textTheme.bodySmall),
+                      Text(_periodLabel(_daysOf(capMonths), l10n), style: theme.textTheme.bodySmall),
                     ],
                   ),
                 ),

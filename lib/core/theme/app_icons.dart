@@ -181,6 +181,7 @@ abstract final class AppIcons {
   static const IconData lock_open = Symbols.lock_open_rounded;
   static const IconData no_encryption = Symbols.no_encryption_rounded;
   static const IconData lock_reset = Symbols.lock_reset_rounded;
+  static const IconData lock_clock = Symbols.lock_clock_rounded;
   static const IconData login = Symbols.login_rounded;
   static const IconData logout = Symbols.logout_rounded;
   static const IconData low_priority = Symbols.low_priority_rounded;

@@ -8,6 +8,7 @@
 // Список писем не ждёт логотипов: запросы идут в фоне, не больше двух сразу
 // и не больше 20 в минуту; до ответа видна буква.
 
+import '../managed_config.dart' show ManagedPolicy;
 import 'dart:async';
 import 'dart:collection' show Queue;
 import 'dart:convert';
@@ -206,6 +207,9 @@ class BimiResolver {
 
   /// Логотип домена (очищенный SVG) или null. Не бросает исключений.
   Future<String?> logoFor(String domain) async {
+    // Организация запретила внешние службы (MDM block_external_services):
+    // логотипы отправителей не запрашиваются.
+    if (ManagedPolicy.current.blockExternalServices) return null;
     if (_stopped) return null;
     // Сервер недоступен — 10 минут не спрашивать (08.11.2026: иначе каждое
     // письмо нового отправителя ждало тайм-аута 15 с).

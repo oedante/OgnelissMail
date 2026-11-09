@@ -4018,4 +4018,21 @@
     <string name="andMoreN">и ещё {n}</string>
     <string name="meetingFreeThen">В это время вы свободны</string>
     <string name="meetingOneOccurrence">Одна встреча из серии</string>
+    <string name="mdmRuleSyncDays">Почта на устройстве — не больше {n} дн.</string>
+    <string name="mdmRuleAttachments">Вложения нельзя открыть и сохранить на устройстве</string>
+    <string name="mdmRulePinTimeout">Блокировка после {n} мин без работы</string>
+    <string name="mdmRuleNoBiometrics">Вход только по коду приложения, без отпечатка и лица</string>
+    <string name="mdmRuleExternal">Без внешних служб: погоды, логотипов, сигналов и входа через сервер Ogneliss</string>
+    <string name="mdmSyncLimit">Организация ограничила период: {period}</string>
+    <string name="mdmTlsRequired">Организация требует шифрованное соединение, а сервер {host} — без SSL/STARTTLS. Включите SSL или STARTTLS в настройках ящика</string>
+    <string name="mdmAccountLocked">Ящик закреплён организацией</string>
+    <string name="mdmAccountLockedDesc">Удалить его и изменить сервер или вход может только ИТ-служба</string>
+    <string name="mdmRuleAccountLocked">Ящик организации закреплён</string>
+    <string name="mdmRuleTransport">Exchange — только через {t}</string>
+    <string name="mdmRuleTls">Только шифрованные соединения</string>
+    <string name="mdmRuleOrgCa">Сертификаты организации — доверенные</string>
+    <string name="mdmRuleNoUserCerts">Доверять сертификатам самому нельзя</string>
+    <string name="mdmRuleDeviceContacts">Контакты не переносятся в «Контакты» устройства</string>
+    <string name="mdmRuleDeviceCalendar">Встречи не переносятся в «Календарь» устройства</string>
+    <string name="mdmLoginServerBlocked">Организация запретила вход через сервер Ogneliss. Добавьте ящик по паролю приложения (IMAP/SMTP).</string>
 </resources>

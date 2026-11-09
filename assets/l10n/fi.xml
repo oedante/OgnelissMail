@@ -3976,4 +3976,21 @@
     <string name="andMoreN">ja {n} muuta</string>
     <string name="meetingFreeThen">Olet vapaana tähän aikaan</string>
     <string name="meetingOneOccurrence">Yksi sarjan kokouksista</string>
+    <string name="mdmRuleSyncDays">Sähköposti laitteella: enintään {n} päivää</string>
+    <string name="mdmRuleAttachments">Liitteitä ei voi avata eikä tallentaa laitteelle</string>
+    <string name="mdmRulePinTimeout">Lukitus {n} min käyttämättömyyden jälkeen</string>
+    <string name="mdmRuleNoBiometrics">Vain sovelluskoodi, ei sormenjälkeä tai kasvoja</string>
+    <string name="mdmRuleExternal">Ei ulkoisia palveluja: sää, logot, signaalit ja kirjautuminen Ogneliss-palvelimen kautta</string>
+    <string name="mdmSyncLimit">Organisaatiosi rajoittaa jaksoa: {period}</string>
+    <string name="mdmTlsRequired">Organisaatiosi vaatii salatun yhteyden, mutta palvelimella {host} ei ole SSL/STARTTLS:ää. Ota SSL tai STARTTLS käyttöön postilaatikon asetuksissa</string>
+    <string name="mdmAccountLocked">Organisaatiosi hallitsee postilaatikkoa</string>
+    <string name="mdmAccountLockedDesc">Vain IT-osasto voi poistaa sen tai muuttaa palvelinta tai kirjautumista</string>
+    <string name="mdmRuleAccountLocked">Organisaation postilaatikko on lukittu</string>
+    <string name="mdmRuleTransport">Exchange vain {t}-yhteydellä</string>
+    <string name="mdmRuleTls">Vain salatut yhteydet</string>
+    <string name="mdmRuleOrgCa">Organisaation varmenteet ovat luotettuja</string>
+    <string name="mdmRuleNoUserCerts">Et voi itse luottaa varmenteisiin</string>
+    <string name="mdmRuleDeviceContacts">Yhteystietoja ei kopioida laitteen Yhteystietoihin</string>
+    <string name="mdmRuleDeviceCalendar">Tapahtumia ei kopioida laitteen Kalenteriin</string>
+    <string name="mdmLoginServerBlocked">Organisaatiosi on estänyt kirjautumisen Ogneliss-palvelimen kautta. Lisää postilaatikko sovellussalasanalla (IMAP/SMTP).</string>
 </resources>

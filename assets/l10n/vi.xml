@@ -3955,4 +3955,21 @@
     <string name="andMoreN">và {n} khác</string>
     <string name="meetingFreeThen">Bạn rảnh vào giờ này</string>
     <string name="meetingOneOccurrence">Một cuộc họp trong chuỗi</string>
+    <string name="mdmRuleSyncDays">Thư trên thiết bị: tối đa {n} ngày</string>
+    <string name="mdmRuleAttachments">Không thể mở hoặc lưu tệp đính kèm trên thiết bị</string>
+    <string name="mdmRulePinTimeout">Khóa sau {n} phút không hoạt động</string>
+    <string name="mdmRuleNoBiometrics">Chỉ mã ứng dụng, không dùng vân tay hay khuôn mặt</string>
+    <string name="mdmRuleExternal">Không dùng dịch vụ bên ngoài: thời tiết, logo, tín hiệu và đăng nhập qua máy chủ Ogneliss</string>
+    <string name="mdmSyncLimit">Tổ chức của bạn giới hạn khoảng thời gian: {period}</string>
+    <string name="mdmTlsRequired">Tổ chức yêu cầu kết nối mã hóa, nhưng {host} không có SSL/STARTTLS. Bật SSL hoặc STARTTLS trong cài đặt hộp thư</string>
+    <string name="mdmAccountLocked">Hộp thư do tổ chức quản lý</string>
+    <string name="mdmAccountLockedDesc">Chỉ bộ phận CNTT mới có thể xóa hoặc đổi máy chủ hay đăng nhập</string>
+    <string name="mdmRuleAccountLocked">Hộp thư của tổ chức bị khóa</string>
+    <string name="mdmRuleTransport">Exchange chỉ qua {t}</string>
+    <string name="mdmRuleTls">Chỉ kết nối được mã hóa</string>
+    <string name="mdmRuleOrgCa">Chứng chỉ của tổ chức được tin cậy</string>
+    <string name="mdmRuleNoUserCerts">Bạn không thể tự tin cậy chứng chỉ</string>
+    <string name="mdmRuleDeviceContacts">Danh bạ không được sao chép vào Danh bạ của thiết bị</string>
+    <string name="mdmRuleDeviceCalendar">Sự kiện không được sao chép vào Lịch của thiết bị</string>
+    <string name="mdmLoginServerBlocked">Tổ chức đã chặn đăng nhập qua máy chủ Ogneliss. Hãy thêm hộp thư bằng mật khẩu ứng dụng (IMAP/SMTP).</string>
 </resources>

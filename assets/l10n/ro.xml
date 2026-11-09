@@ -3997,4 +3997,21 @@
     <string name="andMoreN">și încă {n}</string>
     <string name="meetingFreeThen">Sunteți liber la această oră</string>
     <string name="meetingOneOccurrence">O întâlnire dintr-o serie</string>
+    <string name="mdmRuleSyncDays">E-mail pe dispozitiv: cel mult {n} zile</string>
+    <string name="mdmRuleAttachments">Atașamentele nu pot fi deschise sau salvate pe dispozitiv</string>
+    <string name="mdmRulePinTimeout">Blocare după {n} min de inactivitate</string>
+    <string name="mdmRuleNoBiometrics">Doar codul aplicației, fără amprentă sau față</string>
+    <string name="mdmRuleExternal">Fără servicii externe: vreme, logouri, semnale și autentificare prin serverul Ogneliss</string>
+    <string name="mdmSyncLimit">Organizația a limitat perioada: {period}</string>
+    <string name="mdmTlsRequired">Organizația cere o conexiune criptată, dar {host} nu are SSL/STARTTLS. Activați SSL sau STARTTLS în setările căsuței</string>
+    <string name="mdmAccountLocked">Căsuță gestionată de organizație</string>
+    <string name="mdmAccountLockedDesc">Doar departamentul IT o poate elimina sau îi poate schimba serverul ori autentificarea</string>
+    <string name="mdmRuleAccountLocked">Căsuța organizației este blocată</string>
+    <string name="mdmRuleTransport">Exchange doar prin {t}</string>
+    <string name="mdmRuleTls">Doar conexiuni criptate</string>
+    <string name="mdmRuleOrgCa">Certificatele organizației sunt de încredere</string>
+    <string name="mdmRuleNoUserCerts">Nu puteți acorda singur încredere certificatelor</string>
+    <string name="mdmRuleDeviceContacts">Contactele nu sunt copiate în Contactele dispozitivului</string>
+    <string name="mdmRuleDeviceCalendar">Evenimentele nu sunt copiate în Calendarul dispozitivului</string>
+    <string name="mdmLoginServerBlocked">Organizația a blocat autentificarea prin serverul Ogneliss. Adăugați căsuța cu o parolă de aplicație (IMAP/SMTP).</string>
 </resources>

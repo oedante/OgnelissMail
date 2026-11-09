@@ -2,6 +2,7 @@
 // Синхронизация событий с системным календарём устройства.
 // Запись событий из БД в системный календарь (Android/iOS).
 
+import '../security/managed_config.dart' show ManagedPolicy, ManagedRule;
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -60,6 +61,8 @@ class DeviceCalendarSync {
     bool allDay = false,
     int? reminderMinutes,
   }) async {
+    // Организация запретила обмен с системными «Календарём» (MDM, 2.2.0).
+    if (ManagedPolicy.deny(ManagedRule.deviceCalendar)) return false;
     if (!await hasPermission()) {
       final granted = await requestPermission();
       if (!granted) return false;
@@ -96,6 +99,8 @@ class DeviceCalendarSync {
 
   /// Экспортировать все события аккаунта
   Future<int> exportAllEvents(String accountId) async {
+    // Организация запретила обмен с системными «Календарём» (MDM, 2.2.0).
+    if (ManagedPolicy.deny(ManagedRule.deviceCalendar)) return 0;
     if (!await hasPermission()) return 0;
 
     try {

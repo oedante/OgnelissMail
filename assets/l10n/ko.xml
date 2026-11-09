@@ -3959,7 +3959,7 @@
     <string name="mdmRuleAttachments">기기에서 첨부파일을 열거나 저장할 수 없습니다</string>
     <string name="mdmRulePinTimeout">{n}분 동안 사용하지 않으면 잠금</string>
     <string name="mdmRuleNoBiometrics">앱 코드만 사용, 지문·얼굴 불가</string>
-    <string name="mdmRuleExternal">외부 서비스 없음: 날씨, 로고, 서버 신호</string>
+    <string name="mdmRuleExternal">외부 서비스 없음: 날씨, 로고, 신호, Ogneliss 서버를 통한 로그인</string>
     <string name="mdmSyncLimit">조직에서 기간을 제한함: {period}</string>
     <string name="mdmTlsRequired">조직에서 암호화된 연결을 요구하지만 {host}에는 SSL/STARTTLS가 없습니다. 메일함 설정에서 SSL 또는 STARTTLS를 켜세요</string>
     <string name="mdmAccountLocked">조직에서 관리하는 메일함</string>
@@ -3971,4 +3971,5 @@
     <string name="mdmRuleNoUserCerts">직접 인증서를 신뢰할 수 없음</string>
     <string name="mdmRuleDeviceContacts">연락처가 기기의 연락처로 복사되지 않음</string>
     <string name="mdmRuleDeviceCalendar">일정이 기기의 캘린더로 복사되지 않음</string>
+    <string name="mdmLoginServerBlocked">조직에서 Ogneliss 서버를 통한 로그인을 차단했습니다. 앱 비밀번호(IMAP/SMTP)로 메일함을 추가하세요.</string>
 </resources>

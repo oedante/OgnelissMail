@@ -94,6 +94,17 @@ class OAuthNotConfiguredException extends AuthException {
         );
 }
 
+/// Вход через сервер Ogneliss, а организация запретила внешние службы (MDM
+/// block_external_services, 2.2.0).
+class LoginServerBlockedException extends AuthException {
+  const LoginServerBlockedException()
+      : super(
+          userMessage: 'Организация запретила вход через сервер Ogneliss. Добавьте ящик по паролю приложения (IMAP/SMTP).',
+          messageKey: 'mdmLoginServerBlocked',
+          code: 'LOGIN_SERVER_BLOCKED',
+        );
+}
+
 /// Ящик на домене, который политика организации (MDM, 1.10.5) не разрешает.
 class AccountNotAllowedException extends AuthException {
   AccountNotAllowedException({required String domains})

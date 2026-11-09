@@ -3980,7 +3980,7 @@
     <string name="mdmRuleAttachments">डिवाइस पर अटैचमेंट खोले या सहेजे नहीं जा सकते</string>
     <string name="mdmRulePinTimeout">{n} मिनट निष्क्रियता के बाद लॉक</string>
     <string name="mdmRuleNoBiometrics">केवल ऐप कोड, फ़िंगरप्रिंट या चेहरा नहीं</string>
-    <string name="mdmRuleExternal">कोई बाहरी सेवा नहीं: मौसम, लोगो, सर्वर सिग्नल</string>
+    <string name="mdmRuleExternal">बाहरी सेवाएँ नहीं: मौसम, लोगो, संकेत और Ogneliss सर्वर से साइन-इन</string>
     <string name="mdmSyncLimit">आपके संगठन ने अवधि सीमित की: {period}</string>
     <string name="mdmTlsRequired">आपका संगठन एन्क्रिप्टेड कनेक्शन मांगता है, लेकिन {host} पर SSL/STARTTLS नहीं है। मेलबॉक्स सेटिंग में SSL या STARTTLS चालू करें</string>
     <string name="mdmAccountLocked">मेलबॉक्स आपके संगठन द्वारा प्रबंधित</string>
@@ -3992,4 +3992,5 @@
     <string name="mdmRuleNoUserCerts">आप स्वयं प्रमाणपत्रों पर भरोसा नहीं कर सकते</string>
     <string name="mdmRuleDeviceContacts">संपर्क डिवाइस के संपर्कों में कॉपी नहीं होते</string>
     <string name="mdmRuleDeviceCalendar">ईवेंट डिवाइस के कैलेंडर में कॉपी नहीं होते</string>
+    <string name="mdmLoginServerBlocked">आपके संगठन ने Ogneliss सर्वर से साइन-इन रोक दिया है। ऐप पासवर्ड (IMAP/SMTP) से मेलबॉक्स जोड़ें।</string>
 </resources>

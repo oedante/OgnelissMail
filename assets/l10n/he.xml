@@ -4001,7 +4001,7 @@
     <string name="mdmRuleAttachments">אי אפשר לפתוח או לשמור קבצים מצורפים במכשיר</string>
     <string name="mdmRulePinTimeout">נעילה אחרי {n} דק\' ללא פעילות</string>
     <string name="mdmRuleNoBiometrics">קוד אפליקציה בלבד, בלי טביעת אצבע או פנים</string>
-    <string name="mdmRuleExternal">ללא שירותים חיצוניים: מזג אוויר, לוגואים, אותות שרת</string>
+    <string name="mdmRuleExternal">ללא שירותים חיצוניים: מזג אוויר, לוגואים, אותות וכניסה דרך שרת Ogneliss</string>
     <string name="mdmSyncLimit">הארגון הגביל את התקופה: {period}</string>
     <string name="mdmTlsRequired">הארגון דורש חיבור מוצפן, אבל בשרת {host} אין SSL/STARTTLS. הפעילו SSL או STARTTLS בהגדרות התיבה</string>
     <string name="mdmAccountLocked">התיבה מנוהלת על ידי הארגון</string>
@@ -4013,4 +4013,5 @@
     <string name="mdmRuleNoUserCerts">אי אפשר לסמוך על תעודות בעצמך</string>
     <string name="mdmRuleDeviceContacts">אנשי קשר לא מועתקים לאנשי הקשר של המכשיר</string>
     <string name="mdmRuleDeviceCalendar">אירועים לא מועתקים ללוח השנה של המכשיר</string>
+    <string name="mdmLoginServerBlocked">הארגון חסם כניסה דרך שרת Ogneliss. הוסיפו את התיבה עם סיסמת אפליקציה (IMAP/SMTP).</string>
 </resources>

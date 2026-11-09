@@ -3959,7 +3959,7 @@
     <string name="mdmRuleAttachments">ไม่สามารถเปิดหรือบันทึกไฟล์แนบบนอุปกรณ์ได้</string>
     <string name="mdmRulePinTimeout">ล็อกเมื่อไม่ได้ใช้งาน {n} นาที</string>
     <string name="mdmRuleNoBiometrics">ใช้รหัสแอปเท่านั้น ไม่ใช้ลายนิ้วมือหรือใบหน้า</string>
-    <string name="mdmRuleExternal">ไม่ใช้บริการภายนอก: สภาพอากาศ โลโก้ สัญญาณเซิร์ฟเวอร์</string>
+    <string name="mdmRuleExternal">ไม่มีบริการภายนอก: สภาพอากาศ โลโก้ สัญญาณ และการลงชื่อเข้าใช้ผ่านเซิร์ฟเวอร์ Ogneliss</string>
     <string name="mdmSyncLimit">องค์กรของคุณจำกัดช่วงเวลา: {period}</string>
     <string name="mdmTlsRequired">องค์กรของคุณกำหนดให้ใช้การเชื่อมต่อแบบเข้ารหัส แต่ {host} ไม่มี SSL/STARTTLS เปิด SSL หรือ STARTTLS ในการตั้งค่ากล่องจดหมาย</string>
     <string name="mdmAccountLocked">กล่องจดหมายที่องค์กรจัดการ</string>
@@ -3971,4 +3971,5 @@
     <string name="mdmRuleNoUserCerts">คุณไม่สามารถเชื่อถือใบรับรองด้วยตนเองได้</string>
     <string name="mdmRuleDeviceContacts">รายชื่อติดต่อจะไม่ถูกคัดลอกไปยังรายชื่อของอุปกรณ์</string>
     <string name="mdmRuleDeviceCalendar">กิจกรรมจะไม่ถูกคัดลอกไปยังปฏิทินของอุปกรณ์</string>
+    <string name="mdmLoginServerBlocked">องค์กรของคุณบล็อกการลงชื่อเข้าใช้ผ่านเซิร์ฟเวอร์ Ogneliss เพิ่มกล่องจดหมายด้วยรหัสผ่านแอป (IMAP/SMTP)</string>
 </resources>

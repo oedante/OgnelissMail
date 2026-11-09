@@ -3980,7 +3980,7 @@
     <string name="mdmRuleAttachments">Attachments cannot be opened or saved on the device</string>
     <string name="mdmRulePinTimeout">Locks after {n} min of inactivity</string>
     <string name="mdmRuleNoBiometrics">App code only, no fingerprint or face</string>
-    <string name="mdmRuleExternal">No external services: weather, logos, server signals</string>
+    <string name="mdmRuleExternal">No external services: weather, logos, signals and sign-in through the Ogneliss server</string>
     <string name="mdmSyncLimit">Your organization limits the period: {period}</string>
     <string name="mdmTlsRequired">Your organization requires an encrypted connection, but {host} has no SSL/STARTTLS. Turn on SSL or STARTTLS in the mailbox settings</string>
     <string name="mdmAccountLocked">Mailbox managed by your organization</string>
@@ -3992,4 +3992,5 @@
     <string name="mdmRuleNoUserCerts">You can\'t trust certificates yourself</string>
     <string name="mdmRuleDeviceContacts">Contacts are not copied to the device\'s Contacts</string>
     <string name="mdmRuleDeviceCalendar">Events are not copied to the device\'s Calendar</string>
+    <string name="mdmLoginServerBlocked">Your organization has blocked sign-in through the Ogneliss server. Add the mailbox with an app password (IMAP/SMTP).</string>
 </resources>

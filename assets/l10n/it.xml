@@ -3980,7 +3980,7 @@
     <string name="mdmRuleAttachments">Gli allegati non possono essere aperti né salvati sul dispositivo</string>
     <string name="mdmRulePinTimeout">Blocco dopo {n} min di inattività</string>
     <string name="mdmRuleNoBiometrics">Solo codice dell\'app, senza impronta né volto</string>
-    <string name="mdmRuleExternal">Nessun servizio esterno: meteo, loghi, segnali del server</string>
+    <string name="mdmRuleExternal">Senza servizi esterni: meteo, loghi, segnali e accesso tramite il server Ogneliss</string>
     <string name="mdmSyncLimit">La tua organizzazione limita il periodo: {period}</string>
     <string name="mdmTlsRequired">La tua organizzazione richiede una connessione cifrata, ma {host} non ha SSL/STARTTLS. Attiva SSL o STARTTLS nelle impostazioni della casella</string>
     <string name="mdmAccountLocked">Casella gestita dalla tua organizzazione</string>
@@ -3992,4 +3992,5 @@
     <string name="mdmRuleNoUserCerts">Non puoi considerare attendibili i certificati da solo</string>
     <string name="mdmRuleDeviceContacts">I contatti non vengono copiati nei Contatti del dispositivo</string>
     <string name="mdmRuleDeviceCalendar">Gli eventi non vengono copiati nel Calendario del dispositivo</string>
+    <string name="mdmLoginServerBlocked">La tua organizzazione ha bloccato l\'accesso tramite il server Ogneliss. Aggiungi la casella con una password per app (IMAP/SMTP).</string>
 </resources>

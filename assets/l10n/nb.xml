@@ -3980,7 +3980,7 @@
     <string name="mdmRuleAttachments">Vedlegg kan ikke åpnes eller lagres på enheten</string>
     <string name="mdmRulePinTimeout">Låses etter {n} min uten aktivitet</string>
     <string name="mdmRuleNoBiometrics">Bare appkode, ikke fingeravtrykk eller ansikt</string>
-    <string name="mdmRuleExternal">Ingen eksterne tjenester: vær, logoer, serversignaler</string>
+    <string name="mdmRuleExternal">Ingen eksterne tjenester: vær, logoer, signaler og pålogging via Ogneliss-serveren</string>
     <string name="mdmSyncLimit">Organisasjonen begrenser perioden: {period}</string>
     <string name="mdmTlsRequired">Organisasjonen krever kryptert tilkobling, men {host} har ikke SSL/STARTTLS. Slå på SSL eller STARTTLS i innstillingene for postkassen</string>
     <string name="mdmAccountLocked">Postkassen styres av organisasjonen</string>
@@ -3992,4 +3992,5 @@
     <string name="mdmRuleNoUserCerts">Du kan ikke selv klarere sertifikater</string>
     <string name="mdmRuleDeviceContacts">Kontakter kopieres ikke til enhetens Kontakter</string>
     <string name="mdmRuleDeviceCalendar">Hendelser kopieres ikke til enhetens Kalender</string>
+    <string name="mdmLoginServerBlocked">Organisasjonen har blokkert pålogging via Ogneliss-serveren. Legg til postkassen med et app-passord (IMAP/SMTP).</string>
 </resources>

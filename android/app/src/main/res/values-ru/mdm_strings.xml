@@ -55,7 +55,7 @@
     <string name="mdm_allow_biometrics_title">Разрешить вход по отпечатку и лицу</string>
     <string name="mdm_allow_biometrics_desc">Выключено — приложение открывается только PIN-кодом.</string>
     <string name="mdm_block_external_services_title">Запретить внешние службы</string>
-    <string name="mdm_block_external_services_desc">Без погоды, логотипов отправителей (BIMI) и сигналов о новой почте через сервер Ogneliss: почта приходит по соединению с сервером почты и плановым проверкам.</string>
+    <string name="mdm_block_external_services_desc">Без погоды, логотипов отправителей (BIMI), сигналов о новой почте и входа через сервер Ogneliss: почта приходит по соединению с сервером почты и плановым проверкам; ящики со входом через сервер Ogneliss добавляются паролем приложения.</string>
     <string name="mdm_account_locked_title">Закрепить ящик организации</string>
     <string name="mdm_account_locked_desc">Ящик из этих настроек нельзя удалить, нельзя изменить его сервер и вход.</string>
     <string name="mdm_account_transport_title">Протокол подключения к Exchange</string>

@@ -3980,7 +3980,7 @@
     <string name="mdmRuleAttachments">Os anexos não podem ser abertos nem salvos no dispositivo</string>
     <string name="mdmRulePinTimeout">Bloqueio após {n} min de inatividade</string>
     <string name="mdmRuleNoBiometrics">Somente código do app, sem digital ou rosto</string>
-    <string name="mdmRuleExternal">Sem serviços externos: clima, logotipos, sinais do servidor</string>
+    <string name="mdmRuleExternal">Sem serviços externos: clima, logotipos, sinais e login pelo servidor Ogneliss</string>
     <string name="mdmSyncLimit">Sua organização limita o período: {period}</string>
     <string name="mdmTlsRequired">Sua organização exige uma conexão criptografada, mas {host} não tem SSL/STARTTLS. Ative SSL ou STARTTLS nas configurações da caixa</string>
     <string name="mdmAccountLocked">Caixa gerenciada pela sua organização</string>
@@ -3992,4 +3992,5 @@
     <string name="mdmRuleNoUserCerts">Você não pode confiar em certificados por conta própria</string>
     <string name="mdmRuleDeviceContacts">Os contatos não são copiados para os Contatos do dispositivo</string>
     <string name="mdmRuleDeviceCalendar">Os eventos não são copiados para o Calendário do dispositivo</string>
+    <string name="mdmLoginServerBlocked">Sua organização bloqueou o login pelo servidor Ogneliss. Adicione a caixa com uma senha de app (IMAP/SMTP).</string>
 </resources>

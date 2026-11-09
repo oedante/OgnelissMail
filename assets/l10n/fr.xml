@@ -3980,7 +3980,7 @@
     <string name="mdmRuleAttachments">Les pièces jointes ne peuvent pas être ouvertes ni enregistrées sur l\'appareil</string>
     <string name="mdmRulePinTimeout">Verrouillage après {n} min d\'inactivité</string>
     <string name="mdmRuleNoBiometrics">Code de l\'app uniquement, sans empreinte ni visage</string>
-    <string name="mdmRuleExternal">Pas de services externes : météo, logos, signaux du serveur</string>
+    <string name="mdmRuleExternal">Sans services externes : météo, logos, signaux et connexion via le serveur Ogneliss</string>
     <string name="mdmSyncLimit">Votre organisation limite la période : {period}</string>
     <string name="mdmTlsRequired">Votre organisation exige une connexion chiffrée, mais {host} n\'a pas SSL/STARTTLS. Activez SSL ou STARTTLS dans les réglages de la boîte</string>
     <string name="mdmAccountLocked">Boîte gérée par votre organisation</string>
@@ -3992,4 +3992,5 @@
     <string name="mdmRuleNoUserCerts">Vous ne pouvez pas approuver vous-même des certificats</string>
     <string name="mdmRuleDeviceContacts">Les contacts ne sont pas copiés dans les Contacts de l\'appareil</string>
     <string name="mdmRuleDeviceCalendar">Les événements ne sont pas copiés dans le Calendrier de l\'appareil</string>
+    <string name="mdmLoginServerBlocked">Votre organisation a bloqué la connexion via le serveur Ogneliss. Ajoutez la boîte avec un mot de passe d\'application (IMAP/SMTP).</string>
 </resources>

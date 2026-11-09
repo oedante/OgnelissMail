@@ -3959,7 +3959,7 @@
     <string name="mdmRuleAttachments">Lampiran tidak dapat dibuka atau disimpan di perangkat</string>
     <string name="mdmRulePinTimeout">Terkunci setelah {n} menit tidak aktif</string>
     <string name="mdmRuleNoBiometrics">Hanya kode aplikasi, tanpa sidik jari atau wajah</string>
-    <string name="mdmRuleExternal">Tanpa layanan eksternal: cuaca, logo, sinyal server</string>
+    <string name="mdmRuleExternal">Tanpa layanan eksternal: cuaca, logo, sinyal, dan login melalui server Ogneliss</string>
     <string name="mdmSyncLimit">Organisasi Anda membatasi periode: {period}</string>
     <string name="mdmTlsRequired">Organisasi Anda mewajibkan koneksi terenkripsi, tetapi {host} tanpa SSL/STARTTLS. Aktifkan SSL atau STARTTLS di pengaturan kotak surat</string>
     <string name="mdmAccountLocked">Kotak surat dikelola organisasi Anda</string>
@@ -3971,4 +3971,5 @@
     <string name="mdmRuleNoUserCerts">Anda tidak dapat memercayai sertifikat sendiri</string>
     <string name="mdmRuleDeviceContacts">Kontak tidak disalin ke Kontak perangkat</string>
     <string name="mdmRuleDeviceCalendar">Acara tidak disalin ke Kalender perangkat</string>
+    <string name="mdmLoginServerBlocked">Organisasi Anda memblokir login melalui server Ogneliss. Tambahkan kotak surat dengan sandi aplikasi (IMAP/SMTP).</string>
 </resources>

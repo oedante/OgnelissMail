@@ -14,6 +14,7 @@ import '../../../core/errors/app_exceptions.dart';
 import '../../../core/logging/app_logger.dart';
 import '../../../features/settings/providers/settings_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../security/managed_config.dart' show ManagedPolicy;
 import 'oauth_service.dart';
 // Платформенная реализация desktop/web подгружается по условию компиляции.
 import 'oauth_flow_native.dart' if (dart.library.html) 'oauth_flow_web.dart' as flow;
@@ -50,6 +51,12 @@ class CrossPlatformOAuthService {
     // токенов ActiveSync/EWS не выдаёт.
     final direct = kIsWeb ? null : DirectOAuth.clientFor(providerName);
     if (direct != null) return DirectOAuth.authenticate(direct, loginHint: loginHint);
+    // Организация запретила внешние службы (MDM block_external_services):
+    // через сервер входа Ogneliss не входим.
+    if (!kIsWeb && OAuthProxyFlow.isEnabled && ManagedPolicy.current.blockExternalServices) {
+      AppLogger.info('OAuth ($providerName): сервер входа запрещён организацией (MDM)');
+      throw const LoginServerBlockedException();
+    }
     if (providerName == 'exchange' && (kIsWeb || !OAuthProxyFlow.isEnabled || !await OAuthProxyFlow.offers('exchange'))) {
       throw const OAuthNotConfiguredException();
     }

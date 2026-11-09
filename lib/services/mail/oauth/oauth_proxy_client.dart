@@ -18,6 +18,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/errors/app_exceptions.dart' show OAuthRefreshFailure;
+import '../../security/managed_config.dart' show ManagedPolicy;
 import '../../../core/logging/app_logger.dart';
 import '../../../core/security/secure_storage_service.dart';
 
@@ -42,6 +43,11 @@ class OAuthProxyClient {
 
   /// Включён ли прокси (задан baseUrl).
   bool get isEnabled => _base.isNotEmpty;
+
+  /// Организация запретила внешние службы (MDM block_external_services,
+  /// 2.2.0): к серверу входа Ogneliss приложение не обращается — ни за
+  /// токеном, ни с отзывом.
+  static bool get blockedByPolicy => ManagedPolicy.current.blockExternalServices;
 
   /// URL для старта авторизации в браузере.
   Uri loginUrl(String provider, {String? redirect}) {
@@ -106,6 +112,10 @@ class OAuthProxyClient {
   /// Получить действующий access_token (кэш или обновление через /token).
   Future<ProxyToken?> getAccessToken(String accountId) async {
     if (!isEnabled) return null;
+    if (blockedByPolicy) {
+      AppLogger.info('OAuth proxy: внешние службы запрещены организацией (MDM) — без сервера входа');
+      return null;
+    }
     final data = await _load(accountId);
     if (data == null) return null;
     final cachedExp = DateTime.fromMillisecondsSinceEpoch(data['exp'] as int? ?? 0);
@@ -160,6 +170,12 @@ class OAuthProxyClient {
     if (!isEnabled || rt.isEmpty) {
       throw const OAuthRefreshFailure('нет сохранённого входа', needsSignIn: true);
     }
+    if (blockedByPolicy) {
+      // Ящику нужен другой вход (пароль приложения) — «Войти снова»
+      // объяснит это; токен Graph — не отказ входа ящика.
+      throw OAuthRefreshFailure('сервер входа Ogneliss запрещён организацией (MDM block_external_services)',
+          needsSignIn: resource == null);
+    }
     final http.Response resp;
     try {
       resp = await http.post(
@@ -198,7 +214,7 @@ class OAuthProxyClient {
   Future<void> revoke(String accountId) async {
     final data = await _load(accountId);
     await _storage.deleteProxyData(accountId);
-    if (!isEnabled || data == null) return;
+    if (!isEnabled || data == null || blockedByPolicy) return;
     try {
       await http.post(
         Uri.parse('$_base/revoke'),

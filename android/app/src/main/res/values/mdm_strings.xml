@@ -60,7 +60,7 @@
     <string name="mdm_allow_biometrics_title">Allow fingerprint and face unlock</string>
     <string name="mdm_allow_biometrics_desc">Off — the app is unlocked only with its PIN.</string>
     <string name="mdm_block_external_services_title">Block external services</string>
-    <string name="mdm_block_external_services_desc">No weather, no sender logos (BIMI) and no new-mail signals through the Ogneliss server: new mail arrives by the connection to the mail server and scheduled checks.</string>
+    <string name="mdm_block_external_services_desc">No weather, no sender logos (BIMI), no new-mail signals and no sign-in through the Ogneliss server: new mail arrives by the connection to the mail server and scheduled checks; mailboxes signed in through the Ogneliss server are added with an app password.</string>
     <string name="mdm_account_locked_title">Lock the organization's mailbox</string>
     <string name="mdm_account_locked_desc">The mailbox from these settings cannot be removed, and its server and sign-in cannot be changed.</string>
     <string name="mdm_account_transport_title">Exchange connection protocol</string>

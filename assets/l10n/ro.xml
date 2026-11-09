@@ -4001,7 +4001,7 @@
     <string name="mdmRuleAttachments">Atașamentele nu pot fi deschise sau salvate pe dispozitiv</string>
     <string name="mdmRulePinTimeout">Blocare după {n} min de inactivitate</string>
     <string name="mdmRuleNoBiometrics">Doar codul aplicației, fără amprentă sau față</string>
-    <string name="mdmRuleExternal">Fără servicii externe: vreme, logo-uri, semnale de la server</string>
+    <string name="mdmRuleExternal">Fără servicii externe: vreme, logouri, semnale și autentificare prin serverul Ogneliss</string>
     <string name="mdmSyncLimit">Organizația a limitat perioada: {period}</string>
     <string name="mdmTlsRequired">Organizația cere o conexiune criptată, dar {host} nu are SSL/STARTTLS. Activați SSL sau STARTTLS în setările căsuței</string>
     <string name="mdmAccountLocked">Căsuță gestionată de organizație</string>
@@ -4013,4 +4013,5 @@
     <string name="mdmRuleNoUserCerts">Nu puteți acorda singur încredere certificatelor</string>
     <string name="mdmRuleDeviceContacts">Contactele nu sunt copiate în Contactele dispozitivului</string>
     <string name="mdmRuleDeviceCalendar">Evenimentele nu sunt copiate în Calendarul dispozitivului</string>
+    <string name="mdmLoginServerBlocked">Organizația a blocat autentificarea prin serverul Ogneliss. Adăugați căsuța cu o parolă de aplicație (IMAP/SMTP).</string>
 </resources>

@@ -4001,7 +4001,7 @@
     <string name="mdmRuleAttachments">Prílohy nemožno v zariadení otvoriť ani uložiť</string>
     <string name="mdmRulePinTimeout">Zamknutie po {n} min nečinnosti</string>
     <string name="mdmRuleNoBiometrics">Iba kód aplikácie, bez odtlačku a tváre</string>
-    <string name="mdmRuleExternal">Bez externých služieb: počasie, logá, signály servera</string>
+    <string name="mdmRuleExternal">Bez externých služieb: počasie, logá, signály a prihlásenie cez server Ogneliss</string>
     <string name="mdmSyncLimit">Organizácia obmedzila obdobie: {period}</string>
     <string name="mdmTlsRequired">Organizácia vyžaduje šifrované spojenie, ale {host} je bez SSL/STARTTLS. Zapnite SSL alebo STARTTLS v nastaveniach schránky</string>
     <string name="mdmAccountLocked">Schránku spravuje organizácia</string>
@@ -4013,4 +4013,5 @@
     <string name="mdmRuleNoUserCerts">Certifikátom nemôžete dôverovať sami</string>
     <string name="mdmRuleDeviceContacts">Kontakty sa nekopírujú do Kontaktov zariadenia</string>
     <string name="mdmRuleDeviceCalendar">Udalosti sa nekopírujú do Kalendára zariadenia</string>
+    <string name="mdmLoginServerBlocked">Organizácia zakázala prihlásenie cez server Ogneliss. Pridajte schránku s heslom aplikácie (IMAP/SMTP).</string>
 </resources>

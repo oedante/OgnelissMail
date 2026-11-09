@@ -13,6 +13,7 @@ import 'package:ogneliss/core/security/secure_storage_service.dart';
 import 'package:ogneliss/core/security/trusted_ca_store.dart';
 import 'package:ogneliss/data/models/account_model.dart';
 import 'package:ogneliss/services/mail/imap/imap_service.dart';
+import 'package:ogneliss/services/mail/oauth/oauth_proxy_client.dart';
 import 'package:ogneliss/services/security/managed_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -124,6 +125,25 @@ void main() {
     expect(list.first.fingerprint, TrustedCaStore.bundledAssets['assets/certs/russian_trusted_root_ca.pem']);
     expect(TrustedCaStore.parsePemList(null), isEmpty);
     expect(TrustedCaStore.parsePemList('  '), isEmpty);
+  });
+
+  test('внешние службы запрещены — к серверу входа Ogneliss не обращаемся', () async {
+    FlutterSecureStorage.setMockInitialValues({});
+    final proxy = OAuthProxyClient(SecureStorageService());
+    ManagedPolicy.current = const ManagedPolicy(blockExternalServices: true, blockWeather: true);
+    expect(OAuthProxyClient.blockedByPolicy, isTrue);
+    if (proxy.isEnabled) {
+      // Сборка с сервером входа: обновление входа — без запроса, «войти снова».
+      await expectLater(
+          proxy.refreshWithBlob('blob', 'yandex'),
+          throwsA(isA<OAuthRefreshFailure>().having((e) => e.needsSignIn, 'needsSignIn', isTrue)));
+      await expectLater(proxy.refreshWithBlob('blob', 'exchange', resource: 'graph'),
+          throwsA(isA<OAuthRefreshFailure>().having((e) => e.needsSignIn, 'needsSignIn', isFalse)));
+    }
+    expect(await proxy.getAccessToken('a1'), isNull);
+    ManagedPolicy.current = ManagedPolicy.none;
+    expect(OAuthProxyClient.blockedByPolicy, isFalse);
+    expect(const LoginServerBlockedException().messageKey, 'mdmLoginServerBlocked');
   });
 
   group('запрет доверять самому: прежние решения пользователя не действуют', () {

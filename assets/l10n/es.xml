@@ -3980,7 +3980,7 @@
     <string name="mdmRuleAttachments">Los adjuntos no se pueden abrir ni guardar en el dispositivo</string>
     <string name="mdmRulePinTimeout">Bloqueo tras {n} min de inactividad</string>
     <string name="mdmRuleNoBiometrics">Solo código de la app, sin huella ni rostro</string>
-    <string name="mdmRuleExternal">Sin servicios externos: tiempo, logotipos, señales del servidor</string>
+    <string name="mdmRuleExternal">Sin servicios externos: tiempo, logotipos, señales e inicio de sesión por el servidor de Ogneliss</string>
     <string name="mdmSyncLimit">Tu organización limita el periodo: {period}</string>
     <string name="mdmTlsRequired">Tu organización exige una conexión cifrada, pero {host} no tiene SSL/STARTTLS. Activa SSL o STARTTLS en los ajustes del buzón</string>
     <string name="mdmAccountLocked">Buzón gestionado por tu organización</string>
@@ -3992,4 +3992,5 @@
     <string name="mdmRuleNoUserCerts">No puedes confiar en certificados por tu cuenta</string>
     <string name="mdmRuleDeviceContacts">Los contactos no se copian a los Contactos del dispositivo</string>
     <string name="mdmRuleDeviceCalendar">Los eventos no se copian al Calendario del dispositivo</string>
+    <string name="mdmLoginServerBlocked">Tu organización ha bloqueado el inicio de sesión a través del servidor de Ogneliss. Añade el buzón con una contraseña de aplicación (IMAP/SMTP).</string>
 </resources>

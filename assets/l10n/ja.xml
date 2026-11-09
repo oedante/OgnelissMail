@@ -3959,7 +3959,7 @@
     <string name="mdmRuleAttachments">添付ファイルを端末で開いたり保存したりできません</string>
     <string name="mdmRulePinTimeout">操作がないと {n} 分後にロック</string>
     <string name="mdmRuleNoBiometrics">アプリのコードのみ（指紋・顔は不可）</string>
-    <string name="mdmRuleExternal">外部サービスなし（天気・ロゴ・サーバー通知）</string>
+    <string name="mdmRuleExternal">外部サービスなし: 天気、ロゴ、通知シグナル、Ogneliss サーバー経由のサインイン</string>
     <string name="mdmSyncLimit">組織により期間が制限されています: {period}</string>
     <string name="mdmTlsRequired">組織は暗号化接続を必須にしていますが、{host} は SSL/STARTTLS なしです。メールボックスの設定で SSL か STARTTLS をオンにしてください</string>
     <string name="mdmAccountLocked">組織が管理するメールボックス</string>
@@ -3971,4 +3971,5 @@
     <string name="mdmRuleNoUserCerts">証明書を自分で信頼することはできません</string>
     <string name="mdmRuleDeviceContacts">連絡先は端末の連絡先にコピーされません</string>
     <string name="mdmRuleDeviceCalendar">予定は端末のカレンダーにコピーされません</string>
+    <string name="mdmLoginServerBlocked">組織が Ogneliss サーバー経由のサインインを禁止しています。アプリパスワード (IMAP/SMTP) でメールボックスを追加してください。</string>
 </resources>

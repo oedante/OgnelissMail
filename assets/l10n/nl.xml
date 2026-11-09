@@ -3980,7 +3980,7 @@
     <string name="mdmRuleAttachments">Bijlagen kunnen niet worden geopend of opgeslagen op het apparaat</string>
     <string name="mdmRulePinTimeout">Vergrendeling na {n} min inactiviteit</string>
     <string name="mdmRuleNoBiometrics">Alleen app-code, geen vingerafdruk of gezicht</string>
-    <string name="mdmRuleExternal">Geen externe diensten: weer, logo\'s, serversignalen</string>
+    <string name="mdmRuleExternal">Geen externe diensten: weer, logo\'s, signalen en aanmelden via de Ogneliss-server</string>
     <string name="mdmSyncLimit">Uw organisatie beperkt de periode: {period}</string>
     <string name="mdmTlsRequired">Uw organisatie vereist een versleutelde verbinding, maar {host} heeft geen SSL/STARTTLS. Zet SSL of STARTTLS aan in de instellingen van de mailbox</string>
     <string name="mdmAccountLocked">Mailbox wordt beheerd door uw organisatie</string>
@@ -3992,4 +3992,5 @@
     <string name="mdmRuleNoUserCerts">U kunt zelf geen certificaten vertrouwen</string>
     <string name="mdmRuleDeviceContacts">Contacten worden niet naar Contacten op het apparaat gekopieerd</string>
     <string name="mdmRuleDeviceCalendar">Afspraken worden niet naar de Agenda op het apparaat gekopieerd</string>
+    <string name="mdmLoginServerBlocked">Uw organisatie heeft aanmelden via de Ogneliss-server geblokkeerd. Voeg de mailbox toe met een app-wachtwoord (IMAP/SMTP).</string>
 </resources>

@@ -3980,7 +3980,7 @@
     <string name="mdmRuleAttachments">Bilagor kan inte öppnas eller sparas på enheten</string>
     <string name="mdmRulePinTimeout">Låses efter {n} min inaktivitet</string>
     <string name="mdmRuleNoBiometrics">Endast appkod, inte fingeravtryck eller ansikte</string>
-    <string name="mdmRuleExternal">Inga externa tjänster: väder, logotyper, serversignaler</string>
+    <string name="mdmRuleExternal">Inga externa tjänster: väder, logotyper, signaler och inloggning via Ogneliss-servern</string>
     <string name="mdmSyncLimit">Din organisation begränsar perioden: {period}</string>
     <string name="mdmTlsRequired">Din organisation kräver en krypterad anslutning, men {host} saknar SSL/STARTTLS. Slå på SSL eller STARTTLS i brevlådans inställningar</string>
     <string name="mdmAccountLocked">Brevlådan hanteras av din organisation</string>
@@ -3992,4 +3992,5 @@
     <string name="mdmRuleNoUserCerts">Du kan inte själv lita på certifikat</string>
     <string name="mdmRuleDeviceContacts">Kontakter kopieras inte till enhetens Kontakter</string>
     <string name="mdmRuleDeviceCalendar">Händelser kopieras inte till enhetens Kalender</string>
+    <string name="mdmLoginServerBlocked">Din organisation har blockerat inloggning via Ogneliss-servern. Lägg till brevlådan med ett applösenord (IMAP/SMTP).</string>
 </resources>

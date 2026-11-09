@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">Reminder sent</string>
     <string name="translateEngineBergamot">On-device translation by Bergamot (Mozilla). Message text never leaves the computer; languages are downloaded from the Ogneliss server.</string>
     <string name="translatePhoneLangsWindows">Windows languages — don’t offer translation</string>
+    <string name="swipeDoneRead">Marked as read</string>
+    <string name="swipeDoneUnread">Marked as unread</string>
+    <string name="swipeDoneFlag">Flagged</string>
+    <string name="swipeDoneUnflag">Flag removed</string>
+    <string name="swipeDoneControl">Tracked</string>
+    <string name="swipeDoneControlOff">No longer tracked</string>
 </resources>

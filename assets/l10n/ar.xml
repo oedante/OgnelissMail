@@ -4146,4 +4146,10 @@
     <string name="assignEvReminder">أُرسل التذكير</string>
     <string name="translateEngineBergamot">الترجمة على الكمبيوتر بواسطة Bergamot (Mozilla). لا يغادر نص الرسائل الكمبيوتر، وتُنزَّل اللغات من خادم Ogneliss.</string>
     <string name="translatePhoneLangsWindows">لغات Windows — عدم اقتراح الترجمة</string>
+    <string name="swipeDoneRead">تم التعليم كمقروء</string>
+    <string name="swipeDoneUnread">تم التعليم كغير مقروء</string>
+    <string name="swipeDoneFlag">تمت إضافة علامة</string>
+    <string name="swipeDoneUnflag">تمت إزالة العلامة</string>
+    <string name="swipeDoneControl">قيد المتابعة</string>
+    <string name="swipeDoneControlOff">تمت إزالة المتابعة</string>
 </resources>

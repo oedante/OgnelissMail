@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">Hatırlatma gönderildi</string>
     <string name="translateEngineBergamot">Bilgisayarda çeviri: Bergamot (Mozilla). E-posta metni bilgisayardan çıkmaz; diller Ogneliss sunucusundan indirilir.</string>
     <string name="translatePhoneLangsWindows">Windows dilleri — çeviri önerme</string>
+    <string name="swipeDoneRead">Okundu olarak işaretlendi</string>
+    <string name="swipeDoneUnread">Okunmadı olarak işaretlendi</string>
+    <string name="swipeDoneFlag">Bayrak eklendi</string>
+    <string name="swipeDoneUnflag">Bayrak kaldırıldı</string>
+    <string name="swipeDoneControl">Takipte</string>
+    <string name="swipeDoneControlOff">Takipten çıkarıldı</string>
 </resources>

@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">Rappel envoyé</string>
     <string name="translateEngineBergamot">Traduction sur l’ordinateur par Bergamot (Mozilla). Le texte des e-mails ne quitte pas l’ordinateur ; les langues sont téléchargées depuis le serveur Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Langues de Windows — ne pas proposer de traduction</string>
+    <string name="swipeDoneRead">Marqué comme lu</string>
+    <string name="swipeDoneUnread">Marqué comme non lu</string>
+    <string name="swipeDoneFlag">Signalé</string>
+    <string name="swipeDoneUnflag">Signalement retiré</string>
+    <string name="swipeDoneControl">En suivi</string>
+    <string name="swipeDoneControlOff">Suivi retiré</string>
 </resources>

@@ -4041,4 +4041,10 @@
     <string name="assignEvReminder">ส่งการเตือนแล้ว</string>
     <string name="translateEngineBergamot">แปลบนคอมพิวเตอร์ด้วย Bergamot (Mozilla) ข้อความอีเมลไม่ออกจากคอมพิวเตอร์ ภาษาจะดาวน์โหลดจากเซิร์ฟเวอร์ Ogneliss</string>
     <string name="translatePhoneLangsWindows">ภาษาของ Windows — ไม่ต้องเสนอการแปล</string>
+    <string name="swipeDoneRead">ทำเครื่องหมายว่าอ่านแล้ว</string>
+    <string name="swipeDoneUnread">ทำเครื่องหมายว่ายังไม่ได้อ่าน</string>
+    <string name="swipeDoneFlag">ปักธงแล้ว</string>
+    <string name="swipeDoneUnflag">เอาธงออกแล้ว</string>
+    <string name="swipeDoneControl">กำลังติดตาม</string>
+    <string name="swipeDoneControlOff">เลิกติดตามแล้ว</string>
 </resources>

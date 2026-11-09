@@ -4041,4 +4041,10 @@
     <string name="assignEvReminder">알림 발송됨</string>
     <string name="translateEngineBergamot">컴퓨터에서 Bergamot(Mozilla)으로 번역합니다. 메일 본문은 컴퓨터 밖으로 나가지 않으며, 언어는 Ogneliss 서버에서 다운로드됩니다.</string>
     <string name="translatePhoneLangsWindows">Windows 언어 — 번역 제안 안 함</string>
+    <string name="swipeDoneRead">읽음으로 표시됨</string>
+    <string name="swipeDoneUnread">읽지 않음으로 표시됨</string>
+    <string name="swipeDoneFlag">플래그 지정됨</string>
+    <string name="swipeDoneUnflag">플래그 해제됨</string>
+    <string name="swipeDoneControl">후속 확인 중</string>
+    <string name="swipeDoneControlOff">후속 확인 해제됨</string>
 </resources>

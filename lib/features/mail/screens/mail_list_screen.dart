@@ -1,5 +1,6 @@
 // lib/features/mail/screens/mail_list_screen.dart
 import '../../../widgets/ui/action_sheet.dart';
+import '../../../widgets/common/swipe_done.dart';
 import '../../../widgets/common/gap_below.dart';
 import '../widgets/move_folder_picker.dart';
 import '../widgets/mail_check_sheet.dart' show showMailCheckSheet;
@@ -1619,6 +1620,10 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           final row = MetaData(
             metaData: _SelRow(item.id),
             behavior: HitTestBehavior.translucent,
+            // «Сделано» после свайпа (2.2.0): строка вернулась — поверх на
+            // секунду результат («Прочитано», «На контроле»…).
+            child: SwipeDoneOverlay(
+            id: 'list/${item.accountId}/${item.id}',
             child: Slidable(
             key: ValueKey('${item.id}_${item.accountId}'),
             // В режиме выбора свайп не действует (07.11.2026): он делал
@@ -1750,7 +1755,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             )),
               ),
             ),
-          ));
+          )));
           // Постоянная панель папок (широкое окно): письма перетаскиваются на
           // папку (1.6.28). 1.9.x (просьба владельца 31.10.2026): выбранные —
           // разом; мышью — сразу, пальцем и пером — удержанием выбранной
@@ -1962,6 +1967,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   /// Выполнить действие свайпа напрямую (полный свайп при одном действии).
   /// Логика та же, что у кнопки, — вынесена, чтобы не расходилась.
   void _executeSwipeAction(SwipeAction action, EmailModel email, AppLocalizations l10n) {
+    // Строка вернулась на место — на секунду результат поверх (2.2.0).
+    showSwipeDone(context, action, email, l10n,
+        id: 'list/${email.accountId}/${email.id}', read: !_rowUnread(email), control: _rowControl(email));
     switch (action) {
       case SwipeAction.markRead:
         _toggleRead(email);

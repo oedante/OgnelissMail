@@ -4083,4 +4083,10 @@
     <string name="assignEvReminder">Připomínka odeslána</string>
     <string name="translateEngineBergamot">Překlad v počítači – Bergamot (Mozilla). Text e-mailů neopouští počítač, jazyky se stahují ze serveru Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Jazyky Windows – nenabízet překlad</string>
+    <string name="swipeDoneRead">Označeno jako přečtené</string>
+    <string name="swipeDoneUnread">Označeno jako nepřečtené</string>
+    <string name="swipeDoneFlag">Označeno vlajkou</string>
+    <string name="swipeDoneUnflag">Vlajka odebrána</string>
+    <string name="swipeDoneControl">Ve sledování</string>
+    <string name="swipeDoneControlOff">Sledování zrušeno</string>
 </resources>

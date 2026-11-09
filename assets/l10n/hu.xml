@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">Emlékeztető elküldve</string>
     <string name="translateEngineBergamot">Fordítás a számítógépen: Bergamot (Mozilla). A levelek szövege nem hagyja el a számítógépet; a nyelvek az Ogneliss-kiszolgálóról töltődnek le.</string>
     <string name="translatePhoneLangsWindows">Windows nyelvei – ne ajánljon fordítást</string>
+    <string name="swipeDoneRead">Olvasottnak jelölve</string>
+    <string name="swipeDoneUnread">Olvasatlannak jelölve</string>
+    <string name="swipeDoneFlag">Megjelölve</string>
+    <string name="swipeDoneUnflag">Jelölés eltávolítva</string>
+    <string name="swipeDoneControl">Nyomon követve</string>
+    <string name="swipeDoneControlOff">Nyomon követés megszüntetve</string>
 </resources>

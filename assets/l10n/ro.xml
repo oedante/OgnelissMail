@@ -4083,4 +4083,10 @@
     <string name="assignEvReminder">Memento trimis</string>
     <string name="translateEngineBergamot">Traducere pe computer cu Bergamot (Mozilla). Textul e-mailurilor nu părăsește computerul; limbile se descarcă de pe serverul Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Limbile Windows — nu propune traducerea</string>
+    <string name="swipeDoneRead">Marcat ca citit</string>
+    <string name="swipeDoneUnread">Marcat ca necitit</string>
+    <string name="swipeDoneFlag">Marcat cu steag</string>
+    <string name="swipeDoneUnflag">Steag eliminat</string>
+    <string name="swipeDoneControl">În urmărire</string>
+    <string name="swipeDoneControlOff">Urmărire eliminată</string>
 </resources>

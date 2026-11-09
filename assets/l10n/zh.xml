@@ -4041,4 +4041,10 @@
     <string name="assignEvReminder">提醒已发送</string>
     <string name="translateEngineBergamot">在电脑上由 Bergamot（Mozilla）翻译。邮件文本不会离开电脑，语言包从 Ogneliss 服务器下载。</string>
     <string name="translatePhoneLangsWindows">Windows 语言 — 不提示翻译</string>
+    <string name="swipeDoneRead">已标为已读</string>
+    <string name="swipeDoneUnread">已标为未读</string>
+    <string name="swipeDoneFlag">已加旗标</string>
+    <string name="swipeDoneUnflag">已取消旗标</string>
+    <string name="swipeDoneControl">已加入跟进</string>
+    <string name="swipeDoneControlOff">已取消跟进</string>
 </resources>

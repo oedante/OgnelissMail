@@ -4083,4 +4083,10 @@
     <string name="assignEvReminder">התזכורת נשלחה</string>
     <string name="translateEngineBergamot">תרגום במחשב באמצעות Bergamot (Mozilla). טקסט ההודעות לא יוצא מהמחשב; השפות מורדות משרת Ogneliss.</string>
     <string name="translatePhoneLangsWindows">שפות Windows — לא להציע תרגום</string>
+    <string name="swipeDoneRead">סומן כנקרא</string>
+    <string name="swipeDoneUnread">סומן כלא נקרא</string>
+    <string name="swipeDoneFlag">סומן בדגל</string>
+    <string name="swipeDoneUnflag">הדגל הוסר</string>
+    <string name="swipeDoneControl">במעקב</string>
+    <string name="swipeDoneControlOff">המעקב הוסר</string>
 </resources>

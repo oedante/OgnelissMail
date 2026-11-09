@@ -4104,4 +4104,10 @@
     <string name="assignEvReminder">Напоминание отправлено</string>
     <string name="translateEngineBergamot">Перевод на компьютере — Bergamot (Mozilla). Текст писем не покидает компьютер, языки скачиваются с сервера Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Языки Windows — не предлагать перевод</string>
+    <string name="swipeDoneRead">Прочитано</string>
+    <string name="swipeDoneUnread">Не прочитано</string>
+    <string name="swipeDoneFlag">Флажок поставлен</string>
+    <string name="swipeDoneUnflag">Флажок снят</string>
+    <string name="swipeDoneControl">На контроле</string>
+    <string name="swipeDoneControlOff">Снято с контроля</string>
 </resources>

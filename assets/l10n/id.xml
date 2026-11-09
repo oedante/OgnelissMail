@@ -4041,4 +4041,10 @@
     <string name="assignEvReminder">Pengingat terkirim</string>
     <string name="translateEngineBergamot">Terjemahan di komputer oleh Bergamot (Mozilla). Teks email tidak meninggalkan komputer; bahasa diunduh dari server Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Bahasa Windows — jangan tawarkan terjemahan</string>
+    <string name="swipeDoneRead">Ditandai sudah dibaca</string>
+    <string name="swipeDoneUnread">Ditandai belum dibaca</string>
+    <string name="swipeDoneFlag">Diberi bendera</string>
+    <string name="swipeDoneUnflag">Bendera dihapus</string>
+    <string name="swipeDoneControl">Ditindaklanjuti</string>
+    <string name="swipeDoneControlOff">Tindak lanjut dihapus</string>
 </resources>

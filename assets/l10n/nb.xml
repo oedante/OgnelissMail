@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">Påminnelse sendt</string>
     <string name="translateEngineBergamot">Oversettelse på datamaskinen med Bergamot (Mozilla). E-postteksten forlater ikke datamaskinen; språk lastes ned fra Ogneliss-serveren.</string>
     <string name="translatePhoneLangsWindows">Windows-språk – ikke foreslå oversettelse</string>
+    <string name="swipeDoneRead">Merket som lest</string>
+    <string name="swipeDoneUnread">Merket som ulest</string>
+    <string name="swipeDoneFlag">Flagget</string>
+    <string name="swipeDoneUnflag">Flagg fjernet</string>
+    <string name="swipeDoneControl">Til oppfølging</string>
+    <string name="swipeDoneControlOff">Oppfølging fjernet</string>
 </resources>

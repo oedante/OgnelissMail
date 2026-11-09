@@ -4041,4 +4041,10 @@
     <string name="assignEvReminder">リマインダー送信済み</string>
     <string name="translateEngineBergamot">パソコン上で Bergamot（Mozilla）が翻訳します。メールの本文はパソコンの外に送信されません。言語は Ogneliss のサーバーからダウンロードされます。</string>
     <string name="translatePhoneLangsWindows">Windows の言語 — 翻訳を提案しない</string>
+    <string name="swipeDoneRead">既読にしました</string>
+    <string name="swipeDoneUnread">未読にしました</string>
+    <string name="swipeDoneFlag">フラグを付けました</string>
+    <string name="swipeDoneUnflag">フラグを外しました</string>
+    <string name="swipeDoneControl">フォローアップ中</string>
+    <string name="swipeDoneControlOff">フォローアップを解除しました</string>
 </resources>

@@ -4062,4 +4062,10 @@
     <string name="assignEvReminder">याद दिलाना भेजा गया</string>
     <string name="translateEngineBergamot">कंप्यूटर पर अनुवाद — Bergamot (Mozilla)। ईमेल का पाठ कंप्यूटर से बाहर नहीं जाता; भाषाएँ Ogneliss सर्वर से डाउनलोड होती हैं।</string>
     <string name="translatePhoneLangsWindows">Windows की भाषाएँ — अनुवाद का सुझाव न दें</string>
+    <string name="swipeDoneRead">पढ़ा गया चिह्नित</string>
+    <string name="swipeDoneUnread">अपठित चिह्नित</string>
+    <string name="swipeDoneFlag">फ़्लैग लगाया गया</string>
+    <string name="swipeDoneUnflag">फ़्लैग हटाया गया</string>
+    <string name="swipeDoneControl">फ़ॉलो-अप में</string>
+    <string name="swipeDoneControlOff">फ़ॉलो-अप हटाया गया</string>
 </resources>

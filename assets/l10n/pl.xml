@@ -4104,4 +4104,10 @@
     <string name="assignEvReminder">Przypomnienie wysłane</string>
     <string name="translateEngineBergamot">Tłumaczenie na komputerze – Bergamot (Mozilla). Tekst wiadomości nie opuszcza komputera; języki są pobierane z serwera Ogneliss.</string>
     <string name="translatePhoneLangsWindows">Języki Windows – nie proponuj tłumaczenia</string>
+    <string name="swipeDoneRead">Oznaczono jako przeczytane</string>
+    <string name="swipeDoneUnread">Oznaczono jako nieprzeczytane</string>
+    <string name="swipeDoneFlag">Oznaczono flagą</string>
+    <string name="swipeDoneUnflag">Flaga usunięta</string>
+    <string name="swipeDoneControl">Pod kontrolą</string>
+    <string name="swipeDoneControlOff">Zdjęto z kontroli</string>
 </resources>

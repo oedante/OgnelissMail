@@ -3965,4 +3965,7 @@
     <string name="convFindHint">बातचीत के संदेशों में टेक्स्ट</string>
     <string name="mentionsFilter">उल्लेख</string>
     <string name="mentionedYou">आपका उल्लेख किया गया</string>
+    <string name="dsnRead">पढ़ा गया: {addr}</string>
+    <string name="noticeDsnRead">पढ़ा गया</string>
+    <string name="dsnReadNote">प्राप्तकर्ता ने संदेश खोला और पठन रसीद भेजी</string>
 </resources>

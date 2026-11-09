@@ -3944,4 +3944,7 @@
     <string name="convFindHint">对话中的文字</string>
     <string name="mentionsFilter">提及</string>
     <string name="mentionedYou">有人提及了你</string>
+    <string name="dsnRead">已读：{addr}</string>
+    <string name="noticeDsnRead">已读</string>
+    <string name="dsnReadNote">收件人已打开邮件并发送已读回执</string>
 </resources>

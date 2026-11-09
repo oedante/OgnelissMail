@@ -56,6 +56,7 @@ import '../../../services/mail/own_addresses.dart';
 import '../../../widgets/common/quick_long_press.dart';
 import '../../../widgets/common/peek_card.dart' show peekAnchorOf;
 import '../widgets/peek_helpers.dart';
+import '../providers/delivery_status_provider.dart' show deliveryTicksProvider, deliveryTickOf;
 import '../widgets/mail_find.dart';
 import '../widgets/quick_reply_bar.dart';
 import '../providers/drawer_prefs.dart' show convChatOrderProvider, quickReplyBarProvider;
@@ -640,6 +641,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           });
         }
 
+        // ✓/✓✓ своих писем — по отчётам о доставке и прочтении (2.2.0).
+        final ticks = ref.watch(deliveryTicksProvider).value;
+
         Widget messageAt(int i) {
           final list = shown!;
           final e = list[i];
@@ -665,6 +669,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 builder: (cardCtx) => _MessageCard(
                   email: e,
                   mine: mine,
+                  tick: mine ? deliveryTickOf(ticks, e) : null,
                   alsoIn: [
                     for (final c in copies[e.id] ?? const <EmailModel>[])
                       if ((c.folderName ?? '').isNotEmpty) c.folderName!,
@@ -932,8 +937,17 @@ class _MessageCard extends StatelessWidget {
   /// Другие папки, где лежит копия этого письма (письмо самому себе).
   final List<String> alsoIn;
 
+  /// Своё письмо (2.2.0): false — доставлено (✓), true — прочитано (✓✓),
+  /// null — отчётов нет.
+  final bool? tick;
+
   const _MessageCard(
-      {required this.email, required this.mine, required this.onTap, this.onLongPress, this.alsoIn = const []});
+      {required this.email,
+      required this.mine,
+      required this.onTap,
+      this.onLongPress,
+      this.alsoIn = const [],
+      this.tick});
 
   @override
   Widget build(BuildContext context) {
@@ -1050,6 +1064,16 @@ class _MessageCard extends StatelessWidget {
                             child: Icon(AppIcons.flag, size: Sizes.iconInline, fill: 1, color: scheme.error),
                           ),
                         const SizedBox(width: Space.s),
+                        if (tick != null)
+                          Padding(
+                            padding: const EdgeInsets.only(right: Space.xs),
+                            child: Tooltip(
+                              message: AppLocalizations.of(context).tr(tick! ? 'noticeDsnRead' : 'noticeDsnDelivered'),
+                              child: Icon(tick! ? AppIcons.done_all : AppIcons.check,
+                                  size: Sizes.iconInline,
+                                  color: tick! ? scheme.primary : scheme.onSurfaceVariant),
+                            ),
+                          ),
                         Text(
                           AppDateFormat.listStamp(context, email.receivedAt),
                           style: theme.textTheme.labelSmall

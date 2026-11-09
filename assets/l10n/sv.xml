@@ -3965,4 +3965,7 @@
     <string name="convFindHint">Text i konversationen</string>
     <string name="mentionsFilter">Omnämnanden</string>
     <string name="mentionedYou">Du nämndes</string>
+    <string name="dsnRead">Läst: {addr}</string>
+    <string name="noticeDsnRead">Läst</string>
+    <string name="dsnReadNote">mottagaren öppnade meddelandet och skickade ett läskvitto</string>
 </resources>

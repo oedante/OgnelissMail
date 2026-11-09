@@ -4007,4 +4007,7 @@
     <string name="convFindHint">Текст в письмах беседы</string>
     <string name="mentionsFilter">Упоминания</string>
     <string name="mentionedYou">Вас упомянули в письме</string>
+    <string name="dsnRead">Прочитано: {addr}</string>
+    <string name="noticeDsnRead">Прочитано</string>
+    <string name="dsnReadNote">адресат открыл письмо и отправил отчёт о прочтении</string>
 </resources>

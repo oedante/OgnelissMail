@@ -3965,4 +3965,7 @@
     <string name="convFindHint">Tekst i samtalen</string>
     <string name="mentionsFilter">Omtaler</string>
     <string name="mentionedYou">Du ble nevnt</string>
+    <string name="dsnRead">Lest: {addr}</string>
+    <string name="noticeDsnRead">Lest</string>
+    <string name="dsnReadNote">mottakeren åpnet meldingen og sendte en lesebekreftelse</string>
 </resources>

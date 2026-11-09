@@ -3944,4 +3944,7 @@
     <string name="convFindHint">ข้อความในการสนทนา</string>
     <string name="mentionsFilter">การกล่าวถึง</string>
     <string name="mentionedYou">มีการกล่าวถึงคุณ</string>
+    <string name="dsnRead">อ่านแล้ว: {addr}</string>
+    <string name="noticeDsnRead">อ่านแล้ว</string>
+    <string name="dsnReadNote">ผู้รับเปิดข้อความและส่งใบตอบรับการอ่านแล้ว</string>
 </resources>

@@ -32,6 +32,19 @@ bool isUndelivered(Set<String>? undelivered, EmailModel e) {
   return k != null && undelivered.contains('${k.accountId}|${k.messageId}');
 }
 
+/// ✓/✓✓ у своих писем (2.2.0, план 08.11.2026 «из мессенджеров»):
+/// «аккаунт|Message-ID» → прочитано ли кем-то из адресатов.
+final deliveryTicksProvider =
+    StreamProvider<Map<String, bool>>((ref) => ref.watch(databaseProvider).watchDeliveryTicks());
+
+/// Отметка своего письма: null — отчётов нет; false — доставлено (✓);
+/// true — прочитано (✓✓).
+bool? deliveryTickOf(Map<String, bool>? ticks, EmailModel e) {
+  if (ticks == null || ticks.isEmpty) return null;
+  final k = deliveryKeyOf(e);
+  return k == null ? null : ticks['${k.accountId}|${k.messageId}'];
+}
+
 /// Письмо-отчёт → своё письмо, о котором он (чип «Отчёт о доставке»).
 final deliveryReportOriginalProvider =
     FutureProvider.autoDispose.family<Email?, ({String accountId, String emailId})>((ref, k) async {

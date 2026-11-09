@@ -3986,4 +3986,7 @@
     <string name="convFindHint">טקסט בהודעות השיחה</string>
     <string name="mentionsFilter">אזכורים</string>
     <string name="mentionedYou">אוזכרת בהודעה</string>
+    <string name="dsnRead">נקרא: {addr}</string>
+    <string name="noticeDsnRead">נקרא</string>
+    <string name="dsnReadNote">הנמען פתח את ההודעה ושלח אישור קריאה</string>
 </resources>

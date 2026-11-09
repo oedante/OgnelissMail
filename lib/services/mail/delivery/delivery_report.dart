@@ -11,11 +11,12 @@
 
 import 'package:enough_mail/enough_mail.dart';
 
-/// Что сервер сделал с письмом для адресата (RFC 3464, поле Action).
-enum DeliveryAction { failed, delayed, delivered, relayed, expanded }
+/// Что сервер сделал с письмом для адресата (RFC 3464, поле Action);
+/// [read] — адресат открыл письмо (отчёт о прочтении, RFC 8098, 2.2.0).
+enum DeliveryAction { failed, delayed, delivered, relayed, expanded, read }
 
 /// Причина простыми словами — по коду статуса и ответу сервера.
-enum DeliveryReason { noSuchUser, domainNotFound, mailboxFull, blocked, tooLarge, delayed, delivered, other }
+enum DeliveryReason { noSuchUser, domainNotFound, mailboxFull, blocked, tooLarge, delayed, delivered, read, other }
 
 /// Отчёт об одном адресате.
 class RecipientDelivery {
@@ -75,11 +76,13 @@ class DeliveryReport {
         'delivered' => DeliveryAction.delivered,
         'relayed' => DeliveryAction.relayed,
         'expanded' => DeliveryAction.expanded,
+        'read' => DeliveryAction.read,
         _ => null,
       };
 
   /// Причина по коду статуса (он точнее), затем по тексту ответа сервера.
   static DeliveryReason reasonOf(DeliveryAction action, String? status, String? diagnostic) {
+    if (action == DeliveryAction.read) return DeliveryReason.read;
     if (action != DeliveryAction.failed && action != DeliveryAction.delayed) return DeliveryReason.delivered;
     if (action == DeliveryAction.delayed) return DeliveryReason.delayed;
     final s = status ?? '';
@@ -132,10 +135,11 @@ class DeliveryReportHints {
 
   static bool take(String accountId, String emailId) => _ids.remove('$accountId|$emailId');
 
-  /// Корень письма — отчёт о доставке (content-type и параметр report-type).
+  /// Корень письма — отчёт о доставке или о прочтении (content-type и
+  /// параметр report-type).
   static bool isReportType(String? mediaType, String? reportType) =>
       (mediaType ?? '').toLowerCase() == 'multipart/report' &&
-      (reportType ?? '').toLowerCase().contains('delivery-status');
+      RegExp('delivery-status|disposition-notification').hasMatch((reportType ?? '').toLowerCase());
 }
 
 class DeliveryReportParser {
@@ -164,7 +168,22 @@ class DeliveryReportParser {
   /// Стоит ли скачать письмо целиком и проверить: робот-отправитель, тема
   /// отчёта или (IMAP) структура multipart/report.
   static bool isCandidate({required String fromEmail, String? fromName, required String subject, bool reportType = false}) =>
-      reportType || isRobotSender(fromEmail, fromName) || _subject.hasMatch(subject.trim());
+      reportType ||
+      isRobotSender(fromEmail, fromName) ||
+      _subject.hasMatch(subject.trim()) ||
+      _readSubject.hasMatch(subject.trim());
+
+  /// Тема отчёта о прочтении (2.2.0): «Прочитано: …» (Outlook, Exchange),
+  /// «Read: …», «Отчёт о прочтении» и на других частых языках.
+  static final _readSubject = RegExp(
+      r'^(прочитано|прочтено|read|gelesen|lu|leído|letto|lido|gelezen|odczytano|přečteno|okundu)\s*:|'
+      r'read receipt|return receipt|disposition notification|отч[её]т о прочтении|уведомление о прочтении',
+      caseSensitive: false);
+
+  /// Фраза «прочитано» в тексте отчёта без машинной части (Exchange).
+  static final _readPhrase = RegExp(
+      r'was read on|has been read|been displayed|было прочитано|прочитано\s|прочитал|wurde gelesen|a été lu|fue leído',
+      caseSensitive: false);
 
   static final _failPhrase = RegExp(
       r"could not be delivered|couldn't be delivered|wasn't delivered|was not delivered|undeliverable|"
@@ -201,6 +220,7 @@ class DeliveryReportParser {
       return null;
     }
     String? statusText;
+    String? mdnText;
     String? origHeaders;
     final texts = <String>[];
     void walk(MimePart p, int depth) {
@@ -208,6 +228,11 @@ class DeliveryReportParser {
       final type = p.mediaType.text.toLowerCase();
       if (type == 'message/delivery-status' || type == 'message/global-delivery-status') {
         statusText ??= _safeText(p);
+        return;
+      }
+      // Отчёт о прочтении (RFC 8098, 2.2.0).
+      if (type == 'message/disposition-notification' || type == 'message/global-disposition-notification') {
+        mdnText ??= _safeText(p);
         return;
       }
       if (type == 'message/rfc822' || type == 'message/global' || type == 'text/rfc822-headers' ||
@@ -246,6 +271,38 @@ class DeliveryReportParser {
       final refs = msg.getHeaderValue('references');
       final all = RegExp(r'<[^<>\s]+>').allMatches(refs ?? '').toList();
       if (all.isNotEmpty) origId = DeliveryReport.normalizeMessageId(all.last.group(0));
+    }
+
+    // Отчёт о прочтении (2.2.0, план 08.11.2026: ✓✓ «прочитано»): «открыл»
+    // (displayed) — прочитано; «удалил, не читая» и прочее — не отметка.
+    final mdn = mdnText;
+    if (mdn != null) {
+      final g = <String, String>{for (final m in _fieldGroups(mdn)) ...m};
+      final disposition = (g['disposition'] ?? '').toLowerCase();
+      final rcpt = _address(g['final-recipient'] ?? g['original-recipient']) ?? fromEmail.toLowerCase();
+      final mid = DeliveryReport.normalizeMessageId(g['original-message-id']) ?? origId;
+      if (!disposition.contains('displayed') || rcpt.isEmpty || ownSet.contains(rcpt) || mid == null) return null;
+      return DeliveryReport(
+        originalMessageId: mid,
+        recipients: [RecipientDelivery(recipient: rcpt, action: DeliveryAction.read)],
+        standard: true,
+      );
+    }
+    // Отчёт о прочтении без машинной части (Exchange внутри организации):
+    // «Прочитано: тема» от самого адресата, ссылка на письмо — в
+    // In-Reply-To или References, в тексте — «было прочитано».
+    if (statusText == null &&
+        origId != null &&
+        _readSubject.hasMatch(subject.trim()) &&
+        !isRobotSender(fromEmail, fromAddr?.personalName) &&
+        fromEmail.isNotEmpty &&
+        !ownSet.contains(fromEmail.toLowerCase()) &&
+        (_readPhrase.hasMatch(text) || _readPhrase.hasMatch(subject))) {
+      return DeliveryReport(
+        originalMessageId: origId,
+        recipients: [RecipientDelivery(recipient: fromEmail.toLowerCase(), action: DeliveryAction.read)],
+        standard: false,
+      );
     }
 
     final st = statusText;

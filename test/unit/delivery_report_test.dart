@@ -406,7 +406,9 @@ ${_b64('Похоже, моё письмо не доставлено до client@
     expect(DeliveryReportParser.isCandidate(fromEmail: 'a@b.c', subject: 'Отчёт за октябрь'), isFalse);
     expect(DeliveryReportParser.isCandidate(fromEmail: 'a@b.c', subject: 'x', reportType: true), isTrue);
     expect(DeliveryReportHints.isReportType('multipart/report', 'delivery-status'), isTrue);
-    expect(DeliveryReportHints.isReportType('multipart/report', 'disposition-notification'), isFalse);
+    // С 2.2.0 и отчёт о прочтении (✓✓ «прочитано», read_receipt_test.dart).
+    expect(DeliveryReportHints.isReportType('multipart/report', 'disposition-notification'), isTrue);
+    expect(DeliveryReportHints.isReportType('multipart/mixed', 'delivery-status'), isFalse);
   });
 
   test('Причины по коду и тексту ответа', () {

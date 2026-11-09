@@ -3986,4 +3986,7 @@
     <string name="convFindHint">Text v konverzácii</string>
     <string name="mentionsFilter">Zmienky</string>
     <string name="mentionedYou">Boli ste spomenutí</string>
+    <string name="dsnRead">Prečítané: {addr}</string>
+    <string name="noticeDsnRead">Prečítané</string>
+    <string name="dsnReadNote">príjemca otvoril správu a poslal potvrdenie o prečítaní</string>
 </resources>

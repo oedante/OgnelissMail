@@ -2482,6 +2482,8 @@ class AppDatabase extends _$AppDatabase {
             .getSingleOrNull();
         if (old != null) {
           if (old.action != 'delayed' && r.action == 'delayed') continue;
+          // «Прочитано» (2.2.0) поздний отчёт о доставке не отменяет.
+          if (old.action == 'read' && r.action != 'read' && r.action != 'failed') continue;
           if (old.action == r.action && old.status == r.status) continue;
         }
         await into(deliveryStatuses).insertOnConflictUpdate(DeliveryStatusesCompanion.insert(
@@ -2514,6 +2516,25 @@ class AppDatabase extends _$AppDatabase {
       .map((r) => '${r.read(deliveryStatuses.accountId)}|${r.read(deliveryStatuses.messageId)}')
       .watch()
       .map((l) => l.toSet());
+
+  /// Свои письма с хорошими отчётами (2.2.0, ✓/✓✓ у своих писем):
+  /// «аккаунт|Message-ID» → прочитано ли кем-то из адресатов (иначе —
+  /// доставлено).
+  Stream<Map<String, bool>> watchDeliveryTicks() => (selectOnly(deliveryStatuses)
+        ..addColumns([deliveryStatuses.accountId, deliveryStatuses.messageId, deliveryStatuses.action])
+        ..where(deliveryStatuses.action.isIn(const ['delivered', 'relayed', 'read'])))
+      .map((r) => (
+            key: '${r.read(deliveryStatuses.accountId)}|${r.read(deliveryStatuses.messageId)}',
+            read: r.read(deliveryStatuses.action) == 'read',
+          ))
+      .watch()
+      .map((rows) {
+        final out = <String, bool>{};
+        for (final r in rows) {
+          out[r.key] = (out[r.key] ?? false) || r.read;
+        }
+        return out;
+      });
 
   /// Message-ID письма, о котором отчёт [reportEmailId] (чип «Отчёт о доставке»).
   Future<String?> deliveryReportTarget(String accountId, String reportEmailId) async {

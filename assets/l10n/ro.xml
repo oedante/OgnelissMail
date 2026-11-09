@@ -3986,4 +3986,7 @@
     <string name="convFindHint">Text din conversație</string>
     <string name="mentionsFilter">Mențiuni</string>
     <string name="mentionedYou">Ați fost menționat</string>
+    <string name="dsnRead">Citit: {addr}</string>
+    <string name="noticeDsnRead">Citit</string>
+    <string name="dsnReadNote">destinatarul a deschis mesajul și a trimis o confirmare de citire</string>
 </resources>

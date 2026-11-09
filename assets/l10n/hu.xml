@@ -3965,4 +3965,7 @@
     <string name="convFindHint">Szöveg a beszélgetés üzeneteiben</string>
     <string name="mentionsFilter">Említések</string>
     <string name="mentionedYou">Megemlítették Önt</string>
+    <string name="dsnRead">Elolvasta: {addr}</string>
+    <string name="noticeDsnRead">Elolvasva</string>
+    <string name="dsnReadNote">a címzett megnyitotta az üzenetet, és olvasási visszaigazolást küldött</string>
 </resources>

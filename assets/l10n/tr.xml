@@ -3965,4 +3965,7 @@
     <string name="convFindHint">Konuşmadaki metin</string>
     <string name="mentionsFilter">Bahsetmeler</string>
     <string name="mentionedYou">Sizden bahsedildi</string>
+    <string name="dsnRead">Okundu: {addr}</string>
+    <string name="noticeDsnRead">Okundu</string>
+    <string name="dsnReadNote">alıcı iletiyi açtı ve okundu bilgisi gönderdi</string>
 </resources>

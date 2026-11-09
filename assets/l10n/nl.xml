@@ -3965,4 +3965,7 @@
     <string name="convFindHint">Tekst in het gesprek</string>
     <string name="mentionsFilter">Vermeldingen</string>
     <string name="mentionedYou">U bent vermeld</string>
+    <string name="dsnRead">Gelezen: {addr}</string>
+    <string name="noticeDsnRead">Gelezen</string>
+    <string name="dsnReadNote">de ontvanger heeft het bericht geopend en een leesbevestiging gestuurd</string>
 </resources>

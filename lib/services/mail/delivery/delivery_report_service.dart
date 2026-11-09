@@ -30,6 +30,7 @@ extension DeliveryReasonText on DeliveryReason {
         DeliveryReason.tooLarge => 'dsnReasonTooLarge',
         DeliveryReason.delayed => 'dsnReasonDelayed',
         DeliveryReason.delivered => 'dsnDeliveredNote',
+        DeliveryReason.read => 'dsnReadNote',
         DeliveryReason.other => 'dsnReasonOther',
       };
 }

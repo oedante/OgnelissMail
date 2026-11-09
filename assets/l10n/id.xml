@@ -3944,4 +3944,7 @@
     <string name="convFindHint">Teks di percakapan</string>
     <string name="mentionsFilter">Sebutan</string>
     <string name="mentionedYou">Anda disebut</string>
+    <string name="dsnRead">Dibaca: {addr}</string>
+    <string name="noticeDsnRead">Dibaca</string>
+    <string name="dsnReadNote">penerima membuka pesan dan mengirim tanda terima baca</string>
 </resources>

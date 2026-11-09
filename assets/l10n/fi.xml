@@ -3965,4 +3965,7 @@
     <string name="convFindHint">Teksti keskustelun viesteissä</string>
     <string name="mentionsFilter">Maininnat</string>
     <string name="mentionedYou">Sinut mainittiin</string>
+    <string name="dsnRead">Luettu: {addr}</string>
+    <string name="noticeDsnRead">Luettu</string>
+    <string name="dsnReadNote">vastaanottaja avasi viestin ja lähetti lukukuittauksen</string>
 </resources>

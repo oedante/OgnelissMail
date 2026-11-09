@@ -3944,4 +3944,7 @@
     <string name="convFindHint">Văn bản trong cuộc hội thoại</string>
     <string name="mentionsFilter">Lượt nhắc đến</string>
     <string name="mentionedYou">Bạn được nhắc đến</string>
+    <string name="dsnRead">Đã đọc: {addr}</string>
+    <string name="noticeDsnRead">Đã đọc</string>
+    <string name="dsnReadNote">người nhận đã mở thư và gửi xác nhận đã đọc</string>
 </resources>

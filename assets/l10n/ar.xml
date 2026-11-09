@@ -4049,4 +4049,7 @@
     <string name="convFindHint">نص في رسائل المحادثة</string>
     <string name="mentionsFilter">الإشارات</string>
     <string name="mentionedYou">تمت الإشارة إليك</string>
+    <string name="dsnRead">تمت القراءة: {addr}</string>
+    <string name="noticeDsnRead">تمت القراءة</string>
+    <string name="dsnReadNote">فتح المستلم الرسالة وأرسل إشعار قراءة</string>
 </resources>

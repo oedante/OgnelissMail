@@ -3944,4 +3944,7 @@
     <string name="convFindHint">会話のメッセージ内のテキスト</string>
     <string name="mentionsFilter">メンション</string>
     <string name="mentionedYou">あなたがメンションされました</string>
+    <string name="dsnRead">既読: {addr}</string>
+    <string name="noticeDsnRead">既読</string>
+    <string name="dsnReadNote">受信者がメッセージを開き、開封確認を送信しました</string>
 </resources>

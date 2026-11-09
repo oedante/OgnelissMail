@@ -3965,4 +3965,7 @@
     <string name="convFindHint">Texto na conversa</string>
     <string name="mentionsFilter">Menções</string>
     <string name="mentionedYou">Você foi mencionado</string>
+    <string name="dsnRead">Lido: {addr}</string>
+    <string name="noticeDsnRead">Lido</string>
+    <string name="dsnReadNote">o destinatário abriu a mensagem e enviou uma confirmação de leitura</string>
 </resources>

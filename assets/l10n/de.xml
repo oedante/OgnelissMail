@@ -3965,4 +3965,7 @@
     <string name="convFindHint">Text in der Unterhaltung</string>
     <string name="mentionsFilter">Erwähnungen</string>
     <string name="mentionedYou">Sie wurden erwähnt</string>
+    <string name="dsnRead">Gelesen: {addr}</string>
+    <string name="noticeDsnRead">Gelesen</string>
+    <string name="dsnReadNote">der Empfänger hat die Nachricht geöffnet und eine Lesebestätigung gesendet</string>
 </resources>

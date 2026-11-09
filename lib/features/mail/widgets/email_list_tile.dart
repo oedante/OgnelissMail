@@ -214,6 +214,8 @@ class EmailListTile extends ConsumerWidget {
     // Не доставлено хотя бы одному адресату — красный значок (1.9.x, отчёты
     // о доставке, 31.10.2026).
     final undelivered = isOwnSent && ref.watch(undeliveredProvider.select((v) => isUndelivered(v.value, email)));
+    // ✓ доставлено / ✓✓ прочитано — по отчётам (2.2.0, план 08.11.2026).
+    final tick = isOwnSent && !undelivered ? ref.watch(deliveryTicksProvider.select((v) => deliveryTickOf(v.value, email))) : null;
     final ownAddress = email.from.email.toLowerCase();
 
     final accountMark = showAccountMark
@@ -306,6 +308,12 @@ class EmailListTile extends ConsumerWidget {
             child: Tooltip(
                 message: AppLocalizations.of(context).tr('mentionedYou'),
                 child: Icon(AppIcons.alternate_email, size: 15, weight: 700, color: theme.colorScheme.primary))),
+      if (tick != null)
+        Padding(padding: const EdgeInsets.only(left: Space.xs),
+            child: Tooltip(
+                message: AppLocalizations.of(context).tr(tick ? 'noticeDsnRead' : 'noticeDsnDelivered'),
+                child: Icon(tick ? AppIcons.done_all : AppIcons.check, size: 15,
+                    color: tick ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.5)))),
       if (undelivered)
         Padding(padding: const EdgeInsets.only(left: Space.xs),
             child: Tooltip(

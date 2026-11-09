@@ -4007,4 +4007,7 @@
     <string name="convFindHint">Tekst w rozmowie</string>
     <string name="mentionsFilter">Wzmianki</string>
     <string name="mentionedYou">Wspomniano o Tobie</string>
+    <string name="dsnRead">Przeczytano: {addr}</string>
+    <string name="noticeDsnRead">Przeczytano</string>
+    <string name="dsnReadNote">odbiorca otworzył wiadomość i wysłał potwierdzenie przeczytania</string>
 </resources>

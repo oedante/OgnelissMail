@@ -363,6 +363,7 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
 
   /// Фото аккаунта (из адресной книги организации или профиля Google).
   Future<void> setAccountPhoto(String accountId, String? photo) async {
+    if (state.where((a) => a.id == accountId).firstOrNull?.avatarUrl == photo) return;
     await (_db.update(_db.accounts)..where((a) => a.id.equals(accountId)))
         .write(AccountsCompanion(avatarUrl: Value(photo)));
     state = [for (final a in state) a.id == accountId ? a.copyWith(avatarUrl: photo) : a];
@@ -705,8 +706,13 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
     }
   }
 
-  /// Обновить количество непрочитанных
+  /// Обновить количество непрочитанных. Число то же — ничего не делаем:
+  /// раньше каждая синхронизация пересобирала список ящиков, и всё, что от
+  /// него зависит (меню, лента, «Мой день»), перестраивалось (план
+  /// 08.11.2026 п. 3).
   Future<void> updateUnreadCount(String accountId, int count) async {
+    final cur = state.where((a) => a.id == accountId).firstOrNull;
+    if (cur != null && cur.unreadCount == count) return;
     await (_db.update(_db.accounts)..where((a) => a.id.equals(accountId)))
         .write(AccountsCompanion(unreadCount: Value(count)));
 

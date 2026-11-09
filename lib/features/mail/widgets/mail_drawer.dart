@@ -449,6 +449,19 @@ class MailDrawer extends ConsumerWidget {
       ));
     }
 
+    // «Поручения» (2.2.0, решение владельца 09.11.2026: отдельный раздел меню).
+    if (!hidden.contains(DrawerQuickItem.assignments)) {
+      tiles.add(fav(DrawerQuickItem.assignments.name,
+        icon: AppIcons.assignment_ind,
+        label: l10n.tr('assignments'),
+        isSelected: false,
+        onTap: () {
+          _close(context);
+          context.push('/assignments');
+        },
+      ));
+    }
+
     // «Файловый хаб» — все вложения всех писем (просили вынести в Избранное).
     final flags = ref.watch(featureFlagsProvider);
     if (phone && flags.showFileHub && !hidden.contains(DrawerQuickItem.fileHub)) {
@@ -1689,6 +1702,7 @@ class _FavoritesEditor extends ConsumerWidget {
       if (MailDrawer._tasksInMenu(context, ref))
         (DrawerQuickItem.tasks, AppIcons.check_box, l10n.tasksLabel),
       if (phone && ref.watch(settingsProvider).myDay) (DrawerQuickItem.myDay, AppIcons.myDay, l10n.tr('myDay')),
+      (DrawerQuickItem.assignments, AppIcons.assignment_ind, l10n.tr('assignments')),
       if (phone) (DrawerQuickItem.settings, AppIcons.settings, l10n.tr('settings')),
       (DrawerQuickItem.theme, AppIcons.dark_mode, l10n.tr('drawerThemeSwitch')),
     ];
@@ -1714,8 +1728,8 @@ class _FavoritesEditor extends ConsumerWidget {
     const drawerOrder = [
       DrawerQuickItem.allAccounts, DrawerQuickItem.allMail, DrawerQuickItem.unread, DrawerQuickItem.flagged,
       DrawerQuickItem.control, DrawerQuickItem.later, DrawerQuickItem.vip, DrawerQuickItem.attachments,
-      DrawerQuickItem.triage, DrawerQuickItem.myDay, DrawerQuickItem.fileHub, DrawerQuickItem.notes,
-      DrawerQuickItem.tasks,
+      DrawerQuickItem.triage, DrawerQuickItem.myDay, DrawerQuickItem.assignments, DrawerQuickItem.fileHub,
+      DrawerQuickItem.notes, DrawerQuickItem.tasks,
     ];
     final quickByItem = {for (final q in quick) q.$1: q};
     final starred = folders.where((f) => f.isFavorite).toList()

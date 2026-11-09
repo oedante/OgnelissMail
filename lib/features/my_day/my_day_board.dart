@@ -40,6 +40,8 @@ class _BoardCard {
   final VoidCallback onTap;
   final Task? task;
   final Widget? trailing;
+  /// Долгое нажатие не на задачу (поручение — карточка поручения).
+  final void Function(BuildContext tileContext)? onLongPress;
   const _BoardCard({
     required this.key,
     this.sort,
@@ -52,6 +54,7 @@ class _BoardCard {
     required this.onTap,
     this.task,
     this.trailing,
+    this.onLongPress,
   });
 }
 
@@ -330,6 +333,42 @@ extension _MyDayBoard on _MyDayScreenState {
       ));
     }
 
+    // Поручения со сроком сегодня и просроченные (решение владельца
+    // 09.11.2026): мои — «В работе» (ждём исполнителя), мне — «Предстоит»,
+    // «В работе» или «Готово» (сдано на проверку).
+    for (final v in ref.watch(assignmentsProvider).value ?? const <AssignmentView>[]) {
+      final due = v.due;
+      if (!v.active || due == null) continue;
+      final day = DateTime(due.year, due.month, due.day);
+      if (day.isAfter(today)) continue;
+      final late = day.isBefore(today);
+      final col = late
+          ? overdueCol
+          : (v.outgoing
+              ? work
+              : switch (v.status) {
+                  AssignmentStatus.open => upcoming,
+                  AssignmentStatus.review => done,
+                  _ => work,
+                });
+      col.add(_BoardCard(
+        key: 'a${v.id}',
+        sort: due,
+        icon: AppIcons.assignment_ind,
+        iconColor: late ? err : assignmentStatusColor(v.status, context),
+        title: v.row.title,
+        subtitle: [
+          '${l10n.tr(v.outgoing ? 'assignTo' : 'assignFrom')} ${v.otherName}',
+          assignmentStatusLabel(v.status, l10n),
+          if (late) assignmentDueText(due, l10n),
+        ].join(' · '),
+        subtitleColor: late ? err : null,
+        faded: !v.outgoing && v.status == AssignmentStatus.review,
+        onTap: () => context.push('/assignments/${v.id}'),
+        onLongPress: (tile) => unawaited(showAssignmentPeek(context, ref, v, anchor: peekAnchorOf(tile))),
+      ));
+    }
+
     int bySort(_BoardCard a, _BoardCard b) =>
         (a.sort ?? today).compareTo(b.sort ?? today);
     overdueCol.sort(bySort);
@@ -566,7 +605,9 @@ extension _MyDayBoard on _MyDayScreenState {
         child: InkWell(
           borderRadius: Radii.cardAll,
           onTap: c.onTap,
-          onLongPress: c.task == null ? null : () => _taskPeek(context, c.task!),
+          onLongPress: c.onLongPress != null
+              ? () => c.onLongPress!(context)
+              : (c.task == null ? null : () => _taskPeek(context, c.task!)),
           child: Padding(
             padding: EdgeInsets.fromLTRB(0, dense ? 0 : Space.xs, c.trailing == null ? Space.m : 0, dense ? 0 : Space.xs),
             child: Row(children: [

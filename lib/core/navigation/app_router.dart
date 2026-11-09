@@ -38,6 +38,8 @@ import '../../features/archive/screens/archive_items_screen.dart';
 import '../../features/archive/screens/archive_hub_screen.dart';
 import '../../features/archive/archive_providers.dart' show archiveAccountsParam;
 import '../../features/my_day/my_day_screen.dart';
+import '../../features/assignments/assignments_screen.dart';
+import '../../features/assignments/assignment_screen.dart';
 import '../../features/mail/screens/subscriptions_screen.dart';
 import '../../features/notes/screens/note_edit_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
@@ -293,6 +295,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/subscriptions', name: 'subscriptions',
         builder: (_, st) => WideFrame(child: SubscriptionsScreen(accountId: st.uri.queryParameters['accountId'])),
+      ),
+
+      // «Поручения» (2.2.0, решение владельца 09.11.2026) и карточка поручения.
+      GoRoute(
+        path: '/assignments', name: 'assignments',
+        builder: (_, __) => const WideFrame(child: AssignmentsScreen()),
+      ),
+      GoRoute(
+        path: '/assignments/:id', name: 'assignment',
+        builder: (_, st) => WideFrame(child: AssignmentScreen(id: st.pathParameters['id']!)),
       ),
 
       // Settings

@@ -180,7 +180,12 @@ extension _MyDayTimeline on _MyDayScreenState {
 
     final timeline = _tlTimeline(context, items, free, markers, fromH, toH, now, today, l10n);
     final trayView = _tlTray(context, tray, l10n, muted);
-    final allDayView = allDay.isEmpty
+    // Поручения со сроком сегодня — чипами рядом с событиями на весь день.
+    final assigned = [
+      for (final v in ref.watch(assignmentsProvider).value ?? const <AssignmentView>[])
+        if (v.active && v.due != null && DateTime(v.due!.year, v.due!.month, v.due!.day) == today) v,
+    ];
+    final allDayView = allDay.isEmpty && assigned.isEmpty
         ? null
         : SizedBox(
             height: 40,
@@ -188,6 +193,21 @@ extension _MyDayTimeline on _MyDayScreenState {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: Space.l),
               children: [
+                for (final v in assigned)
+                  Padding(
+                    padding: const EdgeInsets.only(right: Space.s),
+                    child: Builder(
+                      builder: (chipCtx) => GestureDetector(
+                        onLongPress: () =>
+                            unawaited(showAssignmentPeek(context, ref, v, anchor: peekAnchorOf(chipCtx))),
+                        child: ActionChip(
+                          avatar: Icon(AppIcons.assignment_ind, size: 16, color: assignmentStatusColor(v.status, context)),
+                          label: Text('${v.row.title} · ${v.otherName}'),
+                          onPressed: () => context.push('/assignments/${v.id}'),
+                        ),
+                      ),
+                    ),
+                  ),
                 for (final e in allDay)
                   Padding(
                     padding: const EdgeInsets.only(right: Space.s),

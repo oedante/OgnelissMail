@@ -323,6 +323,9 @@ abstract final class AppIcons {
   static const IconData tile_wide = Symbols.crop_16_9_rounded;
   static const IconData view_column = Symbols.view_column_rounded;
   static const IconData view_timeline = Symbols.view_timeline_rounded;
+  // Поручения (2.2.0).
+  static const IconData assignment_ind = Symbols.assignment_ind_rounded;
+  static const IconData rate_review = Symbols.rate_review_rounded;
   static const IconData view_day = Symbols.view_day_rounded;
   static const IconData view_module = Symbols.view_module_rounded;
   static const IconData view_week = Symbols.view_week_rounded;

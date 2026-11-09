@@ -59,6 +59,8 @@ import '../settings/providers/settings_provider.dart';
 import '../tasks/widgets/task_editor_sheet.dart' show showTaskEditor;
 import '../tasks/widgets/task_peek.dart' show showTaskPeek;
 import '../../services/tasks/task_blocks.dart';
+import '../../services/assignments/assignment_service.dart';
+import '../assignments/assignment_widgets.dart';
 import '../../widgets/common/peek_card.dart' show peekAnchorOf;
 import '../../widgets/common/inline_notice.dart' show showInlineNotice;
 

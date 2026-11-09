@@ -2277,7 +2277,8 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     final pane = _pane;
     return CustomSlidableAction(
       onPressed: onPressed,
-      backgroundColor: bg,
+      // Заливку рисует значок — на всё открывшееся место (2.2.0).
+      backgroundColor: Colors.transparent,
       foregroundColor: fg,
       padding: EdgeInsets.zero,
       child: Semantics(
@@ -2294,6 +2295,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             armAt: pane.armAt,
             animated: settings.swipeAnimated && !settings.reduceMotion,
             second: _secondStep,
+            background: bg,
           ),
         ),
       ),

@@ -174,7 +174,8 @@ class _SwipeDoneOverlayState extends State<SwipeDoneOverlay> with SingleTickerPr
     if (e == null) return widget.child;
     final (bg, fg) = SwipeTone.of(context, e.color);
     final theme = Theme.of(context);
-    return Stack(children: [
+    // passthrough: строка под плашкой — той же ширины, что без неё.
+    return Stack(fit: StackFit.passthrough, children: [
       widget.child,
       Positioned.fill(
         child: IgnorePointer(
@@ -187,8 +188,8 @@ class _SwipeDoneOverlayState extends State<SwipeDoneOverlay> with SingleTickerPr
                 gradient: LinearGradient(
                   begin: e.fromStart ? AlignmentDirectional.centerStart : AlignmentDirectional.centerEnd,
                   end: e.fromStart ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
-                  colors: [bg, bg.withValues(alpha: 0.92), bg.withValues(alpha: 0)],
-                  stops: const [0, 0.55, 1],
+                  colors: [bg, bg, bg.withValues(alpha: 0)],
+                  stops: const [0, 0.6, 1],
                 ),
               ),
               child: Align(

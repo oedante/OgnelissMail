@@ -77,6 +77,10 @@ class SwipeActionIndicator extends StatefulWidget {
   /// Второе действие (длинный свайп) — или null.
   final SwipeStep? second;
 
+  /// Заливка панели первого действия: у края она — на всё открывшееся место,
+  /// а не только на ширину панели (иначе за ней — пустой зазор).
+  final Color? background;
+
   const SwipeActionIndicator({
     super.key,
     required this.icon,
@@ -88,6 +92,7 @@ class SwipeActionIndicator extends StatefulWidget {
     this.armAt,
     this.animated = true,
     this.second,
+    this.background,
   });
 
   @override
@@ -154,6 +159,25 @@ class _SwipeActionIndicatorState extends State<SwipeActionIndicator> {
         ]),
       );
 
+  /// У края — слой во всю ширину строки от края: панель библиотеки узкая
+  /// (extentRatio), а строку тянут дальше. Видна только открытая часть —
+  /// её обрезает сама Slidable. Посередине (две кнопки) — как раньше.
+  Widget _wide(BuildContext context, {required Widget child}) {
+    if (!widget.atEdge) return SizedBox.expand(child: child);
+    final w = MediaQuery.maybeSizeOf(context)?.width ?? 0;
+    return LayoutBuilder(builder: (context, c) {
+      final wide = w > c.maxWidth ? w : c.maxWidth;
+      return OverflowBox(
+        alignment: widget.fromStart ? Alignment.centerLeft : Alignment.centerRight,
+        minWidth: wide,
+        maxWidth: wide,
+        minHeight: c.maxHeight,
+        maxHeight: c.maxHeight,
+        child: child,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final padding = EdgeInsets.symmetric(horizontal: widget.atEdge ? Space.xl - 4 : Space.xs);
@@ -174,7 +198,8 @@ class _SwipeActionIndicatorState extends State<SwipeActionIndicator> {
     return Semantics(
       label: widget.label,
       child: RepaintBoundary(
-        child: SizedBox.expand(
+        child: _wide(
+          context,
           child: AnimatedBuilder(
             animation: c.animation,
             builder: (context, _) {
@@ -194,7 +219,7 @@ class _SwipeActionIndicatorState extends State<SwipeActionIndicator> {
               if (!widget.animated) {
                 // Без анимации: значок и подпись без роста и свечения.
                 return DecoratedBox(
-                  decoration: BoxDecoration(color: two ? second.background : null),
+                  decoration: BoxDecoration(color: two ? second.background : widget.background),
                   child: Align(
                     alignment: _edge,
                     child: Padding(
@@ -222,7 +247,7 @@ class _SwipeActionIndicatorState extends State<SwipeActionIndicator> {
               final glow = 0.12 * eased + 0.10 * armT;
               return DecoratedBox(
                 decoration: BoxDecoration(
-                  color: two ? second.background : null,
+                  color: two ? second.background : widget.background,
                   gradient: two
                       ? null
                       : LinearGradient(

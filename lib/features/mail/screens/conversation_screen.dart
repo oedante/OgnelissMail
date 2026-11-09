@@ -390,7 +390,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           dismissThreshold: 0.4,
           child: CustomSlidableAction(
           onPressed: (_) => unawaited(_run(a, e, l10n)),
-          backgroundColor: tone.$1,
+          backgroundColor: Colors.transparent,
           foregroundColor: tone.$2,
           padding: EdgeInsets.zero,
           child: Semantics(
@@ -405,6 +405,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 atEdge: true,
                 extentRatio: 0.28,
                 armAt: 0.4,
+                background: tone.$1,
                 animated: settings.swipeAnimated && !settings.reduceMotion,
               ),
             ),

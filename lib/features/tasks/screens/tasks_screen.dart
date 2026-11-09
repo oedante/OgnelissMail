@@ -38,6 +38,7 @@ import '../../../services/mail/email_actions_service.dart' show emailActionsProv
 import '../../../services/tasks/task_actions_service.dart';
 import '../../../widgets/common/shared_mailbox_badge.dart';
 import '../../../widgets/common/peek_card.dart';
+import '../widgets/task_peek.dart';
 import '../../../widgets/common/quick_long_press.dart';
 import '../../calendar/calendar_data.dart' show calendarScopeProvider, accountColorsProvider, capitalize;
 import '../../mail/providers/mail_providers.dart';
@@ -482,74 +483,16 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   }
 
   /// Карточка задачи по удержанию (1.7.0, как у писем, встреч, контактов и
-  /// заметок): описание и подзадачи, кнопки — выполнено, важная, изменить,
-  /// срок «Сегодня»; «Ещё» — по группам: задача, срок, письмо, удалить.
-  void _peek(BuildContext tileCtx, TaskModel t, AppLocalizations l10n) {
-    unawaited(HapticFeedback.mediumImpact());
-    final actions = ref.read(taskActionsProvider);
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    void due(DateTime? d) {
-      unawaited(HapticFeedback.selectionClick());
-      unawaited(actions.update(t.accountId, t.id, TasksCompanion(dueDate: Value(d))));
-    }
-
-    final done = PeekAction(
-      icon: t.isDone ? AppIcons.undo : AppIcons.check,
-      label: l10n.tr(t.isDone ? 'taskReopen' : 'taskDone'),
-      onTap: () => unawaited(_toggle(t)),
-    );
-    final star = PeekAction(
-      icon: AppIcons.star,
-      filled: t.isFlagged,
-      color: t.isFlagged ? AppColors.brandAmber : null,
-      label: l10n.tr('important'),
-      onTap: () => unawaited(actions.toggleImportant(t.accountId, t.id)),
-    );
-    final edit = PeekAction(icon: AppIcons.edit, label: l10n.tr('edit'), onTap: () => _openEditor(task: t));
-    final linked = t.linkedEmailId;
-    unawaited(showPeekCard(
-      context,
-      anchor: peekAnchorOf(tileCtx),
-      onOpen: () => _openEditor(task: t),
-      card: _TaskPeekCard(task: t, l10n: l10n),
-      moreLabel: l10n.tr('peekMore'),
-      actions: [
-        done,
-        star,
-        edit,
-        if (!t.isDone) PeekAction(icon: AppIcons.today, label: l10n.tr('today'), onTap: () => due(today)),
-      ],
-      more: [
-        PeekGroup(title: l10n.tr('peekGroupTask'), items: [done, star, edit]),
-        if (!t.isDone)
-          PeekGroup(title: l10n.tr('peekGroupDue'), items: [
-            PeekAction(icon: AppIcons.today, label: l10n.tr('today'), onTap: () => due(today)),
-            PeekAction(icon: AppIcons.event, label: l10n.tr('tomorrow'), onTap: () => due(today.add(const Duration(days: 1)))),
-            PeekAction(
-                icon: AppIcons.date_range, label: l10n.tr('inAWeek'), onTap: () => due(today.add(const Duration(days: 7)))),
-            if (t.dueDate != null)
-              PeekAction(icon: AppIcons.event_busy, label: l10n.tr('noDueDate'), onTap: () => due(null)),
-          ]),
-        if (linked != null)
-          PeekGroup(title: l10n.tr('peekGroupMail'), items: [
-            PeekAction(
-              icon: AppIcons.mail,
-              label: l10n.tr('openEmail'),
-              onTap: () => context.push(mailOpenPath(context, linked, accountId: t.accountId)),
-            ),
-          ]),
-        PeekGroup(items: [
-          PeekAction(
-            icon: AppIcons.delete,
-            label: l10n.delete,
-            color: AppColors.errorText(context),
-            onTap: () => unawaited(_delete(t, l10n)),
-          ),
-        ]),
-      ],
-    ));
-  }
+  /// заметок) — общая с «Моим днём» (task_peek.dart).
+  void _peek(BuildContext tileCtx, TaskModel t, AppLocalizations l10n) => unawaited(showTaskPeek(
+        context,
+        ref,
+        t,
+        anchor: peekAnchorOf(tileCtx),
+        onEdit: () => _openEditor(task: t),
+        onToggleDone: () => unawaited(_toggle(t)),
+        onDelete: () => unawaited(_delete(t, l10n)),
+      ));
 
   bool _isShared(String accountId) =>
       ref.read(accountsProvider).where((a) => a.id == accountId).firstOrNull?.isSharedMailbox ?? false;
@@ -857,67 +800,6 @@ class _TaskTile extends StatelessWidget {
 
 /// Содержимое карточки задачи по удержанию: название, срок и напоминание,
 /// описание, подзадачи (до пяти), письмо, из которого задача.
-class _TaskPeekCard extends StatelessWidget {
-  final TaskModel task;
-  final AppLocalizations l10n;
-  const _TaskPeekCard({required this.task, required this.l10n});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final muted = AppColors.mutedText(context);
-    final t = task;
-    final fmt = DateFormat('EEE, d MMM', l10n.localeCode);
-    String when(DateTime d) {
-      final l = d.toLocal();
-      final time = (l.hour != 0 || l.minute != 0) ? ', ${DateFormat('HH:mm').format(l)}' : '';
-      return '${capitalize(fmt.format(l))}$time';
-    }
-
-    Widget line(IconData icon, String text, {Color? color}) => Padding(
-          padding: const EdgeInsets.only(top: Space.xs),
-          child: Row(children: [
-            Icon(icon, size: 16, color: color ?? muted),
-            const SizedBox(width: Space.s),
-            Expanded(
-              child: Text(text,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall?.copyWith(color: color ?? muted)),
-            ),
-          ]),
-        );
-    final desc = (t.description ?? '').trim();
-    final overdue = !t.isDone && t.dueDate != null && t.dueDate!.toLocal().isBefore(DateTime.now());
-    return Padding(
-      padding: const EdgeInsets.all(Space.l),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        Text(t.title,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.titleMedium?.copyWith(
-              decoration: t.isDone ? TextDecoration.lineThrough : null,
-              color: t.isDone ? muted : null,
-            )),
-        if (t.dueDate != null)
-          line(AppIcons.event, when(t.dueDate!), color: overdue ? AppColors.errorText(context) : null),
-        if (t.reminderAt != null && !t.isDone) line(AppIcons.notifications, when(t.reminderAt!)),
-        if ((t.linkedEmailSubject ?? '').trim().isNotEmpty) line(AppIcons.mail, t.linkedEmailSubject!.trim()),
-        if (desc.isNotEmpty) ...[
-          const SizedBox(height: Space.s),
-          Text(desc, maxLines: 5, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodyMedium),
-        ],
-        if (t.subtasks.isNotEmpty) ...[
-          const SizedBox(height: Space.s),
-          for (final st in t.subtasks.take(5))
-            line(st.done ? AppIcons.check_box : AppIcons.check_box_outline_blank, st.title),
-          if (t.subtasks.length > 5)
-            line(AppIcons.more_horiz, '${t.subtasks.where((s) => s.done).length}/${t.subtasks.length}'),
-        ],
-      ]),
-    );
-  }
-}
 
 /// Строка быстрого добавления: разбор на лету («завтра в 15:00» → чипы
 /// срока и напоминания), Enter — добавить, ⋯ — открыть полную карточку.

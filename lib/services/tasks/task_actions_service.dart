@@ -83,6 +83,20 @@ class TaskActionsService {
     await _afterChange(accountId, id);
   }
 
+  /// Перенести задачу на день [day] или снять срок (null) — карточка задачи
+  /// по удержанию: «Сегодня», «Завтра», «На следующей неделе», «Дата…»,
+  /// «Без срока» (решение владельца 09.11.2026). Время срока и напоминания
+  /// переезжает на новый день, если оно ещё впереди; иначе — день без
+  /// времени и без напоминания: перенесённая на сегодня просроченная задача
+  /// не должна тут же снова стать просроченной.
+  Future<void> reschedule(String accountId, String id, DateTime? day) async {
+    final row = await _row(accountId, id);
+    if (row == null) return;
+    final plan = TaskReschedule.plan(
+        due: row.dueDate?.toLocal(), reminder: row.reminderAt?.toLocal(), day: day, now: DateTime.now());
+    await update(accountId, id, TasksCompanion(dueDate: Value(plan.due), reminderAt: Value(plan.reminder)));
+  }
+
   /// Отметить выполненной (или вернуть в работу). У повторяющейся задачи
   /// «выполнено» переносит срок и напоминание на следующий раз — как в
   /// Outlook и Microsoft To Do; отметка о выполнении остаётся в журнале.
@@ -201,5 +215,30 @@ class TaskActionsService {
         AppLogger.warning('enqueue upsert_task: $e2');
       }
     }
+  }
+}
+
+/// Расчёт переноса задачи на другой день (отдельно — для тестов).
+abstract final class TaskReschedule {
+  static ({DateTime? due, DateTime? reminder}) plan({
+    required DateTime? due,
+    required DateTime? reminder,
+    required DateTime? day,
+    required DateTime now,
+  }) {
+    if (day == null) return (due: null, reminder: null);
+    DateTime? onDay(DateTime? t) {
+      if (t == null || (t.hour == 0 && t.minute == 0)) return null;
+      final moved = DateTime(day.year, day.month, day.day, t.hour, t.minute);
+      return moved.isAfter(now) ? moved : null;
+    }
+
+    return (due: onDay(due) ?? DateTime(day.year, day.month, day.day), reminder: onDay(reminder));
+  }
+
+  /// Понедельник следующей недели.
+  static DateTime nextWeek(DateTime now) {
+    final today = DateTime(now.year, now.month, now.day);
+    return today.add(Duration(days: 8 - today.weekday));
   }
 }

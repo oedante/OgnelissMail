@@ -3993,4 +3993,12 @@
     <string name="mdmRuleDeviceContacts">A névjegyek nem kerülnek az eszköz Névjegyeibe</string>
     <string name="mdmRuleDeviceCalendar">Az események nem kerülnek az eszköz Naptárába</string>
     <string name="mdmLoginServerBlocked">A szervezet letiltotta a bejelentkezést az Ogneliss-kiszolgálón keresztül. Adja hozzá a postafiókot alkalmazásjelszóval (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Mára</string>
+    <string name="boardAllToday">Mindet mára</string>
+    <string name="taskPickDate">Dátum választása…</string>
+    <string name="myDayViewTimeline">Idővonal</string>
+    <string name="tlNoTime">Időpont nélkül</string>
+    <string name="tlDragHint">Húzza az idővonalra</string>
+    <string name="tlDropToTray">Engedje el — az időpont törlődik</string>
+    <string name="tlFree">Szabad · {d}</string>
 </resources>

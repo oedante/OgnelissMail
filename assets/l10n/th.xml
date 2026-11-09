@@ -3972,4 +3972,12 @@
     <string name="mdmRuleDeviceContacts">รายชื่อติดต่อจะไม่ถูกคัดลอกไปยังรายชื่อของอุปกรณ์</string>
     <string name="mdmRuleDeviceCalendar">กิจกรรมจะไม่ถูกคัดลอกไปยังปฏิทินของอุปกรณ์</string>
     <string name="mdmLoginServerBlocked">องค์กรของคุณบล็อกการลงชื่อเข้าใช้ผ่านเซิร์ฟเวอร์ Ogneliss เพิ่มกล่องจดหมายด้วยรหัสผ่านแอป (IMAP/SMTP)</string>
+    <string name="boardMoveToday">ย้ายมาวันนี้</string>
+    <string name="boardAllToday">ย้ายทั้งหมดมาวันนี้</string>
+    <string name="taskPickDate">เลือกวันที่…</string>
+    <string name="myDayViewTimeline">ไทม์ไลน์</string>
+    <string name="tlNoTime">ไม่มีเวลา</string>
+    <string name="tlDragHint">ลากไปยังไทม์ไลน์</string>
+    <string name="tlDropToTray">ปล่อยเพื่อลบเวลา</string>
+    <string name="tlFree">ว่าง · {d}</string>
 </resources>

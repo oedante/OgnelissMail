@@ -3993,4 +3993,12 @@
     <string name="mdmRuleDeviceContacts">Kontakte werden nicht in die Kontakte des Geräts übertragen</string>
     <string name="mdmRuleDeviceCalendar">Termine werden nicht in den Kalender des Geräts übertragen</string>
     <string name="mdmLoginServerBlocked">Ihre Organisation hat die Anmeldung über den Ogneliss-Server gesperrt. Fügen Sie das Postfach mit einem App-Passwort hinzu (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Auf heute</string>
+    <string name="boardAllToday">Alles auf heute</string>
+    <string name="taskPickDate">Datum wählen…</string>
+    <string name="myDayViewTimeline">Zeitleiste</string>
+    <string name="tlNoTime">Ohne Uhrzeit</string>
+    <string name="tlDragHint">Auf die Zeitleiste ziehen</string>
+    <string name="tlDropToTray">Loslassen — Uhrzeit entfernen</string>
+    <string name="tlFree">Frei · {d}</string>
 </resources>

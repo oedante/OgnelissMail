@@ -3993,4 +3993,12 @@
     <string name="mdmRuleDeviceContacts">Kişiler cihazın Kişiler uygulamasına kopyalanmaz</string>
     <string name="mdmRuleDeviceCalendar">Etkinlikler cihazın Takvim\'ine kopyalanmaz</string>
     <string name="mdmLoginServerBlocked">Kuruluşunuz Ogneliss sunucusu üzerinden oturum açmayı engelledi. Posta kutusunu uygulama şifresiyle ekleyin (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Bugüne</string>
+    <string name="boardAllToday">Hepsi bugüne</string>
+    <string name="taskPickDate">Tarih seç…</string>
+    <string name="myDayViewTimeline">Zaman çizelgesi</string>
+    <string name="tlNoTime">Saatsiz</string>
+    <string name="tlDragHint">Zaman çizelgesine sürükleyin</string>
+    <string name="tlDropToTray">Bırakın — saat kaldırılır</string>
+    <string name="tlFree">Boş · {d}</string>
 </resources>

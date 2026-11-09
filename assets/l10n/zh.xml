@@ -3972,4 +3972,12 @@
     <string name="mdmRuleDeviceContacts">联系人不会复制到设备的通讯录</string>
     <string name="mdmRuleDeviceCalendar">日程不会复制到设备的日历</string>
     <string name="mdmLoginServerBlocked">您的组织已禁止通过 Ogneliss 服务器登录。请使用应用专用密码 (IMAP/SMTP) 添加邮箱。</string>
+    <string name="boardMoveToday">改到今天</string>
+    <string name="boardAllToday">全部改到今天</string>
+    <string name="taskPickDate">选择日期…</string>
+    <string name="myDayViewTimeline">时间轴</string>
+    <string name="tlNoTime">无时间</string>
+    <string name="tlDragHint">拖到时间轴上</string>
+    <string name="tlDropToTray">松开以清除时间</string>
+    <string name="tlFree">空闲 · {d}</string>
 </resources>

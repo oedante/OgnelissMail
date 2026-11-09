@@ -4014,4 +4014,12 @@
     <string name="mdmRuleDeviceContacts">אנשי קשר לא מועתקים לאנשי הקשר של המכשיר</string>
     <string name="mdmRuleDeviceCalendar">אירועים לא מועתקים ללוח השנה של המכשיר</string>
     <string name="mdmLoginServerBlocked">הארגון חסם כניסה דרך שרת Ogneliss. הוסיפו את התיבה עם סיסמת אפליקציה (IMAP/SMTP).</string>
+    <string name="boardMoveToday">להיום</string>
+    <string name="boardAllToday">הכול להיום</string>
+    <string name="taskPickDate">בחירת תאריך…</string>
+    <string name="myDayViewTimeline">ציר זמן</string>
+    <string name="tlNoTime">ללא שעה</string>
+    <string name="tlDragHint">גררו לציר הזמן</string>
+    <string name="tlDropToTray">שחררו — השעה תוסר</string>
+    <string name="tlFree">פנוי · {d}</string>
 </resources>

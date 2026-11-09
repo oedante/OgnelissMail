@@ -3993,4 +3993,12 @@
     <string name="mdmRuleDeviceContacts">संपर्क डिवाइस के संपर्कों में कॉपी नहीं होते</string>
     <string name="mdmRuleDeviceCalendar">ईवेंट डिवाइस के कैलेंडर में कॉपी नहीं होते</string>
     <string name="mdmLoginServerBlocked">आपके संगठन ने Ogneliss सर्वर से साइन-इन रोक दिया है। ऐप पासवर्ड (IMAP/SMTP) से मेलबॉक्स जोड़ें।</string>
+    <string name="boardMoveToday">आज के लिए</string>
+    <string name="boardAllToday">सब आज के लिए</string>
+    <string name="taskPickDate">तारीख चुनें…</string>
+    <string name="myDayViewTimeline">समयरेखा</string>
+    <string name="tlNoTime">बिना समय</string>
+    <string name="tlDragHint">समयरेखा पर खींचें</string>
+    <string name="tlDropToTray">छोड़ें — समय हट जाएगा</string>
+    <string name="tlFree">खाली · {d}</string>
 </resources>

@@ -4014,4 +4014,12 @@
     <string name="mdmRuleDeviceContacts">Kontakty sa nekopírujú do Kontaktov zariadenia</string>
     <string name="mdmRuleDeviceCalendar">Udalosti sa nekopírujú do Kalendára zariadenia</string>
     <string name="mdmLoginServerBlocked">Organizácia zakázala prihlásenie cez server Ogneliss. Pridajte schránku s heslom aplikácie (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Na dnes</string>
+    <string name="boardAllToday">Všetko na dnes</string>
+    <string name="taskPickDate">Vybrať dátum…</string>
+    <string name="myDayViewTimeline">Časová os</string>
+    <string name="tlNoTime">Bez času</string>
+    <string name="tlDragHint">Presuňte na os</string>
+    <string name="tlDropToTray">Pustite — čas sa zruší</string>
+    <string name="tlFree">Voľno · {d}</string>
 </resources>

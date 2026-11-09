@@ -4077,4 +4077,12 @@
     <string name="mdmRuleDeviceContacts">لا تُنسخ جهات الاتصال إلى جهات اتصال الجهاز</string>
     <string name="mdmRuleDeviceCalendar">لا تُنسخ الأحداث إلى تقويم الجهاز</string>
     <string name="mdmLoginServerBlocked">حظرت مؤسستك تسجيل الدخول عبر خادم Ogneliss. أضف صندوق البريد بكلمة مرور التطبيق (IMAP/SMTP).</string>
+    <string name="boardMoveToday">إلى اليوم</string>
+    <string name="boardAllToday">الكل إلى اليوم</string>
+    <string name="taskPickDate">اختيار تاريخ…</string>
+    <string name="myDayViewTimeline">الخط الزمني</string>
+    <string name="tlNoTime">دون وقت</string>
+    <string name="tlDragHint">اسحب إلى الخط الزمني</string>
+    <string name="tlDropToTray">اترك لإزالة الوقت</string>
+    <string name="tlFree">متاح · {d}</string>
 </resources>

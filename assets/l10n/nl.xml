@@ -3993,4 +3993,12 @@
     <string name="mdmRuleDeviceContacts">Contacten worden niet naar Contacten op het apparaat gekopieerd</string>
     <string name="mdmRuleDeviceCalendar">Afspraken worden niet naar de Agenda op het apparaat gekopieerd</string>
     <string name="mdmLoginServerBlocked">Uw organisatie heeft aanmelden via de Ogneliss-server geblokkeerd. Voeg de mailbox toe met een app-wachtwoord (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Naar vandaag</string>
+    <string name="boardAllToday">Alles naar vandaag</string>
+    <string name="taskPickDate">Datum kiezen…</string>
+    <string name="myDayViewTimeline">Tijdlijn</string>
+    <string name="tlNoTime">Zonder tijd</string>
+    <string name="tlDragHint">Sleep naar de tijdlijn</string>
+    <string name="tlDropToTray">Loslaten — tijd wissen</string>
+    <string name="tlFree">Vrij · {d}</string>
 </resources>

@@ -159,7 +159,6 @@ const _entries = <_Entry>[
   _Entry('expRulesTitle', 'emailSettings', AppIcons.rule, '/settings/mail'),
   _Entry('expSpareTitle', 'emailSettings', AppIcons.bolt, '/settings/mail'),
   _Entry('expNativeTitle', 'emailSettings', AppIcons.article, '/settings/mail'),
-  _Entry('expBoardTitle', 'calendar', AppIcons.view_module, '/settings/calendar'),
   _Entry('meetingPrepTitle', 'calendar', AppIcons.groups, '/settings/calendar'),
   _Entry('expHubTitle', 'calendar', AppIcons.calendar_today, '/settings/calendar'),
   _Entry('about', 'about', AppIcons.info, '/settings/about'),

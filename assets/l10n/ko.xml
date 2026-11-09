@@ -3972,4 +3972,12 @@
     <string name="mdmRuleDeviceContacts">연락처가 기기의 연락처로 복사되지 않음</string>
     <string name="mdmRuleDeviceCalendar">일정이 기기의 캘린더로 복사되지 않음</string>
     <string name="mdmLoginServerBlocked">조직에서 Ogneliss 서버를 통한 로그인을 차단했습니다. 앱 비밀번호(IMAP/SMTP)로 메일함을 추가하세요.</string>
+    <string name="boardMoveToday">오늘로</string>
+    <string name="boardAllToday">모두 오늘로</string>
+    <string name="taskPickDate">날짜 선택…</string>
+    <string name="myDayViewTimeline">타임라인</string>
+    <string name="tlNoTime">시간 없음</string>
+    <string name="tlDragHint">타임라인으로 끌어 놓기</string>
+    <string name="tlDropToTray">놓으면 시간 해제</string>
+    <string name="tlFree">비어 있음 · {d}</string>
 </resources>

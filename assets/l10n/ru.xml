@@ -4035,4 +4035,12 @@
     <string name="mdmRuleDeviceContacts">Контакты не переносятся в «Контакты» устройства</string>
     <string name="mdmRuleDeviceCalendar">Встречи не переносятся в «Календарь» устройства</string>
     <string name="mdmLoginServerBlocked">Организация запретила вход через сервер Ogneliss. Добавьте ящик по паролю приложения (IMAP/SMTP).</string>
+    <string name="boardMoveToday">На сегодня</string>
+    <string name="boardAllToday">Всё на сегодня</string>
+    <string name="taskPickDate">Выбрать дату…</string>
+    <string name="myDayViewTimeline">Шкала</string>
+    <string name="tlNoTime">Без времени</string>
+    <string name="tlDragHint">Перетащите на шкалу</string>
+    <string name="tlDropToTray">Отпустите — убрать время</string>
+    <string name="tlFree">Свободно · {d}</string>
 </resources>

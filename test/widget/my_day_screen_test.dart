@@ -1,5 +1,6 @@
-// «Мой день» строится на настоящей базе (в памяти): список и доска, письмо
-// без грифа, «Позже», задача на сегодня. Версия 1.5.0 падала здесь на любом
+// «Мой день» строится на настоящей базе (в памяти): доска (по умолчанию) и
+// шкала, письмо без грифа, «Позже», задача на сегодня, просроченная задача
+// (решение владельца 09.11.2026: «Просрочено» на доске, долгое нажатие). Версия 1.5.0 падала здесь на любом
 // письме без грифа (подпись письма вызывала саму себя) — этот тест ловит
 // такие ошибки до выдачи сборки.
 import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
@@ -21,6 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const _laterSubject = 'Квартальный отчёт по ремонтам';
 const _taskTitle = 'Согласовать график ТОиР';
+const _overdueTitle = 'Узнать у коллеги про акт';
 
 Future<AppDatabase> _db() async {
   final db = AppDatabase.forTesting(NativeDatabase.memory());
@@ -68,6 +70,14 @@ Future<AppDatabase> _db() async {
         createdAt: now,
         dueDate: Value(DateTime(now.year, now.month, now.day, 23, 0)),
       ));
+  // Несделанная со вчера — в «Просрочено».
+  await db.into(db.tasks).insert(TasksCompanion.insert(
+        id: 't2',
+        accountId: 'a1',
+        title: _overdueTitle,
+        createdAt: now,
+        dueDate: Value(DateTime(now.year, now.month, now.day).subtract(const Duration(days: 1))),
+      ));
   return db;
 }
 
@@ -111,8 +121,8 @@ void main() {
     await initializeDateFormatting('ru');
   });
 
-  testWidgets('список: письмо без грифа, «Позже» и задача на сегодня', (tester) async {
-    SharedPreferences.setMockInitialValues({'myday_board': false});
+  testWidgets('доска по умолчанию: «Позже», задача на сегодня, «Просрочено»', (tester) async {
+    SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
     final db = (await tester.runAsync(_db))!;
 
@@ -122,20 +132,43 @@ void main() {
     expect(find.byType(MyDayScreen), findsOneWidget);
     expect(find.textContaining(_taskTitle, findRichText: true), findsWidgets);
     expect(find.textContaining(_laterSubject, findRichText: true), findsWidgets);
+    expect(find.text('Просрочено'), findsOneWidget);
+    expect(find.textContaining(_overdueTitle, findRichText: true), findsOneWidget);
+    expect(find.text('Всё на сегодня'), findsOneWidget);
 
     await _tearDown(tester, db);
   });
 
-  testWidgets('доска строится без ошибок', (tester) async {
-    SharedPreferences.setMockInitialValues({'myday_board': true});
+  testWidgets('долгое нажатие на задачу — карточка: сегодня, завтра, выполнено', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final db = (await tester.runAsync(_db))!;
+
+    await _pumpScreen(tester, db, prefs);
+    await tester.longPress(find.textContaining(_overdueTitle, findRichText: true));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Выполнено'), findsWidgets);
+    expect(find.text('Сегодня'), findsWidgets);
+    expect(find.text('Завтра'), findsWidgets);
+
+    await tester.tapAt(const Offset(5, 5)); // закрыть карточку
+    await tester.pump(const Duration(milliseconds: 400));
+    await _tearDown(tester, db);
+  });
+
+  testWidgets('шкала: задача со временем — на шкале, просроченная — в лотке', (tester) async {
+    SharedPreferences.setMockInitialValues({'myday_view': 'timeline'});
     final prefs = await SharedPreferences.getInstance();
     final db = (await tester.runAsync(_db))!;
 
     await _pumpScreen(tester, db, prefs);
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(MyDayScreen), findsOneWidget);
+    expect(find.textContaining('Без времени', findRichText: true), findsOneWidget);
     expect(find.textContaining(_taskTitle, findRichText: true), findsWidgets);
+    expect(find.textContaining(_overdueTitle, findRichText: true), findsOneWidget);
 
     await _tearDown(tester, db);
   });

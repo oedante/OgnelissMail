@@ -4035,4 +4035,12 @@
     <string name="mdmRuleDeviceContacts">Kontakty nie są kopiowane do Kontaktów urządzenia</string>
     <string name="mdmRuleDeviceCalendar">Wydarzenia nie są kopiowane do Kalendarza urządzenia</string>
     <string name="mdmLoginServerBlocked">Organizacja zablokowała logowanie przez serwer Ogneliss. Dodaj skrzynkę z hasłem aplikacji (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Na dziś</string>
+    <string name="boardAllToday">Wszystko na dziś</string>
+    <string name="taskPickDate">Wybierz datę…</string>
+    <string name="myDayViewTimeline">Oś czasu</string>
+    <string name="tlNoTime">Bez godziny</string>
+    <string name="tlDragHint">Przeciągnij na oś</string>
+    <string name="tlDropToTray">Puść — usuń godzinę</string>
+    <string name="tlFree">Wolne · {d}</string>
 </resources>

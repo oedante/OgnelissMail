@@ -3972,4 +3972,12 @@
     <string name="mdmRuleDeviceContacts">Danh bạ không được sao chép vào Danh bạ của thiết bị</string>
     <string name="mdmRuleDeviceCalendar">Sự kiện không được sao chép vào Lịch của thiết bị</string>
     <string name="mdmLoginServerBlocked">Tổ chức đã chặn đăng nhập qua máy chủ Ogneliss. Hãy thêm hộp thư bằng mật khẩu ứng dụng (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Sang hôm nay</string>
+    <string name="boardAllToday">Tất cả sang hôm nay</string>
+    <string name="taskPickDate">Chọn ngày…</string>
+    <string name="myDayViewTimeline">Dòng thời gian</string>
+    <string name="tlNoTime">Chưa có giờ</string>
+    <string name="tlDragHint">Kéo vào dòng thời gian</string>
+    <string name="tlDropToTray">Thả để bỏ giờ</string>
+    <string name="tlFree">Rảnh · {d}</string>
 </resources>

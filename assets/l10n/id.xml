@@ -3972,4 +3972,12 @@
     <string name="mdmRuleDeviceContacts">Kontak tidak disalin ke Kontak perangkat</string>
     <string name="mdmRuleDeviceCalendar">Acara tidak disalin ke Kalender perangkat</string>
     <string name="mdmLoginServerBlocked">Organisasi Anda memblokir login melalui server Ogneliss. Tambahkan kotak surat dengan sandi aplikasi (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Ke hari ini</string>
+    <string name="boardAllToday">Semua ke hari ini</string>
+    <string name="taskPickDate">Pilih tanggal…</string>
+    <string name="myDayViewTimeline">Lini waktu</string>
+    <string name="tlNoTime">Tanpa waktu</string>
+    <string name="tlDragHint">Seret ke lini waktu</string>
+    <string name="tlDropToTray">Lepas untuk menghapus waktu</string>
+    <string name="tlFree">Kosong · {d}</string>
 </resources>

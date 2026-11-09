@@ -3993,4 +3993,12 @@
     <string name="mdmRuleDeviceContacts">Yhteystietoja ei kopioida laitteen Yhteystietoihin</string>
     <string name="mdmRuleDeviceCalendar">Tapahtumia ei kopioida laitteen Kalenteriin</string>
     <string name="mdmLoginServerBlocked">Organisaatiosi on estänyt kirjautumisen Ogneliss-palvelimen kautta. Lisää postilaatikko sovellussalasanalla (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Tälle päivälle</string>
+    <string name="boardAllToday">Kaikki tälle päivälle</string>
+    <string name="taskPickDate">Valitse päivä…</string>
+    <string name="myDayViewTimeline">Aikajana</string>
+    <string name="tlNoTime">Ei aikaa</string>
+    <string name="tlDragHint">Vedä aikajanalle</string>
+    <string name="tlDropToTray">Päästä irti — aika poistetaan</string>
+    <string name="tlFree">Vapaa · {d}</string>
 </resources>

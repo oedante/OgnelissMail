@@ -3993,4 +3993,12 @@
     <string name="mdmRuleDeviceContacts">Kontakter kopieres ikke til enhetens Kontakter</string>
     <string name="mdmRuleDeviceCalendar">Hendelser kopieres ikke til enhetens Kalender</string>
     <string name="mdmLoginServerBlocked">Organisasjonen har blokkert pålogging via Ogneliss-serveren. Legg til postkassen med et app-passord (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Til i dag</string>
+    <string name="boardAllToday">Alt til i dag</string>
+    <string name="taskPickDate">Velg dato…</string>
+    <string name="myDayViewTimeline">Tidslinje</string>
+    <string name="tlNoTime">Uten tidspunkt</string>
+    <string name="tlDragHint">Dra til tidslinjen</string>
+    <string name="tlDropToTray">Slipp for å fjerne tidspunktet</string>
+    <string name="tlFree">Ledig · {d}</string>
 </resources>

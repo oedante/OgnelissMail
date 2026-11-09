@@ -4014,4 +4014,12 @@
     <string name="mdmRuleDeviceContacts">Contactele nu sunt copiate în Contactele dispozitivului</string>
     <string name="mdmRuleDeviceCalendar">Evenimentele nu sunt copiate în Calendarul dispozitivului</string>
     <string name="mdmLoginServerBlocked">Organizația a blocat autentificarea prin serverul Ogneliss. Adăugați căsuța cu o parolă de aplicație (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Pe azi</string>
+    <string name="boardAllToday">Toate pe azi</string>
+    <string name="taskPickDate">Alege data…</string>
+    <string name="myDayViewTimeline">Cronologie</string>
+    <string name="tlNoTime">Fără oră</string>
+    <string name="tlDragHint">Trageți pe cronologie</string>
+    <string name="tlDropToTray">Eliberați — ora se elimină</string>
+    <string name="tlFree">Liber · {d}</string>
 </resources>

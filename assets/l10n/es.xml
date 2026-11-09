@@ -3993,4 +3993,12 @@
     <string name="mdmRuleDeviceContacts">Los contactos no se copian a los Contactos del dispositivo</string>
     <string name="mdmRuleDeviceCalendar">Los eventos no se copian al Calendario del dispositivo</string>
     <string name="mdmLoginServerBlocked">Tu organización ha bloqueado el inicio de sesión a través del servidor de Ogneliss. Añade el buzón con una contraseña de aplicación (IMAP/SMTP).</string>
+    <string name="boardMoveToday">Para hoy</string>
+    <string name="boardAllToday">Todo para hoy</string>
+    <string name="taskPickDate">Elegir fecha…</string>
+    <string name="myDayViewTimeline">Línea de tiempo</string>
+    <string name="tlNoTime">Sin hora</string>
+    <string name="tlDragHint">Arrastra a la línea de tiempo</string>
+    <string name="tlDropToTray">Suelta para quitar la hora</string>
+    <string name="tlFree">Libre · {d}</string>
 </resources>

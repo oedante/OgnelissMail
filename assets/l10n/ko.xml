@@ -4039,4 +4039,6 @@
     <string name="assignEvCreated">{name}님에게 지시. 메일 발송됨</string>
     <string name="assignEvReceived">{name}님의 업무 지시</string>
     <string name="assignEvReminder">알림 발송됨</string>
+    <string name="translateEngineBergamot">컴퓨터에서 Bergamot(Mozilla)으로 번역합니다. 메일 본문은 컴퓨터 밖으로 나가지 않으며, 언어는 Ogneliss 서버에서 다운로드됩니다.</string>
+    <string name="translatePhoneLangsWindows">Windows 언어 — 번역 제안 안 함</string>
 </resources>

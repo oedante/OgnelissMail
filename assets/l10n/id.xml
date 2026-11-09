@@ -4039,4 +4039,6 @@
     <string name="assignEvCreated">Ditugaskan ke {name}. Email terkirim</string>
     <string name="assignEvReceived">Penugasan dari {name}</string>
     <string name="assignEvReminder">Pengingat terkirim</string>
+    <string name="translateEngineBergamot">Terjemahan di komputer oleh Bergamot (Mozilla). Teks email tidak meninggalkan komputer; bahasa diunduh dari server Ogneliss.</string>
+    <string name="translatePhoneLangsWindows">Bahasa Windows — jangan tawarkan terjemahan</string>
 </resources>

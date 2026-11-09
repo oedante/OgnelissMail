@@ -4081,4 +4081,6 @@
     <string name="assignEvCreated">הוקצה ל-{name}. ההודעה נשלחה</string>
     <string name="assignEvReceived">משימה מאת {name}</string>
     <string name="assignEvReminder">התזכורת נשלחה</string>
+    <string name="translateEngineBergamot">תרגום במחשב באמצעות Bergamot (Mozilla). טקסט ההודעות לא יוצא מהמחשב; השפות מורדות משרת Ogneliss.</string>
+    <string name="translatePhoneLangsWindows">שפות Windows — לא להציע תרגום</string>
 </resources>

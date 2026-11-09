@@ -9,7 +9,11 @@
 //    Условия ML Kit требуют подписи «Google» у перевода (attribution).
 //  · iPhone и iPad — Apple Translation (iOS 18+), языки скачивает система;
 //    ios/Runner/AppDelegate.swift (TranslationBridge).
-//  · Компьютер и веб — бесплатного движка на устройстве нет: перевод скрыт.
+//  · Mac — Apple Translation (macOS 15+), как iPhone.
+//  · Windows (2.2.0) — Bergamot (Mozilla, MPL-2.0) в скрытом WebView2,
+//    модели Firefox Translations с сервера Ogneliss:
+//    bergamot/bergamot_translator.dart. Движка нет в сборке — перевод скрыт.
+//  · Linux и веб — бесплатного движка на устройстве нет: перевод скрыт.
 // Канал 'ogneliss/translate'. Тесты подменяют [Translator] своим.
 
 import 'dart:async';
@@ -20,6 +24,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/logging/app_logger.dart';
+import 'bergamot/bergamot_translator.dart';
 import 'translation_languages.dart';
 import 'translation_text.dart';
 
@@ -71,17 +76,19 @@ abstract class Translator {
 
 /// Перевод возможен на платформе вообще (до вопроса к движку).
 /// Android — ML Kit, iPhone и Mac (1.11.0) — Apple Translation (iOS 18+,
-/// macOS 15+). Windows и Linux — без перевода: встроенного перевода на
-/// устройстве у них нет.
+/// macOS 15+). Windows (2.2.0) — Bergamot, если движок есть в сборке
+/// (data\bergamot рядом с exe). Linux — без перевода.
 bool get translationPlatformSupported =>
-    debugTranslationPlatformOverride ?? (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS));
+    debugTranslationPlatformOverride ??
+    (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS || bergamotEnginePresent));
 
 /// Тесты (1.12.x): перевод «есть на платформе» и в тестах на Linux —
 /// проверить плашку и раздел настроек с подделкой движка.
 @visibleForTesting
 bool? debugTranslationPlatformOverride;
 
-final translatorProvider = Provider<Translator>((ref) => PlatformTranslator());
+final translatorProvider =
+    Provider<Translator>((ref) => !kIsWeb && Platform.isWindows ? BergamotTranslator() : PlatformTranslator());
 
 /// Язык текста по определителю: [confident] — уверен (ML Kit — язык выше
 /// порога 0,5; Apple — гипотеза от 0,5), иначе это лучшая догадка.
@@ -255,6 +262,10 @@ Future<String> translatePlain(Translator t, String text, {required String from, 
 /// Условия ML Kit — на странице «Тексты лицензий» (Android): библиотеки
 /// Google подключены не из pub.dev, их LicenseRegistry сам не покажет.
 void registerTranslationLicense() {
+  if (!kIsWeb && Platform.isWindows && bergamotEnginePresent) {
+    registerBergamotLicenses();
+    return;
+  }
   if (kIsWeb || !Platform.isAndroid) return;
   LicenseRegistry.addLicense(() async* {
     yield const LicenseEntryWithLineBreaks(['Google ML Kit (Translation, Language Identification)'],

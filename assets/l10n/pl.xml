@@ -4102,4 +4102,6 @@
     <string name="assignEvCreated">Zlecono: {name}. E-mail wysłany</string>
     <string name="assignEvReceived">Zlecenie od {name}</string>
     <string name="assignEvReminder">Przypomnienie wysłane</string>
+    <string name="translateEngineBergamot">Tłumaczenie na komputerze – Bergamot (Mozilla). Tekst wiadomości nie opuszcza komputera; języki są pobierane z serwera Ogneliss.</string>
+    <string name="translatePhoneLangsWindows">Języki Windows – nie proponuj tłumaczenia</string>
 </resources>

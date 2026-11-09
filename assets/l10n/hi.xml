@@ -4060,4 +4060,6 @@
     <string name="assignEvCreated">{name} को सौंपा गया। ईमेल भेजा गया</string>
     <string name="assignEvReceived">{name} से कार्य</string>
     <string name="assignEvReminder">याद दिलाना भेजा गया</string>
+    <string name="translateEngineBergamot">कंप्यूटर पर अनुवाद — Bergamot (Mozilla)। ईमेल का पाठ कंप्यूटर से बाहर नहीं जाता; भाषाएँ Ogneliss सर्वर से डाउनलोड होती हैं।</string>
+    <string name="translatePhoneLangsWindows">Windows की भाषाएँ — अनुवाद का सुझाव न दें</string>
 </resources>

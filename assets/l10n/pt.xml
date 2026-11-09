@@ -4060,4 +4060,6 @@
     <string name="assignEvCreated">Atribuído a {name}. E-mail enviado</string>
     <string name="assignEvReceived">Atribuição de {name}</string>
     <string name="assignEvReminder">Lembrete enviado</string>
+    <string name="translateEngineBergamot">Tradução no computador pelo Bergamot (Mozilla). O texto dos e-mails não sai do computador; os idiomas são baixados do servidor Ogneliss.</string>
+    <string name="translatePhoneLangsWindows">Idiomas do Windows — não sugerir tradução</string>
 </resources>

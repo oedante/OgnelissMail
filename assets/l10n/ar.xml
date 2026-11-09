@@ -4144,4 +4144,6 @@
     <string name="assignEvCreated">كُلِّف {name}. أُرسلت الرسالة</string>
     <string name="assignEvReceived">تكليف من {name}</string>
     <string name="assignEvReminder">أُرسل التذكير</string>
+    <string name="translateEngineBergamot">الترجمة على الكمبيوتر بواسطة Bergamot (Mozilla). لا يغادر نص الرسائل الكمبيوتر، وتُنزَّل اللغات من خادم Ogneliss.</string>
+    <string name="translatePhoneLangsWindows">لغات Windows — عدم اقتراح الترجمة</string>
 </resources>

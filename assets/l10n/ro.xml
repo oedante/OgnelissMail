@@ -4081,4 +4081,6 @@
     <string name="assignEvCreated">Atribuit lui {name}. E-mail trimis</string>
     <string name="assignEvReceived">Sarcină de la {name}</string>
     <string name="assignEvReminder">Memento trimis</string>
+    <string name="translateEngineBergamot">Traducere pe computer cu Bergamot (Mozilla). Textul e-mailurilor nu părăsește computerul; limbile se descarcă de pe serverul Ogneliss.</string>
+    <string name="translatePhoneLangsWindows">Limbile Windows — nu propune traducerea</string>
 </resources>

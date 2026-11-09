@@ -4060,4 +4060,6 @@
     <string name="assignEvCreated">Givet till {name}. Mejl skickat</string>
     <string name="assignEvReceived">Uppdrag från {name}</string>
     <string name="assignEvReminder">Påminnelse skickad</string>
+    <string name="translateEngineBergamot">Översättning på datorn med Bergamot (Mozilla). Texten i mejlen lämnar inte datorn; språk hämtas från Ogneliss-servern.</string>
+    <string name="translatePhoneLangsWindows">Windows-språk – föreslå inte översättning</string>
 </resources>

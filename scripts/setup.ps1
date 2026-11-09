@@ -221,6 +221,21 @@ if (Test-Path $cm) {
   }
 }
 
+# Перевод писем на Windows (2.2.0): движок Bergamot — строка в конце
+# windows/CMakeLists.txt подключает tool/bergamot/bergamot.cmake (кладёт
+# build/bergamot рядом с exe), файлы скачивает tool/bergamot/fetch_engine.ps1.
+if (Test-Path $cm) {
+  $cmFull = (Resolve-Path $cm).Path
+  $cmText = [IO.File]::ReadAllText($cmFull)
+  if ($cmText -notmatch 'tool/bergamot/bergamot\.cmake') {
+    $line = 'include("${CMAKE_CURRENT_SOURCE_DIR}/../tool/bergamot/bergamot.cmake" OPTIONAL)'
+    [IO.File]::WriteAllText($cmFull, $cmText.TrimEnd() + "`n`n# --- Ogneliss: translation engine (Bergamot) next to the exe`n$line`n", (New-Object System.Text.UTF8Encoding $false))
+    Ok "windows/CMakeLists.txt: подключён движок перевода (Bergamot)"
+  }
+  & powershell -NoProfile -ExecutionPolicy Bypass -File "tool/bergamot/fetch_engine.ps1"
+  if ($LASTEXITCODE -ne 0) { Warn "Движок перевода не скачан — сборка Windows без перевода писем" }
+}
+
 # 4. Зависимости
 Step "Загрузка зависимостей (flutter pub get)"
 flutter pub get

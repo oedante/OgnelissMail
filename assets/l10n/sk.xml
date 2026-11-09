@@ -4081,4 +4081,6 @@
     <string name="assignEvCreated">Zadané: {name}. E-mail odoslaný</string>
     <string name="assignEvReceived">Úloha od {name}</string>
     <string name="assignEvReminder">Pripomienka odoslaná</string>
+    <string name="translateEngineBergamot">Preklad v počítači – Bergamot (Mozilla). Text e-mailov neopúšťa počítač, jazyky sa sťahujú zo servera Ogneliss.</string>
+    <string name="translatePhoneLangsWindows">Jazyky Windows – neponúkať preklad</string>
 </resources>

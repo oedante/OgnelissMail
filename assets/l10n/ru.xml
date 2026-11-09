@@ -4102,4 +4102,6 @@
     <string name="assignEvCreated">Поручено: {name}. Письмо отправлено</string>
     <string name="assignEvReceived">Поручение от {name}</string>
     <string name="assignEvReminder">Напоминание отправлено</string>
+    <string name="translateEngineBergamot">Перевод на компьютере — Bergamot (Mozilla). Текст писем не покидает компьютер, языки скачиваются с сервера Ogneliss.</string>
+    <string name="translatePhoneLangsWindows">Языки Windows — не предлагать перевод</string>
 </resources>

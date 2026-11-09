@@ -373,6 +373,14 @@ jobs:
             }' windows/CMakeLists.txt
           fi
           grep -n -A1 '^project(' windows/CMakeLists.txt
+          # Перевод писем (2.2.0): движок Bergamot рядом с exe (data\bergamot) —
+          # tool/bergamot/bergamot.cmake, как в scripts/build_windows.ps1.
+          if ! grep -q 'tool/bergamot/bergamot.cmake' windows/CMakeLists.txt; then
+            printf '\n# --- Ogneliss: translation engine (Bergamot) next to the exe\ninclude("${CMAKE_CURRENT_SOURCE_DIR}/../tool/bergamot/bergamot.cmake" OPTIONAL)\n' >> windows/CMakeLists.txt
+          fi
+          tail -n 2 windows/CMakeLists.txt
+      - name: Translation engine (Bergamot, npm, sha256)
+        run: bash tool/bergamot/fetch_engine.sh
       - name: Install dependencies
         run: flutter pub get
       - name: Generate code
@@ -387,6 +395,9 @@ jobs:
           DEFINES=""
           if [ -f config/dart_defines.json ]; then DEFINES="--dart-define-from-file=config/dart_defines.json"; fi
           flutter build windows --release $DEFINES
+          test -f build/windows/x64/runner/Release/data/bergamot/translator.js \
+            && echo "Bergamot: data/bergamot на месте" \
+            || { echo "::error::Bergamot: нет data/bergamot в сборке"; exit 1; }
       - name: Remove secrets
         if: always()
         run: rm -f config/dart_defines.json

@@ -23,7 +23,7 @@ import '../../core/logging/app_logger.dart';
 import '../../core/security/secure_storage_service.dart';
 import '../../core/security/security_utils.dart';
 import '../../data/providers/shared_prefs_provider.dart';
-import 'managed_config.dart' show ManagedConfigService;
+import 'managed_config.dart' show ManagedConfigService, ManagedPolicy;
 
 final pinLockProvider = StateNotifierProvider<PinLockNotifier, PinLockState>((ref) {
   final secureStorage = ref.watch(secureStorageProvider);
@@ -353,6 +353,8 @@ class PinLockNotifier extends StateNotifier<PinLockState> {
   /// Разблокировать через биометрию ТОЛЬКО после успешной проверки отпечатка/лица.
   /// Возвращает true при успехе. Без фактической аутентификации НЕ разблокирует.
   Future<bool> authenticateBiometric({String reason = 'Подтвердите личность для входа'}) async {
+    // Организация запретила вход по отпечатку и лицу (MDM allow_biometrics).
+    if (!ManagedPolicy.current.allowBiometrics) return false;
     try {
       final localAuth = LocalAuthentication();
       final canCheck = await localAuth.canCheckBiometrics || await localAuth.isDeviceSupported();

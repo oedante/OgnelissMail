@@ -11,6 +11,7 @@
 // Список строится из лёгкой выборки (без тел писем), разбор JSON вложений —
 // в отдельном изоляте, если писем много.
 
+import '../../../services/security/managed_config.dart' show ManagedPolicy, ManagedRule;
 import '../../../core/platform/download_saver.dart';
 import '../../../core/platform/file_opener.dart';
 import 'dart:async';
@@ -309,6 +310,8 @@ class _AttachmentHubScreenState extends ConsumerState<AttachmentHubScreen> with 
 
   /// Файл на телефоне: из кэша или скачать с сервера (как в письме).
   Future<String?> _ensureLocal(AttachmentHubItem item, AppLocalizations l10n) async {
+    // Организация запретила вложения на устройстве (MDM block_attachment_download).
+    if (ManagedPolicy.deny(ManagedRule.attachments)) return null;
     final cacheKey = MailEngineService.attachmentCacheKey(item.accountId, item.emailId, item.attachmentId);
     final cache = ref.read(attachmentCacheProvider);
     final cached = await cache.get(cacheKey);

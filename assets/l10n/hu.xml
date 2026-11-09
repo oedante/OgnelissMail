@@ -3976,4 +3976,10 @@
     <string name="andMoreN">és még {n}</string>
     <string name="meetingFreeThen">Ebben az időpontban szabad</string>
     <string name="meetingOneOccurrence">Egy értekezlet a sorozatból</string>
+    <string name="mdmRuleSyncDays">Levelek az eszközön: legfeljebb {n} nap</string>
+    <string name="mdmRuleAttachments">A mellékletek nem nyithatók meg és nem menthetők az eszközön</string>
+    <string name="mdmRulePinTimeout">Zárolás {n} perc tétlenség után</string>
+    <string name="mdmRuleNoBiometrics">Csak alkalmazáskód, ujjlenyomat és arc nélkül</string>
+    <string name="mdmRuleExternal">Külső szolgáltatások nélkül: időjárás, logók, szerverjelek</string>
+    <string name="mdmSyncLimit">A szervezet korlátozta az időszakot: {period}</string>
 </resources>

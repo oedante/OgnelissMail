@@ -3997,4 +3997,10 @@
     <string name="andMoreN">ועוד {n}</string>
     <string name="meetingFreeThen">את/ה פנוי/ה בזמן הזה</string>
     <string name="meetingOneOccurrence">פגישה אחת מסדרה</string>
+    <string name="mdmRuleSyncDays">דואר במכשיר: עד {n} ימים</string>
+    <string name="mdmRuleAttachments">אי אפשר לפתוח או לשמור קבצים מצורפים במכשיר</string>
+    <string name="mdmRulePinTimeout">נעילה אחרי {n} דק\' ללא פעילות</string>
+    <string name="mdmRuleNoBiometrics">קוד אפליקציה בלבד, בלי טביעת אצבע או פנים</string>
+    <string name="mdmRuleExternal">ללא שירותים חיצוניים: מזג אוויר, לוגואים, אותות שרת</string>
+    <string name="mdmSyncLimit">הארגון הגביל את התקופה: {period}</string>
 </resources>

@@ -3976,4 +3976,10 @@
     <string name="andMoreN">और {n}</string>
     <string name="meetingFreeThen">इस समय आप खाली हैं</string>
     <string name="meetingOneOccurrence">श्रृंखला की एक बैठक</string>
+    <string name="mdmRuleSyncDays">डिवाइस पर मेल: अधिकतम {n} दिन</string>
+    <string name="mdmRuleAttachments">डिवाइस पर अटैचमेंट खोले या सहेजे नहीं जा सकते</string>
+    <string name="mdmRulePinTimeout">{n} मिनट निष्क्रियता के बाद लॉक</string>
+    <string name="mdmRuleNoBiometrics">केवल ऐप कोड, फ़िंगरप्रिंट या चेहरा नहीं</string>
+    <string name="mdmRuleExternal">कोई बाहरी सेवा नहीं: मौसम, लोगो, सर्वर सिग्नल</string>
+    <string name="mdmSyncLimit">आपके संगठन ने अवधि सीमित की: {period}</string>
 </resources>

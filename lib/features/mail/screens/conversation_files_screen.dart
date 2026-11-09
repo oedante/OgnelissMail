@@ -9,6 +9,7 @@
 // LinkOpener (проверка похожих доменов и несовпадения текста и адреса).
 // Ссылки — из писем, тексты которых уже на устройстве.
 
+import '../../../services/security/managed_config.dart' show ManagedPolicy, ManagedRule;
 import 'dart:async';
 
 import 'package:flutter/foundation.dart' show compute;
@@ -104,6 +105,8 @@ class _ConversationFilesScreenState extends ConsumerState<ConversationFilesScree
   String _key(ConversationFile f) => '${f.email.id}|${f.file.id}';
 
   Future<void> _open(ConversationFile f) async {
+    // Организация запретила вложения на устройстве (MDM block_attachment_download).
+    if (ManagedPolicy.deny(ManagedRule.attachments)) return;
     final key = _key(f);
     if (_loading.contains(key)) return;
     final e = f.email;

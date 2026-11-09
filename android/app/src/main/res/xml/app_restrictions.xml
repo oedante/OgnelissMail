@@ -114,4 +114,34 @@
         android:title="@string/mdm_block_weather_title"
         android:description="@string/mdm_block_weather_desc"
         android:defaultValue="false" />
+    <restriction
+        android:key="max_sync_days"
+        android:restrictionType="integer"
+        android:title="@string/mdm_max_sync_days_title"
+        android:description="@string/mdm_max_sync_days_desc"
+        android:defaultValue="0" />
+    <restriction
+        android:key="block_attachment_download"
+        android:restrictionType="bool"
+        android:title="@string/mdm_block_attachment_download_title"
+        android:description="@string/mdm_block_attachment_download_desc"
+        android:defaultValue="false" />
+    <restriction
+        android:key="pin_timeout_minutes"
+        android:restrictionType="integer"
+        android:title="@string/mdm_pin_timeout_minutes_title"
+        android:description="@string/mdm_pin_timeout_minutes_desc"
+        android:defaultValue="0" />
+    <restriction
+        android:key="allow_biometrics"
+        android:restrictionType="bool"
+        android:title="@string/mdm_allow_biometrics_title"
+        android:description="@string/mdm_allow_biometrics_desc"
+        android:defaultValue="true" />
+    <restriction
+        android:key="block_external_services"
+        android:restrictionType="bool"
+        android:title="@string/mdm_block_external_services_title"
+        android:description="@string/mdm_block_external_services_desc"
+        android:defaultValue="false" />
 </restrictions>

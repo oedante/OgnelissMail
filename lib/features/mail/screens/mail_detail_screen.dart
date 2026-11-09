@@ -2299,6 +2299,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   }
 
   Future<void> _onAttachmentTap(EmailAttachment att, AppLocalizations l10n) async {
+    // Организация запретила вложения на устройстве (MDM block_attachment_download).
+    if (ManagedPolicy.deny(ManagedRule.attachments)) return;
     final state = _attachmentStates[att.id];
     if (state == null) return;
 
@@ -3594,6 +3596,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// Скачать вложение и вернуть путь (без открытия предпросмотра).
   /// Общая часть для группового скачивания.
   Future<String?> _fetchToCache(EmailAttachment att, AccountModel account) async {
+    // Организация запретила вложения на устройстве (MDM block_attachment_download).
+    if (ManagedPolicy.deny(ManagedRule.attachments)) return null;
     final cache = ref.read(attachmentCacheProvider);
     final key = MailEngineService.attachmentCacheKey(account.id, widget.emailId, att.id);
     final cached = await cache.get(key);

@@ -3997,4 +3997,10 @@
     <string name="andMoreN">a další {n}</string>
     <string name="meetingFreeThen">V tuto dobu máte volno</string>
     <string name="meetingOneOccurrence">Jedna schůzka ze série</string>
+    <string name="mdmRuleSyncDays">Pošta v zařízení: nejvýše {n} dní</string>
+    <string name="mdmRuleAttachments">Přílohy nelze v zařízení otevřít ani uložit</string>
+    <string name="mdmRulePinTimeout">Zamknutí po {n} min nečinnosti</string>
+    <string name="mdmRuleNoBiometrics">Pouze kód aplikace, bez otisku a obličeje</string>
+    <string name="mdmRuleExternal">Bez externích služeb: počasí, loga, signály serveru</string>
+    <string name="mdmSyncLimit">Organizace omezila období: {period}</string>
 </resources>

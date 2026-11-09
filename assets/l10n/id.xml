@@ -3955,4 +3955,10 @@
     <string name="andMoreN">dan {n} lainnya</string>
     <string name="meetingFreeThen">Anda luang pada waktu ini</string>
     <string name="meetingOneOccurrence">Satu rapat dari rangkaian</string>
+    <string name="mdmRuleSyncDays">Email di perangkat: hingga {n} hari</string>
+    <string name="mdmRuleAttachments">Lampiran tidak dapat dibuka atau disimpan di perangkat</string>
+    <string name="mdmRulePinTimeout">Terkunci setelah {n} menit tidak aktif</string>
+    <string name="mdmRuleNoBiometrics">Hanya kode aplikasi, tanpa sidik jari atau wajah</string>
+    <string name="mdmRuleExternal">Tanpa layanan eksternal: cuaca, logo, sinyal server</string>
+    <string name="mdmSyncLimit">Organisasi Anda membatasi periode: {period}</string>
 </resources>

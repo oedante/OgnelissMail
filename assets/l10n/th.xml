@@ -3955,4 +3955,10 @@
     <string name="andMoreN">และอีก {n}</string>
     <string name="meetingFreeThen">คุณว่างในเวลานี้</string>
     <string name="meetingOneOccurrence">การประชุมหนึ่งครั้งในชุด</string>
+    <string name="mdmRuleSyncDays">อีเมลบนอุปกรณ์: ไม่เกิน {n} วัน</string>
+    <string name="mdmRuleAttachments">ไม่สามารถเปิดหรือบันทึกไฟล์แนบบนอุปกรณ์ได้</string>
+    <string name="mdmRulePinTimeout">ล็อกเมื่อไม่ได้ใช้งาน {n} นาที</string>
+    <string name="mdmRuleNoBiometrics">ใช้รหัสแอปเท่านั้น ไม่ใช้ลายนิ้วมือหรือใบหน้า</string>
+    <string name="mdmRuleExternal">ไม่ใช้บริการภายนอก: สภาพอากาศ โลโก้ สัญญาณเซิร์ฟเวอร์</string>
+    <string name="mdmSyncLimit">องค์กรของคุณจำกัดช่วงเวลา: {period}</string>
 </resources>

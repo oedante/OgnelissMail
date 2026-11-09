@@ -3976,4 +3976,10 @@
     <string name="andMoreN">en nog {n}</string>
     <string name="meetingFreeThen">U bent vrij op dit moment</string>
     <string name="meetingOneOccurrence">Eén vergadering uit een reeks</string>
+    <string name="mdmRuleSyncDays">Mail op het apparaat: maximaal {n} dagen</string>
+    <string name="mdmRuleAttachments">Bijlagen kunnen niet worden geopend of opgeslagen op het apparaat</string>
+    <string name="mdmRulePinTimeout">Vergrendeling na {n} min inactiviteit</string>
+    <string name="mdmRuleNoBiometrics">Alleen app-code, geen vingerafdruk of gezicht</string>
+    <string name="mdmRuleExternal">Geen externe diensten: weer, logo\'s, serversignalen</string>
+    <string name="mdmSyncLimit">Uw organisatie beperkt de periode: {period}</string>
 </resources>

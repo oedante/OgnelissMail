@@ -243,7 +243,8 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
                 : null,
             syncInterval: SyncInterval.values[row.syncInterval],
             syncOnlyWifi: row.syncOnlyWifi,
-            syncDays: row.syncDays,
+            // Предел организации (MDM max_sync_days, 2.2.0).
+            syncDays: _policy().capSyncDays(row.syncDays),
             isActive: row.isActive,
             authFailedAt: row.authFailedAt,
             sharedMailboxEmail: row.sharedMailboxEmail,

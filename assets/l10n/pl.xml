@@ -4018,4 +4018,10 @@
     <string name="andMoreN">i jeszcze {n}</string>
     <string name="meetingFreeThen">W tym czasie jesteś wolny</string>
     <string name="meetingOneOccurrence">Jedno spotkanie z serii</string>
+    <string name="mdmRuleSyncDays">Poczta na urządzeniu: najwyżej {n} dni</string>
+    <string name="mdmRuleAttachments">Załączników nie można otworzyć ani zapisać na urządzeniu</string>
+    <string name="mdmRulePinTimeout">Blokada po {n} min bezczynności</string>
+    <string name="mdmRuleNoBiometrics">Tylko kod aplikacji, bez odcisku palca i twarzy</string>
+    <string name="mdmRuleExternal">Bez usług zewnętrznych: pogody, logo, sygnałów serwera</string>
+    <string name="mdmSyncLimit">Organizacja ograniczyła okres: {period}</string>
 </resources>

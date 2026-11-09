@@ -63,15 +63,35 @@ class ManagedKeys {
   /// OpenStreetMap); 1.15.1.
   static const blockWeather = 'block_weather';
 
+  // 2.2.0 (план 08.11.2026 п. 1, запросы ИТ-служб)
+  /// Сколько дней почты держать на устройстве — не больше (ящики с
+  /// периодом «всё» или длиннее получают этот).
+  static const maxSyncDays = 'max_sync_days';
+
+  /// Вложения нельзя открыть, сохранить, перетащить или поделиться ими
+  /// (пересылка писем с вложениями — можно: файлы не попадают к человеку).
+  static const blockAttachmentDownload = 'block_attachment_download';
+
+  /// Блокировка приложения после бездействия — не позже, минут (1–60).
+  static const pinTimeoutMinutes = 'pin_timeout_minutes';
+
+  /// Вход в приложение по отпечатку или лицу (по умолчанию — да).
+  static const allowBiometrics = 'allow_biometrics';
+
+  /// Без внешних служб Ogneliss и третьих сторон: погода, логотипы
+  /// отправителей (BIMI), сигналы о новой почте через сервер Ogneliss.
+  static const blockExternalServices = 'block_external_services';
+
   static const all = [
     orgName, supportContact, accountEmail, accountProtocol, accountServer, accountUsername, accountDomain,
     imapServer, imapPort, smtpServer, smtpPort, allowedDomains, requireAppLock, minPinLength,
     blockScreenshots, blockShare, blockOpenIn, blockCopy, hideNotificationContent, blockWeather,
+    maxSyncDays, blockAttachmentDownload, pinTimeoutMinutes, allowBiometrics, blockExternalServices,
   ];
 }
 
 /// Что запрещает политика — для проверки в местах действий.
-enum ManagedRule { share, openIn, copy }
+enum ManagedRule { share, openIn, copy, attachments }
 
 @immutable
 class ManagedPolicy {
@@ -96,6 +116,11 @@ class ManagedPolicy {
     this.blockCopy = false,
     this.hideNotificationContent = false,
     this.blockWeather = false,
+    this.maxSyncDays,
+    this.blockAttachmentDownload = false,
+    this.pinTimeoutMinutes,
+    this.allowBiometrics = true,
+    this.blockExternalServices = false,
   });
 
   static const none = ManagedPolicy();
@@ -134,8 +159,43 @@ class ManagedPolicy {
   /// Уведомление без отправителя, темы и текста — «Новое сообщение».
   final bool hideNotificationContent;
 
-  /// Погоды в «Моём дне» нет (запросы к внешним сервисам запрещены).
+  /// Погоды в «Моём дне» нет (запросы к внешним сервисам запрещены);
+  /// и при [blockExternalServices].
   final bool blockWeather;
+
+  /// Почта на устройстве — не больше стольких дней; null — без предела.
+  final int? maxSyncDays;
+
+  /// Вложения не открываются, не сохраняются и не отдаются другим
+  /// приложениям.
+  final bool blockAttachmentDownload;
+
+  /// Блокировка после бездействия — не позже, минут; null — как задано
+  /// политикой Exchange или не задано.
+  final int? pinTimeoutMinutes;
+
+  /// Можно ли разблокировать приложение отпечатком или лицом.
+  final bool allowBiometrics;
+
+  /// Без внешних служб: погода, BIMI, сигналы сервера Ogneliss.
+  final bool blockExternalServices;
+
+  /// Период синхронизации ящика с учётом [maxSyncDays] (0 — «вся почта»).
+  int capSyncDays(int days) {
+    final max = maxSyncDays;
+    if (max == null) return days;
+    return days <= 0 || days > max ? max : days;
+  }
+
+  /// Пауза до блокировки после бездействия: меньшая из политики Exchange
+  /// ([exchange], null — нет) и [pinTimeoutMinutes].
+  Duration? idleTimeout(Duration? exchange) {
+    final m = pinTimeoutMinutes;
+    final mdm = m == null ? null : Duration(minutes: m);
+    if (mdm == null) return exchange;
+    if (exchange == null) return mdm;
+    return exchange < mdm ? exchange : mdm;
+  }
 
   /// Организация задала хоть что-то.
   bool get isManaged => this != none;
@@ -147,6 +207,7 @@ class ManagedPolicy {
         ManagedRule.share => blockShare,
         ManagedRule.openIn => blockOpenIn,
         ManagedRule.copy => blockCopy,
+        ManagedRule.attachments => blockAttachmentDownload,
       };
 
   /// Можно ли добавить ящик [email].
@@ -222,7 +283,13 @@ class ManagedPolicy {
       blockOpenIn: _bool(v(ManagedKeys.blockOpenIn)),
       blockCopy: _bool(v(ManagedKeys.blockCopy)),
       hideNotificationContent: _bool(v(ManagedKeys.hideNotificationContent)),
-      blockWeather: _bool(v(ManagedKeys.blockWeather)),
+      blockWeather: _bool(v(ManagedKeys.blockWeather)) || _bool(v(ManagedKeys.blockExternalServices)),
+      maxSyncDays: switch (_int(v(ManagedKeys.maxSyncDays))) { final d? when d > 0 => d.clamp(1, 3650), _ => null },
+      blockAttachmentDownload: _bool(v(ManagedKeys.blockAttachmentDownload)),
+      pinTimeoutMinutes: switch (_int(v(ManagedKeys.pinTimeoutMinutes))) { final m? when m > 0 => m.clamp(1, 60), _ => null },
+      // Ключа нет — можно (как без MDM).
+      allowBiometrics: v(ManagedKeys.allowBiometrics) == null || _bool(v(ManagedKeys.allowBiometrics)),
+      blockExternalServices: _bool(v(ManagedKeys.blockExternalServices)),
     );
   }
 
@@ -247,6 +314,11 @@ class ManagedPolicy {
         if (blockCopy) ManagedKeys.blockCopy: true,
         if (hideNotificationContent) ManagedKeys.hideNotificationContent: true,
         if (blockWeather) ManagedKeys.blockWeather: true,
+        if (maxSyncDays != null) ManagedKeys.maxSyncDays: maxSyncDays,
+        if (blockAttachmentDownload) ManagedKeys.blockAttachmentDownload: true,
+        if (pinTimeoutMinutes != null) ManagedKeys.pinTimeoutMinutes: pinTimeoutMinutes,
+        if (!allowBiometrics) ManagedKeys.allowBiometrics: false,
+        if (blockExternalServices) ManagedKeys.blockExternalServices: true,
       };
 
   @override

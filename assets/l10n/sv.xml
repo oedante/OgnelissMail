@@ -3976,4 +3976,10 @@
     <string name="andMoreN">och {n} till</string>
     <string name="meetingFreeThen">Du är ledig vid den här tiden</string>
     <string name="meetingOneOccurrence">Ett möte i en serie</string>
+    <string name="mdmRuleSyncDays">E-post på enheten: högst {n} dagar</string>
+    <string name="mdmRuleAttachments">Bilagor kan inte öppnas eller sparas på enheten</string>
+    <string name="mdmRulePinTimeout">Låses efter {n} min inaktivitet</string>
+    <string name="mdmRuleNoBiometrics">Endast appkod, inte fingeravtryck eller ansikte</string>
+    <string name="mdmRuleExternal">Inga externa tjänster: väder, logotyper, serversignaler</string>
+    <string name="mdmSyncLimit">Din organisation begränsar perioden: {period}</string>
 </resources>

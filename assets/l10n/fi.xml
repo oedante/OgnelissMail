@@ -3976,4 +3976,10 @@
     <string name="andMoreN">ja {n} muuta</string>
     <string name="meetingFreeThen">Olet vapaana tähän aikaan</string>
     <string name="meetingOneOccurrence">Yksi sarjan kokouksista</string>
+    <string name="mdmRuleSyncDays">Sähköposti laitteella: enintään {n} päivää</string>
+    <string name="mdmRuleAttachments">Liitteitä ei voi avata eikä tallentaa laitteelle</string>
+    <string name="mdmRulePinTimeout">Lukitus {n} min käyttämättömyyden jälkeen</string>
+    <string name="mdmRuleNoBiometrics">Vain sovelluskoodi, ei sormenjälkeä tai kasvoja</string>
+    <string name="mdmRuleExternal">Ei ulkoisia palveluja: sää, logot, palvelinsignaalit</string>
+    <string name="mdmSyncLimit">Organisaatiosi rajoittaa jaksoa: {period}</string>
 </resources>

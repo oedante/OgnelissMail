@@ -51,4 +51,14 @@
         <item>exchange</item>
         <item>imap</item>
     </string-array>
+    <string name="mdm_max_sync_days_title">Maximum mail period, days</string>
+    <string name="mdm_max_sync_days_desc">Mail older than this is not kept on the device; mailboxes set to "all mail" or a longer period get this one. 0 — no limit.</string>
+    <string name="mdm_block_attachment_download_title">Block attachments on the device</string>
+    <string name="mdm_block_attachment_download_desc">Attachments cannot be opened, saved, dragged out or shared. Forwarding messages with attachments still works.</string>
+    <string name="mdm_pin_timeout_minutes_title">Lock after inactivity, minutes</string>
+    <string name="mdm_pin_timeout_minutes_desc">The app locks with its PIN after this many minutes without use (1–60); the shorter of this and the Exchange policy applies. 0 — not set.</string>
+    <string name="mdm_allow_biometrics_title">Allow fingerprint and face unlock</string>
+    <string name="mdm_allow_biometrics_desc">Off — the app is unlocked only with its PIN.</string>
+    <string name="mdm_block_external_services_title">Block external services</string>
+    <string name="mdm_block_external_services_desc">No weather, no sender logos (BIMI) and no new-mail signals through the Ogneliss server: new mail arrives by the connection to the mail server and scheduled checks.</string>
 </resources>

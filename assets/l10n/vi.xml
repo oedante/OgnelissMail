@@ -3955,4 +3955,10 @@
     <string name="andMoreN">và {n} khác</string>
     <string name="meetingFreeThen">Bạn rảnh vào giờ này</string>
     <string name="meetingOneOccurrence">Một cuộc họp trong chuỗi</string>
+    <string name="mdmRuleSyncDays">Thư trên thiết bị: tối đa {n} ngày</string>
+    <string name="mdmRuleAttachments">Không thể mở hoặc lưu tệp đính kèm trên thiết bị</string>
+    <string name="mdmRulePinTimeout">Khóa sau {n} phút không hoạt động</string>
+    <string name="mdmRuleNoBiometrics">Chỉ mã ứng dụng, không dùng vân tay hay khuôn mặt</string>
+    <string name="mdmRuleExternal">Không dịch vụ bên ngoài: thời tiết, logo, tín hiệu máy chủ</string>
+    <string name="mdmSyncLimit">Tổ chức của bạn giới hạn khoảng thời gian: {period}</string>
 </resources>

@@ -3997,4 +3997,10 @@
     <string name="andMoreN">și încă {n}</string>
     <string name="meetingFreeThen">Sunteți liber la această oră</string>
     <string name="meetingOneOccurrence">O întâlnire dintr-o serie</string>
+    <string name="mdmRuleSyncDays">E-mail pe dispozitiv: cel mult {n} zile</string>
+    <string name="mdmRuleAttachments">Atașamentele nu pot fi deschise sau salvate pe dispozitiv</string>
+    <string name="mdmRulePinTimeout">Blocare după {n} min de inactivitate</string>
+    <string name="mdmRuleNoBiometrics">Doar codul aplicației, fără amprentă sau față</string>
+    <string name="mdmRuleExternal">Fără servicii externe: vreme, logo-uri, semnale de la server</string>
+    <string name="mdmSyncLimit">Organizația a limitat perioada: {period}</string>
 </resources>

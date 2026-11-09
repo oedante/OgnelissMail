@@ -8,6 +8,7 @@
 // Сервисы берутся до первого ожидания: экран (беседа) могут закрыть, пока
 // идёт ответ или загрузка, а ref закрытого экрана читать уже нельзя.
 
+import '../../../services/security/managed_config.dart' show ManagedPolicy, ManagedRule;
 import 'dart:async';
 import 'dart:io';
 
@@ -118,6 +119,8 @@ Future<bool> peekRespondInvite(
 Future<String?> peekFetchFile(WidgetRef ref, AccountModel? account, EmailModel e, EmailAttachment a,
     AppLocalizations l10n) async {
   // Свой файл черновика (1.7.2+111) — с телефона, сервер его не знает.
+  // Организация запретила вложения на устройстве (MDM block_attachment_download).
+  if (ManagedPolicy.deny(ManagedRule.attachments)) return null;
   if (a.id.startsWith('draft:')) {
     final path = await DraftFiles.pathFor(e.id, a.id);
     if (path == null) showInlineError(l10n.tr('attachDownloadFailed'));

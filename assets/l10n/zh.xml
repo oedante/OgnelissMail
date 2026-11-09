@@ -3955,4 +3955,10 @@
     <string name="andMoreN">还有 {n} 个</string>
     <string name="meetingFreeThen">您在此时间有空</string>
     <string name="meetingOneOccurrence">系列中的一次会议</string>
+    <string name="mdmRuleSyncDays">设备上的邮件：最多 {n} 天</string>
+    <string name="mdmRuleAttachments">附件无法在设备上打开或保存</string>
+    <string name="mdmRulePinTimeout">闲置 {n} 分钟后锁定</string>
+    <string name="mdmRuleNoBiometrics">仅限应用密码，不可用指纹或面容</string>
+    <string name="mdmRuleExternal">不使用外部服务：天气、标志、服务器信号</string>
+    <string name="mdmSyncLimit">您的组织限制了期限：{period}</string>
 </resources>

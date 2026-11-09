@@ -3976,4 +3976,10 @@
     <string name="andMoreN">e mais {n}</string>
     <string name="meetingFreeThen">Você está livre neste horário</string>
     <string name="meetingOneOccurrence">Uma reunião de uma série</string>
+    <string name="mdmRuleSyncDays">E-mail no dispositivo: até {n} dias</string>
+    <string name="mdmRuleAttachments">Os anexos não podem ser abertos nem salvos no dispositivo</string>
+    <string name="mdmRulePinTimeout">Bloqueio após {n} min de inatividade</string>
+    <string name="mdmRuleNoBiometrics">Somente código do app, sem digital ou rosto</string>
+    <string name="mdmRuleExternal">Sem serviços externos: clima, logotipos, sinais do servidor</string>
+    <string name="mdmSyncLimit">Sua organização limita o período: {period}</string>
 </resources>

@@ -3976,4 +3976,10 @@
     <string name="andMoreN">ve {n} tane daha</string>
     <string name="meetingFreeThen">Bu saatte müsaitsiniz</string>
     <string name="meetingOneOccurrence">Serideki bir toplantı</string>
+    <string name="mdmRuleSyncDays">Cihazdaki e-posta: en fazla {n} gün</string>
+    <string name="mdmRuleAttachments">Ekler cihazda açılamaz veya kaydedilemez</string>
+    <string name="mdmRulePinTimeout">{n} dk işlem yapılmazsa kilitlenir</string>
+    <string name="mdmRuleNoBiometrics">Yalnızca uygulama kodu, parmak izi veya yüz yok</string>
+    <string name="mdmRuleExternal">Harici hizmet yok: hava durumu, logolar, sunucu sinyalleri</string>
+    <string name="mdmSyncLimit">Kuruluşunuz dönemi sınırladı: {period}</string>
 </resources>

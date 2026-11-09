@@ -4060,4 +4060,10 @@
     <string name="andMoreN">و{n} آخرون</string>
     <string name="meetingFreeThen">أنت متاح في هذا الوقت</string>
     <string name="meetingOneOccurrence">اجتماع واحد من سلسلة</string>
+    <string name="mdmRuleSyncDays">البريد على الجهاز: حتى {n} يومًا</string>
+    <string name="mdmRuleAttachments">لا يمكن فتح المرفقات أو حفظها على الجهاز</string>
+    <string name="mdmRulePinTimeout">القفل بعد {n} دقيقة من عدم النشاط</string>
+    <string name="mdmRuleNoBiometrics">رمز التطبيق فقط، دون بصمة أو وجه</string>
+    <string name="mdmRuleExternal">دون خدمات خارجية: الطقس والشعارات وإشارات الخادم</string>
+    <string name="mdmSyncLimit">حددت مؤسستك الفترة: {period}</string>
 </resources>

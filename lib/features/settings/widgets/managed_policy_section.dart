@@ -34,6 +34,13 @@ class ManagedPolicySection extends ConsumerWidget {
         if (p.blockOpenIn) (AppIcons.open_in_new_off, l10n.tr('mdmRuleOpenIn')),
         if (p.blockCopy) (AppIcons.content_copy, l10n.tr('mdmRuleCopy')),
         if (p.hideNotificationContent) (AppIcons.notifications_off, l10n.tr('mdmRuleNotifications')),
+        // 2.2.0 (план 08.11.2026 п. 1).
+        if (p.maxSyncDays != null) (AppIcons.history, l10n.tr('mdmRuleSyncDays').replaceAll('{n}', '${p.maxSyncDays}')),
+        if (p.blockAttachmentDownload) (AppIcons.attach_file, l10n.tr('mdmRuleAttachments')),
+        if (p.pinTimeoutMinutes != null)
+          (AppIcons.lock_clock, l10n.tr('mdmRulePinTimeout').replaceAll('{n}', '${p.pinTimeoutMinutes}')),
+        if (!p.allowBiometrics) (AppIcons.fingerprint, l10n.tr('mdmRuleNoBiometrics')),
+        if (p.blockExternalServices) (AppIcons.cloud_off, l10n.tr('mdmRuleExternal')),
       ];
 
   /// Ссылка для контакта поддержки: адрес — письмо, телефон — звонок,

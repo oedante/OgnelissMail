@@ -59,10 +59,17 @@ class _AppLockGateState extends ConsumerState<AppLockGate> with WidgetsBindingOb
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     ref.listenManual<StoredEasPolicy>(easPolicyProvider, (_, p) {
-      ref.read(pinLockProvider.notifier).setIdleTimeout(
-          p.maxInactivitySeconds > 0 ? Duration(seconds: p.maxInactivitySeconds) : null);
+      _applyIdleTimeout();
       _refreshDevice();
     }, fireImmediately: true);
+    // Предел организации (MDM pin_timeout_minutes, 2.2.0) — меньший из двух.
+    ref.listenManual(managedPolicyProvider, (_, _) => _applyIdleTimeout());
+  }
+
+  void _applyIdleTimeout() {
+    final p = ref.read(easPolicyProvider);
+    final exchange = p.maxInactivitySeconds > 0 ? Duration(seconds: p.maxInactivitySeconds) : null;
+    ref.read(pinLockProvider.notifier).setIdleTimeout(ref.read(managedPolicyProvider).idleTimeout(exchange));
   }
 
   @override

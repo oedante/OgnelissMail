@@ -1,6 +1,7 @@
 // lib/widgets/common/pin_lock_screen.dart
 // Экран ввода PIN-кода при блокировке.
 
+import '../../services/security/managed_config.dart' show ManagedPolicy;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_icons.dart';
@@ -112,7 +113,8 @@ class _PinLockScreenState extends ConsumerState<PinLockScreen> {
 
             const SizedBox(height: Space.xl),
 
-            // Биометрия
+            // Биометрия (организация может запретить — MDM allow_biometrics).
+            if (ManagedPolicy.current.allowBiometrics)
             TextButton.icon(
               onPressed: () async {
                 // Реальная проверка отпечатка/лица — разблокировка только при успехе.

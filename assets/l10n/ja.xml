@@ -3955,4 +3955,10 @@
     <string name="andMoreN">他 {n} 件</string>
     <string name="meetingFreeThen">この時間は空いています</string>
     <string name="meetingOneOccurrence">定期的な会議の 1 回分</string>
+    <string name="mdmRuleSyncDays">端末上のメール: 最大 {n} 日</string>
+    <string name="mdmRuleAttachments">添付ファイルを端末で開いたり保存したりできません</string>
+    <string name="mdmRulePinTimeout">操作がないと {n} 分後にロック</string>
+    <string name="mdmRuleNoBiometrics">アプリのコードのみ（指紋・顔は不可）</string>
+    <string name="mdmRuleExternal">外部サービスなし（天気・ロゴ・サーバー通知）</string>
+    <string name="mdmSyncLimit">組織により期間が制限されています: {period}</string>
 </resources>

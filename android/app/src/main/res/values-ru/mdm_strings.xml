@@ -46,4 +46,14 @@
         <item>Microsoft Exchange</item>
         <item>IMAP</item>
     </string-array>
+    <string name="mdm_max_sync_days_title">Почта на устройстве, не больше дней</string>
+    <string name="mdm_max_sync_days_desc">Письма старше не хранятся на устройстве; ящики с периодом «вся почта» или длиннее получают этот. 0 — без предела.</string>
+    <string name="mdm_block_attachment_download_title">Запретить вложения на устройстве</string>
+    <string name="mdm_block_attachment_download_desc">Вложения нельзя открыть, сохранить, перетащить или отправить в другое приложение. Пересылать письма с вложениями можно.</string>
+    <string name="mdm_pin_timeout_minutes_title">Блокировка после бездействия, минут</string>
+    <string name="mdm_pin_timeout_minutes_desc">Приложение закрывается PIN-кодом через столько минут без работы (1–60); действует меньшее из этого и политики Exchange. 0 — не задано.</string>
+    <string name="mdm_allow_biometrics_title">Разрешить вход по отпечатку и лицу</string>
+    <string name="mdm_allow_biometrics_desc">Выключено — приложение открывается только PIN-кодом.</string>
+    <string name="mdm_block_external_services_title">Запретить внешние службы</string>
+    <string name="mdm_block_external_services_desc">Без погоды, логотипов отправителей (BIMI) и сигналов о новой почте через сервер Ogneliss: почта приходит по соединению с сервером почты и плановым проверкам.</string>
 </resources>

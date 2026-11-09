@@ -17,6 +17,10 @@
 //  · точка между пальцами остаётся под пальцами;
 //  · масштаб — от обычного до ×4; меньше обычного не уменьшается, у самого
 //    обычного «прилипает»; «Обычный размер» над письмом — сразу назад.
+//    Экран письма показывает «Обычный размер» пилюлей в строке сведений,
+//    где перевод и предупреждения (2.2.0, просьба владельца 09.11.2026:
+//    кнопка над письмом смещалась при перемещении по письму) — тогда
+//    [PinchZoom.onZoomChanged], а своей кнопки нет.
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +34,7 @@ class PinchZoom extends StatefulWidget {
     required this.child,
     this.maxScale = 4,
     this.resetLabel,
+    this.onZoomChanged,
   });
 
   final Widget child;
@@ -40,6 +45,11 @@ class PinchZoom extends StatefulWidget {
   /// Подпись кнопки «Обычный размер» над увеличенным содержимым (null — без
   /// кнопки).
   final String? resetLabel;
+
+  /// Увеличено (с действием «Обычный размер») или снова обычный размер
+  /// (null). Задано — своей кнопки над содержимым нет: её рисует тот, кто
+  /// слушает.
+  final void Function(VoidCallback? reset)? onZoomChanged;
 
   @override
   State<PinchZoom> createState() => _PinchZoomState();
@@ -82,6 +92,16 @@ class _PinchZoomState extends State<PinchZoom> with SingleTickerProviderStateMix
     if (_scale < 1.06 && _scale != 1) _setScale(1, null);
   }
 
+  bool _reported = false;
+
+  /// Сообщить слушателю, только когда «увеличено» сменилось.
+  void _report() {
+    final cb = widget.onZoomChanged;
+    if (cb == null || _zoomed == _reported) return;
+    _reported = _zoomed;
+    cb(_zoomed ? _reset : null);
+  }
+
   void _reset() {
     if (!_zoomed) return;
     _animFrom = _scale;
@@ -105,6 +125,7 @@ class _PinchZoomState extends State<PinchZoom> with SingleTickerProviderStateMix
     final hx = _h.hasClients ? _h.offset : 0.0;
     final oy = outer?.pixels;
     setState(() => _scale = next);
+    _report();
     if (next <= 1.0001) {
       if (_h.hasClients) _h.jumpTo(0);
       return;
@@ -133,7 +154,7 @@ class _PinchZoomState extends State<PinchZoom> with SingleTickerProviderStateMix
     return LayoutBuilder(builder: (context, box) {
       if (!box.maxWidth.isFinite) return widget.child;
       final width = box.maxWidth;
-      final label = widget.resetLabel;
+      final label = widget.onZoomChanged == null ? widget.resetLabel : null;
       return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

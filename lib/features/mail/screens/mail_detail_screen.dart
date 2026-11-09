@@ -1137,6 +1137,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           onLink: (url, text) => _onBodyLink(email, url, text),
           onQuoteReply: (text) => _replyWithFragment(email, text),
           find: _findOpen ? _find : null,
+          // «Обычный размер» после щипка — пилюлей в строке сведений.
+          scaleControl: _scale,
         ),
         if (n.clipped) MailClippedBar(onShowWhole: _onShowWhole),
         if (split.hasQuote) _quoteToggle(theme, l10n, tailOnly: split.tailOnly),

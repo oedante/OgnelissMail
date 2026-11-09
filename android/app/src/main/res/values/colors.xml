@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Фон адаптивной иконки (как adaptive_icon_background в pubspec.yaml). -->
-    <color name="ic_launcher_background">#F4F1EB</color>
+    <color name="ic_launcher_background">#394450</color>
     <!-- Фон заставки запуска (знак с лисой). -->
     <color name="splash_background">#FFFFFF</color>
     <!-- Выделение текста: спокойный синий (как AppTheme.selectionBlueLight). -->

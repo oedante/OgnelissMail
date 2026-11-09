@@ -1,7 +1,7 @@
 // lib/widgets/common/app_logo.dart
 // Знак приложения — для экрана входа и «О программе»: тот же, что на
 // рабочем столе (с 09.10.2026 — конверт с огненной лисой; ресурсы —
-// tool/branding/make_icon_v6.py, светлая с 08.11.2026).
+// tool/branding/make_icon_v5.py).
 
 import 'package:flutter/material.dart';
 

@@ -248,8 +248,8 @@ $hasAndroid = Test-Path "android/app/src/main/res"
 $hasWeb = Test-Path "web/index.html"
 $hasWin = Test-Path "windows/runner/resources"
 function YN($b) { if ($b) { 'true' } else { 'false' } }
-# Android и iOS — нет: их значки (v6, светлые) уже в репозитории, их собирает
-# tool/branding/make_icon_v6.py; плагин перезаписал бы их прежним синим.
+# Android и iOS — нет: их значки (v5) уже в репозитории, их собирает
+# tool/branding/make_icon_v5.py; плагин перезаписал бы их прежним синим.
 # Windows — нет: значок программы ставится ниже из assets/icons/tray_icon.ico
 # (скруглённая плитка, все размеры), плагин сделал бы квадрат из app_icon.png.
 $iconCfg = @"
@@ -285,7 +285,7 @@ $srcIcon = "assets/icons/app_icon.png"; $trayPng = "assets/icons/tray_icon.png"
 if (Test-Path $srcIcon) {
   if (-not (Test-Path $trayPng)) { Copy-Item $srcIcon $trayPng; Ok "Создан $trayPng" }
   $magick = (Get-Command magick -ErrorAction SilentlyContinue)
-  # tray_icon.ico уже в репозитории (make_icon_v6.py desktop) — создаём, только если его нет.
+  # tray_icon.ico уже в репозитории (make_icon_v5.py desktop) — создаём, только если его нет.
   if (Test-Path "assets/icons/tray_icon.ico") { Ok "tray_icon.ico на месте" }
   elseif ($magick) { & magick $srcIcon -define "icon:auto-resize=16,24,32,48,256" assets/icons/tray_icon.ico; Ok "Создан tray_icon.ico" }
   else { Warn "ImageMagick не найден — положите assets/icons/tray_icon.ico вручную для Windows-трея" }

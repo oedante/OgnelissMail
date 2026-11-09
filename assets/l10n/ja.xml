@@ -3947,4 +3947,7 @@
     <string name="dsnRead">既読: {addr}</string>
     <string name="noticeDsnRead">既読</string>
     <string name="dsnReadNote">受信者がメッセージを開き、開封確認を送信しました</string>
+    <string name="readReceiptRequest">開封確認を要求</string>
+    <string name="readReceiptAll">すべてのメッセージに開封確認</string>
+    <string name="readReceiptAllDesc">すべてのメッセージで受信者に開封確認を求めます。確認されると ✓✓ が表示されます。受信者は拒否できます。個別のメッセージはエディターの ⋮ メニューで</string>
 </resources>

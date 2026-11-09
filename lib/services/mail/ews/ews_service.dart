@@ -979,6 +979,9 @@ class EwsService {
     /// «Отправить как / от имени» (адрес отправки, 1.6.27): элемент From;
     /// копия — в свои «Отправленные». Для общего ящика — его адрес.
     EmailAddress? from,
+    /// «Запросить уведомление о прочтении» (2.2.0): IsReadReceiptRequested,
+    /// у письма S/MIME — Disposition-Notification-To в MIME.
+    bool requestReadReceipt = false,
   }) async {
     final fromAddr = from?.email;
     final sanitizedBody =
@@ -998,6 +1001,7 @@ class EwsService {
         attachments: withBytes,
         importance: importance,
         sensitivity: sensitivity,
+        readReceipt: requestReadReceipt,
       );
       var raw = Uint8List.fromList(utf8.encode(message.renderMessage()));
       raw = SmimeMime.withoutHeaders(raw, const {'bcc'});
@@ -1032,6 +1036,7 @@ class EwsService {
         saveSentCopy: saveSentCopy,
         importance: importance,
         sensitivity: sensitivity,
+        readReceipt: requestReadReceipt,
       );
       final xmlDoc = await _soapRequest(account, body, idempotent: false);
       // Отказ сервера (получатель не найден, превышен размер, нет прав на
@@ -1051,6 +1056,7 @@ class EwsService {
           sensitivity: sensitivity,
           sharedMailbox: account.sharedMailboxEmail,
           fromAddress: fromAddr,
+          readReceipt: requestReadReceipt,
         ),
         idempotent: false);
     final itemEl = draftDoc.findAllElements('ItemId').firstOrNull;

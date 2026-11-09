@@ -37,6 +37,8 @@ abstract class MailTransport {
     /// «Запросить подтверждение доставки» (1.9.x): DSN NOTIFY=SUCCESS у SMTP.
     /// Exchange (EWS, ActiveSync) — только отчёты, которые сервер шлёт сам.
     bool requestDeliveryReport,
+    /// «Запросить уведомление о прочтении» (2.2.0) — все способы подключения.
+    bool requestReadReceipt,
   });
 
   Future<void> setRead(AccountModel account, {required String emailId, required String folderId, required bool isRead});
@@ -55,9 +57,10 @@ class EwsTransport implements MailTransport {
   EwsTransport(this._ews, this._smime);
 
   @override
-  Future<bool> send(AccountModel account, {required List<EmailAddress> to, List<EmailAddress> cc = const [], List<EmailAddress> bcc = const [], required String subject, required String bodyHtml, String? inReplyTo, bool saveSentCopy = true, List<({String name, String? contentType, Uint8List bytes})> attachments = const [], String importance = 'Normal', String sensitivity = 'Normal', String? clientId, EmailAddress? from, bool requestDeliveryReport = false}) async {
+  Future<bool> send(AccountModel account, {required List<EmailAddress> to, List<EmailAddress> cc = const [], List<EmailAddress> bcc = const [], required String subject, required String bodyHtml, String? inReplyTo, bool saveSentCopy = true, List<({String name, String? contentType, Uint8List bytes})> attachments = const [], String importance = 'Normal', String sensitivity = 'Normal', String? clientId, EmailAddress? from, bool requestDeliveryReport = false, bool requestReadReceipt = false}) async {
     await _ews.sendEmail(account, to: to, cc: cc, bcc: bcc, subject: subject, bodyHtml: bodyHtml, inReplyTo: inReplyTo, saveSentCopy: saveSentCopy, attachments: attachments, importance: importance, sensitivity: sensitivity,
         from: from,
+        requestReadReceipt: requestReadReceipt,
         mimeTransform: _smime.senderFor(account.id, sensitivity, [for (final a in [...to, ...cc, ...bcc]) a.email]));
     return true;
   }
@@ -83,10 +86,11 @@ class ImapTransport implements MailTransport {
   ImapTransport(this._imap, this._smime);
 
   @override
-  Future<bool> send(AccountModel account, {required List<EmailAddress> to, List<EmailAddress> cc = const [], List<EmailAddress> bcc = const [], required String subject, required String bodyHtml, String? inReplyTo, bool saveSentCopy = true, List<({String name, String? contentType, Uint8List bytes})> attachments = const [], String importance = 'Normal', String sensitivity = 'Normal', String? clientId, EmailAddress? from, bool requestDeliveryReport = false}) async {
+  Future<bool> send(AccountModel account, {required List<EmailAddress> to, List<EmailAddress> cc = const [], List<EmailAddress> bcc = const [], required String subject, required String bodyHtml, String? inReplyTo, bool saveSentCopy = true, List<({String name, String? contentType, Uint8List bytes})> attachments = const [], String importance = 'Normal', String sensitivity = 'Normal', String? clientId, EmailAddress? from, bool requestDeliveryReport = false, bool requestReadReceipt = false}) async {
     await _imap.sendEmail(account, to: to, cc: cc, bcc: bcc, subject: subject, bodyHtml: bodyHtml, inReplyTo: inReplyTo, attachments: attachments, importance: importance, sensitivity: sensitivity,
         from: from,
         requestDeliveryReport: requestDeliveryReport,
+        requestReadReceipt: requestReadReceipt,
         mimeTransform: _smime.senderFor(account.id, sensitivity, [for (final a in [...to, ...cc, ...bcc]) a.email]));
     return true;
   }
@@ -115,7 +119,7 @@ class EngineTransport implements MailTransport {
   EngineTransport(this._engine, this._account);
 
   @override
-  Future<bool> send(AccountModel account, {required List<EmailAddress> to, List<EmailAddress> cc = const [], List<EmailAddress> bcc = const [], required String subject, required String bodyHtml, String? inReplyTo, bool saveSentCopy = true, List<({String name, String? contentType, Uint8List bytes})> attachments = const [], String importance = 'Normal', String sensitivity = 'Normal', String? clientId, EmailAddress? from, bool requestDeliveryReport = false}) =>
+  Future<bool> send(AccountModel account, {required List<EmailAddress> to, List<EmailAddress> cc = const [], List<EmailAddress> bcc = const [], required String subject, required String bodyHtml, String? inReplyTo, bool saveSentCopy = true, List<({String name, String? contentType, Uint8List bytes})> attachments = const [], String importance = 'Normal', String sensitivity = 'Normal', String? clientId, EmailAddress? from, bool requestDeliveryReport = false, bool requestReadReceipt = false}) =>
       _engine.send(account,
           to: to,
           cc: cc,
@@ -127,7 +131,8 @@ class EngineTransport implements MailTransport {
           importance: importance,
           sensitivity: sensitivity,
           clientId: clientId,
-          from: from);
+          from: from,
+          requestReadReceipt: requestReadReceipt);
 
   @override
   Future<void> setRead(AccountModel account, {required String emailId, required String folderId, required bool isRead}) =>

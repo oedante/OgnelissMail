@@ -3968,4 +3968,7 @@
     <string name="dsnRead">Lest: {addr}</string>
     <string name="noticeDsnRead">Lest</string>
     <string name="dsnReadNote">mottakeren åpnet meldingen og sendte en lesebekreftelse</string>
+    <string name="readReceiptRequest">Be om lesebekreftelse</string>
+    <string name="readReceiptAll">Lesebekreftelse for alle meldinger</string>
+    <string name="readReceiptAllDesc">Hver melding ber mottakeren bekrefte lesing — da vises ✓✓. Mottakeren kan avslå. For én melding — i redigeringsprogrammets ⋮-meny</string>
 </resources>

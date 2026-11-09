@@ -3968,4 +3968,7 @@
     <string name="dsnRead">Luettu: {addr}</string>
     <string name="noticeDsnRead">Luettu</string>
     <string name="dsnReadNote">vastaanottaja avasi viestin ja lähetti lukukuittauksen</string>
+    <string name="readReceiptRequest">Pyydä lukukuittaus</string>
+    <string name="readReceiptAll">Lukukuittaus kaikille viesteille</string>
+    <string name="readReceiptAllDesc">Jokainen viesti pyytää vastaanottajaa kuittaamaan lukemisen — silloin näkyy ✓✓. Vastaanottaja voi kieltäytyä. Yksittäiselle viestille — editorin ⋮-valikossa</string>
 </resources>

@@ -1904,6 +1904,9 @@ class ImapService {
     List<({String name, String? contentType, Uint8List bytes})> attachments = const [],
     String importance = 'Normal',
     String sensitivity = 'Normal',
+    /// «Запросить уведомление о прочтении» (2.2.0): Disposition-Notification-To
+    /// (RFC 8098) — программа адресата спросит, отправить ли отчёт.
+    bool readReceipt = false,
   }) {
     final files = attachments.where((a) => a.bytes.isNotEmpty).toList();
     final plain = bodyHtml
@@ -1963,6 +1966,7 @@ class ImapService {
       builder.setHeader('Sensitivity', 'Company-Confidential');
     }
     label.headers.forEach((k, v) => builder.setHeader(k, v));
+    if (readReceipt) builder.setHeader('Disposition-Notification-To', '<$fromEmail>');
 
     final message = builder.buildMimeMessage();
     _applyPartParams(message, files);
@@ -1993,6 +1997,8 @@ class ImapService {
     /// «Запросить подтверждение доставки» (1.9.x): DSN NOTIFY=SUCCESS — сервер
     /// получателя сообщит и об успешной доставке.
     bool requestDeliveryReport = false,
+    /// «Запросить уведомление о прочтении» (2.2.0).
+    bool requestReadReceipt = false,
   }) async {
     final message = buildOutgoingMessage(
       fromName: from == null ? account.displayName : (from.displayName ?? ''),
@@ -2006,6 +2012,7 @@ class ImapService {
       attachments: attachments,
       importance: importance,
       sensitivity: sensitivity,
+      readReceipt: requestReadReceipt,
     );
     // S/MIME: письмо собрано — подписываем/шифруем его текст и отправляем
     // как есть (заголовок Bcc получателям не уходит, адреса — в конверте).

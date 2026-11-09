@@ -3989,4 +3989,7 @@
     <string name="dsnRead">Prečítané: {addr}</string>
     <string name="noticeDsnRead">Prečítané</string>
     <string name="dsnReadNote">príjemca otvoril správu a poslal potvrdenie o prečítaní</string>
+    <string name="readReceiptRequest">Požiadať o potvrdenie o prečítaní</string>
+    <string name="readReceiptAll">Potvrdenie o prečítaní pri všetkých správach</string>
+    <string name="readReceiptAllDesc">Každá správa žiada príjemcu o potvrdenie prečítania — potom sa zobrazí ✓✓. Príjemca môže odmietnuť. Pre jednu správu — v ponuke ⋮ editora</string>
 </resources>

@@ -3968,4 +3968,7 @@
     <string name="dsnRead">Læst: {addr}</string>
     <string name="noticeDsnRead">Læst</string>
     <string name="dsnReadNote">modtageren åbnede meddelelsen og sendte en læsekvittering</string>
+    <string name="readReceiptRequest">Anmod om læsekvittering</string>
+    <string name="readReceiptAll">Læsekvittering for alle meddelelser</string>
+    <string name="readReceiptAllDesc">Hver meddelelse beder modtageren bekræfte læsning — så vises ✓✓. Modtageren kan afvise. For én meddelelse — i editorens ⋮-menu</string>
 </resources>

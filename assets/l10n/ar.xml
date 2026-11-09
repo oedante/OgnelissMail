@@ -4052,4 +4052,7 @@
     <string name="dsnRead">تمت القراءة: {addr}</string>
     <string name="noticeDsnRead">تمت القراءة</string>
     <string name="dsnReadNote">فتح المستلم الرسالة وأرسل إشعار قراءة</string>
+    <string name="readReceiptRequest">طلب إشعار بالقراءة</string>
+    <string name="readReceiptAll">إشعار القراءة لكل الرسائل</string>
+    <string name="readReceiptAllDesc">تطلب كل رسالة من المستلم تأكيد القراءة، وعندها تظهر ✓✓. قد يرفض المستلم. لرسالة واحدة — من قائمة ⋮ في المحرر</string>
 </resources>

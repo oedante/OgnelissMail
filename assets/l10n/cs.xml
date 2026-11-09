@@ -3989,4 +3989,7 @@
     <string name="dsnRead">Přečteno: {addr}</string>
     <string name="noticeDsnRead">Přečteno</string>
     <string name="dsnReadNote">příjemce zprávu otevřel a poslal potvrzení o přečtení</string>
+    <string name="readReceiptRequest">Požádat o potvrzení o přečtení</string>
+    <string name="readReceiptAll">Potvrzení o přečtení u všech zpráv</string>
+    <string name="readReceiptAllDesc">Každá zpráva žádá příjemce o potvrzení přečtení — pak se u ní zobrazí ✓✓. Příjemce může odmítnout. Pro jednu zprávu — v nabídce ⋮ editoru</string>
 </resources>

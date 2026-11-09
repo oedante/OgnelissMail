@@ -3167,6 +3167,9 @@ class EasEngine implements MailEngine {
   /// режется по 76), не-ASCII в заголовках — только encoded-words (RFC 2047).
   /// Раньше тело шло одной строкой base64 (письма с длинным текстом сервер
   /// мог отвергнуть), а получатели «Скрытая копия» не попадали в письмо вовсе.
+  /// Готовый MIME исходящего письма — для тестов заголовков.
+  String debugBuildMime(AccountConfig cfg, OutgoingMessage m) => _buildMime(cfg, m);
+
   String _buildMime(AccountConfig cfg, OutgoingMessage m) {
     const crlf = '\r\n';
     String enc(String v) {
@@ -3228,6 +3231,8 @@ class EasEngine implements MailEngine {
       h('In-Reply-To: ${ids.last}');
       h('References: ${ids.join(' ')}');
     }
+    // Отчёт о прочтении — на адрес отправителя (как From).
+    if (m.requestReadReceipt) h('Disposition-Notification-To: <${from?.email ?? cfg.email}>');
     switch (m.importance.toLowerCase()) {
       case 'high':
         h('Importance: High');

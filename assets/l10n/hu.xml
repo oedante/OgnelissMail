@@ -3968,4 +3968,7 @@
     <string name="dsnRead">Elolvasta: {addr}</string>
     <string name="noticeDsnRead">Elolvasva</string>
     <string name="dsnReadNote">a címzett megnyitotta az üzenetet, és olvasási visszaigazolást küldött</string>
+    <string name="readReceiptRequest">Olvasási visszaigazolás kérése</string>
+    <string name="readReceiptAll">Olvasási visszaigazolás minden üzenethez</string>
+    <string name="readReceiptAllDesc">Minden üzenet olvasási visszaigazolást kér a címzettől — ekkor ✓✓ látható. A címzett elutasíthatja. Egy üzenethez — a szerkesztő ⋮ menüjében</string>
 </resources>

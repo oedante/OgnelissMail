@@ -3902,6 +3902,8 @@ class MailEngineService {
     String sensitivity = 'Normal',
     String? clientId,
     EmailAddress? from,
+    /// «Запросить уведомление о прочтении» (2.2.0).
+    bool requestReadReceipt = false,
   }) async {
     // Ошибка отправки — исключение, а не false: вызывающие (очередь
     // отправки) по исключению оставляют письмо в «Исходящих» и повторяют.
@@ -3945,6 +3947,7 @@ class MailEngineService {
         clientId: clientId,
         mimeTransform: smime,
         from: from == null ? null : me.MailAddress(from.email, from.displayName),
+        requestReadReceipt: requestReadReceipt,
       ));
       return true;
     } catch (e) {

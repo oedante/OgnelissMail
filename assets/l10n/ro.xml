@@ -3989,4 +3989,7 @@
     <string name="dsnRead">Citit: {addr}</string>
     <string name="noticeDsnRead">Citit</string>
     <string name="dsnReadNote">destinatarul a deschis mesajul și a trimis o confirmare de citire</string>
+    <string name="readReceiptRequest">Solicită confirmare de citire</string>
+    <string name="readReceiptAll">Confirmare de citire pentru toate mesajele</string>
+    <string name="readReceiptAllDesc">Fiecare mesaj cere destinatarului confirmarea citirii — atunci apare ✓✓. Destinatarul poate refuza. Pentru un singur mesaj — în meniul ⋮ al editorului</string>
 </resources>

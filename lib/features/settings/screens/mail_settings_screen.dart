@@ -274,6 +274,15 @@ class MailSettingsScreen extends ConsumerWidget {
               value: f.confirmRecipients,
               onChanged: fn.setConfirmRecipients,
             ),
+            // Уведомление о прочтении для всех писем (2.2.0, решение
+            // владельца 09.11.2026: по умолчанию выключено).
+            SettingsSwitchItem(
+              icon: AppIcons.done_all,
+              title: l10n.tr('readReceiptAll'),
+              subtitle: l10n.tr('readReceiptAllDesc'),
+              value: f.readReceipts,
+              onChanged: fn.setReadReceipts,
+            ),
             // Фото во вложениях (1.7.2+109): спрашивать при отправке или
             // сразу как есть / 75% / 50% / 25%.
             SettingsItem(

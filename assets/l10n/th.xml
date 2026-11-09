@@ -3947,4 +3947,7 @@
     <string name="dsnRead">อ่านแล้ว: {addr}</string>
     <string name="noticeDsnRead">อ่านแล้ว</string>
     <string name="dsnReadNote">ผู้รับเปิดข้อความและส่งใบตอบรับการอ่านแล้ว</string>
+    <string name="readReceiptRequest">ขอใบตอบรับการอ่าน</string>
+    <string name="readReceiptAll">ใบตอบรับการอ่านสำหรับทุกข้อความ</string>
+    <string name="readReceiptAllDesc">ทุกข้อความจะขอให้ผู้รับยืนยันการอ่าน จากนั้นจะแสดง ✓✓ ผู้รับอาจปฏิเสธได้ สำหรับข้อความเดียว — ในเมนู ⋮ ของตัวแก้ไข</string>
 </resources>

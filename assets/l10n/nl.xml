@@ -3968,4 +3968,7 @@
     <string name="dsnRead">Gelezen: {addr}</string>
     <string name="noticeDsnRead">Gelezen</string>
     <string name="dsnReadNote">de ontvanger heeft het bericht geopend en een leesbevestiging gestuurd</string>
+    <string name="readReceiptRequest">Leesbevestiging vragen</string>
+    <string name="readReceiptAll">Leesbevestiging voor alle berichten</string>
+    <string name="readReceiptAllDesc">Elk bericht vraagt de ontvanger het lezen te bevestigen — dan staat er ✓✓. De ontvanger kan weigeren. Voor één bericht — in het ⋮-menu van de editor</string>
 </resources>

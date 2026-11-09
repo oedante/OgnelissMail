@@ -3968,4 +3968,7 @@
     <string name="dsnRead">Okundu: {addr}</string>
     <string name="noticeDsnRead">Okundu</string>
     <string name="dsnReadNote">alıcı iletiyi açtı ve okundu bilgisi gönderdi</string>
+    <string name="readReceiptRequest">Okundu bilgisi iste</string>
+    <string name="readReceiptAll">Tüm iletiler için okundu bilgisi</string>
+    <string name="readReceiptAllDesc">Her ileti alıcıdan okunduğunu onaylamasını ister — o zaman ✓✓ görünür. Alıcı reddedebilir. Tek bir ileti için — düzenleyicinin ⋮ menüsünde</string>
 </resources>

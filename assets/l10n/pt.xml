@@ -3968,4 +3968,7 @@
     <string name="dsnRead">Lido: {addr}</string>
     <string name="noticeDsnRead">Lido</string>
     <string name="dsnReadNote">o destinatário abriu a mensagem e enviou uma confirmação de leitura</string>
+    <string name="readReceiptRequest">Solicitar confirmação de leitura</string>
+    <string name="readReceiptAll">Confirmação de leitura para todas as mensagens</string>
+    <string name="readReceiptAllDesc">Cada mensagem pede ao destinatário que confirme a leitura — então mostra ✓✓. O destinatário pode recusar. Para uma única mensagem — no menu ⋮ do editor</string>
 </resources>

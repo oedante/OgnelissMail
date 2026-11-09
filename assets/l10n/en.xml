@@ -3968,4 +3968,7 @@
     <string name="dsnRead">Read: {addr}</string>
     <string name="noticeDsnRead">Read</string>
     <string name="dsnReadNote">the recipient opened the message and sent a read receipt</string>
+    <string name="readReceiptRequest">Request a read receipt</string>
+    <string name="readReceiptAll">Read receipt for all messages</string>
+    <string name="readReceiptAllDesc">Each message asks the recipient to confirm reading — then the message shows ✓✓. The recipient may decline. For a single message — in the editor ⋮ menu</string>
 </resources>

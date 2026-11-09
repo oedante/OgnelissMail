@@ -3947,4 +3947,7 @@
     <string name="dsnRead">Dibaca: {addr}</string>
     <string name="noticeDsnRead">Dibaca</string>
     <string name="dsnReadNote">penerima membuka pesan dan mengirim tanda terima baca</string>
+    <string name="readReceiptRequest">Minta tanda terima baca</string>
+    <string name="readReceiptAll">Tanda terima baca untuk semua pesan</string>
+    <string name="readReceiptAllDesc">Setiap pesan meminta penerima mengonfirmasi telah membaca — lalu tampil ✓✓. Penerima dapat menolak. Untuk satu pesan — di menu ⋮ editor</string>
 </resources>

@@ -32,6 +32,15 @@ class FeatureFlags {
   /// этой доли ширины и высоты без вопроса.
   final int photoSize;
 
+  /// «Запрашивать уведомление о прочтении» для всех писем (2.2.0, решение
+  /// владельца 09.11.2026: по умолчанию выключено; для одного письма — в
+  /// меню редактора). По отчётам — ✓✓ у своих писем.
+  final bool readReceipts;
+
+  /// Ключ [readReceipts] — его читает и быстрый ответ (QuickReplyService,
+  /// в том числе из уведомления в фоне).
+  static const readReceiptsKey = 'ff_read_receipts';
+
   const FeatureFlags({
     this.showTasksTab = true,
     this.showNotes = true,
@@ -40,6 +49,7 @@ class FeatureFlags {
     this.undoSendSeconds = 5,
     this.confirmRecipients = true,
     this.photoSize = 0,
+    this.readReceipts = false,
   });
 
   /// Допустимые значения [photoSize].
@@ -84,6 +94,7 @@ class FeatureFlagsNotifier extends StateNotifier<FeatureFlags> {
       undoSendSeconds: p.getInt(_FK.undoSend) ?? d.undoSendSeconds,
       confirmRecipients: p.getBool(_FK.confirmRcpt) ?? d.confirmRecipients,
       photoSize: FeatureFlags.photoSizes.contains(p.getInt(_FK.photoSize)) ? p.getInt(_FK.photoSize)! : d.photoSize,
+      readReceipts: p.getBool(FeatureFlags.readReceiptsKey) ?? d.readReceipts,
     );
   }
 
@@ -114,6 +125,11 @@ class FeatureFlagsNotifier extends StateNotifier<FeatureFlags> {
 
   Future<void> setConfirmRecipients(bool v) async {
     await _p.setBool(_FK.confirmRcpt, v);
+    state = _load(_p);
+  }
+
+  Future<void> setReadReceipts(bool v) async {
+    await _p.setBool(FeatureFlags.readReceiptsKey, v);
     state = _load(_p);
   }
 

@@ -4010,4 +4010,7 @@
     <string name="dsnRead">Przeczytano: {addr}</string>
     <string name="noticeDsnRead">Przeczytano</string>
     <string name="dsnReadNote">odbiorca otworzył wiadomość i wysłał potwierdzenie przeczytania</string>
+    <string name="readReceiptRequest">Poproś o potwierdzenie przeczytania</string>
+    <string name="readReceiptAll">Potwierdzenie przeczytania dla wszystkich wiadomości</string>
+    <string name="readReceiptAllDesc">Każda wiadomość prosi odbiorcę o potwierdzenie przeczytania — wtedy widać ✓✓. Odbiorca może odmówić. Dla jednej wiadomości — w menu ⋮ edytora</string>
 </resources>

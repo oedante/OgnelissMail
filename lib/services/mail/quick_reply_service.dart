@@ -27,6 +27,7 @@ import '../../l10n/strings_store.dart' show StringsStore;
 import 'greeting_history.dart';
 import 'greeting_mode.dart';
 import 'own_addresses.dart';
+import '../../features/settings/providers/feature_flags_provider.dart' show FeatureFlags;
 
 class QuickReplyService {
   QuickReplyService(this._ref);
@@ -78,6 +79,8 @@ class QuickReplyService {
           bodyHtml: html,
           inReplyTo: messageId,
           attachments: attachments,
+          // Уведомление о прочтении — как задано для всех писем (2.2.0).
+          requestReadReceipt: prefs.getBool(FeatureFlags.readReceiptsKey) ?? false,
         );
     AppLogger.info('${sent ? 'Быстрый ответ отправлен' : 'Быстрый ответ — в очереди (нет сети)'}'
         '${attachments.isEmpty ? '' : ', вложений: ${attachments.length}'}');

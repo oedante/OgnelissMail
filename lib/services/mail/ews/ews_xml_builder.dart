@@ -497,6 +497,8 @@ $mailboxes
     String sensitivity = 'Normal',
     /// «Отправить как / от имени» (1.6.27): From без смены папки копии.
     String? fromAddress,
+    /// «Запросить уведомление о прочтении» (2.2.0).
+    bool readReceipt = false,
   }) {
     // По схеме EWS (EmailAddressType) Name идёт ПЕРЕД EmailAddress; в
     // обратном порядке сервер отвергал письмо (ErrorSchemaValidation), как
@@ -525,6 +527,7 @@ $mailboxes
       <t:ToRecipients>$toXml</t:ToRecipients>
       $ccXml
       $bccXml
+      ${readReceipt ? '<t:IsReadReceiptRequested>true</t:IsReadReceiptRequested>' : ''}
       ${_fromXml(sharedMailbox ?? fromAddress)}
     </t:Message>
   </m:Items>
@@ -731,6 +734,8 @@ $mailboxes
     String sensitivity = 'Normal',
     String? sharedMailbox,
     String? fromAddress,
+    /// «Запросить уведомление о прочтении» (2.2.0).
+    bool readReceipt = false,
   }) {
     final toXml = to.map((a) => '<t:Mailbox><t:EmailAddress>${_escapeXml(a.email)}</t:EmailAddress></t:Mailbox>').join();
     final ccXml = cc.isEmpty ? '' : '<t:CcRecipients>${cc.map((a) => '<t:Mailbox><t:EmailAddress>${_escapeXml(a.email)}</t:EmailAddress></t:Mailbox>').join()}</t:CcRecipients>';
@@ -749,6 +754,7 @@ $mailboxes
       <t:ToRecipients>$toXml</t:ToRecipients>
       $ccXml
       $bccXml
+      ${readReceipt ? '<t:IsReadReceiptRequested>true</t:IsReadReceiptRequested>' : ''}
       ${_fromXml(sharedMailbox ?? fromAddress)}
     </t:Message>
   </m:Items>

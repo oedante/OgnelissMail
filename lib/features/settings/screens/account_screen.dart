@@ -278,6 +278,18 @@ class AccountScreen extends ConsumerWidget {
           ]),
           const SizedBox(height: Space.l),
 
+          // Ящик организации закреплён (MDM account_locked, 2.2.0) — не
+          // удалить: вместо кнопки — пояснение.
+          if (ManagedPolicy.current.lockedAccount(account.email))
+            SettingsGroup(children: [
+              SettingsItem(
+                icon: AppIcons.lock,
+                title: l10n.tr('mdmAccountLocked'),
+                subtitle: l10n.tr('mdmAccountLockedDesc'),
+                onTap: null,
+              ),
+            ])
+          else
           SettingsGroup(children: [
             SettingsItem(
               icon: AppIcons.delete,
@@ -326,7 +338,10 @@ class AccountScreen extends ConsumerWidget {
               icon: AppIcons.dns,
               title: l10n.tr('server'),
               subtitle: _serverText(account, l10n),
-              onTap: account.usesOAuthTokens ? null : () => _editServer(context, ref, account),
+              // Сервер и вход ящика организации меняет только она (MDM).
+              onTap: account.usesOAuthTokens || ManagedPolicy.current.lockedAccount(account.email)
+                  ? null
+                  : () => _editServer(context, ref, account),
             ),
             SettingsItem(
               icon: AppIcons.key,
@@ -353,7 +368,9 @@ class AccountScreen extends ConsumerWidget {
             // выключить): пункт о российских сертификатах пугал пользователей
             // из других стран (1.7.3, решение владельца 25.10.2026).
             if (TrustedCaStore.instance case final store?
-                when l10n.isRussian || store.bundledEnabled || store.mincifryForAccount(account.id))
+                // Организация запретила доверять самому (MDM) — пункта нет.
+                when store.userTrustAllowed &&
+                    (l10n.isRussian || store.bundledEnabled || store.mincifryForAccount(account.id)))
               StatefulBuilder(
                 builder: (ctx, setLocal) => SwitchListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: Space.l),

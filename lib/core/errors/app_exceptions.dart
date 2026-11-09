@@ -105,6 +105,18 @@ class AccountNotAllowedException extends AuthException {
         );
 }
 
+/// Сервер почты без шифрования, а организация требует TLS (MDM
+/// require_tls, 2.2.0).
+class TlsRequiredException extends AppException {
+  TlsRequiredException({required String host})
+      : super(
+          userMessage: 'Организация требует шифрованное соединение: $host — без SSL/STARTTLS',
+          messageKey: 'mdmTlsRequired',
+          messageArgs: {'host': host},
+          code: 'TLS_REQUIRED',
+        );
+}
+
 class AccountAlreadyExistsException extends AuthException {
   final String? email;
   const AccountAlreadyExistsException({this.email})

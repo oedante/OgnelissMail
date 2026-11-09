@@ -3982,4 +3982,14 @@
     <string name="mdmRuleNoBiometrics">Yalnızca uygulama kodu, parmak izi veya yüz yok</string>
     <string name="mdmRuleExternal">Harici hizmet yok: hava durumu, logolar, sunucu sinyalleri</string>
     <string name="mdmSyncLimit">Kuruluşunuz dönemi sınırladı: {period}</string>
+    <string name="mdmTlsRequired">Kuruluşunuz şifreli bağlantı istiyor, ancak {host} SSL/STARTTLS kullanmıyor. Posta kutusu ayarlarında SSL veya STARTTLS\'yi açın</string>
+    <string name="mdmAccountLocked">Posta kutusu kuruluşunuz tarafından yönetiliyor</string>
+    <string name="mdmAccountLockedDesc">Yalnızca BT bölümü kaldırabilir veya sunucuyu ya da oturum açmayı değiştirebilir</string>
+    <string name="mdmRuleAccountLocked">Kuruluşun posta kutusu kilitli</string>
+    <string name="mdmRuleTransport">Exchange yalnızca {t} ile</string>
+    <string name="mdmRuleTls">Yalnızca şifreli bağlantılar</string>
+    <string name="mdmRuleOrgCa">Kuruluş sertifikalarına güveniliyor</string>
+    <string name="mdmRuleNoUserCerts">Sertifikalara kendiniz güvenemezsiniz</string>
+    <string name="mdmRuleDeviceContacts">Kişiler cihazın Kişiler uygulamasına kopyalanmaz</string>
+    <string name="mdmRuleDeviceCalendar">Etkinlikler cihazın Takvim\'ine kopyalanmaz</string>
 </resources>

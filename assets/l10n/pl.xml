@@ -4024,4 +4024,14 @@
     <string name="mdmRuleNoBiometrics">Tylko kod aplikacji, bez odcisku palca i twarzy</string>
     <string name="mdmRuleExternal">Bez usług zewnętrznych: pogody, logo, sygnałów serwera</string>
     <string name="mdmSyncLimit">Organizacja ograniczyła okres: {period}</string>
+    <string name="mdmTlsRequired">Organizacja wymaga szyfrowanego połączenia, a serwer {host} nie ma SSL/STARTTLS. Włącz SSL lub STARTTLS w ustawieniach skrzynki</string>
+    <string name="mdmAccountLocked">Skrzynką zarządza organizacja</string>
+    <string name="mdmAccountLockedDesc">Usunąć ją lub zmienić serwer czy logowanie może tylko dział IT</string>
+    <string name="mdmRuleAccountLocked">Skrzynka organizacji jest zablokowana</string>
+    <string name="mdmRuleTransport">Exchange tylko przez {t}</string>
+    <string name="mdmRuleTls">Tylko szyfrowane połączenia</string>
+    <string name="mdmRuleOrgCa">Certyfikaty organizacji są zaufane</string>
+    <string name="mdmRuleNoUserCerts">Nie możesz samodzielnie ufać certyfikatom</string>
+    <string name="mdmRuleDeviceContacts">Kontakty nie są kopiowane do Kontaktów urządzenia</string>
+    <string name="mdmRuleDeviceCalendar">Wydarzenia nie są kopiowane do Kalendarza urządzenia</string>
 </resources>

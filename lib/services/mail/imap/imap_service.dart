@@ -9,7 +9,9 @@
 
 import 'dart:isolate';
 import '../../../core/utils/text_safe.dart';
-import '../../../core/errors/app_exceptions.dart' show looksLikeAuthError, PushAuthFailure, OAuthRefreshFailure;
+import '../../../core/errors/app_exceptions.dart'
+    show looksLikeAuthError, PushAuthFailure, OAuthRefreshFailure, TlsRequiredException;
+import '../../security/managed_config.dart' show ManagedPolicy;
 import 'dart:async';
 import 'dart:math' show Random;
 import 'dart:io';
@@ -324,6 +326,9 @@ class ImapService {
     // открытым текстом зависало до таймаута.
     final enc = account.imapEncryption ??
         (port == 143 ? EncryptionType.starttls : EncryptionType.ssl);
+    // Организация требует шифрование (MDM require_tls, 2.2.0): открытым
+    // текстом не подключаемся.
+    if (enc == EncryptionType.none && ManagedPolicy.current.requireTls) throw TlsRequiredException(host: host);
     final useSSL = enc == EncryptionType.ssl;
     AppLogger.info('IMAP → подключение $host:$port (SSL=$useSSL)');
 
@@ -471,6 +476,9 @@ class ImapService {
 
   Future<SmtpClient> _openSmtp(AccountModel account, {bool tokenRetried = false}) async {
     final smtpServer = _smtpHost(account);
+    if (account.smtpEncryption == EncryptionType.none && ManagedPolicy.current.requireTls) {
+      throw TlsRequiredException(host: smtpServer);
+    }
     // Терпимый к голому «334» Яндекса (см. TolerantSmtpClient).
     final client = TolerantSmtpClient(
       account.email.split('@').last,

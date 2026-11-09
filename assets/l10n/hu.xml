@@ -3982,4 +3982,14 @@
     <string name="mdmRuleNoBiometrics">Csak alkalmazáskód, ujjlenyomat és arc nélkül</string>
     <string name="mdmRuleExternal">Külső szolgáltatások nélkül: időjárás, logók, szerverjelek</string>
     <string name="mdmSyncLimit">A szervezet korlátozta az időszakot: {period}</string>
+    <string name="mdmTlsRequired">A szervezet titkosított kapcsolatot követel, de a(z) {host} SSL/STARTTLS nélküli. Kapcsolja be az SSL-t vagy a STARTTLS-t a postafiók beállításaiban</string>
+    <string name="mdmAccountLocked">A postafiókot a szervezet kezeli</string>
+    <string name="mdmAccountLockedDesc">Csak az IT-részleg távolíthatja el, vagy módosíthatja a szervert és a bejelentkezést</string>
+    <string name="mdmRuleAccountLocked">A szervezet postafiókja rögzítve</string>
+    <string name="mdmRuleTransport">Exchange csak {t} útján</string>
+    <string name="mdmRuleTls">Csak titkosított kapcsolatok</string>
+    <string name="mdmRuleOrgCa">A szervezet tanúsítványai megbízhatók</string>
+    <string name="mdmRuleNoUserCerts">Tanúsítványokat nem fogadhat el saját maga</string>
+    <string name="mdmRuleDeviceContacts">A névjegyek nem kerülnek az eszköz Névjegyeibe</string>
+    <string name="mdmRuleDeviceCalendar">Az események nem kerülnek az eszköz Naptárába</string>
 </resources>

@@ -35,6 +35,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../logging/app_logger.dart';
 import 'ca_chain_verifier.dart';
+import '../../services/security/managed_config.dart' show ManagedPolicy;
 
 /// Сведения о сертификате ЦС для экрана настроек.
 class CaCertInfo {
@@ -88,6 +89,39 @@ class TrustedCaStore {
   List<CaCertInfo> _device = const [];
   List<CaCertInfo> _imported = const [];
 
+  // ── Политика организации (MDM, 2.2.0) ──
+  /// ЦС организации (trusted_ca_pem) — доверяются всегда.
+  List<CaCertInfo> _managed = const [];
+
+  /// Пользователь может сам доверять ЦС (allow_user_cert_trust): нет — ни
+  /// импортированных, ни установленных на устройство.
+  bool _userTrust = true;
+
+  List<CaCertInfo> get managed => _managed;
+  bool get userTrustAllowed => _userTrust;
+
+  /// Импортированные — если пользователю можно доверять сам.
+  List<CaCertInfo> get _importedActive => _userTrust ? _imported : const [];
+
+  /// Применить политику организации: ЦС организации и право доверять
+  /// самому (отозванное право действует для новых подключений после
+  /// перезапуска — из SecurityContext сертификат не удалить).
+  void applyPolicy(ManagedPolicy p) {
+    _userTrust = p.allowUserCertTrust;
+    _managed = parsePemList(p.trustedCaPem);
+    if (_managed.isNotEmpty) AppLogger.info('ЦС организации (MDM): ${_managed.length}');
+    _applyToDart();
+  }
+
+  /// Сертификаты из текста PEM (несколько блоков) или пусто.
+  static List<CaCertInfo> parsePemList(String? text) {
+    if (text == null || text.trim().isEmpty) return const [];
+    return [
+      for (final m in RegExp(r'-----BEGIN CERTIFICATE-----[\s\S]+?-----END CERTIFICATE-----').allMatches(text))
+        if (parse(utf8.encode(m.group(0)!)) case final c?) c,
+    ];
+  }
+
   /// Отпечатки, уже добавленные в SecurityContext.defaultContext (повторное
   /// добавление BoringSSL отвергает ошибкой).
   static final Set<String> _inDefaultContext = {};
@@ -96,8 +130,12 @@ class TrustedCaStore {
   /// По умолчанию выключен: тогда ЦС действует только для ящиков, где он
   /// включён в настройках ящика (см. [trustsMincifryFor]), и не становится
   /// доверенным для Google, Microsoft и остальных.
-  bool get bundledEnabled => _prefs.getBool(_kBundled) ?? false;
-  bool get deviceEnabled => _prefs.getBool(_kDevice) ?? true;
+  ///
+  /// Организация запретила доверять самому (MDM allow_user_cert_trust) —
+  /// ЦС Минцифры не действует: включает его пользователь. Нужен — его
+  /// сертификаты задаёт организация в trusted_ca_pem.
+  bool get bundledEnabled => _userTrust && (_prefs.getBool(_kBundled) ?? false);
+  bool get deviceEnabled => _userTrust && (_prefs.getBool(_kDevice) ?? true);
 
   List<CaCertInfo> get bundled => _bundled;
   List<CaCertInfo> get device => _device;
@@ -108,14 +146,16 @@ class TrustedCaStore {
   /// доверяет сам).
   List<Uint8List> get extraForNative => [
         if (bundledEnabled) ..._bundled.map((c) => c.der),
-        ..._imported.map((c) => c.der),
+        ..._importedActive.map((c) => c.der),
+        ..._managed.map((c) => c.der),
       ];
 
   /// То же для конкретного хоста: ЦС Минцифры — если он включён для ящика,
   /// которому принадлежит хост.
   List<Uint8List> extraForNativeHost(String host) => [
         if (trustsMincifryFor(host)) ..._bundled.map((c) => c.der),
-        ..._imported.map((c) => c.der),
+        ..._importedActive.map((c) => c.der),
+        ..._managed.map((c) => c.der),
       ];
 
   // ───────────────────── ЦС Минцифры по ящикам ─────────────────────
@@ -204,6 +244,7 @@ class TrustedCaStore {
 
   /// Действует ли ЦС Минцифры для [host].
   bool trustsMincifryFor(String host) {
+    if (!_userTrust) return false;
     if (bundledEnabled || setupTrust) return true;
     final h = host.toLowerCase();
     if (_mincifryHosts.contains(h)) return true;
@@ -231,6 +272,11 @@ class TrustedCaStore {
   static Future<TrustedCaStore> init(SharedPreferences prefs) async {
     final s = TrustedCaStore._(prefs);
     _instance = s;
+    // Политика организации — из её копии (до ответа MDM; ответ применит
+    // ManagedPolicyNotifier через applyPolicy).
+    final policy = ManagedPolicy.fromPrefs(prefs);
+    s._userTrust = policy.allowUserCertTrust;
+    s._managed = parsePemList(policy.trustedCaPem);
     await s._loadBundled();
     s._imported = [
       for (final pem in prefs.getStringList(_kImported) ?? const <String>[])
@@ -281,7 +327,8 @@ class TrustedCaStore {
     final all = <CaCertInfo>[
       if (bundledEnabled) ..._bundled,
       if (deviceEnabled) ..._device,
-      ..._imported,
+      ..._importedActive,
+      ..._managed,
     ];
     for (final c in all) {
       if (!_inDefaultContext.add(c.fingerprint)) continue;
@@ -320,6 +367,8 @@ class TrustedCaStore {
   /// Возвращает добавленные сертификаты; пусто — сертификатов нет или все
   /// уже были импортированы.
   Future<List<CaCertInfo>> importBytes(Uint8List bytes) async {
+    // Организация запретила доверять сертификатам самому (MDM).
+    if (!_userTrust) return const [];
     final found = <CaCertInfo>[];
     final text = _tryLatin1(bytes);
     final blocks = RegExp(r'-----BEGIN CERTIFICATE-----[\s\S]+?-----END CERTIFICATE-----')

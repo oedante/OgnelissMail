@@ -3961,4 +3961,14 @@
     <string name="mdmRuleNoBiometrics">Hanya kode aplikasi, tanpa sidik jari atau wajah</string>
     <string name="mdmRuleExternal">Tanpa layanan eksternal: cuaca, logo, sinyal server</string>
     <string name="mdmSyncLimit">Organisasi Anda membatasi periode: {period}</string>
+    <string name="mdmTlsRequired">Organisasi Anda mewajibkan koneksi terenkripsi, tetapi {host} tanpa SSL/STARTTLS. Aktifkan SSL atau STARTTLS di pengaturan kotak surat</string>
+    <string name="mdmAccountLocked">Kotak surat dikelola organisasi Anda</string>
+    <string name="mdmAccountLockedDesc">Hanya bagian TI yang dapat menghapusnya atau mengubah server atau login</string>
+    <string name="mdmRuleAccountLocked">Kotak surat organisasi dikunci</string>
+    <string name="mdmRuleTransport">Exchange hanya melalui {t}</string>
+    <string name="mdmRuleTls">Hanya koneksi terenkripsi</string>
+    <string name="mdmRuleOrgCa">Sertifikat organisasi tepercaya</string>
+    <string name="mdmRuleNoUserCerts">Anda tidak dapat memercayai sertifikat sendiri</string>
+    <string name="mdmRuleDeviceContacts">Kontak tidak disalin ke Kontak perangkat</string>
+    <string name="mdmRuleDeviceCalendar">Acara tidak disalin ke Kalender perangkat</string>
 </resources>

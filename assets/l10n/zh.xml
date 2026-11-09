@@ -3961,4 +3961,14 @@
     <string name="mdmRuleNoBiometrics">仅限应用密码，不可用指纹或面容</string>
     <string name="mdmRuleExternal">不使用外部服务：天气、标志、服务器信号</string>
     <string name="mdmSyncLimit">您的组织限制了期限：{period}</string>
+    <string name="mdmTlsRequired">您的组织要求加密连接，但 {host} 未使用 SSL/STARTTLS。请在邮箱设置中开启 SSL 或 STARTTLS</string>
+    <string name="mdmAccountLocked">邮箱由您的组织管理</string>
+    <string name="mdmAccountLockedDesc">只有 IT 部门可以删除它或更改服务器和登录</string>
+    <string name="mdmRuleAccountLocked">组织邮箱已锁定</string>
+    <string name="mdmRuleTransport">Exchange 仅通过 {t}</string>
+    <string name="mdmRuleTls">仅限加密连接</string>
+    <string name="mdmRuleOrgCa">信任组织证书</string>
+    <string name="mdmRuleNoUserCerts">您不能自行信任证书</string>
+    <string name="mdmRuleDeviceContacts">联系人不会复制到设备的通讯录</string>
+    <string name="mdmRuleDeviceCalendar">日程不会复制到设备的日历</string>
 </resources>

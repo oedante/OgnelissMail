@@ -4,6 +4,7 @@
 // Экспорт контактов из БД → устройство.
 // Двунаправленная синхронизация по запросу пользователя.
 
+import '../security/managed_config.dart' show ManagedPolicy, ManagedRule;
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -60,6 +61,8 @@ class DeviceContactsSync {
 
   /// Импортировать контакты с устройства в БД
   Future<int> importFromDevice() async {
+    // Организация запретила обмен с системными «Контактами» (MDM, 2.2.0).
+    if (ManagedPolicy.deny(ManagedRule.deviceContacts)) return 0;
     if (!await hasPermission()) {
       final granted = await requestPermission();
       if (!granted) return 0;
@@ -113,6 +116,8 @@ class DeviceContactsSync {
 
   /// Экспортировать контакты из БД на устройство
   Future<int> exportToDevice(String accountId) async {
+    // Организация запретила обмен с системными «Контактами» (MDM, 2.2.0).
+    if (ManagedPolicy.deny(ManagedRule.deviceContacts)) return 0;
     if (!await hasPermission()) {
       final granted = await requestPermission();
       if (!granted) return 0;

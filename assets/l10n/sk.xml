@@ -4003,4 +4003,14 @@
     <string name="mdmRuleNoBiometrics">Iba kód aplikácie, bez odtlačku a tváre</string>
     <string name="mdmRuleExternal">Bez externých služieb: počasie, logá, signály servera</string>
     <string name="mdmSyncLimit">Organizácia obmedzila obdobie: {period}</string>
+    <string name="mdmTlsRequired">Organizácia vyžaduje šifrované spojenie, ale {host} je bez SSL/STARTTLS. Zapnite SSL alebo STARTTLS v nastaveniach schránky</string>
+    <string name="mdmAccountLocked">Schránku spravuje organizácia</string>
+    <string name="mdmAccountLockedDesc">Odstrániť ju alebo zmeniť server či prihlásenie môže iba IT oddelenie</string>
+    <string name="mdmRuleAccountLocked">Schránka organizácie je uzamknutá</string>
+    <string name="mdmRuleTransport">Exchange iba cez {t}</string>
+    <string name="mdmRuleTls">Iba šifrované spojenia</string>
+    <string name="mdmRuleOrgCa">Certifikáty organizácie sú dôveryhodné</string>
+    <string name="mdmRuleNoUserCerts">Certifikátom nemôžete dôverovať sami</string>
+    <string name="mdmRuleDeviceContacts">Kontakty sa nekopírujú do Kontaktov zariadenia</string>
+    <string name="mdmRuleDeviceCalendar">Udalosti sa nekopírujú do Kalendára zariadenia</string>
 </resources>

@@ -6,6 +6,7 @@
 // - Поддержка Exchange, OAuth2, IMAP, биометрия
 // - Сохранение аккаунтов в БД (не требует повторного ввода)
 
+import '../../../services/security/managed_config.dart' show ManagedPolicy;
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -259,7 +260,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final iosCompat = !kIsWeb &&
           defaultTargetPlatform == TargetPlatform.iOS &&
           DeviceUserAgent.compatFor(accountId);
-      if (!iosCompat) {
+      // Организация задала ActiveSync (MDM account_transport) — EWS не пробуем.
+      if (!iosCompat && ManagedPolicy.current.accountTransport != 'eas') {
       try {
         final ews = _ref.read(ewsServiceProvider);
         for (final host in hostsToTry.where((h) => h.trim().isNotEmpty)) {

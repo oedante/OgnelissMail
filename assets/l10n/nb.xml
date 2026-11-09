@@ -3982,4 +3982,14 @@
     <string name="mdmRuleNoBiometrics">Bare appkode, ikke fingeravtrykk eller ansikt</string>
     <string name="mdmRuleExternal">Ingen eksterne tjenester: vær, logoer, serversignaler</string>
     <string name="mdmSyncLimit">Organisasjonen begrenser perioden: {period}</string>
+    <string name="mdmTlsRequired">Organisasjonen krever kryptert tilkobling, men {host} har ikke SSL/STARTTLS. Slå på SSL eller STARTTLS i innstillingene for postkassen</string>
+    <string name="mdmAccountLocked">Postkassen styres av organisasjonen</string>
+    <string name="mdmAccountLockedDesc">Bare IT-avdelingen kan fjerne den eller endre server eller pålogging</string>
+    <string name="mdmRuleAccountLocked">Organisasjonens postkasse er låst</string>
+    <string name="mdmRuleTransport">Exchange bare via {t}</string>
+    <string name="mdmRuleTls">Bare krypterte tilkoblinger</string>
+    <string name="mdmRuleOrgCa">Organisasjonens sertifikater er klarert</string>
+    <string name="mdmRuleNoUserCerts">Du kan ikke selv klarere sertifikater</string>
+    <string name="mdmRuleDeviceContacts">Kontakter kopieres ikke til enhetens Kontakter</string>
+    <string name="mdmRuleDeviceCalendar">Hendelser kopieres ikke til enhetens Kalender</string>
 </resources>

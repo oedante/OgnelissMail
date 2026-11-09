@@ -47,6 +47,9 @@ class NativeAndroidHttpClient extends http.BaseClient {
         'strictSha256': trust?.strict ?? const <String>[],
         'strict': trust?.strict != null,
         'extraCas': TrustedCaStore.instance?.extraForNativeHost(request.url.host) ?? const <Uint8List>[],
+        // Организация запретила доверять сертификатам самому (MDM): без
+        // установленных на устройство пользователем.
+        'systemOnly': !(TrustedCaStore.instance?.userTrustAllowed ?? true),
       });
     } on MissingPluginException {
       // Канала нет (тесты, старая сборка без плагина). На dart:io НЕ

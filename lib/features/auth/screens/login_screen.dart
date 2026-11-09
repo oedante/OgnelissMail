@@ -822,7 +822,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         // интерфейса (1.7.3, решение владельца 25.10.2026) и только для
         // своих серверов (Exchange, IMAP).
         if (TrustedCaStore.instance case final store?
-            when !reauth && l10n.isRussian && (kind == MailKind.exchange || kind == MailKind.imap)) ...[
+            when !reauth &&
+                store.userTrustAllowed &&
+                l10n.isRussian &&
+                (kind == MailKind.exchange || kind == MailKind.imap)) ...[
           const SizedBox(height: Space.s),
           StatefulBuilder(
             builder: (context, setLocal) => SwitchListTile(

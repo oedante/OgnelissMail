@@ -144,4 +144,47 @@
         android:title="@string/mdm_block_external_services_title"
         android:description="@string/mdm_block_external_services_desc"
         android:defaultValue="false" />
+    <restriction
+        android:key="account_locked"
+        android:restrictionType="bool"
+        android:title="@string/mdm_account_locked_title"
+        android:description="@string/mdm_account_locked_desc"
+        android:defaultValue="false" />
+    <restriction
+        android:key="account_transport"
+        android:restrictionType="choice"
+        android:title="@string/mdm_account_transport_title"
+        android:description="@string/mdm_account_transport_desc"
+        android:entries="@array/mdm_transport_entries"
+        android:entryValues="@array/mdm_transport_values"
+        android:defaultValue="auto" />
+    <restriction
+        android:key="require_tls"
+        android:restrictionType="bool"
+        android:title="@string/mdm_require_tls_title"
+        android:description="@string/mdm_require_tls_desc"
+        android:defaultValue="false" />
+    <restriction
+        android:key="trusted_ca_pem"
+        android:restrictionType="string"
+        android:title="@string/mdm_trusted_ca_pem_title"
+        android:description="@string/mdm_trusted_ca_pem_desc" />
+    <restriction
+        android:key="allow_user_cert_trust"
+        android:restrictionType="bool"
+        android:title="@string/mdm_allow_user_cert_trust_title"
+        android:description="@string/mdm_allow_user_cert_trust_desc"
+        android:defaultValue="true" />
+    <restriction
+        android:key="block_device_contacts"
+        android:restrictionType="bool"
+        android:title="@string/mdm_block_device_contacts_title"
+        android:description="@string/mdm_block_device_contacts_desc"
+        android:defaultValue="false" />
+    <restriction
+        android:key="block_device_calendar"
+        android:restrictionType="bool"
+        android:title="@string/mdm_block_device_calendar_title"
+        android:description="@string/mdm_block_device_calendar_desc"
+        android:defaultValue="false" />
 </restrictions>

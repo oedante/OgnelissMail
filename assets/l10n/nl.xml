@@ -3982,4 +3982,14 @@
     <string name="mdmRuleNoBiometrics">Alleen app-code, geen vingerafdruk of gezicht</string>
     <string name="mdmRuleExternal">Geen externe diensten: weer, logo\'s, serversignalen</string>
     <string name="mdmSyncLimit">Uw organisatie beperkt de periode: {period}</string>
+    <string name="mdmTlsRequired">Uw organisatie vereist een versleutelde verbinding, maar {host} heeft geen SSL/STARTTLS. Zet SSL of STARTTLS aan in de instellingen van de mailbox</string>
+    <string name="mdmAccountLocked">Mailbox wordt beheerd door uw organisatie</string>
+    <string name="mdmAccountLockedDesc">Alleen uw IT-afdeling kan deze verwijderen of server of aanmelding wijzigen</string>
+    <string name="mdmRuleAccountLocked">De mailbox van de organisatie is vergrendeld</string>
+    <string name="mdmRuleTransport">Exchange alleen via {t}</string>
+    <string name="mdmRuleTls">Alleen versleutelde verbindingen</string>
+    <string name="mdmRuleOrgCa">Certificaten van de organisatie worden vertrouwd</string>
+    <string name="mdmRuleNoUserCerts">U kunt zelf geen certificaten vertrouwen</string>
+    <string name="mdmRuleDeviceContacts">Contacten worden niet naar Contacten op het apparaat gekopieerd</string>
+    <string name="mdmRuleDeviceCalendar">Afspraken worden niet naar de Agenda op het apparaat gekopieerd</string>
 </resources>

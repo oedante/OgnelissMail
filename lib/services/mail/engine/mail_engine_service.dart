@@ -3,6 +3,7 @@
 // Заменяет разрозненные транспорты (activesync/ews/imap) единым контрактом.
 // UI и БД не трогаем: отдаём те же FolderModel / EmailModel.
 
+import '../../security/managed_config.dart' show ManagedPolicy;
 import '../../../core/utils/category_colors.dart';
 import 'package:flutter/widgets.dart' show WidgetsBinding, AppLifecycleState;
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform, visibleForTesting;
@@ -453,6 +454,17 @@ class MailEngineService {
         account.type == AccountType.outlook ||
         account.type == AccountType.yahoo) {
       forced = me.MailTransportKind.imapSmtp;
+    }
+
+    // Способ подключения к Exchange задан организацией (MDM
+    // account_transport, 2.2.0): только он, без перебора.
+    final mdmTransport = ManagedPolicy.current.accountTransport;
+    final exchangeLike = account.type == AccountType.exchange ||
+        account.type == AccountType.activesync ||
+        account.usesEas ||
+        account.usesEws;
+    if (mdmTransport != null && exchangeLike && !account.isExchangeOnlineOAuth) {
+      forced = mdmTransport == 'eas' ? me.MailTransportKind.eas : me.MailTransportKind.ews;
     }
 
     return me.AccountConfig(

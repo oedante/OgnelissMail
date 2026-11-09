@@ -3982,4 +3982,14 @@
     <string name="mdmRuleNoBiometrics">Endast appkod, inte fingeravtryck eller ansikte</string>
     <string name="mdmRuleExternal">Inga externa tjänster: väder, logotyper, serversignaler</string>
     <string name="mdmSyncLimit">Din organisation begränsar perioden: {period}</string>
+    <string name="mdmTlsRequired">Din organisation kräver en krypterad anslutning, men {host} saknar SSL/STARTTLS. Slå på SSL eller STARTTLS i brevlådans inställningar</string>
+    <string name="mdmAccountLocked">Brevlådan hanteras av din organisation</string>
+    <string name="mdmAccountLockedDesc">Bara IT-avdelningen kan ta bort den eller ändra server eller inloggning</string>
+    <string name="mdmRuleAccountLocked">Organisationens brevlåda är låst</string>
+    <string name="mdmRuleTransport">Exchange endast via {t}</string>
+    <string name="mdmRuleTls">Endast krypterade anslutningar</string>
+    <string name="mdmRuleOrgCa">Organisationens certifikat är betrodda</string>
+    <string name="mdmRuleNoUserCerts">Du kan inte själv lita på certifikat</string>
+    <string name="mdmRuleDeviceContacts">Kontakter kopieras inte till enhetens Kontakter</string>
+    <string name="mdmRuleDeviceCalendar">Händelser kopieras inte till enhetens Kalender</string>
 </resources>

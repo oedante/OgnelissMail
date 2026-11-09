@@ -3961,4 +3961,14 @@
     <string name="mdmRuleNoBiometrics">Chỉ mã ứng dụng, không dùng vân tay hay khuôn mặt</string>
     <string name="mdmRuleExternal">Không dịch vụ bên ngoài: thời tiết, logo, tín hiệu máy chủ</string>
     <string name="mdmSyncLimit">Tổ chức của bạn giới hạn khoảng thời gian: {period}</string>
+    <string name="mdmTlsRequired">Tổ chức yêu cầu kết nối mã hóa, nhưng {host} không có SSL/STARTTLS. Bật SSL hoặc STARTTLS trong cài đặt hộp thư</string>
+    <string name="mdmAccountLocked">Hộp thư do tổ chức quản lý</string>
+    <string name="mdmAccountLockedDesc">Chỉ bộ phận CNTT mới có thể xóa hoặc đổi máy chủ hay đăng nhập</string>
+    <string name="mdmRuleAccountLocked">Hộp thư của tổ chức bị khóa</string>
+    <string name="mdmRuleTransport">Exchange chỉ qua {t}</string>
+    <string name="mdmRuleTls">Chỉ kết nối được mã hóa</string>
+    <string name="mdmRuleOrgCa">Chứng chỉ của tổ chức được tin cậy</string>
+    <string name="mdmRuleNoUserCerts">Bạn không thể tự tin cậy chứng chỉ</string>
+    <string name="mdmRuleDeviceContacts">Danh bạ không được sao chép vào Danh bạ của thiết bị</string>
+    <string name="mdmRuleDeviceCalendar">Sự kiện không được sao chép vào Lịch của thiết bị</string>
 </resources>

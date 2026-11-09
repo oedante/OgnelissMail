@@ -56,4 +56,23 @@
     <string name="mdm_allow_biometrics_desc">Выключено — приложение открывается только PIN-кодом.</string>
     <string name="mdm_block_external_services_title">Запретить внешние службы</string>
     <string name="mdm_block_external_services_desc">Без погоды, логотипов отправителей (BIMI) и сигналов о новой почте через сервер Ogneliss: почта приходит по соединению с сервером почты и плановым проверкам.</string>
+    <string name="mdm_account_locked_title">Закрепить ящик организации</string>
+    <string name="mdm_account_locked_desc">Ящик из этих настроек нельзя удалить, нельзя изменить его сервер и вход.</string>
+    <string name="mdm_account_transport_title">Протокол подключения к Exchange</string>
+    <string name="mdm_account_transport_desc">ActiveSync или EWS для своего сервера Exchange; «Автоматически» — выбирает приложение. Exchange Online со входом Microsoft не затрагивается.</string>
+    <string-array name="mdm_transport_entries">
+        <item>Автоматически</item>
+        <item>ActiveSync</item>
+        <item>EWS</item>
+    </string-array>
+    <string name="mdm_require_tls_title">Только шифрованные соединения</string>
+    <string name="mdm_require_tls_desc">IMAP и SMTP без SSL или STARTTLS не подключаются.</string>
+    <string name="mdm_trusted_ca_pem_title">Корневые сертификаты организации (PEM)</string>
+    <string name="mdm_trusted_ca_pem_desc">Один или несколько сертификатов ЦС в формате PEM; серверам, подписанным ими, приложение доверяет.</string>
+    <string name="mdm_allow_user_cert_trust_title">Разрешить пользователю доверять сертификатам</string>
+    <string name="mdm_allow_user_cert_trust_desc">Выключено — нельзя загрузить сертификат ЦС, вручную доверять сертификату сервера и использовать сертификаты из устройства; действуют только системные и сертификаты организации.</string>
+    <string name="mdm_block_device_contacts_title">Запретить перенос контактов в устройство</string>
+    <string name="mdm_block_device_contacts_desc">Без загрузки из «Контактов» устройства и выгрузки в них.</string>
+    <string name="mdm_block_device_calendar_title">Запретить перенос встреч в устройство</string>
+    <string name="mdm_block_device_calendar_desc">Встречи не добавляются в «Календарь» устройства.</string>
 </resources>

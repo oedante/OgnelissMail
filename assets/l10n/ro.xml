@@ -4003,4 +4003,14 @@
     <string name="mdmRuleNoBiometrics">Doar codul aplicației, fără amprentă sau față</string>
     <string name="mdmRuleExternal">Fără servicii externe: vreme, logo-uri, semnale de la server</string>
     <string name="mdmSyncLimit">Organizația a limitat perioada: {period}</string>
+    <string name="mdmTlsRequired">Organizația cere o conexiune criptată, dar {host} nu are SSL/STARTTLS. Activați SSL sau STARTTLS în setările căsuței</string>
+    <string name="mdmAccountLocked">Căsuță gestionată de organizație</string>
+    <string name="mdmAccountLockedDesc">Doar departamentul IT o poate elimina sau îi poate schimba serverul ori autentificarea</string>
+    <string name="mdmRuleAccountLocked">Căsuța organizației este blocată</string>
+    <string name="mdmRuleTransport">Exchange doar prin {t}</string>
+    <string name="mdmRuleTls">Doar conexiuni criptate</string>
+    <string name="mdmRuleOrgCa">Certificatele organizației sunt de încredere</string>
+    <string name="mdmRuleNoUserCerts">Nu puteți acorda singur încredere certificatelor</string>
+    <string name="mdmRuleDeviceContacts">Contactele nu sunt copiate în Contactele dispozitivului</string>
+    <string name="mdmRuleDeviceCalendar">Evenimentele nu sunt copiate în Calendarul dispozitivului</string>
 </resources>

@@ -3982,4 +3982,14 @@
     <string name="mdmRuleNoBiometrics">Code de l\'app uniquement, sans empreinte ni visage</string>
     <string name="mdmRuleExternal">Pas de services externes : météo, logos, signaux du serveur</string>
     <string name="mdmSyncLimit">Votre organisation limite la période : {period}</string>
+    <string name="mdmTlsRequired">Votre organisation exige une connexion chiffrée, mais {host} n\'a pas SSL/STARTTLS. Activez SSL ou STARTTLS dans les réglages de la boîte</string>
+    <string name="mdmAccountLocked">Boîte gérée par votre organisation</string>
+    <string name="mdmAccountLockedDesc">Seul votre service informatique peut la supprimer ou modifier son serveur ou la connexion</string>
+    <string name="mdmRuleAccountLocked">La boîte de l\'organisation est verrouillée</string>
+    <string name="mdmRuleTransport">Exchange uniquement via {t}</string>
+    <string name="mdmRuleTls">Connexions chiffrées uniquement</string>
+    <string name="mdmRuleOrgCa">Les certificats de l\'organisation sont approuvés</string>
+    <string name="mdmRuleNoUserCerts">Vous ne pouvez pas approuver vous-même des certificats</string>
+    <string name="mdmRuleDeviceContacts">Les contacts ne sont pas copiés dans les Contacts de l\'appareil</string>
+    <string name="mdmRuleDeviceCalendar">Les événements ne sont pas copiés dans le Calendrier de l\'appareil</string>
 </resources>

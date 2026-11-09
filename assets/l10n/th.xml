@@ -3961,4 +3961,14 @@
     <string name="mdmRuleNoBiometrics">ใช้รหัสแอปเท่านั้น ไม่ใช้ลายนิ้วมือหรือใบหน้า</string>
     <string name="mdmRuleExternal">ไม่ใช้บริการภายนอก: สภาพอากาศ โลโก้ สัญญาณเซิร์ฟเวอร์</string>
     <string name="mdmSyncLimit">องค์กรของคุณจำกัดช่วงเวลา: {period}</string>
+    <string name="mdmTlsRequired">องค์กรของคุณกำหนดให้ใช้การเชื่อมต่อแบบเข้ารหัส แต่ {host} ไม่มี SSL/STARTTLS เปิด SSL หรือ STARTTLS ในการตั้งค่ากล่องจดหมาย</string>
+    <string name="mdmAccountLocked">กล่องจดหมายที่องค์กรจัดการ</string>
+    <string name="mdmAccountLockedDesc">มีเพียงฝ่ายไอทีที่ลบหรือเปลี่ยนเซิร์ฟเวอร์หรือการลงชื่อเข้าใช้ได้</string>
+    <string name="mdmRuleAccountLocked">กล่องจดหมายขององค์กรถูกล็อก</string>
+    <string name="mdmRuleTransport">Exchange ผ่าน {t} เท่านั้น</string>
+    <string name="mdmRuleTls">เฉพาะการเชื่อมต่อที่เข้ารหัส</string>
+    <string name="mdmRuleOrgCa">เชื่อถือใบรับรองขององค์กร</string>
+    <string name="mdmRuleNoUserCerts">คุณไม่สามารถเชื่อถือใบรับรองด้วยตนเองได้</string>
+    <string name="mdmRuleDeviceContacts">รายชื่อติดต่อจะไม่ถูกคัดลอกไปยังรายชื่อของอุปกรณ์</string>
+    <string name="mdmRuleDeviceCalendar">กิจกรรมจะไม่ถูกคัดลอกไปยังปฏิทินของอุปกรณ์</string>
 </resources>

@@ -61,4 +61,28 @@
     <string name="mdm_allow_biometrics_desc">Off — the app is unlocked only with its PIN.</string>
     <string name="mdm_block_external_services_title">Block external services</string>
     <string name="mdm_block_external_services_desc">No weather, no sender logos (BIMI) and no new-mail signals through the Ogneliss server: new mail arrives by the connection to the mail server and scheduled checks.</string>
+    <string name="mdm_account_locked_title">Lock the organization's mailbox</string>
+    <string name="mdm_account_locked_desc">The mailbox from these settings cannot be removed, and its server and sign-in cannot be changed.</string>
+    <string name="mdm_account_transport_title">Exchange connection protocol</string>
+    <string name="mdm_account_transport_desc">ActiveSync or EWS for on-premises Exchange; automatic — the app chooses. Exchange Online with Microsoft sign-in is not affected.</string>
+    <string-array name="mdm_transport_entries">
+        <item>Automatic</item>
+        <item>ActiveSync</item>
+        <item>EWS</item>
+    </string-array>
+    <string-array name="mdm_transport_values" translatable="false">
+        <item>auto</item>
+        <item>eas</item>
+        <item>ews</item>
+    </string-array>
+    <string name="mdm_require_tls_title">Encrypted connections only</string>
+    <string name="mdm_require_tls_desc">IMAP and SMTP without SSL or STARTTLS are refused.</string>
+    <string name="mdm_trusted_ca_pem_title">Organization root certificates (PEM)</string>
+    <string name="mdm_trusted_ca_pem_desc">One or more CA certificates in PEM format; servers signed by them are trusted.</string>
+    <string name="mdm_allow_user_cert_trust_title">Allow users to trust certificates</string>
+    <string name="mdm_allow_user_cert_trust_desc">Off — no importing CA certificates, no trusting a server's certificate by hand and no device-installed certificates; only system and organization certificates are used.</string>
+    <string name="mdm_block_device_contacts_title">Block copying contacts to the device</string>
+    <string name="mdm_block_device_contacts_desc">No import from and export to the device's Contacts app.</string>
+    <string name="mdm_block_device_calendar_title">Block copying events to the device</string>
+    <string name="mdm_block_device_calendar_desc">Events are not added to the device's Calendar app.</string>
 </resources>

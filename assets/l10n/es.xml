@@ -3982,4 +3982,14 @@
     <string name="mdmRuleNoBiometrics">Solo código de la app, sin huella ni rostro</string>
     <string name="mdmRuleExternal">Sin servicios externos: tiempo, logotipos, señales del servidor</string>
     <string name="mdmSyncLimit">Tu organización limita el periodo: {period}</string>
+    <string name="mdmTlsRequired">Tu organización exige una conexión cifrada, pero {host} no tiene SSL/STARTTLS. Activa SSL o STARTTLS en los ajustes del buzón</string>
+    <string name="mdmAccountLocked">Buzón gestionado por tu organización</string>
+    <string name="mdmAccountLockedDesc">Solo el departamento de TI puede quitarlo o cambiar el servidor o el inicio de sesión</string>
+    <string name="mdmRuleAccountLocked">El buzón de la organización está fijado</string>
+    <string name="mdmRuleTransport">Exchange solo por {t}</string>
+    <string name="mdmRuleTls">Solo conexiones cifradas</string>
+    <string name="mdmRuleOrgCa">Los certificados de la organización son de confianza</string>
+    <string name="mdmRuleNoUserCerts">No puedes confiar en certificados por tu cuenta</string>
+    <string name="mdmRuleDeviceContacts">Los contactos no se copian a los Contactos del dispositivo</string>
+    <string name="mdmRuleDeviceCalendar">Los eventos no se copian al Calendario del dispositivo</string>
 </resources>

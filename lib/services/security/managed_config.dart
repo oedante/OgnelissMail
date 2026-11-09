@@ -15,6 +15,7 @@
 // Политику сняли в MDM — копия очищается при следующем запуске или сразу,
 // если приложение открыто.
 
+import '../../core/security/trusted_ca_store.dart' show TrustedCaStore;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
@@ -82,16 +83,43 @@ class ManagedKeys {
   /// отправителей (BIMI), сигналы о новой почте через сервер Ogneliss.
   static const blockExternalServices = 'block_external_services';
 
+  /// Ящик организации ([accountEmail]) нельзя удалить и нельзя менять его
+  /// сервер и имя для входа.
+  static const accountLocked = 'account_locked';
+
+  /// Способ подключения к Exchange: eas (ActiveSync) или ews; не задано —
+  /// приложение выбирает само.
+  static const accountTransport = 'account_transport';
+
+  /// Только шифрованные соединения: IMAP/SMTP без SSL/STARTTLS и http://
+  /// для Exchange не используются.
+  static const requireTls = 'require_tls';
+
+  /// Сертификаты ЦС организации (PEM, можно несколько) — доверять им.
+  static const trustedCaPem = 'trusted_ca_pem';
+
+  /// Может ли пользователь сам доверять сертификатам: импорт ЦС, ЦС,
+  /// установленные на устройство, «Доверять этому сертификату» (по
+  /// умолчанию — да).
+  static const allowUserCertTrust = 'allow_user_cert_trust';
+
+  /// Контакты и календарь ящиков не переносятся в системные «Контакты» и
+  /// «Календарь» устройства.
+  static const blockDeviceContacts = 'block_device_contacts';
+  static const blockDeviceCalendar = 'block_device_calendar';
+
   static const all = [
     orgName, supportContact, accountEmail, accountProtocol, accountServer, accountUsername, accountDomain,
     imapServer, imapPort, smtpServer, smtpPort, allowedDomains, requireAppLock, minPinLength,
     blockScreenshots, blockShare, blockOpenIn, blockCopy, hideNotificationContent, blockWeather,
     maxSyncDays, blockAttachmentDownload, pinTimeoutMinutes, allowBiometrics, blockExternalServices,
+    accountLocked, accountTransport, requireTls, trustedCaPem, allowUserCertTrust, blockDeviceContacts,
+    blockDeviceCalendar,
   ];
 }
 
 /// Что запрещает политика — для проверки в местах действий.
-enum ManagedRule { share, openIn, copy, attachments }
+enum ManagedRule { share, openIn, copy, attachments, certTrust, deviceContacts, deviceCalendar }
 
 @immutable
 class ManagedPolicy {
@@ -121,6 +149,13 @@ class ManagedPolicy {
     this.pinTimeoutMinutes,
     this.allowBiometrics = true,
     this.blockExternalServices = false,
+    this.accountLocked = false,
+    this.accountTransport,
+    this.requireTls = false,
+    this.trustedCaPem,
+    this.allowUserCertTrust = true,
+    this.blockDeviceContacts = false,
+    this.blockDeviceCalendar = false,
   });
 
   static const none = ManagedPolicy();
@@ -180,6 +215,28 @@ class ManagedPolicy {
   /// Без внешних служб: погода, BIMI, сигналы сервера Ogneliss.
   final bool blockExternalServices;
 
+  /// Ящик организации закреплён: не удалить, сервер и вход не менять.
+  final bool accountLocked;
+
+  /// eas | ews — способ подключения к Exchange; null — выбирает приложение.
+  final String? accountTransport;
+
+  /// Только шифрованные соединения с серверами почты.
+  final bool requireTls;
+
+  /// ЦС организации (PEM).
+  final String? trustedCaPem;
+
+  /// Пользователь может сам доверять сертификатам.
+  final bool allowUserCertTrust;
+
+  final bool blockDeviceContacts;
+  final bool blockDeviceCalendar;
+
+  /// Ящик [email] — ящик организации, закреплённый политикой.
+  bool lockedAccount(String email) =>
+      accountLocked && hasAccount && email.trim().toLowerCase() == accountEmail;
+
   /// Период синхронизации ящика с учётом [maxSyncDays] (0 — «вся почта»).
   int capSyncDays(int days) {
     final max = maxSyncDays;
@@ -208,6 +265,9 @@ class ManagedPolicy {
         ManagedRule.openIn => blockOpenIn,
         ManagedRule.copy => blockCopy,
         ManagedRule.attachments => blockAttachmentDownload,
+        ManagedRule.certTrust => !allowUserCertTrust,
+        ManagedRule.deviceContacts => blockDeviceContacts,
+        ManagedRule.deviceCalendar => blockDeviceCalendar,
       };
 
   /// Можно ли добавить ящик [email].
@@ -290,6 +350,17 @@ class ManagedPolicy {
       // Ключа нет — можно (как без MDM).
       allowBiometrics: v(ManagedKeys.allowBiometrics) == null || _bool(v(ManagedKeys.allowBiometrics)),
       blockExternalServices: _bool(v(ManagedKeys.blockExternalServices)),
+      accountLocked: _bool(v(ManagedKeys.accountLocked)),
+      accountTransport: switch (_str(v(ManagedKeys.accountTransport))?.toLowerCase()) {
+        'eas' || 'activesync' => 'eas',
+        'ews' => 'ews',
+        _ => null,
+      },
+      requireTls: _bool(v(ManagedKeys.requireTls)),
+      trustedCaPem: _str(v(ManagedKeys.trustedCaPem)),
+      allowUserCertTrust: v(ManagedKeys.allowUserCertTrust) == null || _bool(v(ManagedKeys.allowUserCertTrust)),
+      blockDeviceContacts: _bool(v(ManagedKeys.blockDeviceContacts)),
+      blockDeviceCalendar: _bool(v(ManagedKeys.blockDeviceCalendar)),
     );
   }
 
@@ -319,6 +390,13 @@ class ManagedPolicy {
         if (pinTimeoutMinutes != null) ManagedKeys.pinTimeoutMinutes: pinTimeoutMinutes,
         if (!allowBiometrics) ManagedKeys.allowBiometrics: false,
         if (blockExternalServices) ManagedKeys.blockExternalServices: true,
+        if (accountLocked) ManagedKeys.accountLocked: true,
+        if (accountTransport != null) ManagedKeys.accountTransport: accountTransport,
+        if (requireTls) ManagedKeys.requireTls: true,
+        if (trustedCaPem != null) ManagedKeys.trustedCaPem: trustedCaPem,
+        if (!allowUserCertTrust) ManagedKeys.allowUserCertTrust: false,
+        if (blockDeviceContacts) ManagedKeys.blockDeviceContacts: true,
+        if (blockDeviceCalendar) ManagedKeys.blockDeviceCalendar: true,
       };
 
   @override
@@ -457,6 +535,7 @@ class ManagedPolicyNotifier extends Notifier<ManagedPolicy> {
     _svc = ManagedConfigService(prefs);
     final cached = ManagedPolicy.fromPrefs(prefs);
     ManagedPolicy.current = cached;
+    TrustedCaStore.instance?.applyPolicy(cached);
     _svc.listen(() => unawaited(refresh()));
     unawaited(Future.microtask(refresh));
     return cached;
@@ -469,6 +548,8 @@ class ManagedPolicyNotifier extends Notifier<ManagedPolicy> {
     final p = await _svc.load();
     final domainsChanged = !listEquals(ManagedPolicy.current.allowedDomains, p.allowedDomains);
     ManagedPolicy.current = p;
+    // ЦС организации и право доверять сертификатам самому (2.2.0).
+    TrustedCaStore.instance?.applyPolicy(p);
     if (domainsChanged) ManagedPolicy.allowedDomainsChanged.value++;
     if (p.blockScreenshots != _secure) {
       _secure = p.blockScreenshots;

@@ -4024,4 +4024,14 @@
     <string name="mdmRuleNoBiometrics">Вход только по коду приложения, без отпечатка и лица</string>
     <string name="mdmRuleExternal">Без внешних служб: погоды, логотипов, сигналов сервера</string>
     <string name="mdmSyncLimit">Организация ограничила период: {period}</string>
+    <string name="mdmTlsRequired">Организация требует шифрованное соединение, а сервер {host} — без SSL/STARTTLS. Включите SSL или STARTTLS в настройках ящика</string>
+    <string name="mdmAccountLocked">Ящик закреплён организацией</string>
+    <string name="mdmAccountLockedDesc">Удалить его и изменить сервер или вход может только ИТ-служба</string>
+    <string name="mdmRuleAccountLocked">Ящик организации закреплён</string>
+    <string name="mdmRuleTransport">Exchange — только через {t}</string>
+    <string name="mdmRuleTls">Только шифрованные соединения</string>
+    <string name="mdmRuleOrgCa">Сертификаты организации — доверенные</string>
+    <string name="mdmRuleNoUserCerts">Доверять сертификатам самому нельзя</string>
+    <string name="mdmRuleDeviceContacts">Контакты не переносятся в «Контакты» устройства</string>
+    <string name="mdmRuleDeviceCalendar">Встречи не переносятся в «Календарь» устройства</string>
 </resources>

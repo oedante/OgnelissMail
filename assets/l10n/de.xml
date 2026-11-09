@@ -3982,4 +3982,14 @@
     <string name="mdmRuleNoBiometrics">Nur App-Code, kein Fingerabdruck oder Gesicht</string>
     <string name="mdmRuleExternal">Keine externen Dienste: Wetter, Logos, Server-Signale</string>
     <string name="mdmSyncLimit">Ihre Organisation begrenzt den Zeitraum: {period}</string>
+    <string name="mdmTlsRequired">Ihre Organisation verlangt eine verschlüsselte Verbindung, aber {host} hat kein SSL/STARTTLS. Schalten Sie SSL oder STARTTLS in den Postfacheinstellungen ein</string>
+    <string name="mdmAccountLocked">Postfach wird von Ihrer Organisation verwaltet</string>
+    <string name="mdmAccountLockedDesc">Nur Ihre IT-Abteilung kann es entfernen oder Server und Anmeldung ändern</string>
+    <string name="mdmRuleAccountLocked">Postfach der Organisation ist festgelegt</string>
+    <string name="mdmRuleTransport">Exchange nur über {t}</string>
+    <string name="mdmRuleTls">Nur verschlüsselte Verbindungen</string>
+    <string name="mdmRuleOrgCa">Zertifikate der Organisation sind vertrauenswürdig</string>
+    <string name="mdmRuleNoUserCerts">Zertifikaten können Sie nicht selbst vertrauen</string>
+    <string name="mdmRuleDeviceContacts">Kontakte werden nicht in die Kontakte des Geräts übertragen</string>
+    <string name="mdmRuleDeviceCalendar">Termine werden nicht in den Kalender des Geräts übertragen</string>
 </resources>

@@ -3982,4 +3982,14 @@
     <string name="mdmRuleNoBiometrics">Somente código do app, sem digital ou rosto</string>
     <string name="mdmRuleExternal">Sem serviços externos: clima, logotipos, sinais do servidor</string>
     <string name="mdmSyncLimit">Sua organização limita o período: {period}</string>
+    <string name="mdmTlsRequired">Sua organização exige uma conexão criptografada, mas {host} não tem SSL/STARTTLS. Ative SSL ou STARTTLS nas configurações da caixa</string>
+    <string name="mdmAccountLocked">Caixa gerenciada pela sua organização</string>
+    <string name="mdmAccountLockedDesc">Somente o departamento de TI pode removê-la ou alterar servidor ou login</string>
+    <string name="mdmRuleAccountLocked">A caixa da organização está bloqueada</string>
+    <string name="mdmRuleTransport">Exchange somente via {t}</string>
+    <string name="mdmRuleTls">Somente conexões criptografadas</string>
+    <string name="mdmRuleOrgCa">Os certificados da organização são confiáveis</string>
+    <string name="mdmRuleNoUserCerts">Você não pode confiar em certificados por conta própria</string>
+    <string name="mdmRuleDeviceContacts">Os contatos não são copiados para os Contatos do dispositivo</string>
+    <string name="mdmRuleDeviceCalendar">Os eventos não são copiados para o Calendário do dispositivo</string>
 </resources>

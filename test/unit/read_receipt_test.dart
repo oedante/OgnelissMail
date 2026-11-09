@@ -3,7 +3,6 @@
 // отчётов RFC 8098 (Thunderbird, Outlook) и «Прочитано:» Exchange (адреса
 // вымышленные).
 
-import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/data/database/app_database.dart';

@@ -16,12 +16,10 @@ import '../../../widgets/ui/action_sheet.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../services/home_widget_service.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../calendar/calendar_data.dart' show calendarHubProvider;
 import '../../mail/widgets/mail_html_view.dart' show MailWebViewPool;
 import '../../mail/widgets/mail_header.dart' show RecipientsLayout;
-import '../providers/settings_provider.dart';
 
 /// Ключи выключателей, которых нет в других настройках (имена — с 1.5.x,
 /// не менять: выбор пользователей сохраняется).
@@ -29,7 +27,6 @@ class ExperimentalKeys {
   ExperimentalKeys._();
   static const deviceRules = 'device_rules_on';
   static const easSession = 'eas_session_cache';
-  static const myDayBoard = 'myday_board';
   /// «К встрече» в карточке встречи (MeetingPrep.prefKey).
   static const meetingPrep = 'meeting_prep_on';
   /// Окно письма заранее (1.5.9, MailWebViewPool).
@@ -69,11 +66,7 @@ mixin _Prefs<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   bool pref(String key, {bool def = true}) => ref.read(sharedPrefsProvider).getBool(key) ?? def;
 
   void setPref(String key, bool v) {
-    final container = ProviderScope.containerOf(context, listen: false);
-    unawaited(() async {
-      await ref.read(sharedPrefsProvider).setBool(key, v);
-      if (key == ExperimentalKeys.myDayBoard) await HomeWidgetService.updateFromContainer(container, force: true);
-    }());
+    unawaited(ref.read(sharedPrefsProvider).setBool(key, v));
     setState(() {});
   }
 }
@@ -254,19 +247,10 @@ class _DayFeaturesSectionState extends ConsumerState<DayFeaturesSection> with _P
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final st = ref.watch(settingsProvider);
     final hub = ref.watch(calendarHubProvider);
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       SettingsSectionTitle(l10n.tr('expSectionDay')),
       SettingsGroup(children: [
-        SettingsSwitchItem(
-          icon: AppIcons.view_module,
-          title: l10n.tr('expBoardTitle'),
-          subtitle: l10n.tr('expBoardDesc'),
-          hint: l10n.tr('expBoardHint'),
-          value: pref(ExperimentalKeys.myDayBoard, def: false),
-          onChanged: st.myDay ? (v) => setPref(ExperimentalKeys.myDayBoard, v) : null,
-        ),
         SettingsSwitchItem(
           icon: AppIcons.groups,
           title: l10n.tr('meetingPrepTitle'),

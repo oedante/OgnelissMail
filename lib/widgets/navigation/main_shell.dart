@@ -27,6 +27,8 @@ import '../common/peek_card.dart';
 import '../common/hero_email_transition.dart' show HeroEmailAvatar;
 import '../../features/settings/providers/account_groups_provider.dart' show activeGroupIdProvider, accountGroupsProvider;
 import '../../features/tasks/widgets/quick_task_sheet.dart' show showQuickTaskSheet;
+import '../../features/assignments/assign_sheet.dart' show showAssignSheet;
+import '../../features/calendar/screens/calendar_screen.dart' show CalendarScreen;
 import 'dart:io';
 import '../../features/settings/providers/feature_flags_provider.dart';
 import 'package:flutter/foundation.dart';
@@ -331,6 +333,12 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
                               tooltip: l10n.tr('myDay'),
                               onPressed: () => context.go('/my-day'),
                             ),
+                          // «Поручения» (2.2.0).
+                          IconButton(
+                            icon: const Icon(AppIcons.assignment_ind),
+                            tooltip: l10n.tr('assignments'),
+                            onPressed: () => context.push('/assignments'),
+                          ),
                           if (ref.watch(featureFlagsProvider.select((f) => f.showFileHub)))
                             IconButton(
                               icon: const Icon(AppIcons.folder_open),
@@ -681,6 +689,8 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
                   label: l10n.tr('newTask'),
                   subtitle: l10n.tr('newTaskHint'),
                   value: 'task'),
+              // Поручение со сроком — выбранный в календаре день (2.2.0).
+              ActionSheetItem(icon: AppIcons.assignment_ind, label: l10n.tr('assignNew'), value: 'assign'),
             ]);
             if (!mounted || !context.mounted) return;
             // Встреча — сразу редактор (1.10.2, просьба владельца: «встречи
@@ -688,6 +698,9 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
             // задачи с заполненными полями (срок по умолчанию — сегодня).
             if (kind == 'event') unawaited(context.push('/create-event'));
             if (kind == 'task') unawaited(showQuickTaskSheet(context));
+            if (kind == 'assign') {
+              unawaited(showAssignSheet(context, due: path.startsWith('/calendar') ? CalendarScreen.selectedDay : null));
+            }
           });
     }
     if (path.startsWith('/contacts')) {
@@ -730,6 +743,12 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
         label: l10n.tr('newTask'),
         // Задача одной фразой (1.10.2), потом карточка задачи.
         onTap: () => unawaited(showQuickTaskSheet(context)),
+      ),
+      PeekAction(
+        icon: AppIcons.assignment_ind,
+        label: l10n.tr('assignNew'),
+        onTap: () => unawaited(showAssignSheet(context,
+            due: GoRouterState.of(context).uri.path.startsWith('/calendar') ? CalendarScreen.selectedDay : null)),
       ),
     ]));
   }

@@ -12,6 +12,13 @@
 // замком; под пальцем — компактная плашка, а не копия карточки во всю
 // ширину. Перенос виден сразу (локально), экран не перерисовывается целиком.
 //
+// Просроченное (решение владельца 09.11.2026: «План дня» и «Итоги дня» —
+// на доске, без отдельных окон): несделанные задачи со вчера и раньше —
+// панелью «Просрочено» над остальными; «Всё на сегодня» или перенос на
+// «Предстоит» — срок сегодня. Долгое нажатие на задачу — карточка задачи
+// (task_peek.dart): сегодня, завтра, на следующей неделе, дата, без срока,
+// выполнено, удалить.
+//
 // Телефон (11.10.2026): три панели во всю ширину друг под другом —
 // «Предстоит», «В работе», «Готово», компактные строки, до четырёх дел в
 // панели и «Показать все»; задачу бросают на нужную панель. Планшет и
@@ -19,7 +26,7 @@
 
 part of 'my_day_screen.dart';
 
-enum _Col { upcoming, work, done }
+enum _Col { overdue, upcoming, work, done }
 
 class _BoardCard {
   final String key;
@@ -33,6 +40,8 @@ class _BoardCard {
   final VoidCallback onTap;
   final Task? task;
   final Widget? trailing;
+  /// Долгое нажатие не на задачу (поручение — карточка поручения).
+  final void Function(BuildContext tileContext)? onLongPress;
   const _BoardCard({
     required this.key,
     this.sort,
@@ -45,6 +54,7 @@ class _BoardCard {
     required this.onTap,
     this.task,
     this.trailing,
+    this.onLongPress,
   });
 }
 
@@ -52,6 +62,7 @@ extension _MyDayBoard on _MyDayScreenState {
   Widget _boardBody(BuildContext context, _MyDayData d, DateTime now, AppLocalizations l10n) {
     final cols = _boardColumns(context, d, now, l10n);
     final titles = {
+      _Col.overdue: l10n.tr('overdue'),
       _Col.upcoming: l10n.tr('boardUpcoming'),
       _Col.work: l10n.tr('boardInWork'),
       _Col.done: l10n.tr('boardDone'),
@@ -83,7 +94,8 @@ extension _MyDayBoard on _MyDayScreenState {
               padding: const EdgeInsets.symmetric(horizontal: Space.s),
               child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                 for (final col in _Col.values)
-                  Expanded(child: _boardColumn(context, col, titles[col]!, cols[col]!, l10n, c.maxWidth / 3)),
+                  if (col != _Col.overdue || cols[col]!.isNotEmpty)
+                    Expanded(child: _boardColumn(context, col, titles[col]!, cols[col]!, l10n, c.maxWidth / 3)),
               ]),
             ),
           ),
@@ -99,7 +111,7 @@ extension _MyDayBoard on _MyDayScreenState {
           header,
           hint,
           for (final col in _Col.values)
-            _boardPanel(context, col, titles[col]!, cols[col]!, l10n),
+            if (col != _Col.overdue || cols[col]!.isNotEmpty) _boardPanel(context, col, titles[col]!, cols[col]!, l10n),
         ],
       );
     });
@@ -113,7 +125,7 @@ extension _MyDayBoard on _MyDayScreenState {
     final open = _boardExpanded.contains(col);
     final shown = open || cards.length <= collapsed + 1 ? cards : cards.take(collapsed).toList();
     return DragTarget<Task>(
-      onWillAcceptWithDetails: (det) => _colOf(det.data) != col,
+      onWillAcceptWithDetails: (det) => col != _Col.overdue && _colOf(det.data) != col,
       onAcceptWithDetails: (det) => _moveTask(det.data, col),
       builder: (context, candidates, _) {
         final hot = candidates.isNotEmpty;
@@ -138,7 +150,12 @@ extension _MyDayBoard on _MyDayScreenState {
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            SectionBand(title: title, count: cards.length),
+            SectionBand(
+              title: title,
+              count: cards.length,
+              color: col == _Col.overdue ? AppColors.errorText(context) : null,
+              trailing: col == _Col.overdue ? _allTodayButton(cards, l10n) : null,
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(Space.s, Space.xs, Space.s, Space.xs),
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -171,6 +188,7 @@ extension _MyDayBoard on _MyDayScreenState {
     final err = AppColors.errorText(context);
     final hm = DateFormat('HH:mm');
     final today = DateTime(now.year, now.month, now.day);
+    final overdueCol = <_BoardCard>[];
     final upcoming = <_BoardCard>[];
     final work = <_BoardCard>[];
     final done = <_BoardCard>[];
@@ -203,9 +221,10 @@ extension _MyDayBoard on _MyDayScreenState {
     _BoardCard taskCard(Task t, _Col col) {
       final when = _MyDayScreenState._taskTime(t);
       final hasTime = when != null && (when.hour != 0 || when.minute != 0);
-      final overdue = col != _Col.done &&
-          when != null &&
-          (DateTime(when.year, when.month, when.day).isBefore(today) || (hasTime && when.isBefore(now)));
+      final overdue = col == _Col.overdue ||
+          (col != _Col.done &&
+              when != null &&
+              (DateTime(when.year, when.month, when.day).isBefore(today) || (hasTime && when.isBefore(now))));
       return _BoardCard(
         key: 't${t.accountId}|${t.id}',
         sort: col == _Col.done ? t.completedAt?.toLocal() : (when ?? today),
@@ -235,12 +254,18 @@ extension _MyDayBoard on _MyDayScreenState {
           col = moved;
         }
       }
-      (switch (col) { _Col.upcoming => upcoming, _Col.work => work, _Col.done => done }).add(taskCard(t, col));
+      (switch (col) {
+        _Col.overdue => overdueCol,
+        _Col.upcoming => upcoming,
+        _Col.work => work,
+        _Col.done => done,
+      })
+          .add(taskCard(t, col));
     }
 
     for (final t in [...d.tasks, ...d.inProgress]) {
       if (!seen.add('${t.accountId}|${t.id}')) continue;
-      place(t, t.status == TaskStatus.inProgress.index ? _Col.work : _Col.upcoming);
+      place(t, _storedCol(t, today));
     }
     for (final t in d.doneToday) {
       if (!seen.add('${t.accountId}|${t.id}')) continue;
@@ -308,13 +333,50 @@ extension _MyDayBoard on _MyDayScreenState {
       ));
     }
 
+    // Поручения со сроком сегодня и просроченные (решение владельца
+    // 09.11.2026): мои — «В работе» (ждём исполнителя), мне — «Предстоит»,
+    // «В работе» или «Готово» (сдано на проверку).
+    for (final v in ref.watch(assignmentsProvider).value ?? const <AssignmentView>[]) {
+      final due = v.due;
+      if (!v.active || due == null) continue;
+      final day = DateTime(due.year, due.month, due.day);
+      if (day.isAfter(today)) continue;
+      final late = day.isBefore(today);
+      final col = late
+          ? overdueCol
+          : (v.outgoing
+              ? work
+              : switch (v.status) {
+                  AssignmentStatus.open => upcoming,
+                  AssignmentStatus.review => done,
+                  _ => work,
+                });
+      col.add(_BoardCard(
+        key: 'a${v.id}',
+        sort: due,
+        icon: AppIcons.assignment_ind,
+        iconColor: late ? err : assignmentStatusColor(v.status, context),
+        title: v.row.title,
+        subtitle: [
+          '${l10n.tr(v.outgoing ? 'assignTo' : 'assignFrom')} ${v.otherName}',
+          assignmentStatusLabel(v.status, l10n),
+          if (late) assignmentDueText(due, l10n),
+        ].join(' · '),
+        subtitleColor: late ? err : null,
+        faded: !v.outgoing && v.status == AssignmentStatus.review,
+        onTap: () => context.push('/assignments/${v.id}'),
+        onLongPress: (tile) => unawaited(showAssignmentPeek(context, ref, v, anchor: peekAnchorOf(tile))),
+      ));
+    }
+
     int bySort(_BoardCard a, _BoardCard b) =>
         (a.sort ?? today).compareTo(b.sort ?? today);
+    overdueCol.sort(bySort);
     upcoming.sort(bySort);
     work.sort(bySort);
     // «Готово» — свежее сверху.
     done.sort((a, b) => bySort(b, a));
-    return {_Col.upcoming: upcoming, _Col.work: work, _Col.done: done};
+    return {_Col.overdue: overdueCol, _Col.upcoming: upcoming, _Col.work: work, _Col.done: done};
   }
 
   /// Перенос задачи — только руками: меню ⋮ (и перетаскивание).
@@ -323,7 +385,9 @@ extension _MyDayBoard on _MyDayScreenState {
         icon: const Icon(AppIcons.more_vert, size: 20),
         onSelected: (to) => _moveTask(t, to),
         itemBuilder: (_) => [
-          if (col != _Col.upcoming)
+          if (col == _Col.overdue)
+            AppMenuEntry(value: _Col.upcoming, icon: AppIcons.today, label: l10n.tr('boardMoveToday'))
+          else if (col != _Col.upcoming)
             AppMenuEntry(value: _Col.upcoming, icon: AppIcons.event_upcoming, label: l10n.tr('boardMoveBack')),
           if (col != _Col.work) AppMenuEntry(value: _Col.work, icon: AppIcons.work, label: l10n.tr('boardMoveWork')),
           if (col != _Col.done) AppMenuEntry(value: _Col.done, icon: AppIcons.task_alt, label: l10n.tr('boardMoveDone')),
@@ -331,10 +395,19 @@ extension _MyDayBoard on _MyDayScreenState {
       );
 
   Future<void> _moveTask(Task t, _Col to) async {
+    if (to == _Col.overdue) return;
+    final from = _colOf(t);
     _markBoardMove('t${t.accountId}|${t.id}', to);
     final actions = ref.read(taskActionsProvider);
     final wasDone = t.status == TaskStatus.completed.index;
+    // Из «Просрочено» в «Предстоит» или «В работе» — срок сегодня.
+    if (from == _Col.overdue && to != _Col.done) {
+      final now = DateTime.now();
+      await actions.reschedule(t.accountId, t.id, DateTime(now.year, now.month, now.day));
+    }
     switch (to) {
+      case _Col.overdue:
+        return;
       case _Col.done:
         await actions.setDone(t.accountId, t.id, true);
       case _Col.work:
@@ -354,7 +427,7 @@ extension _MyDayBoard on _MyDayScreenState {
       double width) {
     final theme = Theme.of(context);
     return DragTarget<Task>(
-      onWillAcceptWithDetails: (det) => _colOf(det.data) != col,
+      onWillAcceptWithDetails: (det) => col != _Col.overdue && _colOf(det.data) != col,
       onAcceptWithDetails: (det) => _moveTask(det.data, col),
       builder: (context, candidates, _) {
         final hot = candidates.isNotEmpty;
@@ -407,11 +480,53 @@ extension _MyDayBoard on _MyDayScreenState {
   }
 
   /// Колонка задачи с учётом переноса, ещё не дошедшего до базы.
-  _Col _colOf(Task t) =>
-      _boardMoves['t${t.accountId}|${t.id}'] ??
-      (t.status == TaskStatus.completed.index
-          ? _Col.done
-          : (t.status == TaskStatus.inProgress.index ? _Col.work : _Col.upcoming));
+  _Col _colOf(Task t) {
+    final now = DateTime.now();
+    return _boardMoves['t${t.accountId}|${t.id}'] ?? _storedCol(t, DateTime(now.year, now.month, now.day));
+  }
+
+  /// Колонка по базе: выполнено, в работе, просрочено (несделанное со
+  /// вчера и раньше), предстоит.
+  _Col _storedCol(Task t, DateTime today) {
+    if (t.status == TaskStatus.completed.index) return _Col.done;
+    if (t.status == TaskStatus.inProgress.index) return _Col.work;
+    final when = _MyDayScreenState._taskTime(t);
+    if (when != null && DateTime(when.year, when.month, when.day).isBefore(today)) return _Col.overdue;
+    return _Col.upcoming;
+  }
+
+  /// «Всё на сегодня» в заголовке «Просрочено».
+  Widget _allTodayButton(List<_BoardCard> cards, AppLocalizations l10n) => TextButton(
+        style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+        onPressed: () async {
+          unawaited(HapticFeedback.selectionClick());
+          for (final c in cards) {
+            final t = c.task;
+            if (t != null) await _moveTask(t, _Col.upcoming);
+          }
+        },
+        child: Text(l10n.tr('boardAllToday')),
+      );
+
+  /// Карточка задачи по удержанию (общая с «Задачами»).
+  void _taskPeek(BuildContext tileCtx, Task row) {
+    final t = taskFromRow(row);
+    final l10n = AppLocalizations.of(context);
+    final actions = ref.read(taskActionsProvider);
+    unawaited(showTaskPeek(
+      context,
+      ref,
+      t,
+      anchor: peekAnchorOf(tileCtx),
+      onEdit: () => showTaskEditor(context, task: t, accountId: t.accountId),
+      onToggleDone: () => unawaited(_moveTask(row, t.isDone ? _Col.upcoming : _Col.done)),
+      onDelete: () => unawaited(() async {
+        final deleted = await actions.delete(t.accountId, t.id);
+        if (deleted == null) return;
+        showInlineNotice(l10n.tr('taskDeleted'), actionLabel: l10n.tr('undo'), onAction: () => actions.restore(deleted));
+      }()),
+    ));
+  }
 
   /// Под пальцем при переносе — компактная плашка с названием.
   Widget _dragChip(BuildContext context, _BoardCard c) {
@@ -490,6 +605,9 @@ extension _MyDayBoard on _MyDayScreenState {
         child: InkWell(
           borderRadius: Radii.cardAll,
           onTap: c.onTap,
+          onLongPress: c.onLongPress != null
+              ? () => c.onLongPress!(context)
+              : (c.task == null ? null : () => _taskPeek(context, c.task!)),
           child: Padding(
             padding: EdgeInsets.fromLTRB(0, dense ? 0 : Space.xs, c.trailing == null ? Space.m : 0, dense ? 0 : Space.xs),
             child: Row(children: [

@@ -68,6 +68,9 @@ export '../calendar_data.dart' show calendarEventsProvider, calendarLayersProvid
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
 
+  /// Выбранный день (кнопка «+» → «Поручение»: срок — этот день).
+  static DateTime? selectedDay;
+
   @override
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
 }
@@ -210,6 +213,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    CalendarScreen.selectedDay = _selectedDay;
     ref.listen<DateTime?>(calendarDayRequestProvider, (_, next) {
       if (next != null) WidgetsBinding.instance.addPostFrameCallback((_) => _consumeDayRequest());
     });

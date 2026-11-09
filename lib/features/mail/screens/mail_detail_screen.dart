@@ -15,6 +15,10 @@ import '../../../core/platform/file_opener.dart';
 import '../../../widgets/ui/section_band.dart';
 import '../../../widgets/common/peek_card.dart' show AppMenuEntry, PeekAction, PeekGroup;
 import '../message_window.dart';
+import '../../assignments/assign_sheet.dart' show showAssignSheet;
+import '../../assignments/assignment_widgets.dart';
+import '../../../services/assignments/assignment_codec.dart' show AssignmentCodec;
+import '../../../services/assignments/assignment_service.dart';
 import '../widgets/mail_peek_card.dart' show showMailPeek;
 import '../widgets/unsubscribe_banner.dart';
 import '../widgets/booking_card.dart';
@@ -1911,6 +1915,28 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// доставка, S/MIME, важность, «Спам»), теги и категории. Условия показа —
   /// те же, что у прежних плашек; раскрытый чип — та же плашка с кнопками.
   /// [r] — ref строки (Consumer): отчёты о доставке перестраивают только её.
+  /// Плашка поручения: у исполнителя — «Поручение · до …» с кнопками
+  /// «Принять в работу», «Готово», «Вопрос»; у поручившего — статус.
+  MailNotice? _assignmentNotice(WidgetRef r, EmailModel email, AppLocalizations l10n) {
+    final id = AssignmentCodec.idFromBody(email.bodyHtml) ?? AssignmentCodec.idFromBody(email.bodyPlain);
+    if (id == null) return null;
+    final v = (r.watch(assignmentsProvider).value ?? const <AssignmentView>[]).where((x) => x.id == id).firstOrNull;
+    if (v == null) return null;
+    final label = [
+      l10n.tr('assignTitle'),
+      assignmentStatusLabel(v.status, l10n),
+      if (v.due != null && v.active) l10n.tr('assignDueShort').replaceAll('{due}', assignmentDueText(v.due!, l10n)),
+    ].join(' · ');
+    return MailNotice(
+      id: 'assignment',
+      icon: AppIcons.assignment_ind,
+      color: assignmentStatusColor(v.status, context),
+      label: label,
+      detail: '${l10n.tr(v.outgoing ? 'assignTo' : 'assignFrom')} ${v.otherName}',
+      expanded: (_) => AssignmentMailCard(v: v),
+    );
+  }
+
   List<MailNotice> _notices(WidgetRef r, EmailModel email, {required bool settled, required bool mailControl}) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
@@ -1952,6 +1978,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           detail: SenderSafetyBanner.summary(safety, l10n),
           expanded: (_) => SenderSafetyBanner(account: acc, email: email, report: safety),
         ),
+
+      // ── Поручение (2.2.0): письмо с тегом OGN-… в теле ──
+      ?_assignmentNotice(r, email, l10n),
 
       // ── Перевод: «Перевести · английский» ↔ «Оригинал» ──
       if (settled) ?MailTranslateNotice.of(context, _translation, email),
@@ -2963,6 +2992,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           // Встреча по письму: тема, участники и текст — из письма.
           _peekAction(AppIcons.event, l10n.tr('createEvent'), () => _planMeeting(email)),
           _peekAction(AppIcons.check_box, l10n.tr('createTask'), () => _createTask(email, l10n)),
+          // Поручение по письму (2.2.0, решение владельца 09.11.2026).
+          _peekAction(AppIcons.assignment_ind, l10n.tr('assignSheetTitle'), () => unawaited(
+              showAssignSheet(context, sourceEmailId: email.id, accountId: email.accountId))),
           _peekAction(AppIcons.watch_later, l10n.tr('later'), fill: email.laterState != 0,
               () => unawaited(_later(context, email))),
           // Правило на телефоне для этого отправителя (09.10.2026).

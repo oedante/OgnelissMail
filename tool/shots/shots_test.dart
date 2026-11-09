@@ -38,6 +38,10 @@ import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
 import 'package:ogneliss/features/mail/widgets/mail_drawer.dart';
 import 'package:ogneliss/features/settings/screens/settings_screen.dart';
 import 'package:ogneliss/features/my_day/my_day_screen.dart';
+import 'package:ogneliss/features/assignments/assignments_screen.dart';
+import 'package:ogneliss/features/assignments/assignment_screen.dart';
+import 'package:ogneliss/services/assignments/assignment_codec.dart';
+import 'package:ogneliss/services/assignments/assignment_store.dart';
 import 'package:ogneliss/features/my_day/weather_view.dart' show showWeatherSheet;
 import 'package:ogneliss/services/weather/weather_service.dart';
 import 'package:ogneliss/features/settings/providers/settings_provider.dart';
@@ -491,6 +495,87 @@ void main() {
           theme: _themes[t]!(), db: db, prefs: prefs, extra: extra, before: (tt) async {
         unawaited(showWeatherSheet(tt.element(find.byType(MyDayScreen))));
       });
+      await tester.runAsync(db.close);
+    });
+  }
+
+  // Поручения (2.2.0): список и карточка.
+  testWidgets('поручения', (tester) async {
+    SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+    final prefs = await SharedPreferences.getInstance();
+    final db = (await tester.runAsync(() async {
+      final db = await _db();
+      final now = DateTime.now();
+      final d0 = DateTime(now.year, now.month, now.day);
+      Future<void> a(String id, String title, String who, String name, DateTime? due, int status,
+              {bool mine = true}) =>
+          AssignmentStore.insert(db,
+              id: id,
+              accountId: 'a1',
+              title: title,
+              ownerEmail: mine ? 'i.petrov@corp.example' : who,
+              ownerName: mine ? 'Иван Петров' : name,
+              assigneeEmail: mine ? who : 'i.petrov@corp.example',
+              assigneeName: mine ? name : 'Иван Петров',
+              due: due,
+              at: now.subtract(const Duration(days: 1)),
+              outgoing: mine).then((_) => AssignmentStore.update(db, id, status: status));
+      await a('AAAAAAAAAAAA', 'Согласовать договор поставки № 15', 'b.orlov@corp.example', 'Борис Орлов',
+          d0.subtract(const Duration(days: 1)), AssignmentStatus.inProgress);
+      await a('BBBBBBBBBBBB', 'Отчёт отдела за октябрь', 'v.belova@corp.example', 'Вера Белова', d0, AssignmentStatus.review);
+      await a('CCCCCCCCCCCC', 'Собрать даты отпусков отдела', 'v.belova@corp.example', 'Вера Белова',
+          d0.add(const Duration(days: 2)), AssignmentStatus.inProgress);
+      await a('DDDDDDDDDDDD', 'Обновить договор аренды', 'e.sokolova@corp.example', 'Елена Соколова',
+          d0.add(const Duration(days: 4)), AssignmentStatus.open);
+      await a('EEEEEEEEEEEE', 'Инвентаризация склада', 'd.kuznetsov@corp.example', 'Дмитрий Кузнецов', null,
+          AssignmentStatus.open);
+      await a('FFFFFFFFFFFF', 'Подготовить справку для аудита', 'a.smirnova@corp.example', 'Анна Смирнова',
+          d0.add(const Duration(days: 1)), AssignmentStatus.open, mine: false);
+      await AssignmentStore.addEvent(db,
+          id: 'm1', assignmentId: 'CCCCCCCCCCCC', type: 'message', author: 'v.belova@corp.example',
+          at: now.subtract(const Duration(hours: 20)), outgoing: false,
+          payload: {'text': 'Принято, сделаю к среде', 'status': AssignmentStatus.inProgress});
+      return db;
+    }))!;
+    await _shot(tester, 'assignments_list', const AssignmentsScreen(), theme: _themes['light']!(), db: db, prefs: prefs);
+    await _shot(tester, 'assignment_card', const AssignmentScreen(id: 'CCCCCCCCCCCC'),
+        theme: _themes['light']!(), db: db, prefs: prefs);
+    await tester.runAsync(db.close);
+  });
+
+  // «Мой день» доской и шкалой (решения владельца 09.11.2026): встречи,
+  // задачи со временем и без, просроченная, письмо «Позже».
+  for (final view in const ['board', 'timeline']) {
+    testWidgets('мой день — $view', (tester) async {
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'myday_view': view});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(() async {
+        final db = await _db();
+        final now = DateTime.now();
+        final d0 = DateTime(now.year, now.month, now.day);
+        Future<void> ev(String id, String title, int h, int m, int len, int color) =>
+            db.into(db.calendarEvents).insert(CalendarEventsCompanion.insert(
+                  id: id,
+                  accountId: 'a1',
+                  title: title,
+                  startTime: d0.add(Duration(hours: h, minutes: m)),
+                  endTime: d0.add(Duration(hours: h, minutes: m + len)),
+                  createdAt: now,
+                  colorValue: Value(color),
+                ));
+        await ev('e1', 'Планёрка отдела', 10, 0, 90, 0xFF4A78B0);
+        await ev('e2', 'Звонок поставщику', 10, 30, 30, 0xFF5B8C5A);
+        await ev('e3', 'Созвон с ООО «Ромашка»', 13, 0, 60, 0xFF7E5E9E);
+        await ev('e4', 'Обзор проекта «Склад»', 16, 0, 60, 0xFFB0703F);
+        Future<void> task(String id, String title, DateTime? due) => db.into(db.tasks).insert(TasksCompanion.insert(
+              id: id, accountId: 'a1', title: title, createdAt: now, dueDate: Value(due)));
+        await task('t1', 'Отчёт за октябрь', d0);
+        await task('t2', 'Ответить Борису по договору', d0);
+        await task('t3', 'Подготовить презентацию', d0.add(const Duration(hours: 14, minutes: 30)));
+        await task('t4', 'Узнать у коллеги про акт', d0.subtract(const Duration(days: 1)));
+        return db;
+      }))!;
+      await _shot(tester, 'my_day_$view', const MyDayScreen(), theme: _themes['light']!(), db: db, prefs: prefs);
       await tester.runAsync(db.close);
     });
   }

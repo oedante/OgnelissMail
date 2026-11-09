@@ -29,6 +29,7 @@ import '../../core/security/secure_storage_service.dart';
 import '../../core/security/mail_body_processor.dart';
 import 'dart:convert';
 import '../mail/control_service.dart';
+import '../assignments/assignment_service.dart' show AssignmentService;
 import '../mail/email_actions_service.dart' show emailActionsProvider;
 import 'package:http/http.dart' as http;
 import 'package:drift/drift.dart';
@@ -322,6 +323,8 @@ class SyncService {
               } catch (_) {}
             }
           }
+          // Поручения (2.2.0): ответы исполнителей, новые поручения мне.
+          await AssignmentService.scanAfterSync(_ref.read(databaseProvider), accounts);
           await FollowUpService(
             _ref.read(databaseProvider),
             _ref.read(notificationServiceProvider),

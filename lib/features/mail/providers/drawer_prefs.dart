@@ -17,7 +17,7 @@ import '../../../data/providers/shared_prefs_provider.dart';
 /// myDay, settings, theme — из бывшего меню «Ещё» (1.6.40): по умолчанию
 /// видны (у тех, кто уже настраивал избранное, тоже — их нет в сохранённом
 /// списке скрытых).
-enum DrawerQuickItem { allAccounts, allMail, unread, flagged, vip, attachments, fileHub, notes, tasks, control, later, triage, myDay, settings, theme }
+enum DrawerQuickItem { allAccounts, allMail, unread, flagged, vip, attachments, fileHub, notes, tasks, control, later, triage, myDay, settings, theme, assignments }
 
 const _kHiddenQuick = 'drawer_quick_hidden';
 const _kCollapsed = 'drawer_collapsed_folders';

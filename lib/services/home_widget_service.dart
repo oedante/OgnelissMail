@@ -142,8 +142,9 @@ class HomeWidgetService {
     _lastAt = now;
     try {
       final prefs = await SharedPreferences.getInstance();
-      // Доска включена в «Моём дне» — виджет тоже показывает колонки.
-      final board = prefs.getBool('myday_board') ?? false;
+      // «Мой день» — доска (решение владельца 09.11.2026: список убран);
+      // виджет показывает колонки.
+      const board = true;
       final json = jsonEncode(await _build(db, ids, l10n, showControl, now, private, board: board));
       // Что показывает виджет «Почта» (08.11.2026, план п. 8.1): все
       // входящие, VIP, с флажком, «На контроле» или один ящик.

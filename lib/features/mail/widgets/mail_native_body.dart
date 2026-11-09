@@ -288,11 +288,17 @@ NativeMail? buildNativeMailRemote(String html, {DateContext? dates}) =>
   if (body == null) return no('нет тела');
 
   // <style> письма не применяются: если без них текст изменится (скрытые
-  // классами блоки, адаптивная вёрстка) — в WebView.
+  // классами блоки) — в WebView. Правила @media (2.2.0, план 08.11.2026
+  // п. 5) — для другой ширины экрана: простой показ их не применяет и
+  // показывает письмо как на компьютере (раньше любое @media — в WebView).
+  // Адаптивное письмо прячет мобильную версию вне @media не только
+  // display:none, но и max-height:0, visibility:hidden, opacity:0 — тогда
+  // по-прежнему WebView.
   for (final st in doc.querySelectorAll('style')) {
     final t = st.text.toLowerCase();
-    if (t.contains('@media')) return no('стили @media');
-    if (RegExp(r'display\s*:\s*none').hasMatch(t)) return no('скрытые стилем блоки');
+    final outside = cssOutsideAtRules(t);
+    if (RegExp(r'display\s*:\s*none').hasMatch(outside)) return no('скрытые стилем блоки');
+    if (t.contains('@media') && _hiddenTricks.hasMatch(outside)) return no('скрытые стилем блоки (@media)');
   }
 
   var count = 0;
@@ -499,6 +505,40 @@ NativeMail? _forced(String html, [DateContext? dates]) {
   }
   return _buildBlocks(body, html, dates);
 }
+
+/// CSS без @-блоков (@media, @font-face, @page …) и комментариев: правила,
+/// которые действуют всегда.
+String cssOutsideAtRules(String css) {
+  final text = css.replaceAll(_cssComment, '').replaceAll('<!--', ' ').replaceAll('-->', ' ');
+  final out = StringBuffer();
+  var i = 0;
+  while (i < text.length) {
+    final c = text[i];
+    if (c == '@') {
+      // До «;» (@import, @charset) или до парной «}» блока.
+      final semi = text.indexOf(';', i);
+      final open = text.indexOf('{', i);
+      if (open < 0 || (semi >= 0 && semi < open)) {
+        i = semi < 0 ? text.length : semi + 1;
+        continue;
+      }
+      var depth = 0;
+      var j = open;
+      for (; j < text.length; j++) {
+        if (text[j] == '{') depth++;
+        if (text[j] == '}' && --depth == 0) break;
+      }
+      i = j + 1;
+      continue;
+    }
+    out.write(c);
+    i++;
+  }
+  return out.toString();
+}
+
+final _hiddenTricks = RegExp(
+    r'max-height\s*:\s*0(px)?\s*(!important)?\s*[;}]|visibility\s*:\s*hidden|opacity\s*:\s*0(\.0+)?\s*(!important)?\s*[;}]');
 
 final _zeroOpacity = RegExp(r'(^|;)opacity:0(\.0+)?(!important)?(;|$)');
 final _zeroMaxHeight = RegExp(r'(^|;)max-height:0(px)?(!important)?(;|$)');

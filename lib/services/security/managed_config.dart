@@ -463,11 +463,16 @@ class ManagedConfigService {
   @visibleForTesting
   static bool? debugSupported;
 
+  /// Настройки, как их прислал MDM (до разбора) — для отчёта консоли
+  /// (managed_feedback.dart): там видно и нераспознанные значения.
+  static Map<Object?, Object?> lastRaw = const {};
+
   /// Политика из MDM (сейчас); копия — в prefs.
   Future<ManagedPolicy> load() async {
     if (!supported) return _store(ManagedPolicy.none);
     try {
       final raw = await _channel.invokeMethod<Map<Object?, Object?>>('get');
+      lastRaw = raw ?? const {};
       return _store(ManagedPolicy.fromMap(raw));
     } on MissingPluginException {
       return ManagedPolicy.fromPrefs(_prefs);

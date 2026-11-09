@@ -9,6 +9,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import androidx.enterprise.feedback.KeyedAppState
+import androidx.enterprise.feedback.KeyedAppStatesCallback
+import androidx.enterprise.feedback.KeyedAppStatesReporter
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodChannel
 
@@ -21,7 +25,10 @@ import io.flutter.plugin.common.MethodChannel
  * Канал «ogneliss/mdm»: «get» — нынешние настройки словарём (пусто — не
  * управляется); «changed» — в Dart, когда MDM прислал новые (широковещание
  * ACTION_APPLICATION_RESTRICTIONS_CHANGED, только пока процесс жив; при
- * следующем запуске Dart спрашивает «get» сам).
+ * следующем запуске Dart спрашивает «get» сам); «report» — отчёт для
+ * консоли MDM (2.2.0, KeyedAppStates из androidx.enterprise:enterprise-feedback,
+ * Apache-2.0): список {key, severity, message, data}, что сообщать —
+ * lib/services/security/managed_feedback.dart.
  */
 object MdmBridge {
     private const val CHANNEL = "ogneliss/mdm"
@@ -35,6 +42,10 @@ object MdmBridge {
         ch.setMethodCallHandler { call, result ->
             when (call.method) {
                 "get" -> result.success(read(app))
+                "report" -> {
+                    report(app, call.arguments as? List<*> ?: emptyList<Any>())
+                    result.success(null)
+                }
                 else -> result.notImplemented()
             }
         }
@@ -59,6 +70,39 @@ object MdmBridge {
                 receiver = r
             }
         }
+    }
+
+    private var reporter: KeyedAppStatesReporter? = null
+
+    /**
+     * Отчёт консоли MDM. Без управляющего приложения (DPC) или на старом
+     * Android отчёт просто никуда не уходит; сбой — только в журнал.
+     */
+    private fun report(context: Context, items: List<*>) {
+        runCatching {
+            val states = items.mapNotNull { item ->
+                val m = item as? Map<*, *> ?: return@mapNotNull null
+                val key = m["key"] as? String ?: return@mapNotNull null
+                runCatching {
+                    KeyedAppState.builder()
+                        .setKey(key)
+                        .setSeverity(
+                            if ((m["severity"] as? Number)?.toInt() == 2) KeyedAppState.SEVERITY_ERROR
+                            else KeyedAppState.SEVERITY_INFO
+                        )
+                        .setMessage(m["message"] as? String)
+                        .setData(m["data"] as? String)
+                        .build()
+                }.getOrNull()
+            }
+            if (states.isEmpty()) return
+            val r = reporter ?: KeyedAppStatesReporter.create(context).also { reporter = it }
+            r.setStates(states) { status, error ->
+                if (status != KeyedAppStatesCallback.STATUS_SUCCESS) {
+                    Log.w("OgnelissMdm", "KeyedAppStates: status $status ${error ?: ""}")
+                }
+            }
+        }.onFailure { Log.w("OgnelissMdm", "KeyedAppStates: $it") }
     }
 
     private fun read(context: Context): Map<String, Any?> {

@@ -38,6 +38,7 @@ Contributions are accepted under the same license (section 5 of the license).
 | Material Symbols icons | Apache-2.0 | `material_symbols_icons` |
 | flutter_svg (sender logos, BIMI) with vector_graphics, vector_graphics_codec, vector_graphics_compiler | MIT; vector_graphics*: BSD-3-Clause | pub.dev |
 | AndroidX, Kotlin, AppAuth | Apache-2.0 | Android and iOS builds |
+| AndroidX Enterprise Feedback 1.1.0 (`androidx.enterprise:enterprise-feedback`; checked 09.11.2026) — report to the MDM console (KeyedAppStates, 2.2.0) | Apache-2.0, free | Android build only (`android/app/build.gradle.kts`, `MdmBridge.kt`); text in the app: "AndroidX Enterprise Feedback" |
 | Firebase Cloud Messaging Android SDK (`com.google.firebase:firebase-messaging`, BoM 35.1.0; checked 01.11.2026) | Apache-2.0; pulls in Google Play services client libraries (proprietary, free of charge, Android SDK / Google APIs terms) | Android build only (`android/app/build.gradle.kts`); text in the app: "Firebase Cloud Messaging" |
 | Firebase Cloud Messaging service (Google) | free of charge, no paid tier or quota fees (Firebase Spark plan); Firebase / Google APIs Terms of Service | Android server signals: app and `server/push-relay` (HTTP v1 API) |
 | UnifiedPush android-connector 3.3.5 (`org.unifiedpush.android:connector`; checked 01.11.2026) — server signals on Android without Google services | Apache-2.0, free | Android build only (`android/app/build.gradle.kts`, `PushWakeUnifiedPush.kt`); text in the app: "UnifiedPush connector" |

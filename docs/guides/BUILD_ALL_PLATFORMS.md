@@ -65,7 +65,7 @@ open macos/Runner.xcworkspace   # Runner → Signing & Capabilities → Team
 - возврат из входа через Google/Яндекс (`com.ogneliss.mail://oauth`);
 - имя «Ogneliss Mail», идентификатор `com.ogneliss.mail` (тот же, что у
   iPhone — в App Store Connect это одна карточка, покупка общая),
-  категорию «Производительность», macOS 11+.
+  категорию «Производительность», macOS 12+.
 
 Каждая версия:
 ```bash

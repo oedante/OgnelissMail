@@ -495,6 +495,43 @@ void main() {
     });
   }
 
+  // «Мой день» доской и шкалой (решения владельца 09.11.2026): встречи,
+  // задачи со временем и без, просроченная, письмо «Позже».
+  for (final view in const ['board', 'timeline']) {
+    testWidgets('мой день — $view', (tester) async {
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'myday_view': view});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(() async {
+        final db = await _db();
+        final now = DateTime.now();
+        final d0 = DateTime(now.year, now.month, now.day);
+        Future<void> ev(String id, String title, int h, int m, int len, int color) =>
+            db.into(db.calendarEvents).insert(CalendarEventsCompanion.insert(
+                  id: id,
+                  accountId: 'a1',
+                  title: title,
+                  startTime: d0.add(Duration(hours: h, minutes: m)),
+                  endTime: d0.add(Duration(hours: h, minutes: m + len)),
+                  createdAt: now,
+                  colorValue: Value(color),
+                ));
+        await ev('e1', 'Планёрка отдела', 10, 0, 90, 0xFF4A78B0);
+        await ev('e2', 'Звонок поставщику', 10, 30, 30, 0xFF5B8C5A);
+        await ev('e3', 'Созвон с ООО «Ромашка»', 13, 0, 60, 0xFF7E5E9E);
+        await ev('e4', 'Обзор проекта «Склад»', 16, 0, 60, 0xFFB0703F);
+        Future<void> task(String id, String title, DateTime? due) => db.into(db.tasks).insert(TasksCompanion.insert(
+              id: id, accountId: 'a1', title: title, createdAt: now, dueDate: Value(due)));
+        await task('t1', 'Отчёт за октябрь', d0);
+        await task('t2', 'Ответить Борису по договору', d0);
+        await task('t3', 'Подготовить презентацию', d0.add(const Duration(hours: 14, minutes: 30)));
+        await task('t4', 'Узнать у коллеги про акт', d0.subtract(const Duration(days: 1)));
+        return db;
+      }))!;
+      await _shot(tester, 'my_day_$view', const MyDayScreen(), theme: _themes['light']!(), db: db, prefs: prefs);
+      await tester.runAsync(db.close);
+    });
+  }
+
   // Лента и письмо рядом на компьютере и планшете (1.10.5, по образцу
   // Outlook): панель папок, лента, письмо с панелью команд.
   for (final (name, size) in const [('desktop', Size(1440, 900)), ('tablet', Size(1194, 834))]) {

@@ -470,6 +470,8 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
   static String _left(Duration d, AppLocalizations l10n) {
     final m = d.inMinutes.clamp(0, 24 * 60);
     if (m < 60) return l10n.tr('myDayMinutes').replaceAll('{m}', '$m');
+    // Ровно часы — без «0 мин».
+    if (m % 60 == 0) return l10n.tr('durHours').replaceAll('{h}', '${m ~/ 60}');
     return l10n.tr('myDayHours').replaceAll('{h}', '${m ~/ 60}').replaceAll('{m}', '${m % 60}');
   }
 

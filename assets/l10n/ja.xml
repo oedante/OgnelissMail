@@ -4039,4 +4039,6 @@
     <string name="assignEvCreated">{name}さんに依頼。メール送信済み</string>
     <string name="assignEvReceived">{name}さんからの依頼</string>
     <string name="assignEvReminder">リマインダー送信済み</string>
+    <string name="translateEngineBergamot">パソコン上で Bergamot（Mozilla）が翻訳します。メールの本文はパソコンの外に送信されません。言語は Ogneliss のサーバーからダウンロードされます。</string>
+    <string name="translatePhoneLangsWindows">Windows の言語 — 翻訳を提案しない</string>
 </resources>

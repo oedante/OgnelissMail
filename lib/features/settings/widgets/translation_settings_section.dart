@@ -236,7 +236,11 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       SettingsSectionTitle(l10n.tr('translateSection')),
       // Условия ML Kit: в справке приложения — что перевод от Google.
-      SettingsIntro(l10n.tr(t.googleAttribution ? 'translateEngineGoogle' : 'translateEngineApple')),
+      SettingsIntro(l10n.tr(t.googleAttribution
+          ? 'translateEngineGoogle'
+          : !kIsWeb && Platform.isWindows
+              ? 'translateEngineBergamot'
+              : 'translateEngineApple')),
       SettingsGroup(children: [
         SettingsSwitchItem(
           icon: AppIcons.translate,
@@ -251,7 +255,13 @@ class _TranslationSettingsSectionState extends ConsumerState<TranslationSettings
         SettingsSwitchItem(
           key: const ValueKey('translate_phone_langs'),
           icon: AppIcons.language,
-          title: l10n.tr(!kIsWeb && Platform.isMacOS ? 'translatePhoneLangsMac' : 'translatePhoneLangs'),
+          title: l10n.tr(kIsWeb
+              ? 'translatePhoneLangs'
+              : Platform.isMacOS
+                  ? 'translatePhoneLangsMac'
+                  : Platform.isWindows
+                      ? 'translatePhoneLangsWindows'
+                      : 'translatePhoneLangs'),
           subtitle: _phoneLangsSubtitle(l10n, app),
           value: settings.translatePhoneLangs,
           onChanged: settings.translateOffer ? notifier.setTranslatePhoneLangs : null,

@@ -380,6 +380,24 @@ UnifiedPush (архив сайта). Службу сигналов на серв
   прежний замысел с голосованием (`architecture/TASK_WORKFLOW_DESIGN.md`)
   не реализован.
 
+## 09.11.2026 — перевод на Windows (Bergamot)
+
+- Код: `lib/services/translation/bergamot/` — модели (`bergamot_models.dart`:
+  index.json с ogneliss.ru, скачивание с sha256, manifest.json пары),
+  локальный сервер движка (`bergamot_server.dart`: 127.0.0.1, ключ в пути,
+  Host, CSP), Translator и скрытый WebView2 (`bergamot_translator.dart`);
+  язык письма — `lang_detect.dart`, названия языков — `language_names.g.dart`
+  (`tool/dev/lang_names.py`, CLDR через babel).
+- Сборка: движок из npm (`tool/bergamot/fetch_engine.sh|.ps1`,
+  `engine.sha256`) в `build/bergamot`, `tool/bergamot/bergamot.cmake` кладёт
+  его в `data\bergamot`; строку include добавляют ci.yml (build-windows),
+  `scripts/build_windows.ps1`, `scripts/setup.ps1`.
+- Сервер: `server/translate-models` (nginx, сеть NPM, `/mail/translate/`) —
+  **ждёт установки владельцем**; без него языки на Windows не скачаются.
+- Проверено: путь целиком в Chromium (локальный сервер → движок → модели),
+  тесты `test/unit/bergamot_test.dart`, `lang_detect_test.dart`. В WebView2
+  на Windows — ждёт проверки владельца (docs/guides/TRANSLATION_SETUP.md).
+
 ## Следующий сеанс — с чего начать
 
 1. Прочитать CLAUDE.md и этот файл; ветку разработки начинать от `main`.

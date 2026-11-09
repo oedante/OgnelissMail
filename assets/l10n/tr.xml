@@ -4060,4 +4060,6 @@
     <string name="assignEvCreated">{name} görevlendirildi. E-posta gönderildi</string>
     <string name="assignEvReceived">{name} kişisinden görev</string>
     <string name="assignEvReminder">Hatırlatma gönderildi</string>
+    <string name="translateEngineBergamot">Bilgisayarda çeviri: Bergamot (Mozilla). E-posta metni bilgisayardan çıkmaz; diller Ogneliss sunucusundan indirilir.</string>
+    <string name="translatePhoneLangsWindows">Windows dilleri — çeviri önerme</string>
 </resources>

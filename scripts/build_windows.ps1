@@ -177,6 +177,21 @@ if ($cmText -notmatch '_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS') {
   Ok 'CMake-исправление уже применено'
 }
 
+# Перевод писем (2.2.0): движок Bergamot — строка в конце
+# windows\CMakeLists.txt подключает tool\bergamot\bergamot.cmake, а он кладёт
+# build\bergamot рядом с exe (data\bergamot). Файлы движка скачивает
+# tool\bergamot\fetch_engine.ps1 (npm, проверка sha256). Не скачался — сборка
+# без перевода.
+$bergamotLine = 'include("${CMAKE_CURRENT_SOURCE_DIR}/../tool/bergamot/bergamot.cmake" OPTIONAL)'
+$cmText = Get-Content $cm -Raw
+if ($cmText -notmatch 'tool/bergamot/bergamot\.cmake') {
+  Add-Content -Path $cm -Value @('', '# --- Ogneliss: translation engine (Bergamot) next to the exe', $bergamotLine) -Encoding ASCII
+  Ok 'windows\CMakeLists.txt: подключён движок перевода (Bergamot)'
+}
+Step 'Движок перевода Bergamot (build\bergamot)'
+& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'tool\bergamot\fetch_engine.ps1')
+if ($LASTEXITCODE -ne 0) { Warn 'Движок перевода не скачан — сборка без перевода писем' } else { Ok 'Движок перевода на месте' }
+
 # Название и идентификаторы для Windows: заголовок окна, свойства exe,
 # имя exe. CompanyName\ProductName из Runner.rc задают и папку данных:
 # %APPDATA%\com.ogneliss\Ogneliss Mail. Правка идемпотентна — работает и для

@@ -4039,4 +4039,6 @@
     <string name="assignEvCreated">มอบหมายให้ {name} ส่งอีเมลแล้ว</string>
     <string name="assignEvReceived">งานจาก {name}</string>
     <string name="assignEvReminder">ส่งการเตือนแล้ว</string>
+    <string name="translateEngineBergamot">แปลบนคอมพิวเตอร์ด้วย Bergamot (Mozilla) ข้อความอีเมลไม่ออกจากคอมพิวเตอร์ ภาษาจะดาวน์โหลดจากเซิร์ฟเวอร์ Ogneliss</string>
+    <string name="translatePhoneLangsWindows">ภาษาของ Windows — ไม่ต้องเสนอการแปล</string>
 </resources>

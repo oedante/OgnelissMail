@@ -4060,4 +4060,6 @@
     <string name="assignEvCreated">Kiadva: {name}. E-mail elküldve</string>
     <string name="assignEvReceived">Megbízás tőle: {name}</string>
     <string name="assignEvReminder">Emlékeztető elküldve</string>
+    <string name="translateEngineBergamot">Fordítás a számítógépen: Bergamot (Mozilla). A levelek szövege nem hagyja el a számítógépet; a nyelvek az Ogneliss-kiszolgálóról töltődnek le.</string>
+    <string name="translatePhoneLangsWindows">Windows nyelvei – ne ajánljon fordítást</string>
 </resources>

@@ -4039,4 +4039,6 @@
     <string name="assignEvCreated">Đã giao cho {name}. Đã gửi email</string>
     <string name="assignEvReceived">Việc giao từ {name}</string>
     <string name="assignEvReminder">Đã gửi lời nhắc</string>
+    <string name="translateEngineBergamot">Dịch trên máy tính bằng Bergamot (Mozilla). Nội dung thư không rời khỏi máy tính; ngôn ngữ được tải về từ máy chủ Ogneliss.</string>
+    <string name="translatePhoneLangsWindows">Ngôn ngữ của Windows — không đề xuất dịch</string>
 </resources>

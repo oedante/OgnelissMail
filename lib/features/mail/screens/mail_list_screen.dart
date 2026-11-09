@@ -125,6 +125,9 @@ class MailListScreen extends ConsumerStatefulWidget {
 }
 
 class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBindingObserver {
+  /// Полоса края экрана, от которой свайп открывает меню (2.2.0).
+  static const double _menuEdge = 10;
+
   /// С этой ширины области ленты папки стоят панелью слева (1.6.28):
   /// 272 dp папок + лента 340 + письмо 400 с запасом.
   static const _dockedFoldersMin = 1040.0;
@@ -921,6 +924,11 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       // справа и свайп от правого края — под большим пальцем).
       drawer: docked || _menuAtEnd ? null : const MailDrawer(),
       endDrawer: _menuAtEnd ? const MailDrawer() : null,
+      // Полоса края для меню — 10 точек вместо 20 (2.2.0, план 08.11.2026
+      // п. 7): свайп строки, начатый у края, открывал меню вместо действия
+      // строки. Меню — и от самого края, и кнопкой «Меню» внизу.
+      drawerEdgeDragWidth:
+          _menuEdge + (_menuAtEnd ? MediaQuery.paddingOf(context).right : MediaQuery.paddingOf(context).left),
 
       // В режиме выбора действия показываем внизу — до них можно дотянуться
       // одной рукой. В обычном режиме панели нет: место занимает список.

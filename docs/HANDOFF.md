@@ -363,6 +363,22 @@ UnifiedPush (архив сайта). Службу сигналов на серв
   ждут ответов владельца на пять вопросов. Реакции 👍✅ — не делаем
   (решение владельца 09.11).
 
+## 09.11.2026 — «Мой день» и поручения по решениям владельца
+
+- «Мой день»: `my_day_board.dart` (колонка «Просрочено», `_taskPeek`),
+  `my_day_timeline.dart` (шкала), `services/tasks/task_blocks.dart`
+  (время задачи в настройках телефона), карточка задачи —
+  `features/tasks/widgets/task_peek.dart` (общая с «Задачами»), перенос
+  срока — `TaskActionsService.reschedule`. Список «Моего дня» убран
+  (с ним — VIP, непрочитанные, «Отложенные» и плитки итогов дня).
+- Поручения: `services/assignments/` (метка [OGN-…], отметки
+  ogneliss-task/ogneliss-status, словарь фраз на 27 языках, разбор после
+  синхронизации — `AssignmentService.scanAfterSync`), экраны —
+  `features/assignments/`. Таблицы `Assignments`,
+  `AssignmentParticipants`, `AssignmentEvents` — прежние (без миграции);
+  прежний замысел с голосованием (`architecture/TASK_WORKFLOW_DESIGN.md`)
+  не реализован.
+
 ## Следующий сеанс — с чего начать
 
 1. Прочитать CLAUDE.md и этот файл; ветку разработки начинать от `main`.

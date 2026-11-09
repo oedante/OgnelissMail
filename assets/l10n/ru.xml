@@ -4013,4 +4013,6 @@
     <string name="readReceiptRequest">Запросить уведомление о прочтении</string>
     <string name="readReceiptAll">Уведомление о прочтении для всех писем</string>
     <string name="readReceiptAllDesc">Каждое письмо просит адресата сообщить о прочтении — тогда у письма ✓✓. Адресат может отказаться. Для одного письма — в меню ⋮ редактора</string>
+    <string name="convToLatest">К последнему письму</string>
+    <string name="convNewMessages">Новые письма: {n}</string>
 </resources>

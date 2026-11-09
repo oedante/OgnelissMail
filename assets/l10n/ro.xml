@@ -3992,4 +3992,6 @@
     <string name="readReceiptRequest">Solicită confirmare de citire</string>
     <string name="readReceiptAll">Confirmare de citire pentru toate mesajele</string>
     <string name="readReceiptAllDesc">Fiecare mesaj cere destinatarului confirmarea citirii — atunci apare ✓✓. Destinatarul poate refuza. Pentru un singur mesaj — în meniul ⋮ al editorului</string>
+    <string name="convToLatest">Mergi la cel mai recent mesaj</string>
+    <string name="convNewMessages">Mesaje noi: {n}</string>
 </resources>

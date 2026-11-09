@@ -3971,4 +3971,6 @@
     <string name="readReceiptRequest">Anmod om læsekvittering</string>
     <string name="readReceiptAll">Læsekvittering for alle meddelelser</string>
     <string name="readReceiptAllDesc">Hver meddelelse beder modtageren bekræfte læsning — så vises ✓✓. Modtageren kan afvise. For én meddelelse — i editorens ⋮-menu</string>
+    <string name="convToLatest">Gå til nyeste meddelelse</string>
+    <string name="convNewMessages">Nye meddelelser: {n}</string>
 </resources>

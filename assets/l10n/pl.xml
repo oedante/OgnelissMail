@@ -4013,4 +4013,6 @@
     <string name="readReceiptRequest">Poproś o potwierdzenie przeczytania</string>
     <string name="readReceiptAll">Potwierdzenie przeczytania dla wszystkich wiadomości</string>
     <string name="readReceiptAllDesc">Każda wiadomość prosi odbiorcę o potwierdzenie przeczytania — wtedy widać ✓✓. Odbiorca może odmówić. Dla jednej wiadomości — w menu ⋮ edytora</string>
+    <string name="convToLatest">Do najnowszej wiadomości</string>
+    <string name="convNewMessages">Nowe wiadomości: {n}</string>
 </resources>

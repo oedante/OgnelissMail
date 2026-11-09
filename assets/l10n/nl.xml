@@ -3971,4 +3971,6 @@
     <string name="readReceiptRequest">Leesbevestiging vragen</string>
     <string name="readReceiptAll">Leesbevestiging voor alle berichten</string>
     <string name="readReceiptAllDesc">Elk bericht vraagt de ontvanger het lezen te bevestigen — dan staat er ✓✓. De ontvanger kan weigeren. Voor één bericht — in het ⋮-menu van de editor</string>
+    <string name="convToLatest">Naar nieuwste bericht</string>
+    <string name="convNewMessages">Nieuwe berichten: {n}</string>
 </resources>

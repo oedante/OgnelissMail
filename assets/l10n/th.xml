@@ -3950,4 +3950,6 @@
     <string name="readReceiptRequest">ขอใบตอบรับการอ่าน</string>
     <string name="readReceiptAll">ใบตอบรับการอ่านสำหรับทุกข้อความ</string>
     <string name="readReceiptAllDesc">ทุกข้อความจะขอให้ผู้รับยืนยันการอ่าน จากนั้นจะแสดง ✓✓ ผู้รับอาจปฏิเสธได้ สำหรับข้อความเดียว — ในเมนู ⋮ ของตัวแก้ไข</string>
+    <string name="convToLatest">ไปที่ข้อความล่าสุด</string>
+    <string name="convNewMessages">ข้อความใหม่: {n}</string>
 </resources>

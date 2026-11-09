@@ -3971,4 +3971,6 @@
     <string name="readReceiptRequest">Solicitar confirmação de leitura</string>
     <string name="readReceiptAll">Confirmação de leitura para todas as mensagens</string>
     <string name="readReceiptAllDesc">Cada mensagem pede ao destinatário que confirme a leitura — então mostra ✓✓. O destinatário pode recusar. Para uma única mensagem — no menu ⋮ do editor</string>
+    <string name="convToLatest">Ir para a mensagem mais recente</string>
+    <string name="convNewMessages">Novas mensagens: {n}</string>
 </resources>

@@ -3971,4 +3971,6 @@
     <string name="readReceiptRequest">Be om lesebekreftelse</string>
     <string name="readReceiptAll">Lesebekreftelse for alle meldinger</string>
     <string name="readReceiptAllDesc">Hver melding ber mottakeren bekrefte lesing — da vises ✓✓. Mottakeren kan avslå. For én melding — i redigeringsprogrammets ⋮-meny</string>
+    <string name="convToLatest">Gå til nyeste melding</string>
+    <string name="convNewMessages">Nye meldinger: {n}</string>
 </resources>

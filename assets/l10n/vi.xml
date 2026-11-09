@@ -3950,4 +3950,6 @@
     <string name="readReceiptRequest">Yêu cầu xác nhận đã đọc</string>
     <string name="readReceiptAll">Xác nhận đã đọc cho mọi thư</string>
     <string name="readReceiptAllDesc">Mỗi thư yêu cầu người nhận xác nhận đã đọc — khi đó thư hiện ✓✓. Người nhận có thể từ chối. Cho một thư — trong menu ⋮ của trình soạn</string>
+    <string name="convToLatest">Đến thư mới nhất</string>
+    <string name="convNewMessages">Thư mới: {n}</string>
 </resources>

@@ -3971,4 +3971,6 @@
     <string name="readReceiptRequest">Pyydä lukukuittaus</string>
     <string name="readReceiptAll">Lukukuittaus kaikille viesteille</string>
     <string name="readReceiptAllDesc">Jokainen viesti pyytää vastaanottajaa kuittaamaan lukemisen — silloin näkyy ✓✓. Vastaanottaja voi kieltäytyä. Yksittäiselle viestille — editorin ⋮-valikossa</string>
+    <string name="convToLatest">Uusimpaan viestiin</string>
+    <string name="convNewMessages">Uusia viestejä: {n}</string>
 </resources>

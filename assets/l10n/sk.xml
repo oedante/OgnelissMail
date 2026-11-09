@@ -3992,4 +3992,6 @@
     <string name="readReceiptRequest">Požiadať o potvrdenie o prečítaní</string>
     <string name="readReceiptAll">Potvrdenie o prečítaní pri všetkých správach</string>
     <string name="readReceiptAllDesc">Každá správa žiada príjemcu o potvrdenie prečítania — potom sa zobrazí ✓✓. Príjemca môže odmietnuť. Pre jednu správu — v ponuke ⋮ editora</string>
+    <string name="convToLatest">Na najnovšiu správu</string>
+    <string name="convNewMessages">Nové správy: {n}</string>
 </resources>

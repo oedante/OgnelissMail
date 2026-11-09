@@ -161,9 +161,59 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   final Map<String, GlobalKey> _cardKeys = {};
   String? _revealed;
 
+  // ── «↓ N новых» (2.2.0, план 08.11.2026 «из мессенджеров»: беседа как
+  // чат) ──
+  // Беседа прокручена от последнего письма — кнопка «к последнему»; письма,
+  // пришедшие за это время (не свои), — числом на ней. Последнее письмо — у
+  // начала ленты (offset 0) в обоих порядках: «как чат» — снизу (reverse),
+  // иначе — сверху.
+  bool _atLatest = true;
+  int _newCount = 0;
+  Set<String>? _seenIds;
+
+  static const _latestSlack = 240.0;
+
+  void _onScroll() {
+    final at = !_scroll.hasClients || _scroll.offset < _latestSlack;
+    if (at == _atLatest) return;
+    setState(() {
+      _atLatest = at;
+      if (at) _newCount = 0;
+    });
+  }
+
+  /// Новые письма беседы (не свои) — к счётчику, если беседа прокручена от
+  /// последнего письма.
+  void _trackNew(List<EmailModel> shown, Set<String> own) {
+    final seen = _seenIds;
+    if (seen == null) {
+      _seenIds = {for (final e in shown) e.id};
+      return;
+    }
+    var fresh = 0;
+    for (final e in shown) {
+      if (seen.add(e.id) && !e.isDraft && !own.contains(e.from.email.trim().toLowerCase())) fresh++;
+    }
+    if (fresh == 0 || _atLatest) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !_atLatest) setState(() => _newCount += fresh);
+    });
+  }
+
+  void _toLatest() {
+    setState(() => _newCount = 0);
+    if (!_scroll.hasClients) return;
+    final far = _scroll.offset > 4000;
+    // Издалека — прыжком почти до конца и короткой прокруткой (не листать
+    // сотни писем).
+    if (far) _scroll.jumpTo(800);
+    unawaited(_scroll.animateTo(0, duration: const Duration(milliseconds: 280), curve: Curves.easeOutCubic));
+  }
+
   @override
   void dispose() {
     _find.dispose();
+    _scroll.removeListener(_onScroll);
     _scroll.dispose();
     super.dispose();
   }
@@ -212,6 +262,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     _find.addListener(() {
       if (mounted) setState(() {});
     });
+    _scroll.addListener(_onScroll);
     _stream = _watchConversation(db, widget.conversationId, widget.accountId);
     // Таблица писем меняется при каждой синхронизации — экран беседы
     // перестраивается, только когда черновики правда изменились (2.0.0,
@@ -608,6 +659,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         final own = {
           for (final a in ref.watch(accountsProvider)) ...OwnAddresses.of(a),
         };
+        if (shown != null) _trackNew(shown, {for (final o in own) o.toLowerCase()});
         final settings = ref.watch(settingsProvider);
         final muted = ref.watch(mutedConversationsProvider
             .select((m) => m.contains(ConversationNotify.key(widget.accountId, widget.conversationId))));
@@ -831,6 +883,24 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     ),
             // «Письмо удалено · Вернуть» — как в ленте, поверх списка внизу.
             const Positioned(left: 0, right: 0, bottom: Space.s, child: UndoStrip()),
+            // «↓ N новых»: к последнему письму (2.2.0).
+            if (!_atLatest && shown != null && shown.isNotEmpty)
+              Positioned(
+                right: Space.l,
+                bottom: Space.l,
+                child: Badge(
+                  isLabelVisible: _newCount > 0,
+                  label: Text('$_newCount'),
+                  child: FloatingActionButton.small(
+                    heroTag: null,
+                    tooltip: _newCount > 0
+                        ? l10n.tr('convNewMessages').replaceAll('{n}', '$_newCount')
+                        : l10n.tr('convToLatest'),
+                    onPressed: _toLatest,
+                    child: Icon(chat ? AppIcons.arrow_downward : AppIcons.arrow_upward),
+                  ),
+                ),
+              ),
           ]),
           // Строка ответа на последнее письмо (1.6.49, как в мессенджере);
           // поднимается над клавиатурой.

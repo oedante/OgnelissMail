@@ -3992,4 +3992,6 @@
     <string name="readReceiptRequest">בקשת אישור קריאה</string>
     <string name="readReceiptAll">אישור קריאה לכל ההודעות</string>
     <string name="readReceiptAllDesc">כל הודעה מבקשת מהנמען לאשר קריאה — ואז מוצג ✓✓. הנמען יכול לסרב. להודעה אחת — בתפריט ⋮ של העורך</string>
+    <string name="convToLatest">להודעה האחרונה</string>
+    <string name="convNewMessages">הודעות חדשות: {n}</string>
 </resources>

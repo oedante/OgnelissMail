@@ -3971,4 +3971,6 @@
     <string name="readReceiptRequest">Demander un accusé de lecture</string>
     <string name="readReceiptAll">Accusé de lecture pour tous les messages</string>
     <string name="readReceiptAllDesc">Chaque message demande au destinataire de confirmer la lecture — il affiche alors ✓✓. Le destinataire peut refuser. Pour un seul message — dans le menu ⋮ de l\'éditeur</string>
+    <string name="convToLatest">Aller au dernier message</string>
+    <string name="convNewMessages">Nouveaux messages : {n}</string>
 </resources>

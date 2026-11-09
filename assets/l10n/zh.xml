@@ -3950,4 +3950,6 @@
     <string name="readReceiptRequest">请求已读回执</string>
     <string name="readReceiptAll">所有邮件都请求已读回执</string>
     <string name="readReceiptAllDesc">每封邮件都会请收件人确认已读，确认后显示 ✓✓。收件人可以拒绝。仅针对一封邮件——在编辑器的 ⋮ 菜单中</string>
+    <string name="convToLatest">转到最新邮件</string>
+    <string name="convNewMessages">新邮件：{n}</string>
 </resources>

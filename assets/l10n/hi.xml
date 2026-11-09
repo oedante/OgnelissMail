@@ -3971,4 +3971,6 @@
     <string name="readReceiptRequest">पठन रसीद का अनुरोध करें</string>
     <string name="readReceiptAll">सभी संदेशों के लिए पठन रसीद</string>
     <string name="readReceiptAllDesc">हर संदेश प्राप्तकर्ता से पढ़ने की पुष्टि माँगता है — तब ✓✓ दिखता है। प्राप्तकर्ता मना कर सकता है। एक संदेश के लिए — संपादक के ⋮ मेनू में</string>
+    <string name="convToLatest">नवीनतम संदेश पर जाएँ</string>
+    <string name="convNewMessages">नए संदेश: {n}</string>
 </resources>

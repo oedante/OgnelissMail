@@ -3950,4 +3950,6 @@
     <string name="readReceiptRequest">開封確認を要求</string>
     <string name="readReceiptAll">すべてのメッセージに開封確認</string>
     <string name="readReceiptAllDesc">すべてのメッセージで受信者に開封確認を求めます。確認されると ✓✓ が表示されます。受信者は拒否できます。個別のメッセージはエディターの ⋮ メニューで</string>
+    <string name="convToLatest">最新のメッセージへ</string>
+    <string name="convNewMessages">新着メッセージ: {n}</string>
 </resources>

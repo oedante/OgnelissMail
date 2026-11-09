@@ -3950,4 +3950,6 @@
     <string name="readReceiptRequest">Minta tanda terima baca</string>
     <string name="readReceiptAll">Tanda terima baca untuk semua pesan</string>
     <string name="readReceiptAllDesc">Setiap pesan meminta penerima mengonfirmasi telah membaca — lalu tampil ✓✓. Penerima dapat menolak. Untuk satu pesan — di menu ⋮ editor</string>
+    <string name="convToLatest">Ke pesan terbaru</string>
+    <string name="convNewMessages">Pesan baru: {n}</string>
 </resources>

@@ -3971,4 +3971,6 @@
     <string name="readReceiptRequest">Olvasási visszaigazolás kérése</string>
     <string name="readReceiptAll">Olvasási visszaigazolás minden üzenethez</string>
     <string name="readReceiptAllDesc">Minden üzenet olvasási visszaigazolást kér a címzettől — ekkor ✓✓ látható. A címzett elutasíthatja. Egy üzenethez — a szerkesztő ⋮ menüjében</string>
+    <string name="convToLatest">Ugrás a legújabb üzenethez</string>
+    <string name="convNewMessages">Új üzenetek: {n}</string>
 </resources>

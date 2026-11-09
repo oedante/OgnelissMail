@@ -3971,4 +3971,6 @@
     <string name="readReceiptRequest">Lesebestätigung anfordern</string>
     <string name="readReceiptAll">Lesebestätigung für alle Nachrichten</string>
     <string name="readReceiptAllDesc">Jede Nachricht bittet den Empfänger um Lesebestätigung — dann zeigt sie ✓✓. Der Empfänger kann ablehnen. Für eine Nachricht — im Menü ⋮ des Editors</string>
+    <string name="convToLatest">Zur neuesten Nachricht</string>
+    <string name="convNewMessages">Neue Nachrichten: {n}</string>
 </resources>

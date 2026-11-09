@@ -4055,4 +4055,6 @@
     <string name="readReceiptRequest">طلب إشعار بالقراءة</string>
     <string name="readReceiptAll">إشعار القراءة لكل الرسائل</string>
     <string name="readReceiptAllDesc">تطلب كل رسالة من المستلم تأكيد القراءة، وعندها تظهر ✓✓. قد يرفض المستلم. لرسالة واحدة — من قائمة ⋮ في المحرر</string>
+    <string name="convToLatest">الانتقال إلى أحدث رسالة</string>
+    <string name="convNewMessages">رسائل جديدة: {n}</string>
 </resources>

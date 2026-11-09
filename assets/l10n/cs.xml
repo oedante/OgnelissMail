@@ -3992,4 +3992,6 @@
     <string name="readReceiptRequest">Požádat o potvrzení o přečtení</string>
     <string name="readReceiptAll">Potvrzení o přečtení u všech zpráv</string>
     <string name="readReceiptAllDesc">Každá zpráva žádá příjemce o potvrzení přečtení — pak se u ní zobrazí ✓✓. Příjemce může odmítnout. Pro jednu zprávu — v nabídce ⋮ editoru</string>
+    <string name="convToLatest">Na nejnovější zprávu</string>
+    <string name="convNewMessages">Nové zprávy: {n}</string>
 </resources>

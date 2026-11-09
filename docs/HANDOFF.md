@@ -348,6 +348,21 @@ UnifiedPush (архив сайта). Службу сигналов на серв
 - Архив исходников для магазинов — `tool/dev/make_archive.sh` после всех
   пунктов.
 
+## 09.11.2026 — ключи MDM 2.2.0 и макеты
+
+- Ключи MDM (план п. 1) — все из списка ИТ-служб и отчёт консоли Android
+  (KeyedAppStates, `managed_feedback.dart`, `MdmBridge.kt` «report»).
+  `allow_user_cert_trust=false`: решения пользователя о сертификатах не
+  действуют (и прежние); сетевой стек Android получает `systemOnly` —
+  только системные ЦС (`NativeHttpPlugin.java`, `systemCaStore`).
+  `block_external_services` — и сервер входа Ogneliss: новый вход
+  объясняет, что добавить ящик паролем приложения; обновление токена —
+  «войти снова». Новая зависимость Android — enterprise-feedback 1.1.0.
+- Макеты «Мой день» шкалой и поручений — `docs/design/MOCKUPS_MY_DAY_TASKS.md`
+  (снимки — `flutter test tool/shots/mockups_test.dart --update-goldens`),
+  ждут ответов владельца на пять вопросов. Реакции 👍✅ — не делаем
+  (решение владельца 09.11).
+
 ## Следующий сеанс — с чего начать
 
 1. Прочитать CLAUDE.md и этот файл; ветку разработки начинать от `main`.

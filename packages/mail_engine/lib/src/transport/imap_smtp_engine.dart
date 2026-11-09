@@ -176,6 +176,9 @@ class ImapSmtpEngine implements MailEngine {
     if (message.bcc.isNotEmpty) {
       builder.bcc = message.bcc.map((a) => em.MailAddress(a.name ?? '', a.email)).toList();
     }
+    if (message.requestReadReceipt) {
+      builder.setHeader('Disposition-Notification-To', '<${message.from?.email ?? cfg.email}>');
+    }
     final plain = message.bodyPlain ??
         (message.bodyHtml ?? '').replaceAll(RegExp(r'<[^>]*>'), '').trim();
     final html = message.bodyHtml ?? '<p>${plain.replaceAll("\n", "<br>")}</p>';

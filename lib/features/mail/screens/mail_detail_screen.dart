@@ -119,6 +119,7 @@ import '../../../core/security/link_opener.dart';
 import '../../../core/utils/date_links.dart';
 import '../widgets/date_link_sheet.dart';
 import 'attachment_preview_screen.dart';
+import '../widgets/mail_find.dart';
 import '../../../services/mail/attachment_cache_service.dart';
 import '../../../services/mail/tnef/tnef_decoder.dart';
 import '../../../widgets/common/app_sheet.dart';
@@ -152,6 +153,9 @@ class MailDetailScreen extends ConsumerStatefulWidget {
   /// страницы.
   final bool active;
 
+  /// Поиск по беседе (2.2.0): письмо открывается с этим поиском.
+  final String? findQuery;
+
   const MailDetailScreen({
     super.key,
     required this.emailId,
@@ -161,6 +165,7 @@ class MailDetailScreen extends ConsumerStatefulWidget {
     this.onPrev,
     this.onNext,
     this.active = true,
+    this.findQuery,
   });
 
   @override
@@ -187,7 +192,27 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       MailTranslationController(ref)..addListener(() => safeSetState(() {}));
   bool _isLoadingBody = false;
   bool _readReceiptHandled = false;
-  bool _showQuote = false;
+  late bool _showQuote = (widget.findQuery ?? '').trim().isNotEmpty;
+
+  /// Поиск в письме (2.2.0, план 08.11.2026): строка под заголовком;
+  /// из поиска по беседе — сразу открыта, с тем же запросом.
+  final MailFindController _find = MailFindController();
+  late bool _findOpen = (widget.findQuery ?? '').trim().isNotEmpty;
+
+  /// Открыть поиск: письмо — целиком и с перепиской, чтобы искалось всё.
+  void _openFind() {
+    if (_findOpen) return;
+    safeSetState(() {
+      _findOpen = true;
+      _showQuote = true;
+      _showWhole = true;
+    });
+  }
+
+  void _closeFind() {
+    _find.setQuery('');
+    safeSetState(() => _findOpen = false);
+  }
   /// Тело до очистки трекеров — чтобы по «Показать изображения» обработать
   /// его заново, не загружая письмо повторно.
   String? _rawBodyHtml;
@@ -339,6 +364,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     _quickReply.dispose();
     _translation.dispose();
     _scale.dispose();
+    _find.dispose();
     super.dispose();
   }
 
@@ -1110,6 +1136,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           },
           onLink: (url, text) => _onBodyLink(email, url, text),
           onQuoteReply: (text) => _replyWithFragment(email, text),
+          find: _findOpen ? _find : null,
         ),
         if (n.clipped) MailClippedBar(onShowWhole: _onShowWhole),
         if (split.hasQuote) _quoteToggle(theme, l10n, tailOnly: split.tailOnly),
@@ -1205,7 +1232,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   // Огромные рассылки, цепочки с цитатами, журналы показываются началом
   // (пороги — MailClip), под ним — «Показать письмо целиком». Ответ,
   // пересылка, печать и PDF берут письмо целиком: обрезается только показ.
-  bool _showWhole = false;
+  late bool _showWhole = (widget.findQuery ?? '').trim().isNotEmpty;
 
   void _onShowWhole() => safeSetState(() => _showWhole = true);
 
@@ -1241,6 +1268,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       textScaler: TextScaler.noScaling,
       dates: _datesFor(email),
       onLink: (url, text) => _onBodyLink(email, url, text),
+      find: _findOpen ? _find : null,
     );
     if (short == null && !_plainSplit.hasQuote) return text;
     return Column(
@@ -1490,6 +1518,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           inlineRaw: byRequest ? _inlineRaw : null,
           scaleControl: _scale,
           onLink: (url, text) => _onBodyLink(email, url, text),
+          find: _findOpen ? _find : null,
         ),
         if (doc.clipped) MailClippedBar(onShowWhole: _onShowWhole, busy: _showWhole),
         if (split.hasQuote) _quoteToggle(theme, l10n, tailOnly: split.tailOnly),
@@ -1590,6 +1619,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         const SingleActivator(LogicalKeyboardKey.keyQ, control: true): () => _setReadKey(email, true),
         const SingleActivator(LogicalKeyboardKey.keyU, control: true): () => _setReadKey(email, false),
         const SingleActivator(LogicalKeyboardKey.keyP, control: true): () => unawaited(_exportPdf(email, l10n)),
+        // Поиск в письме (2.2.0) — F4, как в Outlook (Ctrl+F — переслать).
+        const SingleActivator(LogicalKeyboardKey.f4): _openFind,
       },
       // Клавиши без Ctrl — не пока набирают ответ (1.10.1): Delete —
       // удалить, Backspace — в архив, Insert — флажок.
@@ -1652,6 +1683,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             ),
           ],
         ],
+        // Поиск в письме (2.2.0) — строкой под заголовком.
+        bottom: _findOpen ? MailFindBar(controller: _find, onClose: _closeFind, initial: widget.findQuery) : null,
       )),
       backgroundColor: mailPageColor(theme),
       // Ответ — кнопками нижней панели. Плавающая кнопка быстрого ответа
@@ -2946,6 +2979,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
               ShareParams(text: '${email.subject}\n\n${email.bodyPlain ?? email.bodyPreview ?? ""}'))),
         ]),
         PeekGroup(title: l10n.tr('actionsMore'), items: [
+          // Поиск в письме (2.2.0, план 08.11.2026).
+          _peekAction(AppIcons.search, l10n.tr('findInMail'), _openFind),
           // Письмо в отдельном окне — компьютер (1.9.x, просьба владельца
           // 31.10.2026).
           if (MessageWindow.supported)

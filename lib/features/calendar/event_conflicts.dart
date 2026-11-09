@@ -35,3 +35,26 @@ Future<List<CalendarEvent>> eventConflicts(
       if (ex == null || (r.id != ex && !r.id.startsWith('$ex#'))) r,
   ].take(limit).toList();
 }
+
+/// Пересечения приглашения из письма (2.2.0, план 08.11.2026 п. 5) — без
+/// самой встречи: Exchange ставит её в календарь «под вопросом», как только
+/// приходит приглашение (то же время и та же тема).
+Future<List<CalendarEvent>> meetingConflicts(
+  AppDatabase db, {
+  required DateTime start,
+  required DateTime end,
+  required String accountId,
+  String subject = '',
+}) async {
+  final rows = await eventConflicts(db, start: start, end: end, accountIds: {accountId}, limit: 8);
+  String norm(String s) => s
+      .toLowerCase()
+      .replaceAll(RegExp(r'^(\s*(re|fw|fwd|ответ|пересл|приглашение|invitation|updated|обновлено)\s*:\s*)+'), '')
+      .trim();
+  final subj = norm(subject);
+  bool same(CalendarEvent r) =>
+      r.startTime.isAtSameMomentAs(start) &&
+      r.endTime.isAtSameMomentAs(end) &&
+      (subj.isEmpty || norm(r.title) == subj || subj.contains(norm(r.title)));
+  return [for (final r in rows) if (!same(r)) r];
+}

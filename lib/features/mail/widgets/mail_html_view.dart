@@ -65,6 +65,7 @@ import '../../../widgets/common/image_actions.dart';
 import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/ui_zoom.dart';
 import '../../../services/security/managed_config.dart';
+import 'mail_find.dart';
 
 /// Где показ письма в WebView поддерживается. Остальные платформы (Linux,
 /// Windows без проверенного WebView2) — прежний рендер flutter_html.
@@ -944,11 +945,16 @@ class MailHtmlView extends StatefulWidget {
     this.onShown,
     this.inlineRaw,
     this.scaleControl,
+    this.find,
   });
 
   /// Переключатель масштаба — пилюлей в строке сведений экрана; null —
   /// кнопкой строкой над письмом.
   final MailScaleControl? scaleControl;
+
+  /// Поиск в письме (2.2.0): поиск самого WebView, прокрутка экрана — к
+  /// примерному месту совпадения.
+  final MailFindController? find;
 
   /// Встроенные картинки по запросу окна (1.5.9, «Настройки → Почта →
   /// Открытие писем → Картинки письма отдельно»): документ оставляет адреса `cid:`, окно
@@ -1550,6 +1556,10 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   @override
   void didUpdateWidget(MailHtmlView oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.find != widget.find) {
+      oldWidget.find?.removeListener(_onFind);
+      widget.find?.addListener(_onFind);
+    }
     // Тот же документ, но с подставленными картинками (встроенные картинки
     // пришли после показа текста): загружаем его в то же окно, а не
     // создаём WebView заново — раньше ради этого текст держали до 1,5 с
@@ -1673,7 +1683,71 @@ class _MailHtmlViewState extends State<MailHtmlView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    widget.find?.addListener(_onFind);
+  }
+
+  // ── Поиск в письме (2.2.0, план 08.11.2026) ──
+  // Подсветку и текущее совпадение ведёт сам WebView (его поиск работает и
+  // без JavaScript). Окно — во всю высоту текста, прокручивается экран
+  // письма: к совпадению — по доле текста до него (места на странице без
+  // JavaScript не узнать).
+  String _findQuery = '';
+  String? _findTextFor;
+  String _findText = '';
+
+  void _onFind() {
+    final f = widget.find;
+    final c = _web;
+    if (f == null || c == null) return;
+    final q = f.active ? f.query.trim() : '';
+    try {
+      if (q != _findQuery) {
+        _findQuery = q;
+        // ignore: deprecated_member_use
+        unawaited(q.isEmpty ? c.clearMatches() : c.findAllAsync(find: q));
+        return;
+      }
+      if (q.isNotEmpty && f.step != 0) {
+        final forward = f.step > 0;
+        f.step = 0;
+        // ignore: deprecated_member_use
+        unawaited(c.findNext(forward: forward));
+        _revealApprox(f.current);
+      }
+    } catch (e) {
+      AppLogger.debug('Поиск в окне письма: $e');
+    }
+  }
+
+  void _onFindResult(int active, int total, bool done) {
+    final f = widget.find;
+    if (!done || f == null || !f.active || !mounted) return;
+    f.report(total, current: active);
+    _revealApprox(active);
+  }
+
+  void _revealApprox(int index) {
+    final f = widget.find;
+    if (f == null || !f.active || !mounted) return;
+    final html = widget.document.html;
+    if (!identical(_findTextFor, html)) {
+      _findTextFor = html;
+      _findText = html_parser.parse(html).body?.text ?? '';
+    }
+    final ranges = findRanges(_findText, f.query);
+    final box = context.findRenderObject();
+    if (ranges.isEmpty || _findText.isEmpty || box is! RenderBox || !box.hasSize) return;
+    final at = ranges[index.clamp(0, ranges.length - 1)].$1 / _findText.length;
+    final h = box.size.height;
+    final y = (at * h - 80).clamp(0.0, h);
+    box.showOnScreen(rect: Rect.fromLTWH(0, y, box.size.width, 200), duration: const Duration(milliseconds: 200));
+  }
+
+  @override
   void dispose() {
+    widget.find?.removeListener(_onFind);
     widget.scaleControl?.release(this);
     _ownAnim?.removeStatusListener(_onTransition);
     _overAnim?.removeStatusListener(_onTransition);
@@ -2349,6 +2423,8 @@ class _MailHtmlViewState extends State<MailHtmlView> {
                     ? null
                     : CustomSchemeResponse(data: r.data ?? Uint8List(0), contentType: r.contentType ?? 'image/gif');
               },
+        // ignore: deprecated_member_use
+        onFindResultReceived: (c, active, total, done) => _onFindResult(active, total, done),
         onWebViewCreated: (c) {
           _web = c;
           OpenTrace.mark('создано');

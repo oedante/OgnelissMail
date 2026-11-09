@@ -532,6 +532,11 @@ class OutgoingMessage {
   /// сервер письмо отклонит. null — от владельца ящика.
   final MailAddress? from;
 
+  /// «Запросить уведомление о прочтении» (RFC 8098): заголовок
+  /// Disposition-Notification-To — программа адресата предложит отправить
+  /// отчёт о прочтении. Exchange понимает его и в ActiveSync.
+  final bool requestReadReceipt;
+
   const OutgoingMessage({
     required this.to,
     this.cc = const [],
@@ -548,5 +553,6 @@ class OutgoingMessage {
     this.calendar,
     this.calendarMethod = 'REPLY',
     this.from,
+    this.requestReadReceipt = false,
   });
 }

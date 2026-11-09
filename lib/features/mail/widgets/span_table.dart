@@ -4,9 +4,16 @@
 // этого отчёты 1С, таблицы из Excel и шапки «Плановый год вовлечения» над
 // тремя колонками уходили в окно браузера.
 //
+// С 2.2.0 — все таблицы писем без браузера, и простые (раньше — Table
+// из Flutter: колонки строго по долям из письма, и подпись Outlook шириной
+// 1914 точек с колонками 300 и 1614 сжимала левую колонку до букв,
+// замечание владельца 08.11.2026).
+//
 // Раскладка — как у браузера в упрощённом виде:
 //  1. ширины колонок — доли (из ширин ячеек без объединения) от ширины
-//     таблицы; ячейка получает сумму ширин своих колонок;
+//     таблицы, но колонка не уже своего содержимого — самого длинного
+//     слова, картинки ([fitColumnWidths]); ячейка получает сумму ширин
+//     своих колонок;
 //  2. высота строки — по самой высокой ячейке без объединения строк;
 //     ячейка, объединяющая строки, если не помещается, добавляет высоту
 //     последней из своих строк;
@@ -79,6 +86,73 @@ class SpanTable extends MultiChildRenderObjectWidget {
   }
 }
 
+/// Ширины колонок таблицы шириной [width]: доли [flex] (ширины из письма;
+/// все одинаковые — поровну), но колонка не уже [mins] — своего самого
+/// длинного слова или картинки, как в браузере. Колонке, которой доли
+/// мало, — её минимум, остальные делят оставшееся по долям.
+///
+/// Не хватает и на минимумы (адрес почты или ссылка без пробелов длиннее
+/// половины экрана) — колонки получают желаемое (минимум или долю, что
+/// больше), но не больше общего предела: узкие — сколько просят, широкие
+/// — поровну остаток. Так разрываются только самые длинные слова, а
+/// короткие в узких колонках — нет.
+List<double> fitColumnWidths(List<double> flex, List<double> mins, double width) {
+  final n = flex.length;
+  if (n == 0) return const [];
+  double minAt(int i) => i < mins.length && mins[i].isFinite && mins[i] > 0 ? mins[i] : 0;
+  final f = [for (final v in flex) v.isFinite && v > 0 ? v : 0.0];
+  final fSum = f.fold<double>(0, (a, b) => a + b);
+  final share = [for (final v in f) fSum <= 0 ? width / n : width * v / fSum];
+  var sumMin = 0.0;
+  for (var i = 0; i < n; i++) {
+    sumMin += minAt(i);
+  }
+  if (sumMin > width) {
+    final want = [for (var i = 0; i < n; i++) math.max(minAt(i), share[i])];
+    final sorted = [...want]..sort();
+    var rest = width;
+    var left = n;
+    var cap = width / n;
+    for (final w in sorted) {
+      if (w > rest / left) {
+        cap = rest / left;
+        break;
+      }
+      rest -= w;
+      left--;
+      cap = left == 0 ? w : rest / left;
+    }
+    return [for (final w in want) math.min(w, cap)];
+  }
+  // Колонки, которым доли мало, — по содержимому; остальные делят
+  // оставшееся по долям (пока кто-то из них не окажется уже минимума).
+  final fixed = List<bool>.filled(n, false);
+  while (true) {
+    var rest = width;
+    var free = 0;
+    var freeFlex = 0.0;
+    for (var i = 0; i < n; i++) {
+      if (fixed[i]) {
+        rest -= minAt(i);
+      } else {
+        free++;
+        freeFlex += f[i];
+      }
+    }
+    double part(int i) => freeFlex <= 0 ? rest / free : rest * f[i] / freeFlex;
+    var changed = false;
+    for (var i = 0; i < n; i++) {
+      if (!fixed[i] && part(i) < minAt(i)) {
+        fixed[i] = true;
+        changed = true;
+      }
+    }
+    if (!changed || free == 0) {
+      return [for (var i = 0; i < n; i++) fixed[i] ? minAt(i) : part(i)];
+    }
+  }
+}
+
 class RenderSpanTable extends RenderBox
     with
         ContainerRenderObjectMixin<RenderBox, SpanCellParentData>,
@@ -108,11 +182,64 @@ class RenderSpanTable extends RenderBox
     if (child.parentData is! SpanCellParentData) child.parentData = SpanCellParentData();
   }
 
-  List<double> _colWidths(double width) {
-    final n = math.max(1, _columnFlex.length);
-    final flex = _columnFlex.isEmpty ? List<double>.filled(n, 1) : _columnFlex;
-    final sum = flex.fold<double>(0, (a, b) => a + (b > 0 ? b : 0));
-    return [for (final f in flex) sum <= 0 ? width / n : width * (f > 0 ? f : 0) / sum];
+  List<double> get _flex => _columnFlex.isEmpty ? const [1.0] : _columnFlex;
+
+  /// Самое узкое, во что колонка помещается без разрыва слов: самое
+  /// длинное слово ячеек, картинка, вложенная таблица (с отступами
+  /// ячейки). Объединённая ячейка шире своих колонок — разница поровну.
+  List<double> _columnMins() {
+    final n = _flex.length;
+    final mins = List<double>.filled(n, 0);
+    final spanned = <(SpanCellParentData, double)>[];
+    var child = firstChild;
+    while (child != null) {
+      final d = child.parentData! as SpanCellParentData;
+      if (d.col < n) {
+        final m = child.getMinIntrinsicWidth(double.infinity);
+        if (d.colSpan <= 1) {
+          mins[d.col] = math.max(mins[d.col], m);
+        } else {
+          spanned.add((d, m));
+        }
+      }
+      child = d.nextSibling;
+    }
+    for (final (d, m) in spanned) {
+      final end = math.min(n, d.col + d.colSpan);
+      final have = _span(mins, d.col, end - d.col);
+      if (m > have) {
+        final add = (m - have) / (end - d.col);
+        for (var i = d.col; i < end; i++) {
+          mins[i] += add;
+        }
+      }
+    }
+    return mins;
+  }
+
+  List<double> _colWidths(double width) => fitColumnWidths(_flex, _columnMins(), width);
+
+  // Вложенная таблица (подпись Outlook — таблица в ячейке таблицы):
+  // внешняя узнаёт, уже чего её колонку не сжать.
+  @override
+  double computeMinIntrinsicWidth(double height) => _columnMins().fold<double>(0, (a, b) => a + b);
+
+  @override
+  double computeMaxIntrinsicWidth(double height) {
+    final n = _flex.length;
+    final maxes = List<double>.filled(n, 0);
+    var child = firstChild;
+    while (child != null) {
+      final d = child.parentData! as SpanCellParentData;
+      if (d.col < n) {
+        final m = child.getMaxIntrinsicWidth(double.infinity) / math.max(1, d.colSpan);
+        for (var i = d.col; i < math.min(n, d.col + d.colSpan); i++) {
+          maxes[i] = math.max(maxes[i], m);
+        }
+      }
+      child = d.nextSibling;
+    }
+    return maxes.fold<double>(0, (a, b) => a + b);
   }
 
   double _span(List<double> list, int from, int count) {

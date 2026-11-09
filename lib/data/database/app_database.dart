@@ -37,6 +37,9 @@ class EmailListFilter {
   final bool attachments;
   final bool vip;
 
+  /// Письма, где упомянут владелец ящика (@-упоминания, 2.2.0).
+  final bool mentions;
+
   /// VIP-отправители и слова в теме (Настройки → VIP), в нижнем регистре.
   final List<String> vipEmails;
   final List<String> vipKeywords;
@@ -55,6 +58,7 @@ class EmailListFilter {
     this.later = false,
     this.attachments = false,
     this.vip = false,
+    this.mentions = false,
     this.vipEmails = const [],
     this.vipKeywords = const [],
     this.since,
@@ -181,6 +185,10 @@ class Emails extends Table {
   BoolColumn get isReplied => boolean().withDefault(const Constant(false))();
   BoolColumn get isForwarded => boolean().withDefault(const Constant(false))();
   BoolColumn get hasAttachments => boolean().withDefault(const Constant(false))();
+
+  /// Упомянут владелец ящика (@-упоминание, 2.2.0; MentionScanner): null —
+  /// ещё не проверено (текста письма пока нет на устройстве).
+  BoolColumn get mentionsMe => boolean().nullable()();
   IntColumn get priority => integer().withDefault(const Constant(1))();
   IntColumn get status => integer().withDefault(const Constant(3))();
   TextColumn get tagsStr => text().nullable()();
@@ -574,7 +582,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 27;
+  int get schemaVersion => 28;
 
   @override
   MigrationStrategy get migration {
@@ -729,6 +737,10 @@ class AppDatabase extends _$AppDatabase {
         if (from < 27) {
           // Отчёты о доставке отправленных писем (1.9.x, 31.10.2026).
           await m.createTable(deliveryStatuses); // CREATE TABLE IF NOT EXISTS
+        }
+        if (from < 28) {
+          // @-упоминания (2.2.0, план 08.11.2026).
+          await _addColumnIfMissing(m, emails, emails.mentionsMe);
         }
       },
       beforeOpen: (details) async {
@@ -1437,6 +1449,7 @@ class AppDatabase extends _$AppDatabase {
       ]);
     }
     if (f.attachments) q.where((e) => e.hasAttachments.equals(true));
+    if (f.mentions) q.where((e) => e.mentionsMe.equals(true));
     // VIP — отправитель из списка VIP, слово из списка в теме или высокая
     // важность (как FocusModeNotifier.isVip). Раньше список VIP здесь не
     // учитывался, и фильтр показывал пустую ленту (замечание 11.10.2026).
@@ -2469,6 +2482,8 @@ class AppDatabase extends _$AppDatabase {
             .getSingleOrNull();
         if (old != null) {
           if (old.action != 'delayed' && r.action == 'delayed') continue;
+          // «Прочитано» (2.2.0) поздний отчёт о доставке не отменяет.
+          if (old.action == 'read' && r.action != 'read' && r.action != 'failed') continue;
           if (old.action == r.action && old.status == r.status) continue;
         }
         await into(deliveryStatuses).insertOnConflictUpdate(DeliveryStatusesCompanion.insert(
@@ -2501,6 +2516,25 @@ class AppDatabase extends _$AppDatabase {
       .map((r) => '${r.read(deliveryStatuses.accountId)}|${r.read(deliveryStatuses.messageId)}')
       .watch()
       .map((l) => l.toSet());
+
+  /// Свои письма с хорошими отчётами (2.2.0, ✓/✓✓ у своих писем):
+  /// «аккаунт|Message-ID» → прочитано ли кем-то из адресатов (иначе —
+  /// доставлено).
+  Stream<Map<String, bool>> watchDeliveryTicks() => (selectOnly(deliveryStatuses)
+        ..addColumns([deliveryStatuses.accountId, deliveryStatuses.messageId, deliveryStatuses.action])
+        ..where(deliveryStatuses.action.isIn(const ['delivered', 'relayed', 'read'])))
+      .map((r) => (
+            key: '${r.read(deliveryStatuses.accountId)}|${r.read(deliveryStatuses.messageId)}',
+            read: r.read(deliveryStatuses.action) == 'read',
+          ))
+      .watch()
+      .map((rows) {
+        final out = <String, bool>{};
+        for (final r in rows) {
+          out[r.key] = (out[r.key] ?? false) || r.read;
+        }
+        return out;
+      });
 
   /// Message-ID письма, о котором отчёт [reportEmailId] (чип «Отчёт о доставке»).
   Future<String?> deliveryReportTarget(String accountId, String reportEmailId) async {

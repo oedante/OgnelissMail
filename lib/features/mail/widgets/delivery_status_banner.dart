@@ -41,6 +41,8 @@ class DeliveryStatusBanner extends ConsumerWidget {
         '${l10n.tr('dsnFailed').replaceAll('{addr}', s.recipient)} — ${l10n.tr(reason.l10nKey)}$code',
       DeliveryAction.delayed =>
         '${l10n.tr('dsnDelayed').replaceAll('{addr}', s.recipient)} — ${l10n.tr(reason.l10nKey)}',
+      // Отчёт о прочтении (2.2.0).
+      DeliveryAction.read => l10n.tr('dsnRead').replaceAll('{addr}', s.recipient),
       _ => l10n.tr('dsnDelivered').replaceAll('{addr}', s.recipient),
     };
   }
@@ -66,13 +68,18 @@ class DeliveryStatusBanner extends ConsumerWidget {
     }
     final failed = rows.any((r) => r.action == 'failed');
     final delayed = rows.any((r) => r.action == 'delayed');
+    final read = rows.any((r) => r.action == 'read');
     return MailNotice(
       id: 'delivery',
-      icon: failed ? AppIcons.error : (delayed ? AppIcons.schedule : AppIcons.mark_email_read),
+      icon: failed
+          ? AppIcons.error
+          : (delayed ? AppIcons.schedule : (read ? AppIcons.done_all : AppIcons.mark_email_read)),
       iconColor: failed
           ? null
           : (delayed ? AppColors.accentOrangeText(context) : AppColors.successText(context)),
-      label: l10n.tr(failed ? 'noticeDsnFailed' : (delayed ? 'noticeDsnDelayed' : 'noticeDsnDelivered')),
+      label: l10n.tr(failed
+          ? 'noticeDsnFailed'
+          : (delayed ? 'noticeDsnDelayed' : (read ? 'noticeDsnRead' : 'noticeDsnDelivered'))),
       detail: [for (final r in rows) lineFor(l10n, r)].join('\n'),
       tone: failed ? MailNoticeTone.warning : MailNoticeTone.neutral,
       expanded: (_) => DeliveryStatusBanner(email: email),
@@ -134,6 +141,7 @@ class DeliveryStatusBanner extends ConsumerWidget {
     final (icon, color) = switch (s.action) {
       'failed' => (AppIcons.error, AppColors.errorRed),
       'delayed' => (AppIcons.schedule, AppColors.accentOrangeText(context)),
+      'read' => (AppIcons.done_all, AppColors.successText(context)),
       _ => (AppIcons.mark_email_read, AppColors.successText(context)),
     };
     final diag = s.diagnostic;
@@ -150,7 +158,8 @@ class DeliveryStatusBanner extends ConsumerWidget {
               children: [
                 Text(lineFor(l10n, s), style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
                 // Ответ сервера — мелко: по нему администратор поймёт причину.
-                if (s.action != 'delivered' && s.action != 'relayed' && diag != null && diag.isNotEmpty)
+                if (s.action != 'delivered' && s.action != 'relayed' && s.action != 'read' && diag != null &&
+                    diag.isNotEmpty)
                   Text(diag,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

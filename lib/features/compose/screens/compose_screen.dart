@@ -2129,6 +2129,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                 case 'dsn':
                   setState(() => _deliveryReport = !_deliveryReport);
                   if (_deliveryReport) quietNotice(l10n.tr('dsnRequestHint'));
+                case 'mdn':
+                  setState(() => _readReceipt = !_readReceipt);
               }
             },
             itemBuilder: (_) => [
@@ -2156,6 +2158,14 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                   label: l10n.tr('dsnRequest'),
                   checked: _deliveryReport,
                 ),
+              // Уведомление о прочтении (2.2.0): по умолчанию — как в
+              // «Настройки → Почта → Отправка», здесь — для этого письма.
+              AppMenuEntry(
+                value: 'mdn',
+                icon: AppIcons.done_all,
+                label: l10n.tr('readReceiptRequest'),
+                checked: _readReceipt,
+              ),
             ],
           ),
         ],
@@ -3489,6 +3499,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   bool get _requestDeliveryReport => _deliveryReport && _deliveryReportAvailable;
 
+  /// «Запросить уведомление о прочтении» (2.2.0, решение владельца
+  /// 09.11.2026): по умолчанию — настройка для всех писем, в меню «⋮» — для
+  /// этого письма. Ответ адресата — ✓✓ у письма в «Отправленных» и беседе.
+  late bool _readReceipt = ref.read(featureFlagsProvider).readReceipts;
+
   Future<void> _applyControlOnSend() async {
     final account = _fromAccount;
     if (account == null || !ref.read(settingsProvider).mailControl) return;
@@ -4458,6 +4473,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             scheduledAt: scheduledAt,
             from: _fromOverride,
             requestDeliveryReport: _requestDeliveryReport,
+            requestReadReceipt: _readReceipt,
           );
       unawaited(HapticFeedback.mediumImpact());
       AppLogger.info('Письмо отложено до $scheduledAt');
@@ -4794,6 +4810,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       inReplyTo: _inReplyTo,
       window: window,
       requestDeliveryReport: _requestDeliveryReport,
+      requestReadReceipt: _readReceipt,
     );
     await _finishDraft();
     await _markOriginalAnswered();
@@ -5172,6 +5189,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             // Не принято по размеру — письмо остаётся здесь (ниже).
             keepTooLarge: true,
             requestDeliveryReport: _requestDeliveryReport,
+            requestReadReceipt: _readReceipt,
           );
 
       // И при отправке, и при постановке в очередь черновик не нужен: письмо

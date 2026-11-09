@@ -125,6 +125,9 @@ class MailListScreen extends ConsumerStatefulWidget {
 }
 
 class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBindingObserver {
+  /// Полоса края экрана, от которой свайп открывает меню (2.2.0).
+  static const double _menuEdge = 10;
+
   /// С этой ширины области ленты папки стоят панелью слева (1.6.28):
   /// 272 dp папок + лента 340 + письмо 400 с запасом.
   static const _dockedFoldersMin = 1040.0;
@@ -921,6 +924,11 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       // справа и свайп от правого края — под большим пальцем).
       drawer: docked || _menuAtEnd ? null : const MailDrawer(),
       endDrawer: _menuAtEnd ? const MailDrawer() : null,
+      // Полоса края для меню — 10 точек вместо 20 (2.2.0, план 08.11.2026
+      // п. 7): свайп строки, начатый у края, открывал меню вместо действия
+      // строки. Меню — и от самого края, и кнопкой «Меню» внизу.
+      drawerEdgeDragWidth:
+          _menuEdge + (_menuAtEnd ? MediaQuery.paddingOf(context).right : MediaQuery.paddingOf(context).left),
 
       // В режиме выбора действия показываем внизу — до них можно дотянуться
       // одной рукой. В обычном режиме панели нет: место занимает список.
@@ -1387,6 +1395,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       case MailFilter.today: parts.add(l10n.tr('today')); break;
       case MailFilter.control: parts.add(l10n.tr('controlFilter')); break;
       case MailFilter.later: parts.add(l10n.tr('laterFilter')); break;
+      case MailFilter.mentions: parts.add(l10n.tr('mentionsFilter')); break;
       case MailFilter.none: break;
     }
     if (tag != null && tag.isNotEmpty) parts.add('#$tag');
@@ -3132,6 +3141,8 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                   // «Мне лично» — что требует ответа, в отличие от копий
                   // для сведения. Дополняет пункт «прочитано, где я в копии».
                   tile(AppIcons.person, l10n.tr('filterToMe'), MailFilter.toMe),
+                  // Где вас упомянули — «@» (2.2.0).
+                  tile(AppIcons.alternate_email, l10n.tr('mentionsFilter'), MailFilter.mentions),
                   tile(AppIcons.today, l10n.tr('today'), MailFilter.today),
                   tile(AppIcons.flag, l10n.tr('flagged'), MailFilter.flagged),
                   // Как в меню почты: письма в работе.
@@ -3596,6 +3607,7 @@ class _QuickFilterBar extends ConsumerWidget {
     final items = <(MailFilter, IconData, String)>[
       (MailFilter.unread, AppIcons.mark_email_unread, l10n.tr('unread')),
       (MailFilter.toMe, AppIcons.person, l10n.tr('filterToMe')),
+      (MailFilter.mentions, AppIcons.alternate_email, l10n.tr('mentionsFilter')),
       (MailFilter.today, AppIcons.today, l10n.tr('today')),
       (MailFilter.flagged, AppIcons.flag, l10n.tr('flagged')),
       (MailFilter.attachments, AppIcons.attach_file, l10n.tr('withAttachments')),

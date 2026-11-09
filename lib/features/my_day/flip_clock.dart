@@ -215,6 +215,10 @@ class _Card extends StatelessWidget {
     // сливалась с ним), полоска — линией контура; тёмная — наоборот.
     final dark = Theme.of(context).brightness == Brightness.dark;
     final line = dark ? scheme.surface.withValues(alpha: 0.9) : scheme.outlineVariant;
+    // Слой с цифрой и полоской — во всю карточку (09.11.2026, замечание
+    // владельца «разделитель на часах не по середине»): раньше карточка
+    // центрировала слой по размеру цифры, и полоска, отсчитанная от его
+    // верха, была на 14 % высоты ниже середины.
     return Container(
       width: width,
       height: height,
@@ -223,7 +227,6 @@ class _Card extends StatelessWidget {
         borderRadius: BorderRadius.circular(height * 0.14),
         border: dark ? null : Border.all(color: scheme.outlineVariant.withValues(alpha: 0.6), width: 0.5),
       ),
-      alignment: Alignment.center,
       child: Stack(alignment: Alignment.center, children: [
         Text(
           digit,
@@ -231,16 +234,15 @@ class _Card extends StatelessWidget {
           style: TextStyle(
             fontSize: height * 0.72,
             height: 1,
+            // Цифра — по середине строки, как и полоска.
+            leadingDistribution: TextLeadingDistribution.even,
             fontWeight: FontWeight.w600,
             color: scheme.onSurface,
             fontFeatures: const [FontFeature.tabularFigures()],
           ),
         ),
-        Positioned(
-          left: 0,
-          right: 0,
-          top: height / 2 - 0.5,
-          child: Container(height: 1, color: line),
+        Positioned.fill(
+          child: Center(child: SizedBox(height: 1, width: double.infinity, child: ColoredBox(color: line))),
         ),
       ]),
     );

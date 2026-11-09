@@ -94,6 +94,7 @@ const _entries = <_Entry>[
   _Entry('undoSendWindow', 'emailSettings', AppIcons.undo, '/settings/mail'),
   _Entry('photoSendSize', 'emailSettings', AppIcons.photo_size_select_large, '/settings/mail'),
   _Entry('confirmRecipients', 'emailSettings', AppIcons.groups, '/settings/mail'),
+  _Entry('readReceiptAll', 'emailSettings', AppIcons.done_all, '/settings/mail'),
   _Entry('antiPhishing', 'emailSettings', AppIcons.phishing, '/settings/mail'),
   _Entry('tasksTab', 'profileFeatures', AppIcons.check_box, '/settings/profile'),
   _Entry('myDay', 'profileFeatures', AppIcons.myDay, '/settings/profile'),

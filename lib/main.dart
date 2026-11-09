@@ -62,6 +62,7 @@ import 'services/desktop/window_tray_service.dart';
 import 'widgets/desktop/tray_window_listener.dart';
 import 'services/mail/attachment_cache_service.dart';
 import 'services/search/attachment_text_index.dart';
+import 'services/mail/mention_scanner.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'services/notifications/reminder_scheduler_service.dart';
 import 'dart:async';
@@ -380,6 +381,12 @@ Future<void> main() async {
       globalContainer.read(attachmentTextIndexProvider).start();
     } catch (e) {
       AppLogger.warning('Attachment cache: не удалось инициализировать: $e');
+    }
+    // @-упоминания (2.2.0): значок «@» в ленте и фильтр «Упоминания».
+    try {
+      globalContainer.read(mentionScannerProvider).start();
+    } catch (e) {
+      AppLogger.warning('Упоминания: не удалось запустить проверку: $e');
     }
 
     // Новое письмо из другого приложения. Поверх текущего экрана (push), а

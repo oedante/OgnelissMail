@@ -34,6 +34,7 @@ import '../../../services/mail/own_addresses.dart';
 import '../providers/mail_providers.dart' show emailsProvider;
 import '../../../data/database/app_database.dart' show CalendarEvent;
 import '../../../data/providers/database_provider.dart';
+import '../../calendar/event_conflicts.dart' show meetingConflicts;
 import 'package:drift/drift.dart' hide Column;
 import '../../../widgets/common/inline_notice.dart' show showInlineError;
 
@@ -178,7 +179,7 @@ class _MeetingInviteBannerState extends ConsumerState<MeetingInviteBanner> {
             ],
           ),
           const SizedBox(height: Space.s),
-          if (meeting != null) ..._meetingDetails(context, meeting),
+          if (meeting != null) ..._meetingDetails(context, meeting, invite: invite, mine: mine),
           // Событие из файла .ics, на которое не отвечают (рассылка события,
           // билет, вебинар; или ящик Exchange) — «В календарь»: встреча
           // откроется заполненной, сохраняет пользователь.
@@ -260,7 +261,49 @@ class _MeetingInviteBannerState extends ConsumerState<MeetingInviteBanner> {
     );
   }
 
-  List<Widget> _meetingDetails(BuildContext context, EmailMeeting m) {
+  // ── Подробности приглашения (2.2.0, план 08.11.2026 п. 5): повторение,
+  // участники, пересечение с моим календарём ──
+
+  /// Пересечения со встречами в календаре на телефоне — один раз на
+  /// приглашение (запрос к базе).
+  Future<List<CalendarEvent>>? _conflicts;
+  String? _conflictsFor;
+
+  Future<List<CalendarEvent>> _conflictsOf(EmailMeeting m) {
+    final key = '${m.start}|${m.end}';
+    if (_conflicts != null && _conflictsFor == key) return _conflicts!;
+    _conflictsFor = key;
+    return _conflicts = meetingConflicts(ref.read(databaseProvider),
+        start: m.start!, end: m.end!, accountId: widget.account.id, subject: widget.email.subject);
+  }
+
+  /// Участники: из приглашения (iMIP) или адресаты письма-приглашения
+  /// (Exchange рассылает его участникам), без организатора.
+  List<String> _attendees(ImipInvite? invite, EmailMeeting m) {
+    final org = (invite?.event.organizerEmail ?? m.organizer ?? '').toLowerCase();
+    final seen = <String>{};
+    final out = <String>[];
+    void add(String email, String? name) {
+      final e = email.trim().toLowerCase();
+      if (e.isEmpty || org.contains(e) || !seen.add(e)) return;
+      final n = (name ?? '').trim();
+      out.add(n.isEmpty ? email.trim() : n);
+    }
+
+    final list = invite?.event.attendees;
+    if (list != null && list.isNotEmpty) {
+      for (final a in list) {
+        add(a.email, a.name);
+      }
+    } else {
+      for (final a in [...widget.email.to, ...widget.email.cc]) {
+        add(a.email, a.displayName);
+      }
+    }
+    return out;
+  }
+
+  List<Widget> _meetingDetails(BuildContext context, EmailMeeting m, {ImipInvite? invite, bool mine = false}) {
     final l10n = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).toString();
     String when() {
@@ -282,11 +325,57 @@ class _MeetingInviteBannerState extends ConsumerState<MeetingInviteBanner> {
             Expanded(child: Text(text, style: style)),
           ]),
         );
+    final repeat = inviteRecurrenceText(invite?.event.rrule, l10n, loc) ??
+        (m.isOccurrence ? l10n.tr('meetingOneOccurrence') : null);
+    final people = _attendees(invite, m);
+    const shownPeople = 4;
+    final peopleText = people.isEmpty
+        ? null
+        : '${l10n.tr('attendees')} (${people.length}): ${people.take(shownPeople).join(', ')}'
+            '${people.length > shownPeople ? ' ${l10n.tr('andMoreN').replaceAll('{n}', '${people.length - shownPeople}')}' : ''}';
+    final checkBusy = !m.isCanceled && !mine && !m.allDay && m.start != null && m.end != null;
     return [
       if (m.isCanceled) line(AppIcons.event_busy, l10n.tr('meetingCanceled')),
       if (m.start != null) line(AppIcons.schedule, when()),
+      if (repeat != null) line(AppIcons.repeat, repeat),
       if (m.location != null) line(AppIcons.place, m.location!),
       if (m.organizer != null) line(AppIcons.person, m.organizer!),
+      if (peopleText != null) line(AppIcons.groups, peopleText),
+      // Пересечение с моим календарём — как в Outlook «Пересекается с …».
+      if (checkBusy)
+        FutureBuilder<List<CalendarEvent>>(
+          future: _conflictsOf(m),
+          builder: (context, snap) {
+            final list = snap.data;
+            if (list == null) return const SizedBox.shrink();
+            final t = DateFormat.Hm(loc);
+            if (list.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(children: [
+                  Icon(AppIcons.event_available, size: 18, color: AppColors.successText(context)),
+                  const SizedBox(width: Space.s),
+                  Expanded(child: Text(l10n.tr('meetingFreeThen'), style: style)),
+                ]),
+              );
+            }
+            final first = list.first;
+            final more = list.length - 1;
+            final text = l10n
+                    .tr('conflictWith')
+                    .replaceAll('{title}', first.title)
+                    .replaceAll('{time}', '${t.format(first.startTime.toLocal())}–${t.format(first.endTime.toLocal())}') +
+                (more > 0 ? ' ${l10n.tr('andMoreN').replaceAll('{n}', '$more')}' : '');
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Icon(AppIcons.event_busy, size: 18, color: AppColors.accentOrangeText(context)),
+                const SizedBox(width: Space.s),
+                Expanded(child: Text(text, style: style)),
+              ]),
+            );
+          },
+        ),
     ];
   }
 
@@ -588,4 +677,36 @@ class _ReplyCard extends ConsumerWidget {
     final subj = email.subject.toLowerCase();
     return rows.where((r) => r.title.isNotEmpty && subj.contains(r.title.toLowerCase())).firstOrNull ?? rows.first;
   }
+}
+
+/// Повторение: «Еженедельно: пн, ср» — по RRULE приглашения.
+String? inviteRecurrenceText(String? rrule, AppLocalizations l10n, String locale) {
+  if (rrule == null || rrule.trim().isEmpty) return null;
+  final parts = <String, String>{};
+  for (final p in rrule.toUpperCase().replaceFirst('RRULE:', '').split(';')) {
+    final i = p.indexOf('=');
+    if (i > 0) parts[p.substring(0, i)] = p.substring(i + 1);
+  }
+  final interval = int.tryParse(parts['INTERVAL'] ?? '1') ?? 1;
+  final base = switch (parts['FREQ']) {
+    'DAILY' when interval == 1 => l10n.tr('recurDaily'),
+    'WEEKLY' when interval == 1 => l10n.tr('recurWeekly'),
+    'WEEKLY' when interval == 2 => l10n.tr('recurBiweekly'),
+    'MONTHLY' when interval == 1 => l10n.tr('recurMonthly'),
+    'YEARLY' when interval == 1 => l10n.tr('recurYearly'),
+    _ => l10n.tr('recurringSeries'),
+  };
+  const codes = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
+  final days = [
+    for (final d in (parts['BYDAY'] ?? '').split(','))
+      if (codes.contains(d.replaceAll(RegExp(r'^[-+]?\d+'), '')))
+        // 2.11.2026 — понедельник: день недели на языке приложения.
+        DateFormat.E(locale).format(DateTime(2026, 11, 2 + codes.indexOf(d.replaceAll(RegExp(r'^[-+]?\d+'), '')))),
+  ];
+  final byDay = (parts['BYDAY'] ?? '').split(',').toSet();
+  if (parts['FREQ'] == 'WEEKLY' && interval == 1 && byDay.length == 5 &&
+      byDay.containsAll(const ['MO', 'TU', 'WE', 'TH', 'FR'])) {
+    return l10n.tr('recurWeekdays');
+  }
+  return days.isEmpty ? base : '$base: ${days.join(', ')}';
 }

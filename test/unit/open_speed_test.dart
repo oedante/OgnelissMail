@@ -75,7 +75,10 @@ void main() {
           '</td></tr></table>'), isNull);
       expect(buildNativeMail('<p>x <img src="https://t.example/p.gif"></p>'), isNull);
       expect(buildNativeMail('<div style="float:left">x</div>'), isNull);
-      expect(buildNativeMail('<style>@media (max-width:600px){.a{display:none}}</style><p>x</p>'), isNull);
+      // С 2.2.0 правило @media само по себе — не повод для WebView
+      // (native_media_rules_test.dart); скрытое вне @media — повод.
+      expect(buildNativeMail('<style>@media (max-width:600px){.a{display:none}}</style><p>x</p>'), isNotNull);
+      expect(buildNativeMail('<style>.a{display:none}</style><p class="a">x</p>'), isNull);
       expect(buildNativeMail('<v:shape>x</v:shape><p>y</p>'), isNull);
     });
 

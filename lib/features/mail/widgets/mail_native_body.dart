@@ -58,6 +58,7 @@ import '../../../widgets/common/image_actions.dart';
 import '../../../widgets/common/photo_viewer.dart' show showImageViewer;
 import '../../../widgets/common/pinch_zoom.dart';
 import 'quote_person_chip.dart';
+import 'mail_find.dart';
 import 'span_table.dart';
 import '../../../services/security/managed_config.dart';
 
@@ -287,11 +288,17 @@ NativeMail? buildNativeMailRemote(String html, {DateContext? dates}) =>
   if (body == null) return no('нет тела');
 
   // <style> письма не применяются: если без них текст изменится (скрытые
-  // классами блоки, адаптивная вёрстка) — в WebView.
+  // классами блоки) — в WebView. Правила @media (2.2.0, план 08.11.2026
+  // п. 5) — для другой ширины экрана: простой показ их не применяет и
+  // показывает письмо как на компьютере (раньше любое @media — в WebView).
+  // Адаптивное письмо прячет мобильную версию вне @media не только
+  // display:none, но и max-height:0, visibility:hidden, opacity:0 — тогда
+  // по-прежнему WebView.
   for (final st in doc.querySelectorAll('style')) {
     final t = st.text.toLowerCase();
-    if (t.contains('@media')) return no('стили @media');
-    if (RegExp(r'display\s*:\s*none').hasMatch(t)) return no('скрытые стилем блоки');
+    final outside = cssOutsideAtRules(t);
+    if (RegExp(r'display\s*:\s*none').hasMatch(outside)) return no('скрытые стилем блоки');
+    if (t.contains('@media') && _hiddenTricks.hasMatch(outside)) return no('скрытые стилем блоки (@media)');
   }
 
   var count = 0;
@@ -498,6 +505,40 @@ NativeMail? _forced(String html, [DateContext? dates]) {
   }
   return _buildBlocks(body, html, dates);
 }
+
+/// CSS без @-блоков (@media, @font-face, @page …) и комментариев: правила,
+/// которые действуют всегда.
+String cssOutsideAtRules(String css) {
+  final text = css.replaceAll(_cssComment, '').replaceAll('<!--', ' ').replaceAll('-->', ' ');
+  final out = StringBuffer();
+  var i = 0;
+  while (i < text.length) {
+    final c = text[i];
+    if (c == '@') {
+      // До «;» (@import, @charset) или до парной «}» блока.
+      final semi = text.indexOf(';', i);
+      final open = text.indexOf('{', i);
+      if (open < 0 || (semi >= 0 && semi < open)) {
+        i = semi < 0 ? text.length : semi + 1;
+        continue;
+      }
+      var depth = 0;
+      var j = open;
+      for (; j < text.length; j++) {
+        if (text[j] == '{') depth++;
+        if (text[j] == '}' && --depth == 0) break;
+      }
+      i = j + 1;
+      continue;
+    }
+    out.write(c);
+    i++;
+  }
+  return out.toString();
+}
+
+final _hiddenTricks = RegExp(
+    r'max-height\s*:\s*0(px)?\s*(!important)?\s*[;}]|visibility\s*:\s*hidden|opacity\s*:\s*0(\.0+)?\s*(!important)?\s*[;}]');
 
 final _zeroOpacity = RegExp(r'(^|;)opacity:0(\.0+)?(!important)?(;|$)');
 final _zeroMaxHeight = RegExp(r'(^|;)max-height:0(px)?(!important)?(;|$)');
@@ -1160,6 +1201,7 @@ class MailNativeBody extends StatefulWidget {
     this.textScale = 1,
     this.onShown,
     this.onQuoteReply,
+    this.find,
   });
 
   final NativeMail mail;
@@ -1173,6 +1215,9 @@ class MailNativeBody extends StatefulWidget {
   /// «Ответить с цитатой» в меню выделенного текста (2.0.0); null — пункта нет.
   final void Function(String text)? onQuoteReply;
 
+  /// Поиск в письме (2.2.0): совпадения — фоном, текущее — ярче.
+  final MailFindController? find;
+
   @override
   State<MailNativeBody> createState() => _MailNativeBodyState();
 }
@@ -1184,6 +1229,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
   @override
   void initState() {
     super.initState();
+    widget.find?.addListener(_onFind);
     // Письмо видно в первом же кадре экрана.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) widget.onShown?.call();
@@ -1191,21 +1237,46 @@ class _MailNativeBodyState extends State<MailNativeBody> {
   }
 
   @override
+  void didUpdateWidget(covariant MailNativeBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.find != widget.find) {
+      oldWidget.find?.removeListener(_onFind);
+      widget.find?.addListener(_onFind);
+    }
+  }
+
+  @override
   void dispose() {
+    widget.find?.removeListener(_onFind);
     for (final t in _taps) {
       t.dispose();
     }
     super.dispose();
   }
 
-  /// Таблица с объединёнными ячейками: места ячеек в сетке — как у
-  /// браузера (ячейка встаёт в первую свободную колонку строки), доли
-  /// колонок — по ширинам ячеек без объединения колонок.
+  void _onFind() {
+    if (mounted) setState(() {});
+  }
+
+  /// Совпадение, к которому уже прокручено («запрос|номер»).
+  String? _revealed;
+
+  /// Таблица письма: места ячеек в сетке — как у браузера (ячейка встаёт
+  /// в первую свободную колонку строки), доли колонок — по ширинам ячеек
+  /// без объединения колонок, но колонка не уже своего самого длинного
+  /// слова ([fitColumnWidths]). С 2.2.0 — и простые таблицы (раньше —
+  /// Table из Flutter строго по долям: подпись Outlook из двух колонок
+  /// шириной 300 и 1614 точек рвала слова левой колонки по буквам).
+  ///
+  /// Рамки — как border-collapse в браузере: линию между ячейками рисует
+  /// одна из них (правая — своей левой стороной, нижняя — верхней), если
+  /// она есть у любой из двух; края — и по рамке самой таблицы.
   Widget _spanTable(NBlock bl, ThemeData theme, Color? cellBg,
       List<Widget> Function(List<NBlock>, Color?) blocks) {
     final rows = bl.table!;
     final busy = <int, Set<int>>{};
-    final placed = <({NCell cell, int row, int col})>[];
+    final at = <(int, int), int>{};
+    final placed = <({NCell cell, int row, int col, int rowSpan})>[];
     var cols = 0;
     for (var r = 0; r < rows.length; r++) {
       var c = 0;
@@ -1217,9 +1288,10 @@ class _MailNativeBodyState extends State<MailNativeBody> {
         for (var i = 0; i < rs; i++) {
           for (var j = 0; j < cell.colSpan; j++) {
             (busy[r + i] ??= <int>{}).add(c + j);
+            at[(r + i, c + j)] = placed.length;
           }
         }
-        placed.add((cell: cell, row: r, col: c));
+        placed.add((cell: cell, row: r, col: c, rowSpan: rs));
         c += cell.colSpan;
         if (c > cols) cols = c;
       }
@@ -1230,45 +1302,68 @@ class _MailNativeBodyState extends State<MailNativeBody> {
     }
     // Не у всех колонок ширина задана — поровну.
     final widths = flex.every((f) => f > 0) ? flex : List<double>.filled(cols, 1);
+    bool has(int? i, int bit) => i != null && placed[i].cell.sides & bit != 0;
+    bool frame(int bit) => bl.borders & bit != 0;
+    int sidesOf(({NCell cell, int row, int col, int rowSpan}) p) {
+      final own = p.cell.sides;
+      final right = p.col + p.cell.colSpan;
+      final below = p.row + p.rowSpan;
+      var out = 0;
+      if (own & kBorderTop != 0 || (p.row == 0 ? frame(kBorderTop) : has(at[(p.row - 1, p.col)], kBorderBottom))) {
+        out |= kBorderTop;
+      }
+      if (own & kBorderLeft != 0 || (p.col == 0 ? frame(kBorderLeft) : has(at[(p.row, p.col - 1)], kBorderRight))) {
+        out |= kBorderLeft;
+      }
+      // Правая и нижняя — только на краю таблицы или когда соседа нет.
+      final ownRight = own & kBorderRight != 0;
+      if (right >= cols ? ownRight || frame(kBorderRight) : ownRight && at[(p.row, right)] == null) {
+        out |= kBorderRight;
+      }
+      final ownBottom = own & kBorderBottom != 0;
+      if (below >= rows.length ? ownBottom || frame(kBorderBottom) : ownBottom && at[(below, p.col)] == null) {
+        out |= kBorderBottom;
+      }
+      return out;
+    }
+
     final line = BorderSide(color: theme.dividerColor, width: 0.8);
     BorderSide side(int sides, int bit) => sides & bit != 0 ? line : BorderSide.none;
-    return SpanTable(
-      rows: rows.length,
-      columnFlex: widths,
-      children: [
-        for (final p in placed)
-          SpanCell(
-            row: p.row,
-            col: p.col,
-            rowSpan: p.cell.rowSpan.clamp(1, rows.length - p.row),
-            colSpan: p.cell.colSpan,
-            child: Container(
-              decoration: BoxDecoration(
-                color: p.cell.background == null ? null : Color(p.cell.background!),
-                border: p.cell.sides == 0
-                    ? null
-                    : Border(
-                        top: side(p.cell.sides, kBorderTop),
-                        right: side(p.cell.sides, kBorderRight),
-                        bottom: side(p.cell.sides, kBorderBottom),
-                        left: side(p.cell.sides, kBorderLeft),
-                      ),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
-              alignment: switch (p.cell.valign) {
-                1 => Alignment.centerLeft,
-                2 => Alignment.bottomLeft,
-                _ => Alignment.topLeft,
-              },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: blocks(p.cell.blocks, p.cell.background == null ? cellBg : Color(p.cell.background!)),
-              ),
-            ),
+    final cells = <Widget>[];
+    for (final p in placed) {
+      final sd = sidesOf(p);
+      cells.add(SpanCell(
+        row: p.row,
+        col: p.col,
+        rowSpan: p.rowSpan,
+        colSpan: p.cell.colSpan,
+        child: Container(
+          decoration: BoxDecoration(
+            color: p.cell.background == null ? null : Color(p.cell.background!),
+            border: sd == 0
+                ? null
+                : Border(
+                    top: side(sd, kBorderTop),
+                    right: side(sd, kBorderRight),
+                    bottom: side(sd, kBorderBottom),
+                    left: side(sd, kBorderLeft),
+                  ),
           ),
-      ],
-    );
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+          alignment: switch (p.cell.valign) {
+            1 => Alignment.centerLeft,
+            2 => Alignment.bottomLeft,
+            _ => Alignment.topLeft,
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: blocks(p.cell.blocks, p.cell.background == null ? cellBg : Color(p.cell.background!)),
+          ),
+        ),
+      ));
+    }
+    return SpanTable(rows: rows.length, columnFlex: widths, children: cells);
   }
 
   Uint8List? _bytes(String src) {
@@ -1309,6 +1404,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
   Map<String, String>? _bImages;
   double? _bScale;
   ThemeData? _bTheme;
+  String? _bFind;
 
   @override
   Widget build(BuildContext context) {
@@ -1326,14 +1422,21 @@ class _MailNativeBodyState extends State<MailNativeBody> {
         identical(_bMail, widget.mail) &&
         identical(_bImages, widget.images) &&
         _bScale == widget.textScale &&
-        identical(_bTheme, theme)) {
+        identical(_bTheme, theme) &&
+        _bFind == _findKey) {
       return cached;
     }
     _bMail = widget.mail;
     _bImages = widget.images;
     _bScale = widget.textScale;
     _bTheme = theme;
+    _bFind = _findKey;
     return _built = _build(theme);
+  }
+
+  String? get _findKey {
+    final f = widget.find;
+    return f == null || !f.active ? null : '${f.query}|${f.current}';
   }
 
   Widget _build(ThemeData theme) {
@@ -1400,7 +1503,8 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       );
     }
 
-    InlineSpan span(NSpan s, Color? cellBg) {
+    // [text] — часть текста отрезка, [mark] — фон совпадения поиска.
+    InlineSpan span(NSpan s, Color? cellBg, {String? text, Color? mark}) {
       if (s.image != null) {
         final src = s.image!;
         // Картинка из интернета (разрешены — письмо собрано с ними, 1.5.11).
@@ -1469,7 +1573,7 @@ class _MailNativeBodyState extends State<MailNativeBody> {
         if (s.strike) TextDecoration.lineThrough,
       ];
       return TextSpan(
-        text: s.text,
+        text: text ?? s.text,
         recognizer: tap,
         style: TextStyle(
           fontWeight: s.bold ? FontWeight.w700 : null,
@@ -1478,10 +1582,41 @@ class _MailNativeBodyState extends State<MailNativeBody> {
           decorationStyle: href != null && DateLinks.isDateLink(href) ? TextDecorationStyle.dotted : null,
           fontFamily: s.mono ? 'monospace' : null,
           fontSize: s.size == 1 ? null : base.fontSize! * s.size,
-          color: textColor(s, cellBg),
-          backgroundColor: s.background == null ? null : Color(s.background!),
+          color: mark != null ? Colors.black : textColor(s, cellBg),
+          backgroundColor: mark ?? (s.background == null ? null : Color(s.background!)),
         ),
       );
+    }
+
+    // Поиск в письме (2.2.0): совпадения абзаца — фоном, номера — сквозные
+    // по письму в порядке показа (таблицы — по строкам); у абзаца с текущим
+    // совпадением — ключ, чтобы прокрутить к нему.
+    final find = widget.find;
+    final q = find != null && find.active ? find.query : '';
+    var found = 0;
+    GlobalKey? curKey;
+    var curRange = (0, 0);
+    List<InlineSpan>? marked(List<NSpan> spans, Color? cellBg) {
+      if (q.isEmpty) return null;
+      // Картинка и плашка человека — один знак, как в RenderParagraph.
+      final runs = [
+        for (final s in spans) s.image != null || (s.href != null && QuotePeople.isLink(s.href!)) ? '\uFFFC' : s.text,
+      ];
+      final ranges = findRanges(runs.join(), q);
+      if (ranges.isEmpty) return null;
+      final cur = find!.current - found;
+      found += ranges.length;
+      if (cur >= 0 && cur < ranges.length) {
+        curKey = GlobalKey();
+        curRange = ranges[cur];
+      }
+      return [
+        for (final p in splitByMatches(runs, ranges))
+          runs[p.run] == '\uFFFC'
+              ? span(spans[p.run], cellBg)
+              : span(spans[p.run], cellBg,
+                  text: p.text, mark: p.match == null ? null : findMarkColor(current: p.match == cur)),
+      ];
     }
 
     final quoteLine = theme.colorScheme.outlineVariant;
@@ -1492,59 +1627,18 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       Widget w;
       if (bl.kind == NBlockKind.hr) {
         w = Divider(height: 16, thickness: 1, color: theme.dividerColor);
-      } else if (bl.kind == NBlockKind.table && bl.table!.any((r) => r.any((c) => c.rowSpan > 1 || c.colSpan > 1))) {
-        // Объединённые ячейки (1.5.11) — своя раскладка, рамки — у ячеек.
+      } else if (bl.kind == NBlockKind.table) {
+        // Таблица (1.5.9; объединённые ячейки — 1.5.11; одна раскладка для
+        // всех — 2.2.0): колонки не уже своих слов, рамки — у ячеек.
         w = _spanTable(bl, theme, cellBg, blocks);
         final after = bl.after * base.fontSize! * 1.4;
         if (after > 0) w = Padding(padding: EdgeInsets.only(bottom: after), child: w);
-      } else if (bl.kind == NBlockKind.table) {
-        final rows = bl.table!;
-        final cols = rows.fold<int>(0, (m, r) => r.length > m ? r.length : m);
-        // Доли колонок — по ширинам первой строки, если заданы у всех ячеек.
-        final first = rows.first;
-        final widths = first.length == cols && first.every((c) => c.flex > 1)
-            ? [for (final c in first) c.flex]
-            : List<double>.filled(cols, 1);
-        w = Table(
-          border: bl.border
-              ? () {
-                  final line = BorderSide(color: theme.dividerColor, width: 0.8);
-                  BorderSide side(int bit) => bl.borders & bit != 0 ? line : BorderSide.none;
-                  return TableBorder(
-                    top: side(kBorderTop),
-                    right: side(kBorderRight),
-                    bottom: side(kBorderBottom),
-                    left: side(kBorderLeft),
-                    horizontalInside: side(kBorderInsideH),
-                    verticalInside: side(kBorderInsideV),
-                  );
-                }()
-              : null,
-          columnWidths: {for (var i = 0; i < cols; i++) i: FlexColumnWidth(widths[i])},
-          defaultVerticalAlignment: TableCellVerticalAlignment.top,
-          children: [
-            for (final r in rows)
-              TableRow(children: [
-                for (var i = 0; i < cols; i++)
-                  i < r.length
-                      ? Container(
-                          color: r[i].background == null ? null : Color(r[i].background!),
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: blocks(r[i].blocks,
-                                r[i].background == null ? cellBg : Color(r[i].background!)),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-              ]),
-          ],
-        );
-        final after = bl.after * base.fontSize! * 1.4;
-        if (after > 0) w = Padding(padding: EdgeInsets.only(bottom: after), child: w);
       } else {
+        final before = curKey;
+        final hits = marked(bl.spans, cellBg);
         final text = Text.rich(
-          TextSpan(children: [for (final s in bl.spans) span(s, cellBg)]),
+          TextSpan(children: hits ?? [for (final s in bl.spans) span(s, cellBg)]),
+          key: identical(curKey, before) ? null : curKey,
           style: base,
           textScaler: TextScaler.noScaling,
           softWrap: true,
@@ -1578,6 +1672,22 @@ class _MailNativeBodyState extends State<MailNativeBody> {
     }
 
     final column = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: blocks(widget.mail.blocks, null));
+    if (find != null) {
+      // После кадра: сколько нашлось — строке поиска, текущее — на экран.
+      final total = found;
+      final key = curKey;
+      final range = curRange;
+      final sig = q.isEmpty ? null : '$q|${find.current}';
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || widget.find != find) return;
+        if (q.isNotEmpty) find.report(total);
+        if (key != null && sig != _revealed) {
+          _revealed = sig;
+          revealMatch(key, range.$1, range.$2);
+        }
+        if (sig == null) _revealed = null;
+      });
+    }
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 12),
       // Политика организации (MDM, 1.10.5): без выделения — нечего и

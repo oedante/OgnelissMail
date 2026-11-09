@@ -10,7 +10,8 @@ import '../../../widgets/common/undo_strip.dart';
 import '../../../widgets/common/undo_manager.dart';
 import '../../../core/utils/text_safe.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:flutter/foundation.dart' show listEquals;
+import 'package:flutter/foundation.dart' show compute, listEquals;
+import 'package:html/parser.dart' as html_parser;
 import 'package:flutter/material.dart';
 import '../../contacts/widgets/person_card.dart';
 import '../../../core/theme/app_icons.dart';
@@ -45,6 +46,7 @@ import '../../settings/providers/settings_provider.dart';
 import '../../settings/screens/swipe_settings_screen.dart' show conversationSwipeActions;
 import '../widgets/control_sheet.dart' show applyControl, ControlChoice;
 import '../widgets/later_sheet.dart' show postponeEmails;
+import 'conversation_files_screen.dart' show openConversationFiles;
 import 'mail_detail_screen.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/swipe_action_indicator.dart';
@@ -54,6 +56,8 @@ import '../../../services/mail/own_addresses.dart';
 import '../../../widgets/common/quick_long_press.dart';
 import '../../../widgets/common/peek_card.dart' show peekAnchorOf;
 import '../widgets/peek_helpers.dart';
+import '../providers/delivery_status_provider.dart' show deliveryTicksProvider, deliveryTickOf;
+import '../widgets/mail_find.dart';
 import '../widgets/quick_reply_bar.dart';
 import '../providers/drawer_prefs.dart' show convChatOrderProvider, quickReplyBarProvider;
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
@@ -144,10 +148,121 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   /// план 08.11.2026, как в мессенджере); null — самое новое.
   EmailModel? _replyTo;
 
+  // ── Поиск по беседе (2.2.0, план 08.11.2026 «из мессенджеров») ──
+  // Тексты писем — из базы целиком (в карточках — только начало); письма
+  // с совпадением выделены, остальные приглушены, ↑ ↓ — к соседнему
+  // письму с совпадением; открытое письмо показывает тот же поиск.
+  final MailFindController _find = MailFindController();
+  bool _searching = false;
+
+  /// Текст письма для поиска (тема, отправитель, текст), id → строчными.
+  Map<String, String>? _texts;
+  final ScrollController _scroll = ScrollController();
+  final Map<String, GlobalKey> _cardKeys = {};
+  String? _revealed;
+
+  // ── «↓ N новых» (2.2.0, план 08.11.2026 «из мессенджеров»: беседа как
+  // чат) ──
+  // Беседа прокручена от последнего письма — кнопка «к последнему»; письма,
+  // пришедшие за это время (не свои), — числом на ней. Последнее письмо — у
+  // начала ленты (offset 0) в обоих порядках: «как чат» — снизу (reverse),
+  // иначе — сверху.
+  bool _atLatest = true;
+  int _newCount = 0;
+  Set<String>? _seenIds;
+
+  static const _latestSlack = 240.0;
+
+  void _onScroll() {
+    final at = !_scroll.hasClients || _scroll.offset < _latestSlack;
+    if (at == _atLatest) return;
+    setState(() {
+      _atLatest = at;
+      if (at) _newCount = 0;
+    });
+  }
+
+  /// Новые письма беседы (не свои) — к счётчику, если беседа прокручена от
+  /// последнего письма.
+  void _trackNew(List<EmailModel> shown, Set<String> own) {
+    final seen = _seenIds;
+    if (seen == null) {
+      _seenIds = {for (final e in shown) e.id};
+      return;
+    }
+    var fresh = 0;
+    for (final e in shown) {
+      if (seen.add(e.id) && !e.isDraft && !own.contains(e.from.email.trim().toLowerCase())) fresh++;
+    }
+    if (fresh == 0 || _atLatest) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !_atLatest) setState(() => _newCount += fresh);
+    });
+  }
+
+  void _toLatest() {
+    setState(() => _newCount = 0);
+    if (!_scroll.hasClients) return;
+    final far = _scroll.offset > 4000;
+    // Издалека — прыжком почти до конца и короткой прокруткой (не листать
+    // сотни писем).
+    if (far) _scroll.jumpTo(800);
+    unawaited(_scroll.animateTo(0, duration: const Duration(milliseconds: 280), curve: Curves.easeOutCubic));
+  }
+
+  @override
+  void dispose() {
+    _find.dispose();
+    _scroll.removeListener(_onScroll);
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  Future<void> _startSearch() async {
+    setState(() => _searching = true);
+    final rows = await ref
+        .read(databaseProvider)
+        .getConversation(conversationId: widget.conversationId, accountId: widget.accountId);
+    final sources = [
+      for (final r in rows)
+        (id: r.id, head: '${r.subject}\n${r.fromName ?? ''} ${r.fromEmail}', html: r.bodyHtml, plain: r.bodyPlain),
+    ];
+    final texts = await compute(conversationSearchTexts, sources);
+    if (mounted) setState(() => _texts = texts);
+  }
+
+  void _stopSearch() {
+    _find.setQuery('');
+    setState(() {
+      _searching = false;
+      _revealed = null;
+    });
+  }
+
+  /// Показать письмо с текущим совпадением: карточка построена — к ней;
+  /// нет (далеко в ленте) — сначала примерно по номеру, потом точно.
+  void _revealCard(String id, int index, int count, [int tries = 0]) {
+    final ctx = _cardKeys[id]?.currentContext;
+    if (ctx != null) {
+      unawaited(Scrollable.ensureVisible(ctx, alignment: 0.15, duration: const Duration(milliseconds: 250)));
+      return;
+    }
+    if (tries > 3 || !_scroll.hasClients) return;
+    final pos = _scroll.position;
+    pos.jumpTo((pos.maxScrollExtent * index / (count > 1 ? count - 1 : 1)).clamp(0.0, pos.maxScrollExtent));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _revealCard(id, index, count, tries + 1);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     final db = ref.read(databaseProvider);
+    _find.addListener(() {
+      if (mounted) setState(() {});
+    });
+    _scroll.addListener(_onScroll);
     _stream = _watchConversation(db, widget.conversationId, widget.accountId);
     // Таблица писем меняется при каждой синхронизации — экран беседы
     // перестраивается, только когда черновики правда изменились (2.0.0,
@@ -181,7 +296,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     }
     // Письмо готовится, пока экран выезжает (и картинки подписи — тоже).
     ref.read(mailOpenCacheProvider).prefetch(e.accountId, e.id, images: true);
-    context.push(conversationMessagePath(widget.conversationId, e.id, accountId: e.accountId));
+    context.push(conversationMessagePath(widget.conversationId, e.id,
+        accountId: e.accountId, find: _searching && _find.active ? _find.query : null));
   }
 
   Future<void> _markAllRead(List<EmailModel> emails) async {
@@ -543,12 +659,43 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         final own = {
           for (final a in ref.watch(accountsProvider)) ...OwnAddresses.of(a),
         };
+        if (shown != null) _trackNew(shown, {for (final o in own) o.toLowerCase()});
         final settings = ref.watch(settingsProvider);
         final muted = ref.watch(mutedConversationsProvider
             .select((m) => m.contains(ConversationNotify.key(widget.accountId, widget.conversationId))));
 
         // Письмо [i] (самое новое — 0) карточкой; над ним — подпись дня,
         // если день сменился (в порядке показа).
+        // Поиск по беседе: письма с совпадением сверху вниз, как на экране.
+        final q = _searching && _find.active ? _find.query.trim().toLowerCase() : '';
+        final texts = _texts;
+        List<String>? hitOrder;
+        if (q.isNotEmpty && texts != null && shown != null) {
+          final top = chat ? shown.reversed : shown;
+          hitOrder = [for (final e in top) if (texts[e.id]?.contains(q) ?? false) e.id];
+        }
+        final hits = hitOrder?.toSet();
+        final currentHit =
+            hitOrder == null || hitOrder.isEmpty ? null : hitOrder[_find.current.clamp(0, hitOrder.length - 1)];
+        if (_searching) {
+          final order = hitOrder;
+          final sig = q.isEmpty || currentHit == null ? null : '$q|$currentHit';
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted || !_searching) return;
+            if (q.isNotEmpty && texts != null) _find.report(order?.length ?? 0);
+            if (sig != null && sig != _revealed && shown != null) {
+              _revealed = sig;
+              final idx = shown.indexWhere((e) => e.id == currentHit);
+              // Номер в ленте: «чат» — снизу вверх, иначе — после счётчика.
+              final listIndex = chat ? idx : idx + 1;
+              _revealCard(currentHit!, listIndex, shown.length + 1);
+            }
+          });
+        }
+
+        // ✓/✓✓ своих писем — по отчётам о доставке и прочтении (2.2.0).
+        final ticks = ref.watch(deliveryTicksProvider).value;
+
         Widget messageAt(int i) {
           final list = shown!;
           final e = list[i];
@@ -574,6 +721,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 builder: (cardCtx) => _MessageCard(
                   email: e,
                   mine: mine,
+                  tick: mine ? deliveryTickOf(ticks, e) : null,
                   alsoIn: [
                     for (final c in copies[e.id] ?? const <EmailModel>[])
                       if ((c.folderName ?? '').isNotEmpty) c.folderName!,
@@ -586,12 +734,39 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               ),
             ),
           );
+          // Поиск по беседе: письмо с совпадением — рамкой (текущее — цветом
+          // акцента), без совпадения — приглушено.
+          Widget shownCard = card;
+          if (hits != null) {
+            final hit = hits.contains(e.id);
+            final current = hit && currentHit == e.id;
+            shownCard = KeyedSubtree(
+              key: _cardKeys.putIfAbsent(e.id, GlobalKey.new),
+              child: AnimatedOpacity(
+                opacity: hit ? 1 : 0.4,
+                duration: const Duration(milliseconds: 150),
+                child: !hit
+                    ? card
+                    : DecoratedBox(
+                        position: DecorationPosition.foreground,
+                        decoration: BoxDecoration(
+                          borderRadius: Radii.cardAll,
+                          border: Border.all(
+                            color: current ? theme.colorScheme.primary : theme.colorScheme.outline,
+                            width: current ? 2 : 1,
+                          ),
+                        ),
+                        child: card,
+                      ),
+              ),
+            );
+          }
           return Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
             if (newDay) _DayChip(label: _dayLabel(e.receivedAt.toLocal(), l10n)),
             // Свои — правее, чужие — левее (1.6.49, как пузыри в чате).
             Padding(
               padding: mine ? const EdgeInsets.only(left: Space.xl) : const EdgeInsets.only(right: Space.xl),
-              child: card,
+              child: shownCard,
             ),
           ]);
         }
@@ -620,6 +795,13 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             // «Прочитать все» и «Удалить беседу» — вверху (1.6.49): внизу —
             // строка ответа, как в мессенджере.
             actions: [
+              // Поиск по беседе (2.2.0).
+              if (!_searching && emails != null && emails.isNotEmpty)
+                IconButton(
+                  tooltip: l10n.tr('convFind'),
+                  icon: const Icon(AppIcons.search),
+                  onPressed: () => unawaited(_startSearch()),
+                ),
               // Беседа без уведомлений (1.8.13) — значок на виду, как у
               // чата «без звука» в Telegram; нажатие включает уведомления.
               if (muted)
@@ -639,6 +821,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   tooltip: l10n.tr('more'),
                   onSelected: (v) {
                     switch (v) {
+                      case 'files':
+                        unawaited(openConversationFiles(context,
+                            conversationId: widget.conversationId, accountId: widget.accountId));
                       case 'order':
                         unawaited(ref.read(convChatOrderProvider.notifier).set(!chat));
                       case 'mute':
@@ -650,6 +835,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     }
                   },
                   itemBuilder: (_) => [
+                    // Файлы и ссылки беседы (2.2.0, план 08.11.2026).
+                    AppMenuEntry(value: 'files', icon: AppIcons.attach_file, label: l10n.tr('convFilesTitle')),
                     AppMenuEntry(value: 'order', icon: AppIcons.forum, label: l10n.tr('convChatOrder'), checked: chat),
                     AppMenuEntry(
                       value: 'mute',
@@ -661,9 +848,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 ),
             ],
             // Высота заголовка постоянная: полоска не сдвигает ленту.
-            bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(2),
-                child: SizedBox(height: 2, child: _busy ? const LinearProgressIndicator(minHeight: 2) : null)),
+            bottom: _searching
+                ? MailFindBar(controller: _find, onClose: _stopSearch, hint: l10n.tr('convFindHint'))
+                : PreferredSize(
+                    preferredSize: const Size.fromHeight(2),
+                    child: SizedBox(height: 2, child: _busy ? const LinearProgressIndicator(minHeight: 2) : null)),
           )),
           body: Stack(fit: StackFit.expand, children: [
             shown == null
@@ -677,6 +866,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     )
                   : ReadableWidth(
                       child: ListView.separated(
+                        controller: _scroll,
                         // «Как чат» — снизу вверх: экран открывается на
                         // последнем письме, новое появляется у строки ответа.
                         reverse: chat,
@@ -693,6 +883,24 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     ),
             // «Письмо удалено · Вернуть» — как в ленте, поверх списка внизу.
             const Positioned(left: 0, right: 0, bottom: Space.s, child: UndoStrip()),
+            // «↓ N новых»: к последнему письму (2.2.0).
+            if (!_atLatest && shown != null && shown.isNotEmpty)
+              Positioned(
+                right: Space.l,
+                bottom: Space.l,
+                child: Badge(
+                  isLabelVisible: _newCount > 0,
+                  label: Text('$_newCount'),
+                  child: FloatingActionButton.small(
+                    heroTag: null,
+                    tooltip: _newCount > 0
+                        ? l10n.tr('convNewMessages').replaceAll('{n}', '$_newCount')
+                        : l10n.tr('convToLatest'),
+                    onPressed: _toLatest,
+                    child: Icon(chat ? AppIcons.arrow_downward : AppIcons.arrow_upward),
+                  ),
+                ),
+              ),
           ]),
           // Строка ответа на последнее письмо (1.6.49, как в мессенджере);
           // поднимается над клавиатурой.
@@ -799,8 +1007,17 @@ class _MessageCard extends StatelessWidget {
   /// Другие папки, где лежит копия этого письма (письмо самому себе).
   final List<String> alsoIn;
 
+  /// Своё письмо (2.2.0): false — доставлено (✓), true — прочитано (✓✓),
+  /// null — отчётов нет.
+  final bool? tick;
+
   const _MessageCard(
-      {required this.email, required this.mine, required this.onTap, this.onLongPress, this.alsoIn = const []});
+      {required this.email,
+      required this.mine,
+      required this.onTap,
+      this.onLongPress,
+      this.alsoIn = const [],
+      this.tick});
 
   @override
   Widget build(BuildContext context) {
@@ -917,6 +1134,16 @@ class _MessageCard extends StatelessWidget {
                             child: Icon(AppIcons.flag, size: Sizes.iconInline, fill: 1, color: scheme.error),
                           ),
                         const SizedBox(width: Space.s),
+                        if (tick != null)
+                          Padding(
+                            padding: const EdgeInsets.only(right: Space.xs),
+                            child: Tooltip(
+                              message: AppLocalizations.of(context).tr(tick! ? 'noticeDsnRead' : 'noticeDsnDelivered'),
+                              child: Icon(tick! ? AppIcons.done_all : AppIcons.check,
+                                  size: Sizes.iconInline,
+                                  color: tick! ? scheme.primary : scheme.onSurfaceVariant),
+                            ),
+                          ),
                         Text(
                           AppDateFormat.listStamp(context, email.receivedAt),
                           style: theme.textTheme.labelSmall
@@ -976,11 +1203,15 @@ class ConversationPagerScreen extends ConsumerStatefulWidget {
   final String emailId;
   final String accountId;
 
+  /// Поиск по беседе (2.2.0): письма открываются с этим поиском.
+  final String? find;
+
   const ConversationPagerScreen({
     super.key,
     required this.conversationId,
     required this.emailId,
     required this.accountId,
+    this.find,
   });
 
   @override
@@ -1117,6 +1348,7 @@ class _ConversationPagerScreenState extends ConsumerState<ConversationPagerScree
               onPrev: i > 0 ? () => _go(i - 1) : null,
               onNext: i < n - 1 ? () => _go(i + 1) : null,
               active: i == settled,
+              findQuery: widget.find,
             ),
           ),
         );
@@ -1144,3 +1376,16 @@ bool sameDraftList(List<EmailModel> a, List<EmailModel> b) {
   return true;
 }
 
+/// Тексты писем беседы для поиска (в отдельном изоляте): тема,
+/// отправитель и текст письма без разметки — строчными.
+Map<String, String> conversationSearchTexts(List<({String id, String head, String? html, String? plain})> mails) {
+  final out = <String, String>{};
+  for (final m in mails) {
+    final html = m.html;
+    final body = html != null && html.trim().isNotEmpty
+        ? (html_parser.parse(html).body?.text ?? '')
+        : (m.plain ?? '');
+    out[m.id] = '${m.head}\n$body'.toLowerCase();
+  }
+  return out;
+}

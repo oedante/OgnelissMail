@@ -32,4 +32,23 @@ void main() {
     expect(find.text('9'), findsNothing);
     expect(tester.hasRunningAnimations, isFalse);
   });
+
+  testWidgets('полоска карточки — ровно посередине (замечание владельца 09.11.2026)', (tester) async {
+    final now = DateTime(2026, 11, 9, 8, 27);
+    await tester.pumpWidget(
+        MaterialApp(home: Scaffold(body: Center(child: FlipClock(height: 60, clock: () => now)))));
+    // Полоски — ColoredBox высотой 1 в каждой из четырёх карточек.
+    final lines = find.byWidgetPredicate((w) => w is ColoredBox && w.child == null);
+    final boxes = [
+      for (final e in lines.evaluate())
+        if (tester.getSize(find.byWidget(e.widget)).height == 1) tester.getRect(find.byWidget(e.widget)),
+    ];
+    expect(boxes, hasLength(4));
+    final digit = tester.getRect(find.text('8'));
+    final card = tester.getRect(find.ancestor(of: find.text('8'), matching: find.byType(Container)).first);
+    for (final b in boxes.where((b) => b.left >= card.left && b.right <= card.right)) {
+      expect(b.center.dy, closeTo(card.center.dy, 0.6), reason: 'середина карточки');
+    }
+    expect(digit.center.dy, closeTo(card.center.dy, 0.6), reason: 'цифра — тоже посередине');
+  });
 }

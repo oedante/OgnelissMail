@@ -130,6 +130,9 @@ class EmailModel {
   final bool isReplied;
   final bool isForwarded;
   final bool hasAttachments;
+
+  /// Упомянут владелец ящика (@-упоминание, 2.2.0) — значок «@» в ленте.
+  final bool mentionsMe;
   final EmailPriority priority;
   final EmailStatus status;
   final List<String> tags;
@@ -171,7 +174,7 @@ class EmailModel {
     this.bodyPlain, this.bodyHtml, this.bodyPreview, this.authResults, this.listUnsubscribe,
     this.attachments = const [], required this.receivedAt, this.sentAt,
     this.isRead = false, this.isFlagged = false, this.isDraft = false,
-    this.isReplied = false, this.isForwarded = false, this.hasAttachments = false,
+    this.isReplied = false, this.isForwarded = false, this.hasAttachments = false, this.mentionsMe = false,
     this.priority = EmailPriority.normal, this.status = EmailStatus.delivered,
     this.tags = const [], this.categories = const [],
     this.classification, this.sensitivity, this.sentimentScore, this.aiCategory,
@@ -213,7 +216,7 @@ class EmailModel {
     String? bodyPlain, String? bodyHtml, String? bodyPreview, String? authResults, String? listUnsubscribe,
     List<EmailAttachment>? attachments, DateTime? receivedAt, DateTime? sentAt,
     bool? isRead, bool? isFlagged, bool? isDraft, bool? isReplied, bool? isForwarded,
-    bool? hasAttachments, EmailPriority? priority, EmailStatus? status, String? sensitivity,
+    bool? hasAttachments, bool? mentionsMe, EmailPriority? priority, EmailStatus? status, String? sensitivity,
     List<String>? tags, List<String>? categories, String? classification,
     double? sentimentScore, String? aiCategory, String? aiRecommendation,
     DateTime? extractedDeadline, int? size, bool? readReceiptRequested,
@@ -239,7 +242,8 @@ class EmailModel {
       sentAt: sentAt ?? this.sentAt, isRead: isRead ?? this.isRead,
       isFlagged: isFlagged ?? this.isFlagged, isDraft: isDraft ?? this.isDraft,
       isReplied: isReplied ?? this.isReplied, isForwarded: isForwarded ?? this.isForwarded,
-      hasAttachments: hasAttachments ?? this.hasAttachments, priority: priority ?? this.priority,
+      hasAttachments: hasAttachments ?? this.hasAttachments, mentionsMe: mentionsMe ?? this.mentionsMe,
+      priority: priority ?? this.priority,
       status: status ?? this.status, tags: tags ?? this.tags,
       categories: categories ?? this.categories, classification: classification ?? this.classification,
       sensitivity: sensitivity ?? this.sensitivity,

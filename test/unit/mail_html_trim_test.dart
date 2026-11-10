@@ -28,6 +28,30 @@ void main() {
     expect(b, contains('&nbsp;'));
   });
 
+  // Письмо владельца «You were mentioned in a post» 10.11.2026: рассылка —
+  // таблица из пустой колонки слева и колонки текста width:560px. Пустые
+  // края письма убирались вместе с первой пустой ячейкой <td></td>: колонка
+  // 560 px съезжала влево, текст шёл узкой полосой справа.
+  test('пустые ячейки по краям таблицы остаются — колонки не сдвигаются', () {
+    final b = _body('<table width="100%"><tbody><tr height="40"></tr>'
+        '<tr><td></td><td style="width: 560px"><center><img width="123" src="https://x.test/l.png"></center></td></tr>'
+        '<tr><td></td><td style="background:#fff">Dear oedante,</td></tr>'
+        '<tr><td></td><td>Unsubscribe</td><td></td></tr></tbody></table>');
+    // Пустая строка-распорка сверху убирается целиком — как раньше.
+    expect(b, isNot(contains('height="40"')));
+    final rows = RegExp(r'<tr>(.*?)</tr>', dotAll: true).allMatches(b).map((m) => m.group(1)!).toList();
+    expect(rows, hasLength(3));
+    expect(rows[0], startsWith('<td></td><td style="width: 560px">'));
+    expect(rows[2], endsWith('<td></td>'));
+  });
+
+  test('описание колонок и строка с rowspan по краю таблицы остаются', () {
+    final b = _body('<table><colgroup><col width="200"><col width="400"></colgroup>'
+        '<tbody><tr><td rowspan="2"></td><td></td></tr><tr><td>Текст</td></tr></tbody></table>');
+    expect(b, contains('<colgroup><col width="200"><col width="400"></colgroup>'));
+    expect(b, contains('<td rowspan="2"></td>'));
+  });
+
   test('ширина вёрстки рассылки определяется по таблицам и стилям', () {
     final d = MailHtmlDocument.build(
         '<style>.wrap{width:640px} .x{max-width:900px}</style>'

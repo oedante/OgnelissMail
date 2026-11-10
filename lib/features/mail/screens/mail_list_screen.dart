@@ -1021,7 +1021,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   /// Фокус — в выделенном тексте (письмо в панели, SelectionArea).
   static bool _textSelectionFocused() {
     final ctx = FocusManager.instance.primaryFocus?.context;
-    if (ctx == null) return false;
+    if (ctx == null || !ctx.mounted) return false;
     return ctx.widget is SelectableRegion || ctx.findAncestorWidgetOfExactType<SelectableRegion>() != null;
   }
 

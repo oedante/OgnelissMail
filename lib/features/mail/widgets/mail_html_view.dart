@@ -753,8 +753,13 @@ class MailHtmlDocument {
     var i = start ? 0 : e.nodes.length - 1;
     while (i >= 0 && i < e.nodes.length) {
       final n = e.nodes[i];
-      // <style> и <meta> в теле — не текст письма: обходим, не удаляя.
-      if (n is dom.Element && (n.localName == 'style' || n.localName == 'meta')) {
+      // <style> и <meta> в теле — не текст письма; пустая ячейка, описание
+      // колонок и строка с объединёнными вниз ячейками — сетка таблицы:
+      // обходим, не удаляя. Письмо владельца «You were mentioned in a
+      // post» 10.11.2026: из первой строки рассылки удалялась пустая
+      // ячейка <td></td>, колонка текста width:560px съезжала влево над
+      // пустой колонкой, и текст шёл узкой полосой справа.
+      if (n is dom.Element && (n.localName == 'style' || n.localName == 'meta' || _tableGrid(n))) {
         i += start ? 1 : -1;
         continue;
       }
@@ -767,6 +772,15 @@ class MailHtmlDocument {
       return;
     }
   }
+
+  /// Часть сетки таблицы, без которой колонки сдвинутся: ячейка, описание
+  /// колонок, строка с ячейкой rowspan > 1 (занимает место в строках ниже).
+  /// Пустая строка без таких ячеек убирается целиком — колонки не меняются.
+  static bool _tableGrid(dom.Element e) => switch (e.localName) {
+        'td' || 'th' || 'col' || 'colgroup' => true,
+        'tr' => e.children.any((c) => (int.tryParse(c.attributes['rowspan']?.trim() ?? '') ?? 1) > 1),
+        _ => false,
+      };
 
   static String _normCid(String raw) {
     var c = raw.trim();

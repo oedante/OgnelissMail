@@ -13,6 +13,7 @@ export 'src/transport/tolerant_smtp_client.dart';
 export 'src/transport/notify_imap_client.dart';
 export 'src/transport/autodiscover.dart';
 export 'src/transport/base64_off.dart';
+export 'src/transport/preheader.dart';
 export 'src/transport/dav_client.dart';
 export 'src/transport/wbxml_codec.dart';
 export 'src/debug_log.dart';

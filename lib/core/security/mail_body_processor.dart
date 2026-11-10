@@ -12,6 +12,7 @@
 // в интерактивном, пачки синхронизации — в фоновом; без запуска изолята на
 // каждый вызов и без очереди открытого письма за синхронизацией.
 
+import 'package:mail_engine/mail_engine.dart' show Preheader;
 import 'dart:async';
 
 import '../utils/text_safe.dart';
@@ -133,12 +134,36 @@ class MailBodyProcessor {
     Map<String, String> run() {
       final out = <String, String>{};
       src.forEach((k, v) {
+        // Прехедер рассылки — задуманное отправителем превью (2.2.0).
+        final pre = Preheader.of(v.html);
+        if (pre != null) {
+          out[k] = pre;
+          return;
+        }
         final text = (v.plain ?? '').trim().isNotEmpty ? v.plain! : (v.html == null ? '' : htmlToPreviewText(v.html!));
         final p = multilinePreviewOf(text);
         if (p != null) out[k] = p;
       });
       return out;
     }
+    if (kIsWeb) return run();
+    try {
+      return await WorkIsolate.background.run(run);
+    } on UnsupportedError {
+      return run();
+    } on TimeoutException {
+      return const {};
+    }
+  }
+
+  /// Прехедеры рассылок (id → текст) — пачкой, разбор в фоне; писем без
+  /// прехедера в ответе нет (2.2.0).
+  static Future<Map<String, String>> preheaderAll(Map<String, String> html) async {
+    Map<String, String> run() => {
+          for (final e in html.entries)
+            if (Preheader.of(e.value) case final p?) e.key: p,
+        };
+    if (html.isEmpty) return const {};
     if (kIsWeb) return run();
     try {
       return await WorkIsolate.background.run(run);

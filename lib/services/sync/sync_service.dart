@@ -54,6 +54,7 @@ import '../../data/providers/database_provider.dart';
 import '../../services/mail/ews/ews_service.dart';
 import '../../services/mail/imap/imap_service.dart';
 import '../../services/mail/engine/mail_engine_service.dart';
+import 'package:mail_engine/mail_engine.dart' show Preheader;
 import '../../services/notifications/notification_service.dart';
 import '../../services/notifications/notification_text.dart';
 import '../../services/notifications/messenger_notifications.dart' show MessengerNotify;
@@ -3510,7 +3511,8 @@ class SyncService {
               subject: email.subject,
               bodyPlain: Value(email.bodyPlain),
               bodyHtml: Value(email.bodyHtml),
-              bodyPreview: Value(email.bodyPreview),
+              // Прехедер рассылки — задуманное отправителем превью (2.2.0).
+              bodyPreview: Value(Preheader.of(email.bodyHtml) ?? email.bodyPreview),
               authResults: Value(email.authResults),
               listUnsubscribe: Value(email.listUnsubscribe),
               meetingJson: Value(email.meetingJson),
@@ -3612,7 +3614,7 @@ class SyncService {
             // догруженное при открытии письма.
             bodyPlain: Value.absentIfNull(email.bodyPlain),
             bodyHtml: Value.absentIfNull(email.bodyHtml),
-            bodyPreview: Value.absentIfNull(email.bodyPreview),
+            bodyPreview: Value.absentIfNull(Preheader.of(email.bodyHtml) ?? email.bodyPreview),
             authResults: Value.absentIfNull(email.authResults),
             listUnsubscribe: Value.absentIfNull(email.listUnsubscribe),
             meetingJson: Value.absentIfNull(email.meetingJson),

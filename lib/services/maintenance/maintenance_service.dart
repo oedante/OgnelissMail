@@ -33,6 +33,7 @@ class MaintenanceService {
   static const _kCalFull = 'cal_full_after_162';
   static const _kPreviewLines = 'db_previews_lines_v1';
   static const _kThreads = 'db_threads_relinked_v1';
+  static const _kPreheaders = 'db_previews_preheader_v1';
   static const _interval = Duration(hours: 24);
 
   bool _running = false;
@@ -61,7 +62,8 @@ class MaintenanceService {
     final calFull = prefs.getBool(_kCalFull) ?? false;
     final lines = prefs.getBool(_kPreviewLines) ?? false;
     final threads = prefs.getBool(_kThreads) ?? false;
-    if (_running || (previews && marked && dupes && calFull && lines && threads)) return;
+    final preheaders = prefs.getBool(_kPreheaders) ?? false;
+    if (_running || (previews && marked && dupes && calFull && lines && threads && preheaders)) return;
     _running = true;
     final db = _ref.read(databaseProvider);
     try {
@@ -127,6 +129,32 @@ class MaintenanceService {
         }
         await prefs.setBool(_kThreads, true);
         AppLogger.info('База: беседы по ссылкам на письма — $n писем за ${sw.elapsedMilliseconds} мс');
+      }
+      if (!preheaders) {
+        // 2.2.0: превью рассылок — их прехедер (задуманная отправителем
+        // строка превью) у уже загруженных писем. Порциями, разбор в фоне.
+        final sw = Stopwatch()..start();
+        var last = 0;
+        var changed = 0;
+        while (true) {
+          final src = await db.previewSources(last, 150);
+          if (src.isEmpty) break;
+          last = src.last.rowid;
+          final pre = await MailBodyProcessor.preheaderAll({
+            for (final r in src)
+              if (r.html != null) '${r.rowid}': r.html!,
+          });
+          final upd = <int, String>{
+            for (final r in src)
+              if (pre['${r.rowid}'] case final p? when p != r.preview) r.rowid: p,
+          };
+          await db.setPreviewsByRowid(upd);
+          changed += upd.length;
+          await Future<void>.delayed(const Duration(milliseconds: 150));
+        }
+        await prefs.setBool(_kPreheaders, true);
+        if (changed > 0) db.notifyUpdates({TableUpdate.onTable(db.emails, kind: UpdateKind.update)});
+        AppLogger.info('База: прехедеры рассылок в превью — $changed писем за ${sw.elapsedMilliseconds} мс');
       }
     } catch (e) {
       AppLogger.warning('База: разовая подготовка после обновления не завершена — $e');

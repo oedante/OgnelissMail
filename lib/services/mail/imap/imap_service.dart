@@ -23,7 +23,7 @@ import '../../security/smime_mime.dart' show SmimeMime;
 import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
 import 'package:mail_engine/mail_engine.dart'
-    show DsnRequest, ImapNotifyChange, ImapNotifyRejected, NotifyImapClient, SmtpNotSentException, TolerantSmtpClient;
+    show DsnRequest, ImapNotifyChange, ImapNotifyRejected, NotifyImapClient, Preheader, SmtpNotSentException, TolerantSmtpClient;
 import 'package:drift/drift.dart' show Value, BooleanExpressionOperators;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -1433,7 +1433,11 @@ class ImapService {
       // Preview
       String? preview;
       try {
-        final text = msg.decodeTextPlainPart();
+        // Прехедер рассылки — задуманное отправителем превью (2.2.0).
+        preview = Preheader.of(msg.decodeTextHtmlPart());
+      } catch (_) {}
+      try {
+        final text = preview == null ? msg.decodeTextPlainPart() : null;
         if (text != null) {
           // Без сущностей HTML и невидимых символов прехедера рассылок:
           // иначе первые 200 знаков бывали сплошным «&zwnj; &zwnj; …».

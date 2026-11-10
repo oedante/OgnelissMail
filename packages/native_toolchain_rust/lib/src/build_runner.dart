@@ -69,11 +69,7 @@ interface class RustBuildRunner {
     );
     final outputDir = path.join(path.fromUri(input.outputDirectory), 'target');
     final manifestPath = path.join(crateDirectory.path, 'Cargo.toml');
-    final (
-      :libName,
-      :crateName,
-      :toolchainChannel,
-    ) = crateInfoValidator.fetchAndValidateCrateInfo(
+    final (:libName, :crateName, :toolchainChannel) = crateInfoValidator.fetchAndValidateCrateInfo(
       targetTriple: targetTriple,
       manifestPath: manifestPath,
       toolchainTomlPath: path.join(crateDirectory.path, 'rust-toolchain.toml'),
@@ -97,9 +93,28 @@ interface class RustBuildRunner {
     ]);
     await processRunner.invokeRustup(['target', 'add', targetTriple, '--toolchain', toolchainChannel]);
 
+    // Ogneliss (2.3.0, вторая сборка владельца 10.11.2026 — цель поставлена,
+    // а крейты падают так же): cargo из `rustup run` ищет rustc по PATH, и
+    // другой rustc раньше ~/.cargo/bin (Rust из Homebrew) собирает без
+    // стандартной библиотеки iPhone. RUSTC — rustc именно этой версии.
+    final environment = {...buildEnvironmentFactory.createBuildEnvVars(codeConfig), ...extraCargoEnvironmentVariables};
+    if (Platform.isMacOS || Platform.isLinux) {
+      try {
+        final rustc = (await processRunner.invokeRustup(['which', 'rustc', '--toolchain', toolchainChannel])).trim();
+        if (rustc.isNotEmpty && File(rustc).existsSync()) {
+          logger.info('Using rustc $rustc');
+          final basePath = environment['PATH'] ?? Platform.environment['PATH'] ?? '';
+          environment['PATH'] = [path.dirname(rustc), if (basePath.isNotEmpty) basePath].join(':');
+          environment.putIfAbsent('RUSTC', () => rustc);
+        }
+      } on RustProcessException catch (e) {
+        logger.info('rustup which rustc failed; cargo picks rustc from PATH', e);
+      }
+    }
+
     logger.info('Running cargo build');
-    await processRunner.invokeRustup(
-      [
+    try {
+      await processRunner.invokeRustup([
         'run',
         toolchainChannel,
         'cargo',
@@ -119,35 +134,27 @@ interface class RustBuildRunner {
         if (!enableDefaultFeatures) '--no-default-features',
         if (features.isNotEmpty) ...['--features', features.join(',')],
         ...extraCargoBuildArgs,
-      ],
-      environment: {
-        ...buildEnvironmentFactory.createBuildEnvVars(codeConfig),
-        ...extraCargoEnvironmentVariables,
-      },
-    );
+      ], environment: environment);
+    } on RustProcessException catch (e) {
+      // Xcode показывает только строки «error: …», а причина у rustc —
+      // «error[E0463]: …» и «= note: …»: без этого видно лишь «could not
+      // compile `cfg-if` due to 1 previous error».
+      throw RustProcessException(visibleRustErrors(e.message), inner: e.inner);
+    }
 
     final binaryFilePath = path.join(
       outputDir,
       targetTriple,
       buildMode.name,
-      targetOS
-          .libraryFileName(libName ?? crateName, linkMode)
-          .replaceAll('-', '_'),
+      targetOS.libraryFileName(libName ?? crateName, linkMode).replaceAll('-', '_'),
     );
 
     // NOTE: re-run build whenever any of the dependencies change
-    output.dependencies.addAll(
-      dependencyDiscoverer.discover(path.setExtension(binaryFilePath, '.d')),
-    );
+    output.dependencies.addAll(dependencyDiscoverer.discover(path.setExtension(binaryFilePath, '.d')));
 
     for (final routing in assetRouting) {
       output.assets.code.add(
-        CodeAsset(
-          package: input.packageName,
-          name: assetName,
-          linkMode: linkMode,
-          file: path.toUri(binaryFilePath),
-        ),
+        CodeAsset(package: input.packageName, name: assetName, linkMode: linkMode, file: path.toUri(binaryFilePath)),
         routing: routing,
       );
     }
@@ -163,3 +170,16 @@ interface class RustBuildRunner {
     logger.config(showToolchainOutput);
   }
 }
+
+/// Ogneliss: строки причины ошибки rustc — в виде «error: …», чтобы их
+/// показал Xcode (и flutter build ios).
+@internal
+String visibleRustErrors(String message) => message
+    .split('\n')
+    .map((line) {
+      final t = line.trimLeft();
+      if (RegExp(r'^error\[E\d+\]:').hasMatch(t)) return 'error: rustc $t';
+      if (t.startsWith('= note:') || t.startsWith('= help:')) return 'error: rustc $t';
+      return line;
+    })
+    .join('\n');

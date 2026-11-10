@@ -118,10 +118,9 @@ if [[ "$ANALYZE" == 1 ]]; then
   if [[ "$ERRS" != 0 ]]; then warn "Ошибок анализатора: $ERRS — сборка, скорее всего, не пройдёт. Пришлите $AN"; else echo "Ошибок анализатора нет"; fi
 fi
 
-# native_toolchain_rust 1.0.6 пишет «[SEVERE] RustBuilder: Failed to find
-# lib.name … type 'Null' is not a subtype of type 'String'», когда в Cargo.toml
-# нет lib.name, — и берёт package.name. Это не ошибка, сборка идёт дальше.
-RUST_NOTE="Сообщения «[SEVERE] RustBuilder: Failed to find lib.name …» — не ошибка, сборка продолжается."
+# Ядро Rust (super_native_extensions) собирается из исходников; сборщик сам
+# ставит Rust нужной версии и цель (packages/native_toolchain_rust, 2.3.0).
+RUST_NOTE="Первая сборка ядра Rust (перетаскивание вложений) — несколько минут: скачиваются Rust нужной версии и цель платформы."
 
 if [[ "$TEST" == 1 ]]; then
   say "flutter test"

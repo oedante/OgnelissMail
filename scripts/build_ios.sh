@@ -150,10 +150,11 @@ if [[ "$KEEP_LOCK" == 1 ]]; then flutter pub get; else flutter pub upgrade; fi
 # 2.35.3, а на Mac стоял 2.35.2). Без изменений — секунды.
 dart run build_runner build --delete-conflicting-outputs
 (cd ios && pod install --repo-update)
-# native_toolchain_rust 1.0.6 пишет «[SEVERE] RustBuilder: Failed to find
-# lib.name … type 'Null' is not a subtype of type 'String'», когда в Cargo.toml
-# нет lib.name, — и берёт package.name. Это не ошибка, сборка идёт дальше.
-echo "Сообщения «[SEVERE] RustBuilder: Failed to find lib.name …» при сборке — не ошибка."
+# Ядро Rust (super_native_extensions) собирается из исходников; сборщик сам
+# ставит Rust нужной версии и цель aarch64-apple-ios (packages/
+# native_toolchain_rust, 2.3.0: раньше цели не было — «could not compile
+# `cfg-if` … due to 1 previous error» на каждом крейте).
+echo "Первая сборка ядра Rust (перетаскивание вложений) — несколько минут: скачиваются Rust нужной версии и цель платформы."
 
 if [[ -n "${KEYCHAIN_PASSWORD:-}" ]]; then
   security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$HOME/Library/Keychains/login.keychain-db"

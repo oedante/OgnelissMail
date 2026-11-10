@@ -167,12 +167,9 @@ if (-not $SkipAnalyze) {
   else { Ok 'Ошибок анализатора нет' }
 }
 
-# Подсказка: native_toolchain_rust 1.0.6 пишет в журнал
-# «[SEVERE] RustBuilder: Failed to find lib.name … type 'Null' is not a subtype
-# of type 'String'», когда в Cargo.toml нет lib.name, — и берёт package.name.
-# Это не ошибка: сборка идёт дальше. 1.0.7 без этого сообщения требует
-# code_assets 2, а irondash_engine_context (из super_drag_and_drop) — 1.x.
-$rustNote = 'Сообщения «[SEVERE] RustBuilder: Failed to find lib.name …» — не ошибка, сборка продолжается.'
+# Ядро Rust (super_native_extensions) собирается из исходников; сборщик сам
+# ставит Rust нужной версии и цель (packages/native_toolchain_rust, 2.3.0).
+$rustNote = 'Первая сборка ядра Rust (перетаскивание вложений) — несколько минут: скачиваются Rust нужной версии и цель платформы.'
 
 if ($Test) {
   Step 'flutter test'

@@ -299,7 +299,7 @@ if ($Run) {
 }
 
 Step "flutter build windows --$Mode"
-Write-Host 'Сообщения «[SEVERE] RustBuilder: Failed to find lib.name …» — не ошибка, сборка продолжается.' -ForegroundColor Gray
+Write-Host 'Первая сборка ядра Rust (перетаскивание вложений) — несколько минут: скачиваются Rust нужной версии и цель платформы.' -ForegroundColor Gray
 Exec 'flutter build windows' { flutter build windows "--$Mode" @defines } | Out-Null
 $cfg = (Get-Culture).TextInfo.ToTitleCase($Mode)
 $out = Join-Path $Root "build\windows\x64\runner\$cfg"

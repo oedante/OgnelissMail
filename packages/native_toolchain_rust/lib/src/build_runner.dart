@@ -81,6 +81,21 @@ interface class RustBuildRunner {
 
     logger.info('Ensuring $toolchainChannel is installed');
     await ensureToolchainDownloaded(crateDirectory.path);
+    // Ogneliss (2.3.0, сборка владельца для iPhone 10.11.2026): цель — в
+    // toolchain явно. `rustup run <версия>` ставит голый toolchain без целей
+    // из rust-toolchain.toml, и каждый крейт падал: «could not compile
+    // `cfg-if` (lib) due to 1 previous error» — нет стандартной библиотеки
+    // aarch64-apple-ios. Повторный вызов ничего не скачивает.
+    logger.info('Ensuring target $targetTriple is installed for $toolchainChannel');
+    await processRunner.invokeRustup([
+      'toolchain',
+      'install',
+      toolchainChannel,
+      '--profile',
+      'minimal',
+      '--no-self-update',
+    ]);
+    await processRunner.invokeRustup(['target', 'add', targetTriple, '--toolchain', toolchainChannel]);
 
     logger.info('Running cargo build');
     await processRunner.invokeRustup(

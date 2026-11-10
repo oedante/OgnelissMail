@@ -30,6 +30,12 @@
   client secret is invalid». Теперь секрет уходит только с Windows и Linux.
   В `config/dart_defines.json` проверить: `GOOGLE_DESKTOP_CLIENT_ID` — ID
   клиента «Desktop app», а не Android.
+- **Сборка для iPhone и Mac** (сборка владельца 10.11.2026): ядро Rust
+  перетаскивания падало на каждом крейте — «could not compile `cfg-if` …
+  due to 1 previous error»: `rustup run 1.97.1` ставил Rust без цели
+  aarch64-apple-ios. Сборщик (`packages/native_toolchain_rust`) теперь сам
+  ставит Rust нужной версии и цель платформы. Подсказка о «[SEVERE]» в
+  скриптах сборки заменена на «первая сборка ядра Rust — несколько минут».
 - **Тесты на Windows**: настройка перевода — подпись по платформе («Языки
   компьютера» на Windows), тест больше не падает у владельца.
 

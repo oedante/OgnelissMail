@@ -2483,11 +2483,29 @@ class SyncService {
     final notify = fresh.where((e) => uidOf(e.id) > newest).toList();
     // Отчёты о доставке своих писем (1.9.x) — своим уведомлением.
     final toNotify = await _deliveryReports(account, folder, fresh, notify, settings);
-    if (toNotify.isNotEmpty) await _notifyNewMail(account, folder, toNotify, toNotify.length, settings);
-    if (fresh.isNotEmpty) await _maybeAutoReply(account, folder, notify);
     // Тексты новых писем «Входящих» — заранее: письмо открывается сразу,
-    // без секунды ожидания сервера.
-    if (notify.isNotEmpty) unawaited(_prefetchImapBodies(imap, db, account, folder, notify, settings));
+    // без секунды ожидания сервера. И до уведомления (10.11.2026, журнал
+    // владельца: в уведомлении были только отправитель и тема — синк IMAP
+    // берёт заголовки, а текст приходил на полсекунды позже уведомления).
+    // Не дольше 8 секунд: дальше уведомление — без текста, а предзагрузка
+    // дописывает его в базу сама.
+    var previews = const <String, String>{};
+    if (notify.isNotEmpty) {
+      previews = await _prefetchImapBodies(imap, db, account, folder, notify, settings)
+          .timeout(const Duration(seconds: 8), onTimeout: () => const <String, String>{});
+    }
+    if (toNotify.isNotEmpty) {
+      await _notifyNewMail(
+          account,
+          folder,
+          [
+            for (final e in toNotify)
+              if (previews[e.id] case final p?) e.copyWith(bodyPreview: p) else e,
+          ],
+          toNotify.length,
+          settings);
+    }
+    if (fresh.isNotEmpty) await _maybeAutoReply(account, folder, notify);
     // История ещё не догружена — продолжаем сразу (порциями по 200), а не
     // при следующем синке через 15 минут.
     if (!done) {
@@ -2509,10 +2527,11 @@ class SyncService {
 
   /// Предзагрузка текста (без вложений, BODY.PEEK — прочитанными не
   /// становятся) до 10 самых свежих новых писем «Входящих».
-  Future<void> _prefetchImapBodies(ImapService imap, AppDatabase db, AccountModel account,
+  /// Возвращает превью загруженных писем (id → текст) — для уведомления.
+  Future<Map<String, String>> _prefetchImapBodies(ImapService imap, AppDatabase db, AccountModel account,
       FolderModel folder, List<EmailModel> fresh, AppSettings settings) async {
-    if (folder.type != FolderType.inbox) return;
-    if (settings.emailFetchMode == EmailFetchMode.headersOnly) return;
+    if (folder.type != FolderType.inbox) return const {};
+    if (settings.emailFetchMode == EmailFetchMode.headersOnly) return const {};
     final list = [...fresh]..sort((a, b) => b.receivedAt.compareTo(a.receivedAt));
     // Текст — в базу вместе с превью (у IMAP его в строке нет) и в поиск;
     // лента перечитывается один раз в конце, а не после каждого письма.
@@ -2531,7 +2550,8 @@ class SyncService {
         break; // соединение занято или оборвалось — следующий синк повторит
       }
     }
-    if (got.isEmpty) return;
+    if (got.isEmpty) return const {};
+    final previews = <String, String>{};
     try {
       final htmls = <String, String>{
         for (final f in got.values)
@@ -2543,7 +2563,11 @@ class SyncService {
       final index = <({String emailId, String subject, String fromText, String body})>[];
       got.forEach((e, full) {
         final text = (full.bodyPlain ?? '').trim().isNotEmpty ? full.bodyPlain! : (fromHtml[e.id] ?? '');
-        final preview = (e.bodyPreview ?? '').trim().isEmpty ? previewOf(text) : null;
+        // Прехедер рассылки — задуманное отправителем превью (2.2.0).
+        final pre = Preheader.of(full.bodyHtml);
+        final preview = pre ?? ((e.bodyPreview ?? '').trim().isEmpty ? previewOf(text) : null);
+        final shown = preview ?? e.bodyPreview;
+        if (shown != null && shown.trim().isNotEmpty) previews[e.id] = shown;
         rows[e.id] = {
           'body_plain': full.bodyPlain,
           'body_html': full.bodyHtml,
@@ -2569,6 +2593,7 @@ class SyncService {
     } catch (err) {
       AppLogger.debug('IMAP предзагрузка текста — запись: $err');
     }
+    return previews;
   }
 
   Future<void> _syncImap(AccountModel account, AppSettings settings) async {

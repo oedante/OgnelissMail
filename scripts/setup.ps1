@@ -354,12 +354,23 @@ $cfgFile = Join-Path $cfgDir "dart_defines.json"
 $old = $null
 if (Test-Path $cfgFile) { try { $old = Get-Content $cfgFile -Raw -Encoding UTF8 | ConvertFrom-Json } catch { $old = $null } }
 function Pick($envVal, $oldVal, $default) { if ($envVal) { $envVal } elseif ($oldVal) { $oldVal } else { $default } }
-$json = [ordered]@{
-  OAUTH_PROXY_URL = Pick $env:OAUTH_PROXY_URL $old.OAUTH_PROXY_URL "https://www.ogneliss.ru/oauth";
-  OAUTH_PROXY_KEY = Pick $env:OAUTH_PROXY_KEY $old.OAUTH_PROXY_KEY "";
-  # Адрес ИТ-поддержки для «Журнал → Отправить в поддержку».
-  SUPPORT_EMAIL   = Pick $env:SUPPORT_EMAIL $old.SUPPORT_EMAIL ""
-} | ConvertTo-Json
+# Все ключи, уже записанные в файл (MS_CLIENT_ID, GOOGLE_*, PUSH_*, FIREBASE_*
+# …), сохраняются (2.2.0: раньше файл переписывался тремя ключами и
+# идентификаторы клиентов входа пропадали).
+$json = [ordered]@{}
+if ($old) { foreach ($p in $old.PSObject.Properties) { $json[$p.Name] = $p.Value } }
+$json['OAUTH_PROXY_URL'] = Pick $env:OAUTH_PROXY_URL $old.OAUTH_PROXY_URL "https://www.ogneliss.ru/oauth"
+$json['OAUTH_PROXY_KEY'] = Pick $env:OAUTH_PROXY_KEY $old.OAUTH_PROXY_KEY ""
+# Адрес ИТ-поддержки для «Журнал → Отправить в поддержку».
+$json['SUPPORT_EMAIL'] = Pick $env:SUPPORT_EMAIL $old.SUPPORT_EMAIL ""
+# Клиенты входа без сервера (direct_oauth.dart) — из scripts\.env.build или
+# переменных окружения, если заданы; иначе — как в файле.
+foreach ($k in @("MS_CLIENT_ID", "GOOGLE_ANDROID_CLIENT_ID", "GOOGLE_IOS_CLIENT_ID",
+                 "GOOGLE_DESKTOP_CLIENT_ID", "GOOGLE_DESKTOP_CLIENT_SECRET")) {
+  $val = [Environment]::GetEnvironmentVariable($k)
+  if ($val) { $json[$k] = $val }
+}
+$json = $json | ConvertTo-Json
 [IO.File]::WriteAllText($cfgFile, $json, (New-Object Text.UTF8Encoding $false))
 Ok "config\dart_defines.json обновлён (для Android Studio)"
 Ok "OAuth-прокси: $(Pick $env:OAUTH_PROXY_URL $old.OAUTH_PROXY_URL 'https://www.ogneliss.ru/oauth')"

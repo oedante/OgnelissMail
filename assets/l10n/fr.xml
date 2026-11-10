@@ -4088,4 +4088,7 @@
     <string name="barSwap">Les places seront échangées</string>
     <string name="barReset">Rétablir par défaut</string>
     <string name="barMailStays">« Courrier » reste toujours sur la barre — vous pouvez l’échanger avec une autre section</string>
+    <string name="assignMarkAs">Marquer : {status}</string>
+    <string name="assignMarkLocalHint">Uniquement chez vous — aucun e-mail n’est envoyé à l’exécutant</string>
+    <string name="assignMarkedManually">Marqué manuellement</string>
 </resources>

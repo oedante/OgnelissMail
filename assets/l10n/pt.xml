@@ -4088,4 +4088,7 @@
     <string name="barSwap">Trocam de posição</string>
     <string name="barReset">Repor predefinição</string>
     <string name="barMailStays">«E-mail» fica sempre na barra — pode trocá-lo com outra secção</string>
+    <string name="assignMarkAs">Marcar como: {status}</string>
+    <string name="assignMarkLocalHint">Só para você — nenhum e-mail é enviado ao responsável</string>
+    <string name="assignMarkedManually">Marcado manualmente</string>
 </resources>

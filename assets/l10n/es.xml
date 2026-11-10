@@ -4088,4 +4088,7 @@
     <string name="barSwap">Se intercambiarán</string>
     <string name="barReset">Restablecer predeterminado</string>
     <string name="barMailStays">«Correo» siempre está en la barra: puedes intercambiarlo con otra sección</string>
+    <string name="assignMarkAs">Marcar como: {status}</string>
+    <string name="assignMarkLocalHint">Solo para ti: no se envía correo al responsable</string>
+    <string name="assignMarkedManually">Marcado manualmente</string>
 </resources>

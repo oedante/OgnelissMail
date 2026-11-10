@@ -4088,4 +4088,7 @@
     <string name="barSwap">Bytter plads</string>
     <string name="barReset">Gendan standard</string>
     <string name="barMailStays">“Mail” er altid på bjælken – du kan bytte den med en anden sektion</string>
+    <string name="assignMarkAs">Markér som: {status}</string>
+    <string name="assignMarkLocalHint">Kun hos dig – modtageren får ingen mail</string>
+    <string name="assignMarkedManually">Markeret manuelt</string>
 </resources>

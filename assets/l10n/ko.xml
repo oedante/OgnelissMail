@@ -4067,4 +4067,7 @@
     <string name="barSwap">자리가 바뀝니다</string>
     <string name="barReset">기본값으로 복원</string>
     <string name="barMailStays">「메일」은 항상 바에 있습니다. 다른 섹션과 자리를 바꿀 수 있습니다</string>
+    <string name="assignMarkAs">{status}(으)로 표시</string>
+    <string name="assignMarkLocalHint">내 쪽에서만 — 담당자에게 메일을 보내지 않습니다</string>
+    <string name="assignMarkedManually">수동으로 표시함</string>
 </resources>

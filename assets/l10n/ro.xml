@@ -4109,4 +4109,7 @@
     <string name="barSwap">Își schimbă locurile</string>
     <string name="barReset">Restabilește implicit</string>
     <string name="barMailStays">„E-mail” rămâne mereu pe bară — îl puteți schimba cu altă secțiune</string>
+    <string name="assignMarkAs">Marchează: {status}</string>
+    <string name="assignMarkLocalHint">Doar la dvs. — executantul nu primește e-mail</string>
+    <string name="assignMarkedManually">Marcat manual</string>
 </resources>

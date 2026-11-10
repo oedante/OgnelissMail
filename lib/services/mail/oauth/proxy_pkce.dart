@@ -9,6 +9,7 @@
 // выдаёт по POST /exchange тому, кто предъявит сам секрет (cv).
 // Ответ старого прокси (токены в адресе, без кода) отклоняется.
 
+import 'package:flutter/services.dart' show PlatformException;
 import 'dart:convert';
 import 'dart:math';
 
@@ -29,6 +30,12 @@ class OAuthProviderError implements Exception {
 
   /// Отменил сам пользователь — сообщать об ошибке не нужно.
   bool get cancelled => code == 'access_denied';
+
+  /// Окно входа закрыто без ответа (flutter_web_auth_2: CANCELED — «назад»
+  /// или крестик в браузере входа) — та же отмена, что access_denied
+  /// (2.2.0, журнал владельца 10.11.2026: отмена «Войти снова» показывалась
+  /// строкой ошибки «PlatformException(CANCELED…)»).
+  static bool isUserCancel(Object e) => e is PlatformException && e.code == 'CANCELED';
 
   /// Текст для пользователя на языке интерфейса.
   String localizedMessage(AppLocalizations l10n) => switch (code) {

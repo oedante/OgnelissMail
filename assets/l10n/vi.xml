@@ -4067,4 +4067,7 @@
     <string name="barSwap">Sẽ đổi chỗ</string>
     <string name="barReset">Khôi phục mặc định</string>
     <string name="barMailStays">“Thư” luôn có trên thanh — bạn có thể đổi chỗ nó với mục khác</string>
+    <string name="assignMarkAs">Đánh dấu: {status}</string>
+    <string name="assignMarkLocalHint">Chỉ ở phía bạn — không gửi email cho người thực hiện</string>
+    <string name="assignMarkedManually">Đã đánh dấu thủ công</string>
 </resources>

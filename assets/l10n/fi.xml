@@ -4088,4 +4088,7 @@
     <string name="barSwap">Vaihtavat paikkaa</string>
     <string name="barReset">Palauta oletus</string>
     <string name="barMailStays">Sähköposti on aina palkissa – voit vaihtaa sen paikkaa toisen osion kanssa</string>
+    <string name="assignMarkAs">Merkitse: {status}</string>
+    <string name="assignMarkLocalHint">Vain sinulle – tekijä ei saa sähköpostia</string>
+    <string name="assignMarkedManually">Merkitty käsin</string>
 </resources>

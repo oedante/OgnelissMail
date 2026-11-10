@@ -1304,11 +1304,12 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       }
     }
     final flex = List<double>.filled(cols, 0);
+    final filled = List<bool>.filled(cols, false);
     for (final p in placed) {
       if (p.cell.colSpan == 1 && p.cell.flex > 1 && flex[p.col] == 0) flex[p.col] = p.cell.flex;
+      if (p.cell.colSpan == 1 && !tableCellIsEmpty(p.cell)) filled[p.col] = true;
     }
-    // Не у всех колонок ширина задана — поровну.
-    final widths = flex.every((f) => f > 0) ? flex : List<double>.filled(cols, 1);
+    final widths = tableColumnWidths(flex, filled);
     bool has(int? i, int bit) => i != null && placed[i].cell.sides & bit != 0;
     bool frame(int bit) => bl.borders & bit != 0;
     int sidesOf(({NCell cell, int row, int col, int rowSpan}) p) {
@@ -1752,4 +1753,26 @@ class _QuoteReplySelectionState extends State<_QuoteReplySelection> {
       child: widget.child,
     );
   }
+}
+
+/// Ячейка без текста и картинок (рамочная пустая колонка рассылки).
+bool tableCellIsEmpty(NCell c) => c.blocks.every((b) =>
+    b.kind == NBlockKind.text && b.spans.every((sp) => sp.image == null && sp.text.trim().isEmpty));
+
+/// Доли колонок: заданные ширины ([flex] > 0) или поровну. Пустая колонка
+/// без своей ширины — 0 (2.2.1, письмо владельца «Welcome to the
+/// Community» 10.11.2026: таблица на всю ширину из пустых `<td></td>` по
+/// краям и колонки текста width:560px — «не у всех колонок ширина задана»
+/// делило поровну, и текст шёл узкой третью справа). Как браузер: пустая
+/// колонка без ширины места не занимает.
+List<double> tableColumnWidths(List<double> flex, List<bool> filled) {
+  final n = flex.length;
+  final live = [for (var c = 0; c < n; c++) flex[c] > 0 || filled[c]];
+  if (!live.contains(true)) return List<double>.filled(n, 1);
+  // Не у всех живых колонок ширина задана — живые поровну.
+  final allSized = [for (var c = 0; c < n; c++) if (live[c]) flex[c] > 0].every((v) => v);
+  return [
+    for (var c = 0; c < n; c++)
+      if (!live[c]) 0.0 else if (allSized) flex[c] else 1.0,
+  ];
 }

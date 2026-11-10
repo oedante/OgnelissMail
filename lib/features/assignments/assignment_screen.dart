@@ -23,6 +23,7 @@ import '../../data/database/app_database.dart' show AssignmentEvent;
 import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
 import '../../widgets/common/peek_card.dart' show peekAnchorOf;
+import '../../widgets/ui/action_sheet.dart';
 import 'assignment_widgets.dart';
 
 class AssignmentScreen extends ConsumerWidget {
@@ -146,7 +147,9 @@ class AssignmentScreen extends ConsumerWidget {
             child: Align(alignment: Alignment.centerLeft, child: AssignmentStatusPill(s)),
           )
         else
-          _Stepper(status: s),
+          // Поручивший может отметить шаг сам: ответ исполнителя не
+          // распознан (2.2.1).
+          _Stepper(status: s, onPick: v.outgoing ? (st) => _pickStatus(context, v, st) : null),
         const SizedBox(height: Space.m),
         info(
           v.outgoing ? AppIcons.person : AppIcons.assignment_ind,
@@ -196,9 +199,31 @@ class AssignmentScreen extends ConsumerWidget {
   }
 }
 
+/// Шаг на шкале статусов нажат поручившим: «Выполнено» — принять работу
+/// (исполнитель получит письмо, как кнопкой «Принять»), остальное — отметка
+/// только у себя.
+Future<void> _pickStatus(BuildContext context, AssignmentView v, int status) async {
+  final l10n = AppLocalizations.of(context);
+  final svc = ProviderScope.containerOf(context).read(assignmentServiceProvider);
+  final done = status == AssignmentStatus.done;
+  final ok = await showActionSheet<bool>(context, title: assignmentStatusLabel(status, l10n), items: [
+    ActionSheetItem(
+      icon: done ? AppIcons.check : AppIcons.edit,
+      label: done ? l10n.tr('assignAccept') : l10n.tr('assignMarkAs').replaceAll('{status}', assignmentStatusLabel(status, l10n)),
+      subtitle: done ? null : l10n.tr('assignMarkLocalHint'),
+      value: true,
+    ),
+  ]);
+  if (ok != true) return;
+  assignmentFire(done ? svc.setStatus(v, status) : svc.markLocally(v, status));
+}
+
 class _Stepper extends StatelessWidget {
   final int status;
-  const _Stepper({required this.status});
+
+  /// Нажатие на другой шаг (поручивший, 2.2.1); null — шкала только для вида.
+  final void Function(int status)? onPick;
+  const _Stepper({required this.status, this.onPick});
 
   @override
   Widget build(BuildContext context) {
@@ -213,7 +238,10 @@ class _Stepper extends StatelessWidget {
       child: Row(children: [
         for (var i = 0; i < steps.length; i++)
           Expanded(
-            child: Column(children: [
+            child: _tappable(
+              context,
+              steps[i],
+              Column(children: [
               Row(children: [
                 Expanded(child: Container(height: 2, color: i == 0 ? Colors.transparent : (i <= cur ? p : line))),
                 Container(
@@ -238,9 +266,24 @@ class _Stepper extends StatelessWidget {
                     fontWeight: i == cur ? FontWeight.w700 : null,
                     color: i == cur ? p : AppColors.mutedText(context),
                   )),
-            ]),
+              ]),
+            ),
           ),
       ]),
+    );
+  }
+
+  Widget _tappable(BuildContext context, int step, Widget child) {
+    final pick = onPick;
+    if (pick == null || step == status) return child;
+    return Semantics(
+      button: true,
+      child: InkWell(
+        key: ValueKey('assign_step_$step'),
+        borderRadius: BorderRadius.circular(Radii.chip),
+        onTap: () => pick(step),
+        child: Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: child),
+      ),
     );
   }
 }

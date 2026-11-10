@@ -4172,4 +4172,7 @@
     <string name="barSwap">سيتبادلان المكان</string>
     <string name="barReset">استعادة الافتراضي</string>
     <string name="barMailStays">«البريد» يبقى دائمًا على الشريط — يمكنك تبديل مكانه مع قسم آخر</string>
+    <string name="assignMarkAs">تعيين كـ: {status}</string>
+    <string name="assignMarkLocalHint">لديك فقط — لن تُرسل رسالة إلى المنفّذ</string>
+    <string name="assignMarkedManually">تم التعيين يدويًا</string>
 </resources>

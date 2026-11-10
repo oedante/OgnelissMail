@@ -4130,4 +4130,7 @@
     <string name="barSwap">Поменяются местами</string>
     <string name="barReset">Как по умолчанию</string>
     <string name="barMailStays">«Почта» всегда на панели — её можно поменять местами с другим разделом</string>
+    <string name="assignMarkAs">Отметить: {status}</string>
+    <string name="assignMarkLocalHint">Только у вас — письмо исполнителю не уйдёт</string>
+    <string name="assignMarkedManually">Отмечено вручную</string>
 </resources>

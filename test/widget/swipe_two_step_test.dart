@@ -1,7 +1,8 @@
 // Одно правило свайпов (2.2.0, решение владельца 09.11.2026): протянул до
 // порога и отпустил — действие; два действия на стороне — по расстоянию
 // (короткий — первое, длинный — второе), значок и подпись меняются, пока
-// тянешь; не дотянул — строка возвращается. Плашка «сделано» — с «Отменить».
+// тянешь; не дотянул — строка возвращается. Результат и «Вернуть» — в
+// swipe_done_test.
 // Подсказка о свайпах — один раз.
 
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/widgets/common/slidable_spring_back.dart';
 import 'package:ogneliss/widgets/common/swipe_action_indicator.dart';
-import 'package:ogneliss/widgets/common/swipe_done.dart';
 import 'package:ogneliss/widgets/common/swipe_hint.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -112,27 +112,6 @@ void main() {
 
     await swipe(330); // ~80 %
     expect(log, ['read', 'delete']);
-  });
-
-  testWidgets('«Отменить» на плашке «сделано»', (tester) async {
-    var undone = 0;
-    late BuildContext ctx;
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: Builder(builder: (c) {
-          ctx = c;
-          return const SwipeDoneOverlay(id: 'x', child: SizedBox(height: 72, width: 400, child: Text('Письмо')));
-        }),
-      ),
-    ));
-    SwipeDone.show(
-        ctx, SwipeDoneEvent('x', icon: Icons.flag, label: 'Флажок снят', color: Colors.orange, onUndo: () => undone++));
-    await tester.pump(const Duration(milliseconds: 200));
-    expect(find.byKey(const ValueKey('swipe_undo')), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('swipe_undo')));
-    await tester.pump();
-    expect(undone, 1);
-    expect(find.byKey(const ValueKey('swipe_done')), findsNothing, reason: 'после отмены плашка убрана');
   });
 
   testWidgets('подсказка: первая строка отъезжает и возвращается, второй раз — нет', (tester) async {

@@ -4088,4 +4088,7 @@
     <string name="barSwap">जगहें बदल जाएँगी</string>
     <string name="barReset">डिफ़ॉल्ट पर लौटाएँ</string>
     <string name="barMailStays">“मेल” हमेशा पट्टी पर रहता है — आप इसकी जगह किसी दूसरे अनुभाग से बदल सकते हैं</string>
+    <string name="assignMarkAs">चिह्नित करें: {status}</string>
+    <string name="assignMarkLocalHint">सिर्फ़ आपके लिए — कर्ता को ईमेल नहीं जाएगा</string>
+    <string name="assignMarkedManually">हाथ से चिह्नित</string>
 </resources>

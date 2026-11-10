@@ -4088,4 +4088,7 @@
     <string name="barSwap">Byter plats</string>
     <string name="barReset">Återställ standard</string>
     <string name="barMailStays">”E-post” finns alltid på fältet – du kan byta plats med ett annat avsnitt</string>
+    <string name="assignMarkAs">Markera som: {status}</string>
+    <string name="assignMarkLocalHint">Bara hos dig – utföraren får inget mejl</string>
+    <string name="assignMarkedManually">Markerat manuellt</string>
 </resources>

@@ -4067,4 +4067,7 @@
     <string name="barSwap">จะสลับตำแหน่งกัน</string>
     <string name="barReset">คืนค่าเริ่มต้น</string>
     <string name="barMailStays">“อีเมล” อยู่บนแถบเสมอ — สลับตำแหน่งกับส่วนอื่นได้</string>
+    <string name="assignMarkAs">ทำเครื่องหมาย: {status}</string>
+    <string name="assignMarkLocalHint">เฉพาะของคุณ — ไม่ส่งอีเมลถึงผู้รับผิดชอบ</string>
+    <string name="assignMarkedManually">ทำเครื่องหมายด้วยตนเอง</string>
 </resources>

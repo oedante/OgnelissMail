@@ -92,6 +92,7 @@ Future<void> reauthenticateFlow(BuildContext context, WidgetRef ref, AccountMode
   } else {
     final err = await ref.read(authProvider.notifier).reauthenticate(account);
     if (err != null) {
+      if (err == AuthNotifier.reauthCancelled) return;
       if (err.startsWith('mismatch:')) {
         showInlineError(l10n.tr('reauthMismatch').replaceAll('{email}', err.substring(9)));
       } else {

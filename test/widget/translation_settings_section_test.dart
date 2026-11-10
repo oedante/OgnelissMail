@@ -1,6 +1,7 @@
 // «Настройки → Перевод» (1.12.x, просьба владельца 04.11.2026): «Языки
 // телефона — не предлагать перевод» (по умолчанию включено) и «Всегда
 // переводить с языков»; движка нет — только пояснение. Движок — подделка.
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -80,10 +81,18 @@ Future<ProviderContainer> _pump(WidgetTester t, {bool available = true, Map<Stri
   return container;
 }
 
+/// Подпись — по платформе, как в самой настройке (на Windows и Mac — свои;
+/// тест проходил на GitHub (Linux) и падал у владельца на Windows, 10.11.2026).
+final _phoneLangsTitle = AppLocalizations(const Locale('ru')).tr(Platform.isMacOS
+    ? 'translatePhoneLangsMac'
+    : Platform.isWindows
+        ? 'translatePhoneLangsWindows'
+        : 'translatePhoneLangs');
+
 void main() {
   testWidgets('«Языки телефона» — включено по умолчанию, языки в подписи, переключается', (t) async {
     final c = await _pump(t);
-    expect(find.text('Языки телефона — не предлагать перевод'), findsOneWidget);
+    expect(find.text(_phoneLangsTitle), findsOneWidget);
     // Язык приложения (русский) в подписи не повторяется.
     expect(find.text('Английский'), findsOneWidget);
     final sw = find.descendant(of: find.byKey(const ValueKey('translate_phone_langs')), matching: find.byType(Switch));
@@ -141,6 +150,6 @@ void main() {
     addTearDown(t.platformDispatcher.clearTextScaleFactorTestValue);
     await _pump(t);
     expect(t.takeException(), isNull);
-    expect(find.text('Языки телефона — не предлагать перевод'), findsOneWidget);
+    expect(find.text(_phoneLangsTitle), findsOneWidget);
   });
 }

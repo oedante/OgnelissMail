@@ -4070,4 +4070,6 @@
     <string name="assignMarkAs">ทำเครื่องหมาย: {status}</string>
     <string name="assignMarkLocalHint">เฉพาะของคุณ — ไม่ส่งอีเมลถึงผู้รับผิดชอบ</string>
     <string name="assignMarkedManually">ทำเครื่องหมายด้วยตนเอง</string>
+    <string name="readingPaneAskTitle">จะเปิดอีเมลอย่างไร</string>
+    <string name="readingPaneAskHint">เปลี่ยนได้ที่เมนู ⋮ ของรายการ → “{pane}”</string>
 </resources>

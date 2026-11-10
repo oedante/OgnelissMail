@@ -4133,4 +4133,6 @@
     <string name="assignMarkAs">Отметить: {status}</string>
     <string name="assignMarkLocalHint">Только у вас — письмо исполнителю не уйдёт</string>
     <string name="assignMarkedManually">Отмечено вручную</string>
+    <string name="readingPaneAskTitle">Как открывать письма?</string>
+    <string name="readingPaneAskHint">Можно поменять в меню ⋮ ленты → «{pane}»</string>
 </resources>

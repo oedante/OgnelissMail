@@ -4070,4 +4070,6 @@
     <string name="assignMarkAs">Đánh dấu: {status}</string>
     <string name="assignMarkLocalHint">Chỉ ở phía bạn — không gửi email cho người thực hiện</string>
     <string name="assignMarkedManually">Đã đánh dấu thủ công</string>
+    <string name="readingPaneAskTitle">Mở thư theo cách nào?</string>
+    <string name="readingPaneAskHint">Có thể đổi trong menu ⋮ của danh sách → “{pane}”</string>
 </resources>

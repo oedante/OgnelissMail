@@ -4070,4 +4070,6 @@
     <string name="assignMarkAs">Tandai: {status}</string>
     <string name="assignMarkLocalHint">Hanya untuk Anda — tidak ada email ke pelaksana</string>
     <string name="assignMarkedManually">Ditandai manual</string>
+    <string name="readingPaneAskTitle">Bagaimana email dibuka?</string>
+    <string name="readingPaneAskHint">Bisa diubah di menu ⋮ daftar → “{pane}”</string>
 </resources>

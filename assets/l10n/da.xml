@@ -4091,4 +4091,6 @@
     <string name="assignMarkAs">Markér som: {status}</string>
     <string name="assignMarkLocalHint">Kun hos dig – modtageren får ingen mail</string>
     <string name="assignMarkedManually">Markeret manuelt</string>
+    <string name="readingPaneAskTitle">Hvordan skal mails åbnes?</string>
+    <string name="readingPaneAskHint">Kan ændres i listens menu ⋮ → “{pane}”</string>
 </resources>

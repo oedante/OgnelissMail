@@ -4133,4 +4133,6 @@
     <string name="assignMarkAs">Oznacz: {status}</string>
     <string name="assignMarkLocalHint">Tylko u Ciebie — wykonawca nie dostanie e-maila</string>
     <string name="assignMarkedManually">Oznaczono ręcznie</string>
+    <string name="readingPaneAskTitle">Jak otwierać wiadomości?</string>
+    <string name="readingPaneAskHint">Można zmienić w menu ⋮ listy → „{pane}”</string>
 </resources>

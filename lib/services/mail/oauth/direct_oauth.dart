@@ -283,7 +283,15 @@ class DirectOAuth {
     return DirectOAuthClient(
       provider: provider,
       clientId: id,
-      clientSecret: isGoogle && id == _googleDesktop && _googleDesktopSecret.isNotEmpty ? _googleDesktopSecret : null,
+      // Секрет «Desktop app» — только на Windows и Linux (2.3.0, журнал
+      // владельца 10.11.2026 16:04: телефон при обновлении слал Google секрет
+      // компьютерного клиента — «invalid_client: The provided client secret is
+      // invalid» и «Войти снова» через час после входа; в сборке ID клиента
+      // телефона совпал с GOOGLE_DESKTOP_CLIENT_ID). Вход на телефоне —
+      // без секрета, и обновление тоже.
+      clientSecret: isGoogle && _desktop && id == _googleDesktop && _googleDesktopSecret.isNotEmpty
+          ? _googleDesktopSecret
+          : null,
       authorizeEndpoint: isGoogle ? _googleAuth : (provider == 'exchange' ? _orgAuth : _msAuth),
       tokenEndpoint: isGoogle ? _googleToken : (provider == 'exchange' ? _orgToken : _msToken),
       scopes: scopes,

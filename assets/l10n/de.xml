@@ -4091,4 +4091,6 @@
     <string name="assignMarkAs">Markieren als: {status}</string>
     <string name="assignMarkLocalHint">Nur bei Ihnen – der Bearbeiter erhält keine E-Mail</string>
     <string name="assignMarkedManually">Manuell markiert</string>
+    <string name="readingPaneAskTitle">Wie sollen E-Mails geöffnet werden?</string>
+    <string name="readingPaneAskHint">Änderbar im Menü ⋮ der Liste → „{pane}“</string>
 </resources>

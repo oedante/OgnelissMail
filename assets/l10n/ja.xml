@@ -4070,4 +4070,6 @@
     <string name="assignMarkAs">{status} にする</string>
     <string name="assignMarkLocalHint">自分の側だけ。担当者にはメールを送りません</string>
     <string name="assignMarkedManually">手動で設定</string>
+    <string name="readingPaneAskTitle">メールの開き方</string>
+    <string name="readingPaneAskHint">一覧の ⋮ メニュー →「{pane}」で変更できます</string>
 </resources>

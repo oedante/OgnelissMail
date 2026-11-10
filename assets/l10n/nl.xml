@@ -4091,4 +4091,6 @@
     <string name="assignMarkAs">Markeren als: {status}</string>
     <string name="assignMarkLocalHint">Alleen bij jou — de uitvoerder krijgt geen e-mail</string>
     <string name="assignMarkedManually">Handmatig gemarkeerd</string>
+    <string name="readingPaneAskTitle">Hoe moeten e-mails openen?</string>
+    <string name="readingPaneAskHint">Te wijzigen via het menu ⋮ van de lijst → ‘{pane}’</string>
 </resources>

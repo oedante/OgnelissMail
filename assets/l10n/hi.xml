@@ -4091,4 +4091,6 @@
     <string name="assignMarkAs">चिह्नित करें: {status}</string>
     <string name="assignMarkLocalHint">सिर्फ़ आपके लिए — कर्ता को ईमेल नहीं जाएगा</string>
     <string name="assignMarkedManually">हाथ से चिह्नित</string>
+    <string name="readingPaneAskTitle">ईमेल कैसे खुलें?</string>
+    <string name="readingPaneAskHint">सूची के ⋮ मेनू → “{pane}” में बदल सकते हैं</string>
 </resources>

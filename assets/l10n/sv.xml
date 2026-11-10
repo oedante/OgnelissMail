@@ -4091,4 +4091,6 @@
     <string name="assignMarkAs">Markera som: {status}</string>
     <string name="assignMarkLocalHint">Bara hos dig – utföraren får inget mejl</string>
     <string name="assignMarkedManually">Markerat manuellt</string>
+    <string name="readingPaneAskTitle">Hur ska mejl öppnas?</string>
+    <string name="readingPaneAskHint">Kan ändras i listans meny ⋮ → ”{pane}”</string>
 </resources>

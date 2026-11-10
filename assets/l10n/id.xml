@@ -4063,7 +4063,8 @@
     <string name="barSettingsHint">Ketuk posisi untuk memilih bagian</string>
     <string name="barSlot">Posisi</string>
     <string name="barSlotPick">Bagian di posisi ini</string>
-    <string name="barMenuStays">“Menu” selalu ada di bilah — Anda bisa menukarnya dengan bagian lain</string>
+    <string name="barMenuStays">“Menu” selalu di tepi bilah — kiri atau kanan; menu terbuka dari sisi yang sama</string>
     <string name="barSwap">Akan bertukar posisi</string>
     <string name="barReset">Pulihkan default</string>
+    <string name="barMailStays">“Email” selalu ada di bilah — Anda bisa menukarnya dengan bagian lain</string>
 </resources>

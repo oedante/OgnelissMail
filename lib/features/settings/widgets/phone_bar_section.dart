@@ -3,7 +3,9 @@
 // редко нужны — в избранное, а „Мой день“ — в нижний бар»). Макет панели:
 // четыре места по краям от «Создать»; нажал место — выбрал раздел. Раздел,
 // который уже на панели, меняется местами; убранный — появляется в
-// «Избранном» меню. «Меню» убрать нельзя — только переставить.
+// «Избранном» меню. «Почта» и «Меню» на панели всегда (решение владельца
+// 10.11.2026): «Почту» можно только переставить, «Меню» — с левого или
+// правого края, той же стороной, что и меню («Меню ящиков и папок»).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +16,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/navigation/phone_bar.dart';
 import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/ui/settings_group.dart';
-import '../../mail/providers/drawer_prefs.dart' show BarItem, PhoneBarNotifier, phoneBarProvider;
+import '../../mail/providers/drawer_prefs.dart' show BarItem, PhoneBarNotifier, menuOnRightProvider, phoneBarProvider;
 
 class PhoneBarSection extends ConsumerWidget {
   const PhoneBarSection({super.key});
@@ -113,14 +115,32 @@ class PhoneBarSection extends ConsumerWidget {
     final available = barAvailability(ref);
     final bar = PhoneBarNotifier.visible(ref.read(phoneBarProvider), available);
     final current = bar[slot];
-    final isMenu = current == BarItem.menu;
+    // «Меню» — с левого или правого края (та же настройка, что «Меню ящиков
+    // и папок» выше).
+    if (current == BarItem.menu) {
+      final right = ref.read(menuOnRightProvider);
+      final side = await showActionSheet<bool>(
+        context,
+        title: l10n.tr('menuSideTitle'),
+        subtitle: l10n.tr('barMenuStays'),
+        items: [
+          ActionSheetItem(
+              icon: AppIcons.first_page, label: l10n.tr('menuSideLeft'), checked: !right, value: false),
+          ActionSheetItem(
+              icon: AppIcons.last_page, label: l10n.tr('menuSideRight'), checked: right, value: true),
+        ],
+      );
+      if (side != null && side != right) await ref.read(menuOnRightProvider.notifier).set(side);
+      return;
+    }
+    final isMail = current == BarItem.mail;
     final picked = await showActionSheet<BarItem>(
       context,
       title: l10n.tr('barSlotPick'),
-      subtitle: isMenu ? l10n.tr('barMenuStays') : null,
+      subtitle: isMail ? l10n.tr('barMailStays') : null,
       items: [
         for (final item in BarItem.values)
-          if (available(item) && (!isMenu || bar.contains(item)))
+          if (item != BarItem.menu && available(item) && (!isMail || bar.contains(item)))
             ActionSheetItem(
               icon: barIcon(item),
               label: barLabel(item, l10n),
@@ -135,8 +155,6 @@ class PhoneBarSection extends ConsumerWidget {
       ],
     );
     if (picked == null || picked == current) return;
-    // Место — по сохранённому порядку: подставленный вместо выключенного
-    // раздел меняем как есть.
     final notifier = ref.read(phoneBarProvider.notifier);
     final saved = ref.read(phoneBarProvider);
     if (saved[slot] != current) {

@@ -4084,7 +4084,8 @@
     <string name="barSettingsHint">Koppintson egy helyre a rész kiválasztásához</string>
     <string name="barSlot">Hely</string>
     <string name="barSlotPick">Rész ezen a helyen</string>
-    <string name="barMenuStays">A „Menü” mindig a sávon marad – felcserélheti egy másik résszel</string>
+    <string name="barMenuStays">A „Menü” mindig a sáv szélén van – bal vagy jobb oldalon; a menü erről az oldalról nyílik</string>
     <string name="barSwap">Helyet cserélnek</string>
     <string name="barReset">Alapértelmezés visszaállítása</string>
+    <string name="barMailStays">A „Levelezés” mindig a sávon marad – felcserélheti egy másik résszel</string>
 </resources>

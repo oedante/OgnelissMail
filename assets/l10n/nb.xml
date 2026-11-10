@@ -4084,7 +4084,8 @@
     <string name="barSettingsHint">Trykk på en plass for å velge en del</string>
     <string name="barSlot">Plass</string>
     <string name="barSlotPick">Del på denne plassen</string>
-    <string name="barMenuStays">«Meny» er alltid på linjen – du kan bytte den med en annen del</string>
+    <string name="barMenuStays">«Meny» står alltid i kanten av linjen – til venstre eller høyre; menyen åpnes fra samme side</string>
     <string name="barSwap">Bytter plass</string>
     <string name="barReset">Gjenopprett standard</string>
+    <string name="barMailStays">«E-post» er alltid på linjen – du kan bytte den med en annen del</string>
 </resources>

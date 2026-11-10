@@ -151,14 +151,9 @@ class MenuOnRightNotifier extends Notifier<bool> {
   @override
   bool build() => ref.read(sharedPrefsProvider).getBool(_k) ?? false;
 
-  /// Сторона меню; портрет «Меню» на нижней панели переезжает на край этой
-  /// стороны (2.2.0).
+  /// Сторона меню; портрет «Меню» на нижней панели — с края этой стороны
+  /// (phoneBarProvider следит сам).
   Future<void> set(bool right) async {
-    await _store(right);
-    await ref.read(phoneBarProvider.notifier).followMenuSide(right);
-  }
-
-  Future<void> _store(bool right) async {
     state = right;
     await ref.read(sharedPrefsProvider).setBool(_k, right);
   }
@@ -169,8 +164,10 @@ final menuOnRightProvider = NotifierProvider<MenuOnRightNotifier, bool>(MenuOnRi
 /// Разделы нижней панели телефона (2.2.0, просьба пользователя 10.11.2026:
 /// «контакты редко нужны — в избранное, а „Мой день“ — в нижний бар»).
 /// Четыре места — по два слева и справа от кнопки «Создать», она всегда в
-/// центре. «Меню» (портрет ящика) на панели всегда: только оно открывает
-/// ящики, папки, избранное и настройки, — его можно лишь переставить.
+/// центре. «Почта» и «Меню» на панели всегда (решение владельца 10.11.2026):
+/// «Почту» можно поставить на любое место, «Меню» — только с края, слева
+/// или справа, с той же стороны выезжает меню (настройка «Общие → Меню
+/// ящиков и папок», menuOnRightProvider).
 enum BarItem { mail, calendar, contacts, tasks, myDay, notes, assignments, files, menu }
 
 /// Пункт «Избранного» того же раздела (у почты и меню — нет).
@@ -185,29 +182,33 @@ DrawerQuickItem? quickItemOf(BarItem i) => switch (i) {
       BarItem.mail || BarItem.menu => null,
     };
 
-/// Порядок разделов на панели. Пока пользователь её не менял — как раньше:
-/// «Почта · Календарь · Контакты» и «Меню» с той стороны, где выезжает меню
-/// («Общие → Меню ящиков и папок»). Стороны панели и меню согласованы:
-/// перенёс «Меню» на другую половину панели — меню выезжает с той стороны,
-/// и наоборот.
+/// Порядок разделов на панели: «Меню» с края по стороне меню и три места
+/// рядом. Хранятся только три места (без «Меню»); пока пользователь панель
+/// не менял — как раньше: «Почта · Календарь · Контакты».
 class PhoneBarNotifier extends Notifier<List<BarItem>> {
   static const prefKey = 'phone_bar';
   static const slots = 4;
+  static const defaultRest = [BarItem.mail, BarItem.calendar, BarItem.contacts];
 
-  static List<BarItem> defaults({required bool menuOnRight}) => menuOnRight
-      ? const [BarItem.mail, BarItem.calendar, BarItem.contacts, BarItem.menu]
-      : const [BarItem.menu, BarItem.mail, BarItem.calendar, BarItem.contacts];
+  /// Вся панель: три места [rest] и «Меню» с края.
+  static List<BarItem> compose(List<BarItem> rest, {required bool menuOnRight}) =>
+      List.unmodifiable(menuOnRight ? [...rest, BarItem.menu] : [BarItem.menu, ...rest]);
 
-  /// Сохранённый список: четыре разных раздела, среди них «Меню»; иначе null.
+  static List<BarItem> defaults({required bool menuOnRight}) => compose(defaultRest, menuOnRight: menuOnRight);
+
+  /// Сохранённые три места: разные разделы, среди них «Почта»; «Меню» из
+  /// записи (её первого вида, где оно было одним из четырёх) — убирается.
+  /// Иначе null.
   static List<BarItem>? parse(List<String>? raw) {
-    if (raw == null || raw.length != slots) return null;
+    if (raw == null) return null;
     final out = <BarItem>[];
     for (final name in raw) {
       final v = BarItem.values.where((e) => e.name == name).firstOrNull;
       if (v == null || out.contains(v)) return null;
-      out.add(v);
+      if (v != BarItem.menu) out.add(v);
     }
-    return out.contains(BarItem.menu) ? List.unmodifiable(out) : null;
+    if (out.length != slots - 1 || !out.contains(BarItem.mail)) return null;
+    return List.unmodifiable(out);
   }
 
   /// Что показать: раздел, выключенный в «Профиле» (задачи, заметки, файлы,
@@ -220,7 +221,7 @@ class PhoneBarNotifier extends Notifier<List<BarItem>> {
     ];
     final out = [...bar];
     for (var i = 0; i < out.length; i++) {
-      if (out[i] == BarItem.menu || available(out[i])) continue;
+      if (out[i] == BarItem.menu || out[i] == BarItem.mail || available(out[i])) continue;
       final sub = spare.where((s) => available(s) && !out.contains(s)).firstOrNull;
       if (sub != null) out[i] = sub;
     }
@@ -229,28 +230,34 @@ class PhoneBarNotifier extends Notifier<List<BarItem>> {
 
   bool get customized => ref.read(sharedPrefsProvider).getStringList(prefKey) != null;
 
-  @override
-  List<BarItem> build() =>
-      parse(ref.read(sharedPrefsProvider).getStringList(prefKey)) ??
-      defaults(menuOnRight: ref.read(menuOnRightProvider));
+  /// Раздел, который нельзя убрать с панели, — только переставить.
+  static bool fixed(BarItem i) => i == BarItem.mail || i == BarItem.menu;
 
-  /// [item] — на место [slot]. Раздел, который уже на панели, меняется
-  /// местами с прежним; на место «Меню» встаёт только раздел с панели (меню
-  /// не убирается). Возвращает раздел, ушедший с панели, или null.
+  @override
+  List<BarItem> build() => compose(
+        parse(ref.read(sharedPrefsProvider).getStringList(prefKey)) ?? defaultRest,
+        menuOnRight: ref.watch(menuOnRightProvider),
+      );
+
+  /// [item] — на место [slot]. Место «Меню» не меняется (его сторона — в
+  /// menuOnRightProvider). Раздел, который уже на панели, меняется местами с
+  /// прежним; «Почту» можно только переставить. Возвращает раздел, ушедший с
+  /// панели, или null.
   Future<BarItem?> place(int slot, BarItem item) async {
-    final cur = [...state];
-    final old = cur[slot];
-    if (old == item) return null;
-    final at = cur.indexOf(item);
+    final old = state[slot];
+    if (old == item || old == BarItem.menu || item == BarItem.menu) return null;
+    final rest = [for (final v in state) if (v != BarItem.menu) v];
+    final i = rest.indexOf(old);
+    final at = rest.indexOf(item);
     if (at >= 0) {
-      cur[at] = old;
-      cur[slot] = item;
-      await _save(cur);
+      rest[at] = old;
+      rest[i] = item;
+      await _save(rest);
       return null;
     }
-    if (old == BarItem.menu) return null;
-    cur[slot] = item;
-    await _save(cur);
+    if (old == BarItem.mail) return null;
+    rest[i] = item;
+    await _save(rest);
     // Убранный раздел — в «Избранное», чтобы не потерять к нему дорогу.
     final quick = quickItemOf(old);
     if (quick != null && ref.read(hiddenQuickItemsProvider).contains(quick)) {
@@ -259,33 +266,15 @@ class PhoneBarNotifier extends Notifier<List<BarItem>> {
     return old;
   }
 
-  /// Как по умолчанию (с «Меню» на стороне меню).
+  /// Как по умолчанию.
   Future<void> reset() async {
     await ref.read(sharedPrefsProvider).remove(prefKey);
     state = defaults(menuOnRight: ref.read(menuOnRightProvider));
   }
 
-  /// Сторону меню сменили в «Общих»: «Меню» меняется местами с крайним
-  /// разделом этой стороны.
-  Future<void> followMenuSide(bool right) async {
-    if (!customized) {
-      state = defaults(menuOnRight: right);
-      return;
-    }
-    final cur = [...state];
-    final at = cur.indexOf(BarItem.menu);
-    if ((at >= slots ~/ 2) == right) return;
-    final edge = right ? slots - 1 : 0;
-    cur[at] = cur[edge];
-    cur[edge] = BarItem.menu;
-    await _save(cur);
-  }
-
-  Future<void> _save(List<BarItem> next) async {
-    state = List.unmodifiable(next);
-    await ref.read(sharedPrefsProvider).setStringList(prefKey, [for (final v in next) v.name]);
-    final right = next.indexOf(BarItem.menu) >= slots ~/ 2;
-    if (right != ref.read(menuOnRightProvider)) await ref.read(menuOnRightProvider.notifier)._store(right);
+  Future<void> _save(List<BarItem> rest) async {
+    state = compose(rest, menuOnRight: ref.read(menuOnRightProvider));
+    await ref.read(sharedPrefsProvider).setStringList(prefKey, [for (final v in rest) v.name]);
   }
 }
 

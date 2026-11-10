@@ -4084,7 +4084,8 @@
     <string name="barSettingsHint">Tryck på en plats för att välja avsnitt</string>
     <string name="barSlot">Plats</string>
     <string name="barSlotPick">Avsnitt på den här platsen</string>
-    <string name="barMenuStays">”Meny” finns alltid på fältet – du kan byta plats med ett annat avsnitt</string>
+    <string name="barMenuStays">”Meny” sitter alltid i kanten av fältet – till vänster eller höger; menyn öppnas från samma sida</string>
     <string name="barSwap">Byter plats</string>
     <string name="barReset">Återställ standard</string>
+    <string name="barMailStays">”E-post” finns alltid på fältet – du kan byta plats med ett annat avsnitt</string>
 </resources>

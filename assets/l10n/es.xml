@@ -4084,7 +4084,8 @@
     <string name="barSettingsHint">Toca un lugar para elegir una sección</string>
     <string name="barSlot">Lugar</string>
     <string name="barSlotPick">Sección en este lugar</string>
-    <string name="barMenuStays">«Menú» siempre está en la barra: puedes intercambiarlo con otra sección</string>
+    <string name="barMenuStays">«Menú» siempre está en un extremo de la barra, a la izquierda o a la derecha; el menú se abre por ese lado</string>
     <string name="barSwap">Se intercambiarán</string>
     <string name="barReset">Restablecer predeterminado</string>
+    <string name="barMailStays">«Correo» siempre está en la barra: puedes intercambiarlo con otra sección</string>
 </resources>

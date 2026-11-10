@@ -4105,7 +4105,8 @@
     <string name="barSettingsHint">Ťuknutím na miesto vyberte sekciu</string>
     <string name="barSlot">Miesto</string>
     <string name="barSlotPick">Sekcia na tomto mieste</string>
-    <string name="barMenuStays">„Ponuka“ je na lište vždy – môžete ju vymeniť s inou sekciou</string>
+    <string name="barMenuStays">„Ponuka“ je vždy na okraji lišty – vľavo alebo vpravo; z tejto strany sa ponuka vysúva</string>
     <string name="barSwap">Vymenia sa</string>
     <string name="barReset">Obnoviť predvolené</string>
+    <string name="barMailStays">„Pošta“ je na lište vždy – môžete ju vymeniť s inou sekciou</string>
 </resources>

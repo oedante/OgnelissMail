@@ -4084,7 +4084,8 @@
     <string name="barSettingsHint">Tap a spot to choose a section</string>
     <string name="barSlot">Spot</string>
     <string name="barSlotPick">Section in this spot</string>
-    <string name="barMenuStays">“Menu” always stays on the bar — you can swap it with another section</string>
+    <string name="barMenuStays">“Menu” always sits at the edge of the bar — left or right; the menu slides out from the same side</string>
     <string name="barSwap">Will swap places</string>
     <string name="barReset">Restore default</string>
+    <string name="barMailStays">“Mail” always stays on the bar — you can swap it with another section</string>
 </resources>

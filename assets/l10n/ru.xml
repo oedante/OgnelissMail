@@ -4126,7 +4126,8 @@
     <string name="barSettingsHint">Нажмите на место, чтобы выбрать раздел</string>
     <string name="barSlot">Место</string>
     <string name="barSlotPick">Раздел на этом месте</string>
-    <string name="barMenuStays">«Меню» всегда на панели — его можно поменять местами с другим разделом</string>
+    <string name="barMenuStays">«Меню» всегда с края панели — слева или справа; с той же стороны выезжает меню</string>
     <string name="barSwap">Поменяются местами</string>
     <string name="barReset">Как по умолчанию</string>
+    <string name="barMailStays">«Почта» всегда на панели — её можно поменять местами с другим разделом</string>
 </resources>

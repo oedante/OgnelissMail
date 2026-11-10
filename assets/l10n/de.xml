@@ -4084,7 +4084,8 @@
     <string name="barSettingsHint">Tippen Sie auf einen Platz, um einen Bereich zu wählen</string>
     <string name="barSlot">Platz</string>
     <string name="barSlotPick">Bereich an diesem Platz</string>
-    <string name="barMenuStays">„Menü“ bleibt immer auf der Leiste – Sie können es mit einem anderen Bereich tauschen</string>
+    <string name="barMenuStays">„Menü“ steht immer am Rand der Leiste – links oder rechts; von dieser Seite öffnet sich das Menü</string>
     <string name="barSwap">Plätze werden getauscht</string>
     <string name="barReset">Standard wiederherstellen</string>
+    <string name="barMailStays">„E-Mail“ bleibt immer auf der Leiste – Sie können sie mit einem anderen Bereich tauschen</string>
 </resources>

@@ -1,7 +1,8 @@
 // Нижняя панель телефона по выбору пользователя (2.2.0, просьба 10.11.2026:
 // «контакты — в избранное, а „Мой день“ — в нижний бар»): четыре места по
-// краям от «Создать», «Меню» не убирается, убранный раздел — в «Избранном»,
-// сторона «Меню» на панели и сторона меню согласованы.
+// краям от «Создать»; «Почта» и «Меню» на панели всегда (решение владельца
+// 10.11.2026): «Почту» можно переставить, «Меню» — только с края, по стороне
+// меню; убранный раздел — в «Избранном».
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -41,39 +42,44 @@ void main() {
     expect(again.read(hiddenQuickItemsProvider), isNot(contains(DrawerQuickItem.contacts)));
   });
 
-  test('раздел с панели — меняются местами; «Меню» не убирается', () async {
+  test('«Почта» — только переставить; «Меню» — не место для выбора', () async {
     final c = await _container();
     final n = c.read(phoneBarProvider.notifier);
-    expect(await n.place(1, BarItem.calendar), isNull);
-    expect(c.read(phoneBarProvider), [BarItem.menu, BarItem.calendar, BarItem.mail, BarItem.contacts]);
-    expect(await n.place(0, BarItem.notes), isNull, reason: 'на место «Меню» — только раздел с панели');
-    expect(c.read(phoneBarProvider).first, BarItem.menu);
-    await n.place(0, BarItem.mail);
-    expect(c.read(phoneBarProvider), [BarItem.mail, BarItem.calendar, BarItem.menu, BarItem.contacts]);
+    expect(await n.place(1, BarItem.notes), isNull, reason: 'на место «Почты» — только раздел с панели');
+    expect(c.read(phoneBarProvider)[1], BarItem.mail);
+    await n.place(1, BarItem.contacts);
+    expect(c.read(phoneBarProvider), [BarItem.menu, BarItem.contacts, BarItem.calendar, BarItem.mail]);
+    await n.place(2, BarItem.notes);
+    expect(c.read(phoneBarProvider), [BarItem.menu, BarItem.contacts, BarItem.notes, BarItem.mail],
+        reason: 'обычное место — любой раздел');
+    expect(await n.place(0, BarItem.mail), isNull);
+    expect(await n.place(2, BarItem.menu), isNull);
+    expect(c.read(phoneBarProvider).first, BarItem.menu, reason: 'место «Меню» не меняется выбором раздела');
   });
 
-  test('«Меню» на другой половине панели — меню выезжает с той стороны, и наоборот', () async {
+  test('сторона меню: «Меню» переезжает на другой край, остальные — по порядку', () async {
     final c = await _container();
     final n = c.read(phoneBarProvider.notifier);
-    await n.place(3, BarItem.menu);
-    expect(c.read(menuOnRightProvider), isTrue);
-    await c.read(menuOnRightProvider.notifier).set(false);
-    expect(c.read(phoneBarProvider), [BarItem.menu, BarItem.mail, BarItem.calendar, BarItem.contacts]);
-    // Не меняли панель — она просто следует стороне меню.
-    await n.reset();
+    await n.place(3, BarItem.myDay);
     await c.read(menuOnRightProvider.notifier).set(true);
-    expect(c.read(phoneBarProvider).last, BarItem.menu);
+    expect(c.read(phoneBarProvider), [BarItem.mail, BarItem.calendar, BarItem.myDay, BarItem.menu]);
+    await c.read(menuOnRightProvider.notifier).set(false);
+    expect(c.read(phoneBarProvider), [BarItem.menu, BarItem.mail, BarItem.calendar, BarItem.myDay]);
+    await n.reset();
     expect(n.customized, isFalse);
+    expect(c.read(phoneBarProvider), [BarItem.menu, BarItem.mail, BarItem.calendar, BarItem.contacts]);
   });
 
-  test('выключенный раздел заменяется доступным; испорченная запись — по умолчанию', () async {
+  test('выключенный раздел заменяется доступным; прежняя и испорченная запись', () async {
     final shown = PhoneBarNotifier.visible(
         const [BarItem.menu, BarItem.tasks, BarItem.mail, BarItem.notes], (i) => i != BarItem.tasks && i != BarItem.notes);
     expect(shown, [BarItem.menu, BarItem.calendar, BarItem.mail, BarItem.contacts]);
-    expect(PhoneBarNotifier.parse(['mail', 'mail', 'menu', 'notes']), isNull);
-    expect(PhoneBarNotifier.parse(['mail', 'calendar', 'notes', 'tasks']), isNull, reason: 'без «Меню»');
+    expect(PhoneBarNotifier.parse(['mail', 'mail', 'notes']), isNull);
+    expect(PhoneBarNotifier.parse(['calendar', 'notes', 'tasks']), isNull, reason: 'без «Почты»');
     expect(PhoneBarNotifier.parse(['mail', 'menu']), isNull);
-    final c = await _container({'phone_bar': ['mail', 'x', 'menu', 'notes']});
+    // Запись первого вида — четыре места с «Меню»: «Меню» убирается.
+    expect(PhoneBarNotifier.parse(['mail', 'myDay', 'menu', 'notes']), [BarItem.mail, BarItem.myDay, BarItem.notes]);
+    final c = await _container({'phone_bar': ['mail', 'x', 'notes']});
     expect(c.read(phoneBarProvider), [BarItem.menu, BarItem.mail, BarItem.calendar, BarItem.contacts]);
   });
 

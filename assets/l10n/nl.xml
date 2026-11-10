@@ -4084,7 +4084,8 @@
     <string name="barSettingsHint">Tik op een plek om een onderdeel te kiezen</string>
     <string name="barSlot">Plek</string>
     <string name="barSlotPick">Onderdeel op deze plek</string>
-    <string name="barMenuStays">‘Menu’ blijft altijd op de balk — je kunt het met een ander onderdeel wisselen</string>
+    <string name="barMenuStays">‘Menu’ staat altijd aan de rand van de balk — links of rechts; het menu schuift aan die kant open</string>
     <string name="barSwap">Wisselen van plek</string>
     <string name="barReset">Standaard herstellen</string>
+    <string name="barMailStays">‘E-mail’ blijft altijd op de balk — je kunt het met een ander onderdeel wisselen</string>
 </resources>

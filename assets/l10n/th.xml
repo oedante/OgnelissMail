@@ -4063,7 +4063,8 @@
     <string name="barSettingsHint">แตะตำแหน่งเพื่อเลือกส่วน</string>
     <string name="barSlot">ตำแหน่ง</string>
     <string name="barSlotPick">ส่วนในตำแหน่งนี้</string>
-    <string name="barMenuStays">“เมนู” อยู่บนแถบเสมอ — สลับตำแหน่งกับส่วนอื่นได้</string>
+    <string name="barMenuStays">“เมนู” อยู่ที่ขอบแถบเสมอ — ซ้ายหรือขวา และเมนูจะเปิดจากด้านเดียวกัน</string>
     <string name="barSwap">จะสลับตำแหน่งกัน</string>
     <string name="barReset">คืนค่าเริ่มต้น</string>
+    <string name="barMailStays">“อีเมล” อยู่บนแถบเสมอ — สลับตำแหน่งกับส่วนอื่นได้</string>
 </resources>

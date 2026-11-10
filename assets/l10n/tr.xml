@@ -1636,9 +1636,9 @@
     <string name="swipeHint">İleti listesinde kaydırma eylemleri. Her yan için en fazla iki eylem.</string>
     <string name="swipeRight">Sağa kaydır</string>
     <string name="swipeLeft">Sola kaydır</string>
-    <string name="swipeFirstAction">Kısa kaydırma</string>
-    <string name="swipeSecondAction">Uzun kaydırma</string>
-    <string name="swipeSingleHint">Bir satırı sürükleyip bırakın, işlem yapılır. Kısa kaydırma ilk işlemi, uzun kaydırma ikinci işlemi yapar; simge ve etiket hangisinin yapılacağını gösterir. Erken bırakırsanız satır yerine döner. Ardından satırda ne yapıldığı ve Geri al düğmesi görünür.</string>
+    <string name="swipeFirstAction">Birinci eylem</string>
+    <string name="swipeSecondAction">İkinci eylem</string>
+    <string name="swipeSingleHint">Kısa kaydırma düğmeleri gösterir, uzun kaydırma ilk işlemi hemen yapar. Tek işlem varsa satırın yarısı kadar kaydırmak yeterlidir.</string>
     <string name="filterToMe">Bana</string>
     <string name="recentSearches">Son aramalar</string>
     <string name="draft">Taslak</string>
@@ -4074,4 +4074,9 @@
     <string name="easCompatUaMacHint">Yalnızca bilinen e-posta uygulamalarına izin veren bir ağ geçidinin arkasındaki Exchange için (hata 403). EWS kendini Mac’teki Mail, ActiveSync ise iPad Mail olarak tanıtır. BT ekibinizle görüşün.</string>
     <string name="easCompatUaLinux">Ağ geçidi uyumluluğu (Thunderbird ve Android posta gibi)</string>
     <string name="easCompatUaLinuxHint">Yalnızca bilinen e-posta uygulamalarına izin veren bir ağ geçidinin arkasındaki Exchange için (hata 403). EWS kendini Thunderbird, ActiveSync ise Android posta olarak tanıtır. BT ekibinizle görüşün.</string>
+    <string name="swipeShortAction">Kısa kaydırma</string>
+    <string name="swipeLongAction">Uzun kaydırma</string>
+    <string name="swipeTwoStepHint">Bir satırı sürükleyip bırakın, işlem yapılır. Kısa kaydırma ilk işlemi, uzun kaydırma ikinci işlemi yapar; simge ve etiket hangisinin yapılacağını gösterir. Erken bırakırsanız satır yerine döner. Ardından satırda ne yapıldığı ve Geri al düğmesi görünür.</string>
+    <string name="swipeTwoStepTitle">Kısa ve uzun kaydırma</string>
+    <string name="swipeTwoStepSub">Bir tarafta iki işlem: kısa kaydırma ilkini, uzun kaydırma ikincisini düğmesiz yapar. Kapalı — kaydırma düğmeleri gösterir, siz seçersiniz</string>
 </resources>

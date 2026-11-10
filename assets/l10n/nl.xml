@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Veegacties in de berichtenlijst. Maximaal twee acties per kant.</string>
     <string name="swipeRight">Naar rechts vegen</string>
     <string name="swipeLeft">Naar links vegen</string>
-    <string name="swipeFirstAction">Korte veeg</string>
-    <string name="swipeSecondAction">Lange veeg</string>
-    <string name="swipeSingleHint">Sleep een rij en laat los: de actie wordt uitgevoerd. Een korte veeg voert de eerste actie uit, een lange de tweede; pictogram en tekst tonen welke. Te vroeg losgelaten? Dan veert de rij terug. Daarna toont de rij wat er is gedaan, met Ongedaan maken.</string>
+    <string name="swipeFirstAction">Eerste actie</string>
+    <string name="swipeSecondAction">Tweede actie</string>
+    <string name="swipeSingleHint">Kort vegen toont de knoppen, lang vegen voert meteen de eerste actie uit. Met één actie is ongeveer een halve rij genoeg.</string>
     <string name="filterToMe">Aan mij</string>
     <string name="recentSearches">Recente zoekopdrachten</string>
     <string name="draft">Concept</string>
@@ -4074,4 +4074,9 @@
     <string name="easCompatUaMacHint">Voor Exchange achter een gateway die alleen bekende mailprogramma’s toelaat (fout 403). EWS meldt zich als Mail op de Mac, ActiveSync als Mail op de iPad. Overleg met IT.</string>
     <string name="easCompatUaLinux">Gatewaycompatibiliteit (zoals Thunderbird en Android-mail)</string>
     <string name="easCompatUaLinuxHint">Voor Exchange achter een gateway die alleen bekende mailprogramma’s toelaat (fout 403). EWS meldt zich als Thunderbird, ActiveSync als Android-mail. Overleg met IT.</string>
+    <string name="swipeShortAction">Korte veeg</string>
+    <string name="swipeLongAction">Lange veeg</string>
+    <string name="swipeTwoStepHint">Sleep een rij en laat los: de actie wordt uitgevoerd. Een korte veeg voert de eerste actie uit, een lange de tweede; pictogram en tekst tonen welke. Te vroeg losgelaten? Dan veert de rij terug. Daarna toont de rij wat er is gedaan, met Ongedaan maken.</string>
+    <string name="swipeTwoStepTitle">Korte en lange veeg</string>
+    <string name="swipeTwoStepSub">Twee acties aan een kant: korte veeg voert de eerste uit, lange de tweede, zonder knoppen. Uit – de veeg toont knoppen en u kiest</string>
 </resources>

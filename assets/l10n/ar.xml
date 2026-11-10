@@ -1636,9 +1636,9 @@
     <string name="swipeHint">إجراءات التمرير في قائمة الرسائل. حتى إجراءين لكل جهة.</string>
     <string name="swipeRight">تمرير سريع لليمين</string>
     <string name="swipeLeft">تمرير سريع لليسار</string>
-    <string name="swipeFirstAction">سحب قصير</string>
-    <string name="swipeSecondAction">سحب طويل</string>
-    <string name="swipeSingleHint">اسحب الصف ثم اتركه لتنفيذ الإجراء. السحب القصير ينفّذ الإجراء الأول والطويل الثاني، وتوضح الأيقونة والتسمية أيهما سيُنفَّذ. إذا تركته مبكرًا يعود الصف إلى مكانه. بعدها يُظهر الصف ما تم مع زر «تراجع».</string>
+    <string name="swipeFirstAction">الإجراء الأول</string>
+    <string name="swipeSecondAction">الإجراء الثاني</string>
+    <string name="swipeSingleHint">السحب القصير يُظهر الأزرار، والسحب الطويل ينفّذ الإجراء الأول فورًا. مع إجراء واحد يكفي نحو نصف السطر.</string>
     <string name="filterToMe">موجهة إليّ مباشرة</string>
     <string name="recentSearches">عمليات البحث الأخيرة</string>
     <string name="draft">مسودة</string>
@@ -4158,4 +4158,9 @@
     <string name="easCompatUaMacHint">لخادم Exchange خلف بوابة لا تسمح إلا ببرامج البريد المعروفة (الخطأ 403). يقدّم EWS نفسه كتطبيق البريد على Mac، وActiveSync كبريد iPad. نسّق مع قسم تقنية المعلومات.</string>
     <string name="easCompatUaLinux">التوافق مع البوابة (مثل Thunderbird وبريد Android)</string>
     <string name="easCompatUaLinuxHint">لخادم Exchange خلف بوابة لا تسمح إلا ببرامج البريد المعروفة (الخطأ 403). يقدّم EWS نفسه كـ Thunderbird، وActiveSync كبريد Android. نسّق مع قسم تقنية المعلومات.</string>
+    <string name="swipeShortAction">سحب قصير</string>
+    <string name="swipeLongAction">سحب طويل</string>
+    <string name="swipeTwoStepHint">اسحب الصف ثم اتركه لتنفيذ الإجراء. السحب القصير ينفّذ الإجراء الأول والطويل الثاني، وتوضح الأيقونة والتسمية أيهما سيُنفَّذ. إذا تركته مبكرًا يعود الصف إلى مكانه. بعدها يُظهر الصف ما تم مع زر «تراجع».</string>
+    <string name="swipeTwoStepTitle">سحب قصير وطويل</string>
+    <string name="swipeTwoStepSub">إجراءان في جهة واحدة: السحب القصير ينفّذ الأول والطويل الثاني دون أزرار. عند الإيقاف يُظهر السحب الأزرار لتختار</string>
 </resources>

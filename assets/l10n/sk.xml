@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Akcie potiahnutia v zozname správ. Najviac dve akcie na každej strane.</string>
     <string name="swipeRight">Potiahnutie doprava</string>
     <string name="swipeLeft">Potiahnutie doľava</string>
-    <string name="swipeFirstAction">Krátke potiahnutie</string>
-    <string name="swipeSecondAction">Dlhé potiahnutie</string>
-    <string name="swipeSingleHint">Potiahnite riadok a pustite – akcia sa vykoná. Krátke potiahnutie spustí prvú akciu, dlhé druhú; ikona a popis ukážu ktorú. Ak pustíte príliš skoro, riadok sa vráti. Potom riadok ukáže, čo sa stalo, aj s tlačidlom Späť.</string>
+    <string name="swipeFirstAction">Prvá akcia</string>
+    <string name="swipeSecondAction">Druhá akcia</string>
+    <string name="swipeSingleHint">Krátke potiahnutie ukáže tlačidlá, dlhé hneď vykoná prvú akciu. Pri jednej akcii stačí zhruba pol riadka.</string>
     <string name="filterToMe">Mne osobne</string>
     <string name="recentSearches">Nedávne hľadania</string>
     <string name="draft">Koncept</string>
@@ -4095,4 +4095,9 @@
     <string name="easCompatUaMacHint">Pre Exchange za bránou, ktorá prepúšťa len známe poštové programy (chyba 403). EWS sa predstaví ako Mail na Macu, ActiveSync ako Pošta iPadu. Dohodnite sa s IT.</string>
     <string name="easCompatUaLinux">Kompatibilita s bránou (ako Thunderbird a pošta Android)</string>
     <string name="easCompatUaLinuxHint">Pre Exchange za bránou, ktorá prepúšťa len známe poštové programy (chyba 403). EWS sa predstaví ako Thunderbird, ActiveSync ako pošta Android. Dohodnite sa s IT.</string>
+    <string name="swipeShortAction">Krátke potiahnutie</string>
+    <string name="swipeLongAction">Dlhé potiahnutie</string>
+    <string name="swipeTwoStepHint">Potiahnite riadok a pustite – akcia sa vykoná. Krátke potiahnutie spustí prvú akciu, dlhé druhú; ikona a popis ukážu ktorú. Ak pustíte príliš skoro, riadok sa vráti. Potom riadok ukáže, čo sa stalo, aj s tlačidlom Späť.</string>
+    <string name="swipeTwoStepTitle">Krátke a dlhé potiahnutie</string>
+    <string name="swipeTwoStepSub">Dve akcie na strane: krátke potiahnutie spustí prvú, dlhé druhú, bez tlačidiel. Vypnuté – potiahnutie ukáže tlačidlá a vyberiete</string>
 </resources>

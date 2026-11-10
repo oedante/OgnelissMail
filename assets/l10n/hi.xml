@@ -1636,9 +1636,9 @@
     <string name="swipeHint">ईमेल सूची में स्वाइप एक्शन। हर तरफ़ अधिकतम दो एक्शन।</string>
     <string name="swipeRight">दाईं ओर स्वाइप</string>
     <string name="swipeLeft">बाईं ओर स्वाइप</string>
-    <string name="swipeFirstAction">छोटा स्वाइप</string>
-    <string name="swipeSecondAction">लंबा स्वाइप</string>
-    <string name="swipeSingleHint">पंक्ति खींचकर छोड़ें — कार्रवाई हो जाएगी। छोटा स्वाइप पहली कार्रवाई करता है, लंबा दूसरी; आइकन और लेबल बताते हैं कौन-सी होगी। जल्दी छोड़ने पर पंक्ति वापस आ जाती है। इसके बाद पंक्ति पर दिखता है कि क्या हुआ, साथ में «पूर्ववत करें»।</string>
+    <string name="swipeFirstAction">पहली कार्रवाई</string>
+    <string name="swipeSecondAction">दूसरी कार्रवाई</string>
+    <string name="swipeSingleHint">छोटा स्वाइप बटन दिखाता है, लंबा स्वाइप पहली कार्रवाई तुरंत करता है। एक ही कार्रवाई हो तो लगभग आधी पंक्ति काफ़ी है।</string>
     <string name="filterToMe">सीधे मुझे</string>
     <string name="recentSearches">हाल की खोजें</string>
     <string name="draft">ड्राफ़्ट</string>
@@ -4074,4 +4074,9 @@
     <string name="easCompatUaMacHint">ऐसे गेटवे के पीछे Exchange के लिए जो केवल जाने-माने मेल ऐप्स को अनुमति देता है (त्रुटि 403)। EWS Mac के Mail के रूप में, ActiveSync iPad मेल के रूप में पहचान देता है। अपनी IT टीम से पुष्टि करें।</string>
     <string name="easCompatUaLinux">गेटवे संगतता (Thunderbird और Android मेल की तरह)</string>
     <string name="easCompatUaLinuxHint">ऐसे गेटवे के पीछे Exchange के लिए जो केवल जाने-माने मेल ऐप्स को अनुमति देता है (त्रुटि 403)। EWS Thunderbird के रूप में, ActiveSync Android मेल के रूप में पहचान देता है। अपनी IT टीम से पुष्टि करें।</string>
+    <string name="swipeShortAction">छोटा स्वाइप</string>
+    <string name="swipeLongAction">लंबा स्वाइप</string>
+    <string name="swipeTwoStepHint">पंक्ति खींचकर छोड़ें — कार्रवाई हो जाएगी। छोटा स्वाइप पहली कार्रवाई करता है, लंबा दूसरी; आइकन और लेबल बताते हैं कौन-सी होगी। जल्दी छोड़ने पर पंक्ति वापस आ जाती है। इसके बाद पंक्ति पर दिखता है कि क्या हुआ, साथ में «पूर्ववत करें»।</string>
+    <string name="swipeTwoStepTitle">छोटा और लंबा स्वाइप</string>
+    <string name="swipeTwoStepSub">एक तरफ़ दो कार्रवाइयाँ: छोटा स्वाइप पहली, लंबा दूसरी चलाता है, बटनों के बिना। बंद होने पर स्वाइप बटन दिखाता है और आप चुनते हैं</string>
 </resources>

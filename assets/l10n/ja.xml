@@ -1636,9 +1636,9 @@
     <string name="swipeHint">メール一覧でのスワイプ操作。片側につき最大2つまで設定できます。</string>
     <string name="swipeRight">右にスワイプ</string>
     <string name="swipeLeft">左にスワイプ</string>
-    <string name="swipeFirstAction">短いスワイプ</string>
-    <string name="swipeSecondAction">長いスワイプ</string>
-    <string name="swipeSingleHint">行をドラッグして離すと操作が実行されます。短いスワイプで1つ目、長いスワイプで2つ目の操作。どちらが実行されるかはアイコンとラベルで分かります。途中で離すと行は元に戻ります。実行後、行に結果が表示され、「元に戻す」もできます。</string>
+    <string name="swipeFirstAction">1つ目の操作</string>
+    <string name="swipeSecondAction">2つ目の操作</string>
+    <string name="swipeSingleHint">短くスワイプするとボタンが表示され、長くスワイプすると最初の操作をすぐに実行します。操作が1つなら行の半分ほどで実行されます。</string>
     <string name="filterToMe">自分宛て</string>
     <string name="recentSearches">最近の検索</string>
     <string name="draft">下書き</string>
@@ -4053,4 +4053,9 @@
     <string name="easCompatUaMacHint">既知のメールアプリだけを通すゲートウェイの背後にある Exchange 用（エラー 403）。EWS は Mac のメール、ActiveSync は iPad のメールとして接続します。IT 部門に確認してください。</string>
     <string name="easCompatUaLinux">ゲートウェイ互換（Thunderbird や Android メールと同様）</string>
     <string name="easCompatUaLinuxHint">既知のメールアプリだけを通すゲートウェイの背後にある Exchange 用（エラー 403）。EWS は Thunderbird、ActiveSync は Android のメールとして接続します。IT 部門に確認してください。</string>
+    <string name="swipeShortAction">短いスワイプ</string>
+    <string name="swipeLongAction">長いスワイプ</string>
+    <string name="swipeTwoStepHint">行をドラッグして離すと操作が実行されます。短いスワイプで1つ目、長いスワイプで2つ目の操作。どちらが実行されるかはアイコンとラベルで分かります。途中で離すと行は元に戻ります。実行後、行に結果が表示され、「元に戻す」もできます。</string>
+    <string name="swipeTwoStepTitle">短いスワイプと長いスワイプ</string>
+    <string name="swipeTwoStepSub">片側に2つの操作：短いスワイプで1つ目、長いスワイプで2つ目をボタンなしで実行。オフのときはスワイプでボタンが表示され、選んで実行します</string>
 </resources>

@@ -73,16 +73,21 @@
   доверять сертификатам самому, запрет переноса контактов и встреч в
   устройство. На Android — отчёт для консоли MDM: настройки приняты,
   какие значения не распознаны, добавлен ли ящик, задан ли PIN.
-- **Свайпы — одно правило и видно, что сделано**: протяните строку и
-  отпустите — действие выполнено, полуоткрытых кнопок больше нет. Два
-  действия на стороне — короткий свайп и длинный: значок и подпись у края
-  показывают, что сработает. После действия поверх строки — результат
-  («Прочитано», «Флажок снят», «На контроле», «Снято с контроля») и
-  «Отменить», в ленте и в беседе. При первом запуске строка один раз сама
-  слегка отъезжает — подсказка, что под ней. В беседе у письма
-  появилась отметка «На контроле»; подписи папок — только когда письмо не
-  на своём обычном месте (без «Входящих» на каждом письме), названия папок —
-  на языке приложения.
+- **Свайпы — видно, что сделано**: после «Прочитано», «Флаг», «На
+  контроль» (свайпом или кнопкой) поверх строки — результат («Прочитано»,
+  «Флажок снят», «На контроле», «Снято с контроля») и «Отменить», в ленте и
+  в беседе; у края при свайпе — подпись действия; не дотянули — строка
+  возвращается. Логика прежняя (решение владельца 10.11.2026): одно
+  действие на стороне срабатывает сразу, два — кнопки на выбор. По желанию
+  — «Настройки → Свайпы → Короткий и длинный свайп»: короткий свайп —
+  первое действие, длинный — второе. При первом запуске строка один раз сама
+  слегка отъезжает — подсказка. В беседе у письма — отметка «На контроле»;
+  подписи папок — только когда письмо не на обычном месте (без «Входящих»
+  на каждом письме), названия папок — на языке приложения.
+- **Совместимость со шлюзом на всех платформах**: приложение
+  представляется штатной почтой своей платформы — Windows (Почта Windows и
+  Outlook), Mac (Почта Apple), Linux (Thunderbird), как раньше на iPhone и
+  Android.
 - **Перевод писем на Windows**: на компьютере, как на телефоне — плашка
   «Перевести», перевод своего письма, «Всегда переводить с …». Движок —
   Bergamot (Mozilla), текст писем не покидает компьютер; языки (~45 МБ)
@@ -105,28 +110,28 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 <ru-RU>
 • «Мой день»: доска и шкала дня, перенос задач долгим нажатием
 • Поручения из письма и календаря: статус меняется по ответам
-• Свайпы: короткий и длинный, видно результат и «Отменить»
+• Свайпы: на строке видно, что сделано, и есть «Отменить»
 • ✓ и ✓✓ у своих писем, «@» там, где вас упомянули
 • Поиск в письме и в беседе, «+» в быстром ответе
 </ru-RU>
 <en-US>
 • My day: board and day timeline, move tasks with a long press
 • Assignments from an email or the calendar: status follows the replies
-• Swipes: short and long, with the result shown and Undo
+• Swipes: the row shows what was done, with Undo
 • ✓ and ✓✓ on your sent emails, “@” where you are mentioned
 • Find in an email and in a conversation, “+” in quick reply
 </en-US>
 <de-DE>
 • Mein Tag: Board und Tagesleiste, Aufgaben per langem Tippen verschieben
 • Aufträge aus E-Mail oder Kalender: Status folgt den Antworten
-• Wischgesten: kurz und lang, mit Ergebnis und „Rückgängig“
+• Wischgesten: die Zeile zeigt, was erledigt wurde, mit „Rückgängig“
 • ✓ und ✓✓ bei eigenen E-Mails, „@“ wo Sie erwähnt werden
 • Suche in E-Mail und Unterhaltung, „+“ in der Schnellantwort
 </de-DE>
 <fr-FR>
 • Ma journée : tableau et frise du jour, déplacer les tâches par appui long
 • Missions depuis un e-mail ou le calendrier : le statut suit les réponses
-• Balayages court et long, avec le résultat affiché et « Annuler »
+• Balayages : la ligne indique ce qui a été fait, avec « Annuler »
 • ✓ et ✓✓ sur vos e-mails envoyés, « @ » là où l’on vous mentionne
 • Recherche dans un e-mail et une conversation, « + » dans la réponse rapide
 </fr-FR>
@@ -140,189 +145,189 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 <ru-RU>
 • «Мой день»: доска и шкала дня, перенос задач долгим нажатием
 • Поручения из письма и календаря: статус меняется по ответам
-• Свайпы: короткий и длинный, видно результат и «Отменить»
+• Свайпы: на строке видно, что сделано, и есть «Отменить»
 • ✓ и ✓✓ у своих писем, «@» там, где вас упомянули
 • Поиск в письме и в беседе, «+» в быстром ответе
 </ru-RU>
 <en-US>
 • My day: board and day timeline, move tasks with a long press
 • Assignments from an email or the calendar: status follows the replies
-• Swipes: short and long, with the result shown and Undo
+• Swipes: the row shows what was done, with Undo
 • ✓ and ✓✓ on your sent emails, “@” where you are mentioned
 • Find in an email and in a conversation, “+” in quick reply
 </en-US>
 <de-DE>
 • Mein Tag: Board und Tagesleiste, Aufgaben per langem Tippen verschieben
 • Aufträge aus E-Mail oder Kalender: Status folgt den Antworten
-• Wischgesten: kurz und lang, mit Ergebnis und „Rückgängig“
+• Wischgesten: die Zeile zeigt, was erledigt wurde, mit „Rückgängig“
 • ✓ und ✓✓ bei eigenen E-Mails, „@“ wo Sie erwähnt werden
 • Suche in E-Mail und Unterhaltung, „+“ in der Schnellantwort
 </de-DE>
 <fr-FR>
 • Ma journée : tableau et frise du jour, déplacer les tâches par appui long
 • Missions depuis un e-mail ou le calendrier : le statut suit les réponses
-• Balayages court et long, avec le résultat affiché et « Annuler »
+• Balayages : la ligne indique ce qui a été fait, avec « Annuler »
 • ✓ et ✓✓ sur vos e-mails envoyés, « @ » là où l’on vous mentionne
 • Recherche dans un e-mail et une conversation, « + » dans la réponse rapide
 </fr-FR>
 <ar>
 • «يومي»: لوحة ومخطط زمني لليوم، ونقل المهام بضغطة مطوّلة
 • التكليفات من رسالة أو من التقويم: تتغير الحالة حسب الردود
-• سحب قصير وطويل مع عرض النتيجة وزر «تراجع»
+• السحب: يُظهر الصف ما تم مع زر «تراجع»
 • ✓ و✓✓ على رسائلك المرسلة، و«@» حيث تمت الإشارة إليك
 • البحث في الرسالة وفي المحادثة، و«+» في الرد السريع
 </ar>
 <hu-HU>
 • Napom: tábla és napi idővonal, feladatok áthelyezése hosszú nyomással
 • Megbízások levélből vagy naptárból: az állapot a válaszokat követi
-• Rövid és hosszú húzás, látható eredménnyel és Visszavonással
+• Húzás: a sor mutatja, mi történt, Visszavonással
 • ✓ és ✓✓ az elküldött leveleken, „@” ahol megemlítették
 • Keresés levélben és beszélgetésben, „+” a gyors válaszban
 </hu-HU>
 <vi>
 • Ngày của tôi: bảng và dòng thời gian trong ngày, nhấn giữ để dời việc
 • Giao việc từ thư hoặc lịch: trạng thái cập nhật theo thư trả lời
-• Vuốt ngắn và vuốt dài, hiện kết quả và nút Hoàn tác
+• Vuốt: dòng hiển thị việc đã làm, kèm Hoàn tác
 • ✓ và ✓✓ trên thư đã gửi, “@” ở nơi bạn được nhắc tên
 • Tìm trong thư và trong cuộc hội thoại, “+” trong trả lời nhanh
 </vi>
 <da-DK>
 • Min dag: tavle og tidslinje for dagen, flyt opgaver med langt tryk
 • Opgaver fra en mail eller kalenderen: status følger svarene
-• Kort og langt swipe med resultatet vist og Fortryd
+• Swipe: rækken viser, hvad der skete, med Fortryd
 • ✓ og ✓✓ på dine sendte mails, “@” hvor du er nævnt
 • Søg i en mail og i en samtale, “+” i hurtigsvar
 </da-DK>
 <iw-IL>
 • היום שלי: לוח וציר זמן יומי, העברת משימות בלחיצה ארוכה
 • מטלות ממייל או מהיומן: הסטטוס משתנה לפי התשובות
-• החלקה קצרה וארוכה, עם הצגת התוצאה ו„ביטול”
+• החלקה: השורה מציגה מה בוצע, עם „ביטול”
 • ✓ ו-✓✓ במיילים ששלחת, „@” היכן שהזכירו אותך
 • חיפוש במייל ובשיחה, „+” בתשובה המהירה
 </iw-IL>
 <id>
 • Hari Saya: papan dan linimasa hari, pindahkan tugas dengan tekan lama
 • Penugasan dari email atau kalender: status mengikuti balasan
-• Usap pendek dan panjang, hasil terlihat dan ada Urungkan
+• Usap: baris menunjukkan apa yang dilakukan, dengan Urungkan
 • ✓ dan ✓✓ pada email terkirim, “@” saat Anda disebut
 • Cari dalam email dan percakapan, “+” di balasan cepat
 </id>
 <es-ES>
 • Mi día: tablero y línea del día, mueve tareas con una pulsación larga
 • Encargos desde un correo o el calendario: el estado sigue las respuestas
-• Deslizamientos corto y largo, con el resultado visible y Deshacer
+• Deslizar: la fila muestra lo que se hizo, con Deshacer
 • ✓ y ✓✓ en tus correos enviados, «@» donde te mencionan
 • Búsqueda en un correo y en una conversación, «+» en la respuesta rápida
 </es-ES>
 <it-IT>
 • La mia giornata: bacheca e linea del giorno, sposta le attività con pressione prolungata
 • Incarichi da un’email o dal calendario: lo stato segue le risposte
-• Scorrimento breve e lungo, con risultato visibile e Annulla
+• Scorrimento: la riga mostra cosa è stato fatto, con Annulla
 • ✓ e ✓✓ sulle email inviate, «@» dove vieni menzionato
 • Cerca in un’email e in una conversazione, «+» nella risposta rapida
 </it-IT>
 <zh-CN>
 • 我的一天：看板和当日时间轴，长按即可调整任务
 • 从邮件或日历分派任务：状态随回复自动更新
-• 短滑和长滑，显示结果并可“撤销”
+• 滑动：行上显示已完成的操作，并可“撤销”
 • 已发邮件显示 ✓ 和 ✓✓，被提及处显示“@”
 • 在邮件和会话中查找，快速回复中的“+”
 </zh-CN>
 <ko-KR>
 • 나의 하루: 보드와 하루 타임라인, 길게 눌러 할 일 옮기기
 • 메일이나 캘린더에서 업무 지시: 답장에 따라 상태가 바뀜
-• 짧게 밀기와 길게 밀기, 결과 표시와 실행 취소
+• 밀기: 행에 수행된 작업과 실행 취소가 표시됨
 • 보낸 메일에 ✓ 및 ✓✓, 내가 언급된 곳에 “@”
 • 메일과 대화 안에서 찾기, 빠른 답장의 “+”
 </ko-KR>
 <nl-NL>
 • Mijn dag: bord en tijdlijn van de dag, taken verplaatsen met lang drukken
 • Opdrachten vanuit een e-mail of de agenda: status volgt de antwoorden
-• Korte en lange veeg, met het resultaat zichtbaar en Ongedaan maken
+• Vegen: de rij toont wat er is gedaan, met Ongedaan maken
 • ✓ en ✓✓ bij je verzonden e-mails, ‘@’ waar je wordt genoemd
 • Zoeken in een e-mail en een gesprek, ‘+’ in snel antwoord
 </nl-NL>
 <no-NO>
 • Min dag: tavle og tidslinje for dagen, flytt oppgaver med langt trykk
 • Oppdrag fra en e-post eller kalenderen: status følger svarene
-• Kort og langt sveip, med resultatet vist og Angre
+• Sveip: raden viser hva som ble gjort, med Angre
 • ✓ og ✓✓ på sendte e-poster, «@» der du er nevnt
 • Søk i en e-post og i en samtale, «+» i hurtigsvar
 </no-NO>
 <pl-PL>
 • Mój dzień: tablica i oś dnia, przenoszenie zadań długim naciśnięciem
 • Zlecenia z wiadomości lub kalendarza: status zmienia się według odpowiedzi
-• Krótkie i długie przesunięcie, z widocznym wynikiem i Cofnij
+• Przesunięcia: wiersz pokazuje, co zrobiono, z przyciskiem Cofnij
 • ✓ i ✓✓ przy wysłanych wiadomościach, „@” tam, gdzie Cię wspomniano
 • Szukanie w wiadomości i w rozmowie, „+” w szybkiej odpowiedzi
 </pl-PL>
 <pt-BR>
 • Meu dia: quadro e linha do tempo do dia, mova tarefas com toque longo
 • Atribuições a partir de um e-mail ou do calendário: o status segue as respostas
-• Deslize curto e longo, com o resultado visível e Desfazer
+• Deslizar: a linha mostra o que foi feito, com Desfazer
 • ✓ e ✓✓ nos seus e-mails enviados, “@” onde você é mencionado
 • Busca no e-mail e na conversa, “+” na resposta rápida
 </pt-BR>
 <ro>
 • Ziua mea: panou și axa zilei, mutați sarcinile cu apăsare lungă
 • Sarcini atribuite din e-mail sau calendar: starea urmează răspunsurile
-• Glisare scurtă și lungă, cu rezultatul afișat și Anulează
+• Glisare: rândul arată ce s-a făcut, cu Anulează
 • ✓ și ✓✓ la e-mailurile trimise, „@” unde sunteți menționat
 • Căutare în e-mail și în conversație, „+” în răspunsul rapid
 </ro>
 <sk>
 • Môj deň: nástenka a časová os dňa, presun úloh dlhým stlačením
 • Zadania z e-mailu alebo kalendára: stav sa mení podľa odpovedí
-• Krátke a dlhé potiahnutie, s výsledkom a tlačidlom Späť
+• Potiahnutie: riadok ukáže, čo sa stalo, aj s tlačidlom Späť
 • ✓ a ✓✓ pri odoslaných e-mailoch, „@“ tam, kde vás spomenuli
 • Hľadanie v e-maile a v konverzácii, „+“ v rýchlej odpovedi
 </sk>
 <th>
 • วันของฉัน: บอร์ดและไทม์ไลน์ของวัน กดค้างเพื่อย้ายงาน
 • มอบหมายงานจากอีเมลหรือปฏิทิน: สถานะเปลี่ยนตามคำตอบ
-• ปัดสั้นและปัดยาว แสดงผลลัพธ์พร้อมปุ่มเลิกทำ
+• ปัด: แถวแสดงสิ่งที่ทำ พร้อมปุ่มเลิกทำ
 • ✓ และ ✓✓ ที่อีเมลที่ส่ง และ “@” ตรงที่มีการกล่าวถึงคุณ
 • ค้นหาในอีเมลและในบทสนทนา “+” ในการตอบกลับด่วน
 </th>
 <tr-TR>
 • Günüm: pano ve gün zaman çizelgesi, görevleri uzun basarak taşıyın
 • E-postadan veya takvimden görevlendirme: durum yanıtlara göre değişir
-• Kısa ve uzun kaydırma, sonuç görünür ve Geri al düğmesi
+• Kaydırma: satırda ne yapıldığı ve Geri al görünür
 • Gönderdiğiniz e-postalarda ✓ ve ✓✓, anıldığınız yerde “@”
 • E-postada ve konuşmada arama, hızlı yanıtta “+”
 </tr-TR>
 <fi-FI>
 • Oma päivä: taulu ja päivän aikajana, siirrä tehtäviä pitkällä painalluksella
 • Toimeksiannot viestistä tai kalenterista: tila seuraa vastauksia
-• Lyhyt ja pitkä pyyhkäisy, tulos näkyy ja Kumoa
+• Pyyhkäisy: rivi näyttää, mitä tehtiin, ja Kumoa
 • ✓ ja ✓✓ lähettämissäsi viesteissä, ”@” kun sinut mainitaan
 • Haku viestissä ja keskustelussa, ”+” pikavastauksessa
 </fi-FI>
 <hi-IN>
 • मेरा दिन: बोर्ड और दिन की टाइमलाइन, लंबा दबाकर काम खिसकाएँ
 • ईमेल या कैलेंडर से काम सौंपें: स्थिति जवाबों के अनुसार बदलती है
-• छोटा और लंबा स्वाइप, नतीजा दिखता है और «पूर्ववत करें»
+• स्वाइप: पंक्ति पर दिखता है कि क्या हुआ, साथ में «पूर्ववत करें»
 • भेजे गए ईमेल पर ✓ और ✓✓, जहाँ आपका ज़िक्र हो वहाँ “@”
 • ईमेल और बातचीत में खोज, त्वरित जवाब में “+”
 </hi-IN>
 <cs-CZ>
 • Můj den: nástěnka a časová osa dne, přesun úkolů dlouhým stiskem
 • Úkoly zadané z e-mailu nebo kalendáře: stav se mění podle odpovědí
-• Krátké a dlouhé přejetí, s výsledkem a tlačítkem Zpět
+• Přejetí: řádek ukáže, co se stalo, i s tlačítkem Zpět
 • ✓ a ✓✓ u odeslaných e-mailů, „@“ tam, kde vás zmínili
 • Hledání v e-mailu a v konverzaci, „+“ v rychlé odpovědi
 </cs-CZ>
 <sv-SE>
 • Min dag: tavla och tidslinje för dagen, flytta uppgifter med långt tryck
 • Uppdrag från mejl eller kalendern: status följer svaren
-• Kort och långt svep, med resultatet synligt och Ångra
+• Svep: raden visar vad som gjordes, med Ångra
 • ✓ och ✓✓ på skickade mejl, ”@” där du nämns
 • Sök i ett mejl och i en konversation, ”+” i snabbsvar
 </sv-SE>
 <ja-JP>
 • マイデイ：ボードと1日のタイムライン、長押しでタスクを移動
 • メールやカレンダーから依頼：返信に応じて状態が変わります
-• 短いスワイプと長いスワイプ、結果表示と「元に戻す」
+• スワイプ：行に実行結果と「元に戻す」を表示
 • 送信したメールに ✓ と ✓✓、自分が言及された所に「@」
 • メール内と会話内の検索、クイック返信の「+」
 </ja-JP>

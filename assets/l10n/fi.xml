@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Pyyhkäisytoiminnot viestiluettelossa. Enintään kaksi toimintoa per puoli.</string>
     <string name="swipeRight">Pyyhkäisy oikealle</string>
     <string name="swipeLeft">Pyyhkäisy vasemmalle</string>
-    <string name="swipeFirstAction">Lyhyt pyyhkäisy</string>
-    <string name="swipeSecondAction">Pitkä pyyhkäisy</string>
-    <string name="swipeSingleHint">Vedä riviä ja päästä irti – toiminto suoritetaan. Lyhyt pyyhkäisy tekee ensimmäisen toiminnon, pitkä toisen; kuvake ja teksti näyttävät kumman. Liian aikaisin irrotettu rivi palaa paikalleen. Sen jälkeen rivillä näkyy, mitä tehtiin, ja Kumoa.</string>
+    <string name="swipeFirstAction">Ensimmäinen toiminto</string>
+    <string name="swipeSecondAction">Toinen toiminto</string>
+    <string name="swipeSingleHint">Lyhyt pyyhkäisy näyttää painikkeet, pitkä suorittaa heti ensimmäisen toiminnon. Yhdellä toiminnolla riittää noin puoli riviä.</string>
     <string name="filterToMe">Minulle</string>
     <string name="recentSearches">Viimeaikaiset haut</string>
     <string name="draft">Luonnos</string>
@@ -4074,4 +4074,9 @@
     <string name="easCompatUaMacHint">Exchangelle yhdyskäytävän takana, joka päästää läpi vain tunnetut sähköpostiohjelmat (virhe 403). EWS esittäytyy Macin Mailina, ActiveSync iPadin Mailina. Sovi IT:n kanssa.</string>
     <string name="easCompatUaLinux">Yhdyskäytävän yhteensopivuus (kuten Thunderbird ja Androidin sähköposti)</string>
     <string name="easCompatUaLinuxHint">Exchangelle yhdyskäytävän takana, joka päästää läpi vain tunnetut sähköpostiohjelmat (virhe 403). EWS esittäytyy Thunderbirdinä, ActiveSync Androidin sähköpostina. Sovi IT:n kanssa.</string>
+    <string name="swipeShortAction">Lyhyt pyyhkäisy</string>
+    <string name="swipeLongAction">Pitkä pyyhkäisy</string>
+    <string name="swipeTwoStepHint">Vedä riviä ja päästä irti – toiminto suoritetaan. Lyhyt pyyhkäisy tekee ensimmäisen toiminnon, pitkä toisen; kuvake ja teksti näyttävät kumman. Liian aikaisin irrotettu rivi palaa paikalleen. Sen jälkeen rivillä näkyy, mitä tehtiin, ja Kumoa.</string>
+    <string name="swipeTwoStepTitle">Lyhyt ja pitkä pyyhkäisy</string>
+    <string name="swipeTwoStepSub">Kaksi toimintoa samalla puolella: lyhyt pyyhkäisy tekee ensimmäisen, pitkä toisen, ilman painikkeita. Pois – pyyhkäisy näyttää painikkeet ja valitset</string>
 </resources>

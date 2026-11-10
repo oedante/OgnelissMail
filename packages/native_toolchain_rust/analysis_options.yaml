@@ -1,0 +1,4 @@
+# Чужой код (native_toolchain_rust 1.0.6, MIT) — без правил приложения.
+analyzer:
+  exclude:
+    - "**"

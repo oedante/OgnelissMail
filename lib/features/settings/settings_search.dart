@@ -4,6 +4,7 @@
 // Раньше «где включаются тихие часы» приходилось искать, открывая разделы
 // по очереди.
 
+import 'widgets/settings_split.dart';
 import '../../core/constants/app_constants.dart' show kRulesAndCategoriesEnabled;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
@@ -132,7 +133,7 @@ const _entries = <_Entry>[
   _Entry('bgNotifHide', 'permissions', AppIcons.notifications_off, '/settings/permissions'),
   _Entry('pinLock', 'sectionPrivacy', AppIcons.pin, '/settings'),
   // План 08.11.2026 п. 4: настройки, которых не было в поиске.
-  _Entry('trackerBlocker', 'sectionPrivacy', AppIcons.visibility_off, '/settings'),
+  _Entry('trackerBlocker', 'sectionPrivacy', AppIcons.visibility_off, '/settings/trackers'),
   _Entry('bimiLogos', 'emailSettings', AppIcons.verified, '/settings/mail'),
   _Entry('readingPane', 'appearanceTitle', AppIcons.vertical_split, '/settings/appearance'),
   _Entry('uiScaleTitle', 'general', AppIcons.zoom_in, '/settings/general'),
@@ -166,7 +167,10 @@ const _entries = <_Entry>[
 
 class SettingsSearchDelegate extends SearchDelegate<void> {
   final AppLocalizations l10n;
-  SettingsSearchDelegate(this.l10n) : super(searchFieldLabel: l10n.tr('settingsSearchHint'));
+
+  /// Настройки в две колонки: найденный раздел — справа, вместо открытого.
+  final bool split;
+  SettingsSearchDelegate(this.l10n, {this.split = false}) : super(searchFieldLabel: l10n.tr('settingsSearchHint'));
 
   @override
   List<Widget> buildActions(BuildContext context) => [
@@ -226,10 +230,11 @@ class SettingsSearchDelegate extends SearchDelegate<void> {
           subtitle: screen == title ? null : Text(screen),
           trailing: const Icon(AppIcons.chevron_right),
           onTap: () {
+            final nav = Navigator.of(context, rootNavigator: true);
             close(context, null);
             // Настройка на главном экране настроек — поиск открыт с него,
             // достаточно закрыть поиск.
-            if (e.route != '/settings') router.push(e.route);
+            if (e.route != '/settings') openSettingsSectionWith(router, nav, e.route, split: split);
           },
         );
       },

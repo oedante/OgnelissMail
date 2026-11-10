@@ -43,6 +43,8 @@ import '../../features/assignments/assignment_screen.dart';
 import '../../features/mail/screens/subscriptions_screen.dart';
 import '../../features/notes/screens/note_edit_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
+import '../../features/settings/screens/tracker_settings_screen.dart';
+import '../../features/settings/widgets/settings_split.dart';
 import '../../features/settings/screens/advanced_settings_screen.dart';
 import '../../features/settings/screens/rules_screen.dart';
 import '../../features/settings/screens/exchange_tools_screen.dart';
@@ -232,7 +234,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/vip-settings', name: 'vip-settings',
-        pageBuilder: (_, __) => const MaterialPage(child: WideFrame(child: VipSettingsScreen())),
+        pageBuilder: (_, st) => settingsRoutePage(st, const VipSettingsScreen()),
       ),
       GoRoute(
         path: '/create-event', name: 'create-event',
@@ -314,41 +316,45 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // Settings
-      GoRoute(path: '/settings', name: 'settings', builder: (_, __) => const WideFrame(child: SettingsScreen())),
+      GoRoute(
+          path: '/settings',
+          name: 'settings',
+          // В две колонки справа — «Общие», а не второй список.
+          pageBuilder: (_, st) => settingsRoutePage(st, const SettingsScreen(), splitChild: const GeneralSettingsScreen())),
+      // «Защита от трекеров» — страницей (была окном поверх), чтобы в две
+      // колонки открываться справа.
+      GoRoute(path: '/settings/trackers', name: 'tracker-settings', pageBuilder: (_, st) => settingsRoutePage(st, const TrackerSettingsScreen())),
       // «Расширенные настройки» приложения (1.8.0).
-      GoRoute(path: '/settings/advanced', name: 'advanced-settings', builder: (_, __) => const WideFrame(child: AdvancedSettingsScreen())),
-      GoRoute(path: '/settings/rules', name: 'rules', builder: (_, st) => WideFrame(child: RulesScreen(accountId: st.uri.queryParameters['accountId']))),
-      GoRoute(path: '/settings/accessibility', name: 'accessibility', builder: (_, __) => const WideFrame(child: AccessibilityScreen())),
-      GoRoute(path: '/settings/dlp', name: 'dlp', builder: (_, __) => const WideFrame(child: DlpSettingsScreen())),
+      GoRoute(path: '/settings/advanced', name: 'advanced-settings', pageBuilder: (_, st) => settingsRoutePage(st, const AdvancedSettingsScreen())),
+      GoRoute(path: '/settings/rules', name: 'rules', pageBuilder: (_, st) => settingsRoutePage(st, RulesScreen(accountId: st.uri.queryParameters['accountId']))),
+      GoRoute(path: '/settings/accessibility', name: 'accessibility', pageBuilder: (_, st) => settingsRoutePage(st, const AccessibilityScreen())),
+      GoRoute(path: '/settings/dlp', name: 'dlp', pageBuilder: (_, st) => settingsRoutePage(st, const DlpSettingsScreen())),
       // «Экспериментальный функционал» (1.10.3): функции на пробе, по
       // умолчанию выключены. Прежние «Возможности» (до 1.6.1) — в «Почте» и
       // «Календаре».
       GoRoute(path: '/settings/experimental', name: 'experimental',
-          builder: (_, __) => const WideFrame(child: ExperimentalSettingsScreen())),
+          pageBuilder: (_, st) => settingsRoutePage(st, const ExperimentalSettingsScreen())),
       // Exchange на сервере: правила и «Восстановить удалённые» (EWS).
-      GoRoute(path: '/settings/server-rules', name: 'server-rules', builder: (_, st) =>
-          WideFrame(child: ServerRulesScreen(accountId: st.uri.queryParameters['accountId']))),
-      GoRoute(path: '/settings/recover-deleted', name: 'recover-deleted', builder: (_, st) =>
-          WideFrame(child: RecoverDeletedScreen(accountId: st.uri.queryParameters['accountId']))),
+      GoRoute(path: '/settings/server-rules', name: 'server-rules', pageBuilder: (_, st) => settingsRoutePage(st, ServerRulesScreen(accountId: st.uri.queryParameters['accountId']))),
+      GoRoute(path: '/settings/recover-deleted', name: 'recover-deleted', pageBuilder: (_, st) => settingsRoutePage(st, RecoverDeletedScreen(accountId: st.uri.queryParameters['accountId']))),
       // Фильтры на сервере IMAP (Sieve).
-      GoRoute(path: '/settings/sieve', name: 'sieve', builder: (_, st) =>
-          WideFrame(child: SieveRulesScreen(accountId: st.uri.queryParameters['accountId']))),
-      GoRoute(path: '/settings/delivery-schedule', name: 'delivery-schedule', builder: (_, __) => const WideFrame(child: DeliveryScheduleScreen())),
-      GoRoute(path: '/settings/profile', name: 'profile-settings', builder: (_, __) => const WideFrame(child: ProfileSettingsScreen())),
-      GoRoute(path: '/settings/general', name: 'general-settings', builder: (_, __) => const WideFrame(child: GeneralSettingsScreen())),
+      GoRoute(path: '/settings/sieve', name: 'sieve', pageBuilder: (_, st) => settingsRoutePage(st, SieveRulesScreen(accountId: st.uri.queryParameters['accountId']))),
+      GoRoute(path: '/settings/delivery-schedule', name: 'delivery-schedule', pageBuilder: (_, st) => settingsRoutePage(st, const DeliveryScheduleScreen())),
+      GoRoute(path: '/settings/profile', name: 'profile-settings', pageBuilder: (_, st) => settingsRoutePage(st, const ProfileSettingsScreen())),
+      GoRoute(path: '/settings/general', name: 'general-settings', pageBuilder: (_, st) => settingsRoutePage(st, const GeneralSettingsScreen())),
       // «Оформление» (1.9.x): тема, цвета, скругление, плотность ленты.
-      GoRoute(path: '/settings/appearance', name: 'appearance', builder: (_, __) => const WideFrame(child: AppearanceScreen())),
-      GoRoute(path: '/settings/mail', name: 'mail-settings', builder: (_, __) => const WideFrame(child: MailSettingsScreen())),
-      GoRoute(path: '/settings/calendar', name: 'calendar-settings', builder: (_, __) => const WideFrame(child: CalendarSettingsScreen())),
-      GoRoute(path: '/settings/contacts', name: 'contacts-settings', builder: (_, __) => const WideFrame(child: ContactsSettingsScreen())),
-      GoRoute(path: '/settings/tasks', name: 'tasks-settings', builder: (_, __) => const WideFrame(child: TasksSettingsScreen())),
-      GoRoute(path: '/settings/notes', name: 'notes-settings', builder: (_, __) => const WideFrame(child: NotesSettingsScreen())),
-      GoRoute(path: '/settings/categories', name: 'category-settings', builder: (_, __) => const WideFrame(child: CategorySettingsScreen())),
-      GoRoute(path: '/settings/templates', name: 'templates-settings', builder: (_, __) => const WideFrame(child: TemplatesSettingsScreen())),
-      GoRoute(path: '/settings/storage', name: 'storage', builder: (_, __) => const WideFrame(child: StorageScreen())),
-      GoRoute(path: '/settings/backup', name: 'backup', builder: (_, __) => const WideFrame(child: BackupScreen())),
+      GoRoute(path: '/settings/appearance', name: 'appearance', pageBuilder: (_, st) => settingsRoutePage(st, const AppearanceScreen())),
+      GoRoute(path: '/settings/mail', name: 'mail-settings', pageBuilder: (_, st) => settingsRoutePage(st, const MailSettingsScreen())),
+      GoRoute(path: '/settings/calendar', name: 'calendar-settings', pageBuilder: (_, st) => settingsRoutePage(st, const CalendarSettingsScreen())),
+      GoRoute(path: '/settings/contacts', name: 'contacts-settings', pageBuilder: (_, st) => settingsRoutePage(st, const ContactsSettingsScreen())),
+      GoRoute(path: '/settings/tasks', name: 'tasks-settings', pageBuilder: (_, st) => settingsRoutePage(st, const TasksSettingsScreen())),
+      GoRoute(path: '/settings/notes', name: 'notes-settings', pageBuilder: (_, st) => settingsRoutePage(st, const NotesSettingsScreen())),
+      GoRoute(path: '/settings/categories', name: 'category-settings', pageBuilder: (_, st) => settingsRoutePage(st, const CategorySettingsScreen())),
+      GoRoute(path: '/settings/templates', name: 'templates-settings', pageBuilder: (_, st) => settingsRoutePage(st, const TemplatesSettingsScreen())),
+      GoRoute(path: '/settings/storage', name: 'storage', pageBuilder: (_, st) => settingsRoutePage(st, const StorageScreen())),
+      GoRoute(path: '/settings/backup', name: 'backup', pageBuilder: (_, st) => settingsRoutePage(st, const BackupScreen())),
       // Архив Ogneliss (1.7.3): настройки, папки и письма архива, поиск.
-      GoRoute(path: '/settings/archive', name: 'ogna-archive', builder: (_, __) => const WideFrame(child: ArchiveScreen())),
+      GoRoute(path: '/settings/archive', name: 'ogna-archive', pageBuilder: (_, st) => settingsRoutePage(st, const ArchiveScreen())),
       GoRoute(
           path: '/archive/folder/:id',
           name: 'ogna-folder',
@@ -374,36 +380,38 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               child: ArchiveItemsScreen(
                   kind: st.pathParameters['kind'] ?? 'events',
                   accounts: archiveAccountsParam(st.uri.queryParameters['accounts'])))),
-      GoRoute(path: '/settings/folder-sync', name: 'folderSync', builder: (_, st) => WideFrame(child: FolderSyncSettingsScreen(accountId: st.uri.queryParameters['accountId']))),
-      GoRoute(path: '/settings/conflicts', name: 'conflicts', builder: (_, __) => const WideFrame(child: ConflictSettingsScreen())),
+      GoRoute(path: '/settings/folder-sync', name: 'folderSync', pageBuilder: (_, st) => settingsRoutePage(st, FolderSyncSettingsScreen(accountId: st.uri.queryParameters['accountId']))),
+      GoRoute(path: '/settings/conflicts', name: 'conflicts', pageBuilder: (_, st) => settingsRoutePage(st, const ConflictSettingsScreen())),
       GoRoute(path: '/contacts/duplicates', name: 'contacts-duplicates', builder: (_, __) => const WideFrame(child: DuplicateContactsScreen())),
       GoRoute(path: '/contacts/me', name: 'my-contact', builder: (_, __) => const WideFrame(child: MyContactScreen())),
-      GoRoute(path: '/settings/logs', name: 'log-viewer', builder: (_, __) => const LogViewerScreen()),
-      GoRoute(path: '/settings/auto-reply', name: 'auto-reply', builder: (_, st) => WideFrame(child: AutoReplyScreen(accountId: st.uri.queryParameters['accountId']))),
-      GoRoute(path: '/settings/signatures', name: 'signatures-settings', builder: (_, st) => WideFrame(child: SignaturesSettingsScreen(accountId: st.uri.queryParameters['accountId']))),
-      GoRoute(path: '/settings/accounts', name: 'accounts-settings', builder: (_, __) => const WideFrame(child: AccountsSettingsScreen())),
-      GoRoute(path: '/settings/account/:id', name: 'account-settings', builder: (_, st) => WideFrame(child: AccountScreen(accountId: st.pathParameters['id']!))),
+      GoRoute(path: '/settings/logs', name: 'log-viewer', pageBuilder: (_, st) => settingsRoutePage(st, const LogViewerScreen(), maxWidth: double.infinity)),
+      GoRoute(path: '/settings/auto-reply', name: 'auto-reply', pageBuilder: (_, st) => settingsRoutePage(st, AutoReplyScreen(accountId: st.uri.queryParameters['accountId']))),
+      GoRoute(path: '/settings/signatures', name: 'signatures-settings', pageBuilder: (_, st) => settingsRoutePage(st, SignaturesSettingsScreen(accountId: st.uri.queryParameters['accountId']))),
+      GoRoute(path: '/settings/accounts', name: 'accounts-settings', pageBuilder: (_, st) => settingsRoutePage(st, const AccountsSettingsScreen())),
+      GoRoute(path: '/settings/account/:id', name: 'account-settings', pageBuilder: (_, st) => settingsRoutePage(st, AccountScreen(accountId: st.pathParameters['id']!))),
       // «Расширенные настройки» ящика (1.8.0).
-      GoRoute(path: '/settings/account/:id/advanced', name: 'account-advanced', builder: (_, st) => WideFrame(child: AccountScreen(accountId: st.pathParameters['id']!, advanced: true))),
-      GoRoute(path: '/settings/security', name: 'security-settings', builder: (_, __) => const WideFrame(child: SecuritySettingsScreen())),
+      GoRoute(path: '/settings/account/:id/advanced', name: 'account-advanced', pageBuilder: (_, st) => settingsRoutePage(st, AccountScreen(accountId: st.pathParameters['id']!, advanced: true))),
+      GoRoute(path: '/settings/security', name: 'security-settings', pageBuilder: (_, st) => settingsRoutePage(st, const SecuritySettingsScreen())),
       GoRoute(
           path: '/settings/permissions',
           name: 'permissions-settings',
-          builder: (_, s) => WideFrame(child: PermissionsSettingsScreen(setup: s.uri.queryParameters['setup'] == '1'))),
+          // Первая настройка — без списка слева.
+          pageBuilder: (_, s) => settingsRoutePage(s, PermissionsSettingsScreen(setup: s.uri.queryParameters['setup'] == '1'),
+              split: s.uri.queryParameters['setup'] != '1')),
       // Первая настройка, шаг 2: календарь, контакты и папки ящика (1.6.12).
       GoRoute(path: '/setup/mailbox', name: 'setup-mailbox', builder: (_, __) => const WideFrame(child: SetupMailboxScreen())),
-      GoRoute(path: '/settings/aliases', name: 'aliases-settings', builder: (_, __) => const WideFrame(child: AliasesSettingsScreen())),
-      GoRoute(path: '/settings/notifications', name: 'notifications-settings', builder: (_, __) => const WideFrame(child: NotificationsSettingsScreen())),
-      GoRoute(path: '/settings/automation', name: 'automation', builder: (_, __) => const WideFrame(child: AutomationScreen())),
-      GoRoute(path: '/settings/about', name: 'about', builder: (_, __) => const WideFrame(child: AboutScreen())),
+      GoRoute(path: '/settings/aliases', name: 'aliases-settings', pageBuilder: (_, st) => settingsRoutePage(st, const AliasesSettingsScreen())),
+      GoRoute(path: '/settings/notifications', name: 'notifications-settings', pageBuilder: (_, st) => settingsRoutePage(st, const NotificationsSettingsScreen())),
+      GoRoute(path: '/settings/automation', name: 'automation', pageBuilder: (_, st) => settingsRoutePage(st, const AutomationScreen())),
+      GoRoute(path: '/settings/about', name: 'about', pageBuilder: (_, st) => settingsRoutePage(st, const AboutScreen())),
       // Вопросы и ответы (1.7.1); ?section=<id> — сразу нужный раздел.
       GoRoute(
           path: '/settings/faq',
           name: 'faq',
-          builder: (_, state) => WideFrame(child: FaqScreen(section: state.uri.queryParameters['section']))),
-      GoRoute(path: '/settings/swipes', name: 'swipe-settings', builder: (_, __) => const WideFrame(child: SwipeSettingsScreen())),
-      GoRoute(path: '/settings/groups', name: 'account-groups', builder: (_, __) => const WideFrame(child: AccountGroupsScreen())),
-      GoRoute(path: '/settings/shared-mailbox', name: 'shared-mailbox', builder: (_, state) => WideFrame(child: SharedMailboxScreen(parentId: state.uri.queryParameters['parent']))),
+          pageBuilder: (_, state) => settingsRoutePage(state, FaqScreen(section: state.uri.queryParameters['section']))),
+      GoRoute(path: '/settings/swipes', name: 'swipe-settings', pageBuilder: (_, st) => settingsRoutePage(st, const SwipeSettingsScreen())),
+      GoRoute(path: '/settings/groups', name: 'account-groups', pageBuilder: (_, st) => settingsRoutePage(st, const AccountGroupsScreen())),
+      GoRoute(path: '/settings/shared-mailbox', name: 'shared-mailbox', pageBuilder: (_, state) => settingsRoutePage(state, SharedMailboxScreen(parentId: state.uri.queryParameters['parent']))),
     ],
 
     errorBuilder: (context, state) {

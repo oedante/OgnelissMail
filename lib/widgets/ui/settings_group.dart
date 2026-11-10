@@ -164,8 +164,12 @@ class SettingsItem extends StatelessWidget {
   final String? hint;
 
   /// Подпись в одну строку с многоточием (адрес ящика: при крупном шрифте
-  /// он переносился посреди слова, 1.8.12).
+  /// он переносился посреди слова, 1.8.12). В списке разделов
+  /// ([SettingsNavList]) остаётся только такая подпись.
   final bool subtitleOneLine;
+
+  /// Раздел открыт справа (настройки в две колонки, 2.3.0).
+  final bool selected;
   const SettingsItem({
     super.key,
     this.icon,
@@ -177,23 +181,29 @@ class SettingsItem extends StatelessWidget {
     this.trailing,
     this.hint,
     this.subtitleOneLine = false,
+    this.selected = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final nav = SettingsNavList.of(context);
+    final sub = nav && !subtitleOneLine ? null : subtitle;
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: Space.l),
       minTileHeight: Sizes.tapTarget,
+      selected: selected,
+      selectedTileColor: scheme.secondaryContainer,
+      selectedColor: scheme.onSecondaryContainer,
       leading: leading ?? (icon == null ? null : Icon(icon, color: color ?? scheme.primary)),
-      title: TitleWithHelp(title, hint: hint, style: color == null ? null : TextStyle(color: color)),
-      subtitle: subtitle == null || subtitle!.isEmpty
+      title: TitleWithHelp(title, hint: nav ? null : hint, style: color == null ? null : TextStyle(color: color)),
+      subtitle: sub == null || sub.isEmpty
           ? null
-          : Text(subtitle!,
+          : Text(sub,
               maxLines: subtitleOneLine ? 1 : null,
               overflow: subtitleOneLine ? TextOverflow.ellipsis : null,
               softWrap: !subtitleOneLine),
-      trailing: trailing ?? (color == null && onTap != null ? const Icon(AppIcons.chevron_right) : null),
+      trailing: trailing ?? (color == null && onTap != null && !nav ? const Icon(AppIcons.chevron_right) : null),
       onTap: onTap == null
           ? null
           : () {
@@ -202,6 +212,18 @@ class SettingsItem extends StatelessWidget {
             },
     );
   }
+}
+
+/// Список разделов настроек слева в две колонки (2.3.0): строки
+/// [SettingsItem] — только название (адрес ящика остаётся), без «?» и «›»:
+/// раздел открывается рядом, справа.
+class SettingsNavList extends InheritedWidget {
+  const SettingsNavList({super.key, required super.child});
+
+  static bool of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<SettingsNavList>() != null;
+
+  @override
+  bool updateShouldNotify(SettingsNavList oldWidget) => false;
 }
 
 /// Переключатель в группе.
@@ -230,7 +252,7 @@ class SettingsSwitchItem extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(horizontal: Space.l),
       secondary: icon == null ? null : Icon(icon, color: scheme.primary),
       title: TitleWithHelp(title, hint: hint),
-      subtitle: subtitle == null || subtitle!.isEmpty ? null : Text(subtitle!),
+      subtitle: subtitle == null || subtitle!.isEmpty || SettingsNavList.of(context) ? null : Text(subtitle!),
       value: value,
       onChanged: onChanged,
     );

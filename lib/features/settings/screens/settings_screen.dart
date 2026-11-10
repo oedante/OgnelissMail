@@ -21,7 +21,7 @@ import '../providers/feature_flags_provider.dart';
 import '../../../services/security/pin_lock_service.dart';
 import '../../../services/mail/focus_mode_service.dart';
 import '../../../services/security/tracker_blocker.dart';
-import 'tracker_settings_screen.dart';
+import '../widgets/settings_split.dart';
 import '../../../services/background/foreground_sync_controller.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../widgets/common/text_scale_cap.dart';
@@ -32,7 +32,15 @@ import '../widgets/managed_policy_section.dart';
 import '../../../services/security/managed_config.dart';
 
 class SettingsScreen extends ConsumerWidget {
-  const SettingsScreen({super.key});
+  /// Список разделов слева в две колонки (компьютер, планшет —
+  /// [SettingsSplitFrame]): строки без пояснений, выбранный раздел выделен,
+  /// раздел открывается справа.
+  final bool pane;
+
+  /// Раздел, открытый справа ([currentSettingsSection]).
+  final String selected;
+
+  const SettingsScreen({super.key, this.pane = false, this.selected = '/settings'});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,26 +51,29 @@ class SettingsScreen extends ConsumerWidget {
     final mdmPin = ref.watch(managedPolicyProvider.select((p) => p.requireAppLock));
     final focusState = ref.watch(focusModeProvider);
     final trackerState = ref.watch(trackerBlockerProvider);
+    // Из списка раздел открывается с отметкой: в две колонки — справа
+    // вместо открытого, без «Назад».
+    void open(String location) => openSettingsSectionWith(
+        GoRouter.of(context), Navigator.of(context, rootNavigator: true), location,
+        split: pane);
+    bool sel(String location) => pane && settingsSectionSelected(location, selected);
 
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(
-        leading: IconButton(tooltip: l10n.tr('back'), icon: const Icon(AppIcons.arrow_back), onPressed: () => Navigator.of(context).pop()),
+        leading: IconButton(
+            tooltip: l10n.tr('back'),
+            icon: const Icon(AppIcons.arrow_back),
+            onPressed: () => pane ? closeSettings(context) : Navigator.of(context).pop()),
         title: Text(l10n.settingsLabel),
         actions: [
           IconButton(
             tooltip: l10n.tr('settingsSearchHint'),
             icon: const Icon(AppIcons.search),
-            onPressed: () => showSearch(context: context, delegate: SettingsSearchDelegate(l10n)),
+            onPressed: () => showSearch(context: context, delegate: SettingsSearchDelegate(l10n, split: pane)),
           ),
         ],
       )),
-      // На широком экране форма настроек в одну колонку во всю ширину читается
-      // плохо — ограничиваем (для форм комфортнее уже, чем для текста письма).
-      body: ReadableWidth(
-        maxWidth: 720,
-        child: ListView(
-        padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xl),
-        children: [
+      body: _list([
           // ── Управляется организацией (MDM, 1.10.5) — только если задано.
           const ManagedPolicySection(),
           // ── Аккаунты: настройки ящика (подпись, адреса, синхронизация папок,
@@ -83,13 +94,15 @@ class SettingsScreen extends ConsumerWidget {
                 title: a.displayName,
                 subtitle: a.email,
                 subtitleOneLine: true,
-                onTap: () => context.push('/settings/account/${Uri.encodeComponent(a.id)}'),
+                selected: sel('/settings/account/${Uri.encodeComponent(a.id)}'),
+              onTap: () => open('/settings/account/${Uri.encodeComponent(a.id)}'),
               ),
             SettingsItem(
               icon: AppIcons.manage_accounts,
               title: l10n.tr('accounts'),
               subtitle: l10n.tr('accountsManageSubtitle'),
-              onTap: () => context.push('/settings/accounts'),
+              selected: sel('/settings/accounts'),
+              onTap: () => open('/settings/accounts'),
             ),
             SettingsItem(
               icon: AppIcons.add,
@@ -117,7 +130,8 @@ class SettingsScreen extends ConsumerWidget {
               icon: AppIcons.folder_shared,
               title: l10n.tr('accountGroups'),
               subtitle: l10n.tr('accountGroupsSubtitle'),
-              onTap: () => context.push('/settings/groups'),
+              selected: sel('/settings/groups'),
+              onTap: () => open('/settings/groups'),
             ),
           ]),
 
@@ -129,19 +143,22 @@ class SettingsScreen extends ConsumerWidget {
               icon: AppIcons.format_paint,
               title: l10n.tr('appearanceTitle'),
               subtitle: l10n.tr('appearanceDesc'),
-              onTap: () => context.push('/settings/appearance'),
+              selected: sel('/settings/appearance'),
+              onTap: () => open('/settings/appearance'),
             ),
             SettingsItem(
               icon: AppIcons.palette,
               title: l10n.tr('general'),
               subtitle: '${l10n.tr('language')}, ${l10n.tr('fontSize')}',
-              onTap: () => context.push('/settings/general'),
+              selected: sel('/settings/general'),
+              onTap: () => open('/settings/general'),
             ),
             SettingsItem(
               icon: AppIcons.accessibility_new,
               title: l10n.tr('accessibility'),
               subtitle: l10n.tr('highContrast'),
-              onTap: () => context.push('/settings/accessibility'),
+              selected: sel('/settings/accessibility'),
+              onTap: () => open('/settings/accessibility'),
             ),
           ]),
 
@@ -156,7 +173,8 @@ class SettingsScreen extends ConsumerWidget {
                 settings.notificationsEnabled ? l10n.tr('enabled') : l10n.tr('disabled'),
                 if (focusState.isEnabled) '${l10n.tr('focusMode')}: ${focusState.deliveryTimes.join(', ')}',
               ].join(' · '),
-              onTap: () => context.push('/settings/notifications'),
+              selected: sel('/settings/notifications'),
+              onTap: () => open('/settings/notifications'),
             ),
           ]),
 
@@ -167,40 +185,46 @@ class SettingsScreen extends ConsumerWidget {
               icon: AppIcons.mail,
               title: l10n.tr('emailSettings'),
               subtitle: l10n.tr('emailSettingsDesc'),
-              onTap: () => context.push('/settings/mail'),
+              selected: sel('/settings/mail'),
+              onTap: () => open('/settings/mail'),
             ),
             SettingsItem(
               icon: AppIcons.swipe,
               title: l10n.tr('swipeSettings'),
               subtitle: l10n.tr('swipeHint'),
-              onTap: () => context.push('/settings/swipes'),
+              selected: sel('/settings/swipes'),
+              onTap: () => open('/settings/swipes'),
             ),
             if (kRulesAndCategoriesEnabled)
             SettingsItem(
               icon: AppIcons.label,
               title: l10n.tr('categories'),
               subtitle: l10n.tr('categoriesDesc'),
-              onTap: () => context.push('/settings/categories'),
+              selected: sel('/settings/categories'),
+              onTap: () => open('/settings/categories'),
             ),
             SettingsItem(
               icon: AppIcons.article,
               title: l10n.tr('templatesSignature'),
               subtitle: l10n.tr('templatesSignatureDesc'),
-              onTap: () => context.push('/settings/templates'),
+              selected: sel('/settings/templates'),
+              onTap: () => open('/settings/templates'),
             ),
             // Правила на телефоне и VIP — тот же экран, что из «Уведомлений».
             SettingsItem(
               icon: AppIcons.rule,
               title: l10n.tr('vipRulesTitle'),
               subtitle: l10n.tr('vipRulesDesc'),
-              onTap: () => context.push('/vip-settings'),
+              selected: sel('/vip-settings'),
+              onTap: () => open('/vip-settings'),
             ),
             if (kRulesAndCategoriesEnabled)
             SettingsItem(
               icon: AppIcons.rule,
               title: l10n.tr('automation'),
               subtitle: l10n.tr('automationDesc'),
-              onTap: () => context.push('/settings/automation'),
+              selected: sel('/settings/automation'),
+              onTap: () => open('/settings/automation'),
             ),
           ]),
 
@@ -211,26 +235,30 @@ class SettingsScreen extends ConsumerWidget {
               icon: AppIcons.calendar_today,
               title: l10n.tr('calendar'),
               subtitle: l10n.tr('calendarModuleDesc'),
-              onTap: () => context.push('/settings/calendar'),
+              selected: sel('/settings/calendar'),
+              onTap: () => open('/settings/calendar'),
             ),
             SettingsItem(
               icon: AppIcons.contacts,
               title: l10n.contactsLabel,
               subtitle: l10n.tr('contactsModuleDesc'),
-              onTap: () => context.push('/settings/contacts'),
+              selected: sel('/settings/contacts'),
+              onTap: () => open('/settings/contacts'),
             ),
             SettingsItem(
               icon: AppIcons.check_box,
               title: l10n.tasksLabel,
               subtitle: l10n.tr('tasksModuleDesc'),
-              onTap: () => context.push('/settings/tasks'),
+              selected: sel('/settings/tasks'),
+              onTap: () => open('/settings/tasks'),
             ),
             if (ref.watch(featureFlagsProvider).showNotes)
               SettingsItem(
                 icon: AppIcons.sticky_note_2,
                 title: l10n.tr('notes'),
                 subtitle: l10n.tr('mailModuleDesc'),
-                onTap: () => context.push('/settings/notes'),
+                selected: sel('/settings/notes'),
+              onTap: () => open('/settings/notes'),
               ),
           ]),
 
@@ -258,20 +286,22 @@ class SettingsScreen extends ConsumerWidget {
               icon: AppIcons.visibility_off,
               title: l10n.tr('trackerBlocker'),
               subtitle: '${trackerState.totalBlocked} ${l10n.tr('trackersBlocked').toLowerCase()}',
-              onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const TrackerSettingsScreen())),
+              selected: sel('/settings/trackers'),
+              onTap: () => open('/settings/trackers'),
             ),
             SettingsItem(
               icon: AppIcons.verified_user,
               title: l10n.tr('connectionSecurity'),
               subtitle: l10n.tr('connectionSecurityDesc'),
-              onTap: () => context.push('/settings/security'),
+              selected: sel('/settings/security'),
+              onTap: () => open('/settings/security'),
             ),
             SettingsItem(
               icon: AppIcons.shield,
               title: l10n.tr('dlpTitle'),
               subtitle: l10n.tr('dlpSettingsDesc'),
-              onTap: () => context.push('/settings/dlp'),
+              selected: sel('/settings/dlp'),
+              onTap: () => open('/settings/dlp'),
             ),
             // Система замораживает приложение — подсказка прямо в строке.
             SettingsItem(
@@ -280,7 +310,8 @@ class SettingsScreen extends ConsumerWidget {
               subtitle: ForegroundSyncController.frozenRecently(ref.read(sharedPrefsProvider))
                   ? '⚠ ${l10n.tr('bgFrozenTitle')}'
                   : l10n.tr('permissionsDesc'),
-              onTap: () => context.push('/settings/permissions'),
+              selected: sel('/settings/permissions'),
+              onTap: () => open('/settings/permissions'),
             ),
           ]),
 
@@ -293,20 +324,23 @@ class SettingsScreen extends ConsumerWidget {
               icon: AppIcons.inventory_2,
               title: l10n.tr('ognaArchive'),
               subtitle: l10n.tr('archiveSettingsDesc'),
-              onTap: () => context.push('/settings/archive'),
+              selected: sel('/settings/archive'),
+              onTap: () => open('/settings/archive'),
             ),
             // Резервная копия ящиков и настроек — перенос на новый телефон.
             SettingsItem(
               icon: AppIcons.settings_backup_restore,
               title: l10n.tr('backupTitle'),
               subtitle: l10n.tr('backupDesc'),
-              onTap: () => context.push('/settings/backup'),
+              selected: sel('/settings/backup'),
+              onTap: () => open('/settings/backup'),
             ),
             SettingsItem(
               icon: AppIcons.storage,
               title: l10n.tr('storage'),
               subtitle: l10n.tr('storageDesc'),
-              onTap: () => context.push('/settings/storage'),
+              selected: sel('/settings/storage'),
+              onTap: () => open('/settings/storage'),
             ),
           ]),
 
@@ -318,34 +352,44 @@ class SettingsScreen extends ConsumerWidget {
               icon: AppIcons.tune,
               title: l10n.tr('advancedSettings'),
               subtitle: l10n.tr('advancedSettingsDesc'),
-              onTap: () => context.push('/settings/advanced'),
+              selected: sel('/settings/advanced'),
+              onTap: () => open('/settings/advanced'),
             ),
             // Функции на пробе (1.10.3), по умолчанию выключены.
             SettingsItem(
               icon: AppIcons.science,
               title: l10n.tr('experimentalTitle'),
               subtitle: l10n.tr('experimentalDesc'),
-              onTap: () => context.push('/settings/experimental'),
+              selected: sel('/settings/experimental'),
+              onTap: () => open('/settings/experimental'),
             ),
             // Вопросы и ответы по разделам приложения и настройкам (1.7.1).
             SettingsItem(
               icon: AppIcons.help,
               title: l10n.tr('faqTitle'),
               subtitle: l10n.tr('faqDesc'),
-              onTap: () => context.push('/settings/faq'),
+              selected: sel('/settings/faq'),
+              onTap: () => open('/settings/faq'),
             ),
             SettingsItem(
               icon: AppIcons.info,
               title: l10n.tr('about'),
               subtitle: '${AppConstants.appName} v${AppConstants.appVersion}',
-              onTap: () => context.push('/settings/about'),
+              selected: sel('/settings/about'),
+              onTap: () => open('/settings/about'),
             ),
           ]),
 
-        ],
-      ),
-      ),
+      ]),
     );
+  }
+
+  Widget _list(List<Widget> children) {
+    const padding = EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xl);
+    if (pane) return SettingsNavList(child: _PaneList(padding: padding, children: children));
+    // На широком экране форма настроек в одну колонку во всю ширину читается
+    // плохо — ограничиваем (для форм комфортнее уже, чем для текста письма).
+    return ReadableWidth(maxWidth: 720, child: ListView(padding: padding, children: children));
   }
 
   // ════════════════════════ SHEETS ════════════════════════
@@ -379,4 +423,38 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Список слева: место прокрутки общее для всех страниц настроек — выбор
+/// раздела внизу списка не возвращает список к началу.
+class _PaneList extends StatefulWidget {
+  final EdgeInsets padding;
+  final List<Widget> children;
+  const _PaneList({required this.padding, required this.children});
+
+  @override
+  State<_PaneList> createState() => _PaneListState();
+}
+
+class _PaneListState extends State<_PaneList> {
+  static double _offset = 0;
+  late final ScrollController _c = ScrollController(initialScrollOffset: _offset);
+
+  @override
+  void initState() {
+    super.initState();
+    _c.addListener(() {
+      if (_c.hasClients) _offset = _c.offset;
+    });
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      ListView(controller: _c, padding: widget.padding, children: widget.children);
 }

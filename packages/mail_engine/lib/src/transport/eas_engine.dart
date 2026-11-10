@@ -20,6 +20,7 @@ import '../models/models.dart';
 import 'autodiscover.dart';
 import 'base64_off.dart';
 import 'wbxml_codec.dart';
+import 'preheader.dart';
 
 /// Коды команд EAS (MS-ASHTTP) для Base64 command line.
 const Map<String, int> easCommandCodes = {
@@ -2656,7 +2657,10 @@ class EasEngine implements MailEngine {
     }
     // Своё превью из тела — с переносами строк (1.6.31: настройка «строк в
     // ленте»); превью сервера (одной строкой) — если тела нет.
-    preview = _makePreview(bodyPlain ?? bodyHtml) ?? _decodeNumericEntities(appData.childText('Preview'));
+    // Прехедер рассылки — то, что отправитель задумал как превью (2.2.0).
+    preview = Preheader.of(bodyHtml) ??
+        _makePreview(bodyPlain ?? bodyHtml) ??
+        _decodeNumericEntities(appData.childText('Preview'));
     // Тело обрезано сервером (TruncationSize). Раньше обрезок сохранялся как
     // полное тело, и экран письма не догружал остальное: длинные письма
     // читались до середины, а у HTML ломалась разметка. Теперь обрезок идёт

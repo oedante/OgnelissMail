@@ -38,5 +38,8 @@ iPhone и Mac: первая сборка ядра Rust — несколько м
 - **Gmail**: в `config/dart_defines.json` `GOOGLE_DESKTOP_CLIENT_ID` — ID
   клиента «Desktop app» (не Android); через час после входа на телефоне
   Gmail больше не просит «Войти снова».
+- **Рассылка в окне браузера**: письмо «You were mentioned in a post»
+  (Google Cloud Security Community) — текст на всю ширину письма, без
+  широкой серой колонки слева.
 
 Сборка — как у 2.2.0 (`OWNER_STEPS_2.2.0.md`, разделы 3 и 3а).

@@ -1,8 +1,11 @@
 // lib/core/utils/person_names.dart
 // Имена людей в письмах и уведомлениях (1.5.9).
 //
+//  · [PersonNames.full] — полное имя для уведомлений о новом письме (2.2.x,
+//    просьба владельца 10.11.2026: «полное наименование отправителя без
+//    сокращения до "Фамилия И.О."»).
 //  · [PersonNames.short] — «Фамилия И.О.» для тесных мест: панель
-//    получателей, уведомления. Правила:
+//    получателей. Правила:
 //      «Морозов Андрей Николаевич» (ФИО с отчеством)  → «Морозов А.Н.»
 //      «Смирнов, Андрей» (Exchange: «Фамилия, Имя»)       → «Смирнов А.»
 //      «John Smith» (латиница, имя и фамилия)            → «Smith J.»
@@ -34,6 +37,24 @@ class PersonNames {
         .replaceAll(RegExp(r'\s+'), ' ')
         .trim();
     if (n.contains('@')) return '';
+    return n;
+  }
+
+  /// Полное имя без сокращений, как его написал отправитель; только
+  /// «Фамилия, Имя Отчество» (так Exchange пишет имена) — без запятой.
+  /// [email] — когда имени нет.
+  static String full(String? displayName, {String email = ''}) {
+    final n = clean(displayName);
+    if (n.isEmpty) return email;
+    final comma = n.indexOf(',');
+    if (comma > 0 && !_orgMarkers.hasMatch(n) && !n.contains('&')) {
+      final last = n.substring(0, comma).trim();
+      final rest = n.substring(comma + 1).trim();
+      final words = [last, ...rest.split(' ')].where((w) => w.isNotEmpty).toList();
+      if (words.length >= 2 && words.length <= 4 && words.every((w) => _cyrWord.hasMatch(w) || _latWord.hasMatch(w))) {
+        return words.join(' ');
+      }
+    }
     return n;
   }
 

@@ -58,4 +58,25 @@ void main() {
     expect(PersonNames.russianOrder('Аксенов Дмитрий'), 'Аксенов Дмитрий');
     expect(PersonNames.russianOrder('John Smith Jr'), 'John Smith Jr');
   });
+
+  // Уведомления о новом письме (2.2.x, просьба владельца 10.11.2026):
+  // полное имя отправителя, без «Фамилия И.О.».
+  group('полное имя для уведомлений', () {
+    test('ФИО — целиком', () {
+      expect(PersonNames.full('Морозов Андрей Николаевич'), 'Морозов Андрей Николаевич');
+      expect(PersonNames.full('"Иванова Мария Петровна"'), 'Иванова Мария Петровна');
+    });
+
+    test('Exchange «Фамилия, Имя Отчество» — без запятой', () {
+      expect(PersonNames.full('Смирнов, Андрей Сергеевич'), 'Смирнов Андрей Сергеевич');
+      expect(PersonNames.full('Smith, John'), 'Smith John');
+    });
+
+    test('порядок слов — как у отправителя, организации и адрес — как есть', () {
+      expect(PersonNames.full('Евгений Геннадьевич Волков'), 'Евгений Геннадьевич Волков');
+      expect(PersonNames.full('ООО «Ромашка», отдел продаж'), 'ООО Ромашка, отдел продаж');
+      expect(PersonNames.full('', email: 'info@example.com'), 'info@example.com');
+      expect(PersonNames.full('John Smith'), 'John Smith');
+    });
+  });
 }

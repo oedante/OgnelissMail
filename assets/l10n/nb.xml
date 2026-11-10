@@ -4091,4 +4091,6 @@
     <string name="assignMarkAs">Merk som: {status}</string>
     <string name="assignMarkLocalHint">Bare hos deg – utføreren får ingen e-post</string>
     <string name="assignMarkedManually">Merket manuelt</string>
+    <string name="readingPaneAskTitle">Hvordan skal e-post åpnes?</string>
+    <string name="readingPaneAskHint">Kan endres i listens meny ⋮ → «{pane}»</string>
 </resources>

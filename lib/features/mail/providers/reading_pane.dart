@@ -71,3 +71,35 @@ Future<void> pickReadingPane(BuildContext context, WidgetRef ref) async {
   );
   if (picked != null) await ref.read(readingPaneProvider.notifier).set(picked);
 }
+
+/// Спросили ли при первом запуске (2.3.0).
+const readingPaneAskedKey = 'reading_pane_asked_v1';
+
+/// Первый запуск на планшете и компьютере (2.3.0, решение владельца
+/// 10.11.2026: «спрашивать при первом запуске»; замечание: «письмо
+/// открывается на часть экрана, непонятная основная область»): как
+/// открывать письма — рядом с лентой, под ней или на весь экран. Один раз и
+/// только если вид ещё не выбирали; закрыли без выбора — как было (рядом).
+/// Дальше — меню «⋮» ленты → «Область чтения».
+Future<void> maybeAskReadingPane(BuildContext context, WidgetRef ref) async {
+  final prefs = ref.read(sharedPrefsProvider);
+  if (prefs.getBool(readingPaneAskedKey) == true || prefs.getString(ReadingPaneNotifier._k) != null) return;
+  await prefs.setBool(readingPaneAskedKey, true);
+  if (!context.mounted) return;
+  final l10n = AppLocalizations.of(context);
+  final picked = await showChoiceSheet<PanePosition>(
+    context,
+    title: l10n.tr('readingPaneAskTitle'),
+    subtitle: l10n.tr('readingPaneAskHint').replaceAll('{pane}', l10n.tr('readingPane')),
+    entries: [
+      for (final p in const [PanePosition.right, PanePosition.hidden, PanePosition.bottom])
+        AppMenuEntry(
+          value: p,
+          icon: readingPaneLabel(l10n, p).icon,
+          label: readingPaneLabel(l10n, p).label,
+          subtitle: readingPaneLabel(l10n, p).hint,
+        ),
+    ],
+  );
+  if (picked != null) await ref.read(readingPaneProvider.notifier).set(picked);
+}

@@ -4091,4 +4091,6 @@
     <string name="assignMarkAs">İşaretle: {status}</string>
     <string name="assignMarkLocalHint">Yalnızca sizde — sorumluya e-posta gitmez</string>
     <string name="assignMarkedManually">Elle işaretlendi</string>
+    <string name="readingPaneAskTitle">E-postalar nasıl açılsın?</string>
+    <string name="readingPaneAskHint">Listenin ⋮ menüsünden → “{pane}” ile değiştirilebilir</string>
 </resources>

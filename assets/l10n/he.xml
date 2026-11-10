@@ -4112,4 +4112,6 @@
     <string name="assignMarkAs">סימון: {status}</string>
     <string name="assignMarkLocalHint">רק אצלך — לא יישלח דואר למבצע</string>
     <string name="assignMarkedManually">סומן ידנית</string>
+    <string name="readingPaneAskTitle">איך לפתוח הודעות?</string>
+    <string name="readingPaneAskHint">אפשר לשנות בתפריט ⋮ של הרשימה ← „{pane}”</string>
 </resources>

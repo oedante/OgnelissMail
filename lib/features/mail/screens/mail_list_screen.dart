@@ -264,6 +264,10 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     // Infinite scroll — подгрузка при приближении к концу
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addObserver(this);
+    // Планшет и компьютер, первый запуск (2.3.0): как открывать письма.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !AppBottomBar.inUse(context)) unawaited(maybeAskReadingPane(context, ref));
+    });
     // Ctrl+E / Ctrl+Shift+F на десктопе — открыть поиск.
     ref.listenManual<int>(mailSearchRequestProvider, (_, __) {
       if (mounted && !_isSearching) setState(() => _isSearching = true);

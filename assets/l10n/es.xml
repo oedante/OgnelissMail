@@ -4091,4 +4091,6 @@
     <string name="assignMarkAs">Marcar como: {status}</string>
     <string name="assignMarkLocalHint">Solo para ti: no se envía correo al responsable</string>
     <string name="assignMarkedManually">Marcado manualmente</string>
+    <string name="readingPaneAskTitle">¿Cómo abrir los correos?</string>
+    <string name="readingPaneAskHint">Se puede cambiar en el menú ⋮ de la lista → «{pane}»</string>
 </resources>

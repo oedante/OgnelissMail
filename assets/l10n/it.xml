@@ -4091,4 +4091,6 @@
     <string name="assignMarkAs">Segna come: {status}</string>
     <string name="assignMarkLocalHint">Solo per te: all’incaricato non viene inviata alcuna email</string>
     <string name="assignMarkedManually">Segnato manualmente</string>
+    <string name="readingPaneAskTitle">Come aprire le email?</string>
+    <string name="readingPaneAskHint">Puoi cambiarlo dal menu ⋮ dell’elenco → «{pane}»</string>
 </resources>

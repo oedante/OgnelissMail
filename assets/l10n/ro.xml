@@ -4112,4 +4112,6 @@
     <string name="assignMarkAs">Marchează: {status}</string>
     <string name="assignMarkLocalHint">Doar la dvs. — executantul nu primește e-mail</string>
     <string name="assignMarkedManually">Marcat manual</string>
+    <string name="readingPaneAskTitle">Cum să se deschidă e-mailurile?</string>
+    <string name="readingPaneAskHint">Se poate schimba din meniul ⋮ al listei → „{pane}”</string>
 </resources>

@@ -4091,4 +4091,6 @@
     <string name="assignMarkAs">Mark as: {status}</string>
     <string name="assignMarkLocalHint">Only for you — no email is sent to the assignee</string>
     <string name="assignMarkedManually">Marked manually</string>
+    <string name="readingPaneAskTitle">How should emails open?</string>
+    <string name="readingPaneAskHint">You can change this in the list ⋮ menu → {pane}</string>
 </resources>

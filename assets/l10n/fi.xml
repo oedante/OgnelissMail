@@ -4091,4 +4091,6 @@
     <string name="assignMarkAs">Merkitse: {status}</string>
     <string name="assignMarkLocalHint">Vain sinulle – tekijä ei saa sähköpostia</string>
     <string name="assignMarkedManually">Merkitty käsin</string>
+    <string name="readingPaneAskTitle">Miten viestit avataan?</string>
+    <string name="readingPaneAskHint">Voit vaihtaa listan valikosta ⋮ → {pane}</string>
 </resources>

@@ -4112,4 +4112,6 @@
     <string name="assignMarkAs">Označiť: {status}</string>
     <string name="assignMarkLocalHint">Len u vás — riešiteľ e-mail nedostane</string>
     <string name="assignMarkedManually">Označené ručne</string>
+    <string name="readingPaneAskTitle">Ako otvárať e-maily?</string>
+    <string name="readingPaneAskHint">Zmeníte v ponuke ⋮ zoznamu → „{pane}“</string>
 </resources>

@@ -4079,4 +4079,12 @@
     <string name="swipeTwoStepHint">Vedä riviä ja päästä irti – toiminto suoritetaan. Lyhyt pyyhkäisy tekee ensimmäisen toiminnon, pitkä toisen; kuvake ja teksti näyttävät kumman. Liian aikaisin irrotettu rivi palaa paikalleen. Sen jälkeen rivillä näkyy, mitä tehtiin, ja Kumoa.</string>
     <string name="swipeTwoStepTitle">Lyhyt ja pitkä pyyhkäisy</string>
     <string name="swipeTwoStepSub">Kaksi toimintoa samalla puolella: lyhyt pyyhkäisy tekee ensimmäisen, pitkä toisen, ilman painikkeita. Pois – pyyhkäisy näyttää painikkeet ja valitset</string>
+    <string name="barSettingsTitle">Alapalkki</string>
+    <string name="barSettingsHelp">Kaksi osiota kummallakin puolella Luo-painiketta, joka pysyy aina keskellä. Palkista poistettu osio näkyy valikon Suosikeissa.</string>
+    <string name="barSettingsHint">Valitse osio napauttamalla paikkaa</string>
+    <string name="barSlot">Paikka</string>
+    <string name="barSlotPick">Osio tässä paikassa</string>
+    <string name="barMenuStays">Valikko on aina palkissa – voit vaihtaa sen paikkaa toisen osion kanssa</string>
+    <string name="barSwap">Vaihtavat paikkaa</string>
+    <string name="barReset">Palauta oletus</string>
 </resources>

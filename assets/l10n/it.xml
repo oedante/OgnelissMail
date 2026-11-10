@@ -4079,4 +4079,12 @@
     <string name="swipeTwoStepHint">Trascina una riga e rilascia: l’azione viene eseguita. Uno scorrimento breve esegue la prima azione, uno lungo la seconda; icona ed etichetta indicano quale. Rilasciata troppo presto, la riga torna al suo posto. Poi la riga mostra cosa è stato fatto, con Annulla.</string>
     <string name="swipeTwoStepTitle">Scorrimento breve e lungo</string>
     <string name="swipeTwoStepSub">Due azioni su un lato: lo scorrimento breve esegue la prima, quello lungo la seconda, senza pulsanti. Disattivato: lo scorrimento mostra i pulsanti e scegli tu</string>
+    <string name="barSettingsTitle">Barra inferiore</string>
+    <string name="barSettingsHelp">Due sezioni per lato del pulsante «Crea», che resta sempre al centro. Una sezione tolta dalla barra compare nei Preferiti del menu.</string>
+    <string name="barSettingsHint">Tocca una posizione per scegliere una sezione</string>
+    <string name="barSlot">Posizione</string>
+    <string name="barSlotPick">Sezione in questa posizione</string>
+    <string name="barMenuStays">«Menu» resta sempre sulla barra: puoi scambiarlo con un’altra sezione</string>
+    <string name="barSwap">Si scambieranno di posto</string>
+    <string name="barReset">Ripristina predefinito</string>
 </resources>

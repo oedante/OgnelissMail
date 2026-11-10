@@ -43,7 +43,8 @@ import 'package:badges/badges.dart' as badges;
 import '../../l10n/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
 import '../../features/mail/providers/mail_providers.dart';
-import '../../features/mail/providers/drawer_prefs.dart' show menuOnRightProvider;
+import '../../features/mail/providers/drawer_prefs.dart' show BarItem, PhoneBarNotifier, phoneBarProvider;
+import 'phone_bar.dart';
 import '../../features/settings/providers/settings_provider.dart';
 import '../../services/security/pin_lock_service.dart';
 import '../../services/maintenance/maintenance_service.dart';
@@ -500,81 +501,81 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
     ];
   }
 
-  // ── Телефон: панель «Почта · Календарь · [Создать] · Контакты · Ещё» ──
+  // ── Телефон: панель «Почта · Календарь · [Создать] · Контакты · Меню» ──
+  // С 2.2.0 разделы на четырёх местах выбирает пользователь («Общие →
+  // Нижняя панель», phoneBarProvider); «Создать» — всегда в центре.
 
-  static const _phoneRoots = {'/mail', '/calendar', '/contacts', '/tasks', '/notes', '/my-day'};
+  static const _phoneRoots = {
+    '/mail', '/calendar', '/contacts', '/tasks', '/notes', '/my-day', '/assignments', '/files',
+  };
 
-  int _phoneIndex(String path) {
-    if (path.startsWith('/calendar')) return 1;
-    if (path.startsWith('/contacts')) return 2;
-    if (path.startsWith('/tasks') || path.startsWith('/notes') || path.startsWith('/my-day')) return 3;
-    return 0;
-  }
+  /// Индекс боковой полосы для раздела (её выбор и смена экрана).
+  static int _railIndexOf(BarItem i) => switch (i) {
+        BarItem.mail => 0,
+        BarItem.calendar => 1,
+        BarItem.contacts => 2,
+        _ => 3,
+      };
+
+  /// Разделы на панели сейчас: выключенные в «Профиле» заменены доступными.
+  List<BarItem> _barItems() => PhoneBarNotifier.visible(ref.watch(phoneBarProvider), barAvailability(ref));
 
   Widget _phoneBar(BuildContext context, AppLocalizations l10n, ThemeData theme, int unreadCount) {
     final path = GoRouterState.of(context).uri.path;
-    final all = _buildDestinations(l10n, unreadCount);
-    // «Почта» — с аватаром текущего ящика (или значком «Все аккаунты» /
-    // группы) вместо конверта: одна кнопка и для раздела, и для ящиков. В
-    // почте нажатие открывает меню ящиков и папок, из другого раздела —
-    // переход в почту (09.10.2026: отдельный аватар отнимал место у вкладок).
-    // 1.6.40 (решение владельца 18.10.2026): «Почта» — снова значком
-    // конверта; портрет ящика — справа, на месте «Ещё»: открывает меню ящиков,
-    // папок и избранного (там теперь и «Мой день», задачи, заметки,
-    // настройки и тема). Меню и «Ещё» дублировали друг друга, а справа
-    // внизу портрет под большим пальцем.
-    final mailBadge = unreadCount;
+    // 1.6.40 (решение владельца 18.10.2026): «Почта» — значком конверта;
+    // портрет ящика — «Меню»: открывает меню ящиков, папок и избранного
+    // (там «Мой день», задачи, заметки, настройки и тема). Сторона «Меню» —
+    // та, откуда выезжает меню (menuOnRightProvider, согласована с
+    // порядком панели).
     Widget mailIcon(bool selected) => badges.Badge(
-          showBadge: mailBadge > 0,
-          badgeContent: Text(mailBadge > 99 ? '99+' : '$mailBadge',
+          showBadge: unreadCount > 0,
+          badgeContent: Text(unreadCount > 99 ? '99+' : '$unreadCount',
               style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
           badgeStyle: const badges.BadgeStyle(badgeColor: AppColors.errorRed, padding: EdgeInsets.all(Space.xs)),
           child: Icon(AppIcons.mail, fill: selected ? 1.0 : 0.0),
         );
-    final logical = [
-      NavigationDestination(icon: mailIcon(false), selectedIcon: mailIcon(true), label: l10n.mail),
-      all[1],
-      all[2],
-      NavigationDestination(
-        icon: _accountAvatar(theme, selected: false),
-        selectedIcon: _accountAvatar(theme, selected: true),
-        label: l10n.tr('barMenu'),
-      ),
-    ];
-    // Портрет «Меню» — с той стороны, откуда выезжает меню (настройка
-    // «Меню ящиков и папок»: слева по умолчанию или справа, 1.6.40).
-    final order = ref.watch(menuOnRightProvider) ? const [0, 1, 2, 3] : const [3, 0, 1, 2];
-    final destinations = [for (final i in order) logical[i]];
+    final items = _barItems();
+    NavigationDestination dest(BarItem i) => switch (i) {
+          BarItem.mail => NavigationDestination(icon: mailIcon(false), selectedIcon: mailIcon(true), label: l10n.mail),
+          // Число дня — по центру листа значка (CalendarDayIcon).
+          BarItem.calendar => NavigationDestination(
+              icon: const CalendarDayIcon(), selectedIcon: const CalendarDayIcon(), label: l10n.calendarLabel),
+          BarItem.menu => NavigationDestination(
+              icon: _accountAvatar(theme, selected: false),
+              selectedIcon: _accountAvatar(theme, selected: true),
+              label: l10n.tr('barMenu'),
+            ),
+          _ => NavigationDestination(
+              icon: Icon(barIcon(i)), selectedIcon: Icon(barIcon(i), fill: 1), label: barLabel(i, l10n)),
+        };
     // Нижняя панель — всегда по теме (решение владельца 13.10.2026): цвет
     // ящика окрашивает только верхнюю панель ленты. В 1.6.2 окрашивались обе.
     return AppBottomBar(
-      selectedIndex: order.indexOf(_phoneIndex(path)),
-      destinations: destinations,
+      selectedIndex: barSelected(items, path),
+      destinations: [for (final i in items) dest(i)],
       // В режиме выбора писем внизу — панель действий списка; центральная
       // кнопка там не нужна.
       center: path == '/mail' && ref.watch(mailSelectionActiveProvider) ? null : _centerAction(context, l10n, path),
-      onSelected: (i) {
-        switch (order[i]) {
-          case 0:
-            // Уже в ленте — к её началу (1.6.49, как повторное нажатие на
-            // «Чаты» в Telegram).
-            if (path == '/mail') {
-              ref.read(mailScrollTopRequestProvider.notifier).state++;
-              return;
-            }
-            _goPhone(0, '/mail');
-          case 1:
-            _goPhone(1, '/calendar');
-          case 2:
-            _goPhone(2, '/contacts');
-          default:
-            _openMenu();
+      onSelected: (n) {
+        final item = items[n];
+        final route = barRoute(item);
+        if (route == null) {
+          _openMenu();
+          return;
         }
+        // Уже в ленте — к её началу (1.6.49, как повторное нажатие на
+        // «Чаты» в Telegram).
+        if (item == BarItem.mail && path == '/mail') {
+          ref.read(mailScrollTopRequestProvider.notifier).state++;
+          return;
+        }
+        if (path == route) return;
+        _goPhone(_railIndexOf(item), route);
       },
       // Долгое нажатие на «Почту» или портрет — смена ящика прямо под
       // пальцем, без меню папок.
-      onLongPressed: (i) {
-        if (order[i] == 0 || order[i] == 3) unawaited(_pickAccount(context, l10n));
+      onLongPressed: (n) {
+        if (items[n] == BarItem.mail || items[n] == BarItem.menu) unawaited(_pickAccount(context, l10n));
       },
     );
   }
@@ -702,6 +703,13 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
               unawaited(showAssignSheet(context, due: path.startsWith('/calendar') ? CalendarScreen.selectedDay : null));
             }
           });
+    }
+    // «Поручения» — новое поручение (2.2.0).
+    if (path.startsWith('/assignments')) {
+      return PanelAction(
+          icon: AppIcons.add,
+          label: l10n.tr('assignNew'),
+          onPressed: () => unawaited(showAssignSheet(context)));
     }
     if (path.startsWith('/contacts')) {
       return PanelAction(

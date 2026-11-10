@@ -4079,4 +4079,12 @@
     <string name="swipeTwoStepHint">Bir satırı sürükleyip bırakın, işlem yapılır. Kısa kaydırma ilk işlemi, uzun kaydırma ikinci işlemi yapar; simge ve etiket hangisinin yapılacağını gösterir. Erken bırakırsanız satır yerine döner. Ardından satırda ne yapıldığı ve Geri al düğmesi görünür.</string>
     <string name="swipeTwoStepTitle">Kısa ve uzun kaydırma</string>
     <string name="swipeTwoStepSub">Bir tarafta iki işlem: kısa kaydırma ilkini, uzun kaydırma ikincisini düğmesiz yapar. Kapalı — kaydırma düğmeleri gösterir, siz seçersiniz</string>
+    <string name="barSettingsTitle">Alt çubuk</string>
+    <string name="barSettingsHelp">“Oluştur” düğmesinin iki yanında ikişer bölüm; düğme her zaman ortada kalır. Çubuktan kaldırılan bölüm menüdeki Sık kullanılanlar’da görünür.</string>
+    <string name="barSettingsHint">Bölüm seçmek için bir yere dokunun</string>
+    <string name="barSlot">Yer</string>
+    <string name="barSlotPick">Bu yerdeki bölüm</string>
+    <string name="barMenuStays">“Menü” her zaman çubukta kalır; başka bir bölümle yer değiştirebilirsiniz</string>
+    <string name="barSwap">Yer değiştirir</string>
+    <string name="barReset">Varsayılana dön</string>
 </resources>

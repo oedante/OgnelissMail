@@ -4100,4 +4100,12 @@
     <string name="swipeTwoStepHint">Přetáhněte řádek a pusťte – akce se provede. Krátké přejetí spustí první akci, dlouhé druhou; ikona a popisek ukážou kterou. Pustíte-li příliš brzy, řádek se vrátí. Poté řádek ukáže, co se stalo, i s tlačítkem Zpět.</string>
     <string name="swipeTwoStepTitle">Krátké a dlouhé přejetí</string>
     <string name="swipeTwoStepSub">Dvě akce na straně: krátké přejetí spustí první, dlouhé druhou, bez tlačítek. Vypnuto – přejetí ukáže tlačítka a vyberete</string>
+    <string name="barSettingsTitle">Spodní lišta</string>
+    <string name="barSettingsHelp">Po dvou sekcích vlevo a vpravo od tlačítka „Vytvořit“ – to je vždy uprostřed. Sekce odebraná z lišty se objeví v Oblíbených v nabídce.</string>
+    <string name="barSettingsHint">Klepnutím na místo vyberte sekci</string>
+    <string name="barSlot">Místo</string>
+    <string name="barSlotPick">Sekce na tomto místě</string>
+    <string name="barMenuStays">„Nabídka“ je na liště vždy – můžete ji prohodit s jinou sekcí</string>
+    <string name="barSwap">Prohodí se</string>
+    <string name="barReset">Obnovit výchozí</string>
 </resources>

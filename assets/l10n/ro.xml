@@ -4100,4 +4100,12 @@
     <string name="swipeTwoStepHint">Trageți un rând și eliberați – acțiunea se execută. Glisarea scurtă rulează prima acțiune, cea lungă pe a doua; pictograma și eticheta arată care. Eliberat prea devreme, rândul revine la loc. Apoi rândul arată ce s-a făcut, cu Anulează.</string>
     <string name="swipeTwoStepTitle">Glisare scurtă și lungă</string>
     <string name="swipeTwoStepSub">Două acțiuni pe o parte: glisarea scurtă o rulează pe prima, cea lungă pe a doua, fără butoane. Dezactivat – glisarea afișează butoanele și alegeți</string>
+    <string name="barSettingsTitle">Bara de jos</string>
+    <string name="barSettingsHelp">Câte două secțiuni de o parte și de alta a butonului „Creează”, care rămâne mereu la mijloc. O secțiune scoasă de pe bară apare în Favoritele meniului.</string>
+    <string name="barSettingsHint">Atingeți un loc pentru a alege o secțiune</string>
+    <string name="barSlot">Loc</string>
+    <string name="barSlotPick">Secțiunea din acest loc</string>
+    <string name="barMenuStays">„Meniu” rămâne mereu pe bară — îl puteți schimba cu altă secțiune</string>
+    <string name="barSwap">Își schimbă locurile</string>
+    <string name="barReset">Restabilește implicit</string>
 </resources>

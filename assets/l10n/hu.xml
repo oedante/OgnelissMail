@@ -4079,4 +4079,12 @@
     <string name="swipeTwoStepHint">Húzza el a sort, majd engedje el – a művelet lefut. A rövid húzás az első, a hosszú a második műveletet indítja; az ikon és a felirat mutatja, melyiket. Ha túl korán engedi el, a sor visszaugrik. Utána a soron látszik, mi történt, Visszavonás gombbal.</string>
     <string name="swipeTwoStepTitle">Rövid és hosszú húzás</string>
     <string name="swipeTwoStepSub">Két művelet egy oldalon: a rövid húzás az elsőt, a hosszú a másodikat futtatja, gombok nélkül. Kikapcsolva a húzás gombokat mutat, és Ön választ</string>
+    <string name="barSettingsTitle">Alsó sáv</string>
+    <string name="barSettingsHelp">A „Létrehozás” gomb mindkét oldalán két-két rész – a gomb mindig középen marad. A sávról levett rész a menü Kedvencei között jelenik meg.</string>
+    <string name="barSettingsHint">Koppintson egy helyre a rész kiválasztásához</string>
+    <string name="barSlot">Hely</string>
+    <string name="barSlotPick">Rész ezen a helyen</string>
+    <string name="barMenuStays">A „Menü” mindig a sávon marad – felcserélheti egy másik résszel</string>
+    <string name="barSwap">Helyet cserélnek</string>
+    <string name="barReset">Alapértelmezés visszaállítása</string>
 </resources>

@@ -4163,4 +4163,12 @@
     <string name="swipeTwoStepHint">اسحب الصف ثم اتركه لتنفيذ الإجراء. السحب القصير ينفّذ الإجراء الأول والطويل الثاني، وتوضح الأيقونة والتسمية أيهما سيُنفَّذ. إذا تركته مبكرًا يعود الصف إلى مكانه. بعدها يُظهر الصف ما تم مع زر «تراجع».</string>
     <string name="swipeTwoStepTitle">سحب قصير وطويل</string>
     <string name="swipeTwoStepSub">إجراءان في جهة واحدة: السحب القصير ينفّذ الأول والطويل الثاني دون أزرار. عند الإيقاف يُظهر السحب الأزرار لتختار</string>
+    <string name="barSettingsTitle">الشريط السفلي</string>
+    <string name="barSettingsHelp">قسمان على كل جانب من زر «إنشاء» الذي يبقى دائمًا في الوسط. القسم الذي تزيله من الشريط يظهر في «المفضلة» في القائمة.</string>
+    <string name="barSettingsHint">اضغط على موضع لاختيار قسم</string>
+    <string name="barSlot">الموضع</string>
+    <string name="barSlotPick">القسم في هذا الموضع</string>
+    <string name="barMenuStays">«القائمة» تبقى دائمًا على الشريط — يمكنك تبديل مكانها مع قسم آخر</string>
+    <string name="barSwap">سيتبادلان المكان</string>
+    <string name="barReset">استعادة الافتراضي</string>
 </resources>

@@ -4058,4 +4058,12 @@
     <string name="swipeTwoStepHint">Seret baris lalu lepaskan untuk menjalankan tindakan. Usap pendek menjalankan tindakan pertama, usap panjang yang kedua; ikon dan label menunjukkan yang mana. Jika dilepas terlalu cepat, baris kembali. Setelahnya baris menunjukkan apa yang dilakukan, dengan Urungkan.</string>
     <string name="swipeTwoStepTitle">Usap pendek dan panjang</string>
     <string name="swipeTwoStepSub">Dua tindakan di satu sisi: usap pendek menjalankan yang pertama, usap panjang yang kedua, tanpa tombol. Nonaktif — usap menampilkan tombol dan Anda memilih</string>
+    <string name="barSettingsTitle">Bilah bawah</string>
+    <string name="barSettingsHelp">Dua bagian di setiap sisi tombol “Buat”, yang selalu berada di tengah. Bagian yang dihapus dari bilah muncul di Favorit pada menu.</string>
+    <string name="barSettingsHint">Ketuk posisi untuk memilih bagian</string>
+    <string name="barSlot">Posisi</string>
+    <string name="barSlotPick">Bagian di posisi ini</string>
+    <string name="barMenuStays">“Menu” selalu ada di bilah — Anda bisa menukarnya dengan bagian lain</string>
+    <string name="barSwap">Akan bertukar posisi</string>
+    <string name="barReset">Pulihkan default</string>
 </resources>

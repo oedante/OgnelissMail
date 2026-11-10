@@ -4100,4 +4100,12 @@
     <string name="swipeTwoStepHint">גררו שורה ושחררו – הפעולה תתבצע. החלקה קצרה מפעילה את הפעולה הראשונה, ארוכה – את השנייה; הסמל והתווית מראים איזו. שחרור מוקדם מדי מחזיר את השורה למקומה. לאחר מכן השורה מציגה מה בוצע, עם „ביטול”.</string>
     <string name="swipeTwoStepTitle">החלקה קצרה וארוכה</string>
     <string name="swipeTwoStepSub">שתי פעולות בצד אחד: החלקה קצרה מפעילה את הראשונה, ארוכה את השנייה, בלי כפתורים. כבוי – ההחלקה מציגה כפתורים ואתם בוחרים</string>
+    <string name="barSettingsTitle">הסרגל התחתון</string>
+    <string name="barSettingsHelp">שני מדורים מכל צד של הכפתור „צור”, שנשאר תמיד במרכז. מדור שהוסר מהסרגל מופיע במועדפים שבתפריט.</string>
+    <string name="barSettingsHint">הקישו על מקום כדי לבחור מדור</string>
+    <string name="barSlot">מקום</string>
+    <string name="barSlotPick">המדור במקום הזה</string>
+    <string name="barMenuStays">„תפריט” תמיד נשאר בסרגל — אפשר להחליף את מקומו עם מדור אחר</string>
+    <string name="barSwap">יחליפו מקומות</string>
+    <string name="barReset">שחזור ברירת המחדל</string>
 </resources>

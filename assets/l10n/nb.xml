@@ -4079,4 +4079,12 @@
     <string name="swipeTwoStepHint">Dra en rad og slipp – handlingen utføres. Et kort sveip kjører den første handlingen, et langt den andre; ikonet og teksten viser hvilken. Slipper du for tidlig, spretter raden tilbake. Etterpå viser raden hva som ble gjort, med Angre.</string>
     <string name="swipeTwoStepTitle">Kort og langt sveip</string>
     <string name="swipeTwoStepSub">To handlinger på en side: kort sveip kjører den første, langt den andre, uten knapper. Av – sveipet viser knapper, og du velger</string>
+    <string name="barSettingsTitle">Nederste linje</string>
+    <string name="barSettingsHelp">To deler på hver side av «Opprett»-knappen, som alltid står i midten. En del som fjernes fra linjen, vises under Favoritter i menyen.</string>
+    <string name="barSettingsHint">Trykk på en plass for å velge en del</string>
+    <string name="barSlot">Plass</string>
+    <string name="barSlotPick">Del på denne plassen</string>
+    <string name="barMenuStays">«Meny» er alltid på linjen – du kan bytte den med en annen del</string>
+    <string name="barSwap">Bytter plass</string>
+    <string name="barReset">Gjenopprett standard</string>
 </resources>

@@ -4058,4 +4058,12 @@
     <string name="swipeTwoStepHint">行をドラッグして離すと操作が実行されます。短いスワイプで1つ目、長いスワイプで2つ目の操作。どちらが実行されるかはアイコンとラベルで分かります。途中で離すと行は元に戻ります。実行後、行に結果が表示され、「元に戻す」もできます。</string>
     <string name="swipeTwoStepTitle">短いスワイプと長いスワイプ</string>
     <string name="swipeTwoStepSub">片側に2つの操作：短いスワイプで1つ目、長いスワイプで2つ目をボタンなしで実行。オフのときはスワイプでボタンが表示され、選んで実行します</string>
+    <string name="barSettingsTitle">下部バー</string>
+    <string name="barSettingsHelp">「作成」ボタン（常に中央）の左右に2つずつ。バーから外したセクションはメニューのお気に入りに表示されます。</string>
+    <string name="barSettingsHint">位置をタップしてセクションを選択</string>
+    <string name="barSlot">位置</string>
+    <string name="barSlotPick">この位置のセクション</string>
+    <string name="barMenuStays">「メニュー」は常にバーにあります。他のセクションと入れ替えできます</string>
+    <string name="barSwap">位置を入れ替えます</string>
+    <string name="barReset">既定に戻す</string>
 </resources>

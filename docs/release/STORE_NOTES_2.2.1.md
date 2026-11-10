@@ -36,17 +36,6 @@ Store — ru, en, de, fr; Google Play — 27 языков).
   уходит, в истории «Отмечено вручную»); «Выполнено» — «Принять работу», как
   кнопкой. «Принято» после приветствия («Добрый день, … Принято») и раньше
   распознавалось.
-- **Планшет и компьютер — без полосы разделов слева** (решение владельца:
-  «зачем в десктопной версии дубликаты кнопок? Давай от левой области вообще
-  избавимся, а основные кнопки перенесём над избранным»). «Написать» и
-  «Почта · Календарь · Контакты · Задачи» — шапкой панели папок над
-  «Избранным»; «Мой день», «Файловый хаб», «Настройки» — плитками
-  «Избранного» (как на телефоне). В календаре, контактах, задачах — та же
-  панель слева, под разделами — «Мой день», «Поручения», «Заметки»,
-  «Файлы», «Настройки». Панель папок откреплена (шпилька) — в шапке ленты
-  значок меню ☰ вместо портрета: по нему панель выезжает, шпилькой —
-  закрепляется снова (раньше панель «пропадала»: открывалась только
-  нажатием на портрет).
 - **Сборка**: без ложного «[SEVERE] RustBuilder: Failed to find lib.name» в
   `flutter test` и сборке (копия native_toolchain_rust 1.0.6 с исправлением
   из 1.0.7, `packages/native_toolchain_rust`).
@@ -65,255 +54,255 @@ Store — ru, en, de, fr; Google Play — 27 языков).
 • После свайпа «Прочитано», «Флаг», «На контроль» — подсказка с «Вернуть» внизу, как при удалении
 • Превью и уведомления — без пометок «[image: …]»
 • Фоновая проверка почты быстрее после сна телефона
+• Отмена входа больше не показывается как ошибка
 • Письма с пустыми колонками по краям — текст на всю ширину
 • Поручение: статус можно отметить вручную на шкале
-• Планшет и компьютер: «Написать» и разделы — над «Избранным», без полосы слева
 </ru-RU>
 <en-US>
-• After a Read, Flag or Follow-up swipe, an Undo bar appears at the bottom, as after deleting
+• After swiping Read, Flag or Follow-up, a bottom bar with Undo appears, just like after deleting
 • Previews and notifications no longer show “[image: …]” tags
 • Faster background mail checks after the phone wakes up
+• Cancelling sign-in is no longer shown as an error
 • Emails with empty side columns now use the full width
 • Assignments: tap a step to set the status manually
-• Tablet and desktop: Compose and sections sit above Favorites, no extra side strip
 </en-US>
 <de-DE>
 • Nach dem Wischen für „Gelesen“, „Markierung“ oder „Nachverfolgen“ erscheint unten eine Leiste mit „Rückgängig“ – wie beim Löschen
 • Vorschau und Benachrichtigungen ohne „[image: …]“-Marken
 • Schnellere Mailprüfung im Hintergrund, wenn das Telefon aufwacht
+• Abgebrochene Anmeldung wird nicht mehr als Fehler angezeigt
 • E-Mails mit leeren Randspalten nutzen jetzt die volle Breite
 • Aufträge: Status per Tippen auf einen Schritt selbst setzen
-• Tablet und Computer: „Erstellen“ und Bereiche über den Favoriten, ohne Seitenleiste
 </de-DE>
 <fr-FR>
 • Après un balayage « Lu », « Drapeau » ou « Suivi », une barre « Annuler » s’affiche en bas, comme après une suppression
 • Aperçus et notifications sans balises « [image: …] »
 • Vérification en arrière-plan plus rapide au réveil du téléphone
+• L’annulation de la connexion n’est plus affichée comme une erreur
 • Les e-mails à colonnes latérales vides occupent toute la largeur
 • Missions : touchez une étape pour changer le statut
-• Tablette et ordinateur : « Écrire » et sections au-dessus des Favoris, sans barre latérale
 </fr-FR>
 ```
 
 ## Google Play — все 27 языков (одним полем)
 
-Предел Google Play — 500 знаков на язык; здесь каждый язык не длиннее 490.
+Предел Google Play — 500 знаков на язык; здесь каждый язык не длиннее 450.
 
 ```
 <ru-RU>
 • После свайпа «Прочитано», «Флаг», «На контроль» — подсказка с «Вернуть» внизу, как при удалении
 • Превью и уведомления — без пометок «[image: …]»
 • Фоновая проверка почты быстрее после сна телефона
+• Отмена входа больше не показывается как ошибка
 • Письма с пустыми колонками по краям — текст на всю ширину
 • Поручение: статус можно отметить вручную на шкале
-• Планшет и компьютер: «Написать» и разделы — над «Избранным», без полосы слева
 </ru-RU>
 <en-US>
-• After a Read, Flag or Follow-up swipe, an Undo bar appears at the bottom, as after deleting
+• After swiping Read, Flag or Follow-up, a bottom bar with Undo appears, just like after deleting
 • Previews and notifications no longer show “[image: …]” tags
 • Faster background mail checks after the phone wakes up
+• Cancelling sign-in is no longer shown as an error
 • Emails with empty side columns now use the full width
 • Assignments: tap a step to set the status manually
-• Tablet and desktop: Compose and sections sit above Favorites, no extra side strip
 </en-US>
 <de-DE>
 • Nach dem Wischen für „Gelesen“, „Markierung“ oder „Nachverfolgen“ erscheint unten eine Leiste mit „Rückgängig“ – wie beim Löschen
 • Vorschau und Benachrichtigungen ohne „[image: …]“-Marken
 • Schnellere Mailprüfung im Hintergrund, wenn das Telefon aufwacht
+• Abgebrochene Anmeldung wird nicht mehr als Fehler angezeigt
 • E-Mails mit leeren Randspalten nutzen jetzt die volle Breite
 • Aufträge: Status per Tippen auf einen Schritt selbst setzen
-• Tablet und Computer: „Erstellen“ und Bereiche über den Favoriten, ohne Seitenleiste
 </de-DE>
 <fr-FR>
 • Après un balayage « Lu », « Drapeau » ou « Suivi », une barre « Annuler » s’affiche en bas, comme après une suppression
 • Aperçus et notifications sans balises « [image: …] »
 • Vérification en arrière-plan plus rapide au réveil du téléphone
+• L’annulation de la connexion n’est plus affichée comme une erreur
 • Les e-mails à colonnes latérales vides occupent toute la largeur
 • Missions : touchez une étape pour changer le statut
-• Tablette et ordinateur : « Écrire » et sections au-dessus des Favoris, sans barre latérale
 </fr-FR>
 <ar>
 • بعد السحب لـ«مقروء» أو «علامة» أو «متابعة» يظهر شريط سفلي مع «تراجع» كما بعد الحذف
 • المعاينة والإشعارات من دون وسوم «[image: …]»
 • فحص البريد في الخلفية أسرع بعد استيقاظ الهاتف
+• إلغاء تسجيل الدخول لم يعد يُعرض كخطأ
 • الرسائل ذات الأعمدة الجانبية الفارغة تُعرض بكامل العرض
 • التكليفات: اضغط على مرحلة لتغيير الحالة يدويًا
-• الجهاز اللوحي والحاسوب: «كتابة» والأقسام فوق «المفضلة» دون شريط جانبي
 </ar>
 <hu-HU>
 • Olvasott, Jelölő vagy Követés húzás után alul „Visszavonás” sáv jelenik meg, mint törléskor
 • Előnézet és értesítések „[image: …]” jelölések nélkül
 • Gyorsabb háttér-ellenőrzés, amikor a telefon felébred
+• A bejelentkezés megszakítása már nem jelenik meg hibaként
 • Az üres szélső oszlopos levelek teljes szélességben jelennek meg
 • Megbízások: koppintson egy lépésre az állapot kézi beállításához
-• Tablet és számítógép: Írás és a részek a Kedvencek felett, oldalsáv nélkül
 </hu-HU>
 <vi>
 • Sau khi vuốt Đã đọc, Gắn cờ hoặc Theo dõi, thanh Hoàn tác hiện ở dưới như khi xóa
 • Bản xem trước và thông báo không còn nhãn “[image: …]”
 • Kiểm tra thư nền nhanh hơn khi điện thoại thức dậy
+• Hủy đăng nhập không còn hiển thị như lỗi
 • Thư có cột trống hai bên giờ hiển thị toàn chiều rộng
 • Giao việc: chạm vào một bước để tự đặt trạng thái
-• Máy tính bảng và máy tính: Soạn thư và các mục nằm trên Mục yêu thích, không còn thanh bên
 </vi>
 <da-DK>
 • Efter swipe for Læst, Flag eller Opfølgning vises en bjælke med Fortryd nederst – som ved sletning
 • Forhåndsvisning og notifikationer uden “[image: …]”-mærker
 • Hurtigere tjek af mail i baggrunden, når telefonen vågner
+• Annulleret login vises ikke længere som en fejl
 • Mails med tomme sidekolonner bruger nu hele bredden
 • Opgaver: tryk på et trin for at sætte status manuelt
-• Tablet og computer: Skriv og sektioner over Favoritter, uden sidebjælke
 </da-DK>
 <iw-IL>
 • אחרי החלקה ל„נקרא”, „סימון” או „מעקב” מופיע למטה סרגל עם „ביטול”, כמו אחרי מחיקה
 • תצוגה מקדימה והתראות בלי תגיות „[image: …]”
 • בדיקת דואר ברקע מהירה יותר כשהטלפון מתעורר
+• ביטול התחברות כבר לא מוצג כשגיאה
 • הודעות עם עמודות צד ריקות מוצגות ברוחב מלא
 • משימות: הקישו על שלב כדי לשנות סטטוס ידנית
-• טאבלט ומחשב: „כתיבה” והמדורים מעל „מועדפים”, בלי פס צד
 </iw-IL>
 <id>
 • Setelah geser Dibaca, Bendera, atau Pantau, bilah Urungkan muncul di bawah seperti saat menghapus
 • Pratinjau dan notifikasi tanpa tanda “[image: …]”
 • Pemeriksaan email di latar lebih cepat saat ponsel aktif kembali
+• Membatalkan login tidak lagi ditampilkan sebagai kesalahan
 • Email dengan kolom samping kosong kini memakai lebar penuh
 • Tugas: ketuk tahap untuk mengatur status secara manual
-• Tablet dan komputer: Tulis dan bagian di atas Favorit, tanpa bilah samping
 </id>
 <es-ES>
 • Tras deslizar Leído, Marca o Seguimiento aparece abajo una barra con Deshacer, como al eliminar
 • Vistas previas y notificaciones sin etiquetas «[image: …]»
 • Comprobación del correo en segundo plano más rápida al activarse el teléfono
+• Cancelar el inicio de sesión ya no se muestra como error
 • Los correos con columnas laterales vacías usan todo el ancho
 • Encargos: toca un paso para cambiar el estado a mano
-• Tableta y ordenador: Redactar y secciones sobre Favoritos, sin barra lateral
 </es-ES>
 <it-IT>
 • Dopo lo scorrimento Letto, Contrassegno o Controllo compare in basso una barra Annulla, come dopo l’eliminazione
 • Anteprime e notifiche senza tag «[image: …]»
 • Controllo della posta in background più rapido al risveglio del telefono
+• L’annullamento dell’accesso non viene più mostrato come errore
 • Le email con colonne laterali vuote usano tutta la larghezza
 • Incarichi: tocca un passaggio per impostare lo stato a mano
-• Tablet e computer: Scrivi e sezioni sopra i Preferiti, senza barra laterale
 </it-IT>
 <zh-CN>
 • 滑动“已读”“旗标”“跟进”后，底部会出现“撤销”栏，与删除时相同
 • 预览和通知不再显示“[image: …]”标记
 • 手机唤醒后后台检查邮件更快
+• 取消登录不再显示为错误
 • 两侧有空白列的邮件现在占满整个宽度
 • 委派任务：点按步骤即可手动设置状态
-• 平板和电脑：“写邮件”和各分区位于“收藏夹”上方，不再有侧边栏
 </zh-CN>
 <ko-KR>
 • 읽음, 플래그, 후속 조치로 스와이프하면 삭제할 때처럼 아래에 실행 취소 바가 나타납니다
 • 미리보기와 알림에 “[image: …]” 표시가 더 이상 없습니다
 • 휴대폰이 깨어날 때 백그라운드 메일 확인이 더 빨라졌습니다
+• 로그인 취소가 더 이상 오류로 표시되지 않습니다
 • 양쪽 빈 열이 있는 메일이 전체 너비로 표시됩니다
 • 위임: 단계를 눌러 상태를 직접 설정
-• 태블릿·컴퓨터: 쓰기와 섹션이 즐겨찾기 위로, 측면 바 없음
 </ko-KR>
 <nl-NL>
 • Na vegen voor Gelezen, Vlag of Opvolgen verschijnt onderaan een balk met Ongedaan maken, net als bij verwijderen
 • Voorbeelden en meldingen zonder ‘[image: …]’-labels
 • Snellere mailcontrole op de achtergrond als de telefoon ontwaakt
+• Geannuleerd inloggen wordt niet meer als fout getoond
 • Mails met lege zijkolommen gebruiken nu de volle breedte
 • Opdrachten: tik op een stap om de status zelf te zetten
-• Tablet en computer: Opstellen en onderdelen boven Favorieten, zonder zijbalk
 </nl-NL>
 <no-NO>
 • Etter sveip for Lest, Flagg eller Oppfølging vises en linje med Angre nederst – som ved sletting
 • Forhåndsvisning og varsler uten «[image: …]»-merker
 • Raskere sjekk av e-post i bakgrunnen når telefonen våkner
+• Avbrutt pålogging vises ikke lenger som en feil
 • E-post med tomme sidekolonner bruker nå hele bredden
 • Oppdrag: trykk på et trinn for å sette status selv
-• Nettbrett og datamaskin: Skriv og deler over Favoritter, uten sidelinje
 </no-NO>
 <pl-PL>
 • Po przesunięciu „Przeczytane”, „Flaga” lub „Kontrola” na dole pojawia się pasek „Cofnij”, jak przy usuwaniu
 • Podglądy i powiadomienia bez znaczników „[image: …]”
 • Szybsze sprawdzanie poczty w tle po wybudzeniu telefonu
+• Anulowanie logowania nie jest już pokazywane jako błąd
 • E-maile z pustymi kolumnami po bokach zajmują całą szerokość
 • Zlecenia: dotknij etapu, aby ręcznie zmienić status
-• Tablet i komputer: „Napisz” i sekcje nad Ulubionymi, bez paska bocznego
 </pl-PL>
 <pt-BR>
 • Depois de deslizar Lido, Sinalizar ou Acompanhar, aparece embaixo uma barra Desfazer, como ao excluir
 • Prévias e notificações sem as marcas “[image: …]”
 • Verificação de e-mails em segundo plano mais rápida quando o celular acorda
+• Cancelar o login não aparece mais como erro
 • E-mails com colunas laterais vazias agora usam toda a largura
 • Tarefas delegadas: toque numa etapa para mudar o status
-• Tablet e computador: Escrever e seções acima dos Favoritos, sem barra lateral
 </pt-BR>
 <ro>
 • După glisarea Citit, Semnalizare sau Urmărire apare jos o bară Anulează, ca la ștergere
 • Previzualizări și notificări fără etichete „[image: …]”
 • Verificare mai rapidă a e-mailului în fundal la trezirea telefonului
+• Anularea autentificării nu mai apare ca eroare
 • E-mailurile cu coloane laterale goale folosesc toată lățimea
 • Sarcini: atingeți o etapă pentru a seta manual starea
-• Tabletă și computer: Scrie și secțiunile deasupra Favoritelor, fără bară laterală
 </ro>
 <sk>
 • Po potiahnutí Prečítané, Príznak alebo Sledovať sa dole zobrazí lišta Späť, ako pri odstránení
 • Náhľady a upozornenia bez značiek „[image: …]“
 • Rýchlejšia kontrola pošty na pozadí po prebudení telefónu
+• Zrušené prihlásenie sa už nezobrazuje ako chyba
 • E-maily s prázdnymi bočnými stĺpcami využijú celú šírku
 • Úlohy: ťuknutím na krok nastavíte stav ručne
-• Tablet a počítač: Napísať a sekcie nad Obľúbenými, bez bočnej lišty
 </sk>
 <th>
 • หลังปัดเพื่อ อ่านแล้ว ติดธง หรือ ติดตาม จะมีแถบ เลิกทำ ด้านล่างเหมือนตอนลบ
 • ตัวอย่างและการแจ้งเตือนไม่มีแท็ก “[image: …]” อีก
 • ตรวจอีเมลเบื้องหลังเร็วขึ้นเมื่อโทรศัพท์ตื่น
+• การยกเลิกเข้าสู่ระบบไม่แสดงเป็นข้อผิดพลาดอีก
 • อีเมลที่มีคอลัมน์ว่างด้านข้างแสดงเต็มความกว้าง
 • งานที่มอบหมาย: แตะขั้นตอนเพื่อตั้งสถานะเอง
-• แท็บเล็ตและคอมพิวเตอร์: เขียนและส่วนต่าง ๆ อยู่เหนือรายการโปรด ไม่มีแถบข้าง
 </th>
 <tr-TR>
 • Okundu, Bayrak veya Takip kaydırmasından sonra, silmede olduğu gibi altta Geri al çubuğu çıkar
 • Önizleme ve bildirimlerde artık “[image: …]” etiketi yok
 • Telefon uyandığında arka planda posta denetimi daha hızlı
+• Oturum açmayı iptal etmek artık hata olarak gösterilmiyor
 • Kenarları boş sütunlu e-postalar artık tam genişlikte
 • Görevlendirmeler: durumu elle ayarlamak için adıma dokunun
-• Tablet ve bilgisayar: Yaz ve bölümler Sık kullanılanların üstünde, yan çubuk yok
 </tr-TR>
 <fi-FI>
 • Kun pyyhkäiset Luettu, Lippu tai Seuranta, alas tulee Kumoa-palkki kuten poistossa
 • Esikatselut ja ilmoitukset ilman ”[image: …]”-merkintöjä
 • Nopeampi taustatarkistus, kun puhelin herää
+• Kirjautumisen peruminen ei enää näy virheenä
 • Viestit, joissa on tyhjät reunasarakkeet, käyttävät koko leveyden
 • Toimeksiannot: napauta vaihetta asettaaksesi tilan itse
-• Tabletti ja tietokone: Kirjoita ja osiot Suosikkien yläpuolella, ilman sivupalkkia
 </fi-FI>
 <hi-IN>
 • पढ़ा गया, फ़्लैग या फ़ॉलो-अप स्वाइप के बाद नीचे “पूर्ववत करें” पट्टी आती है, जैसे हटाने पर
 • प्रीव्यू और सूचनाओं में अब “[image: …]” टैग नहीं
 • फ़ोन जागने पर बैकग्राउंड में मेल जाँच तेज़
+• लॉगिन रद्द करना अब त्रुटि के रूप में नहीं दिखता
 • किनारों पर खाली कॉलम वाले मेल अब पूरी चौड़ाई में
 • सौंपे गए काम: स्थिति ख़ुद बदलने के लिए चरण पर टैप करें
-• टैबलेट और कंप्यूटर: लिखें और अनुभाग पसंदीदा के ऊपर, साइड पट्टी नहीं
 </hi-IN>
 <cs-CZ>
 • Po potažení Přečteno, Příznak nebo Sledovat se dole zobrazí lišta Zpět, jako při smazání
 • Náhledy a oznámení bez značek „[image: …]“
 • Rychlejší kontrola pošty na pozadí po probuzení telefonu
+• Zrušené přihlášení se už nezobrazuje jako chyba
 • E-maily s prázdnými bočními sloupci využijí celou šířku
 • Úkoly: klepnutím na krok nastavíte stav ručně
-• Tablet a počítač: Napsat a sekce nad Oblíbenými, bez boční lišty
 </cs-CZ>
 <sv-SE>
 • Efter svep för Läst, Flagga eller Uppföljning visas ett fält med Ångra längst ned – som vid borttagning
 • Förhandsvisningar och aviseringar utan ”[image: …]”-märken
 • Snabbare kontroll av e-post i bakgrunden när telefonen vaknar
+• Avbruten inloggning visas inte längre som ett fel
 • Mejl med tomma sidokolumner använder nu hela bredden
 • Uppdrag: tryck på ett steg för att sätta status själv
-• Surfplatta och dator: Skriv och avsnitt ovanför Favoriter, utan sidofält
 </sv-SE>
 <ja-JP>
 • 「既読」「フラグ」「フォロー」のスワイプ後、削除時と同じく下に「元に戻す」バーを表示
 • プレビューと通知に「[image: …]」が表示されなくなりました
 • スマホの復帰後、バックグラウンドのメール確認が高速に
+• ログインのキャンセルがエラーとして表示されなくなりました
 • 左右に空の列があるメールを全幅で表示
 • 依頼：ステップをタップして状態を手動で変更
-• タブレット・PC：「作成」と各セクションをお気に入りの上に、サイドバーなし
 </ja-JP>
 ```

@@ -24,6 +24,18 @@ Store — ru, en, de, fr; Google Play — 27 языков).
 - **Отмена входа — не ошибка**: закрыли окно входа Google, Microsoft,
   Яндекса («назад», крестик) — ничего не показывается (раньше —
   «PlatformException(CANCELED…)» строкой ошибки), и при «Войти снова» тоже.
+- **Письма с пустыми колонками по краям — текст на всю ширину** (письмо
+  владельца «Welcome to the Community»): таблица рассылки из пустых
+  `<td></td>` по краям и колонки текста шириной 560 — пустые колонки без
+  своей ширины больше не занимают места (раньше — по трети ширины, и текст
+  шёл узкой полосой справа).
+- **Поручения: статус можно отметить вручную** (замечание владельца:
+  исполнитель ответил «Приятно» вместо «Принято» — статус не сменился, а
+  поменять было нечем). Поручивший нажимает шаг на шкале: «В работе», «На
+  проверке», «Новое» — отметка только у себя (письмо исполнителю не
+  уходит, в истории «Отмечено вручную»); «Выполнено» — «Принять работу», как
+  кнопкой. «Принято» после приветствия («Добрый день, … Принято») и раньше
+  распознавалось.
 - **Сборка**: без ложного «[SEVERE] RustBuilder: Failed to find lib.name» в
   `flutter test` и сборке (копия native_toolchain_rust 1.0.6 с исправлением
   из 1.0.7, `packages/native_toolchain_rust`).
@@ -43,24 +55,32 @@ Store — ru, en, de, fr; Google Play — 27 языков).
 • Превью и уведомления — без пометок «[image: …]»
 • Фоновая проверка почты быстрее после сна телефона
 • Отмена входа больше не показывается как ошибка
+• Письма с пустыми колонками по краям — текст на всю ширину
+• Поручение: статус можно отметить вручную на шкале
 </ru-RU>
 <en-US>
 • After swiping Read, Flag or Follow-up, a bottom bar with Undo appears, just like after deleting
 • Previews and notifications no longer show “[image: …]” tags
 • Faster background mail checks after the phone wakes up
 • Cancelling sign-in is no longer shown as an error
+• Emails with empty side columns now use the full width
+• Assignments: tap a step to set the status manually
 </en-US>
 <de-DE>
 • Nach dem Wischen für „Gelesen“, „Markierung“ oder „Nachverfolgen“ erscheint unten eine Leiste mit „Rückgängig“ – wie beim Löschen
 • Vorschau und Benachrichtigungen ohne „[image: …]“-Marken
 • Schnellere Mailprüfung im Hintergrund, wenn das Telefon aufwacht
 • Abgebrochene Anmeldung wird nicht mehr als Fehler angezeigt
+• E-Mails mit leeren Randspalten nutzen jetzt die volle Breite
+• Aufträge: Status per Tippen auf einen Schritt selbst setzen
 </de-DE>
 <fr-FR>
 • Après un balayage « Lu », « Drapeau » ou « Suivi », une barre « Annuler » s’affiche en bas, comme après une suppression
 • Aperçus et notifications sans balises « [image: …] »
 • Vérification en arrière-plan plus rapide au réveil du téléphone
 • L’annulation de la connexion n’est plus affichée comme une erreur
+• Les e-mails à colonnes latérales vides occupent toute la largeur
+• Missions : touchez une étape pour changer le statut
 </fr-FR>
 ```
 
@@ -74,161 +94,215 @@ Store — ru, en, de, fr; Google Play — 27 языков).
 • Превью и уведомления — без пометок «[image: …]»
 • Фоновая проверка почты быстрее после сна телефона
 • Отмена входа больше не показывается как ошибка
+• Письма с пустыми колонками по краям — текст на всю ширину
+• Поручение: статус можно отметить вручную на шкале
 </ru-RU>
 <en-US>
 • After swiping Read, Flag or Follow-up, a bottom bar with Undo appears, just like after deleting
 • Previews and notifications no longer show “[image: …]” tags
 • Faster background mail checks after the phone wakes up
 • Cancelling sign-in is no longer shown as an error
+• Emails with empty side columns now use the full width
+• Assignments: tap a step to set the status manually
 </en-US>
 <de-DE>
 • Nach dem Wischen für „Gelesen“, „Markierung“ oder „Nachverfolgen“ erscheint unten eine Leiste mit „Rückgängig“ – wie beim Löschen
 • Vorschau und Benachrichtigungen ohne „[image: …]“-Marken
 • Schnellere Mailprüfung im Hintergrund, wenn das Telefon aufwacht
 • Abgebrochene Anmeldung wird nicht mehr als Fehler angezeigt
+• E-Mails mit leeren Randspalten nutzen jetzt die volle Breite
+• Aufträge: Status per Tippen auf einen Schritt selbst setzen
 </de-DE>
 <fr-FR>
 • Après un balayage « Lu », « Drapeau » ou « Suivi », une barre « Annuler » s’affiche en bas, comme après une suppression
 • Aperçus et notifications sans balises « [image: …] »
 • Vérification en arrière-plan plus rapide au réveil du téléphone
 • L’annulation de la connexion n’est plus affichée comme une erreur
+• Les e-mails à colonnes latérales vides occupent toute la largeur
+• Missions : touchez une étape pour changer le statut
 </fr-FR>
 <ar>
 • بعد السحب لـ«مقروء» أو «علامة» أو «متابعة» يظهر شريط سفلي مع «تراجع» كما بعد الحذف
 • المعاينة والإشعارات من دون وسوم «[image: …]»
 • فحص البريد في الخلفية أسرع بعد استيقاظ الهاتف
 • إلغاء تسجيل الدخول لم يعد يُعرض كخطأ
+• الرسائل ذات الأعمدة الجانبية الفارغة تُعرض بكامل العرض
+• التكليفات: اضغط على مرحلة لتغيير الحالة يدويًا
 </ar>
 <hu-HU>
 • Olvasott, Jelölő vagy Követés húzás után alul „Visszavonás” sáv jelenik meg, mint törléskor
 • Előnézet és értesítések „[image: …]” jelölések nélkül
 • Gyorsabb háttér-ellenőrzés, amikor a telefon felébred
 • A bejelentkezés megszakítása már nem jelenik meg hibaként
+• Az üres szélső oszlopos levelek teljes szélességben jelennek meg
+• Megbízások: koppintson egy lépésre az állapot kézi beállításához
 </hu-HU>
 <vi>
 • Sau khi vuốt Đã đọc, Gắn cờ hoặc Theo dõi, thanh Hoàn tác hiện ở dưới như khi xóa
 • Bản xem trước và thông báo không còn nhãn “[image: …]”
 • Kiểm tra thư nền nhanh hơn khi điện thoại thức dậy
 • Hủy đăng nhập không còn hiển thị như lỗi
+• Thư có cột trống hai bên giờ hiển thị toàn chiều rộng
+• Giao việc: chạm vào một bước để tự đặt trạng thái
 </vi>
 <da-DK>
 • Efter swipe for Læst, Flag eller Opfølgning vises en bjælke med Fortryd nederst – som ved sletning
 • Forhåndsvisning og notifikationer uden “[image: …]”-mærker
 • Hurtigere tjek af mail i baggrunden, når telefonen vågner
 • Annulleret login vises ikke længere som en fejl
+• Mails med tomme sidekolonner bruger nu hele bredden
+• Opgaver: tryk på et trin for at sætte status manuelt
 </da-DK>
 <iw-IL>
 • אחרי החלקה ל„נקרא”, „סימון” או „מעקב” מופיע למטה סרגל עם „ביטול”, כמו אחרי מחיקה
 • תצוגה מקדימה והתראות בלי תגיות „[image: …]”
 • בדיקת דואר ברקע מהירה יותר כשהטלפון מתעורר
 • ביטול התחברות כבר לא מוצג כשגיאה
+• הודעות עם עמודות צד ריקות מוצגות ברוחב מלא
+• משימות: הקישו על שלב כדי לשנות סטטוס ידנית
 </iw-IL>
 <id>
 • Setelah geser Dibaca, Bendera, atau Pantau, bilah Urungkan muncul di bawah seperti saat menghapus
 • Pratinjau dan notifikasi tanpa tanda “[image: …]”
 • Pemeriksaan email di latar lebih cepat saat ponsel aktif kembali
 • Membatalkan login tidak lagi ditampilkan sebagai kesalahan
+• Email dengan kolom samping kosong kini memakai lebar penuh
+• Tugas: ketuk tahap untuk mengatur status secara manual
 </id>
 <es-ES>
 • Tras deslizar Leído, Marca o Seguimiento aparece abajo una barra con Deshacer, como al eliminar
 • Vistas previas y notificaciones sin etiquetas «[image: …]»
 • Comprobación del correo en segundo plano más rápida al activarse el teléfono
 • Cancelar el inicio de sesión ya no se muestra como error
+• Los correos con columnas laterales vacías usan todo el ancho
+• Encargos: toca un paso para cambiar el estado a mano
 </es-ES>
 <it-IT>
 • Dopo lo scorrimento Letto, Contrassegno o Controllo compare in basso una barra Annulla, come dopo l’eliminazione
 • Anteprime e notifiche senza tag «[image: …]»
 • Controllo della posta in background più rapido al risveglio del telefono
 • L’annullamento dell’accesso non viene più mostrato come errore
+• Le email con colonne laterali vuote usano tutta la larghezza
+• Incarichi: tocca un passaggio per impostare lo stato a mano
 </it-IT>
 <zh-CN>
 • 滑动“已读”“旗标”“跟进”后，底部会出现“撤销”栏，与删除时相同
 • 预览和通知不再显示“[image: …]”标记
 • 手机唤醒后后台检查邮件更快
 • 取消登录不再显示为错误
+• 两侧有空白列的邮件现在占满整个宽度
+• 委派任务：点按步骤即可手动设置状态
 </zh-CN>
 <ko-KR>
 • 읽음, 플래그, 후속 조치로 스와이프하면 삭제할 때처럼 아래에 실행 취소 바가 나타납니다
 • 미리보기와 알림에 “[image: …]” 표시가 더 이상 없습니다
 • 휴대폰이 깨어날 때 백그라운드 메일 확인이 더 빨라졌습니다
 • 로그인 취소가 더 이상 오류로 표시되지 않습니다
+• 양쪽 빈 열이 있는 메일이 전체 너비로 표시됩니다
+• 위임: 단계를 눌러 상태를 직접 설정
 </ko-KR>
 <nl-NL>
 • Na vegen voor Gelezen, Vlag of Opvolgen verschijnt onderaan een balk met Ongedaan maken, net als bij verwijderen
 • Voorbeelden en meldingen zonder ‘[image: …]’-labels
 • Snellere mailcontrole op de achtergrond als de telefoon ontwaakt
 • Geannuleerd inloggen wordt niet meer als fout getoond
+• Mails met lege zijkolommen gebruiken nu de volle breedte
+• Opdrachten: tik op een stap om de status zelf te zetten
 </nl-NL>
 <no-NO>
 • Etter sveip for Lest, Flagg eller Oppfølging vises en linje med Angre nederst – som ved sletting
 • Forhåndsvisning og varsler uten «[image: …]»-merker
 • Raskere sjekk av e-post i bakgrunnen når telefonen våkner
 • Avbrutt pålogging vises ikke lenger som en feil
+• E-post med tomme sidekolonner bruker nå hele bredden
+• Oppdrag: trykk på et trinn for å sette status selv
 </no-NO>
 <pl-PL>
 • Po przesunięciu „Przeczytane”, „Flaga” lub „Kontrola” na dole pojawia się pasek „Cofnij”, jak przy usuwaniu
 • Podglądy i powiadomienia bez znaczników „[image: …]”
 • Szybsze sprawdzanie poczty w tle po wybudzeniu telefonu
 • Anulowanie logowania nie jest już pokazywane jako błąd
+• E-maile z pustymi kolumnami po bokach zajmują całą szerokość
+• Zlecenia: dotknij etapu, aby ręcznie zmienić status
 </pl-PL>
 <pt-BR>
 • Depois de deslizar Lido, Sinalizar ou Acompanhar, aparece embaixo uma barra Desfazer, como ao excluir
 • Prévias e notificações sem as marcas “[image: …]”
 • Verificação de e-mails em segundo plano mais rápida quando o celular acorda
 • Cancelar o login não aparece mais como erro
+• E-mails com colunas laterais vazias agora usam toda a largura
+• Tarefas delegadas: toque numa etapa para mudar o status
 </pt-BR>
 <ro>
 • După glisarea Citit, Semnalizare sau Urmărire apare jos o bară Anulează, ca la ștergere
 • Previzualizări și notificări fără etichete „[image: …]”
 • Verificare mai rapidă a e-mailului în fundal la trezirea telefonului
 • Anularea autentificării nu mai apare ca eroare
+• E-mailurile cu coloane laterale goale folosesc toată lățimea
+• Sarcini: atingeți o etapă pentru a seta manual starea
 </ro>
 <sk>
 • Po potiahnutí Prečítané, Príznak alebo Sledovať sa dole zobrazí lišta Späť, ako pri odstránení
 • Náhľady a upozornenia bez značiek „[image: …]“
 • Rýchlejšia kontrola pošty na pozadí po prebudení telefónu
 • Zrušené prihlásenie sa už nezobrazuje ako chyba
+• E-maily s prázdnymi bočnými stĺpcami využijú celú šírku
+• Úlohy: ťuknutím na krok nastavíte stav ručne
 </sk>
 <th>
 • หลังปัดเพื่อ อ่านแล้ว ติดธง หรือ ติดตาม จะมีแถบ เลิกทำ ด้านล่างเหมือนตอนลบ
 • ตัวอย่างและการแจ้งเตือนไม่มีแท็ก “[image: …]” อีก
 • ตรวจอีเมลเบื้องหลังเร็วขึ้นเมื่อโทรศัพท์ตื่น
 • การยกเลิกเข้าสู่ระบบไม่แสดงเป็นข้อผิดพลาดอีก
+• อีเมลที่มีคอลัมน์ว่างด้านข้างแสดงเต็มความกว้าง
+• งานที่มอบหมาย: แตะขั้นตอนเพื่อตั้งสถานะเอง
 </th>
 <tr-TR>
 • Okundu, Bayrak veya Takip kaydırmasından sonra, silmede olduğu gibi altta Geri al çubuğu çıkar
 • Önizleme ve bildirimlerde artık “[image: …]” etiketi yok
 • Telefon uyandığında arka planda posta denetimi daha hızlı
 • Oturum açmayı iptal etmek artık hata olarak gösterilmiyor
+• Kenarları boş sütunlu e-postalar artık tam genişlikte
+• Görevlendirmeler: durumu elle ayarlamak için adıma dokunun
 </tr-TR>
 <fi-FI>
 • Kun pyyhkäiset Luettu, Lippu tai Seuranta, alas tulee Kumoa-palkki kuten poistossa
 • Esikatselut ja ilmoitukset ilman ”[image: …]”-merkintöjä
 • Nopeampi taustatarkistus, kun puhelin herää
 • Kirjautumisen peruminen ei enää näy virheenä
+• Viestit, joissa on tyhjät reunasarakkeet, käyttävät koko leveyden
+• Toimeksiannot: napauta vaihetta asettaaksesi tilan itse
 </fi-FI>
 <hi-IN>
 • पढ़ा गया, फ़्लैग या फ़ॉलो-अप स्वाइप के बाद नीचे “पूर्ववत करें” पट्टी आती है, जैसे हटाने पर
 • प्रीव्यू और सूचनाओं में अब “[image: …]” टैग नहीं
 • फ़ोन जागने पर बैकग्राउंड में मेल जाँच तेज़
 • लॉगिन रद्द करना अब त्रुटि के रूप में नहीं दिखता
+• किनारों पर खाली कॉलम वाले मेल अब पूरी चौड़ाई में
+• सौंपे गए काम: स्थिति ख़ुद बदलने के लिए चरण पर टैप करें
 </hi-IN>
 <cs-CZ>
 • Po potažení Přečteno, Příznak nebo Sledovat se dole zobrazí lišta Zpět, jako při smazání
 • Náhledy a oznámení bez značek „[image: …]“
 • Rychlejší kontrola pošty na pozadí po probuzení telefonu
 • Zrušené přihlášení se už nezobrazuje jako chyba
+• E-maily s prázdnými bočními sloupci využijí celou šířku
+• Úkoly: klepnutím na krok nastavíte stav ručně
 </cs-CZ>
 <sv-SE>
 • Efter svep för Läst, Flagga eller Uppföljning visas ett fält med Ångra längst ned – som vid borttagning
 • Förhandsvisningar och aviseringar utan ”[image: …]”-märken
 • Snabbare kontroll av e-post i bakgrunden när telefonen vaknar
 • Avbruten inloggning visas inte längre som ett fel
+• Mejl med tomma sidokolumner använder nu hela bredden
+• Uppdrag: tryck på ett steg för att sätta status själv
 </sv-SE>
 <ja-JP>
 • 「既読」「フラグ」「フォロー」のスワイプ後、削除時と同じく下に「元に戻す」バーを表示
 • プレビューと通知に「[image: …]」が表示されなくなりました
 • スマホの復帰後、バックグラウンドのメール確認が高速に
 • ログインのキャンセルがエラーとして表示されなくなりました
+• 左右に空の列があるメールを全幅で表示
+• 依頼：ステップをタップして状態を手動で変更
 </ja-JP>
 ```

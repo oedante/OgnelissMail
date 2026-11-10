@@ -224,6 +224,16 @@ class AssignmentService {
     await _notify(v, full, AssignmentCodec.statusMarker(v.id, status, ev: ev));
   }
 
+  /// Поручивший отмечает статус сам (2.2.1, замечание владельца 10.11.2026:
+  /// исполнитель ответил «Приятно» вместо «Принято» — статус не сменился, а
+  /// поменять было нечем). Только у себя: письмо исполнителю не уходит;
+  /// в истории — «Отмечено вручную».
+  Future<void> markLocally(AssignmentView v, int status) async {
+    if (status == v.status) return;
+    await AssignmentStore.update(_db, v.id, status: status);
+    await _record(v, _ev(), 'status', {'status': status, 'text': _l10n().tr('assignMarkedManually')});
+  }
+
   /// Напомнить исполнителю (письмо со сроком).
   Future<void> remind(AssignmentView v) async {
     final l10n = _l10n();

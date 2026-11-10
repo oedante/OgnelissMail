@@ -4088,4 +4088,7 @@
     <string name="barSwap">Si scambieranno di posto</string>
     <string name="barReset">Ripristina predefinito</string>
     <string name="barMailStays">«Posta» resta sempre sulla barra: puoi scambiarla con un’altra sezione</string>
+    <string name="assignMarkAs">Segna come: {status}</string>
+    <string name="assignMarkLocalHint">Solo per te: all’incaricato non viene inviata alcuna email</string>
+    <string name="assignMarkedManually">Segnato manualmente</string>
 </resources>

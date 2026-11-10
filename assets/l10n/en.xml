@@ -4088,4 +4088,7 @@
     <string name="barSwap">Will swap places</string>
     <string name="barReset">Restore default</string>
     <string name="barMailStays">“Mail” always stays on the bar — you can swap it with another section</string>
+    <string name="assignMarkAs">Mark as: {status}</string>
+    <string name="assignMarkLocalHint">Only for you — no email is sent to the assignee</string>
+    <string name="assignMarkedManually">Marked manually</string>
 </resources>

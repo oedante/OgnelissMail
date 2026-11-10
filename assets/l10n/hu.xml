@@ -4088,4 +4088,7 @@
     <string name="barSwap">Helyet cserélnek</string>
     <string name="barReset">Alapértelmezés visszaállítása</string>
     <string name="barMailStays">A „Levelezés” mindig a sávon marad – felcserélheti egy másik résszel</string>
+    <string name="assignMarkAs">Megjelölés: {status}</string>
+    <string name="assignMarkLocalHint">Csak önnél — a végrehajtó nem kap e-mailt</string>
+    <string name="assignMarkedManually">Kézzel megjelölve</string>
 </resources>

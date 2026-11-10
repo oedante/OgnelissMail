@@ -4088,4 +4088,7 @@
     <string name="barSwap">Bytter plass</string>
     <string name="barReset">Gjenopprett standard</string>
     <string name="barMailStays">«E-post» er alltid på linjen – du kan bytte den med en annen del</string>
+    <string name="assignMarkAs">Merk som: {status}</string>
+    <string name="assignMarkLocalHint">Bare hos deg – utføreren får ingen e-post</string>
+    <string name="assignMarkedManually">Merket manuelt</string>
 </resources>

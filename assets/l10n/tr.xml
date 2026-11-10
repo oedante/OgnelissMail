@@ -4088,4 +4088,7 @@
     <string name="barSwap">Yer değiştirir</string>
     <string name="barReset">Varsayılana dön</string>
     <string name="barMailStays">“Posta” her zaman çubukta kalır; başka bir bölümle yer değiştirebilirsiniz</string>
+    <string name="assignMarkAs">İşaretle: {status}</string>
+    <string name="assignMarkLocalHint">Yalnızca sizde — sorumluya e-posta gitmez</string>
+    <string name="assignMarkedManually">Elle işaretlendi</string>
 </resources>

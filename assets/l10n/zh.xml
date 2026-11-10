@@ -4067,4 +4067,7 @@
     <string name="barSwap">将互换位置</string>
     <string name="barReset">恢复默认</string>
     <string name="barMailStays">“邮件”始终在栏中，可与其他分区互换位置</string>
+    <string name="assignMarkAs">标记为：{status}</string>
+    <string name="assignMarkLocalHint">仅在您这里——不会给执行人发邮件</string>
+    <string name="assignMarkedManually">已手动标记</string>
 </resources>

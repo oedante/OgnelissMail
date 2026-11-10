@@ -4109,4 +4109,7 @@
     <string name="barSwap">Prohodí se</string>
     <string name="barReset">Obnovit výchozí</string>
     <string name="barMailStays">„Pošta“ je na liště vždy – můžete ji prohodit s jinou sekcí</string>
+    <string name="assignMarkAs">Označit: {status}</string>
+    <string name="assignMarkLocalHint">Jen u vás — řešitel e-mail nedostane</string>
+    <string name="assignMarkedManually">Označeno ručně</string>
 </resources>

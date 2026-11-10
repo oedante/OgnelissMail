@@ -4088,4 +4088,7 @@
     <string name="barSwap">Plätze werden getauscht</string>
     <string name="barReset">Standard wiederherstellen</string>
     <string name="barMailStays">„E-Mail“ bleibt immer auf der Leiste – Sie können sie mit einem anderen Bereich tauschen</string>
+    <string name="assignMarkAs">Markieren als: {status}</string>
+    <string name="assignMarkLocalHint">Nur bei Ihnen – der Bearbeiter erhält keine E-Mail</string>
+    <string name="assignMarkedManually">Manuell markiert</string>
 </resources>

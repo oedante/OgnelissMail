@@ -4067,4 +4067,7 @@
     <string name="barSwap">Akan bertukar posisi</string>
     <string name="barReset">Pulihkan default</string>
     <string name="barMailStays">“Email” selalu ada di bilah — Anda bisa menukarnya dengan bagian lain</string>
+    <string name="assignMarkAs">Tandai: {status}</string>
+    <string name="assignMarkLocalHint">Hanya untuk Anda — tidak ada email ke pelaksana</string>
+    <string name="assignMarkedManually">Ditandai manual</string>
 </resources>

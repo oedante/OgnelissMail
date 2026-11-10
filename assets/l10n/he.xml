@@ -4109,4 +4109,7 @@
     <string name="barSwap">יחליפו מקומות</string>
     <string name="barReset">שחזור ברירת המחדל</string>
     <string name="barMailStays">„דואר” תמיד נשאר בסרגל — אפשר להחליף את מקומו עם מדור אחר</string>
+    <string name="assignMarkAs">סימון: {status}</string>
+    <string name="assignMarkLocalHint">רק אצלך — לא יישלח דואר למבצע</string>
+    <string name="assignMarkedManually">סומן ידנית</string>
 </resources>

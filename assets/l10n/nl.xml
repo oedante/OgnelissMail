@@ -4088,4 +4088,7 @@
     <string name="barSwap">Wisselen van plek</string>
     <string name="barReset">Standaard herstellen</string>
     <string name="barMailStays">‘E-mail’ blijft altijd op de balk — je kunt het met een ander onderdeel wisselen</string>
+    <string name="assignMarkAs">Markeren als: {status}</string>
+    <string name="assignMarkLocalHint">Alleen bij jou — de uitvoerder krijgt geen e-mail</string>
+    <string name="assignMarkedManually">Handmatig gemarkeerd</string>
 </resources>

@@ -2213,6 +2213,10 @@ class SyncService {
       final lines = NotificationLines.of(_prefs, work: account.isWork);
       for (var i = 0; i < singles.length; i++) {
         final e = singles[i];
+        // Прехедер рассылки (2.2.0, просьба владельца 10.11.2026) — текст
+        // уведомления вместо начала письма: и когда превью пришло с сервера
+        // (EWS, Graph), и когда в уведомлении больше строк, чем в превью.
+        final pre = Preheader.of(e.bodyHtml);
         await service.showEmailNotification(
           accountId: account.id,
           emailId: e.id,
@@ -2222,7 +2226,7 @@ class SyncService {
           subject: e.subject,
           mailboxLabel: mailboxLabel,
           isSharedMailbox: account.isSharedMailbox,
-          preview: e.bodyPreview,
+          preview: pre ?? e.bodyPreview,
           fromEmail: e.from.email,
           folderId: folder.id,
           isVip: focus.isVip(e) || ruled[e.id]?.notify == RuleNotify.always,
@@ -2237,7 +2241,7 @@ class SyncService {
           senderPhoto: photos[e.from.email.trim().toLowerCase()],
           accountLabel: shortLabel,
           previewLines: lines,
-          fullText: NotificationLines.wantsBody(lines) ? e.bodyPlain : null,
+          fullText: pre == null && NotificationLines.wantsBody(lines) ? e.bodyPlain : null,
         );
       }
 

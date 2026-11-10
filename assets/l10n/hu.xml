@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Jelölés eltávolítva</string>
     <string name="swipeDoneControl">Nyomon követve</string>
     <string name="swipeDoneControlOff">Nyomon követés megszüntetve</string>
+    <string name="easCompatUaWin">Átjáró-kompatibilitás (mint a Windows Posta és az Outlook)</string>
+    <string name="easCompatUaWinHint">Olyan átjáró mögötti Exchange-hez, amely csak ismert levelezőprogramokat enged át (403-as hiba). Az ActiveSync Windows Postaként, az EWS Outlookként mutatkozik be. Egyeztessen az informatikával.</string>
+    <string name="easCompatUaMac">Átjáró-kompatibilitás (mint az Apple Mail)</string>
+    <string name="easCompatUaMacHint">Olyan átjáró mögötti Exchange-hez, amely csak ismert levelezőprogramokat enged át (403-as hiba). Az EWS a Mac Mailjeként, az ActiveSync iPad Mailként mutatkozik be. Egyeztessen az informatikával.</string>
+    <string name="easCompatUaLinux">Átjáró-kompatibilitás (mint a Thunderbird és az Android levelező)</string>
+    <string name="easCompatUaLinuxHint">Olyan átjáró mögötti Exchange-hez, amely csak ismert levelezőprogramokat enged át (403-as hiba). Az EWS Thunderbirdként, az ActiveSync Android levelezőként mutatkozik be. Egyeztessen az informatikával.</string>
 </resources>

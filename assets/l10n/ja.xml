@@ -4047,4 +4047,10 @@
     <string name="swipeDoneUnflag">フラグを外しました</string>
     <string name="swipeDoneControl">フォローアップ中</string>
     <string name="swipeDoneControlOff">フォローアップを解除しました</string>
+    <string name="easCompatUaWin">ゲートウェイ互換（Windows メールや Outlook と同様）</string>
+    <string name="easCompatUaWinHint">既知のメールアプリだけを通すゲートウェイの背後にある Exchange 用（エラー 403）。ActiveSync は Windows メール、EWS は Outlook として接続します。IT 部門に確認してください。</string>
+    <string name="easCompatUaMac">ゲートウェイ互換（Apple メールと同様）</string>
+    <string name="easCompatUaMacHint">既知のメールアプリだけを通すゲートウェイの背後にある Exchange 用（エラー 403）。EWS は Mac のメール、ActiveSync は iPad のメールとして接続します。IT 部門に確認してください。</string>
+    <string name="easCompatUaLinux">ゲートウェイ互換（Thunderbird や Android メールと同様）</string>
+    <string name="easCompatUaLinuxHint">既知のメールアプリだけを通すゲートウェイの背後にある Exchange 用（エラー 403）。EWS は Thunderbird、ActiveSync は Android のメールとして接続します。IT 部門に確認してください。</string>
 </resources>

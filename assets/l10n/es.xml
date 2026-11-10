@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Bandera quitada</string>
     <string name="swipeDoneControl">En seguimiento</string>
     <string name="swipeDoneControlOff">Seguimiento quitado</string>
+    <string name="easCompatUaWin">Compatibilidad con pasarela (como Correo de Windows y Outlook)</string>
+    <string name="easCompatUaWinHint">Para Exchange detrás de una pasarela que solo admite programas de correo conocidos (error 403). ActiveSync se identifica como Correo de Windows y EWS como Outlook. Consúltalo con TI.</string>
+    <string name="easCompatUaMac">Compatibilidad con pasarela (como Mail de Apple)</string>
+    <string name="easCompatUaMacHint">Para Exchange detrás de una pasarela que solo admite programas de correo conocidos (error 403). EWS se identifica como Mail en el Mac y ActiveSync como Mail en el iPad. Consúltalo con TI.</string>
+    <string name="easCompatUaLinux">Compatibilidad con pasarela (como Thunderbird y el correo de Android)</string>
+    <string name="easCompatUaLinuxHint">Para Exchange detrás de una pasarela que solo admite programas de correo conocidos (error 403). EWS se identifica como Thunderbird y ActiveSync como el correo de Android. Consúltalo con TI.</string>
 </resources>

@@ -4089,4 +4089,10 @@
     <string name="swipeDoneUnflag">Vlajka odstránená</string>
     <string name="swipeDoneControl">Vo sledovaní</string>
     <string name="swipeDoneControlOff">Sledovanie zrušené</string>
+    <string name="easCompatUaWin">Kompatibilita s bránou (ako Pošta Windows a Outlook)</string>
+    <string name="easCompatUaWinHint">Pre Exchange za bránou, ktorá prepúšťa len známe poštové programy (chyba 403). ActiveSync sa predstaví ako Pošta Windows, EWS ako Outlook. Dohodnite sa s IT.</string>
+    <string name="easCompatUaMac">Kompatibilita s bránou (ako Pošta Apple)</string>
+    <string name="easCompatUaMacHint">Pre Exchange za bránou, ktorá prepúšťa len známe poštové programy (chyba 403). EWS sa predstaví ako Mail na Macu, ActiveSync ako Pošta iPadu. Dohodnite sa s IT.</string>
+    <string name="easCompatUaLinux">Kompatibilita s bránou (ako Thunderbird a pošta Android)</string>
+    <string name="easCompatUaLinuxHint">Pre Exchange za bránou, ktorá prepúšťa len známe poštové programy (chyba 403). EWS sa predstaví ako Thunderbird, ActiveSync ako pošta Android. Dohodnite sa s IT.</string>
 </resources>

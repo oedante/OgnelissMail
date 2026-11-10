@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Sinalização removida</string>
     <string name="swipeDoneControl">Em acompanhamento</string>
     <string name="swipeDoneControlOff">Acompanhamento removido</string>
+    <string name="easCompatUaWin">Compatibilidade com gateway (como o Email do Windows e o Outlook)</string>
+    <string name="easCompatUaWinHint">Para Exchange atrás de um gateway que só aceita apps de e-mail conhecidos (erro 403). O ActiveSync se identifica como Email do Windows e o EWS como Outlook. Confirme com a equipe de TI.</string>
+    <string name="easCompatUaMac">Compatibilidade com gateway (como o Mail da Apple)</string>
+    <string name="easCompatUaMacHint">Para Exchange atrás de um gateway que só aceita apps de e-mail conhecidos (erro 403). O EWS se identifica como o Mail do Mac e o ActiveSync como o Mail do iPad. Confirme com a equipe de TI.</string>
+    <string name="easCompatUaLinux">Compatibilidade com gateway (como o Thunderbird e o e-mail do Android)</string>
+    <string name="easCompatUaLinuxHint">Para Exchange atrás de um gateway que só aceita apps de e-mail conhecidos (erro 403). O EWS se identifica como Thunderbird e o ActiveSync como o e-mail do Android. Confirme com a equipe de TI.</string>
 </resources>

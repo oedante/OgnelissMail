@@ -4152,4 +4152,10 @@
     <string name="swipeDoneUnflag">تمت إزالة العلامة</string>
     <string name="swipeDoneControl">قيد المتابعة</string>
     <string name="swipeDoneControlOff">تمت إزالة المتابعة</string>
+    <string name="easCompatUaWin">التوافق مع البوابة (مثل بريد Windows وOutlook)</string>
+    <string name="easCompatUaWinHint">لخادم Exchange خلف بوابة لا تسمح إلا ببرامج البريد المعروفة (الخطأ 403). يقدّم ActiveSync نفسه كبريد Windows، وEWS كـ Outlook. نسّق مع قسم تقنية المعلومات.</string>
+    <string name="easCompatUaMac">التوافق مع البوابة (مثل بريد Apple)</string>
+    <string name="easCompatUaMacHint">لخادم Exchange خلف بوابة لا تسمح إلا ببرامج البريد المعروفة (الخطأ 403). يقدّم EWS نفسه كتطبيق البريد على Mac، وActiveSync كبريد iPad. نسّق مع قسم تقنية المعلومات.</string>
+    <string name="easCompatUaLinux">التوافق مع البوابة (مثل Thunderbird وبريد Android)</string>
+    <string name="easCompatUaLinuxHint">لخادم Exchange خلف بوابة لا تسمح إلا ببرامج البريد المعروفة (الخطأ 403). يقدّم EWS نفسه كـ Thunderbird، وActiveSync كبريد Android. نسّق مع قسم تقنية المعلومات.</string>
 </resources>

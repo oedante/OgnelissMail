@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Signalement retiré</string>
     <string name="swipeDoneControl">En suivi</string>
     <string name="swipeDoneControlOff">Suivi retiré</string>
+    <string name="easCompatUaWin">Compatibilité passerelle (comme Courrier Windows et Outlook)</string>
+    <string name="easCompatUaWinHint">Pour Exchange derrière une passerelle qui n’admet que les logiciels de messagerie connus (erreur 403). ActiveSync se présente comme Courrier Windows, EWS comme Outlook. À valider avec votre service informatique.</string>
+    <string name="easCompatUaMac">Compatibilité passerelle (comme Mail d’Apple)</string>
+    <string name="easCompatUaMacHint">Pour Exchange derrière une passerelle qui n’admet que les logiciels de messagerie connus (erreur 403). EWS se présente comme Mail sur Mac, ActiveSync comme Mail sur iPad. À valider avec votre service informatique.</string>
+    <string name="easCompatUaLinux">Compatibilité passerelle (comme Thunderbird et la messagerie Android)</string>
+    <string name="easCompatUaLinuxHint">Pour Exchange derrière une passerelle qui n’admet que les logiciels de messagerie connus (erreur 403). EWS se présente comme Thunderbird, ActiveSync comme la messagerie Android. À valider avec votre service informatique.</string>
 </resources>

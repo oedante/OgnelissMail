@@ -4047,4 +4047,10 @@
     <string name="swipeDoneUnflag">已取消旗标</string>
     <string name="swipeDoneControl">已加入跟进</string>
     <string name="swipeDoneControlOff">已取消跟进</string>
+    <string name="easCompatUaWin">网关兼容（如 Windows 邮件和 Outlook）</string>
+    <string name="easCompatUaWinHint">适用于网关只放行已知邮件程序的 Exchange（错误 403）。ActiveSync 以 Windows 邮件身份连接，EWS 以 Outlook 身份连接。请与 IT 部门确认。</string>
+    <string name="easCompatUaMac">网关兼容（如 Apple 邮件）</string>
+    <string name="easCompatUaMacHint">适用于网关只放行已知邮件程序的 Exchange（错误 403）。EWS 以 Mac 上的邮件身份连接，ActiveSync 以 iPad 邮件身份连接。请与 IT 部门确认。</string>
+    <string name="easCompatUaLinux">网关兼容（如 Thunderbird 和 Android 邮件）</string>
+    <string name="easCompatUaLinuxHint">适用于网关只放行已知邮件程序的 Exchange（错误 403）。EWS 以 Thunderbird 身份连接，ActiveSync 以 Android 邮件身份连接。请与 IT 部门确认。</string>
 </resources>

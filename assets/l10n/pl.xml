@@ -4110,4 +4110,10 @@
     <string name="swipeDoneUnflag">Flaga usunięta</string>
     <string name="swipeDoneControl">Pod kontrolą</string>
     <string name="swipeDoneControlOff">Zdjęto z kontroli</string>
+    <string name="easCompatUaWin">Zgodność z bramą (jak Poczta Windows i Outlook)</string>
+    <string name="easCompatUaWinHint">Dla Exchange za bramą, która przepuszcza tylko znane programy pocztowe (błąd 403). ActiveSync przedstawia się jako Poczta Windows, EWS jako Outlook. Uzgodnij z działem IT.</string>
+    <string name="easCompatUaMac">Zgodność z bramą (jak Apple Mail)</string>
+    <string name="easCompatUaMacHint">Dla Exchange za bramą, która przepuszcza tylko znane programy pocztowe (błąd 403). EWS przedstawia się jako Mail na Macu, ActiveSync jako Mail na iPadzie. Uzgodnij z działem IT.</string>
+    <string name="easCompatUaLinux">Zgodność z bramą (jak Thunderbird i poczta Android)</string>
+    <string name="easCompatUaLinuxHint">Dla Exchange za bramą, która przepuszcza tylko znane programy pocztowe (błąd 403). EWS przedstawia się jako Thunderbird, ActiveSync jako poczta Android. Uzgodnij z działem IT.</string>
 </resources>

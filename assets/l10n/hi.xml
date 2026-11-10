@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">फ़्लैग हटाया गया</string>
     <string name="swipeDoneControl">फ़ॉलो-अप में</string>
     <string name="swipeDoneControlOff">फ़ॉलो-अप हटाया गया</string>
+    <string name="easCompatUaWin">गेटवे संगतता (Windows मेल और Outlook की तरह)</string>
+    <string name="easCompatUaWinHint">ऐसे गेटवे के पीछे Exchange के लिए जो केवल जाने-माने मेल ऐप्स को अनुमति देता है (त्रुटि 403)। ActiveSync Windows मेल के रूप में, EWS Outlook के रूप में पहचान देता है। अपनी IT टीम से पुष्टि करें।</string>
+    <string name="easCompatUaMac">गेटवे संगतता (Apple मेल की तरह)</string>
+    <string name="easCompatUaMacHint">ऐसे गेटवे के पीछे Exchange के लिए जो केवल जाने-माने मेल ऐप्स को अनुमति देता है (त्रुटि 403)। EWS Mac के Mail के रूप में, ActiveSync iPad मेल के रूप में पहचान देता है। अपनी IT टीम से पुष्टि करें।</string>
+    <string name="easCompatUaLinux">गेटवे संगतता (Thunderbird और Android मेल की तरह)</string>
+    <string name="easCompatUaLinuxHint">ऐसे गेटवे के पीछे Exchange के लिए जो केवल जाने-माने मेल ऐप्स को अनुमति देता है (त्रुटि 403)। EWS Thunderbird के रूप में, ActiveSync Android मेल के रूप में पहचान देता है। अपनी IT टीम से पुष्टि करें।</string>
 </resources>

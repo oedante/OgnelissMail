@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Flag fjernet</string>
     <string name="swipeDoneControl">Til opfølgning</string>
     <string name="swipeDoneControlOff">Opfølgning fjernet</string>
+    <string name="easCompatUaWin">Gateway-kompatibilitet (som Windows Mail og Outlook)</string>
+    <string name="easCompatUaWinHint">Til Exchange bag en gateway, der kun lukker kendte mailprogrammer ind (fejl 403). ActiveSync præsenterer sig som Windows Mail, EWS som Outlook. Aftal med IT.</string>
+    <string name="easCompatUaMac">Gateway-kompatibilitet (som Apple Mail)</string>
+    <string name="easCompatUaMacHint">Til Exchange bag en gateway, der kun lukker kendte mailprogrammer ind (fejl 403). EWS præsenterer sig som Mail på Mac, ActiveSync som Mail på iPad. Aftal med IT.</string>
+    <string name="easCompatUaLinux">Gateway-kompatibilitet (som Thunderbird og Android-mail)</string>
+    <string name="easCompatUaLinuxHint">Til Exchange bag en gateway, der kun lukker kendte mailprogrammer ind (fejl 403). EWS præsenterer sig som Thunderbird, ActiveSync som Android-mail. Aftal med IT.</string>
 </resources>

@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Flagg fjernet</string>
     <string name="swipeDoneControl">Til oppfølging</string>
     <string name="swipeDoneControlOff">Oppfølging fjernet</string>
+    <string name="easCompatUaWin">Gateway-kompatibilitet (som Windows E-post og Outlook)</string>
+    <string name="easCompatUaWinHint">For Exchange bak en gateway som bare slipper inn kjente e-postprogrammer (feil 403). ActiveSync presenterer seg som Windows E-post, EWS som Outlook. Avklar med IT.</string>
+    <string name="easCompatUaMac">Gateway-kompatibilitet (som Apple Mail)</string>
+    <string name="easCompatUaMacHint">For Exchange bak en gateway som bare slipper inn kjente e-postprogrammer (feil 403). EWS presenterer seg som Mail på Mac, ActiveSync som Mail på iPad. Avklar med IT.</string>
+    <string name="easCompatUaLinux">Gateway-kompatibilitet (som Thunderbird og Android-e-post)</string>
+    <string name="easCompatUaLinuxHint">For Exchange bak en gateway som bare slipper inn kjente e-postprogrammer (feil 403). EWS presenterer seg som Thunderbird, ActiveSync som Android-e-post. Avklar med IT.</string>
 </resources>

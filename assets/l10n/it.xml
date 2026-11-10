@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Contrassegno rimosso</string>
     <string name="swipeDoneControl">In monitoraggio</string>
     <string name="swipeDoneControlOff">Monitoraggio rimosso</string>
+    <string name="easCompatUaWin">Compatibilità gateway (come Posta di Windows e Outlook)</string>
+    <string name="easCompatUaWinHint">Per Exchange dietro un gateway che ammette solo programmi di posta noti (errore 403). ActiveSync si presenta come Posta di Windows, EWS come Outlook. Concordalo con l’IT.</string>
+    <string name="easCompatUaMac">Compatibilità gateway (come Mail di Apple)</string>
+    <string name="easCompatUaMacHint">Per Exchange dietro un gateway che ammette solo programmi di posta noti (errore 403). EWS si presenta come Mail su Mac, ActiveSync come Mail su iPad. Concordalo con l’IT.</string>
+    <string name="easCompatUaLinux">Compatibilità gateway (come Thunderbird e la posta Android)</string>
+    <string name="easCompatUaLinuxHint">Per Exchange dietro un gateway che ammette solo programmi di posta noti (errore 403). EWS si presenta come Thunderbird, ActiveSync come la posta Android. Concordalo con l’IT.</string>
 </resources>

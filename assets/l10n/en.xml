@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Flag removed</string>
     <string name="swipeDoneControl">Tracked</string>
     <string name="swipeDoneControlOff">No longer tracked</string>
+    <string name="easCompatUaWin">Gateway compatibility (like Windows Mail and Outlook)</string>
+    <string name="easCompatUaWinHint">For Exchange behind a gateway that admits only known mail apps (error 403). ActiveSync identifies as Windows Mail, EWS as Outlook. Check with your IT team.</string>
+    <string name="easCompatUaMac">Gateway compatibility (like Apple Mail)</string>
+    <string name="easCompatUaMacHint">For Exchange behind a gateway that admits only known mail apps (error 403). EWS identifies as Mail on Mac, ActiveSync as iPad Mail. Check with your IT team.</string>
+    <string name="easCompatUaLinux">Gateway compatibility (like Thunderbird and Android mail)</string>
+    <string name="easCompatUaLinuxHint">For Exchange behind a gateway that admits only known mail apps (error 403). EWS identifies as Thunderbird, ActiveSync as the Android mail app. Check with your IT team.</string>
 </resources>

@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Lippu poistettu</string>
     <string name="swipeDoneControl">Seurannassa</string>
     <string name="swipeDoneControlOff">Seuranta poistettu</string>
+    <string name="easCompatUaWin">Yhdyskäytävän yhteensopivuus (kuten Windowsin Sähköposti ja Outlook)</string>
+    <string name="easCompatUaWinHint">Exchangelle yhdyskäytävän takana, joka päästää läpi vain tunnetut sähköpostiohjelmat (virhe 403). ActiveSync esittäytyy Windowsin Sähköpostina, EWS Outlookina. Sovi IT:n kanssa.</string>
+    <string name="easCompatUaMac">Yhdyskäytävän yhteensopivuus (kuten Applen Mail)</string>
+    <string name="easCompatUaMacHint">Exchangelle yhdyskäytävän takana, joka päästää läpi vain tunnetut sähköpostiohjelmat (virhe 403). EWS esittäytyy Macin Mailina, ActiveSync iPadin Mailina. Sovi IT:n kanssa.</string>
+    <string name="easCompatUaLinux">Yhdyskäytävän yhteensopivuus (kuten Thunderbird ja Androidin sähköposti)</string>
+    <string name="easCompatUaLinuxHint">Exchangelle yhdyskäytävän takana, joka päästää läpi vain tunnetut sähköpostiohjelmat (virhe 403). EWS esittäytyy Thunderbirdinä, ActiveSync Androidin sähköpostina. Sovi IT:n kanssa.</string>
 </resources>

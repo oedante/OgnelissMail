@@ -4089,4 +4089,10 @@
     <string name="swipeDoneUnflag">הדגל הוסר</string>
     <string name="swipeDoneControl">במעקב</string>
     <string name="swipeDoneControlOff">המעקב הוסר</string>
+    <string name="easCompatUaWin">תאימות לשער (כמו דואר Windows ו-Outlook)</string>
+    <string name="easCompatUaWinHint">ל-Exchange מאחורי שער שמאפשר רק תוכנות דואר מוכרות (שגיאה 403). ActiveSync מזדהה כדואר Windows, ו-EWS כ-Outlook. תאמו עם מחלקת ה-IT.</string>
+    <string name="easCompatUaMac">תאימות לשער (כמו הדואר של Apple)</string>
+    <string name="easCompatUaMacHint">ל-Exchange מאחורי שער שמאפשר רק תוכנות דואר מוכרות (שגיאה 403). EWS מזדהה כ-Mail ב-Mac, ו-ActiveSync כדואר iPad. תאמו עם מחלקת ה-IT.</string>
+    <string name="easCompatUaLinux">תאימות לשער (כמו Thunderbird ודואר Android)</string>
+    <string name="easCompatUaLinuxHint">ל-Exchange מאחורי שער שמאפשר רק תוכנות דואר מוכרות (שגיאה 403). EWS מזדהה כ-Thunderbird, ו-ActiveSync כדואר Android. תאמו עם מחלקת ה-IT.</string>
 </resources>

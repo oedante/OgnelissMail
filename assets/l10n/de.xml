@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Markierung entfernt</string>
     <string name="swipeDoneControl">Im Blick</string>
     <string name="swipeDoneControlOff">Nicht mehr im Blick</string>
+    <string name="easCompatUaWin">Gateway-Kompatibilität (wie Windows Mail und Outlook)</string>
+    <string name="easCompatUaWinHint">Für Exchange hinter einem Gateway, das nur bekannte E-Mail-Programme zulässt (Fehler 403). ActiveSync meldet sich als Windows Mail, EWS als Outlook. Mit der IT abstimmen.</string>
+    <string name="easCompatUaMac">Gateway-Kompatibilität (wie Apple Mail)</string>
+    <string name="easCompatUaMacHint">Für Exchange hinter einem Gateway, das nur bekannte E-Mail-Programme zulässt (Fehler 403). EWS meldet sich als Mail auf dem Mac, ActiveSync als iPad-Mail. Mit der IT abstimmen.</string>
+    <string name="easCompatUaLinux">Gateway-Kompatibilität (wie Thunderbird und Android-Mail)</string>
+    <string name="easCompatUaLinuxHint">Für Exchange hinter einem Gateway, das nur bekannte E-Mail-Programme zulässt (Fehler 403). EWS meldet sich als Thunderbird, ActiveSync als Android-Mail. Mit der IT abstimmen.</string>
 </resources>

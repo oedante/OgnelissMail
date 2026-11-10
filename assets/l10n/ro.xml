@@ -4089,4 +4089,10 @@
     <string name="swipeDoneUnflag">Steag eliminat</string>
     <string name="swipeDoneControl">În urmărire</string>
     <string name="swipeDoneControlOff">Urmărire eliminată</string>
+    <string name="easCompatUaWin">Compatibilitate gateway (ca Mail Windows și Outlook)</string>
+    <string name="easCompatUaWinHint">Pentru Exchange în spatele unui gateway care permite doar programe de e-mail cunoscute (eroarea 403). ActiveSync se prezintă ca Mail Windows, EWS ca Outlook. Stabiliți cu IT.</string>
+    <string name="easCompatUaMac">Compatibilitate gateway (ca Apple Mail)</string>
+    <string name="easCompatUaMacHint">Pentru Exchange în spatele unui gateway care permite doar programe de e-mail cunoscute (eroarea 403). EWS se prezintă ca Mail pe Mac, ActiveSync ca Mail pe iPad. Stabiliți cu IT.</string>
+    <string name="easCompatUaLinux">Compatibilitate gateway (ca Thunderbird și e-mailul Android)</string>
+    <string name="easCompatUaLinuxHint">Pentru Exchange în spatele unui gateway care permite doar programe de e-mail cunoscute (eroarea 403). EWS se prezintă ca Thunderbird, ActiveSync ca e-mailul Android. Stabiliți cu IT.</string>
 </resources>

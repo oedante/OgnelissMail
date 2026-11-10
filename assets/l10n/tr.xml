@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Bayrak kaldırıldı</string>
     <string name="swipeDoneControl">Takipte</string>
     <string name="swipeDoneControlOff">Takipten çıkarıldı</string>
+    <string name="easCompatUaWin">Ağ geçidi uyumluluğu (Windows Posta ve Outlook gibi)</string>
+    <string name="easCompatUaWinHint">Yalnızca bilinen e-posta uygulamalarına izin veren bir ağ geçidinin arkasındaki Exchange için (hata 403). ActiveSync kendini Windows Posta, EWS ise Outlook olarak tanıtır. BT ekibinizle görüşün.</string>
+    <string name="easCompatUaMac">Ağ geçidi uyumluluğu (Apple Mail gibi)</string>
+    <string name="easCompatUaMacHint">Yalnızca bilinen e-posta uygulamalarına izin veren bir ağ geçidinin arkasındaki Exchange için (hata 403). EWS kendini Mac’teki Mail, ActiveSync ise iPad Mail olarak tanıtır. BT ekibinizle görüşün.</string>
+    <string name="easCompatUaLinux">Ağ geçidi uyumluluğu (Thunderbird ve Android posta gibi)</string>
+    <string name="easCompatUaLinuxHint">Yalnızca bilinen e-posta uygulamalarına izin veren bir ağ geçidinin arkasındaki Exchange için (hata 403). EWS kendini Thunderbird, ActiveSync ise Android posta olarak tanıtır. BT ekibinizle görüşün.</string>
 </resources>

@@ -4047,4 +4047,10 @@
     <string name="swipeDoneUnflag">플래그 해제됨</string>
     <string name="swipeDoneControl">후속 확인 중</string>
     <string name="swipeDoneControlOff">후속 확인 해제됨</string>
+    <string name="easCompatUaWin">게이트웨이 호환(Windows 메일 및 Outlook처럼)</string>
+    <string name="easCompatUaWinHint">알려진 메일 앱만 허용하는 게이트웨이 뒤의 Exchange용입니다(오류 403). ActiveSync는 Windows 메일로, EWS는 Outlook으로 표시됩니다. IT 팀과 확인하세요.</string>
+    <string name="easCompatUaMac">게이트웨이 호환(Apple Mail처럼)</string>
+    <string name="easCompatUaMacHint">알려진 메일 앱만 허용하는 게이트웨이 뒤의 Exchange용입니다(오류 403). EWS는 Mac의 Mail로, ActiveSync는 iPad Mail로 표시됩니다. IT 팀과 확인하세요.</string>
+    <string name="easCompatUaLinux">게이트웨이 호환(Thunderbird 및 Android 메일처럼)</string>
+    <string name="easCompatUaLinuxHint">알려진 메일 앱만 허용하는 게이트웨이 뒤의 Exchange용입니다(오류 403). EWS는 Thunderbird로, ActiveSync는 Android 메일로 표시됩니다. IT 팀과 확인하세요.</string>
 </resources>

@@ -4110,4 +4110,10 @@
     <string name="swipeDoneUnflag">Флажок снят</string>
     <string name="swipeDoneControl">На контроле</string>
     <string name="swipeDoneControlOff">Снято с контроля</string>
+    <string name="easCompatUaWin">Совместимость со шлюзом (как Почта Windows и Outlook)</string>
+    <string name="easCompatUaWinHint">Для Exchange за шлюзом, который пропускает только известные почтовые программы (ошибка 403). ActiveSync — как Почта Windows, EWS — как Outlook. Согласуйте с ИТ.</string>
+    <string name="easCompatUaMac">Совместимость со шлюзом (как Почта Apple)</string>
+    <string name="easCompatUaMacHint">Для Exchange за шлюзом, который пропускает только известные почтовые программы (ошибка 403). EWS — как Mail на Mac, ActiveSync — как Почта iPad. Согласуйте с ИТ.</string>
+    <string name="easCompatUaLinux">Совместимость со шлюзом (как Thunderbird и почта Android)</string>
+    <string name="easCompatUaLinuxHint">Для Exchange за шлюзом, который пропускает только известные почтовые программы (ошибка 403). EWS — как Thunderbird, ActiveSync — как почта Android. Согласуйте с ИТ.</string>
 </resources>

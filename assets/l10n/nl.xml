@@ -4068,4 +4068,10 @@
     <string name="swipeDoneUnflag">Vlag verwijderd</string>
     <string name="swipeDoneControl">Wordt opgevolgd</string>
     <string name="swipeDoneControlOff">Opvolging verwijderd</string>
+    <string name="easCompatUaWin">Gatewaycompatibiliteit (zoals Windows Mail en Outlook)</string>
+    <string name="easCompatUaWinHint">Voor Exchange achter een gateway die alleen bekende mailprogramma’s toelaat (fout 403). ActiveSync meldt zich als Windows Mail, EWS als Outlook. Overleg met IT.</string>
+    <string name="easCompatUaMac">Gatewaycompatibiliteit (zoals Apple Mail)</string>
+    <string name="easCompatUaMacHint">Voor Exchange achter een gateway die alleen bekende mailprogramma’s toelaat (fout 403). EWS meldt zich als Mail op de Mac, ActiveSync als Mail op de iPad. Overleg met IT.</string>
+    <string name="easCompatUaLinux">Gatewaycompatibiliteit (zoals Thunderbird en Android-mail)</string>
+    <string name="easCompatUaLinuxHint">Voor Exchange achter een gateway die alleen bekende mailprogramma’s toelaat (fout 403). EWS meldt zich als Thunderbird, ActiveSync als Android-mail. Overleg met IT.</string>
 </resources>

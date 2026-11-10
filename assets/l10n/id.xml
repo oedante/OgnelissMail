@@ -4047,4 +4047,10 @@
     <string name="swipeDoneUnflag">Bendera dihapus</string>
     <string name="swipeDoneControl">Ditindaklanjuti</string>
     <string name="swipeDoneControlOff">Tindak lanjut dihapus</string>
+    <string name="easCompatUaWin">Kompatibilitas gateway (seperti Windows Mail dan Outlook)</string>
+    <string name="easCompatUaWinHint">Untuk Exchange di balik gateway yang hanya mengizinkan aplikasi email dikenal (galat 403). ActiveSync tampil sebagai Windows Mail, EWS sebagai Outlook. Konfirmasikan dengan tim TI.</string>
+    <string name="easCompatUaMac">Kompatibilitas gateway (seperti Apple Mail)</string>
+    <string name="easCompatUaMacHint">Untuk Exchange di balik gateway yang hanya mengizinkan aplikasi email dikenal (galat 403). EWS tampil sebagai Mail di Mac, ActiveSync sebagai Mail iPad. Konfirmasikan dengan tim TI.</string>
+    <string name="easCompatUaLinux">Kompatibilitas gateway (seperti Thunderbird dan email Android)</string>
+    <string name="easCompatUaLinuxHint">Untuk Exchange di balik gateway yang hanya mengizinkan aplikasi email dikenal (galat 403). EWS tampil sebagai Thunderbird, ActiveSync sebagai email Android. Konfirmasikan dengan tim TI.</string>
 </resources>

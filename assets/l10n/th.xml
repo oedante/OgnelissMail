@@ -4047,4 +4047,10 @@
     <string name="swipeDoneUnflag">เอาธงออกแล้ว</string>
     <string name="swipeDoneControl">กำลังติดตาม</string>
     <string name="swipeDoneControlOff">เลิกติดตามแล้ว</string>
+    <string name="easCompatUaWin">ความเข้ากันได้กับเกตเวย์ (เหมือน Windows Mail และ Outlook)</string>
+    <string name="easCompatUaWinHint">สำหรับ Exchange หลังเกตเวย์ที่อนุญาตเฉพาะโปรแกรมอีเมลที่รู้จัก (ข้อผิดพลาด 403) ActiveSync แสดงตัวเป็น Windows Mail และ EWS เป็น Outlook โปรดตกลงกับฝ่ายไอที</string>
+    <string name="easCompatUaMac">ความเข้ากันได้กับเกตเวย์ (เหมือน Apple Mail)</string>
+    <string name="easCompatUaMacHint">สำหรับ Exchange หลังเกตเวย์ที่อนุญาตเฉพาะโปรแกรมอีเมลที่รู้จัก (ข้อผิดพลาด 403) EWS แสดงตัวเป็น Mail บน Mac และ ActiveSync เป็น Mail บน iPad โปรดตกลงกับฝ่ายไอที</string>
+    <string name="easCompatUaLinux">ความเข้ากันได้กับเกตเวย์ (เหมือน Thunderbird และอีเมล Android)</string>
+    <string name="easCompatUaLinuxHint">สำหรับ Exchange หลังเกตเวย์ที่อนุญาตเฉพาะโปรแกรมอีเมลที่รู้จัก (ข้อผิดพลาด 403) EWS แสดงตัวเป็น Thunderbird และ ActiveSync เป็นอีเมล Android โปรดตกลงกับฝ่ายไอที</string>
 </resources>

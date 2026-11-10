@@ -4047,4 +4047,10 @@
     <string name="swipeDoneUnflag">Đã bỏ gắn cờ</string>
     <string name="swipeDoneControl">Đang theo dõi</string>
     <string name="swipeDoneControlOff">Đã bỏ theo dõi</string>
+    <string name="easCompatUaWin">Tương thích cổng (như Thư Windows và Outlook)</string>
+    <string name="easCompatUaWinHint">Cho Exchange sau cổng chỉ cho phép ứng dụng thư đã biết (lỗi 403). ActiveSync tự nhận là Thư Windows, EWS là Outlook. Hãy thống nhất với bộ phận CNTT.</string>
+    <string name="easCompatUaMac">Tương thích cổng (như Thư của Apple)</string>
+    <string name="easCompatUaMacHint">Cho Exchange sau cổng chỉ cho phép ứng dụng thư đã biết (lỗi 403). EWS tự nhận là Mail trên Mac, ActiveSync là Thư trên iPad. Hãy thống nhất với bộ phận CNTT.</string>
+    <string name="easCompatUaLinux">Tương thích cổng (như Thunderbird và thư Android)</string>
+    <string name="easCompatUaLinuxHint">Cho Exchange sau cổng chỉ cho phép ứng dụng thư đã biết (lỗi 403). EWS tự nhận là Thunderbird, ActiveSync là thư Android. Hãy thống nhất với bộ phận CNTT.</string>
 </resources>

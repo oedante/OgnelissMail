@@ -7,7 +7,9 @@
 // Провайдеры:
 //   • google    — Gmail (IMAP/SMTP), календарь и контакты Google;
 //   • microsoft — Outlook.com / Hotmail (IMAP/SMTP);
-//   • exchange  — Exchange Online (Microsoft 365) по ActiveSync и EWS.
+//   • exchange  — Exchange Online (Microsoft 365) по ActiveSync и EWS;
+//   • yandex    — Яндекс Почта (IMAP/SMTP), календарь и контакты (2.2.0,
+//     решение владельца 10.11.2026: вход без сервера). Только телефон и Mac.
 //
 // Идентификаторы клиентов — при сборке (config/dart_defines.json, не
 // секреты, но свои у каждой сборки):
@@ -31,6 +33,14 @@
 //     User.Read, User.ReadBasic.All, People.Read, Mail.ReadWrite,
 //     MailboxSettings.ReadWrite; по желанию (согласие администратора) —
 //     Place.Read.All (переговорные) и GroupMember.Read.All (состав рассылок).
+//   Яндекс — клиент AppConstants.yandexClientId (oauth.yandex.ru): платформы
+//     «iOS-приложение» (App ID с префиксом команды) и «Android-приложение»
+//     (пакет com.ogneliss.mail и SHA-256 ключей подписи), права mail:imap_full,
+//     mail:smtp, login:info, login:email, calendar:all, addressbook:all.
+//     Возврат — схема yx<ClientID>:///auth/finish?platform=ios|android, как у
+//     LoginSDK Яндекса (его код открыт, Apache-2.0; сам SDK не подключаем:
+//     на Android он отдаёт токен без refresh-токена). Обмен кода — с
+//     code_verifier, без секрета. Windows и Linux — через сервер входа.
 // Клиент не задан — вход идёт как раньше (через сервер входа, если он есть).
 //
 // Microsoft Graph (1.8.10, замечание владельца 29.10.2026: Microsoft
@@ -56,6 +66,7 @@ import 'package:http/http.dart' as http;
 import 'package:mail_engine/mail_engine.dart' as me;
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/errors/app_exceptions.dart';
 import '../../../core/logging/app_logger.dart';
 import 'oauth_service.dart' show OAuthResult;
@@ -131,6 +142,14 @@ class DirectOAuth {
   // valid» — а ActiveSync и EWS по OAuth личным ящикам и не положены.
   static final _orgAuth = Uri.parse('https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize');
   static final _orgToken = Uri.parse('https://login.microsoftonline.com/organizations/oauth2/v2.0/token');
+  static final _yandexAuth = Uri.parse('https://oauth.yandex.ru/authorize');
+  static final _yandexToken = Uri.parse('https://oauth.yandex.ru/token');
+  static final _yandexInfo = Uri.parse('https://login.yandex.ru/info?format=json');
+
+  /// Права Яндекса задаются в регистрации приложения; в запросе их не
+  /// перечисляем — Яндекс выдаёт отмеченные там (лишнее в запросе — отказ
+  /// invalid_scope).
+  static const _yandexScopes = <String>[];
 
   static const _googleScopes = [
     'openid', 'email', 'profile',
@@ -226,6 +245,20 @@ class DirectOAuth {
           consentScopes: provider == 'exchange' ? [..._exchangeScopes, ...graphConsentScopes] : null,
           extraParams: const {'prompt': 'select_account'},
         );
+      case 'yandex':
+        // Возврат по схеме yx<ClientID> — телефон и Mac; Windows и Linux —
+        // через сервер входа.
+        if (!_mobile || AppConstants.yandexClientId.isEmpty) return null;
+        return DirectOAuthClient(
+          provider: 'yandex',
+          clientId: AppConstants.yandexClientId,
+          authorizeEndpoint: _yandexAuth,
+          tokenEndpoint: _yandexToken,
+          scopes: _yandexScopes,
+          // Выбор учётной записи, даже если в браузере уже вошли (как
+          // prompt=select_account у Microsoft).
+          extraParams: const {'force_confirm': 'yes'},
+        );
     }
     return null;
   }
@@ -238,6 +271,10 @@ class DirectOAuth {
     final provider = marker.substring(0, i);
     final id = marker.substring(i + 1);
     final isGoogle = provider == 'google';
+    if (provider == 'yandex') {
+      return DirectOAuthClient(
+          provider: 'yandex', clientId: id, authorizeEndpoint: _yandexAuth, tokenEndpoint: _yandexToken, scopes: _yandexScopes);
+    }
     final List<String> scopes = switch (provider) {
       'google' => _googleScopes,
       'exchange' => _exchangeScopes,
@@ -254,9 +291,17 @@ class DirectOAuth {
   }
 
   /// Адрес возврата на телефоне. Google принимает для клиентов Android и iOS
-  /// схему пакета с одним «/», Microsoft — любой адрес из регистрации.
-  static String _mobileRedirect(String provider) =>
-      provider == 'google' ? '$appScheme:/oauth2redirect' : '$appScheme://oauth/microsoft';
+  /// схему пакета с одним «/», Microsoft — любой адрес из регистрации,
+  /// Яндекс — схему yx<ClientID> платформ «iOS» и «Android» (Mac — как iOS).
+  static String mobileRedirect(String provider, {String? clientId, bool android = false}) => switch (provider) {
+        'google' => '$appScheme:/oauth2redirect',
+        'yandex' => '${yandexScheme(clientId ?? AppConstants.yandexClientId)}:///auth/finish'
+            '?platform=${android ? 'android' : 'ios'}',
+        _ => '$appScheme://oauth/microsoft',
+      };
+
+  /// Схема возврата Яндекса (её же ловит CallbackActivity в AndroidManifest).
+  static String yandexScheme(String clientId) => 'yx$clientId';
 
   /// Вход: браузер → провайдер → код → токены. [loginHint] — адрес ящика
   /// («Войти снова»), чтобы провайдер сразу предложил нужную учётную запись.
@@ -286,13 +331,13 @@ class DirectOAuth {
           ? 'http://127.0.0.1:${loopback.port}/'
           : 'http://localhost:${loopback.port}/';
     } else {
-      redirect = _mobileRedirect(c.provider);
+      redirect = mobileRedirect(c.provider, clientId: c.clientId, android: Platform.isAndroid);
     }
     final url = c.authorizeEndpoint.replace(queryParameters: {
       'response_type': 'code',
       'client_id': c.clientId,
       'redirect_uri': redirect,
-      'scope': (c.consentScopes ?? c.scopes).join(' '),
+      if ((c.consentScopes ?? c.scopes).isNotEmpty) 'scope': (c.consentScopes ?? c.scopes).join(' '),
       'state': state,
       'code_challenge': challenge,
       'code_challenge_method': 'S256',
@@ -320,7 +365,7 @@ class DirectOAuth {
       } else {
         final result = await FlutterWebAuth2.authenticate(
           url: url.toString(),
-          callbackUrlScheme: appScheme,
+          callbackUrlScheme: c.provider == 'yandex' ? yandexScheme(c.clientId) : appScheme,
           // Системный браузер: Google и Microsoft не пускают во встроенный.
           options: const FlutterWebAuth2Options(useWebview: false, timeout: 300),
         );
@@ -353,11 +398,12 @@ class DirectOAuth {
       'code': code,
       'client_id': c.clientId,
       if (c.clientSecret != null) 'client_secret': c.clientSecret!,
-      'redirect_uri': redirect,
+      // Яндекс — как LoginSDK: код, code_verifier и клиент.
+      if (c.provider != 'yandex') 'redirect_uri': redirect,
       'code_verifier': verifier,
       // Microsoft: права токена — одного ресурса (без Graph, если согласие
       // на него просилось вместе со входом).
-      if (c.provider != 'google') 'scope': c.scopes.join(' '),
+      if (_microsoft(c)) 'scope': c.scopes.join(' '),
     }).timeout(const Duration(seconds: 30));
     if (resp.statusCode != 200) {
       final why = describeRefreshFailure(c, resp.statusCode, resp.body);
@@ -369,7 +415,7 @@ class DirectOAuth {
     if (at == null || at.isEmpty) {
       throw const AuthException(userMessage: 'OAuth: токен не получен', messageKey: 'oauthNoToken');
     }
-    final claims = idTokenClaims(m['id_token'] as String?);
+    final claims = c.provider == 'yandex' ? await _yandexUser(at) : idTokenClaims(m['id_token'] as String?);
     final email = (claims['email'] ?? claims['preferred_username'] ?? claims['upn']) as String?;
     AppLogger.info('OAuth (${c.provider}): токен получен');
     return OAuthResult(
@@ -395,7 +441,7 @@ class DirectOAuth {
       'refresh_token': refreshToken,
       'client_id': c.clientId,
       if (c.clientSecret != null) 'client_secret': c.clientSecret!,
-      if (c.provider != 'google') 'scope': c.scopes.join(' '),
+      if (_microsoft(c)) 'scope': c.scopes.join(' '),
     }).timeout(const Duration(seconds: 20));
     if (resp.statusCode != 200) {
       final f = describeRefreshFailure(c, resp.statusCode, resp.body,
@@ -432,7 +478,7 @@ class DirectOAuth {
       }
     } catch (_) {}
     if (desc.length > 160) desc = '${desc.substring(0, 160)}…';
-    final who = switch (c.provider) { 'google' => 'Google', _ => 'Microsoft' };
+    final who = switch (c.provider) { 'google' => 'Google', 'yandex' => 'Яндекс', _ => 'Microsoft' };
     final detail = [if (err.isNotEmpty) err, if (desc.isNotEmpty) desc].join(': ');
     final e = err.toLowerCase();
     if (e == 'invalid_client' || e == 'unauthorized_client') {
@@ -466,6 +512,34 @@ class DirectOAuth {
     } catch (_) {
       return const {};
     }
+  }
+
+  static bool _microsoft(DirectOAuthClient c) => c.provider == 'microsoft' || c.provider == 'exchange';
+
+  /// Адрес и имя Яндекса (id_token Яндекс не выдаёт): login.yandex.ru/info
+  /// с правами login:email и login:info. Не ответил — без них (адрес возьмётся
+  /// из формы входа).
+  static Future<Map<String, dynamic>> _yandexUser(String accessToken) async {
+    try {
+      final r = await http
+          .get(_yandexInfo, headers: {'Authorization': 'OAuth $accessToken'}).timeout(const Duration(seconds: 15));
+      if (r.statusCode != 200) return const {};
+      return yandexClaims(jsonDecode(r.body));
+    } catch (e) {
+      AppLogger.warning('OAuth (yandex): login.yandex.ru/info — $e');
+      return const {};
+    }
+  }
+
+  /// Ответ login.yandex.ru/info → поля как у id_token (email, name).
+  static Map<String, dynamic> yandexClaims(Object? info) {
+    if (info is! Map) return const {};
+    final login = info['login'];
+    final email = info['default_email'] ??
+        ((info['emails'] is List && (info['emails'] as List).isNotEmpty) ? (info['emails'] as List).first : null) ??
+        (login is String && login.isNotEmpty ? '$login@yandex.ru' : null);
+    final name = [info['real_name'], info['display_name']].whereType<String>().where((s) => s.trim().isNotEmpty).firstOrNull;
+    return {'email': ?email, 'name': ?name};
   }
 
   static String _random(int n) {

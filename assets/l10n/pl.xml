@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Akcje przesunięcia na liście wiadomości. Do dwóch akcji na stronę.</string>
     <string name="swipeRight">Przesunięcie w prawo</string>
     <string name="swipeLeft">Przesunięcie w lewo</string>
-    <string name="swipeFirstAction">Krótkie przesunięcie</string>
-    <string name="swipeSecondAction">Długie przesunięcie</string>
-    <string name="swipeSingleHint">Przeciągnij wiersz i puść – akcja zostanie wykonana. Krótkie przesunięcie wykonuje pierwszą akcję, długie – drugą; ikona i podpis pokazują którą. Puszczony za wcześnie wiersz wraca na miejsce. Potem wiersz pokazuje, co zrobiono, z przyciskiem Cofnij.</string>
+    <string name="swipeFirstAction">Pierwsza czynność</string>
+    <string name="swipeSecondAction">Druga czynność</string>
+    <string name="swipeSingleHint">Krótkie przesunięcie pokazuje przyciski, długie od razu wykonuje pierwszą akcję. Przy jednej akcji wystarczy mniej więcej pół wiersza.</string>
     <string name="filterToMe">Do mnie</string>
     <string name="recentSearches">Ostatnie wyszukiwania</string>
     <string name="draft">Wersja robocza</string>
@@ -4110,4 +4110,15 @@
     <string name="swipeDoneUnflag">Flaga usunięta</string>
     <string name="swipeDoneControl">Pod kontrolą</string>
     <string name="swipeDoneControlOff">Zdjęto z kontroli</string>
+    <string name="easCompatUaWin">Zgodność z bramą (jak Poczta Windows i Outlook)</string>
+    <string name="easCompatUaWinHint">Dla Exchange za bramą, która przepuszcza tylko znane programy pocztowe (błąd 403). ActiveSync przedstawia się jako Poczta Windows, EWS jako Outlook. Uzgodnij z działem IT.</string>
+    <string name="easCompatUaMac">Zgodność z bramą (jak Apple Mail)</string>
+    <string name="easCompatUaMacHint">Dla Exchange za bramą, która przepuszcza tylko znane programy pocztowe (błąd 403). EWS przedstawia się jako Mail na Macu, ActiveSync jako Mail na iPadzie. Uzgodnij z działem IT.</string>
+    <string name="easCompatUaLinux">Zgodność z bramą (jak Thunderbird i poczta Android)</string>
+    <string name="easCompatUaLinuxHint">Dla Exchange za bramą, która przepuszcza tylko znane programy pocztowe (błąd 403). EWS przedstawia się jako Thunderbird, ActiveSync jako poczta Android. Uzgodnij z działem IT.</string>
+    <string name="swipeShortAction">Krótkie przesunięcie</string>
+    <string name="swipeLongAction">Długie przesunięcie</string>
+    <string name="swipeTwoStepHint">Przeciągnij wiersz i puść – akcja zostanie wykonana. Krótkie przesunięcie wykonuje pierwszą akcję, długie – drugą; ikona i podpis pokazują którą. Puszczony za wcześnie wiersz wraca na miejsce. Potem wiersz pokazuje, co zrobiono, z przyciskiem Cofnij.</string>
+    <string name="swipeTwoStepTitle">Krótkie i długie przesunięcie</string>
+    <string name="swipeTwoStepSub">Dwie akcje po jednej stronie: krótkie przesunięcie wykonuje pierwszą, długie drugą, bez przycisków. Wyłączone – przesunięcie pokazuje przyciski do wyboru</string>
 </resources>

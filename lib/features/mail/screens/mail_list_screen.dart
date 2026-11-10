@@ -1852,6 +1852,12 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     final hasPrimary = primary != SwipeAction.none;
     final hasSecondary = secondary != SwipeAction.none;
     if (!hasPrimary && !hasSecondary) return null;
+    // По умолчанию — прежняя логика (решение владельца 10.11.2026): одно
+    // действие срабатывает сразу, два — кнопки на выбор. Короткий и длинный
+    // свайп — настройка «Свайпы → Короткий и длинный свайп».
+    if (!ref.read(settingsProvider).swipeTwoStep && hasPrimary && hasSecondary) {
+      return _buildButtonsPane(primary: primary, secondary: secondary, email: email, l10n: l10n, fromStart: fromStart);
+    }
     final first = hasPrimary ? primary : secondary;
     final second = hasPrimary && hasSecondary ? secondary : null;
 
@@ -1910,6 +1916,59 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
 
   /// Длинный свайп — второе действие стороны.
   static const _swipeSecondAt = 0.7;
+
+  /// Два действия, прежняя логика (по умолчанию): свайп раскрывает обе
+  /// кнопки, человек выбирает; длинный свайп (от 75 %) — сразу первое
+  /// действие (07.11.2026). Кнопки «Прочитано», «Флаг», «На контроль» —
+  /// тоже с плашкой «сделано» и «Отменить».
+  ActionPane _buildButtonsPane({
+    required SwipeAction primary,
+    required SwipeAction secondary,
+    required EmailModel email,
+    required AppLocalizations l10n,
+    required bool fromStart,
+  }) {
+    _pane = (fromStart: fromStart, atEdge: false, extentRatio: 0.5, armAt: _swipeArmAtPair);
+    final first = _withDone(primary, _buildSwipeAction(primary, email, l10n, isPrimary: true), email, l10n);
+    _pane = (fromStart: fromStart, atEdge: false, extentRatio: 0.5, armAt: null);
+    final second = _withDone(secondary, _buildSwipeAction(secondary, email, l10n, isPrimary: false), email, l10n);
+    final removes =
+        primary == SwipeAction.archive || primary == SwipeAction.delete || primary == SwipeAction.moveToJunk;
+    return ActionPane(
+      motion: const DrawerMotion(),
+      extentRatio: 0.5,
+      dismissible: DismissiblePane(
+        dismissThreshold: _swipeArmAtPair,
+        dismissalDuration: const Duration(milliseconds: 220),
+        resizeDuration: const Duration(milliseconds: 220),
+        closeOnCancel: true,
+        confirmDismiss: removes
+            ? () => _confirmSwipeRemoval(primary, email, l10n)
+            : () async {
+                _executeSwipeAction(primary, email, l10n);
+                return false;
+              },
+        onDismissed: () => _executeSwipeAction(primary, email, l10n),
+      ),
+      children: [first, second],
+    );
+  }
+
+  /// Кнопка «Прочитано», «Флаг», «На контроль» — через общий обработчик
+  /// свайпа: плашка «сделано» и «Отменить», как у полного свайпа.
+  CustomSlidableAction _withDone(SwipeAction a, CustomSlidableAction b, EmailModel email, AppLocalizations l10n) {
+    if (a != SwipeAction.markRead && a != SwipeAction.flag && a != SwipeAction.control) return b;
+    return CustomSlidableAction(
+      onPressed: (_) => _executeSwipeAction(a, email, l10n),
+      backgroundColor: b.backgroundColor,
+      foregroundColor: b.foregroundColor,
+      padding: EdgeInsets.zero,
+      child: b.child,
+    );
+  }
+
+  /// Порог при двух кнопках: дальше раскрытых кнопок (50 %).
+  static const _swipeArmAtPair = 0.75;
 
   /// Второе действие для значка панели, которая сейчас собирается.
   SwipeStep? _secondStep;

@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Wischaktionen in der E-Mail-Liste. Bis zu zwei Aktionen pro Seite.</string>
     <string name="swipeRight">Nach rechts wischen</string>
     <string name="swipeLeft">Nach links wischen</string>
-    <string name="swipeFirstAction">Kurzes Wischen</string>
-    <string name="swipeSecondAction">Langes Wischen</string>
-    <string name="swipeSingleHint">Zeile ziehen und loslassen – die Aktion wird ausgeführt. Kurzes Wischen führt die erste Aktion aus, langes die zweite; Symbol und Beschriftung zeigen, welche. Zu früh losgelassen – die Zeile springt zurück. Danach zeigt die Zeile, was erledigt wurde, mit „Rückgängig“.</string>
+    <string name="swipeFirstAction">Erste Aktion</string>
+    <string name="swipeSecondAction">Zweite Aktion</string>
+    <string name="swipeSingleHint">Kurz wischen zeigt die Schaltflächen, lang wischen führt sofort die erste Aktion aus. Bei nur einer Aktion genügt etwa die halbe Zeile.</string>
     <string name="filterToMe">An mich</string>
     <string name="recentSearches">Letzte Suchen</string>
     <string name="draft">Entwurf</string>
@@ -4068,4 +4068,15 @@
     <string name="swipeDoneUnflag">Markierung entfernt</string>
     <string name="swipeDoneControl">Im Blick</string>
     <string name="swipeDoneControlOff">Nicht mehr im Blick</string>
+    <string name="easCompatUaWin">Gateway-Kompatibilität (wie Windows Mail und Outlook)</string>
+    <string name="easCompatUaWinHint">Für Exchange hinter einem Gateway, das nur bekannte E-Mail-Programme zulässt (Fehler 403). ActiveSync meldet sich als Windows Mail, EWS als Outlook. Mit der IT abstimmen.</string>
+    <string name="easCompatUaMac">Gateway-Kompatibilität (wie Apple Mail)</string>
+    <string name="easCompatUaMacHint">Für Exchange hinter einem Gateway, das nur bekannte E-Mail-Programme zulässt (Fehler 403). EWS meldet sich als Mail auf dem Mac, ActiveSync als iPad-Mail. Mit der IT abstimmen.</string>
+    <string name="easCompatUaLinux">Gateway-Kompatibilität (wie Thunderbird und Android-Mail)</string>
+    <string name="easCompatUaLinuxHint">Für Exchange hinter einem Gateway, das nur bekannte E-Mail-Programme zulässt (Fehler 403). EWS meldet sich als Thunderbird, ActiveSync als Android-Mail. Mit der IT abstimmen.</string>
+    <string name="swipeShortAction">Kurzes Wischen</string>
+    <string name="swipeLongAction">Langes Wischen</string>
+    <string name="swipeTwoStepHint">Zeile ziehen und loslassen – die Aktion wird ausgeführt. Kurzes Wischen führt die erste Aktion aus, langes die zweite; Symbol und Beschriftung zeigen, welche. Zu früh losgelassen – die Zeile springt zurück. Danach zeigt die Zeile, was erledigt wurde, mit „Rückgängig“.</string>
+    <string name="swipeTwoStepTitle">Kurzes und langes Wischen</string>
+    <string name="swipeTwoStepSub">Zwei Aktionen pro Seite: kurzes Wischen führt die erste aus, langes die zweite, ohne Schaltflächen. Aus – Wischen zeigt Schaltflächen zur Auswahl</string>
 </resources>

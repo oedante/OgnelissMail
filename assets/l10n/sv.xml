@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Åtgärder vid svep i meddelandelistan. Högst två åtgärder per sida.</string>
     <string name="swipeRight">Svep åt höger</string>
     <string name="swipeLeft">Svep åt vänster</string>
-    <string name="swipeFirstAction">Kort svep</string>
-    <string name="swipeSecondAction">Långt svep</string>
-    <string name="swipeSingleHint">Dra en rad och släpp – åtgärden utförs. Ett kort svep kör den första åtgärden, ett långt den andra; ikonen och texten visar vilken. Släpper du för tidigt fjädrar raden tillbaka. Efteråt visar raden vad som gjordes, med Ångra.</string>
+    <string name="swipeFirstAction">Första åtgärden</string>
+    <string name="swipeSecondAction">Andra åtgärden</string>
+    <string name="swipeSingleHint">Ett kort svep visar knapparna, ett långt utför direkt den första åtgärden. Med en åtgärd räcker ungefär halva raden.</string>
     <string name="filterToMe">Till mig</string>
     <string name="recentSearches">Senaste sökningar</string>
     <string name="draft">Utkast</string>
@@ -4068,4 +4068,15 @@
     <string name="swipeDoneUnflag">Flagga borttagen</string>
     <string name="swipeDoneControl">Bevakas</string>
     <string name="swipeDoneControlOff">Bevakning borttagen</string>
+    <string name="easCompatUaWin">Gateway-kompatibilitet (som Windows E-post och Outlook)</string>
+    <string name="easCompatUaWinHint">För Exchange bakom en gateway som bara släpper in kända e-postprogram (fel 403). ActiveSync presenterar sig som Windows E-post, EWS som Outlook. Stäm av med IT.</string>
+    <string name="easCompatUaMac">Gateway-kompatibilitet (som Apple Mail)</string>
+    <string name="easCompatUaMacHint">För Exchange bakom en gateway som bara släpper in kända e-postprogram (fel 403). EWS presenterar sig som Mail på Mac, ActiveSync som Mail på iPad. Stäm av med IT.</string>
+    <string name="easCompatUaLinux">Gateway-kompatibilitet (som Thunderbird och Android-e-post)</string>
+    <string name="easCompatUaLinuxHint">För Exchange bakom en gateway som bara släpper in kända e-postprogram (fel 403). EWS presenterar sig som Thunderbird, ActiveSync som Android-e-post. Stäm av med IT.</string>
+    <string name="swipeShortAction">Kort svep</string>
+    <string name="swipeLongAction">Långt svep</string>
+    <string name="swipeTwoStepHint">Dra en rad och släpp – åtgärden utförs. Ett kort svep kör den första åtgärden, ett långt den andra; ikonen och texten visar vilken. Släpper du för tidigt fjädrar raden tillbaka. Efteråt visar raden vad som gjordes, med Ångra.</string>
+    <string name="swipeTwoStepTitle">Kort och långt svep</string>
+    <string name="swipeTwoStepSub">Två åtgärder på en sida: kort svep kör den första, långt den andra, utan knappar. Av – svepet visar knappar och du väljer</string>
 </resources>

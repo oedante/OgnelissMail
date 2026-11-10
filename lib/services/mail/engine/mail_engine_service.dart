@@ -497,11 +497,13 @@ class MailEngineService {
       // Честный User-Agent/DeviceType из реальных системных данных устройства
       // (не имитируем чужое устройство).
       // Режим совместимости со шлюзом — свой у каждого ящика.
-      userAgent: DeviceUserAgent.valueFor(account.id),
+      // Ящик EWS — у компьютеров в режиме совместимости свой клиент
+      // (Outlook, Mail на Mac, Thunderbird), 2.2.x.
+      userAgent: DeviceUserAgent.valueFor(account.id, ews: account.usesEws && !account.usesEas),
       deviceType: DeviceUserAgent.deviceTypeFor(account.id),
-      deviceModel: DeviceUserAgent.deviceModel,
-      deviceOs: DeviceUserAgent.deviceOs,
-      deviceFriendlyName: DeviceUserAgent.deviceFriendlyName,
+      deviceModel: DeviceUserAgent.deviceModelFor(account.id),
+      deviceOs: DeviceUserAgent.deviceOsFor(account.id),
+      deviceFriendlyName: DeviceUserAgent.deviceFriendlyNameFor(account.id),
       deviceLanguage: DeviceUserAgent.deviceLanguage,
       // Всегда, а не только для EAS: пробное подключение при входе идёт с
       // типом «Exchange» и тоже делает Provision — с другим id сервер увидел

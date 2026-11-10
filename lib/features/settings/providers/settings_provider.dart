@@ -176,6 +176,11 @@ class AppSettings {
   /// лёгкая вибрация. Выключается в настройках свайпов.
   final bool swipeAnimated;
 
+  /// Два действия на стороне (2.2.0, решение владельца 10.11.2026): false —
+  /// как раньше (свайп раскрывает кнопки, человек выбирает), true —
+  /// короткий свайп выполняет первое действие, длинный — второе.
+  final bool swipeTwoStep;
+
   /// Строк текста письма под темой в ленте (1–4, по умолчанию 1) и в
   /// карточке по удержанию (по умолчанию 3), 1.6.31. Пустые строки письма
   /// пропускаются, переносы сохраняются.
@@ -259,6 +264,7 @@ class AppSettings {
     this.swipeConvRight = SwipeAction.delete,
     this.swipeTriageCustom = false,
     this.swipeAnimated = true,
+    this.swipeTwoStep = false,
     this.previewLines = 1,
     this.peekPreviewLines = 3,
     this.swipeTriageLeft = SwipeAction.archive,
@@ -351,6 +357,7 @@ class AppSettings {
     SwipeAction? swipeConvRight,
     bool? swipeTriageCustom,
     bool? swipeAnimated,
+    bool? swipeTwoStep,
     int? previewLines,
     int? peekPreviewLines,
     SwipeAction? swipeTriageLeft,
@@ -416,6 +423,7 @@ class AppSettings {
       swipeConvRight: swipeConvRight ?? this.swipeConvRight,
       swipeTriageCustom: swipeTriageCustom ?? this.swipeTriageCustom,
       swipeAnimated: swipeAnimated ?? this.swipeAnimated,
+      swipeTwoStep: swipeTwoStep ?? this.swipeTwoStep,
       previewLines: previewLines ?? this.previewLines,
       peekPreviewLines: peekPreviewLines ?? this.peekPreviewLines,
       swipeTriageLeft: swipeTriageLeft ?? this.swipeTriageLeft,
@@ -495,6 +503,7 @@ class _K {
   static const swipeCR = 's_swipe_conv_r';
   static const swipeTC = 's_swipe_triage_custom';
   static const swipeAnim = 's_swipe_animated';
+  static const swipeTwoStep = 's_swipe_two_step';
   static const previewLines = 's_preview_lines';
   static const peekPreviewLines = 's_peek_preview_lines';
   static const swipeTL = 's_swipe_triage_l';
@@ -594,6 +603,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       swipeConvRight: SwipeAction.values[(_p.getInt(_K.swipeCR) ?? 3).clamp(0, SwipeAction.values.length - 1)],
       swipeTriageCustom: _p.getBool(_K.swipeTC) ?? false,
       swipeAnimated: _p.getBool(_K.swipeAnim) ?? true,
+      swipeTwoStep: _p.getBool(_K.swipeTwoStep) ?? false,
       previewLines: (_p.getInt(_K.previewLines) ?? 1).clamp(1, 4),
       peekPreviewLines: (_p.getInt(_K.peekPreviewLines) ?? 3).clamp(1, 4),
       swipeTriageLeft: SwipeAction.values[(_p.getInt(_K.swipeTL) ?? SwipeAction.archive.index).clamp(0, SwipeAction.values.length - 1)],
@@ -922,6 +932,11 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   Future<void> setSwipeAnimated(bool v) async {
     await _p.setBool(_K.swipeAnim, v);
     state = state.copyWith(swipeAnimated: v);
+  }
+
+  Future<void> setSwipeTwoStep(bool v) async {
+    await _p.setBool(_K.swipeTwoStep, v);
+    state = state.copyWith(swipeTwoStep: v);
   }
 
   Future<void> setSwipeTriageLeft(SwipeAction v) async {

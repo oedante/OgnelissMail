@@ -61,7 +61,9 @@ class SwipeSettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(title: Text(l10n.tr('swipeSettings')), actions: [
-        HelpButton(text: l10n.tr('swipeSingleHint'), title: l10n.tr('swipeSettings')),
+        HelpButton(
+            text: l10n.tr(settings.swipeTwoStep ? 'swipeTwoStepHint' : 'swipeSingleHint'),
+            title: l10n.tr('swipeSettings')),
       ])),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xl),
@@ -75,13 +77,13 @@ class SwipeSettingsScreen extends ConsumerWidget {
           SettingsGroup(children: [
             _actionTile(
               context, l10n,
-              title: l10n.tr('swipeFirstAction'),
+              title: l10n.tr(settings.swipeTwoStep ? 'swipeShortAction' : 'swipeFirstAction'),
               value: settings.swipeLeftPrimary,
               onChanged: notifier.setSwipeLeftPrimary,
             ),
             _actionTile(
               context, l10n,
-              title: l10n.tr('swipeSecondAction'),
+              title: l10n.tr(settings.swipeTwoStep ? 'swipeLongAction' : 'swipeSecondAction'),
               value: settings.swipeLeftSecondary,
               onChanged: notifier.setSwipeLeftSecondary,
             ),
@@ -90,13 +92,13 @@ class SwipeSettingsScreen extends ConsumerWidget {
           SettingsGroup(children: [
             _actionTile(
               context, l10n,
-              title: l10n.tr('swipeFirstAction'),
+              title: l10n.tr(settings.swipeTwoStep ? 'swipeShortAction' : 'swipeFirstAction'),
               value: settings.swipeRightPrimary,
               onChanged: notifier.setSwipeRightPrimary,
             ),
             _actionTile(
               context, l10n,
-              title: l10n.tr('swipeSecondAction'),
+              title: l10n.tr(settings.swipeTwoStep ? 'swipeLongAction' : 'swipeSecondAction'),
               value: settings.swipeRightSecondary,
               onChanged: notifier.setSwipeRightSecondary,
             ),
@@ -120,7 +122,17 @@ class SwipeSettingsScreen extends ConsumerWidget {
             ),
           ]),
           // Живой свайп (1.6.21): значок виден сразу, у порога — отклик.
+          // Короткий и длинный свайп (2.2.0, решение владельца 10.11.2026) —
+          // по желанию; по умолчанию два действия — кнопки на выбор.
           SettingsGroup(children: [
+            SettingsSwitchItem(
+              key: const ValueKey('swipe_two_step'),
+              icon: AppIcons.swipe,
+              title: l10n.tr('swipeTwoStepTitle'),
+              subtitle: l10n.tr('swipeTwoStepSub'),
+              value: settings.swipeTwoStep,
+              onChanged: notifier.setSwipeTwoStep,
+            ),
             SettingsSwitchItem(
               icon: AppIcons.animation,
               title: l10n.tr('swipeAnimatedTitle'),

@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Elhúzással végrehajtható műveletek az üzenetlistában. Oldalanként legfeljebb két művelet.</string>
     <string name="swipeRight">Elhúzás jobbra</string>
     <string name="swipeLeft">Elhúzás balra</string>
-    <string name="swipeFirstAction">Rövid húzás</string>
-    <string name="swipeSecondAction">Hosszú húzás</string>
-    <string name="swipeSingleHint">Húzza el a sort, majd engedje el – a művelet lefut. A rövid húzás az első, a hosszú a második műveletet indítja; az ikon és a felirat mutatja, melyiket. Ha túl korán engedi el, a sor visszaugrik. Utána a soron látszik, mi történt, Visszavonás gombbal.</string>
+    <string name="swipeFirstAction">Első művelet</string>
+    <string name="swipeSecondAction">Második művelet</string>
+    <string name="swipeSingleHint">A rövid húzás megjeleníti a gombokat, a hosszú azonnal végrehajtja az első műveletet. Egy műveletnél nagyjából fél sor elég.</string>
     <string name="filterToMe">Nekem címzett</string>
     <string name="recentSearches">Legutóbbi keresések</string>
     <string name="draft">Piszkozat</string>
@@ -4068,4 +4068,15 @@
     <string name="swipeDoneUnflag">Jelölés eltávolítva</string>
     <string name="swipeDoneControl">Nyomon követve</string>
     <string name="swipeDoneControlOff">Nyomon követés megszüntetve</string>
+    <string name="easCompatUaWin">Átjáró-kompatibilitás (mint a Windows Posta és az Outlook)</string>
+    <string name="easCompatUaWinHint">Olyan átjáró mögötti Exchange-hez, amely csak ismert levelezőprogramokat enged át (403-as hiba). Az ActiveSync Windows Postaként, az EWS Outlookként mutatkozik be. Egyeztessen az informatikával.</string>
+    <string name="easCompatUaMac">Átjáró-kompatibilitás (mint az Apple Mail)</string>
+    <string name="easCompatUaMacHint">Olyan átjáró mögötti Exchange-hez, amely csak ismert levelezőprogramokat enged át (403-as hiba). Az EWS a Mac Mailjeként, az ActiveSync iPad Mailként mutatkozik be. Egyeztessen az informatikával.</string>
+    <string name="easCompatUaLinux">Átjáró-kompatibilitás (mint a Thunderbird és az Android levelező)</string>
+    <string name="easCompatUaLinuxHint">Olyan átjáró mögötti Exchange-hez, amely csak ismert levelezőprogramokat enged át (403-as hiba). Az EWS Thunderbirdként, az ActiveSync Android levelezőként mutatkozik be. Egyeztessen az informatikával.</string>
+    <string name="swipeShortAction">Rövid húzás</string>
+    <string name="swipeLongAction">Hosszú húzás</string>
+    <string name="swipeTwoStepHint">Húzza el a sort, majd engedje el – a művelet lefut. A rövid húzás az első, a hosszú a második műveletet indítja; az ikon és a felirat mutatja, melyiket. Ha túl korán engedi el, a sor visszaugrik. Utána a soron látszik, mi történt, Visszavonás gombbal.</string>
+    <string name="swipeTwoStepTitle">Rövid és hosszú húzás</string>
+    <string name="swipeTwoStepSub">Két művelet egy oldalon: a rövid húzás az elsőt, a hosszú a másodikat futtatja, gombok nélkül. Kikapcsolva a húzás gombokat mutat, és Ön választ</string>
 </resources>

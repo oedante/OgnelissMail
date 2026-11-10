@@ -1636,9 +1636,9 @@
     <string name="swipeHint">การดำเนินการเมื่อปัดในรายการอีเมล ได้สูงสุดสองการดำเนินการต่อด้าน</string>
     <string name="swipeRight">ปัดไปทางขวา</string>
     <string name="swipeLeft">ปัดไปทางซ้าย</string>
-    <string name="swipeFirstAction">ปัดสั้น</string>
-    <string name="swipeSecondAction">ปัดยาว</string>
-    <string name="swipeSingleHint">ลากแถวแล้วปล่อยเพื่อทำคำสั่ง ปัดสั้นทำคำสั่งแรก ปัดยาวทำคำสั่งที่สอง ไอคอนและข้อความจะบอกว่าจะทำคำสั่งใด ถ้าปล่อยเร็วเกินไป แถวจะกลับที่เดิม หลังจากนั้นแถวจะแสดงสิ่งที่ทำ พร้อมปุ่ม «เลิกทำ»</string>
+    <string name="swipeFirstAction">การทำงานแรก</string>
+    <string name="swipeSecondAction">การทำงานที่สอง</string>
+    <string name="swipeSingleHint">ปัดสั้นเพื่อแสดงปุ่ม ปัดยาวเพื่อทำการกระทำแรกทันที หากมีการกระทำเดียว ปัดประมาณครึ่งแถวก็พอ</string>
     <string name="filterToMe">ถึงฉัน</string>
     <string name="recentSearches">การค้นหาล่าสุด</string>
     <string name="draft">ฉบับร่าง</string>
@@ -4047,4 +4047,15 @@
     <string name="swipeDoneUnflag">เอาธงออกแล้ว</string>
     <string name="swipeDoneControl">กำลังติดตาม</string>
     <string name="swipeDoneControlOff">เลิกติดตามแล้ว</string>
+    <string name="easCompatUaWin">ความเข้ากันได้กับเกตเวย์ (เหมือน Windows Mail และ Outlook)</string>
+    <string name="easCompatUaWinHint">สำหรับ Exchange หลังเกตเวย์ที่อนุญาตเฉพาะโปรแกรมอีเมลที่รู้จัก (ข้อผิดพลาด 403) ActiveSync แสดงตัวเป็น Windows Mail และ EWS เป็น Outlook โปรดตกลงกับฝ่ายไอที</string>
+    <string name="easCompatUaMac">ความเข้ากันได้กับเกตเวย์ (เหมือน Apple Mail)</string>
+    <string name="easCompatUaMacHint">สำหรับ Exchange หลังเกตเวย์ที่อนุญาตเฉพาะโปรแกรมอีเมลที่รู้จัก (ข้อผิดพลาด 403) EWS แสดงตัวเป็น Mail บน Mac และ ActiveSync เป็น Mail บน iPad โปรดตกลงกับฝ่ายไอที</string>
+    <string name="easCompatUaLinux">ความเข้ากันได้กับเกตเวย์ (เหมือน Thunderbird และอีเมล Android)</string>
+    <string name="easCompatUaLinuxHint">สำหรับ Exchange หลังเกตเวย์ที่อนุญาตเฉพาะโปรแกรมอีเมลที่รู้จัก (ข้อผิดพลาด 403) EWS แสดงตัวเป็น Thunderbird และ ActiveSync เป็นอีเมล Android โปรดตกลงกับฝ่ายไอที</string>
+    <string name="swipeShortAction">ปัดสั้น</string>
+    <string name="swipeLongAction">ปัดยาว</string>
+    <string name="swipeTwoStepHint">ลากแถวแล้วปล่อยเพื่อทำคำสั่ง ปัดสั้นทำคำสั่งแรก ปัดยาวทำคำสั่งที่สอง ไอคอนและข้อความจะบอกว่าจะทำคำสั่งใด ถ้าปล่อยเร็วเกินไป แถวจะกลับที่เดิม หลังจากนั้นแถวจะแสดงสิ่งที่ทำ พร้อมปุ่ม «เลิกทำ»</string>
+    <string name="swipeTwoStepTitle">ปัดสั้นและปัดยาว</string>
+    <string name="swipeTwoStepSub">สองคำสั่งในด้านเดียว: ปัดสั้นทำคำสั่งแรก ปัดยาวทำคำสั่งที่สอง โดยไม่มีปุ่ม เมื่อปิด การปัดจะแสดงปุ่มให้คุณเลือก</string>
 </resources>

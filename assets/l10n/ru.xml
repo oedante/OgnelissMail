@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Действия по свайпу в списке писем. Можно назначить по два действия на каждую сторону.</string>
     <string name="swipeRight">Свайп вправо</string>
     <string name="swipeLeft">Свайп влево</string>
-    <string name="swipeFirstAction">Короткий свайп</string>
-    <string name="swipeSecondAction">Длинный свайп</string>
-    <string name="swipeSingleHint">Протяните строку и отпустите — действие выполнится. Короткий свайп — первое действие, длинный — второе: значок и подпись подскажут, что сработает. Не дотянули — строка вернётся на место. После действия на строке видно, что сделано, там же — «Отменить».</string>
+    <string name="swipeFirstAction">Первое действие</string>
+    <string name="swipeSecondAction">Второе действие</string>
+    <string name="swipeSingleHint">Короткий свайп открывает кнопки, длинный сразу выполняет первое действие. Если действие одно — оно выполняется уже с середины строки.</string>
     <string name="filterToMe">Мне лично</string>
     <string name="recentSearches">Недавние запросы</string>
     <string name="draft">Черновик</string>
@@ -4110,4 +4110,15 @@
     <string name="swipeDoneUnflag">Флажок снят</string>
     <string name="swipeDoneControl">На контроле</string>
     <string name="swipeDoneControlOff">Снято с контроля</string>
+    <string name="easCompatUaWin">Совместимость со шлюзом (как Почта Windows и Outlook)</string>
+    <string name="easCompatUaWinHint">Для Exchange за шлюзом, который пропускает только известные почтовые программы (ошибка 403). ActiveSync — как Почта Windows, EWS — как Outlook. Согласуйте с ИТ.</string>
+    <string name="easCompatUaMac">Совместимость со шлюзом (как Почта Apple)</string>
+    <string name="easCompatUaMacHint">Для Exchange за шлюзом, который пропускает только известные почтовые программы (ошибка 403). EWS — как Mail на Mac, ActiveSync — как Почта iPad. Согласуйте с ИТ.</string>
+    <string name="easCompatUaLinux">Совместимость со шлюзом (как Thunderbird и почта Android)</string>
+    <string name="easCompatUaLinuxHint">Для Exchange за шлюзом, который пропускает только известные почтовые программы (ошибка 403). EWS — как Thunderbird, ActiveSync — как почта Android. Согласуйте с ИТ.</string>
+    <string name="swipeShortAction">Короткий свайп</string>
+    <string name="swipeLongAction">Длинный свайп</string>
+    <string name="swipeTwoStepHint">Протяните строку и отпустите — действие выполнится. Короткий свайп — первое действие, длинный — второе: значок и подпись подскажут, что сработает. Не дотянули — строка вернётся на место. После действия на строке видно, что сделано, там же — «Отменить».</string>
+    <string name="swipeTwoStepTitle">Короткий и длинный свайп</string>
+    <string name="swipeTwoStepSub">Два действия на стороне: короткий свайп — первое, длинный — второе, без кнопок. Выключено — свайп раскрывает кнопки, вы выбираете</string>
 </resources>

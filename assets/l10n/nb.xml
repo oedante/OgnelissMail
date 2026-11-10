@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Handlinger ved sveip i meldingslisten. Opptil to handlinger per side.</string>
     <string name="swipeRight">Sveip til høyre</string>
     <string name="swipeLeft">Sveip til venstre</string>
-    <string name="swipeFirstAction">Kort sveip</string>
-    <string name="swipeSecondAction">Langt sveip</string>
-    <string name="swipeSingleHint">Dra en rad og slipp – handlingen utføres. Et kort sveip kjører den første handlingen, et langt den andre; ikonet og teksten viser hvilken. Slipper du for tidlig, spretter raden tilbake. Etterpå viser raden hva som ble gjort, med Angre.</string>
+    <string name="swipeFirstAction">Første handling</string>
+    <string name="swipeSecondAction">Andre handling</string>
+    <string name="swipeSingleHint">Et kort sveip viser knappene, et langt utfører straks den første handlingen. Med én handling holder det med omtrent en halv rad.</string>
     <string name="filterToMe">Til meg</string>
     <string name="recentSearches">Siste søk</string>
     <string name="draft">Utkast</string>
@@ -4068,4 +4068,15 @@
     <string name="swipeDoneUnflag">Flagg fjernet</string>
     <string name="swipeDoneControl">Til oppfølging</string>
     <string name="swipeDoneControlOff">Oppfølging fjernet</string>
+    <string name="easCompatUaWin">Gateway-kompatibilitet (som Windows E-post og Outlook)</string>
+    <string name="easCompatUaWinHint">For Exchange bak en gateway som bare slipper inn kjente e-postprogrammer (feil 403). ActiveSync presenterer seg som Windows E-post, EWS som Outlook. Avklar med IT.</string>
+    <string name="easCompatUaMac">Gateway-kompatibilitet (som Apple Mail)</string>
+    <string name="easCompatUaMacHint">For Exchange bak en gateway som bare slipper inn kjente e-postprogrammer (feil 403). EWS presenterer seg som Mail på Mac, ActiveSync som Mail på iPad. Avklar med IT.</string>
+    <string name="easCompatUaLinux">Gateway-kompatibilitet (som Thunderbird og Android-e-post)</string>
+    <string name="easCompatUaLinuxHint">For Exchange bak en gateway som bare slipper inn kjente e-postprogrammer (feil 403). EWS presenterer seg som Thunderbird, ActiveSync som Android-e-post. Avklar med IT.</string>
+    <string name="swipeShortAction">Kort sveip</string>
+    <string name="swipeLongAction">Langt sveip</string>
+    <string name="swipeTwoStepHint">Dra en rad og slipp – handlingen utføres. Et kort sveip kjører den første handlingen, et langt den andre; ikonet og teksten viser hvilken. Slipper du for tidlig, spretter raden tilbake. Etterpå viser raden hva som ble gjort, med Angre.</string>
+    <string name="swipeTwoStepTitle">Kort og langt sveip</string>
+    <string name="swipeTwoStepSub">To handlinger på en side: kort sveip kjører den første, langt den andre, uten knapper. Av – sveipet viser knapper, og du velger</string>
 </resources>

@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Acțiuni de glisare în lista de mesaje. Cel mult două acțiuni pe parte.</string>
     <string name="swipeRight">Glisare spre dreapta</string>
     <string name="swipeLeft">Glisare spre stânga</string>
-    <string name="swipeFirstAction">Glisare scurtă</string>
-    <string name="swipeSecondAction">Glisare lungă</string>
-    <string name="swipeSingleHint">Trageți un rând și eliberați – acțiunea se execută. Glisarea scurtă rulează prima acțiune, cea lungă pe a doua; pictograma și eticheta arată care. Eliberat prea devreme, rândul revine la loc. Apoi rândul arată ce s-a făcut, cu Anulează.</string>
+    <string name="swipeFirstAction">Prima acțiune</string>
+    <string name="swipeSecondAction">A doua acțiune</string>
+    <string name="swipeSingleHint">O glisare scurtă afișează butoanele, una lungă execută imediat prima acțiune. Cu o singură acțiune ajunge cam jumătate de rând.</string>
     <string name="filterToMe">Pentru mine personal</string>
     <string name="recentSearches">Căutări recente</string>
     <string name="draft">Ciornă</string>
@@ -4089,4 +4089,15 @@
     <string name="swipeDoneUnflag">Steag eliminat</string>
     <string name="swipeDoneControl">În urmărire</string>
     <string name="swipeDoneControlOff">Urmărire eliminată</string>
+    <string name="easCompatUaWin">Compatibilitate gateway (ca Mail Windows și Outlook)</string>
+    <string name="easCompatUaWinHint">Pentru Exchange în spatele unui gateway care permite doar programe de e-mail cunoscute (eroarea 403). ActiveSync se prezintă ca Mail Windows, EWS ca Outlook. Stabiliți cu IT.</string>
+    <string name="easCompatUaMac">Compatibilitate gateway (ca Apple Mail)</string>
+    <string name="easCompatUaMacHint">Pentru Exchange în spatele unui gateway care permite doar programe de e-mail cunoscute (eroarea 403). EWS se prezintă ca Mail pe Mac, ActiveSync ca Mail pe iPad. Stabiliți cu IT.</string>
+    <string name="easCompatUaLinux">Compatibilitate gateway (ca Thunderbird și e-mailul Android)</string>
+    <string name="easCompatUaLinuxHint">Pentru Exchange în spatele unui gateway care permite doar programe de e-mail cunoscute (eroarea 403). EWS se prezintă ca Thunderbird, ActiveSync ca e-mailul Android. Stabiliți cu IT.</string>
+    <string name="swipeShortAction">Glisare scurtă</string>
+    <string name="swipeLongAction">Glisare lungă</string>
+    <string name="swipeTwoStepHint">Trageți un rând și eliberați – acțiunea se execută. Glisarea scurtă rulează prima acțiune, cea lungă pe a doua; pictograma și eticheta arată care. Eliberat prea devreme, rândul revine la loc. Apoi rândul arată ce s-a făcut, cu Anulează.</string>
+    <string name="swipeTwoStepTitle">Glisare scurtă și lungă</string>
+    <string name="swipeTwoStepSub">Două acțiuni pe o parte: glisarea scurtă o rulează pe prima, cea lungă pe a doua, fără butoane. Dezactivat – glisarea afișează butoanele și alegeți</string>
 </resources>

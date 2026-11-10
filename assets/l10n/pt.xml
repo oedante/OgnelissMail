@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Ações de deslizar na lista de mensagens. Até duas ações por lado.</string>
     <string name="swipeRight">Deslizar para a direita</string>
     <string name="swipeLeft">Deslizar para a esquerda</string>
-    <string name="swipeFirstAction">Deslize curto</string>
-    <string name="swipeSecondAction">Deslize longo</string>
-    <string name="swipeSingleHint">Arraste uma linha e solte para executar a ação. Um deslize curto executa a primeira ação, um longo a segunda; o ícone e o rótulo mostram qual. Se soltar cedo demais, a linha volta ao lugar. Depois, a linha mostra o que foi feito, com Desfazer.</string>
+    <string name="swipeFirstAction">Primeira ação</string>
+    <string name="swipeSecondAction">Segunda ação</string>
+    <string name="swipeSingleHint">Um deslize curto mostra os botões; um deslize longo executa logo a primeira ação. Com uma só ação, basta cerca de meia linha.</string>
     <string name="filterToMe">Para mim</string>
     <string name="recentSearches">Pesquisas recentes</string>
     <string name="draft">Rascunho</string>
@@ -4068,4 +4068,15 @@
     <string name="swipeDoneUnflag">Sinalização removida</string>
     <string name="swipeDoneControl">Em acompanhamento</string>
     <string name="swipeDoneControlOff">Acompanhamento removido</string>
+    <string name="easCompatUaWin">Compatibilidade com gateway (como o Email do Windows e o Outlook)</string>
+    <string name="easCompatUaWinHint">Para Exchange atrás de um gateway que só aceita apps de e-mail conhecidos (erro 403). O ActiveSync se identifica como Email do Windows e o EWS como Outlook. Confirme com a equipe de TI.</string>
+    <string name="easCompatUaMac">Compatibilidade com gateway (como o Mail da Apple)</string>
+    <string name="easCompatUaMacHint">Para Exchange atrás de um gateway que só aceita apps de e-mail conhecidos (erro 403). O EWS se identifica como o Mail do Mac e o ActiveSync como o Mail do iPad. Confirme com a equipe de TI.</string>
+    <string name="easCompatUaLinux">Compatibilidade com gateway (como o Thunderbird e o e-mail do Android)</string>
+    <string name="easCompatUaLinuxHint">Para Exchange atrás de um gateway que só aceita apps de e-mail conhecidos (erro 403). O EWS se identifica como Thunderbird e o ActiveSync como o e-mail do Android. Confirme com a equipe de TI.</string>
+    <string name="swipeShortAction">Deslize curto</string>
+    <string name="swipeLongAction">Deslize longo</string>
+    <string name="swipeTwoStepHint">Arraste uma linha e solte para executar a ação. Um deslize curto executa a primeira ação, um longo a segunda; o ícone e o rótulo mostram qual. Se soltar cedo demais, a linha volta ao lugar. Depois, a linha mostra o que foi feito, com Desfazer.</string>
+    <string name="swipeTwoStepTitle">Deslize curto e longo</string>
+    <string name="swipeTwoStepSub">Duas ações de um lado: o deslize curto executa a primeira e o longo a segunda, sem botões. Desativado — o deslize mostra os botões e você escolhe</string>
 </resources>

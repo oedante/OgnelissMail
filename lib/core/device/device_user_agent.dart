@@ -14,7 +14,19 @@
 // часть корпоративных шлюзов перед Exchange (анти-бот-защита вроде ServicePipe)
 // пропускает POST-команды ActiveSync только от мобильных почтовых клиентов и
 // отвечает 403 на Provision/Sync/SendMail от любого другого User-Agent. В
-// этом режиме клиент представляется в формате штатной почты Android.
+// этом режиме клиент представляется штатной почтой своей платформы
+// (2.2.x, просьба владельца 10.11.2026 — механизм для всех платформ):
+//   · Android — почта Android («Android-Android/14 (Pixel 7/…)»);
+//   · iPhone и iPad — Почта iOS («Apple-iPhone15C2/2401.446»);
+//   · Windows — Почта Windows для ActiveSync («MSFT-WIN-3/10.0.<сборка>»,
+//     тип WindowsMail) и Outlook для EWS;
+//   · Mac — Почта Apple: EWS — как Mail на Mac («Mac OS X/…;
+//     ExchangeWebServices/…; Mail/16.0 (…)»), ActiveSync — как Почта iPad
+//     (у Mail на Mac ActiveSync нет; iPad-приложения на Mac — обычное дело);
+//   · Linux — EWS как Thunderbird, ActiveSync — как почта Android (у Linux
+//     нет своего клиента ActiveSync, который пропускают шлюзы).
+// Сетевой стек системы (отпечаток TLS как у штатной почты) — пока только на
+// Android и iPhone; на компьютерах — только представление.
 
 import 'dart:io' show Platform;
 
@@ -45,6 +57,18 @@ class DeviceUserAgent {
   static const _compatKey = 'eas_compat_user_agent';
   static bool _compat = false;
   static String? _compatUa;
+
+  /// User-Agent EWS (и Autodiscover ящика EWS) в режиме совместимости, если
+  /// он у платформы другой, чем у ActiveSync (Windows — Outlook, Mac — Mail,
+  /// Linux — Thunderbird).
+  static String? _compatEwsUa;
+
+  /// Тип и сведения об устройстве (Provision) в режиме совместимости, если
+  /// они не такие, как без него (Mac — как iPad).
+  static String? _compatType;
+  static String? _compatModel;
+  static String? _compatOs;
+  static String? _compatFriendly;
 
   /// User-Agent, с которым такой шлюз пропускал ActiveSync в проверочном
   /// движке (connect_test, июнь 2026). На Android берутся реальные версия
@@ -77,9 +101,17 @@ class DeviceUserAgent {
     } catch (_) {}
   }
 
-  /// User-Agent для ящика (с учётом его режима совместимости).
-  static String valueFor(String accountId) =>
-      compatFor(accountId) ? (_compatUa ?? _compatFallback) : (_cached ?? _fallback);
+  /// User-Agent для ящика (с учётом его режима совместимости). [ews] —
+  /// ящик EWS: у компьютеров в режиме совместимости — свой клиент EWS.
+  static String valueFor(String accountId, {bool ews = false}) => compatFor(accountId)
+      ? ((ews ? _compatEwsUa : null) ?? _compatUa ?? _compatFallback)
+      : (_cached ?? _fallback);
+
+  /// Сведения об устройстве для Provision с учётом режима ящика.
+  static String deviceModelFor(String accountId) => compatFor(accountId) ? (_compatModel ?? _model) : _model;
+  static String deviceOsFor(String accountId) => compatFor(accountId) ? (_compatOs ?? _os) : _os;
+  static String deviceFriendlyNameFor(String accountId) =>
+      compatFor(accountId) ? (_compatFriendly ?? _friendlyName) : _friendlyName;
 
   static String deviceTypeFor(String accountId) =>
       compatFor(accountId) ? _compatDeviceType : _nativeDeviceType;
@@ -88,7 +120,8 @@ class DeviceUserAgent {
   /// (1.6.12; раньше и с iPhone приложение называло себя Android-устройством,
   /// и шлюз видел расхождение с отпечатком TLS iOS).
   static String get _compatDeviceType =>
-      !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS ? (_deviceType ?? 'iPhone') : 'Android';
+      _compatType ??
+      (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS ? (_deviceType ?? 'iPhone') : 'Android');
 
   /// Включить/выключить режим совместимости (сохраняется). Уже открытые
   /// подключения Exchange нужно переоткрыть — UA задаётся при подключении.
@@ -115,6 +148,46 @@ class DeviceUserAgent {
       build = v == null ? '2101.0' : '${int.parse(v.group(1)!) + 4}${v.group(2)!.padLeft(2, '0')}.0';
     }
     return 'Apple-$model/$build';
+  }
+
+  /// Почта Windows (ActiveSync): «MSFT-WIN-3/10.0.<сборка>».
+  static String windowsMailUserAgent(int build) => 'MSFT-WIN-3/10.0.${build > 0 ? build : 19045}';
+
+  /// Outlook для Windows (EWS).
+  static const outlookUserAgent = 'Microsoft Office/16.0 (Windows NT 10.0; Microsoft Outlook 16.0.18129; Pro)';
+
+  /// Mail на Mac (EWS): «Mac OS X/14.6.1 (23G93); ExchangeWebServices/10.0
+  /// (269); Mail/16.0 (3774.600.62)». Сборка Mail — по версии системы.
+  static String macMailEwsUserAgent(String version, String build) {
+    final major = int.tryParse(version.split('.').first) ?? 14;
+    final mail = switch (major) {
+      <= 12 => '3696.120.41.1.1',
+      13 => '3731.700.6',
+      14 => '3774.600.62',
+      _ => '3826.400.131.1.6',
+    };
+    final b = build.isEmpty ? '' : ' ($build)';
+    return 'Mac OS X/$version$b; ExchangeWebServices/10.0 (269); Mail/16.0 ($mail)';
+  }
+
+  /// Версия iOS/iPadOS той же поры, что macOS [macVersion] (macOS 15 — iOS
+  /// 18; с 26 номера общие): для Почты iPad на Mac.
+  static String iosVersionForMac(String macVersion) {
+    final parts = macVersion.split('.');
+    final major = int.tryParse(parts.first) ?? 15;
+    final minor = parts.length > 1 ? parts[1] : '0';
+    final ios = major >= 26 ? major : major + 3;
+    return '$ios.$minor';
+  }
+
+  /// Thunderbird на Linux (EWS).
+  static const thunderbirdUserAgent =
+      'Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Thunderbird/140.5.0';
+
+  /// Язык системы для Provision («ru-RU»).
+  static String? _systemLanguage() {
+    final loc = Platform.localeName.split('.').first.replaceAll('_', '-');
+    return RegExp(r'^[a-z]{2}(-[A-Z]{2})?$').hasMatch(loc) ? loc : null;
   }
 
   /// Нейтральный фолбэк (без обмана) — до прогрева кэша или при ошибке.
@@ -184,12 +257,46 @@ class DeviceUserAgent {
       } else if (defaultTargetPlatform == TargetPlatform.windows) {
         _cached = '$app (Windows)';
         _deviceType = 'Computer';
+        final w = await DeviceInfoPlugin().windowsInfo;
+        // Сведения для Provision — настоящие: система, сборка, имя компьютера.
+        _model = 'PC';
+        _os = 'Windows 10.0.${w.buildNumber}';
+        _friendlyName = w.computerName.isEmpty ? 'PC' : w.computerName;
+        _language = _systemLanguage()?.toLowerCase() ?? _language;
+        _compatUa = windowsMailUserAgent(w.buildNumber);
+        _compatEwsUa = outlookUserAgent;
+        _compatType = 'WindowsMail';
       } else if (defaultTargetPlatform == TargetPlatform.macOS) {
         _cached = '$app (macOS)';
         _deviceType = 'Computer';
+        final m = await DeviceInfoPlugin().macOsInfo;
+        final version = '${m.majorVersion}.${m.minorVersion}${m.patchVersion > 0 ? '.${m.patchVersion}' : ''}';
+        final build = RegExp(r'Build\s+(\w+)').firstMatch(Platform.operatingSystemVersion)?.group(1) ?? '';
+        _model = m.model.isEmpty ? 'Mac' : m.model;
+        _os = 'macOS $version${build.isEmpty ? '' : ' $build'}';
+        _friendlyName = m.computerName.isEmpty ? 'Mac' : m.computerName;
+        _language = _systemLanguage() ?? _language;
+        // ActiveSync — как Почта iPad (у Mail на Mac ActiveSync нет), EWS —
+        // как Mail на Mac.
+        final ios = iosVersionForMac(version);
+        _compatUa = appleMailUserAgent('iPad13,1', ios);
+        _compatEwsUa = macMailEwsUserAgent(version, build);
+        _compatType = 'iPad';
+        _compatModel = 'iPad13C1';
+        _compatOs = 'iOS $ios';
+        _compatFriendly = 'iPad';
       } else if (defaultTargetPlatform == TargetPlatform.linux) {
         _cached = '$app (Linux)';
         _deviceType = 'Computer';
+        _model = 'PC';
+        _os = 'Linux';
+        _friendlyName = Platform.localHostname.isEmpty ? 'Linux' : Platform.localHostname;
+        _language = _systemLanguage()?.toLowerCase() ?? _language;
+        // ActiveSync — как почта Android (как раньше), EWS — как Thunderbird.
+        _compatEwsUa = thunderbirdUserAgent;
+        _compatModel = 'Android';
+        _compatOs = 'Android';
+        _compatFriendly = 'Mail';
       } else {
         _cached = app;
       }

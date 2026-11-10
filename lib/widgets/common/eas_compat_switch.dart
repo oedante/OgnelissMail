@@ -1,5 +1,6 @@
 // lib/widgets/common/eas_compat_switch.dart
-// Переключатель «Совместимость со шлюзом (Android-клиент)» для Exchange.
+// Переключатель «Совместимость со шлюзом» для Exchange: приложение
+// представляется штатной почтой своей платформы (DeviceUserAgent).
 // Используется на экране входа (дополнительно) и в настройках аккаунтов.
 
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
@@ -26,7 +27,16 @@ class EasCompatSwitch extends StatefulWidget {
 }
 
 class _EasCompatSwitchState extends State<EasCompatSwitch> {
-  static bool get _ios => !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+  /// Подпись и пояснение — своя штатная почта у каждой платформы (2.2.x).
+  static (String, String) get _keys => kIsWeb
+      ? ('easCompatUa', 'easCompatUaHint')
+      : switch (defaultTargetPlatform) {
+          TargetPlatform.iOS => ('easCompatUaIos', 'easCompatUaIosHint'),
+          TargetPlatform.windows => ('easCompatUaWin', 'easCompatUaWinHint'),
+          TargetPlatform.macOS => ('easCompatUaMac', 'easCompatUaMacHint'),
+          TargetPlatform.linux => ('easCompatUaLinux', 'easCompatUaLinuxHint'),
+          _ => ('easCompatUa', 'easCompatUaHint'),
+        };
 
   late bool _on = widget.accountId == null
       ? DeviceUserAgent.compatMode
@@ -40,9 +50,9 @@ class _EasCompatSwitchState extends State<EasCompatSwitch> {
       secondary: const Icon(AppIcons.shield),
       // Пояснение — под «?» (10.10.2026): длинный абзац под переключателем
       // на экране входа отодвигал поля вниз.
-      // На iPhone — «как Почта iPhone» (1.6.12), на Android — как прежде.
-      title: TitleWithHelp(l10n.tr(_ios ? 'easCompatUaIos' : 'easCompatUa'),
-          hint: l10n.tr(_ios ? 'easCompatUaIosHint' : 'easCompatUaHint')),
+      // На iPhone — «как Почта iPhone» (1.6.12), на компьютерах — своя
+      // штатная почта (2.2.x), на Android — как прежде.
+      title: TitleWithHelp(l10n.tr(_keys.$1), hint: l10n.tr(_keys.$2)),
       value: _on,
       onChanged: (v) async {
         setState(() => _on = v);

@@ -1636,9 +1636,9 @@
     <string name="swipeHint">פעולות החלקה ברשימת ההודעות. עד שתי פעולות לכל צד.</string>
     <string name="swipeRight">החלקה ימינה</string>
     <string name="swipeLeft">החלקה שמאלה</string>
-    <string name="swipeFirstAction">החלקה קצרה</string>
-    <string name="swipeSecondAction">החלקה ארוכה</string>
-    <string name="swipeSingleHint">גררו שורה ושחררו – הפעולה תתבצע. החלקה קצרה מפעילה את הפעולה הראשונה, ארוכה – את השנייה; הסמל והתווית מראים איזו. שחרור מוקדם מדי מחזיר את השורה למקומה. לאחר מכן השורה מציגה מה בוצע, עם „ביטול”.</string>
+    <string name="swipeFirstAction">פעולה ראשונה</string>
+    <string name="swipeSecondAction">פעולה שנייה</string>
+    <string name="swipeSingleHint">החלקה קצרה מציגה את הכפתורים, החלקה ארוכה מבצעת מיד את הפעולה הראשונה. עם פעולה אחת מספיק בערך חצי שורה.</string>
     <string name="filterToMe">אליי אישית</string>
     <string name="recentSearches">חיפושים אחרונים</string>
     <string name="draft">טיוטה</string>
@@ -4089,4 +4089,15 @@
     <string name="swipeDoneUnflag">הדגל הוסר</string>
     <string name="swipeDoneControl">במעקב</string>
     <string name="swipeDoneControlOff">המעקב הוסר</string>
+    <string name="easCompatUaWin">תאימות לשער (כמו דואר Windows ו-Outlook)</string>
+    <string name="easCompatUaWinHint">ל-Exchange מאחורי שער שמאפשר רק תוכנות דואר מוכרות (שגיאה 403). ActiveSync מזדהה כדואר Windows, ו-EWS כ-Outlook. תאמו עם מחלקת ה-IT.</string>
+    <string name="easCompatUaMac">תאימות לשער (כמו הדואר של Apple)</string>
+    <string name="easCompatUaMacHint">ל-Exchange מאחורי שער שמאפשר רק תוכנות דואר מוכרות (שגיאה 403). EWS מזדהה כ-Mail ב-Mac, ו-ActiveSync כדואר iPad. תאמו עם מחלקת ה-IT.</string>
+    <string name="easCompatUaLinux">תאימות לשער (כמו Thunderbird ודואר Android)</string>
+    <string name="easCompatUaLinuxHint">ל-Exchange מאחורי שער שמאפשר רק תוכנות דואר מוכרות (שגיאה 403). EWS מזדהה כ-Thunderbird, ו-ActiveSync כדואר Android. תאמו עם מחלקת ה-IT.</string>
+    <string name="swipeShortAction">החלקה קצרה</string>
+    <string name="swipeLongAction">החלקה ארוכה</string>
+    <string name="swipeTwoStepHint">גררו שורה ושחררו – הפעולה תתבצע. החלקה קצרה מפעילה את הפעולה הראשונה, ארוכה – את השנייה; הסמל והתווית מראים איזו. שחרור מוקדם מדי מחזיר את השורה למקומה. לאחר מכן השורה מציגה מה בוצע, עם „ביטול”.</string>
+    <string name="swipeTwoStepTitle">החלקה קצרה וארוכה</string>
+    <string name="swipeTwoStepSub">שתי פעולות בצד אחד: החלקה קצרה מפעילה את הראשונה, ארוכה את השנייה, בלי כפתורים. כבוי – ההחלקה מציגה כפתורים ואתם בוחרים</string>
 </resources>

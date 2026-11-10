@@ -1636,9 +1636,9 @@
     <string name="swipeHint">Aksi geser di daftar email. Maksimal dua aksi per sisi.</string>
     <string name="swipeRight">Geser ke kanan</string>
     <string name="swipeLeft">Geser ke kiri</string>
-    <string name="swipeFirstAction">Usap pendek</string>
-    <string name="swipeSecondAction">Usap panjang</string>
-    <string name="swipeSingleHint">Seret baris lalu lepaskan untuk menjalankan tindakan. Usap pendek menjalankan tindakan pertama, usap panjang yang kedua; ikon dan label menunjukkan yang mana. Jika dilepas terlalu cepat, baris kembali. Setelahnya baris menunjukkan apa yang dilakukan, dengan Urungkan.</string>
+    <string name="swipeFirstAction">Tindakan pertama</string>
+    <string name="swipeSecondAction">Tindakan kedua</string>
+    <string name="swipeSingleHint">Usapan pendek menampilkan tombol, usapan panjang langsung menjalankan tindakan pertama. Dengan satu tindakan, cukup sekitar setengah baris.</string>
     <string name="filterToMe">Khusus untuk saya</string>
     <string name="recentSearches">Pencarian terbaru</string>
     <string name="draft">Draf</string>
@@ -4047,4 +4047,15 @@
     <string name="swipeDoneUnflag">Bendera dihapus</string>
     <string name="swipeDoneControl">Ditindaklanjuti</string>
     <string name="swipeDoneControlOff">Tindak lanjut dihapus</string>
+    <string name="easCompatUaWin">Kompatibilitas gateway (seperti Windows Mail dan Outlook)</string>
+    <string name="easCompatUaWinHint">Untuk Exchange di balik gateway yang hanya mengizinkan aplikasi email dikenal (galat 403). ActiveSync tampil sebagai Windows Mail, EWS sebagai Outlook. Konfirmasikan dengan tim TI.</string>
+    <string name="easCompatUaMac">Kompatibilitas gateway (seperti Apple Mail)</string>
+    <string name="easCompatUaMacHint">Untuk Exchange di balik gateway yang hanya mengizinkan aplikasi email dikenal (galat 403). EWS tampil sebagai Mail di Mac, ActiveSync sebagai Mail iPad. Konfirmasikan dengan tim TI.</string>
+    <string name="easCompatUaLinux">Kompatibilitas gateway (seperti Thunderbird dan email Android)</string>
+    <string name="easCompatUaLinuxHint">Untuk Exchange di balik gateway yang hanya mengizinkan aplikasi email dikenal (galat 403). EWS tampil sebagai Thunderbird, ActiveSync sebagai email Android. Konfirmasikan dengan tim TI.</string>
+    <string name="swipeShortAction">Usap pendek</string>
+    <string name="swipeLongAction">Usap panjang</string>
+    <string name="swipeTwoStepHint">Seret baris lalu lepaskan untuk menjalankan tindakan. Usap pendek menjalankan tindakan pertama, usap panjang yang kedua; ikon dan label menunjukkan yang mana. Jika dilepas terlalu cepat, baris kembali. Setelahnya baris menunjukkan apa yang dilakukan, dengan Urungkan.</string>
+    <string name="swipeTwoStepTitle">Usap pendek dan panjang</string>
+    <string name="swipeTwoStepSub">Dua tindakan di satu sisi: usap pendek menjalankan yang pertama, usap panjang yang kedua, tanpa tombol. Nonaktif — usap menampilkan tombol dan Anda memilih</string>
 </resources>

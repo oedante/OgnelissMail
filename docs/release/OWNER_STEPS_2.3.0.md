@@ -1,6 +1,23 @@
 # 2.3.0 — что сделать владельцу (10.11.2026)
 
-2.3.0 (148) — в работе. «Что нового» — `STORE_NOTES_2.3.0.md`.
+2.3.0 (148), архив 10.11.2026 — промежуточный: план 2.3 ещё в работе.
+«Что нового» и что дальше — `STORE_NOTES_2.3.0.md`.
+
+## Сервер и магазины
+
+- Сервер ogneliss.ru: ничего нового.
+- Google Play, App Store, Microsoft Store: новых разрешений нет;
+  `AndroidManifest.xml`, `Info.plist`, `Runner.entitlements` после 2.2.1 не
+  менялись — в Xcode ничего включать не нужно.
+
+## Сборка
+
+Как у 2.2.0 — `OWNER_STEPS_2.2.0.md`, разделы 3 и 3а. Архив распаковать
+поверх папки проекта; `config/dart_defines.json` — тот же.
+iPhone и Mac: первая сборка ядра Rust — несколько минут, сборщик сам
+ставит Rust 1.97.1 и цель платформы (в 2.2.1 падало «could not compile
+`cfg-if`»). Если `rustup` спросит — можно заранее:
+`rustup toolchain install 1.97.1 --profile minimal --target aarch64-apple-ios --target aarch64-apple-darwin --target x86_64-apple-darwin`.
 
 ## Проверка на устройстве (пока сделано)
 

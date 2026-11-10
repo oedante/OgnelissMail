@@ -15,6 +15,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
+import '../../widgets/navigation/app_bottom_bar.dart' show AppBottomBar;
 import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
 import '../../widgets/common/peek_card.dart' show peekAnchorOf;
@@ -52,12 +53,15 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
             Tab(text: '${l10n.tr('assignTabToMe')} · ${active(toMe)}'),
           ]),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          heroTag: 'fab_assign',
-          onPressed: () => unawaited(showAssignSheet(context)),
-          icon: const Icon(AppIcons.add),
-          label: Text(l10n.tr('assignNew')),
-        ),
+        // На телефоне «Поручить» — в центре нижней панели (2.2.0).
+        floatingActionButton: AppBottomBar.inUse(context)
+            ? null
+            : FloatingActionButton.extended(
+                heroTag: 'fab_assign',
+                onPressed: () => unawaited(showAssignSheet(context)),
+                icon: const Icon(AppIcons.add),
+                label: Text(l10n.tr('assignNew')),
+              ),
         body: TabBarView(children: [_list(context, mine, l10n), _list(context, toMe, l10n)]),
       ),
     );

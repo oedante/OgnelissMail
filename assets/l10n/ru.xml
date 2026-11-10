@@ -4121,4 +4121,12 @@
     <string name="swipeTwoStepHint">Протяните строку и отпустите — действие выполнится. Короткий свайп — первое действие, длинный — второе: значок и подпись подскажут, что сработает. Не дотянули — строка вернётся на место. После действия на строке видно, что сделано, там же — «Отменить».</string>
     <string name="swipeTwoStepTitle">Короткий и длинный свайп</string>
     <string name="swipeTwoStepSub">Два действия на стороне: короткий свайп — первое, длинный — второе, без кнопок. Выключено — свайп раскрывает кнопки, вы выбираете</string>
+    <string name="barSettingsTitle">Нижняя панель</string>
+    <string name="barSettingsHelp">По два раздела слева и справа от кнопки «Создать» — она всегда в центре. Раздел, убранный с панели, появляется в «Избранном» меню.</string>
+    <string name="barSettingsHint">Нажмите на место, чтобы выбрать раздел</string>
+    <string name="barSlot">Место</string>
+    <string name="barSlotPick">Раздел на этом месте</string>
+    <string name="barMenuStays">«Меню» всегда на панели — его можно поменять местами с другим разделом</string>
+    <string name="barSwap">Поменяются местами</string>
+    <string name="barReset">Как по умолчанию</string>
 </resources>

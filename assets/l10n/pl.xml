@@ -4121,4 +4121,12 @@
     <string name="swipeTwoStepHint">Przeciągnij wiersz i puść – akcja zostanie wykonana. Krótkie przesunięcie wykonuje pierwszą akcję, długie – drugą; ikona i podpis pokazują którą. Puszczony za wcześnie wiersz wraca na miejsce. Potem wiersz pokazuje, co zrobiono, z przyciskiem Cofnij.</string>
     <string name="swipeTwoStepTitle">Krótkie i długie przesunięcie</string>
     <string name="swipeTwoStepSub">Dwie akcje po jednej stronie: krótkie przesunięcie wykonuje pierwszą, długie drugą, bez przycisków. Wyłączone – przesunięcie pokazuje przyciski do wyboru</string>
+    <string name="barSettingsTitle">Dolny pasek</string>
+    <string name="barSettingsHelp">Po dwie sekcje z lewej i z prawej strony przycisku „Utwórz” – on zawsze jest pośrodku. Sekcja usunięta z paska pojawia się w Ulubionych w menu.</string>
+    <string name="barSettingsHint">Dotknij miejsca, aby wybrać sekcję</string>
+    <string name="barSlot">Miejsce</string>
+    <string name="barSlotPick">Sekcja w tym miejscu</string>
+    <string name="barMenuStays">„Menu” jest zawsze na pasku – można zamienić je miejscami z inną sekcją</string>
+    <string name="barSwap">Zamienią się miejscami</string>
+    <string name="barReset">Przywróć domyślne</string>
 </resources>

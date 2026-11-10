@@ -4058,4 +4058,12 @@
     <string name="swipeTwoStepHint">ลากแถวแล้วปล่อยเพื่อทำคำสั่ง ปัดสั้นทำคำสั่งแรก ปัดยาวทำคำสั่งที่สอง ไอคอนและข้อความจะบอกว่าจะทำคำสั่งใด ถ้าปล่อยเร็วเกินไป แถวจะกลับที่เดิม หลังจากนั้นแถวจะแสดงสิ่งที่ทำ พร้อมปุ่ม «เลิกทำ»</string>
     <string name="swipeTwoStepTitle">ปัดสั้นและปัดยาว</string>
     <string name="swipeTwoStepSub">สองคำสั่งในด้านเดียว: ปัดสั้นทำคำสั่งแรก ปัดยาวทำคำสั่งที่สอง โดยไม่มีปุ่ม เมื่อปิด การปัดจะแสดงปุ่มให้คุณเลือก</string>
+    <string name="barSettingsTitle">แถบด้านล่าง</string>
+    <string name="barSettingsHelp">ด้านละสองส่วนข้างปุ่ม “สร้าง” ซึ่งอยู่ตรงกลางเสมอ ส่วนที่นำออกจากแถบจะไปอยู่ในรายการโปรดของเมนู</string>
+    <string name="barSettingsHint">แตะตำแหน่งเพื่อเลือกส่วน</string>
+    <string name="barSlot">ตำแหน่ง</string>
+    <string name="barSlotPick">ส่วนในตำแหน่งนี้</string>
+    <string name="barMenuStays">“เมนู” อยู่บนแถบเสมอ — สลับตำแหน่งกับส่วนอื่นได้</string>
+    <string name="barSwap">จะสลับตำแหน่งกัน</string>
+    <string name="barReset">คืนค่าเริ่มต้น</string>
 </resources>

@@ -176,6 +176,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               )),
           GoRoute(path: '/notes', name: 'notes', builder: (_, __) => const NotesScreen()),
           GoRoute(path: '/my-day', name: 'my-day', builder: (_, __) => const MyDayScreen()),
+          // «Поручения» (2.2.0, решение владельца 09.11.2026) и «Вложения» —
+          // внутри главного экрана: их можно поставить на нижнюю панель
+          // (2.2.0), и панель под ними остаётся. Файлы одного отправителя
+          // (?from=, из письма и карточки человека) — отдельной страницей
+          // /attachment-hub поверх любого экрана.
+          GoRoute(
+            path: '/assignments', name: 'assignments',
+            builder: (_, __) => const WideFrame(child: AssignmentsScreen()),
+          ),
+          GoRoute(path: '/files', name: 'files', builder: (_, __) => const AttachmentHubScreen()),
         ],
       ),
 
@@ -297,11 +307,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, st) => WideFrame(child: SubscriptionsScreen(accountId: st.uri.queryParameters['accountId'])),
       ),
 
-      // «Поручения» (2.2.0, решение владельца 09.11.2026) и карточка поручения.
-      GoRoute(
-        path: '/assignments', name: 'assignments',
-        builder: (_, __) => const WideFrame(child: AssignmentsScreen()),
-      ),
+      // Карточка поручения (список «Поручения» — в главном экране).
       GoRoute(
         path: '/assignments/:id', name: 'assignment',
         builder: (_, st) => WideFrame(child: AssignmentScreen(id: st.pathParameters['id']!)),

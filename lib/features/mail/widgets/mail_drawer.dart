@@ -437,6 +437,30 @@ class MailDrawer extends ConsumerWidget {
     // На планшете и компьютере «Мой день», «Файловый хаб» и «Настройки» —
     // в боковой полосе разделов: в меню их не дублируем.
     final phone = AppBottomBar.inUse(context);
+    // «Календарь» и «Контакты» (2.2.0): раздел можно убрать с нижней
+    // панели — тогда он здесь. На планшете и компьютере — в боковой полосе.
+    if (phone && !hidden.contains(DrawerQuickItem.calendar)) {
+      tiles.add(fav(DrawerQuickItem.calendar.name,
+        icon: AppIcons.calendar_today,
+        label: l10n.calendarLabel,
+        isSelected: false,
+        onTap: () {
+          _close(context);
+          context.go('/calendar');
+        },
+      ));
+    }
+    if (phone && !hidden.contains(DrawerQuickItem.contacts)) {
+      tiles.add(fav(DrawerQuickItem.contacts.name,
+        icon: AppIcons.contacts,
+        label: l10n.contactsLabel,
+        isSelected: false,
+        onTap: () {
+          _close(context);
+          context.go('/contacts');
+        },
+      ));
+    }
     if (phone && ref.watch(settingsProvider).myDay && !hidden.contains(DrawerQuickItem.myDay)) {
       tiles.add(fav(DrawerQuickItem.myDay.name,
         icon: AppIcons.myDay,
@@ -471,7 +495,8 @@ class MailDrawer extends ConsumerWidget {
         isSelected: false,
         onTap: () {
           _close(context);
-          context.push('/attachment-hub');
+          // В главном экране: нижняя панель остаётся (2.2.0).
+          context.push('/files');
         },
       ));
     }
@@ -1695,6 +1720,8 @@ class _FavoritesEditor extends ConsumerWidget {
       (DrawerQuickItem.vip, AppIcons.star, l10n.tr('vip')),
       (DrawerQuickItem.attachments, AppIcons.attach_file, l10n.tr('attachments')),
       (DrawerQuickItem.triage, AppIcons.playlist_add_check, l10n.tr('triageTitle')),
+      if (phone) (DrawerQuickItem.calendar, AppIcons.calendar_today, l10n.calendarLabel),
+      if (phone) (DrawerQuickItem.contacts, AppIcons.contacts, l10n.contactsLabel),
       if (phone && ref.watch(featureFlagsProvider).showFileHub)
         (DrawerQuickItem.fileHub, AppIcons.folder_copy, l10n.tr('fileHub')),
       if (ref.watch(featureFlagsProvider).showNotes)
@@ -1728,8 +1755,8 @@ class _FavoritesEditor extends ConsumerWidget {
     const drawerOrder = [
       DrawerQuickItem.allAccounts, DrawerQuickItem.allMail, DrawerQuickItem.unread, DrawerQuickItem.flagged,
       DrawerQuickItem.control, DrawerQuickItem.later, DrawerQuickItem.vip, DrawerQuickItem.attachments,
-      DrawerQuickItem.triage, DrawerQuickItem.myDay, DrawerQuickItem.assignments, DrawerQuickItem.fileHub,
-      DrawerQuickItem.notes, DrawerQuickItem.tasks,
+      DrawerQuickItem.triage, DrawerQuickItem.calendar, DrawerQuickItem.contacts, DrawerQuickItem.myDay,
+      DrawerQuickItem.assignments, DrawerQuickItem.fileHub, DrawerQuickItem.notes, DrawerQuickItem.tasks,
     ];
     final quickByItem = {for (final q in quick) q.$1: q};
     final starred = folders.where((f) => f.isFavorite).toList()

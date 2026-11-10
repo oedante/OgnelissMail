@@ -102,6 +102,14 @@
   представляется штатной почтой своей платформы — Windows (Почта Windows и
   Outlook), Mac (Почта Apple), Linux (Thunderbird), как раньше на iPhone и
   Android.
+- **Нижняя панель — свои разделы** (просьба пользователя 10.11.2026):
+  «Настройки → Общие → Нижняя панель» — по два места слева и справа от
+  «Создать» (она всегда в центре); на выбор Почта, Календарь, Контакты,
+  Задачи, Мой день, Заметки, Поручения, Вложения (файловый хаб) и Меню.
+  Раздел, убранный с панели, сам появляется в «Избранном» меню; в
+  «Избранное» можно добавить и Календарь, и Контакты. «Меню» на панели
+  всегда — его можно только переставить; меню выезжает с той стороны, где
+  его портрет. Поручения и Вложения открываются с нижней панелью.
 - **Перевод писем на Windows**: на компьютере, как на телефоне — плашка
   «Перевести», перевод своего письма, «Всегда переводить с …». Движок —
   Bergamot (Mozilla), текст писем не покидает компьютер; языки (~45 МБ)
@@ -127,6 +135,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Свайпы: на строке видно, что сделано, и есть «Отменить»
 • ✓ и ✓✓ у своих писем, «@» там, где вас упомянули
 • Поиск в письме и в беседе, «+» в быстром ответе
+• Нижняя панель на свой вкус: например, «Мой день» вместо «Контактов»
 </ru-RU>
 <en-US>
 • My day: board and day timeline, move tasks with a long press
@@ -134,6 +143,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Swipes: the row shows what was done, with Undo
 • ✓ and ✓✓ on your sent emails, “@” where you are mentioned
 • Find in an email and in a conversation, “+” in quick reply
+• Customizable bottom bar: for example, My day instead of Contacts
 </en-US>
 <de-DE>
 • Mein Tag: Board und Tagesleiste, Aufgaben per langem Tippen verschieben
@@ -141,6 +151,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Wischgesten: die Zeile zeigt, was erledigt wurde, mit „Rückgängig“
 • ✓ und ✓✓ bei eigenen E-Mails, „@“ wo Sie erwähnt werden
 • Suche in E-Mail und Unterhaltung, „+“ in der Schnellantwort
+• Untere Leiste nach Wunsch: zum Beispiel Mein Tag statt Kontakte
 </de-DE>
 <fr-FR>
 • Ma journée : tableau et frise du jour, déplacer les tâches par appui long
@@ -148,12 +159,13 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Balayages : la ligne indique ce qui a été fait, avec « Annuler »
 • ✓ et ✓✓ sur vos e-mails envoyés, « @ » là où l’on vous mentionne
 • Recherche dans un e-mail et une conversation, « + » dans la réponse rapide
+• Barre du bas au choix : Ma journée au lieu de Contacts, par exemple
 </fr-FR>
 ```
 
 ## Google Play — все 27 языков (одним полем)
 
-Предел Google Play — 500 знаков на язык; здесь каждый язык не длиннее 400.
+Предел Google Play — 500 знаков на язык; здесь каждый язык не длиннее 450.
 
 ```
 <ru-RU>
@@ -162,6 +174,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Свайпы: на строке видно, что сделано, и есть «Отменить»
 • ✓ и ✓✓ у своих писем, «@» там, где вас упомянули
 • Поиск в письме и в беседе, «+» в быстром ответе
+• Нижняя панель на свой вкус: например, «Мой день» вместо «Контактов»
 </ru-RU>
 <en-US>
 • My day: board and day timeline, move tasks with a long press
@@ -169,6 +182,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Swipes: the row shows what was done, with Undo
 • ✓ and ✓✓ on your sent emails, “@” where you are mentioned
 • Find in an email and in a conversation, “+” in quick reply
+• Customizable bottom bar: for example, My day instead of Contacts
 </en-US>
 <de-DE>
 • Mein Tag: Board und Tagesleiste, Aufgaben per langem Tippen verschieben
@@ -176,6 +190,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Wischgesten: die Zeile zeigt, was erledigt wurde, mit „Rückgängig“
 • ✓ und ✓✓ bei eigenen E-Mails, „@“ wo Sie erwähnt werden
 • Suche in E-Mail und Unterhaltung, „+“ in der Schnellantwort
+• Untere Leiste nach Wunsch: zum Beispiel Mein Tag statt Kontakte
 </de-DE>
 <fr-FR>
 • Ma journée : tableau et frise du jour, déplacer les tâches par appui long
@@ -183,6 +198,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Balayages : la ligne indique ce qui a été fait, avec « Annuler »
 • ✓ et ✓✓ sur vos e-mails envoyés, « @ » là où l’on vous mentionne
 • Recherche dans un e-mail et une conversation, « + » dans la réponse rapide
+• Barre du bas au choix : Ma journée au lieu de Contacts, par exemple
 </fr-FR>
 <ar>
 • «يومي»: لوحة ومخطط زمني لليوم، ونقل المهام بضغطة مطوّلة
@@ -190,6 +206,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • السحب: يُظهر الصف ما تم مع زر «تراجع»
 • ✓ و✓✓ على رسائلك المرسلة، و«@» حيث تمت الإشارة إليك
 • البحث في الرسالة وفي المحادثة، و«+» في الرد السريع
+• شريط سفلي كما تريد: مثلًا «يومي» بدل «جهات الاتصال»
 </ar>
 <hu-HU>
 • Napom: tábla és napi idővonal, feladatok áthelyezése hosszú nyomással
@@ -197,6 +214,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Húzás: a sor mutatja, mi történt, Visszavonással
 • ✓ és ✓✓ az elküldött leveleken, „@” ahol megemlítették
 • Keresés levélben és beszélgetésben, „+” a gyors válaszban
+• Testreszabható alsó sáv: például Napom a Névjegyek helyett
 </hu-HU>
 <vi>
 • Ngày của tôi: bảng và dòng thời gian trong ngày, nhấn giữ để dời việc
@@ -204,6 +222,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Vuốt: dòng hiển thị việc đã làm, kèm Hoàn tác
 • ✓ và ✓✓ trên thư đã gửi, “@” ở nơi bạn được nhắc tên
 • Tìm trong thư và trong cuộc hội thoại, “+” trong trả lời nhanh
+• Thanh dưới cùng tùy chỉnh: ví dụ Ngày của tôi thay cho Danh bạ
 </vi>
 <da-DK>
 • Min dag: tavle og tidslinje for dagen, flyt opgaver med langt tryk
@@ -211,6 +230,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Swipe: rækken viser, hvad der skete, med Fortryd
 • ✓ og ✓✓ på dine sendte mails, “@” hvor du er nævnt
 • Søg i en mail og i en samtale, “+” i hurtigsvar
+• Nederste bjælke efter ønske: f.eks. Min dag i stedet for Kontakter
 </da-DK>
 <iw-IL>
 • היום שלי: לוח וציר זמן יומי, העברת משימות בלחיצה ארוכה
@@ -218,6 +238,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • החלקה: השורה מציגה מה בוצע, עם „ביטול”
 • ✓ ו-✓✓ במיילים ששלחת, „@” היכן שהזכירו אותך
 • חיפוש במייל ובשיחה, „+” בתשובה המהירה
+• סרגל תחתון לפי בחירתכם: למשל „היום שלי” במקום „אנשי קשר”
 </iw-IL>
 <id>
 • Hari Saya: papan dan linimasa hari, pindahkan tugas dengan tekan lama
@@ -225,6 +246,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Usap: baris menunjukkan apa yang dilakukan, dengan Urungkan
 • ✓ dan ✓✓ pada email terkirim, “@” saat Anda disebut
 • Cari dalam email dan percakapan, “+” di balasan cepat
+• Bilah bawah sesuai selera: misalnya Hari Saya, bukan Kontak
 </id>
 <es-ES>
 • Mi día: tablero y línea del día, mueve tareas con una pulsación larga
@@ -232,6 +254,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Deslizar: la fila muestra lo que se hizo, con Deshacer
 • ✓ y ✓✓ en tus correos enviados, «@» donde te mencionan
 • Búsqueda en un correo y en una conversación, «+» en la respuesta rápida
+• Barra inferior a tu gusto: por ejemplo, Mi día en lugar de Contactos
 </es-ES>
 <it-IT>
 • La mia giornata: bacheca e linea del giorno, sposta le attività con pressione prolungata
@@ -239,6 +262,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Scorrimento: la riga mostra cosa è stato fatto, con Annulla
 • ✓ e ✓✓ sulle email inviate, «@» dove vieni menzionato
 • Cerca in un’email e in una conversazione, «+» nella risposta rapida
+• Barra inferiore a piacere: ad esempio La mia giornata al posto di Contatti
 </it-IT>
 <zh-CN>
 • 我的一天：看板和当日时间轴，长按即可调整任务
@@ -246,6 +270,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • 滑动：行上显示已完成的操作，并可“撤销”
 • 已发邮件显示 ✓ 和 ✓✓，被提及处显示“@”
 • 在邮件和会话中查找，快速回复中的“+”
+• 底部栏可自定义：例如用“我的一天”替换“联系人”
 </zh-CN>
 <ko-KR>
 • 나의 하루: 보드와 하루 타임라인, 길게 눌러 할 일 옮기기
@@ -253,6 +278,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • 밀기: 행에 수행된 작업과 실행 취소가 표시됨
 • 보낸 메일에 ✓ 및 ✓✓, 내가 언급된 곳에 “@”
 • 메일과 대화 안에서 찾기, 빠른 답장의 “+”
+• 하단 바 맞춤 설정: 예를 들어 연락처 대신 나의 하루
 </ko-KR>
 <nl-NL>
 • Mijn dag: bord en tijdlijn van de dag, taken verplaatsen met lang drukken
@@ -260,6 +286,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Vegen: de rij toont wat er is gedaan, met Ongedaan maken
 • ✓ en ✓✓ bij je verzonden e-mails, ‘@’ waar je wordt genoemd
 • Zoeken in een e-mail en een gesprek, ‘+’ in snel antwoord
+• Onderbalk naar wens: bijvoorbeeld Mijn dag in plaats van Contacten
 </nl-NL>
 <no-NO>
 • Min dag: tavle og tidslinje for dagen, flytt oppgaver med langt trykk
@@ -267,6 +294,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Sveip: raden viser hva som ble gjort, med Angre
 • ✓ og ✓✓ på sendte e-poster, «@» der du er nevnt
 • Søk i en e-post og i en samtale, «+» i hurtigsvar
+• Nederste linje etter ønske: for eksempel Min dag i stedet for Kontakter
 </no-NO>
 <pl-PL>
 • Mój dzień: tablica i oś dnia, przenoszenie zadań długim naciśnięciem
@@ -274,6 +302,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Przesunięcia: wiersz pokazuje, co zrobiono, z przyciskiem Cofnij
 • ✓ i ✓✓ przy wysłanych wiadomościach, „@” tam, gdzie Cię wspomniano
 • Szukanie w wiadomości i w rozmowie, „+” w szybkiej odpowiedzi
+• Dolny pasek według uznania: np. Mój dzień zamiast Kontaktów
 </pl-PL>
 <pt-BR>
 • Meu dia: quadro e linha do tempo do dia, mova tarefas com toque longo
@@ -281,6 +310,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Deslizar: a linha mostra o que foi feito, com Desfazer
 • ✓ e ✓✓ nos seus e-mails enviados, “@” onde você é mencionado
 • Busca no e-mail e na conversa, “+” na resposta rápida
+• Barra inferior do seu jeito: por exemplo, Meu dia no lugar de Contatos
 </pt-BR>
 <ro>
 • Ziua mea: panou și axa zilei, mutați sarcinile cu apăsare lungă
@@ -288,6 +318,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Glisare: rândul arată ce s-a făcut, cu Anulează
 • ✓ și ✓✓ la e-mailurile trimise, „@” unde sunteți menționat
 • Căutare în e-mail și în conversație, „+” în răspunsul rapid
+• Bara de jos după preferințe: de exemplu Ziua mea în loc de Contacte
 </ro>
 <sk>
 • Môj deň: nástenka a časová os dňa, presun úloh dlhým stlačením
@@ -295,6 +326,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Potiahnutie: riadok ukáže, čo sa stalo, aj s tlačidlom Späť
 • ✓ a ✓✓ pri odoslaných e-mailoch, „@“ tam, kde vás spomenuli
 • Hľadanie v e-maile a v konverzácii, „+“ v rýchlej odpovedi
+• Spodná lišta podľa vás: napríklad Môj deň namiesto Kontaktov
 </sk>
 <th>
 • วันของฉัน: บอร์ดและไทม์ไลน์ของวัน กดค้างเพื่อย้ายงาน
@@ -302,6 +334,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • ปัด: แถวแสดงสิ่งที่ทำ พร้อมปุ่มเลิกทำ
 • ✓ และ ✓✓ ที่อีเมลที่ส่ง และ “@” ตรงที่มีการกล่าวถึงคุณ
 • ค้นหาในอีเมลและในบทสนทนา “+” ในการตอบกลับด่วน
+• ปรับแถบด้านล่างได้: เช่น วางวันของฉันแทนผู้ติดต่อ
 </th>
 <tr-TR>
 • Günüm: pano ve gün zaman çizelgesi, görevleri uzun basarak taşıyın
@@ -309,6 +342,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Kaydırma: satırda ne yapıldığı ve Geri al görünür
 • Gönderdiğiniz e-postalarda ✓ ve ✓✓, anıldığınız yerde “@”
 • E-postada ve konuşmada arama, hızlı yanıtta “+”
+• Alt çubuk istediğiniz gibi: örneğin Kişiler yerine Günüm
 </tr-TR>
 <fi-FI>
 • Oma päivä: taulu ja päivän aikajana, siirrä tehtäviä pitkällä painalluksella
@@ -316,6 +350,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Pyyhkäisy: rivi näyttää, mitä tehtiin, ja Kumoa
 • ✓ ja ✓✓ lähettämissäsi viesteissä, ”@” kun sinut mainitaan
 • Haku viestissä ja keskustelussa, ”+” pikavastauksessa
+• Muokattava alapalkki: esimerkiksi Oma päivä Yhteystietojen tilalle
 </fi-FI>
 <hi-IN>
 • मेरा दिन: बोर्ड और दिन की टाइमलाइन, लंबा दबाकर काम खिसकाएँ
@@ -323,6 +358,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • स्वाइप: पंक्ति पर दिखता है कि क्या हुआ, साथ में «पूर्ववत करें»
 • भेजे गए ईमेल पर ✓ और ✓✓, जहाँ आपका ज़िक्र हो वहाँ “@”
 • ईमेल और बातचीत में खोज, त्वरित जवाब में “+”
+• नीचे की पट्टी अपनी पसंद से: जैसे संपर्क की जगह मेरा दिन
 </hi-IN>
 <cs-CZ>
 • Můj den: nástěnka a časová osa dne, přesun úkolů dlouhým stiskem
@@ -330,6 +366,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Přejetí: řádek ukáže, co se stalo, i s tlačítkem Zpět
 • ✓ a ✓✓ u odeslaných e-mailů, „@“ tam, kde vás zmínili
 • Hledání v e-mailu a v konverzaci, „+“ v rychlé odpovědi
+• Spodní lišta podle vás: například Můj den místo Kontaktů
 </cs-CZ>
 <sv-SE>
 • Min dag: tavla och tidslinje för dagen, flytta uppgifter med långt tryck
@@ -337,6 +374,7 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • Svep: raden visar vad som gjordes, med Ångra
 • ✓ och ✓✓ på skickade mejl, ”@” där du nämns
 • Sök i ett mejl och i en konversation, ”+” i snabbsvar
+• Nedre fält efter önskan: till exempel Min dag i stället för Kontakter
 </sv-SE>
 <ja-JP>
 • マイデイ：ボードと1日のタイムライン、長押しでタスクを移動
@@ -344,5 +382,6 @@ MPL-2.0; скачивается при сборке, `tool/bergamot`), моде�
 • スワイプ：行に実行結果と「元に戻す」を表示
 • 送信したメールに ✓ と ✓✓、自分が言及された所に「@」
 • メール内と会話内の検索、クイック返信の「+」
+• 下部バーをカスタマイズ：たとえば連絡先の代わりにマイデイ
 </ja-JP>
 ```

@@ -4079,4 +4079,12 @@
     <string name="swipeTwoStepHint">Sleep een rij en laat los: de actie wordt uitgevoerd. Een korte veeg voert de eerste actie uit, een lange de tweede; pictogram en tekst tonen welke. Te vroeg losgelaten? Dan veert de rij terug. Daarna toont de rij wat er is gedaan, met Ongedaan maken.</string>
     <string name="swipeTwoStepTitle">Korte en lange veeg</string>
     <string name="swipeTwoStepSub">Twee acties aan een kant: korte veeg voert de eerste uit, lange de tweede, zonder knoppen. Uit – de veeg toont knoppen en u kiest</string>
+    <string name="barSettingsTitle">Onderbalk</string>
+    <string name="barSettingsHelp">Twee onderdelen aan elke kant van de knop ‘Maken’, die altijd in het midden blijft. Een onderdeel dat van de balk is gehaald, staat in Favorieten in het menu.</string>
+    <string name="barSettingsHint">Tik op een plek om een onderdeel te kiezen</string>
+    <string name="barSlot">Plek</string>
+    <string name="barSlotPick">Onderdeel op deze plek</string>
+    <string name="barMenuStays">‘Menu’ blijft altijd op de balk — je kunt het met een ander onderdeel wisselen</string>
+    <string name="barSwap">Wisselen van plek</string>
+    <string name="barReset">Standaard herstellen</string>
 </resources>

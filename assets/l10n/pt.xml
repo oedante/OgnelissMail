@@ -4079,4 +4079,12 @@
     <string name="swipeTwoStepHint">Arraste uma linha e solte para executar a ação. Um deslize curto executa a primeira ação, um longo a segunda; o ícone e o rótulo mostram qual. Se soltar cedo demais, a linha volta ao lugar. Depois, a linha mostra o que foi feito, com Desfazer.</string>
     <string name="swipeTwoStepTitle">Deslize curto e longo</string>
     <string name="swipeTwoStepSub">Duas ações de um lado: o deslize curto executa a primeira e o longo a segunda, sem botões. Desativado — o deslize mostra os botões e você escolhe</string>
+    <string name="barSettingsTitle">Barra inferior</string>
+    <string name="barSettingsHelp">Duas secções de cada lado do botão «Criar», que fica sempre no centro. Uma secção retirada da barra aparece nos Favoritos do menu.</string>
+    <string name="barSettingsHint">Toque numa posição para escolher uma secção</string>
+    <string name="barSlot">Posição</string>
+    <string name="barSlotPick">Secção nesta posição</string>
+    <string name="barMenuStays">«Menu» fica sempre na barra — pode trocá-lo com outra secção</string>
+    <string name="barSwap">Trocam de posição</string>
+    <string name="barReset">Repor predefinição</string>
 </resources>

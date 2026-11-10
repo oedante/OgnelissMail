@@ -4058,4 +4058,12 @@
     <string name="swipeTwoStepHint">Kéo một dòng rồi thả để thực hiện thao tác. Vuốt ngắn thực hiện thao tác thứ nhất, vuốt dài thực hiện thao tác thứ hai; biểu tượng và nhãn cho biết thao tác nào. Thả quá sớm thì dòng trở lại chỗ cũ. Sau đó dòng hiển thị việc đã làm, kèm Hoàn tác.</string>
     <string name="swipeTwoStepTitle">Vuốt ngắn và vuốt dài</string>
     <string name="swipeTwoStepSub">Hai thao tác ở một phía: vuốt ngắn thực hiện thao tác thứ nhất, vuốt dài thao tác thứ hai, không cần nút. Tắt — vuốt hiện các nút để bạn chọn</string>
+    <string name="barSettingsTitle">Thanh dưới cùng</string>
+    <string name="barSettingsHelp">Hai mục ở mỗi bên nút “Tạo”, nút này luôn ở giữa. Mục bị gỡ khỏi thanh sẽ xuất hiện trong Mục yêu thích của menu.</string>
+    <string name="barSettingsHint">Chạm vào một vị trí để chọn mục</string>
+    <string name="barSlot">Vị trí</string>
+    <string name="barSlotPick">Mục ở vị trí này</string>
+    <string name="barMenuStays">“Menu” luôn có trên thanh — bạn có thể đổi chỗ nó với mục khác</string>
+    <string name="barSwap">Sẽ đổi chỗ</string>
+    <string name="barReset">Khôi phục mặc định</string>
 </resources>

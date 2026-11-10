@@ -17,7 +17,11 @@ import '../../../data/providers/shared_prefs_provider.dart';
 /// myDay, settings, theme — из бывшего меню «Ещё» (1.6.40): по умолчанию
 /// видны (у тех, кто уже настраивал избранное, тоже — их нет в сохранённом
 /// списке скрытых).
-enum DrawerQuickItem { allAccounts, allMail, unread, flagged, vip, attachments, fileHub, notes, tasks, control, later, triage, myDay, settings, theme, assignments }
+/// calendar, contacts — «Календарь» и «Контакты» (2.2.0, просьба
+/// пользователя 10.11.2026: раздел, убранный с нижней панели, — в
+/// «Избранном»); по умолчанию скрыты, пока их не включат или не уберут с
+/// панели.
+enum DrawerQuickItem { allAccounts, allMail, unread, flagged, vip, attachments, fileHub, notes, tasks, control, later, triage, myDay, settings, theme, assignments, calendar, contacts }
 
 const _kHiddenQuick = 'drawer_quick_hidden';
 const _kCollapsed = 'drawer_collapsed_folders';
@@ -55,11 +59,13 @@ class HiddenQuickItemsNotifier extends Notifier<Set<DrawerQuickItem>> {
 }
 
 /// Разделы, которые нужно включить явно (по умолчанию скрыты всегда).
-const _optIn = {DrawerQuickItem.triage};
+const _optIn = {DrawerQuickItem.triage, DrawerQuickItem.calendar, DrawerQuickItem.contacts};
 const _kOptInOn = 'drawer_quick_on_';
 
 const _defaultHidden = {
   DrawerQuickItem.triage,
+  DrawerQuickItem.calendar,
+  DrawerQuickItem.contacts,
   DrawerQuickItem.unread,
   DrawerQuickItem.flagged,
   DrawerQuickItem.vip,
@@ -145,13 +151,145 @@ class MenuOnRightNotifier extends Notifier<bool> {
   @override
   bool build() => ref.read(sharedPrefsProvider).getBool(_k) ?? false;
 
+  /// Сторона меню; портрет «Меню» на нижней панели переезжает на край этой
+  /// стороны (2.2.0).
   Future<void> set(bool right) async {
+    await _store(right);
+    await ref.read(phoneBarProvider.notifier).followMenuSide(right);
+  }
+
+  Future<void> _store(bool right) async {
     state = right;
     await ref.read(sharedPrefsProvider).setBool(_k, right);
   }
 }
 
 final menuOnRightProvider = NotifierProvider<MenuOnRightNotifier, bool>(MenuOnRightNotifier.new);
+
+/// Разделы нижней панели телефона (2.2.0, просьба пользователя 10.11.2026:
+/// «контакты редко нужны — в избранное, а „Мой день“ — в нижний бар»).
+/// Четыре места — по два слева и справа от кнопки «Создать», она всегда в
+/// центре. «Меню» (портрет ящика) на панели всегда: только оно открывает
+/// ящики, папки, избранное и настройки, — его можно лишь переставить.
+enum BarItem { mail, calendar, contacts, tasks, myDay, notes, assignments, files, menu }
+
+/// Пункт «Избранного» того же раздела (у почты и меню — нет).
+DrawerQuickItem? quickItemOf(BarItem i) => switch (i) {
+      BarItem.calendar => DrawerQuickItem.calendar,
+      BarItem.contacts => DrawerQuickItem.contacts,
+      BarItem.tasks => DrawerQuickItem.tasks,
+      BarItem.myDay => DrawerQuickItem.myDay,
+      BarItem.notes => DrawerQuickItem.notes,
+      BarItem.assignments => DrawerQuickItem.assignments,
+      BarItem.files => DrawerQuickItem.fileHub,
+      BarItem.mail || BarItem.menu => null,
+    };
+
+/// Порядок разделов на панели. Пока пользователь её не менял — как раньше:
+/// «Почта · Календарь · Контакты» и «Меню» с той стороны, где выезжает меню
+/// («Общие → Меню ящиков и папок»). Стороны панели и меню согласованы:
+/// перенёс «Меню» на другую половину панели — меню выезжает с той стороны,
+/// и наоборот.
+class PhoneBarNotifier extends Notifier<List<BarItem>> {
+  static const prefKey = 'phone_bar';
+  static const slots = 4;
+
+  static List<BarItem> defaults({required bool menuOnRight}) => menuOnRight
+      ? const [BarItem.mail, BarItem.calendar, BarItem.contacts, BarItem.menu]
+      : const [BarItem.menu, BarItem.mail, BarItem.calendar, BarItem.contacts];
+
+  /// Сохранённый список: четыре разных раздела, среди них «Меню»; иначе null.
+  static List<BarItem>? parse(List<String>? raw) {
+    if (raw == null || raw.length != slots) return null;
+    final out = <BarItem>[];
+    for (final name in raw) {
+      final v = BarItem.values.where((e) => e.name == name).firstOrNull;
+      if (v == null || out.contains(v)) return null;
+      out.add(v);
+    }
+    return out.contains(BarItem.menu) ? List.unmodifiable(out) : null;
+  }
+
+  /// Что показать: раздел, выключенный в «Профиле» (задачи, заметки, файлы,
+  /// «Мой день»), заменяется первым доступным, которого на панели нет.
+  /// Сохранённый порядок не меняется — включил раздел снова, и он на месте.
+  static List<BarItem> visible(List<BarItem> bar, bool Function(BarItem) available) {
+    const spare = [
+      BarItem.mail, BarItem.calendar, BarItem.contacts, BarItem.tasks, BarItem.myDay, BarItem.notes,
+      BarItem.assignments, BarItem.files,
+    ];
+    final out = [...bar];
+    for (var i = 0; i < out.length; i++) {
+      if (out[i] == BarItem.menu || available(out[i])) continue;
+      final sub = spare.where((s) => available(s) && !out.contains(s)).firstOrNull;
+      if (sub != null) out[i] = sub;
+    }
+    return out;
+  }
+
+  bool get customized => ref.read(sharedPrefsProvider).getStringList(prefKey) != null;
+
+  @override
+  List<BarItem> build() =>
+      parse(ref.read(sharedPrefsProvider).getStringList(prefKey)) ??
+      defaults(menuOnRight: ref.read(menuOnRightProvider));
+
+  /// [item] — на место [slot]. Раздел, который уже на панели, меняется
+  /// местами с прежним; на место «Меню» встаёт только раздел с панели (меню
+  /// не убирается). Возвращает раздел, ушедший с панели, или null.
+  Future<BarItem?> place(int slot, BarItem item) async {
+    final cur = [...state];
+    final old = cur[slot];
+    if (old == item) return null;
+    final at = cur.indexOf(item);
+    if (at >= 0) {
+      cur[at] = old;
+      cur[slot] = item;
+      await _save(cur);
+      return null;
+    }
+    if (old == BarItem.menu) return null;
+    cur[slot] = item;
+    await _save(cur);
+    // Убранный раздел — в «Избранное», чтобы не потерять к нему дорогу.
+    final quick = quickItemOf(old);
+    if (quick != null && ref.read(hiddenQuickItemsProvider).contains(quick)) {
+      await ref.read(hiddenQuickItemsProvider.notifier).setVisible(quick, true);
+    }
+    return old;
+  }
+
+  /// Как по умолчанию (с «Меню» на стороне меню).
+  Future<void> reset() async {
+    await ref.read(sharedPrefsProvider).remove(prefKey);
+    state = defaults(menuOnRight: ref.read(menuOnRightProvider));
+  }
+
+  /// Сторону меню сменили в «Общих»: «Меню» меняется местами с крайним
+  /// разделом этой стороны.
+  Future<void> followMenuSide(bool right) async {
+    if (!customized) {
+      state = defaults(menuOnRight: right);
+      return;
+    }
+    final cur = [...state];
+    final at = cur.indexOf(BarItem.menu);
+    if ((at >= slots ~/ 2) == right) return;
+    final edge = right ? slots - 1 : 0;
+    cur[at] = cur[edge];
+    cur[edge] = BarItem.menu;
+    await _save(cur);
+  }
+
+  Future<void> _save(List<BarItem> next) async {
+    state = List.unmodifiable(next);
+    await ref.read(sharedPrefsProvider).setStringList(prefKey, [for (final v in next) v.name]);
+    final right = next.indexOf(BarItem.menu) >= slots ~/ 2;
+    if (right != ref.read(menuOnRightProvider)) await ref.read(menuOnRightProvider.notifier)._store(right);
+  }
+}
+
+final phoneBarProvider = NotifierProvider<PhoneBarNotifier, List<BarItem>>(PhoneBarNotifier.new);
 
 /// Быстрые фильтры строкой над лентой (1.6.45, из плана интерфейса 05.10:
 /// «фильтры — чипами над списком»): «Непрочитанные», «Мне лично», «Сегодня»…

@@ -4079,4 +4079,12 @@
     <string name="swipeTwoStepHint">पंक्ति खींचकर छोड़ें — कार्रवाई हो जाएगी। छोटा स्वाइप पहली कार्रवाई करता है, लंबा दूसरी; आइकन और लेबल बताते हैं कौन-सी होगी। जल्दी छोड़ने पर पंक्ति वापस आ जाती है। इसके बाद पंक्ति पर दिखता है कि क्या हुआ, साथ में «पूर्ववत करें»।</string>
     <string name="swipeTwoStepTitle">छोटा और लंबा स्वाइप</string>
     <string name="swipeTwoStepSub">एक तरफ़ दो कार्रवाइयाँ: छोटा स्वाइप पहली, लंबा दूसरी चलाता है, बटनों के बिना। बंद होने पर स्वाइप बटन दिखाता है और आप चुनते हैं</string>
+    <string name="barSettingsTitle">नीचे की पट्टी</string>
+    <string name="barSettingsHelp">“बनाएं” बटन के दोनों ओर दो-दो अनुभाग — बटन हमेशा बीच में रहता है। पट्टी से हटाया गया अनुभाग मेनू के पसंदीदा में दिखता है।</string>
+    <string name="barSettingsHint">अनुभाग चुनने के लिए किसी जगह पर टैप करें</string>
+    <string name="barSlot">जगह</string>
+    <string name="barSlotPick">इस जगह पर अनुभाग</string>
+    <string name="barMenuStays">“मेनू” हमेशा पट्टी पर रहता है — आप इसकी जगह किसी दूसरे अनुभाग से बदल सकते हैं</string>
+    <string name="barSwap">जगहें बदल जाएँगी</string>
+    <string name="barReset">डिफ़ॉल्ट पर लौटाएँ</string>
 </resources>

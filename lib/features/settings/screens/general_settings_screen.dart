@@ -21,6 +21,7 @@ import '../../mail/providers/mail_providers.dart' show accountsProvider;
 import '../../mail/providers/drawer_prefs.dart' show menuOnRightProvider;
 import '../../../widgets/navigation/app_bottom_bar.dart' show AppBottomBar;
 import '../../help/faq_screen.dart' show FaqButton;
+import '../widgets/phone_bar_section.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../l10n/languages.g.dart' show kAppLanguages;
 import '../../../widgets/common/text_scale_cap.dart';
@@ -152,6 +153,8 @@ class GeneralSettingsScreen extends ConsumerWidget {
                   onChanged: (v) => ref.read(menuOnRightProvider.notifier).set(v ?? false),
                 ),
             ]),
+            // ── Нижняя панель (2.2.0): какие разделы по краям от «Создать» ──
+            const PhoneBarSection(),
           ],
 
           // ── Язык ──

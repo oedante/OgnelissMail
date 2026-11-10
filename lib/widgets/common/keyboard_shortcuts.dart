@@ -174,7 +174,10 @@ class _UnlessTyping<T extends Intent> extends Action<T> {
 /// принадлежат ему.
 bool textInputFocused() {
   final ctx = FocusManager.instance.primaryFocus?.context;
-  if (ctx == null) return false;
+  // Фокус у уже снятого с экрана элемента (iPad, второе нажатие «Меню»,
+  // журнал владельца 10.11.2026): его widget — null, проверка падала
+  // «Null check operator» при построении ленты — белый экран.
+  if (ctx == null || !ctx.mounted) return false;
   return ctx.widget is EditableText || ctx.findAncestorWidgetOfExactType<EditableText>() != null;
 }
 

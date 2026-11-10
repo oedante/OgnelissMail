@@ -99,31 +99,16 @@ void main() {
       ),
     ));
     await tester.pumpAndSettle();
-    var undone = 0;
-    showSwipeDone(ctx, SwipeAction.control, _mail('1', 'INBOX'), ru, onUndo: () => undone++);
-    await show(tester);
-    expect(find.text(ru.tr('swipeDoneControl')), findsOneWidget);
-    expect(find.text(ru.tr('undoReturn')), findsOneWidget);
-    expect(find.text('Письмо 1'), findsOneWidget, reason: 'строка письма ничем не закрыта');
-
-    await tester.tap(find.text(ru.tr('undoReturn')));
-    await show(tester);
-    expect(undone, 1);
-    expect(EmailUndoManager.pending.value, isNull);
-
-    // Снять с контроля, прочитать — свои подписи.
-    showSwipeDone(ctx, SwipeAction.control, _mail('2', 'INBOX', control: 1), ru, onUndo: () {});
-    await show(tester);
-    expect(find.text(ru.tr('swipeDoneControlOff')), findsOneWidget);
+    // Легко обратимые действия (владелец 10.11.2026) — без строки «Вернуть».
+    showSwipeDone(ctx, SwipeAction.control, _mail('1', 'INBOX'), ru, onUndo: () {});
+    showSwipeDone(ctx, SwipeAction.flag, _mail('1', 'INBOX'), ru, onUndo: () {});
     showSwipeDone(ctx, SwipeAction.markRead, _mail('1', 'INBOX', read: false), ru, read: false, onUndo: () {});
     await show(tester);
-    expect(find.text(ru.tr('swipeDoneRead')), findsOneWidget);
-
-    // Через 7 секунд строка уходит сама; делать по истечении нечего.
-    await tester.pump(const Duration(seconds: 8));
-    await tester.pumpAndSettle();
     expect(EmailUndoManager.pending.value, isNull);
+    expect(find.text(ru.tr('undoReturn')), findsNothing);
     expect(find.text(ru.tr('swipeDoneRead')), findsNothing);
+    // Подписи для диктора — как раньше.
+    expect(swipeDoneLabel(SwipeAction.control, _mail('2', 'INBOX', control: 1), ru), ru.tr('swipeDoneControlOff'));
 
     // Убирающие действия («Архив») — без этой строки: у них свой «Вернуть».
     showSwipeDone(ctx, SwipeAction.archive, _mail('1', 'INBOX'), ru, onUndo: () {});

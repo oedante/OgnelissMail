@@ -264,6 +264,9 @@ class ImapService {
   /// Когда общий клиент аккаунта последний раз выдавался в работу.
   final Map<String, DateTime> _lastUsed = {};
 
+  /// Соединение, простоявшее дольше, не проверяется NOOP — сразу новое.
+  static const staleAfter = Duration(minutes: 10);
+
   /// Общий клиент аккаунта для обычных операций (под мьютексом _withAccountLock).
   Future<ImapClient> _getImapClient(AccountModel account) async {
     if (_imapClients.containsKey(account.id)) {
@@ -277,14 +280,20 @@ class ImapService {
       // этом не знает. Без проверки первая команда ждала ответа весь таймаут
       // (3 минуты: «IMAP getFolders error: timeout» в журнале 06.10, Яндекс
       // после паузы). NOOP с коротким таймаутом — и, если молчит, новое.
-      if (client.isLoggedIn) {
+      // Простояло дольше [staleAfter] — сразу новое (2.2.0, журнал владельца
+      // 10.11.2026): после 15 минут сна NOOP не отвечал ни разу, и каждая
+      // фоновая проверка ждала по 10 с на ящик — 30–40 с лишних. Живой
+      // сервер отвечает на NOOP за доли секунды — ждём 5 с.
+      if (client.isLoggedIn && idle < staleAfter) {
         try {
-          await client.noop().timeout(const Duration(seconds: 10));
+          await client.noop().timeout(const Duration(seconds: 5));
           _lastUsed[account.id] = DateTime.now();
           return client;
         } catch (_) {
           AppLogger.info('IMAP ${account.email}: простоявшее соединение не отвечает — новое');
         }
+      } else if (client.isLoggedIn) {
+        AppLogger.debug('IMAP ${account.email}: соединение простояло ${idle.inMinutes} мин — новое');
       }
       _imapClients.remove(account.id);
       unawaited(client.disconnect().catchError((Object _) {}));

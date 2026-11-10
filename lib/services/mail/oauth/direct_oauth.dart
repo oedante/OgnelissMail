@@ -363,12 +363,20 @@ class DirectOAuth {
               'text-align:center;padding-top:48px"><h3>Ogneliss Mail</h3><p>✓</p></body></html>');
         await req.response.close();
       } else {
-        final result = await FlutterWebAuth2.authenticate(
+        final String result;
+        try {
+          result = await FlutterWebAuth2.authenticate(
           url: url.toString(),
           callbackUrlScheme: c.provider == 'yandex' ? yandexScheme(c.clientId) : appScheme,
           // Системный браузер: Google и Microsoft не пускают во встроенный.
           options: const FlutterWebAuth2Options(useWebview: false, timeout: 300),
-        );
+          );
+        } catch (e) {
+          // Окно входа закрыто — отмена, не ошибка.
+          if (!OAuthProviderError.isUserCancel(e)) rethrow;
+          AppLogger.info('OAuth (${c.provider}): вход отменён пользователем');
+          throw const OAuthProviderError('access_denied');
+        }
         q = Uri.parse(result).queryParameters;
       }
     } finally {

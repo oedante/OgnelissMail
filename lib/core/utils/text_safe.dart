@@ -57,8 +57,17 @@ String _decodeEntity(Match m) {
 String cleanPreviewText(String s) {
   var t = s;
   if (t.contains('&')) t = t.replaceAllMapped(_entity, _decodeEntity);
+  if (t.contains('[')) t = t.replaceAll(_imageMarks, '');
   return t.replaceAll(_invisible, '').replaceAll(_hspace, ' ');
 }
+
+/// Пометки картинок в текстовой части письма (2.2.0, снимок владельца
+/// 10.11.2026: «почему-то всегда тэг [image: Google]» в ленте и
+/// уведомлении): Gmail пишет «[image: Google]», Outlook — «[cid:image001.png@
+/// 01DA…]» и «[image001.png]». В превью они не нужны; в самом письме текст —
+/// как есть.
+final _imageMarks = RegExp(r'\[(?:image|cid): ?[^\]\n]{0,300}\]|\[image\d{1,4}\.(?:png|jpe?g|gif|bmp)\]',
+    caseSensitive: false);
 
 /// Превью письма из его текста: пробелы и переводы строк — одним пробелом,
 /// не длиннее [max] без разрыва эмодзи. Берётся только начало текста (письмо

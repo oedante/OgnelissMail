@@ -205,6 +205,11 @@ class OAuthProxyFlow {
         ),
       );
     } catch (e) {
+      // Закрыл сам пользователь — отмена, не ошибка.
+      if (OAuthProviderError.isUserCancel(e)) {
+        AppLogger.info('OAuth ($provider): вход отменён пользователем');
+        throw const OAuthProviderError('access_denied');
+      }
       // Браузер закрыт без возврата в приложение. Частая причина — провайдер
       // показал свою ошибку (например, адрес возврата прокси
       // <BASE_URL>/callback не зарегистрирован в консоли Microsoft/Mail.ru)

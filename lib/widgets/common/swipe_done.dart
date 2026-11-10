@@ -2,242 +2,48 @@
 //
 // «Сделано» после свайпа (2.2.0, замечание владельца 09.11.2026: «в беседах
 // свайп "На контроль" никак не отображается… свайпам не хватает понимания,
-// что что-то сделано»). Строка возвращается на место, а поверх неё на
-// секунду — плашка цвета действия с результатом: «На контроле», «Снято с
-// контроля», «Прочитано», «Флажок снят»… Экранный диктор слышит то же.
+// что что-то сделано»): после «Прочитано», «Флаг», «На контроль» внизу —
+// строка с результатом и «Вернуть», та же, что «Письмо удалено · Вернуть»
+// ([UndoStrip], [EmailUndoManager]). Экранный диктор слышит результат.
 //
-// Только для действий, после которых письмо остаётся на месте (прочитано,
-// флажок, контроль): архив, удаление и спам убирают строку и показывают
-// «Вернуть». Плашка не сдвигает строку; касания принимает только кнопка
-// «Отменить» на другом краю (2.2.0, решение владельца: отмена для любого
-// свайпа) — строку под плашкой можно снова тянуть. «Уменьшить движение» —
-// без анимации появления.
+// Сначала (09.11) результат был плашкой поверх самой строки; владелец
+// 10.11.2026: «не нравится, как при свайпе зависает информация о
+// выполненном действии. При удалении нормально работает» — теперь как при
+// удалении. Действие выполнено сразу; «Вернуть» возвращает как было.
+// Архив, удаление и спам — свои «Вернуть» (перенос ждёт 7 секунд).
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 
-import '../../core/theme/app_icons.dart';
-import '../../core/theme/app_theme.dart';
-import '../../core/theme/tokens.dart';
 import '../../data/models/email_model.dart';
 import '../../features/settings/providers/settings_provider.dart' show SwipeAction;
 import '../../l10n/app_localizations.dart';
+import 'undo_manager.dart';
 
-/// Событие «сделано» для строки [id].
-class SwipeDoneEvent {
-  final String id;
-  final IconData icon;
-  final String label;
-
-  /// Цвет действия (константа AppColors, как у панели свайпа).
-  final Color color;
-
-  /// Плашка у края, с которого тянули (true — слева).
-  final bool fromStart;
-
-  /// «Отменить» — вернуть как было; null — без кнопки.
-  final VoidCallback? onUndo;
-  const SwipeDoneEvent(this.id,
-      {required this.icon, required this.label, required this.color, this.fromStart = true, this.onUndo});
-}
-
-class SwipeDone {
-  SwipeDone._();
-
-  /// Последнее событие; строки слушают и показывают своё.
-  static final events = ValueNotifier<SwipeDoneEvent?>(null);
-
-  /// Сколько держится плашка (с «Отменить» — дольше: успеть нажать).
-  static const hold = Duration(milliseconds: 1100);
-  static const holdWithUndo = Duration(milliseconds: 2600);
-
-  /// Показать результат на строке [SwipeDoneEvent.id] и сказать его диктору.
-  static void show(BuildContext context, SwipeDoneEvent e) {
-    events.value = e;
-    final dir = Directionality.maybeOf(context) ?? TextDirection.ltr;
-    unawaited(SemanticsService.sendAnnouncement(View.of(context), e.label, dir));
-  }
-}
-
-/// Плашка «сделано» для свайпа [a] над письмом [e] — состояние ПОСЛЕ
-/// действия. [read] — строка сейчас прочитана (у свёрнутой беседы — вся),
+/// Подпись результата свайпа [a] над письмом [e] — состояние ПОСЛЕ действия.
+/// [read] — строка до действия прочитана (у свёрнутой беседы — вся),
 /// [control] — её отметка «На контроле» до действия. Для действий, которые
-/// убирают письмо или открывают окно, — ничего.
+/// убирают письмо или открывают окно, — null.
+String? swipeDoneLabel(SwipeAction a, EmailModel e, AppLocalizations l10n, {bool? read, int? control}) => switch (a) {
+      SwipeAction.markRead => l10n.tr((read ?? e.isRead) ? 'swipeDoneUnread' : 'swipeDoneRead'),
+      SwipeAction.flag => l10n.tr(e.isFlagged ? 'swipeDoneUnflag' : 'swipeDoneFlag'),
+      SwipeAction.control => l10n.tr((control ?? e.controlState) != 0 ? 'swipeDoneControlOff' : 'swipeDoneControl'),
+      _ => null,
+    };
+
+/// Результат свайпа строкой внизу с «Вернуть» ([onUndo] — вернуть как было).
+/// Для действий без своей строки результата — ничего.
 void showSwipeDone(BuildContext context, SwipeAction a, EmailModel e, AppLocalizations l10n,
-    {required String id, bool? read, int? control, bool fromStart = true, VoidCallback? onUndo}) {
-  final SwipeDoneEvent? ev = switch (a) {
-    SwipeAction.markRead => (read ?? e.isRead)
-        ? SwipeDoneEvent(id,
-            icon: AppIcons.mark_email_unread,
-            label: l10n.tr('swipeDoneUnread'),
-            color: AppColors.infoBlue,
-            fromStart: fromStart,
-            onUndo: onUndo)
-        : SwipeDoneEvent(id,
-            icon: AppIcons.mark_email_read,
-            label: l10n.tr('swipeDoneRead'),
-            color: AppColors.infoBlue,
-            fromStart: fromStart,
-            onUndo: onUndo),
-    SwipeAction.flag => SwipeDoneEvent(id,
-        icon: AppIcons.flag,
-        label: l10n.tr(e.isFlagged ? 'swipeDoneUnflag' : 'swipeDoneFlag'),
-        color: AppColors.warningYellow,
-        fromStart: fromStart,
-        onUndo: onUndo),
-    SwipeAction.control => SwipeDoneEvent(id,
-        icon: (control ?? e.controlState) != 0 ? AppIcons.bookmark_remove : AppIcons.bookmark_added,
-        label: l10n.tr((control ?? e.controlState) != 0 ? 'swipeDoneControlOff' : 'swipeDoneControl'),
-        color: AppColors.successGreen,
-        fromStart: fromStart,
-        onUndo: onUndo),
-    _ => null,
-  };
-  if (ev != null) SwipeDone.show(context, ev);
-}
-
-/// Строка списка с плашкой «сделано» поверх.
-class SwipeDoneOverlay extends StatefulWidget {
-  /// Тот же id, что в [SwipeDoneEvent.id].
-  final String id;
-  final Widget child;
-  final BorderRadius? borderRadius;
-  const SwipeDoneOverlay({super.key, required this.id, required this.child, this.borderRadius});
-
-  @override
-  State<SwipeDoneOverlay> createState() => _SwipeDoneOverlayState();
-}
-
-class _SwipeDoneOverlayState extends State<SwipeDoneOverlay> with SingleTickerProviderStateMixin {
-  late final AnimationController _c = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 160),
-    reverseDuration: const Duration(milliseconds: 260),
+    {bool? read, int? control, required VoidCallback onUndo}) {
+  final label = swipeDoneLabel(a, e, l10n, read: read, control: control);
+  if (label == null) return;
+  EmailUndoManager.perform(
+    context,
+    // Сделано сразу: по истечении ждать нечего, «Вернуть» — откат.
+    UndoableAction(description: label, execute: () async {}, undo: () async {}, onUndo: onUndo),
   );
-  SwipeDoneEvent? _event;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    SwipeDone.events.addListener(_onEvent);
-  }
-
-  void _onEvent() {
-    final e = SwipeDone.events.value;
-    if (e == null || e.id != widget.id || !mounted) return;
-    _timer?.cancel();
-    setState(() => _event = e);
-    final reduce = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
-    if (reduce) {
-      _c.value = 1;
-    } else {
-      unawaited(_c.forward(from: _c.value));
-    }
-    _timer = Timer(e.onUndo != null ? SwipeDone.holdWithUndo : SwipeDone.hold, _hide);
-  }
-
-  void _hide() {
-    if (!mounted) return;
-    final reduce = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
-    if (reduce) {
-      _c.value = 0;
-      setState(() => _event = null);
-    } else {
-      unawaited(_c.reverse().then((_) {
-        if (mounted) setState(() => _event = null);
-      }));
-    }
-  }
-
-  void _undo() {
-    final e = _event;
-    _timer?.cancel();
-    e?.onUndo?.call();
-    _c.value = 0;
-    setState(() => _event = null);
-  }
-
-  @override
-  void dispose() {
-    SwipeDone.events.removeListener(_onEvent);
-    _timer?.cancel();
-    _c.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final e = _event;
-    if (e == null) return widget.child;
-    final (bg, fg) = SwipeTone.of(context, e.color);
-    final theme = Theme.of(context);
-    // passthrough: строка под плашкой — той же ширины, что без неё.
-    return Stack(fit: StackFit.passthrough, children: [
-      widget.child,
-      Positioned.fill(
-        child: IgnorePointer(
-          child: FadeTransition(
-            opacity: _c,
-            child: DecoratedBox(
-              key: const ValueKey('swipe_done'),
-              decoration: BoxDecoration(
-                borderRadius: widget.borderRadius,
-                gradient: LinearGradient(
-                  begin: e.fromStart ? AlignmentDirectional.centerStart : AlignmentDirectional.centerEnd,
-                  end: e.fromStart ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
-                  colors: [bg, bg, bg.withValues(alpha: 0)],
-                  stops: const [0, 0.6, 1],
-                ),
-              ),
-              child: Align(
-                alignment: e.fromStart ? AlignmentDirectional.centerStart : AlignmentDirectional.centerEnd,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: Space.l),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(AppIcons.check_circle, size: Sizes.iconInline + 4, fill: 1, color: fg),
-                    const SizedBox(width: Space.s),
-                    Icon(e.icon, size: Sizes.iconInline + 2, color: fg),
-                    const SizedBox(width: Space.xs),
-                    Flexible(
-                      child: Text(
-                        e.label,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleSmall?.copyWith(color: fg, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ]),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-      if (e.onUndo != null)
-        PositionedDirectional(
-          top: 0,
-          bottom: 0,
-          start: e.fromStart ? null : 0,
-          end: e.fromStart ? 0 : null,
-          child: FadeTransition(
-            opacity: _c,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Space.s),
-                child: FilledButton.tonalIcon(
-                  key: const ValueKey('swipe_undo'),
-                  style: FilledButton.styleFrom(backgroundColor: bg, foregroundColor: fg, visualDensity: VisualDensity.compact),
-                  onPressed: _undo,
-                  icon: const Icon(AppIcons.undo, size: Sizes.iconInline + 2),
-                  label: Text(AppLocalizations.of(context).tr('undo')),
-                ),
-              ),
-            ),
-          ),
-        ),
-    ]);
-  }
+  final dir = Directionality.maybeOf(context) ?? TextDirection.ltr;
+  unawaited(SemanticsService.sendAnnouncement(View.of(context), label, dir));
 }

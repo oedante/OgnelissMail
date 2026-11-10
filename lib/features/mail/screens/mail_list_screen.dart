@@ -1621,10 +1621,6 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           final row = MetaData(
             metaData: _SelRow(item.id),
             behavior: HitTestBehavior.translucent,
-            // «Сделано» после свайпа (2.2.0): строка вернулась — поверх на
-            // секунду результат («Прочитано», «На контроле»…).
-            child: SwipeDoneOverlay(
-            id: 'list/${item.accountId}/${item.id}',
             child: Slidable(
             key: ValueKey('${item.id}_${item.accountId}'),
             // В режиме выбора свайп не действует (07.11.2026): он делал
@@ -1765,7 +1761,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             )),
               )),
             ),
-          )));
+          ));
           // Постоянная панель папок (широкое окно): письма перетаскиваются на
           // папку (1.6.28). 1.9.x (просьба владельца 31.10.2026): выбранные —
           // разом; мышью — сразу, пальцем и пером — удержанием выбранной
@@ -1955,7 +1951,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   }
 
   /// Кнопка «Прочитано», «Флаг», «На контроль» — через общий обработчик
-  /// свайпа: плашка «сделано» и «Отменить», как у полного свайпа.
+  /// свайпа: результат и «Вернуть» внизу, как у полного свайпа.
   CustomSlidableAction _withDone(SwipeAction a, CustomSlidableAction b, EmailModel email, AppLocalizations l10n) {
     if (a != SwipeAction.markRead && a != SwipeAction.flag && a != SwipeAction.control) return b;
     return CustomSlidableAction(
@@ -2030,12 +2026,11 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   /// Выполнить действие свайпа напрямую (полный свайп при одном действии).
   /// Логика та же, что у кнопки, — вынесена, чтобы не расходилась.
   void _executeSwipeAction(SwipeAction action, EmailModel email, AppLocalizations l10n) {
-    // Строка вернулась на место — на секунду результат поверх (2.2.0) и
-    // «Отменить».
+    // «Прочитано», «Флаг», «На контроле» — строкой внизу с «Вернуть», как
+    // при удалении (2.2.0).
     final wasRead = !_rowUnread(email);
     final wasControl = _rowControl(email);
     showSwipeDone(context, action, email, l10n,
-        id: 'list/${email.accountId}/${email.id}',
         read: wasRead,
         control: wasControl,
         onUndo: () => unawaited(_undoSwipe(action, email, wasRead: wasRead, wasControl: wasControl)));
@@ -2071,7 +2066,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     }
   }
 
-  /// «Отменить» на плашке свайпа (2.2.0): вернуть прочитанность, флажок,
+  /// «Вернуть» после свайпа (2.2.0): вернуть прочитанность, флажок,
   /// «На контроле» письма строки, как было до свайпа.
   Future<void> _undoSwipe(SwipeAction action, EmailModel email, {required bool wasRead, required int wasControl}) async {
     final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull ??

@@ -458,8 +458,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     final db = ref.read(databaseProvider);
     unawaited(HapticFeedback.selectionClick());
     if (mounted) {
-      showSwipeDone(context, a, e, l10n,
-          id: 'conv/${e.accountId}/${e.id}', control: e.controlState, onUndo: () => unawaited(_undo(a, e)));
+      showSwipeDone(context, a, e, l10n, control: e.controlState, onUndo: () => unawaited(_undo(a, e)));
     }
     try {
       switch (a) {
@@ -749,10 +748,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           // Черновик — без свайпов и карточки действий: нажатие открывает
           // редактор, удалить — там же или в «Черновиках».
           final draft = e.isDraft || e.folderId == 'drafts';
-          final card = SwipeDoneOverlay(
-            id: 'conv/${e.accountId}/${e.id}',
-            borderRadius: Radii.cardAll,
-            child: Slidable(
+          final card = Slidable(
             key: ValueKey('conv_${e.accountId}_${e.id}'),
             startActionPane: draft ? null : _pane(settings.swipeConvLeft, e, l10n, fromStart: true),
             endActionPane: draft ? null : _pane(settings.swipeConvRight, e, l10n, fromStart: false),
@@ -774,7 +770,6 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 ),
               ),
             ),
-          ),
           );
           // Поиск по беседе: письмо с совпадением — рамкой (текущее — цветом
           // акцента), без совпадения — приглушено.

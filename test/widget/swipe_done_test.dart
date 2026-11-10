@@ -1,8 +1,11 @@
 // Свайпы (2.2.0, замечания владельца 09.11.2026): в беседе «На контроль» не
 // было видно, свайпам не хватало подтверждения; в беседе «Входящие» стояли
 // на каждом письме, в том числе на своих, а «Sent» — именем с сервера.
+// 10.11.2026: результат — не плашкой поверх строки, а строкой внизу с
+// «Вернуть», как при удалении.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/data/models/email_model.dart';
 import 'package:ogneliss/data/models/folder_model.dart';
@@ -10,6 +13,8 @@ import 'package:ogneliss/features/mail/screens/conversation_screen.dart' show co
 import 'package:ogneliss/features/settings/providers/settings_provider.dart' show SwipeAction;
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/widgets/common/swipe_done.dart';
+import 'package:ogneliss/widgets/common/undo_manager.dart';
+import 'package:ogneliss/widgets/common/undo_strip.dart';
 
 EmailModel _mail(String id, String folderId, {String? folderName, int control = 0, bool read = true}) => EmailModel(
       id: id,
@@ -35,6 +40,12 @@ EmailModel _mail(String id, String folderId, {String? folderName, int control = 
 
 FolderModel _f(String id, String name, FolderType type) =>
     FolderModel(id: id, accountId: 'a', displayName: name, type: type, showInUnified: true, sortOrder: 0);
+
+/// Строка появляется анимацией: кадр начала и её конец.
+Future<void> show(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 300));
+}
 
 void main() {
   final ru = AppLocalizations(const Locale('ru'));
@@ -65,41 +76,58 @@ void main() {
     expect(conversationFolderChips([_mail('6', 'x', folderName: 'Sent Items')], const {}, mine: true, l10n: ru), isEmpty);
   });
 
-  testWidgets('после свайпа — плашка с результатом на своей строке, через секунду исчезает', (tester) async {
+  testWidgets('после свайпа — результат и «Вернуть» внизу, как при удалении', (tester) async {
     late BuildContext ctx;
     await tester.pumpWidget(MaterialApp(
+      locale: const Locale('ru'),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       home: Scaffold(
         body: Builder(builder: (c) {
           ctx = c;
-          return const Column(children: [
-            SwipeDoneOverlay(id: 'a/1', child: SizedBox(height: 60, child: Text('Письмо 1'))),
-            SwipeDoneOverlay(id: 'a/2', child: SizedBox(height: 60, child: Text('Письмо 2'))),
+          // Как в ленте: строка «· Вернуть» поверх списка внизу.
+          return const Stack(fit: StackFit.expand, children: [
+            Align(alignment: Alignment.topLeft, child: SizedBox(height: 60, child: Text('Письмо 1'))),
+            Positioned(left: 0, right: 0, bottom: 8, child: UndoStrip()),
           ]);
         }),
       ),
     ));
-    showSwipeDone(ctx, SwipeAction.control, _mail('1', 'INBOX'), ru, id: 'a/1');
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pumpAndSettle();
+    var undone = 0;
+    showSwipeDone(ctx, SwipeAction.control, _mail('1', 'INBOX'), ru, onUndo: () => undone++);
+    await show(tester);
     expect(find.text(ru.tr('swipeDoneControl')), findsOneWidget);
-    expect(find.byKey(const ValueKey('swipe_done')), findsOneWidget, reason: 'только на строке a/1');
+    expect(find.text(ru.tr('undoReturn')), findsOneWidget);
+    expect(find.text('Письмо 1'), findsOneWidget, reason: 'строка письма ничем не закрыта');
 
-    showSwipeDone(ctx, SwipeAction.control, _mail('2', 'INBOX', control: 1), ru, id: 'a/2');
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text(ru.tr('undoReturn')));
+    await show(tester);
+    expect(undone, 1);
+    expect(EmailUndoManager.pending.value, isNull);
+
+    // Снять с контроля, прочитать — свои подписи.
+    showSwipeDone(ctx, SwipeAction.control, _mail('2', 'INBOX', control: 1), ru, onUndo: () {});
+    await show(tester);
     expect(find.text(ru.tr('swipeDoneControlOff')), findsOneWidget);
-
-    await tester.pump(const Duration(seconds: 2));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('swipe_done')), findsNothing);
-
-    // Убирающие действия («Архив») — без плашки: у них «Вернуть».
-    showSwipeDone(ctx, SwipeAction.archive, _mail('1', 'INBOX'), ru, id: 'a/1');
-    await tester.pump(const Duration(milliseconds: 200));
-    expect(find.byKey(const ValueKey('swipe_done')), findsNothing);
-
-    showSwipeDone(ctx, SwipeAction.markRead, _mail('1', 'INBOX', read: false), ru, id: 'a/1', read: false);
-    await tester.pump(const Duration(milliseconds: 200));
+    showSwipeDone(ctx, SwipeAction.markRead, _mail('1', 'INBOX', read: false), ru, read: false, onUndo: () {});
+    await show(tester);
     expect(find.text(ru.tr('swipeDoneRead')), findsOneWidget);
-    await tester.pump(const Duration(seconds: 2));
+
+    // Через 7 секунд строка уходит сама; делать по истечении нечего.
+    await tester.pump(const Duration(seconds: 8));
     await tester.pumpAndSettle();
+    expect(EmailUndoManager.pending.value, isNull);
+    expect(find.text(ru.tr('swipeDoneRead')), findsNothing);
+
+    // Убирающие действия («Архив») — без этой строки: у них свой «Вернуть».
+    showSwipeDone(ctx, SwipeAction.archive, _mail('1', 'INBOX'), ru, onUndo: () {});
+    await show(tester);
+    expect(EmailUndoManager.pending.value, isNull);
   });
 }

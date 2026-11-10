@@ -672,11 +672,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } on AppException catch (e) {
       return e.localizedMessage(_l10n());
     } on OAuthProviderError catch (e) {
-      return e.localizedMessage(_l10n());
+      // Отменил сам — ящик как был, сообщать нечего.
+      return e.cancelled ? reauthCancelled : e.localizedMessage(_l10n());
     } catch (e) {
       return '$e';
     }
   }
+
+  /// Ответ [reauthenticate]: человек закрыл окно входа — не ошибка.
+  static const reauthCancelled = 'cancelled';
 
   // ════════════════════════ IMAP ════════════════════════
 

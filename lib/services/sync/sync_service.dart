@@ -2174,7 +2174,7 @@ class SyncService {
         if (mutedByAccount(e)) continue;
         if (focus.shouldNotify(e)) continue;
         final subj = e.subject.trim().isEmpty ? '—' : e.subject.trim();
-        held.add(NotificationText.summaryLine(PersonNames.short(e.from.displayName, email: e.from.email), subj));
+        held.add(NotificationText.summaryLine(PersonNames.full(e.from.displayName, email: e.from.email), subj));
       }
       if (held.isNotEmpty) await FocusDigest.hold(_prefs, held);
       final unread = fresh
@@ -2215,8 +2215,9 @@ class SyncService {
         await service.showEmailNotification(
           accountId: account.id,
           emailId: e.id,
-          // «Фамилия И.О.» (1.5.9): полное ФИО не помещалось в строку.
-          senderName: PersonNames.short(e.from.displayName, email: e.from.email),
+          // Полное имя отправителя (2.2.x, просьба владельца 10.11.2026; с
+          // 1.5.9 было «Фамилия И.О.»): длинное система переносит сама.
+          senderName: PersonNames.full(e.from.displayName, email: e.from.email),
           subject: e.subject,
           mailboxLabel: mailboxLabel,
           isSharedMailbox: account.isSharedMailbox,
@@ -2247,7 +2248,7 @@ class SyncService {
       if (unread.length > singles.length) {
         final rest = unread.skip(singles.length).take(6).map((e) {
           final subj = e.subject.trim().isEmpty ? '—' : e.subject.trim();
-          return NotificationText.summaryLine(PersonNames.short(e.from.displayName, email: e.from.email), subj);
+          return NotificationText.summaryLine(PersonNames.full(e.from.displayName, email: e.from.email), subj);
         }).toList();
         await service.showSummaryNotification(
           accountId: account.id,

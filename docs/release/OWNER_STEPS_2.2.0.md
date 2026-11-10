@@ -67,14 +67,89 @@ iPhone и Mac — браузер, выбор учётной записи, воз
 проекта.
 
 - **Android**: `build_android.bat` (как у 2.1.0).
-- **iPhone и iPad**: `scripts/build_ios.sh --upload` (или
-  `scripts\ios_remote_build.ps1 -Upload`).
+- **iPhone, iPad и Mac** — подробно ниже, в «3а».
 - **Windows**: `scripts\build_windows.ps1` — сам допишет строку в
   `windows\CMakeLists.txt` и скачает движок перевода из npm (проверка
   sha256). В журнале — «Bergamot 0.4.9: …»; рядом с exe появится папка
   `data\bergamot`. Нужен доступ к registry.npmjs.org.
 - **GitHub**: метка `v2.2.0` собирает все платформы; сборка Windows на
   GitHub проверяет, что `data/bergamot` на месте.
+
+## 3а. iPhone, iPad и Mac
+
+**В Xcode ничего менять не нужно.** `project.pbxproj`,
+`Runner.entitlements`, `Info.plist` в 2.2.0 не менялись (кроме значков).
+Вход в Google, Microsoft и Яндекс без сервера идёт через системное окно
+входа (ASWebAuthenticationSession): схемы возврата (`com.ogneliss.mail`,
+`yx3c99…`) оно ловит само — регистрировать их, добавлять Associated Domains
+или SDK Яндекса не надо. Папку `macos/` пересоздавать не нужно.
+
+**Единственное условие — `config/dart_defines.json` на Mac.** В архиве его
+нет (там ключ прокси). Ключи `MS_CLIENT_ID` и `GOOGLE_*` попадут в сборку,
+только если файл с ними лежит в `config/` той папки, где идёт сборка:
+- сборка из Windows по SSH (`ios_remote_build.ps1`) копирует его сама;
+- сборка прямо на Mac — скопировать файл вручную (тот же, что на Windows).
+Нет строки `MS_CLIENT_ID` или `GOOGLE_IOS_CLIENT_ID` — этот вход идёт, как
+раньше, через сервер. Скрипт пишет «⚠ Нет config/dart_defines.json», если
+файла нет совсем.
+
+### Вариант 1. Из Windows по SSH (только iPhone и iPad)
+
+Один раз: на Mac «Удалённый вход» (SSH), ключ SSH с Windows, файл
+`scripts\ios_remote.json` (образец — `scripts\ios_remote.example.json`:
+адрес Mac, пользователь, Team ID, по желанию ключ App Store Connect и пароль
+входа на Mac — без него подпись по SSH не пройдёт). Дальше:
+
+```powershell
+.\scripts\ios_remote_build.ps1 -Check     # проверить Xcode, Flutter, CocoaPods на Mac
+.\scripts\ios_remote_build.ps1            # IPA → build\ios\ipa\ на Windows
+.\scripts\ios_remote_build.ps1 -Upload    # IPA и сразу в TestFlight
+```
+
+Проект копируется на Mac без `project.pbxproj`, `Runner.entitlements` и
+`Signing.xcconfig` — настройки Xcode на Mac не затираются.
+
+### Вариант 2. Прямо на Mac (iPhone, iPad и Mac)
+
+1. Распаковать архив поверх папки проекта, положить `config/dart_defines.json`.
+2. Один раз — команда разработчика (запоминается вне проекта):
+   ```bash
+   scripts/build_ios.sh --team ABCDE12345
+   ```
+3. iPhone и iPad:
+   ```bash
+   scripts/build_ios.sh --check     # окружение
+   scripts/build_ios.sh --run       # запуск на iPhone по кабелю или в симуляторе
+   scripts/build_ios.sh             # IPA
+   scripts/build_ios.sh --upload    # IPA и выгрузка в TestFlight
+   scripts/build_ios.sh --prepare   # только подготовить → Xcode: Product → Archive
+   ```
+4. Mac (Intel и Apple Silicon одной сборкой):
+   ```bash
+   scripts/build_macos.sh --run       # запуск на этом Mac
+   scripts/build_macos.sh             # .app в build/macos/Build/Products/Release
+   scripts/build_macos.sh --archive   # архив для App Store → Xcode Organizer
+   scripts/build_macos.sh --upload    # архив и выгрузка в TestFlight
+   ```
+   `--setup` — только если папки `macos/` ещё нет (её создаёт скрипт сам).
+
+Ключ App Store Connect API (по желанию; без него — учётная запись Xcode):
+`export ASC_KEY_ID=… ASC_ISSUER_ID=…`, файл
+`~/.appstoreconnect/private_keys/AuthKey_<ASC_KEY_ID>.p8`. Сборка по SSH —
+ещё `KEYCHAIN_PASSWORD=<пароль входа на Mac>`. `--keep-lock` — не обновлять
+версии пакетов (по умолчанию — как в сборке на GitHub). Подробно —
+`docs/guides/BUILD_IOS.md` и `docs/guides/TESTFLIGHT.md`.
+
+### Что проверить на iPhone и Mac после сборки
+
+- Добавить ящик Яндекса, Outlook.com и Gmail: открывается окно входа
+  провайдера, после выбора учётной записи — обратно в приложение. В
+  журнале — «OAuth (yandex|microsoft|google): вход без сервера входа».
+- Gmail, пока Google проверяет приложение: клиенты iOS, Android и Desktop
+  должны быть в том же проекте Google Cloud, что и экран согласия, —
+  тогда вход ведёт себя так же, как через сервер. Если Google не пускает
+  или пишет «Google hasn't verified this app» — убрать строки `GOOGLE_*` из
+  `dart_defines.json`, и Gmail пойдёт через сервер, как раньше.
 
 ## 4. Проверка на устройствах
 

@@ -35,7 +35,6 @@ import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../core/theme/tokens.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:badges/badges.dart' as badges;
@@ -45,6 +44,7 @@ import '../../core/theme/app_theme.dart';
 import '../../features/mail/providers/mail_providers.dart';
 import '../../features/mail/providers/drawer_prefs.dart' show BarItem, PhoneBarNotifier, phoneBarProvider;
 import 'phone_bar.dart';
+import 'section_nav.dart';
 import '../../features/settings/providers/settings_provider.dart';
 import '../../services/security/pin_lock_service.dart';
 import '../../services/maintenance/maintenance_service.dart';
@@ -279,14 +279,19 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
     // Записать активность при взаимодействии
     ref.read(backgroundServiceProvider).recordActivity();
 
-    final destinations = _buildDestinations(l10n, unreadCount);
     // Если выбранная вкладка скрыта флагом — не выходим за границы.
-    if (_currentIndex >= destinations.length) _currentIndex = 0;
+    if (_currentIndex >= _activeRoutes().length) _currentIndex = 0;
 
     Widget body;
 
     if (isTablet || isDesktop) {
-      // NavigationRail
+      // Планшет и компьютер (2.2.1, решение владельца 10.11.2026: «зачем
+      // дубликаты кнопок? Давай от левой области вообще избавимся»): узкой
+      // полосы разделов нет. В почте «Написать» и разделы — шапкой панели
+      // папок над «Избранным» (MailDrawer); в других разделах — такая же
+      // панель слева, под разделами — «Мой день», «Поручения», «Файлы»,
+      // «Настройки» (SectionNav).
+      final onMail = GoRouterState.of(context).uri.path.startsWith('/mail');
       body = Scaffold(
         body: _withSyncOverlay(Column(
           children: [
@@ -295,73 +300,20 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
             Expanded(
               child: Row(
                 children: [
-                  NavigationRail(
-                    selectedIndex: _currentIndex,
-                    onDestinationSelected: _onTabChanged,
-                    // Узкая полоса с подписью под значком — всегда (1.10.5,
-                    // замечание владельца 03.11.2026: «боковая панель слева
-                    // занимает слишком много места»). Развёрнутая панель с
-                    // подписями справа на окне от 1200 занимала ~230 точек
-                    // ради четырёх пунктов — теперь ~72, остальное — ленте и
-                    // письму. Как у Outlook и Gmail на компьютере.
-                    extended: false,
-                    labelType: NavigationRailLabelType.all,
-                    minWidth: 72,
-                    groupAlignment: -1,
-                    // Низкое окно (телефон боком с «Поворотом экрана», узкое
-                    // окно компьютера, 1.8.13): разделы прокручиваются, а
-                    // «Написать» и нижние значки остаются на месте. Раньше
-                    // колонка не помещалась по высоте и обрезалась.
-                    scrollable: true,
-                    leadingAtTop: true,
-                    trailingAtBottom: true,
-                    leading: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: Space.s),
-                      child: FloatingActionButton.small(
-                        heroTag: 'fab_rail',
-                        onPressed: () => context.push('/compose'),
-                        child: const Icon(AppIcons.edit),
+                  if (!onMail) ...[
+                    SizedBox(
+                      key: const ValueKey('section_panel'),
+                      width: 248,
+                      child: Material(
+                        color: theme.colorScheme.surfaceContainerLow,
+                        child: const SafeArea(
+                          right: false,
+                          child: SingleChildScrollView(child: SectionNav(extras: true)),
+                        ),
                       ),
                     ),
-                    trailing: Padding(
-                      padding: const EdgeInsets.only(top: Space.s),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (ref.watch(settingsProvider.select((s) => s.myDay)))
-                            IconButton(
-                              icon: const Icon(AppIcons.myDay),
-                              tooltip: l10n.tr('myDay'),
-                              onPressed: () => context.go('/my-day'),
-                            ),
-                          // «Поручения» (2.2.0).
-                          IconButton(
-                            icon: const Icon(AppIcons.assignment_ind),
-                            tooltip: l10n.tr('assignments'),
-                            onPressed: () => context.push('/assignments'),
-                          ),
-                          if (ref.watch(featureFlagsProvider.select((f) => f.showFileHub)))
-                            IconButton(
-                              icon: const Icon(AppIcons.folder_open),
-                              tooltip: l10n.tr('attachmentHub'),
-                              onPressed: () => context.push('/attachment-hub'),
-                            ),
-                          IconButton(
-                            icon: const Icon(AppIcons.settings),
-                            tooltip: l10n.tr('settings'),
-                            onPressed: () => context.push('/settings'),
-                          ),
-                          const SizedBox(height: Space.l),
-                        ],
-                      ),
-                    ),
-                    destinations: destinations.map((d) => NavigationRailDestination(
-                      icon: d.icon,
-                      selectedIcon: d.selectedIcon,
-                      label: Text(d.label),
-                    )).toList(),
-                  ),
-                  const VerticalDivider(thickness: 1, width: 1),
+                    const VerticalDivider(thickness: 1, width: 1),
+                  ],
                   Expanded(child: AnimatedContentSwitcher(child: KeyedSubtree(key: ValueKey(_currentIndex), child: widget.child))),
                 ],
               ),
@@ -467,38 +419,6 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
         ],
       ),
     );
-  }
-
-  List<NavigationDestination> _buildDestinations(AppLocalizations l10n, int unreadCount) {
-    final flags = ref.read(featureFlagsProvider);
-    return [
-      NavigationDestination(
-        icon: badges.Badge(
-          showBadge: unreadCount > 0,
-          badgeContent: Text(unreadCount > 99 ? '99+' : '$unreadCount', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-          badgeStyle: const badges.BadgeStyle(badgeColor: AppColors.errorRed, padding: EdgeInsets.all(Space.xs)),
-          child: const Icon(AppIcons.mail),
-        ),
-        selectedIcon: badges.Badge(
-          showBadge: unreadCount > 0,
-          badgeContent: Text(unreadCount > 99 ? '99+' : '$unreadCount', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-          badgeStyle: const badges.BadgeStyle(badgeColor: AppColors.errorRed, padding: EdgeInsets.all(Space.xs)),
-          child: const Icon(AppIcons.mail, fill: 1),
-        ),
-        label: l10n.mail,
-      ),
-      // Число дня — по центру листа значка, цветом значка, само меняется в
-      // полночь (1.7.2+108: раньше стояло на нижней рамке, см. CalendarDayIcon).
-      NavigationDestination(
-        icon: const CalendarDayIcon(),
-        selectedIcon: const CalendarDayIcon(),
-        label: l10n.calendarLabel,
-      ),
-      NavigationDestination(icon: const Icon(AppIcons.contacts), selectedIcon: const Icon(AppIcons.contacts, fill: 1), label: l10n.contactsLabel),
-      // Задачи — хвост, скрываются флагом (порядок совпадает с _activeRoutes()).
-      if (flags.showTasksTab)
-        NavigationDestination(icon: const Icon(AppIcons.check_box), selectedIcon: const Icon(AppIcons.check_box, fill: 1), label: l10n.tasksLabel),
-    ];
   }
 
   // ── Телефон: панель «Почта · Календарь · [Создать] · Контакты · Меню» ──
@@ -776,12 +696,4 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
           const Positioned(top: 0, left: 0, right: 0, child: ErrorBanner()),
         ],
       );
-
-  void _onTabChanged(int index) {
-    if (index != _currentIndex) {
-      HapticFeedback.selectionClick();
-      setState(() => _currentIndex = index);
-      context.go(_activeRoutes()[index]);
-    }
-  }
 }

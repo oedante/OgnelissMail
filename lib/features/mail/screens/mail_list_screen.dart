@@ -767,8 +767,12 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             ? null
             : Builder(
                 builder: (ctx) => IconButton(
-                  icon: _buildAccountAvatar(account),
-                  // Папки уже на экране — портрет ведёт к ящикам.
+                  key: const ValueKey('mail_menu_button'),
+                  // Папки уже на экране — портрет ведёт к ящикам. Панель
+                  // откреплена (2.2.1, замечание владельца: «нажал шпильку,
+                  // и панель с папками вообще пропала») — значок меню:
+                  // разделы, «Избранное» и папки выезжают слева.
+                  icon: docked ? _buildAccountAvatar(account) : const Icon(AppIcons.menu),
                   onPressed: docked ? () => context.push('/settings/accounts') : () => Scaffold.of(ctx).openDrawer(),
                   tooltip: l10n.tr('foldersAndAccounts'),
                 ),

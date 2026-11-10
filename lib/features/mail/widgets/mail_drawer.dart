@@ -64,6 +64,7 @@ import '../../../services/notifications/account_notify_mode.dart' show FolderNot
 import '../../../widgets/common/peek_card.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice, quietError, quietNotice;
 import '../../../widgets/common/tile_grid.dart';
+import '../../../widgets/navigation/section_nav.dart';
 import '../../../core/utils/reorder_index.dart';
 import '../providers/folder_names.dart';
 
@@ -115,13 +116,25 @@ class MailDrawer extends ConsumerWidget {
             ),
         ];
 
-    final content = SafeArea(
-        // Постоянная панель стоит справа от боковой полосы разделов:
-        // системный отступ слева у неё уже учтён.
-        left: !docked,
+    // Компьютер и планшет (2.2.1): боковой полосы разделов нет — «Написать»
+    // и разделы стоят здесь, над «Избранным».
+    final wide = !AppBottomBar.inUse(context);
+    // Разделы и «Избранное» вверху — не выше половины панели, дальше
+    // прокрутка: на низком окне папкам остаётся место.
+    Widget top(double maxHeight) => ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: maxHeight),
+          child: SingleChildScrollView(
+            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              if (wide) SectionNav(onNavigate: docked ? null : () => Navigator.of(context).pop()),
+              if (docked) ...favorites(top: true),
+            ]),
+          ),
+        );
+    final content = LayoutBuilder(builder: (context, box) => SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (wide || docked) top(box.maxHeight * 0.55),
             // Папки — сверху и прокручиваются; «Избранное» — внизу, над
             // ящиками, под большим пальцем: частые разделы не нужно искать
             // вверху экрана (09.10.2026).
@@ -131,7 +144,6 @@ class MailDrawer extends ConsumerWidget {
             // Планшет и компьютер, закреплённая панель (1.11.0, как в
             // Outlook): «Избранное» — сверху, над папками; на телефоне —
             // внизу, под большим пальцем.
-            if (docked) ...favorites(top: true),
             _DrawerBand(
               title: l10n.tr('folders'),
               // Планшет и компьютер (1.6.40): значок закрепления — меню
@@ -278,7 +290,7 @@ class MailDrawer extends ConsumerWidget {
             ],
           ],
         ),
-      );
+      ));
     if (docked) {
       return Material(color: theme.colorScheme.surfaceContainerLow, child: content);
     }
@@ -433,9 +445,10 @@ class MailDrawer extends ConsumerWidget {
       ));
     }
 
-    // «Мой день» — из бывшего «Ещё» (1.6.40).
-    // На планшете и компьютере «Мой день», «Файловый хаб» и «Настройки» —
-    // в боковой полосе разделов: в меню их не дублируем.
+    // «Мой день» — из бывшего «Ещё» (1.6.40). С 2.2.1 «Мой день», «Файловый
+    // хаб» и «Настройки» — плитками и на планшете и компьютере: боковой
+    // полосы разделов больше нет. «Календарь» и «Контакты» там — в шапке
+    // разделов ([SectionNav]), плиткой — только на телефоне.
     final phone = AppBottomBar.inUse(context);
     // «Календарь» и «Контакты» (2.2.0): раздел можно убрать с нижней
     // панели — тогда он здесь. На планшете и компьютере — в боковой полосе.
@@ -461,7 +474,7 @@ class MailDrawer extends ConsumerWidget {
         },
       ));
     }
-    if (phone && ref.watch(settingsProvider).myDay && !hidden.contains(DrawerQuickItem.myDay)) {
+    if (ref.watch(settingsProvider).myDay && !hidden.contains(DrawerQuickItem.myDay)) {
       tiles.add(fav(DrawerQuickItem.myDay.name,
         icon: AppIcons.myDay,
         label: l10n.tr('myDay'),
@@ -488,7 +501,7 @@ class MailDrawer extends ConsumerWidget {
 
     // «Файловый хаб» — все вложения всех писем (просили вынести в Избранное).
     final flags = ref.watch(featureFlagsProvider);
-    if (phone && flags.showFileHub && !hidden.contains(DrawerQuickItem.fileHub)) {
+    if (flags.showFileHub && !hidden.contains(DrawerQuickItem.fileHub)) {
       tiles.add(fav(DrawerQuickItem.fileHub.name,
         icon: AppIcons.folder_copy,
         label: l10n.tr('fileHub'),
@@ -550,7 +563,7 @@ class MailDrawer extends ConsumerWidget {
 
     // «Настройки» и выбор темы — из бывшего «Ещё» (1.6.40); тему можно
     // убрать в настройке избранного.
-    if (phone && !hidden.contains(DrawerQuickItem.settings)) {
+    if (!hidden.contains(DrawerQuickItem.settings)) {
       tiles.add(fav(DrawerQuickItem.settings.name,
         icon: AppIcons.settings,
         label: l10n.tr('settings'),
@@ -1722,15 +1735,15 @@ class _FavoritesEditor extends ConsumerWidget {
       (DrawerQuickItem.triage, AppIcons.playlist_add_check, l10n.tr('triageTitle')),
       if (phone) (DrawerQuickItem.calendar, AppIcons.calendar_today, l10n.calendarLabel),
       if (phone) (DrawerQuickItem.contacts, AppIcons.contacts, l10n.contactsLabel),
-      if (phone && ref.watch(featureFlagsProvider).showFileHub)
+      if (ref.watch(featureFlagsProvider).showFileHub)
         (DrawerQuickItem.fileHub, AppIcons.folder_copy, l10n.tr('fileHub')),
       if (ref.watch(featureFlagsProvider).showNotes)
         (DrawerQuickItem.notes, AppIcons.sticky_note_2, l10n.tr('notes')),
       if (MailDrawer._tasksInMenu(context, ref))
         (DrawerQuickItem.tasks, AppIcons.check_box, l10n.tasksLabel),
-      if (phone && ref.watch(settingsProvider).myDay) (DrawerQuickItem.myDay, AppIcons.myDay, l10n.tr('myDay')),
+      if (ref.watch(settingsProvider).myDay) (DrawerQuickItem.myDay, AppIcons.myDay, l10n.tr('myDay')),
       (DrawerQuickItem.assignments, AppIcons.assignment_ind, l10n.tr('assignments')),
-      if (phone) (DrawerQuickItem.settings, AppIcons.settings, l10n.tr('settings')),
+      (DrawerQuickItem.settings, AppIcons.settings, l10n.tr('settings')),
       (DrawerQuickItem.theme, AppIcons.dark_mode, l10n.tr('drawerThemeSwitch')),
     ];
 

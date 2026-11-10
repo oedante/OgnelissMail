@@ -70,6 +70,7 @@ abstract final class AppIcons {
   static const IconData checklist = Symbols.checklist_rounded;
   static const IconData chevron_left = Symbols.chevron_left_rounded;
   static const IconData chevron_right = Symbols.chevron_right_rounded;
+  static const IconData menu = Symbols.menu_rounded;
   static const IconData first_page = Symbols.first_page_rounded;
   static const IconData last_page = Symbols.last_page_rounded;
   static const IconData cleaning_services = Symbols.cleaning_services_rounded;

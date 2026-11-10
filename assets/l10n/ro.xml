@@ -4105,7 +4105,8 @@
     <string name="barSettingsHint">Atingeți un loc pentru a alege o secțiune</string>
     <string name="barSlot">Loc</string>
     <string name="barSlotPick">Secțiunea din acest loc</string>
-    <string name="barMenuStays">„Meniu” rămâne mereu pe bară — îl puteți schimba cu altă secțiune</string>
+    <string name="barMenuStays">„Meniu” este mereu la marginea barei — în stânga sau în dreapta; meniul se deschide din aceeași parte</string>
     <string name="barSwap">Își schimbă locurile</string>
     <string name="barReset">Restabilește implicit</string>
+    <string name="barMailStays">„E-mail” rămâne mereu pe bară — îl puteți schimba cu altă secțiune</string>
 </resources>

@@ -4084,7 +4084,8 @@
     <string name="barSettingsHint">Valitse osio napauttamalla paikkaa</string>
     <string name="barSlot">Paikka</string>
     <string name="barSlotPick">Osio tässä paikassa</string>
-    <string name="barMenuStays">Valikko on aina palkissa – voit vaihtaa sen paikkaa toisen osion kanssa</string>
+    <string name="barMenuStays">Valikko on aina palkin reunassa – vasemmalla tai oikealla; valikko avautuu samalta puolelta</string>
     <string name="barSwap">Vaihtavat paikkaa</string>
     <string name="barReset">Palauta oletus</string>
+    <string name="barMailStays">Sähköposti on aina palkissa – voit vaihtaa sen paikkaa toisen osion kanssa</string>
 </resources>

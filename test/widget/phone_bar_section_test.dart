@@ -1,5 +1,6 @@
 // «Общие → Нижняя панель» (2.2.0): нажал место — выбрал раздел; убранный
-// раздел — в «Избранном»; на месте «Меню» — только разделы с панели.
+// раздел — в «Избранном»; «Меню» — слева или справа, «Почта» — только
+// перестановка.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -58,16 +59,24 @@ void main() {
     expect(c.read(phoneBarProvider), [BarItem.menu, BarItem.mail, BarItem.calendar, BarItem.contacts]);
   });
 
-  testWidgets('место «Меню»: только разделы с панели — меняются местами', (tester) async {
+  testWidgets('место «Меню»: слева или справа; место «Почты»: только перестановка', (tester) async {
     final c = await _pump(tester);
     await tester.tap(find.byKey(const ValueKey('bar_slot_0')));
     await tester.pumpAndSettle();
-    expect(find.textContaining('всегда на панели'), findsOneWidget);
-    expect(find.text('Заметки'), findsNothing, reason: 'раздела нет на панели — на место меню нельзя');
-    expect(find.text('Поменяются местами'), findsNWidgets(3));
+    expect(find.textContaining('с края панели'), findsOneWidget);
+    expect(find.text('Заметки'), findsNothing, reason: 'на место «Меню» раздел не выбирается');
+    await tester.tap(find.text('Справа').last);
+    await tester.pumpAndSettle();
+    expect(c.read(menuOnRightProvider), isTrue, reason: 'меню выезжает справа');
+    expect(c.read(phoneBarProvider), [BarItem.mail, BarItem.calendar, BarItem.contacts, BarItem.menu]);
+
+    await tester.tap(find.byKey(const ValueKey('bar_slot_0')));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('«Почта» всегда на панели'), findsOneWidget);
+    expect(find.text('Заметки'), findsNothing, reason: '«Почту» не убрать — только переставить');
+    expect(find.text('Поменяются местами'), findsNWidgets(2));
     await tester.tap(find.text('Контакты').last);
     await tester.pumpAndSettle();
-    expect(c.read(phoneBarProvider), [BarItem.contacts, BarItem.mail, BarItem.calendar, BarItem.menu]);
-    expect(c.read(menuOnRightProvider), isTrue, reason: '«Меню» справа — и меню выезжает справа');
+    expect(c.read(phoneBarProvider), [BarItem.contacts, BarItem.calendar, BarItem.mail, BarItem.menu]);
   });
 }

@@ -4084,7 +4084,8 @@
     <string name="barSettingsHint">Bölüm seçmek için bir yere dokunun</string>
     <string name="barSlot">Yer</string>
     <string name="barSlotPick">Bu yerdeki bölüm</string>
-    <string name="barMenuStays">“Menü” her zaman çubukta kalır; başka bir bölümle yer değiştirebilirsiniz</string>
+    <string name="barMenuStays">“Menü” her zaman çubuğun kenarındadır, solda veya sağda; menü aynı taraftan açılır</string>
     <string name="barSwap">Yer değiştirir</string>
     <string name="barReset">Varsayılana dön</string>
+    <string name="barMailStays">“Posta” her zaman çubukta kalır; başka bir bölümle yer değiştirebilirsiniz</string>
 </resources>

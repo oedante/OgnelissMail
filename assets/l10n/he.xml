@@ -4105,7 +4105,8 @@
     <string name="barSettingsHint">הקישו על מקום כדי לבחור מדור</string>
     <string name="barSlot">מקום</string>
     <string name="barSlotPick">המדור במקום הזה</string>
-    <string name="barMenuStays">„תפריט” תמיד נשאר בסרגל — אפשר להחליף את מקומו עם מדור אחר</string>
+    <string name="barMenuStays">„תפריט” תמיד בקצה הסרגל — משמאל או מימין; התפריט נפתח מאותו צד</string>
     <string name="barSwap">יחליפו מקומות</string>
     <string name="barReset">שחזור ברירת המחדל</string>
+    <string name="barMailStays">„דואר” תמיד נשאר בסרגל — אפשר להחליף את מקומו עם מדור אחר</string>
 </resources>

@@ -4063,7 +4063,8 @@
     <string name="barSettingsHint">位置をタップしてセクションを選択</string>
     <string name="barSlot">位置</string>
     <string name="barSlotPick">この位置のセクション</string>
-    <string name="barMenuStays">「メニュー」は常にバーにあります。他のセクションと入れ替えできます</string>
+    <string name="barMenuStays">「メニュー」は常にバーの端（左または右）にあり、メニューも同じ側から開きます</string>
     <string name="barSwap">位置を入れ替えます</string>
     <string name="barReset">既定に戻す</string>
+    <string name="barMailStays">「メール」は常にバーにあります。他のセクションと入れ替えできます</string>
 </resources>

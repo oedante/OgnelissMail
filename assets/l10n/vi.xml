@@ -4063,7 +4063,8 @@
     <string name="barSettingsHint">Chạm vào một vị trí để chọn mục</string>
     <string name="barSlot">Vị trí</string>
     <string name="barSlotPick">Mục ở vị trí này</string>
-    <string name="barMenuStays">“Menu” luôn có trên thanh — bạn có thể đổi chỗ nó với mục khác</string>
+    <string name="barMenuStays">“Menu” luôn ở mép thanh — bên trái hoặc bên phải; menu mở ra từ cùng phía đó</string>
     <string name="barSwap">Sẽ đổi chỗ</string>
     <string name="barReset">Khôi phục mặc định</string>
+    <string name="barMailStays">“Thư” luôn có trên thanh — bạn có thể đổi chỗ nó với mục khác</string>
 </resources>

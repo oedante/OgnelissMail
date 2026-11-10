@@ -4168,7 +4168,8 @@
     <string name="barSettingsHint">اضغط على موضع لاختيار قسم</string>
     <string name="barSlot">الموضع</string>
     <string name="barSlotPick">القسم في هذا الموضع</string>
-    <string name="barMenuStays">«القائمة» تبقى دائمًا على الشريط — يمكنك تبديل مكانها مع قسم آخر</string>
+    <string name="barMenuStays">«القائمة» دائمًا على طرف الشريط — يسارًا أو يمينًا؛ وتنفتح القائمة من الجهة نفسها</string>
     <string name="barSwap">سيتبادلان المكان</string>
     <string name="barReset">استعادة الافتراضي</string>
+    <string name="barMailStays">«البريد» يبقى دائمًا على الشريط — يمكنك تبديل مكانه مع قسم آخر</string>
 </resources>

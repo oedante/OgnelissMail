@@ -4063,7 +4063,8 @@
     <string name="barSettingsHint">点按位置以选择分区</string>
     <string name="barSlot">位置</string>
     <string name="barSlotPick">此位置的分区</string>
-    <string name="barMenuStays">“菜单”始终在栏中，可与其他分区互换位置</string>
+    <string name="barMenuStays">“菜单”始终位于栏的边缘（左侧或右侧），菜单也从同一侧滑出</string>
     <string name="barSwap">将互换位置</string>
     <string name="barReset">恢复默认</string>
+    <string name="barMailStays">“邮件”始终在栏中，可与其他分区互换位置</string>
 </resources>

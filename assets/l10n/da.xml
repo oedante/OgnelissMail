@@ -4084,7 +4084,8 @@
     <string name="barSettingsHint">Tryk på en plads for at vælge en sektion</string>
     <string name="barSlot">Plads</string>
     <string name="barSlotPick">Sektion på denne plads</string>
-    <string name="barMenuStays">“Menu” er altid på bjælken – du kan bytte den med en anden sektion</string>
+    <string name="barMenuStays">“Menu” sidder altid i kanten af bjælken – til venstre eller højre; menuen åbner fra samme side</string>
     <string name="barSwap">Bytter plads</string>
     <string name="barReset">Gendan standard</string>
+    <string name="barMailStays">“Mail” er altid på bjælken – du kan bytte den med en anden sektion</string>
 </resources>

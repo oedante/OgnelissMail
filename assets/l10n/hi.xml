@@ -4084,7 +4084,8 @@
     <string name="barSettingsHint">अनुभाग चुनने के लिए किसी जगह पर टैप करें</string>
     <string name="barSlot">जगह</string>
     <string name="barSlotPick">इस जगह पर अनुभाग</string>
-    <string name="barMenuStays">“मेनू” हमेशा पट्टी पर रहता है — आप इसकी जगह किसी दूसरे अनुभाग से बदल सकते हैं</string>
+    <string name="barMenuStays">“मेनू” हमेशा पट्टी के किनारे पर रहता है — बाएं या दाएं; मेनू उसी ओर से खुलता है</string>
     <string name="barSwap">जगहें बदल जाएँगी</string>
     <string name="barReset">डिफ़ॉल्ट पर लौटाएँ</string>
+    <string name="barMailStays">“मेल” हमेशा पट्टी पर रहता है — आप इसकी जगह किसी दूसरे अनुभाग से बदल सकते हैं</string>
 </resources>

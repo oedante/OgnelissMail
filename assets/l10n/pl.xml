@@ -4126,7 +4126,8 @@
     <string name="barSettingsHint">Dotknij miejsca, aby wybrać sekcję</string>
     <string name="barSlot">Miejsce</string>
     <string name="barSlotPick">Sekcja w tym miejscu</string>
-    <string name="barMenuStays">„Menu” jest zawsze na pasku – można zamienić je miejscami z inną sekcją</string>
+    <string name="barMenuStays">„Menu” jest zawsze na skraju paska – z lewej lub z prawej; z tej strony wysuwa się menu</string>
     <string name="barSwap">Zamienią się miejscami</string>
     <string name="barReset">Przywróć domyślne</string>
+    <string name="barMailStays">„Poczta” jest zawsze na pasku – można zamienić ją miejscami z inną sekcją</string>
 </resources>

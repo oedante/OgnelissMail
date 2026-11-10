@@ -113,6 +113,19 @@ setup() {
 
 prepare() {
   [[ -d macos ]] || setup
+  # Плагины — через CocoaPods, и всем pods минимум macOS 12.0 (как в сборке
+  # на GitHub, ci.yml): flutter_inappwebview_macos 1.2 бета с Xcode 26
+  # падал «presentationAnchor(for:) … macOS 10.14 and newer» (10.11.2026).
+  flutter config --no-enable-swift-package-manager >/dev/null
+  [[ -f macos/Podfile ]] || cp "$(dirname "$(dirname "$(command -v flutter)")")/packages/flutter_tools/templates/cocoapods/Podfile-macos" macos/Podfile
+  python3 - <<'PY'
+p = 'macos/Podfile'
+s = open(p).read()
+key = "flutter_additional_macos_build_settings(target)"
+add = key + "\n    target.build_configurations.each do |config|\n      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '12.0'\n    end"
+if "config.build_settings['MACOSX_DEPLOYMENT_TARGET']" not in s and key in s:
+    open(p, 'w').write(s.replace(key, add, 1))
+PY
   # Шаги — с выводом и понятной ошибкой: 09.11.2026 pod install с выводом в
   # /dev/null падал молча, и скрипт заканчивался сразу после build_runner.
   # Пакеты — те же версии, что в сборке на GitHub (как build_ios.sh): у

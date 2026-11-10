@@ -145,6 +145,13 @@ dependencies:
 # не изменился, поэтому переопределение безопасно.
 dependency_overrides:
   uuid: ^4.5.1
+  # Инструмент сборки ядра Rust перетаскивания (super_native_extensions):
+  # 1.0.6 с исправлением из 1.0.7 — без ложного «[SEVERE] RustBuilder:
+  # Failed to find lib.name» при каждом flutter test и сборке (10.11.2026).
+  # 1.0.7 несовместима с super_native_extensions 0.10.0-dev.2 (code_assets 2).
+  # packages/native_toolchain_rust/README.md.
+  native_toolchain_rust:
+    path: packages/native_toolchain_rust
   # Linux-часть flutter_inappwebview требует WPE WebKit, которого нет в
   # Ubuntu 24.04; браузер на Linux не используется — пустая реализация
   # (packages/flutter_inappwebview_linux_stub/pubspec.yaml, 28.10.2026).

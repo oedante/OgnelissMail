@@ -260,7 +260,13 @@ def pub_packages(project: str) -> tuple[list[dict], list[str]]:
         else:
             root = os.path.normpath(os.path.join(project, '.dart_tool', unquote(uri)))
         real = os.path.realpath(root)
-        if name == root_name or real == project_real or real.startswith(project_real + os.sep):
+        inside = real == project_real or real.startswith(project_real + os.sep)
+        # Пакет в папке проекта со своим LICENSE — чужой код, взятый в проект
+        # (packages/native_toolchain_rust, MIT): лицензия — его, не наша.
+        vendored = inside and name != root_name and os.path.isfile(os.path.join(root, 'LICENSE'))
+        if vendored:
+            kind, text = 'vendored', read_license(root)
+        elif name == root_name or inside:
             kind, text = 'own', own_license
         elif flutter_root and real.startswith(os.path.realpath(flutter_root) + os.sep):
             # Flutter SDK (flutter, flutter_test, sky_engine, …): лицензия SDK.

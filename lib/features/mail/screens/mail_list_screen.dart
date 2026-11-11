@@ -31,6 +31,7 @@ import '../../../widgets/common/swipe_action_indicator.dart';
 import '../../../widgets/common/slidable_spring_back.dart';
 import '../../compose/widgets/mail_editor.dart' show MailEditorPool, warmUpMailEditor;
 import '../../../services/mail/conversation_counter.dart';
+import '../../../services/mail/imap/imap_service.dart' show ImapFolderState;
 import 'dart:async';
 import '../../../services/mail/offline_send_service.dart';
 // Список писем с:
@@ -3628,11 +3629,24 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         },
       );
     }
+    // Папка пуста на устройстве, а на сервере письма в ней есть — они старше
+    // периода синхронизации ящика (2.3.2, замечание владельца 11.11.2026:
+    // «Нет отправленных, корзины — всё пусто», хотя в веб-почте письмо
+    // прошлого года лежит). Поясняем, почему пусто.
+    String? older;
+    final acc = ref.watch(activeAccountProvider);
+    if (!disabled && folderId != null && acc != null && acc.syncDays > 0) {
+      try {
+        final st = ImapFolderState.fromJson(
+            ref.read(sharedPrefsProvider).getString('imap_state:${acc.id}:$folderId'));
+        if (st != null && st.maxUid > 0) older = '${l10n.tr('syncPeriod')}. ${l10n.tr('syncPeriodHint')}';
+      } catch (_) {}
+    }
     return EmptyState(
       icon: disabled ? AppIcons.sync_disabled : AppIcons.inbox,
       title: l10n.tr('noEmails'),
       message: l10n.tr('pullToRefresh'),
-      note: disabled ? l10n.tr('folderSyncDisabledHint') : null,
+      note: disabled ? l10n.tr('folderSyncDisabledHint') : older,
     );
   }
 

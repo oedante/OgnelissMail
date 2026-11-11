@@ -6,6 +6,7 @@
 // Оба экрана подписаны на БД: прочтение, удаление и новое письмо в беседе
 // видны сразу, без перезагрузки.
 
+import '../../../widgets/common/paging_slop.dart';
 import '../../../widgets/common/undo_strip.dart';
 import '../../../widgets/common/undo_manager.dart';
 import '../../../core/utils/text_safe.dart';
@@ -1422,18 +1423,24 @@ class _ConversationPagerScreenState extends ConsumerState<ConversationPagerScree
             if (note.depth == 0) _onScrollEnd();
             return false;
           },
-          child: PageView.builder(
-            controller: _controller,
-            itemCount: n,
-            itemBuilder: (context, i) => MailDetailScreen(
-              key: ValueKey(ids[i]),
-              emailId: ids[i],
-              accountId: widget.accountId,
-              pagerLabel: '${i + 1} / $n',
-              onPrev: i > 0 ? () => _go(i - 1) : null,
-              onNext: i < n - 1 ? () => _go(i + 1) : null,
-              active: i == settled,
-              findQuery: widget.find,
+          // Листание — намеренным жестом вбок (2.3.2, paging_slop.dart).
+          child: PagingSlop(
+            child: PageView.builder(
+              controller: _controller,
+              itemCount: n,
+              itemBuilder: (context, i) => PagingSlop.page(
+                context,
+                MailDetailScreen(
+                  key: ValueKey(ids[i]),
+                  emailId: ids[i],
+                  accountId: widget.accountId,
+                  pagerLabel: '${i + 1} / $n',
+                  onPrev: i > 0 ? () => _go(i - 1) : null,
+                  onNext: i < n - 1 ? () => _go(i + 1) : null,
+                  active: i == settled,
+                  findQuery: widget.find,
+                ),
+              ),
             ),
           ),
         );

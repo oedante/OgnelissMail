@@ -80,7 +80,7 @@ class BackgroundJournal {
   }
 
   /// Виды записей, которые означают проверку почты в фоне (1.6.45).
-  static const _checkKinds = {'WorkManager', 'BGTask iOS', 'BGProcessing iOS', 'пульс', 'сигнал iOS'};
+  static const _checkKinds = {'WorkManager', 'BGTask iOS', 'BGProcessing iOS', 'пульс', 'сигнал iOS', 'будильник'};
 
   /// Последняя проверка почты в фоне (для «Проверки почты»): когда и какой
   /// механизм. Пропуски и ошибки не в счёт. null — фоновых проверок ещё не было.

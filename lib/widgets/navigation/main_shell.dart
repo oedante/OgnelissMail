@@ -245,6 +245,9 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       // активного UI. Guard по времени внутри; unawaited, чтобы не задерживать
       // сворачивание.
       unawaited(ref.read(maintenanceServiceProvider).maybeRunDaily());
+      // Будильник фоновой проверки (Android, 2.3.2): интервал по текущим
+      // ящикам и настройкам — на время, пока приложение свёрнуто.
+      unawaited(ref.read(backgroundServiceProvider).applyBackgroundAlarm());
       // Держать процесс живым в фоне (Android), если включено и есть аккаунты —
       // тогда таймеры синка и IMAP IDLE продолжают работать свёрнутыми.
       final st = ref.read(settingsProvider);

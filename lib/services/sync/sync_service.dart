@@ -34,7 +34,7 @@ import '../mail/email_actions_service.dart' show emailActionsProvider;
 import 'package:http/http.dart' as http;
 import 'package:drift/drift.dart';
 import 'package:flutter/widgets.dart' show WidgetsBinding, AppLifecycleState;
-import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'push_health.dart';
 import 'single_pass.dart';
 import '../../data/models/note_model.dart';
@@ -52,6 +52,7 @@ import '../mail/focus_mode_service.dart';
 import '../../data/models/folder_model.dart';
 import '../../data/providers/database_provider.dart';
 import '../../services/mail/ews/ews_service.dart';
+import '../background/background_alarm.dart';
 import '../../services/mail/imap/imap_reconcile.dart';
 import '../../services/mail/imap/imap_service.dart';
 import '../../services/mail/engine/mail_engine_service.dart';
@@ -77,7 +78,7 @@ import '../mail/oauth/oauth_service.dart';
 import '../notifications/account_notify_mode.dart';
 import '../../core/platform/finish_in_background.dart';
 import 'dart:async';
-import 'dart:io' show SocketException, HandshakeException, pid;
+import 'dart:io' show Platform, SocketException, HandshakeException, pid;
 import 'imap_push_service.dart' show imapPushServiceProvider;
 import 'offline_store_service.dart';
 import '../mail/attachment_cache_service.dart';
@@ -138,9 +139,37 @@ class SyncService {
                 : scheduled
                     ? PassScope.scheduled
                     : PassScope.all;
-            return _pass.run(() => _syncAllBody(scheduled: scheduled, respectInterval: respectInterval),
-                fresh: fresh, needs: scope, covers: scope);
+            return _pass
+                .run(() => _syncAllBody(scheduled: scheduled, respectInterval: respectInterval),
+                    fresh: fresh, needs: scope, covers: scope)
+                // Срок следующей проверки — будильнику Android (2.3.2).
+                .whenComplete(noteBackgroundPlan);
           });
+
+  /// Записать для будильника фоновой проверки (Android, BackgroundAlarm,
+  /// 2.3.2) интервал и срок ближайшего ящика — после каждого прохода, в
+  /// приложении и в фоновой задаче. Будильник ОС к этому сроку сам проверит
+  /// почту и в глубоком сне; если её к сроку уже проверили, срок сдвинется.
+  Future<void> noteBackgroundPlan() async {
+    if (kIsWeb || !Platform.isAndroid) return;
+    try {
+      final accounts = _ref.read(accountsProvider);
+      // Список ящиков ещё не загружен — прежнюю запись не затираем.
+      if (accounts.isEmpty) return;
+      final db = _ref.read(databaseProvider);
+      final rows = await (db.selectOnly(db.accounts)..addColumns([db.accounts.id, db.accounts.lastSyncAt])).get();
+      final plan = BackgroundAlarm.plan(
+        globalInterval: _ref.read(settingsProvider).syncIntervalMinutes,
+        accounts: accounts,
+        lastSync: {for (final r in rows) r.read(db.accounts.id)!: r.read(db.accounts.lastSyncAt)},
+        now: DateTime.now(),
+      );
+      await _prefs.setInt(BackgroundAlarm.minutesKey, plan.minutes);
+      await _prefs.setInt(BackgroundAlarm.nextDueKey, plan.nextDueMs);
+    } catch (e) {
+      AppLogger.debug('Будильник проверки: срок не записан — $e');
+    }
+  }
 
   /// Окно доставки режима фокуса — одно сводное уведомление о письмах,
   /// пришедших в тишине. Фокус выключили — тоже показываем, чтобы не потерять.
@@ -239,14 +268,7 @@ class SyncService {
             // с уведомлениями, ловит только эта проверка — для них 15 минут,
             // а не 30 (2.0.0, решение владельца 08.11.2026).
             if (pushOk && imapPushInboxOnly(a) && await _notifiesOutsideInbox(a)) pushOk = false;
-            final minutes = switch (a.syncInterval) {
-              SyncInterval.minutes5 => 5,
-              SyncInterval.minutes30 => 30,
-              SyncInterval.hour1 => 60,
-              // «По расписанию» вне рабочих часов — свой интервал (15/30/60).
-              SyncInterval.scheduled when !SyncSchedule.inWindow() => SyncSchedule.offMinutes,
-              _ => pushOk ? 30 : 15, // push (резервная проверка) и 15 минут
-            };
+            final minutes = SyncSchedule.checkMinutes(a, pushOk: pushOk) ?? 15;
             final row = await (db.select(db.accounts)..where((x) => x.id.equals(a.id))).getSingleOrNull();
             final last = row?.lastSyncAt;
             // Небольшой запас: таймер срабатывает «примерно» через интервал.
@@ -1090,6 +1112,8 @@ class SyncService {
               .getSingleOrNull();
           final mc = _ref.read(mailContactsServiceProvider);
           await mc.backfillOnce(account, sentFolderId: sent?.id);
+          // Один раз: карточки своих адресов и «имена»-тексты из спама (2.3.2).
+          await mc.cleanupOnce();
           // Фото коллег — только пока приложение открыто: в фоне их никто
           // не видит, а это лишние запросы к адресной книге на каждом проходе.
           if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
@@ -3780,7 +3804,11 @@ class SyncService {
 
     // Контакты из переписки: кто пишет и кому пишем (подсказки адресатов,
     // фото). Не ждём — на синхронизацию не влияет.
-    if (newEmails.isNotEmpty) {
+    // «Спам», «Корзина», черновики и исходящие контактов не дают (2.3.2): в
+    // спаме имя отправителя часто подделано — оно становилось именем
+    // человека в подсказках и плашках получателей.
+    const noContacts = {FolderType.junk, FolderType.trash, FolderType.drafts, FolderType.outbox};
+    if (newEmails.isNotEmpty && !noContacts.contains(folder.type)) {
       final acc = _ref.read(accountsProvider).where((a) => a.id == accountId).firstOrNull;
       if (acc != null) {
         unawaited(_ref

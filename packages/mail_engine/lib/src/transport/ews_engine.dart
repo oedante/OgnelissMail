@@ -91,7 +91,7 @@ class EwsEngine implements MailEngine {
     } else {
       log.info(_t, 'EWS: сервер не задан — пробуем Autodiscover...');
       final ad = await Autodiscover.discover(
-          email: cfg.email, authHeader: auth, userAgent: cfg.userAgent, httpClient: _http);
+          email: cfg.email, authHeader: auth, userAgent: cfg.ewsUa, httpClient: _http);
       for (final l in ad.log) { log.debug(_t, l); }
       if (ad.ewsUrl != null) endpoints.add(ad.ewsUrl!);
       final domain = cfg.email.contains('@') ? cfg.email.split('@').last : '';
@@ -115,7 +115,7 @@ class EwsEngine implements MailEngine {
       final h = {
         'Authorization': auth,
         'Content-Type': 'text/xml; charset=utf-8',
-        'User-Agent': cfg.userAgent,
+        'User-Agent': cfg.ewsUa,
         ...?cfg.extraHeaders,
       };
       log.httpRequest(_t, 'POST', url, h, _getFolderInbox.codeUnits);
@@ -171,7 +171,7 @@ class EwsEngine implements MailEngine {
     final headers = {
       'Authorization': _authHeader(cfg),
       'Content-Type': 'text/xml; charset=utf-8',
-      'User-Agent': cfg.userAgent,
+      'User-Agent': cfg.ewsUa,
       ...?cfg.extraHeaders,
     };
     final full = _wrap(body);

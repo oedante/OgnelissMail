@@ -107,6 +107,19 @@ class AccountConfig {
   final MailTransportKind? forceTransport; // null = автоопределение
   final String userAgent;
 
+  /// User-Agent запросов EWS (и Autodiscover EWS), если у платформы он не
+  /// такой, как у ActiveSync: в режиме совместимости со шлюзом компьютеры
+  /// представляются в EWS своей почтой (Windows — Outlook, Mac — Mail,
+  /// Linux — Thunderbird), а в ActiveSync — штатной почтой ActiveSync
+  /// (Почта Windows, Почта iPad, почта Android). null — [userAgent].
+  /// Раньше UA был один: ящик «Exchange (авто)» шёл в ActiveSync с UA
+  /// Outlook (журнал Windows 10.11.2026), и шлюз видел Outlook с типом
+  /// устройства WindowsMail.
+  final String? ewsUserAgent;
+
+  /// User-Agent для EWS.
+  String get ewsUa => ewsUserAgent ?? userAgent;
+
   const AccountConfig({
     required this.email,
     this.password,
@@ -128,6 +141,7 @@ class AccountConfig {
     // (см. DeviceUserAgent в lib/): Ogneliss/<ver> (<ОС> <верс.>; <модель>).
     // Не имитируем чужое устройство.
     this.userAgent = 'Ogneliss-Android/1.0.0',
+    this.ewsUserAgent,
     this.deviceType = 'Android',
     this.deviceModel = 'Android',
     this.deviceOs = 'Android',
@@ -214,7 +228,7 @@ extension AccountConfigCopy on AccountConfig {
         authKind: authKind, domain: domain, username: username,
         exchangeServer: exchangeServer, imapHost: imapHost, imapPort: imapPort,
         imapSsl: imapSsl, smtpHost: smtpHost, smtpPort: smtpPort,
-        forceTransport: forceTransport, userAgent: ua, deviceType: deviceType, deviceId: deviceId,
+        forceTransport: forceTransport, userAgent: ua, ewsUserAgent: ewsUserAgent, deviceType: deviceType, deviceId: deviceId,
         deviceModel: deviceModel, deviceOs: deviceOs, deviceFriendlyName: deviceFriendlyName,
         deviceLanguage: deviceLanguage,
         extraHeaders: extraHeaders, bodyType: bodyType, bodyTruncationBytes: bodyTruncationBytes,

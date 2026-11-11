@@ -497,9 +497,12 @@ class MailEngineService {
       // Честный User-Agent/DeviceType из реальных системных данных устройства
       // (не имитируем чужое устройство).
       // Режим совместимости со шлюзом — свой у каждого ящика.
-      // Ящик EWS — у компьютеров в режиме совместимости свой клиент
-      // (Outlook, Mail на Mac, Thunderbird), 2.2.x.
-      userAgent: DeviceUserAgent.valueFor(account.id, ews: account.usesEws && !account.usesEas),
+      // EWS — у компьютеров в режиме совместимости свой клиент (Outlook,
+      // Mail на Mac, Thunderbird), 2.2.x; ActiveSync — штатная почта
+      // ActiveSync платформы. Раздельно (11.11.2026): ящик «Exchange (авто)»
+      // пробует оба протокола, и ActiveSync уходил с UA Outlook.
+      userAgent: DeviceUserAgent.valueFor(account.id),
+      ewsUserAgent: DeviceUserAgent.valueFor(account.id, ews: true),
       deviceType: DeviceUserAgent.deviceTypeFor(account.id),
       deviceModel: DeviceUserAgent.deviceModelFor(account.id),
       deviceOs: DeviceUserAgent.deviceOsFor(account.id),

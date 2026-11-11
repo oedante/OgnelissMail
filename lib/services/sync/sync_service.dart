@@ -90,6 +90,7 @@ import 'conflict_resolver.dart';
 import '../mail/auto_responder_service.dart';
 import '../mail/transport/mail_transport.dart';
 import '../home_widget_service.dart';
+import '../../features/mail/providers/folder_names.dart' show localizedFolderName;
 import '../../features/mail/providers/mail_providers.dart'
     show emailModelFromRow, accountsProvider, activeAccountProvider, folderFromRow, controlRevisionProvider;
 
@@ -2226,7 +2227,8 @@ class SyncService {
       final active = _ref.read(accountsProvider).where((a) => a.isActive).toList();
       final shortLabel = NotificationText.shortMailbox(account.email, [for (final a in active) a.email]);
       final mailboxLabel = (active.length > 1 || account.isSharedMailbox) ? shortLabel : null;
-      final folderLabel = folder.type == FolderType.inbox ? null : folder.displayName;
+      // Стандартные папки — на языке приложения («Sent» → «Отправленные», 2.3.2).
+      final folderLabel = folder.type == FolderType.inbox ? null : localizedFolderName(folder, _l10n());
 
       // Самые старые из показываемых — первыми: в шторке сверху окажется самое свежее.
       final singles = unread.take(_maxSingleNotifications).toList().reversed.toList();

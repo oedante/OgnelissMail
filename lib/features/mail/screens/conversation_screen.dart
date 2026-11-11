@@ -53,7 +53,7 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/swipe_action_indicator.dart';
 import '../../../widgets/common/swipe_done.dart';
 import '../../../widgets/common/slidable_spring_back.dart';
-import '../providers/folder_names.dart' show localizedFolderName;
+import '../providers/folder_names.dart' show localizedFolderName, localizedFolderLabel;
 import '../widgets/mail_peek_card.dart';
 import '../widgets/move_folder_picker.dart';
 import '../../../services/mail/own_addresses.dart';
@@ -1047,7 +1047,7 @@ List<String> conversationFolderChips(List<EmailModel> copies, Map<String, Folder
     final type = f?.type ?? _folderTypeByName(c.folderId, c.folderName) ?? FolderType.custom;
     if (type == FolderType.inbox || type == FolderType.drafts || type == FolderType.outbox) continue;
     if (mine && type == FolderType.sent) continue;
-    final label = f != null ? localizedFolderName(f, l10n) : (c.folderName ?? '').trim();
+    final label = f != null ? localizedFolderName(f, l10n) : localizedFolderLabel((c.folderName ?? '').trim(), l10n);
     if (label.isNotEmpty && !out.contains(label)) out.add(label);
   }
   return out;

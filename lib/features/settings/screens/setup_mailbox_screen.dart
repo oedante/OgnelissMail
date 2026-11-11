@@ -21,6 +21,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../services/device/phone_mirror_service.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
+import '../../mail/providers/folder_names.dart' show localizedFolderName;
 import '../../mail/providers/mail_providers.dart';
 
 class SetupMailboxScreen extends ConsumerStatefulWidget {
@@ -69,7 +70,7 @@ class _SetupMailboxScreenState extends ConsumerState<SetupMailboxScreen> {
         ? const <FolderModel>[]
         : ref.watch(accountFoldersProvider(account.id)).value ?? const <FolderModel>[];
     final synced = [for (final f in folders) if (f.isSynced) f];
-    final names = synced.take(6).map((f) => f.displayName).join(', ');
+    final names = synced.take(6).map((f) => localizedFolderName(f, l10n)).join(', ');
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(
         title: Text(l10n.tr('setupMailboxTitle')),

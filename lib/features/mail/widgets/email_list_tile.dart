@@ -457,14 +457,11 @@ class EmailListTile extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Строка 1: Имя + время
+                          // Непрочитанное — жирным именем и темой. Точки перед
+                          // именем нет (просьба владельца 11.11.2026): она
+                          // сдвигала имя, и строки списка не совпадали.
                           Row(
                             children: [
-                              if (isUnread)
-                                Container(
-                                  width: 8, height: 8,
-                                  margin: const EdgeInsets.only(right: 6),
-                                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
-                                ),
                               Expanded(
                                 // Черновик — как в Outlook: «Черновик» и адресаты
                                 // (отправителя у него нет — строка была пустой).

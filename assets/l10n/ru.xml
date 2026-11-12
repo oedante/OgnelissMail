@@ -4142,4 +4142,14 @@
     <string name="taskSelectPrompt">Выберите задачу слева или создайте новую</string>
     <string name="calFree2Months">Ближайшие 2 месяца свободны</string>
     <string name="newMeeting">Новая встреча</string>
+    <string name="mailReadingSettings">Лента и письма</string>
+    <string name="mailReadingSettingsDesc">Папка при запуске, беседы, строки превью, кнопки под письмом</string>
+    <string name="mailComposeSettings">Написание и отправка</string>
+    <string name="mailComposeSettingsDesc">Отмена отправки, получатели, люди в цитатах, размер фото</string>
+    <string name="mailFilesSettings">Загрузка и вложения</string>
+    <string name="mailFilesSettingsDesc">Режим загрузки, письма на телефоне, просмотр документов, поиск во вложениях</string>
+    <string name="mailTranslateSettingsDesc">Перевод писем на устройстве</string>
+    <string name="mailSafetySettingsDesc">Предупреждения о поддельных отправителях</string>
+    <string name="generalDesc">Язык, поворот экрана, виджет «Почта»</string>
+    <string name="appearanceDescFull">Тема, цвета, шрифт и масштаб, плотность ленты, виджеты</string>
 </resources>

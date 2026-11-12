@@ -4121,4 +4121,14 @@
     <string name="taskSelectPrompt">Selectați o sarcină din stânga sau creați una nouă</string>
     <string name="calFree2Months">Următoarele 2 luni sunt libere</string>
     <string name="newMeeting">Întâlnire nouă</string>
+    <string name="mailReadingSettings">Listă și citire</string>
+    <string name="mailReadingSettingsDesc">Dosar la pornire, conversații, rânduri de previzualizare, butoane sub mesaj</string>
+    <string name="mailComposeSettings">Scriere și trimitere</string>
+    <string name="mailComposeSettingsDesc">Anulare trimitere, destinatari, persoane în citate, dimensiune foto</string>
+    <string name="mailFilesSettings">Descărcare și atașamente</string>
+    <string name="mailFilesSettingsDesc">Mod descărcare, e-mailuri pe dispozitiv, previzualizare documente, căutare în atașamente</string>
+    <string name="mailTranslateSettingsDesc">Traducerea e-mailurilor pe dispozitiv</string>
+    <string name="mailSafetySettingsDesc">Avertismente despre expeditori falsificați</string>
+    <string name="generalDesc">Limbă, rotirea ecranului, widgetul E-mail</string>
+    <string name="appearanceDescFull">Temă, culori, font și scară, densitatea listei, widgeturi</string>
 </resources>

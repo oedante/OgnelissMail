@@ -4100,4 +4100,14 @@
     <string name="taskSelectPrompt">Velg en oppgave til venstre eller lag en ny</string>
     <string name="calFree2Months">De neste 2 månedene er ledige</string>
     <string name="newMeeting">Nytt møte</string>
+    <string name="mailReadingSettings">Liste og lesing</string>
+    <string name="mailReadingSettingsDesc">Startmappe, samtaler, forhåndsvisningslinjer, knapper under meldingen</string>
+    <string name="mailComposeSettings">Skriving og sending</string>
+    <string name="mailComposeSettingsDesc">Angre sending, mottakere, personer i sitater, bildestørrelse</string>
+    <string name="mailFilesSettings">Nedlasting og vedlegg</string>
+    <string name="mailFilesSettingsDesc">Nedlastingsmodus, e-post på enheten, dokumentvisning, søk i vedlegg</string>
+    <string name="mailTranslateSettingsDesc">Oversettelse av e-post på enheten</string>
+    <string name="mailSafetySettingsDesc">Advarsler om forfalskede avsendere</string>
+    <string name="generalDesc">Språk, skjermrotasjon, E-post-widget</string>
+    <string name="appearanceDescFull">Tema, farger, skrift og skalering, listetetthet, widgeter</string>
 </resources>

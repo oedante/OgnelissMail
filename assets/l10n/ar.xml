@@ -4184,4 +4184,14 @@
     <string name="taskSelectPrompt">اختر مهمة من اليسار أو أنشئ مهمة جديدة</string>
     <string name="calFree2Months">الشهران القادمان متاحان</string>
     <string name="newMeeting">اجتماع جديد</string>
+    <string name="mailReadingSettings">القائمة والقراءة</string>
+    <string name="mailReadingSettingsDesc">مجلد البدء والمحادثات وأسطر المعاينة وأزرار أسفل الرسالة</string>
+    <string name="mailComposeSettings">الكتابة والإرسال</string>
+    <string name="mailComposeSettingsDesc">التراجع عن الإرسال والمستلمون والأشخاص في الاقتباسات وحجم الصور</string>
+    <string name="mailFilesSettings">التنزيل والمرفقات</string>
+    <string name="mailFilesSettingsDesc">وضع التنزيل والبريد على الجهاز ومعاينة المستندات والبحث في المرفقات</string>
+    <string name="mailTranslateSettingsDesc">ترجمة البريد على الجهاز</string>
+    <string name="mailSafetySettingsDesc">تحذيرات من المرسلين المزيفين</string>
+    <string name="generalDesc">اللغة وتدوير الشاشة وأداة البريد</string>
+    <string name="appearanceDescFull">السمة والألوان والخط والحجم وكثافة القائمة والأدوات</string>
 </resources>

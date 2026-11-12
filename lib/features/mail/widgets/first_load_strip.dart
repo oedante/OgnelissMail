@@ -97,7 +97,7 @@ class _FirstLoadStripState extends ConsumerState<FirstLoadStrip> {
       ),
       child: InkWell(
         borderRadius: Radii.chipAll,
-        onTap: () => context.push('/settings/mail'),
+        onTap: () => context.push('/settings/mail/files'),
         child: Padding(
           padding: const EdgeInsets.only(left: Space.m),
           child: Row(children: [

@@ -4142,4 +4142,14 @@
     <string name="taskSelectPrompt">Wybierz zadanie po lewej lub utwórz nowe</string>
     <string name="calFree2Months">Najbliższe 2 miesiące są wolne</string>
     <string name="newMeeting">Nowe spotkanie</string>
+    <string name="mailReadingSettings">Lista i czytanie</string>
+    <string name="mailReadingSettingsDesc">Folder startowy, wątki, wiersze podglądu, przyciski pod wiadomością</string>
+    <string name="mailComposeSettings">Pisanie i wysyłanie</string>
+    <string name="mailComposeSettingsDesc">Cofanie wysyłki, odbiorcy, osoby w cytatach, rozmiar zdjęć</string>
+    <string name="mailFilesSettings">Pobieranie i załączniki</string>
+    <string name="mailFilesSettingsDesc">Tryb pobierania, poczta na urządzeniu, podgląd dokumentów, wyszukiwanie w załącznikach</string>
+    <string name="mailTranslateSettingsDesc">Tłumaczenie wiadomości na urządzeniu</string>
+    <string name="mailSafetySettingsDesc">Ostrzeżenia o podszywających się nadawcach</string>
+    <string name="generalDesc">Język, obracanie ekranu, widżet Poczta</string>
+    <string name="appearanceDescFull">Motyw, kolory, czcionka i skala, gęstość listy, widżety</string>
 </resources>

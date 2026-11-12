@@ -4100,4 +4100,14 @@
     <string name="taskSelectPrompt">Valitse tehtävä vasemmalta tai luo uusi</string>
     <string name="calFree2Months">Seuraavat 2 kuukautta ovat vapaita</string>
     <string name="newMeeting">Uusi kokous</string>
+    <string name="mailReadingSettings">Luettelo ja lukeminen</string>
+    <string name="mailReadingSettingsDesc">Aloituskansio, keskustelut, esikatselurivit, painikkeet viestin alla</string>
+    <string name="mailComposeSettings">Kirjoittaminen ja lähettäminen</string>
+    <string name="mailComposeSettingsDesc">Lähetyksen peruutus, vastaanottajat, henkilöt lainauksissa, kuvan koko</string>
+    <string name="mailFilesSettings">Lataus ja liitteet</string>
+    <string name="mailFilesSettingsDesc">Lataustila, sähköposti laitteella, asiakirjojen esikatselu, haku liitteistä</string>
+    <string name="mailTranslateSettingsDesc">Viestien käännös laitteella</string>
+    <string name="mailSafetySettingsDesc">Varoitukset väärennetyistä lähettäjistä</string>
+    <string name="generalDesc">Kieli, näytön kierto, Sähköposti-widget</string>
+    <string name="appearanceDescFull">Teema, värit, fontti ja skaalaus, luettelon tiheys, widgetit</string>
 </resources>

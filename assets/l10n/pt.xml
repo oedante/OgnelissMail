@@ -4100,4 +4100,14 @@
     <string name="taskSelectPrompt">Selecione uma tarefa à esquerda ou crie uma nova</string>
     <string name="calFree2Months">Os próximos 2 meses estão livres</string>
     <string name="newMeeting">Nova reunião</string>
+    <string name="mailReadingSettings">Lista e leitura</string>
+    <string name="mailReadingSettingsDesc">Pasta inicial, conversas, linhas de pré-visualização, botões abaixo da mensagem</string>
+    <string name="mailComposeSettings">Escrita e envio</string>
+    <string name="mailComposeSettingsDesc">Desfazer envio, destinatários, pessoas nas citações, tamanho da foto</string>
+    <string name="mailFilesSettings">Download e anexos</string>
+    <string name="mailFilesSettingsDesc">Modo de download, e-mails no dispositivo, pré-visualização de documentos, pesquisa em anexos</string>
+    <string name="mailTranslateSettingsDesc">Tradução de e-mails no dispositivo</string>
+    <string name="mailSafetySettingsDesc">Avisos sobre remetentes falsificados</string>
+    <string name="generalDesc">Idioma, rotação do ecrã, widget de e-mail</string>
+    <string name="appearanceDescFull">Tema, cores, fonte e escala, densidade da lista, widgets</string>
 </resources>

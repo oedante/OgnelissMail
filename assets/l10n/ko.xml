@@ -4079,4 +4079,14 @@
     <string name="taskSelectPrompt">왼쪽에서 작업을 선택하거나 새로 만드세요</string>
     <string name="calFree2Months">앞으로 2개월은 일정이 없습니다</string>
     <string name="newMeeting">새 회의</string>
+    <string name="mailReadingSettings">목록 및 읽기</string>
+    <string name="mailReadingSettingsDesc">시작 폴더, 대화, 미리보기 줄, 메일 아래 버튼</string>
+    <string name="mailComposeSettings">작성 및 보내기</string>
+    <string name="mailComposeSettingsDesc">보내기 취소, 받는 사람, 인용 속 사람, 사진 크기</string>
+    <string name="mailFilesSettings">다운로드 및 첨부 파일</string>
+    <string name="mailFilesSettingsDesc">다운로드 방식, 기기의 메일, 문서 미리보기, 첨부 파일 검색</string>
+    <string name="mailTranslateSettingsDesc">기기에서 메일 번역</string>
+    <string name="mailSafetySettingsDesc">위조된 보낸 사람 경고</string>
+    <string name="generalDesc">언어, 화면 회전, 메일 위젯</string>
+    <string name="appearanceDescFull">테마, 색상, 글꼴과 배율, 목록 밀도, 위젯</string>
 </resources>

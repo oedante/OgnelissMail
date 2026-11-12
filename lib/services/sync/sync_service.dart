@@ -2239,6 +2239,15 @@ class SyncService {
           ? await _senderPhotos([for (final e in singles) e.from.email])
           : const <String, String>{};
       final lines = NotificationLines.of(_prefs, work: account.isWork);
+      // Значок ящика (12.11.2026) — когда ящиков несколько, как и подпись.
+      final boxIcon = mailboxLabel == null || MessengerNotify.styleOn(_prefs)
+          ? null
+          : await MessengerNotify.mailboxIcon(
+              accountId: account.id,
+              name: account.displayName,
+              email: account.email,
+              color: account.colorValue,
+              photo: account.avatarUrl);
       for (var i = 0; i < singles.length; i++) {
         final e = singles[i];
         // Прехедер рассылки (2.2.0, просьба владельца 10.11.2026) — текст
@@ -2254,6 +2263,7 @@ class SyncService {
           subject: e.subject,
           mailboxLabel: mailboxLabel,
           isSharedMailbox: account.isSharedMailbox,
+          mailboxIcon: boxIcon,
           preview: pre ?? e.bodyPreview,
           fromEmail: e.from.email,
           folderId: folder.id,

@@ -22,7 +22,9 @@ import '../../core/logging/app_logger.dart';
 import '../../l10n/app_localizations.dart';
 import '../../data/database/app_database.dart';
 import '../../data/providers/database_provider.dart';
+import 'messenger_notifications.dart';
 import 'notification_service.dart';
+import 'notification_text.dart';
 
 class ReminderSchedulerService {
   final AppDatabase _db;
@@ -138,6 +140,7 @@ class ReminderSchedulerService {
         _oldSig = const {};
       }
       final ids = <int>{};
+      _boxes = await _mailboxes();
       await _scheduleEvents(ids, prefs);
       await _scheduleTasks(ids, prefs);
       await _scheduleDigest(ids, prefs);
@@ -171,6 +174,35 @@ class ReminderSchedulerService {
       return prev != null && (boot - prev).abs() > 120;
     } catch (_) {
       return false;
+    }
+  }
+
+  // ──────────────────────────── Ящики ────────────────────────────
+
+  /// Ящик напоминания (12.11.2026, план 2026-11: «ящик в напоминаниях о
+  /// встречах и задачах — сейчас он есть только в уведомлениях о письмах»):
+  /// короткая подпись и значок — как у уведомлений о письмах, только когда
+  /// подключено больше одного ящика (или ящик общий).
+  Map<String, ({String label, Uint8List? icon})> _boxes = const {};
+
+  Future<Map<String, ({String label, Uint8List? icon})>> _mailboxes() async {
+    try {
+      final rows = await (_db.select(_db.accounts)..where((a) => a.isActive.equals(true))).get();
+      final emails = [for (final a in rows) a.email];
+      final out = <String, ({String label, Uint8List? icon})>{};
+      for (final a in rows) {
+        final shared = (a.sharedMailboxEmail ?? '').trim().isNotEmpty;
+        if (rows.length < 2 && !shared) continue;
+        out[a.id] = (
+          label: NotificationText.shortMailbox(a.email, emails),
+          icon: await MessengerNotify.mailboxIcon(
+              accountId: a.id, name: a.displayName, email: a.email, color: a.colorValue, photo: a.avatarUrl),
+        );
+      }
+      return out;
+    } catch (e) {
+      AppLogger.debug('Напоминания: ящики — $e');
+      return const {};
     }
   }
 
@@ -226,7 +258,10 @@ class ReminderSchedulerService {
           'nid': nid,
           if (canJoin) 'url': e.onlineMeetingUrl,
         });
-        if (_unchanged(nid, '${when.millisecondsSinceEpoch}|$title|$body|$canJoin|$alarmClock|$payload')) continue;
+        final box = _boxes[e.accountId];
+        if (_unchanged(nid, '${when.millisecondsSinceEpoch}|$title|$body|$canJoin|$alarmClock|$payload|${box?.label}')) {
+          continue;
+        }
         await _notifications.scheduleEventReminder(
           id: nid,
           title: title,
@@ -235,6 +270,8 @@ class ReminderSchedulerService {
           canJoin: canJoin,
           alarmClock: alarmClock,
           payload: payload,
+          mailbox: box?.label,
+          mailboxIcon: box?.icon,
         );
         count++;
       }
@@ -329,13 +366,16 @@ class ReminderSchedulerService {
       final nid = taskNotificationId(t.accountId, t.id);
       ids.add(nid);
       final body = taskBody(t, l10n);
-      if (_unchanged(nid, '${when.millisecondsSinceEpoch}|${t.title}|$body')) continue;
+      final box = _boxes[t.accountId];
+      if (_unchanged(nid, '${when.millisecondsSinceEpoch}|${t.title}|$body|${box?.label}')) continue;
       await _notifications.scheduleTaskReminder(
         id: nid,
         title: t.title,
         body: body,
         when: when,
         payload: jsonEncode({'type': 'task', 'id': t.id, 'accountId': t.accountId, 'nid': nid}),
+        mailbox: box?.label,
+        mailboxIcon: box?.icon,
       );
       count++;
     }
@@ -456,6 +496,7 @@ class ReminderSchedulerService {
     final l10n = await _l10n();
     final when = DateTime.now().add(delay);
     final nid = snoozeNotificationId(kind, accountId, id);
+    final boxes = await _mailboxes();
     if (kind == 'event') {
       final e = await (_db.select(_db.calendarEvents)
             ..where((x) => x.id.equals(id) & x.accountId.equals(accountId)))
@@ -472,6 +513,8 @@ class ReminderSchedulerService {
           'type': 'event', 'id': e.id, 'accountId': e.accountId, 'nid': nid,
           if ((e.onlineMeetingUrl ?? '').isNotEmpty) 'url': e.onlineMeetingUrl,
         }),
+        mailbox: boxes[accountId]?.label,
+        mailboxIcon: boxes[accountId]?.icon,
       );
     } else {
       final t = await (_db.select(_db.tasks)
@@ -484,6 +527,8 @@ class ReminderSchedulerService {
         body: taskBody(t, l10n),
         when: when,
         payload: jsonEncode({'type': 'task', 'id': t.id, 'accountId': t.accountId, 'nid': nid}),
+        mailbox: boxes[accountId]?.label,
+        mailboxIcon: boxes[accountId]?.icon,
       );
     }
   }

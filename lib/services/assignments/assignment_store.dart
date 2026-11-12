@@ -24,30 +24,73 @@ import '../../core/utils/subject_prefix.dart';
 import '../../data/database/app_database.dart';
 import 'assignment_codec.dart';
 import 'assignment_phrases.dart';
+import 'assignment_project.dart';
 
-/// Роли участников.
+export 'assignment_project.dart';
+
+/// Роли участников (столбец assignment_participants.role).
 abstract final class AssignmentRole {
-  static const owner = 0;
-  static const responsible = 1;
+  static const owner = 0; // постановщик
+  static const responsible = 1; // исполнитель (основной)
+  static const co = 2; // соисполнитель
+  static const observer = 3; // наблюдатель
+  static const controller = 4; // контролирующий — принимает работу
 }
 
-/// Поручение для экранов: строка, исполнитель, поручивший, направление.
+/// Поручение для экранов: строка, участники, мои роли.
 class AssignmentView {
   final Assignment row;
   final AssignmentParticipant? assignee;
   final AssignmentParticipant? owner;
 
-  /// Я поручил (иначе — мне поручили).
+  /// Я поручил (иначе — мне поручили или я контролирую, наблюдаю).
   final bool outgoing;
-  const AssignmentView({required this.row, this.assignee, this.owner, required this.outgoing});
+
+  /// Все участники и мои роли в этом поручении.
+  final List<AssignmentParticipant> people;
+  final Set<int> myRoles;
+
+  const AssignmentView({
+    required this.row,
+    this.assignee,
+    this.owner,
+    required this.outgoing,
+    this.people = const [],
+    this.myRoles = const {},
+  });
 
   String get id => row.id;
   int get status => row.status;
   bool get active => AssignmentStatus.isActive(row.status);
   DateTime? get due => row.dueAt?.toLocal();
+  DateTime? get start => row.startAt?.toLocal();
+  bool get isProject => row.isProject;
+  bool get waiting => row.waiting && active;
 
   /// Код родительского поручения (подзадача, 12.11.2026).
   String? get parentId => row.parentAssignmentId;
+
+  List<ChecklistItem> get checklist => ChecklistItem.decode(row.checklistJson);
+  List<AssignmentFile> get files => AssignmentFile.decode(row.filesJson);
+
+  List<AssignmentParticipant> _role(int r) => [for (final p in people) if (p.role == r) p];
+  List<AssignmentParticipant> get coExecutors => _role(AssignmentRole.co);
+  List<AssignmentParticipant> get observers => _role(AssignmentRole.observer);
+  AssignmentParticipant? get controller => _role(AssignmentRole.controller).firstOrNull;
+
+  /// Мои роли: исполнитель (основной), соисполнитель, контролирующий,
+  /// наблюдатель.
+  bool get iExecute => myRoles.contains(AssignmentRole.responsible);
+  bool get iCoExecute => myRoles.contains(AssignmentRole.co) && !iExecute;
+  bool get iControl => myRoles.contains(AssignmentRole.controller);
+  bool get iObserve => myRoles.contains(AssignmentRole.observer) && !iExecute && !iCoExecute && !iControl && !outgoing;
+
+  /// Принять работу или вернуть на доработку может контролирующий, а без
+  /// него — постановщик.
+  bool get iAccept => iControl || (outgoing && controller == null);
+
+  /// Доля выполненного.
+  double get progress => stageProgress(row.status, checklist);
 
   /// С кем поручение: у моего — исполнитель, у порученного мне — поручивший.
   String get otherName {
@@ -114,14 +157,21 @@ abstract final class AssignmentStore {
       byA.putIfAbsent(p.assignmentId, () => []).add(p);
     }
     return [
-      for (final r in rows)
-        AssignmentView(
-          row: r,
-          assignee: byA[r.id]?.where((p) => p.role == AssignmentRole.responsible).firstOrNull,
-          owner: byA[r.id]?.where((p) => p.role == AssignmentRole.owner).firstOrNull,
-          outgoing: (mine[r.accountId] ?? const {}).contains(r.ownerEmail.toLowerCase()),
-        ),
+      for (final r in rows) view(r, byA[r.id] ?? const [], mine[r.accountId] ?? const {}),
     ];
+  }
+
+  /// Вид поручения по строке, участникам и моим адресам.
+  static AssignmentView view(Assignment r, List<AssignmentParticipant> people, Set<String> me) {
+    final roles = {for (final p in people) if (me.contains(p.email.toLowerCase())) p.role};
+    return AssignmentView(
+      row: r,
+      assignee: people.where((p) => p.role == AssignmentRole.responsible).firstOrNull,
+      owner: people.where((p) => p.role == AssignmentRole.owner).firstOrNull,
+      outgoing: me.contains(r.ownerEmail.toLowerCase()),
+      people: people,
+      myRoles: roles,
+    );
   }
 
   /// История поручения, по времени.
@@ -138,7 +188,7 @@ abstract final class AssignmentStore {
     String? description,
     required String ownerEmail,
     String? ownerName,
-    required String assigneeEmail,
+    String? assigneeEmail,
     String? assigneeName,
     DateTime? due,
     int priority = 1,
@@ -147,6 +197,15 @@ abstract final class AssignmentStore {
     required bool outgoing,
     String? eventId,
     String? parentId,
+    bool isProject = false,
+    DateTime? start,
+    String? afterId,
+    int order = 0,
+    List<ChecklistItem> checklist = const [],
+    List<AssignmentFile> files = const [],
+    String? planJson,
+    /// Остальные участники: адрес → (роль, имя).
+    Map<String, ({int role, String? name})> others = const {},
   }) async {
     await db.transaction(() async {
       await db.into(db.assignments).insert(
@@ -163,6 +222,14 @@ abstract final class AssignmentStore {
               parentAssignmentId: Value(parentId),
               createdAt: at,
               updatedAt: at,
+              isProject: Value(isProject),
+              startAt: Value(start),
+              afterId: Value(afterId),
+              stageOrder: Value(order),
+              checklistJson: Value(ChecklistItem.encode(checklist)),
+              filesJson: Value(AssignmentFile.encode(files)),
+              waiting: Value(afterId != null),
+              planJson: Value(planJson),
             ),
             mode: InsertMode.insertOrIgnore,
           );
@@ -175,15 +242,30 @@ abstract final class AssignmentStore {
             ),
             mode: InsertMode.insertOrReplace,
           );
-      await db.into(db.assignmentParticipants).insert(
-            AssignmentParticipantsCompanion.insert(
-              assignmentId: id,
-              email: assigneeEmail.toLowerCase(),
-              displayName: Value(assigneeName),
-              role: AssignmentRole.responsible,
-            ),
-            mode: InsertMode.insertOrReplace,
-          );
+      if (assigneeEmail != null && assigneeEmail.isNotEmpty) {
+        await db.into(db.assignmentParticipants).insert(
+              AssignmentParticipantsCompanion.insert(
+                assignmentId: id,
+                email: assigneeEmail.toLowerCase(),
+                displayName: Value(assigneeName),
+                role: AssignmentRole.responsible,
+              ),
+              mode: InsertMode.insertOrReplace,
+            );
+      }
+      for (final o in others.entries) {
+        final email = o.key.toLowerCase();
+        if (email == ownerEmail.toLowerCase() || email == assigneeEmail?.toLowerCase()) continue;
+        await db.into(db.assignmentParticipants).insert(
+              AssignmentParticipantsCompanion.insert(
+                assignmentId: id,
+                email: email,
+                displayName: Value(o.value.name),
+                role: o.value.role,
+              ),
+              mode: InsertMode.insertOrReplace,
+            );
+      }
       await addEvent(db,
           id: eventId ?? 'created:$id',
           assignmentId: id,
@@ -191,7 +273,11 @@ abstract final class AssignmentStore {
           author: ownerEmail,
           at: at,
           outgoing: outgoing,
-          payload: {'to': assigneeEmail.toLowerCase(), if (due != null) 'due': due.toIso8601String()},
+          payload: {
+            if (assigneeEmail != null) 'to': assigneeEmail.toLowerCase(),
+            if (due != null) 'due': due.toIso8601String(),
+            if (isProject) 'project': true,
+          },
           sourceEmailId: sourceEmailId);
     });
   }
@@ -221,12 +307,53 @@ abstract final class AssignmentStore {
             mode: InsertMode.insertOrIgnore,
           );
 
-  static Future<void> update(AppDatabase db, String id, {int? status, DateTime? due, bool clearDue = false}) =>
+  static Future<void> update(
+    AppDatabase db,
+    String id, {
+    int? status,
+    DateTime? due,
+    bool clearDue = false,
+    DateTime? start,
+    List<ChecklistItem>? checklist,
+    List<AssignmentFile>? files,
+    bool? waiting,
+    String? planJson,
+  }) =>
       (db.update(db.assignments)..where((a) => a.id.equals(id))).write(AssignmentsCompanion(
         status: status == null ? const Value.absent() : Value(status),
         dueAt: clearDue ? const Value(null) : (due == null ? const Value.absent() : Value(due)),
+        startAt: start == null ? const Value.absent() : Value(start),
+        checklistJson: checklist == null ? const Value.absent() : Value(ChecklistItem.encode(checklist)),
+        filesJson: files == null ? const Value.absent() : Value(AssignmentFile.encode(files)),
+        waiting: waiting == null ? const Value.absent() : Value(waiting),
+        planJson: planJson == null ? const Value.absent() : Value(planJson),
         updatedAt: Value(DateTime.now()),
       ));
+
+  /// Добавить участника (или сменить роль).
+  static Future<void> addParticipant(AppDatabase db, String id, String email, int role, {String? name}) =>
+      db.into(db.assignmentParticipants).insert(
+            AssignmentParticipantsCompanion.insert(
+              assignmentId: id,
+              email: email.toLowerCase(),
+              displayName: Value(name),
+              role: role,
+            ),
+            mode: InsertMode.insertOrReplace,
+          );
+
+  /// Участники поручения.
+  static Future<List<AssignmentParticipant>> participants(AppDatabase db, String id) =>
+      (db.select(db.assignmentParticipants)..where((p) => p.assignmentId.equals(id))).get();
+
+  /// Этапы проекта (подзадачи) по порядку.
+  static Future<List<Assignment>> stagesOf(AppDatabase db, String projectId) => (db.select(db.assignments)
+        ..where((a) => a.parentAssignmentId.equals(projectId))
+        ..orderBy([
+          (a) => OrderingTerm(expression: a.stageOrder),
+          (a) => OrderingTerm(expression: a.createdAt),
+        ]))
+      .get();
 
   /// Удалить поручение у себя (письма остаются в почте).
   static Future<void> delete(AppDatabase db, String id) async {
@@ -350,11 +477,12 @@ abstract final class AssignmentStore {
     }
     final task = AssignmentCodec.parseTask(freshHtml);
     final st = AssignmentCodec.parseStatus(freshHtml);
+    final pm = AssignmentCodec.parsePeople(freshHtml);
     final at = e.receivedAt;
     // Письмо с id события: уже записано (отправлено отсюда) — только
     // привязать письмо; иначе — записать под этим id (одно и то же событие
     // на всех устройствах).
-    final ev = (st?.id == id ? st?.ev : null) ?? (task?.id == id ? task?.ev : null);
+    final ev = (st?.id == id ? st?.ev : null) ?? (pm?.id == id ? pm?.ev : null) ?? (task?.id == id ? task?.ev : null);
     if (ev != null) {
       final local = await (db.select(db.assignmentEvents)..where((x) => x.id.equals(ev))).getSingleOrNull();
       if (local != null) {
@@ -370,24 +498,62 @@ abstract final class AssignmentStore {
       // Новое поручение — по отметке; сервер её убрал — по тегу в свежей
       // части письма, если это не ответ и не пересылка, а я — в «Кому».
       var t = task?.id == id ? task : null;
+      final recipients = '${e.toRecipients} ${e.ccJson ?? ''}'.toLowerCase();
       if (t == null) {
         final fresh = freshText(html, plain);
         final isNew = SubjectPrefix.strip(e.subject) == e.subject.trim();
         final toMe = me.firstWhere((m) => e.toRecipients.toLowerCase().contains(m), orElse: () => '');
         if (fromMe || !isNew || toMe.isEmpty || AssignmentCodec.idFromBody(fresh) != id) return false;
-        t = (id: id, due: null, to: toMe, title: null, ev: null, parent: null);
+        t = (
+          id: id,
+          due: null,
+          to: toMe,
+          title: null,
+          ev: null,
+          parent: null,
+          start: null,
+          after: null,
+          order: null,
+          co: const <String>[],
+          ctl: null,
+          obs: const <String>[],
+          checklist: const <String>[],
+          project: false,
+          plan: null,
+        );
       }
       final to = t.to;
-      // Поручено не мне (я в копии) — не моё поручение.
-      if (!fromMe && to != null && !me.contains(to)) return false;
-      String? toName;
-      final assignee = to ?? (fromMe ? _firstTo(e.toRecipients) : me.firstOrNull);
-      if (assignee == null) return false;
-      try {
-        for (final r in (jsonDecode(e.toRecipients) as List).whereType<Map>()) {
-          if ('${r['email']}'.toLowerCase() == assignee) toName = r['displayName'] as String?;
+      // Участник ли я: исполнитель, соисполнитель, контролирующий,
+      // наблюдатель; письмо проекта — если я в получателях. Иначе (я в
+      // копии чужого поручения) — не моё поручение.
+      final roleMine = {
+        if (to != null) to,
+        ...t.co,
+        if (t.ctl != null) t.ctl!,
+        ...t.obs,
+      }.any(me.contains);
+      final projectMine = t.project && me.any(recipients.contains);
+      if (!fromMe && !roleMine && !projectMine) {
+        if (to != null || t.project) return false;
+      }
+      final names = _names(e);
+      final assignee = t.project ? to : (to ?? (fromMe ? _firstTo(e.toRecipients) : me.firstOrNull));
+      if (!t.project && assignee == null) return false;
+      final others = <String, ({int role, String? name})>{
+        for (final c in t.co) c: (role: AssignmentRole.co, name: names[c]),
+        for (final o in t.obs) o: (role: AssignmentRole.observer, name: names[o]),
+        if (t.ctl != null) t.ctl!: (role: AssignmentRole.controller, name: names[t.ctl!]),
+      };
+      // Письмо проекта мне без роли в нём: я — участник его этапов
+      // (наблюдатель проекта — чтобы видеть план).
+      if (t.project && !fromMe) {
+        for (final m in me) {
+          if (recipients.contains(m) && !others.containsKey(m) && m != assignee) {
+            others[m] = (role: AssignmentRole.observer, name: names[m]);
+            break;
+          }
         }
-      } catch (_) {}
+      }
       await insert(db,
           id: id,
           accountId: e.accountId,
@@ -395,29 +561,43 @@ abstract final class AssignmentStore {
           ownerEmail: from,
           ownerName: e.fromName,
           assigneeEmail: assignee,
-          assigneeName: toName,
+          assigneeName: assignee == null ? null : names[assignee],
           due: t.due,
           sourceEmailId: e.id,
           at: at,
           outgoing: fromMe,
           eventId: evId,
-          parentId: t.parent);
+          parentId: t.parent,
+          isProject: t.project,
+          start: t.start,
+          afterId: t.after,
+          order: t.order ?? 0,
+          checklist: [for (final c in t.checklist) ChecklistItem(c)],
+          files: _mailFiles(e),
+          planJson: t.plan,
+          others: others);
       return true;
     }
 
     // Письмо относится к поручению, только если оно от участника (поручивший,
     // исполнитель или я с другого устройства): чужое поручение с тем же
     // кодом (почти невозможно, но не исключено) ничего не меняет.
+    final people = await participants(db, id);
     if (!fromMe) {
-      final people = await (db.select(db.assignmentParticipants)..where((p) => p.assignmentId.equals(id))).get();
       final known = {a.ownerEmail.toLowerCase(), for (final p in people) p.email.toLowerCase()};
       if (!known.contains(from)) return false;
     }
+    final myRoles = {for (final p in people) if (me.contains(p.email.toLowerCase())) p.role};
     final outgoing = me.contains(a.ownerEmail.toLowerCase());
+    final accepting = outgoing || myRoles.contains(AssignmentRole.controller);
     int? next;
+    String? checks;
+    var go = false;
     if (st != null && st.id == id) {
       next = st.status;
-    } else if (outgoing && !fromMe) {
+      checks = st.checks;
+      go = st.go;
+    } else if (accepting && !fromMe) {
       final sig = AssignmentPhrases.classify(freshText(html, plain));
       final want = switch (sig) {
         AssignmentSignal.done => AssignmentStatus.review,
@@ -426,14 +606,42 @@ abstract final class AssignmentStore {
       };
       if (want != null && _forward(a.status, want)) next = want;
     }
-    // Новый срок — в письме поручившего (у исполнителя) или моём с другого
-    // устройства.
+    // «Можно начинать» — статус не меняется, этап больше не ждёт.
+    if (go && next == AssignmentStatus.open && a.status != AssignmentStatus.open) next = null;
+    // Новый срок и начало — в письме поручившего (у исполнителя) или моём с
+    // другого устройства; новые соисполнители, контролирующий, наблюдатели.
     DateTime? due;
-    if (task != null && task.id == id && task.due != null && (fromMe || !outgoing)) {
-      final d = task.due!;
-      final cur = a.dueAt?.toLocal();
-      if (cur == null || DateTime(cur.year, cur.month, cur.day) != DateTime(d.year, d.month, d.day)) due = d;
+    DateTime? start;
+    final added = <String, ({int role, String? name})>{};
+    final names = _names(e);
+    if (task != null && task.id == id && (fromMe || !outgoing)) {
+      if (task.due != null) {
+        final d = task.due!;
+        final cur = a.dueAt?.toLocal();
+        if (cur == null || DateTime(cur.year, cur.month, cur.day) != DateTime(d.year, d.month, d.day)) due = d;
+      }
+      if (task.start != null) {
+        final d = task.start!;
+        final cur = a.startAt?.toLocal();
+        if (cur == null || DateTime(cur.year, cur.month, cur.day) != DateTime(d.year, d.month, d.day)) start = d;
+      }
+      final known = {for (final p in people) p.email.toLowerCase()};
+      for (final c in task.co) {
+        if (!known.contains(c)) added[c] = (role: AssignmentRole.co, name: names[c]);
+      }
     }
+    if (pm != null && pm.id == id && !people.any((p) => p.email.toLowerCase() == pm.email)) {
+      added[pm.email] = (role: pm.role, name: pm.name ?? names[pm.email]);
+    }
+    List<ChecklistItem>? checklist;
+    if (checks != null && !fromMe) {
+      final cur = ChecklistItem.decode(a.checklistJson);
+      if (cur.isNotEmpty) checklist = ChecklistItem.applyBits(cur, checks);
+    }
+    // Файлы письма — к файлам этапа (поручивший добавил, исполнитель
+    // прислал результат).
+    final mailFiles = _mailFiles(e);
+    final files = mailFiles.isEmpty ? null : [...AssignmentFile.decode(a.filesJson), ...mailFiles];
     final text = freshText(html, plain);
     await db.transaction(() async {
       await addEvent(db,
@@ -447,13 +655,61 @@ abstract final class AssignmentStore {
             'text': text.length > 400 ? '${text.substring(0, 400)}…' : text,
             if (next != null && next != a.status) 'status': next,
             if (due != null) 'due': due.toIso8601String(),
+            if (go) 'go': true,
+            if (added.isNotEmpty) 'added': added.keys.toList(),
+            if (mailFiles.isNotEmpty) 'files': [for (final f in mailFiles) f.name],
           },
           sourceEmailId: e.id);
-      if ((next != null && next != a.status) || due != null) {
-        await update(db, id, status: next != a.status ? next : null, due: due);
+      for (final x in added.entries) {
+        await addParticipant(db, id, x.key, x.value.role, name: x.value.name);
+      }
+      if ((next != null && next != a.status) || due != null || start != null || go || checklist != null || files != null) {
+        await update(db, id,
+            status: next != a.status ? next : null,
+            due: due,
+            start: start,
+            waiting: go ? false : null,
+            checklist: checklist,
+            files: files);
       }
     });
     return true;
+  }
+
+  /// Имена из «Кому» и «Копии» письма: адрес → имя.
+  static Map<String, String?> _names(Email e) {
+    final out = <String, String?>{};
+    for (final raw in [e.toRecipients, e.ccJson ?? '']) {
+      try {
+        for (final r in (jsonDecode(raw) as List).whereType<Map>()) {
+          final m = '${r['email'] ?? ''}'.trim().toLowerCase();
+          if (m.isNotEmpty) out[m] = r['displayName'] as String?;
+        }
+      } catch (_) {}
+    }
+    final f = e.fromEmail.trim().toLowerCase();
+    if (f.isNotEmpty) out[f] = e.fromName;
+    return out;
+  }
+
+  /// Вложения письма (кроме встроенных картинок) — файлы поручения.
+  static List<AssignmentFile> _mailFiles(Email e) {
+    final raw = e.attachmentsJson;
+    if (raw == null || raw.isEmpty) return const [];
+    try {
+      return [
+        for (final m in (jsonDecode(raw) as List).whereType<Map>())
+          if (m['isInline'] != true && '${m['name'] ?? ''}'.trim().isNotEmpty)
+            AssignmentFile(
+              name: '${m['name']}',
+              size: (m['size'] as num?)?.toInt() ?? 0,
+              mailId: e.id,
+              attachmentId: '${m['id'] ?? ''}',
+            ),
+      ];
+    } catch (_) {
+      return const [];
+    }
   }
 
   static String? _firstTo(String toJson) {

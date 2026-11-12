@@ -4,7 +4,9 @@
 // (красным), на проверке, сегодня, на этой неделе, позже, без срока;
 // выполненные и снятые — свёрнуто внизу. Нажатие — карточка поручения,
 // долгое нажатие — быстрые действия (assignment_widgets.dart), кнопка —
-// новое поручение.
+// новое поручение. Проекты с этапами (12.11.2026): строка проекта — с
+// прогрессом, этапы своего проекта — внутри него; фильтры «Контролирую» и
+// «Наблюдаю» — по ролям в чужих поручениях.
 
 import 'dart:async';
 
@@ -20,10 +22,12 @@ import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
 import '../../widgets/common/peek_card.dart' show peekAnchorOf;
 import '../../widgets/ui/empty_state.dart';
+import '../../services/assignments/assignment_store.dart' show AssignmentTree, projectStatus;
 import 'assign_sheet.dart';
 import 'assignment_widgets.dart';
+import 'project_editor.dart' show showProjectEditor;
 
-enum _Filter { all, overdue, review }
+enum _Filter { all, overdue, review, control, observe }
 
 class AssignmentsScreen extends ConsumerStatefulWidget {
   const AssignmentsScreen({super.key});
@@ -38,12 +42,23 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
 
   _Filter _filter = _Filter.all;
   bool _showDone = false;
+  List<AssignmentView> _all = const [];
+
+  Widget _newProject(AppLocalizations l10n) => IconButton(
+        key: const ValueKey('assign_new_project'),
+        tooltip: l10n.tr('projNew'),
+        icon: const Icon(AppIcons.account_tree),
+        onPressed: () => unawaited(showProjectEditor(context)),
+      );
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final all = ref.watch(assignmentsProvider).value ?? const <AssignmentView>[];
-    final mine = [for (final v in all) if (v.outgoing) v];
+    _all = all;
+    // Этапы своего проекта — внутри проекта, не отдельными строками.
+    final myProjects = {for (final v in all) if (v.outgoing && v.isProject) v.id};
+    final mine = [for (final v in all) if (v.outgoing && !myProjects.contains(v.parentId)) v];
     final toMe = [for (final v in all) if (!v.outgoing) v];
     int active(List<AssignmentView> l) => l.where((v) => v.active).length;
     final fab = AppBottomBar.inUse(context)
@@ -74,7 +89,7 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
           ]),
         );
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.tr('assignments'))),
+      appBar: AppBar(title: Text(l10n.tr('assignments')), actions: [_newProject(l10n)]),
       floatingActionButton: fab,
       body: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         column(l10n.tr('assignTabMine'), nMine, mine),
@@ -91,6 +106,7 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.tr('assignments')),
+          actions: [_newProject(l10n)],
           bottom: TabBar(tabs: [
             Tab(text: '${l10n.tr('assignTabMine')} · $nMine'),
             Tab(text: '${l10n.tr('assignTabToMe')} · $nToMe'),
@@ -110,11 +126,19 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
     final weekEnd = today.add(Duration(days: 8 - today.weekday));
     final activeItems = [for (final v in items) if (v.active) v];
     final closed = [for (final v in items) if (!v.active) v];
-    final overdueN = activeItems.where((v) => v.overdue(now)).length;
+    // Проект — просрочен, если опаздывает хоть один его этап (этапы своего
+    // проекта в списке не показываются отдельно).
+    bool late(AssignmentView v) =>
+        v.overdue(now) || (v.isProject && _all.childrenOf(v.id).any((s) => s.active && s.overdue(now)));
+    final overdueN = activeItems.where(late).length;
     final reviewN = activeItems.where((v) => v.status == AssignmentStatus.review).length;
+    final controlN = activeItems.where((v) => v.iControl).length;
+    final observeN = activeItems.where((v) => v.iObserve).length;
     var shown = activeItems;
-    if (_filter == _Filter.overdue) shown = [for (final v in shown) if (v.overdue(now)) v];
+    if (_filter == _Filter.overdue) shown = [for (final v in shown) if (late(v)) v];
     if (_filter == _Filter.review) shown = [for (final v in shown) if (v.status == AssignmentStatus.review) v];
+    if (_filter == _Filter.control) shown = [for (final v in shown) if (v.iControl) v];
+    if (_filter == _Filter.observe) shown = [for (final v in shown) if (v.iObserve) v];
     shown = [...shown]..sort((a, b) {
         final da = a.due, db = b.due;
         if (da == null && db == null) return b.row.createdAt.compareTo(a.row.createdAt);
@@ -124,14 +148,14 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
       });
 
     final groups = <(String, Color?, List<AssignmentView>)>[
-      (l10n.tr('overdue'), AppColors.errorText(context), [for (final v in shown) if (v.overdue(now)) v]),
+      (l10n.tr('overdue'), AppColors.errorText(context), [for (final v in shown) if (late(v)) v]),
       (
         l10n.tr('assignStReview'),
         null,
-        [for (final v in shown) if (!v.overdue(now) && v.status == AssignmentStatus.review) v]
+        [for (final v in shown) if (!late(v) && v.status == AssignmentStatus.review) v]
       ),
     ];
-    bool rest(AssignmentView v) => !v.overdue(now) && v.status != AssignmentStatus.review;
+    bool rest(AssignmentView v) => !late(v) && v.status != AssignmentStatus.review;
     DateTime? day(AssignmentView v) => v.due == null ? null : DateTime(v.due!.year, v.due!.month, v.due!.day);
     groups.addAll([
       (l10n.tr('today'), null, [for (final v in shown) if (rest(v) && day(v) == today) v]),
@@ -165,6 +189,18 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
                 label: Text('${l10n.tr('assignStReview')} · $reviewN'),
                 selected: _filter == _Filter.review,
                 onSelected: (_) => setState(() => _filter = _filter == _Filter.review ? _Filter.all : _Filter.review)),
+            // По ролям — только когда такие есть в этом списке.
+            for (final (f, key, n) in [
+              (_Filter.control, 'filterControl', controlN),
+              (_Filter.observe, 'filterObserve', observeN),
+            ])
+              if (n > 0 || _filter == f) ...[
+                const SizedBox(width: Space.xs),
+                FilterChip(
+                    label: Text('${l10n.tr(key)} · $n'),
+                    selected: _filter == f,
+                    onSelected: (_) => setState(() => _filter = _filter == f ? _Filter.all : f)),
+              ],
           ],
         ),
       ),
@@ -178,7 +214,7 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
               style: theme.textTheme.labelLarge
                   ?.copyWith(color: color ?? AppColors.mutedText(context), fontWeight: FontWeight.w700)),
         ))
-        ..addAll([for (final v in list) _AssignmentRow(v: v)]);
+        ..addAll([for (final v in list) _AssignmentRow(v: v, all: _all)]);
     }
     if (closed.isNotEmpty) {
       children.add(ListTile(
@@ -187,7 +223,7 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
             style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.mutedText(context))),
         onTap: () => setState(() => _showDone = !_showDone),
       ));
-      if (_showDone) children.addAll([for (final v in closed) _AssignmentRow(v: v)]);
+      if (_showDone) children.addAll([for (final v in closed) _AssignmentRow(v: v, all: _all)]);
     }
     if (activeItems.isEmpty && closed.isEmpty) {
       return ListView(children: [
@@ -201,15 +237,34 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
 
 class _AssignmentRow extends ConsumerWidget {
   final AssignmentView v;
-  const _AssignmentRow({required this.v});
+
+  /// Все поручения — этапы проекта для прогресса.
+  final List<AssignmentView> all;
+  const _AssignmentRow({required this.v, required this.all});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final muted = AppColors.mutedText(context);
-    final overdue = v.overdue(DateTime.now());
+    final now = DateTime.now();
+    // Проект: «2 из 5 этапов» и полоса прогресса (у постановщика).
+    final stages = v.isProject ? all.childrenOf(v.id) : const <AssignmentView>[];
+    final overdue = v.overdue(now) || stages.any((s) => s.active && s.overdue(now));
     final dueColor = overdue ? AppColors.errorText(context) : muted;
+    final live = [for (final s in stages) if (s.status != AssignmentStatus.cancelled) s];
+    final doneN = live.where((s) => s.status == AssignmentStatus.done).length;
+    final progress = live.isEmpty ? 0.0 : live.fold<double>(0, (a, s) => a + s.progress) / live.length;
+    // Своя роль в чужом поручении — если не исполнитель.
+    final role = v.outgoing || v.iExecute
+        ? null
+        : v.iControl
+            ? l10n.tr('filterControl')
+            : v.iCoExecute
+                ? l10n.tr('projRoleCo')
+                : v.iObserve
+                    ? l10n.tr('filterObserve')
+                    : null;
     return InkWell(
       onTap: () => context.push('/assignments/${v.id}'),
       onLongPress: () => unawaited(showAssignmentPeek(context, ref, v, anchor: peekAnchorOf(context))),
@@ -230,14 +285,27 @@ class _AssignmentRow extends ConsumerWidget {
                   )),
               const SizedBox(height: 2),
               Row(children: [
-                // Подзадача другого поручения (12.11.2026).
-                if (v.parentId != null) ...[
-                  Icon(AppIcons.account_tree, size: 13, color: muted),
+                // Подзадача другого поручения или проект (12.11.2026).
+                if (v.parentId != null || v.isProject) ...[
+                  Icon(AppIcons.account_tree, size: 13, color: v.isProject ? theme.colorScheme.primary : muted),
                   const SizedBox(width: 3),
                 ],
                 Flexible(
-                  child: Text(v.otherName,
-                      maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodySmall?.copyWith(color: muted)),
+                  child: Text(
+                      [
+                        if (v.isProject && live.isNotEmpty)
+                          l10n
+                              .tr('projStagesCount')
+                              .replaceAll('{done}', '$doneN')
+                              .replaceAll('{total}', '${live.length}')
+                        else if (!(v.outgoing && v.isProject))
+                          v.otherName,
+                        if (role != null) role,
+                        if (v.waiting) l10n.tr('projWaiting'),
+                      ].join(' · '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(color: muted)),
                 ),
                 if (v.due != null) ...[
                   Text(' · ', style: theme.textTheme.bodySmall?.copyWith(color: muted)),
@@ -248,10 +316,15 @@ class _AssignmentRow extends ConsumerWidget {
                           ?.copyWith(color: dueColor, fontWeight: overdue ? FontWeight.w700 : null)),
                 ],
               ]),
+              if (v.isProject && live.isNotEmpty && v.active)
+                Padding(
+                  padding: const EdgeInsets.only(top: Space.xs),
+                  child: LinearProgressIndicator(value: progress, minHeight: 3, borderRadius: BorderRadius.circular(2)),
+                ),
             ]),
           ),
           const SizedBox(width: Space.s),
-          AssignmentStatusPill(v.status),
+          AssignmentStatusPill(v.isProject ? projectStatus(v.status, [for (final s in stages) s.status]) : v.status),
         ]),
       ),
     );

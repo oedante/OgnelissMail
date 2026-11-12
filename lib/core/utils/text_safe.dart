@@ -107,11 +107,19 @@ String? multilinePreviewOf(String? text, [int max = 300]) {
   return cutSafe(lines.join('\n'), max);
 }
 
+/// Кавычки, скобки и прочие знаки перед именем: «'aho@example.com'» (так
+/// Outlook подписывает адрес без имени), «"Иванов"», «<a@b>», «(отдел)».
+final _leadingMarks = RegExp('^[\\s\'"`´‘’‚“”„«»‹›<>()\\[\\]{}.,;:*_~#|/\\\\-]+');
+
 /// Первая «буква» для аватара: эмодзи — целиком, иначе заглавная буква;
-/// пусто — «?».
+/// пусто — «?». Кавычки и знаки перед именем пропускаются (замечание
+/// владельца 12.11.2026: у адресов вида «'aho@engicom.ru'» в кружке стоял
+/// апостроф); из одних знаков — первый знак, как раньше.
 String initialOf(String? s) {
-  final t = (s ?? '').trim();
+  var t = (s ?? '').trim();
   if (t.isEmpty) return '?';
+  final bare = t.replaceFirst(_leadingMarks, '');
+  if (bare.isNotEmpty) t = bare;
   final c = t.codeUnitAt(0);
   if (_isHigh(c)) return t.length > 1 && _isLow(t.codeUnitAt(1)) ? t.substring(0, 2) : '?';
   if (_isLow(c)) return '?';

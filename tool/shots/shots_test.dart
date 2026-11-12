@@ -38,6 +38,10 @@ import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
 import 'package:ogneliss/features/mail/widgets/mail_drawer.dart';
 import 'package:ogneliss/features/settings/screens/settings_screen.dart';
 import 'package:ogneliss/features/my_day/my_day_screen.dart';
+import 'package:ogneliss/features/calendar/screens/calendar_screen.dart';
+import 'package:ogneliss/features/tasks/screens/tasks_screen.dart';
+import 'package:ogneliss/features/contacts/screens/contacts_screen.dart';
+import 'package:ogneliss/features/notes/screens/notes_screen.dart';
 import 'package:ogneliss/features/assignments/assignments_screen.dart';
 import 'package:ogneliss/features/assignments/assignment_screen.dart';
 import 'package:ogneliss/services/assignments/assignment_codec.dart';
@@ -634,6 +638,38 @@ void main() {
   }
 
   // Ответ — прямо в панели письма рядом с лентой (1.11.0, как в Outlook).
+  // Обзор интерфейса (12.11.2026, план 2026-11: «оценка UI всех экранов —
+  // телефон, планшет, компьютер»): разделы приложения на трёх размерах.
+  // Запуск: flutter test tool/shots --plain-name обзор --update-goldens
+  for (final (size, dims) in const [('phone', _phone), ('tablet', Size(1194, 834)), ('desktop', Size(1440, 900))]) {
+    for (final (name, screen) in <(String, Widget)>[
+      ('inbox', const MailListScreen()),
+      ('calendar', const CalendarScreen()),
+      ('tasks', const TasksScreen()),
+      ('contacts', const ContactsScreen()),
+      ('notes', const NotesScreen()),
+      ('settings', const SettingsScreen()),
+      ('myday', const MyDayScreen()),
+      ('assignments', const AssignmentsScreen()),
+    ]) {
+      // Лента на планшете и компьютере — снимки split_* выше (там нужен
+      // маршрутизатор для панели разделов).
+      if (name == 'inbox' && size != 'phone') continue;
+      testWidgets('обзор — $name $size', (tester) async {
+        SharedPreferences.setMockInitialValues({'reading_pane_asked_v1': true});
+        final prefs = await SharedPreferences.getInstance();
+        final db = (await tester.runAsync(_db))!;
+        await tester.runAsync(() async {
+          await _letter(db);
+          await _inbox(db);
+        });
+        await _shot(tester, 'review_${name}_$size', screen,
+            theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: dims, textScale: 1.0);
+        await tester.runAsync(db.close);
+      });
+    }
+  }
+
   testWidgets('лента и ответ в панели — desktop', (tester) async {
     SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
     final prefs = await SharedPreferences.getInstance();

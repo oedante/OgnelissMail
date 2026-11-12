@@ -5,7 +5,9 @@
 // что и когда сделано, в том числе по ответам. Внизу — действия по роли:
 // поручивший принимает работу, возвращает на доработку, напоминает;
 // исполнитель берёт в работу, сдаёт («Готово»), задаёт вопрос (ответ на
-// письмо поручения).
+// письмо поручения). Связь «родитель — подзадача» (12.11.2026): у подзадачи —
+// строка «Часть поручения», у родителя — список подзадач с их статусами и
+// «Добавить подзадачу».
 
 import 'dart:async';
 import 'dart:convert';
@@ -22,8 +24,10 @@ import '../../core/theme/tokens.dart';
 import '../../data/database/app_database.dart' show AssignmentEvent;
 import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
+import '../../services/assignments/assignment_store.dart' show AssignmentTree;
 import '../../widgets/common/peek_card.dart' show peekAnchorOf;
 import '../../widgets/ui/action_sheet.dart';
+import 'assign_sheet.dart';
 import 'assignment_widgets.dart';
 
 class AssignmentScreen extends ConsumerWidget {
@@ -48,6 +52,9 @@ class AssignmentScreen extends ConsumerWidget {
     final overdue = v.overdue(DateTime.now());
     final src = v.row.sourceEmailId;
     final desc = (v.row.description ?? '').trim();
+    final parent = list!.parentOf(v);
+    final subtasks = list.childrenOf(v.id);
+    final subDone = subtasks.where((x) => x.status == AssignmentStatus.done).length;
 
     Widget info(IconData icon, String label, Widget value, {VoidCallback? onTap}) => InkWell(
           onTap: onTap,
@@ -175,6 +182,16 @@ class AssignmentScreen extends ConsumerWidget {
           ),
           onTap: v.active ? () => unawaited(showAssignmentPeek(context, ref, v)) : null,
         ),
+        if (parent != null)
+          info(
+            AppIcons.account_tree,
+            l10n.tr('assignParent'),
+            Text(parent.row.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
+            onTap: () => context.push('/assignments/${parent.id}'),
+          ),
         if (src != null)
           info(
             AppIcons.mail,
@@ -188,6 +205,30 @@ class AssignmentScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, 0),
             child: Text(desc, style: theme.textTheme.bodyLarge),
           ),
+        if (subtasks.isNotEmpty || v.active) ...[
+          const Divider(height: Space.xl),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.s, Space.xs),
+            child: Row(children: [
+              Expanded(
+                child: Text(
+                  subtasks.isEmpty
+                      ? l10n.tr('subtasks')
+                      : '${l10n.tr('subtasks')} · $subDone/${subtasks.length}',
+                  style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                ),
+              ),
+              if (v.active)
+                TextButton.icon(
+                  key: const ValueKey('assign_add_subtask'),
+                  onPressed: () => unawaited(showAssignSheet(context, parent: v)),
+                  icon: const Icon(AppIcons.add, size: 18),
+                  label: Text(l10n.tr('add')),
+                ),
+            ]),
+          ),
+          for (final c in subtasks) AssignmentSubtaskRow(v: c),
+        ],
         const Divider(height: Space.xl),
         Padding(
           padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.xs),

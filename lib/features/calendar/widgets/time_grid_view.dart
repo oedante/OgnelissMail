@@ -401,7 +401,7 @@ class _TimeGridViewState extends State<TimeGridView> {
     final past = it.end.isBefore(widget.now);
     // Задачи и письма со сроком — контуром, встречи — заливкой: с первого
     // взгляда видно, где встреча, а где дело (замечание 10.10.2026).
-    final outlined = isTaskItem(e) || isMailItem(e) || isInviteItem(e);
+    final outlined = isTodoItem(e) || isInviteItem(e);
     final bg = outlined
         ? Color.alphaBlend(c.withValues(alpha: past ? 0.08 : 0.16), theme.colorScheme.surface)
         : (past ? Color.alphaBlend(theme.colorScheme.surface.withValues(alpha: 0.45), c) : c);
@@ -412,9 +412,11 @@ class _TimeGridViewState extends State<TimeGridView> {
         ? AppIcons.task_alt
         : isMailItem(e)
             ? AppIcons.flag
-            : isInviteItem(e)
-                ? AppIcons.event_available
-                : ((e.onlineMeetingUrl ?? '').isNotEmpty ? AppIcons.videocam : null);
+            : isAssignItem(e)
+                ? AppIcons.assignment_ind
+                : isInviteItem(e)
+                    ? AppIcons.event_available
+                    : ((e.onlineMeetingUrl ?? '').isNotEmpty ? AppIcons.videocam : null);
 
     return Positioned(
       top: top + 1,

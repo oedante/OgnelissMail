@@ -90,7 +90,6 @@ import 'conflict_resolver.dart';
 import '../mail/auto_responder_service.dart';
 import '../mail/transport/mail_transport.dart';
 import '../home_widget_service.dart';
-import '../../widgets/common/account_avatar.dart' show distinctAccountInitials;
 import '../../features/mail/providers/folder_names.dart' show localizedFolderName;
 import '../../features/mail/providers/mail_providers.dart'
     show emailModelFromRow, accountsProvider, activeAccountProvider, folderFromRow, controlRevisionProvider;
@@ -1116,6 +1115,7 @@ class SyncService {
           await mc.backfillOnce(account, sentFolderId: sent?.id);
           // Один раз: карточки своих адресов и «имена»-тексты из спама (2.3.2).
           await mc.cleanupOnce();
+          await mc.repairNamesOnce();
           // Фото коллег — только пока приложение открыто: в фоне их никто
           // не видит, а это лишние запросы к адресной книге на каждом проходе.
           if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
@@ -2239,6 +2239,15 @@ class SyncService {
           ? await _senderPhotos([for (final e in singles) e.from.email])
           : const <String, String>{};
       final lines = NotificationLines.of(_prefs, work: account.isWork);
+      // Значок ящика (12.11.2026) — когда ящиков несколько, как и подпись.
+      final boxIcon = mailboxLabel == null || MessengerNotify.styleOn(_prefs)
+          ? null
+          : await MessengerNotify.mailboxIcon(
+              accountId: account.id,
+              name: account.displayName,
+              email: account.email,
+              color: account.colorValue,
+              photo: account.avatarUrl);
       for (var i = 0; i < singles.length; i++) {
         final e = singles[i];
         // Прехедер рассылки (2.2.0, просьба владельца 10.11.2026) — текст
@@ -2254,6 +2263,7 @@ class SyncService {
           subject: e.subject,
           mailboxLabel: mailboxLabel,
           isSharedMailbox: account.isSharedMailbox,
+          mailboxIcon: boxIcon,
           preview: pre ?? e.bodyPreview,
           fromEmail: e.from.email,
           folderId: folder.id,
@@ -2270,8 +2280,6 @@ class SyncService {
           accountLabel: shortLabel,
           previewLines: lines,
           fullText: pre == null && NotificationLines.wantsBody(lines) ? e.bodyPlain : null,
-          accountColor: account.colorValue,
-          accountInitial: distinctAccountInitials(active)[account.id],
         );
       }
 

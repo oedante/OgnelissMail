@@ -16,4 +16,17 @@ void main() {
     final page = buildMailEditorPage(script: script, skinCss: '', config: const {});
     expect(page, contains("script-src 'sha256-${editorScriptHash(script)}'"));
   });
+
+  test('картинки в редакторе не запрещены, сеть и скрипты окон — запрещены', () {
+    // Вставленная картинка в редакторе — ссылка blob: (кэш HugeRTE); с
+    // blockNetworkImage Android её не показывал (замечание 12.11.2026).
+    final s = mailEditorSettingsForTest();
+    expect(s.blockNetworkImage, isFalse);
+    expect(s.blockNetworkLoads, isTrue);
+    expect(s.allowFileAccess, isFalse);
+    expect(s.javaScriptCanOpenWindowsAutomatically, isFalse);
+    final page = buildMailEditorPage(script: '', skinCss: '', config: const {}, scriptHash: 'H');
+    expect(page, contains('img-src data: blob:'));
+    expect(page, contains("connect-src 'none'"));
+  });
 }

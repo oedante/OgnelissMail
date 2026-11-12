@@ -4110,4 +4110,10 @@
     <string name="mailSafetySettingsDesc">Varoitukset väärennetyistä lähettäjistä</string>
     <string name="generalDesc">Kieli, näytön kierto, Sähköposti-widget</string>
     <string name="appearanceDescFull">Teema, värit, fontti ja skaalaus, luettelon tiheys, widgetit</string>
+    <string name="assignParent">Osa toimeksiantoa</string>
+    <string name="assignPartOf">Osa toimeksiantoa: ”{title}”</string>
+    <string name="expMacWebTitle">Monimutkaiset viestit selainnäkymässä</string>
+    <string name="expMacWebDesc">Monimutkaisesti taitetut viestit näytetään kuten selaimessa, suoraan viestissä. Kokeiluominaisuus Macille.</string>
+    <string name="graphicsHcppTitle">Viestinäkymän uusi upotustapa (HCPP)</string>
+    <string name="graphicsHcppDesc">Kokeilutila Android 14:lle ja uudemmille: viestinäkymä ja editori upotetaan uudella tavalla, ja vierityksen pitäisi olla sulavampaa. Jos viesti näkyy väärin, poista asetus käytöstä.</string>
 </resources>

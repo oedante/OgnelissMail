@@ -4131,4 +4131,10 @@
     <string name="mailSafetySettingsDesc">Upozornění na podvržené odesílatele</string>
     <string name="generalDesc">Jazyk, otáčení obrazovky, widget Pošta</string>
     <string name="appearanceDescFull">Motiv, barvy, písmo a měřítko, hustota seznamu, widgety</string>
+    <string name="assignParent">Součást úkolu</string>
+    <string name="assignPartOf">Součást úkolu: „{title}“</string>
+    <string name="expMacWebTitle">Složité e-maily v okně prohlížeče</string>
+    <string name="expMacWebDesc">E-maily se složitým rozvržením se zobrazí jako v prohlížeči, přímo ve zprávě. Zkušební funkce pro Mac.</string>
+    <string name="graphicsHcppTitle">Nové vkládání okna zprávy (HCPP)</string>
+    <string name="graphicsHcppDesc">Zkušební režim pro Android 14 a novější: okno zprávy a editor se vkládají novým způsobem, posouvání by mělo být plynulejší. Pokud se zpráva zobrazuje špatně, vypněte jej.</string>
 </resources>

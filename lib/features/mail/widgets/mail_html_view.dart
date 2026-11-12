@@ -71,6 +71,15 @@ import 'mail_find.dart';
 /// Windows без проверенного WebView2) — прежний рендер flutter_html.
 bool get mailWebViewSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
+/// Mac (12.11.2026, план 2026-11 п. 5): письмо со сложной вёрсткой — во
+/// встроенном окне WKWebView прямо в письме ([MacMailWebView]), а не
+/// упрощённо виджетами с кнопкой «Открыть в браузере». Отдельно от
+/// [mailWebViewSupported]: окно телефона ([MailHtmlView]) растягивается на
+/// высоту письма, а на Mac высоту без JavaScript узнать нельзя (плагин
+/// меряет её скриптом, скрипты в окне письма выключены) — окно листает
+/// письмо само.
+bool get mailMacWebViewSupported => !kIsWeb && Platform.isMacOS;
+
 /// Подготовленный к показу документ письма.
 class MailHtmlDocument {
   /// Полный HTML-документ: CSP, viewport, базовые стили, тело письма.
@@ -1149,6 +1158,19 @@ class MailHtmlView extends StatefulWidget {
           disableVerticalScroll: true,
           textZoom: (textScale * 100).round().clamp(80, 300),
         );
+
+  /// Настройки окна письма на Mac ([MacMailWebView]): те же запреты, что на
+  /// телефоне (без JavaScript, хранилищ, файлов), но окно листает письмо
+  /// само, с полосами прокрутки; размер текста — масштабом страницы.
+  static InAppWebViewSettings macSettings({required double textScale}) =>
+      _settings(blockNet: false, textScale: textScale)
+        ..disableVerticalScroll = false
+        ..verticalScrollBarEnabled = true
+        ..horizontalScrollBarEnabled = true
+        ..pageZoom = textScale.clamp(0.8, 3.0);
+
+  /// Адрес самого документа письма (about:blank, data:), а не ссылка.
+  static bool isLocalUrl(Uri? u) => _MailHtmlViewState._isLocal(u);
 
   /// Масштаб текста письма (1.8.12, замечание владельца 30.10.2026: «у нас
   /// очень мелкий шрифт»). Текст письма — и в окне браузера, и в простом

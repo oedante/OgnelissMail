@@ -4110,4 +4110,10 @@
     <string name="mailSafetySettingsDesc">Varningar om förfalskade avsändare</string>
     <string name="generalDesc">Språk, skärmrotation, E-postwidget</string>
     <string name="appearanceDescFull">Tema, färger, typsnitt och skala, listtäthet, widgetar</string>
+    <string name="assignParent">Del av</string>
+    <string name="assignPartOf">Del av uppdraget: ”{title}”</string>
+    <string name="expMacWebTitle">Komplexa mejl i webbläsarvy</string>
+    <string name="expMacWebDesc">Mejl med komplex layout visas som i en webbläsare, direkt i meddelandet. Testfunktion för Mac.</string>
+    <string name="graphicsHcppTitle">Ny inbäddning av meddelandevyn (HCPP)</string>
+    <string name="graphicsHcppDesc">Testläge för Android 14 och senare: meddelandevyn och redigeraren bäddas in på ett nytt sätt, och rullningen bör bli mjukare. Stäng av det om ett meddelande visas fel.</string>
 </resources>

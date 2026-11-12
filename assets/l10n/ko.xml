@@ -4089,4 +4089,10 @@
     <string name="mailSafetySettingsDesc">위조된 보낸 사람 경고</string>
     <string name="generalDesc">언어, 화면 회전, 메일 위젯</string>
     <string name="appearanceDescFull">테마, 색상, 글꼴과 배율, 목록 밀도, 위젯</string>
+    <string name="assignParent">상위 업무</string>
+    <string name="assignPartOf">업무 지시 \"{title}\"의 일부</string>
+    <string name="expMacWebTitle">복잡한 메일을 브라우저 보기로 표시</string>
+    <string name="expMacWebDesc">레이아웃이 복잡한 메일을 메시지 안에서 브라우저처럼 표시합니다. Mac용 시험 기능입니다.</string>
+    <string name="graphicsHcppTitle">메일 보기의 새 임베딩 방식(HCPP)</string>
+    <string name="graphicsHcppDesc">Android 14 이상용 시험 모드입니다. 메일 보기와 편집기를 새로운 방식으로 임베드하여 스크롤이 더 부드러워집니다. 메일이 잘못 표시되면 끄세요.</string>
 </resources>

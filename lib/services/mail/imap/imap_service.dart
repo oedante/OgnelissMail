@@ -34,6 +34,7 @@ import '../../sync/push_health.dart';
 import '../../../core/security/secure_storage_service.dart';
 import '../oauth/oauth_service.dart';
 import '../../../core/utils/charset_handler.dart';
+import '../../../core/utils/encoded_words.dart';
 import '../../../data/database/app_database.dart' show EmailsCompanion;
 import '../../../data/providers/database_provider.dart';
 import '../../../data/models/account_model.dart';
@@ -1454,8 +1455,10 @@ class ImapService {
 
   /// Имя из конверта: битое при раскодировании («Ол�» — закодированное
   /// слово разорвано посреди буквы) не сохраняем — подставится имя из
-  /// контактов (1.6.33).
-  static String? _cleanName(String? n) => (n == null || n.contains('\uFFFD')) ? null : n;
+  /// контактов (1.6.33). Слово, разрезанное шлюзом между «?» и «=» конца
+  /// («Олег Ермиши?  =?utf8?QD0=BD?=», 12.11.2026), восстанавливается
+  /// (encoded_words.dart); не вышло — имени тоже нет.
+  static String? _cleanName(String? n) => repairedDisplayName(n);
 
   /// Имя вложения: почтовые программы (Mail.ru, Outlook) кодируют
   /// кириллицу по RFC 2047 — «=?UTF-8?B?…?=». Прежде имя показывалось как есть.
@@ -1562,7 +1565,7 @@ class ImapService {
           (envelope.replyTo ?? []).map((a) => EmailAddress(email: a.email, displayName: _cleanName(a.personalName))).toList();
 
       final subject = envelope.subject != null
-          ? CharsetHandler.decodeMimeEncodedWord(envelope.subject!)
+          ? repairEncodedWordText(CharsetHandler.decodeMimeEncodedWord(envelope.subject!))
           : '';
 
       final isRead = msg.flags?.contains(MessageFlags.seen) ?? false;

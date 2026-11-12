@@ -345,15 +345,24 @@ class MessengerNotify {
 
   /// MessagingStyle: «я» — владелец ящика (Android требует имя), одно
   /// сообщение от отправителя: тема, ниже начало письма.
+  ///
+  /// [header] — подпись в шапке уведомления («Ogneliss Mail · ящик · время»,
+  /// 2.3.2): на Android 12+ шапка уведомления-переписки не показывает
+  /// subText, и было не видно, на какой ящик пришло письмо (замечание
+  /// владельца 11.11.2026). Передаётся названием беседы — только для
+  /// уведомления без ярлыка беседы: у беседы с ярлыком название встало бы
+  /// на место имени отправителя.
   static MessagingStyleInformation androidStyle({
     required String selfName,
     required Person sender,
     required String text,
     required DateTime when,
+    String? header,
   }) =>
       MessagingStyleInformation(
         Person(name: selfName.trim().isEmpty ? 'Ogneliss Mail' : selfName.trim()),
         groupConversation: false,
+        conversationTitle: (header == null || header.trim().isEmpty) ? null : header.trim(),
         messages: [Message(text, when, sender)],
       );
 

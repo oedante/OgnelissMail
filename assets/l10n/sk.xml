@@ -4116,4 +4116,5 @@
     <string name="readingPaneAskHint">Zmeníte v ponuke ⋮ zoznamu → „{pane}“</string>
     <string name="keysHintNav">Ďalšia a predchádzajúca správa</string>
     <string name="keysHintPalette">Všetky príkazy</string>
+    <string name="selectedMailsN">Vybrané správy: {n}</string>
 </resources>

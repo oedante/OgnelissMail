@@ -4137,4 +4137,5 @@
     <string name="readingPaneAskHint">Можно поменять в меню ⋮ ленты → «{pane}»</string>
     <string name="keysHintNav">Следующее и предыдущее письмо</string>
     <string name="keysHintPalette">Все команды</string>
+    <string name="selectedMailsN">Выбрано писем: {n}</string>
 </resources>

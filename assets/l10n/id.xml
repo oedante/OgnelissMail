@@ -4074,4 +4074,5 @@
     <string name="readingPaneAskHint">Bisa diubah di menu ⋮ daftar → “{pane}”</string>
     <string name="keysHintNav">Pesan berikutnya dan sebelumnya</string>
     <string name="keysHintPalette">Semua perintah</string>
+    <string name="selectedMailsN">{n} pesan dipilih</string>
 </resources>

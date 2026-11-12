@@ -4095,4 +4095,5 @@
     <string name="readingPaneAskHint">Voit vaihtaa listan valikosta ⋮ → {pane}</string>
     <string name="keysHintNav">Seuraava ja edellinen viesti</string>
     <string name="keysHintPalette">Kaikki komennot</string>
+    <string name="selectedMailsN">{n} viestiä valittu</string>
 </resources>

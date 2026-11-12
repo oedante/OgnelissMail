@@ -4116,4 +4116,5 @@
     <string name="readingPaneAskHint">אפשר לשנות בתפריט ⋮ של הרשימה ← „{pane}”</string>
     <string name="keysHintNav">ההודעה הבאה והקודמת</string>
     <string name="keysHintPalette">כל הפקודות</string>
+    <string name="selectedMailsN">נבחרו {n} הודעות</string>
 </resources>

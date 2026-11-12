@@ -4074,4 +4074,5 @@
     <string name="readingPaneAskHint">可在列表的 ⋮ 菜单 →“{pane}”中更改</string>
     <string name="keysHintNav">下一封和上一封邮件</string>
     <string name="keysHintPalette">所有命令</string>
+    <string name="selectedMailsN">已选择 {n} 封邮件</string>
 </resources>

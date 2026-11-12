@@ -4074,4 +4074,5 @@
     <string name="readingPaneAskHint">เปลี่ยนได้ที่เมนู ⋮ ของรายการ → “{pane}”</string>
     <string name="keysHintNav">ข้อความถัดไปและก่อนหน้า</string>
     <string name="keysHintPalette">คำสั่งทั้งหมด</string>
+    <string name="selectedMailsN">เลือกแล้ว {n} ข้อความ</string>
 </resources>

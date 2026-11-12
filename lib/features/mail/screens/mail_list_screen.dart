@@ -728,6 +728,14 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         _foldersDocked = docked;
         // Сторона меню на телефоне — по настройке (по умолчанию слева).
         _menuAtEnd = phone && ref.watch(menuOnRightProvider);
+        // Выбрано несколько писем, лента и панель рядом — справа сводка с
+        // действиями вместо письма (оценка интерфейса 12.11.2026, как в
+        // Outlook и Apple Mail); нижняя панель выбора тогда не нужна.
+        final panePos = phone ? PanePosition.right : ref.watch(readingPaneProvider);
+        final summary = !phone &&
+            _selectedIds.length >= 2 &&
+            panePos != PanePosition.hidden &&
+            AdaptiveLayout.canSplit(box.maxWidth - (docked ? _dockedWidth(box.maxWidth) : 0));
         final row = Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -947,16 +955,18 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
 
       // В режиме выбора действия показываем внизу — до них можно дотянуться
       // одной рукой. В обычном режиме панели нет: место занимает список.
-      bottomNavigationBar: inSelection
+      bottomNavigationBar: inSelection && !summary
           ? _selectionBottomBar(l10n, theme)
           : null,
 
       body: AdaptiveLayout(
         widthKey: 'mail',
-        showDetail: _selectedEmailId != null,
+        showDetail: _selectedEmailId != null || summary,
         // Своя навигация панели (1.11.0): ответ и пересылка — прямо в
         // панели письма, как в Outlook.
-        detailBody: _selectedEmailId != null
+        detailBody: summary
+            ? _selectionSummary(l10n, theme)
+            : _selectedEmailId != null
             ? PaneNavigator(
                 key: ValueKey('pane_$_selectedEmailId'),
                 child: MailDetailScreen(
@@ -972,7 +982,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         placeholder: _DetailPlaceholder(text: l10n.selectEmailPrompt),
         // «Область чтения» (1.12.x, как в Outlook): справа, снизу или
         // скрыта. Телефон — как раньше.
-        position: phone ? PanePosition.right : ref.watch(readingPaneProvider),
+        position: panePos,
         body: Focus(
           focusNode: _listFocus,
           child: _withBottomStrips(_buildBody(emailState, theme, l10n, settings)),
@@ -1220,6 +1230,58 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             action(AppIcons.delete, l10n.delete, _bulkDelete,
                 color: AppColors.errorRed),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// Сводка выбранных писем в панели справа (планшет, компьютер).
+  Widget _selectionSummary(AppLocalizations l10n, ThemeData theme) {
+    final scheme = theme.colorScheme;
+    Widget action(IconData icon, String label, VoidCallback onTap, {bool danger = false}) => SizedBox(
+          width: 220,
+          child: OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              alignment: AlignmentDirectional.centerStart,
+              padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.m),
+              foregroundColor: danger ? AppColors.errorRed : null,
+            ),
+            onPressed: onTap,
+            icon: Icon(icon, size: 20),
+            label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+          ),
+        );
+    final control = ref.read(settingsProvider).mailControl;
+    return ColoredBox(
+      key: const ValueKey('selection_summary'),
+      color: theme.scaffoldBackgroundColor,
+      child: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(Space.xl),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Icon(AppIcons.done_all, size: 48, color: scheme.primary.withValues(alpha: 0.7)),
+            const SizedBox(height: Space.m),
+            Text(l10n.tr('selectedMailsN').replaceAll('{n}', '${_selectedIds.length}'),
+                style: theme.textTheme.titleLarge),
+            const SizedBox(height: Space.xl),
+            Wrap(spacing: Space.m, runSpacing: Space.m, alignment: WrapAlignment.center, children: [
+              action(AppIcons.mark_email_read, l10n.tr('markRead'), () => _bulkSetRead(true)),
+              action(AppIcons.mark_email_unread, l10n.tr('markUnread'), () => _bulkSetRead(false)),
+              action(AppIcons.flag, l10n.tr('flag'), () => _bulkSetFlag(true)),
+              action(AppIcons.drive_file_move, l10n.tr('move'), () => _bulkMove(l10n)),
+              action(AppIcons.archive, l10n.tr('archive'), _bulkArchive),
+              action(AppIcons.watch_later, l10n.tr('later'), () => unawaited(_bulkLater())),
+              if (control) action(AppIcons.task_alt, l10n.tr('controlSet'), _bulkControl),
+              action(AppIcons.inventory_2, l10n.tr('toOgnaArchive'), () => unawaited(_bulkOgna())),
+              action(AppIcons.delete, l10n.delete, _bulkDelete, danger: true),
+            ]),
+            const SizedBox(height: Space.l),
+            TextButton.icon(
+              onPressed: _exitSelection,
+              icon: const Icon(AppIcons.close, size: 18),
+              label: Text(l10n.tr('deselectAll')),
+            ),
+          ]),
         ),
       ),
     );

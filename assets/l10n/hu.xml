@@ -4095,4 +4095,5 @@
     <string name="readingPaneAskHint">Módosítható a lista ⋮ menüjében → „{pane}”</string>
     <string name="keysHintNav">Következő és előző üzenet</string>
     <string name="keysHintPalette">Minden parancs</string>
+    <string name="selectedMailsN">{n} üzenet kijelölve</string>
 </resources>

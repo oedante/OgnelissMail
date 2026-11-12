@@ -4074,4 +4074,5 @@
     <string name="readingPaneAskHint">一覧の ⋮ メニュー →「{pane}」で変更できます</string>
     <string name="keysHintNav">次と前のメッセージ</string>
     <string name="keysHintPalette">すべてのコマンド</string>
+    <string name="selectedMailsN">{n} 件のメールを選択中</string>
 </resources>

@@ -4137,4 +4137,5 @@
     <string name="readingPaneAskHint">Można zmienić w menu ⋮ listy → „{pane}”</string>
     <string name="keysHintNav">Następna i poprzednia wiadomość</string>
     <string name="keysHintPalette">Wszystkie polecenia</string>
+    <string name="selectedMailsN">Wybrane wiadomości: {n}</string>
 </resources>

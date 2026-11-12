@@ -4095,4 +4095,5 @@
     <string name="readingPaneAskHint">Kan ändras i listans meny ⋮ → ”{pane}”</string>
     <string name="keysHintNav">Nästa och föregående meddelande</string>
     <string name="keysHintPalette">Alla kommandon</string>
+    <string name="selectedMailsN">{n} meddelanden markerade</string>
 </resources>

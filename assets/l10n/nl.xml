@@ -4095,4 +4095,5 @@
     <string name="readingPaneAskHint">Te wijzigen via het menu ⋮ van de lijst → ‘{pane}’</string>
     <string name="keysHintNav">Volgend en vorig bericht</string>
     <string name="keysHintPalette">Alle opdrachten</string>
+    <string name="selectedMailsN">{n} berichten geselecteerd</string>
 </resources>

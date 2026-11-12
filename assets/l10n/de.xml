@@ -4095,4 +4095,5 @@
     <string name="readingPaneAskHint">Änderbar im Menü ⋮ der Liste → „{pane}“</string>
     <string name="keysHintNav">Nächste und vorherige Nachricht</string>
     <string name="keysHintPalette">Alle Befehle</string>
+    <string name="selectedMailsN">{n} Nachrichten ausgewählt</string>
 </resources>

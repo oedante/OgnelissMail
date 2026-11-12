@@ -4116,4 +4116,5 @@
     <string name="readingPaneAskHint">Se poate schimba din meniul ⋮ al listei → „{pane}”</string>
     <string name="keysHintNav">Mesajul următor și anterior</string>
     <string name="keysHintPalette">Toate comenzile</string>
+    <string name="selectedMailsN">{n} mesaje selectate</string>
 </resources>

@@ -2174,8 +2174,14 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       body: Column(
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: Space.l),
+            // На широком экране — колонкой не шире 860 точек по центру, как
+            // письмо (оценка интерфейса 12.11.2026: строки ответа шли через
+            // весь экран компьютера).
+            child: LayoutBuilder(builder: (context, box) {
+              const maxText = 860.0;
+              final side = box.maxWidth > maxText + Space.l * 2 ? (box.maxWidth - maxText) / 2 : Space.l;
+              return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: side),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -2386,7 +2392,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
                 ],
               ),
-            ),
+            );
+            }),
           ),
 
           // Нижняя панель

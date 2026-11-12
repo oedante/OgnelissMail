@@ -2845,19 +2845,37 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
               HapticFeedback.selectionClick();
               onTap();
             },
-      constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+      constraints: const BoxConstraints(minWidth: 48, minHeight: 40),
     );
+    // Подпись под значком (оценка интерфейса 12.11.2026: «Позже» и «Ответить
+    // всем» без подписи не узнавались). Длинная — мельче, не обрезается.
+    final labeled = Column(mainAxisSize: MainAxisSize.min, children: [
+      button,
+      ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 64),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(tooltip,
+              maxLines: 1,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontSize: 10,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  )),
+        ),
+      ),
+    ]);
     return Semantics(
       label: tooltip,
       button: true,
+      excludeSemantics: true,
       child: onLongPress == null
-          ? button
+          ? labeled
           : GestureDetector(
               onLongPress: () {
                 HapticFeedback.mediumImpact();
                 onLongPress();
               },
-              child: button,
+              child: labeled,
             ),
     );
   }

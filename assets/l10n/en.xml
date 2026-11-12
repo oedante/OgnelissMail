@@ -4097,4 +4097,6 @@
     <string name="assignPartOf">Part of the assignment: \"{title}\"</string>
     <string name="expMacWebTitle">Complex emails in a browser view</string>
     <string name="expMacWebDesc">Emails with complex layout are shown as in a browser, right inside the message. A trial feature for Mac.</string>
+    <string name="graphicsHcppTitle">New message view embedding (HCPP)</string>
+    <string name="graphicsHcppDesc">Trial mode for Android 14 and later: the message view and the editor are embedded in a new way, and scrolling should be smoother. If a message looks wrong, turn it off.</string>
 </resources>

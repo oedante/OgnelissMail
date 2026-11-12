@@ -102,6 +102,21 @@ void main() {
       expect(GraphicsState.fromMap(const {'glesReason': ''}).glesReason, isNull);
     });
 
+    test('HCPP: выключатель применяется после перезапуска; в журнале — работает ли', () {
+      final off = GraphicsState.fromMap(const {'hcppSupported': true});
+      expect(off.hcpp, isFalse);
+      expect(off.restartNeeded, isFalse);
+      final picked = GraphicsState.fromMap(const {'hcpp': true, 'hcppNext': true, 'hcppSupported': true});
+      expect(picked.restartNeeded, isTrue);
+      expect(picked.summary, 'Impeller, автоматически; после перезапуска HCPP включится');
+      final on = GraphicsState.fromMap(
+          const {'hcpp': true, 'hcppNext': true, 'hcppActive': true, 'hcppSupported': true, 'backend': 'Vulkan'});
+      expect(on.restartNeeded, isFalse);
+      expect(on.summary, 'Impeller (Vulkan), автоматически; встроенные окна — HCPP');
+      // Включён, но телефон не подходит (нет Vulkan) или выбран Skia — не работает и не просит перезапуска.
+      expect(GraphicsState.fromMap(const {'hcpp': true}).restartNeeded, isFalse);
+    });
+
     test('пустой ответ — значения по умолчанию', () {
       final s = GraphicsState.fromMap(const {});
       expect(s.mode, 'auto');
@@ -148,6 +163,34 @@ void main() {
     await tester.tap(find.text('Совместимость (Skia)'));
     await _settle(tester, () => find.text('Перезапустить').evaluate().isEmpty);
     expect(picked, ['impeller', 'skia']);
+    expect(find.text('Перезапустить'), findsNothing);
+  });
+
+  testWidgets('HCPP: выключатель — только на подходящем телефоне; включение просит перезапуск', (tester) async {
+    await tester.pumpWidget(_app(GraphicsDialog(initial: GraphicsState.fromMap(_afterCrash()))));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('graphics_hcpp')), findsNothing, reason: 'телефон не подходит');
+
+    final asked = <bool>[];
+    await tester.pumpWidget(_app(GraphicsDialog(
+      key: UniqueKey(),
+      initial: GraphicsState.fromMap(const {'mode': 'auto', 'active': 'impeller', 'next': 'impeller', 'hcppSupported': true}),
+      setHcpp: (on) async {
+        asked.add(on);
+        return GraphicsState.fromMap(
+            {'mode': 'auto', 'active': 'impeller', 'next': 'impeller', 'hcppSupported': true, 'hcpp': on, 'hcppNext': on});
+      },
+    )));
+    await tester.pump();
+    expect(find.text('Новое встраивание окна письма (HCPP)'), findsOneWidget);
+    expect(find.text('Перезапустить'), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('graphics_hcpp')));
+    await _settle(tester, () => find.text('Перезапустить').evaluate().isNotEmpty);
+    expect(asked, [true]);
+    expect(find.text('Перезапустить'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('graphics_hcpp')));
+    await _settle(tester, () => find.text('Перезапустить').evaluate().isEmpty);
+    expect(asked, [true, false]);
     expect(find.text('Перезапустить'), findsNothing);
   });
 

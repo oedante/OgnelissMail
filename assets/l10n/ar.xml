@@ -4181,4 +4181,6 @@
     <string name="assignPartOf">جزء من التكليف: «{title}»</string>
     <string name="expMacWebTitle">الرسائل المعقدة في عرض المتصفح</string>
     <string name="expMacWebDesc">تُعرض الرسائل ذات التنسيق المعقد كما في المتصفح، داخل الرسالة مباشرة. ميزة تجريبية لنظام Mac.</string>
+    <string name="graphicsHcppTitle">تضمين جديد لعرض الرسالة (HCPP)</string>
+    <string name="graphicsHcppDesc">وضع تجريبي لنظام Android 14 والأحدث: يُضمَّن عرض الرسالة والمحرر بطريقة جديدة، ويُفترض أن يصبح التمرير أكثر سلاسة. إذا ظهرت رسالة بشكل غير صحيح فأوقفه.</string>
 </resources>

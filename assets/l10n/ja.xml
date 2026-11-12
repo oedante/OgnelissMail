@@ -4076,4 +4076,6 @@
     <string name="assignPartOf">依頼「{title}」の一部</string>
     <string name="expMacWebTitle">複雑なメールをブラウザ表示</string>
     <string name="expMacWebDesc">レイアウトが複雑なメールを、メッセージ内でブラウザと同じように表示します。Mac向けの試験機能です。</string>
+    <string name="graphicsHcppTitle">メール表示の新しい埋め込み方式 (HCPP)</string>
+    <string name="graphicsHcppDesc">Android 14以降向けの試験モードです。メール表示とエディターを新しい方式で埋め込み、スクロールがより滑らかになります。メールが正しく表示されない場合はオフにしてください。</string>
 </resources>

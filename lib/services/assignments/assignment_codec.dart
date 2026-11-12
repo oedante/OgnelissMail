@@ -13,6 +13,7 @@
 //  · ответ кнопкой из Ogneliss Mail — атрибут data-ogneliss-status:
 //    точнее слов («Принято», «Готово» — assignment_phrases.dart).
 
+import 'dart:convert';
 import 'dart:math';
 
 /// Статусы поручения (столбец assignments.status).
@@ -47,10 +48,36 @@ abstract final class AssignmentStatus {
 /// Скрытая отметка поручения в письме. [ev] — id события истории: своё
 /// отправленное письмо не задваивает историю (и на других устройствах).
 /// [parent] — код родительского поручения (подзадача, 12.11.2026).
-typedef TaskMarker = ({String id, DateTime? due, String? to, String? title, String? ev, String? parent});
+///
+/// Проекты с этапами (12.11.2026): [project] — письмо проекта (общей
+/// задачи), [plan] — этапы проекта (JSON) для диаграммы у участников;
+/// у этапа — [start], [after] (код предыдущего этапа: «начать после»),
+/// [order], соисполнители [co], контролирующий [ctl], наблюдатели [obs],
+/// пункты чек-листа [checklist].
+typedef TaskMarker = ({
+  String id,
+  DateTime? due,
+  String? to,
+  String? title,
+  String? ev,
+  String? parent,
+  DateTime? start,
+  String? after,
+  int? order,
+  List<String> co,
+  String? ctl,
+  List<String> obs,
+  List<String> checklist,
+  bool project,
+  String? plan,
+});
 
-/// Отметка статуса в ответе.
-typedef StatusMarker = ({String id, int status, String? ev});
+/// Отметка статуса в ответе. [checks] — выполненные пункты чек-листа
+/// («0110»), [go] — «Можно начинать» (предыдущий этап принят).
+typedef StatusMarker = ({String id, int status, String? ev, String? checks, bool go});
+
+/// Отметка «добавлен участник» (передача исполнения, 12.11.2026).
+typedef PeopleMarker = ({String id, String email, int role, String? name, String? ev});
 
 abstract final class AssignmentCodec {
   // Без похожих знаков (I, L, O, U, 0, 1) — код читают люди.
@@ -79,7 +106,7 @@ abstract final class AssignmentCodec {
   /// null — не поручение. Первый тег — самого нового письма цепочки.
   static String? idFromBody(String? body) {
     if (body == null || body.isEmpty) return null;
-    final m = _statusRe.firstMatch(body) ?? _taskRe.firstMatch(body);
+    final m = _statusRe.firstMatch(body) ?? _peopleRe.firstMatch(body) ?? _taskRe.firstMatch(body);
     if (m != null) {
       final id = _fields(m.group(1))['id'];
       if (id != null && RegExp('^$_code\$').hasMatch(id)) return id;
@@ -108,23 +135,75 @@ abstract final class AssignmentCodec {
 
   static String _clean(String s) => s.replaceAll(RegExp(r'[;\r\n]'), ' ').trim();
 
+  static String _emails(Iterable<String> list) =>
+      list.map((e) => _clean(e.toLowerCase())).where((e) => e.isNotEmpty).join(',');
+
   /// Отметка поручения: пустой элемент с атрибутом (в HTML письма).
-  static String taskMarker({required String id, DateTime? due, String? to, String? title, String? ev, String? parent}) {
+  static String taskMarker({
+    required String id,
+    DateTime? due,
+    String? to,
+    String? title,
+    String? ev,
+    String? parent,
+    DateTime? start,
+    String? after,
+    int? order,
+    List<String> co = const [],
+    String? ctl,
+    List<String> obs = const [],
+    List<String> checklist = const [],
+    bool project = false,
+    String? plan,
+  }) {
     final parts = [
       'v=1',
       'id=$id',
       if (ev != null) 'ev=${_clean(ev)}',
+      if (project) 'pj=1',
       if (parent != null) 'pa=$parent',
+      if (start != null) 'st=${_date(start)}',
       if (due != null) 'due=${_date(due)}',
+      if (after != null && after != id && RegExp('^$_code\$').hasMatch(after)) 'af=$after',
+      if (order != null) 'ord=$order',
       if (to != null && to.isNotEmpty) 'to=${_clean(to.toLowerCase())}',
+      if (co.isNotEmpty) 'co=${_emails(co)}',
+      if (ctl != null && ctl.isNotEmpty) 'ctl=${_clean(ctl.toLowerCase())}',
+      if (obs.isNotEmpty) 'obs=${_emails(obs)}',
       if (title != null && title.trim().isNotEmpty) 'ti=${Uri.encodeComponent(title.trim())}',
+      if (checklist.isNotEmpty)
+        'ck=${checklist.map((t) => Uri.encodeComponent(t.trim())).where((t) => t.isNotEmpty).join('|')}',
+      if (plan != null && plan.isNotEmpty) 'pl=${base64Url.encode(utf8.encode(plan))}',
     ];
     return _marker('data-ogneliss-task', parts.join(';'));
   }
 
-  /// Отметка статуса (в ответе исполнителя или поручившего).
-  static String statusMarker(String id, int status, {String? ev}) => _marker('data-ogneliss-status',
-      'v=1;id=$id;s=${AssignmentStatus.code(status)}${ev == null ? '' : ';ev=${_clean(ev)}'}');
+  /// Отметка статуса (в ответе исполнителя или поручившего). [checks] —
+  /// выполненные пункты чек-листа строкой «0110»; [go] — «Можно начинать».
+  static String statusMarker(String id, int status, {String? ev, String? checks, bool go = false}) =>
+      _marker(
+          'data-ogneliss-status',
+          [
+            'v=1',
+            'id=$id',
+            's=${AssignmentStatus.code(status)}',
+            if (ev != null) 'ev=${_clean(ev)}',
+            if (checks != null && RegExp(r'^[01]{1,200}$').hasMatch(checks)) 'ck=$checks',
+            if (go) 'go=1',
+          ].join(';'));
+
+  /// Отметка «добавлен участник» [email] с ролью [role] (передача
+  /// исполнения: соисполнитель — роль 2).
+  static String peopleMarker(String id, String email, int role, {String? name, String? ev}) => _marker(
+      'data-ogneliss-people',
+      [
+        'v=1',
+        'id=$id',
+        'add=${_clean(email.toLowerCase())}',
+        'r=$role',
+        if (name != null && name.trim().isNotEmpty) 'nm=${Uri.encodeComponent(name.trim())}',
+        if (ev != null) 'ev=${_clean(ev)}',
+      ].join(';'));
 
   /// Пустой невидимый элемент: в тексте письма и в его текстовой версии
   /// (почта без HTML) от него ничего нет.
@@ -133,6 +212,7 @@ abstract final class AssignmentCodec {
 
   static final _taskRe = RegExp(r'data-ogneliss-task="([^"]*)"');
   static final _statusRe = RegExp(r'data-ogneliss-status="([^"]*)"');
+  static final _peopleRe = RegExp(r'data-ogneliss-people="([^"]*)"');
 
   static String _unesc(String s) =>
       s.replaceAll('&quot;', '"').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&');
@@ -161,7 +241,59 @@ abstract final class AssignmentCodec {
     } catch (_) {}
     final pa = fields['pa'];
     final parent = pa != null && pa != id && RegExp('^$_code\$').hasMatch(pa) ? pa : null;
-    return (id: id, due: due, to: fields['to'], title: title, ev: fields['ev'], parent: parent);
+    final af = fields['af'];
+    List<String> emails(String? v) =>
+        [for (final e in (v ?? '').split(',')) if (e.trim().contains('@')) e.trim().toLowerCase()];
+    final checklist = <String>[];
+    for (final t in (fields['ck'] ?? '').split('|')) {
+      if (t.isEmpty) continue;
+      try {
+        final x = Uri.decodeComponent(t).trim();
+        if (x.isNotEmpty) checklist.add(x.length > 300 ? x.substring(0, 300) : x);
+      } catch (_) {}
+    }
+    String? plan;
+    final pl = fields['pl'];
+    if (pl != null && pl.isNotEmpty && pl.length < 60000) {
+      try {
+        plan = utf8.decode(base64Url.decode(base64Url.normalize(pl)));
+      } catch (_) {}
+    }
+    final ctl = fields['ctl'];
+    return (
+      id: id,
+      due: due,
+      to: fields['to'],
+      title: title,
+      ev: fields['ev'],
+      parent: parent,
+      start: DateTime.tryParse(fields['st'] ?? ''),
+      after: af != null && af != id && RegExp('^$_code\$').hasMatch(af) ? af : null,
+      order: int.tryParse(fields['ord'] ?? ''),
+      co: emails(fields['co']),
+      ctl: ctl != null && ctl.contains('@') ? ctl.toLowerCase() : null,
+      obs: emails(fields['obs']),
+      checklist: checklist,
+      project: fields['pj'] == '1',
+      plan: plan,
+    );
+  }
+
+  /// Отметка «добавлен участник».
+  static PeopleMarker? parsePeople(String body) {
+    final m = _peopleRe.firstMatch(body);
+    if (m == null) return null;
+    final fields = _fields(m.group(1));
+    final id = fields['id'];
+    final email = (fields['add'] ?? '').trim().toLowerCase();
+    final role = int.tryParse(fields['r'] ?? '');
+    if (id == null || !RegExp('^$_code\$').hasMatch(id) || !email.contains('@') || role == null) return null;
+    String? name;
+    try {
+      final n = fields['nm'];
+      if (n != null && n.isNotEmpty) name = Uri.decodeComponent(n);
+    } catch (_) {}
+    return (id: id, email: email, role: role, name: name, ev: fields['ev']);
   }
 
   /// Отметка статуса в ответе.
@@ -172,7 +304,14 @@ abstract final class AssignmentCodec {
     final id = fields['id'];
     final s = AssignmentStatus.fromCode(fields['s'] ?? '');
     if (id == null || s == null || !RegExp('^$_code\$').hasMatch(id)) return null;
-    return (id: id, status: s, ev: fields['ev']);
+    final ck = fields['ck'];
+    return (
+      id: id,
+      status: s,
+      ev: fields['ev'],
+      checks: ck != null && RegExp(r'^[01]{1,200}$').hasMatch(ck) ? ck : null,
+      go: fields['go'] == '1',
+    );
   }
 
   /// Текст письма поручения (HTML). Строки — на языке поручившего.
@@ -193,6 +332,10 @@ abstract final class AssignmentCodec {
     String? ev,
     String? parent,
     String? parentLine,
+    /// Дополнительный текст (этапы проекта, роли, чек-лист) — после срока.
+    String? extraHtml,
+    /// Своя отметка вместо отметки по [id], [due], [to], [title], [ev], [parent].
+    String? marker,
   }) {
     final b = StringBuffer()
       ..write('<p>${_esc(greeting)}</p>')
@@ -203,6 +346,7 @@ abstract final class AssignmentCodec {
     final desc = (description ?? '').trim();
     if (desc.isNotEmpty) b.write('<p>${_esc(desc).replaceAll('\n', '<br>')}</p>');
     if (dueLine != null) b.write('<p><b>${_esc(dueLabel ?? '')}</b> ${_esc(dueLine)}</p>');
+    if (extraHtml != null && extraHtml.isNotEmpty) b.write(extraHtml);
     if (sourceLine != null) {
       b.write('<p>${_esc(sourceLine)}</p>');
       final src = (sourceText ?? '').trim();
@@ -214,10 +358,17 @@ abstract final class AssignmentCodec {
     }
     b
       ..write('<p style="color:#888;font-size:smaller">— ${_esc(footer)} ${tag(id)}</p>')
-      ..write(taskMarker(id: id, due: due, to: to, title: title, ev: ev, parent: parent));
+      ..write(marker ?? taskMarker(id: id, due: due, to: to, title: title, ev: ev, parent: parent));
     return b.toString();
   }
 }
+
+/// Экранирование текста для HTML письма поручения.
+String assignmentEsc(String s) => s
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
 
 /// Название поручения из темы письма: «Re: Поручение: собрать даты — до
 /// 12.11» → «собрать даты».

@@ -105,6 +105,25 @@ class PersonNames {
   /// Число слов имени.
   static int words(String? name) => clean(name).split(' ').where((w) => w.isNotEmpty).length;
 
+  static final _link = RegExp(r'(://|\bwww\.|\b[a-z0-9-]+\.[a-z]{2,}/)', caseSensitive: false);
+
+  /// Похоже ли [name] на имя человека или организации, а не на текст
+  /// рассылки (2.3.2). Мошенники пишут в поле имени целое сообщение:
+  /// «Вам перевод 166711 руб. получить тут https://…» — и подставляют чужой
+  /// адрес. Такое «имя» было самым длинным из встреченных и попадало в
+  /// плашку получателя и в контакты из переписки (замечание владельца
+  /// 11.11.2026). Не имя: ссылка, больше [maxNameWords] слов или длиннее
+  /// [maxNameLength] знаков.
+  static bool plausible(String? name) {
+    final n = (name ?? '').trim();
+    if (n.isEmpty || n.length > maxNameLength) return false;
+    if (_link.hasMatch(n)) return false;
+    return n.split(RegExp(r'\s+')).length <= maxNameWords;
+  }
+
+  static const maxNameLength = 64;
+  static const maxNameWords = 7;
+
   /// [candidate] полнее, чем [current]: больше слов и те же буквы (не другой
   /// человек): «Смирнов, Андрей» → «Смирнов Андрей Сергеевич».
   static bool better(String? current, String? candidate) {

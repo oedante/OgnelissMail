@@ -370,7 +370,7 @@ App Bundle и APK; копии с номером версии — `build\out\ogne
 | `Android sdkmanager did not install NDK …` | SDK Manager → SDK Tools → Show Package Details → NDK (Side by side) нужной версии |
 | `Android license status unknown` | `flutter doctor --android-licenses` |
 | `Java version … 25 … incompatible with Gradle` | Сборке Android нужна Java 17 или 21: `winget install EclipseAdoptium.Temurin.21.JDK`, затем `flutter config --jdk-dir "<папка jdk-21…>"` и `cd android; .\gradlew --stop` |
-| `this and base files have different roots`, `Starting AGP 9+, only the new DSL…` | С 1.6.3 проект на **AGP 9.1.0 / Gradle 9.3.1 / Kotlin 2.4.0** (как шаблон Flutter 3.47). В `android\gradle.properties` должны быть `android.newDsl=false` и `android.builtInKotlin=false` — без них часть плагинов не собирается |
+| `this and base files have different roots`, `Starting AGP 9+, only the new DSL…` | С 1.6.3 проект на **AGP 9.1.x / Gradle 9.3.1 / Kotlin 2.4.0** (как шаблон Flutter 3.47; с 2.3.2 — AGP 9.1.1: Flutter 3.50 требует не ниже). В `android\gradle.properties` должны быть `android.newDsl=false` и `android.builtInKotlin=false` — без них часть плагинов не собирается |
 | `WARNING: Your app uses the following plugins that apply Kotlin Gradle Plugin (KGP)` | Предупреждение, не ошибка: эти плагины ещё не перешли на встроенный Kotlin AGP 9. Пока в `gradle.properties` `android.builtInKotlin=false`, сборка идёт. Включать `true` — когда список станет пустым |
 | Эмулятор не запускается, «HAXM / hypervisor» | Включите «Платформу низкоуровневой оболочки Windows» и виртуализацию в BIOS |
 | `Keystore was tampered with, or password was incorrect` | Неверный пароль в `android\key.properties` или в `OGNELISS_KEYSTORE_PASSWORD` |

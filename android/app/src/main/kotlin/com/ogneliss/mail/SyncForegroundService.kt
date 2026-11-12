@@ -21,6 +21,18 @@ package com.ogneliss.mail
 //    сервис жил дальше.
 // Теперь сервис живёт строго вместе с приложением. Скрыть уведомление можно
 // кнопкой в нём (системные настройки канала) — синхронизация при этом идёт.
+//
+// Короткая проверка по будильнику (2.3.2, требование владельца 11.11.2026:
+// «проверки должны срабатывать вовремя во всех режимах»). У ящиков «раз в
+// 15 минут / 30 / час» постоянной службы нет, и в глубоком сне (Doze)
+// Android закрывает приложению сеть и откладывает задачи WorkManager на
+// часы. Будильник (SyncHeartbeat) к сроку проверки запускает эту же службу
+// на время одной проверки: у процесса со службой переднего плана сеть и
+// процессор есть и в глубоком сне. Проверку выполняет задача WorkManager
+// (тот же обработчик Dart, что у плановой), служба ждёт её конца и
+// останавливается. Уведомление — то же, тихое; на Android 12+ система не
+// показывает его первые 10 секунд, и короткая проверка его не успевает
+// показать.
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -31,7 +43,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import io.flutter.embedding.engine.FlutterEngineCache
@@ -52,6 +67,24 @@ class SyncForegroundService : Service() {
 
         /** Запуск из приложения (кнопка «Работать в фоне», открытое окно). */
         const val EXTRA_FROM_APP = "com.ogneliss.mail.FGS_FROM_APP"
+
+        /** Запуск будильником: одна проверка почты — и остановка (2.3.2). */
+        const val EXTRA_CHECK = "com.ogneliss.mail.FGS_CHECK"
+
+        /**
+         * Короткая проверка по будильнику. Бросает исключение, если система
+         * не разрешила запуск службы из фона (Android 12+ без точного
+         * будильника) — тогда проверку ставит срочная задача (SyncHeartbeat).
+         */
+        fun startCheck(context: Context) {
+            val intent = Intent(context, SyncForegroundService::class.java)
+                .putExtra(EXTRA_CHECK, true)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
+        }
 
         fun start(context: Context) {
             val intent = Intent(context, SyncForegroundService::class.java)
@@ -81,30 +114,42 @@ class SyncForegroundService : Service() {
     // приложения, а плановую задачу Android в глубоком сне откладывает.
     override fun onTimeout(startId: Int, fgsType: Int) {
         running = false
-        keepHeartbeat = true
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
     override fun onDestroy() {
         running = false
-        if (!keepHeartbeat) SyncHeartbeat.cancel(applicationContext)
-        keepHeartbeat = false
+        endCheck()
+        // Постоянная служба остановлена (приложением, системой, смахиванием):
+        // будильник не снимается, а переходит в режим «без службы» — если
+        // фоновые проверки включены (2.3.2; раньше явная остановка снимала
+        // его, и почту в глубоком сне никто не проверял).
+        if (permanent) SyncHeartbeat.applyStandby(applicationContext)
+        permanent = false
         super.onDestroy()
     }
 
-    /** Остановка по лимиту Android 15: пульс остаётся (см. [onTimeout]). */
-    private var keepHeartbeat = false
+    /** Служба запускалась приложением как постоянная (не только проверка). */
+    private var permanent = false
+
+    /** Идёт короткая проверка по будильнику. */
+    private var checking = false
+    private var checkLock: PowerManager.WakeLock? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private val checkTimeout = Runnable { finishCheck() }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // Android 15+ (замечание Google Play 14.10.2026): службу типа dataSync
         // нельзя запускать из BOOT_COMPLETED. Служба стартует только по
-        // явному запуску из приложения ([start]); любой другой запуск
-        // (перезапуск системой, после загрузки) — сразу остановка, без
-        // startForeground. Почту в этом случае проверяет WorkManager.
-        if (intent?.getBooleanExtra(EXTRA_FROM_APP, false) != true) {
-            running = false
-            stopSelf(startId)
+        // явному запуску из приложения ([start]) или будильником проверки
+        // ([startCheck]); любой другой запуск (перезапуск системой, после
+        // загрузки) — сразу остановка, без startForeground. Почту в этом
+        // случае проверяет WorkManager.
+        val fromApp = intent?.getBooleanExtra(EXTRA_FROM_APP, false) == true
+        val check = intent?.getBooleanExtra(EXTRA_CHECK, false) == true
+        if (!fromApp && !check) {
+            if (!running && !checking) stopSelf(startId)
             return START_NOT_STICKY
         }
         createChannel()
@@ -120,18 +165,63 @@ class SyncForegroundService : Service() {
         } catch (e: Exception) {
             // Android 12+: из фона (в т.ч. при перезапуске START_STICKY) запуск
             // foreground-сервиса запрещён, а у dataSync исчерпан суточный лимит
-            // (Android 15+). Не падаем — синхронизацию продолжит WorkManager.
-            running = false
-            stopSelf()
+            // (Android 15+). Не падаем — синхронизацию продолжит WorkManager:
+            // для проверки по будильнику — срочной задачей.
+            if (check) SyncHeartbeat.enqueueCheck(applicationContext, inService = false)
+            if (fromApp) running = false
+            if (!running && !checking) stopSelf()
             return START_NOT_STICKY
         }
-        // Пульс: будит процесс и в глубоком сне (см. SyncHeartbeat). Повторный
-        // старт сервиса просто переставляет будильник.
-        running = true
-        SyncHeartbeat.schedule(applicationContext)
+        if (fromApp) {
+            // Пульс: будит процесс и в глубоком сне (см. SyncHeartbeat).
+            // Повторный старт сервиса просто переставляет будильник.
+            running = true
+            permanent = true
+            SyncHeartbeat.schedule(applicationContext)
+        } else if (!running) {
+            beginCheck()
+        }
         // Не пересоздавать после убийства процесса: без Flutter-движка сервис
         // ничего не синхронизирует, а уведомление висело бы впустую.
         return START_NOT_STICKY
+    }
+
+    /** Короткая проверка: задача WorkManager под защитой службы. */
+    private fun beginCheck() {
+        if (checking) return
+        checking = true
+        try {
+            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+            checkLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ogneliss:alarm-check").apply {
+                setReferenceCounted(false)
+                acquire(SyncHeartbeat.MAX_CHECK_MS)
+            }
+        } catch (e: Exception) {
+        }
+        handler.postDelayed(checkTimeout, SyncHeartbeat.MAX_CHECK_MS)
+        SyncHeartbeat.runCheckInService(applicationContext) { handler.post { finishCheck() } }
+    }
+
+    /** Проверка закончилась (или вышло время): остановить службу, если она не постоянная. */
+    private fun finishCheck() {
+        if (!checking) return
+        endCheck()
+        if (!running) {
+            // Следующий будильник — по сроку, который записала проверка.
+            SyncHeartbeat.afterCheck(applicationContext)
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        }
+    }
+
+    private fun endCheck() {
+        checking = false
+        handler.removeCallbacks(checkTimeout)
+        try {
+            checkLock?.let { if (it.isHeld) it.release() }
+        } catch (e: Exception) {
+        }
+        checkLock = null
     }
 
     // Приложение смахнули из недавних. С 07.10.2026 движок Flutter живёт
@@ -139,9 +229,10 @@ class SyncForegroundService : Service() {
     // синхронизировать и держать push — сервис остаётся. Останавливаемся,
     // только если движка нет (тогда синхронизации действительно не будет).
     override fun onTaskRemoved(rootIntent: Intent?) {
-        if (!FlutterEngineCache.getInstance().contains(MainActivity.ENGINE_ID)) {
+        // Идёт короткая проверка — дать ей закончиться (движок ей не нужен:
+        // у задачи WorkManager свой).
+        if (!checking && !FlutterEngineCache.getInstance().contains(MainActivity.ENGINE_ID)) {
             running = false
-            SyncHeartbeat.cancel(applicationContext)
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }

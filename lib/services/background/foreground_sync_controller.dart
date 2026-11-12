@@ -146,6 +146,21 @@ class ForegroundSyncController {
     }
   }
 
+  /// Будильник фоновой проверки (2.3.2): выставить заново по настройке,
+  /// записанной в SharedPreferences (BackgroundAlarm). Возвращает состояние
+  /// для журнала — {minutes, exact, armed, service} — или null.
+  Future<Map<Object?, Object?>?> applyAlarm() async {
+    if (!isSupported) return null;
+    try {
+      return await _channel.invokeMethod<Map<Object?, Object?>>('alarm');
+    } on MissingPluginException {
+      return null;
+    } catch (e) {
+      AppLogger.debug('Будильник фоновой проверки: $e');
+      return null;
+    }
+  }
+
   /// Реально ли подключён нативный сервис (иначе — тихо ничего не делаем).
   Future<bool> isChannelReady() async {
     if (!isSupported) return false;

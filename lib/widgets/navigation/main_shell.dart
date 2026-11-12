@@ -245,6 +245,9 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       // активного UI. Guard по времени внутри; unawaited, чтобы не задерживать
       // сворачивание.
       unawaited(ref.read(maintenanceServiceProvider).maybeRunDaily());
+      // Будильник фоновой проверки (Android, 2.3.2): интервал по текущим
+      // ящикам и настройкам — на время, пока приложение свёрнуто.
+      unawaited(ref.read(backgroundServiceProvider).applyBackgroundAlarm());
       // Держать процесс живым в фоне (Android), если включено и есть аккаунты —
       // тогда таймеры синка и IMAP IDLE продолжают работать свёрнутыми.
       final st = ref.read(settingsProvider);
@@ -299,6 +302,12 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
               _buildFocusBanner(l10n, theme),
             Expanded(
               child: Row(
+                // Панель — на всю высоту, разделы — у верхнего края (2.3.2,
+                // замечание владельца 12.11.2026: в «Календаре» и
+                // «Контактах» разделы съезжали к середине экрана — без папок
+                // и «Избранного» панель была высотой со свои кнопки, и
+                // строка ставила её по центру).
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (!onMail) ...[
                     SizedBox(
@@ -308,7 +317,10 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
                         color: theme.colorScheme.surfaceContainerLow,
                         child: const SafeArea(
                           right: false,
-                          child: SingleChildScrollView(child: SectionNav(extras: true)),
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: SingleChildScrollView(child: SectionNav(extras: true)),
+                          ),
                         ),
                       ),
                     ),

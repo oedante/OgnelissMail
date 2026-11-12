@@ -34,7 +34,7 @@ import '../mail/email_actions_service.dart' show emailActionsProvider;
 import 'package:http/http.dart' as http;
 import 'package:drift/drift.dart';
 import 'package:flutter/widgets.dart' show WidgetsBinding, AppLifecycleState;
-import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'push_health.dart';
 import 'single_pass.dart';
 import '../../data/models/note_model.dart';
@@ -52,6 +52,8 @@ import '../mail/focus_mode_service.dart';
 import '../../data/models/folder_model.dart';
 import '../../data/providers/database_provider.dart';
 import '../../services/mail/ews/ews_service.dart';
+import '../background/background_alarm.dart';
+import '../../services/mail/imap/imap_reconcile.dart';
 import '../../services/mail/imap/imap_service.dart';
 import '../../services/mail/engine/mail_engine_service.dart';
 import 'package:mail_engine/mail_engine.dart' show Preheader;
@@ -76,7 +78,7 @@ import '../mail/oauth/oauth_service.dart';
 import '../notifications/account_notify_mode.dart';
 import '../../core/platform/finish_in_background.dart';
 import 'dart:async';
-import 'dart:io' show SocketException, HandshakeException, pid;
+import 'dart:io' show Platform, SocketException, HandshakeException, pid;
 import 'imap_push_service.dart' show imapPushServiceProvider;
 import 'offline_store_service.dart';
 import '../mail/attachment_cache_service.dart';
@@ -88,6 +90,7 @@ import 'conflict_resolver.dart';
 import '../mail/auto_responder_service.dart';
 import '../mail/transport/mail_transport.dart';
 import '../home_widget_service.dart';
+import '../../features/mail/providers/folder_names.dart' show localizedFolderName;
 import '../../features/mail/providers/mail_providers.dart'
     show emailModelFromRow, accountsProvider, activeAccountProvider, folderFromRow, controlRevisionProvider;
 
@@ -137,9 +140,37 @@ class SyncService {
                 : scheduled
                     ? PassScope.scheduled
                     : PassScope.all;
-            return _pass.run(() => _syncAllBody(scheduled: scheduled, respectInterval: respectInterval),
-                fresh: fresh, needs: scope, covers: scope);
+            return _pass
+                .run(() => _syncAllBody(scheduled: scheduled, respectInterval: respectInterval),
+                    fresh: fresh, needs: scope, covers: scope)
+                // Срок следующей проверки — будильнику Android (2.3.2).
+                .whenComplete(noteBackgroundPlan);
           });
+
+  /// Записать для будильника фоновой проверки (Android, BackgroundAlarm,
+  /// 2.3.2) интервал и срок ближайшего ящика — после каждого прохода, в
+  /// приложении и в фоновой задаче. Будильник ОС к этому сроку сам проверит
+  /// почту и в глубоком сне; если её к сроку уже проверили, срок сдвинется.
+  Future<void> noteBackgroundPlan() async {
+    if (kIsWeb || !Platform.isAndroid) return;
+    try {
+      final accounts = _ref.read(accountsProvider);
+      // Список ящиков ещё не загружен — прежнюю запись не затираем.
+      if (accounts.isEmpty) return;
+      final db = _ref.read(databaseProvider);
+      final rows = await (db.selectOnly(db.accounts)..addColumns([db.accounts.id, db.accounts.lastSyncAt])).get();
+      final plan = BackgroundAlarm.plan(
+        globalInterval: _ref.read(settingsProvider).syncIntervalMinutes,
+        accounts: accounts,
+        lastSync: {for (final r in rows) r.read(db.accounts.id)!: r.read(db.accounts.lastSyncAt)},
+        now: DateTime.now(),
+      );
+      await _prefs.setInt(BackgroundAlarm.minutesKey, plan.minutes);
+      await _prefs.setInt(BackgroundAlarm.nextDueKey, plan.nextDueMs);
+    } catch (e) {
+      AppLogger.debug('Будильник проверки: срок не записан — $e');
+    }
+  }
 
   /// Окно доставки режима фокуса — одно сводное уведомление о письмах,
   /// пришедших в тишине. Фокус выключили — тоже показываем, чтобы не потерять.
@@ -238,14 +269,7 @@ class SyncService {
             // с уведомлениями, ловит только эта проверка — для них 15 минут,
             // а не 30 (2.0.0, решение владельца 08.11.2026).
             if (pushOk && imapPushInboxOnly(a) && await _notifiesOutsideInbox(a)) pushOk = false;
-            final minutes = switch (a.syncInterval) {
-              SyncInterval.minutes5 => 5,
-              SyncInterval.minutes30 => 30,
-              SyncInterval.hour1 => 60,
-              // «По расписанию» вне рабочих часов — свой интервал (15/30/60).
-              SyncInterval.scheduled when !SyncSchedule.inWindow() => SyncSchedule.offMinutes,
-              _ => pushOk ? 30 : 15, // push (резервная проверка) и 15 минут
-            };
+            final minutes = SyncSchedule.checkMinutes(a, pushOk: pushOk) ?? 15;
             final row = await (db.select(db.accounts)..where((x) => x.id.equals(a.id))).getSingleOrNull();
             final last = row?.lastSyncAt;
             // Небольшой запас: таймер срабатывает «примерно» через интервал.
@@ -1089,6 +1113,8 @@ class SyncService {
               .getSingleOrNull();
           final mc = _ref.read(mailContactsServiceProvider);
           await mc.backfillOnce(account, sentFolderId: sent?.id);
+          // Один раз: карточки своих адресов и «имена»-тексты из спама (2.3.2).
+          await mc.cleanupOnce();
           // Фото коллег — только пока приложение открыто: в фоне их никто
           // не видит, а это лишние запросы к адресной книге на каждом проходе.
           if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
@@ -2201,7 +2227,8 @@ class SyncService {
       final active = _ref.read(accountsProvider).where((a) => a.isActive).toList();
       final shortLabel = NotificationText.shortMailbox(account.email, [for (final a in active) a.email]);
       final mailboxLabel = (active.length > 1 || account.isSharedMailbox) ? shortLabel : null;
-      final folderLabel = folder.type == FolderType.inbox ? null : folder.displayName;
+      // Стандартные папки — на языке приложения («Sent» → «Отправленные», 2.3.2).
+      final folderLabel = folder.type == FolderType.inbox ? null : localizedFolderName(folder, _l10n());
 
       // Самые старые из показываемых — первыми: в шторке сверху окажется самое свежее.
       final singles = unread.take(_maxSingleNotifications).toList().reversed.toList();
@@ -2372,6 +2399,81 @@ class SyncService {
     return folders.where((f) => chosen[f.id] ?? f.isSynced).toList();
   }
 
+  /// Догрузить письма, которые есть на сервере, а на устройстве их нет
+  /// (2.3.2, imap_reconcile.dart). [rows] — письма папки на устройстве.
+  /// Возвращает сохранённые письма.
+  Future<List<EmailModel>> _recoverMissingImap(
+      ImapService imap,
+      AppDatabase db,
+      AccountModel account,
+      FolderModel folder,
+      ImapFolderDelta delta,
+      List<({String id, bool edited, DateTime at})> rows,
+      DateTime? cutoff) async {
+    int uidOf(String id) => int.tryParse(id.substring(id.lastIndexOf(':') + 1)) ?? -1;
+    String idOf(int uid) => '${folder.id}:$uid';
+    final addedUids = {for (final e in delta.added) uidOf(e.id)};
+    final server = <int>{...delta.present, ...delta.flags.keys}..removeAll(addedUids);
+    if (server.isEmpty) return const [];
+    // Наименьший UID письма папки в пределах периода синхронизации: всё, что
+    // ниже, — история за срезом (старые письма с флажком автоочистка
+    // оставляет — они нижнюю границу не задают).
+    int? floor;
+    for (final r in rows) {
+      if (cutoff != null && r.at.isBefore(cutoff)) continue;
+      final u = uidOf(r.id);
+      if (u > 0 && (floor == null || u < floor)) floor = u;
+    }
+    if (floor == null) return const [];
+    final cands = (server.where((u) => u > floor!).toList()..sort((a, b) => b.compareTo(a)))
+        .take(ImapReconcile.top)
+        .toList();
+    if (cands.isEmpty) return const [];
+    // Есть на устройстве под этим id — в любой папке (перемещено здесь, а
+    // сервер ещё не знает) — или действие с письмом ждёт отправки на сервер.
+    final have = <int>{};
+    final pending = <int>{};
+    for (var i = 0; i < cands.length; i += 400) {
+      final part = [for (final u in cands.skip(i).take(400)) idOf(u)];
+      final found = await (db.selectOnly(db.emails)
+            ..addColumns([db.emails.id])
+            ..where(db.emails.accountId.equals(account.id) & db.emails.id.isIn(part)))
+          .map((r) => r.read(db.emails.id)!)
+          .get();
+      have.addAll(found.map(uidOf));
+      final queued = await (db.selectOnly(db.syncQueue)
+            ..addColumns([db.syncQueue.targetId])
+            ..where(db.syncQueue.accountId.equals(account.id) & db.syncQueue.targetId.isIn(part)))
+          .map((r) => r.read(db.syncQueue.targetId))
+          .get();
+      pending.addAll(queued.whereType<String>().map(uidOf));
+    }
+    final skipKey = 'imap_skip:${account.id}:${folder.id}';
+    final now = DateTime.now();
+    final missing = ImapReconcile.missing(
+      server: cands,
+      local: have,
+      floor: floor,
+      pending: pending,
+      skipped: ImapReconcile.readSkipped(_prefs.getStringList(skipKey), now),
+      limit: ImapService.maxRecover,
+    );
+    if (missing.isEmpty) return const [];
+    AppLogger.warning('IMAP ${folder.displayName}: на сервере есть письма, которых нет на устройстве, — '
+        'догружаю: UID ${ImapService.briefUids(missing)}');
+    final fetched = await imap.fetchByUids(account, folderId: folder.id, uids: missing);
+    final saved = <EmailModel>[];
+    if (fetched.isNotEmpty) await _batchSaveEmails(db, account.id, folder, fetched, collectNewInto: saved);
+    final savedUids = {for (final e in saved) uidOf(e.id)};
+    final left = [for (final u in missing) if (!savedUids.contains(u)) u];
+    if (left.isNotEmpty) {
+      await _prefs.setStringList(skipKey, ImapReconcile.writeSkipped(_prefs.getStringList(skipKey), left, now));
+    }
+    AppLogger.info('IMAP ${folder.displayName}: догружено пропущенных писем — ${saved.length}'
+        '${left.isEmpty ? '' : '; не сохранены (старше периода синхронизации или сервер не отдал) — ${left.length}'}');
+    return saved;
+  }
+
   /// Одна папка IMAP: письма, удаления на сервере, уведомление о новых,
   /// автоответ. Общая для полной синхронизации и push (IDLE) — прежде push
   /// шёл через загрузку без уведомлений, и о новом письме телефон молчал.
@@ -2440,27 +2542,48 @@ class SyncService {
     final from = delta.empty ? 0 : (delta.reset ? delta.state.minUid : delta.checkedFrom);
     final to = delta.empty ? 1 << 62 : (delta.reset ? delta.state.maxUid : delta.checkedTo);
     final vanished = delta.vanished;
+    // Письма папки на устройстве — один запрос на удаления и на сверку
+    // (только id, отметка правки и дата: раньше здесь читались строки
+    // целиком — с текстами всех писем папки, при каждой синхронизации).
+    List<({String id, bool edited, DateTime at})>? localRows;
+    Future<List<({String id, bool edited, DateTime at})>> local() async => localRows ??=
+        await (db.selectOnly(db.emails)
+              ..addColumns([db.emails.id, db.emails.isLocallyModified, db.emails.receivedAt])
+              ..where(db.emails.accountId.equals(account.id) & db.emails.folderId.equals(folder.id)))
+            .map((r) => (
+                  id: r.read(db.emails.id)!,
+                  edited: r.read(db.emails.isLocallyModified) ?? false,
+                  at: r.read(db.emails.receivedAt)!,
+                ))
+            .get();
     if ((from != null && to != null) || (vanished != null && vanished.isNotEmpty)) {
-      // Только id: раньше здесь читались строки целиком — с текстами всех
-      // писем папки, при каждой синхронизации папки.
-      final local = await (db.selectOnly(db.emails)
-            ..addColumns([db.emails.id])
-            ..where(db.emails.accountId.equals(account.id) &
-                db.emails.folderId.equals(folder.id) &
-                db.emails.isLocallyModified.equals(false)))
-          .map((r) => r.read(db.emails.id)!)
-          .get();
-      final gone = local.where((id) {
-        final u = uidOf(id);
-        if (vanished != null && vanished.contains(u)) return true;
-        return from != null && to != null && u >= from && u <= to && !delta.present.contains(u);
-      }).toList();
+      final gone = <String>[];
+      for (final row in await local()) {
+        if (row.edited) continue;
+        final u = uidOf(row.id);
+        if ((vanished != null && vanished.contains(u)) ||
+            (from != null && to != null && u >= from && u <= to && !delta.present.contains(u))) {
+          gone.add(row.id);
+        }
+      }
       if (gone.isNotEmpty) {
         for (var i = 0; i < gone.length; i += 500) {
           final part = gone.sublist(i, i + 500 > gone.length ? gone.length : i + 500);
           await (db.delete(db.emails)..where((e) => e.accountId.equals(account.id) & e.id.isIn(part))).go();
         }
         AppLogger.info('IMAP ${folder.displayName}: удалено на сервере — ${gone.length}');
+      }
+    }
+
+    // Сверка (2.3.2): письма, которые сервер показывает в проверенном окне
+    // папки (или назвал изменёнными), а на устройстве их нет, — догрузить.
+    // См. imap_reconcile.dart. Сбой сверки синхронизацию папки не срывает.
+    var recovered = const <EmailModel>[];
+    if (!delta.reset && !delta.empty) {
+      try {
+        recovered = await _recoverMissingImap(imap, db, account, folder, delta, await local(), cutoff);
+      } catch (e) {
+        AppLogger.debug('IMAP ${folder.displayName}: сверка писем — $e');
       }
     }
 
@@ -2484,7 +2607,10 @@ class SyncService {
     // Уведомляем только о действительно новых: догруженная история и первая
     // загрузка уведомлений не дают.
     final newest = known?.maxUid ?? 1 << 62;
-    final notify = fresh.where((e) => uidOf(e.id) > newest).toList();
+    // Догруженные сверкой — тоже новые для пользователя (старые отсеет
+    // показ уведомлений: только письма за последние двое суток).
+    final notify = [...fresh.where((e) => uidOf(e.id) > newest), ...recovered];
+    if (recovered.isNotEmpty) fresh.addAll(recovered);
     // Отчёты о доставке своих писем (1.9.x) — своим уведомлением.
     final toNotify = await _deliveryReports(account, folder, fresh, notify, settings);
     // Тексты новых писем «Входящих» — заранее: письмо открывается сразу,
@@ -2517,7 +2643,7 @@ class SyncService {
     } else {
       _continuations.remove('${account.id}|${folder.id}');
     }
-    return added;
+    return added + recovered.length;
   }
 
   /// В папке есть письма с локальными правками, ещё не отправленными на сервер.
@@ -3680,7 +3806,11 @@ class SyncService {
 
     // Контакты из переписки: кто пишет и кому пишем (подсказки адресатов,
     // фото). Не ждём — на синхронизацию не влияет.
-    if (newEmails.isNotEmpty) {
+    // «Спам», «Корзина», черновики и исходящие контактов не дают (2.3.2): в
+    // спаме имя отправителя часто подделано — оно становилось именем
+    // человека в подсказках и плашках получателей.
+    const noContacts = {FolderType.junk, FolderType.trash, FolderType.drafts, FolderType.outbox};
+    if (newEmails.isNotEmpty && !noContacts.contains(folder.type)) {
       final acc = _ref.read(accountsProvider).where((a) => a.id == accountId).firstOrNull;
       if (acc != null) {
         unawaited(_ref
@@ -4099,6 +4229,7 @@ class SyncService {
     for (final id in folderIds) {
       await _resetFolderSync(account, id);
       await _prefs.remove('imap_state:${account.id}:$id');
+      await _prefs.remove('imap_skip:${account.id}:$id');
     }
     AppLogger.info('Синхронизация папок: с телефона убрано писем — $n (папок: ${folderIds.length})');
     return n;

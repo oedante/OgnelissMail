@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/utils/person_names.dart';
 import '../../data/providers/database_provider.dart';
 import '../../services/contacts/person_name_directory.dart';
+import '../../services/mail/own_addresses.dart';
 import '../mail/providers/mail_providers.dart' show accountsProvider;
 
 /// «Фамилия, Имя Отчество» → «Фамилия Имя Отчество»; кавычки и лишние
@@ -97,6 +98,9 @@ final personNamesProvider = FutureProvider<Map<String, String>>((ref) async {
     if (e.isEmpty) return;
     final n = normalizePersonName(name);
     if (n.isEmpty || n.contains('@') || !n.contains(' ')) return;
+    // Текст вместо имени (спам: «Вам перевод … получить тут https://…») —
+    // не имя, каким бы «полным» ни был (2.3.2).
+    if (!PersonNames.plausible(n)) return;
     // Битое имя («Ермишин Ол� 5г»: закодированное слово заголовка From
     // разорвано посреди буквы) не берём — иначе оно, «длиннее» на слово,
     // вытесняло правильное и попадало в адресата и приветствие (1.6.33).
@@ -114,9 +118,13 @@ final personNamesProvider = FutureProvider<Map<String, String>>((ref) async {
       offer(c.email, composed);
       offer(c.email, c.displayName);
     }
+    // Письма из «Спама» и «Корзины» имён не дают (2.3.2): в них имя
+    // отправителя и адресата часто подделано.
+    const notJunk = 'NOT EXISTS (SELECT 1 FROM folders f WHERE f.account_id = emails.account_id '
+        'AND f.id = emails.folder_id AND f.type IN ($_junkTypes))';
     final senders = await db
         .customSelect('SELECT from_email AS e, from_name AS n FROM emails '
-            "WHERE from_name IS NOT NULL AND from_name != '' "
+            "WHERE from_name IS NOT NULL AND from_name != '' AND $notJunk "
             'GROUP BY lower(from_email), from_name LIMIT 20000')
         .get();
     for (final r in senders) {
@@ -124,7 +132,8 @@ final personNamesProvider = FutureProvider<Map<String, String>>((ref) async {
     }
     // Адресаты — из последних писем: по всем письмам разбирать JSON долго.
     final recips = await db
-        .customSelect('SELECT to_recipients AS t, cc_json AS c FROM emails ORDER BY received_at DESC LIMIT 4000')
+        .customSelect('SELECT to_recipients AS t, cc_json AS c FROM emails WHERE $notJunk '
+            'ORDER BY received_at DESC LIMIT 4000')
         .get();
     for (final r in recips) {
       for (final js in [r.read<String?>('t'), r.read<String?>('c')]) {
@@ -139,5 +148,22 @@ final personNamesProvider = FutureProvider<Map<String, String>>((ref) async {
   } catch (_) {
     // Имена — украшение: ошибка запроса не должна ломать список контактов.
   }
+  // Свои адреса — именем своего ящика (2.3.2): в письмах с подделанным
+  // отправителем или получателем «ваш» адрес подписан чужим текстом.
+  try {
+    for (final a in ref.watch(accountsProvider)) {
+      final name = normalizePersonName(a.displayName);
+      for (final e in OwnAddresses.of(a)) {
+        if (name.isNotEmpty && !name.contains('@')) {
+          out[e] = name;
+        } else {
+          out.remove(e);
+        }
+      }
+    }
+  } catch (_) {}
   return out;
 });
+
+/// Типы папок «Спам» и «Корзина» для запросов (индексы [FolderType]).
+const _junkTypes = '3, 4';

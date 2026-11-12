@@ -9,6 +9,7 @@
 
 import '../../../core/utils/text_safe.dart';
 import '../providers/delivery_status_provider.dart';
+import '../providers/folder_names.dart' show localizedFolderLabel;
 import '../providers/conversation_mute.dart';
 import '../../../services/notifications/account_notify_mode.dart' show ConversationNotify;
 import 'package:flutter/material.dart';
@@ -286,11 +287,9 @@ class EmailListTile extends ConsumerWidget {
                   ),
                 if (accountMark != null && folderBadge) const TextSpan(text: ' · '),
                 if (folderBadge)
-                  TextSpan(
-                    text: email.folderName!.toUpperCase() == 'INBOX'
-                        ? AppLocalizations.of(context).tr('inbox')
-                        : email.folderName!,
-                  ),
+                  // Стандартные папки — на языке приложения («Sent» →
+                  // «Отправленные»), остальные — как на сервере (2.3.2).
+                  TextSpan(text: localizedFolderLabel(email.folderName!, AppLocalizations.of(context))),
               ]),
               style: theme.textTheme.labelSmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.65),

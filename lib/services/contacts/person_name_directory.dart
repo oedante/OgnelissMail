@@ -19,6 +19,7 @@ import '../../data/models/account_model.dart';
 import '../../data/providers/database_provider.dart';
 import '../mail/engine/mail_engine_service.dart';
 import '../mail/own_addresses.dart';
+import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 
 final personNameDirectoryProvider = Provider<PersonNameDirectory>((ref) => PersonNameDirectory(ref));
 
@@ -42,11 +43,32 @@ class PersonNameDirectory {
   Future<String?> _lookup(String e, String original, AccountModel? account) async {
     String? best;
     void take(String? v) {
-      if (v != null && PersonNames.better(best, v)) best = PersonNames.clean(v);
+      // Текст вместо имени (спам с подделанным отправителем: «Вам перевод …
+      // получить тут https://…») — не имя (2.3.2).
+      if (v != null && PersonNames.plausible(v) && PersonNames.better(best, v)) best = PersonNames.clean(v);
     }
 
-    // Свой адрес (письмо себе, 1.5.10) — имя ящика.
-    if (account != null && OwnAddresses.isMine(account, e)) take(account.displayName);
+    // Свой адрес (письмо себе, 1.5.10) — имя ящика. С 2.3.2 — адрес любого
+    // своего ящика, и имена из писем для него не берутся: письмо с
+    // подделанным отправителем — вашим же адресом — подписывало плашку
+    // получателя чужим текстом (замечание владельца 11.11.2026).
+    AccountModel? owner = (account != null && OwnAddresses.isMine(account, e)) ? account : null;
+    if (owner == null) {
+      try {
+        for (final a in _ref.read(accountsProvider)) {
+          if (OwnAddresses.isMine(a, e)) {
+            owner = a;
+            break;
+          }
+        }
+      } catch (_) {}
+    }
+    if (owner != null) {
+      final name = PersonNames.clean(owner.displayName);
+      final own = name.isEmpty || name.contains('@') ? null : name;
+      _known[e] = own;
+      return own;
+    }
 
     try {
       final db = _ref.read(databaseProvider);

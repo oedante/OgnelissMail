@@ -116,14 +116,17 @@
              почты (IMAP IDLE, ActiveSync Ping, EWS), пока приложение свёрнуто.
              Тип specialUse (Android 14+; 2.0.0, вместо dataSync с лимитом
              6 часов в сутки на Android 15+); пояснение для Google Play — в
-             свойстве ниже. -->
+             свойстве ниже. 2.3.2: та же служба на несколько секунд
+             поднимается будильником для плановой проверки почты (ящики «раз
+             в 15 минут / 30 / час»), чтобы проверка шла вовремя и в
+             глубоком сне телефона. -->
         <service
             android:name=".SyncForegroundService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="Instant delivery of new email: keeps the mail server push connection (IMAP IDLE, Exchange ActiveSync Ping, EWS notifications) open while the app is in the background, so new messages arrive and are notified immediately."/>
+                android:value="Timely delivery of new email: keeps the mail server push connection (IMAP IDLE, Exchange ActiveSync Ping, EWS notifications) open while the app is in the background, so new messages arrive and are notified immediately; for mailboxes checked on a schedule chosen by the user (every 15, 30 or 60 minutes) it runs for a few seconds per check, started by an alarm, so that the scheduled mail check is performed on time while the device is in Doze."/>
         </service>
         <!-- Сигналы сервера (1.9.x): сообщение FCM «проверь почту» ставит
              проверку в WorkManager (PushWakeFcm.kt). Без параметров Firebase
@@ -251,7 +254,9 @@
                 android:resource="@xml/widget_notes_info" />
         </receiver>
         <!-- Пульс фоновой работы: будильник раз в ~10 мин будит процесс, пока
-             работает SyncForegroundService (проверка push в глубоком сне). -->
+             работает SyncForegroundService (проверка push в глубоком сне).
+             2.3.2: и без службы — к сроку плановой проверки почты (ящики
+             «раз в 15 минут / 30 / час»), см. SyncHeartbeat.kt. -->
         <receiver android:exported="false"
             android:name=".SyncHeartbeatReceiver" />
 

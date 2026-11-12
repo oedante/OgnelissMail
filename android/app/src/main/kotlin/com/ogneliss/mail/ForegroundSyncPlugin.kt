@@ -113,12 +113,27 @@ object ForegroundSyncPlugin {
                 "stop" -> {
                     try {
                         SyncForegroundService.stop(context.applicationContext)
-                        // Фоновая работа выключена приложением — и пульс без
-                        // службы (после лимита Android 15) больше не нужен.
-                        SyncHeartbeat.cancel(context.applicationContext)
+                        // Служба больше не нужна (нет ящиков «Мгновенно») —
+                        // будильник переходит в режим «без службы» по
+                        // настройке Dart; фоновые проверки выключены —
+                        // снимается (2.3.2: раньше снимался всегда).
+                        SyncHeartbeat.applyStandby(context.applicationContext)
                         result.success(true)
                     } catch (e: Exception) {
                         result.error("STOP_FAILED", e.message, null)
+                    }
+                }
+                // Будильник фоновой проверки (2.3.2): настройка изменилась
+                // или приложение свернули — выставить заново по тому, что
+                // записал Dart (BackgroundAlarm). При работающей службе её
+                // пульс уже выставлен.
+                "alarm" -> {
+                    try {
+                        val app = context.applicationContext
+                        if (!SyncForegroundService.running) SyncHeartbeat.applyStandby(app)
+                        result.success(SyncHeartbeat.state(app))
+                    } catch (e: Exception) {
+                        result.error("ALARM_FAILED", e.message, null)
                     }
                 }
                 // Исключение из оптимизации батареи. Прямой запрос

@@ -25,6 +25,7 @@ import 'package:enough_mail/enough_mail.dart';
 import 'package:mail_engine/mail_engine.dart'
     show DsnRequest, ImapNotifyChange, ImapNotifyRejected, NotifyImapClient, Preheader, SmtpNotSentException, TolerantSmtpClient;
 import 'package:drift/drift.dart' show Value, BooleanExpressionOperators;
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
@@ -93,7 +94,10 @@ class ImapOperationHung implements Exception {
   final Duration limit;
   const ImapOperationHung(this.limit);
   @override
-  String toString() => 'IMAP: операция не завершилась за ${limit.inMinutes} мин';
+  String toString() => 'IMAP: операция не завершилась за ${describe(limit)}';
+
+  /// «45 с», «5 мин» — срок для журнала.
+  static String describe(Duration d) => d.inSeconds < 120 ? '${d.inSeconds} с' : '${d.inMinutes} мин';
 }
 
 class ImapService {
@@ -149,20 +153,28 @@ class ImapService {
   /// Яндекса 06.10 не завершилась ни разу за два часа, а пересинхронизация и
   /// обновление жестом становились в очередь за ней. Теперь по истечении
   /// срока соединение закрывается, операция падает с таймаутом, очередь идёт.
+  ///
+  /// [retryHung] — для лёгких команд с коротким сроком (список папок, 2.3.2):
+  /// не ответившее за срок соединение, скорее всего, мертво (сервер закрыл
+  /// его, а телефон об этом не узнал) — один повтор на новом. Журнал
+  /// владельца 11.11.2026: «список папок» Яндекса шёл больше минуты, а срок
+  /// операции был общий, 5 минут, — всё это время ящик не обновлялся.
   Future<T> _withClient<T>(AccountModel account, Future<T> Function(ImapClient client) action,
-      {Duration limit = const Duration(minutes: 5), bool Function()? canRetry}) {
+      {Duration limit = const Duration(minutes: 5), bool Function()? canRetry, bool retryHung = false}) {
     return _withAccountLock(account.id, () async {
       for (var attempt = 0;; attempt++) {
         final client = await _getImapClient(account).timeout(const Duration(seconds: 90));
         try {
           return await action(client).timeout(limit, onTimeout: () {
             AppLogger.warning('IMAP ${account.email}: операция не завершилась за '
-                '${limit.inMinutes} мин — соединение закрыто');
+                '${ImapOperationHung.describe(limit)} — соединение закрыто');
             _dropClient(account.id);
             throw ImapOperationHung(limit);
           });
         } on ImapOperationHung {
-          rethrow; // не повторяем: зависание — не обрыв, повтор ждал бы снова
+          // Обычно не повторяем: зависание — не обрыв, повтор ждал бы снова.
+          if (!retryHung || attempt > 0) rethrow;
+          AppLogger.info('IMAP ${account.email}: повтор на новом соединении');
         } catch (e) {
           // [canRetry] — для APPEND: обрыв после начала записи мог случиться,
           // когда сервер письмо уже сохранил, и повтор дал бы дубль. Обрыв
@@ -595,7 +607,9 @@ class ImapService {
   Future<List<FolderModel>> getFolders(AccountModel account) async {
     // Последовательно на аккаунт: SELECT+операция не должны перемешаться
     // с параллельным запросом к другой папке (см. _withAccountLock).
-    return _withClient(account, (client) async {
+    // Список папок — лёгкая команда: 45 секунд и один повтор на новом
+    // соединении вместо общих пяти минут ожидания (2.3.2).
+    return _withClient(account, limit: const Duration(seconds: 45), retryHung: true, (client) async {
     try {
       final mailboxes = await client.listMailboxes(recursive: true);
       final trash = mailboxes.where((mb) => mb.isTrash).firstOrNull;
@@ -818,6 +832,94 @@ class ImapService {
         .toList();
   }
 
+  /// Сколько писем за проход догружать по одному (сверка и [fetchByUids]).
+  static const maxRecover = 50;
+
+  /// Новые письма папки (UID больше [after]) — со сверкой (2.3.2): все ли
+  /// письма, которые назвал сервер, есть в разобранном ответе. Список новых
+  /// UID — [expected] (полный способ берёт его из запроса флагов) или ответ
+  /// UID SEARCH. Письмо из списка, которого в ответе нет (сервер пропустил
+  /// его в общем ответе или ответ не разобрался), запрашивается отдельно.
+  /// Раньше такое письмо терялось: известный UID уходил дальше, и к нему
+  /// приложение уже не возвращалось.
+  Future<List<EmailModel>> _fetchNew(
+      ImapClient client, AccountModel account, String folderId, int after,
+      {Set<int>? expected}) async {
+    final list = (await _fetchList(
+            client, MessageSequence.fromRangeToLast(after + 1, isUidSequence: true), account, folderId))
+        .where((e) => _uidOf(e.id) > after)
+        .toList();
+    var want = expected;
+    if (want == null) {
+      try {
+        final found = await client.uidSearchMessages(
+            searchCriteria: 'UID ${after + 1}:*',
+            returnOptions: client.serverInfo.supports('ESEARCH') ? [ReturnOption.all()] : null);
+        final seq = found.matchingSequence;
+        want = {
+          if (seq != null && !seq.isNil && seq.isNotEmpty)
+            for (final u in seq.toList())
+              if (u > after) u,
+        };
+      } catch (e) {
+        if (_isConnectionError(e)) rethrow;
+        AppLogger.debug('IMAP $folderId: сверка новых писем (UID SEARCH) — $e');
+        return list;
+      }
+    }
+    final got = {for (final e in list) _uidOf(e.id)};
+    final lost = want.difference(got).toList()..sort();
+    if (lost.isEmpty) return list;
+    AppLogger.warning('IMAP $folderId: сервер назвал новых писем ${want.length}, в ответе ${got.length} — '
+        'догружаю по одному: UID ${briefUids(lost)}');
+    final more = await _fetchEach(client, account, folderId, lost);
+    return [...list, ...more];
+  }
+
+  /// Письма по одному UID на запрос: одно «трудное» письмо не мешает
+  /// остальным. Не получилось с полным набором полей — упрощённый запрос.
+  Future<List<EmailModel>> _fetchEach(
+      ImapClient client, AccountModel account, String folderId, Iterable<int> uids) async {
+    final out = <EmailModel>[];
+    for (final uid in uids.take(maxRecover)) {
+      final one = MessageSequence.fromId(uid, isUid: true);
+      try {
+        var got = (await _fetchList(client, one, account, folderId)).where((e) => _uidOf(e.id) == uid).toList();
+        if (got.isEmpty) {
+          final r = await client.uidFetchMessages(one, '(UID FLAGS ENVELOPE RFC822.SIZE)');
+          got = r.messages
+              .map((m) => _parseMessage(m, account.id, folderId))
+              .whereType<EmailModel>()
+              .where((e) => _uidOf(e.id) == uid)
+              .toList();
+        }
+        if (got.isEmpty) {
+          AppLogger.warning('IMAP $folderId: письмо UID $uid сервер назвал, но не отдал');
+        } else {
+          out.add(got.first);
+        }
+      } catch (e) {
+        if (_isConnectionError(e)) rethrow;
+        AppLogger.warning('IMAP $folderId: письмо UID $uid не загрузилось — $e');
+      }
+    }
+    return out;
+  }
+
+  /// Письма папки по списку UID (2.3.2): догрузка писем, которые есть на
+  /// сервере, а на устройстве их нет (см. SyncService: сверка окна папки).
+  Future<List<EmailModel>> fetchByUids(AccountModel account, {required String folderId, required List<int> uids}) {
+    if (uids.isEmpty) return Future.value(const <EmailModel>[]);
+    return _withClient(account, (client) async {
+      await client.selectMailboxByPath(folderId);
+      return _fetchEach(client, account, folderId, uids);
+    });
+  }
+
+  /// «6901, 6905, 6910 и ещё 12» — номера писем для журнала.
+  static String briefUids(List<int> uids) =>
+      uids.length <= 5 ? uids.join(', ') : '${uids.take(5).join(', ')} и ещё ${uids.length - 5}';
+
   /// Инкрементальная синхронизация папки по UID (ENGINE_AUDIT P1-11).
   ///
   /// Раньше каждый проход брал 50 последних писем по порядковым номерам: всё
@@ -900,28 +1002,42 @@ class ImapService {
             complete: start <= 1);
       }
 
-      // 1. Новые письма: UID больше известного. «n:*» всегда возвращает
-      // хотя бы последнее письмо, даже если его UID меньше n, — фильтруем.
-      var added = <EmailModel>[];
-      final next = box.uidNext;
-      if (next == null || next > known.maxUid + 1) {
-        added = (await _fetchList(client,
-                MessageSequence.fromRangeToLast(known.maxUid + 1, isUidSequence: true), account, folderId))
-            .where((e) => _uidOf(e.id) > known.maxUid)
-            .toList();
-      }
-
-      // 2. Флаги и наличие во всём загруженном диапазоне — только UID и FLAGS.
+      // 1. Флаги и наличие во всём загруженном диапазоне И ВЫШЕ него
+      // («min:*») — только UID и FLAGS, один лёгкий запрос. Письма с UID
+      // больше известного — новые: их список называет сам сервер.
+      // До 2.3.2 новые письма запрашивались, только если UIDNEXT из ответа
+      // на SELECT был больше известного UID, а флаги — в диапазоне «min:max».
+      // Журналы Яндекса 10–11.11.2026: письмо лежало во «Входящих» на
+      // сервере, а приложение его не видело до поиска, и копии отправленных
+      // не появлялись в «Отправленных» — счётчику сервера верить нельзя.
+      // «n:*» всегда возвращает хотя бы последнее письмо, даже если его UID
+      // меньше n, — такие отбрасываем.
       final flags = <int, ({bool read, bool flagged})>{};
+      final above = <int>{};
       final r = await client.uidFetchMessages(
-          MessageSequence.fromRange(known.minUid, known.maxUid, isUidSequence: true), '(UID FLAGS)');
+          MessageSequence.fromRangeToLast(known.minUid, isUidSequence: true), '(UID FLAGS)');
       for (final m in r.messages) {
         final uid = m.uid;
-        if (uid == null) continue;
+        if (uid == null || uid < known.minUid) continue;
+        if (uid > known.maxUid) {
+          above.add(uid);
+          continue;
+        }
         flags[uid] = (
           read: m.flags?.contains(MessageFlags.seen) ?? false,
           flagged: m.flags?.contains(MessageFlags.flagged) ?? false,
         );
+      }
+
+      // 2. Новые письма: UID больше известного — со сверкой, что разобраны
+      // все названные сервером ([_fetchNew]).
+      var added = <EmailModel>[];
+      final next = box.uidNext;
+      if (above.isNotEmpty || next == null || next > known.maxUid + 1) {
+        if (above.isNotEmpty && next != null && next <= known.maxUid + 1) {
+          AppLogger.info('IMAP $folderId: UIDNEXT сервера ($next) отстал — новых писем ${above.length}');
+        }
+        added = await _fetchNew(client, account, folderId, known.maxUid, expected: above);
       }
 
       // 3. История: порция писем старше загруженных, пока их немного.
@@ -1063,13 +1179,11 @@ class ImapService {
       );
     }
 
-    // 1. Новые письма — как в полном способе.
+    // 1. Новые письма — как в полном способе; список новых UID для сверки
+    // даёт UID SEARCH (только когда новые письма есть).
     var added = <EmailModel>[];
     if (next == null || next > known.maxUid + 1) {
-      added = (await _fetchList(client,
-              MessageSequence.fromRangeToLast(known.maxUid + 1, isUidSequence: true), account, folderId))
-          .where((e) => _uidOf(e.id) > known.maxUid)
-          .toList();
+      added = await _fetchNew(client, account, folderId, known.maxUid);
     }
 
     // 2. Флаги: с QRESYNC они уже пришли в ответе на SELECT; иначе —
@@ -1398,10 +1512,16 @@ class ImapService {
   EmailModel? _parseMessage(MimeMessage msg, String accountId, String folderId) {
     try {
       final envelope = msg.envelope;
-      if (envelope == null) return null;
-
       final uid = msg.uid;
-      if (uid == null) return null; // без UID письмо нельзя адресовать
+      if (envelope == null || uid == null) {
+        // Строка ответа без заголовков или UID: чужое обновление флагов
+        // посреди ответа или письмо, разобранное не полностью (2.3.2: в
+        // подробный журнал; пропущенное письмо догрузит сверка — [_fetchNew]).
+        AppLogger.debug('IMAP $folderId: в ответе сервера строка без '
+            '${envelope == null ? 'заголовков (ENVELOPE)' : 'UID'}'
+            '${uid == null ? '' : ', UID $uid'} — пропущена');
+        return null; // без UID письмо нельзя адресовать
+      }
       final from = envelope.from?.isNotEmpty == true
           ? EmailAddress(email: envelope.from!.first.email, displayName: _cleanName(envelope.from!.first.personalName))
           : const EmailAddress(email: '');
@@ -2105,32 +2225,87 @@ class ImapService {
       try { await client.quit(); } catch (_) {}
     }
 
-    // Копия в «Отправленные». Gmail, Яндекс, Mail.ru и Yahoo кладут её сами;
-    // обычный IMAP-сервер — нет, и отправленные письма «исчезали».
-    if (account.type == AccountType.imap) {
+    // Копия в «Отправленные». Обычный IMAP-сервер её не кладёт — сохраняем
+    // сами (иначе отправленные письма «исчезали»). Gmail и Outlook.com
+    // кладут всегда. Яндекс, Mail.ru и Yahoo — не всегда (2.3.2; до этого
+    // считалось, что кладут: журналы двух ящиков Яндекса 10–11.11.2026 —
+    // после отправки копии в «Отправленных» нет, пользователь: «там нет
+    // писем, отправленных через Ogneliss»). Для них — проверка: копия есть
+    // (по Message-ID) — ничего не делаем, нет — сохраняем.
+    final verify = sentCopyNeedsCheck(account.type);
+    if (account.type == AccountType.imap || verify) {
       try {
-        var appending = false;
-        await _withClient(account, canRetry: () => !appending, (c) async {
-          final boxes = await c.listMailboxes(recursive: true);
-          final sent = boxes.where((b) => b.isSent).firstOrNull;
-          if (sent == null) return;
-          appending = true;
-          final text = protectedText;
-          if (text != null) {
-            await c.appendMessageText(text,
-                flags: [MessageFlags.seen],
-                targetMailboxPath: _pathForEnoughMail(c, sent.encodedPath));
-          } else {
-            await c.appendMessage(message,
-                flags: [MessageFlags.seen],
-                targetMailboxPath: _pathForEnoughMail(c, sent.encodedPath));
-          }
-        });
+        await saveSentCopy(account, message, protectedText: protectedText, verify: verify);
       } catch (e) {
         AppLogger.warning('IMAP: копия в «Отправленные» не сохранена — $e');
       }
     }
   }
+
+  /// Сохранить копию отправленного письма в «Отправленные» (APPEND).
+  /// [verify] — сначала проверить, не положил ли её сервер сам (по
+  /// Message-ID): есть — ничего не делаем.
+  @visibleForTesting
+  Future<void> saveSentCopy(AccountModel account, MimeMessage message,
+      {String? protectedText, required bool verify}) async {
+    final id = verify ? (message.getHeaderValue('message-id') ?? '').trim() : '';
+    if (id.isNotEmpty) {
+      // Сервер, который кладёт копию сам, делает это при приёме письма; на
+      // случай задержки — вторая проверка через пару секунд. Замок ящика
+      // между проверками не держим.
+      if (await _sentCopyExists(account, id)) return;
+      await Future<void>.delayed(sentCopyWait);
+      if (await _sentCopyExists(account, id)) return;
+    }
+    if (verify) {
+      AppLogger.info('IMAP ${AppLogger.mask(account.email)}: сервер не положил копию в «Отправленные» — '
+          'сохраняю её');
+    }
+    var appending = false;
+    await _withClient(account, canRetry: () => !appending, (c) async {
+      final boxes = await c.listMailboxes(recursive: true);
+      final sent = boxes.where((b) => b.isSent).firstOrNull;
+      if (sent == null) return;
+      appending = true;
+      final text = protectedText;
+      if (text != null) {
+        await c.appendMessageText(text,
+            flags: [MessageFlags.seen], targetMailboxPath: _pathForEnoughMail(c, sent.encodedPath));
+      } else {
+        await c.appendMessage(message,
+            flags: [MessageFlags.seen], targetMailboxPath: _pathForEnoughMail(c, sent.encodedPath));
+      }
+    });
+  }
+
+  /// Почта, у которой копию отправленного сервер кладёт в «Отправленные»
+  /// не всегда: перед сохранением своей копии проверяем, нет ли её там.
+  static bool sentCopyNeedsCheck(AccountType type) =>
+      type == AccountType.yandex || type == AccountType.mailru || type == AccountType.yahoo;
+
+  /// Пауза между двумя проверками копии в «Отправленных».
+  @visibleForTesting
+  static Duration sentCopyWait = const Duration(seconds: 2);
+
+  /// Есть ли в «Отправленных» письмо с таким Message-ID. Папки нет или
+  /// сервер не ответил на поиск — считаем, что копии нет.
+  Future<bool> _sentCopyExists(AccountModel account, String messageId) =>
+      _withClient(account, (c) async {
+        final boxes = await c.listMailboxes(recursive: true);
+        final sent = boxes.where((b) => b.isSent).firstOrNull;
+        if (sent == null) return false;
+        try {
+          await c.selectMailboxByPath(_pathForEnoughMail(c, sent.encodedPath));
+          final found = await c.uidSearchMessages(
+              searchCriteria: 'HEADER Message-ID "${messageId.replaceAll('"', '')}"');
+          final seq = found.matchingSequence;
+          return seq != null && !seq.isNil && seq.isNotEmpty;
+        } catch (e) {
+          if (_isConnectionError(e)) rethrow;
+          AppLogger.debug('IMAP: поиск копии в «Отправленных» — $e');
+          return false;
+        }
+      });
 
   // ════════════════════════ DRAFTS ════════════════════════
 

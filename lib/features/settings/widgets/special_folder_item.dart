@@ -23,6 +23,7 @@ import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/special_folders.dart';
 import '../../../widgets/ui/settings_group.dart';
+import '../../mail/providers/folder_names.dart' show localizedFolderName;
 import '../../mail/providers/mail_providers.dart' show accountFoldersProvider;
 
 class SpecialFolderItem extends ConsumerStatefulWidget {
@@ -88,7 +89,8 @@ class _SpecialFolderItemState extends ConsumerState<SpecialFolderItem> {
           icon: AppIcons.auto_awesome,
         ),
         for (final f in options)
-          AppMenuEntry(value: f.id, label: f.displayName, subtitle: _parentPath(f, byId), icon: folderIconOf(f)),
+          AppMenuEntry(
+              value: f.id, label: localizedFolderName(f, l10n), subtitle: _parentPath(f, byId), icon: folderIconOf(f)),
       ],
     );
     if (picked == null || !mounted) return;

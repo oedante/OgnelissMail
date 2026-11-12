@@ -19,7 +19,8 @@ import '../../../services/rules/device_rules_service.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../../widgets/ui/app_menu_button.dart';
-import '../../mail/providers/mail_providers.dart' show accountsProvider;
+import '../../mail/providers/folder_names.dart' show localizedFolderName;
+import '../../mail/providers/mail_providers.dart' show accountsProvider, folderFromRow;
 
 /// Открыть редактор правила. [initial] — правка; без него — новое правило
 /// (можно подставить отправителя и ящик из письма).
@@ -341,7 +342,8 @@ class _DeviceRuleScreenState extends ConsumerState<DeviceRuleScreen> {
         }),
         itemBuilder: (_) => [
           AppMenuEntry(value: '', label: l10n.tr('ruleMoveNone')),
-          for (final f in folders) AppMenuEntry(value: f.id, label: f.displayName),
+          // Стандартные папки — на языке приложения (2.3.2).
+          for (final f in folders) AppMenuEntry(value: f.id, label: localizedFolderName(folderFromRow(f), l10n)),
         ],
       ),
     );

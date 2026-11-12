@@ -6,6 +6,7 @@
 // Оба экрана подписаны на БД: прочтение, удаление и новое письмо в беседе
 // видны сразу, без перезагрузки.
 
+import '../../../widgets/common/paging_slop.dart';
 import '../../../widgets/common/undo_strip.dart';
 import '../../../widgets/common/undo_manager.dart';
 import '../../../core/utils/text_safe.dart';
@@ -52,7 +53,7 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/swipe_action_indicator.dart';
 import '../../../widgets/common/swipe_done.dart';
 import '../../../widgets/common/slidable_spring_back.dart';
-import '../providers/folder_names.dart' show localizedFolderName;
+import '../providers/folder_names.dart' show localizedFolderName, localizedFolderLabel;
 import '../widgets/mail_peek_card.dart';
 import '../widgets/move_folder_picker.dart';
 import '../../../services/mail/own_addresses.dart';
@@ -1046,7 +1047,7 @@ List<String> conversationFolderChips(List<EmailModel> copies, Map<String, Folder
     final type = f?.type ?? _folderTypeByName(c.folderId, c.folderName) ?? FolderType.custom;
     if (type == FolderType.inbox || type == FolderType.drafts || type == FolderType.outbox) continue;
     if (mine && type == FolderType.sent) continue;
-    final label = f != null ? localizedFolderName(f, l10n) : (c.folderName ?? '').trim();
+    final label = f != null ? localizedFolderName(f, l10n) : localizedFolderLabel((c.folderName ?? '').trim(), l10n);
     if (label.isNotEmpty && !out.contains(label)) out.add(label);
   }
   return out;
@@ -1422,18 +1423,24 @@ class _ConversationPagerScreenState extends ConsumerState<ConversationPagerScree
             if (note.depth == 0) _onScrollEnd();
             return false;
           },
-          child: PageView.builder(
-            controller: _controller,
-            itemCount: n,
-            itemBuilder: (context, i) => MailDetailScreen(
-              key: ValueKey(ids[i]),
-              emailId: ids[i],
-              accountId: widget.accountId,
-              pagerLabel: '${i + 1} / $n',
-              onPrev: i > 0 ? () => _go(i - 1) : null,
-              onNext: i < n - 1 ? () => _go(i + 1) : null,
-              active: i == settled,
-              findQuery: widget.find,
+          // Листание — намеренным жестом вбок (2.3.2, paging_slop.dart).
+          child: PagingSlop(
+            child: PageView.builder(
+              controller: _controller,
+              itemCount: n,
+              itemBuilder: (context, i) => PagingSlop.page(
+                context,
+                MailDetailScreen(
+                  key: ValueKey(ids[i]),
+                  emailId: ids[i],
+                  accountId: widget.accountId,
+                  pagerLabel: '${i + 1} / $n',
+                  onPrev: i > 0 ? () => _go(i - 1) : null,
+                  onNext: i < n - 1 ? () => _go(i + 1) : null,
+                  active: i == settled,
+                  findQuery: widget.find,
+                ),
+              ),
             ),
           ),
         );

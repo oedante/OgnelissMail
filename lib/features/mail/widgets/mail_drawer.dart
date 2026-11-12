@@ -1347,7 +1347,7 @@ class MailDrawer extends ConsumerWidget {
   Future<void> _deleteFolder(BuildContext context, WidgetRef ref, FolderModel folder, AppLocalizations l10n) async {
     final confirmed = await confirmDestructive(context,
         title: l10n.tr('deleteFolderQ'),
-        message: l10n.tr('deleteFolderWarn').replaceAll('{name}', folder.displayName));
+        message: l10n.tr('deleteFolderWarn').replaceAll('{name}', _localizedFolderName(folder, l10n)));
     if (!confirmed) return;
     if (!context.mounted) return; // меню закрыли, пока был открыт диалог
 
@@ -1454,8 +1454,8 @@ class _FolderDropTarget extends ConsumerWidget {
       context,
       UndoableAction(
         description: emails.length == 1
-            ? l10n.tr('emailMovedTo').replaceAll('{folder}', folder.displayName)
-            : l10n.plural('mailsMovedTo', emails.length).replaceAll('{folder}', folder.displayName),
+            ? l10n.tr('emailMovedTo').replaceAll('{folder}', localizedFolderName(folder, l10n))
+            : l10n.plural('mailsMovedTo', emails.length).replaceAll('{folder}', localizedFolderName(folder, l10n)),
         execute: () async {
           for (final e in emails) {
             await actions.moveTo(account, e.id, e.folderId, folder.id);

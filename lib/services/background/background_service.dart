@@ -8,6 +8,7 @@
 // - Регистрация всех фоновых задач
 
 import '../push/push_wake_service.dart' show PushWakeService, pushWakeServiceProvider;
+import 'background_alarm.dart';
 import '../security/managed_feedback.dart';
 import '../calendar/quick_create_service.dart' show quickCreateProvider;
 import '../widget_mail_actions.dart' show widgetMailActionsProvider;
@@ -64,7 +65,13 @@ class _TaskNames {
   /// Android (1.9.x): сигнал сервера через FCM — разовую задачу ставит
   /// PushWakeFcm.kt (то же имя там).
   static const pushWake = 'push_wake';
+  /// Android (2.3.2): проверка по будильнику к сроку ближайшего ящика —
+  /// задачу ставит SyncHeartbeat.kt (то же имя там).
+  static const alarmCheck = 'alarm_check';
 }
+
+/// Название проверок по будильнику в журнале фоновой работы.
+const alarmCheckKind = 'будильник';
 
 /// iOS: какая фоновая задача сейчас работает (мс эпохи) — чтобы две задачи
 /// (обновление и обработка), запущенные системой разом, не синхронизировали
@@ -127,13 +134,14 @@ Future<void> _markBackgroundCheckDone() async {
 /// Android — 3 минуты: срочную задачу (высокий приоритет FCM) система
 /// держит недолго, а следующий сигнал придёт через интервал.
 Duration _taskLimit(String taskName) {
-  if (taskName == _TaskNames.pushWake) return const Duration(minutes: 3);
+  if (taskName == _TaskNames.pushWake || taskName == _TaskNames.alarmCheck) return const Duration(minutes: 3);
   if (kIsWeb || !Platform.isIOS) return const Duration(minutes: 9);
   return taskName == _TaskNames.processingSync ? const Duration(minutes: 3) : const Duration(seconds: 27);
 }
 
 String _taskKind(String taskName) {
   if (taskName == _TaskNames.pushWake) return PushWakeService.androidWakeKind;
+  if (taskName == _TaskNames.alarmCheck) return alarmCheckKind;
   if (kIsWeb || !Platform.isIOS) return 'WorkManager';
   return taskName == _TaskNames.processingSync ? 'BGProcessing iOS' : 'BGTask iOS';
 }
@@ -959,8 +967,42 @@ class BackgroundService {
     }
   }
 
+  /// Будильник фоновой проверки (Android, 2.3.2; BackgroundAlarm): записать
+  /// интервал по настройкам и ящикам и выставить будильник — при запуске,
+  /// смене настроек и когда приложение свернули. Срок ближайшего ящика
+  /// пишет каждая проверка ([SyncService.noteBackgroundPlan]).
+  Future<void> applyBackgroundAlarm() async {
+    if (kIsWeb || !Platform.isAndroid) return;
+    try {
+      final prefs = _ref.read(sharedPrefsProvider);
+      final accounts = _ref.read(accountsProvider);
+      final global = _ref.read(settingsProvider).syncIntervalMinutes;
+      // Список ящиков при запуске может быть ещё не загружен: прежний
+      // интервал не затираем нулём (выключение — только настройкой).
+      if (accounts.isNotEmpty || global < 0) {
+        await prefs.setInt(
+            BackgroundAlarm.minutesKey, BackgroundAlarm.minutesFor(globalInterval: global, accounts: accounts));
+      }
+      final st = await _ref.read(foregroundSyncControllerProvider).applyAlarm();
+      if (st == null) return;
+      final line = (st['minutes'] ?? 0) == 0
+          ? 'выключен'
+          : 'раз в ${st['minutes']} мин без службы, ${st['exact'] == true ? 'точный' : 'неточный (нет разрешения на точные будильники)'}'
+              '${st['service'] == true ? '; служба работает — пульс раз в 10 мин' : ''}';
+      if (line != _alarmLine) {
+        _alarmLine = line;
+        AppLogger.info('Будильник фоновой проверки: $line');
+      }
+    } catch (e) {
+      AppLogger.debug('Будильник фоновой проверки: $e');
+    }
+  }
+
+  String? _alarmLine;
+
   /// Зарегистрировать (или снять) периодическую задачу WorkManager.
   Future<void> _registerPeriodic() async {
+    unawaited(applyBackgroundAlarm());
     try {
       final settings = _ref.read(settingsProvider);
       // Push есть у IMAP (IDLE), EAS (Ping) и EWS (Streaming Notifications).

@@ -5,6 +5,7 @@ import 'dart:ui' show Color, Locale, PlatformDispatcher;
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzdata;
@@ -377,6 +378,18 @@ class NotificationService {
           name: senderName, email: fromEmail!, accountId: accountId, emailId: emailId, avatar: avatar);
     }
 
+    // Ящик и папка в уведомлении-переписке (2.3.2, замечание владельца
+    // 11.11.2026: «нет информации, на какой аккаунт пришло письмо»). На
+    // Android 12+ шапка такого уведомления не показывает subText. Без
+    // ярлыка беседы подпись идёт названием беседы — система ставит его в
+    // шапку: «Ogneliss Mail · ящик · время». С ярлыком (VIP, «беседы для
+    // всех») название заняло бы место имени отправителя — там подпись
+    // последней строкой текста.
+    final headerInStyle =
+        Platform.isAndroid && messenger && subText != null && await _androidSdk() >= 31;
+    final styleHeader = headerInStyle && shortcutId == null ? subText : null;
+    final styleTail = headerInStyle && shortcutId != null ? subText : null;
+
     await _plugin.show(
       id,
       title,
@@ -421,6 +434,8 @@ class NotificationService {
             avatar: avatar,
             isVip: isVip,
             when: receivedAt ?? DateTime.now(),
+            header: styleHeader,
+            tail: styleTail,
           ),
           shortcutId: shortcutId,
         ),
@@ -500,6 +515,12 @@ class NotificationService {
     Uint8List? avatar,
     bool isVip = false,
     required DateTime when,
+
+    /// Подпись ящика и папки в шапке уведомления-переписки (Android 12+).
+    String? header,
+
+    /// Она же — последней строкой текста (уведомление с ярлыком беседы).
+    String? tail,
   }) {
     if (!messenger) {
       return BigTextStyleInformation(
@@ -508,12 +529,26 @@ class NotificationService {
         summaryText: subText,
       );
     }
+    final text = NotificationText.big(subject, preview);
     return MessengerNotify.androidStyle(
       selfName: selfName,
       sender: MessengerNotify.androidSender(title: title, email: fromEmail, avatar: avatar, vip: isVip),
-      text: NotificationText.big(subject, preview),
+      text: (tail == null || tail.trim().isEmpty) ? text : '$text\n${tail.trim()}',
       when: when,
+      header: header,
     );
+  }
+
+  /// Версия Android (SDK); 0 — не Android или не узнали.
+  static int? _sdk;
+  static Future<int> _androidSdk() async {
+    if (_sdk != null) return _sdk!;
+    if (kIsWeb || !Platform.isAndroid) return _sdk = 0;
+    try {
+      return _sdk = (await DeviceInfoPlugin().androidInfo).version.sdkInt;
+    } catch (_) {
+      return 0;
+    }
   }
 
   /// Пробное уведомление (1.6.45, «Проверка почты»): тем же каналом и с теми

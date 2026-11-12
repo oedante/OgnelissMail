@@ -91,7 +91,7 @@ void main() {
     expect(second.flags.keys, [2]);
     expect(second.flags[2]!.read, isTrue);
     expect(srv.commands, contains('UID FETCH 1:5 (UID FLAGS) (CHANGEDSINCE ${s1.highestModSeq})'));
-    expect(srv.commands, isNot(contains('UID FETCH 1:5 (UID FLAGS)')), reason: 'флаги всего окна не нужны');
+    expect(srv.commands, isNot(contains('UID FETCH 1:* (UID FLAGS)')), reason: 'флаги всего окна не нужны');
     expect(cmds('UID SEARCH'), isEmpty, reason: 'число писем и UIDNEXT прежние — удалений нет');
     expect(second.checkedFrom, isNull);
     final s2 = stored(second)!;
@@ -170,12 +170,12 @@ void main() {
     expect(second.fast, isFalse);
     expect(second.flags.keys, containsAll([1, 2, 3, 4, 5]));
     expect(second.flags[5]!.read, isTrue);
-    expect(srv.commands, contains('UID FETCH 1:5 (UID FLAGS)'));
+    expect(srv.commands, contains('UID FETCH 1:* (UID FLAGS)'));
     // До перезапуска — полным способом, без новых попыток.
     srv.commands.clear();
     await imap.syncFolderDelta(a, folderId: 'Archive', known: stored(second), backfill: 0);
     expect(srv.commands.where((c) => c.contains('CHANGEDSINCE') || c.contains('CONDSTORE')), isEmpty);
-    expect(srv.commands, contains('UID FETCH 1:5 (UID FLAGS)'));
+    expect(srv.commands, contains('UID FETCH 1:* (UID FLAGS)'));
   });
 
   test('сбой SELECT с QRESYNC — полный способ', () async {
@@ -211,7 +211,7 @@ void main() {
     expect(next.fast, isTrue);
   });
 
-  test('сервер без CONDSTORE — команды и состояние как раньше', () async {
+  test('сервер без CONDSTORE — полный способ: SELECT и один запрос флагов (min:*)', () async {
     final box = await serve('IMAP4rev1 IDLE', capsAtLogin: true);
     final a = account();
     final first = await imap.syncFolderDelta(a, folderId: 'Archive', backfill: 0);
@@ -227,7 +227,7 @@ void main() {
     box.setFlags(2, {r'\Seen'});
     srv.commands.clear();
     final second = await imap.syncFolderDelta(a, folderId: 'Archive', known: stored(first), backfill: 0);
-    expect(srv.commands, ['SELECT "Archive"', 'UID FETCH 1:5 (UID FLAGS)']);
+    expect(srv.commands, ['SELECT "Archive"', 'UID FETCH 1:* (UID FLAGS)']);
     expect(second.fast, isFalse);
     expect(second.flags, hasLength(5));
   });
@@ -282,7 +282,7 @@ void main() {
       expect(two.isRead, isTrue);
       expect(two.isFlagged, isTrue);
       expect(srv.commands.where((c) => c.contains('QRESYNC (')), hasLength(1));
-      expect(srv.commands, isNot(contains('UID FETCH 1:5 (UID FLAGS)')));
+      expect(srv.commands, isNot(contains('UID FETCH 1:* (UID FLAGS)')));
       final st = ImapFolderState.fromJson(prefs.getString('imap_state:a1:Archive'))!;
       expect(st.highestModSeq, box.highestModSeq);
       expect(st.historyDone, isTrue);

@@ -30,6 +30,7 @@ import '../../../data/providers/database_provider.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../services/notifications/account_notify_mode.dart' show FolderNotify;
 import '../../../l10n/app_localizations.dart';
+import '../../mail/providers/folder_names.dart' show localizedFolderName;
 import '../../mail/providers/mail_providers.dart';
 import '../../mail/folder_order.dart' show hideUnsyncedFoldersProvider;
 import '../../../services/sync/sync_service.dart';
@@ -183,7 +184,7 @@ class FolderSyncSettingsScreen extends ConsumerWidget {
     yield ListTile(
       contentPadding: EdgeInsets.only(left: Space.l + depth * 20, right: Space.s),
       leading: Icon(folderIconOf(f)),
-      title: Text(f.displayName),
+      title: Text(localizedFolderName(f, l10n)),
       subtitle: children.isEmpty
           ? (f.totalCount > 0
               ? Text(l10n.tr('nMessages').replaceAll('{n}', '${f.totalCount}'))
@@ -240,7 +241,7 @@ class FolderSyncSettingsScreen extends ConsumerWidget {
       if (account != null) unawaited(ref.read(syncServiceProvider).syncAccount(account));
     } else if (account != null && context.mounted) {
       // Выключили — спросить, убрать ли её письма с телефона (1.5.9).
-      await _askDrop(context, ref, account, ids, f.displayName);
+      await _askDrop(context, ref, account, ids, localizedFolderName(f, l10n));
     }
 
     if (context.mounted && ids.length > 1) {

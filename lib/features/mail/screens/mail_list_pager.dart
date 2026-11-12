@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../widgets/common/paging_slop.dart';
 import '../providers/mail_open_cache.dart';
 import 'mail_detail_screen.dart';
 
@@ -75,14 +76,20 @@ class _MailListPagerScreenState extends ConsumerState<MailListPagerScreen> {
         if (note.depth == 0) _onScrollEnd();
         return false;
       },
-      child: PageView.builder(
-        controller: _controller,
-        itemCount: items.length,
-        itemBuilder: (context, i) => MailDetailScreen(
-          key: ValueKey('${items[i].$1}|${items[i].$2}'),
-          emailId: items[i].$2,
-          accountId: items[i].$1,
-          active: i == _settled,
+      // Листание — намеренным жестом вбок, а не от лёгкого касания (2.3.2).
+      child: PagingSlop(
+        child: PageView.builder(
+          controller: _controller,
+          itemCount: items.length,
+          itemBuilder: (context, i) => PagingSlop.page(
+            context,
+            MailDetailScreen(
+              key: ValueKey('${items[i].$1}|${items[i].$2}'),
+              emailId: items[i].$2,
+              accountId: items[i].$1,
+              active: i == _settled,
+            ),
+          ),
         ),
       ),
     );

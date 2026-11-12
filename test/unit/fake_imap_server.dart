@@ -3,7 +3,8 @@
 // по локальному сокету, как сервер «как Яндекс» в
 // smtp_yandex_xoauth2_test.dart. Умеет ровно то, что нужно синхронизации
 // и push: LOGIN, CAPABILITY, ENABLE, LIST, SELECT (CONDSTORE, QRESYNC),
-// FETCH / UID FETCH (CHANGEDSINCE), UID SEARCH (ESEARCH), IDLE, NOTIFY.
+// FETCH / UID FETCH (CHANGEDSINCE), UID SEARCH (ESEARCH, HEADER Message-ID),
+// APPEND, IDLE, NOTIFY.
 // Возможности — строкой CAPABILITY, как у настоящего сервера.
 
 import 'dart:async';
@@ -11,26 +12,47 @@ import 'dart:convert';
 import 'dart:io';
 
 class FakeMessage {
-  FakeMessage(this.uid, this.subject, this.flags, this.modSeq);
+  FakeMessage(this.uid, this.subject, this.flags, this.modSeq, {String? messageId})
+      : messageId = messageId ?? '<$uid@example.com>';
   final int uid;
   final String subject;
+
+  /// Message-ID письма (у добавленных APPEND — из заголовка).
+  final String messageId;
   Set<String> flags;
   int modSeq;
+
+  /// Письмо уже получило UID, но серверу «не видно» (как у Яндекса
+  /// 10.11.2026): нет ни в числе писем, ни в ответах FETCH и SEARCH.
+  bool hidden = false;
 }
 
 class FakeMailbox {
-  FakeMailbox(this.name, {this.uidValidity = 1000});
+  FakeMailbox(this.name, {this.uidValidity = 1000, this.listFlags = ''});
   final String name;
+
+  /// Признаки папки в ответе LIST (например, «\Sent»).
+  final String listFlags;
   int uidValidity;
   int uidNext = 1;
   int highestModSeq = 1;
   final messages = <FakeMessage>[];
 
+  /// UIDNEXT в ответе на SELECT, если сервер его не обновляет (отстал).
+  int? reportedUidNext;
+
+  /// UID, которые сервер пропускает в ответе с заголовками на запрос
+  /// диапазона (отдельным запросом по одному UID — отдаёт).
+  final skipInRange = <int>{};
+
+  /// Письма, которые сервер показывает.
+  List<FakeMessage> get visible => [for (final m in messages) if (!m.hidden) m];
+
   /// UID → MODSEQ удаления (для VANISHED).
   final expunged = <int, int>{};
 
-  FakeMessage add(String subject, {Set<String>? flags}) {
-    final m = FakeMessage(uidNext++, subject, {...?flags}, ++highestModSeq);
+  FakeMessage add(String subject, {Set<String>? flags, String? messageId}) {
+    final m = FakeMessage(uidNext++, subject, {...?flags}, ++highestModSeq, messageId: messageId);
     messages.add(m);
     return m;
   }
@@ -84,8 +106,8 @@ class FakeImapServer {
 
   bool get _modSeq => caps.split(' ').any((c) => c == 'CONDSTORE' || c == 'QRESYNC');
 
-  FakeMailbox box(String name, {int uidValidity = 1000}) =>
-      boxes[name] = FakeMailbox(name, uidValidity: uidValidity);
+  FakeMailbox box(String name, {int uidValidity = 1000, String listFlags = ''}) =>
+      boxes[name] = FakeMailbox(name, uidValidity: uidValidity, listFlags: listFlags);
 
   Future<void> start() async {
     final server = _server = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
@@ -124,7 +146,10 @@ class _Conn {
   _Conn(this.srv, this.socket);
   final FakeImapServer srv;
   final Socket socket;
-  var _buf = '';
+  final _bytes = <int>[];
+
+  /// APPEND ждёт текст письма: метка, папка, признаки и число байт.
+  ({String tag, FakeMailbox box, Set<String> flags, int size})? _append;
   FakeMailbox? _selected;
   var _condStore = false;
   var _qresync = false;
@@ -141,12 +166,31 @@ class _Conn {
   void start() {
     write('* OK [CAPABILITY ${srv.greetingCaps}] Fake IMAP ready');
     socket.listen((data) {
-      _buf += utf8.decode(data);
+      _bytes.addAll(data);
       while (true) {
-        final i = _buf.indexOf('\r\n');
+        final a = _append;
+        if (a != null) {
+          // Текст письма (литерал) и перевод строки после него.
+          if (_bytes.length < a.size + 2) break;
+          final text = utf8.decode(_bytes.sublist(0, a.size), allowMalformed: true);
+          _bytes.removeRange(0, a.size + 2);
+          _append = null;
+          String? header(String name) =>
+              RegExp('^$name:\\s*(.*)\$', multiLine: true, caseSensitive: false).firstMatch(text)?.group(1)?.trim();
+          final m = a.box.add(header('Subject') ?? '', flags: a.flags, messageId: header('Message-ID'));
+          _ok(a.tag, '[APPENDUID ${a.box.uidValidity} ${m.uid}] APPEND completed');
+          continue;
+        }
+        var i = -1;
+        for (var k = 0; k + 1 < _bytes.length; k++) {
+          if (_bytes[k] == 13 && _bytes[k + 1] == 10) {
+            i = k;
+            break;
+          }
+        }
         if (i < 0) break;
-        final line = _buf.substring(0, i);
-        _buf = _buf.substring(i + 2);
+        final line = utf8.decode(_bytes.sublist(0, i), allowMalformed: true);
+        _bytes.removeRange(0, i + 2);
         _handle(line);
       }
     }, onError: (_) {}, onDone: () {});
@@ -188,9 +232,25 @@ class _Conn {
       _ok(tag);
     } else if (upper.startsWith('LIST ')) {
       for (final b in srv.boxes.values) {
-        write('* LIST () "/" "${b.name}"');
+        write('* LIST (${b.listFlags}) "/" "${b.name}"');
       }
       _ok(tag);
+    } else if (upper.startsWith('APPEND ')) {
+      // APPEND Папка (\Seen) {N} — затем текст письма после «+».
+      final m = RegExp(r'^APPEND (?:"([^"]*)"|(\S+))(?: \(([^)]*)\))? \{(\d+)\}$', caseSensitive: false)
+          .firstMatch(cmd);
+      final b = m == null ? null : srv.boxes[m.group(1) ?? m.group(2)];
+      if (b == null) {
+        write('$tag NO [TRYCREATE] no such mailbox');
+      } else {
+        _append = (
+          tag: tag,
+          box: b,
+          flags: {...(m!.group(3) ?? '').split(' ').where((f) => f.isNotEmpty)},
+          size: int.parse(m.group(4)!),
+        );
+        write('+ Ready for literal data');
+      }
     } else if (upper.startsWith('SELECT ')) {
       _select(tag, cmd);
     } else if (upper.startsWith('UID FETCH ')) {
@@ -236,10 +296,10 @@ class _Conn {
     }
     _selected = b;
     write(r'* FLAGS (\Seen \Flagged \Deleted)');
-    write('* ${b.messages.length} EXISTS');
+    write('* ${b.visible.length} EXISTS');
     write('* 0 RECENT');
     write('* OK [UIDVALIDITY ${b.uidValidity}] UIDs valid');
-    write('* OK [UIDNEXT ${b.uidNext}] Predicted next UID');
+    write('* OK [UIDNEXT ${b.reportedUidNext ?? b.uidNext}] Predicted next UID');
     if (srv._modSeq) write('* OK [HIGHESTMODSEQ ${b.highestModSeq}] Highest');
     // RFC 7162, 3.2.5: другой UIDVALIDITY — параметры QRESYNC не действуют.
     if (q != null && int.parse(q.group(1)!) == b.uidValidity) {
@@ -252,8 +312,9 @@ class _Conn {
           if (e.value > since && inKnown(e.key)) e.key,
       ]..sort();
       if (gone.isNotEmpty) write('* VANISHED (EARLIER) ${_compact(gone)}');
-      for (var i = 0; i < b.messages.length; i++) {
-        final msg = b.messages[i];
+      final shown = b.visible;
+      for (var i = 0; i < shown.length; i++) {
+        final msg = shown[i];
         if (msg.modSeq > since && inKnown(msg.uid)) {
           write('* ${i + 1} FETCH (UID ${msg.uid} FLAGS (${msg.flags.join(' ')}) MODSEQ (${msg.modSeq}))');
         }
@@ -279,11 +340,14 @@ class _Conn {
       _condStore = true;
     }
     final items = rest.toUpperCase();
-    final star = uid ? (b.messages.isEmpty ? 0 : b.messages.last.uid) : b.messages.length;
-    for (var i = 0; i < b.messages.length; i++) {
-      final m = b.messages[i];
+    final shown = b.visible;
+    final star = uid ? (shown.isEmpty ? 0 : shown.last.uid) : shown.length;
+    final single = set.length == 1 && set.first.$1 == set.first.$2 && set.first.$1 != 0;
+    for (var i = 0; i < shown.length; i++) {
+      final m = shown[i];
       if (!_contains(set, uid ? m.uid : i + 1, star)) continue;
       if (since != null && m.modSeq <= since) continue;
+      if (!single && items.contains('ENVELOPE') && b.skipInRange.contains(m.uid)) continue;
       final parts = <String>[
         'UID ${m.uid}',
         if (items.contains('FLAGS')) 'FLAGS (${m.flags.join(' ')})',
@@ -292,7 +356,7 @@ class _Conn {
         if (items.contains('ENVELOPE'))
           'ENVELOPE ("Mon, 26 Oct 2026 10:00:00 +0000" "${m.subject}" (("Anna" NIL "anna" "example.com")) '
               '(("Anna" NIL "anna" "example.com")) (("Anna" NIL "anna" "example.com")) '
-              '(("Me" NIL "me" "example.com")) NIL NIL NIL "<${m.uid}@example.com>")',
+              '(("Me" NIL "me" "example.com")) NIL NIL NIL "${m.messageId}")',
       ];
       write('* ${i + 1} FETCH (${parts.join(' ')})');
     }
@@ -309,11 +373,13 @@ class _Conn {
     final extended = crit.toUpperCase().startsWith('RETURN (');
     if (extended) crit = crit.substring(crit.indexOf(')') + 2);
     final m = RegExp(r'^UID ([0-9:,*]+)$', caseSensitive: false).firstMatch(crit);
-    final star = b.messages.isEmpty ? 0 : b.messages.last.uid;
+    final byId = RegExp(r'^HEADER Message-ID "(.*)"$', caseSensitive: false).firstMatch(crit);
+    final shown = b.visible;
+    final star = shown.isEmpty ? 0 : shown.last.uid;
     final set = m == null ? null : _parseSet(m.group(1)!);
     final uids = [
-      for (final x in b.messages)
-        if (set != null && _contains(set, x.uid, star)) x.uid,
+      for (final x in shown)
+        if ((set != null && _contains(set, x.uid, star)) || (byId != null && x.messageId == byId.group(1))) x.uid,
     ];
     if (extended) {
       write('* ESEARCH (TAG "$tag") UID${uids.isEmpty ? '' : ' ALL ${_compact(uids)}'}');

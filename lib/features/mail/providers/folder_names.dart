@@ -33,3 +33,32 @@ String localizedFolderName(FolderModel folder, AppLocalizations l10n) {
       return folder.displayName; // пользовательская — как на сервере
   }
 }
+
+/// Имя папки по её названию с сервера — когда самой папки под рукой нет:
+/// плашка папки у письма в ленте «Вся почта» (2.3.2, замечание владельца
+/// 11.11.2026: у писем Яндекса плашка «Sent», а рядом — «Входящие»).
+/// Стандартные папки — на языке приложения, остальные — как на сервере.
+String localizedFolderLabel(String name, AppLocalizations l10n) {
+  final n = name.trim();
+  final key = n.toLowerCase().replaceAll('ё', 'е');
+  // У Gmail стандартные папки лежат в «[Gmail]/…».
+  final leaf = key.contains('/') ? key.substring(key.lastIndexOf('/') + 1) : key;
+  if (leaf == 'inbox' || leaf == 'входящие') return l10n.inbox;
+  if (_sentNames.contains(leaf)) return l10n.tr('sent');
+  if (_draftNames.contains(leaf)) return l10n.tr('drafts');
+  if (_trashNames.contains(leaf)) return l10n.tr('trash');
+  if (_outboxNames.contains(leaf)) return l10n.tr('outbox');
+  switch (SpecialFolders.typeByName(n)) {
+    case FolderType.junk:
+      return l10n.tr('junk');
+    case FolderType.archive:
+      return l10n.tr('archive');
+    default:
+      return n;
+  }
+}
+
+const _sentNames = {'sent', 'sent items', 'sent messages', 'sent mail', 'отправленные'};
+const _draftNames = {'drafts', 'draft', 'черновики'};
+const _trashNames = {'trash', 'deleted items', 'deleted messages', 'bin', 'корзина', 'удаленные'};
+const _outboxNames = {'outbox', 'исходящие'};

@@ -3818,12 +3818,16 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         'GROUP BY lower(from_email) ORDER BY c DESC LIMIT 6',
         variables: [Variable.withString('%$lower%'), for (final v in variants) Variable.withString('%$v%')],
       ).get();
-      addAll(senders.map((r) => ContactModel(
-            id: 'sender:${r.data['e']}',
-            email: r.data['e'] as String,
-            displayName: (r.data['n'] as String?) ?? '',
-            source: ContactSource.device,
-          )));
+      addAll(senders.map((r) {
+        // Текст вместо имени (спам с подделанным отправителем) — без имени.
+        final n = (r.data['n'] as String?) ?? '';
+        return ContactModel(
+          id: 'sender:${r.data['e']}',
+          email: r.data['e'] as String,
+          displayName: PersonNames.plausible(n) ? n : '',
+          source: ContactSource.device,
+        );
+      }));
     } catch (_) {}
     if (!mounted || seq != _searchSeq) return;
     final acc = _fromAccount;

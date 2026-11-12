@@ -32,6 +32,9 @@ import '../../data/providers/database_provider.dart';
 import '../mail/engine/mail_engine_service.dart';
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../../core/utils/mail_domains.dart';
+import '../../core/utils/person_names.dart';
+import '../../data/models/folder_model.dart';
+import '../mail/own_addresses.dart';
 
 final mailContactsServiceProvider = Provider<MailContactsService>((ref) => MailContactsService(ref));
 
@@ -59,20 +62,46 @@ class MailContactsService {
     return true;
   }
 
+  /// Имя из заголовка письма годится для карточки: не пустое, не битое, не
+  /// адрес и похоже на имя, а не на текст рассылки ([PersonNames.plausible],
+  /// 2.3.2).
+  static bool usableName(String? name, {String email = ''}) {
+    final n = name?.trim() ?? '';
+    return n.isNotEmpty &&
+        !n.contains('\uFFFD') &&
+        n.toLowerCase() != email.trim().toLowerCase() &&
+        PersonNames.plausible(n);
+  }
+
+  /// Адреса всех своих ящиков (вход, алиасы, варианты того же ящика): в
+  /// контакты из переписки они не собираются. Раньше исключался только
+  /// адрес ящика, в который пришло письмо: письмо с подделанным
+  /// отправителем — вашим же адресом другого ящика — создавало карточку с
+  /// «именем» из этого письма (замечание владельца 11.11.2026).
+  Set<String> _ownEverywhere(AccountModel account) {
+    final out = <String>{...OwnAddresses.of(account)};
+    try {
+      for (final a in _ref.read(accountsProvider)) {
+        out.addAll(OwnAddresses.of(a));
+      }
+    } catch (_) {}
+    return out;
+  }
+
   /// Учесть новые письма папки. [sent] — папка «Отправленные».
   Future<void> harvest(AccountModel account, List<EmailModel> emails, {required bool sent}) async {
     if (emails.isEmpty) return;
+    final mine = _ownEverywhere(account);
     final own = account.email.toLowerCase();
-    final shared = account.sharedMailboxEmail?.toLowerCase();
     final stats = <String, _Stat>{};
     void add(EmailAddress a, int weight, DateTime at) {
       final key = a.email.trim().toLowerCase();
-      if (key == own || key == shared || !isPersonAddress(key)) return;
+      if (mine.contains(key) || !isPersonAddress(key)) return;
       final s = stats.putIfAbsent(key, () => _Stat(a.email.trim()));
       s.count += weight;
       if (s.last == null || at.isAfter(s.last!)) s.last = at;
       final n = a.displayName?.trim();
-      if (n != null && n.isNotEmpty && !n.contains('\uFFFD') && n.toLowerCase() != key && (s.name == null || s.name!.length < n.length)) {
+      if (usableName(n, email: key) && (s.name == null || s.name!.length < n!.length)) {
         s.name = n;
       }
     }
@@ -81,6 +110,8 @@ class MailContactsService {
       if (e.isDraft) continue;
       final at = e.sentAt ?? e.receivedAt;
       if (sent || e.from.email.toLowerCase() == own) {
+        // (Только адрес этого ящика: письмо «от себя» с подделанным
+        // отправителем — чужим своим адресом — получателей не даёт.)
         for (final a in [...e.to, ...e.cc]) {
           add(a, 3, at);
         }
@@ -185,22 +216,30 @@ class MailContactsService {
     if (prefs.getBool(key) == true) return;
     try {
       final db = _db;
-      final own = account.email.toLowerCase();
+      final mine = _ownEverywhere(account);
       final stats = <String, _Stat>{};
-      // Отправители входящих.
+      // Отправители входящих (кроме «Спама» и «Корзины»: там имя отправителя
+      // часто подделано, 2.3.2).
       final senders = await db.customSelect(
         'SELECT from_email AS e, MAX(from_name) AS n, COUNT(*) AS c, MAX(received_at) AS t '
-        'FROM emails WHERE account_id = ? AND is_draft = 0 GROUP BY lower(from_email)',
-        variables: [Variable.withString(account.id)],
+        'FROM emails WHERE account_id = ? AND is_draft = 0 '
+        'AND NOT EXISTS (SELECT 1 FROM folders f WHERE f.account_id = emails.account_id '
+        'AND f.id = emails.folder_id AND f.type IN (?, ?)) '
+        'GROUP BY lower(from_email)',
+        variables: [
+          Variable.withString(account.id),
+          Variable.withInt(FolderType.trash.index),
+          Variable.withInt(FolderType.junk.index),
+        ],
       ).get();
       for (final r in senders) {
         final e = (r.readNullable<String>('e') ?? '').trim();
         final k = e.toLowerCase();
-        if (k == own || !isPersonAddress(k)) continue;
+        if (mine.contains(k) || !isPersonAddress(k)) continue;
         final s = stats.putIfAbsent(k, () => _Stat(e));
         s.count += r.read<int>('c');
         final n = r.readNullable<String>('n');
-        if (n != null && !n.contains('\uFFFD')) s.name ??= n;
+        if (usableName(n, email: k)) s.name ??= n;
         final t = r.readNullable<int>('t');
         if (t != null) s.last = DateTime.fromMillisecondsSinceEpoch(t * 1000);
       }
@@ -221,12 +260,12 @@ class MailContactsService {
               for (final m in (jsonDecode(raw) as List).whereType<Map>()) {
                 final a = EmailAddress.fromMap(Map<String, dynamic>.from(m));
                 final k = a.email.trim().toLowerCase();
-                if (k == own || !isPersonAddress(k)) continue;
+                if (mine.contains(k) || !isPersonAddress(k)) continue;
                 final s = stats.putIfAbsent(k, () => _Stat(a.email.trim()));
                 s.count += 3;
                 if (at != null && (s.last == null || at.isAfter(s.last!))) s.last = at;
                 final n = a.displayName?.trim();
-                if (n != null && n.isNotEmpty && !n.contains('\uFFFD') && s.name == null) s.name = n;
+                if (usableName(n, email: k) && s.name == null) s.name = n;
               }
             } catch (_) {}
           }
@@ -237,6 +276,46 @@ class MailContactsService {
       AppLogger.info('Контакты из переписки ${account.email}: ${stats.length}');
     } catch (e) {
       AppLogger.warning('Контакты из переписки: $e');
+    }
+  }
+
+  /// Один раз (2.3.2): убрать из контактов «из переписки» то, что попало
+  /// туда из писем с подделанными заголовками, — карточки своих адресов и
+  /// «имена»-тексты («Вам перевод … получить тут https://…»). У карточки с
+  /// таким именем остаётся адрес.
+  Future<void> cleanupOnce() async {
+    final prefs = await SharedPreferences.getInstance();
+    const key = 'mail_contacts_cleanup_v1';
+    if (prefs.getBool(key) == true) return;
+    try {
+      final db = _db;
+      final accounts = _ref.read(accountsProvider);
+      // Список ящиков ещё не загружен — в следующий раз.
+      if (accounts.isEmpty) return;
+      final mine = <String>{for (final a in accounts) ...OwnAddresses.of(a)};
+      final rows = await (db.select(db.contacts)
+            ..where((c) => c.source.equals(ContactSource.fromMail.index) & c.accountId.isNull()))
+          .get();
+      var removed = 0, renamed = 0;
+      await db.transaction(() async {
+        for (final c in rows) {
+          final email = c.email.trim().toLowerCase();
+          if (mine.contains(email)) {
+            await (db.delete(db.contacts)..where((t) => t.id.equals(c.id) & t.accountId.isNull())).go();
+            removed++;
+          } else if (c.displayName.trim().isNotEmpty && !usableName(c.displayName, email: email)) {
+            await (db.update(db.contacts)..where((t) => t.id.equals(c.id) & t.accountId.isNull())).write(
+                const ContactsCompanion(displayName: Value(''), firstName: Value(null), lastName: Value(null)));
+            renamed++;
+          }
+        }
+      });
+      await prefs.setBool(key, true);
+      if (removed + renamed > 0) {
+        AppLogger.info('Контакты из переписки: убрано своих адресов $removed, имён-текстов $renamed');
+      }
+    } catch (e) {
+      AppLogger.debug('Контакты из переписки: очистка — $e');
     }
   }
 

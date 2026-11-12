@@ -79,6 +79,20 @@ class SyncSchedule {
   static bool pushNow(AccountModel a) =>
       a.syncInterval == SyncInterval.push || (a.syncInterval == SyncInterval.scheduled && inWindow());
 
+  /// Интервал плановой проверки ящика, минуты; null — только вручную.
+  /// [pushOk] — push ящика жив: полная проверка реже (резервная).
+  /// Один расчёт для проверки («ещё не пора», SyncService) и для будильника
+  /// фоновой проверки (BackgroundAlarm, 2.3.2).
+  static int? checkMinutes(AccountModel a, {bool pushOk = false, DateTime? at}) => switch (a.syncInterval) {
+        SyncInterval.manual => null,
+        SyncInterval.minutes5 => 5,
+        SyncInterval.minutes30 => 30,
+        SyncInterval.hour1 => 60,
+        // «По расписанию» вне рабочих часов — свой интервал (15/30/60).
+        SyncInterval.scheduled when !inWindow(at) => offMinutes,
+        _ => pushOk ? 30 : 15, // push (резервная проверка) и 15 минут
+      };
+
   /// Ящику нужна фоновая служба (сторож push): мгновенно или по расписанию.
   static bool needsService(AccountModel a) =>
       a.syncInterval == SyncInterval.push || a.syncInterval == SyncInterval.scheduled;

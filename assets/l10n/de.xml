@@ -4110,4 +4110,10 @@
     <string name="mailSafetySettingsDesc">Warnungen vor gefälschten Absendern</string>
     <string name="generalDesc">Sprache, Bildschirmdrehung, Mail-Widget</string>
     <string name="appearanceDescFull">Design, Farben, Schrift und Skalierung, Listendichte, Widgets</string>
+    <string name="assignParent">Teil von</string>
+    <string name="assignPartOf">Teil des Auftrags: „{title}“</string>
+    <string name="expMacWebTitle">Komplexe E-Mails in der Browseransicht</string>
+    <string name="expMacWebDesc">E-Mails mit komplexem Layout werden wie im Browser direkt in der Nachricht angezeigt. Testfunktion für den Mac.</string>
+    <string name="graphicsHcppTitle">Neue Einbettung der Nachrichtenansicht (HCPP)</string>
+    <string name="graphicsHcppDesc">Testmodus für Android 14 und neuer: Nachrichtenansicht und Editor werden auf neue Weise eingebettet, das Scrollen sollte flüssiger werden. Wird eine Nachricht falsch angezeigt, schalten Sie ihn aus.</string>
 </resources>

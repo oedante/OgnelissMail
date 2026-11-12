@@ -29,6 +29,16 @@ package com.ogneliss.mail
 // читается один раз, при первой инициализации FlutterLoader в процессе,
 // поэтому выставляется из OgnelissApplication.onCreate — раньше главного и
 // фоновых движков (WorkManager, сигнал сервера, виджеты).
+//
+// HCPP (12.11.2026, план 2026-11 п. 3: «проверить новый режим встраивания
+// вместо Hybrid Composition»): Hybrid Composition++ — встроенные окна
+// Android (окно письма, редактор) рисуются через SurfaceControl. Тот же
+// способ включения: флаг движка `--enable-hcpp-and-surface-control`
+// (FlutterEngineFlags.ENABLE_HCPP, разрешён в выпускной сборке). С ним движок
+// сам создаёт все встроенные окна по-новому (PlatformViewsChannel.create) —
+// плагин окна письма менять не нужно. Нужны Android 14+ и Impeller на
+// Vulkan; иначе движок работает, как раньше. По умолчанию выключено:
+// выключатель там же, в «Графике», применяется с перезапуском.
 
 import android.app.ActivityManager
 import android.app.Application
@@ -57,6 +67,8 @@ object GraphicsMode {
     private const val KEY_SCANNED = "scanned_to"
     private const val KEY_GLES_FP = "gles_fingerprint"
     private const val KEY_GLES_WHY = "gles_reason"
+    private const val KEY_HCPP = "hcpp"
+    private const val ARG_HCPP = "--enable-hcpp-and-surface-control"
 
     /** Чипы, на которых Flutter не включает Vulkan (kBadSocs, Flutter 3.47). */
     private val BAD_SOCS = setOf(
@@ -76,6 +88,19 @@ object GraphicsMode {
 
     @Volatile
     private var gpuCache: String? = null
+
+    /** Этот процесс запущен с флагом HCPP. */
+    @Volatile
+    var hcppActive: Boolean = false
+        private set
+
+    /** HCPP есть смысл включать: Android 14+ и Impeller на Vulkan. */
+    fun hcppSupported(c: Context): Boolean =
+        Build.VERSION.SDK_INT >= 34 && glesReason(c) == null
+
+    /** Включить ли HCPP при следующем запуске процесса (со Skia он не работает). */
+    fun wantHcpp(c: Context): Boolean =
+        prefs(c).getBoolean(KEY_HCPP, false) && hcppSupported(c) && !wantSkia(c)
 
     private fun prefs(c: Context) = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
@@ -148,11 +173,13 @@ object GraphicsMode {
     fun applyAtStart(app: Application) {
         try {
             scanCrashes(app)
-            if (!wantSkia(app)) return
+            val skia = wantSkia(app)
+            val hcpp = !skia && wantHcpp(app)
+            if (!skia && !hcpp) return
             val loader = FlutterInjector.instance().flutterLoader()
             loader.startInitialization(app)
-            loader.ensureInitializationComplete(app, arrayOf("--enable-impeller=false"))
-            active = "skia"
+            loader.ensureInitializationComplete(app, arrayOf(if (skia) "--enable-impeller=false" else ARG_HCPP))
+            if (skia) active = "skia" else hcppActive = true
         } catch (e: Throwable) {
             Log.w(TAG, "graphics mode: ${e.message}")
         }
@@ -215,6 +242,10 @@ object GraphicsMode {
                         result.success(state(app, readLog = false))
                     }
                 }
+                "setHcpp" -> {
+                    prefs(app).edit().putBoolean(KEY_HCPP, call.arguments == true).commit()
+                    result.success(state(app, readLog = false))
+                }
                 "restart" -> {
                     result.success(null)
                     Handler(Looper.getMainLooper()).postDelayed({ RestartActivity.restart(app) }, 150)
@@ -237,6 +268,10 @@ object GraphicsMode {
             "autoAt" to p.getLong(KEY_AUTO_AT, 0L),
             "autoReason" to p.getString(KEY_AUTO_WHY, null),
             "glesReason" to glesReason(c),
+            "hcpp" to p.getBoolean(KEY_HCPP, false),
+            "hcppActive" to hcppActive,
+            "hcppNext" to wantHcpp(c),
+            "hcppSupported" to hcppSupported(c),
             "memory" to memory(c),
             "gpu" to gpuCache,
         )

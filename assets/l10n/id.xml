@@ -4089,4 +4089,10 @@
     <string name="mailSafetySettingsDesc">Peringatan pengirim palsu</string>
     <string name="generalDesc">Bahasa, rotasi layar, widget Email</string>
     <string name="appearanceDescFull">Tema, warna, font dan skala, kepadatan daftar, widget</string>
+    <string name="assignParent">Bagian dari</string>
+    <string name="assignPartOf">Bagian dari penugasan: \"{title}\"</string>
+    <string name="expMacWebTitle">Email kompleks dalam tampilan browser</string>
+    <string name="expMacWebDesc">Email dengan tata letak kompleks ditampilkan seperti di browser, langsung di dalam pesan. Fitur uji coba untuk Mac.</string>
+    <string name="graphicsHcppTitle">Penyematan baru tampilan pesan (HCPP)</string>
+    <string name="graphicsHcppDesc">Mode uji coba untuk Android 14 ke atas: tampilan pesan dan editor disematkan dengan cara baru, pengguliran seharusnya lebih mulus. Jika pesan tampil tidak benar, matikan.</string>
 </resources>

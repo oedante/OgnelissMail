@@ -4110,4 +4110,10 @@
     <string name="mailSafetySettingsDesc">Figyelmeztetés hamisított feladókra</string>
     <string name="generalDesc">Nyelv, képernyő elforgatása, Levelek widget</string>
     <string name="appearanceDescFull">Téma, színek, betűtípus és méretezés, lista sűrűsége, widgetek</string>
+    <string name="assignParent">Fő megbízás</string>
+    <string name="assignPartOf">A megbízás része: „{title}”</string>
+    <string name="expMacWebTitle">Összetett levelek böngészőnézetben</string>
+    <string name="expMacWebDesc">Az összetett elrendezésű levelek úgy jelennek meg, mint a böngészőben, közvetlenül a levélben. Kísérleti funkció Macre.</string>
+    <string name="graphicsHcppTitle">A levélnézet új beágyazása (HCPP)</string>
+    <string name="graphicsHcppDesc">Kísérleti mód Android 14-től: a levélnézet és a szerkesztő új módon ágyazódik be, a görgetés simább lehet. Ha egy levél hibásan jelenik meg, kapcsolja ki.</string>
 </resources>

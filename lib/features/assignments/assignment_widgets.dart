@@ -21,6 +21,7 @@ import '../../widgets/common/hero_email_transition.dart';
 import '../../widgets/common/peek_card.dart';
 import '../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../../widgets/ui/wheel_pickers.dart';
+import '../../core/utils/text_safe.dart' show initialOf;
 
 /// Подпись статуса.
 String assignmentStatusLabel(int status, AppLocalizations l10n) => l10n.tr(switch (status) {
@@ -68,7 +69,7 @@ class AssignmentAvatar extends StatelessWidget {
     final name = v.otherName;
     return HeroEmailAvatar(
       emailId: 'asg${v.id}',
-      initial: name.isEmpty ? '?' : name.characters.first.toUpperCase(),
+      initial: initialOf(name),
       color: HeroEmailAvatar.colorForEmail(email),
       radius: radius,
       hero: false,
@@ -212,6 +213,56 @@ class _AssignmentPeekCard extends StatelessWidget {
           Text(desc, maxLines: 4, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodyMedium),
         ],
       ]),
+    );
+  }
+}
+
+/// Подзадача в карточке родительского поручения: статус, исполнитель, срок;
+/// нажатие — карточка подзадачи, удержание — быстрые действия.
+class AssignmentSubtaskRow extends ConsumerWidget {
+  final AssignmentView v;
+  const AssignmentSubtaskRow({super.key, required this.v});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final muted = AppColors.mutedText(context);
+    final overdue = v.overdue(DateTime.now());
+    final done = v.status == AssignmentStatus.done;
+    return InkWell(
+      onTap: () => context.push('/assignments/${v.id}'),
+      onLongPress: () => unawaited(showAssignmentPeek(context, ref, v)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Space.l, vertical: 6),
+        child: Row(children: [
+          Icon(done ? AppIcons.check_circle : AppIcons.radio_button_unchecked,
+              size: 20, color: done ? AppColors.successText(context) : assignmentStatusColor(v.status, context)),
+          const SizedBox(width: Space.m),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(v.row.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: v.active ? null : muted,
+                    decoration: v.status == AssignmentStatus.cancelled ? TextDecoration.lineThrough : null,
+                  )),
+              Text(
+                [
+                  v.otherName,
+                  if (v.due != null) assignmentDueText(v.due!, l10n),
+                ].join(' · '),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall?.copyWith(color: overdue ? AppColors.errorText(context) : muted),
+              ),
+            ]),
+          ),
+          const SizedBox(width: Space.s),
+          AssignmentStatusPill(v.status),
+        ]),
+      ),
     );
   }
 }

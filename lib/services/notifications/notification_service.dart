@@ -221,6 +221,11 @@ class NotificationService {
 
     /// Общий (делегированный) ящик — помечаем явно.
     bool isSharedMailbox = false,
+
+    /// Значок ящика (12.11.2026) — справа в уведомлении прежнего вида
+    /// (Android), когда ящиков несколько. В виде «как в мессенджерах» там
+    /// портрет отправителя, ящик — подписью в шапке.
+    Uint8List? mailboxIcon,
     String? preview,
     String? fromEmail,
     String folderId = 'inbox',
@@ -257,13 +262,6 @@ class NotificationService {
     /// он уже загружен: превью короче, чем нужно для 8 и 12 строк.
     int previewLines = NotificationLines.byDefault,
     String? fullText,
-
-    /// Цвет и буква ящика (несколько ящиков, оценка интерфейса 12.11.2026):
-    /// Android — большой значок справа кружком цвета ящика и цвет шапки.
-    /// Маленький значок система разрешает только однотонным знаком
-    /// приложения.
-    int? accountColor,
-    String? accountInitial,
   }) async {
     if (_skipOnThisPlatform()) return;
     if (!_initialized) await initialize();
@@ -392,14 +390,6 @@ class NotificationService {
     // шапку: «Ogneliss Mail · ящик · время». С ярлыком (VIP, «беседы для
     // всех») название заняло бы место имени отправителя — там подпись
     // последней строкой текста.
-    // Обычный вид (не «как в мессенджерах»): кружок ящика большим значком —
-    // ящик виден и в свёрнутом уведомлении.
-    final boxIcon = Platform.isAndroid && !messenger && mailboxLabel != null && accountColor != null
-        ? await MessengerNotify.renderInitials(
-            letter: accountInitial ?? mailboxLabel.substring(0, 1).toUpperCase(),
-            fill: accountColor,
-            letterColor: 0xFFFFFFFF)
-        : null;
     final headerInStyle =
         Platform.isAndroid && messenger && subText != null && await _androidSdk() >= 31;
     final styleHeader = headerInStyle && shortcutId == null ? subText : null;
@@ -422,11 +412,8 @@ class NotificationService {
           priority: quiet && !isVip ? Priority.low : (isVip ? Priority.max : Priority.high),
           category: AndroidNotificationCategory.email,
           // VIP (1.10.5) — золотой значок и название приложения в шапке.
-          // Несколько ящиков — цвет ящика (значок и название в шапке).
-          color: isVip
-              ? const Color(NotificationText.vipColor)
-              : (mailboxLabel != null && accountColor != null ? Color(accountColor) : null),
-          largeIcon: boxIcon == null ? null : ByteArrayAndroidBitmap(boxIcon),
+          color: isVip ? const Color(NotificationText.vipColor) : null,
+          largeIcon: !messenger && mailboxIcon != null ? ByteArrayAndroidBitmap(mailboxIcon) : null,
           // На экране блокировки — без отправителя и темы (они видны только
           // после разблокировки): переписка не читается с чужого стола.
           visibility: NotificationVisibility.private,
@@ -783,14 +770,16 @@ class NotificationService {
     bool canJoin = false,
     /// «Будильником» Android (настройка календаря, по умолчанию включено).
     bool alarmClock = true,
-    /// Ящик, чья это встреча (несколько ящиков, 2.3.2): в шапке уведомления.
+    /// Ящик встречи (12.11.2026): подпись и значок, когда ящиков несколько.
     String? mailbox,
+    Uint8List? mailboxIcon,
   }) => _schedule(
         id: id,
         title: title,
         body: body,
         when: when,
-        subText: mailbox,
+        mailbox: mailbox,
+        mailboxIcon: mailboxIcon,
         channelId: 'event_reminders',
         channelName: _t('ntfChMeetings'),
         channelDesc: _t('ntfChMeetingsDesc'),
@@ -815,14 +804,16 @@ class NotificationService {
     required String body,
     required DateTime when,
     String? payload,
-    /// Ящик, чья это задача (несколько ящиков, 2.3.2): в шапке уведомления.
+    /// Ящик задачи (12.11.2026): подпись и значок, когда ящиков несколько.
     String? mailbox,
+    Uint8List? mailboxIcon,
   }) => _schedule(
         id: id,
         title: title,
         body: body,
         when: when,
-        subText: mailbox,
+        mailbox: mailbox,
+        mailboxIcon: mailboxIcon,
         channelId: 'task_reminders',
         channelName: _t('ntfChTasks'),
         channelDesc: _t('ntfChTasksDesc'),
@@ -872,9 +863,10 @@ class NotificationService {
     bool alarmClock = false,
     /// Без звука и вибрации, обычная важность (сводка, а не напоминание).
     bool quiet = false,
-    /// Подпись в шапке уведомления (ящик): Android — рядом с названием
-    /// приложения, iPhone и Mac — подзаголовок.
-    String? subText,
+    /// Ящик: в шапке уведомления (Android) или подзаголовком (iPhone, Mac),
+    /// значок ящика — справа (Android).
+    String? mailbox,
+    Uint8List? mailboxIcon,
   }) async {
     if (_skipOnThisPlatform()) return;
     if (!_initialized) await initialize();
@@ -891,10 +883,11 @@ class NotificationService {
         enableVibration: !quiet && _vibrationOn,
         category: category,
         actions: actions.isEmpty ? null : actions,
-        subText: subText,
-        styleInformation: BigTextStyleInformation(body, summaryText: subText),
+        subText: mailbox,
+        largeIcon: mailboxIcon == null ? null : ByteArrayAndroidBitmap(mailboxIcon),
+        styleInformation: BigTextStyleInformation(body, summaryText: mailbox),
       ),
-      iOS: DarwinNotificationDetails(presentSound: !quiet && _soundOn, subtitle: subText),
+      iOS: DarwinNotificationDetails(presentSound: !quiet && _soundOn, subtitle: mailbox),
     );
     final at = tz.TZDateTime.from(when.toUtc(), tz.UTC);
 

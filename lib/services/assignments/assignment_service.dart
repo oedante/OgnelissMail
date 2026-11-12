@@ -80,7 +80,7 @@ class AssignmentService {
   }
 
   /// Поручить: по поручению каждому исполнителю (у каждого — свой статус).
-  /// Возвращает коды поручений.
+  /// Возвращает коды поручений. [parent] — подзадача этого поручения.
   Future<List<String>> create({
     required AccountModel account,
     required String title,
@@ -89,6 +89,7 @@ class AssignmentService {
     DateTime? due,
     int priority = 1,
     Email? source,
+    AssignmentView? parent,
   }) async {
     final l10n = _l10n();
     final now = DateTime.now();
@@ -110,7 +111,8 @@ class AssignmentService {
           sourceEmailId: source?.id,
           at: now,
           outgoing: true,
-          eventId: ev);
+          eventId: ev,
+          parentId: parent?.id);
       final srcFrom = source == null ? null : ((source.fromName ?? '').trim().isNotEmpty ? source.fromName! : source.fromEmail);
       final body = AssignmentCodec.body(
         id: id,
@@ -118,6 +120,8 @@ class AssignmentService {
         whatLabel: l10n.tr('assignWhatLabel'),
         what: title.trim(),
         description: description,
+        parent: parent?.id,
+        parentLine: parent == null ? null : l10n.tr('assignPartOf').replaceAll('{title}', parent.row.title),
         dueLabel: l10n.tr('assignDueLabel'),
         dueLine: due == null ? null : _dueLong(due, l10n),
         sourceLine: source == null

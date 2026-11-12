@@ -17,6 +17,8 @@
 //    «Смирнов, Андрей» на «Смирнов Андрей Сергеевич» из адресной книги).
 //  · [PersonNames.monogram] — две буквы для кружка без фото.
 
+import 'text_safe.dart' show initialOf;
+
 class PersonNames {
   PersonNames._();
 
@@ -144,7 +146,7 @@ class PersonNames {
   static String monogram(String? displayName, {String email = ''}) {
     final n = clean(displayName).replaceAll(',', ' ').replaceAll(RegExp(r'\s+'), ' ').trim();
     final w = n.split(' ').where((x) => x.isNotEmpty && RegExp(r'[A-Za-zА-Яа-яЁё]').hasMatch(x[0])).toList();
-    if (w.isEmpty) return email.isEmpty ? '?' : email[0].toUpperCase();
+    if (w.isEmpty) return initialOf(email);
     if (w.length == 1) return w[0][0].toUpperCase();
     return '${w[0][0]}${w[1][0]}'.toUpperCase();
   }

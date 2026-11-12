@@ -230,6 +230,11 @@ class _AssignmentRow extends ConsumerWidget {
                   )),
               const SizedBox(height: 2),
               Row(children: [
+                // Подзадача другого поручения (12.11.2026).
+                if (v.parentId != null) ...[
+                  Icon(AppIcons.account_tree, size: 13, color: muted),
+                  const SizedBox(width: 3),
+                ],
                 Flexible(
                   child: Text(v.otherName,
                       maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodySmall?.copyWith(color: muted)),

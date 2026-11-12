@@ -28,20 +28,37 @@ import '../../widgets/common/hero_email_transition.dart';
 import '../../widgets/ui/wheel_pickers.dart';
 import '../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
 import '../mail/providers/mail_providers.dart' show accountsProvider, activeAccountProvider, emailModelFromRow;
+import '../../core/utils/text_safe.dart' show initialOf;
+
+/// Срок подзадачи по умолчанию — срок родительского поручения, если он не
+/// прошёл.
+DateTime? subtaskDefaultDue(AssignmentView? parent, DateTime now) {
+  final d = parent?.due;
+  if (d == null) return null;
+  final day = DateTime(d.year, d.month, d.day);
+  return day.isBefore(DateTime(now.year, now.month, now.day)) ? null : day;
+}
 
 /// Открыть «Поручить». [sourceEmailId] — письмо-основание; [due] — срок
-/// (из календаря). true — поручение создано.
+/// (из календаря); [parent] — подзадача этого поручения (ящик и срок — его).
+/// true — поручение создано.
 Future<bool> showAssignSheet(
   BuildContext context, {
   String? sourceEmailId,
   String? accountId,
   DateTime? due,
+  AssignmentView? parent,
 }) async {
   final ok = await showAppSheet<bool>(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
-    builder: (_) => _AssignSheet(sourceEmailId: sourceEmailId, accountId: accountId, due: due),
+    builder: (_) => _AssignSheet(
+      sourceEmailId: sourceEmailId,
+      accountId: parent?.row.accountId ?? accountId,
+      due: due ?? subtaskDefaultDue(parent, DateTime.now()),
+      parent: parent,
+    ),
   );
   return ok ?? false;
 }
@@ -50,7 +67,8 @@ class _AssignSheet extends ConsumerStatefulWidget {
   final String? sourceEmailId;
   final String? accountId;
   final DateTime? due;
-  const _AssignSheet({this.sourceEmailId, this.accountId, this.due});
+  final AssignmentView? parent;
+  const _AssignSheet({this.sourceEmailId, this.accountId, this.due, this.parent});
 
   @override
   ConsumerState<_AssignSheet> createState() => _AssignSheetState();
@@ -142,6 +160,7 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
           assignees: List.of(_to),
           due: _due,
           source: _source,
+          parent: widget.parent,
         );
     if (mounted) Navigator.of(context).pop(true);
   }
@@ -167,7 +186,7 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
       final name = a.label;
       final avatar = HeroEmailAvatar(
         emailId: 'asg_pick_${a.email}',
-        initial: name.isEmpty ? '?' : name.characters.first.toUpperCase(),
+        initial: initialOf(name),
         color: HeroEmailAvatar.colorForEmail(a.email),
         radius: 12,
         hero: false,
@@ -191,8 +210,19 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
             Row(children: [
               Icon(AppIcons.assignment_ind, color: theme.colorScheme.primary),
               const SizedBox(width: Space.s),
-              Text(l10n.tr('assignSheetTitle'), style: theme.textTheme.titleLarge),
+              Text(l10n.tr(widget.parent == null ? 'assignSheetTitle' : 'newSubtask'),
+                  style: theme.textTheme.titleLarge),
             ]),
+            if (widget.parent != null)
+              Padding(
+                padding: const EdgeInsets.only(top: Space.xs),
+                child: Text(
+                  l10n.tr('assignPartOf').replaceAll('{title}', widget.parent!.row.title),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                ),
+              ),
             if (_source != null)
               Padding(
                 padding: const EdgeInsets.only(top: Space.xs),

@@ -46,7 +46,8 @@ abstract final class AssignmentStatus {
 
 /// Скрытая отметка поручения в письме. [ev] — id события истории: своё
 /// отправленное письмо не задваивает историю (и на других устройствах).
-typedef TaskMarker = ({String id, DateTime? due, String? to, String? title, String? ev});
+/// [parent] — код родительского поручения (подзадача, 12.11.2026).
+typedef TaskMarker = ({String id, DateTime? due, String? to, String? title, String? ev, String? parent});
 
 /// Отметка статуса в ответе.
 typedef StatusMarker = ({String id, int status, String? ev});
@@ -108,11 +109,12 @@ abstract final class AssignmentCodec {
   static String _clean(String s) => s.replaceAll(RegExp(r'[;\r\n]'), ' ').trim();
 
   /// Отметка поручения: пустой элемент с атрибутом (в HTML письма).
-  static String taskMarker({required String id, DateTime? due, String? to, String? title, String? ev}) {
+  static String taskMarker({required String id, DateTime? due, String? to, String? title, String? ev, String? parent}) {
     final parts = [
       'v=1',
       'id=$id',
       if (ev != null) 'ev=${_clean(ev)}',
+      if (parent != null) 'pa=$parent',
       if (due != null) 'due=${_date(due)}',
       if (to != null && to.isNotEmpty) 'to=${_clean(to.toLowerCase())}',
       if (title != null && title.trim().isNotEmpty) 'ti=${Uri.encodeComponent(title.trim())}',
@@ -157,7 +159,9 @@ abstract final class AssignmentCodec {
       final t = fields['ti'];
       if (t != null && t.isNotEmpty) title = Uri.decodeComponent(t);
     } catch (_) {}
-    return (id: id, due: due, to: fields['to'], title: title, ev: fields['ev']);
+    final pa = fields['pa'];
+    final parent = pa != null && pa != id && RegExp('^$_code\$').hasMatch(pa) ? pa : null;
+    return (id: id, due: due, to: fields['to'], title: title, ev: fields['ev'], parent: parent);
   }
 
   /// Отметка статуса в ответе.
@@ -187,10 +191,15 @@ abstract final class AssignmentCodec {
     String? to,
     String? title,
     String? ev,
+    String? parent,
+    String? parentLine,
   }) {
     final b = StringBuffer()
       ..write('<p>${_esc(greeting)}</p>')
       ..write('<p><b>${_esc(whatLabel)}</b> ${_esc(what)}</p>');
+    // Подзадача: название родительского поручения — словами. Его тег OGN-…
+    // в текст не пишем: первый тег в теле — код самого письма (idFromBody).
+    if (parentLine != null) b.write('<p>${_esc(parentLine)}</p>');
     final desc = (description ?? '').trim();
     if (desc.isNotEmpty) b.write('<p>${_esc(desc).replaceAll('\n', '<br>')}</p>');
     if (dueLine != null) b.write('<p><b>${_esc(dueLabel ?? '')}</b> ${_esc(dueLine)}</p>');
@@ -205,7 +214,7 @@ abstract final class AssignmentCodec {
     }
     b
       ..write('<p style="color:#888;font-size:smaller">— ${_esc(footer)} ${tag(id)}</p>')
-      ..write(taskMarker(id: id, due: due, to: to, title: title, ev: ev));
+      ..write(taskMarker(id: id, due: due, to: to, title: title, ev: ev, parent: parent));
     return b.toString();
   }
 }

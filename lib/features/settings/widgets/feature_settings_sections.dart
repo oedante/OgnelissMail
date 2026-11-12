@@ -18,7 +18,7 @@ import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../calendar/calendar_data.dart' show calendarHubProvider;
-import '../../mail/widgets/mail_html_view.dart' show MailWebViewPool;
+import '../../mail/widgets/mail_html_view.dart' show MailWebViewPool, mailMacWebViewSupported;
 import '../../mail/widgets/mail_header.dart' show RecipientsLayout;
 
 /// Ключи выключателей, которых нет в других настройках (имена — с 1.5.x,
@@ -37,6 +37,10 @@ class ExperimentalKeys {
   static const inlineByRequest = 'inline_by_request_on';
   /// Вид получателей в шапке письма (1.5.9): RecipientsLayout.name.
   static const recipientsLayout = 'recipients_layout';
+
+  /// Mac: сложные письма — во встроенном окне браузера (12.11.2026,
+  /// MacMailWebView). По умолчанию выключено, пока не проверено на Mac.
+  static const macWebMail = 'mac_web_mail_on';
 
   // ── «Экспериментальный функционал» (1.10.3): по умолчанию выключено ──
 
@@ -213,6 +217,14 @@ class _MailOpeningSectionState extends ConsumerState<MailOpeningSection> with _P
           value: pref(ExperimentalKeys.nativeMail),
           onChanged: (v) => setPref(ExperimentalKeys.nativeMail, v),
         ),
+        if (mailMacWebViewSupported)
+          SettingsSwitchItem(
+            icon: AppIcons.language,
+            title: l10n.tr('expMacWebTitle'),
+            subtitle: l10n.tr('expMacWebDesc'),
+            value: pref(ExperimentalKeys.macWebMail, def: false),
+            onChanged: (v) => setPref(ExperimentalKeys.macWebMail, v),
+          ),
         SettingsSwitchItem(
           icon: AppIcons.image,
           title: l10n.tr('expInlineReqTitle'),

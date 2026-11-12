@@ -4110,4 +4110,10 @@
     <string name="mailSafetySettingsDesc">नकली प्रेषकों के बारे में चेतावनी</string>
     <string name="generalDesc">भाषा, स्क्रीन रोटेशन, मेल विजेट</string>
     <string name="appearanceDescFull">थीम, रंग, फ़ॉन्ट और स्केल, सूची घनत्व, विजेट</string>
+    <string name="assignParent">मुख्य कार्य</string>
+    <string name="assignPartOf">इस कार्य का भाग: \"{title}\"</string>
+    <string name="expMacWebTitle">जटिल ईमेल ब्राउज़र दृश्य में</string>
+    <string name="expMacWebDesc">जटिल लेआउट वाले ईमेल सीधे संदेश में ब्राउज़र की तरह दिखाए जाते हैं। Mac के लिए परीक्षण सुविधा।</string>
+    <string name="graphicsHcppTitle">संदेश दृश्य की नई एम्बेडिंग (HCPP)</string>
+    <string name="graphicsHcppDesc">Android 14 और नए संस्करणों के लिए परीक्षण मोड: संदेश दृश्य और संपादक नए तरीके से एम्बेड होते हैं, स्क्रॉलिंग अधिक सहज होनी चाहिए। यदि कोई संदेश गलत दिखे, तो इसे बंद कर दें।</string>
 </resources>

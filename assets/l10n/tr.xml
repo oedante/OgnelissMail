@@ -4110,4 +4110,10 @@
     <string name="mailSafetySettingsDesc">Sahte gönderenler hakkında uyarılar</string>
     <string name="generalDesc">Dil, ekran döndürme, Posta widget\'ı</string>
     <string name="appearanceDescFull">Tema, renkler, yazı tipi ve ölçek, liste yoğunluğu, widget\'lar</string>
+    <string name="assignParent">Üst görev</string>
+    <string name="assignPartOf">Şu görevin parçası: \"{title}\"</string>
+    <string name="expMacWebTitle">Karmaşık e-postalar tarayıcı görünümünde</string>
+    <string name="expMacWebDesc">Karmaşık düzenli e-postalar, iletinin içinde tarayıcıdaki gibi gösterilir. Mac için deneme özelliği.</string>
+    <string name="graphicsHcppTitle">İleti görünümü için yeni gömme (HCPP)</string>
+    <string name="graphicsHcppDesc">Android 14 ve sonrası için deneme modu: ileti görünümü ve düzenleyici yeni bir yöntemle gömülür, kaydırma daha akıcı olmalıdır. Bir ileti yanlış görünürse kapatın.</string>
 </resources>

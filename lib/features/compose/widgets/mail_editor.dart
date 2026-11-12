@@ -306,6 +306,10 @@ String buildMailEditorPage({
       '</body></html>';
 }
 
+/// Настройки окна редактора — для тестов.
+@visibleForTesting
+InAppWebViewSettings mailEditorSettingsForTest() => _MailEditorState._settings(1);
+
 class MailEditor extends StatefulWidget {
   const MailEditor({
     super.key,
@@ -578,8 +582,17 @@ class _MailEditorState extends State<MailEditor> {
         databaseEnabled: false,
         thirdPartyCookiesEnabled: false,
         geolocationEnabled: false,
-        // Редактору сеть не нужна вовсе.
-        blockNetworkImage: true,
+        // Редактору сеть не нужна вовсе: сетевые загрузки запрещены здесь и
+        // политикой страницы (img-src data: blob:, connect-src 'none').
+        //
+        // Картинки — НЕ запрещать (12.11.2026, замечание владельца:
+        // вставленная в текст картинка в редакторе не видна, а письмо уходит
+        // с ней). Редактор держит вставленную картинку не адресом data:, а
+        // ссылкой blob: (кэш картинок HugeRTE; в письмо она уходит снова
+        // data:). Android с blockNetworkImage откладывает загрузку любой
+        // картинки, кроме data: и файлов, — blob: оставался пустым местом.
+        // Сетевые картинки и без этого не загрузятся: blockNetworkLoads и CSP.
+        blockNetworkImage: false,
         blockNetworkLoads: true,
         safeBrowsingEnabled: true,
         mediaPlaybackRequiresUserGesture: true,

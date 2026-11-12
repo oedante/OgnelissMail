@@ -45,6 +45,19 @@ class GraphicsState {
   /// Чип, драйвер EGL и Vulkan: «чип mt6765, EGL mali, Vulkan 1.1+».
   final String? gpu;
 
+  /// HCPP — новое встраивание окна письма и редактора (Hybrid Composition++,
+  /// 12.11.2026; GraphicsMode.kt): выключатель в настройках.
+  final bool hcpp;
+
+  /// Этот процесс запущен с HCPP.
+  final bool hcppActive;
+
+  /// Будет ли HCPP после перезапуска (выключатель, Android 14+, Vulkan, не Skia).
+  final bool hcppNext;
+
+  /// Телефон подходит: Android 14+ и Impeller на Vulkan.
+  final bool hcppSupported;
+
   const GraphicsState({
     required this.mode,
     required this.active,
@@ -56,6 +69,10 @@ class GraphicsState {
     this.autoReason,
     this.memory = const {},
     this.gpu,
+    this.hcpp = false,
+    this.hcppActive = false,
+    this.hcppNext = false,
+    this.hcppSupported = false,
   });
 
   factory GraphicsState.fromMap(Map<Object?, Object?> m) {
@@ -74,11 +91,15 @@ class GraphicsState {
       autoReason: m['autoReason'] as String?,
       memory: mem is Map ? {for (final e in mem.entries) '${e.key}': e.value} : const {},
       gpu: gpu == null || gpu.isEmpty ? null : gpu,
+      hcpp: m['hcpp'] == true,
+      hcppActive: m['hcppActive'] == true,
+      hcppNext: m['hcppNext'] == true,
+      hcppSupported: m['hcppSupported'] == true,
     );
   }
 
   /// Нужен перезапуск, чтобы выбор вступил в силу.
-  bool get restartNeeded => next != active;
+  bool get restartNeeded => next != active || hcppNext != hcppActive;
 
   /// Для журнала и диагностики (по-русски, как весь журнал).
   String get summary {
@@ -94,7 +115,9 @@ class GraphicsState {
               : ', автоматически',
     });
     if (autoSkia && autoAt != null) b.write(' ${autoAt!.toIso8601String().substring(0, 16)}');
-    if (restartNeeded) b.write('; после перезапуска — ${next == 'skia' ? 'Skia' : 'Impeller'}');
+    if (hcppActive) b.write('; встроенные окна — HCPP');
+    if (next != active) b.write('; после перезапуска — ${next == 'skia' ? 'Skia' : 'Impeller'}');
+    if (hcppNext != hcppActive) b.write('; после перезапуска HCPP ${hcppNext ? 'включится' : 'выключится'}');
     return b.toString();
   }
 
@@ -134,6 +157,19 @@ class GraphicsMode {
       return m == null ? null : GraphicsState.fromMap(m);
     } catch (e) {
       AppLogger.warning('Графика: не сохранено: $e');
+      return null;
+    }
+  }
+
+  /// Новое встраивание окна письма (HCPP) — со следующего запуска.
+  static Future<GraphicsState?> setHcpp(bool on) async {
+    if (!supported) return null;
+    try {
+      final m = await _ch.invokeMethod<Map<Object?, Object?>>('setHcpp', on);
+      AppLogger.info('Графика: HCPP ${on ? 'включён' : 'выключен'}');
+      return m == null ? null : GraphicsState.fromMap(m);
+    } catch (e) {
+      AppLogger.warning('Графика: HCPP не сохранён: $e');
       return null;
     }
   }

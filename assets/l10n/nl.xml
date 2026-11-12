@@ -4110,4 +4110,10 @@
     <string name="mailSafetySettingsDesc">Waarschuwingen voor vervalste afzenders</string>
     <string name="generalDesc">Taal, schermrotatie, Mail-widget</string>
     <string name="appearanceDescFull">Thema, kleuren, lettertype en schaal, lijstdichtheid, widgets</string>
+    <string name="assignParent">Onderdeel van</string>
+    <string name="assignPartOf">Onderdeel van de opdracht: ‘{title}’</string>
+    <string name="expMacWebTitle">Complexe e-mails in browserweergave</string>
+    <string name="expMacWebDesc">E-mails met een complexe opmaak worden zoals in een browser getoond, direct in het bericht. Proeffunctie voor Mac.</string>
+    <string name="graphicsHcppTitle">Nieuwe inbedding van de berichtweergave (HCPP)</string>
+    <string name="graphicsHcppDesc">Proefmodus voor Android 14 en nieuwer: de berichtweergave en de editor worden op een nieuwe manier ingebed, scrollen zou soepeler moeten gaan. Schakel dit uit als een bericht verkeerd wordt weergegeven.</string>
 </resources>

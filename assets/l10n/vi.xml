@@ -4089,4 +4089,10 @@
     <string name="mailSafetySettingsDesc">Cảnh báo người gửi giả mạo</string>
     <string name="generalDesc">Ngôn ngữ, xoay màn hình, tiện ích Thư</string>
     <string name="appearanceDescFull">Chủ đề, màu sắc, phông chữ và tỷ lệ, mật độ danh sách, tiện ích</string>
+    <string name="assignParent">Thuộc việc</string>
+    <string name="assignPartOf">Thuộc việc giao: \"{title}\"</string>
+    <string name="expMacWebTitle">Email phức tạp trong chế độ xem trình duyệt</string>
+    <string name="expMacWebDesc">Email có bố cục phức tạp được hiển thị như trong trình duyệt, ngay trong thư. Tính năng thử nghiệm cho Mac.</string>
+    <string name="graphicsHcppTitle">Cách nhúng mới cho chế độ xem thư (HCPP)</string>
+    <string name="graphicsHcppDesc">Chế độ thử nghiệm cho Android 14 trở lên: chế độ xem thư và trình soạn thảo được nhúng theo cách mới, cuộn sẽ mượt hơn. Nếu thư hiển thị sai, hãy tắt.</string>
 </resources>

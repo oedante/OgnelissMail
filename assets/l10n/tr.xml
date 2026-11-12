@@ -4096,4 +4096,5 @@
     <string name="keysHintNav">Sonraki ve önceki ileti</string>
     <string name="keysHintPalette">Tüm komutlar</string>
     <string name="selectedMailsN">{n} ileti seçildi</string>
+    <string name="noteSelectPrompt">Soldan bir not seçin veya yeni bir not oluşturun</string>
 </resources>

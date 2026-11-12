@@ -4075,4 +4075,5 @@
     <string name="keysHintNav">次と前のメッセージ</string>
     <string name="keysHintPalette">すべてのコマンド</string>
     <string name="selectedMailsN">{n} 件のメールを選択中</string>
+    <string name="noteSelectPrompt">左のメモを選ぶか、新しいメモを作成します</string>
 </resources>

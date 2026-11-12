@@ -4096,4 +4096,5 @@
     <string name="keysHintNav">अगला और पिछला संदेश</string>
     <string name="keysHintPalette">सभी कमांड</string>
     <string name="selectedMailsN">{n} संदेश चुने गए</string>
+    <string name="noteSelectPrompt">बाईं ओर से नोट चुनें या नया बनाएँ</string>
 </resources>

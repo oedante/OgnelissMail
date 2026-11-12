@@ -4180,4 +4180,5 @@
     <string name="keysHintNav">الرسالة التالية والسابقة</string>
     <string name="keysHintPalette">كل الأوامر</string>
     <string name="selectedMailsN">تم تحديد {n} رسائل</string>
+    <string name="noteSelectPrompt">اختر ملاحظة من اليسار أو أنشئ ملاحظة جديدة</string>
 </resources>

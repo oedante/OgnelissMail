@@ -4096,4 +4096,5 @@
     <string name="keysHintNav">Næste og forrige besked</string>
     <string name="keysHintPalette">Alle kommandoer</string>
     <string name="selectedMailsN">{n} beskeder valgt</string>
+    <string name="noteSelectPrompt">Vælg en note til venstre, eller opret en ny</string>
 </resources>

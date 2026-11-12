@@ -4096,4 +4096,5 @@
     <string name="keysHintNav">Mensaje siguiente y anterior</string>
     <string name="keysHintPalette">Todos los comandos</string>
     <string name="selectedMailsN">{n} mensajes seleccionados</string>
+    <string name="noteSelectPrompt">Seleccione una nota a la izquierda o cree una nueva</string>
 </resources>

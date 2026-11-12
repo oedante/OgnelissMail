@@ -4075,4 +4075,5 @@
     <string name="keysHintNav">下一封和上一封邮件</string>
     <string name="keysHintPalette">所有命令</string>
     <string name="selectedMailsN">已选择 {n} 封邮件</string>
+    <string name="noteSelectPrompt">在左侧选择笔记或新建笔记</string>
 </resources>

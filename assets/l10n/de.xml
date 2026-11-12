@@ -4096,4 +4096,5 @@
     <string name="keysHintNav">Nächste und vorherige Nachricht</string>
     <string name="keysHintPalette">Alle Befehle</string>
     <string name="selectedMailsN">{n} Nachrichten ausgewählt</string>
+    <string name="noteSelectPrompt">Wählen Sie links eine Notiz oder erstellen Sie eine neue</string>
 </resources>

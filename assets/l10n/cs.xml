@@ -4117,4 +4117,5 @@
     <string name="keysHintNav">Další a předchozí zpráva</string>
     <string name="keysHintPalette">Všechny příkazy</string>
     <string name="selectedMailsN">Vybrané zprávy: {n}</string>
+    <string name="noteSelectPrompt">Vyberte poznámku vlevo nebo vytvořte novou</string>
 </resources>

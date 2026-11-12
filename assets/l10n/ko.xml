@@ -4075,4 +4075,5 @@
     <string name="keysHintNav">다음 및 이전 메시지</string>
     <string name="keysHintPalette">모든 명령</string>
     <string name="selectedMailsN">메일 {n}개 선택됨</string>
+    <string name="noteSelectPrompt">왼쪽에서 메모를 선택하거나 새로 만드세요</string>
 </resources>

@@ -4096,4 +4096,5 @@
     <string name="keysHintNav">Nästa och föregående meddelande</string>
     <string name="keysHintPalette">Alla kommandon</string>
     <string name="selectedMailsN">{n} meddelanden markerade</string>
+    <string name="noteSelectPrompt">Välj en anteckning till vänster eller skapa en ny</string>
 </resources>

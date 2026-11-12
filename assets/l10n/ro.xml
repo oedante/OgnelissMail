@@ -4117,4 +4117,5 @@
     <string name="keysHintNav">Mesajul următor și anterior</string>
     <string name="keysHintPalette">Toate comenzile</string>
     <string name="selectedMailsN">{n} mesaje selectate</string>
+    <string name="noteSelectPrompt">Selectați o notă din stânga sau creați una nouă</string>
 </resources>

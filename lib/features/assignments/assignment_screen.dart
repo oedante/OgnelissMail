@@ -11,6 +11,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,13 +22,19 @@ import '../../core/navigation/app_router.dart' show mailOpenPath;
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
-import '../../data/database/app_database.dart' show AssignmentEvent;
+import '../../core/platform/file_opener.dart';
+import '../../data/database/app_database.dart' show AssignmentEvent, AssignmentParticipant;
+import '../../data/models/email_model.dart';
+import '../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
+import '../mail/providers/mail_providers.dart' show accountsProvider;
 import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
-import '../../services/assignments/assignment_store.dart' show AssignmentTree;
+import '../../services/assignments/assignment_store.dart' show AssignmentTree, AssignmentFile;
 import '../../widgets/common/peek_card.dart' show peekAnchorOf;
 import '../../widgets/ui/action_sheet.dart';
 import 'assign_sheet.dart';
+import 'project_editor.dart' show pickAssignmentFiles;
+import 'project_screen.dart';
 import 'assignment_widgets.dart';
 
 class AssignmentScreen extends ConsumerWidget {
@@ -47,8 +54,19 @@ class AssignmentScreen extends ConsumerWidget {
         body: list == null ? const Center(child: CircularProgressIndicator()) : const SizedBox.shrink(),
       );
     }
+    // Проект с этапами — свой экран (этапы, план, файлы, история).
+    if (v.isProject) return ProjectScreen(project: v, all: list!);
     final events = ref.watch(assignmentEventsProvider(id)).value ?? const <AssignmentEvent>[];
     final svc = ref.read(assignmentServiceProvider);
+    final afterStage = v.row.afterId == null ? null : list!.where((x) => x.id == v.row.afterId).firstOrNull;
+    final checklist = v.checklist;
+    final files = v.files;
+    // Кто что может: исполнитель — «Взять», «Готово», «Передать»;
+    // соисполнитель — «Сообщить о ходе работ»; принимает работу
+    // контролирующий, а без него — постановщик.
+    final canWork = v.iExecute || v.iCoExecute || (!v.outgoing && v.myRoles.isEmpty);
+    final canCheck = canWork || v.outgoing;
+    final canAddFiles = v.active && (canWork || v.outgoing || v.iControl);
     final overdue = v.overdue(DateTime.now());
     final src = v.row.sourceEmailId;
     final desc = (v.row.description ?? '').trim();
@@ -64,7 +82,10 @@ class AssignmentScreen extends ConsumerWidget {
               Icon(icon, size: 20, color: muted),
               const SizedBox(width: Space.m),
               SizedBox(
-                  width: 112, child: Text(label, style: theme.textTheme.bodyMedium?.copyWith(color: muted))),
+                  width: 136,
+                  child: Text(label,
+                      maxLines: 2, overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodyMedium?.copyWith(color: muted))),
               Expanded(child: value),
               if (onTap != null) Icon(AppIcons.chevron_right, color: muted),
             ]),
@@ -72,8 +93,9 @@ class AssignmentScreen extends ConsumerWidget {
         );
 
     final s = v.status;
+    final main = v.iExecute || (!v.outgoing && v.myRoles.isEmpty);
     final buttons = <Widget>[
-      if (v.outgoing && s == AssignmentStatus.review) ...[
+      if (v.iAccept && s == AssignmentStatus.review) ...[
         Expanded(
           child: FilledButton.tonal(
               onPressed: () => assignmentFire(svc.setStatus(v, AssignmentStatus.inProgress)),
@@ -92,7 +114,7 @@ class AssignmentScreen extends ConsumerWidget {
               icon: const Icon(AppIcons.notifications, size: 18),
               label: Text(l10n.tr('assignRemind'))),
         ),
-      if (!v.outgoing && (s == AssignmentStatus.open || s == AssignmentStatus.inProgress)) ...[
+      if (main && !v.outgoing && (s == AssignmentStatus.open || s == AssignmentStatus.inProgress)) ...[
         if (src != null) ...[
           Expanded(
             child: OutlinedButton.icon(
@@ -117,6 +139,51 @@ class AssignmentScreen extends ConsumerWidget {
                   label: Text(l10n.tr('assignDoneAction'))),
         ),
       ],
+      // Соисполнитель: «Готово» отправляет основной исполнитель (решение
+      // владельца 12.11.2026) — здесь ход работ.
+      if (v.iCoExecute && !v.outgoing && AssignmentStatus.isActive(s))
+        Expanded(
+          child: FilledButton.tonalIcon(
+              onPressed: () => unawaited(_report(context, v)),
+              icon: const Icon(AppIcons.analytics, size: 18),
+              label: Text(l10n.tr('projReport'))),
+        ),
+    ];
+
+    String person(AssignmentParticipant? p, String fallback) {
+      final n = (p?.displayName ?? '').trim();
+      return n.isNotEmpty ? n : (p?.email ?? fallback);
+    }
+
+    final fmtDate = DateFormat('EEE, d MMM', l10n.localeCode);
+    final roles = <Widget>[
+      info(AppIcons.assignment_ind, l10n.tr('projRoleOwner'),
+          Text(v.outgoing ? l10n.tr('assignMe') : person(v.owner, v.row.ownerEmail),
+              style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500))),
+      if (v.assignee != null)
+        info(
+          AppIcons.person,
+          l10n.tr('projExecutor'),
+          Row(children: [
+            AssignmentAvatar(v, radius: 12),
+            const SizedBox(width: Space.s),
+            Expanded(
+              child: Text(v.iExecute ? l10n.tr('assignMe') : person(v.assignee, ''),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
+            ),
+          ]),
+        ),
+      if (v.coExecutors.isNotEmpty)
+        info(AppIcons.group, l10n.tr('projCo'),
+            Text(v.coExecutors.map((p) => person(p, '')).join(', '), style: theme.textTheme.bodyMedium)),
+      if (v.controller != null)
+        info(AppIcons.verified_user, l10n.tr('projController'),
+            Text(v.iControl ? l10n.tr('assignMe') : person(v.controller, ''), style: theme.textTheme.bodyMedium)),
+      if (v.observers.isNotEmpty)
+        info(AppIcons.visibility, l10n.tr('projObservers'),
+            Text(v.observers.map((p) => person(p, '')).join(', '), style: theme.textTheme.bodyMedium)),
     ];
 
     return Scaffold(
@@ -158,30 +225,32 @@ class AssignmentScreen extends ConsumerWidget {
           // распознан (2.2.1).
           _Stepper(status: s, onPick: v.outgoing ? (st) => _pickStatus(context, v, st) : null),
         const SizedBox(height: Space.m),
-        info(
-          v.outgoing ? AppIcons.person : AppIcons.assignment_ind,
-          l10n.tr(v.outgoing ? 'assignAssignee' : 'assignOwner'),
-          Row(children: [
-            AssignmentAvatar(v, radius: 12),
-            const SizedBox(width: Space.s),
-            Expanded(
-              child: Text(v.otherName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
-            ),
-          ]),
-        ),
+        ...roles,
         info(
           AppIcons.event,
           l10n.tr('assignDueTitle'),
           Text(
-            v.due == null ? l10n.tr('noDueDate') : DateFormat('EEEE, d MMMM', l10n.localeCode).format(v.due!),
+            v.start != null
+                ? '${fmtDate.format(v.start!)} — ${v.due == null ? l10n.tr('noDueDate') : fmtDate.format(v.due!)}'
+                : (v.due == null ? l10n.tr('noDueDate') : DateFormat('EEEE, d MMMM', l10n.localeCode).format(v.due!)),
             style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500, color: overdue ? AppColors.errorText(context) : null),
           ),
           onTap: v.active ? () => unawaited(showAssignmentPeek(context, ref, v)) : null,
         ),
+        if (v.row.afterId != null)
+          info(
+            AppIcons.schedule,
+            l10n.tr('projOrder'),
+            Text(
+              [
+                l10n.tr('projAfter').replaceAll('{title}', afterStage?.row.title ?? '…'),
+                if (v.waiting) l10n.tr('projWaiting'),
+              ].join(' · '),
+              style: theme.textTheme.bodyMedium?.copyWith(color: v.waiting ? AppColors.mutedText(context) : null),
+            ),
+            onTap: afterStage == null ? null : () => context.push('/assignments/${afterStage.id}'),
+          ),
         if (parent != null)
           info(
             AppIcons.account_tree,
@@ -204,6 +273,51 @@ class AssignmentScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, 0),
             child: Text(desc, style: theme.textTheme.bodyLarge),
+          ),
+        if (checklist.isNotEmpty) ChecklistSection(v: v, editable: canCheck && v.active),
+        if (files.isNotEmpty) FilesSection(v: v, files: files, canAdd: canAddFiles),
+        // Пустые чек-лист и файлы — кнопками, без пустых разделов.
+        if (v.active && ((checklist.isEmpty && canCheck) || (files.isEmpty && canAddFiles)))
+          Padding(
+            padding: const EdgeInsets.fromLTRB(Space.s, Space.s, Space.l, 0),
+            child: Wrap(spacing: Space.xs, children: [
+              if (checklist.isEmpty && canCheck)
+                TextButton.icon(
+                  key: const ValueKey('assign_add_check'),
+                  onPressed: () async {
+                    final t = await _askNote(context, l10n.tr('projChecklist'), l10n.tr('projAddCheck'),
+                        ok: l10n.tr('add'));
+                    if ((t ?? '').trim().isNotEmpty) assignmentFire(svc.addCheck(v, t!));
+                  },
+                  icon: const Icon(AppIcons.checklist, size: 18),
+                  label: Text(l10n.tr('projChecklist')),
+                ),
+              if (files.isEmpty && canAddFiles)
+                TextButton.icon(
+                  key: const ValueKey('assign_add_files'),
+                  onPressed: () => unawaited(addAssignmentFiles(ref, v)),
+                  icon: const Icon(AppIcons.attach_file, size: 18),
+                  label: Text(l10n.tr('projAddFiles')),
+                ),
+            ]),
+          ),
+        if (main && !v.outgoing && v.active)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
+            child: Wrap(spacing: Space.s, runSpacing: Space.xs, children: [
+              OutlinedButton.icon(
+                key: const ValueKey('assign_delegate'),
+                onPressed: () => unawaited(_delegate(context, ref, v)),
+                icon: const Icon(AppIcons.forward, size: 18),
+                label: Text(l10n.tr('projDelegate')),
+              ),
+              if (checklist.isNotEmpty)
+                OutlinedButton.icon(
+                  onPressed: () => unawaited(_report(context, v)),
+                  icon: const Icon(AppIcons.analytics, size: 18),
+                  label: Text(l10n.tr('projReport')),
+                ),
+            ]),
           ),
         if (subtasks.isNotEmpty || v.active) ...[
           const Divider(height: Space.xl),
@@ -359,6 +473,14 @@ class _EventRow extends StatelessWidget {
         ),
       'reminder' => (AppIcons.notifications, '${l10n.tr('assignEvReminder')}${text.isEmpty ? '' : ' — $text'}'),
       'due' => (AppIcons.event, text),
+      'delegated' => (
+          AppIcons.person_add,
+          l10n.tr('projEvDelegated').replaceAll('{name}', '${p['name'] ?? p['to'] ?? ''}')
+        ),
+      'progress' => (AppIcons.history, '$who: $text'),
+      'files' => (AppIcons.attach_file, '$who: $text'),
+      'go' => (AppIcons.play_arrow, l10n.tr('projEvGo')),
+      'sent' => (AppIcons.send, l10n.tr('projEvSent')),
       'status' => (
           AppIcons.history,
           '$who: ${assignmentStatusLabel(status ?? v.status, l10n)}${text.isEmpty ? '' : ' — «$text»'}'
@@ -385,4 +507,191 @@ class _EventRow extends StatelessWidget {
       ]),
     );
   }
+}
+
+
+/// «Передать для исполнения»: выбранный человек — соисполнитель, я остаюсь
+/// исполнителем.
+Future<void> _delegate(BuildContext context, WidgetRef ref, AssignmentView v) async {
+  final account = ref.read(accountsProvider).where((a) => a.id == v.row.accountId).firstOrNull;
+  final picked = await showPeoplePicker(context,
+      account: account, exclude: {for (final p in v.people) p.email.toLowerCase()});
+  if (picked.isEmpty || !context.mounted) return;
+  final c = picked.first;
+  final l10n = AppLocalizations.of(context);
+  final note = await _askNote(context, l10n.tr('projDelegate'), l10n.tr('projDelegateHint').replaceAll('{name}', c.displayName.trim().isEmpty ? c.email : c.displayName));
+  if (note == null) return;
+  assignmentFire(ref
+      .read(assignmentServiceProvider)
+      .delegate(v, EmailAddress(email: c.email, displayName: c.displayName.trim().isEmpty ? null : c.displayName), note: note));
+}
+
+/// «Сообщить о ходе работ»: чек-лист и комментарий постановщику.
+Future<void> _report(BuildContext context, AssignmentView v) async {
+  final l10n = AppLocalizations.of(context);
+  final svc = ProviderScope.containerOf(context).read(assignmentServiceProvider);
+  final note = await _askNote(context, l10n.tr('projReport'), l10n.tr('projReportHint'));
+  if (note == null) return;
+  assignmentFire(svc.reportProgress(v, note: note));
+}
+
+/// Комментарий к действию; null — передумали.
+Future<String?> _askNote(BuildContext context, String title, String hint, {String? ok}) async {
+  final l10n = AppLocalizations.of(context);
+  final ctrl = TextEditingController();
+  final res = await showDialog<String>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(title),
+      content: TextField(
+        controller: ctrl,
+        autofocus: true,
+        minLines: 2,
+        maxLines: 5,
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(hintText: hint, border: const OutlineInputBorder()),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+        FilledButton(onPressed: () => Navigator.pop(ctx, ctrl.text.trim()), child: Text(ok ?? l10n.tr('send'))),
+      ],
+    ),
+  );
+  ctrl.dispose();
+  return res;
+}
+
+/// Чек-лист этапа: отметки — у себя (постановщик узнаёт из «Сообщить о
+/// ходе работ», «Принято», «Готово»), новый пункт — внизу.
+class ChecklistSection extends ConsumerStatefulWidget {
+  final AssignmentView v;
+  final bool editable;
+  const ChecklistSection({super.key, required this.v, required this.editable});
+
+  @override
+  ConsumerState<ChecklistSection> createState() => _ChecklistSectionState();
+}
+
+class _ChecklistSectionState extends ConsumerState<ChecklistSection> {
+  final _ctrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final items = widget.v.checklist;
+    final done = items.where((i) => i.done).length;
+    final svc = ref.read(assignmentServiceProvider);
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      const Divider(height: Space.xl),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.xs),
+        child: Text(items.isEmpty ? l10n.tr('projChecklist') : '${l10n.tr('projChecklist')} · $done/${items.length}',
+            style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+      ),
+      if (items.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Space.l),
+          child: LinearProgressIndicator(value: done / items.length, minHeight: 4, borderRadius: BorderRadius.circular(2)),
+        ),
+      for (var i = 0; i < items.length; i++)
+        CheckboxListTile(
+          dense: true,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: items[i].done,
+          onChanged: widget.editable ? (_) => assignmentFire(svc.toggleCheck(widget.v, i)) : null,
+          title: Text(items[i].text,
+              style: items[i].done
+                  ? theme.textTheme.bodyMedium?.copyWith(
+                      decoration: TextDecoration.lineThrough, color: AppColors.mutedText(context))
+                  : theme.textTheme.bodyMedium),
+        ),
+      if (widget.editable)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, 0),
+          child: TextField(
+            controller: _ctrl,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(
+                hintText: l10n.tr('projAddCheck'), prefixIcon: const Icon(AppIcons.add), isDense: true),
+            onSubmitted: (t) {
+              if (t.trim().isEmpty) return;
+              assignmentFire(svc.addCheck(widget.v, t));
+              _ctrl.clear();
+            },
+          ),
+        ),
+    ]);
+  }
+}
+
+/// Файлы поручения: свои открываются, из письма — открывают письмо.
+class FilesSection extends ConsumerWidget {
+  final AssignmentView v;
+  final List<AssignmentFile> files;
+  final bool canAdd;
+  final String? title;
+  const FilesSection({super.key, required this.v, required this.files, required this.canAdd, this.title});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    if (files.isEmpty && !canAdd) return const SizedBox.shrink();
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      const Divider(height: Space.xl),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.s, Space.xs),
+        child: Row(children: [
+          Expanded(
+            child: Text(files.isEmpty ? (title ?? l10n.tr('projTabFiles')) : '${title ?? l10n.tr('projTabFiles')} · ${files.length}',
+                style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+          ),
+          if (canAdd)
+            TextButton.icon(
+              onPressed: () => unawaited(addAssignmentFiles(ref, v)),
+              icon: const Icon(AppIcons.attach_file, size: 18),
+              label: Text(l10n.tr('projAddFiles')),
+            ),
+        ]),
+      ),
+      for (final f in files)
+        ListTile(
+          dense: true,
+          leading: const Icon(AppIcons.attach_file),
+          title: Text(f.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+          subtitle: f.size > 0 ? Text(_fileSize(f.size)) : null,
+          onTap: () async {
+            final path = f.path;
+            if (path != null && File(path).existsSync()) {
+              await FileOpener.open(path, name: f.name);
+            } else if (f.mailId != null && context.mounted) {
+              unawaited(context.push(mailOpenPath(context, f.mailId!, accountId: v.row.accountId)));
+            }
+          },
+        ),
+    ]);
+  }
+}
+
+/// Выбрать файлы и добавить к поручению (письмо другой стороне).
+Future<void> addAssignmentFiles(WidgetRef ref, AssignmentView v) async {
+  List<AssignmentFile> picked = const [];
+  try {
+    picked = await pickAssignmentFiles();
+  } catch (_) {}
+  if (picked.isEmpty) return;
+  assignmentFire(ref.read(assignmentServiceProvider).addFiles(v, picked));
+}
+
+String _fileSize(int b) {
+  if (b < 1024) return '$b B';
+  if (b < 1024 * 1024) return '${(b / 1024).toStringAsFixed(0)} KB';
+  return '${(b / 1024 / 1024).toStringAsFixed(1)} MB';
 }

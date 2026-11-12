@@ -426,6 +426,37 @@ class Assignments extends Table {
   DateTimeColumn get updatedAt => dateTime()();
   BoolColumn get isArchived => boolean().withDefault(const Constant(false))();
 
+  // ── Проекты с этапами (схема 29, просьба владельца 12.11.2026) ──
+  // Проект — поручение с этапами (isProject); этап — поручение с
+  // parentAssignmentId = проект. У этапа — начало, «после этапа» (код
+  // предыдущего этапа: последовательно; пусто — параллельно), порядок,
+  // чек-лист и файлы.
+  BoolColumn get isProject => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get startAt => dateTime().nullable()();
+  TextColumn get afterId => text().nullable()();
+  IntColumn get stageOrder => integer().withDefault(const Constant(0))();
+  /// Чек-лист: [{"t": текст, "d": выполнено}].
+  TextColumn get checklistJson => text().nullable()();
+  /// Файлы: [{"n": имя, "s": размер, "p": путь на устройстве} или
+  /// {"n", "s", "m": письмо, "a": вложение}].
+  TextColumn get filesJson => text().nullable()();
+  /// Этап ждёт предыдущего («после этапа N»): до письма «Можно начинать».
+  BoolColumn get waiting => boolean().withDefault(const Constant(false))();
+  /// План проекта (этапы для диаграммы): JSON из письма проекта — у
+  /// участников, у которых других этапов нет.
+  TextColumn get planJson => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Шаблоны проектов (схема 29): этапы, роли и сроки относительно начала.
+class AssignmentTemplates extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text()();
+  TextColumn get payloadJson => text()();
+  DateTimeColumn get createdAt => dateTime()();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -435,7 +466,7 @@ class AssignmentParticipants extends Table {
   TextColumn get assignmentId => text().references(Assignments, #id)();
   TextColumn get email => text()();
   TextColumn get displayName => text().nullable()();
-  IntColumn get role => integer()(); // 0 owner,1 responsible,2 participant,3 observer
+  IntColumn get role => integer()(); // 0 постановщик,1 исполнитель,2 соисполнитель,3 наблюдатель,4 контролирующий
   IntColumn get inviteStatus => integer().withDefault(const Constant(0))(); // 0 pending,1 accepted,2 declined
   BoolColumn get isOurClient => boolean().nullable()(); // null = неизвестно (нет нашего клиента)
 
@@ -574,6 +605,7 @@ class DeliveryStatuses extends Table {
   AssignmentMeetings,
   AssignmentReports,
   DeliveryStatuses,
+  AssignmentTemplates,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -582,7 +614,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 28;
+  int get schemaVersion => 29;
 
   @override
   MigrationStrategy get migration {
@@ -741,6 +773,22 @@ class AppDatabase extends _$AppDatabase {
         if (from < 28) {
           // @-упоминания (2.2.0, план 08.11.2026).
           await _addColumnIfMissing(m, emails, emails.mentionsMe);
+        }
+        if (from < 29) {
+          // Поручения — проекты с этапами (12.11.2026).
+          for (final c in [
+            assignments.isProject,
+            assignments.startAt,
+            assignments.afterId,
+            assignments.stageOrder,
+            assignments.checklistJson,
+            assignments.filesJson,
+            assignments.waiting,
+            assignments.planJson,
+          ]) {
+            await _addColumnIfMissing(m, assignments, c);
+          }
+          await m.createTable(assignmentTemplates);
         }
       },
       beforeOpen: (details) async {

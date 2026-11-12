@@ -4093,4 +4093,6 @@
     <string name="assignMarkedManually">Marked manually</string>
     <string name="readingPaneAskTitle">How should emails open?</string>
     <string name="readingPaneAskHint">You can change this in the list ⋮ menu → {pane}</string>
+    <string name="assignParent">Part of</string>
+    <string name="assignPartOf">Part of the assignment: \"{title}\"</string>
 </resources>

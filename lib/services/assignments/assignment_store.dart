@@ -46,6 +46,9 @@ class AssignmentView {
   bool get active => AssignmentStatus.isActive(row.status);
   DateTime? get due => row.dueAt?.toLocal();
 
+  /// Код родительского поручения (подзадача, 12.11.2026).
+  String? get parentId => row.parentAssignmentId;
+
   /// С кем поручение: у моего — исполнитель, у порученного мне — поручивший.
   String get otherName {
     final p = outgoing ? assignee : owner;
@@ -60,6 +63,33 @@ class AssignmentView {
     final d = due;
     if (d == null || !active) return false;
     return DateTime(d.year, d.month, d.day).isBefore(DateTime(now.year, now.month, now.day));
+  }
+}
+
+/// Связь «родитель — подзадача» среди поручений [all]. Родитель и
+/// подзадачи — только те, что есть на этом устройстве: у исполнителя
+/// подзадачи родительского поручения может не быть.
+extension AssignmentTree on List<AssignmentView> {
+  AssignmentView? parentOf(AssignmentView v) {
+    final id = v.parentId;
+    if (id == null) return null;
+    return where((x) => x.id == id).firstOrNull;
+  }
+
+  /// Подзадачи: сначала действующие по сроку, затем закрытые.
+  List<AssignmentView> childrenOf(String id) {
+    final list = [for (final x in this) if (x.parentId == id) x];
+    int rank(AssignmentView v) => v.active ? 0 : 1;
+    list.sort((a, b) {
+      final r = rank(a).compareTo(rank(b));
+      if (r != 0) return r;
+      final da = a.due, db = b.due;
+      if (da == null && db == null) return a.row.createdAt.compareTo(b.row.createdAt);
+      if (da == null) return 1;
+      if (db == null) return -1;
+      return da.compareTo(db);
+    });
+    return list;
   }
 }
 
@@ -116,6 +146,7 @@ abstract final class AssignmentStore {
     required DateTime at,
     required bool outgoing,
     String? eventId,
+    String? parentId,
   }) async {
     await db.transaction(() async {
       await db.into(db.assignments).insert(
@@ -129,6 +160,7 @@ abstract final class AssignmentStore {
               ownerEmail: ownerEmail.toLowerCase(),
               dueAt: Value(due),
               sourceEmailId: Value(sourceEmailId),
+              parentAssignmentId: Value(parentId),
               createdAt: at,
               updatedAt: at,
             ),
@@ -343,7 +375,7 @@ abstract final class AssignmentStore {
         final isNew = SubjectPrefix.strip(e.subject) == e.subject.trim();
         final toMe = me.firstWhere((m) => e.toRecipients.toLowerCase().contains(m), orElse: () => '');
         if (fromMe || !isNew || toMe.isEmpty || AssignmentCodec.idFromBody(fresh) != id) return false;
-        t = (id: id, due: null, to: toMe, title: null, ev: null);
+        t = (id: id, due: null, to: toMe, title: null, ev: null, parent: null);
       }
       final to = t.to;
       // Поручено не мне (я в копии) — не моё поручение.
@@ -368,7 +400,8 @@ abstract final class AssignmentStore {
           sourceEmailId: e.id,
           at: at,
           outgoing: fromMe,
-          eventId: evId);
+          eventId: evId,
+          parentId: t.parent);
       return true;
     }
 

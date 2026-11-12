@@ -4072,4 +4072,6 @@
     <string name="assignMarkedManually">已手动标记</string>
     <string name="readingPaneAskTitle">如何打开邮件？</string>
     <string name="readingPaneAskHint">可在列表的 ⋮ 菜单 →“{pane}”中更改</string>
+    <string name="assignParent">所属任务</string>
+    <string name="assignPartOf">所属任务：“{title}”</string>
 </resources>

@@ -4135,4 +4135,6 @@
     <string name="assignMarkedManually">Отмечено вручную</string>
     <string name="readingPaneAskTitle">Как открывать письма?</string>
     <string name="readingPaneAskHint">Можно поменять в меню ⋮ ленты → «{pane}»</string>
+    <string name="assignParent">Входит в</string>
+    <string name="assignPartOf">Часть поручения: «{title}»</string>
 </resources>

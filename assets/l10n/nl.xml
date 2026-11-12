@@ -4093,4 +4093,6 @@
     <string name="assignMarkedManually">Handmatig gemarkeerd</string>
     <string name="readingPaneAskTitle">Hoe moeten e-mails openen?</string>
     <string name="readingPaneAskHint">Te wijzigen via het menu ⋮ van de lijst → ‘{pane}’</string>
+    <string name="assignParent">Onderdeel van</string>
+    <string name="assignPartOf">Onderdeel van de opdracht: ‘{title}’</string>
 </resources>

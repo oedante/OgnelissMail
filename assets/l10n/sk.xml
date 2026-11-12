@@ -4114,4 +4114,6 @@
     <string name="assignMarkedManually">Označené ručne</string>
     <string name="readingPaneAskTitle">Ako otvárať e-maily?</string>
     <string name="readingPaneAskHint">Zmeníte v ponuke ⋮ zoznamu → „{pane}“</string>
+    <string name="assignParent">Súčasť úlohy</string>
+    <string name="assignPartOf">Súčasť úlohy: „{title}“</string>
 </resources>

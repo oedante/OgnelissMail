@@ -588,7 +588,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       context.push(mailOpenPath(context, e.id.substring(mailPrefix.length), accountId: e.accountId));
       return;
     }
-    // Поручение — его карточка (2.3.2).
+    // Поручение — его карточка.
     if (isAssignItem(e)) {
       context.push('/assignments/${e.id.substring(assignPrefix.length)}');
       return;

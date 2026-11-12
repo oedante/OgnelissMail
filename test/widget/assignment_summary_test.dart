@@ -14,6 +14,7 @@ import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/assignments/assignment_screen.dart';
 import 'package:ogneliss/features/assignments/assignments_summary_screen.dart';
+import 'package:ogneliss/features/assignments/gantt_chart.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/services/assignments/assignment_service.dart';
 import 'package:ogneliss/services/assignments/assignment_store.dart';
@@ -105,7 +106,7 @@ void main() {
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
 
-  testWidgets('сводка: показатели, статусы, исполнители, недели', (t) async {
+  testWidgets('сводка: показатели, статусы, исполнители, сроки', (t) async {
     await t.binding.setSurfaceSize(const Size(800, 2000));
     await open(t);
     final all = [
@@ -124,14 +125,17 @@ void main() {
     expect(tile('Просрочено: 1'), findsOneWidget);
     expect(tile('В срок: 100%'), findsOneWidget);
     expect(find.text('Исполнители'), findsOneWidget);
-    expect(find.text('Вера'), findsOneWidget);
-    expect(find.text('Дмитрий'), findsOneWidget);
-    expect(find.text('По неделям'), findsOneWidget);
+    // Имя — и в «Исполнителях», и второй строкой на диаграмме сроков.
+    expect(find.text('Вера'), findsWidgets);
+    expect(find.text('Дмитрий'), findsOneWidget, reason: 'его поручение выполнено — на диаграмме сроков его нет');
+    // Сроки — диаграммой Ганта: просроченное (A) первым.
+    expect(find.text('Сроки'), findsOneWidget);
+    expect(find.byType(GanttChart), findsOneWidget);
     // «Мне поручили» — только D, человек — поручивший.
     await t.tap(find.text('Мне поручили'));
     await t.pump(const Duration(milliseconds: 300));
     expect(find.text('Постановщики'), findsOneWidget);
-    expect(find.text('Олег'), findsOneWidget);
+    expect(find.text('Олег'), findsWidgets);
     await close(t);
     await t.binding.setSurfaceSize(null);
   });

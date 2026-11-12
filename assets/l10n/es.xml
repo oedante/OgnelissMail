@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">Activos</string>
     <string name="assignStatsDone">Hechos</string>
     <string name="assignStatsDonePeriod">Hechos en el periodo</string>
-    <string name="assignStatsCreated">Asignados</string>
     <string name="assignStatsOnTime">A tiempo</string>
     <string name="assignStatsOnTimeShort">a tiempo {p}</string>
     <string name="assignStatsAvgDays">Tiempo medio, días</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">Personas</string>
     <string name="assignStatsPerson">Quién</string>
     <string name="assignStatsMorePeople">y {n} más</string>
-    <string name="assignStatsWeeks">Por semanas</string>
-    <string name="assignStatsWeeksHint">Asignados y hechos en 8 semanas</string>
-    <string name="assignStatsProjects">Proyectos</string>
     <string name="assignStatsNone">Aún no hay nada que mostrar</string>
     <string name="assignStatsNote">Hecho = trabajo aceptado. A tiempo = aceptado como tarde en la fecha límite.</string>
     <string name="assignStatsLateDays">Días de retraso</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Vencimiento → aceptado; desviación en días (+ = después del vencimiento).</string>
     <string name="assignStatus">Estado</string>
     <string name="filterHelp">Ayudo</string>
+    <string name="assignStatsTimeline">Plazos</string>
+    <string name="assignStatsTimelineHint">Barra: de la asignación al vencimiento; relleno: parte hecha; borde rojo: vencido. Los vencidos primero.</string>
+    <string name="assignStatsShowAll">Mostrar {n} más</string>
+    <string name="assignStatsNoDue">Sin vencimiento: {n} (no aparecen en el diagrama).</string>
 </resources>

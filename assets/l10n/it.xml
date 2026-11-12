@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">Attivi</string>
     <string name="assignStatsDone">Fatti</string>
     <string name="assignStatsDonePeriod">Fatti nel periodo</string>
-    <string name="assignStatsCreated">Assegnati</string>
     <string name="assignStatsOnTime">In tempo</string>
     <string name="assignStatsOnTimeShort">in tempo {p}</string>
     <string name="assignStatsAvgDays">Tempo medio, giorni</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">Persone</string>
     <string name="assignStatsPerson">Chi</string>
     <string name="assignStatsMorePeople">e altri {n}</string>
-    <string name="assignStatsWeeks">Per settimana</string>
-    <string name="assignStatsWeeksHint">Assegnati e fatti in 8 settimane</string>
-    <string name="assignStatsProjects">Progetti</string>
     <string name="assignStatsNone">Ancora niente da mostrare</string>
     <string name="assignStatsNote">Fatto = lavoro accettato. In tempo = accettato entro la scadenza.</string>
     <string name="assignStatsLateDays">Giorni di ritardo</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Scadenza → accettato; scostamento in giorni (+ = dopo la scadenza).</string>
     <string name="assignStatus">Stato</string>
     <string name="filterHelp">Aiuto</string>
+    <string name="assignStatsTimeline">Scadenze</string>
+    <string name="assignStatsTimelineHint">Barra: dall\'assegnazione alla scadenza; riempimento: parte fatta; bordo rosso: in ritardo. Prima i ritardi.</string>
+    <string name="assignStatsShowAll">Mostra altri {n}</string>
+    <string name="assignStatsNoDue">Senza scadenza: {n} (non nel diagramma).</string>
 </resources>

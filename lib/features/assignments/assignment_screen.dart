@@ -31,6 +31,7 @@ import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
 import '../../services/assignments/assignment_store.dart' show AssignmentTree, AssignmentFile;
 import '../../widgets/common/peek_card.dart' show peekAnchorOf;
+import '../../widgets/common/readable_width.dart';
 import '../../widgets/ui/action_sheet.dart';
 import 'assign_sheet.dart';
 import 'project_editor.dart' show pickAssignmentFiles;
@@ -208,12 +209,20 @@ class AssignmentScreen extends ConsumerWidget {
       bottomNavigationBar: buttons.isEmpty
           ? null
           : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.m),
-                child: Row(children: buttons),
+              child: ReadableWidth(
+                maxWidth: assignmentColumnWidth,
+                heightFactor: 1,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.m),
+                  child: Row(children: buttons),
+                ),
               ),
             ),
-      body: ListView(padding: const EdgeInsets.only(bottom: Space.xl), children: [
+      // Планшет и компьютер: колонка читаемой ширины, а не во весь экран.
+      body: ReadableWidth(
+          maxWidth: assignmentColumnWidth,
+          fill: true,
+          child: ListView(padding: const EdgeInsets.only(bottom: Space.xl), children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.m),
           child: Text.rich(
@@ -368,7 +377,7 @@ class AssignmentScreen extends ConsumerWidget {
           child: Text(l10n.tr('assignHistory'), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
         ),
         for (final e in events) _EventRow(e: e, v: v),
-      ]),
+      ])),
     );
   }
 }

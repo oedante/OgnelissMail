@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">Actief</string>
     <string name="assignStatsDone">Klaar</string>
     <string name="assignStatsDonePeriod">Klaar in periode</string>
-    <string name="assignStatsCreated">Gegeven</string>
     <string name="assignStatsOnTime">Op tijd</string>
     <string name="assignStatsOnTimeShort">op tijd {p}</string>
     <string name="assignStatsAvgDays">Gemiddelde duur, dagen</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">Personen</string>
     <string name="assignStatsPerson">Wie</string>
     <string name="assignStatsMorePeople">en nog {n}</string>
-    <string name="assignStatsWeeks">Per week</string>
-    <string name="assignStatsWeeksHint">Gegeven en klaar in 8 weken</string>
-    <string name="assignStatsProjects">Projecten</string>
     <string name="assignStatsNone">Nog niets te tonen</string>
     <string name="assignStatsNote">Klaar = werk geaccepteerd. Op tijd = uiterlijk op de deadline geaccepteerd.</string>
     <string name="assignStatsLateDays">Dagen te laat</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Deadline → geaccepteerd; afwijking in dagen (+ = na de deadline).</string>
     <string name="assignStatus">Status</string>
     <string name="filterHelp">Help mee</string>
+    <string name="assignStatsTimeline">Planning</string>
+    <string name="assignStatsTimelineHint">Balk: van toewijzing tot deadline; vulling: gedaan deel; rode rand: te laat. Te late eerst.</string>
+    <string name="assignStatsShowAll">Nog {n} tonen</string>
+    <string name="assignStatsNoDue">Zonder deadline: {n} (niet in de grafiek).</string>
 </resources>

@@ -4185,7 +4185,6 @@
     <string name="assignStatsInWork">進行中</string>
     <string name="assignStatsDone">完了</string>
     <string name="assignStatsDonePeriod">期間内の完了</string>
-    <string name="assignStatsCreated">依頼数</string>
     <string name="assignStatsOnTime">期限内</string>
     <string name="assignStatsOnTimeShort">期限内 {p}</string>
     <string name="assignStatsAvgDays">平均日数</string>
@@ -4197,9 +4196,6 @@
     <string name="assignStatsPeople">メンバー</string>
     <string name="assignStatsPerson">担当</string>
     <string name="assignStatsMorePeople">ほか {n} 人</string>
-    <string name="assignStatsWeeks">週別</string>
-    <string name="assignStatsWeeksHint">8 週間の依頼数と完了数</string>
-    <string name="assignStatsProjects">プロジェクト</string>
     <string name="assignStatsNone">まだ表示するものがありません</string>
     <string name="assignStatsNote">完了＝成果が承認済み。期限内＝期限日までに承認。</string>
     <string name="assignStatsLateDays">遅延日数</string>
@@ -4211,4 +4207,8 @@
     <string name="assignStatsPlanFactHint">期限 → 承認日。差異は日数（＋は期限超過）。</string>
     <string name="assignStatus">ステータス</string>
     <string name="filterHelp">協力中</string>
+    <string name="assignStatsTimeline">スケジュール</string>
+    <string name="assignStatsTimelineHint">バー：依頼日から期限まで。塗り：完了した部分。赤枠：期限超過。期限超過が先頭。</string>
+    <string name="assignStatsShowAll">さらに {n} 件表示</string>
+    <string name="assignStatsNoDue">期限なし：{n} 件（図には表示されません）。</string>
 </resources>

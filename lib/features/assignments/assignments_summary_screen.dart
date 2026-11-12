@@ -23,6 +23,7 @@ import '../../services/assignments/assignment_stats.dart';
 import '../../services/assignments/assignment_store.dart' show AssignmentTree, PlanStage, projectProgress, projectStatus;
 import '../mail/providers/mail_providers.dart' show accountsProvider;
 import 'assignment_charts.dart';
+import '../../widgets/common/readable_width.dart';
 import 'assignment_widgets.dart' show AssignmentMailboxChip;
 import 'gantt_chart.dart';
 
@@ -70,6 +71,67 @@ class _AssignmentsSummaryScreenState extends ConsumerState<AssignmentsSummaryScr
   int _period = 30;
   String? _accountId;
 
+  /// Все строки на диаграмме сроков (по умолчанию — первые 12).
+  bool _showAll = false;
+
+  /// Строки диаграммы сроков: действующие поручения со сроком и проекты;
+  /// этапы показанного проекта — внутри него. Просроченные — первыми,
+  /// дальше по сроку.
+  static ({List<AssignmentView> rows, int hidden, int noDue}) _timeline(List<AssignmentView> items, DateTime now,
+      {int? limit}) {
+    final projects = {for (final v in items) if (v.isProject && v.active) v.id};
+    final rows = <AssignmentView>[];
+    var noDue = 0;
+    for (final v in items) {
+      if (!v.active || projects.contains(v.parentId)) continue;
+      if (v.due == null) {
+        if (!v.isProject) noDue++;
+        continue;
+      }
+      rows.add(v);
+    }
+    rows.sort((a, b) {
+      final la = a.overdue(now), lb = b.overdue(now);
+      if (la != lb) return la ? -1 : 1;
+      return a.due!.compareTo(b.due!);
+    });
+    final shown = limit == null || rows.length <= limit ? rows : rows.take(limit).toList();
+    return (rows: shown, hidden: rows.length - shown.length, noDue: noDue);
+  }
+
+  /// Строка диаграммы: поручение (исполнитель — второй строкой) или проект
+  /// (прогресс и статус — по этапам).
+  static PlanStage _planRow(AssignmentView v, int order, List<AssignmentView> all, AppLocalizations l10n) {
+    if (v.isProject) {
+      final stages = all.childrenOf(v.id);
+      final done = stages.where((s) => s.status == AssignmentStatus.done).length;
+      return PlanStage(
+        id: v.id,
+        title: v.row.title,
+        start: v.start ?? v.row.createdAt.toLocal(),
+        due: v.due,
+        order: order,
+        status: projectStatus(v.status, [for (final s in stages) s.status]),
+        progress: projectProgress(planOf(stages)),
+        assignee: [
+          l10n.tr('assignProjectSubject'),
+          if (stages.isNotEmpty)
+            l10n.tr('projStagesCount').replaceAll('{done}', '$done').replaceAll('{total}', '${stages.length}'),
+        ].join(' · '),
+      );
+    }
+    return PlanStage(
+      id: v.id,
+      title: v.important ? '! ${v.row.title}' : v.row.title,
+      start: v.start ?? v.row.createdAt.toLocal(),
+      due: v.due,
+      order: order,
+      status: v.status,
+      progress: v.progress,
+      assignee: v.otherName,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -90,7 +152,7 @@ class _AssignmentsSummaryScreenState extends ConsumerState<AssignmentsSummaryScr
     ];
     final now = DateTime.now();
     final stats = AssignmentStats.of(items, now, periodDays: _period);
-    final projects = [for (final v in items) if (v.isProject && v.active) v];
+    final timeline = _timeline(items, now, limit: _showAll ? null : 12);
     final periodText = l10n.tr('assignStatsPeriod').replaceAll('{n}', '$_period');
     final scopeText = l10n.tr(switch (_scope) {
       SummaryScope.mine => 'assignTabMine',
@@ -118,7 +180,11 @@ class _AssignmentsSummaryScreenState extends ConsumerState<AssignmentsSummaryScr
           ),
         ],
       ),
-      body: ListView(padding: const EdgeInsets.only(bottom: Space.xl), children: [
+      // Компьютер и планшет: не шире 1280, блоки — в две колонки.
+      body: ReadableWidth(
+          maxWidth: 1280,
+          fill: true,
+          child: ListView(padding: const EdgeInsets.only(bottom: Space.xl), children: [
         // Фильтры — над графиками: кто, период, ящик.
         Padding(
           padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
@@ -131,7 +197,10 @@ class _AssignmentsSummaryScreenState extends ConsumerState<AssignmentsSummaryScr
                 ButtonSegment(value: SummaryScope.all, label: Text(l10n.tr('all'))),
               ],
               selected: {_scope},
-              onSelectionChanged: (s) => setState(() => _scope = s.first),
+              onSelectionChanged: (s) => setState(() {
+                _scope = s.first;
+                _showAll = false;
+              }),
             ),
             for (final d in const [30, 90, 365])
               ChoiceChip(
@@ -166,48 +235,63 @@ class _AssignmentsSummaryScreenState extends ConsumerState<AssignmentsSummaryScr
                 value: stats.avgDays == null ? '—' : stats.avgDays!.toStringAsFixed(1)),
           ]),
         ),
-        ChartCard(
-          title: l10n.tr('assignStatsStatuses'),
-          subtitle: l10n.tr('assignStatsStatusesHint').replaceAll('{period}', periodText),
-          child: StatusSplitBar(counts: stats.byStatus),
-        ),
-        ChartCard(
-          title: l10n.tr(switch (_scope) {
-            SummaryScope.mine => 'assignStatsExecutors',
-            SummaryScope.toMe => 'assignStatsOwners',
-            SummaryScope.all => 'assignStatsPeople',
-          }),
-          child: PeopleBars(people: stats.people),
-        ),
-        ChartCard(
-          title: l10n.tr('assignStatsWeeks'),
-          subtitle: l10n.tr('assignStatsWeeksHint'),
-          child: WeeklyColumns(weeks: stats.weeks),
-        ),
-        if (projects.isNotEmpty)
+        // Статусы и люди — рядом на широком экране.
+        LayoutBuilder(builder: (context, box) {
+          final status = ChartCard(
+            title: l10n.tr('assignStatsStatuses'),
+            subtitle: l10n.tr('assignStatsStatusesHint').replaceAll('{period}', periodText),
+            child: StatusSplitBar(counts: stats.byStatus),
+          );
+          final people = ChartCard(
+            title: l10n.tr(switch (_scope) {
+              SummaryScope.mine => 'assignStatsExecutors',
+              SummaryScope.toMe => 'assignStatsOwners',
+              SummaryScope.all => 'assignStatsPeople',
+            }),
+            child: PeopleBars(people: stats.people),
+          );
+          if (box.maxWidth < 900) return Column(children: [status, people]);
+          return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child: status),
+            Expanded(child: people),
+          ]);
+        }),
+        // Сроки — диаграмма Ганта (просьба владельца 12.11.2026, вместо
+        // графика по неделям): поручения и проекты, просроченные — первыми.
+        if (timeline.rows.isNotEmpty || timeline.noDue > 0)
           ChartCard(
-            title: l10n.tr('assignStatsProjects'),
-            child: GanttChart(
-              stages: [
-                for (var i = 0; i < projects.length; i++)
-                  () {
-                    final p = projects[i];
-                    final stages = everything.childrenOf(p.id);
-                    final plan = planOf(stages);
-                    return PlanStage(
-                      id: p.id,
-                      title: p.row.title,
-                      start: p.start ?? p.row.createdAt.toLocal(),
-                      due: p.due,
-                      order: i,
-                      status: projectStatus(p.status, [for (final s in stages) s.status]),
-                      progress: projectProgress(plan),
-                    );
-                  }(),
-              ],
-              today: now,
-              onTap: (id) => unawaited(context.push('/assignments/$id')),
-            ),
+            title: l10n.tr('assignStatsTimeline'),
+            subtitle: l10n.tr('assignStatsTimelineHint'),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              if (timeline.rows.isNotEmpty)
+                GanttChart(
+                  key: ValueKey('summary_gantt_${_scope.name}_${_accountId}_$_showAll'),
+                  stages: [
+                    for (var i = 0; i < timeline.rows.length; i++)
+                      _planRow(timeline.rows[i], i, everything, l10n),
+                  ],
+                  today: now,
+                  numbered: false,
+                  showAssignee: true,
+                  focusToday: true,
+                  onTap: (id) => unawaited(context.push('/assignments/$id')),
+                ),
+              if (timeline.hidden > 0)
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: TextButton(
+                    key: const ValueKey('summary_show_all'),
+                    onPressed: () => setState(() => _showAll = true),
+                    child: Text(l10n.tr('assignStatsShowAll').replaceAll('{n}', '${timeline.hidden}')),
+                  ),
+                ),
+              if (timeline.noDue > 0)
+                Padding(
+                  padding: const EdgeInsets.only(top: Space.xs),
+                  child: Text(l10n.tr('assignStatsNoDue').replaceAll('{n}', '${timeline.noDue}'),
+                      style: theme.textTheme.bodySmall?.copyWith(color: muted)),
+                ),
+            ]),
           ),
         if (items.isEmpty)
           Padding(
@@ -218,7 +302,7 @@ class _AssignmentsSummaryScreenState extends ConsumerState<AssignmentsSummaryScr
           padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
           child: Text(l10n.tr('assignStatsNote'), style: theme.textTheme.bodySmall?.copyWith(color: muted)),
         ),
-      ]),
+      ])),
     );
   }
 }

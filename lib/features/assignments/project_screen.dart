@@ -31,6 +31,9 @@ import 'assignment_widgets.dart';
 import 'gantt_chart.dart';
 import 'project_editor.dart';
 
+/// С этой ширины — две панели (этапы и план рядом).
+const projectTwoPaneMin = 1000.0;
+
 class ProjectScreen extends ConsumerWidget {
   final AssignmentView project;
   final List<AssignmentView> all;
@@ -285,39 +288,75 @@ class ProjectScreen extends ConsumerWidget {
 
     final historyTab = _History(project: project, stages: stages);
 
-    return DefaultTabController(
-      length: 5,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(l10n.tr('projTitle')),
-          actions: [
-            if (project.outgoing)
-              PopupMenuButton<String>(
-                tooltip: l10n.tr('more'),
-                onSelected: (v) {
-                  if (v == 'template') unawaited(_saveTemplate(context, ref));
-                  if (v == 'cancel') assignmentFire(_cancelAll(ref, stages));
-                },
-                itemBuilder: (_) => [
-                  PopupMenuItem(value: 'template', child: Text(l10n.tr('projSaveTemplate'))),
-                  if (project.active) PopupMenuItem(value: 'cancel', child: Text(l10n.tr('projCancel'))),
-                ],
-              ),
-          ],
-        ),
-        body: Column(children: [
-          header,
-          TabBar(isScrollable: true, tabAlignment: TabAlignment.start, tabs: [
-            Tab(text: l10n.tr('projStages')),
-            Tab(text: l10n.tr('projPlan')),
-            Tab(text: l10n.tr('assignSummary')),
-            Tab(text: l10n.tr('projTabFiles')),
-            Tab(text: l10n.tr('assignHistory')),
-          ]),
-          Expanded(child: TabBarView(children: [stagesTab, planTab, summaryTab, filesTab, historyTab])),
-        ]),
-      ),
+    final appBar = AppBar(
+      title: Text(l10n.tr('projTitle')),
+      actions: [
+        if (project.outgoing)
+          PopupMenuButton<String>(
+            tooltip: l10n.tr('more'),
+            onSelected: (v) {
+              if (v == 'template') unawaited(_saveTemplate(context, ref));
+              if (v == 'cancel') assignmentFire(_cancelAll(ref, stages));
+            },
+            itemBuilder: (_) => [
+              PopupMenuItem(value: 'template', child: Text(l10n.tr('projSaveTemplate'))),
+              if (project.active) PopupMenuItem(value: 'cancel', child: Text(l10n.tr('projCancel'))),
+            ],
+          ),
+      ],
     );
+    TabBar tabBar(List<String> keys) =>
+        TabBar(isScrollable: true, tabAlignment: TabAlignment.start, tabs: [for (final k in keys) Tab(text: l10n.tr(k))]);
+
+    // Планшет в альбомной ориентации и компьютер: этапы слева всегда на
+    // виду, справа — план, сводка, файлы и история.
+    return LayoutBuilder(builder: (context, box) {
+      if (box.maxWidth >= projectTwoPaneMin) {
+        return DefaultTabController(
+          length: 4,
+          child: Scaffold(
+            appBar: appBar,
+            body: Column(children: [
+              header,
+              const Divider(height: 1),
+              Expanded(
+                child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  SizedBox(
+                    width: (box.maxWidth * 0.38).clamp(360.0, 520.0),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, 0),
+                        child: Text(l10n.tr('projStages'),
+                            style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                      ),
+                      Expanded(child: stagesTab),
+                    ]),
+                  ),
+                  const VerticalDivider(width: 1),
+                  Expanded(
+                    child: Column(children: [
+                      tabBar(const ['projPlan', 'assignSummary', 'projTabFiles', 'assignHistory']),
+                      Expanded(child: TabBarView(children: [planTab, summaryTab, filesTab, historyTab])),
+                    ]),
+                  ),
+                ]),
+              ),
+            ]),
+          ),
+        );
+      }
+      return DefaultTabController(
+        length: 5,
+        child: Scaffold(
+          appBar: appBar,
+          body: Column(children: [
+            header,
+            tabBar(const ['projStages', 'projPlan', 'assignSummary', 'projTabFiles', 'assignHistory']),
+            Expanded(child: TabBarView(children: [stagesTab, planTab, summaryTab, filesTab, historyTab])),
+          ]),
+        ),
+      );
+    });
   }
 
   Future<void> _addStage(BuildContext context, WidgetRef ref, List<AssignmentView> stages) async {

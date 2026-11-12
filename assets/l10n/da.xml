@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">Aktive</string>
     <string name="assignStatsDone">Færdige</string>
     <string name="assignStatsDonePeriod">Færdige i perioden</string>
-    <string name="assignStatsCreated">Tildelt</string>
     <string name="assignStatsOnTime">Til tiden</string>
     <string name="assignStatsOnTimeShort">til tiden {p}</string>
     <string name="assignStatsAvgDays">Gennemsnitlig tid, dage</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">Personer</string>
     <string name="assignStatsPerson">Hvem</string>
     <string name="assignStatsMorePeople">og {n} mere</string>
-    <string name="assignStatsWeeks">Pr. uge</string>
-    <string name="assignStatsWeeksHint">Tildelt og færdige over 8 uger</string>
-    <string name="assignStatsProjects">Projekter</string>
     <string name="assignStatsNone">Intet at vise endnu</string>
     <string name="assignStatsNote">Færdig = arbejdet godkendt. Til tiden = godkendt senest på fristen.</string>
     <string name="assignStatsLateDays">Dage forsinket</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Frist → godkendt; afvigelse i dage (+ = efter fristen).</string>
     <string name="assignStatus">Status</string>
     <string name="filterHelp">Hjælper</string>
+    <string name="assignStatsTimeline">Tidslinje</string>
+    <string name="assignStatsTimelineHint">Bjælke: fra tildeling til frist; udfyldning: færdig del; rød kant: forsinket. Forsinkede først.</string>
+    <string name="assignStatsShowAll">Vis {n} mere</string>
+    <string name="assignStatsNoDue">Uden frist: {n} (vises ikke i diagrammet).</string>
 </resources>

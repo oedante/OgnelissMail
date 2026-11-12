@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">Aktív</string>
     <string name="assignStatsDone">Kész</string>
     <string name="assignStatsDonePeriod">Kész az időszakban</string>
-    <string name="assignStatsCreated">Kiadva</string>
     <string name="assignStatsOnTime">Határidőre</string>
     <string name="assignStatsOnTimeShort">határidőre {p}</string>
     <string name="assignStatsAvgDays">Átlagos idő, nap</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">Személyek</string>
     <string name="assignStatsPerson">Ki</string>
     <string name="assignStatsMorePeople">és még {n}</string>
-    <string name="assignStatsWeeks">Hetente</string>
-    <string name="assignStatsWeeksHint">Kiadva és kész 8 hét alatt</string>
-    <string name="assignStatsProjects">Projektek</string>
     <string name="assignStatsNone">Még nincs mit mutatni</string>
     <string name="assignStatsNote">Kész = a munkát elfogadták. Határidőre = legkésőbb a határidő napján elfogadva.</string>
     <string name="assignStatsLateDays">Késés, nap</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Határidő → elfogadva; eltérés napokban (+ = határidő után).</string>
     <string name="assignStatus">Állapot</string>
     <string name="filterHelp">Segítek</string>
+    <string name="assignStatsTimeline">Határidők</string>
+    <string name="assignStatsTimelineHint">Sáv: a kiadástól a határidőig; kitöltés: elkészült rész; piros keret: lejárt. A késők elöl.</string>
+    <string name="assignStatsShowAll">További {n} megjelenítése</string>
+    <string name="assignStatsNoDue">Határidő nélkül: {n} (nem szerepelnek a diagramon).</string>
 </resources>

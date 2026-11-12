@@ -4185,7 +4185,6 @@
     <string name="assignStatsInWork">กำลังดำเนินการ</string>
     <string name="assignStatsDone">เสร็จแล้ว</string>
     <string name="assignStatsDonePeriod">เสร็จในช่วงนี้</string>
-    <string name="assignStatsCreated">มอบหมายแล้ว</string>
     <string name="assignStatsOnTime">ตรงเวลา</string>
     <string name="assignStatsOnTimeShort">ตรงเวลา {p}</string>
     <string name="assignStatsAvgDays">เวลาเฉลี่ย (วัน)</string>
@@ -4197,9 +4196,6 @@
     <string name="assignStatsPeople">บุคคล</string>
     <string name="assignStatsPerson">ใคร</string>
     <string name="assignStatsMorePeople">และอีก {n} คน</string>
-    <string name="assignStatsWeeks">รายสัปดาห์</string>
-    <string name="assignStatsWeeksHint">มอบหมายและเสร็จใน 8 สัปดาห์</string>
-    <string name="assignStatsProjects">โครงการ</string>
     <string name="assignStatsNone">ยังไม่มีข้อมูลให้แสดง</string>
     <string name="assignStatsNote">เสร็จ = งานได้รับการอนุมัติ ตรงเวลา = อนุมัติไม่เกินกำหนด</string>
     <string name="assignStatsLateDays">วันที่ล่าช้า</string>
@@ -4211,4 +4207,8 @@
     <string name="assignStatsPlanFactHint">กำหนด → อนุมัติ ส่วนต่างเป็นวัน (+ = หลังกำหนด)</string>
     <string name="assignStatus">สถานะ</string>
     <string name="filterHelp">ช่วยเหลือ</string>
+    <string name="assignStatsTimeline">ไทม์ไลน์</string>
+    <string name="assignStatsTimelineHint">แถบ: ตั้งแต่มอบหมายถึงกำหนดส่ง ส่วนที่ระบาย: ส่วนที่ทำแล้ว กรอบแดง: เลยกำหนด งานที่เลยกำหนดแสดงก่อน</string>
+    <string name="assignStatsShowAll">แสดงอีก {n}</string>
+    <string name="assignStatsNoDue">ไม่มีกำหนดส่ง: {n} (ไม่แสดงในแผนภูมิ)</string>
 </resources>

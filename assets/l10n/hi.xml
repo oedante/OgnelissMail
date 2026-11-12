@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">सक्रिय</string>
     <string name="assignStatsDone">पूरे</string>
     <string name="assignStatsDonePeriod">अवधि में पूरे</string>
-    <string name="assignStatsCreated">सौंपे गए</string>
     <string name="assignStatsOnTime">समय पर</string>
     <string name="assignStatsOnTimeShort">समय पर {p}</string>
     <string name="assignStatsAvgDays">औसत समय, दिन</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">लोग</string>
     <string name="assignStatsPerson">कौन</string>
     <string name="assignStatsMorePeople">और {n}</string>
-    <string name="assignStatsWeeks">सप्ताह के अनुसार</string>
-    <string name="assignStatsWeeksHint">8 सप्ताह में सौंपे और पूरे</string>
-    <string name="assignStatsProjects">परियोजनाएँ</string>
     <string name="assignStatsNone">अभी दिखाने को कुछ नहीं</string>
     <string name="assignStatsNote">पूरा = काम स्वीकार हुआ। समय पर = समय-सीमा तक स्वीकार हुआ।</string>
     <string name="assignStatsLateDays">देरी, दिन</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">समय-सीमा → स्वीकार; विचलन दिनों में (+ = समय-सीमा के बाद)।</string>
     <string name="assignStatus">स्थिति</string>
     <string name="filterHelp">सहयोग में</string>
+    <string name="assignStatsTimeline">समय-रेखा</string>
+    <string name="assignStatsTimelineHint">पट्टी: सौंपने से समय-सीमा तक; भराव: पूरा भाग; लाल किनारा: देर। देर वाले पहले।</string>
+    <string name="assignStatsShowAll">{n} और दिखाएँ</string>
+    <string name="assignStatsNoDue">बिना समय-सीमा: {n} (चार्ट में नहीं)।</string>
 </resources>

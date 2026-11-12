@@ -27,10 +27,11 @@ import '../../services/assignments/assignment_service.dart';
 import '../../services/assignments/assignment_store.dart' show AssignmentFile, nextStageDates;
 import '../../widgets/common/app_sheet.dart';
 import '../../widgets/common/hero_email_transition.dart';
+import '../../widgets/common/readable_width.dart';
 import '../../widgets/ui/wheel_pickers.dart';
 import '../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
 import '../mail/providers/mail_providers.dart' show accountsProvider, activeAccountProvider;
-import 'assignment_widgets.dart' show AssignmentAccountField;
+import 'assignment_widgets.dart' show AssignmentAccountField, assignmentColumnWidth;
 
 /// Открыть «Новый проект». true — проект создан.
 Future<bool> showProjectEditor(BuildContext context, {String? accountId, String? title, String? description}) async {
@@ -292,19 +293,26 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
         ],
       ),
       bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.m),
-          child: FilledButton.icon(
-            key: const ValueKey('proj_send'),
-            onPressed: _ready && !_sending ? () => unawaited(_send()) : null,
-            icon: _sending
-                ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(AppIcons.send, size: 18),
-            label: Text(l10n.tr('projSend')),
+        child: ReadableWidth(
+          maxWidth: assignmentColumnWidth,
+          heightFactor: 1,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.m),
+            child: FilledButton.icon(
+              key: const ValueKey('proj_send'),
+              onPressed: _ready && !_sending ? () => unawaited(_send()) : null,
+              icon: _sending
+                  ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(AppIcons.send, size: 18),
+              label: Text(l10n.tr('projSend')),
+            ),
           ),
         ),
       ),
-      body: ListView(padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.xl), children: [
+      body: ReadableWidth(
+          maxWidth: assignmentColumnWidth,
+          fill: true,
+          child: ListView(padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.xl), children: [
         TextField(
           key: const ValueKey('proj_title'),
           controller: _title,
@@ -385,7 +393,7 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
             onTap: () => unawaited(_editStage(i)),
             onDelete: () => _removeStage(i),
           ),
-      ]),
+      ])),
     );
   }
 }

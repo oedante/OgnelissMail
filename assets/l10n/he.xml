@@ -4227,7 +4227,6 @@
     <string name="assignStatsInWork">פעילות</string>
     <string name="assignStatsDone">בוצעו</string>
     <string name="assignStatsDonePeriod">בוצעו בתקופה</string>
-    <string name="assignStatsCreated">הוקצו</string>
     <string name="assignStatsOnTime">בזמן</string>
     <string name="assignStatsOnTimeShort">בזמן {p}</string>
     <string name="assignStatsAvgDays">זמן ממוצע, ימים</string>
@@ -4239,9 +4238,6 @@
     <string name="assignStatsPeople">אנשים</string>
     <string name="assignStatsPerson">מי</string>
     <string name="assignStatsMorePeople">ועוד {n}</string>
-    <string name="assignStatsWeeks">לפי שבועות</string>
-    <string name="assignStatsWeeksHint">הוקצו ובוצעו ב-8 שבועות</string>
-    <string name="assignStatsProjects">פרויקטים</string>
     <string name="assignStatsNone">אין עדיין מה להציג</string>
     <string name="assignStatsNote">בוצע = העבודה אושרה. בזמן = אושרה עד מועד היעד.</string>
     <string name="assignStatsLateDays">ימי איחור</string>
@@ -4253,4 +4249,8 @@
     <string name="assignStatsPlanFactHint">מועד יעד → אישור; סטייה בימים (+ = אחרי המועד).</string>
     <string name="assignStatus">סטטוס</string>
     <string name="filterHelp">בסיוע שלי</string>
+    <string name="assignStatsTimeline">ציר זמן</string>
+    <string name="assignStatsTimelineHint">פס: מההקצאה עד מועד היעד; מילוי: החלק שבוצע; מסגרת אדומה: באיחור. המאחרות ראשונות.</string>
+    <string name="assignStatsShowAll">הצגת {n} נוספים</string>
+    <string name="assignStatsNoDue">ללא מועד יעד: {n} (לא מוצגות בתרשים).</string>
 </resources>

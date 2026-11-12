@@ -4227,7 +4227,6 @@
     <string name="assignStatsInWork">Aktívne</string>
     <string name="assignStatsDone">Hotové</string>
     <string name="assignStatsDonePeriod">Hotové za obdobie</string>
-    <string name="assignStatsCreated">Zadané</string>
     <string name="assignStatsOnTime">Načas</string>
     <string name="assignStatsOnTimeShort">načas {p}</string>
     <string name="assignStatsAvgDays">Priemerný čas, dni</string>
@@ -4239,9 +4238,6 @@
     <string name="assignStatsPeople">Ľudia</string>
     <string name="assignStatsPerson">Kto</string>
     <string name="assignStatsMorePeople">a ďalších {n}</string>
-    <string name="assignStatsWeeks">Po týždňoch</string>
-    <string name="assignStatsWeeksHint">Zadané a hotové za 8 týždňov</string>
-    <string name="assignStatsProjects">Projekty</string>
     <string name="assignStatsNone">Zatiaľ nie je čo zobraziť</string>
     <string name="assignStatsNote">Hotové = práca prijatá. Načas = prijaté najneskôr v deň termínu.</string>
     <string name="assignStatsLateDays">Dni omeškania</string>
@@ -4253,4 +4249,8 @@
     <string name="assignStatsPlanFactHint">Termín → prijaté; odchýlka v dňoch (+ = po termíne).</string>
     <string name="assignStatus">Stav</string>
     <string name="filterHelp">Pomáham</string>
+    <string name="assignStatsTimeline">Termíny</string>
+    <string name="assignStatsTimelineHint">Pruh: od zadania do termínu; výplň: hotová časť; červený rámik: po termíne. Omeškané prvé.</string>
+    <string name="assignStatsShowAll">Zobraziť ďalších {n}</string>
+    <string name="assignStatsNoDue">Bez termínu: {n} (nie sú v diagrame).</string>
 </resources>

@@ -4248,7 +4248,6 @@
     <string name="assignStatsInWork">Действующие</string>
     <string name="assignStatsDone">Выполнено</string>
     <string name="assignStatsDonePeriod">Выполнено за период</string>
-    <string name="assignStatsCreated">Поставлено</string>
     <string name="assignStatsOnTime">В срок</string>
     <string name="assignStatsOnTimeShort">в срок {p}</string>
     <string name="assignStatsAvgDays">Среднее время, дн.</string>
@@ -4260,9 +4259,6 @@
     <string name="assignStatsPeople">Люди</string>
     <string name="assignStatsPerson">Кто</string>
     <string name="assignStatsMorePeople">и ещё {n}</string>
-    <string name="assignStatsWeeks">По неделям</string>
-    <string name="assignStatsWeeksHint">Поставлено и выполнено за 8 недель</string>
-    <string name="assignStatsProjects">Проекты</string>
     <string name="assignStatsNone">Пока нечего показать</string>
     <string name="assignStatsNote">Выполнено — когда работа принята. «В срок» — принято не позже срока.</string>
     <string name="assignStatsLateDays">Просрочка, дн.</string>
@@ -4274,4 +4270,8 @@
     <string name="assignStatsPlanFactHint">Срок → когда принят; отклонение в днях (+ — позже срока).</string>
     <string name="assignStatus">Статус</string>
     <string name="filterHelp">Помогаю</string>
+    <string name="assignStatsTimeline">Сроки</string>
+    <string name="assignStatsTimelineHint">Полоса — от постановки до срока, заливка — сделанная часть, красная рамка — срок прошёл. Просроченные — первыми.</string>
+    <string name="assignStatsShowAll">Показать ещё {n}</string>
+    <string name="assignStatsNoDue">Без срока: {n} — их нет на диаграмме.</string>
 </resources>

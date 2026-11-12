@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">En cours</string>
     <string name="assignStatsDone">Terminées</string>
     <string name="assignStatsDonePeriod">Terminées sur la période</string>
-    <string name="assignStatsCreated">Confiées</string>
     <string name="assignStatsOnTime">Dans les délais</string>
     <string name="assignStatsOnTimeShort">dans les délais {p}</string>
     <string name="assignStatsAvgDays">Durée moyenne, jours</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">Personnes</string>
     <string name="assignStatsPerson">Qui</string>
     <string name="assignStatsMorePeople">et {n} de plus</string>
-    <string name="assignStatsWeeks">Par semaine</string>
-    <string name="assignStatsWeeksHint">Confiées et terminées sur 8 semaines</string>
-    <string name="assignStatsProjects">Projets</string>
     <string name="assignStatsNone">Rien à afficher pour l\'instant</string>
     <string name="assignStatsNote">Terminée = travail validé. Dans les délais = validé au plus tard à l\'échéance.</string>
     <string name="assignStatsLateDays">Jours de retard</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Échéance → validé ; écart en jours (+ = après l\'échéance).</string>
     <string name="assignStatus">Statut</string>
     <string name="filterHelp">J\'aide</string>
+    <string name="assignStatsTimeline">Échéancier</string>
+    <string name="assignStatsTimelineHint">Barre : de l\'attribution à l\'échéance ; remplissage : partie faite ; contour rouge : en retard. Les retards d\'abord.</string>
+    <string name="assignStatsShowAll">Afficher {n} de plus</string>
+    <string name="assignStatsNoDue">Sans échéance : {n} (absentes du diagramme).</string>
 </resources>

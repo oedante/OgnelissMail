@@ -4185,7 +4185,6 @@
     <string name="assignStatsInWork">Aktif</string>
     <string name="assignStatsDone">Selesai</string>
     <string name="assignStatsDonePeriod">Selesai dalam periode</string>
-    <string name="assignStatsCreated">Diberikan</string>
     <string name="assignStatsOnTime">Tepat waktu</string>
     <string name="assignStatsOnTimeShort">tepat waktu {p}</string>
     <string name="assignStatsAvgDays">Rata-rata waktu, hari</string>
@@ -4197,9 +4196,6 @@
     <string name="assignStatsPeople">Orang</string>
     <string name="assignStatsPerson">Siapa</string>
     <string name="assignStatsMorePeople">dan {n} lainnya</string>
-    <string name="assignStatsWeeks">Per minggu</string>
-    <string name="assignStatsWeeksHint">Diberikan dan selesai dalam 8 minggu</string>
-    <string name="assignStatsProjects">Proyek</string>
     <string name="assignStatsNone">Belum ada yang ditampilkan</string>
     <string name="assignStatsNote">Selesai = pekerjaan diterima. Tepat waktu = diterima paling lambat pada tenggat.</string>
     <string name="assignStatsLateDays">Hari terlambat</string>
@@ -4211,4 +4207,8 @@
     <string name="assignStatsPlanFactHint">Tenggat → diterima; selisih dalam hari (+ = setelah tenggat).</string>
     <string name="assignStatus">Status</string>
     <string name="filterHelp">Membantu</string>
+    <string name="assignStatsTimeline">Linimasa</string>
+    <string name="assignStatsTimelineHint">Batang: dari pemberian hingga tenggat; isian: bagian selesai; bingkai merah: terlambat. Yang terlambat lebih dulu.</string>
+    <string name="assignStatsShowAll">Tampilkan {n} lagi</string>
+    <string name="assignStatsNoDue">Tanpa tenggat: {n} (tidak ada di diagram).</string>
 </resources>

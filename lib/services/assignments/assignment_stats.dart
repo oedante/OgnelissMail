@@ -1,7 +1,7 @@
 // lib/services/assignments/assignment_stats.dart
 // Сводка по поручениям (просьба владельца 12.11.2026: «сводные данные и
 // визуальные отчёты по одной задаче и по нескольким сразу»). Что взято из
-// аналогов: панель Jira (статусы, «Создано и решено», по исполнителям) и
+// аналогов: панель Jira (статусы, по исполнителям) и
 // «Эффективность» Битрикс24 (доля выполненных в срок). Расчёт — без
 // интерфейса, чтобы его проверяли тесты.
 //
@@ -40,14 +40,6 @@ class PersonStats {
   double? get onTimeShare => done == 0 ? null : onTime / done;
 }
 
-/// Неделя с понедельника: поставлено и выполнено.
-class WeekStats {
-  final DateTime start;
-  int created = 0;
-  int done = 0;
-  WeekStats(this.start);
-}
-
 class AssignmentStats {
   /// В работе (не выполнено и не снято), просрочено, на проверке.
   final int active, overdue, review;
@@ -65,9 +57,6 @@ class AssignmentStats {
   /// По людям: больше всего в работе — первыми.
   final List<PersonStats> people;
 
-  /// По неделям, старые — первыми.
-  final List<WeekStats> weeks;
-
   const AssignmentStats({
     required this.active,
     required this.overdue,
@@ -78,14 +67,13 @@ class AssignmentStats {
     required this.avgDays,
     required this.byStatus,
     required this.people,
-    required this.weeks,
   });
 
   double? get onTimeShare => done == 0 ? null : onTime / done;
 
   /// Сводка по [items] (проекты — по их этапам: строки проектов не
   /// считаются). [periodDays] — период для «поставлено/выполнено».
-  static AssignmentStats of(List<AssignmentView> items, DateTime now, {int periodDays = 30, int weekCount = 8}) {
+  static AssignmentStats of(List<AssignmentView> items, DateTime now, {int periodDays = 30}) {
     final today = _day(now);
     final from = today.subtract(Duration(days: periodDays - 1));
     final list = [for (final v in items) if (!v.isProject) v];
@@ -93,24 +81,11 @@ class AssignmentStats {
     var daysSum = 0.0;
     final byStatus = <int, int>{};
     final people = <String, PersonStats>{};
-    final monday = today.subtract(Duration(days: today.weekday - 1));
-    final weeks = [
-      for (var i = weekCount - 1; i >= 0; i--) WeekStats(monday.subtract(Duration(days: 7 * i))),
-    ];
-    WeekStats? weekOf(DateTime d) {
-      final day = _day(d);
-      for (final w in weeks.reversed) {
-        if (!day.isBefore(w.start)) return day.isBefore(w.start.add(const Duration(days: 7))) ? w : null;
-      }
-      return null;
-    }
-
     for (final v in list) {
       final key = (v.otherEmail ?? '').toLowerCase();
       final p = people.putIfAbsent(key, () => PersonStats(key, v.otherName));
       final createdAt = v.row.createdAt.toLocal();
       if (!_day(createdAt).isBefore(from)) created++;
-      weekOf(createdAt)?.created++;
       if (v.active) {
         active++;
         p.active++;
@@ -126,7 +101,6 @@ class AssignmentStats {
       }
       final doneAt = assignmentDoneAt(v);
       if (doneAt != null) {
-        weekOf(doneAt)?.done++;
         if (!_day(doneAt).isBefore(from)) {
           done++;
           p.done++;
@@ -154,7 +128,6 @@ class AssignmentStats {
       avgDays: done == 0 ? null : daysSum / done,
       byStatus: byStatus,
       people: ranked,
-      weeks: weeks,
     );
   }
 }

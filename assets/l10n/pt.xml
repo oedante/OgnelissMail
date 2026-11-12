@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">Ativas</string>
     <string name="assignStatsDone">Concluídas</string>
     <string name="assignStatsDonePeriod">Concluídas no período</string>
-    <string name="assignStatsCreated">Atribuídas</string>
     <string name="assignStatsOnTime">No prazo</string>
     <string name="assignStatsOnTimeShort">no prazo {p}</string>
     <string name="assignStatsAvgDays">Tempo médio, dias</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">Pessoas</string>
     <string name="assignStatsPerson">Quem</string>
     <string name="assignStatsMorePeople">e mais {n}</string>
-    <string name="assignStatsWeeks">Por semana</string>
-    <string name="assignStatsWeeksHint">Atribuídas e concluídas em 8 semanas</string>
-    <string name="assignStatsProjects">Projetos</string>
     <string name="assignStatsNone">Nada para mostrar ainda</string>
     <string name="assignStatsNote">Concluída = trabalho aceito. No prazo = aceito até o prazo.</string>
     <string name="assignStatsLateDays">Dias de atraso</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Prazo → aceito; desvio em dias (+ = depois do prazo).</string>
     <string name="assignStatus">Status</string>
     <string name="filterHelp">Ajudo</string>
+    <string name="assignStatsTimeline">Prazos</string>
+    <string name="assignStatsTimelineHint">Barra: da atribuição ao prazo; preenchimento: parte feita; contorno vermelho: atrasada. Atrasadas primeiro.</string>
+    <string name="assignStatsShowAll">Mostrar mais {n}</string>
+    <string name="assignStatsNoDue">Sem prazo: {n} (fora do gráfico).</string>
 </resources>

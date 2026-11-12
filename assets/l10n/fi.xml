@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">Aktiiviset</string>
     <string name="assignStatsDone">Valmiit</string>
     <string name="assignStatsDonePeriod">Valmiit jaksolla</string>
-    <string name="assignStatsCreated">Annetut</string>
     <string name="assignStatsOnTime">Ajallaan</string>
     <string name="assignStatsOnTimeShort">ajallaan {p}</string>
     <string name="assignStatsAvgDays">Keskimääräinen aika, päivää</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">Henkilöt</string>
     <string name="assignStatsPerson">Kuka</string>
     <string name="assignStatsMorePeople">ja {n} muuta</string>
-    <string name="assignStatsWeeks">Viikoittain</string>
-    <string name="assignStatsWeeksHint">Annetut ja valmiit 8 viikon aikana</string>
-    <string name="assignStatsProjects">Projektit</string>
     <string name="assignStatsNone">Ei vielä näytettävää</string>
     <string name="assignStatsNote">Valmis = työ hyväksytty. Ajallaan = hyväksytty viimeistään määräpäivänä.</string>
     <string name="assignStatsLateDays">Myöhässä, päivää</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Määräaika → hyväksytty; poikkeama päivinä (+ = määräajan jälkeen).</string>
     <string name="assignStatus">Tila</string>
     <string name="filterHelp">Autan</string>
+    <string name="assignStatsTimeline">Aikajana</string>
+    <string name="assignStatsTimelineHint">Palkki: annosta määräaikaan; täyttö: tehty osa; punainen reuna: myöhässä. Myöhässä olevat ensin.</string>
+    <string name="assignStatsShowAll">Näytä {n} lisää</string>
+    <string name="assignStatsNoDue">Ilman määräaikaa: {n} (ei kaaviossa).</string>
 </resources>

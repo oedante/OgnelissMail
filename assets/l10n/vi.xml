@@ -4185,7 +4185,6 @@
     <string name="assignStatsInWork">Đang thực hiện</string>
     <string name="assignStatsDone">Đã xong</string>
     <string name="assignStatsDonePeriod">Xong trong kỳ</string>
-    <string name="assignStatsCreated">Đã giao</string>
     <string name="assignStatsOnTime">Đúng hạn</string>
     <string name="assignStatsOnTimeShort">đúng hạn {p}</string>
     <string name="assignStatsAvgDays">Thời gian trung bình, ngày</string>
@@ -4197,9 +4196,6 @@
     <string name="assignStatsPeople">Mọi người</string>
     <string name="assignStatsPerson">Ai</string>
     <string name="assignStatsMorePeople">và {n} người khác</string>
-    <string name="assignStatsWeeks">Theo tuần</string>
-    <string name="assignStatsWeeksHint">Đã giao và đã xong trong 8 tuần</string>
-    <string name="assignStatsProjects">Dự án</string>
     <string name="assignStatsNone">Chưa có gì để hiển thị</string>
     <string name="assignStatsNote">Đã xong = kết quả đã được duyệt. Đúng hạn = duyệt muộn nhất vào ngày hạn.</string>
     <string name="assignStatsLateDays">Số ngày trễ</string>
@@ -4211,4 +4207,8 @@
     <string name="assignStatsPlanFactHint">Hạn → ngày duyệt; chênh lệch theo ngày (+ = sau hạn).</string>
     <string name="assignStatus">Trạng thái</string>
     <string name="filterHelp">Đang hỗ trợ</string>
+    <string name="assignStatsTimeline">Tiến độ</string>
+    <string name="assignStatsTimelineHint">Thanh: từ lúc giao đến hạn; phần tô: đã làm; viền đỏ: quá hạn. Việc quá hạn lên đầu.</string>
+    <string name="assignStatsShowAll">Hiện thêm {n}</string>
+    <string name="assignStatsNoDue">Không có hạn: {n} (không hiện trên biểu đồ).</string>
 </resources>

@@ -1,4 +1,4 @@
-// Сводка по поручениям (12.11.2026): показатели, по людям, по неделям,
+// Сводка по поручениям (12.11.2026): показатели, по людям,
 // план и факт этапов, отчёт HTML; «Важное» в отметке письма.
 
 import 'dart:io';
@@ -97,17 +97,6 @@ void main() {
       final vera = s.people.first;
       expect((vera.active, vera.overdue, vera.review, vera.done, vera.onTime), (2, 1, 1, 2, 1));
       expect(s.people.last.done, 0, reason: 'выполненное вне периода не считается');
-    });
-
-    test('по неделям: поставлено и выполнено попадают в свою неделю', () {
-      final s = AssignmentStats.of(items, now, periodDays: 30, weekCount: 4);
-      expect(s.weeks, hasLength(4));
-      expect(s.weeks.last.start, DateTime(2026, 11, 9), reason: 'неделя с понедельника');
-      final cur = s.weeks.last, prev = s.weeks[2];
-      // Текущая неделя (с 9.11): поставлены B (9.11), G (10.11), E (11.11);
-      // выполнены C (10.11) и D (11.11). Прошлая: A (2.11), D (4.11), C (6.11).
-      expect((cur.created, cur.done), (3, 2));
-      expect((prev.created, prev.done), (3, 0));
     });
 
     test('план и факт этапов: + — позже срока, у непринятого просроченного — по сегодня', () {

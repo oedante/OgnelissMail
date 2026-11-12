@@ -4227,7 +4227,6 @@
     <string name="assignStatsInWork">Active</string>
     <string name="assignStatsDone">Gata</string>
     <string name="assignStatsDonePeriod">Gata în perioadă</string>
-    <string name="assignStatsCreated">Atribuite</string>
     <string name="assignStatsOnTime">La timp</string>
     <string name="assignStatsOnTimeShort">la timp {p}</string>
     <string name="assignStatsAvgDays">Timp mediu, zile</string>
@@ -4239,9 +4238,6 @@
     <string name="assignStatsPeople">Persoane</string>
     <string name="assignStatsPerson">Cine</string>
     <string name="assignStatsMorePeople">și încă {n}</string>
-    <string name="assignStatsWeeks">Pe săptămâni</string>
-    <string name="assignStatsWeeksHint">Atribuite și gata în 8 săptămâni</string>
-    <string name="assignStatsProjects">Proiecte</string>
     <string name="assignStatsNone">Încă nimic de afișat</string>
     <string name="assignStatsNote">Gata = lucrare acceptată. La timp = acceptată cel târziu la termen.</string>
     <string name="assignStatsLateDays">Zile de întârziere</string>
@@ -4253,4 +4249,8 @@
     <string name="assignStatsPlanFactHint">Termen → acceptat; abatere în zile (+ = după termen).</string>
     <string name="assignStatus">Stare</string>
     <string name="filterHelp">Ajut</string>
+    <string name="assignStatsTimeline">Termene</string>
+    <string name="assignStatsTimelineHint">Bară: de la atribuire la termen; umplere: partea făcută; contur roșu: întârziat. Întârziatele primele.</string>
+    <string name="assignStatsShowAll">Afișează încă {n}</string>
+    <string name="assignStatsNoDue">Fără termen: {n} (nu apar în diagramă).</string>
 </resources>

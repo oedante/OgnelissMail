@@ -4185,7 +4185,6 @@
     <string name="assignStatsInWork">进行中</string>
     <string name="assignStatsDone">已完成</string>
     <string name="assignStatsDonePeriod">期间内完成</string>
-    <string name="assignStatsCreated">已分派</string>
     <string name="assignStatsOnTime">按时</string>
     <string name="assignStatsOnTimeShort">按时 {p}</string>
     <string name="assignStatsAvgDays">平均用时（天）</string>
@@ -4197,9 +4196,6 @@
     <string name="assignStatsPeople">人员</string>
     <string name="assignStatsPerson">谁</string>
     <string name="assignStatsMorePeople">另有 {n} 人</string>
-    <string name="assignStatsWeeks">按周</string>
-    <string name="assignStatsWeeksHint">8 周内分派与完成</string>
-    <string name="assignStatsProjects">项目</string>
     <string name="assignStatsNone">暂无可显示的内容</string>
     <string name="assignStatsNote">已完成＝成果已验收。按时＝不晚于截止日验收。</string>
     <string name="assignStatsLateDays">逾期天数</string>
@@ -4211,4 +4207,8 @@
     <string name="assignStatsPlanFactHint">截止日 → 验收日，偏差以天计（+ 表示晚于截止日）。</string>
     <string name="assignStatus">状态</string>
     <string name="filterHelp">协办</string>
+    <string name="assignStatsTimeline">时间线</string>
+    <string name="assignStatsTimelineHint">条形：从分派到截止；填充：已完成部分；红框：已逾期。逾期的排在前面。</string>
+    <string name="assignStatsShowAll">再显示 {n} 项</string>
+    <string name="assignStatsNoDue">无截止日期：{n} 项（不在图中显示）。</string>
 </resources>

@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">Aktiv</string>
     <string name="assignStatsDone">Erledigt</string>
     <string name="assignStatsDonePeriod">Erledigt im Zeitraum</string>
-    <string name="assignStatsCreated">Erteilt</string>
     <string name="assignStatsOnTime">Termingerecht</string>
     <string name="assignStatsOnTimeShort">termingerecht {p}</string>
     <string name="assignStatsAvgDays">Durchschnittsdauer, Tage</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">Personen</string>
     <string name="assignStatsPerson">Wer</string>
     <string name="assignStatsMorePeople">und {n} weitere</string>
-    <string name="assignStatsWeeks">Nach Wochen</string>
-    <string name="assignStatsWeeksHint">Erteilt und erledigt in 8 Wochen</string>
-    <string name="assignStatsProjects">Projekte</string>
     <string name="assignStatsNone">Noch nichts anzuzeigen</string>
     <string name="assignStatsNote">Erledigt heißt: Arbeit abgenommen. Termingerecht: spätestens am Fälligkeitstag abgenommen.</string>
     <string name="assignStatsLateDays">Tage Verzug</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Fällig → abgenommen; Abweichung in Tagen (+ = später als fällig).</string>
     <string name="assignStatus">Status</string>
     <string name="filterHelp">Helfe mit</string>
+    <string name="assignStatsTimeline">Zeitplan</string>
+    <string name="assignStatsTimelineHint">Balken: von der Erteilung bis zur Fälligkeit; Füllung: erledigter Teil; roter Rahmen: überfällig. Überfällige zuerst.</string>
+    <string name="assignStatsShowAll">{n} weitere anzeigen</string>
+    <string name="assignStatsNoDue">Ohne Fälligkeit: {n} (nicht im Diagramm).</string>
 </resources>

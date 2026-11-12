@@ -1,17 +1,15 @@
 // lib/features/assignments/assignment_charts.dart
 // Блоки сводки по поручениям (12.11.2026): плитки показателей, полоса
-// статусов (доля каждого статуса), «по людям» (в работе, просрочено,
-// выполнено) и «по неделям» (поставлено и выполнено). Виджетами, без
+// статусов (доля каждого статуса) и «по людям» (в работе, просрочено,
+// выполнено); сроки — диаграммой Ганта (gantt_chart.dart). Виджетами, без
 // библиотек графиков: у каждой отметки — подсказка по нажатию и подпись для
 // чтения с экрана, у каждого графика — легенда и числа рядом.
 //
 // Правила вида — навык dataviz: тонкие отметки, 4px скругления, 2px зазор
 // цвета фона между частями, легенда при двух рядах и больше, текст — цветом
-// текста, а не цветом ряда. Цвета рядов «поставлено/выполнено» — первые два
-// слота проверенной палитры (синий, оранжевый; свои шаги для тёмной темы).
+// текста, а не цветом ряда. Цвета — статусов приложения.
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
@@ -19,15 +17,6 @@ import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart' show AssignmentStatus;
 import '../../services/assignments/assignment_stats.dart';
 import 'assignment_widgets.dart' show assignmentStatusColor, assignmentStatusLabel;
-
-/// Ряды «поставлено» и «выполнено» (слоты 1 и 2 палитры).
-Color chartSeries(BuildContext context, int slot) {
-  final dark = Theme.of(context).brightness == Brightness.dark;
-  return switch (slot) {
-    0 => dark ? const Color(0xFF3987E5) : const Color(0xFF2A78D6),
-    _ => dark ? const Color(0xFFD95926) : const Color(0xFFEB6834),
-  };
-}
 
 /// Карточка блока сводки: заголовок и содержимое.
 class ChartCard extends StatelessWidget {
@@ -283,77 +272,6 @@ class PeopleBars extends StatelessWidget {
       if (people.length > limit)
         Text(l10n.tr('assignStatsMorePeople').replaceAll('{n}', '${people.length - limit}'),
             style: theme.textTheme.bodySmall?.copyWith(color: muted)),
-    ]);
-  }
-}
-
-/// По неделям: поставлено и выполнено — парой столбиков на неделю.
-class WeeklyColumns extends StatelessWidget {
-  final List<WeekStats> weeks;
-  const WeeklyColumns({super.key, required this.weeks});
-
-  static const _plot = 120.0;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    final muted = AppColors.mutedText(context);
-    final max = weeks.fold<int>(0, (a, w) => [a, w.created, w.done].reduce((x, y) => x > y ? x : y));
-    final c0 = chartSeries(context, 0), c1 = chartSeries(context, 1);
-    final fmt = DateFormat('d.MM', l10n.localeCode);
-    Widget bar(int n, Color c, String tip) => Tooltip(
-          message: tip,
-          child: Container(
-            width: 10,
-            height: max == 0 ? 0 : (_plot * n / max).clamp(n > 0 ? 3.0 : 0.0, _plot),
-            decoration: BoxDecoration(color: c, borderRadius: const BorderRadius.vertical(top: Radius.circular(4))),
-          ),
-        );
-    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Wrap(spacing: Space.m, children: [
-        _LegendDot(color: c0, label: l10n.tr('assignStatsCreated')),
-        _LegendDot(color: c1, label: l10n.tr('assignStatsDone')),
-      ]),
-      const SizedBox(height: Space.s),
-      Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-        // Ось: наибольшее значение и ноль.
-        SizedBox(
-          height: _plot,
-          width: 24,
-          child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text('$max', style: theme.textTheme.labelSmall?.copyWith(color: muted)),
-            Text('0', style: theme.textTheme.labelSmall?.copyWith(color: muted)),
-          ]),
-        ),
-        Expanded(
-          child: Container(
-            height: _plot,
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: theme.dividerColor))),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              for (final w in weeks)
-                Expanded(
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.end, children: [
-                    bar(w.created, c0, '${fmt.format(w.start)}: ${l10n.tr('assignStatsCreated')} ${w.created}'),
-                    const SizedBox(width: 2),
-                    bar(w.done, c1, '${fmt.format(w.start)}: ${l10n.tr('assignStatsDone')} ${w.done}'),
-                  ]),
-                ),
-            ]),
-          ),
-        ),
-      ]),
-      const SizedBox(height: 4),
-      Row(children: [
-        const SizedBox(width: 24),
-        for (final w in weeks)
-          Expanded(
-            child: Text(fmt.format(w.start),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                style: theme.textTheme.labelSmall?.copyWith(color: muted, fontFeatures: const [FontFeature.tabularFigures()])),
-          ),
-      ]),
     ]);
   }
 }

@@ -61,6 +61,10 @@ class AssignmentStatusPill extends StatelessWidget {
 }
 
 /// Портрет другой стороны поручения (фото из контактов или буква).
+/// Ширина колонки карточки поручения и редактора проекта на планшете и
+/// компьютере (во всю ширину строки читаются плохо).
+const assignmentColumnWidth = 760.0;
+
 /// Выбор ящика, с которого уходит поручение (несколько ящиков).
 class AssignmentAccountField extends StatelessWidget {
   final List<AccountModel> accounts;

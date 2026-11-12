@@ -4290,7 +4290,6 @@
     <string name="assignStatsInWork">النشطة</string>
     <string name="assignStatsDone">المنجزة</string>
     <string name="assignStatsDonePeriod">المنجزة في الفترة</string>
-    <string name="assignStatsCreated">المُسندة</string>
     <string name="assignStatsOnTime">في الموعد</string>
     <string name="assignStatsOnTimeShort">في الموعد {p}</string>
     <string name="assignStatsAvgDays">متوسط المدة، أيام</string>
@@ -4302,9 +4301,6 @@
     <string name="assignStatsPeople">الأشخاص</string>
     <string name="assignStatsPerson">من</string>
     <string name="assignStatsMorePeople">و{n} آخرون</string>
-    <string name="assignStatsWeeks">أسبوعيًا</string>
-    <string name="assignStatsWeeksHint">المُسندة والمنجزة خلال 8 أسابيع</string>
-    <string name="assignStatsProjects">المشاريع</string>
     <string name="assignStatsNone">لا شيء لعرضه بعد</string>
     <string name="assignStatsNote">المنجزة = العمل مقبول. في الموعد = قُبل في موعده أو قبله.</string>
     <string name="assignStatsLateDays">أيام التأخير</string>
@@ -4316,4 +4312,8 @@
     <string name="assignStatsPlanFactHint">الموعد → القبول؛ الانحراف بالأيام (+ = بعد الموعد).</string>
     <string name="assignStatus">الحالة</string>
     <string name="filterHelp">أساعد</string>
+    <string name="assignStatsTimeline">الجدول الزمني</string>
+    <string name="assignStatsTimelineHint">الشريط: من الإسناد حتى الموعد النهائي؛ التعبئة: الجزء المنجز؛ الإطار الأحمر: متأخر. المتأخرة أولًا.</string>
+    <string name="assignStatsShowAll">عرض {n} أخرى</string>
+    <string name="assignStatsNoDue">بلا موعد نهائي: {n} (غير ظاهرة في المخطط).</string>
 </resources>

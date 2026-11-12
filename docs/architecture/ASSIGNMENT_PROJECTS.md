@@ -144,14 +144,14 @@ N принят — письмо «Можно начинать»; при пере
   за другом („Можно начинать“ приходит само), чек-листы, файлы, прогресс,
   диаграмма Ганта и сдвиг сроков при опоздании. Этап можно передать
   коллеге для совместного исполнения. Проект сохраняется шаблоном.
-  Сводка по поручениям и проектам — статусы, исполнители, сроки, по
-  неделям — и отчёт письмом. «Готово» — с результатом и файлами; видно, с
+  Сводка по поручениям и проектам — статусы, исполнители, сроки на
+  диаграмме Ганта — и отчёт письмом. «Готово» — с результатом и файлами; видно, с
   какого ящика отправлено поручение; «Важное» при постановке.»
 - EN: “Assignments: projects with stages — assignee, co-assignees, approver
   and watchers for each stage, dates in parallel or one after another (the
   ‘You can start’ email is sent automatically), checklists, files, progress,
   a Gantt chart and shifting dates when a stage is late. Share a stage with
   a colleague as a co-assignee. Save a project as a template. A summary of
-  assignments and projects — statuses, assignees, dates, weekly trend — and
-  a report by email. “Done” with a result and files; see which mailbox an
+  assignments and projects — statuses, assignees, dates on a Gantt chart —
+  and a report by email. “Done” with a result and files; see which mailbox an
   assignment came from; mark assignments as important.”

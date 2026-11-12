@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">Active</string>
     <string name="assignStatsDone">Done</string>
     <string name="assignStatsDonePeriod">Done in period</string>
-    <string name="assignStatsCreated">Assigned</string>
     <string name="assignStatsOnTime">On time</string>
     <string name="assignStatsOnTimeShort">on time {p}</string>
     <string name="assignStatsAvgDays">Average time, days</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">People</string>
     <string name="assignStatsPerson">Who</string>
     <string name="assignStatsMorePeople">and {n} more</string>
-    <string name="assignStatsWeeks">By week</string>
-    <string name="assignStatsWeeksHint">Assigned and done over 8 weeks</string>
-    <string name="assignStatsProjects">Projects</string>
     <string name="assignStatsNone">Nothing to show yet</string>
     <string name="assignStatsNote">Done means the work was accepted. On time means accepted by the due date.</string>
     <string name="assignStatsLateDays">Days late</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Due date → accepted; deviation in days (+ is later than due).</string>
     <string name="assignStatus">Status</string>
     <string name="filterHelp">Helping</string>
+    <string name="assignStatsTimeline">Timeline</string>
+    <string name="assignStatsTimelineHint">Bar: from assigning to the due date; fill: the part done; red outline: overdue. Overdue items first.</string>
+    <string name="assignStatsShowAll">Show {n} more</string>
+    <string name="assignStatsNoDue">No due date: {n} (not on the chart).</string>
 </resources>

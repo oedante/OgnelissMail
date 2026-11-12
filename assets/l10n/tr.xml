@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">Etkin</string>
     <string name="assignStatsDone">Yapıldı</string>
     <string name="assignStatsDonePeriod">Dönemde yapılan</string>
-    <string name="assignStatsCreated">Verilen</string>
     <string name="assignStatsOnTime">Zamanında</string>
     <string name="assignStatsOnTimeShort">zamanında {p}</string>
     <string name="assignStatsAvgDays">Ortalama süre, gün</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">Kişiler</string>
     <string name="assignStatsPerson">Kim</string>
     <string name="assignStatsMorePeople">ve {n} kişi daha</string>
-    <string name="assignStatsWeeks">Haftalara göre</string>
-    <string name="assignStatsWeeksHint">8 haftada verilen ve yapılan</string>
-    <string name="assignStatsProjects">Projeler</string>
     <string name="assignStatsNone">Henüz gösterilecek bir şey yok</string>
     <string name="assignStatsNote">Yapıldı = iş kabul edildi. Zamanında = en geç bitiş tarihinde kabul edildi.</string>
     <string name="assignStatsLateDays">Gecikme, gün</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Bitiş tarihi → kabul; sapma gün olarak (+ = tarihten sonra).</string>
     <string name="assignStatus">Durum</string>
     <string name="filterHelp">Yardım ediyorum</string>
+    <string name="assignStatsTimeline">Zaman çizelgesi</string>
+    <string name="assignStatsTimelineHint">Çubuk: verilişten bitiş tarihine; dolgu: yapılan kısım; kırmızı çerçeve: gecikti. Gecikenler önce.</string>
+    <string name="assignStatsShowAll">{n} tane daha göster</string>
+    <string name="assignStatsNoDue">Bitiş tarihi yok: {n} (çizelgede gösterilmez).</string>
 </resources>

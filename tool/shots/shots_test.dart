@@ -45,6 +45,7 @@ import 'package:ogneliss/features/notes/screens/notes_screen.dart';
 import 'package:ogneliss/features/assignments/assignments_screen.dart';
 import 'package:ogneliss/features/assignments/assignments_summary_screen.dart';
 import 'package:ogneliss/features/assignments/assign_sheet.dart' show showAssignSheet;
+import 'package:ogneliss/features/assignments/project_editor.dart' show ProjectEditorScreen;
 import 'package:ogneliss/features/assignments/assignment_screen.dart';
 import 'package:ogneliss/services/assignments/assignment_codec.dart';
 import 'package:ogneliss/services/assignments/assignment_store.dart';
@@ -600,6 +601,16 @@ void main() {
     await _shot(tester, 'project_stage', const AssignmentScreen(id: 'SSSSSSSSSSS2'), theme: theme, db: db, prefs: prefs);
     await _shot(tester, 'project_list_desktop', const AssignmentsScreen(), theme: theme, db: db, prefs: prefs,
         size: const Size(1280, 800));
+    // Планшет и компьютер (просьба владельца 12.11.2026: «интерфейс должен
+    // быть корректным не только для телефона»).
+    for (final (tag, size) in const [('tablet', Size(1180, 820)), ('desktop', Size(1440, 900))]) {
+      await _shot(tester, 'project_stages_$tag', const AssignmentScreen(id: 'PPPPPPPPPPPP'), theme: theme, db: db,
+          prefs: prefs, size: size);
+      await _shot(tester, 'project_stage_$tag', const AssignmentScreen(id: 'SSSSSSSSSSS2'), theme: theme, db: db,
+          prefs: prefs, size: size);
+      await _shot(tester, 'project_editor_$tag', const ProjectEditorScreen(title: 'Годовой отчёт отдела'),
+          theme: theme, db: db, prefs: prefs, size: size);
+    }
     await tester.runAsync(db.close);
   });
 
@@ -679,6 +690,16 @@ void main() {
     await _shot(tester, 'assign_card_result', const AssignmentScreen(id: 'AAAAAAAAAAA2'), theme: theme, db: db,
         prefs: prefs, size: const Size(393, 1100));
     await _shot(tester, 'assign_list_mailboxes', const AssignmentsScreen(), theme: theme, db: db, prefs: prefs);
+    for (final (tag, size) in const [('tablet', Size(1180, 820)), ('desktop', Size(1440, 900))]) {
+      await _shot(tester, 'assign_summary_$tag', const AssignmentsSummaryScreen(), theme: theme, db: db, prefs: prefs,
+          size: size);
+      await _shot(tester, 'assign_card_result_$tag', const AssignmentScreen(id: 'AAAAAAAAAAA2'), theme: theme, db: db,
+          prefs: prefs, size: size);
+      await _shot(tester, 'assign_sheet_$tag', const Scaffold(body: SizedBox.expand()), theme: theme, db: db,
+          prefs: prefs, size: size, before: (t) async {
+        unawaited(showAssignSheet(t.element(find.byType(Scaffold))));
+      });
+    }
     await _shot(tester, 'assign_sheet', const Scaffold(body: SizedBox.expand()), theme: theme, db: db, prefs: prefs,
         size: const Size(393, 1000), before: (t) async {
       unawaited(showAssignSheet(t.element(find.byType(Scaffold))));

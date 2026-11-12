@@ -4248,7 +4248,6 @@
     <string name="assignStatsInWork">Aktywne</string>
     <string name="assignStatsDone">Wykonane</string>
     <string name="assignStatsDonePeriod">Wykonane w okresie</string>
-    <string name="assignStatsCreated">Zlecone</string>
     <string name="assignStatsOnTime">W terminie</string>
     <string name="assignStatsOnTimeShort">w terminie {p}</string>
     <string name="assignStatsAvgDays">Średni czas, dni</string>
@@ -4260,9 +4259,6 @@
     <string name="assignStatsPeople">Osoby</string>
     <string name="assignStatsPerson">Kto</string>
     <string name="assignStatsMorePeople">i jeszcze {n}</string>
-    <string name="assignStatsWeeks">Tygodniowo</string>
-    <string name="assignStatsWeeksHint">Zlecone i wykonane w ciągu 8 tygodni</string>
-    <string name="assignStatsProjects">Projekty</string>
     <string name="assignStatsNone">Na razie nie ma czego pokazać</string>
     <string name="assignStatsNote">Wykonane = praca przyjęta. W terminie = przyjęta najpóźniej w dniu terminu.</string>
     <string name="assignStatsLateDays">Dni opóźnienia</string>
@@ -4274,4 +4270,8 @@
     <string name="assignStatsPlanFactHint">Termin → przyjęto; odchylenie w dniach (+ = po terminie).</string>
     <string name="assignStatus">Status</string>
     <string name="filterHelp">Pomagam</string>
+    <string name="assignStatsTimeline">Terminy</string>
+    <string name="assignStatsTimelineHint">Pasek: od zlecenia do terminu; wypełnienie: wykonana część; czerwona ramka: po terminie. Najpierw opóźnione.</string>
+    <string name="assignStatsShowAll">Pokaż jeszcze {n}</string>
+    <string name="assignStatsNoDue">Bez terminu: {n} (nie ma ich na wykresie).</string>
 </resources>

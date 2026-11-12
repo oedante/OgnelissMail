@@ -4185,7 +4185,6 @@
     <string name="assignStatsInWork">진행 중</string>
     <string name="assignStatsDone">완료</string>
     <string name="assignStatsDonePeriod">기간 내 완료</string>
-    <string name="assignStatsCreated">지시</string>
     <string name="assignStatsOnTime">기한 내</string>
     <string name="assignStatsOnTimeShort">기한 내 {p}</string>
     <string name="assignStatsAvgDays">평균 소요일</string>
@@ -4197,9 +4196,6 @@
     <string name="assignStatsPeople">사람</string>
     <string name="assignStatsPerson">누구</string>
     <string name="assignStatsMorePeople">외 {n}명</string>
-    <string name="assignStatsWeeks">주별</string>
-    <string name="assignStatsWeeksHint">8주간 지시 및 완료</string>
-    <string name="assignStatsProjects">프로젝트</string>
     <string name="assignStatsNone">아직 표시할 내용이 없습니다</string>
     <string name="assignStatsNote">완료 = 결과 승인. 기한 내 = 마감일까지 승인.</string>
     <string name="assignStatsLateDays">지연 일수</string>
@@ -4211,4 +4207,8 @@
     <string name="assignStatsPlanFactHint">마감일 → 승인일. 차이는 일 단위(+는 마감 후).</string>
     <string name="assignStatus">상태</string>
     <string name="filterHelp">협력 중</string>
+    <string name="assignStatsTimeline">일정</string>
+    <string name="assignStatsTimelineHint">막대: 지시일부터 마감일까지, 채움: 완료한 부분, 빨간 테두리: 기한 초과. 기한 초과 항목이 먼저 표시됩니다.</string>
+    <string name="assignStatsShowAll">{n}개 더 보기</string>
+    <string name="assignStatsNoDue">마감일 없음: {n}개(차트에 표시되지 않음).</string>
 </resources>

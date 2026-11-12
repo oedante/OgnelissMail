@@ -4206,7 +4206,6 @@
     <string name="assignStatsInWork">Aktiva</string>
     <string name="assignStatsDone">Klara</string>
     <string name="assignStatsDonePeriod">Klara under perioden</string>
-    <string name="assignStatsCreated">Givna</string>
     <string name="assignStatsOnTime">I tid</string>
     <string name="assignStatsOnTimeShort">i tid {p}</string>
     <string name="assignStatsAvgDays">Genomsnittlig tid, dagar</string>
@@ -4218,9 +4217,6 @@
     <string name="assignStatsPeople">Personer</string>
     <string name="assignStatsPerson">Vem</string>
     <string name="assignStatsMorePeople">och {n} till</string>
-    <string name="assignStatsWeeks">Per vecka</string>
-    <string name="assignStatsWeeksHint">Givna och klara under 8 veckor</string>
-    <string name="assignStatsProjects">Projekt</string>
     <string name="assignStatsNone">Inget att visa än</string>
     <string name="assignStatsNote">Klar = arbetet godkänt. I tid = godkänt senast på deadline.</string>
     <string name="assignStatsLateDays">Dagar sent</string>
@@ -4232,4 +4228,8 @@
     <string name="assignStatsPlanFactHint">Deadline → godkänt; avvikelse i dagar (+ = efter deadline).</string>
     <string name="assignStatus">Status</string>
     <string name="filterHelp">Hjälper till</string>
+    <string name="assignStatsTimeline">Tidslinje</string>
+    <string name="assignStatsTimelineHint">Stapel: från tilldelning till deadline; fyllning: klar del; röd ram: försenad. Försenade först.</string>
+    <string name="assignStatsShowAll">Visa {n} till</string>
+    <string name="assignStatsNoDue">Utan deadline: {n} (visas inte i diagrammet).</string>
 </resources>

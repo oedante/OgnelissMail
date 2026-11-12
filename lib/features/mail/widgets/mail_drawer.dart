@@ -19,6 +19,7 @@ import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import '../../../widgets/ui/confirm_dialog.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../widgets/common/account_avatar.dart' show distinctAccountInitials;
 import '../../../widgets/common/hero_email_transition.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -222,6 +223,7 @@ class MailDrawer extends ConsumerWidget {
                         // Место сверху и справа — числу непрочитанных над портретом.
                         padding: const EdgeInsets.fromLTRB(0, Space.m, Space.s, Space.s),
                         child: Row(children: [
+                    for (final initials in [distinctAccountInitials(accounts)])
                     ...accounts.map((account) {
                       final isActive = account.id == activeAccount?.id && !isAllAccounts;
                       // Непрочитанные этого ящика (1.7.3, замечание владельца
@@ -268,10 +270,10 @@ class MailDrawer extends ConsumerWidget {
                                 ),
                               ),
                               child: (isActive || isAllAccounts)
-                                  ? _drawerAvatar(account)
+                                  ? _drawerAvatar(account, initials[account.id])
                                   : Opacity(
                                       opacity: 0.75,
-                                      child: ColorFiltered(colorFilter: _greyscale, child: _drawerAvatar(account)),
+                                      child: ColorFiltered(colorFilter: _greyscale, child: _drawerAvatar(account, initials[account.id])),
                                     ),
                             ),
                           ),
@@ -1062,11 +1064,11 @@ class MailDrawer extends ConsumerWidget {
     );
   }
 
-  static Widget _drawerAvatar(AccountModel account) => HeroEmailAvatar(
+  static Widget _drawerAvatar(AccountModel account, String? initial) => HeroEmailAvatar(
         emailId: 'drawer/${account.id}',
         radius: 20,
         color: Color(account.colorValue),
-        initial: account.displayName.isNotEmpty ? initialOf(account.displayName) : '?',
+        initial: initial ?? (account.displayName.isNotEmpty ? initialOf(account.displayName) : '?'),
         hero: false,
         email: account.email,
         photo: account.avatarUrl,

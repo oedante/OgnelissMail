@@ -4076,4 +4076,5 @@
     <string name="keysHintPalette">Tất cả lệnh</string>
     <string name="selectedMailsN">Đã chọn {n} thư</string>
     <string name="noteSelectPrompt">Chọn một ghi chú bên trái hoặc tạo ghi chú mới</string>
+    <string name="taskSelectPrompt">Chọn một công việc bên trái hoặc tạo công việc mới</string>
 </resources>

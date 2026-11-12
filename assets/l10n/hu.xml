@@ -4097,4 +4097,5 @@
     <string name="keysHintPalette">Minden parancs</string>
     <string name="selectedMailsN">{n} üzenet kijelölve</string>
     <string name="noteSelectPrompt">Válasszon jegyzetet a bal oldalon, vagy hozzon létre újat</string>
+    <string name="taskSelectPrompt">Válasszon feladatot a bal oldalon, vagy hozzon létre újat</string>
 </resources>

@@ -4076,4 +4076,5 @@
     <string name="keysHintPalette">所有命令</string>
     <string name="selectedMailsN">已选择 {n} 封邮件</string>
     <string name="noteSelectPrompt">在左侧选择笔记或新建笔记</string>
+    <string name="taskSelectPrompt">在左侧选择任务或新建任务</string>
 </resources>

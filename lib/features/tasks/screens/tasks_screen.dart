@@ -268,7 +268,36 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         _bodyWidth = c.maxWidth;
         final list = _mainColumn(l10n, theme, counts, async, all, mail, mod);
         final pane = _pane;
-        if (pane == null || c.maxWidth < Breakpoints.tablet) return list;
+        if (c.maxWidth < Breakpoints.tablet) return list;
+        // Широкое окно — две колонки сразу, как в «Контактах» (просьба
+        // владельца 12.11.2026: справа было пусто).
+        if (pane == null) {
+          final muted = theme.colorScheme.onSurfaceVariant;
+          return Row(children: [
+            Expanded(child: list),
+            VerticalDivider(width: 1, thickness: 1, color: theme.dividerColor),
+            SizedBox(
+              width: (c.maxWidth * 0.42).clamp(340.0, 480.0),
+              child: Center(
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(AppIcons.check_box, size: 48, color: muted.withValues(alpha: 0.5)),
+                  const SizedBox(height: Space.m),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                    child: Text(l10n.tr('taskSelectPrompt'),
+                        textAlign: TextAlign.center, style: theme.textTheme.bodyMedium?.copyWith(color: muted)),
+                  ),
+                  const SizedBox(height: Space.l),
+                  FilledButton.tonalIcon(
+                    onPressed: () => _openEditor(accountId: _defaultAccount()),
+                    icon: const Icon(AppIcons.add),
+                    label: Text(l10n.tr('newTask')),
+                  ),
+                ]),
+              ),
+            ),
+          ]);
+        }
         return Row(children: [
           Expanded(child: list),
           VerticalDivider(width: 1, thickness: 1, color: theme.dividerColor),

@@ -4097,4 +4097,5 @@
     <string name="keysHintPalette">Alle opdrachten</string>
     <string name="selectedMailsN">{n} berichten geselecteerd</string>
     <string name="noteSelectPrompt">Kies links een notitie of maak een nieuwe</string>
+    <string name="taskSelectPrompt">Kies links een taak of maak een nieuwe</string>
 </resources>

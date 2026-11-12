@@ -4076,4 +4076,5 @@
     <string name="keysHintPalette">すべてのコマンド</string>
     <string name="selectedMailsN">{n} 件のメールを選択中</string>
     <string name="noteSelectPrompt">左のメモを選ぶか、新しいメモを作成します</string>
+    <string name="taskSelectPrompt">左のタスクを選ぶか、新しいタスクを作成します</string>
 </resources>

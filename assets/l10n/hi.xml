@@ -4097,4 +4097,5 @@
     <string name="keysHintPalette">सभी कमांड</string>
     <string name="selectedMailsN">{n} संदेश चुने गए</string>
     <string name="noteSelectPrompt">बाईं ओर से नोट चुनें या नया बनाएँ</string>
+    <string name="taskSelectPrompt">बाईं ओर से कार्य चुनें या नया बनाएँ</string>
 </resources>

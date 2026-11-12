@@ -4097,4 +4097,5 @@
     <string name="keysHintPalette">Kaikki komennot</string>
     <string name="selectedMailsN">{n} viestiä valittu</string>
     <string name="noteSelectPrompt">Valitse muistiinpano vasemmalta tai luo uusi</string>
+    <string name="taskSelectPrompt">Valitse tehtävä vasemmalta tai luo uusi</string>
 </resources>

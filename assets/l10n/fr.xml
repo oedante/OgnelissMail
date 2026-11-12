@@ -4097,4 +4097,5 @@
     <string name="keysHintPalette">Toutes les commandes</string>
     <string name="selectedMailsN">{n} messages sélectionnés</string>
     <string name="noteSelectPrompt">Sélectionnez une note à gauche ou créez-en une</string>
+    <string name="taskSelectPrompt">Sélectionnez une tâche à gauche ou créez-en une</string>
 </resources>

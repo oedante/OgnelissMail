@@ -4181,4 +4181,5 @@
     <string name="keysHintPalette">كل الأوامر</string>
     <string name="selectedMailsN">تم تحديد {n} رسائل</string>
     <string name="noteSelectPrompt">اختر ملاحظة من اليسار أو أنشئ ملاحظة جديدة</string>
+    <string name="taskSelectPrompt">اختر مهمة من اليسار أو أنشئ مهمة جديدة</string>
 </resources>

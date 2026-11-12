@@ -4139,4 +4139,5 @@
     <string name="keysHintPalette">Wszystkie polecenia</string>
     <string name="selectedMailsN">Wybrane wiadomości: {n}</string>
     <string name="noteSelectPrompt">Wybierz notatkę po lewej lub utwórz nową</string>
+    <string name="taskSelectPrompt">Wybierz zadanie po lewej lub utwórz nowe</string>
 </resources>

@@ -4139,4 +4139,5 @@
     <string name="keysHintPalette">Все команды</string>
     <string name="selectedMailsN">Выбрано писем: {n}</string>
     <string name="noteSelectPrompt">Выберите заметку слева или создайте новую</string>
+    <string name="taskSelectPrompt">Выберите задачу слева или создайте новую</string>
 </resources>

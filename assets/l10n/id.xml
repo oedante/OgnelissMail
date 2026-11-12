@@ -4076,4 +4076,5 @@
     <string name="keysHintPalette">Semua perintah</string>
     <string name="selectedMailsN">{n} pesan dipilih</string>
     <string name="noteSelectPrompt">Pilih catatan di kiri atau buat yang baru</string>
+    <string name="taskSelectPrompt">Pilih tugas di kiri atau buat yang baru</string>
 </resources>

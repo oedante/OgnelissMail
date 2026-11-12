@@ -280,6 +280,8 @@ class MonthGridView extends StatelessWidget {
       icon = AppIcons.task_alt;
     } else if (isMailItem(e)) {
       icon = AppIcons.mail;
+    } else if (isAssignItem(e)) {
+      icon = AppIcons.assignment_ind;
     } else if (isInviteItem(e)) {
       icon = AppIcons.event_available;
     } else if (_birthday.hasMatch(e.title)) {
@@ -292,7 +294,7 @@ class MonthGridView extends StatelessWidget {
   Widget _chip(CalendarEvent e, bool inMonth) {
     final c = eventColor(e, accountColors);
     // Задачи и письма со сроком — контуром, встречи — заливкой.
-    final outlined = isTaskItem(e) || isMailItem(e) || isInviteItem(e);
+    final outlined = isTodoItem(e) || isInviteItem(e);
     final solid = !outlined && (e.isAllDay || e.endTime.difference(e.startTime).inHours >= 24);
     final bg = solid ? c : c.withValues(alpha: outlined ? 0.06 : 0.16);
     final fg = solid ? onColor(c) : c;

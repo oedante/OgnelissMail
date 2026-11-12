@@ -4093,4 +4093,6 @@
     <string name="assignMarkedManually">Markerat manuellt</string>
     <string name="readingPaneAskTitle">Hur ska mejl öppnas?</string>
     <string name="readingPaneAskHint">Kan ändras i listans meny ⋮ → ”{pane}”</string>
+    <string name="assignParent">Del av</string>
+    <string name="assignPartOf">Del av uppdraget: ”{title}”</string>
 </resources>

@@ -4093,4 +4093,6 @@
     <string name="assignMarkedManually">Elle işaretlendi</string>
     <string name="readingPaneAskTitle">E-postalar nasıl açılsın?</string>
     <string name="readingPaneAskHint">Listenin ⋮ menüsünden → “{pane}” ile değiştirilebilir</string>
+    <string name="assignParent">Üst görev</string>
+    <string name="assignPartOf">Şu görevin parçası: \"{title}\"</string>
 </resources>

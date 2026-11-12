@@ -87,6 +87,24 @@ void main() {
       expect(st.ev, 'ev:1');
       expect(AssignmentCodec.parseTask('<p>обычное письмо</p>'), isNull);
     });
+
+    test('подзадача: код родителя — в отметке, в тексте — только его название', () {
+      const parent = 'KMNPQRSTVWXY';
+      const id = 'ABCDEFGHJKMN';
+      final html = AssignmentCodec.body(
+          id: id, greeting: 'Вера, добрый день!', whatLabel: 'Поручение:', what: 'Собрать даты',
+          footer: 'Поручение из Ogneliss Mail', parent: parent, parentLine: 'Часть поручения: «График отпусков»');
+      expect(AssignmentCodec.parseTask(html)!.parent, parent);
+      expect(html, contains('Часть поручения: «График отпусков»'));
+      // Тег родителя в текст не попадает: письмо без отметки (сервер её
+      // убрал) относится к подзадаче, а не к родителю.
+      expect(html, isNot(contains('OGN-$parent')));
+      expect(AssignmentCodec.idFromBody(html.replaceAll(RegExp(r'<span data-ogneliss-task[^>]*></span>'), '')), id);
+      // Без родителя, сам себе родитель, не код — связи нет.
+      expect(AssignmentCodec.parseTask(AssignmentCodec.taskMarker(id: id))!.parent, isNull);
+      expect(AssignmentCodec.parseTask(AssignmentCodec.taskMarker(id: id, parent: id))!.parent, isNull);
+      expect(AssignmentCodec.parseTask(AssignmentCodec.taskMarker(id: id, parent: 'x'))!.parent, isNull);
+    });
   });
 
   group('разбор писем', () {
@@ -169,6 +187,64 @@ void main() {
       expect(list.single.outgoing, isTrue);
       expect(list.single.otherName, 'Вера Белова');
       expect((await AssignmentStore.events(db, id)).length, 4, reason: 'создано и три ответа');
+    });
+
+    test('подзадача: связь с родителем — у поручившего, на другом устройстве и у исполнителя', () async {
+      const parent = 'KMNPQRSTVWXY';
+      const sub = 'ABCDEFGHJKMN';
+      const sub2 = 'VWXYZ2345678';
+      await AssignmentStore.insert(db,
+          id: parent, accountId: 'a1', title: 'График отпусков', ownerEmail: boss, assigneeEmail: vera,
+          at: t0, outgoing: true, due: DateTime(2026, 11, 20));
+      await AssignmentStore.insert(db,
+          id: sub, accountId: 'a1', title: 'Собрать даты', ownerEmail: boss, assigneeEmail: vera,
+          at: t0.add(const Duration(minutes: 1)), outgoing: true, parentId: parent, due: DateTime(2026, 11, 14));
+      // Вторая подзадача создана на другом устройстве: пришла письмом в «Отправленные».
+      await mail(
+          'a1',
+          boss,
+          'Поручение: Сверить с отделом кадров',
+          AssignmentCodec.body(
+              id: sub2, greeting: 'Вера, добрый день!', whatLabel: 'Поручение:', what: 'Сверить с отделом кадров',
+              footer: 'Поручение из Ogneliss Mail', to: vera, title: 'Сверить с отделом кадров', parent: parent,
+              parentLine: 'Часть поручения: «График отпусков»'),
+          t0.add(const Duration(minutes: 5)),
+          to: '[{"email":"$vera","displayName":"Вера Белова"}]');
+      expect(await AssignmentStore.scan(db, mineBoss, since: t0.subtract(const Duration(days: 1))), 1);
+      await AssignmentStore.update(db, sub2, status: AssignmentStatus.done);
+
+      final list = await AssignmentStore.all(db, mineBoss);
+      final p = list.firstWhere((v) => v.id == parent);
+      expect(list.parentOf(p), isNull);
+      expect([for (final c in list.childrenOf(parent)) c.id], [sub, sub2], reason: 'действующие — первыми');
+      expect(list.parentOf(list.firstWhere((v) => v.id == sub2))!.id, parent);
+      expect(list.childrenOf(sub), isEmpty);
+
+      // У исполнителя подзадачи родителя нет — связь не показывается, пока
+      // родитель не появится. (Свой код: в тесте обе стороны в одной базе.)
+      const hersId = 'BCDEFGHJKMNP';
+      await mail(
+          'a2',
+          boss,
+          'Поручение: Собрать даты',
+          AssignmentCodec.body(
+              id: hersId, greeting: 'Вера, добрый день!', whatLabel: 'Поручение:', what: 'Собрать даты',
+              footer: 'Поручение из Ogneliss Mail', to: vera, title: 'Собрать даты', parent: parent),
+          t0);
+      expect(await AssignmentStore.scan(db, mineVera, since: t0.subtract(const Duration(days: 1))), 1);
+      final hers = await AssignmentStore.all(db, mineVera);
+      expect(hers.single.parentId, parent);
+      expect(hers.parentOf(hers.single), isNull);
+
+      // В одной базе с родителем (общий ящик двух сторон) — связь есть.
+      final both = await AssignmentStore.all(db, {...mineBoss, ...mineVera});
+      expect(both.parentOf(both.firstWhere((v) => v.id == hersId))!.id, parent);
+
+      // Родитель удалён — подзадачи остаются сами по себе.
+      await AssignmentStore.delete(db, parent);
+      final rest = await AssignmentStore.all(db, mineBoss);
+      expect(rest, hasLength(2));
+      expect(rest.parentOf(rest.first), isNull);
     });
 
     test('у исполнителя: поручение появляется само; поручено не мне — нет', () async {

@@ -4072,4 +4072,6 @@
     <string name="assignMarkedManually">手動で設定</string>
     <string name="readingPaneAskTitle">メールの開き方</string>
     <string name="readingPaneAskHint">一覧の ⋮ メニュー →「{pane}」で変更できます</string>
+    <string name="assignParent">親の依頼</string>
+    <string name="assignPartOf">依頼「{title}」の一部</string>
 </resources>

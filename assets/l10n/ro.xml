@@ -4114,4 +4114,6 @@
     <string name="assignMarkedManually">Marcat manual</string>
     <string name="readingPaneAskTitle">Cum să se deschidă e-mailurile?</string>
     <string name="readingPaneAskHint">Se poate schimba din meniul ⋮ al listei → „{pane}”</string>
+    <string name="assignParent">Parte din</string>
+    <string name="assignPartOf">Parte din sarcina: „{title}”</string>
 </resources>

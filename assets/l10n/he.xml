@@ -4114,4 +4114,6 @@
     <string name="assignMarkedManually">סומן ידנית</string>
     <string name="readingPaneAskTitle">איך לפתוח הודעות?</string>
     <string name="readingPaneAskHint">אפשר לשנות בתפריט ⋮ של הרשימה ← „{pane}”</string>
+    <string name="assignParent">חלק ממשימה</string>
+    <string name="assignPartOf">חלק מהמשימה: \"{title}\"</string>
 </resources>

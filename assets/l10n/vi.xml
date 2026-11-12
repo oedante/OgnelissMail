@@ -4072,4 +4072,6 @@
     <string name="assignMarkedManually">Đã đánh dấu thủ công</string>
     <string name="readingPaneAskTitle">Mở thư theo cách nào?</string>
     <string name="readingPaneAskHint">Có thể đổi trong menu ⋮ của danh sách → “{pane}”</string>
+    <string name="assignParent">Thuộc việc</string>
+    <string name="assignPartOf">Thuộc việc giao: \"{title}\"</string>
 </resources>

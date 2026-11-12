@@ -4072,4 +4072,6 @@
     <string name="assignMarkedManually">ทำเครื่องหมายด้วยตนเอง</string>
     <string name="readingPaneAskTitle">จะเปิดอีเมลอย่างไร</string>
     <string name="readingPaneAskHint">เปลี่ยนได้ที่เมนู ⋮ ของรายการ → “{pane}”</string>
+    <string name="assignParent">ส่วนหนึ่งของ</string>
+    <string name="assignPartOf">ส่วนหนึ่งของงานมอบหมาย: \"{title}\"</string>
 </resources>

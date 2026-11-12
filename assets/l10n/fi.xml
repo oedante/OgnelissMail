@@ -4093,4 +4093,6 @@
     <string name="assignMarkedManually">Merkitty käsin</string>
     <string name="readingPaneAskTitle">Miten viestit avataan?</string>
     <string name="readingPaneAskHint">Voit vaihtaa listan valikosta ⋮ → {pane}</string>
+    <string name="assignParent">Osa toimeksiantoa</string>
+    <string name="assignPartOf">Osa toimeksiantoa: ”{title}”</string>
 </resources>

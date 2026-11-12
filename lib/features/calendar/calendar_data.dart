@@ -37,7 +37,7 @@ class CalendarLayers {
   final bool showTasks;
   final bool showFlaggedMail;
 
-  /// Поручения со сроком (2.3.2, замечание владельца 10.11.2026: «в
+  /// Поручения со сроком (замечание владельца 10.11.2026: «в
   /// календаре поручения не отображаются»).
   final bool showAssignments;
   const CalendarLayers({this.showTasks = true, this.showFlaggedMail = true, this.showAssignments = true});
@@ -271,7 +271,7 @@ bool isTaskItem(CalendarEvent e) => e.id.startsWith(taskPrefix);
 bool isMailItem(CalendarEvent e) => e.id.startsWith(mailPrefix);
 bool isInviteItem(CalendarEvent e) => e.id.startsWith(invitePrefix);
 
-/// Поручение со сроком (2.3.2).
+/// Поручение со сроком.
 const assignPrefix = 'assign_';
 bool isAssignItem(CalendarEvent e) => e.id.startsWith(assignPrefix);
 

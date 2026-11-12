@@ -4177,4 +4177,6 @@
     <string name="assignMarkedManually">تم التعيين يدويًا</string>
     <string name="readingPaneAskTitle">كيف تُفتح الرسائل؟</string>
     <string name="readingPaneAskHint">يمكن تغييره من قائمة ⋮ في القائمة ← «{pane}»</string>
+    <string name="assignParent">جزء من تكليف</string>
+    <string name="assignPartOf">جزء من التكليف: «{title}»</string>
 </resources>

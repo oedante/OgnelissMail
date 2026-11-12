@@ -4072,4 +4072,6 @@
     <string name="assignMarkedManually">Ditandai manual</string>
     <string name="readingPaneAskTitle">Bagaimana email dibuka?</string>
     <string name="readingPaneAskHint">Bisa diubah di menu ⋮ daftar → “{pane}”</string>
+    <string name="assignParent">Bagian dari</string>
+    <string name="assignPartOf">Bagian dari penugasan: \"{title}\"</string>
 </resources>

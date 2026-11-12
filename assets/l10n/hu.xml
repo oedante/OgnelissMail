@@ -4093,4 +4093,21 @@
     <string name="assignMarkedManually">Kézzel megjelölve</string>
     <string name="readingPaneAskTitle">Hogyan nyíljanak meg a levelek?</string>
     <string name="readingPaneAskHint">Módosítható a lista ⋮ menüjében → „{pane}”</string>
+    <string name="keysHintNav">Következő és előző üzenet</string>
+    <string name="keysHintPalette">Minden parancs</string>
+    <string name="selectedMailsN">{n} üzenet kijelölve</string>
+    <string name="noteSelectPrompt">Válasszon jegyzetet a bal oldalon, vagy hozzon létre újat</string>
+    <string name="taskSelectPrompt">Válasszon feladatot a bal oldalon, vagy hozzon létre újat</string>
+    <string name="calFree2Months">A következő 2 hónap szabad</string>
+    <string name="newMeeting">Új értekezlet</string>
+    <string name="mailReadingSettings">Lista és olvasás</string>
+    <string name="mailReadingSettingsDesc">Kezdőmappa, beszélgetések, előnézeti sorok, gombok az üzenet alatt</string>
+    <string name="mailComposeSettings">Írás és küldés</string>
+    <string name="mailComposeSettingsDesc">Küldés visszavonása, címzettek, személyek az idézetekben, fotóméret</string>
+    <string name="mailFilesSettings">Letöltés és mellékletek</string>
+    <string name="mailFilesSettingsDesc">Letöltési mód, levelek az eszközön, dokumentumelőnézet, keresés a mellékletekben</string>
+    <string name="mailTranslateSettingsDesc">Levelek fordítása az eszközön</string>
+    <string name="mailSafetySettingsDesc">Figyelmeztetés hamisított feladókra</string>
+    <string name="generalDesc">Nyelv, képernyő elforgatása, Levelek widget</string>
+    <string name="appearanceDescFull">Téma, színek, betűtípus és méretezés, lista sűrűsége, widgetek</string>
 </resources>

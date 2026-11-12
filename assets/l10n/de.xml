@@ -4093,4 +4093,21 @@
     <string name="assignMarkedManually">Manuell markiert</string>
     <string name="readingPaneAskTitle">Wie sollen E-Mails geöffnet werden?</string>
     <string name="readingPaneAskHint">Änderbar im Menü ⋮ der Liste → „{pane}“</string>
+    <string name="keysHintNav">Nächste und vorherige Nachricht</string>
+    <string name="keysHintPalette">Alle Befehle</string>
+    <string name="selectedMailsN">{n} Nachrichten ausgewählt</string>
+    <string name="noteSelectPrompt">Wählen Sie links eine Notiz oder erstellen Sie eine neue</string>
+    <string name="taskSelectPrompt">Wählen Sie links eine Aufgabe oder erstellen Sie eine neue</string>
+    <string name="calFree2Months">Die nächsten 2 Monate sind frei</string>
+    <string name="newMeeting">Neuer Termin</string>
+    <string name="mailReadingSettings">Liste und Lesen</string>
+    <string name="mailReadingSettingsDesc">Startordner, Unterhaltungen, Vorschauzeilen, Schaltflächen unter der Nachricht</string>
+    <string name="mailComposeSettings">Schreiben und Senden</string>
+    <string name="mailComposeSettingsDesc">Senden rückgängig, Empfänger, Personen in Zitaten, Fotogröße</string>
+    <string name="mailFilesSettings">Download und Anhänge</string>
+    <string name="mailFilesSettingsDesc">Download-Modus, Mails auf dem Gerät, Dokumentvorschau, Suche in Anhängen</string>
+    <string name="mailTranslateSettingsDesc">Übersetzung auf dem Gerät</string>
+    <string name="mailSafetySettingsDesc">Warnungen vor gefälschten Absendern</string>
+    <string name="generalDesc">Sprache, Bildschirmdrehung, Mail-Widget</string>
+    <string name="appearanceDescFull">Design, Farben, Schrift und Skalierung, Listendichte, Widgets</string>
 </resources>

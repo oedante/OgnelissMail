@@ -4072,4 +4072,21 @@
     <string name="assignMarkedManually">Ditandai manual</string>
     <string name="readingPaneAskTitle">Bagaimana email dibuka?</string>
     <string name="readingPaneAskHint">Bisa diubah di menu ⋮ daftar → “{pane}”</string>
+    <string name="keysHintNav">Pesan berikutnya dan sebelumnya</string>
+    <string name="keysHintPalette">Semua perintah</string>
+    <string name="selectedMailsN">{n} pesan dipilih</string>
+    <string name="noteSelectPrompt">Pilih catatan di kiri atau buat yang baru</string>
+    <string name="taskSelectPrompt">Pilih tugas di kiri atau buat yang baru</string>
+    <string name="calFree2Months">2 bulan ke depan kosong</string>
+    <string name="newMeeting">Rapat baru</string>
+    <string name="mailReadingSettings">Daftar dan membaca</string>
+    <string name="mailReadingSettingsDesc">Folder awal, percakapan, baris pratinjau, tombol di bawah pesan</string>
+    <string name="mailComposeSettings">Menulis dan mengirim</string>
+    <string name="mailComposeSettingsDesc">Batalkan kirim, penerima, orang dalam kutipan, ukuran foto</string>
+    <string name="mailFilesSettings">Unduhan dan lampiran</string>
+    <string name="mailFilesSettingsDesc">Mode unduhan, email di perangkat, pratinjau dokumen, cari di lampiran</string>
+    <string name="mailTranslateSettingsDesc">Terjemahan email di perangkat</string>
+    <string name="mailSafetySettingsDesc">Peringatan pengirim palsu</string>
+    <string name="generalDesc">Bahasa, rotasi layar, widget Email</string>
+    <string name="appearanceDescFull">Tema, warna, font dan skala, kepadatan daftar, widget</string>
 </resources>

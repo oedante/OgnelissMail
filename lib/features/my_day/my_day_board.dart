@@ -80,22 +80,27 @@ extension _MyDayBoard on _MyDayScreenState {
       );
       final hint = Padding(
         padding: const EdgeInsets.fromLTRB(Space.l, Space.xs, Space.l, Space.xs),
-        child: Text(l10n.tr('boardHint'),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.mutedText(context))),
+        child: _hintWithIcons(context, l10n.tr('boardHint')),
       );
       if (wide) {
-        return Column(children: [
-          header,
-          hint,
+        // Компьютер и планшет (12.11.2026, замечание владельца: «часы
+        // растянуты на всю ширину, колонки доски почти пустые»): часы и
+        // встречи — узкой колонкой слева, доска — справа.
+        final shown = [for (final col in _Col.values) if (col != _Col.overdue || cols[col]!.isNotEmpty) col];
+        final boardWidth = c.maxWidth - _sideWidth - Space.s;
+        return Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          SizedBox(
+            width: _sideWidth,
+            child: ListView(padding: const EdgeInsets.only(bottom: Space.l), children: [header, hint]),
+          ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Space.s),
+              padding: const EdgeInsets.only(right: Space.s),
               child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                for (final col in _Col.values)
-                  if (col != _Col.overdue || cols[col]!.isNotEmpty)
-                    Expanded(child: _boardColumn(context, col, titles[col]!, cols[col]!, l10n, c.maxWidth / 3)),
+                for (final col in shown)
+                  Expanded(
+                      child: _boardColumn(
+                          context, col, titles[col]!, cols[col]!, l10n, boardWidth / shown.length)),
               ]),
             ),
           ),
@@ -115,6 +120,34 @@ extension _MyDayBoard on _MyDayScreenState {
         ],
       );
     });
+  }
+
+  /// Ширина левой колонки (часы и встречи) на широком экране.
+  static const _sideWidth = 340.0;
+
+  /// Подсказка с настоящими значками вместо символов «⋮⋮» и «⋮» (12.11.2026:
+  /// символы шрифта на части телефонов — квадратики). Перевод тот же: символы
+  /// в строке заменяются значками ручки и меню.
+  Widget _hintWithIcons(BuildContext context, String text) {
+    final style = Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.mutedText(context));
+    final size = (style?.fontSize ?? 12) + 3;
+    final spans = <InlineSpan>[];
+    var rest = text;
+    while (rest.isNotEmpty) {
+      final i = rest.indexOf('⋮');
+      if (i < 0) {
+        spans.add(TextSpan(text: rest));
+        break;
+      }
+      if (i > 0) spans.add(TextSpan(text: rest.substring(0, i)));
+      final handle = rest.startsWith('⋮⋮', i);
+      spans.add(WidgetSpan(
+        alignment: PlaceholderAlignment.middle,
+        child: Icon(handle ? AppIcons.drag_indicator : AppIcons.more_vert, size: size, color: style?.color),
+      ));
+      rest = rest.substring(i + (handle ? 2 : 1));
+    }
+    return Text.rich(TextSpan(children: spans), maxLines: 3, overflow: TextOverflow.ellipsis, style: style);
   }
 
   /// Панель доски во всю ширину (телефон): заголовок полосой с числом,

@@ -123,15 +123,25 @@ class TrackerBlockerNotifier extends StateNotifier<TrackerBlockerState> {
   static const trackerHosts = {
     'mailtrack.io', 'mailtrack.com', 'getnotify.com', 'bananatag.com',
     'yesware.com', 't.yesware.com', 'mailfoogae.appspot.com', 'streak.com',
-    'track.hubspot.com', 'hubspotemail.net', 'mixmax.com', 'superhuman.com',
-    'pixel.mailchimp.com', 'list-manage.com', 'mandrillapp.com',
-    'sendgrid.net', 'ct.sendgrid.net', 'mailgun.org', 'sparkpostmail.com',
-    'mailjet.com', 'sendibt3.com', 'sendinblue.com', 'brevo.com',
+    'track.hubspot.com', 'mixmax.com', 'superhuman.com',
+    'pixel.mailchimp.com', 'ct.sendgrid.net',
+    'google-analytics.com', 'doubleclick.net', 'facebook.com/tr',
+    'mc.yandex.ru',
+  };
+
+  /// Службы рассылок: с их серверов идут и счётчики открытий, и обычные
+  /// картинки писем — логотипы, баннеры, кнопки (12.11.2026: у письма
+  /// еАптеки через Mindbox пропали все картинки, кроме фото товаров, —
+  /// весь хост считался трекером). Здесь трекер — только картинка, похожая
+  /// на счётчик: адрес вида …/open…, без расширения картинки или без
+  /// заметного размера; остальное — обычная внешняя картинка.
+  static const mailingHosts = {
+    'list-manage.com', 'mandrillapp.com', 'sendgrid.net', 'mailgun.org', 'sparkpostmail.com',
+    'mailjet.com', 'sendibt3.com', 'sendinblue.com', 'brevo.com', 'hubspotemail.net',
     'exct.net', 'rs6.net', 'cmail19.com', 'cmail20.com', 'createsend1.com',
     'mkt.com', 'mktoresp.com', 'eloqua.com', 'en25.com', 'pardot.com',
-    'google-analytics.com', 'doubleclick.net', 'facebook.com/tr',
-    // Российские сервисы рассылок и аналитики
-    'mc.yandex.ru', 'unisender.com', 'sendsay.ru', 'mindbox.ru', 'dashamail.ru',
+    // Российские службы рассылок
+    'unisender.com', 'sendsay.ru', 'mindbox.ru', 'dashamail.ru',
     'esputnik.com', 'mailganer.com', 'notisend.ru', 'sendpulse.com',
   };
 
@@ -344,7 +354,25 @@ class TrackerBlockerNotifier extends StateNotifier<TrackerBlockerState> {
     }
     final first = host.split('.').first;
     if (trackerLabels.contains(first) && host.split('.').length >= 3) return BlockReason.trackerService;
+    if (mailingHosts.any((t) => host == t || host.endsWith('.$t')) && _looksLikeCounter(uri, w, h, tag)) {
+      return BlockReason.trackerService;
+    }
     return null;
+  }
+
+  static final _imageExt = RegExp(r'\.(png|jpe?g|gif|webp|svg|bmp|avif)$', caseSensitive: false);
+  static final _counterPath =
+      RegExp(r'(^|[/_.-])(open|opens|o|track|tracking|trk|pixel|beacon|wf)([/_.?-]|$)', caseSensitive: false);
+
+  /// Картинка службы рассылок похожа на счётчик открытий: в адресе «open»,
+  /// «track», «pixel»… или нет ни расширения картинки, ни размера, ни
+  /// подписи — обычные картинки писем почти всегда с одним из них.
+  static bool _looksLikeCounter(Uri? uri, double? w, double? h, String tag) {
+    final path = uri?.path ?? '';
+    if (_counterPath.hasMatch(path)) return true;
+    final sized = (w != null && w > 2) || (h != null && h > 2);
+    final alt = (_attr(tag, 'alt') ?? '').trim().isNotEmpty;
+    return !_imageExt.hasMatch(path) && !sized && !alt;
   }
 
   /// Место скрытой картинки (1.8.14). Раньше любая картинка становилась

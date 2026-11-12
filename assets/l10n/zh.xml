@@ -4072,4 +4072,21 @@
     <string name="assignMarkedManually">已手动标记</string>
     <string name="readingPaneAskTitle">如何打开邮件？</string>
     <string name="readingPaneAskHint">可在列表的 ⋮ 菜单 →“{pane}”中更改</string>
+    <string name="keysHintNav">下一封和上一封邮件</string>
+    <string name="keysHintPalette">所有命令</string>
+    <string name="selectedMailsN">已选择 {n} 封邮件</string>
+    <string name="noteSelectPrompt">在左侧选择笔记或新建笔记</string>
+    <string name="taskSelectPrompt">在左侧选择任务或新建任务</string>
+    <string name="calFree2Months">未来 2 个月没有安排</string>
+    <string name="newMeeting">新会议</string>
+    <string name="mailReadingSettings">列表与阅读</string>
+    <string name="mailReadingSettingsDesc">启动文件夹、会话、预览行数、邮件下方按钮</string>
+    <string name="mailComposeSettings">撰写与发送</string>
+    <string name="mailComposeSettingsDesc">撤销发送、收件人、引用中的人员、照片大小</string>
+    <string name="mailFilesSettings">下载与附件</string>
+    <string name="mailFilesSettingsDesc">下载方式、设备上的邮件、文档预览、附件内搜索</string>
+    <string name="mailTranslateSettingsDesc">在设备上翻译邮件</string>
+    <string name="mailSafetySettingsDesc">冒充发件人警告</string>
+    <string name="generalDesc">语言、屏幕旋转、邮件小组件</string>
+    <string name="appearanceDescFull">主题、颜色、字体与缩放、列表密度、小组件</string>
 </resources>

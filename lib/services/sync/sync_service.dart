@@ -90,6 +90,7 @@ import 'conflict_resolver.dart';
 import '../mail/auto_responder_service.dart';
 import '../mail/transport/mail_transport.dart';
 import '../home_widget_service.dart';
+import '../../widgets/common/account_avatar.dart' show distinctAccountInitials;
 import '../../features/mail/providers/folder_names.dart' show localizedFolderName;
 import '../../features/mail/providers/mail_providers.dart'
     show emailModelFromRow, accountsProvider, activeAccountProvider, folderFromRow, controlRevisionProvider;
@@ -2269,6 +2270,8 @@ class SyncService {
           accountLabel: shortLabel,
           previewLines: lines,
           fullText: pre == null && NotificationLines.wantsBody(lines) ? e.bodyPlain : null,
+          accountColor: account.colorValue,
+          accountInitial: distinctAccountInitials(active)[account.id],
         );
       }
 

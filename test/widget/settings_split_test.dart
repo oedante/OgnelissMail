@@ -126,7 +126,7 @@ void main() {
   testWidgets('компьютер: список слева, раздел справа без «Назад», вглубь — с «Назад»', (tester) async {
     final (router, db) = await _pump(tester, const Size(1280, 800));
     final l10n = AppLocalizations.of(tester.element(find.byType(SettingsScreen).first));
-    final mail = l10n.tr('emailSettings');
+    final mail = l10n.tr('mailReadingSettings');
     final general = l10n.tr('general');
     final notifications = l10n.tr('notifications');
 
@@ -172,7 +172,7 @@ void main() {
     final l10n = AppLocalizations.of(tester.element(find.byType(SettingsScreen).first));
     expect(find.byKey(const ValueKey('settings_split_list')), findsNothing);
     expect(find.text('ОБЩИЕ'), findsNothing);
-    final mail = find.text(l10n.tr('emailSettings'));
+    final mail = find.text(l10n.tr('mailReadingSettings'));
     await tester.scrollUntilVisible(mail, 200, scrollable: find.byType(Scrollable).first);
     await tester.tap(mail);
     await _settle(tester);

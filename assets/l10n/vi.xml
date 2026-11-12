@@ -4072,4 +4072,21 @@
     <string name="assignMarkedManually">Đã đánh dấu thủ công</string>
     <string name="readingPaneAskTitle">Mở thư theo cách nào?</string>
     <string name="readingPaneAskHint">Có thể đổi trong menu ⋮ của danh sách → “{pane}”</string>
+    <string name="keysHintNav">Thư tiếp theo và trước đó</string>
+    <string name="keysHintPalette">Tất cả lệnh</string>
+    <string name="selectedMailsN">Đã chọn {n} thư</string>
+    <string name="noteSelectPrompt">Chọn một ghi chú bên trái hoặc tạo ghi chú mới</string>
+    <string name="taskSelectPrompt">Chọn một công việc bên trái hoặc tạo công việc mới</string>
+    <string name="calFree2Months">2 tháng tới đều trống</string>
+    <string name="newMeeting">Cuộc họp mới</string>
+    <string name="mailReadingSettings">Danh sách và đọc thư</string>
+    <string name="mailReadingSettingsDesc">Thư mục khi mở, hội thoại, số dòng xem trước, nút dưới thư</string>
+    <string name="mailComposeSettings">Soạn và gửi</string>
+    <string name="mailComposeSettingsDesc">Hoàn tác gửi, người nhận, người trong trích dẫn, kích thước ảnh</string>
+    <string name="mailFilesSettings">Tải xuống và tệp đính kèm</string>
+    <string name="mailFilesSettingsDesc">Chế độ tải, thư trên thiết bị, xem tài liệu, tìm trong tệp đính kèm</string>
+    <string name="mailTranslateSettingsDesc">Dịch thư trên thiết bị</string>
+    <string name="mailSafetySettingsDesc">Cảnh báo người gửi giả mạo</string>
+    <string name="generalDesc">Ngôn ngữ, xoay màn hình, tiện ích Thư</string>
+    <string name="appearanceDescFull">Chủ đề, màu sắc, phông chữ và tỷ lệ, mật độ danh sách, tiện ích</string>
 </resources>

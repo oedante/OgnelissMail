@@ -4114,4 +4114,21 @@
     <string name="assignMarkedManually">Označeno ručně</string>
     <string name="readingPaneAskTitle">Jak otevírat e-maily?</string>
     <string name="readingPaneAskHint">Změníte v nabídce ⋮ seznamu → „{pane}“</string>
+    <string name="keysHintNav">Další a předchozí zpráva</string>
+    <string name="keysHintPalette">Všechny příkazy</string>
+    <string name="selectedMailsN">Vybrané zprávy: {n}</string>
+    <string name="noteSelectPrompt">Vyberte poznámku vlevo nebo vytvořte novou</string>
+    <string name="taskSelectPrompt">Vyberte úkol vlevo nebo vytvořte nový</string>
+    <string name="calFree2Months">Příští 2 měsíce jsou volné</string>
+    <string name="newMeeting">Nová schůzka</string>
+    <string name="mailReadingSettings">Seznam a čtení</string>
+    <string name="mailReadingSettingsDesc">Složka po spuštění, konverzace, řádky náhledu, tlačítka pod zprávou</string>
+    <string name="mailComposeSettings">Psaní a odesílání</string>
+    <string name="mailComposeSettingsDesc">Zrušení odeslání, příjemci, lidé v citacích, velikost fotek</string>
+    <string name="mailFilesSettings">Stahování a přílohy</string>
+    <string name="mailFilesSettingsDesc">Režim stahování, pošta v zařízení, náhled dokumentů, hledání v přílohách</string>
+    <string name="mailTranslateSettingsDesc">Překlad zpráv v zařízení</string>
+    <string name="mailSafetySettingsDesc">Upozornění na podvržené odesílatele</string>
+    <string name="generalDesc">Jazyk, otáčení obrazovky, widget Pošta</string>
+    <string name="appearanceDescFull">Motiv, barvy, písmo a měřítko, hustota seznamu, widgety</string>
 </resources>

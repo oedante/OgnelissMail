@@ -4,6 +4,7 @@
 // возможности), почта, разделы, защита, данные, справка; редкое —
 // в «Расширенных настройках» (advanced_settings_screen.dart).
 
+import '../../../services/translation/translator.dart' show translationPlatformSupported;
 import '../../../core/utils/text_safe.dart';
 import '../../../widgets/common/readable_width.dart';
 import '../../../core/theme/app_icons.dart';
@@ -142,14 +143,14 @@ class SettingsScreen extends ConsumerWidget {
             SettingsItem(
               icon: AppIcons.format_paint,
               title: l10n.tr('appearanceTitle'),
-              subtitle: l10n.tr('appearanceDesc'),
+              subtitle: l10n.tr('appearanceDescFull'),
               selected: sel('/settings/appearance'),
               onTap: () => open('/settings/appearance'),
             ),
             SettingsItem(
               icon: AppIcons.palette,
               title: l10n.tr('general'),
-              subtitle: '${l10n.tr('language')}, ${l10n.tr('fontSize')}',
+              subtitle: l10n.tr('generalDesc'),
               selected: sel('/settings/general'),
               onTap: () => open('/settings/general'),
             ),
@@ -181,13 +182,37 @@ class SettingsScreen extends ConsumerWidget {
           // ── Почта ──
           SettingsSectionTitle(l10n.tr('sectionMail')),
           SettingsGroup(children: [
+            // «Настройки почты» — пятью экранами (12.11.2026, замечание
+            // владельца: раздел был слишком крупным).
             SettingsItem(
               icon: AppIcons.mail,
-              title: l10n.tr('emailSettings'),
-              subtitle: l10n.tr('emailSettingsDesc'),
+              title: l10n.tr('mailReadingSettings'),
+              subtitle: l10n.tr('mailReadingSettingsDesc'),
               selected: sel('/settings/mail'),
               onTap: () => open('/settings/mail'),
             ),
+            SettingsItem(
+              icon: AppIcons.edit,
+              title: l10n.tr('mailComposeSettings'),
+              subtitle: l10n.tr('mailComposeSettingsDesc'),
+              selected: sel('/settings/mail/compose'),
+              onTap: () => open('/settings/mail/compose'),
+            ),
+            SettingsItem(
+              icon: AppIcons.download,
+              title: l10n.tr('mailFilesSettings'),
+              subtitle: l10n.tr('mailFilesSettingsDesc'),
+              selected: sel('/settings/mail/files'),
+              onTap: () => open('/settings/mail/files'),
+            ),
+            if (translationPlatformSupported)
+              SettingsItem(
+                icon: AppIcons.translate,
+                title: l10n.tr('translateSection'),
+                subtitle: l10n.tr('mailTranslateSettingsDesc'),
+                selected: sel('/settings/mail/translate'),
+                onTap: () => open('/settings/mail/translate'),
+              ),
             SettingsItem(
               icon: AppIcons.swipe,
               title: l10n.tr('swipeSettings'),
@@ -281,6 +306,13 @@ class SettingsScreen extends ConsumerWidget {
                   ref.read(pinLockProvider.notifier).removePin();
                 }
               },
+            ),
+            SettingsItem(
+              icon: AppIcons.phishing,
+              title: l10n.tr('antiPhishing'),
+              subtitle: l10n.tr('mailSafetySettingsDesc'),
+              selected: sel('/settings/mail/safety'),
+              onTap: () => open('/settings/mail/safety'),
             ),
             SettingsItem(
               icon: AppIcons.visibility_off,

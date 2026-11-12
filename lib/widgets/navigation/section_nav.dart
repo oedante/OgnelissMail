@@ -38,7 +38,13 @@ class SectionNav extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final path = GoRouterState.of(context).uri.path;
+    // Без маршрутизатора (снимки экранов, тесты) — «Почта» (2.3.2).
+    String path;
+    try {
+      path = GoRouterState.of(context).uri.path;
+    } catch (_) {
+      path = '/mail';
+    }
     final flags = ref.watch(featureFlagsProvider);
     final unread = ref.watch(totalUnreadCountProvider);
 
@@ -82,8 +88,12 @@ class SectionNav extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                // Узкая панель — подпись мельче, а не «Календа…».
-                FittedBox(
+                // Узкая панель — подпись мельче, а не «Календа…». Отступ по
+                // краям — подписи соседей не слипаются («КалендарьКонтакты»,
+                // оценка интерфейса 12.11.2026).
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(label,
                       maxLines: 1,
@@ -91,6 +101,7 @@ class SectionNav extends ConsumerWidget {
                         fontWeight: selected ? FontWeight.w700 : null,
                         color: selected ? scheme.onSurface : scheme.onSurfaceVariant,
                       )),
+                  ),
                 ),
               ]),
             ),

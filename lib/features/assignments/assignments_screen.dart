@@ -33,6 +33,9 @@ class AssignmentsScreen extends ConsumerStatefulWidget {
 }
 
 class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
+  /// С этой ширины области — две колонки вместо вкладок.
+  static const _twoColumnsMin = 720.0;
+
   _Filter _filter = _Filter.all;
   bool _showDone = false;
 
@@ -43,25 +46,58 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
     final mine = [for (final v in all) if (v.outgoing) v];
     final toMe = [for (final v in all) if (!v.outgoing) v];
     int active(List<AssignmentView> l) => l.where((v) => v.active).length;
+    final fab = AppBottomBar.inUse(context)
+        ? null
+        : FloatingActionButton.extended(
+            heroTag: 'fab_assign',
+            onPressed: () => unawaited(showAssignSheet(context)),
+            icon: const Icon(AppIcons.add),
+            label: Text(l10n.tr('assignNew')),
+          );
+    // Широкое окно (компьютер, планшет; просьба владельца 12.11.2026):
+    // «Я поручил» и «Мне поручили» рядом, а не вкладками.
+    return LayoutBuilder(builder: (context, box) => box.maxWidth >= _twoColumnsMin
+        ? _wide(context, l10n, mine, toMe, active(mine), active(toMe), fab)
+        : _tabs(context, l10n, mine, toMe, active(mine), active(toMe), fab));
+  }
+
+  Widget _wide(BuildContext context, AppLocalizations l10n, List<AssignmentView> mine, List<AssignmentView> toMe,
+      int nMine, int nToMe, Widget? fab) {
+    final theme = Theme.of(context);
+    Widget column(String title, int n, List<AssignmentView> items) => Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, 0),
+              child: Text('$title · $n', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+            ),
+            Expanded(child: _list(context, items, l10n)),
+          ]),
+        );
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.tr('assignments'))),
+      floatingActionButton: fab,
+      body: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        column(l10n.tr('assignTabMine'), nMine, mine),
+        const VerticalDivider(width: 1),
+        column(l10n.tr('assignTabToMe'), nToMe, toMe),
+      ]),
+    );
+  }
+
+  Widget _tabs(BuildContext context, AppLocalizations l10n, List<AssignmentView> mine, List<AssignmentView> toMe,
+      int nMine, int nToMe, Widget? fab) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.tr('assignments')),
           bottom: TabBar(tabs: [
-            Tab(text: '${l10n.tr('assignTabMine')} · ${active(mine)}'),
-            Tab(text: '${l10n.tr('assignTabToMe')} · ${active(toMe)}'),
+            Tab(text: '${l10n.tr('assignTabMine')} · $nMine'),
+            Tab(text: '${l10n.tr('assignTabToMe')} · $nToMe'),
           ]),
         ),
         // На телефоне «Поручить» — в центре нижней панели (2.2.0).
-        floatingActionButton: AppBottomBar.inUse(context)
-            ? null
-            : FloatingActionButton.extended(
-                heroTag: 'fab_assign',
-                onPressed: () => unawaited(showAssignSheet(context)),
-                icon: const Icon(AppIcons.add),
-                label: Text(l10n.tr('assignNew')),
-              ),
+        floatingActionButton: fab,
         body: TabBarView(children: [_list(context, mine, l10n), _list(context, toMe, l10n)]),
       ),
     );

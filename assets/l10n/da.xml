@@ -4093,4 +4093,21 @@
     <string name="assignMarkedManually">Markeret manuelt</string>
     <string name="readingPaneAskTitle">Hvordan skal mails åbnes?</string>
     <string name="readingPaneAskHint">Kan ændres i listens menu ⋮ → “{pane}”</string>
+    <string name="keysHintNav">Næste og forrige besked</string>
+    <string name="keysHintPalette">Alle kommandoer</string>
+    <string name="selectedMailsN">{n} beskeder valgt</string>
+    <string name="noteSelectPrompt">Vælg en note til venstre, eller opret en ny</string>
+    <string name="taskSelectPrompt">Vælg en opgave til venstre, eller opret en ny</string>
+    <string name="calFree2Months">De næste 2 måneder er ledige</string>
+    <string name="newMeeting">Nyt møde</string>
+    <string name="mailReadingSettings">Liste og læsning</string>
+    <string name="mailReadingSettingsDesc">Startmappe, samtaler, eksempellinjer, knapper under beskeden</string>
+    <string name="mailComposeSettings">Skrivning og afsendelse</string>
+    <string name="mailComposeSettingsDesc">Fortryd afsendelse, modtagere, personer i citater, fotostørrelse</string>
+    <string name="mailFilesSettings">Download og vedhæftninger</string>
+    <string name="mailFilesSettingsDesc">Downloadtilstand, mail på enheden, dokumentvisning, søgning i vedhæftninger</string>
+    <string name="mailTranslateSettingsDesc">Oversættelse af mail på enheden</string>
+    <string name="mailSafetySettingsDesc">Advarsler om forfalskede afsendere</string>
+    <string name="generalDesc">Sprog, skærmrotation, Mail-widget</string>
+    <string name="appearanceDescFull">Tema, farver, skrift og skalering, listetæthed, widgets</string>
 </resources>

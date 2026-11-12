@@ -4093,4 +4093,21 @@
     <string name="assignMarkedManually">Marked manually</string>
     <string name="readingPaneAskTitle">How should emails open?</string>
     <string name="readingPaneAskHint">You can change this in the list ⋮ menu → {pane}</string>
+    <string name="keysHintNav">Next and previous message</string>
+    <string name="keysHintPalette">All commands</string>
+    <string name="selectedMailsN">{n} messages selected</string>
+    <string name="noteSelectPrompt">Select a note on the left or create a new one</string>
+    <string name="taskSelectPrompt">Select a task on the left or create a new one</string>
+    <string name="calFree2Months">The next 2 months are free</string>
+    <string name="newMeeting">New meeting</string>
+    <string name="mailReadingSettings">Message list and reading</string>
+    <string name="mailReadingSettingsDesc">Startup folder, conversations, preview lines, buttons under a message</string>
+    <string name="mailComposeSettings">Writing and sending</string>
+    <string name="mailComposeSettingsDesc">Undo send, recipients, people in quotes, photo size</string>
+    <string name="mailFilesSettings">Downloads and attachments</string>
+    <string name="mailFilesSettingsDesc">Download mode, mail on the device, document preview, search in attachments</string>
+    <string name="mailTranslateSettingsDesc">On-device mail translation</string>
+    <string name="mailSafetySettingsDesc">Warnings about spoofed senders</string>
+    <string name="generalDesc">Language, screen rotation, Mail widget</string>
+    <string name="appearanceDescFull">Theme, colours, font and scale, list density, widgets</string>
 </resources>

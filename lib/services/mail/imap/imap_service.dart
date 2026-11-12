@@ -1473,10 +1473,35 @@ class ImapService {
     }
   }
 
-  void _collectAttachments(BodyPart part, List<EmailAttachment> result) {
+  void _collectAttachments(BodyPart part, List<EmailAttachment> result) => collectAttachments(part, result);
+
+  /// Есть ли в письме файлы, кроме встроенных в текст картинок.
+  static bool hasFiles(BodyPart? root) {
+    if (root == null) return false;
+    final list = <EmailAttachment>[];
+    collectAttachments(root, list);
+    return list.any((a) => !a.isInline);
+  }
+
+  /// Вложения письма по дереву BODYSTRUCTURE.
+  @visibleForTesting
+  static void collectAttachments(BodyPart part, List<EmailAttachment> result) {
     final top = part.contentType?.mediaType.top;
+    final leaf = part.parts == null || part.parts!.isEmpty;
+    final fileName = part.contentDisposition?.filename ?? part.contentType?.parameters['name'];
+    // Файл, помеченный «встроенным» (Content-Disposition: inline), без
+    // ссылки из текста: фото с iPhone, пересланное из веб-почты Яндекса,
+    // приходит частью image/jpeg; inline; filename=image0.jpeg без
+    // Content-ID (12.11.2026: Gmail показывал вложение, приложение — нет).
+    // Любая конечная часть с именем файла или не-текстовая (кроме
+    // приглашения) — вложение.
+    final looseFile = leaf &&
+        top != MediaToptype.multipart &&
+        part.cid == null &&
+        (fileName != null || (top != null && top != MediaToptype.text));
     final isAttachment = part.contentDisposition?.disposition == ContentDisposition.attachment ||
-        (part.contentType?.mediaType.sub == MediaSubtype.applicationOctetStream);
+        (part.contentType?.mediaType.sub == MediaSubtype.applicationOctetStream) ||
+        looseFile;
     // Встроенная часть с Content-ID (картинка в подписи/теле, на которую
     // ссылается HTML как cid:) — прежде не собиралась вовсе, и картинки
     // в письмах были «битыми».
@@ -1497,14 +1522,19 @@ class ImapService {
             (isInlineWithCid ? 'image' : (isCalendar ? 'invite.ics' : 'attachment')),
         mimeType: part.contentType?.mediaType.text ?? 'application/octet-stream',
         size: part.size ?? 0,
-        isInline: isInlineWithCid || isCalendar || part.contentDisposition?.disposition == ContentDisposition.inline,
+        // Встроенная — только картинка с Content-ID (её показывает текст
+        // письма) и приглашение; «inline» без Content-ID показать в тексте
+        // нечем — это обычное вложение.
+        isInline: isInlineWithCid ||
+            isCalendar ||
+            (part.cid != null && part.contentDisposition?.disposition == ContentDisposition.inline),
         contentId: EmailAttachment.normalizeCid(part.cid),
       ));
     }
 
     if (part.parts != null) {
       for (final child in part.parts!) {
-        _collectAttachments(child, result);
+        collectAttachments(child, result);
       }
     }
   }
@@ -1604,8 +1634,9 @@ class ImapService {
         isRead: isRead,
         isFlagged: isFlagged,
         isReplied: isReplied,
-        hasAttachments: msg.body?.parts?.any((p) =>
-            p.contentDisposition?.disposition == ContentDisposition.attachment) ?? false,
+        // Скрепка в ленте — по тем же правилам, что список вложений (и
+        // вложенные части, и файлы «inline» без Content-ID).
+        hasAttachments: hasFiles(msg.body),
         size: size,
         sensitivity: sensitivity,
       );

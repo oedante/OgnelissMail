@@ -4095,4 +4095,6 @@
     <string name="readingPaneAskHint">Puoi cambiarlo dal menu ⋮ dell’elenco → «{pane}»</string>
     <string name="assignParent">Parte di</string>
     <string name="assignPartOf">Parte dell\'incarico: «{title}»</string>
+    <string name="expMacWebTitle">Email complesse nella vista browser</string>
+    <string name="expMacWebDesc">Le email con impaginazione complessa vengono mostrate come in un browser, direttamente nel messaggio. Funzione di prova per Mac.</string>
 </resources>

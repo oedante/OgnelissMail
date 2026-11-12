@@ -4095,4 +4095,6 @@
     <string name="readingPaneAskHint">Kan endres i listens meny ⋮ → «{pane}»</string>
     <string name="assignParent">Del av</string>
     <string name="assignPartOf">Del av oppdraget: «{title}»</string>
+    <string name="expMacWebTitle">Komplekse e-poster i nettleservisning</string>
+    <string name="expMacWebDesc">E-poster med kompleks layout vises som i en nettleser, rett i meldingen. Prøvefunksjon for Mac.</string>
 </resources>

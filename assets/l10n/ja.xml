@@ -4074,4 +4074,6 @@
     <string name="readingPaneAskHint">一覧の ⋮ メニュー →「{pane}」で変更できます</string>
     <string name="assignParent">親の依頼</string>
     <string name="assignPartOf">依頼「{title}」の一部</string>
+    <string name="expMacWebTitle">複雑なメールをブラウザ表示</string>
+    <string name="expMacWebDesc">レイアウトが複雑なメールを、メッセージ内でブラウザと同じように表示します。Mac向けの試験機能です。</string>
 </resources>

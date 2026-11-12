@@ -4074,4 +4074,6 @@
     <string name="readingPaneAskHint">Bisa diubah di menu ⋮ daftar → “{pane}”</string>
     <string name="assignParent">Bagian dari</string>
     <string name="assignPartOf">Bagian dari penugasan: \"{title}\"</string>
+    <string name="expMacWebTitle">Email kompleks dalam tampilan browser</string>
+    <string name="expMacWebDesc">Email dengan tata letak kompleks ditampilkan seperti di browser, langsung di dalam pesan. Fitur uji coba untuk Mac.</string>
 </resources>

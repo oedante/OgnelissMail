@@ -4095,4 +4095,6 @@
     <string name="readingPaneAskHint">Kan ändras i listans meny ⋮ → ”{pane}”</string>
     <string name="assignParent">Del av</string>
     <string name="assignPartOf">Del av uppdraget: ”{title}”</string>
+    <string name="expMacWebTitle">Komplexa mejl i webbläsarvy</string>
+    <string name="expMacWebDesc">Mejl med komplex layout visas som i en webbläsare, direkt i meddelandet. Testfunktion för Mac.</string>
 </resources>

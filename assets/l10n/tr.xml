@@ -4095,4 +4095,6 @@
     <string name="readingPaneAskHint">Listenin ⋮ menüsünden → “{pane}” ile değiştirilebilir</string>
     <string name="assignParent">Üst görev</string>
     <string name="assignPartOf">Şu görevin parçası: \"{title}\"</string>
+    <string name="expMacWebTitle">Karmaşık e-postalar tarayıcı görünümünde</string>
+    <string name="expMacWebDesc">Karmaşık düzenli e-postalar, iletinin içinde tarayıcıdaki gibi gösterilir. Mac için deneme özelliği.</string>
 </resources>

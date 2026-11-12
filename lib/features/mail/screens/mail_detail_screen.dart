@@ -98,6 +98,7 @@ import '../../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../widgets/attachment_drag_out.dart';
 import '../widgets/move_folder_picker.dart';
 import '../widgets/mail_html_view.dart';
+import '../widgets/mac_mail_web_view.dart';
 import '../../../widgets/common/readable_width.dart';
 import '../providers/conversation_mute.dart';
 import '../widgets/read_receipt_banner.dart';
@@ -1068,6 +1069,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// письмо целиком; null — письмо сложное (WebView).
   final Map<String, NativeMail?> _natives = {};
   final Set<String> _nativeBuilding = {};
+
+  /// Mac: встроенное окно браузера не показало это письмо — виджетами.
+  String? _macWebFailedFor;
   String? _whyMarkedFor;
 
   /// Простое письмо — виджетами (MailNativeBody); null — показывать в WebView
@@ -1327,8 +1331,31 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       final p = _prepared;
       _split = p != null && identical(p.secured.html, html) ? p.split : splitQuotedHtml(html);
     }
-    final native = _nativeBody(email, html, theme, l10n, settings);
-    final body = native ?? _flutterHtmlBody(html, theme, l10n);
+    // Mac: сложная вёрстка — во встроенном окне браузера (12.11.2026,
+    // включается в «Открытии писем»); окно не показало письмо — как раньше.
+    final macWeb = mailMacWebViewSupported &&
+        _prepared?.nativeWhy != null &&
+        _macWebFailedFor != email.id &&
+        (ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.macWebMail) ?? false);
+    final Widget body;
+    if (macWeb) {
+      final dark = theme.brightness == Brightness.dark;
+      final original = dark && _originalColors(email);
+      body = MacMailWebView(
+        key: ValueKey('macweb_${email.id}'),
+        html: html,
+        allowRemoteImages: _imagesAllowed,
+        inlineImages: _inlineImages,
+        height: macMailWebHeight(MediaQuery.sizeOf(context).height),
+        dark: dark && !original,
+        pageColor: original ? Colors.white : mailPageColor(theme),
+        textScale: MailHtmlView.textScaleOf(context),
+        onLink: (url, text) => _onBodyLink(email, url, text),
+        onFailed: () => safeSetState(() => _macWebFailedFor = email.id),
+      );
+    } else {
+      body = _nativeBody(email, html, theme, l10n, settings) ?? _flutterHtmlBody(html, theme, l10n);
+    }
     if (_prepared?.nativeWhy == null) return body;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

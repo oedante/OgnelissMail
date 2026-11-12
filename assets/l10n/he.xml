@@ -4116,4 +4116,6 @@
     <string name="readingPaneAskHint">אפשר לשנות בתפריט ⋮ של הרשימה ← „{pane}”</string>
     <string name="assignParent">חלק ממשימה</string>
     <string name="assignPartOf">חלק מהמשימה: \"{title}\"</string>
+    <string name="expMacWebTitle">הודעות מורכבות בתצוגת דפדפן</string>
+    <string name="expMacWebDesc">הודעות עם עיצוב מורכב מוצגות כמו בדפדפן, ישירות בתוך ההודעה. תכונה ניסיונית ל-Mac.</string>
 </resources>

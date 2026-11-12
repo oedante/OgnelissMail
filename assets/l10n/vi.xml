@@ -4074,4 +4074,6 @@
     <string name="readingPaneAskHint">Có thể đổi trong menu ⋮ của danh sách → “{pane}”</string>
     <string name="assignParent">Thuộc việc</string>
     <string name="assignPartOf">Thuộc việc giao: \"{title}\"</string>
+    <string name="expMacWebTitle">Email phức tạp trong chế độ xem trình duyệt</string>
+    <string name="expMacWebDesc">Email có bố cục phức tạp được hiển thị như trong trình duyệt, ngay trong thư. Tính năng thử nghiệm cho Mac.</string>
 </resources>

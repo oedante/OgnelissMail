@@ -4116,4 +4116,6 @@
     <string name="readingPaneAskHint">Se poate schimba din meniul ⋮ al listei → „{pane}”</string>
     <string name="assignParent">Parte din</string>
     <string name="assignPartOf">Parte din sarcina: „{title}”</string>
+    <string name="expMacWebTitle">E-mailuri complexe în vizualizare de browser</string>
+    <string name="expMacWebDesc">E-mailurile cu aspect complex sunt afișate ca într-un browser, direct în mesaj. Funcție de probă pentru Mac.</string>
 </resources>

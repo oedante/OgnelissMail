@@ -4095,4 +4095,6 @@
     <string name="readingPaneAskHint">सूची के ⋮ मेनू → “{pane}” में बदल सकते हैं</string>
     <string name="assignParent">मुख्य कार्य</string>
     <string name="assignPartOf">इस कार्य का भाग: \"{title}\"</string>
+    <string name="expMacWebTitle">जटिल ईमेल ब्राउज़र दृश्य में</string>
+    <string name="expMacWebDesc">जटिल लेआउट वाले ईमेल सीधे संदेश में ब्राउज़र की तरह दिखाए जाते हैं। Mac के लिए परीक्षण सुविधा।</string>
 </resources>

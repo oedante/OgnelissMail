@@ -4116,4 +4116,6 @@
     <string name="readingPaneAskHint">Zmeníte v ponuke ⋮ zoznamu → „{pane}“</string>
     <string name="assignParent">Súčasť úlohy</string>
     <string name="assignPartOf">Súčasť úlohy: „{title}“</string>
+    <string name="expMacWebTitle">Zložité e-maily v okne prehliadača</string>
+    <string name="expMacWebDesc">E-maily so zložitým rozložením sa zobrazia ako v prehliadači, priamo v správe. Skúšobná funkcia pre Mac.</string>
 </resources>

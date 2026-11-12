@@ -4095,4 +4095,6 @@
     <string name="readingPaneAskHint">Módosítható a lista ⋮ menüjében → „{pane}”</string>
     <string name="assignParent">Fő megbízás</string>
     <string name="assignPartOf">A megbízás része: „{title}”</string>
+    <string name="expMacWebTitle">Összetett levelek böngészőnézetben</string>
+    <string name="expMacWebDesc">Az összetett elrendezésű levelek úgy jelennek meg, mint a böngészőben, közvetlenül a levélben. Kísérleti funkció Macre.</string>
 </resources>

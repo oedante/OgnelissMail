@@ -31,6 +31,7 @@ import '../../data/models/email_model.dart';
 import '../../data/providers/database_provider.dart';
 import '../mail/engine/mail_engine_service.dart';
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
+import '../../core/utils/encoded_words.dart';
 import '../../core/utils/mail_domains.dart';
 import '../../core/utils/person_names.dart';
 import '../../data/models/folder_model.dart';
@@ -69,6 +70,7 @@ class MailContactsService {
     final n = name?.trim() ?? '';
     return n.isNotEmpty &&
         !n.contains('\uFFFD') &&
+        !hasEncodedWordLeftovers(n) &&
         n.toLowerCase() != email.trim().toLowerCase() &&
         PersonNames.plausible(n);
   }
@@ -316,6 +318,42 @@ class MailContactsService {
       }
     } catch (e) {
       AppLogger.debug('Контакты из переписки: очистка — $e');
+    }
+  }
+
+  /// Один раз (12.11.2026): имена с остатком разрезанного закодированного
+  /// слова («Олег Ермиши? ?utf8?QD0=BD?=») — восстановить; не вышло — у
+  /// карточки остаётся адрес. Все источники: такое имя могло попасть и в
+  /// сохранённый вручную контакт из подсказки.
+  Future<void> repairNamesOnce() async {
+    final prefs = await SharedPreferences.getInstance();
+    const key = 'contacts_encoded_names_v1';
+    if (prefs.getBool(key) == true) return;
+    try {
+      final db = _db;
+      final rows = await (db.select(db.contacts)..where((c) => c.displayName.like('%?=%'))).get();
+      var fixed = 0, cleared = 0;
+      await db.transaction(() async {
+        for (final c in rows) {
+          final r = repairedDisplayName(c.displayName);
+          if (r == c.displayName) continue;
+          final where = db.update(db.contacts)
+            ..where((t) => t.id.equals(c.id) & (c.accountId == null ? t.accountId.isNull() : t.accountId.equals(c.accountId!)));
+          if (r == null) {
+            // Чужие контакты (с сервера, с телефона) не трогаем — только «из переписки».
+            if (c.source != ContactSource.fromMail.index) continue;
+            await where.write(const ContactsCompanion(displayName: Value(''), firstName: Value(null), lastName: Value(null)));
+            cleared++;
+          } else {
+            await where.write(ContactsCompanion(displayName: Value(r)));
+            fixed++;
+          }
+        }
+      });
+      await prefs.setBool(key, true);
+      if (fixed + cleared > 0) AppLogger.info('Контакты: имён восстановлено $fixed, убрано битых $cleared');
+    } catch (e) {
+      AppLogger.debug('Контакты: восстановление имён — $e');
     }
   }
 

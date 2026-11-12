@@ -1,5 +1,6 @@
 // lib/data/models/email_model.dart
 
+import '../../core/utils/encoded_words.dart';
 import '../../core/utils/text_safe.dart';
 import 'dart:convert';
 
@@ -29,8 +30,14 @@ class EmailAddress {
 
   Map<String, dynamic> toMap() => {'email': email, 'displayName': displayName};
   factory EmailAddress.fromMap(Map<String, dynamic> m) =>
-      // «name» — так адресатов пишет черновик.
-      EmailAddress(email: m['email'] ?? '', displayName: m['displayName'] ?? m['name']);
+      // «name» — так адресатов пишет черновик. Имя с остатком разрезанного
+      // закодированного слова (сохранено до 12.11.2026) — восстановленным.
+      EmailAddress(email: m['email'] ?? '', displayName: _storedName(m['displayName'] ?? m['name']));
+
+  static String? _storedName(Object? v) {
+    if (v is! String) return null;
+    return v.contains('?=') ? repairedDisplayName(v) : v;
+  }
 }
 
 class EmailAttachment {

@@ -1115,6 +1115,7 @@ class SyncService {
           await mc.backfillOnce(account, sentFolderId: sent?.id);
           // Один раз: карточки своих адресов и «имена»-тексты из спама (2.3.2).
           await mc.cleanupOnce();
+          await mc.repairNamesOnce();
           // Фото коллег — только пока приложение открыто: в фоне их никто
           // не видит, а это лишние запросы к адресной книге на каждом проходе.
           if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {

@@ -47,6 +47,7 @@ import '../../../services/security/smime_service.dart' show smimeServiceProvider
 import '../../../services/security/managed_config.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/utils/encoded_words.dart';
 
 // ════════════════════════ АККАУНТЫ ════════════════════════
 
@@ -1574,10 +1575,9 @@ EmailModel emailModelFromRow(Email row) {
     if (json == null || json.isEmpty) return [];
     try {
       final list = jsonDecode(json) as List;
-      return list.map((m) => EmailAddress(
-            email: m['email'] ?? '',
-            displayName: m['displayName'],
-          )).toList();
+      // fromMap: имя с остатком разрезанного закодированного слова —
+      // восстановленным (12.11.2026).
+      return [for (final m in list.whereType<Map>()) EmailAddress.fromMap(m.cast<String, dynamic>())];
     } catch (_) {
       return [];
     }
@@ -1602,7 +1602,11 @@ EmailModel emailModelFromRow(Email row) {
     parentId: row.parentId,
     internetMessageId: row.internetMessageId,
     references: row.referencesStr?.split(' ').where((s) => s.isNotEmpty).toList(),
-    from: EmailAddress(email: row.fromEmail, displayName: row.fromName == null ? null : fixUtf16(row.fromName!)),
+    from: EmailAddress(
+        email: row.fromEmail,
+        displayName: row.fromName == null
+            ? null
+            : (row.fromName!.contains('?=') ? repairedDisplayName(row.fromName) : fixUtf16(row.fromName!))),
     to: parseAddresses(row.toRecipients),
     cc: parseAddresses(row.ccJson),
     bcc: parseAddresses(row.bccJson),

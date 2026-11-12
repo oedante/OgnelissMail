@@ -31,6 +31,7 @@ import '../../../widgets/common/swipe_action_indicator.dart';
 import '../../../widgets/common/slidable_spring_back.dart';
 import '../../compose/widgets/mail_editor.dart' show MailEditorPool, warmUpMailEditor;
 import '../../../services/mail/conversation_counter.dart';
+import '../../../widgets/ui/theme_quick_switch.dart';
 import '../../../services/mail/imap/imap_service.dart' show ImapFolderState;
 import 'dart:async';
 import '../../../services/mail/offline_send_service.dart';
@@ -907,6 +908,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                   label: l10n.tr('readingPane'),
                   subtitle: readingPaneLabel(l10n, ref.read(readingPaneProvider)).label,
                 ),
+              // Тема — здесь на планшете и компьютере (с панели папок убрана,
+              // 12.11.2026); на телефоне — в выдвижном меню, как раньше.
+              if (!phone) AppMenuEntry(value: 'theme', icon: AppIcons.dark_mode, label: l10n.tr('theme')),
               AppMenuEntry(value: 'mark_all_read', icon: AppIcons.done_all, label: l10n.tr('markAllRead')),
               AppMenuEntry(value: 'read_where_cc', icon: AppIcons.mark_email_read, label: l10n.tr('markReadWhereCc')),
               // «Очистить» — только в Корзине и Спаме, и именно открытую
@@ -3339,6 +3343,16 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         break;
       case 'reading_pane':
         unawaited(pickReadingPane(context, ref));
+        break;
+      case 'theme':
+        unawaited(showDialog<void>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(l10n.tr('theme')),
+            content: const SizedBox(width: 360, child: ThemeQuickSwitch()),
+            actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.tr('close')))],
+          ),
+        ));
         break;
     }
   }

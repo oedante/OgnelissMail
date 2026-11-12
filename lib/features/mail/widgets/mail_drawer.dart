@@ -174,7 +174,9 @@ class MailDrawer extends ConsumerWidget {
               ),
             ),
             if (!docked) ...favorites(top: false),
-            if (docked && !ref.watch(hiddenQuickItemsProvider).contains(DrawerQuickItem.theme)) _themeSwitch,
+            // Тема на закреплённой панели (планшет, компьютер) — в меню «⋮»
+            // ленты: нужна редко, а место у панели — папкам (оценка
+            // интерфейса 12.11.2026).
             // «Добавить аккаунт» убран из меню: он есть в настройках
             // («Аккаунты»), а здесь занимал строку внизу (замечание 06.10.2026).
             // Ящики — ВНИЗУ, под большим пальцем (как частые кнопки в Ogneliss
@@ -299,6 +301,16 @@ class MailDrawer extends ConsumerWidget {
 
   // ════════════════════════ ИЗБРАННОЕ ════════════════════════
 
+  /// Плитки разделов приложения (не почтовых папок и отборов).
+  static final _navTiles = {
+    DrawerQuickItem.myDay.name,
+    DrawerQuickItem.assignments.name,
+    DrawerQuickItem.fileHub.name,
+    DrawerQuickItem.notes.name,
+    DrawerQuickItem.tasks.name,
+    'settings',
+  };
+
   static const _themeSwitch = Padding(
     padding: EdgeInsets.only(top: Space.xs, bottom: Space.s),
     child: ThemeQuickSwitch(),
@@ -346,7 +358,12 @@ class MailDrawer extends ConsumerWidget {
           onTap: onTap,
           muted: muted,
           onLongPressAt: onLongPressAt,
-          iconOnly: iconOnly.contains(id),
+          // Закреплённая панель (планшет, компьютер): разделы приложения —
+          // «Мой день», «Поручения», «Файлы», «Заметки», «Настройки» —
+          // значками в ряд, крупные плитки — только почтовым (оценка
+          // интерфейса 12.11.2026: плитки занимали полпанели, папки уходили
+          // вниз). Подпись — подсказкой.
+          iconOnly: iconOnly.contains(id) || (docked && _navTiles.contains(id)),
         );
 
     // Группы аккаунтов: между «одним ящиком» и «всеми сразу».

@@ -545,15 +545,27 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // Authentication-Results, гриф в MIME и рассылка (EWS даёт заголовки
         // только при открытии письма) записаны выше одной записью; на уже
         // показанное письмо — только если что-то изменилось.
-        if (sameBody && _email != null && (sensChanged || luChanged || authChanged)) {
+        if (sameBody && _email != null && (sensChanged || luChanged || authChanged || attChanged)) {
           final sens = email.sensitivity;
           final lu = email.listUnsubscribe;
           final ar = email.authResults;
-          safeSetState(() => _email = _email!.copyWith(
-                sensitivity: sensChanged ? sens : null,
-                listUnsubscribe: luChanged ? lu : null,
-                authResults: authChanged ? ar : null,
-              ));
+          // Вложения: список с сервера мог стать полнее (12.11.2026: файл
+          // «inline» без Content-ID прежде не попадал в список) — сразу, а
+          // не при следующем открытии.
+          final atts = email.attachments;
+          safeSetState(() {
+            _email = _email!.copyWith(
+              sensitivity: sensChanged ? sens : null,
+              listUnsubscribe: luChanged ? lu : null,
+              authResults: authChanged ? ar : null,
+              attachments: attChanged ? atts : null,
+            );
+            if (attChanged) {
+              for (final att in atts) {
+                _attachmentStates.putIfAbsent(att.id, () => const _AttachmentState());
+              }
+            }
+          });
         }
 
         if (!sameBody) {

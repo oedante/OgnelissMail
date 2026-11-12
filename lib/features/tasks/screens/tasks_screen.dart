@@ -11,6 +11,7 @@
 //  · список обновляется сам (поток из базы) — синхронизация, кнопка
 //    «Выполнено» в уведомлении и календарь видны сразу.
 
+import '../../../widgets/common/section_search_button.dart';
 import '../../../widgets/ui/section_band.dart';
 import 'dart:async';
 import 'package:drift/drift.dart' hide Column;
@@ -241,11 +242,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               }),
             )
           else
-            IconButton(
-              icon: const Icon(AppIcons.search),
-              tooltip: l10n.tr('search'),
-              onPressed: () => setState(() => _searchActive = true),
-            ),
+            SectionSearchButton(onTap: () => setState(() => _searchActive = true)),
           AppMenuButton<String>(
             onSelected: (v) async {
               switch (v) {

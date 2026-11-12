@@ -66,6 +66,7 @@ class ContactsScreen extends ConsumerStatefulWidget {
 
 class _ContactsScreenState extends ConsumerState<ContactsScreen> {
   String _search = '';
+  bool _searchOpen = false;
   final _searchCtrl = TextEditingController();
   String _filter = 'all'; // all, frequent, company
   final _listController = ScrollController();
@@ -250,6 +251,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
     ref.watch(accountsProvider);
     final hasDirectory = _directoryAccounts().isNotEmpty;
 
+    final phone = AppBottomBar.inUse(context);
     return Scaffold(
       // Список — на белом, как лента писем (1.6.40, замечание 19.10.2026:
       // «контакты и поле поиска не соответствуют остальному интерфейсу»).
@@ -257,6 +259,18 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
       appBar: TextScaleCapBar(child: AppBar(
         title: Text(l10n.contactsLabel),
         actions: [
+          if (phone)
+            IconButton(
+              icon: Icon(_searchOpen ? AppIcons.close : AppIcons.search),
+              tooltip: _searchOpen ? l10n.tr('close') : l10n.search,
+              onPressed: () => setState(() {
+                _searchOpen = !_searchOpen;
+                if (!_searchOpen && _search.isNotEmpty) {
+                  _searchCtrl.clear();
+                  _onSearch('');
+                }
+              }),
+            ),
           // «Мой контакт» — QR своей карточки, как в Ogneliss Dialer.
           IconButton(
             icon: const Icon(AppIcons.qr_code_2),
@@ -310,11 +324,14 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
         body: Column(
         children: [
           // Поиск — в стиле полей приложения: заливка, скругление, без рамки
-          // (тема); крестик очищает.
+          // (тема); крестик очищает. Телефон — по значку в шапке (просьба
+          // владельца 12.11.2026: «на телефоне везде значок»).
+          if (!phone || _searchOpen || _search.isNotEmpty)
           Padding(
             padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.xs),
             child: TextField(
               controller: _searchCtrl,
+              autofocus: phone && _searchOpen && _search.isEmpty,
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
                 hintText: l10n.search,
@@ -328,6 +345,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
                         onPressed: () {
                           _searchCtrl.clear();
                           _onSearch('');
+                          setState(() => _searchOpen = false);
                         },
                       ),
               ),

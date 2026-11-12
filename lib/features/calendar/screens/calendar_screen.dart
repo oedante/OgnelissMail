@@ -61,6 +61,7 @@ import '../../../core/permissions/app_permissions.dart';
 import '../../../services/notifications/reminder_scheduler_service.dart';
 import '../../../widgets/ui/settings_group.dart' show SettingsSectionTitle;
 import '../../../widgets/common/account_avatar.dart';
+import '../../../widgets/common/section_search_button.dart';
 
 export '../calendar_data.dart' show calendarEventsProvider, calendarLayersProvider, CalendarLayers;
 
@@ -245,6 +246,28 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final view = _view ?? mod.calendarView;
     final ru = l10n.isRussian;
     final now = ref.watch(nowTickerProvider).value ?? DateTime.now();
+    final inlineSwitch = MediaQuery.sizeOf(context).width >= _weekDefaultMin && !AppBottomBar.inUse(context);
+    final switcher = SegmentedButton<CalendarDefaultView>(
+      key: const ValueKey('calendar_view_switch'),
+      showSelectedIcon: false,
+      style: const ButtonStyle(visualDensity: VisualDensity.compact),
+      segments: [
+        for (final v in const [
+          CalendarDefaultView.agenda,
+          CalendarDefaultView.day,
+          CalendarDefaultView.threeDay,
+          CalendarDefaultView.week,
+          CalendarDefaultView.month,
+        ])
+          ButtonSegment(
+            value: v,
+            tooltip: _viewLabel(v, l10n),
+            label: FittedBox(fit: BoxFit.scaleDown, child: Text(_viewLabel(v, l10n), maxLines: 1)),
+          ),
+      ],
+      selected: {view},
+      onSelectionChanged: (s) => _setView(s.first),
+    );
 
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(
@@ -253,7 +276,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         // переключателем под шапкой (просьба владельца 12.11.2026: заголовок
         // «Расписание ▾» читался как название раздела).
         title: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-          Text(l10n.tr('calendar'), style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600)),
+          Text(l10n.tr('calendar')),
           InkWell(
             borderRadius: BorderRadius.circular(6),
             onTap: () => _pickDate(l10n),
@@ -269,48 +292,27 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             ]),
           ),
         ]),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(Space.m, 0, Space.m, Space.s),
-            child: SizedBox(
-              width: double.infinity,
-              child: SegmentedButton<CalendarDefaultView>(
-                key: const ValueKey('calendar_view_switch'),
-                showSelectedIcon: false,
-                style: const ButtonStyle(visualDensity: VisualDensity.compact),
-                segments: [
-                  for (final v in const [
-                    CalendarDefaultView.agenda,
-                    CalendarDefaultView.day,
-                    CalendarDefaultView.threeDay,
-                    CalendarDefaultView.week,
-                    CalendarDefaultView.month,
-                  ])
-                    ButtonSegment(
-                      value: v,
-                      tooltip: _viewLabel(v, l10n),
-                      label: FittedBox(fit: BoxFit.scaleDown, child: Text(_viewLabel(v, l10n), maxLines: 1)),
-                    ),
-                ],
-                selected: {view},
-                onSelectionChanged: (s) => _setView(s.first),
+        // Телефон — переключатель под шапкой; компьютер и планшет — в
+        // самой шапке: высота шапки та же, что у других разделов (замечание
+        // владельца 12.11.2026: шапки «прыгали» при переходе).
+        bottom: inlineSwitch
+            ? null
+            : PreferredSize(
+                preferredSize: const Size.fromHeight(48),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(Space.m, 0, Space.m, Space.s),
+                  child: SizedBox(width: double.infinity, child: switcher),
+                ),
               ),
-            ),
-          ),
-        ),
         actions: [
+          if (inlineSwitch) Padding(padding: const EdgeInsets.only(right: Space.s), child: SizedBox(width: 420, child: switcher)),
           IconButton(
             tooltip: l10n.tr('today'),
             onPressed: () => _jumpTo(DateTime.now()),
             // Число дня — тем же значком, что вкладка внизу (CalendarDayIcon).
             icon: CalendarDayIcon(day: now.day),
           ),
-          IconButton(
-            icon: const Icon(AppIcons.search),
-            tooltip: l10n.tr('search'),
-            onPressed: () => _openSearch(l10n),
-          ),
+          SectionSearchButton(onTap: () => _openSearch(l10n)),
           IconButton(
             icon: const Icon(AppIcons.tune),
             tooltip: l10n.tr('calendarLayers'),

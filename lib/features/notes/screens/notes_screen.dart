@@ -26,6 +26,7 @@ import '../../../widgets/common/quick_long_press.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/adaptive_layout.dart' show Breakpoints;
 import 'note_edit_screen.dart';
+import '../../../widgets/common/section_search_button.dart';
 import '../../../core/theme/ogneliss_look.dart';
 import '../../../core/platform/app_share.dart';
 
@@ -65,11 +66,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
       appBar: TextScaleCapBar(child: AppBar(
         title: Text(l10n.tr('notes')),
         actions: [
-          IconButton(
-            icon: const Icon(AppIcons.search),
-            tooltip: l10n.search,
-            onPressed: () => _showSearch(context, l10n),
-          ),
+          SectionSearchButton(onTap: () => _showSearch(context, l10n)),
         ],
       )),
       body: LayoutBuilder(builder: (context, c) {

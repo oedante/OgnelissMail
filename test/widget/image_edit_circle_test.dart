@@ -50,12 +50,15 @@ Future<({String name, Uint8List bytes})?> _run(WidgetTester tester, Uint8List by
     await tester.pump(const Duration(milliseconds: 50));
   }
   // Снимок раскодирован — просмотр в трёх кружках и подсказка для круга.
-  for (var i = 0; i < 20 && find.byType(CustomPaint).evaluate().length < 4; i++) {
-    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+  // Ждём сам просмотр, до ~8 с: раскодирование идёт настоящим временем, и
+  // на загруженной машине сборки 1,4 с не хватало (CI 12.11.2026).
+  final preview = find.bySemanticsLabel('Так фото будет выглядеть в ленте, письме и карточке');
+  for (var i = 0; i < 100 && preview.evaluate().isEmpty; i++) {
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 30)));
     await tester.pump(const Duration(milliseconds: 50));
   }
   expect(find.textContaining('Передвиньте круг'), findsOneWidget);
-  expect(find.bySemanticsLabel('Так фото будет выглядеть в ленте, письме и карточке'), findsOneWidget);
+  expect(preview, findsOneWidget);
   // Переход страницы редактора закончился.
   await tester.pump(const Duration(seconds: 1));
   await tester.tap(find.text('Готово'));

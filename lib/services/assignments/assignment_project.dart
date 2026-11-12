@@ -189,6 +189,15 @@ double stageProgress(int status, List<ChecklistItem> checklist) {
 }
 
 /// Прогресс проекта — среднее по этапам (снятые не считаются).
+/// План участника: [fromMail] — план из письма проекта, [own] — свои этапы
+/// с текущим статусом (заменяют одноимённые по id). По порядку этапов.
+List<PlanStage> mergePlan({required List<PlanStage> own, required List<PlanStage> fromMail}) {
+  final byId = {for (final p in own) p.id: p};
+  final out = [for (final p in fromMail) byId.remove(p.id) ?? p, ...byId.values];
+  out.sort((a, b) => a.order.compareTo(b.order));
+  return out;
+}
+
 double projectProgress(List<PlanStage> stages) {
   final live = [for (final s in stages) if (s.status != _cancelled) s];
   if (live.isEmpty) return 0;

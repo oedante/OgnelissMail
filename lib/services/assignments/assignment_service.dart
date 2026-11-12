@@ -403,6 +403,8 @@ class AssignmentService {
         planJson: planJson,
         others: {
           for (final o in d.observers) o.email: (role: AssignmentRole.observer, name: o.displayName),
+          // Общий контролирующий — для этапов, добавленных потом.
+          if (d.controller != null) d.controller!.email: (role: AssignmentRole.controller, name: d.controller!.displayName),
         });
     final stageFiles = <List<AssignmentFile>>[];
     for (var i = 0; i < d.stages.length; i++) {
@@ -502,79 +504,202 @@ class AssignmentService {
     // ── Письма этапов ──
     for (var i = 0; i < d.stages.length; i++) {
       final st = d.stages[i];
-      final ctl = st.controller ?? d.controller;
-      final extra = StringBuffer();
-      final dates = _dates(st.start, st.due, l10n);
-      if (dates.isNotEmpty) {
-        extra.write('<p><b>${assignmentEsc(l10n.tr('assignDatesLabel'))}</b> ${assignmentEsc(dates)}</p>');
-      }
-      if (st.after != null) {
-        extra.write('<p>${assignmentEsc(l10n.tr('assignStartAfterNote').replaceAll('{title}', d.stages[st.after!].title.trim()))}</p>');
-      }
-      extra.write('<p>${assignmentEsc(l10n.tr('assignRoleExecutor'))} ${assignmentEsc(_who(st.executor))}');
-      if (st.co.isNotEmpty) {
-        extra.write('<br>${assignmentEsc(l10n.tr('assignRoleCo'))} ${assignmentEsc(st.co.map(_who).join(', '))}');
-      }
-      if (ctl != null) extra.write('<br>${assignmentEsc(l10n.tr('assignRoleController'))} ${assignmentEsc(_who(ctl))}');
-      final obs = [...st.observers, ...d.observers];
-      if (obs.isNotEmpty) {
-        extra.write('<br>${assignmentEsc(l10n.tr('assignRoleObservers'))} ${assignmentEsc(obs.map(_who).join(', '))}');
-      }
-      extra.write('</p>');
-      final checklist = [for (final c in st.checklist) if (c.trim().isNotEmpty) c.trim()];
-      if (checklist.isNotEmpty) {
-        extra.write('<p><b>${assignmentEsc(l10n.tr('assignChecklistLabel'))}</b></p><ul>');
-        for (final c in checklist) {
-          extra.write('<li>${assignmentEsc(c)}</li>');
-        }
-        extra.write('</ul>');
-      }
-      if (stageFiles[i].isNotEmpty) {
-        extra.write('<p><b>${assignmentEsc(l10n.tr('assignFilesLabel'))}</b> '
-            '${assignmentEsc(stageFiles[i].map((f) => f.name).join(', '))}</p>');
-      }
-      final ev = 'created:${ids[i]}';
-      final body = AssignmentCodec.body(
-        id: ids[i],
-        greeting: l10n.tr('assignGreeting').replaceAll('{name}', _firstName(st.executor)),
-        whatLabel: l10n.tr('assignWhatLabel'),
-        what: st.title.trim(),
-        description: st.description,
-        parentLine: l10n.tr('assignPartOf').replaceAll('{title}', d.title.trim()),
-        dueLabel: l10n.tr('assignDueLabel'),
-        dueLine: st.due == null ? null : _dueLong(st.due!, l10n),
-        footer: l10n
-            .tr('assignFooter')
-            .replaceAll('{accepted}', l10n.tr('assignReplyAccepted'))
-            .replaceAll('{done}', l10n.tr('assignReplyDone')),
-        extraHtml: extra.toString(),
-        marker: AssignmentCodec.taskMarker(
+      await _sendStage(account, l10n,
           id: ids[i],
-          due: st.due,
-          start: st.start,
-          to: st.executor.email,
-          title: st.title.trim(),
-          ev: ev,
-          parent: pid,
-          after: st.after == null ? null : ids[st.after!],
+          projectId: pid,
+          projectTitle: d.title.trim(),
+          st: st,
           order: i,
-          co: [for (final c in st.co) c.email],
-          ctl: ctl?.email,
-          obs: [for (final o in obs) o.email],
-          checklist: checklist,
-        ),
-      );
-      await _send(account, st.executor,
-          moreTo: st.co,
-          cc: [if (ctl != null) ctl, ...obs],
-          subject: AssignmentCodec.subject(
-              prefix: l10n.tr('assignSubject'),
-              title: st.title,
-              due: st.due == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(st.due!))),
-          html: body,
+          afterId: st.after == null ? null : ids[st.after!],
+          afterTitle: st.after == null ? null : d.stages[st.after!].title.trim(),
+          controller: st.controller ?? d.controller,
+          observers: [...st.observers, ...d.observers],
           files: stageFiles[i]);
     }
     return pid;
+  }
+
+  /// Письмо этапа: исполнителю и соисполнителям, в копии — контролирующий и
+  /// наблюдатели; файлы этапа — вложениями.
+  Future<void> _sendStage(
+    AccountModel account,
+    AppLocalizations l10n, {
+    required String id,
+    required String projectId,
+    required String projectTitle,
+    required StageDraft st,
+    required int order,
+    String? afterId,
+    String? afterTitle,
+    EmailAddress? controller,
+    List<EmailAddress> observers = const [],
+    List<AssignmentFile> files = const [],
+  }) async {
+    final ctl = controller;
+    final extra = StringBuffer();
+    final dates = _dates(st.start, st.due, l10n);
+    if (dates.isNotEmpty) {
+      extra.write('<p><b>${assignmentEsc(l10n.tr('assignDatesLabel'))}</b> ${assignmentEsc(dates)}</p>');
+    }
+    if (afterTitle != null) {
+      extra.write('<p>${assignmentEsc(l10n.tr('assignStartAfterNote').replaceAll('{title}', afterTitle))}</p>');
+    }
+    extra.write('<p>${assignmentEsc(l10n.tr('assignRoleExecutor'))} ${assignmentEsc(_who(st.executor))}');
+    if (st.co.isNotEmpty) {
+      extra.write('<br>${assignmentEsc(l10n.tr('assignRoleCo'))} ${assignmentEsc(st.co.map(_who).join(', '))}');
+    }
+    if (ctl != null) extra.write('<br>${assignmentEsc(l10n.tr('assignRoleController'))} ${assignmentEsc(_who(ctl))}');
+    if (observers.isNotEmpty) {
+      extra.write('<br>${assignmentEsc(l10n.tr('assignRoleObservers'))} ${assignmentEsc(observers.map(_who).join(', '))}');
+    }
+    extra.write('</p>');
+    final checklist = [for (final c in st.checklist) if (c.trim().isNotEmpty) c.trim()];
+    if (checklist.isNotEmpty) {
+      extra.write('<p><b>${assignmentEsc(l10n.tr('assignChecklistLabel'))}</b></p><ul>');
+      for (final c in checklist) {
+        extra.write('<li>${assignmentEsc(c)}</li>');
+      }
+      extra.write('</ul>');
+    }
+    if (files.isNotEmpty) {
+      extra.write('<p><b>${assignmentEsc(l10n.tr('assignFilesLabel'))}</b> '
+          '${assignmentEsc(files.map((f) => f.name).join(', '))}</p>');
+    }
+    final ev = 'created:$id';
+    final body = AssignmentCodec.body(
+      id: id,
+      greeting: l10n.tr('assignGreeting').replaceAll('{name}', _firstName(st.executor)),
+      whatLabel: l10n.tr('assignWhatLabel'),
+      what: st.title.trim(),
+      description: st.description,
+      parentLine: l10n.tr('assignPartOf').replaceAll('{title}', projectTitle),
+      dueLabel: l10n.tr('assignDueLabel'),
+      dueLine: st.due == null ? null : _dueLong(st.due!, l10n),
+      footer: l10n
+          .tr('assignFooter')
+          .replaceAll('{accepted}', l10n.tr('assignReplyAccepted'))
+          .replaceAll('{done}', l10n.tr('assignReplyDone')),
+      extraHtml: extra.toString(),
+      marker: AssignmentCodec.taskMarker(
+        id: id,
+        due: st.due,
+        start: st.start,
+        to: st.executor.email,
+        title: st.title.trim(),
+        ev: ev,
+        parent: projectId,
+        after: afterId,
+        order: order,
+        co: [for (final c in st.co) c.email],
+        ctl: ctl?.email,
+        obs: [for (final o in observers) o.email],
+        checklist: checklist,
+      ),
+    );
+    await _send(account, st.executor,
+        moreTo: st.co,
+        cc: [if (ctl != null) ctl, ...observers],
+        subject: AssignmentCodec.subject(
+            prefix: l10n.tr('assignSubject'),
+            title: st.title,
+            due: st.due == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(st.due!))),
+        html: body,
+        files: files);
+  }
+
+  /// Добавить этап в созданный проект [project] (постановщик): строка
+  /// этапа и письмо его участникам; срок проекта — по последнему этапу.
+  /// [afterId] — код этапа, после которого начинать (null — параллельно).
+  Future<String?> addStage(AssignmentView project, StageDraft st, {String? afterId}) async {
+    final account = _account(project.row.accountId);
+    if (account == null || !project.outgoing) return null;
+    final l10n = _l10n();
+    final now = DateTime.now();
+    final id = AssignmentCodec.newId();
+    final existing = await AssignmentStore.stagesOf(_db, project.id);
+    final after = afterId == null ? null : existing.where((x) => x.id == afterId).firstOrNull;
+    final files = await _keepFiles(id, st.files);
+    final observers = [
+      ...st.observers,
+      for (final p in project.observers) EmailAddress(email: p.email, displayName: p.displayName),
+    ];
+    final pc = project.controller;
+    final ctl = st.controller ?? (pc == null ? null : EmailAddress(email: pc.email, displayName: pc.displayName));
+    await AssignmentStore.insert(_db,
+        id: id,
+        accountId: account.id,
+        title: st.title.trim(),
+        description: st.description.trim().isEmpty ? null : st.description.trim(),
+        ownerEmail: account.email,
+        ownerName: account.displayName,
+        assigneeEmail: st.executor.email,
+        assigneeName: st.executor.displayName,
+        due: st.due,
+        start: st.start,
+        at: now,
+        outgoing: true,
+        eventId: 'created:$id',
+        parentId: project.id,
+        afterId: after?.id,
+        order: existing.length,
+        checklist: [for (final c in st.checklist) if (c.trim().isNotEmpty) ChecklistItem(c.trim())],
+        files: files,
+        others: {
+          for (final c in st.co) c.email: (role: AssignmentRole.co, name: c.displayName),
+          for (final o in observers) o.email: (role: AssignmentRole.observer, name: o.displayName),
+          if (ctl != null) ctl.email: (role: AssignmentRole.controller, name: ctl.displayName),
+        });
+    await _sendStage(account, l10n,
+        id: id,
+        projectId: project.id,
+        projectTitle: project.row.title,
+        st: st,
+        order: existing.length,
+        afterId: after?.id,
+        afterTitle: after?.title,
+        controller: ctl,
+        observers: observers,
+        files: files);
+    final dues = [for (final r in await AssignmentStore.stagesOf(_db, project.id)) if (r.dueAt != null) r.dueAt!];
+    if (dues.isNotEmpty) {
+      await AssignmentStore.update(_db, project.id, due: dues.reduce((a, b) => a.isAfter(b) ? a : b));
+    }
+    // Предыдущий этап уже принят — «Можно начинать» сразу.
+    if (after != null && after.status == AssignmentStatus.done) await dispatchPending();
+    return id;
+  }
+
+  /// Шаблон из созданного проекта (этапы и роли — как в проекте).
+  Future<void> saveProjectAsTemplate(AssignmentView project, String name) async {
+    final list = await stages(project.id);
+    EmailAddress addr(AssignmentParticipant p) => EmailAddress(email: p.email, displayName: p.displayName);
+    final idx = {for (var i = 0; i < list.length; i++) list[i].id: i};
+    final d = ProjectDraft(
+      title: project.row.title,
+      description: project.row.description ?? '',
+      start: project.start,
+      observers: [for (final p in project.observers) addr(p)],
+      stages: [
+        for (final v in list)
+          if (v.assignee != null)
+            StageDraft(
+              title: v.row.title,
+              description: v.row.description ?? '',
+              executor: addr(v.assignee!),
+              co: [for (final p in v.coExecutors) addr(p)],
+              controller: v.controller == null ? null : addr(v.controller!),
+              observers: [
+                for (final p in v.observers)
+                  if (!project.observers.any((o) => o.email == p.email)) addr(p),
+              ],
+              start: v.start,
+              due: v.due,
+              after: v.row.afterId == null ? null : idx[v.row.afterId],
+              checklist: [for (final c in v.checklist) c.text],
+            ),
+      ],
+    );
+    await saveTemplate(name, d);
   }
 
   /// Скопировать выбранные файлы в папку поручения (оригинал могут удалить).

@@ -29,6 +29,7 @@ import '../../widgets/ui/wheel_pickers.dart';
 import '../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
 import '../mail/providers/mail_providers.dart' show accountsProvider, activeAccountProvider, emailModelFromRow;
 import '../../core/utils/text_safe.dart' show initialOf;
+import 'project_editor.dart' show showProjectEditor;
 
 /// Срок подзадачи по умолчанию — срок родительского поручения, если он не
 /// прошёл.
@@ -165,6 +166,16 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
     if (mounted) Navigator.of(context).pop(true);
   }
 
+  /// Перейти в «Новый проект» с тем, что уже введено.
+  void _toProject() {
+    final nav = Navigator.of(context);
+    final root = Navigator.of(context, rootNavigator: true).context;
+    final title = _title.text.trim(), note = _note.text.trim();
+    final account = _account?.id;
+    nav.pop(false);
+    unawaited(showProjectEditor(root, accountId: account, title: title, description: note));
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -293,7 +304,18 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
               ].join(' '),
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),
-            const SizedBox(height: Space.m),
+            // Большая работа из частей — проект с этапами (12.11.2026).
+            if (widget.parent == null)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton.icon(
+                  key: const ValueKey('assign_to_project'),
+                  onPressed: _sending ? null : _toProject,
+                  icon: const Icon(AppIcons.account_tree, size: 18),
+                  label: Text(l10n.tr('assignToProject')),
+                ),
+              ),
+            const SizedBox(height: Space.s),
             FilledButton.icon(
               onPressed: _to.isEmpty || _title.text.trim().isEmpty || _sending ? null : () => unawaited(_submit()),
               icon: _sending

@@ -652,6 +652,9 @@ void main() {
       ('myday', const MyDayScreen()),
       ('assignments', const AssignmentsScreen()),
     ]) {
+      // Лента на планшете и компьютере — снимки split_* выше (там нужен
+      // маршрутизатор для панели разделов).
+      if (name == 'inbox' && size != 'phone') continue;
       testWidgets('обзор — $name $size', (tester) async {
         SharedPreferences.setMockInitialValues({'reading_pane_asked_v1': true});
         final prefs = await SharedPreferences.getInstance();

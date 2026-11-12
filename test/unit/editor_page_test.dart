@@ -26,7 +26,7 @@ void main() {
     expect(s.allowFileAccess, isFalse);
     expect(s.javaScriptCanOpenWindowsAutomatically, isFalse);
     final page = buildMailEditorPage(script: '', skinCss: '', config: const {}, scriptHash: 'H');
-    expect(page, contains("img-src data: blob:"));
+    expect(page, contains('img-src data: blob:'));
     expect(page, contains("connect-src 'none'"));
   });
 }

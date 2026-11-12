@@ -547,6 +547,60 @@ void main() {
     await tester.runAsync(db.close);
   });
 
+  // Проект с этапами (12.11.2026): список, этапы, план (Ганта), этап.
+  testWidgets('проект с этапами', (tester) async {
+    SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+    final prefs = await SharedPreferences.getInstance();
+    final db = (await tester.runAsync(() async {
+      final db = await _db();
+      final now = DateTime.now();
+      final d0 = DateTime(now.year, now.month, now.day);
+      DateTime d(int days) => d0.add(Duration(days: days));
+      const me = 'i.petrov@corp.example';
+      await AssignmentStore.insert(db,
+          id: 'PPPPPPPPPPPP', accountId: 'a1', title: 'Годовой отчёт отдела', ownerEmail: me, ownerName: 'Иван Петров',
+          at: d(-6), outgoing: true, isProject: true, start: d(-6), due: d(9),
+          description: 'Сводный отчёт для правления: продажи, склад, кадры.',
+          others: {'n.zaitseva@corp.example': (role: AssignmentRole.controller, name: 'Наталья Зайцева')});
+      Future<void> stage(String id, String title, String who, String name, DateTime start, DateTime due, int status,
+          {String? after, int order = 0, List<ChecklistItem> checklist = const [], Map<String, ({int role, String? name})> others = const {}}) async {
+        await AssignmentStore.insert(db,
+            id: id, accountId: 'a1', title: title, ownerEmail: me, ownerName: 'Иван Петров', assigneeEmail: who,
+            assigneeName: name, at: d(-6), outgoing: true, parentId: 'PPPPPPPPPPPP', start: start, due: due,
+            afterId: after, order: order, checklist: checklist,
+            others: {'n.zaitseva@corp.example': (role: AssignmentRole.controller, name: 'Наталья Зайцева'), ...others});
+        await AssignmentStore.update(db, id, status: status, waiting: after != null && status == AssignmentStatus.open);
+      }
+      await stage('SSSSSSSSSSS1', 'Собрать данные продаж', 'v.belova@corp.example', 'Вера Белова', d(-6), d(-2),
+          AssignmentStatus.done,
+          checklist: const [ChecklistItem('Розница', done: true), ChecklistItem('Опт', done: true)]);
+      await stage('SSSSSSSSSSS2', 'Инвентаризация склада', 'd.kuznetsov@corp.example', 'Дмитрий Кузнецов', d(-5), d(-1),
+          AssignmentStatus.inProgress, order: 1,
+          checklist: const [ChecklistItem('Сырьё', done: true), ChecklistItem('Готовая продукция'), ChecklistItem('Брак')],
+          others: {'b.orlov@corp.example': (role: AssignmentRole.co, name: 'Борис Орлов')});
+      await stage('SSSSSSSSSSS3', 'Свести цифры и выводы', 'v.belova@corp.example', 'Вера Белова', d(0), d(4),
+          AssignmentStatus.open, after: 'SSSSSSSSSSS2', order: 2);
+      await stage('SSSSSSSSSSS4', 'Слайды для правления', 'e.sokolova@corp.example', 'Елена Соколова', d(5), d(9),
+          AssignmentStatus.open, after: 'SSSSSSSSSSS3', order: 3);
+      return db;
+    }))!;
+    final theme = _themes['light']!();
+    await _shot(tester, 'project_list', const AssignmentsScreen(), theme: theme, db: db, prefs: prefs);
+    await _shot(tester, 'project_stages', const AssignmentScreen(id: 'PPPPPPPPPPPP'), theme: theme, db: db, prefs: prefs);
+    await _shot(tester, 'project_plan', const AssignmentScreen(id: 'PPPPPPPPPPPP'), theme: theme, db: db, prefs: prefs,
+        before: (t) async {
+      await t.tap(find.text('План'));
+    });
+    await _shot(tester, 'project_plan_dark', const AssignmentScreen(id: 'PPPPPPPPPPPP'), theme: _themes['dark']!(),
+        db: db, prefs: prefs, before: (t) async {
+      await t.tap(find.text('План'));
+    });
+    await _shot(tester, 'project_stage', const AssignmentScreen(id: 'SSSSSSSSSSS2'), theme: theme, db: db, prefs: prefs);
+    await _shot(tester, 'project_list_desktop', const AssignmentsScreen(), theme: theme, db: db, prefs: prefs,
+        size: const Size(1280, 800));
+    await tester.runAsync(db.close);
+  });
+
   // «Мой день» доской и шкалой (решения владельца 09.11.2026): встречи,
   // задачи со временем и без, просроченная, письмо «Позже».
   for (final view in const ['board', 'timeline']) {

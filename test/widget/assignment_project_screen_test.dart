@@ -133,7 +133,7 @@ void main() {
     expect(find.text('Сбор данных'), findsOneWidget);
     expect(find.text('Анализ'), findsOneWidget);
     expect(find.textContaining('После этапа 1'), findsOneWidget);
-    expect(find.textContaining('☑ 1/2'), findsOneWidget);
+    expect(find.textContaining('1/2', findRichText: true), findsOneWidget);
     expect(find.byKey(const ValueKey('proj_card_add_stage')), findsOneWidget);
     expect(find.byKey(const ValueKey('proj_shift')), findsNothing);
 

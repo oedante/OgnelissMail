@@ -82,7 +82,10 @@ class AssignmentScreen extends ConsumerWidget {
               Icon(icon, size: 20, color: muted),
               const SizedBox(width: Space.m),
               SizedBox(
-                  width: 112, child: Text(label, style: theme.textTheme.bodyMedium?.copyWith(color: muted))),
+                  width: 136,
+                  child: Text(label,
+                      maxLines: 2, overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodyMedium?.copyWith(color: muted))),
               Expanded(child: value),
               if (onTap != null) Icon(AppIcons.chevron_right, color: muted),
             ]),
@@ -227,10 +230,9 @@ class AssignmentScreen extends ConsumerWidget {
           AppIcons.event,
           l10n.tr('assignDueTitle'),
           Text(
-            [
-              if (v.start != null) fmtDate.format(v.start!),
-              v.due == null ? l10n.tr('noDueDate') : DateFormat('EEEE, d MMMM', l10n.localeCode).format(v.due!),
-            ].join(' — '),
+            v.start != null
+                ? '${fmtDate.format(v.start!)} — ${v.due == null ? l10n.tr('noDueDate') : fmtDate.format(v.due!)}'
+                : (v.due == null ? l10n.tr('noDueDate') : DateFormat('EEEE, d MMMM', l10n.localeCode).format(v.due!)),
             style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500, color: overdue ? AppColors.errorText(context) : null),
           ),

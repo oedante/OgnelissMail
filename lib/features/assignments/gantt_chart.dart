@@ -68,7 +68,17 @@ class _GanttChartState extends State<GanttChart> {
       _scrolledToToday = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!_scroll.hasClients) return;
-        final x = _day(widget.today).difference(range.from).inDays * GanttChart.dayWidth - 2 * GanttChart.dayWidth;
+        // С начала первого незавершённого этапа (видно, сколько сделано и
+        // что впереди), а если он ещё не начался — с сегодня.
+        DateTime? focus;
+        for (final s in widget.stages) {
+          if (s.status == 4 || s.status == 6) continue;
+          final d = s.start ?? s.due;
+          if (d != null && (focus == null || _day(d).isBefore(focus))) focus = _day(d);
+        }
+        final today = _day(widget.today);
+        final at = focus == null || today.isBefore(focus) ? today : focus;
+        final x = at.difference(range.from).inDays * GanttChart.dayWidth - GanttChart.dayWidth;
         _scroll.jumpTo(x.clamp(0, _scroll.position.maxScrollExtent));
       });
     }
@@ -76,7 +86,27 @@ class _GanttChartState extends State<GanttChart> {
       width: 132,
       height: height,
       child: Column(children: [
-        const SizedBox(height: GanttChart.headerHeight),
+        // Месяц первого видного дня — над названиями, при листании меняется.
+        SizedBox(
+          height: GanttChart.headerHeight,
+          child: Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: Space.m, bottom: 6),
+              child: ListenableBuilder(
+                listenable: _scroll,
+                builder: (context, _) {
+                  final off = _scroll.hasClients ? _scroll.offset : 0.0;
+                  final first = range.from.add(Duration(days: (off / GanttChart.dayWidth).round().clamp(0, range.days - 1)));
+                  return Text(DateFormat('LLLL yyyy', l10n.localeCode).format(first),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700));
+                },
+              ),
+            ),
+          ),
+        ),
         for (var i = 0; i < rows; i++)
           InkWell(
             onTap: widget.onTap == null ? null : () => widget.onTap!(widget.stages[i].id),
@@ -233,7 +263,8 @@ class _GanttPainter extends CustomPainter {
     final weekend = Paint()..color = colors.weekend;
     final dayFmt = DateFormat('d', locale);
     final monFmt = DateFormat('LLL', locale);
-    // Дни: выходные тоном, сетка, числа; месяц — у первого дня и в начале.
+    // Дни: выходные тоном, сетка, числа; месяц — у первого числа (месяц
+    // первого видного дня — над названиями этапов).
     for (var i = 0; i < days; i++) {
       final d = from.add(Duration(days: i));
       final x = i * GanttChart.dayWidth;
@@ -243,7 +274,7 @@ class _GanttPainter extends CustomPainter {
       canvas.drawLine(Offset(x, GanttChart.headerHeight - 4), Offset(x, size.height), grid);
       _text(canvas, dayFmt.format(d), Offset(x + 8, GanttChart.headerHeight - 20),
           color: d == today ? colors.today : colors.muted, bold: d == today);
-      if (i == 0 || d.day == 1) {
+      if (d.day == 1 && i > 0) {
         _text(canvas, monFmt.format(d), Offset(x + 4, 4), color: colors.text, bold: true, maxWidth: 90);
       }
     }
@@ -329,9 +360,11 @@ class _GanttPainter extends CustomPainter {
         canvas.drawPath(d, Paint()..color = colors.done);
       }
       final pct = '${(fill * 100).round()}%';
-      if (b.bar.width > 34) {
-        _text(canvas, pct, Offset(b.bar.left + 4, b.bar.top + 2),
-            color: fill > 0.5 ? Colors.white : colors.text, maxWidth: b.bar.width - 6);
+      if (fill > 0 && fill < 1 && b.bar.width > 34) {
+        final h = (textStyle.fontSize ?? 11) * 1.3;
+        // На заливке — белым, на светлой части полосы — обычным цветом.
+        _text(canvas, pct, Offset(b.bar.left + 6, b.bar.center.dy - h / 2),
+            color: b.bar.width * fill >= 34 ? Colors.white : colors.text, maxWidth: b.bar.width - 8);
       }
     }
 

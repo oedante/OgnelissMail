@@ -65,6 +65,15 @@ class AssignmentAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Проект — значок плана, а не буква человека.
+    if (v.isProject) {
+      final scheme = Theme.of(context).colorScheme;
+      return CircleAvatar(
+        radius: radius,
+        backgroundColor: scheme.primaryContainer,
+        child: Icon(AppIcons.account_tree, size: radius, color: scheme.onPrimaryContainer),
+      );
+    }
     final email = v.otherEmail ?? '';
     final name = v.otherName;
     return HeroEmailAvatar(

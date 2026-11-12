@@ -310,15 +310,31 @@ class _StageRow extends StatelessWidget {
                 AssignmentStatusPill(v.status),
               ]),
               const SizedBox(height: 2),
-              Text(
-                [
-                  if (who.isNotEmpty) who,
-                  if (dates.isNotEmpty) dates,
-                  if (afterNo != null) l10n.tr('projAfter').replaceAll('{title}', '$afterNo'),
-                  if (v.waiting) l10n.tr('projWaiting'),
-                  if (checklist.isNotEmpty) '☑ ${checklist.where((c) => c.done).length}/${checklist.length}',
-                  if (v.files.isNotEmpty) '📎 ${v.files.length}',
-                ].join(' · '),
+              Text.rich(
+                TextSpan(children: [
+                  TextSpan(
+                      text: [
+                    if (who.isNotEmpty) who,
+                    if (dates.isNotEmpty) dates,
+                    if (afterNo != null) l10n.tr('projAfter').replaceAll('{title}', '$afterNo'),
+                    if (v.waiting) l10n.tr('projWaiting'),
+                  ].join(' · ')),
+                  // Чек-лист и файлы — значками (не символами шрифта).
+                  if (checklist.isNotEmpty) ...[
+                    const TextSpan(text: '  '),
+                    WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: Icon(AppIcons.checklist, size: 14, color: muted)),
+                    TextSpan(text: ' ${checklist.where((c) => c.done).length}/${checklist.length}'),
+                  ],
+                  if (v.files.isNotEmpty) ...[
+                    const TextSpan(text: '  '),
+                    WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: Icon(AppIcons.attach_file, size: 14, color: muted)),
+                    TextSpan(text: ' ${v.files.length}'),
+                  ],
+                ]),
                 style: theme.textTheme.bodySmall?.copyWith(color: overdue ? AppColors.errorText(context) : muted),
               ),
               const SizedBox(height: Space.xs),

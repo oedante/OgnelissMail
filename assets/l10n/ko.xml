@@ -4072,4 +4072,6 @@
     <string name="assignMarkedManually">수동으로 표시함</string>
     <string name="readingPaneAskTitle">메일을 어떻게 열까요?</string>
     <string name="readingPaneAskHint">목록의 ⋮ 메뉴 → 「{pane}」에서 바꿀 수 있습니다</string>
+    <string name="keysHintNav">다음 및 이전 메시지</string>
+    <string name="keysHintPalette">모든 명령</string>
 </resources>

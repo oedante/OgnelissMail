@@ -4135,4 +4135,6 @@
     <string name="assignMarkedManually">Oznaczono ręcznie</string>
     <string name="readingPaneAskTitle">Jak otwierać wiadomości?</string>
     <string name="readingPaneAskHint">Można zmienić w menu ⋮ listy → „{pane}”</string>
+    <string name="keysHintNav">Następna i poprzednia wiadomość</string>
+    <string name="keysHintPalette">Wszystkie polecenia</string>
 </resources>

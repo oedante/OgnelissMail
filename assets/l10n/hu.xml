@@ -4093,4 +4093,6 @@
     <string name="assignMarkedManually">Kézzel megjelölve</string>
     <string name="readingPaneAskTitle">Hogyan nyíljanak meg a levelek?</string>
     <string name="readingPaneAskHint">Módosítható a lista ⋮ menüjében → „{pane}”</string>
+    <string name="keysHintNav">Következő és előző üzenet</string>
+    <string name="keysHintPalette">Minden parancs</string>
 </resources>

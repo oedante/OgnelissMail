@@ -1020,7 +1020,30 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         const SingleActivator(LogicalKeyboardKey.escape): _exitSelection,
         const SingleActivator(LogicalKeyboardKey.delete): () => unawaited(_bulkDelete()),
       },
+      // Следующее и предыдущее письмо в панели (оценка интерфейса
+      // 12.11.2026): стрелки, как в Outlook, и J / K, как в Gmail.
+      if (!inSelection && AdaptiveLayout.isSplit(context)) ...{
+        const SingleActivator(LogicalKeyboardKey.arrowDown): () => _openAdjacent(1),
+        const SingleActivator(LogicalKeyboardKey.keyJ): () => _openAdjacent(1),
+        const SingleActivator(LogicalKeyboardKey.arrowUp): () => _openAdjacent(-1),
+        const SingleActivator(LogicalKeyboardKey.keyK): () => _openAdjacent(-1),
+      },
     };
+  }
+
+  /// Открыть в панели соседнее письмо ленты ([dir]: 1 — ниже, -1 — выше).
+  /// Ничего не открыто — первое письмо.
+  void _openAdjacent(int dir) {
+    final items = [
+      for (final g in _cachedGrouped ?? const <dynamic>[])
+        if (g is EmailModel) g,
+    ];
+    if (items.isEmpty) return;
+    final cur = items.indexWhere((e) => e.id == _selectedEmailId && e.accountId == _selectedAccountId);
+    final next = cur < 0 ? 0 : (cur + dir).clamp(0, items.length - 1);
+    if (next == cur) return;
+    final item = items[next];
+    unawaited(_openEmail(context, item, true));
   }
 
   /// Фокус — в выделенном тексте (письмо в панели, SelectionArea).
@@ -3895,14 +3918,27 @@ class _DragChip extends StatelessWidget {
   }
 }
 
-class _DetailPlaceholder extends StatelessWidget {
+class _DetailPlaceholder extends ConsumerWidget {
   final String text;
   const _DetailPlaceholder({required this.text});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
+    final l10n = AppLocalizations.of(context);
+    final unread = ref.watch(totalUnreadCountProvider);
+    // Пустая область чтения (оценка интерфейса 12.11.2026: на компьютере —
+    // ⅔ экрана): число непрочитанных и клавиши — как в Outlook и Spark.
+    final platform = Theme.of(context).platform;
+    final mac = platform == TargetPlatform.macOS || platform == TargetPlatform.iOS;
+    final mod = mac ? '⌘' : 'Ctrl+';
+    final keys = <(String, String)>[
+      ('↑ ↓   J  K', l10n.tr('keysHintNav')),
+      ('${mod}N', l10n.compose),
+      ('${mod}K', l10n.tr('keysHintPalette')),
+    ];
+    final keyStyle = theme.textTheme.labelMedium?.copyWith(color: muted, fontFeatures: const [FontFeature.tabularFigures()]);
     return ColoredBox(
       color: theme.scaffoldBackgroundColor,
       child: Center(
@@ -3910,6 +3946,23 @@ class _DetailPlaceholder extends StatelessWidget {
           Icon(AppIcons.mail, size: 48, color: muted.withValues(alpha: 0.5)),
           const SizedBox(height: Space.m),
           Text(text, style: theme.textTheme.bodyMedium?.copyWith(color: muted), textAlign: TextAlign.center),
+          if (unread > 0) ...[
+            const SizedBox(height: Space.xs),
+            Text(l10n.tr('unreadCountA11y').replaceAll('{n}', '$unread'),
+                style: theme.textTheme.titleSmall?.copyWith(color: theme.colorScheme.primary)),
+          ],
+          if (!AppBottomBar.inUse(context)) ...[
+            const SizedBox(height: Space.xl),
+            for (final k in keys)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  SizedBox(width: 110, child: Text(k.$1, textAlign: TextAlign.end, style: keyStyle)),
+                  const SizedBox(width: Space.m),
+                  SizedBox(width: 220, child: Text(k.$2, style: theme.textTheme.bodySmall?.copyWith(color: muted))),
+                ]),
+              ),
+          ],
         ]),
       ),
     );

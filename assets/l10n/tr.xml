@@ -4093,4 +4093,6 @@
     <string name="assignMarkedManually">Elle işaretlendi</string>
     <string name="readingPaneAskTitle">E-postalar nasıl açılsın?</string>
     <string name="readingPaneAskHint">Listenin ⋮ menüsünden → “{pane}” ile değiştirilebilir</string>
+    <string name="keysHintNav">Sonraki ve önceki ileti</string>
+    <string name="keysHintPalette">Tüm komutlar</string>
 </resources>

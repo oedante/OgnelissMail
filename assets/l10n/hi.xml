@@ -4093,4 +4093,6 @@
     <string name="assignMarkedManually">हाथ से चिह्नित</string>
     <string name="readingPaneAskTitle">ईमेल कैसे खुलें?</string>
     <string name="readingPaneAskHint">सूची के ⋮ मेनू → “{pane}” में बदल सकते हैं</string>
+    <string name="keysHintNav">अगला और पिछला संदेश</string>
+    <string name="keysHintPalette">सभी कमांड</string>
 </resources>

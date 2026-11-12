@@ -4072,4 +4072,6 @@
     <string name="assignMarkedManually">手動で設定</string>
     <string name="readingPaneAskTitle">メールの開き方</string>
     <string name="readingPaneAskHint">一覧の ⋮ メニュー →「{pane}」で変更できます</string>
+    <string name="keysHintNav">次と前のメッセージ</string>
+    <string name="keysHintPalette">すべてのコマンド</string>
 </resources>

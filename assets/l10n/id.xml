@@ -4072,4 +4072,6 @@
     <string name="assignMarkedManually">Ditandai manual</string>
     <string name="readingPaneAskTitle">Bagaimana email dibuka?</string>
     <string name="readingPaneAskHint">Bisa diubah di menu ⋮ daftar → “{pane}”</string>
+    <string name="keysHintNav">Pesan berikutnya dan sebelumnya</string>
+    <string name="keysHintPalette">Semua perintah</string>
 </resources>

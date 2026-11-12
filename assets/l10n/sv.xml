@@ -4093,4 +4093,6 @@
     <string name="assignMarkedManually">Markerat manuellt</string>
     <string name="readingPaneAskTitle">Hur ska mejl öppnas?</string>
     <string name="readingPaneAskHint">Kan ändras i listans meny ⋮ → ”{pane}”</string>
+    <string name="keysHintNav">Nästa och föregående meddelande</string>
+    <string name="keysHintPalette">Alla kommandon</string>
 </resources>

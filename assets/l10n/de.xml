@@ -4093,4 +4093,6 @@
     <string name="assignMarkedManually">Manuell markiert</string>
     <string name="readingPaneAskTitle">Wie sollen E-Mails geöffnet werden?</string>
     <string name="readingPaneAskHint">Änderbar im Menü ⋮ der Liste → „{pane}“</string>
+    <string name="keysHintNav">Nächste und vorherige Nachricht</string>
+    <string name="keysHintPalette">Alle Befehle</string>
 </resources>

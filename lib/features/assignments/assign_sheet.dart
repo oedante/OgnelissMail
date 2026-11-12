@@ -28,6 +28,7 @@ import '../../widgets/common/hero_email_transition.dart';
 import '../../widgets/ui/wheel_pickers.dart';
 import '../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
 import '../mail/providers/mail_providers.dart' show accountsProvider, activeAccountProvider, emailModelFromRow;
+import '../../core/utils/text_safe.dart' show initialOf;
 
 /// Срок подзадачи по умолчанию — срок родительского поручения, если он не
 /// прошёл.
@@ -185,7 +186,7 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
       final name = a.label;
       final avatar = HeroEmailAvatar(
         emailId: 'asg_pick_${a.email}',
-        initial: name.isEmpty ? '?' : name.characters.first.toUpperCase(),
+        initial: initialOf(name),
         color: HeroEmailAvatar.colorForEmail(a.email),
         radius: 12,
         hero: false,

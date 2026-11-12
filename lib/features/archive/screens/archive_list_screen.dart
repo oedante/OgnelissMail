@@ -23,6 +23,7 @@ import '../archive_providers.dart';
 import '../archive_sheets.dart';
 import '../../../core/theme/ogneliss_look.dart';
 import '../../../core/theme/appearance.dart' show AppearanceLook, ListDensity;
+import '../../../core/utils/text_safe.dart' show initialOf;
 
 class ArchiveListScreen extends ConsumerStatefulWidget {
   /// Папка архива; null — поиск по архиву.
@@ -278,7 +279,7 @@ class ArchiveMessageTile extends StatelessWidget {
               ListDensity.normal => 20,
               ListDensity.comfortable => 22,
             },
-            initial: from.characters.first.toUpperCase(),
+            initial: initialOf(from),
             color: Color(avatarColorValue(head.fromEmail.isEmpty ? from : head.fromEmail)),
             email: head.fromEmail,
           ),

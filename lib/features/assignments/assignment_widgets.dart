@@ -21,6 +21,7 @@ import '../../widgets/common/hero_email_transition.dart';
 import '../../widgets/common/peek_card.dart';
 import '../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../../widgets/ui/wheel_pickers.dart';
+import '../../core/utils/text_safe.dart' show initialOf;
 
 /// Подпись статуса.
 String assignmentStatusLabel(int status, AppLocalizations l10n) => l10n.tr(switch (status) {
@@ -68,7 +69,7 @@ class AssignmentAvatar extends StatelessWidget {
     final name = v.otherName;
     return HeroEmailAvatar(
       emailId: 'asg${v.id}',
-      initial: name.isEmpty ? '?' : name.characters.first.toUpperCase(),
+      initial: initialOf(name),
       color: HeroEmailAvatar.colorForEmail(email),
       radius: radius,
       hero: false,

@@ -17,6 +17,15 @@ void main() {
     expect(initialOf('😀 Отдел'), '😀');
     expect(initialOf('  иван'), 'И');
     expect(initialOf(''), '?');
+    // Адрес в апострофах (Outlook), кавычки, скобки — буква, а не знак.
+    expect(initialOf("'aho@engicom.ru'"), 'A');
+    expect(initialOf("'Clinic-Yamal@sogaz.ru'"), 'C');
+    expect(initialOf('"Иванов Иван"'), 'И');
+    expect(initialOf('«Ромашка», ООО'), 'Р');
+    expect(initialOf('<ivan@example.com>'), 'I');
+    expect(initialOf("' 😀 Отдел"), '😀');
+    expect(initialOf('1С-Отчётность'), '1');
+    expect(initialOf("'"), "'", reason: 'из одних знаков — как раньше');
     expect(initialOf(null), '?');
     expect(initialOf('\uDC00x'), '?');
   });

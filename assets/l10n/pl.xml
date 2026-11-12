@@ -4137,4 +4137,6 @@
     <string name="readingPaneAskHint">Można zmienić w menu ⋮ listy → „{pane}”</string>
     <string name="assignParent">Część zlecenia</string>
     <string name="assignPartOf">Część zlecenia: „{title}”</string>
+    <string name="expMacWebTitle">Złożone wiadomości w widoku przeglądarki</string>
+    <string name="expMacWebDesc">Wiadomości o złożonym układzie są wyświetlane jak w przeglądarce, bezpośrednio w wiadomości. Funkcja próbna dla Maca.</string>
 </resources>

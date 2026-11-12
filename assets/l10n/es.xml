@@ -4095,4 +4095,6 @@
     <string name="readingPaneAskHint">Se puede cambiar en el menú ⋮ de la lista → «{pane}»</string>
     <string name="assignParent">Parte de</string>
     <string name="assignPartOf">Parte del encargo: «{title}»</string>
+    <string name="expMacWebTitle">Correos complejos en vista de navegador</string>
+    <string name="expMacWebDesc">Los correos con diseño complejo se muestran como en un navegador, dentro del propio mensaje. Función de prueba para Mac.</string>
 </resources>

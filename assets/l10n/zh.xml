@@ -4074,4 +4074,6 @@
     <string name="readingPaneAskHint">可在列表的 ⋮ 菜单 →“{pane}”中更改</string>
     <string name="assignParent">所属任务</string>
     <string name="assignPartOf">所属任务：“{title}”</string>
+    <string name="expMacWebTitle">复杂邮件使用浏览器视图</string>
+    <string name="expMacWebDesc">布局复杂的邮件将像在浏览器中一样直接显示在邮件内。Mac 试用功能。</string>
 </resources>

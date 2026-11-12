@@ -4095,4 +4095,6 @@
     <string name="readingPaneAskHint">Te wijzigen via het menu ⋮ van de lijst → ‘{pane}’</string>
     <string name="assignParent">Onderdeel van</string>
     <string name="assignPartOf">Onderdeel van de opdracht: ‘{title}’</string>
+    <string name="expMacWebTitle">Complexe e-mails in browserweergave</string>
+    <string name="expMacWebDesc">E-mails met een complexe opmaak worden zoals in een browser getoond, direct in het bericht. Proeffunctie voor Mac.</string>
 </resources>

@@ -4137,4 +4137,6 @@
     <string name="readingPaneAskHint">Можно поменять в меню ⋮ ленты → «{pane}»</string>
     <string name="assignParent">Входит в</string>
     <string name="assignPartOf">Часть поручения: «{title}»</string>
+    <string name="expMacWebTitle">Сложные письма — в окне браузера</string>
+    <string name="expMacWebDesc">Письма со сложной вёрсткой показываются как в браузере, прямо в письме. Пробная возможность для Mac.</string>
 </resources>

@@ -4095,4 +4095,6 @@
     <string name="readingPaneAskHint">Voit vaihtaa listan valikosta ⋮ → {pane}</string>
     <string name="assignParent">Osa toimeksiantoa</string>
     <string name="assignPartOf">Osa toimeksiantoa: ”{title}”</string>
+    <string name="expMacWebTitle">Monimutkaiset viestit selainnäkymässä</string>
+    <string name="expMacWebDesc">Monimutkaisesti taitetut viestit näytetään kuten selaimessa, suoraan viestissä. Kokeiluominaisuus Macille.</string>
 </resources>

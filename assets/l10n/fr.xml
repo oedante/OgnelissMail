@@ -4095,4 +4095,6 @@
     <string name="readingPaneAskHint">Modifiable via le menu ⋮ de la liste → « {pane} »</string>
     <string name="assignParent">Fait partie de</string>
     <string name="assignPartOf">Fait partie de la mission : « {title} »</string>
+    <string name="expMacWebTitle">E-mails complexes dans une vue navigateur</string>
+    <string name="expMacWebDesc">Les e-mails à la mise en page complexe s\'affichent comme dans un navigateur, directement dans le message. Fonction à l\'essai pour Mac.</string>
 </resources>

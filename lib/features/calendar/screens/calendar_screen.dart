@@ -45,6 +45,8 @@ import '../../../widgets/ui/action_sheet.dart';
 import '../../../data/models/task_model.dart' show taskFromRow;
 import '../../../services/tasks/task_actions_service.dart' show taskActionsProvider;
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditor;
+import '../../../services/assignments/assignment_service.dart' show AssignmentView, assignmentsProvider;
+import '../../assignments/assignment_widgets.dart' show showAssignmentPeek;
 import '../../settings/providers/module_settings_provider.dart';
 import '../../../widgets/navigation/panel_requests.dart' show calendarDayRequestProvider;
 import '../../../data/models/email_model.dart' show EmailMeeting;
@@ -586,6 +588,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       context.push(mailOpenPath(context, e.id.substring(mailPrefix.length), accountId: e.accountId));
       return;
     }
+    // Поручение — его карточка (2.3.2).
+    if (isAssignItem(e)) {
+      context.push('/assignments/${e.id.substring(assignPrefix.length)}');
+      return;
+    }
     // Приглашение без ответа — письмо с «Принять / Под вопросом / Отклонить».
     if (isInviteItem(e)) {
       context.push(mailOpenPath(context, e.id.substring(invitePrefix.length), accountId: e.accountId));
@@ -610,6 +617,17 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     }
     if (isInviteItem(e)) {
       await _invitePeek(e);
+      return;
+    }
+    // Поручение — та же карточка с быстрыми действиями, что в «Поручениях».
+    if (isAssignItem(e)) {
+      final id = e.id.substring(assignPrefix.length);
+      final v = (ref.read(assignmentsProvider).value ?? const <AssignmentView>[]).where((x) => x.id == id).firstOrNull;
+      if (v == null) {
+        _open(e);
+        return;
+      }
+      await showAssignmentPeek(context, ref, v, anchor: peekAnchorAtFinger(context));
       return;
     }
     if (!isRealEvent(e)) {
@@ -757,6 +775,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     secondary: const Icon(AppIcons.flag),
                     title: Text(l10n.tr('layerFlaggedMail')),
                     subtitle: Text(l10n.tr('layerFlaggedMailHint')),
+                  ),
+                  CheckboxListTile(
+                    value: layers.showAssignments,
+                    onChanged: (v) => layersN.set(layers.copyWith(showAssignments: v ?? false)),
+                    secondary: const Icon(AppIcons.assignment_ind),
+                    title: Text(l10n.tr('assignments')),
                   ),
                   ListTile(
                     leading: const Icon(AppIcons.settings),

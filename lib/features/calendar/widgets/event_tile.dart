@@ -48,6 +48,11 @@ class EventTile extends StatelessWidget {
           ? l10n.tr('calDueToday')
           : l10n.tr('calDueAt').replaceAll('{time}', hm.format(s));
     }
+    if (isAssignItem(e)) {
+      return e.isAllDay
+          ? l10n.tr('calDueToday')
+          : l10n.tr('calDueAt').replaceAll('{time}', hm.format(s));
+    }
     if (isMailItem(e)) return l10n.tr('calFollowUpAt').replaceAll('{time}', hm.format(s));
     if (isInviteItem(e)) {
       return '${l10n.tr('invitePendingOne')} · ${e.isAllDay ? l10n.tr('allDay') : '${hm.format(s)} – ${hm.format(en)}'}';
@@ -75,7 +80,7 @@ class EventTile extends StatelessWidget {
         : MeetingLinkService.find(location: e.location, description: e.description)?.url;
     final recurring = e.recurrence != 0 || e.id.contains('#');
     final tentative = e.showAs == 1;
-    final pseudo = isTaskItem(e) || isMailItem(e) || isInviteItem(e);
+    final pseudo = isTodoItem(e) || isInviteItem(e);
     final people = (isTaskItem(e) || isMailItem(e))
         ? (organizer: null, organizerName: null, organizerEmail: null, count: 0)
         : attendeeSummary(e);
@@ -84,9 +89,11 @@ class EventTile extends StatelessWidget {
         ? AppIcons.task_alt
         : isMailItem(e)
             ? AppIcons.flag
-            : isInviteItem(e)
-                ? AppIcons.event_available
-                : null;
+            : isAssignItem(e)
+                ? AppIcons.assignment_ind
+                : isInviteItem(e)
+                    ? AppIcons.event_available
+                    : null;
 
     return Opacity(
       opacity: past ? 0.55 : 1,

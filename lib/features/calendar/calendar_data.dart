@@ -1,7 +1,8 @@
 // lib/features/calendar/calendar_data.dart
 // Данные календаря: события за любой видимый период (а не фиксированные
 // ±45 дней, как раньше — в следующем квартале календарь был пуст), слои
-// (задачи со сроком, письма с напоминанием), скрытые ящики, цвета.
+// (задачи со сроком, письма с напоминанием, поручения со сроком), скрытые
+// ящики, цвета.
 //
 // События берутся из базы потоком (drift watch): синхронизация добавила
 // встречу — она появляется на экране без «потянуть для обновления».
@@ -21,6 +22,7 @@ import '../../data/providers/database_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../data/providers/shared_prefs_provider.dart';
 import '../../services/home_widget_service.dart';
+import '../../services/assignments/assignment_service.dart';
 import '../../services/tasks/task_actions_service.dart';
 import '../mail/providers/mail_providers.dart';
 import '../../data/models/email_model.dart' show EmailMeeting;
@@ -34,12 +36,17 @@ typedef CalRange = ({DateTime from, DateTime to});
 class CalendarLayers {
   final bool showTasks;
   final bool showFlaggedMail;
-  const CalendarLayers({this.showTasks = true, this.showFlaggedMail = true});
 
-  CalendarLayers copyWith({bool? showTasks, bool? showFlaggedMail}) =>
+  /// Поручения со сроком (2.3.2, замечание владельца 10.11.2026: «в
+  /// календаре поручения не отображаются»).
+  final bool showAssignments;
+  const CalendarLayers({this.showTasks = true, this.showFlaggedMail = true, this.showAssignments = true});
+
+  CalendarLayers copyWith({bool? showTasks, bool? showFlaggedMail, bool? showAssignments}) =>
       CalendarLayers(
         showTasks: showTasks ?? this.showTasks,
         showFlaggedMail: showFlaggedMail ?? this.showFlaggedMail,
+        showAssignments: showAssignments ?? this.showAssignments,
       );
 }
 
@@ -50,6 +57,7 @@ class _LayersNotifier extends StateNotifier<CalendarLayers> {
         super(CalendarLayers(
           showTasks: ref.read(sharedPrefsProvider).getBool('cal_layer_tasks') ?? true,
           showFlaggedMail: ref.read(sharedPrefsProvider).getBool('cal_layer_mail') ?? true,
+          showAssignments: ref.read(sharedPrefsProvider).getBool('cal_layer_assignments') ?? true,
         ));
 
   void set(CalendarLayers v) {
@@ -57,6 +65,7 @@ class _LayersNotifier extends StateNotifier<CalendarLayers> {
     final p = _ref.read(sharedPrefsProvider);
     p.setBool('cal_layer_tasks', v.showTasks);
     p.setBool('cal_layer_mail', v.showFlaggedMail);
+    p.setBool('cal_layer_assignments', v.showAssignments);
   }
 }
 
@@ -139,6 +148,10 @@ final calendarEventsProvider =
   // Приглашения без ответа (1.6.34): встреча видна в календаре, даже если
   // сервер ещё не положил её туда (или положил, а синхронизация не дошла).
   final invites = ref.watch(pendingInvitesProvider).value ?? const <Email>[];
+  // Поручения со сроком: поток перечитывается при их изменении.
+  final assignments = layers.showAssignments
+      ? (ref.watch(assignmentsProvider).value ?? const <AssignmentView>[])
+      : const <AssignmentView>[];
   if (ids.isEmpty) return Stream.value(const <CalendarEvent>[]);
 
   final from = range.from.subtract(const Duration(days: 1));
@@ -210,6 +223,7 @@ final calendarEventsProvider =
         ));
       }
     }
+    extra.addAll(assignmentCalendarItems(assignments, accountIds: ids, from: from, to: to));
     for (final m in invites) {
       if (!ids.contains(m.accountId)) continue;
       final meet = EmailMeeting.parse(m.meetingJson);
@@ -256,7 +270,56 @@ const invitePrefix = 'invite_';
 bool isTaskItem(CalendarEvent e) => e.id.startsWith(taskPrefix);
 bool isMailItem(CalendarEvent e) => e.id.startsWith(mailPrefix);
 bool isInviteItem(CalendarEvent e) => e.id.startsWith(invitePrefix);
-bool isRealEvent(CalendarEvent e) => !isTaskItem(e) && !isMailItem(e) && !isInviteItem(e);
+
+/// Поручение со сроком (2.3.2).
+const assignPrefix = 'assign_';
+bool isAssignItem(CalendarEvent e) => e.id.startsWith(assignPrefix);
+
+/// Дело, а не встреча: задача, письмо с напоминанием, поручение — в
+/// календаре контуром, без времени окончания.
+bool isTodoItem(CalendarEvent e) => isTaskItem(e) || isMailItem(e) || isAssignItem(e);
+bool isRealEvent(CalendarEvent e) => !isTodoItem(e) && !isInviteItem(e);
+
+/// Невыполненные поручения со сроком в [from, to) — псевдо-события календаря.
+/// Срок без времени (полночь) — на весь день. «Организатор» — другая сторона
+/// поручения: исполнитель у моего, поручивший — у порученного мне.
+List<CalendarEvent> assignmentCalendarItems(
+  List<AssignmentView> all, {
+  required List<String> accountIds,
+  required DateTime from,
+  required DateTime to,
+}) {
+  final out = <CalendarEvent>[];
+  for (final v in all) {
+    final due = v.due;
+    if (due == null || !v.active || !accountIds.contains(v.row.accountId)) continue;
+    if (due.isBefore(from) || !due.isBefore(to)) continue;
+    final dateOnly = due.hour == 0 && due.minute == 0;
+    out.add(CalendarEvent(
+      id: '$assignPrefix${v.id}',
+      accountId: v.row.accountId,
+      title: v.row.title,
+      organizerEmail: v.otherEmail,
+      // Имя другой стороны — как имя организатора у встречи (attendeeSummary).
+      attendeesJson: v.otherEmail == null
+          ? null
+          : jsonEncode([
+              {'email': v.otherEmail, 'displayName': v.otherName},
+            ]),
+      startTime: due,
+      endTime: dateOnly ? due.add(const Duration(days: 1)) : due.add(const Duration(minutes: 30)),
+      createdAt: v.row.createdAt,
+      isAllDay: dateOnly,
+      recurrence: 0,
+      priority: v.row.priority,
+      showAs: 0,
+      isPrivate: false,
+      isCancelled: false,
+      isLocallyModified: false,
+    ));
+  }
+  return out;
+}
 
 /// Цвета ящиков по id (для полос событий).
 final accountColorsProvider = Provider<Map<String, Color>>((ref) => {
@@ -267,6 +330,7 @@ final accountColorsProvider = Provider<Map<String, Color>>((ref) => {
 Color eventColor(CalendarEvent e, Map<String, Color> accountColors) {
   if (isTaskItem(e)) return AppColors.successGreen;
   if (isMailItem(e)) return AppColors.accentOrange;
+  if (isAssignItem(e)) return AppColors.tagAssignment;
   if (e.colorValue != null && e.colorValue != 0) return Color(e.colorValue!);
   return accountColors[e.accountId] ?? AppColors.primaryBlue;
 }

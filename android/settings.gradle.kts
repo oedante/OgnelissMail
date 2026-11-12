@@ -22,16 +22,17 @@ pluginManagement {
 
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
-    // AGP 9.1.0 + Gradle 9.3.1 — версии шаблона Flutter 3.47 (1.6.3).
+    // AGP 9.1.1 + Gradle 9.3.1 (1.6.3 — 9.1.0, шаблон Flutter 3.47; 2.3.2 —
+    // 9.1.1: Flutter 3.50 не собирает с AGP ниже 9.1.1, CI 12.11.2026).
     // Встроенный Kotlin и новый DSL пока выключены (gradle.properties).
-    id("com.android.application") version "9.1.0" apply false
+    id("com.android.application") version "9.1.1" apply false
     // KGP остаётся в classpath: при android.builtInKotlin=false Flutter Gradle
     // Plugin сам подключает его к :app и к плагинам, которые уже перешли на
     // встроенный Kotlin. Версия — как в шаблоне Flutter 3.47.
     id("org.jetbrains.kotlin.android") version "2.4.0" apply false
     // Базовый профиль запуска (Baseline Profile): модуль-генератор и плагин
     // подключаются только при -Pogneliss.baselineProfile=true (ниже).
-    id("com.android.test") version "9.1.0" apply false
+    id("com.android.test") version "9.1.1" apply false
     // 1.5.0: первая стабильная, что работает с AGP 9.
     id("androidx.baselineprofile") version "1.5.0" apply false
 }

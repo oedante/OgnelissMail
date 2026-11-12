@@ -38,7 +38,13 @@ class SectionNav extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final path = GoRouterState.of(context).uri.path;
+    // Без маршрутизатора (снимки экранов, тесты) — «Почта» (2.3.2).
+    String path;
+    try {
+      path = GoRouterState.of(context).uri.path;
+    } catch (_) {
+      path = '/mail';
+    }
     final flags = ref.watch(featureFlagsProvider);
     final unread = ref.watch(totalUnreadCountProvider);
 

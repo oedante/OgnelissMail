@@ -144,6 +144,17 @@ void main() {
       expect(late['b'], (start: DateTime(2026, 11, 12), due: DateTime(2026, 11, 14)));
     });
 
+    test('статус проекта по этапам', () {
+      const open = AssignmentStatus.open, work = AssignmentStatus.inProgress, done = AssignmentStatus.done;
+      const cancelled = AssignmentStatus.cancelled;
+      expect(projectStatus(open, const []), open);
+      expect(projectStatus(open, const [open, open]), open);
+      expect(projectStatus(open, const [done, open]), work);
+      expect(projectStatus(open, const [AssignmentStatus.review, open]), work);
+      expect(projectStatus(open, const [done, cancelled, done]), done);
+      expect(projectStatus(cancelled, const [done]), cancelled);
+    });
+
     test('план участника: свои этапы — с текущим статусом, порядок — по плану', () {
       final merged = mergePlan(
         own: const [PlanStage(id: 'b', title: 'Анализ', order: 1, status: AssignmentStatus.review, progress: 0.8)],

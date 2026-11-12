@@ -862,6 +862,7 @@ class AssignmentService {
   /// «Можно начинать»: этапы моих проектов, ждущие принятого этапа, —
   /// письмо их исполнителям, этап больше не ждёт.
   Future<void> dispatchPending() async {
+    await _closeDoneProjects();
     final waiting = await (_db.select(_db.assignments)
           ..where((a) => a.waiting.equals(true) & a.afterId.isNotNull() & a.status.isIn(const [1, 2, 3])))
         .get();
@@ -878,6 +879,21 @@ class AssignmentService {
       final text = l10n.tr('assignMsgGo').replaceAll('{title}', prev.title);
       await _record(v, ev, 'go', {'text': text});
       await _notify(v, text, AssignmentCodec.statusMarker(v.id, v.status, ev: ev, go: true));
+    }
+  }
+
+  /// Свой проект, все этапы которого приняты, — выполнен (у себя; письма
+  /// участникам не нужны — каждый свой этап уже получил «Принято»).
+  Future<void> _closeDoneProjects() async {
+    final open = await (_db.select(_db.assignments)
+          ..where((a) => a.isProject.equals(true) & a.status.isIn(const [1, 2, 3])))
+        .get();
+    for (final p in open) {
+      final v = await load(p.id);
+      if (v == null || !v.outgoing) continue;
+      final stages = await AssignmentStore.stagesOf(_db, p.id);
+      if (projectStatus(p.status, [for (final s in stages) s.status]) != AssignmentStatus.done) continue;
+      await AssignmentStore.update(_db, p.id, status: AssignmentStatus.done);
     }
   }
 

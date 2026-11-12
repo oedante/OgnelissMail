@@ -22,7 +22,7 @@ import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
 import '../../widgets/common/peek_card.dart' show peekAnchorOf;
 import '../../widgets/ui/empty_state.dart';
-import '../../services/assignments/assignment_store.dart' show AssignmentTree;
+import '../../services/assignments/assignment_store.dart' show AssignmentTree, projectStatus;
 import 'assign_sheet.dart';
 import 'assignment_widgets.dart';
 import 'project_editor.dart' show showProjectEditor;
@@ -126,12 +126,16 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
     final weekEnd = today.add(Duration(days: 8 - today.weekday));
     final activeItems = [for (final v in items) if (v.active) v];
     final closed = [for (final v in items) if (!v.active) v];
-    final overdueN = activeItems.where((v) => v.overdue(now)).length;
+    // Проект — просрочен, если опаздывает хоть один его этап (этапы своего
+    // проекта в списке не показываются отдельно).
+    bool late(AssignmentView v) =>
+        v.overdue(now) || (v.isProject && _all.childrenOf(v.id).any((s) => s.active && s.overdue(now)));
+    final overdueN = activeItems.where(late).length;
     final reviewN = activeItems.where((v) => v.status == AssignmentStatus.review).length;
     final controlN = activeItems.where((v) => v.iControl).length;
     final observeN = activeItems.where((v) => v.iObserve).length;
     var shown = activeItems;
-    if (_filter == _Filter.overdue) shown = [for (final v in shown) if (v.overdue(now)) v];
+    if (_filter == _Filter.overdue) shown = [for (final v in shown) if (late(v)) v];
     if (_filter == _Filter.review) shown = [for (final v in shown) if (v.status == AssignmentStatus.review) v];
     if (_filter == _Filter.control) shown = [for (final v in shown) if (v.iControl) v];
     if (_filter == _Filter.observe) shown = [for (final v in shown) if (v.iObserve) v];
@@ -144,14 +148,14 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
       });
 
     final groups = <(String, Color?, List<AssignmentView>)>[
-      (l10n.tr('overdue'), AppColors.errorText(context), [for (final v in shown) if (v.overdue(now)) v]),
+      (l10n.tr('overdue'), AppColors.errorText(context), [for (final v in shown) if (late(v)) v]),
       (
         l10n.tr('assignStReview'),
         null,
-        [for (final v in shown) if (!v.overdue(now) && v.status == AssignmentStatus.review) v]
+        [for (final v in shown) if (!late(v) && v.status == AssignmentStatus.review) v]
       ),
     ];
-    bool rest(AssignmentView v) => !v.overdue(now) && v.status != AssignmentStatus.review;
+    bool rest(AssignmentView v) => !late(v) && v.status != AssignmentStatus.review;
     DateTime? day(AssignmentView v) => v.due == null ? null : DateTime(v.due!.year, v.due!.month, v.due!.day);
     groups.addAll([
       (l10n.tr('today'), null, [for (final v in shown) if (rest(v) && day(v) == today) v]),
@@ -243,10 +247,11 @@ class _AssignmentRow extends ConsumerWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final muted = AppColors.mutedText(context);
-    final overdue = v.overdue(DateTime.now());
-    final dueColor = overdue ? AppColors.errorText(context) : muted;
+    final now = DateTime.now();
     // Проект: «2 из 5 этапов» и полоса прогресса (у постановщика).
     final stages = v.isProject ? all.childrenOf(v.id) : const <AssignmentView>[];
+    final overdue = v.overdue(now) || stages.any((s) => s.active && s.overdue(now));
+    final dueColor = overdue ? AppColors.errorText(context) : muted;
     final live = [for (final s in stages) if (s.status != AssignmentStatus.cancelled) s];
     final doneN = live.where((s) => s.status == AssignmentStatus.done).length;
     final progress = live.isEmpty ? 0.0 : live.fold<double>(0, (a, s) => a + s.progress) / live.length;
@@ -319,7 +324,7 @@ class _AssignmentRow extends ConsumerWidget {
             ]),
           ),
           const SizedBox(width: Space.s),
-          AssignmentStatusPill(v.status),
+          AssignmentStatusPill(v.isProject ? projectStatus(v.status, [for (final s in stages) s.status]) : v.status),
         ]),
       ),
     );

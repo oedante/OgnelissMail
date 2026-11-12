@@ -189,6 +189,17 @@ double stageProgress(int status, List<ChecklistItem> checklist) {
 }
 
 /// Прогресс проекта — среднее по этапам (снятые не считаются).
+/// Статус проекта по этапам (снятые не считаются): все приняты —
+/// выполнено; хоть один начат — в работе; иначе — свой статус проекта.
+int projectStatus(int own, List<int> stages) {
+  if (own == _cancelled) return own;
+  final live = [for (final s in stages) if (s != _cancelled) s];
+  if (live.isEmpty) return own;
+  if (live.every((s) => s == _done)) return _done;
+  if (live.any((s) => s == _inProgress || s == _review || s == _done)) return _inProgress;
+  return own;
+}
+
 /// План участника: [fromMail] — план из письма проекта, [own] — свои этапы
 /// с текущим статусом (заменяют одноимённые по id). По порядку этапов.
 List<PlanStage> mergePlan({required List<PlanStage> own, required List<PlanStage> fromMail}) {

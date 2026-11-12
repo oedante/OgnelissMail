@@ -262,11 +262,4 @@ void main() {
       expect(MessengerNotify.allConversationsOn(p), isTrue);
     });
   });
-
-  test('значок ящика: буква на цвете ящика — белая на тёмном, тёмная на светлом', () {
-    expect(MessengerNotify.mailboxLetterColor(0xFF1D4F91), 0xFFFFFFFF);
-    expect(MessengerNotify.mailboxLetterColor(0xFFFFC928), 0xFF1F1F1F);
-    expect(MessengerNotify.mailboxLetterColor(0xFF2E8B57), 0xFFFFFFFF);
-    expect(MessengerNotify.initial('', "'aho@engicom.ru'"), 'A');
-  });
 }

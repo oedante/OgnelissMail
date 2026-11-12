@@ -4078,4 +4078,21 @@
     <string name="expMacWebDesc">レイアウトが複雑なメールを、メッセージ内でブラウザと同じように表示します。Mac向けの試験機能です。</string>
     <string name="graphicsHcppTitle">メール表示の新しい埋め込み方式 (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14以降向けの試験モードです。メール表示とエディターを新しい方式で埋め込み、スクロールがより滑らかになります。メールが正しく表示されない場合はオフにしてください。</string>
+    <string name="keysHintNav">次と前のメッセージ</string>
+    <string name="keysHintPalette">すべてのコマンド</string>
+    <string name="selectedMailsN">{n} 件のメールを選択中</string>
+    <string name="noteSelectPrompt">左のメモを選ぶか、新しいメモを作成します</string>
+    <string name="taskSelectPrompt">左のタスクを選ぶか、新しいタスクを作成します</string>
+    <string name="calFree2Months">今後 2 か月は予定がありません</string>
+    <string name="newMeeting">新しい会議</string>
+    <string name="mailReadingSettings">一覧と閲覧</string>
+    <string name="mailReadingSettingsDesc">起動時のフォルダー、スレッド、プレビュー行、メール下部のボタン</string>
+    <string name="mailComposeSettings">作成と送信</string>
+    <string name="mailComposeSettingsDesc">送信の取り消し、宛先、引用内の人物、写真のサイズ</string>
+    <string name="mailFilesSettings">ダウンロードと添付ファイル</string>
+    <string name="mailFilesSettingsDesc">ダウンロード方法、端末上のメール、文書のプレビュー、添付ファイル内の検索</string>
+    <string name="mailTranslateSettingsDesc">端末上でのメール翻訳</string>
+    <string name="mailSafetySettingsDesc">なりすまし送信者の警告</string>
+    <string name="generalDesc">言語、画面の回転、メールウィジェット</string>
+    <string name="appearanceDescFull">テーマ、色、フォントと拡大率、一覧の密度、ウィジェット</string>
 </resources>

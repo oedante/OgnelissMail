@@ -4099,4 +4099,21 @@
     <string name="expMacWebDesc">Le email con impaginazione complessa vengono mostrate come in un browser, direttamente nel messaggio. Funzione di prova per Mac.</string>
     <string name="graphicsHcppTitle">Nuova incorporazione della vista del messaggio (HCPP)</string>
     <string name="graphicsHcppDesc">Modalità di prova per Android 14 e successivi: la vista del messaggio e l\'editor vengono incorporati in modo nuovo e lo scorrimento dovrebbe essere più fluido. Se un messaggio viene mostrato male, disattivala.</string>
+    <string name="keysHintNav">Messaggio successivo e precedente</string>
+    <string name="keysHintPalette">Tutti i comandi</string>
+    <string name="selectedMailsN">{n} messaggi selezionati</string>
+    <string name="noteSelectPrompt">Seleziona una nota a sinistra o creane una nuova</string>
+    <string name="taskSelectPrompt">Seleziona un\'attività a sinistra o creane una nuova</string>
+    <string name="calFree2Months">I prossimi 2 mesi sono liberi</string>
+    <string name="newMeeting">Nuova riunione</string>
+    <string name="mailReadingSettings">Elenco e lettura</string>
+    <string name="mailReadingSettingsDesc">Cartella all\'avvio, conversazioni, righe di anteprima, pulsanti sotto il messaggio</string>
+    <string name="mailComposeSettings">Scrittura e invio</string>
+    <string name="mailComposeSettingsDesc">Annulla invio, destinatari, persone nelle citazioni, dimensione foto</string>
+    <string name="mailFilesSettings">Download e allegati</string>
+    <string name="mailFilesSettingsDesc">Modalità download, posta sul dispositivo, anteprima documenti, ricerca negli allegati</string>
+    <string name="mailTranslateSettingsDesc">Traduzione dei messaggi sul dispositivo</string>
+    <string name="mailSafetySettingsDesc">Avvisi sui mittenti falsificati</string>
+    <string name="generalDesc">Lingua, rotazione schermo, widget Posta</string>
+    <string name="appearanceDescFull">Tema, colori, carattere e scala, densità elenco, widget</string>
 </resources>

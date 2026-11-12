@@ -42,6 +42,46 @@ class AccountAvatar extends StatelessWidget {
   }
 }
 
+/// Буквы портретов ящиков без фото — разные (оценка интерфейса 12.11.2026:
+/// пять ящиков с одним именем владельца давали ряд «Я Я Я»). Первая буква
+/// имени; совпала с другим ящиком — первая буква адреса (до @); совпала и
+/// она — две буквы: адрес и домен («ОЯ» — o@yandex, «ОG» — o@gmail).
+Map<String, String> distinctAccountInitials(List<AccountModel> accounts) {
+  String nameOf(AccountModel a) {
+    final n = a.displayName.trim();
+    return n.isNotEmpty ? n : a.email;
+  }
+
+  final byName = <String, int>{};
+  for (final a in accounts) {
+    final k = initialOf(nameOf(a));
+    byName[k] = (byName[k] ?? 0) + 1;
+  }
+  final login = <String, int>{};
+  for (final a in accounts) {
+    final k = initialOf(a.email);
+    login[k] = (login[k] ?? 0) + 1;
+  }
+  final out = <String, String>{};
+  for (final a in accounts) {
+    final first = initialOf(nameOf(a));
+    if ((byName[first] ?? 0) < 2) {
+      out[a.id] = first;
+      continue;
+    }
+    final l = initialOf(a.email);
+    if ((login[l] ?? 0) < 2) {
+      out[a.id] = l;
+      continue;
+    }
+    final at = a.email.indexOf('@');
+    final domain = at >= 0 ? a.email.substring(at + 1) : '';
+    final d = initialOf(domain);
+    out[a.id] = d == '?' ? l : '$l$d';
+  }
+  return out;
+}
+
 /// Пункт меню выбора ящика: портрет, имя (или адрес) и адрес под ним.
 AppMenuEntry<String> accountMenuEntry(
   AccountModel a, {

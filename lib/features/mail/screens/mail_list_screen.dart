@@ -31,6 +31,7 @@ import '../../../widgets/common/swipe_action_indicator.dart';
 import '../../../widgets/common/slidable_spring_back.dart';
 import '../../compose/widgets/mail_editor.dart' show MailEditorPool, warmUpMailEditor;
 import '../../../services/mail/conversation_counter.dart';
+import '../../../widgets/ui/theme_quick_switch.dart';
 import '../../../services/mail/imap/imap_service.dart' show ImapFolderState;
 import 'dart:async';
 import '../../../services/mail/offline_send_service.dart';
@@ -727,6 +728,14 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         _foldersDocked = docked;
         // Сторона меню на телефоне — по настройке (по умолчанию слева).
         _menuAtEnd = phone && ref.watch(menuOnRightProvider);
+        // Выбрано несколько писем, лента и панель рядом — справа сводка с
+        // действиями вместо письма (оценка интерфейса 12.11.2026, как в
+        // Outlook и Apple Mail); нижняя панель выбора тогда не нужна.
+        final panePos = phone ? PanePosition.right : ref.watch(readingPaneProvider);
+        final summary = !phone &&
+            _selectedIds.length >= 2 &&
+            panePos != PanePosition.hidden &&
+            AdaptiveLayout.canSplit(box.maxWidth - (docked ? _dockedWidth(box.maxWidth) : 0));
         final row = Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -907,6 +916,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                   label: l10n.tr('readingPane'),
                   subtitle: readingPaneLabel(l10n, ref.read(readingPaneProvider)).label,
                 ),
+              // Тема — здесь на планшете и компьютере (с панели папок убрана,
+              // 12.11.2026); на телефоне — в выдвижном меню, как раньше.
+              if (!phone) AppMenuEntry(value: 'theme', icon: AppIcons.dark_mode, label: l10n.tr('theme')),
               AppMenuEntry(value: 'mark_all_read', icon: AppIcons.done_all, label: l10n.tr('markAllRead')),
               AppMenuEntry(value: 'read_where_cc', icon: AppIcons.mark_email_read, label: l10n.tr('markReadWhereCc')),
               // «Очистить» — только в Корзине и Спаме, и именно открытую
@@ -943,16 +955,18 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
 
       // В режиме выбора действия показываем внизу — до них можно дотянуться
       // одной рукой. В обычном режиме панели нет: место занимает список.
-      bottomNavigationBar: inSelection
+      bottomNavigationBar: inSelection && !summary
           ? _selectionBottomBar(l10n, theme)
           : null,
 
       body: AdaptiveLayout(
         widthKey: 'mail',
-        showDetail: _selectedEmailId != null,
+        showDetail: _selectedEmailId != null || summary,
         // Своя навигация панели (1.11.0): ответ и пересылка — прямо в
         // панели письма, как в Outlook.
-        detailBody: _selectedEmailId != null
+        detailBody: summary
+            ? _selectionSummary(l10n, theme)
+            : _selectedEmailId != null
             ? PaneNavigator(
                 key: ValueKey('pane_$_selectedEmailId'),
                 child: MailDetailScreen(
@@ -968,7 +982,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         placeholder: _DetailPlaceholder(text: l10n.selectEmailPrompt),
         // «Область чтения» (1.12.x, как в Outlook): справа, снизу или
         // скрыта. Телефон — как раньше.
-        position: phone ? PanePosition.right : ref.watch(readingPaneProvider),
+        position: panePos,
         body: Focus(
           focusNode: _listFocus,
           child: _withBottomStrips(_buildBody(emailState, theme, l10n, settings)),
@@ -1016,7 +1030,30 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         const SingleActivator(LogicalKeyboardKey.escape): _exitSelection,
         const SingleActivator(LogicalKeyboardKey.delete): () => unawaited(_bulkDelete()),
       },
+      // Следующее и предыдущее письмо в панели (оценка интерфейса
+      // 12.11.2026): стрелки, как в Outlook, и J / K, как в Gmail.
+      if (!inSelection && AdaptiveLayout.isSplit(context)) ...{
+        const SingleActivator(LogicalKeyboardKey.arrowDown): () => _openAdjacent(1),
+        const SingleActivator(LogicalKeyboardKey.keyJ): () => _openAdjacent(1),
+        const SingleActivator(LogicalKeyboardKey.arrowUp): () => _openAdjacent(-1),
+        const SingleActivator(LogicalKeyboardKey.keyK): () => _openAdjacent(-1),
+      },
     };
+  }
+
+  /// Открыть в панели соседнее письмо ленты ([dir]: 1 — ниже, -1 — выше).
+  /// Ничего не открыто — первое письмо.
+  void _openAdjacent(int dir) {
+    final items = [
+      for (final g in _cachedGrouped ?? const <dynamic>[])
+        if (g is EmailModel) g,
+    ];
+    if (items.isEmpty) return;
+    final cur = items.indexWhere((e) => e.id == _selectedEmailId && e.accountId == _selectedAccountId);
+    final next = cur < 0 ? 0 : (cur + dir).clamp(0, items.length - 1);
+    if (next == cur) return;
+    final item = items[next];
+    unawaited(_openEmail(context, item, true));
   }
 
   /// Фокус — в выделенном тексте (письмо в панели, SelectionArea).
@@ -1193,6 +1230,58 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             action(AppIcons.delete, l10n.delete, _bulkDelete,
                 color: AppColors.errorRed),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// Сводка выбранных писем в панели справа (планшет, компьютер).
+  Widget _selectionSummary(AppLocalizations l10n, ThemeData theme) {
+    final scheme = theme.colorScheme;
+    Widget action(IconData icon, String label, VoidCallback onTap, {bool danger = false}) => SizedBox(
+          width: 220,
+          child: OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              alignment: AlignmentDirectional.centerStart,
+              padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.m),
+              foregroundColor: danger ? AppColors.errorRed : null,
+            ),
+            onPressed: onTap,
+            icon: Icon(icon, size: 20),
+            label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+          ),
+        );
+    final control = ref.read(settingsProvider).mailControl;
+    return ColoredBox(
+      key: const ValueKey('selection_summary'),
+      color: theme.scaffoldBackgroundColor,
+      child: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(Space.xl),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Icon(AppIcons.done_all, size: 48, color: scheme.primary.withValues(alpha: 0.7)),
+            const SizedBox(height: Space.m),
+            Text(l10n.tr('selectedMailsN').replaceAll('{n}', '${_selectedIds.length}'),
+                style: theme.textTheme.titleLarge),
+            const SizedBox(height: Space.xl),
+            Wrap(spacing: Space.m, runSpacing: Space.m, alignment: WrapAlignment.center, children: [
+              action(AppIcons.mark_email_read, l10n.tr('markRead'), () => _bulkSetRead(true)),
+              action(AppIcons.mark_email_unread, l10n.tr('markUnread'), () => _bulkSetRead(false)),
+              action(AppIcons.flag, l10n.tr('flag'), () => _bulkSetFlag(true)),
+              action(AppIcons.drive_file_move, l10n.tr('move'), () => _bulkMove(l10n)),
+              action(AppIcons.archive, l10n.tr('archive'), _bulkArchive),
+              action(AppIcons.watch_later, l10n.tr('later'), () => unawaited(_bulkLater())),
+              if (control) action(AppIcons.task_alt, l10n.tr('controlSet'), _bulkControl),
+              action(AppIcons.inventory_2, l10n.tr('toOgnaArchive'), () => unawaited(_bulkOgna())),
+              action(AppIcons.delete, l10n.delete, _bulkDelete, danger: true),
+            ]),
+            const SizedBox(height: Space.l),
+            TextButton.icon(
+              onPressed: _exitSelection,
+              icon: const Icon(AppIcons.close, size: 18),
+              label: Text(l10n.tr('deselectAll')),
+            ),
+          ]),
         ),
       ),
     );
@@ -1704,6 +1793,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
               email: item,
               // В «Позже» вместо даты получения — когда письмо вернётся.
               showLaterTime: ref.read(mailFilterProvider) == MailFilter.later,
+              showControlDue: ref.read(mailFilterProvider) == MailFilter.control,
               showConversationIndicator: settings.groupByConversation,
               showFolderBadge: _isSearching ||
                     ref.watch(unifiedModeProvider) ||
@@ -3340,6 +3430,16 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       case 'reading_pane':
         unawaited(pickReadingPane(context, ref));
         break;
+      case 'theme':
+        unawaited(showDialog<void>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(l10n.tr('theme')),
+            content: const SizedBox(width: 360, child: ThemeQuickSwitch()),
+            actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.tr('close')))],
+          ),
+        ));
+        break;
     }
   }
 
@@ -3881,14 +3981,27 @@ class _DragChip extends StatelessWidget {
   }
 }
 
-class _DetailPlaceholder extends StatelessWidget {
+class _DetailPlaceholder extends ConsumerWidget {
   final String text;
   const _DetailPlaceholder({required this.text});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
+    final l10n = AppLocalizations.of(context);
+    final unread = ref.watch(totalUnreadCountProvider);
+    // Пустая область чтения (оценка интерфейса 12.11.2026: на компьютере —
+    // ⅔ экрана): число непрочитанных и клавиши — как в Outlook и Spark.
+    final platform = Theme.of(context).platform;
+    final mac = platform == TargetPlatform.macOS || platform == TargetPlatform.iOS;
+    final mod = mac ? '⌘' : 'Ctrl+';
+    final keys = <(String, String)>[
+      ('↑ ↓   J  K', l10n.tr('keysHintNav')),
+      ('${mod}N', l10n.compose),
+      ('${mod}K', l10n.tr('keysHintPalette')),
+    ];
+    final keyStyle = theme.textTheme.labelMedium?.copyWith(color: muted, fontFeatures: const [FontFeature.tabularFigures()]);
     return ColoredBox(
       color: theme.scaffoldBackgroundColor,
       child: Center(
@@ -3896,6 +4009,23 @@ class _DetailPlaceholder extends StatelessWidget {
           Icon(AppIcons.mail, size: 48, color: muted.withValues(alpha: 0.5)),
           const SizedBox(height: Space.m),
           Text(text, style: theme.textTheme.bodyMedium?.copyWith(color: muted), textAlign: TextAlign.center),
+          if (unread > 0) ...[
+            const SizedBox(height: Space.xs),
+            Text(l10n.tr('unreadCountA11y').replaceAll('{n}', '$unread'),
+                style: theme.textTheme.titleSmall?.copyWith(color: theme.colorScheme.primary)),
+          ],
+          if (!AppBottomBar.inUse(context)) ...[
+            const SizedBox(height: Space.xl),
+            for (final k in keys)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  SizedBox(width: 110, child: Text(k.$1, textAlign: TextAlign.end, style: keyStyle)),
+                  const SizedBox(width: Space.m),
+                  SizedBox(width: 220, child: Text(k.$2, style: theme.textTheme.bodySmall?.copyWith(color: muted))),
+                ]),
+              ),
+          ],
         ]),
       ),
     );

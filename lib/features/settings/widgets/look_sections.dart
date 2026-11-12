@@ -1,0 +1,214 @@
+// lib/features/settings/widgets/look_sections.dart
+// Части «Оформления», перенесённые из «Общих» (12.11.2026, просьба
+// владельца: «часть настроек из "Общие" лучше перенести в оформление»):
+// тёплый фон страницы, шрифт, размер шрифта и масштаб интерфейса, сторона
+// меню и нижняя панель телефона, тема и фон виджетов. В «Общих» остались
+// язык, поворот экрана и содержимое виджета «Почта».
+
+import 'dart:io' show Platform;
+
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/theme/app_icons.dart';
+import '../../../core/theme/tokens.dart';
+import '../../../core/theme/ui_fonts.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../widgets/common/ui_zoom.dart';
+import '../../../widgets/navigation/app_bottom_bar.dart' show AppBottomBar;
+import '../../../widgets/ui/app_radio_tile.dart';
+import '../../../widgets/ui/settings_group.dart';
+import '../../mail/providers/drawer_prefs.dart' show menuOnRightProvider;
+import '../providers/settings_provider.dart';
+import '../providers/widget_prefs.dart';
+import 'phone_bar_section.dart';
+
+/// Тёплый фон страницы (в теме «Чтение» он и так везде).
+class WarmPageSection extends ConsumerWidget {
+  const WarmPageSection({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final settings = ref.watch(settingsProvider);
+    final notifier = ref.read(settingsProvider.notifier);
+    if (settings.reading) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: Space.s),
+      child: SettingsGroup(children: [
+        SettingsSwitchItem(
+          icon: AppIcons.wb_sunny,
+          title: l10n.tr('warmPage'),
+          subtitle: l10n.tr('warmPageDesc'),
+          value: settings.warmPage,
+          onChanged: notifier.setWarmPage,
+        ),
+      ]),
+    );
+  }
+}
+
+/// Шрифт, размер шрифта, масштаб интерфейса.
+class TextLookSections extends ConsumerWidget {
+  const TextLookSections({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final settings = ref.watch(settingsProvider);
+    final notifier = ref.read(settingsProvider.notifier);
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      // ── Шрифт интерфейса (1.8.8; с 1.10.2 — шрифты платформы) ──
+      // Каждый вариант подписан своим шрифтом — видно, как он выглядит;
+      // образец — латиница, кириллица и греческий.
+      SettingsSectionTitle(l10n.tr('uiFontTitle')),
+      SettingsGroup(children: [
+        for (final f in UiFonts.forPlatform(Theme.of(context).platform))
+          AppRadioTile<String>(
+            title: Text(f.label ?? l10n.tr('uiFontSystem'), style: TextStyle(fontFamily: f.family)),
+            subtitle: Text(
+              switch (f.id) {
+                'system' => '${l10n.tr('uiFontSystemHint')} · ${UiFonts.sample}',
+                'roboto' => '${l10n.tr('uiFontRobotoHint')} · ${UiFonts.sample}',
+                _ => UiFonts.sample,
+              },
+              style: TextStyle(fontFamily: f.family),
+            ),
+            value: f.id,
+            groupValue: UiFonts.resolve(settings.uiFont, Theme.of(context).platform).id,
+            onChanged: (v) => notifier.setUiFont(v ?? 'roboto'),
+          ),
+        if (settings.dyslexiaFont)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(Space.m, 0, Space.m, Space.s),
+            child: Text(l10n.tr('uiFontDyslexiaNote'), style: Theme.of(context).textTheme.bodySmall),
+          ),
+      ]),
+
+      // ── Масштаб шрифта ──
+      SettingsSectionTitle('${l10n.tr('fontSize')} · ${(settings.fontScale * 100).round()}%'),
+      SettingsGroup(children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Space.s, vertical: Space.xs),
+          child: Slider(
+            min: 0.8,
+            max: 1.6,
+            divisions: 8,
+            value: settings.fontScale.clamp(0.8, 1.6),
+            label: '${(settings.fontScale * 100).round()}%',
+            onChanged: (v) => notifier.setFontScale(v),
+          ),
+        ),
+      ]),
+
+      // ── Масштаб интерфейса (1.6.12) ──
+      SettingsSectionTitle(l10n.tr('uiScaleTitle')),
+      SettingsGroup(children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xs),
+          child: Wrap(
+            spacing: Space.s,
+            runSpacing: Space.xs,
+            children: [
+              for (final v in [0.0, ...UiZoom.manual])
+                ChoiceChip(
+                  label: Text(v == 0 ? l10n.tr('uiScaleAuto') : '${(v * 100).round()}%'),
+                  selected: settings.uiScale == v ||
+                      (v != 0 && settings.uiScale > 0 && (settings.uiScale - v).abs() < 0.001),
+                  onSelected: (_) => notifier.setUiScale(v),
+                ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(Space.m, 0, Space.m, Space.s),
+          child: Text(
+            l10n.tr('uiScaleHint').replaceAll('{n}', '${(UiZoom.current * 100).round()}'),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
+      ]),
+    ]);
+  }
+}
+
+/// Телефон: сторона меню и нижняя панель.
+class PhoneLayoutSections extends ConsumerWidget {
+  const PhoneLayoutSections({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      // ── Меню ящиков и папок (телефон, 1.6.40) ──
+      // Слева (по умолчанию) или справа: портрет «Меню» внизу и свайп от
+      // края — с выбранной стороны.
+      if (AppBottomBar.inUse(context)) ...[
+        SettingsSectionTitle(l10n.tr('menuSideTitle')),
+        SettingsGroup(children: [
+          for (final o in [
+            (false, l10n.tr('menuSideLeft'), l10n.tr('menuSideLeftHint')),
+            (true, l10n.tr('menuSideRight'), l10n.tr('menuSideRightHint')),
+          ])
+            AppRadioTile<bool>(
+              title: Text(o.$2),
+              subtitle: Text(o.$3),
+              value: o.$1,
+              groupValue: ref.watch(menuOnRightProvider),
+              onChanged: (v) => ref.read(menuOnRightProvider.notifier).set(v ?? false),
+            ),
+        ]),
+        // ── Нижняя панель (2.2.0): какие разделы по краям от «Создать» ──
+        const PhoneBarSection(),
+      ],
+    ]);
+  }
+}
+
+/// Виджеты на рабочем столе: тема и фон.
+class WidgetLookSections extends ConsumerWidget {
+  const WidgetLookSections({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      // ── Виджеты на рабочем столе: тема (Android и iPhone, 1.7.0) и
+      // фон (Android, 1.6.49) ──
+      if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) ...[
+        SettingsSectionTitle(l10n.tr('widgetThemeTitle'), help: l10n.tr('widgetThemeHelp')),
+        SettingsGroup(children: [
+          for (final o in [
+            (0, l10n.tr('widgetThemeSystem')),
+            (1, l10n.tr('widgetThemeLight')),
+            (2, l10n.tr('widgetThemeDark')),
+          ])
+            AppRadioTile<int>(
+              title: Text(o.$2),
+              value: o.$1,
+              groupValue: ref.watch(widgetThemeProvider),
+              onChanged: (v) => ref.read(widgetThemeProvider.notifier).set(v ?? 0),
+            ),
+        ]),
+      ],
+      if (!kIsWeb && Platform.isAndroid) ...[
+        SettingsSectionTitle(l10n.tr('widgetBgTitle'), help: l10n.tr('widgetBgHelp')),
+        SettingsGroup(children: [
+          for (final o in [
+            (0, l10n.tr('widgetBgNormal'), null),
+            (1, l10n.tr('widgetBgSoft'), l10n.tr('widgetBgSoftHint')),
+            (2, l10n.tr('widgetBgNone'), l10n.tr('widgetBgNoneHint')),
+          ])
+            AppRadioTile<int>(
+              title: Text(o.$2),
+              subtitle: o.$3 == null ? null : Text(o.$3!),
+              value: o.$1,
+              groupValue: ref.watch(widgetBackgroundProvider),
+              onChanged: (v) => ref.read(widgetBackgroundProvider.notifier).set(v ?? 0),
+            ),
+        ]),
+      ],
+    ]);
+  }
+}

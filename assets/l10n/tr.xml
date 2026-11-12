@@ -4099,4 +4099,21 @@
     <string name="expMacWebDesc">Karmaşık düzenli e-postalar, iletinin içinde tarayıcıdaki gibi gösterilir. Mac için deneme özelliği.</string>
     <string name="graphicsHcppTitle">İleti görünümü için yeni gömme (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 ve sonrası için deneme modu: ileti görünümü ve düzenleyici yeni bir yöntemle gömülür, kaydırma daha akıcı olmalıdır. Bir ileti yanlış görünürse kapatın.</string>
+    <string name="keysHintNav">Sonraki ve önceki ileti</string>
+    <string name="keysHintPalette">Tüm komutlar</string>
+    <string name="selectedMailsN">{n} ileti seçildi</string>
+    <string name="noteSelectPrompt">Soldan bir not seçin veya yeni bir not oluşturun</string>
+    <string name="taskSelectPrompt">Soldan bir görev seçin veya yeni bir görev oluşturun</string>
+    <string name="calFree2Months">Önümüzdeki 2 ay boş</string>
+    <string name="newMeeting">Yeni toplantı</string>
+    <string name="mailReadingSettings">Liste ve okuma</string>
+    <string name="mailReadingSettingsDesc">Başlangıç klasörü, konuşmalar, önizleme satırları, ileti altındaki düğmeler</string>
+    <string name="mailComposeSettings">Yazma ve gönderme</string>
+    <string name="mailComposeSettingsDesc">Göndermeyi geri al, alıcılar, alıntılardaki kişiler, fotoğraf boyutu</string>
+    <string name="mailFilesSettings">İndirme ve ekler</string>
+    <string name="mailFilesSettingsDesc">İndirme modu, cihazdaki postalar, belge önizleme, eklerde arama</string>
+    <string name="mailTranslateSettingsDesc">Cihazda posta çevirisi</string>
+    <string name="mailSafetySettingsDesc">Sahte gönderenler hakkında uyarılar</string>
+    <string name="generalDesc">Dil, ekran döndürme, Posta widget\'ı</string>
+    <string name="appearanceDescFull">Tema, renkler, yazı tipi ve ölçek, liste yoğunluğu, widget\'lar</string>
 </resources>

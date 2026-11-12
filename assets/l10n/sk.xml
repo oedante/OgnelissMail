@@ -4120,4 +4120,21 @@
     <string name="expMacWebDesc">E-maily so zložitým rozložením sa zobrazia ako v prehliadači, priamo v správe. Skúšobná funkcia pre Mac.</string>
     <string name="graphicsHcppTitle">Nové vkladanie okna správy (HCPP)</string>
     <string name="graphicsHcppDesc">Skúšobný režim pre Android 14 a novší: okno správy a editor sa vkladajú novým spôsobom, posúvanie by malo byť plynulejšie. Ak sa správa zobrazuje nesprávne, vypnite ho.</string>
+    <string name="keysHintNav">Ďalšia a predchádzajúca správa</string>
+    <string name="keysHintPalette">Všetky príkazy</string>
+    <string name="selectedMailsN">Vybrané správy: {n}</string>
+    <string name="noteSelectPrompt">Vyberte poznámku vľavo alebo vytvorte novú</string>
+    <string name="taskSelectPrompt">Vyberte úlohu vľavo alebo vytvorte novú</string>
+    <string name="calFree2Months">Najbližšie 2 mesiace sú voľné</string>
+    <string name="newMeeting">Nová schôdza</string>
+    <string name="mailReadingSettings">Zoznam a čítanie</string>
+    <string name="mailReadingSettingsDesc">Priečinok po spustení, konverzácie, riadky náhľadu, tlačidlá pod správou</string>
+    <string name="mailComposeSettings">Písanie a odosielanie</string>
+    <string name="mailComposeSettingsDesc">Zrušenie odoslania, príjemcovia, ľudia v citáciách, veľkosť fotiek</string>
+    <string name="mailFilesSettings">Sťahovanie a prílohy</string>
+    <string name="mailFilesSettingsDesc">Režim sťahovania, pošta v zariadení, náhľad dokumentov, hľadanie v prílohách</string>
+    <string name="mailTranslateSettingsDesc">Preklad správ v zariadení</string>
+    <string name="mailSafetySettingsDesc">Upozornenia na podvrhnutých odosielateľov</string>
+    <string name="generalDesc">Jazyk, otáčanie obrazovky, widget Pošta</string>
+    <string name="appearanceDescFull">Motív, farby, písmo a mierka, hustota zoznamu, widgety</string>
 </resources>

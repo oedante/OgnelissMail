@@ -255,42 +255,6 @@ class MessengerNotify {
     return await vipBadge(out) ?? out;
   }
 
-  /// Значок ящика в уведомлении (12.11.2026, план 2026-11: «значок ящика
-  /// вместо значка приложения»): фото ящика (data URI) или кружок цвета
-  /// ящика с первой буквой имени. Сохраняется в памяти по ящику, цвету и
-  /// фото — не рисуется на каждое уведомление. 128 точек: запланированные
-  /// напоминания хранятся системой вместе с картинкой.
-  static Future<Uint8List?> mailboxIcon({
-    required String accountId,
-    required String name,
-    required String email,
-    required int color,
-    String? photo,
-  }) async {
-    final key = '$accountId|$color|${photo?.hashCode ?? 0}|$name';
-    final hit = _mailboxIcons[key];
-    if (hit != null) return hit;
-    final p = photoBytes(photo, maxBytes: 200 * 1024);
-    Uint8List? out;
-    if (p != null) out = await circlePhoto(p, size: 128);
-    out ??= await renderInitials(
-        letter: initial(name, email), fill: color | 0xFF000000, letterColor: mailboxLetterColor(color), size: 128);
-    if (out != null) {
-      if (_mailboxIcons.length > 16) _mailboxIcons.clear();
-      _mailboxIcons[key] = out;
-    }
-    return out;
-  }
-
-  static final Map<String, Uint8List> _mailboxIcons = {};
-
-  /// Буква на цвете ящика: белая на тёмном, почти чёрная на светлом.
-  static int mailboxLetterColor(int color) {
-    final r = (color >> 16) & 0xFF, g = (color >> 8) & 0xFF, b = color & 0xFF;
-    final luma = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luma > 0.62 ? 0xFF1F1F1F : 0xFFFFFFFF;
-  }
-
   /// Отметка VIP на портрете (1.10.5, замечание владельца 03.11.2026:
   /// «звёздочка в уведомлении у VIP жирным шрифтом не очень выглядит.
   /// Может как-то по-другому обозначим акцент?»): золотое кольцо вокруг

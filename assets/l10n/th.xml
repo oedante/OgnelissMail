@@ -4078,4 +4078,21 @@
     <string name="expMacWebDesc">อีเมลที่มีเลย์เอาต์ซับซ้อนจะแสดงเหมือนในเบราว์เซอร์ภายในข้อความโดยตรง ฟีเจอร์ทดลองสำหรับ Mac</string>
     <string name="graphicsHcppTitle">การฝังมุมมองข้อความแบบใหม่ (HCPP)</string>
     <string name="graphicsHcppDesc">โหมดทดลองสำหรับ Android 14 ขึ้นไป: มุมมองข้อความและตัวแก้ไขถูกฝังด้วยวิธีใหม่ การเลื่อนควรลื่นไหลขึ้น หากข้อความแสดงผิดปกติ ให้ปิด</string>
+    <string name="keysHintNav">ข้อความถัดไปและก่อนหน้า</string>
+    <string name="keysHintPalette">คำสั่งทั้งหมด</string>
+    <string name="selectedMailsN">เลือกแล้ว {n} ข้อความ</string>
+    <string name="noteSelectPrompt">เลือกโน้ตทางซ้ายหรือสร้างโน้ตใหม่</string>
+    <string name="taskSelectPrompt">เลือกงานทางซ้ายหรือสร้างงานใหม่</string>
+    <string name="calFree2Months">2 เดือนข้างหน้าว่าง</string>
+    <string name="newMeeting">การประชุมใหม่</string>
+    <string name="mailReadingSettings">รายการและการอ่าน</string>
+    <string name="mailReadingSettingsDesc">โฟลเดอร์เริ่มต้น บทสนทนา บรรทัดตัวอย่าง ปุ่มใต้ข้อความ</string>
+    <string name="mailComposeSettings">การเขียนและการส่ง</string>
+    <string name="mailComposeSettingsDesc">เลิกทำการส่ง ผู้รับ บุคคลในข้อความอ้างอิง ขนาดรูปภาพ</string>
+    <string name="mailFilesSettings">การดาวน์โหลดและไฟล์แนบ</string>
+    <string name="mailFilesSettingsDesc">โหมดดาวน์โหลด อีเมลบนอุปกรณ์ ดูตัวอย่างเอกสาร ค้นหาในไฟล์แนบ</string>
+    <string name="mailTranslateSettingsDesc">แปลอีเมลบนอุปกรณ์</string>
+    <string name="mailSafetySettingsDesc">คำเตือนเกี่ยวกับผู้ส่งปลอม</string>
+    <string name="generalDesc">ภาษา การหมุนหน้าจอ วิดเจ็ตอีเมล</string>
+    <string name="appearanceDescFull">ธีม สี แบบอักษรและขนาด ความหนาแน่นของรายการ วิดเจ็ต</string>
 </resources>

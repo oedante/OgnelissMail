@@ -546,15 +546,27 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // Authentication-Results, гриф в MIME и рассылка (EWS даёт заголовки
         // только при открытии письма) записаны выше одной записью; на уже
         // показанное письмо — только если что-то изменилось.
-        if (sameBody && _email != null && (sensChanged || luChanged || authChanged)) {
+        if (sameBody && _email != null && (sensChanged || luChanged || authChanged || attChanged)) {
           final sens = email.sensitivity;
           final lu = email.listUnsubscribe;
           final ar = email.authResults;
-          safeSetState(() => _email = _email!.copyWith(
-                sensitivity: sensChanged ? sens : null,
-                listUnsubscribe: luChanged ? lu : null,
-                authResults: authChanged ? ar : null,
-              ));
+          // Вложения: список с сервера мог стать полнее (12.11.2026: файл
+          // «inline» без Content-ID прежде не попадал в список) — сразу, а
+          // не при следующем открытии.
+          final atts = email.attachments;
+          safeSetState(() {
+            _email = _email!.copyWith(
+              sensitivity: sensChanged ? sens : null,
+              listUnsubscribe: luChanged ? lu : null,
+              authResults: authChanged ? ar : null,
+              attachments: attChanged ? atts : null,
+            );
+            if (attChanged) {
+              for (final att in atts) {
+                _attachmentStates.putIfAbsent(att.id, () => const _AttachmentState());
+              }
+            }
+          });
         }
 
         if (!sameBody) {
@@ -1976,9 +1988,13 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
 
     // Внешние изображения скрыты: «Показать изображения» — сразу; «Всегда от
     // этого домена» и «Что заблокировано» — в меню чипа.
-    final imagesHidden =
-        !_isLoadingBody && !_imagesAllowed && (_externalImagesBlocked > 0 || _blockedItems.isNotEmpty);
     final trackers = _blockedItems.where((i) => i.reason != BlockReason.external).length;
+    // Картинки разрешены, но часть адресов отнесена к службам отслеживания —
+    // чип «Трекеры» остаётся: оттуда сервис можно разблокировать (12.11.2026:
+    // без него было не понять, куда делись картинки и как их вернуть).
+    final services = _blockedItems.any((i) => i.reason == BlockReason.trackerService);
+    final imagesHidden = !_isLoadingBody &&
+        ((!_imagesAllowed && (_externalImagesBlocked > 0 || _blockedItems.isNotEmpty)) || services);
 
     final p7m = settled ? _smimeP7m(email) : null;
     final sig = settled && p7m == null && _smimeP7s(email) != null ? _sigView(email, l10n) : null;
@@ -2034,7 +2050,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           expanded: (_) => UnsubscribeBanner(account: acc, email: email, onDone: () => safeSetState(() {})),
         ),
 
-      if (imagesHidden && _externalImagesBlocked > 0)
+      if (imagesHidden && !_imagesAllowed && _externalImagesBlocked > 0)
         MailNotice(
           id: 'images',
           icon: AppIcons.image_not_supported,
@@ -2872,19 +2888,37 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
               HapticFeedback.selectionClick();
               onTap();
             },
-      constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+      constraints: const BoxConstraints(minWidth: 48, minHeight: 40),
     );
+    // Подпись под значком (оценка интерфейса 12.11.2026: «Позже» и «Ответить
+    // всем» без подписи не узнавались). Длинная — мельче, не обрезается.
+    final labeled = Column(mainAxisSize: MainAxisSize.min, children: [
+      button,
+      ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 64),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(tooltip,
+              maxLines: 1,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontSize: 10,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  )),
+        ),
+      ),
+    ]);
     return Semantics(
       label: tooltip,
       button: true,
+      excludeSemantics: true,
       child: onLongPress == null
-          ? button
+          ? labeled
           : GestureDetector(
               onLongPress: () {
                 HapticFeedback.mediumImpact();
                 onLongPress();
               },
-              child: button,
+              child: labeled,
             ),
     );
   }
@@ -3630,7 +3664,12 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         } catch (_) {}
       }
 
-      final eml = await buildEmlFromEmail(email, attachments: atts);
+      // Тело — исходное, а не подготовленное к показу: в показанном картинки
+      // и счётчики заменены заглушками (12.11.2026: в пересланном .eml
+      // рассылки остались только две картинки из двадцати).
+      final raw = _rawBodyHtml;
+      final source = raw != null && raw.isNotEmpty && email.id == _email?.id ? email.copyWith(bodyHtml: raw) : email;
+      final eml = await buildEmlFromEmail(source, attachments: atts);
       // Отдельная папка: копии писем (с вложениями) не копятся во временных
       // файлах — всё старше суток удаляется при следующей пересылке.
       final tmp = await getTemporaryDirectory();

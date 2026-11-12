@@ -4099,4 +4099,21 @@
     <string name="expMacWebDesc">E-mails met een complexe opmaak worden zoals in een browser getoond, direct in het bericht. Proeffunctie voor Mac.</string>
     <string name="graphicsHcppTitle">Nieuwe inbedding van de berichtweergave (HCPP)</string>
     <string name="graphicsHcppDesc">Proefmodus voor Android 14 en nieuwer: de berichtweergave en de editor worden op een nieuwe manier ingebed, scrollen zou soepeler moeten gaan. Schakel dit uit als een bericht verkeerd wordt weergegeven.</string>
+    <string name="keysHintNav">Volgend en vorig bericht</string>
+    <string name="keysHintPalette">Alle opdrachten</string>
+    <string name="selectedMailsN">{n} berichten geselecteerd</string>
+    <string name="noteSelectPrompt">Kies links een notitie of maak een nieuwe</string>
+    <string name="taskSelectPrompt">Kies links een taak of maak een nieuwe</string>
+    <string name="calFree2Months">De komende 2 maanden zijn vrij</string>
+    <string name="newMeeting">Nieuwe afspraak</string>
+    <string name="mailReadingSettings">Lijst en lezen</string>
+    <string name="mailReadingSettingsDesc">Startmap, gesprekken, voorbeeldregels, knoppen onder het bericht</string>
+    <string name="mailComposeSettings">Schrijven en verzenden</string>
+    <string name="mailComposeSettingsDesc">Verzenden ongedaan maken, ontvangers, personen in citaten, fotoformaat</string>
+    <string name="mailFilesSettings">Downloaden en bijlagen</string>
+    <string name="mailFilesSettingsDesc">Downloadmodus, mail op het apparaat, documentvoorbeeld, zoeken in bijlagen</string>
+    <string name="mailTranslateSettingsDesc">Vertaling van mail op het apparaat</string>
+    <string name="mailSafetySettingsDesc">Waarschuwingen voor vervalste afzenders</string>
+    <string name="generalDesc">Taal, schermrotatie, Mail-widget</string>
+    <string name="appearanceDescFull">Thema, kleuren, lettertype en schaal, lijstdichtheid, widgets</string>
 </resources>

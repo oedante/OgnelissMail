@@ -11,8 +11,10 @@
 (play.google.com/store/apps/details?id=com.ogneliss.mail); iPhone и iPad —
 открытая бета TestFlight (testflight.apple.com/join/tpZkBsSz), обе ссылки —
 на сайте и в README (02.11.2026). Политика конфиденциальности на сайте обновлена (редакция 1.7: сигналы на
-Android через FCM, BIMI, перевод ML Kit) — в архиве сайта, сайт в репозиторий
-не кладётся. Задания агентов — [plan/agent_briefs/](plan/agent_briefs/)
+Android через FCM, BIMI, перевод ML Kit). Исходники сайта (с 12.11.2026,
+просьба владельца) — в закрытом репозитории OgnelissMail-archive, каталог
+`site/` (`build_site.py`, выкладка — `site/DEPLOY.md`); в этот, открытый,
+репозиторий сайт не кладётся. Задания агентов — [plan/agent_briefs/](plan/agent_briefs/)
 (общие правила — `common.md`).
 
 ## После 1.15.0 (07–08.11.2026) — план и что сделано

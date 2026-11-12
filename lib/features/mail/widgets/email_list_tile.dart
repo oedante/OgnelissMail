@@ -25,6 +25,7 @@ import '../../../data/models/email_model.dart';
 import '../../../services/rules/device_rules_service.dart' show highlightTagsProvider;
 import '../../../services/mail/own_addresses.dart';
 import '../../../services/mail/control_service.dart';
+import 'control_sheet.dart' show controlDeadlineLabel;
 import '../../../services/mail/conversation_counter.dart';
 import '../../../services/mail/reply_drafts.dart';
 import '../../../widgets/common/hero_email_transition.dart';
@@ -78,8 +79,12 @@ class EmailListTile extends ConsumerWidget {
   /// Список «Позже»: справа — срок возврата вместо даты получения.
   final bool showLaterTime;
 
+  /// «На контроле»: вместо даты получения — срок («до завтра»).
+  final bool showControlDue;
+
   const EmailListTile({
     this.showLaterTime = false,
+    this.showControlDue = false,
     this.showFolderBadge = false,
     this.showAccountMark = false,
     this.sharedMailboxEmail,
@@ -500,15 +505,34 @@ class EmailListTile extends ConsumerWidget {
                                           ),
                               ),
                               const SizedBox(width: Space.s),
-                              Text(
-                                showLaterTime && email.remindAt != null && email.laterState == 1
-                                    ? DateFormat('HH:mm').format(email.remindAt!.toLocal())
-                                    : _formatTime(context, email.receivedAt),
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                                  fontSize: 12,
-                                ),
-                              ),
+                              Builder(builder: (context) {
+                                // «Позже» — когда вернётся (сегодня — часы,
+                                // иначе день и часы: одно «09:00» читалось как
+                                // «сегодня» и для письма через неделю);
+                                // «На контроле» — срок, просроченный красным
+                                // (обзор 12.11.2026).
+                                final later = showLaterTime && email.remindAt != null && email.laterState == 1;
+                                final due = showControlDue && email.followUpAt != null &&
+                                    ControlState.isActive(email.controlState);
+                                final overdue = due && email.followUpAt!.isBefore(DateTime.now());
+                                final l10n = AppLocalizations.of(context);
+                                final text = later
+                                    ? laterTimeLabel(email.remindAt!.toLocal(), l10n)
+                                    : due
+                                        ? l10n.tr('controlUntil').replaceAll(
+                                            '{when}', controlDeadlineLabel(email.followUpAt!.toLocal(), l10n))
+                                        : _formatTime(context, email.receivedAt);
+                                return Text(
+                                  text,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: overdue
+                                        ? AppColors.errorText(context)
+                                        : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                    fontWeight: overdue ? FontWeight.w600 : null,
+                                    fontSize: 12,
+                                  ),
+                                );
+                              }),
                             ],
                           ),
                           SizedBox(height: dens.lineGap),
@@ -756,4 +780,17 @@ class _HoverCheckState extends State<_HoverCheck> {
           : widget.child,
     );
   }
+}
+
+/// Когда письмо из «Позже» вернётся: сегодня — «14:00», завтра — «завтра
+/// 9:00», дальше — «пт 9:00» или «21 нояб. 9:00».
+String laterTimeLabel(DateTime d, AppLocalizations l10n) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final diff = DateTime(d.year, d.month, d.day).difference(today).inDays;
+  final hm = DateFormat('HH:mm').format(d);
+  if (diff <= 0) return hm;
+  if (diff == 1) return '${l10n.tr('tomorrow').toLowerCase()} $hm';
+  if (diff < 7) return '${DateFormat('EEE', l10n.localeCode).format(d)} $hm';
+  return '${DateFormat('d MMM', l10n.localeCode).format(d)} $hm';
 }

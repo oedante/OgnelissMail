@@ -4099,4 +4099,21 @@
     <string name="expMacWebDesc">Los correos con diseño complejo se muestran como en un navegador, dentro del propio mensaje. Función de prueba para Mac.</string>
     <string name="graphicsHcppTitle">Nueva incrustación de la vista del mensaje (HCPP)</string>
     <string name="graphicsHcppDesc">Modo de prueba para Android 14 y posteriores: la vista del mensaje y el editor se incrustan de otra forma, y el desplazamiento debería ser más fluido. Si un mensaje se ve mal, desactívalo.</string>
+    <string name="keysHintNav">Mensaje siguiente y anterior</string>
+    <string name="keysHintPalette">Todos los comandos</string>
+    <string name="selectedMailsN">{n} mensajes seleccionados</string>
+    <string name="noteSelectPrompt">Seleccione una nota a la izquierda o cree una nueva</string>
+    <string name="taskSelectPrompt">Seleccione una tarea a la izquierda o cree una nueva</string>
+    <string name="calFree2Months">Los próximos 2 meses están libres</string>
+    <string name="newMeeting">Nueva reunión</string>
+    <string name="mailReadingSettings">Lista y lectura</string>
+    <string name="mailReadingSettingsDesc">Carpeta de inicio, conversaciones, líneas de vista previa, botones bajo el mensaje</string>
+    <string name="mailComposeSettings">Redacción y envío</string>
+    <string name="mailComposeSettingsDesc">Deshacer envío, destinatarios, personas en citas, tamaño de foto</string>
+    <string name="mailFilesSettings">Descarga y adjuntos</string>
+    <string name="mailFilesSettingsDesc">Modo de descarga, correo en el dispositivo, vista de documentos, búsqueda en adjuntos</string>
+    <string name="mailTranslateSettingsDesc">Traducción de correos en el dispositivo</string>
+    <string name="mailSafetySettingsDesc">Avisos sobre remitentes falsificados</string>
+    <string name="generalDesc">Idioma, rotación de pantalla, widget de correo</string>
+    <string name="appearanceDescFull">Tema, colores, fuente y escala, densidad de la lista, widgets</string>
 </resources>

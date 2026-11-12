@@ -1,6 +1,11 @@
 // lib/features/settings/screens/mail_settings_screen.dart
-// Настройки почты: режим загрузки писем (ленивая/полная/полная с вложениями),
-// группировка в беседы, действия свайпов.
+// Настройки почты. С 12.11.2026 (замечание владельца: «раздел "Настройки
+// почты" слишком крупный») — пятью экранами, один класс с [MailSettingsPart]:
+//   · «Лента и письма» — /settings/mail;
+//   · «Написание и отправка» — /settings/mail/compose;
+//   · «Загрузка и вложения» — /settings/mail/files;
+//   · «Перевод» — /settings/mail/translate;
+//   · «Антифишинг» — /settings/mail/safety (в «Конфиденциальности»).
 
 import 'dart:async';
 
@@ -32,8 +37,20 @@ import '../../mail/widgets/mail_html_view.dart' show MailHtmlView;
 import '../../compose/widgets/image_size_sheet.dart' show photoSizeLabel;
 import '../../../services/security/bimi/bimi_service.dart' show BimiResolver;
 
+/// Какой экран настроек почты показать.
+enum MailSettingsPart { reading, compose, files, translate, safety }
+
 class MailSettingsScreen extends ConsumerWidget {
-  const MailSettingsScreen({super.key});
+  final MailSettingsPart part;
+  const MailSettingsScreen({super.key, this.part = MailSettingsPart.reading});
+
+  static String titleKey(MailSettingsPart p) => switch (p) {
+        MailSettingsPart.reading => 'mailReadingSettings',
+        MailSettingsPart.compose => 'mailComposeSettings',
+        MailSettingsPart.files => 'mailFilesSettings',
+        MailSettingsPart.translate => 'translateSection',
+        MailSettingsPart.safety => 'antiPhishing',
+      };
 
   String _fetchModeLabel(EmailFetchMode m, AppLocalizations l10n) {
     switch (m) {
@@ -138,10 +155,11 @@ class MailSettingsScreen extends ConsumerWidget {
         );
 
     return Scaffold(
-      appBar: TextScaleCapBar(child: AppBar(title: Text(l10n.tr('emailSettings')), actions: const [FaqButton(section: 'mail')])),
+      appBar: TextScaleCapBar(child: AppBar(title: Text(l10n.tr(titleKey(part))), actions: const [FaqButton(section: 'mail')])),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xl),
         children: [
+          if (part == MailSettingsPart.reading) ...[
           SettingsSectionTitle(l10n.tr('mailListSection')),
           SettingsGroup(children: [
             SettingsItem(
@@ -238,11 +256,13 @@ class MailSettingsScreen extends ConsumerWidget {
               onChanged: (v) => notifier.setMailDates(v),
             ),
           ]),
+          ],
           // Бывшие «Возможности» (1.6.1): работа с письмами и их открытие.
-          const MailWorkSection(),
-          const MailOpeningSection(),
+          if (part == MailSettingsPart.compose) const MailWorkSection(),
+          if (part == MailSettingsPart.reading) const MailOpeningSection(),
           // «Отправка» и «Антифишинг» — здесь, в почте (раньше лежали в
           // «Возможностях» среди разделов приложения).
+          if (part == MailSettingsPart.compose) ...[
           SettingsSectionTitle(l10n.tr('sending')),
           SettingsGroup(children: [
             SettingsItem(
@@ -295,6 +315,8 @@ class MailSettingsScreen extends ConsumerWidget {
               onTap: () => unawaited(_pickPhotoSize(context, ref, l10n)),
             ),
           ]),
+          ],
+          if (part == MailSettingsPart.safety) ...[
           SettingsSectionTitle(l10n.tr('antiPhishing')),
           SettingsGroup(children: [
             AppRadioTile<AntiPhishingLevel>(
@@ -332,6 +354,8 @@ class MailSettingsScreen extends ConsumerWidget {
               ),
             ]),
           ],
+          ],
+          if (part == MailSettingsPart.files) ...[
           // Просмотр документов во вложениях (1.11.x, просьба владельца
           // 04.11.2026): выключатель и виды документов.
           const DocPreviewSettingsSection(),
@@ -412,8 +436,9 @@ class MailSettingsScreen extends ConsumerWidget {
           // картинки — за выбранные дни (кроме «только заголовки»).
           if (settings.emailFetchMode != EmailFetchMode.headersOnly)
             const OfflineStoreSection(),
+          ],
           // Перевод писем на устройстве (1.9.x): только Android и iPhone/iPad.
-          const TranslationSettingsSection(),
+          if (part == MailSettingsPart.translate) const TranslationSettingsSection(),
         ],
       ),
     );

@@ -4183,4 +4183,21 @@
     <string name="expMacWebDesc">تُعرض الرسائل ذات التنسيق المعقد كما في المتصفح، داخل الرسالة مباشرة. ميزة تجريبية لنظام Mac.</string>
     <string name="graphicsHcppTitle">تضمين جديد لعرض الرسالة (HCPP)</string>
     <string name="graphicsHcppDesc">وضع تجريبي لنظام Android 14 والأحدث: يُضمَّن عرض الرسالة والمحرر بطريقة جديدة، ويُفترض أن يصبح التمرير أكثر سلاسة. إذا ظهرت رسالة بشكل غير صحيح فأوقفه.</string>
+    <string name="keysHintNav">الرسالة التالية والسابقة</string>
+    <string name="keysHintPalette">كل الأوامر</string>
+    <string name="selectedMailsN">تم تحديد {n} رسائل</string>
+    <string name="noteSelectPrompt">اختر ملاحظة من اليسار أو أنشئ ملاحظة جديدة</string>
+    <string name="taskSelectPrompt">اختر مهمة من اليسار أو أنشئ مهمة جديدة</string>
+    <string name="calFree2Months">الشهران القادمان متاحان</string>
+    <string name="newMeeting">اجتماع جديد</string>
+    <string name="mailReadingSettings">القائمة والقراءة</string>
+    <string name="mailReadingSettingsDesc">مجلد البدء والمحادثات وأسطر المعاينة وأزرار أسفل الرسالة</string>
+    <string name="mailComposeSettings">الكتابة والإرسال</string>
+    <string name="mailComposeSettingsDesc">التراجع عن الإرسال والمستلمون والأشخاص في الاقتباسات وحجم الصور</string>
+    <string name="mailFilesSettings">التنزيل والمرفقات</string>
+    <string name="mailFilesSettingsDesc">وضع التنزيل والبريد على الجهاز ومعاينة المستندات والبحث في المرفقات</string>
+    <string name="mailTranslateSettingsDesc">ترجمة البريد على الجهاز</string>
+    <string name="mailSafetySettingsDesc">تحذيرات من المرسلين المزيفين</string>
+    <string name="generalDesc">اللغة وتدوير الشاشة وأداة البريد</string>
+    <string name="appearanceDescFull">السمة والألوان والخط والحجم وكثافة القائمة والأدوات</string>
 </resources>

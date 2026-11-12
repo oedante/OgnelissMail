@@ -26,6 +26,20 @@ void main() {
     expect(r.items.single.host, 'u123.ct.sendgrid.net');
   });
 
+  test('картинки служб рассылок — обычные, счётчик — трекер (еАптека через Mindbox, 12.11.2026)', () {
+    const html = '<img src="https://static.mindbox.ru/eapteka/logo.png" alt="еАптека">'
+        '<img src="https://static.mindbox.ru/eapteka/banner" width="600" height="300">'
+        '<img src="https://img.mindbox.ru/star.svg">'
+        '<img src="https://tn.mindbox.ru/o/abc123">'
+        '<img src="https://u1.sendgrid.net/x9f">';
+    final r = TrackerBlockerNotifier.block(html, keepImages);
+    expect(r.html, contains('logo.png'));
+    expect(r.html, contains('/eapteka/banner'));
+    expect(r.html, contains('star.svg'));
+    expect(r.items.map((i) => i.host), ['tn.mindbox.ru', 'u1.sendgrid.net']);
+    expect(r.items.every((i) => i.reason == BlockReason.trackerService), isTrue);
+  });
+
   test('слова open/track/analytics в ПУТИ — не трекер (раньше блокировалось)', () {
     const html = '<img src="https://cdn.company.ru/img/open-door.png">'
         '<img src="https://corp.ru/analytics/chart.png" width="600" height="300">';

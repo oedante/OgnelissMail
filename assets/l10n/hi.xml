@@ -4099,4 +4099,21 @@
     <string name="expMacWebDesc">जटिल लेआउट वाले ईमेल सीधे संदेश में ब्राउज़र की तरह दिखाए जाते हैं। Mac के लिए परीक्षण सुविधा।</string>
     <string name="graphicsHcppTitle">संदेश दृश्य की नई एम्बेडिंग (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 और नए संस्करणों के लिए परीक्षण मोड: संदेश दृश्य और संपादक नए तरीके से एम्बेड होते हैं, स्क्रॉलिंग अधिक सहज होनी चाहिए। यदि कोई संदेश गलत दिखे, तो इसे बंद कर दें।</string>
+    <string name="keysHintNav">अगला और पिछला संदेश</string>
+    <string name="keysHintPalette">सभी कमांड</string>
+    <string name="selectedMailsN">{n} संदेश चुने गए</string>
+    <string name="noteSelectPrompt">बाईं ओर से नोट चुनें या नया बनाएँ</string>
+    <string name="taskSelectPrompt">बाईं ओर से कार्य चुनें या नया बनाएँ</string>
+    <string name="calFree2Months">अगले 2 महीने खाली हैं</string>
+    <string name="newMeeting">नई मीटिंग</string>
+    <string name="mailReadingSettings">सूची और पढ़ना</string>
+    <string name="mailReadingSettingsDesc">शुरुआती फ़ोल्डर, बातचीत, पूर्वावलोकन पंक्तियाँ, संदेश के नीचे बटन</string>
+    <string name="mailComposeSettings">लिखना और भेजना</string>
+    <string name="mailComposeSettingsDesc">भेजना पूर्ववत करें, प्राप्तकर्ता, उद्धरणों में लोग, फ़ोटो आकार</string>
+    <string name="mailFilesSettings">डाउनलोड और अनुलग्नक</string>
+    <string name="mailFilesSettingsDesc">डाउनलोड मोड, डिवाइस पर मेल, दस्तावेज़ पूर्वावलोकन, अनुलग्नकों में खोज</string>
+    <string name="mailTranslateSettingsDesc">डिवाइस पर मेल अनुवाद</string>
+    <string name="mailSafetySettingsDesc">नकली प्रेषकों के बारे में चेतावनी</string>
+    <string name="generalDesc">भाषा, स्क्रीन रोटेशन, मेल विजेट</string>
+    <string name="appearanceDescFull">थीम, रंग, फ़ॉन्ट और स्केल, सूची घनत्व, विजेट</string>
 </resources>

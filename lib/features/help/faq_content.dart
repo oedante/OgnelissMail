@@ -49,20 +49,20 @@ const faqSections = <FaqSection>[
     // с 1.11.x — документы Office, OpenDocument, RTF и CSV.
     FaqItem('mail_10'),
     // Как выключить просмотр документов целиком или по видам (1.11.x).
-    FaqItem('mail_11', route: '/settings/mail'),
+    FaqItem('mail_11', route: '/settings/mail/files'),
     // 1.14.0: поиск по тексту вложений, сведения о письме значками,
     // планшет и компьютер как Outlook, «всегда переводить с языка».
-    FaqItem('mail_12', route: '/settings/mail'),
+    FaqItem('mail_12', route: '/settings/mail/files'),
     FaqItem('mail_13'),
     FaqItem('mail_14', route: '/settings/appearance'),
-    FaqItem('mail_15', route: '/settings/mail'),
+    FaqItem('mail_15', route: '/settings/mail/translate'),
   ]),
   FaqSection(id: 'drafts', icon: AppIcons.drafts, items: [
     FaqItem('drafts_1'),
     FaqItem('drafts_2'),
     FaqItem('drafts_3'),
     FaqItem('drafts_4'),
-    FaqItem('drafts_5', route: '/settings/mail'),
+    FaqItem('drafts_5', route: '/settings/mail/compose'),
     FaqItem('drafts_6', route: '/settings/mail'),
     FaqItem('drafts_7'),
     FaqItem('drafts_8'),

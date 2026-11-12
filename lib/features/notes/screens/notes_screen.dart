@@ -26,6 +26,7 @@ import '../../../widgets/common/quick_long_press.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/adaptive_layout.dart' show Breakpoints;
 import 'note_edit_screen.dart';
+import '../../../widgets/common/section_search_button.dart';
 import '../../../core/theme/ogneliss_look.dart';
 import '../../../core/platform/app_share.dart';
 
@@ -65,28 +66,30 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
       appBar: TextScaleCapBar(child: AppBar(
         title: Text(l10n.tr('notes')),
         actions: [
-          IconButton(
-            icon: const Icon(AppIcons.search),
-            tooltip: l10n.search,
-            onPressed: () => _showSearch(context, l10n),
-          ),
+          SectionSearchButton(onTap: () => _showSearch(context, l10n)),
         ],
       )),
       body: LayoutBuilder(builder: (context, c) {
         _bodyWidth = c.maxWidth;
-        final list = _listBody(notesAsync, theme, l10n);
+        final wide = c.maxWidth >= Breakpoints.tablet;
+        // Широкое окно (просьба владельца 12.11.2026): сразу две колонки, как
+        // в «Контактах», — слева заметки карточками (как в Google Keep),
+        // справа открытая заметка или приглашение выбрать.
+        final list = _listBody(notesAsync, theme, l10n, grid: wide);
+        if (!wide) return list;
         final pane = _pane;
-        if (pane == null || c.maxWidth < Breakpoints.tablet) return list;
         return Row(children: [
           Expanded(child: list),
           VerticalDivider(width: 1, thickness: 1, color: theme.dividerColor),
           SizedBox(
-            width: (c.maxWidth * 0.5).clamp(360.0, 640.0),
-            child: NoteEditScreen(
-              key: ValueKey('note_pane_${pane.gen}'),
-              noteId: pane.id,
-              onDone: () => setState(() => _pane = null),
-            ),
+            width: (c.maxWidth * 0.45).clamp(360.0, 640.0),
+            child: pane == null
+                ? _panePlaceholder(theme, l10n)
+                : NoteEditScreen(
+                    key: ValueKey('note_pane_${pane.gen}'),
+                    noteId: pane.id,
+                    onDone: () => setState(() => _pane = null),
+                  ),
           ),
         ]);
       }),
@@ -101,7 +104,106 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     );
   }
 
-  Widget _listBody(AsyncValue<List<Note>> notesAsync, ThemeData theme, AppLocalizations l10n) {
+  Widget _panePlaceholder(ThemeData theme, AppLocalizations l10n) {
+    final muted = theme.colorScheme.onSurfaceVariant;
+    return ColoredBox(
+      color: theme.scaffoldBackgroundColor,
+      child: Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Icon(AppIcons.sticky_note_2, size: 48, color: muted.withValues(alpha: 0.5)),
+          const SizedBox(height: Space.m),
+          Text(l10n.tr('noteSelectPrompt'),
+              textAlign: TextAlign.center, style: theme.textTheme.bodyMedium?.copyWith(color: muted)),
+          const SizedBox(height: Space.l),
+          FilledButton.tonalIcon(
+            onPressed: () => _open(null),
+            icon: const Icon(AppIcons.add),
+            label: Text(l10n.tr('newNote')),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  /// Заметки карточками в несколько колонок разной высоты (как в Google
+  /// Keep): карточка — в самую короткую колонку, по примерной высоте текста.
+  Widget _grid(List<Note> notes, ThemeData theme, AppLocalizations l10n) {
+    return LayoutBuilder(builder: (context, c) {
+      const gap = Space.m;
+      final n = ((c.maxWidth - gap) / (220 + gap)).floor().clamp(1, 6);
+      final cols = List.generate(n, (_) => <Widget>[]);
+      final heights = List.filled(n, 0.0);
+      for (final note in notes) {
+        var i = 0;
+        for (var k = 1; k < n; k++) {
+          if (heights[k] < heights[i]) i = k;
+        }
+        final body = note.body.trim();
+        heights[i] += 80 + (body.length.clamp(0, 400) / 3) + gap;
+        cols[i].add(Padding(
+          padding: const EdgeInsets.only(bottom: gap),
+          child: _noteCard(note, theme, l10n),
+        ));
+      }
+      return SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(gap, gap, gap, 88),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          for (var i = 0; i < n; i++) ...[
+            if (i > 0) const SizedBox(width: gap),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: cols[i])),
+          ],
+        ]),
+      );
+    });
+  }
+
+  Widget _noteCard(Note note, ThemeData theme, AppLocalizations l10n) {
+    final scheme = theme.colorScheme;
+    final titleText = note.title.trim();
+    final body = note.body.trim();
+    final selected = _pane != null && _pane!.id == note.id;
+    final tint = note.colorValue != null ? Color(note.colorValue!) : null;
+    final fill = tint != null
+        ? Color.alphaBlend(tint.withValues(alpha: theme.brightness == Brightness.dark ? 0.28 : 0.18), scheme.surface)
+        : scheme.surfaceContainerLow;
+    final modified = DateFormat('d MMM, HH:mm', l10n.localeCode).format(note.modifiedAt.toLocal());
+    final title = titleText.isNotEmpty ? titleText : (body.isEmpty ? l10n.tr('untitled') : '');
+    return Builder(builder: (tileCtx) => QuickLongPress(
+      onLongPress: () => _peek(tileCtx, note, title.isNotEmpty ? title : body.split('\n').first, l10n),
+      pressEffect: true,
+      child: Material(
+        color: fill,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Radii.card),
+          side: BorderSide(
+            color: selected ? scheme.primary : scheme.outlineVariant,
+            width: selected ? 2 : 1,
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => _open(note.id),
+          child: Padding(
+            padding: const EdgeInsets.all(Space.m),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              if (title.isNotEmpty)
+                Text(title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+              if (title.isNotEmpty && body.isNotEmpty) const SizedBox(height: Space.xs),
+              if (body.isNotEmpty)
+                Text(body, maxLines: 10, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodyMedium),
+              const SizedBox(height: Space.s),
+              Text(modified, style: theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant)),
+            ]),
+          ),
+        ),
+      ),
+    ));
+  }
+
+  Widget _listBody(AsyncValue<List<Note>> notesAsync, ThemeData theme, AppLocalizations l10n, {bool grid = false}) {
     return notesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('${l10n.tr('error')}: $e')),
@@ -115,6 +217,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           if (filtered.isEmpty) {
             return _buildEmptyState(theme, l10n);
           }
+          if (grid) return _grid(filtered, theme, l10n);
 
           // По времени правки — разделами-полосами, как в боковом меню
           // (10.10.2026): «Сегодня», «На этой неделе», «Раньше».

@@ -382,10 +382,15 @@ class _PaneSplitterState extends State<PaneSplitter> {
         onVerticalDragUpdate: across ? null : (d) => widget.onDrag(d.delta.dy),
         onVerticalDragEnd: across ? null : end,
         onDoubleTap: widget.onReset,
-        child: SizedBox(
-          width: across ? 9 : null,
-          height: across ? null : 9,
-          child: Center(child: line),
+        // Фон полосы — фон окна: без него под разделителем просвечивало то,
+        // что ниже (на снимках — чёрная полоса, оценка интерфейса 12.11.2026).
+        child: ColoredBox(
+          color: theme.scaffoldBackgroundColor,
+          child: SizedBox(
+            width: across ? 9 : null,
+            height: across ? null : 9,
+            child: Center(child: line),
+          ),
         ),
       ),
     );

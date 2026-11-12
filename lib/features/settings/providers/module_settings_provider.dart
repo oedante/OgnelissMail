@@ -21,6 +21,8 @@ enum TaskDefaultView { all, today, upcoming }
 class ModuleSettings {
   // Calendar
   final CalendarDefaultView calendarView;
+  /// Вид календаря выбран пользователем (иначе на широком экране — неделя).
+  final bool calendarViewChosen;
   final int weekStartDay; // 1 = Пн, 7 = Вс
   final bool showWeekNumbers;
   final int defaultReminderMinutes;
@@ -49,6 +51,7 @@ class ModuleSettings {
 
   const ModuleSettings({
     this.calendarView = CalendarDefaultView.month,
+    this.calendarViewChosen = false,
     this.weekStartDay = 1,
     this.showWeekNumbers = false,
     this.defaultReminderMinutes = 15,
@@ -96,6 +99,7 @@ class ModuleSettingsNotifier extends StateNotifier<ModuleSettings> {
       calendarView: CalendarDefaultView.values[
           (p.getInt(_MK.calendarView) ?? CalendarDefaultView.agenda.index)
               .clamp(0, CalendarDefaultView.values.length - 1)],
+      calendarViewChosen: p.containsKey(_MK.calendarView),
       weekStartDay: p.getInt(_MK.weekStartDay) ?? 1,
       showWeekNumbers: p.getBool(_MK.showWeekNumbers) ?? false,
       defaultReminderMinutes: p.getInt(_MK.defaultReminder) ?? 15,

@@ -4120,4 +4120,21 @@
     <string name="expMacWebDesc">הודעות עם עיצוב מורכב מוצגות כמו בדפדפן, ישירות בתוך ההודעה. תכונה ניסיונית ל-Mac.</string>
     <string name="graphicsHcppTitle">הטמעה חדשה של תצוגת ההודעה (HCPP)</string>
     <string name="graphicsHcppDesc">מצב ניסיוני ל-Android 14 ומעלה: תצוגת ההודעה והעורך מוטמעים בדרך חדשה, והגלילה אמורה להיות חלקה יותר. אם הודעה מוצגת באופן שגוי, כבו אותו.</string>
+    <string name="keysHintNav">ההודעה הבאה והקודמת</string>
+    <string name="keysHintPalette">כל הפקודות</string>
+    <string name="selectedMailsN">נבחרו {n} הודעות</string>
+    <string name="noteSelectPrompt">בחרו פתק משמאל או צרו פתק חדש</string>
+    <string name="taskSelectPrompt">בחרו משימה משמאל או צרו משימה חדשה</string>
+    <string name="calFree2Months">החודשיים הקרובים פנויים</string>
+    <string name="newMeeting">פגישה חדשה</string>
+    <string name="mailReadingSettings">רשימה וקריאה</string>
+    <string name="mailReadingSettingsDesc">תיקייה בהפעלה, שיחות, שורות תצוגה מקדימה, כפתורים מתחת להודעה</string>
+    <string name="mailComposeSettings">כתיבה ושליחה</string>
+    <string name="mailComposeSettingsDesc">ביטול שליחה, נמענים, אנשים בציטוטים, גודל תמונה</string>
+    <string name="mailFilesSettings">הורדה וקבצים מצורפים</string>
+    <string name="mailFilesSettingsDesc">מצב הורדה, דואר במכשיר, תצוגת מסמכים, חיפוש בקבצים מצורפים</string>
+    <string name="mailTranslateSettingsDesc">תרגום דואר במכשיר</string>
+    <string name="mailSafetySettingsDesc">אזהרות על שולחים מזויפים</string>
+    <string name="generalDesc">שפה, סיבוב מסך, וידג\'ט דואר</string>
+    <string name="appearanceDescFull">ערכת נושא, צבעים, גופן וקנה מידה, צפיפות רשימה, וידג\'טים</string>
 </resources>

@@ -345,6 +345,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // «Оформление» (1.9.x): тема, цвета, скругление, плотность ленты.
       GoRoute(path: '/settings/appearance', name: 'appearance', pageBuilder: (_, st) => settingsRoutePage(st, const AppearanceScreen())),
       GoRoute(path: '/settings/mail', name: 'mail-settings', pageBuilder: (_, st) => settingsRoutePage(st, const MailSettingsScreen())),
+      // Настройки почты частями (12.11.2026).
+      GoRoute(path: '/settings/mail/compose', name: 'mail-settings-compose', pageBuilder: (_, st) => settingsRoutePage(st, const MailSettingsScreen(part: MailSettingsPart.compose))),
+      GoRoute(path: '/settings/mail/files', name: 'mail-settings-files', pageBuilder: (_, st) => settingsRoutePage(st, const MailSettingsScreen(part: MailSettingsPart.files))),
+      GoRoute(path: '/settings/mail/translate', name: 'mail-settings-translate', pageBuilder: (_, st) => settingsRoutePage(st, const MailSettingsScreen(part: MailSettingsPart.translate))),
+      GoRoute(path: '/settings/mail/safety', name: 'mail-settings-safety', pageBuilder: (_, st) => settingsRoutePage(st, const MailSettingsScreen(part: MailSettingsPart.safety))),
       GoRoute(path: '/settings/calendar', name: 'calendar-settings', pageBuilder: (_, st) => settingsRoutePage(st, const CalendarSettingsScreen())),
       GoRoute(path: '/settings/contacts', name: 'contacts-settings', pageBuilder: (_, st) => settingsRoutePage(st, const ContactsSettingsScreen())),
       GoRoute(path: '/settings/tasks', name: 'tasks-settings', pageBuilder: (_, st) => settingsRoutePage(st, const TasksSettingsScreen())),

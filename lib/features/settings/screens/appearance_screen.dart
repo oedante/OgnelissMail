@@ -10,6 +10,7 @@
 // Выбор темы (светлая/тёмная/AMOLED/«Чтение») и «Цвета от обоев» раньше
 // были в «Общих» — теперь здесь, в «Общих» осталась строка-ссылка.
 
+import '../widgets/look_sections.dart';
 import 'dart:io' show Platform;
 import 'dart:math' as math;
 
@@ -168,6 +169,9 @@ class AppearanceScreen extends ConsumerWidget {
             ],
           ),
 
+          // Тёплый фон страницы (из «Общих», 12.11.2026).
+          const WarmPageSection(),
+
           // ── Скругление углов ──
           SettingsSectionTitle(l10n.tr('apCorners')),
           SettingsGroup(
@@ -220,6 +224,11 @@ class AppearanceScreen extends ConsumerWidget {
               ],
             ),
           ],
+          // Из «Общих» (12.11.2026): шрифт и масштаб, панели телефона, вид
+          // виджетов.
+          const TextLookSections(),
+          const PhoneLayoutSections(),
+          const WidgetLookSections(),
         ],
       ),
     );

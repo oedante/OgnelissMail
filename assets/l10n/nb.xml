@@ -4099,4 +4099,21 @@
     <string name="expMacWebDesc">E-poster med kompleks layout vises som i en nettleser, rett i meldingen. Prøvefunksjon for Mac.</string>
     <string name="graphicsHcppTitle">Ny innbygging av meldingsvisningen (HCPP)</string>
     <string name="graphicsHcppDesc">Prøvemodus for Android 14 og nyere: meldingsvisningen og redigeringen bygges inn på en ny måte, og rullingen bør bli jevnere. Slå den av hvis en melding vises feil.</string>
+    <string name="keysHintNav">Neste og forrige melding</string>
+    <string name="keysHintPalette">Alle kommandoer</string>
+    <string name="selectedMailsN">{n} meldinger valgt</string>
+    <string name="noteSelectPrompt">Velg et notat til venstre eller lag et nytt</string>
+    <string name="taskSelectPrompt">Velg en oppgave til venstre eller lag en ny</string>
+    <string name="calFree2Months">De neste 2 månedene er ledige</string>
+    <string name="newMeeting">Nytt møte</string>
+    <string name="mailReadingSettings">Liste og lesing</string>
+    <string name="mailReadingSettingsDesc">Startmappe, samtaler, forhåndsvisningslinjer, knapper under meldingen</string>
+    <string name="mailComposeSettings">Skriving og sending</string>
+    <string name="mailComposeSettingsDesc">Angre sending, mottakere, personer i sitater, bildestørrelse</string>
+    <string name="mailFilesSettings">Nedlasting og vedlegg</string>
+    <string name="mailFilesSettingsDesc">Nedlastingsmodus, e-post på enheten, dokumentvisning, søk i vedlegg</string>
+    <string name="mailTranslateSettingsDesc">Oversettelse av e-post på enheten</string>
+    <string name="mailSafetySettingsDesc">Advarsler om forfalskede avsendere</string>
+    <string name="generalDesc">Språk, skjermrotasjon, E-post-widget</string>
+    <string name="appearanceDescFull">Tema, farger, skrift og skalering, listetetthet, widgeter</string>
 </resources>

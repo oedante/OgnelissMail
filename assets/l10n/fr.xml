@@ -4099,4 +4099,21 @@
     <string name="expMacWebDesc">Les e-mails à la mise en page complexe s\'affichent comme dans un navigateur, directement dans le message. Fonction à l\'essai pour Mac.</string>
     <string name="graphicsHcppTitle">Nouvelle intégration de la vue du message (HCPP)</string>
     <string name="graphicsHcppDesc">Mode à l\'essai pour Android 14 et versions ultérieures : la vue du message et l\'éditeur sont intégrés autrement, le défilement devrait être plus fluide. Si un message s\'affiche mal, désactivez-le.</string>
+    <string name="keysHintNav">Message suivant et précédent</string>
+    <string name="keysHintPalette">Toutes les commandes</string>
+    <string name="selectedMailsN">{n} messages sélectionnés</string>
+    <string name="noteSelectPrompt">Sélectionnez une note à gauche ou créez-en une</string>
+    <string name="taskSelectPrompt">Sélectionnez une tâche à gauche ou créez-en une</string>
+    <string name="calFree2Months">Les 2 prochains mois sont libres</string>
+    <string name="newMeeting">Nouvelle réunion</string>
+    <string name="mailReadingSettings">Liste et lecture</string>
+    <string name="mailReadingSettingsDesc">Dossier au démarrage, conversations, lignes d\'aperçu, boutons sous le message</string>
+    <string name="mailComposeSettings">Rédaction et envoi</string>
+    <string name="mailComposeSettingsDesc">Annuler l\'envoi, destinataires, personnes citées, taille des photos</string>
+    <string name="mailFilesSettings">Téléchargement et pièces jointes</string>
+    <string name="mailFilesSettingsDesc">Mode de téléchargement, messages sur l\'appareil, aperçu des documents, recherche dans les pièces jointes</string>
+    <string name="mailTranslateSettingsDesc">Traduction des messages sur l\'appareil</string>
+    <string name="mailSafetySettingsDesc">Alertes sur les expéditeurs usurpés</string>
+    <string name="generalDesc">Langue, rotation de l\'écran, widget Mail</string>
+    <string name="appearanceDescFull">Thème, couleurs, police et échelle, densité de la liste, widgets</string>
 </resources>

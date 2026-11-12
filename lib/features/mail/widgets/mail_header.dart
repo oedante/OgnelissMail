@@ -363,8 +363,18 @@ class _MailRecipientsPanelState extends State<MailRecipientsPanel> {
           Expanded(
             child: Text.rich(
               TextSpan(children: [
+                // «Кому:» и «вам» вместо своего имени (оценка интерфейса
+                // 12.11.2026: строка получателя выглядела вторым
+                // отправителем).
                 TextSpan(
-                    text: main.isEmpty ? '' : _short(main.first),
+                    text: '${l10n.tr(e.to.isNotEmpty ? 'to' : 'cc')}: ',
+                    style: TextStyle(color: AppColors.mutedText(context))),
+                TextSpan(
+                    text: main.isEmpty
+                        ? ''
+                        : (widget.isMine?.call(main.first.email) ?? false)
+                            ? l10n.tr('toYou')
+                            : _short(main.first),
                     style: const TextStyle(fontWeight: FontWeight.w600)),
                 if (rest > 0)
                   TextSpan(

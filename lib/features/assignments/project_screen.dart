@@ -22,7 +22,11 @@ import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
 import '../../services/assignments/assignment_store.dart'
     show PlanStage, mergePlan, projectProgress, shiftSuccessors, AssignmentTree;
+import '../../services/assignments/assignment_stats.dart';
+import '../mail/providers/mail_providers.dart' show accountsProvider;
+import 'assignment_charts.dart';
 import 'assignment_screen.dart' show FilesSection;
+import 'assignments_summary_screen.dart' show sendAssignmentReport;
 import 'assignment_widgets.dart';
 import 'gantt_chart.dart';
 import 'project_editor.dart';
@@ -81,10 +85,13 @@ class ProjectScreen extends ConsumerWidget {
         Text(
           [
             if (!project.outgoing) '${l10n.tr('projRoleOwner')}: ${project.otherName}',
+            // Ящик проекта — когда ящиков несколько.
+            if (ref.watch(accountsProvider).length > 1)
+              ref.watch(accountsProvider).where((a) => a.id == project.row.accountId).firstOrNull?.email ?? '',
             if (dates.isNotEmpty) dates,
             if (stages.isNotEmpty)
               l10n.tr('projStagesCount').replaceAll('{done}', '$doneN').replaceAll('{total}', '${stages.length}'),
-          ].join(' · '),
+          ].where((x) => x.isNotEmpty).join(' · '),
           style: theme.textTheme.bodySmall?.copyWith(color: muted),
         ),
         if (stages.isNotEmpty) ...[
@@ -176,6 +183,100 @@ class ProjectScreen extends ConsumerWidget {
       ),
     ]);
 
+    // Сводка проекта: показатели, статусы этапов, исполнители, план и факт.
+    final facts = stageFacts(stages, now);
+    final stageStats = AssignmentStats.of(stages, now, periodDays: 3650);
+    final lateStages = stages.where((s) => s.overdue(now)).length;
+    final maxDev = facts.map((f) => f.deviationDays ?? 0).fold<int>(0, (a, b) => b > a ? b : a);
+    final daysLeft = project.due == null
+        ? null
+        : DateTime(project.due!.year, project.due!.month, project.due!.day)
+            .difference(DateTime(now.year, now.month, now.day))
+            .inDays;
+    final summaryTab = ListView(padding: const EdgeInsets.only(bottom: Space.xl), children: [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, Space.s),
+        child: StatGrid(tiles: [
+          StatTile(label: l10n.tr('projStages'), value: '$doneN / ${stages.length}'),
+          StatTile(
+              label: l10n.tr('overdue'),
+              value: '$lateStages',
+              accent: lateStages > 0 ? AppColors.errorText(context) : null),
+          StatTile(label: l10n.tr('assignStatsDeviation'), value: maxDev > 0 ? '+$maxDev' : '0', note: l10n.tr('assignStatsDaysUnit')),
+          if (daysLeft != null)
+            StatTile(
+                label: l10n.tr('assignStatsDaysLeft'),
+                value: '${daysLeft < 0 ? 0 : daysLeft}',
+                note: daysLeft < 0 ? l10n.tr('overdue') : l10n.tr('assignStatsDaysUnit')),
+        ]),
+      ),
+      ChartCard(
+        title: l10n.tr('assignStatsStatuses'),
+        child: StatusSplitBar(counts: {
+          for (final s in StatusSplitBar.order) s: stages.where((x) => x.status == s).length,
+        }),
+      ),
+      if (stageStats.people.isNotEmpty)
+        ChartCard(title: l10n.tr('assignStatsExecutors'), child: PeopleBars(people: stageStats.people)),
+      if (facts.isNotEmpty)
+        ChartCard(
+          title: l10n.tr('assignStatsPlanFact'),
+          child: Column(children: [
+            for (var i = 0; i < facts.length; i++)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: Space.xs),
+                child: Row(children: [
+                  SizedBox(width: 24, child: Text('${i + 1}', style: theme.textTheme.bodySmall?.copyWith(color: muted))),
+                  Expanded(
+                    child: Text(facts[i].stage.row.title,
+                        maxLines: 2, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodyMedium),
+                  ),
+                  const SizedBox(width: Space.s),
+                  Text(
+                    [
+                      facts[i].plannedDue == null ? '—' : fmt.format(facts[i].plannedDue!),
+                      facts[i].doneAt == null ? '—' : fmt.format(facts[i].doneAt!),
+                    ].join(' → '),
+                    style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                  ),
+                  SizedBox(
+                    width: 44,
+                    child: Text(
+                      facts[i].deviationDays == null
+                          ? ''
+                          : (facts[i].deviationDays! > 0 ? '+${facts[i].deviationDays}' : '${facts[i].deviationDays}'),
+                      textAlign: TextAlign.right,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: (facts[i].deviationDays ?? 0) > 0 ? AppColors.errorText(context) : muted),
+                    ),
+                  ),
+                ]),
+              ),
+            Padding(
+              padding: const EdgeInsets.only(top: Space.xs),
+              child: Text(l10n.tr('assignStatsPlanFactHint'), style: theme.textTheme.bodySmall?.copyWith(color: muted)),
+            ),
+          ]),
+        ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
+        child: OutlinedButton.icon(
+          key: const ValueKey('proj_send_report'),
+          onPressed: () => unawaited(sendAssignmentReport(
+            context,
+            title: '${l10n.tr('assignProjectSubject')}: ${project.row.title}',
+            subtitle: l10n.tr('assignReportTitle'),
+            items: [project, ...stages],
+            stats: stageStats,
+            accountId: project.row.accountId,
+          )),
+          icon: const Icon(AppIcons.send, size: 18),
+          label: Text(l10n.tr('assignSendReport')),
+        ),
+      ),
+    ]);
+
     final filesTab = ListView(children: [
       FilesSection(v: project, files: project.files, canAdd: project.outgoing && project.active, title: l10n.tr('projFiles')),
       for (final s in stages)
@@ -185,7 +286,7 @@ class ProjectScreen extends ConsumerWidget {
     final historyTab = _History(project: project, stages: stages);
 
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.tr('projTitle')),
@@ -209,10 +310,11 @@ class ProjectScreen extends ConsumerWidget {
           TabBar(isScrollable: true, tabAlignment: TabAlignment.start, tabs: [
             Tab(text: l10n.tr('projStages')),
             Tab(text: l10n.tr('projPlan')),
+            Tab(text: l10n.tr('assignSummary')),
             Tab(text: l10n.tr('projTabFiles')),
             Tab(text: l10n.tr('assignHistory')),
           ]),
-          Expanded(child: TabBarView(children: [stagesTab, planTab, filesTab, historyTab])),
+          Expanded(child: TabBarView(children: [stagesTab, planTab, summaryTab, filesTab, historyTab])),
         ]),
       ),
     );

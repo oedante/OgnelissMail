@@ -70,6 +70,8 @@ typedef TaskMarker = ({
   List<String> checklist,
   bool project,
   String? plan,
+  // «Важное» (как приоритет в Jira и «Важная задача» в Битрикс24).
+  bool important,
 });
 
 /// Отметка статуса в ответе. [checks] — выполненные пункты чек-листа
@@ -155,12 +157,14 @@ abstract final class AssignmentCodec {
     List<String> checklist = const [],
     bool project = false,
     String? plan,
+    bool important = false,
   }) {
     final parts = [
       'v=1',
       'id=$id',
       if (ev != null) 'ev=${_clean(ev)}',
       if (project) 'pj=1',
+      if (important) 'imp=1',
       if (parent != null) 'pa=$parent',
       if (start != null) 'st=${_date(start)}',
       if (due != null) 'due=${_date(due)}',
@@ -276,6 +280,7 @@ abstract final class AssignmentCodec {
       checklist: checklist,
       project: fields['pj'] == '1',
       plan: plan,
+      important: fields['imp'] == '1',
     );
   }
 

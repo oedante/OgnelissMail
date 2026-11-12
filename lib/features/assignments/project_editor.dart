@@ -30,6 +30,7 @@ import '../../widgets/common/hero_email_transition.dart';
 import '../../widgets/ui/wheel_pickers.dart';
 import '../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
 import '../mail/providers/mail_providers.dart' show accountsProvider, activeAccountProvider;
+import 'assignment_widgets.dart' show AssignmentAccountField;
 
 /// Открыть «Новый проект». true — проект создан.
 Future<bool> showProjectEditor(BuildContext context, {String? accountId, String? title, String? description}) async {
@@ -104,9 +105,12 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
     return DateTime(n.year, n.month, n.day);
   }
 
+  /// Ящик, выбранный вручную (несколько ящиков).
+  String? _accountId;
+
   AccountModel? get _account {
     final accounts = ref.read(accountsProvider);
-    final id = widget.accountId ?? ref.read(activeAccountProvider)?.id;
+    final id = _accountId ?? widget.accountId ?? ref.read(activeAccountProvider)?.id;
     return accounts.where((a) => a.id == id).firstOrNull ?? accounts.firstOrNull;
   }
 
@@ -316,6 +320,15 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
           textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(border: const OutlineInputBorder(), labelText: l10n.tr('projDescription')),
         ),
+        // С какого ящика уйдут письма проекта.
+        if (ref.watch(accountsProvider).length > 1 && _account != null) ...[
+          const SizedBox(height: Space.m),
+          AssignmentAccountField(
+            accounts: ref.watch(accountsProvider),
+            selected: _account!.id,
+            onChanged: (id) => setState(() => _accountId = id),
+          ),
+        ],
         label(l10n.tr('projStart')),
         Align(
           alignment: Alignment.centerLeft,

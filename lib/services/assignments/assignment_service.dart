@@ -91,7 +91,8 @@ class AssignmentService {
     String? description,
     required List<EmailAddress> assignees,
     DateTime? due,
-    int priority = 1,
+    bool important = false,
+    List<AssignmentFile> files = const [],
     Email? source,
     AssignmentView? parent,
   }) async {
@@ -101,6 +102,8 @@ class AssignmentService {
     for (final to in assignees) {
       final id = AssignmentCodec.newId();
       final ev = 'created:$id';
+      // Файлы — копией у себя (у каждого поручения свои) и вложениями.
+      final kept = await _keepFiles(id, files);
       await AssignmentStore.insert(_db,
           id: id,
           accountId: account.id,
@@ -111,12 +114,13 @@ class AssignmentService {
           assigneeEmail: to.email,
           assigneeName: to.displayName,
           due: due,
-          priority: priority,
+          priority: important ? AssignmentPriority.important : AssignmentPriority.normal,
           sourceEmailId: source?.id,
           at: now,
           outgoing: true,
           eventId: ev,
-          parentId: parent?.id);
+          parentId: parent?.id,
+          files: kept);
       final srcFrom = source == null ? null : ((source.fromName ?? '').trim().isNotEmpty ? source.fromName! : source.fromEmail);
       final body = AssignmentCodec.body(
         id: id,
@@ -140,17 +144,20 @@ class AssignmentService {
             .tr('assignFooter')
             .replaceAll('{accepted}', l10n.tr('assignReplyAccepted'))
             .replaceAll('{done}', l10n.tr('assignReplyDone')),
-        due: due,
-        to: to.email,
-        title: title.trim(),
-        ev: ev,
+        extraHtml: kept.isEmpty
+            ? null
+            : '<p><b>${assignmentEsc(l10n.tr('assignFilesLabel'))}</b> '
+                '${assignmentEsc(kept.map((f) => f.name).join(', '))}</p>',
+        marker: AssignmentCodec.taskMarker(
+            id: id, due: due, to: to.email, title: title.trim(), ev: ev, parent: parent?.id, important: important),
       );
       await _send(account, to,
           subject: AssignmentCodec.subject(
-              prefix: l10n.tr('assignSubject'),
+              prefix: l10n.tr(important ? 'assignSubjectImportant' : 'assignSubject'),
               title: title,
               due: due == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(due))),
-          html: body);
+          html: body,
+          files: kept);
       ids.add(id);
     }
     return ids;
@@ -286,7 +293,7 @@ class AssignmentService {
 
   /// Поручивший: принять работу (выполнено), вернуть на доработку, снять.
   /// Исполнитель: «Принято» (в работе), «Готово» (на проверке).
-  Future<void> setStatus(AssignmentView v, int status, {String? note}) async {
+  Future<void> setStatus(AssignmentView v, int status, {String? note, List<AssignmentFile> files = const []}) async {
     if (status == v.status) return;
     final l10n = _l10n();
     final ev = _ev();
@@ -299,11 +306,17 @@ class AssignmentService {
       _ => '',
     };
     final full = [text, if ((note ?? '').trim().isNotEmpty) note!.trim()].join('\n');
-    await AssignmentStore.update(_db, v.id, status: status);
-    await _record(v, ev, 'status', {'status': status, 'text': full});
+    // Файлы ответа (результат, замечания) — к файлам поручения и вложениями.
+    final kept = await _keepFiles(v.id, files);
+    await AssignmentStore.update(_db, v.id, status: status, files: kept.isEmpty ? null : [...v.files, ...kept]);
+    await _record(v, ev, 'status', {
+      'status': status,
+      'text': full,
+      if (kept.isNotEmpty) 'files': [for (final f in kept) f.name],
+    });
     // Исполнитель — с отметкой чек-листа: у постановщика виден ход работ.
     final checks = (v.iExecute || v.iCoExecute) && v.checklist.isNotEmpty ? ChecklistItem.bits(v.checklist) : null;
-    await _notify(v, full, AssignmentCodec.statusMarker(v.id, status, ev: ev, checks: checks));
+    await _notify(v, full, AssignmentCodec.statusMarker(v.id, status, ev: ev, checks: checks), files: kept);
     // Этап принят — следующим этапам «Можно начинать» (письмо уходит от
     // постановщика; у контролирующего — при следующем разборе почты у
     // постановщика).
@@ -813,7 +826,7 @@ class AssignmentService {
   }
 
   /// Сообщить о ходе работ: выполненные пункты чек-листа и комментарий.
-  Future<void> reportProgress(AssignmentView v, {String? note}) async {
+  Future<void> reportProgress(AssignmentView v, {String? note, List<AssignmentFile> files = const []}) async {
     final l10n = _l10n();
     final ev = _ev();
     final items = v.checklist;
@@ -825,10 +838,19 @@ class AssignmentService {
             .replaceAll('{total}', '${items.length}'),
       if ((note ?? '').trim().isNotEmpty) note!.trim(),
     ].join('\n');
-    if (text.isEmpty) return;
-    await _record(v, ev, 'progress', {'text': text});
-    await _notify(v, text,
-        AssignmentCodec.statusMarker(v.id, v.status, ev: ev, checks: items.isEmpty ? null : ChecklistItem.bits(items)));
+    if (text.isEmpty && files.isEmpty) return;
+    final kept = await _keepFiles(v.id, files);
+    if (kept.isNotEmpty) await AssignmentStore.update(_db, v.id, files: [...v.files, ...kept]);
+    final body = text.isEmpty ? l10n.tr('assignMsgFiles') : text;
+    await _record(v, ev, 'progress', {
+      'text': body,
+      if (kept.isNotEmpty) 'files': [for (final f in kept) f.name],
+    });
+    await _notify(
+        v,
+        body,
+        AssignmentCodec.statusMarker(v.id, v.status, ev: ev, checks: items.isEmpty ? null : ChecklistItem.bits(items)),
+        files: kept);
   }
 
   /// Добавить файлы к поручению: у себя и письмом другой стороне.

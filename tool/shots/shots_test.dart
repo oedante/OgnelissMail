@@ -43,6 +43,8 @@ import 'package:ogneliss/features/tasks/screens/tasks_screen.dart';
 import 'package:ogneliss/features/contacts/screens/contacts_screen.dart';
 import 'package:ogneliss/features/notes/screens/notes_screen.dart';
 import 'package:ogneliss/features/assignments/assignments_screen.dart';
+import 'package:ogneliss/features/assignments/assignments_summary_screen.dart';
+import 'package:ogneliss/features/assignments/assign_sheet.dart' show showAssignSheet;
 import 'package:ogneliss/features/assignments/assignment_screen.dart';
 import 'package:ogneliss/services/assignments/assignment_codec.dart';
 import 'package:ogneliss/services/assignments/assignment_store.dart';
@@ -598,6 +600,89 @@ void main() {
     await _shot(tester, 'project_stage', const AssignmentScreen(id: 'SSSSSSSSSSS2'), theme: theme, db: db, prefs: prefs);
     await _shot(tester, 'project_list_desktop', const AssignmentsScreen(), theme: theme, db: db, prefs: prefs,
         size: const Size(1280, 800));
+    await tester.runAsync(db.close);
+  });
+
+  // Сводка, «Результат», ящики и «Важное» (12.11.2026).
+  testWidgets('сводка поручений', (tester) async {
+    SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+    final prefs = await SharedPreferences.getInstance();
+    final db = (await tester.runAsync(() async {
+      final db = await _db();
+      await db.into(db.accounts).insert(AccountsCompanion.insert(
+            id: 'a2',
+            type: 7,
+            email: 'ivan.petrov@mail.example',
+            displayName: 'Личный',
+            username: 'ivan.petrov',
+            createdAt: DateTime(2026),
+            colorValue: const Value(0xFF2E7D32),
+          ));
+      final now = DateTime.now();
+      final d0 = DateTime(now.year, now.month, now.day);
+      DateTime d(int days) => d0.add(Duration(days: days));
+      const me = 'i.petrov@corp.example';
+      Future<void> a(String id, String title, String who, String name, DateTime created, DateTime? due, int status,
+          {String account = 'a1', bool mine = true, int priority = 1, List<AssignmentFile> files = const []}) async {
+        await AssignmentStore.insert(db,
+            id: id,
+            accountId: account,
+            title: title,
+            ownerEmail: mine ? me : who,
+            ownerName: mine ? 'Иван Петров' : name,
+            assigneeEmail: mine ? who : me,
+            assigneeName: mine ? name : 'Иван Петров',
+            due: due,
+            priority: priority,
+            at: created,
+            outgoing: mine,
+            files: files);
+        await AssignmentStore.update(db, id, status: status);
+      }
+
+      await a('AAAAAAAAAAA1', 'Согласовать договор поставки № 15', 'b.orlov@corp.example', 'Борис Орлов', d(-12), d(-2),
+          AssignmentStatus.inProgress, priority: 2);
+      await a('AAAAAAAAAAA2', 'Отчёт отдела за октябрь', 'v.belova@corp.example', 'Вера Белова', d(-9), d(1),
+          AssignmentStatus.review,
+          files: const [AssignmentFile(name: 'Отчёт за октябрь.xlsx', size: 48213, mailId: 'm1', attachmentId: '1')]);
+      await a('AAAAAAAAAAA3', 'Собрать даты отпусков', 'v.belova@corp.example', 'Вера Белова', d(-20), d(-6),
+          AssignmentStatus.done);
+      await a('AAAAAAAAAAA4', 'Обновить договор аренды', 'e.sokolova@corp.example', 'Елена Соколова', d(-15), d(-8),
+          AssignmentStatus.done);
+      await a('AAAAAAAAAAA5', 'Инвентаризация склада', 'd.kuznetsov@corp.example', 'Дмитрий Кузнецов', d(-3), d(4),
+          AssignmentStatus.open);
+      await a('AAAAAAAAAAA6', 'Проверить счета поставщиков', 'd.kuznetsov@corp.example', 'Дмитрий Кузнецов', d(-30), d(-20),
+          AssignmentStatus.done);
+      await a('AAAAAAAAAAA7', 'Заказать новые ноутбуки', 'e.sokolova@corp.example', 'Елена Соколова', d(-2), d(6),
+          AssignmentStatus.inProgress, account: 'a2');
+      await a('AAAAAAAAAAA8', 'Подготовить справку для аудита', 'a.smirnova@corp.example', 'Анна Смирнова', d(-1), d(2),
+          AssignmentStatus.open, mine: false);
+      await AssignmentStore.addEvent(db,
+          id: 'r1',
+          assignmentId: 'AAAAAAAAAAA2',
+          type: 'message',
+          author: 'v.belova@corp.example',
+          at: now.subtract(const Duration(hours: 3)),
+          outgoing: false,
+          payload: {
+            'text': 'Готово\nОтчёт приложен, цифры сверены с бухгалтерией.',
+            'status': AssignmentStatus.review,
+            'files': ['Отчёт за октябрь.xlsx'],
+          });
+      return db;
+    }))!;
+    final theme = _themes['light']!();
+    await _shot(tester, 'assign_summary', const AssignmentsSummaryScreen(), theme: theme, db: db, prefs: prefs,
+        size: const Size(393, 1500));
+    await _shot(tester, 'assign_summary_dark', const AssignmentsSummaryScreen(), theme: _themes['dark']!(), db: db,
+        prefs: prefs, size: const Size(393, 1500));
+    await _shot(tester, 'assign_card_result', const AssignmentScreen(id: 'AAAAAAAAAAA2'), theme: theme, db: db,
+        prefs: prefs, size: const Size(393, 1100));
+    await _shot(tester, 'assign_list_mailboxes', const AssignmentsScreen(), theme: theme, db: db, prefs: prefs);
+    await _shot(tester, 'assign_sheet', const Scaffold(body: SizedBox.expand()), theme: theme, db: db, prefs: prefs,
+        size: const Size(393, 1000), before: (t) async {
+      unawaited(showAssignSheet(t.element(find.byType(Scaffold))));
+    });
     await tester.runAsync(db.close);
   });
 

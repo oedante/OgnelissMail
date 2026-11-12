@@ -29,7 +29,9 @@ import '../../widgets/ui/wheel_pickers.dart';
 import '../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
 import '../mail/providers/mail_providers.dart' show accountsProvider, activeAccountProvider, emailModelFromRow;
 import '../../core/utils/text_safe.dart' show initialOf;
-import 'project_editor.dart' show showProjectEditor;
+import 'project_editor.dart' show pickAssignmentFiles, showProjectEditor;
+import '../../services/assignments/assignment_store.dart' show AssignmentFile;
+import 'assignment_widgets.dart' show AssignmentAccountField;
 
 /// Срок подзадачи по умолчанию — срок родительского поручения, если он не
 /// прошёл.
@@ -83,10 +85,15 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
   Email? _source;
   late DateTime? _due = widget.due;
   bool _sending = false;
+  bool _important = false;
+  final List<AssignmentFile> _files = [];
+
+  /// Ящик, выбранный вручную (несколько ящиков).
+  String? _accountId;
 
   AccountModel? get _account {
     final accounts = ref.read(accountsProvider);
-    final id = _source?.accountId ?? widget.accountId ?? ref.read(activeAccountProvider)?.id;
+    final id = _accountId ?? _source?.accountId ?? widget.accountId ?? ref.read(activeAccountProvider)?.id;
     return accounts.where((a) => a.id == id).firstOrNull ?? accounts.firstOrNull;
   }
 
@@ -160,6 +167,8 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
           description: _note.text,
           assignees: List.of(_to),
           due: _due,
+          important: _important,
+          files: List.of(_files),
           source: _source,
           parent: widget.parent,
         );
@@ -244,6 +253,15 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
                   style: theme.textTheme.bodySmall?.copyWith(color: muted),
                 ),
               ),
+            // С какого ящика уйдёт поручение (просьба владельца 12.11.2026).
+            if (multi && account != null) ...[
+              const SizedBox(height: Space.m),
+              AssignmentAccountField(
+                accounts: ref.watch(accountsProvider),
+                selected: account.id,
+                onChanged: (id) => setState(() => _accountId = id),
+              ),
+            ],
             label(l10n.tr('assignWhatHint')),
             TextField(
               controller: _title,
@@ -296,11 +314,40 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
               textCapitalization: TextCapitalization.sentences,
               decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
+            // Файлы и «Важное» (как вложения и приоритет в Jira и Битрикс24).
+            const SizedBox(height: Space.s),
+            Wrap(spacing: Space.xs, runSpacing: Space.xs, children: [
+              FilterChip(
+                key: const ValueKey('assign_important'),
+                avatar: Icon(AppIcons.priority_high, size: 18, color: _important ? null : muted),
+                label: Text(l10n.tr('assignImportant')),
+                selected: _important,
+                showCheckmark: false,
+                onSelected: (v) => setState(() => _important = v),
+              ),
+              for (final f in _files)
+                InputChip(
+                  avatar: const Icon(AppIcons.attach_file, size: 16),
+                  label: Text(f.name, overflow: TextOverflow.ellipsis),
+                  onDeleted: () => setState(() => _files.remove(f)),
+                ),
+              ActionChip(
+                key: const ValueKey('assign_files'),
+                avatar: const Icon(AppIcons.attach_file, size: 18),
+                label: Text(l10n.tr('projAddFiles')),
+                onPressed: () async {
+                  List<AssignmentFile> picked = const [];
+                  try {
+                    picked = await pickAssignmentFiles();
+                  } catch (_) {}
+                  if (picked.isNotEmpty && mounted) setState(() => _files.addAll(picked));
+                },
+              ),
+            ]),
             const SizedBox(height: Space.s),
             Text(
               [
                 l10n.tr('assignEachNote'),
-                if (multi && account != null) l10n.tr('assignFromAccount').replaceAll('{email}', account.email),
               ].join(' '),
               style: theme.textTheme.bodySmall?.copyWith(color: muted),
             ),

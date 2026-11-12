@@ -1949,9 +1949,13 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
 
     // Внешние изображения скрыты: «Показать изображения» — сразу; «Всегда от
     // этого домена» и «Что заблокировано» — в меню чипа.
-    final imagesHidden =
-        !_isLoadingBody && !_imagesAllowed && (_externalImagesBlocked > 0 || _blockedItems.isNotEmpty);
     final trackers = _blockedItems.where((i) => i.reason != BlockReason.external).length;
+    // Картинки разрешены, но часть адресов отнесена к службам отслеживания —
+    // чип «Трекеры» остаётся: оттуда сервис можно разблокировать (12.11.2026:
+    // без него было не понять, куда делись картинки и как их вернуть).
+    final services = _blockedItems.any((i) => i.reason == BlockReason.trackerService);
+    final imagesHidden = !_isLoadingBody &&
+        ((!_imagesAllowed && (_externalImagesBlocked > 0 || _blockedItems.isNotEmpty)) || services);
 
     final p7m = settled ? _smimeP7m(email) : null;
     final sig = settled && p7m == null && _smimeP7s(email) != null ? _sigView(email, l10n) : null;
@@ -2007,7 +2011,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           expanded: (_) => UnsubscribeBanner(account: acc, email: email, onDone: () => safeSetState(() {})),
         ),
 
-      if (imagesHidden && _externalImagesBlocked > 0)
+      if (imagesHidden && !_imagesAllowed && _externalImagesBlocked > 0)
         MailNotice(
           id: 'images',
           icon: AppIcons.image_not_supported,
@@ -3621,7 +3625,12 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         } catch (_) {}
       }
 
-      final eml = await buildEmlFromEmail(email, attachments: atts);
+      // Тело — исходное, а не подготовленное к показу: в показанном картинки
+      // и счётчики заменены заглушками (12.11.2026: в пересланном .eml
+      // рассылки остались только две картинки из двадцати).
+      final raw = _rawBodyHtml;
+      final source = raw != null && raw.isNotEmpty && email.id == _email?.id ? email.copyWith(bodyHtml: raw) : email;
+      final eml = await buildEmlFromEmail(source, attachments: atts);
       // Отдельная папка: копии писем (с вложениями) не копятся во временных
       // файлах — всё старше суток удаляется при следующей пересылке.
       final tmp = await getTemporaryDirectory();

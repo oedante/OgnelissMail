@@ -4139,4 +4139,6 @@
     <string name="assignPartOf">Часть поручения: «{title}»</string>
     <string name="expMacWebTitle">Сложные письма — в окне браузера</string>
     <string name="expMacWebDesc">Письма со сложной вёрсткой показываются как в браузере, прямо в письме. Пробная возможность для Mac.</string>
+    <string name="graphicsHcppTitle">Новое встраивание окна письма (HCPP)</string>
+    <string name="graphicsHcppDesc">Пробный режим для Android 14 и новее: окно письма и редактор встраиваются по-новому, листание должно стать плавнее. Если письмо показывается неверно — выключите.</string>
 </resources>

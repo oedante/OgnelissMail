@@ -4118,4 +4118,6 @@
     <string name="assignPartOf">חלק מהמשימה: \"{title}\"</string>
     <string name="expMacWebTitle">הודעות מורכבות בתצוגת דפדפן</string>
     <string name="expMacWebDesc">הודעות עם עיצוב מורכב מוצגות כמו בדפדפן, ישירות בתוך ההודעה. תכונה ניסיונית ל-Mac.</string>
+    <string name="graphicsHcppTitle">הטמעה חדשה של תצוגת ההודעה (HCPP)</string>
+    <string name="graphicsHcppDesc">מצב ניסיוני ל-Android 14 ומעלה: תצוגת ההודעה והעורך מוטמעים בדרך חדשה, והגלילה אמורה להיות חלקה יותר. אם הודעה מוצגת באופן שגוי, כבו אותו.</string>
 </resources>

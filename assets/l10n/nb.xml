@@ -4097,4 +4097,6 @@
     <string name="assignPartOf">Del av oppdraget: «{title}»</string>
     <string name="expMacWebTitle">Komplekse e-poster i nettleservisning</string>
     <string name="expMacWebDesc">E-poster med kompleks layout vises som i en nettleser, rett i meldingen. Prøvefunksjon for Mac.</string>
+    <string name="graphicsHcppTitle">Ny innbygging av meldingsvisningen (HCPP)</string>
+    <string name="graphicsHcppDesc">Prøvemodus for Android 14 og nyere: meldingsvisningen og redigeringen bygges inn på en ny måte, og rullingen bør bli jevnere. Slå den av hvis en melding vises feil.</string>
 </resources>

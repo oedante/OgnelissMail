@@ -4097,4 +4097,6 @@
     <string name="assignPartOf">Del af opgaven: »{title}«</string>
     <string name="expMacWebTitle">Komplekse mails i browservisning</string>
     <string name="expMacWebDesc">Mails med komplekst layout vises som i en browser, direkte i mailen. Prøvefunktion til Mac.</string>
+    <string name="graphicsHcppTitle">Ny indlejring af mailvisningen (HCPP)</string>
+    <string name="graphicsHcppDesc">Prøvetilstand til Android 14 og nyere: mailvisningen og editoren indlejres på en ny måde, og rulning bør blive mere jævn. Slå den fra, hvis en mail vises forkert.</string>
 </resources>

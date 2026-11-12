@@ -82,7 +82,8 @@ class GraphicsDialog extends StatefulWidget {
   /// Для тестов — вместо канала платформы.
   final Future<GraphicsState?> Function(String mode)? setMode;
   final Future<void> Function()? restart;
-  const GraphicsDialog({super.key, required this.initial, this.setMode, this.restart});
+  final Future<GraphicsState?> Function(bool on)? setHcpp;
+  const GraphicsDialog({super.key, required this.initial, this.setMode, this.restart, this.setHcpp});
 
   @override
   State<GraphicsDialog> createState() => _GraphicsDialogState();
@@ -94,6 +95,11 @@ class _GraphicsDialogState extends State<GraphicsDialog> {
   Future<void> _pick(String? mode) async {
     if (mode == null || mode == _s.mode) return;
     final s = await (widget.setMode ?? GraphicsMode.setMode)(mode);
+    if (s != null && mounted) setState(() => _s = s);
+  }
+
+  Future<void> _hcpp(bool on) async {
+    final s = await (widget.setHcpp ?? GraphicsMode.setHcpp)(on);
     if (s != null && mounted) setState(() => _s = s);
   }
 
@@ -124,6 +130,16 @@ class _GraphicsDialogState extends State<GraphicsDialog> {
             option('auto', 'graphicsAutoDesc'),
             option('skia', 'graphicsSkiaDesc'),
             option('impeller', 'graphicsImpellerDesc'),
+            // HCPP — только там, где он может работать (Android 14+, Vulkan).
+            if (_s.hcppSupported || _s.hcpp)
+              SwitchListTile(
+                key: const ValueKey('graphics_hcpp'),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                value: _s.hcpp,
+                onChanged: _hcpp,
+                title: Text(l10n.tr('graphicsHcppTitle')),
+                subtitle: Text(l10n.tr('graphicsHcppDesc')),
+              ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 4, 24, 0),
               child: Text(_GraphicsItemState.subtitle(context, _s), style: theme.textTheme.bodySmall),

@@ -4139,4 +4139,6 @@
     <string name="assignPartOf">Część zlecenia: „{title}”</string>
     <string name="expMacWebTitle">Złożone wiadomości w widoku przeglądarki</string>
     <string name="expMacWebDesc">Wiadomości o złożonym układzie są wyświetlane jak w przeglądarce, bezpośrednio w wiadomości. Funkcja próbna dla Maca.</string>
+    <string name="graphicsHcppTitle">Nowe osadzanie widoku wiadomości (HCPP)</string>
+    <string name="graphicsHcppDesc">Tryb próbny dla Androida 14 i nowszych: widok wiadomości i edytor są osadzane w nowy sposób, przewijanie powinno być płynniejsze. Jeśli wiadomość wyświetla się niepoprawnie, wyłącz go.</string>
 </resources>

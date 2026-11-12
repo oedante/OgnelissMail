@@ -4097,4 +4097,6 @@
     <string name="assignPartOf">Fait partie de la mission : « {title} »</string>
     <string name="expMacWebTitle">E-mails complexes dans une vue navigateur</string>
     <string name="expMacWebDesc">Les e-mails à la mise en page complexe s\'affichent comme dans un navigateur, directement dans le message. Fonction à l\'essai pour Mac.</string>
+    <string name="graphicsHcppTitle">Nouvelle intégration de la vue du message (HCPP)</string>
+    <string name="graphicsHcppDesc">Mode à l\'essai pour Android 14 et versions ultérieures : la vue du message et l\'éditeur sont intégrés autrement, le défilement devrait être plus fluide. Si un message s\'affiche mal, désactivez-le.</string>
 </resources>

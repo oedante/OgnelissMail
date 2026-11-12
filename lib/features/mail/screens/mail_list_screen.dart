@@ -1793,6 +1793,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
               email: item,
               // В «Позже» вместо даты получения — когда письмо вернётся.
               showLaterTime: ref.read(mailFilterProvider) == MailFilter.later,
+              showControlDue: ref.read(mailFilterProvider) == MailFilter.control,
               showConversationIndicator: settings.groupByConversation,
               showFolderBadge: _isSearching ||
                     ref.watch(unifiedModeProvider) ||

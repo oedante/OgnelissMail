@@ -4140,4 +4140,6 @@
     <string name="selectedMailsN">Выбрано писем: {n}</string>
     <string name="noteSelectPrompt">Выберите заметку слева или создайте новую</string>
     <string name="taskSelectPrompt">Выберите задачу слева или создайте новую</string>
+    <string name="calFree2Months">Ближайшие 2 месяца свободны</string>
+    <string name="newMeeting">Новая встреча</string>
 </resources>

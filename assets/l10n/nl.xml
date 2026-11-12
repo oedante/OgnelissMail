@@ -4098,4 +4098,6 @@
     <string name="selectedMailsN">{n} berichten geselecteerd</string>
     <string name="noteSelectPrompt">Kies links een notitie of maak een nieuwe</string>
     <string name="taskSelectPrompt">Kies links een taak of maak een nieuwe</string>
+    <string name="calFree2Months">De komende 2 maanden zijn vrij</string>
+    <string name="newMeeting">Nieuwe afspraak</string>
 </resources>

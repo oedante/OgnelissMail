@@ -4098,4 +4098,6 @@
     <string name="selectedMailsN">{n} mensajes seleccionados</string>
     <string name="noteSelectPrompt">Seleccione una nota a la izquierda o cree una nueva</string>
     <string name="taskSelectPrompt">Seleccione una tarea a la izquierda o cree una nueva</string>
+    <string name="calFree2Months">Los próximos 2 meses están libres</string>
+    <string name="newMeeting">Nueva reunión</string>
 </resources>

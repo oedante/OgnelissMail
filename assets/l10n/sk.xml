@@ -4119,4 +4119,6 @@
     <string name="selectedMailsN">Vybrané správy: {n}</string>
     <string name="noteSelectPrompt">Vyberte poznámku vľavo alebo vytvorte novú</string>
     <string name="taskSelectPrompt">Vyberte úlohu vľavo alebo vytvorte novú</string>
+    <string name="calFree2Months">Najbližšie 2 mesiace sú voľné</string>
+    <string name="newMeeting">Nová schôdza</string>
 </resources>

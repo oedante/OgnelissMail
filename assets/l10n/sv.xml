@@ -4098,4 +4098,6 @@
     <string name="selectedMailsN">{n} meddelanden markerade</string>
     <string name="noteSelectPrompt">Välj en anteckning till vänster eller skapa en ny</string>
     <string name="taskSelectPrompt">Välj en uppgift till vänster eller skapa en ny</string>
+    <string name="calFree2Months">De kommande 2 månaderna är lediga</string>
+    <string name="newMeeting">Nytt möte</string>
 </resources>

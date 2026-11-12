@@ -4077,4 +4077,6 @@
     <string name="selectedMailsN">เลือกแล้ว {n} ข้อความ</string>
     <string name="noteSelectPrompt">เลือกโน้ตทางซ้ายหรือสร้างโน้ตใหม่</string>
     <string name="taskSelectPrompt">เลือกงานทางซ้ายหรือสร้างงานใหม่</string>
+    <string name="calFree2Months">2 เดือนข้างหน้าว่าง</string>
+    <string name="newMeeting">การประชุมใหม่</string>
 </resources>

@@ -4119,4 +4119,6 @@
     <string name="selectedMailsN">{n} mesaje selectate</string>
     <string name="noteSelectPrompt">Selectați o notă din stânga sau creați una nouă</string>
     <string name="taskSelectPrompt">Selectați o sarcină din stânga sau creați una nouă</string>
+    <string name="calFree2Months">Următoarele 2 luni sunt libere</string>
+    <string name="newMeeting">Întâlnire nouă</string>
 </resources>

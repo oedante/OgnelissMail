@@ -4077,4 +4077,6 @@
     <string name="selectedMailsN">{n} pesan dipilih</string>
     <string name="noteSelectPrompt">Pilih catatan di kiri atau buat yang baru</string>
     <string name="taskSelectPrompt">Pilih tugas di kiri atau buat yang baru</string>
+    <string name="calFree2Months">2 bulan ke depan kosong</string>
+    <string name="newMeeting">Rapat baru</string>
 </resources>

@@ -112,6 +112,28 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     });
   }
 
+  bool _viewInited = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Широкое окно и вид ещё не выбирали — неделя (просьба владельца
+    // 12.11.2026: «Расписание» на всю ширину компьютера выглядело пусто).
+    if (_viewInited) return;
+    _viewInited = true;
+    final mod = ref.read(moduleSettingsProvider);
+    if (_view == null && !mod.calendarViewChosen && MediaQuery.sizeOf(context).width >= _weekDefaultMin) {
+      _view = CalendarDefaultView.week;
+      _anchor = _pageStart(_currentView, _base);
+    }
+  }
+
+  /// С этой ширины окна вид по умолчанию — неделя.
+  static const _weekDefaultMin = 900.0;
+
+  /// С этой ширины области справа — колонка ближайших событий.
+  static const _upcomingMin = 1000.0;
+
   /// «Мой день» → «Календарь на сегодня»: день в режиме «День».
   void _consumeDayRequest() {
     if (!mounted) return;
@@ -228,23 +250,53 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(
         titleSpacing: 16,
-        title: InkWell(
-          borderRadius: BorderRadius.circular(8),
-          onTap: () => _pickDate(l10n),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Text(
-                    _title(view, l10n),
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
-                  ),
+        // «Календарь», под ним — период (нажатие — выбор даты); вид —
+        // переключателем под шапкой (просьба владельца 12.11.2026: заголовок
+        // «Расписание ▾» читался как название раздела).
+        title: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+          Text(l10n.tr('calendar'), style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600)),
+          InkWell(
+            borderRadius: BorderRadius.circular(6),
+            onTap: () => _pickDate(l10n),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Flexible(
+                child: Text(
+                  _period(view, l10n),
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
-                const Icon(AppIcons.arrow_drop_down),
-              ],
+              ),
+              Icon(AppIcons.arrow_drop_down, size: 18, color: theme.colorScheme.onSurfaceVariant),
+            ]),
+          ),
+        ]),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(Space.m, 0, Space.m, Space.s),
+            child: SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<CalendarDefaultView>(
+                key: const ValueKey('calendar_view_switch'),
+                showSelectedIcon: false,
+                style: const ButtonStyle(visualDensity: VisualDensity.compact),
+                segments: [
+                  for (final v in const [
+                    CalendarDefaultView.agenda,
+                    CalendarDefaultView.day,
+                    CalendarDefaultView.threeDay,
+                    CalendarDefaultView.week,
+                    CalendarDefaultView.month,
+                  ])
+                    ButtonSegment(
+                      value: v,
+                      tooltip: _viewLabel(v, l10n),
+                      label: FittedBox(fit: BoxFit.scaleDown, child: Text(_viewLabel(v, l10n), maxLines: 1)),
+                    ),
+                ],
+                selected: {view},
+                onSelectionChanged: (s) => _setView(s.first),
+              ),
             ),
           ),
         ),
@@ -259,22 +311,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             icon: const Icon(AppIcons.search),
             tooltip: l10n.tr('search'),
             onPressed: () => _openSearch(l10n),
-          ),
-          AppMenuButton<CalendarDefaultView>(
-            tooltip: l10n.tr('defaultView'),
-            icon: Icon(_viewIcon(view)),
-            initialValue: view,
-            onSelected: _setView,
-            itemBuilder: (_) => [
-              for (final v in const [
-                CalendarDefaultView.agenda,
-                CalendarDefaultView.day,
-                CalendarDefaultView.threeDay,
-                CalendarDefaultView.week,
-                CalendarDefaultView.month,
-              ])
-                AppMenuEntry(value: v, icon: _viewIcon(v), label: _viewLabel(v, l10n)),
-            ],
           ),
           IconButton(
             icon: const Icon(AppIcons.tune),
@@ -299,6 +335,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           Expanded(child: inner),
         ]);
         final pane = _pane;
+        // Широкое окно без открытой встречи — справа ближайшие события (как
+        // в Outlook и Google Календаре, просьба владельца 12.11.2026).
+        if (pane == null && c.maxWidth >= _upcomingMin) {
+          return Row(children: [
+            Expanded(child: grid),
+            VerticalDivider(width: 1, thickness: 1, color: theme.dividerColor),
+            SizedBox(width: 300, child: _upcoming(ru, now, l10n)),
+          ]);
+        }
         if (pane == null || c.maxWidth < Breakpoints.tablet) return grid;
         return Row(children: [
           Expanded(child: grid),
@@ -371,6 +416,49 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final async = ref.watch(calendarEventsProvider(range));
     final events = async.value;
     if (events == null) return const Center(child: CircularProgressIndicator());
+    // Пусто — одна строка и кнопка (просьба владельца 12.11.2026: ряд
+    // «свободно» на два месяца выглядел как сбой).
+    if (events.isEmpty) {
+      final l10n = AppLocalizations.of(context);
+      final theme = Theme.of(context);
+      final months = (_agendaTo.difference(_agendaFrom).inDays / 30).round();
+      return RefreshIndicator(
+        onRefresh: _refresh,
+        child: LayoutBuilder(
+          builder: (context, box) => SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: box.maxHeight),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(Space.xl),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(AppIcons.event_available, size: 48, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                    const SizedBox(height: Space.m),
+                    Text(
+                      months == 2 ? l10n.tr('calFree2Months') : l10n.tr('noEventsThisDay'),
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    ),
+                    const SizedBox(height: Space.l),
+                    FilledButton.tonalIcon(
+                      onPressed: () => _createAt(null),
+                      icon: const Icon(AppIcons.add),
+                      label: Text(l10n.tr('newMeeting')),
+                    ),
+                    const SizedBox(height: Space.s),
+                    TextButton(
+                      onPressed: () => setState(() => _agendaTo = _agendaTo.add(const Duration(days: 60))),
+                      child: Text(l10n.tr('calShowMore')),
+                    ),
+                  ]),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
     return RefreshIndicator(
       onRefresh: _refresh,
       child: AgendaView(
@@ -504,13 +592,65 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     }
   }
 
-  IconData _viewIcon(CalendarDefaultView v) => switch (v) {
-        CalendarDefaultView.agenda => AppIcons.view_agenda,
-        CalendarDefaultView.day => AppIcons.view_day,
-        CalendarDefaultView.threeDay => AppIcons.view_column,
-        CalendarDefaultView.week => AppIcons.view_week,
-        CalendarDefaultView.month => AppIcons.calendar_view_month,
-      };
+  /// Период под заголовком «Календарь»: у «Расписания» — месяц начала.
+  String _period(CalendarDefaultView view, AppLocalizations l10n) => view == CalendarDefaultView.agenda
+      ? capitalize(DateFormat('LLLL yyyy', l10n.localeCode).format(_agendaFrom))
+      : _title(view, l10n);
+
+  /// Ближайшие события (две недели) — колонка справа на широком экране.
+  Widget _upcoming(bool ru, DateTime now, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    final today = CalendarViewUtils.dayOf(now);
+    final range = (from: today, to: today.add(const Duration(days: 14)));
+    final events = (ref.watch(calendarEventsProvider(range)).value ?? const <CalendarEvent>[])
+        .where((e) => e.endTime.toLocal().isAfter(now))
+        .toList();
+    final colors = ref.watch(accountColorsProvider);
+    final locale = l10n.localeCode;
+    final children = <Widget>[
+      Padding(
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, Space.xs),
+        child: Text(l10n.tr('upcoming'), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+      ),
+    ];
+    if (events.isEmpty) {
+      children.add(Padding(
+        padding: const EdgeInsets.all(Space.l),
+        child: Text(l10n.tr('noEventsThisDay'),
+            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+      ));
+    }
+    for (var d = today; d.isBefore(range.to); d = DateTime(d.year, d.month, d.day + 1)) {
+      final day = CalendarViewUtils.eventsForDay(events, d);
+      if (day.isEmpty) continue;
+      final label = CalendarViewUtils.sameDay(d, today)
+          ? l10n.tr('today')
+          : CalendarViewUtils.sameDay(d, today.add(const Duration(days: 1)))
+              ? l10n.tr('tomorrow')
+              : capitalize(DateFormat('EEEE, d MMMM', locale).format(d));
+      children.add(Padding(
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, Space.xs),
+        child: Text(label,
+            style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600)),
+      ));
+      for (final e in day) {
+        children.add(EventTile(
+          event: e,
+          day: d,
+          color: eventColor(e, colors),
+          isRussian: ru,
+          now: now,
+          onTap: () => _open(e),
+          onLongPress: () => _quickActions(e),
+        ));
+      }
+    }
+    return ListView(
+      key: const ValueKey('calendar_upcoming'),
+      padding: const EdgeInsets.only(bottom: 96),
+      children: children,
+    );
+  }
 
   String _viewLabel(CalendarDefaultView v, AppLocalizations l10n) => switch (v) {
         CalendarDefaultView.agenda => l10n.tr('viewAgenda'),

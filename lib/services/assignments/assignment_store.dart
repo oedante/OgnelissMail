@@ -74,6 +74,7 @@ class AssignmentView {
   DateTime? get due => row.dueAt?.toLocal();
   DateTime? get start => row.startAt?.toLocal();
   bool get isProject => row.isProject;
+  bool get important => row.priority >= AssignmentPriority.important;
   bool get waiting => row.waiting && active;
 
   /// Код родительского поручения (подзадача, 12.11.2026).
@@ -130,6 +131,12 @@ class AssignmentView {
 /// Связь «родитель — подзадача» среди поручений [all]. Родитель и
 /// подзадачи — только те, что есть на этом устройстве: у исполнителя
 /// подзадачи родительского поручения может не быть.
+/// Важность поручения (столбец priority).
+abstract final class AssignmentPriority {
+  static const normal = 1;
+  static const important = 2;
+}
+
 extension AssignmentTree on List<AssignmentView> {
   AssignmentView? parentOf(AssignmentView v) {
     final id = v.parentId;
@@ -698,6 +705,7 @@ abstract final class AssignmentStore {
           removed: false,
           visibility: null,
           files: null,
+          important: false,
         );
       }
       final to = t.to;
@@ -748,6 +756,7 @@ abstract final class AssignmentStore {
           assigneeEmail: assignee,
           assigneeName: assignee == null ? null : names[assignee],
           due: t.due,
+          priority: t.important ? AssignmentPriority.important : AssignmentPriority.normal,
           sourceEmailId: e.id,
           at: at,
           outgoing: fromMe,

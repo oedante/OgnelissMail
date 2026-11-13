@@ -185,6 +185,12 @@ N принят — письмо «Можно начинать»; при пере
   заместитель, передача прав, снятие прав.
 - `test/unit/assignment_reminders_test.dart` — напоминания о сроке.
 
+## 6а. Что добавлено после (12.11.2026)
+
+Ящик поручения, «Важное», файлы в ответах и блок «Результат», «Сводка» по
+нескольким поручениям и по проекту, отчёт письмом — отбор из Jira и
+Битрикс24 и что отложено: `ASSIGNMENT_UX_JIRA_BITRIX.md`.
+
 ## 7. Для «Что нового» (в следующую версию)
 
 - RU (13.11.2026): «Поручения: напоминания о сроке на телефоне; участники
@@ -204,9 +210,15 @@ N принят — письмо «Можно начинать»; при пере
   контролирующий и наблюдатели у каждого этапа, сроки параллельно или друг
   за другом („Можно начинать“ приходит само), чек-листы, файлы, прогресс,
   диаграмма Ганта и сдвиг сроков при опоздании. Этап можно передать
-  коллеге для совместного исполнения. Проект сохраняется шаблоном.»
+  коллеге для совместного исполнения. Проект сохраняется шаблоном.
+  Сводка по поручениям и проектам — статусы, исполнители, сроки на
+  диаграмме Ганта — и отчёт письмом. «Готово» — с результатом и файлами; видно, с
+  какого ящика отправлено поручение; «Важное» при постановке.»
 - EN: “Assignments: projects with stages — assignee, co-assignees, approver
   and watchers for each stage, dates in parallel or one after another (the
   ‘You can start’ email is sent automatically), checklists, files, progress,
   a Gantt chart and shifting dates when a stage is late. Share a stage with
-  a colleague as a co-assignee. Save a project as a template.”
+  a colleague as a co-assignee. Save a project as a template. A summary of
+  assignments and projects — statuses, assignees, dates on a Gantt chart —
+  and a report by email. “Done” with a result and files; see which mailbox an
+  assignment came from; mark assignments as important.”

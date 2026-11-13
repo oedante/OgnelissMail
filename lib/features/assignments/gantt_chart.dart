@@ -21,7 +21,24 @@ class GanttChart extends StatefulWidget {
   final DateTime today;
   final void Function(String stageId)? onTap;
 
-  const GanttChart({super.key, required this.stages, required this.today, this.onTap});
+  /// Номера строк («1. Сбор») — у этапов проекта; у сводки поручений — нет.
+  final bool numbered;
+
+  /// Вторая строка названия — исполнитель (PlanStage.assignee).
+  final bool showAssignee;
+
+  /// Открыть на сегодняшнем дне (сводка), а не на первом незавершённом.
+  final bool focusToday;
+
+  const GanttChart({
+    super.key,
+    required this.stages,
+    required this.today,
+    this.onTap,
+    this.numbered = true,
+    this.showAssignee = false,
+    this.focusToday = false,
+  });
 
   static const rowHeight = 40.0;
   static const headerHeight = 44.0;
@@ -77,13 +94,18 @@ class _GanttChartState extends State<GanttChart> {
           if (d != null && (focus == null || _day(d).isBefore(focus))) focus = _day(d);
         }
         final today = _day(widget.today);
-        final at = focus == null || today.isBefore(focus) ? today : focus;
-        final x = at.difference(range.from).inDays * GanttChart.dayWidth - GanttChart.dayWidth;
+        final at = widget.focusToday || focus == null || today.isBefore(focus) ? today : focus;
+        // С сегодня — немного прошлого слева (видно опоздавших).
+        final back = widget.focusToday ? 5 : 1;
+        final x = at.difference(range.from).inDays * GanttChart.dayWidth - back * GanttChart.dayWidth;
         _scroll.jumpTo(x.clamp(0, _scroll.position.maxScrollExtent));
       });
     }
+    // Колонка названий — шире на планшете и компьютере.
+    final screen = MediaQuery.sizeOf(context).width;
+    final namesWidth = screen >= 1000 ? 260.0 : (screen >= 600 ? 200.0 : 132.0);
     final names = SizedBox(
-      width: 132,
+      width: namesWidth,
       height: height,
       child: Column(children: [
         // Месяц первого видного дня — над названиями, при листании меняется.
@@ -116,10 +138,17 @@ class _GanttChartState extends State<GanttChart> {
                 alignment: Alignment.centerLeft,
                 child: Padding(
                   padding: const EdgeInsets.only(left: Space.m, right: Space.xs),
-                  child: Text('${i + 1}. ${widget.stages[i].title}',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500)),
+                  child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(widget.numbered ? '${i + 1}. ${widget.stages[i].title}' : widget.stages[i].title,
+                        maxLines: widget.showAssignee ? 1 : 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500)),
+                    if (widget.showAssignee && (widget.stages[i].assignee ?? '').isNotEmpty)
+                      Text(widget.stages[i].assignee!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelSmall?.copyWith(color: AppColors.mutedText(context))),
+                  ]),
                 ),
               ),
             ),
@@ -269,7 +298,8 @@ class _GanttPainter extends CustomPainter {
       final d = from.add(Duration(days: i));
       final x = i * GanttChart.dayWidth;
       if (d.weekday >= 6) {
-        canvas.drawRect(Rect.fromLTWH(x, GanttChart.headerHeight, GanttChart.dayWidth, size.height), weekend);
+        canvas.drawRect(
+            Rect.fromLTWH(x, GanttChart.headerHeight, GanttChart.dayWidth, size.height - GanttChart.headerHeight), weekend);
       }
       canvas.drawLine(Offset(x, GanttChart.headerHeight - 4), Offset(x, size.height), grid);
       _text(canvas, dayFmt.format(d), Offset(x + 8, GanttChart.headerHeight - 20),

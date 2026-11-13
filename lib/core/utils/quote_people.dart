@@ -128,18 +128,28 @@ class QuotePeople {
   /// Шапки цитат в [html] — ссылками на людей (плашки рисует экран письма;
   /// [people] = false — без плашек), подписи и дата — на языке приложения
   /// ([local]; null — как в письме). Ничего не изменилось — исходный HTML.
-  static String enrich(String html, {bool shortNames = false, bool people = true, QuoteHeaderText? local}) {
+  ///
+  /// [emailsByName] — адреса людей по имени ([nameIndex]): Outlook пишет в
+  /// шапке цитаты отправителя без адреса («От: Жаринов Александр
+  /// Вячеславович»), и у плашки не было ни фото, ни карточки (замечание
+  /// владельца 13.11.2026). Адрес подбирается по полному имени или
+  /// «Фамилия И.О.»; имя, которое носят разные адреса, остаётся без адреса.
+  static String enrich(String html,
+      {bool shortNames = false,
+      bool people = true,
+      QuoteHeaderText? local,
+      Map<String, String> emailsByName = const {}}) {
     if (!_mayHaveHeaders(html)) return html;
     final doc = html_parser.parse(html);
     final body = doc.body;
     if (body == null) return html;
-    var changed = people && _people(body, shortNames);
+    var changed = people && _people(body, shortNames, emailsByName);
     if (local != null && _localize(body, local)) changed = true;
     return changed ? (doc.documentElement?.outerHtml ?? html) : html;
   }
 
   /// Плашки людей в строках «От / Кому / Копия»; true — что-то заменено.
-  static bool _people(dom.Element body, bool shortNames) {
+  static bool _people(dom.Element body, bool shortNames, Map<String, String> emailsByName) {
     final events = <_Ev>[];
     _walk(body, events);
     var people = 0;
@@ -169,7 +179,10 @@ class QuotePeople {
         parts.add(x.node);
         buf.write(x.kind == _K.text ? (x.node as dom.Text).data : (x.node as dom.Element).text);
       }
-      final list = parse(buf.toString());
+      final list = [
+        for (final p in parse(buf.toString()))
+          p.email == null && p.name.isNotEmpty ? QuotePerson(p.name, emailForName(p.name, emailsByName)) : p,
+      ];
       // Подпись обычным текстом («To: всем сотрудникам» в самом письме) —
       // только с адресами: без них это скорее фраза, а не шапка цитаты.
       if (plainLabelNode != null) list.removeWhere((p) => p.email == null);
@@ -191,6 +204,60 @@ class QuotePeople {
       i = j - 1;
     }
     return changed;
+  }
+
+  /// Ключи имени для поиска адреса: полное имя, «фамилия и о» (как «Фамилия
+  /// И.О.»), для двух слов — и в обратном порядке («Александр Жаринов»).
+  /// Регистр, «ё», точки и запятые не важны. Одно слово — не ключ: слишком
+  /// много однофамильцев.
+  static List<String> nameKeys(String name) {
+    final w = name
+        .toLowerCase()
+        .replaceAll('ё', 'е')
+        .replaceAll(RegExp(r'[.,;"«»()]'), ' ')
+        .split(RegExp(r'\s+'))
+        .where((x) => x.isNotEmpty)
+        .toList();
+    if (w.length < 2 || w.length > 4) return const [];
+    final keys = <String>{w.join(' ')};
+    keys.add([w.first, for (final x in w.skip(1)) x.substring(0, 1)].join(' '));
+    if (w.length == 2) {
+      keys.add('${w[1]} ${w[0]}');
+      keys.add('${w[1]} ${w[0].substring(0, 1)}');
+    }
+    return keys.toList();
+  }
+
+  /// Указатель «ключ имени → адрес» из пар (адрес, имя). Ключ, который носят
+  /// разные адреса, в указатель не попадает.
+  static Map<String, String> nameIndex(Iterable<({String email, String name})> people) {
+    final out = <String, String>{};
+    final clash = <String>{};
+    for (final p in people) {
+      final e = p.email.trim().toLowerCase();
+      if (!e.contains('@')) continue;
+      for (final k in nameKeys(p.name)) {
+        if (clash.contains(k)) continue;
+        final had = out[k];
+        if (had == null) {
+          out[k] = e;
+        } else if (had != e) {
+          out.remove(k);
+          clash.add(k);
+        }
+      }
+    }
+    return out;
+  }
+
+  /// Адрес человека по имени из шапки; не нашёлся или неоднозначен — null.
+  static String? emailForName(String name, Map<String, String> emailsByName) {
+    if (emailsByName.isEmpty) return null;
+    for (final k in nameKeys(name)) {
+      final e = emailsByName[k];
+      if (e != null) return e;
+    }
+    return null;
   }
 
   /// Быстрая проверка без разбора: есть ли вообще подписи строк шапки.

@@ -106,6 +106,7 @@ import '../widgets/delivery_status_banner.dart';
 import '../widgets/mail_notice_bar.dart';
 import '../../../services/security/sender_safety_service.dart' show senderSafetyServiceProvider, SafetyLevel, SenderSafetyReport;
 import '../../../data/database/app_database.dart';
+import '../../contacts/person_names.dart' show personNamesProvider;
 import '../../../data/providers/database_provider.dart';
 import '../../archive/archive_sheets.dart' show ensureArchiveReady;
 import '../../../services/archive/archive_runner.dart' show archiveRunnerProvider;
@@ -1275,7 +1276,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     });
     final sw = Stopwatch()..start();
     try {
-      final out = await MailBodyProcessor.heavy(html, _quoteHeaders(mode, local));
+      final out = await MailBodyProcessor.heavy(html, _quoteHeaders(mode, local, _quoteNameIndex()));
       AppLogger.debug('Шапки цитат: ${sw.elapsedMilliseconds} мс');
       return out;
     } catch (e) {
@@ -1286,9 +1287,40 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
 
   /// Обработка шапок для изолята. Статическая — как [_nativeBuilder]:
   /// замыкание внутри метода экрана захватило бы и сам экран.
-  static String Function(String) _quoteHeaders(QuotePeopleMode mode, QuoteHeaderText local) =>
+  static String Function(String) _quoteHeaders(
+          QuotePeopleMode mode, QuoteHeaderText local, Map<String, String> emailsByName) =>
       (h) => QuotePeople.enrich(h,
-          shortNames: mode == QuotePeopleMode.short, people: mode != QuotePeopleMode.off, local: local);
+          shortNames: mode == QuotePeopleMode.short,
+          people: mode != QuotePeopleMode.off,
+          local: local,
+          emailsByName: emailsByName);
+
+  /// Адреса людей по имени для шапок цитат без адреса (13.11.2026: «От:
+  /// Жаринов Александр Вячеславович» без адреса — плашка без фото). Сначала
+  /// участники самого письма (их имена точнее всего), затем имена из
+  /// контактов и переписки — у кого то же имя с другим адресом, остаётся без
+  /// адреса.
+  Map<String, String>? _nameIndex;
+  String? _nameIndexFor;
+  Map<String, String> _quoteNameIndex() {
+    final e = _email;
+    final key = e == null ? '' : '${e.accountId}|${e.id}';
+    final cached = _nameIndex;
+    if (cached != null && _nameIndexFor == key) return cached;
+    final people = <({String email, String name})>[
+      if (e != null)
+        for (final a in [e.from, ...e.to, ...e.cc])
+          if ((a.displayName ?? '').trim().isNotEmpty) (email: a.email, name: a.displayName!),
+    ];
+    final own = QuotePeople.nameIndex(people);
+    final known = ref.read(personNamesProvider).value ?? const <String, String>{};
+    final all = QuotePeople.nameIndex([for (final x in known.entries) (email: x.key, name: x.value)]);
+    // Участники письма важнее: их ключи перекрывают общий указатель.
+    final out = {...all, ...own};
+    _nameIndex = out;
+    _nameIndexFor = key;
+    return out;
+  }
 
   void _onBodyLink(EmailModel email, String url, String? text) {
     // Плашка человека в шапке цитаты (1.10.3, экспериментально) — карточка;

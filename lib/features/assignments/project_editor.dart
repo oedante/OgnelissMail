@@ -27,9 +27,11 @@ import '../../services/assignments/assignment_service.dart';
 import '../../services/assignments/assignment_store.dart' show AssignmentFile, nextStageDates;
 import '../../widgets/common/app_sheet.dart';
 import '../../widgets/common/hero_email_transition.dart';
+import '../../widgets/common/readable_width.dart';
 import '../../widgets/ui/wheel_pickers.dart';
 import '../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
 import '../mail/providers/mail_providers.dart' show accountsProvider, activeAccountProvider;
+import 'assignment_widgets.dart' show AssignmentAccountField, assignmentColumnWidth;
 
 /// «Изменить проект» (13.11.2026): название, описание, начало, видимость
 /// плана, участники, файлы, этапы — добавить, изменить, удалить. true —
@@ -121,9 +123,12 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
     return DateTime(n.year, n.month, n.day);
   }
 
+  /// Ящик, выбранный вручную (несколько ящиков).
+  String? _accountId;
+
   AccountModel? get _account {
     final accounts = ref.read(accountsProvider);
-    final id = widget.accountId ?? ref.read(activeAccountProvider)?.id;
+    final id = _accountId ?? widget.accountId ?? ref.read(activeAccountProvider)?.id;
     return accounts.where((a) => a.id == id).firstOrNull ?? accounts.firstOrNull;
   }
 
@@ -316,19 +321,26 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
         ],
       ),
       bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.m),
-          child: FilledButton.icon(
-            key: const ValueKey('proj_send'),
-            onPressed: _ready && !_sending ? () => unawaited(_send()) : null,
-            icon: _sending
-                ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(AppIcons.send, size: 18),
-            label: Text(l10n.tr(_editing ? 'projSaveChanges' : 'projSend')),
+        child: ReadableWidth(
+          maxWidth: assignmentColumnWidth,
+          heightFactor: 1,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.m),
+            child: FilledButton.icon(
+              key: const ValueKey('proj_send'),
+              onPressed: _ready && !_sending ? () => unawaited(_send()) : null,
+              icon: _sending
+                  ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(AppIcons.send, size: 18),
+              label: Text(l10n.tr(_editing ? 'projSaveChanges' : 'projSend')),
+            ),
           ),
         ),
       ),
-      body: ListView(padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.xl), children: [
+      body: ReadableWidth(
+          maxWidth: assignmentColumnWidth,
+          fill: true,
+          child: ListView(padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.xl), children: [
         TextField(
           key: const ValueKey('proj_title'),
           controller: _title,
@@ -344,6 +356,15 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
           textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(border: const OutlineInputBorder(), labelText: l10n.tr('projDescription')),
         ),
+        // С какого ящика уйдут письма проекта.
+        if (ref.watch(accountsProvider).length > 1 && _account != null) ...[
+          const SizedBox(height: Space.m),
+          AssignmentAccountField(
+            accounts: ref.watch(accountsProvider),
+            selected: _account!.id,
+            onChanged: (id) => setState(() => _accountId = id),
+          ),
+        ],
         label(l10n.tr('projStart')),
         Align(
           alignment: Alignment.centerLeft,
@@ -411,7 +432,7 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
             onTap: () => unawaited(_editStage(i)),
             onDelete: () => _removeStage(i),
           ),
-      ]),
+      ])),
     );
   }
 }

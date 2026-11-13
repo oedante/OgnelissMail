@@ -129,6 +129,8 @@ typedef TaskMarker = ({
   bool removed,
   int? visibility,
   List<String>? files,
+  // «Важное» (как приоритет в Jira и «Важная задача» в Битрикс24).
+  bool important,
 });
 
 /// Отметка статуса в ответе. [checks] — выполненные пункты чек-листа
@@ -235,6 +237,7 @@ abstract final class AssignmentCodec {
     bool removed = false,
     int? visibility,
     List<String>? files,
+    bool important = false,
   }) {
     final d = (desc ?? '').trim();
     final parts = [
@@ -242,6 +245,7 @@ abstract final class AssignmentCodec {
       'id=$id',
       if (ev != null) 'ev=${_clean(ev)}',
       if (project) 'pj=1',
+      if (important) 'imp=1',
       if (parent != null) 'pa=$parent',
       if (start != null) 'st=${_date(start)}',
       if (due != null) 'due=${dueStamp(due)}',
@@ -390,6 +394,7 @@ abstract final class AssignmentCodec {
       removed: fields['rm'] == '1',
       visibility: int.tryParse(fields['vis'] ?? ''),
       files: files,
+      important: fields['imp'] == '1',
     );
   }
 

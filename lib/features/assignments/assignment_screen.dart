@@ -235,8 +235,11 @@ class AssignmentScreen extends ConsumerWidget {
           l10n.tr('assignDueTitle'),
           Text(
             v.start != null
-                ? '${fmtDate.format(v.start!)} — ${v.due == null ? l10n.tr('noDueDate') : fmtDate.format(v.due!)}'
-                : (v.due == null ? l10n.tr('noDueDate') : DateFormat('EEEE, d MMMM', l10n.localeCode).format(v.due!)),
+                ? '${fmtDate.format(v.start!)} — ${v.due == null ? l10n.tr('noDueDate') : assignmentDueText(v.due!, l10n)}'
+                : (v.due == null
+                    ? l10n.tr('noDueDate')
+                    : DateFormat(dueHasTime(v.due) ? 'EEEE, d MMMM, HH:mm' : 'EEEE, d MMMM', l10n.localeCode)
+                        .format(v.due!)),
             style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500, color: overdue ? AppColors.errorText(context) : null),
           ),

@@ -415,12 +415,16 @@ class ReminderSchedulerService {
       if (due == null || v.isProject) continue;
       if (v.status != AssignmentStatus.open && v.status != AssignmentStatus.inProgress) continue;
       final day = DateTime(due.year, due.month, due.day);
+      // Срок со временем (13.11.2026): исполнителю — ещё за час до срока,
+      // постановщику — через полчаса после срока.
+      final timed = dueHasTime(due);
       if (v.iExecute || v.iCoExecute) {
         if (v.waiting) continue;
         add(v, 'tomorrow', DateTime(day.year, day.month, day.day - 1, dueHour));
-        add(v, 'today', DateTime(day.year, day.month, day.day, dueHour));
+        if (!timed || due.hour > dueHour + 1) add(v, 'today', DateTime(day.year, day.month, day.day, dueHour));
+        if (timed) add(v, 'soon', due.subtract(const Duration(hours: 1)));
       } else if (v.outgoing || v.iControl) {
-        add(v, 'late', DateTime(day.year, day.month, day.day + 1, dueHour));
+        add(v, 'late', timed ? due.add(const Duration(minutes: 30)) : DateTime(day.year, day.month, day.day + 1, dueHour));
       }
     }
     return out;
@@ -429,10 +433,13 @@ class ReminderSchedulerService {
   /// Текст напоминания о поручении: «Поручение: срок завтра, 14.11 · Проект».
   static String assignmentBody(AssignmentView v, String kind, AppLocalizations l10n, {String? projectTitle}) {
     final d = v.due;
-    final due = d == null ? '' : '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}';
+    String two(int n) => n.toString().padLeft(2, '0');
+    final time = d != null && dueHasTime(d) ? ' ${two(d.hour)}:${two(d.minute)}' : '';
+    final due = d == null ? '' : '${two(d.day)}.${two(d.month)}$time';
     final text = switch (kind) {
       'tomorrow' => l10n.tr('assignRemTomorrow').replaceAll('{due}', due),
-      'today' => l10n.tr('assignRemToday'),
+      'today' => '${l10n.tr('assignRemToday')}${time.isEmpty ? '' : ',$time'}',
+      'soon' => '${l10n.tr('assignRemToday')},$time',
       _ => l10n.tr('assignRemLate').replaceAll('{due}', due).replaceAll('{name}', v.otherName),
     };
     final p = (projectTitle ?? '').trim();

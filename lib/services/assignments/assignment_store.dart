@@ -117,10 +117,12 @@ class AssignmentView {
 
   String? get otherEmail => outgoing ? assignee?.email : (owner?.email ?? row.ownerEmail);
 
-  /// Срок прошёл (день срока закончился), а поручение не выполнено.
+  /// Срок прошёл (у срока со временем — время, без него — день срока
+  /// закончился), а поручение не выполнено.
   bool overdue(DateTime now) {
     final d = due;
     if (d == null || !active) return false;
+    if (dueHasTime(d)) return d.isBefore(now);
     return DateTime(d.year, d.month, d.day).isBefore(DateTime(now.year, now.month, now.day));
   }
 }
@@ -529,11 +531,68 @@ abstract final class AssignmentStore {
         if (id == null) continue;
         if (await _apply(db, e, mine[e.accountId] ?? const {}, id)) changes++;
       }
+      changes += await _recheckReview(db, mine);
     } catch (err) {
       AppLogger.warning('Поручения: разбор писем — $err');
     }
     if (changes > 0) AppLogger.info('Поручения: изменений по письмам — $changes');
     return changes;
+  }
+
+  /// Пересмотр (замечание владельца 13.11.2026): у меня поручение «На
+  /// проверке», а постановщик уже ответил «Работа принята» — письмо
+  /// разобрано раньше, когда сервер вырезал скрытую отметку, а слова
+  /// постановщика у исполнителя не разбирались. Его письма после моего
+  /// «Готово» проверяются заново: код «D» или «Принято» словами —
+  /// выполнено; статус — в ту же запись истории.
+  static Future<int> _recheckReview(AppDatabase db, Map<String, Set<String>> mine) async {
+    var n = 0;
+    final rows = await (db.select(db.assignments)
+          ..where((a) =>
+              a.accountId.isIn(mine.keys) & a.status.equals(AssignmentStatus.review) & a.isArchived.equals(false)))
+        .get();
+    for (final a in rows) {
+      final me = mine[a.accountId] ?? const <String>{};
+      final people = await participants(db, a.id);
+      final iExecute = people.any((p) =>
+          me.contains(p.email.toLowerCase()) &&
+          (p.role == AssignmentRole.responsible || p.role == AssignmentRole.co));
+      if (!iExecute) continue;
+      final accepters = {
+        a.ownerEmail.toLowerCase(),
+        for (final p in people)
+          if (p.role == AssignmentRole.deputy || p.role == AssignmentRole.controller) p.email.toLowerCase(),
+      };
+      Map<String, dynamic> payload(AssignmentEvent e) {
+        try {
+          final j = jsonDecode(e.payloadJson);
+          if (j is Map<String, dynamic>) return j;
+        } catch (_) {}
+        return const {};
+      }
+
+      final list = await events(db, a.id);
+      final review = list.lastIndexWhere((e) => payload(e)['status'] == AssignmentStatus.review);
+      for (final e in list.skip(review < 0 ? 0 : review + 1)) {
+        if (e.type != 'message' || e.sourceEmailId == null || !accepters.contains(e.authorEmail.toLowerCase())) continue;
+        final mail = await (db.select(db.emails)..where((m) => m.id.equals(e.sourceEmailId!))).getSingleOrNull();
+        if (mail == null) continue;
+        final text = freshText(mail.bodyHtml, mail.bodyPlain);
+        final act = AssignmentCodec.actionFromText(text);
+        final ok = act != null
+            ? act.id == a.id && act.act == AssignmentAct.accepted
+            : AssignmentPhrases.classify(text) != null;
+        if (!ok) continue;
+        await db.transaction(() async {
+          await update(db, a.id, status: AssignmentStatus.done);
+          await (db.update(db.assignmentEvents)..where((x) => x.id.equals(e.id)))
+              .write(AssignmentEventsCompanion(payloadJson: Value(jsonEncode({...payload(e), 'status': AssignmentStatus.done}))));
+        });
+        n++;
+        break;
+      }
+    }
+    return n;
   }
 
   /// Письма действующих поручений (отправленное поручение, полученное,
@@ -808,7 +867,8 @@ abstract final class AssignmentStore {
       if (task.due != null) {
         final d = task.due!;
         final cur = a.dueAt?.toLocal();
-        if (cur == null || DateTime(cur.year, cur.month, cur.day) != DateTime(d.year, d.month, d.day)) due = d;
+        // Со временем (13.11.2026): новый час — тоже новый срок.
+        if (cur == null || cur != d) due = d;
       }
       if (task.start != null) {
         final d = task.start!;

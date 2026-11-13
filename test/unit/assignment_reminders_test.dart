@@ -86,6 +86,18 @@ void main() {
     expect([for (final x in r) '${x.v.id}|${x.kind}|${x.when}'], ['CCCCCCCCCCC2|late|${DateTime(2026, 11, 17, 10)}']);
   });
 
+  test('срок со временем: исполнителю — за час, постановщику — через полчаса после', () async {
+    await add('EEEEEEEEEEE2', owner: 'boss@corp.ru', to: me, due: DateTime(2026, 11, 14, 15, 0));
+    await add('EEEEEEEEEEE3', owner: me, to: 'vera@corp.ru', due: DateTime(2026, 11, 14, 8, 30));
+    final list = await AssignmentStore.all(db, mine);
+    final got = {for (final x in ReminderSchedulerService.assignmentReminders(list, now, dueHour: 9)) '${x.v.id}|${x.kind}': x.when};
+    expect(got, {
+      'EEEEEEEEEEE2|today': DateTime(2026, 11, 14, 9),
+      'EEEEEEEEEEE2|soon': DateTime(2026, 11, 14, 14, 0),
+      'EEEEEEEEEEE3|late': DateTime(2026, 11, 14, 9, 0),
+    });
+  });
+
   test('текст: срок, исполнитель, проект', () async {
     await AppLocalizations.load('ru');
     final l10n = AppLocalizations(const Locale('ru'));

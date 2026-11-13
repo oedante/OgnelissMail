@@ -32,7 +32,7 @@ import 'assignment_codec.dart';
 import 'assignment_store.dart';
 
 export 'assignment_codec.dart' show AssignmentStatus, AssignmentAct;
-export 'assignment_store.dart' show AssignmentView;
+export 'assignment_store.dart' show AssignmentView, dueHasTime;
 
 /// Мои адреса по ящикам (нижний регистр).
 Map<String, Set<String>> assignmentMine(List<AccountModel> accounts) => {
@@ -77,8 +77,10 @@ class AssignmentService {
     } catch (_) {}
   }
 
-  String _dueShort(DateTime d) => DateFormat('dd.MM').format(d);
-  String _dueLong(DateTime d, AppLocalizations l10n) => DateFormat('EEEE, d MMMM', l10n.localeCode).format(d);
+  // Срок со временем — с часами и минутами (13.11.2026).
+  String _dueShort(DateTime d) => DateFormat(dueHasTime(d) ? 'dd.MM HH:mm' : 'dd.MM').format(d);
+  String _dueLong(DateTime d, AppLocalizations l10n) =>
+      DateFormat(dueHasTime(d) ? 'EEEE, d MMMM, HH:mm' : 'EEEE, d MMMM', l10n.localeCode).format(d);
 
   static String _firstName(EmailAddress a) {
     final n = (a.displayName ?? '').trim();
@@ -380,8 +382,9 @@ class AssignmentService {
 
   String _dates(DateTime? start, DateTime? due, AppLocalizations l10n) {
     final f = DateFormat('d MMM', l10n.localeCode);
-    if (start != null && due != null) return '${f.format(start)} — ${f.format(due)}';
-    if (due != null) return l10n.tr('assignDueShort').replaceAll('{due}', f.format(due));
+    String end(DateTime d) => dueHasTime(d) ? DateFormat('d MMM, HH:mm', l10n.localeCode).format(d) : f.format(d);
+    if (start != null && due != null) return '${f.format(start)} — ${end(due)}';
+    if (due != null) return l10n.tr('assignDueShort').replaceAll('{due}', end(due));
     if (start != null) return f.format(start);
     return '';
   }
@@ -1751,7 +1754,13 @@ class AssignmentService {
 
 /// Срок поручения «до {дата}» для экранов.
 String assignmentDueText(DateTime due, AppLocalizations l10n) =>
-    DateFormat('EEE, d MMM', l10n.localeCode).format(due);
+    DateFormat(dueHasTime(due) ? 'EEE, d MMM, HH:mm' : 'EEE, d MMM', l10n.localeCode).format(due);
+
+/// Срок [day] (дата) с временем прежнего срока [keep] — перенос «на завтра»
+/// не теряет назначенный час.
+DateTime assignmentDueOn(DateTime day, DateTime? keep) => dueHasTime(keep)
+    ? DateTime(day.year, day.month, day.day, keep!.hour, keep.minute)
+    : DateTime(day.year, day.month, day.day);
 
 /// Помощник для экранов: unawaited с журналом.
 void assignmentFire(Future<void> f) => unawaited(f.catchError((Object e) {

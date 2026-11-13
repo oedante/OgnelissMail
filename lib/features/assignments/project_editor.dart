@@ -591,12 +591,25 @@ class _StageSheetState extends State<_StageSheet> {
     setState(() {
       if (start) {
         _start = d;
-        if (_due != null && _due!.isBefore(d)) _due = d;
+        if (_due != null && _due!.isBefore(d)) _due = assignmentDueOn(d, _due);
       } else {
-        _due = d;
+        _due = assignmentDueOn(d, _due);
         if (_start != null && _start!.isAfter(d)) _start = d;
       }
     });
+  }
+
+  /// Время срока этапа (13.11.2026).
+  Future<void> _time() async {
+    final l10n = AppLocalizations.of(context);
+    final now = DateTime.now();
+    final base = _due ?? DateTime(now.year, now.month, now.day);
+    final t = await showWheelTimePicker(context,
+        initial: dueHasTime(_due) ? TimeOfDay(hour: base.hour, minute: base.minute) : const TimeOfDay(hour: 18, minute: 0),
+        title: l10n.tr('time'),
+        minuteInterval: 5);
+    if (t == null) return;
+    setState(() => _due = DateTime(base.year, base.month, base.day, t.hour, t.minute));
   }
 
   void _setAfter(int? a) {
@@ -733,6 +746,21 @@ class _StageSheetState extends State<_StageSheet> {
                 label: Text(_due == null ? l10n.tr('projDueDate') : fmt.format(_due!)),
                 onPressed: () => unawaited(_date(false)),
               ),
+              if (dueHasTime(_due))
+                InputChip(
+                  key: const ValueKey('stage_time'),
+                  avatar: const Icon(AppIcons.schedule, size: 18),
+                  label: Text(l10n.tr('calUntilTime').replaceAll('{time}', DateFormat('HH:mm').format(_due!))),
+                  onPressed: () => unawaited(_time()),
+                  onDeleted: () => setState(() => _due = DateTime(_due!.year, _due!.month, _due!.day)),
+                )
+              else
+                ActionChip(
+                  key: const ValueKey('stage_time'),
+                  avatar: const Icon(AppIcons.schedule, size: 18),
+                  label: Text(l10n.tr('time')),
+                  onPressed: () => unawaited(_time()),
+                ),
             ]),
             label(l10n.tr('projChecklist')),
             for (var i = 0; i < _checklist.length; i++)

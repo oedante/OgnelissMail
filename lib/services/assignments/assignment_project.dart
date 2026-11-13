@@ -168,7 +168,7 @@ class PlanStage {
         'id': id,
         't': title,
         if (start != null) 's': _d(start!),
-        if (due != null) 'e': _d(due!),
+        if (due != null) 'e': dueStamp(due!),
         if (after != null) 'a': after,
         if (assignee != null) 'to': assignee,
         if ((assigneeName ?? '').trim().isNotEmpty) 'nm': assigneeName!.trim(),
@@ -251,6 +251,17 @@ List<ChecklistItem> mergeChecklist(List<ChecklistItem> old, List<String> texts) 
     for (final t in texts)
       if (t.trim().isNotEmpty) ChecklistItem(t.trim(), done: done[t.trim().toLowerCase()] ?? false),
   ];
+}
+
+/// У срока есть время (13.11.2026, замечание владельца «время очень
+/// важно»): срок без времени хранится полуночью.
+bool dueHasTime(DateTime? d) => d != null && (d.hour != 0 || d.minute != 0);
+
+/// Срок для отметки и плана: «2026-11-21» или «2026-11-21T15:30».
+String dueStamp(DateTime d) {
+  String two(int n) => n.toString().padLeft(2, '0');
+  final date = '${d.year.toString().padLeft(4, '0')}-${two(d.month)}-${two(d.day)}';
+  return dueHasTime(d) ? '${date}T${two(d.hour)}:${two(d.minute)}' : date;
 }
 
 /// Статусы (те же коды, что AssignmentStatus — без зависимости от кодека).

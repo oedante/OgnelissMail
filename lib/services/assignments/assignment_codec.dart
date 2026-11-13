@@ -16,6 +16,8 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'assignment_project.dart' show dueStamp;
+
 /// Статусы поручения (столбец assignments.status).
 abstract final class AssignmentStatus {
   static const open = 1; // новое
@@ -242,7 +244,7 @@ abstract final class AssignmentCodec {
       if (project) 'pj=1',
       if (parent != null) 'pa=$parent',
       if (start != null) 'st=${_date(start)}',
-      if (due != null) 'due=${_date(due)}',
+      if (due != null) 'due=${dueStamp(due)}',
       if (after != null && after != id && RegExp('^$_code\$').hasMatch(after)) 'af=$after',
       if (order != null) 'ord=$order',
       if (to != null && to.isNotEmpty) 'to=${_clean(to.toLowerCase())}',

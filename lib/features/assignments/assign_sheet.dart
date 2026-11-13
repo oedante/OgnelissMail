@@ -147,8 +147,23 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
     final today = DateTime(now.year, now.month, now.day);
     final d = await showWheelDatePicker(context,
         initial: _due ?? today, first: today, title: AppLocalizations.of(context).tr('taskPickDate'));
-    if (d != null) setState(() => _due = d);
+    if (d != null) setState(() => _due = assignmentDueOn(d, _due));
   }
+
+  /// Время срока (13.11.2026: «время очень важно»); без даты — сегодня.
+  Future<void> _pickTime() async {
+    final now = DateTime.now();
+    final base = _due ?? DateTime(now.year, now.month, now.day);
+    final t = await showWheelTimePicker(context,
+        initial: dueHasTime(_due) ? TimeOfDay(hour: base.hour, minute: base.minute) : const TimeOfDay(hour: 18, minute: 0),
+        title: AppLocalizations.of(context).tr('time'),
+        minuteInterval: 5);
+    if (t == null) return;
+    setState(() => _due = DateTime(base.year, base.month, base.day, t.hour, t.minute));
+  }
+
+  /// Дата из чипа — со временем, выбранным раньше.
+  void _setDay(DateTime day) => setState(() => _due = assignmentDueOn(day, _due));
 
   Future<void> _submit() async {
     final account = _account;
@@ -270,16 +285,11 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
             ],
             label(l10n.tr('assignDueTitle')),
             Wrap(spacing: Space.xs, runSpacing: Space.xs, children: [
+              ChoiceChip(label: Text(l10n.tr('today')), selected: same(_due, today), onSelected: (_) => _setDay(today)),
               ChoiceChip(
-                  label: Text(l10n.tr('today')), selected: same(_due, today), onSelected: (_) => setState(() => _due = today)),
+                  label: Text(l10n.tr('tomorrow')), selected: same(_due, tomorrow), onSelected: (_) => _setDay(tomorrow)),
               ChoiceChip(
-                  label: Text(l10n.tr('tomorrow')),
-                  selected: same(_due, tomorrow),
-                  onSelected: (_) => setState(() => _due = tomorrow)),
-              ChoiceChip(
-                  label: Text(l10n.tr('laterNextWeek')),
-                  selected: same(_due, week),
-                  onSelected: (_) => setState(() => _due = week)),
+                  label: Text(l10n.tr('laterNextWeek')), selected: same(_due, week), onSelected: (_) => _setDay(week)),
               ChoiceChip(
                 label: Text(custom ? DateFormat('EEE, d MMM', l10n.localeCode).format(_due!) : l10n.tr('taskPickDate')),
                 selected: custom,
@@ -288,6 +298,25 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
               ChoiceChip(
                   label: Text(l10n.tr('noDueDate')), selected: _due == null, onSelected: (_) => setState(() => _due = null)),
             ]),
+            // Время срока — отдельным чипом: снять — крестиком.
+            const SizedBox(height: Space.xs),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: dueHasTime(_due)
+                  ? InputChip(
+                      key: const ValueKey('assign_time'),
+                      avatar: const Icon(AppIcons.schedule, size: 18),
+                      label: Text(l10n.tr('calUntilTime').replaceAll('{time}', DateFormat('HH:mm').format(_due!))),
+                      onPressed: () => unawaited(_pickTime()),
+                      onDeleted: () => setState(() => _due = DateTime(_due!.year, _due!.month, _due!.day)),
+                    )
+                  : ActionChip(
+                      key: const ValueKey('assign_time'),
+                      avatar: const Icon(AppIcons.schedule, size: 18),
+                      label: Text(l10n.tr('time')),
+                      onPressed: () => unawaited(_pickTime()),
+                    ),
+            ),
             label(l10n.tr('assignNote')),
             TextField(
               controller: _note,

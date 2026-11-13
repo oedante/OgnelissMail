@@ -422,6 +422,55 @@ void main() {
     expect((await v.one(id)).status, AssignmentStatus.done);
   });
 
+  test('пересмотр: «Работа принята» разобрано раньше без статуса — после обновления выполнено', () async {
+    final b = phones[boss]!, v = phones[vera]!;
+    final id = (await b.svc.create(account: acc(b), title: 'Тест', assignees: [a(vera)])).single;
+    await deliver();
+    await v.svc.setStatus(await v.one(id), AssignmentStatus.review);
+    await deliver();
+    // Письмо постановщика уже было разобрано прежней версией: событие есть,
+    // статус не сменился (отметку вырезал сервер).
+    await v.db.into(v.db.emails).insert(EmailsCompanion.insert(
+          id: 'old1',
+          accountId: 'a',
+          folderId: 'in',
+          fromEmail: boss,
+          toRecipients: json([a(vera)]),
+          subject: 'Re: Поручение: Тест — до 13.11',
+          bodyHtml: Value('<p>Работа принята, спасибо! Поручение выполнено.</p><p>OGN-$id</p>'),
+          receivedAt: DateTime.now(),
+        ));
+    await AssignmentStore.addEvent(v.db,
+        id: 'mail:a:old1',
+        assignmentId: id,
+        type: 'message',
+        author: boss,
+        at: DateTime.now(),
+        outgoing: false,
+        payload: {'text': 'Работа принята, спасибо! Поручение выполнено.'},
+        sourceEmailId: 'old1');
+    expect((await v.one(id)).status, AssignmentStatus.review);
+    await AssignmentStore.scan(v.db, v.mine, since: DateTime.now().subtract(const Duration(days: 1)));
+    expect((await v.one(id)).status, AssignmentStatus.done);
+    final ev = (await AssignmentStore.events(v.db, id)).firstWhere((e) => e.id == 'mail:a:old1');
+    expect(jsonDecode(ev.payloadJson)['status'], AssignmentStatus.done);
+  });
+
+  test('срок со временем — у исполнителя, в теме и тексте письма', () async {
+    final b = phones[boss]!, v = phones[vera]!;
+    final id = (await b.svc.create(
+            account: acc(b), title: 'Отчёт', assignees: [a(vera)], due: DateTime(2026, 11, 20, 15, 30)))
+        .single;
+    final m = await deliver();
+    expect(m.single.subject, contains('20.11 15:30'));
+    expect(m.single.html, contains('15:30'));
+    expect((await v.one(id)).due, DateTime(2026, 11, 20, 15, 30));
+    // Перенос только времени — тоже новый срок у исполнителя.
+    await b.svc.reschedule(await b.one(id), DateTime(2026, 11, 20, 17, 0));
+    await deliver();
+    expect((await v.one(id)).due, DateTime(2026, 11, 20, 17, 0));
+  });
+
   test('код действия: туда и обратно', () {
     expect(AssignmentCodec.tag('ABCDEFGHJKMN', AssignmentAct.accepted), 'OGN-ABCDEFGHJKMN-D');
     final x = AssignmentCodec.actionFromText('Готово OGN-ABCDEFGHJKMN-R и ещё OGN-BCDEFGHJKMNP-D')!;

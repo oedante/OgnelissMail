@@ -4262,4 +4262,6 @@
     <string name="projOwnOnlyHint">Inițiatorul v-a arătat doar etapele dvs.</string>
     <string name="projYouDeputy">sunteți adjunct</string>
     <string name="projEvPlan">Progres trimis participanților</string>
+    <string name="markSyncTitle">Marcaje pe toate dispozitivele</string>
+    <string name="markSyncDesc">Păstrate pe server: în Exchange ca semnalizare cu dată, în alte căsuțe fără dată</string>
 </resources>

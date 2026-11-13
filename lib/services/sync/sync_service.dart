@@ -29,6 +29,8 @@ import '../../core/security/secure_storage_service.dart';
 import '../../core/security/mail_body_processor.dart';
 import 'dart:convert';
 import '../mail/control_service.dart';
+import '../mail/marks/mark_sync.dart' show MarkFlag;
+import '../mail/marks/mark_sync_service.dart' show markSyncProvider;
 import '../assignments/assignment_service.dart' show AssignmentService, assignmentServiceProvider;
 import '../mail/email_actions_service.dart' show emailActionsProvider;
 import 'package:http/http.dart' as http;
@@ -347,6 +349,10 @@ class SyncService {
                 _ref.read(controlRevisionProvider.notifier).state++;
               } catch (_) {}
             }
+          }
+          // «На контроле» и «Позже», изменённые здесь, — на сервер (13.11.2026).
+          for (final a in accounts) {
+            await _ref.read(markSyncProvider).pushLocal(a);
           }
           // Поручения (2.2.0): ответы исполнителей, новые поручения мне.
           final changed = await AssignmentService.scanAfterSync(_ref.read(databaseProvider), accounts);
@@ -1685,6 +1691,8 @@ class SyncService {
   Future<void> _applyServerChanges(
       AppDatabase db, String accountId, EngineFolderSync r) async {
     if (r.deletedIds.isEmpty && r.flagChanges.isEmpty) return;
+    // Флажки «На контроле» и «Позже» (13.11.2026) — не флажок пользователя.
+    final ours = {for (final c in r.flagChanges) if (MarkFlag.codeOf(c.followUp?.flagType) != null) c.id};
     try {
       await db.transaction(() async {
         if (r.deletedIds.isNotEmpty) {
@@ -1703,10 +1711,14 @@ class SyncService {
                     e.isLocallyModified.equals(false)))
               .write(EmailsCompanion(
             isRead: c.read == null ? const Value.absent() : Value(c.read!),
-            isFlagged: c.flagged == null ? const Value.absent() : Value(c.flagged!),
+            isFlagged: c.flagged == null ? const Value.absent() : Value(c.flagged! && !ours.contains(c.id)),
           ));
         }
       });
+      final marks = _ref.read(markSyncProvider);
+      for (final c in r.flagChanges) {
+        if (c.followUp != null || c.flagged == false) await marks.applyEasFlag(accountId, c);
+      }
       AppLogger.info('С сервера: удалено ${r.deletedIds.length}, '
           'изменено флагов ${r.flagChanges.length}');
     } catch (e) {
@@ -2553,6 +2565,14 @@ class SyncService {
         }
       });
     }
+
+    // «На контроле» и «Позже» с других устройств (13.11.2026): ключевые
+    // слова новых писем и изменённые флаги уже загруженных.
+    final marks = <String, int>{
+      ...ImapMarkHints.take(account.id),
+      for (final e in delta.flags.entries) idOf(e.key): e.value.marks,
+    };
+    if (marks.isNotEmpty) await _ref.read(markSyncProvider).applyImap(account, marks);
 
     // Удалённые или перенесённые на сервере: в проверенном диапазоне UID
     // письма нет. Пустая папка на сервере — пусто и у нас. С QRESYNC сервер

@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">A megbízó csak az Ön szakaszait osztotta meg.</string>
     <string name="projYouDeputy">Ön helyettes</string>
     <string name="projEvPlan">Az állás elküldve a résztvevőknek</string>
+    <string name="markSyncTitle">Jelölések minden eszközön</string>
+    <string name="markSyncDesc">A kiszolgálón tárolódnak: Exchange-ben dátumos jelzőként, más postafiókokban dátum nélkül</string>
 </resources>

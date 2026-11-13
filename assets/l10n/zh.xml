@@ -4220,4 +4220,6 @@
     <string name="projOwnOnlyHint">发起人只向您共享了您自己的阶段。</string>
     <string name="projYouDeputy">您是代理人</string>
     <string name="projEvPlan">已向参与者发送进展</string>
+    <string name="markSyncTitle">所有设备同步标记</string>
+    <string name="markSyncDesc">保存在服务器上：Exchange 为带日期的标记，其他邮箱不含日期</string>
 </resources>

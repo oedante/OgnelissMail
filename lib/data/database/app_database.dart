@@ -7,6 +7,7 @@
 // WAL-режим, foreign keys, автоочистка.
 
 import 'dart:convert';
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
@@ -2525,7 +2526,12 @@ class AppDatabase extends _$AppDatabase {
   Future<void> setLaterState(String emailId, String accountId, int state, {DateTime? remindAt}) async {
     await (update(emails)..where((e) => e.id.equals(emailId) & e.accountId.equals(accountId)))
         .write(EmailsCompanion(laterState: Value(state), remindAt: Value(remindAt)));
+    markChanges.add(accountId);
   }
+
+  /// Отметки «На контроле» и «Позже» изменились (ящик) — сверка с сервером
+  /// через несколько секунд (mark_sync_service.dart, 13.11.2026).
+  static final markChanges = StreamController<String>.broadcast();
 
   // ─────────── Отчёты о доставке (1.9.x, 31.10.2026) ───────────
 
@@ -2632,6 +2638,7 @@ class AppDatabase extends _$AppDatabase {
           followUpAt: state == 0 || state == 3 ? const Value(null) : (deadline == null ? const Value.absent() : Value(deadline)),
           controlReplied: state == 0 ? const Value(null) : const Value.absent(),
         ));
+    markChanges.add(accountId);
   }
 
   /// Кто из «Кому» уже ответил (адреса через запятую).

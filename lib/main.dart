@@ -11,6 +11,7 @@ import 'widgets/common/scroll_edge_fade.dart';
 import 'services/widget_mail_actions.dart' show widgetMailActionsProvider;
 import 'services/weather/weather_service.dart' show WeatherApi;
 import 'services/documents/doc_preview_settings.dart';
+import 'services/mail/marks/mark_sync_service.dart' show markSyncProvider;
 import 'services/sync/sync_schedule.dart';
 import 'core/theme/mail_page_color.dart' show mailPageWarm;
 import 'core/platform/orientation_policy.dart';
@@ -341,6 +342,9 @@ Future<void> main() async {
       // напоминаний (запросы к базе, вызовы AlarmManager) подождёт 8 с.
       unawaited(Future<void>.delayed(const Duration(seconds: 8),
           () => globalContainer.read(reminderSchedulerProvider).rescheduleAll(force: true)));
+      // «На контроле» и «Позже» на всех устройствах (13.11.2026): правка
+      // отметки уходит на сервер через несколько секунд.
+      globalContainer.read(markSyncProvider).start();
       // Push для IMAP-ящиков (IDLE на отдельном соединении). Раньше IDLE был
       // реализован, но не вызывался — письма приходили лишь по таймеру.
       // ...кроме режима синхронизации «Никогда» (-1), где push выключен.

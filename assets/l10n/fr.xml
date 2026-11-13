@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">Le demandeur ne vous a partagé que vos propres étapes.</string>
     <string name="projYouDeputy">vous êtes adjoint</string>
     <string name="projEvPlan">Avancement envoyé aux participants</string>
+    <string name="markSyncTitle">Marques sur tous les appareils</string>
+    <string name="markSyncDesc">Conservées sur le serveur : dans Exchange avec un indicateur daté, ailleurs sans date</string>
 </resources>

@@ -4220,4 +4220,6 @@
     <string name="projOwnOnlyHint">요청자가 회원님의 단계만 공유했습니다.</string>
     <string name="projYouDeputy">회원님은 대리</string>
     <string name="projEvPlan">참여자에게 진행 상황을 보냄</string>
+    <string name="markSyncTitle">모든 기기에서 표시</string>
+    <string name="markSyncDesc">서버에 저장: Exchange는 날짜가 있는 플래그, 다른 메일함은 날짜 없이</string>
 </resources>

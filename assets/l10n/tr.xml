@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">Görevi veren yalnızca sizin aşamalarınızı paylaştı.</string>
     <string name="projYouDeputy">vekilsiniz</string>
     <string name="projEvPlan">İlerleme katılımcılara gönderildi</string>
+    <string name="markSyncTitle">Tüm cihazlarda işaretler</string>
+    <string name="markSyncDesc">Sunucuda saklanır: Exchange’te tarihli bayrak olarak, diğer kutularda tarihsiz</string>
 </resources>

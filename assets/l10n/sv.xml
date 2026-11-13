@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">Uppdragsgivaren har bara delat dina egna etapper med dig.</string>
     <string name="projYouDeputy">du är ställföreträdare</string>
     <string name="projEvPlan">Framsteg skickat till deltagarna</string>
+    <string name="markSyncTitle">Markeringar på alla enheter</string>
+    <string name="markSyncDesc">Sparas på servern: i Exchange som flagga med datum, i andra brevlådor utan datum</string>
 </resources>

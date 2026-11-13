@@ -4283,4 +4283,6 @@
     <string name="projOwnOnlyHint">Zlecający udostępnił Ci tylko Twoje etapy.</string>
     <string name="projYouDeputy">jesteś zastępcą</string>
     <string name="projEvPlan">Wysłano uczestnikom postęp prac</string>
+    <string name="markSyncTitle">Oznaczenia na wszystkich urządzeniach</string>
+    <string name="markSyncDesc">Przechowywane na serwerze: w Exchange jako flaga z datą, w innych skrzynkach bez dat</string>
 </resources>

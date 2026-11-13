@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">Oppdragsgiveren har bare delt dine egne faser med deg.</string>
     <string name="projYouDeputy">du er stedfortreder</string>
     <string name="projEvPlan">Fremdrift sendt til deltakerne</string>
+    <string name="markSyncTitle">Markeringer på alle enheter</string>
+    <string name="markSyncDesc">Lagres på serveren: i Exchange som flagg med dato, i andre postbokser uten dato</string>
 </resources>

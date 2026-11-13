@@ -4220,4 +4220,6 @@
     <string name="projOwnOnlyHint">Pemberi tugas hanya membagikan tahap Anda sendiri.</string>
     <string name="projYouDeputy">Anda wakil</string>
     <string name="projEvPlan">Kemajuan dikirim ke peserta</string>
+    <string name="markSyncTitle">Tanda di semua perangkat</string>
+    <string name="markSyncDesc">Disimpan di server: di Exchange sebagai bendera bertanggal, kotak lain tanpa tanggal</string>
 </resources>

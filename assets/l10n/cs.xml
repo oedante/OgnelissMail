@@ -4262,4 +4262,6 @@
     <string name="projOwnOnlyHint">Zadavatel vám zpřístupnil jen vaše etapy.</string>
     <string name="projYouDeputy">jste zástupce</string>
     <string name="projEvPlan">Účastníkům rozeslán průběh</string>
+    <string name="markSyncTitle">Značky na všech zařízeních</string>
+    <string name="markSyncDesc">Ukládají se na server: v Exchange jako příznak s datem, v jiných schránkách bez data</string>
 </resources>

@@ -100,6 +100,10 @@ class FakeImapServer {
   /// Отклонять NOTIFY SET (NO [BADEVENT]).
   bool rejectNotify = false;
 
+  /// Ответ PERMANENTFLAGS на SELECT; null — строки нет. С «\*» сервер
+  /// хранит свои ключевые слова ($OgnControl, $OgnLater).
+  String? permanentFlags;
+
   /// Строки без метки в ответ на NOTIFY SET — до OK (NOTIFY подразумевает NOOP).
   final beforeNotifyOk = <String>[];
 
@@ -261,6 +265,21 @@ class _Conn {
       _fetch(tag, cmd.substring('UID FETCH '.length), uid: true);
     } else if (upper.startsWith('FETCH ')) {
       _fetch(tag, cmd.substring('FETCH '.length), uid: false);
+    } else if (upper.startsWith('UID STORE ')) {
+      // UID STORE 7 +FLAGS.SILENT ($OgnControl) — один UID.
+      final m = RegExp(r'^UID STORE (\d+) ([+-])FLAGS(?:\.SILENT)? \(([^)]*)\)$', caseSensitive: false).firstMatch(cmd);
+      final b = _selected;
+      final msg = m == null || b == null ? null : b.messages.where((x) => x.uid == int.parse(m.group(1)!)).firstOrNull;
+      if (msg != null) {
+        final fl = m!.group(3)!.split(' ').where((f) => f.isNotEmpty);
+        if (m.group(2) == '+') {
+          msg.flags.addAll(fl);
+        } else {
+          msg.flags.removeAll(fl);
+        }
+        msg.modSeq++;
+      }
+      _ok(tag);
     } else if (upper.startsWith('UID SEARCH ')) {
       _search(tag, cmd.substring('UID SEARCH '.length));
     } else if (upper == 'NOOP') {
@@ -300,6 +319,7 @@ class _Conn {
     }
     _selected = b;
     write(r'* FLAGS (\Seen \Flagged \Deleted)');
+    if (srv.permanentFlags != null) write('* OK [PERMANENTFLAGS ${srv.permanentFlags}] Limited');
     write('* ${b.visible.length} EXISTS');
     write('* 0 RECENT');
     write('* OK [UIDVALIDITY ${b.uidValidity}] UIDs valid');

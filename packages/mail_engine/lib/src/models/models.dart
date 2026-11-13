@@ -340,6 +340,9 @@ class MailMessage {
 
   /// Reply-To письма (EAS Email:ReplyTo, IMAP заголовок Reply-To).
   final List<MailAddress> replyTo;
+
+  /// Флажок «К исполнению» с подробностями (Exchange); null — флажка нет.
+  final MailFollowUp? followUp;
   const MailMessage({
     required this.id,
     required this.folderId,
@@ -362,7 +365,21 @@ class MailMessage {
     this.meeting,
     this.messageClass,
     this.replyTo = const [],
+    this.followUp,
   });
+}
+
+/// Флажок «К исполнению» (Exchange, 13.11.2026): текст флажка, статус
+/// (2 — отмечено, 1 — выполнено), начало, срок, время напоминания.
+class MailFollowUp {
+  final String? flagType;
+  final int status;
+  final DateTime? start;
+  final DateTime? due;
+  final DateTime? reminder;
+  const MailFollowUp({this.flagType, this.status = 2, this.start, this.due, this.reminder});
+
+  bool get complete => status == 1;
 }
 
 /// Данные приглашения на встречу из письма.
@@ -473,7 +490,10 @@ class MailFlagChange {
   final String folderId;
   final bool? read;
   final bool? flagged;
-  const MailFlagChange({required this.id, required this.folderId, this.read, this.flagged});
+
+  /// Подробности флажка (текст, срок, напоминание), если сервер их прислал.
+  final MailFollowUp? followUp;
+  const MailFlagChange({required this.id, required this.folderId, this.read, this.flagged, this.followUp});
 }
 
 /// Результат синхронизации папки.

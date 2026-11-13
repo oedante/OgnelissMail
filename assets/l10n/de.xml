@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">Der Auftraggeber hat Ihnen nur Ihre eigenen Phasen freigegeben.</string>
     <string name="projYouDeputy">Sie vertreten</string>
     <string name="projEvPlan">Fortschritt an die Beteiligten gesendet</string>
+    <string name="markSyncTitle">Markierungen auf allen Geräten</string>
+    <string name="markSyncDesc">Auf dem Server gespeichert: in Exchange als Kennzeichnung mit Datum, in anderen Postfächern ohne Datum</string>
 </resources>

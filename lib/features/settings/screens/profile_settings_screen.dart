@@ -13,6 +13,8 @@ import '../../../l10n/app_localizations.dart';
 import '../providers/feature_flags_provider.dart';
 import '../providers/settings_provider.dart';
 import '../../../services/notifications/reminder_scheduler_service.dart';
+import '../../../services/mail/marks/mark_sync_service.dart' show MarkSyncService;
+import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 
@@ -72,6 +74,21 @@ class ProfileSettingsScreen extends ConsumerWidget {
               value: st.mailControl,
               onChanged: sn.setMailControl,
             ),
+            // «На контроле» и «Позже» на всех устройствах (13.11.2026).
+            if (st.mailControl)
+              StatefulBuilder(builder: (context, setState) {
+                final prefs = ref.read(sharedPrefsProvider);
+                return SettingsSwitchItem(
+                  icon: AppIcons.cloud_sync,
+                  title: l10n.tr('markSyncTitle'),
+                  subtitle: l10n.tr('markSyncDesc'),
+                  value: prefs.getBool(MarkSyncService.prefKey) ?? true,
+                  onChanged: (v) async {
+                    await prefs.setBool(MarkSyncService.prefKey, v);
+                    setState(() {});
+                  },
+                );
+              }),
             SettingsSwitchItem(
               icon: AppIcons.notifications_active,
               title: l10n.tr('digestSetting'),

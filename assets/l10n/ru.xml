@@ -4283,4 +4283,6 @@
     <string name="projOwnOnlyHint">Постановщик открыл вам только ваши этапы.</string>
     <string name="projYouDeputy">вы — заместитель</string>
     <string name="projEvPlan">Участникам разослан ход работ</string>
+    <string name="markSyncTitle">Отметки на всех устройствах</string>
+    <string name="markSyncDesc">Хранятся на сервере: в Exchange — флажком с датой, в других ящиках — без дат</string>
 </resources>

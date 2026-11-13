@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">Il richiedente ha condiviso con lei solo le sue fasi.</string>
     <string name="projYouDeputy">lei è sostituto</string>
     <string name="projEvPlan">Avanzamento inviato ai partecipanti</string>
+    <string name="markSyncTitle">Contrassegni su tutti i dispositivi</string>
+    <string name="markSyncDesc">Salvati sul server: in Exchange come contrassegno con data, nelle altre caselle senza data</string>
 </resources>

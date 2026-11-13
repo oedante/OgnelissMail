@@ -4220,4 +4220,6 @@
     <string name="projOwnOnlyHint">依頼者が共有しているのはあなたのフェーズだけです。</string>
     <string name="projYouDeputy">あなたは代理</string>
     <string name="projEvPlan">参加者に進捗を送信</string>
+    <string name="markSyncTitle">すべての端末でマーク</string>
+    <string name="markSyncDesc">サーバーに保存：Exchange は日付付きフラグ、その他のメールボックスは日付なし</string>
 </resources>

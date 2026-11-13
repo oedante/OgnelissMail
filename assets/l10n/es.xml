@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">El solicitante solo le ha compartido sus propias etapas.</string>
     <string name="projYouDeputy">usted es suplente</string>
     <string name="projEvPlan">Avance enviado a los participantes</string>
+    <string name="markSyncTitle">Marcas en todos los dispositivos</string>
+    <string name="markSyncDesc">Se guardan en el servidor: en Exchange como marca con fecha, en otros buzones sin fecha</string>
 </resources>

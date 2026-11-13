@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">The owner has shared only your own stages with you.</string>
     <string name="projYouDeputy">you are a deputy</string>
     <string name="projEvPlan">Progress sent to participants</string>
+    <string name="markSyncTitle">Marks on all devices</string>
+    <string name="markSyncDesc">Kept on the server: in Exchange as a flag with a date, in other mailboxes without dates</string>
 </resources>

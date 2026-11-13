@@ -4220,4 +4220,6 @@
     <string name="projOwnOnlyHint">Người giao việc chỉ chia sẻ với bạn các giai đoạn của bạn.</string>
     <string name="projYouDeputy">bạn là người thay</string>
     <string name="projEvPlan">Đã gửi tiến độ cho người tham gia</string>
+    <string name="markSyncTitle">Đánh dấu trên mọi thiết bị</string>
+    <string name="markSyncDesc">Lưu trên máy chủ: trong Exchange là cờ có ngày, hộp thư khác không có ngày</string>
 </resources>

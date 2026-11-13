@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">सौंपने वाले ने आपके साथ केवल आपके चरण साझा किए हैं।</string>
     <string name="projYouDeputy">आप उप हैं</string>
     <string name="projEvPlan">प्रगति प्रतिभागियों को भेजी गई</string>
+    <string name="markSyncTitle">सभी डिवाइस पर चिह्न</string>
+    <string name="markSyncDesc">सर्वर पर रखे जाते हैं: Exchange में तारीख़ वाले फ़्लैग के रूप में, अन्य मेलबॉक्स में बिना तारीख़</string>
 </resources>

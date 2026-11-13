@@ -4262,4 +4262,6 @@
     <string name="projOwnOnlyHint">מטיל המשימה שיתף איתך רק את השלבים שלך.</string>
     <string name="projYouDeputy">אתה ממלא מקום</string>
     <string name="projEvPlan">ההתקדמות נשלחה למשתתפים</string>
+    <string name="markSyncTitle">סימונים בכל המכשירים</string>
+    <string name="markSyncDesc">נשמרים בשרת: ב־Exchange כדגל עם תאריך, בתיבות אחרות בלי תאריך</string>
 </resources>

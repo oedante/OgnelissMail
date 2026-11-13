@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">De opdrachtgever deelt alleen uw eigen fasen met u.</string>
     <string name="projYouDeputy">u bent plaatsvervanger</string>
     <string name="projEvPlan">Voortgang naar deelnemers verstuurd</string>
+    <string name="markSyncTitle">Markeringen op alle apparaten</string>
+    <string name="markSyncDesc">Bewaard op de server: in Exchange als vlag met datum, in andere postvakken zonder datum</string>
 </resources>

@@ -4220,4 +4220,6 @@
     <string name="projOwnOnlyHint">ผู้มอบหมายเปิดให้คุณเห็นเฉพาะขั้นตอนของคุณ</string>
     <string name="projYouDeputy">คุณเป็นผู้แทน</string>
     <string name="projEvPlan">ส่งความคืบหน้าให้ผู้เข้าร่วมแล้ว</string>
+    <string name="markSyncTitle">เครื่องหมายบนทุกอุปกรณ์</string>
+    <string name="markSyncDesc">เก็บไว้บนเซิร์ฟเวอร์: ใน Exchange เป็นแฟล็กพร้อมวันที่ กล่องอื่นไม่มีวันที่</string>
 </resources>

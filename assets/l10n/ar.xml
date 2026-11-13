@@ -4325,4 +4325,6 @@
     <string name="projOwnOnlyHint">شارك صاحب المهمة معك مراحلك فقط.</string>
     <string name="projYouDeputy">أنت نائب</string>
     <string name="projEvPlan">أُرسل سير العمل إلى المشاركين</string>
+    <string name="markSyncTitle">العلامات على كل الأجهزة</string>
+    <string name="markSyncDesc">تُحفظ على الخادم: في Exchange كعلامة بتاريخ، وفي الصناديق الأخرى بلا تاريخ</string>
 </resources>

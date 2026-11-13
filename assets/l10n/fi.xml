@@ -4241,4 +4241,6 @@
     <string name="projOwnOnlyHint">Toimeksiantaja on jakanut sinulle vain omat vaiheesi.</string>
     <string name="projYouDeputy">olet sijainen</string>
     <string name="projEvPlan">Eteneminen lähetetty osallistujille</string>
+    <string name="markSyncTitle">Merkinnät kaikilla laitteilla</string>
+    <string name="markSyncDesc">Tallennetaan palvelimelle: Exchangessa päivättynä merkintänä, muissa postilaatikoissa ilman päivämäärää</string>
 </resources>

@@ -5,6 +5,7 @@
 
 import '../../security/managed_config.dart' show ManagedPolicy;
 import '../../../core/utils/category_colors.dart';
+import '../marks/mark_sync.dart' show MarkFlag;
 import 'package:flutter/widgets.dart' show WidgetsBinding, AppLifecycleState;
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform, visibleForTesting;
 import 'dart:math';
@@ -3865,7 +3866,14 @@ class MailEngineService {
       final batch = EngineFolderSync(
         added: [for (final m in [...res.added, ...res.changed]) _toEmailModel(account.id, m)],
         deletedIds: res.deleted.map((r) => r.id).toList(),
-        flagChanges: res.flagChanges,
+        // Флажки «На контроле» и «Позже» у новых писем — как изменения
+        // флажка: синхронизация применит их после сохранения писем.
+        flagChanges: [
+          ...res.flagChanges,
+          for (final m in [...res.added, ...res.changed])
+            if (MarkFlag.codeOf(m.followUp?.flagType) != null)
+              me.MailFlagChange(id: m.id, folderId: m.folderId, flagged: true, followUp: m.followUp),
+        ],
         newSyncToken: res.newState?.token,
         moreAvailable: res.moreAvailable,
       );
@@ -4009,6 +4017,22 @@ class MailEngineService {
     await engine.applyFlags(
       me.MessageRef(id: serverId, folderId: folderId, serverId: serverId),
       flagged: isFlagged,
+    );
+    await _persistKey(account, engine, folderId);
+  });
+
+  /// Флажок «К исполнению» с текстом, сроком и напоминанием (ActiveSync):
+  /// «На контроле» и «Позже» на всех устройствах (13.11.2026). null —
+  /// снять флажок.
+  Future<void> setFollowUp(AccountModel account,
+      {required String folderId, required String serverId, me.MailFollowUp? followUp}) => _serial(account.id, () async {
+    final engine = await _requireEngine(account);
+    if (engine is! me.EasEngine) return;
+    _seedKey(account, engine, folderId);
+    await engine.applyFlags(
+      me.MessageRef(id: serverId, folderId: folderId, serverId: serverId),
+      flagged: followUp != null,
+      followUp: followUp,
     );
     await _persistKey(account, engine, folderId);
   });
@@ -4269,7 +4293,8 @@ class MailEngineService {
       receivedAt: m.date ?? DateTime.now(),
       sentAt: m.date,
       isRead: m.isRead,
-      isFlagged: m.isFlagged,
+      // Флажок «На контроле» или «Позже» — не флажок пользователя.
+      isFlagged: m.isFlagged && MarkFlag.codeOf(m.followUp?.flagType) == null,
       hasAttachments: m.hasAttachments,
       meetingJson: m.meeting == null
           ? null

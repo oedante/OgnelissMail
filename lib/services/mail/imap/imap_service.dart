@@ -2053,6 +2053,37 @@ class ImapService {
     return '${d.day}-${months[d.month - 1]}-${d.year}';
   }
 
+  /// Список вложений письма по структуре (BODYSTRUCTURE, без текста и
+  /// файлов): для писем, тело которых уже на телефоне, а список вложений
+  /// собран прежними правилами (13.11.2026, «Fwd: Занавеси»: фото «inline»
+  /// без Content-ID). null — письма нет на сервере.
+  Future<List<EmailAttachment>?> fetchAttachmentList(AccountModel account,
+          {required String folderId, required int uid}) =>
+      _withClient<List<EmailAttachment>?>(account, (client) async {
+        await client.selectMailboxByPath(folderId);
+        final r = await client.uidFetchMessages(MessageSequence.fromId(uid, isUid: true), '(UID BODYSTRUCTURE)');
+        if (r.messages.isEmpty) return null;
+        final structure = r.messages.first.body;
+        final list = <EmailAttachment>[];
+        if (structure != null) collectAttachments(structure, list);
+        return list;
+      });
+
+  /// Стоит ли спросить у сервера список вложений письма, тело которого уже
+  /// на телефоне: списка нет, а письмо заметно больше своего текста — значит,
+  /// в нём есть файлы, которые прежние правила не посчитали вложениями.
+  static bool attachmentsMayBeMissing({required int? size, required String? attachmentsJson,
+      required String? bodyHtml, required String? bodyPlain}) {
+    final list = (attachmentsJson ?? '').trim();
+    if (list.isNotEmpty && list != '[]') return false;
+    final total = size ?? 0;
+    if (total <= 0) return false;
+    final text = (bodyHtml?.length ?? 0) + (bodyPlain?.length ?? 0);
+    // Заголовки, кодировка base64/quoted-printable и вторая версия текста
+    // (HTML и простой) — с большим запасом.
+    return total > text * 2 + 16 * 1024;
+  }
+
   Future<Uint8List?> fetchRawMessage(AccountModel account,
       {required String folderId, required int uid}) async {
     return _withClient<Uint8List?>(account, (client) async {

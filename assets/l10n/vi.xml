@@ -4167,4 +4167,9 @@
     <string name="projChecklist">Danh sách kiểm</string>
     <string name="projTabFiles">Tệp</string>
     <string name="projStartDate">Bắt đầu</string>
+    <string name="assignRemTomorrow">Nhiệm vụ: hạn vào ngày mai, {due}</string>
+    <string name="assignRemToday">Nhiệm vụ: hạn hôm nay</string>
+    <string name="assignRemLate">Đã quá hạn từ {due} · người thực hiện: {name}</string>
+    <string name="assignRemSetting">Hạn của nhiệm vụ</string>
+    <string name="assignRemSettingDesc">Người thực hiện: trước một ngày và vào ngày hạn; người giao: khi đã quá hạn</string>
 </resources>

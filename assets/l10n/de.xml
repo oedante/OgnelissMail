@@ -4188,4 +4188,9 @@
     <string name="projChecklist">Checkliste</string>
     <string name="projTabFiles">Dateien</string>
     <string name="projStartDate">Beginn</string>
+    <string name="assignRemTomorrow">Auftrag fällig morgen, {due}</string>
+    <string name="assignRemToday">Auftrag fällig heute</string>
+    <string name="assignRemLate">Frist abgelaufen am {due} · Ausführende(r): {name}</string>
+    <string name="assignRemSetting">Fristen von Aufträgen</string>
+    <string name="assignRemSettingDesc">Ausführenden: am Vortag und am Fälligkeitstag; Auftraggeber: wenn die Frist abgelaufen ist</string>
 </resources>

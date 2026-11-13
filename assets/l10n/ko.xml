@@ -4167,4 +4167,9 @@
     <string name="projChecklist">체크리스트</string>
     <string name="projTabFiles">파일</string>
     <string name="projStartDate">시작</string>
+    <string name="assignRemTomorrow">업무 지시: 마감 내일, {due}</string>
+    <string name="assignRemToday">업무 지시: 마감 오늘</string>
+    <string name="assignRemLate">{due} 마감 지남 · 담당자: {name}</string>
+    <string name="assignRemSetting">업무 지시 마감</string>
+    <string name="assignRemSettingDesc">담당자: 전날과 마감일, 지시자: 마감이 지났을 때</string>
 </resources>

@@ -4188,4 +4188,9 @@
     <string name="projChecklist">Checklist</string>
     <string name="projTabFiles">File</string>
     <string name="projStartDate">Inizio</string>
+    <string name="assignRemTomorrow">Incarico: scade domani, {due}</string>
+    <string name="assignRemToday">Incarico: scade oggi</string>
+    <string name="assignRemLate">Scaduto il {due} · esecutore: {name}</string>
+    <string name="assignRemSetting">Scadenze degli incarichi</string>
+    <string name="assignRemSettingDesc">All’esecutore: il giorno prima e il giorno della scadenza; a chi l’ha assegnato: se è scaduto</string>
 </resources>

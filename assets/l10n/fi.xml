@@ -4188,4 +4188,9 @@
     <string name="projChecklist">Tarkistuslista</string>
     <string name="projTabFiles">Tiedostot</string>
     <string name="projStartDate">Alku</string>
+    <string name="assignRemTomorrow">Toimeksianto: määräaika huomenna, {due}</string>
+    <string name="assignRemToday">Toimeksianto: määräaika tänään</string>
+    <string name="assignRemLate">Määräaika umpeutui {due} · suorittaja: {name}</string>
+    <string name="assignRemSetting">Toimeksiantojen määräajat</string>
+    <string name="assignRemSettingDesc">Suorittajalle edellisenä päivänä ja määräpäivänä, antajalle kun määräaika on umpeutunut</string>
 </resources>

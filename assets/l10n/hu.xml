@@ -4188,4 +4188,9 @@
     <string name="projChecklist">Ellenőrzőlista</string>
     <string name="projTabFiles">Fájlok</string>
     <string name="projStartDate">Kezdés</string>
+    <string name="assignRemTomorrow">Megbízás: határidő holnap, {due}</string>
+    <string name="assignRemToday">Megbízás: határidő ma</string>
+    <string name="assignRemLate">A határidő lejárt: {due} · végrehajtó: {name}</string>
+    <string name="assignRemSetting">Megbízások határideje</string>
+    <string name="assignRemSettingDesc">A végrehajtónak előző nap és a határidő napján, a megbízónak, ha lejárt</string>
 </resources>

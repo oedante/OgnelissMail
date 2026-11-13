@@ -22,6 +22,9 @@ import '../../core/logging/app_logger.dart';
 import '../../l10n/app_localizations.dart';
 import '../../data/database/app_database.dart';
 import '../../data/providers/database_provider.dart';
+import '../assignments/assignment_codec.dart' show AssignmentStatus;
+import '../assignments/assignment_store.dart';
+import '../mail/own_addresses.dart';
 import 'messenger_notifications.dart';
 import 'notification_service.dart';
 import 'notification_text.dart';
@@ -59,6 +62,7 @@ class ReminderSchedulerService {
   static const _kEventAlarmClock = 'mod_event_alarm_clock';
   static const _kTaskReminderDefault = 'mod_task_reminder';
   static const _kTaskDueHour = 'mod_task_due_hour';
+  static const kAssignReminder = 'mod_assign_reminder';
 
   static int eventNotificationId(String accountId, String eventId, int minutesBefore) =>
       NotificationService.stableId('ev|$accountId|$eventId|$minutesBefore');
@@ -143,6 +147,7 @@ class ReminderSchedulerService {
       _boxes = await _mailboxes();
       await _scheduleEvents(ids, prefs);
       await _scheduleTasks(ids, prefs);
+      await _scheduleAssignments(ids, prefs);
       await _scheduleDigest(ids, prefs);
       // Напоминания встреч и задач, которых больше нет (удалены, отменены,
       // перенесены, выполнены), снимаются: раньше уведомление об удалённой
@@ -382,6 +387,113 @@ class ReminderSchedulerService {
     if (count > 0) AppLogger.info('Запланировано напоминаний о задачах: $count (новые и изменённые)');
   }
 
+  // ─────────────────────────── Поручения ───────────────────────────
+
+  static int assignmentNotificationId(String id, String kind) =>
+      NotificationService.stableId('assign|$id|$kind');
+
+  /// Напоминания о сроках поручений [list] (просьба владельца 13.11.2026):
+  /// исполнителю и соисполнителю — накануне срока и в день срока, в час
+  /// [dueHour]; поручившему и контролирующему — утром после срока, если
+  /// работа не сдана. Без напоминаний: общая строка проекта (напоминают
+  /// его этапы), выполненные, снятые, сданные на проверку, этапы, ждущие
+  /// предыдущего этапа, и наблюдателю. Только будущее, в пределах [until].
+  static List<({AssignmentView v, String kind, DateTime when})> assignmentReminders(
+    List<AssignmentView> list,
+    DateTime now, {
+    int dueHour = 9,
+    DateTime? until,
+  }) {
+    final out = <({AssignmentView v, String kind, DateTime when})>[];
+    final end = until ?? now.add(_horizon);
+    void add(AssignmentView v, String kind, DateTime when) {
+      if (when.isAfter(now) && !when.isAfter(end)) out.add((v: v, kind: kind, when: when));
+    }
+
+    for (final v in list) {
+      final due = v.due;
+      if (due == null || v.isProject) continue;
+      if (v.status != AssignmentStatus.open && v.status != AssignmentStatus.inProgress) continue;
+      final day = DateTime(due.year, due.month, due.day);
+      if (v.iExecute || v.iCoExecute) {
+        if (v.waiting) continue;
+        add(v, 'tomorrow', DateTime(day.year, day.month, day.day - 1, dueHour));
+        add(v, 'today', DateTime(day.year, day.month, day.day, dueHour));
+      } else if (v.outgoing || v.iControl) {
+        add(v, 'late', DateTime(day.year, day.month, day.day + 1, dueHour));
+      }
+    }
+    return out;
+  }
+
+  /// Текст напоминания о поручении: «Поручение: срок завтра, 14.11 · Проект».
+  static String assignmentBody(AssignmentView v, String kind, AppLocalizations l10n, {String? projectTitle}) {
+    final d = v.due;
+    final due = d == null ? '' : '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}';
+    final text = switch (kind) {
+      'tomorrow' => l10n.tr('assignRemTomorrow').replaceAll('{due}', due),
+      'today' => l10n.tr('assignRemToday'),
+      _ => l10n.tr('assignRemLate').replaceAll('{due}', due).replaceAll('{name}', v.otherName),
+    };
+    final p = (projectTitle ?? '').trim();
+    return p.isEmpty ? text : '$text · $p';
+  }
+
+  /// Мои адреса по ящикам — для ролей в поручениях (без Riverpod: и из
+  /// фоновой синхронизации).
+  Future<Map<String, Set<String>>> _myAddresses() async {
+    final rows = await (_db.select(_db.accounts)..where((a) => a.isActive.equals(true))).get();
+    return {
+      for (final a in rows)
+        a.id: {
+          a.email.trim().toLowerCase(),
+          if ((a.sharedMailboxEmail ?? '').trim().isNotEmpty) a.sharedMailboxEmail!.trim().toLowerCase(),
+          ...OwnAddresses.extraFor(a.id),
+          ...OwnAddresses.sameMailbox(a.email),
+        }..removeWhere((e) => !e.contains('@')),
+    };
+  }
+
+  Future<void> _scheduleAssignments(Set<int> ids, SharedPreferences prefs) async {
+    if (!(prefs.getBool(kAssignReminder) ?? true)) return;
+    final mine = await _myAddresses();
+    if (mine.isEmpty) return;
+    final list = await AssignmentStore.all(_db, mine);
+    if (list.isEmpty) return;
+    final plan = assignmentReminders(list, DateTime.now(), dueHour: prefs.getInt(_kTaskDueHour) ?? 9);
+    if (plan.isEmpty) return;
+    final l10n = await _l10n();
+    final titles = {for (final v in list) v.id: v.row.title};
+    var count = 0;
+    for (final r in plan) {
+      final v = r.v;
+      final nid = assignmentNotificationId(v.id, r.kind);
+      ids.add(nid);
+      final body = assignmentBody(v, r.kind, l10n, projectTitle: v.parentId == null ? null : titles[v.parentId]);
+      final box = _boxes[v.row.accountId];
+      final payload = jsonEncode({
+        'type': 'assignment',
+        'id': v.id,
+        'accountId': v.row.accountId,
+        'nid': nid,
+        't': v.row.title,
+        'b': body,
+      });
+      if (_unchanged(nid, '${r.when.millisecondsSinceEpoch}|$payload|${box?.label}')) continue;
+      await _notifications.scheduleAssignmentReminder(
+        id: nid,
+        title: v.row.title,
+        body: body,
+        when: r.when,
+        payload: payload,
+        mailbox: box?.label,
+        mailboxIcon: box?.icon,
+      );
+      count++;
+    }
+    if (count > 0) AppLogger.info('Запланировано напоминаний о поручениях: $count (новые и изменённые)');
+  }
+
   // ───────────────────────── Утренняя сводка ─────────────────────────
 
   /// Ключи настроек (AppSettings, settings_provider.dart).
@@ -488,16 +600,34 @@ class ReminderSchedulerService {
   /// «Отложить» из уведомления: показать то же напоминание снова через
   /// [delay]. Данные не меняются — переносится только уведомление.
   Future<void> snooze({
-    required String kind, // 'event' | 'task'
+    required String kind, // 'event' | 'task' | 'assignment'
     required String accountId,
     required String id,
     required Duration delay,
+    /// Поручение: заголовок и текст прежнего уведомления.
+    ({String? title, String? body})? text,
   }) async {
     final l10n = await _l10n();
     final when = DateTime.now().add(delay);
     final nid = snoozeNotificationId(kind, accountId, id);
     final boxes = await _mailboxes();
-    if (kind == 'event') {
+    if (kind == 'assignment') {
+      final a = await AssignmentStore.byId(_db, id);
+      if (a == null || !AssignmentStatus.isActive(a.status)) return;
+      final body = text?.body ?? '';
+      await _notifications.scheduleAssignmentReminder(
+        id: nid,
+        title: text?.title ?? a.title,
+        body: body,
+        when: when,
+        payload: jsonEncode({
+          'type': 'assignment', 'id': id, 'accountId': a.accountId, 'nid': nid,
+          't': text?.title ?? a.title, 'b': body,
+        }),
+        mailbox: boxes[a.accountId]?.label,
+        mailboxIcon: boxes[a.accountId]?.icon,
+      );
+    } else if (kind == 'event') {
       final e = await (_db.select(_db.calendarEvents)
             ..where((x) => x.id.equals(id) & x.accountId.equals(accountId)))
           .getSingleOrNull();

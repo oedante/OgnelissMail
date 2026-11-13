@@ -4209,4 +4209,9 @@
     <string name="projChecklist">Kontrolní seznam</string>
     <string name="projTabFiles">Soubory</string>
     <string name="projStartDate">Začátek</string>
+    <string name="assignRemTomorrow">Úkol: termín zítra, {due}</string>
+    <string name="assignRemToday">Úkol: termín dnes</string>
+    <string name="assignRemLate">Termín uplynul {due} · řešitel: {name}</string>
+    <string name="assignRemSetting">Termíny úkolů</string>
+    <string name="assignRemSettingDesc">Řešiteli den předem a v den termínu, zadavateli po uplynutí termínu</string>
 </resources>

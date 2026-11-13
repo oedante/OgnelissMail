@@ -4188,4 +4188,9 @@
     <string name="projChecklist">Lista de comprobación</string>
     <string name="projTabFiles">Archivos</string>
     <string name="projStartDate">Inicio</string>
+    <string name="assignRemTomorrow">Encargo: vence mañana, {due}</string>
+    <string name="assignRemToday">Encargo: vence hoy</string>
+    <string name="assignRemLate">Venció el {due} · responsable: {name}</string>
+    <string name="assignRemSetting">Plazos de encargos</string>
+    <string name="assignRemSettingDesc">Al responsable: el día anterior y el día del plazo; a quien lo encargó: si ha vencido</string>
 </resources>

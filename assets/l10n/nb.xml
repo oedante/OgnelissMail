@@ -4188,4 +4188,9 @@
     <string name="projChecklist">Sjekkliste</string>
     <string name="projTabFiles">Filer</string>
     <string name="projStartDate">Start</string>
+    <string name="assignRemTomorrow">Oppdrag: frist i morgen, {due}</string>
+    <string name="assignRemToday">Oppdrag: frist i dag</string>
+    <string name="assignRemLate">Fristen gikk ut {due} · utfører: {name}</string>
+    <string name="assignRemSetting">Frister for oppdrag</string>
+    <string name="assignRemSettingDesc">Utfører: dagen før og på dagen; oppdragsgiver: når fristen er passert</string>
 </resources>

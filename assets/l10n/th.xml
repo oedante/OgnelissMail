@@ -4167,4 +4167,9 @@
     <string name="projChecklist">รายการตรวจสอบ</string>
     <string name="projTabFiles">ไฟล์</string>
     <string name="projStartDate">เริ่ม</string>
+    <string name="assignRemTomorrow">งานที่มอบหมาย: ครบกำหนดพรุ่งนี้ {due}</string>
+    <string name="assignRemToday">งานที่มอบหมาย: ครบกำหนดวันนี้</string>
+    <string name="assignRemLate">เลยกำหนดตั้งแต่ {due} · ผู้รับผิดชอบ: {name}</string>
+    <string name="assignRemSetting">กำหนดส่งงานที่มอบหมาย</string>
+    <string name="assignRemSettingDesc">ผู้รับผิดชอบ: ก่อนหนึ่งวันและวันครบกำหนด ผู้มอบหมาย: เมื่อเลยกำหนด</string>
 </resources>

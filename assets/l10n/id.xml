@@ -4167,4 +4167,9 @@
     <string name="projChecklist">Daftar periksa</string>
     <string name="projTabFiles">File</string>
     <string name="projStartDate">Mulai</string>
+    <string name="assignRemTomorrow">Tugas: tenggat besok, {due}</string>
+    <string name="assignRemToday">Tugas: tenggat hari ini</string>
+    <string name="assignRemLate">Lewat tenggat sejak {due} · pelaksana: {name}</string>
+    <string name="assignRemSetting">Tenggat tugas</string>
+    <string name="assignRemSettingDesc">Pelaksana: sehari sebelum dan pada hari tenggat; pemberi tugas: saat terlambat</string>
 </resources>

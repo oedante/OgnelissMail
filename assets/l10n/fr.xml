@@ -4188,4 +4188,9 @@
     <string name="projChecklist">Liste de contrôle</string>
     <string name="projTabFiles">Fichiers</string>
     <string name="projStartDate">Début</string>
+    <string name="assignRemTomorrow">Tâche assignée : échéance demain, {due}</string>
+    <string name="assignRemToday">Tâche assignée : échéance aujourd’hui</string>
+    <string name="assignRemLate">Échéance dépassée le {due} · exécutant : {name}</string>
+    <string name="assignRemSetting">Échéances des tâches assignées</string>
+    <string name="assignRemSettingDesc">Exécutant : la veille et le jour de l’échéance ; donneur d’ordre : en cas de retard</string>
 </resources>

@@ -4188,4 +4188,9 @@
     <string name="projChecklist">Checklist</string>
     <string name="projTabFiles">Files</string>
     <string name="projStartDate">Start</string>
+    <string name="assignRemTomorrow">Assignment due tomorrow, {due}</string>
+    <string name="assignRemToday">Assignment due today</string>
+    <string name="assignRemLate">Past due since {due} · assignee: {name}</string>
+    <string name="assignRemSetting">Assignment deadlines</string>
+    <string name="assignRemSettingDesc">Assignees: the day before and on the due day; assigner: when it is overdue</string>
 </resources>

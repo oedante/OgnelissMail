@@ -27,6 +27,7 @@ import '../../features/settings/providers/settings_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../mail/offline_send_service.dart';
 import '../mail/own_addresses.dart';
+import '../notifications/reminder_scheduler_service.dart' show reminderSchedulerProvider;
 import 'assignment_codec.dart';
 import 'assignment_store.dart';
 
@@ -68,6 +69,13 @@ class AssignmentService {
   String _ev() => 'ev:${const Uuid().v4()}';
 
   AccountModel? _account(String id) => _ref.read(accountsProvider).where((a) => a.id == id).firstOrNull;
+
+  /// Сроки и статусы поменялись — напоминания о сроках заново (13.11.2026).
+  void _reminders() {
+    try {
+      unawaited(_ref.read(reminderSchedulerProvider).rescheduleAll().catchError((Object _) {}));
+    } catch (_) {}
+  }
 
   String _dueShort(DateTime d) => DateFormat('dd.MM').format(d);
   String _dueLong(DateTime d, AppLocalizations l10n) => DateFormat('EEEE, d MMMM', l10n.localeCode).format(d);
@@ -153,6 +161,7 @@ class AssignmentService {
           html: body);
       ids.add(id);
     }
+    _reminders();
     return ids;
   }
 
@@ -300,6 +309,7 @@ class AssignmentService {
     };
     final full = [text, if ((note ?? '').trim().isNotEmpty) note!.trim()].join('\n');
     await AssignmentStore.update(_db, v.id, status: status);
+    _reminders();
     await _record(v, ev, 'status', {'status': status, 'text': full});
     // Исполнитель — с отметкой чек-листа: у постановщика виден ход работ.
     final checks = (v.iExecute || v.iCoExecute) && v.checklist.isNotEmpty ? ChecklistItem.bits(v.checklist) : null;
@@ -317,6 +327,7 @@ class AssignmentService {
   Future<void> markLocally(AssignmentView v, int status) async {
     if (status == v.status) return;
     await AssignmentStore.update(_db, v.id, status: status);
+    _reminders();
     await _record(v, _ev(), 'status', {'status': status, 'text': _l10n().tr('assignMarkedManually')});
   }
 
@@ -336,6 +347,7 @@ class AssignmentService {
   /// у себя).
   Future<void> reschedule(AssignmentView v, DateTime? due) async {
     await AssignmentStore.update(_db, v.id, due: due, clearDue: due == null);
+    _reminders();
     if (!v.outgoing) return;
     final l10n = _l10n();
     final ev = _ev();
@@ -516,6 +528,7 @@ class AssignmentService {
           observers: [...st.observers, ...d.observers],
           files: stageFiles[i]);
     }
+    _reminders();
     return pid;
   }
 
@@ -666,6 +679,7 @@ class AssignmentService {
     }
     // Предыдущий этап уже принят — «Можно начинать» сразу.
     if (after != null && after.status == AssignmentStatus.done) await dispatchPending();
+    _reminders();
     return id;
   }
 
@@ -874,6 +888,7 @@ class AssignmentService {
       final v = await load(w.id);
       if (v == null) continue;
       await AssignmentStore.update(_db, v.id, waiting: false);
+      _reminders();
       if (!v.outgoing) continue; // письмо — от постановщика
       final ev = _ev();
       final text = l10n.tr('assignMsgGo').replaceAll('{title}', prev.title);
@@ -919,6 +934,7 @@ class AssignmentService {
     if (dues.isNotEmpty) {
       await AssignmentStore.update(_db, projectId, due: dues.reduce((a, b) => a.isAfter(b) ? a : b));
     }
+    _reminders();
     return moved.length;
   }
 
@@ -954,7 +970,10 @@ class AssignmentService {
       (_db.delete(_db.assignmentTemplates)..where((t) => t.id.equals(id))).go();
 
   /// Убрать поручение у себя (письма остаются в почте).
-  Future<void> delete(AssignmentView v) => AssignmentStore.delete(_db, v.id);
+  Future<void> delete(AssignmentView v) async {
+    await AssignmentStore.delete(_db, v.id);
+    _reminders();
+  }
 
   /// Разобрать письма поручений после синхронизации (ответы, новые
   /// поручения мне). Не чаще раза в 20 секунд.

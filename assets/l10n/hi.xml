@@ -4188,4 +4188,9 @@
     <string name="projChecklist">जाँच सूची</string>
     <string name="projTabFiles">फ़ाइलें</string>
     <string name="projStartDate">आरंभ</string>
+    <string name="assignRemTomorrow">कार्य: अंतिम तिथि कल, {due}</string>
+    <string name="assignRemToday">कार्य: अंतिम तिथि आज</string>
+    <string name="assignRemLate">{due} को समय सीमा बीत गई · निष्पादक: {name}</string>
+    <string name="assignRemSetting">कार्यों की समय सीमा</string>
+    <string name="assignRemSettingDesc">निष्पादक को — एक दिन पहले और अंतिम दिन, सौंपने वाले को — समय सीमा बीतने पर</string>
 </resources>

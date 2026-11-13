@@ -4188,4 +4188,9 @@
     <string name="projChecklist">Checklist</string>
     <string name="projTabFiles">Bestanden</string>
     <string name="projStartDate">Start</string>
+    <string name="assignRemTomorrow">Opdracht: deadline morgen, {due}</string>
+    <string name="assignRemToday">Opdracht: deadline vandaag</string>
+    <string name="assignRemLate">Deadline verstreken op {due} · uitvoerder: {name}</string>
+    <string name="assignRemSetting">Deadlines van opdrachten</string>
+    <string name="assignRemSettingDesc">Uitvoerder: de dag ervoor en op de dag zelf; opdrachtgever: als de deadline verstreken is</string>
 </resources>

@@ -4188,4 +4188,9 @@
     <string name="projChecklist">Kontrol listesi</string>
     <string name="projTabFiles">Dosyalar</string>
     <string name="projStartDate">Başlangıç</string>
+    <string name="assignRemTomorrow">Görev: son tarih yarın, {due}</string>
+    <string name="assignRemToday">Görev: son tarih bugün</string>
+    <string name="assignRemLate">Süre {due} tarihinde doldu · sorumlu: {name}</string>
+    <string name="assignRemSetting">Görev son tarihleri</string>
+    <string name="assignRemSettingDesc">Sorumluya bir gün önce ve son gün, görevi verene süre dolduğunda</string>
 </resources>

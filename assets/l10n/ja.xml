@@ -4167,4 +4167,9 @@
     <string name="projChecklist">チェックリスト</string>
     <string name="projTabFiles">ファイル</string>
     <string name="projStartDate">開始</string>
+    <string name="assignRemTomorrow">依頼：期限は明日（{due}）</string>
+    <string name="assignRemToday">依頼：期限は今日</string>
+    <string name="assignRemLate">期限切れ（{due}）· 担当：{name}</string>
+    <string name="assignRemSetting">依頼の期限</string>
+    <string name="assignRemSettingDesc">担当者には前日と期限当日、依頼者には期限切れのときに通知</string>
 </resources>

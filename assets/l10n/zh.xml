@@ -4167,4 +4167,9 @@
     <string name="projChecklist">清单</string>
     <string name="projTabFiles">文件</string>
     <string name="projStartDate">开始</string>
+    <string name="assignRemTomorrow">指派任务：明天到期，{due}</string>
+    <string name="assignRemToday">指派任务：今天到期</string>
+    <string name="assignRemLate">已于 {due} 逾期 · 执行人：{name}</string>
+    <string name="assignRemSetting">指派任务的期限</string>
+    <string name="assignRemSettingDesc">执行人：前一天和到期当天；指派人：逾期时</string>
 </resources>

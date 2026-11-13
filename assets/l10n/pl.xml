@@ -4230,4 +4230,9 @@
     <string name="projChecklist">Lista kontrolna</string>
     <string name="projTabFiles">Pliki</string>
     <string name="projStartDate">Początek</string>
+    <string name="assignRemTomorrow">Zlecenie: termin jutro, {due}</string>
+    <string name="assignRemToday">Zlecenie: termin dzisiaj</string>
+    <string name="assignRemLate">Termin minął {due} · wykonawca: {name}</string>
+    <string name="assignRemSetting">Terminy zleceń</string>
+    <string name="assignRemSettingDesc">Wykonawcy — dzień wcześniej i w dniu terminu, zlecającemu — gdy termin minął</string>
 </resources>

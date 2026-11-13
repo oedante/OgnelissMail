@@ -4209,4 +4209,9 @@
     <string name="projChecklist">Listă de verificare</string>
     <string name="projTabFiles">Fișiere</string>
     <string name="projStartDate">Început</string>
+    <string name="assignRemTomorrow">Sarcină: termen mâine, {due}</string>
+    <string name="assignRemToday">Sarcină: termen astăzi</string>
+    <string name="assignRemLate">Termen depășit pe {due} · executant: {name}</string>
+    <string name="assignRemSetting">Termenele sarcinilor</string>
+    <string name="assignRemSettingDesc">Executantului: cu o zi înainte și în ziua termenului; celui care a atribuit: dacă termenul a trecut</string>
 </resources>

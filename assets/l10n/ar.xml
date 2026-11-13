@@ -4272,4 +4272,9 @@
     <string name="projChecklist">قائمة التحقق</string>
     <string name="projTabFiles">الملفات</string>
     <string name="projStartDate">البداية</string>
+    <string name="assignRemTomorrow">مهمة: الموعد النهائي غدًا، {due}</string>
+    <string name="assignRemToday">مهمة: الموعد النهائي اليوم</string>
+    <string name="assignRemLate">انتهى الموعد في {due} · المنفّذ: {name}</string>
+    <string name="assignRemSetting">مواعيد المهام</string>
+    <string name="assignRemSettingDesc">للمنفّذ: قبل يوم وفي يوم الموعد؛ ولمن أسند المهمة: عند التأخر</string>
 </resources>

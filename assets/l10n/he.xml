@@ -4209,4 +4209,9 @@
     <string name="projChecklist">רשימת משימות</string>
     <string name="projTabFiles">קבצים</string>
     <string name="projStartDate">התחלה</string>
+    <string name="assignRemTomorrow">משימה: מועד היעד מחר, {due}</string>
+    <string name="assignRemToday">משימה: מועד היעד היום</string>
+    <string name="assignRemLate">המועד עבר ב־{due} · מבצע: {name}</string>
+    <string name="assignRemSetting">מועדי משימות</string>
+    <string name="assignRemSettingDesc">למבצע — יום לפני וביום היעד; למי שהטיל — כשהמועד עבר</string>
 </resources>

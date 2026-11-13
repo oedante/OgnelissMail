@@ -4188,4 +4188,9 @@
     <string name="projChecklist">Checklist</string>
     <string name="projTabFiles">Arquivos</string>
     <string name="projStartDate">Início</string>
+    <string name="assignRemTomorrow">Atribuição: prazo amanhã, {due}</string>
+    <string name="assignRemToday">Atribuição: prazo hoje</string>
+    <string name="assignRemLate">Prazo vencido em {due} · responsável: {name}</string>
+    <string name="assignRemSetting">Prazos das atribuições</string>
+    <string name="assignRemSettingDesc">Ao responsável: na véspera e no dia do prazo; a quem atribuiu: se estiver atrasado</string>
 </resources>

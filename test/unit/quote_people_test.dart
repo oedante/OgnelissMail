@@ -210,4 +210,48 @@ void main() {
       expect(at('October 22, 2026 — see agenda'), isNull);
     });
   });
+
+  group('адрес по имени (13.11.2026, «От: Жаринов Александр Вячеславович» без адреса)', () {
+    // Шапка Outlook из письма владельца: отправитель — без адреса, адресаты — с адресами.
+    const html = '<div><p class="MsoNormal"><b><span>From:</span></b><span> Жаринов Александр Вячеславович<br>'
+        '<b>Sent:</b> Thursday, November 12, 2026 6:27 PM<br>'
+        '<b>To:</b> Хабиров Ренат Фанильевич &lt;r.khabirov@corp.example&gt;; '
+        'Ермишин Олег Андреевич &lt;o.ermishin@corp.example&gt;<br>'
+        '<b>Subject:</b> Внутренний документ</span></p></div>';
+
+    test('имя без адреса получает адрес участника письма — у плашки будет фото', () {
+      final index = QuotePeople.nameIndex([
+        (email: 'Aleksandr.Zharinov@corp.example', name: 'Жаринов Александр Вячеславович'),
+        (email: 'r.khabirov@corp.example', name: 'Хабиров Ренат Фанильевич'),
+      ]);
+      final out = QuotePeople.enrich(html, shortNames: true, emailsByName: index);
+      expect(out, contains('ogperson:aleksandr.zharinov%40corp.example?n='));
+      expect(out, contains('ogperson:o.ermishin%40corp.example?n='));
+      // Без указателя — как раньше: плашка без адреса.
+      expect(QuotePeople.enrich(html, shortNames: true), contains('href="ogperson:?n='));
+    });
+
+    test('ключи: полное имя, «Фамилия И.О.», два слова в обоих порядках; регистр и «ё» не важны', () {
+      final index = QuotePeople.nameIndex([
+        (email: 'a@corp.example', name: 'Жаринов Александр Вячеславович'),
+        (email: 'p@corp.example', name: 'Пётр Орлов'),
+      ]);
+      expect(QuotePeople.emailForName('Жаринов А.В.', index), 'a@corp.example');
+      expect(QuotePeople.emailForName('жаринов  александр вячеславович', index), 'a@corp.example');
+      expect(QuotePeople.emailForName('Орлов Петр', index), 'p@corp.example');
+      expect(QuotePeople.emailForName('Петр Орлов', index), 'p@corp.example');
+      expect(QuotePeople.emailForName('Жаринов', index), isNull, reason: 'одна фамилия — не ключ');
+      expect(QuotePeople.emailForName('Сидоров И.И.', index), isNull);
+    });
+
+    test('одно имя у разных адресов — без адреса (не угадываем)', () {
+      final index = QuotePeople.nameIndex([
+        (email: 'ivanov1@corp.example', name: 'Иванов Иван Иванович'),
+        (email: 'ivanov2@corp.example', name: 'Иванов Игорь Ильич'),
+        (email: 'ivanov1@corp.example', name: 'Иванов Иван Иванович'),
+      ]);
+      expect(QuotePeople.emailForName('Иванов Иван Иванович', index), 'ivanov1@corp.example');
+      expect(QuotePeople.emailForName('Иванов И.И.', index), isNull, reason: 'оба — «Иванов И.И.»');
+    });
+  });
 }

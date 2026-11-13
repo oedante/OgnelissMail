@@ -368,35 +368,47 @@ extension _MyDayBoard on _MyDayScreenState {
 
     // Поручения со сроком сегодня и просроченные (решение владельца
     // 09.11.2026): мои — «В работе» (ждём исполнителя), мне — «Предстоит»,
-    // «В работе» или «Готово» (сдано на проверку).
+    // «В работе» или «Готово» (сдано на проверку). Выполненные сегодня —
+    // в «Готово» (замечание владельца 13.11.2026: пропадали с доски).
     for (final v in ref.watch(assignmentsProvider).value ?? const <AssignmentView>[]) {
       final due = v.due;
-      if (!v.active || due == null) continue;
-      final day = DateTime(due.year, due.month, due.day);
-      if (day.isAfter(today)) continue;
-      final late = day.isBefore(today);
-      final col = late
-          ? overdueCol
-          : (v.outgoing
-              ? work
-              : switch (v.status) {
-                  AssignmentStatus.open => upcoming,
-                  AssignmentStatus.review => done,
-                  _ => work,
-                });
+      if (v.isProject) continue;
+      final closed = v.row.updatedAt.toLocal();
+      final doneToday = v.status == AssignmentStatus.done && !closed.isBefore(today);
+      if (!doneToday && (!v.active || due == null)) continue;
+      final day = due == null ? today : DateTime(due.year, due.month, due.day);
+      if (!doneToday && day.isAfter(today)) continue;
+      final late = !doneToday && v.overdue(now);
+      final col = doneToday
+          ? done
+          : late
+              ? overdueCol
+              : (v.outgoing
+                  ? work
+                  : switch (v.status) {
+                      AssignmentStatus.open => upcoming,
+                      AssignmentStatus.review => done,
+                      _ => work,
+                    });
       col.add(_BoardCard(
         key: 'a${v.id}',
-        sort: due,
-        icon: AppIcons.assignment_ind,
-        iconColor: late ? err : assignmentStatusColor(v.status, context),
+        sort: doneToday ? closed : due,
+        icon: doneToday ? AppIcons.check_circle : AppIcons.assignment_ind,
+        iconColor: doneToday
+            ? AppColors.successText(context)
+            : (late ? err : assignmentStatusColor(v.status, context)),
         title: v.row.title,
         subtitle: [
           '${l10n.tr(v.outgoing ? 'assignTo' : 'assignFrom')} ${v.otherName}',
           assignmentStatusLabel(v.status, l10n),
-          if (late) assignmentDueText(due, l10n),
+          // Время срока сегодня — важно (13.11.2026); просроченное — с датой.
+          if (late && due != null)
+            assignmentDueText(due, l10n)
+          else if (!doneToday && due != null && dueHasTime(due))
+            l10n.tr('calUntilTime').replaceAll('{time}', hm.format(due)),
         ].join(' · '),
         subtitleColor: late ? err : null,
-        faded: !v.outgoing && v.status == AssignmentStatus.review,
+        faded: doneToday || (!v.outgoing && v.status == AssignmentStatus.review),
         onTap: () => context.push('/assignments/${v.id}'),
         onLongPress: (tile) => unawaited(showAssignmentPeek(context, ref, v, anchor: peekAnchorOf(tile))),
       ));

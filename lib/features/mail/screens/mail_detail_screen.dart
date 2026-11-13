@@ -106,6 +106,7 @@ import '../widgets/delivery_status_banner.dart';
 import '../widgets/mail_notice_bar.dart';
 import '../../../services/security/sender_safety_service.dart' show senderSafetyServiceProvider, SafetyLevel, SenderSafetyReport;
 import '../../../data/database/app_database.dart';
+import '../../contacts/person_names.dart' show personNamesProvider;
 import '../../../data/providers/database_provider.dart';
 import '../../archive/archive_sheets.dart' show ensureArchiveReady;
 import '../../../services/archive/archive_runner.dart' show archiveRunnerProvider;
@@ -390,7 +391,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     }
   }
 
-  Future<void> _loadEmailDetail() async {
+  /// [force] — «Загрузить заново» (13.11.2026): письмо IMAP и ActiveSync —
+  /// с сервера, даже если текст уже на телефоне. Раньше пункт открывал ту же
+  /// копию из базы, и пропавшее вложение так и не появлялось.
+  Future<void> _loadEmailDetail({bool force = false}) async {
     try {
       safeSetState(() {
         // Шапка из ленты уже на экране — без индикатора на весь экран.
@@ -597,7 +601,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           return;
         }
         var email = emailModelFromRow(row);
-        final hasBody = (email.bodyHtml ?? '').isNotEmpty || (email.bodyPlain ?? '').isNotEmpty;
+        final hasBody = !force && ((email.bodyHtml ?? '').isNotEmpty || (email.bodyPlain ?? '').isNotEmpty);
         // Откуда тело — в замер открытия (1.10.2: письмо открывалось ~10 с,
         // по журналу было не понять, ждали сервер или окно).
         OpenTrace.mark(hasBody ? 'тело в базе' : 'тело с сервера');
@@ -624,6 +628,11 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           });
         }
         if (hasBody) _startInlineImages(email);
+        // IMAP: тело уже на телефоне, а список вложений собран прежними
+        // правилами — уточнить его у сервера в фоне (13.11.2026, письмо
+        // «Fwd: Занавеси»: фото «inline» без Content-ID, открытое до 2.4.0,
+        // так и оставалось без вложения).
+        if (hasBody && !account.usesEas) unawaited(_refreshImapAttachments(account, row));
 
         // Если тело не загружено — дотягиваем (EAS через движок, иначе IMAP)
         if (!hasBody) {
@@ -667,6 +676,12 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                       'attachments_json': jsonEncode(full.attachments.map((a) => a.toMap()).toList()),
                   },
                 });
+                // Скрепка в ленте — по тому же списку (письмо, загруженное до
+                // 2.4.0, могло остаться без неё).
+                if (full.attachments.any((a) => !a.isInline) && !row.hasAttachments) {
+                  await (db.update(db.emails)..where((e) => e.id.equals(row.id) & e.accountId.equals(row.accountId)))
+                      .write(const EmailsCompanion(hasAttachments: Value(true)));
+                }
                 cache.forgetRow(widget.accountId, widget.emailId);
               }
             }
@@ -696,6 +711,50 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         _isLoading = false;
         _isLoadingBody = false;
       });
+    }
+  }
+
+  /// Список вложений письма IMAP с сервера (только структура), когда тело
+  /// уже на телефоне, списка нет, а письмо заметно больше текста. Нашлись
+  /// файлы — в базу (и скрепка в ленте) и сразу на экран.
+  Future<void> _refreshImapAttachments(AccountModel account, Email row) async {
+    if (!ImapService.attachmentsMayBeMissing(
+        size: row.size,
+        attachmentsJson: row.attachmentsJson,
+        bodyHtml: row.bodyHtml,
+        bodyPlain: row.bodyPlain,
+        hasAttachments: row.hasAttachments)) {
+      return;
+    }
+    final uid = int.tryParse(row.id.split(':').last) ?? 0;
+    if (uid <= 0) return;
+    try {
+      // После показа текста: запрос к серверу не делит главный поток с
+      // созданием окна письма.
+      await _shown.future.timeout(const Duration(seconds: 2), onTimeout: () {});
+      final list = await ref.read(imapServiceProvider).fetchAttachmentList(account, folderId: row.folderId, uid: uid);
+      if (list == null || list.isEmpty || !mounted) return;
+      final db = ref.read(databaseProvider);
+      await db.storeBodiesQuietly(widget.accountId, {
+        widget.emailId: {'attachments_json': jsonEncode(list.map((a) => a.toMap()).toList())},
+      });
+      if (list.any((a) => !a.isInline) && !row.hasAttachments) {
+        await (db.update(db.emails)..where((e) => e.id.equals(row.id) & e.accountId.equals(row.accountId)))
+            .write(const EmailsCompanion(hasAttachments: Value(true)));
+      }
+      ref.read(mailOpenCacheProvider).forgetRow(widget.accountId, widget.emailId);
+      AppLogger.info('Письмо: список вложений уточнён с сервера — ${list.length}');
+      if (!mounted) return;
+      safeSetState(() {
+        final shown = _email;
+        if (shown == null) return;
+        _email = shown.copyWith(attachments: list, hasAttachments: shown.hasAttachments || list.any((a) => !a.isInline));
+        for (final att in list) {
+          _attachmentStates.putIfAbsent(att.id, () => const _AttachmentState());
+        }
+      });
+    } catch (e) {
+      AppLogger.debug('Письмо: список вложений с сервера — $e');
     }
   }
 
@@ -1217,7 +1276,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     });
     final sw = Stopwatch()..start();
     try {
-      final out = await MailBodyProcessor.heavy(html, _quoteHeaders(mode, local));
+      final out = await MailBodyProcessor.heavy(html, _quoteHeaders(mode, local, _quoteNameIndex()));
       AppLogger.debug('Шапки цитат: ${sw.elapsedMilliseconds} мс');
       return out;
     } catch (e) {
@@ -1228,9 +1287,40 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
 
   /// Обработка шапок для изолята. Статическая — как [_nativeBuilder]:
   /// замыкание внутри метода экрана захватило бы и сам экран.
-  static String Function(String) _quoteHeaders(QuotePeopleMode mode, QuoteHeaderText local) =>
+  static String Function(String) _quoteHeaders(
+          QuotePeopleMode mode, QuoteHeaderText local, Map<String, String> emailsByName) =>
       (h) => QuotePeople.enrich(h,
-          shortNames: mode == QuotePeopleMode.short, people: mode != QuotePeopleMode.off, local: local);
+          shortNames: mode == QuotePeopleMode.short,
+          people: mode != QuotePeopleMode.off,
+          local: local,
+          emailsByName: emailsByName);
+
+  /// Адреса людей по имени для шапок цитат без адреса (13.11.2026: «От:
+  /// Жаринов Александр Вячеславович» без адреса — плашка без фото). Сначала
+  /// участники самого письма (их имена точнее всего), затем имена из
+  /// контактов и переписки — у кого то же имя с другим адресом, остаётся без
+  /// адреса.
+  Map<String, String>? _nameIndex;
+  String? _nameIndexFor;
+  Map<String, String> _quoteNameIndex() {
+    final e = _email;
+    final key = e == null ? '' : '${e.accountId}|${e.id}';
+    final cached = _nameIndex;
+    if (cached != null && _nameIndexFor == key) return cached;
+    final people = <({String email, String name})>[
+      if (e != null)
+        for (final a in [e.from, ...e.to, ...e.cc])
+          if ((a.displayName ?? '').trim().isNotEmpty) (email: a.email, name: a.displayName!),
+    ];
+    final own = QuotePeople.nameIndex(people);
+    final known = ref.read(personNamesProvider).value ?? const <String, String>{};
+    final all = QuotePeople.nameIndex([for (final x in known.entries) (email: x.key, name: x.value)]);
+    // Участники письма важнее: их ключи перекрывают общий указатель.
+    final out = {...all, ...own};
+    _nameIndex = out;
+    _nameIndexFor = key;
+    return out;
+  }
 
   void _onBodyLink(EmailModel email, String url, String? text) {
     // Плашка человека в шапке цитаты (1.10.3, экспериментально) — карточка;
@@ -3101,7 +3191,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           if (email.from.email.contains('@') && ref.read(featureFlagsProvider).showFileHub)
             _peekAction(AppIcons.attach_file, l10n.tr('senderFiles'), () => unawaited(
                 context.push('/attachment-hub?from=${Uri.encodeQueryComponent(email.from.email)}'))),
-          _peekAction(AppIcons.sync, l10n.tr('redownload'), _loadEmailDetail),
+          _peekAction(AppIcons.sync, l10n.tr('redownload'), () => unawaited(_loadEmailDetail(force: true))),
           // Беседа без уведомлений (1.8.13, как «Без звука» в Telegram).
           if ((email.conversationId ?? '').isNotEmpty)
             _peekAction(convMuted ? AppIcons.notifications_active : AppIcons.notifications_off,

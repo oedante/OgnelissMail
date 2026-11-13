@@ -58,6 +58,9 @@ class GraphicsState {
   /// Телефон подходит: Android 14+ и Impeller на Vulkan.
   final bool hcppSupported;
 
+  /// HCPP выключился сам после падения в встраивании окон.
+  final DateTime? hcppCrashAt;
+
   const GraphicsState({
     required this.mode,
     required this.active,
@@ -73,6 +76,7 @@ class GraphicsState {
     this.hcppActive = false,
     this.hcppNext = false,
     this.hcppSupported = false,
+    this.hcppCrashAt,
   });
 
   factory GraphicsState.fromMap(Map<Object?, Object?> m) {
@@ -95,6 +99,9 @@ class GraphicsState {
       hcppActive: m['hcppActive'] == true,
       hcppNext: m['hcppNext'] == true,
       hcppSupported: m['hcppSupported'] == true,
+      hcppCrashAt: ((m['hcppCrashAt'] as num?)?.toInt() ?? 0) > 0
+          ? DateTime.fromMillisecondsSinceEpoch((m['hcppCrashAt'] as num).toInt())
+          : null,
     );
   }
 
@@ -116,6 +123,9 @@ class GraphicsState {
     });
     if (autoSkia && autoAt != null) b.write(' ${autoAt!.toIso8601String().substring(0, 16)}');
     if (hcppActive) b.write('; встроенные окна — HCPP');
+    if (!hcpp && hcppCrashAt != null) {
+      b.write('; HCPP выключен после сбоя ${hcppCrashAt!.toIso8601String().substring(0, 16)}');
+    }
     if (next != active) b.write('; после перезапуска — ${next == 'skia' ? 'Skia' : 'Impeller'}');
     if (hcppNext != hcppActive) b.write('; после перезапуска HCPP ${hcppNext ? 'включится' : 'выключится'}');
     return b.toString();

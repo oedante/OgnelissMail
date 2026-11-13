@@ -113,6 +113,13 @@ void main() {
           const {'hcpp': true, 'hcppNext': true, 'hcppActive': true, 'hcppSupported': true, 'backend': 'Vulkan'});
       expect(on.restartNeeded, isFalse);
       expect(on.summary, 'Impeller (Vulkan), автоматически; встроенные окна — HCPP');
+      // Выключился сам после сбоя встраивания — видно в журнале.
+      final crashed = GraphicsState.fromMap({
+        'hcpp': false,
+        'hcppSupported': true,
+        'hcppCrashAt': DateTime(2026, 11, 13, 9, 30).millisecondsSinceEpoch,
+      });
+      expect(crashed.summary, 'Impeller, автоматически; HCPP выключен после сбоя 2026-11-13T09:30');
       // Включён, но телефон не подходит (нет Vulkan) или выбран Skia — не работает и не просит перезапуска.
       expect(GraphicsState.fromMap(const {'hcpp': true}).restartNeeded, isFalse);
     });

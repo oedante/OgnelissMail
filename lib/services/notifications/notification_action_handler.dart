@@ -96,6 +96,20 @@ class NotificationActionHandler {
         return await _handleTaskAction(actionId, data);
       }
 
+      // Срок поручения: «Через час».
+      if (type == 'assignment') {
+        final id = data['id'] as String?;
+        if (actionId == 'snooze' && id != null) {
+          await _ref.read(reminderSchedulerProvider).snooze(
+              kind: 'assignment',
+              accountId: (data['accountId'] as String?) ?? '',
+              id: id,
+              delay: const Duration(hours: 1),
+              text: (title: data['t'] as String?, body: data['b'] as String?));
+        }
+        return true;
+      }
+
       // Сводка группы писем — кнопок нет, нажатие обрабатывает навигация.
       if (type == 'mail_summary') return true;
 

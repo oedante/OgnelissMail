@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../help/faq_screen.dart' show FaqButton;
 import '../../../l10n/app_localizations.dart';
 import '../providers/module_settings_provider.dart';
+import '../../../services/notifications/reminder_scheduler_service.dart' show reminderSchedulerProvider;
 import '../../../widgets/common/text_scale_cap.dart';
 
 class TasksSettingsScreen extends ConsumerWidget {
@@ -70,6 +71,16 @@ class TasksSettingsScreen extends ConsumerWidget {
               subtitle: l10n.tr('addReminderOnDueTask'),
               value: s.taskReminderDefault,
               onChanged: n.setTaskReminderDefault,
+            ),
+            SettingsSwitchItem(
+              icon: AppIcons.assignment_ind,
+              title: l10n.tr('assignRemSetting'),
+              subtitle: l10n.tr('assignRemSettingDesc'),
+              value: s.assignReminder,
+              onChanged: (v) async {
+                await n.setAssignReminder(v);
+                await ref.read(reminderSchedulerProvider).rescheduleAll();
+              },
             ),
           ]),
         ],

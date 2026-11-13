@@ -22,6 +22,7 @@ import '../../widgets/common/peek_card.dart';
 import '../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../../widgets/ui/wheel_pickers.dart';
 import '../../core/utils/text_safe.dart' show initialOf;
+import 'assignment_edit.dart';
 
 /// Подпись статуса.
 String assignmentStatusLabel(int status, AppLocalizations l10n) => l10n.tr(switch (status) {
@@ -94,12 +95,22 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
   final svc = ref.read(assignmentServiceProvider);
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
-  void due(DateTime? d) => assignmentFire(svc.reschedule(v, d));
+  // Перенос на другой день сохраняет время срока (13.11.2026).
+  void due(DateTime? d) => assignmentFire(svc.reschedule(v, d == null ? null : assignmentDueOn(d, v.due)));
   Future<void> pick() async {
     final cur = v.due;
     final d = await showWheelDatePicker(context,
         initial: cur == null || cur.isBefore(today) ? today : cur, first: today, title: l10n.tr('taskPickDate'));
     if (d != null) due(d);
+  }
+
+  Future<void> pickTime() async {
+    final cur = v.due ?? today;
+    final t = await showWheelTimePicker(context,
+        initial: dueHasTime(cur) ? TimeOfDay(hour: cur.hour, minute: cur.minute) : const TimeOfDay(hour: 18, minute: 0),
+        title: l10n.tr('time'),
+        minuteInterval: 5);
+    if (t != null) assignmentFire(svc.reschedule(v, DateTime(cur.year, cur.month, cur.day, t.hour, t.minute)));
   }
 
   final s = v.status;
@@ -145,7 +156,22 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
           PeekAction(
               icon: AppIcons.date_range, label: l10n.tr('laterNextWeek'), onTap: () => due(TaskReschedule.nextWeek(now))),
           PeekAction(icon: AppIcons.calendar_month, label: l10n.tr('taskPickDate'), onTap: () => unawaited(pick())),
+          PeekAction(icon: AppIcons.schedule, label: l10n.tr('time'), onTap: () => unawaited(pickTime())),
           if (v.due != null) PeekAction(icon: AppIcons.event_busy, label: l10n.tr('noDueDate'), onTap: () => due(null)),
+        ]),
+      // Изменить и права постановщика (13.11.2026): у этапа права — в
+      // проекте.
+      if (v.outgoing && v.active && !v.isProject)
+        PeekGroup(items: [
+          PeekAction(
+              icon: AppIcons.edit,
+              label: l10n.tr('edit'),
+              onTap: () => unawaited(editAssignment(context, ref, v))),
+          if (v.parentId == null || !_isStage(ref, v))
+            PeekAction(
+                icon: AppIcons.manage_accounts,
+                label: l10n.tr('assignRights'),
+                onTap: () => unawaited(showRightsSheet(context, ref, v))),
         ]),
       if (src != null)
         PeekGroup(title: l10n.tr('peekGroupMail'), items: [
@@ -176,6 +202,14 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
       ]),
     ],
   );
+}
+
+/// Этап проекта (права постановщика — у проекта, не у этапа).
+bool _isStage(WidgetRef ref, AssignmentView v) {
+  final id = v.parentId;
+  if (id == null) return false;
+  final all = ref.read(assignmentsProvider).value ?? const <AssignmentView>[];
+  return all.where((x) => x.id == id).firstOrNull?.isProject ?? false;
 }
 
 class _AssignmentPeekCard extends StatelessWidget {

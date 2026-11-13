@@ -44,6 +44,9 @@ class ModuleSettings {
   final bool taskReminderDefault;
   /// Час напоминания для задач со сроком без времени.
   final int taskDueHour;
+  /// Напоминания о сроках поручений (13.11.2026): исполнителю — накануне и
+  /// в день срока, поручившему — когда срок прошёл.
+  final bool assignReminder;
 
   // Notes
   final bool notesPreviewLines; // показывать превью текста в списке
@@ -65,6 +68,7 @@ class ModuleSettings {
     this.hideCompletedTasks = false,
     this.taskReminderDefault = false,
     this.taskDueHour = 9,
+    this.assignReminder = true,
     this.notesPreviewLines = true,
     this.notesSortByModified = true,
   });
@@ -86,6 +90,7 @@ class _MK {
   static const taskView = 'mod_task_view';
   static const hideCompleted = 'mod_hide_completed';
   static const taskReminder = 'mod_task_reminder';
+  static const assignReminder = 'mod_assign_reminder';
   static const notesPreview = 'mod_notes_preview';
   static const notesSortModified = 'mod_notes_sort_modified';
 }
@@ -113,6 +118,7 @@ class ModuleSettingsNotifier extends StateNotifier<ModuleSettings> {
       hideCompletedTasks: p.getBool(_MK.hideCompleted) ?? false,
       taskReminderDefault: p.getBool(_MK.taskReminder) ?? false,
       taskDueHour: (p.getInt(_MK.taskDueHour) ?? 9).clamp(0, 23),
+      assignReminder: p.getBool(_MK.assignReminder) ?? true,
       notesPreviewLines: p.getBool(_MK.notesPreview) ?? true,
       notesSortByModified: p.getBool(_MK.notesSortModified) ?? true,
     );
@@ -188,6 +194,11 @@ class ModuleSettingsNotifier extends StateNotifier<ModuleSettings> {
 
   Future<void> setTaskReminderDefault(bool v) async {
     await _p.setBool(_MK.taskReminder, v);
+    state = _load(_p);
+  }
+
+  Future<void> setAssignReminder(bool v) async {
+    await _p.setBool(_MK.assignReminder, v);
     state = _load(_p);
   }
 

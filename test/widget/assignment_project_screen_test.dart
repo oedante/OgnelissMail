@@ -1,7 +1,7 @@
 // Проект с этапами (12.11.2026): карточка проекта — прогресс, этапы по
 // плану, диаграмма Ганта; нажатие на этап на диаграмме.
 
-import 'package:drift/drift.dart' show driftRuntimeOptions;
+import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -52,6 +52,8 @@ AssignmentView _v(String id, String title,
       stageOrder: order,
       checklistJson: checklist,
       waiting: after != null && status != AssignmentStatus.done,
+      revision: 0,
+      visibility: 0,
     ),
     assignee: project
         ? null
@@ -143,6 +145,56 @@ void main() {
     }
     expect(find.byType(GanttChart), findsOneWidget);
     expect(find.text('2. Анализ'), findsOneWidget);
+    await close(t);
+    await t.binding.setSurfaceSize(null);
+  });
+
+  testWidgets('«Изменить проект»: этапы проекта в редакторе, видимость плана, «Сохранить и разослать»', (t) async {
+    await t.binding.setSurfaceSize(const Size(800, 1400));
+    await open(t);
+    await t.pumpWidget(wrap(const AssignmentScreen(id: 'P'), all));
+    await settle(t, 'Годовой отчёт');
+    await t.tap(find.byKey(const ValueKey('proj_menu')));
+    for (var i = 0; i < 10; i++) {
+      await t.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.text('Права постановщика'), findsOneWidget);
+    await t.tap(find.text('Изменить проект'));
+    for (var i = 0; i < 10; i++) {
+      await t.pump(const Duration(milliseconds: 100));
+    }
+    await settle(t, 'Сохранить и разослать');
+    expect(find.text('Сохранить и разослать'), findsOneWidget);
+    expect(find.text('Изменить проект'), findsOneWidget);
+    expect(find.text('Годовой отчёт'), findsOneWidget, reason: 'название — в поле');
+    final vis = t.widget<SwitchListTile>(find.byKey(const ValueKey('proj_visibility')));
+    expect(vis.value, isTrue, reason: 'по умолчанию все видят план');
+    await t.scrollUntilVisible(find.text('Слайды'), 300, scrollable: find.byType(Scrollable).first);
+    expect(find.text('Сбор данных'), findsOneWidget);
+    expect(find.text('Слайды'), findsOneWidget);
+    await close(t);
+    await t.binding.setSurfaceSize(null);
+  });
+
+  testWidgets('участник: этап другого — со статусом и именем из плана', (t) async {
+    await t.binding.setSurfaceSize(const Size(800, 1200));
+    await open(t);
+    final plan = PlanStage.encode([
+      const PlanStage(id: 'S1', title: 'Сбор данных', assignee: 'vera@corp.example', assigneeName: 'Вера', status: AssignmentStatus.done, progress: 1),
+      const PlanStage(id: 'X', title: 'Чужой этап', assignee: 'dima@corp.example', assigneeName: 'Дмитрий', status: AssignmentStatus.inProgress, order: 1),
+    ]);
+    final base = _v('P', 'Годовой отчёт', project: true);
+    final p = AssignmentView(
+      row: base.row.copyWith(planJson: Value(plan)),
+      owner: base.owner,
+      outgoing: false,
+      people: [base.owner!],
+    );
+    await t.pumpWidget(wrap(const AssignmentScreen(id: 'P'), [p]));
+    await settle(t, 'Чужой этап');
+    expect(find.text('Чужой этап'), findsOneWidget);
+    expect(find.textContaining('Дмитрий'), findsOneWidget);
+    expect(find.text('В работе'), findsOneWidget);
     await close(t);
     await t.binding.setSurfaceSize(null);
   });

@@ -33,6 +33,8 @@ AssignmentView _v(
       isProject: false,
       stageOrder: 0,
       waiting: false,
+      revision: 0,
+      visibility: 0,
     ),
     assignee: const AssignmentParticipant(
         assignmentId: 'x', email: 'ivan@example.com', displayName: 'Иван Петров', role: AssignmentRole.responsible, inviteStatus: 0),

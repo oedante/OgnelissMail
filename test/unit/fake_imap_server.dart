@@ -25,6 +25,10 @@ class FakeMessage {
   /// Письмо уже получило UID, но серверу «не видно» (как у Яндекса
   /// 10.11.2026): нет ни в числе писем, ни в ответах FETCH и SEARCH.
   bool hidden = false;
+
+  /// Ответ на BODYSTRUCTURE (без слова BODYSTRUCTURE), как у настоящего
+  /// сервера; null — письмо из одной текстовой части.
+  String? bodyStructure;
 }
 
 class FakeMailbox {
@@ -353,6 +357,8 @@ class _Conn {
         if (items.contains('FLAGS')) 'FLAGS (${m.flags.join(' ')})',
         if (_condStore) 'MODSEQ (${m.modSeq})',
         if (items.contains('RFC822.SIZE')) 'RFC822.SIZE 100',
+        if (items.contains('BODYSTRUCTURE'))
+          'BODYSTRUCTURE ${m.bodyStructure ?? '("TEXT" "PLAIN" ("CHARSET" "utf-8") NIL NIL "7BIT" 10 1 NIL NIL NIL NIL)'}',
         if (items.contains('ENVELOPE'))
           'ENVELOPE ("Mon, 26 Oct 2026 10:00:00 +0000" "${m.subject}" (("Anna" NIL "anna" "example.com")) '
               '(("Anna" NIL "anna" "example.com")) (("Anna" NIL "anna" "example.com")) '

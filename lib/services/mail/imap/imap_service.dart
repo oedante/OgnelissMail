@@ -2073,9 +2073,11 @@ class ImapService {
   /// на телефоне: списка нет, а письмо заметно больше своего текста — значит,
   /// в нём есть файлы, которые прежние правила не посчитали вложениями.
   static bool attachmentsMayBeMissing({required int? size, required String? attachmentsJson,
-      required String? bodyHtml, required String? bodyPlain}) {
+      required String? bodyHtml, required String? bodyPlain, bool hasAttachments = false}) {
     final list = (attachmentsJson ?? '').trim();
     if (list.isNotEmpty && list != '[]') return false;
+    // Скрепка в ленте (по структуре письма при синхронизации), а списка нет.
+    if (hasAttachments) return true;
     final total = size ?? 0;
     if (total <= 0) return false;
     final text = (bodyHtml?.length ?? 0) + (bodyPlain?.length ?? 0);

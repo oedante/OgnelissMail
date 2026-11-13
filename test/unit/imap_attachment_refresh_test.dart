@@ -26,6 +26,11 @@ void main() {
         isFalse);
     expect(ImapService.attachmentsMayBeMissing(size: null, attachmentsJson: null, bodyHtml: html, bodyPlain: null),
         isFalse);
+    // Скрепка в ленте есть, а списка нет — спросить, каким бы ни был размер.
+    expect(
+        ImapService.attachmentsMayBeMissing(
+            size: null, attachmentsJson: '[]', bodyHtml: html, bodyPlain: null, hasAttachments: true),
+        isTrue);
     // Большая рассылка: письмо большое, но это его же текст.
     final big = 'x' * 120000;
     expect(ImapService.attachmentsMayBeMissing(size: 150000, attachmentsJson: null, bodyHtml: big, bodyPlain: null),

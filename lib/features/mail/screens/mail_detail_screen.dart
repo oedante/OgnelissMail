@@ -718,7 +718,11 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// файлы — в базу (и скрепка в ленте) и сразу на экран.
   Future<void> _refreshImapAttachments(AccountModel account, Email row) async {
     if (!ImapService.attachmentsMayBeMissing(
-        size: row.size, attachmentsJson: row.attachmentsJson, bodyHtml: row.bodyHtml, bodyPlain: row.bodyPlain)) {
+        size: row.size,
+        attachmentsJson: row.attachmentsJson,
+        bodyHtml: row.bodyHtml,
+        bodyPlain: row.bodyPlain,
+        hasAttachments: row.hasAttachments)) {
       return;
     }
     final uid = int.tryParse(row.id.split(':').last) ?? 0;

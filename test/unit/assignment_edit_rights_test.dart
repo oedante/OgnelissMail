@@ -137,9 +137,12 @@ void main() {
   String json(List<EmailAddress> l) => jsonEncode([for (final a in l) {'email': a.email, 'displayName': a.displayName}]);
 
   /// Доставить отправленные письма получателям и разобрать почту у всех.
-  Future<List<_Mail>> deliver() async {
+  /// [strip] — почтовый сервер вырезает скрытые отметки (пустые элементы
+  /// с атрибутами data-ogneliss-*), как у владельца 13.11.2026.
+  Future<List<_Mail>> deliver({bool strip = false}) async {
     final sent = [...queue];
     queue.clear();
+    final cut = RegExp(r'<span data-ogneliss-[^>]*></span>');
     for (final m in sent) {
       for (final p in phones.values) {
         if (!m.rcpt.contains(p.email)) continue;
@@ -152,7 +155,7 @@ void main() {
               toRecipients: json(m.to),
               ccJson: Value(json(m.cc)),
               subject: m.subject,
-              bodyHtml: Value(m.html),
+              bodyHtml: Value(strip ? m.html.replaceAll(cut, '') : m.html),
               receivedAt: DateTime.now().add(Duration(microseconds: n)),
             ));
       }
@@ -377,6 +380,58 @@ void main() {
     final zs = (await z.all()).where((x) => x.parentId == pid);
     expect(zs.every((x) => !x.outgoing && !x.iExecute), isTrue);
     expect(zs.every((x) => x.myRoles.contains(AssignmentRole.observer)), isTrue);
+  });
+
+  test('сервер вырезал скрытые отметки: статус и срок — по коду у номера OGN-…-X', () async {
+    final b = phones[boss]!, v = phones[vera]!;
+    final id = (await b.svc.create(account: acc(b), title: 'Отчёт', assignees: [a(vera)], due: DateTime(2026, 11, 20)))
+        .single;
+    await deliver();
+    await v.svc.setStatus(await v.one(id), AssignmentStatus.review);
+    final r = await deliver(strip: true);
+    expect(r.single.html, contains('OGN-$id-R'));
+    expect((await b.one(id)).status, AssignmentStatus.review);
+    // Постановщик принял работу — у исполнителя поручение закрылось.
+    await b.svc.setStatus(await b.one(id), AssignmentStatus.done);
+    final d = await deliver(strip: true);
+    expect(d.single.html, contains('OGN-$id-D'));
+    expect((await v.one(id)).status, AssignmentStatus.done);
+  });
+
+  test('новый срок со временем — по коду T, без отметки', () async {
+    final b = phones[boss]!, v = phones[vera]!;
+    final id = (await b.svc.create(account: acc(b), title: 'Отчёт', assignees: [a(vera)], due: DateTime(2026, 11, 20)))
+        .single;
+    await deliver();
+    await b.svc.reschedule(await b.one(id), DateTime(2026, 11, 21, 15, 30));
+    final m = await deliver(strip: true);
+    expect(m.single.html, contains('OGN-$id-T20261121T1530'));
+    expect((await v.one(id)).due, DateTime(2026, 11, 21, 15, 30));
+  });
+
+  test('код из цитаты чужого письма не меняет статус; «Принято» постановщика словами — выполнено', () async {
+    final b = phones[boss]!, v = phones[vera]!;
+    final id = (await b.svc.create(account: acc(b), title: 'Отчёт', assignees: [a(vera)])).single;
+    await deliver();
+    await v.svc.setStatus(await v.one(id), AssignmentStatus.review);
+    await deliver();
+    // Постановщик отвечает из другой почты: слова, ниже — цитата с «OGN-…-W».
+    queue.add(_Mail(boss, [a(vera)], const [], 'Re: Поручение: Отчёт',
+        '<p>Принято, спасибо!</p><blockquote>Принято<br>OGN-$id-W</blockquote>'));
+    await deliver();
+    expect((await v.one(id)).status, AssignmentStatus.done);
+  });
+
+  test('код действия: туда и обратно', () {
+    expect(AssignmentCodec.tag('ABCDEFGHJKMN', AssignmentAct.accepted), 'OGN-ABCDEFGHJKMN-D');
+    final x = AssignmentCodec.actionFromText('Готово OGN-ABCDEFGHJKMN-R и ещё OGN-BCDEFGHJKMNP-D')!;
+    expect((x.id, x.act, x.arg), ('ABCDEFGHJKMN', 'R', null));
+    final t = AssignmentCodec.actionFromText('OGN-ABCDEFGHJKMN-T20261121T0905')!;
+    expect(AssignmentAct.dueFrom(t.arg), DateTime(2026, 11, 21, 9, 5));
+    expect(AssignmentAct.dueCode(DateTime(2026, 11, 21)), 'T20261121');
+    // Старый номер без кода и старые версии: код находится по первому номеру.
+    expect(AssignmentCodec.actionFromText('OGN-ABCDEFGHJKMN'), isNull);
+    expect(AssignmentCodec.idFromBody('OGN-ABCDEFGHJKMN-D'), 'ABCDEFGHJKMN');
   });
 
   test('удаление этапа отметкой и разбор без приложения: rm=1', () {

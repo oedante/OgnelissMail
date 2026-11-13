@@ -746,18 +746,55 @@ abstract final class AssignmentStore {
     int? next;
     String? checks;
     var go = false;
+    // Роль отправителя: код действия и слова принимаются только от того,
+    // кто так может ответить (номер из цитаты чужого письма не в счёт).
+    final senderRoles = {for (final p in people) if (p.email.toLowerCase() == from) p.role};
+    final byAssigner = assigners.contains(from);
+    final byController = senderRoles.contains(AssignmentRole.controller);
+    final byExecutor = senderRoles.contains(AssignmentRole.responsible) || senderRoles.contains(AssignmentRole.co);
+    // Код действия у видимого номера (предложение владельца 13.11.2026):
+    // скрытую отметку сервер мог вырезать, номер с кодом — нет.
+    final act = st == null ? AssignmentCodec.actionFromText(freshText(html, plain)) : null;
+    var dueFromCode = false;
+    DateTime? codeDue;
     if (st != null && st.id == id) {
       next = st.status;
       checks = st.checks;
       go = st.go;
-    } else if (accepting && !fromMe) {
+    } else if (act != null && act.id == id) {
+      switch (act.act) {
+        case AssignmentAct.taken when byExecutor && _forward(a.status, AssignmentStatus.inProgress):
+          next = AssignmentStatus.inProgress;
+        case AssignmentAct.review when byExecutor && _forward(a.status, AssignmentStatus.review):
+          next = AssignmentStatus.review;
+        case AssignmentAct.accepted when byAssigner || byController:
+          next = AssignmentStatus.done;
+        case AssignmentAct.returned when byAssigner || byController:
+          next = AssignmentStatus.inProgress;
+        case AssignmentAct.cancelled when byAssigner:
+          next = AssignmentStatus.cancelled;
+        case AssignmentAct.go when byAssigner:
+          go = true;
+        case AssignmentAct.due when byAssigner && (task == null || task.id != id):
+          dueFromCode = true;
+          codeDue = AssignmentAct.dueFrom(act.arg);
+        default:
+          break;
+      }
+    } else if (!fromMe) {
+      // Ни отметки, ни кода — ответ из другой почты: по словам.
       final sig = AssignmentPhrases.classify(freshText(html, plain));
-      final want = switch (sig) {
-        AssignmentSignal.done => AssignmentStatus.review,
-        AssignmentSignal.accepted => AssignmentStatus.inProgress,
-        null => null,
-      };
-      if (want != null && _forward(a.status, want)) next = want;
+      if (accepting && byExecutor) {
+        final want = switch (sig) {
+          AssignmentSignal.done => AssignmentStatus.review,
+          AssignmentSignal.accepted => AssignmentStatus.inProgress,
+          null => null,
+        };
+        if (want != null && _forward(a.status, want)) next = want;
+      } else if ((byAssigner || byController) && sig != null && a.status == AssignmentStatus.review) {
+        // У исполнителя: «Принято» постановщика на сданную работу — выполнено.
+        next = AssignmentStatus.done;
+      }
     }
     // «Можно начинать» — статус не меняется, этап больше не ждёт.
     if (go && next == AssignmentStatus.open && a.status != AssignmentStatus.open) next = null;
@@ -781,6 +818,15 @@ abstract final class AssignmentStore {
       final known = {for (final p in people) p.email.toLowerCase()};
       for (final c in task.co) {
         if (!known.contains(c)) added[c] = (role: AssignmentRole.co, name: names[c]);
+      }
+    }
+    var clearDue = false;
+    if (dueFromCode) {
+      final cur = a.dueAt?.toLocal();
+      if (codeDue == null) {
+        clearDue = cur != null;
+      } else if (cur == null || cur != codeDue) {
+        due = codeDue;
       }
     }
     if (pm != null && pm.id == id && !people.any((p) => p.email.toLowerCase() == pm.email)) {
@@ -816,10 +862,17 @@ abstract final class AssignmentStore {
       for (final x in added.entries) {
         await addParticipant(db, id, x.key, x.value.role, name: x.value.name);
       }
-      if ((next != null && next != a.status) || due != null || start != null || go || checklist != null || files != null) {
+      if ((next != null && next != a.status) ||
+          due != null ||
+          clearDue ||
+          start != null ||
+          go ||
+          checklist != null ||
+          files != null) {
         await update(db, id,
             status: next != a.status ? next : null,
             due: due,
+            clearDue: clearDue,
             start: start,
             waiting: go ? false : null,
             checklist: checklist,

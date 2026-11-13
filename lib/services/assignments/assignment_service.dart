@@ -31,7 +31,7 @@ import '../notifications/reminder_scheduler_service.dart' show reminderScheduler
 import 'assignment_codec.dart';
 import 'assignment_store.dart';
 
-export 'assignment_codec.dart' show AssignmentStatus;
+export 'assignment_codec.dart' show AssignmentStatus, AssignmentAct;
 export 'assignment_store.dart' show AssignmentView;
 
 /// Мои адреса по ящикам (нижний регистр).
@@ -217,7 +217,8 @@ class AssignmentService {
   /// исполнителю и соисполнителям; от исполнителя — постановщику, а если
   /// работу принимает контролирующий — и ему. Остальные участники —
   /// в копии.
-  Future<void> _notify(AssignmentView v, String text, String marker, {List<AssignmentFile> files = const []}) async {
+  Future<void> _notify(AssignmentView v, String text, String marker,
+      {List<AssignmentFile> files = const [], String? act}) async {
     final account = _account(v.row.accountId);
     if (account == null) return;
     final mine = assignmentMine(_ref.read(accountsProvider))[account.id] ?? const <String>{};
@@ -259,7 +260,7 @@ class AssignmentService {
         moreTo: toList.skip(1).toList(),
         cc: toList.isEmpty ? ccList.skip(1).toList() : ccList,
         subject: _subject(v, _l10n()),
-        html: assignmentNoteHtml(text, marker, v.id),
+        html: assignmentNoteHtml(text, marker, v.id, act: act),
         inReplyTo: inReplyTo,
         files: files);
   }
@@ -305,13 +306,24 @@ class AssignmentService {
     if (status == v.status) return;
     final l10n = _l10n();
     final ev = _ev();
+    // Вернуть на доработку может постановщик, заместитель и контролирующий.
+    final returning = status == AssignmentStatus.inProgress && (v.outgoing || v.iControl);
     final text = switch (status) {
       AssignmentStatus.done => l10n.tr('assignMsgAccepted'),
-      AssignmentStatus.inProgress when v.outgoing => l10n.tr('assignMsgReturned'),
+      AssignmentStatus.inProgress when returning => l10n.tr('assignMsgReturned'),
       AssignmentStatus.inProgress => l10n.tr('assignReplyAccepted'),
       AssignmentStatus.review => l10n.tr('assignReplyDone'),
       AssignmentStatus.cancelled => l10n.tr('assignMsgCancelled'),
       _ => '',
+    };
+    // Код действия у номера (13.11.2026): статус дойдёт и без скрытой отметки.
+    final act = switch (status) {
+      AssignmentStatus.done => AssignmentAct.accepted,
+      AssignmentStatus.inProgress when returning => AssignmentAct.returned,
+      AssignmentStatus.inProgress => AssignmentAct.taken,
+      AssignmentStatus.review => AssignmentAct.review,
+      AssignmentStatus.cancelled => AssignmentAct.cancelled,
+      _ => null,
     };
     final full = [text, if ((note ?? '').trim().isNotEmpty) note!.trim()].join('\n');
     await AssignmentStore.update(_db, v.id, status: status);
@@ -319,7 +331,7 @@ class AssignmentService {
     await _record(v, ev, 'status', {'status': status, 'text': full});
     // Исполнитель — с отметкой чек-листа: у постановщика виден ход работ.
     final checks = (v.iExecute || v.iCoExecute) && v.checklist.isNotEmpty ? ChecklistItem.bits(v.checklist) : null;
-    await _notify(v, full, AssignmentCodec.statusMarker(v.id, status, ev: ev, checks: checks));
+    await _notify(v, full, AssignmentCodec.statusMarker(v.id, status, ev: ev, checks: checks), act: act);
     // Этап принят — следующим этапам «Можно начинать» (письмо уходит от
     // постановщика; у контролирующего — при следующем разборе почты у
     // постановщика).
@@ -346,7 +358,7 @@ class AssignmentService {
       if (v.due != null) l10n.tr('assignMsgDue').replaceAll('{due}', _dueLong(v.due!, l10n)),
     ].join(' ');
     await _record(v, ev, 'reminder', {'text': text});
-    await _notify(v, text, AssignmentCodec.taskMarker(id: v.id, due: v.due, ev: ev));
+    await _notify(v, text, AssignmentCodec.taskMarker(id: v.id, due: v.due, ev: ev), act: AssignmentAct.reminder);
   }
 
   /// Новый срок (поручивший — с письмом исполнителю; исполнитель — только
@@ -361,7 +373,7 @@ class AssignmentService {
         ? l10n.tr('assignMsgNoDue')
         : l10n.tr('assignMsgNewDue').replaceAll('{due}', _dueLong(due, l10n));
     await _record(v, ev, 'due', {'text': text, if (due != null) 'due': due.toIso8601String()});
-    await _notify(v, text, AssignmentCodec.taskMarker(id: v.id, due: due, ev: ev));
+    await _notify(v, text, AssignmentCodec.taskMarker(id: v.id, due: due, ev: ev), act: AssignmentAct.dueCode(due));
   }
 
   // ═══════════════ Проекты с этапами (12.11.2026) ═══════════════
@@ -837,6 +849,7 @@ class AssignmentService {
           .replaceAll('{done}', l10n.tr('assignReplyDone')),
       extraHtml: extra.toString(),
       marker: marker,
+      act: AssignmentAct.added,
     );
     final ownerAddr = EmailAddress(email: v.owner?.email ?? v.row.ownerEmail, displayName: v.owner?.displayName);
     await _send(account, person,
@@ -881,7 +894,8 @@ class AssignmentService {
     if (text.isEmpty) return;
     await _record(v, ev, 'progress', {'text': text});
     await _notify(v, text,
-        AssignmentCodec.statusMarker(v.id, v.status, ev: ev, checks: items.isEmpty ? null : ChecklistItem.bits(items)));
+        AssignmentCodec.statusMarker(v.id, v.status, ev: ev, checks: items.isEmpty ? null : ChecklistItem.bits(items)),
+        act: AssignmentAct.progress);
   }
 
   /// Добавить файлы к поручению: у себя и письмом другой стороне.
@@ -898,7 +912,7 @@ class AssignmentService {
       if ((note ?? '').trim().isNotEmpty) note!.trim(),
     ].join('\n');
     await _record(v, ev, 'files', {'text': text, 'files': [for (final f in kept) f.name]});
-    await _notify(v, text, AssignmentCodec.statusMarker(v.id, v.status, ev: ev), files: kept);
+    await _notify(v, text, AssignmentCodec.statusMarker(v.id, v.status, ev: ev), files: kept, act: AssignmentAct.files);
   }
 
   /// Этапы проекта (виды) по порядку.
@@ -935,7 +949,7 @@ class AssignmentService {
       final ev = _ev();
       final text = l10n.tr('assignMsgGo').replaceAll('{title}', prev.title);
       await _record(v, ev, 'go', {'text': text});
-      await _notify(v, text, AssignmentCodec.statusMarker(v.id, v.status, ev: ev, go: true));
+      await _notify(v, text, AssignmentCodec.statusMarker(v.id, v.status, ev: ev, go: true), act: AssignmentAct.go);
     }
     try {
       await _broadcastProjects();
@@ -974,7 +988,8 @@ class AssignmentService {
       final ev = _ev();
       final text = l10n.tr('assignMsgShift').replaceAll('{dates}', _dates(m.start, m.due, l10n));
       await _record(v, ev, 'due', {'text': text, 'due': m.due.toIso8601String()});
-      await _notify(v, text, AssignmentCodec.taskMarker(id: v.id, due: m.due, start: m.start, ev: ev));
+      await _notify(v, text, AssignmentCodec.taskMarker(id: v.id, due: m.due, start: m.start, ev: ev),
+          act: AssignmentAct.dueCode(m.due));
     }
     // Срок проекта — по последнему этапу.
     final dues = [for (final v in await stages(projectId)) if (v.due != null) v.due!];
@@ -1209,6 +1224,7 @@ class AssignmentService {
       footer: l10n.tr('assignProjectFooter'),
       extraHtml: extra.toString(),
       marker: _projectSnapshot(p, stages, rev, ev),
+      act: changes.isEmpty ? AssignmentAct.progress : AssignmentAct.edited,
     );
     await _sendTo(account, _projectPeople(p, stages),
         subject: _projectSubject(p, l10n), html: html, inReplyTo: await _inReplyTo(p), files: files);
@@ -1409,6 +1425,7 @@ class AssignmentService {
           checklist: newCk,
           files: [for (final f in fresh.files) f.name]),
       marker: _taskSnapshot(fresh, rev, ev),
+      act: AssignmentAct.edited,
     );
     await _sendTo(account, (to: to.values.toList(), cc: [for (final e in cc.entries) if (!to.containsKey(e.key)) e.value]),
         subject: _subject(fresh, l10n), html: html, inReplyTo: await _inReplyTo(v), files: newFiles);
@@ -1430,7 +1447,7 @@ class AssignmentService {
       if ((note ?? '').trim().isNotEmpty) note!.trim(),
     ].join('\n');
     await _record(v, ev, 'removed', {'text': text});
-    await _notify(v, text, _taskSnapshot(v, rev, ev, removed: true));
+    await _notify(v, text, _taskSnapshot(v, rev, ev, removed: true), act: AssignmentAct.cancelled);
     _reminders();
   }
 
@@ -1616,6 +1633,7 @@ class AssignmentService {
               checklist: [for (final c in fresh.checklist) c.text],
               files: [for (final f in fresh.files) f.name]),
       marker: v.isProject ? _projectSnapshot(fresh, list, rev, ev, full: true) : _taskSnapshot(fresh, rev, ev),
+      act: AssignmentAct.edited,
     );
     await _send(account, person,
         subject: v.isProject ? _projectSubject(fresh, l10n) : _subject(fresh, l10n),
@@ -1644,7 +1662,8 @@ class AssignmentService {
     final marker = v.isProject ? _projectSnapshot(fresh, list, rev, ev) : _taskSnapshot(fresh, rev, ev);
     await _sendTo(account, people,
         subject: v.isProject ? _projectSubject(fresh, l10n) : _subject(fresh, l10n),
-        html: assignmentNoteHtml([textAll, if ((note ?? '').trim().isNotEmpty) note!.trim()].join('\n'), marker, v.id),
+        html: assignmentNoteHtml([textAll, if ((note ?? '').trim().isNotEmpty) note!.trim()].join('\n'), marker, v.id,
+            act: AssignmentAct.edited),
         inReplyTo: await _inReplyTo(v));
     _reminders();
   }
@@ -1684,7 +1703,8 @@ class AssignmentService {
           );
     await _sendTo(account, people,
         subject: v.isProject ? _projectSubject(fresh, l10n) : _subject(fresh, l10n),
-        html: assignmentNoteHtml(text, v.isProject ? _projectSnapshot(fresh, list, rev, ev) : _taskSnapshot(fresh, rev, ev), v.id),
+        html: assignmentNoteHtml(text, v.isProject ? _projectSnapshot(fresh, list, rev, ev) : _taskSnapshot(fresh, rev, ev), v.id,
+            act: AssignmentAct.edited),
         inReplyTo: await _inReplyTo(v));
   }
 

@@ -54,6 +54,13 @@ abstract final class AssignmentStatus {
 /// у этапа — [start], [after] (код предыдущего этапа: «начать после»),
 /// [order], соисполнители [co], контролирующий [ctl], наблюдатели [obs],
 /// пункты чек-листа [checklist].
+///
+/// Изменение поручения и права постановщика (13.11.2026): [rev] — полные
+/// сведения о поручении (время изменения, секунды Unix): название,
+/// описание [desc], сроки, порядок, участники, чек-лист, файлы [files] —
+/// заменяют прежние; [owner] — постановщик (после передачи прав —
+/// новый), [deputies] — заместители (те же права); [removed] — этап
+/// удалён; [visibility] — видимость плана проекта.
 typedef TaskMarker = ({
   String id,
   DateTime? due,
@@ -70,6 +77,13 @@ typedef TaskMarker = ({
   List<String> checklist,
   bool project,
   String? plan,
+  int? rev,
+  String? desc,
+  String? owner,
+  List<String> deputies,
+  bool removed,
+  int? visibility,
+  List<String>? files,
 });
 
 /// Отметка статуса в ответе. [checks] — выполненные пункты чек-листа
@@ -155,7 +169,15 @@ abstract final class AssignmentCodec {
     List<String> checklist = const [],
     bool project = false,
     String? plan,
+    int? rev,
+    String? desc,
+    String? owner,
+    List<String> deputies = const [],
+    bool removed = false,
+    int? visibility,
+    List<String>? files,
   }) {
+    final d = (desc ?? '').trim();
     final parts = [
       'v=1',
       'id=$id',
@@ -174,6 +196,13 @@ abstract final class AssignmentCodec {
       if (checklist.isNotEmpty)
         'ck=${checklist.map((t) => Uri.encodeComponent(t.trim())).where((t) => t.isNotEmpty).join('|')}',
       if (plan != null && plan.isNotEmpty) 'pl=${base64Url.encode(utf8.encode(plan))}',
+      if (rev != null) 'rv=$rev',
+      if (rev != null && d.isNotEmpty) 'de=${base64Url.encode(utf8.encode(d.length > 4000 ? d.substring(0, 4000) : d))}',
+      if (owner != null && owner.contains('@')) 'ow=${_clean(owner.toLowerCase())}',
+      if (deputies.isNotEmpty) 'dep=${_emails(deputies)}',
+      if (removed) 'rm=1',
+      if (visibility != null) 'vis=$visibility',
+      if (files != null) 'fn=${files.map((n) => Uri.encodeComponent(n.trim())).where((n) => n.isNotEmpty).join('|')}',
     ];
     return _marker('data-ogneliss-task', parts.join(';'));
   }
@@ -254,12 +283,31 @@ abstract final class AssignmentCodec {
     }
     String? plan;
     final pl = fields['pl'];
-    if (pl != null && pl.isNotEmpty && pl.length < 60000) {
+    if (pl != null && pl.isNotEmpty && pl.length < 400000) {
       try {
         plan = utf8.decode(base64Url.decode(base64Url.normalize(pl)));
       } catch (_) {}
     }
+    String? desc;
+    final de = fields['de'];
+    if (de != null && de.isNotEmpty && de.length < 8000) {
+      try {
+        desc = utf8.decode(base64Url.decode(base64Url.normalize(de))).trim();
+      } catch (_) {}
+    }
+    List<String>? files;
+    final fn = fields['fn'];
+    if (fn != null) {
+      files = [];
+      for (final n in fn.split('|')) {
+        if (n.isEmpty) continue;
+        try {
+          files.add(Uri.decodeComponent(n));
+        } catch (_) {}
+      }
+    }
     final ctl = fields['ctl'];
+    final ow = fields['ow'];
     return (
       id: id,
       due: due,
@@ -276,6 +324,13 @@ abstract final class AssignmentCodec {
       checklist: checklist,
       project: fields['pj'] == '1',
       plan: plan,
+      rev: int.tryParse(fields['rv'] ?? ''),
+      desc: desc,
+      owner: ow != null && ow.contains('@') ? ow.toLowerCase() : null,
+      deputies: emails(fields['dep']),
+      removed: fields['rm'] == '1',
+      visibility: int.tryParse(fields['vis'] ?? ''),
+      files: files,
     );
   }
 
@@ -334,12 +389,14 @@ abstract final class AssignmentCodec {
     String? parentLine,
     /// Дополнительный текст (этапы проекта, роли, чек-лист) — после срока.
     String? extraHtml,
+    /// Что изменилось (письмо «Поручение изменено») — сразу после приветствия.
+    String? introHtml,
     /// Своя отметка вместо отметки по [id], [due], [to], [title], [ev], [parent].
     String? marker,
   }) {
-    final b = StringBuffer()
-      ..write('<p>${_esc(greeting)}</p>')
-      ..write('<p><b>${_esc(whatLabel)}</b> ${_esc(what)}</p>');
+    final b = StringBuffer()..write('<p>${_esc(greeting)}</p>');
+    if (introHtml != null && introHtml.isNotEmpty) b.write(introHtml);
+    b.write('<p><b>${_esc(whatLabel)}</b> ${_esc(what)}</p>');
     // Подзадача: название родительского поручения — словами. Его тег OGN-…
     // в текст не пишем: первый тег в теле — код самого письма (idFromBody).
     if (parentLine != null) b.write('<p>${_esc(parentLine)}</p>');

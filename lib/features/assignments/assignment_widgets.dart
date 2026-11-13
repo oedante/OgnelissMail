@@ -22,6 +22,7 @@ import '../../widgets/common/peek_card.dart';
 import '../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../../widgets/ui/wheel_pickers.dart';
 import '../../core/utils/text_safe.dart' show initialOf;
+import 'assignment_edit.dart';
 
 /// Подпись статуса.
 String assignmentStatusLabel(int status, AppLocalizations l10n) => l10n.tr(switch (status) {
@@ -147,6 +148,20 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
           PeekAction(icon: AppIcons.calendar_month, label: l10n.tr('taskPickDate'), onTap: () => unawaited(pick())),
           if (v.due != null) PeekAction(icon: AppIcons.event_busy, label: l10n.tr('noDueDate'), onTap: () => due(null)),
         ]),
+      // Изменить и права постановщика (13.11.2026): у этапа права — в
+      // проекте.
+      if (v.outgoing && v.active && !v.isProject)
+        PeekGroup(items: [
+          PeekAction(
+              icon: AppIcons.edit,
+              label: l10n.tr('edit'),
+              onTap: () => unawaited(editAssignment(context, ref, v))),
+          if (v.parentId == null || !_isStage(ref, v))
+            PeekAction(
+                icon: AppIcons.manage_accounts,
+                label: l10n.tr('assignRights'),
+                onTap: () => unawaited(showRightsSheet(context, ref, v))),
+        ]),
       if (src != null)
         PeekGroup(title: l10n.tr('peekGroupMail'), items: [
           PeekAction(
@@ -176,6 +191,14 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
       ]),
     ],
   );
+}
+
+/// Этап проекта (права постановщика — у проекта, не у этапа).
+bool _isStage(WidgetRef ref, AssignmentView v) {
+  final id = v.parentId;
+  if (id == null) return false;
+  final all = ref.read(assignmentsProvider).value ?? const <AssignmentView>[];
+  return all.where((x) => x.id == id).firstOrNull?.isProject ?? false;
 }
 
 class _AssignmentPeekCard extends StatelessWidget {

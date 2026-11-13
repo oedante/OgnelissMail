@@ -446,6 +446,15 @@ class Assignments extends Table {
   /// участников, у которых других этапов нет.
   TextColumn get planJson => text().nullable()();
 
+  // ── Изменение поручений и права постановщика (схема 30, 13.11.2026) ──
+  /// Время (секунды Unix) последних полных сведений о поручении — письма
+  /// «Поручение изменено» от постановщика или заместителя: сведения старше
+  /// уже применённых не применяются.
+  IntColumn get revision => integer().withDefault(const Constant(0))();
+  /// Видимость проекта: 0 — участники видят весь план и ход работ (по
+  /// умолчанию), 1 — каждый видит только свои этапы.
+  IntColumn get visibility => integer().withDefault(const Constant(0))();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -466,7 +475,7 @@ class AssignmentParticipants extends Table {
   TextColumn get assignmentId => text().references(Assignments, #id)();
   TextColumn get email => text()();
   TextColumn get displayName => text().nullable()();
-  IntColumn get role => integer()(); // 0 постановщик,1 исполнитель,2 соисполнитель,3 наблюдатель,4 контролирующий
+  IntColumn get role => integer()(); // 0 постановщик,1 исполнитель,2 соисполнитель,3 наблюдатель,4 контролирующий,5 заместитель постановщика
   IntColumn get inviteStatus => integer().withDefault(const Constant(0))(); // 0 pending,1 accepted,2 declined
   BoolColumn get isOurClient => boolean().nullable()(); // null = неизвестно (нет нашего клиента)
 
@@ -614,7 +623,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 29;
+  int get schemaVersion => 30;
 
   @override
   MigrationStrategy get migration {
@@ -789,6 +798,11 @@ class AppDatabase extends _$AppDatabase {
             await _addColumnIfMissing(m, assignments, c);
           }
           await m.createTable(assignmentTemplates);
+        }
+        if (from < 30) {
+          // Изменение поручений, видимость проекта, заместители (13.11.2026).
+          await _addColumnIfMissing(m, assignments, assignments.revision);
+          await _addColumnIfMissing(m, assignments, assignments.visibility);
         }
       },
       beforeOpen: (details) async {

@@ -90,6 +90,11 @@ class AssignmentFile {
 }
 
 /// Этап в плане проекта (для диаграммы Ганта).
+///
+/// План в письме проекта (13.11.2026): у этапа — статус, ход работ и имя
+/// исполнителя, чтобы все участники видели, кто что и после кого делает.
+/// Полный план (передача прав постановщика) — ещё описание, участники и
+/// чек-лист: у заместителя этапы появляются целиком.
 class PlanStage {
   final String id;
   final String title;
@@ -97,6 +102,7 @@ class PlanStage {
   final DateTime? due;
   final String? after;
   final String? assignee;
+  final String? assigneeName;
   final int order;
 
   /// Статус (AssignmentStatus); null — неизвестен (этап другого участника).
@@ -108,6 +114,16 @@ class PlanStage {
   /// Когда принят (для «факта» на диаграмме).
   final DateTime? doneAt;
 
+  // ── Полный план (передача прав) ──
+  final String? description;
+  final List<String> co;
+  final String? controller;
+  final List<String> observers;
+  final List<ChecklistItem> checklist;
+
+  /// Имена участников этапа: адрес → имя.
+  final Map<String, String> names;
+
   const PlanStage({
     required this.id,
     required this.title,
@@ -115,10 +131,17 @@ class PlanStage {
     this.due,
     this.after,
     this.assignee,
+    this.assigneeName,
     this.order = 0,
     this.status,
     this.progress = 0,
     this.doneAt,
+    this.description,
+    this.co = const [],
+    this.controller,
+    this.observers = const [],
+    this.checklist = const [],
+    this.names = const {},
   });
 
   PlanStage copyWith({DateTime? start, DateTime? due}) => PlanStage(
@@ -128,26 +151,58 @@ class PlanStage {
         due: due ?? this.due,
         after: after,
         assignee: assignee,
+        assigneeName: assigneeName,
         order: order,
         status: status,
         progress: progress,
         doneAt: doneAt,
+        description: description,
+        co: co,
+        controller: controller,
+        observers: observers,
+        checklist: checklist,
+        names: names,
       );
 
-  Map<String, Object?> toJson() => {
+  Map<String, Object?> toJson({bool full = false}) => {
         'id': id,
         't': title,
         if (start != null) 's': _d(start!),
         if (due != null) 'e': _d(due!),
         if (after != null) 'a': after,
         if (assignee != null) 'to': assignee,
+        if ((assigneeName ?? '').trim().isNotEmpty) 'nm': assigneeName!.trim(),
         'o': order,
+        if (status != null) 'st': status,
+        if (status != null) 'p': (progress * 100).round(),
+        if (doneAt != null) 'dn': _d(doneAt!),
+        if (full) ...{
+          if ((description ?? '').trim().isNotEmpty) 'd': description!.trim(),
+          if (co.isNotEmpty) 'co': co,
+          if (controller != null) 'ctl': controller,
+          if (observers.isNotEmpty) 'obs': observers,
+          if (checklist.isNotEmpty) 'ck': [for (final c in checklist) c.toJson()],
+          if (names.isNotEmpty) 'n': names,
+        },
       };
 
   static String _d(DateTime d) =>
       '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
-  static String encode(List<PlanStage> stages) => jsonEncode([for (final s in stages) s.toJson()]);
+  static String encode(List<PlanStage> stages, {bool full = false}) =>
+      jsonEncode([for (final s in stages) s.toJson(full: full)]);
+
+  /// Подпись плана для «изменилось ли»: этапы, сроки, исполнители, порядок
+  /// и статусы (ход работ по чек-листу — нет: он меняется часто).
+  static String signature(List<PlanStage> stages) => [
+        for (final s in stages)
+          [s.id, s.title, s.start == null ? '' : _d(s.start!), s.due == null ? '' : _d(s.due!), s.after ?? '',
+                  s.assignee ?? '', s.order, s.status ?? '']
+              .join('|'),
+      ].join('\n');
+
+  static List<String> _list(Object? v) =>
+      [for (final x in (v is List ? v : const [])) if ('$x'.contains('@')) '$x'.toLowerCase()];
 
   static List<PlanStage> decode(String? json) {
     if (json == null || json.isEmpty) return const [];
@@ -162,13 +217,40 @@ class PlanStage {
               due: DateTime.tryParse('${m['e'] ?? ''}'),
               after: m['a'] as String?,
               assignee: m['to'] as String?,
+              assigneeName: m['nm'] as String?,
               order: (m['o'] as num?)?.toInt() ?? 0,
+              status: (m['st'] as num?)?.toInt(),
+              progress: ((m['p'] as num?)?.toDouble() ?? 0).clamp(0, 100) / 100,
+              doneAt: DateTime.tryParse('${m['dn'] ?? ''}'),
+              description: m['d'] as String?,
+              co: _list(m['co']),
+              controller: '${m['ctl'] ?? ''}'.contains('@') ? '${m['ctl']}'.toLowerCase() : null,
+              observers: _list(m['obs']),
+              checklist: [
+                for (final c in (m['ck'] is List ? m['ck'] as List : const []).whereType<Map>())
+                  if ('${c['t'] ?? ''}'.trim().isNotEmpty) ChecklistItem('${c['t']}'.trim(), done: c['d'] == true),
+              ],
+              names: {
+                if (m['n'] is Map)
+                  for (final e in (m['n'] as Map).entries)
+                    if ('${e.key}'.contains('@') && e.value is String) '${e.key}'.toLowerCase(): e.value as String,
+              },
             ),
       ];
     } catch (_) {
       return const [];
     }
   }
+}
+
+/// Чек-лист после изменения пунктов постановщиком: у оставшихся пунктов —
+/// прежние отметки (по тексту), новые — не выполнены.
+List<ChecklistItem> mergeChecklist(List<ChecklistItem> old, List<String> texts) {
+  final done = <String, bool>{for (final o in old) o.text.trim().toLowerCase(): o.done};
+  return [
+    for (final t in texts)
+      if (t.trim().isNotEmpty) ChecklistItem(t.trim(), done: done[t.trim().toLowerCase()] ?? false),
+  ];
 }
 
 /// Статусы (те же коды, что AssignmentStatus — без зависимости от кодека).

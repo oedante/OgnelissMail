@@ -38,6 +38,8 @@ AssignmentView _v(String id, String title, {String? parent, int status = Assignm
       isProject: false,
       stageOrder: 0,
       waiting: false,
+      revision: 0,
+      visibility: 0,
     ),
     assignee: AssignmentParticipant(
         assignmentId: id, email: 'vera@corp.example', displayName: 'Вера Белова', role: AssignmentRole.responsible, inviteStatus: 0),

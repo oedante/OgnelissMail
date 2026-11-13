@@ -158,8 +158,12 @@ class AssignmentScreen extends ConsumerWidget {
     final fmtDate = DateFormat('EEE, d MMM', l10n.localeCode);
     final roles = <Widget>[
       info(AppIcons.assignment_ind, l10n.tr('projRoleOwner'),
-          Text(v.outgoing ? l10n.tr('assignMe') : person(v.owner, v.row.ownerEmail),
+          Text(v.iOwn ? l10n.tr('assignMe') : person(v.owner, v.row.ownerEmail),
               style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500))),
+      // Заместители постановщика — те же права (13.11.2026).
+      if (v.deputies.isNotEmpty)
+        info(AppIcons.supervisor_account, l10n.tr('projDeputies'),
+            Text(v.deputies.map((p) => person(p, '')).join(', '), style: theme.textTheme.bodyMedium)),
       if (v.assignee != null)
         info(
           AppIcons.person,
@@ -481,6 +485,10 @@ class _EventRow extends StatelessWidget {
       'files' => (AppIcons.attach_file, '$who: $text'),
       'go' => (AppIcons.play_arrow, l10n.tr('projEvGo')),
       'sent' => (AppIcons.send, l10n.tr('projEvSent')),
+      'edited' => (AppIcons.edit, '$who: ${text.replaceAll('\n', ' · ')}'),
+      'removed' => (AppIcons.delete, text),
+      'rights' => (AppIcons.manage_accounts, text.replaceAll('\n', ' · ')),
+      'plan' => (AppIcons.send, l10n.tr('projEvPlan')),
       'status' => (
           AppIcons.history,
           '$who: ${assignmentStatusLabel(status ?? v.status, l10n)}${text.isEmpty ? '' : ' — «$text»'}'

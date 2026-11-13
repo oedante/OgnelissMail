@@ -22,6 +22,7 @@ import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
 import '../../services/assignments/assignment_store.dart'
     show PlanStage, mergePlan, projectProgress, shiftSuccessors, AssignmentTree;
+import 'assignment_edit.dart' show showRightsSheet;
 import 'assignment_screen.dart' show FilesSection;
 import 'assignment_widgets.dart';
 import 'gantt_chart.dart';
@@ -80,7 +81,9 @@ class ProjectScreen extends ConsumerWidget {
         const SizedBox(height: Space.xs),
         Text(
           [
-            if (!project.outgoing) '${l10n.tr('projRoleOwner')}: ${project.otherName}',
+            if (!project.iOwn)
+              '${l10n.tr('projRoleOwner')}: ${(project.owner?.displayName ?? '').trim().isNotEmpty ? project.owner!.displayName!.trim() : project.row.ownerEmail}',
+            if (project.iDeputy) l10n.tr('projYouDeputy'),
             if (dates.isNotEmpty) dates,
             if (stages.isNotEmpty)
               l10n.tr('projStagesCount').replaceAll('{done}', '$doneN').replaceAll('{total}', '${stages.length}'),
@@ -134,16 +137,27 @@ class ProjectScreen extends ConsumerWidget {
         if (stages.where((s) => s.id == plan[i].id).firstOrNull case final v?)
           _StageRow(index: i, v: v, afterNo: _no(plan, v.row.afterId))
         else
+          // Этап другого участника — из плана в письме проекта: кто, когда,
+          // после какого этапа и статус (13.11.2026).
           ListTile(
             leading: CircleAvatar(radius: 14, child: Text('${i + 1}')),
             title: Text(plan[i].title),
+            trailing: plan[i].status == null ? null : AssignmentStatusPill(plan[i].status!),
             subtitle: Text([
-              if (plan[i].assignee != null) plan[i].assignee!,
+              if ((plan[i].assigneeName ?? '').trim().isNotEmpty)
+                plan[i].assigneeName!.trim()
+              else if (plan[i].assignee != null)
+                plan[i].assignee!,
               [if (plan[i].start != null) fmt.format(plan[i].start!), if (plan[i].due != null) fmt.format(plan[i].due!)]
                   .join(' — '),
               if (_no(plan, plan[i].after) case final n?) l10n.tr('projAfter').replaceAll('{title}', '$n'),
             ].where((x) => x.isNotEmpty).join(' · ')),
           ),
+      if (!project.outgoing && !project.planShared)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
+          child: Text(l10n.tr('projOwnOnlyHint'), style: theme.textTheme.bodySmall?.copyWith(color: muted)),
+        ),
       if (project.outgoing && project.active)
         Padding(
           padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
@@ -192,12 +206,17 @@ class ProjectScreen extends ConsumerWidget {
           actions: [
             if (project.outgoing)
               PopupMenuButton<String>(
+                key: const ValueKey('proj_menu'),
                 tooltip: l10n.tr('more'),
                 onSelected: (v) {
+                  if (v == 'edit') unawaited(showProjectEdit(context, project, stages));
+                  if (v == 'rights') unawaited(showRightsSheet(context, ref, project));
                   if (v == 'template') unawaited(_saveTemplate(context, ref));
                   if (v == 'cancel') assignmentFire(_cancelAll(ref, stages));
                 },
                 itemBuilder: (_) => [
+                  if (project.active) PopupMenuItem(value: 'edit', child: Text(l10n.tr('projEdit'))),
+                  if (project.active) PopupMenuItem(value: 'rights', child: Text(l10n.tr('assignRights'))),
                   PopupMenuItem(value: 'template', child: Text(l10n.tr('projSaveTemplate'))),
                   if (project.active) PopupMenuItem(value: 'cancel', child: Text(l10n.tr('projCancel'))),
                 ],
@@ -403,6 +422,8 @@ class _History extends ConsumerWidget {
       'go' => l10n.tr('projEvGo'),
       'progress' => '$who: $text',
       'files' => '$who: $text',
+      'edited' || 'removed' || 'rights' => '$who: ${text.replaceAll('\n', ' · ')}',
+      'plan' => l10n.tr('projEvPlan'),
       _ => [
           '$who${text.isEmpty ? '' : ': «${text.length > 120 ? '${text.substring(0, 120)}…' : text}»'}',
           if (status != null) '· ${assignmentStatusLabel(status, l10n)}',

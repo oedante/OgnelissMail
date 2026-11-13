@@ -404,6 +404,9 @@ jobs:
       - name: Package
         run: |
           mkdir -p out
+          # Переносная версия (13.11.2026): portable.txt рядом с exe — данные в
+          # папке UserData рядом с программой (lib/core/platform/portable_mode_io.dart).
+          cp tool/windows/portable.txt build/windows/x64/runner/Release/portable.txt
           cd build/windows/x64/runner/Release && 7z a -tzip ../../../../../out/ogneliss-windows-portable.zip . > /dev/null
       - uses: actions/upload-artifact@v4
         with:

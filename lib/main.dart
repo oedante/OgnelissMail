@@ -5,6 +5,7 @@
 // Поддержка Android, iOS, Windows, macOS, Linux.
 
 import 'core/platform/native_drag_drop.dart';
+import 'core/platform/portable_mode.dart';
 import 'core/platform/device_time_zone.dart';
 import 'widgets/common/scroll_edge_fade.dart';
 import 'services/widget_mail_actions.dart' show widgetMailActionsProvider;
@@ -84,6 +85,9 @@ late ProviderContainer globalContainer;
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
+    // Переносная версия для Windows (13.11.2026): portable.txt рядом с exe —
+    // данные в папке программы. До всего, что пишет на диск.
+    PortableMode.init();
     // Окно письма на компьютере (1.9.x): свой движок Flutter — только показ
     // письма, без базы и служб приложения (message_window.dart).
     final windowMail = await MessageWindow.payloadOfThisEngine();

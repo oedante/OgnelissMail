@@ -4094,7 +4094,7 @@
     <string name="expMacWebTitle">Email phức tạp trong chế độ xem trình duyệt</string>
     <string name="expMacWebDesc">Email có bố cục phức tạp được hiển thị như trong trình duyệt, ngay trong thư. Tính năng thử nghiệm cho Mac.</string>
     <string name="graphicsHcppTitle">Cách nhúng mới cho chế độ xem thư (HCPP)</string>
-    <string name="graphicsHcppDesc">Chế độ thử nghiệm cho Android 14 trở lên: chế độ xem thư và trình soạn thảo được nhúng theo cách mới, cuộn sẽ mượt hơn. Nếu thư hiển thị sai, hãy tắt.</string>
+    <string name="graphicsHcppDesc">Android 14 trở lên: chế độ xem thư và trình soạn thảo được nhúng theo cách mới, cuộn mượt hơn. Nếu thư hiển thị sai, hãy tắt.</string>
     <string name="assignProjectSubject">Dự án</string>
     <string name="assignProjectGreeting">Xin chào,</string>
     <string name="assignProjectLabel">Dự án:</string>

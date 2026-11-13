@@ -4115,7 +4115,7 @@
     <string name="expMacWebTitle">Karmaşık e-postalar tarayıcı görünümünde</string>
     <string name="expMacWebDesc">Karmaşık düzenli e-postalar, iletinin içinde tarayıcıdaki gibi gösterilir. Mac için deneme özelliği.</string>
     <string name="graphicsHcppTitle">İleti görünümü için yeni gömme (HCPP)</string>
-    <string name="graphicsHcppDesc">Android 14 ve sonrası için deneme modu: ileti görünümü ve düzenleyici yeni bir yöntemle gömülür, kaydırma daha akıcı olmalıdır. Bir ileti yanlış görünürse kapatın.</string>
+    <string name="graphicsHcppDesc">Android 14 ve sonrası: ileti görünümü ve düzenleyici yeni bir yöntemle gömülür, kaydırma daha akıcıdır. Bir ileti yanlış görünürse kapatın.</string>
     <string name="assignProjectSubject">Proje</string>
     <string name="assignProjectGreeting">Merhaba,</string>
     <string name="assignProjectLabel">Proje:</string>

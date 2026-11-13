@@ -4094,7 +4094,7 @@
     <string name="expMacWebTitle">อีเมลที่ซับซ้อนในมุมมองเบราว์เซอร์</string>
     <string name="expMacWebDesc">อีเมลที่มีเลย์เอาต์ซับซ้อนจะแสดงเหมือนในเบราว์เซอร์ภายในข้อความโดยตรง ฟีเจอร์ทดลองสำหรับ Mac</string>
     <string name="graphicsHcppTitle">การฝังมุมมองข้อความแบบใหม่ (HCPP)</string>
-    <string name="graphicsHcppDesc">โหมดทดลองสำหรับ Android 14 ขึ้นไป: มุมมองข้อความและตัวแก้ไขถูกฝังด้วยวิธีใหม่ การเลื่อนควรลื่นไหลขึ้น หากข้อความแสดงผิดปกติ ให้ปิด</string>
+    <string name="graphicsHcppDesc">Android 14 ขึ้นไป: มุมมองข้อความและตัวแก้ไขถูกฝังด้วยวิธีใหม่ การเลื่อนลื่นไหลขึ้น หากข้อความแสดงผิดปกติ ให้ปิด</string>
     <string name="assignProjectSubject">โครงการ</string>
     <string name="assignProjectGreeting">สวัสดี</string>
     <string name="assignProjectLabel">โครงการ:</string>

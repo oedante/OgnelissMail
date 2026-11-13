@@ -4115,7 +4115,7 @@
     <string name="expMacWebTitle">Komplexe E-Mails in der Browseransicht</string>
     <string name="expMacWebDesc">E-Mails mit komplexem Layout werden wie im Browser direkt in der Nachricht angezeigt. Testfunktion für den Mac.</string>
     <string name="graphicsHcppTitle">Neue Einbettung der Nachrichtenansicht (HCPP)</string>
-    <string name="graphicsHcppDesc">Testmodus für Android 14 und neuer: Nachrichtenansicht und Editor werden auf neue Weise eingebettet, das Scrollen sollte flüssiger werden. Wird eine Nachricht falsch angezeigt, schalten Sie ihn aus.</string>
+    <string name="graphicsHcppDesc">Android 14 und neuer: Nachrichtenansicht und Editor werden auf neue Weise eingebettet, das Scrollen ist flüssiger. Wird eine Nachricht falsch angezeigt, schalten Sie es aus.</string>
     <string name="assignProjectSubject">Projekt</string>
     <string name="assignProjectGreeting">Guten Tag,</string>
     <string name="assignProjectLabel">Projekt:</string>

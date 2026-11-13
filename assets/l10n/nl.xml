@@ -4115,7 +4115,7 @@
     <string name="expMacWebTitle">Complexe e-mails in browserweergave</string>
     <string name="expMacWebDesc">E-mails met een complexe opmaak worden zoals in een browser getoond, direct in het bericht. Proeffunctie voor Mac.</string>
     <string name="graphicsHcppTitle">Nieuwe inbedding van de berichtweergave (HCPP)</string>
-    <string name="graphicsHcppDesc">Proefmodus voor Android 14 en nieuwer: de berichtweergave en de editor worden op een nieuwe manier ingebed, scrollen zou soepeler moeten gaan. Schakel dit uit als een bericht verkeerd wordt weergegeven.</string>
+    <string name="graphicsHcppDesc">Android 14 en nieuwer: de berichtweergave en de editor worden op een nieuwe manier ingebed, scrollen gaat soepeler. Schakel dit uit als een bericht verkeerd wordt weergegeven.</string>
     <string name="assignProjectSubject">Project</string>
     <string name="assignProjectGreeting">Goedendag,</string>
     <string name="assignProjectLabel">Project:</string>

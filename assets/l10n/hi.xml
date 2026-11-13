@@ -4115,7 +4115,7 @@
     <string name="expMacWebTitle">जटिल ईमेल ब्राउज़र दृश्य में</string>
     <string name="expMacWebDesc">जटिल लेआउट वाले ईमेल सीधे संदेश में ब्राउज़र की तरह दिखाए जाते हैं। Mac के लिए परीक्षण सुविधा।</string>
     <string name="graphicsHcppTitle">संदेश दृश्य की नई एम्बेडिंग (HCPP)</string>
-    <string name="graphicsHcppDesc">Android 14 और नए संस्करणों के लिए परीक्षण मोड: संदेश दृश्य और संपादक नए तरीके से एम्बेड होते हैं, स्क्रॉलिंग अधिक सहज होनी चाहिए। यदि कोई संदेश गलत दिखे, तो इसे बंद कर दें।</string>
+    <string name="graphicsHcppDesc">Android 14 और नए संस्करण: संदेश दृश्य और संपादक नए तरीके से एम्बेड होते हैं, स्क्रॉलिंग अधिक सहज है। यदि कोई संदेश गलत दिखे, तो इसे बंद कर दें।</string>
     <string name="assignProjectSubject">परियोजना</string>
     <string name="assignProjectGreeting">नमस्ते,</string>
     <string name="assignProjectLabel">परियोजना:</string>

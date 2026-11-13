@@ -4094,7 +4094,7 @@
     <string name="expMacWebTitle">复杂邮件使用浏览器视图</string>
     <string name="expMacWebDesc">布局复杂的邮件将像在浏览器中一样直接显示在邮件内。Mac 试用功能。</string>
     <string name="graphicsHcppTitle">邮件视图的新嵌入方式 (HCPP)</string>
-    <string name="graphicsHcppDesc">适用于 Android 14 及更高版本的试用模式：邮件视图和编辑器采用新的嵌入方式，滚动应更流畅。如果邮件显示不正确，请关闭。</string>
+    <string name="graphicsHcppDesc">Android 14 及更高版本：邮件视图和编辑器采用新的嵌入方式，滚动更流畅。如果邮件显示不正确，请关闭。</string>
     <string name="assignProjectSubject">项目</string>
     <string name="assignProjectGreeting">您好！</string>
     <string name="assignProjectLabel">项目：</string>

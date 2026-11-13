@@ -37,8 +37,12 @@ package com.ogneliss.mail
 // (FlutterEngineFlags.ENABLE_HCPP, разрешён в выпускной сборке). С ним движок
 // сам создаёт все встроенные окна по-новому (PlatformViewsChannel.create) —
 // плагин окна письма менять не нужно. Нужны Android 14+ и Impeller на
-// Vulkan; иначе движок работает, как раньше. По умолчанию выключено:
-// выключатель там же, в «Графике», применяется с перезапуском.
+// Vulkan; иначе движок работает, как раньше. Выключатель — там же, в
+// «Графике», применяется с перезапуском.
+//
+// 13.11.2026 (владелец: «HCPP на Android — да, у меня всё в порядке»):
+// включён по умолчанию. Если процесс упадёт в коде встраивания (SurfaceControl,
+// PlatformViewsController2), HCPP выключается сам до ручного включения.
 
 import android.app.ActivityManager
 import android.app.Application
@@ -68,6 +72,10 @@ object GraphicsMode {
     private const val KEY_GLES_FP = "gles_fingerprint"
     private const val KEY_GLES_WHY = "gles_reason"
     private const val KEY_HCPP = "hcpp"
+    private const val KEY_HCPP_CRASH = "hcpp_crash_at"
+
+    /** HCPP по умолчанию (13.11.2026). */
+    private const val HCPP_DEFAULT = true
     private const val ARG_HCPP = "--enable-hcpp-and-surface-control"
 
     /** Чипы, на которых Flutter не включает Vulkan (kBadSocs, Flutter 3.47). */
@@ -100,7 +108,7 @@ object GraphicsMode {
 
     /** Включить ли HCPP при следующем запуске процесса (со Skia он не работает). */
     fun wantHcpp(c: Context): Boolean =
-        prefs(c).getBoolean(KEY_HCPP, false) && hcppSupported(c) && !wantSkia(c)
+        prefs(c).getBoolean(KEY_HCPP, HCPP_DEFAULT) && hcppSupported(c) && !wantSkia(c)
 
     private fun prefs(c: Context) = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
@@ -203,8 +211,18 @@ object GraphicsMode {
         for (info in list) {
             if (info.timestamp <= since) continue
             if (info.timestamp > newest) newest = info.timestamp
-            if (info.reason != ApplicationExitInfo.REASON_CRASH_NATIVE) continue
             if (info.processName != c.packageName) continue
+            // Падение в встраивании окон HCPP (Java или машинный код) — HCPP
+            // выключается сам; включить снова можно в «Графике».
+            if (info.reason == ApplicationExitInfo.REASON_CRASH ||
+                info.reason == ApplicationExitInfo.REASON_CRASH_NATIVE
+            ) {
+                val text = (info.description ?: "") + " " + (BackgroundDiagnostics.crashTrace(info) ?: "")
+                if (isHcppCrash(text)) {
+                    edit.putBoolean(KEY_HCPP, false).putLong(KEY_HCPP_CRASH, info.timestamp)
+                }
+            }
+            if (info.reason != ApplicationExitInfo.REASON_CRASH_NATIVE) continue
             val trace = BackgroundDiagnostics.crashTrace(info) ?: continue
             if (!isImpellerCrash(trace)) continue
             if (info.timestamp >= p.getLong(KEY_AUTO_AT, 0L)) {
@@ -216,6 +234,13 @@ object GraphicsMode {
         if (newest > since) edit.putLong(KEY_SCANNED, newest)
         edit.apply()
     }
+
+    /** Падение в коде встраивания окон HCPP. */
+    fun isHcppCrash(text: String): Boolean =
+        text.contains("PlatformViewsController2") ||
+            text.contains("SurfaceControl", ignoreCase = true) ||
+            text.contains("hcpp", ignoreCase = true) ||
+            text.contains("HC++")
 
     /** Сообщение движка о падении — путь к исходнику Impeller в строке FATAL. */
     fun isImpellerCrash(trace: String): Boolean = trace.contains("impeller", ignoreCase = true)
@@ -268,7 +293,8 @@ object GraphicsMode {
             "autoAt" to p.getLong(KEY_AUTO_AT, 0L),
             "autoReason" to p.getString(KEY_AUTO_WHY, null),
             "glesReason" to glesReason(c),
-            "hcpp" to p.getBoolean(KEY_HCPP, false),
+            "hcpp" to p.getBoolean(KEY_HCPP, HCPP_DEFAULT),
+            "hcppCrashAt" to p.getLong(KEY_HCPP_CRASH, 0L),
             "hcppActive" to hcppActive,
             "hcppNext" to wantHcpp(c),
             "hcppSupported" to hcppSupported(c),

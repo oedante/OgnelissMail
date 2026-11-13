@@ -4136,7 +4136,7 @@
     <string name="expMacWebTitle">Zložité e-maily v okne prehliadača</string>
     <string name="expMacWebDesc">E-maily so zložitým rozložením sa zobrazia ako v prehliadači, priamo v správe. Skúšobná funkcia pre Mac.</string>
     <string name="graphicsHcppTitle">Nové vkladanie okna správy (HCPP)</string>
-    <string name="graphicsHcppDesc">Skúšobný režim pre Android 14 a novší: okno správy a editor sa vkladajú novým spôsobom, posúvanie by malo byť plynulejšie. Ak sa správa zobrazuje nesprávne, vypnite ho.</string>
+    <string name="graphicsHcppDesc">Android 14 a novší: okno správy a editor sa vkladajú novým spôsobom, posúvanie je plynulejšie. Ak sa správa zobrazuje nesprávne, vypnite to.</string>
     <string name="assignProjectSubject">Projekt</string>
     <string name="assignProjectGreeting">Dobrý deň,</string>
     <string name="assignProjectLabel">Projekt:</string>

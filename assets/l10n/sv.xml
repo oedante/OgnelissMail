@@ -4115,7 +4115,7 @@
     <string name="expMacWebTitle">Komplexa mejl i webbläsarvy</string>
     <string name="expMacWebDesc">Mejl med komplex layout visas som i en webbläsare, direkt i meddelandet. Testfunktion för Mac.</string>
     <string name="graphicsHcppTitle">Ny inbäddning av meddelandevyn (HCPP)</string>
-    <string name="graphicsHcppDesc">Testläge för Android 14 och senare: meddelandevyn och redigeraren bäddas in på ett nytt sätt, och rullningen bör bli mjukare. Stäng av det om ett meddelande visas fel.</string>
+    <string name="graphicsHcppDesc">Android 14 och senare: meddelandevyn och redigeraren bäddas in på ett nytt sätt, och rullningen är mjukare. Stäng av det om ett meddelande visas fel.</string>
     <string name="assignProjectSubject">Projekt</string>
     <string name="assignProjectGreeting">Hej!</string>
     <string name="assignProjectLabel">Projekt:</string>

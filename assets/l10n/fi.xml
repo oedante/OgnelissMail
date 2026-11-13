@@ -4115,7 +4115,7 @@
     <string name="expMacWebTitle">Monimutkaiset viestit selainnäkymässä</string>
     <string name="expMacWebDesc">Monimutkaisesti taitetut viestit näytetään kuten selaimessa, suoraan viestissä. Kokeiluominaisuus Macille.</string>
     <string name="graphicsHcppTitle">Viestinäkymän uusi upotustapa (HCPP)</string>
-    <string name="graphicsHcppDesc">Kokeilutila Android 14:lle ja uudemmille: viestinäkymä ja editori upotetaan uudella tavalla, ja vierityksen pitäisi olla sulavampaa. Jos viesti näkyy väärin, poista asetus käytöstä.</string>
+    <string name="graphicsHcppDesc">Android 14 ja uudemmat: viestinäkymä ja editori upotetaan uudella tavalla, ja vieritys on sulavampaa. Jos viesti näkyy väärin, poista asetus käytöstä.</string>
     <string name="assignProjectSubject">Projekti</string>
     <string name="assignProjectGreeting">Hei!</string>
     <string name="assignProjectLabel">Projekti:</string>

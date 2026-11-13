@@ -4157,7 +4157,7 @@
     <string name="expMacWebTitle">Złożone wiadomości w widoku przeglądarki</string>
     <string name="expMacWebDesc">Wiadomości o złożonym układzie są wyświetlane jak w przeglądarce, bezpośrednio w wiadomości. Funkcja próbna dla Maca.</string>
     <string name="graphicsHcppTitle">Nowe osadzanie widoku wiadomości (HCPP)</string>
-    <string name="graphicsHcppDesc">Tryb próbny dla Androida 14 i nowszych: widok wiadomości i edytor są osadzane w nowy sposób, przewijanie powinno być płynniejsze. Jeśli wiadomość wyświetla się niepoprawnie, wyłącz go.</string>
+    <string name="graphicsHcppDesc">Android 14 i nowsze: widok wiadomości i edytor są osadzane w nowy sposób, przewijanie jest płynniejsze. Jeśli wiadomość wyświetla się niepoprawnie, wyłącz to.</string>
     <string name="assignProjectSubject">Projekt</string>
     <string name="assignProjectGreeting">Dzień dobry,</string>
     <string name="assignProjectLabel">Projekt:</string>

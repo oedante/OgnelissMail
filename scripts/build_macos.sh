@@ -116,7 +116,13 @@ prepare() {
   # Плагины — через CocoaPods, и всем pods минимум macOS 12.0 (как в сборке
   # на GitHub, ci.yml): flutter_inappwebview_macos 1.2 бета с Xcode 26
   # падал «presentationAnchor(for:) … macOS 10.14 and newer» (10.11.2026).
+  # (build_ios.sh эту общую настройку Flutter включает — для iPhone, 14.11.2026.)
   flutter config --no-enable-swift-package-manager >/dev/null
+  # Отрисовка — прежним движком (Skia), не Impeller (14.11.2026): во Flutter
+  # 3.47 Impeller и новая отрисовка текста включены на Mac по умолчанию, и на
+  # Mac с Intel буквы рассыпались в шум («Почт▒», список языков), интерфейс
+  # дёргался. Info.plist один на все Mac — выключено для всех.
+  plist_set macos/Runner/Info.plist FLTEnableImpeller bool false
   [[ -f macos/Podfile ]] || cp "$(dirname "$(dirname "$(command -v flutter)")")/packages/flutter_tools/templates/cocoapods/Podfile-macos" macos/Podfile
   python3 - <<'PY'
 p = 'macos/Podfile'
@@ -130,10 +136,6 @@ PY
   # /dev/null падал молча, и скрипт заканчивался сразу после build_runner.
   # Пакеты — те же версии, что в сборке на GitHub (как build_ios.sh): у
   # pubspec.lock на Mac были свои, старые версии (09.11.2026).
-  # Плагины Mac — через CocoaPods, как в сборке на GitHub: flutter_inappwebview_macos
-  # в Swift Package Manager с Xcode 26 не собирается. Настройка Flutter общая, а
-  # build_ios.sh её включает (14.11.2026) — выключаем здесь.
-  flutter config --no-enable-swift-package-manager >/dev/null
   if [[ "$KEEP_LOCK" == 1 ]]; then
     echo "▶ Пакеты (flutter pub get, свои версии)…"
     flutter pub get || { echo "✗ flutter pub get не прошёл — ошибка выше."; exit 1; }

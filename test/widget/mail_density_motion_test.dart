@@ -187,6 +187,37 @@ void main() {
       return (row, avatar);
     }
 
+    testWidgets('непрочитанное заметно: точка, время цветом акцента, имя жирным (14.11.2026)', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.pumpWidget(_app(
+        db,
+        prefs,
+        const Appearance(),
+        Scaffold(
+          body: ListView(children: [
+            EmailListTile(email: _mail('m1', read: false), onTap: () {}),
+            EmailListTile(email: _mail('m2'), onTap: () {}),
+          ]),
+        ),
+      ));
+      await _settle(tester);
+      final unread = find.byType(EmailListTile).at(0), read = find.byType(EmailListTile).at(1);
+      expect(find.descendant(of: unread, matching: find.byKey(const ValueKey('unread_dot'))), findsOneWidget);
+      expect(find.descendant(of: read, matching: find.byKey(const ValueKey('unread_dot'))), findsNothing);
+      final primary = Theme.of(tester.element(unread)).colorScheme.primary;
+      TextStyle styleOf(Finder row, String text) =>
+          tester.widget<Text>(find.descendant(of: row, matching: find.text(text))).style!;
+      final time = tester
+          .widgetList<Text>(find.descendant(of: unread, matching: find.byType(Text)))
+          .firstWhere((t) => RegExp(r'^\d{1,2}:\d{2}$').hasMatch(t.data ?? ''));
+      expect(time.style!.color, primary);
+      expect(styleOf(unread, 'Отправитель m1').fontWeight, FontWeight.w700);
+      expect(styleOf(read, 'Отправитель m2').fontWeight, FontWeight.w400);
+      await _done(tester, db);
+    });
+
     testWidgets('компактная ниже обычной, просторная выше; строки не ниже 48 dp', (tester) async {
       final compact = await rowAndAvatar(tester, ListDensity.compact);
       final normal = await rowAndAvatar(tester, ListDensity.normal);

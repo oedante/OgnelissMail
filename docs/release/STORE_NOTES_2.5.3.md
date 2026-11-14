@@ -131,6 +131,9 @@
   найденное на сервере — в конце. Совпадения на устройстве — самые новые
   (при «Сначала старые» — самые старые): свежие письма частого собеседника
   больше не выпадают из первых 100.
+- **Непрочитанные письма заметнее** (2.5.3, замечание владельца 14.11.2026:
+  «новые письма почти незаметны»): точка цветом акцента в левом верхнем
+  углу портрета (имя не сдвигается), время цветом акцента, имя жирным (у прочитанных — обычным), фон строки — акцент 7 % вместо 3,5 %.
 
 ### Платформы
 
@@ -183,8 +186,8 @@
 Поручения и проекты можно изменять, у постановщика может быть заместитель.
 Сроки — с точным временем и напоминаниями, статусы доходят надёжнее.
 «На контроле» и «Позже» — на всех устройствах. Приветствие в поручениях — по
-имени и отчеству. Письма и поиск — по дате получения; исправлена отправка через серверы
-вроде Mercury. На Mac с Intel текст больше не рассыпается; на Windows —
+имени и отчеству. Письма и поиск — по дате получения, новые письма заметнее; исправлена
+отправка через серверы вроде Mercury. На Mac с Intel текст больше не рассыпается; на Windows —
 переносная версия.
 
 **EN.** Projects with stages: roles, a shared plan with a Gantt chart,
@@ -193,7 +196,8 @@ results with files. Assignments and projects can be edited, and assigners
 can name a deputy. Deadlines with an exact time and reminders; statuses
 arrive more reliably. Tracked and Later sync across all your devices.
 Assignment emails greet people by first name. Messages and search follow
-the received date; fixed sending through servers like Mercury. On Intel-based Macs, text no longer gets garbled; a portable
+the received date, new messages stand out; fixed sending through servers
+like Mercury. On Intel-based Macs, text no longer gets garbled; a portable
 version for Windows.
 
 ## App Store — Mac (ru, en, de, fr)
@@ -211,6 +215,7 @@ version for Windows.
 • «Позже» и «На контроле» — на всех ваших устройствах
 • Приветствие в поручениях — по имени и отчеству
 • Исправлены сортировка писем по дате и отправка через Mercury
+• Новые письма заметнее: точка и время цветом
 </ru-RU>
 <en-US>
 • On Intel-based Macs, text no longer gets garbled and the interface no longer stutters
@@ -222,6 +227,7 @@ version for Windows.
 • Later and Tracked sync across all your devices
 • Assignment emails greet people by first name
 • Fixed date sorting of messages and sending via Mercury
+• New messages stand out: a dot and a colored time
 </en-US>
 <de-DE>
 • Auf Macs mit Intel-Prozessor wird Text nicht mehr verstümmelt und die Oberfläche ruckelt nicht mehr
@@ -233,6 +239,7 @@ version for Windows.
 • „Später“ und „Im Blick“ auf all Ihren Geräten
 • Auftrags-E-Mails sprechen Personen mit Vornamen an
 • Sortierung nach Datum und Versand über Mercury korrigiert
+• Neue E-Mails fallen auf: Punkt und farbige Uhrzeit
 </de-DE>
 <fr-FR>
 • Sur les Mac à processeur Intel, le texte ne se brouille plus et l’interface ne saccade plus
@@ -244,6 +251,7 @@ version for Windows.
 • « Plus tard » et « Suivis » sur tous vos appareils
 • Les e-mails de mission saluent par le prénom
 • Tri par date et envoi via Mercury corrigés
+• Les nouveaux e-mails ressortent : point et heure en couleur
 </fr-FR>
 ```
 
@@ -262,6 +270,7 @@ version for Windows.
 • «Позже» и «На контроле» — на всех ваших устройствах
 • Приветствие в поручениях — по имени и отчеству
 • Исправлены сортировка писем по дате и отправка через Mercury
+• Новые письма заметнее: точка и время цветом
 </ru-RU>
 <en-US>
 • Home Screen widgets: My day, Mail, Calendar, Notes
@@ -272,6 +281,7 @@ version for Windows.
 • Later and Tracked sync across all your devices
 • Assignment emails greet people by first name
 • Fixed date sorting of messages and sending via Mercury
+• New messages stand out: a dot and a colored time
 </en-US>
 <de-DE>
 • Widgets für den Home-Bildschirm: Mein Tag, E-Mail, Kalender, Notizen
@@ -282,6 +292,7 @@ version for Windows.
 • „Später“ und „Im Blick“ auf all Ihren Geräten
 • Auftrags-E-Mails sprechen Personen mit Vornamen an
 • Sortierung nach Datum und Versand über Mercury korrigiert
+• Neue E-Mails fallen auf: Punkt und farbige Uhrzeit
 </de-DE>
 <fr-FR>
 • Widgets d’écran d’accueil : Ma journée, E-mail, Calendrier, Notes
@@ -292,6 +303,7 @@ version for Windows.
 • « Plus tard » et « Suivis » sur tous vos appareils
 • Les e-mails de mission saluent par le prénom
 • Tri par date et envoi via Mercury corrigés
+• Les nouveaux e-mails ressortent : point et heure en couleur
 </fr-FR>
 ```
 

@@ -4003,7 +4003,6 @@
     <string name="tlFree">Szabad · {d}</string>
     <string name="assignTitle">Megbízás</string>
     <string name="assignSubject">Megbízás</string>
-    <string name="assignGreeting">Kedves {name}!</string>
     <string name="assignWhatLabel">Megbízás:</string>
     <string name="assignDueLabel">Határidő:</string>
     <string name="assignSource">Eredeti üzenet: „{subject}” — {from}, {date}</string>
@@ -4287,5 +4286,4 @@
     <string name="assignStatsTimelineHint">Sáv: a kiadástól a határidőig; kitöltés: elkészült rész; piros keret: lejárt. A késők elöl.</string>
     <string name="assignStatsShowAll">További {n} megjelenítése</string>
     <string name="assignStatsNoDue">Határidő nélkül: {n} (nem szerepelnek a diagramon).</string>
-    <string name="assignGreetingNoName">Jó napot!</string>
 </resources>

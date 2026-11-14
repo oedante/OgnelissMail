@@ -4003,7 +4003,6 @@
     <string name="tlFree">Vapaa · {d}</string>
     <string name="assignTitle">Toimeksianto</string>
     <string name="assignSubject">Toimeksianto</string>
-    <string name="assignGreeting">Hei {name},</string>
     <string name="assignWhatLabel">Toimeksianto:</string>
     <string name="assignDueLabel">Määräaika:</string>
     <string name="assignSource">Alkuperäinen viesti: ”{subject}” — {from}, {date}</string>
@@ -4287,5 +4286,4 @@
     <string name="assignStatsTimelineHint">Palkki: annosta määräaikaan; täyttö: tehty osa; punainen reuna: myöhässä. Myöhässä olevat ensin.</string>
     <string name="assignStatsShowAll">Näytä {n} lisää</string>
     <string name="assignStatsNoDue">Ilman määräaikaa: {n} (ei kaaviossa).</string>
-    <string name="assignGreetingNoName">Hei,</string>
 </resources>

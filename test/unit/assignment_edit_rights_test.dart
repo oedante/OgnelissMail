@@ -186,7 +186,7 @@ void main() {
     return id;
   }
 
-  test('обращение: «Имя Отчество» — ФИО из писем человека, а не фамилия (14.11.2026)', () async {
+  test('приветствие как в редакторе: «Имя Отчество» — ФИО из писем человека, а не фамилия (14.11.2026)', () async {
     final b = phones[boss]!;
     const who = 'sitnikov@corp.ru';
     // Письмо от него в ящике постановщика — с полным ФИО.
@@ -204,13 +204,13 @@ void main() {
     // обращение бралось из «Ситников Дмитрий» по тайм-ауту).
     final t0 = DateTime.now();
     await b.svc.create(account: acc(b), title: 'Тест', assignees: [const EmailAddress(email: who, displayName: 'Ситников Дмитрий')]);
-    expect(queue.last.html, contains('Дмитрий Александрович, добрый день!'));
+    expect(queue.last.html, contains('Добрый день, Дмитрий Александрович,'));
     expect(DateTime.now().difference(t0), lessThan(const Duration(seconds: 3)));
     expect(await b.c.read(personNameDirectoryProvider).fullName(who, account: acc(b)), 'Ситников Дмитрий Александрович');
     // Имени нет вовсе — приветствие без имени, а не часть адреса.
     await b.svc.create(account: acc(b), title: 'Тест 2', assignees: [const EmailAddress(email: 'x.y@corp.ru')]);
-    expect(queue.last.html, contains('Добрый день!'));
-    expect(queue.last.html, isNot(contains('x.y, добрый день')));
+    expect(queue.last.html, contains('<p>Добрый день!</p>'));
+    expect(queue.last.html, startsWith('<p>Добрый день!</p><p><b>'), reason: 'без части адреса в обращении');
   });
 
   test('участники видят весь план: кто что и после кого делает, статусы этапов', () async {

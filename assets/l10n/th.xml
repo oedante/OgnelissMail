@@ -3982,7 +3982,6 @@
     <string name="tlFree">ว่าง · {d}</string>
     <string name="assignTitle">งานมอบหมาย</string>
     <string name="assignSubject">งานมอบหมาย</string>
-    <string name="assignGreeting">สวัสดี {name}</string>
     <string name="assignWhatLabel">งาน:</string>
     <string name="assignDueLabel">กำหนด:</string>
     <string name="assignSource">อีเมลต้นฉบับ: \"{subject}\" — {from}, {date}</string>
@@ -4266,5 +4265,4 @@
     <string name="assignStatsTimelineHint">แถบ: ตั้งแต่มอบหมายถึงกำหนดส่ง ส่วนที่ระบาย: ส่วนที่ทำแล้ว กรอบแดง: เลยกำหนด งานที่เลยกำหนดแสดงก่อน</string>
     <string name="assignStatsShowAll">แสดงอีก {n}</string>
     <string name="assignStatsNoDue">ไม่มีกำหนดส่ง: {n} (ไม่แสดงในแผนภูมิ)</string>
-    <string name="assignGreetingNoName">สวัสดี</string>
 </resources>

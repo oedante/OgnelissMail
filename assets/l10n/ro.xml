@@ -4024,7 +4024,6 @@
     <string name="tlFree">Liber · {d}</string>
     <string name="assignTitle">Sarcină</string>
     <string name="assignSubject">Sarcină</string>
-    <string name="assignGreeting">Bună ziua, {name},</string>
     <string name="assignWhatLabel">Sarcină:</string>
     <string name="assignDueLabel">Termen:</string>
     <string name="assignSource">Mesajul original: „{subject}” — {from}, {date}</string>
@@ -4308,5 +4307,4 @@
     <string name="assignStatsTimelineHint">Bară: de la atribuire la termen; umplere: partea făcută; contur roșu: întârziat. Întârziatele primele.</string>
     <string name="assignStatsShowAll">Afișează încă {n}</string>
     <string name="assignStatsNoDue">Fără termen: {n} (nu apar în diagramă).</string>
-    <string name="assignGreetingNoName">Bună ziua,</string>
 </resources>

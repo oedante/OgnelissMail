@@ -3982,7 +3982,6 @@
     <string name="tlFree">空き · {d}</string>
     <string name="assignTitle">依頼</string>
     <string name="assignSubject">依頼</string>
-    <string name="assignGreeting">{name}さん</string>
     <string name="assignWhatLabel">依頼内容:</string>
     <string name="assignDueLabel">期限:</string>
     <string name="assignSource">元のメール:「{subject}」— {from}、{date}</string>
@@ -4266,5 +4265,4 @@
     <string name="assignStatsTimelineHint">バー：依頼日から期限まで。塗り：完了した部分。赤枠：期限超過。期限超過が先頭。</string>
     <string name="assignStatsShowAll">さらに {n} 件表示</string>
     <string name="assignStatsNoDue">期限なし：{n} 件（図には表示されません）。</string>
-    <string name="assignGreetingNoName">こんにちは。</string>
 </resources>

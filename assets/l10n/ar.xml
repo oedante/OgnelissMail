@@ -4087,7 +4087,6 @@
     <string name="tlFree">متاح · {d}</string>
     <string name="assignTitle">تكليف</string>
     <string name="assignSubject">تكليف</string>
-    <string name="assignGreeting">مرحبًا {name}،</string>
     <string name="assignWhatLabel">التكليف:</string>
     <string name="assignDueLabel">الموعد:</string>
     <string name="assignSource">الرسالة الأصلية: «{subject}» — {from}، {date}</string>
@@ -4371,5 +4370,4 @@
     <string name="assignStatsTimelineHint">الشريط: من الإسناد حتى الموعد النهائي؛ التعبئة: الجزء المنجز؛ الإطار الأحمر: متأخر. المتأخرة أولًا.</string>
     <string name="assignStatsShowAll">عرض {n} أخرى</string>
     <string name="assignStatsNoDue">بلا موعد نهائي: {n} (غير ظاهرة في المخطط).</string>
-    <string name="assignGreetingNoName">مرحبًا،</string>
 </resources>

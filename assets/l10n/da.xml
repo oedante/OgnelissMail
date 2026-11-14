@@ -4003,7 +4003,6 @@
     <string name="tlFree">Ledig · {d}</string>
     <string name="assignTitle">Opgave</string>
     <string name="assignSubject">Opgave</string>
-    <string name="assignGreeting">Hej {name},</string>
     <string name="assignWhatLabel">Opgave:</string>
     <string name="assignDueLabel">Frist:</string>
     <string name="assignSource">Oprindelig mail: »{subject}« — {from}, {date}</string>
@@ -4287,5 +4286,4 @@
     <string name="assignStatsTimelineHint">Bjælke: fra tildeling til frist; udfyldning: færdig del; rød kant: forsinket. Forsinkede først.</string>
     <string name="assignStatsShowAll">Vis {n} mere</string>
     <string name="assignStatsNoDue">Uden frist: {n} (vises ikke i diagrammet).</string>
-    <string name="assignGreetingNoName">Hej,</string>
 </resources>

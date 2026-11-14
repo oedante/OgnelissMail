@@ -18,7 +18,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/logging/app_logger.dart';
-import '../../core/utils/greeting_name.dart';
+import '../../core/utils/greeting_helper.dart';
 import '../../core/utils/person_names.dart';
 import '../../data/database/app_database.dart';
 import '../../data/models/account_model.dart';
@@ -29,6 +29,7 @@ import '../../features/settings/providers/settings_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../mail/offline_send_service.dart';
 import '../contacts/person_name_directory.dart';
+import '../mail/greeting_mode.dart';
 import '../mail/own_addresses.dart';
 import '../notifications/reminder_scheduler_service.dart' show reminderSchedulerProvider;
 import 'assignment_codec.dart';
@@ -85,22 +86,36 @@ class AssignmentService {
   String _dueLong(DateTime d, AppLocalizations l10n) =>
       DateFormat(dueHasTime(d) ? 'EEEE, d MMMM, HH:mm' : 'EEEE, d MMMM', l10n.localeCode).format(d);
 
-  /// Приветствие письма поручения (14.11.2026, замечание владельца):
-  /// «Дмитрий Александрович, добрый день!» — по-русски имя и отчество (или
-  /// имя), на других языках — по их правилам (GreetingName). ФИО — самое
-  /// полное из контактов, писем и адресной книги организации; имени нет —
-  /// приветствие без имени.
+  /// Приветствие письма поручения — то же, что в редакторе письма
+  /// (GreetingHelper, 14.11.2026, замечание владельца: было «Ситников,
+  /// добрый день!» — одна фамилия): «Добрый день, Дмитрий Александрович,»
+  /// по настройке приветствия ящика (нет, без имени, с именем), на языке
+  /// письма. ФИО — самое полное из контактов, писем и адресной книги
+  /// организации. '' — без приветствия.
   Future<String> _greeting(EmailAddress a, AccountModel? account, AppLocalizations l10n) async {
-    var name = a.displayName;
+    var mode = GreetingMode.helloName;
     try {
-      final full = await _ref
-          .read(personNameDirectoryProvider)
-          .fullName(a.email, account: account)
-          .timeout(const Duration(seconds: 4));
-      if (full != null && PersonNames.better(name, full)) name = full;
+      mode = _ref.read(greetingModeProvider.notifier).of(account?.id);
     } catch (_) {}
-    final who = GreetingName.of(name, locale: l10n.localeCode);
-    return who == null ? l10n.tr('assignGreetingNoName') : l10n.tr('assignGreeting').replaceAll('{name}', who);
+    if (mode == GreetingMode.off) return '';
+    var name = a.displayName;
+    if (mode == GreetingMode.helloName) {
+      try {
+        final full = await _ref
+            .read(personNameDirectoryProvider)
+            .fullName(a.email, account: account)
+            .timeout(const Duration(seconds: 4));
+        if (full != null && PersonNames.better(name, full)) name = full;
+      } catch (_) {}
+    }
+    final set = GreetingHelper.variants(
+      names: [name ?? ''],
+      emails: [a.email],
+      appLang: l10n.localeCode,
+      lang: l10n.localeCode,
+      ownDomains: account == null ? const {} : OwnAddresses.domains(account),
+    );
+    return mode == GreetingMode.hello ? set.hello : set.full;
   }
 
   /// Поручить: по поручению каждому исполнителю (у каждого — свой статус).

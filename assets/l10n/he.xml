@@ -4024,7 +4024,6 @@
     <string name="tlFree">פנוי · {d}</string>
     <string name="assignTitle">משימה</string>
     <string name="assignSubject">משימה</string>
-    <string name="assignGreeting">שלום {name},</string>
     <string name="assignWhatLabel">משימה:</string>
     <string name="assignDueLabel">מועד:</string>
     <string name="assignSource">ההודעה המקורית: \"{subject}\" — {from}, {date}</string>
@@ -4308,5 +4307,4 @@
     <string name="assignStatsTimelineHint">פס: מההקצאה עד מועד היעד; מילוי: החלק שבוצע; מסגרת אדומה: באיחור. המאחרות ראשונות.</string>
     <string name="assignStatsShowAll">הצגת {n} נוספים</string>
     <string name="assignStatsNoDue">ללא מועד יעד: {n} (לא מוצגות בתרשים).</string>
-    <string name="assignGreetingNoName">שלום,</string>
 </resources>

@@ -4024,7 +4024,6 @@
     <string name="tlFree">Voľno · {d}</string>
     <string name="assignTitle">Úloha</string>
     <string name="assignSubject">Úloha</string>
-    <string name="assignGreeting">Dobrý deň, {name},</string>
     <string name="assignWhatLabel">Úloha:</string>
     <string name="assignDueLabel">Termín:</string>
     <string name="assignSource">Pôvodná správa: „{subject}“ — {from}, {date}</string>
@@ -4308,5 +4307,4 @@
     <string name="assignStatsTimelineHint">Pruh: od zadania do termínu; výplň: hotová časť; červený rámik: po termíne. Omeškané prvé.</string>
     <string name="assignStatsShowAll">Zobraziť ďalších {n}</string>
     <string name="assignStatsNoDue">Bez termínu: {n} (nie sú v diagrame).</string>
-    <string name="assignGreetingNoName">Dobrý deň,</string>
 </resources>

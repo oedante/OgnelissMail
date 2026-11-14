@@ -4003,7 +4003,6 @@
     <string name="tlFree">Ledigt · {d}</string>
     <string name="assignTitle">Uppdrag</string>
     <string name="assignSubject">Uppdrag</string>
-    <string name="assignGreeting">Hej {name},</string>
     <string name="assignWhatLabel">Uppdrag:</string>
     <string name="assignDueLabel">Senast:</string>
     <string name="assignSource">Ursprungligt meddelande: ”{subject}” — {from}, {date}</string>
@@ -4287,5 +4286,4 @@
     <string name="assignStatsTimelineHint">Stapel: från tilldelning till deadline; fyllning: klar del; röd ram: försenad. Försenade först.</string>
     <string name="assignStatsShowAll">Visa {n} till</string>
     <string name="assignStatsNoDue">Utan deadline: {n} (visas inte i diagrammet).</string>
-    <string name="assignGreetingNoName">Hej,</string>
 </resources>

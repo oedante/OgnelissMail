@@ -460,7 +460,9 @@ abstract final class AssignmentCodec {
     /// Код действия у номера в подписи (AssignmentAct).
     String? act,
   }) {
-    final b = StringBuffer()..write('<p>${_esc(greeting)}</p>');
+    // Приветствие выключено в настройках ящика — без пустого абзаца.
+    final b = StringBuffer();
+    if (greeting.trim().isNotEmpty) b.write('<p>${_esc(greeting)}</p>');
     if (introHtml != null && introHtml.isNotEmpty) b.write(introHtml);
     b.write('<p><b>${_esc(whatLabel)}</b> ${_esc(what)}</p>');
     // Подзадача: название родительского поручения — словами. Его тег OGN-…

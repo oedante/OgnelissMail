@@ -4003,7 +4003,6 @@
     <string name="tlFree">Libero · {d}</string>
     <string name="assignTitle">Incarico</string>
     <string name="assignSubject">Incarico</string>
-    <string name="assignGreeting">Ciao {name},</string>
     <string name="assignWhatLabel">Incarico:</string>
     <string name="assignDueLabel">Scadenza:</string>
     <string name="assignSource">Messaggio originale: «{subject}» — {from}, {date}</string>
@@ -4287,5 +4286,4 @@
     <string name="assignStatsTimelineHint">Barra: dall\'assegnazione alla scadenza; riempimento: parte fatta; bordo rosso: in ritardo. Prima i ritardi.</string>
     <string name="assignStatsShowAll">Mostra altri {n}</string>
     <string name="assignStatsNoDue">Senza scadenza: {n} (non nel diagramma).</string>
-    <string name="assignGreetingNoName">Buongiorno,</string>
 </resources>

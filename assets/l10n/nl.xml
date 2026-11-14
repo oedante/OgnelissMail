@@ -4003,7 +4003,6 @@
     <string name="tlFree">Vrij · {d}</string>
     <string name="assignTitle">Opdracht</string>
     <string name="assignSubject">Opdracht</string>
-    <string name="assignGreeting">Hallo {name},</string>
     <string name="assignWhatLabel">Opdracht:</string>
     <string name="assignDueLabel">Deadline:</string>
     <string name="assignSource">Oorspronkelijk bericht: ‘{subject}’ — {from}, {date}</string>
@@ -4287,5 +4286,4 @@
     <string name="assignStatsTimelineHint">Balk: van toewijzing tot deadline; vulling: gedaan deel; rode rand: te laat. Te late eerst.</string>
     <string name="assignStatsShowAll">Nog {n} tonen</string>
     <string name="assignStatsNoDue">Zonder deadline: {n} (niet in de grafiek).</string>
-    <string name="assignGreetingNoName">Goedendag,</string>
 </resources>

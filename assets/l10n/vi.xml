@@ -3982,7 +3982,6 @@
     <string name="tlFree">Rảnh · {d}</string>
     <string name="assignTitle">Việc giao</string>
     <string name="assignSubject">Việc giao</string>
-    <string name="assignGreeting">Chào {name},</string>
     <string name="assignWhatLabel">Việc:</string>
     <string name="assignDueLabel">Hạn:</string>
     <string name="assignSource">Thư gốc: \"{subject}\" — {from}, {date}</string>
@@ -4266,5 +4265,4 @@
     <string name="assignStatsTimelineHint">Thanh: từ lúc giao đến hạn; phần tô: đã làm; viền đỏ: quá hạn. Việc quá hạn lên đầu.</string>
     <string name="assignStatsShowAll">Hiện thêm {n}</string>
     <string name="assignStatsNoDue">Không có hạn: {n} (không hiện trên biểu đồ).</string>
-    <string name="assignGreetingNoName">Xin chào,</string>
 </resources>

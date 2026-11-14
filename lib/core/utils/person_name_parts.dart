@@ -1,25 +1,17 @@
-// lib/core/utils/greeting_name.dart
-// Обращение по имени в письмах поручений (14.11.2026, замечание владельца:
-// «Ситников, добрый день!» — в приветствии одна фамилия; нужно «Имя
-// Отчество» или «Имя», если отчества нет, — и по правилам каждого языка).
-//
-// Разбор ФИО — [PersonNameParts.parse]:
+// lib/core/utils/person_name_parts.dart
+// Части имени человека для обращения (14.11.2026, замечание владельца: в
+// письме поручения «Ситников, добрый день!» — одна фамилия). Обращение и
+// шаблоны языков — GreetingHelper (приветствие редактора, быстрого ответа
+// и поручений); здесь — где в ФИО имя, отчество и фамилия:
 //  · «Фамилия, Имя Отчество» (так пишет Exchange) — фамилия до запятой;
-//  · три слова с отчеством («…вич», «…вна», «…оглы», «…ovich») — порядок
-//    по отчеству: «Фамилия Имя Отчество» или «Имя Отчество Фамилия»;
+//  · отчество («…вич», «…вна», «…оглы», «…ovich») — по нему порядок:
+//    «Фамилия Имя Отчество», «Имя Отчество Фамилия», «Имя Отчество»;
 //  · два слова — где имя, решают список имён ([GivenNames]) и окончания
 //    фамилий («-ов», «-ина», «-ский», «-енко», «-ov», «-sky»…); не ясно —
-//    латиница «Имя Фамилия», по-венгерски «Фамилия Имя», кириллица —
-//    полное имя как есть (лучше «Ситников Дмитрий», чем одна фамилия);
+//    латиница «Имя Фамилия», по-венгерски «Фамилия Имя», кириллица — имени
+//    не выделить (обращение полным именем, а не одной фамилией);
 //  · вьетнамское имя (Nguyễn, Trần…) — имя последнее слово;
-//  · китайское, японское, корейское письмо — фамилия первая.
-//
-// Обращение — [GreetingName.of] по языку письма:
-//  · ru — «Имя Отчество» или «Имя»;
-//  · ja — фамилия + «さん» (японское имя), иначе имя;
-//  · ko, zh — полное имя (корейское, китайское), иначе имя;
-//  · остальные языки — имя (как «Hi Dmitry», «Hallo Dmitry»);
-//  · имени нет, адрес или организация — null: приветствие без имени.
+//  · иероглифы и хангыль — фамилия первая.
 
 import 'person_names.dart';
 
@@ -95,6 +87,11 @@ class PersonNameParts {
       if (p.length == 1 && p.first == 2) return PersonNameParts(full: n, family: w[0], given: w[1], patronymic: w[2]);
       if (p.length == 1 && p.first == 1) return PersonNameParts(full: n, given: w[0], patronymic: w[1], family: w[2]);
     }
+    // «Имя Отчество» (без фамилии); «Анна Пашкевич» — не отчество: мужское
+    // «-вич» после женского имени.
+    if (w.length == 2 && _patronymic.hasMatch(w[1]) && !_patronymic.hasMatch(w[0]) && !_femaleWithMale(w[0], w[1])) {
+      return PersonNameParts(full: n, given: w[0], patronymic: w[1]);
+    }
     final cyr = w.every(_cyr.hasMatch);
     final known = [for (final x in w) GivenNames.known(x)];
     // Имя — то слово, которое есть в списке имён (одно из всех).
@@ -118,34 +115,16 @@ class PersonNameParts {
 
   static bool _word(String x) => _cyr.hasMatch(x) || _lat.hasMatch(x);
 
-  static bool _surname(String x) =>
-      _cyr.hasMatch(x) ? _surnameCyr.hasMatch(x) : _surnameLat.hasMatch(x) && !GivenNames.known(x);
-}
+  static final _malePatronymic = RegExp(r'(вич|оглы|улы|уулу|vich|ogly)$', caseSensitive: false);
+  static const _maleOnA = {'никита', 'илья', 'савва', 'лука', 'фома', 'кузьма', 'nikita', 'ilya', 'savva', 'luka', 'foma'};
 
-abstract final class GreetingName {
-  /// Как обратиться к человеку [displayName] в письме на языке [locale];
-  /// null — без имени («Добрый день!»).
-  static String? of(String? displayName, {required String locale}) {
-    final p = PersonNameParts.parse(displayName, locale: locale);
-    if (p == null) return null;
-    final given = p.given;
-    if (p.cjk) {
-      return switch (locale) {
-        'ja' => p.family ?? p.full,
-        'ko' || 'zh' => p.full.replaceAll(' ', ''),
-        _ => p.full,
-      };
-    }
-    if (given == null) return _case(p.full);
-    if (locale == 'ru' && p.patronymic != null) return _case('$given ${p.patronymic}');
-    return _case(given);
+  static bool _femaleWithMale(String given, String pat) {
+    final g = given.toLowerCase();
+    return _malePatronymic.hasMatch(pat) && RegExp(r'[аяay]$').hasMatch(g) && !_maleOnA.contains(g);
   }
 
-  /// «ДМИТРИЙ» (имя заглавными в адресной книге) → «Дмитрий».
-  static String _case(String s) => s.split(' ').map((w) {
-        if (w.length < 2 || w != w.toUpperCase() || w == w.toLowerCase()) return w;
-        return w.split('-').map((p) => p.isEmpty ? p : p[0] + p.substring(1).toLowerCase()).join('-');
-      }).join(' ');
+  static bool _surname(String x) =>
+      _cyr.hasMatch(x) ? _surnameCyr.hasMatch(x) : _surnameLat.hasMatch(x) && !GivenNames.known(x);
 }
 
 /// Частые имена (русские, а также татарские, башкирские, кавказские,

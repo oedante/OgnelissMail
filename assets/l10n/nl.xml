@@ -4112,7 +4112,7 @@
     <string name="assignParent">Onderdeel van</string>
     <string name="assignPartOf">Onderdeel van de opdracht: ‘{title}’</string>
     <string name="expMacWebTitle">Complexe e-mails in browserweergave</string>
-    <string name="expMacWebDesc">E-mails met een complexe opmaak worden zoals in een browser getoond, direct in het bericht. Proeffunctie voor Mac.</string>
+    <string name="expMacWebDesc">E-mails met een complexe opmaak worden zoals in een browser getoond, direct in het bericht. Proeffunctie voor Mac en Windows.</string>
     <string name="graphicsHcppTitle">Nieuwe inbedding van de berichtweergave (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 en nieuwer: de berichtweergave en de editor worden op een nieuwe manier ingebed, scrollen gaat soepeler. Schakel dit uit als een bericht verkeerd wordt weergegeven.</string>
     <string name="assignProjectSubject">Project</string>

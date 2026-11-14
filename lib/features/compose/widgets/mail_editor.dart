@@ -47,8 +47,15 @@ import '../../../services/background/work_scheduler.dart';
 import '../../../widgets/common/ui_zoom.dart';
 
 /// Где редактор работает. Остальные платформы — простое текстовое поле.
-bool get mailEditorSupported =>
-    !kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS || Platform.isWindows);
+///
+/// Windows — тоже простое поле (замечание владельца 14.11.2026: «написать в
+/// ответе ничего нельзя, даже курсора нет»). Плагин flutter_inappwebview на
+/// Windows рисует WebView2 картинкой в окне Flutter и передаёт в него только
+/// мышь: окно WebView2 живёт в отдельном скрытом окне Windows, фокус
+/// клавиатуры туда не переходит, а Flutter, забрав фокус на окно редактора,
+/// нажатия никуда не передаёт. Вернуть редактор с оформлением — когда плагин
+/// научится передавать клавиатуру (проверять на Windows вручную).
+bool get mailEditorSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS);
 
 /// Лицензия HugeRTE (MIT) — на странице «Лицензии» приложения.
 void registerMailEditorLicense() {

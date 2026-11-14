@@ -4112,7 +4112,7 @@
     <string name="assignParent">Parte de</string>
     <string name="assignPartOf">Parte da atribuição: \"{title}\"</string>
     <string name="expMacWebTitle">E-mails complexos na visualização de navegador</string>
-    <string name="expMacWebDesc">E-mails com layout complexo são exibidos como em um navegador, dentro da própria mensagem. Recurso de teste para Mac.</string>
+    <string name="expMacWebDesc">E-mails com layout complexo são exibidos como em um navegador, dentro da própria mensagem. Recurso de teste para Mac e Windows.</string>
     <string name="graphicsHcppTitle">Nova incorporação da visualização da mensagem (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 e posteriores: a visualização da mensagem e o editor são incorporados de uma nova forma, e a rolagem é mais suave. Se uma mensagem aparecer incorreta, desative.</string>
     <string name="assignProjectSubject">Projeto</string>

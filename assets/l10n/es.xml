@@ -4112,7 +4112,7 @@
     <string name="assignParent">Parte de</string>
     <string name="assignPartOf">Parte del encargo: «{title}»</string>
     <string name="expMacWebTitle">Correos complejos en vista de navegador</string>
-    <string name="expMacWebDesc">Los correos con diseño complejo se muestran como en un navegador, dentro del propio mensaje. Función de prueba para Mac.</string>
+    <string name="expMacWebDesc">Los correos con diseño complejo se muestran como en un navegador, dentro del propio mensaje. Función de prueba para Mac y Windows.</string>
     <string name="graphicsHcppTitle">Nueva incrustación de la vista del mensaje (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 y posteriores: la vista del mensaje y el editor se incrustan de otra forma y el desplazamiento es más fluido. Si un mensaje se ve mal, desactívalo.</string>
     <string name="assignProjectSubject">Proyecto</string>

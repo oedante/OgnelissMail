@@ -4112,7 +4112,7 @@
     <string name="assignParent">Parte di</string>
     <string name="assignPartOf">Parte dell\'incarico: «{title}»</string>
     <string name="expMacWebTitle">Email complesse nella vista browser</string>
-    <string name="expMacWebDesc">Le email con impaginazione complessa vengono mostrate come in un browser, direttamente nel messaggio. Funzione di prova per Mac.</string>
+    <string name="expMacWebDesc">Le email con impaginazione complessa vengono mostrate come in un browser, direttamente nel messaggio. Funzione di prova per Mac e Windows.</string>
     <string name="graphicsHcppTitle">Nuova incorporazione della vista del messaggio (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 e successivi: la vista del messaggio e l\'editor vengono incorporati in modo nuovo e lo scorrimento è più fluido. Se un messaggio viene mostrato male, disattivalo.</string>
     <string name="assignProjectSubject">Progetto</string>

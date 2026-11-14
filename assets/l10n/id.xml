@@ -4091,7 +4091,7 @@
     <string name="assignParent">Bagian dari</string>
     <string name="assignPartOf">Bagian dari penugasan: \"{title}\"</string>
     <string name="expMacWebTitle">Email kompleks dalam tampilan browser</string>
-    <string name="expMacWebDesc">Email dengan tata letak kompleks ditampilkan seperti di browser, langsung di dalam pesan. Fitur uji coba untuk Mac.</string>
+    <string name="expMacWebDesc">Email dengan tata letak kompleks ditampilkan seperti di browser, langsung di dalam pesan. Fitur uji coba untuk Mac dan Windows.</string>
     <string name="graphicsHcppTitle">Penyematan baru tampilan pesan (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 ke atas: tampilan pesan dan editor disematkan dengan cara baru, pengguliran lebih mulus. Jika pesan tampil tidak benar, matikan.</string>
     <string name="assignProjectSubject">Proyek</string>

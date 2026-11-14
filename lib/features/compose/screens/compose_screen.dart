@@ -268,8 +268,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     });
     _markDraftChanged();
   }
-  // HTML-редактор — на Android, iOS, macOS и Windows (WebView2). На Linux,
-  // в вебе и при сбое загрузки — простое текстовое поле.
+  // HTML-редактор — на Android, iOS и macOS. На Windows (клавиатура не
+  // доходит до WebView2, 14.11.2026), Linux, в вебе и при сбое загрузки —
+  // простое текстовое поле (mailEditorSupported).
   bool get _useHtmlEditor => mailEditorSupported && !_editorFailed;
 
   // Тело как обычный текст и как HTML.

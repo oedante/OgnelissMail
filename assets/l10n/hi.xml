@@ -4112,7 +4112,7 @@
     <string name="assignParent">मुख्य कार्य</string>
     <string name="assignPartOf">इस कार्य का भाग: \"{title}\"</string>
     <string name="expMacWebTitle">जटिल ईमेल ब्राउज़र दृश्य में</string>
-    <string name="expMacWebDesc">जटिल लेआउट वाले ईमेल सीधे संदेश में ब्राउज़र की तरह दिखाए जाते हैं। Mac के लिए परीक्षण सुविधा।</string>
+    <string name="expMacWebDesc">जटिल लेआउट वाले ईमेल सीधे संदेश में ब्राउज़र की तरह दिखाए जाते हैं। Mac और Windows के लिए परीक्षण सुविधा।</string>
     <string name="graphicsHcppTitle">संदेश दृश्य की नई एम्बेडिंग (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 और नए संस्करण: संदेश दृश्य और संपादक नए तरीके से एम्बेड होते हैं, स्क्रॉलिंग अधिक सहज है। यदि कोई संदेश गलत दिखे, तो इसे बंद कर दें।</string>
     <string name="assignProjectSubject">परियोजना</string>

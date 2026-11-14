@@ -4133,7 +4133,7 @@
     <string name="assignParent">Součást úkolu</string>
     <string name="assignPartOf">Součást úkolu: „{title}“</string>
     <string name="expMacWebTitle">Složité e-maily v okně prohlížeče</string>
-    <string name="expMacWebDesc">E-maily se složitým rozvržením se zobrazí jako v prohlížeči, přímo ve zprávě. Zkušební funkce pro Mac.</string>
+    <string name="expMacWebDesc">E-maily se složitým rozvržením se zobrazí jako v prohlížeči, přímo ve zprávě. Zkušební funkce pro Mac a Windows.</string>
     <string name="graphicsHcppTitle">Nové vkládání okna zprávy (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 a novější: okno zprávy a editor se vkládají novým způsobem, posouvání je plynulejší. Pokud se zpráva zobrazuje špatně, vypněte jej.</string>
     <string name="assignProjectSubject">Projekt</string>

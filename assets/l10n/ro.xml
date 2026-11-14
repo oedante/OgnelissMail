@@ -4133,7 +4133,7 @@
     <string name="assignParent">Parte din</string>
     <string name="assignPartOf">Parte din sarcina: „{title}”</string>
     <string name="expMacWebTitle">E-mailuri complexe în vizualizare de browser</string>
-    <string name="expMacWebDesc">E-mailurile cu aspect complex sunt afișate ca într-un browser, direct în mesaj. Funcție de probă pentru Mac.</string>
+    <string name="expMacWebDesc">E-mailurile cu aspect complex sunt afișate ca într-un browser, direct în mesaj. Funcție de probă pentru Mac și Windows.</string>
     <string name="graphicsHcppTitle">Încorporare nouă a vizualizării mesajului (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 și versiuni mai noi: vizualizarea mesajului și editorul sunt încorporate într-un mod nou, iar derularea este mai fluidă. Dacă un mesaj apare greșit, dezactivați.</string>
     <string name="assignProjectSubject">Proiect</string>

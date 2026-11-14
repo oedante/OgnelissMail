@@ -4112,7 +4112,7 @@
     <string name="assignParent">Del af</string>
     <string name="assignPartOf">Del af opgaven: »{title}«</string>
     <string name="expMacWebTitle">Komplekse mails i browservisning</string>
-    <string name="expMacWebDesc">Mails med komplekst layout vises som i en browser, direkte i mailen. Prøvefunktion til Mac.</string>
+    <string name="expMacWebDesc">Mails med komplekst layout vises som i en browser, direkte i mailen. Prøvefunktion til Mac og Windows.</string>
     <string name="graphicsHcppTitle">Ny indlejring af mailvisningen (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 og nyere: mailvisningen og editoren indlejres på en ny måde, og rulning er mere jævn. Slå det fra, hvis en mail vises forkert.</string>
     <string name="assignProjectSubject">Projekt</string>

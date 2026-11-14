@@ -4112,7 +4112,7 @@
     <string name="assignParent">Del av</string>
     <string name="assignPartOf">Del av oppdraget: «{title}»</string>
     <string name="expMacWebTitle">Komplekse e-poster i nettleservisning</string>
-    <string name="expMacWebDesc">E-poster med kompleks layout vises som i en nettleser, rett i meldingen. Prøvefunksjon for Mac.</string>
+    <string name="expMacWebDesc">E-poster med kompleks layout vises som i en nettleser, rett i meldingen. Prøvefunksjon for Mac og Windows.</string>
     <string name="graphicsHcppTitle">Ny innbygging av meldingsvisningen (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14 og nyere: meldingsvisningen og redigeringen bygges inn på en ny måte, og rullingen er jevnere. Slå det av hvis en melding vises feil.</string>
     <string name="assignProjectSubject">Prosjekt</string>

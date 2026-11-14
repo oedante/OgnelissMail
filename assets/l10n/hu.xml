@@ -4112,7 +4112,7 @@
     <string name="assignParent">Fő megbízás</string>
     <string name="assignPartOf">A megbízás része: „{title}”</string>
     <string name="expMacWebTitle">Összetett levelek böngészőnézetben</string>
-    <string name="expMacWebDesc">Az összetett elrendezésű levelek úgy jelennek meg, mint a böngészőben, közvetlenül a levélben. Kísérleti funkció Macre.</string>
+    <string name="expMacWebDesc">Az összetett elrendezésű levelek úgy jelennek meg, mint a böngészőben, közvetlenül a levélben. Kísérleti funkció Macre és Windowsra.</string>
     <string name="graphicsHcppTitle">A levélnézet új beágyazása (HCPP)</string>
     <string name="graphicsHcppDesc">Android 14-től: a levélnézet és a szerkesztő új módon ágyazódik be, a görgetés simább. Ha egy levél hibásan jelenik meg, kapcsolja ki.</string>
     <string name="assignProjectSubject">Projekt</string>

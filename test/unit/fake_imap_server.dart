@@ -17,6 +17,10 @@ class FakeMessage {
   final int uid;
   final String subject;
 
+  /// Время прихода на сервер (INTERNALDATE, «26-Oct-2026 13:05:00 +0300»);
+  /// null — сервер его не сообщает.
+  String? internalDate;
+
   /// Message-ID письма (у добавленных APPEND — из заголовка).
   final String messageId;
   Set<String> flags;
@@ -376,6 +380,7 @@ class _Conn {
         'UID ${m.uid}',
         if (items.contains('FLAGS')) 'FLAGS (${m.flags.join(' ')})',
         if (_condStore) 'MODSEQ (${m.modSeq})',
+        if (items.contains('INTERNALDATE') && m.internalDate != null) 'INTERNALDATE "${m.internalDate}"',
         if (items.contains('RFC822.SIZE')) 'RFC822.SIZE 100',
         if (items.contains('BODYSTRUCTURE'))
           'BODYSTRUCTURE ${m.bodyStructure ?? '("TEXT" "PLAIN" ("CHARSET" "utf-8") NIL NIL "7BIT" 10 1 NIL NIL NIL NIL)'}',

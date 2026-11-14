@@ -123,6 +123,28 @@ Android: настраивать ничего не нужно — виджеты 
   запуска и согласиться зарегистрировать (или добавить UDID в Devices на
   developer.apple.com). Тогда профили разработчика и App Store Xcode
   создаёт сам.
+- **TestFlight: «90473: CFBundleShortVersionString Mismatch … '1.0' of
+  extension … does not match … '2.5.2'» и «CFBundleVersion Mismatch … '1' …
+  '154'».** У цели виджетов остались версии, которые подставил Xcode
+  (1.0 и 1). Сборка проходит, но App Store такую сборку может не принять.
+  1. Проект **Runner → Info → Configurations**: в Debug, Release и Profile
+     для строки **OgnelissWidgetsExtension** выберите **Widgets**
+     (`Widgets.xcconfig`) — через него приходят версия и номер сборки
+     приложения.
+  2. Цель **OgnelissWidgetsExtension → Build Settings** (All, Levels) →
+     поиск «Marketing Version»: выделите строку и нажмите **Delete** — в
+     столбце цели вместо 1.0 станет `$(FLUTTER_BUILD_NAME)` из
+     `Widgets.xcconfig`. То же для «Current Project Version» (вместо 1 —
+     `$(FLUTTER_BUILD_NUMBER)`).
+  3. Product → Clean Build Folder, Archive. Проверка: Organizer → архив →
+     Show in Finder → Show Package Contents → Products → Applications →
+     Runner.app → PlugIns → OgnelissWidgetsExtension.appex → Info.plist —
+     версии как у приложения.
+
+  Если **Widgets** в списке Configurations нет (файл не виден Xcode),
+  крайний случай — вписать в Marketing Version и Current Project Version
+  цели те же числа, что в `pubspec.yaml` (`2.5.2` и `154`), и менять их при
+  каждой новой версии.
 - **Нет папки `ios/OgnelissWidgets.src`.** Её не бывает в архиве — это
   переименованная перед созданием цели `ios/OgnelissWidgets` (шаг 2,
   Xcode 16+). Если цель уже создана без переименования, оставьте как есть

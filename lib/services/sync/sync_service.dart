@@ -2613,6 +2613,38 @@ class SyncService {
       }
     }
 
+    // Даты писем, загруженных раньше (до 14.11.2026), — по времени прихода на сервер
+    // (14.11.2026, ImapService.arrivalDate: раньше — заголовок Date, и лента
+    // перемешивалась). Один раз на папку; сбой — повтор при следующей
+    // синхронизации, на остальное не влияет.
+    final datesKey = 'imap_dates:${account.id}:${folder.id}';
+    if (!delta.reset && !delta.empty && delta.state.minUid > 0 && delta.state.maxUid >= delta.state.minUid &&
+        _prefs.getBool(datesKey) != true) {
+      try {
+        final arrived = await imap.arrivalDates(account,
+            folderId: folder.id, minUid: delta.state.minUid, maxUid: delta.state.maxUid);
+        final fix = <String, DateTime>{};
+        for (final row in await local()) {
+          final d = arrived[uidOf(row.id)];
+          if (d == null) continue;
+          final want = ImapService.arrivalDate(internal: d, header: row.at);
+          if (want.difference(row.at).abs() >= const Duration(minutes: 1)) fix[row.id] = want;
+        }
+        if (fix.isNotEmpty) {
+          await db.transaction(() async {
+            for (final e in fix.entries) {
+              await (db.update(db.emails)..where((x) => x.accountId.equals(account.id) & x.id.equals(e.key)))
+                  .write(EmailsCompanion(receivedAt: Value(e.value)));
+            }
+          });
+          AppLogger.info('IMAP ${folder.displayName}: даты писем по времени прихода — исправлено ${fix.length}');
+        }
+        await _prefs.setBool(datesKey, true);
+      } catch (e) {
+        AppLogger.debug('IMAP ${folder.displayName}: время прихода писем не получено: $e');
+      }
+    }
+
     // Сверка (2.3.2): письма, которые сервер показывает в проверенном окне
     // папки (или назвал изменёнными), а на устройстве их нет, — догрузить.
     // См. imap_reconcile.dart. Сбой сверки синхронизацию папки не срывает.

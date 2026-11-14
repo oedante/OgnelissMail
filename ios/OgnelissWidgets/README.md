@@ -78,6 +78,17 @@ Android: настраивать ничего не нужно — виджеты 
     в Provisioning Profile цели виджетов. У App ID `com.ogneliss.mail` тоже
     включите App Groups с той же группой и перевыпустите профиль приложения
     (`ogneliss_mail_appstore`): старый профиль группу не знает.
+- **«OgnelissWidgetsExtension has conflicting provisioning settings …
+  iPhone Distribution has been manually specified».** Цель виджетов (Xcode
+  называет её `OgnelissWidgetsExtension` — это нормально) подписывается
+  автоматически, а «iPhone Distribution» пришёл с уровня проекта. Цель →
+  **Build Settings** → All и Levels → поиск «Code Signing Identity»: в
+  столбце цели виджетов для Debug, Release и Profile (и строк «Any iOS SDK»)
+  — **Apple Development**. Приложение это не затрагивает. При отправке в
+  App Store (Archive → Distribute App → App Store Connect, подпись
+  «Automatically manage signing») Xcode сам переподпишет виджеты
+  распространительским сертификатом. С `Widgets.xcconfig` из архива 2.5.2 и
+  новее значение уже задано (если файл выбран в Configurations, шаг 4).
 - **Нет папки `ios/OgnelissWidgets.src`.** Её не бывает в архиве — это
   переименованная перед созданием цели `ios/OgnelissWidgets` (шаг 2,
   Xcode 16+). Если цель уже создана без переименования, оставьте как есть

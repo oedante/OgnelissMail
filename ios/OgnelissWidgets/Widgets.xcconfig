@@ -6,3 +6,10 @@
 // Команда разработчика — та же, что у приложения (локальный файл, не в git).
 #include? "../Flutter/Signing.xcconfig"
 IPHONEOS_DEPLOYMENT_TARGET = 15.0
+// Подпись виджетов — автоматическая (14.11.2026): «iPhone Distribution» с
+// уровня проекта (ручная подпись приложения) с ней несовместим — «conflicting
+// provisioning settings». Ручная подпись, выбранная у цели в Xcode, сильнее
+// этого файла.
+CODE_SIGN_STYLE = Automatic
+CODE_SIGN_IDENTITY = Apple Development
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = Apple Development

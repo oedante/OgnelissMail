@@ -2,21 +2,49 @@
 
 Шесть виджетов: «Мой день», «Почта», «Календарь», «Календарь: неделя» (средний и большой), «Календарь: месяц» (большой), «Заметки» — те же, что на Android (на Android неделя и месяц — вкладки одного виджета календаря; на iPhone переключатель внутри виджета требует iOS 17, поэтому это отдельные виджеты). С 1.7.0 в «Календарь: месяц» на iOS 17 и новее день выбирается касанием, месяц — стрелками (AppIntents). Код уже в проекте:
 
-- `ios/OgnelissWidgets/`: расширение виджетов (`OgnelissWidgets.swift`, `Info.plist`, `OgnelissWidgets.entitlements`, `Widgets.xcconfig`, подписи на 4 языках в `*.lproj/Localizable.strings`);
+- `ios/OgnelissWidgets/`: расширение виджетов (`OgnelissWidgets.swift`, `Info.plist`, `Widgets.xcconfig`, `PrivacyInfo.xcprivacy`, подписи на всех 27 языках приложения в `*.lproj/Localizable.strings`). Права виджетов `OgnelissWidgets.entitlements` в архиве лежат в `ios/xcode-base/OgnelissWidgets/` (распаковка поверх папки их не затирает); `scripts/build_ios.sh` (например, `--check`) сам кладёт копию в `ios/OgnelissWidgets/`, если её там нет;
 - `ios/Runner/WidgetBridgePlugin.swift`: канал `ogneliss/widget` в приложении (уже подключён к цели Runner). Приложение кладёт JSON виджетов в App Group `group.com.ogneliss.mail` и обрабатывает нажатия (`com.ogneliss.mail://widget?t=…`).
 
 Сама цель расширения в `project.pbxproj` не добавлена: её надёжнее создать в Xcode, чем править файл проекта вручную. Пока цели нет, приложение собирается и работает как раньше, просто без виджетов.
 
-## Подключение в Xcode (один раз, около 5 минут)
+## Что заполнять
 
+Ничего в `config/dart_defines.json` и никаких ключей: виджеты не обращаются к
+серверам. Нужно только один раз в Xcode — цель расширения и общая группа
+App Group `group.com.ogneliss.mail` у приложения и у виджетов (через неё
+приложение передаёт виджетам письма, встречи и заметки). При автоматической
+подписи группу и App ID `com.ogneliss.mail.widgets` на developer.apple.com
+Xcode зарегистрирует сам. Эти настройки хранятся в `project.pbxproj` и
+`Runner.entitlements`, которых нет в архиве, — новые версии их не затирают.
+
+Android: настраивать ничего не нужно — виджеты уже в приложении. Mac:
+виджетов пока нет.
+
+## Подключение в Xcode (один раз, около 10 минут)
+
+0. Один раз запустите `scripts/build_ios.sh --check` — он положит
+   `OgnelissWidgets.entitlements` на место (см. выше).
 1. Откройте `ios/Runner.xcworkspace`.
 2. **File → New → Target… → Widget Extension.**
    - Product Name: `OgnelissWidgets`;
-   - снимите галочки «Include Live Activity» и «Include Configuration App Intent»;
+   - снимите все галочки «Include …» (Live Activity, Control, Configuration App Intent);
    - Embed in Application: **Runner**.
 
    На вопрос «Activate scheme?» ответьте **Cancel**, чтобы осталась схема Runner.
-3. Xcode создаст папку `OgnelissWidgets` со своими файлами. Удалите сгенерированные `OgnelissWidgets.swift`, `OgnelissWidgetsBundle.swift`, `Assets.xcassets` и `Info.plist` (**Move to Trash**). Затем перетащите в группу `OgnelissWidgets` файлы из `ios/OgnelissWidgets/` этого архива: `OgnelissWidgets.swift`, `Info.plist`, `OgnelissWidgets.entitlements`, `Widgets.xcconfig`, `PrivacyInfo.xcprivacy` (1.7.0) и папки `*.lproj`. При добавлении:
+   **Xcode 16 и новее** (папка цели — «синхронизированная», файлы в ней
+   попадают в цель сами): перед этим шагом закройте Xcode и переименуйте в
+   Finder `ios/OgnelissWidgets` в `ios/OgnelissWidgets.src`, чтобы Xcode
+   создал свою папку цели, не смешивая шаблон с нашими файлами. После
+   создания цели закройте Xcode,
+   удалите из новой `ios/OgnelissWidgets` все файлы шаблона (`*.swift`,
+   `Assets.xcassets`, `Info.plist`), перенесите туда всё содержимое
+   `ios/OgnelissWidgets.src` и удалите пустую `.src`. Откройте Xcode снова;
+   выделите в группе `OgnelissWidgets` файлы `Info.plist`,
+   `OgnelissWidgets.entitlements` и `Widgets.xcconfig` и в File inspector →
+   Target Membership снимите галочку `OgnelissWidgets` (это настройки, а не
+   ресурсы; иначе «Multiple commands produce …/Info.plist»). Шаг 3 тогда
+   пропустите.
+3. **Xcode 15 и старше:** Xcode создаст папку `OgnelissWidgets` со своими файлами. Удалите сгенерированные `OgnelissWidgets.swift`, `OgnelissWidgetsBundle.swift`, `Assets.xcassets` и `Info.plist` (**Move to Trash**). Затем перетащите в группу `OgnelissWidgets` файлы из `ios/OgnelissWidgets/` этого архива: `OgnelissWidgets.swift`, `Info.plist`, `OgnelissWidgets.entitlements`, `Widgets.xcconfig`, `PrivacyInfo.xcprivacy` (1.7.0) и папки `*.lproj`. При добавлении:
    - галочка Target — только **OgnelissWidgets**;
    - «Copy items if needed» не нужна, файлы уже на месте.
 4. Проект **Runner → Info → Configurations**: для цели OgnelissWidgets в Debug, Release и Profile укажите файл `Widgets.xcconfig` (из папки `OgnelissWidgets`). Тогда версия и номер сборки расширения совпадут с приложением, иначе App Store отклонит сборку.

@@ -248,6 +248,13 @@ jobs:
       - name: Platform folder
         run: |
           [ -d ios ] || flutter create --platforms=ios --org com.ogneliss --project-name ogneliss .
+      # Код виджетов iPhone — проверка компиляции (14.11.2026): цели виджетов в
+      # проекте Xcode из git нет, и ошибки Swift находились только у владельца
+      # («Cannot convert value of type 'some View' to expected argument type 'URL'»).
+      - name: Widgets (typecheck)
+        run: |
+          xcrun -sdk iphoneos swiftc -typecheck -parse-as-library -application-extension \
+            -target arm64-apple-ios15.0 ios/OgnelissWidgets/OgnelissWidgets.swift
       - name: Install dependencies
         run: flutter pub get
       - name: Generate code

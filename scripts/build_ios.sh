@@ -148,6 +148,22 @@ say "Зависимости"
 # Manager»). Настройка Flutter общая для всех проектов, а build_macos.sh её
 # выключает (macOS — через CocoaPods, как в сборке на GitHub), поэтому — здесь.
 flutter config --enable-swift-package-manager >/dev/null
+if ! flutter config --list 2>/dev/null | grep -Eiq 'enable-swift-package-manager: *true'; then
+  echo "⚠ Swift Package Manager не включился — выполните: flutter config --enable-swift-package-manager"
+fi
+# Файлы шаблона Xcode в папке виджетов (Xcode 16+ кладёт их при создании цели):
+# второй @main — «'main' attribute can only apply to one type in a module»
+# (сборка владельца 14.11.2026). Наши файлы — OgnelissWidgets.swift и прочие из
+# архива; шаблонные — удалить.
+tpl=()
+for f in OgnelissWidgetsBundle.swift OgnelissWidgetsControl.swift OgnelissWidgetsLiveActivity.swift AppIntent.swift; do
+  [[ -f "ios/OgnelissWidgets/$f" ]] && tpl+=("ios/OgnelissWidgets/$f")
+done
+if (( ${#tpl[@]} )); then
+  echo "✗ В папке виджетов остались файлы шаблона Xcode — удалите их и запустите снова:"
+  echo "    rm ${tpl[*]}"
+  exit 1
+fi
 if [[ "$KEEP_LOCK" == 1 ]]; then flutter pub get; else flutter pub upgrade; fi
 # Код базы (drift) — всегда заново, под установленную версию drift: файл,
 # сгенерированный другой версией drift_dev, не собирается («Method not found:

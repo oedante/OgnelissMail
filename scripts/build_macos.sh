@@ -130,6 +130,10 @@ PY
   # /dev/null падал молча, и скрипт заканчивался сразу после build_runner.
   # Пакеты — те же версии, что в сборке на GitHub (как build_ios.sh): у
   # pubspec.lock на Mac были свои, старые версии (09.11.2026).
+  # Плагины Mac — через CocoaPods, как в сборке на GitHub: flutter_inappwebview_macos
+  # в Swift Package Manager с Xcode 26 не собирается. Настройка Flutter общая, а
+  # build_ios.sh её включает (14.11.2026) — выключаем здесь.
+  flutter config --no-enable-swift-package-manager >/dev/null
   if [[ "$KEEP_LOCK" == 1 ]]; then
     echo "▶ Пакеты (flutter pub get, свои версии)…"
     flutter pub get || { echo "✗ flutter pub get не прошёл — ошибка выше."; exit 1; }

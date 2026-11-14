@@ -60,7 +60,7 @@ Android: настраивать ничего не нужно — виджеты 
    - у цели **OgnelissWidgets**: тот же Team и та же группа `group.com.ogneliss.mail`.
 
    При автоматической подписи Xcode сам зарегистрирует группу и обновит профили. При ручной подписи добавьте App Group к App ID `com.ogneliss.mail` и создайте App ID и профиль для `com.ogneliss.mail.widgets` на developer.apple.com.
-7. Цель **Runner → Build Phases**: убедитесь, что фаза «Embed Foundation Extensions» с `OgnelissWidgets.appex` стоит **выше** фазы «Thin Binary» (иначе Flutter-сборка выдаёт «Cycle inside Runner»; если ошибки нет, ничего не трогайте).
+7. Цель **Runner → Build Phases**: перетащите фазу «Embed Foundation Extensions» (в ней `OgnelissWidgetsExtension.appex`) сразу под «Copy Bundle Resources» — **выше** «Embed Frameworks», «Thin Binary» и «[CP] Embed Pods Frameworks». Иначе сборка падает с «Cycle inside Runner; building could produce unreliable results» (в цепочке — «Thin Binary», «[CP] Embed Pods Frameworks», `Info.plist` и `…appex`). После перестановки — Product → Clean Build Folder (⇧⌘K) и сборка заново.
 8. Соберите: `flutter build ipa` или Archive в Xcode.
 
 ## Если что-то не так

@@ -49,6 +49,7 @@ import '../../../services/mail/control_service.dart';
 import '../../../core/theme/mail_page_color.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/constants/app_constants.dart';
@@ -105,6 +106,7 @@ import 'image_edit_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../core/theme/ogneliss_look.dart';
 import '../../../widgets/common/account_avatar.dart';
+import '../../mail/screens/attachment_hub_screen.dart' show PickedHubFile;
 
 
 class ComposeScreen extends ConsumerStatefulWidget {
@@ -141,6 +143,11 @@ class ComposeScreen extends ConsumerStatefulWidget {
   final String? accountId;
   final bool replyAll;
 
+  /// «Ответить с вложениями» (просьба владельца 14.11.2026: пришло «прошу
+  /// согласовать» с файлом — отвечаешь «согласовано» и прикладываешь его же):
+  /// файлы исходного письма прикладываются, как при пересылке.
+  final bool replyWithAttachments;
+
   /// Ответ на фрагмент (2.0.0, план 08.11.2026, «из мессенджеров»): в ответ
   /// цитируется только выделенный в письме текст, а не всё письмо.
   final String? quoteFragment;
@@ -169,6 +176,7 @@ class ComposeScreen extends ConsumerStatefulWidget {
     this.draftId,
     this.accountId,
     this.replyAll = false,
+    this.replyWithAttachments = false,
     this.sharedBody,
     this.quickText,
     this.to,
@@ -1144,13 +1152,14 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       // Шапка как у Outlook — «От / Отправлено / Кому / Копия / Тема» под
       // линией, одна и та же для ответа и пересылки (1.5.12; была шапка
       // Gmail «…, Иван пишет:» и отступ-цитата).
-      // ── Вложения: только при пересылке (1.6.12 — до цитаты) ──
-      // При ОТВЕТЕ вложения не переносятся: это лишний трафик, и получатель их
-      // уже видел. При ПЕРЕСЫЛКЕ они нужны — берём из кэша, если уже скачаны.
+      // ── Вложения: при пересылке и «Ответить с вложениями» (1.6.12 — до цитаты) ──
+      // При обычном ОТВЕТЕ вложения не переносятся: это лишний трафик, и
+      // получатель их уже видел. При ПЕРЕСЫЛКЕ они нужны — берём из кэша,
+      // если уже скачаны; так же — при «Ответить с вложениями» (14.11.2026).
       // Раньше они прикладывались после цитаты: ошибка при её подготовке
       // (огромное письмо, сбой очистки) обрывала загрузку, и письмо уходило
       // без вложений (замечание 15.10.2026).
-      if (!isReply) {
+      if (!isReply || widget.replyWithAttachments) {
         try {
           await _attachOriginal(row);
         } catch (e) {
@@ -5064,7 +5073,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     if (srcId == null || _quoteChanged || _quoteHtml == null) return false;
     final ews = account.usesEws || account.isExchange;
     if (!ews && !account.usesEas) return false;
-    if (_attachments.isNotEmpty || _bccRecipients.isNotEmpty) return false;
+    // Не скачанные ещё файлы исходного письма («Ответить с вложениями») сервер
+    // в ответ не положит — такой ответ собирает приложение.
+    if (_attachments.isNotEmpty || _pendingOriginal.isNotEmpty || _bccRecipients.isNotEmpty) return false;
     // Exchange выбирает получателей сам: только если на экране — те же.
     if (ews && (_replySpecialCase || _replyRecipientsAtStart != _recipientsKey())) return false;
     if (_hasInlineImages(bodyHtml)) return false;
@@ -5322,11 +5333,35 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   Future<void> _pickAttachments() async {
     final l10n = AppLocalizations.of(context);
+    // Откуда (14.11.2026, просьба владельца): файл с устройства или из
+    // вложений почты («Вложения» — все файлы из писем).
+    final from = await showActionSheet<String>(context, items: [
+      ActionSheetItem(icon: AppIcons.folder_open, label: l10n.tr('attachFromDevice'), value: 'device'),
+      ActionSheetItem(icon: AppIcons.attach_email, label: l10n.tr('attachFromMail'), value: 'mail'),
+    ]);
+    if (from == null || !mounted) return;
+    if (from == 'mail') {
+      await _attachFromMail();
+      return;
+    }
     try {
       await _addChosenFiles(await FilePick.files());
     } catch (e) {
       AppLogger.warning('Вложения: выбор файлов не удался — $e');
       quietError('${l10n.tr('error')}: $e');
+    }
+  }
+
+  /// Файлы из вложений почты (14.11.2026): экран «Вложения» в режиме выбора
+  /// скачивает отмеченные и возвращает их — вложениями, как выбранные с
+  /// устройства.
+  Future<void> _attachFromMail() async {
+    final picked = await context.push<List<PickedHubFile>>('/attachment-hub?pick=1');
+    if (picked == null || picked.isEmpty || !mounted) return;
+    try {
+      await _addChosenFiles([for (final f in picked) ChosenFile(name: f.name, size: f.size, path: f.path)]);
+    } catch (e) {
+      AppLogger.warning('Вложения из почты не добавлены — $e');
     }
   }
 

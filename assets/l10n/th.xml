@@ -4269,4 +4269,10 @@
     <string name="graphicsAutoDescMac">ความเข้ากันได้บน Mac ที่ใช้ Intel และเอนจินใหม่บน Apple Silicon</string>
     <string name="graphicsSkiaDescMac">เสถียรกว่าบน Mac ที่ใช้ Intel</string>
     <string name="graphicsImpellerDescMac">ลื่นไหลกว่าบน Mac ที่ใช้ Apple Silicon</string>
+    <string name="replyWithAttachments">ตอบกลับพร้อมไฟล์แนบ</string>
+    <string name="attachFromDevice">ไฟล์จากอุปกรณ์</string>
+    <string name="attachFromMail">จากไฟล์แนบในอีเมล</string>
+    <string name="attachFromMailTitle">เลือกไฟล์แนบ</string>
+    <string name="attachPickedFiles">แนบ</string>
+    <string name="selectedFilesN">เลือกแล้ว {n} ไฟล์</string>
 </resources>

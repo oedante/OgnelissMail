@@ -4311,4 +4311,10 @@
     <string name="graphicsAutoDescMac">Kompatibilita na Macu s procesorem Intel, nové jádro na Apple Silicon</string>
     <string name="graphicsSkiaDescMac">Spolehlivější na Macu s procesorem Intel</string>
     <string name="graphicsImpellerDescMac">Plynulejší na Macu s Apple Silicon</string>
+    <string name="replyWithAttachments">Odpovědět s přílohami</string>
+    <string name="attachFromDevice">Soubor ze zařízení</string>
+    <string name="attachFromMail">Z příloh pošty</string>
+    <string name="attachFromMailTitle">Vyberte přílohy</string>
+    <string name="attachPickedFiles">Přiložit</string>
+    <string name="selectedFilesN">Vybráno souborů: {n}</string>
 </resources>

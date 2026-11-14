@@ -4290,4 +4290,10 @@
     <string name="graphicsAutoDescMac">Kompatibilitet på Mac med Intel-processor, ny motor på Apple Silicon</string>
     <string name="graphicsSkiaDescMac">Mere pålidelig på Mac med Intel-processor</string>
     <string name="graphicsImpellerDescMac">Mere flydende på Mac med Apple Silicon</string>
+    <string name="replyWithAttachments">Svar med vedhæftede filer</string>
+    <string name="attachFromDevice">Fil fra enheden</string>
+    <string name="attachFromMail">Fra vedhæftede filer i mails</string>
+    <string name="attachFromMailTitle">Vælg vedhæftede filer</string>
+    <string name="attachPickedFiles">Vedhæft</string>
+    <string name="selectedFilesN">{n} filer valgt</string>
 </resources>

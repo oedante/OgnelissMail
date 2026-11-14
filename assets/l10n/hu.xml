@@ -4290,4 +4290,10 @@
     <string name="graphicsAutoDescMac">Kompatibilitás Intel processzoros Macen, új motor Apple Siliconon</string>
     <string name="graphicsSkiaDescMac">Megbízhatóbb Intel processzoros Macen</string>
     <string name="graphicsImpellerDescMac">Gördülékenyebb Apple Siliconos Macen</string>
+    <string name="replyWithAttachments">Válasz mellékletekkel</string>
+    <string name="attachFromDevice">Fájl az eszközről</string>
+    <string name="attachFromMail">A levelek mellékleteiből</string>
+    <string name="attachFromMailTitle">Mellékletek kiválasztása</string>
+    <string name="attachPickedFiles">Csatolás</string>
+    <string name="selectedFilesN">{n} fájl kiválasztva</string>
 </resources>

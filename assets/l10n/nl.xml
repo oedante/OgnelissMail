@@ -4290,4 +4290,10 @@
     <string name="graphicsAutoDescMac">Compatibiliteit op Macs met Intel-processor, nieuwe engine op Apple Silicon</string>
     <string name="graphicsSkiaDescMac">Betrouwbaarder op Macs met Intel-processor</string>
     <string name="graphicsImpellerDescMac">Vloeiender op Macs met Apple Silicon</string>
+    <string name="replyWithAttachments">Beantwoorden met bijlagen</string>
+    <string name="attachFromDevice">Bestand van apparaat</string>
+    <string name="attachFromMail">Uit e-mailbijlagen</string>
+    <string name="attachFromMailTitle">Bijlagen kiezen</string>
+    <string name="attachPickedFiles">Bijvoegen</string>
+    <string name="selectedFilesN">{n} bestanden geselecteerd</string>
 </resources>

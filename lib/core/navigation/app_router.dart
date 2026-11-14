@@ -227,6 +227,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             sharedAttachments: (state.uri.queryParameters['attachments'] ?? '')
                 .split('|').where((s) => s.isNotEmpty).toList(),
             replyAll: state.uri.queryParameters['replyAll'] == 'true',
+            replyWithAttachments: state.uri.queryParameters['withAttachments'] == 'true',
             quoteFragment: state.uri.queryParameters['fragment'],
             quickText: state.uri.queryParameters['quick'],
           )),
@@ -299,8 +300,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/attachment-hub', name: 'attachment-hub',
-        // ?from=адрес — только файлы этого отправителя.
-        builder: (_, st) => AttachmentHubScreen(sender: st.uri.queryParameters['from']),
+        // ?from=адрес — только файлы этого отправителя; ?pick=1 — выбор
+        // файлов для письма (14.11.2026).
+        builder: (_, st) => AttachmentHubScreen(
+          sender: st.uri.queryParameters['from'],
+          pick: st.uri.queryParameters['pick'] == '1',
+        ),
       ),
       // «Рассылки»: отправители с отпиской (боковое меню, у папок ящика;
       // ?accountId= — только этот ящик).

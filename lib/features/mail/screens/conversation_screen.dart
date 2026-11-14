@@ -623,6 +623,14 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           onTap: () => context.push('/compose?replyToId=${Uri.encodeQueryComponent(e.id)}'
               '&accountId=${Uri.encodeQueryComponent(e.accountId)}&replyAll=true'),
         ),
+        // Ответ с файлами исходного письма (14.11.2026).
+        if (e.hasFiles)
+          PeekAction(
+            icon: AppIcons.attach_file,
+            label: l10n.tr('replyWithAttachments'),
+            onTap: () => context.push('/compose?replyToId=${Uri.encodeQueryComponent(e.id)}'
+                '&accountId=${Uri.encodeQueryComponent(e.accountId)}&withAttachments=true'),
+          ),
         act(SwipeAction.forward),
       ]),
       PeekGroup(title: l10n.tr('peekGroupMark'), items: [

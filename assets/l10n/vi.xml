@@ -4269,4 +4269,10 @@
     <string name="graphicsAutoDescMac">Tương thích trên Mac dùng chip Intel, bộ máy mới trên Apple Silicon</string>
     <string name="graphicsSkiaDescMac">Ổn định hơn trên Mac dùng chip Intel</string>
     <string name="graphicsImpellerDescMac">Mượt hơn trên Mac dùng Apple Silicon</string>
+    <string name="replyWithAttachments">Trả lời kèm tệp đính kèm</string>
+    <string name="attachFromDevice">Tệp từ thiết bị</string>
+    <string name="attachFromMail">Từ tệp đính kèm trong thư</string>
+    <string name="attachFromMailTitle">Chọn tệp đính kèm</string>
+    <string name="attachPickedFiles">Đính kèm</string>
+    <string name="selectedFilesN">Đã chọn {n} tệp</string>
 </resources>

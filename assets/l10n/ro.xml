@@ -4311,4 +4311,10 @@
     <string name="graphicsAutoDescMac">Compatibilitate pe Mac cu procesor Intel, motor nou pe Apple Silicon</string>
     <string name="graphicsSkiaDescMac">Mai fiabil pe Mac cu procesor Intel</string>
     <string name="graphicsImpellerDescMac">Mai fluid pe Mac cu Apple Silicon</string>
+    <string name="replyWithAttachments">Răspunde cu atașamente</string>
+    <string name="attachFromDevice">Fișier de pe dispozitiv</string>
+    <string name="attachFromMail">Din atașamentele e-mailurilor</string>
+    <string name="attachFromMailTitle">Alegeți atașamentele</string>
+    <string name="attachPickedFiles">Atașează</string>
+    <string name="selectedFilesN">Fișiere selectate: {n}</string>
 </resources>

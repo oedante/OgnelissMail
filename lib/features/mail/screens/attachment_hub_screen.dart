@@ -255,11 +255,20 @@ enum _Period { all, week, month, year }
 
 enum _Sort { newest, largest, name }
 
+/// Файл, выбранный в «Вложениях» для письма ([AttachmentHubScreen.pick]):
+/// уже на устройстве.
+typedef PickedHubFile = ({String path, String name, int size});
+
 class AttachmentHubScreen extends ConsumerStatefulWidget {
   /// Показать только файлы этого отправителя (адрес) — «Файлы отправителя»
   /// из карточки письма.
   final String? sender;
-  const AttachmentHubScreen({super.key, this.sender});
+
+  /// Выбор файлов для письма (просьба владельца 14.11.2026: «прикладывать
+  /// файлы в письмо из хаба»): нажатие отмечает файл, «Приложить» скачивает
+  /// отмеченные и закрывает экран со списком [PickedHubFile].
+  final bool pick;
+  const AttachmentHubScreen({super.key, this.sender, this.pick = false});
 
   @override
   ConsumerState<AttachmentHubScreen> createState() => _AttachmentHubScreenState();
@@ -272,6 +281,11 @@ class _AttachmentHubScreenState extends ConsumerState<AttachmentHubScreen> with 
 
   /// Файлы, которые сейчас скачиваются (ключ — письмо и вложение).
   final _busy = <String>{};
+
+  /// Выбор для письма ([AttachmentHubScreen.pick]): отмеченные файлы по
+  /// ключу, в порядке отметки.
+  final _picked = <String, AttachmentHubItem>{};
+  bool _attaching = false;
 
   _Period _period = _Period.all;
   _Sort _sort = _Sort.newest;
@@ -338,6 +352,33 @@ class _AttachmentHubScreenState extends ConsumerState<AttachmentHubScreen> with 
     final prefs = ref.read(sharedPrefsProvider);
     final list = [item.key, ...?prefs.getStringList(_kRecent)?.where((k) => k != item.key)];
     unawaited(prefs.setStringList(_kRecent, list.take(8).toList()));
+  }
+
+  /// Выбор для письма: отметить или снять файл.
+  void _togglePick(AttachmentHubItem item) {
+    unawaited(HapticFeedback.selectionClick());
+    setState(() {
+      if (_picked.remove(item.key) == null) _picked[item.key] = item;
+    });
+  }
+
+  /// «Приложить»: отмеченные файлы — на устройство (из кэша или с сервера),
+  /// экран закрывается с ними. Не скачавшиеся пропускаются (строка ошибки —
+  /// у [_ensureLocal]); не скачалось ничего — экран остаётся открытым.
+  Future<void> _attachPicked(AppLocalizations l10n) async {
+    if (_attaching || _picked.isEmpty) return;
+    setState(() => _attaching = true);
+    final out = <PickedHubFile>[];
+    for (final item in List<AttachmentHubItem>.of(_picked.values)) {
+      final path = await _ensureLocal(item, l10n);
+      if (!mounted) return;
+      if (path == null) continue;
+      _remember(item);
+      out.add((path: path, name: item.name, size: item.size));
+    }
+    if (!mounted) return;
+    setState(() => _attaching = false);
+    if (out.isNotEmpty) Navigator.of(context).pop(out);
   }
 
   /// Нажатие: скачать (если нужно) и открыть во внешнем приложении
@@ -553,8 +594,27 @@ class _AttachmentHubScreenState extends ConsumerState<AttachmentHubScreen> with 
 
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(
-        title: Text(l10n.tr('fileHub')),
-        actions: [HelpButton(text: l10n.tr('filesHelp'), title: l10n.tr('fileHub'))],
+        title: Text(widget.pick
+            ? (_picked.isEmpty ? l10n.tr('attachFromMailTitle') : l10n.tr('selectedFilesN').replaceAll('{n}', '${_picked.length}'))
+            : l10n.tr('fileHub')),
+        actions: [
+          if (widget.pick)
+            Padding(
+              padding: const EdgeInsets.only(right: Space.s),
+              child: _attaching
+                  ? const Padding(
+                      padding: EdgeInsets.all(Space.m),
+                      child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                    )
+                  : FilledButton.icon(
+                      onPressed: _picked.isEmpty ? null : () => unawaited(_attachPicked(l10n)),
+                      icon: const Icon(AppIcons.attach_file, size: 18),
+                      label: Text(l10n.tr('attachPickedFiles')),
+                    ),
+            )
+          else
+            HelpButton(text: l10n.tr('filesHelp'), title: l10n.tr('fileHub')),
+        ],
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -764,15 +824,19 @@ class _AttachmentHubScreenState extends ConsumerState<AttachmentHubScreen> with 
         ],
       ),
       // Нажатие — скачать и открыть файл; долгое — письмо, другое
-      // приложение, «Поделиться», файлы отправителя.
+      // приложение, «Поделиться», файлы отправителя. Выбор для письма —
+      // нажатие отмечает файл (флажок справа).
+      selected: widget.pick && _picked.containsKey(item.key),
       trailing: _busy.contains(item.key)
           ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-          : IconButton(
-              tooltip: l10n.tr('more'),
-              icon: const Icon(AppIcons.more_vert),
-              onPressed: () => _actions(item, l10n),
-            ),
-      onTap: () => _open(item, l10n),
+          : widget.pick
+              ? Checkbox(value: _picked.containsKey(item.key), onChanged: (_) => _togglePick(item))
+              : IconButton(
+                  tooltip: l10n.tr('more'),
+                  icon: const Icon(AppIcons.more_vert),
+                  onPressed: () => _actions(item, l10n),
+                ),
+      onTap: () => widget.pick ? _togglePick(item) : _open(item, l10n),
       onLongPress: () => _actions(item, l10n),
     ));
   }

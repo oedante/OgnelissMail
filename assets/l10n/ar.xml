@@ -4374,4 +4374,10 @@
     <string name="graphicsAutoDescMac">التوافق على أجهزة Mac بمعالج Intel، والمحرك الجديد على Apple Silicon</string>
     <string name="graphicsSkiaDescMac">أكثر موثوقية على أجهزة Mac بمعالج Intel</string>
     <string name="graphicsImpellerDescMac">أكثر سلاسة على أجهزة Mac بمعالج Apple Silicon</string>
+    <string name="replyWithAttachments">الرد مع المرفقات</string>
+    <string name="attachFromDevice">ملف من الجهاز</string>
+    <string name="attachFromMail">من مرفقات البريد</string>
+    <string name="attachFromMailTitle">اختر المرفقات</string>
+    <string name="attachPickedFiles">إرفاق</string>
+    <string name="selectedFilesN">الملفات المحددة: {n}</string>
 </resources>

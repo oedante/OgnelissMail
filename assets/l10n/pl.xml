@@ -4332,4 +4332,10 @@
     <string name="graphicsAutoDescMac">Zgodność na Macach z procesorem Intel, nowy silnik na Apple Silicon</string>
     <string name="graphicsSkiaDescMac">Bardziej niezawodny na Macach z procesorem Intel</string>
     <string name="graphicsImpellerDescMac">Płynniejszy na Macach z Apple Silicon</string>
+    <string name="replyWithAttachments">Odpowiedz z załącznikami</string>
+    <string name="attachFromDevice">Plik z urządzenia</string>
+    <string name="attachFromMail">Z załączników poczty</string>
+    <string name="attachFromMailTitle">Wybierz załączniki</string>
+    <string name="attachPickedFiles">Załącz</string>
+    <string name="selectedFilesN">Wybrano plików: {n}</string>
 </resources>

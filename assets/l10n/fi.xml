@@ -4290,4 +4290,10 @@
     <string name="graphicsAutoDescMac">Yhteensopivuus Intel-suorittimella varustetuissa Maceissa, uusi moottori Apple Siliconissa</string>
     <string name="graphicsSkiaDescMac">Luotettavampi Intel-suorittimella varustetuissa Maceissa</string>
     <string name="graphicsImpellerDescMac">Sujuvampi Apple Silicon -Maceissa</string>
+    <string name="replyWithAttachments">Vastaa liitteiden kanssa</string>
+    <string name="attachFromDevice">Tiedosto laitteelta</string>
+    <string name="attachFromMail">Sähköpostin liitteistä</string>
+    <string name="attachFromMailTitle">Valitse liitteet</string>
+    <string name="attachPickedFiles">Liitä</string>
+    <string name="selectedFilesN">{n} tiedostoa valittu</string>
 </resources>

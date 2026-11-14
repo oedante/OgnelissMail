@@ -4290,4 +4290,10 @@
     <string name="graphicsAutoDescMac">Compatibility on Intel-based Macs, the new engine on Apple silicon</string>
     <string name="graphicsSkiaDescMac">More reliable on Intel-based Macs</string>
     <string name="graphicsImpellerDescMac">Smoother on Macs with Apple silicon</string>
+    <string name="replyWithAttachments">Reply with attachments</string>
+    <string name="attachFromDevice">File from device</string>
+    <string name="attachFromMail">From mail attachments</string>
+    <string name="attachFromMailTitle">Choose attachments</string>
+    <string name="attachPickedFiles">Attach</string>
+    <string name="selectedFilesN">{n} files selected</string>
 </resources>

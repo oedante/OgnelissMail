@@ -2879,6 +2879,12 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         PeekAction(icon: AppIcons.reply, label: l10n.tr('reply'), onTap: () => context.push('/compose?$q')),
         PeekAction(
             icon: AppIcons.reply_all, label: l10n.tr('replyAll'), onTap: () => context.push('/compose?$q&replyAll=true')),
+        // Ответ с файлами исходного письма (14.11.2026).
+        if (email.hasFiles)
+          PeekAction(
+              icon: AppIcons.attach_file,
+              label: l10n.tr('replyWithAttachments'),
+              onTap: () => context.push('/compose?$q&withAttachments=true')),
         PeekAction(icon: AppIcons.forward, label: l10n.tr('forward'), onTap: () => _forward(email, l10n)),
       ]),
       PeekGroup(title: l10n.tr('peekGroupMark'), items: [

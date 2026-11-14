@@ -4290,4 +4290,10 @@
     <string name="graphicsAutoDescMac">Intel प्रोसेसर वाले Mac पर संगतता, Apple Silicon पर नया इंजन</string>
     <string name="graphicsSkiaDescMac">Intel प्रोसेसर वाले Mac पर अधिक भरोसेमंद</string>
     <string name="graphicsImpellerDescMac">Apple Silicon वाले Mac पर अधिक सहज</string>
+    <string name="replyWithAttachments">अटैचमेंट के साथ जवाब दें</string>
+    <string name="attachFromDevice">डिवाइस से फ़ाइल</string>
+    <string name="attachFromMail">मेल अटैचमेंट से</string>
+    <string name="attachFromMailTitle">अटैचमेंट चुनें</string>
+    <string name="attachPickedFiles">संलग्न करें</string>
+    <string name="selectedFilesN">{n} फ़ाइलें चुनी गईं</string>
 </resources>

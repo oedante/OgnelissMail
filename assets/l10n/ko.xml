@@ -4269,4 +4269,10 @@
     <string name="graphicsAutoDescMac">Intel 프로세서 Mac에서는 호환성, Apple 실리콘에서는 새 엔진</string>
     <string name="graphicsSkiaDescMac">Intel 프로세서 Mac에서 더 안정적</string>
     <string name="graphicsImpellerDescMac">Apple 실리콘 Mac에서 더 부드러움</string>
+    <string name="replyWithAttachments">첨부 파일과 함께 답장</string>
+    <string name="attachFromDevice">기기의 파일</string>
+    <string name="attachFromMail">메일 첨부 파일에서</string>
+    <string name="attachFromMailTitle">첨부 파일 선택</string>
+    <string name="attachPickedFiles">첨부</string>
+    <string name="selectedFilesN">{n}개 파일 선택됨</string>
 </resources>

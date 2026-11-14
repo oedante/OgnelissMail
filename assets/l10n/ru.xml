@@ -4332,4 +4332,10 @@
     <string name="graphicsAutoDescMac">Совместимость на Mac с процессором Intel, новый движок — на Apple Silicon</string>
     <string name="graphicsSkiaDescMac">Надёжнее на Mac с процессором Intel</string>
     <string name="graphicsImpellerDescMac">Плавнее на Mac с Apple Silicon</string>
+    <string name="replyWithAttachments">Ответить с вложениями</string>
+    <string name="attachFromDevice">Файл с устройства</string>
+    <string name="attachFromMail">Из вложений почты</string>
+    <string name="attachFromMailTitle">Выберите вложения</string>
+    <string name="attachPickedFiles">Приложить</string>
+    <string name="selectedFilesN">Выбрано файлов: {n}</string>
 </resources>

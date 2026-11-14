@@ -3104,6 +3104,11 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           _peekAction(AppIcons.reply, l10n.tr('reply'), () => context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}')),
           _peekAction(AppIcons.reply_all, l10n.tr('replyAll'), () => context
               .push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}&replyAll=true')),
+          // Ответ с файлами исходного письма (14.11.2026): «согласовано» —
+          // и тот же документ обратно.
+          if (email.hasFiles)
+            _peekAction(AppIcons.attach_file, l10n.tr('replyWithAttachments'), () => context
+                .push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}&withAttachments=true')),
           _peekAction(AppIcons.quickreply, l10n.tr('quickReplies'),
               () => _showQuickReplies(email, l10n)),
           _peekAction(AppIcons.attach_email, l10n.tr('asEml'),

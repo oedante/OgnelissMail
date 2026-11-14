@@ -4290,4 +4290,10 @@
     <string name="graphicsAutoDescMac">Kompatibilitet på Mac med Intel-processor, ny motor på Apple Silicon</string>
     <string name="graphicsSkiaDescMac">Pålitligare på Mac med Intel-processor</string>
     <string name="graphicsImpellerDescMac">Smidigare på Mac med Apple Silicon</string>
+    <string name="replyWithAttachments">Svara med bilagor</string>
+    <string name="attachFromDevice">Fil från enheten</string>
+    <string name="attachFromMail">Från bilagor i mejl</string>
+    <string name="attachFromMailTitle">Välj bilagor</string>
+    <string name="attachPickedFiles">Bifoga</string>
+    <string name="selectedFilesN">{n} filer valda</string>
 </resources>

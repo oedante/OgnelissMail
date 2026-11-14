@@ -211,6 +211,11 @@ class EmailModel {
   }
   bool get isHighPriority => priority == EmailPriority.high;
 
+  /// У письма есть файлы (не только картинки в тексте) — для «Ответить с
+  /// вложениями» (14.11.2026). В строке ленты списка вложений может не быть —
+  /// тогда по флагу.
+  bool get hasFiles => attachments.isEmpty ? hasAttachments : attachments.any((a) => !a.isInline);
+
   /// Данные приглашения на встречу, если письмо — приглашение.
   EmailMeeting? get meeting => EmailMeeting.parse(meetingJson);
   int get recipientCount => to.length + cc.length + bcc.length;

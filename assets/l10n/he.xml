@@ -4311,4 +4311,10 @@
     <string name="graphicsAutoDescMac">תאימות ב-Mac עם מעבד Intel, המנוע החדש ב-Apple Silicon</string>
     <string name="graphicsSkiaDescMac">אמין יותר ב-Mac עם מעבד Intel</string>
     <string name="graphicsImpellerDescMac">חלק יותר ב-Mac עם Apple Silicon</string>
+    <string name="replyWithAttachments">השב עם קבצים מצורפים</string>
+    <string name="attachFromDevice">קובץ מהמכשיר</string>
+    <string name="attachFromMail">מקבצים מצורפים בדואר</string>
+    <string name="attachFromMailTitle">בחר קבצים מצורפים</string>
+    <string name="attachPickedFiles">צרף</string>
+    <string name="selectedFilesN">נבחרו {n} קבצים</string>
 </resources>

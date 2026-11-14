@@ -4290,4 +4290,10 @@
     <string name="graphicsAutoDescMac">Intel işlemcili Mac\'lerde uyumluluk, Apple Silicon\'da yeni motor</string>
     <string name="graphicsSkiaDescMac">Intel işlemcili Mac\'lerde daha güvenilir</string>
     <string name="graphicsImpellerDescMac">Apple Silicon\'lu Mac\'lerde daha akıcı</string>
+    <string name="replyWithAttachments">Eklerle yanıtla</string>
+    <string name="attachFromDevice">Cihazdan dosya</string>
+    <string name="attachFromMail">E-posta eklerinden</string>
+    <string name="attachFromMailTitle">Ek seçin</string>
+    <string name="attachPickedFiles">Ekle</string>
+    <string name="selectedFilesN">{n} dosya seçildi</string>
 </resources>

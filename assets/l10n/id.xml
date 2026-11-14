@@ -4269,4 +4269,10 @@
     <string name="graphicsAutoDescMac">Kompatibilitas di Mac dengan prosesor Intel, mesin baru di Apple Silicon</string>
     <string name="graphicsSkiaDescMac">Lebih andal di Mac dengan prosesor Intel</string>
     <string name="graphicsImpellerDescMac">Lebih mulus di Mac dengan Apple Silicon</string>
+    <string name="replyWithAttachments">Balas dengan lampiran</string>
+    <string name="attachFromDevice">File dari perangkat</string>
+    <string name="attachFromMail">Dari lampiran email</string>
+    <string name="attachFromMailTitle">Pilih lampiran</string>
+    <string name="attachPickedFiles">Lampirkan</string>
+    <string name="selectedFilesN">{n} file dipilih</string>
 </resources>

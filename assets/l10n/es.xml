@@ -4290,4 +4290,10 @@
     <string name="graphicsAutoDescMac">Compatibilidad en Mac con procesador Intel, motor nuevo en Apple Silicon</string>
     <string name="graphicsSkiaDescMac">Más fiable en Mac con procesador Intel</string>
     <string name="graphicsImpellerDescMac">Más fluido en Mac con Apple Silicon</string>
+    <string name="replyWithAttachments">Responder con adjuntos</string>
+    <string name="attachFromDevice">Archivo del dispositivo</string>
+    <string name="attachFromMail">De los adjuntos del correo</string>
+    <string name="attachFromMailTitle">Elige adjuntos</string>
+    <string name="attachPickedFiles">Adjuntar</string>
+    <string name="selectedFilesN">{n} archivos seleccionados</string>
 </resources>

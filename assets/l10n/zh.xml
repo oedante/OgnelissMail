@@ -4269,4 +4269,10 @@
     <string name="graphicsAutoDescMac">Intel 处理器的 Mac 使用兼容模式，Apple 芯片使用新引擎</string>
     <string name="graphicsSkiaDescMac">在 Intel 处理器的 Mac 上更稳定</string>
     <string name="graphicsImpellerDescMac">在 Apple 芯片的 Mac 上更流畅</string>
+    <string name="replyWithAttachments">带附件回复</string>
+    <string name="attachFromDevice">设备上的文件</string>
+    <string name="attachFromMail">来自邮件附件</string>
+    <string name="attachFromMailTitle">选择附件</string>
+    <string name="attachPickedFiles">附加</string>
+    <string name="selectedFilesN">已选择 {n} 个文件</string>
 </resources>

@@ -4269,4 +4269,10 @@
     <string name="graphicsAutoDescMac">Intel プロセッサの Mac では互換モード、Apple シリコンでは新しいエンジン</string>
     <string name="graphicsSkiaDescMac">Intel プロセッサの Mac でより安定</string>
     <string name="graphicsImpellerDescMac">Apple シリコンの Mac でより滑らか</string>
+    <string name="replyWithAttachments">添付ファイル付きで返信</string>
+    <string name="attachFromDevice">デバイスのファイル</string>
+    <string name="attachFromMail">メールの添付ファイルから</string>
+    <string name="attachFromMailTitle">添付ファイルを選択</string>
+    <string name="attachPickedFiles">添付</string>
+    <string name="selectedFilesN">{n} 件のファイルを選択</string>
 </resources>

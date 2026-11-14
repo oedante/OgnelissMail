@@ -4290,4 +4290,10 @@
     <string name="graphicsAutoDescMac">Compatibilité sur les Mac à processeur Intel, nouveau moteur sur Apple Silicon</string>
     <string name="graphicsSkiaDescMac">Plus fiable sur les Mac à processeur Intel</string>
     <string name="graphicsImpellerDescMac">Plus fluide sur les Mac avec Apple Silicon</string>
+    <string name="replyWithAttachments">Répondre avec les pièces jointes</string>
+    <string name="attachFromDevice">Fichier de l’appareil</string>
+    <string name="attachFromMail">Depuis les pièces jointes des e-mails</string>
+    <string name="attachFromMailTitle">Choisir des pièces jointes</string>
+    <string name="attachPickedFiles">Joindre</string>
+    <string name="selectedFilesN">{n} fichiers sélectionnés</string>
 </resources>

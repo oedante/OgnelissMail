@@ -10,6 +10,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/tokens.dart';
+import 'quick_long_press.dart' show secondaryAsHold;
 
 class TileItem {
   /// Ключ (для настроек и тестов).
@@ -144,19 +145,22 @@ class _Tile extends StatelessWidget {
               ],
             ),
           );
+    final VoidCallback? hold = t.onLongPressAt == null
+        ? null
+        : () {
+            final box = context.findRenderObject() as RenderBox?;
+            final rect = box == null ? null : box.localToGlobal(Offset.zero) & box.size;
+            t.onLongPressAt!(rect);
+          };
     final tile = Material(
       color: bg,
       borderRadius: BorderRadius.circular(8),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: t.onTap,
-        onLongPress: t.onLongPressAt == null
-            ? null
-            : () {
-                final box = context.findRenderObject() as RenderBox?;
-                final rect = box == null ? null : box.localToGlobal(Offset.zero) & box.size;
-                t.onLongPressAt!(rect);
-              },
+        onLongPress: hold,
+        // Правая кнопка мыши — то же меню, что удержание (14.11.2026).
+        onSecondaryTapUp: secondaryAsHold(hold),
         child: Stack(
           children: [
             Positioned.fill(child: content),

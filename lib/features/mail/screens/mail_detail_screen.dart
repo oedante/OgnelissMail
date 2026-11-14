@@ -13,6 +13,7 @@ import '../../../widgets/ui/banner_button.dart';
 import '../../../core/platform/download_saver.dart';
 import '../../../core/platform/file_opener.dart';
 import '../../../widgets/ui/section_band.dart';
+import '../../../widgets/common/quick_long_press.dart';
 import '../../../widgets/common/peek_card.dart' show AppMenuEntry, PeekAction, PeekGroup;
 import '../message_window.dart';
 import '../../assignments/assign_sheet.dart' show showAssignSheet;
@@ -1903,6 +1904,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // Язык письма — когда тело готово; показ — с переводом, если он включён.
         if (settled) _translation.detect(email);
         if (settled) _checkSafety(email);
+        if (settled) _serveWindowRequest(email);
         final shown = _translation.apply(email);
         final bodyChildren = <Widget>[
             // ── Строка сведений (1.12.x, просьба владельца 04.11.2026) ──
@@ -2426,6 +2428,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           // поделиться/сохранить (раньше одиночное вложение можно было только
           // открыть; «сохранить» было лишь для всех сразу).
           onLongPress: touchDrag ? null : () => _onAttachmentLongPress(att, l10n),
+          // Правая кнопка мыши — та же шторка (14.11.2026).
+          onSecondaryTapUp: secondaryAsHold(() => _onAttachmentLongPress(att, l10n)),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(Space.s, Space.xs, Space.m, Space.xs),
             child: Row(
@@ -2742,9 +2746,15 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             ),
           )
         : IconButton(onPressed: tap, icon: icon, tooltip: cmd.label);
-    final withLong = (!labeled && cmd.onLongPress != null)
-        ? GestureDetector(onLongPress: cmd.onLongPress, child: button)
-        : button;
+    // Правая кнопка мыши — то же, что удержание (14.11.2026).
+    final withLong = cmd.onLongPress == null
+        ? button
+        : labeled
+            ? SecondaryTap(onTap: cmd.onLongPress, child: button)
+            : GestureDetector(
+                onLongPress: cmd.onLongPress,
+                onSecondaryTapUp: secondaryAsHold(cmd.onLongPress),
+                child: button);
     return labeled ? Tooltip(message: cmd.label, child: withLong) : withLong;
   }
 
@@ -3008,6 +3018,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 HapticFeedback.mediumImpact();
                 onLongPress();
               },
+              onSecondaryTapUp: secondaryAsHold(onLongPress),
               child: labeled,
             ),
     );
@@ -4148,6 +4159,19 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     final r = await runner.archiveEmails(account, [row]);
     if (deleting) notifier.unhideLocally(email);
     if (r.archived == 0) showInlineError(l10n.tr('archiveOneFailed'));
+  }
+
+  /// Двойной щелчок по письму в ленте (14.11.2026): письмо загружено — открыть
+  /// его в отдельном окне (запрос — [messageWindowRequestProvider]).
+  void _serveWindowRequest(EmailModel email) {
+    final r = ref.watch(messageWindowRequestProvider);
+    if (r == null || r.emailId != email.id || r.accountId != email.accountId) return;
+    if (DateTime.now().difference(r.at) > messageWindowRequestFreshFor) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || ref.read(messageWindowRequestProvider) != r) return;
+      ref.read(messageWindowRequestProvider.notifier).state = null;
+      unawaited(_openInWindow(email));
+    });
   }
 
   /// Письмо — в отдельное окно (компьютер): окно получает письмо готовым —

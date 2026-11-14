@@ -26,6 +26,7 @@ import '../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../../widgets/ui/wheel_pickers.dart';
 import '../../core/utils/text_safe.dart' show initialOf;
 import 'assignment_edit.dart';
+import '../../widgets/common/quick_long_press.dart' show secondaryAsHold;
 
 /// Подпись статуса.
 String assignmentStatusLabel(int status, AppLocalizations l10n) => l10n.tr(switch (status) {
@@ -347,6 +348,7 @@ class AssignmentSubtaskRow extends ConsumerWidget {
     return InkWell(
       onTap: () => context.push('/assignments/${v.id}'),
       onLongPress: () => unawaited(showAssignmentPeek(context, ref, v)),
+      onSecondaryTapUp: secondaryAsHold(() => unawaited(showAssignmentPeek(context, ref, v))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l, vertical: 6),
         child: Row(children: [

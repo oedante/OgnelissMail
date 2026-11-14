@@ -115,6 +115,10 @@ class HoldPointer implements HoldTracker {
     if (armed) _target?.holdRelease();
   }
 
+  /// Правая кнопка мыши (компьютер, 14.11.2026): карточка открывается у места
+  /// щелчка — как после удержания в этой точке ([pressedAt]).
+  void markAt(Offset global) => _pressedAt = global;
+
   /// Карточка или меню появились (initState).
   void attach(HoldTarget target) {
     _target = target;
@@ -234,6 +238,14 @@ class _QuickLongPressState extends State<QuickLongPress> with SingleTickerProvid
     return RawGestureDetector(
       behavior: widget.behavior,
       gestures: <Type, GestureRecognizerFactory>{
+        // Правая кнопка мыши и нажатие двумя пальцами на тачпаде (14.11.2026,
+        // замечание владельца 14.11.2026: «не везде есть обработка клика
+        // правой клавишей») — то же меню, что по удержанию. Обычные касания
+        // этот распознаватель не берёт: у него только «вторичные» обработчики.
+        TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+          () => TapGestureRecognizer(debugOwner: this),
+          (r) => r.onSecondaryTapUp = secondaryAsHold(cb),
+        ),
         LongPressGestureRecognizer: GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
           () => LongPressGestureRecognizer(duration: HoldTiming.peek, debugOwner: this),
           (r) {
@@ -256,5 +268,58 @@ class _QuickLongPressState extends State<QuickLongPress> with SingleTickerProvid
       },
       child: child,
     );
+  }
+}
+
+/// Правая кнопка мыши (и нажатие двумя пальцами на тачпаде) — то же, что
+/// удержание [cb] (14.11.2026): для onSecondaryTapUp у InkWell, InkResponse и
+/// GestureDetector. Место щелчка запоминается — карточка встанет у него.
+GestureTapUpCallback? secondaryAsHold(VoidCallback? cb) => cb == null
+    ? null
+    : (d) {
+        HoldPointer.instance.markAt(d.globalPosition);
+        cb();
+      };
+
+/// Правая кнопка для виджета без своего onSecondaryTap (ListTile, кнопки):
+/// [onTap] — то же, что его удержание.
+class SecondaryTap extends StatelessWidget {
+  final VoidCallback? onTap;
+  final Widget child;
+
+  const SecondaryTap({super.key, required this.onTap, required this.child});
+
+  @override
+  Widget build(BuildContext context) => onTap == null
+      ? child
+      : GestureDetector(behavior: HitTestBehavior.deferToChild, onSecondaryTapUp: secondaryAsHold(onTap), child: child);
+}
+
+/// Двойной щелчок мышью на компьютере (14.11.2026). Обычный onDoubleTap Flutter
+/// задерживает каждый одиночный щелчок на время ожидания второго — строка
+/// письма открывалась бы с запаздыванием. Здесь первый щелчок срабатывает
+/// сразу, как раньше, а второй по тому же [key] в пределах [timeout] —
+/// двойной: [isDoubleClick] возвращает true.
+abstract final class DoubleClick {
+  /// Как в Windows по умолчанию (500 мс); kDoubleTapTimeout Flutter (300 мс)
+  /// для мыши коротковат.
+  static const timeout = Duration(milliseconds: 500);
+
+  static Object? _lastKey;
+  static DateTime? _lastAt;
+
+  /// Компьютер: Windows, macOS, Linux. На телефоне двойное касание не
+  /// используем — жест там другой.
+  static bool get supported => !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
+
+  /// Отметить щелчок по [key]; true — это второй щелчок двойного.
+  static bool isDoubleClick(Object key, {DateTime? now}) {
+    final t = now ?? DateTime.now();
+    final last = _lastAt;
+    final hit = last != null && _lastKey == key && t.difference(last) <= timeout;
+    // Третий щелчок не считается вторым двойным.
+    _lastKey = hit ? null : key;
+    _lastAt = hit ? null : t;
+    return hit;
   }
 }

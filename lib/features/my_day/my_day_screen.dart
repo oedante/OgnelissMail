@@ -62,6 +62,7 @@ import '../../services/tasks/task_blocks.dart';
 import '../../services/assignments/assignment_service.dart';
 import '../assignments/assignment_widgets.dart';
 import '../../widgets/common/peek_card.dart' show peekAnchorOf;
+import '../../widgets/common/quick_long_press.dart' show secondaryAsHold;
 import '../../widgets/common/inline_notice.dart' show showInlineNotice;
 
 import 'day_stats.dart';

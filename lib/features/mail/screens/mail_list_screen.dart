@@ -98,7 +98,8 @@ import '../../../widgets/common/mail_open_motion.dart' show MailOpenHandoff;
 import '../widgets/mail_peek_card.dart';
 import '../widgets/peek_helpers.dart';
 import '../../../widgets/common/peek_card.dart' show peekAnchorOf;
-import '../../../widgets/common/quick_long_press.dart' show HoldPointer, HoldTracker;
+import '../../../widgets/common/quick_long_press.dart' show DoubleClick, HoldPointer, HoldTracker;
+import '../message_window.dart' show MessageWindow;
 import '../widgets/mail_freshness_line.dart';
 import '../../../widgets/navigation/panel_requests.dart' show mailScrollTopRequestProvider, mailSearchQueryProvider;
 import '../providers/account_look.dart';
@@ -1823,6 +1824,17 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                 _selectAnchor = item.id;
                 if (_selectionMode) {
                   _toggleSelect(item.id);
+                  return;
+                }
+                // Двойной щелчок мышью (компьютер, 14.11.2026) — письмо в отдельное
+                // окно, как в Outlook. Первый щелчок уже открыл письмо в панели
+                // справа; окно откроет она, когда письмо загрузится.
+                if (DoubleClick.supported &&
+                    MessageWindow.supported &&
+                    AdaptiveLayout.isSplit(context) &&
+                    DoubleClick.isDoubleClick(('mail', item.accountId, item.id))) {
+                  ref.read(messageWindowRequestProvider.notifier).state =
+                      (accountId: item.accountId, emailId: item.id, at: DateTime.now());
                   return;
                 }
                 unawaited(HapticFeedback.selectionClick());

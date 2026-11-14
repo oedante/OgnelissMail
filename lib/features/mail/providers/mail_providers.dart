@@ -65,6 +65,17 @@ final mailDrawerRequestProvider = StateProvider<int>((ref) => 0);
 /// раздела по нажатию на аватар ящика в нижней панели).
 final mailDrawerPendingProvider = StateProvider<bool>((ref) => false);
 
+/// Двойной щелчок по письму в ленте (компьютер, 14.11.2026, замечание владельца
+/// 14.11.2026): письмо — в отдельное окно, как в Outlook. Ленте окно не
+/// открыть — нужно уже загруженное письмо с картинками; его берёт панель
+/// письма справа, когда загрузит это письмо. Запрос старше [freshFor] не
+/// исполняется: письмо так и не открылось в панели (беседа, черновик).
+typedef MessageWindowRequest = ({String accountId, String emailId, DateTime at});
+
+final messageWindowRequestProvider = StateProvider<MessageWindowRequest?>((ref) => null);
+
+const messageWindowRequestFreshFor = Duration(seconds: 15);
+
 /// Меняется при постановке/снятии «На контроле» — «Мой день» перечитывает.
 final controlRevisionProvider = StateProvider<int>((ref) => 0);
 

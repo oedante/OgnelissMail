@@ -29,6 +29,7 @@ import 'assign_sheet.dart';
 import 'assignment_widgets.dart';
 import 'assignments_summary_screen.dart' show showAssignmentsSummary;
 import 'project_editor.dart' show showProjectEditor;
+import '../../widgets/common/quick_long_press.dart' show secondaryAsHold;
 
 enum _Filter { all, overdue, review, control, help, observe }
 
@@ -297,6 +298,7 @@ class _AssignmentRow extends ConsumerWidget {
     return InkWell(
       onTap: () => context.push('/assignments/${v.id}'),
       onLongPress: () => unawaited(showAssignmentPeek(context, ref, v, anchor: peekAnchorOf(context))),
+      onSecondaryTapUp: secondaryAsHold(() => unawaited(showAssignmentPeek(context, ref, v, anchor: peekAnchorOf(context)))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l, vertical: Space.s),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [

@@ -45,6 +45,7 @@ import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../core/utils/avatar_colors.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
+import '../../../widgets/common/quick_long_press.dart' show secondaryAsHold;
 
 /// Событие по (id, аккаунт) — поток: правка или синхронизация обновляют экран.
 final eventByIdProvider =
@@ -709,6 +710,8 @@ class _Row extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       onLongPress: onLongPress,
+      // Правая кнопка мыши — то же, что удержание (14.11.2026).
+      onSecondaryTapUp: secondaryAsHold(onLongPress),
       child: Padding(
         // Сетка карточки (1.7.2+106 — как строки настроек): поле 16 ·
         // значок 24 · 16 · текст — с линии кнопки «Подключиться» и

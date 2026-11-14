@@ -653,6 +653,10 @@ extension _MyDayBoard on _MyDayScreenState {
           onLongPress: c.onLongPress != null
               ? () => c.onLongPress!(context)
               : (c.task == null ? null : () => _taskPeek(context, c.task!)),
+          // Правая кнопка мыши — та же карточка (14.11.2026).
+          onSecondaryTapUp: secondaryAsHold(c.onLongPress != null
+              ? () => c.onLongPress!(context)
+              : (c.task == null ? null : () => _taskPeek(context, c.task!))),
           child: Padding(
             padding: EdgeInsets.fromLTRB(0, dense ? 0 : Space.xs, c.trailing == null ? Space.m : 0, dense ? 0 : Space.xs),
             child: Row(children: [

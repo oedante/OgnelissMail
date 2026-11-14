@@ -18,6 +18,7 @@ import '../../../core/security/trusted_ca_store.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/ui/settings_group.dart';
+import '../../../widgets/common/quick_long_press.dart' show SecondaryTap;
 
 class CaCertificatesSection extends StatefulWidget {
   const CaCertificatesSection({super.key});
@@ -111,7 +112,14 @@ class _CaCertificatesSectionState extends State<CaCertificatesSection>
   Widget _cert(CaCertInfo c, {VoidCallback? onDelete, bool install = true}) {
     final l10n = AppLocalizations.of(context);
     final until = c.validTo == null ? '—' : DateFormat('dd.MM.yyyy').format(c.validTo!.toLocal());
-    return ListTile(
+    void copyFingerprint() {
+      Clipboard.setData(ClipboardData(text: c.fingerprint));
+      setState(() => _status = l10n.tr('caFingerprintCopied'));
+    }
+    // Правая кнопка мыши — скопировать отпечаток, как удержание (14.11.2026).
+    return SecondaryTap(
+      onTap: copyFingerprint,
+      child: ListTile(
       dense: true,
       contentPadding: const EdgeInsets.only(left: Space.l, right: Space.s),
       leading: Icon(c.expired ? AppIcons.gpp_bad : AppIcons.verified,
@@ -124,10 +132,7 @@ class _CaCertificatesSectionState extends State<CaCertificatesSection>
         style: TextStyle(color: AppColors.mutedText(context)),
       ),
       isThreeLine: true,
-      onLongPress: () {
-        Clipboard.setData(ClipboardData(text: c.fingerprint));
-        setState(() => _status = l10n.tr('caFingerprintCopied'));
-      },
+      onLongPress: copyFingerprint,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -145,7 +150,7 @@ class _CaCertificatesSectionState extends State<CaCertificatesSection>
             ),
         ],
       ),
-    );
+    ));
   }
 
   @override

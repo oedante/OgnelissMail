@@ -46,6 +46,7 @@ import '../../../widgets/ui/section_band.dart';
 import '../../mail/providers/mail_providers.dart';
 import 'attachment_preview_screen.dart';
 import '../../../core/platform/app_share.dart';
+import '../../../widgets/common/quick_long_press.dart' show SecondaryTap, secondaryAsHold;
 
 /// Модель вложения в хабе
 class AttachmentHubItem {
@@ -726,7 +727,10 @@ class _AttachmentHubScreenState extends ConsumerState<AttachmentHubScreen> with 
       DateFormat('d MMM yyyy', l10n.localeCode).format(item.receivedAt),
       if (item.copies > 1) l10n.tr('filesInEmails').replaceAll('{n}', '${item.copies}'),
     ];
-    return ListTile(
+    // Правая кнопка мыши — то же меню, что удержание (14.11.2026).
+    return SecondaryTap(
+      onTap: () => _actions(item, l10n),
+      child: ListTile(
       leading: Stack(clipBehavior: Clip.none, children: [
         FileTypeIcon(category: item.category),
         // Метка ящика — когда ящиков несколько.
@@ -770,7 +774,7 @@ class _AttachmentHubScreenState extends ConsumerState<AttachmentHubScreen> with 
             ),
       onTap: () => _open(item, l10n),
       onLongPress: () => _actions(item, l10n),
-    );
+    ));
   }
 }
 
@@ -795,6 +799,7 @@ class _FilesAccountChips extends ConsumerWidget {
               padding: const EdgeInsets.only(right: Space.s),
               child: GestureDetector(
                 onLongPress: () => n.set({for (final o in accounts) if (o.id != a.id) o.id}),
+                onSecondaryTapUp: secondaryAsHold(() => n.set({for (final o in accounts) if (o.id != a.id) o.id})),
                 child: FilterChip(
                   visualDensity: VisualDensity.compact,
                   showCheckmark: false,

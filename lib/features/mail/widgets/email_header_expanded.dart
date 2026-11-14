@@ -9,6 +9,7 @@ import '../../../data/models/email_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
+import '../../../widgets/common/quick_long_press.dart' show secondaryAsHold;
 
 class EmailHeaderExpanded extends StatelessWidget {
   final EmailModel email;
@@ -67,6 +68,13 @@ class EmailHeaderExpanded extends StatelessWidget {
                 Clipboard.setData(ClipboardData(text: value));
                 showInlineNotice(l10n.copied, duration: const Duration(seconds: 2));
               } : null,
+              // Правая кнопка мыши — скопировать, как удержание (14.11.2026).
+              onSecondaryTapUp: copyable
+                  ? secondaryAsHold(() {
+                      Clipboard.setData(ClipboardData(text: value));
+                      showInlineNotice(l10n.copied, duration: const Duration(seconds: 2));
+                    })
+                  : null,
               child: Text(value, style: Theme.of(context).textTheme.bodySmall),
             ),
           ),

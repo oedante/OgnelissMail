@@ -68,6 +68,7 @@ import '../../../widgets/common/tile_grid.dart';
 import '../../../widgets/navigation/section_nav.dart';
 import '../../../core/utils/reorder_index.dart';
 import '../providers/folder_names.dart';
+import '../../../widgets/common/quick_long_press.dart' show DoubleClick, SecondaryTap, secondaryAsHold;
 
 class MailDrawer extends ConsumerWidget {
   /// Панель на широком окне (1.6.28): стоит слева от ленты постоянно, а не
@@ -244,12 +245,17 @@ class MailDrawer extends ConsumerWidget {
                             ref.read(settingsProvider.notifier).setActiveAccountId(account.id);
                             _close(context);
                           },
-                          // Долгое нажатие — настройки этого ящика (раньше ничего).
+                          // Долгое нажатие — настройки этого ящика (раньше ничего);
+                          // правая кнопка мыши — то же (14.11.2026).
                           onLongPress: () {
                             HapticFeedback.mediumImpact();
                             _close(context);
                             context.push('/settings/account/${Uri.encodeComponent(account.id)}');
                           },
+                          onSecondaryTapUp: secondaryAsHold(() {
+                            _close(context);
+                            context.push('/settings/account/${Uri.encodeComponent(account.id)}');
+                          }),
                           // Активный ящик — цветной в тонком кольце ЦВЕТА ЯЩИКА,
                           // остальные — в оттенках серого. Раньше кольцо было
                           // акцентным цветом темы (в монохромной теме — чёрным) и
@@ -1667,9 +1673,12 @@ class _FolderTile extends StatelessWidget {
     final level = indent.clamp(0, 5);
     final inTree = onToggle != null;
 
+    // Правая кнопка мыши — меню папки, как по удержанию (14.11.2026).
     return Material(
       color: isSelected ? theme.colorScheme.secondaryContainer : Colors.transparent,
-      child: ListTile(
+      child: SecondaryTap(
+        onTap: onLongPressAt != null ? () => onLongPressAt!(peekAnchorOf(context)) : null,
+        child: ListTile(
         contentPadding: EdgeInsets.only(left: Space.l + level * 18.0, right: inTree ? Space.xs : Space.l),
         leading: Icon(icon, size: 22, color: isSelected ? theme.colorScheme.primary : null),
         title: Text(
@@ -1718,10 +1727,20 @@ class _FolderTile extends StatelessWidget {
         ),
         dense: true,
         onTap: () {
+          // Двойной щелчок по папке с подпапками — свернуть или развернуть,
+          // как в Outlook (компьютер, 14.11.2026); первый щелчок открыл папку.
+          if (hasChildren &&
+              onToggle != null &&
+              DoubleClick.supported &&
+              DoubleClick.isDoubleClick(('folder', label, indent))) {
+            onToggle!();
+            return;
+          }
           HapticFeedback.selectionClick();
           onTap?.call();
         },
         onLongPress: onLongPressAt != null ? () => onLongPressAt!(peekAnchorOf(context)) : null,
+      ),
       ),
     );
   }

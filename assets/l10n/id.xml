@@ -4266,4 +4266,5 @@
     <string name="assignStatsTimelineHint">Batang: dari pemberian hingga tenggat; isian: bagian selesai; bingkai merah: terlambat. Yang terlambat lebih dulu.</string>
     <string name="assignStatsShowAll">Tampilkan {n} lagi</string>
     <string name="assignStatsNoDue">Tanpa tenggat: {n} (tidak ada di diagram).</string>
+    <string name="assignGreetingNoName">Halo,</string>
 </resources>

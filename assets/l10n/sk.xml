@@ -4308,4 +4308,5 @@
     <string name="assignStatsTimelineHint">Pruh: od zadania do termínu; výplň: hotová časť; červený rámik: po termíne. Omeškané prvé.</string>
     <string name="assignStatsShowAll">Zobraziť ďalších {n}</string>
     <string name="assignStatsNoDue">Bez termínu: {n} (nie sú v diagrame).</string>
+    <string name="assignGreetingNoName">Dobrý deň,</string>
 </resources>

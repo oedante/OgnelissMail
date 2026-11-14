@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">Çubuk: verilişten bitiş tarihine; dolgu: yapılan kısım; kırmızı çerçeve: gecikti. Gecikenler önce.</string>
     <string name="assignStatsShowAll">{n} tane daha göster</string>
     <string name="assignStatsNoDue">Bitiş tarihi yok: {n} (çizelgede gösterilmez).</string>
+    <string name="assignGreetingNoName">Merhaba,</string>
 </resources>

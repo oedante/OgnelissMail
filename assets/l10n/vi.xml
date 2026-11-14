@@ -4266,4 +4266,5 @@
     <string name="assignStatsTimelineHint">Thanh: từ lúc giao đến hạn; phần tô: đã làm; viền đỏ: quá hạn. Việc quá hạn lên đầu.</string>
     <string name="assignStatsShowAll">Hiện thêm {n}</string>
     <string name="assignStatsNoDue">Không có hạn: {n} (không hiện trên biểu đồ).</string>
+    <string name="assignGreetingNoName">Xin chào,</string>
 </resources>

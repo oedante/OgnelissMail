@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">Sáv: a kiadástól a határidőig; kitöltés: elkészült rész; piros keret: lejárt. A késők elöl.</string>
     <string name="assignStatsShowAll">További {n} megjelenítése</string>
     <string name="assignStatsNoDue">Határidő nélkül: {n} (nem szerepelnek a diagramon).</string>
+    <string name="assignGreetingNoName">Jó napot!</string>
 </resources>

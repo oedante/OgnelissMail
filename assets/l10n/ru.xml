@@ -4329,4 +4329,5 @@
     <string name="assignStatsTimelineHint">Полоса — от постановки до срока, заливка — сделанная часть, красная рамка — срок прошёл. Просроченные — первыми.</string>
     <string name="assignStatsShowAll">Показать ещё {n}</string>
     <string name="assignStatsNoDue">Без срока: {n} — их нет на диаграмме.</string>
+    <string name="assignGreetingNoName">Добрый день!</string>
 </resources>

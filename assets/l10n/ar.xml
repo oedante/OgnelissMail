@@ -4371,4 +4371,5 @@
     <string name="assignStatsTimelineHint">الشريط: من الإسناد حتى الموعد النهائي؛ التعبئة: الجزء المنجز؛ الإطار الأحمر: متأخر. المتأخرة أولًا.</string>
     <string name="assignStatsShowAll">عرض {n} أخرى</string>
     <string name="assignStatsNoDue">بلا موعد نهائي: {n} (غير ظاهرة في المخطط).</string>
+    <string name="assignGreetingNoName">مرحبًا،</string>
 </resources>

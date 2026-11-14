@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">पट्टी: सौंपने से समय-सीमा तक; भराव: पूरा भाग; लाल किनारा: देर। देर वाले पहले।</string>
     <string name="assignStatsShowAll">{n} और दिखाएँ</string>
     <string name="assignStatsNoDue">बिना समय-सीमा: {n} (चार्ट में नहीं)।</string>
+    <string name="assignGreetingNoName">नमस्ते,</string>
 </resources>

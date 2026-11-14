@@ -37,7 +37,12 @@ class PersonNameDirectory {
     final e = email.trim().toLowerCase();
     if (e.isEmpty || !e.contains('@')) return Future<String?>.value();
     if (_known.containsKey(e)) return Future<String?>.value(_known[e]);
-    return _inflight[e] ??= _lookup(e, email.trim(), account).whenComplete(() => _inflight.remove(e));
+    // Блок, а не «=> _inflight.remove(e)»: remove вернул бы этот же Future, и
+    // whenComplete ждал бы сам себя — первый запрос не завершался никогда
+    // (находилось только со второго раза, из _known; 14.11.2026).
+    return _inflight[e] ??= _lookup(e, email.trim(), account).whenComplete(() {
+      _inflight.remove(e);
+    });
   }
 
   Future<String?> _lookup(String e, String original, AccountModel? account) async {

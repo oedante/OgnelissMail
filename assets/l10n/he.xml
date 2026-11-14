@@ -4308,4 +4308,5 @@
     <string name="assignStatsTimelineHint">פס: מההקצאה עד מועד היעד; מילוי: החלק שבוצע; מסגרת אדומה: באיחור. המאחרות ראשונות.</string>
     <string name="assignStatsShowAll">הצגת {n} נוספים</string>
     <string name="assignStatsNoDue">ללא מועד יעד: {n} (לא מוצגות בתרשים).</string>
+    <string name="assignGreetingNoName">שלום,</string>
 </resources>

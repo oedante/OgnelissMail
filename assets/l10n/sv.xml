@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">Stapel: från tilldelning till deadline; fyllning: klar del; röd ram: försenad. Försenade först.</string>
     <string name="assignStatsShowAll">Visa {n} till</string>
     <string name="assignStatsNoDue">Utan deadline: {n} (visas inte i diagrammet).</string>
+    <string name="assignGreetingNoName">Hej,</string>
 </resources>

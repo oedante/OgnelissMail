@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">Bar: from assigning to the due date; fill: the part done; red outline: overdue. Overdue items first.</string>
     <string name="assignStatsShowAll">Show {n} more</string>
     <string name="assignStatsNoDue">No due date: {n} (not on the chart).</string>
+    <string name="assignGreetingNoName">Hello,</string>
 </resources>

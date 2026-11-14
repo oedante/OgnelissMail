@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">Barra: dall\'assegnazione alla scadenza; riempimento: parte fatta; bordo rosso: in ritardo. Prima i ritardi.</string>
     <string name="assignStatsShowAll">Mostra altri {n}</string>
     <string name="assignStatsNoDue">Senza scadenza: {n} (non nel diagramma).</string>
+    <string name="assignGreetingNoName">Buongiorno,</string>
 </resources>

@@ -4266,4 +4266,5 @@
     <string name="assignStatsTimelineHint">막대: 지시일부터 마감일까지, 채움: 완료한 부분, 빨간 테두리: 기한 초과. 기한 초과 항목이 먼저 표시됩니다.</string>
     <string name="assignStatsShowAll">{n}개 더 보기</string>
     <string name="assignStatsNoDue">마감일 없음: {n}개(차트에 표시되지 않음).</string>
+    <string name="assignGreetingNoName">안녕하세요.</string>
 </resources>

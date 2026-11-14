@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">Barra: da atribuição ao prazo; preenchimento: parte feita; contorno vermelho: atrasada. Atrasadas primeiro.</string>
     <string name="assignStatsShowAll">Mostrar mais {n}</string>
     <string name="assignStatsNoDue">Sem prazo: {n} (fora do gráfico).</string>
+    <string name="assignGreetingNoName">Olá,</string>
 </resources>

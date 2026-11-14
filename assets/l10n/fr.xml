@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">Barre : de l\'attribution à l\'échéance ; remplissage : partie faite ; contour rouge : en retard. Les retards d\'abord.</string>
     <string name="assignStatsShowAll">Afficher {n} de plus</string>
     <string name="assignStatsNoDue">Sans échéance : {n} (absentes du diagramme).</string>
+    <string name="assignGreetingNoName">Bonjour,</string>
 </resources>

@@ -21,6 +21,7 @@ import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/services/assignments/assignment_codec.dart';
 import 'package:ogneliss/services/assignments/assignment_service.dart';
 import 'package:ogneliss/services/assignments/assignment_store.dart';
+import 'package:ogneliss/services/contacts/person_name_directory.dart';
 import 'package:ogneliss/services/mail/offline_send_service.dart';
 import 'package:ogneliss/services/notifications/notification_service.dart';
 import 'package:ogneliss/services/notifications/reminder_scheduler_service.dart';
@@ -184,6 +185,33 @@ void main() {
     await deliver();
     return id;
   }
+
+  test('обращение: «Имя Отчество» — ФИО из писем человека, а не фамилия (14.11.2026)', () async {
+    final b = phones[boss]!;
+    const who = 'sitnikov@corp.ru';
+    // Письмо от него в ящике постановщика — с полным ФИО.
+    await b.db.into(b.db.emails).insert(EmailsCompanion.insert(
+          id: 'sit1',
+          accountId: 'a',
+          folderId: 'in',
+          fromEmail: who,
+          fromName: const Value('Ситников Дмитрий Александрович'),
+          toRecipients: json([a(boss)]),
+          subject: 'Отчёт',
+          receivedAt: DateTime(2026, 11, 12),
+        ));
+    // Справочник имён отвечает с первого раза (раньше ждал сам себя, и
+    // обращение бралось из «Ситников Дмитрий» по тайм-ауту).
+    final t0 = DateTime.now();
+    await b.svc.create(account: acc(b), title: 'Тест', assignees: [const EmailAddress(email: who, displayName: 'Ситников Дмитрий')]);
+    expect(queue.last.html, contains('Дмитрий Александрович, добрый день!'));
+    expect(DateTime.now().difference(t0), lessThan(const Duration(seconds: 3)));
+    expect(await b.c.read(personNameDirectoryProvider).fullName(who, account: acc(b)), 'Ситников Дмитрий Александрович');
+    // Имени нет вовсе — приветствие без имени, а не часть адреса.
+    await b.svc.create(account: acc(b), title: 'Тест 2', assignees: [const EmailAddress(email: 'x.y@corp.ru')]);
+    expect(queue.last.html, contains('Добрый день!'));
+    expect(queue.last.html, isNot(contains('x.y, добрый день')));
+  });
 
   test('участники видят весь план: кто что и после кого делает, статусы этапов', () async {
     final pid = await project();

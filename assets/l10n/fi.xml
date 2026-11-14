@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">Palkki: annosta määräaikaan; täyttö: tehty osa; punainen reuna: myöhässä. Myöhässä olevat ensin.</string>
     <string name="assignStatsShowAll">Näytä {n} lisää</string>
     <string name="assignStatsNoDue">Ilman määräaikaa: {n} (ei kaaviossa).</string>
+    <string name="assignGreetingNoName">Hei,</string>
 </resources>

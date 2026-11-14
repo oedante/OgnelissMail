@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">Balk: van toewijzing tot deadline; vulling: gedaan deel; rode rand: te laat. Te late eerst.</string>
     <string name="assignStatsShowAll">Nog {n} tonen</string>
     <string name="assignStatsNoDue">Zonder deadline: {n} (niet in de grafiek).</string>
+    <string name="assignGreetingNoName">Goedendag,</string>
 </resources>

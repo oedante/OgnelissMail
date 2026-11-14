@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">Stolpe: fra tildeling til frist; fyll: ferdig del; rød kant: forsinket. Forsinkede først.</string>
     <string name="assignStatsShowAll">Vis {n} til</string>
     <string name="assignStatsNoDue">Uten frist: {n} (vises ikke i diagrammet).</string>
+    <string name="assignGreetingNoName">Hei,</string>
 </resources>

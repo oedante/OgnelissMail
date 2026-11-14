@@ -4329,4 +4329,5 @@
     <string name="assignStatsTimelineHint">Pasek: od zlecenia do terminu; wypełnienie: wykonana część; czerwona ramka: po terminie. Najpierw opóźnione.</string>
     <string name="assignStatsShowAll">Pokaż jeszcze {n}</string>
     <string name="assignStatsNoDue">Bez terminu: {n} (nie ma ich na wykresie).</string>
+    <string name="assignGreetingNoName">Dzień dobry,</string>
 </resources>

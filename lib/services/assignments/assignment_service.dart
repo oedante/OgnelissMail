@@ -18,6 +18,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/logging/app_logger.dart';
+import '../../core/utils/greeting_name.dart';
+import '../../core/utils/person_names.dart';
 import '../../data/database/app_database.dart';
 import '../../data/models/account_model.dart';
 import '../../data/models/email_model.dart';
@@ -26,6 +28,7 @@ import '../../features/mail/providers/mail_providers.dart' show accountsProvider
 import '../../features/settings/providers/settings_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../mail/offline_send_service.dart';
+import '../contacts/person_name_directory.dart';
 import '../mail/own_addresses.dart';
 import '../notifications/reminder_scheduler_service.dart' show reminderSchedulerProvider;
 import 'assignment_codec.dart';
@@ -82,15 +85,22 @@ class AssignmentService {
   String _dueLong(DateTime d, AppLocalizations l10n) =>
       DateFormat(dueHasTime(d) ? 'EEEE, d MMMM, HH:mm' : 'EEEE, d MMMM', l10n.localeCode).format(d);
 
-  static String _firstName(EmailAddress a) {
-    final n = (a.displayName ?? '').trim();
-    if (n.isNotEmpty) {
-      final parts = n.split(RegExp(r'\s+'));
-      // «Фамилия Имя Отчество» и «Имя Фамилия»: в обращении — второе слово
-      // из трёх, иначе первое.
-      return parts.length == 3 ? parts[1] : parts.first;
-    }
-    return a.email.split('@').first;
+  /// Приветствие письма поручения (14.11.2026, замечание владельца):
+  /// «Дмитрий Александрович, добрый день!» — по-русски имя и отчество (или
+  /// имя), на других языках — по их правилам (GreetingName). ФИО — самое
+  /// полное из контактов, писем и адресной книги организации; имени нет —
+  /// приветствие без имени.
+  Future<String> _greeting(EmailAddress a, AccountModel? account, AppLocalizations l10n) async {
+    var name = a.displayName;
+    try {
+      final full = await _ref
+          .read(personNameDirectoryProvider)
+          .fullName(a.email, account: account)
+          .timeout(const Duration(seconds: 4));
+      if (full != null && PersonNames.better(name, full)) name = full;
+    } catch (_) {}
+    final who = GreetingName.of(name, locale: l10n.localeCode);
+    return who == null ? l10n.tr('assignGreetingNoName') : l10n.tr('assignGreeting').replaceAll('{name}', who);
   }
 
   /// Поручить: по поручению каждому исполнителю (у каждого — свой статус).
@@ -134,7 +144,7 @@ class AssignmentService {
       final srcFrom = source == null ? null : ((source.fromName ?? '').trim().isNotEmpty ? source.fromName! : source.fromEmail);
       final body = AssignmentCodec.body(
         id: id,
-        greeting: l10n.tr('assignGreeting').replaceAll('{name}', _firstName(to)),
+        greeting: await _greeting(to, account, l10n),
         whatLabel: l10n.tr('assignWhatLabel'),
         what: title.trim(),
         description: description,
@@ -641,7 +651,7 @@ class AssignmentService {
     final ev = 'created:$id';
     final body = AssignmentCodec.body(
       id: id,
-      greeting: l10n.tr('assignGreeting').replaceAll('{name}', _firstName(st.executor)),
+      greeting: await _greeting(st.executor, account, l10n),
       whatLabel: l10n.tr('assignWhatLabel'),
       what: st.title.trim(),
       description: st.description,
@@ -854,7 +864,7 @@ class AssignmentService {
         AssignmentCodec.peopleMarker(v.id, person.email, AssignmentRole.co, name: person.displayName, ev: ev);
     final html = AssignmentCodec.body(
       id: v.id,
-      greeting: l10n.tr('assignGreeting').replaceAll('{name}', _firstName(person)),
+      greeting: await _greeting(person, account, l10n),
       whatLabel: l10n.tr('assignWhatLabel'),
       what: fresh.row.title,
       description: [text, if ((fresh.row.description ?? '').trim().isNotEmpty) fresh.row.description!.trim()].join('\n\n'),
@@ -1429,7 +1439,7 @@ class AssignmentService {
     final parent = v.parentId == null ? null : await AssignmentStore.byId(_db, v.parentId!);
     final html = AssignmentCodec.body(
       id: v.id,
-      greeting: l10n.tr('assignGreeting').replaceAll('{name}', _firstName(d.executor)),
+      greeting: await _greeting(d.executor, _account(v.row.accountId), l10n),
       introHtml: _changesHtml(head, changes, note),
       whatLabel: l10n.tr('assignWhatLabel'),
       what: title,
@@ -1640,7 +1650,7 @@ class AssignmentService {
     // 1) Ему — полные сведения: поручение или проект со всеми этапами.
     final html = AssignmentCodec.body(
       id: v.id,
-      greeting: l10n.tr('assignGreeting').replaceAll('{name}', _firstName(person)),
+      greeting: await _greeting(person, account, l10n),
       introHtml: _changesHtml(l10n.tr(handover ? 'assignRightsOwnerYou' : 'assignRightsDeputyYou'), const [], note),
       whatLabel: l10n.tr(v.isProject ? 'assignProjectLabel' : 'assignWhatLabel'),
       what: fresh.row.title,

@@ -4287,4 +4287,5 @@
     <string name="assignStatsTimelineHint">Barra: de la asignación al vencimiento; relleno: parte hecha; borde rojo: vencido. Los vencidos primero.</string>
     <string name="assignStatsShowAll">Mostrar {n} más</string>
     <string name="assignStatsNoDue">Sin vencimiento: {n} (no aparecen en el diagrama).</string>
+    <string name="assignGreetingNoName">Hola:</string>
 </resources>

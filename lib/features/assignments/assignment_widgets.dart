@@ -14,14 +14,18 @@ import '../../core/navigation/app_router.dart' show mailOpenPath;
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
+import '../../data/models/account_model.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
 import '../../services/tasks/task_actions_service.dart' show TaskReschedule;
+import '../../widgets/common/account_avatar.dart' show AccountAvatar, accountMenuEntry;
+import '../../widgets/ui/app_menu_button.dart' show AppMenuButton, AppSelectField;
 import '../../widgets/common/hero_email_transition.dart';
 import '../../widgets/common/peek_card.dart';
 import '../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../../widgets/ui/wheel_pickers.dart';
 import '../../core/utils/text_safe.dart' show initialOf;
+import 'assignment_edit.dart';
 
 /// Подпись статуса.
 String assignmentStatusLabel(int status, AppLocalizations l10n) => l10n.tr(switch (status) {
@@ -58,6 +62,74 @@ class AssignmentStatusPill extends StatelessWidget {
 }
 
 /// Портрет другой стороны поручения (фото из контактов или буква).
+/// Ширина колонки карточки поручения и редактора проекта на планшете и
+/// компьютере (во всю ширину строки читаются плохо).
+const assignmentColumnWidth = 760.0;
+
+/// Выбор ящика, с которого уходит поручение (несколько ящиков).
+class AssignmentAccountField extends StatelessWidget {
+  final List<AccountModel> accounts;
+  final String? selected;
+  final ValueChanged<String> onChanged;
+  const AssignmentAccountField({super.key, required this.accounts, required this.selected, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AppSelectField<String>(
+      key: const ValueKey('assign_account'),
+      value: accounts.any((a) => a.id == selected) ? selected : accounts.firstOrNull?.id,
+      entries: [for (final a in accounts) accountMenuEntry(a)],
+      onChanged: onChanged,
+      // Имя и адрес: у ящиков одного владельца имена часто совпадают.
+      selectedBuilder: (context, sel) => Text(
+        sel == null ? '' : [sel.label, if (sel.subtitle != null) sel.subtitle!].join(' · '),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+      decoration: InputDecoration(
+        labelText: l10n.tr('assignFromMailbox'),
+        prefixIcon: const Icon(AppIcons.inbox),
+        border: const OutlineInputBorder(),
+        isDense: true,
+      ),
+    );
+  }
+}
+
+/// Строка «Отправлено с» / «Получено на» — ящик поручения с портретом.
+Widget assignmentMailboxRow(
+  BuildContext context,
+  AccountModel account, {
+  required bool outgoing,
+  required Widget Function(IconData icon, String label, Widget value, {VoidCallback? onTap}) info,
+}) {
+  final theme = Theme.of(context);
+  final l10n = AppLocalizations.of(context);
+  final name = account.displayName.trim();
+  return info(
+    AppIcons.inbox,
+    l10n.tr(outgoing ? 'assignSentFrom' : 'assignReceivedOn'),
+    Row(children: [
+      AccountAvatar(account: account, radius: 10),
+      const SizedBox(width: Space.s),
+      Expanded(
+        child: Text.rich(
+          TextSpan(children: [
+            if (name.isNotEmpty && name.toLowerCase() != account.email.toLowerCase())
+              TextSpan(text: '$name  ', style: const TextStyle(fontWeight: FontWeight.w500)),
+            TextSpan(text: account.email, style: TextStyle(color: AppColors.mutedText(context))),
+          ]),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.bodyMedium,
+        ),
+      ),
+    ]),
+  );
+}
+
 class AssignmentAvatar extends StatelessWidget {
   final AssignmentView v;
   final double radius;
@@ -94,12 +166,22 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
   final svc = ref.read(assignmentServiceProvider);
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
-  void due(DateTime? d) => assignmentFire(svc.reschedule(v, d));
+  // Перенос на другой день сохраняет время срока (13.11.2026).
+  void due(DateTime? d) => assignmentFire(svc.reschedule(v, d == null ? null : assignmentDueOn(d, v.due)));
   Future<void> pick() async {
     final cur = v.due;
     final d = await showWheelDatePicker(context,
         initial: cur == null || cur.isBefore(today) ? today : cur, first: today, title: l10n.tr('taskPickDate'));
     if (d != null) due(d);
+  }
+
+  Future<void> pickTime() async {
+    final cur = v.due ?? today;
+    final t = await showWheelTimePicker(context,
+        initial: dueHasTime(cur) ? TimeOfDay(hour: cur.hour, minute: cur.minute) : const TimeOfDay(hour: 18, minute: 0),
+        title: l10n.tr('time'),
+        minuteInterval: 5);
+    if (t != null) assignmentFire(svc.reschedule(v, DateTime(cur.year, cur.month, cur.day, t.hour, t.minute)));
   }
 
   final s = v.status;
@@ -145,7 +227,22 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
           PeekAction(
               icon: AppIcons.date_range, label: l10n.tr('laterNextWeek'), onTap: () => due(TaskReschedule.nextWeek(now))),
           PeekAction(icon: AppIcons.calendar_month, label: l10n.tr('taskPickDate'), onTap: () => unawaited(pick())),
+          PeekAction(icon: AppIcons.schedule, label: l10n.tr('time'), onTap: () => unawaited(pickTime())),
           if (v.due != null) PeekAction(icon: AppIcons.event_busy, label: l10n.tr('noDueDate'), onTap: () => due(null)),
+        ]),
+      // Изменить и права постановщика (13.11.2026): у этапа права — в
+      // проекте.
+      if (v.outgoing && v.active && !v.isProject)
+        PeekGroup(items: [
+          PeekAction(
+              icon: AppIcons.edit,
+              label: l10n.tr('edit'),
+              onTap: () => unawaited(editAssignment(context, ref, v))),
+          if (v.parentId == null || !_isStage(ref, v))
+            PeekAction(
+                icon: AppIcons.manage_accounts,
+                label: l10n.tr('assignRights'),
+                onTap: () => unawaited(showRightsSheet(context, ref, v))),
         ]),
       if (src != null)
         PeekGroup(title: l10n.tr('peekGroupMail'), items: [
@@ -176,6 +273,14 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
       ]),
     ],
   );
+}
+
+/// Этап проекта (права постановщика — у проекта, не у этапа).
+bool _isStage(WidgetRef ref, AssignmentView v) {
+  final id = v.parentId;
+  if (id == null) return false;
+  final all = ref.read(assignmentsProvider).value ?? const <AssignmentView>[];
+  return all.where((x) => x.id == id).firstOrNull?.isProject ?? false;
 }
 
 class _AssignmentPeekCard extends StatelessWidget {
@@ -331,6 +436,39 @@ class AssignmentMailCard extends ConsumerWidget {
               style: theme.textTheme.bodySmall?.copyWith(color: AppColors.mutedText(context))),
         ],
       ]),
+    );
+  }
+}
+
+/// Фильтр по ящику: «Все ящики» или один ящик (портрет и имя).
+class AssignmentMailboxChip extends StatelessWidget {
+  final List<AccountModel> accounts;
+  final String? selected;
+  final ValueChanged<String?> onChanged;
+  const AssignmentMailboxChip({super.key, required this.accounts, required this.selected, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final a = accounts.where((x) => x.id == selected).firstOrNull;
+    final name = a == null ? l10n.tr('assignAllMailboxes') : (a.displayName.trim().isNotEmpty ? a.displayName.trim() : a.email);
+    return AppMenuButton<String>(
+      key: const ValueKey('assign_mailbox_filter'),
+      initialValue: selected ?? '',
+      itemBuilder: (_) => [
+        AppMenuEntry<String>(value: '', label: l10n.tr('assignAllMailboxes'), icon: AppIcons.inbox),
+        for (final x in accounts) accountMenuEntry(x),
+      ],
+      onSelected: (id) => onChanged(id.isEmpty ? null : id),
+      child: Chip(
+        avatar: a == null ? const Icon(AppIcons.inbox, size: 18) : AccountAvatar(account: a, radius: 9),
+        backgroundColor: a == null ? null : Theme.of(context).colorScheme.secondaryContainer,
+        label: Row(mainAxisSize: MainAxisSize.min, children: [
+          ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 160), child: Text(name, overflow: TextOverflow.ellipsis)),
+          const Icon(AppIcons.arrow_drop_down, size: 18),
+        ]),
+      ),
     );
   }
 }

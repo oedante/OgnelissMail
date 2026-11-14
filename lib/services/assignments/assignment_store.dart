@@ -35,6 +35,9 @@ abstract final class AssignmentRole {
   static const co = 2; // соисполнитель
   static const observer = 3; // наблюдатель
   static const controller = 4; // контролирующий — принимает работу
+  /// Заместитель постановщика (13.11.2026: смена вахты, начальник и
+  /// заместитель) — те же права, что у постановщика.
+  static const deputy = 5;
 }
 
 /// Поручение для экранов: строка, участники, мои роли.
@@ -43,8 +46,13 @@ class AssignmentView {
   final AssignmentParticipant? assignee;
   final AssignmentParticipant? owner;
 
-  /// Я поручил (иначе — мне поручили или я контролирую, наблюдаю).
+  /// Я поручил или я заместитель постановщика (иначе — мне поручили или я
+  /// контролирую, наблюдаю).
   final bool outgoing;
+
+  /// Я — сам постановщик (не заместитель): автоматические письма проекта
+  /// («Можно начинать», ход работ) уходят от него — без повторов.
+  final bool iOwn;
 
   /// Все участники и мои роли в этом поручении.
   final List<AssignmentParticipant> people;
@@ -55,9 +63,10 @@ class AssignmentView {
     this.assignee,
     this.owner,
     required this.outgoing,
+    bool? iOwn,
     this.people = const [],
     this.myRoles = const {},
-  });
+  }) : iOwn = iOwn ?? outgoing;
 
   String get id => row.id;
   int get status => row.status;
@@ -65,6 +74,7 @@ class AssignmentView {
   DateTime? get due => row.dueAt?.toLocal();
   DateTime? get start => row.startAt?.toLocal();
   bool get isProject => row.isProject;
+  bool get important => row.priority >= AssignmentPriority.important;
   bool get waiting => row.waiting && active;
 
   /// Код родительского поручения (подзадача, 12.11.2026).
@@ -77,6 +87,13 @@ class AssignmentView {
   List<AssignmentParticipant> get coExecutors => _role(AssignmentRole.co);
   List<AssignmentParticipant> get observers => _role(AssignmentRole.observer);
   AssignmentParticipant? get controller => _role(AssignmentRole.controller).firstOrNull;
+  List<AssignmentParticipant> get deputies => _role(AssignmentRole.deputy);
+
+  /// Я — заместитель постановщика.
+  bool get iDeputy => myRoles.contains(AssignmentRole.deputy) && !iOwn;
+
+  /// Видимость проекта: все участники видят план и ход работ.
+  bool get planShared => row.visibility == 0;
 
   /// Мои роли: исполнитель (основной), соисполнитель, контролирующий,
   /// наблюдатель.
@@ -101,10 +118,12 @@ class AssignmentView {
 
   String? get otherEmail => outgoing ? assignee?.email : (owner?.email ?? row.ownerEmail);
 
-  /// Срок прошёл (день срока закончился), а поручение не выполнено.
+  /// Срок прошёл (у срока со временем — время, без него — день срока
+  /// закончился), а поручение не выполнено.
   bool overdue(DateTime now) {
     final d = due;
     if (d == null || !active) return false;
+    if (dueHasTime(d)) return d.isBefore(now);
     return DateTime(d.year, d.month, d.day).isBefore(DateTime(now.year, now.month, now.day));
   }
 }
@@ -112,6 +131,12 @@ class AssignmentView {
 /// Связь «родитель — подзадача» среди поручений [all]. Родитель и
 /// подзадачи — только те, что есть на этом устройстве: у исполнителя
 /// подзадачи родительского поручения может не быть.
+/// Важность поручения (столбец priority).
+abstract final class AssignmentPriority {
+  static const normal = 1;
+  static const important = 2;
+}
+
 extension AssignmentTree on List<AssignmentView> {
   AssignmentView? parentOf(AssignmentView v) {
     final id = v.parentId;
@@ -164,11 +189,13 @@ abstract final class AssignmentStore {
   /// Вид поручения по строке, участникам и моим адресам.
   static AssignmentView view(Assignment r, List<AssignmentParticipant> people, Set<String> me) {
     final roles = {for (final p in people) if (me.contains(p.email.toLowerCase())) p.role};
+    final own = me.contains(r.ownerEmail.toLowerCase());
     return AssignmentView(
       row: r,
       assignee: people.where((p) => p.role == AssignmentRole.responsible).firstOrNull,
       owner: people.where((p) => p.role == AssignmentRole.owner).firstOrNull,
-      outgoing: me.contains(r.ownerEmail.toLowerCase()),
+      outgoing: own || roles.contains(AssignmentRole.deputy),
+      iOwn: own,
       people: people,
       myRoles: roles,
     );
@@ -204,6 +231,9 @@ abstract final class AssignmentStore {
     List<ChecklistItem> checklist = const [],
     List<AssignmentFile> files = const [],
     String? planJson,
+    int revision = 0,
+    int visibility = 0,
+    int? status,
     /// Остальные участники: адрес → (роль, имя).
     Map<String, ({int role, String? name})> others = const {},
   }) async {
@@ -214,7 +244,7 @@ abstract final class AssignmentStore {
               accountId: accountId,
               title: title,
               description: Value(description),
-              status: const Value(AssignmentStatus.open),
+              status: Value(status ?? AssignmentStatus.open),
               priority: Value(priority),
               ownerEmail: ownerEmail.toLowerCase(),
               dueAt: Value(due),
@@ -228,8 +258,10 @@ abstract final class AssignmentStore {
               stageOrder: Value(order),
               checklistJson: Value(ChecklistItem.encode(checklist)),
               filesJson: Value(AssignmentFile.encode(files)),
-              waiting: Value(afterId != null),
+              waiting: Value(afterId != null && (status == null || status == AssignmentStatus.open)),
               planJson: Value(planJson),
+              revision: Value(revision),
+              visibility: Value(visibility),
             ),
             mode: InsertMode.insertOrIgnore,
           );
@@ -318,17 +350,104 @@ abstract final class AssignmentStore {
     List<AssignmentFile>? files,
     bool? waiting,
     String? planJson,
+    bool clearPlan = false,
+    String? title,
+    String? description,
+    bool clearDescription = false,
+    bool clearStart = false,
+    String? afterId,
+    bool clearAfter = false,
+    int? order,
+    int? revision,
+    int? visibility,
+    bool? archived,
+    String? ownerEmail,
   }) =>
       (db.update(db.assignments)..where((a) => a.id.equals(id))).write(AssignmentsCompanion(
         status: status == null ? const Value.absent() : Value(status),
         dueAt: clearDue ? const Value(null) : (due == null ? const Value.absent() : Value(due)),
-        startAt: start == null ? const Value.absent() : Value(start),
+        startAt: clearStart ? const Value(null) : (start == null ? const Value.absent() : Value(start)),
+        title: title == null || title.trim().isEmpty ? const Value.absent() : Value(title.trim()),
+        description: clearDescription
+            ? const Value(null)
+            : (description == null ? const Value.absent() : Value(description)),
+        afterId: clearAfter ? const Value(null) : (afterId == null ? const Value.absent() : Value(afterId)),
+        stageOrder: order == null ? const Value.absent() : Value(order),
+        revision: revision == null ? const Value.absent() : Value(revision),
+        visibility: visibility == null ? const Value.absent() : Value(visibility),
+        isArchived: archived == null ? const Value.absent() : Value(archived),
+        ownerEmail: ownerEmail == null ? const Value.absent() : Value(ownerEmail.toLowerCase()),
         checklistJson: checklist == null ? const Value.absent() : Value(ChecklistItem.encode(checklist)),
         filesJson: files == null ? const Value.absent() : Value(AssignmentFile.encode(files)),
         waiting: waiting == null ? const Value.absent() : Value(waiting),
-        planJson: planJson == null ? const Value.absent() : Value(planJson),
+        planJson: clearPlan ? const Value(null) : (planJson == null ? const Value.absent() : Value(planJson)),
         updatedAt: Value(DateTime.now()),
       ));
+
+  /// Заменить участников поручения (изменение, передача прав): постановщик,
+  /// исполнитель и остальные. Имена — новые, а без них — прежние.
+  static Future<void> setParticipants(
+    AppDatabase db,
+    String id, {
+    required String ownerEmail,
+    String? ownerName,
+    String? assigneeEmail,
+    String? assigneeName,
+    Map<String, ({int role, String? name})> others = const {},
+  }) async {
+    await db.transaction(() async {
+      final old = {for (final p in await participants(db, id)) p.email.toLowerCase(): p.displayName};
+      await (db.delete(db.assignmentParticipants)..where((p) => p.assignmentId.equals(id))).go();
+      final owner = ownerEmail.toLowerCase();
+      final assignee = assigneeEmail?.toLowerCase();
+      Future<void> put(String email, int role, String? name) => db.into(db.assignmentParticipants).insert(
+            AssignmentParticipantsCompanion.insert(
+              assignmentId: id,
+              email: email,
+              displayName: Value((name ?? '').trim().isNotEmpty ? name : old[email]),
+              role: role,
+            ),
+            mode: InsertMode.insertOrReplace,
+          );
+      // Как при создании: постановщик, который сам исполняет этап, — в
+      // участниках исполнителем (одна роль на человека).
+      await put(owner, AssignmentRole.owner, ownerName);
+      if (assignee != null && assignee.isNotEmpty) {
+        await put(assignee, AssignmentRole.responsible, assigneeName);
+      }
+      for (final o in others.entries) {
+        final email = o.key.toLowerCase();
+        if (email == assignee || !email.contains('@')) continue;
+        if (email == owner && o.value.role != AssignmentRole.co && o.value.role != AssignmentRole.controller) continue;
+        await put(email, o.value.role, o.value.name);
+      }
+    });
+  }
+
+  /// Заместители поручения [id] — заменить списком [deputies] (у проекта —
+  /// и у всех его этапов). Адрес, который у этапа в другой роли
+  /// (исполнитель), остаётся в ней.
+  static Future<void> setDeputies(AppDatabase db, String id, Map<String, String?> deputies) async {
+    final row = await byId(db, id);
+    final ids = [id, if (row?.isProject ?? false) for (final r in await stagesOf(db, id)) r.id];
+    await db.transaction(() async {
+      for (final x in ids) {
+        final people = await participants(db, x);
+        for (final p in people) {
+          if (p.role == AssignmentRole.deputy && !deputies.containsKey(p.email.toLowerCase())) {
+            await (db.delete(db.assignmentParticipants)
+                  ..where((q) => q.assignmentId.equals(x) & q.email.equals(p.email)))
+                .go();
+          }
+        }
+        final taken = {for (final p in people) if (p.role != AssignmentRole.deputy && p.role != AssignmentRole.observer) p.email.toLowerCase()};
+        for (final d in deputies.entries) {
+          if (taken.contains(d.key)) continue;
+          await addParticipant(db, x, d.key, AssignmentRole.deputy, name: d.value);
+        }
+      }
+    });
+  }
 
   /// Добавить участника (или сменить роль).
   static Future<void> addParticipant(AppDatabase db, String id, String email, int role, {String? name}) =>
@@ -346,9 +465,11 @@ abstract final class AssignmentStore {
   static Future<List<AssignmentParticipant>> participants(AppDatabase db, String id) =>
       (db.select(db.assignmentParticipants)..where((p) => p.assignmentId.equals(id))).get();
 
-  /// Этапы проекта (подзадачи) по порядку.
-  static Future<List<Assignment>> stagesOf(AppDatabase db, String projectId) => (db.select(db.assignments)
-        ..where((a) => a.parentAssignmentId.equals(projectId))
+  /// Этапы проекта (подзадачи) по порядку; удалённые из проекта — только
+  /// с [removed].
+  static Future<List<Assignment>> stagesOf(AppDatabase db, String projectId, {bool removed = false}) =>
+      (db.select(db.assignments)
+        ..where((a) => a.parentAssignmentId.equals(projectId) & (removed ? const Constant(true) : a.isArchived.equals(false)))
         ..orderBy([
           (a) => OrderingTerm(expression: a.stageOrder),
           (a) => OrderingTerm(expression: a.createdAt),
@@ -417,11 +538,68 @@ abstract final class AssignmentStore {
         if (id == null) continue;
         if (await _apply(db, e, mine[e.accountId] ?? const {}, id)) changes++;
       }
+      changes += await _recheckReview(db, mine);
     } catch (err) {
       AppLogger.warning('Поручения: разбор писем — $err');
     }
     if (changes > 0) AppLogger.info('Поручения: изменений по письмам — $changes');
     return changes;
+  }
+
+  /// Пересмотр (замечание владельца 13.11.2026): у меня поручение «На
+  /// проверке», а постановщик уже ответил «Работа принята» — письмо
+  /// разобрано раньше, когда сервер вырезал скрытую отметку, а слова
+  /// постановщика у исполнителя не разбирались. Его письма после моего
+  /// «Готово» проверяются заново: код «D» или «Принято» словами —
+  /// выполнено; статус — в ту же запись истории.
+  static Future<int> _recheckReview(AppDatabase db, Map<String, Set<String>> mine) async {
+    var n = 0;
+    final rows = await (db.select(db.assignments)
+          ..where((a) =>
+              a.accountId.isIn(mine.keys) & a.status.equals(AssignmentStatus.review) & a.isArchived.equals(false)))
+        .get();
+    for (final a in rows) {
+      final me = mine[a.accountId] ?? const <String>{};
+      final people = await participants(db, a.id);
+      final iExecute = people.any((p) =>
+          me.contains(p.email.toLowerCase()) &&
+          (p.role == AssignmentRole.responsible || p.role == AssignmentRole.co));
+      if (!iExecute) continue;
+      final accepters = {
+        a.ownerEmail.toLowerCase(),
+        for (final p in people)
+          if (p.role == AssignmentRole.deputy || p.role == AssignmentRole.controller) p.email.toLowerCase(),
+      };
+      Map<String, dynamic> payload(AssignmentEvent e) {
+        try {
+          final j = jsonDecode(e.payloadJson);
+          if (j is Map<String, dynamic>) return j;
+        } catch (_) {}
+        return const {};
+      }
+
+      final list = await events(db, a.id);
+      final review = list.lastIndexWhere((e) => payload(e)['status'] == AssignmentStatus.review);
+      for (final e in list.skip(review < 0 ? 0 : review + 1)) {
+        if (e.type != 'message' || e.sourceEmailId == null || !accepters.contains(e.authorEmail.toLowerCase())) continue;
+        final mail = await (db.select(db.emails)..where((m) => m.id.equals(e.sourceEmailId!))).getSingleOrNull();
+        if (mail == null) continue;
+        final text = freshText(mail.bodyHtml, mail.bodyPlain);
+        final act = AssignmentCodec.actionFromText(text);
+        final ok = act != null
+            ? act.id == a.id && act.act == AssignmentAct.accepted
+            : AssignmentPhrases.classify(text) != null;
+        if (!ok) continue;
+        await db.transaction(() async {
+          await update(db, a.id, status: AssignmentStatus.done);
+          await (db.update(db.assignmentEvents)..where((x) => x.id.equals(e.id)))
+              .write(AssignmentEventsCompanion(payloadJson: Value(jsonEncode({...payload(e), 'status': AssignmentStatus.done}))));
+        });
+        n++;
+        break;
+      }
+    }
+    return n;
   }
 
   /// Письма действующих поручений (отправленное поручение, полученное,
@@ -520,6 +698,14 @@ abstract final class AssignmentStore {
           checklist: const <String>[],
           project: false,
           plan: null,
+          rev: null,
+          desc: null,
+          owner: null,
+          deputies: const <String>[],
+          removed: false,
+          visibility: null,
+          files: null,
+          important: false,
         );
       }
       final to = t.to;
@@ -531,18 +717,24 @@ abstract final class AssignmentStore {
         ...t.co,
         if (t.ctl != null) t.ctl!,
         ...t.obs,
+        ...t.deputies,
+        if (t.owner != null) t.owner!,
       }.any(me.contains);
       final projectMine = t.project && me.any(recipients.contains);
       if (!fromMe && !roleMine && !projectMine) {
         if (to != null || t.project) return false;
       }
       final names = _names(e);
+      // Постановщик — из сведений (права переданы: письмо от заместителя),
+      // иначе — отправитель.
+      final owner = t.owner ?? from;
       final assignee = t.project ? to : (to ?? (fromMe ? _firstTo(e.toRecipients) : me.firstOrNull));
       if (!t.project && assignee == null) return false;
       final others = <String, ({int role, String? name})>{
         for (final c in t.co) c: (role: AssignmentRole.co, name: names[c]),
         for (final o in t.obs) o: (role: AssignmentRole.observer, name: names[o]),
         if (t.ctl != null) t.ctl!: (role: AssignmentRole.controller, name: names[t.ctl!]),
+        for (final d in t.deputies) d: (role: AssignmentRole.deputy, name: names[d]),
       };
       // Письмо проекта мне без роли в нём: я — участник его этапов
       // (наблюдатель проекта — чтобы видеть план).
@@ -558,11 +750,13 @@ abstract final class AssignmentStore {
           id: id,
           accountId: e.accountId,
           title: (t.title ?? '').trim().isNotEmpty ? t.title!.trim() : assignmentTitleFromSubject(e.subject),
-          ownerEmail: from,
-          ownerName: e.fromName,
+          description: (t.desc ?? '').trim().isEmpty ? null : t.desc!.trim(),
+          ownerEmail: owner,
+          ownerName: owner == from ? e.fromName : names[owner],
           assigneeEmail: assignee,
           assigneeName: assignee == null ? null : names[assignee],
           due: t.due,
+          priority: t.important ? AssignmentPriority.important : AssignmentPriority.normal,
           sourceEmailId: e.id,
           at: at,
           outgoing: fromMe,
@@ -574,8 +768,17 @@ abstract final class AssignmentStore {
           order: t.order ?? 0,
           checklist: [for (final c in t.checklist) ChecklistItem(c)],
           files: _mailFiles(e),
-          planJson: t.plan,
+          planJson: t.visibility == 1 ? null : t.plan,
+          revision: t.rev ?? 0,
+          visibility: t.visibility ?? 0,
           others: others);
+      if (t.project && t.deputies.isNotEmpty) {
+        await setDeputies(db, id, {for (final d in t.deputies) d: names[d]});
+      }
+      // Мне переданы права постановщика: этапы проекта — из полного плана.
+      if (t.project && (me.contains(owner) || t.deputies.any(me.contains))) {
+        await _stagesFromPlan(db, e.accountId, id, t, owner: owner, names: names, at: at);
+      }
       return true;
     }
 
@@ -588,23 +791,78 @@ abstract final class AssignmentStore {
       if (!known.contains(from)) return false;
     }
     final myRoles = {for (final p in people) if (me.contains(p.email.toLowerCase())) p.role};
-    final outgoing = me.contains(a.ownerEmail.toLowerCase());
+    // Постановщик и заместители — у них права постановщика.
+    final assigners = {
+      a.ownerEmail.toLowerCase(),
+      for (final p in people) if (p.role == AssignmentRole.deputy) p.email.toLowerCase(),
+    };
+    final outgoing = me.any(assigners.contains);
+    final fromAssigner = fromMe || assigners.contains(from);
     final accepting = outgoing || myRoles.contains(AssignmentRole.controller);
+    // Полные сведения — изменение поручения или проекта, удаление этапа,
+    // передача прав: от постановщика или заместителя и новее применённых.
+    if (task != null && task.id == id && task.rev != null && fromAssigner) {
+      if (task.rev! <= a.revision) {
+        await addEvent(db,
+            id: evId, assignmentId: id, type: 'message', author: from, at: at, outgoing: fromMe,
+            payload: {'text': _cut(freshText(html, plain))}, sourceEmailId: e.id);
+        return true;
+      }
+      await _applyRevision(db, e, a, people, task, me, evId: evId, text: freshText(html, plain));
+      return true;
+    }
     int? next;
     String? checks;
     var go = false;
+    // Роль отправителя: код действия и слова принимаются только от того,
+    // кто так может ответить (номер из цитаты чужого письма не в счёт).
+    final senderRoles = {for (final p in people) if (p.email.toLowerCase() == from) p.role};
+    final byAssigner = assigners.contains(from);
+    final byController = senderRoles.contains(AssignmentRole.controller);
+    final byExecutor = senderRoles.contains(AssignmentRole.responsible) || senderRoles.contains(AssignmentRole.co);
+    // Код действия у видимого номера (предложение владельца 13.11.2026):
+    // скрытую отметку сервер мог вырезать, номер с кодом — нет.
+    final act = st == null ? AssignmentCodec.actionFromText(freshText(html, plain)) : null;
+    var dueFromCode = false;
+    DateTime? codeDue;
     if (st != null && st.id == id) {
       next = st.status;
       checks = st.checks;
       go = st.go;
-    } else if (accepting && !fromMe) {
+    } else if (act != null && act.id == id) {
+      switch (act.act) {
+        case AssignmentAct.taken when byExecutor && _forward(a.status, AssignmentStatus.inProgress):
+          next = AssignmentStatus.inProgress;
+        case AssignmentAct.review when byExecutor && _forward(a.status, AssignmentStatus.review):
+          next = AssignmentStatus.review;
+        case AssignmentAct.accepted when byAssigner || byController:
+          next = AssignmentStatus.done;
+        case AssignmentAct.returned when byAssigner || byController:
+          next = AssignmentStatus.inProgress;
+        case AssignmentAct.cancelled when byAssigner:
+          next = AssignmentStatus.cancelled;
+        case AssignmentAct.go when byAssigner:
+          go = true;
+        case AssignmentAct.due when byAssigner && (task == null || task.id != id):
+          dueFromCode = true;
+          codeDue = AssignmentAct.dueFrom(act.arg);
+        default:
+          break;
+      }
+    } else if (!fromMe) {
+      // Ни отметки, ни кода — ответ из другой почты: по словам.
       final sig = AssignmentPhrases.classify(freshText(html, plain));
-      final want = switch (sig) {
-        AssignmentSignal.done => AssignmentStatus.review,
-        AssignmentSignal.accepted => AssignmentStatus.inProgress,
-        null => null,
-      };
-      if (want != null && _forward(a.status, want)) next = want;
+      if (accepting && byExecutor) {
+        final want = switch (sig) {
+          AssignmentSignal.done => AssignmentStatus.review,
+          AssignmentSignal.accepted => AssignmentStatus.inProgress,
+          null => null,
+        };
+        if (want != null && _forward(a.status, want)) next = want;
+      } else if ((byAssigner || byController) && sig != null && a.status == AssignmentStatus.review) {
+        // У исполнителя: «Принято» постановщика на сданную работу — выполнено.
+        next = AssignmentStatus.done;
+      }
     }
     // «Можно начинать» — статус не меняется, этап больше не ждёт.
     if (go && next == AssignmentStatus.open && a.status != AssignmentStatus.open) next = null;
@@ -614,11 +872,12 @@ abstract final class AssignmentStore {
     DateTime? start;
     final added = <String, ({int role, String? name})>{};
     final names = _names(e);
-    if (task != null && task.id == id && (fromMe || !outgoing)) {
+    if (task != null && task.id == id && fromAssigner) {
       if (task.due != null) {
         final d = task.due!;
         final cur = a.dueAt?.toLocal();
-        if (cur == null || DateTime(cur.year, cur.month, cur.day) != DateTime(d.year, d.month, d.day)) due = d;
+        // Со временем (13.11.2026): новый час — тоже новый срок.
+        if (cur == null || cur != d) due = d;
       }
       if (task.start != null) {
         final d = task.start!;
@@ -628,6 +887,15 @@ abstract final class AssignmentStore {
       final known = {for (final p in people) p.email.toLowerCase()};
       for (final c in task.co) {
         if (!known.contains(c)) added[c] = (role: AssignmentRole.co, name: names[c]);
+      }
+    }
+    var clearDue = false;
+    if (dueFromCode) {
+      final cur = a.dueAt?.toLocal();
+      if (codeDue == null) {
+        clearDue = cur != null;
+      } else if (cur == null || cur != codeDue) {
+        due = codeDue;
       }
     }
     if (pm != null && pm.id == id && !people.any((p) => p.email.toLowerCase() == pm.email)) {
@@ -652,7 +920,7 @@ abstract final class AssignmentStore {
           at: at,
           outgoing: fromMe,
           payload: {
-            'text': text.length > 400 ? '${text.substring(0, 400)}…' : text,
+            'text': _cut(text),
             if (next != null && next != a.status) 'status': next,
             if (due != null) 'due': due.toIso8601String(),
             if (go) 'go': true,
@@ -663,10 +931,17 @@ abstract final class AssignmentStore {
       for (final x in added.entries) {
         await addParticipant(db, id, x.key, x.value.role, name: x.value.name);
       }
-      if ((next != null && next != a.status) || due != null || start != null || go || checklist != null || files != null) {
+      if ((next != null && next != a.status) ||
+          due != null ||
+          clearDue ||
+          start != null ||
+          go ||
+          checklist != null ||
+          files != null) {
         await update(db, id,
             status: next != a.status ? next : null,
             due: due,
+            clearDue: clearDue,
             start: start,
             waiting: go ? false : null,
             checklist: checklist,
@@ -674,6 +949,202 @@ abstract final class AssignmentStore {
       }
     });
     return true;
+  }
+
+  static String _cut(String text) => text.length > 400 ? '${text.substring(0, 400)}…' : text;
+
+  /// Полные сведения о поручении [a] из письма постановщика или
+  /// заместителя (13.11.2026): заменяют название, описание, сроки, порядок,
+  /// участников, чек-лист (отметки выполненных пунктов сохраняются) и
+  /// файлы. Проект — ещё видимость, план, заместители и постановщик у всех
+  /// этапов. Этап удалён или меня в нём больше нет — снят.
+  static Future<void> _applyRevision(
+    AppDatabase db,
+    Email e,
+    Assignment a,
+    List<AssignmentParticipant> people,
+    TaskMarker t,
+    Set<String> me, {
+    required String evId,
+    required String text,
+  }) async {
+    final from = e.fromEmail.trim().toLowerCase();
+    final names = _names(e);
+    final oldOwner = a.ownerEmail.toLowerCase();
+    final owner = t.owner ?? oldOwner;
+    final known = {for (final p in people) p.email.toLowerCase(): p.displayName};
+    String? nameOf(String m) => (names[m] ?? '').trim().isNotEmpty ? names[m] : known[m];
+    final deputies = {for (final d in t.deputies) d: nameOf(d)};
+    final mailFiles = _mailFiles(e);
+    List<AssignmentFile>? files;
+    if (t.files != null || mailFiles.isNotEmpty) {
+      final keep = t.files?.map((n) => n.trim().toLowerCase()).toSet();
+      final old = AssignmentFile.decode(a.filesJson);
+      final kept = keep == null ? old : [for (final f in old) if (keep.contains(f.name.trim().toLowerCase())) f];
+      final have = {for (final f in kept) '${f.name.toLowerCase()}|${f.mailId}'};
+      files = [...kept, for (final f in mailFiles) if (have.add('${f.name.toLowerCase()}|${f.mailId}')) f];
+    }
+    await db.transaction(() async {
+      if (a.isProject) {
+        final shared = (t.visibility ?? a.visibility) == 0;
+        await update(db, a.id,
+            title: t.title,
+            description: t.desc,
+            clearDescription: t.desc == null,
+            start: t.start,
+            due: t.due,
+            visibility: t.visibility,
+            revision: t.rev,
+            planJson: shared && t.plan != null ? t.plan : null,
+            clearPlan: !shared,
+            files: files,
+            ownerEmail: owner != oldOwner ? owner : null);
+        // Участники проекта: постановщик, наблюдатели, общий контролирующий,
+        // заместители; я без роли в проекте (участник этапов) — наблюдатель.
+        final others = <String, ({int role, String? name})>{
+          for (final o in t.obs) o: (role: AssignmentRole.observer, name: nameOf(o)),
+          if (t.ctl != null) t.ctl!: (role: AssignmentRole.controller, name: nameOf(t.ctl!)),
+          for (final d in deputies.entries) d.key: (role: AssignmentRole.deputy, name: d.value),
+        };
+        for (final p in people) {
+          final m = p.email.toLowerCase();
+          if (me.contains(m) && m != owner && !others.containsKey(m)) {
+            others[m] = (role: AssignmentRole.observer, name: p.displayName);
+          }
+        }
+        await setParticipants(db, a.id, ownerEmail: owner, ownerName: nameOf(owner), others: others);
+        // Этапы проекта у меня: заместители и (после передачи прав) новый
+        // постановщик; прежний — наблюдатель.
+        await setDeputies(db, a.id, deputies);
+        final stages = await stagesOf(db, a.id);
+        // Права сняты: у этапов, где у меня не осталось роли, — наблюдатель
+        // (иначе этап выглядел бы порученным мне).
+        for (final r in stages) {
+          final ps = await participants(db, r.id);
+          if (ps.any((q) => me.contains(q.email.toLowerCase())) || me.contains(r.ownerEmail.toLowerCase())) continue;
+          final mine = people.where((q) => me.contains(q.email.toLowerCase())).firstOrNull;
+          if (mine != null) await addParticipant(db, r.id, mine.email, AssignmentRole.observer, name: mine.displayName);
+        }
+        if (owner != oldOwner) {
+          for (final r in stages) {
+            await update(db, r.id, ownerEmail: owner);
+            final roles = {for (final q in await participants(db, r.id)) q.email.toLowerCase(): q.role};
+            bool free(String m) => roles[m] == null || roles[m] == AssignmentRole.observer || roles[m] == AssignmentRole.deputy || roles[m] == AssignmentRole.owner;
+            if (free(owner)) await addParticipant(db, r.id, owner, AssignmentRole.owner, name: nameOf(owner));
+            if (free(oldOwner)) await addParticipant(db, r.id, oldOwner, AssignmentRole.observer, name: nameOf(oldOwner));
+          }
+        }
+        // Ход работ из плана — у этапов, где я не исполнитель (заместитель,
+        // контролирующий): сведения новее моей последней отметки.
+        final plan = PlanStage.decode(t.plan);
+        for (final p in plan) {
+          final r = stages.where((x) => x.id == p.id).firstOrNull;
+          if (r == null || p.status == null || p.status == r.status) continue;
+          if (r.updatedAt.millisecondsSinceEpoch ~/ 1000 >= t.rev!) continue;
+          final roles = {
+            for (final q in await participants(db, r.id)) if (me.contains(q.email.toLowerCase())) q.role,
+          };
+          if (roles.contains(AssignmentRole.responsible) || roles.contains(AssignmentRole.co)) continue;
+          await update(db, r.id, status: p.status);
+        }
+        if (me.contains(owner) || deputies.keys.any(me.contains)) {
+          await _stagesFromPlan(db, a.accountId, a.id, t, owner: owner, names: names, at: e.receivedAt);
+        }
+      } else {
+        final inIt = me.contains(owner) ||
+            {if (t.to != null) t.to!, ...t.co, if (t.ctl != null) t.ctl!, ...t.obs, ...deputies.keys}.any(me.contains);
+        final afterChanged = t.after != a.afterId;
+        var waiting = a.waiting;
+        if (afterChanged) {
+          final prev = t.after == null ? null : await byId(db, t.after!);
+          waiting = t.after != null && prev?.status != AssignmentStatus.done && a.status == AssignmentStatus.open;
+        }
+        final cancel = (t.removed || !inIt) && AssignmentStatus.isActive(a.status);
+        await update(db, a.id,
+            title: t.title,
+            description: t.desc,
+            clearDescription: t.desc == null,
+            start: t.start,
+            clearStart: t.start == null,
+            due: t.due,
+            clearDue: t.due == null,
+            afterId: t.after,
+            clearAfter: t.after == null,
+            order: t.order,
+            checklist: mergeChecklist(ChecklistItem.decode(a.checklistJson), t.checklist),
+            files: files,
+            waiting: waiting,
+            revision: t.rev,
+            status: cancel ? AssignmentStatus.cancelled : null,
+            archived: t.removed ? true : null,
+            ownerEmail: owner != oldOwner ? owner : null);
+        await setParticipants(db, a.id,
+            ownerEmail: owner,
+            ownerName: nameOf(owner),
+            assigneeEmail: t.to,
+            assigneeName: t.to == null ? null : nameOf(t.to!),
+            others: {
+              for (final c in t.co) c: (role: AssignmentRole.co, name: nameOf(c)),
+              for (final o in t.obs) o: (role: AssignmentRole.observer, name: nameOf(o)),
+              if (t.ctl != null) t.ctl!: (role: AssignmentRole.controller, name: nameOf(t.ctl!)),
+              for (final d in deputies.entries) d.key: (role: AssignmentRole.deputy, name: d.value),
+              if (owner != oldOwner) oldOwner: (role: AssignmentRole.observer, name: nameOf(oldOwner)),
+            });
+      }
+      await addEvent(db,
+          id: evId,
+          assignmentId: a.id,
+          type: t.removed ? 'removed' : 'edited',
+          author: from,
+          at: e.receivedAt,
+          outgoing: me.contains(from),
+          payload: {'text': _cut(text)},
+          sourceEmailId: e.id);
+    });
+  }
+
+  /// Этапы проекта [projectId] из полного плана — у нового постановщика и
+  /// заместителя (передача прав): каких этапов нет — появляются целиком.
+  static Future<void> _stagesFromPlan(
+    AppDatabase db,
+    String accountId,
+    String projectId,
+    TaskMarker t, {
+    required String owner,
+    required Map<String, String?> names,
+    required DateTime at,
+  }) async {
+    final plan = PlanStage.decode(t.plan);
+    for (final p in plan) {
+      if (await byId(db, p.id) != null) continue;
+      String? nm(String m) => p.names[m] ?? names[m];
+      await insert(db,
+          id: p.id,
+          accountId: accountId,
+          title: p.title,
+          description: (p.description ?? '').trim().isEmpty ? null : p.description,
+          ownerEmail: owner,
+          ownerName: nm(owner),
+          assigneeEmail: p.assignee,
+          assigneeName: p.assigneeName ?? (p.assignee == null ? null : nm(p.assignee!)),
+          due: p.due,
+          start: p.start,
+          at: at,
+          outgoing: false,
+          eventId: 'created:${p.id}',
+          parentId: projectId,
+          afterId: p.after,
+          order: p.order,
+          checklist: p.checklist,
+          status: p.status,
+          revision: t.rev ?? 0,
+          others: {
+            for (final c in p.co) c: (role: AssignmentRole.co, name: nm(c)),
+            for (final o in p.observers) o: (role: AssignmentRole.observer, name: nm(o)),
+            if (p.controller != null) p.controller!: (role: AssignmentRole.controller, name: nm(p.controller!)),
+            for (final d in t.deputies) d: (role: AssignmentRole.deputy, name: names[d]),
+          });
+    }
   }
 
   /// Имена из «Кому» и «Копии» письма: адрес → имя.

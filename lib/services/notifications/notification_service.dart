@@ -825,6 +825,32 @@ class NotificationService {
         ],
       );
 
+  /// Срок поручения (13.11.2026): исполнителю — накануне и в день срока,
+  /// поручившему — когда срок прошёл. Канал — как у задач; кнопка — «Через
+  /// час» (сдать работу из шторки нельзя: «Готово» уходит письмом).
+  Future<void> scheduleAssignmentReminder({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime when,
+    String? payload,
+    String? mailbox,
+    Uint8List? mailboxIcon,
+  }) => _schedule(
+        id: id,
+        title: title,
+        body: body,
+        when: when,
+        mailbox: mailbox,
+        mailboxIcon: mailboxIcon,
+        channelId: 'task_reminders',
+        channelName: _t('ntfChTasks'),
+        channelDesc: _t('ntfChTasksDesc'),
+        payload: payload,
+        category: AndroidNotificationCategory.reminder,
+        actions: [AndroidNotificationAction('snooze', _t('ntfSnooze1h'))],
+      );
+
   /// Утренняя сводка: одно тихое уведомление в выбранное время («3 встречи,
   /// 2 задачи, 4 письма на контроле»), нажатие открывает «Мой день».
   Future<void> scheduleDigest({

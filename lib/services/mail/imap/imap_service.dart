@@ -537,6 +537,9 @@ class ImapService {
         await client.startTls().timeout(const Duration(seconds: 10));
         await client.ehlo().timeout(const Duration(seconds: 10));
       } else {
+        // Соединение закрыть сразу: иначе сервер держит его до своего
+        // тайм-аута (Mercury — 30 с после «554 Invalid HELO format»).
+        try { await client.disconnect(); } catch (_) {}
         rethrow;
       }
     }
@@ -1013,7 +1016,7 @@ class ImapService {
       // не появлялись в «Отправленных» — счётчику сервера верить нельзя.
       // «n:*» всегда возвращает хотя бы последнее письмо, даже если его UID
       // меньше n, — такие отбрасываем.
-      final flags = <int, ({bool read, bool flagged})>{};
+      final flags = <int, ({bool read, bool flagged, int marks})>{};
       final above = <int>{};
       final r = await client.uidFetchMessages(
           MessageSequence.fromRangeToLast(known.minUid, isUidSequence: true), '(UID FLAGS)');
@@ -1027,6 +1030,7 @@ class ImapService {
         flags[uid] = (
           read: m.flags?.contains(MessageFlags.seen) ?? false,
           flagged: m.flags?.contains(MessageFlags.flagged) ?? false,
+          marks: marksOf(m.flags),
         );
       }
 
@@ -1130,12 +1134,12 @@ class ImapService {
   Future<ImapFolderDelta?> _syncFolderFast(
       ImapClient client, AccountModel account, String folderId, ImapFolderState known) async {
     final qresync = client.serverInfo.isEnabled(ImapServerInfo.capabilityQresync);
-    final changed = <int, ({bool read, bool flagged})>{};
+    final changed = <int, ({bool read, bool flagged, int marks})>{};
     void take(MimeMessage m) {
       final uid = m.uid;
       final f = m.flags;
       if (uid == null || f == null || uid < known.minUid || uid > known.maxUid) return;
-      changed[uid] = (read: f.contains(MessageFlags.seen), flagged: f.contains(MessageFlags.flagged));
+      changed[uid] = (read: f.contains(MessageFlags.seen), flagged: f.contains(MessageFlags.flagged), marks: marksOf(f));
     }
 
     Set<int>? vanished;
@@ -1614,6 +1618,9 @@ class ImapService {
       if (DeliveryReportHints.isReportType(rootType?.mediaType.text, rootType?.parameters['report-type'])) {
         DeliveryReportHints.add(accountId, '$folderId:$uid');
       }
+      // «На контроле» и «Позже» с другого устройства (13.11.2026).
+      final marks = marksOf(msg.flags);
+      if (marks != 0) ImapMarkHints.add(accountId, '$folderId:$uid', marks);
 
       return EmailModel(
         // UID уникален только внутри папки → делаем глобально-уникальный id
@@ -2051,6 +2058,39 @@ class ImapService {
   static String imapSearchDate(DateTime d) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return '${d.day}-${months[d.month - 1]}-${d.year}';
+  }
+
+  /// Список вложений письма по структуре (BODYSTRUCTURE, без текста и
+  /// файлов): для писем, тело которых уже на телефоне, а список вложений
+  /// собран прежними правилами (13.11.2026, «Fwd: Занавеси»: фото «inline»
+  /// без Content-ID). null — письма нет на сервере.
+  Future<List<EmailAttachment>?> fetchAttachmentList(AccountModel account,
+          {required String folderId, required int uid}) =>
+      _withClient<List<EmailAttachment>?>(account, (client) async {
+        await client.selectMailboxByPath(folderId);
+        final r = await client.uidFetchMessages(MessageSequence.fromId(uid, isUid: true), '(UID BODYSTRUCTURE)');
+        if (r.messages.isEmpty) return null;
+        final structure = r.messages.first.body;
+        final list = <EmailAttachment>[];
+        if (structure != null) collectAttachments(structure, list);
+        return list;
+      });
+
+  /// Стоит ли спросить у сервера список вложений письма, тело которого уже
+  /// на телефоне: списка нет, а письмо заметно больше своего текста — значит,
+  /// в нём есть файлы, которые прежние правила не посчитали вложениями.
+  static bool attachmentsMayBeMissing({required int? size, required String? attachmentsJson,
+      required String? bodyHtml, required String? bodyPlain, bool hasAttachments = false}) {
+    final list = (attachmentsJson ?? '').trim();
+    if (list.isNotEmpty && list != '[]') return false;
+    // Скрепка в ленте (по структуре письма при синхронизации), а списка нет.
+    if (hasAttachments) return true;
+    final total = size ?? 0;
+    if (total <= 0) return false;
+    final text = (bodyHtml?.length ?? 0) + (bodyPlain?.length ?? 0);
+    // Заголовки, кодировка base64/quoted-printable и вторая версия текста
+    // (HTML и простой) — с большим запасом.
+    return total > text * 2 + 16 * 1024;
   }
 
   Future<Uint8List?> fetchRawMessage(AccountModel account,
@@ -2650,6 +2690,44 @@ class ImapService {
     });
   }
 
+  // ═══════ «НА КОНТРОЛЕ» И «ПОЗЖЕ» НА СЕРВЕРЕ (13.11.2026) ═══════
+  // Два постоянных ключевых слова IMAP на письме (решение владельца: без
+  // дат, без служебных писем и папок; в Gmail — два ярлыка). Сроки —
+  // на устройстве (mark_sync_service.dart).
+
+  static const kwControl = r'$OgnControl';
+  static const kwLater = r'$OgnLater';
+
+  /// Отметки из флагов письма: 1 — «На контроле», 2 — «Позже».
+  static int marksOf(List<String>? flags) {
+    if (flags == null) return 0;
+    var m = 0;
+    for (final f in flags) {
+      final l = f.toLowerCase();
+      if (l == kwControl.toLowerCase()) m |= 1;
+      if (l == kwLater.toLowerCase()) m |= 2;
+    }
+    return m;
+  }
+
+  /// Поставить или снять отметки на письме. false — сервер не хранит свои
+  /// ключевые слова (в PERMANENTFLAGS нет «\*»): отметки остаются на
+  /// устройстве.
+  Future<bool> setMarks(AccountModel account,
+      {required String folderId, required String uid, bool? control, bool? later}) {
+    return _withClient(account, (client) async {
+      final box = await client.selectMailboxByPath(folderId);
+      final perm = box.permanentMessageFlags;
+      if (perm.isNotEmpty && !perm.contains(r'\*')) return false;
+      final seq = MessageSequence.fromId(_uidInt(uid), isUid: true);
+      final add = [if (control == true) kwControl, if (later == true) kwLater];
+      final remove = [if (control == false) kwControl, if (later == false) kwLater];
+      if (add.isNotEmpty) await client.uidStore(seq, add, action: StoreAction.add, silent: true);
+      if (remove.isNotEmpty) await client.uidStore(seq, remove, action: StoreAction.remove, silent: true);
+      return true;
+    });
+  }
+
   /// Колбэк после успешного переноса: (аккаунт, старый id, папка, новый id|null).
   Future<void> Function(String accountId, String oldId, String toFolderId, String? newId)? onMoved;
 
@@ -2954,6 +3032,20 @@ class ImapPushEvent {
   String toString() => 'ImapPushEvent($folderId, $count)';
 }
 
+/// Отметки новых писем, найденные при разборе (ключевые слова
+/// $OgnControl, $OgnLater): синхронизация забирает их после сохранения.
+class ImapMarkHints {
+  static final _m = <String, Map<String, int>>{};
+
+  static void add(String accountId, String emailId, int marks) {
+    final a = _m.putIfAbsent(accountId, () => {});
+    a[emailId] = marks;
+    if (a.length > 2000) a.remove(a.keys.first);
+  }
+
+  static Map<String, int> take(String accountId) => _m.remove(accountId) ?? const {};
+}
+
 /// Изменения папки IMAP за один проход.
 class ImapFolderDelta {
   /// Новые письма и догруженная история (с флагами).
@@ -2961,7 +3053,7 @@ class ImapFolderDelta {
   /// Из них — догруженная история (письма старше загруженных ранее).
   final List<EmailModel> backfilled;
   /// UID → флаги писем, которые уже были в приложении.
-  final Map<int, ({bool read, bool flagged})> flags;
+  final Map<int, ({bool read, bool flagged, int marks})> flags;
   /// UID, которые есть на сервере в проверенном диапазоне.
   final Set<int> present;
   final ImapFolderState state;

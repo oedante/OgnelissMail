@@ -92,6 +92,9 @@ class NotificationRouter {
           return id == null ? '/tasks' : tasksPath(openTaskId: id, accountId: accountId);
         case 'myday':
           return '/my-day';
+        case 'assignment':
+          final id = m['id'] as String?;
+          return id == null || id.isEmpty ? '/assignments' : '/assignments/$id';
         default:
           return null;
       }

@@ -27,9 +27,23 @@ import '../../services/assignments/assignment_service.dart';
 import '../../services/assignments/assignment_store.dart' show AssignmentFile, nextStageDates;
 import '../../widgets/common/app_sheet.dart';
 import '../../widgets/common/hero_email_transition.dart';
+import '../../widgets/common/readable_width.dart';
 import '../../widgets/ui/wheel_pickers.dart';
 import '../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
 import '../mail/providers/mail_providers.dart' show accountsProvider, activeAccountProvider;
+import 'assignment_widgets.dart' show AssignmentAccountField, assignmentColumnWidth;
+
+/// «Изменить проект» (13.11.2026): название, описание, начало, видимость
+/// плана, участники, файлы, этапы — добавить, изменить, удалить. true —
+/// изменения разосланы.
+Future<bool> showProjectEdit(BuildContext context, AssignmentView project, List<AssignmentView> stages) async {
+  final ok = await Navigator.of(context).push<bool>(
+    MaterialPageRoute(
+        builder: (_) => ProjectEditorScreen(accountId: project.row.accountId, edit: project, editStages: stages),
+        fullscreenDialog: true),
+  );
+  return ok ?? false;
+}
 
 /// Открыть «Новый проект». true — проект создан.
 Future<bool> showProjectEditor(BuildContext context, {String? accountId, String? title, String? description}) async {
@@ -87,7 +101,12 @@ class ProjectEditorScreen extends ConsumerStatefulWidget {
   /// Начальные название и описание (переход из «Поручить»).
   final String? title;
   final String? description;
-  const ProjectEditorScreen({super.key, this.accountId, this.title, this.description});
+
+  /// Изменить созданный проект (иначе — новый).
+  final AssignmentView? edit;
+  final List<AssignmentView> editStages;
+  const ProjectEditorScreen(
+      {super.key, this.accountId, this.title, this.description, this.edit, this.editStages = const []});
 
   @override
   ConsumerState<ProjectEditorScreen> createState() => _ProjectEditorScreenState();
@@ -104,17 +123,24 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
     return DateTime(n.year, n.month, n.day);
   }
 
+  /// Ящик, выбранный вручную (несколько ящиков).
+  String? _accountId;
+
   AccountModel? get _account {
     final accounts = ref.read(accountsProvider);
-    final id = widget.accountId ?? ref.read(activeAccountProvider)?.id;
+    final id = _accountId ?? widget.accountId ?? ref.read(activeAccountProvider)?.id;
     return accounts.where((a) => a.id == id).firstOrNull ?? accounts.firstOrNull;
   }
+
+  bool get _editing => widget.edit != null;
 
   @override
   void initState() {
     super.initState();
-    _title.text = widget.title ?? '';
-    _desc.text = widget.description ?? '';
+    final e = widget.edit;
+    if (e != null) _d = ProjectDraft.fromProject(e, widget.editStages);
+    _title.text = e?.row.title ?? widget.title ?? '';
+    _desc.text = e?.row.description ?? widget.description ?? '';
     _title.addListener(() => setState(() {}));
   }
 
@@ -253,7 +279,13 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
     _d
       ..title = _title.text.trim()
       ..description = _desc.text.trim();
-    await ref.read(assignmentServiceProvider).createProject(account, _d);
+    final svc = ref.read(assignmentServiceProvider);
+    final e = widget.edit;
+    if (e != null) {
+      await svc.updateProject(e, _d);
+    } else {
+      await svc.createProject(account, _d);
+    }
     if (mounted) Navigator.of(context).pop(true);
   }
 
@@ -272,8 +304,9 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
         );
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.tr('projNew')),
+        title: Text(l10n.tr(_editing ? 'projEdit' : 'projNew')),
         actions: [
+          if (!_editing)
           IconButton(
             key: const ValueKey('proj_from_template'),
             tooltip: l10n.tr('projFromTemplate'),
@@ -288,23 +321,30 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
         ],
       ),
       bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.m),
-          child: FilledButton.icon(
-            key: const ValueKey('proj_send'),
-            onPressed: _ready && !_sending ? () => unawaited(_send()) : null,
-            icon: _sending
-                ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(AppIcons.send, size: 18),
-            label: Text(l10n.tr('projSend')),
+        child: ReadableWidth(
+          maxWidth: assignmentColumnWidth,
+          heightFactor: 1,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.m),
+            child: FilledButton.icon(
+              key: const ValueKey('proj_send'),
+              onPressed: _ready && !_sending ? () => unawaited(_send()) : null,
+              icon: _sending
+                  ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(AppIcons.send, size: 18),
+              label: Text(l10n.tr(_editing ? 'projSaveChanges' : 'projSend')),
+            ),
           ),
         ),
       ),
-      body: ListView(padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.xl), children: [
+      body: ReadableWidth(
+          maxWidth: assignmentColumnWidth,
+          fill: true,
+          child: ListView(padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.xl), children: [
         TextField(
           key: const ValueKey('proj_title'),
           controller: _title,
-          autofocus: true,
+          autofocus: !_editing,
           textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(border: const OutlineInputBorder(), labelText: l10n.tr('projTitleHint')),
         ),
@@ -316,6 +356,15 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
           textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(border: const OutlineInputBorder(), labelText: l10n.tr('projDescription')),
         ),
+        // С какого ящика уйдут письма проекта.
+        if (ref.watch(accountsProvider).length > 1 && _account != null) ...[
+          const SizedBox(height: Space.m),
+          AssignmentAccountField(
+            accounts: ref.watch(accountsProvider),
+            selected: _account!.id,
+            onChanged: (id) => setState(() => _accountId = id),
+          ),
+        ],
         label(l10n.tr('projStart')),
         Align(
           alignment: Alignment.centerLeft,
@@ -324,6 +373,17 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
             label: Text(_d.start == null ? l10n.tr('taskPickDate') : fmt.format(_d.start!)),
             onPressed: () => unawaited(_pickStart()),
           ),
+        ),
+        // Видимость плана (13.11.2026): по умолчанию все участники видят,
+        // кто что и после кого делает, и статусы этапов.
+        SwitchListTile(
+          key: const ValueKey('proj_visibility'),
+          contentPadding: EdgeInsets.zero,
+          value: _d.visibility == 0,
+          onChanged: (v) => setState(() => _d.visibility = v ? 0 : 1),
+          title: Text(l10n.tr('projVisAll')),
+          subtitle: Text(l10n.tr(_d.visibility == 0 ? 'projVisAllDesc' : 'projVisOwnDesc'),
+              style: theme.textTheme.bodySmall?.copyWith(color: muted)),
         ),
         label(l10n.tr('projController')),
         Wrap(spacing: Space.xs, runSpacing: Space.xs, children: [
@@ -372,7 +432,7 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
             onTap: () => unawaited(_editStage(i)),
             onDelete: () => _removeStage(i),
           ),
-      ]),
+      ])),
     );
   }
 }
@@ -454,26 +514,33 @@ class _FilesEditor extends StatelessWidget {
   }
 }
 
-/// Редактор этапа. [index] — изменить этап; null — новый.
+/// Редактор этапа. [index] — изменить этап; null — новый. [heading] —
+/// свой заголовок («Изменить поручение»), [showOrder] — выбор «после
+/// этапа» (у поручения без проекта — нет).
 Future<StageDraft?> showStageEditor(
   BuildContext context,
   WidgetRef ref, {
   required ProjectDraft project,
   int? index,
   AccountModel? account,
+  String? heading,
+  bool showOrder = true,
 }) =>
     showAppSheet<StageDraft>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (_) => _StageSheet(project: project, index: index, account: account),
+      builder: (_) =>
+          _StageSheet(project: project, index: index, account: account, heading: heading, showOrder: showOrder),
     );
 
 class _StageSheet extends StatefulWidget {
   final ProjectDraft project;
   final int? index;
   final AccountModel? account;
-  const _StageSheet({required this.project, this.index, this.account});
+  final String? heading;
+  final bool showOrder;
+  const _StageSheet({required this.project, this.index, this.account, this.heading, this.showOrder = true});
 
   @override
   State<_StageSheet> createState() => _StageSheetState();
@@ -545,12 +612,25 @@ class _StageSheetState extends State<_StageSheet> {
     setState(() {
       if (start) {
         _start = d;
-        if (_due != null && _due!.isBefore(d)) _due = d;
+        if (_due != null && _due!.isBefore(d)) _due = assignmentDueOn(d, _due);
       } else {
-        _due = d;
+        _due = assignmentDueOn(d, _due);
         if (_start != null && _start!.isAfter(d)) _start = d;
       }
     });
+  }
+
+  /// Время срока этапа (13.11.2026).
+  Future<void> _time() async {
+    final l10n = AppLocalizations.of(context);
+    final now = DateTime.now();
+    final base = _due ?? DateTime(now.year, now.month, now.day);
+    final t = await showWheelTimePicker(context,
+        initial: dueHasTime(_due) ? TimeOfDay(hour: base.hour, minute: base.minute) : const TimeOfDay(hour: 18, minute: 0),
+        title: l10n.tr('time'),
+        minuteInterval: 5);
+    if (t == null) return;
+    setState(() => _due = DateTime(base.year, base.month, base.day, t.hour, t.minute));
   }
 
   void _setAfter(int? a) {
@@ -587,7 +667,8 @@ class _StageSheetState extends State<_StageSheet> {
           padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.l),
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Text(
-              widget.index == null ? l10n.tr('projAddStage') : '${l10n.tr('projStage')} ${widget.index! + 1}',
+              widget.heading ??
+                  (widget.index == null ? l10n.tr('projAddStage') : '${l10n.tr('projStage')} ${widget.index! + 1}'),
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: Space.m),
@@ -659,7 +740,8 @@ class _StageSheetState extends State<_StageSheet> {
                 },
               ),
             ]),
-            label(l10n.tr('projOrder')),
+            if (widget.showOrder) label(l10n.tr('projOrder')),
+            if (widget.showOrder)
             Wrap(spacing: Space.xs, runSpacing: Space.xs, children: [
               ChoiceChip(
                 label: Text(l10n.tr('projParallel')),
@@ -685,6 +767,21 @@ class _StageSheetState extends State<_StageSheet> {
                 label: Text(_due == null ? l10n.tr('projDueDate') : fmt.format(_due!)),
                 onPressed: () => unawaited(_date(false)),
               ),
+              if (dueHasTime(_due))
+                InputChip(
+                  key: const ValueKey('stage_time'),
+                  avatar: const Icon(AppIcons.schedule, size: 18),
+                  label: Text(l10n.tr('calUntilTime').replaceAll('{time}', DateFormat('HH:mm').format(_due!))),
+                  onPressed: () => unawaited(_time()),
+                  onDeleted: () => setState(() => _due = DateTime(_due!.year, _due!.month, _due!.day)),
+                )
+              else
+                ActionChip(
+                  key: const ValueKey('stage_time'),
+                  avatar: const Icon(AppIcons.schedule, size: 18),
+                  label: Text(l10n.tr('time')),
+                  onPressed: () => unawaited(_time()),
+                ),
             ]),
             label(l10n.tr('projChecklist')),
             for (var i = 0; i < _checklist.length; i++)
@@ -724,6 +821,7 @@ class _StageSheetState extends State<_StageSheet> {
                       Navigator.pop(
                         context,
                         StageDraft(
+                          id: _orig?.id,
                           title: _title.text.trim(),
                           description: _desc.text.trim(),
                           executor: _executor!,

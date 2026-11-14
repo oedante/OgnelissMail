@@ -20,14 +20,17 @@ import '../../core/theme/tokens.dart';
 import '../../widgets/navigation/app_bottom_bar.dart' show AppBottomBar;
 import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
+import '../../widgets/common/account_avatar.dart' show AccountAvatar;
 import '../../widgets/common/peek_card.dart' show peekAnchorOf;
+import '../mail/providers/mail_providers.dart' show accountsProvider;
 import '../../widgets/ui/empty_state.dart';
 import '../../services/assignments/assignment_store.dart' show AssignmentTree, projectStatus;
 import 'assign_sheet.dart';
 import 'assignment_widgets.dart';
+import 'assignments_summary_screen.dart' show showAssignmentsSummary;
 import 'project_editor.dart' show showProjectEditor;
 
-enum _Filter { all, overdue, review, control, observe }
+enum _Filter { all, overdue, review, control, help, observe }
 
 class AssignmentsScreen extends ConsumerStatefulWidget {
   const AssignmentsScreen({super.key});
@@ -44,6 +47,16 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
   bool _showDone = false;
   List<AssignmentView> _all = const [];
 
+  /// Ящик (несколько ящиков): null — все.
+  String? _accountId;
+
+  Widget _summary(AppLocalizations l10n) => IconButton(
+        key: const ValueKey('assign_summary'),
+        tooltip: l10n.tr('assignSummary'),
+        icon: const Icon(AppIcons.analytics),
+        onPressed: () => unawaited(showAssignmentsSummary(context)),
+      );
+
   Widget _newProject(AppLocalizations l10n) => IconButton(
         key: const ValueKey('assign_new_project'),
         tooltip: l10n.tr('projNew'),
@@ -54,7 +67,10 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final all = ref.watch(assignmentsProvider).value ?? const <AssignmentView>[];
+    final accounts = ref.watch(accountsProvider);
+    if (_accountId != null && !accounts.any((a) => a.id == _accountId)) _accountId = null;
+    final everything = ref.watch(assignmentsProvider).value ?? const <AssignmentView>[];
+    final all = _accountId == null ? everything : [for (final v in everything) if (v.row.accountId == _accountId) v];
     _all = all;
     // Этапы своего проекта — внутри проекта, не отдельными строками.
     final myProjects = {for (final v in all) if (v.outgoing && v.isProject) v.id};
@@ -89,7 +105,7 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
           ]),
         );
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.tr('assignments')), actions: [_newProject(l10n)]),
+      appBar: AppBar(title: Text(l10n.tr('assignments')), actions: [_summary(l10n), _newProject(l10n)]),
       floatingActionButton: fab,
       body: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         column(l10n.tr('assignTabMine'), nMine, mine),
@@ -106,7 +122,7 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.tr('assignments')),
-          actions: [_newProject(l10n)],
+          actions: [_summary(l10n), _newProject(l10n)],
           bottom: TabBar(tabs: [
             Tab(text: '${l10n.tr('assignTabMine')} · $nMine'),
             Tab(text: '${l10n.tr('assignTabToMe')} · $nToMe'),
@@ -134,12 +150,16 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
     final reviewN = activeItems.where((v) => v.status == AssignmentStatus.review).length;
     final controlN = activeItems.where((v) => v.iControl).length;
     final observeN = activeItems.where((v) => v.iObserve).length;
+    final helpN = activeItems.where((v) => v.iCoExecute).length;
     var shown = activeItems;
     if (_filter == _Filter.overdue) shown = [for (final v in shown) if (late(v)) v];
     if (_filter == _Filter.review) shown = [for (final v in shown) if (v.status == AssignmentStatus.review) v];
     if (_filter == _Filter.control) shown = [for (final v in shown) if (v.iControl) v];
     if (_filter == _Filter.observe) shown = [for (final v in shown) if (v.iObserve) v];
+    if (_filter == _Filter.help) shown = [for (final v in shown) if (v.iCoExecute) v];
     shown = [...shown]..sort((a, b) {
+        // Важные — первыми в своей группе.
+        if (a.important != b.important) return a.important ? -1 : 1;
         final da = a.due, db = b.due;
         if (da == null && db == null) return b.row.createdAt.compareTo(a.row.createdAt);
         if (da == null) return 1;
@@ -175,6 +195,14 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
           children: [
+            if (ref.watch(accountsProvider).length > 1) ...[
+              AssignmentMailboxChip(
+                accounts: ref.watch(accountsProvider),
+                selected: _accountId,
+                onChanged: (id) => setState(() => _accountId = id),
+              ),
+              const SizedBox(width: Space.xs),
+            ],
             FilterChip(
                 label: Text(l10n.tr('all')),
                 selected: _filter == _Filter.all,
@@ -192,6 +220,7 @@ class _AssignmentsScreenState extends ConsumerState<AssignmentsScreen> {
             // По ролям — только когда такие есть в этом списке.
             for (final (f, key, n) in [
               (_Filter.control, 'filterControl', controlN),
+              (_Filter.help, 'filterHelp', helpN),
               (_Filter.observe, 'filterObserve', observeN),
             ])
               if (n > 0 || _filter == f) ...[
@@ -261,7 +290,7 @@ class _AssignmentRow extends ConsumerWidget {
         : v.iControl
             ? l10n.tr('filterControl')
             : v.iCoExecute
-                ? l10n.tr('projRoleCo')
+                ? l10n.tr('filterHelp')
                 : v.iObserve
                     ? l10n.tr('filterObserve')
                     : null;
@@ -271,11 +300,28 @@ class _AssignmentRow extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l, vertical: Space.s),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          AssignmentAvatar(v),
+          // Несколько ящиков — значок ящика у портрета (как в уведомлениях).
+          Builder(builder: (context) {
+            final accounts = ref.watch(accountsProvider);
+            final account = accounts.length > 1 ? accounts.where((a) => a.id == v.row.accountId).firstOrNull : null;
+            if (account == null) return AssignmentAvatar(v);
+            return Stack(clipBehavior: Clip.none, children: [
+              AssignmentAvatar(v),
+              Positioned(right: -4, bottom: -4, child: AccountAvatar(account: account, radius: 7)),
+            ]);
+          }),
           const SizedBox(width: Space.m),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(v.row.title,
+              Text.rich(
+                  TextSpan(children: [
+                    if (v.important)
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: Icon(AppIcons.priority_high, size: 18, color: AppColors.errorText(context)),
+                      ),
+                    TextSpan(text: v.row.title),
+                  ]),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyLarge?.copyWith(

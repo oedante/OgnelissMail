@@ -1984,6 +1984,7 @@ class EasEngine implements MailEngine {
           folderId: folderId,
           read: readTxt == null ? null : readTxt == '1',
           flagged: flagged,
+          followUp: _followUpOf(flagEl),
         ));
       }
       // Delete / SoftDelete: письмо удалено на сервере или с другого устройства
@@ -2714,6 +2715,7 @@ class EasEngine implements MailEngine {
       subject: subject,
       preview: preview, bodyPlain: bodyPlain, bodyHtml: bodyHtml,
       date: _parseEasDate(dateStr), isRead: read, isFlagged: isFlagged,
+      followUp: _followUpOf(flag),
       hasAttachments: hasAtt,
       attachments: attachments,
       conversationId: _conversationIdOf(appData),
@@ -3465,7 +3467,11 @@ class EasEngine implements MailEngine {
   }
 
   @override
-  Future<void> applyFlags(MessageRef ref, {bool? read, bool? flagged, bool strict = false}) async {
+  /// [followUp] — флажок «К исполнению» с текстом, сроком и напоминанием
+  /// (13.11.2026: «На контроле» и «Позже» на всех устройствах); вместе с
+  /// [flagged] = true.
+  Future<void> applyFlags(MessageRef ref,
+      {bool? read, bool? flagged, bool strict = false, MailFollowUp? followUp}) async {
     final cfg = _cfg!;
     final serverId = ref.serverId ?? ref.id;
     final key = _syncKeys[ref.folderId] ?? '0';
@@ -3490,8 +3496,13 @@ class EasEngine implements MailEngine {
     if (flagged != null) {
       final flag = appData.addChild('Flag', namespace: 'Email');
       if (flagged) {
-        flag.addChild('FlagStatus', namespace: 'Email', text: '2');
-        flag.addChild('FlagType', namespace: 'Email', text: 'Flag for follow up');
+        final f = followUp;
+        if (f == null) {
+          flag.addChild('FlagStatus', namespace: 'Email', text: '2');
+          flag.addChild('FlagType', namespace: 'Email', text: 'Flag for follow up');
+        } else {
+          _writeFollowUp(flag, f);
+        }
       }
       // Снять флаг — пустой <Flag/> (MS-ASEMAIL). Status=0 сервер не принимает.
     }
@@ -3501,6 +3512,56 @@ class EasEngine implements MailEngine {
     // [strict] — письмо найдено поиском (Find): 8 значит «изменение не дошло».
     _checkSyncCommand(resp, 'Change', serverId, ref.folderId,
         okItemStatuses: strict ? const {'1'} : const {'1', '8'});
+  }
+
+  /// Флажок письма с подробностями (MS-ASEMAIL Flag): статус, текст, начало
+  /// и срок (все четыре даты вместе — так требует спецификация),
+  /// напоминание; выполненный — с временем выполнения.
+  static void _writeFollowUp(WbxmlElement flag, MailFollowUp f) {
+    String utc(DateTime d) => '${d.toUtc().toIso8601String().split('.').first}.000Z';
+    // «Плавающие» StartDate и DueDate — местное время, записанное как UTC.
+    String local(DateTime d) {
+      final l = d.toLocal();
+      return '${DateTime.utc(l.year, l.month, l.day, l.hour, l.minute).toIso8601String().split('.').first}.000Z';
+    }
+
+    flag.addChild('FlagStatus', namespace: 'Email', text: f.complete ? '1' : '2');
+    flag.addChild('FlagType', namespace: 'Email', text: f.flagType ?? 'Flag for follow up');
+    if (f.complete) {
+      final now = DateTime.now();
+      flag.addChild('CompleteTime', namespace: 'Email', text: utc(now));
+      flag.addChild('DateCompleted', namespace: 'Tasks', text: utc(now));
+      return;
+    }
+    final due = f.due;
+    if (due != null) {
+      final start = f.start ?? (due.isBefore(DateTime.now()) ? due : DateTime.now());
+      final s0 = DateTime(start.year, start.month, start.day);
+      final d0 = DateTime(due.year, due.month, due.day);
+      flag.addChild('StartDate', namespace: 'Tasks', text: local(s0));
+      flag.addChild('UtcStartDate', namespace: 'Tasks', text: utc(s0));
+      flag.addChild('DueDate', namespace: 'Tasks', text: local(d0));
+      flag.addChild('UtcDueDate', namespace: 'Tasks', text: utc(d0));
+    }
+    final r = f.reminder;
+    if (r != null) {
+      flag.addChild('ReminderSet', namespace: 'Tasks', text: '1');
+      flag.addChild('ReminderTime', namespace: 'Tasks', text: utc(r));
+    }
+  }
+
+  /// Подробности флажка из ответа сервера; null — флажка нет.
+  MailFollowUp? _followUpOf(WbxmlElement? flag) {
+    if (flag == null) return null;
+    final status = int.tryParse((flag.childText('FlagStatus') ?? flag.childText('Status') ?? '').trim()) ?? 0;
+    if (status == 0) return null;
+    return MailFollowUp(
+      flagType: flag.childText('FlagType'),
+      status: status,
+      start: _parseEasDate(flag.childText('UtcStartDate')),
+      due: _parseEasDate(flag.childText('UtcDueDate')),
+      reminder: flag.childText('ReminderSet') == '0' ? null : _parseEasDate(flag.childText('ReminderTime')),
+    );
   }
 
   /// Есть ли у почтовой папки SyncKey (папка синхронизировалась): изменения

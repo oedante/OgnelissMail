@@ -89,6 +89,76 @@ void main() {
     });
   });
 
+  // Замечание владельца 14.11.2026: в письме поручения было «Ситников,
+  // добрый день!» — одна фамилия. Разбор имени — PersonNameParts.
+  group('обращение: имя и отчество в любом порядке, правила языков', () {
+    String a(String n, [String lang = 'ru']) => GreetingHelper.addressOf(GreetingHelper.cleanName(n), lang: lang);
+
+    test('русские ФИО', () {
+      expect(a('Ситников Дмитрий'), 'Дмитрий');
+      expect(a('Дмитрий Ситников'), 'Дмитрий');
+      expect(a('Ситников Дмитрий Александрович'), 'Дмитрий Александрович');
+      expect(a('Дмитрий Александрович Ситников'), 'Дмитрий Александрович');
+      expect(a('Дмитрий Александрович'), 'Дмитрий Александрович');
+      expect(a('Ситников, Дмитрий'), 'Дмитрий');
+      expect(a('Ситников, Дмитрий Александрович'), 'Дмитрий Александрович');
+      expect(a('Пашкевич Анна Сергеевна'), 'Анна Сергеевна', reason: 'фамилия тоже на «-вич»');
+      expect(a('Анна Сергеевна Пашкевич'), 'Анна Сергеевна');
+      expect(a('Анна Пашкевич'), 'Анна');
+      expect(a('Мамедов Эльдар Рашидович'), 'Эльдар Рашидович');
+      expect(a('СИТНИКОВ ДМИТРИЙ'), 'Дмитрий');
+    });
+
+    test('два слова: имя по списку и по окончанию фамилии', () {
+      expect(a('Хабибуллина Зульфия'), 'Зульфия');
+      expect(a('Ковалёва Марина'), 'Марина');
+      expect(a('Ким Ирина'), 'Ирина', reason: 'Ким — фамилия');
+      expect(a('Ли Виктор'), 'Виктор');
+      expect(a('Гогия Нино'), 'Нино');
+      expect(a('Абвгд Ежзик'), 'Абвгд Ежзик', reason: 'не ясно, где имя, — полное имя, а не фамилия');
+    });
+
+    test('одно слово, пусто, организация', () {
+      expect(a('Дмитрий'), 'Дмитрий');
+      expect(a(''), '');
+      expect(a('Служба поддержки'), '');
+      expect(a('ООО «Ромашка»'), '');
+    });
+
+    test('латиница: имя первым, транслитерация русских имён', () {
+      expect(a('John Smith', 'en'), 'John');
+      expect(a('Smith, John', 'en'), 'John');
+      expect(a('Sitnikov Dmitry', 'en'), 'Dmitry');
+      expect(a('Dmitriy Sitnikov', 'en'), 'Dmitriy');
+      expect(a('Petrov Alexander', 'de'), 'Alexander');
+      expect(a('Ivanova Natalia', 'fr'), 'Natalia');
+      expect(a('Kuznetsov Sergei', 'en'), 'Sergei');
+      expect(a('Sitnikov Dmitry Aleksandrovich'), 'Dmitry Aleksandrovich');
+      expect(a('Sitnikov Dmitry Aleksandrovich', 'de'), 'Dmitry');
+    });
+
+    test('порядок «фамилия — имя»: венгерский, вьетнамский', () {
+      expect(a('Szabó Péter', 'hu'), 'Péter');
+      expect(a('Nguyễn Văn An', 'en'), 'An');
+      expect(a('Trần Bình', 'vi'), 'Bình');
+    });
+
+    test('японский, корейский, китайский', () {
+      expect(a('山田 太郎', 'ja'), '山田', reason: 'фамилия + 様');
+      expect(a('山田太郎', 'ja'), '山田太郎');
+      expect(a('Dmitry Sitnikov', 'ja'), 'Dmitry');
+      expect(a('홍 길동', 'ko'), '홍길동');
+      expect(a('王 伟', 'zh'), '王伟');
+    });
+
+    test('приветствие целиком; язык письма задан — по нему, а не по имени', () {
+      expect(v(['Ситников Дмитрий Александрович'], ['s@corp.example']).full, 'Добрый день, Дмитрий Александрович,');
+      expect(v(['Ситников Дмитрий'], ['s@corp.example']).full, 'Добрый день, Дмитрий,');
+      final en = GreetingHelper.variants(names: ['Ситников Дмитрий'], emails: ['s@corp.example'], appLang: 'en', lang: 'en');
+      expect(en.full, 'Hello Дмитрий,');
+    });
+  });
+
   test('Message-ID из References — со скобками и без', () {
     expect(GreetingHistory.messageIds('<a@b.c> <d@e.f>'), {'a@b.c', '<a@b.c>', 'd@e.f', '<d@e.f>'});
     expect(GreetingHistory.messageIds(null), isEmpty);

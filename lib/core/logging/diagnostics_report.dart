@@ -31,6 +31,7 @@ import '../security/certificate_pinning_service.dart';
 import 'app_logger.dart';
 import '../platform/platform_diagnostics.dart';
 import '../platform/graphics_mode.dart';
+import '../platform/portable_mode.dart';
 import '../../services/background/background_journal.dart';
 import '../../services/notifications/account_notify_mode.dart';
 import '../../services/background/foreground_sync_controller.dart';
@@ -231,7 +232,11 @@ class DiagnosticsReport {
       }
       if (Platform.isWindows) {
         final w = await info.windowsInfo;
-        return '${w.productName} ${w.displayVersion} (сборка ${w.buildNumber})';
+        // Переносная версия (13.11.2026): где лежат данные.
+        final portable = PortableMode.active
+            ? '; переносная версия, данные: ${PortableMode.root}'
+            : (PortableMode.failure == null ? '' : '; portable.txt есть, но ${PortableMode.failure}');
+        return '${w.productName} ${w.displayVersion} (сборка ${w.buildNumber})$portable';
       }
     } catch (_) {}
     return '${Platform.operatingSystem} ${Platform.operatingSystemVersion}';

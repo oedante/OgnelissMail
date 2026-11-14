@@ -22,10 +22,18 @@ import '../../l10n/app_localizations.dart';
 import '../../services/assignments/assignment_service.dart';
 import '../../services/assignments/assignment_store.dart'
     show PlanStage, mergePlan, projectProgress, shiftSuccessors, AssignmentTree;
+import 'assignment_edit.dart' show showRightsSheet;
+import '../../services/assignments/assignment_stats.dart';
+import '../mail/providers/mail_providers.dart' show accountsProvider;
+import 'assignment_charts.dart';
 import 'assignment_screen.dart' show FilesSection;
+import 'assignments_summary_screen.dart' show sendAssignmentReport;
 import 'assignment_widgets.dart';
 import 'gantt_chart.dart';
 import 'project_editor.dart';
+
+/// С этой ширины — две панели (этапы и план рядом).
+const projectTwoPaneMin = 1000.0;
 
 class ProjectScreen extends ConsumerWidget {
   final AssignmentView project;
@@ -80,11 +88,16 @@ class ProjectScreen extends ConsumerWidget {
         const SizedBox(height: Space.xs),
         Text(
           [
-            if (!project.outgoing) '${l10n.tr('projRoleOwner')}: ${project.otherName}',
+            if (!project.iOwn)
+              '${l10n.tr('projRoleOwner')}: ${(project.owner?.displayName ?? '').trim().isNotEmpty ? project.owner!.displayName!.trim() : project.row.ownerEmail}',
+            if (project.iDeputy) l10n.tr('projYouDeputy'),
+            // Ящик проекта — когда ящиков несколько.
+            if (ref.watch(accountsProvider).length > 1)
+              ref.watch(accountsProvider).where((a) => a.id == project.row.accountId).firstOrNull?.email ?? '',
             if (dates.isNotEmpty) dates,
             if (stages.isNotEmpty)
               l10n.tr('projStagesCount').replaceAll('{done}', '$doneN').replaceAll('{total}', '${stages.length}'),
-          ].join(' · '),
+          ].where((x) => x.isNotEmpty).join(' · '),
           style: theme.textTheme.bodySmall?.copyWith(color: muted),
         ),
         if (stages.isNotEmpty) ...[
@@ -134,16 +147,27 @@ class ProjectScreen extends ConsumerWidget {
         if (stages.where((s) => s.id == plan[i].id).firstOrNull case final v?)
           _StageRow(index: i, v: v, afterNo: _no(plan, v.row.afterId))
         else
+          // Этап другого участника — из плана в письме проекта: кто, когда,
+          // после какого этапа и статус (13.11.2026).
           ListTile(
             leading: CircleAvatar(radius: 14, child: Text('${i + 1}')),
             title: Text(plan[i].title),
+            trailing: plan[i].status == null ? null : AssignmentStatusPill(plan[i].status!),
             subtitle: Text([
-              if (plan[i].assignee != null) plan[i].assignee!,
+              if ((plan[i].assigneeName ?? '').trim().isNotEmpty)
+                plan[i].assigneeName!.trim()
+              else if (plan[i].assignee != null)
+                plan[i].assignee!,
               [if (plan[i].start != null) fmt.format(plan[i].start!), if (plan[i].due != null) fmt.format(plan[i].due!)]
                   .join(' — '),
               if (_no(plan, plan[i].after) case final n?) l10n.tr('projAfter').replaceAll('{title}', '$n'),
             ].where((x) => x.isNotEmpty).join(' · ')),
           ),
+      if (!project.outgoing && !project.planShared)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
+          child: Text(l10n.tr('projOwnOnlyHint'), style: theme.textTheme.bodySmall?.copyWith(color: muted)),
+        ),
       if (project.outgoing && project.active)
         Padding(
           padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
@@ -176,6 +200,100 @@ class ProjectScreen extends ConsumerWidget {
       ),
     ]);
 
+    // Сводка проекта: показатели, статусы этапов, исполнители, план и факт.
+    final facts = stageFacts(stages, now);
+    final stageStats = AssignmentStats.of(stages, now, periodDays: 3650);
+    final lateStages = stages.where((s) => s.overdue(now)).length;
+    final maxDev = facts.map((f) => f.deviationDays ?? 0).fold<int>(0, (a, b) => b > a ? b : a);
+    final daysLeft = project.due == null
+        ? null
+        : DateTime(project.due!.year, project.due!.month, project.due!.day)
+            .difference(DateTime(now.year, now.month, now.day))
+            .inDays;
+    final summaryTab = ListView(padding: const EdgeInsets.only(bottom: Space.xl), children: [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, Space.s),
+        child: StatGrid(tiles: [
+          StatTile(label: l10n.tr('projStages'), value: '$doneN / ${stages.length}'),
+          StatTile(
+              label: l10n.tr('overdue'),
+              value: '$lateStages',
+              accent: lateStages > 0 ? AppColors.errorText(context) : null),
+          StatTile(label: l10n.tr('assignStatsDeviation'), value: maxDev > 0 ? '+$maxDev' : '0', note: l10n.tr('assignStatsDaysUnit')),
+          if (daysLeft != null)
+            StatTile(
+                label: l10n.tr('assignStatsDaysLeft'),
+                value: '${daysLeft < 0 ? 0 : daysLeft}',
+                note: daysLeft < 0 ? l10n.tr('overdue') : l10n.tr('assignStatsDaysUnit')),
+        ]),
+      ),
+      ChartCard(
+        title: l10n.tr('assignStatsStatuses'),
+        child: StatusSplitBar(counts: {
+          for (final s in StatusSplitBar.order) s: stages.where((x) => x.status == s).length,
+        }),
+      ),
+      if (stageStats.people.isNotEmpty)
+        ChartCard(title: l10n.tr('assignStatsExecutors'), child: PeopleBars(people: stageStats.people)),
+      if (facts.isNotEmpty)
+        ChartCard(
+          title: l10n.tr('assignStatsPlanFact'),
+          child: Column(children: [
+            for (var i = 0; i < facts.length; i++)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: Space.xs),
+                child: Row(children: [
+                  SizedBox(width: 24, child: Text('${i + 1}', style: theme.textTheme.bodySmall?.copyWith(color: muted))),
+                  Expanded(
+                    child: Text(facts[i].stage.row.title,
+                        maxLines: 2, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodyMedium),
+                  ),
+                  const SizedBox(width: Space.s),
+                  Text(
+                    [
+                      facts[i].plannedDue == null ? '—' : fmt.format(facts[i].plannedDue!),
+                      facts[i].doneAt == null ? '—' : fmt.format(facts[i].doneAt!),
+                    ].join(' → '),
+                    style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                  ),
+                  SizedBox(
+                    width: 44,
+                    child: Text(
+                      facts[i].deviationDays == null
+                          ? ''
+                          : (facts[i].deviationDays! > 0 ? '+${facts[i].deviationDays}' : '${facts[i].deviationDays}'),
+                      textAlign: TextAlign.right,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: (facts[i].deviationDays ?? 0) > 0 ? AppColors.errorText(context) : muted),
+                    ),
+                  ),
+                ]),
+              ),
+            Padding(
+              padding: const EdgeInsets.only(top: Space.xs),
+              child: Text(l10n.tr('assignStatsPlanFactHint'), style: theme.textTheme.bodySmall?.copyWith(color: muted)),
+            ),
+          ]),
+        ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, 0),
+        child: OutlinedButton.icon(
+          key: const ValueKey('proj_send_report'),
+          onPressed: () => unawaited(sendAssignmentReport(
+            context,
+            title: '${l10n.tr('assignProjectSubject')}: ${project.row.title}',
+            subtitle: l10n.tr('assignReportTitle'),
+            items: [project, ...stages],
+            stats: stageStats,
+            accountId: project.row.accountId,
+          )),
+          icon: const Icon(AppIcons.send, size: 18),
+          label: Text(l10n.tr('assignSendReport')),
+        ),
+      ),
+    ]);
+
     final filesTab = ListView(children: [
       FilesSection(v: project, files: project.files, canAdd: project.outgoing && project.active, title: l10n.tr('projFiles')),
       for (final s in stages)
@@ -184,38 +302,80 @@ class ProjectScreen extends ConsumerWidget {
 
     final historyTab = _History(project: project, stages: stages);
 
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(l10n.tr('projTitle')),
-          actions: [
-            if (project.outgoing)
-              PopupMenuButton<String>(
-                tooltip: l10n.tr('more'),
-                onSelected: (v) {
-                  if (v == 'template') unawaited(_saveTemplate(context, ref));
-                  if (v == 'cancel') assignmentFire(_cancelAll(ref, stages));
-                },
-                itemBuilder: (_) => [
-                  PopupMenuItem(value: 'template', child: Text(l10n.tr('projSaveTemplate'))),
-                  if (project.active) PopupMenuItem(value: 'cancel', child: Text(l10n.tr('projCancel'))),
-                ],
-              ),
-          ],
-        ),
-        body: Column(children: [
-          header,
-          TabBar(isScrollable: true, tabAlignment: TabAlignment.start, tabs: [
-            Tab(text: l10n.tr('projStages')),
-            Tab(text: l10n.tr('projPlan')),
-            Tab(text: l10n.tr('projTabFiles')),
-            Tab(text: l10n.tr('assignHistory')),
-          ]),
-          Expanded(child: TabBarView(children: [stagesTab, planTab, filesTab, historyTab])),
-        ]),
-      ),
+    final appBar = AppBar(
+      title: Text(l10n.tr('projTitle')),
+      actions: [
+        if (project.outgoing)
+          PopupMenuButton<String>(
+            key: const ValueKey('proj_menu'),
+            tooltip: l10n.tr('more'),
+            onSelected: (v) {
+              if (v == 'edit') unawaited(showProjectEdit(context, project, stages));
+              if (v == 'rights') unawaited(showRightsSheet(context, ref, project));
+              if (v == 'template') unawaited(_saveTemplate(context, ref));
+              if (v == 'cancel') assignmentFire(_cancelAll(ref, stages));
+            },
+            itemBuilder: (_) => [
+              if (project.active) PopupMenuItem(value: 'edit', child: Text(l10n.tr('projEdit'))),
+              if (project.active) PopupMenuItem(value: 'rights', child: Text(l10n.tr('assignRights'))),
+              PopupMenuItem(value: 'template', child: Text(l10n.tr('projSaveTemplate'))),
+              if (project.active) PopupMenuItem(value: 'cancel', child: Text(l10n.tr('projCancel'))),
+            ],
+          ),
+      ],
     );
+    TabBar tabBar(List<String> keys) =>
+        TabBar(isScrollable: true, tabAlignment: TabAlignment.start, tabs: [for (final k in keys) Tab(text: l10n.tr(k))]);
+
+    // Планшет в альбомной ориентации и компьютер: этапы слева всегда на
+    // виду, справа — план, сводка, файлы и история.
+    return LayoutBuilder(builder: (context, box) {
+      if (box.maxWidth >= projectTwoPaneMin) {
+        return DefaultTabController(
+          length: 4,
+          child: Scaffold(
+            appBar: appBar,
+            body: Column(children: [
+              header,
+              const Divider(height: 1),
+              Expanded(
+                child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  SizedBox(
+                    width: (box.maxWidth * 0.38).clamp(360.0, 520.0),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(Space.l, Space.m, Space.l, 0),
+                        child: Text(l10n.tr('projStages'),
+                            style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                      ),
+                      Expanded(child: stagesTab),
+                    ]),
+                  ),
+                  const VerticalDivider(width: 1),
+                  Expanded(
+                    child: Column(children: [
+                      tabBar(const ['projPlan', 'assignSummary', 'projTabFiles', 'assignHistory']),
+                      Expanded(child: TabBarView(children: [planTab, summaryTab, filesTab, historyTab])),
+                    ]),
+                  ),
+                ]),
+              ),
+            ]),
+          ),
+        );
+      }
+      return DefaultTabController(
+        length: 5,
+        child: Scaffold(
+          appBar: appBar,
+          body: Column(children: [
+            header,
+            tabBar(const ['projStages', 'projPlan', 'assignSummary', 'projTabFiles', 'assignHistory']),
+            Expanded(child: TabBarView(children: [stagesTab, planTab, summaryTab, filesTab, historyTab])),
+          ]),
+        ),
+      );
+    });
   }
 
   Future<void> _addStage(BuildContext context, WidgetRef ref, List<AssignmentView> stages) async {
@@ -403,6 +563,8 @@ class _History extends ConsumerWidget {
       'go' => l10n.tr('projEvGo'),
       'progress' => '$who: $text',
       'files' => '$who: $text',
+      'edited' || 'removed' || 'rights' => '$who: ${text.replaceAll('\n', ' · ')}',
+      'plan' => l10n.tr('projEvPlan'),
       _ => [
           '$who${text.isEmpty ? '' : ': «${text.length > 120 ? '${text.substring(0, 120)}…' : text}»'}',
           if (status != null) '· ${assignmentStatusLabel(status, l10n)}',

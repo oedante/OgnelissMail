@@ -5,11 +5,13 @@
 // Поддержка Android, iOS, Windows, macOS, Linux.
 
 import 'core/platform/native_drag_drop.dart';
+import 'core/platform/portable_mode.dart';
 import 'core/platform/device_time_zone.dart';
 import 'widgets/common/scroll_edge_fade.dart';
 import 'services/widget_mail_actions.dart' show widgetMailActionsProvider;
 import 'services/weather/weather_service.dart' show WeatherApi;
 import 'services/documents/doc_preview_settings.dart';
+import 'services/mail/marks/mark_sync_service.dart' show markSyncProvider;
 import 'services/sync/sync_schedule.dart';
 import 'core/theme/mail_page_color.dart' show mailPageWarm;
 import 'core/platform/orientation_policy.dart';
@@ -84,6 +86,9 @@ late ProviderContainer globalContainer;
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
+    // Переносная версия для Windows (13.11.2026): portable.txt рядом с exe —
+    // данные в папке программы. До всего, что пишет на диск.
+    PortableMode.init();
     // Окно письма на компьютере (1.9.x): свой движок Flutter — только показ
     // письма, без базы и служб приложения (message_window.dart).
     final windowMail = await MessageWindow.payloadOfThisEngine();
@@ -337,6 +342,9 @@ Future<void> main() async {
       // напоминаний (запросы к базе, вызовы AlarmManager) подождёт 8 с.
       unawaited(Future<void>.delayed(const Duration(seconds: 8),
           () => globalContainer.read(reminderSchedulerProvider).rescheduleAll(force: true)));
+      // «На контроле» и «Позже» на всех устройствах (13.11.2026): правка
+      // отметки уходит на сервер через несколько секунд.
+      globalContainer.read(markSyncProvider).start();
       // Push для IMAP-ящиков (IDLE на отдельном соединении). Раньше IDLE был
       // реализован, но не вызывался — письма приходили лишь по таймеру.
       // ...кроме режима синхронизации «Никогда» (-1), где push выключен.

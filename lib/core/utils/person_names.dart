@@ -104,6 +104,9 @@ class PersonNames {
     return '${rest.join(' ')} ${w[p.first]}';
   }
 
+  /// Имя организации или службы («ООО …», «Служба поддержки», «A & B»).
+  static bool isOrganization(String name) => _orgMarkers.hasMatch(name) || name.contains('&');
+
   /// Число слов имени.
   static int words(String? name) => clean(name).split(' ').where((w) => w.isNotEmpty).length;
 

@@ -63,6 +63,36 @@ Android: настраивать ничего не нужно — виджеты 
 7. Цель **Runner → Build Phases**: убедитесь, что фаза «Embed Foundation Extensions» с `OgnelissWidgets.appex` стоит **выше** фазы «Thin Binary» (иначе Flutter-сборка выдаёт «Cycle inside Runner»; если ошибки нет, ничего не трогайте).
 8. Соберите: `flutter build ipa` или Archive в Xcode.
 
+## Если что-то не так
+
+- **«Provisioning profile "…" has app ID "com.ogneliss.mail", which does not
+  match the bundle ID "com.ogneliss.mail.OgnelissWidgets"».** Цели виджетов
+  достался профиль приложения, а профиль годится только для своего
+  идентификатора. Цель **OgnelissWidgets → Signing & Capabilities**:
+  - проще всего — **Automatically manage signing**, Team тот же: Xcode сам
+    заведёт App ID и профиль виджетов и группу App Group;
+  - если подписываете вручную: developer.apple.com → Identifiers → «+» →
+    App ID `com.ogneliss.mail.widgets` (Bundle Identifier цели — такой же)
+    с возможностью App Groups → `group.com.ogneliss.mail`; Profiles → «+» →
+    App Store → этот App ID → скачать и открыть двойным щелчком; выбрать его
+    в Provisioning Profile цели виджетов. У App ID `com.ogneliss.mail` тоже
+    включите App Groups с той же группой и перевыпустите профиль приложения
+    (`ogneliss_mail_appstore`): старый профиль группу не знает.
+- **Нет папки `ios/OgnelissWidgets.src`.** Её не бывает в архиве — это
+  переименованная перед созданием цели `ios/OgnelissWidgets` (шаг 2,
+  Xcode 16+). Если цель уже создана без переименования, оставьте как есть
+  и проверьте папку `ios/OgnelissWidgets`: в ней должны быть наши файлы —
+  `OgnelissWidgets.swift` (первая строка
+  `// ios/OgnelissWidgets/OgnelissWidgets.swift`, около 1300 строк),
+  `Info.plist`, `Widgets.xcconfig`, `PrivacyInfo.xcprivacy`,
+  `OgnelissWidgets.entitlements`, `README.md` и папки `*.lproj`. Файлы
+  шаблона Xcode (`OgnelissWidgetsBundle.swift`, `…LiveActivity.swift`,
+  `…Control.swift`, `AppIntent.swift`, `Assets.xcassets`) удалите — иначе
+  два `@main`. Если Xcode заменил наш `OgnelissWidgets.swift` или
+  `Info.plist` своими — возьмите их из архива (`ios/OgnelissWidgets/`), а
+  права — из `ios/xcode-base/OgnelissWidgets/`. Затем Target Membership
+  (шаг 2) и шаги 4–7.
+
 ## Проверка
 
 - «Календарь: месяц» на iOS 17 и новее: касание числа — встречи этого дня под сеткой (выбранный день — кольцом, сегодня — заливкой), стрелки «‹ ›» — соседний месяц (от прошлого до третьего вперёд). Через 6 часов виджет сам возвращается к сегодняшнему дню. На iOS 15–16 — текущий месяц и встречи сегодняшнего дня.

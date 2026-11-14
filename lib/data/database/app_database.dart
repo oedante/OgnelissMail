@@ -1282,12 +1282,16 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
-  /// Полнотекстовый поиск через FTS5. Возвращает письма по релевантности.
-  /// При ошибке FTS откатывается на LIKE-поиск.
+  /// Полнотекстовый поиск через FTS5. При ошибке FTS откатывается на
+  /// LIKE-поиск. [oldestFirst] null — по релевантности; иначе — по дате
+  /// (14.11.2026, замечание владельца: результаты поиска шли вперемешку по
+  /// датам при «Сначала новые», а по релевантности свежие письма частого
+  /// собеседника могли не попасть в первые [limit]).
   Future<List<Email>> searchEmailsFts({
     required String accountId,
     required String query,
     int limit = 50,
+    bool? oldestFirst,
   }) async {
     final trimmed = query.trim();
     if (trimmed.isEmpty) return [];
@@ -1298,11 +1302,13 @@ class AppDatabase extends _$AppDatabase {
           .where((w) => w.isNotEmpty)
           .map((w) => '${w.replaceAll('"', '')}*')
           .join(' ');
-      // Шаг 1: получаем id писем по релевантности из FTS
+      // Шаг 1: id найденных писем — по дате или по релевантности.
+      final order = oldestFirst == null ? 'rank' : 'e.received_at ${oldestFirst ? 'ASC' : 'DESC'}';
       final idRows = await customSelect(
         '''SELECT f.email_id AS eid FROM emails_fts f
+           ${oldestFirst == null ? '' : 'JOIN emails e ON e.id = f.email_id AND e.account_id = f.account_id'}
            WHERE f.emails_fts MATCH ? AND f.account_id = ?
-           ORDER BY rank
+           ORDER BY $order
            LIMIT ?''',
         variables: [Variable.withString(ftsQuery), Variable.withString(accountId), Variable.withInt(limit)],
         readsFrom: {emails},
@@ -1313,14 +1319,14 @@ class AppDatabase extends _$AppDatabase {
         final rows = await (select(emails)
               ..where((e) => e.id.isIn(ids) & e.accountId.equals(accountId)))
             .get();
-        // Сохраняем порядок релевантности из FTS
+        // Сохраняем порядок из FTS
         final byId = {for (final e in rows) e.id: e};
         return [for (final id in ids) if (byId[id] != null) byId[id]!];
       }
     } catch (e) {
       // FTS недоступен/ошибка синтаксиса — откат на LIKE ниже
     }
-    return searchEmails(accountId: accountId, query: query, limit: limit);
+    return searchEmails(accountId: accountId, query: query, limit: limit, oldestFirst: oldestFirst ?? false);
   }
 
   /// Найденные письма [ids], у которых совпадение — только в тексте вложений
@@ -2793,6 +2799,7 @@ class AppDatabase extends _$AppDatabase {
     required String accountId,
     required String query,
     int limit = 50,
+    bool oldestFirst = false,
   }) async {
     // SQLite LIKE и lower() не различают регистр только у латиницы:
     // «отчёт» не находил «Отчёт». Ищем варианты написания запроса: как
@@ -2811,7 +2818,9 @@ class AppDatabase extends _$AppDatabase {
                 variants.map((p) => c.like(p)).reduce((a, b) => a | b);
             return any(e.subject) | any(e.fromName) | any(e.fromEmail) | any(e.bodyPreview);
           })
-          ..orderBy([(e) => OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)])
+          ..orderBy([
+            (e) => OrderingTerm(expression: e.receivedAt, mode: oldestFirst ? OrderingMode.asc : OrderingMode.desc),
+          ])
           ..limit(limit))
         .get();
   }

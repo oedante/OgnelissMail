@@ -3982,7 +3982,6 @@
     <string name="tlFree">空闲 · {d}</string>
     <string name="assignTitle">任务</string>
     <string name="assignSubject">任务</string>
-    <string name="assignGreeting">{name}，你好：</string>
     <string name="assignWhatLabel">任务：</string>
     <string name="assignDueLabel">期限：</string>
     <string name="assignSource">原邮件：“{subject}”— {from}，{date}</string>

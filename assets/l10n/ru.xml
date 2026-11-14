@@ -4045,7 +4045,6 @@
     <string name="tlFree">Свободно · {d}</string>
     <string name="assignTitle">Поручение</string>
     <string name="assignSubject">Поручение</string>
-    <string name="assignGreeting">{name}, добрый день!</string>
     <string name="assignWhatLabel">Поручение:</string>
     <string name="assignDueLabel">Срок:</string>
     <string name="assignSource">Исходное письмо: «{subject}» — {from}, {date}</string>

@@ -4003,7 +4003,6 @@
     <string name="tlFree">Boş · {d}</string>
     <string name="assignTitle">Görev</string>
     <string name="assignSubject">Görev</string>
-    <string name="assignGreeting">Merhaba {name},</string>
     <string name="assignWhatLabel">Görev:</string>
     <string name="assignDueLabel">Son tarih:</string>
     <string name="assignSource">Özgün ileti: \"{subject}\" — {from}, {date}</string>

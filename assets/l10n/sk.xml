@@ -4024,7 +4024,6 @@
     <string name="tlFree">Voľno · {d}</string>
     <string name="assignTitle">Úloha</string>
     <string name="assignSubject">Úloha</string>
-    <string name="assignGreeting">Dobrý deň, {name},</string>
     <string name="assignWhatLabel">Úloha:</string>
     <string name="assignDueLabel">Termín:</string>
     <string name="assignSource">Pôvodná správa: „{subject}“ — {from}, {date}</string>

@@ -4024,7 +4024,6 @@
     <string name="tlFree">פנוי · {d}</string>
     <string name="assignTitle">משימה</string>
     <string name="assignSubject">משימה</string>
-    <string name="assignGreeting">שלום {name},</string>
     <string name="assignWhatLabel">משימה:</string>
     <string name="assignDueLabel">מועד:</string>
     <string name="assignSource">ההודעה המקורית: \"{subject}\" — {from}, {date}</string>

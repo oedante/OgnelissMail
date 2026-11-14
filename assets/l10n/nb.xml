@@ -4003,7 +4003,6 @@
     <string name="tlFree">Ledig · {d}</string>
     <string name="assignTitle">Oppdrag</string>
     <string name="assignSubject">Oppdrag</string>
-    <string name="assignGreeting">Hei {name},</string>
     <string name="assignWhatLabel">Oppdrag:</string>
     <string name="assignDueLabel">Frist:</string>
     <string name="assignSource">Opprinnelig e-post: «{subject}» — {from}, {date}</string>

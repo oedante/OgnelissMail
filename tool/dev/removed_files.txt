@@ -84,6 +84,7 @@ lib/services/voice/voice_command_service.dart
 lib/widgets/common/voice_button.dart
 test/unit/ai_analyzer_test.dart
 test/unit/dictation_formatter_test.dart
+test/unit/greeting_name_test.dart
 test/unit/mail_classification_test.dart
 test/unit/schedule_hints_test.dart
 test/widget/quick_event_sheet_test.dart

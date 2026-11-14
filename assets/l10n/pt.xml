@@ -4003,7 +4003,6 @@
     <string name="tlFree">Livre · {d}</string>
     <string name="assignTitle">Atribuição</string>
     <string name="assignSubject">Atribuição</string>
-    <string name="assignGreeting">Olá, {name},</string>
     <string name="assignWhatLabel">Atribuição:</string>
     <string name="assignDueLabel">Prazo:</string>
     <string name="assignSource">Mensagem original: \"{subject}\" — {from}, {date}</string>

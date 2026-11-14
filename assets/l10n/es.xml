@@ -4003,7 +4003,6 @@
     <string name="tlFree">Libre · {d}</string>
     <string name="assignTitle">Encargo</string>
     <string name="assignSubject">Encargo</string>
-    <string name="assignGreeting">Hola, {name}:</string>
     <string name="assignWhatLabel">Encargo:</string>
     <string name="assignDueLabel">Plazo:</string>
     <string name="assignSource">Mensaje original: «{subject}» — {from}, {date}</string>

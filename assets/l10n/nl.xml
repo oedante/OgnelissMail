@@ -4003,7 +4003,6 @@
     <string name="tlFree">Vrij · {d}</string>
     <string name="assignTitle">Opdracht</string>
     <string name="assignSubject">Opdracht</string>
-    <string name="assignGreeting">Hallo {name},</string>
     <string name="assignWhatLabel">Opdracht:</string>
     <string name="assignDueLabel">Deadline:</string>
     <string name="assignSource">Oorspronkelijk bericht: ‘{subject}’ — {from}, {date}</string>

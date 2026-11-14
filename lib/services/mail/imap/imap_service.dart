@@ -537,6 +537,9 @@ class ImapService {
         await client.startTls().timeout(const Duration(seconds: 10));
         await client.ehlo().timeout(const Duration(seconds: 10));
       } else {
+        // Соединение закрыть сразу: иначе сервер держит его до своего
+        // тайм-аута (Mercury — 30 с после «554 Invalid HELO format»).
+        try { await client.disconnect(); } catch (_) {}
         rethrow;
       }
     }

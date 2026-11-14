@@ -4045,7 +4045,6 @@
     <string name="tlFree">Wolne · {d}</string>
     <string name="assignTitle">Zlecenie</string>
     <string name="assignSubject">Zlecenie</string>
-    <string name="assignGreeting">Dzień dobry, {name},</string>
     <string name="assignWhatLabel">Zlecenie:</string>
     <string name="assignDueLabel">Termin:</string>
     <string name="assignSource">Oryginalna wiadomość: „{subject}” — {from}, {date}</string>

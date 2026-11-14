@@ -3982,7 +3982,6 @@
     <string name="tlFree">ว่าง · {d}</string>
     <string name="assignTitle">งานมอบหมาย</string>
     <string name="assignSubject">งานมอบหมาย</string>
-    <string name="assignGreeting">สวัสดี {name}</string>
     <string name="assignWhatLabel">งาน:</string>
     <string name="assignDueLabel">กำหนด:</string>
     <string name="assignSource">อีเมลต้นฉบับ: \"{subject}\" — {from}, {date}</string>

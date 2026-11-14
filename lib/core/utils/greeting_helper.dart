@@ -13,12 +13,17 @@
 // «Коллеги» — только если все адресаты «Кому» из доменов вашей организации
 // (адреса на gmail.com, yandex.ru и других общих почтах — не коллеги);
 // иначе нескольким адресатам — «Добрый день!».
-// Обращение — в именительном падеже: «Фамилия Имя Отчество» → «Имя
-// Отчество», «Имя Фамилия» и «Фамилия Имя» → имя.
+// Обращение — в именительном падеже (addressOf, разбор имени —
+// PersonNameParts, 14.11.2026): по-русски «Имя Отчество» или имя в любом
+// порядке слов («Ситников Дмитрий» → «Дмитрий»: раньше бралось первое
+// слово, если фамилия не на «-ов/-ин…»); по-японски — фамилия (шаблон
+// «{name}様»), по-корейски и по-китайски — полное имя, на остальных
+// языках — имя. То же приветствие — в письмах поручений.
 
 import '../../l10n/languages.g.dart';
 import '../../l10n/strings_store.dart';
 import 'mail_domains.dart';
+import 'person_name_parts.dart';
 
 /// Вариант приветствия в письме.
 enum GreetingVariant { full, short, hello, none }
@@ -97,15 +102,18 @@ class GreetingHelper {
 
   /// Варианты приветствия для адресатов «Кому»: [names] — имена из адресной
   /// книги (пустая строка — имени нет), [emails] — адреса, [appLang] — язык
-  /// приложения, [ownDomains] — домены своих адресов ящика.
+  /// приложения, [ownDomains] — домены своих адресов ящика. [lang] — язык
+  /// приветствия задан (письмо поручения целиком на языке приложения);
+  /// иначе — по имени ([languageFor]).
   static GreetingSet variants({
     required List<String> names,
     required List<String> emails,
     required String appLang,
     Set<String> ownDomains = const {},
+    String? lang,
   }) {
     final clean = [for (final n in names) cleanName(n)];
-    final lang = languageFor(clean, appLang);
+    lang ??= languageFor(clean, appLang);
     final hello = _t(lang, 'greetHelloOnly');
     final count = emails.length > clean.length ? emails.length : clean.length;
     if (count == 0) return GreetingSet(lang: lang, full: hello, short: '', hello: hello);
@@ -114,7 +122,7 @@ class GreetingHelper {
       return GreetingSet(
           lang: lang, full: _t(lang, 'greetGroup'), short: _t(lang, 'greetGroupShort'), hello: hello);
     }
-    final addr = clean.isEmpty ? '' : addressOf(clean.first);
+    final addr = clean.isEmpty ? '' : addressOf(clean.first, lang: lang);
     if (addr.isEmpty) return GreetingSet(lang: lang, full: hello, short: '', hello: hello);
     return GreetingSet(
       lang: lang,
@@ -146,31 +154,30 @@ class GreetingHelper {
     return n.replaceAll(RegExp(r'\s+'), ' ').trim();
   }
 
-  /// Как обратиться: «Фамилия Имя Отчество» и «Имя Отчество» → «Имя
-  /// Отчество»; «Имя Фамилия» и «Фамилия Имя» → имя; одно слово — оно.
-  static String addressOf(String name) {
-    final parts = name.split(' ').where((p) => p.isNotEmpty).toList();
-    if (parts.isEmpty) return '';
-    if (parts.length >= 3 && _isPatronymic(parts[2])) return '${parts[1]} ${parts[2]}';
-    if (parts.length >= 2 && _isPatronymic(parts[1])) return '${parts[0]} ${parts[1]}';
-    if (parts.length >= 3 && _isPatronymic(parts[1])) return '${parts[0]} ${parts[1]}';
-    if (parts.length >= 2) {
-      // Русская фамилия первой («Петров Иван») — обращаемся по второму слову.
-      return _looksLikeSurname(parts[0]) && !_looksLikeSurname(parts[1]) ? parts[1] : parts[0];
+  /// Как обратиться к человеку [name] в приветствии на языке [lang]:
+  /// по-русски (и на других языках с кириллицей) — «Имя Отчество» или имя;
+  /// по-японски — фамилия японского имени; по-корейски и по-китайски —
+  /// полное имя; иначе — имя. Имени не выделить — полное имя; организация
+  /// или пусто — '' (приветствие без имени).
+  static String addressOf(String name, {String lang = 'ru'}) {
+    final p = PersonNameParts.parse(name, locale: lang);
+    if (p == null) return '';
+    if (p.cjk) {
+      return switch (lang) {
+        'ja' => p.family ?? p.full,
+        'ko' || 'zh' => p.full.replaceAll(' ', ''),
+        _ => p.full,
+      };
     }
-    return parts.first;
+    final given = p.given;
+    if (given == null) return _case(p.full);
+    if (_cyrLangs.contains(lang) && p.patronymic != null) return _case('$given ${p.patronymic}');
+    return _case(given);
   }
 
-  static bool _looksLikeSurname(String w) {
-    final l = w.toLowerCase();
-    return RegExp(r'(ов|ев|ёв|ин|ын|ский|цкий|ской|ова|ева|ёва|ина|ына|ская|цкая|енко|ук|юк|ян|дзе|швили)$')
-        .hasMatch(l);
-  }
-
-  static bool _isPatronymic(String word) {
-    final lower = word.toLowerCase();
-    return lower.endsWith('ович') || lower.endsWith('евич') ||
-        lower.endsWith('овна') || lower.endsWith('евна') ||
-        lower.endsWith('ич') || lower.endsWith('ична');
-  }
+  /// «ДМИТРИЙ» (имя заглавными в адресной книге) → «Дмитрий».
+  static String _case(String s) => s.split(' ').map((w) {
+        if (w.length < 2 || w != w.toUpperCase() || w == w.toLowerCase()) return w;
+        return w.split('-').map((p) => p.isEmpty ? p : p[0] + p.substring(1).toLowerCase()).join('-');
+      }).join(' ');
 }

@@ -4024,7 +4024,6 @@
     <string name="tlFree">Volno · {d}</string>
     <string name="assignTitle">Úkol</string>
     <string name="assignSubject">Úkol</string>
-    <string name="assignGreeting">Dobrý den, {name},</string>
     <string name="assignWhatLabel">Úkol:</string>
     <string name="assignDueLabel">Termín:</string>
     <string name="assignSource">Původní zpráva: „{subject}“ — {from}, {date}</string>

@@ -4003,7 +4003,6 @@
     <string name="tlFree">Ledigt · {d}</string>
     <string name="assignTitle">Uppdrag</string>
     <string name="assignSubject">Uppdrag</string>
-    <string name="assignGreeting">Hej {name},</string>
     <string name="assignWhatLabel">Uppdrag:</string>
     <string name="assignDueLabel">Senast:</string>
     <string name="assignSource">Ursprungligt meddelande: ”{subject}” — {from}, {date}</string>

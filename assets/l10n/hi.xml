@@ -4003,7 +4003,6 @@
     <string name="tlFree">खाली · {d}</string>
     <string name="assignTitle">कार्य</string>
     <string name="assignSubject">कार्य</string>
-    <string name="assignGreeting">नमस्ते {name},</string>
     <string name="assignWhatLabel">कार्य:</string>
     <string name="assignDueLabel">समय सीमा:</string>
     <string name="assignSource">मूल संदेश: \"{subject}\" — {from}, {date}</string>

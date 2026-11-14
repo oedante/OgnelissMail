@@ -3982,7 +3982,6 @@
     <string name="tlFree">Kosong · {d}</string>
     <string name="assignTitle">Penugasan</string>
     <string name="assignSubject">Penugasan</string>
-    <string name="assignGreeting">Halo {name},</string>
     <string name="assignWhatLabel">Tugas:</string>
     <string name="assignDueLabel">Tenggat:</string>
     <string name="assignSource">Pesan asli: \"{subject}\" — {from}, {date}</string>

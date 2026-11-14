@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Barra: dall\'assegnazione alla scadenza; riempimento: parte fatta; bordo rosso: in ritardo. Prima i ritardi.</string>
     <string name="assignStatsShowAll">Mostra altri {n}</string>
     <string name="assignStatsNoDue">Senza scadenza: {n} (non nel diagramma).</string>
+    <string name="graphicsHelpMac">Se le lettere appaiono distorte o l’interfaccia scatta, scegli «Compatibilità».</string>
+    <string name="graphicsAutoDescMac">Compatibilità sui Mac con processore Intel, nuovo motore su Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Più affidabile sui Mac con processore Intel</string>
+    <string name="graphicsImpellerDescMac">Più fluido sui Mac con Apple Silicon</string>
 </resources>

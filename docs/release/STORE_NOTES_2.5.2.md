@@ -6,12 +6,17 @@
 
 ## Сделано
 
-- **Mac: отрисовка прежним движком (Skia), не Impeller.** Во Flutter 3.47
-  Impeller и новая отрисовка текста включены на Mac по умолчанию; на Mac с
-  Intel часть букв рассыпалась в шум («Почт▒», «▒ерновики», список языков
-  почти нечитаем), интерфейс дёргался. `FLTEnableImpeller = false` в
-  `Info.plist` — `scripts/build_macos.sh` при каждой сборке и сборка Mac на
-  GitHub. `Info.plist` один на все Mac — выключено и на Apple Silicon.
+- **Mac: выбор движка рисования — как на Android** («Настройки → Расширенные
+  настройки → Графика»): «Автоматически» — прежний движок Skia на Mac с
+  Intel и Impeller на Apple Silicon, «Совместимость (Skia)», «Новый движок
+  (Impeller)»; кнопка «Перезапустить». Во Flutter 3.47 Impeller и новая
+  отрисовка текста включены на Mac по умолчанию; на Mac с Intel часть букв
+  рассыпалась в шум («Почт▒», «▒ерновики», список языков почти нечитаем),
+  интерфейс дёргался. Flutter решает по ключу `FLTEnableImpeller` из
+  `Info.plist`; приложение подменяет ответ на него при запуске (GraphicsBridge
+  в `tool/desktop/macos/MainFlutterWindow.swift`). `false` в `Info.plist`
+  (сборка пишет сама) — запасной вариант. В журнале и диагностике — чем
+  рисует и видеокарта.
 - **Сборка для iPhone:** `scripts/build_ios.sh` сам включает Swift Package
   Manager (новые версии `receive_sharing_intent` собираются только так),
   `scripts/build_macos.sh` — выключает (плагины Mac — через CocoaPods, как на
@@ -27,10 +32,12 @@ Android, `Info.plist` iPhone, зависимости и схема базы (30)
 ## Кратко (RU / EN)
 
 **RU.** На Mac с процессором Intel текст больше не рассыпается, интерфейс
-не дёргается. Исправления и улучшения стабильности.
+не дёргается; движок рисования можно выбрать в настройках. Исправления и
+улучшения стабильности.
 
 **EN.** On Intel-based Macs, text no longer gets garbled and the interface
-no longer stutters. Bug fixes and stability improvements.
+no longer stutters; the rendering engine can be chosen in Settings. Bug
+fixes and stability improvements.
 
 ## App Store — Mac (ru, en, de, fr)
 
@@ -39,18 +46,22 @@ no longer stutters. Bug fixes and stability improvements.
 ```
 <ru-RU>
 • На Mac с процессором Intel текст больше не рассыпается, интерфейс не дёргается
+• Выбор движка рисования: Настройки → Расширенные настройки → Графика
 • Исправления и улучшения стабильности
 </ru-RU>
 <en-US>
 • On Intel-based Macs, text no longer gets garbled and the interface no longer stutters
+• Choose the rendering engine: Settings → Advanced settings → Graphics
 • Bug fixes and stability improvements
 </en-US>
 <de-DE>
 • Auf Macs mit Intel-Prozessor wird Text nicht mehr verstümmelt und die Oberfläche ruckelt nicht mehr
+• Grafik-Engine wählbar: Einstellungen → Erweiterte Einstellungen → Grafik
 • Fehlerbehebungen und Stabilitätsverbesserungen
 </de-DE>
 <fr-FR>
 • Sur les Mac à processeur Intel, le texte ne se brouille plus et l’interface ne saccade plus
+• Choix du moteur de rendu : Réglages → Réglages avancés → Graphismes
 • Corrections de bugs et amélioration de la stabilité
 </fr-FR>
 ```

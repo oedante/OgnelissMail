@@ -4265,4 +4265,8 @@
     <string name="assignStatsTimelineHint">バー：依頼日から期限まで。塗り：完了した部分。赤枠：期限超過。期限超過が先頭。</string>
     <string name="assignStatsShowAll">さらに {n} 件表示</string>
     <string name="assignStatsNoDue">期限なし：{n} 件（図には表示されません）。</string>
+    <string name="graphicsHelpMac">文字が崩れて表示されたり画面がカクついたりする場合は「互換モード」を選んでください。</string>
+    <string name="graphicsAutoDescMac">Intel プロセッサの Mac では互換モード、Apple シリコンでは新しいエンジン</string>
+    <string name="graphicsSkiaDescMac">Intel プロセッサの Mac でより安定</string>
+    <string name="graphicsImpellerDescMac">Apple シリコンの Mac でより滑らか</string>
 </resources>

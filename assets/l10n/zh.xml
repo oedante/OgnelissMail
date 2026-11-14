@@ -4265,4 +4265,8 @@
     <string name="assignStatsTimelineHint">条形：从分派到截止；填充：已完成部分；红框：已逾期。逾期的排在前面。</string>
     <string name="assignStatsShowAll">再显示 {n} 项</string>
     <string name="assignStatsNoDue">无截止日期：{n} 项（不在图中显示）。</string>
+    <string name="graphicsHelpMac">如果文字显示错乱或界面卡顿，请选择“兼容模式”。</string>
+    <string name="graphicsAutoDescMac">Intel 处理器的 Mac 使用兼容模式，Apple 芯片使用新引擎</string>
+    <string name="graphicsSkiaDescMac">在 Intel 处理器的 Mac 上更稳定</string>
+    <string name="graphicsImpellerDescMac">在 Apple 芯片的 Mac 上更流畅</string>
 </resources>

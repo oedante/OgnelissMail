@@ -294,9 +294,9 @@ jobs:
           cp assets/branding/macos/app_icon_*.png macos/Runner/Assets.xcassets/AppIcon.appiconset/
           # Окно с переводом писем (Apple Translation, macOS 15+, 1.11.0).
           cp tool/desktop/macos/MainFlutterWindow.swift macos/Runner/MainFlutterWindow.swift
-          # Отрисовка Skia, не Impeller (14.11.2026, как scripts/build_macos.sh): во
-          # Flutter 3.47 Impeller на Mac по умолчанию, на Mac с Intel буквы
-          # рассыпались в шум и интерфейс дёргался.
+          # Движок рисования выбирает приложение (14.11.2026, GraphicsBridge в
+          # MainFlutterWindow.swift: Skia на Mac с Intel, Impeller на Apple Silicon);
+          # false в Info.plist — запасной вариант (как scripts/build_macos.sh).
           /usr/libexec/PlistBuddy -c "Set :FLTEnableImpeller false" macos/Runner/Info.plist 2>/dev/null \
             || /usr/libexec/PlistBuddy -c "Add :FLTEnableImpeller bool false" macos/Runner/Info.plist
           # Плагины — через CocoaPods, не Swift Package Manager: пакет

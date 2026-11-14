@@ -4265,4 +4265,8 @@
     <string name="assignStatsTimelineHint">Thanh: từ lúc giao đến hạn; phần tô: đã làm; viền đỏ: quá hạn. Việc quá hạn lên đầu.</string>
     <string name="assignStatsShowAll">Hiện thêm {n}</string>
     <string name="assignStatsNoDue">Không có hạn: {n} (không hiện trên biểu đồ).</string>
+    <string name="graphicsHelpMac">Nếu chữ hiển thị bị méo hoặc giao diện bị giật, hãy chọn «Tương thích».</string>
+    <string name="graphicsAutoDescMac">Tương thích trên Mac dùng chip Intel, bộ máy mới trên Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Ổn định hơn trên Mac dùng chip Intel</string>
+    <string name="graphicsImpellerDescMac">Mượt hơn trên Mac dùng Apple Silicon</string>
 </resources>

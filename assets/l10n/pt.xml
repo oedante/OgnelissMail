@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Barra: da atribuição ao prazo; preenchimento: parte feita; contorno vermelho: atrasada. Atrasadas primeiro.</string>
     <string name="assignStatsShowAll">Mostrar mais {n}</string>
     <string name="assignStatsNoDue">Sem prazo: {n} (fora do gráfico).</string>
+    <string name="graphicsHelpMac">Se as letras aparecerem distorcidas ou a interface engasgar, escolha \"Compatibilidade\".</string>
+    <string name="graphicsAutoDescMac">Compatibilidade em Macs com processador Intel, motor novo em Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Mais confiável em Macs com processador Intel</string>
+    <string name="graphicsImpellerDescMac">Mais fluido em Macs com Apple Silicon</string>
 </resources>

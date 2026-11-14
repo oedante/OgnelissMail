@@ -4307,4 +4307,8 @@
     <string name="assignStatsTimelineHint">Pruh: od zadání do termínu; výplň: hotová část; červený rámeček: po termínu. Zpožděné první.</string>
     <string name="assignStatsShowAll">Zobrazit dalších {n}</string>
     <string name="assignStatsNoDue">Bez termínu: {n} (nejsou v diagramu).</string>
+    <string name="graphicsHelpMac">Pokud jsou písmena zkreslená nebo rozhraní trhá, zvolte „Kompatibilita“.</string>
+    <string name="graphicsAutoDescMac">Kompatibilita na Macu s procesorem Intel, nové jádro na Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Spolehlivější na Macu s procesorem Intel</string>
+    <string name="graphicsImpellerDescMac">Plynulejší na Macu s Apple Silicon</string>
 </resources>

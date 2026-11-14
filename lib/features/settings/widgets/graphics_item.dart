@@ -8,7 +8,14 @@
 // Выбор применяется только с новым процессом: кнопка «Перезапустить»
 // (обычное «закрыть и открыть» процесс не завершает — его держит служба
 // почты).
+//
+// Mac (14.11.2026): тот же выбор, свои пояснения — «Автоматически» значит
+// Skia на Mac с Intel (там Impeller рассыпал буквы в шум) и Impeller на
+// Apple Silicon.
 
+import 'dart:io';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../../../core/platform/graphics_mode.dart';
@@ -83,7 +90,10 @@ class GraphicsDialog extends StatefulWidget {
   final Future<GraphicsState?> Function(String mode)? setMode;
   final Future<void> Function()? restart;
   final Future<GraphicsState?> Function(bool on)? setHcpp;
-  const GraphicsDialog({super.key, required this.initial, this.setMode, this.restart, this.setHcpp});
+
+  /// Пояснения для Mac; null — по платформе (для тестов — задать).
+  final bool? mac;
+  const GraphicsDialog({super.key, required this.initial, this.setMode, this.restart, this.setHcpp, this.mac});
 
   @override
   State<GraphicsDialog> createState() => _GraphicsDialogState();
@@ -107,6 +117,7 @@ class _GraphicsDialogState extends State<GraphicsDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final mac = widget.mac ?? (!kIsWeb && Platform.isMacOS);
     Widget option(String mode, String desc) => AppRadioTile<String>(
           value: mode,
           groupValue: _s.mode,
@@ -124,12 +135,12 @@ class _GraphicsDialogState extends State<GraphicsDialog> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(l10n.tr('graphicsHelp'), style: theme.textTheme.bodyMedium),
+              child: Text(l10n.tr(mac ? 'graphicsHelpMac' : 'graphicsHelp'), style: theme.textTheme.bodyMedium),
             ),
             const SizedBox(height: 8),
-            option('auto', 'graphicsAutoDesc'),
-            option('skia', 'graphicsSkiaDesc'),
-            option('impeller', 'graphicsImpellerDesc'),
+            option('auto', mac ? 'graphicsAutoDescMac' : 'graphicsAutoDesc'),
+            option('skia', mac ? 'graphicsSkiaDescMac' : 'graphicsSkiaDesc'),
+            option('impeller', mac ? 'graphicsImpellerDescMac' : 'graphicsImpellerDesc'),
             // HCPP — только там, где он может работать (Android 14+, Vulkan).
             if (_s.hcppSupported || _s.hcpp)
               SwitchListTile(

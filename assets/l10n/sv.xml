@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Stapel: från tilldelning till deadline; fyllning: klar del; röd ram: försenad. Försenade först.</string>
     <string name="assignStatsShowAll">Visa {n} till</string>
     <string name="assignStatsNoDue">Utan deadline: {n} (visas inte i diagrammet).</string>
+    <string name="graphicsHelpMac">Om bokstäverna ser förvrängda ut eller gränssnittet hackar, välj ”Kompatibilitet”.</string>
+    <string name="graphicsAutoDescMac">Kompatibilitet på Mac med Intel-processor, ny motor på Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Pålitligare på Mac med Intel-processor</string>
+    <string name="graphicsImpellerDescMac">Smidigare på Mac med Apple Silicon</string>
 </resources>

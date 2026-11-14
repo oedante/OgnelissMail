@@ -4370,4 +4370,8 @@
     <string name="assignStatsTimelineHint">الشريط: من الإسناد حتى الموعد النهائي؛ التعبئة: الجزء المنجز؛ الإطار الأحمر: متأخر. المتأخرة أولًا.</string>
     <string name="assignStatsShowAll">عرض {n} أخرى</string>
     <string name="assignStatsNoDue">بلا موعد نهائي: {n} (غير ظاهرة في المخطط).</string>
+    <string name="graphicsHelpMac">إذا ظهرت الحروف مشوّهة أو تقطّعت الواجهة، فاختر «التوافق».</string>
+    <string name="graphicsAutoDescMac">التوافق على أجهزة Mac بمعالج Intel، والمحرك الجديد على Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">أكثر موثوقية على أجهزة Mac بمعالج Intel</string>
+    <string name="graphicsImpellerDescMac">أكثر سلاسة على أجهزة Mac بمعالج Apple Silicon</string>
 </resources>

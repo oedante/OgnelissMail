@@ -4328,4 +4328,8 @@
     <string name="assignStatsTimelineHint">Полоса — от постановки до срока, заливка — сделанная часть, красная рамка — срок прошёл. Просроченные — первыми.</string>
     <string name="assignStatsShowAll">Показать ещё {n}</string>
     <string name="assignStatsNoDue">Без срока: {n} — их нет на диаграмме.</string>
+    <string name="graphicsHelpMac">Если буквы на экране искажаются или интерфейс дёргается, выберите «Совместимость».</string>
+    <string name="graphicsAutoDescMac">Совместимость на Mac с процессором Intel, новый движок — на Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Надёжнее на Mac с процессором Intel</string>
+    <string name="graphicsImpellerDescMac">Плавнее на Mac с Apple Silicon</string>
 </resources>

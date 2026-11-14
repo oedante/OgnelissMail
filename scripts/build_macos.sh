@@ -113,10 +113,21 @@ setup() {
 
 prepare() {
   [[ -d macos ]] || setup
+  # Окно Mac — наш файл (перевод, выбор движка рисования): при каждой сборке,
+  # а не только при создании папки — иначе в старой папке macos/ остаётся
+  # прежний (14.11.2026).
+  cp tool/desktop/macos/MainFlutterWindow.swift macos/Runner/MainFlutterWindow.swift
   # Плагины — через CocoaPods, и всем pods минимум macOS 12.0 (как в сборке
   # на GitHub, ci.yml): flutter_inappwebview_macos 1.2 бета с Xcode 26
   # падал «presentationAnchor(for:) … macOS 10.14 and newer» (10.11.2026).
+  # (build_ios.sh эту общую настройку Flutter включает — для iPhone, 14.11.2026.)
   flutter config --no-enable-swift-package-manager >/dev/null
+  # Движок рисования выбирает приложение при запуске (14.11.2026, GraphicsBridge
+  # в MainFlutterWindow.swift): «Автоматически» — Skia на Mac с Intel (во
+  # Flutter 3.47 Impeller там рассыпал буквы в шум, интерфейс дёргался),
+  # Impeller на Apple Silicon; выбор — «Расширенные → Графика». false в
+  # Info.plist — запасной вариант, если выбор в приложении не сработает.
+  plist_set macos/Runner/Info.plist FLTEnableImpeller bool false
   [[ -f macos/Podfile ]] || cp "$(dirname "$(dirname "$(command -v flutter)")")/packages/flutter_tools/templates/cocoapods/Podfile-macos" macos/Podfile
   python3 - <<'PY'
 p = 'macos/Podfile'

@@ -4307,4 +4307,8 @@
     <string name="assignStatsTimelineHint">פס: מההקצאה עד מועד היעד; מילוי: החלק שבוצע; מסגרת אדומה: באיחור. המאחרות ראשונות.</string>
     <string name="assignStatsShowAll">הצגת {n} נוספים</string>
     <string name="assignStatsNoDue">ללא מועד יעד: {n} (לא מוצגות בתרשים).</string>
+    <string name="graphicsHelpMac">אם האותיות נראות משובשות או שהממשק מקרטע, בחרו \"תאימות\".</string>
+    <string name="graphicsAutoDescMac">תאימות ב-Mac עם מעבד Intel, המנוע החדש ב-Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">אמין יותר ב-Mac עם מעבד Intel</string>
+    <string name="graphicsImpellerDescMac">חלק יותר ב-Mac עם Apple Silicon</string>
 </resources>

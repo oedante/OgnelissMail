@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Barra: de la asignación al vencimiento; relleno: parte hecha; borde rojo: vencido. Los vencidos primero.</string>
     <string name="assignStatsShowAll">Mostrar {n} más</string>
     <string name="assignStatsNoDue">Sin vencimiento: {n} (no aparecen en el diagrama).</string>
+    <string name="graphicsHelpMac">Si las letras se ven distorsionadas o la interfaz da tirones, elige «Compatibilidad».</string>
+    <string name="graphicsAutoDescMac">Compatibilidad en Mac con procesador Intel, motor nuevo en Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Más fiable en Mac con procesador Intel</string>
+    <string name="graphicsImpellerDescMac">Más fluido en Mac con Apple Silicon</string>
 </resources>

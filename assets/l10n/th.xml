@@ -4265,4 +4265,8 @@
     <string name="assignStatsTimelineHint">แถบ: ตั้งแต่มอบหมายถึงกำหนดส่ง ส่วนที่ระบาย: ส่วนที่ทำแล้ว กรอบแดง: เลยกำหนด งานที่เลยกำหนดแสดงก่อน</string>
     <string name="assignStatsShowAll">แสดงอีก {n}</string>
     <string name="assignStatsNoDue">ไม่มีกำหนดส่ง: {n} (ไม่แสดงในแผนภูมิ)</string>
+    <string name="graphicsHelpMac">หากตัวอักษรแสดงผิดเพี้ยนหรืออินเทอร์เฟซกระตุก ให้เลือก «ความเข้ากันได้»</string>
+    <string name="graphicsAutoDescMac">ความเข้ากันได้บน Mac ที่ใช้ Intel และเอนจินใหม่บน Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">เสถียรกว่าบน Mac ที่ใช้ Intel</string>
+    <string name="graphicsImpellerDescMac">ลื่นไหลกว่าบน Mac ที่ใช้ Apple Silicon</string>
 </resources>

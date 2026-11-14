@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Balken: von der Erteilung bis zur Fälligkeit; Füllung: erledigter Teil; roter Rahmen: überfällig. Überfällige zuerst.</string>
     <string name="assignStatsShowAll">{n} weitere anzeigen</string>
     <string name="assignStatsNoDue">Ohne Fälligkeit: {n} (nicht im Diagramm).</string>
+    <string name="graphicsHelpMac">Wenn Buchstaben verzerrt aussehen oder die Oberfläche ruckelt, wählen Sie „Kompatibilität“.</string>
+    <string name="graphicsAutoDescMac">Kompatibilität auf Macs mit Intel-Prozessor, neue Engine auf Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Zuverlässiger auf Macs mit Intel-Prozessor</string>
+    <string name="graphicsImpellerDescMac">Flüssiger auf Macs mit Apple Silicon</string>
 </resources>

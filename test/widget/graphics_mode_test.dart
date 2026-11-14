@@ -132,9 +132,19 @@ void main() {
       expect(s.summary, 'Impeller, автоматически');
     });
 
-    test('не Android — состояния нет, канал не трогаем', () async {
-      expect(GraphicsMode.supported, Platform.isAndroid);
-      if (!Platform.isAndroid) expect(await GraphicsMode.state(), isNull);
+    test('не Android и не Mac — состояния нет, канал не трогаем', () async {
+      expect(GraphicsMode.supported, Platform.isAndroid || Platform.isMacOS);
+      if (!GraphicsMode.supported) expect(await GraphicsMode.state(), isNull);
+    });
+
+    test('Mac: «Автоматически» — по процессору (14.11.2026)', () {
+      final intel = GraphicsState.fromMap(const {'mode': 'auto', 'active': 'skia', 'next': 'skia', 'cpu': 'intel'});
+      expect(intel.summary, 'Skia (совместимость), автоматически (Mac с Intel)');
+      final arm = GraphicsState.fromMap(const {'mode': 'auto', 'active': 'impeller', 'next': 'impeller', 'cpu': 'arm'});
+      expect(arm.summary, 'Impeller, автоматически (Mac с Apple Silicon)');
+      final chosen = GraphicsState.fromMap(const {'mode': 'impeller', 'active': 'skia', 'next': 'impeller', 'cpu': 'intel'});
+      expect(chosen.restartNeeded, isTrue);
+      expect(chosen.summary, contains('после перезапуска — Impeller'));
     });
   });
 
@@ -199,6 +209,26 @@ void main() {
     await _settle(tester, () => find.text('Перезапустить').evaluate().isEmpty);
     expect(asked, [true, false]);
     expect(find.text('Перезапустить'), findsNothing);
+  });
+
+  testWidgets('Mac: пояснения про Intel и Apple Silicon, выбор просит перезапуск', (tester) async {
+    final picked = <String>[];
+    await tester.pumpWidget(_app(GraphicsDialog(
+      mac: true,
+      initial: GraphicsState.fromMap(const {'mode': 'auto', 'active': 'skia', 'next': 'skia', 'cpu': 'intel'}),
+      setMode: (m) async {
+        picked.add(m);
+        return GraphicsState.fromMap({'mode': m, 'active': 'skia', 'next': m == 'impeller' ? 'impeller' : 'skia', 'cpu': 'intel'});
+      },
+    )));
+    await tester.pump();
+    expect(find.textContaining('буквы на экране искажаются'), findsOneWidget);
+    expect(find.text('Совместимость на Mac с процессором Intel, новый движок — на Apple Silicon'), findsOneWidget);
+    expect(find.text('Плавнее на Mac с Apple Silicon'), findsOneWidget);
+    expect(find.textContaining('чёрным'), findsNothing, reason: 'пояснение Android');
+    await tester.tap(find.text('Новый движок (Impeller)'));
+    await _settle(tester, () => find.text('Перезапустить').evaluate().isNotEmpty);
+    expect(picked, ['impeller']);
   });
 
   test('картинки на весь экран декодируются не больше 4096 точек', () {

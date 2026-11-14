@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Bar: from assigning to the due date; fill: the part done; red outline: overdue. Overdue items first.</string>
     <string name="assignStatsShowAll">Show {n} more</string>
     <string name="assignStatsNoDue">No due date: {n} (not on the chart).</string>
+    <string name="graphicsHelpMac">If letters on the screen look garbled or the interface stutters, choose “Compatibility”.</string>
+    <string name="graphicsAutoDescMac">Compatibility on Intel-based Macs, the new engine on Apple silicon</string>
+    <string name="graphicsSkiaDescMac">More reliable on Intel-based Macs</string>
+    <string name="graphicsImpellerDescMac">Smoother on Macs with Apple silicon</string>
 </resources>

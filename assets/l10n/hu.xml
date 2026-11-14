@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Sáv: a kiadástól a határidőig; kitöltés: elkészült rész; piros keret: lejárt. A késők elöl.</string>
     <string name="assignStatsShowAll">További {n} megjelenítése</string>
     <string name="assignStatsNoDue">Határidő nélkül: {n} (nem szerepelnek a diagramon).</string>
+    <string name="graphicsHelpMac">Ha a betűk torzan jelennek meg vagy a felület akadozik, válassza a „Kompatibilitás” lehetőséget.</string>
+    <string name="graphicsAutoDescMac">Kompatibilitás Intel processzoros Macen, új motor Apple Siliconon</string>
+    <string name="graphicsSkiaDescMac">Megbízhatóbb Intel processzoros Macen</string>
+    <string name="graphicsImpellerDescMac">Gördülékenyebb Apple Siliconos Macen</string>
 </resources>

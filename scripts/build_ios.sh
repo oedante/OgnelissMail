@@ -143,6 +143,11 @@ else
 fi
 
 say "Зависимости"
+# Плагины iPhone — через Swift Package Manager (14.11.2026): receive_sharing_intent
+# новых версий собирается только так («only compatible with Swift Package
+# Manager»). Настройка Flutter общая для всех проектов, а build_macos.sh её
+# выключает (macOS — через CocoaPods, как в сборке на GitHub), поэтому — здесь.
+flutter config --enable-swift-package-manager >/dev/null
 if [[ "$KEEP_LOCK" == 1 ]]; then flutter pub get; else flutter pub upgrade; fi
 # Код базы (drift) — всегда заново, под установленную версию drift: файл,
 # сгенерированный другой версией drift_dev, не собирается («Method not found:

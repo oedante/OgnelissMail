@@ -23,6 +23,8 @@ import Translation
 
 class MainFlutterWindow: NSWindow {
   override func awakeFromNib() {
+    // Движок рисования выбирается при создании Flutter — до него.
+    GraphicsBridge.install()
     let flutterViewController = FlutterViewController()
     let windowFrame = self.frame
     self.contentViewController = flutterViewController
@@ -30,8 +32,122 @@ class MainFlutterWindow: NSWindow {
 
     RegisterGeneratedPlugins(registry: flutterViewController)
     TranslationBridge.register(flutterViewController.engine.binaryMessenger, view: flutterViewController.view)
+    GraphicsBridge.register(flutterViewController.engine.binaryMessenger)
 
     super.awakeFromNib()
+  }
+}
+
+/// Движок рисования на Mac (14.11.2026, снимки владельца: Flutter 3.47.7,
+/// Mac с Intel — Impeller рассыпал буквы в шум, интерфейс дёргался; на Apple
+/// Silicon Impeller работает и он плавнее). Flutter решает по ключу
+/// FLTEnableImpeller из Info.plist — `[[NSBundle mainBundle]
+/// objectForInfoDictionaryKey:]` (FlutterDartProject.mm). Info.plist
+/// подписанного приложения не изменить, поэтому ответ на этот ключ
+/// подменяется в процессе до создания движка. Выбор хранится в UserDefaults
+/// и применяется со следующего запуска; канал 'ogneliss/graphics' — тот же,
+/// что на Android (lib/core/platform/graphics_mode.dart).
+enum GraphicsBridge {
+  private static let modeKey = "ogneliss.graphics.mode"
+
+  /// Чем рисует этот процесс: skia | impeller.
+  private(set) static var active = "impeller"
+
+  /// Mac с Intel (и приложение под Rosetta).
+  static var intel: Bool {
+    #if arch(x86_64)
+    return true
+    #else
+    return false
+    #endif
+  }
+
+  /// Выбор: auto | skia | impeller.
+  static var mode: String {
+    let m = UserDefaults.standard.string(forKey: modeKey) ?? "auto"
+    return ["skia", "impeller"].contains(m) ? m : "auto"
+  }
+
+  static func engine(_ mode: String) -> String {
+    switch mode {
+    case "skia", "impeller": return mode
+    default: return intel ? "skia" : "impeller"
+    }
+  }
+
+  static func install() {
+    let want = engine(mode)
+    if Bundle.ognOverrideImpeller(want == "impeller") {
+      active = want
+    } else {
+      // Подмена не удалась — как записано в Info.plist (сборка пишет false).
+      let on = (Bundle.main.object(forInfoDictionaryKey: "FLTEnableImpeller") as? NSNumber)?.boolValue ?? true
+      active = on ? "impeller" : "skia"
+    }
+  }
+
+  static func state() -> [String: Any] {
+    var s: [String: Any] = ["mode": mode, "active": active, "next": engine(mode), "cpu": intel ? "intel" : "arm"]
+    if let gpu = MTLCreateSystemDefaultDevice()?.name {
+      s["gpu"] = "\(gpu), \(intel ? "Intel" : "Apple Silicon")"
+    }
+    return s
+  }
+
+  static func register(_ messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(name: "ogneliss/graphics", binaryMessenger: messenger)
+    channel.setMethodCallHandler { call, result in
+      switch call.method {
+      case "state":
+        result(state())
+      case "setMode":
+        let m = call.arguments as? String ?? "auto"
+        UserDefaults.standard.set(["skia", "impeller"].contains(m) ? m : "auto", forKey: modeKey)
+        result(state())
+      case "restart":
+        result(nil)
+        restart()
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+  }
+
+  /// Новый процесс приложения и выход из этого: движок выбирается при запуске.
+  static func restart() {
+    let cfg = NSWorkspace.OpenConfiguration()
+    cfg.createsNewApplicationInstance = true
+    NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: cfg) { _, error in
+      DispatchQueue.main.async {
+        if error == nil { NSApp.terminate(nil) }
+      }
+    }
+  }
+}
+
+extension Bundle {
+  private static var ognImpeller: Bool?
+  private static var ognSwizzled = false
+
+  /// Ответ главного бандла на FLTEnableImpeller — [on]. false — подменить
+  /// не удалось.
+  static func ognOverrideImpeller(_ on: Bool) -> Bool {
+    ognImpeller = on
+    if ognSwizzled { return true }
+    guard let original = class_getInstanceMethod(Bundle.self, #selector(Bundle.object(forInfoDictionaryKey:))),
+          let replacement = class_getInstanceMethod(Bundle.self, #selector(Bundle.ogn_object(forInfoDictionaryKey:)))
+    else { return false }
+    method_exchangeImplementations(original, replacement)
+    ognSwizzled = true
+    return true
+  }
+
+  /// После обмена реализаций вызов ogn_object(…) внутри — исходный метод.
+  @objc private func ogn_object(forInfoDictionaryKey key: String) -> Any? {
+    if key == "FLTEnableImpeller", self == Bundle.main, let on = Bundle.ognImpeller {
+      return NSNumber(value: on)
+    }
+    return ogn_object(forInfoDictionaryKey: key)
   }
 }
 

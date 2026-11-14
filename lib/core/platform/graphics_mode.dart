@@ -1,6 +1,9 @@
 // lib/core/platform/graphics_mode.dart
-// Движок рисования на Android: Impeller (по умолчанию) или Skia
-// (совместимость). Нативная часть и причины — GraphicsMode.kt.
+// Движок рисования на Android и Mac: Impeller или Skia (совместимость).
+// Нативная часть и причины — GraphicsMode.kt (Android) и GraphicsBridge в
+// tool/desktop/macos/MainFlutterWindow.swift (Mac, 14.11.2026: на Mac с Intel
+// и Flutter 3.47 Impeller рассыпал буквы в шум; «Автоматически» — Skia на
+// Intel, Impeller на Apple Silicon).
 //
 // Коротко (диагностика владельца 08.11.2026, HUAWEI DEL-LX9): Impeller на
 // OpenGL ES падал при передаче картинки в видеопамять — чёрный экран до
@@ -15,7 +18,7 @@ import 'package:flutter/services.dart';
 
 import '../logging/app_logger.dart';
 
-/// Состояние движка рисования (только Android).
+/// Состояние движка рисования (Android и Mac).
 class GraphicsState {
   /// Выбор в настройках: auto | skia | impeller.
   final String mode;
@@ -61,6 +64,9 @@ class GraphicsState {
   /// HCPP выключился сам после падения в встраивании окон.
   final DateTime? hcppCrashAt;
 
+  /// Mac: процессор — intel | arm (для «Автоматически»); null — не Mac.
+  final String? cpu;
+
   const GraphicsState({
     required this.mode,
     required this.active,
@@ -77,6 +83,7 @@ class GraphicsState {
     this.hcppNext = false,
     this.hcppSupported = false,
     this.hcppCrashAt,
+    this.cpu,
   });
 
   factory GraphicsState.fromMap(Map<Object?, Object?> m) {
@@ -102,6 +109,7 @@ class GraphicsState {
       hcppCrashAt: ((m['hcppCrashAt'] as num?)?.toInt() ?? 0) > 0
           ? DateTime.fromMillisecondsSinceEpoch((m['hcppCrashAt'] as num).toInt())
           : null,
+      cpu: m['cpu'] as String?,
     );
   }
 
@@ -115,6 +123,7 @@ class GraphicsState {
     b.write(switch (mode) {
       'skia' => ', выбрано вручную',
       'impeller' => ', Impeller выбран вручную',
+      _ when cpu != null => ', автоматически (Mac с ${cpu == 'intel' ? 'Intel' : 'Apple Silicon'})',
       _ => autoSkia
           ? ', автоматически после сбоя Impeller'
           : glesReason != null
@@ -145,9 +154,9 @@ class GraphicsState {
 class GraphicsMode {
   static const _ch = MethodChannel('ogneliss/graphics');
 
-  static bool get supported => !kIsWeb && Platform.isAndroid;
+  static bool get supported => !kIsWeb && (Platform.isAndroid || Platform.isMacOS);
 
-  /// null — не Android или канал не ответил.
+  /// null — не Android и не Mac или канал не ответил.
   static Future<GraphicsState?> state() async {
     if (!supported) return null;
     try {

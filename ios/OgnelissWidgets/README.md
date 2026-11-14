@@ -87,8 +87,8 @@ Android: настраивать ничего не нужно — виджеты 
   — **Apple Development**. Приложение это не затрагивает. При отправке в
   App Store (Archive → Distribute App → App Store Connect, подпись
   «Automatically manage signing») Xcode сам переподпишет виджеты
-  распространительским сертификатом. С `Widgets.xcconfig` из архива 2.5.2 и
-  новее значение уже задано (если файл выбран в Configurations, шаг 4).
+  распространительским сертификатом. Нет зарегистрированных устройств —
+  автоматическая подпись не сработает вовсе (следующий пункт).
 - **«Your team has no devices from which to generate a provisioning
   profile» / «No profiles for '…OgnelissWidgets' were found».** Автоматической
   подписи для сборки нужен профиль разработчика, а его выпускают только на
@@ -114,9 +114,15 @@ Android: настраивать ничего не нужно — виджеты 
   6. Archive → Distribute App → App Store Connect → Manually manage
      signing — профили приложения и виджетов.
 
-  Другой путь — автоматическая подпись: один раз подключить iPhone кабелем к
-  Mac, выбрать его вверху Xcode как устройство для запуска и согласиться
-  зарегистрировать (или добавить UDID в Devices на developer.apple.com).
+  Без устройств автоматическая подпись не работает ни у виджетов, ни у
+  приложения («No profiles for 'com.ogneliss.mail' were found … iOS App
+  Development»): у обеих целей — ручная подпись профилями App Store.
+
+  Другой путь — автоматическая подпись у обеих целей: один раз подключить
+  iPhone или iPad кабелем к Mac, выбрать его вверху Xcode как устройство для
+  запуска и согласиться зарегистрировать (или добавить UDID в Devices на
+  developer.apple.com). Тогда профили разработчика и App Store Xcode
+  создаёт сам.
 - **Нет папки `ios/OgnelissWidgets.src`.** Её не бывает в архиве — это
   переименованная перед созданием цели `ios/OgnelissWidgets` (шаг 2,
   Xcode 16+). Если цель уже создана без переименования, оставьте как есть

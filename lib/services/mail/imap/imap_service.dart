@@ -788,13 +788,13 @@ class ImapService {
           // перенос, удаление) выполняются UID-командами. Без UID в запросе
           // поле оставалось пустым, вместо него брался порядковый номер, и
           // действие применялось к ДРУГОМУ письму.
-          '(UID FLAGS ENVELOPE BODYSTRUCTURE RFC822.SIZE BODY.PEEK[HEADER.FIELDS (REFERENCES IN-REPLY-TO AUTHENTICATION-RESULTS LIST-UNSUBSCRIBE LIST-UNSUBSCRIBE-POST LIST-ID SENSITIVITY X-OGNELISS-CLASSIFICATION X-OGNELISS-HANDLING)])',
+          '(UID FLAGS INTERNALDATE ENVELOPE BODYSTRUCTURE RFC822.SIZE BODY.PEEK[HEADER.FIELDS (REFERENCES IN-REPLY-TO AUTHENTICATION-RESULTS LIST-UNSUBSCRIBE LIST-UNSUBSCRIBE-POST LIST-ID SENSITIVITY X-OGNELISS-CLASSIFICATION X-OGNELISS-HANDLING)])',
         );
       } catch (e) {
         // Некоторые серверы (Яндекс/Mail.ru) капризны к составному FETCH —
         // пробуем упрощённый запрос, чтобы письма всё же загрузились.
         AppLogger.warning('IMAP: расширенный FETCH не прошёл, упрощаю: $e');
-        messages = await client.fetchMessages(sequence, '(UID FLAGS ENVELOPE RFC822.SIZE)');
+        messages = await client.fetchMessages(sequence, '(UID FLAGS INTERNALDATE ENVELOPE RFC822.SIZE)');
       }
 
       final result = messages.messages
@@ -812,7 +812,7 @@ class ImapService {
   }
 
   static const _listSpec =
-      '(UID FLAGS ENVELOPE BODYSTRUCTURE RFC822.SIZE BODY.PEEK[HEADER.FIELDS (REFERENCES IN-REPLY-TO AUTHENTICATION-RESULTS LIST-UNSUBSCRIBE LIST-UNSUBSCRIBE-POST LIST-ID SENSITIVITY X-OGNELISS-CLASSIFICATION X-OGNELISS-HANDLING)])';
+      '(UID FLAGS INTERNALDATE ENVELOPE BODYSTRUCTURE RFC822.SIZE BODY.PEEK[HEADER.FIELDS (REFERENCES IN-REPLY-TO AUTHENTICATION-RESULTS LIST-UNSUBSCRIBE LIST-UNSUBSCRIBE-POST LIST-ID SENSITIVITY X-OGNELISS-CLASSIFICATION X-OGNELISS-HANDLING)])';
 
   /// Заголовки писем по последовательности (UID или порядковые номера) с
   /// упрощённым запросом для капризных серверов (Яндекс/Mail.ru).
@@ -825,7 +825,7 @@ class ImapService {
           : await client.fetchMessages(seq, _listSpec);
     } catch (e) {
       AppLogger.warning('IMAP: расширенный FETCH не прошёл, упрощаю: $e');
-      const simple = '(UID FLAGS ENVELOPE RFC822.SIZE)';
+      const simple = '(UID FLAGS INTERNALDATE ENVELOPE RFC822.SIZE)';
       r = seq.isUidSequence
           ? await client.uidFetchMessages(seq, simple)
           : await client.fetchMessages(seq, simple);
@@ -890,7 +890,7 @@ class ImapService {
       try {
         var got = (await _fetchList(client, one, account, folderId)).where((e) => _uidOf(e.id) == uid).toList();
         if (got.isEmpty) {
-          final r = await client.uidFetchMessages(one, '(UID FLAGS ENVELOPE RFC822.SIZE)');
+          final r = await client.uidFetchMessages(one, '(UID FLAGS INTERNALDATE ENVELOPE RFC822.SIZE)');
           got = r.messages
               .map((m) => _parseMessage(m, account.id, folderId))
               .whereType<EmailModel>()
@@ -1371,7 +1371,7 @@ class ImapService {
           // BODYSTRUCTURE — и здесь: список вложений берётся из структуры
           // (msg.body). Без неё в режиме «целиком» у открытого письма не было
           // ни одного вложения (проверка на настоящем сервере, 01.11.2026).
-          fetchSpec = '(UID FLAGS ENVELOPE BODYSTRUCTURE BODY.PEEK[] RFC822.SIZE)';
+          fetchSpec = '(UID FLAGS INTERNALDATE ENVELOPE BODYSTRUCTURE BODY.PEEK[] RFC822.SIZE)';
           break;
         // Частичные режимы прежде запрашивали BODY.PEEK[]<0.N>: сервер
         // отвечает «BODY[]<0>», а разборщик enough_mail такой ключ не
@@ -1383,7 +1383,7 @@ class ImapService {
         case EmailFetchMode.partial50k:
         case EmailFetchMode.headersOnly:
         case EmailFetchMode.noAttachments:
-          fetchSpec = '(UID FLAGS ENVELOPE BODYSTRUCTURE RFC822.SIZE)';
+          fetchSpec = '(UID FLAGS INTERNALDATE ENVELOPE BODYSTRUCTURE RFC822.SIZE)';
           break;
       }
 
@@ -1576,7 +1576,10 @@ class ImapService {
       final isFlagged = msg.flags?.contains(MessageFlags.flagged) ?? false;
       final isReplied = msg.flags?.contains(MessageFlags.answered) ?? false;
 
-      final dateReceived = envelope.date ?? DateTime.now();
+      // Время прихода на сервер (INTERNALDATE), а не дата из заголовка
+      // письма (14.11.2026, замечание владельца: лента перемешивалась по
+      // датам) — см. [arrivalDate].
+      final dateReceived = arrivalDate(internal: parseInternalDate(msg.internalDate), header: envelope.date);
       final messageId = envelope.messageId;
       final inReplyTo = msg.getHeaderValue('in-reply-to');
       final references = msg.getHeaderValue('references');
@@ -2699,6 +2702,54 @@ class ImapService {
   static const kwLater = r'$OgnLater';
 
   /// Отметки из флагов письма: 1 — «На контроле», 2 — «Позже».
+  /// Дата письма в ленте (14.11.2026, замечание владельца: «перемешиваются
+  /// данные по датам»). Раньше — заголовок Date: время, которое поставил
+  /// отправитель (у рассылок — время подготовки, у части отправителей —
+  /// неверные часы), а без него — время загрузки, и письмо уходило наверх
+  /// как «сегодня». Gmail, Apple Mail, Outlook сортируют по времени прихода
+  /// на сервер — INTERNALDATE. Пришло на 3+ дня позже своей даты — перенос
+  /// или импорт ящика (INTERNALDATE — день переноса): тогда дата письма.
+  static DateTime arrivalDate({DateTime? internal, DateTime? header}) {
+    if (internal == null) return header ?? DateTime.now();
+    if (header == null) return internal;
+    if (internal.difference(header) > const Duration(days: 3)) return header;
+    return internal;
+  }
+
+  static const _months = {
+    'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+    'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
+  };
+  static final _internalRe =
+      RegExp(r'^\s*"?\s*(\d{1,2})-([A-Za-z]{3})-(\d{4}) (\d{1,2}):(\d{2}):(\d{2}) ([+-])(\d{2})(\d{2})"?\s*$');
+
+  /// INTERNALDATE (RFC 3501): «14-Nov-2026 10:38:00 +0300» → момент (UTC).
+  static DateTime? parseInternalDate(String? s) {
+    final m = _internalRe.firstMatch(s ?? '');
+    if (m == null) return null;
+    final month = _months[m[2]!.toLowerCase()];
+    if (month == null) return null;
+    final local = DateTime.utc(int.parse(m[3]!), month, int.parse(m[1]!), int.parse(m[4]!), int.parse(m[5]!), int.parse(m[6]!));
+    final offset = Duration(hours: int.parse(m[8]!), minutes: int.parse(m[9]!));
+    return m[7] == '+' ? local.subtract(offset) : local.add(offset);
+  }
+
+  /// Время прихода писем [minUid]..[maxUid] папки (UID → момент) — разовое
+  /// исправление дат писем, загруженных раньше (по заголовку, до 14.11.2026).
+  Future<Map<int, DateTime>> arrivalDates(AccountModel account,
+      {required String folderId, required int minUid, required int maxUid}) {
+    return _withClient(account, (client) async {
+      await client.selectMailboxByPath(folderId);
+      final r = await client.uidFetchMessages(
+          MessageSequence.fromRange(minUid, maxUid, isUidSequence: true), '(UID INTERNALDATE)');
+      return {
+        for (final m in r.messages)
+          if (m.uid != null)
+            if (parseInternalDate(m.internalDate) case final d?) m.uid!: d,
+      };
+    }, limit: const Duration(seconds: 60));
+  }
+
   static int marksOf(List<String>? flags) {
     if (flags == null) return 0;
     var m = 0;

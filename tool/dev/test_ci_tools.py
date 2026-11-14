@@ -7,6 +7,8 @@
 Только стандартная библиотека (1.9.x, просьба владельца 31.10.2026).
 """
 
+import contextlib
+import io
 import json
 import os
 import sys
@@ -184,7 +186,12 @@ class OsvReportTest(unittest.TestCase):
         self.assertLess(osv.vkey('1.9.0'), osv.vkey('1.10.0'))
 
     def test_report_missing_file_is_warning(self):
-        self.assertEqual(osv.main([os.path.join(self.project, 'nope.json')]), 0)
+        # Вывод перехватываем: иначе строка «::warning» из теста попадает в
+        # журнал CI, и GitHub показывает её как предупреждение сборки.
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(osv.main([os.path.join(self.project, 'nope.json')]), 0)
+        self.assertIn('::warning title=OSV-Scanner::', out.getvalue())
 
 
 class PerfCheckTest(unittest.TestCase):
@@ -195,8 +202,10 @@ class PerfCheckTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             a = os.path.join(d, 'a.jsonl')
             b = os.path.join(d, 'b.txt')
-            open(a, 'w').write('{"type":"start"}\n' + machine + '\n')
-            open(b, 'w').write('10-31 I/flutter ( 123): ' + line + '\n')
+            with open(a, 'w', encoding='utf-8') as f:
+                f.write('{"type":"start"}\n' + machine + '\n')
+            with open(b, 'w', encoding='utf-8') as f:
+                f.write('10-31 I/flutter ( 123): ' + line + '\n')
             self.assertEqual(pc.extract([a])['metrics'], {'mail_open_cold_ms': 900})
             self.assertEqual(pc.extract([b])['metrics'], {'mail_open_cold_ms': 900})
             self.assertEqual(pc.extract([os.path.join(d, 'none')])['metrics'], {})

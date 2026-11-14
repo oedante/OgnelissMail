@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">पट्टी: सौंपने से समय-सीमा तक; भराव: पूरा भाग; लाल किनारा: देर। देर वाले पहले।</string>
     <string name="assignStatsShowAll">{n} और दिखाएँ</string>
     <string name="assignStatsNoDue">बिना समय-सीमा: {n} (चार्ट में नहीं)।</string>
+    <string name="graphicsHelpMac">अगर स्क्रीन पर अक्षर बिगड़े दिखें या इंटरफ़ेस अटके, तो «संगतता» चुनें।</string>
+    <string name="graphicsAutoDescMac">Intel प्रोसेसर वाले Mac पर संगतता, Apple Silicon पर नया इंजन</string>
+    <string name="graphicsSkiaDescMac">Intel प्रोसेसर वाले Mac पर अधिक भरोसेमंद</string>
+    <string name="graphicsImpellerDescMac">Apple Silicon वाले Mac पर अधिक सहज</string>
 </resources>

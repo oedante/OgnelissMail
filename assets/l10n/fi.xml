@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Palkki: annosta määräaikaan; täyttö: tehty osa; punainen reuna: myöhässä. Myöhässä olevat ensin.</string>
     <string name="assignStatsShowAll">Näytä {n} lisää</string>
     <string name="assignStatsNoDue">Ilman määräaikaa: {n} (ei kaaviossa).</string>
+    <string name="graphicsHelpMac">Jos kirjaimet näkyvät vääristyneinä tai käyttöliittymä nykii, valitse ”Yhteensopivuus”.</string>
+    <string name="graphicsAutoDescMac">Yhteensopivuus Intel-suorittimella varustetuissa Maceissa, uusi moottori Apple Siliconissa</string>
+    <string name="graphicsSkiaDescMac">Luotettavampi Intel-suorittimella varustetuissa Maceissa</string>
+    <string name="graphicsImpellerDescMac">Sujuvampi Apple Silicon -Maceissa</string>
 </resources>

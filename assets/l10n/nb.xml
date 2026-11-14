@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Stolpe: fra tildeling til frist; fyll: ferdig del; rød kant: forsinket. Forsinkede først.</string>
     <string name="assignStatsShowAll">Vis {n} til</string>
     <string name="assignStatsNoDue">Uten frist: {n} (vises ikke i diagrammet).</string>
+    <string name="graphicsHelpMac">Hvis bokstavene ser forvrengte ut eller grensesnittet hakker, velg «Kompatibilitet».</string>
+    <string name="graphicsAutoDescMac">Kompatibilitet på Mac med Intel-prosessor, ny motor på Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Mer pålitelig på Mac med Intel-prosessor</string>
+    <string name="graphicsImpellerDescMac">Jevnere på Mac med Apple Silicon</string>
 </resources>

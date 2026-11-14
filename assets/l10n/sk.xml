@@ -4307,4 +4307,8 @@
     <string name="assignStatsTimelineHint">Pruh: od zadania do termínu; výplň: hotová časť; červený rámik: po termíne. Omeškané prvé.</string>
     <string name="assignStatsShowAll">Zobraziť ďalších {n}</string>
     <string name="assignStatsNoDue">Bez termínu: {n} (nie sú v diagrame).</string>
+    <string name="graphicsHelpMac">Ak sú písmená skreslené alebo rozhranie trhá, zvoľte „Kompatibilita“.</string>
+    <string name="graphicsAutoDescMac">Kompatibilita na Macu s procesorom Intel, nové jadro na Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Spoľahlivejšie na Macu s procesorom Intel</string>
+    <string name="graphicsImpellerDescMac">Plynulejšie na Macu s Apple Silicon</string>
 </resources>

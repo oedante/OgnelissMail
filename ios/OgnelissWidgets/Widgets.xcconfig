@@ -6,3 +6,10 @@
 // Команда разработчика — та же, что у приложения (локальный файл, не в git).
 #include? "../Flutter/Signing.xcconfig"
 IPHONEOS_DEPLOYMENT_TARGET = 15.0
+// Версия и сборка расширения — как у приложения (14.11.2026, TestFlight:
+// «90473: CFBundleShortVersionString Mismatch … '1.0' … '2.5.2'»). Xcode 16+
+// создаёт цель со своим Info.plist из настроек (MARKETING_VERSION = 1.0,
+// CURRENT_PROJECT_VERSION = 1): значения у цели в Build Settings нужно
+// удалить (Delete), тогда действуют эти.
+MARKETING_VERSION = $(FLUTTER_BUILD_NAME)
+CURRENT_PROJECT_VERSION = $(FLUTTER_BUILD_NUMBER)

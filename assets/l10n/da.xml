@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Bjælke: fra tildeling til frist; udfyldning: færdig del; rød kant: forsinket. Forsinkede først.</string>
     <string name="assignStatsShowAll">Vis {n} mere</string>
     <string name="assignStatsNoDue">Uden frist: {n} (vises ikke i diagrammet).</string>
+    <string name="graphicsHelpMac">Hvis bogstaverne ser forvrængede ud, eller brugerfladen hakker, så vælg \"Kompatibilitet\".</string>
+    <string name="graphicsAutoDescMac">Kompatibilitet på Mac med Intel-processor, ny motor på Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Mere pålidelig på Mac med Intel-processor</string>
+    <string name="graphicsImpellerDescMac">Mere flydende på Mac med Apple Silicon</string>
 </resources>

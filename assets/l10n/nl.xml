@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Balk: van toewijzing tot deadline; vulling: gedaan deel; rode rand: te laat. Te late eerst.</string>
     <string name="assignStatsShowAll">Nog {n} tonen</string>
     <string name="assignStatsNoDue">Zonder deadline: {n} (niet in de grafiek).</string>
+    <string name="graphicsHelpMac">Als letters vervormd lijken of de interface hapert, kies dan ‘Compatibiliteit’.</string>
+    <string name="graphicsAutoDescMac">Compatibiliteit op Macs met Intel-processor, nieuwe engine op Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Betrouwbaarder op Macs met Intel-processor</string>
+    <string name="graphicsImpellerDescMac">Vloeiender op Macs met Apple Silicon</string>
 </resources>

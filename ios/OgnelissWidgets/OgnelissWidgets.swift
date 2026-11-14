@@ -34,7 +34,10 @@ private extension Dictionary where Key == String, Value == Any {
   func items(_ k: String) -> [[String: Any]] { (self[k] as? [[String: Any]]) ?? [] }
 }
 
-private func widgetURL(_ type: String) -> URL {
+// Не «widgetURL»: внутри вида SwiftUI это имя — модификатор View.widgetURL(_:),
+// и Xcode 26 подставлял его вместо этой функции («Cannot convert value of type
+// 'some View' to expected argument type 'URL'», сборка 14.11.2026).
+private func ognLink(_ type: String) -> URL {
   var c = URLComponents()
   c.scheme = "com.ogneliss.mail"
   c.host = "widget"
@@ -181,7 +184,7 @@ private struct Header: View {
       Text(title).font(.system(size: 15, weight: .bold)).foregroundColor(cAccent).lineLimit(1)
       Text(sub).font(.system(size: 13)).foregroundColor(cSub).lineLimit(1)
       Spacer(minLength: 4)
-      Link(destination: widgetURL(action)) {
+      Link(destination: ognLink(action)) {
         Image(systemName: actionIcon).font(.system(size: 16, weight: .semibold)).foregroundColor(cAccent)
           .frame(width: 28, height: 28)
       }
@@ -247,7 +250,7 @@ struct MyDayView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .widgetURL(widgetURL("myday"))
+    .widgetURL(ognLink("myday"))
     .widgetBackground()
   }
 }
@@ -490,7 +493,7 @@ struct MailView: View {
     if isAccessory(family) {
       if #available(iOSApplicationExtension 16.0, *) {
         MailAccessoryView(j: entry.json ?? [:], family: family)
-          .widgetURL(widgetURL("mail"))
+          .widgetURL(ognLink("mail"))
           .widgetBackground()
       }
     } else {
@@ -513,7 +516,7 @@ struct MailView: View {
       }
       ForEach(Array(items.prefix(max).enumerated()), id: \.offset) { _, it in
         if family == .systemSmall {
-          Link(destination: widgetURL(it.str("open"))) {
+          Link(destination: ognLink(it.str("open"))) {
             VStack(alignment: .leading, spacing: 0) {
               Text(it.str("f")).font(.system(size: 13, weight: .bold)).foregroundColor(cText).lineLimit(1)
               Text(it.str("s")).font(.system(size: 12)).foregroundColor(cSub).lineLimit(1)
@@ -522,7 +525,7 @@ struct MailView: View {
         } else {
           // Ссылка — только на текст: кнопки рядом, не внутри ссылки.
           HStack(spacing: 8) {
-            Link(destination: widgetURL(it.str("open"))) {
+            Link(destination: ognLink(it.str("open"))) {
               VStack(alignment: .leading, spacing: 1) {
                 HStack(spacing: 8) {
                   Text(it.str("f")).font(.system(size: 14, weight: .bold)).foregroundColor(cText).lineLimit(1)
@@ -551,7 +554,7 @@ struct MailView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .widgetURL(widgetURL("mail"))
+    .widgetURL(ognLink("mail"))
     .widgetBackground()
   }
 }
@@ -615,7 +618,7 @@ struct CalendarView: View {
           Text(dayLabel(day, j, fmt)).font(.system(size: 12, weight: .bold)).foregroundColor(cSub)
             .padding(.top, i == 0 ? 2 : 4)
         }
-        Link(destination: widgetURL(it.str("open"))) {
+        Link(destination: ognLink(it.str("open"))) {
           HStack(spacing: 6) {
             Circle().fill(argb(it["c"] as? NSNumber)).frame(width: 7, height: 7)
             TimeCell(allDay: (it["a"] as? NSNumber)?.intValue == 1, text: it.str("t"),
@@ -627,7 +630,7 @@ struct CalendarView: View {
       Spacer(minLength: 0)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .widgetURL(widgetURL("calendar"))
+    .widgetURL(ognLink("calendar"))
     .widgetBackground()
   }
 }
@@ -662,7 +665,7 @@ struct NotesView: View {
         Text(j.str("empty")).font(.system(size: 13)).foregroundColor(cSub)
       }
       ForEach(Array(items.prefix(max).enumerated()), id: \.offset) { _, it in
-        Link(destination: widgetURL(it.str("open"))) {
+        Link(destination: ognLink(it.str("open"))) {
           VStack(alignment: .leading, spacing: 1) {
             Text(it.str("s")).font(.system(size: 14, weight: .bold)).foregroundColor(cText).lineLimit(1)
             if !it.str("p").isEmpty {
@@ -674,7 +677,7 @@ struct NotesView: View {
       Spacer(minLength: 0)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .widgetURL(widgetURL("notes"))
+    .widgetURL(ognLink("notes"))
     .widgetBackground()
   }
 }
@@ -713,7 +716,7 @@ struct TasksView: View {
       ForEach(Array(items.prefix(max).enumerated()), id: \.offset) { _, it in
         HStack(spacing: 6) {
           TaskDoneButton(item: it, label: j.str("done"))
-          Link(destination: widgetURL(it.str("open"))) {
+          Link(destination: ognLink(it.str("open"))) {
             VStack(alignment: .leading, spacing: 1) {
               Text(it.str("s")).font(.system(size: 14)).foregroundColor(cText).lineLimit(1)
               if !it.str("d").isEmpty {
@@ -728,7 +731,7 @@ struct TasksView: View {
       Spacer(minLength: 0)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .widgetURL(widgetURL("tasks"))
+    .widgetURL(ognLink("tasks"))
     .widgetBackground()
   }
 }
@@ -949,7 +952,7 @@ struct CalendarWeekView: View {
       Spacer(minLength: 0)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .widgetURL(widgetURL("calendar"))
+    .widgetURL(ognLink("calendar"))
     .widgetBackground()
   }
 }
@@ -1110,7 +1113,7 @@ private struct MonthHeader: View {
           Spacer(minLength: 4)
           arrow(-1, "chevron.left", canBack)
           arrow(1, "chevron.right", canFwd)
-          Link(destination: widgetURL("event")) {
+          Link(destination: ognLink("event")) {
             Image(systemName: "plus").font(.system(size: 16, weight: .semibold)).foregroundColor(cAccent)
               .frame(width: 28, height: 28)
           }
@@ -1227,7 +1230,7 @@ struct CalendarMonthView: View {
       Spacer(minLength: 0)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .widgetURL(widgetURL("calendar"))
+    .widgetURL(ognLink("calendar"))
     .widgetBackground()
   }
 }

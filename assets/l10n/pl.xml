@@ -4328,4 +4328,8 @@
     <string name="assignStatsTimelineHint">Pasek: od zlecenia do terminu; wypełnienie: wykonana część; czerwona ramka: po terminie. Najpierw opóźnione.</string>
     <string name="assignStatsShowAll">Pokaż jeszcze {n}</string>
     <string name="assignStatsNoDue">Bez terminu: {n} (nie ma ich na wykresie).</string>
+    <string name="graphicsHelpMac">Jeśli litery są zniekształcone lub interfejs się zacina, wybierz „Zgodność”.</string>
+    <string name="graphicsAutoDescMac">Zgodność na Macach z procesorem Intel, nowy silnik na Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Bardziej niezawodny na Macach z procesorem Intel</string>
+    <string name="graphicsImpellerDescMac">Płynniejszy na Macach z Apple Silicon</string>
 </resources>

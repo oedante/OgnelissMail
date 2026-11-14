@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Barre : de l\'attribution à l\'échéance ; remplissage : partie faite ; contour rouge : en retard. Les retards d\'abord.</string>
     <string name="assignStatsShowAll">Afficher {n} de plus</string>
     <string name="assignStatsNoDue">Sans échéance : {n} (absentes du diagramme).</string>
+    <string name="graphicsHelpMac">Si les lettres s’affichent mal ou si l’interface saccade, choisissez « Compatibilité ».</string>
+    <string name="graphicsAutoDescMac">Compatibilité sur les Mac à processeur Intel, nouveau moteur sur Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Plus fiable sur les Mac à processeur Intel</string>
+    <string name="graphicsImpellerDescMac">Plus fluide sur les Mac avec Apple Silicon</string>
 </resources>

@@ -4286,4 +4286,8 @@
     <string name="assignStatsTimelineHint">Çubuk: verilişten bitiş tarihine; dolgu: yapılan kısım; kırmızı çerçeve: gecikti. Gecikenler önce.</string>
     <string name="assignStatsShowAll">{n} tane daha göster</string>
     <string name="assignStatsNoDue">Bitiş tarihi yok: {n} (çizelgede gösterilmez).</string>
+    <string name="graphicsHelpMac">Harfler bozuk görünüyorsa veya arayüz takılıyorsa «Uyumluluk» seçeneğini seçin.</string>
+    <string name="graphicsAutoDescMac">Intel işlemcili Mac\'lerde uyumluluk, Apple Silicon\'da yeni motor</string>
+    <string name="graphicsSkiaDescMac">Intel işlemcili Mac\'lerde daha güvenilir</string>
+    <string name="graphicsImpellerDescMac">Apple Silicon\'lu Mac\'lerde daha akıcı</string>
 </resources>

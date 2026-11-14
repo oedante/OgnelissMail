@@ -183,12 +183,37 @@ void main() {
       srv.commands.clear();
       await sync.syncSingleFolder(a, folder);
       expect(await ids(), contains('INBOX:6'));
-      expect(srv.commands.where((c) => c.startsWith('UID FETCH 6 (UID FLAGS ENVELOPE')), hasLength(1));
+      expect(srv.commands.where((c) => c.startsWith('UID FETCH 6 (UID FLAGS INTERNALDATE ENVELOPE')), hasLength(1));
 
       // Всё на месте — лишних запросов нет.
       srv.commands.clear();
       await sync.syncSingleFolder(a, folder);
       expect(srv.commands, ['SELECT "INBOX"', 'UID FETCH 1:* (UID FLAGS)']);
+    });
+
+    test('даты загруженных раньше писем — один раз по времени прихода (14.11.2026)', () async {
+      final box = await serve(_plain);
+      await init();
+      final sync = c.read(syncServiceProvider);
+      final a = account();
+      await sync.syncSingleFolder(a, folder);
+      Future<DateTime> at(String id) async => (await db.getEmailById(id, accountId: 'a1'))!.receivedAt.toUtc();
+      // Загружены по заголовку Date (26.10.2026 10:00 UTC) — как до исправления.
+      expect(await at('INBOX:2'), DateTime.utc(2026, 10, 26, 10));
+      // Сервер сообщает время прихода: письмо 2 пришло через 5 минут,
+      // письмо 3 перенесено месяц спустя (остаётся дата письма).
+      box.messages[1].internalDate = '26-Oct-2026 13:05:00 +0300';
+      box.messages[2].internalDate = '26-Nov-2026 09:00:00 +0000';
+      // Следующий проход исправляет даты; повторно время прихода не
+      // запрашивается.
+      srv.commands.clear();
+      await sync.syncSingleFolder(a, folder);
+      expect(await at('INBOX:2'), DateTime.utc(2026, 10, 26, 10, 5));
+      expect(await at('INBOX:3'), DateTime.utc(2026, 10, 26, 10));
+      expect(srv.commands.where((c) => c.contains('(UID INTERNALDATE)')), hasLength(1));
+      srv.commands.clear();
+      await sync.syncSingleFolder(a, folder);
+      expect(srv.commands.where((c) => c.contains('(UID INTERNALDATE)')), isEmpty, reason: 'один раз на папку');
     });
   });
 

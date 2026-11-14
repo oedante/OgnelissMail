@@ -22,6 +22,7 @@ import '../../../services/mail/oauth/oauth_revocation.dart';
 import '../../../services/mail/transport_capabilities.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:drift/drift.dart';
@@ -1338,6 +1339,39 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
   /// продолжал печатать) не должен затирать результаты более позднего.
   int _searchSeq = 0;
 
+  /// Поиск на устройстве берёт совпадения по дате: самые старые при
+  /// «Сначала старые», иначе самые новые (14.11.2026).
+  bool get _oldestFirst => sortBy == MailSort.dateOldest;
+
+  /// Найденное — в порядке выбранной сортировки, как обычная лента
+  /// (14.11.2026, замечание владельца: при «Сначала новые» результаты поиска
+  /// шли вперемешку — по релевантности, по ящикам, найденное на сервере — в
+  /// конце, и заголовки дней повторялись).
+  void _sortFound(List<EmailModel> list) => list.sort((a, b) => compareForSort(sortBy, a, b));
+
+  @visibleForTesting
+  static int compareForSort(MailSort sort, EmailModel a, EmailModel b) {
+    int newest() {
+      final c = b.receivedAt.compareTo(a.receivedAt);
+      return c != 0 ? c : b.id.compareTo(a.id);
+    }
+
+    String sender(EmailModel e) {
+      final n = (e.from.displayName ?? '').trim();
+      return (n.isEmpty ? e.from.email : n).toLowerCase();
+    }
+
+    int then(int c) => c != 0 ? c : newest();
+    return switch (sort) {
+      MailSort.dateNewest => newest(),
+      MailSort.dateOldest => -newest(),
+      MailSort.senderAZ => then(sender(a).compareTo(sender(b))),
+      MailSort.subjectAZ => then(a.subject.toLowerCase().compareTo(b.subject.toLowerCase())),
+      MailSort.sizeLargest => then((b.size ?? 0).compareTo(a.size ?? 0)),
+      MailSort.sizeSmallest => then((a.size ?? 0).compareTo(b.size ?? 0)),
+    };
+  }
+
   Future<void> search(String query) async {
     final seq = ++_searchSeq;
     final q = query.trim();
@@ -1357,11 +1391,11 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
       if (allAccountsMode) {
         final all = <dynamic>[];
         for (final a in accounts) {
-          all.addAll(await db.searchEmailsFts(accountId: a.id, query: q, limit: 50));
+          all.addAll(await db.searchEmailsFts(accountId: a.id, query: q, limit: 50, oldestFirst: _oldestFirst));
         }
         rows = all;
       } else {
-        rows = await db.searchEmailsFts(accountId: account!.id, query: q, limit: 100);
+        rows = await db.searchEmailsFts(accountId: account!.id, query: q, limit: 100, oldestFirst: _oldestFirst);
       }
       if (seq != _searchSeq || !mounted) return;
       final found = _dedupByMessageId(rows.cast<Email>());
@@ -1389,6 +1423,7 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
       // Найденное на телефоне — сразу; серверный поиск — когда пользователь
       // перестал печатать (ещё 0,7 с): иначе каждая пауза в наборе уходила
       // запросом на сервер и занимала соединение ящика (у IMAP — единственное).
+      _sortFound(emails);
       state = EmailListState(emails: List.of(emails), isLoading: false, hasMore: false, currentPage: 0);
       await Future<void>.delayed(const Duration(milliseconds: 700));
       if (seq != _searchSeq || !mounted) return;
@@ -1427,6 +1462,7 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
         AppLogger.error('Emails: серверный поиск не удался', e);
       }
       if (seq != _searchSeq || !mounted) return;
+      _sortFound(emails);
       state = EmailListState(emails: emails, isLoading: false, hasMore: false, currentPage: 0);
     } catch (e, stack) {
       if (seq != _searchSeq) return;

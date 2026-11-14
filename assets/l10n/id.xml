@@ -4265,4 +4265,8 @@
     <string name="assignStatsTimelineHint">Batang: dari pemberian hingga tenggat; isian: bagian selesai; bingkai merah: terlambat. Yang terlambat lebih dulu.</string>
     <string name="assignStatsShowAll">Tampilkan {n} lagi</string>
     <string name="assignStatsNoDue">Tanpa tenggat: {n} (tidak ada di diagram).</string>
+    <string name="graphicsHelpMac">Jika huruf tampak rusak atau antarmuka tersendat, pilih «Kompatibilitas».</string>
+    <string name="graphicsAutoDescMac">Kompatibilitas di Mac dengan prosesor Intel, mesin baru di Apple Silicon</string>
+    <string name="graphicsSkiaDescMac">Lebih andal di Mac dengan prosesor Intel</string>
+    <string name="graphicsImpellerDescMac">Lebih mulus di Mac dengan Apple Silicon</string>
 </resources>

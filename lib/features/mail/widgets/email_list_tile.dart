@@ -360,7 +360,8 @@ class EmailListTile extends ConsumerWidget {
         : hlColor != null
             ? Color.alphaBlend(hlColor, listBg)
             : (isUnread
-                ? Color.alphaBlend(theme.colorScheme.primary.withValues(alpha: 0.035), listBg)
+                // 0,035 было почти не видно (14.11.2026).
+                ? Color.alphaBlend(theme.colorScheme.primary.withValues(alpha: 0.07), listBg)
                 : listBg);
 
     return Semantics(
@@ -453,6 +454,27 @@ class EmailListTile extends ConsumerWidget {
                               ))),
                     if (!isInSelectionMode && email.laterState != 0)
                       Positioned(left: 1, bottom: 0, child: _laterMark(context, email.laterState)),
+                    // Непрочитанное — точка в левом верхнем углу портрета
+                    // (просьба владельца 14.11.2026: точка у имени сдвигала
+                    // ФИО, пользователям не нравилось), обводка цвета строки.
+                    // Центр точки — на краю круга под 45° (r·(1 − √½) от угла).
+                    if (!isInSelectionMode && isUnread)
+                      Positioned(
+                        left: Space.l + dens.avatarRadius * 0.2929 - 6,
+                        top: (compact ? (Sizes.tapTarget - avatarSize) / 2 : 0) + dens.avatarRadius * 0.2929 - 6,
+                        child: IgnorePointer(
+                          child: Container(
+                            key: const ValueKey('unread_dot'),
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: rowColor, width: 2),
+                            ),
+                          ),
+                        ),
+                      ),
                     ]),
 
                     // Содержимое
@@ -497,8 +519,10 @@ class EmailListTile extends ConsumerWidget {
                                           )
                                         : Text(
                                             email.from.label,
+                                            // Прочитанное — обычным, непрочитанное — жирным
+                                            // (14.11.2026: при 500 и 700 разница терялась).
                                             style: theme.textTheme.titleSmall?.copyWith(
-                                              fontWeight: isUnread ? FontWeight.w700 : FontWeight.w500,
+                                              fontWeight: isUnread ? FontWeight.w700 : FontWeight.w400,
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
@@ -522,13 +546,20 @@ class EmailListTile extends ConsumerWidget {
                                         ? l10n.tr('controlUntil').replaceAll(
                                             '{when}', controlDeadlineLabel(email.followUpAt!.toLocal(), l10n))
                                         : _formatTime(context, email.receivedAt);
+                                // Непрочитанное (14.11.2026, замечание владельца:
+                                // «новые письма почти незаметны»; дизайн-система,
+                                // «Строка списка»): время — цветом акцента, точка —
+                                // на портрете (имя не сдвигает).
+                                final fresh = isUnread && !later && !due;
                                 return Text(
                                   text,
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: overdue
                                         ? AppColors.errorText(context)
-                                        : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                                    fontWeight: overdue ? FontWeight.w600 : null,
+                                        : fresh
+                                            ? theme.colorScheme.primary
+                                            : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                    fontWeight: overdue ? FontWeight.w600 : (fresh ? FontWeight.w700 : null),
                                     fontSize: 12,
                                   ),
                                 );

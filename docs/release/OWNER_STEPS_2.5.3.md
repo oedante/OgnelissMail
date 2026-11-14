@@ -17,6 +17,17 @@
 У цели виджетов остались версии Xcode (1.0 и 1) вместо версии приложения.
 Один раз:
 
+0. Удалить файлы шаблона, которые Xcode создал вместе с целью (второй
+   `@main` — ошибка сборки; `scripts/build_ios.sh` теперь сам называет их и
+   останавливается):
+
+   ```bash
+   rm -f ios/OgnelissWidgets/OgnelissWidgetsBundle.swift ios/OgnelissWidgets/OgnelissWidgetsControl.swift ios/OgnelissWidgets/OgnelissWidgetsLiveActivity.swift ios/OgnelissWidgets/AppIntent.swift
+   ```
+
+   В Xcode они пропадут из папки OgnelissWidgets сами (папка
+   синхронизируется). Ошибки «widgetURL» в `OgnelissWidgets.swift`
+   исправлены в коде.
 1. Проект **Runner → Info → Configurations**: в Debug, Release и Profile для
    строки **OgnelissWidgetsExtension** — **Widgets** (`Widgets.xcconfig`).
 2. Цель **OgnelissWidgetsExtension → Build Settings** (All, Levels):

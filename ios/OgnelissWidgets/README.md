@@ -89,6 +89,34 @@ Android: настраивать ничего не нужно — виджеты 
   «Automatically manage signing») Xcode сам переподпишет виджеты
   распространительским сертификатом. С `Widgets.xcconfig` из архива 2.5.2 и
   новее значение уже задано (если файл выбран в Configurations, шаг 4).
+- **«Your team has no devices from which to generate a provisioning
+  profile» / «No profiles for '…OgnelissWidgets' were found».** Автоматической
+  подписи для сборки нужен профиль разработчика, а его выпускают только на
+  зарегистрированные устройства. Если приложение подписано вручную профилем
+  App Store, подпишите так же и виджеты (устройства не нужны):
+  1. developer.apple.com → Certificates, Identifiers & Profiles →
+     Identifiers. Группы `group.com.ogneliss.mail` нет — «+» → App Groups →
+     создать.
+  2. «+» → App IDs → App: Bundle ID (Explicit) — тот же, что у цели виджетов
+     в Xcode (лучше `com.ogneliss.mail.widgets`), отметить **App Groups** →
+     Register; затем в нём App Groups → Configure → `group.com.ogneliss.mail`.
+  3. App ID `com.ogneliss.mail`: включить App Groups с той же группой → Save.
+  4. Profiles → «+» → Distribution → **App Store Connect** → App ID виджетов
+     → тот же сертификат Distribution, что у приложения → имя, например
+     `ogneliss_widgets_appstore` → Download, открыть двойным щелчком.
+     Профиль приложения (`ogneliss_mail_appstore`) — Edit → Save → Download
+     заново: после включения App Groups старый недействителен.
+  5. Xcode, цель виджетов: Bundle Identifier — как в шаге 2; Signing &
+     Capabilities → снять **Automatically manage signing** → Provisioning
+     Profile (Release) — `ogneliss_widgets_appstore`; Build Settings → Code
+     Signing Identity (Release) — та же, что у Runner (Apple Distribution /
+     iPhone Distribution).
+  6. Archive → Distribute App → App Store Connect → Manually manage
+     signing — профили приложения и виджетов.
+
+  Другой путь — автоматическая подпись: один раз подключить iPhone кабелем к
+  Mac, выбрать его вверху Xcode как устройство для запуска и согласиться
+  зарегистрировать (или добавить UDID в Devices на developer.apple.com).
 - **Нет папки `ios/OgnelissWidgets.src`.** Её не бывает в архиве — это
   переименованная перед созданием цели `ios/OgnelissWidgets` (шаг 2,
   Xcode 16+). Если цель уже создана без переименования, оставьте как есть

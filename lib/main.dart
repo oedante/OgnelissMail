@@ -4,6 +4,7 @@
 // Инициализирует БД, SecureStorage, уведомления, фоновые задачи.
 // Поддержка Android, iOS, Windows, macOS, Linux.
 
+import 'core/logging/jank_monitor.dart';
 import 'core/platform/native_drag_drop.dart';
 import 'core/platform/portable_mode.dart';
 import 'core/platform/device_time_zone.dart';
@@ -493,6 +494,8 @@ Future<void> main() async {
     // Windows: есть ли WebView2 Runtime для сложных писем — до первого
     // письма (2.5.4).
     unawaited(DesktopMailWebView.probe());
+    // Медленные кадры — в журнал (2.6.0): видно, когда интерфейс замирал.
+    JankMonitor.start();
     // Календарь и контакты рабочей почты, найденные раньше (RFC 6764).
     unawaited(DavDiscovery.load());
   } catch (e, stack) {

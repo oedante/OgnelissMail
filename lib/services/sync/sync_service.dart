@@ -356,7 +356,10 @@ class SyncService {
             await _ref.read(markSyncProvider).pushLocal(a);
           }
           // Поручения (2.2.0): ответы исполнителей, новые поручения мне.
-          final changed = await AssignmentService.scanAfterSync(_ref.read(databaseProvider), accounts);
+          // Уступает открытому письму и экрану (очередь работ, «докачка»):
+          // разбор не толкается с интерфейсом сразу после запуска.
+          final changed = await WorkScheduler.instance.run(WorkPriority.prefetch,
+              () => AssignmentService.scanAfterSync(_ref.read(databaseProvider), accounts));
           // Новые поручения и сроки из писем — напоминания о сроках заново.
           if (changed > 0) unawaited(_ref.read(reminderSchedulerProvider).rescheduleAll().catchError((Object _) {}));
           // Этапы проектов: предыдущий этап принят — «Можно начинать»

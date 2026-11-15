@@ -453,9 +453,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     // домена (их можно поправить в «Дополнительно»).
     if (!kExchangeEnabled && guess.kind == MailKind.exchange) {
       final d = MailProviderDetect.domainOf(_email) ?? '';
+      // Серверы IMAP, которые опубликовал администратор (SRV), — уверенно.
       guess = MailGuess(MailKind.imap,
-          sure: false,
-          imap: ImapPreset(
+          sure: guess.imap != null,
+          imap: guess.imap ?? ImapPreset(
             imapHost: 'imap.$d',
             imapPort: 993,
             imapEncryption: EncryptionType.ssl,

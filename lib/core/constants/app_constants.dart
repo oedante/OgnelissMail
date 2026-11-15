@@ -22,9 +22,11 @@ class AppConstants {
   static const supportEmail = String.fromEnvironment('SUPPORT_EMAIL', defaultValue: '');
 
   /// Вход через систему организации (SSO, OAuth организации) — по запросу:
-  /// раздел сайта с контактами разработчика (2.6.0, решение владельца
+  /// раздел сайта «Рабочая почта» с контактами разработчика на языке
+  /// приложения (у сайта — ru, de, fr и en; 2.6.0, решение владельца
   /// 15.11.2026). Без SUPPORT_EMAIL кнопка «Связаться с нами» открывает его.
-  static const corporateContactUrl = 'https://ogneliss.ru/mail/#corporate';
+  static String corporateContactUrl(String lang) =>
+      const {'ru', 'de', 'fr'}.contains(lang) ? 'https://ogneliss.ru/$lang/mail/#corporate' : 'https://ogneliss.ru/mail/#corporate';
   static const appBuild = '1';
   /// Правообладатель — как в лицензионном соглашении (ogneliss.ru/mail/eula).
   /// Латиницей: строка видна и в английском, немецком, французском интерфейсе.

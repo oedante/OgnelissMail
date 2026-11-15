@@ -883,7 +883,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final mail = AppConstants.supportEmail.trim();
     await _open(mail.isNotEmpty
         ? Uri(scheme: 'mailto', path: mail, queryParameters: {'subject': 'Ogneliss Mail: SSO'}).toString()
-        : AppConstants.corporateContactUrl);
+        : AppConstants.corporateContactUrl(l10n.localeCode));
   }
 
   /// Плитки личной почты: по три в ряд.

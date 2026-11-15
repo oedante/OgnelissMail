@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">Google अभी नए उपयोगकर्ताओं को अनुमति नहीं दे रहा है: जब तक ऐप Google की जाँच पूरी नहीं कर लेता, Google से अधिकतम 100 लोग साइन इन कर सकते हैं। आप ऐप पासवर्ड से Gmail जोड़ सकते हैं।</string>
     <string name="oauthGoogleUserCapAction">ऐप पासवर्ड इस्तेमाल करें</string>
     <string name="gmailAppPwNote">Google ऐप पासवर्ड चाहिए: अपने Google खाते में 2-चरणीय सत्यापन चालू करें और “ऐप पासवर्ड” पेज पर पासवर्ड बनाएँ। इस तरह सिर्फ़ मेल जुड़ता है; Google कैलेंडर और संपर्कों के लिए Google से साइन इन ज़रूरी है।</string>
+    <string name="assignReminded">{time} बजे याद दिलाया</string>
 </resources>

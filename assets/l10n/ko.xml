@@ -4281,4 +4281,5 @@
     <string name="oauthGoogleUserCap">현재 Google이 새 사용자를 받지 않습니다. 앱이 Google 검토를 통과할 때까지 Google로 로그인할 수 있는 사람은 최대 100명입니다. Gmail은 앱 비밀번호로 연결할 수 있습니다.</string>
     <string name="oauthGoogleUserCapAction">앱 비밀번호 사용</string>
     <string name="gmailAppPwNote">Google 앱 비밀번호가 필요합니다. Google 계정에서 2단계 인증을 켜고 ‘앱 비밀번호’ 페이지에서 비밀번호를 만드세요. 이 방법으로는 메일만 연결되며, Google 캘린더와 주소록은 Google 로그인이 필요합니다.</string>
+    <string name="assignReminded">{time}에 알림 보냄</string>
 </resources>

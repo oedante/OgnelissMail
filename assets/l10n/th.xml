@@ -4281,4 +4281,5 @@
     <string name="oauthGoogleUserCap">ขณะนี้ Google ไม่รับผู้ใช้ใหม่ จนกว่าแอปจะผ่านการตรวจสอบของ Google จะลงชื่อเข้าใช้ด้วย Google ได้ไม่เกิน 100 คน คุณเชื่อมต่อ Gmail ด้วยรหัสผ่านสำหรับแอปได้</string>
     <string name="oauthGoogleUserCapAction">ใช้รหัสผ่านสำหรับแอป</string>
     <string name="gmailAppPwNote">ต้องใช้รหัสผ่านสำหรับแอปของ Google: เปิดการยืนยันแบบ 2 ขั้นตอนในบัญชี Google แล้วสร้างรหัสผ่านในหน้า “รหัสผ่านสำหรับแอป” วิธีนี้เชื่อมต่อได้เฉพาะอีเมล ส่วน Google ปฏิทินและรายชื่อติดต่อต้องลงชื่อเข้าใช้ด้วย Google</string>
+    <string name="assignReminded">เตือนแล้วเมื่อ {time}</string>
 </resources>

@@ -4281,4 +4281,5 @@
     <string name="oauthGoogleUserCap">Google 目前不接受新用户：在应用通过 Google 审核之前，最多只有 100 人可以使用 Google 登录。你可以用应用专用密码连接 Gmail。</string>
     <string name="oauthGoogleUserCapAction">使用应用专用密码</string>
     <string name="gmailAppPwNote">需要 Google 应用专用密码：请在 Google 账号中开启两步验证，并在“应用专用密码”页面创建密码。这种方式只连接邮件；Google 日历和通讯录需要使用 Google 登录。</string>
+    <string name="assignReminded">已于 {time} 提醒</string>
 </resources>

@@ -31,6 +31,7 @@ import '../mail/providers/mail_providers.dart' show accountsProvider, activeAcco
 import '../../core/utils/text_safe.dart' show initialOf;
 import 'project_editor.dart' show pickAssignmentFiles, showProjectEditor;
 import '../../services/assignments/assignment_store.dart' show AssignmentFile;
+import '../compose/widgets/recipients_check.dart' show confirmExternalRecipients;
 import 'assignment_widgets.dart' show AssignmentAccountField;
 
 /// Срок подзадачи по умолчанию — срок родительского поручения, если он не
@@ -175,6 +176,9 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
   Future<void> _submit() async {
     final account = _account;
     if (account == null || _to.isEmpty || _title.text.trim().isEmpty || _sending) return;
+    // Исполнитель вне организации рабочего ящика — «Проверьте получателей».
+    if (!await confirmExternalRecipients(context, account, [for (final a in _to) a.email])) return;
+    if (!mounted) return;
     setState(() => _sending = true);
     await ref.read(assignmentServiceProvider).create(
           account: account,

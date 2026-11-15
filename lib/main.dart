@@ -421,13 +421,20 @@ Future<void> main() async {
     // не вместо всей истории (go): после закрытия редактора приложение
     // оставалось на пустом белом экране (замечание 11.10.2026). После
     // первого кадра — при холодном запуске навигатор ещё не готов.
+    // Холодный запуск — после заставки, входа и блокировки: их переход на
+    // главный экран (go) заменял весь стек, и редактор пропадал (15.11.2026).
     void openCompose(Map<String, String> params) {
       final uri = Uri(path: '/compose', queryParameters: params.isEmpty ? null : params).toString();
-      void go() => globalContainer.read(appRouterProvider).push(uri);
+      Future<void> go() async {
+        final router = globalContainer.read(appRouterProvider);
+        await AppShortcuts.waitForMainScreen(router);
+        unawaited(router.push(uri));
+      }
+
       if (WidgetsBinding.instance.hasScheduledFrame || !WidgetsBinding.instance.firstFrameRasterized) {
-        WidgetsBinding.instance.addPostFrameCallback((_) => go());
+        WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(go()));
       } else {
-        go();
+        unawaited(go());
       }
     }
 

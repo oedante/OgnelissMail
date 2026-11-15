@@ -4323,4 +4323,5 @@
     <string name="oauthGoogleUserCap">Google nu acceptă acum utilizatori noi: până când aplicația trece de verificarea Google, se pot conecta cu Google cel mult 100 de persoane. Puteți conecta Gmail cu o parolă pentru aplicații.</string>
     <string name="oauthGoogleUserCapAction">Folosiți o parolă pentru aplicații</string>
     <string name="gmailAppPwNote">Aveți nevoie de o parolă pentru aplicații Google: activați verificarea în doi pași în contul Google și creați o parolă pe pagina „Parole pentru aplicații”. Așa se conectează doar e-mailul; Google Calendar și Persoane de contact necesită conectarea cu Google.</string>
+    <string name="assignReminded">Reamintit la {time}</string>
 </resources>

@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">Google no admite nuevos usuarios por ahora: hasta que la app supere la verificación de Google, solo 100 personas pueden iniciar sesión con Google. Puedes conectar Gmail con una contraseña de aplicación.</string>
     <string name="oauthGoogleUserCapAction">Usar contraseña de aplicación</string>
     <string name="gmailAppPwNote">Necesitas una contraseña de aplicación de Google: activa la verificación en dos pasos en tu cuenta de Google y crea una contraseña en la página «Contraseñas de aplicaciones». Así solo se conecta el correo; Google Calendar y Contactos requieren iniciar sesión con Google.</string>
+    <string name="assignReminded">Recordado a las {time}</string>
 </resources>

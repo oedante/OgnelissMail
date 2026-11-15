@@ -4344,4 +4344,5 @@
     <string name="oauthGoogleUserCap">Google nie przyjmuje teraz nowych użytkowników: dopóki aplikacja nie przejdzie weryfikacji Google, przez Google może zalogować się najwyżej 100 osób. Gmail możesz podłączyć hasłem do aplikacji.</string>
     <string name="oauthGoogleUserCapAction">Użyj hasła do aplikacji</string>
     <string name="gmailAppPwNote">Potrzebne jest hasło do aplikacji Google: włącz weryfikację dwuetapową na koncie Google i utwórz hasło na stronie „Hasła do aplikacji”. W ten sposób łączy się tylko poczta; Kalendarz i Kontakty Google wymagają logowania przez Google.</string>
+    <string name="assignReminded">Przypomniano o {time}</string>
 </resources>

@@ -396,7 +396,9 @@ class ProjectScreen extends ConsumerWidget {
     final st = await showStageEditor(context, ref, project: draft);
     if (st == null) return;
     final afterId = st.after == null || st.after! >= stages.length ? null : stages[st.after!].id;
-    assignmentFire(ref.read(assignmentServiceProvider).addStage(project, st, afterId: afterId).then((_) {}));
+    if (!context.mounted) return;
+    assignmentGuarded(context, project, () => ref.read(assignmentServiceProvider).addStage(project, st, afterId: afterId),
+        extra: stageEmails(st));
   }
 
   Future<void> _saveTemplate(BuildContext context, WidgetRef ref) async {

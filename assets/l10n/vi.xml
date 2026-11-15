@@ -4281,4 +4281,5 @@
     <string name="oauthGoogleUserCap">Hiện Google không nhận người dùng mới: cho đến khi ứng dụng vượt qua kiểm duyệt của Google, tối đa 100 người có thể đăng nhập bằng Google. Bạn có thể kết nối Gmail bằng mật khẩu ứng dụng.</string>
     <string name="oauthGoogleUserCapAction">Dùng mật khẩu ứng dụng</string>
     <string name="gmailAppPwNote">Bạn cần mật khẩu ứng dụng của Google: bật Xác minh 2 bước trong Tài khoản Google và tạo mật khẩu ở trang “Mật khẩu ứng dụng”. Cách này chỉ kết nối thư; Lịch và Danh bạ Google cần đăng nhập bằng Google.</string>
+    <string name="assignReminded">Đã nhắc lúc {time}</string>
 </resources>

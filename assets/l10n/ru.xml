@@ -4344,4 +4344,5 @@
     <string name="oauthGoogleUserCap">Google сейчас не пускает новых пользователей: пока приложение проходит проверку Google, войти через Google могут не больше 100 человек. Почту Gmail можно подключить паролем приложения.</string>
     <string name="oauthGoogleUserCapAction">Подключить паролем приложения</string>
     <string name="gmailAppPwNote">Нужен пароль приложения Google: включите двухэтапную проверку в аккаунте Google и создайте пароль на странице «Пароли приложений». Так подключается почта; календарь и контакты Google — только при входе через Google.</string>
+    <string name="assignReminded">Напомнили в {time}</string>
 </resources>

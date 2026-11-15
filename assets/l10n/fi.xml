@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">Google ei nyt ota uusia käyttäjiä: kunnes sovellus on läpäissyt Googlen tarkistuksen, Googlella voi kirjautua enintään 100 henkilöä. Voit yhdistää Gmailin sovellussalasanalla.</string>
     <string name="oauthGoogleUserCapAction">Käytä sovellussalasanaa</string>
     <string name="gmailAppPwNote">Tarvitset Googlen sovellussalasanan: ota kaksivaiheinen vahvistus käyttöön Google-tililläsi ja luo salasana Sovellussalasanat-sivulla. Näin yhdistetään vain posti; Google Kalenteri ja Yhteystiedot vaativat Google-kirjautumisen.</string>
+    <string name="assignReminded">Muistutettu klo {time}</string>
 </resources>

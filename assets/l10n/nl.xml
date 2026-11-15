@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">Google laat op dit moment geen nieuwe gebruikers toe: tot de app door Googles controle is, kunnen maximaal 100 mensen inloggen met Google. Je kunt Gmail koppelen met een app-wachtwoord.</string>
     <string name="oauthGoogleUserCapAction">App-wachtwoord gebruiken</string>
     <string name="gmailAppPwNote">Je hebt een Google-app-wachtwoord nodig: zet verificatie in twee stappen aan in je Google-account en maak een wachtwoord aan op de pagina ‘App-wachtwoorden’. Zo wordt alleen de mail gekoppeld; Google Agenda en Contacten vereisen inloggen met Google.</string>
+    <string name="assignReminded">Herinnerd om {time}</string>
 </resources>

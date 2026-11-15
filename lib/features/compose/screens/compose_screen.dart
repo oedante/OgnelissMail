@@ -15,7 +15,6 @@ import '../../../widgets/ui/settings_group.dart' show SettingsSectionTitle;
 import '../../../core/utils/text_safe.dart';
 import '../../../core/utils/subject_prefix.dart';
 import '../../../core/utils/address_input.dart';
-import '../../../core/utils/mail_domains.dart' show sameOrgDomain;
 import '../../../widgets/common/person_photo.dart';
 import '../../../services/mail/alias_service.dart' show aliasServiceProvider;
 import '../../../core/theme/app_icons.dart';
@@ -67,6 +66,7 @@ import '../../../data/models/email_model.dart';
 import '../../../data/models/contact_model.dart';
 import '../../../services/mail/offline_send_service.dart';
 import '../../settings/providers/feature_flags_provider.dart';
+import '../widgets/recipients_check.dart';
 import '../../../services/security/dlp_service.dart';
 import '../../settings/screens/dlp_settings_screen.dart' show dlpSettingsProvider;
 import '../../../services/mail/attachment_hint_service.dart';
@@ -4882,63 +4882,18 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     final all = [..._toRecipients, ..._ccRecipients, ..._bccRecipients];
     if (all.isEmpty) return true;
 
-    // Внешние адресаты имеют смысл только для рабочего ящика: с личной почты
-    // (Gmail, Яндекс) все получатели «внешние», и предупреждение было бы на
-    // каждом письме. Для личной почты остаётся только проверка «много
-    // получателей».
-    // Домены организации — по всем адресам ящика (адрес входа, основной с
-    // сервера, алиасы) и с поддоменами («msk.corp.ru» — свой для «corp.ru»):
-    // раньше «внешними» считались коллеги на втором домене организации.
-    final acc = _fromAccount;
-    final corporate = acc?.isMsExchange ?? false;
-    final orgDomains = corporate && acc != null ? OwnAddresses.domains(acc) : const <String>{};
-    final externalDomains = <String>{};
-    for (final r in all) {
-      final d = _domainOf(r.email);
-      if (d.isNotEmpty && orgDomains.isNotEmpty && !orgDomains.any((o) => sameOrgDomain(d, o))) {
-        externalDomains.add(d);
-      }
-    }
+    // Внешние адресаты — только у рабочего ящика (recipients_check.dart:
+    // та же проверка у поручений).
+    final externalDomains = externalDomainsOf(_fromAccount, [for (final r in all) r.email]);
     final many = all.length >= _manyRecipientsThreshold;
 
     if (externalDomains.isEmpty && !many) return true; // всё в порядке
 
-    final lines = <String>[];
-    if (many) {
-      lines.add(l10n.tr('goesToNRecipients').replaceAll('{n}', '${all.length}'));
-    }
-    if (externalDomains.isNotEmpty) {
-      final shown = externalDomains.take(5).join(', ');
-      lines.add(l10n.tr('externalRecipientsWarn')
-          .replaceAll('{domains}', shown)
-          .replaceAll('{ellipsis}', externalDomains.length > 5 ? '…' : ''));
-    }
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        icon: Icon(AppIcons.warning, color: AppColors.accentOrangeText(context)),
-        title: Text(l10n.tr('checkRecipients')),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: lines.map((t) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Text(t),
-              )).toList(),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(l10n.cancel)),
-          FilledButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(l10n.tr('send'))),
-        ],
-      ),
-    );
-    return confirmed == true;
-  }
-
-  String _domainOf(String email) {
-    final at = email.lastIndexOf('@');
-    return at >= 0 ? email.substring(at + 1).toLowerCase().trim() : '';
+    final lines = <String>[
+      if (many) l10n.tr('goesToNRecipients').replaceAll('{n}', '${all.length}'),
+      if (externalDomains.isNotEmpty) externalRecipientsLine(externalDomains, l10n),
+    ];
+    return showRecipientsWarning(context, lines);
   }
 
   /// Настоящая отправка: sendOrQueue → уведомление → закрыть экран.

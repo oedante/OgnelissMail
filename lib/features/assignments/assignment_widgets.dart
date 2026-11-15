@@ -26,7 +26,51 @@ import '../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../../widgets/ui/wheel_pickers.dart';
 import '../../core/utils/text_safe.dart' show initialOf;
 import 'assignment_edit.dart';
+import '../compose/widgets/recipients_check.dart' show confirmExternalRecipients;
+import '../mail/providers/mail_providers.dart' show accountsProvider;
+import 'assignment_screen.dart' show assignmentReply;
 import '../../widgets/common/quick_long_press.dart' show secondaryAsHold;
+
+/// Поручения, по которым внешних адресатов уже подтвердили (за запуск).
+final Set<String> _externalOk = {};
+
+/// Адреса поручения [v]: постановщик, исполнитель и все участники.
+Set<String> assignmentEmails(AssignmentView v) => {
+      v.row.ownerEmail,
+      if (v.assignee != null) v.assignee!.email,
+      for (final p in v.people) p.email,
+    };
+
+/// Адреса этапа: исполнитель, соисполнители, контролирующий, наблюдатели.
+List<String> stageEmails(StageDraft st) => [
+      st.executor.email,
+      for (final c in st.co) c.email,
+      if (st.controller != null) st.controller!.email,
+      for (final o in st.observers) o.email,
+    ];
+
+/// Действие по поручению, после которого уходит письмо. Среди участников
+/// есть адреса вне организации рабочего ящика — сначала «Проверьте
+/// получателей» (как у обычного письма; 15.11.2026: ответ по поручению
+/// ушёл на yandex.ru без предупреждения, и Exchange Online его отклонил).
+/// Подтвердили — по этому поручению больше не спрашиваем до перезапуска.
+/// [extra] — новые участники (передача, права): их проверяем всегда.
+void assignmentGuarded(BuildContext context, AssignmentView v, Future<Object?> Function() action,
+    {Iterable<String> extra = const []}) {
+  Future<void> run() async {
+    final known = assignmentEmails(v).map((e) => e.toLowerCase()).toSet();
+    final added = extra.where((e) => !known.contains(e.toLowerCase())).toList();
+    if (!_externalOk.contains(v.id) || added.isNotEmpty) {
+      final account =
+          ProviderScope.containerOf(context, listen: false).read(accountsProvider).where((a) => a.id == v.row.accountId).firstOrNull;
+      if (!await confirmExternalRecipients(context, account, [...known, ...added])) return;
+      _externalOk.add(v.id);
+    }
+    await action();
+  }
+
+  assignmentFire(run());
+}
 
 /// Подпись статуса.
 String assignmentStatusLabel(int status, AppLocalizations l10n) => l10n.tr(switch (status) {
@@ -168,7 +212,7 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
   // Перенос на другой день сохраняет время срока (13.11.2026).
-  void due(DateTime? d) => assignmentFire(svc.reschedule(v, d == null ? null : assignmentDueOn(d, v.due)));
+  void due(DateTime? d) => assignmentGuarded(context, v, () => svc.reschedule(v, d == null ? null : assignmentDueOn(d, v.due)));
   Future<void> pick() async {
     final cur = v.due;
     final d = await showWheelDatePicker(context,
@@ -182,7 +226,9 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
         initial: dueHasTime(cur) ? TimeOfDay(hour: cur.hour, minute: cur.minute) : const TimeOfDay(hour: 18, minute: 0),
         title: l10n.tr('time'),
         minuteInterval: 5);
-    if (t != null) assignmentFire(svc.reschedule(v, DateTime(cur.year, cur.month, cur.day, t.hour, t.minute)));
+    if (t != null && context.mounted) {
+      assignmentGuarded(context, v, () => svc.reschedule(v, DateTime(cur.year, cur.month, cur.day, t.hour, t.minute)));
+    }
   }
 
   final s = v.status;
@@ -191,24 +237,30 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
       PeekAction(
           icon: AppIcons.check,
           label: l10n.tr('assignAccept'),
-          onTap: () => assignmentFire(svc.setStatus(v, AssignmentStatus.done))),
+          onTap: () => assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.done))),
     if (v.outgoing && s == AssignmentStatus.review)
       PeekAction(
           icon: AppIcons.undo,
           label: l10n.tr('assignReturn'),
-          onTap: () => assignmentFire(svc.setStatus(v, AssignmentStatus.inProgress))),
+          onTap: () => unawaited(assignmentReply(context, v, AssignmentStatus.inProgress))),
     if (v.outgoing && (s == AssignmentStatus.open || s == AssignmentStatus.inProgress))
-      PeekAction(icon: AppIcons.notifications, label: l10n.tr('assignRemind'), onTap: () => assignmentFire(svc.remind(v))),
+      PeekAction(
+          icon: AppIcons.notifications,
+          label: l10n.tr('assignRemind'),
+          onTap: () {
+            unawaited(HapticFeedback.selectionClick());
+            assignmentGuarded(context, v, () => svc.remind(v));
+          }),
     if (!v.outgoing && s == AssignmentStatus.open)
       PeekAction(
           icon: AppIcons.play_arrow,
           label: l10n.tr('assignTake'),
-          onTap: () => assignmentFire(svc.setStatus(v, AssignmentStatus.inProgress))),
+          onTap: () => assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.inProgress))),
     if (!v.outgoing && (s == AssignmentStatus.open || s == AssignmentStatus.inProgress))
       PeekAction(
           icon: AppIcons.task_alt,
           label: l10n.tr('assignDoneAction'),
-          onTap: () => assignmentFire(svc.setStatus(v, AssignmentStatus.review))),
+          onTap: () => assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.review))),
     PeekAction(icon: AppIcons.chevron_right, label: l10n.tr('assignOpen'), onTap: () => context.push('/assignments/${v.id}')),
   ];
   final src = v.row.sourceEmailId;
@@ -262,14 +314,14 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
             onTap: () => unawaited(() async {
               final ok = await confirmDestructive(context,
                   title: l10n.tr('assignCancel'), message: l10n.tr('assignCancelConfirm'));
-              if (ok) assignmentFire(svc.setStatus(v, AssignmentStatus.cancelled));
+              if (ok && context.mounted) assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.cancelled));
             }()),
           ),
         PeekAction(
           icon: AppIcons.delete,
           label: l10n.tr('assignDeleteLocal'),
           color: AppColors.errorText(context),
-          onTap: () => assignmentFire(svc.delete(v)),
+          onTap: () => assignmentGuarded(context, v, () => svc.delete(v)),
         ),
       ]),
     ],
@@ -406,12 +458,12 @@ class AssignmentMailCard extends ConsumerWidget {
         Wrap(spacing: Space.xs, runSpacing: Space.xs, children: [
           if (!v.outgoing && s == AssignmentStatus.open)
             FilledButton.icon(
-                onPressed: () => assignmentFire(svc.setStatus(v, AssignmentStatus.inProgress)),
+                onPressed: () => assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.inProgress)),
                 icon: const Icon(AppIcons.play_arrow, size: 18),
                 label: Text(l10n.tr('assignTake'))),
           if (!v.outgoing && (s == AssignmentStatus.open || s == AssignmentStatus.inProgress))
             OutlinedButton.icon(
-                onPressed: () => assignmentFire(svc.setStatus(v, AssignmentStatus.review)),
+                onPressed: () => assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.review)),
                 icon: const Icon(AppIcons.check, size: 18),
                 label: Text(l10n.tr('assignDoneAction'))),
           if (!v.outgoing && v.active && src != null)
@@ -424,10 +476,10 @@ class AssignmentMailCard extends ConsumerWidget {
                 label: Text(l10n.tr('assignQuestion'))),
           if (v.outgoing && s == AssignmentStatus.review) ...[
             FilledButton(
-                onPressed: () => assignmentFire(svc.setStatus(v, AssignmentStatus.done)),
+                onPressed: () => assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.done)),
                 child: Text(l10n.tr('assignAccept'))),
             OutlinedButton(
-                onPressed: () => assignmentFire(svc.setStatus(v, AssignmentStatus.inProgress)),
+                onPressed: () => unawaited(assignmentReply(context, v, AssignmentStatus.inProgress)),
                 child: Text(l10n.tr('assignReturn'))),
           ],
           TextButton(onPressed: () => context.push('/assignments/${v.id}'), child: Text(l10n.tr('assignOpen'))),

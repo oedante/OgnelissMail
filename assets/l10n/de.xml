@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">Google lässt derzeit keine neuen Nutzer zu: Bis die App Googles Prüfung bestanden hat, können sich höchstens 100 Personen mit Google anmelden. Gmail können Sie mit einem App-Passwort verbinden.</string>
     <string name="oauthGoogleUserCapAction">Mit App-Passwort verbinden</string>
     <string name="gmailAppPwNote">Sie brauchen ein Google-App-Passwort: Aktivieren Sie die Bestätigung in zwei Schritten in Ihrem Google-Konto und erstellen Sie ein Passwort auf der Seite „App-Passwörter“. So wird nur die E-Mail verbunden; Google Kalender und Kontakte erfordern die Anmeldung mit Google.</string>
+    <string name="assignReminded">Erinnert um {time}</string>
 </resources>

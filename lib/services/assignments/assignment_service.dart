@@ -389,16 +389,51 @@ class AssignmentService {
     await _record(v, _ev(), 'status', {'status': status, 'text': _l10n().tr('assignMarkedManually')});
   }
 
-  /// Напомнить исполнителю (письмо со сроком).
-  Future<void> remind(AssignmentView v) async {
-    final l10n = _l10n();
-    final ev = _ev();
-    final text = [
-      l10n.tr('assignMsgReminder'),
-      if (v.due != null) l10n.tr('assignMsgDue').replaceAll('{due}', _dueLong(v.due!, l10n)),
-    ].join(' ');
-    await _record(v, ev, 'reminder', {'text': text});
-    await _notify(v, text, AssignmentCodec.taskMarker(id: v.id, due: v.due, ev: ev), act: AssignmentAct.reminder);
+  /// Повторное напоминание — не раньше чем через полчаса (15.11.2026:
+  /// кнопка не отзывалась, её нажали много раз — исполнителю пришло 41
+  /// одинаковое письмо). Кнопка на это время — «Напомнили в 18:07».
+  static const remindPause = Duration(minutes: 30);
+
+  /// Поручения, по которым напоминание отправляется прямо сейчас.
+  static final Set<String> _reminding = {};
+
+  /// Когда я последний раз напоминал по поручению (null — не напоминал).
+  static DateTime? lastReminder(Iterable<AssignmentEvent> events) {
+    DateTime? last;
+    for (final e in events) {
+      if (e.type != 'reminder' || e.direction != 0) continue;
+      if (last == null || e.createdAt.isAfter(last)) last = e.createdAt;
+    }
+    return last;
+  }
+
+  /// Напоминание недавно отправлено — повторять рано.
+  static bool remindedRecently(Iterable<AssignmentEvent> events, {DateTime? now}) {
+    final last = lastReminder(events);
+    return last != null && (now ?? DateTime.now()).difference(last) < remindPause;
+  }
+
+  /// Напомнить исполнителю (письмо со сроком). false — не отправлено:
+  /// напоминание уже уходит или ушло меньше [remindPause] назад.
+  Future<bool> remind(AssignmentView v) async {
+    if (!_reminding.add(v.id)) return false;
+    try {
+      if (remindedRecently(await AssignmentStore.events(_db, v.id))) {
+        AppLogger.info('Поручение: напоминание уже отправлено недавно — повтор пропущен');
+        return false;
+      }
+      final l10n = _l10n();
+      final ev = _ev();
+      final text = [
+        l10n.tr('assignMsgReminder'),
+        if (v.due != null) l10n.tr('assignMsgDue').replaceAll('{due}', _dueLong(v.due!, l10n)),
+      ].join(' ');
+      await _record(v, ev, 'reminder', {'text': text});
+      await _notify(v, text, AssignmentCodec.taskMarker(id: v.id, due: v.due, ev: ev), act: AssignmentAct.reminder);
+      return true;
+    } finally {
+      _reminding.remove(v.id);
+    }
   }
 
   /// Новый срок (поручивший — с письмом исполнителю; исполнитель — только

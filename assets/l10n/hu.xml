@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">A Google most nem enged be új felhasználókat: amíg az alkalmazás át nem megy a Google ellenőrzésén, legfeljebb 100 ember léphet be Google-fiókkal. A Gmailt alkalmazásjelszóval csatlakoztathatja.</string>
     <string name="oauthGoogleUserCapAction">Alkalmazásjelszó használata</string>
     <string name="gmailAppPwNote">Google-alkalmazásjelszó kell: kapcsolja be a kétlépcsős azonosítást a Google-fiókjában, és hozzon létre jelszót az „Alkalmazásjelszavak” oldalon. Így csak a levelezés csatlakozik; a Google Naptárhoz és Névjegyekhez Google-bejelentkezés kell.</string>
+    <string name="assignReminded">Emlékeztetve: {time}</string>
 </resources>

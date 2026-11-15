@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">Google tager ikke imod nye brugere lige nu: indtil appen er godkendt af Google, kan højst 100 personer logge ind med Google. Du kan forbinde Gmail med en app-adgangskode.</string>
     <string name="oauthGoogleUserCapAction">Brug app-adgangskode</string>
     <string name="gmailAppPwNote">Du skal bruge en Google-app-adgangskode: slå totrinsbekræftelse til i din Google-konto, og opret en adgangskode på siden »App-adgangskoder«. Sådan forbindes kun mail; Google Kalender og Kontakter kræver login med Google.</string>
+    <string name="assignReminded">Påmindet kl. {time}</string>
 </resources>

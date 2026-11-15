@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">Google al momento non accetta nuovi utenti: finché l\'app non supera la verifica di Google, possono accedere con Google al massimo 100 persone. Puoi collegare Gmail con una password per le app.</string>
     <string name="oauthGoogleUserCapAction">Usa una password per le app</string>
     <string name="gmailAppPwNote">Serve una password per le app di Google: attiva la verifica in due passaggi nel tuo Account Google e crea una password nella pagina «Password per le app». Così si collega solo la posta; Google Calendar e Contatti richiedono l\'accesso con Google.</string>
+    <string name="assignReminded">Promemoria inviato alle {time}</string>
 </resources>

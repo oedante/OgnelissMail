@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">Google şu anda yeni kullanıcı kabul etmiyor: uygulama Google doğrulamasını geçene kadar en fazla 100 kişi Google ile oturum açabilir. Gmail\'i uygulama şifresiyle bağlayabilirsiniz.</string>
     <string name="oauthGoogleUserCapAction">Uygulama şifresi kullan</string>
     <string name="gmailAppPwNote">Google uygulama şifresi gerekir: Google Hesabınızda 2 Adımlı Doğrulama\'yı açın ve “Uygulama şifreleri” sayfasında bir şifre oluşturun. Bu şekilde yalnızca e-posta bağlanır; Google Takvim ve Kişiler için Google ile oturum açmak gerekir.</string>
+    <string name="assignReminded">{time} itibarıyla hatırlatıldı</string>
 </resources>

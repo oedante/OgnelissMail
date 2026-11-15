@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">Google tar ikke imot nye brukere akkurat nå: til appen har bestått Googles kontroll, kan maks. 100 personer logge på med Google. Du kan koble til Gmail med et apppassord.</string>
     <string name="oauthGoogleUserCapAction">Bruk apppassord</string>
     <string name="gmailAppPwNote">Du trenger et Google-apppassord: slå på totrinnsbekreftelse i Google-kontoen og lag et passord på siden «Apppassord». Slik kobles bare e-posten til; Google Kalender og Kontakter krever pålogging med Google.</string>
+    <string name="assignReminded">Påminnet kl. {time}</string>
 </resources>

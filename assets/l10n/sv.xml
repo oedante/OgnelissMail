@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">Google tar inte emot nya användare just nu: tills appen har godkänts av Google kan högst 100 personer logga in med Google. Du kan ansluta Gmail med ett applösenord.</string>
     <string name="oauthGoogleUserCapAction">Använd applösenord</string>
     <string name="gmailAppPwNote">Du behöver ett applösenord från Google: aktivera tvåstegsverifiering i ditt Google-konto och skapa ett lösenord på sidan ”Applösenord”. Så ansluts bara e-posten; Google Kalender och Kontakter kräver inloggning med Google.</string>
+    <string name="assignReminded">Påmint kl. {time}</string>
 </resources>

@@ -4281,4 +4281,5 @@
     <string name="oauthGoogleUserCap">現在、Google は新しいユーザーを受け付けていません。アプリが Google の審査を通過するまで、Google でログインできるのは最大 100 人です。Gmail はアプリ パスワードで接続できます。</string>
     <string name="oauthGoogleUserCapAction">アプリ パスワードを使う</string>
     <string name="gmailAppPwNote">Google のアプリ パスワードが必要です。Google アカウントで 2 段階認証プロセスを有効にし、「アプリ パスワード」ページでパスワードを作成してください。この方法で接続されるのはメールのみです。Google カレンダーと連絡先には Google でのログインが必要です。</string>
+    <string name="assignReminded">{time} に催促済み</string>
 </resources>

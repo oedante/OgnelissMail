@@ -4281,4 +4281,5 @@
     <string name="oauthGoogleUserCap">Google sedang tidak menerima pengguna baru: sampai aplikasi lolos peninjauan Google, paling banyak 100 orang bisa masuk dengan Google. Anda bisa menghubungkan Gmail dengan sandi aplikasi.</string>
     <string name="oauthGoogleUserCapAction">Gunakan sandi aplikasi</string>
     <string name="gmailAppPwNote">Anda perlu sandi aplikasi Google: aktifkan Verifikasi 2 Langkah di Akun Google dan buat sandi di halaman “Sandi aplikasi”. Cara ini hanya menghubungkan email; Google Kalender dan Kontak memerlukan masuk dengan Google.</string>
+    <string name="assignReminded">Diingatkan pukul {time}</string>
 </resources>

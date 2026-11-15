@@ -4323,4 +4323,5 @@
     <string name="oauthGoogleUserCap">Google teraz neprijíma nových používateľov: kým aplikácia neprejde overením Googlu, môže sa cez Google prihlásiť najviac 100 ľudí. Gmail môžete pripojiť heslom aplikácie.</string>
     <string name="oauthGoogleUserCapAction">Použiť heslo aplikácie</string>
     <string name="gmailAppPwNote">Potrebujete heslo aplikácie Google: zapnite v účte Google dvojstupňové overenie a vytvorte heslo na stránke „Heslá aplikácií“. Takto sa pripojí len pošta; Kalendár a Kontakty Google vyžadujú prihlásenie cez Google.</string>
+    <string name="assignReminded">Pripomenuté o {time}</string>
 </resources>

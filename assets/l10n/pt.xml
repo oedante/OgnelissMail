@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">O Google não está aceitando novos usuários no momento: até o app passar na verificação do Google, no máximo 100 pessoas podem entrar com o Google. Você pode conectar o Gmail com uma senha de app.</string>
     <string name="oauthGoogleUserCapAction">Usar senha de app</string>
     <string name="gmailAppPwNote">Você precisa de uma senha de app do Google: ative a verificação em duas etapas na sua Conta do Google e crie uma senha na página “Senhas de app”. Assim só o e-mail é conectado; Google Agenda e Contatos exigem entrar com o Google.</string>
+    <string name="assignReminded">Lembrado às {time}</string>
 </resources>

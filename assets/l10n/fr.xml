@@ -4302,4 +4302,5 @@
     <string name="oauthGoogleUserCap">Google n\'accepte pas de nouveaux utilisateurs pour le moment : tant que l\'application n\'a pas passé la vérification de Google, 100 personnes au maximum peuvent se connecter avec Google. Vous pouvez connecter Gmail avec un mot de passe d\'application.</string>
     <string name="oauthGoogleUserCapAction">Utiliser un mot de passe d\'application</string>
     <string name="gmailAppPwNote">Il faut un mot de passe d\'application Google : activez la validation en deux étapes dans votre compte Google et créez un mot de passe sur la page « Mots de passe des applications ». Seul le courrier est connecté ainsi ; Google Agenda et Contacts nécessitent la connexion avec Google.</string>
+    <string name="assignReminded">Relancé à {time}</string>
 </resources>

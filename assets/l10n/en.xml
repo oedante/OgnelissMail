@@ -4318,4 +4318,6 @@
     <string name="loginSsoBody">Single sign-on through your organisation’s system (OAuth 2.0 and OpenID Connect: Keycloak, ADFS, Microsoft Entra ID and others) differs from one organisation to another, and the app does not include it. Ogneliss Mail is open source (Apache 2.0): your organisation can fork the app and add its own sign-in. If you need advice, contact us. Meanwhile you can sign in with a password: Exchange or organisation IMAP.</string>
     <string name="loginWorkImapNote">You need your address and password. The app finds the servers itself if your organisation has published them. If it does not connect, ask your mail administrator for the IMAP and SMTP servers, ports, encryption and login (if it differs from your address).</string>
     <string name="assignQuestionAbout">A question about the assignment “{title}” ({code}):</string>
+    <string name="assignWriteExecutor">Write to the assignee</string>
+    <string name="assignWriteAbout">About the assignment “{title}” ({code}):</string>
 </resources>

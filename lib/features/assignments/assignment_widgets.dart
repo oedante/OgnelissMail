@@ -261,6 +261,13 @@ Future<void> showAssignmentPeek(BuildContext context, WidgetRef ref, AssignmentV
           icon: AppIcons.task_alt,
           label: l10n.tr('assignDoneAction'),
           onTap: () => assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.review))),
+    // Письмо другой стороне в беседу поручения: исполнитель — вопрос
+    // постановщику, постановщик и контролирующий — исполнителю.
+    if (v.active && !v.isProject && (v.outgoing || v.iControl || v.iExecute))
+      PeekAction(
+          icon: v.outgoing || v.iControl ? AppIcons.edit : AppIcons.help,
+          label: l10n.tr(v.outgoing || v.iControl ? 'assignWriteExecutor' : 'assignQuestion'),
+          onTap: () => unawaited(assignmentAsk(context, v))),
     PeekAction(icon: AppIcons.chevron_right, label: l10n.tr('assignOpen'), onTap: () => context.push('/assignments/${v.id}')),
   ];
   final src = v.row.sourceEmailId;

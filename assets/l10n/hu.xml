@@ -4318,4 +4318,6 @@
     <string name="loginSsoBody">A szervezet egyszeri bejelentkezési rendszerén keresztüli belépés (OAuth 2.0 és OpenID Connect: Keycloak, ADFS, Microsoft Entra ID és mások) szervezetenként más, és az alkalmazás nem tartalmazza. Az Ogneliss Mail nyílt forráskódú (Apache 2.0): a szervezet forkolhatja az alkalmazást, és hozzáadhatja a saját bejelentkezését. Ha tanácsra van szüksége, vegye fel velünk a kapcsolatot. Addig jelszóval is beléphet: Exchange vagy szervezeti IMAP.</string>
     <string name="loginWorkImapNote">A címre és a jelszóra van szükség. A kiszolgálókat az alkalmazás maga megtalálja, ha a szervezet közzétette őket. Ha nem kapcsolódik, kérdezze meg a levelezés rendszergazdáját az IMAP- és SMTP-kiszolgálóról, a portokról, a titkosításról és a felhasználónévről (ha eltér a címtől).</string>
     <string name="assignQuestionAbout">Kérdés a(z) „{title}” feladattal kapcsolatban ({code}):</string>
+    <string name="assignWriteExecutor">Írás a végrehajtónak</string>
+    <string name="assignWriteAbout">A(z) „{title}” feladattal kapcsolatban ({code}):</string>
 </resources>

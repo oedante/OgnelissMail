@@ -4318,4 +4318,6 @@
     <string name="loginSsoBody">Kirjautuminen organisaation kertakirjautumisjärjestelmän kautta (OAuth 2.0 ja OpenID Connect: Keycloak, ADFS, Microsoft Entra ID ym.) on joka organisaatiossa erilainen, eikä sovellus sisällä sitä. Ogneliss Mail on avointa lähdekoodia (Apache 2.0): organisaatio voi tehdä sovelluksesta oman haaran (fork) ja lisätä siihen oman kirjautumisensa. Jos tarvitset neuvoja, ota meihin yhteyttä. Sillä välin voit kirjautua salasanalla: Exchange tai organisaation IMAP.</string>
     <string name="loginWorkImapNote">Tarvitset osoitteen ja salasanan. Sovellus löytää palvelimet itse, jos organisaatio on julkaissut ne. Jos yhteys ei onnistu, kysy sähköpostin ylläpitäjältä IMAP- ja SMTP-palvelimet, portit, salaus ja käyttäjätunnus (jos eri kuin osoite).</string>
     <string name="assignQuestionAbout">Kysymys toimeksiannosta ”{title}” ({code}):</string>
+    <string name="assignWriteExecutor">Kirjoita tekijälle</string>
+    <string name="assignWriteAbout">Toimeksiannosta ”{title}” ({code}):</string>
 </resources>

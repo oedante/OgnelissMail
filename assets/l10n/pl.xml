@@ -4360,4 +4360,6 @@
     <string name="loginSsoBody">Logowanie przez system jednokrotnego logowania organizacji (OAuth 2.0 i OpenID Connect: Keycloak, ADFS, Microsoft Entra ID i inne) w każdej organizacji wygląda inaczej i aplikacja go nie zawiera. Ogneliss Mail ma otwarty kod (Apache 2.0): organizacja może zrobić fork aplikacji i dodać własne logowanie. Jeśli potrzebujesz konsultacji, skontaktuj się z nami. Do tego czasu możesz zalogować się hasłem: Exchange lub IMAP organizacji.</string>
     <string name="loginWorkImapNote">Potrzebny jest adres i hasło. Aplikacja sama znajdzie serwery, jeśli organizacja je opublikowała. Jeśli nie łączy, zapytaj administratora poczty o serwery IMAP i SMTP, porty, szyfrowanie i login (jeśli jest inny niż adres).</string>
     <string name="assignQuestionAbout">Pytanie dotyczące zlecenia „{title}” ({code}):</string>
+    <string name="assignWriteExecutor">Napisz do wykonawcy</string>
+    <string name="assignWriteAbout">W sprawie zlecenia „{title}” ({code}):</string>
 </resources>

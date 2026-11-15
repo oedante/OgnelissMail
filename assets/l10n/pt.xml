@@ -4318,4 +4318,6 @@
     <string name="loginSsoBody">O início de sessão pelo sistema de autenticação única da organização (OAuth 2.0 e OpenID Connect: Keycloak, ADFS, Microsoft Entra ID e outros) é diferente em cada organização e não está incluído na aplicação. O Ogneliss Mail é de código aberto (Apache 2.0): a sua organização pode fazer um fork da aplicação e acrescentar o seu próprio início de sessão. Se precisar de consultoria, contacte-nos. Entretanto, pode entrar com palavra-passe: Exchange ou IMAP da organização.</string>
     <string name="loginWorkImapNote">Precisa do endereço e da palavra-passe. A aplicação encontra os servidores sozinha se a organização os tiver publicado. Se não ligar, peça ao administrador de e-mail os servidores IMAP e SMTP, as portas, a encriptação e o login (se for diferente do endereço).</string>
     <string name="assignQuestionAbout">Pergunta sobre a tarefa «{title}» ({code}):</string>
+    <string name="assignWriteExecutor">Escrever ao responsável</string>
+    <string name="assignWriteAbout">Sobre a tarefa «{title}» ({code}):</string>
 </resources>

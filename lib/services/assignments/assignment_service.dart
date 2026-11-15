@@ -384,32 +384,42 @@ class AssignmentService {
   /// от постановщика (или любое письмо поручения), которое есть в ящике;
   /// писем нет — новое письмо постановщику и заместителям с темой беседы и
   /// номером поручения (по номеру ответ привяжется к поручению).
+  ///
+  /// Постановщику и контролирующему — то же в обратную сторону: «Написать
+  /// исполнителю» (ответ на последнее письмо исполнителя в беседе).
   Future<Map<String, String>> questionCompose(AssignmentView v) async {
     final acc = v.row.accountId;
     final mine = assignmentMine(_ref.read(accountsProvider))[acc] ?? const <String>{};
-    final mailId = await _replyMailOf(v, mine);
+    final toExecutors = v.outgoing || v.iControl;
+    final targets = <String>{
+      if (toExecutors) ...[
+        if (v.assignee != null) v.assignee!.email,
+        for (final p in v.people)
+          if (p.role == AssignmentRole.responsible || p.role == AssignmentRole.co) p.email,
+      ] else ...[
+        v.owner?.email ?? v.row.ownerEmail,
+        for (final p in v.people)
+          if (p.role == AssignmentRole.deputy || p.role == AssignmentRole.controller) p.email,
+      ],
+    }.map((e) => e.trim().toLowerCase()).where((e) => e.isNotEmpty && !mine.contains(e)).toList();
+    final mailId = await _replyMailOf(v, mine, targets.toSet());
     if (mailId != null) return {'replyToId': mailId, 'accountId': acc};
     final l10n = _l10n();
-    final to = <String>{
-      v.owner?.email ?? v.row.ownerEmail,
-      for (final p in v.people)
-        if (p.role == AssignmentRole.deputy || p.role == AssignmentRole.controller) p.email,
-    }.where((e) => e.trim().isNotEmpty && !mine.contains(e.trim().toLowerCase())).toList();
     return {
       'accountId': acc,
-      if (to.isNotEmpty) 'to': to.join(','),
+      if (targets.isNotEmpty) 'to': targets.join(','),
       'subject': await _subject(v, l10n),
       'quick': l10n
-          .tr('assignQuestionAbout')
+          .tr(toExecutors ? 'assignWriteAbout' : 'assignQuestionAbout')
           .replaceAll('{title}', v.row.title)
           .replaceAll('{code}', AssignmentCodec.tag(v.id)),
     };
   }
 
   /// Письмо поручения [v], на которое можно ответить: есть в ящике; сперва
-  /// — последнее от постановщика, заместителя или контролирующего, иначе —
-  /// последнее любое (своё отправленное — тоже).
-  Future<String?> _replyMailOf(AssignmentView v, Set<String> mine) async {
+  /// — последнее от тех, кому пишем ([from]), иначе — последнее не своё,
+  /// иначе — любое (своё отправленное — тоже).
+  Future<String?> _replyMailOf(AssignmentView v, Set<String> mine, Set<String> from) async {
     try {
       final ids = [v.id, if (_projectOf(v) case final p?) p.id];
       final linked = await (_db.select(_db.assignmentEvents)
@@ -426,13 +436,8 @@ class AssignmentService {
           .get();
       if (rows.isEmpty) return null;
       final byId = {for (final r in rows) r.id: r};
-      final assigners = {
-        (v.owner?.email ?? v.row.ownerEmail).toLowerCase(),
-        for (final p in v.people)
-          if (p.role == AssignmentRole.deputy || p.role == AssignmentRole.controller) p.email.toLowerCase(),
-      };
       final present = [for (final id in mailIds) if (byId[id] != null) byId[id]!];
-      return (present.where((m) => assigners.contains(m.fromEmail.trim().toLowerCase())).firstOrNull ??
+      return (present.where((m) => from.contains(m.fromEmail.trim().toLowerCase())).firstOrNull ??
               present.where((m) => !mine.contains(m.fromEmail.trim().toLowerCase())).firstOrNull ??
               present.first)
           .id;

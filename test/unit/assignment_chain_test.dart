@@ -96,7 +96,9 @@ void main() {
 
   const boss = 'boss@corp.ru';
   const vera = 'vera@corp.ru';
-  final names = {boss: 'Иван Петрович', vera: 'Вера Сергеевна'};
+  const dmitry = 'dmitry@corp.ru';
+  const zam = 'zam@corp.ru';
+  final names = {boss: 'Иван Петрович', vera: 'Вера Сергеевна', dmitry: 'Дмитрий Олегович', zam: 'Зам Начальника'};
 
   late Map<String, _Phone> phones;
   final queue = <_Mail>[];
@@ -353,5 +355,73 @@ void main() {
     await v.svc.setStatus(await v.one(id), AssignmentStatus.inProgress);
     await deliver();
     expect((await b.one(id)).status, AssignmentStatus.inProgress);
+  });
+
+  test('проект: этап 2 после этапа 1 — «Можно начинать», приёмка контролирующим, проект выполнен', () async {
+    final b = phones[boss]!, v = phones[vera]!, d = phones[dmitry]!, z = phones[zam]!;
+    final acc = b.c.read(accountsProvider).first;
+    final pid = await b.svc.createProject(
+        acc,
+        ProjectDraft(
+          title: 'Ремонт склада',
+          start: DateTime(2026, 11, 16),
+          controller: a(zam),
+          stages: [
+            StageDraft(title: 'Смета', executor: a(vera), start: DateTime(2026, 11, 16), due: DateTime(2026, 11, 18)),
+            StageDraft(
+                title: 'Закупка', executor: a(dmitry), start: DateTime(2026, 11, 19), due: DateTime(2026, 11, 21), after: 0),
+          ],
+        ));
+    await deliver();
+    final stages = (await b.all()).where((x) => x.parentId == pid).toList()
+      ..sort((x, y) => x.row.stageOrder.compareTo(y.row.stageOrder));
+    final s1 = stages[0].id, s2 = stages[1].id;
+    expect((await d.one(s2)).waiting, isTrue, reason: 'этап 2 ждёт этап 1');
+    expect((await z.one(s1)).iControl, isTrue);
+
+    // Этап 1: взять, сдать; принимает контролирующий.
+    await v.svc.setStatus(await v.one(s1), AssignmentStatus.inProgress);
+    await deliver();
+    await v.svc.setStatus(await v.one(s1), AssignmentStatus.review, note: 'Смета готова');
+    await deliver();
+    expect((await z.one(s1)).status, AssignmentStatus.review);
+    await z.svc.setStatus(await z.one(s1), AssignmentStatus.done);
+    await deliver();
+    expect((await v.one(s1)).status, AssignmentStatus.done);
+    expect((await b.one(s1)).status, AssignmentStatus.done);
+
+    // Постановщик после синхронизации рассылает «Можно начинать».
+    await b.svc.dispatchPending();
+    await deliver();
+    expect((await d.one(s2)).waiting, isFalse, reason: 'у исполнителя этапа 2 — можно начинать');
+
+    // Этап 2 — до приёмки; проект — выполнен у постановщика.
+    await d.svc.setStatus(await d.one(s2), AssignmentStatus.review);
+    await deliver();
+    await z.svc.setStatus(await z.one(s2), AssignmentStatus.done);
+    await deliver();
+    expect((await d.one(s2)).status, AssignmentStatus.done);
+    await b.svc.dispatchPending();
+    expect((await b.one(pid)).status, AssignmentStatus.done);
+
+    // Все письма проекта — в одной беседе.
+    final topics = log.map((m) => SubjectPrefix.strip(m.subject)).toSet();
+    expect(topics.length, 1, reason: '$topics');
+  });
+
+  test('«Написать исполнителю» у постановщика: ответ на письмо исполнителя; без писем — новое ему', () async {
+    final b = phones[boss]!, v = phones[vera]!;
+    final acc = b.c.read(accountsProvider).first;
+    final id = (await b.svc.create(account: acc, title: 'План закупок', assignees: [a(vera)])).single;
+    await deliver();
+    await v.svc.setStatus(await v.one(id), AssignmentStatus.inProgress);
+    await deliver();
+    var q = await b.svc.questionCompose(await b.one(id));
+    final fromVera = await (b.db.select(b.db.emails)..where((e) => e.fromEmail.equals(vera))).get();
+    expect(q['replyToId'], fromVera.last.id);
+    await b.db.delete(b.db.emails).go();
+    q = await b.svc.questionCompose(await b.one(id));
+    expect(q['to'], vera);
+    expect(q['quick'], startsWith('По поручению «План закупок»'));
   });
 }

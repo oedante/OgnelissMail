@@ -4318,4 +4318,6 @@
     <string name="loginSsoBody">Inloggning via organisationens system för enkel inloggning (OAuth 2.0 och OpenID Connect: Keycloak, ADFS, Microsoft Entra ID med flera) ser olika ut i varje organisation och finns inte i appen. Ogneliss Mail har öppen källkod (Apache 2.0): organisationen kan göra en fork av appen och lägga till sin egen inloggning. Om ni behöver råd, kontakta oss. Under tiden kan du logga in med lösenord: Exchange eller organisationens IMAP.</string>
     <string name="loginWorkImapNote">Du behöver adress och lösenord. Servrarna hittar appen själv om organisationen har publicerat dem. Går det inte att ansluta, fråga e-postadministratören om IMAP- och SMTP-servrar, portar, kryptering och inloggning (om den skiljer sig från adressen).</string>
     <string name="assignQuestionAbout">Fråga om uppdraget ”{title}” ({code}):</string>
+    <string name="assignWriteExecutor">Skriv till utföraren</string>
+    <string name="assignWriteAbout">Angående uppdraget ”{title}” ({code}):</string>
 </resources>

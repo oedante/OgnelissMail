@@ -4339,4 +4339,6 @@
     <string name="loginSsoBody">Conectarea prin sistemul de autentificare unică al organizației (OAuth 2.0 și OpenID Connect: Keycloak, ADFS, Microsoft Entra ID și altele) diferă de la o organizație la alta și nu este inclusă în aplicație. Ogneliss Mail este open source (Apache 2.0): organizația poate face un fork al aplicației și își poate adăuga propria autentificare. Dacă aveți nevoie de consultanță, contactați-ne. Până atunci vă puteți conecta cu parola: Exchange sau IMAP-ul organizației.</string>
     <string name="loginWorkImapNote">Aveți nevoie de adresă și parolă. Aplicația găsește singură serverele dacă organizația le-a publicat. Dacă nu se conectează, cereți administratorului de e-mail serverele IMAP și SMTP, porturile, criptarea și numele de utilizator (dacă diferă de adresă).</string>
     <string name="assignQuestionAbout">Întrebare despre sarcina „{title}” ({code}):</string>
+    <string name="assignWriteExecutor">Scrie executantului</string>
+    <string name="assignWriteAbout">Despre sarcina „{title}” ({code}):</string>
 </resources>

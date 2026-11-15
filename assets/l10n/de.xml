@@ -4318,4 +4318,6 @@
     <string name="loginSsoBody">Die Anmeldung über das Single-Sign-on-System der Organisation (OAuth 2.0 und OpenID Connect: Keycloak, ADFS, Microsoft Entra ID u. a.) ist bei jeder Organisation anders und in der App nicht enthalten. Ogneliss Mail ist quelloffen (Apache 2.0): Ihre Organisation kann die App forken und eine eigene Anmeldung ergänzen. Wenn Sie Beratung brauchen, nehmen Sie Kontakt mit uns auf. Bis dahin können Sie sich mit Passwort anmelden: Exchange oder IMAP der Organisation.</string>
     <string name="loginWorkImapNote">Sie brauchen Adresse und Passwort. Die Server findet die App selbst, wenn die Organisation sie veröffentlicht hat. Klappt die Verbindung nicht, fragen Sie den Mail-Administrator nach IMAP- und SMTP-Server, Ports, Verschlüsselung und Anmeldenamen (falls abweichend von der Adresse).</string>
     <string name="assignQuestionAbout">Frage zum Auftrag „{title}“ ({code}):</string>
+    <string name="assignWriteExecutor">Dem Ausführenden schreiben</string>
+    <string name="assignWriteAbout">Zum Auftrag „{title}“ ({code}):</string>
 </resources>

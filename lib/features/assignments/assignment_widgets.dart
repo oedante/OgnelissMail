@@ -28,7 +28,7 @@ import '../../core/utils/text_safe.dart' show initialOf;
 import 'assignment_edit.dart';
 import '../compose/widgets/recipients_check.dart' show confirmExternalRecipients;
 import '../mail/providers/mail_providers.dart' show accountsProvider;
-import 'assignment_screen.dart' show assignmentReply;
+import 'assignment_screen.dart' show assignmentAsk, assignmentReply;
 import '../../widgets/common/quick_long_press.dart' show secondaryAsHold;
 
 /// Поручения, по которым внешних адресатов уже подтвердили (за запуск).
@@ -446,7 +446,6 @@ class AssignmentMailCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final svc = ref.read(assignmentServiceProvider);
     final s = v.status;
-    final src = v.row.sourceEmailId;
     return Padding(
       padding: const EdgeInsets.all(Space.m),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
@@ -466,12 +465,9 @@ class AssignmentMailCard extends ConsumerWidget {
                 onPressed: () => assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.review)),
                 icon: const Icon(AppIcons.check, size: 18),
                 label: Text(l10n.tr('assignDoneAction'))),
-          if (!v.outgoing && v.active && src != null)
+          if (!v.outgoing && v.active)
             OutlinedButton.icon(
-                onPressed: () => context.push(Uri(path: '/compose', queryParameters: {
-                      'replyToId': src,
-                      'accountId': v.row.accountId,
-                    }).toString()),
+                onPressed: () => unawaited(assignmentAsk(context, v)),
                 icon: const Icon(AppIcons.help, size: 18),
                 label: Text(l10n.tr('assignQuestion'))),
           if (v.outgoing && s == AssignmentStatus.review) ...[

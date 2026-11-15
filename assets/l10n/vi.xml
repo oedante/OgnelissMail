@@ -4296,4 +4296,5 @@
     <string name="imapLoginHint">nguyenvan hoặc CORP\\nguyenvan</string>
     <string name="loginSsoBody">Đăng nhập qua hệ thống đăng nhập một lần của tổ chức (OAuth 2.0 và OpenID Connect: Keycloak, ADFS, Microsoft Entra ID và các hệ thống khác) mỗi tổ chức một khác và không có sẵn trong ứng dụng. Ogneliss Mail là mã nguồn mở (Apache 2.0): tổ chức của bạn có thể tạo bản fork của ứng dụng và thêm cách đăng nhập riêng. Nếu cần tư vấn, hãy liên hệ với chúng tôi. Trong lúc đó bạn có thể đăng nhập bằng mật khẩu: Exchange hoặc IMAP của tổ chức.</string>
     <string name="loginWorkImapNote">Bạn cần địa chỉ và mật khẩu. Ứng dụng tự tìm máy chủ nếu tổ chức đã công bố. Nếu không kết nối được, hãy hỏi quản trị viên thư về máy chủ IMAP và SMTP, cổng, mã hóa và tên đăng nhập (nếu khác địa chỉ).</string>
+    <string name="assignQuestionAbout">Câu hỏi về việc được giao “{title}” ({code}):</string>
 </resources>

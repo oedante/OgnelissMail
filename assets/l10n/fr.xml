@@ -4317,4 +4317,5 @@
     <string name="imapLoginHint">jdupont ou CORP\\jdupont</string>
     <string name="loginSsoBody">La connexion via le système d’authentification unique de l’organisation (OAuth 2.0 et OpenID Connect : Keycloak, ADFS, Microsoft Entra ID, etc.) diffère d’une organisation à l’autre et n’est pas incluse dans l’application. Ogneliss Mail est open source (Apache 2.0) : votre organisation peut créer un fork de l’application et y ajouter sa propre connexion. Pour un conseil, contactez-nous. En attendant, vous pouvez vous connecter avec un mot de passe : Exchange ou IMAP de l’organisation.</string>
     <string name="loginWorkImapNote">Il faut votre adresse et votre mot de passe. L’application trouve les serveurs elle-même si l’organisation les a publiés. Si la connexion échoue, demandez à l’administrateur de messagerie les serveurs IMAP et SMTP, les ports, le chiffrement et l’identifiant (s’il diffère de l’adresse).</string>
+    <string name="assignQuestionAbout">Question sur la tâche « {title} » ({code}) :</string>
 </resources>

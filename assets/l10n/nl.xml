@@ -4317,4 +4317,5 @@
     <string name="imapLoginHint">jdevries of CORP\\jdevries</string>
     <string name="loginSsoBody">Inloggen via het single-sign-onsysteem van de organisatie (OAuth 2.0 en OpenID Connect: Keycloak, ADFS, Microsoft Entra ID en andere) verschilt per organisatie en zit niet in de app. Ogneliss Mail is open source (Apache 2.0): uw organisatie kan de app forken en een eigen inlogmethode toevoegen. Hebt u advies nodig, neem dan contact met ons op. Tot die tijd kunt u met een wachtwoord inloggen: Exchange of IMAP van de organisatie.</string>
     <string name="loginWorkImapNote">U hebt uw adres en wachtwoord nodig. De app vindt de servers zelf als de organisatie ze heeft gepubliceerd. Lukt de verbinding niet, vraag de mailbeheerder dan om de IMAP- en SMTP-server, poorten, versleuteling en inlognaam (als die afwijkt van het adres).</string>
+    <string name="assignQuestionAbout">Vraag over de opdracht ‘{title}’ ({code}):</string>
 </resources>

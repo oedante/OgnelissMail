@@ -4317,4 +4317,5 @@
     <string name="imapLoginHint">mrossi o CORP\\mrossi</string>
     <string name="loginSsoBody">L’accesso tramite il sistema di single sign-on dell’organizzazione (OAuth 2.0 e OpenID Connect: Keycloak, ADFS, Microsoft Entra ID e altri) è diverso per ogni organizzazione e non è incluso nell’app. Ogneliss Mail è open source (Apache 2.0): la sua organizzazione può fare un fork dell’app e aggiungere il proprio accesso. Se le serve una consulenza, ci contatti. Nel frattempo può accedere con la password: Exchange o IMAP dell’organizzazione.</string>
     <string name="loginWorkImapNote">Servono indirizzo e password. L’app trova da sola i server se l’organizzazione li ha pubblicati. Se non si connette, chieda all’amministratore della posta server IMAP e SMTP, porte, crittografia e nome utente (se diverso dall’indirizzo).</string>
+    <string name="assignQuestionAbout">Domanda sull’incarico «{title}» ({code}):</string>
 </resources>

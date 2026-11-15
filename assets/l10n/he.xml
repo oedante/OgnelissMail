@@ -4338,4 +4338,5 @@
     <string name="imapLoginHint">user או CORP\\user</string>
     <string name="loginSsoBody">כניסה דרך מערכת הכניסה האחודה של הארגון (OAuth 2.0 ו-OpenID Connect: ‏Keycloak, ‏ADFS, ‏Microsoft Entra ID ועוד) שונה מארגון לארגון ואינה כלולה באפליקציה. הקוד של Ogneliss Mail פתוח (Apache 2.0): הארגון יכול ליצור פיצול (fork) של האפליקציה ולהוסיף לה כניסה משלו. אם דרוש ייעוץ, צרו איתנו קשר. בינתיים אפשר להיכנס עם סיסמה: Exchange או IMAP של הארגון.</string>
     <string name="loginWorkImapNote">צריך כתובת וסיסמה. האפליקציה מוצאת את השרתים בעצמה אם הארגון פרסם אותם. אם אין חיבור, בקשו ממנהל הדואר את שרתי IMAP ו-SMTP, הפורטים, ההצפנה ושם המשתמש (אם שונה מהכתובת).</string>
+    <string name="assignQuestionAbout">שאלה לגבי המשימה „{title}” ({code}):</string>
 </resources>

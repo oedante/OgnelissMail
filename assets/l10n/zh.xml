@@ -4296,4 +4296,5 @@
     <string name="imapLoginHint">zhangsan 或 CORP\\zhangsan</string>
     <string name="loginSsoBody">通过单位单点登录系统（OAuth 2.0 和 OpenID Connect：Keycloak、ADFS、Microsoft Entra ID 等）登录，各单位各不相同，应用中未包含。Ogneliss Mail 是开源软件（Apache 2.0）：单位可以派生（fork）本应用并加入自己的登录方式。如需咨询，请联系我们。在此之前，您可以用密码登录：Exchange 或单位 IMAP。</string>
     <string name="loginWorkImapNote">需要邮箱地址和密码。如果单位公布了服务器，应用会自动找到。如无法连接，请向邮件管理员索取 IMAP 和 SMTP 服务器、端口、加密方式和登录名（如与地址不同）。</string>
+    <string name="assignQuestionAbout">关于任务“{title}”的问题（{code}）：</string>
 </resources>

@@ -136,18 +136,14 @@ class AssignmentScreen extends ConsumerWidget {
           }),
         ),
       if (main && !v.outgoing && (s == AssignmentStatus.open || s == AssignmentStatus.inProgress)) ...[
-        if (src != null) ...[
-          Expanded(
-            child: OutlinedButton.icon(
-                onPressed: () => context.push(Uri(path: '/compose', queryParameters: {
-                      'replyToId': src,
-                      'accountId': v.row.accountId,
-                    }).toString()),
-                icon: const Icon(AppIcons.help, size: 18),
-                label: Text(l10n.tr('assignQuestion'))),
-          ),
-          const SizedBox(width: Space.s),
-        ],
+        Expanded(
+          child: OutlinedButton.icon(
+              key: const ValueKey('assign_question'),
+              onPressed: () => unawaited(assignmentAsk(context, v)),
+              icon: const Icon(AppIcons.help, size: 18),
+              label: Text(l10n.tr('assignQuestion'))),
+        ),
+        const SizedBox(width: Space.s),
         Expanded(
           child: s == AssignmentStatus.open
               ? FilledButton.icon(
@@ -603,6 +599,15 @@ Future<void> _report(BuildContext context, AssignmentView v) async {
 }
 
 /// «Готово» с результатом и файлами; «Вернуть на доработку» — с причиной.
+/// «Задать вопрос» постановщику: ответ на последнее письмо поручения, а
+/// если писем в ящике уже нет — новое письмо с темой беседы и номером
+/// поручения (AssignmentService.questionCompose).
+Future<void> assignmentAsk(BuildContext context, AssignmentView v) async {
+  final q = await ProviderScope.containerOf(context, listen: false).read(assignmentServiceProvider).questionCompose(v);
+  if (!context.mounted) return;
+  unawaited(context.push(Uri(path: '/compose', queryParameters: q).toString()));
+}
+
 /// Вернуть на доработку (текст обязателен: что исправить) или сдать работу
 /// (результат и файлы — по желанию). Везде одинаково: в карточке, в
 /// быстром просмотре и в списке (15.11.2026: из быстрого просмотра работа

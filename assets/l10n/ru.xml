@@ -4359,4 +4359,5 @@
     <string name="imapLoginHint">ivanov или CORP\\ivanov</string>
     <string name="loginSsoBody">Вход через систему единого входа организации (OAuth 2.0 и OpenID Connect: Keycloak, ADFS, Microsoft Entra ID и другие) у каждой организации свой, и в приложении его нет. Код Ogneliss Mail открыт (Apache 2.0): организация может сделать форк приложения и добавить свой вход сама. Если нужна консультация — свяжитесь с нами. Пока можно войти по паролю: Exchange или IMAP организации.</string>
     <string name="loginWorkImapNote">Нужны адрес и пароль. Серверы приложение найдёт само, если организация их опубликовала. Не подключается — спросите у администратора почты серверы IMAP и SMTP, порты, шифрование и логин (если он не совпадает с адресом).</string>
+    <string name="assignQuestionAbout">Вопрос по поручению «{title}» ({code}):</string>
 </resources>

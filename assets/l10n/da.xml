@@ -4317,4 +4317,5 @@
     <string name="imapLoginHint">jjensen eller CORP\\jjensen</string>
     <string name="loginSsoBody">Login via organisationens single sign-on-system (OAuth 2.0 og OpenID Connect: Keycloak, ADFS, Microsoft Entra ID m.fl.) er forskelligt fra organisation til organisation og findes ikke i appen. Ogneliss Mail er open source (Apache 2.0): organisationen kan lave en fork af appen og tilføje sit eget login. Har I brug for rådgivning, så kontakt os. Indtil da kan du logge ind med adgangskode: Exchange eller organisationens IMAP.</string>
     <string name="loginWorkImapNote">Du skal bruge adresse og adgangskode. Serverne finder appen selv, hvis organisationen har offentliggjort dem. Hvis der ikke er forbindelse, så spørg mailadministratoren om IMAP- og SMTP-servere, porte, kryptering og login (hvis det er et andet end adressen).</string>
+    <string name="assignQuestionAbout">Spørgsmål om opgaven »{title}« ({code}):</string>
 </resources>

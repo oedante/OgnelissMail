@@ -4296,4 +4296,5 @@
     <string name="imapLoginHint">tanaka または CORP\\tanaka</string>
     <string name="loginSsoBody">組織のシングルサインオン（OAuth 2.0・OpenID Connect：Keycloak、ADFS、Microsoft Entra ID など）によるサインインは組織ごとに異なり、アプリには含まれていません。Ogneliss Mail はオープンソース（Apache 2.0）です。組織でアプリをフォークし、独自のサインインを追加できます。ご相談が必要な場合はお問い合わせください。それまではパスワードでサインインできます：Exchange または組織の IMAP。</string>
     <string name="loginWorkImapNote">アドレスとパスワードが必要です。組織がサーバーを公開していれば、アプリが自動で見つけます。接続できない場合は、メール管理者に IMAP・SMTP サーバー、ポート、暗号化、ログイン名（アドレスと異なる場合）を確認してください。</string>
+    <string name="assignQuestionAbout">指示「{title}」について質問です（{code}）：</string>
 </resources>

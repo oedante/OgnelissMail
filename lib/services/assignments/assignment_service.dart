@@ -361,17 +361,84 @@ class AssignmentService {
   /// отправленного, когда оно пришло в «Отправленные»).
   Future<String?> _latestMailOf(List<String> ids, String accountId) async {
     try {
+      // Последнее письмо, которое ещё есть в ящике (старые уходят за период
+      // синхронизации, у Exchange номер письма меняется при перемещении).
       final linked = await (_db.select(_db.assignmentEvents)
             ..where((x) => x.assignmentId.isIn(ids) & x.sourceEmailId.isNotNull())
             ..orderBy([(x) => OrderingTerm(expression: x.createdAt, mode: OrderingMode.desc)])
-            ..limit(1))
-          .getSingleOrNull();
-      final mailId = linked?.sourceEmailId;
-      if (mailId != null) {
-        return (await _db.getEmailById(mailId, accountId: accountId))?.internetMessageId;
+            ..limit(20))
+          .get();
+      for (final x in linked) {
+        final mid = (await _db.getEmailById(x.sourceEmailId!, accountId: accountId))?.internetMessageId?.trim();
+        if (mid != null && mid.contains('@')) return mid;
       }
     } catch (_) {}
     return null;
+  }
+
+  /// «Задать вопрос» (исполнитель): параметры редактора письма.
+  /// 15.11.2026: кнопка открывала пустое письмо — она отвечала на письмо-
+  /// основание по его номеру в базе, а у Exchange номер меняется при
+  /// перемещении письма и пересинхронизации папки, старые письма уходят
+  /// за период синхронизации. Теперь — ответ на последнее письмо поручения
+  /// от постановщика (или любое письмо поручения), которое есть в ящике;
+  /// писем нет — новое письмо постановщику и заместителям с темой беседы и
+  /// номером поручения (по номеру ответ привяжется к поручению).
+  Future<Map<String, String>> questionCompose(AssignmentView v) async {
+    final acc = v.row.accountId;
+    final mine = assignmentMine(_ref.read(accountsProvider))[acc] ?? const <String>{};
+    final mailId = await _replyMailOf(v, mine);
+    if (mailId != null) return {'replyToId': mailId, 'accountId': acc};
+    final l10n = _l10n();
+    final to = <String>{
+      v.owner?.email ?? v.row.ownerEmail,
+      for (final p in v.people)
+        if (p.role == AssignmentRole.deputy || p.role == AssignmentRole.controller) p.email,
+    }.where((e) => e.trim().isNotEmpty && !mine.contains(e.trim().toLowerCase())).toList();
+    return {
+      'accountId': acc,
+      if (to.isNotEmpty) 'to': to.join(','),
+      'subject': await _subject(v, l10n),
+      'quick': l10n
+          .tr('assignQuestionAbout')
+          .replaceAll('{title}', v.row.title)
+          .replaceAll('{code}', AssignmentCodec.tag(v.id)),
+    };
+  }
+
+  /// Письмо поручения [v], на которое можно ответить: есть в ящике; сперва
+  /// — последнее от постановщика, заместителя или контролирующего, иначе —
+  /// последнее любое (своё отправленное — тоже).
+  Future<String?> _replyMailOf(AssignmentView v, Set<String> mine) async {
+    try {
+      final ids = [v.id, if (_projectOf(v) case final p?) p.id];
+      final linked = await (_db.select(_db.assignmentEvents)
+            ..where((x) => x.assignmentId.isIn(ids) & x.sourceEmailId.isNotNull())
+            ..orderBy([(x) => OrderingTerm(expression: x.createdAt, mode: OrderingMode.desc)]))
+          .get();
+      final mailIds = <String>[
+        for (final e in linked) e.sourceEmailId!,
+        if (v.row.sourceEmailId != null) v.row.sourceEmailId!,
+      ];
+      if (mailIds.isEmpty) return null;
+      final rows = await (_db.select(_db.emails)
+            ..where((e) => e.accountId.equals(v.row.accountId) & e.id.isIn(mailIds)))
+          .get();
+      if (rows.isEmpty) return null;
+      final byId = {for (final r in rows) r.id: r};
+      final assigners = {
+        (v.owner?.email ?? v.row.ownerEmail).toLowerCase(),
+        for (final p in v.people)
+          if (p.role == AssignmentRole.deputy || p.role == AssignmentRole.controller) p.email.toLowerCase(),
+      };
+      final present = [for (final id in mailIds) if (byId[id] != null) byId[id]!];
+      return (present.where((m) => assigners.contains(m.fromEmail.trim().toLowerCase())).firstOrNull ??
+              present.where((m) => !mine.contains(m.fromEmail.trim().toLowerCase())).firstOrNull ??
+              present.first)
+          .id;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Мой адрес в поручении [v] (для истории).

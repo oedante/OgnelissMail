@@ -4317,4 +4317,5 @@
     <string name="imapLoginHint">ohansen eller CORP\\ohansen</string>
     <string name="loginSsoBody">Innlogging via organisasjonens system for enkel pålogging (OAuth 2.0 og OpenID Connect: Keycloak, ADFS, Microsoft Entra ID med flere) er ulik fra organisasjon til organisasjon og finnes ikke i appen. Ogneliss Mail har åpen kildekode (Apache 2.0): organisasjonen kan lage en fork av appen og legge til sin egen pålogging. Trenger dere råd, kontakt oss. Inntil videre kan du logge inn med passord: Exchange eller organisasjonens IMAP.</string>
     <string name="loginWorkImapNote">Du trenger adresse og passord. Serverne finner appen selv hvis organisasjonen har publisert dem. Kobler den ikke til, spør e-postadministratoren om IMAP- og SMTP-servere, porter, kryptering og brukernavn (hvis det er et annet enn adressen).</string>
+    <string name="assignQuestionAbout">Spørsmål om oppdraget «{title}» ({code}):</string>
 </resources>

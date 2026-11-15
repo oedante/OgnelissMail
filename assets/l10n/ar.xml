@@ -4401,4 +4401,5 @@
     <string name="imapLoginHint">user أو CORP\\user</string>
     <string name="loginSsoBody">يختلف تسجيل الدخول عبر نظام الدخول الموحّد للمؤسسة (OAuth 2.0 وOpenID Connect: ‏Keycloak وADFS وMicrosoft Entra ID وغيرها) من مؤسسة إلى أخرى، وهو غير مضمّن في التطبيق. شيفرة Ogneliss Mail مفتوحة المصدر (Apache 2.0): يمكن لمؤسستك إنشاء نسخة مشتقة (fork) من التطبيق وإضافة تسجيل الدخول الخاص بها. إن احتجت إلى استشارة فتواصل معنا. وإلى ذلك الحين يمكنك الدخول بكلمة المرور: Exchange أو IMAP الخاص بالمؤسسة.</string>
     <string name="loginWorkImapNote">تحتاج إلى العنوان وكلمة المرور. يجد التطبيق الخوادم بنفسه إن نشرتها المؤسسة. إن لم يتصل، فاسأل مسؤول البريد عن خادمي IMAP وSMTP والمنافذ والتشفير واسم المستخدم (إن كان مختلفًا عن العنوان).</string>
+    <string name="assignQuestionAbout">سؤال حول التكليف «{title}» ({code}):</string>
 </resources>

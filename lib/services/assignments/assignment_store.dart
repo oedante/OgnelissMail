@@ -522,24 +522,31 @@ abstract final class AssignmentStore {
       final links = await _threadLinks(db, mine.keys);
       final refs = links.byMessageId.keys.take(100).toList();
       final convs = links.byConversation.keys.map((k) => k.split('|').last).toSet().toList();
-      final rows = await (db.select(db.emails)
-            ..where((e) {
-              Expression<bool> hit = e.bodyHtml.like('%OGN-%') | e.bodyPlain.like('%OGN-%');
-              if (convs.isNotEmpty) hit = hit | e.conversationId.isIn(convs);
-              for (final r in refs) {
-                hit = hit | e.referencesStr.like('%$r%');
-              }
-              return e.accountId.isIn(mine.keys) & e.receivedAt.isBiggerThanValue(since) & hit;
-            })
-            ..orderBy([(e) => OrderingTerm(expression: e.receivedAt)])
-            ..limit(500))
-          .get();
-      for (final e in rows) {
-        final id = AssignmentCodec.idFromBody(e.bodyHtml) ??
-            AssignmentCodec.idFromBody(e.bodyPlain) ??
-            links.of(e);
-        if (id == null) continue;
-        if (await _apply(db, e, mine[e.accountId] ?? const {}, id)) changes++;
+      // Порциями по 500 от старых к новым (15.11.2026: одна выборка в 500
+      // писем — при первом разборе за 32 дня у активного постановщика самые
+      // свежие ответы не разбирались).
+      const page = 500;
+      for (var offset = 0; offset < page * 20; offset += page) {
+        final rows = await (db.select(db.emails)
+              ..where((e) {
+                Expression<bool> hit = e.bodyHtml.like('%OGN-%') | e.bodyPlain.like('%OGN-%');
+                if (convs.isNotEmpty) hit = hit | e.conversationId.isIn(convs);
+                for (final r in refs) {
+                  hit = hit | e.referencesStr.like('%$r%');
+                }
+                return e.accountId.isIn(mine.keys) & e.receivedAt.isBiggerThanValue(since) & hit;
+              })
+              ..orderBy([(e) => OrderingTerm(expression: e.receivedAt), (e) => OrderingTerm(expression: e.id)])
+              ..limit(page, offset: offset))
+            .get();
+        for (final e in rows) {
+          final id = AssignmentCodec.idFromBody(e.bodyHtml) ??
+              AssignmentCodec.idFromBody(e.bodyPlain) ??
+              links.of(e);
+          if (id == null) continue;
+          if (await _apply(db, e, mine[e.accountId] ?? const {}, id)) changes++;
+        }
+        if (rows.length < page) break;
       }
       changes += await _recheckReview(db, mine);
     } catch (err) {
@@ -667,11 +674,24 @@ abstract final class AssignmentStore {
     if (ev != null) {
       final local = await (db.select(db.assignmentEvents)..where((x) => x.id.equals(ev))).getSingleOrNull();
       if (local != null) {
-        await (db.update(db.assignmentEvents)..where((x) => x.id.equals(ev)))
-            .write(AssignmentEventsCompanion(sourceEmailId: Value(e.id)));
+        await _rebind(db, local, e.id);
         return false;
       }
       evId = ev;
+    }
+    // То же письмо под новым номером (у Exchange номер меняется при
+    // перемещении и пересинхронизации папки): событие уже есть — только
+    // привязать письмо, иначе ответ без отметки задвоился бы в истории.
+    final mid = _msgId(e.internetMessageId);
+    if (mid != null) {
+      final same = await (db.select(db.assignmentEvents)
+            ..where((x) => x.assignmentId.equals(id) & x.payloadJson.like('%"mid":"$mid"%'))
+            ..limit(1))
+          .getSingleOrNull();
+      if (same != null) {
+        await _rebind(db, same, e.id);
+        return false;
+      }
     }
     final a = await byId(db, id);
 
@@ -764,6 +784,9 @@ abstract final class AssignmentStore {
           at: at,
           outgoing: fromMe,
           eventId: evId,
+          // Тема первого письма: ответы — в той же беседе, даже когда
+          // письма уже нет в ящике.
+          subject: SubjectPrefix.strip(e.subject),
           parentId: t.parent,
           isProject: t.project,
           start: t.start,
@@ -808,7 +831,7 @@ abstract final class AssignmentStore {
       if (task.rev! <= a.revision) {
         await addEvent(db,
             id: evId, assignmentId: id, type: 'message', author: from, at: at, outgoing: fromMe,
-            payload: {'text': _cut(freshText(html, plain))}, sourceEmailId: e.id);
+            payload: {'text': _cut(freshText(html, plain)), if (mid != null) 'mid': mid}, sourceEmailId: e.id);
         return true;
       }
       await _applyRevision(db, e, a, people, task, me, evId: evId, text: freshText(html, plain));
@@ -852,10 +875,12 @@ abstract final class AssignmentStore {
         default:
           break;
       }
-    } else if (!fromMe) {
-      // Ни отметки, ни кода — ответ из другой почты: по словам.
+    } else {
+      // Ни отметки, ни кода — ответ из другой почты или из обычного
+      // редактора: по словам. Своё такое письмо (из «Отправленных») — тоже:
+      // иначе статус менялся только у другой стороны (15.11.2026).
       final sig = AssignmentPhrases.classify(freshText(html, plain));
-      if (accepting && byExecutor) {
+      if (byExecutor && (accepting || fromMe)) {
         final want = switch (sig) {
           AssignmentSignal.done => AssignmentStatus.review,
           AssignmentSignal.accepted => AssignmentStatus.inProgress,
@@ -924,6 +949,7 @@ abstract final class AssignmentStore {
           outgoing: fromMe,
           payload: {
             'text': _cut(text),
+            if (mid != null) 'mid': mid,
             if (next != null && next != a.status) 'status': next,
             if (due != null) 'due': due.toIso8601String(),
             if (go) 'go': true,
@@ -955,6 +981,21 @@ abstract final class AssignmentStore {
   }
 
   static String _cut(String text) => text.length > 400 ? '${text.substring(0, 400)}…' : text;
+
+  /// Письмо события [ev] пришло под номером [mailId] — привязать; если это
+  /// письмо поручения (создание) и поручение ссылалось на прежний номер —
+  /// поручение тоже («Письмо-основание», «Задать вопрос»).
+  static Future<void> _rebind(AppDatabase db, AssignmentEvent ev, String mailId) async {
+    if (ev.sourceEmailId == mailId) return;
+    await (db.update(db.assignmentEvents)..where((x) => x.id.equals(ev.id)))
+        .write(AssignmentEventsCompanion(sourceEmailId: Value(mailId)));
+    final old = ev.sourceEmailId;
+    if (ev.type == 'created' && old != null) {
+      await (db.update(db.assignments)
+            ..where((a) => a.id.equals(ev.assignmentId) & a.sourceEmailId.equals(old)))
+          .write(AssignmentsCompanion(sourceEmailId: Value(mailId)));
+    }
+  }
 
   /// Полные сведения о поручении [a] из письма постановщика или
   /// заместителя (13.11.2026): заменяют название, описание, сроки, порядок,

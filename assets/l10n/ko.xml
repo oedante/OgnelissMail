@@ -4296,4 +4296,5 @@
     <string name="imapLoginHint">kim 또는 CORP\\kim</string>
     <string name="loginSsoBody">조직의 통합 로그인 시스템(OAuth 2.0 및 OpenID Connect: Keycloak, ADFS, Microsoft Entra ID 등)을 통한 로그인은 조직마다 다르며 앱에는 포함되어 있지 않습니다. Ogneliss Mail은 오픈 소스(Apache 2.0)입니다. 조직에서 앱을 포크하여 자체 로그인을 추가할 수 있습니다. 상담이 필요하면 문의해 주세요. 그동안에는 비밀번호로 로그인할 수 있습니다: Exchange 또는 조직 IMAP.</string>
     <string name="loginWorkImapNote">주소와 비밀번호가 필요합니다. 조직이 서버를 공개했다면 앱이 직접 찾습니다. 연결되지 않으면 메일 관리자에게 IMAP·SMTP 서버, 포트, 암호화 방식, 로그인 이름(주소와 다른 경우)을 문의하세요.</string>
+    <string name="assignQuestionAbout">업무 지시 ‘{title}’ 관련 질문({code}):</string>
 </resources>

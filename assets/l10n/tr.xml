@@ -4317,4 +4317,5 @@
     <string name="imapLoginHint">ayilmaz veya CORP\\ayilmaz</string>
     <string name="loginSsoBody">Kuruluşun tek oturum açma sistemiyle giriş (OAuth 2.0 ve OpenID Connect: Keycloak, ADFS, Microsoft Entra ID ve diğerleri) her kuruluşta farklıdır ve uygulamada yer almaz. Ogneliss Mail açık kaynaklıdır (Apache 2.0): kuruluşunuz uygulamanın fork’unu oluşturup kendi girişini ekleyebilir. Danışmanlığa ihtiyacınız varsa bize ulaşın. Bu arada parolayla giriş yapabilirsiniz: Exchange veya kuruluş IMAP’i.</string>
     <string name="loginWorkImapNote">Adresiniz ve parolanız gerekir. Kuruluş sunucuları yayımladıysa uygulama onları kendisi bulur. Bağlanmazsa e-posta yöneticisinden IMAP ve SMTP sunucularını, portları, şifrelemeyi ve kullanıcı adını (adresten farklıysa) isteyin.</string>
+    <string name="assignQuestionAbout">“{title}” görevi hakkında soru ({code}):</string>
 </resources>

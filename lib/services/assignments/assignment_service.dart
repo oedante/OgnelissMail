@@ -20,6 +20,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/logging/app_logger.dart';
 import '../../core/utils/greeting_helper.dart';
 import '../../core/utils/person_names.dart';
+import '../../core/utils/subject_prefix.dart';
 import '../../data/database/app_database.dart';
 import '../../data/models/account_model.dart';
 import '../../data/models/email_model.dart';
@@ -139,7 +140,14 @@ class AssignmentService {
       final ev = 'created:$id';
       // Файлы — копией у себя (у каждого поручения свои) и вложениями.
       final kept = await _keepFiles(id, files);
+      // Тема первого письма — в истории: ответы по поручению идут с ней же
+      // (одна беседа), даже если срок потом перенесли.
+      final subject = AssignmentCodec.subject(
+          prefix: l10n.tr(important ? 'assignSubjectImportant' : 'assignSubject'),
+          title: title,
+          due: due == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(due)));
       await AssignmentStore.insert(_db,
+          subject: subject,
           id: id,
           accountId: account.id,
           title: title.trim(),
@@ -187,10 +195,7 @@ class AssignmentService {
             id: id, due: due, to: to.email, title: title.trim(), ev: ev, parent: parent?.id, important: important),
       );
       await _send(account, to,
-          subject: AssignmentCodec.subject(
-              prefix: l10n.tr(important ? 'assignSubjectImportant' : 'assignSubject'),
-              title: title,
-              due: due == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(due))),
+          subject: subject,
           html: body,
           files: kept);
       ids.add(id);
@@ -199,11 +204,58 @@ class AssignmentService {
     return ids;
   }
 
-  String _subject(AssignmentView v, AppLocalizations l10n) => 'Re: ${AssignmentCodec.subject(
-        prefix: l10n.tr('assignSubject'),
-        title: v.row.title,
-        due: v.due == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(v.due!)),
-      )}';
+  /// Тема писем поручения — одна на всю переписку (15.11.2026: «Re:
+  /// Поручение: Тест 2 — до 21.11» и «Re: Поручение: Тест 2» были разными
+  /// беседами; этапы проекта — отдельными). Тема первого письма (со сроком
+  /// на момент поручения), даже если срок потом перенесли; этап проекта — в
+  /// теме проекта. Не знаем первого письма — тема по поручению, как раньше.
+  Future<String> _subject(AssignmentView v, AppLocalizations l10n) async {
+    final project = _projectOf(v);
+    if (project != null) return _projectSubject(project, l10n);
+    return await _firstSubject(v.id, v.row.accountId) ??
+        'Re: ${AssignmentCodec.subject(
+          prefix: l10n.tr(v.important ? 'assignSubjectImportant' : 'assignSubject'),
+          title: v.row.title,
+          due: v.due == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(v.due!)),
+        )}';
+  }
+
+  /// «Re: » + тема первого письма поручения: у постановщика — из истории
+  /// (сохраняется с 2.6.0), у исполнителя — тема полученного письма.
+  Future<String?> _firstSubject(String id, String accountId) async {
+    try {
+      final created = await (_db.select(_db.assignmentEvents)
+            ..where((x) => x.assignmentId.equals(id) & x.type.equals('created'))
+            ..limit(1))
+          .getSingleOrNull();
+      if (created == null) return null;
+      var first = '';
+      final p = jsonDecode(created.payloadJson);
+      if (p is Map && p['subject'] is String) first = p['subject'] as String;
+      final mailId = created.sourceEmailId;
+      if (first.trim().isEmpty && mailId != null) {
+        first = (await _db.getEmailById(mailId, accountId: accountId))?.subject ?? '';
+      }
+      final base = SubjectPrefix.strip(first);
+      return base.isEmpty ? null : 'Re: $base';
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Проект этапа [v] (null — не этап проекта). Список поручений — тот,
+  /// что уже прочитан экранами ([assignmentsProvider]).
+  AssignmentView? _projectOf(AssignmentView v) {
+    final pid = v.parentId;
+    if (pid == null || v.isProject) return null;
+    try {
+      final all = _ref.read(assignmentsProvider).value;
+      final p = all?.where((x) => x.id == pid).firstOrNull;
+      return p != null && p.isProject ? p : null;
+    } catch (_) {
+      return null;
+    }
+  }
 
   Future<void> _send(AccountModel account, EmailAddress to,
       {required String subject,
@@ -293,7 +345,7 @@ class AssignmentService {
     await _send(account, first,
         moreTo: toList.skip(1).toList(),
         cc: toList.isEmpty ? ccList.skip(1).toList() : ccList,
-        subject: _subject(v, _l10n()),
+        subject: await _subject(v, _l10n()),
         html: assignmentNoteHtml(text, marker, v.id, act: act),
         inReplyTo: inReplyTo,
         files: files);
@@ -301,16 +353,22 @@ class AssignmentService {
 
   /// Ответ — в ту же цепочку: на последнее письмо поручения (полученное
   /// или своё отправленное, когда оно пришло в «Отправленные»).
-  Future<String?> _inReplyTo(AssignmentView v) async {
+  /// Этап проекта — в беседе проекта: последнее письмо этапа или проекта.
+  Future<String?> _inReplyTo(AssignmentView v) =>
+      _latestMailOf([v.id, if (_projectOf(v) case final p?) p.id], v.row.accountId);
+
+  /// Message-ID последнего письма поручений [ids] (полученного или своего
+  /// отправленного, когда оно пришло в «Отправленные»).
+  Future<String?> _latestMailOf(List<String> ids, String accountId) async {
     try {
       final linked = await (_db.select(_db.assignmentEvents)
-            ..where((x) => x.assignmentId.equals(v.id) & x.sourceEmailId.isNotNull())
+            ..where((x) => x.assignmentId.isIn(ids) & x.sourceEmailId.isNotNull())
             ..orderBy([(x) => OrderingTerm(expression: x.createdAt, mode: OrderingMode.desc)])
             ..limit(1))
           .getSingleOrNull();
       final mailId = linked?.sourceEmailId;
       if (mailId != null) {
-        return (await _db.getEmailById(mailId, accountId: v.row.accountId))?.internetMessageId;
+        return (await _db.getEmailById(mailId, accountId: accountId))?.internetMessageId;
       }
     } catch (_) {}
     return null;
@@ -495,7 +553,13 @@ class AssignmentService {
     final planJson = PlanStage.encode(plan);
     final shared = d.visibility == 0;
     final projectFiles = await _keepFiles(pid, d.files);
+    // Тема письма проекта — в истории: этапы и ответы идут в той же беседе.
+    final projectSubject = AssignmentCodec.subject(
+        prefix: l10n.tr('assignProjectSubject'),
+        title: d.title,
+        due: projectDue == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(projectDue)));
     await AssignmentStore.insert(_db,
+        subject: projectSubject,
         id: pid,
         accountId: account.id,
         title: d.title.trim(),
@@ -597,10 +661,7 @@ class AssignmentService {
       await _send(account, all.first,
           moreTo: executors.skip(1).toList(),
           cc: executors.isEmpty ? copies.skip(1).toList() : copies,
-          subject: AssignmentCodec.subject(
-              prefix: l10n.tr('assignProjectSubject'),
-              title: d.title,
-              due: projectDue == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(projectDue))),
+          subject: projectSubject,
           html: projectBody,
           files: projectFiles);
     }
@@ -734,10 +795,11 @@ class AssignmentService {
     await _send(account, st.executor,
         moreTo: st.co,
         cc: [if (owner != null && owner.toLowerCase() != account.email.toLowerCase()) EmailAddress(email: owner), ...deputies, if (ctl != null) ctl, ...observers],
-        subject: AssignmentCodec.subject(
-            prefix: l10n.tr('assignSubject'),
-            title: st.title,
-            due: st.due == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(st.due!))),
+        // Этап — в беседе проекта (15.11.2026: «всё по поручению — в одной
+        // теме, в том числе этапы»).
+        subject: await _firstSubject(projectId, account.id) ??
+            'Re: ${AssignmentCodec.subject(prefix: l10n.tr('assignProjectSubject'), title: projectTitle)}',
+        inReplyTo: await _latestMailOf([projectId], account.id),
         html: body,
         files: files);
   }
@@ -934,7 +996,7 @@ class AssignmentService {
           ownerAddr,
           if (fresh.controller != null) EmailAddress(email: fresh.controller!.email, displayName: fresh.controller!.displayName),
         ],
-        subject: _subject(v, l10n),
+        subject: await _subject(v, l10n),
         html: html,
         files: [for (final f in fresh.files) if (f.path != null) f]);
   }
@@ -1271,7 +1333,9 @@ class AssignmentService {
         files: files);
   }
 
-  String _projectSubject(AssignmentView p, AppLocalizations l10n) => 'Re: ${AssignmentCodec.subject(
+  Future<String> _projectSubject(AssignmentView p, AppLocalizations l10n) async =>
+      await _firstSubject(p.id, p.row.accountId) ??
+      'Re: ${AssignmentCodec.subject(
         prefix: l10n.tr('assignProjectSubject'),
         title: p.row.title,
         due: p.due == null ? null : l10n.tr('assignDueShort').replaceAll('{due}', _dueShort(p.due!)),
@@ -1314,7 +1378,7 @@ class AssignmentService {
       act: changes.isEmpty ? AssignmentAct.progress : AssignmentAct.edited,
     );
     await _sendTo(account, _projectPeople(p, stages),
-        subject: _projectSubject(p, l10n), html: html, inReplyTo: await _inReplyTo(p), files: files);
+        subject: await _projectSubject(p, l10n), html: html, inReplyTo: await _inReplyTo(p), files: files);
   }
 
   /// Ход работ по моим проектам: у проекта с общим планом поменялись этапы,
@@ -1515,7 +1579,7 @@ class AssignmentService {
       act: AssignmentAct.edited,
     );
     await _sendTo(account, (to: to.values.toList(), cc: [for (final e in cc.entries) if (!to.containsKey(e.key)) e.value]),
-        subject: _subject(fresh, l10n), html: html, inReplyTo: await _inReplyTo(v), files: newFiles);
+        subject: await _subject(fresh, l10n), html: html, inReplyTo: await _inReplyTo(v), files: newFiles);
     _reminders();
     return true;
   }
@@ -1723,7 +1787,7 @@ class AssignmentService {
       act: AssignmentAct.edited,
     );
     await _send(account, person,
-        subject: v.isProject ? _projectSubject(fresh, l10n) : _subject(fresh, l10n),
+        subject: v.isProject ? await _projectSubject(fresh, l10n) : await _subject(fresh, l10n),
         html: html,
         files: [for (final f in fresh.files) if (f.path != null) f]);
     // 2) Остальным участникам — кто теперь с правами постановщика.
@@ -1748,7 +1812,7 @@ class AssignmentService {
           );
     final marker = v.isProject ? _projectSnapshot(fresh, list, rev, ev) : _taskSnapshot(fresh, rev, ev);
     await _sendTo(account, people,
-        subject: v.isProject ? _projectSubject(fresh, l10n) : _subject(fresh, l10n),
+        subject: v.isProject ? await _projectSubject(fresh, l10n) : await _subject(fresh, l10n),
         html: assignmentNoteHtml([textAll, if ((note ?? '').trim().isNotEmpty) note!.trim()].join('\n'), marker, v.id,
             act: AssignmentAct.edited),
         inReplyTo: await _inReplyTo(v));
@@ -1789,7 +1853,7 @@ class AssignmentService {
             ],
           );
     await _sendTo(account, people,
-        subject: v.isProject ? _projectSubject(fresh, l10n) : _subject(fresh, l10n),
+        subject: v.isProject ? await _projectSubject(fresh, l10n) : await _subject(fresh, l10n),
         html: assignmentNoteHtml(text, v.isProject ? _projectSnapshot(fresh, list, rev, ev) : _taskSnapshot(fresh, rev, ev), v.id,
             act: AssignmentAct.edited),
         inReplyTo: await _inReplyTo(v));

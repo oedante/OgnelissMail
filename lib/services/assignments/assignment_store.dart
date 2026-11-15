@@ -223,6 +223,7 @@ abstract final class AssignmentStore {
     required DateTime at,
     required bool outgoing,
     String? eventId,
+    String? subject,
     String? parentId,
     bool isProject = false,
     DateTime? start,
@@ -309,6 +310,8 @@ abstract final class AssignmentStore {
             if (assigneeEmail != null) 'to': assigneeEmail.toLowerCase(),
             if (due != null) 'due': due.toIso8601String(),
             if (isProject) 'project': true,
+            // Тема первого письма: ответы по поручению — в той же беседе.
+            if (subject != null && subject.isNotEmpty) 'subject': subject,
           },
           sourceEmailId: sourceEmailId);
     });

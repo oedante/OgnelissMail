@@ -895,6 +895,9 @@ class EmailListState {
 /// Размер страницы
 const int _pageSize = 30;
 
+/// Меньше строк в ленте при заполненном окне — окно расширяется само.
+const int _minVisibleRows = 15;
+
 /// Максимум писем в памяти (контроль RAM)
 const int _maxInMemory = 2000;
 
@@ -1122,6 +1125,15 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
     final models = _modelsFor(filtered);
     final hasMore = rows.length >= _window && _window < _maxInMemory;
     final page = (_window ~/ _pageSize) - 1;
+    // Строк в ленте мало, а окно заполнено (15.11.2026: беседа из 41 письма
+    // заняла все 30 писем окна — в «Всей почте» одна строка): прокрутки нет,
+    // и догрузка по прокрутке не срабатывала. Расширяем окно сами — так же
+    // после фильтров, которые оставили от окна несколько писем.
+    if (hasMore && models.length < _minVisibleRows) {
+      scheduleMicrotask(() {
+        if (mounted) unawaited(loadNextPage());
+      });
+    }
     // Ничего не изменилось — состояние прежнее (07.11.2026, аудит
     // микрофризов): drift присылает выборку на любую запись в таблицу
     // писем, и во время синхронизации лента целиком перестраивалась до

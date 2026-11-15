@@ -102,12 +102,14 @@ void main() {
 
   late Map<String, _Phone> phones;
   final queue = <_Mail>[];
+  final queueLog = <_Mail>[];
   var n = 0;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({'s_locale': 'ru'});
     final prefs = await SharedPreferences.getInstance();
     queue.clear();
+    queueLog.clear();
     phones = {for (final e in names.entries) e.key: _Phone(e.key, e.value)};
     for (final p in phones.values) {
       await p.db.into(p.db.accounts).insert(AccountsCompanion.insert(
@@ -142,6 +144,7 @@ void main() {
   /// с атрибутами data-ogneliss-*), как у владельца 13.11.2026.
   Future<List<_Mail>> deliver({bool strip = false}) async {
     final sent = [...queue];
+    queueLog.addAll(sent);
     queue.clear();
     final cut = RegExp(r'<span data-ogneliss-[^>]*></span>');
     for (final m in sent) {
@@ -482,6 +485,32 @@ void main() {
     expect((await v.one(id)).status, AssignmentStatus.done);
     final ev = (await AssignmentStore.events(v.db, id)).firstWhere((e) => e.id == 'mail:a:old1');
     expect(jsonDecode(ev.payloadJson)['status'], AssignmentStatus.done);
+  });
+
+  test('одна беседа: ответы — с темой первого письма, хоть срок и перенесли (15.11.2026)', () async {
+    final b = phones[boss]!, v = phones[vera]!;
+    final id = (await b.svc.create(
+            account: acc(b), title: 'Тест 2', assignees: [a(vera)], due: DateTime(2026, 11, 21), important: true))
+        .single;
+    final first = (await deliver()).single.subject;
+    expect(first, contains('21.11'));
+    // Срок перенесли — тема та же; ответ исполнителя — тоже.
+    await b.svc.reschedule(await b.one(id), DateTime(2026, 11, 25));
+    final moved = (await deliver()).single.subject;
+    await v.svc.setStatus(await v.one(id), AssignmentStatus.inProgress);
+    final taken = (await deliver()).single.subject;
+    expect(moved, 'Re: $first');
+    expect(taken, 'Re: $first');
+  });
+
+  test('этапы проекта — в беседе проекта (15.11.2026)', () async {
+    final pid = await project();
+    final mails = queueLog.where((m) => m.subject.isNotEmpty).toList();
+    final projectMail = mails.firstWhere((m) => !m.subject.startsWith('Re:'));
+    for (final m in mails.where((m) => m != projectMail)) {
+      expect(m.subject, 'Re: ${projectMail.subject}');
+    }
+    expect(pid, isNotEmpty);
   });
 
   test('срок со временем — у исполнителя, в теме и тексте письма', () async {

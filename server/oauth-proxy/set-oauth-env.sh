@@ -15,6 +15,7 @@
 #       ещё раз.
 #
 #  Запуск на сервере (из каталога server/oauth-proxy архива или откуда угодно):
+#    sudo bash set-oauth-env.sh --yandex-only         # сервер — только Яндекс (2.5.5)
 #    sudo bash set-oauth-env.sh --google-scope        # права Google (ниже)
 #    sudo bash set-oauth-env.sh KEY=VALUE [KEY=VALUE…] # любые ключи
 #    sudo bash set-oauth-env.sh --unset KEY            # удалить ключ
@@ -23,6 +24,10 @@
 #
 #  Параметры:
 #    --dir DIR        каталог прокси (по умолчанию /opt/mailserver/oauth-proxy)
+#    --yandex-only    с 2.5.5 сервер входа — только для Яндекса на Windows
+#                     и Linux: удаляет ключи Google, Microsoft (и Exchange
+#                     Online), Mail.ru и Yahoo, выключает логотипы BIMI здесь
+#                     (они в службе погоды). Ключи Яндекса не трогает.
 #    --google-scope   GOOGLE_SCOPE — права, заявленные в Google Cloud
 #                     (15.11.2026: без gmail.settings.basic): почта (IMAP и
 #                     SMTP), календарь, контакты, openid, адрес и профиль
@@ -61,6 +66,15 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --dir) APP_DIR="${2:?--dir: нужен каталог}"; shift ;;
     --google-scope) SETS+=("GOOGLE_SCOPE=$GOOGLE_SCOPE_VALUE") ;;
+    --yandex-only)
+      for k in GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET GOOGLE_SCOPE GOOGLE_USER_CAP \
+               MS_CLIENT_ID MS_CLIENT_SECRET MS_SCOPE MS_TENANT \
+               EXO_CLIENT_ID EXO_CLIENT_SECRET EXO_SCOPE EXO_GRAPH EXO_GRAPH_CONSENT \
+               MAILRU_CLIENT_ID MAILRU_CLIENT_SECRET MAILRU_SCOPE \
+               YAHOO_APP_ID YAHOO_CLIENT_ID YAHOO_CLIENT_SECRET YAHOO_SCOPE; do
+        UNSETS+=("$k")
+      done
+      SETS+=("BIMI=0") ;;
     --unset) UNSETS+=("${2:?--unset: нужен ключ}"); shift ;;
     --show) SHOW=1 ;;
     --dry-run) DRY=1 ;;

@@ -36,6 +36,14 @@ class _Direct extends CrossPlatformOAuthService {
   bool available(String providerName) => true;
 }
 
+/// Сборка без клиентов служб и без сервера входа: только пароль приложения.
+class _NoDirect extends CrossPlatformOAuthService {
+  const _NoDirect();
+
+  @override
+  bool available(String providerName) => false;
+}
+
 class _CapOAuth extends _Direct {
   const _CapOAuth();
 
@@ -54,11 +62,11 @@ void main() {
     tester.view.physicalSize = const Size(400, 900) * 2;
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
-    // Сервис как в сборке без клиентов служб (в тестах — Linux без ключей).
     await tester.pumpWidget(ProviderScope(
       overrides: [
         databaseProvider.overrideWithValue(db),
         sharedPrefsProvider.overrideWithValue(prefs),
+        crossPlatformOAuthProvider.overrideWithValue(const _NoDirect()),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme(1.0),

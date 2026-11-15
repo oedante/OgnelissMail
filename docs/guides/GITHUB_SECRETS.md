@@ -47,10 +47,10 @@ variables → Actions → New repository secret**. Имя — ровно как 
 `PUSH_WAKE_ANDROID_PRIORITY`. Обновили `config/dart_defines.json` — обновите и
 секрет.
 
-С 2.5.5 сервера входа нет: `OAUTH_PROXY_URL` не читается (можно удалить),
-`OAUTH_PROXY_KEY` нужен только сигналам сервера. Вход через Google и Microsoft
-работает только с клиентами `GOOGLE_*_CLIENT_ID` и `MS_CLIENT_ID`; без них
-Gmail и Яндекс подключаются паролем приложения. Логотипы отправителей —
+С 2.5.5 сервер входа (`OAUTH_PROXY_URL`, `OAUTH_PROXY_KEY`) — только для
+Яндекса на Windows и Linux; ключ нужен и сигналам сервера. Вход через Google
+и Microsoft — напрямую, только с клиентами `GOOGLE_*_CLIENT_ID` и
+`MS_CLIENT_ID`; без них Gmail подключается паролем приложения. Логотипы отправителей —
 `BIMI_URL` (по умолчанию `https://www.ogneliss.ru/weather`).
 
 ## Чем сборки с GitHub отличаются от магазинных

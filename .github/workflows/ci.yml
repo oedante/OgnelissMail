@@ -199,7 +199,7 @@ jobs:
             printf '%s' "$DART_DEFINES_JSON" > config/dart_defines.json
             echo "dart_defines.json: из секрета"
           else
-            echo "::warning title=Без DART_DEFINES_JSON::Нет клиентов служб: вход через Google и Microsoft в этой сборке недоступен (Gmail и Яндекс — паролем приложения), нет ключа сигналов"
+            echo "::warning title=Без DART_DEFINES_JSON::Нет клиентов служб и ключа сервера: вход через Google, Microsoft и Яндекс в этой сборке недоступен (Gmail и Яндекс — паролем приложения), нет сигналов сервера"
           fi
           if [ -n "$KS_B64" ]; then
             echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/upload-keystore.jks"

@@ -270,9 +270,9 @@ add_define OAUTH_PROXY_URL     "${OAUTH_PROXY_URL:-}"
 add_define OAUTH_PROXY_KEY     "${OAUTH_PROXY_KEY:-}"
 # MAILRU_CLIENT_SECRET в сборку не передаём: секрет живёт только на прокси.
 
-# С 2.5.5 сервера входа нет: вход — напрямую у служб (клиенты GOOGLE_*_CLIENT_ID
-# и MS_CLIENT_ID в config/dart_defines.json); OAUTH_PROXY_URL не читается,
-# OAUTH_PROXY_KEY — ключ сигналов сервера (push-relay).
+# С 2.5.5 вход — напрямую у служб (клиенты GOOGLE_*_CLIENT_ID и MS_CLIENT_ID в
+# config/dart_defines.json); OAUTH_PROXY_URL — сервер входа только для Яндекса
+# на Windows и Linux, OAUTH_PROXY_KEY — его ключ и ключ сигналов (push-relay).
 [ -z "${OAUTH_PROXY_KEY:-}" ] && warn "OAUTH_PROXY_KEY пуст — сигналы сервера о новой почте работать не будут"
 
 # Те же значения — в config/dart_defines.json: его подхватывают конфигурации

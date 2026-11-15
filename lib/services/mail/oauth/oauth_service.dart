@@ -13,6 +13,7 @@ import '../../../core/logging/app_logger.dart';
 import '../../../core/security/secure_storage_service.dart';
 import '../../../data/models/account_model.dart';
 import 'direct_oauth.dart';
+import 'oauth_proxy_client.dart';
 
 final oauthServiceProvider = Provider<OAuthService>((ref) {
   final secureStorage = ref.watch(secureStorageProvider);
@@ -283,12 +284,25 @@ class OAuthService {
         AppLogger.info('Token refreshed (${direct.provider}, без сервера входа): ${account.email}');
         return;
       }
-      // Сервера входа больше нет (2.5.5, 15.11.2026): токен ящика, добавленного
-      // через него, обновить нечем — нужен повторный вход, уже напрямую у
-      // службы («Войти снова»; новый токен — с отметкой клиента).
+      // Сервер входа с 2.5.5 — только для Яндекса (Windows и Linux; там же
+      // обновляются и прежние ящики Яндекса). Токен Google или Microsoft,
+      // выданный через сервер, обновить нечем: ключей этих служб на сервере
+      // нет — нужен повторный вход, уже напрямую у службы («Войти снова»).
+      final proxy = OAuthProxyClient(_secureStorage);
+      if (account.type == AccountType.yandex && proxy.isEnabled && provider != null) {
+        final res = await proxy.refreshWithBlob(refreshToken, provider);
+        await _secureStorage.saveOAuthTokens(
+          accountId: account.id,
+          accessToken: res.accessToken,
+          refreshToken: res.rt,
+          expiry: res.expiresAt,
+        );
+        AppLogger.info('Token refreshed (сервер входа, Яндекс): ${account.email}');
+        return;
+      }
       AppLogger.warning('Token refresh: ${account.email} — вход был через сервер входа ($provider), '
-          'его больше нет — нужен повторный вход');
-      throw const OAuthRefreshFailure('вход был через сервер входа Ogneliss, его больше нет', needsSignIn: true);
+          'теперь вход в эту службу напрямую — нужен повторный вход');
+      throw const OAuthRefreshFailure('вход был через сервер входа Ogneliss, теперь — напрямую у службы', needsSignIn: true);
     } on OAuthRefreshFailure catch (e) {
       // Пауза: отозванный вход — 2 мин (синхронизация перепроверяет его
       // через 3 мин и только тогда просит войти заново; дальше ящик с

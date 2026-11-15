@@ -1,4 +1,5 @@
 {
+  "OAUTH_PROXY_URL": "https://www.ogneliss.ru/oauth",
   "OAUTH_PROXY_KEY": "",
   "SUPPORT_EMAIL": "",
   "GOOGLE_ANDROID_CLIENT_ID": "",

@@ -94,18 +94,19 @@ class AppConstants {
   static const mailruClientSecret =
       String.fromEnvironment('MAILRU_CLIENT_SECRET', defaultValue: '');
 
-  // ═══════════════ СЕРВЕР ВХОДА (server/oauth-proxy) — СНЯТ ═══════════════
-  // С 2.5.5 (решение владельца 15.11.2026) сервера входа нет: вход и
-  // обновление токенов — только напрямую у служб (direct_oauth.dart).
-  // Ключ сборки OAUTH_PROXY_URL больше не читается; пустой адрес выключает
-  // все прежние пути через сервер (OAuthProxyClient.isEnabled).
-  static const oauthProxyBaseUrl = '';
+  // ═══════════════ СЕРВЕР ВХОДА (server/oauth-proxy) ═══════════════
+  // С 2.5.5 (решение владельца 15.11.2026) — только для Яндекса на Windows и
+  // Linux (cross_platform_oauth.dart): Google, Microsoft и Яндекс на
+  // телефонах и Mac входят напрямую у службы (direct_oauth.dart), ключей
+  // других служб на сервере нет. Пусто — выключен (Яндекс на компьютере —
+  // паролем приложения).
+  static const oauthProxyBaseUrl = String.fromEnvironment('OAUTH_PROXY_URL', defaultValue: 'https://ogneliss.ru');
 
   /// Своя сборка с самоподписанным сертификатом OAuth-прокси: принимать его
   /// сертификат без проверки. По умолчанию — нет (у ogneliss.ru настоящий).
   static const oauthProxySelfSigned = bool.fromEnvironment('OAUTH_PROXY_SELF_SIGNED');
-  /// Ключ приложения для служб на сервере Ogneliss (сигналы push-relay).
-  /// Имя ключа сборки прежнее.
+  /// Ключ приложения для служб на сервере Ogneliss: сервер входа (Яндекс на
+  /// Windows и Linux) и сигналы push-relay.
   static const oauthProxyApiKey = String.fromEnvironment('OAUTH_PROXY_KEY', defaultValue: '');
 
   /// Логотипы отправителей BIMI (2.5.5): служба погоды на сервере Ogneliss,

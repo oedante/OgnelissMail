@@ -1,12 +1,12 @@
 # Ogneliss OAuth Proxy
 
-> **Снят с 2.5.5 (решение владельца 15.11.2026).** Вход и обновление токенов
-> идут только из приложений напрямую у Google, Microsoft и Яндекса
-> (`lib/services/mail/oauth/direct_oauth.dart`), токены не проходят через
-> серверы Ogneliss. Логотипы отправителей — в службе погоды
-> (`server/weather-proxy`, `/weather/bimi`). Снять прокси с сервера:
-> `sudo bash remove-oauth-proxy.sh --dry-run`, затем без `--dry-run` — после
-> выхода 2.5.5 и обновления службы погоды. Остальное ниже — для истории.
+> **С 2.5.5 (решение владельца 15.11.2026) — только для Яндекса на Windows и
+> Linux.** Google, Microsoft и Яндекс на телефонах и Mac входят напрямую
+> (`lib/services/mail/oauth/direct_oauth.dart`), токены Google и Microsoft
+> через сервер не проходят. Ключи других служб из `.env` убрать:
+> `sudo bash set-oauth-env.sh --yandex-only`. Логотипы отправителей — в
+> службе погоды (`server/weather-proxy`, `/weather/bimi`). Про Google, Microsoft,
+> Mail.ru и Yahoo ниже — для истории.
 
 Stateless-посредник OAuth: держит `client_secret` **на сервере**, ловит redirect
 провайдера, меняет код на токены и обновляет их по refresh. Приложение секретов

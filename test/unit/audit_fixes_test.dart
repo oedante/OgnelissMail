@@ -17,6 +17,7 @@ import 'package:ogneliss/features/compose/widgets/mail_editor.dart';
 import 'package:ogneliss/l10n/strings_store.dart';
 import 'package:ogneliss/services/calendar/meeting_link_service.dart';
 import 'package:ogneliss/services/mail/imap/imap_service.dart' show imapConversationId;
+import 'package:ogneliss/services/mail/oauth/proxy_pkce.dart';
 
 void main() {
   group('HtmlSanitizer (G-1)', () {
@@ -181,6 +182,17 @@ void main() {
       expect(m, isNot(contains('abc')));
       expect(m, isNot(contains('def')));
       expect(m, isNot(contains('xyz.123')));
+    });
+  });
+
+  group('PKCE прокси (G-6)', () {
+    test('challenge = base64url(sha256(verifier)) без =', () {
+      final p = ProxyPkce.generate();
+      final expected = base64Url
+          .encode(sha256.convert(ascii.encode(p.verifier)).bytes)
+          .replaceAll('=', '');
+      expect(p.challenge, expected);
+      expect(p.challenge.length, 43);
     });
   });
 

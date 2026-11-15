@@ -40,9 +40,9 @@ class ExperimentalKeys {
   static const recipientsLayout = 'recipients_layout';
 
   /// Mac и Windows: сложные письма — во встроенном окне браузера (Mac —
-  /// 12.11.2026, Windows — 14.11.2026; DesktopMailWebView). По умолчанию
-  /// выключено, пока владелец не проверит. Ключ прежний — включённое на Mac
-  /// не сбрасывается.
+  /// 12.11.2026, Windows — 14.11.2026; DesktopMailWebView). С 2.5.4
+  /// включено по умолчанию (владелец 15.11.2026: «не работал html
+  /// просмотр писем»); выключенное вручную остаётся выключенным.
   static const macWebMail = 'mac_web_mail_on';
 
   // ── «Экспериментальный функционал» (1.10.3): по умолчанию выключено ──
@@ -235,7 +235,7 @@ class _MailOpeningSectionState extends ConsumerState<MailOpeningSection> with _P
             icon: AppIcons.language,
             title: l10n.tr('expMacWebTitle'),
             subtitle: l10n.tr('expMacWebDesc'),
-            value: pref(ExperimentalKeys.macWebMail, def: false),
+            value: pref(ExperimentalKeys.macWebMail, def: true),
             onChanged: (v) => setPref(ExperimentalKeys.macWebMail, v),
           ),
         SettingsSwitchItem(

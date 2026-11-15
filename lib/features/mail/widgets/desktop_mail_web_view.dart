@@ -23,13 +23,17 @@
 //    клавиатура до окна не доходит; окно не забирает фокус у ленты, иначе
 //    стрелки и Delete в ленте переставали бы работать после открытия письма;
 //  · WebView2 Runtime нет или окно не загрузилось за [_loadTimeout] —
-//    [onFailed].
+//    [onFailed];
+//  · с 2.5.4 включено по умолчанию: Runtime проверяется при запуске
+//    ([DesktopMailWebView.probe]); нет его или окно дважды подряд не
+//    загрузилось — до перезапуска письма сразу показываются виджетами, без
+//    ожидания у каждого письма.
 
 import 'dart:async';
 import 'dart:convert' show utf8;
 import 'dart:io';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:path_provider/path_provider.dart';
@@ -50,6 +54,36 @@ bool desktopMailNeedsFile(String page, {required bool windows}) =>
     windows && page.length * 3 > desktopMailInlineLimit && utf8.encode(page).length > desktopMailInlineLimit;
 
 class DesktopMailWebView extends StatefulWidget {
+  /// Окно письма можно показывать: Mac — всегда; Windows — WebView2 Runtime
+  /// есть (или ещё не проверен) и окно не отказывало дважды подряд.
+  static bool get usable => _runtime != false && _stalls < 2;
+  static bool? _runtime;
+  static int _stalls = 0;
+
+  /// Проверить WebView2 Runtime (Windows; один раз за запуск, заранее — до
+  /// первого письма). Не ответил — считается, что есть: окно само
+  /// сообщит о сбое.
+  static Future<void> probe() async {
+    if (kIsWeb || !Platform.isWindows || _runtime != null) return;
+    try {
+      final v = await WebViewEnvironment.getAvailableVersion();
+      _runtime = v != null && v.isNotEmpty;
+      if (_runtime!) {
+        AppLogger.info('WebView2 Runtime $v');
+      } else {
+        AppLogger.warning('WebView2 Runtime не установлен — сложные письма показываются упрощённо');
+      }
+    } catch (e) {
+      AppLogger.warning('WebView2 Runtime не проверен: $e');
+    }
+  }
+
+  @visibleForTesting
+  static void resetForTest() {
+    _runtime = null;
+    _stalls = 0;
+  }
+
   const DesktopMailWebView({
     super.key,
     required this.html,
@@ -127,10 +161,11 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
     super.dispose();
   }
 
-  void _fail(String why) {
+  void _fail(String why, {bool stall = false}) {
     if (_failed) return;
     _failed = true;
     _watchdog?.cancel();
+    if (stall) DesktopMailWebView._stalls++;
     AppLogger.warning('Письмо в окне (${_windows ? 'Windows' : 'Mac'}): $why');
     if (mounted) widget.onFailed?.call();
   }
@@ -176,7 +211,7 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
       _fromFile = file != null;
     });
     if (first) {
-      if (_windows) _watchdog = Timer(_loadTimeout, () => _fail('WebView2 не загрузил письмо'));
+      if (_windows) _watchdog = Timer(_loadTimeout, () => _fail('WebView2 не загрузил письмо', stall: true));
       return;
     }
     final web = _web;
@@ -221,7 +256,10 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
             initialUrlRequest: fromFile ? URLRequest(url: WebUri.uri(file.uri)) : null,
             initialSettings: MailHtmlView.desktopSettings(textScale: widget.textScale),
             onWebViewCreated: (c) => _web = c,
-            onLoadStop: (controller, url) => _watchdog?.cancel(),
+            onLoadStop: (controller, url) {
+              _watchdog?.cancel();
+              DesktopMailWebView._stalls = 0;
+            },
             shouldOverrideUrlLoading: (controller, action) async {
               final url = action.request.url;
               if (_isDocument(url)) return NavigationActionPolicy.ALLOW;

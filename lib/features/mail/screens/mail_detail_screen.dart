@@ -1435,12 +1435,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       _split = p != null && identical(p.secured.html, html) ? p.split : splitQuotedHtml(html);
     }
     // Mac и Windows: сложная вёрстка — во встроенном окне браузера (Mac —
-    // 12.11.2026, Windows — 14.11.2026; включается в «Открытии писем»); окно
-    // не показало письмо — как раньше.
+    // 12.11.2026, Windows — 14.11.2026; с 2.5.4 включено по умолчанию,
+    // выключается в «Открытии писем»); окно не показало письмо или WebView2
+    // на компьютере нет — как раньше, виджетами.
     final desktopWeb = mailDesktopWebViewSupported &&
         _prepared?.nativeWhy != null &&
         _webFailedFor != email.id &&
-        (ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.macWebMail) ?? false);
+        DesktopMailWebView.usable &&
+        (ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.macWebMail) ?? true);
     final Widget body;
     if (desktopWeb) {
       final dark = theme.brightness == Brightness.dark;

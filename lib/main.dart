@@ -28,6 +28,7 @@ import 'widgets/common/animated_appearance.dart' show uiAnimations;
 import 'services/mail/own_addresses.dart';
 import 'features/mail/message_window.dart';
 import 'features/mail/message_window_host.dart';
+import 'features/mail/widgets/desktop_mail_web_view.dart' show DesktopMailWebView;
 import 'features/compose/compose_window.dart';
 import 'features/compose/compose_window_app.dart';
 import 'services/mail/draft_sync_service.dart' show draftSyncServiceProvider;
@@ -481,6 +482,9 @@ Future<void> main() async {
     );
     // Просьбы окон писем (ответить, переслать, удалить…) — компьютер.
     unawaited(MessageWindowHost.start(globalContainer));
+    // Windows: есть ли WebView2 Runtime для сложных писем — до первого
+    // письма (2.5.4).
+    unawaited(DesktopMailWebView.probe());
   } catch (e, stack) {
     AppLogger.error('Критическая ошибка при запуске', e, stack);
     runApp(_ErrorApp(error: e.toString()));

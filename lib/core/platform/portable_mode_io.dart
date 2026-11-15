@@ -50,12 +50,31 @@ abstract final class PortableMode {
   /// main() — до базы, настроек и окон WebView2.
   static void init() {
     if (!Platform.isWindows || _root != null) return;
+    if (!_portable()) _localWebViewData();
+  }
+
+  /// Обычный режим: данные WebView2 — в папке пользователя
+  /// (%LOCALAPPDATA%\com.ogneliss\Ogneliss Mail\WebView2, 2.5.4). Без
+  /// этого WebView2 пишет их рядом с exe, а в Program Files записи нет —
+  /// окно письма не открывалось. Переменную, заданную снаружи, не трогаем.
+  static void _localWebViewData() {
+    try {
+      final env = Platform.environment;
+      final local = env['LOCALAPPDATA'];
+      if (local == null || local.isEmpty || (env['WEBVIEW2_USER_DATA_FOLDER'] ?? '').isNotEmpty) return;
+      _setEnv('WEBVIEW2_USER_DATA_FOLDER', '$local\\com.ogneliss\\Ogneliss Mail\\WebView2');
+    } catch (_) {}
+  }
+
+  /// Переносной режим: portable.txt рядом с exe и папка программы доступна
+  /// для записи.
+  static bool _portable() {
     final String exeDir;
     try {
       exeDir = File(Platform.resolvedExecutable).parent.path;
-      if (!File('$exeDir\\$markerName').existsSync()) return;
+      if (!File('$exeDir\\$markerName').existsSync()) return false;
     } catch (_) {
-      return;
+      return false;
     }
     final dir = Directory('$exeDir\\$dataName');
     try {
@@ -65,7 +84,7 @@ abstract final class PortableMode {
       probe.deleteSync();
     } catch (e) {
       failure = 'папка программы недоступна для записи: $e';
-      return;
+      return false;
     }
     _root = dir.path;
     final paths = PortablePaths(dir.path);
@@ -79,6 +98,7 @@ abstract final class PortableMode {
     // ignore: invalid_use_of_visible_for_testing_member
     if (prefsAsync is SharedPreferencesAsyncWindows) prefsAsync.pathProvider = paths;
     _setEnv('WEBVIEW2_USER_DATA_FOLDER', '${dir.path}\\WebView2');
+    return true;
   }
 
   /// Переменная окружения процесса (WebView2 читает её при создании окна).

@@ -256,10 +256,12 @@ class AppSettings {
     this.syncIntervalMinutes = 15,
     this.emailFetchMode = EmailFetchMode.noAttachments,
     this.groupByConversation = true,
+    // По одному действию на сторону (2.5.4, просьба владельца 15.11.2026):
+    // от левого края — «прочитано / не прочитано», от правого — «удалить».
     this.swipeLeftPrimary = SwipeAction.markRead,
-    this.swipeLeftSecondary = SwipeAction.flag,
-    this.swipeRightPrimary = SwipeAction.archive,
-    this.swipeRightSecondary = SwipeAction.delete,
+    this.swipeLeftSecondary = SwipeAction.none,
+    this.swipeRightPrimary = SwipeAction.delete,
+    this.swipeRightSecondary = SwipeAction.none,
     this.swipeConvLeft = SwipeAction.markRead,
     this.swipeConvRight = SwipeAction.delete,
     this.swipeTriageCustom = false,
@@ -595,10 +597,13 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       attachmentsWifiOnly: _p.getBool(_K.attachmentsWifiOnly) ?? true,
       searchAttachments: _p.getBool(_K.searchAttachments) ?? true,
       groupByConversation: _p.getBool(_K.groupByConversation) ?? true,
-      swipeLeftPrimary: SwipeAction.values[_p.getInt(_K.swipeLP) ?? 0],
-      swipeLeftSecondary: SwipeAction.values[_p.getInt(_K.swipeLS) ?? 1],
-      swipeRightPrimary: SwipeAction.values[_p.getInt(_K.swipeRP) ?? 2],
-      swipeRightSecondary: SwipeAction.values[_p.getInt(_K.swipeRS) ?? 3],
+      // По умолчанию (2.5.4, просьба владельца 15.11.2026) — по одному
+      // действию на сторону: свайп вправо — «прочитано / не прочитано»,
+      // влево — «удалить». Выбранное в настройках остаётся как было.
+      swipeLeftPrimary: SwipeAction.values[_p.getInt(_K.swipeLP) ?? SwipeAction.markRead.index],
+      swipeLeftSecondary: SwipeAction.values[_p.getInt(_K.swipeLS) ?? SwipeAction.none.index],
+      swipeRightPrimary: SwipeAction.values[_p.getInt(_K.swipeRP) ?? SwipeAction.delete.index],
+      swipeRightSecondary: SwipeAction.values[_p.getInt(_K.swipeRS) ?? SwipeAction.none.index],
       swipeConvLeft: SwipeAction.values[(_p.getInt(_K.swipeCL) ?? 0).clamp(0, SwipeAction.values.length - 1)],
       swipeConvRight: SwipeAction.values[(_p.getInt(_K.swipeCR) ?? 3).clamp(0, SwipeAction.values.length - 1)],
       swipeTriageCustom: _p.getBool(_K.swipeTC) ?? false,

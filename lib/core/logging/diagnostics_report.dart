@@ -82,6 +82,12 @@ class DiagnosticsReport {
         final l = f.readAsBytesSync();
         archive.addFile(ArchiveFile('ogneliss.log', l.length, l));
       }
+      // Журнал окон редактора на компьютере (2.5.4) — рядом с основным.
+      final w = File('${f.parent.path}${Platform.pathSeparator}ogneliss-window.log');
+      if (w.existsSync()) {
+        final l = w.readAsBytesSync();
+        archive.addFile(ArchiveFile('ogneliss-window.log', l.length, l));
+      }
     }
     // Журнал до 15 МБ сжимается примерно в 10 раз — пакет проходит
     // ограничение размера вложения почтового сервера.

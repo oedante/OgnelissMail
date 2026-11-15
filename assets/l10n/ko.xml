@@ -4275,4 +4275,7 @@
     <string name="attachFromMailTitle">첨부 파일 선택</string>
     <string name="attachPickedFiles">첨부</string>
     <string name="selectedFilesN">{n}개 파일 선택됨</string>
+    <string name="composeWindowTitle">메일을 별도 창에서 작성</string>
+    <string name="composeWindowDesc">새 메일, 답장, 전달이 Outlook처럼 별도 창에서 열립니다. 메일을 읽으면서 여러 메일을 쓸 수 있습니다. 읽기 창에서의 답장은 읽기 창에 그대로 있습니다.</string>
+    <string name="composeWindowFailed">메일 창이 시작되지 않았습니다</string>
 </resources>

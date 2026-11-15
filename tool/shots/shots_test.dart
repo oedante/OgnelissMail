@@ -508,7 +508,7 @@ void main() {
 
   // Поручения (2.2.0): список и карточка.
   testWidgets('поручения', (tester) async {
-    SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+    SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
     final prefs = await SharedPreferences.getInstance();
     final db = (await tester.runAsync(() async {
       final db = await _db();
@@ -552,7 +552,7 @@ void main() {
 
   // Проект с этапами (12.11.2026): список, этапы, план (Ганта), этап.
   testWidgets('проект с этапами', (tester) async {
-    SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+    SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
     final prefs = await SharedPreferences.getInstance();
     final db = (await tester.runAsync(() async {
       final db = await _db();
@@ -616,7 +616,7 @@ void main() {
 
   // Сводка, «Результат», ящики и «Важное» (12.11.2026).
   testWidgets('сводка поручений', (tester) async {
-    SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+    SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
     final prefs = await SharedPreferences.getInstance();
     final db = (await tester.runAsync(() async {
       final db = await _db();
@@ -748,7 +748,7 @@ void main() {
   // Outlook): панель папок, лента, письмо с панелью команд.
   for (final (name, size) in const [('desktop', Size(1440, 900)), ('tablet', Size(1194, 834))]) {
     testWidgets('лента и письмо — $name', (tester) async {
-      SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
       final prefs = await SharedPreferences.getInstance();
       final db = (await tester.runAsync(_db))!;
       await tester.runAsync(() => _letter(db));
@@ -767,6 +767,23 @@ void main() {
     });
   }
 
+  // Значок закрепления панели папок (2.5.4, замечание владельца 14.11.2026:
+  // «перескакивает символ закрепления»): панель откреплена и выдвинута —
+  // значок там же, где у закреплённой (снимок split_desktop).
+  testWidgets('лента — панель откреплена, desktop', (tester) async {
+    SharedPreferences.setMockInitialValues(
+        {'s_active_account': 'a1', 'reading_pane_asked_v1': true, 'drawer_pinned': false});
+    final prefs = await SharedPreferences.getInstance();
+    final db = (await tester.runAsync(_db))!;
+    await tester.runAsync(() => _letter(db));
+    await tester.runAsync(() => _inbox(db));
+    await _shot(tester, 'split_desktop_unpinned', const MailListScreen(),
+        theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: const Size(1440, 900), before: (t) async {
+      await t.tap(find.byIcon(AppIcons.menu).first);
+    });
+    await tester.runAsync(db.close);
+  });
+
   // Складные (07.11.2026, пункт 10 владельца): Galaxy Z Fold — внешний
   // экран (узкий и высокий) и внутренний (почти квадрат, сгиб посередине, в
   // крупном и обычном масштабе), Pixel Fold — внутренний «альбомный»,
@@ -780,7 +797,7 @@ void main() {
     ('flip_half', Size(412, 1006), Rect.fromLTRB(0, 503, 412, 503)),
   ]) {
     testWidgets('складные — $name', (tester) async {
-      SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
       final prefs = await SharedPreferences.getInstance();
       final db = (await tester.runAsync(_db))!;
       await tester.runAsync(() => _letter(db));
@@ -831,7 +848,7 @@ void main() {
   }
 
   testWidgets('лента и ответ в панели — desktop', (tester) async {
-    SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+    SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
     final prefs = await SharedPreferences.getInstance();
     final db = (await tester.runAsync(_db))!;
     await tester.runAsync(() => _letter(db));

@@ -67,7 +67,10 @@ class AppLogger {
     return _detailedUntil?.millisecondsSinceEpoch;
   }
 
-  static Future<void> init() async {
+  /// [fileName] — свой файл у окна редактора на компьютере (2.5.4): два
+  /// окна не пишут в один файл одновременно; в отчёт для поддержки он
+  /// попадает вместе с основным (diagnostics_report.dart).
+  static Future<void> init({String fileName = 'ogneliss.log'}) async {
     if (_initialized) return;
     try {
       if (!kIsWeb) {
@@ -86,7 +89,7 @@ class AppLogger {
           } catch (_) {}
         }
         // Единый файл (без даты в имени).
-        _logFile = File('${logDir.path}${sep}ogneliss.log');
+        _logFile = File('${logDir.path}$sep$fileName');
         _currentBytes = await _logFile!.exists() ? (await _logFile!.length()) : 0;
       }
       _initialized = true;

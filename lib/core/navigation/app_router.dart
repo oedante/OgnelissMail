@@ -82,6 +82,9 @@ import '../../features/settings/screens/setup_mailbox_screen.dart';
 import '../../features/settings/screens/aliases_settings_screen.dart';
 import '../../features/settings/screens/notifications_settings_screen.dart';
 import '../../widgets/navigation/main_shell.dart';
+import '../../features/compose/compose_window.dart';
+import '../../data/providers/shared_prefs_provider.dart';
+import '../../features/compose/compose_window_launcher.dart';
 import '../../features/settings/screens/folder_sync_settings_screen.dart';
 import '../../widgets/common/text_scale_cap.dart';
 import '../../widgets/common/wide_frame.dart';
@@ -212,26 +215,27 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Fullscreen dialogs
       GoRoute(
         path: '/compose', name: 'compose',
-        pageBuilder: (_, state) => MaterialPage(
-          fullscreenDialog: true,
-          child: WideFrame.wide(child: ComposeScreen(
-            replyToId: state.uri.queryParameters['replyToId'],
-            forwardFromId: state.uri.queryParameters['forwardFromId'],
-            draftId: state.uri.queryParameters['draftId'],
-            accountId: state.uri.queryParameters['accountId'],
-            to: state.uri.queryParameters['to'],
-            cc: state.uri.queryParameters['cc'],
-            bcc: state.uri.queryParameters['bcc'],
-            sharedBody: state.uri.queryParameters['body'],
-            sharedSubject: state.uri.queryParameters['subject'],
-            sharedAttachments: (state.uri.queryParameters['attachments'] ?? '')
-                .split('|').where((s) => s.isNotEmpty).toList(),
-            replyAll: state.uri.queryParameters['replyAll'] == 'true',
-            replyWithAttachments: state.uri.queryParameters['withAttachments'] == 'true',
-            quoteFragment: state.uri.queryParameters['fragment'],
-            quickText: state.uri.queryParameters['quick'],
-          )),
-        ),
+        pageBuilder: (_, state) {
+          final q = state.uri.queryParameters;
+          // Компьютер (2.5.4, «многооконный режим как в Outlook»): новое
+          // письмо, ответ, пересылка, черновик — отдельным окном; эта
+          // страница только открывает его и закрывается. Окно не создалось
+          // или просили «здесь» — редактор, как раньше.
+          if (q[ComposeWindow.hereParam] != '1' && ComposeWindow.enabled(ref.read(sharedPrefsProvider))) {
+            return CustomTransitionPage<void>(
+              key: state.pageKey,
+              opaque: false,
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero,
+              transitionsBuilder: (_, __, ___, child) => child,
+              child: ComposeWindowLauncher(query: q),
+            );
+          }
+          return MaterialPage(
+            fullscreenDialog: true,
+            child: WideFrame.wide(child: ComposeScreen.fromQuery(q)),
+          );
+        },
       ),
       GoRoute(
         path: '/vip-settings', name: 'vip-settings',

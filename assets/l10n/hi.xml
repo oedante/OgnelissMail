@@ -4296,4 +4296,7 @@
     <string name="attachFromMailTitle">अटैचमेंट चुनें</string>
     <string name="attachPickedFiles">संलग्न करें</string>
     <string name="selectedFilesN">{n} फ़ाइलें चुनी गईं</string>
+    <string name="composeWindowTitle">ईमेल अलग विंडो में</string>
+    <string name="composeWindowDesc">नया ईमेल, जवाब और फ़ॉरवर्ड Outlook की तरह अलग विंडो में खुलते हैं: मेल पढ़ते हुए कई ईमेल लिखें। रीडिंग पेन से जवाब उसी में रहता है।</string>
+    <string name="composeWindowFailed">ईमेल विंडो शुरू नहीं हुई</string>
 </resources>

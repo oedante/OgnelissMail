@@ -911,6 +911,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                       ),
                     )
                   : ReadableWidth(
+                      maxWidth: ReadableWidth.mailWidth(),
                       child: ListView.separated(
                         controller: _scroll,
                         // «Как чат» — снизу вверх: экран открывается на

@@ -4275,4 +4275,7 @@
     <string name="attachFromMailTitle">Pilih lampiran</string>
     <string name="attachPickedFiles">Lampirkan</string>
     <string name="selectedFilesN">{n} file dipilih</string>
+    <string name="composeWindowTitle">Email di jendela terpisah</string>
+    <string name="composeWindowDesc">Email baru, balasan, dan penerusan terbuka di jendela terpisah seperti di Outlook: tulis beberapa email sambil membaca surat. Balasan dari panel baca tetap di panel.</string>
+    <string name="composeWindowFailed">Jendela email tidak dimulai</string>
 </resources>

@@ -4317,4 +4317,7 @@
     <string name="attachFromMailTitle">בחר קבצים מצורפים</string>
     <string name="attachPickedFiles">צרף</string>
     <string name="selectedFilesN">נבחרו {n} קבצים</string>
+    <string name="composeWindowTitle">הודעות בחלון נפרד</string>
+    <string name="composeWindowDesc">הודעה חדשה, תשובה והעברה נפתחות בחלון נפרד כמו ב-Outlook: אפשר לכתוב כמה הודעות ולקרוא דואר בו-זמנית. תשובה מחלונית הקריאה נשארת בה.</string>
+    <string name="composeWindowFailed">חלון ההודעה לא נפתח</string>
 </resources>

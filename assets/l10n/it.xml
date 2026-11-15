@@ -4296,4 +4296,7 @@
     <string name="attachFromMailTitle">Scegli gli allegati</string>
     <string name="attachPickedFiles">Allega</string>
     <string name="selectedFilesN">{n} file selezionati</string>
+    <string name="composeWindowTitle">Email in una finestra separata</string>
+    <string name="composeWindowDesc">Nuova email, risposta e inoltro si aprono in una finestra separata, come in Outlook: scrivi più email mentre leggi la posta. La risposta dal riquadro di lettura resta nel riquadro.</string>
+    <string name="composeWindowFailed">La finestra dell\'email non si è avviata</string>
 </resources>

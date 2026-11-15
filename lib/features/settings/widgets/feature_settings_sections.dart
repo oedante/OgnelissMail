@@ -19,6 +19,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../calendar/calendar_data.dart' show calendarHubProvider;
 import '../../mail/widgets/mail_html_view.dart' show MailWebViewPool, mailDesktopWebViewSupported;
+import '../../compose/compose_window.dart' show ComposeWindow;
 import '../../mail/widgets/mail_header.dart' show RecipientsLayout;
 
 /// Ключи выключателей, которых нет в других настройках (имена — с 1.5.x,
@@ -219,6 +220,16 @@ class _MailOpeningSectionState extends ConsumerState<MailOpeningSection> with _P
           value: pref(ExperimentalKeys.nativeMail),
           onChanged: (v) => setPref(ExperimentalKeys.nativeMail, v),
         ),
+        // Многооконный режим (2.5.4, просьба владельца 15.11.2026: «как в
+        // Outlook»): новое письмо, ответ, пересылка — отдельным окном.
+        if (ComposeWindow.supported)
+          SettingsSwitchItem(
+            icon: AppIcons.open_in_new,
+            title: l10n.tr('composeWindowTitle'),
+            subtitle: l10n.tr('composeWindowDesc'),
+            value: pref(ComposeWindow.prefKey),
+            onChanged: (v) => setPref(ComposeWindow.prefKey, v),
+          ),
         if (mailDesktopWebViewSupported)
           SettingsSwitchItem(
             icon: AppIcons.language,

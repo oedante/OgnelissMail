@@ -38,11 +38,13 @@
 // (core/utils/linkify.dart, 1.5.10); даты в тексте — тоже (1.9.x,
 // core/utils/date_links.dart): по тексту абзаца целиком, ссылками `ogdate:`.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
 
@@ -1451,6 +1453,31 @@ class _MailNativeBodyState extends State<MailNativeBody> {
     return f == null || !f.active ? null : '${f.query}|${f.current}';
   }
 
+  /// Меню ссылки по правой кнопке: открыть (с той же проверкой адреса, что
+  /// и нажатие) или скопировать адрес (у mailto: — сам адрес почты).
+  Future<void> _linkMenu(Offset at, String href, String text) async {
+    final overlay = Overlay.maybeOf(context)?.context.findRenderObject() as RenderBox?;
+    if (overlay == null) return;
+    final l10n = AppLocalizations.of(context);
+    final mail = href.toLowerCase().startsWith('mailto:');
+    final choice = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromRect(at & const Size(1, 1), Offset.zero & overlay.size),
+      items: [
+        PopupMenuItem(value: 'open', child: Text(l10n.tr(mail ? 'writeEmail' : 'openLink'))),
+        PopupMenuItem(value: 'copy', child: Text(l10n.tr(mail ? 'copyEmail' : 'copyLink'))),
+      ],
+    );
+    if (!mounted) return;
+    switch (choice) {
+      case 'open':
+        widget.onLink(href, text);
+      case 'copy':
+        final value = mail ? Uri.decodeComponent(href.substring(7).split('?').first) : href;
+        await Clipboard.setData(ClipboardData(text: value));
+    }
+  }
+
   Widget _build(ThemeData theme) {
     for (final t in _taps) {
       t.dispose();
@@ -1577,7 +1604,19 @@ class _MailNativeBodyState extends State<MailNativeBody> {
       }
       TapGestureRecognizer? tap;
       if (href != null) {
-        tap = TapGestureRecognizer()..onTap = () => widget.onLink(href, s.text.trim());
+        tap = _LinkTap()
+          ..onTap = () {
+            widget.onLink(href, s.text.trim());
+          }
+          // Правая кнопка мыши по ссылке (компьютер, 2.5.4, как в Outlook):
+          // «Открыть» и «Копировать»; служебные ссылки (даты) — как нажатие.
+          ..onSecondaryTapUp = (d) {
+            if (DateLinks.isDateLink(href)) {
+              widget.onLink(href, s.text.trim());
+            } else {
+              unawaited(_linkMenu(d.globalPosition, href, s.text.trim()));
+            }
+          };
         _taps.add(tap);
       }
       final deco = <TextDecoration>[
@@ -1712,6 +1751,18 @@ class _MailNativeBodyState extends State<MailNativeBody> {
 /// Выделение текста с пунктом «Ответить с цитатой» (2.0.0, план 08.11.2026:
 /// ответ на фрагмент, как в мессенджере). Без [onQuoteReply] — обычное
 /// выделение.
+/// Нажатие ссылки. Правую кнопку ссылка забирает сразу, при нажатии: иначе
+/// кнопку, подержанную дольше 100 мс, получает и выделение текста
+/// (SelectionArea) — и вместе с меню ссылки открывается его меню
+/// «Копировать / Выделить всё» (2.5.4).
+class _LinkTap extends TapGestureRecognizer {
+  @override
+  void addAllowedPointer(PointerDownEvent event) {
+    super.addAllowedPointer(event);
+    if (event.buttons == kSecondaryButton) resolvePointer(event.pointer, GestureDisposition.accepted);
+  }
+}
+
 Widget quoteReplySelectionArea(Widget child, void Function(String text)? onQuoteReply) {
   if (onQuoteReply == null) return SelectionArea(child: child);
   return _QuoteReplySelection(onQuoteReply: onQuoteReply, child: child);

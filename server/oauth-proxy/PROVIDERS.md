@@ -86,7 +86,7 @@ https://www.ogneliss.ru/oauth/callback
    ```
    GOOGLE_CLIENT_ID=<client id>.apps.googleusercontent.com
    GOOGLE_CLIENT_SECRET=<client secret>
-   GOOGLE_SCOPE=https://mail.google.com/ openid email profile
+   GOOGLE_SCOPE=https://mail.google.com/ https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/carddav openid email profile
    ```
 
 ---
@@ -266,8 +266,10 @@ flutter build apk \
 
 Чтобы работал импорт подписи через API (кнопка «Импорт из ящика» и авто-импорт
 при подключении):
-- **Google**: добавьте scope `https://www.googleapis.com/auth/gmail.settings.basic`
-  (в `.env` уже включён в GOOGLE_SCOPE). Приложение читает `settings/sendAs`.
+- **Google**: отдельный scope не нужен — `settings/sendAs` читается с
+  `https://mail.google.com/` (нужен только включённый Gmail API в проекте).
+  `gmail.settings.basic` убран 15.11.2026: проверка приложения Google требует
+  минимум прав, а это ещё одно право из «ограниченных».
 - **Microsoft**: добавьте `MailboxSettings.Read` (в `.env` включён в MS_SCOPE) —
   для Exchange Online (Graph `/me/mailboxSettings`). Для on-prem Exchange scope
   не нужен (EWS GetUserConfiguration по EWS-доступу).

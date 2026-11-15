@@ -150,16 +150,17 @@ abstract final class MessageWindow {
   }
 
   /// Главное окно: просьбы окон писем — в [onAction] (method: reply,
-  /// replyAll, forward, delete, openLink, openAttachment, open).
-  static Future<void> serve(Future<void> Function(String method, Map<String, Object?> args) onAction) async {
+  /// replyAll, forward, delete, openLink, openAttachment, open) и окон
+  /// редактора (compose*, compose_window.dart). Ответ [onAction] уходит
+  /// окну; null — true, как раньше.
+  static Future<void> serve(Future<Object?> Function(String method, Map<String, Object?> args) onAction) async {
     if (!supported) return;
     try {
       await _channel.setMethodCallHandler((call) async {
         final args = <String, Object?>{
           for (final e in ((call.arguments as Map?) ?? const {}).entries) '${e.key}': e.value,
         };
-        await onAction(call.method, args);
-        return true;
+        return await onAction(call.method, args) ?? true;
       });
     } catch (_) {
       // Плагина нет (сборка без окон) — окна писем просто не открываются.
@@ -172,6 +173,11 @@ abstract final class MessageWindow {
       await _channel.invokeMethod<Object?>(method, args);
     } catch (_) {}
   }
+
+  /// Окно → главное окно, с ответом; ошибка канала — исключением (окно
+  /// редактора, compose_window.dart).
+  static Future<Object?> request(String method, Map<String, Object?> args) =>
+      _channel.invokeMethod<Object?>(method, args);
 }
 
 /// Приложение окна письма: только показ, без базы и провайдеров.

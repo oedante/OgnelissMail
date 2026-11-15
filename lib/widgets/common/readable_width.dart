@@ -6,6 +6,9 @@
 // это примерно 700–900 логических пикселей. На телефоне и планшете виджет
 // ничего не меняет (контент и так уже́ лимита).
 
+import 'dart:io' show Platform;
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 class ReadableWidth extends StatelessWidget {
@@ -39,6 +42,12 @@ class ReadableWidth extends StatelessWidget {
   /// (1.10.1, замечание владельца 02.11.2026: при выключенной строке
   /// «Ответить…»).
   final double? heightFactor;
+
+  /// Письмо на компьютере — во всю ширину окна или области чтения, как в
+  /// Outlook (2.5.4, замечание владельца 15.11.2026: «не надо ограничивать
+  /// письмо по ширине»). Телефон и планшет — колонкой [maxWidth].
+  static double mailWidth({double tablet = 860}) =>
+      !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux) ? double.infinity : tablet;
 
   @override
   Widget build(BuildContext context) {

@@ -4296,4 +4296,7 @@
     <string name="attachFromMailTitle">Ek seçin</string>
     <string name="attachPickedFiles">Ekle</string>
     <string name="selectedFilesN">{n} dosya seçildi</string>
+    <string name="composeWindowTitle">E-postalar ayrı pencerede</string>
+    <string name="composeWindowDesc">Yeni e-posta, yanıt ve iletme Outlook\'taki gibi ayrı pencerede açılır: postanızı okurken birden fazla e-posta yazın. Okuma bölmesinden yanıt bölmede kalır.</string>
+    <string name="composeWindowFailed">E-posta penceresi başlatılamadı</string>
 </resources>

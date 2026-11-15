@@ -620,6 +620,18 @@ class DeliveryStatuses extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  /// Окно редактора на компьютере (2.5.4, compose_window.dart): своё
+  /// соединение с той же базой — файл и ключ дало главное окно
+  /// ([openedPath], [openedKey]). Без [DbEncryption.prepare]: подготовку
+  /// (шифрование, откладывание базы с чужим ключом) делает только главное
+  /// окно. Не подошёл ключ — открытие падает, база не трогается.
+  AppDatabase.secondary({required String path, String? key}) : super(_openSecondary(path, key));
+
+  /// Файл и ключ, с которыми главное окно открыло базу (null — ещё не
+  /// открыта или ключа нет: сборка без шифрования).
+  static String? openedPath;
+  static String? openedKey;
+
   /// Для тестов: база в памяти или во временном файле (NativeDatabase).
   AppDatabase.forTesting(super.executor);
 
@@ -3055,6 +3067,8 @@ LazyDatabase _openConnection() {
       DbEncryption.cleanupMovedAside(file);
     }
     final dbKey = key;
+    AppDatabase.openedPath = file.path;
+    AppDatabase.openedKey = dbKey;
 
     return NativeDatabase.createInBackground(
       file,
@@ -3071,6 +3085,27 @@ LazyDatabase _openConnection() {
         }
         // Ждать до 5 с, если базу держит другое подключение (фоновая
         // синхронизация), вместо мгновенной ошибки «database is locked».
+        rawDb.execute('PRAGMA busy_timeout = 5000;');
+      },
+    );
+  });
+}
+
+/// Соединение окна редактора с базой главного окна (2.5.4): тот же файл,
+/// тот же ключ, те же настройки соединения; WAL и ожидание блокировки
+/// позволяют двум окнам писать по очереди.
+LazyDatabase _openSecondary(String path, String? dbKey) {
+  return LazyDatabase(() async {
+    final file = File(path);
+    if (!file.existsSync()) throw StateError('База не найдена: $path');
+    return NativeDatabase.createInBackground(
+      file,
+      logStatements: false,
+      readPool: _dbReadPool,
+      setup: (rawDb) {
+        if (dbKey != null && dbKey.isNotEmpty) {
+          rawDb.execute("PRAGMA key = '${dbKey.replaceAll("'", "''")}';");
+        }
         rawDb.execute('PRAGMA busy_timeout = 5000;');
       },
     );

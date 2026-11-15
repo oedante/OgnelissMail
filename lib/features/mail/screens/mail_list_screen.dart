@@ -946,7 +946,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
 
       // Телефон — справа (1.6.40, решение владельца: портрет «Меню» внизу
       // справа и свайп от правого края — под большим пальцем).
-      drawer: docked || _menuAtEnd ? null : const MailDrawer(),
+      // Планшет и компьютер: выдвижное меню — той же ширины, что
+      // закреплённая панель (значок закрепления не прыгает, 2.5.4).
+      drawer: docked || _menuAtEnd ? null : MailDrawer(width: phone ? null : _dockedWidth(box.maxWidth)),
       endDrawer: _menuAtEnd ? const MailDrawer() : null,
       // Полоса края для меню — 10 точек вместо 20 (2.2.0, план 08.11.2026
       // п. 7): свайп строки, начатый у края, открывал меню вместо действия
@@ -4034,15 +4036,25 @@ class _DetailPlaceholder extends ConsumerWidget {
           ],
           if (!AppBottomBar.inUse(context)) ...[
             const SizedBox(height: Space.xl),
-            for (final k in keys)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  SizedBox(width: 110, child: Text(k.$1, textAlign: TextAlign.end, style: keyStyle)),
-                  const SizedBox(width: Space.m),
-                  SizedBox(width: 220, child: Text(k.$2, style: theme.textTheme.bodySmall?.copyWith(color: muted))),
-                ]),
-              ),
+            // Узкая область чтения (складной экран, окно в треть экрана):
+            // подписи клавиш сужаются, а не вылезают за край (2.5.4 — было
+            // 110 + 220 точек при любой ширине).
+            LayoutBuilder(builder: (context, box) {
+              final label = (box.maxWidth - 110 - Space.m - Space.l).clamp(80.0, 220.0);
+              return Column(mainAxisSize: MainAxisSize.min, children: [
+                for (final k in keys)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      SizedBox(width: 110, child: Text(k.$1, textAlign: TextAlign.end, style: keyStyle)),
+                      const SizedBox(width: Space.m),
+                      SizedBox(
+                          width: label,
+                          child: Text(k.$2, style: theme.textTheme.bodySmall?.copyWith(color: muted))),
+                    ]),
+                  ),
+              ]);
+            }),
           ],
         ]),
       ),

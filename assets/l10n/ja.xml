@@ -4275,4 +4275,7 @@
     <string name="attachFromMailTitle">添付ファイルを選択</string>
     <string name="attachPickedFiles">添付</string>
     <string name="selectedFilesN">{n} 件のファイルを選択</string>
+    <string name="composeWindowTitle">メールを別ウィンドウで作成</string>
+    <string name="composeWindowDesc">新規メール、返信、転送は Outlook のように別ウィンドウで開きます。メールを読みながら複数のメールを作成できます。閲覧ウィンドウからの返信はそのまま閲覧ウィンドウで行います。</string>
+    <string name="composeWindowFailed">メールウィンドウを開始できませんでした</string>
 </resources>

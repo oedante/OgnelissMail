@@ -4275,4 +4275,7 @@
     <string name="attachFromMailTitle">เลือกไฟล์แนบ</string>
     <string name="attachPickedFiles">แนบ</string>
     <string name="selectedFilesN">เลือกแล้ว {n} ไฟล์</string>
+    <string name="composeWindowTitle">อีเมลในหน้าต่างแยก</string>
+    <string name="composeWindowDesc">อีเมลใหม่ การตอบกลับ และการส่งต่อจะเปิดในหน้าต่างแยกเหมือน Outlook: เขียนหลายฉบับพร้อมอ่านอีเมลได้ การตอบกลับจากบานหน้าต่างอ่านจะอยู่ในบานนั้น</string>
+    <string name="composeWindowFailed">หน้าต่างอีเมลไม่เริ่มทำงาน</string>
 </resources>

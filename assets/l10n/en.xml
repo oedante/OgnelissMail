@@ -4296,4 +4296,7 @@
     <string name="attachFromMailTitle">Choose attachments</string>
     <string name="attachPickedFiles">Attach</string>
     <string name="selectedFilesN">{n} files selected</string>
+    <string name="composeWindowTitle">Emails in a separate window</string>
+    <string name="composeWindowDesc">New emails, replies and forwards open in a separate window, as in Outlook: write several emails while reading your mail. A reply from the reading pane stays in the pane.</string>
+    <string name="composeWindowFailed">The email window did not start</string>
 </resources>

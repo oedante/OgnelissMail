@@ -4338,4 +4338,7 @@
     <string name="attachFromMailTitle">Wybierz załączniki</string>
     <string name="attachPickedFiles">Załącz</string>
     <string name="selectedFilesN">Wybrano plików: {n}</string>
+    <string name="composeWindowTitle">Wiadomości w osobnym oknie</string>
+    <string name="composeWindowDesc">Nowa wiadomość, odpowiedź i przekazanie otwierają się w osobnym oknie, jak w Outlooku: możesz pisać kilka wiadomości i czytać pocztę. Odpowiedź z okienka odczytu zostaje w nim.</string>
+    <string name="composeWindowFailed">Okno wiadomości nie uruchomiło się</string>
 </resources>

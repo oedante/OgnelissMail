@@ -391,6 +391,10 @@ jobs:
             printf '\n# --- Ogneliss: translation engine (Bergamot) next to the exe\ninclude("${CMAKE_CURRENT_SOURCE_DIR}/../tool/bergamot/bergamot.cmake" OPTIONAL)\n' >> windows/CMakeLists.txt
           fi
           tail -n 2 windows/CMakeLists.txt
+          # Окна писем и редактора (2.5.4): плагины регистрируются и в
+          # движках отдельных окон — как в scripts/build_windows.ps1.
+          pwsh -NoProfile -File tool/desktop/windows/multi_window.ps1
+          grep -n -A4 'DesktopMultiWindowSetWindowCreatedCallback' windows/runner/flutter_window.cpp
       - name: Translation engine (Bergamot, npm, sha256)
         run: bash tool/bergamot/fetch_engine.sh
       - name: Install dependencies

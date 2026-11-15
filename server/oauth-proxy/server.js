@@ -75,7 +75,9 @@ const PROVIDERS = {
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     // Календарь и контакты Gmail идут по CalDAV/CardDAV тем же токеном —
     // без этих scope Google отвечает 403 (см. lib/services/mail/dav).
-    scope: process.env.GOOGLE_SCOPE || 'https://mail.google.com/ https://www.googleapis.com/auth/gmail.settings.basic https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/carddav openid email profile',
+    // gmail.settings.basic не нужен (15.11.2026, проверка Google — «минимум
+    // прав»): подпись (settings/sendAs) читается и с https://mail.google.com/.
+    scope: process.env.GOOGLE_SCOPE || 'https://mail.google.com/ https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/carddav openid email profile',
     extra: { access_type: 'offline', prompt: 'consent' }, // чтобы выдавался refresh_token
   },
   microsoft: {

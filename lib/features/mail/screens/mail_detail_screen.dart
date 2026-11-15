@@ -1998,6 +1998,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         if (!pinHeader) {
           return SingleChildScrollView(
             child: ReadableWidth(
+              maxWidth: ReadableWidth.mailWidth(),
               fill: true,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2010,12 +2011,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ReadableWidth(
+              maxWidth: ReadableWidth.mailWidth(),
               fill: true,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: headerChildren),
             ),
             Expanded(
               child: SingleChildScrollView(
                 child: ReadableWidth(
+                  maxWidth: ReadableWidth.mailWidth(),
                   fill: true,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: bodyChildren),
                 ),
@@ -2633,6 +2636,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // Scaffold даёт bottomNavigationBar, — весь экран.
         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           ReadableWidth(
+            maxWidth: ReadableWidth.mailWidth(),
             fill: true,
             child: QuickReplyBar(key: ValueKey('qrw_${email.accountId}_${email.id}'), email: email),
           ),
@@ -2837,6 +2841,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         ColoredBox(
           color: mailPageColor(theme),
           child: ReadableWidth(
+            maxWidth: ReadableWidth.mailWidth(),
             fill: true,
             child: QuickReplyBar(
               key: ValueKey('qr_${email.accountId}_${email.id}'),

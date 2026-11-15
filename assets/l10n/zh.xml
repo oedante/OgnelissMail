@@ -4275,4 +4275,7 @@
     <string name="attachFromMailTitle">选择附件</string>
     <string name="attachPickedFiles">附加</string>
     <string name="selectedFilesN">已选择 {n} 个文件</string>
+    <string name="composeWindowTitle">在单独窗口中写邮件</string>
+    <string name="composeWindowDesc">新邮件、回复和转发像 Outlook 一样在单独窗口中打开：可在阅读邮件的同时撰写多封邮件。从阅读窗格回复则留在窗格中。</string>
+    <string name="composeWindowFailed">邮件窗口未能启动</string>
 </resources>

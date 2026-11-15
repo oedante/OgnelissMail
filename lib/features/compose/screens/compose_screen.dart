@@ -1,5 +1,6 @@
 // lib/features/compose/screens/compose_screen.dart
 import '../widgets/mail_tips_strip.dart';
+import '../compose_window.dart' show ComposeWindow;
 import '../../../core/platform/file_pick.dart' show ChosenFile, FilePick;
 import '../../../core/utils/app_date_format.dart';
 import '../../../core/utils/send_later_presets.dart';
@@ -167,6 +168,26 @@ class ComposeScreen extends ConsumerStatefulWidget {
 
   /// Предзаполненная тема (например, «Журнал → Отправить в поддержку»).
   final String? sharedSubject;
+
+  /// Редактор по параметрам адреса /compose — в главном окне и в окне
+  /// редактора на компьютере (2.5.4, compose_window.dart).
+  factory ComposeScreen.fromQuery(Map<String, String> q, {Key? key}) => ComposeScreen(
+        key: key,
+        replyToId: q['replyToId'],
+        forwardFromId: q['forwardFromId'],
+        draftId: q['draftId'],
+        accountId: q['accountId'],
+        to: q['to'],
+        cc: q['cc'],
+        bcc: q['bcc'],
+        sharedBody: q['body'],
+        sharedSubject: q['subject'],
+        sharedAttachments: (q['attachments'] ?? '').split('|').where((s) => s.isNotEmpty).toList(),
+        replyAll: q['replyAll'] == 'true',
+        replyWithAttachments: q['withAttachments'] == 'true',
+        quoteFragment: q['fragment'],
+        quickText: q['quick'],
+      );
 
   const ComposeScreen({
     super.key,
@@ -1283,7 +1304,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       AppLogger.debug('Пересылка: пропущено встроенных вложений — $skippedInline');
     }
     // Не скачанные файлы — в фоне, по одному (1.6.18).
-    if (_pendingOriginal.isNotEmpty) unawaited(_prefetchPending());
+    // Окно редактора на компьютере (2.5.4): файлы докачивает при отправке
+    // главное окно — у него соединения и учётные данные.
+    if (_pendingOriginal.isNotEmpty && !ComposeWindow.inWindow) unawaited(_prefetchPending());
   }
 
   /// Докачать файлы пересылаемого письма, пока человек пишет текст.
@@ -1877,7 +1900,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     } else {
       _setBodyPlain(looksHtml ? _htmlToPlain(body) : body);
     }
-    if (_pendingOriginal.isNotEmpty) unawaited(_prefetchPending());
+    // Окно редактора на компьютере (2.5.4): файлы докачивает при отправке
+    // главное окно — у него соединения и учётные данные.
+    if (_pendingOriginal.isNotEmpty && !ComposeWindow.inWindow) unawaited(_prefetchPending());
     // Вложения черновика из серверной папки (начат в Outlook или
     // веб-почте) — плашками, как у пересылки: раньше при отправке такого
     // черновика файлы терялись.
@@ -1986,27 +2011,27 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
           // Как сохранили кнопкой «Сохранить» — эту версию и выгружаем
           // (записав заново: таймер мог сохранить промежуточную правку).
           autosave?.updateDraft(_snapshot(force: true));
-          unawaited((autosave?.forceSave() ?? Future.value(false)).then((_) async {
+          unawaited(ComposeWindow.track((autosave?.forceSave() ?? Future.value(false)).then((_) async {
             if (accId != null) await sync.upload(id, accId);
-          }));
+          })));
         } else if (_serverDraft != null) {
           // Открытый из серверной папки черновик не меняли (или вернули как
           // было): серверная копия и есть он; промежуточная локальная — не нужна.
           unawaited(sync.forget(id));
-          if (accId != null) unawaited(autosave?.deleteDraft(id, accId));
+          if (accId != null && autosave != null) unawaited(ComposeWindow.track(autosave.deleteDraft(id, accId)));
         } else if (_localSaved) {
           // Свой черновик правили и вернули как было — записать как есть.
           autosave?.updateDraft(_snapshot(force: true));
-          unawaited((autosave?.forceSave() ?? Future.value(false)).then((_) async {
+          unawaited(ComposeWindow.track((autosave?.forceSave() ?? Future.value(false)).then((_) async {
             if (accId != null) await sync.upload(id, accId);
-          }));
+          })));
         } else if (accId != null) {
           // Свой, ещё не выгруженный (например, без сети), — выгружается.
-          unawaited(sync.upload(id, accId));
+          unawaited(ComposeWindow.track(sync.upload(id, accId)));
         }
       } else if (_snapshot().isEmpty) {
         // Всё стёрли: черновика нет — и прежней автосохранённой копии тоже.
-        if (accId != null) unawaited(autosave?.deleteDraft(id, accId));
+        if (accId != null && autosave != null) unawaited(ComposeWindow.track(autosave.deleteDraft(id, accId)));
         unawaited(sync.forget(id));
       } else {
         _rememberReplyDraft();
@@ -2014,9 +2039,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         // него в черновик попадало состояние до последнего добавленного
         // получателя.
         autosave?.updateDraft(_snapshot());
-        unawaited((autosave?.forceSave() ?? Future.value(false)).then((_) async {
+        unawaited(ComposeWindow.track((autosave?.forceSave() ?? Future.value(false)).then((_) async {
           if (accId != null) await sync.upload(id, accId);
-        }));
+        })));
       }
     }
     _autosave?.stopAutosave();
@@ -4999,7 +5024,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   Future<bool> _tryServerForward(
       AccountModel account, String subject, String bodyHtml) async {
     final srcId = widget.forwardFromId;
-    if (srcId == null) return false;
+    // Окно редактора (2.5.4): письмо уходит обычной отправкой главного окна.
+    if (srcId == null || ComposeWindow.inWindow) return false;
     // Подписанное или зашифрованное письмо сервер дополнить не может (подпись
     // сломалась бы, шифр — тем более): отправляется целиком с устройства.
     if (_smimeActive) return false;
@@ -5070,7 +5096,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// Иначе — обычная отправка с цитатой.
   Future<bool> _tryServerReply(AccountModel account, String subject, String bodyHtml) async {
     final srcId = widget.replyToId;
-    if (srcId == null || _quoteChanged || _quoteHtml == null) return false;
+    // Окно редактора (2.5.4): письмо уходит обычной отправкой главного окна.
+    if (srcId == null || _quoteChanged || _quoteHtml == null || ComposeWindow.inWindow) return false;
     final ews = account.usesEws || account.isExchange;
     if (!ews && !account.usesEas) return false;
     // Не скачанные ещё файлы исходного письма («Ответить с вложениями») сервер

@@ -570,21 +570,44 @@ class ImapService {
         try { await client.disconnect(); } catch (_) {}
         throw Exception('SMTP: пароль не найден');
       }
-      final smtpUser = account.username.contains('@') ? account.username : account.email;
-      try {
-        await client.authenticate(smtpUser, password, AuthMechanism.plain)
-            .timeout(const Duration(seconds: 15));
-      } catch (e) {
-        // Часть серверов принимает только AUTH LOGIN.
-        if (!client.serverInfo.supportsAuth(AuthMechanism.login)) rethrow;
-        AppLogger.info('SMTP: AUTH PLAIN не принят ($e) — пробую AUTH LOGIN');
-        await client.authenticate(smtpUser, password, AuthMechanism.login)
-            .timeout(const Duration(seconds: 15));
+      // Логин SMTP (2.6.0): логин ящика, если он задан (рабочая почта:
+      // «ivanov», «CORP\\ivanov»), затем адрес. Пароль тот же и верный,
+      // поэтому вторая попытка не приближает блокировку учётной записи:
+      // сервер просто не узнаёт имя в другой форме. Удачный — запоминаем.
+      final users = <String>{
+        if (_smtpUserOk[account.id] case final ok?) ok,
+        if (account.username.trim().isNotEmpty) account.username.trim(),
+        account.email,
+      }.toList();
+      for (var i = 0; i < users.length; i++) {
+        try {
+          await _smtpAuth(client, users[i], password);
+          _smtpUserOk[account.id] = users[i];
+          break;
+        } catch (e) {
+          if (i == users.length - 1) rethrow;
+          AppLogger.info('SMTP: вход под логином ящика не принят — пробую адрес');
+        }
       }
     }
 
     AppLogger.info('SMTP connected: ${account.email} ($smtpServer:$connectedPort, SSL=$useSSL)');
     return client;
+  }
+
+  /// Логин SMTP, под которым вход удался (ящик → логин), — до перезапуска.
+  static final Map<String, String> _smtpUserOk = {};
+
+  /// AUTH PLAIN, а если сервер его не принял и умеет AUTH LOGIN — LOGIN.
+  Future<void> _smtpAuth(TolerantSmtpClient client, String user, String password) async {
+    try {
+      await client.authenticate(user, password, AuthMechanism.plain).timeout(const Duration(seconds: 15));
+    } catch (e) {
+      // Часть серверов принимает только AUTH LOGIN.
+      if (!client.serverInfo.supportsAuth(AuthMechanism.login)) rethrow;
+      AppLogger.info('SMTP: AUTH PLAIN не принят ($e) — пробую AUTH LOGIN');
+      await client.authenticate(user, password, AuthMechanism.login).timeout(const Duration(seconds: 15));
+    }
   }
 
   /// Текст последней ошибки входа (для сообщения на экране входа).

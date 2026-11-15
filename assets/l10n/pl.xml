@@ -4345,4 +4345,18 @@
     <string name="oauthGoogleUserCapAction">Użyj hasła do aplikacji</string>
     <string name="gmailAppPwNote">Potrzebne jest hasło do aplikacji Google: włącz weryfikację dwuetapową na koncie Google i utwórz hasło na stronie „Hasła do aplikacji”. W ten sposób łączy się tylko poczta; Kalendarz i Kontakty Google wymagają logowania przez Google.</string>
     <string name="assignReminded">Przypomniano o {time}</string>
+    <string name="loginPersonalMail">Poczta prywatna</string>
+    <string name="loginWorkMail">Poczta służbowa</string>
+    <string name="loginKindExchangeServerDesc">Serwer Exchange organizacji (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Poczta służbowa w chmurze Microsoft</string>
+    <string name="loginKindWorkImap">IMAP organizacji</string>
+    <string name="loginKindWorkImapDesc">Własny serwer pocztowy organizacji: serwery i login u administratora</string>
+    <string name="loginKindSso">Logowanie przez system organizacji</string>
+    <string name="loginKindSsoDesc">SSO i OAuth organizacji — na życzenie</string>
+    <string name="loginSsoTitle">Logowanie przez system organizacji</string>
+    <string name="loginSsoContact">Skontaktuj się z nami</string>
+    <string name="imapLoginLabel">Login (jeśli inny niż adres)</string>
+    <string name="imapLoginHint">jkowalski lub CORP\\jkowalski</string>
+    <string name="loginSsoBody">Logowanie przez system jednokrotnego logowania organizacji (OAuth 2.0 i OpenID Connect: Keycloak, ADFS, Microsoft Entra ID i inne) konfiguruje się osobno dla każdej organizacji. Jeśli chcesz, abyśmy przygotowali je dla Twojej organizacji, skontaktuj się z nami i napisz, jakiego systemu logowania używacie. Do tego czasu możesz zalogować się hasłem: Exchange lub IMAP organizacji.</string>
+    <string name="loginWorkImapNote">Potrzebny jest adres i hasło. Aplikacja sama znajdzie serwery, jeśli organizacja je opublikowała. Jeśli nie łączy, zapytaj administratora poczty o serwery IMAP i SMTP, porty, szyfrowanie i login (jeśli jest inny niż adres).</string>
 </resources>

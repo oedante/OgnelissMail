@@ -29,6 +29,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../data/database/app_database.dart';
 import '../../../data/providers/database_provider.dart';
 import '../../../services/mail/imap/imap_service.dart';
+import '../../../services/mail/server_probe.dart';
 import '../../../services/mail/oauth/oauth_service.dart';
 import '../../../services/mail/oauth/cross_platform_oauth.dart';
 import '../../../services/mail/oauth/proxy_pkce.dart' show OAuthProviderError;
@@ -701,6 +702,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     EncryptionType imapEncryption = EncryptionType.ssl,
     EncryptionType smtpEncryption = EncryptionType.starttls,
     bool appPassword = false,
+    String? username,
+    bool probePorts = false,
   }) async {
     try {
       state = state.copyWith(status: AuthStatus.connecting, errorMessage: null);
@@ -709,7 +712,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final secureStorage = _ref.read(secureStorageProvider);
       await secureStorage.saveAccountPassword(accountId, password);
 
-      final account = AccountModel(
+      var account = AccountModel(
         id: accountId,
         // Новый ящик — проверка раз в 15 минут (решение 10.10.2026);
         // «Мгновенно» и «По расписанию» включаются на экране ящика.
@@ -717,7 +720,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
         type: AccountType.imap,
         email: email,
         displayName: email.split('@').first,
-        username: email,
+        // Логин IMAP, если он не совпадает с адресом (рабочая почта, 2.6.0).
+        username: (username ?? '').trim().isNotEmpty ? username!.trim() : email,
         imapServer: imapServer,
         imapPort: imapPort,
         imapEncryption: imapEncryption,
@@ -729,7 +733,25 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       final imap = _ref.read(imapServiceProvider);
-      final connected = await imap.testConnection(account);
+      var connected = await imap.testConnection(account);
+      // Сервер не ответил на указанном порту — подбираем порт и шифрование
+      // (только доступность, без пароля: ServerProbe). Неверный пароль —
+      // не подбираем.
+      if (!connected &&
+          probePorts &&
+          authErrorKindOf(imap.lastConnectError, appPassword: appPassword) == AuthErrorKind.network) {
+        final alt = await ServerProbe.imap(imapServer, tried: (imapPort, imapEncryption));
+        if (alt != null) {
+          account = account.copyWith(imapPort: alt.port, imapEncryption: alt.encryption);
+          connected = await imap.testConnection(account);
+        }
+      }
+      // Отправка: указанный SMTP не отвечает — подбираем порт (и сервер
+      // IMAP как сервер отправки). Не нашли — оставляем как есть: вход
+      // по IMAP уже удался, а отправку можно поправить в настройках.
+      if (connected && probePorts) {
+        account = await _probeSmtp(account);
+      }
 
       if (!connected) {
         await secureStorage.deleteAccountPassword(accountId);
@@ -753,6 +775,33 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(status: AuthStatus.error, errorMessage: _l10n().tr('authErrGeneric').replaceAll('{e}', '$e'));
       return false;
+    }
+  }
+
+  /// SMTP рабочей почты: указанный порт не отвечает — первый отвечающий
+  /// вариант (465 SSL, 587 и 25 STARTTLS; на сервере SMTP, затем IMAP).
+  Future<AccountModel> _probeSmtp(AccountModel account) async {
+    final host = account.smtpServer ?? '';
+    final port = account.smtpPort ?? 587;
+    final enc = account.smtpEncryption ?? EncryptionType.starttls;
+    if (host.isEmpty) return account;
+    try {
+      if (enc != EncryptionType.none &&
+          await ServerProbe.checkSmtp(host, port, enc).timeout(const Duration(seconds: 12))) {
+        return account;
+      }
+    } catch (_) {}
+    try {
+      final alt = await ServerProbe.smtp(host,
+              moreHosts: [if ((account.imapServer ?? '').isNotEmpty) account.imapServer!], tried: (port, enc))
+          .timeout(const Duration(seconds: 40));
+      if (alt == null) {
+        AppLogger.info('Подбор SMTP: не ответил ни один вариант — оставлен прежний');
+        return account;
+      }
+      return account.copyWith(smtpServer: alt.host, smtpPort: alt.port, smtpEncryption: alt.encryption);
+    } catch (_) {
+      return account;
     }
   }
 

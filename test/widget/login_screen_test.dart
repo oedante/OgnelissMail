@@ -277,4 +277,52 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await tester.runAsync(db.close);
   });
+
+  testWidgets('рабочая почта: «IMAP организации» — подсказка и логин; вход организации — пояснение (2.6.0)', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    tester.view.physicalSize = const Size(400, 1400) * 2;
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        databaseProvider.overrideWithValue(db),
+        sharedPrefsProvider.overrideWithValue(prefs),
+        crossPlatformOAuthProvider.overrideWithValue(const _Direct()),
+      ],
+      child: MaterialApp(
+        theme: AppTheme.lightTheme(1.0),
+        locale: const Locale('ru'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: const LoginScreen(),
+      ),
+    ));
+    await _settle(tester);
+    expect(find.text('Личная почта'), findsOneWidget);
+    expect(find.text('Рабочая почта'), findsOneWidget);
+
+    // Вход через систему организации — по запросу.
+    await tester.ensureVisible(find.byKey(const ValueKey('login_sso')));
+    await tester.tap(find.byKey(const ValueKey('login_sso')));
+    await _settle(tester);
+    expect(find.textContaining('Keycloak'), findsOneWidget);
+    expect(find.text('Связаться с нами'), findsOneWidget);
+    await tester.tap(find.text('Закрыть'));
+    await _settle(tester);
+
+    // IMAP организации: подсказка администратору и поле логина.
+    await tester.ensureVisible(find.byKey(const ValueKey('login_work_imap')));
+    await tester.tap(find.byKey(const ValueKey('login_work_imap')));
+    await _settle(tester);
+    expect(find.text('IMAP организации'), findsWidgets);
+    expect(find.textContaining('спросите у администратора'), findsOneWidget);
+    expect(find.byKey(const ValueKey('imap_login')), findsOneWidget);
+  });
 }

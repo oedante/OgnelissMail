@@ -4345,4 +4345,18 @@
     <string name="oauthGoogleUserCapAction">Подключить паролем приложения</string>
     <string name="gmailAppPwNote">Нужен пароль приложения Google: включите двухэтапную проверку в аккаунте Google и создайте пароль на странице «Пароли приложений». Так подключается почта; календарь и контакты Google — только при входе через Google.</string>
     <string name="assignReminded">Напомнили в {time}</string>
+    <string name="loginPersonalMail">Личная почта</string>
+    <string name="loginWorkMail">Рабочая почта</string>
+    <string name="loginKindExchangeServerDesc">Сервер Exchange организации (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Рабочая почта в облаке Microsoft</string>
+    <string name="loginKindWorkImap">IMAP организации</string>
+    <string name="loginKindWorkImapDesc">Свой почтовый сервер организации: серверы и логин — у администратора</string>
+    <string name="loginKindSso">Вход через систему организации</string>
+    <string name="loginKindSsoDesc">SSO и OAuth организации — по запросу</string>
+    <string name="loginSsoTitle">Вход через систему организации</string>
+    <string name="loginSsoContact">Связаться с нами</string>
+    <string name="imapLoginLabel">Логин (если отличается от адреса)</string>
+    <string name="imapLoginHint">ivanov или CORP\\ivanov</string>
+    <string name="loginSsoBody">Вход через систему единого входа организации (OAuth 2.0 и OpenID Connect: Keycloak, ADFS, Microsoft Entra ID и другие) настраивается отдельно для каждой организации. Чтобы мы сделали такой вход для вашей организации, свяжитесь с нами и напишите, какая система входа у вас используется. Пока можно войти по паролю: Exchange или IMAP организации.</string>
+    <string name="loginWorkImapNote">Нужны адрес и пароль. Серверы приложение найдёт само, если организация их опубликовала. Не подключается — спросите у администратора почты серверы IMAP и SMTP, порты, шифрование и логин (если он не совпадает с адресом).</string>
 </resources>

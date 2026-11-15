@@ -4303,4 +4303,18 @@
     <string name="oauthGoogleUserCapAction">Alkalmazásjelszó használata</string>
     <string name="gmailAppPwNote">Google-alkalmazásjelszó kell: kapcsolja be a kétlépcsős azonosítást a Google-fiókjában, és hozzon létre jelszót az „Alkalmazásjelszavak” oldalon. Így csak a levelezés csatlakozik; a Google Naptárhoz és Névjegyekhez Google-bejelentkezés kell.</string>
     <string name="assignReminded">Emlékeztetve: {time}</string>
+    <string name="loginPersonalMail">Személyes e-mail</string>
+    <string name="loginWorkMail">Munkahelyi e-mail</string>
+    <string name="loginKindExchangeServerDesc">A szervezet Exchange-kiszolgálója (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Munkahelyi e-mail a Microsoft felhőjében</string>
+    <string name="loginKindWorkImap">Szervezeti IMAP</string>
+    <string name="loginKindWorkImapDesc">A szervezet saját levelezőkiszolgálója: a kiszolgálókat és a felhasználónevet a rendszergazda adja meg</string>
+    <string name="loginKindSso">Bejelentkezés a szervezet rendszerén át</string>
+    <string name="loginKindSsoDesc">Szervezeti SSO és OAuth – kérésre</string>
+    <string name="loginSsoTitle">Bejelentkezés a szervezet rendszerén át</string>
+    <string name="loginSsoContact">Kapcsolatfelvétel</string>
+    <string name="imapLoginLabel">Felhasználónév (ha eltér a címtől)</string>
+    <string name="imapLoginHint">nagyj vagy CORP\\nagyj</string>
+    <string name="loginSsoBody">A szervezet egyszeri bejelentkezési rendszerén keresztüli belépést (OAuth 2.0 és OpenID Connect: Keycloak, ADFS, Microsoft Entra ID és mások) minden szervezethez külön kell beállítani. Ha szeretné, hogy elkészítsük az Önök szervezetéhez, vegye fel velünk a kapcsolatot, és írja meg, milyen bejelentkezési rendszert használnak. Addig jelszóval is beléphet: Exchange vagy szervezeti IMAP.</string>
+    <string name="loginWorkImapNote">A címre és a jelszóra van szükség. A kiszolgálókat az alkalmazás maga megtalálja, ha a szervezet közzétette őket. Ha nem kapcsolódik, kérdezze meg a levelezés rendszergazdáját az IMAP- és SMTP-kiszolgálóról, a portokról, a titkosításról és a felhasználónévről (ha eltér a címtől).</string>
 </resources>

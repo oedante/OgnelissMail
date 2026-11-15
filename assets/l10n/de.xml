@@ -4303,4 +4303,18 @@
     <string name="oauthGoogleUserCapAction">Mit App-Passwort verbinden</string>
     <string name="gmailAppPwNote">Sie brauchen ein Google-App-Passwort: Aktivieren Sie die Bestätigung in zwei Schritten in Ihrem Google-Konto und erstellen Sie ein Passwort auf der Seite „App-Passwörter“. So wird nur die E-Mail verbunden; Google Kalender und Kontakte erfordern die Anmeldung mit Google.</string>
     <string name="assignReminded">Erinnert um {time}</string>
+    <string name="loginPersonalMail">Private E-Mail</string>
+    <string name="loginWorkMail">Geschäftliche E-Mail</string>
+    <string name="loginKindExchangeServerDesc">Exchange-Server der Organisation (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Geschäftliche E-Mail in der Microsoft-Cloud</string>
+    <string name="loginKindWorkImap">IMAP der Organisation</string>
+    <string name="loginKindWorkImapDesc">Eigener Mailserver der Organisation: Server und Anmeldename gibt der Administrator</string>
+    <string name="loginKindSso">Anmeldung über die Organisation</string>
+    <string name="loginKindSsoDesc">SSO und OAuth der Organisation – auf Anfrage</string>
+    <string name="loginSsoTitle">Anmeldung über die Organisation</string>
+    <string name="loginSsoContact">Kontakt aufnehmen</string>
+    <string name="imapLoginLabel">Anmeldename (falls abweichend von der Adresse)</string>
+    <string name="imapLoginHint">mmueller oder CORP\\mmueller</string>
+    <string name="loginSsoBody">Die Anmeldung über das Single-Sign-on-System der Organisation (OAuth 2.0 und OpenID Connect: Keycloak, ADFS, Microsoft Entra ID u. a.) wird für jede Organisation eigens eingerichtet. Wenn wir sie für Ihre Organisation einrichten sollen, nehmen Sie Kontakt mit uns auf und nennen Sie Ihr Anmeldesystem. Bis dahin können Sie sich mit Passwort anmelden: Exchange oder IMAP der Organisation.</string>
+    <string name="loginWorkImapNote">Sie brauchen Adresse und Passwort. Die Server findet die App selbst, wenn die Organisation sie veröffentlicht hat. Klappt die Verbindung nicht, fragen Sie den Mail-Administrator nach IMAP- und SMTP-Server, Ports, Verschlüsselung und Anmeldenamen (falls abweichend von der Adresse).</string>
 </resources>

@@ -4303,4 +4303,18 @@
     <string name="oauthGoogleUserCapAction">Bruk apppassord</string>
     <string name="gmailAppPwNote">Du trenger et Google-apppassord: slå på totrinnsbekreftelse i Google-kontoen og lag et passord på siden «Apppassord». Slik kobles bare e-posten til; Google Kalender og Kontakter krever pålogging med Google.</string>
     <string name="assignReminded">Påminnet kl. {time}</string>
+    <string name="loginPersonalMail">Privat e-post</string>
+    <string name="loginWorkMail">Jobb-e-post</string>
+    <string name="loginKindExchangeServerDesc">Organisasjonens Exchange-server (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Jobb-e-post i Microsoft-skyen</string>
+    <string name="loginKindWorkImap">Organisasjonens IMAP</string>
+    <string name="loginKindWorkImapDesc">Organisasjonens egen e-postserver: servere og brukernavn får du av administratoren</string>
+    <string name="loginKindSso">Logg inn via organisasjonen</string>
+    <string name="loginKindSsoDesc">Organisasjonens SSO og OAuth – på forespørsel</string>
+    <string name="loginSsoTitle">Logg inn via organisasjonen</string>
+    <string name="loginSsoContact">Kontakt oss</string>
+    <string name="imapLoginLabel">Brukernavn (hvis det er et annet enn adressen)</string>
+    <string name="imapLoginHint">ohansen eller CORP\\ohansen</string>
+    <string name="loginSsoBody">Innlogging via organisasjonens system for enkel pålogging (OAuth 2.0 og OpenID Connect: Keycloak, ADFS, Microsoft Entra ID med flere) settes opp separat for hver organisasjon. Hvis du vil at vi skal lage det for din organisasjon, kontakt oss og skriv hvilket påloggingssystem dere bruker. Inntil videre kan du logge inn med passord: Exchange eller organisasjonens IMAP.</string>
+    <string name="loginWorkImapNote">Du trenger adresse og passord. Serverne finner appen selv hvis organisasjonen har publisert dem. Kobler den ikke til, spør e-postadministratoren om IMAP- og SMTP-servere, porter, kryptering og brukernavn (hvis det er et annet enn adressen).</string>
 </resources>

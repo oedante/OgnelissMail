@@ -4303,4 +4303,18 @@
     <string name="oauthGoogleUserCapAction">Brug app-adgangskode</string>
     <string name="gmailAppPwNote">Du skal bruge en Google-app-adgangskode: slå totrinsbekræftelse til i din Google-konto, og opret en adgangskode på siden »App-adgangskoder«. Sådan forbindes kun mail; Google Kalender og Kontakter kræver login med Google.</string>
     <string name="assignReminded">Påmindet kl. {time}</string>
+    <string name="loginPersonalMail">Privat e-mail</string>
+    <string name="loginWorkMail">Arbejdsmail</string>
+    <string name="loginKindExchangeServerDesc">Organisationens Exchange-server (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Arbejdsmail i Microsofts sky</string>
+    <string name="loginKindWorkImap">Organisationens IMAP</string>
+    <string name="loginKindWorkImapDesc">Organisationens egen mailserver: servere og login får du af administratoren</string>
+    <string name="loginKindSso">Log ind via organisationen</string>
+    <string name="loginKindSsoDesc">Organisationens SSO og OAuth – efter aftale</string>
+    <string name="loginSsoTitle">Log ind via organisationen</string>
+    <string name="loginSsoContact">Kontakt os</string>
+    <string name="imapLoginLabel">Login (hvis det er et andet end adressen)</string>
+    <string name="imapLoginHint">jjensen eller CORP\\jjensen</string>
+    <string name="loginSsoBody">Login via organisationens single sign-on-system (OAuth 2.0 og OpenID Connect: Keycloak, ADFS, Microsoft Entra ID m.fl.) sættes op for hver organisation for sig. Hvis du vil have os til at lave det til din organisation, så kontakt os og skriv, hvilket loginsystem I bruger. Indtil da kan du logge ind med adgangskode: Exchange eller organisationens IMAP.</string>
+    <string name="loginWorkImapNote">Du skal bruge adresse og adgangskode. Serverne finder appen selv, hvis organisationen har offentliggjort dem. Hvis der ikke er forbindelse, så spørg mailadministratoren om IMAP- og SMTP-servere, porte, kryptering og login (hvis det er et andet end adressen).</string>
 </resources>

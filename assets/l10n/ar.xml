@@ -4387,4 +4387,18 @@
     <string name="oauthGoogleUserCapAction">استخدام كلمة مرور التطبيق</string>
     <string name="gmailAppPwNote">تحتاج إلى كلمة مرور تطبيق من Google: فعّل التحقق بخطوتين في حساب Google وأنشئ كلمة مرور في صفحة «كلمات مرور التطبيقات». بهذه الطريقة يُربط البريد فقط؛ أما تقويم Google وجهات الاتصال فيتطلبان تسجيل الدخول عبر Google.</string>
     <string name="assignReminded">تم التذكير في {time}</string>
+    <string name="loginPersonalMail">البريد الشخصي</string>
+    <string name="loginWorkMail">بريد العمل</string>
+    <string name="loginKindExchangeServerDesc">خادم Exchange الخاص بالمؤسسة (ActiveSync وEWS)</string>
+    <string name="loginKindM365Desc">بريد العمل في سحابة Microsoft</string>
+    <string name="loginKindWorkImap">IMAP الخاص بالمؤسسة</string>
+    <string name="loginKindWorkImapDesc">خادم البريد الخاص بالمؤسسة: الخوادم واسم المستخدم لدى المسؤول</string>
+    <string name="loginKindSso">تسجيل الدخول عبر نظام المؤسسة</string>
+    <string name="loginKindSsoDesc">SSO وOAuth الخاصة بالمؤسسة — عند الطلب</string>
+    <string name="loginSsoTitle">تسجيل الدخول عبر نظام المؤسسة</string>
+    <string name="loginSsoContact">تواصل معنا</string>
+    <string name="imapLoginLabel">اسم المستخدم (إن كان مختلفًا عن العنوان)</string>
+    <string name="imapLoginHint">user أو CORP\\user</string>
+    <string name="loginSsoBody">يُضبط تسجيل الدخول عبر نظام الدخول الموحّد للمؤسسة (OAuth 2.0 وOpenID Connect: ‏Keycloak وADFS وMicrosoft Entra ID وغيرها) لكل مؤسسة على حدة. إن أردت أن نجهّزه لمؤسستك، فتواصل معنا واذكر نظام الدخول الذي تستخدمونه. وإلى ذلك الحين يمكنك الدخول بكلمة المرور: Exchange أو IMAP الخاص بالمؤسسة.</string>
+    <string name="loginWorkImapNote">تحتاج إلى العنوان وكلمة المرور. يجد التطبيق الخوادم بنفسه إن نشرتها المؤسسة. إن لم يتصل، فاسأل مسؤول البريد عن خادمي IMAP وSMTP والمنافذ والتشفير واسم المستخدم (إن كان مختلفًا عن العنوان).</string>
 </resources>

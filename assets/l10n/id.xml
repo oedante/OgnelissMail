@@ -4282,4 +4282,18 @@
     <string name="oauthGoogleUserCapAction">Gunakan sandi aplikasi</string>
     <string name="gmailAppPwNote">Anda perlu sandi aplikasi Google: aktifkan Verifikasi 2 Langkah di Akun Google dan buat sandi di halaman “Sandi aplikasi”. Cara ini hanya menghubungkan email; Google Kalender dan Kontak memerlukan masuk dengan Google.</string>
     <string name="assignReminded">Diingatkan pukul {time}</string>
+    <string name="loginPersonalMail">Email pribadi</string>
+    <string name="loginWorkMail">Email kantor</string>
+    <string name="loginKindExchangeServerDesc">Server Exchange organisasi (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Email kantor di cloud Microsoft</string>
+    <string name="loginKindWorkImap">IMAP organisasi</string>
+    <string name="loginKindWorkImapDesc">Server email milik organisasi: server dan nama login dari administrator</string>
+    <string name="loginKindSso">Masuk melalui sistem organisasi</string>
+    <string name="loginKindSsoDesc">SSO dan OAuth organisasi — atas permintaan</string>
+    <string name="loginSsoTitle">Masuk melalui sistem organisasi</string>
+    <string name="loginSsoContact">Hubungi kami</string>
+    <string name="imapLoginLabel">Nama login (jika berbeda dari alamat)</string>
+    <string name="imapLoginHint">budi atau CORP\\budi</string>
+    <string name="loginSsoBody">Masuk melalui sistem single sign-on organisasi (OAuth 2.0 dan OpenID Connect: Keycloak, ADFS, Microsoft Entra ID, dan lainnya) diatur terpisah untuk setiap organisasi. Jika Anda ingin kami membuatnya untuk organisasi Anda, hubungi kami dan sebutkan sistem masuk yang Anda gunakan. Sementara itu Anda dapat masuk dengan kata sandi: Exchange atau IMAP organisasi.</string>
+    <string name="loginWorkImapNote">Anda memerlukan alamat dan kata sandi. Aplikasi menemukan server sendiri jika organisasi telah memublikasikannya. Jika tidak tersambung, tanyakan kepada administrator email server IMAP dan SMTP, port, enkripsi, dan nama login (jika berbeda dari alamat).</string>
 </resources>

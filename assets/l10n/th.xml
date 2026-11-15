@@ -4282,4 +4282,18 @@
     <string name="oauthGoogleUserCapAction">ใช้รหัสผ่านสำหรับแอป</string>
     <string name="gmailAppPwNote">ต้องใช้รหัสผ่านสำหรับแอปของ Google: เปิดการยืนยันแบบ 2 ขั้นตอนในบัญชี Google แล้วสร้างรหัสผ่านในหน้า “รหัสผ่านสำหรับแอป” วิธีนี้เชื่อมต่อได้เฉพาะอีเมล ส่วน Google ปฏิทินและรายชื่อติดต่อต้องลงชื่อเข้าใช้ด้วย Google</string>
     <string name="assignReminded">เตือนแล้วเมื่อ {time}</string>
+    <string name="loginPersonalMail">อีเมลส่วนตัว</string>
+    <string name="loginWorkMail">อีเมลที่ทำงาน</string>
+    <string name="loginKindExchangeServerDesc">เซิร์ฟเวอร์ Exchange ขององค์กร (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">อีเมลที่ทำงานบนคลาวด์ของ Microsoft</string>
+    <string name="loginKindWorkImap">IMAP ขององค์กร</string>
+    <string name="loginKindWorkImapDesc">เซิร์ฟเวอร์อีเมลขององค์กรเอง: ขอเซิร์ฟเวอร์และชื่อเข้าสู่ระบบจากผู้ดูแลระบบ</string>
+    <string name="loginKindSso">ลงชื่อเข้าใช้ผ่านระบบขององค์กร</string>
+    <string name="loginKindSsoDesc">SSO และ OAuth ขององค์กร — ตามคำขอ</string>
+    <string name="loginSsoTitle">ลงชื่อเข้าใช้ผ่านระบบขององค์กร</string>
+    <string name="loginSsoContact">ติดต่อเรา</string>
+    <string name="imapLoginLabel">ชื่อเข้าสู่ระบบ (หากต่างจากที่อยู่อีเมล)</string>
+    <string name="imapLoginHint">user หรือ CORP\\user</string>
+    <string name="loginSsoBody">การลงชื่อเข้าใช้ผ่านระบบลงชื่อเข้าใช้ครั้งเดียวขององค์กร (OAuth 2.0 และ OpenID Connect: Keycloak, ADFS, Microsoft Entra ID และอื่น ๆ) ต้องตั้งค่าแยกสำหรับแต่ละองค์กร หากต้องการให้เราทำให้องค์กรของคุณ โปรดติดต่อเราและแจ้งว่าใช้ระบบลงชื่อเข้าใช้ใด ระหว่างนี้คุณลงชื่อเข้าใช้ด้วยรหัสผ่านได้: Exchange หรือ IMAP ขององค์กร</string>
+    <string name="loginWorkImapNote">ต้องใช้ที่อยู่อีเมลและรหัสผ่าน แอปจะหาเซิร์ฟเวอร์เองหากองค์กรเผยแพร่ไว้ หากเชื่อมต่อไม่ได้ ให้ขอข้อมูลเซิร์ฟเวอร์ IMAP และ SMTP พอร์ต การเข้ารหัส และชื่อเข้าสู่ระบบ (หากต่างจากที่อยู่อีเมล) จากผู้ดูแลอีเมล</string>
 </resources>

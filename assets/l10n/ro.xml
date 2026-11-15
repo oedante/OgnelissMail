@@ -4324,4 +4324,18 @@
     <string name="oauthGoogleUserCapAction">Folosiți o parolă pentru aplicații</string>
     <string name="gmailAppPwNote">Aveți nevoie de o parolă pentru aplicații Google: activați verificarea în doi pași în contul Google și creați o parolă pe pagina „Parole pentru aplicații”. Așa se conectează doar e-mailul; Google Calendar și Persoane de contact necesită conectarea cu Google.</string>
     <string name="assignReminded">Reamintit la {time}</string>
+    <string name="loginPersonalMail">E-mail personal</string>
+    <string name="loginWorkMail">E-mail de serviciu</string>
+    <string name="loginKindExchangeServerDesc">Serverul Exchange al organizației (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">E-mail de serviciu în cloudul Microsoft</string>
+    <string name="loginKindWorkImap">IMAP-ul organizației</string>
+    <string name="loginKindWorkImapDesc">Serverul de e-mail propriu al organizației: serverele și numele de utilizator de la administrator</string>
+    <string name="loginKindSso">Conectare prin sistemul organizației</string>
+    <string name="loginKindSsoDesc">SSO și OAuth ale organizației — la cerere</string>
+    <string name="loginSsoTitle">Conectare prin sistemul organizației</string>
+    <string name="loginSsoContact">Contactați-ne</string>
+    <string name="imapLoginLabel">Nume de utilizator (dacă diferă de adresă)</string>
+    <string name="imapLoginHint">ipopescu sau CORP\\ipopescu</string>
+    <string name="loginSsoBody">Conectarea prin sistemul de autentificare unică al organizației (OAuth 2.0 și OpenID Connect: Keycloak, ADFS, Microsoft Entra ID și altele) se configurează separat pentru fiecare organizație. Dacă doriți să o realizăm pentru organizația dvs., contactați-ne și spuneți-ne ce sistem de autentificare folosiți. Până atunci vă puteți conecta cu parola: Exchange sau IMAP-ul organizației.</string>
+    <string name="loginWorkImapNote">Aveți nevoie de adresă și parolă. Aplicația găsește singură serverele dacă organizația le-a publicat. Dacă nu se conectează, cereți administratorului de e-mail serverele IMAP și SMTP, porturile, criptarea și numele de utilizator (dacă diferă de adresă).</string>
 </resources>

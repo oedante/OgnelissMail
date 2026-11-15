@@ -4303,4 +4303,18 @@
     <string name="oauthGoogleUserCapAction">Usar contraseña de aplicación</string>
     <string name="gmailAppPwNote">Necesitas una contraseña de aplicación de Google: activa la verificación en dos pasos en tu cuenta de Google y crea una contraseña en la página «Contraseñas de aplicaciones». Así solo se conecta el correo; Google Calendar y Contactos requieren iniciar sesión con Google.</string>
     <string name="assignReminded">Recordado a las {time}</string>
+    <string name="loginPersonalMail">Correo personal</string>
+    <string name="loginWorkMail">Correo del trabajo</string>
+    <string name="loginKindExchangeServerDesc">Servidor Exchange de la organización (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Correo del trabajo en la nube de Microsoft</string>
+    <string name="loginKindWorkImap">IMAP de la organización</string>
+    <string name="loginKindWorkImapDesc">Servidor de correo propio de la organización: servidores e inicio de sesión, del administrador</string>
+    <string name="loginKindSso">Iniciar sesión con la organización</string>
+    <string name="loginKindSsoDesc">SSO y OAuth de la organización — bajo petición</string>
+    <string name="loginSsoTitle">Iniciar sesión con la organización</string>
+    <string name="loginSsoContact">Contactar</string>
+    <string name="imapLoginLabel">Usuario (si es distinto de la dirección)</string>
+    <string name="imapLoginHint">jgarcia o CORP\\jgarcia</string>
+    <string name="loginSsoBody">El inicio de sesión mediante el sistema de inicio de sesión único de la organización (OAuth 2.0 y OpenID Connect: Keycloak, ADFS, Microsoft Entra ID y otros) se configura por separado para cada organización. Si quiere que lo preparemos para la suya, contáctenos e indíquenos qué sistema usan. Mientras tanto puede entrar con contraseña: Exchange o IMAP de la organización.</string>
+    <string name="loginWorkImapNote">Necesita su dirección y contraseña. La aplicación encuentra los servidores sola si la organización los ha publicado. Si no conecta, pida al administrador de correo los servidores IMAP y SMTP, los puertos, el cifrado y el usuario (si es distinto de la dirección).</string>
 </resources>

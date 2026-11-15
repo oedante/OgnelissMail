@@ -4324,4 +4324,18 @@
     <string name="oauthGoogleUserCapAction">Použít heslo aplikace</string>
     <string name="gmailAppPwNote">Potřebujete heslo aplikace Google: zapněte v účtu Google dvoufázové ověření a vytvořte heslo na stránce „Hesla aplikací“. Takto se připojí jen pošta; Kalendář a Kontakty Google vyžadují přihlášení přes Google.</string>
     <string name="assignReminded">Připomenuto v {time}</string>
+    <string name="loginPersonalMail">Osobní e-mail</string>
+    <string name="loginWorkMail">Pracovní e-mail</string>
+    <string name="loginKindExchangeServerDesc">Server Exchange organizace (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Pracovní e-mail v cloudu Microsoft</string>
+    <string name="loginKindWorkImap">IMAP organizace</string>
+    <string name="loginKindWorkImapDesc">Vlastní poštovní server organizace: servery a přihlašovací jméno u správce</string>
+    <string name="loginKindSso">Přihlášení přes systém organizace</string>
+    <string name="loginKindSsoDesc">SSO a OAuth organizace — na požádání</string>
+    <string name="loginSsoTitle">Přihlášení přes systém organizace</string>
+    <string name="loginSsoContact">Kontaktujte nás</string>
+    <string name="imapLoginLabel">Přihlašovací jméno (pokud se liší od adresy)</string>
+    <string name="imapLoginHint">jnovak nebo CORP\\jnovak</string>
+    <string name="loginSsoBody">Přihlášení přes systém jednotného přihlášení organizace (OAuth 2.0 a OpenID Connect: Keycloak, ADFS, Microsoft Entra ID a další) se nastavuje zvlášť pro každou organizaci. Chcete-li, abychom ho připravili pro vaši organizaci, kontaktujte nás a napište, jaký systém přihlášení používáte. Zatím se můžete přihlásit heslem: Exchange nebo IMAP organizace.</string>
+    <string name="loginWorkImapNote">Potřebujete adresu a heslo. Servery aplikace najde sama, pokud je organizace zveřejnila. Pokud se nepřipojí, zeptejte se správce pošty na servery IMAP a SMTP, porty, šifrování a přihlašovací jméno (pokud se liší od adresy).</string>
 </resources>

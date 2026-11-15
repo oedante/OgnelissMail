@@ -4303,4 +4303,18 @@
     <string name="oauthGoogleUserCapAction">Usa una password per le app</string>
     <string name="gmailAppPwNote">Serve una password per le app di Google: attiva la verifica in due passaggi nel tuo Account Google e crea una password nella pagina «Password per le app». Così si collega solo la posta; Google Calendar e Contatti richiedono l\'accesso con Google.</string>
     <string name="assignReminded">Promemoria inviato alle {time}</string>
+    <string name="loginPersonalMail">Posta personale</string>
+    <string name="loginWorkMail">Posta di lavoro</string>
+    <string name="loginKindExchangeServerDesc">Server Exchange dell’organizzazione (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Posta di lavoro nel cloud Microsoft</string>
+    <string name="loginKindWorkImap">IMAP dell’organizzazione</string>
+    <string name="loginKindWorkImapDesc">Server di posta dell’organizzazione: server e nome utente dall’amministratore</string>
+    <string name="loginKindSso">Accesso tramite l’organizzazione</string>
+    <string name="loginKindSsoDesc">SSO e OAuth dell’organizzazione — su richiesta</string>
+    <string name="loginSsoTitle">Accesso tramite l’organizzazione</string>
+    <string name="loginSsoContact">Contattaci</string>
+    <string name="imapLoginLabel">Nome utente (se diverso dall’indirizzo)</string>
+    <string name="imapLoginHint">mrossi o CORP\\mrossi</string>
+    <string name="loginSsoBody">L’accesso tramite il sistema di single sign-on dell’organizzazione (OAuth 2.0 e OpenID Connect: Keycloak, ADFS, Microsoft Entra ID e altri) si configura separatamente per ogni organizzazione. Se desidera che lo realizziamo per la sua, ci contatti indicando quale sistema di accesso usate. Nel frattempo può accedere con la password: Exchange o IMAP dell’organizzazione.</string>
+    <string name="loginWorkImapNote">Servono indirizzo e password. L’app trova da sola i server se l’organizzazione li ha pubblicati. Se non si connette, chieda all’amministratore della posta server IMAP e SMTP, porte, crittografia e nome utente (se diverso dall’indirizzo).</string>
 </resources>

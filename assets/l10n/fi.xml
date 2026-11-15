@@ -4303,4 +4303,18 @@
     <string name="oauthGoogleUserCapAction">Käytä sovellussalasanaa</string>
     <string name="gmailAppPwNote">Tarvitset Googlen sovellussalasanan: ota kaksivaiheinen vahvistus käyttöön Google-tililläsi ja luo salasana Sovellussalasanat-sivulla. Näin yhdistetään vain posti; Google Kalenteri ja Yhteystiedot vaativat Google-kirjautumisen.</string>
     <string name="assignReminded">Muistutettu klo {time}</string>
+    <string name="loginPersonalMail">Henkilökohtainen sähköposti</string>
+    <string name="loginWorkMail">Työsähköposti</string>
+    <string name="loginKindExchangeServerDesc">Organisaation Exchange-palvelin (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Työsähköposti Microsoftin pilvessä</string>
+    <string name="loginKindWorkImap">Organisaation IMAP</string>
+    <string name="loginKindWorkImapDesc">Organisaation oma sähköpostipalvelin: palvelimet ja käyttäjätunnus ylläpitäjältä</string>
+    <string name="loginKindSso">Kirjaudu organisaation kautta</string>
+    <string name="loginKindSsoDesc">Organisaation SSO ja OAuth – pyynnöstä</string>
+    <string name="loginSsoTitle">Kirjaudu organisaation kautta</string>
+    <string name="loginSsoContact">Ota yhteyttä</string>
+    <string name="imapLoginLabel">Käyttäjätunnus (jos eri kuin osoite)</string>
+    <string name="imapLoginHint">mvirtanen tai CORP\\mvirtanen</string>
+    <string name="loginSsoBody">Kirjautuminen organisaation kertakirjautumisjärjestelmän kautta (OAuth 2.0 ja OpenID Connect: Keycloak, ADFS, Microsoft Entra ID ym.) määritetään erikseen kullekin organisaatiolle. Jos haluat, että teemme sen organisaatiollesi, ota yhteyttä ja kerro, mitä kirjautumisjärjestelmää käytätte. Sillä välin voit kirjautua salasanalla: Exchange tai organisaation IMAP.</string>
+    <string name="loginWorkImapNote">Tarvitset osoitteen ja salasanan. Sovellus löytää palvelimet itse, jos organisaatio on julkaissut ne. Jos yhteys ei onnistu, kysy sähköpostin ylläpitäjältä IMAP- ja SMTP-palvelimet, portit, salaus ja käyttäjätunnus (jos eri kuin osoite).</string>
 </resources>

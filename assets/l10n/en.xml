@@ -4303,4 +4303,18 @@
     <string name="oauthGoogleUserCapAction">Use an app password</string>
     <string name="gmailAppPwNote">You need a Google app password: turn on 2-Step Verification in your Google Account and create a password on the “App passwords” page. This connects mail only; Google Calendar and Contacts need sign-in with Google.</string>
     <string name="assignReminded">Reminded at {time}</string>
+    <string name="loginPersonalMail">Personal email</string>
+    <string name="loginWorkMail">Work email</string>
+    <string name="loginKindExchangeServerDesc">Your organisation’s Exchange server (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Work email in the Microsoft cloud</string>
+    <string name="loginKindWorkImap">Organisation IMAP</string>
+    <string name="loginKindWorkImapDesc">Your organisation’s own mail server: ask your administrator for the servers and login</string>
+    <string name="loginKindSso">Sign in with your organisation</string>
+    <string name="loginKindSsoDesc">Organisation SSO and OAuth — on request</string>
+    <string name="loginSsoTitle">Sign in with your organisation</string>
+    <string name="loginSsoContact">Contact us</string>
+    <string name="imapLoginLabel">Login (if different from the address)</string>
+    <string name="imapLoginHint">jsmith or CORP\\jsmith</string>
+    <string name="loginSsoBody">Signing in through your organisation’s single sign-on system (OAuth 2.0 and OpenID Connect: Keycloak, ADFS, Microsoft Entra ID and others) is set up separately for each organisation. If you would like us to add it for your organisation, contact us and tell us which sign-in system you use. Meanwhile you can sign in with a password: Exchange or organisation IMAP.</string>
+    <string name="loginWorkImapNote">You need your address and password. The app finds the servers itself if your organisation has published them. If it does not connect, ask your mail administrator for the IMAP and SMTP servers, ports, encryption and login (if it differs from your address).</string>
 </resources>

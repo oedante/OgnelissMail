@@ -4303,4 +4303,18 @@
     <string name="oauthGoogleUserCapAction">App-wachtwoord gebruiken</string>
     <string name="gmailAppPwNote">Je hebt een Google-app-wachtwoord nodig: zet verificatie in twee stappen aan in je Google-account en maak een wachtwoord aan op de pagina ‘App-wachtwoorden’. Zo wordt alleen de mail gekoppeld; Google Agenda en Contacten vereisen inloggen met Google.</string>
     <string name="assignReminded">Herinnerd om {time}</string>
+    <string name="loginPersonalMail">Persoonlijke e-mail</string>
+    <string name="loginWorkMail">Zakelijke e-mail</string>
+    <string name="loginKindExchangeServerDesc">Exchange-server van de organisatie (ActiveSync, EWS)</string>
+    <string name="loginKindM365Desc">Zakelijke e-mail in de Microsoft-cloud</string>
+    <string name="loginKindWorkImap">IMAP van de organisatie</string>
+    <string name="loginKindWorkImapDesc">Eigen mailserver van de organisatie: servers en inlognaam via de beheerder</string>
+    <string name="loginKindSso">Inloggen via de organisatie</string>
+    <string name="loginKindSsoDesc">SSO en OAuth van de organisatie — op aanvraag</string>
+    <string name="loginSsoTitle">Inloggen via de organisatie</string>
+    <string name="loginSsoContact">Contact opnemen</string>
+    <string name="imapLoginLabel">Inlognaam (als die afwijkt van het adres)</string>
+    <string name="imapLoginHint">jdevries of CORP\\jdevries</string>
+    <string name="loginSsoBody">Inloggen via het single-sign-onsysteem van de organisatie (OAuth 2.0 en OpenID Connect: Keycloak, ADFS, Microsoft Entra ID en andere) wordt per organisatie apart ingericht. Wilt u dat wij dit voor uw organisatie maken, neem dan contact op en vermeld welk inlogsysteem u gebruikt. Tot die tijd kunt u met een wachtwoord inloggen: Exchange of IMAP van de organisatie.</string>
+    <string name="loginWorkImapNote">U hebt uw adres en wachtwoord nodig. De app vindt de servers zelf als de organisatie ze heeft gepubliceerd. Lukt de verbinding niet, vraag de mailbeheerder dan om de IMAP- en SMTP-server, poorten, versleuteling en inlognaam (als die afwijkt van het adres).</string>
 </resources>

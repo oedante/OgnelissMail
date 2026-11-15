@@ -4310,11 +4310,11 @@
     <string name="loginKindWorkImap">संगठन का IMAP</string>
     <string name="loginKindWorkImapDesc">संगठन का अपना मेल सर्वर: सर्वर और लॉगिन व्यवस्थापक से लें</string>
     <string name="loginKindSso">संगठन की प्रणाली से साइन इन</string>
-    <string name="loginKindSsoDesc">संगठन का SSO और OAuth — अनुरोध पर</string>
+    <string name="loginKindSsoDesc">संगठन का SSO और OAuth: ऐप का फ़ोर्क या परामर्श</string>
     <string name="loginSsoTitle">संगठन की प्रणाली से साइन इन</string>
     <string name="loginSsoContact">हमसे संपर्क करें</string>
     <string name="imapLoginLabel">लॉगिन (यदि पते से अलग हो)</string>
     <string name="imapLoginHint">user या CORP\\user</string>
-    <string name="loginSsoBody">संगठन की सिंगल साइन-ऑन प्रणाली (OAuth 2.0 और OpenID Connect: Keycloak, ADFS, Microsoft Entra ID आदि) से साइन इन हर संगठन के लिए अलग से सेट किया जाता है। अगर आप चाहते हैं कि हम इसे आपके संगठन के लिए बनाएँ, तो हमसे संपर्क करें और बताएँ कि आप कौन-सी साइन-इन प्रणाली इस्तेमाल करते हैं। तब तक आप पासवर्ड से साइन इन कर सकते हैं: Exchange या संगठन का IMAP।</string>
+    <string name="loginSsoBody">संगठन की सिंगल साइन-ऑन प्रणाली (OAuth 2.0 और OpenID Connect: Keycloak, ADFS, Microsoft Entra ID आदि) से साइन इन हर संगठन में अलग होता है और ऐप में शामिल नहीं है। Ogneliss Mail ओपन सोर्स है (Apache 2.0): आपका संगठन ऐप का फ़ोर्क बनाकर अपना साइन-इन जोड़ सकता है। परामर्श चाहिए तो हमसे संपर्क करें। तब तक आप पासवर्ड से साइन इन कर सकते हैं: Exchange या संगठन का IMAP।</string>
     <string name="loginWorkImapNote">पता और पासवर्ड चाहिए। अगर संगठन ने सर्वर प्रकाशित किए हैं तो ऐप उन्हें खुद ढूँढ लेगा। कनेक्ट न हो तो मेल व्यवस्थापक से IMAP और SMTP सर्वर, पोर्ट, एन्क्रिप्शन और लॉगिन (यदि पते से अलग हो) पूछें।</string>
 </resources>

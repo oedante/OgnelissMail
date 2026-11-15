@@ -4310,11 +4310,11 @@
     <string name="loginKindWorkImap">Organisation IMAP</string>
     <string name="loginKindWorkImapDesc">Your organisation’s own mail server: ask your administrator for the servers and login</string>
     <string name="loginKindSso">Sign in with your organisation</string>
-    <string name="loginKindSsoDesc">Organisation SSO and OAuth — on request</string>
+    <string name="loginKindSsoDesc">Organisation SSO and OAuth: fork the app or ask us for advice</string>
     <string name="loginSsoTitle">Sign in with your organisation</string>
     <string name="loginSsoContact">Contact us</string>
     <string name="imapLoginLabel">Login (if different from the address)</string>
     <string name="imapLoginHint">jsmith or CORP\\jsmith</string>
-    <string name="loginSsoBody">Signing in through your organisation’s single sign-on system (OAuth 2.0 and OpenID Connect: Keycloak, ADFS, Microsoft Entra ID and others) is set up separately for each organisation. If you would like us to add it for your organisation, contact us and tell us which sign-in system you use. Meanwhile you can sign in with a password: Exchange or organisation IMAP.</string>
+    <string name="loginSsoBody">Single sign-on through your organisation’s system (OAuth 2.0 and OpenID Connect: Keycloak, ADFS, Microsoft Entra ID and others) differs from one organisation to another, and the app does not include it. Ogneliss Mail is open source (Apache 2.0): your organisation can fork the app and add its own sign-in. If you need advice, contact us. Meanwhile you can sign in with a password: Exchange or organisation IMAP.</string>
     <string name="loginWorkImapNote">You need your address and password. The app finds the servers itself if your organisation has published them. If it does not connect, ask your mail administrator for the IMAP and SMTP servers, ports, encryption and login (if it differs from your address).</string>
 </resources>

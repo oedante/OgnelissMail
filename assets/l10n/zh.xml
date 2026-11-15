@@ -4289,11 +4289,11 @@
     <string name="loginKindWorkImap">单位 IMAP</string>
     <string name="loginKindWorkImapDesc">单位自己的邮件服务器：服务器和登录名请向管理员索取</string>
     <string name="loginKindSso">通过单位系统登录</string>
-    <string name="loginKindSsoDesc">单位 SSO 与 OAuth — 按需提供</string>
+    <string name="loginKindSsoDesc">单位 SSO 与 OAuth：派生（fork）应用或咨询</string>
     <string name="loginSsoTitle">通过单位系统登录</string>
     <string name="loginSsoContact">联系我们</string>
     <string name="imapLoginLabel">登录名（如与地址不同）</string>
     <string name="imapLoginHint">zhangsan 或 CORP\\zhangsan</string>
-    <string name="loginSsoBody">通过单位的单点登录系统（OAuth 2.0 和 OpenID Connect：Keycloak、ADFS、Microsoft Entra ID 等）登录需要为每个单位单独配置。如果希望我们为您的单位实现，请联系我们并说明您使用的登录系统。在此之前，您可以用密码登录：Exchange 或单位 IMAP。</string>
+    <string name="loginSsoBody">通过单位单点登录系统（OAuth 2.0 和 OpenID Connect：Keycloak、ADFS、Microsoft Entra ID 等）登录，各单位各不相同，应用中未包含。Ogneliss Mail 是开源软件（Apache 2.0）：单位可以派生（fork）本应用并加入自己的登录方式。如需咨询，请联系我们。在此之前，您可以用密码登录：Exchange 或单位 IMAP。</string>
     <string name="loginWorkImapNote">需要邮箱地址和密码。如果单位公布了服务器，应用会自动找到。如无法连接，请向邮件管理员索取 IMAP 和 SMTP 服务器、端口、加密方式和登录名（如与地址不同）。</string>
 </resources>

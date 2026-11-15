@@ -4310,11 +4310,11 @@
     <string name="loginKindWorkImap">IMAP de la organización</string>
     <string name="loginKindWorkImapDesc">Servidor de correo propio de la organización: servidores e inicio de sesión, del administrador</string>
     <string name="loginKindSso">Iniciar sesión con la organización</string>
-    <string name="loginKindSsoDesc">SSO y OAuth de la organización — bajo petición</string>
+    <string name="loginKindSsoDesc">SSO y OAuth de la organización: un fork de la app o asesoramiento</string>
     <string name="loginSsoTitle">Iniciar sesión con la organización</string>
     <string name="loginSsoContact">Contactar</string>
     <string name="imapLoginLabel">Usuario (si es distinto de la dirección)</string>
     <string name="imapLoginHint">jgarcia o CORP\\jgarcia</string>
-    <string name="loginSsoBody">El inicio de sesión mediante el sistema de inicio de sesión único de la organización (OAuth 2.0 y OpenID Connect: Keycloak, ADFS, Microsoft Entra ID y otros) se configura por separado para cada organización. Si quiere que lo preparemos para la suya, contáctenos e indíquenos qué sistema usan. Mientras tanto puede entrar con contraseña: Exchange o IMAP de la organización.</string>
+    <string name="loginSsoBody">El inicio de sesión mediante el sistema de inicio de sesión único de la organización (OAuth 2.0 y OpenID Connect: Keycloak, ADFS, Microsoft Entra ID y otros) es distinto en cada organización y la aplicación no lo incluye. Ogneliss Mail es de código abierto (Apache 2.0): su organización puede hacer un fork de la aplicación y añadir su propio inicio de sesión. Si necesita asesoramiento, contáctenos. Mientras tanto puede entrar con contraseña: Exchange o IMAP de la organización.</string>
     <string name="loginWorkImapNote">Necesita su dirección y contraseña. La aplicación encuentra los servidores sola si la organización los ha publicado. Si no conecta, pida al administrador de correo los servidores IMAP y SMTP, los puertos, el cifrado y el usuario (si es distinto de la dirección).</string>
 </resources>

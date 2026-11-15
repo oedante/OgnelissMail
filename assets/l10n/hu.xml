@@ -4310,11 +4310,11 @@
     <string name="loginKindWorkImap">Szervezeti IMAP</string>
     <string name="loginKindWorkImapDesc">A szervezet saját levelezőkiszolgálója: a kiszolgálókat és a felhasználónevet a rendszergazda adja meg</string>
     <string name="loginKindSso">Bejelentkezés a szervezet rendszerén át</string>
-    <string name="loginKindSsoDesc">Szervezeti SSO és OAuth – kérésre</string>
+    <string name="loginKindSsoDesc">Szervezeti SSO és OAuth: az alkalmazás forkja vagy tanácsadás</string>
     <string name="loginSsoTitle">Bejelentkezés a szervezet rendszerén át</string>
     <string name="loginSsoContact">Kapcsolatfelvétel</string>
     <string name="imapLoginLabel">Felhasználónév (ha eltér a címtől)</string>
     <string name="imapLoginHint">nagyj vagy CORP\\nagyj</string>
-    <string name="loginSsoBody">A szervezet egyszeri bejelentkezési rendszerén keresztüli belépést (OAuth 2.0 és OpenID Connect: Keycloak, ADFS, Microsoft Entra ID és mások) minden szervezethez külön kell beállítani. Ha szeretné, hogy elkészítsük az Önök szervezetéhez, vegye fel velünk a kapcsolatot, és írja meg, milyen bejelentkezési rendszert használnak. Addig jelszóval is beléphet: Exchange vagy szervezeti IMAP.</string>
+    <string name="loginSsoBody">A szervezet egyszeri bejelentkezési rendszerén keresztüli belépés (OAuth 2.0 és OpenID Connect: Keycloak, ADFS, Microsoft Entra ID és mások) szervezetenként más, és az alkalmazás nem tartalmazza. Az Ogneliss Mail nyílt forráskódú (Apache 2.0): a szervezet forkolhatja az alkalmazást, és hozzáadhatja a saját bejelentkezését. Ha tanácsra van szüksége, vegye fel velünk a kapcsolatot. Addig jelszóval is beléphet: Exchange vagy szervezeti IMAP.</string>
     <string name="loginWorkImapNote">A címre és a jelszóra van szükség. A kiszolgálókat az alkalmazás maga megtalálja, ha a szervezet közzétette őket. Ha nem kapcsolódik, kérdezze meg a levelezés rendszergazdáját az IMAP- és SMTP-kiszolgálóról, a portokról, a titkosításról és a felhasználónévről (ha eltér a címtől).</string>
 </resources>

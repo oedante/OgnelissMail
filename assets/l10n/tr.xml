@@ -4310,11 +4310,11 @@
     <string name="loginKindWorkImap">Kuruluş IMAP’i</string>
     <string name="loginKindWorkImapDesc">Kuruluşun kendi e-posta sunucusu: sunucuları ve kullanıcı adını yöneticiden alın</string>
     <string name="loginKindSso">Kuruluş sistemiyle giriş</string>
-    <string name="loginKindSsoDesc">Kuruluş SSO ve OAuth – talep üzerine</string>
+    <string name="loginKindSsoDesc">Kuruluş SSO ve OAuth: uygulamanın fork’u veya danışmanlık</string>
     <string name="loginSsoTitle">Kuruluş sistemiyle giriş</string>
     <string name="loginSsoContact">Bize ulaşın</string>
     <string name="imapLoginLabel">Kullanıcı adı (adresten farklıysa)</string>
     <string name="imapLoginHint">ayilmaz veya CORP\\ayilmaz</string>
-    <string name="loginSsoBody">Kuruluşun tek oturum açma sistemiyle giriş (OAuth 2.0 ve OpenID Connect: Keycloak, ADFS, Microsoft Entra ID ve diğerleri) her kuruluş için ayrı ayarlanır. Kuruluşunuz için hazırlamamızı isterseniz bize ulaşın ve hangi giriş sistemini kullandığınızı yazın. Bu arada parolayla giriş yapabilirsiniz: Exchange veya kuruluş IMAP’i.</string>
+    <string name="loginSsoBody">Kuruluşun tek oturum açma sistemiyle giriş (OAuth 2.0 ve OpenID Connect: Keycloak, ADFS, Microsoft Entra ID ve diğerleri) her kuruluşta farklıdır ve uygulamada yer almaz. Ogneliss Mail açık kaynaklıdır (Apache 2.0): kuruluşunuz uygulamanın fork’unu oluşturup kendi girişini ekleyebilir. Danışmanlığa ihtiyacınız varsa bize ulaşın. Bu arada parolayla giriş yapabilirsiniz: Exchange veya kuruluş IMAP’i.</string>
     <string name="loginWorkImapNote">Adresiniz ve parolanız gerekir. Kuruluş sunucuları yayımladıysa uygulama onları kendisi bulur. Bağlanmazsa e-posta yöneticisinden IMAP ve SMTP sunucularını, portları, şifrelemeyi ve kullanıcı adını (adresten farklıysa) isteyin.</string>
 </resources>

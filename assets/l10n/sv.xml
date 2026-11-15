@@ -4310,11 +4310,11 @@
     <string name="loginKindWorkImap">Organisationens IMAP</string>
     <string name="loginKindWorkImapDesc">Organisationens egen e-postserver: servrar och inloggning får du av administratören</string>
     <string name="loginKindSso">Logga in via organisationen</string>
-    <string name="loginKindSsoDesc">Organisationens SSO och OAuth – på begäran</string>
+    <string name="loginKindSsoDesc">Organisationens SSO och OAuth: en fork av appen eller rådgivning</string>
     <string name="loginSsoTitle">Logga in via organisationen</string>
     <string name="loginSsoContact">Kontakta oss</string>
     <string name="imapLoginLabel">Inloggning (om den skiljer sig från adressen)</string>
     <string name="imapLoginHint">aandersson eller CORP\\aandersson</string>
-    <string name="loginSsoBody">Inloggning via organisationens system för enkel inloggning (OAuth 2.0 och OpenID Connect: Keycloak, ADFS, Microsoft Entra ID med flera) ställs in separat för varje organisation. Om du vill att vi gör det för din organisation, kontakta oss och berätta vilket inloggningssystem ni använder. Under tiden kan du logga in med lösenord: Exchange eller organisationens IMAP.</string>
+    <string name="loginSsoBody">Inloggning via organisationens system för enkel inloggning (OAuth 2.0 och OpenID Connect: Keycloak, ADFS, Microsoft Entra ID med flera) ser olika ut i varje organisation och finns inte i appen. Ogneliss Mail har öppen källkod (Apache 2.0): organisationen kan göra en fork av appen och lägga till sin egen inloggning. Om ni behöver råd, kontakta oss. Under tiden kan du logga in med lösenord: Exchange eller organisationens IMAP.</string>
     <string name="loginWorkImapNote">Du behöver adress och lösenord. Servrarna hittar appen själv om organisationen har publicerat dem. Går det inte att ansluta, fråga e-postadministratören om IMAP- och SMTP-servrar, portar, kryptering och inloggning (om den skiljer sig från adressen).</string>
 </resources>

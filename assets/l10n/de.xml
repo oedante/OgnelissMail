@@ -4310,11 +4310,11 @@
     <string name="loginKindWorkImap">IMAP der Organisation</string>
     <string name="loginKindWorkImapDesc">Eigener Mailserver der Organisation: Server und Anmeldename gibt der Administrator</string>
     <string name="loginKindSso">Anmeldung über die Organisation</string>
-    <string name="loginKindSsoDesc">SSO und OAuth der Organisation – auf Anfrage</string>
+    <string name="loginKindSsoDesc">SSO und OAuth der Organisation: Fork der App oder Beratung</string>
     <string name="loginSsoTitle">Anmeldung über die Organisation</string>
     <string name="loginSsoContact">Kontakt aufnehmen</string>
     <string name="imapLoginLabel">Anmeldename (falls abweichend von der Adresse)</string>
     <string name="imapLoginHint">mmueller oder CORP\\mmueller</string>
-    <string name="loginSsoBody">Die Anmeldung über das Single-Sign-on-System der Organisation (OAuth 2.0 und OpenID Connect: Keycloak, ADFS, Microsoft Entra ID u. a.) wird für jede Organisation eigens eingerichtet. Wenn wir sie für Ihre Organisation einrichten sollen, nehmen Sie Kontakt mit uns auf und nennen Sie Ihr Anmeldesystem. Bis dahin können Sie sich mit Passwort anmelden: Exchange oder IMAP der Organisation.</string>
+    <string name="loginSsoBody">Die Anmeldung über das Single-Sign-on-System der Organisation (OAuth 2.0 und OpenID Connect: Keycloak, ADFS, Microsoft Entra ID u. a.) ist bei jeder Organisation anders und in der App nicht enthalten. Ogneliss Mail ist quelloffen (Apache 2.0): Ihre Organisation kann die App forken und eine eigene Anmeldung ergänzen. Wenn Sie Beratung brauchen, nehmen Sie Kontakt mit uns auf. Bis dahin können Sie sich mit Passwort anmelden: Exchange oder IMAP der Organisation.</string>
     <string name="loginWorkImapNote">Sie brauchen Adresse und Passwort. Die Server findet die App selbst, wenn die Organisation sie veröffentlicht hat. Klappt die Verbindung nicht, fragen Sie den Mail-Administrator nach IMAP- und SMTP-Server, Ports, Verschlüsselung und Anmeldenamen (falls abweichend von der Adresse).</string>
 </resources>

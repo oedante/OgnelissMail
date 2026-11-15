@@ -313,6 +313,9 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('login_sso')));
     await _settle(tester);
     expect(find.textContaining('Keycloak'), findsOneWidget);
+    // Не обещаем сделать вход: форк открытого кода или консультация.
+    expect(find.descendant(of: find.byType(AlertDialog), matching: find.textContaining('форк')), findsOneWidget);
+    expect(find.byKey(const ValueKey('login_sso_source')), findsOneWidget);
     expect(find.text('Связаться с нами'), findsOneWidget);
     await tester.tap(find.text('Закрыть'));
     await _settle(tester);

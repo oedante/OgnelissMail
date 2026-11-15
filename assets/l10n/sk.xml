@@ -4331,11 +4331,11 @@
     <string name="loginKindWorkImap">IMAP organizácie</string>
     <string name="loginKindWorkImapDesc">Vlastný poštový server organizácie: servery a prihlasovacie meno u správcu</string>
     <string name="loginKindSso">Prihlásenie cez systém organizácie</string>
-    <string name="loginKindSsoDesc">SSO a OAuth organizácie — na požiadanie</string>
+    <string name="loginKindSsoDesc">SSO a OAuth organizácie: fork aplikácie alebo konzultácia</string>
     <string name="loginSsoTitle">Prihlásenie cez systém organizácie</string>
     <string name="loginSsoContact">Kontaktujte nás</string>
     <string name="imapLoginLabel">Prihlasovacie meno (ak sa líši od adresy)</string>
     <string name="imapLoginHint">jnovak alebo CORP\\jnovak</string>
-    <string name="loginSsoBody">Prihlásenie cez systém jednotného prihlásenia organizácie (OAuth 2.0 a OpenID Connect: Keycloak, ADFS, Microsoft Entra ID a ďalšie) sa nastavuje osobitne pre každú organizáciu. Ak chcete, aby sme ho pripravili pre vašu organizáciu, kontaktujte nás a napíšte, aký systém prihlásenia používate. Zatiaľ sa môžete prihlásiť heslom: Exchange alebo IMAP organizácie.</string>
+    <string name="loginSsoBody">Prihlásenie cez systém jednotného prihlásenia organizácie (OAuth 2.0 a OpenID Connect: Keycloak, ADFS, Microsoft Entra ID a ďalšie) je v každej organizácii iné a aplikácia ho neobsahuje. Ogneliss Mail má otvorený kód (Apache 2.0): organizácia si môže vytvoriť fork aplikácie a doplniť vlastné prihlásenie. Ak potrebujete poradiť, kontaktujte nás. Zatiaľ sa môžete prihlásiť heslom: Exchange alebo IMAP organizácie.</string>
     <string name="loginWorkImapNote">Potrebujete adresu a heslo. Servery aplikácia nájde sama, ak ich organizácia zverejnila. Ak sa nepripojí, opýtajte sa správcu pošty na servery IMAP a SMTP, porty, šifrovanie a prihlasovacie meno (ak sa líši od adresy).</string>
 </resources>

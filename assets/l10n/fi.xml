@@ -4310,11 +4310,11 @@
     <string name="loginKindWorkImap">Organisaation IMAP</string>
     <string name="loginKindWorkImapDesc">Organisaation oma sähköpostipalvelin: palvelimet ja käyttäjätunnus ylläpitäjältä</string>
     <string name="loginKindSso">Kirjaudu organisaation kautta</string>
-    <string name="loginKindSsoDesc">Organisaation SSO ja OAuth – pyynnöstä</string>
+    <string name="loginKindSsoDesc">Organisaation SSO ja OAuth: sovelluksen haara (fork) tai neuvonta</string>
     <string name="loginSsoTitle">Kirjaudu organisaation kautta</string>
     <string name="loginSsoContact">Ota yhteyttä</string>
     <string name="imapLoginLabel">Käyttäjätunnus (jos eri kuin osoite)</string>
     <string name="imapLoginHint">mvirtanen tai CORP\\mvirtanen</string>
-    <string name="loginSsoBody">Kirjautuminen organisaation kertakirjautumisjärjestelmän kautta (OAuth 2.0 ja OpenID Connect: Keycloak, ADFS, Microsoft Entra ID ym.) määritetään erikseen kullekin organisaatiolle. Jos haluat, että teemme sen organisaatiollesi, ota yhteyttä ja kerro, mitä kirjautumisjärjestelmää käytätte. Sillä välin voit kirjautua salasanalla: Exchange tai organisaation IMAP.</string>
+    <string name="loginSsoBody">Kirjautuminen organisaation kertakirjautumisjärjestelmän kautta (OAuth 2.0 ja OpenID Connect: Keycloak, ADFS, Microsoft Entra ID ym.) on joka organisaatiossa erilainen, eikä sovellus sisällä sitä. Ogneliss Mail on avointa lähdekoodia (Apache 2.0): organisaatio voi tehdä sovelluksesta oman haaran (fork) ja lisätä siihen oman kirjautumisensa. Jos tarvitset neuvoja, ota meihin yhteyttä. Sillä välin voit kirjautua salasanalla: Exchange tai organisaation IMAP.</string>
     <string name="loginWorkImapNote">Tarvitset osoitteen ja salasanan. Sovellus löytää palvelimet itse, jos organisaatio on julkaissut ne. Jos yhteys ei onnistu, kysy sähköpostin ylläpitäjältä IMAP- ja SMTP-palvelimet, portit, salaus ja käyttäjätunnus (jos eri kuin osoite).</string>
 </resources>

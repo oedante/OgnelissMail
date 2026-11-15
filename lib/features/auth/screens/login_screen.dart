@@ -816,7 +816,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       );
 
   /// Рабочая почта: Exchange, Microsoft 365, IMAP организации и вход через
-  /// систему организации (по запросу) — строками с пояснением.
+  /// систему организации (форк или консультация) — строками с пояснением.
   Widget _buildWorkRows(ThemeData theme, AppLocalizations l10n) {
     final scheme = theme.colorScheme;
     Widget row(IconData icon, Color color, String title, String desc, VoidCallback onTap, {Key? key}) => Material(
@@ -862,28 +862,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     ]);
   }
 
-  /// Вход через систему организации (SSO, OAuth организации) — по запросу:
-  /// он настраивается под каждую организацию (решение владельца 15.11.2026:
-  /// «для разработки такого способа входа свяжитесь с нами»).
+  /// Вход через систему организации (SSO, OAuth организации): в приложении
+  /// его нет — он у каждой организации свой. Решение владельца 15.11.2026:
+  /// не обещать сделать его каждому, а предложить форк открытого кода или
+  /// консультацию.
   Future<void> _showOrgSso() async {
     final l10n = AppLocalizations.of(context);
-    final go = await showDialog<bool>(
+    final go = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
         icon: const Icon(AppIcons.verified_user),
         title: Text(l10n.tr('loginSsoTitle')),
         content: SingleChildScrollView(child: Text(l10n.tr('loginSsoBody'))),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.tr('close'))),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.tr('loginSsoContact'))),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.tr('close'))),
+          TextButton(
+              key: const ValueKey('login_sso_source'),
+              onPressed: () => Navigator.pop(ctx, 'source'),
+              child: Text(l10n.tr('sourceCode'))),
+          FilledButton(onPressed: () => Navigator.pop(ctx, 'contact'), child: Text(l10n.tr('loginSsoContact'))),
         ],
       ),
     );
-    if (go != true) return;
-    final mail = AppConstants.supportEmail.trim();
-    await _open(mail.isNotEmpty
-        ? Uri(scheme: 'mailto', path: mail, queryParameters: {'subject': 'Ogneliss Mail: SSO'}).toString()
-        : AppConstants.corporateContactUrl(l10n.localeCode));
+    if (go == 'source') {
+      await _open(AppConstants.sourceUrl);
+    } else if (go == 'contact') {
+      final mail = AppConstants.supportEmail.trim();
+      await _open(mail.isNotEmpty
+          ? Uri(scheme: 'mailto', path: mail, queryParameters: {'subject': 'Ogneliss Mail: SSO'}).toString()
+          : AppConstants.corporateContactUrl(l10n.localeCode));
+    }
   }
 
   /// Плитки личной почты: по три в ряд.
@@ -1189,7 +1197,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         ],
 
         // IMAP организации (2.6.0): что понадобится и что спросить у
-        // администратора; вход через систему организации — по запросу.
+        // администратора; вход через систему организации — форк или консультация.
         if (kind == MailKind.imap && _corporate && !reauth) ...[
           _buildNote(theme, l10n.tr('loginWorkImapNote')),
           Align(

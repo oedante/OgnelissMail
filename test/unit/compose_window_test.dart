@@ -15,7 +15,10 @@ import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/data/models/email_model.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/features/compose/compose_window.dart';
+import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
+import 'package:ogneliss/services/mail/draft_sync_service.dart';
 import 'package:ogneliss/services/mail/offline_send_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Отправка главного окна в тесте: запоминает письмо, отвечает заданным.
 class _FakeSend extends OfflineSendService {
@@ -172,6 +175,23 @@ void main() {
     await ComposeWindowHost.handle(c, 'composeDbChanged', {'tables': ['emails', 'folders']});
     await Future<void>.delayed(Duration.zero);
     expect(seen, containsAll(['emails', 'folders']));
+  });
+
+  test('главное окно помнит, какой черновик в каком окне: второе окно не открывается', () async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final c = ProviderContainer(overrides: [sharedPrefsProvider.overrideWithValue(prefs)]);
+    addTearDown(c.dispose);
+    addTearDown(ComposeWindow.editing.clear);
+    await ComposeWindowHost.handle(c, 'composeDraft', {'op': 'begin', 'id': 'd1', 'window': '7'});
+    expect(ComposeWindow.editing, {'d1': '7'});
+    expect(DraftSyncService.editing, contains('d1'), reason: 'синхронизация не трогает черновик');
+    // Отметка «закрыт» от другого окна — не наша.
+    await ComposeWindowHost.handle(c, 'composeDraft', {'op': 'end', 'id': 'd1', 'window': '9'});
+    expect(ComposeWindow.editing, {'d1': '7'});
+    await ComposeWindowHost.handle(c, 'composeDraft', {'op': 'end', 'id': 'd1', 'window': '7'});
+    expect(ComposeWindow.editing, isEmpty);
+    expect(DraftSyncService.editing, isNot(contains('d1')));
   });
 
   test('окно закрывается после записи черновика (не дольше предела)', () async {

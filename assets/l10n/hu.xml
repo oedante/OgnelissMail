@@ -4297,6 +4297,6 @@
     <string name="attachPickedFiles">Csatolás</string>
     <string name="selectedFilesN">{n} fájl kiválasztva</string>
     <string name="composeWindowTitle">Levelek külön ablakban</string>
-    <string name="composeWindowDesc">Az új levél, a válasz és a továbbítás külön ablakban nyílik meg, mint az Outlookban: több levelet írhat, közben olvashatja a postát. Az olvasóablaktáblából indított válasz ott marad.</string>
+    <string name="composeWindowDesc">Az új levél, a válasz és a továbbítás külön ablakban nyílik meg, mint az Outlookban: több levelet írhat, közben olvashatja a postát. Az olvasóablaktáblából indított válasz ott marad. Kísérleti funkció Macre és Windowsra.</string>
     <string name="composeWindowFailed">A levél ablaka nem indult el</string>
 </resources>

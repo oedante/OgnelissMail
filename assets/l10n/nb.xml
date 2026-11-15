@@ -4297,6 +4297,6 @@
     <string name="attachPickedFiles">Legg ved</string>
     <string name="selectedFilesN">{n} filer valgt</string>
     <string name="composeWindowTitle">E-post i eget vindu</string>
-    <string name="composeWindowDesc">Ny e-post, svar og videresending åpnes i et eget vindu som i Outlook: skriv flere e-poster mens du leser posten. Et svar fra leseruten blir i ruten.</string>
+    <string name="composeWindowDesc">Ny e-post, svar og videresending åpnes i et eget vindu som i Outlook: skriv flere e-poster mens du leser posten. Et svar fra leseruten blir i ruten. Prøvefunksjon for Mac og Windows.</string>
     <string name="composeWindowFailed">E-postvinduet startet ikke</string>
 </resources>

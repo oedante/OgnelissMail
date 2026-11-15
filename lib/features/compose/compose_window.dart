@@ -85,13 +85,50 @@ abstract final class ComposeWindow {
   /// Этот движок — окно редактора.
   static bool inWindow = false;
 
+  /// Номер этого окна (в окне редактора).
+  static String? windowId;
+
   /// Windows и macOS: плагины в окнах регистрирует нативная часть сборки.
   /// Linux — редактор в главном окне, как раньше.
   static bool get supported => !kIsWeb && (Platform.isWindows || Platform.isMacOS);
 
   /// Открывать редактор отдельным окном: компьютер, не само окно редактора,
-  /// настройка включена (по умолчанию — да).
-  static bool enabled(SharedPreferences prefs) => supported && !inWindow && (prefs.getBool(prefKey) ?? true);
+  /// настройка включена. По умолчанию выключено — пробная возможность
+  /// (владелец 15.11.2026: «если многооконность нестабильная… экспериментом,
+  /// выключенным по умолчанию»).
+  static bool enabled(SharedPreferences prefs) => supported && !inWindow && (prefs.getBool(prefKey) ?? false);
+
+  /// Главное окно: черновики, которые правятся в окнах редактора, — id
+  /// черновика → окно (отметки «правится» из окон, [ComposeWindowHost]).
+  static final editing = <String, String>{};
+
+  /// Черновик [draftId] уже открыт в окне — поднять то окно. Второе окно
+  /// с тем же черновиком писало бы его поверх первого.
+  static Future<bool> focusDraft(String draftId) async {
+    final ids = <String>{if (editing[draftId] case final w?) w};
+    try {
+      for (final w in await WindowController.getAll()) {
+        Object? json;
+        try {
+          json = jsonDecode(w.arguments);
+        } catch (_) {}
+        if (ComposeWindowArgs.fromJson(json)?.query['draftId'] == draftId) ids.add(w.windowId);
+      }
+    } catch (_) {}
+    for (final id in ids) {
+      try {
+        await WindowController.fromWindowId(id).invokeMethod<Object?>(focusMethod);
+        return true;
+      } catch (e) {
+        // Окна уже нет.
+        editing.removeWhere((_, w) => w == id);
+      }
+    }
+    return false;
+  }
+
+  /// Просьба главного окна окну редактора: выйти на передний план.
+  static const focusMethod = 'composeFocus';
 
   /// В main(): этот движок — окно редактора? Тогда — что открыть.
   static Future<ComposeWindowArgs?> argsOfThisEngine() async {
@@ -111,6 +148,8 @@ abstract final class ComposeWindow {
   /// Главное окно: открыть редактор [query] отдельным окном. false — окно
   /// не создалось (тогда редактор — в главном окне).
   static Future<bool> open(Map<String, String> query) async {
+    final draft = query['draftId'];
+    if (draft != null && await focusDraft(draft)) return true;
     try {
       final c = await WindowController.create(
           WindowConfiguration(arguments: jsonEncode(ComposeWindowArgs(query).toJson()), hiddenAtLaunch: true));
@@ -270,8 +309,10 @@ abstract final class ComposeWindowHost {
     switch (a['op']) {
       case 'begin':
         s.beginEdit(id);
+        if (a['window'] case final String w when w.isNotEmpty) ComposeWindow.editing[id] = w;
       case 'end':
         s.endEdit(id);
+        if (ComposeWindow.editing[id] == a['window']) ComposeWindow.editing.remove(id);
       case 'replace':
         await s.rememberReplace(id, (id: '${a['server']}', folderId: '${a['folder']}'));
       case 'forget':
@@ -477,13 +518,13 @@ class WindowDraftSyncService extends DraftSyncService {
   @override
   void beginEdit(String id) {
     super.beginEdit(id);
-    unawaited(MessageWindow.ask('composeDraft', {'op': 'begin', 'id': id}));
+    unawaited(MessageWindow.ask('composeDraft', {'op': 'begin', 'id': id, 'window': ComposeWindow.windowId}));
   }
 
   @override
   void endEdit(String id) {
     super.endEdit(id);
-    unawaited(MessageWindow.ask('composeDraft', {'op': 'end', 'id': id}));
+    unawaited(MessageWindow.ask('composeDraft', {'op': 'end', 'id': id, 'window': ComposeWindow.windowId}));
   }
 
   @override

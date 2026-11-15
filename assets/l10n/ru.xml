@@ -4339,6 +4339,6 @@
     <string name="attachPickedFiles">Приложить</string>
     <string name="selectedFilesN">Выбрано файлов: {n}</string>
     <string name="composeWindowTitle">Письма — в отдельном окне</string>
-    <string name="composeWindowDesc">Новое письмо, ответ и пересылка открываются отдельным окном, как в Outlook: можно писать несколько писем и при этом читать почту. Ответ из области чтения — в ней же.</string>
+    <string name="composeWindowDesc">Новое письмо, ответ и пересылка открываются отдельным окном, как в Outlook: можно писать несколько писем и при этом читать почту. Ответ из области чтения — в ней же. Пробная возможность для Mac и Windows.</string>
     <string name="composeWindowFailed">Окно письма не запустилось</string>
 </resources>

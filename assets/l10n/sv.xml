@@ -4297,6 +4297,6 @@
     <string name="attachPickedFiles">Bifoga</string>
     <string name="selectedFilesN">{n} filer valda</string>
     <string name="composeWindowTitle">Mejl i eget fönster</string>
-    <string name="composeWindowDesc">Nytt mejl, svar och vidarebefordran öppnas i ett eget fönster som i Outlook: skriv flera mejl medan du läser posten. Ett svar från läsfönstret stannar där.</string>
+    <string name="composeWindowDesc">Nytt mejl, svar och vidarebefordran öppnas i ett eget fönster som i Outlook: skriv flera mejl medan du läser posten. Ett svar från läsfönstret stannar där. Testfunktion för Mac och Windows.</string>
     <string name="composeWindowFailed">Mejlfönstret startade inte</string>
 </resources>

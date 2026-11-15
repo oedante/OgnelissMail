@@ -4339,6 +4339,6 @@
     <string name="attachPickedFiles">Załącz</string>
     <string name="selectedFilesN">Wybrano plików: {n}</string>
     <string name="composeWindowTitle">Wiadomości w osobnym oknie</string>
-    <string name="composeWindowDesc">Nowa wiadomość, odpowiedź i przekazanie otwierają się w osobnym oknie, jak w Outlooku: możesz pisać kilka wiadomości i czytać pocztę. Odpowiedź z okienka odczytu zostaje w nim.</string>
+    <string name="composeWindowDesc">Nowa wiadomość, odpowiedź i przekazanie otwierają się w osobnym oknie, jak w Outlooku: możesz pisać kilka wiadomości i czytać pocztę. Odpowiedź z okienka odczytu zostaje w nim. Funkcja próbna dla Maca i Windows.</string>
     <string name="composeWindowFailed">Okno wiadomości nie uruchomiło się</string>
 </resources>

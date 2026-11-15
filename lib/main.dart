@@ -502,6 +502,7 @@ Future<void> _runComposeWindow(ComposeWindowArgs args) async {
   try {
     windowId = (await WindowController.fromCurrentEngine()).windowId;
   } catch (_) {}
+  ComposeWindow.windowId = windowId;
   try {
     await AppLogger.init(fileName: 'ogneliss-window.log');
     final init = await ComposeWindow.init();
@@ -541,6 +542,7 @@ Future<void> _runComposeWindow(ComposeWindowArgs args) async {
       await globalContainer.read(attachmentCacheProvider).init();
     } catch (_) {}
     await ComposeWindowFrame.setup(title: composeWindowTitle(l10n, args.query), windowId: windowId);
+    await ComposeWindowFrame.listenFocus();
     runApp(UncontrolledProviderScope(
       container: globalContainer,
       child: MailApp(router: composeWindowRouter(args.query), window: true),

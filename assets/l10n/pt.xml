@@ -4297,6 +4297,6 @@
     <string name="attachPickedFiles">Anexar</string>
     <string name="selectedFilesN">{n} arquivos selecionados</string>
     <string name="composeWindowTitle">E-mails em uma janela separada</string>
-    <string name="composeWindowDesc">Novo e-mail, resposta e encaminhamento abrem em uma janela separada, como no Outlook: escreva vários e-mails enquanto lê. A resposta pelo painel de leitura fica no painel.</string>
+    <string name="composeWindowDesc">Novo e-mail, resposta e encaminhamento abrem em uma janela separada, como no Outlook: escreva vários e-mails enquanto lê. A resposta pelo painel de leitura fica no painel. Recurso de teste para Mac e Windows.</string>
     <string name="composeWindowFailed">A janela do e-mail não iniciou</string>
 </resources>

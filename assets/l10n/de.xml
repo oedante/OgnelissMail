@@ -4297,6 +4297,6 @@
     <string name="attachPickedFiles">Anhängen</string>
     <string name="selectedFilesN">{n} Dateien ausgewählt</string>
     <string name="composeWindowTitle">E-Mails in eigenem Fenster</string>
-    <string name="composeWindowDesc">Neue E-Mail, Antwort und Weiterleitung öffnen sich in einem eigenen Fenster wie in Outlook: mehrere E-Mails schreiben und dabei Post lesen. Eine Antwort aus dem Lesebereich bleibt dort.</string>
+    <string name="composeWindowDesc">Neue E-Mail, Antwort und Weiterleitung öffnen sich in einem eigenen Fenster wie in Outlook: mehrere E-Mails schreiben und dabei Post lesen. Eine Antwort aus dem Lesebereich bleibt dort. Testfunktion für Mac und Windows.</string>
     <string name="composeWindowFailed">Das E-Mail-Fenster wurde nicht gestartet</string>
 </resources>

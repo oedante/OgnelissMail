@@ -4297,6 +4297,6 @@
     <string name="attachPickedFiles">Bijvoegen</string>
     <string name="selectedFilesN">{n} bestanden geselecteerd</string>
     <string name="composeWindowTitle">E-mails in een apart venster</string>
-    <string name="composeWindowDesc">Nieuwe e-mail, antwoord en doorsturen openen in een apart venster, zoals in Outlook: schrijf meerdere e-mails terwijl je je mail leest. Een antwoord vanuit het leesvenster blijft daar.</string>
+    <string name="composeWindowDesc">Nieuwe e-mail, antwoord en doorsturen openen in een apart venster, zoals in Outlook: schrijf meerdere e-mails terwijl je je mail leest. Een antwoord vanuit het leesvenster blijft daar. Proeffunctie voor Mac en Windows.</string>
     <string name="composeWindowFailed">Het e-mailvenster is niet gestart</string>
 </resources>

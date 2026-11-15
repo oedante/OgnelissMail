@@ -227,7 +227,7 @@ class _MailOpeningSectionState extends ConsumerState<MailOpeningSection> with _P
             icon: AppIcons.open_in_new,
             title: l10n.tr('composeWindowTitle'),
             subtitle: l10n.tr('composeWindowDesc'),
-            value: pref(ComposeWindow.prefKey),
+            value: pref(ComposeWindow.prefKey, def: false),
             onChanged: (v) => setPref(ComposeWindow.prefKey, v),
           ),
         if (mailDesktopWebViewSupported)

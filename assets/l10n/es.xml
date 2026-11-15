@@ -4297,6 +4297,6 @@
     <string name="attachPickedFiles">Adjuntar</string>
     <string name="selectedFilesN">{n} archivos seleccionados</string>
     <string name="composeWindowTitle">Correos en una ventana aparte</string>
-    <string name="composeWindowDesc">El correo nuevo, la respuesta y el reenvío se abren en una ventana aparte, como en Outlook: escribe varios correos mientras lees. La respuesta desde el panel de lectura se queda en él.</string>
+    <string name="composeWindowDesc">El correo nuevo, la respuesta y el reenvío se abren en una ventana aparte, como en Outlook: escribe varios correos mientras lees. La respuesta desde el panel de lectura se queda en él. Función de prueba para Mac y Windows.</string>
     <string name="composeWindowFailed">La ventana del correo no se inició</string>
 </resources>

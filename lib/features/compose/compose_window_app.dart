@@ -91,6 +91,31 @@ abstract final class ComposeWindowFrame {
     }
   }
 
+  /// Главное окно просит выйти вперёд (тот же черновик открыли ещё раз).
+  static Future<void> listenFocus() async {
+    try {
+      final me = await WindowController.fromCurrentEngine();
+      await me.setWindowMethodHandler((call) async {
+        if (call.method == ComposeWindow.focusMethod) await focus();
+        return null;
+      });
+    } catch (e) {
+      AppLogger.warning('Окно редактора: просьбы главного окна не принимаются — $e');
+    }
+  }
+
+  static Future<void> focus() async {
+    try {
+      if (_wm) {
+        if (await windowManager.isMinimized()) await windowManager.restore();
+        await windowManager.show();
+        await windowManager.focus();
+      } else if (_windowId != null) {
+        await WindowController.fromWindowId(_windowId!).show();
+      }
+    } catch (_) {}
+  }
+
   /// Показать окно и сообщить главному окну, что оно показано.
   static Future<void> show() async {
     try {

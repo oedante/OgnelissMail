@@ -4297,6 +4297,6 @@
     <string name="attachPickedFiles">Vedhæft</string>
     <string name="selectedFilesN">{n} filer valgt</string>
     <string name="composeWindowTitle">Mails i et separat vindue</string>
-    <string name="composeWindowDesc">Ny mail, svar og videresendelse åbnes i et separat vindue som i Outlook: skriv flere mails, mens du læser din post. Et svar fra læseruden bliver i ruden.</string>
+    <string name="composeWindowDesc">Ny mail, svar og videresendelse åbnes i et separat vindue som i Outlook: skriv flere mails, mens du læser din post. Et svar fra læseruden bliver i ruden. Prøvefunktion til Mac og Windows.</string>
     <string name="composeWindowFailed">Mailvinduet startede ikke</string>
 </resources>

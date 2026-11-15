@@ -4276,6 +4276,6 @@
     <string name="attachPickedFiles">Đính kèm</string>
     <string name="selectedFilesN">Đã chọn {n} tệp</string>
     <string name="composeWindowTitle">Email trong cửa sổ riêng</string>
-    <string name="composeWindowDesc">Email mới, trả lời và chuyển tiếp mở trong cửa sổ riêng như Outlook: vừa đọc thư vừa soạn nhiều email. Trả lời từ ngăn đọc vẫn ở trong ngăn.</string>
+    <string name="composeWindowDesc">Email mới, trả lời và chuyển tiếp mở trong cửa sổ riêng như Outlook: vừa đọc thư vừa soạn nhiều email. Trả lời từ ngăn đọc vẫn ở trong ngăn. Tính năng thử nghiệm cho Mac và Windows.</string>
     <string name="composeWindowFailed">Cửa sổ email không khởi động</string>
 </resources>

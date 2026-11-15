@@ -4381,6 +4381,6 @@
     <string name="attachPickedFiles">إرفاق</string>
     <string name="selectedFilesN">الملفات المحددة: {n}</string>
     <string name="composeWindowTitle">الرسائل في نافذة منفصلة</string>
-    <string name="composeWindowDesc">تُفتح الرسالة الجديدة والرد وإعادة التوجيه في نافذة منفصلة كما في Outlook: يمكنك كتابة عدة رسائل أثناء قراءة البريد. الرد من جزء القراءة يبقى فيه.</string>
+    <string name="composeWindowDesc">تُفتح الرسالة الجديدة والرد وإعادة التوجيه في نافذة منفصلة كما في Outlook: يمكنك كتابة عدة رسائل أثناء قراءة البريد. الرد من جزء القراءة يبقى فيه. ميزة تجريبية لنظامي Mac وWindows.</string>
     <string name="composeWindowFailed">لم تبدأ نافذة الرسالة</string>
 </resources>

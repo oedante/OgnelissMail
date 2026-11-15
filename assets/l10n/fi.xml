@@ -4297,6 +4297,6 @@
     <string name="attachPickedFiles">Liitä</string>
     <string name="selectedFilesN">{n} tiedostoa valittu</string>
     <string name="composeWindowTitle">Viestit erillisessä ikkunassa</string>
-    <string name="composeWindowDesc">Uusi viesti, vastaus ja edelleenlähetys avautuvat erilliseen ikkunaan kuten Outlookissa: voit kirjoittaa useita viestejä ja lukea postia samalla. Vastaus lukuruudusta pysyy ruudussa.</string>
+    <string name="composeWindowDesc">Uusi viesti, vastaus ja edelleenlähetys avautuvat erilliseen ikkunaan kuten Outlookissa: voit kirjoittaa useita viestejä ja lukea postia samalla. Vastaus lukuruudusta pysyy ruudussa. Kokeiluominaisuus Macille ja Windowsille.</string>
     <string name="composeWindowFailed">Viesti-ikkuna ei käynnistynyt</string>
 </resources>

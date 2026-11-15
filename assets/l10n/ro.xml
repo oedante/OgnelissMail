@@ -4318,6 +4318,6 @@
     <string name="attachPickedFiles">Atașează</string>
     <string name="selectedFilesN">Fișiere selectate: {n}</string>
     <string name="composeWindowTitle">E-mailuri într-o fereastră separată</string>
-    <string name="composeWindowDesc">E-mailul nou, răspunsul și redirecționarea se deschid într-o fereastră separată, ca în Outlook: scrieți mai multe e-mailuri în timp ce citiți. Răspunsul din panoul de citire rămâne în panou.</string>
+    <string name="composeWindowDesc">E-mailul nou, răspunsul și redirecționarea se deschid într-o fereastră separată, ca în Outlook: scrieți mai multe e-mailuri în timp ce citiți. Răspunsul din panoul de citire rămâne în panou. Funcție de probă pentru Mac și Windows.</string>
     <string name="composeWindowFailed">Fereastra e-mailului nu a pornit</string>
 </resources>

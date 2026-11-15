@@ -4297,6 +4297,6 @@
     <string name="attachPickedFiles">Joindre</string>
     <string name="selectedFilesN">{n} fichiers sélectionnés</string>
     <string name="composeWindowTitle">E-mails dans une fenêtre séparée</string>
-    <string name="composeWindowDesc">Le nouvel e-mail, la réponse et le transfert s\'ouvrent dans une fenêtre séparée, comme dans Outlook : écrivez plusieurs e-mails tout en lisant. Une réponse depuis le volet de lecture y reste.</string>
+    <string name="composeWindowDesc">Le nouvel e-mail, la réponse et le transfert s\'ouvrent dans une fenêtre séparée, comme dans Outlook : écrivez plusieurs e-mails tout en lisant. Une réponse depuis le volet de lecture y reste. Fonction à l\'essai pour Mac et Windows.</string>
     <string name="composeWindowFailed">La fenêtre de l\'e-mail n\'a pas démarré</string>
 </resources>

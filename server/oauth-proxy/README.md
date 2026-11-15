@@ -17,6 +17,7 @@ Stateless-посредник OAuth: держит `client_secret` **на серв
 | Файл | Назначение |
 |---|---|
 | `install-oauth-proxy.sh` | **Установщик** для Debian 11/12: `install`, `update`, `check`, `key`. Docker рядом с почтой (за Nginx Proxy Manager) или systemd + nginx на чистом сервере. Инструкция — `docs/guides/OAUTH_PROXY_DEBIAN.md`. |
+| `set-oauth-env.sh` | **Правка `.env` и перезапуск** (15.11.2026): копия `.env`, замена ключей, пересоздание контейнера (`docker restart` `.env` не перечитывает), проверка `/healthz`, откат при сбое. `sudo bash set-oauth-env.sh --google-scope` — права Google без `gmail.settings.basic`; `--show` — ключи со скрытыми секретами; `--help` — всё остальное. |
 | `setup-oauth-ogneliss.sh` | Устарел: вызывает `install-oauth-proxy.sh --mode docker`. Раньше содержал старую копию server.js. |
 | `setup-mail-tls-ogneliss.sh` | Установка валидного TLS-сертификата в docker-mailserver (чтобы почтовые клиенты подключались по 993/587). |
 | `server.js`, `bimi.js`, `package.json`, `package-lock.json`, `Dockerfile`, `docker-compose.oauth.yml` | Исходники прокси; установщик берёт их из этой папки — копируйте на сервер папку целиком. |

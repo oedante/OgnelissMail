@@ -4318,6 +4318,6 @@
     <string name="attachPickedFiles">Přiložit</string>
     <string name="selectedFilesN">Vybráno souborů: {n}</string>
     <string name="composeWindowTitle">E-maily v samostatném okně</string>
-    <string name="composeWindowDesc">Nový e-mail, odpověď a přeposlání se otevírají v samostatném okně jako v Outlooku: můžete psát více e-mailů a přitom číst poštu. Odpověď z podokna čtení zůstává v něm.</string>
+    <string name="composeWindowDesc">Nový e-mail, odpověď a přeposlání se otevírají v samostatném okně jako v Outlooku: můžete psát více e-mailů a přitom číst poštu. Odpověď z podokna čtení zůstává v něm. Zkušební funkce pro Mac a Windows.</string>
     <string name="composeWindowFailed">Okno e-mailu se nespustilo</string>
 </resources>

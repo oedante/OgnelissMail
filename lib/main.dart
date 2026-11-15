@@ -8,6 +8,7 @@ import 'core/platform/native_drag_drop.dart';
 import 'core/platform/portable_mode.dart';
 import 'core/platform/device_time_zone.dart';
 import 'widgets/common/scroll_edge_fade.dart';
+import 'services/mail/dav/dav_discovery.dart';
 import 'services/widget_mail_actions.dart' show widgetMailActionsProvider;
 import 'services/weather/weather_service.dart' show WeatherApi;
 import 'services/documents/doc_preview_settings.dart';
@@ -492,6 +493,8 @@ Future<void> main() async {
     // Windows: есть ли WebView2 Runtime для сложных писем — до первого
     // письма (2.5.4).
     unawaited(DesktopMailWebView.probe());
+    // Календарь и контакты рабочей почты, найденные раньше (RFC 6764).
+    unawaited(DavDiscovery.load());
   } catch (e, stack) {
     AppLogger.error('Критическая ошибка при запуске', e, stack);
     runApp(_ErrorApp(error: e.toString()));

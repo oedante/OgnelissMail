@@ -59,6 +59,14 @@ class DavCredentials {
   static String _basic(String user, String pw) =>
       'Basic ${base64.encode(utf8.encode('$user:$pw'))}';
 
+  /// Basic с логином и паролем ящика IMAP — для поиска календаря и
+  /// контактов рабочей почты (DavDiscovery). null — пароля нет.
+  static Future<String?> passwordBasic(AccountModel account, SecureStorageService storage) async {
+    final pw = await storage.getAccountPassword(account.id);
+    if (pw == null || pw.isEmpty) return null;
+    return _basic(account.username.isNotEmpty ? account.username : account.email, pw);
+  }
+
   /// null — войти нечем (нет токена и пароля). [contacts] — для CardDAV:
   /// сначала отдельный пароль контактов, если он задан.
   static Future<String?> authorization(

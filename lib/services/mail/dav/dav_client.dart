@@ -86,6 +86,16 @@ class DavClient {
 
   // ── Обнаружение коллекций ──
 
+  /// Principal пользователя на [url] (с учётными данными) — проверка, что
+  /// по адресу действительно CalDAV/CardDAV и вход подходит (поиск
+  /// календаря рабочей почты, 2.6.0). null — нет.
+  Future<String?> principalOf(String url) async {
+    final xml = await _dav('PROPFIND', url, depth: 0, body:
+        '<d:propfind xmlns:d="DAV:"><d:prop><d:current-user-principal/></d:prop></d:propfind>');
+    final href = _href(xml, 'current-user-principal');
+    return href == null ? null : _abs(Uri.parse(url), href);
+  }
+
   /// Найти URL коллекций (календарей/адресных книг) от базового адреса.
   /// homeProp: 'calendar-home-set' | 'addressbook-home-set'.
   /// collType: локальное имя resourcetype-метки ('calendar' | 'addressbook').

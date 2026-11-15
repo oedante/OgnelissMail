@@ -11,6 +11,7 @@
 //   Yahoo  — пароль приложения.
 // Отказ сервера (401/403) — нормальный исход: пустой список и пауза 6 часов.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' show Random;
 
@@ -23,6 +24,7 @@ import '../../../data/models/task_model.dart';
 import '../../../core/logging/app_logger.dart';
 import '../../calendar/eas_recurrence.dart';
 import 'dav_client.dart';
+import 'dav_discovery.dart';
 import 'ical_parser.dart';
 import 'vcard_parser.dart';
 
@@ -48,6 +50,10 @@ class DavPimService {
       // iCloud (1.6.12): principal с корня, пароль приложения Apple.
       case 'icloud':
         return (start: 'https://caldav.icloud.com/', fallback: const []);
+      // Рабочая почта по IMAP (2.6.0): адрес нашёл DavDiscovery (RFC 6764).
+      case 'custom':
+        final s = DavDiscovery.calendarFor(email);
+        return s == null ? null : (start: s, fallback: const []);
     }
     return null;
   }
@@ -66,6 +72,9 @@ class DavPimService {
         return (start: 'https://carddav.address.yahoo.com/', fallback: const []);
       case 'icloud':
         return (start: 'https://contacts.icloud.com/', fallback: const []);
+      case 'custom':
+        final s = DavDiscovery.contactsFor(email);
+        return s == null ? null : (start: s, fallback: const []);
       // mail.ru: CardDAV нет.
     }
     return null;
@@ -104,11 +113,22 @@ class DavPimService {
     if (_icloudDomains.contains(d) || (account.imapServer ?? '').toLowerCase() == 'imap.mail.me.com') {
       return 'icloud';
     }
+    // Рабочая почта: календарь или контакты нашлись на сервере организации.
+    if (DavDiscovery.has(account.email)) return 'custom';
     return null;
   }
 
-  /// Есть ли у провайдера контакты по CardDAV.
-  static bool hasContacts(String provider) => provider != 'mailru';
+  /// Провайдер по типу и домену — без найденного на сервере организации
+  /// (для DavDiscovery: искать ли).
+  static String? knownProviderOf(AccountModel account) {
+    final p = providerOf(account);
+    return p == 'custom' ? null : p;
+  }
+
+  /// Есть ли у провайдера контакты по CardDAV ([email] — для рабочей
+  /// почты: нашлись ли контакты на её сервере).
+  static bool hasContacts(String provider, [String? email]) =>
+      provider == 'custom' ? (email != null && DavDiscovery.contactsFor(email) != null) : provider != 'mailru';
 
   /// Нужен ли пароль приложения для календаря и контактов (1.7.2+110 —
   /// пункт «Календарь и контакты» в настройках ящика показывается только
@@ -183,7 +203,9 @@ class DavPimService {
 
   Future<List<DavCalendar>> _calendarsOf(AccountModel account, DavClient client, {bool fresh = false}) async {
     if (!fresh && _calendars[account.id] != null) return _calendars[account.id]!;
-    final ep = _calendarEndpoints(providerOf(account)!, account.email)!;
+    final provider = providerOf(account);
+    final ep = provider == null ? null : _calendarEndpoints(provider, account.email);
+    if (ep == null) return const [];
     final cals = await client.discoverCalendars(ep.start, fallback: ep.fallback);
     if (!client.denied) {
       _calendars[account.id] = cals;
@@ -236,6 +258,7 @@ class DavPimService {
   }
 
   static Future<void> forgetAccount(String accountId) async {
+    unawaited(DavDiscovery.forget(accountId));
     _calendars.remove(accountId);
     _books.remove(accountId);
     _discoveredAt.remove('$accountId:cal');
@@ -874,14 +897,14 @@ class DavPimService {
   /// Можно ли записывать контакты (у Mail.ru CardDAV нет).
   static bool canWriteContacts(AccountModel account) {
     final p = providerOf(account);
-    return p != null && hasContacts(p);
+    return p != null && hasContacts(p, account.email);
   }
 
   /// Создать или изменить контакт на сервере. Возвращает id, под которым он
   /// придёт при синхронизации (null — сервер не принял).
   Future<String?> saveContact(AccountModel account, String authorization, ContactModel c) async {
     final provider = providerOf(account);
-    if (provider == null || !hasContacts(provider)) return null;
+    if (provider == null || !hasContacts(provider, account.email)) return null;
     final prefix = idPrefix(account.id);
     final oldKey = c.id.startsWith(prefix) ? c.id.substring(prefix.length) : null;
     var res = await _loadCardRes(account.id);

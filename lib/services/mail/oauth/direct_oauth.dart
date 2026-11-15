@@ -394,7 +394,7 @@ class DirectOAuth {
     final err = q['error'];
     if (err != null && err.isNotEmpty) {
       AppLogger.warning('OAuth (${c.provider}): провайдер вернул $err');
-      throw OAuthProviderError(err, q['error_description']);
+      throw OAuthProviderError.of(err, q['error_description'], provider: c.provider);
     }
     // Ответ без нашего state — не наш вход (CSRF).
     if (q['state'] != state) {

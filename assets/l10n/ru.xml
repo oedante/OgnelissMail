@@ -4341,4 +4341,7 @@
     <string name="composeWindowTitle">Письма — в отдельном окне</string>
     <string name="composeWindowDesc">Новое письмо, ответ и пересылка открываются отдельным окном, как в Outlook: можно писать несколько писем и при этом читать почту. Ответ из области чтения — в ней же. Пробная возможность для Mac и Windows.</string>
     <string name="composeWindowFailed">Окно письма не запустилось</string>
+    <string name="oauthGoogleUserCap">Google сейчас не пускает новых пользователей: пока приложение проходит проверку Google, войти через Google могут не больше 100 человек. Почту Gmail можно подключить паролем приложения.</string>
+    <string name="oauthGoogleUserCapAction">Подключить паролем приложения</string>
+    <string name="gmailAppPwNote">Нужен пароль приложения Google: включите двухэтапную проверку в аккаунте Google и создайте пароль на странице «Пароли приложений». Так подключается почта; календарь и контакты Google — только при входе через Google.</string>
 </resources>

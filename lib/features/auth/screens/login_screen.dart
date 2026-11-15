@@ -152,6 +152,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   /// Способ выбран вручную («Другой способ входа»).
   bool _manual = false;
 
+  /// Почта Gmail паролем приложения: Google не пустил по OAuth (лимит
+  /// пользователей непроверенного приложения, 2.5.4).
+  bool _gmailAppPw = false;
+
+  /// Страница паролей приложений Google (и для адресов Google Workspace на
+  /// своём домене — MailProviderDetect знает только gmail.com).
+  static const _googleAppPwUrl = 'https://myaccount.google.com/apppasswords';
+
+  /// Серверы Gmail для входа паролем приложения (и для адресов Google
+  /// Workspace на своём домене).
+  static const _gmailImap = ImapPreset(
+    imapHost: 'imap.gmail.com',
+    imapPort: 993,
+    imapEncryption: EncryptionType.ssl,
+    smtpHost: 'smtp.gmail.com',
+    smtpPort: 587,
+    smtpEncryption: EncryptionType.starttls,
+  );
+
   /// Ошибка поля адреса на первом шаге.
   String? _addressError;
 
@@ -279,6 +298,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   /// проверить.
   void _applyKind(MailKind k, {ImapPreset? preset, bool guessed = false}) {
     _icloud = k == MailKind.icloud;
+    _gmailAppPw = false;
     _selectedType = switch (k) {
       MailKind.google => AccountType.google,
       MailKind.microsoft => AccountType.outlook,
@@ -959,10 +979,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final kind = _kind;
     final scheme = theme.colorScheme;
     final appPwKind = kind == MailKind.mailru || kind == MailKind.icloud;
-    final appPwHint = !appPwKind && (_guess?.appPassword ?? false);
+    final appPwHint = !appPwKind && (_gmailAppPw || (_guess?.appPassword ?? false));
     final appPwUrl = switch (kind) {
       MailKind.mailru => 'https://account.mail.ru/user/2-step-auth/passwords/',
       MailKind.icloud => 'https://account.apple.com/account/manage',
+      _ when _gmailAppPw => _googleAppPwUrl,
       _ => MailProviderDetect.appPasswordUrl(_email),
     };
     return Column(
@@ -1042,7 +1063,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         // Служба пускает почтовые программы только по паролю приложения.
         if (appPwHint) ...[
           const SizedBox(height: Space.s),
-          _buildNote(theme, l10n.tr('loginAppPasswordNote')),
+          _buildNote(theme, l10n.tr(_gmailAppPw ? 'gmailAppPwNote' : 'loginAppPasswordNote')),
           if (appPwUrl != null)
             Align(
               alignment: AlignmentDirectional.centerStart,
@@ -1229,6 +1250,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final appPwUrl = switch (_kind) {
       MailKind.mailru => 'https://account.mail.ru/user/2-step-auth/passwords/',
       MailKind.icloud => 'https://account.apple.com/account/manage',
+      _ when _gmailAppPw => _googleAppPwUrl,
       _ => MailProviderDetect.appPasswordUrl(_email),
     };
     final imapUrl = MailProviderDetect.imapSettingsUrl(_email);
@@ -1240,6 +1262,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       AuthErrorKind.imapDisabled when imapUrl != null =>
         (l10n.tr('loginErrImapSettings'), AppIcons.open_in_new, () => _open(imapUrl)),
       AuthErrorKind.network => (l10n.tr('retry'), AppIcons.refresh, _isOAuthKind ? _onOAuth : _onLogin),
+      // Google не пускает новых пользователей — почта Gmail паролем
+      // приложения (вход по паролю, IMAP).
+      AuthErrorKind.googleUserCap when _reauth == null =>
+        (l10n.tr('oauthGoogleUserCapAction'), AppIcons.key, _gmailAppPassword),
       _ => (null, null, null),
     };
     return Container(
@@ -1284,6 +1310,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         ],
       ),
     );
+  }
+
+  /// Gmail паролем приложения вместо входа через Google (2.5.4): вход по
+  /// паролю IMAP с серверами Gmail, подсказка и ссылка на страницу паролей
+  /// приложений Google.
+  void _gmailAppPassword() {
+    unawaited(HapticFeedback.selectionClick());
+    setState(() {
+      _resetForDomain();
+      _manual = true;
+      _askEmail = !_emailValid;
+      _applyKind(MailKind.imap, preset: _gmailImap);
+      _gmailAppPw = true;
+      _showAdvanced = false;
+      _step = _Step.method;
+    });
+    _focusPasswordSoon();
   }
 
   /// «Проверить пароль»: показать пароль и выделить его.
@@ -1354,7 +1397,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           smtpPort: int.tryParse(_smtpPortController.text) ?? AppConstants.defaultSmtpPort,
           imapEncryption: _imapEncryption,
           smtpEncryption: _smtpEncryption,
-          appPassword: _guess?.appPassword ?? false,
+          appPassword: _gmailAppPw || (_guess?.appPassword ?? false),
         );
       case MailKind.mailru:
         // Серверы Mail.ru (все домены: mail.ru, bk.ru, inbox.ru, list.ru,

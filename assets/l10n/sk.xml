@@ -4320,4 +4320,7 @@
     <string name="composeWindowTitle">E-maily v samostatnom okne</string>
     <string name="composeWindowDesc">Nový e-mail, odpoveď a preposlanie sa otvárajú v samostatnom okne ako v Outlooku: môžete písať viac e-mailov a pritom čítať poštu. Odpoveď z tably na čítanie zostáva v nej. Skúšobná funkcia pre Mac a Windows.</string>
     <string name="composeWindowFailed">Okno e-mailu sa nespustilo</string>
+    <string name="oauthGoogleUserCap">Google teraz neprijíma nových používateľov: kým aplikácia neprejde overením Googlu, môže sa cez Google prihlásiť najviac 100 ľudí. Gmail môžete pripojiť heslom aplikácie.</string>
+    <string name="oauthGoogleUserCapAction">Použiť heslo aplikácie</string>
+    <string name="gmailAppPwNote">Potrebujete heslo aplikácie Google: zapnite v účte Google dvojstupňové overenie a vytvorte heslo na stránke „Heslá aplikácií“. Takto sa pripojí len pošta; Kalendár a Kontakty Google vyžadujú prihlásenie cez Google.</string>
 </resources>

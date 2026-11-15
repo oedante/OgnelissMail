@@ -4320,4 +4320,7 @@
     <string name="composeWindowTitle">E-mailuri într-o fereastră separată</string>
     <string name="composeWindowDesc">E-mailul nou, răspunsul și redirecționarea se deschid într-o fereastră separată, ca în Outlook: scrieți mai multe e-mailuri în timp ce citiți. Răspunsul din panoul de citire rămâne în panou. Funcție de probă pentru Mac și Windows.</string>
     <string name="composeWindowFailed">Fereastra e-mailului nu a pornit</string>
+    <string name="oauthGoogleUserCap">Google nu acceptă acum utilizatori noi: până când aplicația trece de verificarea Google, se pot conecta cu Google cel mult 100 de persoane. Puteți conecta Gmail cu o parolă pentru aplicații.</string>
+    <string name="oauthGoogleUserCapAction">Folosiți o parolă pentru aplicații</string>
+    <string name="gmailAppPwNote">Aveți nevoie de o parolă pentru aplicații Google: activați verificarea în doi pași în contul Google și creați o parolă pe pagina „Parole pentru aplicații”. Așa se conectează doar e-mailul; Google Calendar și Persoane de contact necesită conectarea cu Google.</string>
 </resources>

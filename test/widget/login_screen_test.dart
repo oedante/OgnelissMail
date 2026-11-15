@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ogneliss/core/security/secure_storage_service.dart';
 import 'package:ogneliss/core/theme/app_theme.dart';
 import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
@@ -14,6 +15,9 @@ import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/auth/screens/login_screen.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/services/mail/mail_provider_detect.dart' show MailKind;
+import 'package:ogneliss/services/mail/oauth/cross_platform_oauth.dart';
+import 'package:ogneliss/services/mail/oauth/oauth_service.dart';
+import 'package:ogneliss/services/mail/oauth/proxy_pkce.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _settle(WidgetTester tester) async {
@@ -23,8 +27,64 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
+/// Вход через Google, который Google не пускает: лимит пользователей
+/// непроверенного приложения (2.5.4).
+class _CapOAuth extends CrossPlatformOAuthService {
+  _CapOAuth() : super(OAuthService(SecureStorageService()), () => AppLocalizations(const Locale('ru')));
+
+  @override
+  Future<OAuthResult> authenticate(String providerName, {String? loginHint, bool reauth = false}) async =>
+      throw const OAuthProviderError(OAuthProviderError.userCap);
+}
+
 void main() {
   setUpAll(() => driftRuntimeOptions.dontWarnAboutMultipleDatabases = true);
+
+  testWidgets('Google не пускает новых пользователей — объяснение и вход паролем приложения', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    tester.view.physicalSize = const Size(400, 900) * 2;
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        databaseProvider.overrideWithValue(db),
+        sharedPrefsProvider.overrideWithValue(prefs),
+        crossPlatformOAuthProvider.overrideWithValue(_CapOAuth()),
+      ],
+      child: MaterialApp(
+        theme: AppTheme.lightTheme(1.0),
+        locale: const Locale('ru'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: const LoginScreen(),
+      ),
+    ));
+    await _settle(tester);
+    await tester.enterText(find.byType(TextField).first, 'ivan@gmail.com');
+    await tester.tap(find.text('Далее'));
+    await _settle(tester);
+    await tester.tap(find.text('Войти через Google'));
+    await _settle(tester);
+    // Текст ошибки — на языке настроек (в тесте не задан), число — в любом.
+    expect(find.textContaining('100 '), findsOneWidget);
+    await tester.tap(find.text('Подключить паролем приложения'));
+    await _settle(tester);
+
+    // Вход по паролю: подсказка Google и ссылка на страницу паролей.
+    expect(find.text('Пароль'), findsOneWidget);
+    expect(find.textContaining('двухэтапную проверку'), findsOneWidget);
+    expect(find.text('Создать пароль приложения'), findsOneWidget);
+    expect(find.text('Войти через Google'), findsNothing);
+    expect(find.textContaining('100 '), findsNothing, reason: 'ошибка снята');
+  });
 
   testWidgets('адрес первым: Gmail — вход через Google, Mail.ru — пароль приложения', (tester) async {
     SharedPreferences.setMockInitialValues({});

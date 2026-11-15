@@ -29,6 +29,11 @@
 #    --no-restart     только записать .env
 #    --yes            не спрашивать подтверждения
 #
+#  Лимит пользователей Google (100 из 100 в Cloud Console, «OAuth user cap»):
+#    sudo bash set-oauth-env.sh GOOGLE_USER_CAP=1          # закрыть новый вход
+#    sudo bash set-oauth-env.sh --unset GOOGLE_USER_CAP    # открыть снова
+#  Нужен server.js от 15.11.2026 и новее (в /healthz — "googleUserCap").
+#
 #  Значения с пробелами — одним аргументом в кавычках:
 #    sudo bash set-oauth-env.sh "GOOGLE_SCOPE=openid email profile"
 #  В .env они пишутся без кавычек (так читает env_file у docker-compose 1.x).
@@ -61,7 +66,7 @@ while [ $# -gt 0 ]; do
     --dry-run) DRY=1 ;;
     --no-restart) RESTART=0 ;;
     --yes|-y) YES=1 ;;
-    -h|--help) sed -n '2,37p' "$0" | sed 's/^#  \{0,1\}//'; exit 0 ;;
+    -h|--help) awk 'NR > 2 && /^# =+$/ { exit } NR > 2 { sub(/^# ?/, ""); print }' "$0"; exit 0 ;;
     *=*) SETS+=("$1") ;;
     *) die "непонятный параметр: $1 (справка: --help)" ;;
   esac

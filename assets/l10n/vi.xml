@@ -4278,4 +4278,7 @@
     <string name="composeWindowTitle">Email trong cửa sổ riêng</string>
     <string name="composeWindowDesc">Email mới, trả lời và chuyển tiếp mở trong cửa sổ riêng như Outlook: vừa đọc thư vừa soạn nhiều email. Trả lời từ ngăn đọc vẫn ở trong ngăn. Tính năng thử nghiệm cho Mac và Windows.</string>
     <string name="composeWindowFailed">Cửa sổ email không khởi động</string>
+    <string name="oauthGoogleUserCap">Hiện Google không nhận người dùng mới: cho đến khi ứng dụng vượt qua kiểm duyệt của Google, tối đa 100 người có thể đăng nhập bằng Google. Bạn có thể kết nối Gmail bằng mật khẩu ứng dụng.</string>
+    <string name="oauthGoogleUserCapAction">Dùng mật khẩu ứng dụng</string>
+    <string name="gmailAppPwNote">Bạn cần mật khẩu ứng dụng của Google: bật Xác minh 2 bước trong Tài khoản Google và tạo mật khẩu ở trang “Mật khẩu ứng dụng”. Cách này chỉ kết nối thư; Lịch và Danh bạ Google cần đăng nhập bằng Google.</string>
 </resources>

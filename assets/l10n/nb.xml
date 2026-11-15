@@ -4299,4 +4299,7 @@
     <string name="composeWindowTitle">E-post i eget vindu</string>
     <string name="composeWindowDesc">Ny e-post, svar og videresending åpnes i et eget vindu som i Outlook: skriv flere e-poster mens du leser posten. Et svar fra leseruten blir i ruten. Prøvefunksjon for Mac og Windows.</string>
     <string name="composeWindowFailed">E-postvinduet startet ikke</string>
+    <string name="oauthGoogleUserCap">Google tar ikke imot nye brukere akkurat nå: til appen har bestått Googles kontroll, kan maks. 100 personer logge på med Google. Du kan koble til Gmail med et apppassord.</string>
+    <string name="oauthGoogleUserCapAction">Bruk apppassord</string>
+    <string name="gmailAppPwNote">Du trenger et Google-apppassord: slå på totrinnsbekreftelse i Google-kontoen og lag et passord på siden «Apppassord». Slik kobles bare e-posten til; Google Kalender og Kontakter krever pålogging med Google.</string>
 </resources>

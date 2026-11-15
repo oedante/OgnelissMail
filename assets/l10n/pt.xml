@@ -4299,4 +4299,7 @@
     <string name="composeWindowTitle">E-mails em uma janela separada</string>
     <string name="composeWindowDesc">Novo e-mail, resposta e encaminhamento abrem em uma janela separada, como no Outlook: escreva vários e-mails enquanto lê. A resposta pelo painel de leitura fica no painel. Recurso de teste para Mac e Windows.</string>
     <string name="composeWindowFailed">A janela do e-mail não iniciou</string>
+    <string name="oauthGoogleUserCap">O Google não está aceitando novos usuários no momento: até o app passar na verificação do Google, no máximo 100 pessoas podem entrar com o Google. Você pode conectar o Gmail com uma senha de app.</string>
+    <string name="oauthGoogleUserCapAction">Usar senha de app</string>
+    <string name="gmailAppPwNote">Você precisa de uma senha de app do Google: ative a verificação em duas etapas na sua Conta do Google e crie uma senha na página “Senhas de app”. Assim só o e-mail é conectado; Google Agenda e Contatos exigem entrar com o Google.</string>
 </resources>

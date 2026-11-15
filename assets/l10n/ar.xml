@@ -4383,4 +4383,7 @@
     <string name="composeWindowTitle">الرسائل في نافذة منفصلة</string>
     <string name="composeWindowDesc">تُفتح الرسالة الجديدة والرد وإعادة التوجيه في نافذة منفصلة كما في Outlook: يمكنك كتابة عدة رسائل أثناء قراءة البريد. الرد من جزء القراءة يبقى فيه. ميزة تجريبية لنظامي Mac وWindows.</string>
     <string name="composeWindowFailed">لم تبدأ نافذة الرسالة</string>
+    <string name="oauthGoogleUserCap">لا يقبل Google مستخدمين جددًا حاليًا: إلى أن يجتاز التطبيق مراجعة Google، يمكن لـ 100 شخص على الأكثر تسجيل الدخول عبر Google. يمكنك ربط Gmail بكلمة مرور التطبيق.</string>
+    <string name="oauthGoogleUserCapAction">استخدام كلمة مرور التطبيق</string>
+    <string name="gmailAppPwNote">تحتاج إلى كلمة مرور تطبيق من Google: فعّل التحقق بخطوتين في حساب Google وأنشئ كلمة مرور في صفحة «كلمات مرور التطبيقات». بهذه الطريقة يُربط البريد فقط؛ أما تقويم Google وجهات الاتصال فيتطلبان تسجيل الدخول عبر Google.</string>
 </resources>

@@ -4299,4 +4299,7 @@
     <string name="composeWindowTitle">Email in una finestra separata</string>
     <string name="composeWindowDesc">Nuova email, risposta e inoltro si aprono in una finestra separata, come in Outlook: scrivi più email mentre leggi la posta. La risposta dal riquadro di lettura resta nel riquadro. Funzione di prova per Mac e Windows.</string>
     <string name="composeWindowFailed">La finestra dell\'email non si è avviata</string>
+    <string name="oauthGoogleUserCap">Google al momento non accetta nuovi utenti: finché l\'app non supera la verifica di Google, possono accedere con Google al massimo 100 persone. Puoi collegare Gmail con una password per le app.</string>
+    <string name="oauthGoogleUserCapAction">Usa una password per le app</string>
+    <string name="gmailAppPwNote">Serve una password per le app di Google: attiva la verifica in due passaggi nel tuo Account Google e crea una password nella pagina «Password per le app». Così si collega solo la posta; Google Calendar e Contatti richiedono l\'accesso con Google.</string>
 </resources>

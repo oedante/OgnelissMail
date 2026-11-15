@@ -4299,4 +4299,7 @@
     <string name="composeWindowTitle">Correos en una ventana aparte</string>
     <string name="composeWindowDesc">El correo nuevo, la respuesta y el reenvío se abren en una ventana aparte, como en Outlook: escribe varios correos mientras lees. La respuesta desde el panel de lectura se queda en él. Función de prueba para Mac y Windows.</string>
     <string name="composeWindowFailed">La ventana del correo no se inició</string>
+    <string name="oauthGoogleUserCap">Google no admite nuevos usuarios por ahora: hasta que la app supere la verificación de Google, solo 100 personas pueden iniciar sesión con Google. Puedes conectar Gmail con una contraseña de aplicación.</string>
+    <string name="oauthGoogleUserCapAction">Usar contraseña de aplicación</string>
+    <string name="gmailAppPwNote">Necesitas una contraseña de aplicación de Google: activa la verificación en dos pasos en tu cuenta de Google y crea una contraseña en la página «Contraseñas de aplicaciones». Así solo se conecta el correo; Google Calendar y Contactos requieren iniciar sesión con Google.</string>
 </resources>

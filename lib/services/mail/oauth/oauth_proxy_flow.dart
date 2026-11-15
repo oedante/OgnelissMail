@@ -148,8 +148,10 @@ class OAuthProxyFlow {
 
   /// Авторизация через прокси. Возвращает токены или бросает исключение.
   /// [loginHint] — адрес почты: Google, Microsoft и Яндекс подставят его на
-  /// странице входа (1.8.0).
-  static Future<OAuthResult> authenticate(String provider, {String? loginHint}) async {
+  /// странице входа (1.8.0). [reauth] — повторный вход в уже добавленный
+  /// ящик: сервер входа пускает его и при закрытом лимите пользователей
+  /// Google (2.5.4, GOOGLE_USER_CAP) — прежних пользователей Google пускает.
+  static Future<OAuthResult> authenticate(String provider, {String? loginHint, bool reauth = false}) async {
     final base = AppConstants.oauthProxyBaseUrl.replaceAll(RegExp(r'/+$'), '');
     // Без ключа прокси не выдаст токены (POST /exchange отвечает 401), а
     // пользователь увидел бы это только после входа у провайдера. Ключ
@@ -178,7 +180,7 @@ class OAuthProxyFlow {
     final t = _target();
     final pkce = ProxyPkce.generate();
     final loginUrl = '$base/oauth/$provider/login'
-        '?redirect=${Uri.encodeComponent(t.redirect)}&cc=${pkce.challenge}';
+        '?redirect=${Uri.encodeComponent(t.redirect)}&cc=${pkce.challenge}${reauth ? '&reauth=1' : ''}';
     var url = loginUrl;
     final hint = hintParam(loginHint);
     if (hint != null && _hintProviders.contains(provider)) {

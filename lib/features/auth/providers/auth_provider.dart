@@ -45,7 +45,9 @@ enum AuthStatus { idle, connecting, success, error }
 /// Что делать после неудачного входа (1.8.0, п. 6 плана): экран входа
 /// показывает у строки ошибки кнопку — «Проверить пароль», «Создать пароль
 /// приложения», «Открыть настройки почты», «Повторить».
-enum AuthErrorKind { generic, password, appPassword, imapDisabled, network }
+/// googleUserCap — Google не пускает новых пользователей (лимит
+/// непроверенного приложения, 2.5.4): почта Gmail — паролем приложения.
+enum AuthErrorKind { generic, password, appPassword, imapDisabled, network, googleUserCap }
 
 class AuthState {
   final AuthStatus status;
@@ -599,7 +601,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
       // Отказ провайдера, возвращённый прокси: «отменено» — не ошибка.
       state = e.cancelled
           ? state.copyWith(status: AuthStatus.idle, errorMessage: null)
-          : state.copyWith(status: AuthStatus.error, errorMessage: e.localizedMessage(_l10n()));
+          : state.copyWith(
+              status: AuthStatus.error,
+              errorMessage: e.localizedMessage(_l10n()),
+              errorKind: e.code == OAuthProviderError.userCap ? AuthErrorKind.googleUserCap : null);
       return false;
     } catch (e) {
       state = state.copyWith(status: AuthStatus.error, errorMessage: _l10n().tr('authOAuthErr').replaceAll('{e}', '$e'));
@@ -627,7 +632,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
                 _ => null,
               };
         if (name == null) return 'OAuth';
-        final result = await _ref.read(crossPlatformOAuthProvider).authenticate(name, loginHint: account.email);
+        final result = await _ref.read(crossPlatformOAuthProvider).authenticate(name, loginHint: account.email, reauth: true);
         // Вошли под другим адресом — не подменяем чужой ящик.
         var email = result.email;
         if (email == null || email.isEmpty) {

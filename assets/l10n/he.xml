@@ -4320,4 +4320,7 @@
     <string name="composeWindowTitle">הודעות בחלון נפרד</string>
     <string name="composeWindowDesc">הודעה חדשה, תשובה והעברה נפתחות בחלון נפרד כמו ב-Outlook: אפשר לכתוב כמה הודעות ולקרוא דואר בו-זמנית. תשובה מחלונית הקריאה נשארת בה. תכונה ניסיונית ל-Mac ול-Windows.</string>
     <string name="composeWindowFailed">חלון ההודעה לא נפתח</string>
+    <string name="oauthGoogleUserCap">Google לא מקבלת כרגע משתמשים חדשים: עד שהאפליקציה תעבור את הבדיקה של Google, רק עד 100 אנשים יכולים להתחבר באמצעות Google. אפשר לחבר את Gmail עם סיסמה לאפליקציה.</string>
+    <string name="oauthGoogleUserCapAction">שימוש בסיסמה לאפליקציה</string>
+    <string name="gmailAppPwNote">נדרשת סיסמה לאפליקציה של Google: הפעילו אימות דו-שלבי בחשבון Google וצרו סיסמה בדף ״סיסמאות לאפליקציות״. כך מתחבר רק הדואר; יומן Google ואנשי הקשר דורשים התחברות באמצעות Google.</string>
 </resources>

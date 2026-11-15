@@ -4299,4 +4299,7 @@
     <string name="composeWindowTitle">E-postalar ayrı pencerede</string>
     <string name="composeWindowDesc">Yeni e-posta, yanıt ve iletme Outlook\'taki gibi ayrı pencerede açılır: postanızı okurken birden fazla e-posta yazın. Okuma bölmesinden yanıt bölmede kalır. Mac ve Windows için deneme özelliği.</string>
     <string name="composeWindowFailed">E-posta penceresi başlatılamadı</string>
+    <string name="oauthGoogleUserCap">Google şu anda yeni kullanıcı kabul etmiyor: uygulama Google doğrulamasını geçene kadar en fazla 100 kişi Google ile oturum açabilir. Gmail\'i uygulama şifresiyle bağlayabilirsiniz.</string>
+    <string name="oauthGoogleUserCapAction">Uygulama şifresi kullan</string>
+    <string name="gmailAppPwNote">Google uygulama şifresi gerekir: Google Hesabınızda 2 Adımlı Doğrulama\'yı açın ve “Uygulama şifreleri” sayfasında bir şifre oluşturun. Bu şekilde yalnızca e-posta bağlanır; Google Takvim ve Kişiler için Google ile oturum açmak gerekir.</string>
 </resources>

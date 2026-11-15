@@ -4299,4 +4299,7 @@
     <string name="composeWindowTitle">E-mails in een apart venster</string>
     <string name="composeWindowDesc">Nieuwe e-mail, antwoord en doorsturen openen in een apart venster, zoals in Outlook: schrijf meerdere e-mails terwijl je je mail leest. Een antwoord vanuit het leesvenster blijft daar. Proeffunctie voor Mac en Windows.</string>
     <string name="composeWindowFailed">Het e-mailvenster is niet gestart</string>
+    <string name="oauthGoogleUserCap">Google laat op dit moment geen nieuwe gebruikers toe: tot de app door Googles controle is, kunnen maximaal 100 mensen inloggen met Google. Je kunt Gmail koppelen met een app-wachtwoord.</string>
+    <string name="oauthGoogleUserCapAction">App-wachtwoord gebruiken</string>
+    <string name="gmailAppPwNote">Je hebt een Google-app-wachtwoord nodig: zet verificatie in twee stappen aan in je Google-account en maak een wachtwoord aan op de pagina ‘App-wachtwoorden’. Zo wordt alleen de mail gekoppeld; Google Agenda en Contacten vereisen inloggen met Google.</string>
 </resources>

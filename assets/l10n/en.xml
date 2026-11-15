@@ -4299,4 +4299,7 @@
     <string name="composeWindowTitle">Emails in a separate window</string>
     <string name="composeWindowDesc">New emails, replies and forwards open in a separate window, as in Outlook: write several emails while reading your mail. A reply from the reading pane stays in the pane. A trial feature for Mac and Windows.</string>
     <string name="composeWindowFailed">The email window did not start</string>
+    <string name="oauthGoogleUserCap">Google isn\'t accepting new users right now: until the app passes Google\'s review, no more than 100 people can sign in with Google. You can connect Gmail with an app password.</string>
+    <string name="oauthGoogleUserCapAction">Use an app password</string>
+    <string name="gmailAppPwNote">You need a Google app password: turn on 2-Step Verification in your Google Account and create a password on the “App passwords” page. This connects mail only; Google Calendar and Contacts need sign-in with Google.</string>
 </resources>

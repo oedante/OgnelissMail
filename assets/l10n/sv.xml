@@ -4299,4 +4299,7 @@
     <string name="composeWindowTitle">Mejl i eget fönster</string>
     <string name="composeWindowDesc">Nytt mejl, svar och vidarebefordran öppnas i ett eget fönster som i Outlook: skriv flera mejl medan du läser posten. Ett svar från läsfönstret stannar där. Testfunktion för Mac och Windows.</string>
     <string name="composeWindowFailed">Mejlfönstret startade inte</string>
+    <string name="oauthGoogleUserCap">Google tar inte emot nya användare just nu: tills appen har godkänts av Google kan högst 100 personer logga in med Google. Du kan ansluta Gmail med ett applösenord.</string>
+    <string name="oauthGoogleUserCapAction">Använd applösenord</string>
+    <string name="gmailAppPwNote">Du behöver ett applösenord från Google: aktivera tvåstegsverifiering i ditt Google-konto och skapa ett lösenord på sidan ”Applösenord”. Så ansluts bara e-posten; Google Kalender och Kontakter kräver inloggning med Google.</string>
 </resources>

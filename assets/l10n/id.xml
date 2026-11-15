@@ -4278,4 +4278,7 @@
     <string name="composeWindowTitle">Email di jendela terpisah</string>
     <string name="composeWindowDesc">Email baru, balasan, dan penerusan terbuka di jendela terpisah seperti di Outlook: tulis beberapa email sambil membaca surat. Balasan dari panel baca tetap di panel. Fitur uji coba untuk Mac dan Windows.</string>
     <string name="composeWindowFailed">Jendela email tidak dimulai</string>
+    <string name="oauthGoogleUserCap">Google sedang tidak menerima pengguna baru: sampai aplikasi lolos peninjauan Google, paling banyak 100 orang bisa masuk dengan Google. Anda bisa menghubungkan Gmail dengan sandi aplikasi.</string>
+    <string name="oauthGoogleUserCapAction">Gunakan sandi aplikasi</string>
+    <string name="gmailAppPwNote">Anda perlu sandi aplikasi Google: aktifkan Verifikasi 2 Langkah di Akun Google dan buat sandi di halaman “Sandi aplikasi”. Cara ini hanya menghubungkan email; Google Kalender dan Kontak memerlukan masuk dengan Google.</string>
 </resources>

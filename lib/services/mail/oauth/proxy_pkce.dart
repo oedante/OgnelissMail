@@ -1,23 +1,10 @@
 // lib/services/mail/oauth/proxy_pkce.dart
-// PKCE между приложением и OAuth-прокси.
-//
-// Прокси возвращает результат входа в приложение по адресу своей схемы
-// (com.ogneliss.mail://oauth) или на loopback. Свою схему может
-// зарегистрировать любое приложение на устройстве, поэтому токены в адресе —
-// это риск их перехвата. Теперь приложение посылает на /login хеш случайного
-// секрета (cc), прокси возвращает только одноразовый код (oc), а токены
-// выдаёт по POST /exchange тому, кто предъявит сам секрет (cv).
-// Ответ старого прокси (токены в адресе, без кода) отклоняется.
+// Отказ службы при входе (OAuthProviderError). Имя файла — от прежнего
+// обмена кода с сервером входа (PKCE между приложением и сервером); сервер
+// входа снят в 2.5.5, вход — напрямую у служб (direct_oauth.dart).
 
 import 'package:flutter/services.dart' show PlatformException;
-import 'dart:convert';
-import 'dart:math';
 
-import 'package:crypto/crypto.dart';
-import 'package:http/http.dart' as http;
-
-import '../../../core/constants/app_constants.dart';
-import '../../../core/errors/app_exceptions.dart';
 import '../../../l10n/app_localizations.dart';
 
 /// Отказ провайдера при входе (код из OAuth: access_denied, invalid_scope…).
@@ -30,8 +17,7 @@ class OAuthProviderError implements Exception {
 
   /// Google не пускает в приложение новых пользователей (2.5.4): у
   /// непроверенного приложения кончился лимит в 100 человек. Код ставит
-  /// сервер входа (GOOGLE_USER_CAP=1 в его .env) или [OAuthProviderError.of]
-  /// по ответу самого Google.
+  /// [OAuthProviderError.of] по ответу самого Google.
   static const userCap = 'user_cap';
 
   /// Отказ с учётом подробности: Google ответил про лимит пользователей или
@@ -67,66 +53,4 @@ class OAuthProviderError implements Exception {
   /// Для журнала; пользователю — [localizedMessage].
   @override
   String toString() => 'OAuthProviderError($code${detail == null ? '' : ' $detail'})';
-}
-
-class ProxyPkce {
-  final String verifier;
-  final String challenge;
-  ProxyPkce._(this.verifier, this.challenge);
-
-  factory ProxyPkce.generate() {
-    final rnd = Random.secure();
-    final bytes = List<int>.generate(32, (_) => rnd.nextInt(256));
-    final v = base64Url.encode(bytes).replaceAll('=', '');
-    final c = base64Url.encode(sha256.convert(ascii.encode(v)).bytes).replaceAll('=', '');
-    return ProxyPkce._(v, c);
-  }
-
-  /// Параметры возврата → {at, exp, rt, provider}. Если пришёл одноразовый
-  /// код — обменивает его у прокси; иначе возвращает параметры как есть.
-  Future<Map<String, String>> resolve(String proxyBase, Map<String, String> params) async {
-    // Ошибка провайдера, которую прокси вернул в приложение.
-    final err = params['error'];
-    if (err != null && err.isNotEmpty) throw OAuthProviderError.of(err, params['desc'], provider: params['provider']);
-    final oc = params['oc'];
-    // Токены прямо в адресе возврата не принимаются: адрес схемы приложения
-    // может подставить любое приложение на устройстве (вход в чужой ящик).
-    // Прокси с PKCE всегда возвращает только одноразовый код.
-    if (oc == null || oc.isEmpty) {
-      throw const AuthException(
-          userMessage: 'OAuth (прокси): ответ без одноразового кода отклонён — '
-              'обновите сервер входа',
-          messageKey: 'oauthProxyNoCode');
-    }
-    final base = proxyBase.replaceAll(RegExp(r'/+$'), '');
-    final resp = await http
-        .post(
-          Uri.parse('$base/exchange'),
-          headers: {
-            'x-api-key': AppConstants.oauthProxyApiKey,
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({'oc': oc, 'cv': verifier}),
-        )
-        .timeout(const Duration(seconds: 20));
-    if (resp.statusCode != 200) {
-      // Тело не пишем в журнал и в текст ошибки: там может быть токен.
-      throw AuthException(
-        userMessage: 'OAuth (прокси): обмен кода не удался, HTTP ${resp.statusCode}',
-        messageKey: 'oauthProxyExchangeFailed',
-        messageArgs: {'status': '${resp.statusCode}'},
-      );
-    }
-    final m = jsonDecode(resp.body) as Map<String, dynamic>;
-    return {
-      'at': (m['access_token'] ?? '').toString(),
-      'exp': (m['expires_at'] ?? '').toString(),
-      if ((m['rt'] ?? '').toString().isNotEmpty) 'rt': m['rt'].toString(),
-      'provider': (m['provider'] ?? params['provider'] ?? '').toString(),
-      if ((m['email'] ?? '').toString().isNotEmpty) 'email': m['email'].toString(),
-      if ((m['name'] ?? '').toString().isNotEmpty) 'name': m['name'].toString(),
-      // Exchange Online: дано согласие и на Microsoft Graph (сервер входа 1.8.11).
-      if (m['graph'] == true) 'graph': '1',
-    };
-  }
 }

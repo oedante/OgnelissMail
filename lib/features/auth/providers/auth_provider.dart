@@ -632,7 +632,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
                 _ => null,
               };
         if (name == null) return 'OAuth';
-        final result = await _ref.read(crossPlatformOAuthProvider).authenticate(name, loginHint: account.email, reauth: true);
+        final result = await _ref.read(crossPlatformOAuthProvider).authenticate(name, loginHint: account.email);
         // Вошли под другим адресом — не подменяем чужой ящик.
         var email = result.email;
         if (email == null || email.isEmpty) {

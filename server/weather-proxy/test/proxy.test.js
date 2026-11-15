@@ -86,3 +86,42 @@ test('прогноз через кэш и поиск городов', async () =
     met.close();
   }
 });
+
+// 2.5.5: логотипы BIMI — в службе погоды (сервер входа снят). Заглушка вместо
+// DNS: ответ, ошибки домена и сети, выключенная функция.
+test('логотипы BIMI: /weather/bimi', async () => {
+  const seen = [];
+  const bimi = {
+    stats: () => ({ requests: seen.length }),
+    lookup: async (d, s) => {
+      seen.push([d, s]);
+      if (d === 'bad') return { bad: true };
+      if (d === 'down.example') return { transient: true };
+      return { policy: 'reject', logo: '<svg/>' };
+    },
+  };
+  const { createServer } = require('../server.js');
+  const srv = createServer({ cities: [], bimi });
+  const port = await listen(srv);
+  const get = async (q) => {
+    const r = await fetch(`http://127.0.0.1:${port}/weather/bimi${q}`);
+    return { status: r.status, body: await r.json() };
+  };
+  try {
+    assert.deepStrictEqual(await get('?d=bank.example'), { status: 200, body: { policy: 'reject', logo: '<svg/>' } });
+    assert.strictEqual((await get('?d=bad')).status, 400);
+    assert.strictEqual((await get('?d=down.example')).status, 503);
+    assert.deepStrictEqual(seen[0], ['bank.example', null]);
+    const hz = await (await fetch(`http://127.0.0.1:${port}/weather/healthz`)).json();
+    assert.strictEqual(hz.bimi.requests, 3);
+  } finally {
+    srv.close();
+  }
+  const off = createServer({ cities: [], bimi: null });
+  const port2 = await listen(off);
+  try {
+    assert.strictEqual((await fetch(`http://127.0.0.1:${port2}/weather/bimi?d=bank.example`)).status, 404);
+  } finally {
+    off.close();
+  }
+});

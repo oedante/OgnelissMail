@@ -47,6 +47,12 @@ variables → Actions → New repository secret**. Имя — ровно как 
 `PUSH_WAKE_ANDROID_PRIORITY`. Обновили `config/dart_defines.json` — обновите и
 секрет.
 
+С 2.5.5 сервера входа нет: `OAUTH_PROXY_URL` не читается (можно удалить),
+`OAUTH_PROXY_KEY` нужен только сигналам сервера. Вход через Google и Microsoft
+работает только с клиентами `GOOGLE_*_CLIENT_ID` и `MS_CLIENT_ID`; без них
+Gmail и Яндекс подключаются паролем приложения. Логотипы отправителей —
+`BIMI_URL` (по умолчанию `https://www.ogneliss.ru/weather`).
+
 ## Чем сборки с GitHub отличаются от магазинных
 
 - **Android.** APK с GitHub подписан вашим **ключом загрузки**. Если в Google

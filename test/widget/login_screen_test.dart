@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ogneliss/core/security/secure_storage_service.dart';
 import 'package:ogneliss/core/theme/app_theme.dart';
 import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
@@ -29,16 +28,70 @@ Future<void> _settle(WidgetTester tester) async {
 
 /// Вход через Google, который Google не пускает: лимит пользователей
 /// непроверенного приложения (2.5.4).
-class _CapOAuth extends CrossPlatformOAuthService {
-  _CapOAuth() : super(OAuthService(SecureStorageService()), () => AppLocalizations(const Locale('ru')));
+/// Сборка с клиентами служб: вход через Google, Яндекс и Microsoft есть.
+class _Direct extends CrossPlatformOAuthService {
+  const _Direct();
 
   @override
-  Future<OAuthResult> authenticate(String providerName, {String? loginHint, bool reauth = false}) async =>
+  bool available(String providerName) => true;
+}
+
+class _CapOAuth extends _Direct {
+  const _CapOAuth();
+
+  @override
+  Future<OAuthResult> authenticate(String providerName, {String? loginHint}) async =>
       throw const OAuthProviderError(OAuthProviderError.userCap);
 }
 
 void main() {
   setUpAll(() => driftRuntimeOptions.dontWarnAboutMultipleDatabases = true);
+
+  testWidgets('нет входа через службу на этой платформе — пароль приложения (Gmail, Яндекс)', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    tester.view.physicalSize = const Size(400, 900) * 2;
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    // Сервис как в сборке без клиентов служб (в тестах — Linux без ключей).
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        databaseProvider.overrideWithValue(db),
+        sharedPrefsProvider.overrideWithValue(prefs),
+      ],
+      child: MaterialApp(
+        theme: AppTheme.lightTheme(1.0),
+        locale: const Locale('ru'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: const LoginScreen(),
+      ),
+    ));
+    await _settle(tester);
+    await tester.enterText(find.byType(TextField).first, 'ivan@gmail.com');
+    await tester.tap(find.text('Далее'));
+    await _settle(tester);
+    expect(find.text('Войти через Google'), findsNothing);
+    expect(find.text('Пароль'), findsOneWidget);
+    expect(find.textContaining('двухэтапную проверку'), findsOneWidget);
+    expect(find.text('Создать пароль приложения'), findsOneWidget);
+
+    await tester.tap(find.text('Изменить'));
+    await _settle(tester);
+    await tester.enterText(find.byType(TextField).first, 'ivan@yandex.ru');
+    await tester.tap(find.text('Далее'));
+    await _settle(tester);
+    expect(find.text('Войти через Яндекс'), findsNothing);
+    expect(find.text('Пароль'), findsOneWidget);
+    expect(find.textContaining('только по паролю приложения'), findsOneWidget);
+    expect(find.text('Создать пароль приложения'), findsOneWidget);
+  });
 
   testWidgets('Google не пускает новых пользователей — объяснение и вход паролем приложения', (tester) async {
     SharedPreferences.setMockInitialValues({});
@@ -52,7 +105,7 @@ void main() {
       overrides: [
         databaseProvider.overrideWithValue(db),
         sharedPrefsProvider.overrideWithValue(prefs),
-        crossPlatformOAuthProvider.overrideWithValue(_CapOAuth()),
+        crossPlatformOAuthProvider.overrideWithValue(const _CapOAuth()),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme(1.0),
@@ -98,6 +151,7 @@ void main() {
       overrides: [
         databaseProvider.overrideWithValue(db),
         sharedPrefsProvider.overrideWithValue(prefs),
+        crossPlatformOAuthProvider.overrideWithValue(const _Direct()),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme(1.0),
@@ -165,6 +219,7 @@ void main() {
       overrides: [
         databaseProvider.overrideWithValue(db),
         sharedPrefsProvider.overrideWithValue(prefs),
+        crossPlatformOAuthProvider.overrideWithValue(const _Direct()),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme(1.0),

@@ -22,6 +22,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../../data/providers/database_provider.dart';
 import '../../services/mail/engine/mail_engine_service.dart';
+import '../../services/mail/oauth/direct_oauth.dart' show DirectOAuth;
 import '../../services/security/bimi/bimi_service.dart' show BimiResolver, BimiStats;
 import '../../features/settings/providers/settings_provider.dart' show settingsProvider;
 import '../../services/security/device_security_service.dart';
@@ -202,10 +203,12 @@ class DiagnosticsReport {
       line('Сертификаты: режим=${pin.mode.name}, правил=${pin.rules.length}'
           '${hosts.isEmpty ? '' : ' (${hosts.join(', ')})'}, доверенных доменов=${pin.trustedCaDomains.length}');
     } catch (_) {}
-    line('OAuth-прокси: адрес ${AppConstants.oauthProxyBaseUrl.isEmpty ? 'не задан' : AppConstants.oauthProxyBaseUrl}, '
-        'ключ ${AppConstants.oauthProxyApiKey.isEmpty ? 'НЕ задан' : 'задан, отпечаток ${sha256.convert(utf8.encode(AppConstants.oauthProxyApiKey)).toString().substring(0, 8)}'}'
-        // Сверка с прокси: GET <адрес>/healthz → keys.api должен совпасть.
-        );
+    // Сервера входа нет с 2.5.5: вход напрямую у служб. Ключ — для сигналов
+    // сервера (push-relay); логотипы BIMI — служба погоды.
+    line('Вход: напрямую у служб (Google ${_direct('google')}, Microsoft ${_direct('microsoft')}, '
+        'Exchange Online ${_direct('exchange')}, Яндекс ${_direct('yandex')}); '
+        'ключ служб ${AppConstants.oauthProxyApiKey.isEmpty ? 'НЕ задан' : 'задан, отпечаток ${sha256.convert(utf8.encode(AppConstants.oauthProxyApiKey)).toString().substring(0, 8)}'}; '
+        'логотипы BIMI: ${AppConstants.bimiUrl.isEmpty ? 'выключены' : AppConstants.bimiUrl}');
     // Сигналы сервера на iPhone (1.7.2) и Android (FCM, 1.9.x): включены ли,
     // регистрация, последний сигнал.
     if (PushWakeService.supported) {
@@ -248,3 +251,6 @@ class DiagnosticsReport {
     return '${Platform.operatingSystem} ${Platform.operatingSystemVersion}';
   }
 }
+
+/// Есть ли в сборке клиент службы для входа напрямую на этой платформе.
+String _direct(String provider) => !kIsWeb && DirectOAuth.clientFor(provider) != null ? 'да' : 'нет — пароль приложения';

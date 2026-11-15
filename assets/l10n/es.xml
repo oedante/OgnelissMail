@@ -771,7 +771,7 @@
     <string name="confirmRecipientsDesc">Avisar al enviar a destinatarios externos o a una lista grande</string>
     <string name="antiPhishing">Antiphishing</string>
     <string name="bimiLogos">Logotipos de remitentes (BIMI)</string>
-    <string name="bimiLogosDesc">El dominio del remitente se comprueba a través del servidor de Ogneliss; no se envían direcciones ni mensajes</string>
+    <string name="bimiLogosDesc">El dominio del remitente se comprueba a través del servidor de Ogneliss; no se envían direcciones ni mensajes; para los buzones de Google no se buscan logotipos</string>
     <string name="phishingOff">Desactivado</string>
     <string name="dangerOnly">Solo peligrosos</string>
     <string name="dangerOnlyDesc">Mostrar solo amenazas evidentes</string>

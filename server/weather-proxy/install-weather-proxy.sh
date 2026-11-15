@@ -44,7 +44,7 @@ cities() {
 install_all() {
   command -v docker >/dev/null || die "нет docker"
   mkdir -p "$DIR"
-  install -m 0644 "$SRC/server.js" "$SRC/package.json" "$SRC/Dockerfile" "$DIR/"
+  install -m 0644 "$SRC/server.js" "$SRC/bimi.js" "$SRC/package.json" "$SRC/Dockerfile" "$DIR/"
   [ -s "$DIR/data/cities15000.txt" ] || cities
   detect_network
   docker network inspect "$NPM_NETWORK" >/dev/null 2>&1 \

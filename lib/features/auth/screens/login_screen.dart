@@ -45,6 +45,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/engine/mail_engine_service.dart';
 import '../../../services/mail/ews/ews_service.dart';
 import '../../../services/mail/mail_provider_detect.dart';
+import '../../../services/mail/oauth/cross_platform_oauth.dart' show crossPlatformOAuthProvider;
 import '../../../services/mail/oauth/direct_oauth.dart' show DirectOAuth;
 import '../../../widgets/common/app_logo.dart';
 import '../../../widgets/common/eas_compat_switch.dart';
@@ -152,13 +153,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   /// Способ выбран вручную («Другой способ входа»).
   bool _manual = false;
 
-  /// Почта Gmail паролем приложения: Google не пустил по OAuth (лимит
-  /// пользователей непроверенного приложения, 2.5.4).
-  bool _gmailAppPw = false;
+  /// Вход паролем приложения вместо входа через службу ('google' |
+  /// 'yandex'): Google не пустил по OAuth (лимит пользователей
+  /// непроверенного приложения, 2.5.4) или входа через службу на этой
+  /// платформе нет (2.5.5: сервера входа нет — Яндекс на Windows и Linux,
+  /// сборка без клиента Google).
+  String? _appPwFor;
 
-  /// Страница паролей приложений Google (и для адресов Google Workspace на
-  /// своём домене — MailProviderDetect знает только gmail.com).
-  static const _googleAppPwUrl = 'https://myaccount.google.com/apppasswords';
+  /// Страница паролей приложений службы (Google — и для адресов Google
+  /// Workspace на своём домене: MailProviderDetect знает только gmail.com).
+  static String _appPwUrlFor(String provider) => provider == 'yandex'
+      ? 'https://id.yandex.ru/security/app-passwords'
+      : 'https://myaccount.google.com/apppasswords';
+
+  /// Серверы Яндекс Почты для входа паролем приложения.
+  static const _yandexImap = ImapPreset(
+    imapHost: 'imap.yandex.ru',
+    imapPort: 993,
+    imapEncryption: EncryptionType.ssl,
+    smtpHost: 'smtp.yandex.ru',
+    smtpPort: 465,
+    smtpEncryption: EncryptionType.ssl,
+  );
 
   /// Серверы Gmail для входа паролем приложения (и для адресов Google
   /// Workspace на своём домене).
@@ -298,7 +314,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   /// проверить.
   void _applyKind(MailKind k, {ImapPreset? preset, bool guessed = false}) {
     _icloud = k == MailKind.icloud;
-    _gmailAppPw = false;
+    _appPwFor = null;
+    // Входа через службу на этой платформе нет (2.5.5) — пароль приложения
+    // по IMAP с серверами службы. Microsoft паролей не принимает — остаётся
+    // вход через службу (он объяснит, что не настроен).
+    final provider = switch (k) { MailKind.google => 'google', MailKind.yandex => 'yandex', _ => null };
+    if (provider != null && _reauth == null && !ref.read(crossPlatformOAuthProvider).available(provider)) {
+      k = MailKind.imap;
+      preset = provider == 'google' ? _gmailImap : _yandexImap;
+      guessed = false;
+      _appPwFor = provider;
+    }
     _selectedType = switch (k) {
       MailKind.google => AccountType.google,
       MailKind.microsoft => AccountType.outlook,
@@ -979,11 +1005,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final kind = _kind;
     final scheme = theme.colorScheme;
     final appPwKind = kind == MailKind.mailru || kind == MailKind.icloud;
-    final appPwHint = !appPwKind && (_gmailAppPw || (_guess?.appPassword ?? false));
+    final appPwHint = !appPwKind && (_appPwFor != null || (_guess?.appPassword ?? false));
     final appPwUrl = switch (kind) {
       MailKind.mailru => 'https://account.mail.ru/user/2-step-auth/passwords/',
       MailKind.icloud => 'https://account.apple.com/account/manage',
-      _ when _gmailAppPw => _googleAppPwUrl,
+      _ when _appPwFor != null => _appPwUrlFor(_appPwFor!),
       _ => MailProviderDetect.appPasswordUrl(_email),
     };
     return Column(
@@ -1063,7 +1089,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         // Служба пускает почтовые программы только по паролю приложения.
         if (appPwHint) ...[
           const SizedBox(height: Space.s),
-          _buildNote(theme, l10n.tr(_gmailAppPw ? 'gmailAppPwNote' : 'loginAppPasswordNote')),
+          _buildNote(theme, l10n.tr(_appPwFor == 'google' ? 'gmailAppPwNote' : 'loginAppPasswordNote')),
           if (appPwUrl != null)
             Align(
               alignment: AlignmentDirectional.centerStart,
@@ -1250,7 +1276,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final appPwUrl = switch (_kind) {
       MailKind.mailru => 'https://account.mail.ru/user/2-step-auth/passwords/',
       MailKind.icloud => 'https://account.apple.com/account/manage',
-      _ when _gmailAppPw => _googleAppPwUrl,
+      _ when _appPwFor != null => _appPwUrlFor(_appPwFor!),
       _ => MailProviderDetect.appPasswordUrl(_email),
     };
     final imapUrl = MailProviderDetect.imapSettingsUrl(_email);
@@ -1322,7 +1348,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       _manual = true;
       _askEmail = !_emailValid;
       _applyKind(MailKind.imap, preset: _gmailImap);
-      _gmailAppPw = true;
+      _appPwFor = 'google';
       _showAdvanced = false;
       _step = _Step.method;
     });
@@ -1397,7 +1423,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           smtpPort: int.tryParse(_smtpPortController.text) ?? AppConstants.defaultSmtpPort,
           imapEncryption: _imapEncryption,
           smtpEncryption: _smtpEncryption,
-          appPassword: _gmailAppPw || (_guess?.appPassword ?? false),
+          appPassword: _appPwFor != null || (_guess?.appPassword ?? false),
         );
       case MailKind.mailru:
         // Серверы Mail.ru (все домены: mail.ru, bk.ru, inbox.ru, list.ru,

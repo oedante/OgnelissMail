@@ -88,21 +88,29 @@ class AppConstants {
   static const mailruClientId = '019f9df891d57637bce39e9b2471898b';
   // Mail.ru требует client_secret при обмене кода на токен. В распространяемом
   // клиенте секрет извлекается реверсом — поэтому В ИСХОДНИКАХ ЕГО НЕТ.
-  // Штатный путь — OAuth-прокси (секрет живёт на сервере, см. oauth_proxy_flow.dart).
-  // Легаси-путь без прокси возможен только со сборочным ключом:
+  // Вход в Mail.ru — паролем приложения: OAuth Mail с июля 2025 не даёт
+  // доступа к почте новым приложениям. Легаси-путь — только со сборочным ключом:
   //   --dart-define=MAILRU_CLIENT_SECRET=...
   static const mailruClientSecret =
       String.fromEnvironment('MAILRU_CLIENT_SECRET', defaultValue: '');
 
-  // ═══════════════ OAUTH-ПРОКСИ (server/oauth-proxy) ═══════════════
-  // Если задан baseUrl — обмен/refresh токенов идёт через корпоративный прокси
-  // (секреты на сервере, пользователь не логинится заново). Пусто = выключено.
-  static const oauthProxyBaseUrl = String.fromEnvironment('OAUTH_PROXY_URL', defaultValue: 'https://ogneliss.ru');
+  // ═══════════════ СЕРВЕР ВХОДА (server/oauth-proxy) — СНЯТ ═══════════════
+  // С 2.5.5 (решение владельца 15.11.2026) сервера входа нет: вход и
+  // обновление токенов — только напрямую у служб (direct_oauth.dart).
+  // Ключ сборки OAUTH_PROXY_URL больше не читается; пустой адрес выключает
+  // все прежние пути через сервер (OAuthProxyClient.isEnabled).
+  static const oauthProxyBaseUrl = '';
 
   /// Своя сборка с самоподписанным сертификатом OAuth-прокси: принимать его
   /// сертификат без проверки. По умолчанию — нет (у ogneliss.ru настоящий).
   static const oauthProxySelfSigned = bool.fromEnvironment('OAUTH_PROXY_SELF_SIGNED');
+  /// Ключ приложения для служб на сервере Ogneliss (сигналы push-relay).
+  /// Имя ключа сборки прежнее.
   static const oauthProxyApiKey = String.fromEnvironment('OAUTH_PROXY_KEY', defaultValue: '');
+
+  /// Логотипы отправителей BIMI (2.5.5): служба погоды на сервере Ogneliss,
+  /// GET <адрес>/bimi?d=<домен>. Пусто — логотипов нет.
+  static const bimiUrl = String.fromEnvironment('BIMI_URL', defaultValue: 'https://www.ogneliss.ru/weather');
   static const oauthProxyRedirect = 'com.ogneliss.mail://oauth';
 
   // ═══════════════ СИГНАЛЫ СЕРВЕРА НА IPHONE (server/push-relay, 1.7.2) ═══════════════

@@ -1,7 +1,6 @@
 // Лимит пользователей Google у непроверенного приложения (2.5.4): Google
-// пускает не больше 100 новых пользователей. Сервер входа отвечает
-// error=user_cap (флаг GOOGLE_USER_CAP) или передаёт ответ Google — в
-// приложении это не «отмена», а объяснение и вход паролем приложения.
+// пускает не больше 100 новых пользователей. Ответ Google об этом (вход
+// напрямую у Google) — не «отмена», а объяснение и вход паролем приложения.
 
 import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
@@ -26,17 +25,7 @@ void main() {
     expect(OAuthProviderError.of('invalid_scope', 'bad scope', provider: 'google').code, 'invalid_scope');
   });
 
-  test('ответ сервера входа error=user_cap — отказ user_cap, текст на языке интерфейса', () async {
-    final pkce = ProxyPkce.generate();
-    await expectLater(
-      pkce.resolve('https://www.ogneliss.ru/oauth', {'provider': 'google', 'error': 'user_cap'}),
-      throwsA(isA<OAuthProviderError>().having((e) => e.code, 'code', OAuthProviderError.userCap)),
-    );
-    await expectLater(
-      pkce.resolve('https://www.ogneliss.ru/oauth',
-          {'provider': 'google', 'error': 'access_denied', 'desc': 'This app has reached its user cap'}),
-      throwsA(isA<OAuthProviderError>().having((e) => e.code, 'code', OAuthProviderError.userCap)),
-    );
+  test('лимит пользователей — текст на языке интерфейса с выходом', () {
     final text = const OAuthProviderError(OAuthProviderError.userCap).localizedMessage(AppLocalizations(const Locale('ru')));
     expect(text, contains('100'));
     expect(text, contains('паролем приложения'));

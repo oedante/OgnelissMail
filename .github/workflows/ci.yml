@@ -199,7 +199,7 @@ jobs:
             printf '%s' "$DART_DEFINES_JSON" > config/dart_defines.json
             echo "dart_defines.json: из секрета"
           else
-            echo "::warning title=Без DART_DEFINES_JSON::Вход через OAuth-прокси (Gmail, Яндекс, Mail.ru, Outlook) в этой сборке работать не будет"
+            echo "::warning title=Без DART_DEFINES_JSON::Нет клиентов служб и ключа сервера: вход через Google, Microsoft и Яндекс в этой сборке недоступен (Gmail и Яндекс — паролем приложения), нет сигналов сервера"
           fi
           if [ -n "$KS_B64" ]; then
             echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/upload-keystore.jks"
@@ -391,6 +391,10 @@ jobs:
             printf '\n# --- Ogneliss: translation engine (Bergamot) next to the exe\ninclude("${CMAKE_CURRENT_SOURCE_DIR}/../tool/bergamot/bergamot.cmake" OPTIONAL)\n' >> windows/CMakeLists.txt
           fi
           tail -n 2 windows/CMakeLists.txt
+          # Окна писем и редактора (2.5.4): плагины регистрируются и в
+          # движках отдельных окон — как в scripts/build_windows.ps1.
+          pwsh -NoProfile -File tool/desktop/windows/multi_window.ps1
+          grep -n -A4 'DesktopMultiWindowSetWindowCreatedCallback' windows/runner/flutter_window.cpp
       - name: Translation engine (Bergamot, npm, sha256)
         run: bash tool/bergamot/fetch_engine.sh
       - name: Install dependencies

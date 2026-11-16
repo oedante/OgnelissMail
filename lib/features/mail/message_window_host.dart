@@ -13,6 +13,7 @@ import '../../core/logging/app_logger.dart';
 import '../../core/navigation/app_router.dart';
 import '../../core/security/link_opener.dart';
 import '../../services/mail/email_actions_service.dart';
+import '../compose/compose_window.dart';
 import 'message_window.dart';
 import 'providers/mail_providers.dart' show accountsProvider;
 
@@ -20,7 +21,25 @@ abstract final class MessageWindowHost {
   static Future<void> start(ProviderContainer container) =>
       MessageWindow.serve((method, args) => handle(container, method, args));
 
-  static Future<void> handle(ProviderContainer c, String method, Map<String, Object?> args) async {
+  static Future<Object?> handle(ProviderContainer c, String method, Map<String, Object?> args) async {
+    // Окна редактора (2.5.4): настройки и база, отправка, изменения базы.
+    if (ComposeWindowHost.handles(method)) {
+      try {
+        if (method == 'composeOpenHere') {
+          await _front();
+          final q = {
+            for (final e in ((args['query'] as Map?) ?? const {}).entries) '${e.key}': '${e.value}',
+            ComposeWindow.hereParam: '1',
+          };
+          unawaited(c.read(appRouterProvider).push(Uri(path: '/compose', queryParameters: q).toString()));
+          return true;
+        }
+        return await ComposeWindowHost.handle(c, method, args);
+      } catch (e) {
+        AppLogger.warning('Окно редактора: «$method» не выполнено — $e');
+        rethrow;
+      }
+    }
     final accountId = '${args['accountId'] ?? ''}';
     final emailId = '${args['emailId'] ?? ''}';
     final router = c.read(appRouterProvider);
@@ -42,18 +61,19 @@ abstract final class MessageWindowHost {
           unawaited(router.push(messagePath(emailId, accountId: accountId)));
         case 'openLink':
           final ctx = router.routerDelegate.navigatorKey.currentContext;
-          if (ctx == null || !ctx.mounted) return;
+          if (ctx == null || !ctx.mounted) return null;
           await _front();
-          if (!ctx.mounted) return;
+          if (!ctx.mounted) return null;
           await LinkOpener.open(ctx, '${args['url'] ?? ''}', linkText: args['text'] as String?, accountId: accountId);
         case 'delete':
           final account = c.read(accountsProvider).where((a) => a.id == accountId).firstOrNull;
-          if (account == null) return;
+          if (account == null) return null;
           await c.read(emailActionsProvider).delete(account, emailId, '${args['folderId'] ?? ''}');
       }
     } catch (e) {
       AppLogger.warning('Окно письма: «$method» не выполнено — $e');
     }
+    return null;
   }
 
   static Future<void> _front() async {

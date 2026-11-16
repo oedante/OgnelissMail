@@ -14,6 +14,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -100,44 +101,58 @@ class AssignmentScreen extends ConsumerWidget {
         Expanded(
           child: FilledButton.tonal(
               key: const ValueKey('assign_return'),
-              onPressed: () => unawaited(_reply(context, v, AssignmentStatus.inProgress)),
+              onPressed: () => unawaited(assignmentReply(context, v, AssignmentStatus.inProgress)),
               child: Text(l10n.tr('assignReturn'))),
         ),
         const SizedBox(width: Space.s),
         Expanded(
           child: FilledButton(
-              onPressed: () => assignmentFire(svc.setStatus(v, AssignmentStatus.done)), child: Text(l10n.tr('assignAccept'))),
+              onPressed: () => assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.done)), child: Text(l10n.tr('assignAccept'))),
         ),
       ],
       if (v.outgoing && (s == AssignmentStatus.open || s == AssignmentStatus.inProgress))
         Expanded(
-          child: OutlinedButton.icon(
-              onPressed: () => assignmentFire(svc.remind(v)),
-              icon: const Icon(AppIcons.notifications, size: 18),
-              label: Text(l10n.tr('assignRemind'))),
+          // Напоминание ушло — кнопка «Напомнили в 18:07» и полчаса не
+          // нажимается (15.11.2026: без отклика её нажали 41 раз).
+          child: Builder(builder: (context) {
+            final last = AssignmentService.lastReminder(events);
+            final recent = AssignmentService.remindedRecently(events);
+            return OutlinedButton.icon(
+                key: const ValueKey('assign_remind'),
+                onPressed: recent
+                    ? null
+                    : () {
+                        unawaited(HapticFeedback.selectionClick());
+                        assignmentGuarded(context, v, () => svc.remind(v));
+                      },
+                icon: Icon(recent ? AppIcons.check : AppIcons.notifications, size: 18),
+                label: Text(
+                  recent
+                      ? l10n.tr('assignReminded').replaceAll('{time}', DateFormat.Hm(l10n.localeCode).format(last!))
+                      : l10n.tr('assignRemind'),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ));
+          }),
         ),
       if (main && !v.outgoing && (s == AssignmentStatus.open || s == AssignmentStatus.inProgress)) ...[
-        if (src != null) ...[
-          Expanded(
-            child: OutlinedButton.icon(
-                onPressed: () => context.push(Uri(path: '/compose', queryParameters: {
-                      'replyToId': src,
-                      'accountId': v.row.accountId,
-                    }).toString()),
-                icon: const Icon(AppIcons.help, size: 18),
-                label: Text(l10n.tr('assignQuestion'))),
-          ),
-          const SizedBox(width: Space.s),
-        ],
+        Expanded(
+          child: OutlinedButton.icon(
+              key: const ValueKey('assign_question'),
+              onPressed: () => unawaited(assignmentAsk(context, v)),
+              icon: const Icon(AppIcons.help, size: 18),
+              label: Text(l10n.tr('assignQuestion'))),
+        ),
+        const SizedBox(width: Space.s),
         Expanded(
           child: s == AssignmentStatus.open
               ? FilledButton.icon(
-                  onPressed: () => assignmentFire(svc.setStatus(v, AssignmentStatus.inProgress)),
+                  onPressed: () => assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.inProgress)),
                   icon: const Icon(AppIcons.play_arrow, size: 18),
                   label: Text(l10n.tr('assignTake')))
               : FilledButton.icon(
                   key: const ValueKey('assign_done'),
-                  onPressed: () => unawaited(_reply(context, v, AssignmentStatus.review)),
+                  onPressed: () => unawaited(assignmentReply(context, v, AssignmentStatus.review)),
                   icon: const Icon(AppIcons.check, size: 18),
                   label: Text(l10n.tr('assignDoneAction'))),
         ),
@@ -322,7 +337,7 @@ class AssignmentScreen extends ConsumerWidget {
                   onPressed: () async {
                     final t = await _askNote(context, l10n.tr('projChecklist'), l10n.tr('projAddCheck'),
                         ok: l10n.tr('add'));
-                    if ((t ?? '').trim().isNotEmpty) assignmentFire(svc.addCheck(v, t!));
+                    if ((t ?? '').trim().isNotEmpty && context.mounted) assignmentGuarded(context, v, () => svc.addCheck(v, t!));
                   },
                   icon: const Icon(AppIcons.checklist, size: 18),
                   label: Text(l10n.tr('projChecklist')),
@@ -404,8 +419,12 @@ Future<void> _pickStatus(BuildContext context, AssignmentView v, int status) asy
       value: true,
     ),
   ]);
-  if (ok != true) return;
-  assignmentFire(done ? svc.setStatus(v, status) : svc.markLocally(v, status));
+  if (ok != true || !context.mounted) return;
+  if (done) {
+    assignmentGuarded(context, v, () => svc.setStatus(v, status));
+  } else {
+    assignmentFire(svc.markLocally(v, status));
+  }
 }
 
 class _Stepper extends StatelessWidget {
@@ -560,9 +579,14 @@ Future<void> _delegate(BuildContext context, WidgetRef ref, AssignmentView v) as
   final l10n = AppLocalizations.of(context);
   final note = await _askNote(context, l10n.tr('projDelegate'), l10n.tr('projDelegateHint').replaceAll('{name}', c.displayName.trim().isEmpty ? c.email : c.displayName));
   if (note == null) return;
-  assignmentFire(ref
-      .read(assignmentServiceProvider)
-      .delegate(v, EmailAddress(email: c.email, displayName: c.displayName.trim().isEmpty ? null : c.displayName), note: note));
+  if (!context.mounted) return;
+  assignmentGuarded(
+      context,
+      v,
+      () => ref
+          .read(assignmentServiceProvider)
+          .delegate(v, EmailAddress(email: c.email, displayName: c.displayName.trim().isEmpty ? null : c.displayName), note: note),
+      extra: [c.email]);
 }
 
 /// «Сообщить о ходе работ»: чек-лист и комментарий постановщику.
@@ -570,12 +594,25 @@ Future<void> _report(BuildContext context, AssignmentView v) async {
   final l10n = AppLocalizations.of(context);
   final svc = ProviderScope.containerOf(context).read(assignmentServiceProvider);
   final r = await showAssignmentReply(context, title: l10n.tr('projReport'), hint: l10n.tr('projReportHint'));
-  if (r == null) return;
-  assignmentFire(svc.reportProgress(v, note: r.text, files: r.files));
+  if (r == null || !context.mounted) return;
+  assignmentGuarded(context, v, () => svc.reportProgress(v, note: r.text, files: r.files));
 }
 
 /// «Готово» с результатом и файлами; «Вернуть на доработку» — с причиной.
-Future<void> _reply(BuildContext context, AssignmentView v, int status) async {
+/// «Задать вопрос» постановщику: ответ на последнее письмо поручения, а
+/// если писем в ящике уже нет — новое письмо с темой беседы и номером
+/// поручения (AssignmentService.questionCompose).
+Future<void> assignmentAsk(BuildContext context, AssignmentView v) async {
+  final q = await ProviderScope.containerOf(context, listen: false).read(assignmentServiceProvider).questionCompose(v);
+  if (!context.mounted) return;
+  unawaited(context.push(Uri(path: '/compose', queryParameters: q).toString()));
+}
+
+/// Вернуть на доработку (текст обязателен: что исправить) или сдать работу
+/// (результат и файлы — по желанию). Везде одинаково: в карточке, в
+/// быстром просмотре и в списке (15.11.2026: из быстрого просмотра работа
+/// возвращалась без пояснения — исполнителю было непонятно, что исправлять).
+Future<void> assignmentReply(BuildContext context, AssignmentView v, int status) async {
   final l10n = AppLocalizations.of(context);
   final svc = ProviderScope.containerOf(context).read(assignmentServiceProvider);
   final returning = status == AssignmentStatus.inProgress;
@@ -583,8 +620,8 @@ Future<void> _reply(BuildContext context, AssignmentView v, int status) async {
       title: l10n.tr(returning ? 'assignReturn' : 'assignDoneAction'),
       hint: l10n.tr(returning ? 'assignReturnHint' : 'assignResultHint'),
       requireText: returning);
-  if (r == null) return;
-  assignmentFire(svc.setStatus(v, status, note: r.text, files: r.files));
+  if (r == null || !context.mounted) return;
+  assignmentGuarded(context, v, () => svc.setStatus(v, status, note: r.text, files: r.files));
 }
 
 /// Ответ по поручению: текст и файлы (как комментарий с вложениями в Jira
@@ -840,7 +877,7 @@ class _ChecklistSectionState extends ConsumerState<ChecklistSection> {
           dense: true,
           controlAffinity: ListTileControlAffinity.leading,
           value: items[i].done,
-          onChanged: widget.editable ? (_) => assignmentFire(svc.toggleCheck(widget.v, i)) : null,
+          onChanged: widget.editable ? (_) => assignmentGuarded(context, widget.v, () => svc.toggleCheck(widget.v, i)) : null,
           title: Text(items[i].text,
               style: items[i].done
                   ? theme.textTheme.bodyMedium?.copyWith(
@@ -857,7 +894,7 @@ class _ChecklistSectionState extends ConsumerState<ChecklistSection> {
                 hintText: l10n.tr('projAddCheck'), prefixIcon: const Icon(AppIcons.add), isDense: true),
             onSubmitted: (t) {
               if (t.trim().isEmpty) return;
-              assignmentFire(svc.addCheck(widget.v, t));
+              assignmentGuarded(context, widget.v, () => svc.addCheck(widget.v, t));
               _ctrl.clear();
             },
           ),

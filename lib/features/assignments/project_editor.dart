@@ -31,7 +31,8 @@ import '../../widgets/common/readable_width.dart';
 import '../../widgets/ui/wheel_pickers.dart';
 import '../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
 import '../mail/providers/mail_providers.dart' show accountsProvider, activeAccountProvider;
-import 'assignment_widgets.dart' show AssignmentAccountField, assignmentColumnWidth;
+import '../compose/widgets/recipients_check.dart' show confirmExternalRecipients;
+import 'assignment_widgets.dart' show AssignmentAccountField, assignmentColumnWidth, stageEmails;
 
 /// «Изменить проект» (13.11.2026): название, описание, начало, видимость
 /// плана, участники, файлы, этапы — добавить, изменить, удалить. true —
@@ -275,6 +276,14 @@ class _ProjectEditorScreenState extends ConsumerState<ProjectEditorScreen> {
   Future<void> _send() async {
     final account = _account;
     if (account == null || !_ready || _sending) return;
+    // Участники вне организации рабочего ящика — «Проверьте получателей».
+    final emails = [
+      for (final st in _d.stages) ...stageEmails(st),
+      if (_d.controller != null) _d.controller!.email,
+      for (final o in _d.observers) o.email,
+    ];
+    if (!await confirmExternalRecipients(context, account, emails)) return;
+    if (!mounted) return;
     setState(() => _sending = true);
     _d
       ..title = _title.text.trim()

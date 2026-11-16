@@ -7,6 +7,11 @@
 //
 // Известные домены узнаются сразу. Для остальных — короткая проверка без
 // учётных данных (не дольше нескольких секунд):
+//  · записи DNS домена (2.6.0) через DNS устройства (system_dns.dart): MX —
+//    где лежит почта (Google Workspace, Яндекс 360, VK WorkMail, Microsoft
+//    365, iCloud+), SRV по RFC 6186 — серверы IMAP и отправки, которые
+//    опубликовал администратор (_imaps, _imap, _submissions, _submission),
+//    и _autodiscover — Exchange;
 //  · настройки почты на сервере самого домена (autoconfig —
 //    autoconfig.<домен>/mail/config-v1.1.xml и
 //    <домен>/.well-known/autoconfig/mail/config-v1.1.xml);
@@ -27,7 +32,9 @@ import 'package:xml/xml.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/logging/app_logger.dart';
+import '../../core/utils/mail_domains.dart' show sameOrgDomain;
 import '../../data/models/account_model.dart' show EncryptionType;
+import '../net/system_dns.dart';
 
 /// Способ входа.
 enum MailKind {
@@ -222,6 +229,7 @@ class MailProviderDetect {
     Duration timeout = const Duration(seconds: 5),
     HostResolver? resolve,
     TextFetcher? fetch,
+    DnsLookup? dns,
   }) async {
     final known = byDomain(email);
     if (known != null) return known;
@@ -229,8 +237,10 @@ class MailProviderDetect {
     if (d == null || (kIsWeb && resolve == null)) return const MailGuess(MailKind.exchange, sure: false);
     final res = resolve ?? _resolve;
     final get = fetch ?? _fetch;
+    // В тестах с подменой сети и без подмены DNS — без записей DNS.
+    final look = dns ?? (resolve == null ? SystemDns.lookup : _noDns);
     try {
-      return await _probe(d, res, get).timeout(timeout,
+      return await _probe(d, res, get, look).timeout(timeout,
           onTimeout: () => const MailGuess(MailKind.exchange, sure: false));
     } catch (e) {
       AppLogger.info('Почта по адресу: проверка $d не удалась — $e');
@@ -238,7 +248,25 @@ class MailProviderDetect {
     }
   }
 
-  static Future<MailGuess> _probe(String d, HostResolver res, TextFetcher get) async {
+  static Future<List<List<DnsRecord>?>> _noDns(List<DnsQuestion> q) async => List.filled(q.length, null);
+
+  static Future<MailGuess> _probe(String d, HostResolver res, TextFetcher get, DnsLookup dns) async {
+    Future<List<List<DnsRecord>?>> records() async {
+      final q = [
+        DnsQuestion(d, DnsType.mx),
+        DnsQuestion('_imaps._tcp.$d', DnsType.srv),
+        DnsQuestion('_imap._tcp.$d', DnsType.srv),
+        DnsQuestion('_submissions._tcp.$d', DnsType.srv),
+        DnsQuestion('_submission._tcp.$d', DnsType.srv),
+        DnsQuestion('_autodiscover._tcp.$d', DnsType.srv),
+      ];
+      try {
+        return await dns(q).timeout(const Duration(seconds: 4), onTimeout: () => List.filled(q.length, null));
+      } catch (_) {
+        return List.filled(q.length, null);
+      }
+    }
+
     Future<bool> safe(String host) async {
       try {
         return await res(host).timeout(const Duration(seconds: 3), onTimeout: () => false);
@@ -253,6 +281,7 @@ class MailProviderDetect {
     // на любые имена и узел Microsoft 365 ничего не доказывает.
     final probe = 'ogn${Random().nextInt(1 << 30).toRadixString(36)}-check';
     final results = await Future.wait<Object?>([
+      records(),
       autoconfig(d, get),
       safe('autodiscover.$d'),
       safe('imap.$d'),
@@ -262,16 +291,25 @@ class MailProviderDetect {
       if (undashed != dashed) safe('$undashed.mail.protection.outlook.com') else Future.value(false),
       safe('$probe.mail.protection.outlook.com'),
     ]);
-    final cfg = results[0] as ImapPreset?;
-    final autodiscover = results[1] as bool;
-    final imap = results[2] as bool;
-    final smtp = results[3] as bool;
-    final mail = results[4] as bool;
-    final m365 = ((results[5] as bool) || (results[6] as bool)) && !(results[7] as bool);
+    final rec = results[0] as List<List<DnsRecord>?>;
+    final cfg = results[1] as ImapPreset?;
+    final autodiscover = results[2] as bool;
+    final imap = results[3] as bool;
+    final smtp = results[4] as bool;
+    final mail = results[5] as bool;
+    final m365 = ((results[6] as bool) || (results[7] as bool)) && !(results[8] as bool);
     final guess = decide(
       domain: d,
+      mx: SystemDns.mxHosts(rec[0] ?? const []),
+      srv: presetFromSrv(
+        imaps: SystemDns.bestSrv(rec[1]),
+        imap: SystemDns.bestSrv(rec[2]),
+        submissions: SystemDns.bestSrv(rec[3]),
+        submission: SystemDns.bestSrv(rec[4]),
+        smtpFallback: smtp ? 'smtp.$d' : (mail ? 'mail.$d' : null),
+      ),
       autoconfig: cfg,
-      autodiscover: autodiscover,
+      autodiscover: autodiscover || SystemDns.bestSrv(rec[5]) != null,
       imap: imap,
       smtp: smtp,
       mail: mail,
@@ -285,6 +323,8 @@ class MailProviderDetect {
   @visibleForTesting
   static MailGuess decide({
     required String domain,
+    List<String> mx = const [],
+    ImapPreset? srv,
     ImapPreset? autoconfig,
     bool autodiscover = false,
     bool imap = false,
@@ -292,6 +332,9 @@ class MailProviderDetect {
     bool mail = false,
     bool microsoft365 = false,
   }) {
+    // Почта домена лежит у известной службы (MX): вход через неё.
+    final byMx = kindByMx(mx);
+    if (byMx != null) return byMx;
     // Почта домена — у Microsoft 365: вход через Microsoft.
     if (microsoft365) return const MailGuess(MailKind.microsoft, microsoft365: true);
     // Сервер домена сам сообщил настройки IMAP.
@@ -307,6 +350,17 @@ class MailProviderDetect {
         return const MailGuess(MailKind.microsoft, microsoft365: true);
       }
       return MailGuess(MailKind.imap, imap: autoconfig);
+    }
+    // Администратор опубликовал серверы IMAP (SRV, RFC 6186). Если есть и
+    // autodiscover (Exchange с IMAP) — Exchange, а серверы IMAP — в запасе
+    // (сборка без Exchange и переключатель «Exchange | IMAP»).
+    // Записи SRV не подписаны: в чужой сети их могут подменить и увести
+    // пароль на чужой сервер с настоящим сертификатом (RFC 6186, раздел 6).
+    // Сервер вне домена адреса — не «уверенно»: серверы показаны человеку
+    // в «Расширенных настройках» до входа.
+    if (srv != null) {
+      final own = sameOrgDomain(srv.imapHost, domain) && sameOrgDomain(srv.smtpHost, domain);
+      return autodiscover ? MailGuess(MailKind.exchange, imap: srv) : MailGuess(MailKind.imap, imap: srv, sure: own);
     }
     // Есть autodiscover — почти наверняка Exchange.
     if (autodiscover) return const MailGuess(MailKind.exchange);
@@ -325,6 +379,53 @@ class MailProviderDetect {
     }
     // mail.<домен> есть у Exchange (Outlook в браузере) и у IMAP — не знаем.
     return const MailGuess(MailKind.exchange, sure: false);
+  }
+
+  /// Служба по узлам MX (по предпочтению — первый узнанный): Google
+  /// Workspace, Яндекс 360, VK WorkMail (Mail.ru), Microsoft 365, iCloud+.
+  /// null — почта на своём сервере организации или у неизвестной службы.
+  @visibleForTesting
+  static MailGuess? kindByMx(List<String> mx) {
+    bool under(String h, String zone) => h == zone || h.endsWith('.$zone');
+    for (final raw in mx.take(3)) {
+      final h = raw.toLowerCase().replaceAll(RegExp(r'\.$'), '');
+      if (under(h, 'google.com') || under(h, 'googlemail.com')) return const MailGuess(MailKind.google);
+      if (under(h, 'yandex.net') || under(h, 'yandex.ru')) return const MailGuess(MailKind.yandex);
+      if (under(h, 'mail.ru')) return const MailGuess(MailKind.mailru, appPassword: true);
+      if (under(h, 'protection.outlook.com') || under(h, 'outlook.com')) {
+        return const MailGuess(MailKind.microsoft, microsoft365: true);
+      }
+      if (under(h, 'icloud.com')) return const MailGuess(MailKind.icloud, appPassword: true);
+    }
+    return null;
+  }
+
+  /// Серверы из записей SRV (RFC 6186): IMAP — _imaps (SSL), иначе _imap
+  /// (STARTTLS); отправка — _submissions (SSL), иначе _submission
+  /// (STARTTLS), иначе [smtpFallback] или сервер IMAP на 587. null — IMAP
+  /// не опубликован.
+  @visibleForTesting
+  static ImapPreset? presetFromSrv({
+    DnsRecord? imaps,
+    DnsRecord? imap,
+    DnsRecord? submissions,
+    DnsRecord? submission,
+    String? smtpFallback,
+  }) {
+    final i = imaps ?? imap;
+    if (i == null) return null;
+    final imapHost = i.target.toLowerCase();
+    final s = submissions ?? submission;
+    return ImapPreset(
+      imapHost: imapHost,
+      imapPort: i.port,
+      imapEncryption: imaps != null ? EncryptionType.ssl : EncryptionType.starttls,
+      smtpHost: s?.target.toLowerCase() ?? smtpFallback ?? imapHost,
+      smtpPort: s?.port ?? 587,
+      smtpEncryption: submissions != null
+          ? EncryptionType.ssl
+          : (s != null && s.port == 465 ? EncryptionType.ssl : EncryptionType.starttls),
+    );
   }
 
   /// Настройки IMAP с сервера домена (формат autoconfig Thunderbird).

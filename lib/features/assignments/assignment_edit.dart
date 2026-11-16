@@ -26,6 +26,7 @@ import '../../widgets/common/hero_email_transition.dart';
 import '../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../compose/widgets/people_picker_sheet.dart' show showPeoplePicker;
 import '../mail/providers/mail_providers.dart' show accountsProvider;
+import 'assignment_widgets.dart' show assignmentGuarded, stageEmails;
 import 'project_editor.dart' show showStageEditor;
 
 /// «Изменить» поручение или этап [v] (постановщик или заместитель).
@@ -58,7 +59,9 @@ Future<void> editAssignment(BuildContext context, WidgetRef ref, AssignmentView 
   if (res == null) return;
   final a = res.after;
   final afterId = !stage ? v.row.afterId : (a == null || a < 0 || a >= list.length ? null : list[a].id);
-  assignmentFire(ref.read(assignmentServiceProvider).editTask(v, res, afterId: afterId).then((_) {}));
+  if (!context.mounted) return;
+  assignmentGuarded(context, v, () => ref.read(assignmentServiceProvider).editTask(v, res, afterId: afterId),
+      extra: stageEmails(res));
 }
 
 /// «Права постановщика»: заместители, назначить заместителя, передать
@@ -125,7 +128,7 @@ Future<void> showRightsSheet(BuildContext context, WidgetRef ref, AssignmentView
     final ok = await confirmDestructive(context,
         title: l10n.tr('assignRightsRemove'),
         message: l10n.tr('assignRightsRevoked').replaceAll('{name}', label(email, d?.displayName)));
-    if (ok) assignmentFire(svc.revokeRights(v, email));
+    if (ok && context.mounted) assignmentGuarded(context, v, () => svc.revokeRights(v, email));
     return;
   }
   final account = ref.read(accountsProvider).where((a) => a.id == v.row.accountId).firstOrNull;
@@ -143,5 +146,6 @@ Future<void> showRightsSheet(BuildContext context, WidgetRef ref, AssignmentView
         message: l10n.tr('assignRightsHandoverConfirm').replaceAll('{name}', person.label));
     if (!ok) return;
   }
-  assignmentFire(svc.grantRights(v, person, handover: handover));
+  if (!context.mounted) return;
+  assignmentGuarded(context, v, () => svc.grantRights(v, person, handover: handover), extra: [person.email]);
 }

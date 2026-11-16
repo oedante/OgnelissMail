@@ -192,6 +192,14 @@ Step 'Движок перевода Bergamot (build\bergamot)'
 & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'tool\bergamot\fetch_engine.ps1')
 if ($LASTEXITCODE -ne 0) { Warn 'Движок перевода не скачан — сборка без перевода писем' } else { Ok 'Движок перевода на месте' }
 
+# Окна писем и редактора (2.5.4): плагины регистрируются и в движках
+# отдельных окон — tool\desktop\windows\multi_window.ps1 правит
+# windows\runner\flutter_window.cpp (повторный запуск ничего не меняет).
+Step 'Окна писем и редактора (плагины в окнах)'
+& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'tool\desktop\windows\multi_window.ps1') -Root $Root
+if ($LASTEXITCODE -ne 0) { Fail 'Не удалось подготовить windows\runner\flutter_window.cpp для окон' }
+Ok 'Плагины в окнах писем и редактора'
+
 # Название и идентификаторы для Windows: заголовок окна, свойства exe,
 # имя exe. CompanyName\ProductName из Runner.rc задают и папку данных:
 # %APPDATA%\com.ogneliss\Ogneliss Mail. Правка идемпотентна — работает и для

@@ -65,6 +65,17 @@ final mailDrawerRequestProvider = StateProvider<int>((ref) => 0);
 /// раздела по нажатию на аватар ящика в нижней панели).
 final mailDrawerPendingProvider = StateProvider<bool>((ref) => false);
 
+/// Двойной щелчок по письму в ленте (компьютер, 14.11.2026, замечание владельца
+/// 14.11.2026): письмо — в отдельное окно, как в Outlook. Ленте окно не
+/// открыть — нужно уже загруженное письмо с картинками; его берёт панель
+/// письма справа, когда загрузит это письмо. Запрос старше [freshFor] не
+/// исполняется: письмо так и не открылось в панели (беседа, черновик).
+typedef MessageWindowRequest = ({String accountId, String emailId, DateTime at});
+
+final messageWindowRequestProvider = StateProvider<MessageWindowRequest?>((ref) => null);
+
+const messageWindowRequestFreshFor = Duration(seconds: 15);
+
 /// Меняется при постановке/снятии «На контроле» — «Мой день» перечитывает.
 final controlRevisionProvider = StateProvider<int>((ref) => 0);
 
@@ -884,6 +895,9 @@ class EmailListState {
 /// Размер страницы
 const int _pageSize = 30;
 
+/// Меньше строк в ленте при заполненном окне — окно расширяется само.
+const int _minVisibleRows = 15;
+
 /// Максимум писем в памяти (контроль RAM)
 const int _maxInMemory = 2000;
 
@@ -1111,6 +1125,15 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
     final models = _modelsFor(filtered);
     final hasMore = rows.length >= _window && _window < _maxInMemory;
     final page = (_window ~/ _pageSize) - 1;
+    // Строк в ленте мало, а окно заполнено (15.11.2026: беседа из 41 письма
+    // заняла все 30 писем окна — в «Всей почте» одна строка): прокрутки нет,
+    // и догрузка по прокрутке не срабатывала. Расширяем окно сами — так же
+    // после фильтров, которые оставили от окна несколько писем.
+    if (hasMore && models.length < _minVisibleRows) {
+      scheduleMicrotask(() {
+        if (mounted) unawaited(loadNextPage());
+      });
+    }
     // Ничего не изменилось — состояние прежнее (07.11.2026, аудит
     // микрофризов): drift присылает выборку на любую запись в таблицу
     // писем, и во время синхронизации лента целиком перестраивалась до

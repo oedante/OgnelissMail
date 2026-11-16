@@ -48,8 +48,9 @@ class SignatureImportService {
   }
 
   // ── Gmail REST: GET users/me/settings/sendAs ──
-  // Требует OAuth-scope https://www.googleapis.com/auth/gmail.settings.basic
-  // (добавляется на стороне OAuth-прокси). Без него вернётся 403 → фолбэк.
+  // Чтение sendAs разрешено и с https://mail.google.com/ (вход Google
+  // приложения и прокси); gmail.settings.basic не нужен (15.11.2026). Нет
+  // доступа (Gmail API не включён в проекте) — 403 → подпись из отправленных.
   Future<ImportedSignature?> _fromGmail(AccountModel account) async {
     final token = await _oauth.getAccessToken(account.id);
     if (token == null) return null;

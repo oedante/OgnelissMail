@@ -1,7 +1,7 @@
 // lib/services/security/bimi/bimi_service.dart
 // Логотипы отправителей BIMI (1.9.x, просьба владельца 31.10.2026): запрос
-// к серверу Ogneliss (server/oauth-proxy, GET /bimi?d=<домен>) и кэш на
-// диске. DNS читает сервер, а не телефон и не публичный DoH: домены
+// к серверу Ogneliss (с 2.5.5 — служба погоды server/weather-proxy, GET
+// /weather/bimi?d=<домен>; сервер входа снят) и кэш на диске. DNS читает сервер, а не телефон и не публичный DoH: домены
 // отправителей не уходят третьим лицам (решено с владельцем 31.10.2026). На
 // сервер уходит только домен — без адресов, писем и заголовков.
 //
@@ -181,10 +181,10 @@ class BimiResolver {
         _client = client ?? http.Client(),
         _now = now ?? DateTime.now;
 
-  /// Сервер задан при сборке (OAUTH_PROXY_URL и OAUTH_PROXY_KEY): без него
-  /// функции нет, переключатель в настройках не показывается.
-  static bool get configured =>
-      AppConstants.oauthProxyBaseUrl.trim().isNotEmpty && AppConstants.oauthProxyApiKey.isNotEmpty;
+  /// Адрес службы задан при сборке (BIMI_URL; по умолчанию — служба погоды
+  /// на ogneliss.ru): без него функции нет, переключатель в настройках не
+  /// показывается.
+  static bool get configured => AppConstants.bimiUrl.trim().isNotEmpty;
 
   final String _base;
   final String apiKey;
@@ -234,7 +234,7 @@ class BimiResolver {
       final uri = Uri.parse('$_base/bimi').replace(queryParameters: {'d': domain});
       BimiStats.requests++;
       final r = await _client
-          .get(uri, headers: {'x-api-key': apiKey, 'Accept': 'application/json'})
+          .get(uri, headers: {if (apiKey.isNotEmpty) 'x-api-key': apiKey, 'Accept': 'application/json'})
           .timeout(const Duration(seconds: 15));
       switch (r.statusCode) {
         case 200:
@@ -317,7 +317,7 @@ class BimiResolver {
 final bimiResolverProvider = Provider<BimiResolver?>((ref) {
   if (!BimiResolver.configured) return null;
   return BimiResolver(
-    baseUrl: AppConstants.oauthProxyBaseUrl,
+    baseUrl: AppConstants.bimiUrl,
     apiKey: AppConstants.oauthProxyApiKey,
     cache: BimiCache(BimiFileStore()),
   );

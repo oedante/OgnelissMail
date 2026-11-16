@@ -98,7 +98,8 @@ import '../../../widgets/common/mail_open_motion.dart' show MailOpenHandoff;
 import '../widgets/mail_peek_card.dart';
 import '../widgets/peek_helpers.dart';
 import '../../../widgets/common/peek_card.dart' show peekAnchorOf;
-import '../../../widgets/common/quick_long_press.dart' show HoldPointer, HoldTracker;
+import '../../../widgets/common/quick_long_press.dart' show DoubleClick, HoldPointer, HoldTracker;
+import '../message_window.dart' show MessageWindow;
 import '../widgets/mail_freshness_line.dart';
 import '../../../widgets/navigation/panel_requests.dart' show mailScrollTopRequestProvider, mailSearchQueryProvider;
 import '../providers/account_look.dart';
@@ -945,7 +946,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
 
       // Телефон — справа (1.6.40, решение владельца: портрет «Меню» внизу
       // справа и свайп от правого края — под большим пальцем).
-      drawer: docked || _menuAtEnd ? null : const MailDrawer(),
+      // Планшет и компьютер: выдвижное меню — той же ширины, что
+      // закреплённая панель (значок закрепления не прыгает, 2.5.4).
+      drawer: docked || _menuAtEnd ? null : MailDrawer(width: phone ? null : _dockedWidth(box.maxWidth)),
       endDrawer: _menuAtEnd ? const MailDrawer() : null,
       // Полоса края для меню — 10 точек вместо 20 (2.2.0, план 08.11.2026
       // п. 7): свайп строки, начатый у края, открывал меню вместо действия
@@ -1823,6 +1826,17 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                 _selectAnchor = item.id;
                 if (_selectionMode) {
                   _toggleSelect(item.id);
+                  return;
+                }
+                // Двойной щелчок мышью (компьютер, 14.11.2026) — письмо в отдельное
+                // окно, как в Outlook. Первый щелчок уже открыл письмо в панели
+                // справа; окно откроет она, когда письмо загрузится.
+                if (DoubleClick.supported &&
+                    MessageWindow.supported &&
+                    AdaptiveLayout.isSplit(context) &&
+                    DoubleClick.isDoubleClick(('mail', item.accountId, item.id))) {
+                  ref.read(messageWindowRequestProvider.notifier).state =
+                      (accountId: item.accountId, emailId: item.id, at: DateTime.now());
                   return;
                 }
                 unawaited(HapticFeedback.selectionClick());
@@ -2867,6 +2881,12 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         PeekAction(icon: AppIcons.reply, label: l10n.tr('reply'), onTap: () => context.push('/compose?$q')),
         PeekAction(
             icon: AppIcons.reply_all, label: l10n.tr('replyAll'), onTap: () => context.push('/compose?$q&replyAll=true')),
+        // Ответ с файлами исходного письма (14.11.2026).
+        if (email.hasFiles)
+          PeekAction(
+              icon: AppIcons.attach_file,
+              label: l10n.tr('replyWithAttachments'),
+              onTap: () => context.push('/compose?$q&withAttachments=true')),
         PeekAction(icon: AppIcons.forward, label: l10n.tr('forward'), onTap: () => _forward(email, l10n)),
       ]),
       PeekGroup(title: l10n.tr('peekGroupMark'), items: [
@@ -4016,15 +4036,25 @@ class _DetailPlaceholder extends ConsumerWidget {
           ],
           if (!AppBottomBar.inUse(context)) ...[
             const SizedBox(height: Space.xl),
-            for (final k in keys)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  SizedBox(width: 110, child: Text(k.$1, textAlign: TextAlign.end, style: keyStyle)),
-                  const SizedBox(width: Space.m),
-                  SizedBox(width: 220, child: Text(k.$2, style: theme.textTheme.bodySmall?.copyWith(color: muted))),
-                ]),
-              ),
+            // Узкая область чтения (складной экран, окно в треть экрана):
+            // подписи клавиш сужаются, а не вылезают за край (2.5.4 — было
+            // 110 + 220 точек при любой ширине).
+            LayoutBuilder(builder: (context, box) {
+              final label = (box.maxWidth - 110 - Space.m - Space.l).clamp(80.0, 220.0);
+              return Column(mainAxisSize: MainAxisSize.min, children: [
+                for (final k in keys)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      SizedBox(width: 110, child: Text(k.$1, textAlign: TextAlign.end, style: keyStyle)),
+                      const SizedBox(width: Space.m),
+                      SizedBox(
+                          width: label,
+                          child: Text(k.$2, style: theme.textTheme.bodySmall?.copyWith(color: muted))),
+                    ]),
+                  ),
+              ]);
+            }),
           ],
         ]),
       ),

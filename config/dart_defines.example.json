@@ -8,6 +8,7 @@
   "GOOGLE_DESKTOP_CLIENT_SECRET": "",
   "MS_CLIENT_ID": "",
   "PUSH_RELAY_URL": "https://www.ogneliss.ru/push",
+  "BIMI_URL": "https://www.ogneliss.ru/weather",
   "PUSH_WAKE_MODE": "silent",
   "FIREBASE_API_KEY": "",
   "FIREBASE_APP_ID": "",

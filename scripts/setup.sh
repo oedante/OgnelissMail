@@ -270,12 +270,10 @@ add_define OAUTH_PROXY_URL     "${OAUTH_PROXY_URL:-}"
 add_define OAUTH_PROXY_KEY     "${OAUTH_PROXY_KEY:-}"
 # MAILRU_CLIENT_SECRET в сборку не передаём: секрет живёт только на прокси.
 
-if [ -n "${OAUTH_PROXY_URL:-}" ]; then
-  ok "OAuth через прокси: $OAUTH_PROXY_URL"
-  [ -z "${OAUTH_PROXY_KEY:-}" ] && warn "OAUTH_PROXY_KEY пуст — /token вернёт 401"
-else
-  warn "OAUTH_PROXY_URL не задан — OAuth пойдёт легаси-путём (нужны clientId в app_constants)"
-fi
+# С 2.5.5 вход — напрямую у служб (клиенты GOOGLE_*_CLIENT_ID и MS_CLIENT_ID в
+# config/dart_defines.json); OAUTH_PROXY_URL — сервер входа только для Яндекса
+# на Windows и Linux, OAUTH_PROXY_KEY — его ключ и ключ сигналов (push-relay).
+[ -z "${OAUTH_PROXY_KEY:-}" ] && warn "OAUTH_PROXY_KEY пуст — сигналы сервера о новой почте работать не будут"
 
 # Те же значения — в config/dart_defines.json: его подхватывают конфигурации
 # запуска Android Studio (--dart-define-from-file). Файл в .gitignore.

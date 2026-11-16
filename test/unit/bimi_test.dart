@@ -4,6 +4,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ogneliss/data/models/account_model.dart' show AccountType;
+import 'package:ogneliss/widgets/common/bimi_avatar.dart' show isGoogleMailbox;
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:ogneliss/services/security/bimi/bimi_rules.dart';
@@ -26,6 +28,23 @@ class _MemStore implements BimiCacheStore {
 }
 
 void main() {
+  // 2.5.5: ящики Google — не «свои» серверы. Письма Gmail проверку DMARC
+  // получают от mx.google.com, ему логотип не доверяет — домен отправителя
+  // на сервер Ogneliss не уходит, данные Google остаются на устройстве.
+  test('ящик Google: логотип не ищется, у остальных ящиков — как раньше', () {
+    expect(isGoogleMailbox(AccountType.google, const []), isTrue);
+    expect(isGoogleMailbox(AccountType.imap, const ['imap.gmail.com', 'smtp.gmail.com']), isTrue,
+        reason: 'Gmail паролем приложения или Google Workspace на своём домене');
+    expect(isGoogleMailbox(AccountType.yandex, const ['imap.yandex.ru', 'smtp.yandex.ru']), isFalse);
+    const gmail = 'mx.google.com; dkim=pass header.i=@bank.example; dmarc=pass (p=REJECT) header.from=bank.example';
+    // Только Яндекс — письмо, проверенное Google, не «своё».
+    final own = ownMailServerDomains([(email: 'i@yandex.ru', hosts: ['imap.yandex.ru'])]);
+    expect(bimiDmarcDomain(gmail, 'news@bank.example', ownServers: own), isNull);
+    // Раньше ящик Gmail делал mx.google.com «своим».
+    final withGmail = ownMailServerDomains([(email: 'i@gmail.com', hosts: ['imap.gmail.com'])]);
+    expect(bimiDmarcDomain(gmail, 'news@bank.example', ownServers: withGmail), 'bank.example');
+  });
+
   group('Authentication-Results', () {
     test('dmarc=pass для домена From в верхнем заголовке', () {
       const ar = 'mx.google.com; dkim=pass header.i=@example.com; spf=pass smtp.mailfrom=example.com; '

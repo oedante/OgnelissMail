@@ -1,5 +1,6 @@
 // lib/services/mail/oauth/proxy_pkce.dart
-// PKCE между приложением и OAuth-прокси.
+// PKCE между приложением и OAuth-прокси (с 2.5.5 сервер входа — только для
+// Яндекса на Windows и Linux; остальное — напрямую, direct_oauth.dart).
 //
 // Прокси возвращает результат входа в приложение по адресу своей схемы
 // (com.ogneliss.mail://oauth) или на loopback. Свою схему может
@@ -28,6 +29,24 @@ class OAuthProviderError implements Exception {
   final String? detail;
   const OAuthProviderError(this.code, [this.detail]);
 
+  /// Google не пускает в приложение новых пользователей (2.5.4): у
+  /// непроверенного приложения кончился лимит в 100 человек. Код ставит
+  /// сервер входа (GOOGLE_USER_CAP=1 в его .env) или [OAuthProviderError.of]
+  /// по ответу самого Google.
+  static const userCap = 'user_cap';
+
+  /// Отказ с учётом подробности: Google ответил про лимит пользователей или
+  /// непроверенное приложение — [userCap]. Остальное — как пришло.
+  factory OAuthProviderError.of(String code, String? detail, {String? provider}) =>
+      provider == 'google' && looksLikeUserCap(detail) ? OAuthProviderError(userCap, detail) : OAuthProviderError(code, detail);
+
+  /// Подробность отказа Google говорит о лимите пользователей или о том, что
+  /// приложение не проверено.
+  static bool looksLikeUserCap(String? detail) =>
+      detail != null &&
+      RegExp(r'user[\s_-]?cap|unverified|not\s+(been\s+)?verified|verification\s+process', caseSensitive: false)
+          .hasMatch(detail);
+
   /// Отменил сам пользователь — сообщать об ошибке не нужно.
   bool get cancelled => code == 'access_denied';
 
@@ -40,6 +59,7 @@ class OAuthProviderError implements Exception {
   /// Текст для пользователя на языке интерфейса.
   String localizedMessage(AppLocalizations l10n) => switch (code) {
         'access_denied' => l10n.tr('oauthCancelled'),
+        userCap => l10n.tr('oauthGoogleUserCap'),
         'invalid_scope' => l10n.tr('oauthInvalidScope'),
         'token_exchange' => l10n.tr('oauthTokenExchange').replaceAll('{code}', detail ?? '?'),
         _ => l10n.tr('oauthProviderDenied').replaceAll('{code}', code),
@@ -68,7 +88,7 @@ class ProxyPkce {
   Future<Map<String, String>> resolve(String proxyBase, Map<String, String> params) async {
     // Ошибка провайдера, которую прокси вернул в приложение.
     final err = params['error'];
-    if (err != null && err.isNotEmpty) throw OAuthProviderError(err, params['desc']);
+    if (err != null && err.isNotEmpty) throw OAuthProviderError.of(err, params['desc'], provider: params['provider']);
     final oc = params['oc'];
     // Токены прямо в адресе возврата не принимаются: адрес схемы приложения
     // может подставить любое приложение на устройстве (вход в чужой ящик).

@@ -62,6 +62,7 @@ import '../providers/settings_provider.dart';
 import 'accounts_settings_screen.dart';
 import '../widgets/dav_pim_item.dart';
 import '../../../widgets/common/text_scale_cap.dart';
+import '../../../widgets/ui/app_menu_button.dart' show AppMenuEntry, AppSelectField;
 import '../../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../../contacts/person_names.dart' show personNamesProvider;
 import 'package:flutter_riverpod/legacy.dart' show StateProvider;
@@ -626,8 +627,10 @@ class AccountScreen extends ConsumerWidget {
     return 'IMAP $imap · SMTP $smtp';
   }
 
-  /// Адрес сервера Exchange или серверы и порты IMAP/SMTP. Пароль меняется
-  /// пунктом «Войти снова».
+  /// Адрес сервера Exchange или серверы, порты и шифрование IMAP/SMTP.
+  /// Пароль и логин меняются пунктом «Войти снова». 15.11.2026: подписи
+  /// полей налезали на заголовки «Входящая почта» и «Исходящая почта», а
+  /// шифрование изменить было нельзя.
   Future<void> _editServer(BuildContext context, WidgetRef ref, AccountModel a) async {
     final l10n = AppLocalizations.of(context);
     final exchange = a.isMsExchange || a.usesEas || a.usesEws;
@@ -635,38 +638,78 @@ class AccountScreen extends ConsumerWidget {
     final port = TextEditingController(text: a.imapPort?.toString() ?? '');
     final sHost = TextEditingController(text: a.smtpServer ?? '');
     final sPort = TextEditingController(text: a.smtpPort?.toString() ?? '');
-    InputDecoration dec(String label) => InputDecoration(labelText: label, isDense: true);
+    var imapEnc = a.imapEncryption ?? EncryptionType.ssl;
+    var smtpEnc = a.smtpEncryption ?? EncryptionType.starttls;
+    InputDecoration dec(String label) => InputDecoration(labelText: label);
+    const encEntries = [
+      AppMenuEntry(value: EncryptionType.ssl, label: 'SSL/TLS'),
+      AppMenuEntry(value: EncryptionType.starttls, label: 'STARTTLS'),
+      AppMenuEntry(value: EncryptionType.none, label: 'None'),
+    ];
+    Future<bool> plaintextOk(BuildContext ctx) => confirmDestructive(ctx,
+        title: l10n.tr('plaintextTitle'), message: l10n.tr('plaintextBody'), action: l10n.tr('plaintextAction'));
     final ok = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.tr('server')),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (!exchange)
-                Text(l10n.tr('incomingServer'), style: Theme.of(ctx).textTheme.labelLarge),
-              TextField(controller: host, keyboardType: TextInputType.url, autocorrect: false,
+      builder: (ctx) => StatefulBuilder(builder: (ctx, setLocal) {
+        final head = Theme.of(ctx).textTheme.titleSmall;
+        Widget section(String title, TextEditingController h, TextEditingController p, EncryptionType enc,
+                ValueChanged<EncryptionType> onEnc) =>
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
+              Text(title, style: head),
+              const SizedBox(height: Space.m),
+              TextField(
+                  controller: h,
+                  keyboardType: TextInputType.url,
+                  autocorrect: false,
+                  enableSuggestions: false,
                   decoration: dec(l10n.tr('serverHostLbl'))),
-              if (!exchange) ...[
-                TextField(controller: port, keyboardType: TextInputType.number,
-                    decoration: dec(l10n.tr('port'))),
-                const SizedBox(height: Space.l),
-                Text(l10n.tr('outgoingServer'), style: Theme.of(ctx).textTheme.labelLarge),
-                TextField(controller: sHost, keyboardType: TextInputType.url, autocorrect: false,
-                    decoration: dec(l10n.tr('serverHostLbl'))),
-                TextField(controller: sPort, keyboardType: TextInputType.number,
-                    decoration: dec(l10n.tr('port'))),
-              ],
-            ],
+              const SizedBox(height: Space.m),
+              Row(children: [
+                SizedBox(
+                    width: 104,
+                    child: TextField(
+                        controller: p, keyboardType: TextInputType.number, decoration: dec(l10n.tr('port')))),
+                const SizedBox(width: Space.m),
+                Expanded(
+                  child: AppSelectField<EncryptionType>(
+                    value: enc,
+                    decoration: InputDecoration(labelText: l10n.tr('encryption')),
+                    entries: encEntries,
+                    onChanged: (v) async {
+                      // Без шифрования пароль уходит открытым текстом — только
+                      // после явного согласия (как на экране входа).
+                      if (v == EncryptionType.none && !await plaintextOk(ctx)) return;
+                      setLocal(() => onEnc(v));
+                    },
+                  ),
+                ),
+              ]),
+            ]);
+        return AlertDialog(
+          title: Text(l10n.tr('server')),
+          content: SizedBox(
+            width: 440,
+            child: SingleChildScrollView(
+              child: exchange
+                  ? TextField(
+                      controller: host,
+                      keyboardType: TextInputType.url,
+                      autocorrect: false,
+                      enableSuggestions: false,
+                      decoration: dec(l10n.tr('serverHostLbl')))
+                  : Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                      section(l10n.tr('incomingServer'), host, port, imapEnc, (v) => imapEnc = v),
+                      const SizedBox(height: Space.xl),
+                      section(l10n.tr('outgoingServer'), sHost, sPort, smtpEnc, (v) => smtpEnc = v),
+                    ]),
+            ),
           ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.tr('cancel'))),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.tr('save'))),
-        ],
-      ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.tr('cancel'))),
+            FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.tr('save'))),
+          ],
+        );
+      }),
     );
     if (ok != true) return;
     final h = host.text.trim();
@@ -678,6 +721,8 @@ class AccountScreen extends ConsumerWidget {
             imapPort: int.tryParse(port.text.trim()) ?? a.imapPort,
             smtpServer: sHost.text.trim().isEmpty ? a.smtpServer : sHost.text.trim(),
             smtpPort: int.tryParse(sPort.text.trim()) ?? a.smtpPort,
+            imapEncryption: imapEnc,
+            smtpEncryption: smtpEnc,
           );
     await ref.read(accountsProvider.notifier).updateAccount(updated);
     ref.read(mailEngineServiceProvider).disconnect(a.id);

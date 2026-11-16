@@ -18,7 +18,8 @@ import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../calendar/calendar_data.dart' show calendarHubProvider;
-import '../../mail/widgets/mail_html_view.dart' show MailWebViewPool, mailMacWebViewSupported;
+import '../../mail/widgets/mail_html_view.dart' show MailWebViewPool, mailDesktopWebViewSupported;
+import '../../compose/compose_window.dart' show ComposeWindow;
 import '../../mail/widgets/mail_header.dart' show RecipientsLayout;
 
 /// Ключи выключателей, которых нет в других настройках (имена — с 1.5.x,
@@ -38,8 +39,10 @@ class ExperimentalKeys {
   /// Вид получателей в шапке письма (1.5.9): RecipientsLayout.name.
   static const recipientsLayout = 'recipients_layout';
 
-  /// Mac: сложные письма — во встроенном окне браузера (12.11.2026,
-  /// MacMailWebView). По умолчанию выключено, пока не проверено на Mac.
+  /// Mac и Windows: сложные письма — во встроенном окне браузера (Mac —
+  /// 12.11.2026, Windows — 14.11.2026; DesktopMailWebView). С 2.5.4
+  /// включено по умолчанию (владелец 15.11.2026: «не работал html
+  /// просмотр писем»); выключенное вручную остаётся выключенным.
   static const macWebMail = 'mac_web_mail_on';
 
   // ── «Экспериментальный функционал» (1.10.3): по умолчанию выключено ──
@@ -217,12 +220,22 @@ class _MailOpeningSectionState extends ConsumerState<MailOpeningSection> with _P
           value: pref(ExperimentalKeys.nativeMail),
           onChanged: (v) => setPref(ExperimentalKeys.nativeMail, v),
         ),
-        if (mailMacWebViewSupported)
+        // Многооконный режим (2.5.4, просьба владельца 15.11.2026: «как в
+        // Outlook»): новое письмо, ответ, пересылка — отдельным окном.
+        if (ComposeWindow.supported)
+          SettingsSwitchItem(
+            icon: AppIcons.open_in_new,
+            title: l10n.tr('composeWindowTitle'),
+            subtitle: l10n.tr('composeWindowDesc'),
+            value: pref(ComposeWindow.prefKey, def: false),
+            onChanged: (v) => setPref(ComposeWindow.prefKey, v),
+          ),
+        if (mailDesktopWebViewSupported)
           SettingsSwitchItem(
             icon: AppIcons.language,
             title: l10n.tr('expMacWebTitle'),
             subtitle: l10n.tr('expMacWebDesc'),
-            value: pref(ExperimentalKeys.macWebMail, def: false),
+            value: pref(ExperimentalKeys.macWebMail, def: true),
             onChanged: (v) => setPref(ExperimentalKeys.macWebMail, v),
           ),
         SettingsSwitchItem(

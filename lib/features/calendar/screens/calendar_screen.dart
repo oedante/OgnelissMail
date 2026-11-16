@@ -64,6 +64,7 @@ import '../../../services/notifications/reminder_scheduler_service.dart';
 import '../../../widgets/ui/settings_group.dart' show SettingsSectionTitle;
 import '../../../widgets/common/account_avatar.dart';
 import '../../../widgets/common/section_search_button.dart';
+import '../../../widgets/common/quick_long_press.dart' show secondaryAsHold;
 
 export '../calendar_data.dart' show calendarEventsProvider, calendarLayersProvider, CalendarLayers;
 
@@ -1066,6 +1067,7 @@ class _AccountChips extends ConsumerWidget {
                   // «только этот».
                   child: GestureDetector(
                     onLongPress: () => n.setHidden({for (final o in scope) if (o.id != a.id) o.id}),
+                    onSecondaryTapUp: secondaryAsHold(() => n.setHidden({for (final o in scope) if (o.id != a.id) o.id})),
                     child: FilterChip(
                       visualDensity: VisualDensity.compact,
                       showCheckmark: false,

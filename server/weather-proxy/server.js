@@ -29,11 +29,19 @@
 //                                — [{name, display_name, lat, lon}] (как у
 //                                  Nominatim format=jsonv2 — приложение
 //                                  разбирает тем же кодом)
+//   GET /bimi?d=<домен>[&s=<селектор>]
+//                                — логотип отправителя BIMI и политика DMARC
+//                                  (2.5.5: перенесено из снятого сервера
+//                                  входа, bimi.js). Домены в журнал не
+//                                  пишутся; кэш — в памяти (контейнер только
+//                                  для чтения). У ящиков Google приложение
+//                                  логотипы не запрашивает.
 // ============================================================================
 
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
+const { createBimi } = require('./bimi');
 
 const PORT = Number(process.env.PORT || 8789);
 const HOST = process.env.HOST || '0.0.0.0';
@@ -275,13 +283,17 @@ function send(res, status, body, headers = {}) {
 
 function createServer(opts = {}) {
   const cities = opts.cities || loadCities(opts.dataDir || DATA_DIR);
+  // Логотипы BIMI: BIMI=0 — выключены.
+  const bimi = opts.bimi !== undefined ? opts.bimi : process.env.BIMI === '0' ? null : createBimi({});
   console.log(`Ogneliss Weather Proxy: городов ${cities.length}, путь ${BASE_PATH}`);
   return http.createServer(async (req, res) => {
     try {
       const u = new URL(req.url, 'http://x');
       if (req.method !== 'GET') return send(res, 405, '{"error":"method"}');
       const p = u.pathname.startsWith(BASE_PATH) ? u.pathname.slice(BASE_PATH.length) : u.pathname;
-      if (p === '/healthz') return send(res, 200, JSON.stringify({ ok: true, cities: cities.length, stats }));
+      if (p === '/healthz') {
+        return send(res, 200, JSON.stringify({ ok: true, cities: cities.length, stats, ...(bimi ? { bimi: bimi.stats() } : {}) }));
+      }
       const ip = String(req.headers['x-real-ip'] || req.socket.remoteAddress || '');
       if (!allowed(ip)) {
         stats.limited++;
@@ -307,6 +319,13 @@ function createServer(opts = {}) {
         const q = (u.searchParams.get('q') || '').slice(0, 80);
         const limit = Number(u.searchParams.get('limit') || 6) || 6;
         return send(res, 200, JSON.stringify(searchCities(cities, q, limit)));
+      }
+      if (p === '/bimi') {
+        if (!bimi) return send(res, 404, '{"error":"disabled"}');
+        const out = await bimi.lookup(u.searchParams.get('d'), u.searchParams.get('s'));
+        if (out.bad) return send(res, 400, '{"error":"bad domain"}');
+        if (out.transient) return send(res, 503, '{"error":"unavailable"}');
+        return send(res, 200, JSON.stringify({ policy: out.policy, logo: out.logo }));
       }
       return send(res, 404, '{"error":"not found"}');
     } catch (e) {

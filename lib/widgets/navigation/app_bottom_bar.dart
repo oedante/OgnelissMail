@@ -219,6 +219,8 @@ class _Item extends StatelessWidget {
       child: InkResponse(
         onTap: onTap,
         onLongPress: onLongPress,
+        // Правая кнопка мыши — то же, что удержание (14.11.2026).
+        onSecondaryTapUp: secondaryAsHold(onLongPress),
         containedInkWell: true,
         highlightShape: BoxShape.rectangle,
         child: Column(

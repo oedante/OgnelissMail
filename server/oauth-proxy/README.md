@@ -1,5 +1,13 @@
 # Ogneliss OAuth Proxy
 
+> **С 2.5.5 (решение владельца 15.11.2026) — только для Яндекса на Windows и
+> Linux.** Google, Microsoft и Яндекс на телефонах и Mac входят напрямую
+> (`lib/services/mail/oauth/direct_oauth.dart`), токены Google и Microsoft
+> через сервер не проходят. Ключи других служб из `.env` убрать:
+> `sudo bash set-oauth-env.sh --yandex-only`. Логотипы отправителей — в
+> службе погоды (`server/weather-proxy`, `/weather/bimi`). Про Google, Microsoft,
+> Mail.ru и Yahoo ниже — для истории.
+
 Stateless-посредник OAuth: держит `client_secret` **на сервере**, ловит redirect
 провайдера, меняет код на токены и обновляет их по refresh. Приложение секретов
 не видит — в него уходит только access-токен и зашифрованный refresh-blob.
@@ -17,6 +25,7 @@ Stateless-посредник OAuth: держит `client_secret` **на серв
 | Файл | Назначение |
 |---|---|
 | `install-oauth-proxy.sh` | **Установщик** для Debian 11/12: `install`, `update`, `check`, `key`. Docker рядом с почтой (за Nginx Proxy Manager) или systemd + nginx на чистом сервере. Инструкция — `docs/guides/OAUTH_PROXY_DEBIAN.md`. |
+| `set-oauth-env.sh` | **Правка `.env` и перезапуск** (15.11.2026): копия `.env`, замена ключей, пересоздание контейнера (`docker restart` `.env` не перечитывает), проверка `/healthz`, откат при сбое. `sudo bash set-oauth-env.sh --google-scope` — права Google без `gmail.settings.basic`; `--show` — ключи со скрытыми секретами; `GOOGLE_USER_CAP=1` — закрыть новый вход через Google, когда кончился лимит 100 пользователей непроверенного приложения; `--help` — всё остальное. |
 | `setup-oauth-ogneliss.sh` | Устарел: вызывает `install-oauth-proxy.sh --mode docker`. Раньше содержал старую копию server.js. |
 | `setup-mail-tls-ogneliss.sh` | Установка валидного TLS-сертификата в docker-mailserver (чтобы почтовые клиенты подключались по 993/587). |
 | `server.js`, `bimi.js`, `package.json`, `package-lock.json`, `Dockerfile`, `docker-compose.oauth.yml` | Исходники прокси; установщик берёт их из этой папки — копируйте на сервер папку целиком. |

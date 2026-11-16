@@ -1543,6 +1543,7 @@ class _ContactCard extends ConsumerWidget {
     Widget row(IconData icon, String value, String label, {VoidCallback? onTap, Widget? trailing}) => InkWell(
           onTap: onTap ?? () => copy(value),
           onLongPress: () => copy(value),
+          onSecondaryTapUp: secondaryAsHold(() => copy(value)),
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: Sizes.tapTarget + Space.s),
             child: Padding(

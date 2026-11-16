@@ -13,6 +13,7 @@ import '../../../widgets/ui/banner_button.dart';
 import '../../../core/platform/download_saver.dart';
 import '../../../core/platform/file_opener.dart';
 import '../../../widgets/ui/section_band.dart';
+import '../../../widgets/common/quick_long_press.dart';
 import '../../../widgets/common/peek_card.dart' show AppMenuEntry, PeekAction, PeekGroup;
 import '../message_window.dart';
 import '../../assignments/assign_sheet.dart' show showAssignSheet;
@@ -98,7 +99,7 @@ import '../../../widgets/ui/confirm_dialog.dart' show confirmDestructive;
 import '../widgets/attachment_drag_out.dart';
 import '../widgets/move_folder_picker.dart';
 import '../widgets/mail_html_view.dart';
-import '../widgets/mac_mail_web_view.dart';
+import '../widgets/desktop_mail_web_view.dart';
 import '../../../widgets/common/readable_width.dart';
 import '../providers/conversation_mute.dart';
 import '../widgets/read_receipt_banner.dart';
@@ -1141,8 +1142,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   final Map<String, NativeMail?> _natives = {};
   final Set<String> _nativeBuilding = {};
 
-  /// Mac: встроенное окно браузера не показало это письмо — виджетами.
-  String? _macWebFailedFor;
+  /// Компьютер: встроенное окно браузера не показало это письмо — виджетами.
+  String? _webFailedFor;
   String? _whyMarkedFor;
 
   /// Простое письмо — виджетами (MailNativeBody); null — показывать в WebView
@@ -1433,27 +1434,30 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       final p = _prepared;
       _split = p != null && identical(p.secured.html, html) ? p.split : splitQuotedHtml(html);
     }
-    // Mac: сложная вёрстка — во встроенном окне браузера (12.11.2026,
-    // включается в «Открытии писем»); окно не показало письмо — как раньше.
-    final macWeb = mailMacWebViewSupported &&
+    // Mac и Windows: сложная вёрстка — во встроенном окне браузера (Mac —
+    // 12.11.2026, Windows — 14.11.2026; с 2.5.4 включено по умолчанию,
+    // выключается в «Открытии писем»); окно не показало письмо или WebView2
+    // на компьютере нет — как раньше, виджетами.
+    final desktopWeb = mailDesktopWebViewSupported &&
         _prepared?.nativeWhy != null &&
-        _macWebFailedFor != email.id &&
-        (ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.macWebMail) ?? false);
+        _webFailedFor != email.id &&
+        DesktopMailWebView.usable &&
+        (ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.macWebMail) ?? true);
     final Widget body;
-    if (macWeb) {
+    if (desktopWeb) {
       final dark = theme.brightness == Brightness.dark;
       final original = dark && _originalColors(email);
-      body = MacMailWebView(
-        key: ValueKey('macweb_${email.id}'),
+      body = DesktopMailWebView(
+        key: ValueKey('deskweb_${email.id}'),
         html: html,
         allowRemoteImages: _imagesAllowed,
         inlineImages: _inlineImages,
-        height: macMailWebHeight(MediaQuery.sizeOf(context).height),
+        height: desktopMailWebHeight(MediaQuery.sizeOf(context).height),
         dark: dark && !original,
         pageColor: original ? Colors.white : mailPageColor(theme),
         textScale: MailHtmlView.textScaleOf(context),
         onLink: (url, text) => _onBodyLink(email, url, text),
-        onFailed: () => safeSetState(() => _macWebFailedFor = email.id),
+        onFailed: () => safeSetState(() => _webFailedFor = email.id),
       );
     } else {
       body = _nativeBody(email, html, theme, l10n, settings) ?? _flutterHtmlBody(html, theme, l10n);
@@ -1903,6 +1907,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // Язык письма — когда тело готово; показ — с переводом, если он включён.
         if (settled) _translation.detect(email);
         if (settled) _checkSafety(email);
+        if (settled) _serveWindowRequest(email);
         final shown = _translation.apply(email);
         final bodyChildren = <Widget>[
             // ── Строка сведений (1.12.x, просьба владельца 04.11.2026) ──
@@ -1995,6 +2000,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         if (!pinHeader) {
           return SingleChildScrollView(
             child: ReadableWidth(
+              maxWidth: ReadableWidth.mailWidth(),
               fill: true,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2007,12 +2013,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ReadableWidth(
+              maxWidth: ReadableWidth.mailWidth(),
               fill: true,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: headerChildren),
             ),
             Expanded(
               child: SingleChildScrollView(
                 child: ReadableWidth(
+                  maxWidth: ReadableWidth.mailWidth(),
                   fill: true,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: bodyChildren),
                 ),
@@ -2426,6 +2434,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           // поделиться/сохранить (раньше одиночное вложение можно было только
           // открыть; «сохранить» было лишь для всех сразу).
           onLongPress: touchDrag ? null : () => _onAttachmentLongPress(att, l10n),
+          // Правая кнопка мыши — та же шторка (14.11.2026).
+          onSecondaryTapUp: secondaryAsHold(() => _onAttachmentLongPress(att, l10n)),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(Space.s, Space.xs, Space.m, Space.xs),
             child: Row(
@@ -2628,6 +2638,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         // Scaffold даёт bottomNavigationBar, — весь экран.
         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           ReadableWidth(
+            maxWidth: ReadableWidth.mailWidth(),
             fill: true,
             child: QuickReplyBar(key: ValueKey('qrw_${email.accountId}_${email.id}'), email: email),
           ),
@@ -2742,9 +2753,15 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
             ),
           )
         : IconButton(onPressed: tap, icon: icon, tooltip: cmd.label);
-    final withLong = (!labeled && cmd.onLongPress != null)
-        ? GestureDetector(onLongPress: cmd.onLongPress, child: button)
-        : button;
+    // Правая кнопка мыши — то же, что удержание (14.11.2026).
+    final withLong = cmd.onLongPress == null
+        ? button
+        : labeled
+            ? SecondaryTap(onTap: cmd.onLongPress, child: button)
+            : GestureDetector(
+                onLongPress: cmd.onLongPress,
+                onSecondaryTapUp: secondaryAsHold(cmd.onLongPress),
+                child: button);
     return labeled ? Tooltip(message: cmd.label, child: withLong) : withLong;
   }
 
@@ -2826,6 +2843,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         ColoredBox(
           color: mailPageColor(theme),
           child: ReadableWidth(
+            maxWidth: ReadableWidth.mailWidth(),
             fill: true,
             child: QuickReplyBar(
               key: ValueKey('qr_${email.accountId}_${email.id}'),
@@ -3008,6 +3026,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 HapticFeedback.mediumImpact();
                 onLongPress();
               },
+              onSecondaryTapUp: secondaryAsHold(onLongPress),
               child: labeled,
             ),
     );
@@ -3092,6 +3111,11 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           _peekAction(AppIcons.reply, l10n.tr('reply'), () => context.push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}')),
           _peekAction(AppIcons.reply_all, l10n.tr('replyAll'), () => context
               .push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}&replyAll=true')),
+          // Ответ с файлами исходного письма (14.11.2026): «согласовано» —
+          // и тот же документ обратно.
+          if (email.hasFiles)
+            _peekAction(AppIcons.attach_file, l10n.tr('replyWithAttachments'), () => context
+                .push('/compose?replyToId=${Uri.encodeQueryComponent(email.id)}&accountId=${Uri.encodeQueryComponent(email.accountId)}&withAttachments=true')),
           _peekAction(AppIcons.quickreply, l10n.tr('quickReplies'),
               () => _showQuickReplies(email, l10n)),
           _peekAction(AppIcons.attach_email, l10n.tr('asEml'),
@@ -4148,6 +4172,19 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     final r = await runner.archiveEmails(account, [row]);
     if (deleting) notifier.unhideLocally(email);
     if (r.archived == 0) showInlineError(l10n.tr('archiveOneFailed'));
+  }
+
+  /// Двойной щелчок по письму в ленте (14.11.2026): письмо загружено — открыть
+  /// его в отдельном окне (запрос — [messageWindowRequestProvider]).
+  void _serveWindowRequest(EmailModel email) {
+    final r = ref.watch(messageWindowRequestProvider);
+    if (r == null || r.emailId != email.id || r.accountId != email.accountId) return;
+    if (DateTime.now().difference(r.at) > messageWindowRequestFreshFor) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || ref.read(messageWindowRequestProvider) != r) return;
+      ref.read(messageWindowRequestProvider.notifier).state = null;
+      unawaited(_openInWindow(email));
+    });
   }
 
   /// Письмо — в отдельное окно (компьютер): окно получает письмо готовым —

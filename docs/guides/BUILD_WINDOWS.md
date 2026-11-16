@@ -36,9 +36,11 @@ flutter doctor
 Android и Chrome для сборки под Windows не важны.
 
 Остальное скрипт сборки проверит и при необходимости сделает сам:
-- **NuGet** (нужен редактору писем на WebView2) — скачается в `tools\nuget`;
-- **WebView2 Runtime** уже есть в Windows 10/11; если редактор письма
-  открывается пустым — установите «Microsoft Edge WebView2 Runtime».
+- **NuGet** (нужен встроенному браузеру WebView2: окно письма, перевод) —
+  скачается в `tools\nuget`;
+- **WebView2 Runtime** уже есть в Windows 10/11; если письма со сложной
+  вёрсткой не открываются во встроенном окне — установите «Microsoft Edge
+  WebView2 Runtime».
 
 **Интернет при первой сборке обязателен:** pub.dev (пакеты), GitHub
 (готовая сборка SQLite, PDFium) и nuget.org. Если в сети корпоративный
@@ -161,7 +163,7 @@ flutter build windows --release --dart-define=OAUTH_PROXY_URL=https://www.ogneli
 | Кэш вложений | `UserData\Cache` |
 | Временные файлы | `UserData\Temp` |
 | Настройки (`shared_preferences.json`) | `UserData\Support` |
-| Данные WebView2 (окно письма, редактор, перевод) | `UserData\WebView2` |
+| Данные WebView2 (окно письма, перевод) | `UserData\WebView2` |
 
 «Документы» и «Загрузки» — папки пользователя: файлы, которые он сохраняет
 сам (вложения, выгрузка контактов), идут туда, как обычно. Удалите
@@ -180,7 +182,9 @@ flutter build windows --release --dart-define=OAUTH_PROXY_URL=https://www.ogneli
 ## 6. Что работает на Windows, а что нет
 
 **Работает:** Exchange по ActiveSync и EWS (гибрид), IMAP/SMTP, календарь,
-контакты, задачи, заметки, HTML-редактор письма (WebView2), просмотр PDF,
+контакты, задачи, заметки, письмо — в простом поле ввода (редактор с
+оформлением на WebView2 с 14.11.2026 выключен: плагин не передаёт в него
+клавиатуру), просмотр PDF,
 вложения, офлайн-очередь, сворачивание в трей (закрытие окна прячет его в
 трей; выход — правый щелчок по значку → «Выход»).
 

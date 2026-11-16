@@ -1,5 +1,6 @@
 // lib/features/compose/screens/compose_screen.dart
 import '../widgets/mail_tips_strip.dart';
+import '../compose_window.dart' show ComposeWindow;
 import '../../../core/platform/file_pick.dart' show ChosenFile, FilePick;
 import '../../../core/utils/app_date_format.dart';
 import '../../../core/utils/send_later_presets.dart';
@@ -14,7 +15,6 @@ import '../../../widgets/ui/settings_group.dart' show SettingsSectionTitle;
 import '../../../core/utils/text_safe.dart';
 import '../../../core/utils/subject_prefix.dart';
 import '../../../core/utils/address_input.dart';
-import '../../../core/utils/mail_domains.dart' show sameOrgDomain;
 import '../../../widgets/common/person_photo.dart';
 import '../../../services/mail/alias_service.dart' show aliasServiceProvider;
 import '../../../core/theme/app_icons.dart';
@@ -49,6 +49,7 @@ import '../../../services/mail/control_service.dart';
 import '../../../core/theme/mail_page_color.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/constants/app_constants.dart';
@@ -65,6 +66,7 @@ import '../../../data/models/email_model.dart';
 import '../../../data/models/contact_model.dart';
 import '../../../services/mail/offline_send_service.dart';
 import '../../settings/providers/feature_flags_provider.dart';
+import '../widgets/recipients_check.dart';
 import '../../../services/security/dlp_service.dart';
 import '../../settings/screens/dlp_settings_screen.dart' show dlpSettingsProvider;
 import '../../../services/mail/attachment_hint_service.dart';
@@ -105,6 +107,7 @@ import 'image_edit_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../core/theme/ogneliss_look.dart';
 import '../../../widgets/common/account_avatar.dart';
+import '../../mail/screens/attachment_hub_screen.dart' show PickedHubFile;
 
 
 class ComposeScreen extends ConsumerStatefulWidget {
@@ -141,6 +144,11 @@ class ComposeScreen extends ConsumerStatefulWidget {
   final String? accountId;
   final bool replyAll;
 
+  /// «Ответить с вложениями» (просьба владельца 14.11.2026: пришло «прошу
+  /// согласовать» с файлом — отвечаешь «согласовано» и прикладываешь его же):
+  /// файлы исходного письма прикладываются, как при пересылке.
+  final bool replyWithAttachments;
+
   /// Ответ на фрагмент (2.0.0, план 08.11.2026, «из мессенджеров»): в ответ
   /// цитируется только выделенный в письме текст, а не всё письмо.
   final String? quoteFragment;
@@ -161,6 +169,26 @@ class ComposeScreen extends ConsumerStatefulWidget {
   /// Предзаполненная тема (например, «Журнал → Отправить в поддержку»).
   final String? sharedSubject;
 
+  /// Редактор по параметрам адреса /compose — в главном окне и в окне
+  /// редактора на компьютере (2.5.4, compose_window.dart).
+  factory ComposeScreen.fromQuery(Map<String, String> q, {Key? key}) => ComposeScreen(
+        key: key,
+        replyToId: q['replyToId'],
+        forwardFromId: q['forwardFromId'],
+        draftId: q['draftId'],
+        accountId: q['accountId'],
+        to: q['to'],
+        cc: q['cc'],
+        bcc: q['bcc'],
+        sharedBody: q['body'],
+        sharedSubject: q['subject'],
+        sharedAttachments: (q['attachments'] ?? '').split('|').where((s) => s.isNotEmpty).toList(),
+        replyAll: q['replyAll'] == 'true',
+        replyWithAttachments: q['withAttachments'] == 'true',
+        quoteFragment: q['fragment'],
+        quickText: q['quick'],
+      );
+
   const ComposeScreen({
     super.key,
     this.replyToId,
@@ -169,6 +197,7 @@ class ComposeScreen extends ConsumerStatefulWidget {
     this.draftId,
     this.accountId,
     this.replyAll = false,
+    this.replyWithAttachments = false,
     this.sharedBody,
     this.quickText,
     this.to,
@@ -268,8 +297,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     });
     _markDraftChanged();
   }
-  // HTML-редактор — на Android, iOS, macOS и Windows (WebView2). На Linux,
-  // в вебе и при сбое загрузки — простое текстовое поле.
+  // HTML-редактор — на Android, iOS и macOS. На Windows (клавиатура не
+  // доходит до WebView2, 14.11.2026), Linux, в вебе и при сбое загрузки —
+  // простое текстовое поле (mailEditorSupported).
   bool get _useHtmlEditor => mailEditorSupported && !_editorFailed;
 
   // Тело как обычный текст и как HTML.
@@ -1143,13 +1173,14 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       // Шапка как у Outlook — «От / Отправлено / Кому / Копия / Тема» под
       // линией, одна и та же для ответа и пересылки (1.5.12; была шапка
       // Gmail «…, Иван пишет:» и отступ-цитата).
-      // ── Вложения: только при пересылке (1.6.12 — до цитаты) ──
-      // При ОТВЕТЕ вложения не переносятся: это лишний трафик, и получатель их
-      // уже видел. При ПЕРЕСЫЛКЕ они нужны — берём из кэша, если уже скачаны.
+      // ── Вложения: при пересылке и «Ответить с вложениями» (1.6.12 — до цитаты) ──
+      // При обычном ОТВЕТЕ вложения не переносятся: это лишний трафик, и
+      // получатель их уже видел. При ПЕРЕСЫЛКЕ они нужны — берём из кэша,
+      // если уже скачаны; так же — при «Ответить с вложениями» (14.11.2026).
       // Раньше они прикладывались после цитаты: ошибка при её подготовке
       // (огромное письмо, сбой очистки) обрывала загрузку, и письмо уходило
       // без вложений (замечание 15.10.2026).
-      if (!isReply) {
+      if (!isReply || widget.replyWithAttachments) {
         try {
           await _attachOriginal(row);
         } catch (e) {
@@ -1273,7 +1304,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       AppLogger.debug('Пересылка: пропущено встроенных вложений — $skippedInline');
     }
     // Не скачанные файлы — в фоне, по одному (1.6.18).
-    if (_pendingOriginal.isNotEmpty) unawaited(_prefetchPending());
+    // Окно редактора на компьютере (2.5.4): файлы докачивает при отправке
+    // главное окно — у него соединения и учётные данные.
+    if (_pendingOriginal.isNotEmpty && !ComposeWindow.inWindow) unawaited(_prefetchPending());
   }
 
   /// Докачать файлы пересылаемого письма, пока человек пишет текст.
@@ -1867,7 +1900,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     } else {
       _setBodyPlain(looksHtml ? _htmlToPlain(body) : body);
     }
-    if (_pendingOriginal.isNotEmpty) unawaited(_prefetchPending());
+    // Окно редактора на компьютере (2.5.4): файлы докачивает при отправке
+    // главное окно — у него соединения и учётные данные.
+    if (_pendingOriginal.isNotEmpty && !ComposeWindow.inWindow) unawaited(_prefetchPending());
     // Вложения черновика из серверной папки (начат в Outlook или
     // веб-почте) — плашками, как у пересылки: раньше при отправке такого
     // черновика файлы терялись.
@@ -1976,27 +2011,27 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
           // Как сохранили кнопкой «Сохранить» — эту версию и выгружаем
           // (записав заново: таймер мог сохранить промежуточную правку).
           autosave?.updateDraft(_snapshot(force: true));
-          unawaited((autosave?.forceSave() ?? Future.value(false)).then((_) async {
+          unawaited(ComposeWindow.track((autosave?.forceSave() ?? Future.value(false)).then((_) async {
             if (accId != null) await sync.upload(id, accId);
-          }));
+          })));
         } else if (_serverDraft != null) {
           // Открытый из серверной папки черновик не меняли (или вернули как
           // было): серверная копия и есть он; промежуточная локальная — не нужна.
           unawaited(sync.forget(id));
-          if (accId != null) unawaited(autosave?.deleteDraft(id, accId));
+          if (accId != null && autosave != null) unawaited(ComposeWindow.track(autosave.deleteDraft(id, accId)));
         } else if (_localSaved) {
           // Свой черновик правили и вернули как было — записать как есть.
           autosave?.updateDraft(_snapshot(force: true));
-          unawaited((autosave?.forceSave() ?? Future.value(false)).then((_) async {
+          unawaited(ComposeWindow.track((autosave?.forceSave() ?? Future.value(false)).then((_) async {
             if (accId != null) await sync.upload(id, accId);
-          }));
+          })));
         } else if (accId != null) {
           // Свой, ещё не выгруженный (например, без сети), — выгружается.
-          unawaited(sync.upload(id, accId));
+          unawaited(ComposeWindow.track(sync.upload(id, accId)));
         }
       } else if (_snapshot().isEmpty) {
         // Всё стёрли: черновика нет — и прежней автосохранённой копии тоже.
-        if (accId != null) unawaited(autosave?.deleteDraft(id, accId));
+        if (accId != null && autosave != null) unawaited(ComposeWindow.track(autosave.deleteDraft(id, accId)));
         unawaited(sync.forget(id));
       } else {
         _rememberReplyDraft();
@@ -2004,9 +2039,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         // него в черновик попадало состояние до последнего добавленного
         // получателя.
         autosave?.updateDraft(_snapshot());
-        unawaited((autosave?.forceSave() ?? Future.value(false)).then((_) async {
+        unawaited(ComposeWindow.track((autosave?.forceSave() ?? Future.value(false)).then((_) async {
           if (accId != null) await sync.upload(id, accId);
-        }));
+        })));
       }
     }
     _autosave?.stopAutosave();
@@ -4847,63 +4882,18 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     final all = [..._toRecipients, ..._ccRecipients, ..._bccRecipients];
     if (all.isEmpty) return true;
 
-    // Внешние адресаты имеют смысл только для рабочего ящика: с личной почты
-    // (Gmail, Яндекс) все получатели «внешние», и предупреждение было бы на
-    // каждом письме. Для личной почты остаётся только проверка «много
-    // получателей».
-    // Домены организации — по всем адресам ящика (адрес входа, основной с
-    // сервера, алиасы) и с поддоменами («msk.corp.ru» — свой для «corp.ru»):
-    // раньше «внешними» считались коллеги на втором домене организации.
-    final acc = _fromAccount;
-    final corporate = acc?.isMsExchange ?? false;
-    final orgDomains = corporate && acc != null ? OwnAddresses.domains(acc) : const <String>{};
-    final externalDomains = <String>{};
-    for (final r in all) {
-      final d = _domainOf(r.email);
-      if (d.isNotEmpty && orgDomains.isNotEmpty && !orgDomains.any((o) => sameOrgDomain(d, o))) {
-        externalDomains.add(d);
-      }
-    }
+    // Внешние адресаты — только у рабочего ящика (recipients_check.dart:
+    // та же проверка у поручений).
+    final externalDomains = externalDomainsOf(_fromAccount, [for (final r in all) r.email]);
     final many = all.length >= _manyRecipientsThreshold;
 
     if (externalDomains.isEmpty && !many) return true; // всё в порядке
 
-    final lines = <String>[];
-    if (many) {
-      lines.add(l10n.tr('goesToNRecipients').replaceAll('{n}', '${all.length}'));
-    }
-    if (externalDomains.isNotEmpty) {
-      final shown = externalDomains.take(5).join(', ');
-      lines.add(l10n.tr('externalRecipientsWarn')
-          .replaceAll('{domains}', shown)
-          .replaceAll('{ellipsis}', externalDomains.length > 5 ? '…' : ''));
-    }
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        icon: Icon(AppIcons.warning, color: AppColors.accentOrangeText(context)),
-        title: Text(l10n.tr('checkRecipients')),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: lines.map((t) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Text(t),
-              )).toList(),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(l10n.cancel)),
-          FilledButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(l10n.tr('send'))),
-        ],
-      ),
-    );
-    return confirmed == true;
-  }
-
-  String _domainOf(String email) {
-    final at = email.lastIndexOf('@');
-    return at >= 0 ? email.substring(at + 1).toLowerCase().trim() : '';
+    final lines = <String>[
+      if (many) l10n.tr('goesToNRecipients').replaceAll('{n}', '${all.length}'),
+      if (externalDomains.isNotEmpty) externalRecipientsLine(externalDomains, l10n),
+    ];
+    return showRecipientsWarning(context, lines);
   }
 
   /// Настоящая отправка: sendOrQueue → уведомление → закрыть экран.
@@ -4989,7 +4979,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   Future<bool> _tryServerForward(
       AccountModel account, String subject, String bodyHtml) async {
     final srcId = widget.forwardFromId;
-    if (srcId == null) return false;
+    // Окно редактора (2.5.4): письмо уходит обычной отправкой главного окна.
+    if (srcId == null || ComposeWindow.inWindow) return false;
     // Подписанное или зашифрованное письмо сервер дополнить не может (подпись
     // сломалась бы, шифр — тем более): отправляется целиком с устройства.
     if (_smimeActive) return false;
@@ -5060,10 +5051,13 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// Иначе — обычная отправка с цитатой.
   Future<bool> _tryServerReply(AccountModel account, String subject, String bodyHtml) async {
     final srcId = widget.replyToId;
-    if (srcId == null || _quoteChanged || _quoteHtml == null) return false;
+    // Окно редактора (2.5.4): письмо уходит обычной отправкой главного окна.
+    if (srcId == null || _quoteChanged || _quoteHtml == null || ComposeWindow.inWindow) return false;
     final ews = account.usesEws || account.isExchange;
     if (!ews && !account.usesEas) return false;
-    if (_attachments.isNotEmpty || _bccRecipients.isNotEmpty) return false;
+    // Не скачанные ещё файлы исходного письма («Ответить с вложениями») сервер
+    // в ответ не положит — такой ответ собирает приложение.
+    if (_attachments.isNotEmpty || _pendingOriginal.isNotEmpty || _bccRecipients.isNotEmpty) return false;
     // Exchange выбирает получателей сам: только если на экране — те же.
     if (ews && (_replySpecialCase || _replyRecipientsAtStart != _recipientsKey())) return false;
     if (_hasInlineImages(bodyHtml)) return false;
@@ -5321,11 +5315,35 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   Future<void> _pickAttachments() async {
     final l10n = AppLocalizations.of(context);
+    // Откуда (14.11.2026, просьба владельца): файл с устройства или из
+    // вложений почты («Вложения» — все файлы из писем).
+    final from = await showActionSheet<String>(context, items: [
+      ActionSheetItem(icon: AppIcons.folder_open, label: l10n.tr('attachFromDevice'), value: 'device'),
+      ActionSheetItem(icon: AppIcons.attach_email, label: l10n.tr('attachFromMail'), value: 'mail'),
+    ]);
+    if (from == null || !mounted) return;
+    if (from == 'mail') {
+      await _attachFromMail();
+      return;
+    }
     try {
       await _addChosenFiles(await FilePick.files());
     } catch (e) {
       AppLogger.warning('Вложения: выбор файлов не удался — $e');
       quietError('${l10n.tr('error')}: $e');
+    }
+  }
+
+  /// Файлы из вложений почты (14.11.2026): экран «Вложения» в режиме выбора
+  /// скачивает отмеченные и возвращает их — вложениями, как выбранные с
+  /// устройства.
+  Future<void> _attachFromMail() async {
+    final picked = await context.push<List<PickedHubFile>>('/attachment-hub?pick=1');
+    if (picked == null || picked.isEmpty || !mounted) return;
+    try {
+      await _addChosenFiles([for (final f in picked) ChosenFile(name: f.name, size: f.size, path: f.path)]);
+    } catch (e) {
+      AppLogger.warning('Вложения из почты не добавлены — $e');
     }
   }
 

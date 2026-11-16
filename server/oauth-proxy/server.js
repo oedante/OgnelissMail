@@ -61,6 +61,15 @@ const STORE_PATH = process.env.STORE_PATH || '/var/lib/oauth-proxy/store.json';
 // только для чтения запись не удастся, и кэш останется в памяти.
 const BIMI_CACHE_PATH = process.env.BIMI_CACHE_PATH || path.join(path.dirname(STORE_PATH), 'bimi-cache.json');
 const BIMI_ENABLED = process.env.BIMI !== '0';
+// Лимит пользователей Google исчерпан (2.5.4): у непроверенного приложения
+// Google пускает не больше 100 новых пользователей. Владелец ставит
+// GOOGLE_USER_CAP=1, когда в Google Cloud Console «OAuth user cap» — 100 из
+// 100: новый вход через Google сразу возвращается в приложение с
+// error=user_cap (там объяснение и вход паролем приложения), а не на
+// страницу Google «приложение заблокировано». Повторный вход в уже
+// добавленный ящик (reauth=1) — как обычно: прежних пользователей Google
+// пускает.
+const GOOGLE_USER_CAP = /^(1|true|yes|on)$/i.test(String(process.env.GOOGLE_USER_CAP || '').trim());
 const ALLOWED_REDIRECTS = (process.env.ALLOWED_REDIRECTS ||
   'com.ogneliss.mail://oauth,https://mail.example.com/oauth2redirect.html')
   .split(',').map((s) => s.trim()).filter(Boolean);
@@ -75,7 +84,9 @@ const PROVIDERS = {
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     // Календарь и контакты Gmail идут по CalDAV/CardDAV тем же токеном —
     // без этих scope Google отвечает 403 (см. lib/services/mail/dav).
-    scope: process.env.GOOGLE_SCOPE || 'https://mail.google.com/ https://www.googleapis.com/auth/gmail.settings.basic https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/carddav openid email profile',
+    // gmail.settings.basic не нужен (15.11.2026, проверка Google — «минимум
+    // прав»): подпись (settings/sendAs) читается и с https://mail.google.com/.
+    scope: process.env.GOOGLE_SCOPE || 'https://mail.google.com/ https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/carddav openid email profile',
     extra: { access_type: 'offline', prompt: 'consent' }, // чтобы выдавался refresh_token
   },
   microsoft: {
@@ -426,6 +437,9 @@ router.get('/healthz', (_req, res) => res.json({
     auth: p.authStyle === 'basic' ? 'basic' : 'body',
     ...(p.graphScope ? { graph: Boolean(p.consentScope) } : {}),
   }])),
+  // Новый вход через Google закрыт флагом GOOGLE_USER_CAP (лимит
+  // пользователей непроверенного приложения).
+  googleUserCap: GOOGLE_USER_CAP,
   keys: {
     api: fingerprint(API_KEY),
     enc: fingerprint(process.env.ENC_SECRET || process.env.STATE_SECRET),
@@ -445,6 +459,10 @@ router.get('/oauth/:provider/login', (req, res) => {
 
   const cc = req.query.cc ? String(req.query.cc) : '';
   if (cc && !/^[A-Za-z0-9_-]{43}$/.test(cc)) return plain(res, 400, 'bad code_challenge');
+  if (req.params.provider === 'google' && GOOGLE_USER_CAP && req.query.reauth !== '1') {
+    console.warn('[google] новый вход не начат: GOOGLE_USER_CAP=1 (лимит пользователей Google)');
+    return res.redirect(errorBack(redirect, 'google', 'user_cap'));
+  }
   const nonce = crypto.randomBytes(16).toString('hex');
   // g — просили согласие и на Graph (Exchange Online).
   const g = p.consentScope ? 1 : undefined;
@@ -458,6 +476,30 @@ router.get('/oauth/:provider/login', (req, res) => {
   });
   res.redirect(authUrl(p, state, g ? `${p.scope} ${p.consentScope}` : p.scope, nonce));
 });
+
+// Возврат в приложение с ошибкой входа: provider, error и — для журнала
+// приложения — короткая подробность без адресов почты.
+function errorBack(redirect, provider, err, desc) {
+  const back = new URL(redirect);
+  back.searchParams.set('provider', provider);
+  back.searchParams.set('error', err);
+  if (desc) back.searchParams.set('desc', desc);
+  return back.toString();
+}
+
+// Подробность отказа провайдера (error_description, error_subtype) — для
+// журналов: без адресов почты, только безопасные символы, до 160 знаков.
+function safeDetail(...parts) {
+  return parts.map((v) => String(v || '')).join(' ')
+    .replace(/[^\s@]+@[^\s@]+/g, '<адрес>')
+    .replace(/[^\p{L}\p{N} .,:;()'<>_-]/gu, ' ')
+    .replace(/\s+/g, ' ').trim().slice(0, 160);
+}
+
+// Google ответил про лимит пользователей или непроверенное приложение.
+function looksLikeUserCap(detail) {
+  return /user[\s_-]?cap|unverified|not\s+(been\s+)?verified|verification\s+process/i.test(String(detail || ''));
+}
 
 // Отказ, после которого вход стоит повторить без прав Graph (как в
 // приложении, DirectOAuth.isConsentError): организация требует согласия
@@ -523,10 +565,12 @@ router.get(['/oauth/callback', '/callback'], async (req, res) => {
     }
     // Вернуть ошибку в приложение: оно закроет браузер и покажет понятный
     // текст. Раньше вкладка оставалась на странице «provider error: …».
-    const back = new URL(data.redirect);
-    back.searchParams.set('provider', data.provider);
-    back.searchParams.set('error', err);
-    return res.redirect(back.toString());
+    // Google про лимит пользователей непроверенного приложения — user_cap
+    // (2.5.4): в приложении — вход паролем приложения.
+    const desc = safeDetail(req.query.error_description, req.query.error_subtype);
+    const code = data.provider === 'google' && looksLikeUserCap(desc) ? 'user_cap' : err;
+    console.warn(`[${data.provider}] вход отклонён: ${code}${desc ? ` (${desc})` : ''}`);
+    return res.redirect(errorBack(data.redirect, data.provider, code, desc));
   }
 
   try {

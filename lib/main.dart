@@ -4,10 +4,12 @@
 // Инициализирует БД, SecureStorage, уведомления, фоновые задачи.
 // Поддержка Android, iOS, Windows, macOS, Linux.
 
+import 'core/logging/jank_monitor.dart';
 import 'core/platform/native_drag_drop.dart';
 import 'core/platform/portable_mode.dart';
 import 'core/platform/device_time_zone.dart';
 import 'widgets/common/scroll_edge_fade.dart';
+import 'services/mail/dav/dav_discovery.dart';
 import 'services/widget_mail_actions.dart' show widgetMailActionsProvider;
 import 'services/weather/weather_service.dart' show WeatherApi;
 import 'services/documents/doc_preview_settings.dart';
@@ -28,6 +30,14 @@ import 'widgets/common/animated_appearance.dart' show uiAnimations;
 import 'services/mail/own_addresses.dart';
 import 'features/mail/message_window.dart';
 import 'features/mail/message_window_host.dart';
+import 'features/mail/widgets/desktop_mail_web_view.dart' show DesktopMailWebView;
+import 'features/compose/compose_window.dart';
+import 'features/compose/compose_window_app.dart';
+import 'services/mail/draft_sync_service.dart' show draftSyncServiceProvider;
+import 'services/mail/email_actions_service.dart' show emailActionsProvider;
+import 'services/mail/offline_send_service.dart' show offlineSendProvider;
+import 'package:desktop_multi_window/desktop_multi_window.dart' show WindowController;
+import 'package:go_router/go_router.dart' show GoRouter;
 import 'features/mail/widgets/mail_html_view.dart' show MailHtmlView;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
@@ -94,6 +104,13 @@ Future<void> main() async {
     final windowMail = await MessageWindow.payloadOfThisEngine();
     if (windowMail != null) {
       runApp(MessageWindowApp(payload: windowMail));
+      return;
+    }
+    // Окно редактора на компьютере (2.5.4): та же база, отправка — через
+    // главное окно (compose_window.dart).
+    final windowCompose = await ComposeWindow.argsOfThisEngine();
+    if (windowCompose != null) {
+      await _runComposeWindow(windowCompose);
       return;
     }
     registerMailEditorLicense();
@@ -406,13 +423,20 @@ Future<void> main() async {
     // не вместо всей истории (go): после закрытия редактора приложение
     // оставалось на пустом белом экране (замечание 11.10.2026). После
     // первого кадра — при холодном запуске навигатор ещё не готов.
+    // Холодный запуск — после заставки, входа и блокировки: их переход на
+    // главный экран (go) заменял весь стек, и редактор пропадал (15.11.2026).
     void openCompose(Map<String, String> params) {
       final uri = Uri(path: '/compose', queryParameters: params.isEmpty ? null : params).toString();
-      void go() => globalContainer.read(appRouterProvider).push(uri);
+      Future<void> go() async {
+        final router = globalContainer.read(appRouterProvider);
+        await AppShortcuts.waitForMainScreen(router);
+        unawaited(router.push(uri));
+      }
+
       if (WidgetsBinding.instance.hasScheduledFrame || !WidgetsBinding.instance.firstFrameRasterized) {
-        WidgetsBinding.instance.addPostFrameCallback((_) => go());
+        WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(go()));
       } else {
-        go();
+        unawaited(go());
       }
     }
 
@@ -467,20 +491,97 @@ Future<void> main() async {
     );
     // Просьбы окон писем (ответить, переслать, удалить…) — компьютер.
     unawaited(MessageWindowHost.start(globalContainer));
+    // Windows: есть ли WebView2 Runtime для сложных писем — до первого
+    // письма (2.5.4).
+    unawaited(DesktopMailWebView.probe());
+    // Медленные кадры — в журнал (2.6.0): видно, когда интерфейс замирал.
+    JankMonitor.start();
+    // Календарь и контакты рабочей почты, найденные раньше (RFC 6764).
+    unawaited(DavDiscovery.load());
   } catch (e, stack) {
     AppLogger.error('Критическая ошибка при запуске', e, stack);
     runApp(_ErrorApp(error: e.toString()));
   }
 }
 
+/// Окно редактора на компьютере (2.5.4, compose_window.dart): своя копия
+/// приложения — та же база (файл и ключ дало главное окно), настройки
+/// копией в памяти, без синхронизации, уведомлений, трея и экрана PIN — их
+/// держит главное окно. Не запустилось — экран с причиной и «Открыть в
+/// главном окне».
+Future<void> _runComposeWindow(ComposeWindowArgs args) async {
+  ComposeWindow.inWindow = true;
+  String? windowId;
+  try {
+    windowId = (await WindowController.fromCurrentEngine()).windowId;
+  } catch (_) {}
+  ComposeWindow.windowId = windowId;
+  try {
+    await AppLogger.init(fileName: 'ogneliss-window.log');
+    final init = await ComposeWindow.init();
+    // Настройки — копией: запись двумя окнами в один файл настроек затирала
+    // бы изменения друг друга.
+    // ignore: invalid_use_of_visible_for_testing_member
+    SharedPreferences.setMockInitialValues(init.prefs);
+    final prefs = await SharedPreferences.getInstance();
+    AppLogger.loadSettings(prefs.getInt(AppLogger.detailedPrefsKey));
+    for (final l in const ['ru', 'en', 'de', 'fr']) {
+      await initializeDateFormatting(l);
+    }
+    final l10n = await AppLocalizations.load(_startLanguage(prefs));
+    AppLogger.info('Окно редактора: ${args.query.keys.join(', ')}');
+    OwnAddresses.load(prefs);
+    MailHtmlView.fitWide = prefs.getBool(MailHtmlView.fitWideKey) ?? false;
+    DocPreviewSettings.load(prefs);
+    unawaited(DeviceTimeZone.load(prefs));
+    final pinning = CertificatePinningService(prefs);
+    CertificatePinningBridge.instance = pinning;
+    HttpOverrides.global = AppHttpOverrides();
+    await TrustedCaStore.init(prefs);
+    final database = AppDatabase.secondary(path: init.dbPath, key: init.dbKey);
+    // Проверка соединения до первого кадра: не тот ключ — понятная ошибка.
+    await database.customSelect('SELECT 1').get();
+    globalContainer = ProviderContainer(overrides: [
+      sharedPrefsProvider.overrideWithValue(prefs),
+      databaseProvider.overrideWithValue(database),
+      certPinningProvider.overrideWithValue(pinning),
+      // Отправка, выгрузка черновиков, удаление на сервере — главное окно.
+      offlineSendProvider.overrideWith(WindowSendService.new),
+      draftSyncServiceProvider.overrideWith(WindowDraftSyncService.new),
+      emailActionsProvider.overrideWith(WindowEmailActions.new),
+    ]);
+    ComposeWindow.forwardDbChanges(database);
+    try {
+      await globalContainer.read(attachmentCacheProvider).init();
+    } catch (_) {}
+    await ComposeWindowFrame.setup(title: composeWindowTitle(l10n, args.query), windowId: windowId);
+    await ComposeWindowFrame.listenFocus();
+    runApp(UncontrolledProviderScope(
+      container: globalContainer,
+      child: MailApp(router: composeWindowRouter(args.query), window: true),
+    ));
+    WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(ComposeWindowFrame.show()));
+  } catch (e, st) {
+    AppLogger.error('Окно редактора не запустилось', e, st);
+    await ComposeWindowFrame.setup(title: 'Ogneliss Mail', windowId: windowId);
+    runApp(ComposeWindowErrorApp(query: args.query, error: '$e'));
+    WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(ComposeWindowFrame.show()));
+  }
+}
+
 /// Корневой виджет приложения
 class MailApp extends ConsumerWidget {
-  const MailApp({super.key});
+  const MailApp({super.key, this.router, this.window = false});
+
+  /// Окно редактора на компьютере (2.5.4): свои маршруты; без трея и экрана
+  /// PIN — их держит главное окно.
+  final GoRouter? router;
+  final bool window;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
-    final router = ref.watch(appRouterProvider);
+    final router = this.router ?? ref.watch(appRouterProvider);
 
     // Цвета от обоев (Android 12+). Из цвета обоев строится полная схема
     // Material 3 (fromSeed) — у схем самого плагина на части версий нет
@@ -515,8 +616,7 @@ class MailApp extends ConsumerWidget {
     // «Уменьшить движение» выключает и их. Переменная пропала при удалении
     // настройки «Анимации интерфейса» — сборка 1.5.1 падала (10.10.2026).
     final animated = !settings.reduceMotion;
-    return TrayWindowListener(
-      child: MaterialApp.router(
+    final app = MaterialApp.router(
       routerConfig: router,
       // На десктопе/вебе список можно тянуть мышью (по умолчанию Flutter
       // разрешает перетаскивание только пальцем/стилусом). Полезно и для
@@ -597,7 +697,9 @@ class MailApp extends ConsumerWidget {
           // Свой ScaffoldMessenger: чёрные плашки выключены во всём приложении.
           // Ошибки — строкой вверху (InlineNoticeLayer), не плашкой.
           child: QuietScaffoldMessenger(
-              child: AppLockGate(child: InlineNoticeLayer(child: child ?? const SizedBox.shrink()))),
+              child: window
+                  ? InlineNoticeLayer(child: child ?? const SizedBox.shrink())
+                  : AppLockGate(child: InlineNoticeLayer(child: child ?? const SizedBox.shrink()))),
         );
         result = UiZoomBox(zoom: zoom, child: result);
         // Коррекция цвета для дальтонизма (дальтонизация): различия, которые
@@ -635,8 +737,9 @@ class MailApp extends ConsumerWidget {
           ),
         );
       },
-    ),
     );
+    // Трей и сворачивание в него — у главного окна.
+    return window ? app : TrayWindowListener(child: app);
     });
   }
 }

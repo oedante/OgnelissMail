@@ -68,7 +68,7 @@ class _DavPimItemState extends ConsumerState<DavPimItem> {
     final has = saved != null && (saved.cal != null || saved.card != null);
     if (!DavPimService.needsAppPassword(widget.account) && !has) return const SizedBox.shrink();
     final provider = _provider;
-    final contacts = provider != null && DavPimService.hasContacts(provider);
+    final contacts = provider != null && DavPimService.hasContacts(provider, widget.account.email);
     return SettingsItem(
       icon: AppIcons.event_note,
       title: l10n.tr(contacts ? 'davPim' : 'davPimCalendarOnly'),
@@ -85,7 +85,7 @@ class _DavPimItemState extends ConsumerState<DavPimItem> {
   Future<void> _edit(BuildContext context, AppLocalizations l10n, ({String? cal, String? card}) saved) async {
     final provider = _provider;
     final yandex = provider == 'yandex';
-    final contacts = provider != null && DavPimService.hasContacts(provider);
+    final contacts = provider != null && DavPimService.hasContacts(provider, widget.account.email);
     final cal = TextEditingController(text: saved.cal ?? '');
     final card = TextEditingController(text: saved.card ?? '');
     final storage = ref.read(secureStorageProvider);

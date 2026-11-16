@@ -16,6 +16,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart' show compute;
 import 'package:html/parser.dart' as html_parser;
 
 import '../../core/logging/app_logger.dart';
@@ -161,6 +162,41 @@ extension AssignmentTree on List<AssignmentView> {
   }
 }
 
+/// Разбор текста письма поручения — один раз, в фоновом потоке (scan):
+/// свежая часть без цитаты, её текст, отметки поручения, статуса и
+/// участника, код поручения в теле.
+typedef MailParse = ({String text, TaskMarker? task, StatusMarker? st, PeopleMarker? pm, String? bodyId});
+
+MailParse parseMail(String? html, String? plain) {
+  final h = html ?? '';
+  var fresh = h;
+  if (h.trim().isNotEmpty) {
+    try {
+      fresh = splitQuotedHtml(h).reply;
+    } catch (_) {}
+  }
+  String text;
+  if (h.trim().isNotEmpty) {
+    try {
+      text = (html_parser.parse(fresh).body?.text ?? '').replaceAll(RegExp(r'\s+'), ' ').trim();
+    } catch (_) {
+      text = AssignmentStore.freshText(null, plain);
+    }
+  } else {
+    text = AssignmentStore.freshText(null, plain);
+  }
+  return (
+    text: text,
+    task: AssignmentCodec.parseTask(fresh),
+    st: AssignmentCodec.parseStatus(fresh),
+    pm: AssignmentCodec.parsePeople(fresh),
+    bodyId: AssignmentCodec.idFromBody(html) ?? AssignmentCodec.idFromBody(plain),
+  );
+}
+
+/// Для compute: письма (HTML, текст) → разбор.
+List<MailParse> parseMails(List<(String?, String?)> mails) => [for (final (h, p) in mails) parseMail(h, p)];
+
 abstract final class AssignmentStore {
   static Future<Assignment?> byId(AppDatabase db, String id) =>
       (db.select(db.assignments)..where((a) => a.id.equals(id))).getSingleOrNull();
@@ -223,6 +259,7 @@ abstract final class AssignmentStore {
     required DateTime at,
     required bool outgoing,
     String? eventId,
+    String? subject,
     String? parentId,
     bool isProject = false,
     DateTime? start,
@@ -309,6 +346,8 @@ abstract final class AssignmentStore {
             if (assigneeEmail != null) 'to': assigneeEmail.toLowerCase(),
             if (due != null) 'due': due.toIso8601String(),
             if (isProject) 'project': true,
+            // Тема первого письма: ответы по поручению — в той же беседе.
+            if (subject != null && subject.isNotEmpty) 'subject': subject,
           },
           sourceEmailId: sourceEmailId);
     });
@@ -512,31 +551,85 @@ abstract final class AssignmentStore {
   /// Письмо поручения — по техническому тегу OGN-… в теле (в ответе — в
   /// цитате) или по цепочке: ответ на письмо поручения (In-Reply-To,
   /// References) и та же беседа сервера — если цитату удалили.
+  /// Письма, разобранные в этом запуске без записи в истории (чужое
+  /// поручение в копии, не моё), — не разбирать заново («ящик|письмо»; у
+  /// каждой базы — свои).
+  static final Expando<Set<String>> _doneByDb = Expando();
+
   static Future<int> scan(AppDatabase db, Map<String, Set<String>> mine, {required DateTime since}) async {
     if (mine.isEmpty) return 0;
     var changes = 0;
+    final done = _doneByDb[db] ??= <String>{};
     try {
       final links = await _threadLinks(db, mine.keys);
       final refs = links.byMessageId.keys.take(100).toList();
       final convs = links.byConversation.keys.map((k) => k.split('|').last).toSet().toList();
-      final rows = await (db.select(db.emails)
-            ..where((e) {
-              Expression<bool> hit = e.bodyHtml.like('%OGN-%') | e.bodyPlain.like('%OGN-%');
-              if (convs.isNotEmpty) hit = hit | e.conversationId.isIn(convs);
-              for (final r in refs) {
-                hit = hit | e.referencesStr.like('%$r%');
-              }
-              return e.accountId.isIn(mine.keys) & e.receivedAt.isBiggerThanValue(since) & hit;
-            })
-            ..orderBy([(e) => OrderingTerm(expression: e.receivedAt)])
-            ..limit(500))
-          .get();
-      for (final e in rows) {
-        final id = AssignmentCodec.idFromBody(e.bodyHtml) ??
-            AssignmentCodec.idFromBody(e.bodyPlain) ??
-            links.of(e);
-        if (id == null) continue;
-        if (await _apply(db, e, mine[e.accountId] ?? const {}, id)) changes++;
+      // Только письма, которые ещё не разобраны (15.11.2026, тормоза после
+      // запуска и при беседе из 40+ писем): раньше каждый разбор — после
+      // запуска за 32 дня, потом после каждой синхронизации — выбирал ВСЕ
+      // письма поручений с полным текстом и перегонял их из потока базы в
+      // основной поток, а затем проверял по одному запросу на письмо. Теперь
+      // сначала — только номера писем, не привязанных к истории поручений
+      // (и не разобранных в этом запуске), а текст — только у них.
+      final linked = db.selectOnly(db.assignmentEvents)
+        ..addColumns([db.assignmentEvents.sourceEmailId])
+        ..where(db.assignmentEvents.sourceEmailId.isNotNull());
+      const page = 500;
+      DateTime? lastAt;
+      String? lastId;
+      for (var round = 0; round < 20; round++) {
+        final q = db.selectOnly(db.emails)
+          ..addColumns([db.emails.id, db.emails.accountId, db.emails.receivedAt])
+          ..where(() {
+            final e = db.emails;
+            Expression<bool> hit = e.bodyHtml.like('%OGN-%') | e.bodyPlain.like('%OGN-%');
+            if (convs.isNotEmpty) hit = hit | e.conversationId.isIn(convs);
+            for (final r in refs) {
+              hit = hit | e.referencesStr.like('%$r%');
+            }
+            var cond = e.accountId.isIn(mine.keys) & e.receivedAt.isBiggerThanValue(since) & hit & e.id.isNotInQuery(linked);
+            // Порциями от старых к новым — по ключу, а не по смещению:
+            // разобранные письма выпадают из выборки на ходу.
+            final at = lastAt, last = lastId;
+            if (at != null && last != null) {
+              cond = cond & (e.receivedAt.isBiggerThanValue(at) | (e.receivedAt.equals(at) & e.id.isBiggerThanValue(last)));
+            }
+            return cond;
+          }())
+          ..orderBy([OrderingTerm(expression: db.emails.receivedAt), OrderingTerm(expression: db.emails.id)])
+          ..limit(page);
+        final cand = await q
+            .map((r) => (id: r.read(db.emails.id)!, acc: r.read(db.emails.accountId)!, at: r.read(db.emails.receivedAt)!))
+            .get();
+        if (cand.isEmpty) break;
+        lastAt = cand.last.at;
+        lastId = cand.last.id;
+        final todo = [for (final c in cand) if (!done.contains('${c.acc}|${c.id}')) c];
+        for (var i = 0; i < todo.length; i += 40) {
+          final part = todo.sublist(i, i + 40 > todo.length ? todo.length : i + 40);
+          final want = {for (final c in part) '${c.acc}|${c.id}'};
+          final rows = (await (db.select(db.emails)
+                    ..where((e) => e.id.isIn([for (final c in part) c.id]))
+                    ..orderBy([(e) => OrderingTerm(expression: e.receivedAt), (e) => OrderingTerm(expression: e.id)]))
+                  .get())
+              .where((e) => want.contains('${e.accountId}|${e.id}'));
+          // Разбор текста (цитата, HTML, отметки) — в фоновом потоке, по
+          // одному разу на письмо: в основном потоке 41 письмо подряд
+          // подвешивало интерфейс.
+          final list = rows.toList();
+          final parsed = await compute(parseMails, [for (final e in list) (e.bodyHtml, e.bodyPlain)]);
+          for (var k = 0; k < list.length; k++) {
+            final e = list[k];
+            final p = parsed[k];
+            final id = p.bodyId ?? links.of(e);
+            // Код не узнан (ответ по беседе, а письмо поручения ещё не
+            // пришло) — проверим при следующем разборе.
+            if (id == null) continue;
+            if (await _apply(db, e, mine[e.accountId] ?? const {}, id, p)) changes++;
+            done.add('${e.accountId}|${e.id}');
+          }
+        }
+        if (cand.length < page) break;
       }
       changes += await _recheckReview(db, mine);
     } catch (err) {
@@ -552,8 +645,11 @@ abstract final class AssignmentStore {
   /// постановщика у исполнителя не разбирались. Его письма после моего
   /// «Готово» проверяются заново: код «D» или «Принято» словами —
   /// выполнено; статус — в ту же запись истории.
+  static final Expando<Set<String>> _recheckedByDb = Expando();
+
   static Future<int> _recheckReview(AppDatabase db, Map<String, Set<String>> mine) async {
     var n = 0;
+    final checked = _recheckedByDb[db] ??= <String>{};
     final rows = await (db.select(db.assignments)
           ..where((a) =>
               a.accountId.isIn(mine.keys) & a.status.equals(AssignmentStatus.review) & a.isArchived.equals(false)))
@@ -582,9 +678,12 @@ abstract final class AssignmentStore {
       final review = list.lastIndexWhere((e) => payload(e)['status'] == AssignmentStatus.review);
       for (final e in list.skip(review < 0 ? 0 : review + 1)) {
         if (e.type != 'message' || e.sourceEmailId == null || !accepters.contains(e.authorEmail.toLowerCase())) continue;
+        // Уже проверенное письмо («не принято») при каждом разборе заново не
+        // читаем и не разбираем — до перезапуска.
+        if (!checked.add(e.id)) continue;
         final mail = await (db.select(db.emails)..where((m) => m.id.equals(e.sourceEmailId!))).getSingleOrNull();
         if (mail == null) continue;
-        final text = freshText(mail.bodyHtml, mail.bodyPlain);
+        final text = (await compute(parseMails, [(mail.bodyHtml, mail.bodyPlain)])).first.text;
         final act = AssignmentCodec.actionFromText(text);
         final ok = act != null
             ? act.id == a.id && act.act == AssignmentAct.accepted
@@ -617,14 +716,19 @@ abstract final class AssignmentStore {
         .get();
     final byMail = {for (final x in events) x.sourceEmailId!: x.assignmentId};
     if (byMail.isEmpty) return links;
-    final mails = await (db.select(db.emails)..where((e) => e.id.isIn(byMail.keys))).get();
+    // Только Message-ID и беседа — без текстов писем.
+    final e = db.emails;
+    final mails = await (db.selectOnly(e)
+          ..addColumns([e.id, e.accountId, e.internetMessageId, e.conversationId])
+          ..where(e.id.isIn(byMail.keys)))
+        .get();
     for (final m in mails) {
-      final id = byMail[m.id];
+      final id = byMail[m.read(e.id)];
       if (id == null) continue;
-      final mid = _msgId(m.internetMessageId);
+      final mid = _msgId(m.read(e.internetMessageId));
       if (mid != null) links.byMessageId[mid] = id;
-      final conv = (m.conversationId ?? '').trim();
-      if (conv.isNotEmpty) links.byConversation['${m.accountId}|$conv'] = id;
+      final conv = (m.read(e.conversationId) ?? '').trim();
+      if (conv.isNotEmpty) links.byConversation['${m.read(e.accountId)}|$conv'] = id;
     }
     return links;
   }
@@ -634,7 +738,7 @@ abstract final class AssignmentStore {
     return s.contains('@') ? s.toLowerCase() : null;
   }
 
-  static Future<bool> _apply(AppDatabase db, Email e, Set<String> me, String id) async {
+  static Future<bool> _apply(AppDatabase db, Email e, Set<String> me, String id, MailParse p) async {
     var evId = 'mail:${e.accountId}:${e.id}';
     final seen = await (db.select(db.assignmentEvents)
           ..where((x) => x.id.equals(evId) | x.sourceEmailId.equals(e.id))
@@ -643,19 +747,11 @@ abstract final class AssignmentStore {
     if (seen.isNotEmpty) return false;
     final from = e.fromEmail.trim().toLowerCase();
     final fromMe = me.contains(from);
-    final html = e.bodyHtml ?? '';
-    final plain = e.bodyPlain ?? '';
-    // Отметки — только из свежей части письма: в цитате ответа — отметки
-    // прежних писем поручения.
-    var freshHtml = html;
-    if (html.trim().isNotEmpty) {
-      try {
-        freshHtml = splitQuotedHtml(html).reply;
-      } catch (_) {}
-    }
-    final task = AssignmentCodec.parseTask(freshHtml);
-    final st = AssignmentCodec.parseStatus(freshHtml);
-    final pm = AssignmentCodec.parsePeople(freshHtml);
+    // Отметки — только из свежей части письма (в цитате ответа — отметки
+    // прежних писем поручения); разобраны заранее в фоне (parseMail).
+    final task = p.task;
+    final st = p.st;
+    final pm = p.pm;
     final at = e.receivedAt;
     // Письмо с id события: уже записано (отправлено отсюда) — только
     // привязать письмо; иначе — записать под этим id (одно и то же событие
@@ -664,11 +760,24 @@ abstract final class AssignmentStore {
     if (ev != null) {
       final local = await (db.select(db.assignmentEvents)..where((x) => x.id.equals(ev))).getSingleOrNull();
       if (local != null) {
-        await (db.update(db.assignmentEvents)..where((x) => x.id.equals(ev)))
-            .write(AssignmentEventsCompanion(sourceEmailId: Value(e.id)));
+        await _rebind(db, local, e.id);
         return false;
       }
       evId = ev;
+    }
+    // То же письмо под новым номером (у Exchange номер меняется при
+    // перемещении и пересинхронизации папки): событие уже есть — только
+    // привязать письмо, иначе ответ без отметки задвоился бы в истории.
+    final mid = _msgId(e.internetMessageId);
+    if (mid != null) {
+      final same = await (db.select(db.assignmentEvents)
+            ..where((x) => x.assignmentId.equals(id) & x.payloadJson.like('%"mid":"$mid"%'))
+            ..limit(1))
+          .getSingleOrNull();
+      if (same != null) {
+        await _rebind(db, same, e.id);
+        return false;
+      }
     }
     final a = await byId(db, id);
 
@@ -678,7 +787,7 @@ abstract final class AssignmentStore {
       var t = task?.id == id ? task : null;
       final recipients = '${e.toRecipients} ${e.ccJson ?? ''}'.toLowerCase();
       if (t == null) {
-        final fresh = freshText(html, plain);
+        final fresh = p.text;
         final isNew = SubjectPrefix.strip(e.subject) == e.subject.trim();
         final toMe = me.firstWhere((m) => e.toRecipients.toLowerCase().contains(m), orElse: () => '');
         if (fromMe || !isNew || toMe.isEmpty || AssignmentCodec.idFromBody(fresh) != id) return false;
@@ -761,6 +870,9 @@ abstract final class AssignmentStore {
           at: at,
           outgoing: fromMe,
           eventId: evId,
+          // Тема первого письма: ответы — в той же беседе, даже когда
+          // письма уже нет в ящике.
+          subject: SubjectPrefix.strip(e.subject),
           parentId: t.parent,
           isProject: t.project,
           start: t.start,
@@ -805,10 +917,10 @@ abstract final class AssignmentStore {
       if (task.rev! <= a.revision) {
         await addEvent(db,
             id: evId, assignmentId: id, type: 'message', author: from, at: at, outgoing: fromMe,
-            payload: {'text': _cut(freshText(html, plain))}, sourceEmailId: e.id);
+            payload: {'text': _cut(p.text), if (mid != null) 'mid': mid}, sourceEmailId: e.id);
         return true;
       }
-      await _applyRevision(db, e, a, people, task, me, evId: evId, text: freshText(html, plain));
+      await _applyRevision(db, e, a, people, task, me, evId: evId, text: p.text);
       return true;
     }
     int? next;
@@ -822,7 +934,7 @@ abstract final class AssignmentStore {
     final byExecutor = senderRoles.contains(AssignmentRole.responsible) || senderRoles.contains(AssignmentRole.co);
     // Код действия у видимого номера (предложение владельца 13.11.2026):
     // скрытую отметку сервер мог вырезать, номер с кодом — нет.
-    final act = st == null ? AssignmentCodec.actionFromText(freshText(html, plain)) : null;
+    final act = st == null ? AssignmentCodec.actionFromText(p.text) : null;
     var dueFromCode = false;
     DateTime? codeDue;
     if (st != null && st.id == id) {
@@ -849,10 +961,12 @@ abstract final class AssignmentStore {
         default:
           break;
       }
-    } else if (!fromMe) {
-      // Ни отметки, ни кода — ответ из другой почты: по словам.
-      final sig = AssignmentPhrases.classify(freshText(html, plain));
-      if (accepting && byExecutor) {
+    } else {
+      // Ни отметки, ни кода — ответ из другой почты или из обычного
+      // редактора: по словам. Своё такое письмо (из «Отправленных») — тоже:
+      // иначе статус менялся только у другой стороны (15.11.2026).
+      final sig = AssignmentPhrases.classify(p.text);
+      if (byExecutor && (accepting || fromMe)) {
         final want = switch (sig) {
           AssignmentSignal.done => AssignmentStatus.review,
           AssignmentSignal.accepted => AssignmentStatus.inProgress,
@@ -910,7 +1024,7 @@ abstract final class AssignmentStore {
     // прислал результат).
     final mailFiles = _mailFiles(e);
     final files = mailFiles.isEmpty ? null : [...AssignmentFile.decode(a.filesJson), ...mailFiles];
-    final text = freshText(html, plain);
+    final text = p.text;
     await db.transaction(() async {
       await addEvent(db,
           id: evId,
@@ -921,6 +1035,7 @@ abstract final class AssignmentStore {
           outgoing: fromMe,
           payload: {
             'text': _cut(text),
+            if (mid != null) 'mid': mid,
             if (next != null && next != a.status) 'status': next,
             if (due != null) 'due': due.toIso8601String(),
             if (go) 'go': true,
@@ -952,6 +1067,21 @@ abstract final class AssignmentStore {
   }
 
   static String _cut(String text) => text.length > 400 ? '${text.substring(0, 400)}…' : text;
+
+  /// Письмо события [ev] пришло под номером [mailId] — привязать; если это
+  /// письмо поручения (создание) и поручение ссылалось на прежний номер —
+  /// поручение тоже («Письмо-основание», «Задать вопрос»).
+  static Future<void> _rebind(AppDatabase db, AssignmentEvent ev, String mailId) async {
+    if (ev.sourceEmailId == mailId) return;
+    await (db.update(db.assignmentEvents)..where((x) => x.id.equals(ev.id)))
+        .write(AssignmentEventsCompanion(sourceEmailId: Value(mailId)));
+    final old = ev.sourceEmailId;
+    if (ev.type == 'created' && old != null) {
+      await (db.update(db.assignments)
+            ..where((a) => a.id.equals(ev.assignmentId) & a.sourceEmailId.equals(old)))
+          .write(AssignmentsCompanion(sourceEmailId: Value(mailId)));
+    }
+  }
 
   /// Полные сведения о поручении [a] из письма постановщика или
   /// заместителя (13.11.2026): заменяют название, описание, сроки, порядок,

@@ -24,6 +24,7 @@ import '../mail/offline_send_service.dart';
 import '../mail/draft_sync_service.dart';
 import '../mail/dav/dav_pim_service.dart';
 import '../mail/dav/dav_credentials.dart';
+import '../mail/dav/dav_discovery.dart';
 import '../mail/oauth/oauth_proxy_client.dart';
 import '../../core/security/secure_storage_service.dart';
 import '../../core/security/mail_body_processor.dart';
@@ -355,7 +356,10 @@ class SyncService {
             await _ref.read(markSyncProvider).pushLocal(a);
           }
           // Поручения (2.2.0): ответы исполнителей, новые поручения мне.
-          final changed = await AssignmentService.scanAfterSync(_ref.read(databaseProvider), accounts);
+          // Уступает открытому письму и экрану (очередь работ, «докачка»):
+          // разбор не толкается с интерфейсом сразу после запуска.
+          final changed = await WorkScheduler.instance.run(WorkPriority.prefetch,
+              () => AssignmentService.scanAfterSync(_ref.read(databaseProvider), accounts));
           // Новые поручения и сроки из писем — напоминания о сроках заново.
           if (changed > 0) unawaited(_ref.read(reminderSchedulerProvider).rescheduleAll().catchError((Object _) {}));
           // Этапы проектов: предыдущий этап принят — «Можно начинать»
@@ -2871,6 +2875,10 @@ class SyncService {
   static const _davEvery = Duration(minutes: 15);
 
   Future<void> _syncDavPim(AccountModel account, AppDatabase db) async {
+    // Рабочая почта по IMAP (2.6.0): календарь и контакты на сервере
+    // организации — поиск по RFC 6764 (раз в неделю, если не нашлись).
+    await DavDiscovery.ensure(account, DavPimService.knownProviderOf(account),
+        () => DavCredentials.passwordBasic(account, _ref.read(secureStorageProvider)));
     if (!DavPimService.isSupported(account)) return;
     final lastDav = _lastDav[account.id];
     if (lastDav != null && DateTime.now().difference(lastDav) < _davEvery) return;

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../data/models/account_model.dart' show AccountType;
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../../services/security/bimi/bimi_rules.dart';
 import '../../services/security/bimi/bimi_service.dart';
@@ -14,10 +15,24 @@ import 'person_photo.dart' show PhotoRing;
 
 /// Домены серверов ящиков пользователя: логотипу верим, только если
 /// Authentication-Results поставил один из них (2.0.0).
+///
+/// Ящики Google (Gmail и Google Workspace) сюда не входят (2.5.5): у их
+/// писем логотип не ищется, и домены отправителей из Gmail на сервер
+/// Ogneliss не уходят — данные пользователей Google остаются на устройстве.
 final bimiOwnServersProvider = Provider<Set<String>>((ref) => ownMailServerDomains([
       for (final a in ref.watch(accountsProvider))
-        (email: a.email, hosts: [a.imapServer, a.ewsUrl, a.exchangeServer, a.smtpServer]),
+        if (!isGoogleMailbox(a.type, [a.imapServer, a.smtpServer]))
+          (email: a.email, hosts: [a.imapServer, a.ewsUrl, a.exchangeServer, a.smtpServer]),
     ]));
+
+/// Ящик Google: вход через Google или серверы Gmail (пароль приложения,
+/// Google Workspace на своём домене).
+bool isGoogleMailbox(AccountType type, List<String?> hosts) =>
+    type == AccountType.google ||
+    hosts.any((h) {
+      final s = (h ?? '').trim().toLowerCase();
+      return s.endsWith('gmail.com') || s.endsWith('googlemail.com');
+    });
 
 class BimiAvatar extends ConsumerWidget {
   const BimiAvatar({

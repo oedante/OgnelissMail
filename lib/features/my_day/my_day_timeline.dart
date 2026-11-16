@@ -200,6 +200,8 @@ extension _MyDayTimeline on _MyDayScreenState {
                       builder: (chipCtx) => GestureDetector(
                         onLongPress: () =>
                             unawaited(showAssignmentPeek(context, ref, v, anchor: peekAnchorOf(chipCtx))),
+                        onSecondaryTapUp: secondaryAsHold(
+                            () => unawaited(showAssignmentPeek(context, ref, v, anchor: peekAnchorOf(chipCtx)))),
                         child: ActionChip(
                           avatar: Icon(AppIcons.assignment_ind, size: 16, color: assignmentStatusColor(v.status, context)),
                           label: Text('${v.row.title} · ${v.otherName}'),
@@ -331,6 +333,7 @@ extension _MyDayTimeline on _MyDayScreenState {
           borderRadius: BorderRadius.circular(12),
           onTap: () => showTaskEditor(context, task: taskFromRow(t), accountId: t.accountId),
           onLongPress: () => _taskPeek(context, t),
+          onSecondaryTapUp: secondaryAsHold(() => _taskPeek(context, t)),
           child: Row(children: [
             _tlHandle(context, t, t.title, l10n),
             Expanded(
@@ -631,6 +634,7 @@ extension _MyDayTimeline on _MyDayScreenState {
           child: InkWell(
             onTap: it.onTap,
             onLongPress: () => _taskPeek(context, t),
+            onSecondaryTapUp: secondaryAsHold(() => _taskPeek(context, t)),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               IconButton(
                 visualDensity: VisualDensity.compact,

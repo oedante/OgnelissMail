@@ -4,6 +4,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/data/models/account_model.dart' show EncryptionType;
 import 'package:ogneliss/services/mail/mail_provider_detect.dart';
+import 'package:ogneliss/services/net/system_dns.dart';
 
 void main() {
   group('byDomain — известные домены', () {
@@ -169,5 +170,86 @@ void main() {
       expect(g.kind, MailKind.exchange);
       expect(g.sure, isFalse);
     });
+  });
+
+  group('DNS домена (2.6.0): MX и SRV через DNS устройства', () {
+    DnsLookup dnsOf(Map<String, List<DnsRecord>> zone) =>
+        (q) async => [for (final x in q) zone['${x.type.name} ${x.name}'] ?? const <DnsRecord>[]];
+
+    test('MX у Google, Яндекса, Mail.ru, Microsoft 365, iCloud — вход через службу', () {
+      expect(MailProviderDetect.kindByMx(['smtp.google.com'])!.kind, MailKind.google);
+      expect(MailProviderDetect.kindByMx(['ASPMX.L.GOOGLE.COM.'])!.kind, MailKind.google);
+      expect(MailProviderDetect.kindByMx(['mx.yandex.net'])!.kind, MailKind.yandex);
+      expect(MailProviderDetect.kindByMx(['emx.mail.ru'])!.kind, MailKind.mailru);
+      final m = MailProviderDetect.kindByMx(['corp-ru.mail.protection.outlook.com'])!;
+      expect((m.kind, m.microsoft365), (MailKind.microsoft, true));
+      expect(MailProviderDetect.kindByMx(['mx01.mail.icloud.com'])!.kind, MailKind.icloud);
+      expect(MailProviderDetect.kindByMx(['mail.corp.ru', 'mx.notgoogle.com']), isNull);
+    });
+
+    test('SRV: IMAPS и SUBMISSION — серверы администратора, уверенно', () async {
+      final g = await MailProviderDetect.detect('a@corp.example',
+          resolve: (_) async => false,
+          fetch: (_) async => null,
+          dns: dnsOf({
+            'srv _imaps._tcp.corp.example': [const DnsRecord(DnsType.srv, 'mail.corp.example', port: 993)],
+            'srv _submission._tcp.corp.example': [const DnsRecord(DnsType.srv, 'smtp.corp.example', port: 587)],
+          }));
+      expect(g.kind, MailKind.imap);
+      expect(g.sure, isTrue);
+      expect(g.imap!.imapHost, 'mail.corp.example');
+      expect(g.imap!.imapEncryption, EncryptionType.ssl);
+      expect((g.imap!.smtpHost, g.imap!.smtpPort, g.imap!.smtpEncryption),
+          ('smtp.corp.example', 587, EncryptionType.starttls));
+    });
+
+    test('SRV IMAP со STARTTLS и без SRV отправки — отправка на сервер IMAP', () {
+      final p = MailProviderDetect.presetFromSrv(imap: const DnsRecord(DnsType.srv, 'IMAP.corp.example', port: 143))!;
+      expect((p.imapHost, p.imapPort, p.imapEncryption), ('imap.corp.example', 143, EncryptionType.starttls));
+      expect((p.smtpHost, p.smtpPort), ('imap.corp.example', 587));
+      expect(MailProviderDetect.presetFromSrv(), isNull);
+    });
+
+    test('SRV IMAP и _autodiscover — Exchange, серверы IMAP в запасе', () async {
+      final g = await MailProviderDetect.detect('a@corp.example',
+          resolve: (_) async => false,
+          fetch: (_) async => null,
+          dns: dnsOf({
+            'srv _imaps._tcp.corp.example': [const DnsRecord(DnsType.srv, 'mail.corp.example', port: 993)],
+            'srv _autodiscover._tcp.corp.example': [const DnsRecord(DnsType.srv, 'mail.corp.example', port: 443)],
+          }));
+      expect(g.kind, MailKind.exchange);
+      expect(g.imap!.imapHost, 'mail.corp.example');
+    });
+
+    test('MX у Яндекса важнее догадки по imap.<домен>', () async {
+      final g = await MailProviderDetect.detect('a@corp.example',
+          resolve: (h) async => h == 'imap.corp.example',
+          fetch: (_) async => null,
+          dns: dnsOf({'mx corp.example': [const DnsRecord(DnsType.mx, 'mx.yandex.net', priority: 10)]}));
+      expect(g.kind, MailKind.yandex);
+    });
+
+    test('DNS устройства недоступен (null) — проверка как раньше', () async {
+      final g = await MailProviderDetect.detect('a@corp.example',
+          resolve: (h) async => h == 'imap.corp.example',
+          fetch: (_) async => null,
+          dns: (q) async => List.filled(q.length, null));
+      expect(g.kind, MailKind.imap);
+      expect(g.sure, isFalse);
+    });
+  });
+
+  test('SRV ведёт на сервер вне домена адреса — не «уверенно»: серверы показываются до входа', () async {
+    DnsLookup zone(String host) => (q) async => [
+          for (final x in q)
+            x.name.startsWith('_imaps.') ? [DnsRecord(DnsType.srv, host, port: 993)] : const <DnsRecord>[],
+        ];
+    final foreign = await MailProviderDetect.detect('a@corp.example',
+        resolve: (_) async => false, fetch: (_) async => null, dns: zone('imap.attacker.example'));
+    expect((foreign.kind, foreign.sure), (MailKind.imap, false));
+    final own = await MailProviderDetect.detect('a@corp.example',
+        resolve: (_) async => false, fetch: (_) async => null, dns: zone('mx.mail.corp.example'));
+    expect((own.kind, own.sure), (MailKind.imap, true));
   });
 }

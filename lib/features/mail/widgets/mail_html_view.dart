@@ -71,14 +71,14 @@ import 'mail_find.dart';
 /// Windows без проверенного WebView2) — прежний рендер flutter_html.
 bool get mailWebViewSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
-/// Mac (12.11.2026, план 2026-11 п. 5): письмо со сложной вёрсткой — во
-/// встроенном окне WKWebView прямо в письме ([MacMailWebView]), а не
-/// упрощённо виджетами с кнопкой «Открыть в браузере». Отдельно от
-/// [mailWebViewSupported]: окно телефона ([MailHtmlView]) растягивается на
-/// высоту письма, а на Mac высоту без JavaScript узнать нельзя (плагин
-/// меряет её скриптом, скрипты в окне письма выключены) — окно листает
-/// письмо само.
-bool get mailMacWebViewSupported => !kIsWeb && Platform.isMacOS;
+/// Компьютер: Mac (12.11.2026, план 2026-11 п. 5) и Windows (14.11.2026) —
+/// письмо со сложной вёрсткой во встроенном окне браузера прямо в письме
+/// ([DesktopMailWebView]: WKWebView, WebView2), а не упрощённо виджетами с
+/// кнопкой «Открыть в браузере». Отдельно от [mailWebViewSupported]: окно
+/// телефона ([MailHtmlView]) растягивается на высоту письма, а здесь высоту
+/// без JavaScript узнать нельзя (плагин меряет её скриптом, скрипты в окне
+/// письма выключены) — окно листает письмо само.
+bool get mailDesktopWebViewSupported => !kIsWeb && (Platform.isMacOS || Platform.isWindows);
 
 /// Подготовленный к показу документ письма.
 class MailHtmlDocument {
@@ -1159,10 +1159,11 @@ class MailHtmlView extends StatefulWidget {
           textZoom: (textScale * 100).round().clamp(80, 300),
         );
 
-  /// Настройки окна письма на Mac ([MacMailWebView]): те же запреты, что на
-  /// телефоне (без JavaScript, хранилищ, файлов), но окно листает письмо
-  /// само, с полосами прокрутки; размер текста — масштабом страницы.
-  static InAppWebViewSettings macSettings({required double textScale}) =>
+  /// Настройки окна письма на компьютере ([DesktopMailWebView]): те же
+  /// запреты, что на телефоне (без JavaScript, хранилищ, файлов), но окно
+  /// листает письмо само, с полосами прокрутки; размер текста — масштабом
+  /// страницы.
+  static InAppWebViewSettings desktopSettings({required double textScale}) =>
       _settings(blockNet: false, textScale: textScale)
         ..disableVerticalScroll = false
         ..verticalScrollBarEnabled = true

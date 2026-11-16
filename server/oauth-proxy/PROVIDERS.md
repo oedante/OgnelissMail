@@ -86,7 +86,7 @@ https://www.ogneliss.ru/oauth/callback
    ```
    GOOGLE_CLIENT_ID=<client id>.apps.googleusercontent.com
    GOOGLE_CLIENT_SECRET=<client secret>
-   GOOGLE_SCOPE=https://mail.google.com/ openid email profile
+   GOOGLE_SCOPE=https://mail.google.com/ https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/carddav openid email profile
    ```
 
 ---
@@ -96,6 +96,15 @@ https://www.ogneliss.ru/oauth/callback
 > Для корпоративного использования проще: если домен в Google Workspace —
 > публиковать приложение как **Internal**; иначе на время отладки добавить себя
 > в **Test users** (тогда работает без верификации, но refresh_token живёт 7 дней).
+>
+> **Лимит 100 пользователей (2.5.4).** Без проверки Google пускает в приложение
+> не больше 100 новых пользователей («OAuth user cap» в Cloud Console). Дошло
+> до 100 — `sudo bash set-oauth-env.sh GOOGLE_USER_CAP=1`. Тогда новый вход
+> через Google сразу возвращается в приложение с объяснением и кнопкой
+> «Подключить паролем приложения» (почта Gmail по IMAP; календарь и контакты
+> Google — только через OAuth). Уже добавленные ящики входят повторно как
+> обычно. Ответ самого Google о лимите (если он вернул его в прокси)
+> распознаётся и без флага: в журнале прокси — `[google] вход отклонён: user_cap`.
 
 ## 2. Microsoft (Outlook / Office 365, через EWS)
 
@@ -266,8 +275,10 @@ flutter build apk \
 
 Чтобы работал импорт подписи через API (кнопка «Импорт из ящика» и авто-импорт
 при подключении):
-- **Google**: добавьте scope `https://www.googleapis.com/auth/gmail.settings.basic`
-  (в `.env` уже включён в GOOGLE_SCOPE). Приложение читает `settings/sendAs`.
+- **Google**: отдельный scope не нужен — `settings/sendAs` читается с
+  `https://mail.google.com/` (нужен только включённый Gmail API в проекте).
+  `gmail.settings.basic` убран 15.11.2026: проверка приложения Google требует
+  минимум прав, а это ещё одно право из «ограниченных».
 - **Microsoft**: добавьте `MailboxSettings.Read` (в `.env` включён в MS_SCOPE) —
   для Exchange Online (Graph `/me/mailboxSettings`). Для on-prem Exchange scope
   не нужен (EWS GetUserConfiguration по EWS-доступу).

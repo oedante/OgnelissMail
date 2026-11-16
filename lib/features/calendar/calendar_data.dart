@@ -198,12 +198,15 @@ final calendarEventsProvider =
       }
     }
     if (layers.showFlaggedMail) {
-      final mails = await (db.select(db.emails)
-            ..where((e) => e.accountId.isIn(ids))
-            ..where((e) => e.followUpAt.isNotNull())
-            ..where((e) => e.followUpAt.isBiggerOrEqualValue(from))
-            ..where((e) => e.followUpAt.isSmallerThanValue(to))
-            ..limit(200))
+      // Без текстов писем: в календаре — тема и срок.
+      final mails = await db
+          .emailsLight(
+              (e) =>
+                  e.accountId.isIn(ids) &
+                  e.followUpAt.isNotNull() &
+                  e.followUpAt.isBiggerOrEqualValue(from) &
+                  e.followUpAt.isSmallerThanValue(to),
+              limit: 200)
           .get();
       for (final m in mails) {
         extra.add(CalendarEvent(

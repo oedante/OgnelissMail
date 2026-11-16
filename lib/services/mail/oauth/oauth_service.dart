@@ -12,8 +12,8 @@ import '../../../core/errors/app_exceptions.dart';
 import '../../../core/logging/app_logger.dart';
 import '../../../core/security/secure_storage_service.dart';
 import '../../../data/models/account_model.dart';
-import 'oauth_proxy_client.dart';
 import 'direct_oauth.dart';
+import 'oauth_proxy_client.dart';
 
 final oauthServiceProvider = Provider<OAuthService>((ref) {
   final secureStorage = ref.watch(secureStorageProvider);
@@ -284,8 +284,12 @@ class OAuthService {
         AppLogger.info('Token refreshed (${direct.provider}, без сервера входа): ${account.email}');
         return;
       }
+      // Сервер входа с 2.5.5 — только для Яндекса (Windows и Linux; там же
+      // обновляются и прежние ящики Яндекса). Токен Google или Microsoft,
+      // выданный через сервер, обновить нечем: ключей этих служб на сервере
+      // нет — нужен повторный вход, уже напрямую у службы («Войти снова»).
       final proxy = OAuthProxyClient(_secureStorage);
-      if (proxy.isEnabled && provider != null) {
+      if (account.type == AccountType.yandex && proxy.isEnabled && provider != null) {
         final res = await proxy.refreshWithBlob(refreshToken, provider);
         await _secureStorage.saveOAuthTokens(
           accountId: account.id,
@@ -293,39 +297,12 @@ class OAuthService {
           refreshToken: res.rt,
           expiry: res.expiresAt,
         );
-        AppLogger.info('Token refreshed (proxy): ${account.email}');
+        AppLogger.info('Token refreshed (сервер входа, Яндекс): ${account.email}');
         return;
       }
-
-      final ep = _tokenEndpoint(account.type);
-      if (ep == null) throw Exception('Token refresh not supported for ${account.type}');
-      final resp = await http.post(Uri.parse(ep.url), headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
-      }, body: {
-        'grant_type': 'refresh_token',
-        'refresh_token': refreshToken,
-        'client_id': ep.clientId,
-        if (ep.clientSecret != null && ep.clientSecret!.isNotEmpty) 'client_secret': ep.clientSecret!,
-        if (account.type == AccountType.yahoo) 'redirect_uri': AppConstants.googleRedirectUri,
-      }).timeout(const Duration(seconds: 20));
-      if (resp.statusCode != 200) {
-        // Тело целиком не логируем (может быть токен) — только поле error.
-        final why = OAuthProxyClient.describeFailure(resp.statusCode, resp.body);
-        throw OAuthRefreshFailure('провайдер: HTTP ${resp.statusCode} ${why.text}',
-            needsSignIn: why.needsSignIn, temporary: resp.statusCode >= 500);
-      }
-      final m = jsonDecode(resp.body) as Map<String, dynamic>;
-      final at = m['access_token'] as String?;
-      if (at == null || at.isEmpty) throw Exception('Token refresh: нет access_token');
-      final expiresIn = (m['expires_in'] as num?)?.toInt() ?? 3600;
-      await _secureStorage.saveOAuthTokens(
-        accountId: account.id,
-        accessToken: at,
-        refreshToken: (m['refresh_token'] as String?) ?? refreshToken,
-        expiry: DateTime.now().add(Duration(seconds: expiresIn)),
-      );
-      AppLogger.info('Token refreshed: ${account.email}');
+      AppLogger.warning('Token refresh: ${account.email} — вход был через сервер входа ($provider), '
+          'теперь вход в эту службу напрямую — нужен повторный вход');
+      throw const OAuthRefreshFailure('вход был через сервер входа Ogneliss, теперь — напрямую у службы', needsSignIn: true);
     } on OAuthRefreshFailure catch (e) {
       // Пауза: отозванный вход — 2 мин (синхронизация перепроверяет его
       // через 3 мин и только тогда просит войти заново; дальше ящик с
@@ -364,25 +341,6 @@ class OAuthService {
         return 'yahoo';
       case AccountType.outlook:
         return 'microsoft';
-      default:
-        return null;
-    }
-  }
-
-  static ({String url, String clientId, String? clientSecret})? _tokenEndpoint(AccountType t) {
-    switch (t) {
-      case AccountType.google:
-        return (url: 'https://oauth2.googleapis.com/token', clientId: AppConstants.googleClientId, clientSecret: null);
-      case AccountType.yandex:
-        return (url: 'https://oauth.yandex.ru/token', clientId: AppConstants.yandexClientId, clientSecret: null);
-      case AccountType.mailru:
-        return (
-          url: 'https://oauth.mail.ru/token',
-          clientId: AppConstants.mailruClientId,
-          clientSecret: AppConstants.mailruClientSecret,
-        );
-      case AccountType.yahoo:
-        return (url: 'https://api.login.yahoo.com/oauth2/get_token', clientId: AppConstants.yahooClientId, clientSecret: null);
       default:
         return null;
     }

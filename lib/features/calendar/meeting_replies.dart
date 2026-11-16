@@ -141,10 +141,11 @@ final meetingRepliesProvider =
     }
   } catch (_) {}
   if (attendees.isEmpty) return const [];
-  final rows = await (db.select(db.emails)
-        ..where((e) => e.accountId.equals(k.accountId) & e.meetingJson.isNotNull())
-        ..orderBy([(e) => OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)])
-        ..limit(1000))
+  // Без текстов писем (до 1000 строк): ответам нужны шапка, meetingJson и
+  // готовое превью.
+  final rows = await db
+      .emailsLight((e) => e.accountId.equals(k.accountId) & e.meetingJson.isNotNull(),
+          orderBy: (e) => [OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)], limit: 1000)
       .get();
   return matchReplies(
     [
@@ -153,7 +154,7 @@ final meetingRepliesProvider =
           id: r.id,
           fromEmail: r.fromEmail,
           fromName: r.fromName,
-          preview: r.bodyPlain ?? r.bodyPreview,
+          preview: r.bodyPreview,
           receivedAt: r.receivedAt,
           meetingJson: r.meetingJson,
         ),

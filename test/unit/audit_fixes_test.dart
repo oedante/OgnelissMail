@@ -176,6 +176,17 @@ void main() {
   });
 
   group('Журнал (G-9)', () {
+    test('журнал: логин и устройство в адресе ActiveSync и в строке подключения скрыты (15.11.2026)', () {
+      final m = AppLogger.mask(
+          'ClientException: uri=https://mail.corp.ru/Microsoft-Server-ActiveSync?Cmd=Search&User=msk%5Cr.khabirov&DeviceId=OGNL39CCA946, x');
+      expect(m, contains('Cmd=Search'));
+      expect(m, isNot(contains('khabirov')));
+      expect(m, isNot(contains('OGNL39CCA946')));
+      final l = AppLogger.mask(r'[EAS] Подключение (логин: msk\o.ermishin)');
+      expect(l, contains(r'логин: msk\o***)'));
+      expect(AppLogger.mask('(логин: ivanov)'), '(логин: i***)');
+    });
+
     test('адреса и токены маскируются', () {
       final m = AppLogger.mask('ivanov@corp.ru at=abc&rt=def Bearer xyz.123');
       expect(m, contains('i***@corp.ru'));

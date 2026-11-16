@@ -16,6 +16,7 @@
 import Cocoa
 import FlutterMacOS
 import NaturalLanguage
+import desktop_multi_window
 import SwiftUI
 #if canImport(Translation)
 import Translation
@@ -33,6 +34,14 @@ class MainFlutterWindow: NSWindow {
     RegisterGeneratedPlugins(registry: flutterViewController)
     TranslationBridge.register(flutterViewController.engine.binaryMessenger, view: flutterViewController.view)
     GraphicsBridge.register(flutterViewController.engine.binaryMessenger)
+
+    // Окна писем и редактора (2.5.4, lib/features/compose/compose_window.dart):
+    // у каждого окна свой движок Flutter — плагины (окно, файлы, браузер,
+    // ссылки) регистрируются и в нём. Перевод Apple — только у главного
+    // окна: его скрытый вид SwiftUI один на приложение.
+    FlutterMultiWindowPlugin.setOnWindowCreatedCallback { controller in
+      RegisterGeneratedPlugins(registry: controller)
+    }
 
     super.awakeFromNib()
   }

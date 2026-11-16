@@ -34,6 +34,7 @@ import '../../../widgets/common/pane_navigator.dart';
 import '../../../widgets/ui/file_type_icon.dart';
 import '../providers/mail_providers.dart';
 import 'attachment_preview_screen.dart';
+import '../../../widgets/common/quick_long_press.dart' show SecondaryTap;
 
 /// Вложение беседы и его письмо.
 typedef ConversationFile = ({EmailAttachment file, EmailModel email});
@@ -193,7 +194,14 @@ class _ConversationFilesScreenState extends ConsumerState<ConversationFilesScree
       itemBuilder: (context, i) {
         final l = links[i];
         final sub = [l.host, l.from, AppDateFormat.dayMonth(context, l.at)].join(' · ');
-        return ListTile(
+        void copy() {
+          unawaited(Clipboard.setData(ClipboardData(text: l.url)));
+          unawaited(HapticFeedback.mediumImpact());
+        }
+        // Правая кнопка мыши — то же, что удержание (14.11.2026).
+        return SecondaryTap(
+          onTap: copy,
+          child: ListTile(
           leading: CircleAvatar(
             backgroundColor: theme.colorScheme.secondaryContainer,
             child: Icon(AppIcons.link, color: theme.colorScheme.onSecondaryContainer),
@@ -203,11 +211,8 @@ class _ConversationFilesScreenState extends ConsumerState<ConversationFilesScree
           onTap: () => unawaited(LinkOpener.open(context, l.url, linkText: l.text.isEmpty ? null : l.text,
               accountId: widget.accountId)),
           // Удержание — скопировать адрес (как «Копировать ссылку» в мессенджере).
-          onLongPress: () {
-            unawaited(Clipboard.setData(ClipboardData(text: l.url)));
-            unawaited(HapticFeedback.mediumImpact());
-          },
-        );
+          onLongPress: copy,
+        ));
       },
     );
   }

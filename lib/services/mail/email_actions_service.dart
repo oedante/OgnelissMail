@@ -387,14 +387,15 @@ final transportCapabilitiesProvider = Provider<TransportCapabilities?>((ref) {
 /// аккаунт, тема и отправитель, время получения — в пределах 2 минут.
 Future<Email?> findLocalTwin(AppDatabase db, String accountId,
     {required String subject, required String fromEmail, required DateTime receivedAt}) async {
-  final rows = await (db.select(db.emails)
-        ..where((e) =>
-            e.accountId.equals(accountId) &
-            e.folderId.equals('search').not() &
-            e.subject.equals(subject) &
-            e.receivedAt.isBetweenValues(
-                receivedAt.subtract(const Duration(minutes: 2)), receivedAt.add(const Duration(minutes: 2))))
-        ..limit(5))
+  final rows = await db
+      .emailsLight(
+          (e) =>
+              e.accountId.equals(accountId) &
+              e.folderId.equals('search').not() &
+              e.subject.equals(subject) &
+              e.receivedAt.isBetweenValues(
+                  receivedAt.subtract(const Duration(minutes: 2)), receivedAt.add(const Duration(minutes: 2))),
+          limit: 5)
       .get();
   final from = fromEmail.toLowerCase();
   for (final r in rows) {

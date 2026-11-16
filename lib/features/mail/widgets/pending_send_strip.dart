@@ -27,9 +27,10 @@ import '../providers/mail_providers.dart';
 /// Письма в Исходящих с окном отмены (id «undosend_…»); срок — в sentAt.
 final pendingSendsProvider = StreamProvider.autoDispose<List<Email>>((ref) {
   final db = ref.watch(databaseProvider);
-  return (db.select(db.emails)
-        ..where((e) => e.folderId.equals('outbox') & e.id.like('undosend_%'))
-        ..orderBy([(e) => OrderingTerm(expression: e.receivedAt)]))
+  // Без текстов писем: полоске нужны тема и срок.
+  return db
+      .emailsLight((e) => e.folderId.equals('outbox') & e.id.like('undosend_%'),
+          orderBy: (e) => [OrderingTerm(expression: e.receivedAt)])
       .watch();
 });
 

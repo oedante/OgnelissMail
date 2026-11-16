@@ -22,6 +22,8 @@ import 'package:path_provider/path_provider.dart';
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../../data/providers/database_provider.dart';
 import '../../services/mail/engine/mail_engine_service.dart';
+import '../../services/mail/oauth/cross_platform_oauth.dart' show CrossPlatformOAuthService;
+import '../../services/mail/oauth/direct_oauth.dart' show DirectOAuth;
 import '../../services/security/bimi/bimi_service.dart' show BimiResolver, BimiStats;
 import '../../features/settings/providers/settings_provider.dart' show settingsProvider;
 import '../../services/security/device_security_service.dart';
@@ -81,6 +83,12 @@ class DiagnosticsReport {
       if (f.existsSync()) {
         final l = f.readAsBytesSync();
         archive.addFile(ArchiveFile('ogneliss.log', l.length, l));
+      }
+      // Журнал окон редактора на компьютере (2.5.4) — рядом с основным.
+      final w = File('${f.parent.path}${Platform.pathSeparator}ogneliss-window.log');
+      if (w.existsSync()) {
+        final l = w.readAsBytesSync();
+        archive.addFile(ArchiveFile('ogneliss-window.log', l.length, l));
       }
     }
     // Журнал до 15 МБ сжимается примерно в 10 раз — пакет проходит
@@ -196,10 +204,13 @@ class DiagnosticsReport {
       line('Сертификаты: режим=${pin.mode.name}, правил=${pin.rules.length}'
           '${hosts.isEmpty ? '' : ' (${hosts.join(', ')})'}, доверенных доменов=${pin.trustedCaDomains.length}');
     } catch (_) {}
-    line('OAuth-прокси: адрес ${AppConstants.oauthProxyBaseUrl.isEmpty ? 'не задан' : AppConstants.oauthProxyBaseUrl}, '
-        'ключ ${AppConstants.oauthProxyApiKey.isEmpty ? 'НЕ задан' : 'задан, отпечаток ${sha256.convert(utf8.encode(AppConstants.oauthProxyApiKey)).toString().substring(0, 8)}'}'
-        // Сверка с прокси: GET <адрес>/healthz → keys.api должен совпасть.
-        );
+    // С 2.5.5 вход напрямую у служб; сервер входа — только Яндекс на Windows
+    // и Linux. Ключ — для него и сигналов сервера; логотипы BIMI — служба
+    // погоды.
+    line('Вход: напрямую у служб (Google ${_direct('google')}, Microsoft ${_direct('microsoft')}, '
+        'Exchange Online ${_direct('exchange')}, Яндекс ${_direct('yandex')}); '
+        'ключ служб ${AppConstants.oauthProxyApiKey.isEmpty ? 'НЕ задан' : 'задан, отпечаток ${sha256.convert(utf8.encode(AppConstants.oauthProxyApiKey)).toString().substring(0, 8)}'}; '
+        'логотипы BIMI: ${AppConstants.bimiUrl.isEmpty ? 'выключены' : AppConstants.bimiUrl}');
     // Сигналы сервера на iPhone (1.7.2) и Android (FCM, 1.9.x): включены ли,
     // регистрация, последний сигнал.
     if (PushWakeService.supported) {
@@ -242,3 +253,11 @@ class DiagnosticsReport {
     return '${Platform.operatingSystem} ${Platform.operatingSystemVersion}';
   }
 }
+
+/// Как служба входит на этой платформе: напрямую, через сервер входа
+/// (Яндекс на Windows и Linux) или паролем приложения.
+String _direct(String provider) => !kIsWeb && DirectOAuth.clientFor(provider) != null
+    ? 'напрямую'
+    : CrossPlatformOAuthService.yandexViaServer(provider)
+        ? 'через сервер входа ${AppConstants.oauthProxyBaseUrl}'
+        : 'нет — пароль приложения';

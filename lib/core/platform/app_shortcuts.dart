@@ -14,6 +14,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:quick_actions/quick_actions.dart';
 
 import '../../features/mail/providers/mail_providers.dart';
@@ -87,16 +88,23 @@ class AppShortcuts {
   /// Открыть экран быстрого действия — и для нажатий на виджет «Мой день».
   static Future<void> openType(ProviderContainer container, String type) => _open(container, type);
 
-  static Future<void> _open(ProviderContainer container, String type) async {
-    final router = container.read(appRouterProvider);
-    // Холодный запуск: ждём, пока заставка, вход и блокировка пропустят на
-    // главный экран, — иначе они перекроют открытое окно.
+  /// Холодный запуск: дождаться, пока заставка, вход и блокировка пропустят
+  /// на главный экран (не дольше 15 с). Заставка переходит на «Почту» через
+  /// go() — он заменяет весь стек, и окно, открытое раньше, пропадало
+  /// (15.11.2026: «Поделиться» в закрытое приложение — редактор через пару
+  /// секунд сменялся лентой, «Назад» закрывало приложение).
+  static Future<void> waitForMainScreen(GoRouter router) async {
+    const gate = {'/splash', '/onboarding', '/license', '/login', '/lock'};
     for (var i = 0; i < 60; i++) {
       final path = router.routerDelegate.currentConfiguration.uri.path;
-      const gate = {'/splash', '/onboarding', '/license', '/login', '/lock'};
-      if (path.isNotEmpty && !gate.contains(path)) break;
+      if (path.isNotEmpty && !gate.contains(path)) return;
       await Future<void>.delayed(const Duration(milliseconds: 250));
     }
+  }
+
+  static Future<void> _open(ProviderContainer container, String type) async {
+    final router = container.read(appRouterProvider);
+    await waitForMainScreen(router);
     // Письмо из виджета «Почта»: «email?id=…&acc=…».
     if (type.startsWith('email')) {
       final q = Uri.parse(type).queryParameters;

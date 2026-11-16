@@ -84,15 +84,16 @@ class MarkSyncService {
     final out = <Email>[];
     for (var i = 0; i < list.length; i += 500) {
       final part = list.sublist(i, i + 500 > list.length ? list.length : i + 500);
-      out.addAll(await (_db.select(_db.emails)..where((e) => e.accountId.equals(accountId) & e.id.isIn(part))).get());
+      // Без текстов писем: отметкам нужны только поля строки.
+      out.addAll(await _db.emailsLight((e) => e.accountId.equals(accountId) & e.id.isIn(part)).get());
     }
     return out;
   }
 
-  Future<List<Email>> _marked(String accountId) => (_db.select(_db.emails)
-        ..where((e) =>
-            e.accountId.equals(accountId) & (e.controlState.isBiggerThanValue(0) | e.laterState.isBiggerThanValue(0)))
-        ..orderBy([(e) => OrderingTerm(expression: e.receivedAt)]))
+  Future<List<Email>> _marked(String accountId) => _db
+      .emailsLight(
+          (e) => e.accountId.equals(accountId) & (e.controlState.isBiggerThanValue(0) | e.laterState.isBiggerThanValue(0)),
+          orderBy: (e) => [OrderingTerm(expression: e.receivedAt)])
       .get();
 
   static MarkState _stateOf(Email r) => MarkState.of(

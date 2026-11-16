@@ -70,10 +70,10 @@ final mailRemindersProvider = StreamProvider.autoDispose<List<Email>>((ref) {
   final db = ref.watch(databaseProvider);
   final ids = [for (final a in ref.watch(calendarScopeProvider)) a.id];
   if (ids.isEmpty) return Stream.value(const <Email>[]);
-  return (db.select(db.emails)
-        ..where((e) => e.accountId.isIn(ids))
-        ..where((e) => e.remindAt.isNotNull() | e.followUpAt.isNotNull())
-        ..limit(200))
+  // Без текстов писем (15.11.2026): поток перечитывается при каждом
+  // изменении таблицы писем, а строки с телами копировались в основной поток.
+  return db
+      .emailsLight((e) => e.accountId.isIn(ids) & (e.remindAt.isNotNull() | e.followUpAt.isNotNull()), limit: 200)
       .watch();
 });
 

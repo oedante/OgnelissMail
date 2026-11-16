@@ -13,8 +13,9 @@
 // Сначала адрес проверяется без учётных данных (ответ DAV: 207, 401 после
 // перенаправления с .well-known, заголовок DAV), и только потом — с
 // логином и паролем ящика (principal пользователя). Пароль уходит лишь
-// серверам домена организации и тем, что опубликовал её администратор, и
-// только тем, что ответили как сервер DAV, — не сайту на чужом хостинге.
+// серверам домена организации (и серверу IMAP ящика), и только тем, что
+// ответили как сервер DAV, — не сайту на чужом хостинге и не узлу из
+// подменённой записи SRV.
 // Серверы Ogneliss и посторонние службы не участвуют.
 //
 // Найденное хранится по ящику (SharedPreferences), ничего не найдено —
@@ -143,9 +144,13 @@ class DavDiscovery {
       ]);
       final imapHost = (account.imapServer ?? '').trim().toLowerCase();
       Future<String?> find(String kind, DnsRecord? srv, List<DnsRecord>? txt) async {
+        // Записи SRV не подписаны (в чужой сети их могут подменить): узел
+        // из SRV годится, только если он в домене организации или это сервер
+        // IMAP ящика, — иначе пароль ушёл бы на чужой сервер.
+        final srvHost = srv?.target.toLowerCase() ?? '';
+        final srvOk = srv != null && (sameOrgDomain(srvHost, domain) || srvHost == imapHost);
         final candidates = <({String url, bool trusted})>[
-          if (srv != null)
-            (url: _srvUrl(srv, kind, _txtPath(txt)), trusted: true),
+          if (srvOk) (url: _srvUrl(srv, kind, _txtPath(txt)), trusted: true),
           if (imapHost.isNotEmpty) (url: 'https://$imapHost/.well-known/$kind', trusted: true),
           if ('mail.$domain' != imapHost) (url: 'https://mail.$domain/.well-known/$kind', trusted: false),
           (url: 'https://$domain/.well-known/$kind', trusted: false),

@@ -82,10 +82,11 @@ class OwnIdentityService {
           .map((r) => r.read(db.folders.id)!)
           .get();
       if (sentIds.isNotEmpty) {
-        final rows = await (db.select(db.emails)
-              ..where((e) => e.accountId.equals(account.id) & e.folderId.isIn(sentIds))
-              ..orderBy([(e) => OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)])
-              ..limit(200))
+        // Без текстов писем (15.11.2026): 200 писем с телами копировались в
+        // основной поток — подвисания после запуска.
+        final rows = await db
+            .emailsLight((e) => e.accountId.equals(account.id) & e.folderId.isIn(sentIds),
+                orderBy: (e) => [OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)], limit: 200)
             .get();
         final byAddr = <String, int>{};
         final byName = <String, int>{};

@@ -256,10 +256,10 @@ class SenderRulesNotifier extends StateNotifier<List<SenderRule>> {
     final folder = folderId ?? await db.folderIdOfType(account.id, FolderType.inbox.index);
     if (folder == null) return const [];
     final p = normalizePattern(pattern);
-    final rows = await (db.select(db.emails)
-          ..where((e) => e.accountId.equals(account.id) & e.folderId.equals(folder) & senderFilter(e, p))
-          ..orderBy([(e) => OrderingTerm.desc(e.receivedAt)])
-          ..limit(5000))
+    // Без текстов писем (до 5000 строк — с телами это сотни мегабайт).
+    final rows = await db
+        .emailsLight((e) => e.accountId.equals(account.id) & e.folderId.equals(folder) & senderFilter(e, p),
+            orderBy: (e) => [OrderingTerm.desc(e.receivedAt)], limit: 5000)
         .get();
     return [for (final r in rows) (id: r.id, folderId: r.folderId, at: r.receivedAt)];
   }

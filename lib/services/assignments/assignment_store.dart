@@ -645,8 +645,11 @@ abstract final class AssignmentStore {
   /// постановщика у исполнителя не разбирались. Его письма после моего
   /// «Готово» проверяются заново: код «D» или «Принято» словами —
   /// выполнено; статус — в ту же запись истории.
+  static final Expando<Set<String>> _recheckedByDb = Expando();
+
   static Future<int> _recheckReview(AppDatabase db, Map<String, Set<String>> mine) async {
     var n = 0;
+    final checked = _recheckedByDb[db] ??= <String>{};
     final rows = await (db.select(db.assignments)
           ..where((a) =>
               a.accountId.isIn(mine.keys) & a.status.equals(AssignmentStatus.review) & a.isArchived.equals(false)))
@@ -675,9 +678,12 @@ abstract final class AssignmentStore {
       final review = list.lastIndexWhere((e) => payload(e)['status'] == AssignmentStatus.review);
       for (final e in list.skip(review < 0 ? 0 : review + 1)) {
         if (e.type != 'message' || e.sourceEmailId == null || !accepters.contains(e.authorEmail.toLowerCase())) continue;
+        // Уже проверенное письмо («не принято») при каждом разборе заново не
+        // читаем и не разбираем — до перезапуска.
+        if (!checked.add(e.id)) continue;
         final mail = await (db.select(db.emails)..where((m) => m.id.equals(e.sourceEmailId!))).getSingleOrNull();
         if (mail == null) continue;
-        final text = freshText(mail.bodyHtml, mail.bodyPlain);
+        final text = (await compute(parseMails, [(mail.bodyHtml, mail.bodyPlain)])).first.text;
         final act = AssignmentCodec.actionFromText(text);
         final ok = act != null
             ? act.id == a.id && act.act == AssignmentAct.accepted

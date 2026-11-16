@@ -239,4 +239,17 @@ void main() {
       expect(g.sure, isFalse);
     });
   });
+
+  test('SRV ведёт на сервер вне домена адреса — не «уверенно»: серверы показываются до входа', () async {
+    DnsLookup zone(String host) => (q) async => [
+          for (final x in q)
+            x.name.startsWith('_imaps.') ? [DnsRecord(DnsType.srv, host, port: 993)] : const <DnsRecord>[],
+        ];
+    final foreign = await MailProviderDetect.detect('a@corp.example',
+        resolve: (_) async => false, fetch: (_) async => null, dns: zone('imap.attacker.example'));
+    expect((foreign.kind, foreign.sure), (MailKind.imap, false));
+    final own = await MailProviderDetect.detect('a@corp.example',
+        resolve: (_) async => false, fetch: (_) async => null, dns: zone('mx.mail.corp.example'));
+    expect((own.kind, own.sure), (MailKind.imap, true));
+  });
 }

@@ -32,6 +32,7 @@ import 'package:xml/xml.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/logging/app_logger.dart';
+import '../../core/utils/mail_domains.dart' show sameOrgDomain;
 import '../../data/models/account_model.dart' show EncryptionType;
 import '../net/system_dns.dart';
 
@@ -353,8 +354,13 @@ class MailProviderDetect {
     // Администратор опубликовал серверы IMAP (SRV, RFC 6186). Если есть и
     // autodiscover (Exchange с IMAP) — Exchange, а серверы IMAP — в запасе
     // (сборка без Exchange и переключатель «Exchange | IMAP»).
+    // Записи SRV не подписаны: в чужой сети их могут подменить и увести
+    // пароль на чужой сервер с настоящим сертификатом (RFC 6186, раздел 6).
+    // Сервер вне домена адреса — не «уверенно»: серверы показаны человеку
+    // в «Расширенных настройках» до входа.
     if (srv != null) {
-      return autodiscover ? MailGuess(MailKind.exchange, imap: srv) : MailGuess(MailKind.imap, imap: srv);
+      final own = sameOrgDomain(srv.imapHost, domain) && sameOrgDomain(srv.smtpHost, domain);
+      return autodiscover ? MailGuess(MailKind.exchange, imap: srv) : MailGuess(MailKind.imap, imap: srv, sure: own);
     }
     // Есть autodiscover — почти наверняка Exchange.
     if (autodiscover) return const MailGuess(MailKind.exchange);

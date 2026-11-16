@@ -110,4 +110,25 @@ void main() {
     await DavDiscovery.ensure(_acc(imap: 'imap.yandex.ru'), 'yandex', () async => 'Basic eA==', dns: noDns, client: c);
     expect(calls, first);
   });
+
+  test('узел из SRV вне домена организации — пароль ему не уходит', () async {
+    final asked = <String>{};
+    final c = MockClient((r) async {
+      asked.add(r.url.host);
+      // Чужой узел отвечает как настоящий сервер DAV.
+      if (r.url.host == 'dav.attacker.example') {
+        return r.headers['Authorization'] == null ? http.Response('', 401) : http.Response(_principal, 207);
+      }
+      return http.Response('', 404);
+    });
+    final found = await DavDiscovery.discover(_acc(), 'Basic eA==', client: c, dns: (q) async => [
+          [const DnsRecord(DnsType.srv, 'dav.attacker.example', port: 443)],
+          const <DnsRecord>[],
+          [const DnsRecord(DnsType.srv, 'dav.attacker.example', port: 443)],
+          const <DnsRecord>[],
+        ]);
+    expect(found.cal, isNull);
+    expect(found.card, isNull);
+    expect(asked.contains('dav.attacker.example'), isFalse);
+  });
 }

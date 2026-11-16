@@ -33,14 +33,17 @@ Future<List<Email>> loadPendingInvites(AppDatabase db, List<String> ids, {DateTi
       .map((r) => r.read(db.folders.id)!)
       .get();
   if (inboxIds.isEmpty) return const [];
-  final rows = await (db.select(db.emails)
-        ..where((e) => e.accountId.isIn(ids))
-        ..where((e) => e.folderId.isIn(inboxIds))
-        ..where((e) => e.meetingJson.isNotNull())
-        ..where((e) => e.isReplied.equals(false))
-        ..where((e) => e.receivedAt.isBiggerThanValue(at.subtract(const Duration(days: 90))))
-        ..orderBy([(e) => OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)])
-        ..limit(100))
+  // Без текстов писем: приглашению нужны шапка и meetingJson.
+  final rows = await db
+      .emailsLight(
+          (e) =>
+              e.accountId.isIn(ids) &
+              e.folderId.isIn(inboxIds) &
+              e.meetingJson.isNotNull() &
+              e.isReplied.equals(false) &
+              e.receivedAt.isBiggerThanValue(at.subtract(const Duration(days: 90))),
+          orderBy: (e) => [OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)],
+          limit: 100)
       .get();
   final out = <({Email mail, DateTime sort})>[];
   for (final m in rows) {

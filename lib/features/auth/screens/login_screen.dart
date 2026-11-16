@@ -800,9 +800,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final color = theme.colorScheme.outlineVariant;
     return Row(children: [
       Expanded(child: Divider(color: color)),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Space.m),
-        child: Text(text, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+      // Длинная подпись (крупный шрифт, другой язык) переносится, а не
+      // вылезает за край.
+      Flexible(
+        flex: 4,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Space.m),
+          child: Text(text,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+        ),
       ),
       Expanded(child: Divider(color: color)),
     ]);
@@ -1314,7 +1321,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     Icon(_showAdvanced ? AppIcons.keyboard_arrow_up : AppIcons.keyboard_arrow_down,
                         size: 20, color: scheme.primary),
                     const SizedBox(width: Space.xs),
-                    Text(l10n.tr('advancedSettings'), style: theme.textTheme.bodyMedium?.copyWith(color: scheme.primary)),
+                    Flexible(
+                      child: Text(l10n.tr('advancedSettings'),
+                          style: theme.textTheme.bodyMedium?.copyWith(color: scheme.primary)),
+                    ),
                   ],
                 ),
               ),

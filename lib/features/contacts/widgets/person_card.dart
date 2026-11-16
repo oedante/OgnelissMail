@@ -364,10 +364,10 @@ class _PersonMailsState extends ConsumerState<PersonMails> {
     if (e.isEmpty) return;
     try {
       final db = ref.read(databaseProvider);
-      final rows = await (db.select(db.emails)
-            ..where((m) => m.fromEmail.lower().equals(e))
-            ..orderBy([(m) => OrderingTerm(expression: m.receivedAt, mode: OrderingMode.desc)])
-            ..limit(_limit + 1))
+      // Без текстов писем: в карточке человека — шапки писем.
+      final rows = await db
+          .emailsLight((m) => m.fromEmail.lower().equals(e),
+              orderBy: (m) => [OrderingTerm(expression: m.receivedAt, mode: OrderingMode.desc)], limit: _limit + 1)
           .get();
       if (!mounted) return;
       setState(() {

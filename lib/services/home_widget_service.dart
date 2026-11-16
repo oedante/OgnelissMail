@@ -394,7 +394,8 @@ class HomeWidgetService {
       for (final m in picked) {
         perAccount[m.accountId] = (perAccount[m.accountId] ?? 0) + 1;
       }
-      _addMailRows(rows, picked.take(10), ids, now, private, labels, colors);
+      final top = picked.take(10).toList();
+      _addMailRows(rows, top, ids, now, private, labels, colors, await _previews(db, top, private));
     }
     if (ids.isNotEmpty && kind == 'all') {
       final inboxes = await (db.select(db.folders)
@@ -415,16 +416,15 @@ class HomeWidgetService {
           perAccount[r.read(db.emails.accountId)!] = n;
           total += n;
         }
-        final latest = await (db.select(db.emails)
-              ..where((e) => e.accountId.isIn(ids))
-              ..where((e) => e.folderId.isIn(inboxIds))
-              ..where((e) => e.isRead.equals(false))
-              ..orderBy([(e) => OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)])
-              // Android показывает столько, сколько помещается по высоте
-              // виджета (до 10), iPhone — первые строки.
-              ..limit(10))
+        // Без текстов писем (15.11.2026: строки с телами после каждой
+        // синхронизации копировались в основной поток); строка текста —
+        // из готового превью. Android показывает столько, сколько
+        // помещается по высоте виджета (до 10), iPhone — первые строки.
+        final latest = await db
+            .emailsLight((e) => e.accountId.isIn(ids) & e.folderId.isIn(inboxIds) & e.isRead.equals(false),
+                orderBy: (e) => [OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)], limit: 10)
             .get();
-        _addMailRows(rows, latest, ids, now, private, labels, colors);
+        _addMailRows(rows, latest, ids, now, private, labels, colors, await _previews(db, latest, private));
       }
     }
     // Когда почта обновлялась (1.6.48): по самому давнему ящику с
@@ -476,8 +476,36 @@ class HomeWidgetService {
     };
   }
 
+  /// Строка текста для писем без готового превью — началом текста письма,
+  /// вычисленным в базе (тексты целиком в основной поток не читаются).
+  static Future<Map<String, String>> _previews(AppDatabase db, List<Email> mails, bool private) async {
+    final out = <String, String>{};
+    if (private) return out;
+    final need = <String, List<String>>{};
+    for (final m in mails) {
+      if ((m.bodyPreview ?? '').trim().isEmpty) (need[m.accountId] ??= []).add(m.id);
+    }
+    for (final e in need.entries) {
+      try {
+        // Только начало текста (с переносами строк — цитаты отсекаются по
+        // строкам), а не письмо целиком.
+        final got = await db.customSelect(
+          'SELECT id, substr(body_plain, 1, 600) AS p FROM emails '
+          'WHERE account_id = ? AND id IN (${List.filled(e.value.length, '?').join(', ')}) AND body_plain IS NOT NULL',
+          variables: [Variable.withString(e.key), for (final id in e.value) Variable.withString(id)],
+          readsFrom: {db.emails},
+        ).get();
+        for (final r in got) {
+          out['${e.key}|${r.read<String>('id')}'] = r.read<String?>('p') ?? '';
+        }
+      } catch (_) {}
+    }
+    return out;
+  }
+
   static void _addMailRows(List<Map<String, Object?>> rows, Iterable<Email> mails, List<String> ids, DateTime now,
-      bool private, Map<String, String> labels, Map<String, int> colors) {
+      bool private, Map<String, String> labels, Map<String, int> colors,
+      [Map<String, String> previews = const {}]) {
 final today = DateTime(now.year, now.month, now.day);
 for (final m in mails) {
       final at = m.receivedAt;
@@ -494,7 +522,8 @@ for (final m in mails) {
         'acc': m.accountId,
         // Строка текста письма и значки (вложение, флажок) — как в
         // виджетах Outlook и Gmail; в режиме приватности — нет.
-        if (!private) 'p': _previewLine(m.bodyPlain),
+        if (!private)
+          'p': _previewLine((m.bodyPreview ?? '').trim().isNotEmpty ? m.bodyPreview : previews['${m.accountId}|${m.id}']),
         if (!private && m.hasAttachments) 'att': 1,
         if (m.isFlagged) 'fl': 1,
       });
@@ -514,16 +543,17 @@ for (final m in mails) {
         .get();
     final inboxIds = [for (final f in inboxes) f.id];
     if (inboxIds.isEmpty) return const [];
-    final q = db.select(db.emails)
-      ..where((e) => e.accountId.isIn(ids) & e.folderId.isIn(inboxIds))
-      ..orderBy([(e) => OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)])
-      ..limit(100);
-    if (kind == 'flagged') {
-      q.where((e) => e.isFlagged.equals(true));
-    } else {
-      q.where((e) => e.isRead.equals(false) & e.fromEmail.lower().isIn(vip));
-    }
-    return q.get();
+    return db
+        .emailsLight(
+            (e) =>
+                e.accountId.isIn(ids) &
+                e.folderId.isIn(inboxIds) &
+                (kind == 'flagged'
+                    ? e.isFlagged.equals(true)
+                    : e.isRead.equals(false) & e.fromEmail.lower().isIn(vip)),
+            orderBy: (e) => [OrderingTerm(expression: e.receivedAt, mode: OrderingMode.desc)],
+            limit: 100)
+        .get();
   }
 
   /// Первая строка текста письма для виджета: без пустых строк, цитат и

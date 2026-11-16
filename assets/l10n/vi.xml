@@ -4299,4 +4299,9 @@
     <string name="assignWriteAbout">Về việc được giao “{title}” ({code}):</string>
     <string name="orgIcons">Hiển thị biểu tượng của tổ chức</string>
     <string name="orgIconsDesc">Chỉ với người gửi đã xác minh. Biểu tượng trang được lấy trực tiếp từ trang đó (mỗi tên miền một lần mỗi tháng), logo BIMI lấy từ máy chủ Ogneliss (chỉ tên miền); thư công việc Exchange không áp dụng</string>
+    <string name="accountLabel">Tên hộp thư</string>
+    <string name="accountLabelHint">Ví dụ: Công việc, Gia đình</string>
+    <string name="accountLabelEmpty">Chưa đặt — hiển thị một phần địa chỉ</string>
+    <string name="accountLabelAsk">Đặt tên hộp thư này là gì?</string>
+    <string name="accountLabelAskBody">Tên hiển thị trong thông báo và trên màn hình thư. Bạn có thể đổi trong cài đặt hộp thư.</string>
 </resources>

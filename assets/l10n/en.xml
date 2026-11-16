@@ -4320,4 +4320,9 @@
     <string name="assignWriteAbout">About the assignment “{title}” ({code}):</string>
     <string name="orgIcons">Show organisation icons</string>
     <string name="orgIconsDesc">Only for verified senders. The site icon is requested from the site itself (once a month per domain), the BIMI logo from the Ogneliss server (domain only); Exchange work mail is not included</string>
+    <string name="accountLabel">Mailbox name</string>
+    <string name="accountLabelHint">For example: Work, Family</string>
+    <string name="accountLabelEmpty">Not set — part of the address is shown</string>
+    <string name="accountLabelAsk">What should this mailbox be called?</string>
+    <string name="accountLabelAskBody">The name appears in notifications and on the mail screen. You can change it in the mailbox settings.</string>
 </resources>

@@ -4341,4 +4341,9 @@
     <string name="assignWriteAbout">K úlohe „{title}“ ({code}):</string>
     <string name="orgIcons">Zobrazovať ikony organizácií</string>
     <string name="orgIconsDesc">Len pri overených odosielateľoch. Ikona webu sa sťahuje priamo z webu (raz mesačne pre doménu), logo BIMI zo servera Ogneliss (len doména); pracovná pošta Exchange sa nezapája</string>
+    <string name="accountLabel">Názov schránky</string>
+    <string name="accountLabelHint">Napríklad: Práca, Rodina</string>
+    <string name="accountLabelEmpty">Nenastavené — zobrazuje sa časť adresy</string>
+    <string name="accountLabelAsk">Ako pomenovať schránku?</string>
+    <string name="accountLabelAskBody">Názov sa zobrazuje v upozorneniach a na obrazovke pošty. Môžete ho zmeniť v nastaveniach schránky.</string>
 </resources>

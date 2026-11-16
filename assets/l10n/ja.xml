@@ -4299,4 +4299,9 @@
     <string name="assignWriteAbout">指示「{title}」について（{code}）：</string>
     <string name="orgIcons">組織のアイコンを表示</string>
     <string name="orgIconsDesc">確認済みの差出人のみ。サイトのアイコンはそのサイトから（ドメインごとに月1回）、BIMI ロゴは Ogneliss サーバーから（ドメインのみ）取得します。Exchange の仕事用メールは対象外です</string>
+    <string name="accountLabel">メールボックス名</string>
+    <string name="accountLabelHint">例：仕事、家族</string>
+    <string name="accountLabelEmpty">未設定 — アドレスの一部を表示</string>
+    <string name="accountLabelAsk">このメールボックスの名前は？</string>
+    <string name="accountLabelAskBody">名前は通知とメール画面に表示されます。メールボックスの設定で変更できます。</string>
 </resources>

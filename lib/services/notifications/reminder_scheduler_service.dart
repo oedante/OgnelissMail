@@ -11,6 +11,7 @@
 // выгруженном приложении.
 
 import 'dart:convert';
+import '../accounts/account_labels.dart';
 import 'dart:io' show File, Platform;
 import 'dart:ui' show PlatformDispatcher;
 
@@ -194,12 +195,15 @@ class ReminderSchedulerService {
     try {
       final rows = await (_db.select(_db.accounts)..where((a) => a.isActive.equals(true))).get();
       final emails = [for (final a in rows) a.email];
+      // Названия ящиков, заданные пользователем (2.6.1), — вместо логина.
+      final labels = AccountLabels.read(await SharedPreferences.getInstance());
       final out = <String, ({String label, Uint8List? icon})>{};
       for (final a in rows) {
         final shared = (a.sharedMailboxEmail ?? '').trim().isNotEmpty;
-        if (rows.length < 2 && !shared) continue;
+        final custom = labels[a.id];
+        if (rows.length < 2 && !shared && custom == null) continue;
         out[a.id] = (
-          label: NotificationText.shortMailbox(a.email, emails),
+          label: custom ?? NotificationText.shortMailbox(a.email, emails),
           icon: await MessengerNotify.mailboxIcon(
               accountId: a.id, name: a.displayName, email: a.email, color: a.colorValue, photo: a.avatarUrl),
         );

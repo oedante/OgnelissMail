@@ -8,6 +8,7 @@
 // - Иконки: приоритет, вложения, флаг, replied, forwarded
 
 import '../../../core/utils/text_safe.dart';
+import '../../../services/accounts/account_labels.dart';
 import '../providers/delivery_status_provider.dart';
 import '../providers/folder_names.dart' show localizedFolderLabel;
 import '../providers/conversation_mute.dart';
@@ -118,7 +119,7 @@ class EmailListTile extends ConsumerWidget {
     final fresh = uiAnimations && email.receivedAt.isAfter(_sessionStart) && _appeared.add(email.id);
     final tile = AnimatedAppearance(play: fresh, child: _buildTile(context, ref));
     if (!showAccountMark) return tile;
-    final mark = ref.watch(accountsProvider.select((l) => accountMarkOf(l, email.accountId)));
+    final mark = ref.watch(accountsProvider.select((l) => accountMarkOf(l, email.accountId, labels: ref.watch(accountLabelsProvider))));
     if (mark == null) return tile;
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -165,12 +166,16 @@ class EmailListTile extends ConsumerWidget {
   /// Цвет и короткое имя ящика для отметки в общей ленте. Имя — то, что
   /// различает ящики: домен без зоны («acmegroup», «gmail»), а если с этим
   /// доменом несколько ящиков — имя до «@».
-  static ({int color, String label})? accountMarkOf(List<AccountModel> list, String accountId) {
+  static ({int color, String label})? accountMarkOf(List<AccountModel> list, String accountId,
+      {Map<String, String> labels = const {}}) {
     AccountModel? a;
     for (final x in list) {
       if (x.id == accountId) a = x;
     }
     if (a == null) return null;
+    // Название ящика, заданное пользователем (2.6.1), — вместо логина.
+    final custom = labels[a.id];
+    if (custom != null) return (color: a.colorValue, label: custom);
     final at = a.email.indexOf('@');
     if (at < 0) return (color: a.colorValue, label: a.email);
     final local = a.email.substring(0, at);
@@ -225,7 +230,7 @@ class EmailListTile extends ConsumerWidget {
     final ownAddress = email.from.email.toLowerCase();
 
     final accountMark = showAccountMark
-        ? ref.watch(accountsProvider.select((l) => accountMarkOf(l, email.accountId)))
+        ? ref.watch(accountsProvider.select((l) => accountMarkOf(l, email.accountId, labels: ref.watch(accountLabelsProvider))))
         : null;
 
     final showControl = ref.watch(settingsProvider.select((s) => s.mailControl));

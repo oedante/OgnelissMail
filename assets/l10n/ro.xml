@@ -4341,4 +4341,9 @@
     <string name="assignWriteAbout">Despre sarcina „{title}” ({code}):</string>
     <string name="orgIcons">Afișează pictogramele organizațiilor</string>
     <string name="orgIconsDesc">Doar pentru expeditori confirmați. Pictograma site-ului este cerută chiar site-ului (o dată pe lună pe domeniu), sigla BIMI serverului Ogneliss (doar domeniul); e-mailul de serviciu Exchange nu participă</string>
+    <string name="accountLabel">Numele căsuței</string>
+    <string name="accountLabelHint">De exemplu: Serviciu, Familie</string>
+    <string name="accountLabelEmpty">Nesetat — se afișează o parte din adresă</string>
+    <string name="accountLabelAsk">Cum numiți această căsuță?</string>
+    <string name="accountLabelAskBody">Numele apare în notificări și pe ecranul de e-mail. Îl puteți schimba din setările căsuței.</string>
 </resources>

@@ -4320,4 +4320,9 @@
     <string name="assignWriteAbout">“{title}” görevi hakkında ({code}):</string>
     <string name="orgIcons">Kuruluş simgelerini göster</string>
     <string name="orgIconsDesc">Yalnızca doğrulanmış gönderenler için. Site simgesi sitenin kendisinden (alan adı başına ayda bir), BIMI logosu Ogneliss sunucusundan (yalnızca alan adı) istenir; Exchange iş e-postası dahil değildir</string>
+    <string name="accountLabel">Posta kutusu adı</string>
+    <string name="accountLabelHint">Örneğin: İş, Aile</string>
+    <string name="accountLabelEmpty">Ayarlanmadı — adresin bir kısmı gösterilir</string>
+    <string name="accountLabelAsk">Bu posta kutusunun adı ne olsun?</string>
+    <string name="accountLabelAskBody">Ad, bildirimlerde ve posta ekranında görünür. Posta kutusu ayarlarından değiştirebilirsiniz.</string>
 </resources>

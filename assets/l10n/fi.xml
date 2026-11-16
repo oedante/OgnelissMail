@@ -4320,4 +4320,9 @@
     <string name="assignWriteAbout">Toimeksiannosta ”{title}” ({code}):</string>
     <string name="orgIcons">Näytä organisaatioiden kuvakkeet</string>
     <string name="orgIconsDesc">Vain vahvistetuille lähettäjille. Sivuston kuvake haetaan itse sivustolta (kerran kuussa verkkotunnusta kohden), BIMI-logo Ogneliss-palvelimelta (vain verkkotunnus); Exchange-työposti ei ole mukana</string>
+    <string name="accountLabel">Postilaatikon nimi</string>
+    <string name="accountLabelHint">Esimerkiksi: Työ, Perhe</string>
+    <string name="accountLabelEmpty">Ei asetettu — osa osoitteesta näytetään</string>
+    <string name="accountLabelAsk">Mikä postilaatikon nimeksi?</string>
+    <string name="accountLabelAskBody">Nimi näkyy ilmoituksissa ja postinäkymässä. Voit muuttaa sen postilaatikon asetuksista.</string>
 </resources>

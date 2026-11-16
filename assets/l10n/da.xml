@@ -4320,4 +4320,9 @@
     <string name="assignWriteAbout">Vedrørende opgaven »{title}« ({code}):</string>
     <string name="orgIcons">Vis organisationers ikoner</string>
     <string name="orgIconsDesc">Kun for bekræftede afsendere. Webstedets ikon hentes fra webstedet selv (en gang om måneden pr. domæne), BIMI-logoet fra Ogneliss-serveren (kun domænet); arbejdsmail i Exchange er ikke med</string>
+    <string name="accountLabel">Postkassens navn</string>
+    <string name="accountLabelHint">For eksempel: Arbejde, Familie</string>
+    <string name="accountLabelEmpty">Ikke angivet — en del af adressen vises</string>
+    <string name="accountLabelAsk">Hvad skal postkassen hedde?</string>
+    <string name="accountLabelAskBody">Navnet vises i notifikationer og på mailskærmen. Du kan ændre det i postkassens indstillinger.</string>
 </resources>

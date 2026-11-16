@@ -4320,4 +4320,9 @@
     <string name="assignWriteAbout">À propos de la tâche « {title} » ({code}) :</string>
     <string name="orgIcons">Afficher les icônes des organisations</string>
     <string name="orgIconsDesc">Uniquement pour les expéditeurs vérifiés. L’icône du site est demandée au site lui-même (une fois par mois et par domaine), le logo BIMI au serveur Ogneliss (domaine seulement) ; la messagerie pro Exchange n’est pas concernée</string>
+    <string name="accountLabel">Nom de la boîte</string>
+    <string name="accountLabelHint">Par exemple : Travail, Famille</string>
+    <string name="accountLabelEmpty">Non défini — une partie de l’adresse est affichée</string>
+    <string name="accountLabelAsk">Comment nommer cette boîte ?</string>
+    <string name="accountLabelAskBody">Le nom apparaît dans les notifications et sur l’écran du courrier. Vous pouvez le modifier dans les réglages de la boîte.</string>
 </resources>

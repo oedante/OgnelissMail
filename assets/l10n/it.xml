@@ -4320,4 +4320,9 @@
     <string name="assignWriteAbout">Sull’incarico «{title}» ({code}):</string>
     <string name="orgIcons">Mostra le icone delle organizzazioni</string>
     <string name="orgIconsDesc">Solo per mittenti verificati. L’icona del sito viene richiesta al sito stesso (una volta al mese per dominio), il logo BIMI al server Ogneliss (solo il dominio); la posta di lavoro Exchange è esclusa</string>
+    <string name="accountLabel">Nome della casella</string>
+    <string name="accountLabelHint">Ad esempio: Lavoro, Famiglia</string>
+    <string name="accountLabelEmpty">Non impostato: viene mostrata parte dell’indirizzo</string>
+    <string name="accountLabelAsk">Come vuoi chiamare questa casella?</string>
+    <string name="accountLabelAskBody">Il nome compare nelle notifiche e nella schermata della posta. Puoi cambiarlo nelle impostazioni della casella.</string>
 </resources>

@@ -4341,4 +4341,9 @@
     <string name="assignWriteAbout">בנוגע למשימה „{title}” ({code}):</string>
     <string name="orgIcons">הצגת סמלים של ארגונים</string>
     <string name="orgIconsDesc">רק לשולחים מאומתים. סמל האתר מתבקש מהאתר עצמו (פעם בחודש לכל דומיין), ולוגו BIMI משרת Ogneliss (הדומיין בלבד); דואר עבודה של Exchange אינו נכלל</string>
+    <string name="accountLabel">שם תיבת הדואר</string>
+    <string name="accountLabelHint">לדוגמה: עבודה, משפחה</string>
+    <string name="accountLabelEmpty">לא הוגדר — מוצג חלק מהכתובת</string>
+    <string name="accountLabelAsk">איך לקרוא לתיבה?</string>
+    <string name="accountLabelAskBody">השם מופיע בהתראות ובמסך הדואר. אפשר לשנות אותו בהגדרות התיבה.</string>
 </resources>

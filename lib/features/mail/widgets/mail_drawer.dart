@@ -10,6 +10,7 @@
 // - Контекстное меню на папках (очистить, переименовать)
 
 import '../../../widgets/ui/section_band.dart';
+import '../../../services/accounts/account_labels.dart';
 import '../../../widgets/ui/theme_quick_switch.dart' show ThemeQuickSwitch;
 import '../../../widgets/navigation/app_bottom_bar.dart' show AppBottomBar;
 import '../../../core/utils/text_safe.dart';
@@ -206,7 +207,9 @@ class MailDrawer extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(activeAccount.displayName, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500)),
+                      // Название ящика (2.6.1), если задано, — вместо имени.
+                      Text(ref.watch(accountLabelsProvider)[activeAccount.id] ?? activeAccount.displayName,
+                          style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500)),
                       Text(activeAccount.email, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
                     ],
                   ),

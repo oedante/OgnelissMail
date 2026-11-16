@@ -4299,4 +4299,9 @@
     <string name="assignWriteAbout">업무 지시 ‘{title}’ 관련({code}):</string>
     <string name="orgIcons">조직 아이콘 표시</string>
     <string name="orgIconsDesc">확인된 발신자에게만 적용됩니다. 사이트 아이콘은 해당 사이트에서 직접(도메인당 한 달에 한 번), BIMI 로고는 Ogneliss 서버에서(도메인만) 가져옵니다. Exchange 업무 메일은 제외됩니다</string>
+    <string name="accountLabel">편지함 이름</string>
+    <string name="accountLabelHint">예: 업무, 가족</string>
+    <string name="accountLabelEmpty">설정 안 됨 — 주소 일부가 표시됨</string>
+    <string name="accountLabelAsk">이 편지함 이름을 무엇으로 할까요?</string>
+    <string name="accountLabelAskBody">이름은 알림과 메일 화면에 표시됩니다. 편지함 설정에서 바꿀 수 있습니다.</string>
 </resources>

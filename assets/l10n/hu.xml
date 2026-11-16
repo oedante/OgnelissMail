@@ -4320,4 +4320,9 @@
     <string name="assignWriteAbout">A(z) „{title}” feladattal kapcsolatban ({code}):</string>
     <string name="orgIcons">Szervezetek ikonjainak megjelenítése</string>
     <string name="orgIconsDesc">Csak ellenőrzött feladóknál. A webhely ikonját magától a webhelytől kéri (tartományonként havonta egyszer), a BIMI-logót az Ogneliss-kiszolgálótól (csak a tartomány); az Exchange munkahelyi levelezés kimarad</string>
+    <string name="accountLabel">Postafiók neve</string>
+    <string name="accountLabelHint">Például: Munka, Család</string>
+    <string name="accountLabelEmpty">Nincs megadva — a cím egy része látszik</string>
+    <string name="accountLabelAsk">Mi legyen a postafiók neve?</string>
+    <string name="accountLabelAskBody">A név megjelenik az értesítésekben és a levelezés képernyőjén. A postafiók beállításaiban módosíthatja.</string>
 </resources>

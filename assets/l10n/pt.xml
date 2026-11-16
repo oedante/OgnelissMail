@@ -4320,4 +4320,9 @@
     <string name="assignWriteAbout">Sobre a tarefa «{title}» ({code}):</string>
     <string name="orgIcons">Mostrar ícones de organizações</string>
     <string name="orgIconsDesc">Só para remetentes verificados. O ícone do site é pedido ao próprio site (uma vez por mês por domínio) e o logotipo BIMI ao servidor Ogneliss (só o domínio); o e-mail de trabalho Exchange não participa</string>
+    <string name="accountLabel">Nome da caixa</string>
+    <string name="accountLabelHint">Por exemplo: Trabalho, Família</string>
+    <string name="accountLabelEmpty">Não definido — aparece parte do endereço</string>
+    <string name="accountLabelAsk">Como quer chamar esta caixa?</string>
+    <string name="accountLabelAskBody">O nome aparece nas notificações e na tela do e-mail. Você pode mudá-lo nas configurações da caixa.</string>
 </resources>

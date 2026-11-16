@@ -4362,4 +4362,9 @@
     <string name="assignWriteAbout">По поручению «{title}» ({code}):</string>
     <string name="orgIcons">Показывать иконки организаций</string>
     <string name="orgIconsDesc">Только у подтверждённых отправителей. Значок сайта запрашивается у самого сайта (раз в месяц на домен), логотип BIMI — у сервера Ogneliss (только домен); рабочая почта Exchange не участвует</string>
+    <string name="accountLabel">Название ящика</string>
+    <string name="accountLabelHint">Например: Работа, Семья</string>
+    <string name="accountLabelEmpty">Не задано — видна часть адреса</string>
+    <string name="accountLabelAsk">Как назвать ящик?</string>
+    <string name="accountLabelAskBody">Название видно в уведомлениях и на экране почты. Его можно изменить в настройках ящика.</string>
 </resources>

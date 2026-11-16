@@ -4404,4 +4404,9 @@
     <string name="assignWriteAbout">بخصوص التكليف «{title}» ({code}):</string>
     <string name="orgIcons">إظهار أيقونات المؤسسات</string>
     <string name="orgIconsDesc">للمرسلين المؤكَّدين فقط. تُطلب أيقونة الموقع من الموقع نفسه (مرة شهريًا لكل نطاق)، وشعار BIMI من خادم Ogneliss (النطاق فقط)؛ بريد العمل في Exchange غير مشمول</string>
+    <string name="accountLabel">اسم صندوق البريد</string>
+    <string name="accountLabelHint">مثلًا: العمل، العائلة</string>
+    <string name="accountLabelEmpty">غير محدد — يظهر جزء من العنوان</string>
+    <string name="accountLabelAsk">ما الاسم الذي تريده لهذا الصندوق؟</string>
+    <string name="accountLabelAskBody">يظهر الاسم في الإشعارات وعلى شاشة البريد. يمكنك تغييره من إعدادات الصندوق.</string>
 </resources>

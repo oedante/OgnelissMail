@@ -4320,4 +4320,9 @@
     <string name="assignWriteAbout">Over de opdracht ‘{title}’ ({code}):</string>
     <string name="orgIcons">Pictogrammen van organisaties tonen</string>
     <string name="orgIconsDesc">Alleen bij bevestigde afzenders. Het sitepictogram wordt bij de site zelf opgevraagd (eens per maand per domein), het BIMI-logo bij de Ogneliss-server (alleen het domein); Exchange-werkmail doet niet mee</string>
+    <string name="accountLabel">Naam van de mailbox</string>
+    <string name="accountLabelHint">Bijvoorbeeld: Werk, Gezin</string>
+    <string name="accountLabelEmpty">Niet ingesteld — een deel van het adres wordt getoond</string>
+    <string name="accountLabelAsk">Hoe wil je deze mailbox noemen?</string>
+    <string name="accountLabelAskBody">De naam verschijnt in meldingen en op het mailscherm. Je kunt hem wijzigen in de instellingen van de mailbox.</string>
 </resources>

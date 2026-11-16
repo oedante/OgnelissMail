@@ -4299,4 +4299,9 @@
     <string name="assignWriteAbout">เกี่ยวกับงานมอบหมาย “{title}” ({code}):</string>
     <string name="orgIcons">แสดงไอคอนขององค์กร</string>
     <string name="orgIconsDesc">เฉพาะผู้ส่งที่ยืนยันแล้ว ไอคอนเว็บไซต์ขอจากเว็บไซต์นั้นโดยตรง (เดือนละครั้งต่อโดเมน) ส่วนโลโก้ BIMI ขอจากเซิร์ฟเวอร์ Ogneliss (เฉพาะโดเมน) อีเมลงาน Exchange ไม่รวมอยู่ด้วย</string>
+    <string name="accountLabel">ชื่อกล่องจดหมาย</string>
+    <string name="accountLabelHint">เช่น งาน ครอบครัว</string>
+    <string name="accountLabelEmpty">ยังไม่ได้ตั้ง — แสดงบางส่วนของที่อยู่</string>
+    <string name="accountLabelAsk">ตั้งชื่อกล่องจดหมายนี้ว่าอะไร</string>
+    <string name="accountLabelAskBody">ชื่อจะแสดงในการแจ้งเตือนและหน้าจออีเมล เปลี่ยนได้ในการตั้งค่ากล่องจดหมาย</string>
 </resources>

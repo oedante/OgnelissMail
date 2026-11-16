@@ -4362,4 +4362,9 @@
     <string name="assignWriteAbout">W sprawie zlecenia „{title}” ({code}):</string>
     <string name="orgIcons">Pokazuj ikony organizacji</string>
     <string name="orgIconsDesc">Tylko dla potwierdzonych nadawców. Ikona strony jest pobierana z samej strony (raz w miesiącu na domenę), logo BIMI z serwera Ogneliss (tylko domena); poczta służbowa Exchange nie jest objęta</string>
+    <string name="accountLabel">Nazwa skrzynki</string>
+    <string name="accountLabelHint">Na przykład: Praca, Rodzina</string>
+    <string name="accountLabelEmpty">Nie ustawiono — widać część adresu</string>
+    <string name="accountLabelAsk">Jak nazwać tę skrzynkę?</string>
+    <string name="accountLabelAskBody">Nazwa jest widoczna w powiadomieniach i na ekranie poczty. Można ją zmienić w ustawieniach skrzynki.</string>
 </resources>

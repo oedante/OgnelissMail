@@ -57,6 +57,25 @@ const desktopMailInlineLimit = 1800 * 1024;
 bool desktopMailNeedsFile(String page, {required bool windows}) =>
     windows && page.length * 3 > desktopMailInlineLimit && utf8.encode(page).length > desktopMailInlineLimit;
 
+/// Письмо с оформлением — вёрстка таблицами с фоном или шириной ячеек,
+/// цветной фон, несколько картинок. На компьютере такое показывается в
+/// окне браузера, даже если его можно нарисовать упрощённо (16.11.2026:
+/// рассылки Ozon на Mac считались «простыми», рисовались без оформления, и
+/// выключатель «Сложные письма — в окне браузера» ничего не менял).
+/// Обычная переписка (текст, ссылки, цитаты, подпись с логотипом) —
+/// по-прежнему без окна: так быстрее и работает клавиатура.
+bool mailLooksDesigned(String html) {
+  final l = (html.length > 200000 ? html.substring(0, 200000) : html).toLowerCase();
+  if (l.contains('<table') && (l.contains('bgcolor') || _cellWidth.hasMatch(l))) return true;
+  if (_background.hasMatch(l)) return true;
+  return _img.allMatches(l).take(2).length >= 2;
+}
+
+final _cellWidth = RegExp(r'<t[dh]\b[^>]*\bwidth\s*=');
+final _background = RegExp(
+    r'background(?:-color)?\s*:\s*(?!(?:#fff\b|#ffffff\b|white\b|transparent\b|none\b|inherit\b|initial\b|unset\b))[#a-z]');
+final _img = RegExp(r'<img\b');
+
 class DesktopMailWebView extends StatefulWidget {
   /// Окно письма можно показывать: Mac — всегда; Windows — WebView2 Runtime
   /// есть (или ещё не проверен) и окно не отказывало дважды подряд.

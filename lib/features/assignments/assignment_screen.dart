@@ -110,6 +110,16 @@ class AssignmentScreen extends ConsumerWidget {
               onPressed: () => assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.done)), child: Text(l10n.tr('assignAccept'))),
         ),
       ],
+      // Принятую работу можно вернуть (16.11.2026: постановщик принял, а
+      // потом увидел незаполненный чек-лист — вернуть было нечем).
+      if (v.iAccept && s == AssignmentStatus.done)
+        Expanded(
+          child: OutlinedButton.icon(
+              key: const ValueKey('assign_reopen'),
+              onPressed: () => unawaited(assignmentReply(context, v, AssignmentStatus.inProgress)),
+              icon: const Icon(AppIcons.undo, size: 18),
+              label: Text(l10n.tr('assignReturn'))),
+        ),
       if (v.outgoing && (s == AssignmentStatus.open || s == AssignmentStatus.inProgress))
         Expanded(
           // Напоминание ушло — кнопка «Напомнили в 18:07» и полчаса не
@@ -413,24 +423,35 @@ class AssignmentScreen extends ConsumerWidget {
 
 /// Шаг на шкале статусов нажат поручившим: «Выполнено» — принять работу
 /// (исполнитель получит письмо, как кнопкой «Принять»), остальное — отметка
-/// только у себя.
+/// только у себя. Сданную или принятую работу отсюда же можно вернуть на
+/// доработку (16.11.2026: на шкале было только «Принять», и постановщик
+/// искал «Вернуть» и не нашёл).
 Future<void> _pickStatus(BuildContext context, AssignmentView v, int status) async {
   final l10n = AppLocalizations.of(context);
   final svc = ProviderScope.containerOf(context).read(assignmentServiceProvider);
   final done = status == AssignmentStatus.done;
-  final ok = await showActionSheet<bool>(context, title: assignmentStatusLabel(status, l10n), items: [
-    ActionSheetItem(
-      icon: done ? AppIcons.check : AppIcons.edit,
-      label: done ? l10n.tr('assignAccept') : l10n.tr('assignMarkAs').replaceAll('{status}', assignmentStatusLabel(status, l10n)),
-      subtitle: done ? null : l10n.tr('assignMarkLocalHint'),
-      value: true,
-    ),
+  final acceptable = done && v.status != AssignmentStatus.done;
+  final returnable = v.iAccept && (v.status == AssignmentStatus.review || v.status == AssignmentStatus.done);
+  final pick = await showActionSheet<String>(context, title: assignmentStatusLabel(status, l10n), items: [
+    if (acceptable) ActionSheetItem(icon: AppIcons.check, label: l10n.tr('assignAccept'), value: 'accept'),
+    if (returnable)
+      ActionSheetItem(icon: AppIcons.undo, label: l10n.tr('assignReturn'), value: 'return'),
+    if (!done)
+      ActionSheetItem(
+        icon: AppIcons.edit,
+        label: l10n.tr('assignMarkAs').replaceAll('{status}', assignmentStatusLabel(status, l10n)),
+        subtitle: l10n.tr('assignMarkLocalHint'),
+        value: 'mark',
+      ),
   ]);
-  if (ok != true || !context.mounted) return;
-  if (done) {
-    assignmentGuarded(context, v, () => svc.setStatus(v, status));
-  } else {
-    assignmentFire(svc.markLocally(v, status));
+  if (pick == null || !context.mounted) return;
+  switch (pick) {
+    case 'accept':
+      assignmentGuarded(context, v, () => svc.setStatus(v, AssignmentStatus.done));
+    case 'return':
+      await assignmentReply(context, v, AssignmentStatus.inProgress);
+    default:
+      assignmentFire(svc.markLocally(v, status));
   }
 }
 
@@ -759,7 +780,9 @@ class AssignmentResult extends StatelessWidget {
     var text = AssignmentCodec.stripTags(p['text'] as String? ?? '');
     final stock = l10n.tr('assignReplyDone');
     if (text == stock) text = '';
-    if (text.startsWith('$stock\n')) text = text.substring(stock.length + 1).trim();
+    // «Готово» в начале — слово самой кнопки (у прежних версий строки
+    // письма приходили через пробел: «Готово Готово»).
+    if (text.startsWith('$stock\n') || text.startsWith('$stock ')) text = text.substring(stock.length + 1).trim();
     final names = [for (final n in (p['files'] as List? ?? const [])) '$n'];
     final files = [for (final n in names) v.files.where((f) => f.name == n).firstOrNull ?? AssignmentFile(name: n)];
     String who = e.authorEmail;

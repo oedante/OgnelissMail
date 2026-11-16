@@ -174,6 +174,24 @@ void main() {
     await t.binding.setSurfaceSize(null);
   });
 
+  testWidgets('принятую работу можно вернуть: кнопка внизу и шаг на шкале (16.11.2026)', (t) async {
+    await t.binding.setSurfaceSize(const Size(800, 2000));
+    await open(t);
+    final v = _v('D', 'Гостинец', status: AssignmentStatus.done, files: '[{"n":"a.zip","s":10,"m":"m1","a":"1"},'
+        '{"n":"a.zip","s":10,"m":"m2","a":"1"},{"n":"a.zip","s":10,"m":"m3","a":"1"}]');
+    await t.pumpWidget(wrap(const AssignmentScreen(id: 'D'), [v]));
+    await settle(t, 'Гостинец');
+    expect(find.byKey(const ValueKey('assign_reopen')), findsOneWidget);
+    // Один и тот же файл из трёх писем — одной строкой.
+    expect(find.text('a.zip'), findsOneWidget);
+    // Касание шага «В работе» — среди действий «Вернуть на доработку».
+    await t.tap(find.text('В работе').first);
+    await t.pump(const Duration(milliseconds: 400));
+    expect(find.text('Вернуть на доработку'), findsWidgets);
+    await close(t);
+    await t.binding.setSurfaceSize(null);
+  });
+
   testWidgets('«Вернуть на доработку» — только с причиной', (t) async {
     await open(t);
     final v = _v('W', 'Отчёт за квартал', status: AssignmentStatus.review);

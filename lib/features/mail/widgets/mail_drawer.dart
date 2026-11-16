@@ -1162,12 +1162,17 @@ class MailDrawer extends ConsumerWidget {
         ],
       ),
     );
-    if (ok != true) return;
-    final (done, total) = await ref.read(folderActionsProvider).emptyFolder(account, folder);
+    if (ok != true || !context.mounted) return;
+    // Службы — до ожидания: на компьютере меню папок закрывается, пока
+    // папка очищается, и ref после этого читать нельзя (журнал Mac
+    // 16.11.2026: «Using ref when a widget … has been unmounted»).
+    final actions = ref.read(folderActionsProvider);
+    final emails = ref.read(emailsProvider.notifier);
+    final (done, total) = await actions.emptyFolder(account, folder);
     if (done < total) {
       quietError('${l10n.error}: ${total - done}');
     }
-    unawaited(ref.read(emailsProvider.notifier).refresh());
+    unawaited(emails.refresh());
   }
 
   /// Создать папку: диалог → сервер → ресинк списка папок → обновление UI.

@@ -1148,6 +1148,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
 
   /// Компьютер: тело письма сейчас во встроенном окне браузера.
   bool _desktopWeb = false;
+
+  /// Компьютер: письмо с оформлением (mailLooksDesigned) — в окне.
+  bool _designed = false;
+  String? _deskLoggedFor;
   String? _whyMarkedFor;
 
   /// Простое письмо — виджетами (MailNativeBody); null — показывать в WebView
@@ -1414,6 +1418,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   /// показывается по-новому (окно или виджеты; прежний сбой окна забыт).
   void _onMailViewPrefs() {
     _webFailedFor = null;
+    _deskLoggedFor = null;
     _natives.clear();
     _nativeBuilding.clear();
     _docGen++;
@@ -1448,6 +1453,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       _docGen++;
       final p = _prepared;
       _split = p != null && identical(p.secured.html, html) ? p.split : splitQuotedHtml(html);
+      _designed = mailDesktopWebViewSupported && mailLooksDesigned(html);
     }
     // Mac и Windows: сложная вёрстка — во встроенном окне браузера (Mac —
     // 12.11.2026, Windows — 14.11.2026; с 2.5.4 включено по умолчанию,
@@ -1456,13 +1462,25 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // 16.11.2026: и простое письмо — в окне, если «Простые письма без
     // браузера» выключены (как на телефоне; раньше этот выключатель на
     // компьютере ничего не менял).
+    // Письмо с оформлением (рассылки) — тоже в окне (mailLooksDesigned).
     final prefs = ref.read(sharedPrefsProvider);
+    final webOn = prefs.getBool(ExperimentalKeys.macWebMail) ?? true;
+    final wants = _prepared?.nativeWhy != null || _designed || !(prefs.getBool(ExperimentalKeys.nativeMail) ?? true);
     final desktopWeb = mailDesktopWebViewSupported &&
-        (prefs.getBool(ExperimentalKeys.macWebMail) ?? true) &&
-        (_prepared?.nativeWhy != null || !(prefs.getBool(ExperimentalKeys.nativeMail) ?? true)) &&
+        webOn &&
+        wants &&
         _webFailedFor != email.id &&
         DesktopMailWebView.usable;
     _desktopWeb = desktopWeb;
+    // В журнал — как показано письмо и почему (одна строка на письмо):
+    // по нему видно, если окно браузера на компьютере не используется.
+    if (mailDesktopWebViewSupported && _deskLoggedFor != email.id) {
+      _deskLoggedFor = email.id;
+      final why = _prepared?.nativeWhy ?? (_designed ? 'оформление' : null);
+      AppLogger.info(desktopWeb
+          ? 'Письмо на компьютере: в окне браузера${why == null ? '' : ' ($why)'}'
+          : 'Письмо на компьютере: упрощённо — ${!wants ? 'простое' : !webOn ? 'окно выключено в настройках' : _webFailedFor == email.id ? 'окно не показало письмо' : 'окно недоступно (${DesktopMailWebView.summary()})'}');
+    }
     final Widget body;
     if (desktopWeb) {
       final dark = theme.brightness == Brightness.dark;

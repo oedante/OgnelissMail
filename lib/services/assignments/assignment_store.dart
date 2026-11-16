@@ -82,7 +82,10 @@ class AssignmentView {
   String? get parentId => row.parentAssignmentId;
 
   List<ChecklistItem> get checklist => ChecklistItem.decode(row.checklistJson);
-  List<AssignmentFile> get files => AssignmentFile.decode(row.filesJson);
+  /// Файлы без повторов (16.11.2026): у поручений до 2.6.2 одно и то же
+  /// вложение из каждого письма по поручению (и из его копий в папках)
+  /// записывалось заново — в карточке было 6 одинаковых файлов.
+  List<AssignmentFile> get files => uniqueFiles(AssignmentFile.decode(row.filesJson));
 
   List<AssignmentParticipant> _role(int r) => [for (final p in people) if (p.role == r) p];
   List<AssignmentParticipant> get coExecutors => _role(AssignmentRole.co);

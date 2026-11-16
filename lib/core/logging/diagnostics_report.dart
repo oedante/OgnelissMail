@@ -27,6 +27,10 @@ import '../../services/mail/oauth/direct_oauth.dart' show DirectOAuth;
 import '../../services/security/bimi/bimi_service.dart' show BimiResolver, BimiStats;
 import '../../services/security/bimi/site_icon_service.dart' show SiteIconStats;
 import '../../features/settings/providers/settings_provider.dart' show settingsProvider;
+import '../../features/settings/widgets/feature_settings_sections.dart' show ExperimentalKeys;
+import '../../features/mail/widgets/desktop_mail_web_view.dart' show DesktopMailWebView;
+import '../../features/mail/widgets/mail_html_view.dart' show mailDesktopWebViewSupported;
+import '../../data/providers/shared_prefs_provider.dart' show sharedPrefsProvider;
 import '../../services/security/device_security_service.dart';
 import '../../services/security/eas_policy_store.dart';
 import '../constants/app_constants.dart';
@@ -121,6 +125,14 @@ class DiagnosticsReport {
       line('Иконки организаций: ${on ? 'включены' : 'выключены в настройках'}'
           '${on ? '; BIMI: ${BimiResolver.configured ? BimiStats.summary() : 'нет сервера в сборке'}; '
               'значки сайтов: ${SiteIconStats.summary()}' : ''}');
+    } catch (_) {}
+    // Компьютер: сложные письма во встроенном окне (16.11.2026) — включено
+    // ли, есть ли движок, показывало ли окно письма и почему отказывало.
+    try {
+      if (mailDesktopWebViewSupported) {
+        final on = ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.macWebMail) ?? true;
+        line('Сложные письма в окне: ${on ? 'включено' : 'выключено в настройках'}; ${DesktopMailWebView.summary()}');
+      }
     } catch (_) {}
     // Фоновая работа: ограничения устройства и история запусков.
     try {

@@ -24,6 +24,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../core/logging/app_logger.dart';
+import '../../../core/platform/windows_webview_env.dart';
 import '../lang_detect.dart';
 import '../language_names.g.dart';
 import '../translator.dart';
@@ -64,7 +65,11 @@ class WebViewBergamotEngine implements BergamotEngine {
   Future<InAppWebViewController> _start() => _starting ??= () async {
         final url = await server.start();
         final loaded = Completer<void>();
+        // Windows: папка данных WebView2 — в данных приложения (рядом с exe
+        // её может быть не создать).
+        final env = await WindowsWebViewEnv.get();
         final view = HeadlessInAppWebView(
+          webViewEnvironment: env,
           initialUrlRequest: URLRequest(url: WebUri(url.toString())),
           initialSettings: InAppWebViewSettings(
             javaScriptEnabled: true,

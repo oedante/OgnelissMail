@@ -24,6 +24,9 @@
 //    стрелки и Delete в ленте переставали бы работать после открытия письма;
 //  · WebView2 Runtime нет или окно не загрузилось за [_loadTimeout] —
 //    [onFailed];
+//  · папка данных WebView2 — в данных приложения (WindowsWebViewEnv,
+//    16.11.2026): рядом с exe её не создать, если архив распакован в папку
+//    без права записи, и окно не создавалось;
 //  · с 2.5.4 включено по умолчанию: Runtime проверяется при запуске
 //    ([DesktopMailWebView.probe]); нет его или окно дважды подряд не
 //    загрузилось — до перезапуска письма сразу показываются виджетами, без
@@ -39,6 +42,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../core/logging/app_logger.dart';
+import '../../../core/platform/windows_webview_env.dart';
 import 'mail_html_view.dart';
 
 /// Высота окна письма на компьютере по высоте окна приложения [screen]: окно
@@ -59,6 +63,19 @@ class DesktopMailWebView extends StatefulWidget {
   static bool get usable => _runtime != false && _stalls < 2;
   static bool? _runtime;
   static int _stalls = 0;
+  static int _loaded = 0;
+  static int _failures = 0;
+  static String? _lastFailure;
+
+  /// Для диагностики (16.11.2026): есть ли движок, сколько писем окно
+  /// показало и почему отказало в последний раз.
+  static String summary() => [
+        if (!kIsWeb && Platform.isWindows)
+          'WebView2 Runtime: ${_runtime == null ? 'не проверен' : (_runtime! ? 'есть' : 'нет')}',
+        'показано писем: $_loaded',
+        'отказов: $_failures${_lastFailure == null ? '' : ' (последний — $_lastFailure)'}',
+        if (_stalls >= 2) 'до перезапуска — упрощённо',
+      ].join('; ');
 
   /// Проверить WebView2 Runtime (Windows; один раз за запуск, заранее — до
   /// первого письма). Не ответил — считается, что есть: окно само
@@ -70,6 +87,8 @@ class DesktopMailWebView extends StatefulWidget {
       _runtime = v != null && v.isNotEmpty;
       if (_runtime!) {
         AppLogger.info('WebView2 Runtime $v');
+        // Окружение — заранее, к первому письму оно уже готово.
+        await WindowsWebViewEnv.get();
       } else {
         AppLogger.warning('WebView2 Runtime не установлен — сложные письма показываются упрощённо');
       }
@@ -131,6 +150,7 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
   /// Нынешний документ — из [_file], а не строкой.
   bool _fromFile = false;
   InAppWebViewController? _web;
+  WebViewEnvironment? _env;
   Timer? _watchdog;
   bool _failed = false;
   int _gen = 0;
@@ -166,6 +186,8 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
     _failed = true;
     _watchdog?.cancel();
     if (stall) DesktopMailWebView._stalls++;
+    DesktopMailWebView._failures++;
+    DesktopMailWebView._lastFailure = why;
     AppLogger.warning('Письмо в окне (${_windows ? 'Windows' : 'Mac'}): $why');
     if (mounted) widget.onFailed?.call();
   }
@@ -173,6 +195,7 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
   Future<void> _prepare() async {
     final gen = ++_gen;
     try {
+      if (_windows) _env ??= await WindowsWebViewEnv.get();
       final doc = await MailHtmlDocument.buildAsync(widget.html,
           allowRemoteImages: widget.allowRemoteImages, inlineImages: widget.inlineImages);
       if (!mounted || gen != _gen) return;
@@ -245,6 +268,7 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
     Widget web = page == null
         ? const SizedBox.shrink()
         : InAppWebView(
+            webViewEnvironment: _env,
             initialData: fromFile
                 ? null
                 : InAppWebViewInitialData(
@@ -259,6 +283,7 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
             onLoadStop: (controller, url) {
               _watchdog?.cancel();
               DesktopMailWebView._stalls = 0;
+              DesktopMailWebView._loaded++;
             },
             shouldOverrideUrlLoading: (controller, action) async {
               final url = action.request.url;

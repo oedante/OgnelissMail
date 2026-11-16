@@ -123,8 +123,11 @@ class AppSettings {
   /// (BimiResolver.configured).
   /// «Показывать иконки организаций» (2.6.1, одна настройка вместо
   /// «Логотипов BIMI»): фото из контактов, сохранённые логотипы и значки,
-  /// логотип BIMI, значок сайта отправителя (orgIconProvider). По умолчанию
-  /// выключено: значок сайта телефон запрашивает у самого сайта.
+  /// логотип BIMI, значок сайта отправителя (orgIconProvider). С 2.6.2 по
+  /// умолчанию включено (решение владельца 16.11.2026: «BIMI и значки
+  /// компаний включаем по умолчанию»); выключенное вручную остаётся
+  /// выключенным. Значок сайта телефон запрашивает у самого сайта, MDM
+  /// block_external_services выключает.
   final bool orgIcons;
 
   // ── Уведомления ──
@@ -248,7 +251,7 @@ class AppSettings {
     this.reduceMotion = false,
     this.uiAnimations = false,
     this.colorBlindMode = 0,
-    this.orgIcons = false,
+    this.orgIcons = true,
     this.notificationsEnabled = true,
     this.notificationSound = true,
     this.notificationVibration = true,
@@ -584,7 +587,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       reduceMotion: _p.getBool(_K.reduceMotion) ?? false,
       uiAnimations: _p.getBool(_K.uiAnimations) ?? false,
       colorBlindMode: _p.getInt(_K.colorBlindMode) ?? 0,
-      orgIcons: _p.getBool(_K.orgIcons) ?? false,
+      orgIcons: _p.getBool(_K.orgIcons) ?? true,
       notificationsEnabled: _p.getBool(_K.notificationsEnabled) ?? true,
       notificationSound: _p.getBool(_K.notificationSound) ?? true,
       notificationVibration: _p.getBool(_K.notificationVibration) ?? true,

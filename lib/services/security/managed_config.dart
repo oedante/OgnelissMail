@@ -80,7 +80,9 @@ class ManagedKeys {
   static const allowBiometrics = 'allow_biometrics';
 
   /// Без внешних служб Ogneliss и третьих сторон: погода, логотипы
-  /// отправителей (BIMI), сигналы о новой почте через сервер Ogneliss.
+  /// отправителей (BIMI) и значки сайтов, сигналы о новой почте через
+  /// сервер Ogneliss, вход Яндекса через сервер входа, модели перевода
+  /// (Windows) с сайта Ogneliss.
   static const blockExternalServices = 'block_external_services';
 
   /// Ящик организации ([accountEmail]) нельзя удалить и нельзя менять его

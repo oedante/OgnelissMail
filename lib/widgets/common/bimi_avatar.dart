@@ -8,6 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../data/models/account_model.dart' show AccountType;
+import '../../data/models/folder_model.dart' show FolderType;
+import '../../data/providers/database_provider.dart' show databaseProvider;
+import '../../services/security/sender_safety_service.dart' show SenderSafetyService;
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../../services/security/bimi/bimi_rules.dart';
 import '../../services/security/bimi/bimi_service.dart';
@@ -36,6 +39,29 @@ final siteIconOwnServersProvider = Provider<Set<String>>((ref) => ownMailServerD
         if (!a.isMsExchange) (email: a.email, hosts: [a.imapServer, a.ewsUrl, a.exchangeServer, a.smtpServer]),
     ]));
 
+/// Папки «Спам» всех ящиков («ящик|папка», 2.6.1): у писем в них иконок
+/// организаций нет никогда (просьба владельца 16.11.2026) — ни запросов к
+/// сайтам спамеров, ни знакомого значка рядом со спамом.
+final junkFoldersProvider = StreamProvider<Set<String>>((ref) {
+  final db = ref.watch(databaseProvider);
+  return (db.select(db.folders)..where((f) => f.type.equals(FolderType.junk.index)))
+      .watch()
+      .map((rows) => {for (final r in rows) '${r.accountId}|${r.id}'});
+});
+
+/// Домен отправителя, которому иконку не показываем даже при пройденном
+/// DMARC (2.6.1): punycode, кириллица в домене или домен, похожий на
+/// известный бренд («sberbank-secure.ru», «paypa1.com»). DMARC подтверждает
+/// только, что письмо от этого домена, а значок сайта домена задаёт его
+/// владелец — у поддельного домена это был бы значок настоящего банка.
+bool orgIconSuspiciousDomain(String email) {
+  final at = email.lastIndexOf('@');
+  final d = (at < 0 ? email : email.substring(at + 1)).trim().toLowerCase().replaceAll(RegExp(r'[>\s]+$'), '');
+  if (d.isEmpty) return true;
+  if (d.contains('xn--') || RegExp(r'[^\x00-\x7f]').hasMatch(d)) return true;
+  return SenderSafetyService.lookalikeOf(d, SenderSafetyService.knownBrandDomains) != null;
+}
+
 /// Ящик Google: вход через Google или серверы Gmail (пароль приложения,
 /// Google Workspace на своём домене).
 bool isGoogleMailbox(AccountType type, List<String?> hosts) =>
@@ -52,7 +78,11 @@ class BimiAvatar extends ConsumerWidget {
     required this.authResults,
     required this.radius,
     required this.fallback,
+    this.folder,
   });
+
+  /// Ящик и папка письма: в «Спаме» — только буква.
+  final ({String account, String folder})? folder;
 
   /// Адрес отправителя (From).
   final String email;
@@ -97,6 +127,14 @@ class BimiAvatar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Цепочка «сохранённое → BIMI → сайт» (org_icon.dart); фото из контактов
     // портрет показал до неё.
+    // «Спам» — никогда; пока папки не загружены — тоже буква: ни одного
+    // запроса к сайту из «Спама».
+    final f = folder;
+    if (f != null) {
+      final junk = ref.watch(junkFoldersProvider).value;
+      if (junk == null || junk.contains('${f.account}|${f.folder}')) return fallback;
+    }
+    if (orgIconSuspiciousDomain(email)) return fallback;
     final bimi = BimiResolver.configured ? _domainFor(email, authResults, ref.watch(bimiOwnServersProvider)) : null;
     final site = _siteDomainFor(email, authResults, ref.watch(siteIconOwnServersProvider));
     if (bimi == null && site == null) return fallback;

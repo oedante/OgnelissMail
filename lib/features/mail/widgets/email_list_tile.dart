@@ -427,6 +427,7 @@ class EmailListTile extends ConsumerWidget {
                                 color: HeroEmailAvatar.colorForEmail(email.from.email),
                                 email: email.from.email,
                                 authResults: email.authResults,
+                                folder: (account: email.accountId, folder: email.folderId),
                                 radius: dens.avatarRadius,
                                 // Летит в шапку письма (1.9.x, «Анимация
                                 // открытия письма»).

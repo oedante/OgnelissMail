@@ -1121,6 +1121,7 @@ class _MessageCard extends StatelessWidget {
         color: HeroEmailAvatar.colorForEmail(email.from.email),
         email: email.from.email,
         authResults: email.authResults,
+        folder: (account: email.accountId, folder: email.folderId),
         radius: switch (density) {
           ListDensity.compact => 16,
           ListDensity.normal => Sizes.avatar / 2,

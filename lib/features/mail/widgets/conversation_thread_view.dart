@@ -131,6 +131,7 @@ class _ConversationThreadViewState extends State<ConversationThreadView> {
                     color: HeroEmailAvatar.colorForEmail(email.from.email),
                     email: email.from.email,
                     authResults: email.authResults,
+                    folder: (account: email.accountId, folder: email.folderId),
                     radius: 14,
                     hero: false,
                   ),

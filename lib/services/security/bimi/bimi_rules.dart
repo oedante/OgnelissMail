@@ -31,16 +31,73 @@ String? bimiDmarcDomain(String? authResults, String fromEmail, {Set<String>? own
   final parts = trustedAuthResultParts(authResults, ownServers: ownServers);
   if (parts == null) return null;
   var pass = false;
+  var dmarcSeen = false;
   for (final p in parts) {
     final m = RegExp(r'^dmarc\s*=\s*([a-z]+)', caseSensitive: false).firstMatch(p);
     if (m == null) continue;
+    dmarcSeen = true;
     if (m.group(1)!.toLowerCase() != 'pass') return null;
     // header.from — домен, который проверял сервер: должен совпасть с From.
     final hf = RegExp(r'header\.from\s*=\s*"?([^\s;"]+)', caseSensitive: false).firstMatch(p)?.group(1);
     if (hf != null && hf.toLowerCase().replaceAll(RegExp(r'\.$'), '') != domain) return null;
     pass = true;
   }
-  return pass ? domain : null;
+  if (dmarcSeen) return pass ? domain : null;
+  // Сервер не пишет результат DMARC (2.6.1; Яндекс и Mail.ru пишут только
+  // SPF и DKIM — поэтому логотипов у их ящиков не было совсем). DMARC по
+  // определению (RFC 7489, 3.1 и 4.2) — это пройденная проверка DKIM или
+  // SPF для домена, совпадающего с доменом из From (или его поддомена):
+  // считаем её по тем же результатам того же сервера.
+  return parts.any((p) => alignedPass(p, domain)) ? domain : null;
+}
+
+/// Проверка DKIM или SPF из Authentication-Results пройдена для домена,
+/// согласованного с доменом From [fromDomain] (DMARC, нестрогое
+/// согласование): dkim=pass с header.d или header.i, spf=pass с
+/// smtp.mailfrom.
+bool alignedPass(String part, String fromDomain) {
+  final m = RegExp(r'^(dkim|spf)\s*=\s*([a-z]+)', caseSensitive: false).firstMatch(part);
+  if (m == null || m.group(2)!.toLowerCase() != 'pass') return false;
+  final key = m.group(1)!.toLowerCase() == 'dkim' ? r'header\.(?:d|i)' : r'smtp\.mailfrom';
+  for (final v in RegExp('$key\\s*=\\s*"?([^\\s;"]+)', caseSensitive: false).allMatches(part)) {
+    var d = v.group(1)!.toLowerCase();
+    final at = d.lastIndexOf('@');
+    if (at >= 0) d = d.substring(at + 1);
+    d = d.replaceAll(RegExp(r'\.$'), '');
+    if (d.contains('.') && _aligned(d, fromDomain)) return true;
+  }
+  return false;
+}
+
+/// Нестрогое согласование DMARC: один домен или поддомен другого, но не
+/// просто общая доменная зона («bank.ru» и «evil.ru» — нет).
+bool _aligned(String a, String b) => a == b || a.endsWith('.$b') || b.endsWith('.$a');
+
+/// Заголовки Authentication-Results сервера ящика одной строкой (2.6.1).
+/// [values] — все заголовки письма в их порядке (верхний — первый). Берётся
+/// верхний и следующие за ним подряд, если их поставил тот же почтовый
+/// сервис (тот же базовый домен authserv-id): iCloud пишет результаты
+/// отдельными заголовками — «dmarc.icloud.com», «dkim-verifier.icloud.com»,
+/// «spf.icloud.com», а раньше учитывался только первый из них. Заголовки
+/// ниже чужого — добавлены раньше по пути письма и не берутся.
+String? ownAuthResultsHeader(List<String> values) {
+  final out = <String>[];
+  String? base;
+  for (final raw in values) {
+    final v = raw.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (v.isEmpty) continue;
+    final id = v.split(';').first.trim().split(' ').first.toLowerCase().replaceAll(RegExp(r'\.$'), '');
+    if (id.isEmpty || id.contains('=')) break;
+    final b = id.contains('.') ? _baseDomain(id) : id;
+    if (base == null) {
+      base = b;
+    } else if (b != base || !id.contains('.')) {
+      break;
+    }
+    out.add(v);
+    if (out.length >= 6) break;
+  }
+  return out.isEmpty ? null : out.join('; ');
 }
 
 /// Проверки (resinfo) из верхнего заголовка без комментариев; null —
@@ -63,7 +120,11 @@ List<String>? trustedAuthResultParts(String? authResults, {Set<String>? ownServe
     if (p.isEmpty) continue;
     if (!p.contains('=')) {
       if (p.toLowerCase() == 'none') continue;
-      break; // начался следующий склеенный заголовок (его authserv-id)
+      // Начался следующий склеенный заголовок (его authserv-id). Заголовок
+      // того же сервера ящика (iCloud, [ownAuthResultsHeader]) — читаем
+      // дальше, чужой — останавливаемся.
+      if (ownServers != null && isOwnAuthServ(p, ownServers)) continue;
+      break;
     }
     out.add(p);
   }
@@ -76,6 +137,12 @@ List<String>? trustedAuthResultParts(String? authResults, {Set<String>? ownServe
 bool isOwnAuthServ(String authServId, Set<String> ownServers) {
   final id = authServId.trim().split(RegExp(r'\s+')).first.toLowerCase().replaceAll(RegExp(r'\.$'), '');
   if (id.isEmpty) return false;
+  // Яндекс подписывает заголовок именем сервера без домена
+  // («mail-nwsmtp-mxback-production-main-39», 2.6.1) — его серверы
+  // доставки называются так все.
+  if (!id.contains('.') && ownServers.contains('yandex.net') && RegExp(r'^mail-nwsmtp-[a-z0-9-]+$').hasMatch(id)) {
+    return true;
+  }
   return ownServers.any((d) => id == d || id.endsWith('.$d'));
 }
 
@@ -118,6 +185,14 @@ const _providerAliases = <String, List<String>>{
   'inbox.ru': ['mail.ru'],
   'list.ru': ['mail.ru'],
 };
+
+/// Домен сайта для значка (2.6.1, [SiteIconService]): базовый домен
+/// организации из домена отправителя — «news.sber.ru» → «sber.ru»; null —
+/// не домен.
+String? siteDomainOf(String domain) {
+  final d = bimiFromDomain('x@$domain');
+  return d == null ? null : _baseDomain(d);
+}
 
 /// Узел из адреса сервера: «https://mail.org.ru/EWS/Exchange.asmx» →
 /// «mail.org.ru»; «imap.yandex.ru» — как есть.

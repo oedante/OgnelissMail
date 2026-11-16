@@ -276,6 +276,10 @@ class PlatformDiagnostics {
       // из записи системы — где именно упало.
       final trace = e['trace'] as String?;
       if (trace != null && trace.isNotEmpty) AppLogger.warning('Сбой в машинном коде: $trace');
+      // Сбой в Java/Kotlin (2.6.0): исключение и верхние строки стека,
+      // записанные приложением в момент сбоя.
+      final java = e['java'] as String?;
+      if (java != null && java.isNotEmpty) AppLogger.warning('Сбой (Java): $java');
     }
     return exits;
   }

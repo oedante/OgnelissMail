@@ -35,7 +35,6 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../mail/widgets/mail_html_view.dart' show MailHtmlView;
 import '../../compose/widgets/image_size_sheet.dart' show photoSizeLabel;
-import '../../../services/security/bimi/bimi_service.dart' show BimiResolver;
 
 /// Какой экран настроек почты показать.
 enum MailSettingsPart { reading, compose, files, translate, safety }
@@ -340,20 +339,19 @@ class MailSettingsScreen extends ConsumerWidget {
               onChanged: (v) => fn.setAntiPhishing(v!),
             ),
           ]),
-          // Логотипы отправителей BIMI (1.9.x): только в сборке, знающей
-          // сервер Ogneliss, — без него функции нет.
-          if (BimiResolver.configured) ...[
-            const SizedBox(height: Space.s),
-            SettingsGroup(children: [
-              SettingsSwitchItem(
-                icon: AppIcons.badge,
-                title: l10n.tr('bimiLogos'),
-                subtitle: l10n.tr('bimiLogosDesc'),
-                value: settings.bimiLogos,
-                onChanged: notifier.setBimiLogos,
-              ),
-            ]),
-          ],
+          // Иконки организаций (2.6.1, одна настройка вместо «Логотипов
+          // BIMI»): сохранённые логотипы и значки, BIMI, значок сайта
+          // отправителя — org_icon.dart.
+          const SizedBox(height: Space.s),
+          SettingsGroup(children: [
+            SettingsSwitchItem(
+              icon: AppIcons.badge,
+              title: l10n.tr('orgIcons'),
+              subtitle: l10n.tr('orgIconsDesc'),
+              value: settings.orgIcons,
+              onChanged: notifier.setOrgIcons,
+            ),
+          ]),
           ],
           if (part == MailSettingsPart.files) ...[
           // Просмотр документов во вложениях (1.11.x, просьба владельца

@@ -56,6 +56,7 @@ import '../../../widgets/ui/help_hint.dart' show TitleWithHelp;
 import '../../mail/providers/mail_providers.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/certificate_trust_dialog.dart';
+import '../../settings/widgets/account_label_dialog.dart';
 import '../../../services/security/managed_config.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -215,9 +216,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
 
+  /// Ящики до входа: после успешного входа новый ящик — тот, которого здесь
+  /// не было (ему предлагается название, 2.6.1).
+  Set<String> _idsBefore = const {};
+  bool _successHandled = false;
+
   @override
   void initState() {
     super.initState();
+    _idsBefore = {for (final a in ref.read(accountsProvider)) a.id};
     _animController = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
     _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeInOut);
     _animController.forward();
@@ -590,6 +597,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     ), guessed: true);
   }
 
+  /// Вход удался: новому ящику — предложить название (2.6.1, просьба
+  /// владельца 16.11.2026; можно пропустить), затем — в почту или обратно в
+  /// настройки.
+  Future<void> _afterSuccess() async {
+    if (_reauth == null && widget.reauthAccountId == null) {
+      final added = [for (final a in ref.read(accountsProvider)) if (!_idsBefore.contains(a.id)) a];
+      if (added.isNotEmpty && mounted) {
+        await showAccountLabelDialog(context, ref, added.last, ask: true);
+      }
+    }
+    if (!mounted) return;
+    if (widget.isAddMode && context.canPop()) {
+      context.pop(); // возврат в настройки после добавления аккаунта
+    } else {
+      context.go('/mail');
+    }
+  }
+
   /// Переключатель «Exchange | IMAP» на шаге 2 (1.8.8).
   void _switchProtocol(MailKind k) {
     if (k == _kind) return;
@@ -623,13 +648,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           }
         });
       }
-      if (next.status == AuthStatus.success) {
+      if (next.status == AuthStatus.success && !_successHandled) {
+        _successHandled = true;
         HapticFeedback.mediumImpact();
-        if (widget.isAddMode && context.canPop()) {
-          context.pop(); // возврат в настройки после добавления аккаунта
-        } else {
-          context.go('/mail');
-        }
+        unawaited(_afterSuccess());
       }
     });
 

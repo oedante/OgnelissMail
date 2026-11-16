@@ -135,7 +135,7 @@ const _entries = <_Entry>[
   _Entry('pinLock', 'sectionPrivacy', AppIcons.pin, '/settings'),
   // План 08.11.2026 п. 4: настройки, которых не было в поиске.
   _Entry('trackerBlocker', 'sectionPrivacy', AppIcons.visibility_off, '/settings/trackers'),
-  _Entry('bimiLogos', 'sectionPrivacy', AppIcons.verified, '/settings/mail/safety'),
+  _Entry('orgIcons', 'sectionPrivacy', AppIcons.verified, '/settings/mail/safety'),
   _Entry('readingPane', 'appearanceTitle', AppIcons.vertical_split, '/settings/appearance'),
   _Entry('uiScaleTitle', 'appearanceTitle', AppIcons.zoom_in, '/settings/appearance'),
   _Entry('signatures', 'templatesSignature', AppIcons.draw, '/settings/signatures'),

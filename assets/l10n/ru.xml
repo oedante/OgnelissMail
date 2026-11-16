@@ -770,8 +770,6 @@
     <string name="confirmRecipients">Проверять получателей</string>
     <string name="confirmRecipientsDesc">Предупреждать при отправке внешним адресатам или большому списку</string>
     <string name="antiPhishing">Антифишинг</string>
-    <string name="bimiLogos">Логотипы отправителей (BIMI)</string>
-    <string name="bimiLogosDesc">Домен отправителя проверяется через сервер Ogneliss, адреса и письма не передаются; у ящиков Google логотипы не ищутся</string>
     <string name="phishingOff">Выключен</string>
     <string name="dangerOnly">Только опасные</string>
     <string name="dangerOnlyDesc">Показывать лишь явные угрозы</string>
@@ -4362,4 +4360,11 @@
     <string name="assignQuestionAbout">Вопрос по поручению «{title}» ({code}):</string>
     <string name="assignWriteExecutor">Написать исполнителю</string>
     <string name="assignWriteAbout">По поручению «{title}» ({code}):</string>
+    <string name="orgIcons">Показывать иконки организаций</string>
+    <string name="orgIconsDesc">Только у подтверждённых отправителей. Значок сайта запрашивается у самого сайта (раз в месяц на домен), логотип BIMI — у сервера Ogneliss (только домен); рабочая почта Exchange не участвует</string>
+    <string name="accountLabel">Название ящика</string>
+    <string name="accountLabelHint">Например: Работа, Семья</string>
+    <string name="accountLabelEmpty">Не задано — видна часть адреса</string>
+    <string name="accountLabelAsk">Как назвать ящик?</string>
+    <string name="accountLabelAskBody">Название видно в уведомлениях и на экране почты. Его можно изменить в настройках ящика.</string>
 </resources>

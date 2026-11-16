@@ -53,6 +53,8 @@ import '../../../services/security/managed_config.dart' show ManagedPolicy;
 import '../../../services/sync/imap_push_service.dart';
 import '../../../data/models/account_model.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../services/accounts/account_labels.dart';
+import '../widgets/account_label_dialog.dart';
 import '../../compose/screens/image_edit_screen.dart' show ImageEditScreen;
 import '../../../services/mail/dav/dav_pim_service.dart';
 import '../../../widgets/common/hero_email_transition.dart';
@@ -128,6 +130,18 @@ class AccountScreen extends ConsumerWidget {
                   : l10n.tr('senderNameEmpty'),
               onTap: () => _editSenderName(context, ref, account),
             ),
+            // Название ящика (2.6.1): вместо логина в уведомлениях и под
+            // заголовком почты.
+            Builder(builder: (context) {
+              final label = ref.watch(accountLabelsProvider)[account.id];
+              return SettingsItem(
+                key: const Key('account_label_item'),
+                icon: AppIcons.label,
+                title: l10n.tr('accountLabel'),
+                subtitle: label ?? l10n.tr('accountLabelEmpty'),
+                onTap: () => showAccountLabelDialog(context, ref, account),
+              );
+            }),
             Builder(builder: (context) {
               // Какие подписи вставляются: для новых писем и для ответов.
               final all = ref.watch(signaturesProvider);

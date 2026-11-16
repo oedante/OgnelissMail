@@ -30,6 +30,9 @@ class HeroEmailAvatar extends ConsumerWidget {
   /// отправителя BIMI (1.9.x). null — только фото или буква.
   final String? authResults;
 
+  /// Ящик и папка письма (2.6.1): в «Спаме» иконок организаций нет.
+  final ({String account, String folder})? folder;
+
   /// false — без Hero. В split-view (Windows, планшет) список и карточка
   /// письма в одном маршруте: два Hero с одним тегом роняют перерисовку
   /// («multiple heroes share the same tag»).
@@ -51,6 +54,7 @@ class HeroEmailAvatar extends ConsumerWidget {
     this.email,
     this.photo,
     this.authResults,
+    this.folder,
   });
 
   @override
@@ -86,7 +90,8 @@ class HeroEmailAvatar extends ConsumerWidget {
             ),
           )
         : (authResults != null && email != null
-            ? BimiAvatar(email: email!, authResults: authResults, radius: radius, fallback: _monogram(context))
+            ? BimiAvatar(
+                email: email!, authResults: authResults, folder: folder, radius: radius, fallback: _monogram(context))
             : _monogram(context));
     if (hero && openHero && AppearanceLook.of(context).openAnimation) {
       return Hero(tag: 'avatar_$emailId', flightShuttleBuilder: mailAvatarShuttle, child: avatar);

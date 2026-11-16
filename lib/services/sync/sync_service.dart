@@ -9,6 +9,7 @@
 // - fetchMode support
 
 import '../calendar/event_reminders.dart';
+import '../accounts/account_labels.dart';
 import '../../features/settings/providers/quiet_hours_provider.dart' show QuietHours;
 import 'sync_schedule.dart';
 import '../background/work_scheduler.dart';
@@ -2249,8 +2250,11 @@ class SyncService {
       // Короткая подпись («i.petrov» или домен, если имена совпадают) —
       // полный адрес занимал полстроки в шапке уведомления (10.10.2026).
       final active = _ref.read(accountsProvider).where((a) => a.isActive).toList();
-      final shortLabel = NotificationText.shortMailbox(account.email, [for (final a in active) a.email]);
-      final mailboxLabel = (active.length > 1 || account.isSharedMailbox) ? shortLabel : null;
+      // Название ящика, заданное пользователем (2.6.1), — вместо логина и
+      // даже при одном ящике: его задали, чтобы видеть.
+      final custom = AccountLabels.of(_prefs, account.id);
+      final shortLabel = custom ?? NotificationText.shortMailbox(account.email, [for (final a in active) a.email]);
+      final mailboxLabel = custom ?? ((active.length > 1 || account.isSharedMailbox) ? shortLabel : null);
       // Стандартные папки — на языке приложения («Sent» → «Отправленные», 2.3.2).
       final folderLabel = folder.type == FolderType.inbox ? null : localizedFolderName(folder, _l10n());
 

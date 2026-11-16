@@ -25,6 +25,7 @@ import '../../services/mail/engine/mail_engine_service.dart';
 import '../../services/mail/oauth/cross_platform_oauth.dart' show CrossPlatformOAuthService;
 import '../../services/mail/oauth/direct_oauth.dart' show DirectOAuth;
 import '../../services/security/bimi/bimi_service.dart' show BimiResolver, BimiStats;
+import '../../services/security/bimi/site_icon_service.dart' show SiteIconStats;
 import '../../features/settings/providers/settings_provider.dart' show settingsProvider;
 import '../../services/security/device_security_service.dart';
 import '../../services/security/eas_policy_store.dart';
@@ -115,9 +116,11 @@ class DiagnosticsReport {
     line('Подробный журнал: ${AppLogger.detailed ? 'до ${AppLogger.detailedUntil}' : 'выключен'}');
     // Логотипы отправителей (1.10.1): видно, включены ли и что ответил сервер.
     try {
-      final on = ref.read(settingsProvider).bimiLogos;
-      line('Логотипы BIMI: ${!BimiResolver.configured ? 'нет сервера в сборке (OAUTH_PROXY_URL/KEY)' : on ? 'включены' : 'выключены в настройках'}'
-          '${BimiResolver.configured && on ? '; ${BimiStats.summary()}' : ''}');
+      // 2.6.1: одна настройка «Иконки организаций» — BIMI и значки сайтов.
+      final on = ref.read(settingsProvider).orgIcons;
+      line('Иконки организаций: ${on ? 'включены' : 'выключены в настройках'}'
+          '${on ? '; BIMI: ${BimiResolver.configured ? BimiStats.summary() : 'нет сервера в сборке'}; '
+              'значки сайтов: ${SiteIconStats.summary()}' : ''}');
     } catch (_) {}
     // Фоновая работа: ограничения устройства и история запусков.
     try {

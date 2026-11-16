@@ -770,8 +770,6 @@
     <string name="confirmRecipients">Vahvista vastaanottajat</string>
     <string name="confirmRecipientsDesc">Varoita, kun viesti lähetetään ulkoisille vastaanottajille tai suurelle joukolle</string>
     <string name="antiPhishing">Tietojenkalastelusuojaus</string>
-    <string name="bimiLogos">Lähettäjien logot (BIMI)</string>
-    <string name="bimiLogosDesc">Lähettäjän verkkotunnus tarkistetaan Ogneliss-palvelimen kautta; osoitteita ja viestejä ei lähetetä; Google-postilaatikoille logoja ei haeta</string>
     <string name="phishingOff">Pois käytöstä</string>
     <string name="dangerOnly">Vain vaaralliset</string>
     <string name="dangerOnlyDesc">Näytä vain selvät uhat</string>
@@ -4320,4 +4318,11 @@
     <string name="assignQuestionAbout">Kysymys toimeksiannosta ”{title}” ({code}):</string>
     <string name="assignWriteExecutor">Kirjoita tekijälle</string>
     <string name="assignWriteAbout">Toimeksiannosta ”{title}” ({code}):</string>
+    <string name="orgIcons">Näytä organisaatioiden kuvakkeet</string>
+    <string name="orgIconsDesc">Vain vahvistetuille lähettäjille. Sivuston kuvake haetaan itse sivustolta (kerran kuussa verkkotunnusta kohden), BIMI-logo Ogneliss-palvelimelta (vain verkkotunnus); Exchange-työposti ei ole mukana</string>
+    <string name="accountLabel">Postilaatikon nimi</string>
+    <string name="accountLabelHint">Esimerkiksi: Työ, Perhe</string>
+    <string name="accountLabelEmpty">Ei asetettu — osa osoitteesta näytetään</string>
+    <string name="accountLabelAsk">Mikä postilaatikon nimeksi?</string>
+    <string name="accountLabelAskBody">Nimi näkyy ilmoituksissa ja postinäkymässä. Voit muuttaa sen postilaatikon asetuksista.</string>
 </resources>

@@ -159,6 +159,7 @@ class _MailCard extends StatelessWidget {
               color: HeroEmailAvatar.colorForEmail(email.from.email),
               email: email.from.email,
               authResults: email.authResults,
+              folder: (account: email.accountId, folder: email.folderId),
               radius: 22,
               hero: false,
             ),

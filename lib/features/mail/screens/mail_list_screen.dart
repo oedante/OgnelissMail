@@ -1,5 +1,6 @@
 // lib/features/mail/screens/mail_list_screen.dart
 import '../../../widgets/ui/action_sheet.dart';
+import '../../../services/accounts/account_labels.dart';
 import '../../../widgets/common/swipe_done.dart';
 import '../../../widgets/common/swipe_hint.dart';
 import '../../../widgets/common/gap_below.dart';
@@ -829,7 +830,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                               text: '● ',
                               style: TextStyle(color: Color(a.colorValue)),
                             ),
-                            TextSpan(text: EmailListTile.accountMarkOf(all, a.id)?.label ?? a.email),
+                            TextSpan(text: EmailListTile.accountMarkOf(all, a.id, labels: ref.watch(accountLabelsProvider))?.label ?? a.email),
                           ],
                         ],
                       );
@@ -842,7 +843,8 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                         color: barTheme.colorScheme.onSurface.withValues(alpha: 0.6),
                         fontSize: 11,
                       ),
-                      tail: [TextSpan(text: account.email)],
+                      // Название ящика (2.6.1) — вместо адреса.
+                      tail: [TextSpan(text: ref.watch(accountLabelsProvider)[account.id] ?? account.email)],
                     ),
                 ],
               ),

@@ -58,7 +58,10 @@ void main() {
       expect(bimiDmarcDomain('mx.yandex.ru; none', 'a@example.com'), isNull);
       expect(bimiDmarcDomain('none', 'a@example.com'), isNull);
       expect(bimiDmarcDomain('spf=pass', 'a@example.com'), isNull);
-      expect(bimiDmarcDomain('mx.example.net; spf=pass smtp.mailfrom=example.com', 'a@example.com'), isNull);
+      // 2.6.1: без строки dmarc= — по согласованию: SPF для домена From
+      // и есть DMARC (RFC 7489), для чужого домена — нет.
+      expect(bimiDmarcDomain('mx.example.net; spf=pass smtp.mailfrom=example.com', 'a@example.com'), 'example.com');
+      expect(bimiDmarcDomain('mx.example.net; spf=pass smtp.mailfrom=other.example', 'a@example.com'), isNull);
       expect(bimiDmarcDomain(null, 'a@example.com'), isNull);
     });
 
@@ -71,7 +74,7 @@ void main() {
       ];
       expect(bimiDmarcDomain(headers.first, 'a@example.com'), isNull);
       // ActiveSync склеивает одноимённые заголовки через «; ».
-      expect(bimiDmarcDomain('mx.own-provider.ru; spf=pass smtp.mailfrom=example.com; '
+      expect(bimiDmarcDomain('mx.own-provider.ru; spf=pass smtp.mailfrom=other.example; '
           'evil.example; dmarc=pass header.from=example.com', 'a@example.com'), isNull);
       expect(bimiDmarcDomain('mx.own-provider.ru; dmarc=pass header.from=example.com; '
           'relay.example; dmarc=fail', 'a@example.com'), 'example.com');
@@ -280,5 +283,64 @@ void main() {
       expect(isOwnAuthServ('notyamalspg.ru', own), isFalse);
     });
   });
-}
 
+  group('2.6.1: Яндекс, Mail.ru и iCloud — логотипы были недоступны', () {
+    final yandex = ownMailServerDomains([(email: 'i@yandex.ru', hosts: ['imap.yandex.ru'])]);
+    final icloud = ownMailServerDomains([(email: 'e@icloud.com', hosts: ['imap.mail.me.com'])]);
+    final mailru = ownMailServerDomains([(email: 'm@mail.ru', hosts: ['imap.mail.ru'])]);
+
+    test('Яндекс: без dmarc=, authserv-id без домена — DKIM домена From засчитан', () {
+      // Настоящий заголовок письма с Яндекса (12.11.2026).
+      const real = 'mail-nwsmtp-mxback-production-main-39; dkim=pass header.i=@yandex.ru';
+      expect(bimiDmarcDomain(real, 's2552844@yandex.ru', ownServers: yandex), 'yandex.ru');
+      expect(bimiDmarcDomain('mail-nwsmtp-mxfront-production-main-7; dkim=pass header.d=sberbank.ru', 'info@sberbank.ru',
+              ownServers: yandex),
+          'sberbank.ru');
+      expect(bimiDmarcDomain('mail-nwsmtp-mxfront-production-main-7; dkim=pass header.d=mail.sberbank.ru',
+              'info@sberbank.ru', ownServers: yandex),
+          'sberbank.ru', reason: 'поддомен — нестрогое согласование DMARC');
+    });
+
+    test('подпись чужого домена, провал и чужой сервер — без логотипа', () {
+      expect(bimiDmarcDomain('mail-nwsmtp-mxfront-1; dkim=pass header.d=attacker.example', 'info@sberbank.ru',
+              ownServers: yandex),
+          isNull, reason: 'DKIM есть, но домен подписи не совпадает с From');
+      expect(bimiDmarcDomain('mail-nwsmtp-mxfront-1; dkim=fail header.d=sberbank.ru', 'info@sberbank.ru',
+              ownServers: yandex),
+          isNull);
+      expect(bimiDmarcDomain('mail-nwsmtp-mxfront-1; dkim=pass header.d=notsberbank.ru', 'info@sberbank.ru',
+              ownServers: yandex),
+          isNull);
+      expect(bimiDmarcDomain('mail-nwsmtp-mxfront-1; dkim=pass header.d=sberbank.ru', 'info@sberbank.ru',
+              ownServers: mailru),
+          isNull, reason: 'имя сервера Яндекса без домена доверяется только у ящиков Яндекса');
+      expect(bimiDmarcDomain('mxs.mail.ru; dkim=pass header.d=sberbank.ru; dmarc=fail header.from=sberbank.ru',
+              'info@sberbank.ru', ownServers: mailru),
+          isNull, reason: 'провал DMARC важнее пройденного DKIM');
+    });
+
+    test('Mail.ru: SPF домена From засчитан', () {
+      expect(bimiDmarcDomain('mxs.mail.ru; spf=pass smtp.mailfrom=noreply@news.ozon.ru', 'info@ozon.ru',
+              ownServers: mailru),
+          'ozon.ru');
+    });
+
+    test('iCloud: результаты разными заголовками — берутся все заголовки iCloud сверху', () {
+      final merged = ownAuthResultsHeader([
+        'bimi.icloud.com; bimi=skipped reason="insufficient dmarc"',
+        'dmarc.icloud.com; dmarc=pass header.from=apple.com',
+        'dkim-verifier.icloud.com;\r\n\tdkim=pass (2048-bit key) header.d=apple.com',
+        // Ниже — добавлено раньше по пути письма: не берётся.
+        'mx.attacker.example; dmarc=pass header.from=sberbank.ru',
+        'dmarc.icloud.com; dmarc=pass header.from=sberbank.ru',
+      ]);
+      expect(merged, isNot(contains('attacker')));
+      expect(merged, isNot(contains('sberbank')));
+      expect(bimiDmarcDomain(merged, 'news@apple.com', ownServers: icloud), 'apple.com');
+      expect(bimiDmarcDomain(merged, 'info@sberbank.ru', ownServers: icloud), isNull);
+      expect(ownAuthResultsHeader(const []), isNull);
+      expect(ownAuthResultsHeader(['mx.google.com; dkim=pass header.d=a.ru', 'mx.google.com; spf=pass']),
+          'mx.google.com; dkim=pass header.d=a.ru; mx.google.com; spf=pass');
+    });
+  });
+}

@@ -20,7 +20,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/logging/app_logger.dart';
-import '../../../features/settings/providers/settings_provider.dart';
 import 'bimi_rules.dart';
 
 /// Где лежит кэш: файл в каталоге приложения, в тестах — память.
@@ -205,6 +204,16 @@ class BimiResolver {
   /// До этого времени сервер не спрашивать (был недоступен).
   DateTime _pauseUntil = DateTime(0);
 
+  /// Только сохранённое (2.6.1, первый шаг цепочки иконок): hit — ответ
+  /// по домену уже есть (с логотипом или без), сеть не трогается.
+  Future<({bool hit, String? svg})> cached(String domain) async {
+    if (ManagedPolicy.current.blockExternalServices) return (hit: true, svg: null);
+    await cache.load();
+    final c = cache.lookup(domain);
+    if (c.hit) BimiStats.cached++;
+    return c;
+  }
+
   /// Логотип домена (очищенный SVG) или null. Не бросает исключений.
   Future<String?> logoFor(String domain) async {
     // Организация запретила внешние службы (MDM block_external_services):
@@ -323,9 +332,3 @@ final bimiResolverProvider = Provider<BimiResolver?>((ref) {
   );
 });
 
-/// Логотип домена для портрета; null — показывать букву.
-final bimiLogoProvider = FutureProvider.family<String?, String>((ref, domain) async {
-  if (!ref.watch(settingsProvider.select((s) => s.bimiLogos))) return null;
-  final r = ref.watch(bimiResolverProvider);
-  return r?.logoFor(domain);
-});

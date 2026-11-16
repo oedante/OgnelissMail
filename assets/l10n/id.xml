@@ -770,8 +770,6 @@
     <string name="confirmRecipients">Periksa penerima</string>
     <string name="confirmRecipientsDesc">Beri peringatan saat mengirim ke penerima eksternal atau daftar yang besar</string>
     <string name="antiPhishing">Anti-phishing</string>
-    <string name="bimiLogos">Logo pengirim (BIMI)</string>
-    <string name="bimiLogosDesc">Domain pengirim diperiksa melalui server Ogneliss; alamat dan pesan tidak dikirim; untuk kotak surat Google logo tidak dicari</string>
     <string name="phishingOff">Nonaktif</string>
     <string name="dangerOnly">Hanya yang berbahaya</string>
     <string name="dangerOnlyDesc">Tampilkan hanya ancaman yang jelas</string>
@@ -4299,4 +4297,11 @@
     <string name="assignQuestionAbout">Pertanyaan tentang tugas “{title}” ({code}):</string>
     <string name="assignWriteExecutor">Tulis ke pelaksana</string>
     <string name="assignWriteAbout">Tentang tugas “{title}” ({code}):</string>
+    <string name="orgIcons">Tampilkan ikon organisasi</string>
+    <string name="orgIconsDesc">Hanya untuk pengirim terverifikasi. Ikon situs diminta dari situs itu sendiri (sebulan sekali per domain), logo BIMI dari server Ogneliss (hanya domain); email kerja Exchange tidak disertakan</string>
+    <string name="accountLabel">Nama kotak surat</string>
+    <string name="accountLabelHint">Contoh: Kerja, Keluarga</string>
+    <string name="accountLabelEmpty">Belum diatur — sebagian alamat ditampilkan</string>
+    <string name="accountLabelAsk">Mau beri nama apa kotak surat ini?</string>
+    <string name="accountLabelAskBody">Nama tampil di notifikasi dan layar email. Anda bisa mengubahnya di setelan kotak surat.</string>
 </resources>

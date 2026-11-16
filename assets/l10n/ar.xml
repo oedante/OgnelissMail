@@ -770,8 +770,6 @@
     <string name="confirmRecipients">التحقق من المستلمين</string>
     <string name="confirmRecipientsDesc">التنبيه عند الإرسال إلى مستلمين خارجيين أو إلى قائمة كبيرة</string>
     <string name="antiPhishing">الحماية من التصيّد</string>
-    <string name="bimiLogos">شعارات المرسلين (BIMI)</string>
-    <string name="bimiLogosDesc">يُتحقق من نطاق المرسل عبر خادم Ogneliss، ولا تُرسل العناوين أو الرسائل؛ لا تُبحث الشعارات لصناديق Google</string>
     <string name="phishingOff">متوقفة</string>
     <string name="dangerOnly">الخطيرة فقط</string>
     <string name="dangerOnlyDesc">عرض التهديدات الواضحة فقط</string>
@@ -4404,4 +4402,11 @@
     <string name="assignQuestionAbout">سؤال حول التكليف «{title}» ({code}):</string>
     <string name="assignWriteExecutor">مراسلة المنفّذ</string>
     <string name="assignWriteAbout">بخصوص التكليف «{title}» ({code}):</string>
+    <string name="orgIcons">إظهار أيقونات المؤسسات</string>
+    <string name="orgIconsDesc">للمرسلين المؤكَّدين فقط. تُطلب أيقونة الموقع من الموقع نفسه (مرة شهريًا لكل نطاق)، وشعار BIMI من خادم Ogneliss (النطاق فقط)؛ بريد العمل في Exchange غير مشمول</string>
+    <string name="accountLabel">اسم صندوق البريد</string>
+    <string name="accountLabelHint">مثلًا: العمل، العائلة</string>
+    <string name="accountLabelEmpty">غير محدد — يظهر جزء من العنوان</string>
+    <string name="accountLabelAsk">ما الاسم الذي تريده لهذا الصندوق؟</string>
+    <string name="accountLabelAskBody">يظهر الاسم في الإشعارات وعلى شاشة البريد. يمكنك تغييره من إعدادات الصندوق.</string>
 </resources>

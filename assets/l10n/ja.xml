@@ -770,8 +770,6 @@
     <string name="confirmRecipients">宛先を確認</string>
     <string name="confirmRecipientsDesc">社外の宛先や大人数のリストに送信するときに警告します</string>
     <string name="antiPhishing">フィッシング対策</string>
-    <string name="bimiLogos">送信者のロゴ (BIMI)</string>
-    <string name="bimiLogosDesc">送信者のドメインは Ogneliss サーバーで確認します。アドレスやメールは送信されません。Google のメールボックスではロゴを検索しません</string>
     <string name="phishingOff">オフ</string>
     <string name="dangerOnly">危険なもののみ</string>
     <string name="dangerOnlyDesc">明らかな脅威のみ表示します</string>
@@ -4299,4 +4297,11 @@
     <string name="assignQuestionAbout">指示「{title}」について質問です（{code}）：</string>
     <string name="assignWriteExecutor">担当者に書く</string>
     <string name="assignWriteAbout">指示「{title}」について（{code}）：</string>
+    <string name="orgIcons">組織のアイコンを表示</string>
+    <string name="orgIconsDesc">確認済みの差出人のみ。サイトのアイコンはそのサイトから（ドメインごとに月1回）、BIMI ロゴは Ogneliss サーバーから（ドメインのみ）取得します。Exchange の仕事用メールは対象外です</string>
+    <string name="accountLabel">メールボックス名</string>
+    <string name="accountLabelHint">例：仕事、家族</string>
+    <string name="accountLabelEmpty">未設定 — アドレスの一部を表示</string>
+    <string name="accountLabelAsk">このメールボックスの名前は？</string>
+    <string name="accountLabelAskBody">名前は通知とメール画面に表示されます。メールボックスの設定で変更できます。</string>
 </resources>

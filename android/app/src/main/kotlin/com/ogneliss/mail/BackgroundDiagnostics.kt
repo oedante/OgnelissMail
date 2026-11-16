@@ -255,6 +255,64 @@ object BackgroundDiagnostics {
         }
     }
 
+    private const val CRASH_PREFS = "ogneliss_crash_note"
+
+    /**
+     * Причина Java-сбоя (2.6.0; вылет на Samsung S24 16.11.2026). Для сбоя в
+     * Java/Kotlin система хранит только «crash», без исключения, и по
+     * журналу было не понять, что упало. Обработчик необработанных
+     * исключений записывает класс исключения, сообщение и верхние строки
+     * стека — только код, без писем и адресов — и передаёт сбой дальше
+     * системе, как раньше. При следующем запуске строка выводится в журнал
+     * рядом с записью о завершении процесса.
+     */
+    fun installCrashNote(context: Context) {
+        val app = context.applicationContext
+        val previous = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, e ->
+            try {
+                app.getSharedPreferences(CRASH_PREFS, Context.MODE_PRIVATE).edit()
+                    .putLong("at", System.currentTimeMillis())
+                    .putString("note", describeCrash(thread, e))
+                    .commit()
+            } catch (_: Throwable) {
+            }
+            previous?.uncaughtException(thread, e)
+        }
+    }
+
+    internal fun describeCrash(thread: Thread, e: Throwable): String {
+        val parts = mutableListOf<String>()
+        var t: Throwable? = e
+        var depth = 0
+        while (t != null && depth < 3) {
+            val cur: Throwable = t
+            val msg = (cur.message ?: "").replace('\n', ' ').take(200)
+            val frames = cur.stackTrace.take(if (depth == 0) 8 else 4)
+                .joinToString(" < ") { "${it.className.substringAfterLast('.')}.${it.methodName}:${it.lineNumber}" }
+            val head = if (msg.isEmpty()) cur.javaClass.name else "${cur.javaClass.name}: $msg"
+            parts.add("$head @ $frames")
+            val next = cur.cause
+            t = if (next === cur) null else next
+            depth++
+        }
+        return "поток ${thread.name}; " + parts.joinToString(" | причина: ")
+    }
+
+    /** Записанная причина сбоя [info] (запись не позже 30 с до сбоя). */
+    private fun javaCrashNote(context: Context, info: ApplicationExitInfo): String? {
+        if (info.reason != ApplicationExitInfo.REASON_CRASH) return null
+        return try {
+            val p = context.getSharedPreferences(CRASH_PREFS, Context.MODE_PRIVATE)
+            val at = p.getLong("at", 0L)
+            val note = p.getString("note", null) ?: return null
+            if (at <= 0L || info.timestamp < at || info.timestamp - at > 30_000L) return null
+            note
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     /**
      * Почему система завершала процесс (Android 11+): нехватка памяти,
      * «оптимизатор» производителя (обычно other/signaled), смахивание,
@@ -277,6 +335,7 @@ object BackgroundDiagnostics {
                         "process" to (it.processName ?: ""),
                         "pid" to it.pid,
                         "trace" to crashTrace(it),
+                        "java" to javaCrashNote(context, it),
                     )
                 }
         } catch (e: Exception) {

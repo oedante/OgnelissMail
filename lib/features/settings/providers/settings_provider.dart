@@ -121,7 +121,11 @@ class AppSettings {
   /// Логотипы отправителей BIMI вместо буквы (1.9.x, просьба владельца
   /// 31.10.2026). Работает, только если сборка знает сервер Ogneliss
   /// (BimiResolver.configured).
-  final bool bimiLogos;
+  /// «Показывать иконки организаций» (2.6.1, одна настройка вместо
+  /// «Логотипов BIMI»): фото из контактов, сохранённые логотипы и значки,
+  /// логотип BIMI, значок сайта отправителя (orgIconProvider). По умолчанию
+  /// выключено: значок сайта телефон запрашивает у самого сайта.
+  final bool orgIcons;
 
   // ── Уведомления ──
   final bool notificationsEnabled;
@@ -244,7 +248,7 @@ class AppSettings {
     this.reduceMotion = false,
     this.uiAnimations = false,
     this.colorBlindMode = 0,
-    this.bimiLogos = true,
+    this.orgIcons = false,
     this.notificationsEnabled = true,
     this.notificationSound = true,
     this.notificationVibration = true,
@@ -339,7 +343,7 @@ class AppSettings {
     bool? reduceMotion,
     bool? uiAnimations,
     int? colorBlindMode,
-    bool? bimiLogos,
+    bool? orgIcons,
     bool? notificationsEnabled,
     bool? notificationSound,
     bool? notificationVibration,
@@ -403,7 +407,7 @@ class AppSettings {
       reduceMotion: reduceMotion ?? this.reduceMotion,
       uiAnimations: uiAnimations ?? this.uiAnimations,
       colorBlindMode: colorBlindMode ?? this.colorBlindMode,
-      bimiLogos: bimiLogos ?? this.bimiLogos,
+      orgIcons: orgIcons ?? this.orgIcons,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       notificationSound: notificationSound ?? this.notificationSound,
       notificationVibration: notificationVibration ?? this.notificationVibration,
@@ -479,7 +483,7 @@ class _K {
   static const reduceMotion = 's_reduce_motion';
   static const uiAnimations = 's_ui_animations';
   static const colorBlindMode = 's_color_blind';
-  static const bimiLogos = 's_bimi_logos';
+  static const orgIcons = 's_org_icons';
   static const notificationsEnabled = 's_notif_on';
   static const notificationSound = 's_notif_sound';
   static const notificationVibration = 's_notif_vib';
@@ -580,7 +584,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       reduceMotion: _p.getBool(_K.reduceMotion) ?? false,
       uiAnimations: _p.getBool(_K.uiAnimations) ?? false,
       colorBlindMode: _p.getInt(_K.colorBlindMode) ?? 0,
-      bimiLogos: _p.getBool(_K.bimiLogos) ?? true,
+      orgIcons: _p.getBool(_K.orgIcons) ?? false,
       notificationsEnabled: _p.getBool(_K.notificationsEnabled) ?? true,
       notificationSound: _p.getBool(_K.notificationSound) ?? true,
       notificationVibration: _p.getBool(_K.notificationVibration) ?? true,
@@ -801,9 +805,9 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(uiAnimations: v);
   }
 
-  Future<void> setBimiLogos(bool v) async {
-    await _p.setBool(_K.bimiLogos, v);
-    state = state.copyWith(bimiLogos: v);
+  Future<void> setOrgIcons(bool v) async {
+    await _p.setBool(_K.orgIcons, v);
+    state = state.copyWith(orgIcons: v);
   }
 
   Future<void> setColorBlindMode(int v) async {
@@ -1023,7 +1027,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       _K.amoled, _K.reading, _K.dynamicColor, _K.allowRotation, _K.warmPage, _K.mailControl, _K.mailDates, _K.myDay, _K.morningDigest, _K.morningDigestMinutes, _K.backgroundKeepAlive, _K.attachmentsWifiOnly,
       _K.themeMode, _K.locale, _K.fontScale, _K.uiScale, _K.uiFont, _K.highContrast,
       _K.themePreset, _K.accentColor, _K.listTint, _K.corners, _K.listDensity, _K.openAnimation,
-      _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode, _K.bimiLogos,
+      _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode, _K.orgIcons,
       _K.notificationsEnabled, _K.notificationSound, _K.notificationVibration,
       _K.notificationMessengerStyle, _K.notificationVipConversations, _K.notificationAllConversations,
       NotificationLines.prefWork, NotificationLines.prefPersonal,

@@ -33,6 +33,10 @@ class FakeMessage {
   /// Ответ на BODYSTRUCTURE (без слова BODYSTRUCTURE), как у настоящего
   /// сервера; null — письмо из одной текстовой части.
   String? bodyStructure;
+
+  /// Письмо целиком (ответ на BODY[] / BODY.PEEK[] — литералом); null —
+  /// сервер BODY[] не отдаёт.
+  String? raw;
 }
 
 class FakeMailbox {
@@ -389,6 +393,17 @@ class _Conn {
               '(("Anna" NIL "anna" "example.com")) (("Anna" NIL "anna" "example.com")) '
               '(("Me" NIL "me" "example.com")) NIL NIL NIL "${m.messageId}")',
       ];
+      final raw = m.raw;
+      if (raw != null && (items.contains('BODY.PEEK[]') || items.contains('BODY[]'))) {
+        // Литерал {N}: число байт, перевод строки, сами байты и «)».
+        final bytes = utf8.encode(raw.replaceAll('\r\n', '\n').replaceAll('\n', '\r\n'));
+        write('* ${i + 1} FETCH (${[...parts, 'BODY[] {${bytes.length}}'].join(' ')}');
+        try {
+          socket.add(bytes);
+        } catch (_) {}
+        write(')');
+        continue;
+      }
       write('* ${i + 1} FETCH (${parts.join(' ')})');
     }
     _ok(tag, 'FETCH completed');

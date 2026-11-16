@@ -770,8 +770,6 @@
     <string name="confirmRecipients">Confirmer les destinataires</string>
     <string name="confirmRecipientsDesc">Avertir lors d’un envoi à des destinataires externes ou à une longue liste</string>
     <string name="antiPhishing">Anti-hameçonnage</string>
-    <string name="bimiLogos">Logos des expéditeurs (BIMI)</string>
-    <string name="bimiLogosDesc">Le domaine de l’expéditeur est vérifié via le serveur Ogneliss ; les adresses et les messages ne sont pas transmis ; aucun logo n’est recherché pour les boîtes Google</string>
     <string name="phishingOff">Désactivé</string>
     <string name="dangerOnly">Dangereux uniquement</string>
     <string name="dangerOnlyDesc">Afficher uniquement les menaces avérées</string>
@@ -4320,4 +4318,11 @@
     <string name="assignQuestionAbout">Question sur la tâche « {title} » ({code}) :</string>
     <string name="assignWriteExecutor">Écrire à l’exécutant</string>
     <string name="assignWriteAbout">À propos de la tâche « {title} » ({code}) :</string>
+    <string name="orgIcons">Afficher les icônes des organisations</string>
+    <string name="orgIconsDesc">Uniquement pour les expéditeurs vérifiés. L’icône du site est demandée au site lui-même (une fois par mois et par domaine), le logo BIMI au serveur Ogneliss (domaine seulement) ; la messagerie pro Exchange n’est pas concernée</string>
+    <string name="accountLabel">Nom de la boîte</string>
+    <string name="accountLabelHint">Par exemple : Travail, Famille</string>
+    <string name="accountLabelEmpty">Non défini — une partie de l’adresse est affichée</string>
+    <string name="accountLabelAsk">Comment nommer cette boîte ?</string>
+    <string name="accountLabelAskBody">Le nom apparaît dans les notifications et sur l’écran du courrier. Vous pouvez le modifier dans les réglages de la boîte.</string>
 </resources>

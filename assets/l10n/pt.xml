@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Não definido — aparece parte do endereço</string>
     <string name="accountLabelAsk">Como quer chamar esta caixa?</string>
     <string name="accountLabelAskBody">O nome aparece nas notificações e na tela do e-mail. Você pode mudá-lo nas configurações da caixa.</string>
+    <string name="assignMsgChecklist">Lista de verificação alterada:</string>
+    <string name="assignChecklistPending">As alterações da lista serão enviadas aos participantes em alguns segundos.</string>
+    <string name="assignRoleMeExecute">Executo</string>
+    <string name="assignRoleMeOwn">Atribuídas por mim</string>
+    <string name="assignStatsProgress">Andamento do trabalho</string>
+    <string name="assignStatsProgressHint">A cor da linha mostra a sua função, como nos filtros acima; o prazo fica no fim da barra, em vermelho se vencido. Toque numa linha para abri-la.</string>
+    <string name="assignStatsWeek">Vencem esta semana</string>
 </resources>

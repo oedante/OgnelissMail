@@ -1,6 +1,7 @@
 // Поручения со сроком — слой календаря (замечание владельца 10.11.2026:
 // «в календаре поручения не отображаются»).
 
+import 'package:flutter/painting.dart' show Color;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/features/calendar/calendar_data.dart';
@@ -91,5 +92,15 @@ void main() {
     final toMe = items([_v('B', due: DateTime(2026, 11, 12), outgoing: false)]).single;
     expect(toMe.organizerEmail, 'boss@example.com');
     expect(attendeeSummary(toMe).organizer, 'Олег');
+  });
+
+  test('моя роль — цветом и подписью: исполняю и поручил различаются (16.11.2026)', () {
+    final mine = items([_v('A', due: DateTime(2026, 11, 12))]).single;
+    final toMe = items([_v('B', due: DateTime(2026, 11, 12), outgoing: false)]).single;
+    expect(mine.description, 'assignRoleMeOwn');
+    expect(toMe.description, 'assignRoleMeExecute');
+    expect(mine.colorValue, isNotNull);
+    expect(toMe.colorValue, isNot(mine.colorValue));
+    expect(eventColor(toMe, const {}), Color(toMe.colorValue!));
   });
 }

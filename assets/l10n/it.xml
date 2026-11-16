@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Non impostato: viene mostrata parte dell’indirizzo</string>
     <string name="accountLabelAsk">Come vuoi chiamare questa casella?</string>
     <string name="accountLabelAskBody">Il nome compare nelle notifiche e nella schermata della posta. Puoi cambiarlo nelle impostazioni della casella.</string>
+    <string name="assignMsgChecklist">Checklist modificata:</string>
+    <string name="assignChecklistPending">Le modifiche alla checklist saranno inviate ai partecipanti tra pochi secondi.</string>
+    <string name="assignRoleMeExecute">Eseguo</string>
+    <string name="assignRoleMeOwn">Assegnate da me</string>
+    <string name="assignStatsProgress">Andamento del lavoro</string>
+    <string name="assignStatsProgressHint">Il colore della riga indica il tuo ruolo, come nei filtri sopra; la scadenza è alla fine della barra, in rosso se superata. Tocca una riga per aprirla.</string>
+    <string name="assignStatsWeek">Scadenza questa settimana</string>
 </resources>

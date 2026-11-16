@@ -108,7 +108,7 @@ void main() {
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
 
-  testWidgets('сводка: показатели, статусы, исполнители, сроки', (t) async {
+  testWidgets('сводка: ход работ диаграммой Ганта, моя роль цветом и фильтром (16.11.2026)', (t) async {
     await t.binding.setSurfaceSize(const Size(800, 2000));
     await open(t);
     final all = [
@@ -120,24 +120,30 @@ void main() {
     await t.pumpWidget(wrap(const AssignmentsSummaryScreen(), all));
     await settle(t, 'Сводка');
     expect(find.text('Сводка'), findsOneWidget);
-    // «Я поручил»: A, B, C; просрочено — A; в срок — C.
-    Finder tile(String prefix) =>
-        find.byWidgetPredicate((w) => w is Semantics && (w.properties.label ?? '').startsWith(prefix));
-    expect(tile('Действующие: 2'), findsOneWidget);
-    expect(tile('Просрочено: 1'), findsOneWidget);
-    expect(tile('В срок: 100%'), findsOneWidget);
-    expect(find.text('Исполнители'), findsOneWidget);
-    // Имя — и в «Исполнителях», и второй строкой на диаграмме сроков.
-    expect(find.text('Вера'), findsWidgets);
-    expect(find.text('Дмитрий'), findsOneWidget, reason: 'его поручение выполнено — на диаграмме сроков его нет');
-    // Сроки — диаграммой Ганта: просроченное (A) первым.
-    expect(find.text('Сроки'), findsOneWidget);
+    // Первым — диаграмма «Ход работ»; плиток, статусов и людей больше нет.
+    expect(find.text('Ход работ'), findsOneWidget);
     expect(find.byType(GanttChart), findsOneWidget);
-    // «Мне поручили» — только D, человек — поручивший.
-    await t.tap(find.text('Мне поручили'));
+    expect(find.text('Исполнители'), findsNothing);
+    // Фильтр по моей роли со счётчиками: действующие A, B (поручил я), D (мне).
+    expect(find.text('Все · 3'), findsOneWidget);
+    expect(find.text('Исполняю · 1'), findsOneWidget);
+    expect(find.text('Поручил · 2'), findsOneWidget);
+    // Одна строка счётчиков.
+    expect(find.textContaining('Просрочено 1'), findsOneWidget);
+    // Второй строкой — моя роль, исполнитель и стадия; выполненного (C) нет.
+    expect(find.textContaining('Поручил · Вера'), findsNWidgets(2));
+    expect(find.textContaining('Дмитрий'), findsNothing);
+    // Строки подсвечены цветом роли.
+    final gantt = t.widget<GanttChart>(find.byType(GanttChart));
+    expect(gantt.styles.keys, unorderedEquals(['A', 'B']));
+    expect(gantt.styles['A']!.accent, isNotNull);
+    expect(gantt.dueLabels, isTrue);
+    expect(find.textContaining('Без срока: 1'), findsOneWidget, reason: 'D без срока — не на диаграмме');
+    // «Исполняю» — только D, а у него нет срока.
+    await t.tap(find.text('Исполняю · 1'));
     await t.pump(const Duration(milliseconds: 300));
-    expect(find.text('Постановщики'), findsOneWidget);
-    expect(find.text('Олег'), findsWidgets);
+    expect(find.byType(GanttChart), findsNothing);
+    expect(find.text('Пока нечего показать'), findsOneWidget);
     await close(t);
     await t.binding.setSurfaceSize(null);
   });

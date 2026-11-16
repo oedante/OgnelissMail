@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Inte angivet — en del av adressen visas</string>
     <string name="accountLabelAsk">Vad ska brevlådan heta?</string>
     <string name="accountLabelAskBody">Namnet visas i aviseringar och på e-postskärmen. Du kan ändra det i brevlådans inställningar.</string>
+    <string name="assignMsgChecklist">Checklistan ändrad:</string>
+    <string name="assignChecklistPending">Ändringar i checklistan skickas till deltagarna om några sekunder.</string>
+    <string name="assignRoleMeExecute">Utför</string>
+    <string name="assignRoleMeOwn">Tilldelat av mig</string>
+    <string name="assignStatsProgress">Arbetets gång</string>
+    <string name="assignStatsProgressHint">Radens färg visar din roll som i filtren ovan; förfallodatum står vid stapelns slut, försenade i rött. Tryck på en rad för att öppna den.</string>
+    <string name="assignStatsWeek">Förfaller denna vecka</string>
 </resources>

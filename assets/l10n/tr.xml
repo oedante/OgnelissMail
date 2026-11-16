@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Ayarlanmadı — adresin bir kısmı gösterilir</string>
     <string name="accountLabelAsk">Bu posta kutusunun adı ne olsun?</string>
     <string name="accountLabelAskBody">Ad, bildirimlerde ve posta ekranında görünür. Posta kutusu ayarlarından değiştirebilirsiniz.</string>
+    <string name="assignMsgChecklist">Kontrol listesi değişti:</string>
+    <string name="assignChecklistPending">Kontrol listesi değişiklikleri birkaç saniye içinde katılımcılara gönderilecek.</string>
+    <string name="assignRoleMeExecute">Yürütüyorum</string>
+    <string name="assignRoleMeOwn">Benim verdiğim</string>
+    <string name="assignStatsProgress">İşin gidişatı</string>
+    <string name="assignStatsProgressHint">Satır rengi, yukarıdaki filtrelerdeki gibi rolünüzü gösterir; son tarih çubuğun sonunda, gecikenler kırmızıdır. Açmak için bir satıra dokunun.</string>
+    <string name="assignStatsWeek">Bu hafta süresi dolan</string>
 </resources>

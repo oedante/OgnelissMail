@@ -29,6 +29,10 @@ void main() {
     });
   });
 
+  test('иконки организаций (BIMI и значки сайтов) — по умолчанию включены (16.11.2026)', () {
+    expect(const AppSettings().orgIcons, isTrue);
+  });
+
   group('Кружки с буквой', () {
     test('цвет постоянный и не зависит от регистра адреса', () {
       expect(avatarColorValue('Ivan@Firm.ru'), avatarColorValue('ivan@firm.ru'));

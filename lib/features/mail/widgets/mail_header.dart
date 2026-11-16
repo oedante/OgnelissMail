@@ -46,7 +46,11 @@ class MailSenderTitle extends StatelessWidget {
     return InkWell(
       borderRadius: Radii.chipAll,
       onTap: () => showPersonCard(context,
-          email: email.from.email, name: email.from.displayName, accountId: email.accountId),
+          email: email.from.email,
+          name: email.from.displayName,
+          accountId: email.accountId,
+          authResults: email.authResults,
+          folder: (account: email.accountId, folder: email.folderId)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: Space.xs),
         child: Row(children: [

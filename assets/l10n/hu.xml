@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Nincs megadva — a cím egy része látszik</string>
     <string name="accountLabelAsk">Mi legyen a postafiók neve?</string>
     <string name="accountLabelAskBody">A név megjelenik az értesítésekben és a levelezés képernyőjén. A postafiók beállításaiban módosíthatja.</string>
+    <string name="assignMsgChecklist">Ellenőrzőlista módosult:</string>
+    <string name="assignChecklistPending">A lista változásai néhány másodpercen belül elmennek a résztvevőknek.</string>
+    <string name="assignRoleMeExecute">Végzem</string>
+    <string name="assignRoleMeOwn">Én adtam ki</string>
+    <string name="assignStatsProgress">A munka menete</string>
+    <string name="assignStatsProgressHint">A sor színe a szerepét mutatja, mint a fenti szűrőkben; a határidő a sáv végén, a lejárt pirossal. Koppintson egy sorra a megnyitáshoz.</string>
+    <string name="assignStatsWeek">Határidő a héten</string>
 </resources>

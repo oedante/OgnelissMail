@@ -4367,4 +4367,11 @@
     <string name="accountLabelEmpty">Не задано — видна часть адреса</string>
     <string name="accountLabelAsk">Как назвать ящик?</string>
     <string name="accountLabelAskBody">Название видно в уведомлениях и на экране почты. Его можно изменить в настройках ящика.</string>
+    <string name="assignMsgChecklist">Чек-лист изменён:</string>
+    <string name="assignChecklistPending">Изменения чек-листа уйдут участникам через несколько секунд.</string>
+    <string name="assignRoleMeExecute">Исполняю</string>
+    <string name="assignRoleMeOwn">Поручил</string>
+    <string name="assignStatsProgress">Ход работ</string>
+    <string name="assignStatsProgressHint">Цвет строки — ваша роль, как у фильтров вверху; срок — у конца полосы, просроченный — красным. Нажмите строку, чтобы открыть поручение.</string>
+    <string name="assignStatsWeek">Срок на неделе</string>
 </resources>

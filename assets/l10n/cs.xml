@@ -4346,4 +4346,11 @@
     <string name="accountLabelEmpty">Nenastaveno — zobrazuje se část adresy</string>
     <string name="accountLabelAsk">Jak pojmenovat schránku?</string>
     <string name="accountLabelAskBody">Název se zobrazuje v oznámeních a na obrazovce pošty. Můžete ho změnit v nastavení schránky.</string>
+    <string name="assignMsgChecklist">Kontrolní seznam změněn:</string>
+    <string name="assignChecklistPending">Změny seznamu se účastníkům odešlou za několik sekund.</string>
+    <string name="assignRoleMeExecute">Plním</string>
+    <string name="assignRoleMeOwn">Zadal jsem</string>
+    <string name="assignStatsProgress">Průběh prací</string>
+    <string name="assignStatsProgressHint">Barva řádku ukazuje vaši roli jako u filtrů nahoře; termín je na konci pruhu, prošlý červeně. Klepnutím na řádek jej otevřete.</string>
+    <string name="assignStatsWeek">Termín tento týden</string>
 </resources>

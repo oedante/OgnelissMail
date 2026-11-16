@@ -135,7 +135,16 @@ typedef TaskMarker = ({
 
 /// Отметка статуса в ответе. [checks] — выполненные пункты чек-листа
 /// («0110»), [go] — «Можно начинать» (предыдущий этап принят).
-typedef StatusMarker = ({String id, int status, String? ev, String? checks, bool go});
+typedef StatusMarker = ({
+  String id,
+  int status,
+  String? ev,
+  String? checks,
+  bool go,
+  // Чек-лист целиком — пункты с отметками (16.11.2026): пункты, добавленные
+  // исполнителем, доходят до постановщика; отметки — по тексту пункта.
+  List<({String text, bool done})>? items,
+});
 
 /// Отметка «добавлен участник» (передача исполнения, 12.11.2026).
 typedef PeopleMarker = ({String id, String email, int role, String? name, String? ev});
@@ -176,6 +185,14 @@ abstract final class AssignmentCodec {
     if (m == null) return null;
     return (id: m.group(1)!, act: m.group(2)!, arg: m.group(3));
   }
+
+  /// Текст ответа без служебных номеров OGN-… (16.11.2026: номер попадал в
+  /// «Результат» и историю).
+  static String stripTags(String text) => text
+      .replaceAll(RegExp('OGN-$_code(?:-[A-Z](?:[0-9]{8}(?:T[0-9]{4})?)?)?(?![0-9A-Za-z])'), '')
+      .replaceAll(RegExp(r'[ \t]+\n'), '\n')
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n')
+      .trim();
 
   /// Код поручения по тегу в теле (HTML или текст, и в цитате ответа);
   /// null — не поручение. Первый тег — самого нового письма цепочки.
@@ -260,7 +277,9 @@ abstract final class AssignmentCodec {
         'ck=${checklist.map((t) => Uri.encodeComponent(t.trim())).where((t) => t.isNotEmpty).join('|')}',
       if (plan != null && plan.isNotEmpty) 'pl=${base64Url.encode(utf8.encode(plan))}',
       if (rev != null) 'rv=$rev',
-      if (rev != null && d.isNotEmpty) 'de=${base64Url.encode(utf8.encode(d.length > 4000 ? d.substring(0, 4000) : d))}',
+      // Пояснение — и в первом письме (16.11.2026: у исполнителя поручение
+      // появлялось без пояснения).
+      if (d.isNotEmpty) 'de=${base64Url.encode(utf8.encode(d.length > 4000 ? d.substring(0, 4000) : d))}',
       if (owner != null && owner.contains('@')) 'ow=${_clean(owner.toLowerCase())}',
       if (deputies.isNotEmpty) 'dep=${_emails(deputies)}',
       if (removed) 'rm=1',
@@ -271,8 +290,10 @@ abstract final class AssignmentCodec {
   }
 
   /// Отметка статуса (в ответе исполнителя или поручившего). [checks] —
-  /// выполненные пункты чек-листа строкой «0110»; [go] — «Можно начинать».
-  static String statusMarker(String id, int status, {String? ev, String? checks, bool go = false}) =>
+  /// выполненные пункты чек-листа строкой «0110» (для прежних версий);
+  /// [items] — пункты целиком с отметками; [go] — «Можно начинать».
+  static String statusMarker(String id, int status,
+          {String? ev, String? checks, bool go = false, List<({String text, bool done})>? items}) =>
       _marker(
           'data-ogneliss-status',
           [
@@ -281,6 +302,8 @@ abstract final class AssignmentCodec {
             's=${AssignmentStatus.code(status)}',
             if (ev != null) 'ev=${_clean(ev)}',
             if (checks != null && RegExp(r'^[01]{1,200}$').hasMatch(checks)) 'ck=$checks',
+            if (items != null && items.isNotEmpty)
+              'cl=${items.where((i) => i.text.trim().isNotEmpty).take(200).map((i) => '${i.done ? 1 : 0}${Uri.encodeComponent(i.text.trim())}').join('|')}',
             if (go) 'go=1',
           ].join(';'));
 
@@ -424,12 +447,26 @@ abstract final class AssignmentCodec {
     final s = AssignmentStatus.fromCode(fields['s'] ?? '');
     if (id == null || s == null || !RegExp('^$_code\$').hasMatch(id)) return null;
     final ck = fields['ck'];
+    List<({String text, bool done})>? items;
+    final cl = fields['cl'];
+    if (cl != null && cl.isNotEmpty) {
+      items = [];
+      for (final part in cl.split('|')) {
+        if (part.length < 2 || (part[0] != '0' && part[0] != '1')) continue;
+        try {
+          final t = Uri.decodeComponent(part.substring(1)).trim();
+          if (t.isNotEmpty) items.add((text: t.length > 300 ? t.substring(0, 300) : t, done: part[0] == '1'));
+        } catch (_) {}
+      }
+      if (items.isEmpty) items = null;
+    }
     return (
       id: id,
       status: s,
       ev: fields['ev'],
       checks: ck != null && RegExp(r'^[01]{1,200}$').hasMatch(ck) ? ck : null,
       go: fields['go'] == '1',
+      items: items,
     );
   }
 

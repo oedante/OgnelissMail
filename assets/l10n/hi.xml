@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">सेट नहीं — पते का हिस्सा दिखता है</string>
     <string name="accountLabelAsk">इस मेलबॉक्स का नाम क्या रखें?</string>
     <string name="accountLabelAskBody">नाम सूचनाओं और मेल स्क्रीन पर दिखता है। इसे मेलबॉक्स की सेटिंग्स में बदला जा सकता है।</string>
+    <string name="assignMsgChecklist">चेकलिस्ट बदली गई:</string>
+    <string name="assignChecklistPending">चेकलिस्ट के बदलाव कुछ सेकंड में प्रतिभागियों को भेजे जाएंगे।</string>
+    <string name="assignRoleMeExecute">मैं कर रहा हूँ</string>
+    <string name="assignRoleMeOwn">मेरे द्वारा सौंपे</string>
+    <string name="assignStatsProgress">काम की प्रगति</string>
+    <string name="assignStatsProgressHint">पंक्ति का रंग आपकी भूमिका दिखाता है, ऊपर के फ़िल्टर की तरह; समय-सीमा पट्टी के अंत में, बीती हुई लाल में। खोलने के लिए पंक्ति पर टैप करें।</string>
+    <string name="assignStatsWeek">इस सप्ताह देय</string>
 </resources>

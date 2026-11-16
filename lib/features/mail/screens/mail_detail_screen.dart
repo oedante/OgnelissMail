@@ -18,7 +18,6 @@ import '../../../widgets/common/peek_card.dart' show AppMenuEntry, PeekAction, P
 import '../message_window.dart';
 import '../../assignments/assign_sheet.dart' show showAssignSheet;
 import '../../assignments/assignment_widgets.dart';
-import '../../../services/assignments/assignment_codec.dart' show AssignmentCodec;
 import '../../../services/assignments/assignment_service.dart';
 import '../widgets/mail_peek_card.dart' show showMailPeek;
 import '../widgets/unsubscribe_banner.dart';
@@ -244,6 +243,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   @override
   void initState() {
     super.initState();
+    ExperimentalKeys.mailViewChanged.addListener(_onMailViewPrefs);
     // Докачка «Писем на телефоне» ждёт несколько секунд: сеть и процессор —
     // открытому письму.
     ref.read(offlineStoreProvider).hold();
@@ -364,6 +364,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
 
   @override
   void dispose() {
+    ExperimentalKeys.mailViewChanged.removeListener(_onMailViewPrefs);
     _routeAnim?.removeStatusListener(_onRouteStatus);
     _inlineWait?.cancel();
     _shownTimer?.cancel();
@@ -1144,6 +1145,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
 
   /// Компьютер: встроенное окно браузера не показало это письмо — виджетами.
   String? _webFailedFor;
+
+  /// Компьютер: тело письма сейчас во встроенном окне браузера.
+  bool _desktopWeb = false;
   String? _whyMarkedFor;
 
   /// Простое письмо — виджетами (MailNativeBody); null — показывать в WebView
@@ -1406,9 +1410,20 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     safeSetState(() {});
   }
 
+  /// Выключатели показа письма изменились — открытое письмо сразу
+  /// показывается по-новому (окно или виджеты; прежний сбой окна забыт).
+  void _onMailViewPrefs() {
+    _webFailedFor = null;
+    _natives.clear();
+    _nativeBuilding.clear();
+    _docGen++;
+    safeSetState(() {});
+  }
+
   /// Тело письма сейчас в окне браузера (простое письмо виджетами не
   /// перекрашивается — «Исходные цвета» ему не нужны).
   bool _inWebView(EmailModel e) {
+    if (mailDesktopWebViewSupported) return _desktopWeb && (e.bodyHtml ?? '').isNotEmpty;
     if (!mailWebViewSupported || (e.bodyHtml ?? '').isEmpty) return false;
     if (!(ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.nativeMail) ?? true)) return true;
     final split = _split;
@@ -1438,11 +1453,16 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // 12.11.2026, Windows — 14.11.2026; с 2.5.4 включено по умолчанию,
     // выключается в «Открытии писем»); окно не показало письмо или WebView2
     // на компьютере нет — как раньше, виджетами.
+    // 16.11.2026: и простое письмо — в окне, если «Простые письма без
+    // браузера» выключены (как на телефоне; раньше этот выключатель на
+    // компьютере ничего не менял).
+    final prefs = ref.read(sharedPrefsProvider);
     final desktopWeb = mailDesktopWebViewSupported &&
-        _prepared?.nativeWhy != null &&
+        (prefs.getBool(ExperimentalKeys.macWebMail) ?? true) &&
+        (_prepared?.nativeWhy != null || !(prefs.getBool(ExperimentalKeys.nativeMail) ?? true)) &&
         _webFailedFor != email.id &&
-        DesktopMailWebView.usable &&
-        (ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.macWebMail) ?? true);
+        DesktopMailWebView.usable;
+    _desktopWeb = desktopWeb;
     final Widget body;
     if (desktopWeb) {
       final dark = theme.brightness == Brightness.dark;

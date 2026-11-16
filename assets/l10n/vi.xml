@@ -4304,4 +4304,11 @@
     <string name="accountLabelEmpty">Chưa đặt — hiển thị một phần địa chỉ</string>
     <string name="accountLabelAsk">Đặt tên hộp thư này là gì?</string>
     <string name="accountLabelAskBody">Tên hiển thị trong thông báo và trên màn hình thư. Bạn có thể đổi trong cài đặt hộp thư.</string>
+    <string name="assignMsgChecklist">Danh sách kiểm tra đã thay đổi:</string>
+    <string name="assignChecklistPending">Thay đổi danh sách sẽ được gửi đến người tham gia sau vài giây.</string>
+    <string name="assignRoleMeExecute">Tôi thực hiện</string>
+    <string name="assignRoleMeOwn">Tôi giao</string>
+    <string name="assignStatsProgress">Tiến độ công việc</string>
+    <string name="assignStatsProgressHint">Màu của hàng cho biết vai trò của bạn, như ở bộ lọc phía trên; hạn ở cuối thanh, quá hạn màu đỏ. Chạm vào hàng để mở.</string>
+    <string name="assignStatsWeek">Hạn trong tuần</string>
 </resources>

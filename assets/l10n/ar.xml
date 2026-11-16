@@ -4409,4 +4409,11 @@
     <string name="accountLabelEmpty">غير محدد — يظهر جزء من العنوان</string>
     <string name="accountLabelAsk">ما الاسم الذي تريده لهذا الصندوق؟</string>
     <string name="accountLabelAskBody">يظهر الاسم في الإشعارات وعلى شاشة البريد. يمكنك تغييره من إعدادات الصندوق.</string>
+    <string name="assignMsgChecklist">تم تحديث قائمة التحقق:</string>
+    <string name="assignChecklistPending">سيتم إرسال تغييرات قائمة التحقق إلى المشاركين خلال ثوانٍ.</string>
+    <string name="assignRoleMeExecute">أنفّذ</string>
+    <string name="assignRoleMeOwn">كلّفتُ بها</string>
+    <string name="assignStatsProgress">سير العمل</string>
+    <string name="assignStatsProgressHint">لون الصف يبيّن دورك كما في عوامل التصفية أعلاه؛ الموعد في نهاية الشريط، والمتأخر بالأحمر. اضغط على صف لفتحه.</string>
+    <string name="assignStatsWeek">مستحقة هذا الأسبوع</string>
 </resources>

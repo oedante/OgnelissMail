@@ -30,6 +30,13 @@ class GanttChart extends StatefulWidget {
   /// Открыть на сегодняшнем дне (сводка), а не на первом незавершённом.
   final bool focusToday;
 
+  /// Вид строк по id (сводка, 16.11.2026): цвет моей роли — полоска слева
+  /// и лёгкий фон строки; отступ — этап внутри проекта.
+  final Map<String, GanttRowStyle> styles;
+
+  /// Срок — подписью у конца полосы («до 18.11»; прошёл — красным).
+  final bool dueLabels;
+
   const GanttChart({
     super.key,
     required this.stages,
@@ -38,6 +45,8 @@ class GanttChart extends StatefulWidget {
     this.numbered = true,
     this.showAssignee = false,
     this.focusToday = false,
+    this.styles = const {},
+    this.dueLabels = false,
   });
 
   static const rowHeight = 40.0;
@@ -60,7 +69,8 @@ class _GanttChartState extends State<GanttChart> {
       for (final s in widget.stages) ...[if (s.start != null) _day(s.start!), if (s.due != null) _day(s.due!)],
     ];
     var from = dates.reduce((a, b) => a.isBefore(b) ? a : b).subtract(const Duration(days: 1));
-    var to = dates.reduce((a, b) => a.isAfter(b) ? a : b).add(const Duration(days: 2));
+    // Справа — место для подписи срока.
+    var to = dates.reduce((a, b) => a.isAfter(b) ? a : b).add(Duration(days: widget.dueLabels ? 4 : 2));
     // Не меньше двух недель — диаграмма не сжимается в столбик.
     if (to.difference(from).inDays < 14) to = from.add(const Duration(days: 14));
     from = DateTime(from.year, from.month, from.day);
@@ -103,7 +113,7 @@ class _GanttChartState extends State<GanttChart> {
     }
     // Колонка названий — шире на планшете и компьютере.
     final screen = MediaQuery.sizeOf(context).width;
-    final namesWidth = screen >= 1000 ? 260.0 : (screen >= 600 ? 200.0 : 132.0);
+    final namesWidth = screen >= 1000 ? 260.0 : (screen >= 600 ? 200.0 : (widget.showAssignee ? 156.0 : 132.0));
     final names = SizedBox(
       width: namesWidth,
       height: height,
@@ -132,12 +142,19 @@ class _GanttChartState extends State<GanttChart> {
         for (var i = 0; i < rows; i++)
           InkWell(
             onTap: widget.onTap == null ? null : () => widget.onTap!(widget.stages[i].id),
-            child: SizedBox(
+            child: Container(
               height: GanttChart.rowHeight,
+              decoration: BoxDecoration(
+                color: widget.styles[widget.stages[i].id]?.accent?.withValues(alpha: 0.10),
+                border: widget.styles[widget.stages[i].id]?.accent == null
+                    ? null
+                    : Border(left: BorderSide(color: widget.styles[widget.stages[i].id]!.accent!, width: 4)),
+              ),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: Space.m, right: Space.xs),
+                  padding: EdgeInsets.only(
+                      left: Space.m + 14.0 * (widget.styles[widget.stages[i].id]?.indent ?? 0), right: Space.xs),
                   child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(widget.numbered ? '${i + 1}. ${widget.stages[i].title}' : widget.stages[i].title,
                         maxLines: widget.showAssignee ? 1 : 2,
@@ -175,6 +192,8 @@ class _GanttChartState extends State<GanttChart> {
             locale: l10n.localeCode,
             colors: _GanttColors.of(context),
             textStyle: theme.textTheme.labelSmall ?? const TextStyle(fontSize: 11),
+            styles: widget.styles,
+            dueLabel: widget.dueLabels ? l10n.tr('assignDueShort') : null,
           ),
         ),
       ),
@@ -202,6 +221,7 @@ class _GanttColors {
   final Color late;
   final Color waiting;
   final Color arrow;
+  final Color surface;
 
   const _GanttColors({
     required this.grid,
@@ -216,6 +236,7 @@ class _GanttColors {
     required this.late,
     required this.waiting,
     required this.arrow,
+    required this.surface,
   });
 
   static _GanttColors of(BuildContext context) {
@@ -233,8 +254,17 @@ class _GanttColors {
       late: AppColors.errorText(context),
       waiting: s.outline.withValues(alpha: 0.35),
       arrow: s.onSurfaceVariant,
+      surface: s.surface,
     );
   }
+}
+
+/// Вид строки диаграммы: [accent] — цвет моей роли, [indent] — уровень
+/// (этап внутри проекта — 1).
+class GanttRowStyle {
+  final Color? accent;
+  final int indent;
+  const GanttRowStyle({this.accent, this.indent = 0});
 }
 
 class _GanttPainter extends CustomPainter {
@@ -245,6 +275,10 @@ class _GanttPainter extends CustomPainter {
   final String locale;
   final _GanttColors colors;
   final TextStyle textStyle;
+  final Map<String, GanttRowStyle> styles;
+
+  /// Подпись срока («до {due}»); null — без подписей.
+  final String? dueLabel;
 
   _GanttPainter({
     required this.stages,
@@ -254,6 +288,8 @@ class _GanttPainter extends CustomPainter {
     required this.locale,
     required this.colors,
     required this.textStyle,
+    this.styles = const {},
+    this.dueLabel,
   });
 
   static const _done = 4;
@@ -341,7 +377,17 @@ class _GanttPainter extends CustomPainter {
       canvas.drawPath(head, Paint()..color = colors.arrow);
     }
 
+    // Строки моей роли — лёгким фоном (как в колонке названий).
+    for (var i = 0; i < stages.length; i++) {
+      final accent = styles[stages[i].id]?.accent;
+      if (accent == null) continue;
+      canvas.drawRect(
+          Rect.fromLTWH(0, GanttChart.headerHeight + i * GanttChart.rowHeight, size.width, GanttChart.rowHeight),
+          Paint()..color = accent.withValues(alpha: 0.10));
+    }
+    final dueFmt = DateFormat('d.MM', locale);
     // Полосы этапов.
+    final dueTexts = <(String, Offset, bool)>[];
     for (var i = 0; i < stages.length; i++) {
       final b = _bar(i);
       if (b == null) continue;
@@ -389,6 +435,12 @@ class _GanttPainter extends CustomPainter {
           ..close();
         canvas.drawPath(d, Paint()..color = colors.done);
       }
+      // Срок — у конца полосы; прошёл — красным. Рисуется поверх линии
+      // «сегодня» (ниже), на подложке.
+      final dl = dueLabel;
+      if (dl != null && s.due != null && status != _done) {
+        dueTexts.add((dl.replaceAll('{due}', dueFmt.format(s.due!)), Offset(b.bar.right + 6, b.bar.center.dy), late));
+      }
       final pct = '${(fill * 100).round()}%';
       if (fill > 0 && fill < 1 && b.bar.width > 34) {
         final h = (textStyle.fontSize ?? 11) * 1.3;
@@ -408,9 +460,23 @@ class _GanttPainter extends CustomPainter {
             ..color = colors.today
             ..strokeWidth = 1.5);
     }
+    for (final (t, at, late) in dueTexts) {
+      final tp = TextPainter(
+        text: TextSpan(
+            text: t,
+            style: textStyle.copyWith(color: late ? colors.late : colors.muted, fontWeight: late ? FontWeight.w700 : null)),
+        textDirection: TextDirection.ltr,
+        maxLines: 1,
+      )..layout(maxWidth: 90);
+      final o = Offset(at.dx, at.dy - tp.height / 2);
+      canvas.drawRRect(
+          RRect.fromRectAndRadius(Rect.fromLTWH(o.dx - 3, o.dy - 1, tp.width + 6, tp.height + 2), const Radius.circular(4)),
+          Paint()..color = colors.surface.withValues(alpha: 0.85));
+      tp.paint(canvas, o);
+    }
   }
 
   @override
   bool shouldRepaint(covariant _GanttPainter old) =>
-      old.stages != stages || old.from != from || old.days != days || old.today != today;
+      old.stages != stages || old.from != from || old.days != days || old.today != today || old.styles != styles;
 }

@@ -42,8 +42,17 @@ class ExperimentalKeys {
   /// Mac и Windows: сложные письма — во встроенном окне браузера (Mac —
   /// 12.11.2026, Windows — 14.11.2026; DesktopMailWebView). С 2.5.4
   /// включено по умолчанию (владелец 15.11.2026: «не работал html
-  /// просмотр писем»); выключенное вручную остаётся выключенным.
-  static const macWebMail = 'mac_web_mail_on';
+  /// просмотр писем»). С 2.6.2 — новое имя ключа (прежнее —
+  /// 'mac_web_mail_on'): владелец 16.11.2026 «настройка не работает —
+  /// исправим и включим по умолчанию»; выключенное до починки включается
+  /// у всех один раз, дальше выбор пользователя сохраняется.
+  static const macWebMail = 'desktop_web_mail_v2';
+
+  /// Выключатели показа письма ([macWebMail], [nativeMail]) изменились —
+  /// открытое письмо перерисовывается сразу (16.11.2026: раньше выбор
+  /// применялся только к следующему открытому письму, и казалось, что
+  /// настройка не работает).
+  static final mailViewChanged = ValueNotifier<int>(0);
 
   // ── «Экспериментальный функционал» (1.10.3): по умолчанию выключено ──
 
@@ -73,7 +82,11 @@ mixin _Prefs<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   bool pref(String key, {bool def = true}) => ref.read(sharedPrefsProvider).getBool(key) ?? def;
 
   void setPref(String key, bool v) {
-    unawaited(ref.read(sharedPrefsProvider).setBool(key, v));
+    unawaited(ref.read(sharedPrefsProvider).setBool(key, v).then((_) {
+      if (key == ExperimentalKeys.macWebMail || key == ExperimentalKeys.nativeMail) {
+        ExperimentalKeys.mailViewChanged.value++;
+      }
+    }));
     setState(() {});
   }
 }

@@ -43,13 +43,18 @@ Future<void> showPersonCard(
   required String email,
   String? name,
   String? accountId,
+  // Отправитель письма (16.11.2026): проверка отправителя и папка письма —
+  // для иконки организации, как в шапке письма.
+  String? authResults,
+  ({String account, String folder})? folder,
 }) {
   HapticFeedback.selectionClick();
   return showAppSheet<void>(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
-    builder: (_) => _PersonCard(email: email.trim(), name: name, accountId: accountId),
+    builder: (_) =>
+        _PersonCard(email: email.trim(), name: name, accountId: accountId, authResults: authResults, folder: folder),
   );
 }
 
@@ -57,7 +62,9 @@ class _PersonCard extends ConsumerStatefulWidget {
   final String email;
   final String? name;
   final String? accountId;
-  const _PersonCard({required this.email, this.name, this.accountId});
+  final String? authResults;
+  final ({String account, String folder})? folder;
+  const _PersonCard({required this.email, this.name, this.accountId, this.authResults, this.folder});
 
   @override
   ConsumerState<_PersonCard> createState() => _PersonCardState();
@@ -200,6 +207,8 @@ class _PersonCardState extends ConsumerState<_PersonCard> {
                       color: HeroEmailAvatar.colorForEmail(widget.email),
                       email: widget.email,
                       photo: p?.avatarUrl,
+                      authResults: widget.authResults,
+                      folder: widget.folder,
                       radius: 32,
                     ),
                   ),

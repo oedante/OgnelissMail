@@ -267,26 +267,52 @@ class SiteIconService {
   static Future<Uint8List?> fetchIcon(String domain, {http.Client? client}) async {
     final c = client ?? http.Client();
     try {
-      for (final p in const ['/apple-touch-icon.png', '/apple-touch-icon-precomposed.png']) {
-        final r = await _get(c, Uri.https(domain, p), domain, maxBytes);
-        final png = r == null ? null : pngIcon(r.bytes);
+      Object? err;
+      try {
+        final png = await _fetchFrom(c, domain, domain);
         if (png != null) return png;
+      } catch (e) {
+        err = e;
       }
-      final page = await _get(c, Uri.https(domain, '/'), domain, maxPage, html: true);
-      if (page != null) {
-        final text = latin1.decode(page.bytes, allowInvalid: true);
-        for (final u in iconLinks(text, page.url).take(3)) {
-          final r = await _get(c, u, null, maxBytes);
-          final png = r == null ? null : (pngIcon(r.bytes) ?? icoPng(r.bytes));
+      // Голый домен без HTTPS или без значка, а сайт — на www (16.11.2026:
+      // у рассылок с поддоменов — sender.ozon.ru, info.sberbank.ru — значка
+      // не было).
+      if (!domain.startsWith('www.')) {
+        try {
+          final png = await _fetchFrom(c, 'www.$domain', domain);
           if (png != null) return png;
+        } catch (e) {
+          err ??= e;
         }
       }
-      final ico = await _get(c, Uri.https(domain, '/favicon.ico'), domain, maxBytes);
-      if (ico != null) return icoPng(ico.bytes) ?? pngIcon(ico.bytes);
+      // Сбой сети — повторить раньше, чем «значка нет».
+      if (err != null) throw err;
       return null;
     } finally {
       if (client == null) c.close();
     }
+  }
+
+  /// Значок с узла [host] (переходы — в пределах домена [org]).
+  static Future<Uint8List?> _fetchFrom(http.Client c, String host, String org) async {
+    final domain = host;
+    for (final p in const ['/apple-touch-icon.png', '/apple-touch-icon-precomposed.png']) {
+      final r = await _get(c, Uri.https(domain, p), org, maxBytes);
+      final png = r == null ? null : pngIcon(r.bytes);
+      if (png != null) return png;
+    }
+    final page = await _get(c, Uri.https(domain, '/'), org, maxPage, html: true);
+    if (page != null) {
+      final text = latin1.decode(page.bytes, allowInvalid: true);
+      for (final u in iconLinks(text, page.url).take(3)) {
+        final r = await _get(c, u, null, maxBytes);
+        final png = r == null ? null : (pngIcon(r.bytes) ?? icoPng(r.bytes));
+        if (png != null) return png;
+      }
+    }
+    final ico = await _get(c, Uri.https(domain, '/favicon.ico'), org, maxBytes);
+    if (ico != null) return icoPng(ico.bytes) ?? pngIcon(ico.bytes);
+    return null;
   }
 
   /// GET без cookies, с переходами только по HTTPS (и, если задан [org], —

@@ -4304,4 +4304,11 @@
     <string name="accountLabelEmpty">Belum diatur — sebagian alamat ditampilkan</string>
     <string name="accountLabelAsk">Mau beri nama apa kotak surat ini?</string>
     <string name="accountLabelAskBody">Nama tampil di notifikasi dan layar email. Anda bisa mengubahnya di setelan kotak surat.</string>
+    <string name="assignMsgChecklist">Daftar periksa diubah:</string>
+    <string name="assignChecklistPending">Perubahan daftar periksa akan dikirim ke peserta dalam beberapa detik.</string>
+    <string name="assignRoleMeExecute">Saya kerjakan</string>
+    <string name="assignRoleMeOwn">Saya tugaskan</string>
+    <string name="assignStatsProgress">Kemajuan kerja</string>
+    <string name="assignStatsProgressHint">Warna baris menunjukkan peran Anda, seperti pada filter di atas; tenggat ada di ujung bilah, yang terlambat berwarna merah. Ketuk baris untuk membukanya.</string>
+    <string name="assignStatsWeek">Tenggat minggu ini</string>
 </resources>

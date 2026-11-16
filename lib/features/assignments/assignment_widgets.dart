@@ -111,6 +111,38 @@ class AssignmentStatusPill extends StatelessWidget {
 /// компьютере (во всю ширину строки читаются плохо).
 const assignmentColumnWidth = 760.0;
 
+/// Моя роль в поручении (16.11.2026, просьба владельца: «акцентировать
+/// пользователю его роль»): исполняю (и помогаю), контролирую, поручил,
+/// наблюдаю; нет роли — none.
+enum MyAssignmentRole { execute, control, own, observe, none }
+
+MyAssignmentRole myAssignmentRole(AssignmentView v) {
+  if (v.iExecute || v.iCoExecute || (!v.outgoing && v.myRoles.isEmpty)) return MyAssignmentRole.execute;
+  if (v.iControl) return MyAssignmentRole.control;
+  if (v.outgoing) return MyAssignmentRole.own;
+  if (v.iObserve) return MyAssignmentRole.observe;
+  return MyAssignmentRole.none;
+}
+
+/// Цвет роли — одинаковый в сводке и календаре (не зависит от темы).
+Color? myAssignmentRoleColor(MyAssignmentRole r) => switch (r) {
+      MyAssignmentRole.execute => const Color(0xFF2A78D6),
+      MyAssignmentRole.control => const Color(0xFFD08700),
+      MyAssignmentRole.own => const Color(0xFF1B9E6E),
+      MyAssignmentRole.observe => const Color(0xFF8A8F98),
+      MyAssignmentRole.none => null,
+    };
+
+/// Ключ подписи роли: «Исполняю», «Помогаю», «Контролирую», «Поручил»,
+/// «Наблюдаю».
+String? myAssignmentRoleKey(AssignmentView v) => switch (myAssignmentRole(v)) {
+      MyAssignmentRole.execute => v.iCoExecute ? 'filterHelp' : 'assignRoleMeExecute',
+      MyAssignmentRole.control => 'filterControl',
+      MyAssignmentRole.own => 'assignRoleMeOwn',
+      MyAssignmentRole.observe => 'filterObserve',
+      MyAssignmentRole.none => null,
+    };
+
 /// Выбор ящика, с которого уходит поручение (несколько ящиков).
 class AssignmentAccountField extends StatelessWidget {
   final List<AccountModel> accounts;

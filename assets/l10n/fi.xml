@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Ei asetettu — osa osoitteesta näytetään</string>
     <string name="accountLabelAsk">Mikä postilaatikon nimeksi?</string>
     <string name="accountLabelAskBody">Nimi näkyy ilmoituksissa ja postinäkymässä. Voit muuttaa sen postilaatikon asetuksista.</string>
+    <string name="assignMsgChecklist">Tarkistuslista muuttui:</string>
+    <string name="assignChecklistPending">Tarkistuslistan muutokset lähetetään osallistujille muutaman sekunnin kuluttua.</string>
+    <string name="assignRoleMeExecute">Teen</string>
+    <string name="assignRoleMeOwn">Antamani</string>
+    <string name="assignStatsProgress">Työn eteneminen</string>
+    <string name="assignStatsProgressHint">Rivin väri näyttää roolisi kuten yllä olevissa suodattimissa; määräaika on palkin lopussa, myöhässä olevat punaisella. Avaa napauttamalla riviä.</string>
+    <string name="assignStatsWeek">Erääntyy tällä viikolla</string>
 </resources>

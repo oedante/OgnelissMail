@@ -337,7 +337,14 @@ class AssignmentScreen extends ConsumerWidget {
                   onPressed: () async {
                     final t = await _askNote(context, l10n.tr('projChecklist'), l10n.tr('projAddCheck'),
                         ok: l10n.tr('add'));
-                    if ((t ?? '').trim().isNotEmpty && context.mounted) assignmentGuarded(context, v, () => svc.addCheck(v, t!));
+                    // Первый пункт — сразу и участникам (16.11.2026).
+                    if ((t ?? '').trim().isNotEmpty && context.mounted) {
+                      assignmentGuarded(context, v, () async {
+                        await svc.addCheck(v, t!);
+                        await svc.syncChecklist(v.id, ['+ ${t.trim()}']);
+                        return null;
+                      });
+                    }
                   },
                   icon: const Icon(AppIcons.checklist, size: 18),
                   label: Text(l10n.tr('projChecklist')),
@@ -519,7 +526,7 @@ class _EventRow extends StatelessWidget {
             ? (v.assignee?.displayName ?? e.authorEmail)
             : (v.owner?.displayName ?? e.authorEmail));
     final status = p['status'] is int ? p['status'] as int : null;
-    final text = (p['text'] as String? ?? '').trim();
+    final text = AssignmentCodec.stripTags(p['text'] as String? ?? '');
     final (IconData icon, String line) = switch (e.type) {
       'created' => (
           AppIcons.send,
@@ -749,7 +756,7 @@ class AssignmentResult extends StatelessWidget {
     final e = resultOf(events);
     if (e == null) return const SizedBox.shrink();
     final p = _payload(e);
-    var text = (p['text'] as String? ?? '').trim();
+    var text = AssignmentCodec.stripTags(p['text'] as String? ?? '');
     final stock = l10n.tr('assignReplyDone');
     if (text == stock) text = '';
     if (text.startsWith('$stock\n')) text = text.substring(stock.length + 1).trim();
@@ -847,8 +854,35 @@ class ChecklistSection extends ConsumerStatefulWidget {
 class _ChecklistSectionState extends ConsumerState<ChecklistSection> {
   final _ctrl = TextEditingController();
 
+  /// Изменения, ещё не отправленные другой стороне (16.11.2026: отметки и
+  /// новые пункты оставались только у того, кто их сделал). Уходят одним
+  /// письмом — через [_delay] после последнего изменения или при уходе с
+  /// экрана.
+  final List<String> _pending = [];
+  Timer? _timer;
+  late final AssignmentService _svc = ref.read(assignmentServiceProvider);
+  static const _delay = Duration(seconds: 20);
+
+  void _changed(String what) {
+    setState(() => _pending.add(what));
+    _timer?.cancel();
+    _timer = Timer(_delay, () {
+      if (mounted) setState(_flush);
+    });
+  }
+
+  void _flush() {
+    _timer?.cancel();
+    _timer = null;
+    if (_pending.isEmpty) return;
+    final changes = List.of(_pending);
+    _pending.clear();
+    assignmentFire(_svc.syncChecklist(widget.v.id, changes));
+  }
+
   @override
   void dispose() {
+    _flush();
     _ctrl.dispose();
     super.dispose();
   }
@@ -859,7 +893,7 @@ class _ChecklistSectionState extends ConsumerState<ChecklistSection> {
     final theme = Theme.of(context);
     final items = widget.v.checklist;
     final done = items.where((i) => i.done).length;
-    final svc = ref.read(assignmentServiceProvider);
+    final svc = _svc;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       const Divider(height: Space.xl),
       Padding(
@@ -877,7 +911,13 @@ class _ChecklistSectionState extends ConsumerState<ChecklistSection> {
           dense: true,
           controlAffinity: ListTileControlAffinity.leading,
           value: items[i].done,
-          onChanged: widget.editable ? (_) => assignmentGuarded(context, widget.v, () => svc.toggleCheck(widget.v, i)) : null,
+          onChanged: widget.editable
+              ? (_) {
+                  final item = items[i];
+                  assignmentGuarded(context, widget.v, () => svc.toggleCheck(widget.v, i));
+                  _changed('${item.done ? '○' : '✓'} ${item.text}');
+                }
+              : null,
           title: Text(items[i].text,
               style: items[i].done
                   ? theme.textTheme.bodyMedium?.copyWith(
@@ -895,9 +935,26 @@ class _ChecklistSectionState extends ConsumerState<ChecklistSection> {
             onSubmitted: (t) {
               if (t.trim().isEmpty) return;
               assignmentGuarded(context, widget.v, () => svc.addCheck(widget.v, t));
+              _changed('+ ${t.trim()}');
               _ctrl.clear();
             },
           ),
+        ),
+      // Изменения уйдут сами; подсказка — что они не только у меня.
+      if (widget.editable && _pending.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(Space.l, Space.xs, Space.l, 0),
+          child: Row(children: [
+            Expanded(
+              child: Text(l10n.tr('assignChecklistPending'),
+                  style: theme.textTheme.bodySmall?.copyWith(color: AppColors.mutedText(context))),
+            ),
+            TextButton(
+              key: const ValueKey('assign_checklist_send'),
+              onPressed: () => setState(_flush),
+              child: Text(l10n.tr('send')),
+            ),
+          ]),
         ),
     ]);
   }

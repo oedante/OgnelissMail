@@ -190,6 +190,14 @@ class ProjectScreen extends ConsumerWidget {
         GanttChart(
           stages: plan,
           today: now,
+          // Мои этапы (исполняю, контролирую) — цветом роли, как в сводке;
+          // срок — у конца полосы.
+          styles: {
+            for (final s in stages)
+              if (const [MyAssignmentRole.execute, MyAssignmentRole.control].contains(myAssignmentRole(s)))
+                s.id: GanttRowStyle(accent: myAssignmentRoleColor(myAssignmentRole(s))),
+          },
+          dueLabels: true,
           onTap: (id) {
             if (stages.any((s) => s.id == id)) unawaited(context.push('/assignments/$id'));
           },
@@ -553,7 +561,7 @@ class _History extends ConsumerWidget {
       final j = jsonDecode(e.payloadJson);
       if (j is Map<String, dynamic>) p = j;
     } catch (_) {}
-    final text = (p['text'] as String? ?? '').trim();
+    final text = AssignmentCodec.stripTags(p['text'] as String? ?? '');
     final status = p['status'] is int ? p['status'] as int : null;
     final who = e.direction == 0 ? l10n.tr('assignMe') : e.authorEmail;
     return switch (e.type) {

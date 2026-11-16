@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Sin definir: se muestra parte de la dirección</string>
     <string name="accountLabelAsk">¿Cómo quieres llamar a este buzón?</string>
     <string name="accountLabelAskBody">El nombre aparece en las notificaciones y en la pantalla del correo. Puedes cambiarlo en los ajustes del buzón.</string>
+    <string name="assignMsgChecklist">Lista de verificación modificada:</string>
+    <string name="assignChecklistPending">Los cambios de la lista se enviarán a los participantes en unos segundos.</string>
+    <string name="assignRoleMeExecute">Ejecuto</string>
+    <string name="assignRoleMeOwn">Asignadas por mí</string>
+    <string name="assignStatsProgress">Avance del trabajo</string>
+    <string name="assignStatsProgressHint">El color de la fila indica su rol, como en los filtros de arriba; el plazo está al final de la barra, en rojo si venció. Toque una fila para abrirla.</string>
+    <string name="assignStatsWeek">Vencen esta semana</string>
 </resources>

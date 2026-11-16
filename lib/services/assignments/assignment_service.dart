@@ -36,7 +36,7 @@ import '../notifications/reminder_scheduler_service.dart' show reminderScheduler
 import 'assignment_codec.dart';
 import 'assignment_store.dart';
 
-export 'assignment_codec.dart' show AssignmentStatus, AssignmentAct;
+export 'assignment_codec.dart' show AssignmentStatus, AssignmentAct, AssignmentCodec;
 export 'assignment_store.dart' show AssignmentView, dueHasTime;
 
 /// Мои адреса по ящикам (нижний регистр).
@@ -129,12 +129,15 @@ class AssignmentService {
     DateTime? due,
     bool important = false,
     List<AssignmentFile> files = const [],
+    List<String> checklist = const [],
     Email? source,
     AssignmentView? parent,
   }) async {
     final l10n = _l10n();
     final now = DateTime.now();
     final ids = <String>[];
+    // Чек-лист обычного поручения (16.11.2026: был только у этапов проекта).
+    final ck = [for (final c in checklist) if (c.trim().isNotEmpty) c.trim()];
     for (final to in assignees) {
       final id = AssignmentCodec.newId();
       final ev = 'created:$id';
@@ -163,6 +166,7 @@ class AssignmentService {
           outgoing: true,
           eventId: ev,
           parentId: parent?.id,
+          checklist: [for (final c in ck) ChecklistItem(c)],
           files: kept);
       final srcFrom = source == null ? null : ((source.fromName ?? '').trim().isNotEmpty ? source.fromName! : source.fromEmail);
       final body = AssignmentCodec.body(
@@ -187,12 +191,26 @@ class AssignmentService {
             .tr('assignFooter')
             .replaceAll('{accepted}', l10n.tr('assignReplyAccepted'))
             .replaceAll('{done}', l10n.tr('assignReplyDone')),
-        extraHtml: kept.isEmpty
-            ? null
-            : '<p><b>${assignmentEsc(l10n.tr('assignFilesLabel'))}</b> '
+        extraHtml: [
+          if (ck.isNotEmpty)
+            '<p><b>${assignmentEsc(l10n.tr('assignChecklistLabel'))}</b></p>'
+                '<ul>${ck.map((c) => '<li>${assignmentEsc(c)}</li>').join()}</ul>',
+          if (kept.isNotEmpty)
+            '<p><b>${assignmentEsc(l10n.tr('assignFilesLabel'))}</b> '
                 '${assignmentEsc(kept.map((f) => f.name).join(', '))}</p>',
+        ].join(),
+        // Пояснение и чек-лист — в отметке (16.11.2026): у исполнителя
+        // поручение появлялось без пояснения.
         marker: AssignmentCodec.taskMarker(
-            id: id, due: due, to: to.email, title: title.trim(), ev: ev, parent: parent?.id, important: important),
+            id: id,
+            due: due,
+            to: to.email,
+            title: title.trim(),
+            ev: ev,
+            parent: parent?.id,
+            important: important,
+            desc: (description ?? '').trim().isEmpty ? null : description!.trim(),
+            checklist: ck),
       );
       await _send(account, to,
           subject: subject,
@@ -500,8 +518,15 @@ class AssignmentService {
       if (kept.isNotEmpty) 'files': [for (final f in kept) f.name],
     });
     // Исполнитель — с отметкой чек-листа: у постановщика виден ход работ.
-    final checks = (v.iExecute || v.iCoExecute) && v.checklist.isNotEmpty ? ChecklistItem.bits(v.checklist) : null;
-    await _notify(v, full, AssignmentCodec.statusMarker(v.id, status, ev: ev, checks: checks), files: kept, act: act);
+    final mineList = (v.iExecute || v.iCoExecute) && v.checklist.isNotEmpty;
+    final checks = mineList ? ChecklistItem.bits(v.checklist) : null;
+    await _notify(
+        v,
+        full,
+        AssignmentCodec.statusMarker(v.id, status,
+            ev: ev, checks: checks, items: mineList ? _items(v.checklist) : null),
+        files: kept,
+        act: act);
     // Этап принят — следующим этапам «Можно начинать» (письмо уходит от
     // постановщика; у контролирующего — при следующем разборе почты у
     // постановщика).
@@ -862,6 +887,7 @@ class AssignmentService {
         checklist: checklist,
         owner: owner,
         deputies: [for (final d in deputies) d.email],
+        desc: st.description.trim().isEmpty ? null : st.description.trim(),
       ),
     );
     await _send(account, st.executor,
@@ -1082,11 +1108,44 @@ class AssignmentService {
     await AssignmentStore.update(_db, v.id, checklist: items);
   }
 
-  /// Добавить пункт чек-листа (у себя).
+  /// Добавить пункт чек-листа (у себя; другой стороне — [syncChecklist]).
   Future<void> addCheck(AssignmentView v, String text) async {
     final t = text.trim();
     if (t.isEmpty) return;
     await AssignmentStore.update(_db, v.id, checklist: [...v.checklist, ChecklistItem(t)]);
+  }
+
+  static List<({String text, bool done})> _items(List<ChecklistItem> list) =>
+      [for (final c in list) (text: c.text, done: c.done)];
+
+  /// Отправить изменения чек-листа другой стороне (16.11.2026: отметки и
+  /// новые пункты оставались только у того, кто их сделал). [changes] —
+  /// что изменилось, словами («+Пункт», «✓ Пункт»). Постановщик и
+  /// заместитель — письмом об изменении (полные сведения, у всех участников
+  /// чек-лист заменится); исполнитель и соисполнитель — отметкой с
+  /// пунктами (у постановщика добавятся пункты и отметки).
+  Future<void> syncChecklist(String id, List<String> changes) async {
+    final v = await load(id);
+    if (v == null || changes.isEmpty || !v.active) return;
+    final l10n = _l10n();
+    final text = [l10n.tr('assignMsgChecklist'), ...changes].join('\n');
+    if (v.outgoing) {
+      final rev = _nextRev(v);
+      await AssignmentStore.update(_db, v.id, revision: rev);
+      final fresh = await load(v.id) ?? v;
+      final prev = v.row.afterId == null ? null : await AssignmentStore.byId(_db, v.row.afterId!);
+      await _sendEdit(v, fresh, StageDraft.fromView(fresh),
+          head: l10n.tr('assignMsgChecklist'), changes: changes, afterTitle: prev?.title, rev: rev);
+      return;
+    }
+    if (!(v.iExecute || v.iCoExecute || (v.myRoles.isEmpty && !v.outgoing))) return;
+    final ev = _ev();
+    await _record(v, ev, 'progress', {'text': text});
+    await _notify(
+        v,
+        text,
+        AssignmentCodec.statusMarker(v.id, v.status,
+            ev: ev, checks: v.checklist.isEmpty ? null : ChecklistItem.bits(v.checklist), items: _items(v.checklist)));
   }
 
   /// Сообщить о ходе работ: выполненные пункты чек-листа и комментарий.
@@ -1113,7 +1172,8 @@ class AssignmentService {
     await _notify(
         v,
         body,
-        AssignmentCodec.statusMarker(v.id, v.status, ev: ev, checks: items.isEmpty ? null : ChecklistItem.bits(items)),
+        AssignmentCodec.statusMarker(v.id, v.status,
+            ev: ev, checks: items.isEmpty ? null : ChecklistItem.bits(items), items: items.isEmpty ? null : _items(items)),
         files: kept,
         act: AssignmentAct.progress);
   }
@@ -1599,8 +1659,36 @@ class AssignmentService {
           for (final p in v.deputies) p.email: (role: AssignmentRole.deputy, name: p.displayName),
         });
     final fresh = await load(v.id) ?? v;
+    await _sendEdit(v, fresh, d,
+        head: l10n.tr('assignMsgEdited'),
+        changes: changes,
+        note: note,
+        afterTitle: prev?.title,
+        rev: rev,
+        checklist: newCk,
+        newFiles: newFiles);
+    _reminders();
+    return true;
+  }
+
+  /// Письмо об изменении [v] (уже сохранённом как [fresh]) всем
+  /// участникам: что изменилось ([changes]) и полные сведения ([d]).
+  Future<void> _sendEdit(AssignmentView v, AssignmentView fresh, StageDraft d,
+      {required String head,
+      required List<String> changes,
+      String? note,
+      String? afterTitle,
+      required int rev,
+      List<String>? checklist,
+      List<AssignmentFile> newFiles = const []}) async {
+    final account = _account(v.row.accountId);
+    if (account == null) return;
+    final l10n = _l10n();
+    final title = fresh.row.title;
+    final desc = (fresh.row.description ?? '').trim();
+    final ck = checklist ?? [for (final c in fresh.checklist) c.text];
+    String low(String e) => e.trim().toLowerCase();
     final ev = _ev();
-    final head = l10n.tr('assignMsgEdited');
     await _record(fresh, ev, 'edited', {
       'text': [head, ...changes, if ((note ?? '').trim().isNotEmpty) note!.trim()].join('\n'),
     });
@@ -1639,13 +1727,13 @@ class AssignmentService {
           .replaceAll('{done}', l10n.tr('assignReplyDone')),
       extraHtml: _stageExtra(l10n,
           start: d.start,
-          afterTitle: prev?.title,
+          afterTitle: afterTitle,
           executor: d.executor,
           co: d.co,
           controller: d.controller,
           observers: d.observers,
           deputies: [for (final p in fresh.deputies) _addr(p)],
-          checklist: newCk,
+          checklist: ck,
           files: [for (final f in fresh.files) f.name]),
       marker: _taskSnapshot(fresh, rev, ev),
       act: AssignmentAct.edited,
@@ -1653,7 +1741,6 @@ class AssignmentService {
     await _sendTo(account, (to: to.values.toList(), cc: [for (final e in cc.entries) if (!to.containsKey(e.key)) e.value]),
         subject: await _subject(fresh, l10n), html: html, inReplyTo: await _inReplyTo(v), files: newFiles);
     _reminders();
-    return true;
   }
 
   /// Удалить этап [v] из проекта: снят и убран из плана — у себя и у его

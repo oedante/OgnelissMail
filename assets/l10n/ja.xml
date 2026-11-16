@@ -4304,4 +4304,11 @@
     <string name="accountLabelEmpty">未設定 — アドレスの一部を表示</string>
     <string name="accountLabelAsk">このメールボックスの名前は？</string>
     <string name="accountLabelAskBody">名前は通知とメール画面に表示されます。メールボックスの設定で変更できます。</string>
+    <string name="assignMsgChecklist">チェックリストを変更しました:</string>
+    <string name="assignChecklistPending">チェックリストの変更は数秒後に参加者へ送信されます。</string>
+    <string name="assignRoleMeExecute">担当中</string>
+    <string name="assignRoleMeOwn">自分が依頼</string>
+    <string name="assignStatsProgress">作業の進行</string>
+    <string name="assignStatsProgressHint">行の色は上のフィルターと同じくあなたの役割を示します。期限はバーの右端に、期限切れは赤で表示。行をタップすると開きます。</string>
+    <string name="assignStatsWeek">今週期限</string>
 </resources>

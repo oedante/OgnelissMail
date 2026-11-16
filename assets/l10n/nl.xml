@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Niet ingesteld — een deel van het adres wordt getoond</string>
     <string name="accountLabelAsk">Hoe wil je deze mailbox noemen?</string>
     <string name="accountLabelAskBody">De naam verschijnt in meldingen en op het mailscherm. Je kunt hem wijzigen in de instellingen van de mailbox.</string>
+    <string name="assignMsgChecklist">Checklist gewijzigd:</string>
+    <string name="assignChecklistPending">Wijzigingen in de checklist gaan over een paar seconden naar de deelnemers.</string>
+    <string name="assignRoleMeExecute">Voer ik uit</string>
+    <string name="assignRoleMeOwn">Door mij toegewezen</string>
+    <string name="assignStatsProgress">Voortgang</string>
+    <string name="assignStatsProgressHint">De kleur van de rij toont uw rol, zoals in de filters hierboven; de deadline staat aan het eind van de balk, verlopen in rood. Tik op een rij om die te openen.</string>
+    <string name="assignStatsWeek">Deze week</string>
 </resources>

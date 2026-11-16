@@ -89,6 +89,18 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
   bool _important = false;
   final List<AssignmentFile> _files = [];
 
+  /// Чек-лист (16.11.2026: был только у этапов проекта). null — поле
+  /// скрыто, пока не нажали «Чек-лист».
+  List<String>? _checks;
+  final _checkCtrl = TextEditingController();
+
+  void _addCheck(String t) {
+    final x = t.trim();
+    if (x.isEmpty) return;
+    setState(() => (_checks ??= []).add(x));
+    _checkCtrl.clear();
+  }
+
   /// Ящик, выбранный вручную (несколько ящиков).
   String? _accountId;
 
@@ -134,6 +146,7 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
   void dispose() {
     _title.dispose();
     _note.dispose();
+    _checkCtrl.dispose();
     super.dispose();
   }
 
@@ -188,6 +201,8 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
           due: _due,
           important: _important,
           files: List.of(_files),
+          // Недописанный пункт в поле — тоже пункт.
+          checklist: [...?_checks, if (_checkCtrl.text.trim().isNotEmpty) _checkCtrl.text.trim()],
           source: _source,
           parent: widget.parent,
         );
@@ -376,7 +391,38 @@ class _AssignSheetState extends ConsumerState<_AssignSheet> {
                   if (picked.isNotEmpty && mounted) setState(() => _files.addAll(picked));
                 },
               ),
+              if (_checks == null)
+                ActionChip(
+                  key: const ValueKey('assign_checklist'),
+                  avatar: const Icon(AppIcons.checklist, size: 18),
+                  label: Text(l10n.tr('projChecklist')),
+                  onPressed: () => setState(() => _checks = []),
+                ),
             ]),
+            if (_checks != null) ...[
+              label(l10n.tr('projChecklist')),
+              for (var i = 0; i < _checks!.length; i++)
+                Row(children: [
+                  Icon(AppIcons.check_box_outline_blank, size: 20, color: muted),
+                  const SizedBox(width: Space.s),
+                  Expanded(child: Text(_checks![i], style: theme.textTheme.bodyMedium)),
+                  IconButton(
+                    tooltip: l10n.tr('delete'),
+                    icon: const Icon(AppIcons.close, size: 18),
+                    onPressed: () => setState(() => _checks!.removeAt(i)),
+                  ),
+                ]),
+              TextField(
+                key: const ValueKey('assign_check_input'),
+                controller: _checkCtrl,
+                autofocus: _checks!.isEmpty,
+                textCapitalization: TextCapitalization.sentences,
+                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(
+                    hintText: l10n.tr('projAddCheck'), prefixIcon: const Icon(AppIcons.add), isDense: true),
+                onSubmitted: _addCheck,
+              ),
+            ],
             const SizedBox(height: Space.s),
             Text(
               [

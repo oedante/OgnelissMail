@@ -4346,4 +4346,11 @@
     <string name="accountLabelEmpty">לא הוגדר — מוצג חלק מהכתובת</string>
     <string name="accountLabelAsk">איך לקרוא לתיבה?</string>
     <string name="accountLabelAskBody">השם מופיע בהתראות ובמסך הדואר. אפשר לשנות אותו בהגדרות התיבה.</string>
+    <string name="assignMsgChecklist">רשימת התיוג עודכנה:</string>
+    <string name="assignChecklistPending">השינויים ברשימה יישלחו למשתתפים בעוד כמה שניות.</string>
+    <string name="assignRoleMeExecute">מבצע</string>
+    <string name="assignRoleMeOwn">הקצבתי</string>
+    <string name="assignStatsProgress">התקדמות העבודה</string>
+    <string name="assignStatsProgressHint">צבע השורה מציין את התפקיד שלך, כמו במסננים למעלה; המועד בסוף הפס, ובאיחור — באדום. הקש על שורה כדי לפתוח.</string>
+    <string name="assignStatsWeek">מועד השבוע</string>
 </resources>

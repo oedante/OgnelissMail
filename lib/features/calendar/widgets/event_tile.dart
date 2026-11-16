@@ -49,9 +49,10 @@ class EventTile extends StatelessWidget {
           : l10n.tr('calDueAt').replaceAll('{time}', hm.format(s));
     }
     if (isAssignItem(e)) {
-      return e.isAllDay
-          ? l10n.tr('calDueToday')
-          : l10n.tr('calDueAt').replaceAll('{time}', hm.format(s));
+      // Моя роль первой: «Исполняю · срок сегодня».
+      final role = (e.description ?? '').isEmpty ? null : l10n.tr(e.description!);
+      final due = e.isAllDay ? l10n.tr('calDueToday') : l10n.tr('calDueAt').replaceAll('{time}', hm.format(s));
+      return role == null ? due : '$role · $due';
     }
     if (isMailItem(e)) return l10n.tr('calFollowUpAt').replaceAll('{time}', hm.format(s));
     if (isInviteItem(e)) {

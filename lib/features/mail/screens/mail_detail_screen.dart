@@ -18,7 +18,6 @@ import '../../../widgets/common/peek_card.dart' show AppMenuEntry, PeekAction, P
 import '../message_window.dart';
 import '../../assignments/assign_sheet.dart' show showAssignSheet;
 import '../../assignments/assignment_widgets.dart';
-import '../../../services/assignments/assignment_codec.dart' show AssignmentCodec;
 import '../../../services/assignments/assignment_service.dart';
 import '../widgets/mail_peek_card.dart' show showMailPeek;
 import '../widgets/unsubscribe_banner.dart';

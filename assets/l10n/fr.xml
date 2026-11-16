@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Non défini — une partie de l’adresse est affichée</string>
     <string name="accountLabelAsk">Comment nommer cette boîte ?</string>
     <string name="accountLabelAskBody">Le nom apparaît dans les notifications et sur l’écran du courrier. Vous pouvez le modifier dans les réglages de la boîte.</string>
+    <string name="assignMsgChecklist">Liste de contrôle modifiée :</string>
+    <string name="assignChecklistPending">Les modifications de la liste seront envoyées aux participants dans quelques secondes.</string>
+    <string name="assignRoleMeExecute">J\'exécute</string>
+    <string name="assignRoleMeOwn">Confiées par moi</string>
+    <string name="assignStatsProgress">Avancement</string>
+    <string name="assignStatsProgressHint">La couleur de la ligne indique votre rôle, comme dans les filtres ci-dessus ; l\'échéance est au bout de la barre, en rouge si dépassée. Touchez une ligne pour l\'ouvrir.</string>
+    <string name="assignStatsWeek">Échéance cette semaine</string>
 </resources>

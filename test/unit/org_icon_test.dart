@@ -106,6 +106,21 @@ void main() {
       expect(await SiteIconService.fetchIcon('bank.ru', client: html), isNull);
     });
 
+    test('голый домен без значка или без HTTPS — значок с www (16.11.2026)', () async {
+      final png = _png(180, 180);
+      final c = MockClient((r) async {
+        if (r.url.host == 'ozon.ru') throw http.ClientException('handshake');
+        if (r.url.host == 'www.ozon.ru' && r.url.path == '/apple-touch-icon.png') {
+          return http.Response.bytes(png, 200, headers: {'content-type': 'image/png'});
+        }
+        return http.Response('', 404);
+      });
+      expect(await SiteIconService.fetchIcon('ozon.ru', client: c), png);
+      // Оба узла недоступны — ошибка сети (повторить раньше, чем «нет значка»).
+      final down = MockClient((r) async => throw http.ClientException('offline'));
+      expect(SiteIconService.fetchIcon('sberbank.ru', client: down), throwsA(isA<http.ClientException>()));
+    });
+
     test('домен сайта — базовый; бесплатная почта не спрашивается; повтор — из сохранённого', () async {
       expect(siteDomainOf('news.sber.ru'), 'sber.ru');
       expect(siteDomainOf('mail.example.co.uk'), 'example.co.uk');

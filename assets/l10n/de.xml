@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Nicht festgelegt — ein Teil der Adresse wird angezeigt</string>
     <string name="accountLabelAsk">Wie soll das Postfach heißen?</string>
     <string name="accountLabelAskBody">Der Name erscheint in Benachrichtigungen und auf dem E-Mail-Bildschirm. Sie können ihn in den Postfacheinstellungen ändern.</string>
+    <string name="assignMsgChecklist">Checkliste geändert:</string>
+    <string name="assignChecklistPending">Änderungen der Checkliste gehen in wenigen Sekunden an die Beteiligten.</string>
+    <string name="assignRoleMeExecute">Erledige ich</string>
+    <string name="assignRoleMeOwn">Von mir vergeben</string>
+    <string name="assignStatsProgress">Arbeitsfortschritt</string>
+    <string name="assignStatsProgressHint">Die Zeilenfarbe zeigt Ihre Rolle wie bei den Filtern oben; die Frist steht am Balkenende, überfällige rot. Tippen Sie auf eine Zeile, um sie zu öffnen.</string>
+    <string name="assignStatsWeek">Fällig diese Woche</string>
 </resources>

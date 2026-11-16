@@ -1016,15 +1016,21 @@ abstract final class AssignmentStore {
       added[pm.email] = (role: pm.role, name: pm.name ?? names[pm.email]);
     }
     List<ChecklistItem>? checklist;
-    if (checks != null && !fromMe) {
+    final items = st != null && st.id == id ? st.items : null;
+    if (items != null && !fromMe) {
+      // Пункты целиком (16.11.2026): добавленные другой стороной — тоже.
+      checklist = mergeRemoteChecklist(ChecklistItem.decode(a.checklistJson), items);
+    } else if (checks != null && !fromMe) {
       final cur = ChecklistItem.decode(a.checklistJson);
       if (cur.isNotEmpty) checklist = ChecklistItem.applyBits(cur, checks);
     }
     // Файлы письма — к файлам этапа (поручивший добавил, исполнитель
     // прислал результат).
     final mailFiles = _mailFiles(e);
-    final files = mailFiles.isEmpty ? null : [...AssignmentFile.decode(a.filesJson), ...mailFiles];
-    final text = p.text;
+    final oldFiles = AssignmentFile.decode(a.filesJson);
+    final merged = mailFiles.isEmpty ? oldFiles : uniqueFiles([...oldFiles, ...mailFiles]);
+    final files = merged.length == oldFiles.length ? null : merged;
+    final text = AssignmentCodec.stripTags(p.text);
     await db.transaction(() async {
       await addEvent(db,
           id: evId,
@@ -1066,7 +1072,10 @@ abstract final class AssignmentStore {
     return true;
   }
 
-  static String _cut(String text) => text.length > 400 ? '${text.substring(0, 400)}…' : text;
+  static String _cut(String text) {
+    final t = AssignmentCodec.stripTags(text);
+    return t.length > 400 ? '${t.substring(0, 400)}…' : t;
+  }
 
   /// Письмо события [ev] пришло под номером [mailId] — привязать; если это
   /// письмо поручения (создание) и поручение ссылалось на прежний номер —
@@ -1111,8 +1120,7 @@ abstract final class AssignmentStore {
       final keep = t.files?.map((n) => n.trim().toLowerCase()).toSet();
       final old = AssignmentFile.decode(a.filesJson);
       final kept = keep == null ? old : [for (final f in old) if (keep.contains(f.name.trim().toLowerCase())) f];
-      final have = {for (final f in kept) '${f.name.toLowerCase()}|${f.mailId}'};
-      files = [...kept, for (final f in mailFiles) if (have.add('${f.name.toLowerCase()}|${f.mailId}')) f];
+      files = uniqueFiles([...kept, ...mailFiles]);
     }
     await db.transaction(() async {
       if (a.isProject) {

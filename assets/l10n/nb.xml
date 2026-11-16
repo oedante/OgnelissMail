@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Ikke angitt — en del av adressen vises</string>
     <string name="accountLabelAsk">Hva skal postkassen hete?</string>
     <string name="accountLabelAskBody">Navnet vises i varsler og på e-postskjermen. Du kan endre det i innstillingene for postkassen.</string>
+    <string name="assignMsgChecklist">Sjekkliste endret:</string>
+    <string name="assignChecklistPending">Endringer i sjekklisten sendes til deltakerne om noen sekunder.</string>
+    <string name="assignRoleMeExecute">Utfører</string>
+    <string name="assignRoleMeOwn">Tildelt av meg</string>
+    <string name="assignStatsProgress">Arbeidsfremdrift</string>
+    <string name="assignStatsProgressHint">Radens farge viser rollen din som i filtrene over; fristen står ved enden av stolpen, overskredne i rødt. Trykk på en rad for å åpne den.</string>
+    <string name="assignStatsWeek">Frist denne uken</string>
 </resources>

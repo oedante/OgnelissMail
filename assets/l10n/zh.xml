@@ -4304,4 +4304,11 @@
     <string name="accountLabelEmpty">未设置 — 显示部分地址</string>
     <string name="accountLabelAsk">给这个邮箱起个名字？</string>
     <string name="accountLabelAskBody">名称显示在通知和邮件界面中，可在邮箱设置中修改。</string>
+    <string name="assignMsgChecklist">检查清单已更改：</string>
+    <string name="assignChecklistPending">检查清单的更改将在几秒后发送给参与者。</string>
+    <string name="assignRoleMeExecute">我执行</string>
+    <string name="assignRoleMeOwn">我指派</string>
+    <string name="assignStatsProgress">工作进度</string>
+    <string name="assignStatsProgressHint">行的颜色表示您的角色，与上方筛选器一致；截止日期在条形末端，逾期显示为红色。点按一行即可打开。</string>
+    <string name="assignStatsWeek">本周到期</string>
 </resources>

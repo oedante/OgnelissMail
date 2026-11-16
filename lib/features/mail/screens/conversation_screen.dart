@@ -1114,7 +1114,11 @@ class _MessageCard extends StatelessWidget {
     // Нажатие на аватар — карточка отправителя (должность, отдел, телефоны).
     final avatar = GestureDetector(
       onTap: () => showPersonCard(context,
-          email: email.from.email, name: email.from.displayName, accountId: email.accountId),
+          email: email.from.email,
+          name: email.from.displayName,
+          accountId: email.accountId,
+          authResults: email.authResults,
+          folder: (account: email.accountId, folder: email.folderId)),
       child: HeroEmailAvatar(
         emailId: '${email.accountId}/${email.id}',
         initial: name.isNotEmpty ? initialOf(name) : '?',

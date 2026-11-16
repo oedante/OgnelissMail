@@ -18,7 +18,6 @@ import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/mail/providers/mail_providers.dart' show accountsProvider;
 import 'package:ogneliss/l10n/app_localizations.dart';
-import 'package:ogneliss/services/assignments/assignment_codec.dart';
 import 'package:ogneliss/services/assignments/assignment_service.dart';
 import 'package:ogneliss/services/assignments/assignment_store.dart';
 import 'package:ogneliss/services/contacts/person_name_directory.dart';

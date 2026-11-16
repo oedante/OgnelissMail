@@ -23,6 +23,7 @@ import '../../l10n/app_localizations.dart';
 import '../../data/providers/shared_prefs_provider.dart';
 import '../../services/home_widget_service.dart';
 import '../../services/assignments/assignment_service.dart';
+import '../assignments/assignment_widgets.dart' show myAssignmentRole, myAssignmentRoleColor, myAssignmentRoleKey;
 import '../../services/tasks/task_actions_service.dart';
 import '../mail/providers/mail_providers.dart';
 import '../../data/models/email_model.dart' show EmailMeeting;
@@ -302,6 +303,10 @@ List<CalendarEvent> assignmentCalendarItems(
       id: '$assignPrefix${v.id}',
       accountId: v.row.accountId,
       title: v.row.title,
+      // Моя роль (16.11.2026: «акцентировать пользователю его роль и сроки в
+      // календаре»): цвет — как в сводке поручений, подпись — ключ строки.
+      colorValue: myAssignmentRoleColor(myAssignmentRole(v))?.toARGB32(),
+      description: myAssignmentRoleKey(v),
       organizerEmail: v.otherEmail,
       // Имя другой стороны — как имя организатора у встречи (attendeeSummary).
       attendeesJson: v.otherEmail == null
@@ -333,7 +338,7 @@ final accountColorsProvider = Provider<Map<String, Color>>((ref) => {
 Color eventColor(CalendarEvent e, Map<String, Color> accountColors) {
   if (isTaskItem(e)) return AppColors.successGreen;
   if (isMailItem(e)) return AppColors.accentOrange;
-  if (isAssignItem(e)) return AppColors.tagAssignment;
+  if (isAssignItem(e)) return e.colorValue == null ? AppColors.tagAssignment : Color(e.colorValue!);
   if (e.colorValue != null && e.colorValue != 0) return Color(e.colorValue!);
   return accountColors[e.accountId] ?? AppColors.primaryBlue;
 }

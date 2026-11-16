@@ -4346,4 +4346,11 @@
     <string name="accountLabelEmpty">Nesetat — se afișează o parte din adresă</string>
     <string name="accountLabelAsk">Cum numiți această căsuță?</string>
     <string name="accountLabelAskBody">Numele apare în notificări și pe ecranul de e-mail. Îl puteți schimba din setările căsuței.</string>
+    <string name="assignMsgChecklist">Lista de verificare modificată:</string>
+    <string name="assignChecklistPending">Modificările listei vor fi trimise participanților în câteva secunde.</string>
+    <string name="assignRoleMeExecute">Execut</string>
+    <string name="assignRoleMeOwn">Atribuite de mine</string>
+    <string name="assignStatsProgress">Mersul lucrărilor</string>
+    <string name="assignStatsProgressHint">Culoarea rândului arată rolul dvs., ca la filtrele de sus; termenul e la capătul barei, cel depășit cu roșu. Atingeți un rând pentru a-l deschide.</string>
+    <string name="assignStatsWeek">Termen săptămâna aceasta</string>
 </resources>

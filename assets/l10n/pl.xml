@@ -4367,4 +4367,11 @@
     <string name="accountLabelEmpty">Nie ustawiono — widać część adresu</string>
     <string name="accountLabelAsk">Jak nazwać tę skrzynkę?</string>
     <string name="accountLabelAskBody">Nazwa jest widoczna w powiadomieniach i na ekranie poczty. Można ją zmienić w ustawieniach skrzynki.</string>
+    <string name="assignMsgChecklist">Lista kontrolna zmieniona:</string>
+    <string name="assignChecklistPending">Zmiany listy zostaną wysłane uczestnikom za kilka sekund.</string>
+    <string name="assignRoleMeExecute">Wykonuję</string>
+    <string name="assignRoleMeOwn">Zleciłem</string>
+    <string name="assignStatsProgress">Przebieg prac</string>
+    <string name="assignStatsProgressHint">Kolor wiersza pokazuje Twoją rolę, jak w filtrach powyżej; termin jest na końcu paska, przekroczony na czerwono. Stuknij wiersz, aby go otworzyć.</string>
+    <string name="assignStatsWeek">Termin w tym tygodniu</string>
 </resources>

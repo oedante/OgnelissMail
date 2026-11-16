@@ -4325,4 +4325,11 @@
     <string name="accountLabelEmpty">Not set — part of the address is shown</string>
     <string name="accountLabelAsk">What should this mailbox be called?</string>
     <string name="accountLabelAskBody">The name appears in notifications and on the mail screen. You can change it in the mailbox settings.</string>
+    <string name="assignMsgChecklist">Checklist updated:</string>
+    <string name="assignChecklistPending">Checklist changes will be sent to participants in a few seconds.</string>
+    <string name="assignRoleMeExecute">Doing</string>
+    <string name="assignRoleMeOwn">Assigned by me</string>
+    <string name="assignStatsProgress">Work progress</string>
+    <string name="assignStatsProgressHint">Row colour shows your role, as in the filters above; the due date is at the end of the bar, overdue in red. Tap a row to open it.</string>
+    <string name="assignStatsWeek">Due this week</string>
 </resources>

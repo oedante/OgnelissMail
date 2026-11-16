@@ -253,6 +253,30 @@ List<ChecklistItem> mergeChecklist(List<ChecklistItem> old, List<String> texts) 
   ];
 }
 
+/// Чек-лист другой стороны (16.11.2026): её пункты — с её отметками и в
+/// её порядке; мои пункты, которых у неё нет (добавлены здесь, ещё не
+/// дошли), — в конце. Отметки сверяются по тексту пункта, а не по номеру.
+List<ChecklistItem> mergeRemoteChecklist(List<ChecklistItem> local, List<({String text, bool done})> remote) {
+  String key(String t) => t.trim().toLowerCase();
+  final theirs = {for (final r in remote) key(r.text)};
+  return [
+    for (final r in remote) ChecklistItem(r.text.trim(), done: r.done),
+    for (final l in local)
+      if (!theirs.contains(key(l.text))) l,
+  ];
+}
+
+/// Файлы без повторов: одно и то же вложение приходит в каждом письме
+/// об изменении (у каждого письма свой номер) — сравнение по имени и
+/// размеру.
+List<AssignmentFile> uniqueFiles(Iterable<AssignmentFile> files) {
+  final seen = <String>{};
+  return [
+    for (final f in files)
+      if (seen.add('${f.name.trim().toLowerCase()}|${f.size > 0 ? f.size : ''}')) f,
+  ];
+}
+
 /// У срока есть время (13.11.2026, замечание владельца «время очень
 /// важно»): срок без времени хранится полуночью.
 bool dueHasTime(DateTime? d) => d != null && (d.hour != 0 || d.minute != 0);

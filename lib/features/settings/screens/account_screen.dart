@@ -48,6 +48,7 @@ import '../../../services/mail/engine/mail_engine_service.dart';
 import '../../../services/mail/signature_service.dart';
 import '../../../services/mail/compose_style_service.dart';
 import '../../../widgets/common/app_sheet.dart';
+import '../../../widgets/common/account_avatar.dart' show AccountAvatar;
 import '../../../services/security/eas_policy_store.dart';
 import '../../../services/security/managed_config.dart' show ManagedPolicy;
 import '../../../services/sync/imap_push_service.dart';
@@ -111,6 +112,8 @@ class AccountScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xl),
         children: [
+          // Несколько ящиков — переключение прямо здесь (16.11.2026).
+          _AccountSwitcher(current: account),
           _Header(account: account, typeLabel: accountTypeLabel(account.type, l10n), isPrimary: isPrimary),
           const SizedBox(height: Space.l),
 
@@ -346,6 +349,7 @@ class AccountScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xl),
         children: [
+          _AccountSwitcher(current: account, advanced: true),
           // ── Подключение ──
           SettingsSectionTitle(l10n.tr('accSectionConnection')),
           SettingsGroup(children: [
@@ -1188,6 +1192,77 @@ class _ServerCertItemState extends ConsumerState<_ServerCertItem> {
   }
 }
 
+
+/// Ящики — портретами в ряд (как у почтовых служб): нажатие открывает
+/// настройки другого ящика на месте этого экрана. Один ящик — ничего.
+class _AccountSwitcher extends ConsumerWidget {
+  final AccountModel current;
+  final bool advanced;
+  const _AccountSwitcher({required this.current, this.advanced = false});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final accounts = ref.watch(accountsProvider);
+    if (accounts.length < 2) return const SizedBox.shrink();
+    final labels = ref.watch(accountLabelsProvider);
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: Space.m),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(children: [
+          for (final a in accounts)
+            Padding(
+              padding: const EdgeInsets.only(right: Space.xs),
+              child: Semantics(
+                selected: a.id == current.id,
+                button: true,
+                child: InkWell(
+                  key: ValueKey('account_switch_${a.id}'),
+                  borderRadius: BorderRadius.circular(Radii.chip),
+                  onTap: a.id == current.id
+                      ? null
+                      : () => context.replace('/settings/account/${Uri.encodeComponent(a.id)}${advanced ? '/advanced' : ''}'),
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(Space.xs, Space.xs, Space.m, Space.xs),
+                    decoration: BoxDecoration(
+                      color: a.id == current.id ? scheme.secondaryContainer : null,
+                      borderRadius: BorderRadius.circular(Radii.chip),
+                      border: Border.all(color: a.id == current.id ? scheme.secondaryContainer : scheme.outlineVariant),
+                    ),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      AccountAvatar(account: a, radius: 12),
+                      const SizedBox(width: Space.s),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 180),
+                        child: Text(
+                          _shortName(a, labels[a.id]),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                              fontWeight: a.id == current.id ? FontWeight.w700 : FontWeight.w500,
+                              color: a.id == current.id ? scheme.onSecondaryContainer : null),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ),
+              ),
+            ),
+        ]),
+      ),
+    );
+  }
+
+  /// Название ящика (если задано) или имя, иначе адрес.
+  static String _shortName(AccountModel a, String? name) {
+    final label = (name ?? '').trim();
+    if (label.isNotEmpty) return label;
+    final n = a.displayName.trim();
+    return n.isNotEmpty && n.toLowerCase() != a.email.toLowerCase() ? n : a.email;
+  }
+}
 
 class _Header extends StatelessWidget {
   final AccountModel account;

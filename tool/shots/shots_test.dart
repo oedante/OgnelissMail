@@ -37,6 +37,7 @@ import 'package:ogneliss/features/mail/screens/mail_list_screen.dart';
 import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
 import 'package:ogneliss/features/mail/widgets/mail_drawer.dart';
 import 'package:ogneliss/features/settings/screens/settings_screen.dart';
+import 'package:ogneliss/features/settings/screens/account_screen.dart';
 import 'package:ogneliss/features/my_day/my_day_screen.dart';
 import 'package:ogneliss/features/calendar/screens/calendar_screen.dart';
 import 'package:ogneliss/features/tasks/screens/tasks_screen.dart';
@@ -639,7 +640,7 @@ void main() {
             id: id,
             accountId: account,
             title: title,
-            ownerEmail: mine ? me : who,
+            ownerEmail: mine ? (account == 'a2' ? 'ivan.petrov@mail.example' : me) : who,
             ownerName: mine ? 'Иван Петров' : name,
             assigneeEmail: mine ? who : me,
             assigneeName: mine ? name : 'Иван Петров',
@@ -668,6 +669,29 @@ void main() {
           AssignmentStatus.inProgress, account: 'a2');
       await a('AAAAAAAAAAA8', 'Подготовить справку для аудита', 'a.smirnova@corp.example', 'Анна Смирнова', d(-1), d(2),
           AssignmentStatus.open, mine: false);
+      // Сводка 16.11.2026: я контролирую чужое поручение; проект с этапами,
+      // один этап — мой.
+      await AssignmentStore.insert(db,
+          id: 'AAAAAAAAAAA9', accountId: 'a1', title: 'Акт сверки с ООО «Ромашка»', ownerEmail: 'a.smirnova@corp.example',
+          ownerName: 'Анна Смирнова', assigneeEmail: 'b.orlov@corp.example', assigneeName: 'Борис Орлов',
+          due: d(3), at: d(-4), outgoing: false, start: d(-4),
+          others: {me: (role: AssignmentRole.controller, name: 'Иван Петров')});
+      await AssignmentStore.update(db, 'AAAAAAAAAAA9', status: AssignmentStatus.inProgress);
+      await AssignmentStore.insert(db,
+          id: 'PPPPPPPPPPPP', accountId: 'a1', title: 'Годовой отчёт отдела', ownerEmail: me, ownerName: 'Иван Петров',
+          at: d(-6), outgoing: true, isProject: true, start: d(-6), due: d(9));
+      for (final (i, id, title, who, name, from, to, st) in [
+        (0, 'SSSSSSSSSSS1', 'Собрать данные продаж', 'v.belova@corp.example', 'Вера Белова', -6, -2, AssignmentStatus.done),
+        (1, 'SSSSSSSSSSS2', 'Инвентаризация склада', 'd.kuznetsov@corp.example', 'Дмитрий Кузнецов', -5, -1,
+            AssignmentStatus.inProgress),
+        (2, 'SSSSSSSSSSS3', 'Свести цифры и выводы', 'v.belova@corp.example', 'Вера Белова', 0, 4, AssignmentStatus.open),
+        (3, 'SSSSSSSSSSS4', 'Утвердить у правления', me, 'Иван Петров', 5, 9, AssignmentStatus.open),
+      ]) {
+        await AssignmentStore.insert(db,
+            id: id, accountId: 'a1', title: title, ownerEmail: me, ownerName: 'Иван Петров', assigneeEmail: who,
+            assigneeName: name, at: d(-6), outgoing: true, parentId: 'PPPPPPPPPPPP', start: d(from), due: d(to), order: i);
+        await AssignmentStore.update(db, id, status: st);
+      }
       await AssignmentStore.addEvent(db,
           id: 'r1',
           assignmentId: 'AAAAAAAAAAA2',
@@ -704,6 +728,28 @@ void main() {
         size: const Size(393, 1000), before: (t) async {
       unawaited(showAssignSheet(t.element(find.byType(Scaffold))));
     });
+    await tester.runAsync(db.close);
+  });
+
+  // Настройки ящика: переход к другому ящику чипами сверху (16.11.2026).
+  testWidgets('настройки ящика — переключатель', (tester) async {
+    SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+    final prefs = await SharedPreferences.getInstance();
+    final db = (await tester.runAsync(() async {
+      final db = await _db();
+      await db.into(db.accounts).insert(AccountsCompanion.insert(
+            id: 'a2',
+            type: 7,
+            email: 'ivan.petrov@mail.example',
+            displayName: 'Личный',
+            username: 'ivan.petrov',
+            createdAt: DateTime(2026),
+            colorValue: const Value(0xFF2E7D32),
+          ));
+      return db;
+    }))!;
+    await _shot(tester, 'account_switch', const AccountScreen(accountId: 'a1'), theme: _themes['light']!(), db: db,
+        prefs: prefs);
     await tester.runAsync(db.close);
   });
 

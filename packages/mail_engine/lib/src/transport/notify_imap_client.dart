@@ -20,7 +20,7 @@
 
 import 'dart:async';
 
-import 'package:enough_mail/enough_mail.dart' as em;
+import 'tolerant_imap_client.dart';
 
 /// Изменение, о котором сообщил сервер по NOTIFY.
 class ImapNotifyChange {
@@ -56,13 +56,16 @@ class ImapNotifyRejected implements Exception {
   String toString() => 'NOTIFY отклонён сервером: $response';
 }
 
-class NotifyImapClient extends em.ImapClient {
+// Ответ, который enough_mail не разобрал, не останавливает соединение push
+// (TolerantImapClient, 2.6.0).
+class NotifyImapClient extends TolerantImapClient {
   NotifyImapClient({
     super.isLogEnabled,
     super.logName,
     super.defaultWriteTimeout,
     super.defaultResponseTimeout,
     super.onBadCertificate,
+    super.onParseFailure,
   });
 
   static const capabilityNotify = 'NOTIFY';

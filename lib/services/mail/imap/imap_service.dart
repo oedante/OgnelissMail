@@ -23,7 +23,15 @@ import '../../security/smime_mime.dart' show SmimeMime;
 import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
 import 'package:mail_engine/mail_engine.dart'
-    show DsnRequest, ImapNotifyChange, ImapNotifyRejected, NotifyImapClient, Preheader, SmtpNotSentException, TolerantSmtpClient;
+    show
+        DsnRequest,
+        ImapNotifyChange,
+        ImapNotifyRejected,
+        NotifyImapClient,
+        Preheader,
+        SmtpNotSentException,
+        TolerantImapClient,
+        TolerantSmtpClient;
 import 'package:drift/drift.dart' show Value, BooleanExpressionOperators;
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -318,6 +326,28 @@ class ImapService {
     return client;
   }
 
+  /// Ошибка входа XOAUTH2 — отказ сервера (тогда токен стоит обновить), а
+  /// не обрыв связи или тайм-аут ответа (2.6.0; журнал Samsung S24
+  /// 16.11.2026: на «timeout» токен Яндекса обновлялся принудительно,
+  /// Яндекс без секрета клиента обновление не принял, и ящик с действующим
+  /// токеном мог получить «Требуется вход»).
+  @visibleForTesting
+  static bool isAuthRejection(Object e) {
+    if (e is TimeoutException || e is SocketException || e is TlsException) return false;
+    final message = switch (e) {
+      ImapException(:final message) => message,
+      SmtpException(:final message) => message,
+      _ => null,
+    };
+    if ((message ?? '').trim().toLowerCase() == 'timeout') return false;
+    final t = e.toString().toLowerCase();
+    return !(t.contains('ondone not expected') ||
+        t.contains('socket') ||
+        t.contains('connection closed') ||
+        t.contains('connection reset') ||
+        t.contains('timed out'));
+  }
+
   /// Новое соединение + вход. Вынесено, чтобы IDLE мог держать ОТДЕЛЬНЫЙ клиент:
   /// IDLE занимает соединение постоянно, и на общем клиенте он блокировал бы
   /// обычные операции (или конфликтовал с их SELECT).
@@ -334,13 +364,20 @@ class ImapService {
     // Клиент push — с командой NOTIFY (RFC 5465): пока NOTIFY не включён,
     // он ничем не отличается от ImapClient.
     final client = forIdle
-        ? NotifyImapClient(isLogEnabled: false, onBadCertificate: (c) => _acceptCert(c, host, port))
-        : ImapClient(
+        ? NotifyImapClient(
+            isLogEnabled: false,
+            onBadCertificate: (c) => _acceptCert(c, host, port),
+            onParseFailure: AppLogger.info,
+          )
+        // Ответ, который enough_mail не разобрал, не подвешивает команду до
+        // тайм-аута (TolerantImapClient, 2.6.0; см. _fetchSafe).
+        : TolerantImapClient(
             isLogEnabled: false,
             defaultWriteTimeout: const Duration(seconds: 30),
             // С запасом: полное письмо с вложениями по медленной сети.
             defaultResponseTimeout: const Duration(minutes: 3),
             onBadCertificate: (c) => _acceptCert(c, host, port),
+            onParseFailure: AppLogger.info,
           );
 
     // Шифрование не задано (аккаунты OAuth его не сохраняют) — по порту:
@@ -392,7 +429,8 @@ class ImapService {
         try {
           await client.authenticateWithOAuth2(account.email, token);
         } catch (e) {
-          if (tokenRetried) rethrow;
+          // Обрыв связи или тайм-аут ответа — не отказ: токен не трогаем.
+          if (tokenRetried || !isAuthRejection(e)) rethrow;
           // Токен мог быть отозван/просрочен, хотя срок ещё «не истёк»
           // (смена пароля, выход на всех устройствах). Один раз
           // принудительно обновляем и пробуем снова.
@@ -556,7 +594,7 @@ class ImapService {
             .timeout(const Duration(seconds: 15));
       } catch (e) {
         try { await client.disconnect(); } catch (_) {}
-        if (tokenRetried) rethrow;
+        if (tokenRetried || !isAuthRejection(e)) rethrow;
         // Токен отозван раньше срока — принудительно обновляем один раз.
         AppLogger.warning('SMTP XOAUTH2 отклонён — обновляю токен: $e');
         await _ensureToken?.call(account, true);
@@ -805,14 +843,11 @@ class ImapService {
 
       FetchImapResult messages;
       try {
-        messages = await client.fetchMessages(
-          sequence,
-          // UID обязателен: id письма строится из него, а действия (прочитано,
-          // перенос, удаление) выполняются UID-командами. Без UID в запросе
-          // поле оставалось пустым, вместо него брался порядковый номер, и
-          // действие применялось к ДРУГОМУ письму.
-          '(UID FLAGS INTERNALDATE ENVELOPE BODYSTRUCTURE RFC822.SIZE BODY.PEEK[HEADER.FIELDS (REFERENCES IN-REPLY-TO AUTHENTICATION-RESULTS LIST-UNSUBSCRIBE LIST-UNSUBSCRIBE-POST LIST-ID SENSITIVITY X-OGNELISS-CLASSIFICATION X-OGNELISS-HANDLING)])',
-        );
+        // UID обязателен: id письма строится из него, а действия (прочитано,
+        // перенос, удаление) выполняются UID-командами. Без UID в запросе
+        // поле оставалось пустым, вместо него брался порядковый номер, и
+        // действие применялось к ДРУГОМУ письму.
+        messages = await _fetchSafe(client, sequence, _listSpec);
       } catch (e) {
         // Некоторые серверы (Яндекс/Mail.ru) капризны к составному FETCH —
         // пробуем упрощённый запрос, чтобы письма всё же загрузились.
@@ -843,9 +878,7 @@ class ImapService {
       ImapClient client, MessageSequence seq, AccountModel account, String folderId) async {
     FetchImapResult r;
     try {
-      r = seq.isUidSequence
-          ? await client.uidFetchMessages(seq, _listSpec)
-          : await client.fetchMessages(seq, _listSpec);
+      r = await _fetchSafe(client, seq, _listSpec);
     } catch (e) {
       AppLogger.warning('IMAP: расширенный FETCH не прошёл, упрощаю: $e');
       const simple = '(UID FLAGS INTERNALDATE ENVELOPE RFC822.SIZE)';
@@ -861,6 +894,50 @@ class ImapService {
 
   /// Сколько писем за проход догружать по одному (сверка и [fetchByUids]).
   static const maxRecover = 50;
+
+  /// FETCH с BODYSTRUCTURE, устойчивый к ответу, который enough_mail не
+  /// разобрал (2.6.0; журнал S24 16.11.2026: RangeError в разборе структуры
+  /// одного письма — папка «висела» 5 мин на каждой проверке). Клиент
+  /// [TolerantImapClient] ловит сбой и называет такие письма; их частичный
+  /// разбор отбрасывается, и они загружаются ещё раз запросом [fallback]
+  /// (по умолчанию — тот же без BODYSTRUCTURE): тема, отправитель и флаги
+  /// есть, нет только списка вложений из структуры.
+  @visibleForTesting
+  static Future<FetchImapResult> fetchSafe(ImapClient client, MessageSequence seq, String spec, {String? fallback}) =>
+      _fetchSafe(client, seq, spec, fallback: fallback);
+
+  static Future<FetchImapResult> _fetchSafe(ImapClient client, MessageSequence seq, String spec,
+      {String? fallback}) async {
+    final tolerant = client is TolerantImapClient ? client : null;
+    tolerant?.takeParseFailures();
+    final r = seq.isUidSequence ? await client.uidFetchMessages(seq, spec) : await client.fetchMessages(seq, spec);
+    final failed = tolerant?.takeParseFailures() ?? const [];
+    final bad = {for (final f in failed) if (f.sequenceId != null) f.sequenceId!};
+    if (bad.isEmpty) return r;
+    final kept = [for (final m in r.messages) if (!bad.contains(m.sequenceId)) m];
+    final again = fallback ?? withoutStructure(spec);
+    final uids = [for (final f in failed) if (f.sequenceId != null && f.uid != null) f.uid!];
+    AppLogger.info('IMAP: структура ${bad.length} писем не разобралась — загружаю их без неё');
+    if (again != spec) {
+      try {
+        // По UID, если он есть у всех таких писем, иначе — по номерам в
+        // выбранной папке (папка между запросами не менялась).
+        final r2 = uids.length == bad.length
+            ? await client.uidFetchMessages(MessageSequence.fromIds(uids, isUid: true), again)
+            : await client.fetchMessages(MessageSequence.fromIds(bad.toList()), again);
+        tolerant?.takeParseFailures();
+        kept.addAll(r2.messages);
+      } catch (e) {
+        AppLogger.info('IMAP: повторная загрузка писем без структуры не удалась — $e');
+      }
+    }
+    return FetchImapResult(kept, r.vanishedMessagesUidSequence, modifiedSequence: r.modifiedSequence);
+  }
+
+  /// Тот же запрос FETCH без BODYSTRUCTURE.
+  @visibleForTesting
+  static String withoutStructure(String spec) =>
+      spec.replaceAll(RegExp(r'\s*\bBODYSTRUCTURE\b', caseSensitive: false), '').replaceAll('( ', '(');
 
   /// Новые письма папки (UID больше [after]) — со сверкой (2.3.2): все ли
   /// письма, которые назвал сервер, есть в разобранном ответе. Список новых
@@ -1410,11 +1487,15 @@ class ImapService {
           break;
       }
 
-      final messages = await client.uidFetchMessages(sequence, fetchSpec);
+      // Структура не разобралась (_fetchSafe) — письмо целиком: без неё
+      // текстовые части не найти.
+      final messages = await _fetchSafe(client, sequence, fetchSpec,
+          fallback: '(UID FLAGS INTERNALDATE ENVELOPE BODY.PEEK[] RFC822.SIZE)');
 
       if (messages.messages.isEmpty) return null;
 
       final msg = messages.messages.first;
+      final whole = fetchMode == EmailFetchMode.full || (msg.body == null && msg.mimeData != null);
 
       final email = _parseMessage(msg, account.id, folderId);
 
@@ -1423,7 +1504,7 @@ class ImapService {
       String? bodyHtml;
       String? bodyPlain;
 
-      if (fetchMode != EmailFetchMode.full) {
+      if (!whole) {
         // Письмо без вложений: по структуре тянем только text/html и
         // text/plain — вложения остаются на сервере до явного запроса.
         final texts = await _fetchTextBodies(client, sequence, msg);
@@ -1456,6 +1537,10 @@ class ImapService {
       final structure = msg.body;
       if (structure != null) {
         _collectAttachments(structure, attachments);
+      } else if (whole) {
+        // Структура не разобралась, письмо загружено целиком (_fetchSafe):
+        // вложения — по разобранному MIME.
+        attachments.addAll(attachmentsFromMime(msg));
       }
 
       return email.copyWith(
@@ -1511,6 +1596,41 @@ class ImapService {
     final list = <EmailAttachment>[];
     collectAttachments(root, list);
     return list.any((a) => !a.isInline);
+  }
+
+  /// Вложения письма, загруженного целиком, когда структура
+  /// (BODYSTRUCTURE) не разобралась: файлы и встроенные картинки с
+  /// Content-ID — по разобранному MIME; номер части — тот же, что у
+  /// сервера, и скачивание работает как обычно.
+  @visibleForTesting
+  static List<EmailAttachment> attachmentsFromMime(MimeMessage msg) {
+    final out = <EmailAttachment>[];
+    try {
+      for (final info in msg.findContentInfo()) {
+        out.add(EmailAttachment(
+          id: info.fetchId,
+          name: info.fileName ?? 'attachment',
+          mimeType: info.mediaType?.text ?? 'application/octet-stream',
+          size: info.size ?? 0,
+          isInline: false,
+          contentId: EmailAttachment.normalizeCid(info.cid),
+        ));
+      }
+      for (final info in msg.findContentInfo(disposition: ContentDisposition.inline)) {
+        if (info.isText || out.any((a) => a.id == info.fetchId)) continue;
+        out.add(EmailAttachment(
+          id: info.fetchId,
+          name: info.fileName ?? 'image',
+          mimeType: info.mediaType?.text ?? 'application/octet-stream',
+          size: info.size ?? 0,
+          isInline: info.cid != null,
+          contentId: EmailAttachment.normalizeCid(info.cid),
+        ));
+      }
+    } catch (e) {
+      AppLogger.debug('IMAP: вложения по MIME не собраны — $e');
+    }
+    return out;
   }
 
   /// Вложения письма по дереву BODYSTRUCTURE.
@@ -2094,7 +2214,7 @@ class ImapService {
           {required String folderId, required int uid}) =>
       _withClient<List<EmailAttachment>?>(account, (client) async {
         await client.selectMailboxByPath(folderId);
-        final r = await client.uidFetchMessages(MessageSequence.fromId(uid, isUid: true), '(UID BODYSTRUCTURE)');
+        final r = await _fetchSafe(client, MessageSequence.fromId(uid, isUid: true), '(UID BODYSTRUCTURE)');
         if (r.messages.isEmpty) return null;
         final structure = r.messages.first.body;
         final list = <EmailAttachment>[];
@@ -2653,8 +2773,10 @@ class ImapService {
       // BODYSTRUCTURE — ради кодировки передачи части: скачанная отдельно
       // часть своих заголовков не содержит, и без неё base64 сохранялся в
       // файл как есть (PDF/картинка «битые»).
-      final messages = await client.uidFetchMessages(
-          sequence, '(BODYSTRUCTURE BODY.PEEK[$partNumber])');
+      // Структура не разобралась (_fetchSafe) — письмо целиком: часть и её
+      // кодировка — из разобранного MIME.
+      final messages = await _fetchSafe(client, sequence, '(BODYSTRUCTURE BODY.PEEK[$partNumber])',
+          fallback: '(UID BODY.PEEK[])');
 
       if (messages.messages.isEmpty) throw Exception('Message not found');
 

@@ -15,6 +15,9 @@ class OgnelissApplication : Application() {
         super.onCreate()
         // Процесс перезапуска (RestartActivity, «:restart») Flutter не нужен.
         if (processName().endsWith(RestartActivity.PROCESS_SUFFIX)) return
+        // Причина Java-сбоя — для журнала при следующем запуске (2.6.0):
+        // система про такой сбой сообщает только «crash».
+        BackgroundDiagnostics.installCrashNote(this)
         GraphicsMode.applyAtStart(this)
         // Будильник фоновой проверки (2.3.2): после перезагрузки телефона,
         // обновления приложения или принудительной остановки его нет —

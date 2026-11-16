@@ -11,6 +11,7 @@ export 'src/transport/graph_engine.dart';
 export 'src/transport/imap_smtp_engine.dart';
 export 'src/transport/tolerant_smtp_client.dart';
 export 'src/transport/notify_imap_client.dart';
+export 'src/transport/tolerant_imap_client.dart';
 export 'src/transport/autodiscover.dart';
 export 'src/transport/base64_off.dart';
 export 'src/transport/preheader.dart';

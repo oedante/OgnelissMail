@@ -105,6 +105,16 @@ class MainActivity : FlutterFragmentActivity() {
         // требует Android 15 (рекомендация Google Play): прозрачные строка
         // состояния и панель навигации, отступы задаёт приложение.
         enableEdgeToEdge()
+        // Движок — ДО super.onCreate (2.6.0; вылет на Samsung S24 и realme
+        // «при первом открытии после простоя»). Система выгрузила процесс из
+        // памяти, а окно осталось в недавних с сохранённым состоянием:
+        // super.onCreate восстанавливает FlutterFragment, и он сразу ищет
+        // движок ENGINE_ID в FlutterEngineCache. Раньше движок создавался
+        // позже — в getCachedEngineId, при создании НОВОГО фрагмента, — и
+        // восстановленный фрагмент падал с IllegalStateException («The
+        // requested cached FlutterEngine did not exist»). Следующий запуск
+        // шёл уже без сохранённого состояния и работал.
+        ensureEngine(applicationContext)
         super.onCreate(savedInstanceState)
         if (secureOn) window.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
         // Нажатие на виджет «Мой день» (холодный запуск).

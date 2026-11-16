@@ -9,6 +9,8 @@
 
 import 'package:enough_mail/enough_mail.dart' as em;
 
+import 'tolerant_imap_client.dart';
+
 import 'tolerant_smtp_client.dart';
 
 import '../debug_log.dart';
@@ -41,7 +43,8 @@ class ImapSmtpEngine implements MailEngine {
         return ConnectResult(success: false, error: 'IMAP host не задан', log: [log.dump()]);
       }
       log.info(_t, 'IMAP → $host:${cfg.imapPort} (SSL=${cfg.imapSsl})');
-      final client = em.ImapClient(isLogEnabled: false);
+      // Ответ, который enough_mail не разобрал, не подвешивает команду (2.6.0).
+      final client = TolerantImapClient(isLogEnabled: false);
       await client.connectToServer(host, cfg.imapPort, isSecure: cfg.imapSsl);
 
       if (cfg.authKind == AuthKind.oauth2) {

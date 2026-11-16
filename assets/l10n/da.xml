@@ -770,8 +770,6 @@
     <string name="confirmRecipients">Bekræft modtagere</string>
     <string name="confirmRecipientsDesc">Advar ved afsendelse til eksterne modtagere eller en stor liste</string>
     <string name="antiPhishing">Anti-phishing</string>
-    <string name="bimiLogos">Afsenderlogoer (BIMI)</string>
-    <string name="bimiLogosDesc">Afsenderens domæne kontrolleres via Ogneliss-serveren; adresser og beskeder sendes ikke; for Google-postkasser hentes logoer ikke</string>
     <string name="phishingOff">Slået fra</string>
     <string name="dangerOnly">Kun farlige</string>
     <string name="dangerOnlyDesc">Vis kun tydelige trusler</string>
@@ -4320,4 +4318,6 @@
     <string name="assignQuestionAbout">Spørgsmål om opgaven »{title}« ({code}):</string>
     <string name="assignWriteExecutor">Skriv til den ansvarlige</string>
     <string name="assignWriteAbout">Vedrørende opgaven »{title}« ({code}):</string>
+    <string name="orgIcons">Vis organisationers ikoner</string>
+    <string name="orgIconsDesc">Kun for bekræftede afsendere. Webstedets ikon hentes fra webstedet selv (en gang om måneden pr. domæne), BIMI-logoet fra Ogneliss-serveren (kun domænet); arbejdsmail i Exchange er ikke med</string>
 </resources>

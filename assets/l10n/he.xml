@@ -770,8 +770,6 @@
     <string name="confirmRecipients">בדוק נמענים</string>
     <string name="confirmRecipientsDesc">הצג אזהרה בשליחה לנמענים חיצוניים או לרשימה גדולה</string>
     <string name="antiPhishing">הגנה מפני פישינג</string>
-    <string name="bimiLogos">לוגו של שולחים (BIMI)</string>
-    <string name="bimiLogosDesc">הדומיין של השולח נבדק דרך שרת Ogneliss; כתובות והודעות אינן נשלחות; לתיבות Google לא מחפשים לוגואים</string>
     <string name="phishingOff">כבויה</string>
     <string name="dangerOnly">מסוכנות בלבד</string>
     <string name="dangerOnlyDesc">הצג רק איומים ברורים</string>
@@ -4341,4 +4339,6 @@
     <string name="assignQuestionAbout">שאלה לגבי המשימה „{title}” ({code}):</string>
     <string name="assignWriteExecutor">כתיבה למבצע</string>
     <string name="assignWriteAbout">בנוגע למשימה „{title}” ({code}):</string>
+    <string name="orgIcons">הצגת סמלים של ארגונים</string>
+    <string name="orgIconsDesc">רק לשולחים מאומתים. סמל האתר מתבקש מהאתר עצמו (פעם בחודש לכל דומיין), ולוגו BIMI משרת Ogneliss (הדומיין בלבד); דואר עבודה של Exchange אינו נכלל</string>
 </resources>

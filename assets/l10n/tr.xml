@@ -770,8 +770,6 @@
     <string name="confirmRecipients">Alıcıları kontrol et</string>
     <string name="confirmRecipientsDesc">Dış alıcılara veya büyük bir listeye gönderirken uyar</string>
     <string name="antiPhishing">Kimlik avı koruması</string>
-    <string name="bimiLogos">Gönderen logoları (BIMI)</string>
-    <string name="bimiLogosDesc">Gönderenin alan adı Ogneliss sunucusu üzerinden denetlenir; adresler ve iletiler gönderilmez; Google posta kutuları için logo aranmaz</string>
     <string name="phishingOff">Kapalı</string>
     <string name="dangerOnly">Yalnızca tehlikeli olanlar</string>
     <string name="dangerOnlyDesc">Yalnızca açık tehditleri göster</string>
@@ -4320,4 +4318,6 @@
     <string name="assignQuestionAbout">“{title}” görevi hakkında soru ({code}):</string>
     <string name="assignWriteExecutor">Sorumluya yaz</string>
     <string name="assignWriteAbout">“{title}” görevi hakkında ({code}):</string>
+    <string name="orgIcons">Kuruluş simgelerini göster</string>
+    <string name="orgIconsDesc">Yalnızca doğrulanmış gönderenler için. Site simgesi sitenin kendisinden (alan adı başına ayda bir), BIMI logosu Ogneliss sunucusundan (yalnızca alan adı) istenir; Exchange iş e-postası dahil değildir</string>
 </resources>

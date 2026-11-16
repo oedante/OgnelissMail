@@ -770,8 +770,6 @@
     <string name="confirmRecipients">Verificar destinatários</string>
     <string name="confirmRecipientsDesc">Avisar ao enviar para destinatários externos ou para uma lista grande</string>
     <string name="antiPhishing">Antiphishing</string>
-    <string name="bimiLogos">Logotipos dos remetentes (BIMI)</string>
-    <string name="bimiLogosDesc">O domínio do remetente é verificado pelo servidor Ogneliss; endereços e mensagens não são enviados; para caixas do Google não são buscados logotipos</string>
     <string name="phishingOff">Desativado</string>
     <string name="dangerOnly">Somente perigosos</string>
     <string name="dangerOnlyDesc">Mostrar apenas ameaças evidentes</string>
@@ -4320,4 +4318,6 @@
     <string name="assignQuestionAbout">Pergunta sobre a tarefa «{title}» ({code}):</string>
     <string name="assignWriteExecutor">Escrever ao responsável</string>
     <string name="assignWriteAbout">Sobre a tarefa «{title}» ({code}):</string>
+    <string name="orgIcons">Mostrar ícones de organizações</string>
+    <string name="orgIconsDesc">Só para remetentes verificados. O ícone do site é pedido ao próprio site (uma vez por mês por domínio) e o logotipo BIMI ao servidor Ogneliss (só o domínio); o e-mail de trabalho Exchange não participa</string>
 </resources>

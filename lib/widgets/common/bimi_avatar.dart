@@ -11,6 +11,7 @@ import '../../data/models/account_model.dart' show AccountType;
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../../services/security/bimi/bimi_rules.dart';
 import '../../services/security/bimi/bimi_service.dart';
+import '../../services/security/bimi/org_icon.dart';
 import 'person_photo.dart' show PhotoRing;
 
 /// Домены серверов ящиков пользователя: логотипу верим, только если
@@ -25,6 +26,14 @@ final bimiOwnServersProvider = Provider<Set<String>>((ref) => ownMailServerDomai
       for (final a in ref.watch(accountsProvider))
         if (!a.isMsExchange && !isGoogleMailbox(a.type, [a.imapServer, a.smtpServer]))
           (email: a.email, hosts: [a.imapServer, a.ewsUrl, a.exchangeServer, a.smtpServer]),
+    ]));
+
+/// Серверы ящиков, чьей проверке отправителя верим для значков сайтов
+/// (2.6.1): все ящики, кроме рабочей почты Exchange. Ящики Google здесь
+/// есть: значок телефон берёт сам, на сервер Ogneliss ничего не уходит.
+final siteIconOwnServersProvider = Provider<Set<String>>((ref) => ownMailServerDomains([
+      for (final a in ref.watch(accountsProvider))
+        if (!a.isMsExchange) (email: a.email, hosts: [a.imapServer, a.ewsUrl, a.exchangeServer, a.smtpServer]),
     ]));
 
 /// Ящик Google: вход через Google или серверы Gmail (пароль приложения,
@@ -70,24 +79,32 @@ class BimiAvatar extends ConsumerWidget {
     return d;
   }
 
+  /// Отправитель подтверждён для значка сайта (тот же разбор, другой набор
+  /// своих серверов — [siteIconOwnServersProvider]).
+  static final _siteDomains = <String, String?>{};
+
+  static String? _siteDomainFor(String email, String? authResults, Set<String> own) {
+    if (authResults == null || authResults.isEmpty) return null;
+    final key = '$email\n$authResults\n${own.length}';
+    if (_siteDomains.containsKey(key)) return _siteDomains[key];
+    final d = bimiDmarcDomain(authResults, email, ownServers: own);
+    _siteDomains[key] = d;
+    if (_siteDomains.length > 500) _siteDomains.remove(_siteDomains.keys.first);
+    return d;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (!BimiResolver.configured) return fallback;
-    final domain = _domainFor(email, authResults, ref.watch(bimiOwnServersProvider));
-    if (domain == null) return fallback;
-    final svg = ref.watch(bimiLogoProvider(domain)).value;
-    if (svg == null) return fallback;
+    // Цепочка «сохранённое → BIMI → сайт» (org_icon.dart); фото из контактов
+    // портрет показал до неё.
+    final bimi = BimiResolver.configured ? _domainFor(email, authResults, ref.watch(bimiOwnServersProvider)) : null;
+    final site = _siteDomainFor(email, authResults, ref.watch(siteIconOwnServersProvider));
+    if (bimi == null && site == null) return fallback;
+    final icon = ref.watch(orgIconProvider((bimi: bimi, site: site))).value;
     final size = radius * 2;
-    // Круглая маска и белая подложка: логотипы рисуют для белого фона, а
-    // прозрачные в тёмной теме терялись бы.
-    return PhotoRing(
-      width: radius >= 14 ? 1.5 : 1,
-      child: ClipOval(
-        child: Container(
-          width: size,
-          height: size,
-          color: Colors.white,
-          child: SvgPicture.string(
+    if (icon?.svg case final svg?) {
+      return _ring(
+          SvgPicture.string(
             svg,
             width: size,
             height: size,
@@ -95,8 +112,32 @@ class BimiAvatar extends ConsumerWidget {
             excludeFromSemantics: true,
             errorBuilder: (_, __, ___) => fallback,
           ),
-        ),
-      ),
-    );
+          size);
+    }
+    if (icon?.png case final png?) {
+      final px = (size * MediaQuery.devicePixelRatioOf(context)).round().clamp(16, 512);
+      return _ring(
+          Image.memory(
+            png,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+            cacheWidth: px,
+            gaplessPlayback: true,
+            excludeFromSemantics: true,
+            errorBuilder: (_, __, ___) => fallback,
+          ),
+          size);
+    }
+    return fallback;
   }
+
+  // Круглая маска и белая подложка: логотипы рисуют для белого фона, а
+  // прозрачные в тёмной теме терялись бы.
+  Widget _ring(Widget image, double size) => PhotoRing(
+        width: radius >= 14 ? 1.5 : 1,
+        child: ClipOval(
+          child: Container(width: size, height: size, color: Colors.white, child: image),
+        ),
+      );
 }

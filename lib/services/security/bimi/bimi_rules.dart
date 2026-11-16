@@ -186,6 +186,14 @@ const _providerAliases = <String, List<String>>{
   'list.ru': ['mail.ru'],
 };
 
+/// Домен сайта для значка (2.6.1, [SiteIconService]): базовый домен
+/// организации из домена отправителя — «news.sber.ru» → «sber.ru»; null —
+/// не домен.
+String? siteDomainOf(String domain) {
+  final d = bimiFromDomain('x@$domain');
+  return d == null ? null : _baseDomain(d);
+}
+
 /// Узел из адреса сервера: «https://mail.org.ru/EWS/Exchange.asmx» →
 /// «mail.org.ru»; «imap.yandex.ru» — как есть.
 String? _hostOf(String? s) {

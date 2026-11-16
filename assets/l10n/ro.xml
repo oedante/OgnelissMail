@@ -770,8 +770,6 @@
     <string name="confirmRecipients">Verifică destinatarii</string>
     <string name="confirmRecipientsDesc">Avertizează la trimiterea către destinatari externi sau către o listă mare</string>
     <string name="antiPhishing">Protecție anti-phishing</string>
-    <string name="bimiLogos">Siglele expeditorilor (BIMI)</string>
-    <string name="bimiLogosDesc">Domeniul expeditorului este verificat prin serverul Ogneliss; adresele și mesajele nu sunt trimise; pentru căsuțele Google nu se caută logouri</string>
     <string name="phishingOff">Dezactivată</string>
     <string name="dangerOnly">Doar periculoase</string>
     <string name="dangerOnlyDesc">Afișează doar amenințările evidente</string>
@@ -4341,4 +4339,6 @@
     <string name="assignQuestionAbout">Întrebare despre sarcina „{title}” ({code}):</string>
     <string name="assignWriteExecutor">Scrie executantului</string>
     <string name="assignWriteAbout">Despre sarcina „{title}” ({code}):</string>
+    <string name="orgIcons">Afișează pictogramele organizațiilor</string>
+    <string name="orgIconsDesc">Doar pentru expeditori confirmați. Pictograma site-ului este cerută chiar site-ului (o dată pe lună pe domeniu), sigla BIMI serverului Ogneliss (doar domeniul); e-mailul de serviciu Exchange nu participă</string>
 </resources>

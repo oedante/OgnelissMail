@@ -770,8 +770,6 @@
     <string name="confirmRecipients">Xác nhận người nhận</string>
     <string name="confirmRecipientsDesc">Cảnh báo khi gửi cho người nhận bên ngoài hoặc danh sách lớn</string>
     <string name="antiPhishing">Chống lừa đảo</string>
-    <string name="bimiLogos">Logo người gửi (BIMI)</string>
-    <string name="bimiLogosDesc">Tên miền của người gửi được kiểm tra qua máy chủ Ogneliss; địa chỉ và thư không được gửi đi; với hộp thư Google, logo không được tìm</string>
     <string name="phishingOff">Tắt</string>
     <string name="dangerOnly">Chỉ nguy hiểm</string>
     <string name="dangerOnlyDesc">Chỉ hiển thị các mối đe dọa rõ ràng</string>
@@ -4299,4 +4297,6 @@
     <string name="assignQuestionAbout">Câu hỏi về việc được giao “{title}” ({code}):</string>
     <string name="assignWriteExecutor">Viết cho người thực hiện</string>
     <string name="assignWriteAbout">Về việc được giao “{title}” ({code}):</string>
+    <string name="orgIcons">Hiển thị biểu tượng của tổ chức</string>
+    <string name="orgIconsDesc">Chỉ với người gửi đã xác minh. Biểu tượng trang được lấy trực tiếp từ trang đó (mỗi tên miền một lần mỗi tháng), logo BIMI lấy từ máy chủ Ogneliss (chỉ tên miền); thư công việc Exchange không áp dụng</string>
 </resources>

@@ -770,8 +770,6 @@
     <string name="confirmRecipients">Confirm recipients</string>
     <string name="confirmRecipientsDesc">Warn when sending to external recipients or a large list</string>
     <string name="antiPhishing">Anti-phishing</string>
-    <string name="bimiLogos">Sender logos (BIMI)</string>
-    <string name="bimiLogosDesc">The sender’s domain is checked via the Ogneliss server; addresses and messages are not sent; no logos are looked up for Google mailboxes</string>
     <string name="phishingOff">Off</string>
     <string name="dangerOnly">Danger only</string>
     <string name="dangerOnlyDesc">Show only clear threats</string>
@@ -4320,4 +4318,6 @@
     <string name="assignQuestionAbout">A question about the assignment “{title}” ({code}):</string>
     <string name="assignWriteExecutor">Write to the assignee</string>
     <string name="assignWriteAbout">About the assignment “{title}” ({code}):</string>
+    <string name="orgIcons">Show organisation icons</string>
+    <string name="orgIconsDesc">Only for verified senders. The site icon is requested from the site itself (once a month per domain), the BIMI logo from the Ogneliss server (domain only); Exchange work mail is not included</string>
 </resources>

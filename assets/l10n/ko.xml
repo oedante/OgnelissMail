@@ -770,8 +770,6 @@
     <string name="confirmRecipients">받는 사람 확인</string>
     <string name="confirmRecipientsDesc">외부 수신자나 많은 수신자에게 보낼 때 경고합니다</string>
     <string name="antiPhishing">피싱 방지</string>
-    <string name="bimiLogos">발신자 로고(BIMI)</string>
-    <string name="bimiLogosDesc">발신자 도메인은 Ogneliss 서버를 통해 확인하며 주소와 메일은 전송되지 않습니다. Google 메일함에서는 로고를 찾지 않습니다</string>
     <string name="phishingOff">끔</string>
     <string name="dangerOnly">위험한 메일만</string>
     <string name="dangerOnlyDesc">명확한 위협만 표시합니다</string>
@@ -4299,4 +4297,6 @@
     <string name="assignQuestionAbout">업무 지시 ‘{title}’ 관련 질문({code}):</string>
     <string name="assignWriteExecutor">담당자에게 쓰기</string>
     <string name="assignWriteAbout">업무 지시 ‘{title}’ 관련({code}):</string>
+    <string name="orgIcons">조직 아이콘 표시</string>
+    <string name="orgIconsDesc">확인된 발신자에게만 적용됩니다. 사이트 아이콘은 해당 사이트에서 직접(도메인당 한 달에 한 번), BIMI 로고는 Ogneliss 서버에서(도메인만) 가져옵니다. Exchange 업무 메일은 제외됩니다</string>
 </resources>

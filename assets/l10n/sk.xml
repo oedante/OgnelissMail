@@ -770,8 +770,6 @@
     <string name="confirmRecipients">Overovať príjemcov</string>
     <string name="confirmRecipientsDesc">Upozorniť pri odosielaní externým príjemcom alebo veľkému zoznamu</string>
     <string name="antiPhishing">Ochrana pred phishingom</string>
-    <string name="bimiLogos">Logá odosielateľov (BIMI)</string>
-    <string name="bimiLogosDesc">Doména odosielateľa sa overuje cez server Ogneliss, adresy ani správy sa neodosielajú; pri schránkach Google sa logá nehľadajú</string>
     <string name="phishingOff">Vypnutá</string>
     <string name="dangerOnly">Iba nebezpečné</string>
     <string name="dangerOnlyDesc">Zobrazovať len jasné hrozby</string>
@@ -4341,4 +4339,6 @@
     <string name="assignQuestionAbout">Otázka k úlohe „{title}“ ({code}):</string>
     <string name="assignWriteExecutor">Napísať riešiteľovi</string>
     <string name="assignWriteAbout">K úlohe „{title}“ ({code}):</string>
+    <string name="orgIcons">Zobrazovať ikony organizácií</string>
+    <string name="orgIconsDesc">Len pri overených odosielateľoch. Ikona webu sa sťahuje priamo z webu (raz mesačne pre doménu), logo BIMI zo servera Ogneliss (len doména); pracovná pošta Exchange sa nezapája</string>
 </resources>

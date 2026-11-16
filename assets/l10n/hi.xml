@@ -770,8 +770,6 @@
     <string name="confirmRecipients">प्राप्तकर्ताओं की जांच करें</string>
     <string name="confirmRecipientsDesc">बाहरी प्राप्तकर्ताओं या बड़ी सूची को भेजते समय चेतावनी दें</string>
     <string name="antiPhishing">फ़िशिंग से सुरक्षा</string>
-    <string name="bimiLogos">प्रेषकों के लोगो (BIMI)</string>
-    <string name="bimiLogosDesc">प्रेषक का डोमेन Ogneliss सर्वर से जाँचा जाता है; पते और संदेश नहीं भेजे जाते; Google मेलबॉक्स के लिए लोगो नहीं खोजे जाते</string>
     <string name="phishingOff">बंद</string>
     <string name="dangerOnly">केवल खतरनाक</string>
     <string name="dangerOnlyDesc">केवल स्पष्ट खतरे दिखाएं</string>
@@ -4320,4 +4318,6 @@
     <string name="assignQuestionAbout">कार्य “{title}” के बारे में प्रश्न ({code}):</string>
     <string name="assignWriteExecutor">निष्पादक को लिखें</string>
     <string name="assignWriteAbout">कार्य “{title}” के बारे में ({code}):</string>
+    <string name="orgIcons">संगठनों के आइकन दिखाएँ</string>
+    <string name="orgIconsDesc">केवल पुष्ट प्रेषकों के लिए। साइट का आइकन सीधे उसी साइट से (हर डोमेन के लिए महीने में एक बार) और BIMI लोगो Ogneliss सर्वर से (केवल डोमेन) माँगा जाता है; Exchange का कार्य मेल शामिल नहीं है</string>
 </resources>

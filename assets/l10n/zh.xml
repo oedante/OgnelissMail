@@ -770,8 +770,6 @@
     <string name="confirmRecipients">确认收件人</string>
     <string name="confirmRecipientsDesc">发送给外部收件人或大型列表时发出提醒</string>
     <string name="antiPhishing">反网络钓鱼</string>
-    <string name="bimiLogos">发件人标志 (BIMI)</string>
-    <string name="bimiLogosDesc">发件人域名通过 Ogneliss 服务器检查，不会发送地址和邮件；Google 邮箱不查找徽标</string>
     <string name="phishingOff">关闭</string>
     <string name="dangerOnly">仅危险邮件</string>
     <string name="dangerOnlyDesc">仅显示明确的威胁</string>
@@ -4299,4 +4297,6 @@
     <string name="assignQuestionAbout">关于任务“{title}”的问题（{code}）：</string>
     <string name="assignWriteExecutor">写信给执行人</string>
     <string name="assignWriteAbout">关于任务“{title}”（{code}）：</string>
+    <string name="orgIcons">显示机构图标</string>
+    <string name="orgIconsDesc">仅限已验证的发件人。网站图标直接向该网站请求（每个域名每月一次），BIMI 徽标向 Ogneliss 服务器请求（仅域名）；Exchange 工作邮件不参与</string>
 </resources>

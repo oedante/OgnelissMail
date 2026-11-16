@@ -20,6 +20,7 @@ import '../unsubscribe_service.dart' show encodeListUnsubscribe;
 import '../../security/mail_classification.dart' show MailLabel;
 import '../delivery/delivery_report.dart' show DeliveryReportHints;
 import '../../security/smime_mime.dart' show SmimeMime;
+import '../../security/bimi/bimi_rules.dart' show ownAuthResultsHeader;
 import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
 import 'package:mail_engine/mail_engine.dart'
@@ -1726,7 +1727,12 @@ class ImapService {
       final messageId = envelope.messageId;
       final inReplyTo = msg.getHeaderValue('in-reply-to');
       final references = msg.getHeaderValue('references');
-      final authResults = msg.getHeaderValue('authentication-results') ?? msg.getHeaderValue('received-spf');
+      // Все заголовки Authentication-Results сервера ящика, а не только
+      // верхний (2.6.1: iCloud пишет DMARC, DKIM и SPF разными заголовками).
+      final authResults = ownAuthResultsHeader([
+            for (final h in msg.getHeader('authentication-results') ?? const <Header>[]) h.value ?? '',
+          ]) ??
+          msg.getHeaderValue('received-spf');
       // Пометка Outlook и гриф в MIME (X-Ogneliss-*) — одной строкой, см. MailLabel.
       final sensitivity = MailLabel.fromHeaders(
         sensitivity: msg.getHeaderValue('sensitivity'),

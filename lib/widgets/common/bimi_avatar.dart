@@ -19,9 +19,11 @@ import 'person_photo.dart' show PhotoRing;
 /// Ящики Google (Gmail и Google Workspace) сюда не входят (2.5.5): у их
 /// писем логотип не ищется, и домены отправителей из Gmail на сервер
 /// Ogneliss не уходят — данные пользователей Google остаются на устройстве.
+/// Рабочая почта Exchange — тоже (2.6.1, правило владельца: с рабочей
+/// почтой серверы Ogneliss не используются).
 final bimiOwnServersProvider = Provider<Set<String>>((ref) => ownMailServerDomains([
       for (final a in ref.watch(accountsProvider))
-        if (!isGoogleMailbox(a.type, [a.imapServer, a.smtpServer]))
+        if (!a.isMsExchange && !isGoogleMailbox(a.type, [a.imapServer, a.smtpServer]))
           (email: a.email, hosts: [a.imapServer, a.ewsUrl, a.exchangeServer, a.smtpServer]),
     ]));
 

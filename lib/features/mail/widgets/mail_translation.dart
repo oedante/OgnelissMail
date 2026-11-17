@@ -34,6 +34,7 @@ import '../../../core/theme/app_icons.dart';
 import '../../../data/models/email_model.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../services/translation/lang_detect.dart' show detectLanguageHeuristic;
 import '../../../services/translation/translation_languages.dart';
 import '../../../services/translation/translation_prefs.dart';
 import '../../../services/translation/translation_text.dart';
@@ -291,9 +292,19 @@ class MailTranslationController extends ChangeNotifier {
       final again = await t.identifyLanguage(s.substring(0, 300));
       r = again?.confident == true ? again : first ?? again;
     }
+    // Движок телефона язык не назвал вовсе («und»), а текст — явно одним
+    // алфавитом: свой определитель (тот же, что на Windows). Журнал
+    // 17.11.2026: «не определён» у письма, где кириллица — 100 %.
+    if (r == null) {
+      final h = detectLanguageHeuristic(s);
+      if (h != null && h.confident) r = h;
+    }
     if (r?.confident != true) _logUndetected(s, r?.lang);
     return r;
   }
+
+  @visibleForTesting
+  static Future<LangDetection?> debugDetectLang(Translator t, String sample) => _detectLang(t, sample);
 
   /// Образец одним алфавитом (1.11.x, журнал владельца 04.11.2026: «язык
   /// письма не определён», «Не удалось перевести», русское письмо —

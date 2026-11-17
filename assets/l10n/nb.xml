@@ -4334,4 +4334,5 @@
     <string name="assignStatsWeek">Frist denne uken</string>
     <string name="kbdShortcuts">Hurtigtaster</string>
     <string name="kbdShortcutsDesc">E-post, søk og deler fra tastaturet</string>
+    <string name="mdmRuleProxy">Organisasjonens proxy: {proxy}</string>
 </resources>

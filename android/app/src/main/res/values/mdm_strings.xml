@@ -85,4 +85,8 @@
     <string name="mdm_block_device_contacts_desc">No import from and export to the device’s Contacts app.</string>
     <string name="mdm_block_device_calendar_title">Block copying events to the device</string>
     <string name="mdm_block_device_calendar_desc">Events are not added to the device’s Calendar app.</string>
+    <string name="mdm_http_proxy_title">Proxy for mail servers</string>
+    <string name="mdm_http_proxy_desc">host:port (or user:password@host:port). Empty — the device proxy and PAC are used.</string>
+    <string name="mdm_proxy_bypass_title">Hosts without proxy</string>
+    <string name="mdm_proxy_bypass_desc">Comma-separated: *.corp.local, 10.*, 10.0.0.0/8, &lt;local&gt; — names without a dot.</string>
 </resources>

@@ -6,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 import '../logging/app_logger.dart';
+import 'system_proxy.dart';
 
 final connectivityServiceProvider = StateNotifierProvider<ConnectivityNotifier, ConnectivityState>((ref) {
   return ConnectivityNotifier();
@@ -61,6 +62,9 @@ class ConnectivityNotifier extends StateNotifier<ConnectivityState> {
 
     final wasConnected = state.isConnected;
     final wasKind = _kind;
+    // Другая сеть — другой прокси (офисный Wi-Fi и мобильная сеть): ответы
+    // о прокси забываются (2.6.5).
+    SystemProxy.reset();
     _kind = [
       if (hasWifi) 'wifi', if (hasMobile) 'mobile', if (hasEthernet) 'ethernet', if (hasVpn) 'vpn',
     ].join('+');

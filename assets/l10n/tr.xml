@@ -4334,4 +4334,5 @@
     <string name="assignStatsWeek">Bu hafta süresi dolan</string>
     <string name="kbdShortcuts">Klavye kısayolları</string>
     <string name="kbdShortcutsDesc">Klavyeden posta, arama ve bölümler</string>
+    <string name="mdmRuleProxy">Kuruluş proxy’si: {proxy}</string>
 </resources>

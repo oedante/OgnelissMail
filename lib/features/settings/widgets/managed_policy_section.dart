@@ -7,12 +7,13 @@
 
 import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/network/system_proxy.dart' show SystemProxy;
 import '../../../core/theme/app_icons.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/security/managed_config.dart';
@@ -49,7 +50,21 @@ class ManagedPolicySection extends ConsumerWidget {
         if (!p.allowUserCertTrust) (AppIcons.no_encryption, l10n.tr('mdmRuleNoUserCerts')),
         if (p.blockDeviceContacts) (AppIcons.contacts, l10n.tr('mdmRuleDeviceContacts')),
         if (p.blockDeviceCalendar) (AppIcons.event_busy, l10n.tr('mdmRuleDeviceCalendar')),
+        // 2.6.5: прокси организации (без данных входа); PAC на Android
+        // задаёт политика устройства, ключ pac_url там не действует.
+        if (_proxyText(p) case final proxy?) (AppIcons.dns, l10n.tr('mdmRuleProxy').replaceAll('{proxy}', proxy)),
       ];
+
+  static String? _proxyText(ManagedPolicy p) {
+    final hop = SystemProxy.parseProxy(p.httpProxy);
+    if (hop != null) return '$hop';
+    final pac = p.pacUrl;
+    if (pac == null || defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.linux) {
+      return null;
+    }
+    final host = Uri.tryParse(pac)?.host ?? '';
+    return host.isEmpty ? 'PAC' : 'PAC ($host)';
+  }
 
   /// Ссылка для контакта поддержки: адрес — письмо, телефон — звонок,
   /// ссылка — браузер; иначе — нет.

@@ -51,6 +51,17 @@ public class NativeHttpPlugin: NSObject, FlutterPlugin, URLSessionDelegate, URLS
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    if call.method == "proxyFor" {
+      // Прокси для адреса (2.6.5): настройки сети и PAC — как у Safari.
+      let args = call.arguments as? [String: Any]
+      let s = args?["url"] as? String ?? ""
+      let pac = args?["pac"] as? String
+      DispatchQueue.global(qos: .utility).async {
+        let out = SystemProxyResolver.proxies(for: s, pac: pac)
+        DispatchQueue.main.async { result(out) }
+      }
+      return
+    }
     guard call.method == "send",
           let args = call.arguments as? [String: Any],
           let urlString = args["url"] as? String,

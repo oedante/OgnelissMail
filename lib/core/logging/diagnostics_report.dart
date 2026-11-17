@@ -35,6 +35,8 @@ import '../../services/security/device_security_service.dart';
 import '../../services/security/eas_policy_store.dart';
 import '../constants/app_constants.dart';
 import '../security/certificate_pinning_service.dart';
+import '../network/system_proxy.dart';
+import '../../services/security/managed_config.dart' show ManagedPolicy;
 import 'app_logger.dart';
 import '../platform/platform_diagnostics.dart';
 import '../platform/graphics_mode.dart';
@@ -219,6 +221,13 @@ class DiagnosticsReport {
       line('Сертификаты: режим=${pin.mode.name}, правил=${pin.rules.length}'
           '${hosts.isEmpty ? '' : ' (${hosts.join(', ')})'}, доверенных доменов=${pin.trustedCaDomains.length}');
     } catch (_) {}
+    // Прокси (2.6.5): задан ли MDM, что решено для серверов ящиков.
+    {
+      final mdmProxy = ManagedPolicy.current.httpProxy;
+      final seen = SystemProxy.summary();
+      line('Прокси: ${mdmProxy != null ? 'MDM ${SystemProxy.parseProxy(mdmProxy) ?? 'неверный'}' : 'системы'}'
+          '${seen.isEmpty ? '' : '; ${seen.take(8).join('; ')}'}');
+    }
     // С 2.5.5 вход напрямую у служб; сервер входа — только Яндекс на Windows
     // и Linux. Ключ — для него и сигналов сервера; логотипы BIMI — служба
     // погоды.

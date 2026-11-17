@@ -4313,4 +4313,5 @@
     <string name="assignStatsWeek">이번 주 기한</string>
     <string name="kbdShortcuts">키보드 단축키</string>
     <string name="kbdShortcutsDesc">키보드로 메일, 검색, 섹션 이동</string>
+    <string name="mdmRuleProxy">조직 프록시: {proxy}</string>
 </resources>

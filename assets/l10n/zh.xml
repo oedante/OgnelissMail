@@ -4313,4 +4313,5 @@
     <string name="assignStatsWeek">本周到期</string>
     <string name="kbdShortcuts">键盘快捷键</string>
     <string name="kbdShortcutsDesc">用键盘处理邮件、搜索和切换版块</string>
+    <string name="mdmRuleProxy">组织代理：{proxy}</string>
 </resources>

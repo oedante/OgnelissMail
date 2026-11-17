@@ -100,6 +100,17 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
             });
             return;
         }
+        if ("proxyFor".equals(call.method)) {
+            // Прокси для адреса (2.6.5): как у системного сетевого стека —
+            // прокси сети Wi-Fi или мобильной сети, PAC (через локальный
+            // прокси PacProxyService), глобальный прокси политики устройства.
+            final String target = orDefault(call.<String>argument("url"), "");
+            POOL.execute(() -> {
+                final List<Map<String, Object>> out = proxyFor(target);
+                MAIN.post(() -> result.success(out));
+            });
+            return;
+        }
         if (!"send".equals(call.method)) {
             result.notImplemented();
             return;
@@ -386,5 +397,31 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
             out.write(buf, 0, n);
         }
         return out.toByteArray();
+    }
+
+    /** Прокси для адреса [url]: {type: DIRECT|HTTP, host, port} по порядку. */
+    private static List<Map<String, Object>> proxyFor(String url) {
+        final List<Map<String, Object>> out = new ArrayList<>();
+        try {
+            final java.net.ProxySelector selector = java.net.ProxySelector.getDefault();
+            if (selector == null) return out;
+            for (java.net.Proxy p : selector.select(new java.net.URI(url))) {
+                final Map<String, Object> m = new HashMap<>();
+                if (p.type() == java.net.Proxy.Type.DIRECT) {
+                    m.put("type", "DIRECT");
+                    out.add(m);
+                } else if (p.type() == java.net.Proxy.Type.HTTP
+                        && p.address() instanceof java.net.InetSocketAddress) {
+                    final java.net.InetSocketAddress a = (java.net.InetSocketAddress) p.address();
+                    m.put("type", "HTTP");
+                    m.put("host", a.getHostString());
+                    m.put("port", a.getPort());
+                    out.add(m);
+                }
+            }
+        } catch (Exception ignored) {
+            // Неверный адрес или сбой выбора — «напрямую».
+        }
+        return out;
     }
 }

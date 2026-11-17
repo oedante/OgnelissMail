@@ -4334,4 +4334,5 @@
     <string name="assignStatsWeek">Scadenza questa settimana</string>
     <string name="kbdShortcuts">Scorciatoie da tastiera</string>
     <string name="kbdShortcutsDesc">Posta, ricerca e sezioni dalla tastiera</string>
+    <string name="mdmRuleProxy">Proxy dell’organizzazione: {proxy}</string>
 </resources>

@@ -4376,4 +4376,5 @@
     <string name="assignStatsWeek">Срок на неделе</string>
     <string name="kbdShortcuts">Сочетания клавиш</string>
     <string name="kbdShortcutsDesc">Письма, поиск и разделы с клавиатуры</string>
+    <string name="mdmRuleProxy">Прокси организации: {proxy}</string>
 </resources>

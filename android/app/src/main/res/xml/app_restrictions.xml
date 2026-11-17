@@ -187,4 +187,14 @@
         android:title="@string/mdm_block_device_calendar_title"
         android:description="@string/mdm_block_device_calendar_desc"
         android:defaultValue="false" />
+    <restriction
+        android:key="http_proxy"
+        android:restrictionType="string"
+        android:title="@string/mdm_http_proxy_title"
+        android:description="@string/mdm_http_proxy_desc" />
+    <restriction
+        android:key="proxy_bypass"
+        android:restrictionType="string"
+        android:title="@string/mdm_proxy_bypass_title"
+        android:description="@string/mdm_proxy_bypass_desc" />
 </restrictions>

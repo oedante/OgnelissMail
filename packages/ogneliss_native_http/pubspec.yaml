@@ -24,3 +24,6 @@ flutter:
       # 1.6.12: iPhone — NSURLSession (ios/Classes/NativeHttpPlugin.swift).
       ios:
         pluginClass: NativeHttpPlugin
+      # 2.6.5: Mac — прокси системы (macos/Classes).
+      macos:
+        pluginClass: NativeHttpPlugin

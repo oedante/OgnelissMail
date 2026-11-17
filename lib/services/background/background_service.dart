@@ -46,6 +46,7 @@ import '../../data/providers/database_provider.dart';
 import '../../data/providers/shared_prefs_provider.dart';
 import '../../core/device/device_user_agent.dart';
 import '../../core/network/app_http_overrides.dart';
+import '../../core/network/system_proxy.dart';
 import '../../core/network/certificate_pinning_bridge.dart';
 import '../../core/security/certificate_pinning_service.dart';
 import '../../core/security/trusted_ca_store.dart';
@@ -465,6 +466,8 @@ Future<void> runInBackgroundContainer(
     await DeviceUserAgent.warmUp();
     CertificatePinningBridge.instance ??= CertificatePinningService(prefs);
     HttpOverrides.global = AppHttpOverrides();
+    // Прокси системы, PAC и MDM для почтовых серверов (2.6.5).
+    SystemProxy.install();
     await TrustedCaStore.init(prefs);
     OwnAddresses.load(prefs);
     SyncSchedule.load(prefs);

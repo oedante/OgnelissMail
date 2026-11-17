@@ -4376,4 +4376,5 @@
     <string name="assignStatsWeek">Termin w tym tygodniu</string>
     <string name="kbdShortcuts">Skróty klawiszowe</string>
     <string name="kbdShortcutsDesc">Poczta, wyszukiwanie i sekcje z klawiatury</string>
+    <string name="mdmRuleProxy">Serwer proxy organizacji: {proxy}</string>
 </resources>

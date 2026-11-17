@@ -4313,4 +4313,5 @@
     <string name="assignStatsWeek">ครบกำหนดสัปดาห์นี้</string>
     <string name="kbdShortcuts">แป้นพิมพ์ลัด</string>
     <string name="kbdShortcutsDesc">อีเมล การค้นหา และส่วนต่างๆ ด้วยแป้นพิมพ์</string>
+    <string name="mdmRuleProxy">พร็อกซีขององค์กร: {proxy}</string>
 </resources>

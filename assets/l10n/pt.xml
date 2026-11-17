@@ -4334,4 +4334,5 @@
     <string name="assignStatsWeek">Vencem esta semana</string>
     <string name="kbdShortcuts">Atalhos de teclado</string>
     <string name="kbdShortcutsDesc">E-mails, pesquisa e secções pelo teclado</string>
+    <string name="mdmRuleProxy">Proxy da organização: {proxy}</string>
 </resources>

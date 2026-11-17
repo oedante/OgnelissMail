@@ -4334,4 +4334,5 @@
     <string name="assignStatsWeek">Deze week</string>
     <string name="kbdShortcuts">Sneltoetsen</string>
     <string name="kbdShortcutsDesc">Mail, zoeken en onderdelen met het toetsenbord</string>
+    <string name="mdmRuleProxy">Proxy van de organisatie: {proxy}</string>
 </resources>

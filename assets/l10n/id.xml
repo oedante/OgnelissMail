@@ -4313,4 +4313,5 @@
     <string name="assignStatsWeek">Tenggat minggu ini</string>
     <string name="kbdShortcuts">Pintasan keyboard</string>
     <string name="kbdShortcutsDesc">Email, pencarian, dan bagian dari keyboard</string>
+    <string name="mdmRuleProxy">Proxy organisasi: {proxy}</string>
 </resources>

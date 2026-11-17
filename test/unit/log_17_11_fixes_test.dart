@@ -4,16 +4,62 @@
 
 import 'dart:async';
 
+import 'package:drift/drift.dart' hide isNull, isNotNull;
+import 'package:drift/native.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:ogneliss/services/contacts/google_people_photos.dart';
 import 'package:ogneliss/services/mail/dav/dav_client.dart';
 import 'package:ogneliss/services/mail/engine/mail_engine_service.dart';
+import 'package:ogneliss/data/database/app_database.dart';
+import 'package:ogneliss/features/mail/widgets/mail_translation.dart';
 import 'package:ogneliss/services/mail/oauth/direct_oauth.dart';
+import 'package:ogneliss/services/sync/sync_service.dart';
+import 'package:ogneliss/services/translation/translator.dart';
 import 'package:ogneliss/widgets/common/bimi_avatar.dart';
 
+/// Движок перевода, который язык не определяет («und» у ML Kit).
+class _NoDetect implements Translator {
+  @override
+  Future<bool> isAvailable() async => true;
+  @override
+  Future<String?> detectLanguage(String text) async => null;
+  @override
+  Future<LangDetection?> identifyLanguage(String text) async => null;
+  @override
+  Future<List<String>> supportedLanguages() async => const ['en', 'ru'];
+  @override
+  Future<Map<String, String>> languageNames(List<String> codes, String displayLang) async => const {};
+  @override
+  Future<Set<String>?> downloadedModels() async => null;
+  @override
+  Future<List<String>> missingModels(String from, String to) async => const [];
+  @override
+  Future<void> download(String from, String to, {required bool wifiOnly}) async {}
+  @override
+  Future<void> deleteModel(String lang) async {}
+  @override
+  Future<List<String>> translate(List<String> texts, {required String from, required String to}) async => texts;
+  @override
+  bool get googleAttribution => false;
+  @override
+  int? get modelSizeMb => null;
+  @override
+  bool get canManageModels => false;
+}
+
 void main() {
+  test('перевод: движок не назвал язык, текст одним алфавитом — свой определитель', () async {
+    const ru = 'Добрый день! Спасибо за отчёт, мы отправим договор в понедельник. '
+        'Если будут вопросы по срокам, пишите, пожалуйста, мне или коллегам из отдела.';
+    final r = await MailTranslationController.debugDetectLang(_NoDetect(), ru);
+    expect(r?.lang, 'ru');
+    expect(r?.confident, isTrue);
+    expect(await MailTranslationController.debugDetectLang(_NoDetect(), '12345 ok'), isNull);
+  });
+
   test('вход Google: в журнале — какие разрешения не выданы', () {
     const req = [
       'openid', 'email', 'profile', 'https://mail.google.com/',
@@ -59,6 +105,41 @@ void main() {
     expect(MailEngineService.imapServerId('[Gmail]/Корзина:7'), isTrue);
     expect(MailEngineService.imapServerId('draft-86064180-e999-48af-bf07-f8c5baf385a2'), isFalse);
     expect(MailEngineService.imapServerId('Trash:0'), isFalse);
+  });
+
+  test('IMAP: папку пересоздали (UIDVALIDITY) — отложенные действия по старым номерам отменены', () async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    await db.into(db.accounts).insert(AccountsCompanion.insert(
+        id: 'a1', type: 1, email: 'me@corp.example', displayName: 'Я', username: 'me', createdAt: DateTime(2026)));
+    for (final f in ['INBOX', 'Sent']) {
+      await db.into(db.folders).insert(FoldersCompanion.insert(id: f, accountId: 'a1', displayName: f));
+    }
+    Future<void> mail(String id, String folder, {bool edited = false}) => db.into(db.emails).insert(EmailsCompanion.insert(
+          id: id,
+          accountId: 'a1',
+          folderId: folder,
+          fromEmail: 'anna@corp.example',
+          toRecipients: '[]',
+          subject: id,
+          receivedAt: DateTime(2026, 11, 1),
+          isLocallyModified: Value(edited),
+        ));
+    Future<void> op(String type, String target) => db.into(db.syncQueue).insert(SyncQueueCompanion.insert(
+        accountId: 'a1', operationType: type, targetId: target, payloadJson: '{}', createdAt: DateTime(2026, 11, 1)));
+    await mail('INBOX:7', 'INBOX', edited: true);
+    await mail('draft-1', 'INBOX', edited: true);
+    await mail('Sent:7', 'Sent', edited: true);
+    await op('delete', 'INBOX:7');
+    await op('mark_read', 'INBOX:8');
+    await op('delete', 'Sent:7');
+    await op('send_email', 'outbox_1');
+
+    expect(await SyncService.dropStaleImapOps(db, 'a1', 'INBOX'), 2);
+    final left = await db.select(db.syncQueue).get();
+    expect(left.map((o) => o.targetId), unorderedEquals(['Sent:7', 'outbox_1']));
+    final mails = await db.select(db.emails).get();
+    expect(mails.map((m) => m.id), unorderedEquals(['draft-1', 'Sent:7']));
   });
 
   group('календарь: запрос без диапазона дат', () {

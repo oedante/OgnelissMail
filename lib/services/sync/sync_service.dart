@@ -2542,7 +2542,12 @@ class SyncService {
                 e.folderId.equals(folder.id) &
                 e.isLocallyModified.equals(false)))
           .go();
-      AppLogger.info('IMAP ${folder.displayName}: UIDVALIDITY изменился — папка загружается заново');
+      // Отложенные «прочитано», флаг, перенос и удаление по старым номерам
+      // (UID) пришлись бы на другие письма — отменяются, а письма с такими
+      // номерами убираются (план 08.11, п. 1). Черновики (свои id) остаются.
+      final stale = await dropStaleImapOps(db, account.id, folder.id);
+      AppLogger.info('IMAP ${folder.displayName}: UIDVALIDITY изменился — папка загружается заново'
+          '${stale > 0 ? ', отложенных действий отменено: $stale' : ''}');
     }
 
     final fresh = <EmailModel>[];
@@ -2924,6 +2929,30 @@ class SyncService {
     } catch (e) {
       AppLogger.debug('Фото собеседников Google: $e');
     }
+  }
+
+  /// Папка IMAP [folderId] пересоздана на сервере (сменился UIDVALIDITY):
+  /// отложенные действия над письмами «папка:UID» и сами такие письма с
+  /// локальными правками — удалить. Возвращает число отменённых действий.
+  @visibleForTesting
+  static Future<int> dropStaleImapOps(AppDatabase db, String accountId, String folderId) async {
+    final prefix = '$folderId:';
+    final ops = await (db.select(db.syncQueue)
+          ..where((q) => q.accountId.equals(accountId) & q.operationType.isIn(const ['mark_read', 'flag', 'move', 'delete'])))
+        .get();
+    final opIds = [for (final o in ops) if (o.targetId.startsWith(prefix)) o.id];
+    if (opIds.isNotEmpty) await (db.delete(db.syncQueue)..where((q) => q.id.isIn(opIds))).go();
+    final edited = await (db.selectOnly(db.emails)
+          ..addColumns([db.emails.id])
+          ..where(db.emails.accountId.equals(accountId) & db.emails.folderId.equals(folderId)))
+        .map((r) => r.read(db.emails.id)!)
+        .get();
+    final staleMails = [for (final id in edited) if (id.startsWith(prefix)) id];
+    for (var i = 0; i < staleMails.length; i += 500) {
+      final part = staleMails.sublist(i, i + 500 > staleMails.length ? staleMails.length : i + 500);
+      await (db.delete(db.emails)..where((e) => e.accountId.equals(accountId) & e.id.isIn(part))).go();
+    }
+    return opIds.length;
   }
 
   /// Метка входа (не сам токен): изменилась — пользователь вошёл заново.

@@ -406,7 +406,9 @@ class DavPimService {
     if (days <= 1 || !_loggedLong.add(uid)) return;
     String day(DateTime d) => '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
     final prodId = RegExp(r'^PRODID:(.*)$', multiLine: true).firstMatch(data)?.group(1)?.trim() ?? '?';
-    AppLogger.info('CalDAV: событие на весь день, $days дн.: ${day(s)} — ${day(e)} (конец не включается), '
+    // Только в подробном журнале: в обычном было по 50 строк на каждый
+    // запуск (журнал 17.11.2026), вопрос 04.11 о лишнем дне закрыт.
+    AppLogger.debug('CalDAV: событие на весь день, $days дн.: ${day(s)} — ${day(e)} (конец не включается), '
         '${ev.rrule != null ? 'серия, ' : ''}записано: ${prodId.length > 60 ? prodId.substring(0, 60) : prodId}');
   }
 

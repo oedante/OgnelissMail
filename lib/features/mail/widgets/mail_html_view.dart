@@ -1173,6 +1173,9 @@ class MailHtmlView extends StatefulWidget {
   /// Адрес самого документа письма (about:blank, data:), а не ссылка.
   static bool isLocalUrl(Uri? u) => _MailHtmlViewState._isLocal(u);
 
+  /// Адрес «data:…» (ссылка письма на такой адрес не открывается).
+  static bool isDataUrl(Uri? u) => u?.scheme.toLowerCase() == 'data';
+
   /// Масштаб текста письма (1.8.12, замечание владельца 30.10.2026: «у нас
   /// очень мелкий шрифт»). Текст письма — и в окне браузера, и в простом
   /// письме — рисовался 14 px без учёта системного размера шрифта, а
@@ -2423,12 +2426,16 @@ class _MailHtmlViewState extends State<MailHtmlView> {
         },
         shouldOverrideUrlLoading: (controller, action) async {
           final url = action.request.url;
+          final byUser = action.navigationType == NavigationType.LINK_ACTIVATED ||
+              (action.hasGesture ?? false);
+          // Ссылка письма на «data:…» — не открывается ни в окне, ни снаружи:
+          // так письмо могло показать в окне приложения свою страницу
+          // (план 08.11, п. 2). Сам документ письма грузится без нажатия.
+          if (byUser && MailHtmlView.isDataUrl(url)) return NavigationActionPolicy.CANCEL;
           // Сам документ письма грузится как about:blank/data.
           if (_isLocal(url)) return NavigationActionPolicy.ALLOW;
           // Переход по нажатию пользователя — открываем через приложение с
           // проверкой домена. Без нажатия (meta refresh, редирект) — отменяем.
-          final byUser = action.navigationType == NavigationType.LINK_ACTIVATED ||
-              (action.hasGesture ?? false);
           if (byUser && url != null) {
             final s = url.toString();
             widget.onLink(s, widget.document.linkTexts[s]);

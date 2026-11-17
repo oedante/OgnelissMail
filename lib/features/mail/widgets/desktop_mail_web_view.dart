@@ -318,11 +318,14 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
             },
             shouldOverrideUrlLoading: (controller, action) async {
               final url = action.request.url;
+              final byUser =
+                  action.navigationType == NavigationType.LINK_ACTIVATED || (action.hasGesture ?? false);
+              // Ссылка письма на «data:…» — не открывается (своя страница
+              // письма в окне приложения); сам документ грузится без нажатия.
+              if (byUser && MailHtmlView.isDataUrl(url)) return NavigationActionPolicy.CANCEL;
               if (_isDocument(url)) return NavigationActionPolicy.ALLOW;
               // Нажатая ссылка — через приложение (проверка домена); переход
               // без нажатия (meta refresh, редирект) — отменяется молча.
-              final byUser =
-                  action.navigationType == NavigationType.LINK_ACTIVATED || (action.hasGesture ?? false);
               if (byUser && url != null) {
                 final s = url.toString();
                 widget.onLink(s, _doc?.linkTexts[s]);

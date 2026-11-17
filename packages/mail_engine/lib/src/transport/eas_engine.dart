@@ -1064,6 +1064,9 @@ class EasEngine implements MailEngine {
             _resolvedHost = to.host;
             redirected = true;
             log.warn(_t, '$cmd → 451: ящик на другом сервере, новый адрес ${to.host}');
+            // Новый адрес — и в сохранённый сеанс: после перезапуска первый
+            // запрос шёл на старый сервер и снова получал 451 (план 08.11, п. 1).
+            _storeSession(cfg);
             i--; // та же версия протокола — на новом адресе
             continue;
           }
@@ -3155,13 +3158,14 @@ class EasEngine implements MailEngine {
   ///  · status 1 — время ожидания истекло, изменений нет (норма);
   ///  · status 2 — изменения в [changed];
   ///  · status 5 — сервер просит другой интервал ([heartbeat]);
+  ///  · status 6 — папок больше, чем сервер следит ([maxFolders]);
   ///  · status 7 — нужна синхронизация иерархии папок;
   ///  · status 8 — ошибка (сеть/сервер).
   /// Сбой сети при Ping сейчас ожидаем (приложение свёрнуто, iOS
   /// замораживает запросы): пишется в журнал как DEBUG, а не WARN.
   bool Function()? quietPingErrors;
 
-  Future<({int status, List<String> changed, int? heartbeat})> ping(
+  Future<({int status, List<String> changed, int? heartbeat, int? maxFolders})> ping(
       List<String> folderIds, {int heartbeatSeconds = 480}) async {
     final cfg = _cfg!;
     final root = WbxmlElement(name: 'Ping', namespace: 'Ping');
@@ -3178,7 +3182,7 @@ class EasEngine implements MailEngine {
     if (resp == null) {
       // Пустой 200 — «изменений нет»; блокировка WAF или сбой сети — ошибка.
       final ok = _lastStatus == 200 && !_lastWasChallenge;
-      return (status: ok ? 1 : 8, changed: const <String>[], heartbeat: null);
+      return (status: ok ? 1 : 8, changed: const <String>[], heartbeat: null, maxFolders: null);
     }
     final status = int.tryParse(resp.root.childText('Status') ?? '') ?? 8;
     final changed = <String>[];
@@ -3187,7 +3191,7 @@ class EasEngine implements MailEngine {
       if (id != null && id.isNotEmpty) changed.add(id);
     }
     final hb = int.tryParse(resp.root.childText('HeartbeatInterval') ?? '');
-    return (status: status, changed: changed, heartbeat: hb);
+    return (status: status, changed: changed, heartbeat: hb, maxFolders: int.tryParse(resp.root.childText('MaxFolders') ?? ''));
   }
 
   /// MIME исходящего письма для SendMail/SmartForward/SmartReply.

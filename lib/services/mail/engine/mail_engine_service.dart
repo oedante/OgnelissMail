@@ -3390,7 +3390,7 @@ class MailEngineService {
     Future<void> loop() async {
       // Сервер ограничивает число папок в Ping (Status 6); «Входящие» и
       // несколько пользовательских папок — практический предел.
-      final ids = folderIds.take(25).toList();
+      var ids = folderIds.take(25).toList();
       // 8 минут — проходит через типичные прокси и NAT. Интервал, который
       // выдерживает шлюз этого ящика, запоминается: раньше после каждого
       // перезапуска push (смена сети — до 17 раз в день) первый Ping снова
@@ -3507,6 +3507,20 @@ class MailEngineService {
             break;
           case 5: // сервер просит другой интервал
             if (r.heartbeat != null && r.heartbeat! > 0) heartbeat = r.heartbeat!;
+            break;
+          case 6:
+            // Папок больше, чем сервер готов отслеживать (MaxFolders): раньше
+            // это считалось сбоем, и push переходил на короткие запросы.
+            // Оставляем первые — «Входящие» идут первыми.
+            final max = r.maxFolders;
+            if (max != null && max > 0 && max < ids.length) {
+              AppLogger.info('EAS push ${account.email}: сервер следит не больше чем за $max папками '
+                  '(было ${ids.length})');
+              ids = ids.take(max).toList();
+            } else {
+              errors++;
+              await pause(30);
+            }
             break;
           case 7:
             // Иерархия папок изменилась: без FolderSync сервер будет отвечать 7

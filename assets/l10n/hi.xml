@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">काम की प्रगति</string>
     <string name="assignStatsProgressHint">पंक्ति का रंग आपकी भूमिका दिखाता है, ऊपर के फ़िल्टर की तरह; समय-सीमा पट्टी के अंत में, बीती हुई लाल में। खोलने के लिए पंक्ति पर टैप करें।</string>
     <string name="assignStatsWeek">इस सप्ताह देय</string>
+    <string name="kbdShortcuts">कीबोर्ड शॉर्टकट</string>
+    <string name="kbdShortcutsDesc">कीबोर्ड से मेल, खोज और अनुभाग</string>
 </resources>

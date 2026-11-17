@@ -4311,4 +4311,6 @@
     <string name="assignStatsProgress">ความคืบหน้างาน</string>
     <string name="assignStatsProgressHint">สีของแถวแสดงบทบาทของคุณ เหมือนตัวกรองด้านบน กำหนดส่งอยู่ท้ายแถบ เกินกำหนดเป็นสีแดง แตะแถวเพื่อเปิด</string>
     <string name="assignStatsWeek">ครบกำหนดสัปดาห์นี้</string>
+    <string name="kbdShortcuts">แป้นพิมพ์ลัด</string>
+    <string name="kbdShortcutsDesc">อีเมล การค้นหา และส่วนต่างๆ ด้วยแป้นพิมพ์</string>
 </resources>

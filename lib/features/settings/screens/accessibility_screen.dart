@@ -6,6 +6,7 @@
 import 'dart:async';
 
 import '../../../widgets/ui/action_sheet.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
@@ -13,8 +14,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../providers/settings_provider.dart';
+import '../../../widgets/common/keyboard_shortcuts.dart' show showKeyboardHelp;
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
+
+
+/// Windows, Mac, Linux: клавиатура вместо жестов.
+bool get _desktop =>
+    !kIsWeb &&
+    (defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.macOS ||
+        defaultTargetPlatform == TargetPlatform.linux);
 
 class AccessibilityScreen extends ConsumerWidget {
   const AccessibilityScreen({super.key});
@@ -98,12 +108,21 @@ class AccessibilityScreen extends ConsumerWidget {
           // ── УПРАВЛЕНИЕ ──
           SettingsSectionTitle(l10n.tr('a11yControl')),
           SettingsGroup(children: [
-            SettingsItem(
-              icon: AppIcons.gesture,
-              title: l10n.tr('gestureNav'),
-              subtitle: l10n.tr('gestureNavDesc'),
-              onTap: () => _showGestureHelp(context),
-            ),
+            // Компьютер — сочетания клавиш вместо жестов пальцем (2.6.4).
+            if (_desktop)
+              SettingsItem(
+                icon: AppIcons.keyboard,
+                title: l10n.tr('kbdShortcuts'),
+                subtitle: l10n.tr('kbdShortcutsDesc'),
+                onTap: () => unawaited(showKeyboardHelp(context)),
+              )
+            else
+              SettingsItem(
+                icon: AppIcons.gesture,
+                title: l10n.tr('gestureNav'),
+                subtitle: l10n.tr('gestureNavDesc'),
+                onTap: () => _showGestureHelp(context),
+              ),
           ]),
 
           // «Экранный диктор» (строка без действия) и плашка «соответствует

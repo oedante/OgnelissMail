@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">Työn eteneminen</string>
     <string name="assignStatsProgressHint">Rivin väri näyttää roolisi kuten yllä olevissa suodattimissa; määräaika on palkin lopussa, myöhässä olevat punaisella. Avaa napauttamalla riviä.</string>
     <string name="assignStatsWeek">Erääntyy tällä viikolla</string>
+    <string name="kbdShortcuts">Pikanäppäimet</string>
+    <string name="kbdShortcutsDesc">Sähköposti, haku ja osiot näppäimistöltä</string>
 </resources>

@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_constants.dart' show kRulesAndCategoriesEnabled;
 import '../../l10n/app_localizations.dart';
+import 'keyboard_shortcuts.dart' show showKeyboardHelp;
 
 class PaletteCommand {
   final String title;
@@ -44,6 +45,8 @@ class CommandPalette {
       PaletteCommand(title: l10n.tr('emailSettings'), icon: AppIcons.mail, action: () => context.push('/settings/mail')),
       PaletteCommand(title: l10n.tr('signatures'), icon: AppIcons.draw, action: () => context.push('/settings/signatures')),
       PaletteCommand(title: l10n.tr('paletteSecurityPinning'), icon: AppIcons.shield, action: () => context.push('/settings/security')),
+      // Все клавиши одним списком (2.6.4).
+      PaletteCommand(title: l10n.tr('kbdShortcuts'), icon: AppIcons.keyboard, action: () => showKeyboardHelp(context)),
       // Общие «Правила обработки» скрыты (kRulesAndCategoriesEnabled) —
       // правила на телефоне живут в «VIP и правила».
       if (kRulesAndCategoriesEnabled)

@@ -11,6 +11,7 @@ import 'dart:ui' as ui;
 
 import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
 import 'package:drift/native.dart';
+import 'package:flutter/foundation.dart' show debugDefaultTargetPlatformOverride;
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -31,6 +32,13 @@ import 'package:ogneliss/features/archive/screens/archive_screen.dart';
 import 'package:ogneliss/features/auth/screens/login_screen.dart';
 import 'package:ogneliss/features/settings/screens/general_settings_screen.dart';
 import 'package:ogneliss/features/settings/screens/appearance_screen.dart';
+import 'package:ogneliss/features/settings/screens/notifications_settings_screen.dart';
+import 'package:ogneliss/features/settings/screens/mail_settings_screen.dart';
+import 'package:ogneliss/features/settings/screens/advanced_settings_screen.dart';
+import 'package:ogneliss/features/settings/screens/permissions_settings_screen.dart';
+import 'package:ogneliss/features/settings/screens/swipe_settings_screen.dart';
+import 'package:ogneliss/features/settings/screens/accessibility_screen.dart';
+import 'package:ogneliss/features/settings/screens/experimental_settings_screen.dart';
 import 'package:ogneliss/features/compose/screens/compose_screen.dart';
 import 'package:ogneliss/features/mail/screens/mail_detail_screen.dart';
 import 'package:ogneliss/features/mail/screens/mail_list_screen.dart';
@@ -889,6 +897,76 @@ void main() {
         await _shot(tester, 'review_${name}_$size', screen,
             theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: dims, textScale: 1.0);
         await tester.runAsync(db.close);
+      });
+    }
+  }
+
+  // Настройки на компьютере (2.6.4, проход по интерфейсу компьютера,
+  // 17.11.2026): телефонные пункты и тексты, ширина колонок. В тесте
+  // Platform — Linux, как у компьютера.
+  // Запуск: flutter test tool/shots --plain-name «настройки компьютера» --update-goldens
+  for (final (name, screen) in <(String, Widget)>[
+    ('general', const GeneralSettingsScreen()),
+    ('appearance', const AppearanceScreen()),
+    ('notifications', const NotificationsSettingsScreen()),
+    ('mail_reading', const MailSettingsScreen()),
+    ('mail_compose', const MailSettingsScreen(part: MailSettingsPart.compose)),
+    ('mail_files', const MailSettingsScreen(part: MailSettingsPart.files)),
+    ('mail_safety', const MailSettingsScreen(part: MailSettingsPart.safety)),
+    ('advanced', const AdvancedSettingsScreen()),
+    ('permissions', const PermissionsSettingsScreen()),
+    ('swipes', const SwipeSettingsScreen()),
+    ('accessibility', const AccessibilityScreen()),
+    ('experimental', const ExperimentalSettingsScreen()),
+  ]) {
+    testWidgets('настройки компьютера — $name', (tester) async {
+      // Платформа — Windows: пункты только для телефона скрыты, как у
+      // пользователя (по умолчанию тест изображает Android).
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
+        final prefs = await SharedPreferences.getInstance();
+        final db = (await tester.runAsync(_db))!;
+        await _shot(tester, 'desktop_settings_$name', screen,
+            theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: const Size(1280, 2000), dpr: 1, textScale: 1.0);
+        await tester.runAsync(db.close);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+  }
+
+  // Компьютер в двух размерах окна (2.6.4, проход по интерфейсу
+  // компьютера): ноутбук 1280×800 и большой экран 1920×1080.
+  // Запуск: flutter test tool/shots --plain-name «окно компьютера» --update-goldens
+  for (final (tag, size) in const [('1280', Size(1280, 800)), ('1920', Size(1920, 1080))]) {
+    for (final (name, screen) in <(String, Widget)>[
+      ('inbox', const MailListScreen()),
+      ('calendar', const CalendarScreen()),
+      ('contacts', const ContactsScreen()),
+      ('myday', const MyDayScreen()),
+      ('settings', const SettingsScreen()),
+      ('assignments', const AssignmentsScreen()),
+    ]) {
+      testWidgets('окно компьютера — $name $tag', (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+        try {
+          SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
+          final prefs = await SharedPreferences.getInstance();
+          final db = (await tester.runAsync(_db))!;
+          await tester.runAsync(() async {
+            await _letter(db);
+            await _inbox(db);
+          });
+          await _shot(tester, 'desktop_${name}_$tag', screen,
+              theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, dpr: 1, textScale: 1.0,
+              before: name != 'inbox'
+                  ? null
+                  : (t) async => t.tap(find.text('Смета по ремонту насосной станции').first));
+          await tester.runAsync(db.close);
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
       });
     }
   }

@@ -4311,4 +4311,6 @@
     <string name="assignStatsProgress">Kemajuan kerja</string>
     <string name="assignStatsProgressHint">Warna baris menunjukkan peran Anda, seperti pada filter di atas; tenggat ada di ujung bilah, yang terlambat berwarna merah. Ketuk baris untuk membukanya.</string>
     <string name="assignStatsWeek">Tenggat minggu ini</string>
+    <string name="kbdShortcuts">Pintasan keyboard</string>
+    <string name="kbdShortcutsDesc">Email, pencarian, dan bagian dari keyboard</string>
 </resources>

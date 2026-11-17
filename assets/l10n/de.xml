@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">Arbeitsfortschritt</string>
     <string name="assignStatsProgressHint">Die Zeilenfarbe zeigt Ihre Rolle wie bei den Filtern oben; die Frist steht am Balkenende, überfällige rot. Tippen Sie auf eine Zeile, um sie zu öffnen.</string>
     <string name="assignStatsWeek">Fällig diese Woche</string>
+    <string name="kbdShortcuts">Tastenkürzel</string>
+    <string name="kbdShortcutsDesc">E-Mails, Suche und Bereiche per Tastatur</string>
 </resources>

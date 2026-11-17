@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">Arbejdets forløb</string>
     <string name="assignStatsProgressHint">Rækkens farve viser din rolle som i filtrene ovenfor; fristen står ved enden af bjælken, overskredne med rødt. Tryk på en række for at åbne den.</string>
     <string name="assignStatsWeek">Frist denne uge</string>
+    <string name="kbdShortcuts">Tastaturgenveje</string>
+    <string name="kbdShortcutsDesc">Mail, søgning og sektioner fra tastaturet</string>
 </resources>

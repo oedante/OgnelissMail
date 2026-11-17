@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">Arbeidsfremdrift</string>
     <string name="assignStatsProgressHint">Radens farge viser rollen din som i filtrene over; fristen står ved enden av stolpen, overskredne i rødt. Trykk på en rad for å åpne den.</string>
     <string name="assignStatsWeek">Frist denne uken</string>
+    <string name="kbdShortcuts">Hurtigtaster</string>
+    <string name="kbdShortcutsDesc">E-post, søk og deler fra tastaturet</string>
 </resources>

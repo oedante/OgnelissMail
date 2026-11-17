@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">A munka menete</string>
     <string name="assignStatsProgressHint">A sor színe a szerepét mutatja, mint a fenti szűrőkben; a határidő a sáv végén, a lejárt pirossal. Koppintson egy sorra a megnyitáshoz.</string>
     <string name="assignStatsWeek">Határidő a héten</string>
+    <string name="kbdShortcuts">Billentyűparancsok</string>
+    <string name="kbdShortcutsDesc">Levelek, keresés és részek a billentyűzetről</string>
 </resources>

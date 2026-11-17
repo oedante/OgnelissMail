@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">Andamento do trabalho</string>
     <string name="assignStatsProgressHint">A cor da linha mostra a sua função, como nos filtros acima; o prazo fica no fim da barra, em vermelho se vencido. Toque numa linha para abri-la.</string>
     <string name="assignStatsWeek">Vencem esta semana</string>
+    <string name="kbdShortcuts">Atalhos de teclado</string>
+    <string name="kbdShortcutsDesc">E-mails, pesquisa e secções pelo teclado</string>
 </resources>

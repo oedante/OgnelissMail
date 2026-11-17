@@ -18,6 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
+import '../../l10n/app_localizations.dart';
+import '../ui/help_hint.dart' show showHelpSheet;
 import 'command_palette.dart';
 
 /// Обёртка с горячими клавишами для desktop
@@ -211,4 +213,39 @@ class TypingAwareShortcuts extends StatelessWidget {
         ),
         child: child,
       );
+}
+
+/// Клавиши компьютера для справки (2.6.4, проход по интерфейсу компьютера:
+/// в «Спец. возможностях» был только список жестов пальцем). Клавиши — как
+/// в [KeyboardShortcutsWrapper], ленте и письме; на Mac — значками ⌘ ⌃ ⇧.
+List<(String, String)> desktopKeyList(AppLocalizations l10n, {required bool mac}) {
+  String k(String win, String macKeys) => mac ? macKeys : win;
+  return [
+    ('↑ ↓   J  K', l10n.tr('keysHintNav')),
+    (k('Ctrl+N', '⌘N'), l10n.compose),
+    (k('Ctrl+R', '⌘R'), l10n.tr('replyLbl')),
+    (k('Ctrl+Shift+R', '⌃⇧R'), l10n.tr('replyAllLbl')),
+    (k('Ctrl+F', '⌃F'), l10n.tr('forwardLbl')),
+    (k('Ctrl+Enter', '⌘↩'), l10n.tr('sendLbl')),
+    ('Delete', l10n.tr('deleteLbl')),
+    (k('Backspace', '⌫'), l10n.tr('archiveLbl')),
+    if (!mac) ('Insert', l10n.tr('actFlagFull')),
+    (k('Ctrl+Q', '⌃Q'), l10n.tr('markRead')),
+    (k('Ctrl+U', '⌃U'), l10n.tr('markUnread')),
+    (k('Ctrl+P', '⌃P'), l10n.tr('printEmail')),
+    ('F4', l10n.tr('findInMail')),
+    (k('Ctrl+E   F3', '⌃E   F3'), l10n.tr('searchLbl')),
+    ('F5   F9', l10n.tr('checkMail')),
+    (k('Ctrl+1 … 5', '⌃1 … 5'), l10n.tr('sections')),
+    (k('Ctrl+K', '⌘K'), l10n.tr('keysHintPalette')),
+    ('Esc', l10n.tr('closeLbl')),
+  ];
+}
+
+/// Справка «Сочетания клавиш» (компьютер).
+Future<void> showKeyboardHelp(BuildContext context) {
+  final l10n = AppLocalizations.of(context);
+  final mac = Theme.of(context).platform == TargetPlatform.macOS;
+  final text = [for (final (keys, label) in desktopKeyList(l10n, mac: mac)) '$keys — $label'].join('\n');
+  return showHelpSheet(context, title: l10n.tr('kbdShortcuts'), text: text);
 }

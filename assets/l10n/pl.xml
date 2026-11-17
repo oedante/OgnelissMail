@@ -4374,4 +4374,6 @@
     <string name="assignStatsProgress">Przebieg prac</string>
     <string name="assignStatsProgressHint">Kolor wiersza pokazuje Twoją rolę, jak w filtrach powyżej; termin jest na końcu paska, przekroczony na czerwono. Stuknij wiersz, aby go otworzyć.</string>
     <string name="assignStatsWeek">Termin w tym tygodniu</string>
+    <string name="kbdShortcuts">Skróty klawiszowe</string>
+    <string name="kbdShortcutsDesc">Poczta, wyszukiwanie i sekcje z klawiatury</string>
 </resources>

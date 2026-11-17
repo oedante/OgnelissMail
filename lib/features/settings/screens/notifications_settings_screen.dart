@@ -66,14 +66,17 @@ class NotificationsSettingsScreen extends ConsumerWidget {
                   ? (v) => notifier.setNotificationSound(v)
                   : null,
             ),
-            SettingsSwitchItem(
-              icon: AppIcons.vibration,
-              title: l10n.tr('vibration'),
-              value: settings.notificationVibration,
-              onChanged: settings.notificationsEnabled
-                  ? (v) => notifier.setNotificationVibration(v)
-                  : null,
-            ),
+            // Вибрация — только у телефона (2.6.4, проход по интерфейсу
+            // компьютера: на Windows и Mac пункт ничего не менял).
+            if (_mobile)
+              SettingsSwitchItem(
+                icon: AppIcons.vibration,
+                title: l10n.tr('vibration'),
+                value: settings.notificationVibration,
+                onChanged: settings.notificationsEnabled
+                    ? (v) => notifier.setNotificationVibration(v)
+                    : null,
+              ),
             // Как в мессенджерах (1.9.x, просьба владельца 31.10.2026): фото
             // или буква отправителя; на Android письма VIP — в «Беседах».
             if (_mobile) ...[

@@ -4311,4 +4311,6 @@
     <string name="assignStatsProgress">工作进度</string>
     <string name="assignStatsProgressHint">行的颜色表示您的角色，与上方筛选器一致；截止日期在条形末端，逾期显示为红色。点按一行即可打开。</string>
     <string name="assignStatsWeek">本周到期</string>
+    <string name="kbdShortcuts">键盘快捷键</string>
+    <string name="kbdShortcutsDesc">用键盘处理邮件、搜索和切换版块</string>
 </resources>

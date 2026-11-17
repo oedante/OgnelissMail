@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">Arbetets gång</string>
     <string name="assignStatsProgressHint">Radens färg visar din roll som i filtren ovan; förfallodatum står vid stapelns slut, försenade i rött. Tryck på en rad för att öppna den.</string>
     <string name="assignStatsWeek">Förfaller denna vecka</string>
+    <string name="kbdShortcuts">Kortkommandon</string>
+    <string name="kbdShortcutsDesc">E-post, sökning och avsnitt från tangentbordet</string>
 </resources>

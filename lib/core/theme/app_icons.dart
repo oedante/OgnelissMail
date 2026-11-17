@@ -172,6 +172,7 @@ abstract final class AppIcons {
   static const IconData install_mobile = Symbols.install_mobile_rounded;
   static const IconData ios_share = Symbols.ios_share_rounded;
   static const IconData key = Symbols.key_rounded;
+  static const IconData keyboard = Symbols.keyboard_rounded;
   static const IconData keyboard_arrow_down = Symbols.keyboard_arrow_down_rounded;
   static const IconData keyboard_arrow_up = Symbols.keyboard_arrow_up_rounded;
   static const IconData label = Symbols.label_rounded;

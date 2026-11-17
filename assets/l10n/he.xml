@@ -4353,4 +4353,6 @@
     <string name="assignStatsProgress">התקדמות העבודה</string>
     <string name="assignStatsProgressHint">צבע השורה מציין את התפקיד שלך, כמו במסננים למעלה; המועד בסוף הפס, ובאיחור — באדום. הקש על שורה כדי לפתוח.</string>
     <string name="assignStatsWeek">מועד השבוע</string>
+    <string name="kbdShortcuts">קיצורי מקלדת</string>
+    <string name="kbdShortcutsDesc">דואר, חיפוש ואזורים מהמקלדת</string>
 </resources>

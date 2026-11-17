@@ -4311,4 +4311,6 @@
     <string name="assignStatsProgress">Tiến độ công việc</string>
     <string name="assignStatsProgressHint">Màu của hàng cho biết vai trò của bạn, như ở bộ lọc phía trên; hạn ở cuối thanh, quá hạn màu đỏ. Chạm vào hàng để mở.</string>
     <string name="assignStatsWeek">Hạn trong tuần</string>
+    <string name="kbdShortcuts">Phím tắt</string>
+    <string name="kbdShortcutsDesc">Thư, tìm kiếm và các mục bằng bàn phím</string>
 </resources>

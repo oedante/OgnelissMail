@@ -4416,4 +4416,6 @@
     <string name="assignStatsProgress">سير العمل</string>
     <string name="assignStatsProgressHint">لون الصف يبيّن دورك كما في عوامل التصفية أعلاه؛ الموعد في نهاية الشريط، والمتأخر بالأحمر. اضغط على صف لفتحه.</string>
     <string name="assignStatsWeek">مستحقة هذا الأسبوع</string>
+    <string name="kbdShortcuts">اختصارات لوحة المفاتيح</string>
+    <string name="kbdShortcutsDesc">البريد والبحث والأقسام من لوحة المفاتيح</string>
 </resources>

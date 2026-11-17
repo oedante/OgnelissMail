@@ -101,9 +101,9 @@ class MailDrawer extends ConsumerWidget {
     final activeGroupId = ref.watch(activeGroupIdProvider);
 
     // ── Избранное ──
-    List<Widget> favorites({required bool top}) => [
+    List<Widget> favorites() => [
             _DrawerBand(
-              shadowUp: !top,
+              shadowUp: true,
               title: l10n.tr('favorites'),
               trailing: IconButton(
                 tooltip: l10n.tr('favoritesEdit'),
@@ -125,39 +125,35 @@ class MailDrawer extends ConsumerWidget {
         ];
 
     // Компьютер и планшет (2.2.1): боковой полосы разделов нет — «Написать»
-    // и разделы стоят здесь, над «Избранным».
+    // и разделы стоят здесь, над папками.
     final wide = !AppBottomBar.inUse(context);
-    // «Избранное» сверху — на планшете и компьютере всегда, закреплена
-    // панель или выдвигается (2.5.4, замечание владельца 14.11.2026:
-    // «перескакивает символ закрепления»): раньше у выдвижного меню
-    // «Избранное» уходило вниз, полоса «Папки» со значком закрепления —
-    // вверх, и значок после нажатия оказывался в другом месте.
-    final favTop = wide || docked;
-    // Разделы и «Избранное» вверху — не выше половины панели, дальше
-    // прокрутка: на низком окне папкам остаётся место.
+    // «Избранное» — внизу везде (2.6.4, решение владельца 17.11.2026: «папки
+    // и значок закрепления поменять местами с избранным»). Полоса «Папки» со
+    // значком закрепления — сразу под разделами, на одном месте у
+    // закреплённой и выдвижной панели при любой высоте «Избранного»
+    // (замечание 14.11.2026: «перескакивает символ закрепления»); дерево
+    // папок — главное на компьютере — наверху, «Избранное» — внизу, как на
+    // телефоне.
+    // Разделы вверху — не выше половины панели, дальше прокрутка: на низком
+    // окне папкам остаётся место.
     Widget top(double maxHeight) => ConstrainedBox(
           constraints: BoxConstraints(maxHeight: maxHeight),
           child: SingleChildScrollView(
-            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              if (wide) SectionNav(onNavigate: docked ? null : () => Navigator.of(context).pop()),
-              if (favTop) ...favorites(top: true),
-            ]),
+            child: SectionNav(onNavigate: docked ? null : () => Navigator.of(context).pop()),
           ),
         );
     final content = LayoutBuilder(builder: (context, box) => SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (wide || docked) top(box.maxHeight * 0.55),
+            if (wide) top(box.maxHeight * 0.55),
             // Папки — сверху и прокручиваются; «Избранное» — внизу, над
             // ящиками, под большим пальцем: частые разделы не нужно искать
             // вверху экрана (09.10.2026).
             // Разделы меню — «Папки», «Избранное», «Аккаунты» — с полосой-
             // заголовком на более тёмной подложке: раньше всё сливалось в
             // один список (замечание 09.10.2026).
-            // Планшет и компьютер, закреплённая панель (1.11.0, как в
-            // Outlook): «Избранное» — сверху, над папками; на телефоне —
-            // внизу, под большим пальцем.
+            // «Избранное» — внизу и на планшете с компьютером (2.6.4).
             _DrawerBand(
               title: l10n.tr('folders'),
               // Планшет и компьютер (1.6.40): значок закрепления — меню
@@ -187,7 +183,7 @@ class MailDrawer extends ConsumerWidget {
                 ],
               ),
             ),
-            if (!favTop) ...favorites(top: false),
+            ...favorites(),
             // Тема на закреплённой панели (планшет, компьютер) — в меню «⋮»
             // ленты: нужна редко, а место у панели — папкам (оценка
             // интерфейса 12.11.2026).

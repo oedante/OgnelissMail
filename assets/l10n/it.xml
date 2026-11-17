@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">Andamento del lavoro</string>
     <string name="assignStatsProgressHint">Il colore della riga indica il tuo ruolo, come nei filtri sopra; la scadenza è alla fine della barra, in rosso se superata. Tocca una riga per aprirla.</string>
     <string name="assignStatsWeek">Scadenza questa settimana</string>
+    <string name="kbdShortcuts">Scorciatoie da tastiera</string>
+    <string name="kbdShortcutsDesc">Posta, ricerca e sezioni dalla tastiera</string>
 </resources>

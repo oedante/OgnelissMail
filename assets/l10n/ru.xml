@@ -4144,7 +4144,7 @@
     <string name="mailComposeSettings">Написание и отправка</string>
     <string name="mailComposeSettingsDesc">Отмена отправки, получатели, люди в цитатах, размер фото</string>
     <string name="mailFilesSettings">Загрузка и вложения</string>
-    <string name="mailFilesSettingsDesc">Режим загрузки, письма на телефоне, просмотр документов, поиск во вложениях</string>
+    <string name="mailFilesSettingsDesc">Режим загрузки, письма на устройстве, просмотр документов, поиск во вложениях</string>
     <string name="mailTranslateSettingsDesc">Перевод писем на устройстве</string>
     <string name="mailSafetySettingsDesc">Предупреждения о поддельных отправителях</string>
     <string name="generalDesc">Язык, поворот экрана, виджет «Почта»</string>
@@ -4374,4 +4374,6 @@
     <string name="assignStatsProgress">Ход работ</string>
     <string name="assignStatsProgressHint">Цвет строки — ваша роль, как у фильтров вверху; срок — у конца полосы, просроченный — красным. Нажмите строку, чтобы открыть поручение.</string>
     <string name="assignStatsWeek">Срок на неделе</string>
+    <string name="kbdShortcuts">Сочетания клавиш</string>
+    <string name="kbdShortcutsDesc">Письма, поиск и разделы с клавиатуры</string>
 </resources>

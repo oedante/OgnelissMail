@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">Avancement</string>
     <string name="assignStatsProgressHint">La couleur de la ligne indique votre rôle, comme dans les filtres ci-dessus ; l\'échéance est au bout de la barre, en rouge si dépassée. Touchez une ligne pour l\'ouvrir.</string>
     <string name="assignStatsWeek">Échéance cette semaine</string>
+    <string name="kbdShortcuts">Raccourcis clavier</string>
+    <string name="kbdShortcutsDesc">Messages, recherche et sections au clavier</string>
 </resources>

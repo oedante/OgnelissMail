@@ -11,6 +11,7 @@ import 'dart:async';
 
 import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/ui/app_radio_tile.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../widgets/common/app_sheet.dart';
@@ -38,6 +39,10 @@ import '../../compose/widgets/image_size_sheet.dart' show photoSizeLabel;
 
 /// Какой экран настроек почты показать.
 enum MailSettingsPart { reading, compose, files, translate, safety }
+
+/// Телефон или планшет (Android, iPhone, iPad): жесты пальцем.
+bool get _touchPlatform =>
+    !kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS);
 
 class MailSettingsScreen extends ConsumerWidget {
   final MailSettingsPart part;
@@ -199,14 +204,16 @@ class MailSettingsScreen extends ConsumerWidget {
               value: ref.watch(confirmMailDeleteProvider),
               onChanged: (v) => ref.read(confirmMailDeleteProvider.notifier).set(v),
             ),
-            // Соседние письма ленты свайпом влево-вправо (1.6.49+95).
-            SettingsSwitchItem(
-              icon: AppIcons.swipe,
-              title: l10n.tr('mailSwipePager'),
-              subtitle: l10n.tr('mailSwipePagerDesc'),
-              value: ref.watch(mailSwipePagerProvider),
-              onChanged: (v) => ref.read(mailSwipePagerProvider.notifier).set(v),
-            ),
+            // Соседние письма ленты свайпом влево-вправо (1.6.49+95) — жест
+            // пальцем: на компьютере не показывается (2.6.4; там ↑ ↓, J, K).
+            if (_touchPlatform)
+              SettingsSwitchItem(
+                icon: AppIcons.swipe,
+                title: l10n.tr('mailSwipePager'),
+                subtitle: l10n.tr('mailSwipePagerDesc'),
+                value: ref.watch(mailSwipePagerProvider),
+                onChanged: (v) => ref.read(mailSwipePagerProvider.notifier).set(v),
+              ),
             // ── Группировка в беседы ──
             SettingsSwitchItem(
               icon: AppIcons.forum,

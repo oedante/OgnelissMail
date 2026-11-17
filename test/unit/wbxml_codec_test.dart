@@ -169,4 +169,15 @@ void main() {
       expect(AsCodePages.pageToNamespace[e.value], e.key);
     }
   });
+
+  test('ItemOperations/EmptyFolderContents с AirSync:CollectionId (очистка корзины, 17.11.2026)', () {
+    final root = WbxmlElement(name: 'ItemOperations', namespace: 'ItemOperations');
+    root.addChild('EmptyFolderContents', namespace: 'ItemOperations').addChild('CollectionId', namespace: 'AirSync', text: '7');
+    final bytes = WbxmlEncoder().encode(WbxmlDocument(root: root));
+    // Страница 20 (ItemOperations), EmptyFolderContents 0x12 с содержимым.
+    expect(bytes.sublist(4, 7), [0x00, 20, 0x45]);
+    expect(bytes, containsAllInOrder([0x52, 0x00, 0x00, 0x52, 0x03, 0x37, 0x00]));
+    final back = _roundTrip(WbxmlDocument(root: root));
+    expect(back.root.findChild('EmptyFolderContents')?.childText('CollectionId'), '7');
+  });
 }

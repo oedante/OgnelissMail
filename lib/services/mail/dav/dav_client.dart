@@ -5,6 +5,7 @@
 // Обнаружение коллекций (principal → home-set → collections) и выборка данных
 // (calendar-data / address-data). Парсинг — ICalParser / VCardParser.
 
+import 'dart:async' show TimeoutException;
 import 'dart:convert' show utf8;
 
 import 'package:http/http.dart' as http;
@@ -23,6 +24,9 @@ class DavClient {
   /// 404 сюда не относится: это неверный адрес, а не отказ, и прежде из-за
   /// него синхронизация замолкала на 6 часов.
   bool denied = false;
+
+  /// Почему не удался последний запрос (null — удался).
+  DavFailure? lastFailure;
 
   Map<String, String> _headers({int? depth, String contentType = 'application/xml; charset=utf-8'}) => {
         'Authorization': authorization,
@@ -44,10 +48,13 @@ class DavClient {
       req.headers.addAll(_headers(depth: depth));
       if (body != null) req.body = body;
       final streamed = await _http.send(req).timeout(const Duration(seconds: 25));
-      final resp = await http.Response.fromStream(streamed);
+      // Тело — тоже с пределом: медленная сеть отдавала ответ минутами.
+      final resp = await http.Response.fromStream(streamed).timeout(const Duration(seconds: 60));
       if (resp.statusCode == 207 || resp.statusCode == 200) {
+        lastFailure = null;
         return utf8Body(resp);
       }
+      lastFailure = DavFailure.http;
       if (resp.statusCode == 401 || resp.statusCode == 403) {
         denied = true;
       }
@@ -62,6 +69,7 @@ class DavClient {
       AppLogger.warning('DAV $method ${Uri.parse(url).host} → HTTP ${resp.statusCode}$reason');
       return null;
     } catch (e) {
+      lastFailure = e is TimeoutException ? DavFailure.timeout : DavFailure.network;
       AppLogger.warning('DAV $method ${Uri.tryParse(url)?.host ?? ''} ошибка: $e');
       return null;
     }
@@ -207,7 +215,10 @@ class DavClient {
         '${range && from != null && to != null ? '<c:time-range start="${_utcStamp(from)}" end="${_utcStamp(to)}"/>' : ''}'
         '</c:comp-filter></c:comp-filter></c:filter></c:calendar-query>';
     var xml = await _dav('REPORT', calendarUrl, depth: 1, body: body(true));
-    if (xml == null && !denied && from != null) {
+    // Без диапазона — только если сервер отверг запрос с диапазоном. На
+    // тайм-аут запрос всех событий за все годы (он больше) тоже не успевал
+    // (журнал 17.11.2026: Google, каждые 15 минут по 50 секунд).
+    if (xml == null && !denied && from != null && lastFailure == DavFailure.http) {
       xml = await _dav('REPORT', calendarUrl, depth: 1, body: body(false));
     }
     if (xml == null) return null;
@@ -452,6 +463,9 @@ class DavClient {
 }
 
 /// Календарь (коллекция CalDAV).
+/// Почему не удался запрос DAV.
+enum DavFailure { http, timeout, network }
+
 class DavCalendar {
   final String url;
   final String? name;

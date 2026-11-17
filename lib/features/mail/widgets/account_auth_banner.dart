@@ -80,6 +80,10 @@ class AccountAuthBanner extends ConsumerWidget {
 Future<void> reauthenticateFlow(BuildContext context, WidgetRef ref, AccountModel a) async {
   final l10n = AppLocalizations.of(context);
   final started = DateTime.now();
+  // После входа баннер «не удаётся войти» исчезает вместе со своим ref —
+  // дальше провайдеры читаются из контейнера (журнал 17.11.2026: «Using ref
+  // when a widget is … unmounted», проверка сертификата после входа не шла).
+  final container = ProviderScope.containerOf(context, listen: false);
   var account = a;
   if (!a.usesOAuthTokens) {
     // Вход по паролю — экран входа в режиме «Войти снова» (1.5.12): те же
@@ -104,9 +108,9 @@ Future<void> reauthenticateFlow(BuildContext context, WidgetRef ref, AccountMode
   showInlineNotice(l10n.tr('reauthDone'));
 
   // Ждём первую синхронизацию с новыми данными и проверяем сертификат.
-  final fresh = ref.read(accountsProvider).where((x) => x.id == a.id).firstOrNull ?? account;
-  await ref.read(syncServiceProvider).syncAccount(fresh);
-  final pins = ref.read(certPinningProvider);
+  final fresh = container.read(accountsProvider).where((x) => x.id == a.id).firstOrNull ?? account;
+  await container.read(syncServiceProvider).syncAccount(fresh);
+  final pins = container.read(certPinningProvider);
   final rejected = pins.lastRejected(since: started, hosts: _hostsOf(fresh));
   if (rejected == null || !context.mounted) return;
   if (rejected.pinMismatch) {
@@ -118,8 +122,8 @@ Future<void> reauthenticateFlow(BuildContext context, WidgetRef ref, AccountMode
   }
   if (await showCertificateTrustDialog(context, rejected)) {
     await pins.trustCertificate(rejected);
-    ref.read(mailEngineServiceProvider).disconnect(a.id);
-    unawaited(ref.read(syncServiceProvider).syncAccount(fresh));
+    container.read(mailEngineServiceProvider).disconnect(a.id);
+    unawaited(container.read(syncServiceProvider).syncAccount(fresh));
   }
 }
 

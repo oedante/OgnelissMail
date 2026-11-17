@@ -2857,6 +2857,29 @@ class EasEngine implements MailEngine {
     return out;
   }
 
+  /// Очистить папку на сервере целиком (ItemOperations/EmptyFolderContents,
+  /// MS-ASCMD 2.2.3.56): «Очистить корзину». Ключ синхронизации папки не
+  /// нужен — Sync/Delete по одному письму сервер отвергал (Status 4), если
+  /// папку «Удалённые» ещё не синхронизировали (журнал 17.11.2026).
+  /// Подпапки не трогаются. true — сервер очистил папку.
+  Future<bool> emptyFolderContents(String folderId) async {
+    final cfg = _cfg!;
+    final root = WbxmlElement(name: 'ItemOperations', namespace: 'ItemOperations');
+    root
+        .addChild('EmptyFolderContents', namespace: 'ItemOperations')
+        .addChild('CollectionId', namespace: 'AirSync', text: folderId);
+    final resp = await _easCommand(cfg, 'ItemOperations', WbxmlDocument(root: root),
+        policyKeyHeader: _policyKey ?? '0');
+    if (resp == null) {
+      log.warn(_t, 'EmptyFolderContents: нет ответа (HTTP $_lastStatus)');
+      return false;
+    }
+    final status = resp.root.findChild('Response')?.findChild('EmptyFolderContents')?.childText('Status') ??
+        resp.root.childText('Status');
+    log.info(_t, 'EmptyFolderContents: Status=$status');
+    return status == '1';
+  }
+
   /// Скачать вложение по FileReference (ItemOperations/Fetch).
   ///
   /// Ответ — `Properties/Data`: либо opaque-байты, либо base64-строка.

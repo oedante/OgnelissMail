@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../core/logging/app_logger.dart';
 import '../../data/models/account_model.dart' show AccountType;
 import '../../data/models/folder_model.dart' show FolderType;
 import '../../data/providers/database_provider.dart' show databaseProvider;
@@ -113,6 +114,18 @@ class BimiAvatar extends ConsumerWidget {
   /// Отправитель подтверждён для значка сайта (тот же разбор, другой набор
   /// своих серверов — [siteIconOwnServersProvider]).
   static final _siteDomains = <String, String?>{};
+  static final _loggedUnverified = <String>{};
+
+  /// Authentication-Results для журнала: без адресов (только домены), не
+  /// длиннее 500 знаков.
+  @visibleForTesting
+  static String maskAuthResults(String v) {
+    final s = v
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .replaceAll(RegExp(r'[^\s;=@"<>()]+@'), '***@')
+        .replaceAll(RegExp(r'header\.b=[^\s;]+'), 'header.b=…');
+    return s.length > 500 ? '${s.substring(0, 500)}…' : s;
+  }
 
   static String? _siteDomainFor(String email, String? authResults, Set<String> own) {
     if (authResults == null || authResults.isEmpty) {
@@ -125,8 +138,15 @@ class BimiAvatar extends ConsumerWidget {
     _siteDomains[key] = d;
     if (d == null && email.contains('@')) {
       final first = authResults.split(';').first.trim();
-      SiteIconStats.notVerified(email.split('@').last.toLowerCase(),
-          isOwnAuthServ(first, own) ? 'нет pass' : 'заголовок от ${first.isEmpty ? '?' : first}');
+      final from = email.split('@').last.toLowerCase();
+      final own0 = isOwnAuthServ(first, own);
+      SiteIconStats.notVerified(from, own0 ? 'нет pass' : 'заголовок от ${first.isEmpty ? '?' : first}');
+      // Сервер ящика свой, а подтверждения нет — сам заголовок в журнал, раз
+      // на домен (17.11.2026: у Apple, OpenAI, Anthropic «нет pass», а по
+      // сводке не понять, что написал сервер).
+      if (own0 && _loggedUnverified.add(from) && _loggedUnverified.length < 40) {
+        AppLogger.info('Значок: $from не подтверждён сервером ящика — ${maskAuthResults(authResults)}');
+      }
     }
     if (_siteDomains.length > 500) _siteDomains.remove(_siteDomains.keys.first);
     return d;

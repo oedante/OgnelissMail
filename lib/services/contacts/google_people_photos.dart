@@ -27,12 +27,15 @@ class GooglePeoplePhotos {
   static const maxPages = 10;
 
   /// Адрес (в нижнем регистре) → ссылка на фото по обоим источникам.
-  /// [denied] — источники, на которые нет разрешения (403).
-  static Future<({Map<String, String> photos, List<String> denied})> fetch(String authorization,
+  /// [denied] — источники, на которые нет разрешения (401/403);
+  /// [apiDisabled] — отказ не из-за разрешения, а потому что People API не
+  /// включён в проекте Google Cloud (повторный вход тут не поможет).
+  static Future<({Map<String, String> photos, List<String> denied, bool apiDisabled})> fetch(String authorization,
       {http.Client? client}) async {
     final c = client ?? http.Client();
     final photos = <String, String>{};
     final denied = <String>[];
+    var apiDisabled = false;
     try {
       for (final (name, path, param) in const [
         ('contacts', '/people/me/connections', 'personFields'),
@@ -48,6 +51,7 @@ class GooglePeoplePhotos {
           final r = await c.get(uri, headers: {'Authorization': authorization}).timeout(const Duration(seconds: 20));
           if (r.statusCode == 401 || r.statusCode == 403) {
             denied.add(name);
+            if (isApiDisabled(r.body)) apiDisabled = true;
             break;
           }
           if (r.statusCode != 200) throw http.ClientException('People API $path: HTTP ${r.statusCode}', uri);
@@ -63,8 +67,14 @@ class GooglePeoplePhotos {
     } finally {
       if (client == null) c.close();
     }
-    return (photos: photos, denied: denied);
+    return (photos: photos, denied: denied, apiDisabled: apiDisabled);
   }
+
+  /// Ответ 403 Google: API выключен в проекте (SERVICE_DISABLED,
+  /// accessNotConfigured), а не нехватка разрешений
+  /// (ACCESS_TOKEN_SCOPE_INSUFFICIENT).
+  static bool isApiDisabled(String body) =>
+      body.contains('SERVICE_DISABLED') || body.contains('accessNotConfigured') || body.contains('has not been used in project');
 
   /// Люди из ответа People API → адрес → фото. Фото — основное (primary),
   /// иначе первое не-заглушка; ссылка — только https.

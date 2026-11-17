@@ -61,6 +61,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http/http.dart' as http;
 import 'package:mail_engine/mail_engine.dart' as me;
@@ -444,7 +445,7 @@ class DirectOAuth {
     }
     final claims = c.provider == 'yandex' ? await _yandexUser(at) : idTokenClaims(m['id_token'] as String?);
     final email = (claims['email'] ?? claims['preferred_username'] ?? claims['upn']) as String?;
-    AppLogger.info('OAuth (${c.provider}): токен получен');
+    AppLogger.info('OAuth (${c.provider}): токен получен${c.provider == 'google' ? grantedNote(c.scopes, m['scope']) : ''}');
     return OAuthResult(
       accessToken: at,
       refreshToken: m['refresh_token'] as String?,
@@ -454,6 +455,24 @@ class DirectOAuth {
       directClient: c.marker,
       graphConsent: c.consentScopes != null,
     );
+  }
+
+  /// Какие из запрошенных [requested] разрешений провайдер не выдал (поле
+  /// scope ответа): « — выданы все разрешения» или « — не выданы: …». Google
+  /// при входе даёт снять галочки, а разрешения, ещё не одобренные проверкой,
+  /// может не выдать вовсе (17.11.2026: фото собеседников) — без этой строки
+  /// по журналу не понять почему.
+  @visibleForTesting
+  static String grantedNote(List<String> requested, Object? granted) {
+    if (granted is! String || granted.trim().isEmpty) return '';
+    final got = granted.split(RegExp(r'[\s,]+')).toSet();
+    String short(String s) => s.replaceFirst('https://www.googleapis.com/auth/', '');
+    bool has(String s) =>
+        got.contains(s) ||
+        (s == 'email' && got.contains('https://www.googleapis.com/auth/userinfo.email')) ||
+        (s == 'profile' && got.contains('https://www.googleapis.com/auth/userinfo.profile'));
+    final missing = [for (final s in requested) if (!has(s) && s != 'offline_access') short(s)];
+    return missing.isEmpty ? ' — выданы все разрешения' : ' — не выданы: ${missing.join(', ')}';
   }
 
   /// Обновить токен прямо у провайдера. Microsoft может прислать новый

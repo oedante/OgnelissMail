@@ -2312,24 +2312,21 @@ class SyncService {
         );
       }
 
-      // Сводка «N новых писем» — только когда писем больше, чем отдельных
-      // уведомлений (1.6.4, замечание 13.10.2026): на части прошивок (nubia
-      // MyOS) она показывалась в шторке отдельной строкой рядом с
-      // уведомлениями о каждом письме, повторяя их. Теперь в ней лишь те
-      // письма, о которых отдельного уведомления нет.
-      if (unread.length > singles.length) {
-        final rest = unread.skip(singles.length).take(6).map((e) {
-          final subj = e.subject.trim().isEmpty ? '—' : e.subject.trim();
-          return NotificationText.summaryLine(PersonNames.full(e.from.displayName, email: e.from.email), subj);
-        }).toList();
-        await service.showSummaryNotification(
-          accountId: account.id,
-          accountEmail: active.length > 1 ? shortLabel : '',
-          count: unread.length,
-          lines: rest,
-          quiet: accMode == AccountNotifyMode.quiet,
-        );
-      }
+      // Письма ящика — одной группой со сводным «N новых писем» (17.11.2026;
+      // с 1.6.4 сводное было только при переполнении — и Android показывал
+      // каждое письмо отдельно). В сводном — и письма сверх отдельных
+      // уведомлений.
+      final rest = unread.skip(singles.length).take(6).map((e) {
+        final subj = e.subject.trim().isEmpty ? '—' : e.subject.trim();
+        return NotificationText.summaryLine(PersonNames.full(e.from.displayName, email: e.from.email), subj);
+      }).toList();
+      await service.refreshMailGroup(
+        accountId: account.id,
+        label: active.length > 1 ? shortLabel : '',
+        quiet: accMode == AccountNotifyMode.quiet,
+        extra: unread.length - singles.length,
+        extraLines: rest,
+      );
     } catch (e) {
       AppLogger.warning('Не удалось показать уведомление: $e');
     }

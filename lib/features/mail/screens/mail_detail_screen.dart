@@ -36,7 +36,7 @@ import 'dart:convert';
 import 'dart:io';
 import '../../../services/mail/transport_capabilities.dart';
 import '../../../services/mail/engine/mail_engine_service.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import '../../../widgets/ui/file_type_icon.dart';
 import '../../../widgets/ui/action_sheet.dart';
@@ -63,7 +63,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../data/models/email_model.dart';
 import '../../../data/models/folder_model.dart';
 import '../../../data/models/account_model.dart';
-import '../../../widgets/common/keyboard_shortcuts.dart' show TypingAwareShortcuts;
+import '../../../widgets/common/keyboard_shortcuts.dart' show TypingAwareShortcuts, withMacCommand;
 import '../../../widgets/common/undo_manager.dart';
 import '../providers/mail_providers.dart';
 import '../widgets/sender_safety_banner.dart';
@@ -1782,8 +1782,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // подписями — сверху, отправитель и дата — под темой, телефонной
     // нижней панели нет.
     final wide = _wideLayout(context);
+    // Mac (17.11.2026): сочетания и с ⌘ ([withMacCommand]); ⌘F — поиск в
+    // письме, ⌘J — переслать (Outlook для Mac), ⌘⌫ — удалить; ⌘Q — выход
+    // из программы, «прочитано» — только ⌃Q.
+    final mac = defaultTargetPlatform == TargetPlatform.macOS;
     return TypingAwareShortcuts(
-      bindings: {
+      bindings: withMacCommand({
+        if (mac) const SingleActivator(LogicalKeyboardKey.keyF, meta: true): _openFind,
+        if (mac) const SingleActivator(LogicalKeyboardKey.keyJ, meta: true): () => _forward(email),
         const SingleActivator(LogicalKeyboardKey.keyR, control: true): () =>
             _compose({'replyToId': email.id, 'accountId': email.accountId}),
         const SingleActivator(LogicalKeyboardKey.keyR, control: true, shift: true): () =>
@@ -1798,13 +1804,14 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         const SingleActivator(LogicalKeyboardKey.keyP, control: true): () => unawaited(_exportPdf(email, l10n)),
         // Поиск в письме (2.2.0) — F4, как в Outlook (Ctrl+F — переслать).
         const SingleActivator(LogicalKeyboardKey.f4): _openFind,
-      },
+      }, except: {LogicalKeyboardKey.keyQ, LogicalKeyboardKey.keyF}),
       // Клавиши без Ctrl — не пока набирают ответ (1.10.1): Delete —
       // удалить, Backspace — в архив, Insert — флажок.
       plain: {
         const SingleActivator(LogicalKeyboardKey.delete): () => _deleteEmail(email, l10n),
         const SingleActivator(LogicalKeyboardKey.backspace): () => unawaited(_archiveEmail(email, l10n)),
         const SingleActivator(LogicalKeyboardKey.insert): () => _toggleFlag(email),
+        if (mac) const SingleActivator(LogicalKeyboardKey.backspace, meta: true): () => _deleteEmail(email, l10n),
       },
       child: Focus(
         autofocus: true,

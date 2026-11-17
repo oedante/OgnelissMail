@@ -54,67 +54,41 @@ class KeyboardShortcutsWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!_isDesktop) return child;
 
+    // Сочетания — SingleActivator (Ctrl; на Mac — и ⌘, [withMacCommand]).
+    // Ответить, переслать и удалить — только если оболочке их передали:
+    // иначе пустое действие забирало клавишу, и ⌘R на Mac не доходил ни до
+    // чего (17.11.2026: «сочетания клавиш не реагировали»). Письмо в панели
+    // обрабатывает их само.
+    SingleActivator ctrl(LogicalKeyboardKey k, {bool shift = false}) => SingleActivator(k, control: true, shift: shift);
+    final shortcuts = withMacCommand<Intent>({
+      // Новое письмо; Ctrl+Shift+M — откуда угодно (Outlook).
+      ctrl(LogicalKeyboardKey.keyN): const _ComposeIntent(),
+      ctrl(LogicalKeyboardKey.keyM, shift: true): const _ComposeIntent(),
+      if (onReply != null) ctrl(LogicalKeyboardKey.keyR): const _ReplyIntent(),
+      if (onReplyAll != null) ctrl(LogicalKeyboardKey.keyR, shift: true): const _ReplyAllIntent(),
+      if (onForward != null) ctrl(LogicalKeyboardKey.keyF): const _ForwardIntent(),
+      if (onDelete != null) const SingleActivator(LogicalKeyboardKey.delete): const _DeleteIntent(),
+      // Поиск: Ctrl+E (Outlook), Ctrl+Shift+F, F3. Ctrl+K — палитра команд.
+      ctrl(LogicalKeyboardKey.keyE): const _SearchIntent(),
+      ctrl(LogicalKeyboardKey.keyF, shift: true): const _SearchIntent(),
+      const SingleActivator(LogicalKeyboardKey.f3): const _SearchIntent(),
+      // Ctrl+Shift+I — «Входящие» (Outlook): вкладка почты.
+      ctrl(LogicalKeyboardKey.keyI, shift: true): const _SwitchTabIntent(0),
+      // Проверить почту: F5, F9 («Отправить и получить» в Outlook), Ctrl+Shift+S.
+      const SingleActivator(LogicalKeyboardKey.f5): const _RefreshIntent(),
+      const SingleActivator(LogicalKeyboardKey.f9): const _RefreshIntent(),
+      ctrl(LogicalKeyboardKey.keyS, shift: true): const _RefreshIntent(),
+      // Разделы 1–5.
+      ctrl(LogicalKeyboardKey.digit1): const _SwitchTabIntent(0),
+      ctrl(LogicalKeyboardKey.digit2): const _SwitchTabIntent(1),
+      ctrl(LogicalKeyboardKey.digit3): const _SwitchTabIntent(2),
+      ctrl(LogicalKeyboardKey.digit4): const _SwitchTabIntent(3),
+      ctrl(LogicalKeyboardKey.digit5): const _SwitchTabIntent(4),
+      ctrl(LogicalKeyboardKey.keyK): const _PaletteIntent(),
+    });
+
     return Shortcuts(
-      shortcuts: {
-        // Новое письмо
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyN):
-            const _ComposeIntent(),
-        // macOS: Cmd+N
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyN):
-            const _ComposeIntent(),
-
-        // Ответить
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyR):
-            const _ReplyIntent(),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyR):
-            const _ReplyIntent(),
-
-        // Ответить всем
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift, LogicalKeyboardKey.keyR):
-            const _ReplyAllIntent(),
-
-        // Переслать
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
-            const _ForwardIntent(),
-
-        // Удалить
-        const SingleActivator(LogicalKeyboardKey.delete):
-            const _DeleteIntent(),
-
-        // Поиск
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift, LogicalKeyboardKey.keyF):
-            const _SearchIntent(),
-        // Ctrl+E — поиск, как в Outlook (Ctrl+K занят командной палитрой;
-        // раньше он был назначен дважды и поиск по нему не открывался).
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyE):
-            const _SearchIntent(),
-
-        // F3 — поиск, Ctrl+Shift+M — новое письмо откуда угодно (Outlook).
-        const SingleActivator(LogicalKeyboardKey.f3): const _SearchIntent(),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift, LogicalKeyboardKey.keyM):
-            const _ComposeIntent(),
-        // Ctrl+Shift+I — «Входящие» (Outlook): вкладка почты.
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift, LogicalKeyboardKey.keyI):
-            const _SwitchTabIntent(0),
-
-        // Обновить; F9 — «Отправить и получить» в Outlook.
-        const SingleActivator(LogicalKeyboardKey.f5):
-            const _RefreshIntent(),
-        const SingleActivator(LogicalKeyboardKey.f9):
-            const _RefreshIntent(),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift, LogicalKeyboardKey.keyS):
-            const _RefreshIntent(),
-
-        // Вкладки 1-5
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit1): const _SwitchTabIntent(0),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit2): const _SwitchTabIntent(1),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit3): const _SwitchTabIntent(2),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit4): const _SwitchTabIntent(3),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit5): const _SwitchTabIntent(4),
-        // Командная палитра Ctrl+K / Cmd+K
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyK): const _PaletteIntent(),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyK): const _PaletteIntent(),
-      },
+      shortcuts: shortcuts,
       child: Actions(
         actions: {
           _ComposeIntent: CallbackAction<_ComposeIntent>(onInvoke: (_) {
@@ -140,6 +114,26 @@ class KeyboardShortcutsWrapper extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Клавиши Mac (17.11.2026): на Mac главная клавиша сочетаний — ⌘, а не
+/// Ctrl. Для каждого сочетания с Ctrl добавляется такое же с ⌘ (Ctrl тоже
+/// работает); [except] — клавиши, у которых ⌘ занят системой или другим
+/// действием (⌘Q — выход из программы). На Windows и Linux — как есть.
+Map<ShortcutActivator, T> withMacCommand<T>(Map<ShortcutActivator, T> bindings,
+    {Set<LogicalKeyboardKey> except = const {}}) {
+  if (defaultTargetPlatform != TargetPlatform.macOS) return bindings;
+  final out = Map<ShortcutActivator, T>.of(bindings);
+  // SingleActivator не сравнивается по значению — свои ⌘ ищутся по полям.
+  bool taken(SingleActivator c) => out.keys.whereType<SingleActivator>().any(
+      (b) => b.meta && !b.control && b.trigger == c.trigger && b.shift == c.shift && b.alt == c.alt);
+  for (final e in bindings.entries) {
+    final a = e.key;
+    if (a is! SingleActivator || !a.control || a.meta || except.contains(a.trigger)) continue;
+    final cmd = SingleActivator(a.trigger, meta: true, shift: a.shift, alt: a.alt, includeRepeats: a.includeRepeats);
+    if (!taken(cmd)) out[cmd] = e.value;
+  }
+  return out;
 }
 
 class _ComposeIntent extends Intent { const _ComposeIntent(); }
@@ -224,19 +218,21 @@ List<(String, String)> desktopKeyList(AppLocalizations l10n, {required bool mac}
     ('↑ ↓   J  K', l10n.tr('keysHintNav')),
     (k('Ctrl+N', '⌘N'), l10n.compose),
     (k('Ctrl+R', '⌘R'), l10n.tr('replyLbl')),
-    (k('Ctrl+Shift+R', '⌃⇧R'), l10n.tr('replyAllLbl')),
-    (k('Ctrl+F', '⌃F'), l10n.tr('forwardLbl')),
+    (k('Ctrl+Shift+R', '⇧⌘R'), l10n.tr('replyAllLbl')),
+    // На Mac ⌘F — поиск в письме, пересылка — ⌘J (как Outlook для Mac).
+    (k('Ctrl+F', '⌘J'), l10n.tr('forwardLbl')),
     (k('Ctrl+Enter', '⌘↩'), l10n.tr('sendLbl')),
-    ('Delete', l10n.tr('deleteLbl')),
+    (k('Delete', '⌘⌫'), l10n.tr('deleteLbl')),
     (k('Backspace', '⌫'), l10n.tr('archiveLbl')),
     if (!mac) ('Insert', l10n.tr('actFlagFull')),
+    // ⌘Q на Mac — выход из программы.
     (k('Ctrl+Q', '⌃Q'), l10n.tr('markRead')),
-    (k('Ctrl+U', '⌃U'), l10n.tr('markUnread')),
-    (k('Ctrl+P', '⌃P'), l10n.tr('printEmail')),
-    ('F4', l10n.tr('findInMail')),
-    (k('Ctrl+E   F3', '⌃E   F3'), l10n.tr('searchLbl')),
+    (k('Ctrl+U', '⌘U'), l10n.tr('markUnread')),
+    (k('Ctrl+P', '⌘P'), l10n.tr('printEmail')),
+    (k('F4', '⌘F   F4'), l10n.tr('findInMail')),
+    (k('Ctrl+E   F3', '⌘E   F3'), l10n.tr('searchLbl')),
     ('F5   F9', l10n.tr('checkMail')),
-    (k('Ctrl+1 … 5', '⌃1 … 5'), l10n.tr('sections')),
+    (k('Ctrl+1 … 5', '⌘1 … 5'), l10n.tr('sections')),
     (k('Ctrl+K', '⌘K'), l10n.tr('keysHintPalette')),
     ('Esc', l10n.tr('closeLbl')),
   ];

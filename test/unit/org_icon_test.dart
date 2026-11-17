@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:image/image.dart' as img;
 import 'package:ogneliss/services/security/bimi/bimi_rules.dart';
 import 'package:ogneliss/services/security/bimi/bimi_service.dart';
 import 'package:ogneliss/services/security/bimi/org_icon.dart';
@@ -41,6 +42,39 @@ Uint8List _ico(Uint8List png, int w) {
     ..setUint32(14, png.length, Endian.little)
     ..setUint32(18, 22, Endian.little);
   return Uint8List.fromList([...head.buffer.asUint8List(), ...png]);
+}
+
+/// .ico с картинкой BMP 32×32 внутри (как favicon.ico google.com).
+Uint8List _icoBmp(int w) {
+  final dib = BytesBuilder();
+  final head = ByteData(40)
+    ..setUint32(0, 40, Endian.little)
+    ..setInt32(4, w, Endian.little)
+    ..setInt32(8, w * 2, Endian.little) // высота с маской AND
+    ..setUint16(12, 1, Endian.little)
+    ..setUint16(14, 32, Endian.little)
+    ..setUint32(20, w * w * 4, Endian.little);
+  dib.add(head.buffer.asUint8List());
+  for (var i = 0; i < w * w; i++) {
+    dib.add(const [0x20, 0x40, 0xC0, 0xFF]); // BGRA
+  }
+  dib.add(List.filled(w * ((w + 31) ~/ 32) * 4, 0)); // маска AND
+  final data = dib.takeBytes();
+  final dir = ByteData(22)
+    ..setUint16(2, 1, Endian.little)
+    ..setUint16(4, 1, Endian.little)
+    ..setUint8(6, w)
+    ..setUint8(7, w)
+    ..setUint16(10, 1, Endian.little)
+    ..setUint16(12, 32, Endian.little)
+    ..setUint32(14, data.length, Endian.little)
+    ..setUint32(18, 22, Endian.little);
+  return Uint8List.fromList([...dir.buffer.asUint8List(), ...data]);
+}
+
+(int, int) _size(Uint8List png) {
+  final d = ByteData.sublistView(png);
+  return (d.getUint32(16), d.getUint32(20));
 }
 
 class _BimiMem implements BimiCacheStore {
@@ -90,20 +124,101 @@ void main() {
       expect(await SiteIconService.fetchIcon('ya.example', client: c), png);
     });
 
-    test('чужой домен, http, мелкий и большой значок — нет', () async {
-      final away = MockClient((r) async => http.Response('', 302, headers: {'location': 'https://tracker.example/i.png'}));
-      expect(await SiteIconService.fetchIcon('bank.ru', client: away), isNull);
+    test('http, мелкий и большой значок, страница вместо картинки, бесконечные переходы — нет', () async {
+      final loop = MockClient((r) async => http.Response('', 302, headers: {'location': 'https://tracker.example/i.png'}));
+      expect(await SiteIconService.fetchIcon('bank.ru', client: loop), isNull);
       final insecure = MockClient((r) async => http.Response('', 302, headers: {'location': 'http://bank.ru/i.png'}));
       expect(await SiteIconService.fetchIcon('bank.ru', client: insecure), isNull);
       final tiny = MockClient((r) async =>
           r.url.path == '/apple-touch-icon.png' ? http.Response.bytes(_png(16, 16), 200) : http.Response('', 404));
       expect(await SiteIconService.fetchIcon('bank.ru', client: tiny), isNull);
       final huge = MockClient((r) async => r.url.path == '/apple-touch-icon.png'
-          ? http.Response.bytes(_png(180, 180, pad: 200 * 1024), 200)
+          ? http.Response.bytes(_png(180, 180, pad: 600 * 1024), 200)
           : http.Response('', 404));
       expect(await SiteIconService.fetchIcon('bank.ru', client: huge), isNull);
+      final trace = <String>[];
       final html = MockClient((r) async => http.Response('<html>not an image</html>', 200));
-      expect(await SiteIconService.fetchIcon('bank.ru', client: html), isNull);
+      expect(await SiteIconService.fetchIcon('bank.ru', client: html, trace: trace), isNull);
+      expect(trace.join('; '), contains('bank.ru/apple-touch-icon.png: не картинка (страница)'));
+    });
+
+    test('переход на другой домен — значок того сайта (statuspage.io → atlassian.com, 17.11.2026)', () async {
+      final png = _png(180, 180);
+      final c = MockClient((r) async {
+        if (r.url.host.endsWith('statuspage.io')) {
+          return http.Response('', 301, headers: {'location': 'https://www.atlassian.com${r.url.path}'});
+        }
+        if (r.url.host == 'www.atlassian.com' && r.url.path == '/apple-touch-icon.png') return http.Response.bytes(png, 200);
+        return http.Response('', 404);
+      });
+      expect(await SiteIconService.fetchIcon('statuspage.io', client: c), png);
+    });
+
+    test('.ico с BMP внутри, JPEG и GIF — в PNG (google.com, 17.11.2026)', () async {
+      final ico = MockClient((r) async =>
+          r.url.path == '/favicon.ico' ? http.Response.bytes(_icoBmp(32), 200) : http.Response('', 404));
+      final fromIco = await SiteIconService.fetchIcon('google.com', client: ico);
+      expect(fromIco, isNotNull);
+      expect(_size(fromIco!), (32, 32));
+      expect(img.decodePng(fromIco)!.getPixel(5, 5).r, 0xC0);
+
+      final jpg = img.encodeJpg(img.Image(width: 600, height: 300));
+      final cj = MockClient((r) async =>
+          r.url.path == '/apple-touch-icon.png' ? http.Response.bytes(jpg, 200) : http.Response('', 404));
+      final fromJpg = await SiteIconService.fetchIcon('jpeg.example', client: cj);
+      expect(_size(fromJpg!), (256, 128), reason: 'крупный — сжат до 256 точек');
+
+      final gif = img.encodeGif(img.Image(width: 48, height: 48));
+      final cg = MockClient((r) async =>
+          r.url.path == '/favicon.ico' ? http.Response.bytes(gif, 200) : http.Response('', 404));
+      expect(_size((await SiteIconService.fetchIcon('gif.example', client: cg))!), (48, 48));
+
+      final trace = <String>[];
+      final small = MockClient((r) async =>
+          r.url.path == '/favicon.ico' ? http.Response.bytes(_icoBmp(16), 200) : http.Response('', 404));
+      expect(await SiteIconService.fetchIcon('small.example', client: small, trace: trace), isNull);
+      expect(trace.join('; '), contains('мал 16×16'));
+    });
+
+    test('«&amp;» в адресе значка и значки из манифеста сайта', () async {
+      final png = _png(192, 192);
+      final c = MockClient((r) async {
+        if (r.url.path == '/') {
+          return http.Response('<link rel="icon" href="https://cdn.example/f.png?w=180&amp;h=180">', 200);
+        }
+        if (r.url.toString() == 'https://cdn.example/f.png?w=180&h=180') return http.Response.bytes(png, 200);
+        return http.Response('', r.url.path.contains('f.png') ? 400 : 404);
+      });
+      expect(await SiteIconService.fetchIcon('stripe.example', client: c), png);
+
+      final m = MockClient((r) async {
+        if (r.url.path == '/') return http.Response('<head><link rel="manifest" href="/site.webmanifest"></head>', 200);
+        if (r.url.path == '/site.webmanifest') {
+          return http.Response(
+              '{"icons":[{"src":"/m.svg","type":"image/svg+xml"},'
+              '{"src":"/mask512.png","sizes":"512x512","purpose":"maskable"},'
+              '{"src":"/i192.png","sizes":"192x192","type":"image/png"}]}',
+              200);
+        }
+        if (r.url.path == '/i192.png') return http.Response.bytes(png, 200);
+        return http.Response('', 404);
+      });
+      expect(await SiteIconService.fetchIcon('spa.example', client: m), png);
+    });
+
+    test('голый домен перевёл на www — второй раз www не спрашивается', () async {
+      final asked = <String>[];
+      final c = MockClient((r) async {
+        asked.add('${r.url.host}${r.url.path}');
+        if (r.url.host == 'rzd.example' && r.url.path == '/') {
+          return http.Response('', 301, headers: {'location': 'https://www.rzd.example/'});
+        }
+        if (r.url.path == '/') return http.Response('<html></html>', 200);
+        return http.Response('', 404);
+      });
+      expect(await SiteIconService.fetchIcon('rzd.example', client: c), isNull);
+      expect(asked.where((a) => a == 'www.rzd.example/').length, 1);
+      expect(asked, contains('www.rzd.example/favicon.ico'));
     });
 
     test('голый домен без значка или без HTTPS — значок с www (16.11.2026)', () async {

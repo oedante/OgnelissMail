@@ -2894,8 +2894,12 @@ class SyncService {
       await _prefs.setString(key, DateTime.now().toIso8601String());
       await _prefs.setBool('$key:denied', r.denied.length == 2);
       await _prefs.setString('$key:grant', grant);
-      if (r.denied.isNotEmpty) {
-        AppLogger.info('Фото собеседников Google: нет разрешения (${r.denied.join(', ')}) — появятся после повторного входа');
+      if (r.apiDisabled) {
+        AppLogger.info('Фото собеседников Google: People API не включён в проекте Google Cloud '
+            '(консоль → «API и сервисы» → «Библиотека» → Google People API) — повторный вход не поможет');
+      } else if (r.denied.isNotEmpty) {
+        AppLogger.info('Фото собеседников Google: нет разрешения (${r.denied.join(', ')}) — появятся после '
+            'повторного входа, если Google выдаст разрешения (пока приложение на проверке — может не выдать)');
       }
       if (r.photos.isEmpty) return;
       // Только тем, у кого фото нет: своё фото контакта и фото из адресной

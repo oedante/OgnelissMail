@@ -464,10 +464,14 @@ class DavPimService {
       final res = <String, Map<String, dynamic>>{};
       var ok = cals.isNotEmpty && !client.denied;
       var resources = 0;
+      final slow = <String>[];
       for (final cal in cals) {
         final items = await client.reportCalendarItems(cal.url, from: w.from, to: w.to);
         if (items == null) {
           ok = false;
+          if (client.lastFailure == DavFailure.timeout || client.lastFailure == DavFailure.network) {
+            slow.add(cal.name?.trim().isNotEmpty == true ? '«${cal.name!.trim()}»' : 'без названия');
+          }
           continue;
         }
         for (final it in items) {
@@ -487,7 +491,13 @@ class DavPimService {
         if (tagLine != null) await _saveTag(_calTagKey(account.id), tagLine);
       } else if (res.isNotEmpty) {
         await _saveRes(account.id, {...await _loadRes(account.id), ...res});
+        // Остальные календари прочитаны, а один не успел ответить (сеть): метка
+        // сохраняется — без изменений следующая проверка выгрузку пропустит,
+        // медленный календарь — со следующей полной выгрузкой (раз в 6 часов).
+        // Раньше вся выгрузка повторялась каждые 15 минут (журнал 17.11.2026).
+        if (tagLine != null && slow.isNotEmpty && !client.denied) await _saveTag(_calTagKey(account.id), tagLine);
       }
+      if (slow.isNotEmpty) AppLogger.info('CalDAV $provider: не успел ответить календарь ${slow.join(', ')}');
       _noteResult(key, client, out.isEmpty);
       AppLogger.info('CalDAV $provider: календарей ${cals.length}, ресурсов $resources, событий ${out.length}'
           '${ok ? '' : ', не все календари прочитаны'}${client.denied ? ', отказ в доступе (401/403)' : ''}');

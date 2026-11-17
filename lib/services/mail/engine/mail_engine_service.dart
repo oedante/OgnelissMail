@@ -3731,7 +3731,24 @@ class MailEngineService {
       {required String trashFolderId}) async {
     final done = <String>[];
     if (account.usesEas) {
+      // Сначала — очистка папки одной командой (ItemOperations): по одному
+      // письму сервер отвергал удаление в несинхронизированной папке, а
+      // найденные поиском письма лежали под id поиска (LongId), которого
+      // нет в папке (журнал 17.11.2026: Status=4).
+      try {
+        final eas = await _easEngine(account);
+        if (eas != null && await _serial(account.id, () => eas.emptyFolderContents(trashFolderId))) {
+          return [...trashIds];
+        }
+      } catch (e) {
+        AppLogger.warning('emptyTrash EAS (папка целиком): $e');
+      }
       for (final id in trashIds) {
+        // Черновик, не ушедший на сервер, и письмо из поиска — только здесь.
+        if (_localOnlyId(id) || id.startsWith('eas_')) {
+          done.add(id);
+          continue;
+        }
         try {
           await deleteMessage(account, folderId: trashFolderId, serverId: id);
           done.add(id);
@@ -3752,6 +3769,13 @@ class MailEngineService {
       final imap = _ref?.read(imapServiceProvider);
       if (imap == null) return done;
       for (final id in trashIds) {
+        // Не номер письма на сервере (черновик «draft-…», ещё не ушедший на
+        // сервер) — удаляется только здесь; раньше уходил в команду IMAP
+        // («BAD Could not parse command», журнал 17.11.2026).
+        if (!imapServerId(id)) {
+          done.add(id);
+          continue;
+        }
         try {
           await imap.deleteEmail(account, folderId: trashFolderId, uid: id, hard: true);
           done.add(id);
@@ -3762,6 +3786,14 @@ class MailEngineService {
     }
     return done;
   }
+
+  /// Письмо есть только на устройстве: черновик, ещё не ушедший на сервер.
+  static bool _localOnlyId(String id) => id.startsWith('draft-');
+
+  /// id письма IMAP («папка:UID») указывает на письмо на сервере: UID —
+  /// положительное число. «draft-…» и прочие местные id — нет.
+  @visibleForTesting
+  static bool imapServerId(String id) => !_localOnlyId(id) && (int.tryParse(id.split(':').last) ?? 0) > 0;
 
   /// Синхронизировать папку, вернуть новые письма + токен состояния.
   ///

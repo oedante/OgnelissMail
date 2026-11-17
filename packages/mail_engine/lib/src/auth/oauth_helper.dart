@@ -31,6 +31,8 @@ class OAuthHelper {
           'https://www.googleapis.com/auth/userinfo.email',
           'https://www.googleapis.com/auth/calendar.readonly',
           'https://www.googleapis.com/auth/carddav',
+          'https://www.googleapis.com/auth/contacts.readonly',
+          'https://www.googleapis.com/auth/contacts.other.readonly',
         ];
       case OAuthProvider.mailru:
         // openid обязателен (документация OAuth Mail), offline_access — для refresh_token.

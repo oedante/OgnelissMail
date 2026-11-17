@@ -48,6 +48,13 @@ class ExperimentalKeys {
   /// у всех один раз, дальше выбор пользователя сохраняется.
   static const macWebMail = 'desktop_web_mail_v2';
 
+  /// Значение [macWebMail] по умолчанию — включено на всех компьютерах
+  /// (решение владельца 17.11.2026: «встроенный просмотр с полным
+  /// оформлением — по умолчанию на всех платформах»). Окно не загрузило
+  /// письмо за 10 секунд (Mac — с 17.11.2026, Windows — с 2.5.4) —
+  /// упрощённый вид, письмо открывается в программе в любом случае.
+  static const desktopWebDefault = true;
+
   /// Выключатели показа письма ([macWebMail], [nativeMail]) изменились —
   /// открытое письмо перерисовывается сразу (16.11.2026: раньше выбор
   /// применялся только к следующему открытому письму, и казалось, что
@@ -248,7 +255,7 @@ class _MailOpeningSectionState extends ConsumerState<MailOpeningSection> with _P
             icon: AppIcons.language,
             title: l10n.tr('expMacWebTitle'),
             subtitle: l10n.tr('expMacWebDesc'),
-            value: pref(ExperimentalKeys.macWebMail, def: true),
+            value: pref(ExperimentalKeys.macWebMail, def: ExperimentalKeys.desktopWebDefault),
             onChanged: (v) => setPref(ExperimentalKeys.macWebMail, v),
           ),
         SettingsSwitchItem(

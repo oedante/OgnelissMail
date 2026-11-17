@@ -349,10 +349,17 @@ class NotificationService {
     final body = apple
         ? [if (text.isNotEmpty) text, if (subText != null) subText].join('\n')
         : (Platform.isAndroid ? subj : NotificationText.big(subj, text));
+    // Группы (17.11.2026, просьба владельца: «каждое письмо идёт отдельно —
+    // группировать хотя бы не избранные»): письма ящика — одной группой
+    // (Android — groupKey и сводное уведомление refreshMailGroup, iPhone и
+    // Mac — ветка), VIP — отдельно: Android — своя группа у каждого
+    // письма, iPhone — своя ветка у отправителя.
+    final thread = isVip ? 'email_vip_${(fromEmail ?? emailId).toLowerCase()}' : mailGroupKey(accountId);
+    final group = isVip ? 'email_vip_${accountId}_$emailId' : mailGroupKey(accountId);
     final darwin = DarwinNotificationDetails(
         presentAlert: true, presentSound: _soundOn && !silent && !quiet, presentBadge: true, badgeNumber: badge,
         subtitle: subj,
-        categoryIdentifier: isInvite ? 'INVITE' : 'EMAIL', threadIdentifier: 'email_$accountId');
+        categoryIdentifier: isInvite ? 'INVITE' : 'EMAIL', threadIdentifier: thread);
 
     final avatar = messenger
         ? await MessengerNotify.avatar(
@@ -365,7 +372,7 @@ class NotificationService {
     if (messenger && Platform.isIOS) {
       final shown = await MessengerNotify.showIos(MessengerNotify.iosArgs(
         id: id, title: title, subtitle: subj, body: body,
-        threadId: 'email_$accountId', category: isInvite ? 'INVITE' : 'EMAIL',
+        threadId: thread, category: isInvite ? 'INVITE' : 'EMAIL',
         sound: _soundOn && !silent && !quiet, badge: badge, payload: payload,
         senderEmail: fromEmail, avatar: avatar,
       ));
@@ -417,7 +424,7 @@ class NotificationService {
           // На экране блокировки — без отправителя и темы (они видны только
           // после разблокировки): переписка не читается с чужого стола.
           visibility: NotificationVisibility.private,
-          groupKey: 'email_$accountId',
+          groupKey: group,
           actions: actions,
           playSound: _soundOn && !(quiet && !isVip),
           enableVibration: _vibrationOn && !(quiet && !isVip),
@@ -624,6 +631,8 @@ class NotificationService {
           visibility: NotificationVisibility.private,
           groupKey: 'email_$accountId',
           setAsGroupSummary: true,
+          // Звонят письма, а не сводное: иначе при новом письме — два сигнала.
+          groupAlertBehavior: GroupAlertBehavior.children,
           number: badge > 0 ? badge : count,
           // Сводка не звонит сама — звонит первое письмо пачки.
           onlyAlertOnce: true,
@@ -719,9 +728,67 @@ class NotificationService {
 
   static int notificationIdForSummary(String accountId) => stableId('mailsum|$accountId');
 
+  /// Группа уведомлений о письмах ящика (кроме VIP).
+  static String mailGroupKey(String accountId) => 'email_$accountId';
+
   /// Снять уведомление о письме (прочитано или удалено в приложении).
-  Future<void> cancelEmail(String accountId, String emailId) =>
-      cancelScheduled(notificationIdForEmail(accountId, emailId));
+  /// Осталось меньше двух писем в группе — сводное уведомление тоже.
+  Future<void> cancelEmail(String accountId, String emailId) async {
+    await cancelScheduled(notificationIdForEmail(accountId, emailId));
+    await refreshMailGroup(accountId: accountId, tidyOnly: true);
+  }
+
+  /// Сводное уведомление группы писем ящика (17.11.2026). Android
+  /// объединяет уведомления одной группы, только когда у неё есть сводное:
+  /// раньше оно было лишь при переполнении (больше [extra] писем, чем
+  /// отдельных уведомлений), и каждое письмо шло отдельной строкой. Теперь
+  /// — когда в шторке два письма ящика и больше: «N новых писем» и строки
+  /// «отправитель — тема». Одно письмо — без сводного. [tidyOnly] — только
+  /// убрать лишнее сводное (письмо прочитано), не показывая новое.
+  /// iPhone и Mac группируют по ветке сами: там сводное — только при
+  /// переполнении, как раньше.
+  Future<void> refreshMailGroup({
+    required String accountId,
+    String label = '',
+    bool quiet = false,
+    int extra = 0,
+    List<String> extraLines = const [],
+    bool tidyOnly = false,
+  }) async {
+    if (_skipOnThisPlatform()) return;
+    if (!Platform.isAndroid) {
+      if (!tidyOnly && extra > 0) {
+        await showSummaryNotification(
+            accountId: accountId, accountEmail: label, count: extra, lines: extraLines, quiet: quiet);
+      }
+      return;
+    }
+    try {
+      if (!_initialized) await initialize();
+      final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      final active = await android?.getActiveNotifications() ?? const <ActiveNotification>[];
+      final sumId = notificationIdForSummary(accountId);
+      final key = mailGroupKey(accountId);
+      final kids = [for (final n in active) if (n.groupKey == key && n.id != sumId) n];
+      if (kids.length < 2 && extra == 0) {
+        if (active.any((n) => n.id == sumId)) await _plugin.cancel(sumId);
+        return;
+      }
+      if (tidyOnly) return;
+      await showSummaryNotification(
+        accountId: accountId,
+        accountEmail: label,
+        count: kids.length + extra,
+        lines: [
+          ...extraLines,
+          for (final n in kids) NotificationText.summaryLine(n.title ?? '', (n.body ?? '').trim().isEmpty ? '—' : n.body!),
+        ],
+        quiet: quiet,
+      );
+    } catch (e) {
+      AppLogger.debug('Сводное уведомление: $e');
+    }
+  }
 
   /// Запланировать отложенное уведомление о письме на конкретное время через ОС
   /// (срабатывает даже при полностью выгруженном приложении — AlarmManager/APNs).

@@ -23,7 +23,7 @@
 //    клавиатура до окна не доходит; окно не забирает фокус у ленты, иначе
 //    стрелки и Delete в ленте переставали бы работать после открытия письма;
 //  · WebView2 Runtime нет или окно не загрузилось за [_loadTimeout] —
-//    [onFailed];
+//    [onFailed] (с 17.11.2026 — и на Mac);
 //  · папка данных WebView2 — в данных приложения (WindowsWebViewEnv,
 //    16.11.2026): рядом с exe её не создать, если архив распакован в папку
 //    без права записи, и окно не создавалось;
@@ -171,6 +171,7 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
   InAppWebViewController? _web;
   WebViewEnvironment? _env;
   Timer? _watchdog;
+  DateTime? _started;
   bool _failed = false;
   int _gen = 0;
 
@@ -253,7 +254,12 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
       _fromFile = file != null;
     });
     if (first) {
-      if (_windows) _watchdog = Timer(_loadTimeout, () => _fail('WebView2 не загрузил письмо', stall: true));
+      // Не загрузилось за [_loadTimeout] — упрощённый вид. Mac — тоже
+      // (17.11.2026): без этого пустое окно оставалось пустым, и в журнале
+      // не было ни строки.
+      _started = DateTime.now();
+      _watchdog = Timer(_loadTimeout,
+          () => _fail(_windows ? 'WebView2 не загрузил письмо' : 'WKWebView не загрузил письмо', stall: true));
       return;
     }
     final web = _web;
@@ -303,6 +309,12 @@ class _DesktopMailWebViewState extends State<DesktopMailWebView> {
               _watchdog?.cancel();
               DesktopMailWebView._stalls = 0;
               DesktopMailWebView._loaded++;
+              final t0 = _started;
+              if (t0 != null) {
+                _started = null;
+                AppLogger.info('Письмо в окне (${_windows ? 'Windows' : 'Mac'}): загружено за '
+                    '${DateTime.now().difference(t0).inMilliseconds} мс');
+              }
             },
             shouldOverrideUrlLoading: (controller, action) async {
               final url = action.request.url;

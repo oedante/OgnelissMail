@@ -156,7 +156,18 @@ class DirectOAuth {
     'https://mail.google.com/',
     'https://www.googleapis.com/auth/calendar',
     'https://www.googleapis.com/auth/carddav',
+    // Фото собеседников из профилей Google (2.6.2): сохранённые и «Другие
+    // контакты» — только адрес и фото (GooglePeoplePhotos). Пока Google не
+    // одобрил эти разрешения, сборку можно выпустить без них:
+    // --dart-define=GOOGLE_PEOPLE_SCOPES=false.
+    if (googlePeopleScopes) ...[
+      'https://www.googleapis.com/auth/contacts.readonly',
+      'https://www.googleapis.com/auth/contacts.other.readonly',
+    ],
   ];
+
+  /// Разрешения People API (фото собеседников) в запросе входа Google.
+  static const googlePeopleScopes = bool.fromEnvironment('GOOGLE_PEOPLE_SCOPES', defaultValue: true);
   static const _outlookScopes = [
     'openid', 'email', 'profile', 'offline_access',
     'https://outlook.office.com/IMAP.AccessAsUser.All',

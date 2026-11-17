@@ -57,6 +57,7 @@ import 'services/sync/sync_service.dart';
 import 'core/navigation/app_router.dart';
 import 'core/security/certificate_pinning_service.dart';
 import 'core/network/app_http_overrides.dart';
+import 'core/network/system_proxy.dart';
 import 'core/network/certificate_pinning_bridge.dart';
 import 'data/database/app_database.dart';
 import 'data/providers/database_provider.dart';
@@ -294,6 +295,8 @@ Future<void> main() async {
     }
     CertificatePinningBridge.instance = pinningService;
     HttpOverrides.global = AppHttpOverrides();
+    // Прокси системы, PAC и MDM для почтовых серверов (2.6.5).
+    SystemProxy.install();
     // Дополнительные центры сертификации (Минцифры, установленные на
     // устройство, импортированные) — до первого сетевого запроса.
     await TrustedCaStore.init(sharedPrefs);
@@ -537,6 +540,8 @@ Future<void> _runComposeWindow(ComposeWindowArgs args) async {
     final pinning = CertificatePinningService(prefs);
     CertificatePinningBridge.instance = pinning;
     HttpOverrides.global = AppHttpOverrides();
+    // Прокси системы, PAC и MDM для почтовых серверов (2.6.5).
+    SystemProxy.install();
     await TrustedCaStore.init(prefs);
     final database = AppDatabase.secondary(path: init.dbPath, key: init.dbKey);
     // Проверка соединения до первого кадра: не тот ключ — понятная ошибка.

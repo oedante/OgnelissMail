@@ -4313,4 +4313,5 @@
     <string name="assignStatsWeek">今週期限</string>
     <string name="kbdShortcuts">キーボードショートカット</string>
     <string name="kbdShortcutsDesc">メール、検索、各画面をキーボードで操作</string>
+    <string name="mdmRuleProxy">組織のプロキシ: {proxy}</string>
 </resources>

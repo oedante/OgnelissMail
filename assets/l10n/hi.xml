@@ -4334,4 +4334,5 @@
     <string name="assignStatsWeek">इस सप्ताह देय</string>
     <string name="kbdShortcuts">कीबोर्ड शॉर्टकट</string>
     <string name="kbdShortcutsDesc">कीबोर्ड से मेल, खोज और अनुभाग</string>
+    <string name="mdmRuleProxy">संगठन का प्रॉक्सी: {proxy}</string>
 </resources>

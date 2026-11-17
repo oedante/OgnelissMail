@@ -4334,4 +4334,5 @@
     <string name="assignStatsWeek">Förfaller denna vecka</string>
     <string name="kbdShortcuts">Kortkommandon</string>
     <string name="kbdShortcutsDesc">E-post, sökning och avsnitt från tangentbordet</string>
+    <string name="mdmRuleProxy">Organisationens proxy: {proxy}</string>
 </resources>

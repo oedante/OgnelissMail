@@ -19,6 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/logging/app_logger.dart';
+import '../../core/network/system_proxy.dart' show SystemProxy;
 import '../../core/security/trusted_ca_store.dart';
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import 'managed_config.dart';
@@ -159,6 +160,26 @@ List<FeedbackState> managedFeedback(
     } else {
       out.add(FeedbackState(ManagedKeys.trustedCaPem, FeedbackSeverity.info, 'Trusted organization CAs: $parsed'));
     }
+  }
+
+  // Прокси (2.6.5). Отчёт — только на Android: PAC там задаёт политика
+  // устройства, ключ pac_url приложение не выполняет.
+  final proxy = str(ManagedKeys.httpProxy);
+  if (proxy != null) {
+    final hop = SystemProxy.parseProxy(proxy);
+    if (hop == null) {
+      bad(ManagedKeys.httpProxy, 'Not host:port — the device proxy is used');
+    } else {
+      out.add(FeedbackState(ManagedKeys.httpProxy, FeedbackSeverity.info, 'Proxy for mail servers: $hop'));
+    }
+  }
+  if (str(ManagedKeys.proxyBypass) != null && proxy == null) {
+    bad(ManagedKeys.proxyBypass, 'Needs http_proxy — ignored');
+  }
+  if (str(ManagedKeys.pacUrl) != null) {
+    bad(ManagedKeys.pacUrl, proxy != null
+        ? 'Ignored: http_proxy is set'
+        : 'Not used on Android: set the PAC URL with the device policy (recommended global proxy) — the app follows it');
   }
 
   if (policy.hasAccount) {

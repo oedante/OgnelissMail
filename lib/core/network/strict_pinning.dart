@@ -13,6 +13,8 @@
 
 import 'dart:io';
 
+import 'package:mail_engine/mail_engine.dart' show NetProxy;
+
 import 'certificate_pinning_bridge.dart';
 
 /// Поставить клиенту [client] фабрику соединений со сверкой закрепления.
@@ -24,24 +26,36 @@ void installStrictPinning(
   required bool Function(X509Certificate cert, String host, int port) onBadCertificate,
 }) {
   client.connectionFactory = (Uri uri, String? proxyHost, int? proxyPort) async {
-    // Через прокси HttpClient сам выполняет CONNECT и TLS со своим
-    // badCertificateCallback; на телефонах прокси в Dart не настраивается.
+    // Прокси, заданный самому HttpClient (findProxy), — CONNECT и TLS
+    // выполняет HttpClient со своим badCertificateCallback.
     if (proxyHost != null && proxyPort != null) return Socket.startConnect(proxyHost, proxyPort);
     final host = uri.host;
     final secure = uri.scheme == 'https' || uri.scheme == 'wss';
     final port = uri.hasPort ? uri.port : (secure ? 443 : 80);
+    // Прокси системы, PAC или MDM (2.6.5, план 08.11.2026 п. 1): туннель
+    // CONNECT к узлу, TLS — с сертификатом самого узла.
+    final t = await NetProxy.tunnelFor(host, port, secure: secure);
+    if (t != null) {
+      if (!secure) return ConnectionTask.fromSocket(Future.value(t.plain()), () {});
+      final tunneled = t
+          .secure(context: context, onBadCertificate: (cert) => onBadCertificate(cert, host, port))
+          .then<Socket>((s) => _checked(s, host, port));
+      return ConnectionTask.fromSocket(tunneled, () {});
+    }
     if (!secure) return Socket.startConnect(host, port);
     final task = await SecureSocket.startConnect(host, port,
         context: context, onBadCertificate: (cert) => onBadCertificate(cert, host, port));
-    final checked = task.socket.then<Socket>((s) {
-      final svc = CertificatePinningBridge.instance;
-      final cert = s.peerCertificate;
-      if (svc != null && cert != null && !svc.checkStrict(cert, host, port)) {
-        s.destroy();
-        throw HandshakeException('Сертификат $host не совпадает с закреплённым (правило администратора)');
-      }
-      return s;
-    });
-    return ConnectionTask.fromSocket(checked, task.cancel);
+    return ConnectionTask.fromSocket(task.socket.then<Socket>((s) => _checked(s, host, port)), task.cancel);
   };
+}
+
+/// Строгие правила закрепления администратора — после рукопожатия.
+Socket _checked(SecureSocket s, String host, int port) {
+  final svc = CertificatePinningBridge.instance;
+  final cert = s.peerCertificate;
+  if (svc != null && cert != null && !svc.checkStrict(cert, host, port)) {
+    s.destroy();
+    throw HandshakeException('Сертификат $host не совпадает с закреплённым (правило администратора)');
+  }
+  return s;
 }

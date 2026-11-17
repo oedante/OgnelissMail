@@ -4334,4 +4334,5 @@
     <string name="assignStatsWeek">Erääntyy tällä viikolla</string>
     <string name="kbdShortcuts">Pikanäppäimet</string>
     <string name="kbdShortcutsDesc">Sähköposti, haku ja osiot näppäimistöltä</string>
+    <string name="mdmRuleProxy">Organisaation välityspalvelin: {proxy}</string>
 </resources>

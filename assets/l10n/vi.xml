@@ -4313,4 +4313,5 @@
     <string name="assignStatsWeek">Hạn trong tuần</string>
     <string name="kbdShortcuts">Phím tắt</string>
     <string name="kbdShortcutsDesc">Thư, tìm kiếm và các mục bằng bàn phím</string>
+    <string name="mdmRuleProxy">Proxy của tổ chức: {proxy}</string>
 </resources>

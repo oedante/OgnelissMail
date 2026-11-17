@@ -4334,4 +4334,5 @@
     <string name="assignStatsWeek">Határidő a héten</string>
     <string name="kbdShortcuts">Billentyűparancsok</string>
     <string name="kbdShortcutsDesc">Levelek, keresés és részek a billentyűzetről</string>
+    <string name="mdmRuleProxy">A szervezet proxyja: {proxy}</string>
 </resources>

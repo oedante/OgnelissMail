@@ -4355,4 +4355,5 @@
     <string name="assignStatsWeek">מועד השבוע</string>
     <string name="kbdShortcuts">קיצורי מקלדת</string>
     <string name="kbdShortcutsDesc">דואר, חיפוש ואזורים מהמקלדת</string>
+    <string name="mdmRuleProxy">שרת ה-Proxy של הארגון: {proxy}</string>
 </resources>

@@ -4334,4 +4334,5 @@
     <string name="assignStatsWeek">Fällig diese Woche</string>
     <string name="kbdShortcuts">Tastenkürzel</string>
     <string name="kbdShortcutsDesc">E-Mails, Suche und Bereiche per Tastatur</string>
+    <string name="mdmRuleProxy">Proxy der Organisation: {proxy}</string>
 </resources>

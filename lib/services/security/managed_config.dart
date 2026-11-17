@@ -110,13 +110,29 @@ class ManagedKeys {
   static const blockDeviceContacts = 'block_device_contacts';
   static const blockDeviceCalendar = 'block_device_calendar';
 
+  // 2.6.5 (план 08.11.2026 п. 1: «в корпоративном Wi-Fi с обязательным
+  // прокси EAS/EWS/IMAP не работают»)
+  /// Прокси для почтовых серверов: «узел:порт» (можно «логин:пароль@узел:порт»
+  /// для входа Basic). Не задан — прокси системы (и PAC), как у браузера.
+  static const httpProxy = 'http_proxy';
+
+  /// Узлы без прокси: через запятую или «;», «*.corp.local», «10.*»,
+  /// «10.0.0.0/8», «<local>» — имена без точки.
+  static const proxyBypass = 'proxy_bypass';
+
+  /// Сценарий автонастройки прокси (PAC) организации: https://…/proxy.pac.
+  /// Выполняет система: iPhone, iPad и Mac (CFNetwork), Windows (WinHTTP).
+  /// На Android PAC задаётся политикой устройства (recommendedGlobalProxy),
+  /// приложение берёт его из системы.
+  static const pacUrl = 'pac_url';
+
   static const all = [
     orgName, supportContact, accountEmail, accountProtocol, accountServer, accountUsername, accountDomain,
     imapServer, imapPort, smtpServer, smtpPort, allowedDomains, requireAppLock, minPinLength,
     blockScreenshots, blockShare, blockOpenIn, blockCopy, hideNotificationContent, blockWeather,
     maxSyncDays, blockAttachmentDownload, pinTimeoutMinutes, allowBiometrics, blockExternalServices,
     accountLocked, accountTransport, requireTls, trustedCaPem, allowUserCertTrust, blockDeviceContacts,
-    blockDeviceCalendar,
+    blockDeviceCalendar, httpProxy, proxyBypass, pacUrl,
   ];
 }
 
@@ -158,6 +174,9 @@ class ManagedPolicy {
     this.allowUserCertTrust = true,
     this.blockDeviceContacts = false,
     this.blockDeviceCalendar = false,
+    this.httpProxy,
+    this.proxyBypass,
+    this.pacUrl,
   });
 
   static const none = ManagedPolicy();
@@ -234,6 +253,16 @@ class ManagedPolicy {
 
   final bool blockDeviceContacts;
   final bool blockDeviceCalendar;
+
+  /// Прокси организации «узел:порт» ([ManagedKeys.httpProxy]); null — прокси
+  /// системы.
+  final String? httpProxy;
+
+  /// Узлы без прокси ([ManagedKeys.proxyBypass]).
+  final String? proxyBypass;
+
+  /// Сценарий PAC организации ([ManagedKeys.pacUrl]).
+  final String? pacUrl;
 
   /// Ящик [email] — ящик организации, закреплённый политикой.
   bool lockedAccount(String email) =>
@@ -363,6 +392,9 @@ class ManagedPolicy {
       allowUserCertTrust: v(ManagedKeys.allowUserCertTrust) == null || _bool(v(ManagedKeys.allowUserCertTrust)),
       blockDeviceContacts: _bool(v(ManagedKeys.blockDeviceContacts)),
       blockDeviceCalendar: _bool(v(ManagedKeys.blockDeviceCalendar)),
+      httpProxy: _str(v(ManagedKeys.httpProxy)),
+      proxyBypass: _str(v(ManagedKeys.proxyBypass)),
+      pacUrl: _str(v(ManagedKeys.pacUrl)),
     );
   }
 
@@ -399,6 +431,9 @@ class ManagedPolicy {
         if (!allowUserCertTrust) ManagedKeys.allowUserCertTrust: false,
         if (blockDeviceContacts) ManagedKeys.blockDeviceContacts: true,
         if (blockDeviceCalendar) ManagedKeys.blockDeviceCalendar: true,
+        if (httpProxy != null) ManagedKeys.httpProxy: httpProxy,
+        if (proxyBypass != null) ManagedKeys.proxyBypass: proxyBypass,
+        if (pacUrl != null) ManagedKeys.pacUrl: pacUrl,
       };
 
   @override

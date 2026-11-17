@@ -4418,4 +4418,5 @@
     <string name="assignStatsWeek">مستحقة هذا الأسبوع</string>
     <string name="kbdShortcuts">اختصارات لوحة المفاتيح</string>
     <string name="kbdShortcutsDesc">البريد والبحث والأقسام من لوحة المفاتيح</string>
+    <string name="mdmRuleProxy">وكيل المؤسسة: {proxy}</string>
 </resources>

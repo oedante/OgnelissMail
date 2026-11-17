@@ -75,4 +75,8 @@
     <string name="mdm_block_device_contacts_desc">Без загрузки из «Контактов» устройства и выгрузки в них.</string>
     <string name="mdm_block_device_calendar_title">Запретить перенос встреч в устройство</string>
     <string name="mdm_block_device_calendar_desc">Встречи не добавляются в «Календарь» устройства.</string>
+    <string name="mdm_http_proxy_title">Прокси для почтовых серверов</string>
+    <string name="mdm_http_proxy_desc">узел:порт (или логин:пароль@узел:порт). Пусто — прокси и PAC устройства.</string>
+    <string name="mdm_proxy_bypass_title">Узлы без прокси</string>
+    <string name="mdm_proxy_bypass_desc">Через запятую: *.corp.local, 10.*, 10.0.0.0/8, &lt;local&gt; — имена без точки.</string>
 </resources>

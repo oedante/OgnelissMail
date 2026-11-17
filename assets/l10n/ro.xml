@@ -4355,4 +4355,5 @@
     <string name="assignStatsWeek">Termen săptămâna aceasta</string>
     <string name="kbdShortcuts">Comenzi rapide de la tastatură</string>
     <string name="kbdShortcutsDesc">E-mailuri, căutare și secțiuni de la tastatură</string>
+    <string name="mdmRuleProxy">Proxy-ul organizației: {proxy}</string>
 </resources>

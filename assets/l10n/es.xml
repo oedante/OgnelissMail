@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">Avance del trabajo</string>
     <string name="assignStatsProgressHint">El color de la fila indica su rol, como en los filtros de arriba; el plazo está al final de la barra, en rojo si venció. Toque una fila para abrirla.</string>
     <string name="assignStatsWeek">Vencen esta semana</string>
+    <string name="kbdShortcuts">Atajos de teclado</string>
+    <string name="kbdShortcutsDesc">Correo, búsqueda y secciones desde el teclado</string>
 </resources>

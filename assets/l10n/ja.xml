@@ -4311,4 +4311,6 @@
     <string name="assignStatsProgress">作業の進行</string>
     <string name="assignStatsProgressHint">行の色は上のフィルターと同じくあなたの役割を示します。期限はバーの右端に、期限切れは赤で表示。行をタップすると開きます。</string>
     <string name="assignStatsWeek">今週期限</string>
+    <string name="kbdShortcuts">キーボードショートカット</string>
+    <string name="kbdShortcutsDesc">メール、検索、各画面をキーボードで操作</string>
 </resources>

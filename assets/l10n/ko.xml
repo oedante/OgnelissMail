@@ -4311,4 +4311,6 @@
     <string name="assignStatsProgress">작업 진행</string>
     <string name="assignStatsProgressHint">행 색상은 위 필터처럼 내 역할을 나타냅니다. 기한은 막대 끝에, 지난 기한은 빨간색으로 표시됩니다. 행을 누르면 열립니다.</string>
     <string name="assignStatsWeek">이번 주 기한</string>
+    <string name="kbdShortcuts">키보드 단축키</string>
+    <string name="kbdShortcutsDesc">키보드로 메일, 검색, 섹션 이동</string>
 </resources>

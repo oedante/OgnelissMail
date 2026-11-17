@@ -8,6 +8,7 @@ import '../../../services/translation/translator.dart' show translationPlatformS
 import '../../../core/utils/text_safe.dart';
 import '../../../widgets/common/readable_width.dart';
 import '../../../core/theme/app_icons.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import '../../../widgets/common/hero_email_transition.dart';
 import 'package:flutter/services.dart';
@@ -31,6 +32,12 @@ import '../settings_search.dart';
 import '../../../core/theme/tokens.dart';
 import '../widgets/managed_policy_section.dart';
 import '../../../services/security/managed_config.dart';
+
+
+/// Телефон или планшет (Android, iPhone, iPad): у компьютера нет поворота
+/// экрана и виджетов.
+bool get _touch =>
+    !kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS);
 
 class SettingsScreen extends ConsumerWidget {
   /// Список разделов слева в две колонки (компьютер, планшет —
@@ -143,14 +150,16 @@ class SettingsScreen extends ConsumerWidget {
             SettingsItem(
               icon: AppIcons.format_paint,
               title: l10n.tr('appearanceTitle'),
-              subtitle: l10n.tr('appearanceDescFull'),
+              // Виджеты — только у телефона (2.6.4).
+              subtitle: l10n.tr(_touch ? 'appearanceDescFull' : 'appearanceDesc'),
               selected: sel('/settings/appearance'),
               onTap: () => open('/settings/appearance'),
             ),
             SettingsItem(
               icon: AppIcons.palette,
               title: l10n.tr('general'),
-              subtitle: l10n.tr('generalDesc'),
+              // Поворот экрана и виджет — только у телефона (2.6.4).
+              subtitle: _touch ? l10n.tr('generalDesc') : l10n.tr('language'),
               selected: sel('/settings/general'),
               onTap: () => open('/settings/general'),
             ),

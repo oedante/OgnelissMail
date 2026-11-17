@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">Voortgang</string>
     <string name="assignStatsProgressHint">De kleur van de rij toont uw rol, zoals in de filters hierboven; de deadline staat aan het eind van de balk, verlopen in rood. Tik op een rij om die te openen.</string>
     <string name="assignStatsWeek">Deze week</string>
+    <string name="kbdShortcuts">Sneltoetsen</string>
+    <string name="kbdShortcutsDesc">Mail, zoeken en onderdelen met het toetsenbord</string>
 </resources>

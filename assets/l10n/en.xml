@@ -4332,4 +4332,6 @@
     <string name="assignStatsProgress">Work progress</string>
     <string name="assignStatsProgressHint">Row colour shows your role, as in the filters above; the due date is at the end of the bar, overdue in red. Tap a row to open it.</string>
     <string name="assignStatsWeek">Due this week</string>
+    <string name="kbdShortcuts">Keyboard shortcuts</string>
+    <string name="kbdShortcutsDesc">Mail, search and sections from the keyboard</string>
 </resources>

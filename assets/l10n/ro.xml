@@ -4353,4 +4353,6 @@
     <string name="assignStatsProgress">Mersul lucrărilor</string>
     <string name="assignStatsProgressHint">Culoarea rândului arată rolul dvs., ca la filtrele de sus; termenul e la capătul barei, cel depășit cu roșu. Atingeți un rând pentru a-l deschide.</string>
     <string name="assignStatsWeek">Termen săptămâna aceasta</string>
+    <string name="kbdShortcuts">Comenzi rapide de la tastatură</string>
+    <string name="kbdShortcutsDesc">E-mailuri, căutare și secțiuni de la tastatură</string>
 </resources>

@@ -4353,4 +4353,6 @@
     <string name="assignStatsProgress">Průběh prací</string>
     <string name="assignStatsProgressHint">Barva řádku ukazuje vaši roli jako u filtrů nahoře; termín je na konci pruhu, prošlý červeně. Klepnutím na řádek jej otevřete.</string>
     <string name="assignStatsWeek">Termín tento týden</string>
+    <string name="kbdShortcuts">Klávesové zkratky</string>
+    <string name="kbdShortcutsDesc">Pošta, hledání a sekce z klávesnice</string>
 </resources>

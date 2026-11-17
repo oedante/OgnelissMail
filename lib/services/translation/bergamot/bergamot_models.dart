@@ -23,6 +23,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 
+import '../../security/managed_config.dart' show ManagedPolicy;
 import '../translation_languages.dart';
 
 /// Папка моделей на сервере Ogneliss.
@@ -200,6 +201,7 @@ class BergamotStore {
     } catch (_) {
       saved = null;
     }
+    _allowed();
     final c = client();
     try {
       final r = await c.get(base.resolve('index.json')).timeout(const Duration(seconds: 20));
@@ -250,6 +252,15 @@ class BergamotStore {
     return File('${_pairDir(key).path}${Platform.pathSeparator}$name');
   }
 
+  /// Организация запретила внешние службы (MDM block_external_services,
+  /// 16.11.2026) — модели с сайта Ogneliss не скачиваются: перевод на
+  /// Windows без них недоступен, как и остальные службы Ogneliss.
+  static void _allowed() {
+    if (ManagedPolicy.current.blockExternalServices) {
+      throw StateError('загрузка моделей перевода запрещена политикой организации');
+    }
+  }
+
   /// Скачать пару [p]: файлы во временные, проверка размера и sha256,
   /// затем manifest.json. [progress] — байты скачано / всего.
   Future<void> download(BergamotPair p, {void Function(int done, int total)? progress}) async {
@@ -260,6 +271,7 @@ class BergamotStore {
     if (manifest.existsSync()) await manifest.delete();
     final total = p.size;
     var done = 0;
+    _allowed();
     final c = client();
     try {
       for (final f in p.files.values) {

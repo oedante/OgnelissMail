@@ -510,7 +510,7 @@ class AssignmentService {
     final full = [text, if ((note ?? '').trim().isNotEmpty) note!.trim()].join('\n');
     // Файлы ответа (результат, замечания) — к файлам поручения и вложениями.
     final kept = await _keepFiles(v.id, files);
-    await AssignmentStore.update(_db, v.id, status: status, files: kept.isEmpty ? null : [...v.files, ...kept]);
+    await AssignmentStore.update(_db, v.id, status: status, files: kept.isEmpty ? null : uniqueFiles([...v.files, ...kept]));
     _reminders();
     await _record(v, ev, 'status', {
       'status': status,
@@ -1163,7 +1163,7 @@ class AssignmentService {
     ].join('\n');
     if (text.isEmpty && files.isEmpty) return;
     final kept = await _keepFiles(v.id, files);
-    if (kept.isNotEmpty) await AssignmentStore.update(_db, v.id, files: [...v.files, ...kept]);
+    if (kept.isNotEmpty) await AssignmentStore.update(_db, v.id, files: uniqueFiles([...v.files, ...kept]));
     final body = text.isEmpty ? l10n.tr('assignMsgFiles') : text;
     await _record(v, ev, 'progress', {
       'text': body,
@@ -1183,7 +1183,7 @@ class AssignmentService {
     if (picked.isEmpty) return;
     final kept = await _keepFiles(v.id, picked);
     if (kept.isEmpty) return;
-    await AssignmentStore.update(_db, v.id, files: [...v.files, ...kept]);
+    await AssignmentStore.update(_db, v.id, files: uniqueFiles([...v.files, ...kept]));
     final l10n = _l10n();
     final ev = _ev();
     final text = [

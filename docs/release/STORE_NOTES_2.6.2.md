@@ -51,15 +51,20 @@
     до починки снова включена), дальше выбор сохраняется;
   - в диагностике — строка «Сложные письма в окне: …» (включено ли, есть
     ли WebView2, сколько писем показано, последний отказ).
-- **Компьютер: письма с оформлением — тоже в окне браузера.** Журнал Mac
+- **Компьютер: письмо всегда открывается в программе.** Журнал Mac
   владельца (16.11.2026): рассылки Ozon открывались много раз, а отказов
-  окна нет — их рисовало само приложение, потому что упрощённый показ
-  «справлялся» с ними, и выключатель окна ничего не менял. Теперь на
-  компьютере в окне браузера и письма с оформлением: вёрстка таблицами с
-  фоном или шириной ячеек, цветной фон, несколько картинок
-  (`mailLooksDesigned`). Переписка без оформления — по-прежнему без окна.
-  В журнале на каждое письмо — строка «Письмо на компьютере: в окне
-  браузера / упрощённо — причина».
+  встроенного окна нет — на Mac у окна WKWebView не было сторожа, и пустое
+  окно оставалось пустым без строки в журнале. Решение владельца
+  17.11.2026: «письма должны открываться в программе, как на телефоне, в
+  простом виде или сложном — не важно». Теперь:
+  - Mac — по умолчанию упрощённый вид в самом письме (открывается всегда);
+    встроенное окно включается в «Открытии писем» для проверки;
+  - Windows — письма с оформлением (вёрстка таблицами с фоном или шириной
+    ячеек, цветной фон, несколько картинок, `mailLooksDesigned`) и сложные
+    — во встроенном окне WebView2, остальные — упрощённо;
+  - встроенное окно не загрузило письмо за 10 секунд — упрощённый вид, и на
+    Mac тоже; в журнале — «Письмо в окне (Mac): загружено за N мс» или
+    причина отказа, и одна строка на письмо: как показано и почему.
 - **Поручения: «Вернуть на доработку»** — и на шкале статусов (касание
   шага: раньше там было только «Принять», и постановщик так и принимал
   работу), и после принятия (постановщик увидел незаполненный чек-лист,
@@ -77,14 +82,14 @@
 **RU.** Поручения: «Сводка» — ход работ на диаграмме Ганта, ваша роль и
 сроки выделены цветом, и в календаре тоже. Чек-лист в обычном поручении;
 отметки, пункты и пояснение видят все участники. Иконки организаций
-включены по умолчанию, находятся и для сайтов с www. Компьютер: сложные
-письма — в окне браузера. Переход между ящиками в настройках.
+включены по умолчанию, находятся и для сайтов с www. Компьютер: письмо
+всегда открывается в программе. Переход между ящиками в настройках.
 
 **EN.** Assignments: the Summary shows work progress on a Gantt chart with
 your role and due dates highlighted, also in the calendar. Checklist in a
 regular assignment; ticks, items and the description reach all
 participants. Organisation icons are on by default and found for www
-sites too. Desktop: complex emails in a browser view. Switch between
+sites too. Desktop: emails always open inside the app. Switch between
 mailboxes in settings.
 
 ## App Store — iPhone, iPad и Mac (ru, en, de, fr)
@@ -95,28 +100,28 @@ mailboxes in settings.
 • Чек-лист в обычном поручении; отметки, пункты и пояснение видят все участники
 • Иконки организаций (логотип BIMI или значок сайта) включены по умолчанию и находятся и на сайтах с www
 • Настройки ящика: переход к другому ящику одним нажатием
-• Mac: письма со сложной вёрсткой — в окне браузера, настройка применяется сразу
+• Mac: письмо всегда открывается в программе
 </ru-RU>
 <en-US>
 • Assignments: the Summary shows work progress on a Gantt chart, with your role and due dates highlighted (also in the calendar)
 • Checklist in a regular assignment; ticks, items and the description reach all participants
 • Organisation icons (BIMI logo or site icon) are on by default and also found on www sites
 • Mailbox settings: switch to another mailbox in one tap
-• Mac: emails with complex layout open in a browser view; the setting applies at once
+• Mac: emails always open inside the app
 </en-US>
 <de-DE>
 • Aufträge: Die Übersicht zeigt den Arbeitsfortschritt als Gantt-Diagramm, Ihre Rolle und Fristen sind farbig hervorgehoben (auch im Kalender)
 • Checkliste auch im einfachen Auftrag; Häkchen, Punkte und Beschreibung erreichen alle Beteiligten
 • Symbole von Organisationen (BIMI-Logo oder Website-Symbol) sind standardmäßig an und werden auch auf www-Websites gefunden
 • Postfacheinstellungen: mit einem Tippen zu einem anderen Postfach wechseln
-• Mac: E-Mails mit komplexem Layout in einer Browseransicht; die Einstellung gilt sofort
+• Mac: E-Mails öffnen sich immer in der App
 </de-DE>
 <fr-FR>
 • Missions : la Synthèse montre l’avancement sur un diagramme de Gantt, votre rôle et les échéances en couleur (aussi dans l’agenda)
 • Liste de contrôle dans une mission simple ; coches, points et description parviennent à tous les participants
 • Icônes d’organisation (logo BIMI ou icône du site) activées par défaut, trouvées aussi sur les sites www
 • Réglages de la boîte : passer à une autre boîte en un geste
-• Mac : les e-mails à mise en page complexe s’affichent dans une vue navigateur ; le réglage s’applique aussitôt
+• Mac : les e-mails s’ouvrent toujours dans l’application
 </fr-FR>
 ```
 

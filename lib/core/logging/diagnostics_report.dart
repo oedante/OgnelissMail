@@ -130,7 +130,7 @@ class DiagnosticsReport {
     // ли, есть ли движок, показывало ли окно письма и почему отказывало.
     try {
       if (mailDesktopWebViewSupported) {
-        final on = ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.macWebMail) ?? true;
+        final on = ref.read(sharedPrefsProvider).getBool(ExperimentalKeys.macWebMail) ?? ExperimentalKeys.desktopWebDefault;
         line('Сложные письма в окне: ${on ? 'включено' : 'выключено в настройках'}; ${DesktopMailWebView.summary()}');
       }
     } catch (_) {}

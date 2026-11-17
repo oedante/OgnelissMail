@@ -7,7 +7,9 @@
 // выбор тестировщиков сохраняется.
 
 import 'dart:async';
+import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -47,6 +49,13 @@ class ExperimentalKeys {
   /// исправим и включим по умолчанию»; выключенное до починки включается
   /// у всех один раз, дальше выбор пользователя сохраняется.
   static const macWebMail = 'desktop_web_mail_v2';
+
+  /// Значение [macWebMail] по умолчанию. Mac — выключено (17.11.2026,
+  /// владелец: «письма должны открываться в программе, в простом виде или
+  /// сложном — не важно»): встроенное окно WKWebView у владельца сложные
+  /// письма так и не показало, а упрощённый вид открывается всегда.
+  /// Windows — включено: WebView2 при сбое сам уступает упрощённому виду.
+  static bool get desktopWebDefault => !kIsWeb && !Platform.isMacOS;
 
   /// Выключатели показа письма ([macWebMail], [nativeMail]) изменились —
   /// открытое письмо перерисовывается сразу (16.11.2026: раньше выбор
@@ -248,7 +257,7 @@ class _MailOpeningSectionState extends ConsumerState<MailOpeningSection> with _P
             icon: AppIcons.language,
             title: l10n.tr('expMacWebTitle'),
             subtitle: l10n.tr('expMacWebDesc'),
-            value: pref(ExperimentalKeys.macWebMail, def: true),
+            value: pref(ExperimentalKeys.macWebMail, def: ExperimentalKeys.desktopWebDefault),
             onChanged: (v) => setPref(ExperimentalKeys.macWebMail, v),
           ),
         SettingsSwitchItem(

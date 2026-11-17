@@ -1464,7 +1464,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     // компьютере ничего не менял).
     // Письмо с оформлением (рассылки) — тоже в окне (mailLooksDesigned).
     final prefs = ref.read(sharedPrefsProvider);
-    final webOn = prefs.getBool(ExperimentalKeys.macWebMail) ?? true;
+    final webOn = prefs.getBool(ExperimentalKeys.macWebMail) ?? ExperimentalKeys.desktopWebDefault;
     final wants = _prepared?.nativeWhy != null || _designed || !(prefs.getBool(ExperimentalKeys.nativeMail) ?? true);
     final desktopWeb = mailDesktopWebViewSupported &&
         webOn &&

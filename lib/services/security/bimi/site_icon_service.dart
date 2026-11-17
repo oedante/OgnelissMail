@@ -43,7 +43,25 @@ abstract final class SiteIconStats {
   static int empty = 0;
   static int cached = 0;
 
-  static String summary() => 'запросов к сайтам $requests: найдено $found, без значка $empty; из кэша $cached';
+  /// Последние домены без значка и отправители без подтверждения DMARC
+  /// (17.11.2026: по сводке было не понять, почему у Ozon и Сбера буква).
+  static final missing = <String>[];
+  static final unverified = <String>[];
+
+  static void _remember(List<String> list, String v) {
+    list.remove(v);
+    list.add(v);
+    if (list.length > 12) list.removeAt(0);
+  }
+
+  static void noIcon(String domain) => _remember(missing, domain);
+
+  /// Отправитель не подтверждён сервером ящика ([why] — коротко почему).
+  static void notVerified(String fromDomain, String why) => _remember(unverified, '$fromDomain ($why)');
+
+  static String summary() => 'запросов к сайтам $requests: найдено $found, без значка $empty; из кэша $cached'
+      '${missing.isEmpty ? '' : '; без значка: ${missing.join(', ')}'}'
+      '${unverified.isEmpty ? '' : '; без подтверждения DMARC: ${unverified.join(', ')}'}';
 }
 
 /// Где хранятся значки: папка в каталоге приложения, в тестах — память.
@@ -150,6 +168,20 @@ class SiteIconService {
   int _active = 0;
   final _waiters = Queue<Completer<void>>();
 
+  /// Версия записей «значка нет»: ответы прежних версий (до поиска на www и
+  /// подробного журнала, 2.6.2) забываются один раз — домен спрашивается
+  /// заново (17.11.2026: у Ozon и Сбера оставалась буква).
+  static const _version = 3;
+  static const _versionKey = '~v';
+
+  Map<String, int> _migrate(Map<String, int> index) {
+    if (index[_versionKey] == _version) return index;
+    index.removeWhere((k, v) => v < 0 || k == _versionKey);
+    index[_versionKey] = _version;
+    unawaited(_store.writeIndex(index).catchError((Object _) {}));
+    return index;
+  }
+
   /// Только сохранённое (первый шаг цепочки иконок): hit — по домену уже
   /// есть ответ (со значком или без), сайт не спрашивается.
   Future<({bool hit, Uint8List? png})> cached(String fromDomain) async {
@@ -162,7 +194,7 @@ class SiteIconService {
     }
     final mem = _memory[domain];
     if (mem != null) return (hit: true, png: mem);
-    final index = _index ??= await _store.readIndex();
+    final index = _index ??= _migrate(await _store.readIndex());
     final until = index[domain];
     if (until == null || until.abs() <= _now().millisecondsSinceEpoch) return (hit: false, png: null);
     if (until < 0) return (hit: true, png: null);
@@ -188,7 +220,7 @@ class SiteIconService {
   }
 
   Future<Uint8List?> _resolve(String domain) async {
-    final index = _index ??= await _store.readIndex();
+    final index = _index ??= _migrate(await _store.readIndex());
     final until = index[domain];
     final nowMs = _now().millisecondsSinceEpoch;
     if (until != null && until.abs() > nowMs) {
@@ -204,14 +236,21 @@ class SiteIconService {
     await _acquire();
     Uint8List? png;
     var ok = true;
+    final trace = <String>[];
     try {
       SiteIconStats.requests++;
-      png = await fetchIcon(domain, client: _client);
+      png = await fetchIcon(domain, client: _client, trace: trace);
     } catch (e) {
       ok = false;
-      AppLogger.debug('Значок сайта $domain: $e');
     } finally {
       _release();
+    }
+    // Почему значка нет — в журнал одной строкой (раз на домен, повтор не
+    // раньше чем через сутки или неделю).
+    if (png == null) {
+      SiteIconStats.noIcon(domain);
+      AppLogger.info('Значок сайта $domain: ${ok ? 'нет' : 'сбой'} — '
+          '${trace.isEmpty ? 'нет ответа' : trace.take(8).join('; ')}');
     }
     final ttl = png != null ? found : (ok ? missing : failed);
     final next = _now().add(ttl).millisecondsSinceEpoch;
@@ -224,8 +263,8 @@ class SiteIconService {
       SiteIconStats.empty++;
       await _store.deleteIcon(domain);
     }
-    while (index.length > maxEntries) {
-      final old = index.keys.first;
+    while (index.length > maxEntries + 1) {
+      final old = index.keys.firstWhere((k) => k != _versionKey);
       index.remove(old);
       await _store.deleteIcon(old);
     }
@@ -264,25 +303,27 @@ class SiteIconService {
   /// Поиск значка на сайте [domain]: apple-touch-icon в корне, значок из
   /// `<link rel="…icon…">` главной страницы, PNG внутри favicon.ico.
   @visibleForTesting
-  static Future<Uint8List?> fetchIcon(String domain, {http.Client? client}) async {
+  static Future<Uint8List?> fetchIcon(String domain, {http.Client? client, List<String>? trace}) async {
     final c = client ?? http.Client();
     try {
       Object? err;
       try {
-        final png = await _fetchFrom(c, domain, domain);
+        final png = await _fetchFrom(c, domain, domain, trace);
         if (png != null) return png;
       } catch (e) {
         err = e;
+        trace?.add('$domain: ${_short(e)}');
       }
       // Голый домен без HTTPS или без значка, а сайт — на www (16.11.2026:
       // у рассылок с поддоменов — sender.ozon.ru, info.sberbank.ru — значка
       // не было).
       if (!domain.startsWith('www.')) {
         try {
-          final png = await _fetchFrom(c, 'www.$domain', domain);
+          final png = await _fetchFrom(c, 'www.$domain', domain, trace);
           if (png != null) return png;
         } catch (e) {
           err ??= e;
+          trace?.add('www.$domain: ${_short(e)}');
         }
       }
       // Сбой сети — повторить раньше, чем «значка нет».
@@ -294,23 +335,33 @@ class SiteIconService {
   }
 
   /// Значок с узла [host] (переходы — в пределах домена [org]).
-  static Future<Uint8List?> _fetchFrom(http.Client c, String host, String org) async {
+  static String _short(Object e) {
+    final s = e.toString();
+    if (s.contains('Timeout')) return 'тайм-аут';
+    if (s.contains('Failed host lookup')) return 'нет такого узла';
+    if (s.contains('Handshake') || s.contains('CERTIFICATE')) return 'ошибка TLS';
+    return s.length > 60 ? s.substring(0, 60) : s;
+  }
+
+  static Future<Uint8List?> _fetchFrom(http.Client c, String host, String org, [List<String>? trace]) async {
     final domain = host;
     for (final p in const ['/apple-touch-icon.png', '/apple-touch-icon-precomposed.png']) {
-      final r = await _get(c, Uri.https(domain, p), org, maxBytes);
+      final r = await _get(c, Uri.https(domain, p), org, maxBytes, trace: trace);
       final png = r == null ? null : pngIcon(r.bytes);
       if (png != null) return png;
     }
-    final page = await _get(c, Uri.https(domain, '/'), org, maxPage, html: true);
+    final page = await _get(c, Uri.https(domain, '/'), org, maxPage, html: true, trace: trace);
     if (page != null) {
       final text = latin1.decode(page.bytes, allowInvalid: true);
-      for (final u in iconLinks(text, page.url).take(3)) {
-        final r = await _get(c, u, null, maxBytes);
+      final links = iconLinks(text, page.url);
+      if (links.isEmpty) trace?.add('$domain/: значков в странице нет');
+      for (final u in links.take(3)) {
+        final r = await _get(c, u, null, maxBytes, trace: trace);
         final png = r == null ? null : (pngIcon(r.bytes) ?? icoPng(r.bytes));
         if (png != null) return png;
       }
     }
-    final ico = await _get(c, Uri.https(domain, '/favicon.ico'), org, maxBytes);
+    final ico = await _get(c, Uri.https(domain, '/favicon.ico'), org, maxBytes, trace: trace);
     if (ico != null) return icoPng(ico.bytes) ?? pngIcon(ico.bytes);
     return null;
   }
@@ -319,11 +370,18 @@ class SiteIconService {
   /// только в пределах домена организации). Ответ больше [limit] байт —
   /// null.
   static Future<({Uint8List bytes, Uri url})?> _get(http.Client c, Uri url, String? org, int limit,
-      {bool html = false}) async {
+      {bool html = false, List<String>? trace}) async {
     var u = url;
+    String at() => '${u.host}${u.path}';
     for (var hop = 0; hop < 4; hop++) {
-      if (u.scheme != 'https') return null;
-      if (org != null && !_sameOrg(u.host, org)) return null;
+      if (u.scheme != 'https') {
+        trace?.add('${at()}: не https');
+        return null;
+      }
+      if (org != null && !_sameOrg(u.host, org)) {
+        trace?.add('${url.host}${url.path}: переход на ${u.host}');
+        return null;
+      }
       final req = http.Request('GET', u)
         ..followRedirects = false
         ..headers['Accept'] = html ? 'text/html' : 'image/png,image/x-icon,image/*;q=0.8'
@@ -338,11 +396,13 @@ class SiteIconService {
       }
       if (r.statusCode != 200) {
         unawaited(r.stream.drain<void>().catchError((_) {}));
+        trace?.add('${at()}: HTTP ${r.statusCode}');
         return null;
       }
       final len = r.contentLength;
       if (len != null && len > limit) {
         unawaited(r.stream.drain<void>().catchError((_) {}));
+        trace?.add('${at()}: больше ${limit ~/ 1024} КБ');
         return null;
       }
       final b = BytesBuilder(copy: false);

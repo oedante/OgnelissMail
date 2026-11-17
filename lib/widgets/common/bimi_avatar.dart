@@ -14,6 +14,7 @@ import '../../services/security/sender_safety_service.dart' show SenderSafetySer
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../../services/security/bimi/bimi_rules.dart';
 import '../../services/security/bimi/bimi_service.dart';
+import '../../services/security/bimi/site_icon_service.dart' show SiteIconStats;
 import '../../services/security/bimi/org_icon.dart';
 import 'person_photo.dart' show PhotoRing;
 
@@ -114,11 +115,19 @@ class BimiAvatar extends ConsumerWidget {
   static final _siteDomains = <String, String?>{};
 
   static String? _siteDomainFor(String email, String? authResults, Set<String> own) {
-    if (authResults == null || authResults.isEmpty) return null;
+    if (authResults == null || authResults.isEmpty) {
+      if (email.contains('@')) SiteIconStats.notVerified(email.split('@').last.toLowerCase(), 'нет заголовка');
+      return null;
+    }
     final key = '$email\n$authResults\n${own.length}';
     if (_siteDomains.containsKey(key)) return _siteDomains[key];
     final d = bimiDmarcDomain(authResults, email, ownServers: own);
     _siteDomains[key] = d;
+    if (d == null && email.contains('@')) {
+      final first = authResults.split(';').first.trim();
+      SiteIconStats.notVerified(email.split('@').last.toLowerCase(),
+          isOwnAuthServ(first, own) ? 'нет pass' : 'заголовок от ${first.isEmpty ? '?' : first}');
+    }
     if (_siteDomains.length > 500) _siteDomains.remove(_siteDomains.keys.first);
     return d;
   }

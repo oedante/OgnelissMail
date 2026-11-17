@@ -2881,12 +2881,19 @@ class SyncService {
     if (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) return;
     final key = 'people_photos_checked:${account.id}';
     final last = DateTime.tryParse(_prefs.getString(key) ?? '');
-    final wait = _prefs.getBool('$key:denied') == true ? const Duration(days: 7) : const Duration(hours: 24);
-    if (last != null && DateTime.now().difference(last) < wait) return;
+    // Отказ (нет разрешений) привязан ко входу: после «Войти снова» (новый
+    // refresh-токен) — сразу заново (17.11.2026: после повторного входа
+    // программа ждала неделю). Без нового входа — раз в 6 часов.
+    final grant = _grantMark(await _ref.read(secureStorageProvider).getRefreshToken(account.id));
+    final denied = _prefs.getBool('$key:denied') == true;
+    final regranted = denied && _prefs.getString('$key:grant') != grant;
+    final wait = denied ? const Duration(hours: 6) : const Duration(hours: 24);
+    if (!regranted && last != null && DateTime.now().difference(last) < wait) return;
     try {
       final r = await GooglePeoplePhotos.fetch(authorization);
       await _prefs.setString(key, DateTime.now().toIso8601String());
       await _prefs.setBool('$key:denied', r.denied.length == 2);
+      await _prefs.setString('$key:grant', grant);
       if (r.denied.isNotEmpty) {
         AppLogger.info('Фото собеседников Google: нет разрешения (${r.denied.join(', ')}) — появятся после повторного входа');
       }
@@ -2913,6 +2920,16 @@ class SyncService {
     } catch (e) {
       AppLogger.debug('Фото собеседников Google: $e');
     }
+  }
+
+  /// Метка входа (не сам токен): изменилась — пользователь вошёл заново.
+  static String _grantMark(String? refreshToken) {
+    final t = refreshToken ?? '';
+    var h = 0x811c9dc5;
+    for (final c in t.codeUnits) {
+      h = ((h ^ c) * 0x01000193) & 0xFFFFFFFF;
+    }
+    return '${t.length}:$h';
   }
 
   /// Календарь и контакты по DAV — не чаще раза в 15 минут: почта Gmail

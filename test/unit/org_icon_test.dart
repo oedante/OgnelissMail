@@ -142,6 +142,27 @@ void main() {
     });
   });
 
+  test('«значка нет» прежних версий забывается один раз; почему нет — в сводке (17.11.2026)', () async {
+    final store = SiteIconMemoryStore();
+    final future = DateTime.now().add(const Duration(days: 5)).millisecondsSinceEpoch;
+    store.index['ozon.ru'] = -future; // ответ 2.6.1: «значка нет» ещё 5 дней
+    var calls = 0;
+    final c = MockClient((r) async {
+      calls++;
+      return http.Response('', 403);
+    });
+    final s = SiteIconService(store: store, client: c);
+    expect((await s.cached('sender.ozon.ru')).hit, isFalse, reason: 'старая запись не мешает спросить сайт');
+    expect(await s.iconFor('sender.ozon.ru'), isNull);
+    expect(calls, greaterThan(0));
+    expect(SiteIconStats.summary(), contains('без значка: ozon.ru'));
+    // Новая запись «значка нет» действует: второй раз сайт не спрашивается.
+    final before = calls;
+    final s2 = SiteIconService(store: store, client: c);
+    expect((await s2.cached('sender.ozon.ru')).hit, isTrue);
+    expect(calls, before);
+  });
+
   group('цепочка: сохранённое → BIMI → сайт', () {
     late List<String> asked;
     late BimiResolver bimi;

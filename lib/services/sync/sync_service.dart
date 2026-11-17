@@ -18,6 +18,8 @@ import '../../core/utils/subject_prefix.dart';
 import '../device/phone_mirror_service.dart' show phoneMirrorProvider;
 import '../../core/utils/text_safe.dart';
 import '../contacts/mail_contacts_service.dart';
+import '../contacts/google_people_photos.dart';
+import '../../features/settings/providers/module_settings_provider.dart' show moduleSettingsProvider;
 import '../contacts/colleague_directory.dart';
 import '../../core/utils/mail_domains.dart' show mailDomainOf, isPublicMailDomain;
 import '../../core/errors/app_exceptions.dart' show looksLikeAuthError, looksTransientError, OAuthRefreshFailure;
@@ -2871,6 +2873,51 @@ class SyncService {
     }
   }
 
+  /// Фото собеседников из профилей Google (17.11.2026): сохранённые и
+  /// «Другие контакты» — через People API, раз в сутки, пока приложение
+  /// открыто. Фото ставится контактам и собеседникам из переписки, у
+  /// которых своего фото нет. Нет разрешений (вход до 2.6.2) — тихо, повтор
+  /// через неделю: фото появятся после повторного входа в ящик.
+  Future<void> _maybeGooglePeoplePhotos(AccountModel account, String authorization, AppDatabase db) async {
+    if (account.type != AccountType.google) return;
+    if (!_ref.read(moduleSettingsProvider).showContactPhotos) return;
+    if (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) return;
+    final key = 'people_photos_checked:${account.id}';
+    final last = DateTime.tryParse(_prefs.getString(key) ?? '');
+    final wait = _prefs.getBool('$key:denied') == true ? const Duration(days: 7) : const Duration(hours: 24);
+    if (last != null && DateTime.now().difference(last) < wait) return;
+    try {
+      final r = await GooglePeoplePhotos.fetch(authorization);
+      await _prefs.setString(key, DateTime.now().toIso8601String());
+      await _prefs.setBool('$key:denied', r.denied.length == 2);
+      if (r.denied.isNotEmpty) {
+        AppLogger.info('Фото собеседников Google: нет разрешения (${r.denied.join(', ')}) — появятся после повторного входа');
+      }
+      if (r.photos.isEmpty) return;
+      // Только тем, у кого фото нет: своё фото контакта и фото из адресной
+      // книги организации важнее.
+      final rows = await db.customSelect(
+        "SELECT DISTINCT lower(email) AS e FROM contacts WHERE (avatar_url IS NULL OR avatar_url = '') AND email LIKE '%@%'",
+      ).get();
+      final need = [for (final row in rows) if (r.photos.containsKey(row.read<String>('e'))) row.read<String>('e')];
+      if (need.isNotEmpty) {
+        await db.transaction(() async {
+          for (final e in need) {
+            await db.customUpdate(
+              "UPDATE contacts SET avatar_url = ? WHERE lower(email) = ? AND (avatar_url IS NULL OR avatar_url = '')",
+              variables: [Variable.withString(r.photos[e]!), Variable.withString(e)],
+              updates: {db.contacts},
+              updateKind: UpdateKind.update,
+            );
+          }
+        });
+      }
+      AppLogger.info('Фото собеседников Google: в профилях ${r.photos.length}, поставлено ${need.length}');
+    } catch (e) {
+      AppLogger.debug('Фото собеседников Google: $e');
+    }
+  }
+
   /// Календарь и контакты по DAV — не чаще раза в 15 минут: почта Gmail
   /// проверяется каждые несколько минут, а события и контакты меняются
   /// редко; раньше на каждую проверку почты шли и запросы CalDAV/CardDAV
@@ -2894,6 +2941,7 @@ class SyncService {
     );
     if (token == null) return;
     await _maybeGoogleProfilePhoto(account, token);
+    await _maybeGooglePeoplePhotos(account, token, db);
 
     final dav = DavPimService();
     // Календарь: события периода, серии развёрнуты во вхождения

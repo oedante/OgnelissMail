@@ -86,7 +86,7 @@ const PROVIDERS = {
     // без этих scope Google отвечает 403 (см. lib/services/mail/dav).
     // gmail.settings.basic не нужен (15.11.2026, проверка Google — «минимум
     // прав»): подпись (settings/sendAs) читается и с https://mail.google.com/.
-    scope: process.env.GOOGLE_SCOPE || 'https://mail.google.com/ https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/carddav openid email profile',
+    scope: process.env.GOOGLE_SCOPE || 'https://mail.google.com/ https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/carddav https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/contacts.other.readonly openid email profile',
     extra: { access_type: 'offline', prompt: 'consent' }, // чтобы выдавался refresh_token
   },
   microsoft: {

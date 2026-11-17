@@ -63,7 +63,14 @@ class OAuthService {
           AppConstants.googleClientId,
           AppConstants.googleRedirectUri,
           issuer: 'https://accounts.google.com',
-          scopes: ['openid', 'email', 'profile', 'https://mail.google.com/', 'https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/carddav'],
+          scopes: [
+            'openid', 'email', 'profile', 'https://mail.google.com/', 'https://www.googleapis.com/auth/calendar',
+            'https://www.googleapis.com/auth/carddav',
+            if (DirectOAuth.googlePeopleScopes) ...[
+              'https://www.googleapis.com/auth/contacts.readonly',
+              'https://www.googleapis.com/auth/contacts.other.readonly',
+            ],
+          ],
           preferEphemeralSession: false,
         ),
       );

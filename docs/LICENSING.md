@@ -55,6 +55,7 @@ Contributions are accepted under the same license (section 5 of the license).
 | Rust toolchain (rustup, rustc, cargo) — compiler used at build time, not shipped | MIT OR Apache-2.0, free | installed by the developer (https://rustup.rs) |
 | desktop_multi_window 0.3.1 (MixinNetwork; checked 01.11.2026) — a message in a separate window on Windows, macOS and Linux | Apache-2.0, free | pub.dev, unmodified; desktop only |
 | markdown 7.3.1 (Dart team, dart-lang/tools; checked 05.11.2026) — Markdown attachments (.md) shown as formatted documents in the attachment preview | BSD-3-Clause, free | pub.dev, unmodified; licence text in the app (Settings → About → Licence texts) comes from the package |
+| Google People API (`people.googleapis.com`, checked 17.11.2026) — profile photos of saved contacts and "Other contacts" for Google mailboxes (2.6.2) | free of charge, no paid tier (per-project quota); Google APIs Terms of Service and Google API Services User Data Policy (Limited Use: only e-mail address and photo, stored on the device, shown next to messages, not transferred or used for anything else); scopes `contacts.readonly` and `contacts.other.readonly` must be added to the OAuth consent screen and verified by Google | app: `lib/services/contacts/google_people_photos.dart`; the token is the mailbox's own (direct Google sign-in, no Ogneliss server) |
 | Russian Trusted Root CA certificates | public certificates | `assets/certs/` |
 
 There are no GPL, LGPL or AGPL dependencies. MPL-2.0 is a file-level copyleft

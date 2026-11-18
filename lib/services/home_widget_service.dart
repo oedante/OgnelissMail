@@ -803,7 +803,9 @@ for (final m in mails) {
       // Выходные (выделяются цветом в сетке месяца и недели): 1 — пн … 7 —
       // вс; в Израиле и арабских странах — пятница и суббота.
       'weekend': const {'he', 'ar'}.contains(l10n.locale.languageCode) ? [5, 6] : [6, 7],
-      'tabs': [l10n.tr('viewDay'), l10n.tr('viewWeek'), l10n.tr('viewMonth')],
+      // Четвёртая вкладка Android — «Мой день» (доска из widget_myday,
+      // 18.11.2026: «чтобы отдельный виджет не показывать»).
+      'tabs': [l10n.tr('viewDay'), l10n.tr('viewWeek'), l10n.tr('viewMonth'), l10n.tr('myDay')],
       // Окно «Создать» виджета: ящики (порядок из настроек; первым —
       // активный) и подписи на языке приложения.
       'defaultAccount': activeAccountId ?? '',

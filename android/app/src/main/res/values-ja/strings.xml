@@ -20,7 +20,7 @@
     <string name="widget_mail_label">メール</string>
     <string name="widget_mail_desc">アカウント別の未読メールと最新の未読メール</string>
     <string name="widget_cal_label">カレンダー</string>
-    <string name="widget_cal_desc">すべてのアカウントの予定を日・週・月で表示</string>
+    <string name="widget_cal_desc">すべてのアカウントの予定：今日の予定・日・週・月</string>
     <string name="widget_cal_add">新しい予定</string>
     <string name="widget_notes_label">メモ</string>
     <string name="widget_note_new">新しいメモ</string>

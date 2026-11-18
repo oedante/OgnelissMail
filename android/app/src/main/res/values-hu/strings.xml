@@ -20,7 +20,7 @@
     <string name="widget_mail_label">Levelek</string>
     <string name="widget_mail_desc">Olvasatlan levelek fiókonként és a legutóbbi olvasatlan levelek</string>
     <string name="widget_cal_label">Naptár</string>
-    <string name="widget_cal_desc">Eseményeid az összes fiókból napi, heti vagy havi nézetben</string>
+    <string name="widget_cal_desc">Eseményeid az összes fiókból: Saját napom, nap, hét vagy hónap</string>
     <string name="widget_cal_add">Új esemény</string>
     <string name="widget_notes_label">Jegyzetek</string>
     <string name="widget_note_new">Új jegyzet</string>

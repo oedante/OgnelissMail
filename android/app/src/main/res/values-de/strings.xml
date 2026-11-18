@@ -20,7 +20,7 @@
     <string name="widget_mail_label">Mail</string>
     <string name="widget_mail_desc">Ungelesene E-Mails nach Konto und die neuesten ungelesenen</string>
     <string name="widget_cal_label">Kalender</string>
-    <string name="widget_cal_desc">Termine aller Postfächer als Tag, Woche oder Monat</string>
+    <string name="widget_cal_desc">Termine aller Postfächer: Mein Tag, Tag, Woche oder Monat</string>
     <string name="widget_cal_add">Neuer Termin</string>
     <string name="widget_notes_label">Notizen</string>
     <string name="widget_note_new">Neue Notiz</string>

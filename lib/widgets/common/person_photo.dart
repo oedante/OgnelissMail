@@ -19,6 +19,7 @@ import '../../core/theme/ogneliss_look.dart';
 import '../../data/providers/database_provider.dart';
 import '../../services/mail/own_addresses.dart';
 import '../../services/mail/own_identity_service.dart' show ownAddressesRevisionProvider;
+import 'photo_disk_cache.dart';
 
 /// Адрес почты (в нижнем регистре) → фото. Аккаунты поверх контактов:
 /// своё фото владельца важнее старой карточки в адресной книге.
@@ -87,7 +88,8 @@ final personPhotosProvider = StreamProvider<Map<String, String>>((ref) {
 
 final Map<String, ImageProvider> _cache = {};
 
-/// Картинка для фото: data URI декодируется один раз, ссылку кэширует Flutter.
+/// Картинка для фото: data URI декодируется один раз, ссылка — с копией
+/// на диске ([CachedPhotoImage]).
 ImageProvider? photoImage(String? photo) {
   if (photo == null || photo.isEmpty) return null;
   final cached = _cache[photo];
@@ -102,11 +104,13 @@ ImageProvider? photoImage(String? photo) {
       } catch (_) {}
     }
   } else if (photo.startsWith('https://')) {
-    img = NetworkImage(photo);
+    // С копией на диске (18.11.2026): раньше — только в памяти, и после
+    // каждого сворачивания фото Google скачивались заново.
+    img = CachedPhotoImage(photo);
   } else if (photo.startsWith('http://')) {
     // Открытый http Android не загружает (cleartext запрещён); почти все
     // серверы фото отдают и по https. Раньше такие фото отбрасывались молча.
-    img = NetworkImage('https://${photo.substring(7)}');
+    img = CachedPhotoImage('https://${photo.substring(7)}');
   }
   if (img != null) {
     // Фото на экране — не больше 96 dp (карточка контакта, ×3 на плотных

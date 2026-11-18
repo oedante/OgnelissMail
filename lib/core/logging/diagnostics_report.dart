@@ -26,6 +26,8 @@ import '../../services/mail/oauth/cross_platform_oauth.dart' show CrossPlatformO
 import '../../services/mail/oauth/direct_oauth.dart' show DirectOAuth;
 import '../../services/security/bimi/bimi_service.dart' show BimiResolver, BimiStats;
 import '../../services/security/bimi/site_icon_service.dart' show SiteIconStats;
+import '../../services/contacts/google_people_photos.dart' show GooglePeoplePhotos;
+import '../../data/models/account_model.dart' show AccountType;
 import '../../features/settings/providers/settings_provider.dart' show settingsProvider;
 import '../../features/settings/widgets/feature_settings_sections.dart' show ExperimentalKeys;
 import '../../features/mail/widgets/desktop_mail_web_view.dart' show DesktopMailWebView;
@@ -201,6 +203,14 @@ class DiagnosticsReport {
       final tried = sp.getString('gal_photo_tried');
       final noPhoto = tried == null ? 0 : (jsonDecode(tried) as Map).length;
       line('Контакты: ${parts.isEmpty ? 'нет' : parts.join(', ')}; без фото в адресной книге (неделя): $noPhoto');
+      // Фото собеседников Google (18.11.2026): по журналу было не понять,
+      // проверялись ли профили и что ответил Google.
+      for (final acc in accounts.where((x) => x.type == AccountType.google)) {
+        final k = '${GooglePeoplePhotos.prefsKey}:${acc.id}';
+        final at = sp.getString(k);
+        line('Фото собеседников Google (${AppLogger.mask(acc.email)}): '
+            '${at == null ? 'ещё не проверялись' : '${sp.getString('$k:last') ?? '—'} (проверка $at)'}');
+      }
     } catch (_) {}
     line('');
 

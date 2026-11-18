@@ -82,6 +82,9 @@ import 'dart:async';
 import 'services/sync/imap_push_service.dart';
 import 'widgets/common/app_lock_gate.dart';
 import 'core/security/trusted_ca_store.dart';
+import 'core/security/client_cert_store.dart';
+import 'core/security/secure_storage_service.dart' show SecureStorageService;
+import 'services/security/managed_config.dart' show ManagedPolicy;
 import 'core/security/account_ca_sync.dart';
 import 'features/mail/providers/mail_providers.dart' show accountsProvider;
 import 'features/compose/widgets/mail_editor.dart' show registerMailEditorLicense;
@@ -300,6 +303,8 @@ Future<void> main() async {
     // Дополнительные центры сертификации (Минцифры, установленные на
     // устройство, импортированные) — до первого сетевого запроса.
     await TrustedCaStore.init(sharedPrefs);
+    // Сертификаты клиента TLS (2.6.5) — после ЦС (их набор нужен контексту).
+    await ClientCertStore.init(SecureStorageService(), policy: ManagedPolicy.fromPrefs(sharedPrefs));
 
     // База данных. Ключ шифрования читаем заранее: если хранилище ключей
     // не готово, лучше сразу показать понятную причину, чем падать на
@@ -543,6 +548,7 @@ Future<void> _runComposeWindow(ComposeWindowArgs args) async {
     // Прокси системы, PAC и MDM для почтовых серверов (2.6.5).
     SystemProxy.install();
     await TrustedCaStore.init(prefs);
+    await ClientCertStore.init(SecureStorageService(), policy: ManagedPolicy.fromPrefs(prefs));
     final database = AppDatabase.secondary(path: init.dbPath, key: init.dbKey);
     // Проверка соединения до первого кадра: не тот ключ — понятная ошибка.
     await database.customSelect('SELECT 1').get();

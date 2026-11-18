@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/security/certificate_pinning_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../widgets/ca_certificates_section.dart';
+import '../widgets/client_certificates_section.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../../widgets/ui/confirm_dialog.dart';
@@ -61,6 +62,9 @@ class _SecuritySettingsScreenState extends ConsumerState<SecuritySettingsScreen>
         children: [
           // ── Центры сертификации: Минцифры, с устройства, импортированные ──
           const CaCertificatesSection(),
+
+          // ── Сертификаты клиента (2.6.5): сервер требует сертификат устройства ──
+          const ClientCertificatesSection(),
 
           // ── Доверенные хосты и домены (самоподписанный сертификат или
           // корпоративный центр сертификации). Раньше один и тот же список

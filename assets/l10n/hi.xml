@@ -4335,4 +4335,17 @@
     <string name="kbdShortcuts">कीबोर्ड शॉर्टकट</string>
     <string name="kbdShortcutsDesc">कीबोर्ड से मेल, खोज और अनुभाग</string>
     <string name="mdmRuleProxy">संगठन का प्रॉक्सी: {proxy}</string>
+    <string name="clientCertTitle">क्लाइंट प्रमाणपत्र</string>
+    <string name="clientCertDesc">यदि आपके संगठन का मेल सर्वर डिवाइस प्रमाणपत्र मांगता है: पासवर्ड वाली .p12 या .pfx फ़ाइल। प्रमाणपत्र केवल बताए गए डोमेन के सर्वरों को दिखाया जाता है।</string>
+    <string name="clientCertAdd">प्रमाणपत्र जोड़ें</string>
+    <string name="clientCertPassword">फ़ाइल का पासवर्ड</string>
+    <string name="clientCertDomains">सर्वरों के लिए (अल्पविराम से अलग डोमेन)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">गलत पासवर्ड</string>
+    <string name="clientCertBadFile">अनुपयुक्त फ़ाइल: निजी कुंजी वाली .p12 या .pfx चाहिए</string>
+    <string name="clientCertNoDomains">कम से कम एक डोमेन लिखें</string>
+    <string name="clientCertFor">इनके लिए: {domains}</string>
+    <string name="clientCertManaged">आपके संगठन द्वारा सेट</string>
+    <string name="clientCertEditDomains">डोमेन बदलें</string>
+    <string name="mdmRuleClientCert">संगठन का क्लाइंट प्रमाणपत्र — {domains} के लिए</string>
 </resources>

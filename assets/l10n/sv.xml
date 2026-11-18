@@ -4335,4 +4335,17 @@
     <string name="kbdShortcuts">Kortkommandon</string>
     <string name="kbdShortcutsDesc">E-post, sökning och avsnitt från tangentbordet</string>
     <string name="mdmRuleProxy">Organisationens proxy: {proxy}</string>
+    <string name="clientCertTitle">Klientcertifikat</string>
+    <string name="clientCertDesc">Om organisationens e-postserver kräver ett enhetscertifikat: en .p12- eller .pfx-fil med lösenord. Certifikatet visas bara för servrar i de angivna domänerna.</string>
+    <string name="clientCertAdd">Lägg till certifikat</string>
+    <string name="clientCertPassword">Filens lösenord</string>
+    <string name="clientCertDomains">För servrar (domäner, kommaseparerade)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">Fel lösenord</string>
+    <string name="clientCertBadFile">Fel fil: en .p12 eller .pfx med privat nyckel krävs</string>
+    <string name="clientCertNoDomains">Ange minst en domän</string>
+    <string name="clientCertFor">För: {domains}</string>
+    <string name="clientCertManaged">Angivet av organisationen</string>
+    <string name="clientCertEditDomains">Ändra domäner</string>
+    <string name="mdmRuleClientCert">Organisationens klientcertifikat – för {domains}</string>
 </resources>

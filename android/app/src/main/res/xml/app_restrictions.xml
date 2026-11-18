@@ -197,4 +197,19 @@
         android:restrictionType="string"
         android:title="@string/mdm_proxy_bypass_title"
         android:description="@string/mdm_proxy_bypass_desc" />
+    <restriction
+        android:key="client_cert_pkcs12"
+        android:restrictionType="string"
+        android:title="@string/mdm_client_cert_pkcs12_title"
+        android:description="@string/mdm_client_cert_pkcs12_desc" />
+    <restriction
+        android:key="client_cert_password"
+        android:restrictionType="string"
+        android:title="@string/mdm_client_cert_password_title"
+        android:description="@string/mdm_client_cert_password_desc" />
+    <restriction
+        android:key="client_cert_domains"
+        android:restrictionType="string"
+        android:title="@string/mdm_client_cert_domains_title"
+        android:description="@string/mdm_client_cert_domains_desc" />
 </restrictions>

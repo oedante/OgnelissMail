@@ -268,6 +268,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     // Infinite scroll — подгрузка при приближении к концу
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addObserver(this);
+    FocusManager.instance.addListener(_onFocusChanged);
     // Планшет и компьютер, первый запуск (2.3.0): как открывать письма.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && !AppBottomBar.inUse(context)) unawaited(maybeAskReadingPane(context, ref));
@@ -522,6 +523,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     // Набранный поиск ещё ждал паузы (300 мс), а лента ушла — без отмены
     // таймер обращался к ушедшему экрану (1.12.x).
     _searchDebounce?.cancel();
+    FocusManager.instance.removeListener(_onFocusChanged);
     _listFocus.dispose();
     // Экран ушёл в режиме выбора — вернуть кнопку «Написать» оболочке.
     // Не во время демонтажа дерева: менять провайдер здесь нельзя.
@@ -996,7 +998,13 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     )),
           ],
         );
+        _keysOwner = !phone;
         if (phone) return row;
+        // Первое построение на компьютере: клавиши — ленте сразу.
+        if (!_keysClaimed) {
+          _keysClaimed = true;
+          _onFocusChanged();
+        }
         // Планшет и компьютер (1.12.x, выбор как в Outlook): Ctrl+A (Cmd+A)
         // — все загруженные письма, Esc — снять выбор, Delete — удалить
         // выбранные. Нажатие мышью в ленте или папках отдаёт фокус ленте,
@@ -1037,7 +1045,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       },
       // Следующее и предыдущее письмо в панели (оценка интерфейса
       // 12.11.2026): стрелки, как в Outlook, и J / K, как в Gmail.
-      if (!inSelection && AdaptiveLayout.isSplit(context)) ...{
+      // Раскладка — по месту ленты (внутри AdaptiveLayout): с уровня экрана
+      // isSplit всегда давал «нет», и J/K/стрелки не работали (17.11.2026).
+      if (!inSelection && AdaptiveLayout.isSplit(_listFocus.context ?? context)) ...{
         const SingleActivator(LogicalKeyboardKey.arrowDown): () => _openAdjacent(1),
         const SingleActivator(LogicalKeyboardKey.keyJ): () => _openAdjacent(1),
         const SingleActivator(LogicalKeyboardKey.arrowUp): () => _openAdjacent(-1),
@@ -1058,7 +1068,8 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     final next = cur < 0 ? 0 : (cur + dir).clamp(0, items.length - 1);
     if (next == cur) return;
     final item = items[next];
-    unawaited(_openEmail(context, item, true));
+    // Контекст ленты (внутри AdaptiveLayout): письмо — в панели.
+    unawaited(_openEmail(_listFocus.context ?? context, item, true));
   }
 
   /// Фокус — в выделенном тексте (письмо в панели, SelectionArea).
@@ -1071,10 +1082,29 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
   /// Фокус — ленте, если он сейчас выше неё (оболочка, ничего не выбрано).
   /// Письмо в панели, поле ввода и выделенный текст фокус не теряют.
   void _claimKeys() {
+    if (!mounted || _listFocus.context == null) return;
     final p = FocusManager.instance.primaryFocus;
     if (p == _listFocus) return;
     if (p == null || _listFocus.ancestors.contains(p)) _listFocus.requestFocus();
   }
+
+  /// Компьютер и планшет (17.11.2026: «сочетания клавиш не реагировали»):
+  /// фокус ушёл наверх — к оболочке при запуске, после закрытия письма в
+  /// панели или окна — клавиши ленты (J/K, стрелки, Ctrl+A) возвращаются ей
+  /// без нажатия мышью. Поле ввода, письмо и другие окна фокус не теряют.
+  void _onFocusChanged() {
+    if (!_keysOwner) return;
+    WidgetsBinding.instance
+      ..addPostFrameCallback((_) {
+        if (!mounted || !(ModalRoute.of(context)?.isCurrent ?? true)) return;
+        _claimKeys();
+      })
+      ..ensureVisualUpdate();
+  }
+
+  /// Лента ведёт клавиши: компьютер или планшет (не телефонная раскладка).
+  bool _keysOwner = false;
+  bool _keysClaimed = false;
 
   /// Выбор сменился мышью или клавиатурой — фокус ленте: Esc и Delete
   /// относятся к выбранным письмам, а не к письму в панели. Поле ввода

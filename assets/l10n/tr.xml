@@ -4335,4 +4335,17 @@
     <string name="kbdShortcuts">Klavye kısayolları</string>
     <string name="kbdShortcutsDesc">Klavyeden posta, arama ve bölümler</string>
     <string name="mdmRuleProxy">Kuruluş proxy’si: {proxy}</string>
+    <string name="clientCertTitle">İstemci sertifikaları</string>
+    <string name="clientCertDesc">Kuruluşunuzun posta sunucusu cihaz sertifikası istiyorsa: parolalı bir .p12 veya .pfx dosyası. Sertifika yalnızca belirtilen alan adlarının sunucularına sunulur.</string>
+    <string name="clientCertAdd">Sertifika ekle</string>
+    <string name="clientCertPassword">Dosya parolası</string>
+    <string name="clientCertDomains">Sunucular için (virgülle ayrılmış alan adları)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">Yanlış parola</string>
+    <string name="clientCertBadFile">Uygun olmayan dosya: özel anahtarlı .p12 veya .pfx gerekir</string>
+    <string name="clientCertNoDomains">En az bir alan adı girin</string>
+    <string name="clientCertFor">Şunlar için: {domains}</string>
+    <string name="clientCertManaged">Kuruluşunuz tarafından ayarlandı</string>
+    <string name="clientCertEditDomains">Alan adlarını düzenle</string>
+    <string name="mdmRuleClientCert">Kuruluş istemci sertifikası — {domains} için</string>
 </resources>

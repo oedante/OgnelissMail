@@ -56,6 +56,9 @@
 | `http_proxy` | строка | Прокси организации для серверов почты (с 2.6.5): `узел:порт`, например `proxy.romashka.ru:3128`; с входом — `логин:пароль@узел:порт` (Basic; символы `@` и `:` в пароле — `%40` и `%3A`). Важнее прокси системы и PAC. Соединения — туннелем CONNECT: Exchange (ActiveSync, EWS, Graph), календари и контакты (CalDAV, CardDAV), вход, IMAP и SMTP; сертификат проверяется у самого сервера почты. Прокси отказал в туннеле или недоступен — приложение подключается напрямую. Нет ключа — прокси системы (см. ниже). |
 | `proxy_bypass` | строка | Узлы без прокси при `http_proxy` (с 2.6.5), через запятую или пробел: `*.romashka.local, .corp, mail.romashka.ru, 10.0.0.0/8, <local>` (`<local>` — имена без точки). |
 | `pac_url` | строка | Сценарий автонастройки прокси (PAC) для серверов почты (с 2.6.5), например `https://wpad.romashka.ru/proxy.pac`. Выполняет система: **iPhone, iPad, Mac и Windows**. Важнее настроек прокси устройства; при `http_proxy` не действует. На Android ключа нет: PAC задаётся политикой устройства (глобальный прокси, `recommendedGlobalProxy`), и приложение берёт его из системы. |
+| `client_cert_pkcs12` | строка | Сертификат клиента TLS (с 2.6.5) — файл .p12/.pfx с закрытым ключом в base64 — для серверов почты, которые требуют сертификат устройства (mTLS: «проверка подлинности по сертификату клиента» в IIS, обратный прокси со взаимным TLS). Предъявляется только серверам из `client_cert_domains`. Подходят ключи RSA и EC, старые файлы Windows и новые (AES). Файл и пароль хранятся в защищённом хранилище устройства; в копии настроек, в журнале и в отчёте консоли их нет — только владелец сертификата, срок и домены. Пользователь видит сертификат в «Настройки → Безопасность → Сертификаты клиента», удалить его не может. |
+| `client_cert_password` | строка | Пароль файла `client_cert_pkcs12` (с 2.6.5). |
+| `client_cert_domains` | строка | Для каких серверов сертификат клиента (с 2.6.5): домены через запятую, `romashka.ru` — и все его поддомены. Пусто — домен `account_email` и серверы `account_server`, `imap_server`, `smtp_server`. |
 
 «Да/нет» — логическое значение. Строки `true`, `1`, `yes` тоже
 понимаются как «да».
@@ -96,7 +99,7 @@ Enterprise (KeyedAppStates; в консолях — App feedback / App states).
 |---|---|---|
 | `policy` | info | Настройки приняты: сколько ключей; в данных — их список. |
 | `unknown_keys` | error | Ключи, которых приложение не знает (опечатка в имени), — не применены. |
-| имя ключа (`min_pin_length`, `account_transport`, `trusted_ca_pem`…) | error | Значение не распознано или вне допустимого — что приложение сделало вместо него. Для `trusted_ca_pem` без ошибок — info с числом принятых сертификатов, для `http_proxy` — info с адресом прокси (без данных входа). `pac_url` на Android — error: PAC там задаёт политика устройства. |
+| имя ключа (`min_pin_length`, `account_transport`, `trusted_ca_pem`…) | error | Значение не распознано или вне допустимого — что приложение сделало вместо него. Для `trusted_ca_pem` без ошибок — info с числом принятых сертификатов, для `http_proxy` — info с адресом прокси (без данных входа), для `client_cert_pkcs12` — info с владельцем сертификата или error «неверный пароль» / «не PKCS#12». `pac_url` на Android — error: PAC там задаёт политика устройства. |
 | `account` | info | Ящик из `account_email` добавлен (`added`) или ещё нет (`missing`). |
 | `app_lock` | info | PIN приложения задан (`set`) или ещё нет (`missing`) — при `require_app_lock`. |
 
@@ -160,6 +163,12 @@ MIIDdzCCAl+gAwIBAgIE…
   <string>proxy.romashka.ru:3128</string>
   <key>proxy_bypass</key>
   <string>*.romashka.local, 10.0.0.0/8</string>
+  <key>client_cert_pkcs12</key>
+  <string>MIIKSQIBAzCCCg8GCSqGSIb3DQEHAaCC…</string>
+  <key>client_cert_password</key>
+  <string>$CERT_PASSWORD$</string>
+  <key>client_cert_domains</key>
+  <string>romashka.ru</string>
   <!-- или вместо http_proxy и proxy_bypass:
   <key>pac_url</key>
   <string>https://wpad.romashka.ru/proxy.pac</string> -->

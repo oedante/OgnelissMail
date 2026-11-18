@@ -4314,4 +4314,17 @@
     <string name="kbdShortcuts">Pintasan keyboard</string>
     <string name="kbdShortcutsDesc">Email, pencarian, dan bagian dari keyboard</string>
     <string name="mdmRuleProxy">Proxy organisasi: {proxy}</string>
+    <string name="clientCertTitle">Sertifikat klien</string>
+    <string name="clientCertDesc">Jika server email organisasi Anda meminta sertifikat perangkat: berkas .p12 atau .pfx dengan kata sandi. Sertifikat hanya ditunjukkan ke server domain yang disebutkan.</string>
+    <string name="clientCertAdd">Tambah sertifikat</string>
+    <string name="clientCertPassword">Kata sandi berkas</string>
+    <string name="clientCertDomains">Untuk server (domain, dipisah koma)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">Kata sandi salah</string>
+    <string name="clientCertBadFile">Berkas tidak sesuai: perlu .p12 atau .pfx dengan kunci privat</string>
+    <string name="clientCertNoDomains">Masukkan minimal satu domain</string>
+    <string name="clientCertFor">Untuk: {domains}</string>
+    <string name="clientCertManaged">Diatur oleh organisasi Anda</string>
+    <string name="clientCertEditDomains">Ubah domain</string>
+    <string name="mdmRuleClientCert">Sertifikat klien organisasi — untuk {domains}</string>
 </resources>

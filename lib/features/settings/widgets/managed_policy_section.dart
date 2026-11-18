@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/system_proxy.dart' show SystemProxy;
+import '../../../core/security/client_cert_store.dart' show ClientCertStore;
 import '../../../core/theme/app_icons.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/security/managed_config.dart';
@@ -53,6 +54,15 @@ class ManagedPolicySection extends ConsumerWidget {
         // 2.6.5: прокси организации (без данных входа); PAC на Android
         // задаёт политика устройства, ключ pac_url там не действует.
         if (_proxyText(p) case final proxy?) (AppIcons.dns, l10n.tr('mdmRuleProxy').replaceAll('{proxy}', proxy)),
+        // 2.6.5: сертификат клиента организации (mTLS).
+        if (p.hasClientCert)
+          (
+            AppIcons.badge,
+            l10n.tr('mdmRuleClientCert').replaceAll(
+                '{domains}',
+                ClientCertStore.instance?.items.where((c) => c.managed).firstOrNull?.domains.join(', ') ??
+                    (p.clientCertDomains ?? '—')),
+          ),
       ];
 
   static String? _proxyText(ManagedPolicy p) {

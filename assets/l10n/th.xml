@@ -4314,4 +4314,17 @@
     <string name="kbdShortcuts">แป้นพิมพ์ลัด</string>
     <string name="kbdShortcutsDesc">อีเมล การค้นหา และส่วนต่างๆ ด้วยแป้นพิมพ์</string>
     <string name="mdmRuleProxy">พร็อกซีขององค์กร: {proxy}</string>
+    <string name="clientCertTitle">ใบรับรองไคลเอนต์</string>
+    <string name="clientCertDesc">หากเซิร์ฟเวอร์อีเมลขององค์กรต้องการใบรับรองอุปกรณ์: ไฟล์ .p12 หรือ .pfx พร้อมรหัสผ่าน ใบรับรองจะแสดงต่อเซิร์ฟเวอร์ของโดเมนที่ระบุเท่านั้น</string>
+    <string name="clientCertAdd">เพิ่มใบรับรอง</string>
+    <string name="clientCertPassword">รหัสผ่านไฟล์</string>
+    <string name="clientCertDomains">สำหรับเซิร์ฟเวอร์ (โดเมน คั่นด้วยจุลภาค)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">รหัสผ่านไม่ถูกต้อง</string>
+    <string name="clientCertBadFile">ไฟล์ไม่เหมาะสม: ต้องเป็น .p12 หรือ .pfx ที่มีคีย์ส่วนตัว</string>
+    <string name="clientCertNoDomains">ระบุอย่างน้อยหนึ่งโดเมน</string>
+    <string name="clientCertFor">สำหรับ: {domains}</string>
+    <string name="clientCertManaged">กำหนดโดยองค์กรของคุณ</string>
+    <string name="clientCertEditDomains">แก้ไขโดเมน</string>
+    <string name="mdmRuleClientCert">ใบรับรองไคลเอนต์ขององค์กร — สำหรับ {domains}</string>
 </resources>

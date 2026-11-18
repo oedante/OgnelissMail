@@ -323,14 +323,19 @@ class TrustedCaStore {
     }
   }
 
+  /// Действующие дополнительные ЦС (PEM) — и для своих контекстов TLS
+  /// (сертификат клиента, 2.6.5): там нужен тот же набор, что в общем.
+  List<String> get activePems => [for (final c in _active) c.pem];
+
+  List<CaCertInfo> get _active => [
+        if (bundledEnabled) ..._bundled,
+        if (deviceEnabled) ..._device,
+        ..._importedActive,
+        ..._managed,
+      ];
+
   void _applyToDart() {
-    final all = <CaCertInfo>[
-      if (bundledEnabled) ..._bundled,
-      if (deviceEnabled) ..._device,
-      ..._importedActive,
-      ..._managed,
-    ];
-    for (final c in all) {
+    for (final c in _active) {
       if (!_inDefaultContext.add(c.fingerprint)) continue;
       try {
         SecurityContext.defaultContext.setTrustedCertificatesBytes(utf8.encode(c.pem));

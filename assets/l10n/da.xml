@@ -4335,4 +4335,17 @@
     <string name="kbdShortcuts">Tastaturgenveje</string>
     <string name="kbdShortcutsDesc">Mail, søgning og sektioner fra tastaturet</string>
     <string name="mdmRuleProxy">Organisationens proxy: {proxy}</string>
+    <string name="clientCertTitle">Klientcertifikater</string>
+    <string name="clientCertDesc">Hvis organisationens mailserver kræver et enhedscertifikat: en .p12- eller .pfx-fil med adgangskode. Certifikatet vises kun for servere i de angivne domæner.</string>
+    <string name="clientCertAdd">Tilføj certifikat</string>
+    <string name="clientCertPassword">Filens adgangskode</string>
+    <string name="clientCertDomains">Til servere (domæner, kommasepareret)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">Forkert adgangskode</string>
+    <string name="clientCertBadFile">Ugyldig fil: en .p12 eller .pfx med privat nøgle er påkrævet</string>
+    <string name="clientCertNoDomains">Angiv mindst ét domæne</string>
+    <string name="clientCertFor">Til: {domains}</string>
+    <string name="clientCertManaged">Angivet af organisationen</string>
+    <string name="clientCertEditDomains">Rediger domæner</string>
+    <string name="mdmRuleClientCert">Organisationens klientcertifikat – til {domains}</string>
 </resources>

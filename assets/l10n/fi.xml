@@ -4335,4 +4335,17 @@
     <string name="kbdShortcuts">Pikanäppäimet</string>
     <string name="kbdShortcutsDesc">Sähköposti, haku ja osiot näppäimistöltä</string>
     <string name="mdmRuleProxy">Organisaation välityspalvelin: {proxy}</string>
+    <string name="clientCertTitle">Asiakasvarmenteet</string>
+    <string name="clientCertDesc">Jos organisaation sähköpostipalvelin vaatii laitevarmenteen: .p12- tai .pfx-tiedosto salasanalla. Varmenne esitetään vain annettujen verkkotunnusten palvelimille.</string>
+    <string name="clientCertAdd">Lisää varmenne</string>
+    <string name="clientCertPassword">Tiedoston salasana</string>
+    <string name="clientCertDomains">Palvelimille (verkkotunnukset pilkuin eroteltuina)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">Väärä salasana</string>
+    <string name="clientCertBadFile">Sopimaton tiedosto: tarvitaan .p12 tai .pfx yksityisellä avaimella</string>
+    <string name="clientCertNoDomains">Anna vähintään yksi verkkotunnus</string>
+    <string name="clientCertFor">Kohteet: {domains}</string>
+    <string name="clientCertManaged">Organisaation asettama</string>
+    <string name="clientCertEditDomains">Muokkaa verkkotunnuksia</string>
+    <string name="mdmRuleClientCert">Organisaation asiakasvarmenne – kohteet {domains}</string>
 </resources>

@@ -4335,4 +4335,17 @@
     <string name="kbdShortcuts">Sneltoetsen</string>
     <string name="kbdShortcutsDesc">Mail, zoeken en onderdelen met het toetsenbord</string>
     <string name="mdmRuleProxy">Proxy van de organisatie: {proxy}</string>
+    <string name="clientCertTitle">Clientcertificaten</string>
+    <string name="clientCertDesc">Als de mailserver van uw organisatie een apparaatcertificaat vereist: een .p12- of .pfx-bestand met wachtwoord. Het certificaat wordt alleen aan servers van de opgegeven domeinen getoond.</string>
+    <string name="clientCertAdd">Certificaat toevoegen</string>
+    <string name="clientCertPassword">Wachtwoord van bestand</string>
+    <string name="clientCertDomains">Voor servers (domeinen, gescheiden door komma’s)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">Onjuist wachtwoord</string>
+    <string name="clientCertBadFile">Ongeschikt bestand: een .p12 of .pfx met privésleutel is nodig</string>
+    <string name="clientCertNoDomains">Geef ten minste één domein op</string>
+    <string name="clientCertFor">Voor: {domains}</string>
+    <string name="clientCertManaged">Ingesteld door uw organisatie</string>
+    <string name="clientCertEditDomains">Domeinen bewerken</string>
+    <string name="mdmRuleClientCert">Clientcertificaat van de organisatie — voor {domains}</string>
 </resources>

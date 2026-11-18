@@ -9,6 +9,9 @@
 
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:mail_engine/mail_engine.dart' show NetProxy;
+
+import '../logging/app_logger.dart';
 
 import '../security/trusted_ca_store.dart';
 import 'certificate_pinning_bridge.dart';
@@ -20,8 +23,18 @@ class NativeAndroidHttpClient extends http.BaseClient {
 
   NativeAndroidHttpClient(this._fallback);
 
+  static final _certNoted = <String>{};
+
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    // Сертификат клиента для сервера (mTLS, 2.6.5) предъявляет TLS Dart:
+    // сетевой стек системы его не знает — запрос обычным путём.
+    if (NetProxy.contextFor(request.url.host) != null) {
+      if (_certNoted.add(request.url.host)) {
+        AppLogger.info('Режим совместимости: ${request.url.host} — с сертификатом клиента, через TLS приложения');
+      }
+      return _fallback.send(request);
+    }
     if (_noChannel) {
       throw http.ClientException(
           'Режим совместимости со шлюзом: системный сетевой стек недоступен', request.url);

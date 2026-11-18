@@ -34,17 +34,19 @@ void installStrictPinning(
     final port = uri.hasPort ? uri.port : (secure ? 443 : 80);
     // Прокси системы, PAC или MDM (2.6.5, план 08.11.2026 п. 1): туннель
     // CONNECT к узлу, TLS — с сертификатом самого узла.
+    // Сертификат клиента для узла (mTLS, 2.6.5) — свой контекст TLS.
+    final ctx = (secure ? NetProxy.contextFor(host) : null) ?? context;
     final t = await NetProxy.tunnelFor(host, port, secure: secure);
     if (t != null) {
       if (!secure) return ConnectionTask.fromSocket(Future.value(t.plain()), () {});
       final tunneled = t
-          .secure(context: context, onBadCertificate: (cert) => onBadCertificate(cert, host, port))
+          .secure(context: ctx, onBadCertificate: (cert) => onBadCertificate(cert, host, port))
           .then<Socket>((s) => _checked(s, host, port));
       return ConnectionTask.fromSocket(tunneled, () {});
     }
     if (!secure) return Socket.startConnect(host, port);
     final task = await SecureSocket.startConnect(host, port,
-        context: context, onBadCertificate: (cert) => onBadCertificate(cert, host, port));
+        context: ctx, onBadCertificate: (cert) => onBadCertificate(cert, host, port));
     return ConnectionTask.fromSocket(task.socket.then<Socket>((s) => _checked(s, host, port)), task.cancel);
   };
 }

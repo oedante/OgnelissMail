@@ -55,6 +55,11 @@ Future<AppDatabase> _db() async {
   return db;
 }
 
+DateTime _todayMidnight() {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, now.day);
+}
+
 EmailModel _mail(String id, {bool read = true}) => EmailModel(
   id: id,
   accountId: 'a1',
@@ -64,7 +69,10 @@ EmailModel _mail(String id, {bool read = true}) => EmailModel(
   to: const [],
   subject: 'График отпусков $id',
   bodyPreview: _preview,
-  receivedAt: DateTime.now().subtract(const Duration(hours: 1)),
+  // Сегодня в полночь: лента показывает время (ЧЧ:ММ) в любое время запуска.
+  // «Час назад» в первый час суток — вчера, и строка показывала «Вчера»
+  // (тест падал с 00:00 до 01:00).
+  receivedAt: _todayMidnight(),
   isRead: read,
   hasAttachments: true,
 );

@@ -26,6 +26,7 @@ import '../../core/utils/greeting_helper.dart';
 import '../../l10n/strings_store.dart' show StringsStore;
 import 'greeting_history.dart';
 import 'greeting_mode.dart';
+import 'mail_tags.dart';
 import 'own_addresses.dart';
 import '../../features/settings/providers/feature_flags_provider.dart' show FeatureFlags;
 
@@ -170,6 +171,23 @@ class QuickReplyService {
       set = build();
     }
     if (mode == GreetingMode.hello) return set.hello;
+    // Своё приветствие ящика (18.11.2026) — с полями {…}.
+    final custom = mode == GreetingMode.custom ? _ref.read(customGreetingsProvider).forAccount(account.id) : null;
+    if (custom != null) {
+      return MailTags.apply(
+          custom.text,
+          MailTagValues(
+            sender: MailTags.sender(displayName: account.displayName, email: account.email),
+            recipient: MailTags.recipient(
+              names: [for (final a in to) a.displayName ?? ''],
+              emails: [for (final a in to) a.email],
+              lang: set.lang,
+              ownDomains: OwnAddresses.domains(account),
+            ),
+            lang: set.lang,
+          ),
+          cleanup: true);
+    }
     final wrote = parent != null && await GreetingHistory.wroteBefore(_ref.read(databaseProvider), account, parent);
     return set.text(wrote ? GreetingVariant.short : GreetingVariant.full);
   }

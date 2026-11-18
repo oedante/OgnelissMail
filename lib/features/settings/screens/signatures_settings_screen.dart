@@ -22,6 +22,9 @@ import '../../../core/utils/greeting_helper.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineNotice, quietError, quietNotice;
 import '../../../widgets/ui/app_menu_button.dart';
+import '../../../services/mail/mail_tags.dart';
+import '../../../data/models/account_model.dart';
+import '../widgets/mail_tag_chips.dart';
 
 class SignaturesSettingsScreen extends ConsumerWidget {
   const SignaturesSettingsScreen({super.key, this.accountId});
@@ -77,9 +80,31 @@ class SignaturesSettingsScreen extends ConsumerWidget {
             ListTile(
               leading: const Icon(AppIcons.waving_hand),
               title: Text(l10n.tr('greetingSetting')),
-              subtitle: Text(_greetingLabel(
-                  l10n, ref.watch(greetingModeProvider)[account.id] ?? GreetingMode.helloName)),
-              onTap: () => _pickGreeting(context, ref, account.id),
+              subtitle: Text(_greetingLabel(l10n, ref.watch(greetingModeProvider)[account.id] ?? GreetingMode.helloName,
+                  custom: ref.watch(customGreetingsProvider).forAccount(account.id), account: account)),
+              onTap: () => _pickGreeting(context, ref, account),
+            ),
+            // Свои приветствия с полями {…} (18.11.2026) — общие для ящиков.
+            for (final g in ref.watch(customGreetingsProvider).items)
+              ListTile(
+                contentPadding: const EdgeInsetsDirectional.only(start: 56, end: 8),
+                title: Text(_sampleGreeting(l10n, g.text, account), maxLines: 1, overflow: TextOverflow.ellipsis),
+                subtitle: Text(g.text, maxLines: 1, overflow: TextOverflow.ellipsis),
+                onTap: () => _editGreeting(context, ref, account, g),
+                trailing: AppMenuButton<String>(
+                  onSelected: (action) {
+                    if (action == 'delete') ref.read(customGreetingsProvider.notifier).remove(g.id);
+                  },
+                  itemBuilder: (_) => [
+                    AppMenuEntry(value: 'delete', icon: AppIcons.delete, label: l10n.tr('delete'), destructive: true),
+                  ],
+                ),
+              ),
+            ListTile(
+              contentPadding: const EdgeInsetsDirectional.only(start: 56, end: 16),
+              title: Text(l10n.tr('customGreetingAdd')),
+              trailing: const Icon(AppIcons.add),
+              onTap: () => _editGreeting(context, ref, account, null),
             ),
             ListTile(
               enabled: settings.autoInsertSignature,
@@ -131,25 +156,157 @@ class SignaturesSettingsScreen extends ConsumerWidget {
 
   /// Образцы — из тех же шаблонов, что вставляются в письмо (на языке
   /// приложения): «Добрый день!», «Добрый день, Имя Отчество,».
-  static String _greetingLabel(AppLocalizations l10n, GreetingMode m) => switch (m) {
+  static String _greetingLabel(AppLocalizations l10n, GreetingMode m,
+          {CustomGreeting? custom, AccountModel? account}) =>
+      switch (m) {
         GreetingMode.off => l10n.tr('greetingOff'),
         GreetingMode.hello => GreetingHelper.sample(l10n.localeCode, withName: false),
         GreetingMode.helloName => GreetingHelper.sample(l10n.localeCode),
+        GreetingMode.custom => custom == null
+            ? GreetingHelper.sample(l10n.localeCode)
+            : _sampleGreeting(l10n, custom.text, account),
       };
 
-  /// Приветствие: нет / «Добрый день!» / «Добрый день, Имя Отчество,».
-  Future<void> _pickGreeting(BuildContext context, WidgetRef ref, String accId) async {
+  /// Своё приветствие [text] на образце адресата («Иван Петрович») и с
+  /// вашими полями из ящика [account].
+  static String _sampleGreeting(AppLocalizations l10n, String text, AccountModel? account) {
+    final lang = l10n.localeCode;
+    return MailTags.apply(
+        text,
+        MailTagValues(
+          sender: account == null
+              ? const {}
+              : MailTags.sender(displayName: account.displayName, email: account.email),
+          recipient: MailTags.sampleRecipient(lang),
+          lang: lang,
+        ),
+        cleanup: true);
+  }
+
+  /// Приветствие: нет / «Добрый день!» / «Добрый день, Имя Отчество,» /
+  /// свои приветствия / добавить своё.
+  Future<void> _pickGreeting(BuildContext context, WidgetRef ref, AccountModel account) async {
     final l10n = AppLocalizations.of(context);
-    final current = ref.read(greetingModeProvider.notifier).of(accId);
-    // Карточкой (1.8.8), как меню «⋮»; текущее — с галочкой.
-    final picked = await showChoiceSheet<GreetingMode>(
+    final current = ref.read(greetingModeProvider.notifier).of(account.id);
+    final custom = ref.read(customGreetingsProvider);
+    final currentCustom = current == GreetingMode.custom ? custom.forAccount(account.id) : null;
+    // Карточкой (1.8.8), как меню «⋮»; текущее — с галочкой. Свои — «c:<id>».
+    final picked = await showChoiceSheet<String>(
       context,
       title: l10n.tr('greetingSetting'),
       subtitle: l10n.tr('greetingSettingDesc'),
-      selected: current,
-      entries: [for (final m in GreetingMode.values) AppMenuEntry(value: m, label: _greetingLabel(l10n, m))],
+      selected: currentCustom != null ? 'c:${currentCustom.id}' : current.name,
+      entries: [
+        for (final m in const [GreetingMode.off, GreetingMode.hello, GreetingMode.helloName])
+          AppMenuEntry(value: m.name, label: _greetingLabel(l10n, m)),
+        for (final g in custom.items)
+          AppMenuEntry(value: 'c:${g.id}', label: _sampleGreeting(l10n, g.text, account), subtitle: g.text),
+        AppMenuEntry(value: 'add', icon: AppIcons.add, label: l10n.tr('customGreetingAdd')),
+      ],
     );
-    if (picked != null) await ref.read(greetingModeProvider.notifier).set(accId, picked);
+    if (picked == null || !context.mounted) return;
+    final modes = ref.read(greetingModeProvider.notifier);
+    if (picked == 'add') {
+      await _editGreeting(context, ref, account, null);
+      return;
+    }
+    if (picked.startsWith('c:')) {
+      await ref.read(customGreetingsProvider.notifier).choose(account.id, picked.substring(2));
+      await modes.set(account.id, GreetingMode.custom);
+      return;
+    }
+    final mode = GreetingMode.values.where((m) => m.name == picked).firstOrNull;
+    if (mode != null) await modes.set(account.id, mode);
+  }
+
+  /// Конструктор своего приветствия: текст с полями {…}, кнопки полей,
+  /// образец. Новое приветствие сразу становится приветствием ящика.
+  Future<void> _editGreeting(BuildContext context, WidgetRef ref, AccountModel? account, CustomGreeting? existing) {
+    final l10n = AppLocalizations.of(context);
+    final text = TextEditingController(text: existing?.text ?? '');
+    return showAppSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(ctx).viewInsets.bottom,
+          left: Space.l, right: Space.l, top: Space.l,
+        ),
+        child: SingleChildScrollView(
+          child: StatefulBuilder(
+            builder: (ctx, setLocal) {
+              final sample = _sampleGreeting(l10n, text.text, account);
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.tr('customGreeting'), style: Theme.of(ctx).textTheme.titleMedium),
+                  const SizedBox(height: Space.m),
+                  TextField(
+                    controller: text,
+                    autofocus: existing == null,
+                    maxLines: 2,
+                    minLines: 1,
+                    onChanged: (_) => setLocal(() {}),
+                    decoration: InputDecoration(
+                      hintText: l10n.tr('customGreetingHint'),
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: Space.s),
+                  // Образец: как приветствие будет выглядеть в письме.
+                  if (sample.isNotEmpty)
+                    Text('${l10n.tr('customGreetingSample')}: $sample',
+                        style: Theme.of(ctx).textTheme.bodySmall),
+                  const SizedBox(height: Space.m),
+                  MailTagChips(
+                    tags: MailTags.forGreeting,
+                    onInsert: (t) {
+                      insertAtCursor(text, t);
+                      setLocal(() {});
+                    },
+                  ),
+                  const SizedBox(height: Space.l),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          child: Text(l10n.tr('cancel')),
+                        ),
+                      ),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () async {
+                            final t = text.text.trim();
+                            if (t.isEmpty) return;
+                            final notifier = ref.read(customGreetingsProvider.notifier);
+                            if (existing == null) {
+                              final g = await notifier.add(t);
+                              // Новое — сразу приветствие ящика.
+                              if (account != null) {
+                                await notifier.choose(account.id, g.id);
+                                await ref.read(greetingModeProvider.notifier).set(account.id, GreetingMode.custom);
+                              }
+                            } else {
+                              await notifier.update(existing.id, t);
+                            }
+                            if (ctx.mounted) Navigator.pop(ctx);
+                          },
+                          child: Text(l10n.tr('save')),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: Space.l),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   /// Выбор подписи для новых писем или для ответов и пересылки.
@@ -242,6 +399,21 @@ class SignaturesSettingsScreen extends ConsumerWidget {
                     border: const OutlineInputBorder(),
                   ),
                 ),
+              const SizedBox(height: Space.m),
+              // Поля {…} подписи (18.11.2026): вставляются в место курсора.
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: MailTagChips(
+                  tags: MailTags.forSignature,
+                  onInsert: (t) {
+                    if (useHtml && !editorFailed) {
+                      unawaited(htmlController.insertHtml(t));
+                    } else {
+                      insertAtCursor(plainController, t);
+                    }
+                  },
+                ),
+              ),
               const SizedBox(height: Space.m),
               // Импорт подписи из почтового ящика (Gmail/Exchange/эвристика по «Отправленным»).
               SizedBox(

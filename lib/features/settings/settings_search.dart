@@ -142,6 +142,7 @@ const _entries = <_Entry>[
   _Entry('readingPane', 'mailReadingSettings', AppIcons.vertical_split, '/settings/mail'),
   _Entry('uiScaleTitle', 'appearanceTitle', AppIcons.zoom_in, '/settings/appearance'),
   _Entry('signatures', 'templatesSignature', AppIcons.draw, '/settings/signatures'),
+  _Entry('customGreeting', 'templatesSignature', AppIcons.waving_hand, '/settings/signatures'),
   _Entry('syncPeriod', 'accounts', AppIcons.date_range, '/settings/accounts'),
   _Entry('vipRulesTitle', 'sectionMail', AppIcons.rule, '/vip-settings'),
   _Entry('connectionSecurity', 'sectionPrivacy', AppIcons.verified_user, '/settings/security'),

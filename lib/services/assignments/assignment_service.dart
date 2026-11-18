@@ -31,6 +31,7 @@ import '../../l10n/app_localizations.dart';
 import '../mail/offline_send_service.dart';
 import '../contacts/person_name_directory.dart';
 import '../mail/greeting_mode.dart';
+import '../mail/mail_tags.dart';
 import '../mail/own_addresses.dart';
 import '../notifications/reminder_scheduler_service.dart' show reminderSchedulerProvider;
 import 'assignment_codec.dart';
@@ -100,7 +101,7 @@ class AssignmentService {
     } catch (_) {}
     if (mode == GreetingMode.off) return '';
     var name = a.displayName;
-    if (mode == GreetingMode.helloName) {
+    if (mode == GreetingMode.helloName || mode == GreetingMode.custom) {
       try {
         final full = await _ref
             .read(personNameDirectoryProvider)
@@ -116,6 +117,27 @@ class AssignmentService {
       lang: l10n.localeCode,
       ownDomains: account == null ? const {} : OwnAddresses.domains(account),
     );
+    // Своё приветствие ящика (18.11.2026) — с полями {…}.
+    if (mode == GreetingMode.custom) {
+      final custom = _ref.read(customGreetingsProvider).forAccount(account?.id);
+      if (custom != null) {
+        return MailTags.apply(
+            custom.text,
+            MailTagValues(
+              sender: account == null
+                  ? const {}
+                  : MailTags.sender(displayName: account.displayName, email: account.email),
+              recipient: MailTags.recipient(
+                names: [name ?? ''],
+                emails: [a.email],
+                lang: l10n.localeCode,
+                ownDomains: account == null ? const {} : OwnAddresses.domains(account),
+              ),
+              lang: l10n.localeCode,
+            ),
+            cleanup: true);
+      }
+    }
     return mode == GreetingMode.hello ? set.hello : set.full;
   }
 

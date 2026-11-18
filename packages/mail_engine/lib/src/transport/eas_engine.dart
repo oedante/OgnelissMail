@@ -754,6 +754,13 @@ class EasEngine implements MailEngine {
   static final Map<String, DateTime> _wafPauseUntil = {};
   static const _wafPause = Duration(minutes: 15);
 
+  /// Адрес отправителя по данным сервера, если адрес ящика в настройках —
+  /// не его (18.11.2026: ящик «…@yamalspd.ru» вместо «…@yamalspg.ru», вход
+  /// по логину домена работал, а все 19 писем — SendMail Status 120: Exchange
+  /// не отправляет письмо от адреса, которого у ящика нет). Ключ — адрес из
+  /// настроек; живёт до перезапуска приложения.
+  static final Map<String, MailAddress> _ownerFrom = {};
+
   /// Минут до конца паузы после блокировки шлюзом (0 — паузы нет).
   static int wafPauseMinutesLeft(String host) {
     final until = _wafPauseUntil[host.toLowerCase()];
@@ -3044,7 +3051,11 @@ class EasEngine implements MailEngine {
   }
 
   @override
-  Future<void> send(OutgoingMessage message) async {
+  Future<void> send(OutgoingMessage message) => _send(message);
+
+  /// [retry] — повтор от адреса ящика с сервера после Status 120: другой
+  /// ClientId, иначе сервер мог бы ответить «уже отправлено» (118).
+  Future<void> _send(OutgoingMessage message, {bool retry = false}) async {
     final cfg = _cfg!;
     final mime = _buildMime(cfg, message);
     var mimeBytes = Uint8List.fromList(utf8.encode(mime));
@@ -3052,7 +3063,9 @@ class EasEngine implements MailEngine {
     if (transform != null) mimeBytes = await transform(mimeBytes);
     log.info(_t, 'SendMail: письмо ${_size(mimeBytes.length)}, вложений ${message.attachments.length}');
     final root = WbxmlElement(name: 'SendMail', namespace: 'ComposeMail');
-    root.addChild('ClientId', namespace: 'ComposeMail', text: _clientId('snd', message));
+    final clientId = _clientId('snd', message);
+    root.addChild('ClientId', namespace: 'ComposeMail',
+        text: retry ? '${clientId.length >= 40 ? clientId.substring(0, 39) : clientId}r' : clientId);
     root.addChild('SaveInSentItems', namespace: 'ComposeMail');
     root.addChild('MIME', namespace: 'ComposeMail', opaqueData: mimeBytes);
     // Таймаут больше обычного: письмо с вложениями уходит одним запросом.
@@ -3087,12 +3100,36 @@ class EasEngine implements MailEngine {
       log.info(_t, 'SendMail: Status 118 — уже отправлено ранее, повтор не нужен');
       return;
     }
+    if (status == '120' && !retry && message.from == null && await _learnOwnerFrom(cfg)) {
+      log.warn(_t, 'SendMail: Status 120 — адреса ящика из настроек нет среди адресов ящика на сервере; '
+          'повтор от основного адреса ящика. Исправьте адрес ящика в настройках.');
+      return _send(message, retry: true);
+    }
     if (status != null && status != '1') {
       log.error(_t, 'SendMail: Status=$status (ошибка)');
       throw Exception('EAS SendMail Status=$status');
     }
     log.info(_t, 'SendMail: успех');
   }
+
+  /// Адрес ящика из настроек не принадлежит ящику (опечатка в домене при
+  /// входе по логину): запомнить основной адрес с сервера как отправителя.
+  /// true — запомнен новый адрес (стоит повторить отправку).
+  Future<bool> _learnOwnerFrom(AccountConfig cfg) async {
+    final own = cfg.email.trim().toLowerCase();
+    if (_ownerFrom.containsKey(own)) return false;
+    final info = await getUserInformation();
+    if (info == null || info.addresses.isEmpty || info.addresses.contains(own)) return false;
+    final primary = info.primary ?? info.addresses.first;
+    if (primary == own) return false;
+    _ownerFrom[own] = MailAddress(primary, info.displayName);
+    log.warn(_t, 'Адрес ящика в настройках не найден среди ${info.addresses.length} адресов ящика на сервере — '
+        'письма уходят от основного адреса ящика');
+    return true;
+  }
+
+  /// Для тестов: забыть адреса отправителя, узнанные у сервера.
+  static void debugResetOwnerFrom() => _ownerFrom.clear();
 
   /// ClientId команды отправки: постоянный, если приложение его передало
   /// (повтор той же записи очереди), иначе уникальный. Не длиннее 40
@@ -3268,7 +3305,7 @@ class EasEngine implements MailEngine {
 
     // Отправитель — владелец ящика или адрес «от имени» (1.6.27): Exchange
     // ActiveSync берёт From из MIME и проверяет права «Отправить как/от имени».
-    final from = m.from;
+    final from = m.from ?? _ownerFrom[cfg.email.trim().toLowerCase()];
     h('From: ${from == null ? cfg.email : addr(from)}');
     h('To: ${fmt(m.to)}');
     if (m.cc.isNotEmpty) h('Cc: ${fmt(m.cc)}');

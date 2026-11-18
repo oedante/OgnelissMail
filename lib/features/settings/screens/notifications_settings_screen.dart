@@ -99,6 +99,21 @@ class NotificationsSettingsScreen extends ConsumerWidget {
                       ? (v) => notifier.setNotificationVipConversations(v)
                       : null,
                 ),
+              // Портрет со значком приложения на нём — у писем людей,
+              // рассылки — обычным видом (ответ владельца 18.11.2026).
+              // При «всех письмах» не нужен.
+              if (defaultTargetPlatform == TargetPlatform.android)
+                SettingsSwitchItem(
+                  icon: AppIcons.forum,
+                  title: l10n.tr('notifyPeopleConversations'),
+                  subtitle: l10n.tr('notifyPeopleConversationsDesc'),
+                  value: settings.notificationPeopleConversations || settings.notificationAllConversations,
+                  onChanged: settings.notificationsEnabled &&
+                          settings.notificationMessengerStyle &&
+                          !settings.notificationAllConversations
+                      ? (v) => notifier.setNotificationPeopleConversations(v)
+                      : null,
+                ),
               // Портрет вместо значка приложения в свёрнутом уведомлении
               // (1.11.0, вопрос владельца 04.11.2026).
               if (defaultTargetPlatform == TargetPlatform.android)

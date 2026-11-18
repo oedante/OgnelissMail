@@ -4358,4 +4358,6 @@
     <string name="syncSettingsDesc">Minden postafiók ellenőrzése, ütemezés, ütközések</string>
     <string name="faq_settings_4_q">Honnan tudom meg, mit csinál egy beállítás?</string>
     <string name="faq_settings_4_a">Tartsa lenyomva a beállítás elemét (számítógépen kattintson rá a jobb egérgombbal): megnyílik a magyarázat, hogy mire van hatással, és a róla szóló válaszok a „Kérdések és válaszok” részből. A név melletti „?” ikon ugyanezt nyitja meg.</string>
+    <string name="notifyPeopleConversations">Beszélgetések az emberektől érkező levelekhez</string>
+    <string name="notifyPeopleConversationsDesc">A feladó képe rajta az alkalmazás ikonjával a kollégák és névjegyek olyan leveleinél, amelyek címzettjei között Ön is szerepel (legfeljebb 50); a hírlevelek a szokásos módon</string>
 </resources>

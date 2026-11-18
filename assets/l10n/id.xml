@@ -4337,4 +4337,6 @@
     <string name="syncSettingsDesc">Pemeriksaan semua kotak surat, jadwal, konflik</string>
     <string name="faq_settings_4_q">Bagaimana cara mengetahui fungsi suatu pengaturan?</string>
     <string name="faq_settings_4_a">Tekan lama item pengaturan (di komputer, klik kanan): penjelasan tentang apa yang dipengaruhinya akan terbuka, beserta jawaban tentangnya dari “Tanya jawab”. Ikon “?” di samping nama membuka hal yang sama.</string>
+    <string name="notifyPeopleConversations">Percakapan untuk email dari orang</string>
+    <string name="notifyPeopleConversationsDesc">Foto pengirim dengan ikon aplikasi di atasnya untuk email dari rekan kerja dan kontak yang mencantumkan Anda sebagai penerima (hingga 50); buletin tampil seperti biasa</string>
 </resources>

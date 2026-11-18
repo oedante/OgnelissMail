@@ -4337,4 +4337,6 @@
     <string name="syncSettingsDesc">全メールボックスの確認、スケジュール、競合</string>
     <string name="faq_settings_4_q">設定の働きを知るには？</string>
     <string name="faq_settings_4_a">設定の項目を長押しします（パソコンでは右クリック）。その項目が何に影響するかの説明と、「質問と回答」の関連する回答が開きます。名前の横の「?」アイコンでも同じものが開きます。</string>
+    <string name="notifyPeopleConversations">人からのメールを会話に</string>
+    <string name="notifyPeopleConversationsDesc">あなたが宛先に含まれる同僚や連絡先からのメール（宛先50人まで）は、差出人の写真にアプリのアイコンを重ねて表示。ニュースレターは通常どおり</string>
 </resources>

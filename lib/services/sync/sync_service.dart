@@ -76,7 +76,7 @@ import '../mail/delivery/delivery_report_service.dart';
 import '../mail/thread_linker.dart';
 import '../mail/special_folders.dart';
 import '../security/mail_classification.dart' show MailLabel;
-import '../rules/device_rules_service.dart' show deviceRulesProvider, RuleNotify, RuleOutcome;
+import '../rules/device_rules_service.dart' show deviceRulesProvider, DeviceRule, RuleNotify, RuleOutcome;
 import '../rules/sender_rules_service.dart' show senderRulesProvider;
 import '../notifications/reminder_scheduler_service.dart';
 import '../notifications/follow_up_service.dart';
@@ -2272,6 +2272,17 @@ class SyncService {
       final photos = MessengerNotify.styleOn(_prefs)
           ? await _senderPhotos([for (final e in singles) e.from.email])
           : const <String, String>{};
+      // Кто из отправителей есть в контактах (не из переписки) — для
+      // «Бесед для писем от людей» (18.11.2026).
+      final inContacts = MessengerNotify.styleOn(_prefs) && MessengerNotify.peopleConversationsOn(_prefs)
+          ? await _contactSenders([for (final e in singles) e.from.email])
+          : const <String>{};
+      final orgDomains = account.isWork ? OwnAddresses.domains(account) : const <String>{};
+      bool sameOrg(String email) {
+        final d = mailDomainOf(email);
+        if (d.isEmpty || isPublicMailDomain(d)) return false;
+        return orgDomains.any((o) => d == o || d.endsWith('.$o'));
+      }
       final lines = NotificationLines.of(_prefs, work: account.isWork);
       // Значок ящика (12.11.2026) — когда ящиков несколько, как и подпись.
       final boxIcon = mailboxLabel == null || MessengerNotify.styleOn(_prefs)
@@ -2302,6 +2313,16 @@ class SyncService {
           fromEmail: e.from.email,
           folderId: folder.id,
           isVip: focus.isVip(e) || ruled[e.id]?.notify == RuleNotify.always,
+          // Письмо от человека — портрет беседой (18.11.2026): не рассылка,
+          // до 50 адресатов, вы в «Кому» или «Копии», отправитель из своей
+          // организации или из контактов.
+          isFromPerson: MessengerNotify.fromPerson(
+            bulk: DeviceRule.isMailingList(e) || AutoResponderNotifier.isAutomatedSender(e.from.email, e.subject),
+            recipients: e.to.length + e.cc.length,
+            addressedToMe: [...e.to, ...e.cc].any((a) => OwnAddresses.isMine(account, a.email)),
+            sameOrg: sameOrg(e.from.email),
+            inContacts: inContacts.contains(e.from.email.trim().toLowerCase()),
+          ),
           folderLabel: folderLabel,
           receivedAt: e.receivedAt,
           // Звонит только самое свежее письмо пачки.
@@ -2339,6 +2360,23 @@ class SyncService {
 
   /// Фото людей по адресам (в нижнем регистре) — из контактов (CardDAV
   /// PHOTO, Exchange Picture), как в списке писем (personPhotosProvider).
+  /// Адреса (в нижнем регистре), которые есть в контактах — Exchange,
+  /// Google, телефон, добавленные вручную; собранные из переписки — нет.
+  Future<Set<String>> _contactSenders(List<String> emails) async {
+    final keys = {for (final e in emails) if (e.contains('@')) e.trim().toLowerCase()};
+    if (keys.isEmpty) return const {};
+    try {
+      final db = _ref.read(databaseProvider);
+      final rows = await (db.select(db.contacts)
+            ..where((c) => c.email.lower().isIn(keys) & c.source.equals(ContactSource.fromMail.index).not()))
+          .get();
+      return {for (final r in rows) r.email.toLowerCase()};
+    } catch (e) {
+      AppLogger.debug('Контакты отправителей: $e');
+      return const {};
+    }
+  }
+
   Future<Map<String, String>> _senderPhotos(List<String> emails) async {
     final keys = {for (final e in emails) if (e.contains('@')) e.trim().toLowerCase()};
     if (keys.isEmpty) return const {};

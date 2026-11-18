@@ -4358,4 +4358,6 @@
     <string name="syncSettingsDesc">Mail checks for all mailboxes, schedule, conflicts</string>
     <string name="faq_settings_4_q">How do I find out what a setting does?</string>
     <string name="faq_settings_4_a">Press and hold a settings item (on a computer, right-click it): an explanation of what it affects opens, together with answers about it from “Questions and answers”. The “?” icon next to the name opens the same.</string>
+    <string name="notifyPeopleConversations">Conversations for mail from people</string>
+    <string name="notifyPeopleConversationsDesc">The sender\'s portrait with the app icon on it for mail from colleagues and contacts that lists you among the recipients (up to 50); newsletters look as usual</string>
 </resources>

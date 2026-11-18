@@ -4442,4 +4442,6 @@
     <string name="syncSettingsDesc">فحص كل صناديق البريد، الجدول، التعارضات</string>
     <string name="faq_settings_4_q">كيف أعرف ما الذي يفعله إعداد ما؟</string>
     <string name="faq_settings_4_a">اضغط مطولًا على عنصر في الإعدادات (على الكمبيوتر انقر عليه بزر الفأرة الأيمن): يُفتح شرح لما يؤثر فيه، مع الإجابات عنه من «الأسئلة والأجوبة». وأيقونة «؟» بجانب الاسم تفتح الشيء نفسه.</string>
+    <string name="notifyPeopleConversations">محادثات لرسائل الأشخاص</string>
+    <string name="notifyPeopleConversationsDesc">صورة المرسل وعليها أيقونة التطبيق لرسائل الزملاء وجهات الاتصال التي تكون أنت من مستلميها (حتى 50)؛ النشرات بالشكل المعتاد</string>
 </resources>

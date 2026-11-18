@@ -57,6 +57,7 @@ import '../../../core/theme/tokens.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/greeting_helper.dart';
 import '../../../services/mail/greeting_mode.dart';
+import '../../../services/mail/mail_tags.dart';
 import '../../../services/mail/greeting_history.dart';
 import '../../../l10n/strings_store.dart' show StringsStore;
 import '../../../core/utils/async_guard.dart';
@@ -567,6 +568,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// Вариант, выбранный кнопкой «Приветствие»; null — по настройке ящика
   /// (в ответе в переписке, где вы уже писали, — короткое).
   GreetingVariant? _greetPick;
+
+  /// Своё приветствие, выбранное кнопкой «Приветствие» (id); null — нет.
+  String? _greetPickCustom;
 
   /// Ответ в переписке, где вы уже писали: приветствие короткое — «Имя
   /// Отчество,» / «Коллеги,» (просьба владельца 25.10.2026).
@@ -1443,21 +1447,14 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     // Имя отправителя из настроек аккаунта главнее адресной книги: там
     // бывает «Фамилия Имя», а человек хочет «Имя Отчество Фамилия» или
     // иное. Логин и адрес именем не считаются — тогда берём карточку.
-    final own = acc.displayName.trim();
-    final ownIsReal = own.isNotEmpty &&
-        own.toLowerCase() != acc.email.toLowerCase() &&
-        own.toLowerCase() != acc.email.split('@').first.toLowerCase();
-    final values = <String, String>{
-      'name': ownIsReal ? own : (card['name'] ?? own),
-      'title': card['title'] ?? '',
-      'department': card['office'] ?? '',
-      'company': card['company'] ?? '',
-      'phone': card['phone'] ?? card['mobile'] ?? '',
-      'email': acc.email,
-    };
-    var out = template;
-    values.forEach((k, v) => out = out.replaceAll('{$k}', v));
-    out = out.replaceAll(RegExp(r'\{[a-zA-Zа-яА-Я_]+\}'), '');
+    // Поля — общий набор подписей и приветствий (mail_tags.dart): и
+    // английские ({name}), и русские ({имя}); неизвестные пропадают.
+    final values = MailTagValues(
+      sender: MailTags.sender(displayName: acc.displayName, email: acc.email, card: card),
+      lang: ref.read(settingsProvider).locale.languageCode,
+    );
+    // В HTML значения экранируются («&», «<» в названии компании).
+    var out = MailTags.apply(template, values, html: html);
     if (html) {
       // Абзацы подписи — строками (div) без верхнего отступа: в редакторе
       // строки идут без отступов, и подпись с <p> и margin-top стояла
@@ -1619,6 +1616,13 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// «Добрый день, Имя Отчество,» (в переписке, где вы уже писали, —
   /// «Имя Отчество,»). '' — без приветствия.
   String _greetingText() {
+    final custom = _customGreetingNow;
+    if (custom != null) {
+      for (final r in _toRecipients) {
+        _lookupFullName(r);
+      }
+      return _renderCustomGreeting(custom);
+    }
     final v = _greetingVariantNow;
     if (v == GreetingVariant.none) return '';
     if (v != GreetingVariant.hello) {
@@ -1658,8 +1662,53 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     return switch (mode) {
       GreetingMode.off => GreetingVariant.none,
       GreetingMode.hello => GreetingVariant.hello,
-      GreetingMode.helloName => _wroteInThread ? GreetingVariant.short : GreetingVariant.full,
+      // Своих приветствий нет — как «с именем».
+      GreetingMode.helloName || GreetingMode.custom => _wroteInThread ? GreetingVariant.short : GreetingVariant.full,
     };
+  }
+
+  /// Текст своего приветствия (с полями {…}), которое сейчас в письме:
+  /// выбранное кнопкой «Приветствие» или своё приветствие ящика (режим
+  /// «Своё»); null — стандартное.
+  String? get _customGreetingNow {
+    if (_greetPick != null) return null;
+    final cg = ref.read(customGreetingsProvider);
+    if (_greetPickCustom != null) return cg.byId(_greetPickCustom)?.text;
+    if (ref.read(greetingModeProvider.notifier).of(_fromAccount?.id) != GreetingMode.custom) return null;
+    return cg.forAccount(_fromAccount?.id)?.text;
+  }
+
+  /// id своего приветствия, которое сейчас в письме (для галочки в меню).
+  String? get _customGreetingIdNow {
+    if (_greetPick != null) return null;
+    if (_greetPickCustom != null) return _greetPickCustom;
+    if (ref.read(greetingModeProvider.notifier).of(_fromAccount?.id) != GreetingMode.custom) return null;
+    return ref.read(customGreetingsProvider).forAccount(_fromAccount?.id)?.id;
+  }
+
+  /// Своё приветствие [template] для нынешних адресатов «Кому»: поля
+  /// адресата — на языке приветствия (по имени: кириллица — русский), ваши
+  /// поля — из настроек ящика и карточки, время суток — по часам отправки.
+  String _renderCustomGreeting(String template) {
+    final acc = _fromAccount;
+    final lang = _greetingSet().lang;
+    final names = [for (final r in _toRecipients) _fullNames[r.email.toLowerCase()] ?? r.displayName ?? ''];
+    final values = MailTagValues(
+      sender: acc == null
+          ? const {}
+          : MailTags.sender(
+              displayName: acc.displayName,
+              email: acc.email,
+              card: ref.read(mailEngineServiceProvider).cachedSelfCard(acc.id)),
+      recipient: MailTags.recipient(
+        names: names,
+        emails: [for (final r in _toRecipients) r.email],
+        lang: lang,
+        ownDomains: acc == null ? const {} : OwnAddresses.domains(acc),
+      ),
+      lang: lang,
+    );
+    return MailTags.apply(template, values, cleanup: true);
   }
 
   /// Кнопка «Приветствие» над текстом письма: все варианты для нынешних
@@ -1670,23 +1719,32 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     final set = _greetingSet();
     final now = _greetingVariantNow;
     final nowText = set.text(now);
+    final customId = _customGreetingIdNow;
     final scheme = theme.colorScheme;
     return Align(
       alignment: AlignmentDirectional.centerStart,
-      child: AppMenuButton<GreetingVariant>(
+      child: AppMenuButton<Object>(
         tooltip: l10n.tr('greetingChipHint'),
         onSelected: (v) {
-          setState(() => _greetPick = v);
+          setState(() {
+            // Своё приветствие — id (строка), стандартное — вариант.
+            _greetPick = v is GreetingVariant ? v : null;
+            _greetPickCustom = v is String ? v : null;
+          });
           _updateGreeting(force: true);
           _markDraftChanged();
         },
         itemBuilder: (_) => [
           for (final (v, text) in set.choices)
-            AppMenuEntry(
+            AppMenuEntry<Object>(
               value: v,
               label: v == GreetingVariant.none ? l10n.tr('greetingOff') : text,
-              checked: v == now || (text.isNotEmpty && text == nowText),
+              checked: customId == null && (v == now || (text.isNotEmpty && text == nowText)),
             ),
+          // Свои приветствия (18.11.2026) — для нынешних адресатов.
+          for (final g in ref.read(customGreetingsProvider).items)
+            if (_renderCustomGreeting(g.text) case final text when text.isNotEmpty)
+              AppMenuEntry<Object>(value: g.id, label: text, icon: AppIcons.edit, checked: customId == g.id),
         ],
         child: ConstrainedBox(
           // Палец попадает и в узкую строку: высота не меньше 40.
@@ -4366,7 +4424,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     }
     final lines = _plainController.text.split('\n');
     final first = lines.isEmpty ? '' : lines.first.trim();
-    final known = {prev, for (final (_, t) in _greetingSet().choices) t}..remove('');
+    final known = {
+      prev,
+      for (final (_, t) in _greetingSet().choices) t,
+      for (final g in ref.read(customGreetingsProvider).items) _renderCustomGreeting(g.text),
+    }..remove('');
     if (first.isNotEmpty && (first == prev.trim() || (force && known.contains(first)))) {
       if (greeting.isEmpty) {
         lines.removeAt(0);

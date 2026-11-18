@@ -68,6 +68,8 @@ const faqSections = <FaqSection>[
     FaqItem('drafts_8'),
     FaqItem('drafts_9', route: '/settings/signatures'),
     FaqItem('drafts_10'),
+    // Свои приветствия и поля {…} (18.11.2026).
+    FaqItem('drafts_11', route: '/settings/signatures'),
   ]),
   FaqSection(id: 'conv', icon: AppIcons.forum, items: [
     FaqItem('conv_1', route: '/settings/mail'),

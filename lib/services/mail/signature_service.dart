@@ -16,6 +16,7 @@ import '../../data/models/account_model.dart';
 import '../../data/providers/database_provider.dart';
 import '../../l10n/app_language.dart';
 import '../../l10n/strings_store.dart';
+import 'mail_tags.dart';
 
 /// Провайдер сервиса подписей
 final signatureServiceProvider = Provider<SignatureService>((ref) {
@@ -301,21 +302,12 @@ class SignatureService {
         final raw = prefs.getString('selfcard_${acc.id}');
         if (raw != null) card = Map<String, String>.from(jsonDecode(raw) as Map);
       } catch (_) {}
-      final own = acc.displayName.trim();
-      final ownIsReal = own.isNotEmpty &&
-          own.toLowerCase() != acc.email.toLowerCase() &&
-          own.toLowerCase() != acc.email.split('@').first.toLowerCase();
-      final values = <String, String>{
-        'name': ownIsReal ? own : (card['name'] ?? own),
-        'title': card['title'] ?? '',
-        'department': card['office'] ?? '',
-        'company': card['company'] ?? '',
-        'phone': card['phone'] ?? card['mobile'] ?? '',
-        'email': acc.email,
-      };
-      values.forEach((k, v) => html = html.replaceAll('{$k}', const HtmlEscape().convert(v)));
-      html = html
-          .replaceAll(RegExp(r'\{[a-zA-Zа-яА-Я_]+\}'), '')
+      // Поля — общий набор подписей и приветствий (mail_tags.dart).
+      final values = MailTagValues(
+        sender: MailTags.sender(displayName: acc.displayName, email: acc.email, card: card),
+        lang: appLanguage(prefs),
+      );
+      html = MailTags.apply(html, values, html: true)
           .replaceAll(RegExp(r'color:\s*#666;?\s*font-size:\s*12px;?\s*'), '')
           .replaceAll(RegExp(r'(<br\s*/?>\s*){3,}', caseSensitive: false), '<br><br>');
       return html;
@@ -366,15 +358,18 @@ class SignatureService {
     required String email,
     bool html = true,
   }) {
-    var content = html ? signature.htmlContent : signature.plainContent;
-    content = content
-        .replaceAll('{name}', name)
-        .replaceAll('{title}', title ?? '')
-        .replaceAll('{department}', department ?? '')
-        .replaceAll('{company}', company ?? '')
-        .replaceAll('{phone}', phone ?? '')
-        .replaceAll('{email}', email);
-    return content;
+    final content = html ? signature.htmlContent : signature.plainContent;
+    return MailTags.apply(
+        content,
+        MailTagValues(sender: {
+          'name': name,
+          'title': title ?? '',
+          'department': department ?? '',
+          'company': company ?? '',
+          'phone': phone ?? '',
+          'email': email,
+        }),
+        html: html);
   }
 }
 

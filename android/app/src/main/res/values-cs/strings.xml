@@ -20,7 +20,7 @@
     <string name="widget_mail_label">Pošta</string>
     <string name="widget_mail_desc">Nepřečtené zprávy podle účtů a nejnovější nepřečtené zprávy</string>
     <string name="widget_cal_label">Kalendář</string>
-    <string name="widget_cal_desc">Vaše události ze všech účtů po dnech, týdnech nebo měsících</string>
+    <string name="widget_cal_desc">Vaše události ze všech účtů: Můj den, den, týden nebo měsíc</string>
     <string name="widget_cal_add">Nová událost</string>
     <string name="widget_notes_label">Poznámky</string>
     <string name="widget_note_new">Nová poznámka</string>

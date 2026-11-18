@@ -18,6 +18,8 @@
     <color name="widget_muted">#858E99</color>
     <!-- 1.6.48: приглушённый 4,4:1 (было 3,2); «Не обновлялось» 7,2:1. -->
     <color name="widget_warn">#E0B03A</color>
+    <!-- Выходные в сетке месяца и недели виджета «Календарь» (18.11.2026). -->
+    <color name="widget_weekend">#F2B8B5</color>
     <color name="widget_bg_soft">#B3181D23</color>
     <color name="widget_card_soft">#99232A33</color>
 </resources>

@@ -20,7 +20,7 @@
     <string name="widget_mail_label">邮件</string>
     <string name="widget_mail_desc">按账户显示的未读邮件和最新未读邮件</string>
     <string name="widget_cal_label">日历</string>
-    <string name="widget_cal_desc">所有账户的日程，按日、周或月显示</string>
+    <string name="widget_cal_desc">所有账户的日程：我的一天、日、周或月</string>
     <string name="widget_cal_add">新建日程</string>
     <string name="widget_notes_label">笔记</string>
     <string name="widget_note_new">新建笔记</string>

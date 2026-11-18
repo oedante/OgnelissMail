@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Виджет «Календарь» (CalendarWidget): День · Неделя · Месяц.
+<!-- Виджет «Календарь» (CalendarWidget): День · Неделя · Месяц · Мой день.
      Шапка — период (нажатие — сегодня) и стрелки; ниже переключатель вида;
      содержимое строит код: День — встречи дня карточкой; Неделя — полоса из
      7 дней и встречи недели по дням; Месяц — сетка 7 × 5–6 с цветными
-     точками встреч. Нажатие на день недели или месяца — этот день. -->
+     точками встреч; Мой день (18.11.2026, просьба владельца: «чтобы
+     отдельный виджет не показывать») — доска «Предстоит · В работе ·
+     Готово», как в виджете «Мой день». Нажатие на день недели или месяца —
+     этот день. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/cal_root"
     style="@style/WidgetRoot">
@@ -71,6 +74,7 @@
         <TextView android:id="@+id/cal_tab0" style="@style/WidgetTab" android:text="@string/widget_cal_day" />
         <TextView android:id="@+id/cal_tab1" style="@style/WidgetTab" android:text="@string/widget_cal_week" />
         <TextView android:id="@+id/cal_tab2" style="@style/WidgetTab" android:text="@string/widget_cal_month" />
+        <TextView android:id="@+id/cal_tab3" style="@style/WidgetTab" android:text="@string/widget_myday_label" />
     </LinearLayout>
 
     <!-- «Подключиться»: идущая или ближайшая (в 15 минутах) онлайн-встреча. -->
@@ -118,6 +122,143 @@
         android:layout_marginTop="10dp"
         android:orientation="vertical"
         android:visibility="gone" />
+
+    <!-- Мой день: три колонки, как в widget_my_day_board (те же id — дела
+         добавляет WidgetUi.fillBoard). -->
+    <LinearLayout
+        android:id="@+id/cal_board"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:id="@+id/board_c1"
+        android:background="@drawable/widget_card_bg">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="22dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/board_c1_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="@color/widget_sub"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06" />
+            <TextView
+                android:id="@+id/board_c1_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/widget_sub"
+                android:textSize="11sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/board_c1_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:id="@+id/board_c2"
+        android:background="@drawable/widget_card_bg">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="22dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/board_c2_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="@color/widget_sub"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06" />
+            <TextView
+                android:id="@+id/board_c2_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/widget_sub"
+                android:textSize="11sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/board_c2_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:id="@+id/board_c3"
+        android:background="@drawable/widget_card_bg">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="22dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/board_c3_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="@color/widget_sub"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06" />
+            <TextView
+                android:id="@+id/board_c3_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/widget_sub"
+                android:textSize="11sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/board_c3_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+    </LinearLayout>
 
     <!-- День и неделя (и месяц со встречами дня): встречи карточкой. -->
     <LinearLayout

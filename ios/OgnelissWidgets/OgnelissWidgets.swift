@@ -60,6 +60,9 @@ private let cBg = dyn(0xE6EBF2, 0x181D23)
 private let cText = dyn(0x1F2329, 0xE2E4E8)
 private let cSub = dyn(0x5B6470, 0x9AA3AE)
 private let cAccent = dyn(0x2A63A6, 0x8AB1E6)
+// Выходные в календарях (18.11.2026, просьба владельца «выделить выходные
+// дни») — как на Android (widget_weekend).
+private let cWeekend = dyn(0xB3261E, 0xF2B8B5)
 
 /// Время в узкой колонке строки или значок «весь день» (1.10.2: надпись
 /// «Весь день» в колонку не помещалась и обрезалась). Подпись значка —
@@ -842,6 +845,14 @@ private func calEvents(_ j: [String: Any]) -> [CalEv] {
   }.sorted { ($0.allDay ? 0 : 1, $0.st) < ($1.allDay ? 0 : 1, $1.st) }
 }
 
+/// Выходные из JSON («weekend»: дни ISO, 1 — понедельник … 7 — воскресенье;
+/// в Израиле и арабских странах — пятница и суббота) в номера
+/// Calendar.weekday (1 — воскресенье … 7 — суббота).
+private func weekendDays(_ j: [String: Any]) -> Set<Int> {
+  let iso = (j["weekend"] as? [NSNumber])?.map { $0.intValue } ?? [6, 7]
+  return Set(iso.map { $0 % 7 + 1 })
+}
+
 private func calendarFor(_ lang: String) -> Calendar {
   var c = Calendar.current
   if !lang.isEmpty { c.locale = Locale(identifier: lang) }
@@ -860,10 +871,10 @@ private struct Dots: View {
   var body: some View {
     HStack(spacing: 2) {
       ForEach(Array(evs.prefix(3).enumerated()), id: \.offset) { _, e in
-        Circle().fill(e.color).frame(width: 4, height: 4)
+        Circle().fill(e.color).frame(width: 5, height: 5)
       }
     }
-    .frame(height: 5)
+    .frame(height: 6)
   }
 }
 
@@ -908,6 +919,7 @@ struct CalendarWeekView: View {
     // Встречи с сегодняшнего дня до конца недели — по дням.
     let rest = days.filter { $0 >= cal.startOfDay(for: now) }
     let maxRows = family == .systemLarge ? 8 : 2
+    let weekend = weekendDays(j)
     VStack(alignment: .leading, spacing: 8) {
       Header(title: j.str("title").isEmpty ? "Calendar" : j.str("title"),
              sub: "\(rangeF.string(from: days.first ?? now)) – \(rangeF.string(from: days.last ?? now))",
@@ -915,11 +927,13 @@ struct CalendarWeekView: View {
       HStack(spacing: 0) {
         ForEach(Array(days.enumerated()), id: \.offset) { _, d in
           let today = cal.isDate(d, inSameDayAs: now)
+          let off = weekend.contains(cal.component(.weekday, from: d))
+          let numColor: Color = today ? .white : (off ? cWeekend : cText)
           VStack(spacing: 3) {
-            Text(wd.string(from: d).capitalized).font(.system(size: 11)).foregroundColor(cSub)
+            Text(wd.string(from: d).capitalized).font(.system(size: 11)).foregroundColor(off ? cWeekend : cSub)
             Text("\(cal.component(.day, from: d))")
               .font(.system(size: 14, weight: today ? .bold : .regular))
-              .foregroundColor(today ? .white : cText)
+              .foregroundColor(numColor)
               .frame(width: 26, height: 26)
               .background(Circle().fill(today ? cAccent : Color.clear))
             Dots(evs: events(evs, on: d, cal))
@@ -1169,6 +1183,7 @@ struct CalendarMonthView: View {
     }()
     let dayEvents = events(evs, on: selDay, cal)
     let rangeF = dateFormatter(lang)
+    let weekend = weekendDays(j)
     let thisMonth = cal.dateInterval(of: .month, for: now)?.start ?? now
     let canBack = interactive && monthStart > (cal.date(byAdding: .month, value: -1, to: thisMonth) ?? thisMonth)
     let canFwd = interactive && monthStart < (cal.date(byAdding: .month, value: 2, to: thisMonth) ?? thisMonth)
@@ -1177,8 +1192,9 @@ struct CalendarMonthView: View {
                   interactive: interactive, canBack: canBack, canFwd: canFwd)
       HStack(spacing: 0) {
         ForEach(0..<7, id: \.self) { i in
+          let off = weekend.contains(cal.component(.weekday, from: daysInView[i]))
           Text(wd.string(from: daysInView[i]).capitalized)
-            .font(.system(size: 11)).foregroundColor(cSub).frame(maxWidth: .infinity)
+            .font(.system(size: 11)).foregroundColor(off ? cWeekend : cSub).frame(maxWidth: .infinity)
         }
       }
       VStack(spacing: 1) {
@@ -1189,11 +1205,14 @@ struct CalendarMonthView: View {
               let today = cal.isDate(d, inSameDayAs: now)
               let picked = interactive && !today && cal.isDate(d, inSameDayAs: selDay)
               let inMonth = cal.component(.month, from: d) == month
+              let off = inMonth && weekend.contains(cal.component(.weekday, from: d))
+              let plain: Color = inMonth ? (off ? cWeekend : cText) : cSub.opacity(0.6)
+              let numColor: Color = today ? .white : (picked ? cAccent : plain)
               DayCell(day: d) {
                 VStack(spacing: 1) {
                   Text("\(cal.component(.day, from: d))")
                     .font(.system(size: 13, weight: today || picked ? .bold : .regular))
-                    .foregroundColor(today ? .white : (picked ? cAccent : (inMonth ? cText : cSub.opacity(0.6))))
+                    .foregroundColor(numColor)
                     .frame(width: 22, height: 22)
                     .background(Circle().fill(today ? cAccent : Color.clear))
                     // Выбранный день — кольцом (сегодня — заливкой).

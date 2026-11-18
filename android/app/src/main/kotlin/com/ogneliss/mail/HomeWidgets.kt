@@ -211,6 +211,48 @@ internal object WidgetUi {
         return c.timeInMillis
     }
 
+    /**
+     * Доска «Мой день»: три колонки одинаковой ширины, дела — сколько
+     * помещается. Виджет «Мой день» и вкладка «Мой день» виджета «Календарь»
+     * (18.11.2026): разметки с одними id (board_c1…c3).
+     */
+    fun fillBoard(context: Context, v: RemoteViews, json: JSONObject, availableDp: Int) {
+        val titles = intArrayOf(R.id.board_c1_title, R.id.board_c2_title, R.id.board_c3_title)
+        val counts = intArrayOf(R.id.board_c1_count, R.id.board_c2_count, R.id.board_c3_count)
+        val lists = intArrayOf(R.id.board_c1_list, R.id.board_c2_list, R.id.board_c3_list)
+        val cap = fit(availableDp, 30, 8)
+        val now = System.currentTimeMillis()
+        val cols = json.optJSONArray("cols")
+        for (c in 0 until 3) {
+            val col = cols?.optJSONObject(c)
+            v.setTextViewText(titles[c], col?.optString("title").orEmpty().uppercase())
+            v.removeAllViews(lists[c])
+            val items = mutableListOf<String>()
+            col?.optJSONArray("items")?.let { arr ->
+                for (i in 0 until arr.length()) {
+                    val item = arr.optJSONObject(i) ?: continue
+                    // «Предстоит»: закончившееся по времени не показываем.
+                    val end = item.optLong("end", 0)
+                    if (c == 0 && end in 1..now) continue
+                    items.add(item.optString("s"))
+                }
+            }
+            v.setTextViewText(counts[c], if (items.isEmpty()) "" else items.size.toString())
+            val shown = if (items.size > cap) (cap - 1).coerceAtLeast(1) else items.size
+            for (i in 0 until shown) {
+                v.addView(lists[c], RemoteViews(context.packageName, layout(context, R.layout.widget_row_board)).apply {
+                    setTextViewText(R.id.row_text, items[i])
+                })
+            }
+            if (items.size > shown) {
+                v.addView(lists[c], RemoteViews(context.packageName, layout(context, R.layout.widget_row_board)).apply {
+                    setTextViewText(R.id.row_text, json.optString("more").replace("{n}", (items.size - shown).toString()))
+                    textColor(context, this, R.id.row_text, R.color.widget_sub)
+                })
+            }
+        }
+    }
+
     /** Код запроса PendingIntent, уникальный для экземпляра виджета и элемента. */
     fun req(widgetId: Int, base: Int, k: Int) = 100_000 + (widgetId % 1000) * 200 + base + k
 }
@@ -333,7 +375,7 @@ class MyDayWidget : OgnelissWidget() {
         val height = WidgetUi.heightDp(context, manager, id, 180)
         val footerDp = if (footer.isNotEmpty()) WidgetUi.FOOTER else 0
         if (board) {
-            fillBoard(context, v, json!!, height - WidgetUi.PAD - WidgetUi.HEADER - WidgetUi.GAP - 16 - 22 - footerDp)
+            WidgetUi.fillBoard(context, v, json!!, height - WidgetUi.PAD - WidgetUi.HEADER - WidgetUi.GAP - 16 - 22 - footerDp)
             return v
         }
 
@@ -370,44 +412,6 @@ class MyDayWidget : OgnelissWidget() {
                 json?.optString("more").orEmpty().ifEmpty { "+{n}" }.replace("{n}", (items.size - shown).toString())))
         }
         return v
-    }
-
-    /** Доска: три колонки одинаковой ширины, дела — сколько помещается. */
-    private fun fillBoard(context: Context, v: RemoteViews, json: JSONObject, availableDp: Int) {
-        val titles = intArrayOf(R.id.board_c1_title, R.id.board_c2_title, R.id.board_c3_title)
-        val counts = intArrayOf(R.id.board_c1_count, R.id.board_c2_count, R.id.board_c3_count)
-        val lists = intArrayOf(R.id.board_c1_list, R.id.board_c2_list, R.id.board_c3_list)
-        val cap = WidgetUi.fit(availableDp, 30, 8)
-        val now = System.currentTimeMillis()
-        val cols = json.optJSONArray("cols")
-        for (c in 0 until 3) {
-            val col = cols?.optJSONObject(c)
-            v.setTextViewText(titles[c], col?.optString("title").orEmpty().uppercase())
-            v.removeAllViews(lists[c])
-            val items = mutableListOf<String>()
-            col?.optJSONArray("items")?.let { arr ->
-                for (i in 0 until arr.length()) {
-                    val item = arr.optJSONObject(i) ?: continue
-                    // «Предстоит»: закончившееся по времени не показываем.
-                    val end = item.optLong("end", 0)
-                    if (c == 0 && end in 1..now) continue
-                    items.add(item.optString("s"))
-                }
-            }
-            v.setTextViewText(counts[c], if (items.isEmpty()) "" else items.size.toString())
-            val shown = if (items.size > cap) (cap - 1).coerceAtLeast(1) else items.size
-            for (i in 0 until shown) {
-                v.addView(lists[c], RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_row_board)).apply {
-                    setTextViewText(R.id.row_text, items[i])
-                })
-            }
-            if (items.size > shown) {
-                v.addView(lists[c], RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_row_board)).apply {
-                    setTextViewText(R.id.row_text, json.optString("more").replace("{n}", (items.size - shown).toString()))
-                    WidgetUi.textColor(context, this, R.id.row_text, R.color.widget_sub)
-                })
-            }
-        }
     }
 }
 
@@ -668,7 +672,7 @@ class CalendarWidget : OgnelissWidget() {
         val anchor = anchorOf(context, id, today)
         val e = st.edit().putLong("cal_at_$id", System.currentTimeMillis())
         when (op) {
-            "mode" -> e.putInt("cal_mode_$id", value.toInt().coerceIn(0, 2)).putLong("cal_anchor_$id", anchor)
+            "mode" -> e.putInt("cal_mode_$id", value.toInt().coerceIn(0, 3)).putLong("cal_anchor_$id", anchor)
             "today" -> e.remove("cal_anchor_$id").remove("cal_sel_$id")
             // Месяц со встречами дня (1.6.49): нажатие на день — выбрать его.
             "sel" -> e.putLong("cal_sel_$id", value)
@@ -723,6 +727,19 @@ class CalendarWidget : OgnelissWidget() {
         return evs.filter { it.st < next && it.en > dayStart }
     }
 
+    /**
+     * Выходные (18.11.2026, просьба владельца: «выделить выходные дни»):
+     * дни недели Calendar.DAY_OF_WEEK. Приложение передаёт «weekend» —
+     * 1 пн … 7 вс; нет — суббота и воскресенье.
+     */
+    private fun weekendDays(json: JSONObject?): Set<Int> {
+        val arr = json?.optJSONArray("weekend") ?: return setOf(Calendar.SATURDAY, Calendar.SUNDAY)
+        return (0 until arr.length()).map { arr.optInt(it) % 7 + 1 }.toSet()
+    }
+
+    private fun isWeekend(day: Long, weekend: Set<Int>): Boolean =
+        Calendar.getInstance().apply { timeInMillis = day }.get(Calendar.DAY_OF_WEEK) in weekend
+
     private fun dots(evs: List<Ev>): CharSequence {
         val sb = SpannableStringBuilder()
         for (e in evs.distinctBy { it.color }.take(3)) {
@@ -737,12 +754,15 @@ class CalendarWidget : OgnelissWidget() {
 
     override fun render(context: Context, manager: AppWidgetManager, id: Int): RemoteViews {
         val v = RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_calendar))
-        WidgetUi.background(context, v, R.id.cal_root, R.id.cal_list)
+        WidgetUi.background(context, v, R.id.cal_root, R.id.cal_list, R.id.board_c1, R.id.board_c2, R.id.board_c3)
         val json = WidgetUi.json(context, KEY)
         val locale = WidgetUi.locale(json)
         val now = System.currentTimeMillis()
         val today = WidgetUi.startOfDay(now)
-        val mode = WidgetUi.state(context).getInt("cal_mode_$id", 0).coerceIn(0, 2)
+        // 3 — «Мой день» (18.11.2026, просьба владельца: «в виджет календаря
+        // ещё один режим „Мой день“, чтобы отдельный виджет не показывать»).
+        val mode = WidgetUi.state(context).getInt("cal_mode_$id", 0).coerceIn(0, 3)
+        val myDay = if (mode == 3) WidgetUi.json(context, "flutter.widget_myday") else null
         val anchor = anchorOf(context, id, today)
         val evs = events(json)
         // Месяц: выбранный день — сохранённый, иначе сегодня (если месяц
@@ -764,10 +784,11 @@ class CalendarWidget : OgnelissWidget() {
         }
 
         // Вкладки.
-        val tabIds = intArrayOf(R.id.cal_tab0, R.id.cal_tab1, R.id.cal_tab2)
-        val tabDefaults = intArrayOf(R.string.widget_cal_day, R.string.widget_cal_week, R.string.widget_cal_month)
+        val tabIds = intArrayOf(R.id.cal_tab0, R.id.cal_tab1, R.id.cal_tab2, R.id.cal_tab3)
+        val tabDefaults = intArrayOf(R.string.widget_cal_day, R.string.widget_cal_week, R.string.widget_cal_month,
+            R.string.widget_myday_label)
         val tabs = json?.optJSONArray("tabs")
-        for (i in 0..2) {
+        for (i in 0..3) {
             val label = tabs?.optString(i)?.takeIf { it.isNotEmpty() } ?: context.getString(tabDefaults[i])
             if (i == mode) {
                 val sb = SpannableStringBuilder(label)
@@ -784,7 +805,12 @@ class CalendarWidget : OgnelissWidget() {
         v.setOnClickPendingIntent(R.id.cal_prev, nav(context, id, "prev", 0, 3))
         v.setOnClickPendingIntent(R.id.cal_next, nav(context, id, "next", 0, 4))
         v.setOnClickPendingIntent(R.id.cal_head, nav(context, id, "today", 0, 5))
-        v.setOnClickPendingIntent(R.id.cal_root, WidgetBridge.open(context, "calendar", WidgetUi.req(id, 0, 1)))
+        // «Мой день» — только сегодня: стрелок нет, нажатие — экран «Мой день».
+        val arrows = if (mode == 3) View.GONE else View.VISIBLE
+        v.setViewVisibility(R.id.cal_prev, arrows)
+        v.setViewVisibility(R.id.cal_next, arrows)
+        v.setOnClickPendingIntent(R.id.cal_root,
+            WidgetBridge.open(context, if (mode == 3) "myday" else "calendar", WidgetUi.req(id, 0, 1)))
         // «+» — окно «Создать» (встреча или задача) прямо на рабочем столе, на
         // день, открытый в виджете.
         val createDay = when (mode) { 0 -> anchor; 2 -> sel; else -> today }
@@ -822,17 +848,23 @@ class CalendarWidget : OgnelissWidget() {
                 val f = SimpleDateFormat("d MMM", locale)
                 "${f.format(Date(weekStart))} – ${f.format(Date(end))}"
             }
-            else -> WidgetUi.cap(SimpleDateFormat("LLLL yyyy", locale).format(Date(anchor)), locale)
+            2 -> WidgetUi.cap(SimpleDateFormat("LLLL yyyy", locale).format(Date(anchor)), locale)
+            else -> WidgetUi.cap(SimpleDateFormat("EEEE, d MMMM", locale).format(Date(now)), locale)
         }
         v.setTextViewText(R.id.cal_title, period)
-        WidgetUi.text(v, R.id.cal_sub, calLabel)
+        // «Мой день»: под датой — непрочитанные и «в работе», как внизу виджета
+        // «Мой день».
+        val myDayLine = listOf(myDay?.optString("unread").orEmpty(), myDay?.optString("work").orEmpty())
+            .filter { it.isNotEmpty() }.joinToString("  ·  ")
+        WidgetUi.text(v, R.id.cal_sub, if (mode == 3 && myDayLine.isNotEmpty()) myDayLine else calLabel)
 
         // Высота: поля, шапка, вкладки (8 + 32), отступ до содержимого.
         val height = WidgetUi.heightDp(context, manager, id, 300)
         var avail = height - WidgetUi.PAD - WidgetUi.HEADER - 40 - WidgetUi.GAP
 
         // «Подключиться» — когда на экране сегодняшний день.
-        val showsToday = mode == 0 && anchor == today || mode == 1 && today >= weekStart && today < WidgetUi.addDays(weekStart, 7)
+        val showsToday = mode == 0 && anchor == today || mode == 1 && today >= weekStart && today < WidgetUi.addDays(weekStart, 7) ||
+            mode == 3
         val join = if (showsToday && json?.optBoolean("private") != true) {
             evs.firstOrNull { it.join.isNotEmpty() && it.en > now && it.st - now <= 15L * 60 * 1000 }
         } else null
@@ -855,10 +887,14 @@ class CalendarWidget : OgnelissWidget() {
         val gridDp = 10 + 18 + monthRows(anchor) * 40
         val listAvail = avail - gridDp - WidgetUi.GAP - WidgetUi.CARD_PAD - 26
         val monthList = mode == 2 && listAvail >= 45
+        // Доска «Мой день» — когда приложение уже передало её (иначе — подсказка
+        // открыть приложение карточкой).
+        val board = mode == 3 && myDay?.optJSONArray("cols") != null
         v.setViewVisibility(R.id.cal_strip, if (mode == 1) View.VISIBLE else View.GONE)
         v.setViewVisibility(R.id.cal_month, if (mode == 2 && !monthList) View.VISIBLE else View.GONE)
         v.setViewVisibility(R.id.cal_month_fixed, if (monthList) View.VISIBLE else View.GONE)
-        v.setViewVisibility(R.id.cal_list, if (mode == 2 && !monthList) View.GONE else View.VISIBLE)
+        v.setViewVisibility(R.id.cal_board, if (board) View.VISIBLE else View.GONE)
+        v.setViewVisibility(R.id.cal_list, if (mode == 2 && !monthList || board) View.GONE else View.VISIBLE)
         v.removeAllViews(R.id.cal_list)
         v.removeAllViews(R.id.cal_strip)
         v.removeAllViews(R.id.cal_month)
@@ -867,8 +903,14 @@ class CalendarWidget : OgnelissWidget() {
         when (mode) {
             0 -> renderDay(context, v, id, json, locale, evs, anchor, now, avail - WidgetUi.CARD_PAD)
             1 -> renderWeek(context, v, id, json, locale, evs, weekStart, today, avail - 66 - WidgetUi.CARD_PAD)
+            3 -> if (board) {
+                // Колонка: отступы 16 и строка заголовка 22 (как в виджете «Мой день»).
+                WidgetUi.fillBoard(context, v, myDay!!, avail - 16 - 22)
+            } else {
+                v.addView(R.id.cal_list, WidgetUi.note(context, context.getString(R.string.widget_open_app)))
+            }
             else -> if (monthList) {
-                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month_fixed, sel)
+                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month_fixed, sel, weekendDays(json))
                 // Заголовок выбранного дня (нажатие — вид «День») и его встречи.
                 val head = RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_row_day))
                 val label = when (sel) {
@@ -880,7 +922,7 @@ class CalendarWidget : OgnelissWidget() {
                 v.addView(R.id.cal_list, head)
                 renderDay(context, v, id, json, locale, evs, sel, now, listAvail)
             } else {
-                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month, null)
+                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month, null, weekendDays(json))
             }
         }
         return v
@@ -971,9 +1013,13 @@ class CalendarWidget : OgnelissWidget() {
             val d = WidgetUi.addDays(weekStart, i)
             strip.setTextViewText(names[i], WidgetUi.cap(wd.format(Date(d)), locale).trimEnd('.'))
             strip.setTextViewText(nums[i], dn.format(Date(d)))
+            val weekendDay = isWeekend(d, weekendDays(json))
+            if (weekendDay) WidgetUi.textColor(context, strip, names[i], R.color.widget_weekend)
             if (d == today) {
                 strip.setInt(nums[i], "setBackgroundResource", WidgetUi.drawable(context, R.drawable.widget_today_circle))
                 WidgetUi.textColor(context, strip, nums[i], R.color.widget_on_accent)
+            } else if (weekendDay) {
+                WidgetUi.textColor(context, strip, nums[i], R.color.widget_weekend)
             }
             strip.setTextViewText(dotIds[i], dots(on(evs, d)))
             strip.setOnClickPendingIntent(cells[i], nav(context, id, "day", d, 10 + i))
@@ -1044,6 +1090,7 @@ class CalendarWidget : OgnelissWidget() {
     private fun renderMonth(
         context: Context, v: RemoteViews, id: Int, locale: Locale,
         evs: List<Ev>, anchor: Long, today: Long, container: Int, sel: Long?,
+        weekend: Set<Int> = setOf(Calendar.SATURDAY, Calendar.SUNDAY),
     ) {
         val c = Calendar.getInstance()
         c.timeInMillis = anchor
@@ -1059,7 +1106,9 @@ class CalendarWidget : OgnelissWidget() {
         val headIds = intArrayOf(R.id.mh0, R.id.mh1, R.id.mh2, R.id.mh3, R.id.mh4, R.id.mh5, R.id.mh6)
         val wd = SimpleDateFormat("EE", locale)
         for (i in 0..6) {
-            head.setTextViewText(headIds[i], WidgetUi.cap(wd.format(Date(WidgetUi.addDays(gridStart, i))), locale).trimEnd('.'))
+            val d = WidgetUi.addDays(gridStart, i)
+            head.setTextViewText(headIds[i], WidgetUi.cap(wd.format(Date(d)), locale).trimEnd('.'))
+            if (isWeekend(d, weekend)) WidgetUi.textColor(context, head, headIds[i], R.color.widget_weekend)
         }
         v.addView(container, head)
 
@@ -1082,11 +1131,13 @@ class CalendarWidget : OgnelissWidget() {
                 val d = dots(on(evs, day))
                 val s = sb.length
                 sb.append(if (d.isEmpty()) " " else d)
-                sb.setSpan(RelativeSizeSpan(0.6f), s, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                // Точки крупнее (18.11.2026: «добавить отображение цветом»).
+                sb.setSpan(RelativeSizeSpan(0.8f), s, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 row.setTextViewText(cellIds[i], sb)
                 if (sel == null) {
                     if (day == today) row.setInt(cellIds[i], "setBackgroundResource", WidgetUi.drawable(context, R.drawable.widget_today_cell))
                     if (!inMonth) WidgetUi.textColor(context, row, cellIds[i], R.color.widget_muted)
+                    else if (isWeekend(day, weekend)) WidgetUi.textColor(context, row, cellIds[i], R.color.widget_weekend)
                     row.setOnClickPendingIntent(cellIds[i], nav(context, id, "day", day, 30 + k++))
                 } else {
                     when {
@@ -1094,8 +1145,12 @@ class CalendarWidget : OgnelissWidget() {
                             row.setInt(cellIds[i], "setBackgroundResource", WidgetUi.drawable(context, R.drawable.widget_day_today))
                             WidgetUi.textColor(context, row, cellIds[i], R.color.widget_on_accent)
                         }
-                        day == sel -> row.setInt(cellIds[i], "setBackgroundResource", WidgetUi.drawable(context, R.drawable.widget_day_sel))
+                        day == sel -> {
+                            row.setInt(cellIds[i], "setBackgroundResource", WidgetUi.drawable(context, R.drawable.widget_day_sel))
+                            if (isWeekend(day, weekend)) WidgetUi.textColor(context, row, cellIds[i], R.color.widget_weekend)
+                        }
                         !inMonth -> WidgetUi.textColor(context, row, cellIds[i], R.color.widget_muted)
+                        isWeekend(day, weekend) -> WidgetUi.textColor(context, row, cellIds[i], R.color.widget_weekend)
                     }
                     // Выбранный день — ещё раз: его вид «День».
                     row.setOnClickPendingIntent(cellIds[i], nav(context, id, if (day == sel) "day" else "sel", day, 30 + k++))

@@ -4360,4 +4360,5 @@
     <string name="faq_settings_4_a">Toque e segure um item das configurações (no computador, clique com o botão direito): abre uma explicação do que ele afeta, junto com as respostas sobre ele em “Perguntas e respostas”. O ícone “?” ao lado do nome abre o mesmo.</string>
     <string name="notifyPeopleConversations">Conversas para e-mails de pessoas</string>
     <string name="notifyPeopleConversationsDesc">Foto do remetente com o ícone do app para e-mails de colegas e contatos em que você está entre os destinatários (até 50); newsletters como de costume</string>
+    <string name="offlineErrGateway">O gateway da sua organização bloqueou a mensagem a partir desta rede (por exemplo, uma VPN) — ela será enviada automaticamente quando a rede mudar</string>
 </resources>

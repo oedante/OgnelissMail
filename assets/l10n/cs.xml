@@ -4381,4 +4381,5 @@
     <string name="faq_settings_4_a">Podržte položku nastavení (na počítači na ni klikněte pravým tlačítkem myši): otevře se vysvětlení, co ovlivňuje, a odpovědi k ní z „Otázek a odpovědí“. Totéž otevře ikona „?“ vedle názvu.</string>
     <string name="notifyPeopleConversations">Konverzace pro poštu od lidí</string>
     <string name="notifyPeopleConversationsDesc">Portrét odesílatele s ikonou aplikace u pošty od kolegů a kontaktů, kde jste mezi příjemci (nejvýše 50); zpravodaje jako obvykle</string>
+    <string name="offlineErrGateway">Brána vaší organizace zablokovala zprávu z této sítě (například přes VPN) — odešle se automaticky po změně sítě</string>
 </resources>

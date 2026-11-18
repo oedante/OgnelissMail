@@ -47,6 +47,22 @@ class GatewaySizeRejected implements Exception {
       '${(bytes / 1048576).toStringAsFixed(1)} МБ (HTTP 403, письмо не отправлено)';
 }
 
+/// Шлюз перед Exchange (анти-бот) не пропустил небольшой запрос SendMail:
+/// страница блокировки, а не ответ Exchange. Журнал 18.11.2026 (vivo, 2.5.3):
+/// после смены сети (включили VPN) все команды с нового адреса — 403 от
+/// шлюза, «Test2» 1 КБ не ушло пять раз подряд; после следующей смены сети
+/// то же письмо ушло. Дело в адресе сети, а не в письме: повторять стоит
+/// после смены сети или паузы шлюза ([EasEngine.wafPauseMinutesLeft]).
+class GatewayBlocked implements Exception {
+  /// Узел, к которому шлюз не пропустил запрос.
+  final String host;
+  const GatewayBlocked(this.host);
+
+  @override
+  String toString() => 'EAS SendMail: шлюз организации не пропустил запрос из этой сети '
+      '(HTTP 403, письмо не отправлено)';
+}
+
 class EasEngine implements MailEngine {
   final DebugLog log;
   final http.Client _http;
@@ -752,6 +768,10 @@ class EasEngine implements MailEngine {
   /// 403. Для анти-бота это атака, адрес оставался в блокировке.
   static void markWafBlocked(String key) =>
       _wafPauseUntil[key.toLowerCase()] = DateTime.now().add(_wafPause);
+
+  /// Сеть сменилась (18.11.2026): адрес устройства теперь другой, блокировка
+  /// шлюза была по прежнему адресу — паузы снимаются, очередь можно повторить.
+  static void clearWafPauses() => _wafPauseUntil.clear();
 
   /// Адрес сервера из поля ввода (1.6.16): без пробелов внутри и по краям
   /// (автозамена на iPhone вставляла «cloud mail.…» — запросы уходили на
@@ -3047,6 +3067,11 @@ class EasEngine implements MailEngine {
       log.error(_t, 'SendMail: шлюз не пропустил письмо ${_size(mimeBytes.length)} — НЕ отправлено. '
           'Повтор того же письма не поможет: уменьшите вложения.');
       throw GatewaySizeRejected(mimeBytes.length);
+    }
+    if (_lastWasWaf && _lastStatus == 403) {
+      log.error(_t, 'SendMail: шлюз не пропустил запрос из этой сети — НЕ отправлено. Повтор — после '
+          'смены сети или паузы шлюза.');
+      throw GatewayBlocked((Uri.tryParse(_easUrl ?? '')?.host ?? _resolvedHost ?? '').toLowerCase());
     }
     if (_lastStatus != 200) {
       log.error(_t, 'SendMail: НЕ отправлено (HTTP $_lastStatus). См. лог.');

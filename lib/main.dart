@@ -358,6 +358,9 @@ Future<void> main() async {
       net.onNetworkChanged = () {
         netDebounce?.cancel();
         netDebounce = Timer(const Duration(seconds: 5), () {
+          // Шлюз организации блокировал прежний адрес сети (VPN): письма,
+          // которые он не пропустил, — повторить сразу (18.11.2026).
+          globalContainer.read(offlineSendProvider).onNetworkChanged();
           if (globalContainer.read(settingsProvider).syncIntervalMinutes < 0) return;
           unawaited(globalContainer.read(imapPushServiceProvider).restartAll(reason: 'смена сети'));
         });

@@ -109,6 +109,7 @@ class _QueueSheetState extends ConsumerState<_QueueSheet> {
           errorMessage: const Value(null),
           payloadJson: Value(jsonEncode(p)),
         ));
+        ref.read(offlineSendProvider).releaseGatewayHold(op.id);
         await ref.read(offlineSendProvider).processQueue(op.accountId);
       });
 

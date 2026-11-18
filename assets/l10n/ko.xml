@@ -4339,4 +4339,5 @@
     <string name="faq_settings_4_a">설정 항목을 길게 누르세요(컴퓨터에서는 마우스 오른쪽 버튼으로 클릭). 그 항목이 무엇에 영향을 주는지에 대한 설명과 \'질문과 답변\'의 관련 답변이 열립니다. 이름 옆의 \'?\' 아이콘도 같은 내용을 엽니다.</string>
     <string name="notifyPeopleConversations">사람이 보낸 메일을 대화로</string>
     <string name="notifyPeopleConversationsDesc">내가 받는 사람에 포함된 동료와 연락처의 메일(받는 사람 50명까지)은 보낸 사람 사진 위에 앱 아이콘 표시. 뉴스레터는 평소대로</string>
+    <string name="offlineErrGateway">조직의 게이트웨이가 이 네트워크(예: VPN)에서 보낸 메시지를 차단했습니다. 네트워크가 바뀌면 자동으로 전송됩니다</string>
 </resources>

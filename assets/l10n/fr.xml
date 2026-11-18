@@ -4360,4 +4360,5 @@
     <string name="faq_settings_4_a">Appuyez longuement sur un élément des réglages (sur ordinateur, faites un clic droit) : une explication de ce qu’il change s’ouvre, avec les réponses le concernant dans « Questions et réponses ». L’icône « ? » à côté du nom ouvre la même chose.</string>
     <string name="notifyPeopleConversations">Conversations pour les messages de personnes</string>
     <string name="notifyPeopleConversationsDesc">Portrait de l\'expéditeur avec l\'icône de l\'app pour les messages de collègues et de contacts qui vous comptent parmi les destinataires (jusqu\'à 50) ; les newsletters restent comme d\'habitude</string>
+    <string name="offlineErrGateway">La passerelle de votre organisation a bloqué le message depuis ce réseau (par exemple un VPN) — il sera envoyé automatiquement après un changement de réseau</string>
 </resources>

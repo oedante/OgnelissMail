@@ -4381,4 +4381,5 @@
     <string name="faq_settings_4_a">לחצו לחיצה ארוכה על פריט בהגדרות (במחשב – לחיצה ימנית בעכבר): ייפתח הסבר על מה הוא משפיע, יחד עם התשובות עליו מתוך „שאלות ותשובות”. הסמל „?” ליד השם פותח את אותו הדבר.</string>
     <string name="notifyPeopleConversations">שיחות להודעות מאנשים</string>
     <string name="notifyPeopleConversationsDesc">תמונת השולח עם סמל האפליקציה עליה בהודעות מעמיתים ומאנשי קשר שבהן אתם בין הנמענים (עד 50); ידיעונים כרגיל</string>
+    <string name="offlineErrGateway">השער של הארגון חסם את ההודעה מהרשת הזו (למשל VPN) — היא תישלח אוטומטית כשהרשת תשתנה</string>
 </resources>

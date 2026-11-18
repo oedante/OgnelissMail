@@ -4360,4 +4360,5 @@
     <string name="faq_settings_4_a">Hold fingeren på et punkt i indstillingerne (på en computer: højreklik på det): Der åbnes en forklaring på, hvad det påvirker, og svar om det fra „Spørgsmål og svar“. Ikonet „?“ ved siden af navnet åbner det samme.</string>
     <string name="notifyPeopleConversations">Samtaler for mails fra personer</string>
     <string name="notifyPeopleConversationsDesc">Afsenderens billede med appikonet på for mails fra kolleger og kontakter, hvor du er blandt modtagerne (op til 50); nyhedsbreve som normalt</string>
+    <string name="offlineErrGateway">Organisationens gateway blokerede beskeden fra dette netværk (for eksempel et VPN) — den sendes automatisk, når netværket skifter</string>
 </resources>

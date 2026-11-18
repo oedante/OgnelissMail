@@ -4348,4 +4348,7 @@
     <string name="clientCertManaged">Set by your organization</string>
     <string name="clientCertEditDomains">Edit domains</string>
     <string name="mdmRuleClientCert">Organization client certificate — for {domains}</string>
+    <string name="clientCertDevice">Device certificate</string>
+    <string name="clientCertDeviceDesc">Installed on the phone or issued by your organization</string>
+    <string name="clientCertDeviceTag">Device certificate — for Exchange ActiveSync</string>
 </resources>

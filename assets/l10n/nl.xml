@@ -4348,4 +4348,7 @@
     <string name="clientCertManaged">Ingesteld door uw organisatie</string>
     <string name="clientCertEditDomains">Domeinen bewerken</string>
     <string name="mdmRuleClientCert">Clientcertificaat van de organisatie — voor {domains}</string>
+    <string name="clientCertDevice">Apparaatcertificaat</string>
+    <string name="clientCertDeviceDesc">Op de telefoon geïnstalleerd of uitgegeven door uw organisatie</string>
+    <string name="clientCertDeviceTag">Apparaatcertificaat — voor Exchange ActiveSync</string>
 </resources>

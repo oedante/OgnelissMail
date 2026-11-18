@@ -196,8 +196,12 @@ List<FeedbackState> managedFeedback(
     } catch (_) {
       bad(ManagedKeys.clientCertPkcs12, 'Not valid base64 — certificate not used');
     }
+  } else if (str(ManagedKeys.clientCertAlias) != null) {
+    out.add(FeedbackState(ManagedKeys.clientCertAlias, FeedbackSeverity.info,
+        'Device certificate (KeyChain) for Exchange ActiveSync: ${policy.clientCertAlias}'));
   } else if (str(ManagedKeys.clientCertPassword) != null || str(ManagedKeys.clientCertDomains) != null) {
-    bad(ManagedKeys.clientCertPkcs12, 'client_cert_password / client_cert_domains need client_cert_pkcs12 — ignored');
+    bad(ManagedKeys.clientCertPkcs12,
+        'client_cert_password / client_cert_domains need client_cert_pkcs12 or client_cert_alias — ignored');
   }
 
   if (policy.hasAccount) {

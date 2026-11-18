@@ -4369,4 +4369,7 @@
     <string name="clientCertManaged">נקבע על ידי הארגון</string>
     <string name="clientCertEditDomains">עריכת דומיינים</string>
     <string name="mdmRuleClientCert">אישור הלקוח של הארגון — עבור {domains}</string>
+    <string name="clientCertDevice">אישור המכשיר</string>
+    <string name="clientCertDeviceDesc">מותקן בטלפון או הונפק על ידי הארגון</string>
+    <string name="clientCertDeviceTag">אישור המכשיר — עבור Exchange ActiveSync</string>
 </resources>

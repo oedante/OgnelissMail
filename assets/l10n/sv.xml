@@ -4348,4 +4348,7 @@
     <string name="clientCertManaged">Angivet av organisationen</string>
     <string name="clientCertEditDomains">Ändra domäner</string>
     <string name="mdmRuleClientCert">Organisationens klientcertifikat – för {domains}</string>
+    <string name="clientCertDevice">Enhetscertifikat</string>
+    <string name="clientCertDeviceDesc">Installerat på telefonen eller utfärdat av organisationen</string>
+    <string name="clientCertDeviceTag">Enhetscertifikat – för Exchange ActiveSync</string>
 </resources>

@@ -4327,4 +4327,7 @@
     <string name="clientCertManaged">組織が設定</string>
     <string name="clientCertEditDomains">ドメインを編集</string>
     <string name="mdmRuleClientCert">組織のクライアント証明書 — 対象 {domains}</string>
+    <string name="clientCertDevice">デバイス証明書</string>
+    <string name="clientCertDeviceDesc">スマートフォンにインストール済み、または組織が発行</string>
+    <string name="clientCertDeviceTag">デバイス証明書 — Exchange ActiveSync 用</string>
 </resources>

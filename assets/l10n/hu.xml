@@ -4348,4 +4348,7 @@
     <string name="clientCertManaged">A szervezet állította be</string>
     <string name="clientCertEditDomains">Tartományok módosítása</string>
     <string name="mdmRuleClientCert">A szervezet ügyféltanúsítványa – ehhez: {domains}</string>
+    <string name="clientCertDevice">Eszköztanúsítvány</string>
+    <string name="clientCertDeviceDesc">A telefonra telepített vagy a szervezet által kiadott</string>
+    <string name="clientCertDeviceTag">Eszköztanúsítvány – Exchange ActiveSynchez</string>
 </resources>

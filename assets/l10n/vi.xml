@@ -4327,4 +4327,7 @@
     <string name="clientCertManaged">Do tổ chức của bạn đặt</string>
     <string name="clientCertEditDomains">Sửa miền</string>
     <string name="mdmRuleClientCert">Chứng chỉ máy khách của tổ chức — cho {domains}</string>
+    <string name="clientCertDevice">Chứng chỉ thiết bị</string>
+    <string name="clientCertDeviceDesc">Đã cài trên điện thoại hoặc do tổ chức cấp</string>
+    <string name="clientCertDeviceTag">Chứng chỉ thiết bị — cho Exchange ActiveSync</string>
 </resources>

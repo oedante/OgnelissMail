@@ -4327,4 +4327,7 @@
     <string name="clientCertManaged">Diatur oleh organisasi Anda</string>
     <string name="clientCertEditDomains">Ubah domain</string>
     <string name="mdmRuleClientCert">Sertifikat klien organisasi — untuk {domains}</string>
+    <string name="clientCertDevice">Sertifikat perangkat</string>
+    <string name="clientCertDeviceDesc">Terpasang di ponsel atau diterbitkan organisasi Anda</string>
+    <string name="clientCertDeviceTag">Sertifikat perangkat — untuk Exchange ActiveSync</string>
 </resources>

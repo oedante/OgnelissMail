@@ -4348,4 +4348,7 @@
     <string name="clientCertManaged">Definido pela sua organização</string>
     <string name="clientCertEditDomains">Editar domínios</string>
     <string name="mdmRuleClientCert">Certificado de cliente da organização — para {domains}</string>
+    <string name="clientCertDevice">Certificado do dispositivo</string>
+    <string name="clientCertDeviceDesc">Instalado no telefone ou emitido pela sua organização</string>
+    <string name="clientCertDeviceTag">Certificado do dispositivo — para Exchange ActiveSync</string>
 </resources>

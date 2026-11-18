@@ -26,7 +26,8 @@ import 'dart:io' show SecurityContext, TlsException;
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' show sha256;
-import 'package:flutter/foundation.dart' show listEquals, mapEquals, visibleForTesting;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, listEquals, mapEquals, visibleForTesting;
 import 'package:mail_engine/mail_engine.dart' show NetProxy;
 
 import '../../services/security/cms/pkcs12.dart';
@@ -64,6 +65,11 @@ class ClientCertInfo {
   /// Задан организацией (MDM): удалить и изменить нельзя.
   final bool managed;
 
+  /// Сертификат устройства (Android KeyChain): псевдоним в системном
+  /// хранилище; null — файл .p12/.pfx. TLS с ним делает сетевой стек
+  /// Android — только для Exchange ActiveSync (запросы через систему).
+  final String? alias;
+
   const ClientCertInfo({
     required this.id,
     required this.name,
@@ -71,12 +77,16 @@ class ClientCertInfo {
     required this.validTo,
     required this.domains,
     this.managed = false,
+    this.alias,
   });
 
   bool get expired => validTo != null && validTo!.isBefore(DateTime.now());
 
-  ClientCertInfo withDomains(List<String> d) =>
-      ClientCertInfo(id: id, name: name, issuer: issuer, validTo: validTo, domains: d, managed: managed);
+  /// Сертификат устройства (KeyChain), а не файл.
+  bool get isDevice => alias != null;
+
+  ClientCertInfo withDomains(List<String> d) => ClientCertInfo(
+      id: id, name: name, issuer: issuer, validTo: validTo, domains: d, managed: managed, alias: alias);
 
   Map<String, Object?> toJson() => {
         'id': id,
@@ -84,6 +94,7 @@ class ClientCertInfo {
         'issuer': issuer,
         if (validTo != null) 'validTo': validTo!.toIso8601String(),
         'domains': domains,
+        if (alias != null) 'alias': alias,
       };
 
   static ClientCertInfo fromJson(Map<String, Object?> j, {bool managed = false}) => ClientCertInfo(
@@ -93,6 +104,7 @@ class ClientCertInfo {
         validTo: DateTime.tryParse('${j['validTo'] ?? ''}'),
         domains: [for (final d in (j['domains'] as List?) ?? const []) '$d'],
         managed: managed,
+        alias: j['alias'] as String?,
       );
 
   @override
@@ -102,16 +114,21 @@ class ClientCertInfo {
 class _Entry {
   _Entry(this.info, this.p12, this.password);
   final ClientCertInfo info;
-  final Uint8List p12;
+
+  /// Файл и пароль; у сертификата устройства (KeyChain) — пусто.
+  final Uint8List? p12;
   final String password;
 
-  Map<String, Object?> toJson() => {...info.toJson(), 'p12': base64.encode(p12), 'pw': password};
+  Map<String, Object?> toJson() => {...info.toJson(), if (p12 != null) 'p12': base64.encode(p12!), 'pw': password};
 
   static _Entry? fromJson(Object? o, {bool managed = false}) {
     if (o is! Map) return null;
     try {
       final j = o.cast<String, Object?>();
-      return _Entry(ClientCertInfo.fromJson(j, managed: managed), base64.decode('${j['p12']}'), '${j['pw'] ?? ''}');
+      final info = ClientCertInfo.fromJson(j, managed: managed);
+      final p12 = j['p12'] == null ? null : base64.decode('${j['p12']}');
+      if (p12 == null && info.alias == null) return null;
+      return _Entry(info, p12, '${j['pw'] ?? ''}');
     } catch (_) {
       return null;
     }
@@ -167,9 +184,18 @@ class ClientCertStore {
   /// равенстве первым.
   SecurityContext? contextFor(String host) {
     final e = _entryFor(host);
-    if (e == null) return null;
-    return _contexts[e.info.id] ??= buildContext(e.p12, e.password);
+    // Сертификат устройства (KeyChain) — не в TLS Dart: ключ из системы
+    // не извлекается; запросы к такому серверу идут через Android.
+    final p12 = e?.p12;
+    if (e == null || p12 == null) return null;
+    return _contexts[e.info.id] ??= buildContext(p12, e.password);
   }
+
+  /// Псевдоним сертификата устройства (Android KeyChain) для узла или null.
+  String? aliasFor(String host) => _entryFor(host)?.info.alias;
+
+  /// Есть сертификаты устройства — запросы к их серверам через Android.
+  bool get hasDeviceCerts => items.any((c) => c.isDevice);
 
   _Entry? _entryFor(String host) {
     final h = host.toLowerCase().replaceAll(RegExp(r'^\[|\]$|\.$'), '');
@@ -197,6 +223,24 @@ class ClientCertStore {
     _contexts.remove(info.id);
     await _saveUser();
     AppLogger.info('Сертификат клиента добавлен: $info');
+    return info;
+  }
+
+  /// Добавить сертификат устройства (Android KeyChain) по псевдониму,
+  /// выбранному в системном окне, для доменов [domains].
+  Future<ClientCertInfo> importDevice(String alias,
+      {required String name, String issuer = '', DateTime? validTo, required List<String> domains}) async {
+    final info = ClientCertInfo(
+      id: 'keychain:$alias',
+      name: name.isEmpty ? alias : name,
+      issuer: issuer,
+      validTo: validTo,
+      domains: normalizeDomains(domains),
+      alias: alias,
+    );
+    _user = [for (final e in _user) if (e.info.id != info.id) e, _Entry(info, null, '')];
+    await _saveUser();
+    AppLogger.info('Сертификат устройства добавлен: $info');
     return info;
   }
 
@@ -228,6 +272,33 @@ class ClientCertStore {
   /// фонового изолята: в копии политики в prefs его нет, только отпечаток).
   Future<void> applyPolicy(ManagedPolicy p) async {
     final sha = p.clientCertSha256;
+    // Сертификат устройства, выданный организацией (Android KeyChain,
+    // client_cert_alias): доступ к нему открывает сама организация.
+    // Только Android: на iPhone и компьютере KeyChain Android нет.
+    final alias = defaultTargetPlatform == TargetPlatform.android ? p.clientCertAlias : null;
+    if (sha == null && alias != null) {
+      final domains = normalizeDomains(_policyDomains(p));
+      final id = 'keychain:$alias';
+      if (_managed?.info.id == id && listEquals(_managed!.info.domains, domains)) return;
+      final prev = _managed?.info;
+      _managed = _Entry(
+          ClientCertInfo(
+            id: id,
+            name: prev?.id == id ? prev!.name : alias,
+            issuer: prev?.id == id ? prev!.issuer : '',
+            validTo: prev?.id == id ? prev!.validTo : null,
+            domains: domains,
+            managed: true,
+            alias: alias,
+          ),
+          null,
+          '');
+      try {
+        await _storage.write(_kManaged, jsonEncode(_managed!.toJson()));
+      } catch (_) {}
+      AppLogger.info('Сертификат устройства организации: ${_managed!.info}');
+      return;
+    }
     if (sha == null) {
       if (_managed != null) {
         _contexts.remove(_managed!.info.id);

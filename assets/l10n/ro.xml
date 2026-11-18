@@ -4369,4 +4369,7 @@
     <string name="clientCertManaged">Setat de organizație</string>
     <string name="clientCertEditDomains">Editează domeniile</string>
     <string name="mdmRuleClientCert">Certificatul client al organizației — pentru {domains}</string>
+    <string name="clientCertDevice">Certificatul dispozitivului</string>
+    <string name="clientCertDeviceDesc">Instalat pe telefon sau emis de organizație</string>
+    <string name="clientCertDeviceTag">Certificatul dispozitivului — pentru Exchange ActiveSync</string>
 </resources>

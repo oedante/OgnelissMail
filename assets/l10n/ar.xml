@@ -4432,4 +4432,7 @@
     <string name="clientCertManaged">عيّنته مؤسستك</string>
     <string name="clientCertEditDomains">تعديل النطاقات</string>
     <string name="mdmRuleClientCert">شهادة العميل الخاصة بالمؤسسة — لـ {domains}</string>
+    <string name="clientCertDevice">شهادة الجهاز</string>
+    <string name="clientCertDeviceDesc">مثبتة على الهاتف أو صادرة عن مؤسستك</string>
+    <string name="clientCertDeviceTag">شهادة الجهاز — لـ Exchange ActiveSync</string>
 </resources>

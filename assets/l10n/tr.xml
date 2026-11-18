@@ -4348,4 +4348,7 @@
     <string name="clientCertManaged">Kuruluşunuz tarafından ayarlandı</string>
     <string name="clientCertEditDomains">Alan adlarını düzenle</string>
     <string name="mdmRuleClientCert">Kuruluş istemci sertifikası — {domains} için</string>
+    <string name="clientCertDevice">Cihaz sertifikası</string>
+    <string name="clientCertDeviceDesc">Telefona yüklenmiş veya kuruluşunuzca verilmiş</string>
+    <string name="clientCertDeviceTag">Cihaz sertifikası — Exchange ActiveSync için</string>
 </resources>

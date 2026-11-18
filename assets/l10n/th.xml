@@ -4327,4 +4327,7 @@
     <string name="clientCertManaged">กำหนดโดยองค์กรของคุณ</string>
     <string name="clientCertEditDomains">แก้ไขโดเมน</string>
     <string name="mdmRuleClientCert">ใบรับรองไคลเอนต์ขององค์กร — สำหรับ {domains}</string>
+    <string name="clientCertDevice">ใบรับรองอุปกรณ์</string>
+    <string name="clientCertDeviceDesc">ติดตั้งบนโทรศัพท์หรือออกโดยองค์กรของคุณ</string>
+    <string name="clientCertDeviceTag">ใบรับรองอุปกรณ์ — สำหรับ Exchange ActiveSync</string>
 </resources>

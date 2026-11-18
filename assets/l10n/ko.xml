@@ -4327,4 +4327,7 @@
     <string name="clientCertManaged">조직에서 설정함</string>
     <string name="clientCertEditDomains">도메인 편집</string>
     <string name="mdmRuleClientCert">조직 클라이언트 인증서 — 대상 {domains}</string>
+    <string name="clientCertDevice">기기 인증서</string>
+    <string name="clientCertDeviceDesc">휴대폰에 설치되었거나 조직에서 발급</string>
+    <string name="clientCertDeviceTag">기기 인증서 — Exchange ActiveSync용</string>
 </resources>

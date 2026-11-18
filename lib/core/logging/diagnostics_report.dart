@@ -233,7 +233,7 @@ class DiagnosticsReport {
     {
       final certs = ClientCertStore.instance?.items ?? const [];
       if (certs.isNotEmpty) {
-        line('Сертификаты клиента: ${certs.map((c) => '${c.name}${c.managed ? ' (MDM)' : ''}, '
+        line('Сертификаты клиента: ${certs.map((c) => '${c.name}${c.managed ? ' (MDM)' : ''}${c.isDevice ? ' (устройство)' : ''}, '
             'до ${c.validTo == null ? '—' : DateFormat('dd.MM.yyyy').format(c.validTo!)}'
             '${c.expired ? ' ИСТЁК' : ''}, для ${c.domains.join(' ')}').join('; ')}');
       }

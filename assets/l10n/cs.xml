@@ -4369,4 +4369,7 @@
     <string name="clientCertManaged">Nastaveno organizací</string>
     <string name="clientCertEditDomains">Upravit domény</string>
     <string name="mdmRuleClientCert">Klientský certifikát organizace — pro {domains}</string>
+    <string name="clientCertDevice">Certifikát zařízení</string>
+    <string name="clientCertDeviceDesc">Nainstalovaný v telefonu nebo vydaný organizací</string>
+    <string name="clientCertDeviceTag">Certifikát zařízení — pro Exchange ActiveSync</string>
 </resources>

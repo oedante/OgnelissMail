@@ -85,4 +85,6 @@
     <string name="mdm_client_cert_password_desc">Пароль файла сертификата клиента.</string>
     <string name="mdm_client_cert_domains_title">Сертификат клиента: домены серверов</string>
     <string name="mdm_client_cert_domains_desc">Через запятую: corp.ru (и поддомены). Пусто — домен account_email и серверы ящика.</string>
+    <string name="mdm_client_cert_alias_title">Сертификат клиента на устройстве (псевдоним KeyChain)</string>
+    <string name="mdm_client_cert_alias_desc">Псевдоним сертификата, установленного политикой устройства, с доступом для приложения. Для Exchange ActiveSync, домены — client_cert_domains.</string>
 </resources>

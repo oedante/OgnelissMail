@@ -4348,4 +4348,7 @@
     <string name="clientCertManaged">Organisaation asettama</string>
     <string name="clientCertEditDomains">Muokkaa verkkotunnuksia</string>
     <string name="mdmRuleClientCert">Organisaation asiakasvarmenne – kohteet {domains}</string>
+    <string name="clientCertDevice">Laitevarmenne</string>
+    <string name="clientCertDeviceDesc">Puhelimeen asennettu tai organisaation myöntämä</string>
+    <string name="clientCertDeviceTag">Laitevarmenne – Exchange ActiveSyncille</string>
 </resources>

@@ -35,8 +35,11 @@ http.Client createCorporateHttpClient({bool? compat}) {
   // 1.6.12: на iPhone то же через NSURLSession (плагин ogneliss_native_http,
   // ios/Classes/NativeHttpPlugin.swift): с User-Agent Почты iPhone и TLS
   // Dart VM шлюз отвечал 403 «If you are not a bot».
-  if ((Platform.isAndroid || Platform.isIOS) && (compat ?? DeviceUserAgent.compatMode)) {
-    return NativeAndroidHttpClient(io);
-  }
+  final nativeAll = (Platform.isAndroid || Platform.isIOS) && (compat ?? DeviceUserAgent.compatMode);
+  if (nativeAll) return NativeAndroidHttpClient(io);
+  // Сертификат устройства (Android KeyChain, 2.6.5): запросы к его
+  // серверам — через Android и вне режима совместимости. Проверяется на
+  // каждый запрос: сертификат могли добавить, пока ящик работает.
+  if (Platform.isAndroid) return NativeAndroidHttpClient(io, nativeAll: false);
   return io;
 }

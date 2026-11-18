@@ -4348,4 +4348,7 @@
     <string name="clientCertManaged">आपके संगठन द्वारा सेट</string>
     <string name="clientCertEditDomains">डोमेन बदलें</string>
     <string name="mdmRuleClientCert">संगठन का क्लाइंट प्रमाणपत्र — {domains} के लिए</string>
+    <string name="clientCertDevice">डिवाइस प्रमाणपत्र</string>
+    <string name="clientCertDeviceDesc">फ़ोन पर इंस्टॉल या आपके संगठन द्वारा जारी</string>
+    <string name="clientCertDeviceTag">डिवाइस प्रमाणपत्र — Exchange ActiveSync के लिए</string>
 </resources>

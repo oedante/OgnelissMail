@@ -4327,4 +4327,7 @@
     <string name="clientCertManaged">由您的组织设置</string>
     <string name="clientCertEditDomains">编辑域名</string>
     <string name="mdmRuleClientCert">组织客户端证书 — 用于 {domains}</string>
+    <string name="clientCertDevice">设备证书</string>
+    <string name="clientCertDeviceDesc">已安装在手机上或由组织颁发</string>
+    <string name="clientCertDeviceTag">设备证书 — 用于 Exchange ActiveSync</string>
 </resources>

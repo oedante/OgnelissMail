@@ -6,10 +6,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart' show MockClient;
 import 'package:mail_engine/mail_engine.dart';
+import 'package:ogneliss/core/network/native_android_http_client.dart';
 import 'package:ogneliss/core/network/strict_pinning.dart';
 import 'package:ogneliss/core/security/client_cert_store.dart';
 import 'package:ogneliss/core/security/secure_storage_service.dart';
@@ -485,6 +488,52 @@ void main() {
       await store.importBytes(_p12(_rsaLegacy), 'secret', ['localhost']);
       expect(await get(), contains('Ivanov Ivan'));
       await server.close(force: true);
+    });
+  });
+
+  group('сертификат устройства (Android KeyChain)', () {
+    test('псевдоним по домену; TLS Dart его не берёт; точный домен важнее', () async {
+      await store.importBytes(_p12(_rsaModern), 'secret', ['corp.test']);
+      await store.importDevice('corp-cba', name: 'Ivanov (device)', domains: ['eas.corp.test']);
+      expect(store.aliasFor('eas.corp.test'), 'corp-cba');
+      expect(store.contextFor('eas.corp.test'), isNull, reason: 'ключ в системе — не в TLS Dart');
+      expect(store.aliasFor('imap.corp.test'), isNull);
+      expect(store.contextFor('imap.corp.test'), isNotNull, reason: 'остальное — файлом');
+      expect(store.hasDeviceCerts, isTrue);
+      final again = await ClientCertStore.init(storage, policy: ManagedPolicy.none);
+      expect(again.aliasFor('eas.corp.test'), 'corp-cba');
+      expect(again.items.firstWhere((c) => c.isDevice).name, 'Ivanov (device)');
+    });
+
+    test('MDM client_cert_alias: домены ящика организации', () async {
+      final p = ManagedPolicy.fromMap(const {
+        'account_email': 'ivanov@corp.test',
+        'client_cert_alias': 'intune-pkcs',
+      });
+      expect(p.hasClientCert, isTrue);
+      expect(ManagedPolicy.fromMap(p.toJson()).clientCertAlias, 'intune-pkcs');
+      await store.applyPolicy(p);
+      expect(store.aliasFor('mail.corp.test'), 'intune-pkcs');
+      expect(store.items.single.managed, isTrue);
+      await store.applyPolicy(ManagedPolicy.none);
+      expect(store.items, isEmpty);
+    });
+
+    test('запросы Exchange: к серверу сертификата — через Android с псевдонимом, остальные — как раньше', () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      final calls = <Map<Object?, Object?>>[];
+      const ch = MethodChannel('ogneliss/native_http');
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(ch, (c) async {
+        calls.add(c.arguments as Map<Object?, Object?>);
+        return {'status': 200, 'reason': 'OK', 'headers': <String, String>{}, 'body': Uint8List.fromList(utf8.encode('native'))};
+      });
+      addTearDown(() => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(ch, null));
+      await store.importDevice('corp-cba', name: 'Ivanov', domains: ['corp.test']);
+      final client = NativeAndroidHttpClient(MockClient((_) async => http.Response('dart', 200)), nativeAll: false);
+      expect((await client.get(Uri.parse('https://eas.corp.test/Microsoft-Server-ActiveSync'))).body, 'native');
+      expect(calls.single['clientAlias'], 'corp-cba');
+      expect((await client.get(Uri.parse('https://outlook.office365.com/EWS'))).body, 'dart');
+      expect(calls, hasLength(1));
     });
   });
 }

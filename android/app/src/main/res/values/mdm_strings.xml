@@ -95,4 +95,6 @@
     <string name="mdm_client_cert_password_desc">Password of the client certificate file.</string>
     <string name="mdm_client_cert_domains_title">Client certificate: server domains</string>
     <string name="mdm_client_cert_domains_desc">Comma-separated: corp.example (and subdomains). Empty — the domain of account_email and the account servers.</string>
+    <string name="mdm_client_cert_alias_title">Client certificate on the device (KeyChain alias)</string>
+    <string name="mdm_client_cert_alias_desc">Alias of a certificate installed by the device policy and granted to the app. Used for Exchange ActiveSync with client_cert_domains.</string>
 </resources>

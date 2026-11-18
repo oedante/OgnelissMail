@@ -4335,4 +4335,6 @@
     <string name="loadRemoteImages">自动加载网络图片</string>
     <string name="loadRemoteImagesDesc">关闭 — 只在邮件中点“显示图片”时加载，发件人不会知道您打开了邮件</string>
     <string name="syncSettingsDesc">检查所有邮箱、计划、冲突</string>
+    <string name="faq_settings_4_q">如何了解某项设置的作用？</string>
+    <string name="faq_settings_4_a">长按设置中的某一项（在电脑上点击鼠标右键）：会打开它影响什么的说明，以及「问题与解答」中与它相关的回答。名称旁的「?」图标也会打开同样的内容。</string>
 </resources>

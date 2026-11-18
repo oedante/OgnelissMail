@@ -4356,4 +4356,6 @@
     <string name="loadRemoteImages">Bilder aus dem Internet automatisch laden</string>
     <string name="loadRemoteImagesDesc">Aus – nur über „Bilder anzeigen“ in der E-Mail, damit der Absender nicht erfährt, dass Sie sie geöffnet haben</string>
     <string name="syncSettingsDesc">E-Mail-Abruf aller Postfächer, Zeitplan, Konflikte</string>
+    <string name="faq_settings_4_q">Wie erfahre ich, was eine Einstellung bewirkt?</string>
+    <string name="faq_settings_4_a">Halten Sie einen Eintrag in den Einstellungen gedrückt (am Computer: Rechtsklick): Es öffnet sich eine Erklärung, worauf er sich auswirkt, und die Antworten dazu aus „Fragen und Antworten“. Dasselbe öffnet das Symbol „?“ neben dem Namen.</string>
 </resources>

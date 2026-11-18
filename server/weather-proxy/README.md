@@ -37,8 +37,11 @@ Google. Выключить: `BIMI=0` в `environment` контейнера. Об
    ```
 
    Установщик кладёт файлы в `/opt/mailserver/weather-proxy`, скачивает
-   список городов GeoNames (около 3 МБ: `cities15000.zip`,
-   `admin1CodesASCII.txt`, `countryInfo.txt` с download.geonames.org),
+   списки мест GeoNames с download.geonames.org: города от 1000 жителей
+   по всему миру (`cities1000.zip`, около 10 МБ), все населённые пункты и
+   аэропорты России (`RU.zip`, около 30 МБ, из него остаются только места —
+   `places-RU.txt`), `admin1CodesASCII.txt`, `countryInfo.txt`. Другие
+   страны целиком — `PLACE_COUNTRIES="RU KZ BY"` перед командой. Затем
    находит сеть Nginx Proxy Manager (как у push-relay) и запускает
    контейнер `weather-proxy` (порт 8789 внутри сети, наружу не открыт).
 

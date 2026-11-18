@@ -4356,4 +4356,6 @@
     <string name="loadRemoteImages">Last inn bilder fra Internett med en gang</string>
     <string name="loadRemoteImagesDesc">Av – bare med «Vis bilder» i e-posten, så avsenderen ikke får vite at du åpnet den</string>
     <string name="syncSettingsDesc">Sjekk av alle postbokser, tidsplan, konflikter</string>
+    <string name="faq_settings_4_q">Hvordan finner jeg ut hva en innstilling gjør?</string>
+    <string name="faq_settings_4_a">Hold fingeren på et punkt i innstillingene (på en datamaskin: høyreklikk på det): Det åpnes en forklaring på hva det påvirker, og svar om det fra «Spørsmål og svar». Ikonet «?» ved siden av navnet åpner det samme.</string>
 </resources>

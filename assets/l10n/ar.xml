@@ -4440,4 +4440,6 @@
     <string name="loadRemoteImages">تحميل الصور من الإنترنت تلقائيًا</string>
     <string name="loadRemoteImagesDesc">متوقف — فقط عبر «إظهار الصور» في الرسالة، فلا يعرف المرسل أنك فتحتها</string>
     <string name="syncSettingsDesc">فحص كل صناديق البريد، الجدول، التعارضات</string>
+    <string name="faq_settings_4_q">كيف أعرف ما الذي يفعله إعداد ما؟</string>
+    <string name="faq_settings_4_a">اضغط مطولًا على عنصر في الإعدادات (على الكمبيوتر انقر عليه بزر الفأرة الأيمن): يُفتح شرح لما يؤثر فيه، مع الإجابات عنه من «الأسئلة والأجوبة». وأيقونة «؟» بجانب الاسم تفتح الشيء نفسه.</string>
 </resources>

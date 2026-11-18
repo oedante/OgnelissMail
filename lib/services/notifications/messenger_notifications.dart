@@ -4,8 +4,10 @@
 // буквой тех же цветов, что в списке писем.
 //
 //  · Android — MessagingStyle с Person отправителя; у VIP — ещё ярлык беседы
-//    (ShortcutManagerCompat, MainActivity.kt → ConversationShortcuts), и
-//    письмо попадает в раздел «Беседы»: его можно сделать приоритетным.
+//    (ConversationShortcuts.java в плагине ogneliss_native_http — во всех
+//    движках, и в фоновом: 18.11.2026 письма фоновой проверки выходили без
+//    беседы — значок приложения сбоку от портрета, а не на нём), и письмо
+//    попадает в раздел «Беседы»: его можно сделать приоритетным.
 //  · iPhone — Communication Notifications: уведомление показывается
 //    нативно (AppDelegate.swift, INSendMessageIntent) с аватаром
 //    отправителя. Без возможности в Xcode — обычное уведомление
@@ -403,8 +405,8 @@ class MessengerNotify {
       );
 
   /// Опубликовать ярлык беседы (Android 11+). id ярлыка — или null, если
-  /// не вышло (старый Android, фоновый движок без канала): тогда уведомление
-  /// без беседы, как раньше.
+  /// не вышло (старый Android, ошибка системы): тогда уведомление без
+  /// беседы. Канал — в плагине, то есть и в фоновом движке.
   static Future<String?> pushShortcut({
     required String name,
     required String email,
@@ -422,9 +424,12 @@ class MessengerNotify {
         'open': openTarget(accountId, emailId),
         'avatar': avatar,
       });
+      if (ok != true) AppLogger.info('Ярлык беседы не опубликован (Android до 11 или отказ системы)');
       return ok == true ? id : null;
     } catch (e) {
-      AppLogger.debug('Ярлык беседы: $e');
+      // Без ярлыка уведомление выходит без беседы (значок приложения
+      // сбоку от портрета) — в журнал, чтобы это было видно.
+      AppLogger.info('Ярлык беседы не опубликован: ${e.runtimeType}');
       return null;
     }
   }

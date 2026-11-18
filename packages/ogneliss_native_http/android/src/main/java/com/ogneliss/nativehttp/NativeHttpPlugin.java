@@ -72,6 +72,9 @@ public class NativeHttpPlugin implements FlutterPlugin, ActivityAware, MethodCha
     // Аватар для уведомлений без видеокарты (AvatarPainter, 08.11.2026) —
     // тоже во всех движках, поэтому в этом же плагине.
     private MethodChannel avatarChannel;
+    // Ярлыки бесед уведомлений (ConversationShortcuts, 18.11.2026) — тоже во
+    // всех движках: письма фоновой проверки показывает фоновый движок.
+    private MethodChannel messengerChannel;
 
     // Сертификат клиента из KeyChain (2.6.5): контекст приложения — для
     // ключа и цепочки (и в фоновом движке), окно — для выбора сертификата.
@@ -105,6 +108,8 @@ public class NativeHttpPlugin implements FlutterPlugin, ActivityAware, MethodCha
         channel.setMethodCallHandler(this);
         avatarChannel = new MethodChannel(binding.getBinaryMessenger(), AvatarPainter.CHANNEL);
         avatarChannel.setMethodCallHandler(new AvatarPainter());
+        messengerChannel = new MethodChannel(binding.getBinaryMessenger(), ConversationShortcuts.CHANNEL);
+        messengerChannel.setMethodCallHandler(new ConversationShortcuts(binding.getApplicationContext()));
     }
 
     @Override
@@ -113,6 +118,8 @@ public class NativeHttpPlugin implements FlutterPlugin, ActivityAware, MethodCha
         channel = null;
         if (avatarChannel != null) avatarChannel.setMethodCallHandler(null);
         avatarChannel = null;
+        if (messengerChannel != null) messengerChannel.setMethodCallHandler(null);
+        messengerChannel = null;
     }
 
     @Override

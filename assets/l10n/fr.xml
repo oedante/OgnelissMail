@@ -4356,4 +4356,6 @@
     <string name="loadRemoteImages">Charger automatiquement les images d’Internet</string>
     <string name="loadRemoteImagesDesc">Désactivé — uniquement via « Afficher les images » dans l’e-mail : l’expéditeur ne saura pas que vous l’avez ouvert</string>
     <string name="syncSettingsDesc">Relève de toutes les boîtes, planning, conflits</string>
+    <string name="faq_settings_4_q">Comment savoir à quoi sert un réglage ?</string>
+    <string name="faq_settings_4_a">Appuyez longuement sur un élément des réglages (sur ordinateur, faites un clic droit) : une explication de ce qu’il change s’ouvre, avec les réponses le concernant dans « Questions et réponses ». L’icône « ? » à côté du nom ouvre la même chose.</string>
 </resources>

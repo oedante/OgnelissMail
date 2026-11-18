@@ -4377,4 +4377,6 @@
     <string name="loadRemoteImages">Načítat obrázky z internetu hned</string>
     <string name="loadRemoteImagesDesc">Vypnuto — jen tlačítkem „Zobrazit obrázky“ v e-mailu: odesílatel se nedozví, že jste e-mail otevřeli</string>
     <string name="syncSettingsDesc">Kontrola všech schránek, plán, konflikty</string>
+    <string name="faq_settings_4_q">Jak zjistím, k čemu nastavení slouží?</string>
+    <string name="faq_settings_4_a">Podržte položku nastavení (na počítači na ni klikněte pravým tlačítkem myši): otevře se vysvětlení, co ovlivňuje, a odpovědi k ní z „Otázek a odpovědí“. Totéž otevře ikona „?“ vedle názvu.</string>
 </resources>

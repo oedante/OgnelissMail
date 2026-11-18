@@ -32,6 +32,16 @@ class SettingsSectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Справка о разделе (18.11.2026): пояснение [help] и вопросы о разделе
+    // из «Вопросов и ответов» — долгим нажатием на подпись или правой
+    // кнопкой. Значок «?» — как раньше, только при [help]: подписи разделов
+    // на главном экране настроек не обрастают значками.
+    final show = settingHelpAction(context, text, help);
+    final title = _build(context);
+    return show == null ? title : GestureDetector(onLongPress: show, onSecondaryTap: show, child: title);
+  }
+
+  Widget _build(BuildContext context) {
     final theme = Theme.of(context);
     // «Воздушный» вид (1.8.0, как Ogneliss Dialer): подпись раздела синим,
     // обычным регистром, без полосы — над карточкой, вровень с текстом
@@ -189,7 +199,9 @@ class SettingsItem extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final nav = SettingsNavList.of(context);
     final sub = nav && !subtitleOneLine ? null : subtitle;
-    return ListTile(
+    // Справка (18.11.2026): долгое нажатие, на компьютере — правая кнопка.
+    final help = settingHelpAction(context, title, hint);
+    final tile = ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: Space.l),
       minTileHeight: Sizes.tapTarget,
       selected: selected,
@@ -210,7 +222,9 @@ class SettingsItem extends StatelessWidget {
               HapticFeedback.selectionClick();
               onTap!();
             },
+      onLongPress: help,
     );
+    return help == null ? tile : GestureDetector(onSecondaryTap: help, child: tile);
   }
 }
 
@@ -248,7 +262,7 @@ class SettingsSwitchItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return SwitchListTile(
+    final tile = SwitchListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: Space.l),
       secondary: icon == null ? null : Icon(icon, color: scheme.primary),
       title: TitleWithHelp(title, hint: hint),
@@ -256,6 +270,9 @@ class SettingsSwitchItem extends StatelessWidget {
       value: value,
       onChanged: onChanged,
     );
+    // Справка (18.11.2026): долгое нажатие не переключает, а объясняет.
+    final help = settingHelpAction(context, title, hint);
+    return help == null ? tile : GestureDetector(onLongPress: help, onSecondaryTap: help, child: tile);
   }
 }
 

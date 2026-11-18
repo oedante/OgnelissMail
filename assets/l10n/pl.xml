@@ -4398,4 +4398,6 @@
     <string name="loadRemoteImages">Od razu wczytuj obrazy z internetu</string>
     <string name="loadRemoteImagesDesc">Wyłączone — tylko przyciskiem „Pokaż obrazy” w wiadomości: nadawca nie dowie się, że ją otwarto</string>
     <string name="syncSettingsDesc">Sprawdzanie wszystkich skrzynek, harmonogram, konflikty</string>
+    <string name="faq_settings_4_q">Jak sprawdzić, do czego służy ustawienie?</string>
+    <string name="faq_settings_4_a">Przytrzymaj pozycję ustawień (na komputerze kliknij ją prawym przyciskiem myszy): otworzy się wyjaśnienie, na co wpływa, oraz odpowiedzi na jej temat z „Pytań i odpowiedzi”. Ikona „?” obok nazwy otwiera to samo.</string>
 </resources>

@@ -18,7 +18,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform, visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show AppLifecycleListener;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -285,6 +285,20 @@ class HomeWidgetService {
           'acc': t.accountId,
           // «В работе» — на доске в своей колонке, не в «Предстоит».
           if (t.status == 1) 'ip': true,
+        });
+      }
+      // Поручения со сроком и письма с напоминанием на сегодня — как в
+      // календаре (18.11.2026); задачи — выше, со своей галочкой.
+      for (final d in await layerItems(db, ids, start, end, l10n, private, tasks: false)) {
+        final st = DateTime.fromMillisecondsSinceEpoch(d['st']! as int);
+        final allDay = d['a'] == 1;
+        items.add({
+          't': allDay ? l10n.tr('myDayAllDay') : hm.format(st),
+          if (allDay) 'a': 1,
+          's': d['s'],
+          'at': (allDay ? start : st).millisecondsSinceEpoch,
+          'end': d['en'],
+          'k': 'e',
         });
       }
       items.sort((a, b) => (a['at'] as int).compareTo(b['at'] as int));
@@ -570,6 +584,93 @@ for (final m in mails) {
     return lines.length > 120 ? '${lines.substring(0, 120)}…' : lines;
   }
 
+  /// Дела в календаре виджетов — те же слои, что на экране «Календарь»
+  /// (замечание владельца 18.11.2026: «не все события, которые есть в
+  /// календаре, отображаются в виджете» — задача «Проверка, срок сегодня»
+  /// была на экране и не было в виджете): задачи со сроком, письма с
+  /// напоминанием, поручения со сроком. Слои — по настройке календаря
+  /// («Календари → Задачи / Письма / Поручения»). Цвета — как в приложении
+  /// (зелёный, оранжевый, цвет поручений); значок перед названием.
+  @visibleForTesting
+  static Future<List<Map<String, Object?>>> layerItems(
+      AppDatabase db, List<String> ids, DateTime from, DateTime to, AppLocalizations l10n, bool private,
+      {bool tasks = true}) async {
+    final out = <Map<String, Object?>>[];
+    if (ids.isEmpty) return out;
+    SharedPreferences? prefs;
+    try {
+      prefs = await SharedPreferences.getInstance();
+    } catch (_) {}
+    bool on(String key) => prefs?.getBool(key) ?? true;
+    Map<String, Object?> item(String mark, String title, DateTime st, bool allDay, int color, String open) {
+      final en = allDay ? DateTime(st.year, st.month, st.day + 1) : st.add(const Duration(minutes: 30));
+      return {
+        'st': st.millisecondsSinceEpoch,
+        'en': en.millisecondsSinceEpoch,
+        if (allDay) 'a': 1,
+        's': '$mark ${private ? l10n.tr('widgetMeeting') : (title.trim().isEmpty ? '—' : title.trim())}',
+        'c': color,
+        'o': open,
+        'todo': 1,
+      };
+    }
+
+    bool dateOnly(DateTime d) => d.hour == 0 && d.minute == 0;
+    if (tasks && on('cal_layer_tasks')) {
+      final rows = await (db.select(db.tasks)
+            ..where((t) => t.accountId.isIn(ids))
+            ..where((t) => t.dueDate.isNotNull())
+            ..where((t) => t.dueDate.isBiggerOrEqualValue(from))
+            ..where((t) => t.dueDate.isSmallerThanValue(to))
+            ..where((t) => t.status.isNotIn(const [2, 3]))
+            ..limit(200))
+          .get();
+      for (final t in rows) {
+        final due = t.dueDate!.toLocal();
+        out.add(item('✓', t.title, due, dateOnly(due), _taskColor,
+            Uri(path: 'task', queryParameters: {'id': t.id, 'acc': t.accountId}).toString()));
+      }
+    }
+    if (on('cal_layer_mail')) {
+      final mails = await db
+          .emailsLight(
+              (e) =>
+                  e.accountId.isIn(ids) &
+                  e.followUpAt.isNotNull() &
+                  e.followUpAt.isBiggerOrEqualValue(from) &
+                  e.followUpAt.isSmallerThanValue(to),
+              limit: 100)
+          .get();
+      for (final m in mails) {
+        out.add(item('✉', m.subject, m.followUpAt!.toLocal(), false, _mailColor,
+            Uri(path: 'email', queryParameters: {'id': m.id, 'acc': m.accountId}).toString()));
+      }
+    }
+    if (on('cal_layer_assignments')) {
+      final rows = await (db.select(db.assignments)
+            ..where((a) => a.accountId.isIn(ids))
+            ..where((a) => a.dueAt.isNotNull())
+            ..where((a) => a.dueAt.isBiggerOrEqualValue(from))
+            ..where((a) => a.dueAt.isSmallerThanValue(to))
+            ..where((a) => a.status.isIn(const [1, 2, 3]))
+            ..where((a) => a.isTemplate.equals(false))
+            ..where((a) => a.isArchived.equals(false))
+            ..limit(200))
+          .get();
+      for (final a in rows) {
+        final due = a.dueAt!.toLocal();
+        out.add(item('⚑', a.title, due, dateOnly(due), _assignColor,
+            Uri(path: 'assign', queryParameters: {'id': a.id}).toString()));
+      }
+    }
+    return out;
+  }
+
+  /// Цвета дел — как в календаре приложения (AppColors).
+  static const _taskColor = 0xFF2E8B57;
+  static const _mailColor = 0xFFD9822B;
+  static const _assignColor = 0xFFA3536F;
+
   /// Виджет «Календарь»: встречи всех включённых ящиков на 14 дней вперёд,
   /// с цветом ящика. Подписи дней («Сегодня», «Завтра», дата) виджет
   /// считает сам по началу дня — после полуночи они не устаревают.
@@ -613,6 +714,22 @@ for (final m in mails) {
           'open': Uri(path: 'calevent', queryParameters: {'id': e.id, 'acc': e.accountId}).toString(),
         });
       }
+      // Дела на 14 дней — в том же списке (виджеты iPhone).
+      for (final d in await layerItems(db, ids, today, until, l10n, private)) {
+        final st = DateTime.fromMillisecondsSinceEpoch(d['st']! as int);
+        final allDay = d['a'] == 1;
+        items.add({
+          'day': DateTime(st.year, st.month, st.day).millisecondsSinceEpoch,
+          'st': st.millisecondsSinceEpoch,
+          't': allDay ? l10n.tr('myDayAllDay') : hm.format(st),
+          if (allDay) 'a': 1,
+          's': d['s'],
+          'end': d['en'],
+          'c': d['c'],
+          'open': d['o'],
+        });
+      }
+      items.sort((a, b) => (a['st']! as int).compareTo(b['st']! as int));
     }
     // Android: три вида (день, неделя, месяц) с листанием — встречи с начала
     // прошлого месяца до конца позапрошлого вперёд, включая прошедшие
@@ -649,11 +766,15 @@ for (final m in mails) {
           if (link != null && link.isNotEmpty) 'j': link,
         });
       }
+      events.addAll(await layerItems(db, ids, from, to, l10n, private));
     }
     return {
       'lang': l10n.locale.languageCode,
       'private': private,
       'events': events,
+      // Выходные (выделяются цветом в сетке месяца и недели): 1 — пн … 7 —
+      // вс; в Израиле и арабских странах — пятница и суббота.
+      'weekend': const {'he', 'ar'}.contains(l10n.locale.languageCode) ? [5, 6] : [6, 7],
       'tabs': [l10n.tr('viewDay'), l10n.tr('viewWeek'), l10n.tr('viewMonth')],
       // Окно «Создать» виджета: ящики (порядок из настроек; первым —
       // активный) и подписи на языке приложения.

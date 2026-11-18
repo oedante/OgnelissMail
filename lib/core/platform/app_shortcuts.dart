@@ -131,6 +131,13 @@ class AppShortcuts {
       if (id != null && id.isNotEmpty) router.go(tasksPath(openTaskId: id, accountId: q['acc']));
       return;
     }
+    // Поручение из виджета «Календарь» / «Мой день»: «assign?id=…»
+    // (18.11.2026).
+    if (type.startsWith('assign?')) {
+      final id = Uri.parse(type).queryParameters['id'];
+      if (id != null && id.isNotEmpty) unawaited(router.push('/assignments/$id'));
+      return;
+    }
     if (type == 'newtask') {
       router.go(Uri(path: '/tasks', queryParameters: {'new': '1'}).toString());
       return;

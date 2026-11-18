@@ -723,6 +723,19 @@ class CalendarWidget : OgnelissWidget() {
         return evs.filter { it.st < next && it.en > dayStart }
     }
 
+    /**
+     * Выходные (18.11.2026, просьба владельца: «выделить выходные дни»):
+     * дни недели Calendar.DAY_OF_WEEK. Приложение передаёт «weekend» —
+     * 1 пн … 7 вс; нет — суббота и воскресенье.
+     */
+    private fun weekendDays(json: JSONObject?): Set<Int> {
+        val arr = json?.optJSONArray("weekend") ?: return setOf(Calendar.SATURDAY, Calendar.SUNDAY)
+        return (0 until arr.length()).map { arr.optInt(it) % 7 + 1 }.toSet()
+    }
+
+    private fun isWeekend(day: Long, weekend: Set<Int>): Boolean =
+        Calendar.getInstance().apply { timeInMillis = day }.get(Calendar.DAY_OF_WEEK) in weekend
+
     private fun dots(evs: List<Ev>): CharSequence {
         val sb = SpannableStringBuilder()
         for (e in evs.distinctBy { it.color }.take(3)) {
@@ -868,7 +881,7 @@ class CalendarWidget : OgnelissWidget() {
             0 -> renderDay(context, v, id, json, locale, evs, anchor, now, avail - WidgetUi.CARD_PAD)
             1 -> renderWeek(context, v, id, json, locale, evs, weekStart, today, avail - 66 - WidgetUi.CARD_PAD)
             else -> if (monthList) {
-                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month_fixed, sel)
+                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month_fixed, sel, weekendDays(json))
                 // Заголовок выбранного дня (нажатие — вид «День») и его встречи.
                 val head = RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_row_day))
                 val label = when (sel) {
@@ -880,7 +893,7 @@ class CalendarWidget : OgnelissWidget() {
                 v.addView(R.id.cal_list, head)
                 renderDay(context, v, id, json, locale, evs, sel, now, listAvail)
             } else {
-                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month, null)
+                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month, null, weekendDays(json))
             }
         }
         return v
@@ -971,9 +984,13 @@ class CalendarWidget : OgnelissWidget() {
             val d = WidgetUi.addDays(weekStart, i)
             strip.setTextViewText(names[i], WidgetUi.cap(wd.format(Date(d)), locale).trimEnd('.'))
             strip.setTextViewText(nums[i], dn.format(Date(d)))
+            val weekendDay = isWeekend(d, weekendDays(json))
+            if (weekendDay) WidgetUi.textColor(context, strip, names[i], R.color.widget_weekend)
             if (d == today) {
                 strip.setInt(nums[i], "setBackgroundResource", WidgetUi.drawable(context, R.drawable.widget_today_circle))
                 WidgetUi.textColor(context, strip, nums[i], R.color.widget_on_accent)
+            } else if (weekendDay) {
+                WidgetUi.textColor(context, strip, nums[i], R.color.widget_weekend)
             }
             strip.setTextViewText(dotIds[i], dots(on(evs, d)))
             strip.setOnClickPendingIntent(cells[i], nav(context, id, "day", d, 10 + i))
@@ -1044,6 +1061,7 @@ class CalendarWidget : OgnelissWidget() {
     private fun renderMonth(
         context: Context, v: RemoteViews, id: Int, locale: Locale,
         evs: List<Ev>, anchor: Long, today: Long, container: Int, sel: Long?,
+        weekend: Set<Int> = setOf(Calendar.SATURDAY, Calendar.SUNDAY),
     ) {
         val c = Calendar.getInstance()
         c.timeInMillis = anchor
@@ -1059,7 +1077,9 @@ class CalendarWidget : OgnelissWidget() {
         val headIds = intArrayOf(R.id.mh0, R.id.mh1, R.id.mh2, R.id.mh3, R.id.mh4, R.id.mh5, R.id.mh6)
         val wd = SimpleDateFormat("EE", locale)
         for (i in 0..6) {
-            head.setTextViewText(headIds[i], WidgetUi.cap(wd.format(Date(WidgetUi.addDays(gridStart, i))), locale).trimEnd('.'))
+            val d = WidgetUi.addDays(gridStart, i)
+            head.setTextViewText(headIds[i], WidgetUi.cap(wd.format(Date(d)), locale).trimEnd('.'))
+            if (isWeekend(d, weekend)) WidgetUi.textColor(context, head, headIds[i], R.color.widget_weekend)
         }
         v.addView(container, head)
 
@@ -1082,11 +1102,13 @@ class CalendarWidget : OgnelissWidget() {
                 val d = dots(on(evs, day))
                 val s = sb.length
                 sb.append(if (d.isEmpty()) " " else d)
-                sb.setSpan(RelativeSizeSpan(0.6f), s, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                // Точки крупнее (18.11.2026: «добавить отображение цветом»).
+                sb.setSpan(RelativeSizeSpan(0.8f), s, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 row.setTextViewText(cellIds[i], sb)
                 if (sel == null) {
                     if (day == today) row.setInt(cellIds[i], "setBackgroundResource", WidgetUi.drawable(context, R.drawable.widget_today_cell))
                     if (!inMonth) WidgetUi.textColor(context, row, cellIds[i], R.color.widget_muted)
+                    else if (isWeekend(day, weekend)) WidgetUi.textColor(context, row, cellIds[i], R.color.widget_weekend)
                     row.setOnClickPendingIntent(cellIds[i], nav(context, id, "day", day, 30 + k++))
                 } else {
                     when {
@@ -1094,8 +1116,12 @@ class CalendarWidget : OgnelissWidget() {
                             row.setInt(cellIds[i], "setBackgroundResource", WidgetUi.drawable(context, R.drawable.widget_day_today))
                             WidgetUi.textColor(context, row, cellIds[i], R.color.widget_on_accent)
                         }
-                        day == sel -> row.setInt(cellIds[i], "setBackgroundResource", WidgetUi.drawable(context, R.drawable.widget_day_sel))
+                        day == sel -> {
+                            row.setInt(cellIds[i], "setBackgroundResource", WidgetUi.drawable(context, R.drawable.widget_day_sel))
+                            if (isWeekend(day, weekend)) WidgetUi.textColor(context, row, cellIds[i], R.color.widget_weekend)
+                        }
                         !inMonth -> WidgetUi.textColor(context, row, cellIds[i], R.color.widget_muted)
+                        isWeekend(day, weekend) -> WidgetUi.textColor(context, row, cellIds[i], R.color.widget_weekend)
                     }
                     // Выбранный день — ещё раз: его вид «День».
                     row.setOnClickPendingIntent(cellIds[i], nav(context, id, if (day == sel) "day" else "sel", day, 30 + k++))

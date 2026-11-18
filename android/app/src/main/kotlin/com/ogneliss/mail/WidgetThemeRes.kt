@@ -41,6 +41,7 @@ internal object WidgetThemeRes {
         R.color.widget_task to (R.color.widget_task_lt to R.color.widget_task_dk),
         R.color.widget_text to (R.color.widget_text_lt to R.color.widget_text_dk),
         R.color.widget_warn to (R.color.widget_warn_lt to R.color.widget_warn_dk),
+        R.color.widget_weekend to (R.color.widget_weekend_lt to R.color.widget_weekend_dk),
     )
 
     val drawables: Map<Int, Pair<Int, Int>> = mapOf(

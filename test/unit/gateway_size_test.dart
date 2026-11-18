@@ -84,6 +84,36 @@ void main() {
     expect(EasEngine.wafPauseMinutesLeft(_server), 0, reason: 'отказ по размеру — не блокировка адреса');
   });
 
+  // Журнал 18.11.2026 (vivo, 2.5.3): после смены сети (VPN) шлюз отвечал
+  // 403 на всё, письмо 1 КБ не ушло пять раз; после следующей смены сети
+  // ушло. Небольшой SendMail + 403 от шлюза — GatewayBlocked (дело в сети, не
+  // в письме), пауза на хост; смена сети паузу снимает.
+  test('письмо без вложений, 403 от шлюза — GatewayBlocked, пауза; смена сети её снимает', () async {
+    final eng = EasEngine(httpClient: MockClient((req) async {
+      if (req.url.toString().contains('SendMail')) {
+        return http.Response(_gatewayPage, 403, headers: {'content-type': 'text/html'});
+      }
+      return http.Response('', 200);
+    }));
+    expect((await eng.connect(_cfg())).success, isTrue);
+    Object? error;
+    try {
+      await eng.send(const OutgoingMessage(
+          to: [MailAddress('colleague@example.com')], subject: 'Test2', bodyHtml: '<p>Тест</p>'));
+    } catch (e) {
+      error = e;
+    }
+    expect(error, isA<GatewayBlocked>());
+    expect((error as GatewayBlocked).host, _server);
+    expect(error.toString(), contains('шлюз организации'));
+    expect(OfflineSendService.tooLargeOf(error), isNull, reason: 'не отказ по размеру');
+    expect(EasEngine.wafPauseMinutesLeft(_server), greaterThan(0));
+    EasEngine.clearWafPauses();
+    expect(EasEngine.wafPauseMinutesLeft(_server), 0);
+    final ru = AppLocalizations(const Locale('ru'));
+    expect(ru.tr('offlineErrGateway'), contains('смены сети'));
+  });
+
   test('ошибки размера: шлюз, лимит сервера, прочее', () {
     final g = OfflineSendService.tooLargeOf(const GatewaySizeRejected(5 * 1048576));
     expect(g, isNotNull);

@@ -47,6 +47,22 @@ class GatewaySizeRejected implements Exception {
       '${(bytes / 1048576).toStringAsFixed(1)} МБ (HTTP 403, письмо не отправлено)';
 }
 
+/// Шлюз перед Exchange (анти-бот) не пропустил небольшой запрос SendMail:
+/// страница блокировки, а не ответ Exchange. Журнал 18.11.2026 (vivo, 2.5.3):
+/// после смены сети (включили VPN) все команды с нового адреса — 403 от
+/// шлюза, «Test2» 1 КБ не ушло пять раз подряд; после следующей смены сети
+/// то же письмо ушло. Дело в адресе сети, а не в письме: повторять стоит
+/// после смены сети или паузы шлюза ([EasEngine.wafPauseMinutesLeft]).
+class GatewayBlocked implements Exception {
+  /// Узел, к которому шлюз не пропустил запрос.
+  final String host;
+  const GatewayBlocked(this.host);
+
+  @override
+  String toString() => 'EAS SendMail: шлюз организации не пропустил запрос из этой сети '
+      '(HTTP 403, письмо не отправлено)';
+}
+
 class EasEngine implements MailEngine {
   final DebugLog log;
   final http.Client _http;
@@ -738,6 +754,13 @@ class EasEngine implements MailEngine {
   static final Map<String, DateTime> _wafPauseUntil = {};
   static const _wafPause = Duration(minutes: 15);
 
+  /// Адрес отправителя по данным сервера, если адрес ящика в настройках —
+  /// не его (18.11.2026: ящик «…@yamalspd.ru» вместо «…@yamalspg.ru», вход
+  /// по логину домена работал, а все 19 писем — SendMail Status 120: Exchange
+  /// не отправляет письмо от адреса, которого у ящика нет). Ключ — адрес из
+  /// настроек; живёт до перезапуска приложения.
+  static final Map<String, MailAddress> _ownerFrom = {};
+
   /// Минут до конца паузы после блокировки шлюзом (0 — паузы нет).
   static int wafPauseMinutesLeft(String host) {
     final until = _wafPauseUntil[host.toLowerCase()];
@@ -752,6 +775,10 @@ class EasEngine implements MailEngine {
   /// 403. Для анти-бота это атака, адрес оставался в блокировке.
   static void markWafBlocked(String key) =>
       _wafPauseUntil[key.toLowerCase()] = DateTime.now().add(_wafPause);
+
+  /// Сеть сменилась (18.11.2026): адрес устройства теперь другой, блокировка
+  /// шлюза была по прежнему адресу — паузы снимаются, очередь можно повторить.
+  static void clearWafPauses() => _wafPauseUntil.clear();
 
   /// Адрес сервера из поля ввода (1.6.16): без пробелов внутри и по краям
   /// (автозамена на iPhone вставляла «cloud mail.…» — запросы уходили на
@@ -3024,7 +3051,11 @@ class EasEngine implements MailEngine {
   }
 
   @override
-  Future<void> send(OutgoingMessage message) async {
+  Future<void> send(OutgoingMessage message) => _send(message);
+
+  /// [retry] — повтор от адреса ящика с сервера после Status 120: другой
+  /// ClientId, иначе сервер мог бы ответить «уже отправлено» (118).
+  Future<void> _send(OutgoingMessage message, {bool retry = false}) async {
     final cfg = _cfg!;
     final mime = _buildMime(cfg, message);
     var mimeBytes = Uint8List.fromList(utf8.encode(mime));
@@ -3032,7 +3063,9 @@ class EasEngine implements MailEngine {
     if (transform != null) mimeBytes = await transform(mimeBytes);
     log.info(_t, 'SendMail: письмо ${_size(mimeBytes.length)}, вложений ${message.attachments.length}');
     final root = WbxmlElement(name: 'SendMail', namespace: 'ComposeMail');
-    root.addChild('ClientId', namespace: 'ComposeMail', text: _clientId('snd', message));
+    final clientId = _clientId('snd', message);
+    root.addChild('ClientId', namespace: 'ComposeMail',
+        text: retry ? '${clientId.length >= 40 ? clientId.substring(0, 39) : clientId}r' : clientId);
     root.addChild('SaveInSentItems', namespace: 'ComposeMail');
     root.addChild('MIME', namespace: 'ComposeMail', opaqueData: mimeBytes);
     // Таймаут больше обычного: письмо с вложениями уходит одним запросом.
@@ -3048,6 +3081,11 @@ class EasEngine implements MailEngine {
           'Повтор того же письма не поможет: уменьшите вложения.');
       throw GatewaySizeRejected(mimeBytes.length);
     }
+    if (_lastWasWaf && _lastStatus == 403) {
+      log.error(_t, 'SendMail: шлюз не пропустил запрос из этой сети — НЕ отправлено. Повтор — после '
+          'смены сети или паузы шлюза.');
+      throw GatewayBlocked((Uri.tryParse(_easUrl ?? '')?.host ?? _resolvedHost ?? '').toLowerCase());
+    }
     if (_lastStatus != 200) {
       log.error(_t, 'SendMail: НЕ отправлено (HTTP $_lastStatus). См. лог.');
       throw Exception('EAS SendMail: HTTP $_lastStatus (письмо не отправлено)');
@@ -3062,12 +3100,36 @@ class EasEngine implements MailEngine {
       log.info(_t, 'SendMail: Status 118 — уже отправлено ранее, повтор не нужен');
       return;
     }
+    if (status == '120' && !retry && message.from == null && await _learnOwnerFrom(cfg)) {
+      log.warn(_t, 'SendMail: Status 120 — адреса ящика из настроек нет среди адресов ящика на сервере; '
+          'повтор от основного адреса ящика. Исправьте адрес ящика в настройках.');
+      return _send(message, retry: true);
+    }
     if (status != null && status != '1') {
       log.error(_t, 'SendMail: Status=$status (ошибка)');
       throw Exception('EAS SendMail Status=$status');
     }
     log.info(_t, 'SendMail: успех');
   }
+
+  /// Адрес ящика из настроек не принадлежит ящику (опечатка в домене при
+  /// входе по логину): запомнить основной адрес с сервера как отправителя.
+  /// true — запомнен новый адрес (стоит повторить отправку).
+  Future<bool> _learnOwnerFrom(AccountConfig cfg) async {
+    final own = cfg.email.trim().toLowerCase();
+    if (_ownerFrom.containsKey(own)) return false;
+    final info = await getUserInformation();
+    if (info == null || info.addresses.isEmpty || info.addresses.contains(own)) return false;
+    final primary = info.primary ?? info.addresses.first;
+    if (primary == own) return false;
+    _ownerFrom[own] = MailAddress(primary, info.displayName);
+    log.warn(_t, 'Адрес ящика в настройках не найден среди ${info.addresses.length} адресов ящика на сервере — '
+        'письма уходят от основного адреса ящика');
+    return true;
+  }
+
+  /// Для тестов: забыть адреса отправителя, узнанные у сервера.
+  static void debugResetOwnerFrom() => _ownerFrom.clear();
 
   /// ClientId команды отправки: постоянный, если приложение его передало
   /// (повтор той же записи очереди), иначе уникальный. Не длиннее 40
@@ -3243,7 +3305,7 @@ class EasEngine implements MailEngine {
 
     // Отправитель — владелец ящика или адрес «от имени» (1.6.27): Exchange
     // ActiveSync берёт From из MIME и проверяет права «Отправить как/от имени».
-    final from = m.from;
+    final from = m.from ?? _ownerFrom[cfg.email.trim().toLowerCase()];
     h('From: ${from == null ? cfg.email : addr(from)}');
     h('To: ${fmt(m.to)}');
     if (m.cc.isNotEmpty) h('Cc: ${fmt(m.cc)}');

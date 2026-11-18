@@ -4381,4 +4381,5 @@
     <string name="faq_settings_4_a">Țineți apăsat pe un element din setări (pe computer, faceți clic dreapta pe el): se deschide o explicație despre ce influențează, împreună cu răspunsurile despre el din „Întrebări și răspunsuri”. Pictograma „?” de lângă nume deschide același lucru.</string>
     <string name="notifyPeopleConversations">Conversații pentru mesajele de la oameni</string>
     <string name="notifyPeopleConversationsDesc">Fotografia expeditorului cu pictograma aplicației pe ea pentru mesajele de la colegi și contacte în care sunteți printre destinatari (până la 50); buletinele informative ca de obicei</string>
+    <string name="offlineErrGateway">Gateway-ul organizației a blocat mesajul din această rețea (de exemplu, un VPN) — va fi trimis automat după schimbarea rețelei</string>
 </resources>

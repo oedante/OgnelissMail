@@ -4360,4 +4360,5 @@
     <string name="faq_settings_4_a">Hold fingeren på et punkt i innstillingene (på en datamaskin: høyreklikk på det): Det åpnes en forklaring på hva det påvirker, og svar om det fra «Spørsmål og svar». Ikonet «?» ved siden av navnet åpner det samme.</string>
     <string name="notifyPeopleConversations">Samtaler for e-post fra personer</string>
     <string name="notifyPeopleConversationsDesc">Avsenderens bilde med appikonet på for e-post fra kolleger og kontakter der du står blant mottakerne (opptil 50); nyhetsbrev som vanlig</string>
+    <string name="offlineErrGateway">Organisasjonens gateway blokkerte meldingen fra dette nettverket (for eksempel et VPN) — den sendes automatisk når nettverket endres</string>
 </resources>

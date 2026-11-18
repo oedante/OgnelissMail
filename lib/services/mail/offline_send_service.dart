@@ -30,7 +30,7 @@ import 'attachment_cache_service.dart' show attachmentCacheProvider;
 import 'draft_files.dart';
 import 'engine/mail_engine_service.dart' show MailEngineService, mailEngineServiceProvider;
 import 'draft_autosave_service.dart' show DraftData, draftAutosaveProvider;
-import 'package:mail_engine/mail_engine.dart' as me show GatewaySizeRejected, SmtpNotSentException;
+import 'package:mail_engine/mail_engine.dart' as me show EasEngine, GatewayBlocked, GatewaySizeRejected, SmtpNotSentException;
 import 'package:uuid/uuid.dart';
 
 /// Письмо не ушло из-за размера: сервер назвал лимит или шлюз перед
@@ -215,6 +215,18 @@ class OfflineSendService {
           return false;
         }
         AppLogger.error('Send failed, queuing: $e');
+        // Шлюз не пропустил запрос из этой сети (18.11.2026): в очередь с
+        // понятной причиной; уйдёт после смены сети или паузы шлюза.
+        if (e is me.GatewayBlocked) {
+          final id = await _enqueue(accountId, to, cc, bcc, subject, bodyHtml, inReplyTo,
+              attachments: attachments, importance: importance, sensitivity: sensitivity,
+              remoteAttachments: remoteAttachments, from: from, dsn: requestDeliveryReport, mdn: requestReadReceipt,
+              clientId: clientId, errorMessage: _l10n().tr('offlineErrGateway'));
+          _gatewayHeld[id] = e.host;
+          final left = me.EasEngine.wafPauseMinutesLeft(e.host);
+          _wakeAt(accountId, DateTime.now().add(Duration(minutes: left > 0 ? left : 15)));
+          return false;
+        }
         // Таймаут ожидания ответа: сервер мог письмо уже принять. Повторная
         // отправка из очереди дала бы получателю дубль. Кладём письмо в
         // «не отправлено» (видно и можно отправить заново) и просим проверить
@@ -349,6 +361,32 @@ class OfflineSendService {
         .go();
     if (n > 0) AppLogger.info('Отложенная отправка отменена');
     return n > 0;
+  }
+
+  // ─────────────────────── Блокировка шлюзом организации ───────────────────────
+  /// Письма очереди, которые шлюз перед Exchange не пропустил из текущей
+  /// сети: id строки очереди → узел шлюза (18.11.2026).
+  final Map<int, String> _gatewayHeld = {};
+
+  /// Попыток отправки, которые шлюз не пропустил, до «не отправлено».
+  static const gatewayMaxRetries = 8;
+
+  /// «Отправить снова» в списке очереди: не ждать смены сети.
+  void releaseGatewayHold(int queueId) => _gatewayHeld.remove(queueId);
+
+  /// Сеть сменилась (Wi-Fi ↔ мобильная, VPN): блокировка шлюза была по
+  /// прежнему адресу — паузы снимаются, задержанные письма уходят сразу.
+  void onNetworkChanged() {
+    me.EasEngine.clearWafPauses();
+    if (_gatewayHeld.isEmpty) return;
+    AppLogger.info('Сеть сменилась — повторяем письма, которые не пропустил шлюз (${_gatewayHeld.length})');
+    unawaited(() async {
+      final db = _ref.read(databaseProvider);
+      final rows = await (db.select(db.syncQueue)..where((q) => q.id.isIn(_gatewayHeld.keys.toList()))).get();
+      for (final accountId in {for (final r in rows) r.accountId}) {
+        _wakeAt(accountId, DateTime.now());
+      }
+    }());
   }
 
   // ─────────────────────────── Пробуждение очереди ───────────────────────────
@@ -552,7 +590,7 @@ class OfflineSendService {
     }
   }
 
-  Future<void> _enqueue(
+  Future<int> _enqueue(
     String accountId,
     List<EmailAddress> to,
     List<EmailAddress> cc,
@@ -584,7 +622,7 @@ class OfflineSendService {
           '${incoming ~/ (1024 * 1024)} МБ > лимит ${maxQueueBytes ~/ (1024 * 1024)} МБ');
       throw StateError('offline_queue_full');
     }
-    await db.into(db.syncQueue).insert(SyncQueueCompanion.insert(
+    return db.into(db.syncQueue).insert(SyncQueueCompanion.insert(
           accountId: accountId,
           operationType: operationType,
           targetId: 'outbox_${DateTime.now().millisecondsSinceEpoch}',
@@ -693,6 +731,19 @@ class OfflineSendService {
 
     for (final op in ops) {
       try {
+        // Шлюз организации не пропускал запросы из этой сети (18.11.2026):
+        // ждём смены сети или конца паузы шлюза — повторы в паузе анти-бот
+        // считает атакой. «Отправить снова» снимает ожидание
+        // ([releaseGatewayHold]).
+        final held = _gatewayHeld[op.id];
+        if (held != null) {
+          final left = me.EasEngine.wafPauseMinutesLeft(held);
+          if (left > 0) {
+            wakeNoLaterThan(now.add(Duration(minutes: left)));
+            continue;
+          }
+          _gatewayHeld.remove(op.id);
+        }
         // Экспоненциальный backoff: не пытаться раньше, чем через 2^retry секунд
         if (op.lastAttemptAt != null && op.retryCount > 0) {
           final waitSec = 1 << (op.retryCount.clamp(0, 8)); // 2,4,8,...,256
@@ -820,6 +871,33 @@ class OfflineSendService {
             errorMessage: Value(tooLargeText(_l10n(), tooLarge)),
           ));
           await _notifyNotSent(op.accountId, op.targetId, _subjectOf(op.payloadJson), queueId: op.id);
+          continue;
+        }
+        // Шлюз не пропустил запрос из этой сети (VPN, чужой адрес): дело не
+        // в письме — оно остаётся в очереди и уйдёт после смены сети или
+        // паузы шлюза, без «Отправить снова» (18.11.2026: пять нажатий).
+        if (e is me.GatewayBlocked) {
+          AppLogger.warning('Отправка из очереди: шлюз организации не пропустил запрос из этой сети — '
+              'повтор после смены сети или паузы шлюза (queueId=${op.id})');
+          _gatewayHeld[op.id] = e.host;
+          await (db.update(db.syncQueue)..where((q) => q.id.equals(op.id))).write(SyncQueueCompanion(
+            operationType: const Value('send_email'),
+            retryCount: Value(op.retryCount + 1),
+            lastAttemptAt: Value(DateTime.now()),
+            errorMessage: Value(_l10n().tr('offlineErrGateway')),
+          ));
+          // Около двух часов в той же сети (8 попыток раз в паузу шлюза) —
+          // «не отправлено» с уведомлением, как после других сбоев.
+          if (op.retryCount + 1 >= gatewayMaxRetries) {
+            _gatewayHeld.remove(op.id);
+            await (db.update(db.syncQueue)..where((q) => q.id.equals(op.id)))
+                .write(const SyncQueueCompanion(operationType: Value('send_failed')));
+            AppLogger.warning('Письмо помечено как НЕ доставленное: шлюз не пропускал ${op.retryCount + 1} попыток');
+            await _notifyNotSent(op.accountId, op.targetId, _subjectOf(op.payloadJson), queueId: op.id);
+            continue;
+          }
+          final left = me.EasEngine.wafPauseMinutesLeft(e.host);
+          wakeNoLaterThan(DateTime.now().add(Duration(minutes: left > 0 ? left : 15)));
           continue;
         }
         final isTransient = _isTransientError('$e');

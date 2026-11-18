@@ -89,4 +89,10 @@
     <string name="mdm_http_proxy_desc">host:port (or user:password@host:port). Empty — the device proxy and PAC are used.</string>
     <string name="mdm_proxy_bypass_title">Hosts without proxy</string>
     <string name="mdm_proxy_bypass_desc">Comma-separated: *.corp.local, 10.*, 10.0.0.0/8, &lt;local&gt; — names without a dot.</string>
+    <string name="mdm_client_cert_pkcs12_title">Client certificate (PKCS#12, base64)</string>
+    <string name="mdm_client_cert_pkcs12_desc">A .p12/.pfx file with the private key, base64-encoded, for mail servers that require a client certificate (mTLS).</string>
+    <string name="mdm_client_cert_password_title">Client certificate password</string>
+    <string name="mdm_client_cert_password_desc">Password of the client certificate file.</string>
+    <string name="mdm_client_cert_domains_title">Client certificate: server domains</string>
+    <string name="mdm_client_cert_domains_desc">Comma-separated: corp.example (and subdomains). Empty — the domain of account_email and the account servers.</string>
 </resources>

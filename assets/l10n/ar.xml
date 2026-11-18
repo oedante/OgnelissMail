@@ -4419,4 +4419,17 @@
     <string name="kbdShortcuts">اختصارات لوحة المفاتيح</string>
     <string name="kbdShortcutsDesc">البريد والبحث والأقسام من لوحة المفاتيح</string>
     <string name="mdmRuleProxy">وكيل المؤسسة: {proxy}</string>
+    <string name="clientCertTitle">شهادات العميل</string>
+    <string name="clientCertDesc">إذا كان خادم بريد مؤسستك يطلب شهادة الجهاز: ملف ‎.p12 أو ‎.pfx مع كلمة مرور. تُقدَّم الشهادة لخوادم النطاقات المحددة فقط.</string>
+    <string name="clientCertAdd">إضافة شهادة</string>
+    <string name="clientCertPassword">كلمة مرور الملف</string>
+    <string name="clientCertDomains">للخوادم (نطاقات مفصولة بفواصل)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">كلمة مرور غير صحيحة</string>
+    <string name="clientCertBadFile">ملف غير مناسب: يلزم ملف ‎.p12 أو ‎.pfx مع مفتاح خاص</string>
+    <string name="clientCertNoDomains">أدخل نطاقًا واحدًا على الأقل</string>
+    <string name="clientCertFor">لـ: {domains}</string>
+    <string name="clientCertManaged">عيّنته مؤسستك</string>
+    <string name="clientCertEditDomains">تعديل النطاقات</string>
+    <string name="mdmRuleClientCert">شهادة العميل الخاصة بالمؤسسة — لـ {domains}</string>
 </resources>

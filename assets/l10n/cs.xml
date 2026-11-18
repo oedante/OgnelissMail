@@ -4356,4 +4356,17 @@
     <string name="kbdShortcuts">Klávesové zkratky</string>
     <string name="kbdShortcutsDesc">Pošta, hledání a sekce z klávesnice</string>
     <string name="mdmRuleProxy">Proxy organizace: {proxy}</string>
+    <string name="clientCertTitle">Klientské certifikáty</string>
+    <string name="clientCertDesc">Pokud poštovní server organizace vyžaduje certifikát zařízení: soubor .p12 nebo .pfx s heslem. Certifikát se předkládá jen serverům uvedených domén.</string>
+    <string name="clientCertAdd">Přidat certifikát</string>
+    <string name="clientCertPassword">Heslo souboru</string>
+    <string name="clientCertDomains">Pro servery (domény oddělené čárkou)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">Nesprávné heslo</string>
+    <string name="clientCertBadFile">Nevhodný soubor: je potřeba .p12 nebo .pfx se soukromým klíčem</string>
+    <string name="clientCertNoDomains">Zadejte aspoň jednu doménu</string>
+    <string name="clientCertFor">Pro: {domains}</string>
+    <string name="clientCertManaged">Nastaveno organizací</string>
+    <string name="clientCertEditDomains">Upravit domény</string>
+    <string name="mdmRuleClientCert">Klientský certifikát organizace — pro {domains}</string>
 </resources>

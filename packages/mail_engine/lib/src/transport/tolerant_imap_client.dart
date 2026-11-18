@@ -57,23 +57,21 @@ class TolerantImapClient extends em.ImapClient {
   /// Сообщение о строке, которая не разобралась, — в журнал приложения.
   final void Function(String message)? onParseFailure;
 
-  // ── Прокси (2.6.5): подключение через туннель HTTP CONNECT ──
+  // ── Прокси и сертификат клиента (2.6.5) ──
 
-  /// Туннель открытого текста (порт 143): STARTTLS — на нём же.
-  ProxyTunnel? _proxyTunnel;
+  /// Туннель CONNECT и/или свой контекст TLS; STARTTLS — на том же соединении.
+  final _transport = MailTransport();
 
   /// Через прокси, если он нужен узлу ([NetProxy.lookup]); иначе — как в
   /// enough_mail, напрямую.
   @override
   Future<ConnectionInfo> connectToServer(String host, int port,
       {bool isSecure = true, Duration timeout = const Duration(seconds: 20)}) async {
-    _proxyTunnel = null;
-    final t = await NetProxy.tunnelFor(host, port, timeout: timeout);
-    if (t == null) return super.connectToServer(host, port, isSecure: isSecure, timeout: timeout);
-    final socket = isSecure ? await t.secure(onBadCertificate: onBadCertificate).timeout(timeout) : t.plain();
-    if (!isSecure) _proxyTunnel = t;
-    // Сокет туннеля — через обычный путь enough_mail (приветствие,
-    // тайм-аут); TLS, если нужен, уже на сокете.
+    final socket = await _transport.open(host, port,
+        isSecure: isSecure, timeout: timeout, onBadCertificate: onBadCertificate);
+    if (socket == null) return super.connectToServer(host, port, isSecure: isSecure, timeout: timeout);
+    // Свой сокет — через обычный путь enough_mail (приветствие, тайм-аут);
+    // TLS, если нужен, уже на сокете.
     return NetProxy.viaSocket(
       socket,
       () => super.connectToServer(host, port, isSecure: false, timeout: timeout),
@@ -86,10 +84,9 @@ class TolerantImapClient extends em.ImapClient {
   /// почтового сервера.
   @override
   Future<void> upgradeToSslSocket() async {
-    final t = _proxyTunnel;
-    if (t == null) return super.upgradeToSslSocket();
-    _proxyTunnel = null;
-    connect(await t.upgrade(onBadCertificate: onBadCertificate));
+    final up = _transport.upgrade(onBadCertificate: onBadCertificate);
+    if (up == null) return super.upgradeToSslSocket();
+    connect(await up);
   }
 
   /// Не больше стольких сбоев хранится до [takeParseFailures].

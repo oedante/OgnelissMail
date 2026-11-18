@@ -4314,4 +4314,17 @@
     <string name="kbdShortcuts">키보드 단축키</string>
     <string name="kbdShortcutsDesc">키보드로 메일, 검색, 섹션 이동</string>
     <string name="mdmRuleProxy">조직 프록시: {proxy}</string>
+    <string name="clientCertTitle">클라이언트 인증서</string>
+    <string name="clientCertDesc">조직의 메일 서버가 기기 인증서를 요구하는 경우: 암호가 있는 .p12 또는 .pfx 파일. 인증서는 지정한 도메인의 서버에만 제시됩니다.</string>
+    <string name="clientCertAdd">인증서 추가</string>
+    <string name="clientCertPassword">파일 암호</string>
+    <string name="clientCertDomains">대상 서버(도메인, 쉼표로 구분)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">암호가 틀렸습니다</string>
+    <string name="clientCertBadFile">맞지 않는 파일: 개인 키가 있는 .p12 또는 .pfx가 필요합니다</string>
+    <string name="clientCertNoDomains">도메인을 하나 이상 입력하세요</string>
+    <string name="clientCertFor">대상: {domains}</string>
+    <string name="clientCertManaged">조직에서 설정함</string>
+    <string name="clientCertEditDomains">도메인 편집</string>
+    <string name="mdmRuleClientCert">조직 클라이언트 인증서 — 대상 {domains}</string>
 </resources>

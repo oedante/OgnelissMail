@@ -4356,4 +4356,17 @@
     <string name="kbdShortcuts">Comenzi rapide de la tastatură</string>
     <string name="kbdShortcutsDesc">E-mailuri, căutare și secțiuni de la tastatură</string>
     <string name="mdmRuleProxy">Proxy-ul organizației: {proxy}</string>
+    <string name="clientCertTitle">Certificate client</string>
+    <string name="clientCertDesc">Dacă serverul de e-mail al organizației cere un certificat de dispozitiv: un fișier .p12 sau .pfx cu parolă. Certificatul este prezentat doar serverelor din domeniile indicate.</string>
+    <string name="clientCertAdd">Adaugă certificat</string>
+    <string name="clientCertPassword">Parola fișierului</string>
+    <string name="clientCertDomains">Pentru servere (domenii separate prin virgulă)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">Parolă greșită</string>
+    <string name="clientCertBadFile">Fișier nepotrivit: este necesar un .p12 sau .pfx cu cheie privată</string>
+    <string name="clientCertNoDomains">Indicați cel puțin un domeniu</string>
+    <string name="clientCertFor">Pentru: {domains}</string>
+    <string name="clientCertManaged">Setat de organizație</string>
+    <string name="clientCertEditDomains">Editează domeniile</string>
+    <string name="mdmRuleClientCert">Certificatul client al organizației — pentru {domains}</string>
 </resources>

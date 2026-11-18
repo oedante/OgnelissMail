@@ -50,6 +50,23 @@ class Pkcs12 {
   static const _x509Cert = '1.2.840.113549.1.9.22.1';
 
   static SmimeIdentity parse(Uint8List pfx, String password) {
+    final (keys, certs) = _read(pfx, password, withKeys: true);
+    if (keys.isEmpty) throw const Pkcs12Exception('nokey', 'no private key in file');
+    for (final k in keys) {
+      final own = certs.where((c) => c.rsa != null && c.rsa!.n == k.n).firstOrNull;
+      if (own != null) {
+        return SmimeIdentity(k, own, [for (final c in certs) if (!identical(c, own)) c]);
+      }
+    }
+    throw const Pkcs12Exception('nokey', 'no certificate for the private key');
+  }
+
+  /// Только сертификаты файла (ключ не разбирается: он может быть и не
+  /// RSA — сертификат клиента TLS с ключом EC, 2.6.5). Пароль проверяется.
+  static List<SmimeCert> certificates(Uint8List pfx, String password) =>
+      _read(pfx, password, withKeys: false).$2;
+
+  static (List<RsaPrivateKey>, List<SmimeCert>) _read(Uint8List pfx, String password, {required bool withKeys}) {
     Der root;
     try {
       root = Der.parse(pfx);
@@ -86,6 +103,8 @@ class Pkcs12 {
         try {
           if (id == _certBag && value[0].oid == _x509Cert) {
             certs.add(SmimeCert.parse(value[1][0].octets));
+          } else if (!withKeys) {
+            continue;
           } else if (id == _keyBag) {
             keys.add(_privateKeyInfo(value));
           } else if (id == _shroudedKeyBag) {
@@ -99,14 +118,7 @@ class Pkcs12 {
         }
       }
     }
-    if (keys.isEmpty) throw const Pkcs12Exception('nokey', 'no private key in file');
-    for (final k in keys) {
-      final own = certs.where((c) => c.rsa != null && c.rsa!.n == k.n).firstOrNull;
-      if (own != null) {
-        return SmimeIdentity(k, own, [for (final c in certs) if (!identical(c, own)) c]);
-      }
-    }
-    throw const Pkcs12Exception('nokey', 'no certificate for the private key');
+    return (keys, certs);
   }
 
   static void _checkMac(Der macData, Uint8List authSafe, Uint8List bmp) {

@@ -16,9 +16,11 @@
 // если приложение открыто.
 
 import '../../core/security/trusted_ca_store.dart' show TrustedCaStore;
+import '../../core/security/client_cert_store.dart' show ClientCertStore;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
+import 'package:crypto/crypto.dart' show sha256;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -126,13 +128,30 @@ class ManagedKeys {
   /// приложение берёт его из системы.
   static const pacUrl = 'pac_url';
 
+  // 2.6.5: сертификат клиента TLS (сервер требует сертификат — mTLS).
+  /// Файл PKCS#12 (.p12/.pfx) в base64.
+  static const clientCertPkcs12 = 'client_cert_pkcs12';
+
+  /// Пароль файла [clientCertPkcs12].
+  static const clientCertPassword = 'client_cert_password';
+
+  /// Для каких серверов: домены через запятую («corp.ru» — и его
+  /// поддомены). Пусто — домен account_email и серверы account_server,
+  /// imap_server, smtp_server.
+  static const clientCertDomains = 'client_cert_domains';
+
+  /// Отпечаток файла в копии политики (prefs): сам файл и пароль туда не
+  /// пишутся, их копия — в защищённом хранилище (ClientCertStore).
+  static const clientCertSha256 = 'client_cert_sha256';
+
   static const all = [
     orgName, supportContact, accountEmail, accountProtocol, accountServer, accountUsername, accountDomain,
     imapServer, imapPort, smtpServer, smtpPort, allowedDomains, requireAppLock, minPinLength,
     blockScreenshots, blockShare, blockOpenIn, blockCopy, hideNotificationContent, blockWeather,
     maxSyncDays, blockAttachmentDownload, pinTimeoutMinutes, allowBiometrics, blockExternalServices,
     accountLocked, accountTransport, requireTls, trustedCaPem, allowUserCertTrust, blockDeviceContacts,
-    blockDeviceCalendar, httpProxy, proxyBypass, pacUrl,
+    blockDeviceCalendar, httpProxy, proxyBypass, pacUrl, clientCertPkcs12, clientCertPassword,
+    clientCertDomains,
   ];
 }
 
@@ -177,6 +196,10 @@ class ManagedPolicy {
     this.httpProxy,
     this.proxyBypass,
     this.pacUrl,
+    this.clientCertPkcs12,
+    this.clientCertPassword,
+    this.clientCertDomains,
+    this.clientCertSha256,
   });
 
   static const none = ManagedPolicy();
@@ -264,6 +287,20 @@ class ManagedPolicy {
   /// Сценарий PAC организации ([ManagedKeys.pacUrl]).
   final String? pacUrl;
 
+  /// Сертификат клиента организации (base64 PKCS#12) и его пароль — только
+  /// в политике, прочитанной у MDM (в копии в prefs их нет).
+  final String? clientCertPkcs12;
+  final String? clientCertPassword;
+
+  /// Домены серверов для сертификата клиента ([ManagedKeys.clientCertDomains]).
+  final String? clientCertDomains;
+
+  /// Отпечаток SHA-256 файла сертификата клиента (есть и в копии в prefs).
+  final String? clientCertSha256;
+
+  /// Организация задала сертификат клиента.
+  bool get hasClientCert => clientCertSha256 != null;
+
   /// Ящик [email] — ящик организации, закреплённый политикой.
   bool lockedAccount(String email) =>
       accountLocked && hasAccount && email.trim().toLowerCase() == accountEmail;
@@ -312,6 +349,17 @@ class ManagedPolicy {
 
   // ── Разбор: значения из Bundle (Android) и plist (iOS) ──
 
+  /// Отпечаток SHA-256 (hex) содержимого base64; неверный base64 — от строки.
+  static String _sha256B64(String b64) {
+    List<int> bytes;
+    try {
+      bytes = base64.decode(b64);
+    } catch (_) {
+      bytes = utf8.encode(b64);
+    }
+    return sha256.convert(bytes).toString();
+  }
+
   static String? _str(Object? v) {
     if (v == null) return null;
     final s = '$v'.trim();
@@ -354,6 +402,9 @@ class ManagedPolicy {
     Object? v(String k) => m[k];
     final proto = _str(v(ManagedKeys.accountProtocol))?.toLowerCase();
     final pin = _int(v(ManagedKeys.minPinLength));
+    // Сертификат клиента: base64 без пробелов и переносов (консоли MDM
+    // переносят длинные строки).
+    final p12 = _str(v(ManagedKeys.clientCertPkcs12))?.replaceAll(RegExp(r'\s+'), '');
     return ManagedPolicy(
       orgName: _str(v(ManagedKeys.orgName)),
       supportContact: _str(v(ManagedKeys.supportContact)),
@@ -395,6 +446,10 @@ class ManagedPolicy {
       httpProxy: _str(v(ManagedKeys.httpProxy)),
       proxyBypass: _str(v(ManagedKeys.proxyBypass)),
       pacUrl: _str(v(ManagedKeys.pacUrl)),
+      clientCertPkcs12: p12,
+      clientCertPassword: p12 == null ? null : (v(ManagedKeys.clientCertPassword)?.toString() ?? ''),
+      clientCertDomains: _str(v(ManagedKeys.clientCertDomains)),
+      clientCertSha256: p12 != null ? _sha256B64(p12) : _str(v(ManagedKeys.clientCertSha256)),
     );
   }
 
@@ -434,6 +489,8 @@ class ManagedPolicy {
         if (httpProxy != null) ManagedKeys.httpProxy: httpProxy,
         if (proxyBypass != null) ManagedKeys.proxyBypass: proxyBypass,
         if (pacUrl != null) ManagedKeys.pacUrl: pacUrl,
+        if (clientCertDomains != null) ManagedKeys.clientCertDomains: clientCertDomains,
+        if (clientCertSha256 != null) ManagedKeys.clientCertSha256: clientCertSha256,
       };
 
   @override
@@ -578,6 +635,7 @@ class ManagedPolicyNotifier extends Notifier<ManagedPolicy> {
     final cached = ManagedPolicy.fromPrefs(prefs);
     ManagedPolicy.current = cached;
     TrustedCaStore.instance?.applyPolicy(cached);
+    unawaited(ClientCertStore.instance?.applyPolicy(cached));
     _svc.listen(() => unawaited(refresh()));
     unawaited(Future.microtask(refresh));
     return cached;
@@ -592,6 +650,8 @@ class ManagedPolicyNotifier extends Notifier<ManagedPolicy> {
     ManagedPolicy.current = p;
     // ЦС организации и право доверять сертификатам самому (2.2.0).
     TrustedCaStore.instance?.applyPolicy(p);
+    // Сертификат клиента организации (2.6.5).
+    await ClientCertStore.instance?.applyPolicy(p);
     if (domainsChanged) ManagedPolicy.allowedDomainsChanged.value++;
     if (p.blockScreenshots != _secure) {
       _secure = p.blockScreenshots;

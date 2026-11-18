@@ -50,6 +50,9 @@ import '../../core/network/system_proxy.dart';
 import '../../core/network/certificate_pinning_bridge.dart';
 import '../../core/security/certificate_pinning_service.dart';
 import '../../core/security/trusted_ca_store.dart';
+import '../../core/security/client_cert_store.dart';
+import '../../core/security/secure_storage_service.dart' show SecureStorageService;
+import '../security/managed_config.dart' show ManagedPolicy;
 import '../../core/security/account_ca_sync.dart';
 
 /// Провайдер фоновых сервисов
@@ -469,6 +472,8 @@ Future<void> runInBackgroundContainer(
     // Прокси системы, PAC и MDM для почтовых серверов (2.6.5).
     SystemProxy.install();
     await TrustedCaStore.init(prefs);
+    // Сертификаты клиента TLS (2.6.5): файл — из защищённого хранилища.
+    await ClientCertStore.init(SecureStorageService(), policy: ManagedPolicy.fromPrefs(prefs));
     OwnAddresses.load(prefs);
     SyncSchedule.load(prefs);
     db = AppDatabase();

@@ -36,6 +36,7 @@ import '../../services/security/eas_policy_store.dart';
 import '../constants/app_constants.dart';
 import '../security/certificate_pinning_service.dart';
 import '../network/system_proxy.dart';
+import '../security/client_cert_store.dart' show ClientCertStore;
 import '../../services/security/managed_config.dart' show ManagedPolicy;
 import 'app_logger.dart';
 import '../platform/platform_diagnostics.dart';
@@ -227,6 +228,15 @@ class DiagnosticsReport {
       final seen = SystemProxy.summary();
       line('Прокси: ${mdmProxy != null ? 'MDM ${SystemProxy.parseProxy(mdmProxy) ?? 'неверный'}' : 'системы'}'
           '${seen.isEmpty ? '' : '; ${seen.take(8).join('; ')}'}');
+    }
+    // Сертификаты клиента (2.6.5): владелец, срок, домены — без файла и пароля.
+    {
+      final certs = ClientCertStore.instance?.items ?? const [];
+      if (certs.isNotEmpty) {
+        line('Сертификаты клиента: ${certs.map((c) => '${c.name}${c.managed ? ' (MDM)' : ''}, '
+            'до ${c.validTo == null ? '—' : DateFormat('dd.MM.yyyy').format(c.validTo!)}'
+            '${c.expired ? ' ИСТЁК' : ''}, для ${c.domains.join(' ')}').join('; ')}');
+      }
     }
     // С 2.5.5 вход напрямую у служб; сервер входа — только Яндекс на Windows
     // и Linux. Ключ — для него и сигналов сервера; логотипы BIMI — служба

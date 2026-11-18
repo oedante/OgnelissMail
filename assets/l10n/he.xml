@@ -4356,4 +4356,17 @@
     <string name="kbdShortcuts">קיצורי מקלדת</string>
     <string name="kbdShortcutsDesc">דואר, חיפוש ואזורים מהמקלדת</string>
     <string name="mdmRuleProxy">שרת ה-Proxy של הארגון: {proxy}</string>
+    <string name="clientCertTitle">אישורי לקוח</string>
+    <string name="clientCertDesc">אם שרת הדואר של הארגון דורש אישור מכשיר: קובץ ‎.p12 או ‎.pfx עם סיסמה. האישור מוצג רק לשרתים של הדומיינים שצוינו.</string>
+    <string name="clientCertAdd">הוספת אישור</string>
+    <string name="clientCertPassword">סיסמת הקובץ</string>
+    <string name="clientCertDomains">עבור שרתים (דומיינים מופרדים בפסיקים)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">סיסמה שגויה</string>
+    <string name="clientCertBadFile">קובץ לא מתאים: נדרש ‎.p12 או ‎.pfx עם מפתח פרטי</string>
+    <string name="clientCertNoDomains">יש להזין לפחות דומיין אחד</string>
+    <string name="clientCertFor">עבור: {domains}</string>
+    <string name="clientCertManaged">נקבע על ידי הארגון</string>
+    <string name="clientCertEditDomains">עריכת דומיינים</string>
+    <string name="mdmRuleClientCert">אישור הלקוח של הארגון — עבור {domains}</string>
 </resources>

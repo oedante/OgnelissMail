@@ -4335,4 +4335,17 @@
     <string name="kbdShortcuts">Billentyűparancsok</string>
     <string name="kbdShortcutsDesc">Levelek, keresés és részek a billentyűzetről</string>
     <string name="mdmRuleProxy">A szervezet proxyja: {proxy}</string>
+    <string name="clientCertTitle">Ügyféltanúsítványok</string>
+    <string name="clientCertDesc">Ha a szervezet levelezőszervere eszköztanúsítványt kér: .p12 vagy .pfx fájl jelszóval. A tanúsítványt csak a megadott tartományok szerverei kapják meg.</string>
+    <string name="clientCertAdd">Tanúsítvány hozzáadása</string>
+    <string name="clientCertPassword">Fájl jelszava</string>
+    <string name="clientCertDomains">Szerverekhez (tartományok vesszővel elválasztva)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">Hibás jelszó</string>
+    <string name="clientCertBadFile">Nem megfelelő fájl: privát kulcsos .p12 vagy .pfx szükséges</string>
+    <string name="clientCertNoDomains">Adjon meg legalább egy tartományt</string>
+    <string name="clientCertFor">Ehhez: {domains}</string>
+    <string name="clientCertManaged">A szervezet állította be</string>
+    <string name="clientCertEditDomains">Tartományok módosítása</string>
+    <string name="mdmRuleClientCert">A szervezet ügyféltanúsítványa – ehhez: {domains}</string>
 </resources>

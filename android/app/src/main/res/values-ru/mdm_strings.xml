@@ -79,4 +79,10 @@
     <string name="mdm_http_proxy_desc">узел:порт (или логин:пароль@узел:порт). Пусто — прокси и PAC устройства.</string>
     <string name="mdm_proxy_bypass_title">Узлы без прокси</string>
     <string name="mdm_proxy_bypass_desc">Через запятую: *.corp.local, 10.*, 10.0.0.0/8, &lt;local&gt; — имена без точки.</string>
+    <string name="mdm_client_cert_pkcs12_title">Сертификат клиента (PKCS#12, base64)</string>
+    <string name="mdm_client_cert_pkcs12_desc">Файл .p12/.pfx с закрытым ключом в base64 — для почтовых серверов, которые требуют сертификат клиента (mTLS).</string>
+    <string name="mdm_client_cert_password_title">Пароль сертификата клиента</string>
+    <string name="mdm_client_cert_password_desc">Пароль файла сертификата клиента.</string>
+    <string name="mdm_client_cert_domains_title">Сертификат клиента: домены серверов</string>
+    <string name="mdm_client_cert_domains_desc">Через запятую: corp.ru (и поддомены). Пусто — домен account_email и серверы ящика.</string>
 </resources>

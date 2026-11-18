@@ -4314,4 +4314,17 @@
     <string name="kbdShortcuts">キーボードショートカット</string>
     <string name="kbdShortcutsDesc">メール、検索、各画面をキーボードで操作</string>
     <string name="mdmRuleProxy">組織のプロキシ: {proxy}</string>
+    <string name="clientCertTitle">クライアント証明書</string>
+    <string name="clientCertDesc">組織のメールサーバーがデバイス証明書を要求する場合：パスワード付きの .p12 または .pfx ファイル。証明書は指定したドメインのサーバーにのみ提示されます。</string>
+    <string name="clientCertAdd">証明書を追加</string>
+    <string name="clientCertPassword">ファイルのパスワード</string>
+    <string name="clientCertDomains">対象サーバー（ドメインをカンマ区切り）</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">パスワードが違います</string>
+    <string name="clientCertBadFile">このファイルは使えません：秘密鍵付きの .p12 または .pfx が必要です</string>
+    <string name="clientCertNoDomains">ドメインを1つ以上入力してください</string>
+    <string name="clientCertFor">対象：{domains}</string>
+    <string name="clientCertManaged">組織が設定</string>
+    <string name="clientCertEditDomains">ドメインを編集</string>
+    <string name="mdmRuleClientCert">組織のクライアント証明書 — 対象 {domains}</string>
 </resources>

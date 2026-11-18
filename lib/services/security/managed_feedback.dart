@@ -20,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/logging/app_logger.dart';
 import '../../core/network/system_proxy.dart' show SystemProxy;
+import '../../core/security/client_cert_store.dart' show ClientCertStore, ClientCertException;
 import '../../core/security/trusted_ca_store.dart';
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import 'managed_config.dart';
@@ -180,6 +181,23 @@ List<FeedbackState> managedFeedback(
     bad(ManagedKeys.pacUrl, proxy != null
         ? 'Ignored: http_proxy is set'
         : 'Not used on Android: set the PAC URL with the device policy (recommended global proxy) — the app follows it');
+  }
+
+  // Сертификат клиента (2.6.5): файл и пароль подходят; в отчёте — только
+  // владелец, срок и домены.
+  if (str(ManagedKeys.clientCertPkcs12) != null) {
+    try {
+      final info = ClientCertStore.inspect(base64.decode(policy.clientCertPkcs12!), policy.clientCertPassword ?? '');
+      out.add(FeedbackState(ManagedKeys.clientCertPkcs12, FeedbackSeverity.info,
+          'Client certificate: ${info.name}${info.expired ? ' (EXPIRED)' : ''}'));
+    } on ClientCertException catch (e) {
+      bad(ManagedKeys.clientCertPkcs12,
+          e.code == 'password' ? 'Wrong client_cert_password — certificate not used' : 'Not a PKCS#12 file with a key — not used');
+    } catch (_) {
+      bad(ManagedKeys.clientCertPkcs12, 'Not valid base64 — certificate not used');
+    }
+  } else if (str(ManagedKeys.clientCertPassword) != null || str(ManagedKeys.clientCertDomains) != null) {
+    bad(ManagedKeys.clientCertPkcs12, 'client_cert_password / client_cert_domains need client_cert_pkcs12 — ignored');
   }
 
   if (policy.hasAccount) {

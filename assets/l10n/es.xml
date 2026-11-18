@@ -4335,4 +4335,17 @@
     <string name="kbdShortcuts">Atajos de teclado</string>
     <string name="kbdShortcutsDesc">Correo, búsqueda y secciones desde el teclado</string>
     <string name="mdmRuleProxy">Proxy de la organización: {proxy}</string>
+    <string name="clientCertTitle">Certificados de cliente</string>
+    <string name="clientCertDesc">Si el servidor de correo de su organización exige un certificado del dispositivo: un archivo .p12 o .pfx con contraseña. El certificado solo se presenta a los servidores de los dominios indicados.</string>
+    <string name="clientCertAdd">Añadir certificado</string>
+    <string name="clientCertPassword">Contraseña del archivo</string>
+    <string name="clientCertDomains">Para servidores (dominios separados por comas)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">Contraseña incorrecta</string>
+    <string name="clientCertBadFile">Archivo no válido: se necesita un .p12 o .pfx con clave privada</string>
+    <string name="clientCertNoDomains">Indique al menos un dominio</string>
+    <string name="clientCertFor">Para: {domains}</string>
+    <string name="clientCertManaged">Establecido por su organización</string>
+    <string name="clientCertEditDomains">Editar dominios</string>
+    <string name="mdmRuleClientCert">Certificado de cliente de la organización — para {domains}</string>
 </resources>

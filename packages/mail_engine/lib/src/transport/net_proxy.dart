@@ -78,6 +78,20 @@ class NetProxy {
   /// Заметки для журнала приложения (туннель не открылся — напрямую).
   static void Function(String message)? onNote;
 
+  /// Контекст TLS с сертификатом клиента для узла (2.6.5: сервер требует
+  /// сертификат — mTLS); null — обычный. Задаёт приложение.
+  static SecurityContext? Function(String host)? clientContext;
+
+  /// [clientContext] без сбоев: ошибка — без сертификата клиента.
+  static SecurityContext? contextFor(String host) {
+    try {
+      return clientContext?.call(host);
+    } catch (e) {
+      onNote?.call('Сертификат клиента для $host: ${e.runtimeType}');
+      return null;
+    }
+  }
+
   /// Туннель к [host]:[port], если узлу нужен прокси; null — напрямую.
   /// Прокси отказал или недоступен — тоже напрямую, как браузеры при
   /// «PROXY …; DIRECT» в PAC: прокси часто пускает CONNECT только на 443,
@@ -209,12 +223,58 @@ final class _FirstSocket extends IOOverrides {
   }
 }
 
-/// Открытый туннель к узлу через прокси.
+/// Подключение IMAP и SMTP мимо SecureSocket.connect enough_mail, когда
+/// узлу нужен прокси или сертификат клиента ([NetProxy.clientContext]);
+/// иначе — обычный путь enough_mail.
+class MailTransport {
+  ProxyTunnel? _plain;
+  SecurityContext? _context;
+
+  /// Сокет для клиента или null — подключаться обычным путём. Открытый
+  /// текст (до STARTTLS) — обёртка соединения: STARTTLS — [upgrade].
+  Future<Socket?> open(String host, int port,
+      {required bool isSecure,
+      required Duration timeout,
+      bool Function(X509Certificate certificate)? onBadCertificate}) async {
+    _plain = null;
+    final ctx = _context = NetProxy.contextFor(host);
+    final t = await NetProxy.tunnelFor(host, port, timeout: timeout);
+    if (t == null && ctx == null) return null;
+    if (isSecure) {
+      if (t != null) return t.secure(context: ctx, onBadCertificate: onBadCertificate).timeout(timeout);
+      return SecureSocket.connect(host, port, context: ctx, onBadCertificate: onBadCertificate, timeout: timeout);
+    }
+    final w = t ?? ProxyTunnel.direct(await Socket.connect(host, port, timeout: timeout), host);
+    _plain = w;
+    return w.plain();
+  }
+
+  /// STARTTLS на соединении из [open]: TLS на настоящем соединении, с
+  /// сертификатом клиента и проверкой сертификата узла почтового сервера.
+  /// null — соединение обычное, STARTTLS — путём enough_mail.
+  Future<SecureSocket>? upgrade({bool Function(X509Certificate certificate)? onBadCertificate}) {
+    final t = _plain;
+    if (t == null) return null;
+    _plain = null;
+    return t.upgrade(context: _context, onBadCertificate: onBadCertificate);
+  }
+}
+
+/// Открытый туннель к узлу через прокси (или прямое соединение в той же
+/// обёртке — [ProxyTunnel.direct]).
 class ProxyTunnel {
   ProxyTunnel._(this._socket, this._sub, this._extra, this._rest, this.host, this.proxy);
 
-  /// Прокси, через который открыт туннель.
-  final ProxyHop proxy;
+  /// Прямое соединение [socket] с узлом [host] в обёртке туннеля: для
+  /// STARTTLS со своим контекстом TLS (сертификат клиента).
+  factory ProxyTunnel.direct(Socket socket, String host) {
+    final rest = StreamController<Uint8List>(sync: true);
+    final sub = socket.listen(rest.add, onError: rest.addError, onDone: () => unawaited(rest.close()));
+    return ProxyTunnel._(socket, sub, <Uint8List>[], rest, host, null);
+  }
+
+  /// Прокси, через который открыт туннель (null — напрямую).
+  final ProxyHop? proxy;
 
   final Socket _socket;
   final StreamSubscription<Uint8List> _sub;
@@ -237,7 +297,7 @@ class ProxyTunnel {
     _sub.pause();
     if (_extra.isNotEmpty) {
       _socket.destroy();
-      throw ProxyTunnelException(proxy, host, 'сервер ответил открытым текстом вместо TLS');
+      throw ProxyTunnelException(proxy ?? ProxyHop(host, 0), host, 'сервер ответил открытым текстом вместо TLS');
     }
     return SecureSocket.secure(_socket, host: host, context: context, onBadCertificate: onBadCertificate);
   }

@@ -4335,4 +4335,17 @@
     <string name="kbdShortcuts">Hurtigtaster</string>
     <string name="kbdShortcutsDesc">E-post, søk og deler fra tastaturet</string>
     <string name="mdmRuleProxy">Organisasjonens proxy: {proxy}</string>
+    <string name="clientCertTitle">Klientsertifikater</string>
+    <string name="clientCertDesc">Hvis organisasjonens e-postserver krever et enhetssertifikat: en .p12- eller .pfx-fil med passord. Sertifikatet vises bare for servere i de oppgitte domenene.</string>
+    <string name="clientCertAdd">Legg til sertifikat</string>
+    <string name="clientCertPassword">Filens passord</string>
+    <string name="clientCertDomains">For servere (domener, kommaseparert)</string>
+    <string name="clientCertDomainsHint">corp.example, mail.corp.example</string>
+    <string name="clientCertWrongPassword">Feil passord</string>
+    <string name="clientCertBadFile">Feil fil: en .p12 eller .pfx med privat nøkkel kreves</string>
+    <string name="clientCertNoDomains">Oppgi minst ett domene</string>
+    <string name="clientCertFor">For: {domains}</string>
+    <string name="clientCertManaged">Angitt av organisasjonen</string>
+    <string name="clientCertEditDomains">Endre domener</string>
+    <string name="mdmRuleClientCert">Organisasjonens klientsertifikat – for {domains}</string>
 </resources>

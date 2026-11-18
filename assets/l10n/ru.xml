@@ -4377,4 +4377,17 @@
     <string name="kbdShortcuts">Сочетания клавиш</string>
     <string name="kbdShortcutsDesc">Письма, поиск и разделы с клавиатуры</string>
     <string name="mdmRuleProxy">Прокси организации: {proxy}</string>
+    <string name="clientCertTitle">Сертификаты клиента</string>
+    <string name="clientCertDesc">Если почтовый сервер организации требует сертификат устройства: файл .p12 или .pfx с паролем. Сертификат предъявляется только серверам указанных доменов.</string>
+    <string name="clientCertAdd">Добавить сертификат</string>
+    <string name="clientCertPassword">Пароль файла</string>
+    <string name="clientCertDomains">Для серверов (домены через запятую)</string>
+    <string name="clientCertDomainsHint">corp.ru, mail.corp.ru</string>
+    <string name="clientCertWrongPassword">Неверный пароль</string>
+    <string name="clientCertBadFile">Файл не подходит: нужен .p12 или .pfx с закрытым ключом</string>
+    <string name="clientCertNoDomains">Укажите хотя бы один домен</string>
+    <string name="clientCertFor">Для: {domains}</string>
+    <string name="clientCertManaged">Задан организацией</string>
+    <string name="clientCertEditDomains">Изменить домены</string>
+    <string name="mdmRuleClientCert">Сертификат клиента организации — для {domains}</string>
 </resources>

@@ -60,5 +60,47 @@ void main() {
     expect(asked.first, contains('personFields=emailAddresses%2Cphotos'));
     expect(asked.last, contains('/otherContacts'));
     expect(asked.last, contains('readMask=emailAddresses%2Cphotos'));
+    expect(r.found, {'contacts': 2});
+  });
+
+  // Журнал владельца 18.11.2026: «в профилях 5» — у «Других контактов» без
+  // источника PROFILE Google отдаёт одни заглушки.
+  test('«Другие контакты» — с источником профиля Google; у сохранённых — источник по умолчанию', () async {
+    final asked = <Uri>[];
+    final client = MockClient((r) async {
+      asked.add(r.url);
+      if (r.url.path.endsWith('/otherContacts')) {
+        return http.Response(jsonEncode({
+          'otherContacts': [
+            {
+              'emailAddresses': [{'value': 'friend@gmail.com'}],
+              'photos': [
+                {'url': 'https://lh3.googleusercontent.com/a/letter', 'default': true},
+                {'url': 'https://lh3.googleusercontent.com/a/profile'},
+              ],
+            },
+          ],
+        }), 200);
+      }
+      return http.Response(jsonEncode({'connections': []}), 200);
+    });
+    final r = await GooglePeoplePhotos.fetch('Bearer t', client: client);
+    final other = asked.firstWhere((u) => u.path.endsWith('/otherContacts'));
+    expect(other.queryParametersAll['sources'], ['READ_SOURCE_TYPE_CONTACT', 'READ_SOURCE_TYPE_PROFILE']);
+    final saved = asked.firstWhere((u) => u.path.endsWith('/connections'));
+    expect(saved.queryParametersAll.containsKey('sources'), isFalse);
+    expect(r.photos, {'friend@gmail.com': 'https://lh3.googleusercontent.com/a/profile'});
+    expect(r.found, {'other': 1});
+    expect(r.denied, isEmpty);
+  });
+
+  test('итог для журнала и диагностики', () {
+    expect(GooglePeoplePhotos.summary({'contacts': 5, 'other': 120}, 123, 40, const []),
+        'в профилях 123 (сохранённые 5, «Другие контакты» 120), поставлено 40');
+    expect(GooglePeoplePhotos.summary({'contacts': 5}, 5, 0, const ['other']),
+        'в профилях 5 (сохранённые 5, «Другие контакты» — нет разрешения), поставлено 0; '
+        'фото появятся после повторного входа, если Google выдаст разрешения');
+    expect(GooglePeoplePhotos.summary(const {}, 0, 0, const ['contacts', 'other'], apiDisabled: true),
+        contains('People API не включён'));
   });
 }

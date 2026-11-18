@@ -2922,55 +2922,57 @@ class SyncService {
   /// «Другие контакты» — через People API, раз в сутки, пока приложение
   /// открыто. Фото ставится контактам и собеседникам из переписки, у
   /// которых своего фото нет. Нет разрешений (вход до 2.6.2) — тихо, повтор
-  /// через неделю: фото появятся после повторного входа в ящик.
+  /// через 6 часов или сразу после повторного входа.
+  ///
+  /// Журнал владельца 18.11.2026: после «Войти снова» проверка ждала сутки
+  /// (заново сразу — только если отказ был по обоим источникам), и итог без
+  /// фото в журнал не писался. Теперь новый вход — всегда проверка сразу,
+  /// итог — всегда в журнал и в пакет диагностики. Ключ «v2»: после
+  /// обновления «Другие контакты» с фото профиля приходят сразу
+  /// ([GooglePeoplePhotos.prefsKey]).
   Future<void> _maybeGooglePeoplePhotos(AccountModel account, String authorization, AppDatabase db) async {
     if (account.type != AccountType.google) return;
     if (!_ref.read(moduleSettingsProvider).showContactPhotos) return;
     if (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) return;
-    final key = 'people_photos_checked:${account.id}';
+    final key = '${GooglePeoplePhotos.prefsKey}:${account.id}';
     final last = DateTime.tryParse(_prefs.getString(key) ?? '');
-    // Отказ (нет разрешений) привязан ко входу: после «Войти снова» (новый
-    // refresh-токен) — сразу заново (17.11.2026: после повторного входа
-    // программа ждала неделю). Без нового входа — раз в 6 часов.
     final grant = _grantMark(await _ref.read(secureStorageProvider).getRefreshToken(account.id));
     final denied = _prefs.getBool('$key:denied') == true;
-    final regranted = denied && _prefs.getString('$key:grant') != grant;
+    final regranted = _prefs.getString('$key:grant') != grant;
     final wait = denied ? const Duration(hours: 6) : const Duration(hours: 24);
     if (!regranted && last != null && DateTime.now().difference(last) < wait) return;
     try {
       final r = await GooglePeoplePhotos.fetch(authorization);
       await _prefs.setString(key, DateTime.now().toIso8601String());
-      await _prefs.setBool('$key:denied', r.denied.length == 2);
+      await _prefs.setBool('$key:denied', r.denied.isNotEmpty);
       await _prefs.setString('$key:grant', grant);
-      if (r.apiDisabled) {
-        AppLogger.info('Фото собеседников Google: People API не включён в проекте Google Cloud '
-            '(консоль → «API и сервисы» → «Библиотека» → Google People API) — повторный вход не поможет');
-      } else if (r.denied.isNotEmpty) {
-        AppLogger.info('Фото собеседников Google: нет разрешения (${r.denied.join(', ')}) — появятся после '
-            'повторного входа, если Google выдаст разрешения (пока приложение на проверке — может не выдать)');
+      var set = 0;
+      if (r.photos.isNotEmpty) {
+        // Только тем, у кого фото нет: своё фото контакта и фото из адресной
+        // книги организации важнее.
+        final rows = await db.customSelect(
+          "SELECT DISTINCT lower(email) AS e FROM contacts WHERE (avatar_url IS NULL OR avatar_url = '') AND email LIKE '%@%'",
+        ).get();
+        final need = [for (final row in rows) if (r.photos.containsKey(row.read<String>('e'))) row.read<String>('e')];
+        if (need.isNotEmpty) {
+          await db.transaction(() async {
+            for (final e in need) {
+              await db.customUpdate(
+                "UPDATE contacts SET avatar_url = ? WHERE lower(email) = ? AND (avatar_url IS NULL OR avatar_url = '')",
+                variables: [Variable.withString(r.photos[e]!), Variable.withString(e)],
+                updates: {db.contacts},
+                updateKind: UpdateKind.update,
+              );
+            }
+          });
+        }
+        set = need.length;
       }
-      if (r.photos.isEmpty) return;
-      // Только тем, у кого фото нет: своё фото контакта и фото из адресной
-      // книги организации важнее.
-      final rows = await db.customSelect(
-        "SELECT DISTINCT lower(email) AS e FROM contacts WHERE (avatar_url IS NULL OR avatar_url = '') AND email LIKE '%@%'",
-      ).get();
-      final need = [for (final row in rows) if (r.photos.containsKey(row.read<String>('e'))) row.read<String>('e')];
-      if (need.isNotEmpty) {
-        await db.transaction(() async {
-          for (final e in need) {
-            await db.customUpdate(
-              "UPDATE contacts SET avatar_url = ? WHERE lower(email) = ? AND (avatar_url IS NULL OR avatar_url = '')",
-              variables: [Variable.withString(r.photos[e]!), Variable.withString(e)],
-              updates: {db.contacts},
-              updateKind: UpdateKind.update,
-            );
-          }
-        });
-      }
-      AppLogger.info('Фото собеседников Google: в профилях ${r.photos.length}, поставлено ${need.length}');
+      final summary = GooglePeoplePhotos.summary(r.found, r.photos.length, set, r.denied, apiDisabled: r.apiDisabled);
+      await _prefs.setString('$key:last', summary);
+      AppLogger.info('Фото собеседников Google: $summary');
     } catch (e) {
-      AppLogger.debug('Фото собеседников Google: $e');
+      AppLogger.info('Фото собеседников Google: сбой — $e');
     }
   }
 

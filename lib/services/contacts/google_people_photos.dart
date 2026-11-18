@@ -13,6 +13,14 @@
 // фоне, photos[].default = true) пропускаются — у нас своя буква.
 // Ящик, вошедший до 2.6.2, этих разрешений не имеет: ответ 403 — тихо,
 // фото появятся после повторного входа.
+//
+// Журнал владельца 18.11.2026 («пользователи Gmail не отображаются»):
+// «в профилях 5» — фото пришли только у сохранённых контактов. У
+// otherContacts источник по умолчанию — только READ_SOURCE_TYPE_CONTACT:
+// у «Других контактов» там одни заглушки (буква), а фото профиля Google —
+// в источнике READ_SOURCE_TYPE_PROFILE, который надо попросить явно (вместе
+// с CONTACT — один PROFILE Google не принимает). У connections по умолчанию
+// оба источника.
 
 import 'dart:convert';
 
@@ -26,26 +34,51 @@ class GooglePeoplePhotos {
   /// Страниц на источник не больше этого (по 1000 человек).
   static const maxPages = 10;
 
+  /// Ключ настроек проверки (время; «:denied», «:grant», «:last» — итог для
+  /// пакета диагностики). «v2» (18.11.2026) — после обновления проверка
+  /// сразу, а не через сутки по отметке старой версии.
+  static const prefsKey = 'people_photos_v2';
+
+  /// Итог проверки фото собеседников Google — для журнала и диагностики.
+  static String summary(Map<String, int> found, int total, int set, List<String> denied,
+      {bool apiDisabled = false}) {
+    String src(String name, String title) =>
+        denied.contains(name) ? '$title — нет разрешения' : '$title ${found[name] ?? 0}';
+    final out = StringBuffer('в профилях $total (${src('contacts', 'сохранённые')}, '
+        '${src('other', '«Другие контакты»')}), поставлено $set');
+    if (apiDisabled) {
+      out.write('; People API не включён в проекте Google Cloud (консоль → «API и сервисы» → «Библиотека» → '
+          'Google People API) — повторный вход не поможет');
+    } else if (denied.isNotEmpty) {
+      out.write('; фото появятся после повторного входа, если Google выдаст разрешения');
+    }
+    return out.toString();
+  }
+
   /// Адрес (в нижнем регистре) → ссылка на фото по обоим источникам.
   /// [denied] — источники, на которые нет разрешения (401/403);
   /// [apiDisabled] — отказ не из-за разрешения, а потому что People API не
   /// включён в проекте Google Cloud (повторный вход тут не поможет).
-  static Future<({Map<String, String> photos, List<String> denied, bool apiDisabled})> fetch(String authorization,
+  /// [found] — сколько адресов с фото дал каждый источник (для журнала).
+  static Future<({Map<String, String> photos, List<String> denied, bool apiDisabled, Map<String, int> found})> fetch(
+      String authorization,
       {http.Client? client}) async {
     final c = client ?? http.Client();
     final photos = <String, String>{};
     final denied = <String>[];
+    final found = <String, int>{};
     var apiDisabled = false;
     try {
-      for (final (name, path, param) in const [
-        ('contacts', '/people/me/connections', 'personFields'),
-        ('other', '/otherContacts', 'readMask'),
+      for (final (name, path, param, sources) in const [
+        ('contacts', '/people/me/connections', 'personFields', <String>[]),
+        ('other', '/otherContacts', 'readMask', ['READ_SOURCE_TYPE_CONTACT', 'READ_SOURCE_TYPE_PROFILE']),
       ]) {
         String? page;
         for (var i = 0; i < maxPages; i++) {
-          final uri = Uri.parse('$_base$path').replace(queryParameters: {
+          final uri = Uri.parse('$_base$path').replace(queryParameters: <String, dynamic>{
             param: 'emailAddresses,photos',
             'pageSize': '1000',
+            if (sources.isNotEmpty) 'sources': sources,
             if (page != null) 'pageToken': page,
           });
           final r = await c.get(uri, headers: {'Authorization': authorization}).timeout(const Duration(seconds: 20));
@@ -58,6 +91,7 @@ class GooglePeoplePhotos {
           final j = jsonDecode(r.body) as Map<String, dynamic>;
           final list = (j[path == '/otherContacts' ? 'otherContacts' : 'connections'] as List?) ?? const [];
           for (final e in parse(list).entries) {
+            found[name] = (found[name] ?? 0) + 1;
             photos.putIfAbsent(e.key, () => e.value);
           }
           page = j['nextPageToken'] as String?;
@@ -67,7 +101,7 @@ class GooglePeoplePhotos {
     } finally {
       if (client == null) c.close();
     }
-    return (photos: photos, denied: denied, apiDisabled: apiDisabled);
+    return (photos: photos, denied: denied, apiDisabled: apiDisabled, found: found);
   }
 
   /// Ответ 403 Google: API выключен в проекте (SERVICE_DISABLED,

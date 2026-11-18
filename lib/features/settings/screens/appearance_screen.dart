@@ -29,8 +29,6 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/app_radio_tile.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../mail/widgets/email_list_tile.dart';
-import '../../mail/providers/reading_pane.dart';
-import '../../../widgets/common/adaptive_layout.dart' show AdaptiveLayout, PanePosition;
 import '../providers/settings_provider.dart';
 
 /// Подписи цветовых тем.
@@ -54,10 +52,6 @@ class AppearanceScreen extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
     final android = !kIsWeb && Platform.isAndroid;
-    // «Область чтения» — только там, где лента и письмо бывают рядом:
-    // планшет и компьютер (1.12.x). Телефон не меняется.
-    final wideDevice = AdaptiveLayout.isTablet(context) ||
-        (!kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux));
     // Цветовая тема и акцент не применяются при высоком контрасте и в
     // «Чтении» (свои палитры); цвета обоев их заменяют.
     final locked = settings.highContrast || settings.reading;
@@ -207,23 +201,7 @@ class AppearanceScreen extends ConsumerWidget {
             ],
           ),
 
-          // ── Область чтения (1.12.x, просьба владельца 04.11.2026, как
-          // «Вид → Область чтения» в Outlook) ──
-          if (wideDevice) ...[
-            SettingsSectionTitle(l10n.tr('readingPane')),
-            SettingsGroup(
-              children: [
-                for (final p in PanePosition.values)
-                  AppRadioTile<PanePosition>(
-                    title: Text(readingPaneLabel(l10n, p).label),
-                    subtitle: readingPaneLabel(l10n, p).hint == null ? null : Text(readingPaneLabel(l10n, p).hint!),
-                    value: p,
-                    groupValue: ref.watch(readingPaneProvider),
-                    onChanged: (v) => ref.read(readingPaneProvider.notifier).set(v ?? PanePosition.right),
-                  ),
-              ],
-            ),
-          ],
+          // «Область чтения» — в «Почта → Чтение» (18.11.2026).
           // Из «Общих» (12.11.2026): шрифт и масштаб, панели телефона, вид
           // виджетов.
           const TextLookSections(),

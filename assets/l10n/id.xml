@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Setiap {n} menit</string>
     <string name="checkHourly">Setiap jam</string>
     <string name="checkManual">Hanya manual</string>
-    <string name="checkMailHint">Instan — server langsung memberi tahu ada email baru (di latar belakang — dengan “Jalankan di latar belakang”). Sesuai jadwal — instan pada jam kerja, selain itu menurut interval (Pengaturan → Pengaturan lanjutan → Jadwal pengiriman). Setiap 15/30/60 menit — pemeriksaan terjadwal, paling hemat. Manual — saat Anda membuka aplikasi dan menarik layar untuk menyegarkan.</string>
+    <string name="checkMailHint">Instan — server langsung memberi tahu ada email baru (di latar belakang — dengan “Jalankan di latar belakang”). Sesuai jadwal — instan pada jam kerja, selain itu menurut interval (Pengaturan → Sinkronisasi → Jadwal pengiriman). Setiap 15/30/60 menit — pemeriksaan terjadwal, paling hemat. Manual — saat Anda membuka aplikasi dan menarik layar untuk menyegarkan.</string>
     <string name="wifiOnlyAcc">Hanya Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Pemeriksaan otomatis hanya saat terhubung ke Wi‑Fi</string>
     <string name="accSectionConnection">Koneksi</string>
@@ -3916,7 +3916,7 @@
     <string name="faq_mail_13_q">Apa arti ikon di bawah header email?</string>
     <string name="faq_mail_13_a">Informasi tentang email — terjemahan, berhenti berlangganan, gambar tersembunyi, permintaan tanda terima baca, pengiriman, tanda tangan, tingkat kepentingan, tag — dikumpulkan dalam satu baris ikon. Mengetuk ikon akan membuka detail beserta tombolnya, mengetuk lagi akan menutupnya. Ikon terjemahan dan gambar langsung bekerja: menerjemahkan email atau menampilkan gambar, sedangkan opsi lainnya ada di menu ▾ atau dengan tekan lama. Peringatan pengirim palsu dan undangan rapat tetap tampil sebagai kartu lengkap.</string>
     <string name="faq_mail_14_q">Bagaimana cara menata layar tablet atau komputer seperti di Outlook?</string>
-    <string name="faq_mail_14_a">Panel baca bisa diletakkan di kanan, di bawah, atau disembunyikan: Pengaturan → Tampilan → Panel baca atau menu ⋮ di atas daftar. Beberapa email dipilih seperti di Outlook: Ctrl + klik (di Mac dan iPad, Cmd) — satu per satu, Shift — berurutan, Ctrl+A — semua yang dimuat, Esc — batalkan pilihan, Delete — hapus yang dipilih. Lampiran terbuka langsung di panel baca, dan Kembali membawa Anda kembali ke email.</string>
+    <string name="faq_mail_14_a">Panel baca bisa diletakkan di kanan, di bawah, atau disembunyikan: Pengaturan → Daftar dan membaca → Panel baca atau menu ⋮ di atas daftar. Beberapa email dipilih seperti di Outlook: Ctrl + klik (di Mac dan iPad, Cmd) — satu per satu, Shift — berurutan, Ctrl+A — semua yang dimuat, Esc — batalkan pilihan, Delete — hapus yang dipilih. Lampiran terbuka langsung di panel baca, dan Kembali membawa Anda kembali ke email.</string>
     <string name="faq_mail_15_q">Bagaimana cara menerjemahkan email langsung saat dibuka?</string>
     <string name="faq_mail_15_a">Ketuk ▾ di samping ikon terjemahan lalu pilih Selalu terjemahkan dari … — email dalam bahasa itu akan langsung terbuka dalam terjemahan; teks aslinya ditampilkan dengan ikon yang sama. Daftar bahasa: Pengaturan → Email → Terjemahan → Selalu terjemahkan dari. Terjemahan hanya ditawarkan jika bahasa email terdeteksi dengan yakin, dan tidak ditawarkan untuk bahasa ponsel (bisa dimatikan di tempat yang sama: Bahasa ponsel — jangan tawarkan terjemahan).</string>
     <string name="convReplyTo">Balas ke {name}</string>
@@ -4334,4 +4334,5 @@
     <string name="mailImagesSection">Gambar di email</string>
     <string name="loadRemoteImages">Muat gambar dari internet langsung</string>
     <string name="loadRemoteImagesDesc">Mati — hanya lewat “Tampilkan gambar” di email, agar pengirim tidak tahu Anda membukanya</string>
+    <string name="syncSettingsDesc">Pemeriksaan semua kotak surat, jadwal, konflik</string>
 </resources>

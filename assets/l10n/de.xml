@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Alle {n} Min.</string>
     <string name="checkHourly">Stündlich</string>
     <string name="checkManual">Nur manuell</string>
-    <string name="checkMailHint">Sofort — der Server meldet neue E-Mails sofort (im Hintergrund mit „Im Hintergrund ausführen“). Nach Zeitplan — sofort zur Arbeitszeit, sonst im Intervall (Einstellungen → Erweiterte Einstellungen → Zustellzeitplan). Alle 15/30/60 Minuten — geplanter Abruf, am sparsamsten. Manuell — beim Öffnen der App und per Ziehen.</string>
+    <string name="checkMailHint">Sofort — der Server meldet neue E-Mails sofort (im Hintergrund mit „Im Hintergrund ausführen“). Nach Zeitplan — sofort zur Arbeitszeit, sonst im Intervall (Einstellungen → Synchronisierung → Zustellzeitplan). Alle 15/30/60 Minuten — geplanter Abruf, am sparsamsten. Manuell — beim Öffnen der App und per Ziehen.</string>
     <string name="wifiOnlyAcc">Nur über WLAN</string>
     <string name="wifiOnlyAccDesc">Automatischer Abruf nur bei WLAN-Verbindung</string>
     <string name="accSectionConnection">Verbindung</string>
@@ -3937,7 +3937,7 @@
     <string name="faq_mail_13_q">Was bedeuten die Symbole unter dem Nachrichtenkopf?</string>
     <string name="faq_mail_13_a">Angaben zur Nachricht — Übersetzung, Abbestellen, ausgeblendete Bilder, Bitte um Lesebestätigung, Zustellung, Signatur, Wichtigkeit, Tags — sind in einer Symbolzeile zusammengefasst. Tippen auf ein Symbol klappt die Details mit Schaltflächen auf, erneutes Tippen klappt sie wieder zu. Die Symbole für Übersetzung und Bilder wirken sofort: sie übersetzen die Nachricht oder zeigen die Bilder an; die übrigen Optionen gibt es im Menü ▾ oder per langem Drücken. Die Warnung vor gefälschten Absendern und Besprechungseinladungen bleiben vollständige Karten.</string>
     <string name="faq_mail_14_q">Wie richte ich den Bildschirm auf Tablet oder Computer wie in Outlook ein?</string>
-    <string name="faq_mail_14_a">Den Lesebereich können Sie rechts oder unten anordnen oder ausblenden: Einstellungen → Darstellung → „Lesebereich“ oder das Menü ⋮ über der Nachrichtenliste. Mehrere Nachrichten wählen Sie wie in Outlook aus: Ctrl + Klick (auf Mac und iPad Cmd) — einzeln, Shift — einen Bereich, Ctrl+A — alle geladenen, Esc — Auswahl aufheben, Delete — ausgewählte löschen. Ein Anhang öffnet sich direkt im Lesebereich, „Zurück“ führt zur Nachricht zurück.</string>
+    <string name="faq_mail_14_a">Den Lesebereich können Sie rechts oder unten anordnen oder ausblenden: Einstellungen → Liste und Lesen → „Lesebereich“ oder das Menü ⋮ über der Nachrichtenliste. Mehrere Nachrichten wählen Sie wie in Outlook aus: Ctrl + Klick (auf Mac und iPad Cmd) — einzeln, Shift — einen Bereich, Ctrl+A — alle geladenen, Esc — Auswahl aufheben, Delete — ausgewählte löschen. Ein Anhang öffnet sich direkt im Lesebereich, „Zurück“ führt zur Nachricht zurück.</string>
     <string name="faq_mail_15_q">Wie lasse ich Nachrichten gleich beim Öffnen übersetzen?</string>
     <string name="faq_mail_15_a">Tippen Sie beim Übersetzungssymbol auf ▾ und wählen Sie „Immer aus … übersetzen“ — Nachrichten in dieser Sprache öffnen sich dann gleich übersetzt, das Original zeigt dasselbe Symbol. Liste der Sprachen: Einstellungen → E-Mail → Übersetzung → „Immer übersetzen aus“. Eine Übersetzung wird nur angeboten, wenn die Sprache der Nachricht sicher erkannt ist, und nicht für die Sprachen des Telefons (abschaltbar an derselben Stelle: „Sprachen des Telefons – keine Übersetzung anbieten“).</string>
     <string name="convReplyTo">Antwort an {name}</string>
@@ -4355,4 +4355,5 @@
     <string name="mailImagesSection">Bilder in E-Mails</string>
     <string name="loadRemoteImages">Bilder aus dem Internet automatisch laden</string>
     <string name="loadRemoteImagesDesc">Aus – nur über „Bilder anzeigen“ in der E-Mail, damit der Absender nicht erfährt, dass Sie sie geöffnet haben</string>
+    <string name="syncSettingsDesc">E-Mail-Abruf aller Postfächer, Zeitplan, Konflikte</string>
 </resources>

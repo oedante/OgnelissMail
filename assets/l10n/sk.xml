@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Každých {n} min</string>
     <string name="checkHourly">Každú hodinu</string>
     <string name="checkManual">Iba ručne</string>
-    <string name="checkMailHint">Okamžite – server hlási novú poštu hneď (na pozadí – s voľbou Beh na pozadí). Podľa plánu – okamžite v pracovnom čase, inak v intervaloch (Nastavenia → Rozšírené nastavenia → Plán doručovania). Každých 15/30/60 minút – plánované kontroly, najúspornejšie. Ručne – keď otvoríte aplikáciu a potiahnete nadol na obnovenie.</string>
+    <string name="checkMailHint">Okamžite – server hlási novú poštu hneď (na pozadí – s voľbou Beh na pozadí). Podľa plánu – okamžite v pracovnom čase, inak v intervaloch (Nastavenia → Synchronizácia → Plán doručovania). Každých 15/30/60 minút – plánované kontroly, najúspornejšie. Ručne – keď otvoríte aplikáciu a potiahnete nadol na obnovenie.</string>
     <string name="wifiOnlyAcc">Iba cez Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automatická kontrola len pri pripojení k Wi‑Fi</string>
     <string name="accSectionConnection">Pripojenie</string>
@@ -3958,7 +3958,7 @@
     <string name="faq_mail_13_q">Čo sú ikony pod hlavičkou správy?</string>
     <string name="faq_mail_13_a">Údaje o správe — preklad, odhlásenie odberu, skryté obrázky, žiadosť o potvrdenie o prečítaní, doručenie, podpis, dôležitosť, štítky — sú zhrnuté do jedného riadka ikon. Ťuknutie na ikonu rozbalí podrobnosti s tlačidlami, ďalšie ťuknutie ich zbalí. Ikony prekladu a obrázkov fungujú hneď: preložia správu alebo zobrazia obrázky, ostatné možnosti sú v ponuke ▾ alebo pod dlhým stlačením. Upozornenie na podvrhnutého odosielateľa a pozvánky na schôdzky zostávajú celými kartami.</string>
     <string name="faq_mail_14_q">Ako usporiadať obrazovku tabletu alebo počítača ako v Outlooku?</string>
-    <string name="faq_mail_14_a">Tablu na čítanie možno umiestniť vpravo, dole alebo skryť: Nastavenia → Vzhľad → Tabla na čítanie alebo ponuka ⋮ nad zoznamom. Viac správ sa vyberá ako v Outlooku: Ctrl + kliknutie (na Macu a iPade Cmd) — po jednej, Shift — rozsah, Ctrl+A — všetky načítané, Esc — zrušiť výber, Delete — odstrániť vybrané. Príloha sa otvorí priamo v table na čítanie a Späť vráti k správe.</string>
+    <string name="faq_mail_14_a">Tablu na čítanie možno umiestniť vpravo, dole alebo skryť: Nastavenia → Zoznam a čítanie → Tabla na čítanie alebo ponuka ⋮ nad zoznamom. Viac správ sa vyberá ako v Outlooku: Ctrl + kliknutie (na Macu a iPade Cmd) — po jednej, Shift — rozsah, Ctrl+A — všetky načítané, Esc — zrušiť výber, Delete — odstrániť vybrané. Príloha sa otvorí priamo v table na čítanie a Späť vráti k správe.</string>
     <string name="faq_mail_15_q">Ako nechať správy preložiť hneď pri otvorení?</string>
     <string name="faq_mail_15_a">Ťuknite na ▾ pri ikone prekladu a vyberte Vždy prekladať z jazyka … — správy v tomto jazyku sa potom budú otvárať rovno preložené, originál zobrazíte tou istou ikonou. Zoznam jazykov: Nastavenia → Pošta → Preklad → Vždy prekladať z jazykov. Preklad sa ponúka, len keď je jazyk správy rozpoznaný s istotou, a neponúka sa pre jazyky telefónu (vypína sa na tom istom mieste: Jazyky telefónu – neponúkať preklad).</string>
     <string name="convReplyTo">Odpoveď pre {name}</string>
@@ -4376,4 +4376,5 @@
     <string name="mailImagesSection">Obrázky v e-mailoch</string>
     <string name="loadRemoteImages">Načítavať obrázky z internetu hneď</string>
     <string name="loadRemoteImagesDesc">Vypnuté — len tlačidlom „Zobraziť obrázky“ v e-maile: odosielateľ sa nedozvie, že ste ho otvorili</string>
+    <string name="syncSettingsDesc">Kontrola všetkých schránok, plán, konflikty</string>
 </resources>

@@ -1,10 +1,9 @@
 // lib/features/settings/screens/advanced_settings_screen.dart
 // «Расширенные настройки» (1.8.0, решение владельца 26.10.2026: «часть …
 // общих настроек вынести в разделы „Расширенные настройки“, а остальные
-// разнести по категориям»). Здесь то, что нужно редко: общий выключатель
-// синхронизации и расписание доставки, конфликты синхронизации, разрешения
-// и работа в фоне, проверка сертификатов, защита данных при отправке,
-// разделы приложения, графика (Android), журнал и сброс.
+// разнести по категориям»). Здесь то, что нужно редко: разделы приложения,
+// графика (Android), журнал и сброс. Синхронизация — в «Аккаунтах»
+// (sync_settings_screen.dart, 18.11.2026).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,16 +14,12 @@ import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../services/background/background_service.dart';
 import '../../../services/security/remote_wipe_service.dart';
-import '../../../services/sync/imap_push_service.dart';
-import '../../../services/sync/sync_schedule.dart';
 import '../../../widgets/common/readable_width.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/graphics_item.dart';
-import 'delivery_schedule_screen.dart' show scheduleDaysLabel, deliveryScheduleRevisionProvider;
 
 class AdvancedSettingsScreen extends ConsumerWidget {
   const AdvancedSettingsScreen({super.key});
@@ -33,8 +28,6 @@ class AdvancedSettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final settings = ref.watch(settingsProvider);
-    ref.watch(deliveryScheduleRevisionProvider); // подпись «Расписания доставки»
 
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(title: Text(l10n.tr('advancedSettings')))),
@@ -43,42 +36,8 @@ class AdvancedSettingsScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(Space.m, Space.s, Space.m, Space.xl),
           children: [
-            // ── Синхронизация ──
-            SettingsSectionTitle(l10n.tr('sync')),
-            SettingsGroup(children: [
-              // Интервал и push — у каждого аккаунта (экран аккаунта →
-              // «Проверка почты»). Здесь — общий выключатель.
-              SettingsSwitchItem(
-                icon: AppIcons.sync,
-                title: l10n.tr('autoSyncAll'),
-                subtitle: l10n.tr('autoSyncAllDesc'),
-                value: settings.syncIntervalMinutes >= 0,
-                onChanged: (v) async {
-                  await ref.read(settingsProvider.notifier).setSyncInterval(v ? 15 : -1);
-                  await ref.read(backgroundServiceProvider).applySyncInterval();
-                  final push = ref.read(imapPushServiceProvider);
-                  if (v) {
-                    await push.start();
-                  } else {
-                    await push.stopAll();
-                  }
-                },
-              ),
-              // «По расписанию»: рабочие часы — мгновенно, остальное — по интервалу.
-              SettingsItem(
-                icon: AppIcons.schedule,
-                title: l10n.tr('scheduleTitle'),
-                subtitle: '${SyncSchedule.windowLabel()} · ${scheduleDaysLabel(SyncSchedule.days, l10n)} · '
-                    '${l10n.tr('scheduleOffShort').replaceAll('{n}', '${SyncSchedule.offMinutes}')}',
-                onTap: () => context.push('/settings/delivery-schedule'),
-              ),
-              SettingsItem(
-                icon: AppIcons.sync_problem,
-                title: l10n.tr('syncConflicts'),
-                subtitle: l10n.tr('syncConflictsDesc'),
-                onTap: () => context.push('/settings/conflicts'),
-              ),
-            ]),
+            // «Синхронизация» — на главном экране настроек, в «Аккаунтах»
+            // (замечание владельца 18.11.2026: искали рядом с ящиками).
 
             // «Разрешения», безопасность соединения и защита данных (DLP) —
             // на главном экране, в «Конфиденциальности» (перегруппировка

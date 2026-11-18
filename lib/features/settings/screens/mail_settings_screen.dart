@@ -11,7 +11,7 @@ import 'dart:async';
 
 import '../../../widgets/ui/action_sheet.dart';
 import '../../../widgets/ui/app_radio_tile.dart';
-import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
+import 'package:flutter/foundation.dart' show TargetPlatform, kIsWeb, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../widgets/common/app_sheet.dart';
@@ -28,6 +28,8 @@ import '../providers/settings_provider.dart';
 import '../../../services/security/tracker_blocker.dart' show trackerBlockerProvider;
 import 'package:go_router/go_router.dart';
 import '../../mail/providers/startup_folder.dart';
+import '../../mail/providers/reading_pane.dart';
+import '../../../widgets/common/adaptive_layout.dart' show AdaptiveLayout, PanePosition;
 import '../../mail/providers/drawer_prefs.dart'
     show quickFiltersProvider, quickReplyBarProvider, mailSwipePagerProvider, mailBarOrderProvider,
         MailBarOrderNotifier, MailBarAction, confirmMailDeleteProvider;
@@ -267,6 +269,24 @@ class MailSettingsScreen extends ConsumerWidget {
           ],
           // Бывшие «Возможности» (1.6.1): работа с письмами и их открытие.
           if (part == MailSettingsPart.compose) const MailWorkSection(),
+          if (part == MailSettingsPart.reading) ...[
+            // Иконки организаций (2.6.1, одна настройка вместо «Логотипов
+            // BIMI»): сохранённые логотипы и значки, BIMI, значок сайта
+            // отправителя — org_icon.dart. Это вид ленты — здесь, а не в
+            // «Антифишинге» (замечание владельца 18.11.2026).
+            const SizedBox(height: Space.s),
+            SettingsGroup(children: [
+              SettingsSwitchItem(
+                icon: AppIcons.badge,
+                title: l10n.tr('orgIcons'),
+                subtitle: l10n.tr('orgIconsDesc'),
+                value: settings.orgIcons,
+                onChanged: notifier.setOrgIcons,
+              ),
+            ]),
+            // «Область чтения» (планшет и компьютер) — из «Оформления».
+            const _ReadingPaneSection(),
+          ],
           if (part == MailSettingsPart.reading) const MailOpeningSection(),
           // Картинки из интернета (замечание владельца 18.11.2026: «разрешение
           // отображения картинок не там, где пользователь ожидает» — было
@@ -353,19 +373,7 @@ class MailSettingsScreen extends ConsumerWidget {
               onChanged: (v) => fn.setAntiPhishing(v!),
             ),
           ]),
-          // Иконки организаций (2.6.1, одна настройка вместо «Логотипов
-          // BIMI»): сохранённые логотипы и значки, BIMI, значок сайта
-          // отправителя — org_icon.dart.
-          const SizedBox(height: Space.s),
-          SettingsGroup(children: [
-            SettingsSwitchItem(
-              icon: AppIcons.badge,
-              title: l10n.tr('orgIcons'),
-              subtitle: l10n.tr('orgIconsDesc'),
-              value: settings.orgIcons,
-              onChanged: notifier.setOrgIcons,
-            ),
-          ]),
+          // «Иконки организаций» — в «Чтении», у ленты (18.11.2026).
           ],
           if (part == MailSettingsPart.files) ...[
           // Просмотр документов во вложениях (1.11.x, просьба владельца
@@ -626,6 +634,40 @@ class _MailImagesSection extends ConsumerWidget {
             subtitle: '${l10n.tr('whitelistedDomains')}: ${t.whitelistedDomains.length}',
             onTap: () => context.push('/settings/trackers'),
           ),
+        ]),
+      ],
+    );
+  }
+}
+
+/// «Область чтения» (1.12.x, как «Вид → Область чтения» в Outlook): справа,
+/// снизу или скрыта — только где лента и письмо бывают рядом: планшет и
+/// компьютер. С 18.11.2026 — в «Чтении» (было в «Оформлении»).
+class _ReadingPaneSection extends ConsumerWidget {
+  const _ReadingPaneSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final wide = AdaptiveLayout.isTablet(context) ||
+        (!kIsWeb &&
+            (defaultTargetPlatform == TargetPlatform.windows ||
+                defaultTargetPlatform == TargetPlatform.macOS ||
+                defaultTargetPlatform == TargetPlatform.linux));
+    if (!wide) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SettingsSectionTitle(l10n.tr('readingPane')),
+        SettingsGroup(children: [
+          for (final p in PanePosition.values)
+            AppRadioTile<PanePosition>(
+              title: Text(readingPaneLabel(l10n, p).label),
+              subtitle: readingPaneLabel(l10n, p).hint == null ? null : Text(readingPaneLabel(l10n, p).hint!),
+              value: p,
+              groupValue: ref.watch(readingPaneProvider),
+              onChanged: (v) => ref.read(readingPaneProvider.notifier).set(v ?? PanePosition.right),
+            ),
         ]),
       ],
     );

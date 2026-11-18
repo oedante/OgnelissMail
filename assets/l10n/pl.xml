@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Co {n} min</string>
     <string name="checkHourly">Co godzinę</string>
     <string name="checkManual">Tylko ręcznie</string>
-    <string name="checkMailHint">Natychmiast: serwer od razu zgłasza nową pocztę (w tle — z opcją Działaj w tle). Według harmonogramu: natychmiast w godzinach pracy, poza nimi w odstępach czasu (Ustawienia → Ustawienia zaawansowane → Harmonogram dostarczania). Co 15/30/60 minut: zaplanowane sprawdzanie, najbardziej oszczędne. Ręcznie: po otwarciu aplikacji i pociągnięciu w dół, aby odświeżyć.</string>
+    <string name="checkMailHint">Natychmiast: serwer od razu zgłasza nową pocztę (w tle — z opcją Działaj w tle). Według harmonogramu: natychmiast w godzinach pracy, poza nimi w odstępach czasu (Ustawienia → Synchronizacja → Harmonogram dostarczania). Co 15/30/60 minut: zaplanowane sprawdzanie, najbardziej oszczędne. Ręcznie: po otwarciu aplikacji i pociągnięciu w dół, aby odświeżyć.</string>
     <string name="wifiOnlyAcc">Tylko Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automatyczne sprawdzanie tylko po połączeniu z Wi‑Fi</string>
     <string name="accSectionConnection">Połączenie</string>
@@ -3979,7 +3979,7 @@
     <string name="faq_mail_13_q">Co to za ikony pod nagłówkiem wiadomości?</string>
     <string name="faq_mail_13_a">Informacje o wiadomości — tłumaczenie, rezygnacja z subskrypcji, ukryte obrazy, prośba o potwierdzenie odczytu, doręczenie, podpis, ważność, tagi — są zebrane w jednym rzędzie ikon. Dotknięcie ikony rozwija szczegóły z przyciskami, ponowne — zwija. Ikony tłumaczenia i obrazów działają od razu: tłumaczą wiadomość lub pokazują obrazy, a pozostałe opcje są w menu ▾ albo pod długim naciśnięciem. Ostrzeżenie o podrobionym nadawcy i zaproszenia na spotkania pozostają pełnymi kartami.</string>
     <string name="faq_mail_14_q">Jak urządzić ekran tabletu lub komputera jak w Outlooku?</string>
-    <string name="faq_mail_14_a">Okienko odczytu można ustawić po prawej, na dole albo ukryć: Ustawienia → Wygląd → Okienko odczytu lub menu ⋮ nad listą. Wiele wiadomości zaznacza się jak w Outlooku: Ctrl + kliknięcie (na Macu i iPadzie Cmd) — pojedynczo, Shift — zakres, Ctrl+A — wszystkie wczytane, Esc — anuluj zaznaczenie, Delete — usuń zaznaczone. Załącznik otwiera się bezpośrednio w okienku odczytu, a Wstecz wraca do wiadomości.</string>
+    <string name="faq_mail_14_a">Okienko odczytu można ustawić po prawej, na dole albo ukryć: Ustawienia → Lista i czytanie → Okienko odczytu lub menu ⋮ nad listą. Wiele wiadomości zaznacza się jak w Outlooku: Ctrl + kliknięcie (na Macu i iPadzie Cmd) — pojedynczo, Shift — zakres, Ctrl+A — wszystkie wczytane, Esc — anuluj zaznaczenie, Delete — usuń zaznaczone. Załącznik otwiera się bezpośrednio w okienku odczytu, a Wstecz wraca do wiadomości.</string>
     <string name="faq_mail_15_q">Jak tłumaczyć wiadomości od razu po otwarciu?</string>
     <string name="faq_mail_15_a">Dotknij ▾ przy ikonie tłumaczenia i wybierz Zawsze tłumacz z języka … — wiadomości w tym języku będą się otwierać już przetłumaczone; oryginał pokaże ta sama ikona. Lista języków: Ustawienia → Poczta → Tłumaczenie → Zawsze tłumacz z języków. Tłumaczenie jest proponowane tylko wtedy, gdy język wiadomości został rozpoznany z pewnością, i nie dla języków telefonu (wyłącza się to w tym samym miejscu: Języki telefonu — nie proponuj tłumaczenia).</string>
     <string name="convReplyTo">Odpowiedź do {name}</string>
@@ -4397,4 +4397,5 @@
     <string name="mailImagesSection">Obrazy w wiadomościach</string>
     <string name="loadRemoteImages">Od razu wczytuj obrazy z internetu</string>
     <string name="loadRemoteImagesDesc">Wyłączone — tylko przyciskiem „Pokaż obrazy” w wiadomości: nadawca nie dowie się, że ją otwarto</string>
+    <string name="syncSettingsDesc">Sprawdzanie wszystkich skrzynek, harmonogram, konflikty</string>
 </resources>

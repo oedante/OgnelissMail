@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Každých {n} min</string>
     <string name="checkHourly">Každou hodinu</string>
     <string name="checkManual">Pouze ručně</string>
-    <string name="checkMailHint">Okamžitě – server oznámí novou poštu hned (na pozadí – s volbou Běh na pozadí). Podle plánu – okamžitě v pracovní době, jinak v intervalech (Nastavení → Rozšířená nastavení → Plán doručování). Každých 15/30/60 minut – plánované kontroly, nejúspornější. Ručně – když otevřete aplikaci a potáhnete dolů pro obnovení.</string>
+    <string name="checkMailHint">Okamžitě – server oznámí novou poštu hned (na pozadí – s volbou Běh na pozadí). Podle plánu – okamžitě v pracovní době, jinak v intervalech (Nastavení → Synchronizace → Plán doručování). Každých 15/30/60 minut – plánované kontroly, nejúspornější. Ručně – když otevřete aplikaci a potáhnete dolů pro obnovení.</string>
     <string name="wifiOnlyAcc">Pouze přes Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automatická kontrola jen při připojení k Wi‑Fi</string>
     <string name="accSectionConnection">Připojení</string>
@@ -3958,7 +3958,7 @@
     <string name="faq_mail_13_q">Co jsou ikony pod záhlavím zprávy?</string>
     <string name="faq_mail_13_a">Údaje o zprávě – překlad, odhlášení odběru, skryté obrázky, žádost o potvrzení o přečtení, doručení, podpis, důležitost, štítky – jsou shrnuty do jednoho řádku ikon. Klepnutí na ikonu rozbalí podrobnosti s tlačítky, další klepnutí je sbalí. Ikony překladu a obrázků fungují hned: přeloží zprávu nebo zobrazí obrázky, ostatní možnosti jsou v nabídce ▾ nebo pod dlouhým stisknutím. Upozornění na podvrženého odesílatele a pozvánky na schůzky zůstávají celými kartami.</string>
     <string name="faq_mail_14_q">Jak uspořádat obrazovku tabletu nebo počítače jako v Outlooku?</string>
-    <string name="faq_mail_14_a">Podokno čtení lze umístit vpravo, dole nebo skrýt: Nastavení → Vzhled → Podokno čtení nebo nabídka ⋮ nad seznamem. Více zpráv se vybírá jako v Outlooku: Ctrl + kliknutí (na Macu a iPadu Cmd) – po jedné, Shift – rozsah, Ctrl+A – všechny načtené, Esc – zrušit výběr, Delete – smazat vybrané. Příloha se otevře přímo v podokně čtení a Zpět vrátí ke zprávě.</string>
+    <string name="faq_mail_14_a">Podokno čtení lze umístit vpravo, dole nebo skrýt: Nastavení → Seznam a čtení → Podokno čtení nebo nabídka ⋮ nad seznamem. Více zpráv se vybírá jako v Outlooku: Ctrl + kliknutí (na Macu a iPadu Cmd) – po jedné, Shift – rozsah, Ctrl+A – všechny načtené, Esc – zrušit výběr, Delete – smazat vybrané. Příloha se otevře přímo v podokně čtení a Zpět vrátí ke zprávě.</string>
     <string name="faq_mail_15_q">Jak nechat zprávy přeložit hned při otevření?</string>
     <string name="faq_mail_15_a">Klepněte na ▾ u ikony překladu a vyberte Vždy překládat z jazyka … – zprávy v tomto jazyce se pak budou otevírat rovnou přeložené, originál zobrazíte stejnou ikonou. Seznam jazyků: Nastavení → Pošta → Překlad → Vždy překládat z jazyků. Překlad se nabízí, jen když je jazyk zprávy rozpoznán s jistotou, a nenabízí se pro jazyky telefonu (vypíná se tamtéž: Jazyky telefonu – nenabízet překlad).</string>
     <string name="convReplyTo">Odpověď pro {name}</string>
@@ -4376,4 +4376,5 @@
     <string name="mailImagesSection">Obrázky v e-mailech</string>
     <string name="loadRemoteImages">Načítat obrázky z internetu hned</string>
     <string name="loadRemoteImagesDesc">Vypnuto — jen tlačítkem „Zobrazit obrázky“ v e-mailu: odesílatel se nedozví, že jste e-mail otevřeli</string>
+    <string name="syncSettingsDesc">Kontrola všech schránek, plán, konflikty</string>
 </resources>

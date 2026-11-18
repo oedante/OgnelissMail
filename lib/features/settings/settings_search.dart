@@ -72,6 +72,8 @@ const _entries = <_Entry>[
   _Entry('quickFilters', 'mailReadingSettings', AppIcons.filter_list, '/settings/mail'),
   _Entry('quickReplyBar', 'mailReadingSettings', AppIcons.quickreply, '/settings/mail'),
   _Entry('mailSwipePager', 'mailReadingSettings', AppIcons.swipe, '/settings/mail'),
+  _Entry('loadRemoteImages', 'mailReadingSettings', AppIcons.image, '/settings/mail'),
+  _Entry('blockExternalImages', 'sectionPrivacy', AppIcons.image_not_supported, '/settings/trackers'),
   // Кнопки под письмом и вопрос перед удалением (1.7.3).
   _Entry('mailBarOrder', 'mailReadingSettings', AppIcons.view_week, '/settings/mail'),
   _Entry('confirmMailDelete', 'mailReadingSettings', AppIcons.delete, '/settings/mail'),

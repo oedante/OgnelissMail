@@ -4351,4 +4351,8 @@
     <string name="clientCertDevice">Device certificate</string>
     <string name="clientCertDeviceDesc">Installed on the phone or issued by your organization</string>
     <string name="clientCertDeviceTag">Device certificate — for Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Saved password — tap “Sign in again” or enter a new one</string>
+    <string name="mailImagesSection">Images in emails</string>
+    <string name="loadRemoteImages">Load images from the internet automatically</string>
+    <string name="loadRemoteImagesDesc">Off — only with “Show images” in the email, so the sender doesn’t learn that you opened it</string>
 </resources>

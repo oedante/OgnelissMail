@@ -4330,4 +4330,8 @@
     <string name="clientCertDevice">Sertifikat perangkat</string>
     <string name="clientCertDeviceDesc">Terpasang di ponsel atau diterbitkan organisasi Anda</string>
     <string name="clientCertDeviceTag">Sertifikat perangkat — untuk Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Kata sandi tersimpan — “Masuk lagi” atau masukkan yang baru</string>
+    <string name="mailImagesSection">Gambar di email</string>
+    <string name="loadRemoteImages">Muat gambar dari internet langsung</string>
+    <string name="loadRemoteImagesDesc">Mati — hanya lewat “Tampilkan gambar” di email, agar pengirim tidak tahu Anda membukanya</string>
 </resources>

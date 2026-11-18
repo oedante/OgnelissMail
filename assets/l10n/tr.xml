@@ -4351,4 +4351,8 @@
     <string name="clientCertDevice">Cihaz sertifikası</string>
     <string name="clientCertDeviceDesc">Telefona yüklenmiş veya kuruluşunuzca verilmiş</string>
     <string name="clientCertDeviceTag">Cihaz sertifikası — Exchange ActiveSync için</string>
+    <string name="reauthSavedPassword">Kayıtlı parola — “Yeniden oturum aç” veya yenisini girin</string>
+    <string name="mailImagesSection">E-postalardaki resimler</string>
+    <string name="loadRemoteImages">İnternetteki resimleri hemen yükle</string>
+    <string name="loadRemoteImagesDesc">Kapalı — yalnızca e-postadaki “Resimleri göster” ile; böylece gönderen açtığınızı öğrenmez</string>
 </resources>

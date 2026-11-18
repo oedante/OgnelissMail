@@ -25,6 +25,8 @@ import '../widgets/feature_settings_sections.dart';
 import '../widgets/offline_store_section.dart';
 import '../widgets/translation_settings_section.dart';
 import '../providers/settings_provider.dart';
+import '../../../services/security/tracker_blocker.dart' show trackerBlockerProvider;
+import 'package:go_router/go_router.dart';
 import '../../mail/providers/startup_folder.dart';
 import '../../mail/providers/drawer_prefs.dart'
     show quickFiltersProvider, quickReplyBarProvider, mailSwipePagerProvider, mailBarOrderProvider,
@@ -266,6 +268,11 @@ class MailSettingsScreen extends ConsumerWidget {
           // Бывшие «Возможности» (1.6.1): работа с письмами и их открытие.
           if (part == MailSettingsPart.compose) const MailWorkSection(),
           if (part == MailSettingsPart.reading) const MailOpeningSection(),
+          // Картинки из интернета (замечание владельца 18.11.2026: «разрешение
+          // отображения картинок не там, где пользователь ожидает» — было
+          // только в «Конфиденциальность → Блокировка трекеров»). Та же
+          // настройка, что и там.
+          if (part == MailSettingsPart.reading) const _MailImagesSection(),
           // «Отправка» и «Антифишинг» — здесь, в почте (раньше лежали в
           // «Возможностях» среди разделов приложения).
           if (part == MailSettingsPart.compose) ...[
@@ -579,6 +586,48 @@ class _MailBarOrderSheet extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// «Картинки в письмах»: загружать картинки из интернета сразу или по кнопке
+/// «Показать изображения»; доверенные отправители — в «Блокировке трекеров».
+class _MailImagesSection extends ConsumerWidget {
+  const _MailImagesSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final t = ref.watch(trackerBlockerProvider);
+    final n = ref.read(trackerBlockerProvider.notifier);
+    final blocked = t.isEnabled && t.blockExternalImages;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SettingsSectionTitle(l10n.tr('mailImagesSection')),
+        SettingsGroup(children: [
+          SettingsSwitchItem(
+            icon: AppIcons.image,
+            title: l10n.tr('loadRemoteImages'),
+            subtitle: l10n.tr('loadRemoteImagesDesc'),
+            value: !blocked,
+            onChanged: (load) {
+              if (load) {
+                n.setBlockExternalImages(false);
+              } else {
+                if (!t.isEnabled) n.setEnabled(true);
+                n.setBlockExternalImages(true);
+              }
+            },
+          ),
+          SettingsItem(
+            icon: AppIcons.verified_user,
+            title: l10n.tr('imageAllowlistDesc'),
+            subtitle: '${l10n.tr('whitelistedDomains')}: ${t.whitelistedDomains.length}',
+            onTap: () => context.push('/settings/trackers'),
+          ),
+        ]),
+      ],
     );
   }
 }

@@ -4372,4 +4372,8 @@
     <string name="clientCertDevice">Certificatul dispozitivului</string>
     <string name="clientCertDeviceDesc">Instalat pe telefon sau emis de organizație</string>
     <string name="clientCertDeviceTag">Certificatul dispozitivului — pentru Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Parolă salvată — „Conectează-te din nou” sau introdu una nouă</string>
+    <string name="mailImagesSection">Imagini în e-mailuri</string>
+    <string name="loadRemoteImages">Încarcă imediat imaginile de pe internet</string>
+    <string name="loadRemoteImagesDesc">Dezactivat — doar cu „Afișează imaginile” din e-mail, astfel expeditorul nu află că l-ați deschis</string>
 </resources>

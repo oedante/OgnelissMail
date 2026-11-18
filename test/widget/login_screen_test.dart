@@ -6,12 +6,16 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ogneliss/core/theme/app_theme.dart';
 import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/auth/screens/login_screen.dart';
+import 'package:ogneliss/features/mail/providers/mail_providers.dart' show accountsProvider;
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/services/mail/mail_provider_detect.dart' show MailKind;
 import 'package:ogneliss/services/mail/oauth/cross_platform_oauth.dart';
@@ -327,5 +331,65 @@ void main() {
     expect(find.text('IMAP организации'), findsWidgets);
     expect(find.textContaining('спросите у администратора'), findsOneWidget);
     expect(find.byKey(const ValueKey('imap_login')), findsOneWidget);
+  });
+
+  testWidgets('«Войти снова»: сохранённый пароль в поле, показать его нельзя, новый — можно (18.11.2026)', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    FlutterSecureStorage.setMockInitialValues({'pwd_ic': 'abcd-efgh-ijkl-mnop'});
+    final prefs = await SharedPreferences.getInstance();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    await tester.runAsync(() => db.into(db.accounts).insert(AccountsCompanion.insert(
+          id: 'ic',
+          type: 1,
+          email: 'ivan@icloud.com',
+          displayName: 'Иван',
+          username: 'ivan@icloud.com',
+          createdAt: DateTime(2026),
+          imapServer: const Value('imap.mail.me.com'),
+          smtpServer: const Value('smtp.mail.me.com'),
+        )));
+    tester.view.physicalSize = const Size(400, 900) * 2;
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        databaseProvider.overrideWithValue(db),
+        sharedPrefsProvider.overrideWithValue(prefs),
+        crossPlatformOAuthProvider.overrideWithValue(const _NoDirect()),
+      ],
+      child: MaterialApp.router(
+        theme: AppTheme.lightTheme(1.0),
+        locale: const Locale('ru'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        // Экран — когда ящики уже прочитаны из базы (как в приложении).
+        routerConfig: GoRouter(routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, __) => Consumer(
+              builder: (_, ref, __) =>
+                  ref.watch(accountsProvider).isEmpty ? const SizedBox() : const LoginScreen(reauthAccountId: 'ic'),
+            ),
+          ),
+        ]),
+      ),
+    ));
+    await _settle(tester);
+    final l10n = AppLocalizations.of(tester.element(find.byType(LoginScreen)));
+    final pw = find.byWidgetPredicate(
+        (w) => w is TextField && w.obscureText && w.controller?.text == 'abcd-efgh-ijkl-mnop');
+    expect(pw, findsOneWidget, reason: 'сохранённый пароль — в поле, точками');
+    expect(find.textContaining(l10n.tr('reauthSavedPassword').substring(0, 18)), findsOneWidget);
+    expect(find.byTooltip(l10n.tr('showPassword')), findsNothing, reason: 'сохранённый не раскрывается');
+    await tester.enterText(pw, 'new-password');
+    await _settle(tester);
+    expect(find.byTooltip(l10n.tr('showPassword')), findsOneWidget, reason: 'новый пароль показать можно');
+    await tester.pumpWidget(const SizedBox());
+    await tester.runAsync(db.close);
   });
 }

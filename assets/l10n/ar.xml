@@ -4435,4 +4435,8 @@
     <string name="clientCertDevice">شهادة الجهاز</string>
     <string name="clientCertDeviceDesc">مثبتة على الهاتف أو صادرة عن مؤسستك</string>
     <string name="clientCertDeviceTag">شهادة الجهاز — لـ Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">كلمة المرور المحفوظة — «تسجيل الدخول مجددًا» أو أدخل كلمة جديدة</string>
+    <string name="mailImagesSection">الصور في الرسائل</string>
+    <string name="loadRemoteImages">تحميل الصور من الإنترنت تلقائيًا</string>
+    <string name="loadRemoteImagesDesc">متوقف — فقط عبر «إظهار الصور» في الرسالة، فلا يعرف المرسل أنك فتحتها</string>
 </resources>

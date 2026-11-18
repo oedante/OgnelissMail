@@ -4330,4 +4330,8 @@
     <string name="clientCertDevice">ใบรับรองอุปกรณ์</string>
     <string name="clientCertDeviceDesc">ติดตั้งบนโทรศัพท์หรือออกโดยองค์กรของคุณ</string>
     <string name="clientCertDeviceTag">ใบรับรองอุปกรณ์ — สำหรับ Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">รหัสผ่านที่บันทึกไว้ — “ลงชื่อเข้าใช้อีกครั้ง” หรือใส่รหัสใหม่</string>
+    <string name="mailImagesSection">รูปภาพในอีเมล</string>
+    <string name="loadRemoteImages">โหลดรูปภาพจากอินเทอร์เน็ตทันที</string>
+    <string name="loadRemoteImagesDesc">ปิด — แสดงเฉพาะเมื่อกด “แสดงรูปภาพ” ในอีเมล ผู้ส่งจะไม่รู้ว่าคุณเปิดอ่าน</string>
 </resources>

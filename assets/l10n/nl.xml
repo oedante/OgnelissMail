@@ -4351,4 +4351,8 @@
     <string name="clientCertDevice">Apparaatcertificaat</string>
     <string name="clientCertDeviceDesc">Op de telefoon geïnstalleerd of uitgegeven door uw organisatie</string>
     <string name="clientCertDeviceTag">Apparaatcertificaat — voor Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Opgeslagen wachtwoord — ‘Opnieuw aanmelden’ of voer een nieuw in</string>
+    <string name="mailImagesSection">Afbeeldingen in e-mails</string>
+    <string name="loadRemoteImages">Afbeeldingen van internet direct laden</string>
+    <string name="loadRemoteImagesDesc">Uit — alleen via ‘Afbeeldingen tonen’ in de e-mail, zodat de afzender niet weet dat u hem opende</string>
 </resources>

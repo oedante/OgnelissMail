@@ -4351,4 +4351,8 @@
     <string name="clientCertDevice">Laitevarmenne</string>
     <string name="clientCertDeviceDesc">Puhelimeen asennettu tai organisaation myöntämä</string>
     <string name="clientCertDeviceTag">Laitevarmenne – Exchange ActiveSyncille</string>
+    <string name="reauthSavedPassword">Tallennettu salasana – ”Kirjaudu uudelleen” tai anna uusi</string>
+    <string name="mailImagesSection">Kuvat sähköposteissa</string>
+    <string name="loadRemoteImages">Lataa kuvat internetistä heti</string>
+    <string name="loadRemoteImagesDesc">Pois – vain viestin ”Näytä kuvat” -painikkeella, jolloin lähettäjä ei saa tietää avauksesta</string>
 </resources>

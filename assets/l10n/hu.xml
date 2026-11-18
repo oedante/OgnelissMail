@@ -4351,4 +4351,8 @@
     <string name="clientCertDevice">Eszköztanúsítvány</string>
     <string name="clientCertDeviceDesc">A telefonra telepített vagy a szervezet által kiadott</string>
     <string name="clientCertDeviceTag">Eszköztanúsítvány – Exchange ActiveSynchez</string>
+    <string name="reauthSavedPassword">Mentett jelszó – „Újra bejelentkezés” vagy adjon meg újat</string>
+    <string name="mailImagesSection">Képek az e-mailekben</string>
+    <string name="loadRemoteImages">Internetes képek azonnali betöltése</string>
+    <string name="loadRemoteImagesDesc">Kikapcsolva – csak a levél „Képek megjelenítése” gombjával, így a feladó nem tudja meg, hogy megnyitotta</string>
 </resources>

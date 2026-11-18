@@ -4351,4 +4351,8 @@
     <string name="clientCertDevice">डिवाइस प्रमाणपत्र</string>
     <string name="clientCertDeviceDesc">फ़ोन पर इंस्टॉल या आपके संगठन द्वारा जारी</string>
     <string name="clientCertDeviceTag">डिवाइस प्रमाणपत्र — Exchange ActiveSync के लिए</string>
+    <string name="reauthSavedPassword">सहेजा गया पासवर्ड — “फिर से साइन इन करें” या नया डालें</string>
+    <string name="mailImagesSection">ईमेल में चित्र</string>
+    <string name="loadRemoteImages">इंटरनेट से चित्र तुरंत लोड करें</string>
+    <string name="loadRemoteImagesDesc">बंद — केवल ईमेल में “चित्र दिखाएँ” से, ताकि भेजने वाले को पता न चले कि आपने इसे खोला</string>
 </resources>

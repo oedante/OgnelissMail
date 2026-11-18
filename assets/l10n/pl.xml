@@ -4393,4 +4393,8 @@
     <string name="clientCertDevice">Certyfikat urządzenia</string>
     <string name="clientCertDeviceDesc">Zainstalowany w telefonie lub wydany przez organizację</string>
     <string name="clientCertDeviceTag">Certyfikat urządzenia — dla Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Zapisane hasło — „Zaloguj ponownie” lub wpisz nowe</string>
+    <string name="mailImagesSection">Obrazy w wiadomościach</string>
+    <string name="loadRemoteImages">Od razu wczytuj obrazy z internetu</string>
+    <string name="loadRemoteImagesDesc">Wyłączone — tylko przyciskiem „Pokaż obrazy” w wiadomości: nadawca nie dowie się, że ją otwarto</string>
 </resources>

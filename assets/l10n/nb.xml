@@ -4351,4 +4351,8 @@
     <string name="clientCertDevice">Enhetssertifikat</string>
     <string name="clientCertDeviceDesc">Installert på telefonen eller utstedt av organisasjonen</string>
     <string name="clientCertDeviceTag">Enhetssertifikat – for Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Lagret passord – «Logg inn på nytt» eller skriv inn et nytt</string>
+    <string name="mailImagesSection">Bilder i e-post</string>
+    <string name="loadRemoteImages">Last inn bilder fra Internett med en gang</string>
+    <string name="loadRemoteImagesDesc">Av – bare med «Vis bilder» i e-posten, så avsenderen ikke får vite at du åpnet den</string>
 </resources>

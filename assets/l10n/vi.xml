@@ -4330,4 +4330,8 @@
     <string name="clientCertDevice">Chứng chỉ thiết bị</string>
     <string name="clientCertDeviceDesc">Đã cài trên điện thoại hoặc do tổ chức cấp</string>
     <string name="clientCertDeviceTag">Chứng chỉ thiết bị — cho Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Mật khẩu đã lưu — “Đăng nhập lại” hoặc nhập mật khẩu mới</string>
+    <string name="mailImagesSection">Hình ảnh trong thư</string>
+    <string name="loadRemoteImages">Tải ngay hình ảnh từ internet</string>
+    <string name="loadRemoteImagesDesc">Tắt — chỉ khi bấm “Hiện hình ảnh” trong thư, để người gửi không biết bạn đã mở thư</string>
 </resources>

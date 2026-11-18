@@ -1172,6 +1172,11 @@ class SyncService {
               .write(const AccountsCompanion(authFailedAt: Value(null)));
           _authStrike.remove(account.id);
           AppLogger.info('Аккаунт ${account.email}: вход восстановлен');
+          // Список ящиков в памяти — тоже (журнал 18.11.2026: iCloud вошёл,
+          // «вход восстановлен», а проверки по-прежнему пропускали ящик —
+          // «требуется вход»: отметка оставалась в памяти, и баннер «Войти
+          // снова» не исчезал).
+          await _ref.read(accountsProvider.notifier).reload();
         } catch (_) {}
       }
     } catch (e) {

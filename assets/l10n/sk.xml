@@ -4372,4 +4372,8 @@
     <string name="clientCertDevice">Certifikát zariadenia</string>
     <string name="clientCertDeviceDesc">Nainštalovaný v telefóne alebo vydaný organizáciou</string>
     <string name="clientCertDeviceTag">Certifikát zariadenia — pre Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Uložené heslo — „Prihlásiť znova“ alebo zadajte nové</string>
+    <string name="mailImagesSection">Obrázky v e-mailoch</string>
+    <string name="loadRemoteImages">Načítavať obrázky z internetu hneď</string>
+    <string name="loadRemoteImagesDesc">Vypnuté — len tlačidlom „Zobraziť obrázky“ v e-maile: odosielateľ sa nedozvie, že ste ho otvorili</string>
 </resources>

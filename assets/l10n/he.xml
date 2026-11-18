@@ -4372,4 +4372,8 @@
     <string name="clientCertDevice">אישור המכשיר</string>
     <string name="clientCertDeviceDesc">מותקן בטלפון או הונפק על ידי הארגון</string>
     <string name="clientCertDeviceTag">אישור המכשיר — עבור Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">סיסמה שמורה — „התחברות מחדש” או הזינו סיסמה חדשה</string>
+    <string name="mailImagesSection">תמונות בהודעות</string>
+    <string name="loadRemoteImages">טעינת תמונות מהאינטרנט מיד</string>
+    <string name="loadRemoteImagesDesc">כבוי — רק בלחיצה על „הצגת תמונות” בהודעה, כך שהשולח לא יידע שפתחתם אותה</string>
 </resources>

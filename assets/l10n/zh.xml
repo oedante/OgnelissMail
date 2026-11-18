@@ -4330,4 +4330,8 @@
     <string name="clientCertDevice">设备证书</string>
     <string name="clientCertDeviceDesc">已安装在手机上或由组织颁发</string>
     <string name="clientCertDeviceTag">设备证书 — 用于 Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">已保存的密码 — 点“重新登录”或输入新密码</string>
+    <string name="mailImagesSection">邮件中的图片</string>
+    <string name="loadRemoteImages">自动加载网络图片</string>
+    <string name="loadRemoteImagesDesc">关闭 — 只在邮件中点“显示图片”时加载，发件人不会知道您打开了邮件</string>
 </resources>

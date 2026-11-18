@@ -41,6 +41,7 @@ import 'package:badges/badges.dart' as badges;
 
 import '../../l10n/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
+import '../../services/accounts/account_labels.dart' show accountLabelsProvider;
 import '../../features/mail/providers/mail_providers.dart';
 import '../../features/mail/providers/drawer_prefs.dart' show BarItem, PhoneBarNotifier, phoneBarProvider;
 import 'phone_bar.dart';
@@ -569,6 +570,9 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
     if (accounts.length < 2) return;
     final active = ref.read(activeAccountProvider)?.id;
     final all = ref.read(allAccountsModeProvider);
+    // Название ящика, которое дал пользователь («Работа», «Семья»), —
+    // вместо имени отправителя (замечание 18.11.2026).
+    final labels = ref.read(accountLabelsProvider);
     final picked = await showActionSheet<String>(context, title: l10n.tr('accounts'), items: [
       ActionSheetItem(
         icon: AppIcons.all_inbox,
@@ -581,7 +585,7 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
           icon: a.id == active && !all ? AppIcons.check_circle : AppIcons.forAccountType(a.type.name),
           // Портрет ящика (1.10.3); текущий — с галочкой справа.
           leading: AccountAvatar(account: a),
-          label: a.displayName.isEmpty ? a.email : a.displayName,
+          label: labels[a.id] ?? (a.displayName.isEmpty ? a.email : a.displayName),
           subtitle: a.email,
           checked: a.id == active && !all,
           value: a.id,

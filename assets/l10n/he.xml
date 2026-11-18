@@ -4377,4 +4377,6 @@
     <string name="loadRemoteImages">טעינת תמונות מהאינטרנט מיד</string>
     <string name="loadRemoteImagesDesc">כבוי — רק בלחיצה על „הצגת תמונות” בהודעה, כך שהשולח לא יידע שפתחתם אותה</string>
     <string name="syncSettingsDesc">בדיקת כל תיבות הדואר, לוח זמנים, התנגשויות</string>
+    <string name="faq_settings_4_q">איך יודעים מה הגדרה עושה?</string>
+    <string name="faq_settings_4_a">לחצו לחיצה ארוכה על פריט בהגדרות (במחשב – לחיצה ימנית בעכבר): ייפתח הסבר על מה הוא משפיע, יחד עם התשובות עליו מתוך „שאלות ותשובות”. הסמל „?” ליד השם פותח את אותו הדבר.</string>
 </resources>

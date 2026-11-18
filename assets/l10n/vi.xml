@@ -4335,4 +4335,6 @@
     <string name="loadRemoteImages">Tải ngay hình ảnh từ internet</string>
     <string name="loadRemoteImagesDesc">Tắt — chỉ khi bấm “Hiện hình ảnh” trong thư, để người gửi không biết bạn đã mở thư</string>
     <string name="syncSettingsDesc">Kiểm tra mọi hộp thư, lịch, xung đột</string>
+    <string name="faq_settings_4_q">Làm sao biết một cài đặt có tác dụng gì?</string>
+    <string name="faq_settings_4_a">Nhấn giữ một mục cài đặt (trên máy tính, nhấp chuột phải vào mục đó): phần giải thích mục đó ảnh hưởng đến gì sẽ mở ra, kèm các câu trả lời về nó trong «Câu hỏi và trả lời». Biểu tượng «?» cạnh tên cũng mở nội dung này.</string>
 </resources>

@@ -4356,4 +4356,6 @@
     <string name="loadRemoteImages">Afbeeldingen van internet direct laden</string>
     <string name="loadRemoteImagesDesc">Uit — alleen via ‘Afbeeldingen tonen’ in de e-mail, zodat de afzender niet weet dat u hem opende</string>
     <string name="syncSettingsDesc">Controle van alle postvakken, schema, conflicten</string>
+    <string name="faq_settings_4_q">Hoe kom ik te weten wat een instelling doet?</string>
+    <string name="faq_settings_4_a">Houd een onderdeel van de instellingen ingedrukt (op een computer: klik er met de rechtermuisknop op): er opent een uitleg over waar het invloed op heeft, met de antwoorden erover uit „Vragen en antwoorden”. Het pictogram „?” naast de naam opent hetzelfde.</string>
 </resources>

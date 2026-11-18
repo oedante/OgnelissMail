@@ -4356,4 +4356,6 @@
     <string name="loadRemoteImages">Lataa kuvat internetistä heti</string>
     <string name="loadRemoteImagesDesc">Pois – vain viestin ”Näytä kuvat” -painikkeella, jolloin lähettäjä ei saa tietää avauksesta</string>
     <string name="syncSettingsDesc">Kaikkien postilaatikoiden tarkistus, aikataulu, ristiriidat</string>
+    <string name="faq_settings_4_q">Miten saan selville, mitä asetus tekee?</string>
+    <string name="faq_settings_4_a">Paina asetuskohdetta pitkään (tietokoneella napsauta sitä hiiren oikealla painikkeella): avautuu selitys siitä, mihin se vaikuttaa, ja sitä koskevat vastaukset kohdasta ”Kysymykset ja vastaukset”. Nimen vieressä oleva ”?”-kuvake avaa saman.</string>
 </resources>

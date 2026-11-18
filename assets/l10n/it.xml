@@ -4356,4 +4356,6 @@
     <string name="loadRemoteImages">Carica subito le immagini da internet</string>
     <string name="loadRemoteImagesDesc">Disattivato: solo con «Mostra immagini» nell’email, così il mittente non sa che l’hai aperta</string>
     <string name="syncSettingsDesc">Controllo di tutte le caselle, pianificazione, conflitti</string>
+    <string name="faq_settings_4_q">Come scopro a cosa serve un\'impostazione?</string>
+    <string name="faq_settings_4_a">Tieni premuto una voce delle impostazioni (sul computer, fai clic con il tasto destro): si apre una spiegazione di cosa modifica, insieme alle risposte che la riguardano da «Domande e risposte». L\'icona «?» accanto al nome apre la stessa cosa.</string>
 </resources>

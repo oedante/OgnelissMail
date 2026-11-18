@@ -4356,4 +4356,6 @@
     <string name="loadRemoteImages">Läs in bilder från internet direkt</string>
     <string name="loadRemoteImagesDesc">Av – bara med ”Visa bilder” i meddelandet, så att avsändaren inte får veta att du öppnade det</string>
     <string name="syncSettingsDesc">Kontroll av alla brevlådor, schema, konflikter</string>
+    <string name="faq_settings_4_q">Hur tar jag reda på vad en inställning gör?</string>
+    <string name="faq_settings_4_a">Håll fingret på en punkt i inställningarna (på en dator: högerklicka på den): en förklaring av vad den påverkar öppnas, tillsammans med svar om den från ”Frågor och svar”. Ikonen ”?” bredvid namnet öppnar samma sak.</string>
 </resources>

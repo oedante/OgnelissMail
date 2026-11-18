@@ -4356,4 +4356,6 @@
     <string name="loadRemoteImages">İnternetteki resimleri hemen yükle</string>
     <string name="loadRemoteImagesDesc">Kapalı — yalnızca e-postadaki “Resimleri göster” ile; böylece gönderen açtığınızı öğrenmez</string>
     <string name="syncSettingsDesc">Tüm posta kutularını denetleme, zamanlama, çakışmalar</string>
+    <string name="faq_settings_4_q">Bir ayarın ne işe yaradığını nasıl öğrenirim?</string>
+    <string name="faq_settings_4_a">Ayarlardaki bir öğeye basılı tutun (bilgisayarda sağ tıklayın): neyi etkilediğine dair bir açıklama ve «Sorular ve yanıtlar» bölümünden onunla ilgili yanıtlar açılır. Adın yanındaki «?» simgesi de aynısını açar.</string>
 </resources>

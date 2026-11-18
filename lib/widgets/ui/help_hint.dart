@@ -4,23 +4,36 @@
 // Длинные абзацы на входе в экран и под настройками отвлекали и отодвигали
 // сами настройки вниз (замечание 10.10.2026). Теперь на экране — короткая
 // строка, а «как это работает» открывается по значку «?» в шторке.
+//
+// 18.11.2026 (просьба владельца): в той же шторке — ответы из «Вопросов и
+// ответов» про эту настройку (features/help/settings_help.dart), а у строк
+// настроек она открывается и долгим нажатием (на компьютере — правой
+// кнопкой мыши).
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/app_theme.dart';
+import '../../features/help/settings_help.dart';
 import '../../l10n/app_localizations.dart';
 import '../common/app_sheet.dart';
 
-/// Открыть пояснение в нижней шторке.
+/// Открыть пояснение в нижней шторке. [text] — пояснение (может быть
+/// пустым); ниже — вопросы и ответы про пункт с названием [title].
 Future<void> showHelpSheet(BuildContext context, {String? title, required String text}) {
+  final l10n = AppLocalizations.of(context);
+  final faq = SettingsHelp.faqFor(l10n, title);
+  final router = GoRouter.maybeOf(context);
+  final section = faq.isEmpty ? null : SettingsHelp.sectionOf(faq.first);
   return showAppSheet<void>(
     context: context,
     showDragHandle: true,
     isScrollControlled: true,
     builder: (ctx) {
       final theme = Theme.of(ctx);
+      final body = theme.textTheme.bodyLarge?.copyWith(height: 1.4);
       return ConstrainedBox(
         constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.8),
         child: SingleChildScrollView(
@@ -33,14 +46,31 @@ Future<void> showHelpSheet(BuildContext context, {String? title, required String
                 Text(title, style: theme.textTheme.titleLarge),
                 const SizedBox(height: Space.m),
               ],
-              Text(text, style: theme.textTheme.bodyLarge?.copyWith(height: 1.4)),
+              if (text.isNotEmpty) Text(text, style: body),
+              for (final (i, it) in faq.indexed) ...[
+                if (i > 0 || text.isNotEmpty) const SizedBox(height: Space.l),
+                Text(it.q(l10n), style: theme.textTheme.titleSmall),
+                const SizedBox(height: Space.xs),
+                Text(it.a(l10n), style: body),
+              ],
               const SizedBox(height: Space.l),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  child: Text(AppLocalizations.of(ctx).tr('close')),
-                ),
+              Row(
+                children: [
+                  if (router != null && section != null)
+                    TextButton.icon(
+                      icon: const Icon(AppIcons.help),
+                      label: Text(l10n.tr('faqTitle')),
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                        router.push('/settings/faq?section=$section');
+                      },
+                    ),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    child: Text(l10n.tr('close')),
+                  ),
+                ],
               ),
             ],
           ),
@@ -48,6 +78,13 @@ Future<void> showHelpSheet(BuildContext context, {String? title, required String
       );
     },
   );
+}
+
+/// Справка к строке настроек по долгому нажатию и правой кнопке: null —
+/// показать нечего (ни пояснения, ни вопросов про этот пункт).
+VoidCallback? settingHelpAction(BuildContext context, String title, String? hint) {
+  if (!SettingsHelp.has(AppLocalizations.of(context), title, hint)) return null;
+  return () => showHelpSheet(context, title: title, text: hint ?? '');
 }
 
 /// Значок «?» — открывает пояснение. [compact] — маленький, рядом с

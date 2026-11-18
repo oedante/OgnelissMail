@@ -4356,4 +4356,6 @@
     <string name="loadRemoteImages">Cargar automáticamente las imágenes de internet</string>
     <string name="loadRemoteImagesDesc">Desactivado: solo con «Mostrar imágenes» en el correo, así el remitente no sabrá que lo abrió</string>
     <string name="syncSettingsDesc">Comprobación de todos los buzones, horario, conflictos</string>
+    <string name="faq_settings_4_q">¿Cómo sé qué hace un ajuste?</string>
+    <string name="faq_settings_4_a">Mantén pulsado un elemento de los ajustes (en el ordenador, haz clic derecho): se abre una explicación de lo que afecta y las respuestas sobre él de «Preguntas y respuestas». El icono «?» junto al nombre abre lo mismo.</string>
 </resources>

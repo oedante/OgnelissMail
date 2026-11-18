@@ -87,6 +87,42 @@ test('прогноз через кэш и поиск городов', async () =
   }
 });
 
+// 18.11.2026: «Сабетта» не находилась — в cities15000 только города от
+// 15 000 жителей. Теперь: самый полный список городов (cities1000) и все
+// населённые пункты и аэропорты России (places-RU.txt); следы мест
+// (исторические, заброшенные) — нет; повторы по geonameid — один раз.
+test('поиск: посёлки и аэропорты России, повторы и следы мест', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wx'));
+  const place = (id, name, alt, cls, code, pop) =>
+    [id, name, name, alt, '71.27', '72.05', cls, code, 'RU', '', '87', '', '', '', pop, '', '', 'Asia/Yekaterinburg', '2026-01-01'].join('\t');
+  fs.writeFileSync(path.join(dir, 'cities15000.txt'), row(9, 'Kazan', 'Казань', '55.78', '49.12', 'RU', '73', '1243500'));
+  fs.writeFileSync(path.join(dir, 'cities1000.txt'), [
+    row(1, 'Kazan', 'Казань', '55.78', '49.12', 'RU', '73', '1243500'),
+    row(2, 'Salekhard', 'Салехард', '66.53', '66.6', 'RU', '87', '48000'),
+  ].join('\n'));
+  fs.writeFileSync(path.join(dir, 'places-RU.txt'), [
+    place(2, 'Salekhard', 'Салехард', 'P', 'PPLA', '48000'),
+    place(11103760, 'Sabetta International Airport', 'SBT,USDA,Международный аэропорт Сабетта', 'S', 'AIRP', '0'),
+    place(1493111, 'Sabetta', 'Сабетта', 'P', 'PPL', '0'),
+    place(1493112, 'Staraya Sabetta', 'Старая Сабетта', 'P', 'PPLQ', '0'),
+    place(1493113, 'Sabetta River', 'Сабеттаяха', 'H', 'STM', '0'),
+  ].join('\n'));
+  fs.writeFileSync(path.join(dir, 'admin1CodesASCII.txt'), 'RU.87\tYamalo-Nenets\nRU.73\tTatarstan Republic\n');
+  fs.writeFileSync(path.join(dir, 'countryInfo.txt'), '#c\nRU\tRUS\t643\tRS\tRussia\n');
+  const { loadCities, searchCities } = require('../server.js');
+  const cities = loadCities(dir);
+  // cities1000 (2) + места России без повтора Салехарда (2).
+  assert.strictEqual(cities.length, 4);
+  let s = searchCities(cities, 'Сабетта');
+  assert.deepStrictEqual(s.map((x) => x.name), ['Сабетта', 'Международный аэропорт Сабетта']);
+  assert.strictEqual(s[0].display_name, 'Сабетта, Yamalo-Nenets, Russia');
+  s = searchCities(cities, 'Sabetta');
+  assert.deepStrictEqual(s.map((x) => x.name), ['Sabetta', 'Sabetta International Airport']);
+  // По коду аэропорта IATA — тоже, с названием, а не кодом.
+  assert.strictEqual(searchCities(cities, 'SBT')[0].name, 'Sabetta International Airport');
+  assert.strictEqual(searchCities(cities, 'Казань').length, 1);
+});
+
 // 2.5.5: логотипы BIMI — в службе погоды (сервер входа снят). Заглушка вместо
 // DNS: ответ, ошибки домена и сети, выключенная функция.
 test('логотипы BIMI: /weather/bimi', async () => {

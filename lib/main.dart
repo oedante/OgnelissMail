@@ -135,7 +135,8 @@ Future<void> main() async {
             'https://api.met.no/doc/License');
         yield const LicenseEntryWithLineBreaks(['GeoNames (city search)'],
             'City search for the weather uses the GeoNames geographical database '
-            '(cities15000), licensed under Creative Commons Attribution 4.0 (CC BY 4.0).\n'
+            '(cities1000; populated places and airports of Russia), licensed under '
+            'Creative Commons Attribution 4.0 (CC BY 4.0).\n'
             'https://www.geonames.org/');
       });
     }

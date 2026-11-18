@@ -4356,4 +4356,6 @@
     <string name="loadRemoteImages">Internetes képek azonnali betöltése</string>
     <string name="loadRemoteImagesDesc">Kikapcsolva – csak a levél „Képek megjelenítése” gombjával, így a feladó nem tudja meg, hogy megnyitotta</string>
     <string name="syncSettingsDesc">Minden postafiók ellenőrzése, ütemezés, ütközések</string>
+    <string name="faq_settings_4_q">Honnan tudom meg, mit csinál egy beállítás?</string>
+    <string name="faq_settings_4_a">Tartsa lenyomva a beállítás elemét (számítógépen kattintson rá a jobb egérgombbal): megnyílik a magyarázat, hogy mire van hatással, és a róla szóló válaszok a „Kérdések és válaszok” részből. A név melletti „?” ikon ugyanezt nyitja meg.</string>
 </resources>

@@ -134,5 +134,7 @@ const faqSections = <FaqSection>[
     FaqItem('settings_2', route: '/settings/logs'),
     // Вход по адресу (1.8.0).
     FaqItem('settings_3', route: '/settings/accounts'),
+    // Справка по долгому нажатию на пункт настроек (18.11.2026).
+    FaqItem('settings_4'),
   ]),
 ];

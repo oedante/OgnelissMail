@@ -28,6 +28,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/logging/app_logger.dart';
 import '../data/database/app_database.dart';
 import '../data/models/account_model.dart' show AccountModel;
+import '../data/models/email_model.dart' show EmailMeeting;
 import '../data/models/folder_model.dart' show FolderType;
 import '../data/providers/database_provider.dart';
 import '../features/settings/providers/widget_prefs.dart' show WidgetMailFilterNotifier, WidgetThemeNotifier, widgetThemeProvider;
@@ -37,6 +38,7 @@ import 'security/pin_lock_service.dart' show pinLockProvider;
 import '../l10n/app_localizations.dart';
 import 'mail/control_service.dart' show ControlState;
 import 'calendar/meeting_link_service.dart';
+import 'calendar/pending_invites.dart' show loadPendingInvites;
 import 'sync/mail_freshness.dart';
 import 'sync/sync_schedule.dart';
 
@@ -145,7 +147,7 @@ class HomeWidgetService {
       // «Мой день» — доска (решение владельца 09.11.2026: список убран);
       // виджет показывает колонки.
       const board = true;
-      final json = jsonEncode(await _build(db, ids, l10n, showControl, now, private, board: board));
+      final json = jsonEncode(await _build(db, ids, l10n, showControl, now, private, board: board, colors: colors));
       // Что показывает виджет «Почта» (08.11.2026, план п. 8.1): все
       // входящие, VIP, с флажком, «На контроле» или один ящик.
       final mailFilter = prefs.getString(mailFilterKey) ?? 'all';
@@ -224,7 +226,7 @@ class HomeWidgetService {
 
   static Future<Map<String, Object?>> _build(
       AppDatabase db, List<String> ids, AppLocalizations l10n, bool showControl, DateTime now, bool private,
-      {bool board = false}) async {
+      {bool board = false, Map<String, int> colors = const {}}) async {
     final lang = l10n.locale.languageCode;
     String date;
     try {
@@ -289,7 +291,7 @@ class HomeWidgetService {
       }
       // Поручения со сроком и письма с напоминанием на сегодня — как в
       // календаре (18.11.2026); задачи — выше, со своей галочкой.
-      for (final d in await layerItems(db, ids, start, end, l10n, private, tasks: false)) {
+      for (final d in await layerItems(db, ids, start, end, l10n, private, tasks: false, colors: colors)) {
         final st = DateTime.fromMillisecondsSinceEpoch(d['st']! as int);
         final allDay = d['a'] == 1;
         items.add({
@@ -591,10 +593,13 @@ for (final m in mails) {
   /// напоминанием, поручения со сроком. Слои — по настройке календаря
   /// («Календари → Задачи / Письма / Поручения»). Цвета — как в приложении
   /// (зелёный, оранжевый, цвет поручений); значок перед названием.
+  /// Ещё — приглашения без ответа, которых сервер пока не положил в
+  /// календарь (как в календаре приложения, 1.6.34): «?» перед названием,
+  /// цвет ящика [colors]; касание открывает письмо с «Принять / Отклонить».
   @visibleForTesting
   static Future<List<Map<String, Object?>>> layerItems(
       AppDatabase db, List<String> ids, DateTime from, DateTime to, AppLocalizations l10n, bool private,
-      {bool tasks = true}) async {
+      {bool tasks = true, Map<String, int> colors = const {}}) async {
     final out = <Map<String, Object?>>[];
     if (ids.isEmpty) return out;
     SharedPreferences? prefs;
@@ -663,6 +668,29 @@ for (final m in mails) {
             Uri(path: 'assign', queryParameters: {'id': a.id}).toString()));
       }
     }
+    for (final m in await loadPendingInvites(db, ids)) {
+      final meet = EmailMeeting.parse(m.meetingJson);
+      final st = meet?.start?.toLocal();
+      if (meet == null || st == null) continue;
+      final en = meet.end?.toLocal() ?? st.add(const Duration(minutes: 30));
+      if (!st.isBefore(to) || !en.isAfter(from)) continue;
+      // Сервер уже положил встречу в календарь — второй раз не показываем
+      // (то же правило, что в календаре приложения).
+      final subj = m.subject.trim().toLowerCase();
+      final same = await (db.select(db.calendarEvents)
+            ..where((e) => e.accountId.equals(m.accountId))
+            ..where((e) => e.isCancelled.equals(false))
+            ..where((e) => e.startTime.isBiggerOrEqualValue(st.subtract(const Duration(minutes: 1))))
+            ..where((e) => e.startTime.isSmallerOrEqualValue(st.add(const Duration(minutes: 1))))
+            ..limit(10))
+          .get();
+      if (same.any((e) => subj.isEmpty || subj.endsWith(e.title.trim().toLowerCase()))) continue;
+      // Встреча, а не дело: конец — из приглашения, без пометки «todo».
+      out.add(item('?', m.subject, st, meet.allDay, colors[m.accountId] ?? 0xFF5C7CFA,
+          Uri(path: 'email', queryParameters: {'id': m.id, 'acc': m.accountId}).toString())
+        ..['en'] = en.millisecondsSinceEpoch
+        ..remove('todo'));
+    }
     return out;
   }
 
@@ -715,7 +743,7 @@ for (final m in mails) {
         });
       }
       // Дела на 14 дней — в том же списке (виджеты iPhone).
-      for (final d in await layerItems(db, ids, today, until, l10n, private)) {
+      for (final d in await layerItems(db, ids, today, until, l10n, private, colors: colors)) {
         final st = DateTime.fromMillisecondsSinceEpoch(d['st']! as int);
         final allDay = d['a'] == 1;
         items.add({
@@ -766,7 +794,7 @@ for (final m in mails) {
           if (link != null && link.isNotEmpty) 'j': link,
         });
       }
-      events.addAll(await layerItems(db, ids, from, to, l10n, private));
+      events.addAll(await layerItems(db, ids, from, to, l10n, private, colors: colors));
     }
     return {
       'lang': l10n.locale.languageCode,

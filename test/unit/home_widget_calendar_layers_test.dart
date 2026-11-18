@@ -71,6 +71,32 @@ void main() {
     expect(j['weekend'], [6, 7]);
   });
 
+  test('приглашение без ответа — как в календаре приложения, без повтора', () async {
+    final st = today.add(const Duration(days: 1, hours: 11));
+    String meeting(DateTime s) => jsonEncode({
+          'start': s.toUtc().toIso8601String(),
+          'end': s.add(const Duration(hours: 1)).toUtc().toIso8601String(),
+          'class': 'IPM.Schedule.Meeting.Request',
+        });
+    await db.into(db.emails).insert(EmailsCompanion.insert(
+        id: 'inv1', accountId: 'a1', folderId: 'INBOX', fromEmail: 'boss@corp.ru', toRecipients: '[]',
+        subject: 'Планёрка', receivedAt: today, meetingJson: Value(meeting(st))));
+    // Второе приглашение сервер уже положил в календарь — показываем встречу.
+    final st2 = st.add(const Duration(hours: 3));
+    await db.into(db.emails).insert(EmailsCompanion.insert(
+        id: 'inv2', accountId: 'a1', folderId: 'INBOX', fromEmail: 'boss@corp.ru', toRecipients: '[]',
+        subject: 'Приглашение: Бюджет', receivedAt: today, meetingJson: Value(meeting(st2))));
+    await db.into(db.calendarEvents).insert(CalendarEventsCompanion.insert(
+        id: 'ev2', accountId: 'a1', title: 'Бюджет', startTime: st2,
+        endTime: st2.add(const Duration(hours: 1)), createdAt: today));
+    final j = await run(HomeWidgetService.calendarKey);
+    final events = j['events'] as List;
+    final inv = events.firstWhere((e) => e['s'] == '? Планёрка');
+    expect(inv['o'], 'email?id=inv1&acc=a1', reason: 'письмо с «Принять / Отклонить»');
+    expect(inv['en'], st.add(const Duration(hours: 1)).millisecondsSinceEpoch);
+    expect(events.where((e) => (e['s'] as String).contains('Бюджет')).length, 1);
+  });
+
   test('слои календаря выключены — и в виджете нет', () async {
     final j = await run(HomeWidgetService.calendarKey,
         {'cal_layer_tasks': false, 'cal_layer_mail': false, 'cal_layer_assignments': false});

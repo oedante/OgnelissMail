@@ -4358,4 +4358,6 @@
     <string name="syncSettingsDesc">Comprobación de todos los buzones, horario, conflictos</string>
     <string name="faq_settings_4_q">¿Cómo sé qué hace un ajuste?</string>
     <string name="faq_settings_4_a">Mantén pulsado un elemento de los ajustes (en el ordenador, haz clic derecho): se abre una explicación de lo que afecta y las respuestas sobre él de «Preguntas y respuestas». El icono «?» junto al nombre abre lo mismo.</string>
+    <string name="notifyPeopleConversations">Conversaciones para el correo de personas</string>
+    <string name="notifyPeopleConversationsDesc">Foto del remitente con el icono de la app para el correo de compañeros y contactos en el que usted está entre los destinatarios (hasta 50); los boletines, como siempre</string>
 </resources>

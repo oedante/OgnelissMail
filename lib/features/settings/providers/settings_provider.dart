@@ -144,6 +144,11 @@ class AppSettings {
   /// значка приложения в свёрнутом уведомлении.
   final bool notificationAllConversations;
 
+  /// Беседы для писем от людей (Android, ответ владельца 18.11.2026): портрет
+  /// со значком приложения на нём — у писем людей, рассылки и служебные —
+  /// обычным видом. По умолчанию включено.
+  final bool notificationPeopleConversations;
+
   // ── Синхронизация ──
   final bool syncOnlyWifi;
   /// Держать приложение живым в фоне (Android foreground service).
@@ -258,6 +263,7 @@ class AppSettings {
     this.notificationMessengerStyle = true,
     this.notificationVipConversations = true,
     this.notificationAllConversations = false,
+    this.notificationPeopleConversations = true,
     this.syncOnlyWifi = false,
     this.backgroundKeepAlive = true,
     this.syncIntervalMinutes = 15,
@@ -353,6 +359,7 @@ class AppSettings {
     bool? notificationMessengerStyle,
     bool? notificationVipConversations,
     bool? notificationAllConversations,
+    bool? notificationPeopleConversations,
     bool? syncOnlyWifi,
     bool? backgroundKeepAlive,
     int? syncIntervalMinutes,
@@ -417,6 +424,7 @@ class AppSettings {
       notificationMessengerStyle: notificationMessengerStyle ?? this.notificationMessengerStyle,
       notificationVipConversations: notificationVipConversations ?? this.notificationVipConversations,
       notificationAllConversations: notificationAllConversations ?? this.notificationAllConversations,
+      notificationPeopleConversations: notificationPeopleConversations ?? this.notificationPeopleConversations,
       syncOnlyWifi: syncOnlyWifi ?? this.syncOnlyWifi,
       backgroundKeepAlive: backgroundKeepAlive ?? this.backgroundKeepAlive,
       syncIntervalMinutes: syncIntervalMinutes ?? this.syncIntervalMinutes,
@@ -494,6 +502,7 @@ class _K {
   static const notificationMessengerStyle = 's_notif_messenger';
   static const notificationVipConversations = 's_notif_vip_conv';
   static const notificationAllConversations = 's_notif_all_conv';
+  static const notificationPeopleConversations = 's_notif_people_conv';
   static const syncOnlyWifi = 's_sync_wifi';
   // v2: прежний ключ в ранних сборках включался по умолчанию, и постоянное
   // уведомление появлялось без ведома пользователя. Новый ключ — выбор
@@ -594,6 +603,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       notificationMessengerStyle: _p.getBool(_K.notificationMessengerStyle) ?? true,
       notificationVipConversations: _p.getBool(_K.notificationVipConversations) ?? true,
       notificationAllConversations: _p.getBool(_K.notificationAllConversations) ?? false,
+      notificationPeopleConversations: _p.getBool(_K.notificationPeopleConversations) ?? true,
       syncOnlyWifi: _p.getBool(_K.syncOnlyWifi) ?? false,
       // По умолчанию включено: у новых ящиков режим «Мгновенно», и без
       // фоновой работы push в свёрнутом приложении не работал вовсе.
@@ -854,6 +864,14 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     if (!v) unawaited(MessengerNotify.removeShortcuts());
   }
 
+  /// Беседы для писем от людей (18.11.2026). Выключили — ярлыки снимаются
+  /// все; беседы VIP появятся снова со следующим письмом VIP.
+  Future<void> setNotificationPeopleConversations(bool v) async {
+    await _p.setBool(_K.notificationPeopleConversations, v);
+    state = state.copyWith(notificationPeopleConversations: v);
+    if (!v) unawaited(MessengerNotify.removeShortcuts());
+  }
+
   Future<void> setSyncOnlyWifi(bool v) async {
     await _p.setBool(_K.syncOnlyWifi, v);
     state = state.copyWith(syncOnlyWifi: v);
@@ -1033,6 +1051,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       _K.dyslexiaFont, _K.reduceMotion, _K.uiAnimations, _K.colorBlindMode, _K.orgIcons,
       _K.notificationsEnabled, _K.notificationSound, _K.notificationVibration,
       _K.notificationMessengerStyle, _K.notificationVipConversations, _K.notificationAllConversations,
+      _K.notificationPeopleConversations,
       NotificationLines.prefWork, NotificationLines.prefPersonal,
       _K.syncOnlyWifi, _K.syncInterval, _K.emailFetchMode,
       _K.searchAttachments,

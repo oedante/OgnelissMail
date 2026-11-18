@@ -55,6 +55,36 @@ void main() {
       expect(want(email: null), isFalse);
     });
 
+    // 18.11.2026: «Беседы для писем от людей» — портрет беседой у писем
+    // людей, рассылки — обычным видом; VIP — как раньше.
+    test('беседы для писем от людей: только письмо от человека', () {
+      bool want({bool people = true, bool fromPerson = true, bool vipConv = true, bool vip = false}) =>
+          MessengerNotify.wantsShortcut(
+              android: true, styleOn: true, vipConversationsOn: vipConv, isVip: vip,
+              peopleConversationsOn: people, isFromPerson: fromPerson, email: 'colleague@corp.example');
+      expect(want(), isTrue);
+      expect(want(fromPerson: false), isFalse);
+      expect(want(people: false), isFalse);
+      // VIP — беседой, даже если по правилу «не от человека».
+      expect(want(fromPerson: false, vip: true), isTrue);
+    });
+
+    // Уточнения владельца 18.11.2026: «порог в 50 человек», «из твоей
+    // организации»; своё — вы сами среди адресатов.
+    test('от человека: не рассылка, до 50 адресатов, вы среди них, коллега или контакт', () {
+      bool from({bool bulk = false, int recipients = 3, bool me = true, bool org = true, bool contact = false}) =>
+          MessengerNotify.fromPerson(
+              bulk: bulk, recipients: recipients, addressedToMe: me, sameOrg: org, inContacts: contact);
+      expect(from(), isTrue);
+      expect(from(org: false, contact: true), isTrue);
+      expect(from(org: false, contact: false), isFalse, reason: 'чужой не из контактов');
+      expect(from(bulk: true), isFalse, reason: 'рассылка');
+      expect(from(recipients: MessengerNotify.maxPersonRecipients), isTrue);
+      expect(MessengerNotify.maxPersonRecipients, 50);
+      expect(from(recipients: 51), isFalse, reason: 'объявление');
+      expect(from(me: false), isFalse, reason: 'на общий список, вас поимённо нет');
+    });
+
     test('нажатие открывает письмо — формат виджета «Почта»', () {
       final t = MessengerNotify.openTarget('acc 1', 'INBOX:42');
       final u = Uri.parse(t);
@@ -260,6 +290,11 @@ void main() {
       expect(s.notificationAllConversations, isFalse);
       await p.setBool(MessengerNotify.prefAllConversations, true);
       expect(MessengerNotify.allConversationsOn(p), isTrue);
+      // Беседы для писем от людей (18.11.2026) — по умолчанию включены.
+      expect(MessengerNotify.peopleConversationsOn(p), isTrue);
+      expect(s.notificationPeopleConversations, isTrue);
+      await p.setBool(MessengerNotify.prefPeopleConversations, false);
+      expect(MessengerNotify.peopleConversationsOn(p), isFalse);
     });
   });
 

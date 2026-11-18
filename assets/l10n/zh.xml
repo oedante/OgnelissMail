@@ -4337,4 +4337,6 @@
     <string name="syncSettingsDesc">检查所有邮箱、计划、冲突</string>
     <string name="faq_settings_4_q">如何了解某项设置的作用？</string>
     <string name="faq_settings_4_a">长按设置中的某一项（在电脑上点击鼠标右键）：会打开它影响什么的说明，以及「问题与解答」中与它相关的回答。名称旁的「?」图标也会打开同样的内容。</string>
+    <string name="notifyPeopleConversations">来自个人的邮件显示为对话</string>
+    <string name="notifyPeopleConversationsDesc">同事和联系人发来、且你在收件人之中的邮件（收件人不超过 50 个）：发件人头像上带应用图标；简报照常显示</string>
 </resources>

@@ -4358,4 +4358,6 @@
     <string name="syncSettingsDesc">Kaikkien postilaatikoiden tarkistus, aikataulu, ristiriidat</string>
     <string name="faq_settings_4_q">Miten saan selville, mitä asetus tekee?</string>
     <string name="faq_settings_4_a">Paina asetuskohdetta pitkään (tietokoneella napsauta sitä hiiren oikealla painikkeella): avautuu selitys siitä, mihin se vaikuttaa, ja sitä koskevat vastaukset kohdasta ”Kysymykset ja vastaukset”. Nimen vieressä oleva ”?”-kuvake avaa saman.</string>
+    <string name="notifyPeopleConversations">Keskustelut ihmisten viesteille</string>
+    <string name="notifyPeopleConversationsDesc">Lähettäjän kuva ja sen päällä sovelluksen kuvake kollegoiden ja yhteystietojen viesteissä, joiden vastaanottajissa olet (enintään 50); uutiskirjeet tavalliseen tapaan</string>
 </resources>

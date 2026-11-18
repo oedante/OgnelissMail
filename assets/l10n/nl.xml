@@ -4358,4 +4358,6 @@
     <string name="syncSettingsDesc">Controle van alle postvakken, schema, conflicten</string>
     <string name="faq_settings_4_q">Hoe kom ik te weten wat een instelling doet?</string>
     <string name="faq_settings_4_a">Houd een onderdeel van de instellingen ingedrukt (op een computer: klik er met de rechtermuisknop op): er opent een uitleg over waar het invloed op heeft, met de antwoorden erover uit „Vragen en antwoorden”. Het pictogram „?” naast de naam opent hetzelfde.</string>
+    <string name="notifyPeopleConversations">Gesprekken voor e-mail van personen</string>
+    <string name="notifyPeopleConversationsDesc">Foto van de afzender met het app-pictogram erop bij e-mail van collega\'s en contacten waarin u bij de ontvangers staat (tot 50); nieuwsbrieven zoals gewoonlijk</string>
 </resources>

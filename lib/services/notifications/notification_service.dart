@@ -230,6 +230,9 @@ class NotificationService {
     String? fromEmail,
     String folderId = 'inbox',
     bool isVip = false,
+    // Письмо от человека (MessengerNotify.fromPerson, 18.11.2026): для
+    // «Бесед для писем от людей» — портрет беседой, иначе обычный вид.
+    bool isFromPerson = false,
     List<String> smartReplyLabels = const [],
     List<String> smartReplyBodies = const [],
 
@@ -385,7 +388,9 @@ class NotificationService {
     String? shortcutId;
     if (MessengerNotify.wantsShortcut(
         android: Platform.isAndroid, styleOn: messenger, vipConversationsOn: MessengerNotify.vipConversationsOn(_prefs),
-        allConversationsOn: MessengerNotify.allConversationsOn(_prefs), isVip: isVip, email: fromEmail)) {
+        allConversationsOn: MessengerNotify.allConversationsOn(_prefs),
+        peopleConversationsOn: MessengerNotify.peopleConversationsOn(_prefs), isFromPerson: isFromPerson,
+        isVip: isVip, email: fromEmail)) {
       shortcutId = await MessengerNotify.pushShortcut(
           name: senderName, email: fromEmail!, accountId: accountId, emailId: emailId, avatar: avatar);
     }

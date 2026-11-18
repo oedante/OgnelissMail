@@ -4358,4 +4358,6 @@
     <string name="syncSettingsDesc">Kontroll av alla brevlådor, schema, konflikter</string>
     <string name="faq_settings_4_q">Hur tar jag reda på vad en inställning gör?</string>
     <string name="faq_settings_4_a">Håll fingret på en punkt i inställningarna (på en dator: högerklicka på den): en förklaring av vad den påverkar öppnas, tillsammans med svar om den från ”Frågor och svar”. Ikonen ”?” bredvid namnet öppnar samma sak.</string>
+    <string name="notifyPeopleConversations">Konversationer för mejl från personer</string>
+    <string name="notifyPeopleConversationsDesc">Avsändarens bild med appikonen på för mejl från kolleger och kontakter där du är bland mottagarna (upp till 50); nyhetsbrev som vanligt</string>
 </resources>

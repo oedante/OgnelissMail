@@ -4379,4 +4379,6 @@
     <string name="syncSettingsDesc">Kontrola všetkých schránok, plán, konflikty</string>
     <string name="faq_settings_4_q">Ako zistím, na čo slúži nastavenie?</string>
     <string name="faq_settings_4_a">Podržte položku nastavení (na počítači na ňu kliknite pravým tlačidlom myši): otvorí sa vysvetlenie, čo ovplyvňuje, a odpovede k nej z „Otázok a odpovedí“. To isté otvorí ikona „?“ vedľa názvu.</string>
+    <string name="notifyPeopleConversations">Konverzácie pre poštu od ľudí</string>
+    <string name="notifyPeopleConversationsDesc">Portrét odosielateľa s ikonou aplikácie pri pošte od kolegov a kontaktov, kde ste medzi príjemcami (najviac 50); spravodaje ako zvyčajne</string>
 </resources>

@@ -43,6 +43,7 @@ class MessengerNotify {
   static const prefStyle = 's_notif_messenger';
   static const prefVipConversations = 's_notif_vip_conv';
   static const prefAllConversations = 's_notif_all_conv';
+  static const prefPeopleConversations = 's_notif_people_conv';
 
   /// «Уведомления как в мессенджерах» (по умолчанию включено).
   static bool styleOn(SharedPreferences? p) => p?.getBool(prefStyle) ?? true;
@@ -56,6 +57,37 @@ class MessengerNotify {
   /// значок приложения. По умолчанию выключено: все письма тогда — в разделе
   /// «Беседы», выше уведомлений других приложений.
   static bool allConversationsOn(SharedPreferences? p) => p?.getBool(prefAllConversations) ?? false;
+
+  /// «Беседы для писем от людей» на Android (ответ владельца 18.11.2026 на
+  /// вопрос «портрет беседой у всех писем от людей, а рассылки — обычным
+  /// видом?» — «да»). По умолчанию включено: портрет со значком приложения
+  /// на нём — у писем людей ([fromPerson]), остальные — обычным видом.
+  static bool peopleConversationsOn(SharedPreferences? p) => p?.getBool(prefPeopleConversations) ?? true;
+
+  /// Больше адресатов в «Кому» и «Копии» — уже не переписка, а объявление
+  /// (уточнение владельца 18.11.2026: «давай в 50 человек порог поставим»).
+  static const maxPersonRecipients = 50;
+
+  /// Письмо от человека — для «Бесед для писем от людей» (уточнения
+  /// владельца 18.11.2026: «только от людей надо как-то определять; в
+  /// адресатах может быть несколько людей; порог … и из твоей организации»,
+  /// «давай в 50 человек порог поставим, хотя может у тебя своя идея будет»):
+  ///  · не рассылка и не служебное ([bulk]: List-Unsubscribe, noreply,
+  ///    автоответы, отчёты о доставке);
+  ///  · адресатов в «Кому» и «Копии» — не больше [maxPersonRecipients];
+  ///  · вы сами — в «Кому» или «Копии» ([addressedToMe]): письмо на общий
+  ///    список (all@…, отдел@…), где вас нет поимённо, — объявление;
+  ///  · отправитель из своей организации (домен рабочего ящика, [sameOrg])
+  ///    или есть в контактах (Exchange, Google, телефон — не собранные из
+  ///    переписки, [inContacts]).
+  static bool fromPerson({
+    required bool bulk,
+    required int recipients,
+    required bool addressedToMe,
+    required bool sameOrg,
+    required bool inContacts,
+  }) =>
+      !bulk && recipients <= maxPersonRecipients && addressedToMe && (sameOrg || inContacts);
 
   static const _channel = MethodChannel('ogneliss/messenger');
 
@@ -74,20 +106,23 @@ class MessengerNotify {
   }
 
   /// Публиковать ли ярлык беседы: Android, вид «как в мессенджерах», письмо
-  /// с адресом отправителя и беседы для всех писем — или для VIP, если это
-  /// VIP. Раздел «Беседы» требует MessagingStyle, поэтому без вида «как в
-  /// мессенджерах» ярлык не нужен.
+  /// с адресом отправителя и беседы для всех писем, для писем от людей
+  /// ([isFromPerson], см. [fromPerson]) или для VIP, если это VIP. Раздел
+  /// «Беседы» требует MessagingStyle, поэтому без вида «как в мессенджерах»
+  /// ярлык не нужен.
   static bool wantsShortcut({
     required bool android,
     required bool styleOn,
     required bool vipConversationsOn,
     required bool isVip,
     bool allConversationsOn = false,
+    bool peopleConversationsOn = false,
+    bool isFromPerson = false,
     String? email,
   }) =>
       android &&
       styleOn &&
-      (allConversationsOn || (vipConversationsOn && isVip)) &&
+      (allConversationsOn || (peopleConversationsOn && isFromPerson) || (vipConversationsOn && isVip)) &&
       shortcutId(email) != null;
 
   /// Что открыть ярлыком беседы — тот же формат, что у виджета «Почта»

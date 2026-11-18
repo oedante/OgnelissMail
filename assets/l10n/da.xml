@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Hvert {n}. minut</string>
     <string name="checkHourly">Hver time</string>
     <string name="checkManual">Kun manuelt</string>
-    <string name="checkMailHint">Øjeblikkelig – serveren giver straks besked om ny mail (i baggrunden – med »Kør i baggrunden«). Efter plan – øjeblikkeligt i arbejdstiden, ellers med interval (Indstillinger → Avancerede indstillinger → Leveringsplan). Hvert 15./30./60. minut – planlagte kontroller, den mest økonomiske. Manuelt – når du åbner appen og trækker ned for at opdatere.</string>
+    <string name="checkMailHint">Øjeblikkelig – serveren giver straks besked om ny mail (i baggrunden – med »Kør i baggrunden«). Efter plan – øjeblikkeligt i arbejdstiden, ellers med interval (Indstillinger → Synkronisering → Leveringsplan). Hvert 15./30./60. minut – planlagte kontroller, den mest økonomiske. Manuelt – når du åbner appen og trækker ned for at opdatere.</string>
     <string name="wifiOnlyAcc">Kun Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automatisk kontrol kun, når der er forbindelse til Wi‑Fi</string>
     <string name="accSectionConnection">Forbindelse</string>
@@ -3937,7 +3937,7 @@
     <string name="faq_mail_13_q">Hvad er ikonerne under mailhovedet?</string>
     <string name="faq_mail_13_a">Oplysninger om mailen – oversættelse, afmelding af nyhedsbrev, skjulte billeder, anmodning om læsekvittering, levering, signatur, vigtighed, tags – er samlet i én række ikoner. Et tryk på et ikon folder detaljerne med knapper ud, et nyt tryk folder dem sammen. Ikonerne for oversættelse og billeder virker med det samme: de oversætter mailen eller viser billederne, og de øvrige valg findes i menuen ▾ eller med et langt tryk. Advarslen om falsk afsender og mødeinvitationer forbliver fulde kort.</string>
     <string name="faq_mail_14_q">Hvordan indretter jeg skærmen på en tablet eller computer som i Outlook?</string>
-    <string name="faq_mail_14_a">Læseruden kan placeres til højre, nederst eller skjules: Indstillinger → Udseende → Læserude eller menuen ⋮ over listen. Flere mails vælges som i Outlook: Ctrl + klik (på Mac og iPad Cmd) – én ad gangen, Shift – et område, Ctrl+A – alle indlæste, Esc – fjern markeringen, Delete – slet de valgte. En vedhæftet fil åbnes direkte i læseruden, og Tilbage fører tilbage til mailen.</string>
+    <string name="faq_mail_14_a">Læseruden kan placeres til højre, nederst eller skjules: Indstillinger → Liste og læsning → Læserude eller menuen ⋮ over listen. Flere mails vælges som i Outlook: Ctrl + klik (på Mac og iPad Cmd) – én ad gangen, Shift – et område, Ctrl+A – alle indlæste, Esc – fjern markeringen, Delete – slet de valgte. En vedhæftet fil åbnes direkte i læseruden, og Tilbage fører tilbage til mailen.</string>
     <string name="faq_mail_15_q">Hvordan får jeg mails oversat, så snart de åbnes?</string>
     <string name="faq_mail_15_a">Tryk på ▾ ved oversættelsesikonet, og vælg Oversæt altid fra … – mails på det sprog åbnes så allerede oversat; originalen vises med samme ikon. Listen over sprog: Indstillinger → Mail → Oversættelse → Oversæt altid fra. Oversættelse tilbydes kun, når mailens sprog er genkendt med sikkerhed, og ikke for telefonens sprog (slås fra samme sted: Telefonens sprog – tilbyd ikke oversættelse).</string>
     <string name="convReplyTo">Svar til {name}</string>
@@ -4348,4 +4348,12 @@
     <string name="clientCertManaged">Angivet af organisationen</string>
     <string name="clientCertEditDomains">Rediger domæner</string>
     <string name="mdmRuleClientCert">Organisationens klientcertifikat – til {domains}</string>
+    <string name="clientCertDevice">Enhedscertifikat</string>
+    <string name="clientCertDeviceDesc">Installeret på telefonen eller udstedt af organisationen</string>
+    <string name="clientCertDeviceTag">Enhedscertifikat – til Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Gemt adgangskode – “Log ind igen” eller indtast en ny</string>
+    <string name="mailImagesSection">Billeder i e-mails</string>
+    <string name="loadRemoteImages">Indlæs billeder fra internettet med det samme</string>
+    <string name="loadRemoteImagesDesc">Fra – kun med “Vis billeder” i mailen, så afsenderen ikke ved, at du har åbnet den</string>
+    <string name="syncSettingsDesc">Tjek af alle postkasser, tidsplan, konflikter</string>
 </resources>

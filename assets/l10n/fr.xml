@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Toutes les {n} min</string>
     <string name="checkHourly">Toutes les heures</string>
     <string name="checkManual">Manuellement uniquement</string>
-    <string name="checkMailHint">Instantané — le serveur signale tout de suite le nouveau courrier (en arrière-plan avec « Fonctionner en arrière-plan »). Selon un horaire — instantané aux heures de travail, sinon par intervalle (Paramètres → Paramètres avancés → Horaire de livraison). Toutes les 15/30/60 minutes — relève planifiée, la plus économe. Manuel — à l’ouverture et en tirant vers le bas.</string>
+    <string name="checkMailHint">Instantané — le serveur signale tout de suite le nouveau courrier (en arrière-plan avec « Fonctionner en arrière-plan »). Selon un horaire — instantané aux heures de travail, sinon par intervalle (Paramètres → Synchronisation → Horaire de livraison). Toutes les 15/30/60 minutes — relève planifiée, la plus économe. Manuel — à l’ouverture et en tirant vers le bas.</string>
     <string name="wifiOnlyAcc">Wi‑Fi uniquement</string>
     <string name="wifiOnlyAccDesc">Relève automatique uniquement en Wi‑Fi</string>
     <string name="accSectionConnection">Connexion</string>
@@ -3937,7 +3937,7 @@
     <string name="faq_mail_13_q">Que sont les icônes sous l’en-tête du message ?</string>
     <string name="faq_mail_13_a">Les informations sur le message — traduction, désabonnement, images masquées, demande d’accusé de lecture, remise, signature, importance, balises — sont réunies sur une seule ligne d’icônes. Toucher une icône déploie les détails avec des boutons, la toucher à nouveau les replie. Les icônes de traduction et d’images agissent immédiatement : elles traduisent le message ou affichent les images ; les autres options sont dans le menu ▾ ou par appui long. L’avertissement d’expéditeur usurpé et les invitations aux réunions restent des cartes complètes.</string>
     <string name="faq_mail_14_q">Comment disposer l’écran d’une tablette ou d’un ordinateur comme dans Outlook ?</string>
-    <string name="faq_mail_14_a">Le volet de lecture se place à droite, en bas ou se masque : Paramètres → Apparence → « Volet de lecture » ou le menu ⋮ au-dessus de la liste. Plusieurs messages se sélectionnent comme dans Outlook : Ctrl + clic (Cmd sur Mac et iPad) — un par un, Shift — une plage, Ctrl+A — tous les messages chargés, Esc — annuler la sélection, Delete — supprimer les messages sélectionnés. Une pièce jointe s’ouvre directement dans le volet de lecture, « Retour » ramène au message.</string>
+    <string name="faq_mail_14_a">Le volet de lecture se place à droite, en bas ou se masque : Paramètres → Liste et lecture → « Volet de lecture » ou le menu ⋮ au-dessus de la liste. Plusieurs messages se sélectionnent comme dans Outlook : Ctrl + clic (Cmd sur Mac et iPad) — un par un, Shift — une plage, Ctrl+A — tous les messages chargés, Esc — annuler la sélection, Delete — supprimer les messages sélectionnés. Une pièce jointe s’ouvre directement dans le volet de lecture, « Retour » ramène au message.</string>
     <string name="faq_mail_15_q">Comment traduire les messages dès leur ouverture ?</string>
     <string name="faq_mail_15_a">Touchez ▾ à côté de l’icône de traduction et choisissez « Toujours traduire depuis : … » — les messages dans cette langue s’ouvriront déjà traduits ; la même icône affiche l’original. Liste des langues : Paramètres → Courrier → Traduction → « Toujours traduire depuis ». La traduction n’est proposée que si la langue du message est détectée avec certitude, et elle ne l’est pas pour les langues du téléphone (désactivable au même endroit : « Langues du téléphone — ne pas proposer de traduction »).</string>
     <string name="convReplyTo">Réponse à {name}</string>
@@ -4348,4 +4348,12 @@
     <string name="clientCertManaged">Défini par votre organisation</string>
     <string name="clientCertEditDomains">Modifier les domaines</string>
     <string name="mdmRuleClientCert">Certificat client de l’organisation — pour {domains}</string>
+    <string name="clientCertDevice">Certificat de l’appareil</string>
+    <string name="clientCertDeviceDesc">Installé sur le téléphone ou délivré par votre organisation</string>
+    <string name="clientCertDeviceTag">Certificat de l’appareil — pour Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Mot de passe enregistré — « Se reconnecter » ou saisissez-en un nouveau</string>
+    <string name="mailImagesSection">Images dans les e-mails</string>
+    <string name="loadRemoteImages">Charger automatiquement les images d’Internet</string>
+    <string name="loadRemoteImagesDesc">Désactivé — uniquement via « Afficher les images » dans l’e-mail : l’expéditeur ne saura pas que vous l’avez ouvert</string>
+    <string name="syncSettingsDesc">Relève de toutes les boîtes, planning, conflits</string>
 </resources>

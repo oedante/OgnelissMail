@@ -345,6 +345,13 @@ class EmailActionsService {
     try {
       await _transport(account).delete(account, emailId: emailId, folderId: folderId, hard: hard);
     } catch (e) {
+      // Письмо, найденное поиском Exchange (id поиска «eas_…» вместо номера
+      // в папке): сервер отвечает Status=4 на каждую попытку — в очередь не
+      // ставим, иначе повторы шли бы бесконечно (журнал 18.11.2026).
+      if (account.usesEas && emailId.startsWith('eas_') && '$e'.contains('Status=4')) {
+        AppLogger.info('Удаление письма из поиска Exchange: сервер не принял id поиска — удалено только здесь');
+        return;
+      }
       AppLogger.warning('delete remote failed (локально применено, в очередь): $e');
       await _enqueueOffline(account, 'delete', emailId, {'folderId': folderId, 'hard': hard});
     }

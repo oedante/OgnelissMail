@@ -13,6 +13,7 @@ import 'package:mail_engine/mail_engine.dart' show NetProxy;
 
 import '../logging/app_logger.dart';
 
+import '../security/client_cert_store.dart' show ClientCertStore;
 import '../security/trusted_ca_store.dart';
 import 'certificate_pinning_bridge.dart';
 
@@ -21,19 +22,33 @@ class NativeAndroidHttpClient extends http.BaseClient {
   final http.Client _fallback;
   bool _noChannel = false;
 
-  NativeAndroidHttpClient(this._fallback);
+  /// [nativeAll] — режим «Совместимость со шлюзом»: все запросы через
+  /// Android. false — только к серверам с сертификатом устройства (KeyChain),
+  /// остальные — [_fallback] (TLS приложения).
+  NativeAndroidHttpClient(this._fallback, {this.nativeAll = true});
+
+  final bool nativeAll;
 
   static final _certNoted = <String>{};
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    // Сертификат клиента для сервера (mTLS, 2.6.5) предъявляет TLS Dart:
-    // сетевой стек системы его не знает — запрос обычным путём.
-    if (NetProxy.contextFor(request.url.host) != null) {
-      if (_certNoted.add(request.url.host)) {
-        AppLogger.info('Режим совместимости: ${request.url.host} — с сертификатом клиента, через TLS приложения');
+    final host = request.url.host;
+    // Сертификат устройства (Android KeyChain, 2.6.5): ключ не извлекается,
+    // TLS с ним — только через сетевой стек Android.
+    final alias = ClientCertStore.instance?.aliasFor(host);
+    if (alias == null) {
+      // Без сертификата устройства: не в режиме совместимости — обычным
+      // путём; сертификат-файл (mTLS) предъявляет TLS Dart — тоже.
+      if (!nativeAll) return _fallback.send(request);
+      if (NetProxy.contextFor(host) != null) {
+        if (_certNoted.add(host)) {
+          AppLogger.info('Режим совместимости: $host — с сертификатом клиента, через TLS приложения');
+        }
+        return _fallback.send(request);
       }
-      return _fallback.send(request);
+    } else if (_certNoted.add('keychain:$host')) {
+      AppLogger.info('$host — с сертификатом устройства, через сетевой стек Android');
     }
     if (_noChannel) {
       throw http.ClientException(
@@ -48,6 +63,7 @@ class NativeAndroidHttpClient extends http.BaseClient {
     try {
       res = await _ch.invokeMapMethod<String, dynamic>('send', {
         'method': request.method,
+        if (alias != null) 'clientAlias': alias,
         'url': request.url.toString(),
         'headers': Map<String, String>.from(request.headers),
         'body': body,

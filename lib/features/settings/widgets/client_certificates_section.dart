@@ -4,7 +4,9 @@
 // паролем и домены серверов, которым его предъявлять; сертификат,
 // заданный организацией (MDM), — только для просмотра.
 
+import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show MethodChannel;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -16,6 +18,7 @@ import '../../../core/theme/tokens.dart';
 import '../../../data/models/account_model.dart';
 import '../../../features/mail/providers/mail_providers.dart' show accountsProvider;
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/common/inline_notice.dart' show quietError;
 import '../../../widgets/ui/settings_group.dart';
 
 class ClientCertificatesSection extends ConsumerStatefulWidget {
@@ -60,12 +63,62 @@ class _ClientCertificatesSectionState extends ConsumerState<ClientCertificatesSe
   }
 
   Future<void> _editDomains(ClientCertInfo c) async {
+    final domains = await _askDomains(AppLocalizations.of(context).tr('clientCertEditDomains'), c.domains.join(', '));
+    if (domains == null) return;
+    await _store?.setDomains(c.id, domains);
+    if (mounted) setState(() {});
+  }
+
+  // ── Сертификат устройства (Android KeyChain) ──
+
+  static const _ch = MethodChannel('ogneliss/native_http');
+
+  bool get _android => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
+  /// Системное окно выбора сертификата (установленные на телефон и
+  /// выданные организацией), затем домены серверов.
+  Future<void> _addDevice() async {
     final l10n = AppLocalizations.of(context);
-    final ctrl = TextEditingController(text: c.domains.join(', '));
+    final suggested = _suggested();
+    String? alias;
+    try {
+      alias = await _ch.invokeMethod<String>('chooseClientAlias', {
+        'host': suggested.isEmpty ? null : suggested.first,
+        'port': 443,
+      });
+    } catch (e) {
+      quietError('Сертификат устройства: окно выбора не открылось (${e.runtimeType})');
+    }
+    if (alias == null || !mounted) return;
+    Map<String, dynamic>? info;
+    try {
+      info = await _ch.invokeMapMethod<String, dynamic>('clientAliasInfo', {'alias': alias});
+    } catch (_) {}
+    if (!mounted) return;
+    final domains = await _askDomains(l10n.tr('clientCertDevice'), suggested.join(', '));
+    if (domains == null) return;
+    final notAfter = info?['notAfter'];
+    await _store?.importDevice(
+      alias,
+      name: cnOf('${info?['subject'] ?? ''}') ?? alias,
+      issuer: cnOf('${info?['issuer'] ?? ''}') ?? '',
+      validTo: notAfter is int ? DateTime.fromMillisecondsSinceEpoch(notAfter) : null,
+      domains: domains,
+    );
+    if (mounted) setState(() {});
+  }
+
+  /// Имя (CN) из X.500: «CN=Иванов Иван,O=Ромашка» → «Иванов Иван».
+  static String? cnOf(String x500) => RegExp(r'(?:^|,)\s*CN=([^,]+)').firstMatch(x500)?.group(1)?.trim();
+
+  /// Домены серверов; null — отмена или пусто.
+  Future<List<String>?> _askDomains(String title, String initial) async {
+    final l10n = AppLocalizations.of(context);
+    final ctrl = TextEditingController(text: initial);
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(l10n.tr('clientCertEditDomains')),
+        title: Text(title),
         content: TextField(
           controller: ctrl,
           autofocus: true,
@@ -82,9 +135,7 @@ class _ClientCertificatesSectionState extends ConsumerState<ClientCertificatesSe
     );
     final domains = ClientCertStore.parseDomains(ctrl.text);
     ctrl.dispose();
-    if (ok != true || domains.isEmpty) return;
-    await _store?.setDomains(c.id, domains);
-    if (mounted) setState(() {});
+    return ok == true && domains.isNotEmpty ? domains : null;
   }
 
   Widget _cert(ClientCertInfo c) {
@@ -101,6 +152,7 @@ class _ClientCertificatesSectionState extends ConsumerState<ClientCertificatesSe
         [
           '${c.expired ? l10n.tr('caExpired') : l10n.tr('caValidUntil')} $until',
           l10n.tr('clientCertFor').replaceAll('{domains}', c.domains.join(', ')),
+          if (c.isDevice) l10n.tr('clientCertDeviceTag'),
           if (c.managed) l10n.tr('clientCertManaged'),
         ].join('\n'),
         style: TextStyle(color: AppColors.mutedText(context)),
@@ -148,6 +200,15 @@ class _ClientCertificatesSectionState extends ConsumerState<ClientCertificatesSe
             trailing: const SizedBox.shrink(),
             onTap: _add,
           ),
+          // Android: сертификат из системного хранилища (KeyChain).
+          if (_android)
+            SettingsItem(
+              icon: AppIcons.phone_android,
+              title: l10n.tr('clientCertDevice'),
+              subtitle: l10n.tr('clientCertDeviceDesc'),
+              trailing: const SizedBox.shrink(),
+              onTap: _addDevice,
+            ),
         ]),
       ],
     );

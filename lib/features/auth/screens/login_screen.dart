@@ -55,6 +55,7 @@ import '../../../widgets/ui/app_menu_button.dart';
 import '../../../widgets/ui/help_hint.dart' show TitleWithHelp;
 import '../../mail/providers/mail_providers.dart';
 import '../providers/auth_provider.dart';
+import '../../../core/security/secure_storage_service.dart' show secureStorageProvider;
 import '../widgets/certificate_trust_dialog.dart';
 import '../../settings/widgets/account_label_dialog.dart';
 import '../../../services/security/managed_config.dart';
@@ -94,6 +95,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   final _passwordFocus = FocusNode();
 
   bool _showPassword = false;
+
+  /// «Войти снова» (18.11.2026: «перезайти с сохранёнными данными нельзя —
+  /// пароль не заполняется»): в поле — сохранённый пароль (точками). Пока
+  /// он не изменён, показать его нельзя — подсмотреть с чужого телефона
+  /// тоже.
+  bool _savedPassword = false;
   bool _showAdvanced = false;
 
   /// Порты или шифрование IMAP/SMTP изменены вручную — их не подбираем.
@@ -231,7 +238,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final rid = widget.reauthAccountId;
     if (rid != null) {
       final a = ref.read(accountsProvider).where((x) => x.id == rid).firstOrNull;
-      if (a != null) _fillFrom(a);
+      if (a != null) {
+        _fillFrom(a);
+        if (!a.usesOAuthTokens) unawaited(_fillSavedPassword(a.id));
+      }
     } else {
       // Ящик, заданный организацией (MDM, 1.10.5), — адрес уже вписан,
       // остаётся пароль; ещё не добавлен — иначе пустой вход.
@@ -279,6 +289,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     _passwordFocus.dispose();
     _animController.dispose();
     super.dispose();
+  }
+
+  /// Сохранённый пароль ящика — в поле «Войти снова».
+  Future<void> _fillSavedPassword(String accountId) async {
+    String? pw;
+    try {
+      pw = await ref.read(secureStorageProvider).getAccountPassword(accountId);
+    } catch (_) {}
+    if (!mounted || pw == null || pw.isEmpty || _passwordController.text.isNotEmpty) return;
+    setState(() {
+      _passwordController.text = pw!;
+      _savedPassword = true;
+      _savedPasswordText = pw;
+      _showPassword = false;
+    });
+    _passwordController.addListener(_onPasswordEdited);
+  }
+
+  String? _savedPasswordText;
+
+  /// Пароль изменили (а не только курсор или фокус) — это уже новый пароль.
+  void _onPasswordEdited() {
+    if (!_savedPassword || _passwordController.text == _savedPasswordText) return;
+    _passwordController.removeListener(_onPasswordEdited);
+    setState(() => _savedPassword = false);
   }
 
   /// Поля — из ящика («Войти снова»).
@@ -1295,11 +1330,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             },
             hintText: kind == MailKind.icloud ? 'xxxx-xxxx-xxxx-xxxx' : null,
             prefixIcon: Icon(appPwKind ? AppIcons.key : AppIcons.lock),
-            suffixIcon: IconButton(
-              tooltip: l10n.tr(_showPassword ? 'hidePassword' : 'showPassword'),
-              icon: Icon(_showPassword ? AppIcons.visibility_off : AppIcons.visibility),
-              onPressed: () => setState(() => _showPassword = !_showPassword),
-            ),
+            // Сохранённый пароль не показывается — только новый.
+            helperText: _savedPassword ? l10n.tr('reauthSavedPassword') : null,
+            suffixIcon: _savedPassword
+                ? null
+                : IconButton(
+                    tooltip: l10n.tr(_showPassword ? 'hidePassword' : 'showPassword'),
+                    icon: Icon(_showPassword ? AppIcons.visibility_off : AppIcons.visibility),
+                    onPressed: () => setState(() => _showPassword = !_showPassword),
+                  ),
           ),
           obscureText: !_showPassword,
           autocorrect: false,
@@ -1588,6 +1627,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   /// «Проверить пароль»: показать пароль и выделить его.
   void _checkPassword() {
+    // Сохранённый пароль не раскрывается: сначала его нужно изменить.
+    if (_savedPassword) {
+      _passwordFocus.requestFocus();
+      _passwordController.selection = TextSelection(baseOffset: 0, extentOffset: _passwordController.text.length);
+      return;
+    }
     setState(() => _showPassword = true);
     _passwordFocus.requestFocus();
     _passwordController.selection = TextSelection(baseOffset: 0, extentOffset: _passwordController.text.length);

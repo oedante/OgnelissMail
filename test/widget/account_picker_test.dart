@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/data/models/account_model.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
+import 'package:ogneliss/services/accounts/account_labels.dart';
 import 'package:ogneliss/widgets/common/account_avatar.dart';
 import 'package:ogneliss/widgets/common/person_photo.dart';
 import 'package:ogneliss/widgets/ui/app_menu_button.dart';
@@ -54,5 +55,16 @@ void main() {
     await tester.tap(find.text('oedante@gmail.com'));
     await tester.pumpAndSettle();
     expect(value, 'h');
+  });
+
+  test('название ящика («Работа») — вместо имени отправителя, адрес — под ним (18.11.2026)', () {
+    AccountLabels.current = {'w': 'Работа'};
+    addTearDown(() => AccountLabels.current = const {});
+    final work = accountMenuEntry(_work);
+    expect(work.label, 'Работа');
+    expect(work.subtitle, 'o.ermishin@yamalspg.ru');
+    final home = accountMenuEntry(_home);
+    expect(home.label, 'oedante@gmail.com', reason: 'без названия — как раньше');
+    expect(home.subtitle, isNull);
   });
 }

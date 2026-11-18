@@ -141,6 +141,15 @@ class SettingsScreen extends ConsumerWidget {
               selected: sel('/settings/groups'),
               onTap: () => open('/settings/groups'),
             ),
+            // Синхронизация всех ящиков, расписание, конфликты (18.11.2026:
+            // из «Дополнительно» — сюда, рядом с ящиками).
+            SettingsItem(
+              icon: AppIcons.sync,
+              title: l10n.tr('sync'),
+              subtitle: l10n.tr('syncSettingsDesc'),
+              selected: sel('/settings/sync'),
+              onTap: () => open('/settings/sync'),
+            ),
           ]),
 
           // ── Вид и язык (перегруппировка, согласовано владельцем 08.11.2026) ──

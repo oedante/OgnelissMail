@@ -1215,7 +1215,7 @@
     <string name="checkEvery">{n} min välein</string>
     <string name="checkHourly">Tunnin välein</string>
     <string name="checkManual">Vain manuaalisesti</string>
-    <string name="checkMailHint">Heti – palvelin ilmoittaa uusista viesteistä välittömästi (taustalla – ”Suorita taustalla” -asetuksella). Aikataulun mukaan – heti työaikana, muulloin välein (Asetukset → Lisäasetukset → Toimitusaikataulu). 15/30/60 minuutin välein – ajastetut tarkistukset, säästeliäin vaihtoehto. Manuaalisesti – kun avaat sovelluksen ja päivität vetämällä.</string>
+    <string name="checkMailHint">Heti – palvelin ilmoittaa uusista viesteistä välittömästi (taustalla – ”Suorita taustalla” -asetuksella). Aikataulun mukaan – heti työaikana, muulloin välein (Asetukset → Synkronointi → Toimitusaikataulu). 15/30/60 minuutin välein – ajastetut tarkistukset, säästeliäin vaihtoehto. Manuaalisesti – kun avaat sovelluksen ja päivität vetämällä.</string>
     <string name="wifiOnlyAcc">Vain Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automaattinen tarkistus vain, kun laite on yhteydessä Wi‑Fi-verkkoon</string>
     <string name="accSectionConnection">Yhteys</string>
@@ -3937,7 +3937,7 @@
     <string name="faq_mail_13_q">Mitä viestin otsikkotietojen alla olevat kuvakkeet ovat?</string>
     <string name="faq_mail_13_a">Viestin tiedot – käännös, uutiskirjeen tilauksen peruutus, piilotetut kuvat, lukukuittauspyyntö, toimitus, allekirjoitus, tärkeys, tunnisteet – on koottu yhdelle kuvakeriville. Kuvakkeen napautus avaa yksityiskohdat painikkeineen, uusi napautus sulkee ne. Käännöksen ja kuvien kuvakkeet toimivat heti: ne kääntävät viestin tai näyttävät kuvat, ja muut vaihtoehdot ovat ▾-valikossa tai pitkällä painalluksella. Varoitus väärennetystä lähettäjästä ja kokouskutsut näkyvät edelleen kokonaisina kortteina.</string>
     <string name="faq_mail_14_q">Miten saan tabletin tai tietokoneen näytön Outlookin kaltaiseksi?</string>
-    <string name="faq_mail_14_a">Lukuruudun voi sijoittaa oikealle tai alas tai piilottaa: Asetukset → Ulkoasu → Lukuruutu tai luettelon yläpuolella oleva ⋮-valikko. Useita viestejä valitaan kuten Outlookissa: Ctrl + napsautus (Macissa ja iPadissa Cmd) – yksi kerrallaan, Shift – peräkkäiset, Ctrl+A – kaikki ladatut, Esc – peru valinta, Delete – poista valitut. Liite avautuu suoraan lukuruutuun, ja Takaisin palaa viestiin.</string>
+    <string name="faq_mail_14_a">Lukuruudun voi sijoittaa oikealle tai alas tai piilottaa: Asetukset → Luettelo ja lukeminen → Lukuruutu tai luettelon yläpuolella oleva ⋮-valikko. Useita viestejä valitaan kuten Outlookissa: Ctrl + napsautus (Macissa ja iPadissa Cmd) – yksi kerrallaan, Shift – peräkkäiset, Ctrl+A – kaikki ladatut, Esc – peru valinta, Delete – poista valitut. Liite avautuu suoraan lukuruutuun, ja Takaisin palaa viestiin.</string>
     <string name="faq_mail_15_q">Miten saan viestit käännetyiksi heti avattaessa?</string>
     <string name="faq_mail_15_a">Napauta käännöskuvakkeen vieressä ▾ ja valitse Käännä aina kielestä … – sillä kielellä kirjoitetut viestit avautuvat jatkossa valmiiksi käännettyinä; alkuperäisen saa näkyviin samalla kuvakkeella. Kieliluettelo: Asetukset → Sähköposti → Käännös → Käännä aina kielistä. Käännöstä tarjotaan vain, kun viestin kieli on tunnistettu varmasti, eikä puhelimen kielille (tämän voi poistaa käytöstä samassa paikassa: Puhelimen kielet – älä tarjoa käännöstä).</string>
     <string name="convReplyTo">Vastaus: {name}</string>
@@ -4348,4 +4348,12 @@
     <string name="clientCertManaged">Organisaation asettama</string>
     <string name="clientCertEditDomains">Muokkaa verkkotunnuksia</string>
     <string name="mdmRuleClientCert">Organisaation asiakasvarmenne – kohteet {domains}</string>
+    <string name="clientCertDevice">Laitevarmenne</string>
+    <string name="clientCertDeviceDesc">Puhelimeen asennettu tai organisaation myöntämä</string>
+    <string name="clientCertDeviceTag">Laitevarmenne – Exchange ActiveSyncille</string>
+    <string name="reauthSavedPassword">Tallennettu salasana – ”Kirjaudu uudelleen” tai anna uusi</string>
+    <string name="mailImagesSection">Kuvat sähköposteissa</string>
+    <string name="loadRemoteImages">Lataa kuvat internetistä heti</string>
+    <string name="loadRemoteImagesDesc">Pois – vain viestin ”Näytä kuvat” -painikkeella, jolloin lähettäjä ei saa tietää avauksesta</string>
+    <string name="syncSettingsDesc">Kaikkien postilaatikoiden tarkistus, aikataulu, ristiriidat</string>
 </resources>

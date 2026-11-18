@@ -1215,7 +1215,7 @@
     <string name="checkEvery">{n} dakikada bir</string>
     <string name="checkHourly">Saatte bir</string>
     <string name="checkManual">Yalnızca elle</string>
-    <string name="checkMailHint">Anında: sunucu yeni postayı hemen bildirir (arka planda — Arka planda çalıştır ile). Programa göre: çalışma saatlerinde anında, diğer zamanlarda aralıklarla (Ayarlar → Gelişmiş ayarlar → Teslim programı). 15/30/60 dakikada bir: zamanlanmış denetimler, en ekonomik seçenek. Elle: uygulamayı açıp aşağı çekerek yenilediğinizde.</string>
+    <string name="checkMailHint">Anında: sunucu yeni postayı hemen bildirir (arka planda — Arka planda çalıştır ile). Programa göre: çalışma saatlerinde anında, diğer zamanlarda aralıklarla (Ayarlar → Senkronizasyon → Teslim programı). 15/30/60 dakikada bir: zamanlanmış denetimler, en ekonomik seçenek. Elle: uygulamayı açıp aşağı çekerek yenilediğinizde.</string>
     <string name="wifiOnlyAcc">Yalnızca Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Otomatik denetim yalnızca Wi‑Fi\'ye bağlıyken</string>
     <string name="accSectionConnection">Bağlantı</string>
@@ -3937,7 +3937,7 @@
     <string name="faq_mail_13_q">İleti başlığının altındaki simgeler nedir?</string>
     <string name="faq_mail_13_a">İletiyle ilgili bilgiler — çeviri, abonelikten çıkma, gizlenen resimler, okundu bilgisi isteği, teslim durumu, imza, önem, etiketler — tek bir simge satırında toplanır. Bir simgeye dokunmak ayrıntıları düğmeleriyle birlikte açar, yeniden dokunmak kapatır. Çeviri ve resim simgeleri hemen işe yarar: iletiyi çevirir ya da resimleri gösterir; diğer seçenekler ▾ menüsünde veya uzun basınca çıkar. Sahte gönderen uyarısı ve toplantı davetleri tam kart olarak kalır.</string>
     <string name="faq_mail_14_q">Tablet veya bilgisayar ekranını Outlook\'taki gibi nasıl düzenlerim?</string>
-    <string name="faq_mail_14_a">Okuma bölmesi sağa ya da alta yerleştirilebilir veya gizlenebilir: Ayarlar → Görünüm → Okuma bölmesi ya da listenin üstündeki ⋮ menüsü. Birden çok ileti Outlook\'taki gibi seçilir: Ctrl + tıklama (Mac ve iPad\'de Cmd) — tek tek, Shift — art arda, Ctrl+A — yüklenenlerin tümü, Esc — seçimi kaldır, Delete — seçilenleri sil. Ek doğrudan okuma bölmesinde açılır, Geri ise iletiye döndürür.</string>
+    <string name="faq_mail_14_a">Okuma bölmesi sağa ya da alta yerleştirilebilir veya gizlenebilir: Ayarlar → Liste ve okuma → Okuma bölmesi ya da listenin üstündeki ⋮ menüsü. Birden çok ileti Outlook\'taki gibi seçilir: Ctrl + tıklama (Mac ve iPad\'de Cmd) — tek tek, Shift — art arda, Ctrl+A — yüklenenlerin tümü, Esc — seçimi kaldır, Delete — seçilenleri sil. Ek doğrudan okuma bölmesinde açılır, Geri ise iletiye döndürür.</string>
     <string name="faq_mail_15_q">İletiler açıldığında hemen nasıl çevrilir?</string>
     <string name="faq_mail_15_a">Çeviri simgesinin yanındaki ▾ düğmesine dokunun ve … dilinden her zaman çevir seçeneğini seçin — o dildeki iletiler artık çevrilmiş olarak açılır; aslı aynı simgeyle görüntülenir. Dil listesi: Ayarlar → E-posta → Çeviri → Şu dillerden her zaman çevir. Çeviri yalnızca iletinin dili kesin olarak belirlendiğinde önerilir ve telefon dilleri için önerilmez (aynı yerden kapatılabilir: Telefon dilleri: çeviri önerme).</string>
     <string name="convReplyTo">Yanıt: {name}</string>
@@ -4348,4 +4348,12 @@
     <string name="clientCertManaged">Kuruluşunuz tarafından ayarlandı</string>
     <string name="clientCertEditDomains">Alan adlarını düzenle</string>
     <string name="mdmRuleClientCert">Kuruluş istemci sertifikası — {domains} için</string>
+    <string name="clientCertDevice">Cihaz sertifikası</string>
+    <string name="clientCertDeviceDesc">Telefona yüklenmiş veya kuruluşunuzca verilmiş</string>
+    <string name="clientCertDeviceTag">Cihaz sertifikası — Exchange ActiveSync için</string>
+    <string name="reauthSavedPassword">Kayıtlı parola — “Yeniden oturum aç” veya yenisini girin</string>
+    <string name="mailImagesSection">E-postalardaki resimler</string>
+    <string name="loadRemoteImages">İnternetteki resimleri hemen yükle</string>
+    <string name="loadRemoteImagesDesc">Kapalı — yalnızca e-postadaki “Resimleri göster” ile; böylece gönderen açtığınızı öğrenmez</string>
+    <string name="syncSettingsDesc">Tüm posta kutularını denetleme, zamanlama, çakışmalar</string>
 </resources>

@@ -10,12 +10,13 @@ import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/settings/screens/accessibility_screen.dart';
 import 'package:ogneliss/features/settings/screens/mail_settings_screen.dart';
 import 'package:ogneliss/features/settings/screens/notifications_settings_screen.dart';
+import 'package:ogneliss/features/settings/screens/sync_settings_screen.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/widgets/common/keyboard_shortcuts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> _pump(WidgetTester t, Widget home) async {
-  t.view.physicalSize = const Size(1280, 3000);
+Future<void> _pump(WidgetTester t, Widget home, {Size size = const Size(1280, 3000)}) async {
+  t.view.physicalSize = size;
   t.view.devicePixelRatio = 1;
   addTearDown(t.view.reset);
   SharedPreferences.setMockInitialValues({'s_locale': 'ru'});
@@ -72,5 +73,37 @@ void main() {
     expect(mac.any((k) => k.$1 == 'Insert'), isFalse);
     final win = desktopKeyList(ru, mac: false);
     expect(win.map((k) => k.$1), containsAll(['Ctrl+N', 'Ctrl+K', 'Insert']));
+  });
+
+  // Замечание владельца 18.11.2026: «что в настройках лежит не там».
+  testWidgets('«Лента и письма»: картинки из интернета, иконки организаций, область чтения (компьютер)', (t) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    try {
+      await _pump(t, const MailSettingsScreen());
+      expect(find.text(ru.tr('mailImagesSection')), findsOneWidget);
+      expect(find.text(ru.tr('loadRemoteImages')), findsOneWidget);
+      expect(find.text(ru.tr('orgIcons')), findsOneWidget);
+      expect(find.text(ru.tr('readingPane')), findsOneWidget);
+      await t.pumpWidget(const SizedBox());
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('телефон: области чтения в «Ленте и письмах» нет', (t) async {
+    // Высокое окно — вся страница построена (иначе «нет» могло бы значить
+    // «ниже экрана»).
+    await _pump(t, const MailSettingsScreen(), size: const Size(400, 12000));
+    expect(find.text(ru.tr('loadRemoteImages')), findsOneWidget);
+    expect(find.text(ru.tr('readingPane')), findsNothing);
+    await t.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('«Синхронизация» — отдельный экран: все ящики, расписание, конфликты', (t) async {
+    await _pump(t, const SyncSettingsScreen());
+    expect(find.text(ru.tr('autoSyncAll')), findsOneWidget);
+    expect(find.text(ru.tr('scheduleTitle')), findsOneWidget);
+    expect(find.text(ru.tr('syncConflicts')), findsOneWidget);
+    await t.pumpWidget(const SizedBox());
   });
 }

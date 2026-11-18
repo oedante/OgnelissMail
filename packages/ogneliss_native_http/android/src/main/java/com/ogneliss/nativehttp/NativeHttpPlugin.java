@@ -14,8 +14,11 @@ package com.ogneliss.nativehttp;
 // WorkManager. Прежний Kotlin-объект регистрировался только в MainActivity,
 // и в фоне каждый запрос заканчивался MissingPluginException.
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.security.KeyChain;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -45,6 +48,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
@@ -52,10 +56,12 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler {
+public class NativeHttpPlugin implements FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandler {
     private static final String CHANNEL = "ogneliss/native_http";
 
     // Общие для всех движков процесса: запросы независимы, состояние не хранится.
@@ -67,8 +73,34 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
     // тоже во всех движках, поэтому в этом же плагине.
     private MethodChannel avatarChannel;
 
+    // Сертификат клиента из KeyChain (2.6.5): контекст приложения — для
+    // ключа и цепочки (и в фоновом движке), окно — для выбора сертификата.
+    private static volatile Context appContext;
+    private Activity activity;
+
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        activity = null;
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        activity = null;
+    }
+
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        appContext = binding.getApplicationContext();
         channel = new MethodChannel(binding.getBinaryMessenger(), CHANNEL);
         channel.setMethodCallHandler(this);
         avatarChannel = new MethodChannel(binding.getBinaryMessenger(), AvatarPainter.CHANNEL);
@@ -111,6 +143,52 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
             });
             return;
         }
+        if ("chooseClientAlias".equals(call.method)) {
+            // Системное окно выбора сертификата (установленные на устройство и
+            // выданные организацией). Выбор даёт приложению доступ к ключу.
+            final Activity a = activity;
+            if (a == null) {
+                result.success(null);
+                return;
+            }
+            final String host = call.argument("host");
+            final Integer port = call.argument("port");
+            final String preselect = call.argument("alias");
+            try {
+                KeyChain.choosePrivateKeyAlias(a, alias -> MAIN.post(() -> result.success(alias)),
+                        new String[]{"RSA", "EC"}, null, host, port != null ? port : 443, preselect);
+            } catch (Exception e) {
+                result.error("KEYCHAIN", e.getClass().getSimpleName() + ": " + e.getMessage(), null);
+            }
+            return;
+        }
+        if ("clientAliasInfo".equals(call.method)) {
+            // Сведения о сертификате по псевдониму; null — нет доступа или
+            // сертификата (удалён, организация отозвала).
+            final String alias = call.argument("alias");
+            POOL.execute(() -> {
+                Map<String, Object> out = null;
+                try {
+                    final Context ctx = appContext;
+                    final X509Certificate[] chain =
+                            ctx == null || alias == null ? null : KeyChain.getCertificateChain(ctx, alias);
+                    if (chain != null && chain.length > 0) {
+                        final X509Certificate leaf = chain[0];
+                        out = new HashMap<>();
+                        out.put("subject", leaf.getSubjectX500Principal().getName());
+                        out.put("issuer", leaf.getIssuerX500Principal().getName());
+                        out.put("notAfter", leaf.getNotAfter().getTime());
+                        out.put("sha256", Base64.encodeToString(
+                                MessageDigest.getInstance("SHA-256").digest(leaf.getEncoded()), Base64.NO_WRAP));
+                    }
+                } catch (Exception ignored) {
+                    out = null;
+                }
+                final Map<String, Object> res = out;
+                MAIN.post(() -> result.success(res));
+            });
+            return;
+        }
         if (!"send".equals(call.method)) {
             result.notImplemented();
             return;
@@ -141,13 +219,15 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
         // установленных на устройство пользователем.
         final Boolean systemOnlyArg = call.argument("systemOnly");
         final boolean systemOnly = systemOnlyArg != null && systemOnlyArg;
+        // Сертификат клиента из KeyChain для этого сервера (2.6.5); null — без.
+        final String clientAlias = call.argument("clientAlias");
 
         POOL.execute(() -> {
             final X509Certificate[] rejected = new X509Certificate[1];
             try {
                 final Map<String, Object> res =
                         send(method, url, headers, body, timeoutMs, trusted, acceptAny, extraCas,
-                                strict, strictPins, systemOnly, rejected);
+                                strict, strictPins, systemOnly, clientAlias, rejected);
                 MAIN.post(() -> result.success(res));
             } catch (Exception e) {
                 final String msg = e.getClass().getSimpleName() + ": " + e.getMessage();
@@ -181,12 +261,12 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
             String method, String url, Map<String, String> headers,
             byte[] body, int timeoutMs,
             Set<String> trusted, boolean acceptAny, List<byte[]> extraCas,
-            boolean strict, Set<String> strictPins, boolean systemOnly,
+            boolean strict, Set<String> strictPins, boolean systemOnly, String clientAlias,
             X509Certificate[] rejected) throws Exception {
         final HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         if (conn instanceof HttpsURLConnection) {
             ((HttpsURLConnection) conn).setSSLSocketFactory(
-                    sslFactory(trusted, acceptAny, extraCas, strict, strictPins, systemOnly, rejected));
+                    sslFactory(trusted, acceptAny, extraCas, strict, strictPins, systemOnly, clientAlias, rejected));
         }
         try {
             conn.setInstanceFollowRedirects(false);
@@ -256,7 +336,7 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
      */
     private static SSLSocketFactory sslFactory(
             Set<String> trusted, boolean acceptAny, List<byte[]> extraCas,
-            boolean strict, Set<String> strictPins, boolean systemOnly,
+            boolean strict, Set<String> strictPins, boolean systemOnly, String clientAlias,
             X509Certificate[] rejected) throws Exception {
         final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         // По умолчанию — как велит network_security_config (системные и
@@ -332,7 +412,11 @@ public class NativeHttpPlugin implements FlutterPlugin, MethodChannel.MethodCall
             }
         };
         final SSLContext ctx = SSLContext.getInstance("TLS");
-        ctx.init(null, new TrustManager[]{tm}, null);
+        final Context app = appContext;
+        final KeyManager[] km = clientAlias != null && app != null
+                ? new KeyManager[]{new KeyChainKeyManager(app, clientAlias)}
+                : null;
+        ctx.init(km, new TrustManager[]{tm}, null);
         return ctx.getSocketFactory();
     }
 

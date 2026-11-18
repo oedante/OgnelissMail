@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import '../../../widgets/navigation/app_bottom_bar.dart';
+import '../../../services/accounts/account_labels.dart' show AccountLabels;
 import '../../../services/mail/dav/dav_pim_service.dart';
 import '../../mail/providers/mail_providers.dart' show accountsProvider, emailModelFromRow;
 import '../../mail/widgets/mail_peek_card.dart' show showMailPeek, PeekAction;
@@ -897,8 +898,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       onChanged: (_) => ref.read(calendarHiddenAccountsProvider.notifier).toggle(a.id),
                       activeColor: Color(a.colorValue),
                       secondary: CircleAvatar(radius: 7, backgroundColor: Color(a.colorValue)),
-                      title: Text(a.displayName.isNotEmpty ? a.displayName : a.email),
-                      subtitle: a.displayName.isNotEmpty ? Text(a.email) : null,
+                      // Название ящика («Работа», «Семья»), если задано.
+                      title: Text(AccountLabels.current[a.id] ?? (a.displayName.isNotEmpty ? a.displayName : a.email)),
+                      subtitle: a.displayName.isNotEmpty || AccountLabels.current[a.id] != null ? Text(a.email) : null,
                     ),
                   const Divider(),
                   Padding(

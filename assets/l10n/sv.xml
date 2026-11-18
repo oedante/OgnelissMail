@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Var {n} min</string>
     <string name="checkHourly">Varje timme</string>
     <string name="checkManual">Endast manuellt</string>
-    <string name="checkMailHint">Direkt – servern meddelar om ny e-post omedelbart (i bakgrunden – med ”Kör i bakgrunden”). Enligt schema – direkt under arbetstid, annars med intervall (Inställningar → Avancerade inställningar → Leveransschema). Var 15:e/30:e/60:e minut – schemalagda kontroller, det mest sparsamma. Manuellt – när du öppnar appen och drar ned för att uppdatera.</string>
+    <string name="checkMailHint">Direkt – servern meddelar om ny e-post omedelbart (i bakgrunden – med ”Kör i bakgrunden”). Enligt schema – direkt under arbetstid, annars med intervall (Inställningar → Synkronisering → Leveransschema). Var 15:e/30:e/60:e minut – schemalagda kontroller, det mest sparsamma. Manuellt – när du öppnar appen och drar ned för att uppdatera.</string>
     <string name="wifiOnlyAcc">Endast Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automatisk kontroll endast vid anslutning till Wi‑Fi</string>
     <string name="accSectionConnection">Anslutning</string>
@@ -3937,7 +3937,7 @@
     <string name="faq_mail_13_q">Vad betyder ikonerna under meddelandehuvudet?</string>
     <string name="faq_mail_13_a">Uppgifter om meddelandet – översättning, avregistrering från nyhetsbrev, dolda bilder, begäran om läskvitto, leverans, signatur, prioritet, taggar – är samlade i en enda rad ikoner. Ett tryck på en ikon fäller ut detaljerna med knappar, ett nytt tryck fäller ihop dem. Ikonerna för översättning och bilder verkar direkt: de översätter meddelandet eller visar bilderna, och övriga val finns i menyn ▾ eller med en lång tryckning. Varningen för förfalskad avsändare och mötesinbjudningar visas fortfarande som fullständiga kort.</string>
     <string name="faq_mail_14_q">Hur ordnar jag skärmen på en surfplatta eller dator som i Outlook?</string>
-    <string name="faq_mail_14_a">Läsfönstret kan placeras till höger, nederst eller döljas: Inställningar → Utseende → Läsfönster eller menyn ⋮ ovanför listan. Flera meddelanden markeras som i Outlook: Ctrl + klick (på Mac och iPad Cmd) – ett i taget, Shift – ett intervall, Ctrl+A – alla inlästa, Esc – avmarkera, Delete – ta bort de markerade. En bilaga öppnas direkt i läsfönstret, och Tillbaka går tillbaka till meddelandet.</string>
+    <string name="faq_mail_14_a">Läsfönstret kan placeras till höger, nederst eller döljas: Inställningar → Lista och läsning → Läsfönster eller menyn ⋮ ovanför listan. Flera meddelanden markeras som i Outlook: Ctrl + klick (på Mac och iPad Cmd) – ett i taget, Shift – ett intervall, Ctrl+A – alla inlästa, Esc – avmarkera, Delete – ta bort de markerade. En bilaga öppnas direkt i läsfönstret, och Tillbaka går tillbaka till meddelandet.</string>
     <string name="faq_mail_15_q">Hur översätter jag meddelanden direkt när de öppnas?</string>
     <string name="faq_mail_15_a">Tryck på ▾ vid översättningsikonen och välj Översätt alltid från … – meddelanden på det språket öppnas sedan redan översatta; originalet visas med samma ikon. Listan över språk: Inställningar → E-post → Översättning → Översätt alltid från. Översättning erbjuds bara när meddelandets språk har identifierats säkert, och inte för telefonens språk (stängs av på samma ställe: Telefonens språk – erbjud inte översättning).</string>
     <string name="convReplyTo">Svar till {name}</string>
@@ -4348,4 +4348,12 @@
     <string name="clientCertManaged">Angivet av organisationen</string>
     <string name="clientCertEditDomains">Ändra domäner</string>
     <string name="mdmRuleClientCert">Organisationens klientcertifikat – för {domains}</string>
+    <string name="clientCertDevice">Enhetscertifikat</string>
+    <string name="clientCertDeviceDesc">Installerat på telefonen eller utfärdat av organisationen</string>
+    <string name="clientCertDeviceTag">Enhetscertifikat – för Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Sparat lösenord – ”Logga in igen” eller ange ett nytt</string>
+    <string name="mailImagesSection">Bilder i e-post</string>
+    <string name="loadRemoteImages">Läs in bilder från internet direkt</string>
+    <string name="loadRemoteImagesDesc">Av – bara med ”Visa bilder” i meddelandet, så att avsändaren inte får veta att du öppnade det</string>
+    <string name="syncSettingsDesc">Kontroll av alla brevlådor, schema, konflikter</string>
 </resources>

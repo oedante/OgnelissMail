@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/utils/text_safe.dart' show initialOf;
 import '../../data/models/account_model.dart';
+import '../../services/accounts/account_labels.dart' show AccountLabels;
 import 'hero_email_transition.dart';
 import 'peek_card.dart' show AppMenuEntry;
 
@@ -82,7 +83,8 @@ Map<String, String> distinctAccountInitials(List<AccountModel> accounts) {
   return out;
 }
 
-/// Пункт меню выбора ящика: портрет, имя (или адрес) и адрес под ним.
+/// Пункт меню выбора ящика: портрет, название ящика (если его задали —
+/// «Работа», «Семья»), иначе имя или адрес; адрес под ним.
 AppMenuEntry<String> accountMenuEntry(
   AccountModel a, {
   String? value,
@@ -91,13 +93,14 @@ AppMenuEntry<String> accountMenuEntry(
   Color? ringColor,
   bool enabled = true,
 }) {
+  final own = AccountLabels.current[a.id];
   final name = a.displayName.trim();
   final login = a.email.split('@').first.toLowerCase();
   final plain = name.isEmpty || name.toLowerCase() == login || name.toLowerCase() == a.email.toLowerCase();
   return AppMenuEntry<String>(
     value: value ?? a.id,
-    label: label ?? (plain ? a.email : name),
-    subtitle: subtitle ?? (plain ? null : a.email),
+    label: label ?? own ?? (plain ? a.email : name),
+    subtitle: subtitle ?? (own == null && plain ? null : a.email),
     leading: AccountAvatar(account: a, ringColor: ringColor),
     enabled: enabled,
   );

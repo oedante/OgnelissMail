@@ -212,4 +212,9 @@
         android:restrictionType="string"
         android:title="@string/mdm_client_cert_domains_title"
         android:description="@string/mdm_client_cert_domains_desc" />
+    <restriction
+        android:key="client_cert_alias"
+        android:restrictionType="string"
+        android:title="@string/mdm_client_cert_alias_title"
+        android:description="@string/mdm_client_cert_alias_desc" />
 </restrictions>

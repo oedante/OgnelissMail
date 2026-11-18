@@ -1215,7 +1215,7 @@
     <string name="checkEvery">{n}分ごと</string>
     <string name="checkHourly">1時間ごと</string>
     <string name="checkManual">手動のみ</string>
-    <string name="checkMailHint">即時：新着メールをサーバーがすぐに通知します（バックグラウンドでは「バックグラウンドで実行」が必要）。スケジュール：勤務時間中は即時、それ以外は一定間隔で確認します（設定 → 詳細設定 → 配信スケジュール）。15/30/60分ごと：定期的に確認し、最も省電力です。手動：アプリを開いて下に引っ張って更新したときに確認します。</string>
+    <string name="checkMailHint">即時：新着メールをサーバーがすぐに通知します（バックグラウンドでは「バックグラウンドで実行」が必要）。スケジュール：勤務時間中は即時、それ以外は一定間隔で確認します（設定 → 同期 → 配信スケジュール）。15/30/60分ごと：定期的に確認し、最も省電力です。手動：アプリを開いて下に引っ張って更新したときに確認します。</string>
     <string name="wifiOnlyAcc">Wi‑Fiのみ</string>
     <string name="wifiOnlyAccDesc">Wi‑Fi接続時のみ自動で確認します</string>
     <string name="accSectionConnection">接続</string>
@@ -3916,7 +3916,7 @@
     <string name="faq_mail_13_q">メールのヘッダーの下にあるアイコンは何ですか？</string>
     <string name="faq_mail_13_a">メールの情報（翻訳、配信停止、非表示の画像、開封確認の依頼、配信状況、署名、重要度、タグ）は、1 行のアイコンにまとめられています。アイコンをタップすると詳細とボタンが開き、もう一度タップすると閉じます。翻訳と画像のアイコンはすぐに動作し、メールを翻訳したり画像を表示したりします。その他の操作は ▾ メニューか長押しで選べます。差出人の偽装の警告と会議の招待は、引き続き完全なカードで表示されます。</string>
     <string name="faq_mail_14_q">タブレットやパソコンの画面を Outlook のようにするには？</string>
-    <string name="faq_mail_14_a">閲覧ウィンドウは右か下に配置するか、非表示にできます：設定 → 外観 → 閲覧ウィンドウ、またはリスト上部の ⋮ メニュー。複数のメールは Outlook と同じように選択できます：Ctrl + クリック（Mac と iPad では Cmd）で 1 通ずつ、Shift で連続した範囲、Ctrl+A で読み込み済みのすべて、Esc で選択解除、Delete で選択したメールを削除。添付ファイルは閲覧ウィンドウ内で直接開き、「戻る」でメールに戻ります。</string>
+    <string name="faq_mail_14_a">閲覧ウィンドウは右か下に配置するか、非表示にできます：設定 → 一覧と閲覧 → 閲覧ウィンドウ、またはリスト上部の ⋮ メニュー。複数のメールは Outlook と同じように選択できます：Ctrl + クリック（Mac と iPad では Cmd）で 1 通ずつ、Shift で連続した範囲、Ctrl+A で読み込み済みのすべて、Esc で選択解除、Delete で選択したメールを削除。添付ファイルは閲覧ウィンドウ内で直接開き、「戻る」でメールに戻ります。</string>
     <string name="faq_mail_15_q">メールを開いたときにすぐ翻訳するには？</string>
     <string name="faq_mail_15_a">翻訳アイコンの横の ▾ をタップし、「…は常に翻訳する」を選ぶと、その言語のメールは最初から翻訳された状態で開きます。原文は同じアイコンで表示できます。言語の一覧：設定 → メール → 翻訳 → 常に翻訳する言語。翻訳が提案されるのは、メールの言語を確実に判別できた場合だけで、スマートフォンの言語では提案されません（同じ場所の「スマートフォンの言語は翻訳を提案しない」でオフにできます）。</string>
     <string name="convReplyTo">{name} への返信</string>
@@ -4327,4 +4327,12 @@
     <string name="clientCertManaged">組織が設定</string>
     <string name="clientCertEditDomains">ドメインを編集</string>
     <string name="mdmRuleClientCert">組織のクライアント証明書 — 対象 {domains}</string>
+    <string name="clientCertDevice">デバイス証明書</string>
+    <string name="clientCertDeviceDesc">スマートフォンにインストール済み、または組織が発行</string>
+    <string name="clientCertDeviceTag">デバイス証明書 — Exchange ActiveSync 用</string>
+    <string name="reauthSavedPassword">保存済みのパスワード —「再ログイン」または新しいパスワードを入力</string>
+    <string name="mailImagesSection">メール内の画像</string>
+    <string name="loadRemoteImages">インターネットの画像をすぐに読み込む</string>
+    <string name="loadRemoteImagesDesc">オフ — メールの「画像を表示」でのみ表示。差出人に開封が知られません</string>
+    <string name="syncSettingsDesc">全メールボックスの確認、スケジュール、競合</string>
 </resources>

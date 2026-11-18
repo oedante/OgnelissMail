@@ -46,6 +46,11 @@ abstract final class AccountLabels {
 
   static String? of(SharedPreferences prefs, String accountId) => clean(prefs.getString('$_prefix$accountId'));
 
+  /// Названия сейчас — для меню, которые строятся без провайдеров
+  /// (выбор ящика в календаре, контактах, задачах). Ведёт
+  /// [AccountLabelsNotifier].
+  static Map<String, String> current = const {};
+
   /// Сохранить; пустое — убрать название.
   static Future<void> write(SharedPreferences prefs, String accountId, String? label) async {
     final v = clean(label);
@@ -58,12 +63,15 @@ abstract final class AccountLabels {
 }
 
 class AccountLabelsNotifier extends StateNotifier<Map<String, String>> {
-  AccountLabelsNotifier(this._prefs) : super(AccountLabels.read(_prefs));
+  AccountLabelsNotifier(this._prefs) : super(AccountLabels.read(_prefs)) {
+    AccountLabels.current = state;
+  }
   final SharedPreferences _prefs;
 
   Future<void> set(String accountId, String? label) async {
     await AccountLabels.write(_prefs, accountId, label);
     state = AccountLabels.read(_prefs);
+    AccountLabels.current = state;
   }
 }
 

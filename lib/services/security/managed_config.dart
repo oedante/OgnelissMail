@@ -140,6 +140,12 @@ class ManagedKeys {
   /// imap_server, smtp_server.
   static const clientCertDomains = 'client_cert_domains';
 
+  /// Android: псевдоним сертификата устройства в KeyChain, к которому
+  /// организация открыла приложению доступ (Android Enterprise:
+  /// DevicePolicyManager.grantKeyPairToApp или делегированный выбор
+  /// сертификата). TLS с ним — сетевой стек Android, для Exchange ActiveSync.
+  static const clientCertAlias = 'client_cert_alias';
+
   /// Отпечаток файла в копии политики (prefs): сам файл и пароль туда не
   /// пишутся, их копия — в защищённом хранилище (ClientCertStore).
   static const clientCertSha256 = 'client_cert_sha256';
@@ -151,7 +157,7 @@ class ManagedKeys {
     maxSyncDays, blockAttachmentDownload, pinTimeoutMinutes, allowBiometrics, blockExternalServices,
     accountLocked, accountTransport, requireTls, trustedCaPem, allowUserCertTrust, blockDeviceContacts,
     blockDeviceCalendar, httpProxy, proxyBypass, pacUrl, clientCertPkcs12, clientCertPassword,
-    clientCertDomains,
+    clientCertDomains, clientCertAlias,
   ];
 }
 
@@ -200,6 +206,7 @@ class ManagedPolicy {
     this.clientCertPassword,
     this.clientCertDomains,
     this.clientCertSha256,
+    this.clientCertAlias,
   });
 
   static const none = ManagedPolicy();
@@ -298,8 +305,11 @@ class ManagedPolicy {
   /// Отпечаток SHA-256 файла сертификата клиента (есть и в копии в prefs).
   final String? clientCertSha256;
 
-  /// Организация задала сертификат клиента.
-  bool get hasClientCert => clientCertSha256 != null;
+  /// Псевдоним сертификата устройства (Android KeyChain, [ManagedKeys.clientCertAlias]).
+  final String? clientCertAlias;
+
+  /// Организация задала сертификат клиента (файлом или на устройстве).
+  bool get hasClientCert => clientCertSha256 != null || clientCertAlias != null;
 
   /// Ящик [email] — ящик организации, закреплённый политикой.
   bool lockedAccount(String email) =>
@@ -450,6 +460,7 @@ class ManagedPolicy {
       clientCertPassword: p12 == null ? null : (v(ManagedKeys.clientCertPassword)?.toString() ?? ''),
       clientCertDomains: _str(v(ManagedKeys.clientCertDomains)),
       clientCertSha256: p12 != null ? _sha256B64(p12) : _str(v(ManagedKeys.clientCertSha256)),
+      clientCertAlias: _str(v(ManagedKeys.clientCertAlias)),
     );
   }
 
@@ -491,6 +502,7 @@ class ManagedPolicy {
         if (pacUrl != null) ManagedKeys.pacUrl: pacUrl,
         if (clientCertDomains != null) ManagedKeys.clientCertDomains: clientCertDomains,
         if (clientCertSha256 != null) ManagedKeys.clientCertSha256: clientCertSha256,
+        if (clientCertAlias != null) ManagedKeys.clientCertAlias: clientCertAlias,
       };
 
   @override

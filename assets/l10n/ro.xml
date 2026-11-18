@@ -1215,7 +1215,7 @@
     <string name="checkEvery">La fiecare {n} min</string>
     <string name="checkHourly">În fiecare oră</string>
     <string name="checkManual">Doar manual</string>
-    <string name="checkMailHint">Instant – serverul anunță imediat mesajele noi (în fundal – cu opțiunea Rulare în fundal). Conform programului – instant în timpul programului de lucru, altfel la intervale (Setări → Setări avansate → Program de livrare). La fiecare 15/30/60 de minute – verificări programate, cea mai economică variantă. Manual – când deschizi aplicația și tragi în jos pentru a reîmprospăta.</string>
+    <string name="checkMailHint">Instant – serverul anunță imediat mesajele noi (în fundal – cu opțiunea Rulare în fundal). Conform programului – instant în timpul programului de lucru, altfel la intervale (Setări → Sincronizare → Program de livrare). La fiecare 15/30/60 de minute – verificări programate, cea mai economică variantă. Manual – când deschizi aplicația și tragi în jos pentru a reîmprospăta.</string>
     <string name="wifiOnlyAcc">Doar prin Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Verificare automată doar la conectarea la Wi‑Fi</string>
     <string name="accSectionConnection">Conexiune</string>
@@ -3958,7 +3958,7 @@
     <string name="faq_mail_13_q">Ce sunt pictogramele de sub antetul mesajului?</string>
     <string name="faq_mail_13_a">Informațiile despre mesaj — traducere, dezabonare, imagini ascunse, cerere de confirmare de citire, livrare, semnătură, importanță, etichete — sunt adunate într-un singur rând de pictograme. O atingere pe pictogramă deschide detaliile cu butoane, încă o atingere le închide. Pictogramele de traducere și de imagini acționează imediat: traduc mesajul sau afișează imaginile, iar celelalte opțiuni sunt în meniul ▾ sau la apăsare lungă. Avertismentul despre expeditor fals și invitațiile la întâlniri rămân carduri complete.</string>
     <string name="faq_mail_14_q">Cum aranjez ecranul tabletei sau al computerului ca în Outlook?</string>
-    <string name="faq_mail_14_a">Panoul de citire se pune în dreapta, jos sau se ascunde: Setări → Aspect → Panou de citire sau meniul ⋮ de deasupra listei. Mai multe mesaje se selectează ca în Outlook: Ctrl + clic (pe Mac și iPad, Cmd) — câte unul, Shift — un interval, Ctrl+A — toate cele încărcate, Esc — anulează selecția, Delete — șterge mesajele selectate. Un atașament se deschide direct în panoul de citire, iar Înapoi te duce înapoi la mesaj.</string>
+    <string name="faq_mail_14_a">Panoul de citire se pune în dreapta, jos sau se ascunde: Setări → Listă și citire → Panou de citire sau meniul ⋮ de deasupra listei. Mai multe mesaje se selectează ca în Outlook: Ctrl + clic (pe Mac și iPad, Cmd) — câte unul, Shift — un interval, Ctrl+A — toate cele încărcate, Esc — anulează selecția, Delete — șterge mesajele selectate. Un atașament se deschide direct în panoul de citire, iar Înapoi te duce înapoi la mesaj.</string>
     <string name="faq_mail_15_q">Cum traduc mesajele imediat ce le deschid?</string>
     <string name="faq_mail_15_a">Atinge ▾ de lângă pictograma de traducere și alege Tradu întotdeauna din … — mesajele în limba respectivă se vor deschide deja traduse; originalul îl vezi cu aceeași pictogramă. Lista limbilor: Setări → E-mail → Traducere → Tradu întotdeauna din. Traducerea este oferită doar când limba mesajului e detectată cu siguranță și nu e oferită pentru limbile telefonului (se dezactivează tot acolo: Limbile telefonului – nu oferi traducere).</string>
     <string name="convReplyTo">Răspuns către {name}</string>
@@ -4369,4 +4369,12 @@
     <string name="clientCertManaged">Setat de organizație</string>
     <string name="clientCertEditDomains">Editează domeniile</string>
     <string name="mdmRuleClientCert">Certificatul client al organizației — pentru {domains}</string>
+    <string name="clientCertDevice">Certificatul dispozitivului</string>
+    <string name="clientCertDeviceDesc">Instalat pe telefon sau emis de organizație</string>
+    <string name="clientCertDeviceTag">Certificatul dispozitivului — pentru Exchange ActiveSync</string>
+    <string name="reauthSavedPassword">Parolă salvată — „Conectează-te din nou” sau introdu una nouă</string>
+    <string name="mailImagesSection">Imagini în e-mailuri</string>
+    <string name="loadRemoteImages">Încarcă imediat imaginile de pe internet</string>
+    <string name="loadRemoteImagesDesc">Dezactivat — doar cu „Afișează imaginile” din e-mail, astfel expeditorul nu află că l-ați deschis</string>
+    <string name="syncSettingsDesc">Verificarea tuturor căsuțelor, program, conflicte</string>
 </resources>

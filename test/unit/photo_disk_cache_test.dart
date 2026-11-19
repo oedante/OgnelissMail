@@ -15,7 +15,10 @@ void main() {
     dir = Directory.systemTemp.createTempSync('photos');
     PhotoDiskCache.debugDir = dir;
   });
-  tearDown(() {
+  tearDown(() async {
+    // Фоновое обновление могло ещё писать файл: на Windows папку с открытым
+    // файлом не удалить (журнал владельца 19.11.2026, errno 32).
+    await PhotoDiskCache.debugIdle();
     PhotoDiskCache.debugDir = null;
     PhotoDiskCache.debugClient = null;
     dir.deleteSync(recursive: true);
@@ -58,7 +61,8 @@ void main() {
       return http.Response.bytes(fresh, 200);
     });
     expect(await PhotoDiskCache.bytes(url), png, reason: 'старая копия — без ожидания сети');
-    await Future<void>.delayed(const Duration(milliseconds: 50));
+    // Ждём само обновление, а не 50 мс: на Windows запись медленнее.
+    await PhotoDiskCache.debugIdle();
     expect(asked, 1);
     expect(f.readAsBytesSync(), fresh);
 

@@ -40,6 +40,14 @@ abstract final class PhotoDiskCache {
   static Directory? _dir;
   static final Map<String, Future<Uint8List?>> _inflight = {};
 
+  /// Для тестов: дождаться всех идущих загрузок (и фоновых обновлений).
+  @visibleForTesting
+  static Future<void> debugIdle() async {
+    while (_inflight.isNotEmpty) {
+      await Future.wait(_inflight.values.toList());
+    }
+  }
+
   static Future<Directory> _folder() async {
     final d = debugDir ?? (_dir ??= Directory('${(await getApplicationCacheDirectory()).path}/photos'));
     if (!d.existsSync()) d.createSync(recursive: true);

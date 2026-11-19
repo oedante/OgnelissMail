@@ -5,7 +5,8 @@
 // код обменивается на токены прямо у провайдера, обновление токена — тоже.
 //
 // Провайдеры:
-//   • google    — Gmail (IMAP/SMTP), календарь и контакты Google;
+//   • google    — календарь и контакты Google (почта Gmail с 2.6.7 — по
+//     паролю приложения);
 //   • microsoft — Outlook.com / Hotmail (IMAP/SMTP);
 //   • exchange  — Exchange Online (Microsoft 365) по ActiveSync и EWS;
 //   • yandex    — Яндекс Почта (IMAP/SMTP), календарь и контакты (2.2.0,
@@ -154,7 +155,9 @@ class DirectOAuth {
 
   static const _googleScopes = [
     'openid', 'email', 'profile',
-    'https://mail.google.com/',
+    // Почта Gmail — по паролю приложения (2.6.7): https://mail.google.com/
+    // не запрашивается (письмо Google 19.11.2026 — доступ к почте требует
+    // платной проверки CASA). Остались календарь и контакты.
     'https://www.googleapis.com/auth/calendar',
     'https://www.googleapis.com/auth/carddav',
     // Фото собеседников из профилей Google (2.6.2): сохранённые и «Другие

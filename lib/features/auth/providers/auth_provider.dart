@@ -621,7 +621,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<String?> reauthenticate(AccountModel account, {String? password}) async {
     try {
       final storage = _ref.read(secureStorageProvider);
-      if (account.usesOAuthTokens) {
+      // Ящик Google (2.6.7): почта — по паролю приложения; токен Google
+      // (календарь и контакты прежних ящиков) не трогаем.
+      if (account.usesOAuthTokens && account.type != AccountType.google) {
         final name = account.isExchangeOnlineOAuth
             ? 'exchange'
             : switch (account.type) {

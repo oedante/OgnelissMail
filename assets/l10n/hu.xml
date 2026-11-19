@@ -4388,4 +4388,6 @@
     <string name="customGreetingSample">Az e-mailben</string>
     <string name="faq_drafts_11_q">Hogyan készíthetek saját megszólítást?</string>
     <string name="faq_drafts_11_a">Beállítások → Fiókok → postafiók → Aláírások → „Saját megszólítás hozzáadása”. Írja be a szöveget, és a gombokkal szúrjon be mezőket: {to_address} — a név, ahogy a szokásos megszólításban; {to_first_name} és {to_last_name}; {part_of_day} — „Jó reggelt”, „Jó napot” vagy „Jó estét” a küldés ideje szerint; az Ön neve, beosztása és telefonszáma. Az érték nélküli mező a fölösleges vesszővel együtt eltűnik. Az új megszólítás azonnal a postafiók megszólítása lesz, a levélben pedig az összes saját megszólítás a szöveg fölötti „Megszólítás” gombban van. Ugyanezek a mezők az aláírásszerkesztőben is megvannak.</string>
+    <string name="gmailAppPwTitle">Gmail – alkalmazásjelszó</string>
+    <string name="gmailAppPwHint">A Gmail alkalmazásjelszóval csatlakozik – ez egy külön jelszó levelezőprogramokhoz, amelyet bármikor visszavonhat; a Google-jelszavát nem kell megadnia. Kapcsolja be a kétlépcsős azonosítást Google-fiókjában, hozzon létre jelszót az „Alkalmazásjelszavak” oldalon (például Ogneliss névvel), és írja be ide.</string>
 </resources>

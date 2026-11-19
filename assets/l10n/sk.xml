@@ -4409,4 +4409,6 @@
     <string name="customGreetingSample">V e-maile</string>
     <string name="faq_drafts_11_q">Ako vytvoriť vlastný pozdrav?</string>
     <string name="faq_drafts_11_a">Nastavenia → Účty → schránka → Podpisy → „Pridať vlastný pozdrav“. Napíšte text a tlačidlami vložte polia: {to_address} — meno ako v štandardnom pozdrave; {to_first_name} a {to_last_name}; {part_of_day} — „Dobré ráno“, „Dobrý deň“ alebo „Dobrý večer“ podľa času odoslania; vaše meno, pozícia a telefón. Pole bez hodnoty zmizne aj s nadbytočnou čiarkou. Nový pozdrav sa hneď stane pozdravom schránky a v e-maile nájdete všetky svoje pozdravy pod tlačidlom „Pozdrav“ nad textom. Rovnaké polia sú v editore podpisu.</string>
+    <string name="gmailAppPwTitle">Gmail — heslo aplikácie</string>
+    <string name="gmailAppPwHint">Gmail sa pripája pomocou hesla aplikácie — samostatného hesla pre poštové programy, ktoré môžete kedykoľvek zrušiť; hlavné heslo Google nezadávate. Zapnite v účte Google dvojstupňové overenie, na stránke „Heslá aplikácií“ vytvorte heslo (napr. s názvom Ogneliss) a zadajte ho sem.</string>
 </resources>

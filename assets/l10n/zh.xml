@@ -4367,4 +4367,6 @@
     <string name="customGreetingSample">邮件中</string>
     <string name="faq_drafts_11_q">如何创建自己的问候语？</string>
     <string name="faq_drafts_11_a">设置 → 账户 → 邮箱 → 签名 → “添加问候语”。输入文本，并用按钮插入字段：{to_address} — 与标准问候语相同的称呼；{to_first_name} 和 {to_last_name}；{part_of_day} — 按发送时间显示“早上好”“下午好”或“晚上好”；以及您的姓名、职位和电话。没有值的字段会连同多余的逗号一起消失。新的问候语会立即成为该邮箱的问候语；在邮件中，所有问候语都在正文上方的“问候语”按钮里。签名编辑器中也有相同的字段。</string>
+    <string name="gmailAppPwTitle">Gmail — 应用专用密码</string>
+    <string name="gmailAppPwHint">Gmail 通过应用专用密码连接：这是供邮件应用使用的独立密码，可随时撤销，无需输入 Google 主密码。请在 Google 账号中开启两步验证，在“应用专用密码”页面创建密码（名称例如 Ogneliss），然后在此输入。</string>
 </resources>

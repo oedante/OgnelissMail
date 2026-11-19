@@ -410,7 +410,7 @@ class ImapService {
     final capsBeforeLogin = client.serverInfo.capabilitiesText;
 
     // Аутентификация
-    if (account.isOAuth) {
+    if (account.mailUsesOAuth) {
       // Обновляем access-токен, если он истёк (иначе IMAP-вход упадёт через ~1 час).
       if (_ensureToken != null) {
         try { await _ensureToken!(account, false); } catch (e) {
@@ -447,6 +447,11 @@ class ImapService {
       }
     } else {
       final password = await _secureStorage.getAccountPassword(account.id);
+      // Ящик Google, вошедший через Google до 2.6.7: пароля приложения ещё
+      // нет — это ошибка входа («Войти снова» спросит пароль приложения).
+      if (password == null && account.type == AccountType.google) {
+        throw Exception('IMAP: Gmail authentication failed — app password required');
+      }
       if (password == null) throw Exception('IMAP: No password');
       // Логин IMAP — полный email; fallback на email, если username пуст.
       final loginName = account.username.isNotEmpty ? account.username : account.email;
@@ -583,7 +588,7 @@ class ImapService {
       }
     }
 
-    if (account.isOAuth) {
+    if (account.mailUsesOAuth) {
       try { await _ensureToken?.call(account, false); } catch (_) {}
       final token = await _secureStorage.getAccessToken(account.id);
       if (token == null) {

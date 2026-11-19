@@ -130,6 +130,12 @@ class AccountModel {
   /// серверных правил и отзыва письма. Если Autodiscover отдал адрес EWS,
   /// эти функции работают и для EAS-аккаунта.
   bool get hasEwsExtras => usesEws || (ewsUrl != null && ewsUrl!.isNotEmpty);
+  /// Почта (IMAP/SMTP) — по токену OAuth. Gmail — по паролю приложения
+  /// (2.6.7, письмо Google 19.11.2026: доступ к почте через OAuth
+  /// (https://mail.google.com/) требует платной проверки CASA; приложение от
+  /// него отказалось). Токен Google у прежних ящиков остаётся для календаря
+  /// и контактов.
+  bool get mailUsesOAuth => isOAuth && type != AccountType.google;
   bool get isOAuth => type == AccountType.google || type == AccountType.yandex || type == AccountType.yahoo || type == AccountType.mailru || type == AccountType.outlook;
   /// Exchange Online (Microsoft 365) по OAuth: ActiveSync и EWS с токеном
   /// вместо пароля (1.6.2).

@@ -4388,4 +4388,6 @@
     <string name="customGreetingSample">I mejlet</string>
     <string name="faq_drafts_11_q">Hur skapar jag en egen hälsning?</string>
     <string name="faq_drafts_11_a">Inställningar → Konton → brevlåda → Signaturer → ”Lägg till egen hälsning”. Skriv texten och infoga fält med knapparna: {to_address} — namnet som i standardhälsningen; {to_first_name} och {to_last_name}; {part_of_day} — ”God morgon”, ”God dag” eller ”God kväll” efter sändningstiden; ditt namn, din befattning och ditt telefonnummer. Ett fält utan värde försvinner tillsammans med det överflödiga kommatecknet. En ny hälsning blir direkt brevlådans hälsning, och i ett meddelande finns alla dina hälsningar under knappen ”Hälsning” ovanför texten. Samma fält finns i signaturredigeraren.</string>
+    <string name="gmailAppPwTitle">Gmail – applösenord</string>
+    <string name="gmailAppPwHint">Gmail ansluts med ett applösenord – ett separat lösenord för e-postappar som du kan återkalla när som helst; du anger inte ditt Google-lösenord. Aktivera tvåstegsverifiering i ditt Google-konto, skapa ett lösenord på sidan ”Applösenord” (till exempel med namnet Ogneliss) och ange det här.</string>
 </resources>

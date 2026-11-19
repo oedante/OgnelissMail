@@ -90,7 +90,7 @@ void main() {
     await tester.tap(find.text('Далее'));
     await _settle(tester);
     expect(find.text('Войти через Google'), findsNothing);
-    expect(find.text('Пароль'), findsOneWidget);
+    expect(find.text('Пароль приложения'), findsOneWidget);
     expect(find.textContaining('двухэтапную проверку'), findsOneWidget);
     expect(find.text('Создать пароль приложения'), findsOneWidget);
 
@@ -105,7 +105,7 @@ void main() {
     expect(find.text('Создать пароль приложения'), findsOneWidget);
   });
 
-  testWidgets('Google не пускает новых пользователей — объяснение и вход паролем приложения', (tester) async {
+  testWidgets('Gmail (2.6.7) — пароль приложения и при доступном входе Google', (tester) async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
     final db = AppDatabase.forTesting(NativeDatabase.memory());
@@ -136,22 +136,16 @@ void main() {
     await tester.enterText(find.byType(TextField).first, 'ivan@gmail.com');
     await tester.tap(find.text('Далее'));
     await _settle(tester);
-    await tester.tap(find.text('Войти через Google'));
-    await _settle(tester);
-    // Текст ошибки — на языке настроек (в тесте не задан), число — в любом.
-    expect(find.textContaining('100 '), findsOneWidget);
-    await tester.tap(find.text('Подключить паролем приложения'));
-    await _settle(tester);
-
-    // Вход по паролю: подсказка Google и ссылка на страницу паролей.
-    expect(find.text('Пароль'), findsOneWidget);
+    // Доступа к почте через вход Google приложение не просит (письмо Google
+    // 19.11.2026): сразу пароль приложения — как у iCloud.
+    expect(find.text('Войти через Google'), findsNothing);
+    expect(find.text('Gmail — пароль приложения'), findsOneWidget);
+    expect(find.text('Пароль приложения'), findsOneWidget);
     expect(find.textContaining('двухэтапную проверку'), findsOneWidget);
     expect(find.text('Создать пароль приложения'), findsOneWidget);
-    expect(find.text('Войти через Google'), findsNothing);
-    expect(find.textContaining('100 '), findsNothing, reason: 'ошибка снята');
   });
 
-  testWidgets('адрес первым: Gmail — вход через Google, Mail.ru — пароль приложения', (tester) async {
+  testWidgets('адрес первым: Gmail и Mail.ru — пароль приложения', (tester) async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
     final db = AppDatabase.forTesting(NativeDatabase.memory());
@@ -188,13 +182,13 @@ void main() {
     expect(find.text('Далее'), findsOneWidget);
     expect(find.text('Введите корректный email'), findsWidgets);
 
-    // Gmail → страница входа Google, пароля нет.
+    // Gmail → пароль приложения (2.6.7), страницы входа Google нет.
     await tester.enterText(find.byType(TextField).first, 'ivan@gmail.com');
     await tester.tap(find.text('Далее'));
     await _settle(tester);
-    expect(find.text('Войти через Google'), findsOneWidget);
+    expect(find.text('Войти через Google'), findsNothing);
     expect(find.text('ivan@gmail.com'), findsOneWidget);
-    expect(find.text('Пароль'), findsNothing);
+    expect(find.text('Пароль приложения'), findsOneWidget);
 
     // «Изменить» — к адресу; Mail.ru — пароль приложения, без входа через Mail.ru.
     await tester.tap(find.text('Изменить'));

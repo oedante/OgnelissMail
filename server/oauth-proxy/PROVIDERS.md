@@ -76,7 +76,9 @@ https://www.ogneliss.ru/oauth/callback
    - User type: **External** (или Internal для Google Workspace).
    - Заполните название, поддержку, домены. Добавьте тестовых пользователей (если
      приложение в статусе Testing).
-   - Scopes: добавьте `https://mail.google.com/`.
+   - Scopes: календарь и контакты (список — ниже, в `GOOGLE_SCOPE`).
+     `https://mail.google.com/` с 2.6.7 не нужен: почта Gmail — по паролю
+     приложения (письмо Google 19.11.2026: этот доступ требует проверки CASA).
 4. **APIs & Services → Credentials → Create Credentials → OAuth client ID**:
    - Application type: **Web application**.
    - **Authorized redirect URIs**: `https://www.ogneliss.ru/oauth/callback`
@@ -86,7 +88,7 @@ https://www.ogneliss.ru/oauth/callback
    ```
    GOOGLE_CLIENT_ID=<client id>.apps.googleusercontent.com
    GOOGLE_CLIENT_SECRET=<client secret>
-   GOOGLE_SCOPE=https://mail.google.com/ https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/carddav https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/contacts.other.readonly openid email profile
+   GOOGLE_SCOPE=https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/carddav https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/contacts.other.readonly openid email profile
    ```
 
 ---
@@ -275,8 +277,9 @@ flutter build apk \
 
 Чтобы работал импорт подписи через API (кнопка «Импорт из ящика» и авто-импорт
 при подключении):
-- **Google**: отдельный scope не нужен — `settings/sendAs` читается с
-  `https://mail.google.com/` (нужен только включённый Gmail API в проекте).
+- **Google**: с 2.6.7 подпись Gmail берётся из отправленных писем: доступа к
+  почте (`https://mail.google.com/`, им читался `settings/sendAs`) вход Google
+  больше не просит.
   `gmail.settings.basic` убран 15.11.2026: проверка приложения Google требует
   минимум прав, а это ещё одно право из «ограниченных».
 - **Microsoft**: добавьте `MailboxSettings.Read` (в `.env` включён в MS_SCOPE) —

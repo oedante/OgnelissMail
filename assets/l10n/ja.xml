@@ -4367,4 +4367,6 @@
     <string name="customGreetingSample">メールでは</string>
     <string name="faq_drafts_11_q">自分の挨拶を作るには？</string>
     <string name="faq_drafts_11_a">設定 → アカウント → メールボックス → 署名 →「挨拶を追加」。文面を入力し、ボタンでフィールドを挿入します：{to_address} — 通常の挨拶と同じ宛名、{to_first_name} と {to_last_name}、{part_of_day} — 送信時刻に応じて「おはようございます」「こんにちは」「こんばんは」、そしてあなたの名前・役職・電話番号。値のないフィールドは余分な読点とともに消えます。新しい挨拶はすぐにそのメールボックスの挨拶になり、メールでは本文上の「挨拶」ボタンにすべての挨拶が表示されます。同じフィールドは署名エディタでも使えます。</string>
+    <string name="gmailAppPwTitle">Gmail — アプリ パスワード</string>
+    <string name="gmailAppPwHint">Gmail はアプリ パスワードで接続します。メールアプリ専用の別のパスワードで、いつでも取り消せます。Google のメインのパスワードは入力しません。Google アカウントで 2 段階認証プロセスを有効にし、「アプリ パスワード」ページでパスワードを作成して（名前は例えば Ogneliss）、ここに入力してください。</string>
 </resources>

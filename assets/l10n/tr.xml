@@ -4388,4 +4388,6 @@
     <string name="customGreetingSample">E-postada</string>
     <string name="faq_drafts_11_q">Kendi selamlamamı nasıl oluştururum?</string>
     <string name="faq_drafts_11_a">Ayarlar → Hesaplar → posta kutusu → İmzalar → “Özel selamlama ekle”. Metni yazın ve düğmelerle alan ekleyin: {to_address} — standart selamlamadaki gibi ad; {to_first_name} ve {to_last_name}; {part_of_day} — gönderim saatine göre “Günaydın”, “İyi günler” veya “İyi akşamlar”; adınız, unvanınız ve telefonunuz. Değeri olmayan alan, fazla virgülle birlikte kaybolur. Yeni selamlama hemen posta kutusunun selamlaması olur; iletide tüm selamlamalarınız metnin üstündeki “Selamlama” düğmesindedir. Aynı alanlar imza düzenleyicide de vardır.</string>
+    <string name="gmailAppPwTitle">Gmail — uygulama şifresi</string>
+    <string name="gmailAppPwHint">Gmail bir uygulama şifresiyle bağlanır: e-posta uygulamaları için istediğiniz zaman iptal edebileceğiniz ayrı bir şifre; ana Google şifrenizi girmezsiniz. Google Hesabınızda 2 Adımlı Doğrulama\'yı açın, \"Uygulama şifreleri\" sayfasında bir şifre oluşturun (örneğin Ogneliss adıyla) ve buraya girin.</string>
 </resources>

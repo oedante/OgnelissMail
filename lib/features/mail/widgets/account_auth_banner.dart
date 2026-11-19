@@ -85,7 +85,8 @@ Future<void> reauthenticateFlow(BuildContext context, WidgetRef ref, AccountMode
   // when a widget is … unmounted», проверка сертификата после входа не шла).
   final container = ProviderScope.containerOf(context, listen: false);
   var account = a;
-  if (!a.usesOAuthTokens) {
+  // Ящик Google (2.6.7): почта — по паролю приложения, тоже экран входа.
+  if (!a.usesOAuthTokens || a.type == AccountType.google) {
     // Вход по паролю — экран входа в режиме «Войти снова» (1.5.12): те же
     // поля, что при добавлении ящика, заполненные данными ящика. Раньше был
     // отдельный диалог, где подписи полей наезжали друг на друга. Ошибки

@@ -4367,4 +4367,6 @@
     <string name="customGreetingSample">Trong email</string>
     <string name="faq_drafts_11_q">Làm sao tạo lời chào riêng?</string>
     <string name="faq_drafts_11_a">Cài đặt → Tài khoản → hộp thư → Chữ ký → «Thêm lời chào riêng». Nhập văn bản và chèn trường bằng các nút: {to_address} — tên như trong lời chào chuẩn; {to_first_name} và {to_last_name}; {part_of_day} — «Chào buổi sáng», «Chào buổi chiều» hoặc «Chào buổi tối» theo giờ gửi; tên, chức danh và điện thoại của bạn. Trường không có giá trị sẽ biến mất cùng dấu phẩy thừa. Lời chào mới lập tức trở thành lời chào của hộp thư, và trong thư mọi lời chào của bạn nằm ở nút «Lời chào» phía trên văn bản. Các trường này cũng có trong trình chỉnh sửa chữ ký.</string>
+    <string name="gmailAppPwTitle">Gmail — mật khẩu ứng dụng</string>
+    <string name="gmailAppPwHint">Gmail kết nối bằng mật khẩu ứng dụng — mật khẩu riêng cho các ứng dụng thư mà bạn có thể thu hồi bất cứ lúc nào; bạn không nhập mật khẩu Google chính. Bật Xác minh 2 bước trong Tài khoản Google, tạo mật khẩu trên trang \"Mật khẩu ứng dụng\" (đặt tên, ví dụ Ogneliss) rồi nhập vào đây.</string>
 </resources>

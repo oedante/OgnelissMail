@@ -4409,4 +4409,6 @@
     <string name="customGreetingSample">În e-mail</string>
     <string name="faq_drafts_11_q">Cum îmi creez propriul salut?</string>
     <string name="faq_drafts_11_a">Setări → Conturi → căsuță → Semnături → „Adaugă salut personalizat”. Scrieți textul și inserați câmpuri cu butoanele: {to_address} — numele ca în salutul standard; {to_first_name} și {to_last_name}; {part_of_day} — „Bună dimineața”, „Bună ziua” sau „Bună seara” după ora trimiterii; numele, funcția și telefonul dvs. Un câmp fără valoare dispare împreună cu virgula în plus. Un salut nou devine imediat salutul căsuței, iar în mesaj toate saluturile dvs. sunt în butonul „Salut” de deasupra textului. Aceleași câmpuri sunt în editorul de semnătură.</string>
+    <string name="gmailAppPwTitle">Gmail — parolă pentru aplicație</string>
+    <string name="gmailAppPwHint">Gmail se conectează cu o parolă pentru aplicație — o parolă separată pentru aplicațiile de e-mail, pe care o puteți revoca oricând; nu introduceți parola Google. Activați verificarea în doi pași în Contul Google, creați o parolă pe pagina „Parole pentru aplicații” (de exemplu cu numele Ogneliss) și introduceți-o aici.</string>
 </resources>

@@ -64,7 +64,8 @@ class OAuthService {
           AppConstants.googleRedirectUri,
           issuer: 'https://accounts.google.com',
           scopes: [
-            'openid', 'email', 'profile', 'https://mail.google.com/', 'https://www.googleapis.com/auth/calendar',
+            // Почта Gmail — по паролю приложения (2.6.7), без https://mail.google.com/.
+            'openid', 'email', 'profile', 'https://www.googleapis.com/auth/calendar',
             'https://www.googleapis.com/auth/carddav',
             if (DirectOAuth.googlePeopleScopes) ...[
               'https://www.googleapis.com/auth/contacts.readonly',

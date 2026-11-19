@@ -154,8 +154,8 @@ class AppConstants {
 
   // ═══════════════ IMAP серверы ═══════════════
   static const Map<String, Map<String, dynamic>> imapServers = {
-    'gmail.com': {'imap': 'imap.gmail.com', 'imapPort': 993, 'smtp': 'smtp.gmail.com', 'smtpPort': 587, 'oauth': true},
-    'googlemail.com': {'imap': 'imap.gmail.com', 'imapPort': 993, 'smtp': 'smtp.gmail.com', 'smtpPort': 587, 'oauth': true},
+    'gmail.com': {'imap': 'imap.gmail.com', 'imapPort': 993, 'smtp': 'smtp.gmail.com', 'smtpPort': 465, 'oauth': true},
+    'googlemail.com': {'imap': 'imap.gmail.com', 'imapPort': 993, 'smtp': 'smtp.gmail.com', 'smtpPort': 465, 'oauth': true},
     'yandex.ru': {'imap': 'imap.yandex.ru', 'imapPort': 993, 'smtp': 'smtp.yandex.ru', 'smtpPort': 465},
     'ya.ru': {'imap': 'imap.yandex.ru', 'imapPort': 993, 'smtp': 'smtp.yandex.ru', 'smtpPort': 465},
     'yandex.com': {'imap': 'imap.yandex.com', 'imapPort': 993, 'smtp': 'smtp.yandex.com', 'smtpPort': 465},

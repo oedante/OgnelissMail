@@ -208,9 +208,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     imapHost: 'imap.gmail.com',
     imapPort: 993,
     imapEncryption: EncryptionType.ssl,
+    // 465 (SSL), как у входа Google раньше: 587 в некоторых сетях не
+    // отвечает (журнал владельца 19.11.2026).
     smtpHost: 'smtp.gmail.com',
-    smtpPort: 587,
-    smtpEncryption: EncryptionType.starttls,
+    smtpPort: 465,
+    smtpEncryption: EncryptionType.ssl,
   );
 
   /// Ошибка поля адреса на первом шаге.
@@ -1827,7 +1829,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         await ref.read(accountsProvider.notifier).updateAccount(account);
         if (serverChanged) ref.read(ewsServiceProvider).clearClientCache(a.id);
       }
-    } else {
+    } else if (a.type != AccountType.google) {
+      // Ящик Google (2.6.7): «Войти снова» — только пароль приложения,
+      // серверы и порты не трогаем (поля скрыты; пустой порт превращался в
+      // 587 и ломал отправку — журнал владельца 19.11.2026).
       final imap = opt(_imapServerController) ?? a.imapServer;
       final smtp = opt(_smtpServerController) ?? a.smtpServer;
       final imapPort = int.tryParse(_imapPortController.text.trim()) ?? a.imapPort;

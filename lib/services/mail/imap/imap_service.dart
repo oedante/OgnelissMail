@@ -580,22 +580,6 @@ class ImapService {
         await client.ehlo().timeout(const Duration(seconds: 10));
         await client.startTls().timeout(const Duration(seconds: 10));
         await client.ehlo().timeout(const Duration(seconds: 10));
-      } else if (smtpPort == 587) {
-        // 587 не отвечает — пробуем 465 с SSL (журнал владельца 19.11.2026:
-        // smtp.gmail.com:587 — тайм-аут на EHLO, 465 в той же сети работал).
-        // Не удалось и так — исходная ошибка.
-        try { await client.disconnect(); } catch (_) {}
-        try {
-          useSSL = true;
-          connectedPort = 465;
-          await client.connectToServer(smtpServer, 465, isSecure: true)
-              .timeout(const Duration(seconds: 15));
-          await client.ehlo().timeout(const Duration(seconds: 10));
-          AppLogger.info('SMTP $smtpServer: 587 не ответил — подключено по 465 (SSL)');
-        } catch (_) {
-          try { await client.disconnect(); } catch (_) {}
-          rethrow;
-        }
       } else {
         // Соединение закрыть сразу: иначе сервер держит его до своего
         // тайм-аута (Mercury — 30 с после «554 Invalid HELO format»).

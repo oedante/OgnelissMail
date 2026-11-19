@@ -344,16 +344,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     _filledFor = MailProviderDetect.domainOf(a.email);
     // Ящик Google (2.6.7): «Войти снова» — пароль приложения Gmail
     // (серверы Gmail, если у ящика их не было).
+    // Ящик Google: в полях — то, что записано в ящике, как у обычного
+    // IMAP/SMTP; не записано — рекомендуемые серверы Gmail (imap.gmail.com
+    // 993 и smtp.gmail.com 465, SSL/TLS). Что в полях — то и сохраняется.
     if (a.type == AccountType.google) {
       _appPwFor = 'google';
-      if (_imapServerController.text.trim().isEmpty) {
-        _imapServerController.text = _gmailImap.imapHost;
-        _imapPortController.text = '${_gmailImap.imapPort}';
-        _imapEncryption = _gmailImap.imapEncryption;
-        _smtpServerController.text = _gmailImap.smtpHost;
-        _smtpPortController.text = '${_gmailImap.smtpPort}';
-        _smtpEncryption = _gmailImap.smtpEncryption;
-      }
+      if ((a.imapServer ?? '').trim().isEmpty) _imapServerController.text = _gmailImap.imapHost;
+      if (a.imapPort == null) _imapPortController.text = '${_gmailImap.imapPort}';
+      _imapEncryption = a.imapEncryption ?? _gmailImap.imapEncryption;
+      if ((a.smtpServer ?? '').trim().isEmpty) _smtpServerController.text = _gmailImap.smtpHost;
+      if (a.smtpPort == null) _smtpPortController.text = '${_gmailImap.smtpPort}';
+      _smtpEncryption = a.smtpEncryption ?? _gmailImap.smtpEncryption;
     }
   }
 
@@ -1829,10 +1830,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         await ref.read(accountsProvider.notifier).updateAccount(account);
         if (serverChanged) ref.read(ewsServiceProvider).clearClientCache(a.id);
       }
-    } else if (a.type != AccountType.google) {
-      // Ящик Google (2.6.7): «Войти снова» — только пароль приложения,
-      // серверы и порты не трогаем (поля скрыты; пустой порт превращался в
-      // 587 и ломал отправку — журнал владельца 19.11.2026).
+    } else {
       final imap = opt(_imapServerController) ?? a.imapServer;
       final smtp = opt(_smtpServerController) ?? a.smtpServer;
       final imapPort = int.tryParse(_imapPortController.text.trim()) ?? a.imapPort;

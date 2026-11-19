@@ -36,7 +36,9 @@ void main() {
 
     final g = DirectOAuth.fromMarker('google|123-abc.apps.googleusercontent.com')!;
     expect(g.tokenEndpoint.host, 'oauth2.googleapis.com');
-    expect(g.scopes, contains('https://mail.google.com/'));
+    // Почта Gmail — по паролю приложения (2.6.7): доступа к почте вход Google не просит.
+    expect(g.scopes, isNot(contains('https://mail.google.com/')));
+    expect(g.scopes, contains('https://www.googleapis.com/auth/calendar'));
 
     expect(DirectOAuth.fromMarker('без разделителя'), isNull);
   });

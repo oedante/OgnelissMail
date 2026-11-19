@@ -4388,4 +4388,9 @@
     <string name="customGreetingSample">Viestissä</string>
     <string name="faq_drafts_11_q">Miten teen oman tervehdyksen?</string>
     <string name="faq_drafts_11_a">Asetukset → Tilit → postilaatikko → Allekirjoitukset → ”Lisää oma tervehdys”. Kirjoita teksti ja lisää kenttiä painikkeilla: {to_address} — nimi kuten vakiotervehdyksessä; {to_first_name} ja {to_last_name}; {part_of_day} — ”Hyvää huomenta”, ”Hyvää päivää” tai ”Hyvää iltaa” lähetysajan mukaan; oma nimesi, tehtävänimikkeesi ja puhelinnumerosi. Kenttä ilman arvoa poistuu ylimääräisen pilkun kanssa. Uusi tervehdys tulee heti postilaatikon tervehdykseksi, ja viestissä kaikki omat tervehdyksesi ovat tekstin yläpuolella olevassa ”Tervehdys”-painikkeessa. Samat kentät ovat allekirjoituseditorissa.</string>
+    <string name="gmailAppPwTitle">Gmail – sovellussalasana</string>
+    <string name="gmailAppPwHint">Gmail yhdistetään sovellussalasanalla – erillisellä salasanalla sähköpostisovelluksille, jonka voit perua milloin tahansa; Google-salasanaasi ei syötetä. Ota kaksivaiheinen vahvistus käyttöön Google-tililläsi, luo salasana Sovellussalasanat-sivulla (esimerkiksi nimellä Ogneliss) ja syötä se tähän.</string>
+    <string name="gmailConnectGoogleServices">Google-kalenteri ja -yhteystiedot</string>
+    <string name="gmailConnectGoogleServicesHint">Google-sivu avautuu: kirjaudu samalla tilillä ja salli pääsy kalenteriin ja yhteystietoihin. Sähköposti toimii ilmankin.</string>
+    <string name="googleServicesConnected">Google-kalenteri ja -yhteystiedot yhdistetty</string>
 </resources>

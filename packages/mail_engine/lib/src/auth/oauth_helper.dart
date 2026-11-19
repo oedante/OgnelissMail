@@ -25,7 +25,8 @@ class OAuthHelper {
         // сверки с актуальной докой (через переменную YANDEX_SCOPE прокси или сюда).
         return ['mail:imap_full', 'mail:smtp', 'login:email'];
       case OAuthProvider.google:
-        // Почта + календарь (CalDAV) + контакты (CardDAV) + фото (People API).
+        // Календарь (CalDAV) + контакты (CardDAV) + фото (People API). Почта
+        // Gmail — по паролю приложения (2.6.7): без https://mail.google.com/.
         // Ровно тот же список, что у приложения (direct_oauth.dart) и в
         // консоли Google: проверка Google требует точного совпадения
         // (письмо Google 17.11.2026, docs/release/GOOGLE_VERIFICATION.md).
@@ -33,7 +34,6 @@ class OAuthHelper {
           'openid',
           'email',
           'profile',
-          'https://mail.google.com/',
           'https://www.googleapis.com/auth/calendar',
           'https://www.googleapis.com/auth/carddav',
           'https://www.googleapis.com/auth/contacts.readonly',

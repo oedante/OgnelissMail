@@ -4367,4 +4367,9 @@
     <string name="customGreetingSample">Di email</string>
     <string name="faq_drafts_11_q">Bagaimana membuat salam sendiri?</string>
     <string name="faq_drafts_11_a">Pengaturan → Akun → kotak surat → Tanda tangan → «Tambah salam khusus». Tulis teksnya dan sisipkan kolom dengan tombol: {to_address} — nama seperti pada salam standar; {to_first_name} dan {to_last_name}; {part_of_day} — «Selamat pagi», «Selamat siang», atau «Selamat malam» sesuai waktu pengiriman; nama, jabatan, dan telepon Anda. Kolom tanpa nilai hilang beserta koma berlebih. Salam baru langsung menjadi salam kotak surat, dan di pesan semua salam Anda ada di tombol «Salam» di atas teks. Kolom yang sama tersedia di editor tanda tangan.</string>
+    <string name="gmailAppPwTitle">Gmail — sandi aplikasi</string>
+    <string name="gmailAppPwHint">Gmail terhubung dengan sandi aplikasi — sandi terpisah untuk aplikasi email yang dapat Anda cabut kapan saja; Anda tidak memasukkan sandi utama Google. Aktifkan Verifikasi 2 Langkah di Akun Google, buat sandi di halaman \"Sandi aplikasi\" (beri nama misalnya Ogneliss), lalu masukkan di sini.</string>
+    <string name="gmailConnectGoogleServices">Kalender dan Kontak Google</string>
+    <string name="gmailConnectGoogleServicesHint">Halaman Google akan terbuka: masuk dengan akun yang sama dan izinkan akses ke kalender dan kontak. Email tetap berfungsi tanpa ini.</string>
+    <string name="googleServicesConnected">Kalender dan Kontak Google terhubung</string>
 </resources>

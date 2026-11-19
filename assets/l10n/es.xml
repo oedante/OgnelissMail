@@ -4388,4 +4388,9 @@
     <string name="customGreetingSample">En el correo</string>
     <string name="faq_drafts_11_q">¿Cómo creo mi propio saludo?</string>
     <string name="faq_drafts_11_a">Ajustes → Cuentas → buzón → Firmas → «Añadir saludo». Escriba el texto e inserte campos con los botones: {to_address} — el nombre como en el saludo estándar; {to_first_name} y {to_last_name}; {part_of_day} — «Buenos días», «Buenas tardes» o «Buenas noches» según la hora de envío; su nombre, cargo y teléfono. Un campo sin valor desaparece junto con la coma sobrante. Un saludo nuevo pasa a ser el del buzón de inmediato y, en un mensaje, todos sus saludos están en el botón «Saludo» sobre el texto. Los mismos campos están en el editor de firmas.</string>
+    <string name="gmailAppPwTitle">Gmail: contraseña de aplicación</string>
+    <string name="gmailAppPwHint">Gmail se conecta con una contraseña de aplicación: una contraseña aparte para apps de correo que puedes revocar en cualquier momento; no introduces tu contraseña de Google. Activa la verificación en dos pasos en tu cuenta de Google, crea una contraseña en la página «Contraseñas de aplicación» (por ejemplo, con el nombre Ogneliss) e introdúcela aquí.</string>
+    <string name="gmailConnectGoogleServices">Calendario y Contactos de Google</string>
+    <string name="gmailConnectGoogleServicesHint">Se abrirá una página de Google: inicia sesión con la misma cuenta y permite el acceso al calendario y los contactos. El correo funciona también sin esto.</string>
+    <string name="googleServicesConnected">Calendario y Contactos de Google conectados</string>
 </resources>

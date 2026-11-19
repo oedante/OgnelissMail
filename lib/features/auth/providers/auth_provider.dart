@@ -621,7 +621,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<String?> reauthenticate(AccountModel account, {String? password}) async {
     try {
       final storage = _ref.read(secureStorageProvider);
-      if (account.usesOAuthTokens) {
+      // Ящик Google (2.6.7): почта — по паролю приложения; токен Google
+      // (календарь и контакты прежних ящиков) не трогаем.
+      if (account.usesOAuthTokens && account.type != AccountType.google) {
         final name = account.isExchangeOnlineOAuth
             ? 'exchange'
             : switch (account.type) {
@@ -687,6 +689,53 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   /// Ответ [reauthenticate]: человек закрыл окно входа — не ошибка.
   static const reauthCancelled = 'cancelled';
+
+  /// Календарь и контакты Google для ящика Gmail (2.6.7, просьба владельца
+  /// 19.11.2026: почта — по паролю приложения, календарь, контакты и фото
+  /// собеседников — через вход Google, сразу при входе или позже из
+  /// настроек ящика). Вход Google — только с правами календаря и контактов
+  /// (без доступа к почте). Ящик IMAP с паролем приложения становится ящиком
+  /// Google: почта остаётся по паролю ([AccountModel.mailUsesOAuth]),
+  /// календарь, контакты и фото — по токену. null — подключено;
+  /// [reauthCancelled] — закрыл окно; «mismatch:<адрес>» — вошёл другим
+  /// аккаунтом; иначе текст ошибки.
+  Future<String?> connectGoogleServices(AccountModel account) async {
+    try {
+      final result = await _ref.read(crossPlatformOAuthProvider).authenticate('google', loginHint: account.email);
+      var email = result.email;
+      if (email == null || email.isEmpty) {
+        email = (await _ref.read(oauthServiceProvider).fetchIdentity(AccountType.google, result.accessToken)).email;
+      }
+      // Тот же ящик, что почта (просьба владельца 19.11.2026: «проверить,
+      // что почта одна и та же»): адрес аккаунта Google должен совпасть с
+      // адресом ящика; не узнали адрес — тоже не подключаем.
+      if (email == null || email.trim().isEmpty || email.trim().toLowerCase() != account.email.trim().toLowerCase()) {
+        return 'mismatch:${email ?? '?'}';
+      }
+      final storage = _ref.read(secureStorageProvider);
+      await storage.saveOAuthTokens(
+        accountId: account.id,
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        expiry: result.expiry,
+      );
+      await storage.saveOAuthClient(account.id, result.directClient);
+      OAuthService.clearRefreshFailure(account.id);
+      if (account.type != AccountType.google) {
+        await _ref.read(accountsProvider.notifier).updateAccount(account.copyWith(type: AccountType.google));
+      }
+      final fresh = _ref.read(accountsProvider).where((a) => a.id == account.id).firstOrNull;
+      if (fresh != null) unawaited(_ref.read(syncServiceProvider).syncAccount(fresh));
+      await _audit('google_services', details: SecurityUtils.maskEmail(account.email));
+      return null;
+    } on AppException catch (e) {
+      return e.localizedMessage(_l10n());
+    } on OAuthProviderError catch (e) {
+      return e.cancelled ? reauthCancelled : e.localizedMessage(_l10n());
+    } catch (e) {
+      return '$e';
+    }
+  }
 
   // ════════════════════════ IMAP ════════════════════════
 

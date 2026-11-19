@@ -1,0 +1,247 @@
+# «Что нового» — 2.6.7 (166), относительно 2.6.6 (165)
+
+Главное — **почта Gmail по паролю приложения** (письмо Google 19.11.2026:
+доступ к почте через вход Google (`https://mail.google.com/`) требует
+платной проверки безопасности CASA; приложение от него отказалось,
+проверка продолжается для календаря и контактов). Шаги владельца —
+`OWNER_STEPS_2.6.7.md`.
+
+## Сделано в 2.6.7
+
+- **Gmail — по паролю приложения**, как iCloud. Плитка «Google» и адрес
+  Gmail ведут к паролю приложения: на экране входа — что это и как его
+  создать (двухэтапная проверка → «Пароли приложений»), кнопка «Создать
+  пароль приложения» открывает страницу Google. Пароль можно вводить с
+  пробелами, как его показывает Google. Вход через Google доступ к почте
+  больше не запрашивает.
+- **Календарь и контакты Google** для ящика Gmail — через вход Google (только
+  календарь, контакты и фото собеседников): переключатель «Календарь и
+  контакты Google» на экране входа (включён — страница Google открывается
+  сразу после почты) или позже «Настройки → Аккаунты → ящик → Подключение →
+  Календарь и контакты Google». Адрес аккаунта Google должен совпасть с
+  адресом ящика — иначе подключение отменяется с объяснением.
+- **Ящики Gmail, добавленные раньше через Google**, попросят пароль
+  приложения один раз: «Войти снова» → пароль приложения (с той же
+  инструкцией). Письма, папки и настройки ящика сохраняются; календарь и
+  контакты Google такого ящика работают, как прежде.
+- **Виджет «Календарь»** — всё, что в календаре приложения: задачи со
+  сроком (✓), письма с напоминанием (✉), поручения (⚑) и приглашения без
+  ответа (?); касание открывает задачу, письмо или поручение. В «Моём дне»
+  — тоже. Выходные в сетке месяца и недели — красным, точки дней крупнее.
+- **Вкладка «Мой день» в виджете «Календарь»** (Android): «День · Неделя ·
+  Месяц · Мой день» — доска «Предстоит · В работе · Готово»; отдельный
+  виджет можно не ставить.
+
+## Кратко (RU / EN)
+
+**RU.** Почта Gmail подключается по паролю приложения — как iCloud: на
+экране входа есть короткая инструкция и кнопка, открывающая страницу
+Google. Календарь и контакты Google подключаются входом Google — сразу или
+позже в настройках ящика. Уже добавленный ящик Gmail попросит пароль
+приложения один раз («Войти снова»), письма и настройки сохраняются. Виджет календаря
+показывает задачи, поручения и приглашения, выделяет выходные и получил
+вкладку «Мой день».
+
+**EN.** Gmail now connects with an app password, like iCloud: the sign-in
+screen has short instructions and a button that opens the Google page. Google
+Calendar and Contacts connect with Google sign-in — right away or later in
+the account settings. A Gmail account added earlier asks for an app password once (“Sign in
+again”); your mail and settings stay. The calendar widget shows tasks,
+assignments and invitations, highlights weekends and has a new “My day”
+tab.
+
+## Google Play — короткий текст (27 языков)
+
+```
+<ru-RU>
+• Gmail подключается по паролю приложения — инструкция на экране входа
+• Календарь в виджете: задачи, поручения и приглашения
+• Вкладка «Мой день» в виджете календаря, выходные — цветом
+• Исправления и улучшения
+</ru-RU>
+<en-US>
+• Gmail now connects with an app password — steps on the sign-in screen
+• Calendar widget: tasks, assignments and invitations
+• “My day” tab in the calendar widget, weekends highlighted
+• Bug fixes and improvements
+</en-US>
+<de-DE>
+• Gmail wird mit einem App-Passwort verbunden – Anleitung bei der Anmeldung
+• Kalender-Widget: Aufgaben, Aufträge und Einladungen
+• Tab „Mein Tag“ im Kalender-Widget, Wochenenden hervorgehoben
+• Fehlerbehebungen und Verbesserungen
+</de-DE>
+<fr-FR>
+• Gmail se connecte avec un mot de passe d’application — étapes à l’écran de connexion
+• Widget Calendrier : tâches, missions et invitations
+• Onglet « Ma journée » dans le widget Calendrier, week-ends en couleur
+• Corrections et améliorations
+</fr-FR>
+<ar>
+• يتصل Gmail بكلمة مرور التطبيق — الخطوات في شاشة تسجيل الدخول
+• أداة التقويم: المهام والتكليفات والدعوات
+• علامة «يومي» في أداة التقويم، وعطلات نهاية الأسبوع ملونة
+• إصلاحات وتحسينات
+</ar>
+<hu-HU>
+• A Gmail alkalmazásjelszóval csatlakozik – útmutató a bejelentkezésnél
+• Naptár widget: feladatok, megbízások és meghívók
+• „Saját napom” lap a naptár widgetben, kiemelt hétvégék
+• Hibajavítások és fejlesztések
+</hu-HU>
+<vi>
+• Gmail kết nối bằng mật khẩu ứng dụng — hướng dẫn ở màn hình đăng nhập
+• Tiện ích Lịch: việc cần làm, giao việc và lời mời
+• Thẻ “Ngày của tôi” trong tiện ích lịch, tô màu cuối tuần
+• Sửa lỗi và cải tiến
+</vi>
+<da-DK>
+• Gmail forbindes med en app-adgangskode – vejledning ved login
+• Kalender-widget: opgaver, tildelinger og invitationer
+• Fanen “Min dag” i kalender-widgetten, weekender fremhævet
+• Fejlrettelser og forbedringer
+</da-DK>
+<iw-IL>
+• Gmail מתחבר עם סיסמת אפליקציה — הוראות במסך הכניסה
+• ווידג'ט היומן: משימות, הקצאות והזמנות
+• לשונית "היום שלי" בווידג'ט היומן, סופי שבוע בצבע
+• תיקוני באגים ושיפורים
+</iw-IL>
+<id>
+• Gmail terhubung dengan sandi aplikasi — langkahnya ada di layar masuk
+• Widget Kalender: tugas, penugasan, dan undangan
+• Tab “Hari saya” di widget kalender, akhir pekan berwarna
+• Perbaikan bug dan peningkatan
+</id>
+<es-ES>
+• Gmail se conecta con una contraseña de aplicación: pasos en la pantalla de acceso
+• Widget de calendario: tareas, encargos e invitaciones
+• Pestaña «Mi día» en el widget de calendario, fines de semana destacados
+• Correcciones y mejoras
+</es-ES>
+<it-IT>
+• Gmail si collega con una password per le app: istruzioni nella schermata di accesso
+• Widget Calendario: attività, incarichi e inviti
+• Scheda «Il mio giorno» nel widget Calendario, weekend evidenziati
+• Correzioni e miglioramenti
+</it-IT>
+<zh-CN>
+• Gmail 改用应用专用密码连接——登录界面有操作步骤
+• 日历小组件：任务、委派和邀请
+• 日历小组件新增“我的一天”标签，周末以颜色标出
+• 错误修复和改进
+</zh-CN>
+<ko-KR>
+• Gmail은 앱 비밀번호로 연결 — 로그인 화면에 안내
+• 캘린더 위젯: 할 일, 업무 지시, 초대
+• 캘린더 위젯에 '나의 하루' 탭, 주말 색상 표시
+• 버그 수정 및 개선
+</ko-KR>
+<nl-NL>
+• Gmail maakt verbinding met een app-wachtwoord — stappen op het inlogscherm
+• Agendawidget: taken, opdrachten en uitnodigingen
+• Tabblad ‘Mijn dag’ in de agendawidget, weekenden gemarkeerd
+• Bugfixes en verbeteringen
+</nl-NL>
+<no-NO>
+• Gmail kobles til med app-passord – veiledning på innloggingsskjermen
+• Kalender-widget: oppgaver, oppdrag og invitasjoner
+• Fanen «Min dag» i kalender-widgeten, helger fremhevet
+• Feilrettinger og forbedringer
+</no-NO>
+<pl-PL>
+• Gmail łączy się za pomocą hasła do aplikacji — instrukcja na ekranie logowania
+• Widżet kalendarza: zadania, zlecenia i zaproszenia
+• Karta „Mój dzień” w widżecie kalendarza, weekendy wyróżnione
+• Poprawki błędów i ulepszenia
+</pl-PL>
+<pt-BR>
+• O Gmail se conecta com senha de app — passos na tela de login
+• Widget de agenda: tarefas, atribuições e convites
+• Aba “Meu dia” no widget de agenda, fins de semana destacados
+• Correções e melhorias
+</pt-BR>
+<ro>
+• Gmail se conectează cu o parolă pentru aplicație — pașii sunt pe ecranul de conectare
+• Widgetul Calendar: sarcini, însărcinări și invitații
+• Fila „Ziua mea” în widgetul calendar, weekenduri evidențiate
+• Remedieri și îmbunătățiri
+</ro>
+<sk>
+• Gmail sa pripája heslom aplikácie — postup na prihlasovacej obrazovke
+• Miniaplikácia kalendára: úlohy, poverenia a pozvánky
+• Karta „Môj deň“ v miniaplikácii kalendára, zvýraznené víkendy
+• Opravy chýb a vylepšenia
+</sk>
+<th>
+• Gmail เชื่อมต่อด้วยรหัสผ่านสำหรับแอป — ดูขั้นตอนที่หน้าลงชื่อเข้าใช้
+• วิดเจ็ตปฏิทิน: งาน งานที่มอบหมาย และคำเชิญ
+• แท็บ "วันของฉัน" ในวิดเจ็ตปฏิทิน และวันหยุดสุดสัปดาห์แสดงสี
+• แก้ไขข้อบกพร่องและปรับปรุง
+</th>
+<tr-TR>
+• Gmail uygulama şifresiyle bağlanır — adımlar giriş ekranında
+• Takvim widget'ı: görevler, atamalar ve davetler
+• Takvim widget'ında "Günüm" sekmesi, renkli hafta sonları
+• Hata düzeltmeleri ve iyileştirmeler
+</tr-TR>
+<fi-FI>
+• Gmail yhdistetään sovellussalasanalla – ohjeet kirjautumisnäytössä
+• Kalenteriwidget: tehtävät, toimeksiannot ja kutsut
+• ”Oma päivä” -välilehti kalenteriwidgetissä, viikonloput korostettu
+• Virheenkorjauksia ja parannuksia
+</fi-FI>
+<hi-IN>
+• Gmail अब ऐप पासवर्ड से जुड़ता है — चरण साइन-इन स्क्रीन पर
+• कैलेंडर विजेट: कार्य, असाइनमेंट और आमंत्रण
+• कैलेंडर विजेट में "मेरा दिन" टैब, सप्ताहांत रंग में
+• बग फ़िक्स और सुधार
+</hi-IN>
+<cs-CZ>
+• Gmail se připojuje heslem aplikace — postup na přihlašovací obrazovce
+• Widget kalendáře: úkoly, pověření a pozvánky
+• Karta „Můj den“ ve widgetu kalendáře, zvýrazněné víkendy
+• Opravy chyb a vylepšení
+</cs-CZ>
+<sv-SE>
+• Gmail ansluts med applösenord – steg på inloggningsskärmen
+• Kalenderwidget: uppgifter, uppdrag och inbjudningar
+• Fliken ”Min dag” i kalenderwidgeten, helger markerade
+• Felrättningar och förbättringar
+</sv-SE>
+<ja-JP>
+• Gmail はアプリ パスワードで接続 — 手順はログイン画面に表示
+• カレンダー ウィジェット：タスク、依頼、招待
+• カレンダー ウィジェットに「今日の予定」タブ、週末を色分け
+• 不具合の修正と改善
+</ja-JP>
+```
+
+## App Store — iPhone, iPad и Mac (ru, en, de, fr)
+
+```
+<ru-RU>
+• Gmail подключается по паролю приложения — инструкция на экране входа
+• Календарь в виджете: задачи, поручения и приглашения
+• Выходные в виджетах календаря — цветом
+• Исправления и улучшения
+</ru-RU>
+<en-US>
+• Gmail now connects with an app password — steps on the sign-in screen
+• Calendar widget: tasks, assignments and invitations
+• Weekends highlighted in calendar widgets
+• Bug fixes and improvements
+</en-US>
+<de-DE>
+• Gmail wird mit einem App-Passwort verbunden – Anleitung bei der Anmeldung
+• Kalender-Widget: Aufgaben, Aufträge und Einladungen
+• Wochenenden in Kalender-Widgets hervorgehoben
+• Fehlerbehebungen und Verbesserungen
+</de-DE>
+<fr-FR>
+• Gmail se connecte avec un mot de passe d’application — étapes à l’écran de connexion
+• Widget Calendrier : tâches, missions et invitations
+• Week-ends en couleur dans les widgets Calendrier
+• Corrections et améliorations
+</fr-FR>
+```

@@ -4430,4 +4430,9 @@
     <string name="customGreetingSample">W wiadomości</string>
     <string name="faq_drafts_11_q">Jak utworzyć własne powitanie?</string>
     <string name="faq_drafts_11_a">Ustawienia → Konta → skrzynka → Podpisy → „Dodaj własne powitanie”. Wpisz tekst i wstaw pola przyciskami: {to_address} — imię jak w standardowym powitaniu; {to_first_name} i {to_last_name}; {part_of_day} — „Dzień dobry” lub „Dobry wieczór” zależnie od godziny wysłania; Twoje imię, stanowisko i telefon. Pole bez wartości znika razem z nadmiarowym przecinkiem. Nowe powitanie od razu staje się powitaniem skrzynki, a w wiadomości wszystkie Twoje powitania są w przycisku „Powitanie” nad tekstem. Te same pola są w edytorze podpisu.</string>
+    <string name="gmailAppPwTitle">Gmail — hasło do aplikacji</string>
+    <string name="gmailAppPwHint">Gmail łączy się za pomocą hasła do aplikacji — osobnego hasła dla programów pocztowych, które można w każdej chwili unieważnić; nie wpisujesz hasła Google. Włącz weryfikację dwuetapową na koncie Google, utwórz hasło na stronie „Hasła do aplikacji” (np. o nazwie Ogneliss) i wpisz je tutaj.</string>
+    <string name="gmailConnectGoogleServices">Kalendarz i Kontakty Google</string>
+    <string name="gmailConnectGoogleServicesHint">Otworzy się strona Google: zaloguj się tym samym kontem i zezwól na dostęp do kalendarza i kontaktów. Poczta działa także bez tego.</string>
+    <string name="googleServicesConnected">Kalendarz i Kontakty Google połączone</string>
 </resources>

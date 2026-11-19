@@ -23,6 +23,7 @@
 // протокол, который узнали по адресу, видно и можно сменить.
 
 import '../../../widgets/ui/confirm_dialog.dart';
+import '../../../widgets/common/inline_notice.dart' show quietError, showInlineError;
 import '../../../core/constants/exchange_feature.dart';
 import 'dart:async';
 
@@ -181,6 +182,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   /// сборка без клиента Google).
   String? _appPwFor;
 
+  /// Gmail (2.6.7): после входа по паролю приложения — сразу вход Google для
+  /// календаря, контактов и фото собеседников.
+  bool _googleServices = true;
+
   /// Страница паролей приложений службы (Google — и для адресов Google
   /// Workspace на своём домене: MailProviderDetect знает только gmail.com).
   static String _appPwUrlFor(String provider) => provider == 'yandex'
@@ -335,7 +340,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     _imapEncryption = a.imapEncryption ?? _imapEncryption;
     _smtpEncryption = a.smtpEncryption ?? _smtpEncryption;
     _filledFor = MailProviderDetect.domainOf(a.email);
+    // Ящик Google (2.6.7): «Войти снова» — пароль приложения Gmail
+    // (серверы Gmail, если у ящика их не было).
+    if (a.type == AccountType.google) {
+      _appPwFor = 'google';
+      if (_imapServerController.text.trim().isEmpty) {
+        _imapServerController.text = _gmailImap.imapHost;
+        _imapPortController.text = '${_gmailImap.imapPort}';
+        _imapEncryption = _gmailImap.imapEncryption;
+        _smtpServerController.text = _gmailImap.smtpHost;
+        _smtpPortController.text = '${_gmailImap.smtpPort}';
+        _smtpEncryption = _gmailImap.smtpEncryption;
+      }
+    }
   }
+
+  /// Пароль из поля. Пароль приложения Google показывается группами через
+  /// пробел («abcd efgh ijkl mnop») — пробелы не часть пароля.
+  String get _passwordText =>
+      _appPwFor == 'google' ? _passwordController.text.replaceAll(RegExp(r'\s'), '') : _passwordController.text;
 
   /// Логин Exchange — часть адреса до «@».
   void _onEmailChanged() {
@@ -393,7 +416,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     // по IMAP с серверами службы. Microsoft паролей не принимает — остаётся
     // вход через службу (он объяснит, что не настроен).
     final provider = switch (k) { MailKind.google => 'google', MailKind.yandex => 'yandex', _ => null };
-    if (provider != null && _reauth == null && !ref.read(crossPlatformOAuthProvider).available(provider)) {
+    // Google (2.6.7) — всегда пароль приложения: доступ к почте Gmail через
+    // вход Google приложение больше не запрашивает.
+    if (provider != null &&
+        _reauth == null &&
+        (provider == 'google' || !ref.read(crossPlatformOAuthProvider).available(provider))) {
       k = MailKind.imap;
       preset = provider == 'google' ? _gmailImap : _yandexImap;
       guessed = false;
@@ -638,6 +665,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Future<void> _afterSuccess() async {
     if (_reauth == null && widget.reauthAccountId == null) {
       final added = [for (final a in ref.read(accountsProvider)) if (!_idsBefore.contains(a.id)) a];
+      // Gmail: календарь и контакты Google — вход Google сразу после почты.
+      // Отказ или ошибка не критичны: почта уже работает, подключить можно
+      // в настройках ящика (в журнал).
+      if (added.isNotEmpty && _appPwFor == 'google' && _googleServices && _googleOAuthAvailable) {
+        final err = await ref.read(authProvider.notifier).connectGoogleServices(added.last);
+        if (!mounted) return;
+        if (err != null && err.startsWith('mismatch:')) {
+          // Вошли в Google другим аккаунтом — календарь не подключён; сказать.
+          showInlineError(AppLocalizations.of(context).tr('reauthMismatch').replaceAll('{email}', err.substring(9)));
+        } else if (err != null) {
+          quietError('Календарь и контакты Google не подключены: $err');
+        }
+      }
       if (added.isNotEmpty && mounted) {
         await showAccountLabelDialog(context, ref, added.last, ask: true);
       }
@@ -1229,7 +1269,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final reauth = _reauth != null;
     final kind = _kind;
     final scheme = theme.colorScheme;
-    final appPwKind = kind == MailKind.mailru || kind == MailKind.icloud;
+    final gmail = _appPwFor == 'google';
+    final appPwKind = kind == MailKind.mailru || kind == MailKind.icloud || gmail;
     final appPwHint = !appPwKind && (_appPwFor != null || (_guess?.appPassword ?? false));
     final appPwUrl = switch (kind) {
       MailKind.mailru => 'https://account.mail.ru/user/2-step-auth/passwords/',
@@ -1245,18 +1286,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         // так: OAuth Mail с июля 2025 не выдаёт доступ к почте новым
         // приложениям, а VK ID доступа к IMAP не даёт (09.10.2026).
         if (appPwKind) ...[
-          Text(l10n.tr(kind == MailKind.mailru ? 'mailruAppPwTitle' : 'icloudAppPwTitle'), style: theme.textTheme.titleSmall),
+          Text(l10n.tr(gmail ? 'gmailAppPwTitle' : kind == MailKind.mailru ? 'mailruAppPwTitle' : 'icloudAppPwTitle'),
+              style: theme.textTheme.titleSmall),
           const SizedBox(height: Space.xs),
-          Text(l10n.tr(kind == MailKind.mailru ? 'mailruAppPwHint' : 'icloudAppPwHint'),
+          Text(l10n.tr(gmail ? 'gmailAppPwHint' : kind == MailKind.mailru ? 'mailruAppPwHint' : 'icloudAppPwHint'),
               style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: TextButton.icon(
               icon: const Icon(AppIcons.open_in_new, size: 18),
-              label: Text(l10n.tr(kind == MailKind.mailru ? 'mailruAppPwCreate' : 'icloudAppPwCreate')),
+              label: Text(l10n.tr(kind == MailKind.mailru && !gmail ? 'mailruAppPwCreate' : 'icloudAppPwCreate')),
               onPressed: () => _open(appPwUrl!),
             ),
           ),
+          // Gmail: календарь и контакты Google — сразу (вход Google после
+          // почты) или позже в настройках ящика.
+          if (gmail && !reauth && _googleOAuthAvailable)
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _googleServices,
+              onChanged: busy ? null : (v) => setState(() => _googleServices = v),
+              title: Text(l10n.tr('gmailConnectGoogleServices')),
+              subtitle: Text(l10n.tr('gmailConnectGoogleServicesHint')),
+            ),
           const SizedBox(height: Space.s),
         ],
 
@@ -1326,9 +1378,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             labelText: switch (kind) {
               MailKind.mailru => l10n.tr('mailruAppPwLabel'),
               MailKind.icloud => l10n.tr('icloudAppPwLabel'),
+              _ when gmail => l10n.tr('icloudAppPwLabel'),
               _ => l10n.tr('password'),
             },
-            hintText: kind == MailKind.icloud ? 'xxxx-xxxx-xxxx-xxxx' : null,
+            hintText: kind == MailKind.icloud
+                ? 'xxxx-xxxx-xxxx-xxxx'
+                : gmail
+                    ? 'xxxx xxxx xxxx xxxx'
+                    : null,
             prefixIcon: Icon(appPwKind ? AppIcons.key : AppIcons.lock),
             // Сохранённый пароль не показывается — только новый.
             helperText: _savedPassword ? l10n.tr('reauthSavedPassword') : null,
@@ -1625,6 +1682,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     _focusPasswordSoon();
   }
 
+  /// Вход Google на этой платформе есть (клиент задан в сборке).
+  bool get _googleOAuthAvailable => !kIsWeb && ref.read(crossPlatformOAuthProvider).available('google');
+
   /// «Проверить пароль»: показать пароль и выделить его.
   void _checkPassword() {
     // Сохранённый пароль не раскрывается: сначала его нужно изменить.
@@ -1692,7 +1752,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         }
         auth.loginImap(
           email: email,
-          password: _passwordController.text,
+          password: _passwordText,
           imapServer: _cleanServer(_imapServerController.text),
           imapPort: int.tryParse(_imapPortController.text) ?? AppConstants.defaultImapPort,
           smtpServer: _cleanServer(_smtpServerController.text),
@@ -1795,7 +1855,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     }
     // Новые данные входа и режим совместимости — только с новым подключением.
     ref.read(mailEngineServiceProvider).disconnect(a.id);
-    final err = await ref.read(authProvider.notifier).reauthenticate(account, password: _passwordController.text);
+    final err = await ref.read(authProvider.notifier).reauthenticate(account, password: _passwordText);
     if (!mounted) return;
     if (err != null) {
       setState(() {

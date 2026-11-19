@@ -4388,4 +4388,9 @@
     <string name="customGreetingSample">In the email</string>
     <string name="faq_drafts_11_q">How do I make my own greeting?</string>
     <string name="faq_drafts_11_a">Settings → Accounts → mailbox → Signatures → “Add custom greeting”. Type the text and insert fields with the buttons: {to_address} — the name as in the standard greeting; {to_first_name} and {to_last_name}; {part_of_day} — “Good morning”, “Good afternoon” or “Good evening” by the time of sending; your name, job title and phone. A field without a value disappears together with the extra comma. A new greeting becomes the mailbox greeting right away, and in a message all your greetings are in the “Greeting” button above the text. The same fields are available in the signature editor.</string>
+    <string name="gmailAppPwTitle">Gmail — app password</string>
+    <string name="gmailAppPwHint">Gmail connects with an app password — a separate password for mail apps that you can revoke at any time; you don\'t enter your main Google password. Turn on 2-Step Verification in your Google Account, create a password on the “App passwords” page (name it, for example, Ogneliss) and enter it here.</string>
+    <string name="gmailConnectGoogleServices">Google Calendar and Contacts</string>
+    <string name="gmailConnectGoogleServicesHint">A Google page will open: sign in with the same account and allow access to your calendar and contacts. Mail works without this too.</string>
+    <string name="googleServicesConnected">Google Calendar and Contacts connected</string>
 </resources>

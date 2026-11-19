@@ -4409,4 +4409,9 @@
     <string name="customGreetingSample">בהודעה</string>
     <string name="faq_drafts_11_q">איך יוצרים ברכה משלי?</string>
     <string name="faq_drafts_11_a">הגדרות ← חשבונות ← תיבת דואר ← חתימות ← „הוספת ברכה”. כתבו את הטקסט והוסיפו שדות בעזרת הכפתורים: {to_address} — השם כמו בברכה הרגילה; {to_first_name} ו-{to_last_name}; {part_of_day} — „בוקר טוב”, „צהריים טובים” או „ערב טוב” לפי שעת השליחה; השם, התפקיד והטלפון שלכם. שדה בלי ערך נעלם יחד עם הפסיק המיותר. ברכה חדשה הופכת מיד לברכת התיבה, ובהודעה כל הברכות שלכם נמצאות בכפתור „ברכה” מעל הטקסט. אותם שדות זמינים בעורך החתימה.</string>
+    <string name="gmailAppPwTitle">Gmail — סיסמת אפליקציה</string>
+    <string name="gmailAppPwHint">Gmail מתחבר באמצעות סיסמת אפליקציה — סיסמה נפרדת לתוכנות דואר שאפשר לבטל בכל עת; את סיסמת Google הראשית לא מזינים. הפעילו אימות דו-שלבי בחשבון Google, צרו סיסמה בדף \"סיסמאות לאפליקציות\" (למשל בשם Ogneliss) והזינו אותה כאן.</string>
+    <string name="gmailConnectGoogleServices">יומן ואנשי קשר של Google</string>
+    <string name="gmailConnectGoogleServicesHint">ייפתח דף של Google: היכנסו עם אותו חשבון ואשרו גישה ליומן ולאנשי הקשר. הדואר עובד גם בלי זה.</string>
+    <string name="googleServicesConnected">יומן ואנשי קשר של Google מחוברים</string>
 </resources>

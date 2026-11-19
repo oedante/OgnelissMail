@@ -4388,4 +4388,9 @@
     <string name="customGreetingSample">Dans l’e-mail</string>
     <string name="faq_drafts_11_q">Comment créer ma propre salutation ?</string>
     <string name="faq_drafts_11_a">Réglages → Comptes → boîte → Signatures → « Ajouter une salutation ». Saisissez le texte et insérez des champs avec les boutons : {to_address} — le nom comme dans la salutation standard ; {to_first_name} et {to_last_name} ; {part_of_day} — « Bonjour » ou « Bonsoir » selon l’heure d’envoi ; vos nom, fonction et téléphone. Un champ sans valeur disparaît avec la virgule en trop. Une nouvelle salutation devient aussitôt celle de la boîte ; dans un message, toutes vos salutations sont dans le bouton « Salutation » au-dessus du texte. Les mêmes champs existent dans l’éditeur de signature.</string>
+    <string name="gmailAppPwTitle">Gmail — mot de passe d\'application</string>
+    <string name="gmailAppPwHint">Gmail se connecte avec un mot de passe d\'application : un mot de passe distinct pour les applis de messagerie, révocable à tout moment ; vous ne saisissez pas votre mot de passe Google. Activez la validation en deux étapes dans votre compte Google, créez un mot de passe sur la page « Mots de passe des applications » (nommez-le par exemple Ogneliss) et saisissez-le ici.</string>
+    <string name="gmailConnectGoogleServices">Google Agenda et Contacts</string>
+    <string name="gmailConnectGoogleServicesHint">Une page Google s\'ouvrira : connectez-vous avec le même compte et autorisez l\'accès à l\'agenda et aux contacts. La messagerie fonctionne aussi sans.</string>
+    <string name="googleServicesConnected">Google Agenda et Contacts connectés</string>
 </resources>

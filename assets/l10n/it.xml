@@ -4390,4 +4390,7 @@
     <string name="faq_drafts_11_a">Impostazioni → Account → casella → Firme → «Aggiungi saluto». Scrivi il testo e inserisci i campi con i pulsanti: {to_address} — il nome come nel saluto standard; {to_first_name} e {to_last_name}; {part_of_day} — «Buongiorno» o «Buonasera» in base all’ora di invio; il tuo nome, ruolo e telefono. Un campo senza valore scompare insieme alla virgola in più. Un nuovo saluto diventa subito quello della casella; nel messaggio tutti i tuoi saluti sono nel pulsante «Saluto» sopra il testo. Gli stessi campi sono nell’editor della firma.</string>
     <string name="gmailAppPwTitle">Gmail — password per le app</string>
     <string name="gmailAppPwHint">Gmail si collega con una password per le app: una password separata per le app di posta, revocabile in qualsiasi momento; non inserisci la password di Google. Attiva la verifica in due passaggi nel tuo Account Google, crea una password nella pagina «Password per le app» (ad esempio con il nome Ogneliss) e inseriscila qui.</string>
+    <string name="gmailConnectGoogleServices">Calendario e Contatti Google</string>
+    <string name="gmailConnectGoogleServicesHint">Si aprirà una pagina Google: accedi con lo stesso account e consenti l\'accesso a calendario e contatti. La posta funziona anche senza.</string>
+    <string name="googleServicesConnected">Calendario e Contatti Google collegati</string>
 </resources>

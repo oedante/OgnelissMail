@@ -4411,4 +4411,7 @@
     <string name="faq_drafts_11_a">Nastavení → Účty → schránka → Podpisy → „Přidat vlastní pozdrav“. Napište text a tlačítky vložte pole: {to_address} — jméno jako ve standardním pozdravu; {to_first_name} a {to_last_name}; {part_of_day} — „Dobré ráno“, „Dobrý den“ nebo „Dobrý večer“ podle času odeslání; vaše jméno, pozice a telefon. Pole bez hodnoty zmizí i s nadbytečnou čárkou. Nový pozdrav se hned stane pozdravem schránky a v e-mailu najdete všechny své pozdravy pod tlačítkem „Pozdrav“ nad textem. Stejná pole jsou v editoru podpisu.</string>
     <string name="gmailAppPwTitle">Gmail — heslo aplikace</string>
     <string name="gmailAppPwHint">Gmail se připojuje pomocí hesla aplikace — samostatného hesla pro poštovní programy, které můžete kdykoli zrušit; hlavní heslo Google nezadáváte. Zapněte v účtu Google dvoufázové ověření, na stránce „Hesla aplikací“ vytvořte heslo (např. s názvem Ogneliss) a zadejte ho sem.</string>
+    <string name="gmailConnectGoogleServices">Kalendář a kontakty Google</string>
+    <string name="gmailConnectGoogleServicesHint">Otevře se stránka Google: přihlaste se stejným účtem a povolte přístup ke kalendáři a kontaktům. Pošta funguje i bez toho.</string>
+    <string name="googleServicesConnected">Kalendář a kontakty Google připojeny</string>
 </resources>

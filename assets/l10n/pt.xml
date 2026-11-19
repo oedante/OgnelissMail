@@ -4390,4 +4390,7 @@
     <string name="faq_drafts_11_a">Configurações → Contas → caixa → Assinaturas → «Adicionar saudação». Escreva o texto e insira campos com os botões: {to_address} — o nome como na saudação padrão; {to_first_name} e {to_last_name}; {part_of_day} — «Bom dia», «Boa tarde» ou «Boa noite» conforme a hora do envio; seu nome, cargo e telefone. Um campo sem valor some junto com a vírgula extra. Uma nova saudação passa a ser a da caixa na hora e, na mensagem, todas as suas saudações ficam no botão «Saudação» acima do texto. Os mesmos campos estão no editor de assinatura.</string>
     <string name="gmailAppPwTitle">Gmail — senha de app</string>
     <string name="gmailAppPwHint">O Gmail se conecta com uma senha de app — uma senha separada para apps de e-mail que você pode revogar a qualquer momento; você não digita sua senha do Google. Ative a verificação em duas etapas na sua Conta do Google, crie uma senha na página “Senhas de app” (com o nome Ogneliss, por exemplo) e digite-a aqui.</string>
+    <string name="gmailConnectGoogleServices">Agenda e Contatos do Google</string>
+    <string name="gmailConnectGoogleServicesHint">Uma página do Google será aberta: entre com a mesma conta e permita o acesso à agenda e aos contatos. O e-mail funciona também sem isso.</string>
+    <string name="googleServicesConnected">Agenda e Contatos do Google conectados</string>
 </resources>

@@ -4390,4 +4390,7 @@
     <string name="faq_drafts_11_a">Instellingen → Accounts → postvak → Handtekeningen → ‘Eigen begroeting toevoegen’. Typ de tekst en voeg velden in met de knoppen: {to_address} — de naam zoals in de standaardbegroeting; {to_first_name} en {to_last_name}; {part_of_day} — ‘Goedemorgen’, ‘Goedemiddag’ of ‘Goedenavond’ naar het tijdstip van verzenden; uw naam, functie en telefoon. Een veld zonder waarde verdwijnt samen met de overbodige komma. Een nieuwe begroeting wordt meteen die van het postvak; in een bericht staan al uw begroetingen onder de knop ‘Begroeting’ boven de tekst. Dezelfde velden staan in de handtekeningeditor.</string>
     <string name="gmailAppPwTitle">Gmail — app-wachtwoord</string>
     <string name="gmailAppPwHint">Gmail wordt verbonden met een app-wachtwoord: een apart wachtwoord voor mail-apps dat je altijd kunt intrekken; je voert je Google-wachtwoord niet in. Zet verificatie in twee stappen aan in je Google-account, maak een wachtwoord op de pagina \'App-wachtwoorden\' (bijvoorbeeld met de naam Ogneliss) en vul het hier in.</string>
+    <string name="gmailConnectGoogleServices">Google Agenda en Contacten</string>
+    <string name="gmailConnectGoogleServicesHint">Er opent een Google-pagina: log in met hetzelfde account en geef toegang tot agenda en contacten. Mail werkt ook zonder.</string>
+    <string name="googleServicesConnected">Google Agenda en Contacten gekoppeld</string>
 </resources>

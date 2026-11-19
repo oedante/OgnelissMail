@@ -13,6 +13,9 @@ import '../../../services/device/phone_mirror_service.dart';
 import '../../../core/constants/app_constants.dart' show kRulesAndCategoriesEnabled;
 import '../../../core/utils/text_safe.dart';
 import 'dart:async';
+import '../../../services/mail/oauth/cross_platform_oauth.dart' show crossPlatformOAuthProvider;
+import '../../auth/providers/auth_provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../../core/permissions/app_permissions.dart';
 import '../../../core/theme/app_icons.dart';
 import 'dart:convert';
@@ -368,6 +371,18 @@ class AccountScreen extends ConsumerWidget {
               subtitle: account.usesOAuthTokens ? null : l10n.tr('signInAgainDesc'),
               onTap: () => reauthenticateFlow(context, ref, account),
             ),
+            // Gmail (2.6.7): почта — по паролю приложения; календарь, контакты
+            // и фото собеседников — через вход Google, здесь (или сразу при
+            // входе). Подключено — повторный вход обновляет разрешения.
+            if (_isGmail(account) && !kIsWeb && ref.read(crossPlatformOAuthProvider).available('google'))
+              SettingsItem(
+                icon: AppIcons.calendar_month,
+                title: l10n.tr('gmailConnectGoogleServices'),
+                subtitle: l10n.tr(account.type == AccountType.google
+                    ? 'googleServicesConnected'
+                    : 'gmailConnectGoogleServicesHint'),
+                onTap: () => _connectGoogle(context, ref, account),
+              ),
             // Exchange Online: дала ли организация согласие на Microsoft Graph
             // (1.8.10, вместо EWS, который Microsoft отключает).
             if (account.isExchangeOnlineOAuth) GraphStatusItem(account: account),
@@ -649,6 +664,23 @@ class AccountScreen extends ConsumerWidget {
   /// Пароль и логин меняются пунктом «Войти снова». 15.11.2026: подписи
   /// полей налезали на заголовки «Входящая почта» и «Исходящая почта», а
   /// шифрование изменить было нельзя.
+  /// Ящик Gmail или Google Workspace (серверы Gmail).
+  static bool _isGmail(AccountModel a) =>
+      a.type == AccountType.google || (a.isImap && (a.imapServer ?? '').trim().toLowerCase() == 'imap.gmail.com');
+
+  /// Календарь и контакты Google для ящика Gmail — вход Google (2.6.7).
+  Future<void> _connectGoogle(BuildContext context, WidgetRef ref, AccountModel a) async {
+    final l10n = AppLocalizations.of(context);
+    final err = await ref.read(authProvider.notifier).connectGoogleServices(a);
+    if (err == null) {
+      showInlineNotice(l10n.tr('googleServicesConnected'));
+    } else if (err.startsWith('mismatch:')) {
+      showInlineError(l10n.tr('reauthMismatch').replaceAll('{email}', err.substring(9)));
+    } else if (err != AuthNotifier.reauthCancelled) {
+      showInlineError(err);
+    }
+  }
+
   Future<void> _editServer(BuildContext context, WidgetRef ref, AccountModel a) async {
     final l10n = AppLocalizations.of(context);
     final exchange = a.isMsExchange || a.usesEas || a.usesEws;

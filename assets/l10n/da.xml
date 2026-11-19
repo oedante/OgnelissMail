@@ -4390,4 +4390,7 @@
     <string name="faq_drafts_11_a">Indstillinger → Konti → postkasse → Signaturer → »Tilføj egen hilsen«. Skriv teksten, og indsæt felter med knapperne: {to_address} — navnet som i standardhilsenen; {to_first_name} og {to_last_name}; {part_of_day} — »Godmorgen«, »Goddag« eller »Godaften« efter afsendelsestidspunktet; dit navn, din stilling og dit telefonnummer. Et felt uden værdi forsvinder sammen med det overflødige komma. En ny hilsen bliver straks postkassens hilsen, og i en besked finder du alle dine hilsner under knappen »Hilsen« over teksten. De samme felter findes i signatureditoren.</string>
     <string name="gmailAppPwTitle">Gmail – app-adgangskode</string>
     <string name="gmailAppPwHint">Gmail forbindes med en app-adgangskode – en separat adgangskode til mailapps, som du når som helst kan tilbagekalde; du indtaster ikke din Google-adgangskode. Slå totrinsbekræftelse til i din Google-konto, opret en adgangskode på siden \"Adgangskoder til apps\" (f.eks. med navnet Ogneliss), og indtast den her.</string>
+    <string name="gmailConnectGoogleServices">Google Kalender og Kontakter</string>
+    <string name="gmailConnectGoogleServicesHint">En Google-side åbnes: log ind med samme konto, og giv adgang til kalender og kontakter. Mail virker også uden.</string>
+    <string name="googleServicesConnected">Google Kalender og Kontakter forbundet</string>
 </resources>

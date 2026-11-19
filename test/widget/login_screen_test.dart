@@ -93,6 +93,8 @@ void main() {
     expect(find.text('Пароль приложения'), findsOneWidget);
     expect(find.textContaining('двухэтапную проверку'), findsOneWidget);
     expect(find.text('Создать пароль приложения'), findsOneWidget);
+    // Входа Google на платформе нет — календарь Google не предлагается.
+    expect(find.text('Календарь и контакты Google'), findsNothing);
 
     await tester.tap(find.text('Изменить'));
     await _settle(tester);
@@ -143,6 +145,8 @@ void main() {
     expect(find.text('Пароль приложения'), findsOneWidget);
     expect(find.textContaining('двухэтапную проверку'), findsOneWidget);
     expect(find.text('Создать пароль приложения'), findsOneWidget);
+    // Календарь и контакты — вход Google сразу после почты (по умолчанию да).
+    expect(find.text('Календарь и контакты Google'), findsOneWidget);
   });
 
   testWidgets('адрес первым: Gmail и Mail.ru — пароль приложения', (tester) async {

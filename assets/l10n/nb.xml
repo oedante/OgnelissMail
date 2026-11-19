@@ -4390,4 +4390,7 @@
     <string name="faq_drafts_11_a">Innstillinger → Kontoer → postboks → Signaturer → «Legg til egen hilsen». Skriv teksten og sett inn felt med knappene: {to_address} — navnet som i standardhilsenen; {to_first_name} og {to_last_name}; {part_of_day} — «God morgen», «God dag» eller «God kveld» etter sendetidspunktet; ditt navn, stilling og telefon. Et felt uten verdi forsvinner sammen med det overflødige kommaet. En ny hilsen blir straks postboksens hilsen, og i en melding finner du alle hilsenene dine under knappen «Hilsen» over teksten. De samme feltene finnes i signaturredigeringen.</string>
     <string name="gmailAppPwTitle">Gmail – app-passord</string>
     <string name="gmailAppPwHint">Gmail kobles til med et app-passord – et eget passord for e-postapper som du kan trekke tilbake når som helst; du skriver ikke inn Google-passordet ditt. Slå på totrinnsbekreftelse i Google-kontoen, lag et passord på siden «App-passord» (for eksempel med navnet Ogneliss) og skriv det inn her.</string>
+    <string name="gmailConnectGoogleServices">Google Kalender og Kontakter</string>
+    <string name="gmailConnectGoogleServicesHint">En Google-side åpnes: logg på med samme konto og gi tilgang til kalender og kontakter. E-post fungerer også uten.</string>
+    <string name="googleServicesConnected">Google Kalender og Kontakter tilkoblet</string>
 </resources>

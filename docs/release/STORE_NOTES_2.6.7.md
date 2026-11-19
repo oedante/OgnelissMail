@@ -14,6 +14,12 @@
   пароль приложения» открывает страницу Google. Пароль можно вводить с
   пробелами, как его показывает Google. Вход через Google доступ к почте
   больше не запрашивает.
+- **Календарь и контакты Google** для ящика Gmail — через вход Google (только
+  календарь, контакты и фото собеседников): переключатель «Календарь и
+  контакты Google» на экране входа (включён — страница Google открывается
+  сразу после почты) или позже «Настройки → Аккаунты → ящик → Подключение →
+  Календарь и контакты Google». Адрес аккаунта Google должен совпасть с
+  адресом ящика — иначе подключение отменяется с объяснением.
 - **Ящики Gmail, добавленные раньше через Google**, попросят пароль
   приложения один раз: «Войти снова» → пароль приложения (с той же
   инструкцией). Письма, папки и настройки ящика сохраняются; календарь и
@@ -30,14 +36,16 @@
 
 **RU.** Почта Gmail подключается по паролю приложения — как iCloud: на
 экране входа есть короткая инструкция и кнопка, открывающая страницу
-Google. Уже добавленный ящик Gmail попросит пароль приложения один раз
-(«Войти снова»), письма и настройки сохраняются. Виджет календаря
+Google. Календарь и контакты Google подключаются входом Google — сразу или
+позже в настройках ящика. Уже добавленный ящик Gmail попросит пароль
+приложения один раз («Войти снова»), письма и настройки сохраняются. Виджет календаря
 показывает задачи, поручения и приглашения, выделяет выходные и получил
 вкладку «Мой день».
 
 **EN.** Gmail now connects with an app password, like iCloud: the sign-in
-screen has short instructions and a button that opens the Google page. A
-Gmail account added earlier asks for an app password once (“Sign in
+screen has short instructions and a button that opens the Google page. Google
+Calendar and Contacts connect with Google sign-in — right away or later in
+the account settings. A Gmail account added earlier asks for an app password once (“Sign in
 again”); your mail and settings stay. The calendar widget shows tasks,
 assignments and invitations, highlights weekends and has a new “My day”
 tab.

@@ -4390,4 +4390,7 @@
     <string name="faq_drafts_11_a">Einstellungen → Konten → Postfach → Signaturen → „Eigene Begrüßung hinzufügen“. Geben Sie den Text ein und fügen Sie Felder über die Schaltflächen ein: {to_address} — der Name wie in der Standardbegrüßung; {to_first_name} und {to_last_name}; {part_of_day} — „Guten Morgen“, „Guten Tag“ oder „Guten Abend“ je nach Sendezeit; Ihr Name, Ihre Position und Telefonnummer. Ein Feld ohne Wert entfällt samt überflüssigem Komma. Eine neue Begrüßung wird sofort zur Begrüßung des Postfachs; in der E-Mail finden Sie alle eigenen Begrüßungen unter der Schaltfläche „Begrüßung“ über dem Text. Dieselben Felder gibt es im Signatur-Editor.</string>
     <string name="gmailAppPwTitle">Gmail – App-Passwort</string>
     <string name="gmailAppPwHint">Gmail wird mit einem App-Passwort verbunden – einem eigenen Passwort für Mail-Apps, das Sie jederzeit widerrufen können; Ihr Google-Passwort geben Sie nicht ein. Aktivieren Sie die Bestätigung in zwei Schritten in Ihrem Google-Konto, erstellen Sie auf der Seite „App-Passwörter“ ein Passwort (Name z. B. Ogneliss) und geben Sie es hier ein.</string>
+    <string name="gmailConnectGoogleServices">Google Kalender und Kontakte</string>
+    <string name="gmailConnectGoogleServicesHint">Es öffnet sich eine Google-Seite: Melden Sie sich mit demselben Konto an und erlauben Sie den Zugriff auf Kalender und Kontakte. E-Mail funktioniert auch ohne.</string>
+    <string name="googleServicesConnected">Google Kalender und Kontakte verbunden</string>
 </resources>

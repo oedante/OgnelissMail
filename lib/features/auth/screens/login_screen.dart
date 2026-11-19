@@ -23,6 +23,7 @@
 // протокол, который узнали по адресу, видно и можно сменить.
 
 import '../../../widgets/ui/confirm_dialog.dart';
+import '../../../widgets/common/inline_notice.dart' show quietError, showInlineError;
 import '../../../core/constants/exchange_feature.dart';
 import 'dart:async';
 
@@ -180,6 +181,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   /// платформе нет (2.5.5: сервера входа нет — Яндекс на Windows и Linux,
   /// сборка без клиента Google).
   String? _appPwFor;
+
+  /// Gmail (2.6.7): после входа по паролю приложения — сразу вход Google для
+  /// календаря, контактов и фото собеседников.
+  bool _googleServices = true;
 
   /// Страница паролей приложений службы (Google — и для адресов Google
   /// Workspace на своём домене: MailProviderDetect знает только gmail.com).
@@ -660,6 +665,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Future<void> _afterSuccess() async {
     if (_reauth == null && widget.reauthAccountId == null) {
       final added = [for (final a in ref.read(accountsProvider)) if (!_idsBefore.contains(a.id)) a];
+      // Gmail: календарь и контакты Google — вход Google сразу после почты.
+      // Отказ или ошибка не критичны: почта уже работает, подключить можно
+      // в настройках ящика (в журнал).
+      if (added.isNotEmpty && _appPwFor == 'google' && _googleServices && _googleOAuthAvailable) {
+        final err = await ref.read(authProvider.notifier).connectGoogleServices(added.last);
+        if (!mounted) return;
+        if (err != null && err.startsWith('mismatch:')) {
+          // Вошли в Google другим аккаунтом — календарь не подключён; сказать.
+          showInlineError(AppLocalizations.of(context).tr('reauthMismatch').replaceAll('{email}', err.substring(9)));
+        } else if (err != null) {
+          quietError('Календарь и контакты Google не подключены: $err');
+        }
+      }
       if (added.isNotEmpty && mounted) {
         await showAccountLabelDialog(context, ref, added.last, ask: true);
       }
@@ -1281,6 +1299,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               onPressed: () => _open(appPwUrl!),
             ),
           ),
+          // Gmail: календарь и контакты Google — сразу (вход Google после
+          // почты) или позже в настройках ящика.
+          if (gmail && !reauth && _googleOAuthAvailable)
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _googleServices,
+              onChanged: busy ? null : (v) => setState(() => _googleServices = v),
+              title: Text(l10n.tr('gmailConnectGoogleServices')),
+              subtitle: Text(l10n.tr('gmailConnectGoogleServicesHint')),
+            ),
           const SizedBox(height: Space.s),
         ],
 
@@ -1653,6 +1681,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     });
     _focusPasswordSoon();
   }
+
+  /// Вход Google на этой платформе есть (клиент задан в сборке).
+  bool get _googleOAuthAvailable => !kIsWeb && ref.read(crossPlatformOAuthProvider).available('google');
 
   /// «Проверить пароль»: показать пароль и выделить его.
   void _checkPassword() {

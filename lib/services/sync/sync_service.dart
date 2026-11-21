@@ -1875,6 +1875,7 @@ class SyncService {
       final initialLoad = state == null;
       var reachedLast = false;
       var deltaFailed = false;
+      String? deltaCode;
       final collected = <EmailModel>[];
 
       // ── БОЛЬШИЕ ЯЩИКИ ──
@@ -1934,6 +1935,7 @@ class SyncService {
         if (d.error != null) {
           AppLogger.warning('EWS delta (${folder.displayName}): ${d.error}');
           deltaFailed = true;
+          deltaCode = d.responseCode;
           break;
         }
         collected..addAll(d.created)..addAll(d.updated);
@@ -1954,10 +1956,22 @@ class SyncService {
           count: AppConstants.emailsPerPage,
           fetchMode: settings.emailFetchMode,
         );
-        await _prefs.remove(stateKey); // состояние могло испортиться
+        // Состояние — только если оно правда негодно или ошибка третья
+        // подряд (EwsDeltaSyncResult.keepStateAfterError): иначе следующая
+        // синхронизация продолжит с прежнего места, а не с нуля.
+        final failKey = '${stateKey}_fails';
+        final fails = (_prefs.getInt(failKey) ?? 0) + 1;
+        if (EwsDeltaSyncResult.keepStateAfterError(deltaCode, fails)) {
+          await _prefs.setInt(failKey, fails);
+          AppLogger.info('EWS delta (${folder.displayName}): состояние сохранено (ошибка $fails подряд)');
+        } else {
+          await _prefs.remove(stateKey);
+          await _prefs.remove(failKey);
+        }
       } else {
         emails = collected;
         if (state != null) await _prefs.setString(stateKey, state);
+        await _prefs.remove('${stateKey}_fails');
         if (collected.isNotEmpty || deletedIds.isNotEmpty) {
           AppLogger.info('EWS delta (${folder.displayName}): '
               '${collected.length} изменений, удалено ${deletedIds.length}');
@@ -4465,6 +4479,7 @@ class SyncService {
         await _ref.read(mailEngineServiceProvider).resetMailFolderSync(account, folderId);
       } else if (account.usesEws || account.isExchange) {
         await _prefs.remove(_ewsDeltaKey(account.id, folderId));
+        await _prefs.remove('${_ewsDeltaKey(account.id, folderId)}_fails');
       }
       // IMAP: окно последних писем сверяется при каждой синхронизации.
     } catch (e) {

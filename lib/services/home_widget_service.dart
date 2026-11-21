@@ -37,6 +37,9 @@ import '../features/settings/providers/settings_provider.dart';
 import 'security/pin_lock_service.dart' show pinLockProvider;
 import '../l10n/app_localizations.dart';
 import 'mail/control_service.dart' show ControlState;
+import 'security/managed_config.dart' show ManagedPolicy;
+import 'weather/weather_service.dart' show WeatherApi, WeatherCache, WeatherKind;
+import 'accounts/account_labels.dart' show AccountLabels;
 import 'calendar/meeting_link_service.dart';
 import 'calendar/pending_invites.dart' show loadPendingInvites;
 import 'sync/mail_freshness.dart';
@@ -99,6 +102,8 @@ class HomeWidgetService {
       // и названия встреч видны без разблокировки.
       private: pinSet,
       colors: {for (final a in accounts) a.id: a.colorValue},
+      // Название ящика, заданное пользователем («Работа», «Семья»), — как в
+      // приложении (21.11.2026: виджет показывал имя отправителя).
       labels: {
         for (final a in accounts)
           a.id: a.displayName.trim().isNotEmpty && a.displayName.trim().toLowerCase() != a.email.toLowerCase()
@@ -147,7 +152,8 @@ class HomeWidgetService {
       // «Мой день» — доска (решение владельца 09.11.2026: список убран);
       // виджет показывает колонки.
       const board = true;
-      final json = jsonEncode(await _build(db, ids, l10n, showControl, now, private, board: board, colors: colors));
+      final json = jsonEncode(await _build(db, ids, l10n, showControl, now, private,
+          board: board, colors: colors, weather: weatherLine(prefs, now)));
       // Что показывает виджет «Почта» (08.11.2026, план п. 8.1): все
       // входящие, VIP, с флажком, «На контроле» или один ящик.
       final mailFilter = prefs.getString(mailFilterKey) ?? 'all';
@@ -156,12 +162,14 @@ class HomeWidgetService {
         final fm = jsonDecode(prefs.getString('focus_mode') ?? '{}');
         vip = [for (final v in (fm is Map ? (fm['vipEmails'] as List?) ?? const [] : const [])) '$v'.toLowerCase()];
       } catch (_) {}
+      // Заданные названия ящиков — из настроек (их читает и фоновая проверка).
+      final named = {for (final e in labels.entries) e.key: AccountLabels.of(prefs, e.key) ?? e.value};
       final mail = jsonEncode(
-          await _buildMailFiltered(db, ids, l10n, now, private, labels, colors, staleMin, mailFilter, vip));
+          await _buildMailFiltered(db, ids, l10n, now, private, named, colors, staleMin, mailFilter, vip));
       // Календарь — те ящики, что включены в «хабе» календаря в приложении.
       final hidden = {...?prefs.getStringList('cal_hidden_accounts')};
       final calIds = [for (final id in ids) if (!hidden.contains(id)) id];
-      final cal = jsonEncode(await _buildCalendar(db, calIds, l10n, now, private, colors, labels, ids, activeAccountId));
+      final cal = jsonEncode(await _buildCalendar(db, calIds, l10n, now, private, colors, named, ids, activeAccountId));
       final notes = jsonEncode(await _buildNotes(db, l10n, private));
       final tasks = jsonEncode(await _buildTasks(db, ids, l10n, now, private));
       // Все варианты «Почты» для виджетов со своим фильтром (запросы
@@ -171,7 +179,7 @@ class HomeWidgetService {
         ('vip', l10n.tr('widgetMailVip')),
         ('flagged', l10n.tr('widgetMailFlagged')),
         if (showControl) ('control', l10n.tr('widgetMailControl')),
-        for (final id in ids) ('acc:$id', labels[id] ?? id),
+        for (final id in ids) ('acc:$id', named[id] ?? id),
       ];
       final variants = <String, String>{
         mailFiltersKey: jsonEncode({
@@ -183,7 +191,7 @@ class HomeWidgetService {
         variants[mailKeyFor(f.$1)] = f.$1 == mailFilter
             ? mail
             : jsonEncode(
-                await _buildMailFiltered(db, ids, l10n, now, private, labels, colors, staleMin, f.$1, vip));
+                await _buildMailFiltered(db, ids, l10n, now, private, named, colors, staleMin, f.$1, vip));
       }
       final all = json + mail + cal + notes + tasks + variants.values.join();
       if (all == _lastJson && !force) return;
@@ -226,7 +234,7 @@ class HomeWidgetService {
 
   static Future<Map<String, Object?>> _build(
       AppDatabase db, List<String> ids, AppLocalizations l10n, bool showControl, DateTime now, bool private,
-      {bool board = false, Map<String, int> colors = const {}}) async {
+      {bool board = false, Map<String, int> colors = const {}, String? weather}) async {
     final lang = l10n.locale.languageCode;
     String date;
     try {
@@ -314,7 +322,27 @@ class HomeWidgetService {
               ..where((t) => t.status.equals(1))
               ..limit(20))
             .get()) {
-          inWork.add({'s': title(t.title, l10n.tr('myDayTask'))});
+          inWork.add({'s': title(t.title, l10n.tr('myDayTask')), 'sub': l10n.tr('myDayTask'), 'k': 't'});
+        }
+        // Письма «На контроле» — тоже «В работе», как на экране «Мой день»
+        // (21.11.2026: в виджете колонка была пустой, а в шапке — «2 в работе»).
+        if (showControl) {
+          for (final m in (await db.controlledEmails(accountIds: ids, activeOnly: true)).take(20)) {
+            final due = m.followUpAt?.toLocal();
+            final label = l10n.tr(m.controlState == ControlState.mustReply ? 'controlMustReply' : 'controlAwaiting');
+            String when(DateTime d) {
+              final diff = DateTime(d.year, d.month, d.day).difference(start).inDays;
+              if (diff == 0) return l10n.tr('today').toLowerCase();
+              if (diff == 1) return l10n.tr('tomorrow').toLowerCase();
+              return DateFormat('d MMM', lang).format(d);
+            }
+
+            inWork.add({
+              's': title(m.subject, l10n.tr('noSubject')),
+              'sub': due == null ? label : '$label · ${l10n.tr('controlUntil').replaceAll('{when}', when(due))}',
+              'k': 'm',
+            });
+          }
         }
         for (final t in await (db.select(db.tasks)
               ..where((t) => t.accountId.isIn(ids))
@@ -323,7 +351,7 @@ class HomeWidgetService {
               ..orderBy([(t) => OrderingTerm(expression: t.completedAt, mode: OrderingMode.desc)])
               ..limit(20))
             .get()) {
-          done.add({'s': '✓ ${title(t.title, l10n.tr('myDayTask'))}'});
+          done.add({'s': title(t.title, l10n.tr('myDayTask')), 't': '✓', 'k': 't'});
         }
         for (final e in await (db.select(db.calendarEvents)
               ..where((e) => e.accountId.isIn(ids))
@@ -334,7 +362,12 @@ class HomeWidgetService {
               ..orderBy([(e) => OrderingTerm(expression: e.startTime, mode: OrderingMode.desc)])
               ..limit(20))
             .get()) {
-          done.add({'s': '${hm.format(e.startTime)} ${title(e.title, l10n.tr('widgetMeeting'))}'});
+          done.add({
+            's': title(e.title, l10n.tr('widgetMeeting')),
+            't': hm.format(e.startTime),
+            'sub': '${hm.format(e.startTime)}–${hm.format(e.endTime)}',
+            'k': 'e',
+          });
         }
       }
 
@@ -378,15 +411,60 @@ class HomeWidgetService {
             'title': l10n.tr('boardUpcoming'),
             'items': [
               for (final i in items.take(20))
-                if (i['ip'] != true) {'s': '${i['t']} ${i['s']}', 'end': i['end']},
+                if (i['ip'] != true)
+                  {
+                    't': i['t'],
+                    's': i['s'],
+                    'end': i['end'],
+                    'k': i['k'],
+                    if (i['a'] == 1) 'a': 1,
+                    // Галочка «Выполнено» у задачи в виджете «Мой день».
+                    if (i['id'] != null) 'id': i['id'],
+                    if (i['acc'] != null) 'acc': i['acc'],
+                  },
             ],
           },
           {'title': l10n.tr('boardInWork'), 'items': inWork},
           {'title': l10n.tr('boardDone'), 'items': done},
         ],
       },
+      // Погода (21.11.2026) — из прогноза «Моего дня», без сети.
+      if (weather != null) 'weather': weather,
       'updated': now.millisecondsSinceEpoch,
     };
+  }
+
+  /// Погода для виджета: «☁ −9°» из сохранённого прогноза «Моего дня».
+  /// Погода выключена, запрещена организацией или прогноз старше 6 часов —
+  /// null (виджет без неё).
+  static String? weatherLine(SharedPreferences prefs, DateTime now) {
+    try {
+      if (prefs.getBool('weather_on') != true) return null;
+      if (ManagedPolicy.current.blockWeather) return null;
+      final cached = WeatherCache.read(prefs);
+      if (cached == null) return null;
+      final fetched = cached.fetched;
+      if (fetched != null && now.difference(fetched) > const Duration(hours: 6)) return null;
+      final f = WeatherApi.parseMet(cached.body, now: now);
+      if (f == null) return null;
+      final t = f.now.temp.round();
+      final icon = switch (f.now.kind) {
+        WeatherKind.clear => f.now.night ? '🌙' : '☀',
+        WeatherKind.fair => f.now.night ? '🌙' : '🌤',
+        WeatherKind.partlyCloudy => '⛅',
+        WeatherKind.cloudy => '☁',
+        WeatherKind.fog => '🌫',
+        WeatherKind.lightRain => '🌦',
+        WeatherKind.rain || WeatherKind.heavyRain => '🌧',
+        WeatherKind.sleet => '🌨',
+        WeatherKind.snow => '❄',
+        WeatherKind.thunder => '⛈',
+        null => '',
+      };
+      return '${icon.isEmpty ? '' : '$icon '}${t < 0 ? '−${-t}' : '$t'}°';
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Виджет «Почта»: непрочитанные во «Входящих» по ящикам и четыре
@@ -481,10 +559,13 @@ class HomeWidgetService {
       'empty': l10n.tr('widgetNoUnread'),
       'compose': l10n.tr('shortcutCompose'),
       // Счётчики ящиков — в порядке из настроек.
-      'accounts': [
-        for (final id in ids)
-          if ((perAccount[id] ?? 0) > 0) '${labels[id] ?? ''} ${perAccount[id]}',
-      ].join(' · '),
+      // Один ящик — строка не нужна: число уже в шапке (21.11.2026).
+      'accounts': ids.length < 2
+          ? ''
+          : [
+              for (final id in ids)
+                if ((perAccount[id] ?? 0) > 0) '${labels[id] ?? ''} ${perAccount[id]}',
+            ].join(' · '),
       'items': rows,
       // Подписи кнопок строки (для озвучивания) — на языке приложения.
       'actRead': l10n.tr('markRead'),

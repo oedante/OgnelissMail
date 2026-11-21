@@ -4402,4 +4402,8 @@
     <string name="threadOlder">Tidigare meddelanden: {n}</string>
     <string name="threadOpenAll">Hela konversationen</string>
     <string name="calFree2Weeks">De kommande 2 veckorna är lediga</string>
+    <string name="googleServicesDenied">Google gav inte åtkomst till: {what}. Tryck, logga in och markera alla rutor på Googles sida</string>
+    <string name="googleAccessCalendar">kalender</string>
+    <string name="googleAccessContacts">kontakter</string>
+    <string name="googleAccessPhotos">kontakters foton</string>
 </resources>

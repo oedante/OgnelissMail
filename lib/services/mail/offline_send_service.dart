@@ -29,6 +29,7 @@ import '../../l10n/app_localizations.dart';
 import '../sync/sync_service.dart';
 import 'attachment_cache_service.dart' show attachmentCacheProvider;
 import 'draft_files.dart';
+import 'sent_placeholder.dart';
 import 'engine/mail_engine_service.dart' show MailEngineService, mailEngineServiceProvider;
 import 'draft_autosave_service.dart' show DraftData, draftAutosaveProvider;
 import 'package:mail_engine/mail_engine.dart' as me show EasEngine, GatewayBlocked, GatewaySizeRejected, SmtpNotSentException;
@@ -127,6 +128,10 @@ class OfflineSendService {
     /// «Запросить уведомление о прочтении» (2.2.0): Disposition-Notification-To
     /// (SMTP, ActiveSync), IsReadReceiptRequested (EWS).
     bool requestReadReceipt = false,
+    /// Отправленное — сразу в беседе временной строкой с текстом (2.6.8,
+    /// [SentPlaceholder]). Быстрый ответ ставит свою строку сам (с набранным
+    /// текстом) — передаёт false.
+    bool showInConversation = true,
   }) =>
       FinishInBackground.guard(() => _sendOrQueue(
             accountId: accountId,
@@ -144,6 +149,7 @@ class OfflineSendService {
             keepTooLarge: keepTooLarge,
             requestDeliveryReport: requestDeliveryReport,
             requestReadReceipt: requestReadReceipt,
+            showInConversation: showInConversation,
           ));
 
   Future<bool> _sendOrQueue({
@@ -162,6 +168,7 @@ class OfflineSendService {
     required bool keepTooLarge,
     required bool requestDeliveryReport,
     required bool requestReadReceipt,
+    bool showInConversation = true,
   }) async {
     final connectivity = _ref.read(connectivityServiceProvider);
     // Один ClientId на письмо с первой попытки (07.11.2026, аудит): сервер
@@ -221,6 +228,10 @@ class OfflineSendService {
         }
 
         AppLogger.info('Email sent: $subject');
+        if (showInConversation) {
+          unawaited(_showSentInConversation(account,
+              to: to, cc: cc, subject: subject, html: bodyHtml, inReplyTo: inReplyTo, hasAttachments: all.isNotEmpty));
+        }
         _afterSent(account);
         return true;
       } catch (e) {
@@ -441,6 +452,29 @@ class OfflineSendService {
         AppLogger.warning('Очередь отправки: $e');
       }
     });
+  }
+
+  /// Ответ — сразу в беседе письма, на которое отвечали (2.6.8, замечание
+  /// владельца 21.11.2026: «карточки в беседах… пустыми, а потом
+  /// подгружают. Часто если только отправил»): временная строка с текстом
+  /// до прихода серверной копии ([SentPlaceholder]). Новое письмо (не
+  /// ответ) — без неё: беседы ещё нет.
+  Future<void> _showSentInConversation(AccountModel account,
+      {required List<EmailAddress> to,
+      required List<EmailAddress> cc,
+      required String subject,
+      required String html,
+      required String? inReplyTo,
+      bool hasAttachments = false}) async {
+    try {
+      final db = _ref.read(databaseProvider);
+      final conv = await SentPlaceholder.conversationOf(db, account.id, inReplyTo);
+      if (conv == null) return;
+      await SentPlaceholder.insert(db, account,
+          conversationId: conv, to: to, cc: cc, subject: subject, html: html, hasAttachments: hasAttachments);
+    } catch (e) {
+      AppLogger.debug('Отправленное в беседе: $e');
+    }
   }
 
   void _afterSent(AccountModel account) {
@@ -867,6 +901,8 @@ class OfflineSendService {
         await (db.delete(db.emails)..where((e) => e.id.equals(op.targetId))).go();
         sent++;
         AppLogger.info('Письмо из очереди отправлено: $subject');
+        unawaited(_showSentInConversation(account,
+            to: to, cc: cc, subject: subject, html: bodyHtml, inReplyTo: inReplyTo, hasAttachments: attachments.isNotEmpty));
         _afterSent(account);
       } catch (e) {
         // Таймаут ожидания ответа: сервер мог письмо уже принять. У EAS

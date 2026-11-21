@@ -207,6 +207,35 @@ class NotificationService {
   /// Показать уведомление о новом письме.
   /// [smartReplyLabels]/[smartReplyBodies] — умные быстрые ответы (локальный ИИ):
   /// подписи на кнопках и готовый текст (отправляется обработчиком).
+  /// Каналы, выключенные пользователем в настройках Android (важность 0),
+  /// — с запоминанием на 2 минуты: не спрашивать систему на каждое письмо.
+  Set<String>? _blocked;
+  DateTime? _blockedAt;
+
+  Future<bool> _channelBlocked(String channelId) async {
+    if (!Platform.isAndroid) return false;
+    final now = DateTime.now();
+    if (_blocked == null || _blockedAt == null || now.difference(_blockedAt!) > const Duration(minutes: 2)) {
+      try {
+        final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+        final list = await android?.getNotificationChannels() ?? const <AndroidNotificationChannel>[];
+        _blocked = {for (final c in list) if (c.importance == Importance.none) c.id};
+      } catch (e) {
+        _blocked = const {};
+        AppLogger.debug('Каналы уведомлений: $e');
+      }
+      _blockedAt = now;
+    }
+    final off = _blocked!.contains(channelId);
+    if (off && !_loggedBlocked.contains(channelId)) {
+      _loggedBlocked.add(channelId);
+      AppLogger.warning('Канал уведомлений $channelId выключен в настройках Android — письмо показано обычным каналом');
+    }
+    return off;
+  }
+
+  final Set<String> _loggedBlocked = {};
+
   Future<void> showEmailNotification({
     required String accountId,
     required String emailId,
@@ -407,6 +436,11 @@ class NotificationService {
     final styleHeader = headerInStyle && shortcutId == null ? subText : null;
     final styleTail = headerInStyle && shortcutId != null ? subText : null;
 
+    // Канал «VIP-почта» выключен в настройках Android (2.6.8, случай
+    // пользователя 21.11.2026: VIP-категория выключена в телефоне — письма
+    // VIP не приходили вовсе): письмо VIP — обычным каналом «Почта».
+    final suffix = '${_soundOn ? 's' : 'n'}${_vibrationOn ? 'v' : 'n'}';
+    final vipChannel = isVip && !await _channelBlocked('email_vip_$suffix');
     await _plugin.show(
       id,
       title,
@@ -418,10 +452,10 @@ class NotificationService {
         android: AndroidNotificationDetails(
           quiet && !isVip
               ? 'email_quiet'
-              : '${isVip ? 'email_vip' : 'email_default'}_${_soundOn ? 's' : 'n'}${_vibrationOn ? 'v' : 'n'}',
-          quiet && !isVip ? _t('ntfChQuiet') : (isVip ? _t('ntfChVip') : _t('ntfChMail')),
-          importance: quiet && !isVip ? Importance.low : (isVip ? Importance.max : Importance.high),
-          priority: quiet && !isVip ? Priority.low : (isVip ? Priority.max : Priority.high),
+              : '${vipChannel ? 'email_vip' : 'email_default'}_$suffix',
+          quiet && !isVip ? _t('ntfChQuiet') : (vipChannel ? _t('ntfChVip') : _t('ntfChMail')),
+          importance: quiet && !isVip ? Importance.low : (vipChannel ? Importance.max : Importance.high),
+          priority: quiet && !isVip ? Priority.low : (vipChannel ? Priority.max : Priority.high),
           category: AndroidNotificationCategory.email,
           // VIP (1.10.5) — золотой значок и название приложения в шапке.
           color: isVip ? const Color(NotificationText.vipColor) : null,

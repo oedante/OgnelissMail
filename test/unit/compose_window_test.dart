@@ -43,6 +43,7 @@ class _FakeSend extends OfflineSendService {
     bool keepTooLarge = false,
     bool requestDeliveryReport = false,
     bool requestReadReceipt = false,
+    bool showInConversation = true,
   }) {
     got = {
       'accountId': accountId,

@@ -60,6 +60,7 @@ class _Outbox extends OfflineSendService {
     bool keepTooLarge = false,
     bool requestDeliveryReport = false,
     bool requestReadReceipt = false,
+    bool showInConversation = true,
   }) async {
     sink(_Mail(me, to, cc, subject, bodyHtml, inReplyTo));
     return true;

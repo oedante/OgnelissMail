@@ -4402,4 +4402,8 @@
     <string name="threadOlder">पुराने संदेश: {n}</string>
     <string name="threadOpenAll">पूरी बातचीत</string>
     <string name="calFree2Weeks">अगले 2 सप्ताह खाली हैं</string>
+    <string name="googleServicesDenied">Google ने इनकी अनुमति नहीं दी: {what}. टैप करें, साइन इन करें और Google पेज पर सभी बॉक्स चुनें</string>
+    <string name="googleAccessCalendar">कैलेंडर</string>
+    <string name="googleAccessContacts">संपर्क</string>
+    <string name="googleAccessPhotos">संपर्कों की फ़ोटो</string>
 </resources>

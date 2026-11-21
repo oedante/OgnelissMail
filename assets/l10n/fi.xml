@@ -4402,4 +4402,8 @@
     <string name="threadOlder">Aiemmat viestit: {n}</string>
     <string name="threadOpenAll">Koko keskustelu</string>
     <string name="calFree2Weeks">Seuraavat 2 viikkoa ovat vapaita</string>
+    <string name="googleServicesDenied">Google ei antanut käyttöoikeutta: {what}. Napauta, kirjaudu sisään ja valitse Googlen sivulla kaikki valintaruudut</string>
+    <string name="googleAccessCalendar">kalenteri</string>
+    <string name="googleAccessContacts">yhteystiedot</string>
+    <string name="googleAccessPhotos">yhteyshenkilöiden kuvat</string>
 </resources>

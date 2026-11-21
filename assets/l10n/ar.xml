@@ -4486,4 +4486,8 @@
     <string name="threadOlder">رسائل أقدم: {n}</string>
     <string name="threadOpenAll">المحادثة كاملة</string>
     <string name="calFree2Weeks">الأسبوعان القادمان متاحان</string>
+    <string name="googleServicesDenied">لم يمنح Google الوصول إلى: {what}. انقر وسجّل الدخول وحدّد كل المربعات في صفحة Google</string>
+    <string name="googleAccessCalendar">التقويم</string>
+    <string name="googleAccessContacts">جهات الاتصال</string>
+    <string name="googleAccessPhotos">صور المراسلين</string>
 </resources>

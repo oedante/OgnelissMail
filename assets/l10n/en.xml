@@ -4402,4 +4402,8 @@
     <string name="threadOlder">Earlier messages: {n}</string>
     <string name="threadOpenAll">Whole conversation</string>
     <string name="calFree2Weeks">The next 2 weeks are free</string>
+    <string name="googleServicesDenied">Google didn\'t grant access to: {what}. Tap, sign in and tick all boxes on the Google page</string>
+    <string name="googleAccessCalendar">calendar</string>
+    <string name="googleAccessContacts">contacts</string>
+    <string name="googleAccessPhotos">correspondents\' photos</string>
 </resources>

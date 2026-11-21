@@ -34,6 +34,8 @@ import '../../../data/models/folder_model.dart';
 import '../../../data/providers/database_provider.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../services/mail/special_folders.dart';
+import '../../../services/mail/sent_placeholder.dart' show SentPlaceholder;
+import '../../../core/security/mail_body_processor.dart' show MailBodyProcessor;
 import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/email_actions_service.dart';
 import '../../../widgets/common/hero_email_transition.dart';
@@ -83,32 +85,60 @@ typedef _ConvRows = ({List<EmailModel> emails, Map<String, List<EmailModel>> cop
 /// каждое изменение таблицы писем (во время синхронизации — несколько раз в
 /// секунду) перечитывало тексты всех писем длинной беседы. Изменения других
 /// писем экран не перерисовывают. Превью, которого нет в строке (IMAP),
-/// берётся из начала текста — один раз на письмо.
+/// берётся из начала текста.
+///
+/// 2.6.8 (замечание владельца 21.11.2026: «карточки в беседах иногда новые
+/// верхние письма отображают пустыми, а потом подгружают. Часто если только
+/// отправил»):
+/// - превью спрашивается заново, пока его нет: текст догружается в базу
+///   «тихо» (без оповещения списков), а раньше письмо спрашивали один раз —
+///   карточка оставалась пустой до постороннего изменения таблицы. Пока есть
+///   пустые карточки — проверка каждые [_previewRetry], не дольше
+///   [_previewRetries] раз; письмо только с HTML — начало HTML без разметки;
+/// - временная строка отправленного письма ([SentPlaceholder]) не
+///   показывается рядом с пришедшей серверной копией
+///   ([conversationWithoutPlaceholders]).
+const _previewRetry = Duration(seconds: 3);
+const _previewRetries = 20;
+
 Stream<_ConvRows> _watchConversation(AppDatabase db, String conversationId, String accountId) {
   final previews = <String, String>{};
-  final asked = <String>{};
-  bool noPreview(Email r) => (r.bodyPreview ?? '').trim().isEmpty;
-  return db
-      .watchConversationLight(conversationId: conversationId, accountId: accountId, dedup: false)
-      .distinct((a, b) => listEquals(a, b))
-      .asyncMap((all) async {
+  bool noPreview(Email r) => (r.bodyPreview ?? '').trim().isEmpty && (previews[r.id] ?? '').isEmpty;
+  late final StreamController<_ConvRows> ctrl;
+  StreamSubscription<List<Email>>? sub;
+  Timer? retry;
+  List<Email>? last;
+  var tries = 0;
+  var seq = 0;
+
+  Future<void> emit(List<Email> all) async {
+    final my = ++seq;
     final dropped = <String, List<Email>>{};
-    final rows = AppDatabase.dedupCopies(all, copies: dropped);
-    final need = [
-      for (final r in rows)
-        if (noPreview(r) && asked.add(r.id)) r.id,
-    ];
+    final rows = conversationWithoutPlaceholders(AppDatabase.dedupCopies(all, copies: dropped));
+    final need = [for (final r in rows) if (noPreview(r)) r.id];
     if (need.isNotEmpty) {
       try {
         previews.addAll(await db.previewsFromBody(accountId, need));
+        final still = [for (final id in need) if ((previews[id] ?? '').isEmpty) id];
+        if (still.isNotEmpty) {
+          final heads = await db.htmlHeads(accountId, still);
+          if (heads.isNotEmpty) {
+            final plain = await MailBodyProcessor.htmlToPlainAll(heads);
+            plain.forEach((id, t) {
+              final p = previewOf(t);
+              if (p != null) previews[id] = p;
+            });
+          }
+        }
       } catch (e) {
         AppLogger.debug('Беседа: превью из текста — $e');
       }
     }
-    return (
+    if (my != seq || ctrl.isClosed) return;
+    ctrl.add((
       emails: [
         for (final r in rows)
-          emailModelFromRow(noPreview(r) && previews[r.id] != null
+          emailModelFromRow((r.bodyPreview ?? '').trim().isEmpty && previews[r.id] != null
               ? r.copyWith(bodyPreview: Value(previews[r.id]))
               : r),
       ],
@@ -119,8 +149,55 @@ Stream<_ConvRows> _watchConversation(AppDatabase db, String conversationId, Stri
               if (!AppDatabase.isGmailVirtualCopy(c)) emailModelFromRow(c),
           ],
       },
-    );
-  });
+    ));
+    retry?.cancel();
+    if (rows.any(noPreview) && tries < _previewRetries) {
+      retry = Timer(_previewRetry, () {
+        tries++;
+        final l = last;
+        if (l != null) unawaited(emit(l));
+      });
+    }
+  }
+
+  ctrl = StreamController<_ConvRows>(
+    onListen: () {
+      sub = db
+          .watchConversationLight(conversationId: conversationId, accountId: accountId, dedup: false)
+          .distinct((a, b) => listEquals(a, b))
+          .listen((all) {
+        last = all;
+        tries = 0;
+        unawaited(emit(all));
+      }, onError: ctrl.addError);
+    },
+    onCancel: () async {
+      retry?.cancel();
+      await sub?.cancel();
+    },
+  );
+  return ctrl.stream;
+}
+
+/// Беседа без временных строк отправленных писем ([SentPlaceholder]),
+/// у которых уже есть серверная копия: то же письмо от того же адреса с той
+/// же темой, не раньше чем за 5 минут до временной строки. Убирает их и
+/// синхронизация, но до неё в беседе было бы два одинаковых письма
+/// (замечание владельца 21.11.2026: «дублирование писем в беседах»).
+@visibleForTesting
+List<Email> conversationWithoutPlaceholders(List<Email> rows) {
+  if (!rows.any((r) => r.id.startsWith(SentPlaceholder.prefix))) return rows;
+  String subj(Email r) => r.subject.trim().toLowerCase();
+  return [
+    for (final r in rows)
+      if (!r.id.startsWith(SentPlaceholder.prefix) ||
+          !rows.any((x) =>
+              !x.id.startsWith(SentPlaceholder.prefix) &&
+              x.fromEmail.trim().toLowerCase() == r.fromEmail.trim().toLowerCase() &&
+              subj(x) == subj(r) &&
+              !x.receivedAt.isBefore(r.receivedAt.subtract(const Duration(minutes: 5)))))
+        r,
+  ];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

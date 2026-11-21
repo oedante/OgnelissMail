@@ -4402,4 +4402,8 @@
     <string name="threadOlder">Eerdere berichten: {n}</string>
     <string name="threadOpenAll">Hele gesprek</string>
     <string name="calFree2Weeks">De komende 2 weken zijn vrij</string>
+    <string name="googleServicesDenied">Google heeft geen toegang gegeven tot: {what}. Tik, meld je aan en vink op de Google-pagina alle vakjes aan</string>
+    <string name="googleAccessCalendar">agenda</string>
+    <string name="googleAccessContacts">contacten</string>
+    <string name="googleAccessPhotos">foto\'s van contacten</string>
 </resources>

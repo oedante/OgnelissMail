@@ -4423,4 +4423,8 @@
     <string name="threadOlder">הודעות קודמות: {n}</string>
     <string name="threadOpenAll">כל השיחה</string>
     <string name="calFree2Weeks">השבועיים הקרובים פנויים</string>
+    <string name="googleServicesDenied">Google לא העניקה גישה אל: {what}. הקישו, היכנסו וסמנו את כל התיבות בדף של Google</string>
+    <string name="googleAccessCalendar">יומן</string>
+    <string name="googleAccessContacts">אנשי קשר</string>
+    <string name="googleAccessPhotos">תמונות אנשי קשר</string>
 </resources>

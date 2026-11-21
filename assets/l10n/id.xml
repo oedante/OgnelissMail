@@ -4381,4 +4381,8 @@
     <string name="threadOlder">Pesan sebelumnya: {n}</string>
     <string name="threadOpenAll">Seluruh percakapan</string>
     <string name="calFree2Weeks">2 minggu ke depan kosong</string>
+    <string name="googleServicesDenied">Google tidak memberi akses ke: {what}. Ketuk, masuk, dan centang semua kotak di halaman Google</string>
+    <string name="googleAccessCalendar">kalender</string>
+    <string name="googleAccessContacts">kontak</string>
+    <string name="googleAccessPhotos">foto kontak</string>
 </resources>

@@ -4423,4 +4423,8 @@
     <string name="threadOlder">Mesaje anterioare: {n}</string>
     <string name="threadOpenAll">Toată conversația</string>
     <string name="calFree2Weeks">Următoarele 2 săptămâni sunt libere</string>
+    <string name="googleServicesDenied">Google nu a acordat acces la: {what}. Atingeți, conectați-vă și bifați toate casetele pe pagina Google</string>
+    <string name="googleAccessCalendar">calendar</string>
+    <string name="googleAccessContacts">contacte</string>
+    <string name="googleAccessPhotos">fotografiile corespondenților</string>
 </resources>

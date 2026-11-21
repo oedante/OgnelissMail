@@ -4402,4 +4402,8 @@
     <string name="threadOlder">Tidligere beskeder: {n}</string>
     <string name="threadOpenAll">Hele samtalen</string>
     <string name="calFree2Weeks">De næste 2 uger er ledige</string>
+    <string name="googleServicesDenied">Google gav ikke adgang til: {what}. Tryk, log ind og sæt flueben i alle felter på Googles side</string>
+    <string name="googleAccessCalendar">kalender</string>
+    <string name="googleAccessContacts">kontakter</string>
+    <string name="googleAccessPhotos">kontakters fotos</string>
 </resources>

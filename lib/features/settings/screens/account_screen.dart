@@ -15,7 +15,7 @@ import '../../../core/utils/text_safe.dart';
 import 'dart:async';
 import '../../../services/mail/oauth/cross_platform_oauth.dart' show crossPlatformOAuthProvider;
 import '../../auth/providers/auth_provider.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import '../../../core/permissions/app_permissions.dart';
 import '../../../core/theme/app_icons.dart';
 import 'dart:convert';
@@ -41,6 +41,7 @@ import '../../../core/theme/tokens.dart';
 import '../../../core/theme/app_theme.dart' show AppColors;
 import '../../../core/utils/app_date_format.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/mail/shared_access.dart';
 import '../widgets/graph_status_item.dart';
 import '../widgets/online_archive_item.dart';
@@ -61,6 +62,7 @@ import '../../../services/accounts/account_labels.dart';
 import '../widgets/account_label_dialog.dart';
 import '../../compose/screens/image_edit_screen.dart' show ImageEditScreen;
 import '../../../services/mail/dav/dav_pim_service.dart';
+import '../../../services/contacts/google_people_photos.dart' show GooglePeoplePhotos;
 import '../../../widgets/common/hero_email_transition.dart';
 import '../../mail/providers/mail_providers.dart';
 import '../../mail/widgets/account_auth_banner.dart' show reauthenticateFlow;
@@ -82,6 +84,23 @@ final _resyncStartedProvider = StateProvider.family<bool, String>((ref, id) => f
 /// Режим уведомлений ящика (1.6.45) — из prefs, меняется в [_pickNotifyMode].
 final _notifyModeProvider = StateProvider.family<AccountNotifyMode, String>(
     (ref, id) => AccountNotify.of(ref.read(sharedPrefsProvider), id));
+
+/// Чего Google не дал ящику (2.6.8, случай пользователя 21.11.2026): на
+/// странице входа Google галочки календаря и контактов можно не отметить —
+/// календарь и фото собеседников молчали, а здесь было «подключены». Текст
+/// для пункта «Календарь и контакты Google» или null — всё выдано.
+@visibleForTesting
+String? googleDenied(String accountId, SharedPreferences prefs, AppLocalizations l10n,
+    {({bool calendar, bool contacts})? dav}) {
+  final d = dav ?? DavPimService.accessDenied(accountId);
+  final photos = prefs.getBool('${GooglePeoplePhotos.prefsKey}:$accountId:denied') ?? false;
+  final what = [
+    if (d.calendar) l10n.tr('googleAccessCalendar'),
+    if (d.contacts) l10n.tr('googleAccessContacts'),
+    if (photos) l10n.tr('googleAccessPhotos'),
+  ];
+  return what.isEmpty ? null : l10n.tr('googleServicesDenied').replaceAll('{what}', what.join(', '));
+}
 
 class AccountScreen extends ConsumerWidget {
   final String accountId;
@@ -378,9 +397,10 @@ class AccountScreen extends ConsumerWidget {
               SettingsItem(
                 icon: AppIcons.calendar_month,
                 title: l10n.tr('gmailConnectGoogleServices'),
-                subtitle: l10n.tr(account.type == AccountType.google
-                    ? 'googleServicesConnected'
-                    : 'gmailConnectGoogleServicesHint'),
+                subtitle: account.type == AccountType.google
+                    ? (googleDenied(account.id, ref.read(sharedPrefsProvider), l10n) ??
+                        l10n.tr('googleServicesConnected'))
+                    : l10n.tr('gmailConnectGoogleServicesHint'),
                 onTap: () => _connectGoogle(context, ref, account),
               ),
             // Exchange Online: дала ли организация согласие на Microsoft Graph

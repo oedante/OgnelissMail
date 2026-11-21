@@ -4423,4 +4423,8 @@
     <string name="threadOlder">Staršie správy: {n}</string>
     <string name="threadOpenAll">Celá konverzácia</string>
     <string name="calFree2Weeks">Najbližšie 2 týždne sú voľné</string>
+    <string name="googleServicesDenied">Google neudelil prístup k: {what}. Ťuknite, prihláste sa a na stránke Google začiarknite všetky políčka</string>
+    <string name="googleAccessCalendar">kalendár</string>
+    <string name="googleAccessContacts">kontakty</string>
+    <string name="googleAccessPhotos">fotky kontaktov</string>
 </resources>

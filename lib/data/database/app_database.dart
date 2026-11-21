@@ -1975,23 +1975,48 @@ class AppDatabase extends _$AppDatabase {
   /// Превью для писем, у которых его нет в строке (IMAP при синхронизации
   /// получает только заголовки, превью появляется из текста): только начало
   /// текста, а не весь текст в главный поток. id → превью; пустые не входят.
+  ///
+  /// 2.6.8 (замечание владельца 21.11.2026: «карточки в беседах… пустыми, а
+  /// потом подгружают»): и сохранённое превью — текст догружается в базу
+  /// «тихо» ([storeBodiesQuietly]), и открытый поток беседы о нём не знает.
+  /// Письма только с HTML — [htmlHeads].
   Future<Map<String, String>> previewsFromBody(String accountId, List<String> ids) async {
     final out = <String, String>{};
     for (var i = 0; i < ids.length; i += 400) {
       final part = ids.sublist(i, i + 400 > ids.length ? ids.length : i + 400);
       final rows = await customSelect(
-        'SELECT id, $previewFromPlainSql AS p FROM emails '
+        "SELECT id, NULLIF(trim(body_preview), '') AS v, $previewFromPlainSql AS p FROM emails "
         'WHERE account_id = ? AND id IN (${List.filled(part.length, '?').join(', ')}) '
-        'AND body_plain IS NOT NULL',
+        "AND (body_plain IS NOT NULL OR NULLIF(trim(body_preview), '') IS NOT NULL)",
         variables: [Variable.withString(accountId), for (final id in part) Variable.withString(id)],
         readsFrom: {emails},
       ).get();
       for (final r in rows) {
-        final p = r.read<String?>('p');
-        if (p != null && p.isNotEmpty) out[r.read<String>('id')] = p;
+        final v = r.read<String?>('v') ?? r.read<String?>('p');
+        if (v != null && v.trim().isNotEmpty) out[r.read<String>('id')] = v;
       }
     }
     return out;
+  }
+
+  /// Начало HTML писем без текстовой части (для превью — разбирает
+  /// вызывающий, вне главного потока): не больше [limit] писем и [chars]
+  /// символов на письмо. id → начало HTML.
+  Future<Map<String, String>> htmlHeads(String accountId, List<String> ids,
+      {int limit = 30, int chars = 20000}) async {
+    final part = ids.length > limit ? ids.sublist(0, limit) : ids;
+    if (part.isEmpty) return const {};
+    final rows = await customSelect(
+      'SELECT id, substr(body_html, 1, ?) AS h FROM emails '
+      'WHERE account_id = ? AND id IN (${List.filled(part.length, '?').join(', ')}) '
+      "AND (body_plain IS NULL OR body_plain = '') AND body_html IS NOT NULL",
+      variables: [Variable.withInt(chars), Variable.withString(accountId), for (final id in part) Variable.withString(id)],
+      readsFrom: {emails},
+    ).get();
+    return {
+      for (final r in rows)
+        if ((r.read<String?>('h') ?? '').trim().isNotEmpty) r.read<String>('id'): r.read<String>('h'),
+    };
   }
 
   /// Разово (1.6.31): источники превью с переносами — начало сохранённого

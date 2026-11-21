@@ -4381,4 +4381,8 @@
     <string name="threadOlder">以前のメッセージ: {n}</string>
     <string name="threadOpenAll">スレッド全体</string>
     <string name="calFree2Weeks">今後 2 週間は予定がありません</string>
+    <string name="googleServicesDenied">Google から次へのアクセスが許可されていません: {what}。タップしてログインし、Google のページですべてのチェックボックスをオンにしてください</string>
+    <string name="googleAccessCalendar">カレンダー</string>
+    <string name="googleAccessContacts">連絡先</string>
+    <string name="googleAccessPhotos">相手の写真</string>
 </resources>

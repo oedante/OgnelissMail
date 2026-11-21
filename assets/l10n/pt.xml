@@ -4402,4 +4402,8 @@
     <string name="threadOlder">Mensagens anteriores: {n}</string>
     <string name="threadOpenAll">Conversa inteira</string>
     <string name="calFree2Weeks">As próximas 2 semanas estão livres</string>
+    <string name="googleServicesDenied">O Google não concedeu acesso a: {what}. Toque, entre e marque todas as caixas na página do Google</string>
+    <string name="googleAccessCalendar">agenda</string>
+    <string name="googleAccessContacts">contatos</string>
+    <string name="googleAccessPhotos">fotos dos contatos</string>
 </resources>

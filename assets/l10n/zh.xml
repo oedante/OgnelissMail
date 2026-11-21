@@ -4381,4 +4381,8 @@
     <string name="threadOlder">较早的邮件：{n}</string>
     <string name="threadOpenAll">整个会话</string>
     <string name="calFree2Weeks">未来 2 周没有安排</string>
+    <string name="googleServicesDenied">Google 未授予以下访问权限：{what}。请点按、登录，并在 Google 页面勾选所有复选框</string>
+    <string name="googleAccessCalendar">日历</string>
+    <string name="googleAccessContacts">通讯录</string>
+    <string name="googleAccessPhotos">联系人照片</string>
 </resources>

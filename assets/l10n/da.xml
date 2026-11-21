@@ -4395,4 +4395,11 @@
     <string name="googleServicesConnected">Google Kalender og Kontakter forbundet</string>
     <string name="fwdContactGroup">Kontaktgruppe</string>
     <string name="saveGroup">Gem gruppe</string>
+    <string name="outboxEmpty">Alle beskeder er sendt</string>
+    <string name="tagNewLine">Ny linje</string>
+    <string name="moveDown">Flyt ned</string>
+    <string name="threadNewer">Nyere beskeder: {n}</string>
+    <string name="threadOlder">Tidligere beskeder: {n}</string>
+    <string name="threadOpenAll">Hele samtalen</string>
+    <string name="calFree2Weeks">De næste 2 uger er ledige</string>
 </resources>

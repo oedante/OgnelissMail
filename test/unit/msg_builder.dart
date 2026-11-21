@@ -63,9 +63,13 @@ class MsgBuilder {
   final recipients = <MsgProps>[];
   final attachments = <(MsgProps, MsgBuilder?)>[];
 
+  /// Свои потоки по пути (именованные свойства, многозначные значения).
+  final extra = <String, List<int>>{};
+
   Uint8List build() {
     final w = CfbWriter();
     _write(w, '', 32);
+    extra.forEach(w.add);
     return w.build();
   }
 

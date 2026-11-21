@@ -65,6 +65,10 @@ on:
         description: 'Тесты и замеры скорости на эмуляторе Android (~30 мин)'
         type: boolean
         default: false
+      baseline_profile:
+        description: 'Снять базовый профиль запуска на эмуляторе Android (~40 мин) — в Artifacts'
+        type: boolean
+        default: false
 
 concurrency:
   group: ci-${{ github.ref }}-${{ github.event_name }}
@@ -648,6 +652,108 @@ jobs:
             emulator-logcat.txt
           retention-days: 14
           if-no-files-found: ignore
+
+  # Базовый профиль запуска (Baseline Profile, 21.11.2026): снимается на
+  # эмуляторе Linux. На Windows сборка варианта nonMinifiedRelease падала с
+  # «Illegal char <?> … app\provider(?)» — Windows не допускает «?» в пути,
+  # Linux допускает. Профиль задание коммитит в ветку запуска
+  # (android/app/src/main/baselineProfiles/) и выкладывает в Artifacts.
+  baseline-profile:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.baseline_profile }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # Снятый профиль задание кладёт коммитом в ту же ветку (не в main).
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      # android/local.properties (путь к Flutter) и настройки Gradle — без
+      # сборки самого приложения.
+      - name: Gradle configuration
+        run: flutter build apk --config-only
+
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-34-google_apis-x86_64-pixel_6-v1
+
+      - name: Create AVD and snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "AVD snapshot for the cache"
+
+      - name: Generate baseline profile
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          working-directory: android
+          script: ./gradlew :app:generateReleaseBaselineProfile -PognelissBaselineProfile=true -Ptarget-platform=android-x64 --stacktrace
+
+      # Профиль — коммитом в ветку запуска (21.11.2026, просьба владельца:
+      # «сам снимай и вкладывай в следующую сборку»). В main — никогда:
+      # туда профиль попадает через PR.
+      - name: Commit the profile to the branch
+        if: ${{ success() && github.ref_name != 'main' }}
+        run: |
+          set -e
+          ls android/app/src/main/baselineProfiles/*.txt >/dev/null 2>&1 || { echo "Профиль не создан"; exit 0; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add android/app/src/main/baselineProfiles
+          if git diff --cached --quiet; then echo "Профиль не изменился"; exit 0; fi
+          git commit -m "Базовый профиль запуска: снят на эмуляторе в CI (${GITHUB_SHA::7})"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: baseline-profile-${{ github.sha }}
+          path: |
+            android/app/src/main/baselineProfiles/
+            android/app/src/release/generated/baselineProfiles/
+          retention-days: 30
+          if-no-files-found: warn
 
   # Выпуск: метка v* (например, v1.8.6) → страница Releases: Android APK,
   # Windows (portable), macOS, Linux, iOS без подписи — что собралось.

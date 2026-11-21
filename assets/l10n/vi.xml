@@ -4374,4 +4374,11 @@
     <string name="googleServicesConnected">Đã kết nối Lịch và Danh bạ Google</string>
     <string name="fwdContactGroup">Nhóm liên hệ</string>
     <string name="saveGroup">Lưu nhóm</string>
+    <string name="outboxEmpty">Đã gửi tất cả thư</string>
+    <string name="tagNewLine">Dòng mới</string>
+    <string name="moveDown">Chuyển xuống</string>
+    <string name="threadNewer">Thư mới hơn: {n}</string>
+    <string name="threadOlder">Thư cũ hơn: {n}</string>
+    <string name="threadOpenAll">Toàn bộ cuộc hội thoại</string>
+    <string name="calFree2Weeks">2 tuần tới đều trống</string>
 </resources>

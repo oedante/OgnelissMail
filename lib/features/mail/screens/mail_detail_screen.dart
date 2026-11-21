@@ -29,7 +29,7 @@ import '../../../services/security/managed_config.dart' show ManagedPolicy, Mana
 import '../../tasks/widgets/task_editor_sheet.dart' show showTaskEditorForEmail;
 import '../../../core/utils/text_safe.dart';
 import '../../../core/utils/symbol_fonts.dart';
-import '../../../core/navigation/app_router.dart' show mailOpenPath;
+import '../../../core/navigation/app_router.dart' show conversationPath, mailOpenPath;
 import '../../../core/theme/app_icons.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -2040,6 +2040,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                   }
                   context.push(mailOpenPath(context, e.id, accountId: e.accountId));
                 },
+                // Длинная беседа — целиком на экране беседы (2.6.8).
+                onOpenAll: (email.conversationId ?? '').isEmpty
+                    ? null
+                    : () => context.push(conversationPath(email.conversationId!, accountId: email.accountId)),
               ),
             ],
 

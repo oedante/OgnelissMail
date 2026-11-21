@@ -110,16 +110,28 @@ class CustomGreetingsNotifier extends Notifier<CustomGreetingsState> {
 
   /// Добавить; вернёт новое приветствие.
   Future<CustomGreeting> add(String text) async {
-    final g = CustomGreeting(id: 'g${DateTime.now().microsecondsSinceEpoch}', text: _oneLine(text));
+    final g = CustomGreeting(id: 'g${DateTime.now().microsecondsSinceEpoch}', text: clean(text));
     await _saveList([...state.items, g]);
     return g;
   }
 
   Future<void> update(String id, String text) => _saveList([
-        for (final g in state.items) g.id == id ? CustomGreeting(id: id, text: _oneLine(text)) : g,
+        for (final g in state.items) g.id == id ? CustomGreeting(id: id, text: clean(text)) : g,
       ]);
 
   Future<void> remove(String id) => _saveList([for (final g in state.items) if (g.id != id) g]);
+
+  /// Поднять ([delta] < 0) или опустить своё приветствие в списке: в этом
+  /// порядке они в выборе по умолчанию и в меню письма (21.11.2026).
+  Future<void> move(String id, int delta) async {
+    final list = [...state.items];
+    final i = list.indexWhere((g) => g.id == id);
+    final j = i + delta;
+    if (i < 0 || j < 0 || j >= list.length) return;
+    final g = list.removeAt(i);
+    list.insert(j, g);
+    await _saveList(list);
+  }
 
   /// Своё приветствие ящика по умолчанию.
   Future<void> choose(String accountId, String id) async {
@@ -127,8 +139,20 @@ class CustomGreetingsNotifier extends Notifier<CustomGreetingsState> {
     await ref.read(sharedPrefsProvider).setString('$_chosenPrefix$accountId', id);
   }
 
-  /// Приветствие — одна строка в начале письма.
-  static String _oneLine(String s) => s.replaceAll(RegExp(r'\s*\n\s*'), ' ').trim();
+  /// Приветствие — до трёх строк в начале письма (21.11.2026: перенос
+  /// строки сохраняется, раньше строки склеивались в одну).
+  static String clean(String s) {
+    final lines = [for (final l in s.replaceAll('\r\n', '\n').replaceAll('\r', '\n').split('\n')) l.trim()];
+    final out = <String>[];
+    for (final l in lines) {
+      if (l.isEmpty && (out.isEmpty || out.last.isEmpty)) continue;
+      out.add(l);
+    }
+    while (out.isNotEmpty && out.last.isEmpty) {
+      out.removeLast();
+    }
+    return out.take(3).join('\n').trim();
+  }
 }
 
 final customGreetingsProvider =

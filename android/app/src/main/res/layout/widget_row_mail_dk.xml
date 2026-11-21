@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Сгенерировано tool/dev/widget_themes.py — не править вручную. -->
 <!-- Строка письма: метка цвета ящика · отправитель и время · тема · строка
-     текста (08.11.2026) · «Прочитано» и «В архив» справа. -->
+     текста (08.11.2026) · «Прочитано» и «В архив» справа — значок с
+     подписью. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ml_row"
     android:layout_width="match_parent"
@@ -50,19 +51,55 @@
             android:textSize="12sp"
             android:visibility="gone" />
     </LinearLayout>
-    <ImageView
+    <!-- Кнопки — значок с подписью (21.11.2026, замечание владельца:
+         «кнопки непонятные» — были только значки). -->
+    <LinearLayout
         android:id="@+id/ml_read"
-        android:layout_width="36dp"
-        android:layout_height="40dp"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:padding="8dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/widget_ic_done_dk" />
-    <ImageView
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
+        <ImageView
+            android:id="@+id/ml_read_icon"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/widget_ic_done_dk" />
+        <TextView
+            android:id="@+id/ml_read_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textColor="@color/widget_sub_dk"
+            android:textSize="10sp" />
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/ml_archive"
-        android:layout_width="36dp"
-        android:layout_height="40dp"
-        android:padding="8dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/widget_ic_archive_dk" />
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
+        <ImageView
+            android:id="@+id/ml_archive_icon"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/widget_ic_archive_dk" />
+        <TextView
+            android:id="@+id/ml_archive_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textColor="@color/widget_sub_dk"
+            android:textSize="10sp" />
+    </LinearLayout>
 </LinearLayout>

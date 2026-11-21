@@ -2,6 +2,7 @@
 // Финальный роутер — ВСЕ маршруты приложения.
 
 import '../../features/mail/screens/mail_list_pager.dart';
+import '../../features/mail/screens/outbox_screen.dart';
 import '../../features/contacts/my_contact.dart' show MyContactScreen;
 import 'package:flutter/material.dart';
 import '../theme/app_icons.dart';
@@ -197,6 +198,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       // «Разобрать входящие» — непрочитанные по одному (поверх ленты).
       GoRoute(path: '/triage', name: 'triage', builder: (_, __) => const TriageScreen()),
+
+      // «Исходящие» (21.11.2026): письма к отправке, как в Outlook.
+      GoRoute(path: '/outbox', name: 'outbox', builder: (_, __) => const WideFrame.wide(child: OutboxScreen())),
 
       // Письмо отдельной страницей поверх любого экрана (1.8.13): из
       // уведомления, ярлыка, виджета и со страниц вне главного экрана

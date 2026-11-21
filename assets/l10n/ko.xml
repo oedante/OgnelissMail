@@ -4374,4 +4374,11 @@
     <string name="googleServicesConnected">Google 캘린더 및 연락처 연결됨</string>
     <string name="fwdContactGroup">연락처 그룹</string>
     <string name="saveGroup">그룹 저장</string>
+    <string name="outboxEmpty">모든 메일을 보냈습니다</string>
+    <string name="tagNewLine">줄 바꿈</string>
+    <string name="moveDown">아래로 이동</string>
+    <string name="threadNewer">최근 메시지: {n}</string>
+    <string name="threadOlder">이전 메시지: {n}</string>
+    <string name="threadOpenAll">전체 대화</string>
+    <string name="calFree2Weeks">앞으로 2주는 일정이 없습니다</string>
 </resources>

@@ -618,10 +618,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         child: Text(l10n.tr('upcoming'), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
       ),
     ];
+    // Пусто — про две недели колонки (2.6.8: было «Нет событий на этот
+    // день» — фраза от вида «День»).
     if (events.isEmpty) {
       children.add(Padding(
         padding: const EdgeInsets.all(Space.l),
-        child: Text(l10n.tr('noEventsThisDay'),
+        child: Text(l10n.tr('calFree2Weeks'),
             style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
       ));
     }

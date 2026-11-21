@@ -92,8 +92,12 @@ abstract final class MailTags {
     MailTag('email', 'почта', MailTagGroup.sender, 'tagMyEmail'),
   ];
 
-  /// Кнопки конструктора приветствия: сначала адресат и время, затем вы.
-  static List<MailTag> get forGreeting => all;
+  /// Кнопки конструктора приветствия: первым — «Доброе утро / Добрый день /
+  /// Добрый вечер» (меняется по времени суток), затем адресат, дата и вы.
+  static List<MailTag> get forGreeting => [
+        for (final t in all) if (t.key == 'part_of_day') t,
+        for (final t in all) if (t.key != 'part_of_day') t,
+      ];
 
   /// Кнопки конструктора подписи: вы и дата (адресата подпись не знает).
   static List<MailTag> get forSignature => [
@@ -163,18 +167,13 @@ abstract final class MailTags {
   static String _esc(String s) =>
       s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
-  /// Все варианты времени суток одной строкой: «Доброе утро/день/вечер»,
-  /// «Good morning/afternoon/evening»; языки без пробелов между словами —
-  /// через « / ».
-  static String partOfDayAll(String lang) {
+  /// Все варианты времени суток одной строкой: «Доброе утро/Добрый
+  /// день/Добрый вечер» (21.11.2026, как просил владелец), [sep] — между
+  /// ними; языки без пробелов между словами — всегда « / ».
+  static String partOfDayAll(String lang, {String sep = '/'}) {
     String s(String k) => StringsStore.get(lang, k) ?? StringsStore.get('en', k) ?? '';
-    final parts = [s('greetPartMorning'), s('greetPartDay'), s('greetPartEvening')];
-    if (parts.any((p) => p.isEmpty)) return parts.where((p) => p.isNotEmpty).join(' / ');
-    if (parts.every((p) => p.contains(' '))) {
-      String last(String p) => p.substring(p.lastIndexOf(' ') + 1);
-      return '${parts[0]}/${last(parts[1])}/${last(parts[2])}';
-    }
-    return parts.join(' / ');
+    final parts = [s('greetPartMorning'), s('greetPartDay'), s('greetPartEvening')].where((p) => p.isNotEmpty);
+    return parts.join(parts.every((p) => p.contains(' ')) ? sep : ' / ');
   }
 
   /// «Доброе утро» (5–11 ч), «Добрый день» (12–17), «Добрый вечер» (18–4)

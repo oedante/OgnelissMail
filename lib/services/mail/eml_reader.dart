@@ -259,6 +259,19 @@ class EmlReader {
         ]);
     }
 
+    // Контакты и группа файлом .vcf (так их пересылают телефоны и Outlook
+    // «как визитку», и так Ogneliss кладёт их во вложенное письмо .msg).
+    if (group == null && contacts.isEmpty) {
+      for (final a in attachments) {
+        final n = a.name.toLowerCase();
+        final ct = a.contentType.toLowerCase();
+        if (!(n.endsWith('.vcf') || n.endsWith('.vcard') || ct.contains('vcard'))) continue;
+        final v = MapiContacts.fromVcf(utf8.decode(a.bytes, allowMalformed: true));
+        group ??= v.group;
+        contacts.addAll(v.contacts);
+      }
+    }
+
     return EmlMessage(
       subject: fix8bit((_safe(msg.decodeSubject) ?? '').trim()),
       from: _addresses(() => msg.from),

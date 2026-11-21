@@ -4374,4 +4374,11 @@
     <string name="googleServicesConnected">เชื่อมต่อปฏิทินและรายชื่อติดต่อ Google แล้ว</string>
     <string name="fwdContactGroup">กลุ่มรายชื่อติดต่อ</string>
     <string name="saveGroup">บันทึกกลุ่ม</string>
+    <string name="outboxEmpty">ส่งข้อความทั้งหมดแล้ว</string>
+    <string name="tagNewLine">ขึ้นบรรทัดใหม่</string>
+    <string name="moveDown">เลื่อนลง</string>
+    <string name="threadNewer">ข้อความที่ใหม่กว่า: {n}</string>
+    <string name="threadOlder">ข้อความก่อนหน้า: {n}</string>
+    <string name="threadOpenAll">ทั้งการสนทนา</string>
+    <string name="calFree2Weeks">2 สัปดาห์ข้างหน้าว่าง</string>
 </resources>

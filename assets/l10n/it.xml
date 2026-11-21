@@ -4395,4 +4395,11 @@
     <string name="googleServicesConnected">Calendario e Contatti Google collegati</string>
     <string name="fwdContactGroup">Gruppo di contatti</string>
     <string name="saveGroup">Salva gruppo</string>
+    <string name="outboxEmpty">Tutti i messaggi inviati</string>
+    <string name="tagNewLine">Nuova riga</string>
+    <string name="moveDown">Sposta giù</string>
+    <string name="threadNewer">Messaggi più recenti: {n}</string>
+    <string name="threadOlder">Messaggi precedenti: {n}</string>
+    <string name="threadOpenAll">Intera conversazione</string>
+    <string name="calFree2Weeks">Le prossime 2 settimane sono libere</string>
 </resources>

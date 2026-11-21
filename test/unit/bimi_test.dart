@@ -4,8 +4,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ogneliss/data/models/account_model.dart' show AccountType;
-import 'package:ogneliss/widgets/common/bimi_avatar.dart' show isGoogleMailbox;
+import 'package:ogneliss/data/models/account_model.dart' show AccountModel, AccountType;
+import 'package:ogneliss/widgets/common/bimi_avatar.dart' show bimiOwnServers, isGoogleMailbox;
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:ogneliss/services/security/bimi/bimi_rules.dart';
@@ -28,6 +28,24 @@ class _MemStore implements BimiCacheStore {
 }
 
 void main() {
+  // 2.6.8 (решение владельца 21.11.2026: «BIMI включаем для Gmail и вообще
+  // любых IMAP»): Gmail с паролем приложения и любые IMAP-ящики — «свои»
+  // серверы для логотипов; рабочая почта Exchange — нет.
+  test('BIMI: Gmail и IMAP — свои серверы, Exchange — нет', () {
+    final at = DateTime(2026);
+    final own = bimiOwnServers([
+      AccountModel(id: 'g', type: AccountType.google, email: 'i@gmail.com', displayName: 'Я',
+          username: 'i@gmail.com', imapServer: 'imap.gmail.com', smtpServer: 'smtp.gmail.com', createdAt: at),
+      AccountModel(id: 'y', type: AccountType.imap, email: 'i@example.org', displayName: 'Я',
+          username: 'i@example.org', imapServer: 'imap.example.org', createdAt: at),
+      AccountModel(id: 'x', type: AccountType.exchange, email: 'i@corp.ru', displayName: 'Я',
+          username: 'i@corp.ru', ewsUrl: 'https://mail.corp.ru/EWS/Exchange.asmx', createdAt: at),
+    ]);
+    const gmail = 'mx.google.com; dkim=pass header.i=@bank.example; dmarc=pass (p=REJECT) header.from=bank.example';
+    expect(bimiDmarcDomain(gmail, 'news@bank.example', ownServers: own), 'bank.example');
+    expect(own.any((d) => d.contains('corp.ru')), isFalse, reason: 'рабочая почта Exchange — без серверов Ogneliss');
+  });
+
   // 2.5.5: ящики Google — не «свои» серверы. Письма Gmail проверку DMARC
   // получают от mx.google.com, ему логотип не доверяет — домен отправителя
   // на сервер Ogneliss не уходит, данные Google остаются на устройстве.

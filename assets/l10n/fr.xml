@@ -4395,4 +4395,11 @@
     <string name="googleServicesConnected">Google Agenda et Contacts connectés</string>
     <string name="fwdContactGroup">Groupe de contacts</string>
     <string name="saveGroup">Enregistrer le groupe</string>
+    <string name="outboxEmpty">Tous les messages ont été envoyés</string>
+    <string name="tagNewLine">Nouvelle ligne</string>
+    <string name="moveDown">Descendre</string>
+    <string name="threadNewer">Messages plus récents : {n}</string>
+    <string name="threadOlder">Messages plus anciens : {n}</string>
+    <string name="threadOpenAll">Toute la conversation</string>
+    <string name="calFree2Weeks">Les 2 prochaines semaines sont libres</string>
 </resources>

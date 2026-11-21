@@ -42,7 +42,7 @@ class EwsDeltaSync {
       // каждый синк откатывался на полную перезагрузку FindItem.
       final xmlDoc = await _ews.rawSoapRequest(account, soapBody);
 
-      return _parseResponse(xmlDoc, account.id, folderId);
+      return parseResponse(xmlDoc, account.id, folderId);
     } catch (e, stack) {
       AppLogger.error('EWS DeltaSync error', e, stack);
       rethrow;
@@ -110,7 +110,8 @@ class EwsDeltaSync {
 
   bool _isDistinguished(String folderId) => EwsXmlBuilder.isDistinguished(folderId);
 
-  EwsDeltaSyncResult _parseResponse(XmlDocument doc, String accountId, String folderId) {
+  /// Ответ SyncFolderItems → изменения и новое состояние.
+  static EwsDeltaSyncResult parseResponse(XmlDocument doc, String accountId, String folderId) {
     final responseMessage = doc.findAllElements('SyncFolderItemsResponseMessage').firstOrNull;
     if (responseMessage == null) {
       return const EwsDeltaSyncResult(syncState: null);
@@ -119,8 +120,9 @@ class EwsDeltaSync {
     final responseClass = responseMessage.getAttribute('ResponseClass');
     if (responseClass != 'Success') {
       final errorCode = responseMessage.findElements('MessageText').firstOrNull?.innerText;
-      AppLogger.warning('EWS DeltaSync: $responseClass — $errorCode');
-      return EwsDeltaSyncResult(syncState: null, error: errorCode);
+      final responseCode = responseMessage.findElements('ResponseCode').firstOrNull?.innerText.trim();
+      AppLogger.warning('EWS DeltaSync: $responseClass — ${responseCode ?? ''} $errorCode');
+      return EwsDeltaSyncResult(syncState: null, error: errorCode ?? responseCode ?? responseClass, responseCode: responseCode);
     }
 
     final syncState = responseMessage.findElements('SyncState').firstOrNull?.innerText;
@@ -181,7 +183,7 @@ class EwsDeltaSync {
     );
   }
 
-  EmailModel? _parseMessage(XmlElement message, String accountId, String folderId) {
+  static EmailModel? _parseMessage(XmlElement message, String accountId, String folderId) {
     try {
       final itemId = message.findElements('ItemId').firstOrNull?.getAttribute('Id');
       if (itemId == null) return null;
@@ -269,6 +271,10 @@ class EwsDeltaSyncResult {
   final bool includesLastItem;
   final String? error;
 
+  /// Код ошибки ответа ([MS-OXWSCDATA] ResponseCodeType):
+  /// ErrorInvalidSyncStateData, ErrorServerBusy…
+  final String? responseCode;
+
   const EwsDeltaSyncResult({
     this.syncState,
     this.created = const [],
@@ -277,7 +283,28 @@ class EwsDeltaSyncResult {
     this.readChanges = const {},
     this.includesLastItem = true,
     this.error,
+    this.responseCode,
   });
+
+  /// Сохранённое состояние SyncFolderItems после ошибки (2.6.8, план
+  /// 2026-11, «сохранение состояния EWS при единичной ошибке»): раньше любая
+  /// ошибка ответа — занятость сервера, тайм-аут, недоступность хранилища —
+  /// стирала состояние, и следующая синхронизация перечитывала папку с нуля
+  /// (в большом ящике — тысячи писем). Сбрасываем, только когда состояние
+  /// правда негодно: сервер его не принимает, папки нет, или ошибка
+  /// повторяется [maxFailures] раз подряд ([failuresInRow] — с этой).
+  static const maxFailures = 3;
+  static bool keepStateAfterError(String? responseCode, int failuresInRow) {
+    const invalid = {
+      'ErrorInvalidSyncStateData',
+      'ErrorSyncFolderNotFound',
+      'ErrorFolderNotFound',
+      'ErrorInvalidFolderId',
+      'ErrorInvalidIdMalformed',
+    };
+    if (responseCode != null && invalid.contains(responseCode)) return false;
+    return failuresInRow < maxFailures;
+  }
 
   int get totalChanges => created.length + updated.length + deletedIds.length + readChanges.length;
   bool get hasChanges => totalChanges > 0;

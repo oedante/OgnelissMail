@@ -9,7 +9,7 @@
 // - Добавить аккаунт
 // - Контекстное меню на папках (очистить, переименовать)
 
-import '../../../widgets/common/queue_sheet.dart' show outboxCountProvider, showQueueSheet;
+import '../screens/outbox_screen.dart' show kOutboxFolderId, outboxCountProvider, outboxItemsProvider;
 import '../../../widgets/ui/section_band.dart';
 import '../../../services/accounts/account_labels.dart';
 import '../../../widgets/ui/theme_quick_switch.dart' show ThemeQuickSwitch;
@@ -178,18 +178,6 @@ class MailDrawer extends ConsumerWidget {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  // «Исходящие» (21.11.2026, как в Outlook): письма в очереди
-                  // на отправку — открыть, изменить, отправить, удалить.
-                  // Видна, пока очередь не пуста.
-                  if ((ref.watch(outboxCountProvider).value ?? 0) > 0)
-                    ListTile(
-                      dense: true,
-                      leading: Icon(AppIcons.outbox, color: theme.colorScheme.primary),
-                      title: Text(l10n.tr('outbox')),
-                      trailing: Text('${ref.watch(outboxCountProvider).value ?? 0}',
-                          style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.primary)),
-                      onTap: () => unawaited(showQueueSheet(context)),
-                    ),
                   ..._buildFolderSection(context, ref, l10n, theme, foldersAsync),
                   // Архив Ogneliss — разделом под папками ящика (1.7.3).
                   ..._buildArchiveSection(context, ref, l10n, theme),
@@ -739,6 +727,25 @@ class MailDrawer extends ConsumerWidget {
         // или порядок, расставленный пользователем.
         return [
           for (final f in tree.roots) ...branch(f, 0),
+          // «Исходящие» (21.11.2026, как в Outlook): письма к отправке — с
+          // отсчётом, отложенные и не отправленные; отправленные пропадают.
+          // Открывается в ленте, как любая папка (21.11.2026).
+          _FolderTile(
+            icon: AppIcons.outbox,
+            label: l10n.tr('outbox'),
+            count: ref.watch(outboxCountProvider),
+            countColor: ref.watch(outboxItemsProvider).value?.any((i) => i.failed) ?? false
+                ? AppColors.errorRed
+                : null,
+            isSelected: selectedId == kOutboxFolderId,
+            onTap: () {
+              ref.read(allAccountsModeProvider.notifier).state = false;
+              ref.read(unifiedModeProvider.notifier).state = false;
+              ref.read(selectedFolderIdProvider.notifier).state = kOutboxFolderId;
+              ref.read(mailFilterProvider.notifier).state = MailFilter.none;
+              _close(context);
+            },
+          ),
           // «Рассылки» этого ящика — как папка в конце дерева, со значком
           // «?»: это не папка на сервере, а подборка по заголовку отписки
           // (10.10.2026; раньше — пункт «Ещё», общий для всех ящиков).

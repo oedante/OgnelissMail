@@ -4416,4 +4416,11 @@
     <string name="googleServicesConnected">Kalendár a kontakty Google pripojené</string>
     <string name="fwdContactGroup">Skupina kontaktov</string>
     <string name="saveGroup">Uložiť skupinu</string>
+    <string name="outboxEmpty">Všetky správy odoslané</string>
+    <string name="tagNewLine">Nový riadok</string>
+    <string name="moveDown">Nižšie</string>
+    <string name="threadNewer">Novšie správy: {n}</string>
+    <string name="threadOlder">Staršie správy: {n}</string>
+    <string name="threadOpenAll">Celá konverzácia</string>
+    <string name="calFree2Weeks">Najbližšie 2 týždne sú voľné</string>
 </resources>

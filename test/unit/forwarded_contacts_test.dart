@@ -9,8 +9,11 @@ import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/services/mail/eml_reader.dart';
 import 'package:ogneliss/services/mail/mime_attach.dart';
+import 'package:ogneliss/services/mail/msg_reader.dart';
 import 'package:ogneliss/services/mail/tnef/mapi_contacts.dart';
 import 'package:ogneliss/services/mail/tnef/tnef_props.dart';
+
+import 'msg_builder.dart';
 
 // ── Сборка TNEF для тестов ──
 
@@ -143,6 +146,8 @@ Uint8List innerMail(String subject, Uint8List winmail) {
 }
 
 void main() {
+  _msgTests();
+
   test('группа Outlook: имя и участники без повторов', () {
     final p = TnefProps.parse(groupTnef())!;
     expect(p.messageClass, 'IPM.DistList');
@@ -218,5 +223,68 @@ void main() {
     final rendered = b.buildMimeMessage().renderMessage();
     expect(rendered, contains('application/octet-stream'));
     expect(rendered, contains('Content-Transfer-Encoding: base64'));
+  });
+}
+
+// ── Outlook .msg с группой и контактом (21.11.2026) ──
+
+/// Таблица именованных свойств .msg: PSETID_Address, номер [lid] →
+/// свойство 0x8000 + индекс.
+void _nameid(MsgBuilder b, List<int> lids) {
+  const guid = [0x04, 0x20, 0x06, 0, 0, 0, 0, 0, 0xC0, 0, 0, 0, 0, 0, 0, 0x46];
+  final entries = BytesBuilder();
+  for (var i = 0; i < lids.length; i++) {
+    final e = ByteData(8)
+      ..setUint32(0, lids[i], Endian.little)
+      // Вид 0 (номер), GUID — первый в потоке GUID (индекс 3), свойство i.
+      ..setUint32(4, (i << 16) | (3 << 1), Endian.little);
+    entries.add(e.buffer.asUint8List());
+  }
+  b.extra['__nameid_version1.0/__substg1.0_00020102'] = guid;
+  b.extra['__nameid_version1.0/__substg1.0_00030102'] = entries.toBytes();
+  b.extra['__nameid_version1.0/__substg1.0_00040102'] = const [];
+}
+
+void _msgTests() {
+  test('.msg: группа контактов Outlook', () {
+    final b = MsgBuilder();
+    b.props
+      ..str(0x001A, 'IPM.DistList')
+      ..str(0x0037, 'Каталогеры');
+    _nameid(b, const [0x8053, 0x8054]);
+    b.props.str(0x8000, 'Каталогеры');
+    final members = [oneOff('Иванов Иван', 'i.ivanov@example.com'), oneOff('Петров Пётр', 'p.petrov@example.com')];
+    final lens = BytesBuilder();
+    for (var k = 0; k < members.length; k++) {
+      lens.add((ByteData(8)..setUint32(0, members[k].length, Endian.little)).buffer.asUint8List());
+      b.extra['__substg1.0_80011102-${k.toRadixString(16).padLeft(8, '0').toUpperCase()}'] = members[k];
+    }
+    b.extra['__substg1.0_80011102'] = lens.toBytes();
+    final m = MsgReader.read(b.build());
+    expect(m.contactGroup?.name, 'Каталогеры');
+    expect(m.contactGroup?.members.map((x) => x.email), ['i.ivanov@example.com', 'p.petrov@example.com']);
+
+    // Вложенным письмом (.eml) группа едет файлом .vcf и читается обратно.
+    final eml = EmlReader.parse(MsgReader.toEml(m));
+    expect(eml.contactGroup?.name, 'Каталогеры');
+    expect(eml.contactGroup?.members, hasLength(2));
+    expect(eml.contactGroup?.members.first.name, 'Иванов Иван');
+  });
+
+  test('.msg: контакт Outlook', () {
+    final b = MsgBuilder();
+    b.props
+      ..str(0x001A, 'IPM.Contact')
+      ..str(0x3001, 'Сидорова Анна')
+      ..str(0x3A06, 'Анна')
+      ..str(0x3A11, 'Сидорова')
+      ..str(0x3A1C, '+7 900 000-00-00');
+    _nameid(b, const [0x8083]);
+    b.props.str(0x8000, 'a.sidorova@example.com');
+    final m = MsgReader.read(b.build());
+    expect(m.contacts.single.email, 'a.sidorova@example.com');
+    expect(m.contacts.single.family, 'Сидорова');
+    final eml = EmlReader.parse(MsgReader.toEml(m));
+    expect(eml.contacts.single.email, 'a.sidorova@example.com');
   });
 }

@@ -4437,4 +4437,11 @@
     <string name="googleServicesConnected">Календарь и контакты Google подключены</string>
     <string name="fwdContactGroup">Группа контактов</string>
     <string name="saveGroup">Сохранить группу</string>
+    <string name="outboxEmpty">Все письма отправлены</string>
+    <string name="tagNewLine">Новая строка</string>
+    <string name="moveDown">Ниже</string>
+    <string name="threadNewer">Более новые письма: {n}</string>
+    <string name="threadOlder">Более ранние письма: {n}</string>
+    <string name="threadOpenAll">Вся беседа</string>
+    <string name="calFree2Weeks">Ближайшие 2 недели свободны</string>
 </resources>

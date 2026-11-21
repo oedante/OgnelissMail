@@ -17,8 +17,10 @@ import 'dart:typed_data';
 
 import 'package:enough_mail/enough_mail.dart' show MailCodec;
 
+import 'mapi_contacts.dart' show MapiPropSource;
+
 /// Свойства MAPI письма из TNEF.
-class TnefProps {
+class TnefProps implements MapiPropSource {
   TnefProps._();
 
   /// Обычные свойства: номер → значение (String, Uint8List, int, bool,
@@ -44,8 +46,11 @@ class TnefProps {
   /// Предел числа свойств — защита от испорченного потока.
   static const _maxProps = 20000;
 
+  @override
   String? string(int id) => _asString(props[id]);
+  @override
   String? namedString(int lid, {String guid = psetidAddress}) => _asString(named['$guid:$lid']);
+  @override
   List<Uint8List> namedBinaries(int lid, {String guid = psetidAddress}) {
     final v = named['$guid:$lid'];
     if (v is List) return v.whereType<Uint8List>().toList();
@@ -58,7 +63,7 @@ class TnefProps {
     return v is Uint8List ? v : null;
   }
 
-  /// Класс письма: IPM.Note, IPM.Contact, IPM.DistList…
+  @override
   String? get messageClass => string(0x001A);
 
   static String? _asString(Object? v) {

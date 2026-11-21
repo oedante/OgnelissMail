@@ -4395,4 +4395,11 @@
     <string name="googleServicesConnected">Google Calendar and Contacts connected</string>
     <string name="fwdContactGroup">Contact group</string>
     <string name="saveGroup">Save group</string>
+    <string name="outboxEmpty">All messages sent</string>
+    <string name="tagNewLine">New line</string>
+    <string name="moveDown">Move down</string>
+    <string name="threadNewer">Newer messages: {n}</string>
+    <string name="threadOlder">Earlier messages: {n}</string>
+    <string name="threadOpenAll">Whole conversation</string>
+    <string name="calFree2Weeks">The next 2 weeks are free</string>
 </resources>

@@ -4374,4 +4374,11 @@
     <string name="googleServicesConnected">Kalender dan Kontak Google terhubung</string>
     <string name="fwdContactGroup">Grup kontak</string>
     <string name="saveGroup">Simpan grup</string>
+    <string name="outboxEmpty">Semua pesan terkirim</string>
+    <string name="tagNewLine">Baris baru</string>
+    <string name="moveDown">Pindah ke bawah</string>
+    <string name="threadNewer">Pesan lebih baru: {n}</string>
+    <string name="threadOlder">Pesan sebelumnya: {n}</string>
+    <string name="threadOpenAll">Seluruh percakapan</string>
+    <string name="calFree2Weeks">2 minggu ke depan kosong</string>
 </resources>

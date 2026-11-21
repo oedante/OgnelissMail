@@ -9,7 +9,6 @@
 //    запоминается и выполняется, когда откроется главный экран (MainShell),
 //    иначе заставка перезаписала бы его своим переходом на /mail.
 
-import 'dart:async' show unawaited;
 import 'dart:convert';
 import 'dart:io' show Platform;
 
@@ -22,7 +21,6 @@ import '../../core/navigation/app_router.dart';
 import '../../features/mail/providers/mail_providers.dart' show allAccountsModeProvider, accountsProvider;
 import '../../features/settings/providers/account_groups_provider.dart' show activeGroupIdProvider;
 import '../../features/settings/providers/settings_provider.dart' show settingsProvider;
-import '../../widgets/common/queue_sheet.dart' show showQueueSheet;
 import 'notification_service.dart' show NotificationService;
 
 final notificationRouterProvider = Provider<NotificationRouter>((ref) => NotificationRouter(ref));
@@ -65,7 +63,9 @@ class NotificationRouter {
     // «Письмо не отправлено» (1.7.2+114): почта и список очереди — там
     // «Отправить снова», «В черновики», «Удалить». Раньше нажатие ничего не
     // открывало («нет маршрута», журнал владельца 25.10.2026).
-    if (payload.startsWith('outbox:')) return '/mail';
+    // С 21.11.2026 — папка «Исходящие»: там «Отправить снова», «Изменить»,
+    // «Отменить».
+    if (payload.startsWith('outbox:')) return '/outbox';
     if (payload.startsWith('event:')) {
       return eventDetailsPath(payload.substring(6), accountId: '');
     }
@@ -120,9 +120,6 @@ class NotificationRouter {
   /// Ящик, на который переключить список перед переходом.
   static String? _pendingAccount;
 
-  /// После перехода открыть список очереди (уведомление «не отправлено»).
-  static bool _openQueue = false;
-
   static bool _launchBusy = false;
   static bool _launchChecked = false;
 
@@ -176,7 +173,6 @@ class NotificationRouter {
     _lastPayload = payload;
     _lastAt = now;
     final account = mailAccountFor(payload);
-    _openQueue = payload?.startsWith('outbox:') ?? false;
     // Ждать главного экрана нужно только при запуске процесса (заставка
     // ещё впереди). Приложение уже работало — переход сразу, даже если
     // сейчас открыт экран вне главного (настройки, письмо поверх).
@@ -260,14 +256,6 @@ class NotificationRouter {
         router.push(route);
       }
       AppLogger.info('Переход по уведомлению: $route');
-      if (_openQueue) {
-        _openQueue = false;
-        // Шторка — когда экран почты уже построен.
-        Future<void>.delayed(const Duration(milliseconds: 350), () {
-          final ctx = router.routerDelegate.navigatorKey.currentContext;
-          if (ctx != null && ctx.mounted) unawaited(showQueueSheet(ctx));
-        });
-      }
     } catch (e) {
       AppLogger.warning('Переход по уведомлению: $e');
     }

@@ -40,8 +40,13 @@ plugins {
 include(":app")
 
 // Генератор базового профиля — только по запросу (нужен телефон по USB):
-//   gradlew :app:generateBaselineProfile -Pogneliss.baselineProfile=true
+//   gradlew :app:generateBaselineProfile -PognelissBaselineProfile=true
 // См. docs/guides/BASELINE_PROFILE.md. Обычная сборка его не подключает.
-if (providers.gradleProperty("ogneliss.baselineProfile").orNull == "true") {
+// Флаг без точки (-PognelissBaselineProfile=true) и переменная окружения — для
+// PowerShell: он делит «-Pogneliss.baselineProfile=true» по точке на два
+// аргумента, и флаг до Gradle не доходил (21.11.2026).
+if (providers.gradleProperty("ogneliss.baselineProfile").orNull == "true" ||
+    providers.gradleProperty("ognelissBaselineProfile").orNull == "true" ||
+    providers.environmentVariable("OGNELISS_BASELINE_PROFILE").orNull == "1") {
     include(":baselineprofile")
 }

@@ -20,6 +20,8 @@ void main() {
     test('сводка — лента', () {
       expect(NotificationRouter.routeFor(jsonEncode({'type': 'mail_summary', 'accountId': 'a'})), '/mail');
       expect(NotificationRouter.routeFor('summary:a'), '/mail');
+      // «Не отправлено» — папка «Исходящие» (21.11.2026).
+      expect(NotificationRouter.routeFor('outbox:a:m1'), '/outbox');
     });
 
     test('встреча — карточка встречи', () {

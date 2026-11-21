@@ -4395,4 +4395,11 @@
     <string name="googleServicesConnected">Google Takvim ve Kişiler bağlandı</string>
     <string name="fwdContactGroup">Kişi grubu</string>
     <string name="saveGroup">Grubu kaydet</string>
+    <string name="outboxEmpty">Tüm iletiler gönderildi</string>
+    <string name="tagNewLine">Yeni satır</string>
+    <string name="moveDown">Aşağı taşı</string>
+    <string name="threadNewer">Daha yeni iletiler: {n}</string>
+    <string name="threadOlder">Daha eski iletiler: {n}</string>
+    <string name="threadOpenAll">Tüm konuşma</string>
+    <string name="calFree2Weeks">Önümüzdeki 2 hafta boş</string>
 </resources>

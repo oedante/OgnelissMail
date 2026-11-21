@@ -39,6 +39,8 @@ import '../documents/doc_codepages.dart';
 import '../documents/office_package.dart';
 import '../documents/rtf_reader.dart';
 import 'eml_reader.dart';
+import 'tnef/mapi_contacts.dart';
+import 'tnef/tnef_props.dart' show TnefProps;
 
 class MsgReader {
   MsgReader._();
@@ -360,7 +362,8 @@ class MsgReader {
     out.write('Subject: ${enc(m.subject)}\r\n');
     if (m.date != null) out.write('Date: ${_rfcDate(m.date!.toUtc())}\r\n');
     const boundary = '----=_ogneliss_msg_part';
-    if (m.html == null && m.plain == null && m.inlineImages.isEmpty && m.attachments.isEmpty) {
+    if (m.html == null && m.plain == null && m.inlineImages.isEmpty && m.attachments.isEmpty &&
+        m.contactGroup == null && m.contacts.isEmpty) {
       // Пустое письмо — простым текстом: «multipart» без частей читается
       // как странное вложение.
       out.write('MIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n');
@@ -389,6 +392,12 @@ class MsgReader {
     });
     for (final a in m.attachments) {
       part(a.contentType.isEmpty ? 'application/octet-stream' : a.contentType, a.bytes, name: a.name);
+    }
+    // Группа и контакты Outlook — файлом .vcf: EmlReader прочтёт их обратно.
+    if (m.contactGroup != null || m.contacts.isNotEmpty) {
+      final title = (m.contactGroup?.name ?? (m.contacts.isEmpty ? '' : m.contacts.first.displayName)).trim();
+      part('text/vcard; charset=utf-8', utf8.encode(MapiContacts.toVcf(group: m.contactGroup, contacts: m.contacts)),
+          name: '${title.isEmpty ? 'contacts' : title}.vcf');
     }
     out.write('--$boundary--\r\n');
     return Uint8List.fromList(utf8.encode(out.toString()));
@@ -740,7 +749,62 @@ class _Msg {
       plain: plain,
       attachments: attachments,
       inlineImages: inline,
+      // Контакт и группа контактов Outlook (21.11.2026).
+      contactGroup: MapiContacts.group(mapi),
+      contacts: [?MapiContacts.contact(mapi)],
     );
+  }
+
+  /// Свойства MAPI письма — для контакта и группы контактов.
+  late final MapiPropSource mapi = _MsgMapi(this);
+
+  /// Именованные свойства ([MS-OXMSG] 2.2.3): «GUID:номер» → номер
+  /// свойства в файле (0x8000 и дальше). Таблица одна на весь файл — в
+  /// корне, и для вложенных писем тоже.
+  late final Map<String, int> _named = _readNamed();
+
+  Map<String, int> _readNamed() {
+    final out = <String, int>{};
+    final ns = cfb.root.child('__nameid_version1.0');
+    if (ns == null || !ns.isStorage) return out;
+    final guids = _stream(ns, 0x0002, 0x0102);
+    final entries = _stream(ns, 0x0003, 0x0102);
+    if (entries == null) return out;
+    final bd = ByteData.sublistView(entries);
+    for (var p = 0; p + 8 <= entries.length && out.length < 20000; p += 8) {
+      final nameId = bd.getUint32(p, Endian.little);
+      final idx = bd.getUint32(p + 4, Endian.little);
+      if (idx & 1 != 0) continue; // именованное строкой — не нужно
+      final guidIndex = (idx >> 1) & 0x7FFF;
+      final String guid;
+      if (guidIndex == 1) {
+        guid = 'mapi';
+      } else if (guidIndex == 2) {
+        guid = 'public';
+      } else {
+        final g = guidIndex - 3;
+        if (guids == null || (g + 1) * 16 > guids.length) continue;
+        guid = [for (final b in guids.sublist(g * 16, g * 16 + 16)) b.toRadixString(16).padLeft(2, '0')].join();
+      }
+      out['$guid:$nameId'] = 0x8000 + (idx >> 16);
+    }
+    return out;
+  }
+
+  /// Значения многозначного двоичного свойства [id]: длины — в потоке
+  /// «__substg1.0_XXXX1102», значения — в «…-0000000N».
+  List<Uint8List> _binaries(int id) {
+    String hex(int v, int w) => v.toRadixString(16).padLeft(w, '0').toUpperCase();
+    final base = '__substg1.0_${hex(id, 4)}1102';
+    final lens = storage.child(base);
+    if (lens == null || !lens.isStream) return const [];
+    final count = math.min(lens.size ~/ 8, MsgReader.maxItems);
+    final out = <Uint8List>[];
+    for (var k = 0; k < count; k++) {
+      final e = storage.child('$base-${hex(k, 8)}');
+      if (e != null && e.isStream) out.add(cfb.readEntry(e));
+    }
+    return out;
   }
 
   /// RTF, сделанный Outlook'ом из простого текста (\fromtext): тело — PidTagBody.
@@ -778,5 +842,31 @@ class _Msg {
       'msg' => 'application/vnd.ms-outlook',
       _ => 'application/octet-stream',
     };
+  }
+}
+
+/// Свойства MAPI файла .msg для разбора контакта и группы контактов.
+class _MsgMapi implements MapiPropSource {
+  _MsgMapi(this.m);
+  final _Msg m;
+
+  int? _id(int lid) => m._named['${TnefProps.psetidAddress}:$lid'];
+
+  @override
+  String? get messageClass => m._string(0x001A);
+
+  @override
+  String? string(int id) => m._string(id);
+
+  @override
+  String? namedString(int lid) {
+    final id = _id(lid);
+    return id == null ? null : m._string(id);
+  }
+
+  @override
+  List<Uint8List> namedBinaries(int lid) {
+    final id = _id(lid);
+    return id == null ? const [] : m._binaries(id);
   }
 }

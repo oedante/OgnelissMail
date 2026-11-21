@@ -1819,6 +1819,40 @@ class AppDatabase extends _$AppDatabase {
         .get());
   }
 
+  /// Тексты писем беседы для поиска по ней (2.6.8): начало текста письма
+  /// ([plainChars] символов text/plain, без него — [htmlChars] символов HTML),
+  /// а не письма целиком. В длинной беседе каждое письмо несёт цитаты всех
+  /// прежних — полные тексты (десятки мегабайт) копировались в главный поток
+  /// и в изолят поиска; цитаты и так есть в беседе своими письмами.
+  Future<List<({String id, String head, String? html, String? plain})>> conversationSearchSources({
+    required String conversationId,
+    required String accountId,
+    int plainChars = 30000,
+    int htmlChars = 120000,
+  }) async {
+    final rows = await customSelect(
+      'SELECT id, subject, from_name, from_email, substr(body_plain, 1, ?) AS p, '
+      "CASE WHEN body_plain IS NULL OR body_plain = '' THEN substr(body_html, 1, ?) END AS h "
+      'FROM emails WHERE conversation_id = ? AND account_id = ?',
+      variables: [
+        Variable.withInt(plainChars),
+        Variable.withInt(htmlChars),
+        Variable.withString(conversationId),
+        Variable.withString(accountId),
+      ],
+      readsFrom: {emails},
+    ).get();
+    return [
+      for (final r in rows)
+        (
+          id: r.read<String>('id'),
+          head: '${r.read<String>('subject')}\n${r.read<String?>('from_name') ?? ''} ${r.read<String>('from_email')}',
+          html: r.read<String?>('h'),
+          plain: r.read<String?>('p'),
+        ),
+    ];
+  }
+
   /// Одно письмо — одна строка беседы. У Gmail письмо лежит и во
   /// «Входящих», и во «Всей почте» (и в папках ярлыков) — в беседе оно
   /// показывалось дважды (замечание 09.10.2026). Склеиваем по Message-ID;

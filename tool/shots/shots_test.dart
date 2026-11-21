@@ -6,6 +6,7 @@
 // Обычный `flutter test` (папка test/) эти снимки не запускает.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'dart:ui' as ui;
 
@@ -40,6 +41,7 @@ import 'package:ogneliss/features/settings/screens/swipe_settings_screen.dart';
 import 'package:ogneliss/features/settings/screens/accessibility_screen.dart';
 import 'package:ogneliss/features/settings/screens/experimental_settings_screen.dart';
 import 'package:ogneliss/features/compose/screens/compose_screen.dart';
+import 'package:ogneliss/features/mail/screens/conversation_screen.dart';
 import 'package:ogneliss/features/mail/screens/mail_detail_screen.dart';
 import 'package:ogneliss/features/mail/screens/mail_list_screen.dart';
 import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
@@ -189,6 +191,12 @@ Future<void> _shot(
     ];
   }
   addTearDown(tester.view.reset);
+  // Настоящие тени (2.6.8): по умолчанию тест рисует тень сплошной чёрной
+  // обводкой (debugDisableShadows) — на снимках у кнопки «+» и строки
+  // ответа была толстая рамка, которой на экране нет. В конце теста —
+  // как было: тестовая привязка проверяет флаг до addTearDown, поэтому
+  // возвращается сразу после снимка.
+  debugDisableShadows = false;
   await tester.pumpWidget(ProviderScope(
     overrides: [
       if (db != null) databaseProvider.overrideWithValue(db),
@@ -231,7 +239,11 @@ Future<void> _shot(
     await before(tester);
     await _settle(tester);
   }
-  await expectLater(find.byType(MaterialApp), matchesGoldenFile('out/$name.png'));
+  try {
+    await expectLater(find.byType(MaterialApp), matchesGoldenFile('out/$name.png'));
+  } finally {
+    debugDisableShadows = true;
+  }
   await tester.pumpWidget(const SizedBox());
   // Пауза фоновой работы на время открытия письма считается по настоящим
   // часам, а таймеры в тесте — поддельные: снять её сразу.
@@ -969,6 +981,96 @@ void main() {
         }
       });
     }
+  }
+
+  // 2.6.8 (владелец 21.11.2026: «закончим с видом для десктопа и
+  // планшета»): «Исходящие» папкой в ленте, экран беседы и письмо длинной
+  // беседы с блоком «Беседа» (окно вокруг текущего письма) на планшете и
+  // компьютере.
+  // Запуск: flutter test tool/shots --plain-name «2.6.8» --update-goldens
+  Future<void> conversation(AppDatabase db, int n) async {
+    final base = DateTime.now().subtract(Duration(hours: n * 3));
+    for (var i = 0; i < n; i++) {
+      final mine = i.isOdd;
+      await db.into(db.emails).insert(EmailsCompanion.insert(
+            id: 'c$i',
+            accountId: 'a1',
+            folderId: 'inbox',
+            conversationId: const Value('conv1'),
+            fromEmail: mine ? 'i.petrov@corp.example' : 'v.belova@corp.example',
+            fromName: Value(mine ? 'Иван Петров' : 'Вера Белова'),
+            toRecipients: '[{"email":"i.petrov@corp.example","displayName":"Иван Петров"}]',
+            subject: i == 0 ? 'Поставка насосов' : 'Re: Поставка насосов',
+            bodyPlain: Value(mine ? 'Вера, спасибо, принято. Уточню у склада.' : 'Иван, по поставке: письмо $i, сроки и объёмы во вложении.'),
+            bodyPreview: Value(mine ? 'Вера, спасибо, принято. Уточню у склада.' : 'Иван, по поставке: письмо $i, сроки и объёмы во вложении.'),
+            receivedAt: base.add(Duration(hours: i * 3)),
+            isRead: const Value(true),
+          ));
+    }
+  }
+
+  for (final (name, size) in const [('desktop', Size(1440, 900)), ('tablet', Size(1194, 834))]) {
+    testWidgets('2.6.8 исходящие — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() async {
+        await _letter(db);
+        await _inbox(db);
+        await db.into(db.syncQueue).insert(SyncQueueCompanion.insert(
+              accountId: 'a1',
+              operationType: 'send_email',
+              targetId: 'q1',
+              payloadJson: jsonEncode({
+                'to': [{'email': 'b.orlov@corp.example', 'displayName': 'Борис Орлов'}],
+                'subject': 'Re: Договор поставки № 15',
+                'bodyHtml': '<p>Борис, договор согласован, подписанный экземпляр — во вложении.</p>',
+                'scheduledAt': DateTime.now().add(const Duration(seconds: 4)).toIso8601String(),
+              }),
+              createdAt: DateTime.now(),
+            ));
+        await db.into(db.syncQueue).insert(SyncQueueCompanion.insert(
+              accountId: 'a1',
+              operationType: 'send_failed',
+              targetId: 'q2',
+              payloadJson: jsonEncode({
+                'to': [{'email': 'helpdesk@corp.example'}],
+                'subject': 'Заявка: замена картриджа',
+                'bodyHtml': '<p>Прошу заменить картридж в 412 кабинете.</p>',
+              }),
+              createdAt: DateTime.now().subtract(const Duration(minutes: 12)),
+              errorMessage: const Value('Сервер не принял письмо: ящик получателя переполнен'),
+            ));
+      });
+      await _shot(tester, 'v268_outbox_$name', const MailListScreen(),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, before: (t) async {
+        await t.tap(find.text('Исходящие').first);
+      });
+      await tester.runAsync(db.close);
+    });
+
+    testWidgets('2.6.8 беседа — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1'});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => conversation(db, 9));
+      await _shot(tester, 'v268_conversation_$name', const ConversationScreen(conversationId: 'conv1', accountId: 'a1'),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size);
+      await tester.runAsync(db.close);
+    });
+
+    testWidgets('2.6.8 письмо длинной беседы — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => conversation(db, 40));
+      await _shot(tester, 'v268_long_thread_$name', const MailDetailScreen(emailId: 'c20', accountId: 'a1'),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, size: size, before: (t) async {
+        await t.scrollUntilVisible(find.byKey(const ValueKey('thread_older')), 300,
+            scrollable: find.byType(Scrollable).first);
+      });
+      await tester.runAsync(db.close);
+    });
   }
 
   testWidgets('лента и ответ в панели — desktop', (tester) async {

@@ -212,43 +212,77 @@ internal object WidgetUi {
     }
 
     /**
-     * Доска «Мой день»: три колонки одинаковой ширины, дела — сколько
-     * помещается. Виджет «Мой день» и вкладка «Мой день» виджета «Календарь»
-     * (18.11.2026): разметки с одними id (board_c1…c3).
+     * «Мой день» разделами сверху вниз (21.11.2026, просьба владельца:
+     * «вертикальными полосами плохо смотрится, лучше горизонтально, как в
+     * почте»): «ПРЕДСТОИТ · 2», под ним дела строками (время · метка ·
+     * название и подпись), затем «В РАБОТЕ» и «ГОТОВО». Пустые разделы не
+     * показываются; что не поместилось — «ещё N». [done] — галочка
+     * «Выполнено» у задачи (виджет «Мой день»).
      */
-    fun fillBoard(context: Context, v: RemoteViews, json: JSONObject, availableDp: Int) {
-        val titles = intArrayOf(R.id.board_c1_title, R.id.board_c2_title, R.id.board_c3_title)
-        val counts = intArrayOf(R.id.board_c1_count, R.id.board_c2_count, R.id.board_c3_count)
-        val lists = intArrayOf(R.id.board_c1_list, R.id.board_c2_list, R.id.board_c3_list)
-        val cap = fit(availableDp, 30, 8)
+    fun fillSections(
+        context: Context, v: RemoteViews, list: Int, json: JSONObject, availableDp: Int,
+        done: ((JSONObject) -> PendingIntent)? = null,
+    ) {
+        v.removeAllViews(list)
         val now = System.currentTimeMillis()
         val cols = json.optJSONArray("cols")
-        for (c in 0 until 3) {
-            val col = cols?.optJSONObject(c)
-            v.setTextViewText(titles[c], col?.optString("title").orEmpty().uppercase())
-            v.removeAllViews(lists[c])
-            val items = mutableListOf<String>()
-            col?.optJSONArray("items")?.let { arr ->
+        val sections = mutableListOf<Pair<String, List<JSONObject>>>()
+        for (c in 0 until (cols?.length() ?: 0)) {
+            val col = cols?.optJSONObject(c) ?: continue
+            val items = mutableListOf<JSONObject>()
+            col.optJSONArray("items")?.let { arr ->
                 for (i in 0 until arr.length()) {
                     val item = arr.optJSONObject(i) ?: continue
                     // «Предстоит»: закончившееся по времени не показываем.
                     val end = item.optLong("end", 0)
                     if (c == 0 && end in 1..now) continue
-                    items.add(item.optString("s"))
+                    items.add(item)
                 }
             }
-            v.setTextViewText(counts[c], if (items.isEmpty()) "" else items.size.toString())
-            val shown = if (items.size > cap) (cap - 1).coerceAtLeast(1) else items.size
+            sections.add(col.optString("title") to items)
+        }
+        if (sections.all { it.second.isEmpty() }) {
+            v.addView(list, note(context, json.optString("empty").ifEmpty { context.getString(R.string.widget_open_app) }))
+            return
+        }
+        var left = availableDp
+        for ((index, section) in sections.withIndex()) {
+            val (title, items) = section
+            if (items.isEmpty()) continue
+            if (left < 26 + 44) {
+                break
+            }
+            val head = RemoteViews(context.packageName, layout(context, R.layout.widget_row_day))
+            head.setTextViewText(R.id.row_text, "$title · ${items.size}")
+            v.addView(list, head)
+            left -= 26
+            val fit = (left / 46).coerceAtLeast(1)
+            val shown = if (items.size > fit) (fit - 1).coerceAtLeast(1) else items.size
             for (i in 0 until shown) {
-                v.addView(lists[c], RemoteViews(context.packageName, layout(context, R.layout.widget_row_board)).apply {
-                    setTextViewText(R.id.row_text, items[i])
-                })
+                val item = items[i]
+                val kind = item.optString("k")
+                val time = item.optString("t")
+                val row = eventRow(
+                    context, time, null, item.optString("s"), item.optString("sub").ifEmpty { null },
+                    bar = if (kind == "t") R.drawable.widget_bar_task else R.drawable.widget_bar_accent,
+                    faded = index == 2,
+                    allDay = if (item.optInt("a") == 1) time else null,
+                )
+                if (time.isEmpty()) row.setViewVisibility(R.id.ev_time, View.GONE)
+                if (done != null && index == 0 && kind == "t" && item.optString("id").isNotEmpty() &&
+                    item.optString("acc").isNotEmpty()) {
+                    row.setViewVisibility(R.id.ev_done, View.VISIBLE)
+                    row.setImageViewResource(R.id.ev_done, drawable(context, R.drawable.widget_ic_done))
+                    row.setContentDescription(R.id.ev_done, json.optString("done"))
+                    row.setOnClickPendingIntent(R.id.ev_done, done(item))
+                }
+                v.addView(list, row)
+                left -= 46
             }
             if (items.size > shown) {
-                v.addView(lists[c], RemoteViews(context.packageName, layout(context, R.layout.widget_row_board)).apply {
-                    setTextViewText(R.id.row_text, json.optString("more").replace("{n}", (items.size - shown).toString()))
-                    textColor(context, this, R.id.row_text, R.color.widget_sub)
-                })
+                v.addView(list, note(context, json.optString("more").ifEmpty { "+{n}" }
+                    .replace("{n}", (items.size - shown).toString())))
+                left -= 30
             }
         }
     }
@@ -356,15 +390,15 @@ class MyDayWidget : OgnelissWidget() {
     override fun render(context: Context, manager: AppWidgetManager, id: Int): RemoteViews {
         val json = WidgetUi.json(context, KEY)
         val board = json?.optBoolean("board") == true
-        val v = RemoteViews(context.packageName, WidgetUi.layout(context, if (board) R.layout.widget_my_day_board else R.layout.widget_my_day))
-        if (board) {
-            WidgetUi.background(context, v, R.id.wd_root, R.id.board_c1, R.id.board_c2, R.id.board_c3)
-        } else {
-            WidgetUi.background(context, v, R.id.wd_root, R.id.wd_list)
-        }
+        // Разделы строками (21.11.2026) — в той же разметке, что и список.
+        val v = RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_my_day))
+        WidgetUi.background(context, v, R.id.wd_root, R.id.wd_list)
         val locale = WidgetUi.locale(json)
         json?.optString("title")?.takeIf { it.isNotEmpty() }?.let { v.setTextViewText(R.id.wd_title, it) }
-        WidgetUi.text(v, R.id.wd_sub, WidgetUi.cap(SimpleDateFormat("EEEE, d MMMM", locale).format(Date()), locale))
+        // Дата и погода (21.11.2026) — «Суббота, 21 ноября · ☁ −9°».
+        val date = WidgetUi.cap(SimpleDateFormat("EEEE, d MMMM", locale).format(Date()), locale)
+        val weather = json?.optString("weather").orEmpty()
+        WidgetUi.text(v, R.id.wd_sub, if (weather.isEmpty()) date else "$date  ·  $weather")
         val footer = listOf(json?.optString("unread").orEmpty(), json?.optString("work").orEmpty())
             .filter { it.isNotEmpty() }.joinToString("  ·  ")
         WidgetUi.text(v, R.id.wd_footer, footer)
@@ -375,7 +409,8 @@ class MyDayWidget : OgnelissWidget() {
         val height = WidgetUi.heightDp(context, manager, id, 180)
         val footerDp = if (footer.isNotEmpty()) WidgetUi.FOOTER else 0
         if (board) {
-            WidgetUi.fillBoard(context, v, json!!, height - WidgetUi.PAD - WidgetUi.HEADER - WidgetUi.GAP - 16 - 22 - footerDp)
+            WidgetUi.fillSections(context, v, R.id.wd_list, json!!,
+                height - WidgetUi.PAD - WidgetUi.HEADER - WidgetUi.GAP - WidgetUi.CARD_PAD - footerDp) { doneIntent(context, it) }
             return v
         }
 
@@ -593,6 +628,8 @@ class MailWidget : OgnelissWidget() {
             if (item.optString("id").isNotEmpty() && item.optString("acc").isNotEmpty()) {
                 row.setOnClickPendingIntent(R.id.ml_read, act(context, id, "read", item, i))
                 row.setOnClickPendingIntent(R.id.ml_archive, act(context, id, "archive", item, i))
+                row.setTextViewText(R.id.ml_read_label, json?.optString("actRead").orEmpty())
+                row.setTextViewText(R.id.ml_archive_label, json?.optString("actArchive").orEmpty())
                 row.setContentDescription(R.id.ml_read, json?.optString("actRead").orEmpty())
                 row.setContentDescription(R.id.ml_archive, json?.optString("actArchive").orEmpty())
             } else {
@@ -856,7 +893,9 @@ class CalendarWidget : OgnelissWidget() {
         // «Мой день».
         val myDayLine = listOf(myDay?.optString("unread").orEmpty(), myDay?.optString("work").orEmpty())
             .filter { it.isNotEmpty() }.joinToString("  ·  ")
-        WidgetUi.text(v, R.id.cal_sub, if (mode == 3 && myDayLine.isNotEmpty()) myDayLine else calLabel)
+        // Погода — в начале строки (21.11.2026).
+        val myDaySub = listOf(myDay?.optString("weather").orEmpty(), myDayLine).filter { it.isNotEmpty() }.joinToString("  ·  ")
+        WidgetUi.text(v, R.id.cal_sub, if (mode == 3 && myDaySub.isNotEmpty()) myDaySub else calLabel)
 
         // Высота: поля, шапка, вкладки (8 + 32), отступ до содержимого.
         val height = WidgetUi.heightDp(context, manager, id, 300)
@@ -893,8 +932,10 @@ class CalendarWidget : OgnelissWidget() {
         v.setViewVisibility(R.id.cal_strip, if (mode == 1) View.VISIBLE else View.GONE)
         v.setViewVisibility(R.id.cal_month, if (mode == 2 && !monthList) View.VISIBLE else View.GONE)
         v.setViewVisibility(R.id.cal_month_fixed, if (monthList) View.VISIBLE else View.GONE)
-        v.setViewVisibility(R.id.cal_board, if (board) View.VISIBLE else View.GONE)
-        v.setViewVisibility(R.id.cal_list, if (mode == 2 && !monthList || board) View.GONE else View.VISIBLE)
+        // Доска колонками больше не показывается: «Мой день» — разделами в
+        // списке (21.11.2026).
+        v.setViewVisibility(R.id.cal_board, View.GONE)
+        v.setViewVisibility(R.id.cal_list, if (mode == 2 && !monthList) View.GONE else View.VISIBLE)
         v.removeAllViews(R.id.cal_list)
         v.removeAllViews(R.id.cal_strip)
         v.removeAllViews(R.id.cal_month)
@@ -904,8 +945,7 @@ class CalendarWidget : OgnelissWidget() {
             0 -> renderDay(context, v, id, json, locale, evs, anchor, now, avail - WidgetUi.CARD_PAD)
             1 -> renderWeek(context, v, id, json, locale, evs, weekStart, today, avail - 66 - WidgetUi.CARD_PAD)
             3 -> if (board) {
-                // Колонка: отступы 16 и строка заголовка 22 (как в виджете «Мой день»).
-                WidgetUi.fillBoard(context, v, myDay!!, avail - 16 - 22)
+                WidgetUi.fillSections(context, v, R.id.cal_list, myDay!!, avail - WidgetUi.CARD_PAD)
             } else {
                 v.addView(R.id.cal_list, WidgetUi.note(context, context.getString(R.string.widget_open_app)))
             }

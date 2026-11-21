@@ -225,13 +225,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 
   Future<void> _startSearch() async {
     setState(() => _searching = true);
-    final rows = await ref
+    // Начало текста каждого письма, а не письма целиком (2.6.8): в длинной
+    // беседе полные тексты с цитатами — десятки мегабайт.
+    final sources = await ref
         .read(databaseProvider)
-        .getConversation(conversationId: widget.conversationId, accountId: widget.accountId);
-    final sources = [
-      for (final r in rows)
-        (id: r.id, head: '${r.subject}\n${r.fromName ?? ''} ${r.fromEmail}', html: r.bodyHtml, plain: r.bodyPlain),
-    ];
+        .conversationSearchSources(conversationId: widget.conversationId, accountId: widget.accountId);
     final texts = await compute(conversationSearchTexts, sources);
     if (mounted) setState(() => _texts = texts);
   }

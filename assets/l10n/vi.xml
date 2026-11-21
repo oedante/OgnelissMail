@@ -4381,4 +4381,8 @@
     <string name="threadOlder">Thư cũ hơn: {n}</string>
     <string name="threadOpenAll">Toàn bộ cuộc hội thoại</string>
     <string name="calFree2Weeks">2 tuần tới đều trống</string>
+    <string name="googleServicesDenied">Google chưa cấp quyền truy cập: {what}. Chạm, đăng nhập và đánh dấu tất cả các ô trên trang Google</string>
+    <string name="googleAccessCalendar">lịch</string>
+    <string name="googleAccessContacts">danh bạ</string>
+    <string name="googleAccessPhotos">ảnh người liên hệ</string>
 </resources>

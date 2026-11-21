@@ -170,6 +170,13 @@ class DavPimService {
     }
   }
 
+  /// Сервер отказал в доступе (нет разрешения у токена): календарь и/или
+  /// контакты — для настроек ящика (2.6.8, случай пользователя 21.11.2026:
+  /// на странице Google галочки календаря и контактов не отмечены — календарь
+  /// и фото молчали, а настройки писали «подключены»).
+  static ({bool calendar, bool contacts}) accessDenied(String accountId) =>
+      (calendar: _paused('$accountId:cal'), contacts: _paused('$accountId:card'));
+
   /// Поддерживается ли DAV-PIM для аккаунта.
   static bool isSupported(AccountModel account) => providerOf(account) != null;
 

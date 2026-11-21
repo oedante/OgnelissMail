@@ -4381,4 +4381,8 @@
     <string name="threadOlder">이전 메시지: {n}</string>
     <string name="threadOpenAll">전체 대화</string>
     <string name="calFree2Weeks">앞으로 2주는 일정이 없습니다</string>
+    <string name="googleServicesDenied">Google에서 다음 항목에 대한 액세스를 허용하지 않았습니다: {what}. 탭하여 로그인하고 Google 페이지에서 모든 확인란을 선택하세요</string>
+    <string name="googleAccessCalendar">캘린더</string>
+    <string name="googleAccessContacts">연락처</string>
+    <string name="googleAccessPhotos">상대방 사진</string>
 </resources>

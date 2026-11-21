@@ -2902,10 +2902,20 @@ class SyncService {
       final r = await http.get(Uri.parse('https://www.googleapis.com/oauth2/v3/userinfo'),
           headers: {'Authorization': authorization}).timeout(const Duration(seconds: 15));
       await _prefs.setString(key, DateTime.now().toIso8601String());
-      if (r.statusCode != 200) return;
+      // В журнал — что ответил Google (2.6.8: «нет портрета ящика», а по
+      // журналу пользователя было не понять почему).
+      if (r.statusCode != 200) {
+        AppLogger.info('Фото профиля Google (${AppLogger.mask(account.email)}): HTTP ${r.statusCode}');
+        return;
+      }
       final pic = (jsonDecode(r.body) as Map<String, dynamic>)['picture'] as String?;
-      if (pic != null && pic.startsWith('https://') && pic != account.avatarUrl) {
-        await _ref.read(accountsProvider.notifier).setAccountPhoto(account.id, pic);
+      if (pic == null || !pic.startsWith('https://')) {
+        AppLogger.info('Фото профиля Google (${AppLogger.mask(account.email)}): в профиле нет фото');
+      } else if (pic != account.avatarUrl) {
+        // Фото, выбранное вручную, профиль не заменяет.
+        final manual = (_prefs.getStringList('account_photo_manual') ?? const []).contains(account.id);
+        if (!manual) await _ref.read(accountsProvider.notifier).setAccountPhoto(account.id, pic);
+        AppLogger.info('Фото профиля Google (${AppLogger.mask(account.email)}): ${manual ? 'есть, оставлено своё' : 'поставлено'}');
       }
     } catch (e) {
       AppLogger.debug('Фото профиля Google: $e');

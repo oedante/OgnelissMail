@@ -4402,4 +4402,8 @@
     <string name="threadOlder">Daha eski iletiler: {n}</string>
     <string name="threadOpenAll">Tüm konuşma</string>
     <string name="calFree2Weeks">Önümüzdeki 2 hafta boş</string>
+    <string name="googleServicesDenied">Google şunlara erişim vermedi: {what}. Dokunun, oturum açın ve Google sayfasındaki tüm kutuları işaretleyin</string>
+    <string name="googleAccessCalendar">takvim</string>
+    <string name="googleAccessContacts">kişiler</string>
+    <string name="googleAccessPhotos">kişilerin fotoğrafları</string>
 </resources>

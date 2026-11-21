@@ -4402,4 +4402,8 @@
     <string name="threadOlder">Korábbi üzenetek: {n}</string>
     <string name="threadOpenAll">Teljes beszélgetés</string>
     <string name="calFree2Weeks">A következő 2 hét szabad</string>
+    <string name="googleServicesDenied">A Google nem adott hozzáférést ehhez: {what}. Koppintson, jelentkezzen be, és a Google-oldalon jelölje be az összes négyzetet</string>
+    <string name="googleAccessCalendar">naptár</string>
+    <string name="googleAccessContacts">névjegyek</string>
+    <string name="googleAccessPhotos">partnerek fényképei</string>
 </resources>

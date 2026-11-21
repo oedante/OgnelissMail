@@ -4381,4 +4381,8 @@
     <string name="threadOlder">ข้อความก่อนหน้า: {n}</string>
     <string name="threadOpenAll">ทั้งการสนทนา</string>
     <string name="calFree2Weeks">2 สัปดาห์ข้างหน้าว่าง</string>
+    <string name="googleServicesDenied">Google ไม่ได้ให้สิทธิ์เข้าถึง: {what} แตะ ลงชื่อเข้าใช้ แล้วทำเครื่องหมายทุกช่องในหน้า Google</string>
+    <string name="googleAccessCalendar">ปฏิทิน</string>
+    <string name="googleAccessContacts">รายชื่อติดต่อ</string>
+    <string name="googleAccessPhotos">รูปของผู้ติดต่อ</string>
 </resources>

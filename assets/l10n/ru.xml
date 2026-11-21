@@ -4444,4 +4444,8 @@
     <string name="threadOlder">Более ранние письма: {n}</string>
     <string name="threadOpenAll">Вся беседа</string>
     <string name="calFree2Weeks">Ближайшие 2 недели свободны</string>
+    <string name="googleServicesDenied">Google не дал доступ: {what}. Нажмите, войдите и отметьте все галочки на странице Google</string>
+    <string name="googleAccessCalendar">календарь</string>
+    <string name="googleAccessContacts">контакты</string>
+    <string name="googleAccessPhotos">фото собеседников</string>
 </resources>

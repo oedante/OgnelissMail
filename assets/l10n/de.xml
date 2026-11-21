@@ -4402,4 +4402,8 @@
     <string name="threadOlder">Ältere Nachrichten: {n}</string>
     <string name="threadOpenAll">Ganze Unterhaltung</string>
     <string name="calFree2Weeks">Die nächsten 2 Wochen sind frei</string>
+    <string name="googleServicesDenied">Google hat keinen Zugriff gewährt: {what}. Tippen, anmelden und auf der Google-Seite alle Häkchen setzen</string>
+    <string name="googleAccessCalendar">Kalender</string>
+    <string name="googleAccessContacts">Kontakte</string>
+    <string name="googleAccessPhotos">Fotos der Kontakte</string>
 </resources>

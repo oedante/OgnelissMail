@@ -4375,4 +4375,6 @@
     <string name="fwdContactGroup">連絡先グループ</string>
     <string name="saveGroup">グループを保存</string>
     <string name="outboxEmpty">すべてのメールを送信しました</string>
+    <string name="tagNewLine">改行</string>
+    <string name="moveDown">下へ移動</string>
 </resources>

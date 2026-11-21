@@ -4417,4 +4417,6 @@
     <string name="fwdContactGroup">Grup de contacte</string>
     <string name="saveGroup">Salvează grupul</string>
     <string name="outboxEmpty">Toate mesajele au fost trimise</string>
+    <string name="tagNewLine">Rând nou</string>
+    <string name="moveDown">Mută în jos</string>
 </resources>

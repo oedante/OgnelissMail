@@ -4375,4 +4375,6 @@
     <string name="fwdContactGroup">Grup kontak</string>
     <string name="saveGroup">Simpan grup</string>
     <string name="outboxEmpty">Semua pesan terkirim</string>
+    <string name="tagNewLine">Baris baru</string>
+    <string name="moveDown">Pindah ke bawah</string>
 </resources>

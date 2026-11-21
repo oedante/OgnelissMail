@@ -4375,4 +4375,6 @@
     <string name="fwdContactGroup">กลุ่มรายชื่อติดต่อ</string>
     <string name="saveGroup">บันทึกกลุ่ม</string>
     <string name="outboxEmpty">ส่งข้อความทั้งหมดแล้ว</string>
+    <string name="tagNewLine">ขึ้นบรรทัดใหม่</string>
+    <string name="moveDown">เลื่อนลง</string>
 </resources>

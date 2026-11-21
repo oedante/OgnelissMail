@@ -176,14 +176,32 @@ final outboxItemsProvider = StreamProvider<List<OutboxItem>>((ref) {
 /// Писем в «Исходящих» — счётчик у папки в меню.
 final outboxCountProvider = Provider<int>((ref) => ref.watch(outboxItemsProvider).value?.length ?? 0);
 
-class OutboxScreen extends ConsumerStatefulWidget {
+/// Папка «Исходящие» в списке писем (21.11.2026, просьба владельца:
+/// «не отдельным экраном, а папкой, как Входящие, Черновики») — id
+/// выбранной папки ленты; письма в ней — из очереди отправки всех ящиков.
+const kOutboxFolderId = '__outbox__';
+
+/// «Исходящие» отдельной страницей — из уведомления «Не отправлено».
+class OutboxScreen extends StatelessWidget {
   const OutboxScreen({super.key});
 
   @override
-  ConsumerState<OutboxScreen> createState() => _OutboxScreenState();
+  Widget build(BuildContext context) => Scaffold(
+        appBar: TextScaleCapBar(child: AppBar(title: Text(AppLocalizations.of(context).tr('outbox')))),
+        body: const OutboxList(),
+      );
 }
 
-class _OutboxScreenState extends ConsumerState<OutboxScreen> {
+/// Список «Исходящих» — в ленте писем вместо писем папки и на странице
+/// [OutboxScreen].
+class OutboxList extends ConsumerStatefulWidget {
+  const OutboxList({super.key});
+
+  @override
+  ConsumerState<OutboxList> createState() => _OutboxListState();
+}
+
+class _OutboxListState extends ConsumerState<OutboxList> {
   Timer? _tick;
 
   /// Отменённые свайпом — убраны сразу, до обновления списка из базы.
@@ -294,25 +312,22 @@ class _OutboxScreenState extends ConsumerState<OutboxScreen> {
     final service = ref.watch(offlineSendProvider);
     final now = DateTime.now();
     _ensureTicker(items.any((i) => i.waiting(now)));
-    return Scaffold(
-      appBar: TextScaleCapBar(child: AppBar(title: Text(l10n.tr('outbox')))),
-      body: ValueListenableBuilder<List<OutboxSending>>(
-        valueListenable: service.sendingNow,
-        builder: (context, direct, _) {
-          if (items.isEmpty && direct.isEmpty) {
-            return EmptyState(icon: AppIcons.outbox, title: l10n.tr('outboxEmpty'));
-          }
-          return SlidableAutoCloseBehavior(
-            child: ListView(
-              padding: const EdgeInsets.only(bottom: Space.xl),
-              children: [
-                for (final d in direct) _directTile(l10n, d),
-                for (final i in items) _tile(l10n, i, now),
-              ],
-            ),
-          );
-        },
-      ),
+    return ValueListenableBuilder<List<OutboxSending>>(
+      valueListenable: service.sendingNow,
+      builder: (context, direct, _) {
+        if (items.isEmpty && direct.isEmpty) {
+          return EmptyState(icon: AppIcons.outbox, title: l10n.tr('outboxEmpty'));
+        }
+        return SlidableAutoCloseBehavior(
+          child: ListView(
+            padding: const EdgeInsets.only(top: Space.xs, bottom: Space.xl),
+            children: [
+              for (final d in direct) _directTile(l10n, d),
+              for (final i in items) _tile(l10n, i, now),
+            ],
+          ),
+        );
+      },
     );
   }
 

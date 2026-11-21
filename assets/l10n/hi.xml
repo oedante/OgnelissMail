@@ -4396,4 +4396,6 @@
     <string name="fwdContactGroup">संपर्क समूह</string>
     <string name="saveGroup">समूह सहेजें</string>
     <string name="outboxEmpty">सभी संदेश भेज दिए गए</string>
+    <string name="tagNewLine">नई पंक्ति</string>
+    <string name="moveDown">नीचे ले जाएँ</string>
 </resources>

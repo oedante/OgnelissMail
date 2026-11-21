@@ -4438,4 +4438,6 @@
     <string name="fwdContactGroup">Grupa kontaktów</string>
     <string name="saveGroup">Zapisz grupę</string>
     <string name="outboxEmpty">Wszystkie wiadomości wysłane</string>
+    <string name="tagNewLine">Nowa linia</string>
+    <string name="moveDown">Niżej</string>
 </resources>

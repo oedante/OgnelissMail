@@ -4438,4 +4438,6 @@
     <string name="fwdContactGroup">Группа контактов</string>
     <string name="saveGroup">Сохранить группу</string>
     <string name="outboxEmpty">Все письма отправлены</string>
+    <string name="tagNewLine">Новая строка</string>
+    <string name="moveDown">Ниже</string>
 </resources>

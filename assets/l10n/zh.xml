@@ -4375,4 +4375,6 @@
     <string name="fwdContactGroup">联系人组</string>
     <string name="saveGroup">保存组</string>
     <string name="outboxEmpty">所有邮件均已发送</string>
+    <string name="tagNewLine">换行</string>
+    <string name="moveDown">下移</string>
 </resources>

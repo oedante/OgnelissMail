@@ -4396,4 +4396,6 @@
     <string name="fwdContactGroup">Contact group</string>
     <string name="saveGroup">Save group</string>
     <string name="outboxEmpty">All messages sent</string>
+    <string name="tagNewLine">New line</string>
+    <string name="moveDown">Move down</string>
 </resources>

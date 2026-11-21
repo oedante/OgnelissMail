@@ -9,7 +9,7 @@
 // - Добавить аккаунт
 // - Контекстное меню на папках (очистить, переименовать)
 
-import '../screens/outbox_screen.dart' show outboxCountProvider, outboxItemsProvider;
+import '../screens/outbox_screen.dart' show kOutboxFolderId, outboxCountProvider, outboxItemsProvider;
 import '../../../widgets/ui/section_band.dart';
 import '../../../services/accounts/account_labels.dart';
 import '../../../widgets/ui/theme_quick_switch.dart' show ThemeQuickSwitch;
@@ -729,6 +729,7 @@ class MailDrawer extends ConsumerWidget {
           for (final f in tree.roots) ...branch(f, 0),
           // «Исходящие» (21.11.2026, как в Outlook): письма к отправке — с
           // отсчётом, отложенные и не отправленные; отправленные пропадают.
+          // Открывается в ленте, как любая папка (21.11.2026).
           _FolderTile(
             icon: AppIcons.outbox,
             label: l10n.tr('outbox'),
@@ -736,9 +737,13 @@ class MailDrawer extends ConsumerWidget {
             countColor: ref.watch(outboxItemsProvider).value?.any((i) => i.failed) ?? false
                 ? AppColors.errorRed
                 : null,
+            isSelected: selectedId == kOutboxFolderId,
             onTap: () {
+              ref.read(allAccountsModeProvider.notifier).state = false;
+              ref.read(unifiedModeProvider.notifier).state = false;
+              ref.read(selectedFolderIdProvider.notifier).state = kOutboxFolderId;
+              ref.read(mailFilterProvider.notifier).state = MailFilter.none;
               _close(context);
-              context.push('/outbox');
             },
           ),
           // «Рассылки» этого ящика — как папка в конце дерева, со значком

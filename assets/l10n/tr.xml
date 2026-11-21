@@ -4396,4 +4396,6 @@
     <string name="fwdContactGroup">Kişi grubu</string>
     <string name="saveGroup">Grubu kaydet</string>
     <string name="outboxEmpty">Tüm iletiler gönderildi</string>
+    <string name="tagNewLine">Yeni satır</string>
+    <string name="moveDown">Aşağı taşı</string>
 </resources>

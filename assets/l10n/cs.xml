@@ -4417,4 +4417,6 @@
     <string name="fwdContactGroup">Skupina kontaktů</string>
     <string name="saveGroup">Uložit skupinu</string>
     <string name="outboxEmpty">Všechny zprávy odeslány</string>
+    <string name="tagNewLine">Nový řádek</string>
+    <string name="moveDown">Níž</string>
 </resources>

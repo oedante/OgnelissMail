@@ -4396,4 +4396,6 @@
     <string name="fwdContactGroup">Névjegycsoport</string>
     <string name="saveGroup">Csoport mentése</string>
     <string name="outboxEmpty">Minden üzenet elküldve</string>
+    <string name="tagNewLine">Új sor</string>
+    <string name="moveDown">Lejjebb</string>
 </resources>

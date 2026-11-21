@@ -53,6 +53,7 @@ import '../../../services/mail/control_service.dart';
 import '../../../services/mail/later_service.dart';
 import '../widgets/later_sheet.dart';
 import '../widgets/pending_send_strip.dart';
+import 'outbox_screen.dart' show OutboxList, kOutboxFolderId;
 import '../widgets/scheduled_sends.dart' show ScheduledSendStrip;
 import '../providers/pinned_mail.dart';
 import '../../../widgets/common/undo_strip.dart';
@@ -636,7 +637,11 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       final folder = fid == null
           ? null
           : folders.where((f) => f.id == fid && (account == null || f.accountId == account.id)).firstOrNull;
-      title = folder == null ? l10n.inbox : localizedFolderName(folder, l10n);
+      title = fid == kOutboxFolderId
+          ? l10n.tr('outbox')
+          : folder == null
+              ? l10n.inbox
+              : localizedFolderName(folder, l10n);
     }
 
     _publishSelection();
@@ -1446,6 +1451,12 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     // договора, узел), а набирать с телефона неудобно.
     if (_isSearching && _searchController.text.trim().isEmpty) {
       return _buildSearchHistory(theme, l10n);
+    }
+
+    // «Исходящие» — папкой в ленте (21.11.2026): письма из очереди отправки
+    // всех ящиков, с «Отменить», «Изменить» и «Отправить сейчас».
+    if (!_isSearching && ref.watch(selectedFolderIdProvider) == kOutboxFolderId) {
+      return const OutboxList();
     }
 
     if (emailState.isLoading) {

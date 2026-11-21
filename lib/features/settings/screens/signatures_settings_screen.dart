@@ -93,11 +93,28 @@ class SignaturesSettingsScreen extends ConsumerWidget {
                 onTap: () => _editGreeting(context, ref, account, g),
                 trailing: AppMenuButton<String>(
                   onSelected: (action) {
-                    if (action == 'delete') ref.read(customGreetingsProvider.notifier).remove(g.id);
+                    final n = ref.read(customGreetingsProvider.notifier);
+                    switch (action) {
+                      case 'up':
+                        n.move(g.id, -1);
+                      case 'down':
+                        n.move(g.id, 1);
+                      case 'delete':
+                        n.remove(g.id);
+                    }
                   },
-                  itemBuilder: (_) => [
-                    AppMenuEntry(value: 'delete', icon: AppIcons.delete, label: l10n.tr('delete'), destructive: true),
-                  ],
+                  // Порядок своих приветствий — в выборе по умолчанию и в
+                  // меню письма тот же (21.11.2026).
+                  itemBuilder: (_) {
+                    final items = ref.read(customGreetingsProvider).items;
+                    final i = items.indexWhere((x) => x.id == g.id);
+                    return [
+                      if (i > 0) AppMenuEntry(value: 'up', icon: AppIcons.arrow_upward, label: l10n.tr('moveUp')),
+                      if (i >= 0 && i < items.length - 1)
+                        AppMenuEntry(value: 'down', icon: AppIcons.arrow_downward, label: l10n.tr('moveDown')),
+                      AppMenuEntry(value: 'delete', icon: AppIcons.delete, label: l10n.tr('delete'), destructive: true),
+                    ];
+                  },
                 ),
               ),
             ListTile(
@@ -245,8 +262,11 @@ class SignaturesSettingsScreen extends ConsumerWidget {
                   TextField(
                     controller: text,
                     autofocus: existing == null,
-                    maxLines: 2,
-                    minLines: 1,
+                    // До трёх строк (21.11.2026): «Доброе утро» и дата —
+                    // разными строками.
+                    maxLines: 4,
+                    minLines: 2,
+                    keyboardType: TextInputType.multiline,
                     onChanged: (_) => setLocal(() {}),
                     decoration: InputDecoration(
                       hintText: l10n.tr('customGreetingHint'),
@@ -256,11 +276,12 @@ class SignaturesSettingsScreen extends ConsumerWidget {
                   const SizedBox(height: Space.s),
                   // Образец: как приветствие будет выглядеть в письме.
                   if (sample.isNotEmpty)
-                    Text('${l10n.tr('customGreetingSample')}: $sample',
+                    Text('${l10n.tr('customGreetingSample')}:\n$sample',
                         style: Theme.of(ctx).textTheme.bodySmall),
                   const SizedBox(height: Space.m),
                   MailTagChips(
                     tags: MailTags.forGreeting,
+                    newLine: true,
                     onInsert: (t) {
                       insertAtCursor(text, t);
                       setLocal(() {});

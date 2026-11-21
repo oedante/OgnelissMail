@@ -38,8 +38,11 @@ void main() {
     final v = MailTagValues(now: morning, lang: 'ru');
     expect(MailTags.apply('{время_суток}\n{дата}', v, cleanup: true), 'Доброе утро\n19.11.2026');
     final any = MailTagValues(now: morning, lang: 'ru', anyTime: true);
-    expect(MailTags.apply('{время_суток}\n{дата}', any, cleanup: true), 'Доброе утро/день/вечер\n19.11.2026');
-    expect(MailTags.partOfDayAll('en'), 'Good morning/afternoon/evening');
+    expect(MailTags.apply('{время_суток}\n{дата}', any, cleanup: true), 'Доброе утро/Добрый день/Добрый вечер\n19.11.2026');
+    expect(MailTags.partOfDayAll('en'), 'Good morning/Good afternoon/Good evening');
+    expect(MailTags.partOfDayAll('ru', sep: ' / '), 'Доброе утро / Добрый день / Добрый вечер');
+    // Первым в конструкторе — время суток.
+    expect(MailTags.forGreeting.first.key, 'part_of_day');
   });
 
   test('приветствие на других языках: обращение, время суток, знаки без лишних запятых', () {

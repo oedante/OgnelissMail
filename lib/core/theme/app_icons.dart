@@ -39,6 +39,7 @@ abstract final class AppIcons {
   static const IconData arrow_downward = Symbols.arrow_downward_rounded;
   static const IconData arrow_drop_down = Symbols.arrow_drop_down_rounded;
   static const IconData arrow_upward = Symbols.arrow_upward_rounded;
+  static const IconData keyboard_return = Symbols.keyboard_return_rounded;
   static const IconData article = Symbols.article_rounded;
   static const IconData attach_email = Symbols.attach_email_rounded;
   static const IconData attach_file = Symbols.attach_file_rounded;

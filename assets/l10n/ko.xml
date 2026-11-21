@@ -4375,4 +4375,6 @@
     <string name="fwdContactGroup">연락처 그룹</string>
     <string name="saveGroup">그룹 저장</string>
     <string name="outboxEmpty">모든 메일을 보냈습니다</string>
+    <string name="tagNewLine">줄 바꿈</string>
+    <string name="moveDown">아래로 이동</string>
 </resources>

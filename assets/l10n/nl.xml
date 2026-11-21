@@ -4396,4 +4396,6 @@
     <string name="fwdContactGroup">Contactgroep</string>
     <string name="saveGroup">Groep opslaan</string>
     <string name="outboxEmpty">Alle berichten verzonden</string>
+    <string name="tagNewLine">Nieuwe regel</string>
+    <string name="moveDown">Omlaag</string>
 </resources>

@@ -55,10 +55,9 @@ git push origin v2.6.8
    авиакомпания, PayPal, eBay) в ящике Gmail — вместо буквы логотип. В
    пакете диагностики строка «BIMI: … запросов к серверу N» — N больше нуля.
 
-## 3. Базовый профиль запуска (по желанию)
+## 3. Базовый профиль запуска
 
-Почему не снимался на Windows и как снять сейчас — в
-`docs/guides/BASELINE_PROFILE.md`. Самый простой путь: GitHub → Actions →
-CI/CD → Run workflow → «Снять базовый профиль…» → через ~40 минут файл
-`baseline-prof.txt` из Artifacts пришлите мне (или положите в
-`android/app/src/main/baselineProfiles/`).
+Снимается в CI на эмуляторе и лежит в
+`android/app/src/main/baselineProfiles/` — входит в каждую сборку, делать
+ничего не нужно. Почему не снимался на Windows и как снять заново —
+`docs/guides/BASELINE_PROFILE.md`.

@@ -656,12 +656,15 @@ jobs:
   # Базовый профиль запуска (Baseline Profile, 21.11.2026): снимается на
   # эмуляторе Linux. На Windows сборка варианта nonMinifiedRelease падала с
   # «Illegal char <?> … app\provider(?)» — Windows не допускает «?» в пути,
-  # Linux допускает. Профиль — в Artifacts (baseline-prof.txt): положить в
-  # android/app/src/main/baselineProfiles/ (docs/guides/BASELINE_PROFILE.md).
+  # Linux допускает. Профиль задание коммитит в ветку запуска
+  # (android/app/src/main/baselineProfiles/) и выкладывает в Artifacts.
   baseline-profile:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.baseline_profile }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    # Снятый профиль задание кладёт коммитом в ту же ветку (не в main).
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v5
 
@@ -726,6 +729,21 @@ jobs:
           disable-animations: true
           working-directory: android
           script: ./gradlew :app:generateReleaseBaselineProfile -PognelissBaselineProfile=true -Ptarget-platform=android-x64 --stacktrace
+
+      # Профиль — коммитом в ветку запуска (21.11.2026, просьба владельца:
+      # «сам снимай и вкладывай в следующую сборку»). В main — никогда:
+      # туда профиль попадает через PR.
+      - name: Commit the profile to the branch
+        if: ${{ success() && github.ref_name != 'main' }}
+        run: |
+          set -e
+          ls android/app/src/main/baselineProfiles/*.txt >/dev/null 2>&1 || { echo "Профиль не создан"; exit 0; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add android/app/src/main/baselineProfiles
+          if git diff --cached --quiet; then echo "Профиль не изменился"; exit 0; fi
+          git commit -m "Базовый профиль запуска: снят на эмуляторе в CI (${GITHUB_SHA::7})"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

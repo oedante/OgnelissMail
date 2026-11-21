@@ -4377,4 +4377,7 @@
     <string name="outboxEmpty">ส่งข้อความทั้งหมดแล้ว</string>
     <string name="tagNewLine">ขึ้นบรรทัดใหม่</string>
     <string name="moveDown">เลื่อนลง</string>
+    <string name="threadNewer">ข้อความที่ใหม่กว่า: {n}</string>
+    <string name="threadOlder">ข้อความก่อนหน้า: {n}</string>
+    <string name="threadOpenAll">ทั้งการสนทนา</string>
 </resources>

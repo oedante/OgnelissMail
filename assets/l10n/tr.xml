@@ -4398,4 +4398,7 @@
     <string name="outboxEmpty">Tüm iletiler gönderildi</string>
     <string name="tagNewLine">Yeni satır</string>
     <string name="moveDown">Aşağı taşı</string>
+    <string name="threadNewer">Daha yeni iletiler: {n}</string>
+    <string name="threadOlder">Daha eski iletiler: {n}</string>
+    <string name="threadOpenAll">Tüm konuşma</string>
 </resources>

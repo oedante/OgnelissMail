@@ -4398,4 +4398,7 @@
     <string name="outboxEmpty">Tous les messages ont été envoyés</string>
     <string name="tagNewLine">Nouvelle ligne</string>
     <string name="moveDown">Descendre</string>
+    <string name="threadNewer">Messages plus récents : {n}</string>
+    <string name="threadOlder">Messages plus anciens : {n}</string>
+    <string name="threadOpenAll">Toute la conversation</string>
 </resources>

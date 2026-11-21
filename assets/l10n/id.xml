@@ -4377,4 +4377,7 @@
     <string name="outboxEmpty">Semua pesan terkirim</string>
     <string name="tagNewLine">Baris baru</string>
     <string name="moveDown">Pindah ke bawah</string>
+    <string name="threadNewer">Pesan lebih baru: {n}</string>
+    <string name="threadOlder">Pesan sebelumnya: {n}</string>
+    <string name="threadOpenAll">Seluruh percakapan</string>
 </resources>

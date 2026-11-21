@@ -4398,4 +4398,7 @@
     <string name="outboxEmpty">Alle beskeder er sendt</string>
     <string name="tagNewLine">Ny linje</string>
     <string name="moveDown">Flyt ned</string>
+    <string name="threadNewer">Nyere beskeder: {n}</string>
+    <string name="threadOlder">Tidligere beskeder: {n}</string>
+    <string name="threadOpenAll">Hele samtalen</string>
 </resources>

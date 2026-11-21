@@ -4398,4 +4398,7 @@
     <string name="outboxEmpty">Alle Nachrichten gesendet</string>
     <string name="tagNewLine">Neue Zeile</string>
     <string name="moveDown">Nach unten</string>
+    <string name="threadNewer">Neuere Nachrichten: {n}</string>
+    <string name="threadOlder">Ältere Nachrichten: {n}</string>
+    <string name="threadOpenAll">Ganze Unterhaltung</string>
 </resources>

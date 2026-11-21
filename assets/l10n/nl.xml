@@ -4398,4 +4398,7 @@
     <string name="outboxEmpty">Alle berichten verzonden</string>
     <string name="tagNewLine">Nieuwe regel</string>
     <string name="moveDown">Omlaag</string>
+    <string name="threadNewer">Nieuwere berichten: {n}</string>
+    <string name="threadOlder">Eerdere berichten: {n}</string>
+    <string name="threadOpenAll">Hele gesprek</string>
 </resources>

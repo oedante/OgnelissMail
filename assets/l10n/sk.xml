@@ -4419,4 +4419,7 @@
     <string name="outboxEmpty">Všetky správy odoslané</string>
     <string name="tagNewLine">Nový riadok</string>
     <string name="moveDown">Nižšie</string>
+    <string name="threadNewer">Novšie správy: {n}</string>
+    <string name="threadOlder">Staršie správy: {n}</string>
+    <string name="threadOpenAll">Celá konverzácia</string>
 </resources>

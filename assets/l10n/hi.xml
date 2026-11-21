@@ -4398,4 +4398,7 @@
     <string name="outboxEmpty">सभी संदेश भेज दिए गए</string>
     <string name="tagNewLine">नई पंक्ति</string>
     <string name="moveDown">नीचे ले जाएँ</string>
+    <string name="threadNewer">नए संदेश: {n}</string>
+    <string name="threadOlder">पुराने संदेश: {n}</string>
+    <string name="threadOpenAll">पूरी बातचीत</string>
 </resources>

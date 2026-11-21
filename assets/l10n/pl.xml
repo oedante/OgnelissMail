@@ -4440,4 +4440,7 @@
     <string name="outboxEmpty">Wszystkie wiadomości wysłane</string>
     <string name="tagNewLine">Nowa linia</string>
     <string name="moveDown">Niżej</string>
+    <string name="threadNewer">Nowsze wiadomości: {n}</string>
+    <string name="threadOlder">Wcześniejsze wiadomości: {n}</string>
+    <string name="threadOpenAll">Cała rozmowa</string>
 </resources>

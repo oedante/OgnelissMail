@@ -4482,4 +4482,7 @@
     <string name="outboxEmpty">تم إرسال جميع الرسائل</string>
     <string name="tagNewLine">سطر جديد</string>
     <string name="moveDown">نقل لأسفل</string>
+    <string name="threadNewer">رسائل أحدث: {n}</string>
+    <string name="threadOlder">رسائل أقدم: {n}</string>
+    <string name="threadOpenAll">المحادثة كاملة</string>
 </resources>

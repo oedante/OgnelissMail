@@ -4398,4 +4398,7 @@
     <string name="outboxEmpty">Kaikki viestit lähetetty</string>
     <string name="tagNewLine">Uusi rivi</string>
     <string name="moveDown">Siirrä alas</string>
+    <string name="threadNewer">Uudemmat viestit: {n}</string>
+    <string name="threadOlder">Aiemmat viestit: {n}</string>
+    <string name="threadOpenAll">Koko keskustelu</string>
 </resources>

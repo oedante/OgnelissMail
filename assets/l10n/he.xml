@@ -4419,4 +4419,7 @@
     <string name="outboxEmpty">כל ההודעות נשלחו</string>
     <string name="tagNewLine">שורה חדשה</string>
     <string name="moveDown">הזזה למטה</string>
+    <string name="threadNewer">הודעות חדשות יותר: {n}</string>
+    <string name="threadOlder">הודעות קודמות: {n}</string>
+    <string name="threadOpenAll">כל השיחה</string>
 </resources>

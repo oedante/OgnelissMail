@@ -4398,4 +4398,7 @@
     <string name="outboxEmpty">Minden üzenet elküldve</string>
     <string name="tagNewLine">Új sor</string>
     <string name="moveDown">Lejjebb</string>
+    <string name="threadNewer">Újabb üzenetek: {n}</string>
+    <string name="threadOlder">Korábbi üzenetek: {n}</string>
+    <string name="threadOpenAll">Teljes beszélgetés</string>
 </resources>

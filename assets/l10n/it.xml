@@ -4395,4 +4395,5 @@
     <string name="googleServicesConnected">Calendario e Contatti Google collegati</string>
     <string name="fwdContactGroup">Gruppo di contatti</string>
     <string name="saveGroup">Salva gruppo</string>
+    <string name="outboxEmpty">Tutti i messaggi inviati</string>
 </resources>

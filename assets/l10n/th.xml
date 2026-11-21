@@ -4374,4 +4374,5 @@
     <string name="googleServicesConnected">เชื่อมต่อปฏิทินและรายชื่อติดต่อ Google แล้ว</string>
     <string name="fwdContactGroup">กลุ่มรายชื่อติดต่อ</string>
     <string name="saveGroup">บันทึกกลุ่ม</string>
+    <string name="outboxEmpty">ส่งข้อความทั้งหมดแล้ว</string>
 </resources>

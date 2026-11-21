@@ -10,6 +10,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show File;
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/logging/app_logger.dart';
@@ -71,6 +72,17 @@ final offlineSendProvider = Provider<OfflineSendService>((ref) {
   return OfflineSendService(ref);
 });
 
+/// Письмо, которое отправляется прямо сейчас без очереди (окно отмены
+/// выключено): в «Исходящих» — «Отправляется…», пока сервер не принял.
+class OutboxSending {
+  final String id;
+  final String accountId;
+  final String subject;
+  final String to;
+  final DateTime startedAt;
+  const OutboxSending({required this.id, required this.accountId, required this.subject, required this.to, required this.startedAt});
+}
+
 class OfflineSendService {
   final Ref _ref;
 
@@ -81,6 +93,9 @@ class OfflineSendService {
   static const int maxQueueBytes = 200 * 1024 * 1024;
 
   OfflineSendService(this._ref);
+
+  /// Отправляемые сейчас без очереди — для «Исходящих» (21.11.2026).
+  final ValueNotifier<List<OutboxSending>> sendingNow = ValueNotifier(const []);
 
   /// Строки для пользователя (уведомления, причина в «не отправлено») на языке
   /// интерфейса: BuildContext в сервисе нет, язык берём из настроек.
@@ -186,11 +201,24 @@ class OfflineSendService {
         }
 
         final transport = _ref.read(mailTransportFactoryProvider).forAccount(account);
-        await transport.send(account, to: to, cc: cc, bcc: bcc,
-            subject: subject, bodyHtml: bodyHtml, inReplyTo: inReplyTo, attachments: all, importance: importance, sensitivity: sensitivity,
-            from: from, clientId: clientId,
-            requestDeliveryReport: requestDeliveryReport,
-            requestReadReceipt: requestReadReceipt);
+        // В «Исходящих» — пока сервер не принял (как в Outlook).
+        final now = OutboxSending(
+          id: clientId,
+          accountId: accountId,
+          subject: subject,
+          to: [for (final r in to) (r.displayName ?? '').trim().isNotEmpty ? r.displayName!.trim() : r.email].join(', '),
+          startedAt: DateTime.now(),
+        );
+        sendingNow.value = [...sendingNow.value, now];
+        try {
+          await transport.send(account, to: to, cc: cc, bcc: bcc,
+              subject: subject, bodyHtml: bodyHtml, inReplyTo: inReplyTo, attachments: all, importance: importance, sensitivity: sensitivity,
+              from: from, clientId: clientId,
+              requestDeliveryReport: requestDeliveryReport,
+              requestReadReceipt: requestReadReceipt);
+        } finally {
+          sendingNow.value = [for (final x in sendingNow.value) if (x.id != clientId) x];
+        }
 
         AppLogger.info('Email sent: $subject');
         _afterSent(account);
@@ -1022,12 +1050,57 @@ class OfflineSendService {
     return l10n.tr('sendTooLargeServer').replaceAll('{mb}', e.limitBytes == null ? '?' : mb(e.limitBytes!));
   }
 
+  /// «Отменить» в «Исходящих» (21.11.2026): письмо больше не отправляется и
+  /// возвращается в «Черновики» — с адресатами, текстом и файлами. Письмо,
+  /// которое уже отправляется, отменить нельзя — null.
+  /// Возвращает id черновика.
+  Future<String?> cancelToDraft(SyncQueueData op) async {
+    // Отсчёт перед отправкой: письмо уже лежит в «Исходящих» строкой
+    // базы — она и становится черновиком.
+    if (op.targetId.startsWith('undosend_') && op.operationType != 'send_failed') {
+      return await cancelUndoSend(op.targetId) ? op.targetId : null;
+    }
+    _undoTimers.remove(op.targetId)?.cancel();
+    final db = _ref.read(databaseProvider);
+    // Сначала убрать из очереди — только если отправка ещё не началась.
+    final removed = await (db.delete(db.syncQueue)
+          ..where((q) => q.id.equals(op.id) & q.operationType.isIn(const ['send_email', 'send_pending', 'send_failed'])))
+        .go();
+    if (removed == 0) return null;
+    final id = await _queuedToDraft(op);
+    if (id == null) {
+      // Черновик не записался — письмо не теряем: обратно в «Исходящие»
+      // неотправленным, чтобы его было видно.
+      await db.into(db.syncQueue).insert(SyncQueueCompanion.insert(
+            accountId: op.accountId,
+            operationType: 'send_failed',
+            targetId: op.targetId,
+            payloadJson: op.payloadJson,
+            createdAt: op.createdAt,
+            errorMessage: Value(op.errorMessage),
+          ));
+      return null;
+    }
+    await (db.delete(db.emails)..where((e) => e.id.equals(op.targetId))).go();
+    return id;
+  }
+
   /// «В черновики» для неотправленного письма (1.7.2+114): письмо из
   /// очереди становится черновиком того же ящика — с адресатами, текстом и
   /// файлами; там его можно поправить (уменьшить фото) и отправить снова.
   /// Возвращает id черновика или null, если не вышло.
   Future<String?> failedToDraft(SyncQueueData op) async {
     final db = _ref.read(databaseProvider);
+    final id = await _queuedToDraft(op);
+    if (id == null) return null;
+    await (db.delete(db.syncQueue)..where((q) => q.id.equals(op.id))).go();
+    await (db.delete(db.emails)..where((e) => e.id.equals(op.targetId))).go();
+    AppLogger.info('Неотправленное письмо — в черновики: queueId=${op.id} → $id');
+    return id;
+  }
+
+  /// Черновик из записи очереди; не вышло — null.
+  Future<String?> _queuedToDraft(SyncQueueData op) async {
     try {
       final p = jsonDecode(op.payloadJson) as Map<String, dynamic>;
       List<Map<String, String>> rcpt(Object? v) => [
@@ -1053,9 +1126,6 @@ class OfflineSendService {
         files: _draftFilesOf(op.payloadJson),
       );
       if (!await _ref.read(draftAutosaveProvider).saveStandalone(draft)) return null;
-      await (db.delete(db.syncQueue)..where((q) => q.id.equals(op.id))).go();
-      await (db.delete(db.emails)..where((e) => e.id.equals(op.targetId))).go();
-      AppLogger.info('Неотправленное письмо — в черновики: queueId=${op.id} → $id');
       return id;
     } catch (e) {
       AppLogger.warning('Неотправленное письмо в черновики не перенесено: $e');

@@ -4479,4 +4479,5 @@
     <string name="googleServicesConnected">تم ربط تقويم Google وجهات الاتصال</string>
     <string name="fwdContactGroup">مجموعة جهات اتصال</string>
     <string name="saveGroup">حفظ المجموعة</string>
+    <string name="outboxEmpty">تم إرسال جميع الرسائل</string>
 </resources>

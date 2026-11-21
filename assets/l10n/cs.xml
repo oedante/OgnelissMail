@@ -4416,4 +4416,5 @@
     <string name="googleServicesConnected">Kalendář a kontakty Google připojeny</string>
     <string name="fwdContactGroup">Skupina kontaktů</string>
     <string name="saveGroup">Uložit skupinu</string>
+    <string name="outboxEmpty">Všechny zprávy odeslány</string>
 </resources>

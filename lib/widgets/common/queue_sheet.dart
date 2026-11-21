@@ -26,21 +26,12 @@ import 'package:intl/intl.dart';
 import '../../data/database/app_database.dart';
 import '../../data/providers/database_provider.dart';
 import '../../features/mail/providers/mail_providers.dart';
+import '../../features/mail/screens/outbox_screen.dart' show outboxSendTypes;
 import '../../l10n/app_localizations.dart';
 import '../../services/mail/offline_send_service.dart';
 import '../../services/sync/sync_service.dart';
 
-const _sendTypes = {'send_email', 'send_pending', 'send_inflight', 'send_failed'};
-
-/// Писем в очереди на отправку — папка «Исходящие» в меню (просьба
-/// владельца 21.11.2026: «папка „Исходящие“, как в Outlook, где видна
-/// очередь на отправку»).
-final outboxCountProvider = StreamProvider<int>((ref) {
-  final db = ref.watch(databaseProvider);
-  return (db.select(db.syncQueue)..where((q) => q.operationType.isIn(_sendTypes)))
-      .watch()
-      .map((rows) => rows.length);
-});
+const _sendTypes = outboxSendTypes;
 
 Future<void> showQueueSheet(BuildContext context) async {
   // Записи удалённых аккаунтов никому не нужны и только держат счётчик.

@@ -4395,4 +4395,5 @@
     <string name="googleServicesConnected">Google Kalender und Kontakte verbunden</string>
     <string name="fwdContactGroup">Kontaktgruppe</string>
     <string name="saveGroup">Gruppe speichern</string>
+    <string name="outboxEmpty">Alle Nachrichten gesendet</string>
 </resources>

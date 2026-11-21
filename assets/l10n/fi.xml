@@ -4395,4 +4395,5 @@
     <string name="googleServicesConnected">Google-kalenteri ja -yhteystiedot yhdistetty</string>
     <string name="fwdContactGroup">Yhteystietoryhmä</string>
     <string name="saveGroup">Tallenna ryhmä</string>
+    <string name="outboxEmpty">Kaikki viestit lähetetty</string>
 </resources>

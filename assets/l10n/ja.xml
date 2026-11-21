@@ -4374,4 +4374,5 @@
     <string name="googleServicesConnected">Google カレンダーと連絡先を接続しました</string>
     <string name="fwdContactGroup">連絡先グループ</string>
     <string name="saveGroup">グループを保存</string>
+    <string name="outboxEmpty">すべてのメールを送信しました</string>
 </resources>

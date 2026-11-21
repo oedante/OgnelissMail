@@ -4374,4 +4374,5 @@
     <string name="googleServicesConnected">Đã kết nối Lịch và Danh bạ Google</string>
     <string name="fwdContactGroup">Nhóm liên hệ</string>
     <string name="saveGroup">Lưu nhóm</string>
+    <string name="outboxEmpty">Đã gửi tất cả thư</string>
 </resources>

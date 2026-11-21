@@ -4395,4 +4395,5 @@
     <string name="googleServicesConnected">Google कैलेंडर और संपर्क जुड़ गए</string>
     <string name="fwdContactGroup">संपर्क समूह</string>
     <string name="saveGroup">समूह सहेजें</string>
+    <string name="outboxEmpty">सभी संदेश भेज दिए गए</string>
 </resources>

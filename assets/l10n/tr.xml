@@ -4395,4 +4395,5 @@
     <string name="googleServicesConnected">Google Takvim ve Kişiler bağlandı</string>
     <string name="fwdContactGroup">Kişi grubu</string>
     <string name="saveGroup">Grubu kaydet</string>
+    <string name="outboxEmpty">Tüm iletiler gönderildi</string>
 </resources>

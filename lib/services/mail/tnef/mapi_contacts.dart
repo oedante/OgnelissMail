@@ -17,7 +17,21 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import '../dav/vcard_parser.dart';
-import 'tnef_props.dart';
+
+/// Свойства MAPI письма — из TNEF (winmail.dat) или из файла Outlook .msg.
+abstract interface class MapiPropSource {
+  /// Класс письма: IPM.Note, IPM.Contact, IPM.DistList…
+  String? get messageClass;
+
+  /// Строковое свойство по номеру.
+  String? string(int id);
+
+  /// Строковое именованное свойство набора PSETID_Address.
+  String? namedString(int lid);
+
+  /// Многозначное двоичное именованное свойство набора PSETID_Address.
+  List<Uint8List> namedBinaries(int lid);
+}
 
 /// Пересланная группа контактов: имя и участники.
 class ContactGroupCard {
@@ -42,7 +56,7 @@ class MapiContacts {
       (messageClass ?? '').toLowerCase().startsWith('ipm.contact');
 
   /// Группа контактов из свойств письма; не группа или пустая — null.
-  static ContactGroupCard? group(TnefProps p) {
+  static ContactGroupCard? group(MapiPropSource p) {
     if (!isGroup(p.messageClass)) return null;
     final name = [p.namedString(_lidDlName), p.string(0x3001), p.string(0x0037)]
             .firstWhere((s) => s != null && s.trim().isNotEmpty, orElse: () => null)
@@ -71,7 +85,7 @@ class MapiContacts {
   }
 
   /// Контакт из свойств письма; не контакт или без адреса и телефона — null.
-  static VCardData? contact(TnefProps p) {
+  static VCardData? contact(MapiPropSource p) {
     if (!isContact(p.messageClass)) return null;
     String? s(int id) {
       final v = p.string(id)?.trim();
@@ -154,5 +168,89 @@ class MapiContacts {
     if (!_starts(b, 4, _wrappedUid) || b.length < 21) return null;
     if (b[20] & 0x0F != 0) return null;
     return oneOff(Uint8List.sublistView(b, 21));
+  }
+
+  // ── vCard: группа и контакты файлом .vcf ──
+  //
+  // Вложенное письмо Outlook (.msg внутри .msg) показывается как .eml:
+  // группа и контакты едут в нём файлом .vcf (формат — как у «Переслать
+  // группу», contact_groups_screen.dart), а EmlReader читает их обратно.
+
+  static String _esc(String v) =>
+      v.replaceAll('\\', '\\\\').replaceAll(',', '\\,').replaceAll(';', '\\;').replaceAll('\n', '\\n');
+
+  static String toVcf({ContactGroupCard? group, List<VCardData> contacts = const []}) {
+    final b = StringBuffer();
+    if (group != null) {
+      b
+        ..write('BEGIN:VCARD\r\nVERSION:4.0\r\nKIND:group\r\n')
+        ..write('FN:${_esc(group.name)}\r\n');
+      for (final m in group.members) {
+        b.write('MEMBER:mailto:${m.email}\r\n');
+      }
+      b.write('END:VCARD\r\n');
+      for (final m in group.members) {
+        b
+          ..write('BEGIN:VCARD\r\nVERSION:4.0\r\n')
+          ..write('FN:${_esc(m.name.isEmpty ? m.email : m.name)}\r\n')
+          ..write('EMAIL;TYPE=work:${m.email}\r\n')
+          ..write('END:VCARD\r\n');
+      }
+    }
+    for (final c in contacts) {
+      b
+        ..write('BEGIN:VCARD\r\nVERSION:4.0\r\n')
+        ..write('FN:${_esc(c.displayName)}\r\n');
+      if ((c.family ?? '').isNotEmpty || (c.given ?? '').isNotEmpty) {
+        b.write('N:${_esc(c.family ?? '')};${_esc(c.given ?? '')};${_esc(c.middle ?? '')};;\r\n');
+      }
+      for (final e in c.emails.isEmpty && c.email.isNotEmpty ? [c.email] : c.emails) {
+        b.write('EMAIL;TYPE=work:$e\r\n');
+      }
+      if ((c.phoneWork ?? '').isNotEmpty) b.write('TEL;TYPE=work:${c.phoneWork}\r\n');
+      if ((c.phoneMobile ?? '').isNotEmpty) b.write('TEL;TYPE=cell:${c.phoneMobile}\r\n');
+      if ((c.org ?? '').isNotEmpty) b.write('ORG:${_esc(c.org!)}\r\n');
+      if ((c.title ?? '').isNotEmpty) b.write('TITLE:${_esc(c.title!)}\r\n');
+      b.write('END:VCARD\r\n');
+    }
+    return b.toString();
+  }
+
+  /// Группа (карточка KIND:group) и контакты из .vcf. В файле с группой
+  /// карточки участников — её часть, отдельными контактами не считаются.
+  static ({ContactGroupCard? group, List<VCardData> contacts}) fromVcf(String text) {
+    final unfolded = text.replaceAll(RegExp(r'\r?\n[ \t]'), '');
+    final cards = RegExp(r'BEGIN:VCARD(.*?)END:VCARD', dotAll: true, caseSensitive: false)
+        .allMatches(unfolded)
+        .map((m) => m.group(1)!)
+        .toList();
+    final groupCard = cards.where((c) => RegExp(r'^KIND:group', multiLine: true, caseSensitive: false).hasMatch(c)).firstOrNull;
+    if (groupCard == null) {
+      final contacts = VCardParser.parse(text)
+          .where((c) => c.email.isNotEmpty || (c.phoneMobile ?? '').isNotEmpty || (c.phoneWork ?? '').isNotEmpty)
+          .toList();
+      return (group: null, contacts: contacts);
+    }
+    String? prop(String card, String name) {
+      final m = RegExp('^$name(?:;[^:\\n]*)?:(.*)\$', multiLine: true, caseSensitive: false).firstMatch(card);
+      return m?.group(1)?.trim().replaceAll('\\,', ',').replaceAll('\\;', ';').replaceAll('\\n', ' ');
+    }
+
+    final names = <String, String>{};
+    for (final c in cards) {
+      if (identical(c, groupCard)) continue;
+      final e = prop(c, 'EMAIL')?.toLowerCase();
+      final fn = prop(c, 'FN');
+      if (e != null && fn != null && fn.toLowerCase() != e) names[e] = fn;
+    }
+    final members = <({String name, String email})>[];
+    final seen = <String>{};
+    for (final m in RegExp(r'^MEMBER(?:;[^:\n]*)?:(?:mailto:)?(.+)$', multiLine: true, caseSensitive: false)
+        .allMatches(groupCard)) {
+      final e = m.group(1)!.trim();
+      if (_isSmtp(e) && seen.add(e.toLowerCase())) members.add((name: names[e.toLowerCase()] ?? '', email: e));
+    }
+    if (members.isEmpty) return (group: null, contacts: const <VCardData>[]);
+    return (group: ContactGroupCard(name: prop(groupCard, 'FN') ?? '', members: members), contacts: const <VCardData>[]);
   }
 }

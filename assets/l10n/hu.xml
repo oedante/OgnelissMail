@@ -4395,4 +4395,5 @@
     <string name="googleServicesConnected">Google Naptár és Névjegyek csatlakoztatva</string>
     <string name="fwdContactGroup">Névjegycsoport</string>
     <string name="saveGroup">Csoport mentése</string>
+    <string name="outboxEmpty">Minden üzenet elküldve</string>
 </resources>

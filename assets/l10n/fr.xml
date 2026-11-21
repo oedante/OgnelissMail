@@ -4395,4 +4395,5 @@
     <string name="googleServicesConnected">Google Agenda et Contacts connectés</string>
     <string name="fwdContactGroup">Groupe de contacts</string>
     <string name="saveGroup">Enregistrer le groupe</string>
+    <string name="outboxEmpty">Tous les messages ont été envoyés</string>
 </resources>

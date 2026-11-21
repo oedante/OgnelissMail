@@ -4374,4 +4374,5 @@
     <string name="googleServicesConnected">Kalender dan Kontak Google terhubung</string>
     <string name="fwdContactGroup">Grup kontak</string>
     <string name="saveGroup">Simpan grup</string>
+    <string name="outboxEmpty">Semua pesan terkirim</string>
 </resources>

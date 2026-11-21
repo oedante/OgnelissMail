@@ -4437,4 +4437,5 @@
     <string name="googleServicesConnected">Kalendarz i Kontakty Google połączone</string>
     <string name="fwdContactGroup">Grupa kontaktów</string>
     <string name="saveGroup">Zapisz grupę</string>
+    <string name="outboxEmpty">Wszystkie wiadomości wysłane</string>
 </resources>

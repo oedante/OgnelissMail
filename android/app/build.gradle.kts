@@ -122,7 +122,10 @@ dependencies {
 // Снятие базового профиля на телефоне (docs/guides/BASELINE_PROFILE.md).
 // Плагин подключается только по запросу: обычной сборке он не нужен, а
 // профиль, снятый однажды, лежит в src/release/generated/baselineProfiles.
-if (providers.gradleProperty("ogneliss.baselineProfile").orNull == "true") {
+// Флаг — как в settings.gradle.kts (и без точки, для PowerShell).
+if (providers.gradleProperty("ogneliss.baselineProfile").orNull == "true" ||
+    providers.gradleProperty("ognelissBaselineProfile").orNull == "true" ||
+    providers.environmentVariable("OGNELISS_BASELINE_PROFILE").orNull == "1") {
     apply(plugin = "androidx.baselineprofile")
     dependencies {
         add("baselineProfile", project(":baselineprofile"))

@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/logging/app_logger.dart';
-import '../../data/models/account_model.dart' show AccountType;
+import '../../data/models/account_model.dart' show AccountModel, AccountType;
 import '../../data/models/folder_model.dart' show FolderType;
 import '../../data/providers/database_provider.dart' show databaseProvider;
 import '../../services/security/sender_safety_service.dart' show SenderSafetyService;
@@ -22,16 +22,20 @@ import 'person_photo.dart' show PhotoRing;
 /// Домены серверов ящиков пользователя: логотипу верим, только если
 /// Authentication-Results поставил один из них (2.0.0).
 ///
-/// Ящики Google (Gmail и Google Workspace) сюда не входят (2.5.5): у их
-/// писем логотип не ищется, и домены отправителей из Gmail на сервер
-/// Ogneliss не уходят — данные пользователей Google остаются на устройстве.
-/// Рабочая почта Exchange — тоже (2.6.1, правило владельца: с рабочей
-/// почтой серверы Ogneliss не используются).
-final bimiOwnServersProvider = Provider<Set<String>>((ref) => ownMailServerDomains([
-      for (final a in ref.watch(accountsProvider))
-        if (!a.isMsExchange && !isGoogleMailbox(a.type, [a.imapServer, a.smtpServer]))
-          (email: a.email, hosts: [a.imapServer, a.ewsUrl, a.exchangeServer, a.smtpServer]),
-    ]));
+/// Все ящики, кроме рабочей почты Exchange (2.6.1, правило владельца: с
+/// рабочей почтой серверы Ogneliss не используются). Ящики Google — снова
+/// здесь (2.6.8, решение владельца 21.11.2026: «BIMI включаем для Gmail и
+/// вообще любых IMAP»): с 2.6.7 почта Gmail идёт по IMAP с паролем
+/// приложения, а не через вход Google, и правила Google к данным, полученным
+/// входом Google, к письмам больше не относятся. С 2.5.5 по 2.6.7 у писем
+/// Gmail логотип не искался — поэтому BIMI почти никогда не срабатывал.
+final bimiOwnServersProvider = Provider<Set<String>>((ref) => bimiOwnServers(ref.watch(accountsProvider)));
+
+/// Серверы ящиков для логотипов BIMI: все, кроме рабочей почты Exchange.
+Set<String> bimiOwnServers(List<AccountModel> accounts) => ownMailServerDomains([
+      for (final a in accounts)
+        if (!a.isMsExchange) (email: a.email, hosts: [a.imapServer, a.ewsUrl, a.exchangeServer, a.smtpServer]),
+    ]);
 
 /// Серверы ящиков, чьей проверке отправителя верим для значков сайтов
 /// (2.6.1): все ящики, кроме рабочей почты Exchange. Ящики Google здесь

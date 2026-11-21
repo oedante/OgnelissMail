@@ -24,7 +24,8 @@ import 'site_icon_service.dart';
 typedef OrgIcon = ({String? svg, Uint8List? png});
 
 /// Для чего искать: домен для BIMI ([bimi], null — BIMI для этого письма
-/// не спрашивается: ящик Google) и домен для значка сайта ([site]).
+/// не спрашивается: рабочая почта Exchange) и домен для значка сайта
+/// ([site]).
 typedef OrgIconKey = ({String? bimi, String? site});
 
 /// Цепочка: сохранённое → BIMI → сайт.

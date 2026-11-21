@@ -4485,4 +4485,5 @@
     <string name="threadNewer">رسائل أحدث: {n}</string>
     <string name="threadOlder">رسائل أقدم: {n}</string>
     <string name="threadOpenAll">المحادثة كاملة</string>
+    <string name="calFree2Weeks">الأسبوعان القادمان متاحان</string>
 </resources>

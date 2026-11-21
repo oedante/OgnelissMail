@@ -4443,4 +4443,5 @@
     <string name="threadNewer">Более новые письма: {n}</string>
     <string name="threadOlder">Более ранние письма: {n}</string>
     <string name="threadOpenAll">Вся беседа</string>
+    <string name="calFree2Weeks">Ближайшие 2 недели свободны</string>
 </resources>

@@ -409,8 +409,13 @@ class _OutboxListState extends ConsumerState<OutboxList> {
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error)),
           ),
+        // Кнопки — справа; не помещаются — переносится последняя, а не все
+        // три столбиком, как у OverflowBar (лента на компьютере ~400 точек,
+        // снимок v268_outbox_desktop).
         if (item.cancellable)
-          OverflowBar(alignment: MainAxisAlignment.end, children: [
+          SizedBox(
+            width: double.infinity,
+            child: Wrap(alignment: WrapAlignment.end, crossAxisAlignment: WrapCrossAlignment.center, children: [
             TextButton(
               key: ValueKey('outbox_cancel_${item.queueId}'),
               onPressed: busy ? null : () => _cancel(item),
@@ -425,6 +430,7 @@ class _OutboxListState extends ConsumerState<OutboxList> {
               child: Text(l10n.tr(item.failed ? 'queueSendAgain' : 'queueSendNow')),
             ),
           ]),
+          ),
       ]),
     );
 

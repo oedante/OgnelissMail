@@ -4422,4 +4422,5 @@
     <string name="threadNewer">הודעות חדשות יותר: {n}</string>
     <string name="threadOlder">הודעות קודמות: {n}</string>
     <string name="threadOpenAll">כל השיחה</string>
+    <string name="calFree2Weeks">השבועיים הקרובים פנויים</string>
 </resources>

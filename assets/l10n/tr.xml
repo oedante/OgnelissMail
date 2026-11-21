@@ -4401,4 +4401,5 @@
     <string name="threadNewer">Daha yeni iletiler: {n}</string>
     <string name="threadOlder">Daha eski iletiler: {n}</string>
     <string name="threadOpenAll">Tüm konuşma</string>
+    <string name="calFree2Weeks">Önümüzdeki 2 hafta boş</string>
 </resources>

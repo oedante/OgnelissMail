@@ -4422,4 +4422,5 @@
     <string name="threadNewer">Novější zprávy: {n}</string>
     <string name="threadOlder">Starší zprávy: {n}</string>
     <string name="threadOpenAll">Celá konverzace</string>
+    <string name="calFree2Weeks">Příští 2 týdny jsou volné</string>
 </resources>

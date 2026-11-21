@@ -4380,4 +4380,5 @@
     <string name="threadNewer">较新的邮件：{n}</string>
     <string name="threadOlder">较早的邮件：{n}</string>
     <string name="threadOpenAll">整个会话</string>
+    <string name="calFree2Weeks">未来 2 周没有安排</string>
 </resources>

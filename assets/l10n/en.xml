@@ -4401,4 +4401,5 @@
     <string name="threadNewer">Newer messages: {n}</string>
     <string name="threadOlder">Earlier messages: {n}</string>
     <string name="threadOpenAll">Whole conversation</string>
+    <string name="calFree2Weeks">The next 2 weeks are free</string>
 </resources>

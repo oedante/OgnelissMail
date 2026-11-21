@@ -4380,4 +4380,5 @@
     <string name="threadNewer">Thư mới hơn: {n}</string>
     <string name="threadOlder">Thư cũ hơn: {n}</string>
     <string name="threadOpenAll">Toàn bộ cuộc hội thoại</string>
+    <string name="calFree2Weeks">2 tuần tới đều trống</string>
 </resources>

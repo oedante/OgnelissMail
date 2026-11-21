@@ -4380,4 +4380,5 @@
     <string name="threadNewer">최근 메시지: {n}</string>
     <string name="threadOlder">이전 메시지: {n}</string>
     <string name="threadOpenAll">전체 대화</string>
+    <string name="calFree2Weeks">앞으로 2주는 일정이 없습니다</string>
 </resources>

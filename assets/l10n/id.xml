@@ -4380,4 +4380,5 @@
     <string name="threadNewer">Pesan lebih baru: {n}</string>
     <string name="threadOlder">Pesan sebelumnya: {n}</string>
     <string name="threadOpenAll">Seluruh percakapan</string>
+    <string name="calFree2Weeks">2 minggu ke depan kosong</string>
 </resources>

@@ -4401,4 +4401,5 @@
     <string name="threadNewer">Uudemmat viestit: {n}</string>
     <string name="threadOlder">Aiemmat viestit: {n}</string>
     <string name="threadOpenAll">Koko keskustelu</string>
+    <string name="calFree2Weeks">Seuraavat 2 viikkoa ovat vapaita</string>
 </resources>

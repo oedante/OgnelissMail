@@ -4401,4 +4401,5 @@
     <string name="threadNewer">नए संदेश: {n}</string>
     <string name="threadOlder">पुराने संदेश: {n}</string>
     <string name="threadOpenAll">पूरी बातचीत</string>
+    <string name="calFree2Weeks">अगले 2 सप्ताह खाली हैं</string>
 </resources>

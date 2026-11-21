@@ -4401,4 +4401,5 @@
     <string name="threadNewer">Nyere beskeder: {n}</string>
     <string name="threadOlder">Tidligere beskeder: {n}</string>
     <string name="threadOpenAll">Hele samtalen</string>
+    <string name="calFree2Weeks">De næste 2 uger er ledige</string>
 </resources>

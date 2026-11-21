@@ -4380,4 +4380,5 @@
     <string name="threadNewer">新しいメッセージ: {n}</string>
     <string name="threadOlder">以前のメッセージ: {n}</string>
     <string name="threadOpenAll">スレッド全体</string>
+    <string name="calFree2Weeks">今後 2 週間は予定がありません</string>
 </resources>

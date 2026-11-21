@@ -427,6 +427,7 @@ class WindowSendService extends OfflineSendService {
     bool keepTooLarge = false,
     bool requestDeliveryReport = false,
     bool requestReadReceipt = false,
+    bool showInConversation = true,
   }) async {
     final r = await MessageWindow.request('composeSend', {
       'accountId': accountId,
@@ -484,6 +485,7 @@ class WindowSendService extends OfflineSendService {
     EmailAddress? from,
     bool requestDeliveryReport = false,
     bool requestReadReceipt = false,
+    bool showInConversation = true,
   }) async {
     final r = await MessageWindow.request('composeSendUndo', {
       'accountId': accountId,

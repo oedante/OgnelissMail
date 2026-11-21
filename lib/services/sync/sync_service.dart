@@ -89,6 +89,7 @@ import 'imap_push_service.dart' show imapPushServiceProvider;
 import 'offline_store_service.dart';
 import '../mail/attachment_cache_service.dart';
 import '../mail/ews/ews_delta_sync.dart';
+import '../mail/sent_placeholder.dart';
 import '../../data/providers/shared_prefs_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../mail/shared_access.dart';
@@ -329,6 +330,19 @@ class SyncService {
       }
 
       _finishStatus(activeAccounts);
+      // Временные строки отправленных писем (2.6.8, замечание владельца
+      // 21.11.2026: «дублирование писем в беседах»): раньше их убирали только
+      // три попытки обновить «Отправленные» через 3, 15 и 45 с после
+      // отправки — не успела серверная копия, и строка оставалась навсегда
+      // рядом с ней (срок 30 минут проверялся там же). Теперь — после каждой
+      // синхронизации.
+      for (final a in activeAccounts) {
+        try {
+          await SentPlaceholder.dropReplaced(_ref.read(databaseProvider), a.id);
+        } catch (e) {
+          AppLogger.debug('Временные строки отправленных: $e');
+        }
+      }
       // Черновики, сохранённые без сети, — в серверные «Черновики».
       final drafts = _ref.read(draftSyncServiceProvider).uploadPending().catchError((_) {});
       // С сервера могли прийти новые встречи и задачи — перевыставляем
@@ -966,45 +980,11 @@ class SyncService {
     Future.delayed(const Duration(seconds: 3), () => attempt(0));
   }
 
-  /// Временные строки быстрых ответов (id «qr_…», 1.7.1): ответ из строки
-  /// внизу письма или беседы виден в беседе сразу, а не после синхронизации
-  /// «Отправленных». Строка убирается, когда пришла серверная копия (то же
-  /// письмо в той же папке: тема и время), и в любом случае через 30 минут.
-  /// Возвращает, сколько временных строк осталось.
-  static Future<int> dropQuickReplyPlaceholders(AppDatabase db, String accountId) async {
-    final rows = await db.customSelect(
-      "SELECT id, folder_id, subject, received_at FROM emails WHERE account_id = ? AND id LIKE 'qr\\_%' ESCAPE '\\'",
-      variables: [Variable.withString(accountId)],
-      readsFrom: {db.emails},
-    ).get();
-    var left = 0;
-    final now = DateTime.now();
-    for (final r in rows) {
-      final id = r.read<String>('id');
-      final at = r.read<DateTime>('received_at');
-      var drop = now.difference(at) > const Duration(minutes: 30);
-      if (!drop) {
-        final real = await db.customSelect(
-          "SELECT 1 FROM emails WHERE account_id = ? AND folder_id = ? AND id NOT LIKE 'qr\\_%' ESCAPE '\\' "
-          'AND lower(subject) = lower(?) AND received_at >= ? LIMIT 1',
-          variables: [
-            Variable.withString(accountId),
-            Variable.withString(r.read<String>('folder_id')),
-            Variable.withString(r.read<String>('subject')),
-            Variable.withDateTime(at.subtract(const Duration(minutes: 5))),
-          ],
-          readsFrom: {db.emails},
-        ).getSingleOrNull();
-        drop = real != null;
-      }
-      if (drop) {
-        await (db.delete(db.emails)..where((e) => e.id.equals(id) & e.accountId.equals(accountId))).go();
-      } else {
-        left++;
-      }
-    }
-    return left;
-  }
+  /// Временные строки отправленных писем (id «qr_…», 1.7.1; 2.6.8 — и
+  /// из редактора): убираются, когда пришла серверная копия, и в любом
+  /// случае через 30 минут ([SentPlaceholder.dropReplaced]).
+  static Future<int> dropQuickReplyPlaceholders(AppDatabase db, String accountId) =>
+      SentPlaceholder.dropReplaced(db, accountId);
 
   /// Безопасная синхронизация одного аккаунта (не параллельно с другой
   /// синхронизацией того же ящика — ни в этом изоляте, ни в фоновом).

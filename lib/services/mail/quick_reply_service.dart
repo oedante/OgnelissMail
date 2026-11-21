@@ -5,7 +5,7 @@
 // ответов. Через очередь отправки: без связи ответ уйдёт позже, а не
 // пропадёт. Цепочка — References исходного письма и его Message-ID.
 
-import 'dart:convert' show HtmlEscape, jsonEncode;
+import 'dart:convert' show HtmlEscape;
 import 'dart:typed_data' show Uint8List;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,10 +17,10 @@ import 'package:drift/drift.dart' show Value, BooleanExpressionOperators;
 
 import '../../data/database/app_database.dart' show Email, EmailsCompanion;
 import '../../data/models/account_model.dart';
-import '../../data/models/folder_model.dart' show FolderType;
 import '../../data/models/email_model.dart';
 import '../../data/providers/database_provider.dart';
 import 'offline_send_service.dart';
+import 'sent_placeholder.dart';
 import 'signature_service.dart' show SignatureService;
 import '../../core/utils/greeting_helper.dart';
 import '../../l10n/strings_store.dart' show StringsStore;
@@ -82,6 +82,8 @@ class QuickReplyService {
           attachments: attachments,
           // Уведомление о прочтении — как задано для всех писем (2.2.0).
           requestReadReceipt: prefs.getBool(FeatureFlags.readReceiptsKey) ?? false,
+          // Свою временную строку в беседе ставит сам — с набранным текстом.
+          showInConversation: false,
         );
     AppLogger.info('${sent ? 'Быстрый ответ отправлен' : 'Быстрый ответ — в очереди (нет сети)'}'
         '${attachments.isEmpty ? '' : ', вложений: ${attachments.length}'}');
@@ -101,7 +103,7 @@ class QuickReplyService {
   /// засчитывается — надо перезаходить в переписку»): копия в «Отправленных»
   /// приходит с сервера через несколько секунд, а до тех пор — временная
   /// строка «qr_…» в «Отправленных» с беседой исходного письма. Её убирает
-  /// SyncService.dropQuickReplyPlaceholders, когда пришла серверная копия.
+  /// SentPlaceholder.dropReplaced, когда пришла серверная копия.
   /// Исходное письмо — «Отвечено».
   Future<void> _showInConversation(AccountModel account, String? originalEmailId,
       {required List<EmailAddress> to,
@@ -118,35 +120,14 @@ class QuickReplyService {
               ..where((e) => e.id.equals(orig.id) & e.accountId.equals(account.id)))
             .write(const EmailsCompanion(isReplied: Value(true)));
       }
-      final sent = await (db.select(db.folders)
-            ..where((f) => f.accountId.equals(account.id) & f.type.equals(FolderType.sent.index))
-            ..limit(1))
-          .getSingleOrNull();
-      if (sent == null) return;
-      final sentId = sent.id;
-      final now = DateTime.now();
-      List<Map<String, String?>> addrs(List<EmailAddress> l) =>
-          [for (final a in l) {'email': a.email, 'displayName': a.displayName}];
-      await db.into(db.emails).insertOnConflictUpdate(EmailsCompanion.insert(
-            id: 'qr_${now.microsecondsSinceEpoch}',
-            accountId: account.id,
-            folderId: sentId,
-            folderName: Value(sent.displayName),
-            conversationId: Value(orig?.conversationId),
-            fromEmail: account.sharedMailboxEmail?.isNotEmpty == true ? account.sharedMailboxEmail! : account.email,
-            fromName: Value(account.displayName),
-            toRecipients: jsonEncode(addrs(to)),
-            ccJson: Value(cc.isEmpty ? null : jsonEncode(addrs(cc))),
-            subject: subject,
-            bodyHtml: Value(html),
-            bodyPreview: Value(text.length > 200 ? text.substring(0, 200) : text),
-            hasAttachments: Value(hasAttachments),
-            receivedAt: now,
-            sentAt: Value(now),
-            isRead: const Value(true),
-            loadedLevel: const Value(3),
-            cachedAt: Value(now),
-          ));
+      await SentPlaceholder.insert(db, account,
+          conversationId: orig?.conversationId,
+          to: to,
+          cc: cc,
+          subject: subject,
+          html: html,
+          text: text,
+          hasAttachments: hasAttachments);
     } catch (e) {
       AppLogger.debug('Быстрый ответ в беседе: $e');
     }

@@ -4435,4 +4435,6 @@
     <string name="gmailConnectGoogleServices">Kalendarz i Kontakty Google</string>
     <string name="gmailConnectGoogleServicesHint">Otworzy się strona Google: zaloguj się tym samym kontem i zezwól na dostęp do kalendarza i kontaktów. Poczta działa także bez tego.</string>
     <string name="googleServicesConnected">Kalendarz i Kontakty Google połączone</string>
+    <string name="fwdContactGroup">Grupa kontaktów</string>
+    <string name="saveGroup">Zapisz grupę</string>
 </resources>

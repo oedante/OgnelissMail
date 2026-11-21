@@ -4393,4 +4393,6 @@
     <string name="gmailConnectGoogleServices">Agenda e Contatos do Google</string>
     <string name="gmailConnectGoogleServicesHint">Uma página do Google será aberta: entre com a mesma conta e permita o acesso à agenda e aos contatos. O e-mail funciona também sem isso.</string>
     <string name="googleServicesConnected">Agenda e Contatos do Google conectados</string>
+    <string name="fwdContactGroup">Grupo de contatos</string>
+    <string name="saveGroup">Salvar grupo</string>
 </resources>

@@ -203,6 +203,25 @@ class SpecialFolders {
     return b.toString();
   }
 
+  // Черновики, отправленные и корзина — по названию, если сервер не указал
+  // их сам (замечание владельца 21.11.2026: у iCloud папка «Drafts» без
+  // пометки \Drafts была обычной папкой с английским названием).
+  static const _draftsNames = [
+    'Drafts', 'Draft', 'Черновики', 'Entwürfe', 'Brouillons', 'Borradores', 'Bozze', 'Rascunhos',
+    'Concepten', 'Szkice', 'Koncepty', 'Utkast', 'Kladder', 'Luonnokset', 'Piszkozatok', 'Taslaklar',
+  ];
+  static const _sentNames = [
+    'Sent', 'Sent Items', 'Sent Messages', 'Sent Mail', 'Отправленные', 'Gesendet', 'Gesendete Elemente',
+    'Envoyés', 'Éléments envoyés', 'Enviados', 'Posta inviata', 'Verzonden', 'Wysłane', 'Odeslaná pošta',
+  ];
+  static const _trashNames = [
+    'Trash', 'Deleted', 'Deleted Items', 'Deleted Messages', 'Bin', 'Корзина', 'Удаленные', 'Удалённые',
+    'Papierkorb', 'Gelöschte Elemente', 'Corbeille', 'Éléments supprimés', 'Papelera', 'Cestino',
+    'Lixeira', 'Prullenbak', 'Kosz', 'Koš',
+  ];
+  static final Set<String> _drafts = {for (final n in _draftsNames) norm(n)};
+  static final Set<String> _sent = {for (final n in _sentNames) norm(n)};
+  static final Set<String> _trash = {for (final n in _trashNames) norm(n)};
   static final Set<String> _junk = {for (final n in _junkNames) norm(n)};
   static final Set<String> _archive = {for (final n in _archiveNames) norm(n)};
 
@@ -212,6 +231,9 @@ class SpecialFolders {
     if (n.isEmpty) return null;
     if (_junk.contains(n)) return FolderType.junk;
     if (_archive.contains(n)) return FolderType.archive;
+    if (_drafts.contains(n)) return FolderType.drafts;
+    if (_sent.contains(n)) return FolderType.sent;
+    if (_trash.contains(n)) return FolderType.trash;
     return null;
   }
 
@@ -247,6 +269,14 @@ class SpecialFolders {
         continue;
       }
       if (out.any((f) => f.type == t)) continue; // сервер указал сам
+      final found = _byName(out, t, exclude: picked.values.toSet());
+      if (found != null) out[found] = _retype(out[found], t);
+    }
+    // Черновики, отправленные, корзина: только когда сервер такую папку не
+    // указал и папка с этим названием — на верхнем уровне (или во
+    // «Входящих»).
+    for (final t in const [FolderType.drafts, FolderType.sent, FolderType.trash]) {
+      if (out.any((f) => f.type == t)) continue;
       final found = _byName(out, t, exclude: picked.values.toSet());
       if (found != null) out[found] = _retype(out[found], t);
     }

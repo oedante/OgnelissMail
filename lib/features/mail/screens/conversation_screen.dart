@@ -6,6 +6,7 @@
 // Оба экрана подписаны на БД: прочтение, удаление и новое письмо в беседе
 // видны сразу, без перезагрузки.
 
+import '../../../core/utils/subject_prefix.dart';
 import '../../../widgets/common/paging_slop.dart';
 import '../../../widgets/common/undo_strip.dart';
 import '../../../widgets/common/undo_manager.dart';
@@ -694,7 +695,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         final emails = snap.data?.emails.where((e) => !_hidden.contains(e.id)).toList();
         final shown = emails == null ? null : _withDrafts(emails, draftSnap.data, links);
         final copies = snap.data?.copies ?? const <String, List<EmailModel>>{};
-        final subject = (emails != null && emails.isNotEmpty) ? emails.first.subject : '';
+        // Заголовок беседы — без «RE:», «FW:» (21.11.2026).
+        final subject = (emails != null && emails.isNotEmpty) ? SubjectPrefix.display(emails.first.subject) : '';
         final latest = emails == null ? null : _replyTarget(emails);
         final picked = _replyTo == null || emails == null
             ? null

@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'app_sheet.dart';
 import '../../core/theme/tokens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'dart:async';
 import 'package:intl/intl.dart';
 
 import '../../data/database/app_database.dart';
@@ -29,6 +31,16 @@ import '../../services/mail/offline_send_service.dart';
 import '../../services/sync/sync_service.dart';
 
 const _sendTypes = {'send_email', 'send_pending', 'send_inflight', 'send_failed'};
+
+/// Писем в очереди на отправку — папка «Исходящие» в меню (просьба
+/// владельца 21.11.2026: «папка „Исходящие“, как в Outlook, где видна
+/// очередь на отправку»).
+final outboxCountProvider = StreamProvider<int>((ref) {
+  final db = ref.watch(databaseProvider);
+  return (db.select(db.syncQueue)..where((q) => q.operationType.isIn(_sendTypes)))
+      .watch()
+      .map((rows) => rows.length);
+});
 
 Future<void> showQueueSheet(BuildContext context) async {
   // Записи удалённых аккаунтов никому не нужны и только держат счётчик.
@@ -112,6 +124,25 @@ class _QueueSheetState extends ConsumerState<_QueueSheet> {
         ref.read(offlineSendProvider).releaseGatewayHold(op.id);
         await ref.read(offlineSendProvider).processQueue(op.accountId);
       });
+
+  /// «Изменить» (21.11.2026): письмо из очереди — в черновики и сразу в
+  /// окно письма; исправленное отправляется заново как обычно.
+  Future<void> _edit(SyncQueueData op) async {
+    final l10n = AppLocalizations.of(context);
+    String? id;
+    await _run(() async {
+      id = await ref.read(offlineSendProvider).failedToDraft(op);
+    });
+    if (!mounted) return;
+    if (id == null) {
+      setState(() => _note = l10n.tr('queueToDraftsFailed'));
+      return;
+    }
+    final router = GoRouter.of(context);
+    Navigator.of(context).pop();
+    unawaited(router.push('/compose?draftId=${Uri.encodeQueryComponent(id!)}'
+        '&accountId=${Uri.encodeQueryComponent(op.accountId)}'));
+  }
 
   Future<void> _toDrafts(SyncQueueData op) {
     final l10n = AppLocalizations.of(context);
@@ -248,6 +279,20 @@ class _QueueSheetState extends ConsumerState<_QueueSheet> {
       Map<String, String> accounts, SyncQueueData op) {
     final p = _payload(op);
     final subject = (p['subject'] as String?)?.trim() ?? '';
+    // Кому и начало текста — чтобы было видно, что за письмо (21.11.2026).
+    final to = [
+      for (final r in (p['to'] as List?) ?? const [])
+        if (r is Map)
+          ((r['displayName'] as String?)?.trim().isNotEmpty ?? false)
+              ? (r['displayName'] as String).trim()
+              : (r['email'] as String? ?? ''),
+    ].where((s) => s.isNotEmpty).join(', ');
+    final preview = ((p['bodyHtml'] as String?) ?? (p['bodyPlain'] as String?) ?? '')
+        .replaceAll(RegExp(r'<(style|script)[\s\S]*?</\1>', caseSensitive: false), ' ')
+        .replaceAll(RegExp(r'<[^>]*>'), ' ')
+        .replaceAll('&nbsp;', ' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
     final scheduled = DateTime.tryParse(p['scheduledAt'] as String? ?? '');
     final failed = op.operationType == 'send_failed';
     final sending = op.operationType == 'send_inflight';
@@ -276,6 +321,20 @@ class _QueueSheetState extends ConsumerState<_QueueSheet> {
                     maxLines: 2, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleSmall),
               ),
             ]),
+            if (to.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: Space.xxs),
+                child: Text('${l10n.tr('to')}: $to',
+                    maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodySmall),
+              ),
+            if (preview.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: Space.xxs),
+                child: Text(preview,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+              ),
             const SizedBox(height: Space.xs),
             Text('${accounts[op.accountId] ?? ''} · ${fmt.format(op.createdAt.toLocal())} · $status',
                 style: theme.textTheme.bodySmall),
@@ -299,6 +358,10 @@ class _QueueSheetState extends ConsumerState<_QueueSheet> {
                     onPressed: _busy ? null : () => _toDrafts(op),
                     child: Text(l10n.tr('queueToDrafts')),
                   ),
+                TextButton(
+                  onPressed: _busy || sending ? null : () => _edit(op),
+                  child: Text(l10n.tr('edit')),
+                ),
                 FilledButton.tonal(
                   onPressed: _busy || sending ? null : () => _sendNow(op),
                   child: Text(failed ? l10n.tr('queueSendAgain') : l10n.tr('queueSendNow')),

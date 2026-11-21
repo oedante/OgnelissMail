@@ -1689,7 +1689,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// Своё приветствие [template] для нынешних адресатов «Кому»: поля
   /// адресата — на языке приветствия (по имени: кириллица — русский), ваши
   /// поля — из настроек ящика и карточки, время суток — по часам отправки.
-  String _renderCustomGreeting(String template) {
+  String _renderCustomGreeting(String template, {bool anyTime = false}) {
     final acc = _fromAccount;
     final lang = _greetingSet().lang;
     final names = [for (final r in _toRecipients) _fullNames[r.email.toLowerCase()] ?? r.displayName ?? ''];
@@ -1707,6 +1707,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         ownDomains: acc == null ? const {} : OwnAddresses.domains(acc),
       ),
       lang: lang,
+      anyTime: anyTime,
     );
     return MailTags.apply(template, values, cleanup: true);
   }
@@ -1743,7 +1744,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             ),
           // Свои приветствия (18.11.2026) — для нынешних адресатов.
           for (final g in ref.read(customGreetingsProvider).items)
-            if (_renderCustomGreeting(g.text) case final text when text.isNotEmpty)
+            // Подпись — шаблоном: время суток всеми вариантами
+            // («Доброе утро/день/вечер»), строки — как в письме (21.11.2026).
+            if (_renderCustomGreeting(g.text, anyTime: true) case final text when text.isNotEmpty)
               AppMenuEntry<Object>(value: g.id, label: text, icon: AppIcons.edit, checked: customId == g.id),
         ],
         child: ConstrainedBox(

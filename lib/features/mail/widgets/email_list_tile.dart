@@ -7,6 +7,7 @@
 // - Semantics для screen reader
 // - Иконки: приоритет, вложения, флаг, replied, forwarded
 
+import '../../../core/utils/subject_prefix.dart';
 import '../../../core/utils/text_safe.dart';
 import '../../../services/accounts/account_labels.dart';
 import '../providers/delivery_status_provider.dart';
@@ -347,7 +348,8 @@ class EmailListTile extends ConsumerWidget {
         Padding(padding: const EdgeInsets.only(left: Space.xs),
             child: Icon(AppIcons.forward, size: 15, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
     ];
-    final subject = email.subject.isEmpty ? AppLocalizations.of(context).tr('noSubject') : email.subject;
+    // Без «RE:», «FW:» — префикс виден в самом письме (21.11.2026).
+    final subject = email.subject.isEmpty ? AppLocalizations.of(context).tr('noSubject') : SubjectPrefix.display(email.subject);
     final subjectStyle = theme.textTheme.bodyMedium?.copyWith(
       fontWeight: isUnread ? FontWeight.w600 : FontWeight.w400,
     );

@@ -4477,4 +4477,6 @@
     <string name="gmailConnectGoogleServices">تقويم Google وجهات الاتصال</string>
     <string name="gmailConnectGoogleServicesHint">ستُفتح صفحة Google: سجّل الدخول بالحساب نفسه واسمح بالوصول إلى التقويم وجهات الاتصال. يعمل البريد بدون ذلك أيضًا.</string>
     <string name="googleServicesConnected">تم ربط تقويم Google وجهات الاتصال</string>
+    <string name="fwdContactGroup">مجموعة جهات اتصال</string>
+    <string name="saveGroup">حفظ المجموعة</string>
 </resources>

@@ -4393,4 +4393,6 @@
     <string name="gmailConnectGoogleServices">Google कैलेंडर और संपर्क</string>
     <string name="gmailConnectGoogleServicesHint">Google का पेज खुलेगा: उसी खाते से साइन इन करें और कैलेंडर व संपर्कों तक पहुँच दें। मेल इसके बिना भी काम करता है।</string>
     <string name="googleServicesConnected">Google कैलेंडर और संपर्क जुड़ गए</string>
+    <string name="fwdContactGroup">संपर्क समूह</string>
+    <string name="saveGroup">समूह सहेजें</string>
 </resources>

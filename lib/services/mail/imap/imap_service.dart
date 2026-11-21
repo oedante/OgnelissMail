@@ -17,6 +17,7 @@ import 'dart:math' show Random;
 import 'dart:io';
 import 'dart:convert';
 import '../unsubscribe_service.dart' show encodeListUnsubscribe;
+import '../mime_attach.dart';
 import '../../security/mail_classification.dart' show MailLabel;
 import '../delivery/delivery_report.dart' show DeliveryReportHints;
 import '../../security/smime_mime.dart' show SmimeMime;
@@ -1580,10 +1581,22 @@ class ImapService {
 
   /// Имя вложения: почтовые программы (Mail.ru, Outlook) кодируют
   /// кириллицу по RFC 2047 — «=?UTF-8?B?…?=». Прежде имя показывалось как есть.
+  @visibleForTesting
+  static String? decodeFileName(String? raw) => _decodeFileName(raw);
+
   static String? _decodeFileName(String? raw) {
     if (raw == null) return null;
     var v = raw.trim();
     if (v.length > 1 && v.startsWith('"') && v.endsWith('"')) v = v.substring(1, v.length - 1);
+    // RFC 2231 («filename*=utf-8''%D0%9A…»): сервер отдаёт значение как есть,
+    // а кавычки между кодировкой и текстом иногда теряются наполовину —
+    // «utf-8"%D0%9A…» (снимок владельца 21.11.2026: имя вложения так и
+    // показывалось).
+    final ext = RegExp(r"""^([A-Za-z0-9_-]+)(?:''|'[A-Za-z-]*'|")(.*%[0-9A-Fa-f]{2}.*)$""").firstMatch(v);
+    if (ext != null) {
+      final decoded = _percentDecode(ext.group(2)!, ext.group(1)!);
+      if (decoded != null && decoded.isNotEmpty) return decoded;
+    }
     if (!v.contains('=?')) return v;
     try {
       // decodeHeader сам склеивает соседние закодированные слова.
@@ -1591,6 +1604,32 @@ class ImapService {
       return (d == null || d.isEmpty) ? v : d;
     } catch (_) {
       return v;
+    }
+  }
+
+  /// Текст «%D0%9A%D0%B0…» в кодировке [charset] (UTF-8 и однобайтовые
+  /// кириллические); не вышло — null.
+  static String? _percentDecode(String text, String charset) {
+    final bytes = <int>[];
+    for (var i = 0; i < text.length; i++) {
+      final c = text.codeUnitAt(i);
+      if (c == 0x25 && i + 2 < text.length) {
+        final b = int.tryParse(text.substring(i + 1, i + 3), radix: 16);
+        if (b != null) {
+          bytes.add(b);
+          i += 2;
+          continue;
+        }
+      }
+      if (c > 0x7F) return null;
+      bytes.add(c);
+    }
+    try {
+      final cs = charset.toLowerCase();
+      if (cs == 'utf-8' || cs == 'utf8' || cs == 'us-ascii') return utf8.decode(bytes);
+      return MailCodec.decodeAsText(Uint8List.fromList(bytes), null, cs);
+    } catch (_) {
+      return null;
     }
   }
 
@@ -2307,7 +2346,7 @@ class ImapService {
         final type = (a.contentType != null && a.contentType!.isNotEmpty)
             ? MediaType.fromText(a.contentType!.split(';').first.trim())
             : MediaType.guessFromFileName(a.name);
-        builder.addBinary(a.bytes, type, filename: a.name);
+        addFileAttachment(builder, a.bytes, type, a.name);
       }
     }
     builder.from = [MailAddress(fromName, fromEmail)];
@@ -2575,7 +2614,7 @@ class ImapService {
         final type = (a.contentType != null && a.contentType!.isNotEmpty)
             ? MediaType.fromText(a.contentType!.split(';').first.trim())
             : MediaType.guessFromFileName(a.name);
-        builder.addBinary(a.bytes, type, filename: a.name);
+        addFileAttachment(builder, a.bytes, type, a.name);
       }
     }
     builder.from = [MailAddress(account.displayName, account.email)];

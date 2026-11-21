@@ -124,9 +124,12 @@
       if (!ed) return;
       var body = ed.getBody();
       var el = body.querySelector('#ogn-greeting');
+      // Сравнение — без учёта пробелов и переносов: в приветствии могут быть
+      // строки (21.11.2026), а textContent переносы <br> теряет.
+      var norm = function (s) { return String(s).replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim(); };
       if (el && previous != null) {
-        var cur = (el.textContent || '').replace(/\u00a0/g, ' ').trim();
-        if (cur !== String(previous).trim()) return;
+        var cur = norm(el.innerText != null ? el.innerText : (el.textContent || ''));
+        if (cur !== norm(previous) && norm(el.textContent || '') !== norm(String(previous).replace(/\n/g, ''))) return;
       }
       if (!text) {
         if (el && el.parentNode) el.parentNode.removeChild(el);
@@ -139,7 +142,14 @@
         el = body.querySelector('#ogn-greeting');
         if (!el) return;
       }
-      el.textContent = text;
+      // Переносы строк приветствия — <br> (замечание владельца 21.11.2026:
+      // «Доброе утро» и дата сливались в одну строку).
+      el.textContent = '';
+      var lines = String(text).split('\n');
+      for (var i = 0; i < lines.length; i++) {
+        if (i > 0) el.appendChild(el.ownerDocument.createElement('br'));
+        el.appendChild(el.ownerDocument.createTextNode(lines[i]));
+      }
       changed();
     },
     // Подпись (блок #ogn-signature) — замена при смене ящика «От».

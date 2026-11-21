@@ -4414,4 +4414,6 @@
     <string name="gmailConnectGoogleServices">Kalendář a kontakty Google</string>
     <string name="gmailConnectGoogleServicesHint">Otevře se stránka Google: přihlaste se stejným účtem a povolte přístup ke kalendáři a kontaktům. Pošta funguje i bez toho.</string>
     <string name="googleServicesConnected">Kalendář a kontakty Google připojeny</string>
+    <string name="fwdContactGroup">Skupina kontaktů</string>
+    <string name="saveGroup">Uložit skupinu</string>
 </resources>

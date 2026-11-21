@@ -18,6 +18,12 @@ import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+import 'dav/vcard_parser.dart';
+import 'msg_reader.dart';
+import 'tnef/mapi_contacts.dart';
+import 'tnef/tnef_decoder.dart';
+import 'tnef/tnef_props.dart';
+
 /// Адрес из заголовка письма.
 class EmlAddress {
   final String name;
@@ -57,6 +63,11 @@ class EmlMessage {
   /// Content-ID (без «<>», строчными) → data URI — для `cid:` в HTML.
   final Map<String, String> inlineImages;
 
+  /// Пересланная группа контактов и контакты Outlook (winmail.dat внутри
+  /// письма, 21.11.2026) — к сохранению себе.
+  final ContactGroupCard? contactGroup;
+  final List<VCardData> contacts;
+
   const EmlMessage({
     required this.subject,
     this.from = const [],
@@ -67,6 +78,8 @@ class EmlMessage {
     this.plain,
     this.attachments = const [],
     this.inlineImages = const {},
+    this.contactGroup,
+    this.contacts = const [],
   });
 
   bool get hasBody => (html?.trim().isNotEmpty ?? false) || (plain?.trim().isNotEmpty ?? false);
@@ -107,8 +120,27 @@ class EmlReader {
     }
   }
 
+  /// Вложенное письмо, закодированное base64 без заголовка
+  /// Content-Transfer-Encoding (так его отправлял сам Ogneliss до 2.6.7:
+  /// enough_mail кодирует message/rfc822 в base64, но заголовок для
+  /// message/* не пишет) — раскодировать; иначе — как есть.
+  static Uint8List unwrap(Uint8List data) {
+    if (data.isEmpty || looksLikeEml(data)) return data;
+    final head = data.length > 256 ? data.sublist(0, 256) : data;
+    final b64 = RegExp(r'^[A-Za-z0-9+/=\s]+$');
+    if (!b64.hasMatch(latin1.decode(head))) return data;
+    try {
+      final text = latin1.decode(data).replaceAll(RegExp(r'\s+'), '');
+      if (!b64.hasMatch(text)) return data;
+      final decoded = base64Decode(text);
+      return looksLikeEml(decoded) ? decoded : data;
+    } catch (_) {
+      return data;
+    }
+  }
+
   static EmlMessage parse(Uint8List data) {
-    final msg = MimeMessage.parseFromData(repairHeaders(data));
+    final msg = MimeMessage.parseFromData(repairHeaders(unwrap(data)));
 
     String? html;
     String? plain;
@@ -184,6 +216,49 @@ class EmlReader {
       ));
     }
 
+    // winmail.dat (Outlook, TNEF): файлы из него — обычными вложениями,
+    // свойства письма — текст, группа контактов, контакт.
+    ContactGroupCard? group;
+    final contacts = <VCardData>[];
+    for (final a in [...attachments]) {
+      if (!TnefDecoder.isTnef(a.bytes)) continue;
+      final props = TnefProps.parse(a.bytes);
+      final files = TnefDecoder.decode(a.bytes);
+      var used = files.isNotEmpty;
+      if (props != null) {
+        final g = MapiContacts.group(props);
+        if (g != null) {
+          group ??= g;
+          used = true;
+        }
+        final c = MapiContacts.contact(props);
+        if (c != null) {
+          contacts.add(c);
+          used = true;
+        }
+        if (html == null && plain == null) {
+          final body = _tnefBody(props);
+          if (body.html != null || body.plain != null) {
+            html = body.html;
+            plain = body.plain;
+            used = true;
+          }
+        }
+      }
+      if (!used) continue;
+      final at = attachments.indexOf(a);
+      attachments
+        ..removeAt(at)
+        ..insertAll(at, [
+          for (final f in files)
+            EmlPart(
+              name: f.filename.trim().isEmpty ? _defaultName(MediaType.fromText('application/octet-stream'), ++n) : f.filename.trim(),
+              contentType: MediaType.guessFromFileName(f.filename).text,
+              bytes: f.data!,
+            ),
+        ]);
+    }
+
     return EmlMessage(
       subject: fix8bit((_safe(msg.decodeSubject) ?? '').trim()),
       from: _addresses(() => msg.from),
@@ -194,7 +269,29 @@ class EmlReader {
       plain: plain,
       attachments: attachments,
       inlineImages: inline,
+      contactGroup: group,
+      contacts: contacts,
     );
+  }
+
+  /// Текст письма из свойств TNEF: HTML, RTF (Outlook часто кладёт только
+  /// его) или простой текст.
+  static ({String? html, String? plain}) _tnefBody(TnefProps p) {
+    final rawHtml = p.props[0x1013];
+    if (rawHtml is Uint8List && rawHtml.isNotEmpty) {
+      return (html: utf8.decode(rawHtml, allowMalformed: true), plain: null);
+    }
+    if (rawHtml is String && rawHtml.trim().isNotEmpty) return (html: rawHtml, plain: null);
+    final rtf = p.binary(0x1009);
+    if (rtf != null && rtf.isNotEmpty) {
+      try {
+        final html = MsgReader.htmlFromRtf(MsgReader.decompressRtf(rtf));
+        if (html != null && html.trim().isNotEmpty) return (html: html, plain: null);
+      } catch (_) {}
+    }
+    final plain = p.string(0x1000);
+    if (plain != null && plain.trim().isNotEmpty) return (html: null, plain: plain);
+    return (html: null, plain: null);
   }
 
   // ─────────────────── закодированные слова, разрезанные переносом ───────────────────

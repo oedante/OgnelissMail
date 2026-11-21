@@ -4372,4 +4372,6 @@
     <string name="gmailConnectGoogleServices">Google 캘린더 및 연락처</string>
     <string name="gmailConnectGoogleServicesHint">Google 페이지가 열립니다. 같은 계정으로 로그인하고 캘린더와 연락처 접근을 허용하세요. 메일은 이것 없이도 작동합니다.</string>
     <string name="googleServicesConnected">Google 캘린더 및 연락처 연결됨</string>
+    <string name="fwdContactGroup">연락처 그룹</string>
+    <string name="saveGroup">그룹 저장</string>
 </resources>

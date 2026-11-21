@@ -4372,4 +4372,6 @@
     <string name="gmailConnectGoogleServices">Google カレンダーと連絡先</string>
     <string name="gmailConnectGoogleServicesHint">Google のページが開きます。同じアカウントでログインし、カレンダーと連絡先へのアクセスを許可してください。メールはこれがなくても使えます。</string>
     <string name="googleServicesConnected">Google カレンダーと連絡先を接続しました</string>
+    <string name="fwdContactGroup">連絡先グループ</string>
+    <string name="saveGroup">グループを保存</string>
 </resources>

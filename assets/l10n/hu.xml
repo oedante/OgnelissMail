@@ -4393,4 +4393,6 @@
     <string name="gmailConnectGoogleServices">Google Naptár és Névjegyek</string>
     <string name="gmailConnectGoogleServicesHint">Megnyílik egy Google-oldal: jelentkezzen be ugyanazzal a fiókkal, és engedélyezze a naptár és a névjegyek elérését. A levelezés enélkül is működik.</string>
     <string name="googleServicesConnected">Google Naptár és Névjegyek csatlakoztatva</string>
+    <string name="fwdContactGroup">Névjegycsoport</string>
+    <string name="saveGroup">Csoport mentése</string>
 </resources>

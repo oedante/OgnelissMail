@@ -4393,4 +4393,6 @@
     <string name="gmailConnectGoogleServices">Google Kalender und Kontakte</string>
     <string name="gmailConnectGoogleServicesHint">Es öffnet sich eine Google-Seite: Melden Sie sich mit demselben Konto an und erlauben Sie den Zugriff auf Kalender und Kontakte. E-Mail funktioniert auch ohne.</string>
     <string name="googleServicesConnected">Google Kalender und Kontakte verbunden</string>
+    <string name="fwdContactGroup">Kontaktgruppe</string>
+    <string name="saveGroup">Gruppe speichern</string>
 </resources>

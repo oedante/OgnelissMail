@@ -17,6 +17,7 @@
 // iPhone: отправитель — заголовок, тема — подзаголовок, текст — ниже.
 // Чистые функции — проверяются тестом notification_text_test.dart.
 
+import '../../core/utils/subject_prefix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/utils/text_safe.dart' show cleanPreviewText;
@@ -90,7 +91,8 @@ class NotificationText {
 
   /// Тема (или «без темы») — строка под отправителем.
   static String subject(String subject, {required String noSubject}) {
-    final s = subject.replaceAll(RegExp(r'\s+'), ' ').trim();
+    // Без «RE:», «FW:» (21.11.2026) — префикс виден в самом письме.
+    final s = SubjectPrefix.display(subject.replaceAll(RegExp(r'\s+'), ' ')).trim();
     return s.isEmpty ? noSubject : s;
   }
 

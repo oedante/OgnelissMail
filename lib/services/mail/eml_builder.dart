@@ -11,6 +11,7 @@ import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
 
 import '../../data/models/email_model.dart';
+import 'mime_attach.dart';
 
 /// Вложение для .eml: имя, тип и УЖЕ загруженный файл на диске.
 typedef EmlAttachment = ({String name, String mimeType, String path});
@@ -56,11 +57,7 @@ Future<String> buildEmlFromEmail(
         final file = File(att.path);
         if (!await file.exists()) continue;
         final bytes = await file.readAsBytes();
-        builder.addBinary(
-          Uint8List.fromList(bytes),
-          MediaType.fromText(att.mimeType),
-          filename: att.name,
-        );
+        addFileAttachment(builder, Uint8List.fromList(bytes), MediaType.fromText(att.mimeType), att.name);
       } catch (_) {
         // Один нечитаемый файл не должен рушить весь .eml.
       }

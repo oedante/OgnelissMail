@@ -4372,4 +4372,6 @@
     <string name="gmailConnectGoogleServices">Lịch và Danh bạ Google</string>
     <string name="gmailConnectGoogleServicesHint">Trang Google sẽ mở: đăng nhập bằng cùng tài khoản và cho phép truy cập lịch và danh bạ. Thư vẫn hoạt động khi không có bước này.</string>
     <string name="googleServicesConnected">Đã kết nối Lịch và Danh bạ Google</string>
+    <string name="fwdContactGroup">Nhóm liên hệ</string>
+    <string name="saveGroup">Lưu nhóm</string>
 </resources>

@@ -227,9 +227,10 @@ Future<void> importGroupFile(BuildContext context, WidgetRef ref) async {
   }
 }
 
-/// Новая группа для рассылки — из «Создать» в контактах.
-void openGroupEditor(BuildContext context) {
-  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const _GroupEditor()));
+/// Новая группа для рассылки — из «Создать» в контактах; [group] — правка
+/// уже сохранённой (например, принятой из письма).
+void openGroupEditor(BuildContext context, [DistributionGroup? group]) {
+  Navigator.of(context).push(MaterialPageRoute(builder: (_) => _GroupEditor(group: group)));
 }
 
 // ── Правка группы ──

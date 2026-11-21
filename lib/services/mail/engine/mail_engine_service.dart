@@ -3670,9 +3670,27 @@ class MailEngineService {
   /// Несколько вложений одного письма (встроенные картинки подписи): у
   /// ActiveSync — одним запросом, у остальных — по очереди. Ключ — id
   /// вложения; чего нет в ответе — не получено (1.5.6). Нет связи — ошибка.
+  /// Идущие загрузки вложений: тот же запрос (ящик, письмо, набор вложений)
+  /// во время загрузки получает её же результат (2.6.8, журнал владельца
+  /// 21.11.2026: после зависшей связи одни и те же картинки письма скачались
+  /// четыре раза подряд).
+  final Map<String, Future<Map<String, Uint8List>>> _attachmentsInFlight = {};
+
   Future<Map<String, Uint8List>> getAttachmentsBytes(AccountModel account, List<String> attachmentIds,
+      {required String emailId}) {
+    if (attachmentIds.isEmpty) return Future.value(const {});
+    final key = '${account.id}|$emailId|${([...attachmentIds]..sort()).join(',')}';
+    final running = _attachmentsInFlight[key];
+    if (running != null) return running;
+    final f = _getAttachmentsBytes(account, attachmentIds, emailId: emailId);
+    _attachmentsInFlight[key] = f;
+    void done() => _attachmentsInFlight.remove(key);
+    f.then((_) => done(), onError: (Object _) => done());
+    return f;
+  }
+
+  Future<Map<String, Uint8List>> _getAttachmentsBytes(AccountModel account, List<String> attachmentIds,
       {required String emailId}) async {
-    if (attachmentIds.isEmpty) return const {};
     if (account.usesEas) {
       final eas = await _easEngine(account);
       // Нет подключения — ошибка, а не «сервер ничего не отдал»: иначе

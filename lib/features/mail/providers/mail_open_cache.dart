@@ -411,7 +411,11 @@ class MailOpenCache {
 
   // ───────────────────────── встроенные картинки ─────────────────────────
 
-  final Map<String, ({Future<InlineImages> future, DateTime at})> _images = {};
+  /// [done] — время окончания загрузки; null — ещё идёт (2.6.8, журнал
+  /// владельца 21.11.2026: связь висела 3 минуты, а запись жила 20 с от
+  /// начала — каждое следующее открытие письма запускало ещё одну загрузку,
+  /// и после переподключения одни и те же картинки скачались четыре раза).
+  final Map<String, ({Future<InlineImages> future, DateTime at, DateTime? done})> _images = {};
   static const _imagesFresh = Duration(seconds: 20);
 
   static const maxEach = 3 * 1024 * 1024;
@@ -461,13 +465,18 @@ class MailOpenCache {
     final k = '${_key(accountId, email.id)}|${email.attachments.length}';
     final now = DateTime.now();
     final hit = _images[k];
-    if (hit != null && now.difference(hit.at) < _imagesFresh) return hit.future;
+    // Идущая загрузка — та же, сколько бы ни шла; готовая — 20 с.
+    if (hit != null && (hit.done == null || now.difference(hit.done!) < _imagesFresh)) return hit.future;
     // Устаревшие записи не нужны (повторно они не выдаются), а держат в
     // памяти картинки в base64 — до 12 МБ на письмо.
-    _images.removeWhere((_, v) => now.difference(v.at) >= _imagesFresh);
+    _images.removeWhere((_, v) => v.done != null && now.difference(v.done!) >= _imagesFresh);
     final f = _loadImages(accountId, email, html);
-    unawaited(f.then((_) {}, onError: (Object _) {}));
-    _images[k] = (future: f, at: now);
+    void finished() {
+      final cur = _images[k];
+      if (cur != null && identical(cur.future, f)) _images[k] = (future: f, at: cur.at, done: DateTime.now());
+    }
+    unawaited(f.then((_) => finished(), onError: (Object _) => finished()));
+    _images[k] = (future: f, at: now, done: null);
     if (_images.length > 16) _images.remove(_images.keys.first);
     return f;
   }

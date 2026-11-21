@@ -120,7 +120,21 @@ void main() {
     final fifth = await imap.syncFolderDelta(a, folderId: 'Archive', known: stored(fourth), backfill: 0);
     expect(fifth.added.map((e) => e.id), ['Archive:6']);
     expect(fifth.state.maxUid, 6);
-    expect(fifth.present, containsAll([1, 2, 3, 5, 6]));
+    // Писем стало ровно «было + новое» — удалений нет, номера окна не
+    // сверяются (2.6.8): только поиск новых номеров.
+    expect(fifth.checkedFrom, isNull, reason: 'сверки окна не было');
+    expect(fifth.present, isEmpty);
+    expect(srv.commands, isNot(contains('UID SEARCH RETURN (ALL) UID 1:5')));
+    expect(stored(fifth)!.exists, 5);
+
+    // Новое письмо и удаление разом — сверка окна, как раньше.
+    box.add('Ещё одно');
+    box.expunge(2);
+    srv.commands.clear();
+    final sixth = await imap.syncFolderDelta(a, folderId: 'Archive', known: stored(fifth), backfill: 0);
+    expect(sixth.added.map((e) => e.id), ['Archive:7']);
+    expect(sixth.checkedFrom, isNotNull);
+    expect(sixth.present, isNot(contains(2)));
   });
 
   test('QRESYNC (как Dovecot): изменения и удалённые — в ответе на SELECT', () async {

@@ -226,6 +226,16 @@ class ImapPushService {
         .listen(
       (changedFolderIds) async {
         AppLogger.info('EAS push: изменения в ${changedFolderIds.length} папках');
+        // Много папок разом — «догнать пропущенное» после обрывов Ping, раз в
+        // 5 минут в режиме коротких запросов, после FolderSync: одной
+        // проверкой ящика (GetItemEstimate по всем папкам и Sync только
+        // изменившихся). Раньше — Sync каждой папки по очереди (журнал
+        // владельца 21.11.2026: после 502 от шлюза 25 запросов подряд, почти
+        // все «изменений нет» — лишние радио и батарея).
+        if (changedFolderIds.length > _easCatchUpFolders) {
+          unawaited(_syncAccountCoalesced(account));
+          return;
+        }
         for (final fid in changedFolderIds) {
           final row = byId[fid];
           if (row == null) continue;
@@ -388,6 +398,33 @@ class ImapPushService {
   /// десятка синхронизаций одной папки за одной арендой ящика. Теперь пока
   /// папка синхронизируется, новые события лишь отмечают «нужно ещё раз».
   final Map<String, bool> _folderSyncDirty = {};
+
+  /// Больше стольких папок в одном событии EAS push — проверка ящика целиком.
+  static const _easCatchUpFolders = 3;
+
+  /// Проверка ящика целиком (оценка изменений по всем папкам) — не чаще
+  /// одной сразу: события во время проверки дают ещё один проход после неё.
+  Future<void> _syncAccountCoalesced(AccountModel account) async {
+    final key = '${account.id}|*';
+    if (_folderSyncDirty.containsKey(key)) {
+      _folderSyncDirty[key] = true;
+      return;
+    }
+    _folderSyncDirty[key] = false;
+    try {
+      do {
+        _folderSyncDirty[key] = false;
+        await Future<void>.delayed(const Duration(milliseconds: 800));
+        try {
+          await _ref.read(syncServiceProvider).syncAccountMail(account);
+        } catch (e) {
+          AppLogger.warning('Push ${account.email}: проверка ящика — $e');
+        }
+      } while (_folderSyncDirty[key] == true);
+    } finally {
+      _folderSyncDirty.remove(key);
+    }
+  }
 
   Future<void> _syncCoalesced(AccountModel account, FolderModel folder) async {
     final key = '${account.id}|${folder.id}';

@@ -1312,8 +1312,14 @@ class ImapService {
     // SELECT, — писем не добавлялось и не удалялось (удаление уменьшило бы
     // число, а новое письмо — сдвинуло UIDNEXT). Иначе — UID SEARCH окна:
     // только номера писем, а не строки с флагами.
+    // Пришли только новые письма (2.6.8, журнал владельца 21.11.2026: сверка
+    // номеров всего окна шла при каждом новом письме — тысячи номеров у
+    // Gmail, разбор в главном потоке и подтормаживание ленты): писем стало
+    // ровно «было + новые» — значит, ничего не удалено (_fetchNew забирает
+    // все новые письма и сверяет их сам).
+    final onlyAdded = known.exists != null && known.exists! + added.length == total;
     Set<int>? present;
-    if (!qresync && !(known.exists == total && known.uidNext != null && known.uidNext == next)) {
+    if (!qresync && !onlyAdded && !(known.exists == total && known.uidNext != null && known.uidNext == next)) {
       final r = await client.uidSearchMessages(
           searchCriteria: 'UID ${known.minUid}:${known.maxUid}',
           returnOptions: client.serverInfo.supports('ESEARCH') ? [ReturnOption.all()] : null);
@@ -2684,12 +2690,20 @@ class ImapService {
   }
 
   /// Заметки ящика: null — папки «Notes» нет (заметок на сервере нет).
+  /// [known] — отпечаток папки с прошлого чтения ([notesSignature]): папка
+  /// не изменилась — [onSignature] получает тот же отпечаток, а заметки не
+  /// читаются (возвращается [notesUnchanged]). 2.6.8, журнал владельца
+  /// 21.11.2026: тела до 500 заметок читались при каждой проверке — 13 с.
   Future<List<({String uuid, String title, String body, DateTime modified})>?> getImapNotes(
-      AccountModel account, {int max = 500}) {
+      AccountModel account, {int max = 500, String? known, void Function(String signature)? onSignature}) {
     return _withClient(account, (c) async {
       final box = await _notesBox(c);
       if (box == null) return null;
       final sel = await c.selectMailboxByPath(_pathForEnoughMail(c, box.encodedPath));
+      final sig = notesSignature(
+          exists: sel.messagesExists, uidNext: sel.uidNext, uidValidity: sel.uidValidity, modSeq: sel.highestModSequence);
+      onSignature?.call(sig);
+      if (known != null && sig == known) return notesUnchanged;
       final total = sel.messagesExists;
       if (total <= 0) return const <({String uuid, String title, String body, DateTime modified})>[];
       final seq = MessageSequence.fromRange((total - max + 1).clamp(1, total), total);
@@ -2722,6 +2736,17 @@ class ImapService {
       return out;
     });
   }
+
+  /// Заметки не изменились с прошлого чтения — тот же объект списка
+  /// (сравнивать через identical).
+  static const List<({String uuid, String title, String body, DateTime modified})> notesUnchanged = [];
+
+  /// Отпечаток папки заметок: число писем, следующий UID, UIDVALIDITY и (если
+  /// сервер умеет CONDSTORE) HIGHESTMODSEQ. Без HIGHESTMODSEQ правка флагов
+  /// не видна, но заметка меняется новым письмом (UIDNEXT растёт) или
+  /// удалением (меняется число писем).
+  static String notesSignature({required int exists, int? uidNext, int? uidValidity, int? modSeq}) =>
+      '$exists:${uidNext ?? '-'}:${uidValidity ?? '-'}:${modSeq ?? '-'}';
 
   /// Создать или изменить заметку: новое письмо в «Notes», прежняя копия
   /// (тот же UUID) удаляется. Возвращает UUID заметки.
@@ -3123,6 +3148,25 @@ class ImapService {
       );
     }
     return null;
+  }
+
+  /// Сеть сменилась (Wi-Fi ↔ мобильная, VPN): соединения синхронизации
+  /// привязаны к прежнему адресу и молча умирают — команда ждала ответа до
+  /// тайм-аута (2.6.8, журнал владельца 21.11.2026: этап «папка Notes» —
+  /// 185 с после двух смен сети). Закрываем их сразу: идущая команда
+  /// заканчивается ошибкой, следующая открывает новое соединение.
+  void dropConnections({String reason = ''}) {
+    if (_imapClients.isEmpty && _smtpClients.isEmpty) return;
+    AppLogger.info('IMAP: соединения закрыты${reason.isEmpty ? '' : ' — $reason'} '
+        '(IMAP ${_imapClients.length}, SMTP ${_smtpClients.length})');
+    for (final client in _imapClients.values) {
+      unawaited(client.disconnect().catchError((Object _) {}));
+    }
+    for (final client in _smtpClients.values) {
+      unawaited(client.disconnect().catchError((Object _) {}));
+    }
+    _imapClients.clear();
+    _smtpClients.clear();
   }
 
   void dispose() {

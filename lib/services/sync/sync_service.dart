@@ -651,8 +651,16 @@ class SyncService {
   Future<void> syncAccount(AccountModel account) {
     _pimForce.add(account.id);
     _folderSyncForce.add(account.id);
+    _imapAllFoldersForce.add(account.id);
     return FinishInBackground.guard(() => _pass.run(() => _syncAccountBody(account), needs: PassScope.all));
   }
+
+  /// Почта ящика без принудительных календаря, контактов и списка папок
+  /// (они — по своему расписанию): для push «догнать пропущенное» (2.6.8,
+  /// журнал владельца 21.11.2026). У ActiveSync — оценка изменений по всем
+  /// папкам одним запросом и Sync только изменившихся.
+  Future<void> syncAccountMail(AccountModel account) =>
+      FinishInBackground.guard(() => _pass.run(() => _syncAccountBody(account), needs: PassScope.all));
 
   /// Первая синхронизация только что добавленного ящика (1.9.x, журнал
   /// владельца 31.10.2026: Outlook после входа — «Ещё не обновлялось», письма
@@ -661,12 +669,29 @@ class SyncService {
   Future<void> syncNewAccount(AccountModel account) {
     _pimForce.add(account.id);
     _folderSyncForce.add(account.id);
+    _imapAllFoldersForce.add(account.id);
     return FinishInBackground.guard(() => _pass.run(() => _syncAccountBody(account), fresh: true));
   }
 
   /// Последний FolderSync ActiveSync (папки не чаще раза в час) и ящики,
   /// для которых его нужно сделать в ближайший проход (жест «обновить»).
   final Map<String, DateTime> _easFolderSyncAt = {};
+
+  /// Последний LIST папок IMAP (2.6.8): не чаще раза в 30 минут.
+  final Map<String, DateTime> _imapFolderListAt = {};
+
+  /// Ящики, у которых в ближайший проход проверить все папки, хоть
+  /// приложение и свёрнуто («обновить», первый проход).
+  final Set<String> _imapAllFoldersForce = {};
+
+  /// Папку IMAP пора проверять в свёрнутом приложении: «Входящие» —
+  /// всегда, остальные — раз в 30 минут ([at] — время прошлой проверки).
+  @visibleForTesting
+  static bool imapFolderDue(FolderModel folder, String? at, DateTime now) {
+    if (folder.type == FolderType.inbox) return true;
+    final last = DateTime.tryParse(at ?? '');
+    return last == null || now.difference(last) >= const Duration(minutes: 30);
+  }
   final Set<String> _folderSyncForce = {};
 
   /// Время последней синхронизации календаря/контактов/заметок/задач Exchange.
@@ -2850,13 +2875,46 @@ class SyncService {
     final db = _ref.read(databaseProvider);
     final total = Stopwatch()..start();
 
-    final folders = await _batchSaveFolders(
-        db,
-        account.id,
-        await _stage(account, 'список папок', () => imap.getFolders(account),
-            limit: const Duration(minutes: 3)));
-    final synced = await _chosenFolders(db, account.id, folders);
-    AppLogger.info('IMAP sync: ${account.email} — папок ${folders.length}, синхронизируем ${synced.length}');
+    // Список папок меняется редко (2.6.8, журнал владельца 21.11.2026: LIST
+    // и запись папок в базу на каждой проверке — по 2–3 с у Gmail и iCloud):
+    // не чаще раза в 30 минут; «обновить», экран ящика и первый проход —
+    // всегда (как FolderSync у ActiveSync — раз в час).
+    final lastList = _imapFolderListAt[account.id];
+    final listFresh = lastList != null &&
+        DateTime.now().difference(lastList) < const Duration(minutes: 30) &&
+        !_folderSyncForce.remove(account.id);
+    final stored = listFresh
+        ? [
+            for (final r in await (db.select(db.folders)..where((f) => f.accountId.equals(account.id))).get())
+              folderFromRow(r)
+          ]
+        : const <FolderModel>[];
+    final List<FolderModel> folders;
+    if (stored.isNotEmpty) {
+      folders = stored;
+    } else {
+      folders = await _batchSaveFolders(
+          db,
+          account.id,
+          await _stage(account, 'список папок', () => imap.getFolders(account),
+              limit: const Duration(minutes: 3)));
+      if (folders.isNotEmpty) _imapFolderListAt[account.id] = DateTime.now();
+    }
+    final chosen = await _chosenFolders(db, account.id, folders);
+    // Свёрнуто (фоновая проверка): «Входящие» — каждый раз, остальные
+    // выбранные папки — раз в 30 минут (2.6.8, журнал владельца 21.11.2026:
+    // у Gmail каждая фоновая проверка открывала 7 папок по 1–1,5 с, держа
+    // радио включённым). На экране и по «обновить» — все, как раньше.
+    final foreground = WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+    final forcedAll = _imapAllFoldersForce.remove(account.id);
+    final synced = foreground || forcedAll
+        ? chosen
+        : [
+            for (final f in chosen)
+              if (imapFolderDue(f, _prefs.getString('imap_folder_at:${account.id}:${f.id}'), DateTime.now())) f,
+          ];
+    AppLogger.info('IMAP sync: ${account.email} — папок ${folders.length}, синхронизируем ${synced.length}'
+        '${synced.length < chosen.length ? ' (остальные ${chosen.length - synced.length} — позже, приложение свёрнуто)' : ''}');
 
     int totalEmails = 0;
     final failedFolders = <String>[];
@@ -2864,6 +2922,7 @@ class SyncService {
       try {
         totalEmails += await _stage(account, 'папка ${folder.displayName}',
             () => _syncImapFolder(imap, db, account, folder, settings));
+        await _prefs.setString('imap_folder_at:${account.id}:${folder.id}', DateTime.now().toIso8601String());
       } catch (e) {
         failedFolders.add('${folder.displayName}: ${_shortError(e)}');
         AppLogger.error('IMAP sync папка "${folder.displayName}": $e');
@@ -3020,6 +3079,7 @@ class SyncService {
   /// (журнал 11.10.2026: по 60 раз за день «без изменений»).
   final Map<String, DateTime> _lastDav = {};
   static const _davEvery = Duration(minutes: 15);
+  static const _davEveryBackground = Duration(minutes: 60);
 
   Future<void> _syncDavPim(AccountModel account, AppDatabase db) async {
     // Рабочая почта по IMAP (2.6.0): календарь и контакты на сервере
@@ -3027,9 +3087,19 @@ class SyncService {
     await DavDiscovery.ensure(account, DavPimService.knownProviderOf(account),
         () => DavCredentials.passwordBasic(account, _ref.read(secureStorageProvider)));
     if (!DavPimService.isSupported(account)) return;
-    final lastDav = _lastDav[account.id];
-    if (lastDav != null && DateTime.now().difference(lastDav) < _davEvery) return;
-    _lastDav[account.id] = DateTime.now();
+    // Время прошлой проверки — и в настройках (2.6.8, журнал владельца
+    // 21.11.2026: DAV в половине проходов — каждая фоновая задача, новый
+    // процесс, начинала с нуля). Свёрнуто — раз в час: встречи и контакты
+    // меняются редко, напоминания уже в расписании телефона.
+    final davKey = 'dav_pim_at:${account.id}';
+    final lastDav = _lastDav[account.id] ?? DateTime.tryParse(_prefs.getString(davKey) ?? '');
+    final open = WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+    final every = open ? _davEvery : _davEveryBackground;
+    final forced = _pimForce.remove(account.id);
+    if (!forced && lastDav != null && DateTime.now().difference(lastDav) < every) return;
+    final davNow = DateTime.now();
+    _lastDav[account.id] = davNow;
+    await _prefs.setString(davKey, davNow.toIso8601String());
     final token = await DavCredentials.authorization(
       account,
       _ref.read(secureStorageProvider),
@@ -3408,17 +3478,38 @@ class SyncService {
   /// целиком. Правки, ещё не ушедшие на сервер, серверной версией не
   /// затираются; заметки, удалённые на сервере, убираются.
   Future<void> _syncImapNotes(AccountModel account, AppDatabase db, {bool force = false}) async {
-    final last = _imapNotesAt[account.id];
+    // Время прошлой проверки — и в настройках (2.6.8): раньше только в памяти,
+    // и каждая фоновая задача (новый процесс) читала заметки заново.
+    final atKey = 'imap_notes_at:${account.id}';
+    final sigKey = 'imap_notes_sig:${account.id}';
+    final last = _imapNotesAt[account.id] ?? DateTime.tryParse(_prefs.getString(atKey) ?? '');
     if (!force && last != null && DateTime.now().difference(last) < const Duration(minutes: 30)) return;
-    _imapNotesAt[account.id] = DateTime.now();
+    final now = DateTime.now();
+    _imapNotesAt[account.id] = now;
+    await _prefs.setString(atKey, now.toIso8601String());
     try {
+      // Свои правки уходят на сервер — папка изменится, отпечаток не годится.
+      final pushed = await (db.select(db.notes)
+            ..where((n) => n.accountId.equals(account.id) & n.isLocallyModified.equals(true))
+            ..limit(1))
+          .get()
+          .then((r) => r.isNotEmpty);
       try {
         await _ref.read(mailEngineServiceProvider).pushPendingNotes(account);
       } catch (e) {
         AppLogger.warning('IMAP notes push: $e');
       }
-      final notes = await _ref.read(imapServiceProvider).getImapNotes(account);
+      String? sig;
+      final notes = await _ref.read(imapServiceProvider).getImapNotes(account,
+          // Свои правки только что ушли — папка изменилась, читаем.
+          known: force || pushed ? null : _prefs.getString(sigKey),
+          onSignature: (s) => sig = s);
       if (notes == null) return; // папки «Notes» нет
+      if (sig != null) await _prefs.setString(sigKey, sig!);
+      if (identical(notes, ImapService.notesUnchanged)) {
+        AppLogger.debug('IMAP заметки ${AppLogger.mask(account.email)}: без изменений — не читаются');
+        return;
+      }
       final pending = (await (db.select(db.notes)
                 ..where((n) => n.accountId.equals(account.id) & n.isLocallyModified.equals(true)))
               .get())

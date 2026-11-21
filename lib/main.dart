@@ -14,6 +14,7 @@ import 'services/widget_mail_actions.dart' show widgetMailActionsProvider;
 import 'services/weather/weather_service.dart' show WeatherApi;
 import 'services/documents/doc_preview_settings.dart';
 import 'services/mail/marks/mark_sync_service.dart' show markSyncProvider;
+import 'services/mail/imap/imap_service.dart' show imapServiceProvider;
 import 'services/sync/sync_schedule.dart';
 import 'core/theme/mail_page_color.dart' show mailPageWarm;
 import 'core/platform/orientation_policy.dart';
@@ -361,6 +362,9 @@ Future<void> main() async {
           // Шлюз организации блокировал прежний адрес сети (VPN): письма,
           // которые он не пропустил, — повторить сразу (18.11.2026).
           globalContainer.read(offlineSendProvider).onNetworkChanged();
+          // Соединения синхронизации — тоже: иначе идущая команда ждёт
+          // тайм-аута на мёртвом соединении (2.6.8).
+          globalContainer.read(imapServiceProvider).dropConnections(reason: 'смена сети');
           if (globalContainer.read(settingsProvider).syncIntervalMinutes < 0) return;
           unawaited(globalContainer.read(imapPushServiceProvider).restartAll(reason: 'смена сети'));
         });

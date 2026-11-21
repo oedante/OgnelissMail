@@ -631,7 +631,14 @@ for (final m in mails) {
             ..limit(200))
           .get();
       for (final t in rows) {
-        final due = t.dueDate!.toLocal();
+        // Срок на день и напоминание в тот же день — время напоминания, как в
+        // «Моём дне» (замечание владельца 21.11.2026: в виджете задачи шли
+        // «весь день» и не по порядку, в «Моём дне» — 11:40, 12:00, 17:00).
+        var due = t.dueDate!.toLocal();
+        final rem = t.reminderAt?.toLocal();
+        if (dateOnly(due) && rem != null && rem.year == due.year && rem.month == due.month && rem.day == due.day) {
+          due = rem;
+        }
         out.add(item('✓', t.title, due, dateOnly(due), _taskColor,
             Uri(path: 'task', queryParameters: {'id': t.id, 'acc': t.accountId}).toString()));
       }

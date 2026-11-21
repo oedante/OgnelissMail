@@ -1,4 +1,5 @@
 // lib/features/mail/screens/mail_list_screen.dart
+import '../../../core/utils/subject_prefix.dart';
 import '../../../widgets/ui/action_sheet.dart';
 import '../../../services/accounts/account_labels.dart';
 import '../../../widgets/common/swipe_done.dart';
@@ -773,10 +774,25 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         // ящика. В Хабе и группе — обычная.
         backgroundColor: look?.background,
         foregroundColor: look?.foreground,
+        // Заливка: значки действий и строка состояния — цвета, читаемого на
+        // цвете ящика (замечание владельца 21.11.2026: значки и подписи
+        // оставались тёмными; у темы свой цвет значков действий).
+        iconTheme: fg == null ? null : IconThemeData(color: fg),
+        actionsIconTheme: fg == null ? null : IconThemeData(color: fg),
+        systemOverlayStyle: look?.background == null || look?.gradient != null
+            ? null
+            : (ThemeData.estimateBrightnessForColor(look!.background!) == Brightness.dark
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark),
+        // Цвет ящика поверх фона не меняется при прокрутке ленты.
+        surfaceTintColor: look?.background == null ? null : Colors.transparent,
+        scrolledUnderElevation: look?.background == null ? null : 0,
         shape: look?.shape,
+        // Градиент — на всю шапку: пустой DecoratedBox получал нулевой размер
+        // и не был виден (21.11.2026: «градиент вообще не работает»).
         flexibleSpace: look?.gradient == null
             ? null
-            : DecoratedBox(decoration: BoxDecoration(gradient: look!.gradient)),
+            : SizedBox.expand(child: DecoratedBox(decoration: BoxDecoration(gradient: look!.gradient))),
         // Телефон (1.6.40, решение владельца): портрета в шапке нет — меню
         // открывает портрет в нижней панели, под большим пальцем. Планшет и
         // компьютер (нижней панели нет) — портрет остаётся здесь.
@@ -1920,7 +1936,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           final feedback = _DragChip(
               subject: n > 1
                   ? l10n.plural('dragNMails', n)
-                  : (item.subject.isEmpty ? l10n.tr('noSubject') : item.subject),
+                  : (item.subject.isEmpty ? l10n.tr('noSubject') : SubjectPrefix.display(item.subject)),
               many: n > 1);
           Widget drag({required bool touch, required Widget child}) => MailDraggable(
                 touch: touch,

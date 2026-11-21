@@ -32,6 +32,7 @@ import '../../../data/models/contact_model.dart';
 import '../../../data/providers/database_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/engine/mail_engine_service.dart';
+import '../../../services/mail/dav/vcard_parser.dart' show VCardData;
 import '../../../services/sync/sync_service.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
@@ -41,11 +42,14 @@ import '../../../widgets/common/account_avatar.dart';
 
 /// Открыть форму. [existing] — правка, иначе — новый контакт ([email] и
 /// [name] — подстановка, например из карточки человека).
+///
+/// [card] — контакт, присланный письмом (.vcf или контакт Outlook,
+/// 21.11.2026): ФИО, адрес, телефоны, организация и должность.
 Future<bool?> showContactEditor(BuildContext context,
-    {Contact? existing, String? email, String? name}) {
+    {Contact? existing, String? email, String? name, VCardData? card}) {
   return Navigator.of(context, rootNavigator: true).push<bool>(MaterialPageRoute(
     fullscreenDialog: true,
-    builder: (_) => ContactEditorScreen(existing: existing, email: email, name: name),
+    builder: (_) => ContactEditorScreen(existing: existing, email: email, name: name, card: card),
   ));
 }
 
@@ -53,7 +57,8 @@ class ContactEditorScreen extends ConsumerStatefulWidget {
   final Contact? existing;
   final String? email;
   final String? name;
-  const ContactEditorScreen({super.key, this.existing, this.email, this.name});
+  final VCardData? card;
+  const ContactEditorScreen({super.key, this.existing, this.email, this.name, this.card});
 
   @override
   ConsumerState<ContactEditorScreen> createState() => _ContactEditorScreenState();
@@ -63,15 +68,16 @@ class ContactEditorScreen extends ConsumerStatefulWidget {
 const _localTarget = '__local__';
 
 class _ContactEditorScreenState extends ConsumerState<ContactEditorScreen> {
-  late final _last = TextEditingController(text: widget.existing?.lastName ?? '');
-  late final _first = TextEditingController(text: widget.existing?.firstName ?? '');
-  late final _middle = TextEditingController(text: widget.existing?.middleName ?? '');
-  late final _email = TextEditingController(text: widget.existing?.email ?? widget.email ?? '');
-  late final _mobile = TextEditingController(text: widget.existing?.phoneMobile ?? '');
-  late final _work = TextEditingController(text: widget.existing?.phoneWork ?? '');
-  late final _company = TextEditingController(text: widget.existing?.company ?? '');
+  late final _last = TextEditingController(text: widget.existing?.lastName ?? widget.card?.family ?? '');
+  late final _first = TextEditingController(text: widget.existing?.firstName ?? widget.card?.given ?? '');
+  late final _middle = TextEditingController(text: widget.existing?.middleName ?? widget.card?.middle ?? '');
+  late final _email =
+      TextEditingController(text: widget.existing?.email ?? widget.email ?? widget.card?.email ?? '');
+  late final _mobile = TextEditingController(text: widget.existing?.phoneMobile ?? widget.card?.phoneMobile ?? '');
+  late final _work = TextEditingController(text: widget.existing?.phoneWork ?? widget.card?.phoneWork ?? '');
+  late final _company = TextEditingController(text: widget.existing?.company ?? widget.card?.org ?? '');
   late final _department = TextEditingController(text: widget.existing?.department ?? '');
-  late final _title = TextEditingController(text: widget.existing?.jobTitle ?? '');
+  late final _title = TextEditingController(text: widget.existing?.jobTitle ?? widget.card?.title ?? '');
   late final _manager = TextEditingController(text: widget.existing?.manager ?? '');
   late final _office = TextEditingController(text: widget.existing?.office ?? '');
   late final _notes = TextEditingController(text: widget.existing?.notes ?? '');
@@ -96,6 +102,11 @@ class _ContactEditorScreenState extends ConsumerState<ContactEditorScreen> {
       _splitInto(e.displayName);
     }
     if (_isNew && (widget.name ?? '').trim().isNotEmpty) _splitInto(widget.name!);
+    final card = widget.card;
+    if (_isNew && card != null && (card.given ?? '').isEmpty && (card.family ?? '').isEmpty) {
+      final fn = (card.fn ?? '').trim();
+      if (fn.isNotEmpty && fn != card.email) _splitInto(fn);
+    }
     if (_isNew) {
       // По умолчанию — адресная книга активного ящика, если она доступна.
       final active = ref.read(activeAccountProvider);

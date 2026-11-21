@@ -4393,4 +4393,6 @@
     <string name="gmailConnectGoogleServices">Google Takvim ve Kişiler</string>
     <string name="gmailConnectGoogleServicesHint">Bir Google sayfası açılır: aynı hesapla oturum açın ve takvim ile kişilere erişime izin verin. E-posta bu olmadan da çalışır.</string>
     <string name="googleServicesConnected">Google Takvim ve Kişiler bağlandı</string>
+    <string name="fwdContactGroup">Kişi grubu</string>
+    <string name="saveGroup">Grubu kaydet</string>
 </resources>

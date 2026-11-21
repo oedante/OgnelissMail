@@ -9,6 +9,7 @@
 // - Добавить аккаунт
 // - Контекстное меню на папках (очистить, переименовать)
 
+import '../../../widgets/common/queue_sheet.dart' show outboxCountProvider, showQueueSheet;
 import '../../../widgets/ui/section_band.dart';
 import '../../../services/accounts/account_labels.dart';
 import '../../../widgets/ui/theme_quick_switch.dart' show ThemeQuickSwitch;
@@ -177,6 +178,18 @@ class MailDrawer extends ConsumerWidget {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
+                  // «Исходящие» (21.11.2026, как в Outlook): письма в очереди
+                  // на отправку — открыть, изменить, отправить, удалить.
+                  // Видна, пока очередь не пуста.
+                  if ((ref.watch(outboxCountProvider).value ?? 0) > 0)
+                    ListTile(
+                      dense: true,
+                      leading: Icon(AppIcons.outbox, color: theme.colorScheme.primary),
+                      title: Text(l10n.tr('outbox')),
+                      trailing: Text('${ref.watch(outboxCountProvider).value ?? 0}',
+                          style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.primary)),
+                      onTap: () => unawaited(showQueueSheet(context)),
+                    ),
                   ..._buildFolderSection(context, ref, l10n, theme, foldersAsync),
                   // Архив Ogneliss — разделом под папками ящика (1.7.3).
                   ..._buildArchiveSection(context, ref, l10n, theme),
@@ -955,6 +968,14 @@ class MailDrawer extends ConsumerWidget {
       await ref.read(folderNotifyOffProvider.notifier).set(folder.accountId, [folder.id, ...below(folder.id)], muted);
     }
 
+    final bin = folder.type == FolderType.trash || folder.type == FolderType.junk;
+    final favorite = PeekAction(
+      icon: AppIcons.star,
+      filled: folder.isFavorite,
+      color: folder.isFavorite ? AppColors.brandAmber : null,
+      label: l10n.tr(folder.isFavorite ? 'removeFromFavorites' : 'addToFavorites'),
+      onTap: () => unawaited(setFolderFavorite(ref, folder, !folder.isFavorite)),
+    );
     unawaited(showPeekCard(
       context,
       anchor: anchor,
@@ -976,6 +997,15 @@ class MailDrawer extends ConsumerWidget {
         ]),
       ),
       actions: [
+        // Корзина и Спам (просьба владельца 21.11.2026): первой — «Очистить»,
+        // «В избранное» в быстрых действиях не нужно (осталось в «Ещё»).
+        if (bin)
+          PeekAction(
+            icon: AppIcons.delete_sweep,
+            label: folder.type == FolderType.trash ? l10n.tr('emptyTrash') : l10n.tr('clearJunk'),
+            color: AppColors.errorText(context),
+            onTap: () => unawaited(_emptyFolder(context, ref, folder, l10n)),
+          ),
         PeekAction(
           icon: AppIcons.mark_email_read,
           label: l10n.tr('markAllRead'),
@@ -987,13 +1017,7 @@ class MailDrawer extends ConsumerWidget {
             label: l10n.tr(muted ? 'folderNotifyTurnOn' : 'folderNotifyTurnOff'),
             onTap: () => unawaited(toggleNotify()),
           ),
-        PeekAction(
-          icon: AppIcons.star,
-          filled: folder.isFavorite,
-          color: folder.isFavorite ? AppColors.brandAmber : null,
-          label: l10n.tr(folder.isFavorite ? 'removeFromFavorites' : 'addToFavorites'),
-          onTap: () => unawaited(setFolderFavorite(ref, folder, !folder.isFavorite)),
-        ),
+        if (!bin) favorite,
       ],
       moreLabel: l10n.tr('peekMore'),
       more: [
@@ -1029,14 +1053,8 @@ class MailDrawer extends ConsumerWidget {
             onTap: () => unawaited(_folderToOgna(context, ref, folder, l10n)),
           ),
         ]),
+        if (bin) PeekGroup(items: [favorite]),
         PeekGroup(items: [
-          if (folder.type == FolderType.trash || folder.type == FolderType.junk)
-            PeekAction(
-              icon: AppIcons.delete_sweep,
-              label: folder.type == FolderType.trash ? l10n.tr('emptyTrash') : l10n.tr('clearJunk'),
-              color: AppColors.errorText(context),
-              onTap: () => unawaited(_emptyFolder(context, ref, folder, l10n)),
-            ),
           if (!folder.isLocked)
             PeekAction(
               icon: AppIcons.delete,

@@ -24,6 +24,7 @@
 import '../../../core/platform/download_saver.dart';
 import '../../../core/platform/file_opener.dart';
 import '../../../core/utils/text_safe.dart';
+import 'dart:async';
 import 'dart:convert';
 import '../../../core/theme/app_icons.dart';
 import 'dart:io';
@@ -41,6 +42,12 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/security/attachment_safety.dart';
 import '../../../core/security/link_opener.dart';
 import '../widgets/mail_html_view.dart';
+import '../widgets/eml_translate_button.dart';
+import '../widgets/forwarded_contacts_card.dart';
+import '../../compose/providers/distribution_groups_provider.dart' show DistributionGroup, GroupMember;
+import '../../contacts/screens/contact_groups_screen.dart' show groupsFromVcf;
+import '../../../services/mail/dav/vcard_parser.dart' show VCardData, VCardParser;
+import '../../../services/translation/translator.dart' show translationPlatformSupported;
 import '../widgets/desktop_mail_body.dart';
 import '../widgets/pdf_view.dart';
 import '../widgets/zip_view.dart';
@@ -71,7 +78,7 @@ import '../../../services/security/smime_service.dart';
 import '../../../services/security/smime_mime.dart';
 import '../../../core/platform/app_share.dart';
 
-enum _Kind { image, pdf, text, pass, mail, zip, document, other }
+enum _Kind { image, pdf, text, pass, mail, zip, document, contact, other }
 
 /// Одна вкладка предпросмотра: файл + подпись.
 class PreviewItem {
@@ -133,6 +140,8 @@ class AttachmentPreviewScreen extends StatefulWidget {
     final ext = name.contains('.') ? name.split('.').last : '';
     final ct = item.mimeType?.toLowerCase() ?? '';
     if (ext == 'eml' || ext == 'p7m' || ct.contains('pkcs7-mime') || ct == 'message/rfc822') return true;
+    // Контакты и группы файлом .vcf (21.11.2026) — здесь, с «Сохранить».
+    if (_isVcard(name, ct)) return true;
     // Письмо Outlook .msg (1.12.x, просьба владельца 05.11.2026) — тоже
     // письмом, на всех устройствах: «Просмотр» iOS и Android его не открывают.
     if (MsgReader.isMsgName(name, mimeType: ct)) return true;
@@ -185,6 +194,12 @@ class AttachmentPreviewScreen extends StatefulWidget {
   static bool _textDocOn(PreviewItem item) =>
       TextDocReader.handles(item.fileName, mimeType: item.mimeType) && DocPreviewSettings.isOn(DocPreviewType.text);
 
+  static bool _isVcard(String name, String? mimeType) {
+    final n = name.toLowerCase();
+    final ct = (mimeType ?? '').toLowerCase();
+    return n.endsWith('.vcf') || n.endsWith('.vcard') || ct.startsWith('text/vcard') || ct.startsWith('text/x-vcard');
+  }
+
   static const _imageExt = {'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'};
   static const _textExt = {'txt', 'log', 'csv', 'tsv', 'json', 'xml', 'md', 'yaml', 'yml', 'ini'};
 
@@ -232,6 +247,9 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   /// Ресурсы на вкладку — грузим лениво, только когда вкладку открыли.
   final Map<int, String> _texts = {};
   final Map<int, PkPass> _passes = {};
+
+  /// Контакты и группы из .vcf.
+  final Map<int, ({List<DistributionGroup> groups, List<VCardData> contacts})> _vcards = {};
   final Map<int, EmlMessage> _mails = {};
 
   /// Разобранные документы (1.11.x) и HTML текстовых — очищенный и
@@ -249,6 +267,11 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
   /// каждый раз был новым объектом.
   MailHtmlDocument? _emailDoc;
   final Map<int, String> _mailHtml = {};
+
+  /// Перевод вложенного письма (21.11.2026): исходный HTML — для «Показать
+  /// оригинал», тема перевода — для шапки.
+  final Map<int, String> _mailSource = {};
+  final Map<int, String> _mailSubject = {};
 
   /// Вложения без расширения, которые по содержимому оказались письмами.
   final Set<int> _sniffedMail = {};
@@ -359,6 +382,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
     if (ext == 'pdf') return _Kind.pdf;
     if (PackedArchive.kindOf(name) != null) return _Kind.zip;
     if (ext == 'pkpass') return _Kind.pass;
+    if (AttachmentPreviewScreen._isVcard(name, widget.items[i].mimeType)) return _Kind.contact;
     // Письмо — письмом, а не текстом MIME (раньше .eml показывался сырым:
     // заголовки Received, «=?koi8-r?…», quoted-printable).
     if (ext == 'eml' ||
@@ -414,6 +438,11 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
           break;
         case _Kind.document:
           await _loadDocument(i);
+          break;
+        case _Kind.contact:
+          final bytes = await File(item.filePath).readAsBytes();
+          _vcards[i] = _readVcards(TextDocReader.decode(bytes, truncated: false),
+              item.fileName.replaceAll(RegExp(r'\.(vcf|vcard)$', caseSensitive: false), ''));
           break;
         case _Kind.other:
           // Вложенное письмо без расширения (так его отдаёт Exchange) —
@@ -489,13 +518,33 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
           '${const HtmlEscape(HtmlEscapeMode.element).convert(m.plain!)}</pre>';
     }
     if (html != null) {
-      _mailHtml[i] = html;
+      _mailHtml[i] = _mailSource[i] = html;
       if (mailWebViewSupported) {
         _mailDocs[i] = await MailHtmlDocument.buildAsync(html,
             allowRemoteImages: false, inlineImages: m.inlineImages);
       }
     }
     _mails[i] = m;
+  }
+
+  /// Перевод или оригинал вложенного письма — в окно письма.
+  Future<void> _showTranslated(int i, EmlMessage m, String? html, String? subject) async {
+    final shown = html ?? _mailSource[i];
+    if (shown == null) return;
+    MailHtmlDocument? doc;
+    if (mailWebViewSupported) {
+      doc = await MailHtmlDocument.buildAsync(shown, allowRemoteImages: false, inlineImages: m.inlineImages);
+    }
+    if (!mounted) return;
+    setState(() {
+      _mailHtml[i] = shown;
+      if (doc != null) _mailDocs[i] = doc;
+      if (subject == null) {
+        _mailSubject.remove(i);
+      } else {
+        _mailSubject[i] = subject;
+      }
+    });
   }
 
   /// Разобрать документ (в изоляте, с пределами — OfficeReader) и, если он
@@ -569,6 +618,8 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         return AppIcons.confirmation_number;
       case _Kind.mail:
         return AppIcons.mail;
+      case _Kind.contact:
+        return AppIcons.contacts;
       case _Kind.document:
         final f = OfficeFormats.of(widget.items[i].fileName, mimeType: widget.items[i].mimeType);
         if (f != null && OfficeFormats.isSheet(f)) return AppIcons.table_chart;
@@ -784,6 +835,14 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         final m = _mails[i];
         if (m == null) return const Center(child: CircularProgressIndicator());
         return _mailView(i, m, l10n);
+
+      case _Kind.contact:
+        final v = _vcards[i];
+        if (v == null) return const Center(child: CircularProgressIndicator());
+        if (v.groups.isEmpty && v.contacts.isEmpty) return _fallback(i, ru, l10n.tr('fileDamaged'));
+        return ListView(padding: const EdgeInsets.all(Space.l), children: [
+          ForwardedContactsCard(groups: v.groups, contacts: v.contacts),
+        ]);
 
       case _Kind.document:
         final doc = _docs[i];
@@ -1013,6 +1072,19 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
     );
   }
 
+  /// Группы (карточки KIND:group) и контакты из текста .vcf. В файле с
+  /// группой участники — в ней (каждого можно добавить отдельно).
+  static ({List<DistributionGroup> groups, List<VCardData> contacts}) _readVcards(String text, String name) {
+    final hasGroup = RegExp(r'^KIND:group', multiLine: true, caseSensitive: false).hasMatch(text);
+    final groups = hasGroup ? groupsFromVcf(text, fallbackName: name) : <DistributionGroup>[];
+    final contacts = groups.isNotEmpty
+        ? <VCardData>[]
+        : VCardParser.parse(text)
+            .where((c) => c.email.isNotEmpty || (c.phoneMobile ?? '').isNotEmpty || (c.phoneWork ?? '').isNotEmpty)
+            .toList();
+    return (groups: groups, contacts: contacts);
+  }
+
   Widget _mailView(int i, EmlMessage m, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final muted = AppColors.mutedText(context);
@@ -1051,7 +1123,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  m.subject.isEmpty ? l10n.tr('noSubject') : m.subject,
+                  _mailSubject[i] ?? (m.subject.isEmpty ? l10n.tr('noSubject') : m.subject),
                   style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: Space.xs),
@@ -1059,23 +1131,56 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
                 if (m.to.isNotEmpty) field(AppIcons.mailTo, l10n.tr('to'), m.to.map((a) => a.label).join(', ')),
                 if (m.cc.isNotEmpty) field(AppIcons.mailCc, l10n.tr('cc'), m.cc.map((a) => a.label).join(', ')),
                 if (m.date != null) field(AppIcons.schedule, l10n.tr('date'), AppDateFormat.dateTime(context, m.date!)),
+                if (translationPlatformSupported && _mailSource[i] != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: Space.xs),
+                    child: EmlTranslateButton(
+                      key: ValueKey('eml_tr_$i'),
+                      id: '${widget.items[i].filePath}#$i',
+                      subject: m.subject,
+                      html: _mailSource[i]!,
+                      onChanged: (html, subject) => unawaited(_showTranslated(i, m, html, subject)),
+                    ),
+                  ),
               ],
             ),
           ),
         ),
         const SizedBox(height: Space.m),
-        if (html == null)
+        // Пересланная группа контактов или контакт Outlook (21.11.2026).
+        if (m.contactGroup != null || m.contacts.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Space.l),
+            child: ForwardedContactsCard(
+              groups: [
+                if (m.contactGroup != null)
+                  DistributionGroup(
+                    name: m.contactGroup!.name.isEmpty ? m.subject : m.contactGroup!.name,
+                    members: [
+                      for (final x in m.contactGroup!.members)
+                        GroupMember(email: x.email, name: x.name.isEmpty ? null : x.name),
+                    ],
+                  ),
+              ],
+              contacts: m.contacts,
+            ),
+          ),
+          const SizedBox(height: Space.m),
+        ],
+        if (html == null && m.contactGroup == null && m.contacts.isEmpty)
           Padding(
             padding: const EdgeInsets.all(Space.l),
             child: Text(l10n.tr('emlNoText'), style: theme.textTheme.bodyMedium?.copyWith(color: muted)),
           )
+        else if (html == null)
+          const SizedBox.shrink()
         else if (doc != null)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: Space.l),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: MailHtmlView(
-                key: ValueKey('eml_${i}_${theme.brightness.name}'),
+                key: ValueKey('eml_${i}_${theme.brightness.name}_${identityHashCode(doc)}'),
                 document: doc,
                 allowRemoteImages: false,
                 textScale: _fontScale,

@@ -4393,4 +4393,6 @@
     <string name="gmailConnectGoogleServices">Google-kalenteri ja -yhteystiedot</string>
     <string name="gmailConnectGoogleServicesHint">Google-sivu avautuu: kirjaudu samalla tilillä ja salli pääsy kalenteriin ja yhteystietoihin. Sähköposti toimii ilmankin.</string>
     <string name="googleServicesConnected">Google-kalenteri ja -yhteystiedot yhdistetty</string>
+    <string name="fwdContactGroup">Yhteystietoryhmä</string>
+    <string name="saveGroup">Tallenna ryhmä</string>
 </resources>

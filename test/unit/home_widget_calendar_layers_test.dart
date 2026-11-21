@@ -72,6 +72,18 @@ void main() {
     expect(j['tabs'], ['День', 'Неделя', 'Месяц', 'Мой день'], reason: 'вкладка «Мой день» на Android');
   });
 
+  test('задача на день с напоминанием в тот же день — во время напоминания (21.11.2026)', () async {
+    final at = today.add(const Duration(hours: 11, minutes: 40));
+    await db.into(db.tasks).insert(TasksCompanion.insert(
+        id: 't3', accountId: 'a1', title: 'Позвонить', createdAt: today, dueDate: Value(today), reminderAt: Value(at)));
+    final j = await run(HomeWidgetService.calendarKey);
+    final e = (j['events'] as List).firstWhere((e) => e['s'] == '✓ Позвонить');
+    expect(e['a'], isNull, reason: 'не «весь день»');
+    expect(e['st'], at.millisecondsSinceEpoch);
+    // Без напоминания — по-прежнему на весь день.
+    expect((j['events'] as List).firstWhere((e) => e['s'] == '✓ Проверка')['a'], 1);
+  });
+
   test('приглашение без ответа — как в календаре приложения, без повтора', () async {
     final st = today.add(const Duration(days: 1, hours: 11));
     String meeting(DateTime s) => jsonEncode({

@@ -23,6 +23,14 @@ class SubjectPrefix {
   /// Тема без префиксов ответа и пересылки в начале.
   static String strip(String subject) => subject.replaceFirst(_prefixes, '').trim();
 
+  /// Тема для списка писем, бесед и уведомлений — без префиксов (просьба
+  /// владельца 21.11.2026: «префикс будем показывать только в самом
+  /// письме»). Тема из одного префикса («RE:») — как есть, не пустая.
+  static String display(String subject) {
+    final t = strip(subject);
+    return t.isEmpty ? subject.trim() : t;
+  }
+
   /// Тема ответа: «RE: тема».
   static String reply(String subject) => 'RE: ${strip(subject)}';
 

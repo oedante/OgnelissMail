@@ -4372,4 +4372,6 @@
     <string name="gmailConnectGoogleServices">Google 日历和通讯录</string>
     <string name="gmailConnectGoogleServicesHint">将打开 Google 页面：请使用同一账号登录，并允许访问日历和通讯录。不连接也可以正常收发邮件。</string>
     <string name="googleServicesConnected">已连接 Google 日历和通讯录</string>
+    <string name="fwdContactGroup">联系人组</string>
+    <string name="saveGroup">保存组</string>
 </resources>

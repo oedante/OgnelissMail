@@ -46,8 +46,9 @@ void main() {
     expect(NotificationText.subText(mailbox: 'i.petrov', vip: true), 'VIP · i.petrov');
   });
 
-  test('тема — строкой под отправителем; без темы — подпись', () {
-    expect(NotificationText.subject('  RE: Смена\n рейса ', noSubject: '(Без темы)'), 'RE: Смена рейса');
+  test('тема — строкой под отправителем, без «RE:/FW:» (21.11.2026); без темы — подпись', () {
+    expect(NotificationText.subject('  RE: Смена\n рейса ', noSubject: '(Без темы)'), 'Смена рейса');
+    expect(NotificationText.subject('Fwd: RE: Акт', noSubject: '(Без темы)'), 'Акт');
     expect(NotificationText.subject(' ', noSubject: '(Без темы)'), '(Без темы)');
   });
 

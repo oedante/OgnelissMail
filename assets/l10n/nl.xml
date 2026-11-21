@@ -4393,4 +4393,6 @@
     <string name="gmailConnectGoogleServices">Google Agenda en Contacten</string>
     <string name="gmailConnectGoogleServicesHint">Er opent een Google-pagina: log in met hetzelfde account en geef toegang tot agenda en contacten. Mail werkt ook zonder.</string>
     <string name="googleServicesConnected">Google Agenda en Contacten gekoppeld</string>
+    <string name="fwdContactGroup">Contactgroep</string>
+    <string name="saveGroup">Groep opslaan</string>
 </resources>

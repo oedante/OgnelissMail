@@ -4393,4 +4393,6 @@
     <string name="gmailConnectGoogleServices">Google Calendar and Contacts</string>
     <string name="gmailConnectGoogleServicesHint">A Google page will open: sign in with the same account and allow access to your calendar and contacts. Mail works without this too.</string>
     <string name="googleServicesConnected">Google Calendar and Contacts connected</string>
+    <string name="fwdContactGroup">Contact group</string>
+    <string name="saveGroup">Save group</string>
 </resources>

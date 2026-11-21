@@ -4372,4 +4372,6 @@
     <string name="gmailConnectGoogleServices">ปฏิทินและรายชื่อติดต่อ Google</string>
     <string name="gmailConnectGoogleServicesHint">หน้า Google จะเปิดขึ้น: ลงชื่อเข้าใช้ด้วยบัญชีเดียวกันและอนุญาตให้เข้าถึงปฏิทินและรายชื่อติดต่อ อีเมลใช้งานได้แม้ไม่ทำขั้นตอนนี้</string>
     <string name="googleServicesConnected">เชื่อมต่อปฏิทินและรายชื่อติดต่อ Google แล้ว</string>
+    <string name="fwdContactGroup">กลุ่มรายชื่อติดต่อ</string>
+    <string name="saveGroup">บันทึกกลุ่ม</string>
 </resources>

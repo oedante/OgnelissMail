@@ -32,8 +32,20 @@ void main() {
     });
 
     test('прочие названия — нет', () {
-      for (final n in ['Входящие', 'Архив 2019', 'Проекты', 'Spam filter', 'Удалённые', '']) {
+      for (final n in ['Входящие', 'Архив 2019', 'Проекты', 'Spam filter', 'Черновики 2', '']) {
         expect(SpecialFolders.typeByName(n), isNull, reason: n);
+      }
+    });
+
+    test('черновики, отправленные, корзина (21.11.2026: «Drafts» у iCloud)', () {
+      for (final n in ['Drafts', 'Черновики', 'Entwürfe', 'Brouillons']) {
+        expect(SpecialFolders.typeByName(n), FolderType.drafts, reason: n);
+      }
+      for (final n in ['Sent Messages', 'Отправленные', 'Gesendet']) {
+        expect(SpecialFolders.typeByName(n), FolderType.sent, reason: n);
+      }
+      for (final n in ['Deleted Messages', 'Удалённые', 'Корзина', 'Trash']) {
+        expect(SpecialFolders.typeByName(n), FolderType.trash, reason: n);
       }
     });
   });
@@ -113,5 +125,19 @@ void main() {
       expect(_typeOf(out, 'proj'), FolderType.archive);
       expect(_typeOf(out, 'junk'), FolderType.junk);
     });
+  });
+
+  test('iCloud: «Drafts» без пометки сервера — черновики; помеченная сервером — главнее', () {
+    final list = SpecialFolders.apply([
+      _f('INBOX', 'INBOX', type: FolderType.inbox),
+      _f('Drafts', 'Drafts'),
+      _f('Sent', 'Sent Messages', type: FolderType.sent),
+      _f('Old', 'Отправленные'),
+      _f('Proj/Drafts', 'Drafts', parent: 'Proj'),
+      _f('Proj', 'Proj'),
+    ]);
+    expect(_typeOf(list, 'Drafts'), FolderType.drafts);
+    expect(_typeOf(list, 'Proj/Drafts'), FolderType.custom);
+    expect(_typeOf(list, 'Old'), FolderType.custom);
   });
 }

@@ -52,11 +52,14 @@ class MailTagValues {
   final Map<String, String> _byKey;
   const MailTagValues._(this._byKey);
 
+  /// [anyTime] — {время_суток} всеми вариантами («Доброе утро/день/вечер»):
+  /// подпись шаблона в меню, а не значение на сейчас (21.11.2026).
   factory MailTagValues({
     Map<String, String> sender = const {},
     Map<String, String> recipient = const {},
     DateTime? now,
     String? lang,
+    bool anyTime = false,
   }) {
     final t = now ?? DateTime.now();
     String two(int n) => n.toString().padLeft(2, '0');
@@ -65,7 +68,7 @@ class MailTagValues {
       ...recipient,
       'date': '${two(t.day)}.${two(t.month)}.${t.year}',
       'time': '${two(t.hour)}:${two(t.minute)}',
-      'part_of_day': MailTags.partOfDay(lang ?? 'ru', t),
+      'part_of_day': anyTime ? MailTags.partOfDayAll(lang ?? 'ru') : MailTags.partOfDay(lang ?? 'ru', t),
     });
   }
 
@@ -134,19 +137,45 @@ abstract final class MailTags {
 
   /// Строка после подстановки без лишних пробелов и запятых:
   /// «Здравствуйте, !» → «Здравствуйте!», «, коллеги» → «коллеги».
+  /// Знаки — и китайские, японские, арабские (21.11.2026: «おはようございます、！»
+  /// без имени).
   static String tidy(String s) {
-    var out = s
-        .replaceAll(RegExp(r'[ \t]+'), ' ')
-        .replaceAllMapped(RegExp(r'\s+([,.!?;:])'), (m) => m.group(1)!)
-        .replaceAll(RegExp(r',(\s*,)+'), ',')
-        .replaceAll(RegExp(r',(?=[!?.;:])'), '')
-        .trim();
-    out = out.replaceFirst(RegExp(r'^[,;:]\s*'), '');
-    return out;
+    final lines = [
+      for (final line in s.split('\n'))
+        line
+            .replaceAll(RegExp(r'[ \t]+'), ' ')
+            .replaceAllMapped(RegExp(r'[ \t]+([,.!?;:，、。！？；：،؟])'), (m) => m.group(1)!)
+            .replaceAllMapped(RegExp(r'([,，、،])(\s*[,，、،])+'), (m) => m.group(1)!)
+            .replaceAll(RegExp(r'[,，、،](?=[!?.;:。！？；：؟])'), '')
+            .replaceFirst(RegExp(r'^\s*[,;:，、；：،]\s*'), '')
+            .trim(),
+    ];
+    // Пустые строки по краям — от полей без значения.
+    while (lines.isNotEmpty && lines.first.isEmpty) {
+      lines.removeAt(0);
+    }
+    while (lines.isNotEmpty && lines.last.isEmpty) {
+      lines.removeLast();
+    }
+    return lines.join('\n');
   }
 
   static String _esc(String s) =>
       s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
+
+  /// Все варианты времени суток одной строкой: «Доброе утро/день/вечер»,
+  /// «Good morning/afternoon/evening»; языки без пробелов между словами —
+  /// через « / ».
+  static String partOfDayAll(String lang) {
+    String s(String k) => StringsStore.get(lang, k) ?? StringsStore.get('en', k) ?? '';
+    final parts = [s('greetPartMorning'), s('greetPartDay'), s('greetPartEvening')];
+    if (parts.any((p) => p.isEmpty)) return parts.where((p) => p.isNotEmpty).join(' / ');
+    if (parts.every((p) => p.contains(' '))) {
+      String last(String p) => p.substring(p.lastIndexOf(' ') + 1);
+      return '${parts[0]}/${last(parts[1])}/${last(parts[2])}';
+    }
+    return parts.join(' / ');
+  }
 
   /// «Доброе утро» (5–11 ч), «Добрый день» (12–17), «Добрый вечер» (18–4)
   /// на языке [lang].

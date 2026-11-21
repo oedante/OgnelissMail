@@ -4372,4 +4372,6 @@
     <string name="gmailConnectGoogleServices">Kalender dan Kontak Google</string>
     <string name="gmailConnectGoogleServicesHint">Halaman Google akan terbuka: masuk dengan akun yang sama dan izinkan akses ke kalender dan kontak. Email tetap berfungsi tanpa ini.</string>
     <string name="googleServicesConnected">Kalender dan Kontak Google terhubung</string>
+    <string name="fwdContactGroup">Grup kontak</string>
+    <string name="saveGroup">Simpan grup</string>
 </resources>

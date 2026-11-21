@@ -4414,4 +4414,6 @@
     <string name="gmailConnectGoogleServices">יומן ואנשי קשר של Google</string>
     <string name="gmailConnectGoogleServicesHint">ייפתח דף של Google: היכנסו עם אותו חשבון ואשרו גישה ליומן ולאנשי הקשר. הדואר עובד גם בלי זה.</string>
     <string name="googleServicesConnected">יומן ואנשי קשר של Google מחוברים</string>
+    <string name="fwdContactGroup">קבוצת אנשי קשר</string>
+    <string name="saveGroup">שמירת הקבוצה</string>
 </resources>

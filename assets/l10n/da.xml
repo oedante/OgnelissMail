@@ -4393,4 +4393,6 @@
     <string name="gmailConnectGoogleServices">Google Kalender og Kontakter</string>
     <string name="gmailConnectGoogleServicesHint">En Google-side åbnes: log ind med samme konto, og giv adgang til kalender og kontakter. Mail virker også uden.</string>
     <string name="googleServicesConnected">Google Kalender og Kontakter forbundet</string>
+    <string name="fwdContactGroup">Kontaktgruppe</string>
+    <string name="saveGroup">Gem gruppe</string>
 </resources>

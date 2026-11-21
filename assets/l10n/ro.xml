@@ -4414,4 +4414,6 @@
     <string name="gmailConnectGoogleServices">Calendar și Agendă Google</string>
     <string name="gmailConnectGoogleServicesHint">Se va deschide o pagină Google: conectați-vă cu același cont și permiteți accesul la calendar și agendă. E-mailul funcționează și fără.</string>
     <string name="googleServicesConnected">Calendar și Agendă Google conectate</string>
+    <string name="fwdContactGroup">Grup de contacte</string>
+    <string name="saveGroup">Salvează grupul</string>
 </resources>

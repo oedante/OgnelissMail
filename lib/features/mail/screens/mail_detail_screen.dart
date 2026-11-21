@@ -1500,7 +1500,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     } else {
       body = _nativeBody(email, html, theme, l10n, settings) ?? _flutterHtmlBody(html, theme, l10n);
     }
-    if (_prepared?.nativeWhy == null) return body;
+    // «Открыть в браузере» — только когда письмо показано упрощённо: в окне
+    // браузера оно уже целиком (замечание владельца 21.11.2026: плашка
+    // висела и над письмом, показанным полностью).
+    if (_prepared?.nativeWhy == null || desktopWeb) return body;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

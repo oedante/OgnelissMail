@@ -84,4 +84,20 @@ void main() {
     expect(await eng.searchGal('later@example.com'), isEmpty);
     expect(total, before);
   });
+
+  // Журнал владельца 22.11.2026: сервер недоступен, на каждую букву в «Кому»
+  // уходил ResolveRecipients и ждал соединения 20 с — подсказки висели.
+  test('сервер недоступен — разрешение имён тоже молчит', () async {
+    var total = 0;
+    final eng = await engine(MockClient((req) async {
+      total++;
+      throw http.ClientException('SocketTimeoutException: failed to connect');
+    }));
+    expect(await eng.resolveRecipients('Сит'), isEmpty);
+    expect(eng.galPaused, isTrue);
+    final before = total;
+    expect(await eng.resolveRecipients('Ситн'), isEmpty);
+    expect(await eng.searchGal('Ситни'), isEmpty);
+    expect(total, before, reason: 'пока пауза — к серверу не ходим');
+  });
 }

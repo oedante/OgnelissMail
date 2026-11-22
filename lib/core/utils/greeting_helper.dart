@@ -10,6 +10,10 @@
 //           звучит странно;
 //   hello — «Добрый день!» без имени;
 //   none  — без приветствия.
+// Время суток (просьба владельца 22.11.2026): «Доброе утро» (5–11 ч),
+// «Добрый день» (12–17), «Добрый вечер» (18–4) — по часам, когда пишется
+// письмо ([now]); только в языках, где деловое приветствие и есть «добрый
+// день» ([timedLangs]): «Hello», «Hola», «こんにちは» от часа не зависят.
 // «Коллеги» — только если все адресаты «Кому» из доменов вашей организации
 // (адреса на gmail.com, yandex.ru и других общих почтах — не коллеги);
 // иначе нескольким адресатам — «Добрый день!».
@@ -84,6 +88,29 @@ class GreetingHelper {
     return 'ru';
   }
 
+  /// Языки, где приветствие начинается с «добрый день» и меняется по
+  /// времени суток: «Добрый день» → «Доброе утро» / «Добрый вечер»,
+  /// «Guten Tag» → «Guten Morgen» / «Guten Abend», «Bonjour» → «Bonsoir».
+  static const timedLangs = {'ru', 'uk', 'bg', 'cs', 'sk', 'pl', 'de', 'fr', 'it', 'ro'};
+
+  /// Ключ строки времени суток: 5–11 ч — утро, 12–17 — день, 18–4 — вечер.
+  static String partOfDayKey(DateTime now) => now.hour >= 5 && now.hour < 12
+      ? 'greetPartMorning'
+      : now.hour >= 12 && now.hour < 18
+          ? 'greetPartDay'
+          : 'greetPartEvening';
+
+  /// [text] по времени суток [now]: начало «Добрый день» сменяется на
+  /// «Доброе утро» или «Добрый вечер». Язык не из [timedLangs], [now] не
+  /// задано или текст начинается иначе — как есть.
+  static String timed(String lang, String text, DateTime? now) {
+    if (now == null || text.isEmpty || !timedLangs.contains(lang)) return text;
+    final day = _t(lang, 'greetPartDay');
+    final part = StringsStore.get(lang, partOfDayKey(now)) ?? '';
+    if (day.isEmpty || part.isEmpty || !text.startsWith(day)) return text;
+    return part + text.substring(day.length);
+  }
+
   /// Строка [key] на языке [lang] (нет — английская; нет и её — '').
   static String _t(String lang, String key) =>
       StringsStore.get(lang, key) ?? StringsStore.get('en', key) ?? '';
@@ -104,16 +131,29 @@ class GreetingHelper {
   /// книги (пустая строка — имени нет), [emails] — адреса, [appLang] — язык
   /// приложения, [ownDomains] — домены своих адресов ящика. [lang] — язык
   /// приветствия задан (письмо поручения целиком на языке приложения);
-  /// иначе — по имени ([languageFor]).
+  /// иначе — по имени ([languageFor]). [now] — время письма: приветствие
+  /// по времени суток ([timed]); null — всегда «Добрый день».
   static GreetingSet variants({
     required List<String> names,
     required List<String> emails,
     required String appLang,
     Set<String> ownDomains = const {},
     String? lang,
+    DateTime? now,
   }) {
     final clean = [for (final n in names) cleanName(n)];
-    lang ??= languageFor(clean, appLang);
+    final l = lang ?? languageFor(clean, appLang);
+    final set = _variants(clean, emails, l, ownDomains);
+    if (now == null) return set;
+    return GreetingSet(
+      lang: set.lang,
+      full: timed(l, set.full, now),
+      short: set.short,
+      hello: timed(l, set.hello, now),
+    );
+  }
+
+  static GreetingSet _variants(List<String> clean, List<String> emails, String lang, Set<String> ownDomains) {
     final hello = _t(lang, 'greetHelloOnly');
     final count = emails.length > clean.length ? emails.length : clean.length;
     if (count == 0) return GreetingSet(lang: lang, full: hello, short: '', hello: hello);

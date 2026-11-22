@@ -179,11 +179,7 @@ abstract final class MailTags {
   /// «Доброе утро» (5–11 ч), «Добрый день» (12–17), «Добрый вечер» (18–4)
   /// на языке [lang].
   static String partOfDay(String lang, DateTime now) {
-    final key = now.hour >= 5 && now.hour < 12
-        ? 'greetPartMorning'
-        : now.hour >= 12 && now.hour < 18
-            ? 'greetPartDay'
-            : 'greetPartEvening';
+    final key = GreetingHelper.partOfDayKey(now);
     return StringsStore.get(lang, key) ?? StringsStore.get('en', key) ?? '';
   }
 

@@ -116,6 +116,7 @@ class AssignmentService {
       appLang: l10n.localeCode,
       lang: l10n.localeCode,
       ownDomains: account == null ? const {} : OwnAddresses.domains(account),
+      now: DateTime.now(),
     );
     // Своё приветствие ящика (18.11.2026) — с полями {…}.
     if (mode == GreetingMode.custom) {

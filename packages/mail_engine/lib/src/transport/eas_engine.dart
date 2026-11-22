@@ -1379,8 +1379,18 @@ class EasEngine implements MailEngine {
   /// Возвращает пары (отображаемое имя, email).
   Future<List<({String displayName, String email})>> resolveRecipients(
       String query, {int maxResults = 20}) async {
+    if (_cfg == null || query.trim().isEmpty) return const [];
+    // Сервер недоступен — молчим, как поиск GAL: раньше при каждой букве
+    // уходил запрос и ждал соединения 20 с, подсказки висели (журнал
+    // владельца 22.11.2026, 17:49–17:52: десятки ResolveRecipients подряд).
+    if (galPaused) return const [];
+    return _galLimited(() => _resolveRecipients(query, maxResults: maxResults));
+  }
+
+  Future<List<({String displayName, String email})>> _resolveRecipients(
+      String query, {int maxResults = 20}) async {
     final cfg = _cfg;
-    if (cfg == null || query.trim().isEmpty) return const [];
+    if (cfg == null || galPaused) return const [];
     final root = WbxmlElement(name: 'ResolveRecipients', namespace: 'ResolveRecipients');
     root.addChild('To', namespace: 'ResolveRecipients', text: query);
     final opts = root.addChild('Options', namespace: 'ResolveRecipients');
@@ -1390,6 +1400,7 @@ class EasEngine implements MailEngine {
         WbxmlDocument(root: root), policyKeyHeader: _policyKey ?? '0');
     if (resp == null) {
       log.error(_t, 'ResolveRecipients: нет ответа');
+      _pauseGalOnOutage();
       return const [];
     }
     final out = <({String displayName, String email})>[];
@@ -1429,6 +1440,21 @@ class EasEngine implements MailEngine {
     return until != null && DateTime.now().isBefore(until);
   }
 
+  /// Нет связи или шлюз ответил 502–504 — поиск в адресной книге и
+  /// разрешение имён молчат 5 минут; ждущие в очереди отпускаются сразу.
+  void _pauseGalOnOutage() {
+    final code = _lastStatus;
+    if (code != 0 && code != 502 && code != 503 && code != 504) return;
+    if (!galPaused) {
+      log.warn(_t, 'GAL: сервер недоступен (HTTP $code) — поиск в адресной книге приостановлен на 5 мин');
+    }
+    _galPausedUntil = DateTime.now().add(const Duration(minutes: 5));
+    for (final w in _galWaiters) {
+      w.complete();
+    }
+    _galWaiters.clear();
+  }
+
   Future<T> _galLimited<T>(Future<T> Function() run) async {
     while (_galActive >= _galMax) {
       final c = Completer<void>();
@@ -1464,17 +1490,7 @@ class EasEngine implements MailEngine {
     final resp = await _easCommand(cfg, 'Search', WbxmlDocument(root: root),
         policyKeyHeader: _policyKey ?? '0');
     if (resp == null) {
-      final code = _lastStatus;
-      if (code == 0 || code == 502 || code == 503 || code == 504) {
-        if (!galPaused) {
-          log.warn(_t, 'GAL: сервер недоступен (HTTP $code) — поиск в адресной книге приостановлен на 5 мин');
-        }
-        _galPausedUntil = DateTime.now().add(const Duration(minutes: 5));
-        for (final w in _galWaiters) {
-          w.complete();
-        }
-        _galWaiters.clear();
-      }
+      _pauseGalOnOutage();
       return const [];
     }
     final st = resp.root.findChild('Response')?.findChild('Store') ??

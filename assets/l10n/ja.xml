@@ -38,9 +38,9 @@
     <string name="permCamera">カメラ</string>
     <string name="permCameraWhy">書類を撮影して添付します。</string>
     <string name="permContacts">デバイスの連絡先</string>
-    <string name="permContactsWhy">デバイスの連絡先をインポートし、組織の連絡先をデバイスのアドレス帳にエクスポートします（連絡先設定で操作したときのみ）。</string>
+    <string name="permContactsWhy">メールボックスの連絡先が、端末の連絡先に別グループとして表示されます。同僚から電話があると名前と役職がわかります。変更はアプリで行います。端末の連絡先をアプリに読み込むときにも使います。Google（iPhone では iCloud も）の連絡先は端末が自分で同期するため、重複しません。</string>
     <string name="permCalendar">デバイスのカレンダー</string>
-    <string name="permCalendarWhy">メールの会議をデバイスのカレンダーにエクスポートします（カレンダー設定で操作したときのみ）。</string>
+    <string name="permCalendarWhy">メールボックスの会議が、端末のカレンダー、ウィジェット、ウォッチに読み取り専用の別カレンダーとして表示されます。変更はアプリで行います。Google（iPhone では iCloud も）のカレンダーは端末が自分で同期するため、会議は重複しません。</string>
     <string name="permExactAlarms">正確なリマインダー</string>
     <string name="permExactAlarmsWhy">会議や「後で」のリマインダーが時間どおりに届きます。許可しない場合、Android によって数分遅れることがあります。</string>
     <string name="permBattery">バックグラウンドの制限なし</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">{n}分ごと</string>
     <string name="checkHourly">1時間ごと</string>
     <string name="checkManual">手動のみ</string>
-    <string name="checkMailHint">即時：新着メールをサーバーがすぐに通知します（バックグラウンドでは「バックグラウンドで実行」が必要）。スケジュール：勤務時間中は即時、それ以外は一定間隔で確認します（設定 → 同期 → 配信スケジュール）。15/30/60分ごと：定期的に確認し、最も省電力です。手動：アプリを開いて下に引っ張って更新したときに確認します。</string>
+    <string name="checkMailHint">即時：新着メールをサーバーがすぐに通知します。スケジュール：勤務時間中は即時、それ以外は一定間隔で確認します（設定 → 同期 → 配信スケジュール）。15/30/60分ごと：定期的に確認し、最も省電力です。手動：アプリを開いて下に引っ張って更新したときに確認します。</string>
     <string name="wifiOnlyAcc">Wi‑Fiのみ</string>
     <string name="wifiOnlyAccDesc">Wi‑Fi接続時のみ自動で確認します</string>
     <string name="accSectionConnection">接続</string>
@@ -2506,7 +2506,7 @@
     <string name="scheduleOffHours">それ以外の時間</string>
     <string name="scheduleAccounts">スケジュール設定のアカウント</string>
     <string name="scheduleNoAccounts">まだありません: アカウントの「メールの確認」で「スケジュール」を選択してください</string>
-    <string name="scheduleHelp">即時配信（プッシュ）はサーバーとの接続を維持し、数分ごとにデバイスを起動します。夜間や週末にはバッテリーの無駄になります。\n\n「スケジュール」を使うと、勤務時間と勤務日はメールが即時に届き、それ以外の時間はアプリが15分、30分、または60分ごとに確認します。\n\nスケジュールは、「スケジュール」に設定したすべてのアカウントで共通です（設定 → アカウント → メールの確認）。ほかのモード（即時、15分ごとなど）はこれまでどおり動作します。\n\nAndroidでは、バックグラウンドでの即時配信に「バックグラウンドで実行」が必要です。勤務日の開始時には、約10分以内にプッシュがオンになります。</string>
+    <string name="scheduleHelp">即時配信（プッシュ）はサーバーとの接続を維持し、数分ごとにデバイスを起動します。夜間や週末にはバッテリーの無駄になります。\n\n「スケジュール」を使うと、勤務時間と勤務日はメールが即時に届き、それ以外の時間はアプリが15分、30分、または60分ごとに確認します。\n\nスケジュールは、「スケジュール」に設定したすべてのアカウントで共通です（設定 → アカウント → メールの確認）。ほかのモード（即時、15分ごとなど）はこれまでどおり動作します。</string>
     <string name="expScheduleDesc">勤務時間は即時、それ以外は一定間隔で確認</string>
     <string name="expScheduleHint">アカウントの「メールの確認」モードの「スケジュール」。勤務時間と勤務日（初期設定は月〜金の7:00〜19:00）はメールが即時に届き、それ以外は15分、30分、または60分ごとに確認されます。アカウントごとにオンにします: 設定 → アカウント → メールの確認。</string>
     <string name="ruleAlwaysNoMove">「常に通知」と「フォルダーに移動」は併用できません。移動後は、通知からメッセージを開けなくなります。どちらか一方を選択してください。</string>
@@ -3075,6 +3075,8 @@
     <string name="pushWakeTitleAndroid">バックグラウンドでのメール確認</string>
     <string name="pushWakeHelpAndroid">バックグラウンドのアプリをいつ動かすかは Android が自分で決めます。ディープスリープ中はバックグラウンドの確認を後回しにし、Android 15 以降はバックグラウンド同期に 1 日最大 6 時間しか与えられません。開発者のサーバー（ogneliss.ru/push）が選んだ間隔で Google（Firebase Cloud Messaging）経由で空の「メールを確認」シグナルを送り、アプリはこの端末から自分でメールボックスを確認します。サーバーに送られるのはこのインストールの通知トークンだけで、アドレス、パスワード、メールは送られません。ディープスリープ中は、Android が次のメンテナンス期間にシグナルを遅れて届けることがあります。Google のサービスがない場合は、UnifiedPush アプリ（ntfy など）経由で届きます。詳しくはプライバシーポリシーの 6.2 をご覧ください。</string>
     <string name="pushWakeVia">シグナルの届き方</string>
+    <string name="bgDeliveryAuto">ここの設定はすべて自動で行われます。バックグラウンドのアプリは、端末に Google サービスがあればそれを経由した合図で、なければ UnifiedPush アプリ（例：ntfy）経由で起こされます。どちらもない場合は、スケジュールに従ってメールを確認します。「{bg}」は「{instant}」または「{scheduled}」のメールボックスで自動的にオンになります。新着メールの通知が遅れる場合だけ、ここを変更してください。</string>
+    <string name="bgDeliveryAutoShort">自動で選択：Google、UnifiedPush、またはスケジュール</string>
     <string name="pushWakeViaHelp">Google Play 開発者サービスがあるスマートフォンでは、Google（Firebase Cloud Messaging）経由で届きます。ない場合は、UnifiedPush ディストリビューターアプリ（ntfy など）経由で届きます。このアプリが独自の接続を保ち、「メールを確認」シグナルを中継します。シグナルはこのインストール固有の鍵で暗号化されており、アドレスやメールは含まれません。詳しくはプライバシーポリシーの 6.2 をご覧ください。</string>
     <string name="pushWakeViaGoogle">Google 経由</string>
     <string name="pushWakeViaGoogleDesc">Google Play 開発者サービスが必要です</string>
@@ -3293,7 +3295,7 @@
     <string name="faq_tasks_3_a">メモを長押しすると、編集、メール送信、共有、コピー、削除ができます。</string>
     <string name="faq_notify_title">通知とバックグラウンド</string>
     <string name="faq_notify_1_q">iPhoneで通知が遅れて届くのはなぜですか？</string>
-    <string name="faq_notify_1_a">アプリを開いている間は、メールがすぐに届きます。バックグラウンドにある場合は、iOSがいつアプリを起動するかを自分で判断します。毎日アプリを使っていると頻度が上がり、低電力モード中やバッテリー残量が少ないときは下がります。起動の頻度を上げるには、「設定 → 通知」で「サーバーシグナル（iPhone）」をオンのままにしてください。開発者のサーバーが、選んだ間隔でAppleを通じて空の「メールを確認」シグナルを送り、アプリがこのデバイスから自分でメールボックスを確認します。サーバーに送られるのは通知トークンだけです。アプリスイッチャーでスワイプして終了しないでください。終了すると、アプリを再び開くまで、iOSは自動でもシグナルでもアプリを起動しなくなります。iOSの設定で、Ogneliss Mailの「Appのバックグラウンド更新」がオンになっていることを確認してください。</string>
+    <string name="faq_notify_1_a">アプリを開いている間は、メールがすぐに届きます。バックグラウンドにある場合は、iOSがいつアプリを起動するかを自分で判断します。毎日アプリを使っていると頻度が上がり、低電力モード中やバッテリー残量が少ないときは下がります。起動の頻度を上げるには、「設定 → 詳細設定」で「サーバーシグナル（iPhone）」をオンのままにしてください。開発者のサーバーが、選んだ間隔でAppleを通じて空の「メールを確認」シグナルを送り、アプリがこのデバイスから自分でメールボックスを確認します。サーバーに送られるのは通知トークンだけです。アプリスイッチャーでスワイプして終了しないでください。終了すると、アプリを再び開くまで、iOSは自動でもシグナルでもアプリを起動しなくなります。iOSの設定で、Ogneliss Mailの「Appのバックグラウンド更新」がオンになっていることを確認してください。</string>
     <string name="faq_notify_2_q">1つのフォルダーの通知をオフにするには？</string>
     <string name="faq_notify_2_a">設定 → アカウント → フォルダー同期：フォルダーのスイッチの横にあるベルで、そのフォルダー（サブフォルダー含む）の新着メール通知をオン・オフできます。フォルダーの同期は続きます。⋮メニューには「通知：すべてのフォルダー」と「通知：フォルダーなし」があります。送信済み、下書き、削除済みアイテム、迷惑メールの通知は常にありません。</string>
     <string name="faq_notify_3_q">Androidで通知がすぐに届かないのはなぜですか？</string>

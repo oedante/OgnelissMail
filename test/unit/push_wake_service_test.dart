@@ -380,7 +380,11 @@ void main() {
       expect(s.state().lastError, isNull);
     });
 
-    test('несколько распространителей — выбирает человек; выбранный удалён — будто его нет', () async {
+    // 2.7.0 (замечание владельца 22.11.2026: «как и что будет будить
+    // приложение, пользователю не интересно»): несколько распространителей —
+    // первый по названию, сам; вручную — «Расширенные настройки».
+    test('несколько распространителей — выбирается сам первый по названию; «Автоматически» сбрасывает выбор',
+        () async {
       dists = [
         {'id': 'io.heckel.ntfy', 'name': 'ntfy'},
         {'id': 'org.unifiedpush.distributor.nextpush', 'name': 'NextPush'},
@@ -388,12 +392,18 @@ void main() {
       final c = await make(gms: 'missing');
       final s = c.read(pushWakeServiceProvider);
       await s.apply();
-      expect(upCalls.where((c) => c.method == 'register'), isEmpty);
-      expect(s.upDistributor, isNull);
-      expect(await s.signalChannel(), SignalChannel.chooseDistributor);
+      expect(s.upDistributor, 'org.unifiedpush.distributor.nextpush');
+      expect(upCalls.where((c) => c.method == 'register').single.arguments['distributor'],
+          'org.unifiedpush.distributor.nextpush');
+      expect(await s.signalChannel(), SignalChannel.unifiedPush);
+      expect(s.explicitChoice, isFalse);
 
-      await c.read(sharedPrefsProvider).setString('push_wake_up_distributor', 'com.example.removed');
-      expect(await s.signalChannel(), SignalChannel.chooseDistributor);
+      await s.useTransport(PushWakeTransport.unifiedpush, distributor: 'io.heckel.ntfy');
+      expect(s.explicitChoice, isTrue);
+      expect(s.upDistributor, 'io.heckel.ntfy');
+      await s.useAuto();
+      expect(s.explicitChoice, isFalse);
+      expect(s.upDistributor, 'org.unifiedpush.distributor.nextpush');
     });
 
     test('выбор сам: Google — только если он есть на телефоне и недавно не отказал', () {

@@ -262,7 +262,8 @@ class AppSettings {
     this.notificationVibration = true,
     this.notificationMessengerStyle = true,
     this.notificationVipConversations = true,
-    this.notificationAllConversations = false,
+    // 2.7.0 (владелец 22.11.2026: «все как в мессенджере показывать»).
+    this.notificationAllConversations = true,
     this.notificationPeopleConversations = true,
     this.syncOnlyWifi = false,
     this.backgroundKeepAlive = true,
@@ -602,7 +603,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       notificationVibration: _p.getBool(_K.notificationVibration) ?? true,
       notificationMessengerStyle: _p.getBool(_K.notificationMessengerStyle) ?? true,
       notificationVipConversations: _p.getBool(_K.notificationVipConversations) ?? true,
-      notificationAllConversations: _p.getBool(_K.notificationAllConversations) ?? false,
+      notificationAllConversations: _p.getBool(_K.notificationAllConversations) ?? true,
       notificationPeopleConversations: _p.getBool(_K.notificationPeopleConversations) ?? true,
       syncOnlyWifi: _p.getBool(_K.syncOnlyWifi) ?? false,
       // По умолчанию включено: у новых ящиков режим «Мгновенно», и без

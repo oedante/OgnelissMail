@@ -38,9 +38,9 @@
     <string name="permCamera">Fotoaparát</string>
     <string name="permCameraWhy">Odfotiť dokument na pripojenie ako prílohu.</string>
     <string name="permContacts">Kontakty zariadenia</string>
-    <string name="permContactsWhy">Import kontaktov zo zariadenia a export firemných kontaktov do adresára zariadenia (na váš pokyn v nastaveniach kontaktov).</string>
+    <string name="permContactsWhy">Kontakty vašich schránok sa zobrazia v Kontaktoch telefónu ako samostatná skupina: keď volá kolega, vidíte jeho meno a funkciu. Zmeny sa robia v aplikácii. Slúži aj na import kontaktov z telefónu do aplikácie. Kontakty Google (a iCloud na iPhone) synchronizuje telefón sám – nezdvojujú sa.</string>
     <string name="permCalendar">Kalendár zariadenia</string>
-    <string name="permCalendarWhy">Export stretnutí z pošty do kalendára zariadenia (na váš pokyn v nastaveniach kalendára).</string>
+    <string name="permCalendarWhy">Schôdzky vašich schránok sa zobrazia v kalendári telefónu, jeho miniaplikáciách a na hodinkách – ako samostatný kalendár len na čítanie; zmeny sa robia v aplikácii. Kalendáre Google (a iCloud na iPhone) synchronizuje telefón sám – ich schôdzky sa nezdvojujú.</string>
     <string name="permExactAlarms">Presné pripomienky</string>
     <string name="permExactAlarmsWhy">Pripomienky stretnutí a odložených správ prídu načas. Bez tohto povolenia ich Android môže oneskoriť o niekoľko minút.</string>
     <string name="permBattery">Neobmedzená činnosť na pozadí</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Každých {n} min</string>
     <string name="checkHourly">Každú hodinu</string>
     <string name="checkManual">Iba ručne</string>
-    <string name="checkMailHint">Okamžite – server hlási novú poštu hneď (na pozadí – s voľbou Beh na pozadí). Podľa plánu – okamžite v pracovnom čase, inak v intervaloch (Nastavenia → Synchronizácia → Plán doručovania). Každých 15/30/60 minút – plánované kontroly, najúspornejšie. Ručne – keď otvoríte aplikáciu a potiahnete nadol na obnovenie.</string>
+    <string name="checkMailHint">Okamžite – server hlási novú poštu hneď. Podľa plánu – okamžite v pracovnom čase, inak v intervaloch (Nastavenia → Synchronizácia → Plán doručovania). Každých 15/30/60 minút – plánované kontroly, najúspornejšie. Ručne – keď otvoríte aplikáciu a potiahnete nadol na obnovenie.</string>
     <string name="wifiOnlyAcc">Iba cez Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automatická kontrola len pri pripojení k Wi‑Fi</string>
     <string name="accSectionConnection">Pripojenie</string>
@@ -2530,7 +2530,7 @@
     <string name="scheduleOffHours">Ostatný čas</string>
     <string name="scheduleAccounts">Účty podľa plánu</string>
     <string name="scheduleNoAccounts">Zatiaľ žiadny: vyberte Podľa plánu v časti Kontrola pošty daného účtu</string>
-    <string name="scheduleHelp">Okamžité doručovanie (push) udržiava spojenie so serverom a každých pár minút preberá zariadenie. V noci a cez víkendy to zbytočne míňa batériu.\n\nPri režime Podľa plánu pošta počas pracovných hodín a dní prichádza okamžite a v ostatnom čase aplikácia kontroluje každých 15, 30 alebo 60 minút.\n\nPlán je spoločný pre všetky účty s režimom Podľa plánu (Nastavenia → účet → Kontrola pošty). Ostatné režimy — Okamžite, Každých 15 minút atď. — fungujú ako doteraz.\n\nV systéme Android potrebuje okamžité doručovanie na pozadí povolené spúšťanie na pozadí. Na začiatku pracovného dňa sa push zapne do ~10 minút.</string>
+    <string name="scheduleHelp">Okamžité doručovanie (push) udržiava spojenie so serverom a každých pár minút preberá zariadenie. V noci a cez víkendy to zbytočne míňa batériu.\n\nPri režime Podľa plánu pošta počas pracovných hodín a dní prichádza okamžite a v ostatnom čase aplikácia kontroluje každých 15, 30 alebo 60 minút.\n\nPlán je spoločný pre všetky účty s režimom Podľa plánu (Nastavenia → účet → Kontrola pošty). Ostatné režimy — Okamžite, Každých 15 minút atď. — fungujú ako doteraz.</string>
     <string name="expScheduleDesc">Okamžite počas pracovných hodín, inak v intervale</string>
     <string name="expScheduleHint">Režim Kontrola pošty „Podľa plánu“ pre účet. Počas pracovných hodín a dní (predvolene 7:00 – 19:00, pondelok – piatok) pošta prichádza okamžite; inak sa kontroluje každých 15, 30 alebo 60 minút. Zapína sa pre každý účet: Nastavenia → účet → Kontrola pošty.</string>
     <string name="ruleAlwaysNoMove">„Vždy upozorniť“ a „Presunúť do priečinka“ spolu nefungujú: po presune sa správa z upozornenia nedá otvoriť. Vyberte jedno.</string>
@@ -3101,6 +3101,8 @@
     <string name="pushWakeTitleAndroid">Kontrola pošty na pozadí</string>
     <string name="pushWakeHelpAndroid">Android sám rozhoduje, kedy môže aplikácia na pozadí bežať: v hlbokom spánku odkladá kontroly na pozadí a od Androidu 15 dostáva synchronizácia na pozadí najviac 6 hodín denne. Server vývojára (ogneliss.ru/push) vo zvolenom intervale posiela cez Google (Firebase Cloud Messaging) prázdny signál „skontroluj poštu“ a aplikácia schránky skontroluje sama, z tohto zariadenia. Na server sa odosiela len token upozornení tejto inštalácie — žiadne adresy, heslá ani správy. V hlbokom spánku môže Android signál doručiť neskôr, v najbližšom okne údržby. Bez služieb Google — cez aplikáciu UnifiedPush (napríklad ntfy). Podrobnosti sú v Zásadách ochrany súkromia, oddiel 6.2.</string>
     <string name="pushWakeVia">Ako prichádzajú signály</string>
+    <string name="bgDeliveryAuto">Všetko tu sa nastavuje samo. Aplikáciu na pozadí prebúdza signál cez služby Google, ak ich telefón má, inak cez aplikáciu UnifiedPush (napr. ntfy); bez nich sa pošta kontroluje podľa plánu. „{bg}“ sa zapína samo pri schránkach s voľbou „{instant}“ alebo „{scheduled}“. Niečo tu meňte, len ak upozornenia na novú poštu chodia neskoro.</string>
+    <string name="bgDeliveryAutoShort">Vyberá sa samo: Google, UnifiedPush alebo podľa plánu</string>
     <string name="pushWakeViaHelp">Cez Google (Firebase Cloud Messaging) na telefónoch so službami Google Play. Bez nich cez aplikáciu distribútora UnifiedPush (napríklad ntfy): drží si vlastné spojenie a odovzdáva signál „skontroluj poštu“. Signál je zašifrovaný kľúčom tejto inštalácie a neobsahuje adresy ani správy. Podrobnosti: Zásady ochrany osobných údajov, časť 6.2.</string>
     <string name="pushWakeViaGoogle">Cez Google</string>
     <string name="pushWakeViaGoogleDesc">Vyžaduje služby Google Play</string>
@@ -3319,7 +3321,7 @@
     <string name="faq_tasks_3_a">Dlho podržte poznámku: upraviť, odoslať e-mailom, zdieľať, kopírovať alebo odstrániť.</string>
     <string name="faq_notify_title">Upozornenia a pozadie</string>
     <string name="faq_notify_1_q">Prečo upozornenia na iPhone chodia s oneskorením?</string>
-    <string name="faq_notify_1_a">Kým je aplikácia otvorená, pošta prichádza okamžite. Keď je na pozadí, iOS sám rozhoduje, kedy ju prebudí: častejšie, ak aplikáciu používate každý deň, zriedkavejšie v režime nízkej spotreby alebo pri slabej batérii. Aby sa budila častejšie, nechajte v Nastavenia → Upozornenia zapnuté Kontrola pošty na pozadí (iPhone): server vývojára cez Apple pošle v zvolenom intervale prázdny signál „skontrolujte poštu“ a aplikácia si schránky skontroluje sama, z tohto zariadenia; na server sa odosiela iba token upozornení. Nezatvárajte aplikáciu potiahnutím v prepínači aplikácií: potom ju iOS neprebudí ani sám, ani signálom, kým aplikáciu znova neotvoríte. Skontrolujte, či je v Nastaveniach iOS zapnuté Obnovenie aplikácií na pozadí pre Ogneliss Mail.</string>
+    <string name="faq_notify_1_a">Kým je aplikácia otvorená, pošta prichádza okamžite. Keď je na pozadí, iOS sám rozhoduje, kedy ju prebudí: častejšie, ak aplikáciu používate každý deň, zriedkavejšie v režime nízkej spotreby alebo pri slabej batérii. Aby sa budila častejšie, nechajte v Nastavenia → Rozšírené nastavenia zapnuté Kontrola pošty na pozadí (iPhone): server vývojára cez Apple pošle v zvolenom intervale prázdny signál „skontrolujte poštu“ a aplikácia si schránky skontroluje sama, z tohto zariadenia; na server sa odosiela iba token upozornení. Nezatvárajte aplikáciu potiahnutím v prepínači aplikácií: potom ju iOS neprebudí ani sám, ani signálom, kým aplikáciu znova neotvoríte. Skontrolujte, či je v Nastaveniach iOS zapnuté Obnovenie aplikácií na pozadí pre Ogneliss Mail.</string>
     <string name="faq_notify_2_q">Ako vypnúť upozornenia pre jeden priečinok?</string>
     <string name="faq_notify_2_a">Nastavenia → účet → Synchronizácia priečinkov: zvonček vedľa prepínača priečinka zapína alebo vypína upozornenia na jeho nové správy (aj s podpriečinkami) a priečinok sa naďalej synchronizuje. Ponuka ⋮ obsahuje Upozornenia: všetky priečinky a Upozornenia: žiadne priečinky. Pre priečinky Odoslané, Koncepty, Odstránená pošta a Nevyžiadaná pošta sa upozornenia nezobrazujú nikdy.</string>
     <string name="faq_notify_3_q">Prečo upozornenia v systéme Android chodia neskoro?</string>

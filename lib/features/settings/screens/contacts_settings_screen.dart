@@ -15,6 +15,7 @@ import '../../mail/providers/mail_providers.dart';
 import '../providers/module_settings_provider.dart';
 import '../../../core/permissions/app_permissions.dart';
 import '../../../widgets/common/text_scale_cap.dart';
+import '../widgets/phone_mirror_switch.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
 
 class ContactsSettingsScreen extends ConsumerWidget {
@@ -69,6 +70,8 @@ class ContactsSettingsScreen extends ConsumerWidget {
           // «Сначала глобальный каталог» убрано: поиск адресатов ранжирует
           // по частоте переписки, адресная книга организации дополняет его
           // автоматически; переключатель ни на что не влиял.
+          // Контакты ящиков в «Контактах» телефона — сами, по умолчанию (2.7.0).
+          const PhoneMirrorSection(contacts: true),
           const _DeviceContactsSyncSection(),
         ],
       ),

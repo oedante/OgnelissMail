@@ -285,11 +285,12 @@ void main() {
       const s = AppSettings(isFirstLaunch: false);
       expect(s.notificationMessengerStyle, isTrue);
       expect(s.notificationVipConversations, isTrue);
-      // Беседы для всех писем — по умолчанию выключены.
-      expect(MessengerNotify.allConversationsOn(p), isFalse);
-      expect(s.notificationAllConversations, isFalse);
-      await p.setBool(MessengerNotify.prefAllConversations, true);
+      // Беседы для всех писем — с 2.7.0 по умолчанию включены (владелец
+      // 22.11.2026: «все как в мессенджере показывать»).
       expect(MessengerNotify.allConversationsOn(p), isTrue);
+      expect(s.notificationAllConversations, isTrue);
+      await p.setBool(MessengerNotify.prefAllConversations, false);
+      expect(MessengerNotify.allConversationsOn(p), isFalse);
       // Беседы для писем от людей (18.11.2026) — по умолчанию включены.
       expect(MessengerNotify.peopleConversationsOn(p), isTrue);
       expect(s.notificationPeopleConversations, isTrue);

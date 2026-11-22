@@ -404,6 +404,12 @@
              ищет UnifiedPush.getDistributors на Android 11+ (библиотека
              объявляет то же, здесь — на случай, если в её манифесте нет). -->
         <package android:name="com.google.android.gms"/>
+        <!-- Контакты и календарь ящиков в телефоне (2.7.0, журнал пользователя
+             22.11.2026, Motorola, Android 16: «Unknown URL
+             content://com.android.calendar/calendars» — системный календарь не
+             виден приложению без этого объявления). -->
+        <provider android:authorities="com.android.calendar"/>
+        <provider android:authorities="com.android.contacts"/>
         <intent><action android:name="org.unifiedpush.android.distributor.REGISTER"/></intent>
     </queries>
 </manifest>

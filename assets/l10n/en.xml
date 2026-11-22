@@ -38,9 +38,9 @@
     <string name="permCamera">Camera</string>
     <string name="permCameraWhy">Take a photo of a document to attach.</string>
     <string name="permContacts">Device contacts</string>
-    <string name="permContactsWhy">Import device contacts and export corporate contacts to the device book (on your command in contacts settings).</string>
+    <string name="permContactsWhy">Your mailboxes’ contacts appear in the phone’s Contacts as a separate group, so when a colleague calls you see their name and job title. Changes are made in the app. The permission is also used to import the phone’s contacts into the app. Google (and iCloud on iPhone) contacts are synced by the phone itself, so they are not duplicated.</string>
     <string name="permCalendar">Device calendar</string>
-    <string name="permCalendarWhy">Export meetings from mail to the device calendar (on your command in calendar settings).</string>
+    <string name="permCalendarWhy">Your mailboxes’ meetings appear in the phone’s calendar, its widgets and on your watch — as a separate, read-only calendar; changes are made in the app. Google (and iCloud on iPhone) calendars are synced by the phone itself, so their meetings are not duplicated.</string>
     <string name="permExactAlarms">Exact reminders</string>
     <string name="permExactAlarmsWhy">Meeting and snooze reminders arrive on time. Without it Android may delay them by several minutes.</string>
     <string name="permBattery">Unrestricted background</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Every {n} min</string>
     <string name="checkHourly">Every hour</string>
     <string name="checkManual">Manually only</string>
-    <string name="checkMailHint">Instant — the server reports new mail at once (in the background — with Run in background). On a schedule — instant during working hours, otherwise by interval (Settings → Sync → Delivery schedule). Every 15/30/60 minutes — scheduled checks, the most economical. Manual — when you open the app and pull to refresh.</string>
+    <string name="checkMailHint">Instant — the server reports new mail at once. On a schedule — instant during working hours, otherwise by interval (Settings → Sync → Delivery schedule). Every 15/30/60 minutes — scheduled checks, the most economical. Manual — when you open the app and pull to refresh.</string>
     <string name="wifiOnlyAcc">Wi‑Fi only</string>
     <string name="wifiOnlyAccDesc">Automatic checks only when connected to Wi‑Fi</string>
     <string name="accSectionConnection">Connection</string>
@@ -2518,7 +2518,7 @@
     <string name="scheduleOffHours">The rest of the time</string>
     <string name="scheduleAccounts">Accounts on the schedule</string>
     <string name="scheduleNoAccounts">None yet: choose On a schedule in the account’s Check mail</string>
-    <string name="scheduleHelp">Instant delivery (push) keeps a connection to the server and wakes the device every few minutes. At night and on weekends that wastes battery.\n\nWith On a schedule, mail arrives instantly during working hours and days, and the rest of the time the app checks every 15, 30 or 60 minutes.\n\nThe schedule is shared by all accounts set to On a schedule (Settings → account → Check mail). Other modes — Instant, Every 15 minutes, etc. — work as before.\n\nOn Android, instant delivery in the background needs Run in background. At the start of the working day push turns on within ~10 minutes.</string>
+    <string name="scheduleHelp">Instant delivery (push) keeps a connection to the server and wakes the device every few minutes. At night and on weekends that wastes battery.\n\nWith On a schedule, mail arrives instantly during working hours and days, and the rest of the time the app checks every 15, 30 or 60 minutes.\n\nThe schedule is shared by all accounts set to On a schedule (Settings → account → Check mail). Other modes — Instant, Every 15 minutes, etc. — work as before.</string>
     <string name="expScheduleDesc">Instant during working hours, at an interval otherwise</string>
     <string name="expScheduleHint">The account’s Check mail mode “On a schedule”. During working hours and days (by default 7:00–19:00, Mon–Fri) mail arrives instantly; otherwise it is checked every 15, 30 or 60 minutes. Turned on per account: Settings → account → Check mail.</string>
     <string name="ruleAlwaysNoMove">\"Always notify\" and \"Move to folder\" don\'t work together: after moving, the notification can\'t open the message. Choose one.</string>
@@ -3088,6 +3088,8 @@
     <string name="pushWakeTitleAndroid">Background mail check</string>
     <string name="pushWakeHelpAndroid">Android decides on its own when a background app may run: in deep sleep it postpones background checks, and since Android 15 background sync gets at most 6 hours a day. The developer’s server (ogneliss.ru/push) sends an empty “check your mail” signal through Google (Firebase Cloud Messaging) at the chosen interval, and the app checks your mailboxes itself, from this device. Only this installation’s notification token is sent to the server — no addresses, passwords or messages. In deep sleep Android may deliver the signal later, in the next maintenance window. Without Google services — through a UnifiedPush app (for example, ntfy). Details are in the Privacy Policy, section 6.2.</string>
     <string name="pushWakeVia">How signals arrive</string>
+    <string name="bgDeliveryAuto">Everything here is set automatically. The minimized app is woken by a signal via Google services if the phone has them, otherwise via a UnifiedPush app (for example, ntfy); without either, mail is checked on a schedule. “{bg}” turns on by itself for mailboxes set to “{instant}” or “{scheduled}”. Change something here only if new-mail notifications arrive late.</string>
+    <string name="bgDeliveryAutoShort">Chosen automatically: Google, UnifiedPush or on a schedule</string>
     <string name="pushWakeViaHelp">Through Google (Firebase Cloud Messaging) on phones with Google Play services. Without them, through a UnifiedPush distributor app (for example, ntfy): it keeps its own connection and passes on the “check your mail” signal. The signal is encrypted with this installation’s key and contains no addresses or messages. Details: Privacy Policy, section 6.2.</string>
     <string name="pushWakeViaGoogle">Through Google</string>
     <string name="pushWakeViaGoogleDesc">Requires Google Play services</string>
@@ -3306,7 +3308,7 @@
     <string name="faq_tasks_3_a">Long-press the note: edit, send by email, share, copy or delete.</string>
     <string name="faq_notify_title">Notifications and background</string>
     <string name="faq_notify_1_q">Why do notifications arrive late on iPhone?</string>
-    <string name="faq_notify_1_a">While the app is open, mail arrives immediately. When it is in the background, iOS decides on its own when to wake it: more often if you use the app every day, less often in Low Power Mode or when the battery is low. To make it wake up more often, keep Background mail check (iPhone) on in Settings → Notifications: the developer’s server sends an empty “check your mail” signal through Apple at the interval you choose, and the app checks your mailboxes itself, from this device; only the notification token is sent to the server. Don’t close the app by swiping it away in the app switcher: after that iOS wakes it neither on its own nor by a signal until you open the app again. Make sure Background App Refresh is on for Ogneliss Mail in iOS Settings.</string>
+    <string name="faq_notify_1_a">While the app is open, mail arrives immediately. When it is in the background, iOS decides on its own when to wake it: more often if you use the app every day, less often in Low Power Mode or when the battery is low. To make it wake up more often, keep Background mail check (iPhone) on in Settings → Advanced settings: the developer’s server sends an empty “check your mail” signal through Apple at the interval you choose, and the app checks your mailboxes itself, from this device; only the notification token is sent to the server. Don’t close the app by swiping it away in the app switcher: after that iOS wakes it neither on its own nor by a signal until you open the app again. Make sure Background App Refresh is on for Ogneliss Mail in iOS Settings.</string>
     <string name="faq_notify_2_q">How do I turn off notifications for one folder?</string>
     <string name="faq_notify_2_a">Settings → account → Folder sync: the bell next to a folder’s switch turns notifications about its new messages on or off (with subfolders), and the folder keeps syncing. The ⋮ menu has Notifications: all folders and Notifications: no folders. There are never notifications for Sent, Drafts, Deleted Items or Junk.</string>
     <string name="faq_notify_3_q">Why are notifications delayed on Android?</string>

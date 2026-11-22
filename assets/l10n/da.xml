@@ -38,9 +38,9 @@
     <string name="permCamera">Kamera</string>
     <string name="permCameraWhy">Tag et billede af et dokument, så du kan vedhæfte det.</string>
     <string name="permContacts">Enhedens kontakter</string>
-    <string name="permContactsWhy">Importér enhedens kontakter, og eksportér virksomhedens kontakter til enhedens kontaktbog (kun efter din anmodning i kontaktindstillingerne).</string>
+    <string name="permContactsWhy">Kontakterne fra dine postkasser vises som en separat gruppe i telefonens Kontakter: når en kollega ringer, ser du navn og stilling. Ændringer laves i appen. Bruges også til at importere telefonens kontakter i appen. Google-kontakter (og iCloud på iPhone) synkroniserer telefonen selv, så de dubleres ikke.</string>
     <string name="permCalendar">Enhedens kalender</string>
-    <string name="permCalendarWhy">Eksportér møder fra mails til enhedens kalender (kun efter din anmodning i kalenderindstillingerne).</string>
+    <string name="permCalendarWhy">Møder fra dine postkasser vises i telefonens kalender, dens widgets og på uret – som en separat skrivebeskyttet kalender; ændringer laves i appen. Google-kalendere (og iCloud på iPhone) synkroniserer telefonen selv, så deres møder dubleres ikke.</string>
     <string name="permExactAlarms">Præcise påmindelser</string>
     <string name="permExactAlarmsWhy">Påmindelser om møder og om mails sat til Senere kommer til tiden. Uden denne tilladelse kan Android forsinke dem med flere minutter.</string>
     <string name="permBattery">Ubegrænset baggrundsdrift</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Hvert {n}. minut</string>
     <string name="checkHourly">Hver time</string>
     <string name="checkManual">Kun manuelt</string>
-    <string name="checkMailHint">Øjeblikkelig – serveren giver straks besked om ny mail (i baggrunden – med »Kør i baggrunden«). Efter plan – øjeblikkeligt i arbejdstiden, ellers med interval (Indstillinger → Synkronisering → Leveringsplan). Hvert 15./30./60. minut – planlagte kontroller, den mest økonomiske. Manuelt – når du åbner appen og trækker ned for at opdatere.</string>
+    <string name="checkMailHint">Øjeblikkelig – serveren giver straks besked om ny mail. Efter plan – øjeblikkeligt i arbejdstiden, ellers med interval (Indstillinger → Synkronisering → Leveringsplan). Hvert 15./30./60. minut – planlagte kontroller, den mest økonomiske. Manuelt – når du åbner appen og trækker ned for at opdatere.</string>
     <string name="wifiOnlyAcc">Kun Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automatisk kontrol kun, når der er forbindelse til Wi‑Fi</string>
     <string name="accSectionConnection">Forbindelse</string>
@@ -2518,7 +2518,7 @@
     <string name="scheduleOffHours">Resten af tiden</string>
     <string name="scheduleAccounts">Konti efter plan</string>
     <string name="scheduleNoAccounts">Ingen endnu: vælg Efter plan under kontoens Tjek mail</string>
-    <string name="scheduleHelp">Øjeblikkelig levering (push) holder en forbindelse til serveren åben og vækker enheden hvert par minutter. Om natten og i weekenden spilder det batteri.\n\nMed Efter plan ankommer mail øjeblikkeligt i arbejdstiden og på arbejdsdage, og resten af tiden tjekker appen hvert 15., 30. eller 60. minut.\n\nPlanen deles af alle konti, der er sat til Efter plan (Indstillinger → konto → Tjek mail). Andre tilstande — Øjeblikkelig, Hvert 15. minut osv. — virker som før.\n\nPå Android kræver øjeblikkelig levering i baggrunden Kør i baggrunden. Ved arbejdsdagens start slås push til inden for ca. 10 minutter.</string>
+    <string name="scheduleHelp">Øjeblikkelig levering (push) holder en forbindelse til serveren åben og vækker enheden hvert par minutter. Om natten og i weekenden spilder det batteri.\n\nMed Efter plan ankommer mail øjeblikkeligt i arbejdstiden og på arbejdsdage, og resten af tiden tjekker appen hvert 15., 30. eller 60. minut.\n\nPlanen deles af alle konti, der er sat til Efter plan (Indstillinger → konto → Tjek mail). Andre tilstande — Øjeblikkelig, Hvert 15. minut osv. — virker som før.</string>
     <string name="expScheduleDesc">Øjeblikkeligt i arbejdstiden, ellers med et interval</string>
     <string name="expScheduleHint">Kontoens tilstand “Efter plan” under Tjek mail. I arbejdstiden og på arbejdsdage (som standard 7:00–19:00, man–fre) ankommer mail øjeblikkeligt; ellers tjekkes den hvert 15., 30. eller 60. minut. Slås til pr. konto: Indstillinger → konto → Tjek mail.</string>
     <string name="ruleAlwaysNoMove">“Giv altid besked” og “Flyt til mappe” virker ikke sammen: efter flytningen kan notifikationen ikke åbne mailen. Vælg én.</string>
@@ -3088,6 +3088,8 @@
     <string name="pushWakeTitleAndroid">Tjek af mail i baggrunden</string>
     <string name="pushWakeHelpAndroid">Android bestemmer selv, hvornår en app i baggrunden må køre: i dyb dvale udsætter den baggrundstjek, og fra Android 15 får baggrundssynkronisering højst 6 timer i døgnet. Udviklerens server (ogneliss.ru/push) sender med det valgte interval et tomt signal “tjek mail” via Google (Firebase Cloud Messaging), og appen tjekker selv dine postkasser fra denne enhed. Kun denne installations notifikationstoken sendes til serveren — ingen adresser, adgangskoder eller beskeder. I dyb dvale kan Android levere signalet senere, i det næste vedligeholdelsesvindue. Uden Google-tjenester sker det via en UnifiedPush-app (f.eks. ntfy). Detaljer står i privatlivspolitikken, afsnit 6.2.</string>
     <string name="pushWakeVia">Sådan kommer signalerne</string>
+    <string name="bgDeliveryAuto">Alt her indstilles automatisk. Appen i baggrunden vækkes af et signal via Googles tjenester, hvis telefonen har dem, ellers via en UnifiedPush-app (f.eks. ntfy); uden dem hentes mail efter en tidsplan. “{bg}” slår selv til for postkasser med “{instant}” eller “{scheduled}”. Ændr kun noget her, hvis notifikationer om ny mail kommer for sent.</string>
+    <string name="bgDeliveryAutoShort">Vælges automatisk: Google, UnifiedPush eller efter tidsplan</string>
     <string name="pushWakeViaHelp">Via Google (Firebase Cloud Messaging) på telefoner med Google Play-tjenester. Uden dem via en UnifiedPush-distributørapp (f.eks. ntfy): den har sin egen forbindelse og videresender signalet »tjek mail«. Signalet er krypteret med denne installations nøgle og indeholder hverken adresser eller mails. Detaljer står i privatlivspolitikken, afsnit 6.2.</string>
     <string name="pushWakeViaGoogle">Via Google</string>
     <string name="pushWakeViaGoogleDesc">Kræver Google Play-tjenester</string>
@@ -3306,7 +3308,7 @@
     <string name="faq_tasks_3_a">Hold fingeren på noten: rediger, send som mail, del, kopier eller slet.</string>
     <string name="faq_notify_title">Notifikationer og baggrund</string>
     <string name="faq_notify_1_q">Hvorfor kommer notifikationer sent på iPhone?</string>
-    <string name="faq_notify_1_a">Mens appen er åben, kommer mails med det samme. Når den kører i baggrunden, bestemmer iOS selv, hvornår den vækkes: oftere, hvis du bruger appen hver dag, sjældnere i Strømsparetilstand eller når batteriet er lavt. Hvis du vil have den vækket oftere, så lad Tjek af mail i baggrunden (iPhone) være slået til under Indstillinger → Notifikationer: Udviklerens server sender et tomt »tjek din mail«-signal via Apple med det interval, du vælger, og appen tjekker selv dine postkasser fra denne enhed. Kun notifikationstokenet sendes til serveren. Luk ikke appen ved at stryge den væk i appvælgeren: Derefter vækker iOS den hverken af sig selv eller med et signal, før du åbner appen igen. Kontrollér, at Opdatering af app i baggrunden er slået til for Ogneliss Mail i iOS-indstillingerne.</string>
+    <string name="faq_notify_1_a">Mens appen er åben, kommer mails med det samme. Når den kører i baggrunden, bestemmer iOS selv, hvornår den vækkes: oftere, hvis du bruger appen hver dag, sjældnere i Strømsparetilstand eller når batteriet er lavt. Hvis du vil have den vækket oftere, så lad Tjek af mail i baggrunden (iPhone) være slået til under Indstillinger → Avancerede indstillinger: Udviklerens server sender et tomt »tjek din mail«-signal via Apple med det interval, du vælger, og appen tjekker selv dine postkasser fra denne enhed. Kun notifikationstokenet sendes til serveren. Luk ikke appen ved at stryge den væk i appvælgeren: Derefter vækker iOS den hverken af sig selv eller med et signal, før du åbner appen igen. Kontrollér, at Opdatering af app i baggrunden er slået til for Ogneliss Mail i iOS-indstillingerne.</string>
     <string name="faq_notify_2_q">Hvordan slår jeg notifikationer fra for én mappe?</string>
     <string name="faq_notify_2_a">Indstillinger → konto → Mappesynkronisering: Klokken ved siden af mappens til/fra-knap slår notifikationer om nye mails i den til eller fra (med undermapper), og mappen bliver ved med at synkronisere. Menuen ⋮ har Notifikationer: alle mapper og Notifikationer: ingen mapper. Der er aldrig notifikationer for Sendt, Kladder, Slettet post eller Uønsket mail.</string>
     <string name="faq_notify_3_q">Hvorfor kommer notifikationer sent på Android?</string>

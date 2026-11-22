@@ -647,6 +647,29 @@ class SyncService {
     }
   }
 
+  /// Календарь и контакты всех ящиков — в ближайший проход без паузы (жест
+  /// «обновить» в календаре: раньше он запускал проверку почты, а календари
+  /// DAV ждали своих 15 минут — встреча, созданная в Google, появлялась в
+  /// приложении через четверть часа; журнал пользователя 22.11.2026).
+  void forcePimAll() {
+    for (final a in _ref.read(accountsProvider)) {
+      _pimForce.add(a.id);
+    }
+  }
+
+  DateTime? _calendarRefreshAt;
+
+  /// Открыт календарь: календари ящиков проверены больше [stale] назад —
+  /// проверить сейчас (не чаще раза в [stale]).
+  Future<void> refreshCalendarsIfStale({Duration stale = const Duration(minutes: 2)}) async {
+    final now = DateTime.now();
+    final last = _calendarRefreshAt;
+    if (last != null && now.difference(last) < stale) return;
+    _calendarRefreshAt = now;
+    forcePimAll();
+    await syncAll();
+  }
+
   /// Публичная синхронизация одного аккаунта (вызывается из UI при refresh).
   /// Явное обновление — календарь и контакты тоже, без паузы.
   Future<void> syncAccount(AccountModel account) {

@@ -113,6 +113,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _consumeDayRequest();
       _askExactAlarmsOnce();
+      // Открыли календарь — встречи, созданные в другом календаре (Google,
+      // Outlook), подтягиваются сразу, а не по расписанию проверки.
+      unawaited(ref.read(syncServiceProvider).refreshCalendarsIfStale());
     });
   }
 
@@ -675,7 +678,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     for (final a in ref.read(accountsProvider)) {
       await DavPimService.invalidateTags(a.id);
     }
-    await ref.read(syncServiceProvider).syncAll();
+    // Календари — без 15-минутной паузы DAV (журнал пользователя 22.11.2026:
+    // встреча из Google не появлялась после «обновить»).
+    final sync = ref.read(syncServiceProvider)..forcePimAll();
+    await sync.syncAll();
   }
 
   Future<void> _pickDate(AppLocalizations l10n) async {

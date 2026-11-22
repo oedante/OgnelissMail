@@ -38,9 +38,9 @@
     <string name="permCamera">Kamera</string>
     <string name="permCameraWhy">Ota valokuva asiakirjasta liitettäväksi.</string>
     <string name="permContacts">Laitteen yhteystiedot</string>
-    <string name="permContactsWhy">Tuo laitteen yhteystiedot ja vie yrityksen yhteystiedot laitteen osoitekirjaan (vain pyynnöstäsi yhteystietoasetuksissa).</string>
+    <string name="permContactsWhy">Postilaatikoidesi yhteystiedot näkyvät puhelimen Yhteystiedoissa omana ryhmänään: kun kollega soittaa, näet hänen nimensä ja tehtävänsä. Muutokset tehdään sovelluksessa. Lupaa käytetään myös puhelimen yhteystietojen tuontiin sovellukseen. Googlen (ja iPhonessa iCloudin) yhteystiedot puhelin synkronoi itse, joten niitä ei monisteta.</string>
     <string name="permCalendar">Laitteen kalenteri</string>
-    <string name="permCalendarWhy">Vie viesteissä olevat kokoukset laitteen kalenteriin (vain pyynnöstäsi kalenteriasetuksissa).</string>
+    <string name="permCalendarWhy">Postilaatikoidesi kokoukset näkyvät puhelimen kalenterissa, sen widgeteissä ja kellossa – omana, vain luku -kalenterinaan; muutokset tehdään sovelluksessa. Googlen (ja iPhonessa iCloudin) kalenterit puhelin synkronoi itse, joten niiden kokouksia ei monisteta.</string>
     <string name="permExactAlarms">Tarkat muistutukset</string>
     <string name="permExactAlarmsWhy">Kokousmuistutukset ja Myöhemmin-muistutukset saapuvat ajallaan. Ilman tätä Android voi viivästyttää niitä useilla minuuteilla.</string>
     <string name="permBattery">Rajoittamaton toiminta taustalla</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">{n} min välein</string>
     <string name="checkHourly">Tunnin välein</string>
     <string name="checkManual">Vain manuaalisesti</string>
-    <string name="checkMailHint">Heti – palvelin ilmoittaa uusista viesteistä välittömästi (taustalla – ”Suorita taustalla” -asetuksella). Aikataulun mukaan – heti työaikana, muulloin välein (Asetukset → Synkronointi → Toimitusaikataulu). 15/30/60 minuutin välein – ajastetut tarkistukset, säästeliäin vaihtoehto. Manuaalisesti – kun avaat sovelluksen ja päivität vetämällä.</string>
+    <string name="checkMailHint">Heti – palvelin ilmoittaa uusista viesteistä välittömästi. Aikataulun mukaan – heti työaikana, muulloin välein (Asetukset → Synkronointi → Toimitusaikataulu). 15/30/60 minuutin välein – ajastetut tarkistukset, säästeliäin vaihtoehto. Manuaalisesti – kun avaat sovelluksen ja päivität vetämällä.</string>
     <string name="wifiOnlyAcc">Vain Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automaattinen tarkistus vain, kun laite on yhteydessä Wi‑Fi-verkkoon</string>
     <string name="accSectionConnection">Yhteys</string>
@@ -2518,7 +2518,7 @@
     <string name="scheduleOffHours">Muu aika</string>
     <string name="scheduleAccounts">Aikataulun mukaiset tilit</string>
     <string name="scheduleNoAccounts">Ei vielä yhtään: valitse tilin kohdassa Tarkista sähköposti vaihtoehto Aikataulun mukaan</string>
-    <string name="scheduleHelp">Välitön toimitus (push) pitää yhteyden palvelimeen auki ja herättää laitteen muutaman minuutin välein. Öisin ja viikonloppuisin se kuluttaa akkua turhaan.\n\nAikataulun mukaan -tilassa viestit saapuvat välittömästi työaikana ja työpäivinä, ja muuna aikana sovellus tarkistaa 15, 30 tai 60 minuutin välein.\n\nAikataulu on yhteinen kaikille tileille, joiden asetus on Aikataulun mukaan (Asetukset → tili → Tarkista sähköposti). Muut tilat — Välittömästi, 15 minuutin välein jne. — toimivat kuten ennenkin.\n\nAndroidissa välitön toimitus taustalla vaatii asetuksen Suorita taustalla. Työpäivän alkaessa push otetaan käyttöön noin 10 minuutin kuluessa.</string>
+    <string name="scheduleHelp">Välitön toimitus (push) pitää yhteyden palvelimeen auki ja herättää laitteen muutaman minuutin välein. Öisin ja viikonloppuisin se kuluttaa akkua turhaan.\n\nAikataulun mukaan -tilassa viestit saapuvat välittömästi työaikana ja työpäivinä, ja muuna aikana sovellus tarkistaa 15, 30 tai 60 minuutin välein.\n\nAikataulu on yhteinen kaikille tileille, joiden asetus on Aikataulun mukaan (Asetukset → tili → Tarkista sähköposti). Muut tilat — Välittömästi, 15 minuutin välein jne. — toimivat kuten ennenkin.</string>
     <string name="expScheduleDesc">Välittömästi työaikana, muuten tietyin väliajoin</string>
     <string name="expScheduleHint">Tilin Tarkista sähköposti -tila ”Aikataulun mukaan”. Työaikana ja työpäivinä (oletuksena 7.00–19.00, ma–pe) viestit saapuvat välittömästi; muuten ne tarkistetaan 15, 30 tai 60 minuutin välein. Otetaan käyttöön tilikohtaisesti: Asetukset → tili → Tarkista sähköposti.</string>
     <string name="ruleAlwaysNoMove">”Ilmoita aina” ja ”Siirrä kansioon” eivät toimi yhdessä: siirron jälkeen ilmoitus ei voi avata viestiä. Valitse toinen.</string>
@@ -3088,6 +3088,8 @@
     <string name="pushWakeTitleAndroid">Postin tarkistus taustalla</string>
     <string name="pushWakeHelpAndroid">Android päättää itse, milloin taustalla oleva sovellus saa toimia: syvässä lepotilassa se lykkää taustatarkistuksia, ja Android 15:stä alkaen taustasynkronointi saa enintään 6 tuntia vuorokaudessa. Kehittäjän palvelin (ogneliss.ru/push) lähettää valitulla välillä Googlen (Firebase Cloud Messaging) kautta tyhjän signaalin ”tarkista posti”, ja sovellus tarkistaa postilaatikot itse tältä laitteelta. Palvelimelle lähetetään vain tämän asennuksen ilmoitustunnus — ei osoitteita, salasanoja eikä viestejä. Syvässä lepotilassa Android voi toimittaa signaalin myöhemmin, seuraavassa huoltoikkunassa. Ilman Google-palveluita — UnifiedPush-sovelluksen (esimerkiksi ntfy) kautta. Lisätietoja tietosuojakäytännön kohdassa 6.2.</string>
     <string name="pushWakeVia">Miten signaalit saapuvat</string>
+    <string name="bgDeliveryAuto">Kaikki tässä asetetaan automaattisesti. Taustalla olevan sovelluksen herättää signaali Googlen palvelujen kautta, jos puhelimessa on ne, muuten UnifiedPush-sovelluksen (esim. ntfy) kautta; ilman niitä posti tarkistetaan aikataulun mukaan. ”{bg}” kytkeytyy itsestään päälle postilaatikoille, joiden asetus on ”{instant}” tai ”{scheduled}”. Muuta täällä jotain vain, jos ilmoitukset uusista viesteistä tulevat myöhässä.</string>
+    <string name="bgDeliveryAutoShort">Valitaan automaattisesti: Google, UnifiedPush tai aikataulu</string>
     <string name="pushWakeViaHelp">Googlen (Firebase Cloud Messaging) kautta puhelimissa, joissa on Google Play -palvelut. Ilman niitä UnifiedPush-jakelusovelluksen (esimerkiksi ntfy) kautta: se pitää yllä omaa yhteyttään ja välittää ”tarkista posti” -signaalin. Signaali on salattu tämän asennuksen avaimella, eikä se sisällä osoitteita tai viestejä. Lisätietoja: tietosuojakäytäntö, kohta 6.2.</string>
     <string name="pushWakeViaGoogle">Googlen kautta</string>
     <string name="pushWakeViaGoogleDesc">Vaatii Google Play -palvelut</string>
@@ -3306,7 +3308,7 @@
     <string name="faq_tasks_3_a">Paina muistiinpanoa pitkään: muokkaa, lähetä sähköpostilla, jaa, kopioi tai poista.</string>
     <string name="faq_notify_title">Ilmoitukset ja tausta</string>
     <string name="faq_notify_1_q">Miksi ilmoitukset saapuvat iPhonessa myöhässä?</string>
-    <string name="faq_notify_1_a">Kun sovellus on auki, posti saapuu heti. Kun se on taustalla, iOS päättää itse, milloin se herätetään: useammin, jos käytät sovellusta päivittäin, harvemmin Virransäästötilassa tai kun akku on vähissä. Jotta se heräisi useammin, pidä Postin tarkistus taustalla (iPhone) päällä kohdassa Asetukset → Ilmoitukset: kehittäjän palvelin lähettää Applen kautta tyhjän ”tarkista postisi” -signaalin valitsemallasi välein, ja sovellus tarkistaa postilaatikkosi itse tältä laitteelta. Palvelimelle lähetetään vain ilmoitustunnus. Älä sulje sovellusta pyyhkäisemällä sitä pois sovellusvalitsimessa: sen jälkeen iOS ei herätä sitä itse eikä signaalilla, ennen kuin avaat sovelluksen uudelleen. Varmista, että Taustapäivitys on päällä Ogneliss Mailille iOS:n asetuksissa.</string>
+    <string name="faq_notify_1_a">Kun sovellus on auki, posti saapuu heti. Kun se on taustalla, iOS päättää itse, milloin se herätetään: useammin, jos käytät sovellusta päivittäin, harvemmin Virransäästötilassa tai kun akku on vähissä. Jotta se heräisi useammin, pidä Postin tarkistus taustalla (iPhone) päällä kohdassa Asetukset → Lisäasetukset: kehittäjän palvelin lähettää Applen kautta tyhjän ”tarkista postisi” -signaalin valitsemallasi välein, ja sovellus tarkistaa postilaatikkosi itse tältä laitteelta. Palvelimelle lähetetään vain ilmoitustunnus. Älä sulje sovellusta pyyhkäisemällä sitä pois sovellusvalitsimessa: sen jälkeen iOS ei herätä sitä itse eikä signaalilla, ennen kuin avaat sovelluksen uudelleen. Varmista, että Taustapäivitys on päällä Ogneliss Mailille iOS:n asetuksissa.</string>
     <string name="faq_notify_2_q">Miten poistan ilmoitukset käytöstä yhdeltä kansiolta?</string>
     <string name="faq_notify_2_a">Asetukset → tili → Kansioiden synkronointi: kansion kytkimen vieressä oleva kello ottaa kansion (alikansioineen) uusien viestien ilmoitukset käyttöön tai pois käytöstä, ja kansio synkronoidaan edelleen. ⋮-valikossa on Ilmoitukset: kaikki kansiot ja Ilmoitukset: ei kansioita. Kansioista Lähetetyt, Luonnokset, Poistetut ja Roskaposti ei tule koskaan ilmoituksia.</string>
     <string name="faq_notify_3_q">Miksi ilmoitukset saapuvat Androidissa myöhässä?</string>

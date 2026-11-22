@@ -1,5 +1,14 @@
 // lib/services/device/phone_mirror_service.dart
-// Контакты и календарь ящиков — в телефоне (Настройки ящика → «В телефоне»).
+// Контакты и календарь ящиков — в телефоне.
+//
+// 2.7.0 (замечание владельца 22.11.2026: «контакты и календарь на устройстве
+// у каждого аккаунта нужно всегда включать по умолчанию или вообще убрать из
+// настроек»): включено по умолчанию для всех ящиков, без переключателей у
+// ящика; один выключатель — в «Настройки → Контакты» и «Настройки →
+// Календарь». Не дублируются ящики, которые телефон синхронизирует сам:
+// Google (аккаунт Google есть в телефоне), iCloud на iPhone; онлайн-архив
+// Exchange — тоже нет. Ящик, включённый раньше вручную, остаётся включённым.
+// Нет разрешения — запись пропускается молча, спросит «Разрешения».
 //
 // Зачем: определитель номера (звонит коллега из адресной книги — «Телефон» и
 // Ogneliss Dialer показывают имя и должность), встречи в системном календаре,
@@ -31,6 +40,7 @@ import '../../data/models/contact_model.dart';
 import '../../data/providers/database_provider.dart';
 import '../../data/providers/shared_prefs_provider.dart';
 import '../../features/mail/providers/mail_providers.dart' show accountsProvider;
+import '../mail/dav/dav_pim_service.dart' show DavPimService;
 import '../notifications/reminder_scheduler_service.dart';
 
 final phoneMirrorProvider = Provider<PhoneMirrorService>((ref) => PhoneMirrorService(ref));
@@ -44,50 +54,95 @@ class PhoneMirrorService {
 
   bool get isAvailable => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
+  // Прежние переключатели у ящика: включённый вручную ящик (например,
+  // Google) остаётся включённым.
   static String _kContacts(String id) => 'mirror_contacts_$id';
   static String _kCalendar(String id) => 'mirror_calendar_$id';
+  static const kContactsAll = 'mirror_contacts_all';
+  static const kCalendarAll = 'mirror_calendar_all';
 
-  bool contactsOn(String accountId) => _ref.read(sharedPrefsProvider).getBool(_kContacts(accountId)) ?? false;
-  bool calendarOn(String accountId) => _ref.read(sharedPrefsProvider).getBool(_kCalendar(accountId)) ?? false;
+  /// Контакты ящиков в телефоне (по умолчанию — да).
+  bool get contactsEnabled => _ref.read(sharedPrefsProvider).getBool(kContactsAll) ?? true;
 
-  /// Включить/выключить контакты ящика в телефоне. false — нет разрешения
-  /// или нативной части (переключатель остаётся выключенным).
-  Future<bool> setContacts(AccountModel a, bool on) async {
-    final prefs = _ref.read(sharedPrefsProvider);
-    if (on) {
-      if (!await Permission.contacts.request().isGranted) return false;
-      await prefs.setBool(_kContacts(a.id), true);
-      return syncAccount(a, force: true);
-    }
-    await prefs.setBool(_kContacts(a.id), false);
-    await _invoke('remove', {'account': a.email, 'contacts': true, 'removeAccount': !calendarOn(a.id)});
+  /// Встречи ящиков в календаре телефона (по умолчанию — да).
+  bool get calendarEnabled => _ref.read(sharedPrefsProvider).getBool(kCalendarAll) ?? true;
+
+  /// Ящик пишется в телефон по умолчанию: не Google (его контакты и
+  /// календарь телефон синхронизирует сам — были бы дубли), не iCloud на
+  /// iPhone, не онлайн-архив.
+  static bool eligible(AccountModel a, {required bool ios}) {
+    if (a.isOnlineArchive) return false;
+    final p = DavPimService.providerOf(a);
+    if (p == 'google') return false;
+    if (ios && p == 'icloud') return false;
     return true;
   }
 
-  /// Включить/выключить календарь ящика в телефоне.
-  Future<bool> setCalendar(AccountModel a, bool on) async {
-    final prefs = _ref.read(sharedPrefsProvider);
-    if (on) {
-      if (!await Permission.calendarFullAccess.request().isGranted) return false;
-      await prefs.setBool(_kCalendar(a.id), true);
-      return syncAccount(a, force: true);
+  AccountModel? _account(String id) {
+    for (final a in _ref.read(accountsProvider)) {
+      if (a.id == id) return a;
     }
-    await prefs.setBool(_kCalendar(a.id), false);
-    await _invoke('remove', {'account': a.email, 'calendar': true, 'removeAccount': !contactsOn(a.id)});
-    return true;
+    return null;
+  }
+
+  bool _on(String accountId, String legacyKey, bool enabled) {
+    if (!enabled) return false;
+    final prefs = _ref.read(sharedPrefsProvider);
+    if (prefs.getBool(legacyKey) == true) return true;
+    final a = _account(accountId);
+    return a != null && eligible(a, ios: !kIsWeb && Platform.isIOS);
+  }
+
+  /// Список ящиков уже загружен.
+  bool get accountsLoaded => _ref.read(accountsProvider).isNotEmpty;
+
+  /// Есть ящик, контакты которого пишутся в телефон (нужно разрешение).
+  bool get wantsContacts => isAvailable && _ref.read(accountsProvider).any((a) => contactsOn(a.id));
+
+  /// Есть ящик, встречи которого пишутся в календарь телефона.
+  bool get wantsCalendar => isAvailable && _ref.read(accountsProvider).any((a) => calendarOn(a.id));
+
+  bool contactsOn(String accountId) => _on(accountId, _kContacts(accountId), contactsEnabled);
+  bool calendarOn(String accountId) => _on(accountId, _kCalendar(accountId), calendarEnabled);
+
+  /// Включить/выключить контакты всех ящиков в телефоне. Выключение
+  /// убирает их из телефона.
+  Future<void> setContactsEnabled(bool on) async {
+    final before = _ref.read(accountsProvider).where((a) => contactsOn(a.id)).toList();
+    await _ref.read(sharedPrefsProvider).setBool(kContactsAll, on);
+    if (on) {
+      await syncAll(force: true);
+      return;
+    }
+    for (final a in before) {
+      await _invoke('remove', {'account': a.email, 'contacts': true, 'removeAccount': !calendarOn(a.id)});
+    }
+  }
+
+  /// Включить/выключить встречи всех ящиков в календаре телефона.
+  Future<void> setCalendarEnabled(bool on) async {
+    final before = _ref.read(accountsProvider).where((a) => calendarOn(a.id)).toList();
+    await _ref.read(sharedPrefsProvider).setBool(kCalendarAll, on);
+    if (on) {
+      await syncAll(force: true);
+      return;
+    }
+    for (final a in before) {
+      await _invoke('remove', {'account': a.email, 'calendar': true, 'removeAccount': !contactsOn(a.id)});
+    }
   }
 
   /// Ящик удалён из приложения — убрать его данные из телефона.
   Future<void> forget(AccountModel a) async {
     final prefs = _ref.read(sharedPrefsProvider);
-    if (!contactsOn(a.id) && !calendarOn(a.id)) return;
     await prefs.remove(_kContacts(a.id));
     await prefs.remove(_kCalendar(a.id));
+    if (!isAvailable) return;
     await _invoke('remove', {'account': a.email, 'removeAccount': true});
   }
 
   /// Обновить все ящики с включённой связью (после синхронизации).
-  Future<void> syncAll() async {
+  Future<void> syncAll({bool force = false}) async {
     if (!isAvailable) return;
     final accounts = _ref.read(accountsProvider);
     // Список ящиков ещё не загружен — ничего не трогаем (иначе «лишними»
@@ -97,7 +152,7 @@ class PhoneMirrorService {
     // Ящики, удалённые в обход приложения, — убрать из телефона.
     await _invoke('prune', {'keep': [for (final a in on) a.email]});
     for (final a in on) {
-      await syncAccount(a);
+      await syncAccount(a, force: force);
     }
   }
 
@@ -110,13 +165,15 @@ class PhoneMirrorService {
     final db = _ref.read(databaseProvider);
     final label = 'Ogneliss — ${a.displayName.trim().isEmpty ? a.email : a.displayName.trim()}';
     var ok = true;
-    if (contactsOn(a.id)) {
+    // Нет разрешения — пропуск без записи в журнал при каждой проверке:
+    // спросит «Разрешения» (первая настройка, «Разрешить всё»).
+    if (contactsOn(a.id) && await Permission.contacts.isGranted) {
       final items = await _contacts(db, a.id);
       final n = await _invoke('syncContacts', {'account': a.email, 'groupName': label, 'contacts': items});
       ok = ok && n != null;
       if (n is int && n > 0) AppLogger.info('В телефоне: контактов записано $n (${a.email})');
     }
-    if (calendarOn(a.id)) {
+    if (calendarOn(a.id) && await Permission.calendarFullAccess.isGranted) {
       final items = await _events(db, a.id);
       final n = await _invoke('syncEvents', {
         'account': a.email,

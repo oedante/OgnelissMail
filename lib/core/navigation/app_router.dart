@@ -48,6 +48,7 @@ import '../../features/settings/screens/settings_screen.dart';
 import '../../features/settings/screens/tracker_settings_screen.dart';
 import '../../features/settings/widgets/settings_split.dart';
 import '../../features/settings/screens/advanced_settings_screen.dart';
+import '../../features/settings/screens/background_delivery_screen.dart';
 import '../../features/settings/screens/sync_settings_screen.dart';
 import '../../features/settings/screens/rules_screen.dart';
 import '../../features/settings/screens/exchange_tools_screen.dart';
@@ -354,6 +355,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/settings/trackers', name: 'tracker-settings', pageBuilder: (_, st) => settingsRoutePage(st, const TrackerSettingsScreen())),
       // «Расширенные настройки» приложения (1.8.0).
       GoRoute(path: '/settings/advanced', name: 'advanced-settings', pageBuilder: (_, st) => settingsRoutePage(st, const AdvancedSettingsScreen())),
+      // Проверка почты в фоне — ручной выбор (2.7.0; само — по умолчанию).
+      GoRoute(path: '/settings/background-delivery', name: 'background-delivery', pageBuilder: (_, st) => settingsRoutePage(st, const BackgroundDeliveryScreen())),
       GoRoute(path: '/settings/sync', name: 'sync-settings', pageBuilder: (_, st) => settingsRoutePage(st, const SyncSettingsScreen())),
       GoRoute(path: '/settings/rules', name: 'rules', pageBuilder: (_, st) => settingsRoutePage(st, RulesScreen(accountId: st.uri.queryParameters['accountId']))),
       GoRoute(path: '/settings/accessibility', name: 'accessibility', pageBuilder: (_, st) => settingsRoutePage(st, const AccessibilityScreen())),

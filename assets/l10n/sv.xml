@@ -38,9 +38,9 @@
     <string name="permCamera">Kamera</string>
     <string name="permCameraWhy">Fotografera ett dokument som du vill bifoga.</string>
     <string name="permContacts">Enhetens kontakter</string>
-    <string name="permContactsWhy">Importera enhetens kontakter och exportera företagskontakter till enhetens kontaktbok (bara på din begäran i kontaktinställningarna).</string>
+    <string name="permContactsWhy">Kontakterna från dina brevlådor visas som en egen grupp i telefonens Kontakter: när en kollega ringer ser du namn och befattning. Ändringar görs i appen. Används även för att importera telefonens kontakter till appen. Google-kontakter (och iCloud på iPhone) synkar telefonen själv, så de dubbleras inte.</string>
     <string name="permCalendar">Enhetens kalender</string>
-    <string name="permCalendarWhy">Exportera möten från e-post till enhetens kalender (bara på din begäran i kalenderinställningarna).</string>
+    <string name="permCalendarWhy">Möten från dina brevlådor visas i telefonens kalender, dess widgetar och på klockan – som en egen kalender som bara kan läsas; ändringar görs i appen. Google-kalendrar (och iCloud på iPhone) synkar telefonen själv, så deras möten dubbleras inte.</string>
     <string name="permExactAlarms">Exakta påminnelser</string>
     <string name="permExactAlarmsWhy">Påminnelser om möten och om meddelanden som skjutits upp till Senare kommer i rätt tid. Utan tillståndet kan Android försena dem med flera minuter.</string>
     <string name="permBattery">Obegränsad bakgrundsaktivitet</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Var {n} min</string>
     <string name="checkHourly">Varje timme</string>
     <string name="checkManual">Endast manuellt</string>
-    <string name="checkMailHint">Direkt – servern meddelar om ny e-post omedelbart (i bakgrunden – med ”Kör i bakgrunden”). Enligt schema – direkt under arbetstid, annars med intervall (Inställningar → Synkronisering → Leveransschema). Var 15:e/30:e/60:e minut – schemalagda kontroller, det mest sparsamma. Manuellt – när du öppnar appen och drar ned för att uppdatera.</string>
+    <string name="checkMailHint">Direkt – servern meddelar om ny e-post omedelbart. Enligt schema – direkt under arbetstid, annars med intervall (Inställningar → Synkronisering → Leveransschema). Var 15:e/30:e/60:e minut – schemalagda kontroller, det mest sparsamma. Manuellt – när du öppnar appen och drar ned för att uppdatera.</string>
     <string name="wifiOnlyAcc">Endast Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automatisk kontroll endast vid anslutning till Wi‑Fi</string>
     <string name="accSectionConnection">Anslutning</string>
@@ -2518,7 +2518,7 @@
     <string name="scheduleOffHours">Resten av tiden</string>
     <string name="scheduleAccounts">Konton enligt schema</string>
     <string name="scheduleNoAccounts">Inga ännu: välj Enligt schema under kontots Kontrollera e-post</string>
-    <string name="scheduleHelp">Omedelbar leverans (push) håller en anslutning till servern öppen och väcker enheten med några minuters mellanrum. På natten och i helger slösar det med batteriet.\n\nMed Enligt schema kommer e-post omedelbart under arbetstid och arbetsdagar, och resten av tiden kontrollerar appen var 15:e, 30:e eller 60:e minut.\n\nSchemat delas av alla konton som är inställda på Enligt schema (Inställningar → konto → Kontrollera e-post). Andra lägen — Omedelbart, Var 15:e minut osv. — fungerar som förut.\n\nPå Android kräver omedelbar leverans i bakgrunden Kör i bakgrunden. I början av arbetsdagen slås push på inom ca 10 minuter.</string>
+    <string name="scheduleHelp">Omedelbar leverans (push) håller en anslutning till servern öppen och väcker enheten med några minuters mellanrum. På natten och i helger slösar det med batteriet.\n\nMed Enligt schema kommer e-post omedelbart under arbetstid och arbetsdagar, och resten av tiden kontrollerar appen var 15:e, 30:e eller 60:e minut.\n\nSchemat delas av alla konton som är inställda på Enligt schema (Inställningar → konto → Kontrollera e-post). Andra lägen — Omedelbart, Var 15:e minut osv. — fungerar som förut.</string>
     <string name="expScheduleDesc">Omedelbart under arbetstid, annars med ett intervall</string>
     <string name="expScheduleHint">Kontots läge ”Enligt schema” under Kontrollera e-post. Under arbetstid och arbetsdagar (som standard 7:00–19:00, mån–fre) kommer e-post omedelbart; annars kontrolleras den var 15:e, 30:e eller 60:e minut. Slås på per konto: Inställningar → konto → Kontrollera e-post.</string>
     <string name="ruleAlwaysNoMove">”Avisera alltid” och ”Flytta till mapp” fungerar inte tillsammans: efter flyttningen kan aviseringen inte öppna meddelandet. Välj ett av dem.</string>
@@ -3088,6 +3088,8 @@
     <string name="pushWakeTitleAndroid">E-postkontroll i bakgrunden</string>
     <string name="pushWakeHelpAndroid">Android bestämmer själv när en app i bakgrunden får köras: i djupviloläge skjuter den upp bakgrundskontroller, och från Android 15 får bakgrundssynkronisering högst 6 timmar per dygn. Utvecklarens server (ogneliss.ru/push) skickar med valt intervall en tom signal ”kolla e-post” via Google (Firebase Cloud Messaging), och appen kontrollerar själv dina brevlådor från den här enheten. Bara den här installationens aviseringstoken skickas till servern — inga adresser, lösenord eller meddelanden. I djupviloläge kan Android leverera signalen senare, i nästa underhållsfönster. Utan Google-tjänster — via en UnifiedPush-app (till exempel ntfy). Detaljer finns i integritetspolicyn, avsnitt 6.2.</string>
     <string name="pushWakeVia">Hur signalerna kommer fram</string>
+    <string name="bgDeliveryAuto">Allt här ställs in automatiskt. Appen i bakgrunden väcks av en signal via Googles tjänster om telefonen har dem, annars via en UnifiedPush-app (till exempel ntfy); utan dem hämtas e-post enligt schema. ”{bg}” slås på av sig självt för brevlådor med ”{instant}” eller ”{scheduled}”. Ändra något här bara om aviseringar om ny e-post kommer sent.</string>
+    <string name="bgDeliveryAutoShort">Väljs automatiskt: Google, UnifiedPush eller enligt schema</string>
     <string name="pushWakeViaHelp">Via Google (Firebase Cloud Messaging) på telefoner med Google Play-tjänster. Utan dem via en UnifiedPush-distributörsapp (till exempel ntfy): den håller sin egen anslutning och vidarebefordrar signalen ”kolla e-post”. Signalen är krypterad med den här installationens nyckel och innehåller inga adresser eller meddelanden. Detaljer: integritetspolicyn, avsnitt 6.2.</string>
     <string name="pushWakeViaGoogle">Via Google</string>
     <string name="pushWakeViaGoogleDesc">Kräver Google Play-tjänster</string>
@@ -3306,7 +3308,7 @@
     <string name="faq_tasks_3_a">Tryck länge på anteckningen: redigera, skicka med e-post, dela, kopiera eller ta bort.</string>
     <string name="faq_notify_title">Aviseringar och bakgrund</string>
     <string name="faq_notify_1_q">Varför kommer aviseringar sent på iPhone?</string>
-    <string name="faq_notify_1_a">Medan appen är öppen kommer e-post direkt. När den ligger i bakgrunden bestämmer iOS själv när den ska väckas: oftare om du använder appen varje dag, mer sällan i Lågeffektläge eller när batteriet är lågt. För att den ska väckas oftare, låt E-postkontroll i bakgrunden (iPhone) vara på under Inställningar → Aviseringar: Utvecklarens server skickar en tom ”kolla din e-post”-signal via Apple med det intervall du väljer, och appen kontrollerar dina postlådor själv, från den här enheten. Bara aviseringstoken skickas till servern. Stäng inte appen genom att svepa bort den i appväljaren: Efter det väcker iOS den varken av sig själv eller med en signal förrän du öppnar appen igen. Kontrollera att Bakgrundsuppdatering är på för Ogneliss Mail i iOS-inställningarna.</string>
+    <string name="faq_notify_1_a">Medan appen är öppen kommer e-post direkt. När den ligger i bakgrunden bestämmer iOS själv när den ska väckas: oftare om du använder appen varje dag, mer sällan i Lågeffektläge eller när batteriet är lågt. För att den ska väckas oftare, låt E-postkontroll i bakgrunden (iPhone) vara på under Inställningar → Avancerade inställningar: Utvecklarens server skickar en tom ”kolla din e-post”-signal via Apple med det intervall du väljer, och appen kontrollerar dina postlådor själv, från den här enheten. Bara aviseringstoken skickas till servern. Stäng inte appen genom att svepa bort den i appväljaren: Efter det väcker iOS den varken av sig själv eller med en signal förrän du öppnar appen igen. Kontrollera att Bakgrundsuppdatering är på för Ogneliss Mail i iOS-inställningarna.</string>
     <string name="faq_notify_2_q">Hur stänger jag av aviseringar för en mapp?</string>
     <string name="faq_notify_2_a">Inställningar → konto → Mappsynkronisering: Klockan bredvid mappens reglage slår på eller av aviseringar om nya meddelanden i den (med undermappar), och mappen synkroniseras fortfarande. Menyn ⋮ har Aviseringar: alla mappar och Aviseringar: inga mappar. Det kommer aldrig aviseringar för Skickat, Utkast, Borttagna objekt eller Skräppost.</string>
     <string name="faq_notify_3_q">Varför kommer aviseringar sent på Android?</string>

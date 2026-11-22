@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../help/faq_screen.dart' show FaqButton;
 import '../../../l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,9 +18,6 @@ import '../../../widgets/ui/settings_group.dart';
 import '../../../services/notifications/notification_service.dart' show notificationServiceProvider;
 import '../../../services/notifications/notification_text.dart' show NotificationLines;
 import '../../../data/providers/shared_prefs_provider.dart';
-import '../../../services/push/push_wake_service.dart';
-import '../../../core/utils/app_date_format.dart';
-import '../../../widgets/ui/app_radio_tile.dart';
 
 /// Отступ вложенных строк — по тексту строк группы.
 const _indent = Space.l + Sizes.icon + Space.l;
@@ -89,43 +85,10 @@ class NotificationsSettingsScreen extends ConsumerWidget {
                     ? (v) => notifier.setNotificationMessengerStyle(v)
                     : null,
               ),
-              if (defaultTargetPlatform == TargetPlatform.android)
-                SettingsSwitchItem(
-                  icon: AppIcons.forum,
-                  title: l10n.tr('notifyVipConversations'),
-                  subtitle: l10n.tr('notifyVipConversationsDesc'),
-                  value: settings.notificationVipConversations,
-                  onChanged: settings.notificationsEnabled && settings.notificationMessengerStyle
-                      ? (v) => notifier.setNotificationVipConversations(v)
-                      : null,
-                ),
-              // Портрет со значком приложения на нём — у писем людей,
-              // рассылки — обычным видом (ответ владельца 18.11.2026).
-              // При «всех письмах» не нужен.
-              if (defaultTargetPlatform == TargetPlatform.android)
-                SettingsSwitchItem(
-                  icon: AppIcons.forum,
-                  title: l10n.tr('notifyPeopleConversations'),
-                  subtitle: l10n.tr('notifyPeopleConversationsDesc'),
-                  value: settings.notificationPeopleConversations || settings.notificationAllConversations,
-                  onChanged: settings.notificationsEnabled &&
-                          settings.notificationMessengerStyle &&
-                          !settings.notificationAllConversations
-                      ? (v) => notifier.setNotificationPeopleConversations(v)
-                      : null,
-                ),
-              // Портрет вместо значка приложения в свёрнутом уведомлении
-              // (1.11.0, вопрос владельца 04.11.2026).
-              if (defaultTargetPlatform == TargetPlatform.android)
-                SettingsSwitchItem(
-                  icon: AppIcons.forum,
-                  title: l10n.tr('notifyAllConversations'),
-                  subtitle: l10n.tr('notifyAllConversationsDesc'),
-                  value: settings.notificationAllConversations,
-                  onChanged: settings.notificationsEnabled && settings.notificationMessengerStyle
-                      ? (v) => notifier.setNotificationAllConversations(v)
-                      : null,
-                ),
+              // Беседы Android (VIP, письма людей, все письма) — по умолчанию
+              // как задумано; ручной выбор — «Расширенные настройки →
+              // Уведомления» (2.7.0, вопрос владельца 22.11.2026: «столько
+              // вариантов нужно?»).
             ],
             // Строк текста в уведомлении (1.10.3, просьба владельца
             // 02.11.2026) — отдельно для рабочих и личных ящиков.
@@ -139,37 +102,11 @@ class NotificationsSettingsScreen extends ConsumerWidget {
               onTap: () => unawaited(ref.read(notificationServiceProvider).showTestNotification()),
             ),
           ]),
-          // Сигналы сервера (iPhone, 1.7.2; Android через FCM, 1.9.x):
-          // свёрнутое приложение просыпается по пустому сигналу «проверь
-          // почту» с ogneliss.ru/push.
-          if (PushWakeService.supported) ...[
-            if (PushWakeService.platformOs == PushWakeOs.android)
-              SettingsSectionTitle(l10n.tr('pushWakeTitleAndroid'), help: l10n.tr('pushWakeHelpAndroid'))
-            else
-              SettingsSectionTitle(l10n.tr('pushWakeTitle'), help: l10n.tr('pushWakeHelp')),
-            SettingsGroup(children: [
-              SettingsSwitchItem(
-                icon: AppIcons.cloud_sync,
-                title: l10n.tr('pushWakeSwitch'),
-                subtitle: _pushWakeStatus(context, ref, l10n),
-                value: ref.watch(pushWakePrefsProvider).enabled,
-                onChanged: (v) => ref.read(pushWakePrefsProvider.notifier).setEnabled(v),
-              ),
-              if (ref.watch(pushWakePrefsProvider).enabled)
-                for (final m in PushWakePrefsNotifier.intervals)
-                  AppRadioTile<int>(
-                    title: Text(l10n.tr('pushWakeEvery').replaceAll('{n}', '$m')),
-                    value: m,
-                    groupValue: ref.watch(pushWakePrefsProvider).interval,
-                    onChanged: (v) => ref.read(pushWakePrefsProvider.notifier).setInterval(v ?? 15),
-                  ),
-            ]),
-            // Android: через Google или UnifiedPush (1.10.x).
-            if (PushWakeService.platformOs == PushWakeOs.android && ref.watch(pushWakePrefsProvider).enabled) ...[
-              SettingsSectionTitle(l10n.tr('pushWakeVia'), help: l10n.tr('pushWakeViaHelp')),
-              const SettingsGroup(children: [_PushTransportPicker()]),
-            ],
-          ],
+          // Проверка почты в фоне (сигналы сервера: Google, UnifiedPush или
+          // по расписанию) выбирается сама; ручной выбор — «Расширенные
+          // настройки → Проверка почты в фоне» (2.7.0, замечание владельца
+          // 22.11.2026: «как и что будет будить приложение, пользователю не
+          // интересно»).
           SettingsSectionTitle(l10n.tr('quietHours')),
           SettingsGroup(children: [
           SettingsSwitchItem(
@@ -336,113 +273,6 @@ Future<void> _editDeliveryTimes(BuildContext context, WidgetRef ref, List<String
 String _weekdayShort(int weekday, AppLocalizations l10n) {
   const keys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
   return l10n.tr(keys[weekday - 1]);
-}
-
-/// Строка под переключателем сигналов: пояснение и состояние регистрации.
-String _pushWakeStatus(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
-  final svc = ref.read(pushWakeServiceProvider);
-  final st = svc.state();
-  final parts = <String>[l10n.tr('pushWakeDesc')];
-  if (!ref.read(pushWakePrefsProvider).enabled) return parts.first;
-  // Android без сервисов Google и без распространителя (1.12.x): не ошибка
-  // и не «ещё не зарегистрировано», а как есть — почта проверяется по
-  // расписанию; что поставить для сигналов — в «Как приходят сигналы».
-  if (svc.os == PushWakeOs.android &&
-      svc.transport == PushWakeTransport.unifiedpush &&
-      svc.upDistributor == null &&
-      !st.registered) {
-    parts.add(l10n.tr('pushWakeStatusPeriodic'));
-    return parts.join('\n');
-  }
-  if (st.lastError != null && !st.registered) {
-    parts.add(l10n.tr('pushWakeStatusError').replaceAll('{e}', st.lastError!));
-  } else if (st.registered && st.registeredAt != null) {
-    parts.add(l10n.tr('pushWakeStatusOk').replaceAll('{when}', AppDateFormat.dayMonthTime(context, st.registeredAt!)));
-    if (st.lastWake != null) {
-      parts.add(l10n.tr('pushWakeStatusLast').replaceAll('{when}', AppDateFormat.dayMonthTime(context, st.lastWake!)));
-    }
-  } else {
-    parts.add(l10n.tr('pushWakeStatusNone'));
-  }
-  return parts.join('\n');
-}
-
-/// Способ доставки сигналов на Android: Google (FCM) или распространитель
-/// UnifiedPush (1.10.x, просьба владельца 01.11.2026).
-class _PushTransportPicker extends ConsumerStatefulWidget {
-  const _PushTransportPicker();
-
-  @override
-  ConsumerState<_PushTransportPicker> createState() => _PushTransportPickerState();
-}
-
-class _PushTransportPickerState extends ConsumerState<_PushTransportPicker> {
-  late Future<List<UpDistributor>> _list = ref.read(pushWakeServiceProvider).upDistributors();
-  bool _busy = false;
-
-  Future<void> _use(PushWakeTransport t, {String? distributor}) async {
-    setState(() => _busy = true);
-    try {
-      await ref.read(pushWakeServiceProvider).useTransport(t, distributor: distributor);
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final s = ref.read(pushWakeServiceProvider);
-    final muted = Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.mutedText(context));
-    return FutureBuilder<List<UpDistributor>>(
-      future: _list,
-      builder: (context, snap) {
-        final list = snap.data ?? const <UpDistributor>[];
-        final current = s.transport == PushWakeTransport.unifiedpush ? 'up:${s.upDistributor ?? ''}' : 'fcm';
-        void pick(String? v) {
-          if (v == null || _busy || v == current) return;
-          if (v == 'fcm') {
-            unawaited(_use(PushWakeTransport.fcm));
-          } else {
-            unawaited(_use(PushWakeTransport.unifiedpush, distributor: v.substring(3)));
-          }
-        }
-
-        return Column(mainAxisSize: MainAxisSize.min, children: [
-          // Нет сервисов Google Play на телефоне (1.12.x) — и пункта нет:
-          // через Google сигналы не придут.
-          if (s.fcmUsable)
-            AppRadioTile<String>(
-              title: Text(l10n.tr('pushWakeViaGoogle')),
-              subtitle: Text(l10n.tr('pushWakeViaGoogleDesc'), style: muted),
-              value: 'fcm',
-              groupValue: current,
-              onChanged: pick,
-            ),
-          for (final d in list)
-            AppRadioTile<String>(
-              title: Text(l10n.tr('pushWakeViaUp').replaceAll('{app}', d.name)),
-              subtitle: Text(l10n.tr('pushWakeViaUpDesc'), style: muted),
-              value: 'up:${d.id}',
-              groupValue: current,
-              onChanged: pick,
-            ),
-          if (snap.connectionState == ConnectionState.done && list.isEmpty)
-            ListTile(
-              leading: const Icon(AppIcons.info),
-              title: Text(l10n.tr('pushWakeNoDistributor')),
-              subtitle: Text(l10n.tr('pushWakeNoDistributorDesc'), style: muted),
-              trailing: IconButton(
-                tooltip: l10n.tr('refresh'),
-                icon: const Icon(AppIcons.refresh),
-                onPressed: () => setState(() => _list = s.upDistributors()),
-              ),
-            ),
-          if (_busy) const LinearProgressIndicator(minHeight: 2),
-        ]);
-      },
-    );
-  }
 }
 
 /// «Строк текста в уведомлении»: рабочие и личные ящики — по ряду кнопок

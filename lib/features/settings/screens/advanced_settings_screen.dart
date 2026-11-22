@@ -4,7 +4,13 @@
 // разнести по категориям»). Здесь то, что нужно редко: разделы приложения,
 // графика (Android), журнал и сброс. Синхронизация — в «Аккаунтах»
 // (sync_settings_screen.dart, 18.11.2026).
+//
+// 2.7.0 (замечание владельца 22.11.2026: «не убирать без потери функций, а
+// автоматизировать выбор того, в чём пользователь не разберётся»): сюда —
+// ручной выбор того, что приложение выбирает само: проверка почты в фоне
+// (сигналы сервера, «Работать в фоне») и беседы Android в уведомлениях.
 
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +26,7 @@ import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/graphics_item.dart';
+import 'background_delivery_screen.dart' show backgroundDeliveryAvailable;
 
 class AdvancedSettingsScreen extends ConsumerWidget {
   const AdvancedSettingsScreen({super.key});
@@ -28,6 +35,9 @@ class AdvancedSettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final settings = ref.watch(settingsProvider);
+    final notifier = ref.read(settingsProvider.notifier);
+    final android = !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(title: Text(l10n.tr('advancedSettings')))),
@@ -42,6 +52,51 @@ class AdvancedSettingsScreen extends ConsumerWidget {
             // «Разрешения», безопасность соединения и защита данных (DLP) —
             // на главном экране, в «Конфиденциальности» (перегруппировка
             // 08.11.2026): здесь они повторялись.
+
+            // ── Проверка почты в фоне: само, вручную — здесь ──
+            if (backgroundDeliveryAvailable) ...[
+              SettingsSectionTitle(l10n.tr('sync')),
+              SettingsGroup(children: [
+                SettingsItem(
+                  key: const ValueKey('adv_bg_delivery'),
+                  icon: AppIcons.cloud_sync,
+                  title: l10n.tr('pushWakeTitleAndroid'),
+                  subtitle: l10n.tr('bgDeliveryAutoShort'),
+                  onTap: () => context.push('/settings/background-delivery'),
+                ),
+              ]),
+            ],
+
+            // ── Беседы Android в уведомлениях (по умолчанию: VIP и письма
+            // людей — беседами, рассылки — обычным видом) ──
+            if (android && settings.notificationMessengerStyle) ...[
+              SettingsSectionTitle(l10n.tr('notifications')),
+              SettingsGroup(children: [
+                SettingsSwitchItem(
+                  icon: AppIcons.forum,
+                  title: l10n.tr('notifyVipConversations'),
+                  subtitle: l10n.tr('notifyVipConversationsDesc'),
+                  value: settings.notificationVipConversations,
+                  onChanged: settings.notificationsEnabled ? (v) => notifier.setNotificationVipConversations(v) : null,
+                ),
+                SettingsSwitchItem(
+                  icon: AppIcons.forum,
+                  title: l10n.tr('notifyPeopleConversations'),
+                  subtitle: l10n.tr('notifyPeopleConversationsDesc'),
+                  value: settings.notificationPeopleConversations || settings.notificationAllConversations,
+                  onChanged: settings.notificationsEnabled && !settings.notificationAllConversations
+                      ? (v) => notifier.setNotificationPeopleConversations(v)
+                      : null,
+                ),
+                SettingsSwitchItem(
+                  icon: AppIcons.forum,
+                  title: l10n.tr('notifyAllConversations'),
+                  subtitle: l10n.tr('notifyAllConversationsDesc'),
+                  value: settings.notificationAllConversations,
+                  onChanged: settings.notificationsEnabled ? (v) => notifier.setNotificationAllConversations(v) : null,
+                ),
+              ]),
+            ],
 
             // ── Приложение ──
             SettingsSectionTitle(l10n.tr('sectionApp')),

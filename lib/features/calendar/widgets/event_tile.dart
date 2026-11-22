@@ -43,15 +43,17 @@ class EventTile extends StatelessWidget {
     final s = e.startTime.toLocal();
     final en = e.endTime.toLocal();
     final hm = DateFormat('HH:mm');
+    // Срок без времени: «Срок сегодня» — только у сегодняшнего дня; у
+    // остальных — «Срок», дата — в заголовке дня (2.6.8: в «Расписании»
+    // задача на завтра тоже была «Срок сегодня»).
+    final dueDay = DateUtils.isSameDay(day, now) ? l10n.tr('calDueToday') : l10n.tr('dueDate');
     if (isTaskItem(e)) {
-      return e.isAllDay
-          ? l10n.tr('calDueToday')
-          : l10n.tr('calDueAt').replaceAll('{time}', hm.format(s));
+      return e.isAllDay ? dueDay : l10n.tr('calDueAt').replaceAll('{time}', hm.format(s));
     }
     if (isAssignItem(e)) {
       // Моя роль первой: «Исполняю · срок сегодня».
       final role = (e.description ?? '').isEmpty ? null : l10n.tr(e.description!);
-      final due = e.isAllDay ? l10n.tr('calDueToday') : l10n.tr('calDueAt').replaceAll('{time}', hm.format(s));
+      final due = e.isAllDay ? dueDay : l10n.tr('calDueAt').replaceAll('{time}', hm.format(s));
       return role == null ? due : '$role · $due';
     }
     if (isMailItem(e)) return l10n.tr('calFollowUpAt').replaceAll('{time}', hm.format(s));

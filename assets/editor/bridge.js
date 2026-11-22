@@ -43,6 +43,34 @@
     }, 350);
   }
 
+  // Высота текста письма (2.6.8, замечание владельца 22.11.2026: при ответе
+  // свёрнутое «Исходное письмо» стояло почти внизу экрана, под пустым полем):
+  // приложение ставит окну редактора высоту по тексту — до своего предела,
+  // дальше текст прокручивается внутри, как раньше.
+  var hTimer = null;
+  var lastH = 0;
+  function measure() {
+    if (hTimer) clearTimeout(hTimer);
+    hTimer = setTimeout(function () {
+      hTimer = null;
+      try {
+        if (!ed || !ed.getBody()) return;
+        var body = ed.getBody();
+        var win = ed.getWin();
+        var cs = win.getComputedStyle(body);
+        var last = body.lastElementChild;
+        var bottom = last ? last.getBoundingClientRect().bottom + (win.scrollY || win.pageYOffset || 0) : 0;
+        var h = bottom + (parseFloat(cs.paddingBottom) || 0) + (parseFloat(cs.marginBottom) || 0);
+        var head = document.querySelector('.tox-editor-header');
+        if (head && head.offsetParent !== null) h += head.offsetHeight;
+        h = Math.ceil(h);
+        if (Math.abs(h - lastH) < 4) return;
+        lastH = h;
+        send('height', h);
+      } catch (e) {}
+    }, 150);
+  }
+
   window.OgnEditor = {
     set: function (html) {
       if (!ed) return;
@@ -267,8 +295,13 @@
           if (cfg.bodyStyle) editor.getBody().setAttribute('style', cfg.bodyStyle);
           lastSent = editor.getContent();
           send('ready');
+          measure();
+          // Картинка догрузилась — текст стал выше.
+          try { editor.getBody().addEventListener('load', measure, true); } catch (e) {}
+          try { editor.getWin().addEventListener('resize', measure); } catch (e) {}
         });
         editor.on('input change undo redo keyup paste ExecCommand SetContent', changed);
+        editor.on('input change undo redo keyup paste ExecCommand SetContent NodeChange', measure);
         // Курсор ушёл в текст письма — приложение завершает ввод в шапке
         // (адрес становится плашкой, курсор поля гаснет), 1.6.2.
         editor.on('focus', function () { send('focus'); });

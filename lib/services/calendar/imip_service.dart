@@ -37,6 +37,11 @@ class ImipInvite {
 
   bool get isRequest => method.isEmpty || method == 'REQUEST';
   bool get isCancel => method == 'CANCEL';
+
+  /// Есть кому отвечать: запрос с организатором и участниками. Бронирования
+  /// и билеты (METHOD:REQUEST без ATTENDEE, 22.11.2026) — не приглашение:
+  /// «Принять» отправляло бы ответ роботу брони; у них — «В календарь».
+  bool get canReply => isRequest && (event.organizerEmail ?? '').isNotEmpty && event.attendees.isNotEmpty;
 }
 
 class ImipService {

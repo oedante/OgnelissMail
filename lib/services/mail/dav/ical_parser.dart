@@ -320,7 +320,10 @@ class ICalParser {
   static String? _mailto(String? v) {
     if (v == null) return null;
     final m = RegExp(r'mailto:([^\s;]+)', caseSensitive: false).firstMatch(v);
-    return m?.group(1);
+    if (m != null) return m.group(1);
+    // Без «mailto:» — «Имя <адрес>» или просто адрес (так пишут системы
+    // бронирования, 22.11.2026: «ORGANIZER:Экипаж <booking@…>»).
+    return RegExp(r'[\w.+-]+@[\w-]+(\.[\w-]+)+').firstMatch(v)?.group(0);
   }
 
   static String? _unescape(String? v) => v

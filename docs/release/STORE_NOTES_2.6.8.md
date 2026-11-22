@@ -12,13 +12,7 @@
   и возвращается в «Черновики». «Изменить» — в редактор, «Отправить
   сейчас». Отправленное исчезает из папки сразу; не отправленное остаётся с
   причиной и «Отправить снова». Уведомление «Не отправлено» открывает
-  «Исходящие». У ящика своя папка «Исходящие» на сервере (Exchange, часть
-  IMAP) — она и есть эта папка, на своём месте в списке, без второй строки;
-  письма, которые лежат в ней на сервере, открываются строкой внизу.
-  Exchange называет эту папку сам, у IMAP она узнаётся по названию на
-  разных языках («Outbox», «Исходящие», «Postausgang», «Boîte d'envoi»,
-  «Bandeja de salida», «送信トレイ» и др.; только папка верхнего уровня). Так же —
-  больше языков у «Черновиков», «Отправленных» и «Корзины».
+  «Исходящие».
 - **Пересланные контакты и группы контактов Outlook** — во вложенном
   письме (.eml, .msg) и файлом .vcf: «Сохранить группу» (в «Группы
   рассылки») и «Добавить контакт» у каждого участника и контакта.
@@ -86,33 +80,6 @@
   столбиком в узкой ленте.
 - **Без «RE:», «FW:»** в списке писем, беседах и уведомлениях — только в
   самом письме.
-- **Черновик — на сервере, пока письмо пишется** (IMAP и Exchange): не на
-  каждое нажатие, а не чаще раза в 30 секунд, пока письмо меняется; сразу —
-  по «Сохранить» и при сворачивании приложения. Новая версия заменяет прежнюю — в «Черновиках»
-  один черновик; при закрытии письма та же версия второй раз не уходит.
-  Раньше черновик уходил на сервер только при закрытии письма. Файлы
-  больше 2 МБ — при сворачивании и закрытии, не каждые 30 секунд.
-- **Черновик ответа — с заголовками ответа** (In-Reply-To, References;
-  IMAP и EWS): веб-почта, которая собирает беседы по заголовкам (Gmail),
-  ставит его в беседу исходного письма, а ответ, отправленный из
-  черновика на другом устройстве или в другой программе, встаёт в ту же
-  переписку у получателя. Ogneliss на другом устройстве находит
-  исходное письмо по этим заголовкам и после отправки отмечает его
-  «Отвечено». ActiveSync таких полей у черновика не принимает.
-- **Смена ящика, когда открыта папка**: открывается такая же папка нового
-  ящика («Отправленные» → «Отправленные», своя — с тем же названием), а нет
-  такой — «Входящие» или «Вся почта», как в «Открывать при запуске».
-  Раньше оставалась папка прежнего ящика: заголовок «Входящие» и пустая
-  лента.
-- **Ответ и пересылка**: поле текста — по высоте текста (не выше половины
-  экрана, дальше прокрутка внутри), свёрнутое «Исходное письмо» — сразу
-  под подписью, а не внизу экрана под пустым полем.
-- **Виджет календаря**: под месяцем вместо подписи «Календарь» — погода,
-  как в виджете «Мой день» (если погода включена).
-- **Черновики с сервера** (папка «Черновики» Gmail и других ящиков IMAP) в
-  беседе и на экране письма — черновики: нажатие открывает редактор, внизу
-  «Редактировать», а не «Ответить» и «Переслать»; в «Расписании»
-  календаря у задачи на завтра — «Срок», а не «Срок сегодня».
 - Имена вложений вида `utf-8''%D0%9A…` расшифровываются; iCloud:
   «Drafts» — «Черновики»; Корзина и Спам: «Очистить» первой; оформление
   шапки «Заливка» учитывает цвет значков, «Градиент» работает; на
@@ -127,9 +94,7 @@
 переводятся и пересылаются без искажений. Приветствия — в несколько строк и
 в своём порядке. «Мой день» в виджетах — списком и с погодой, в виджете
 почты — ваши названия ящиков. Длинные беседы открываются без подвисания,
-синхронизация легче — меньше расход батареи и трафика. Черновик попадает
-на сервер уже во время набора и встаёт в ту же переписку; у ящиков со своей
-папкой «Исходящие» она и используется.
+синхронизация легче — меньше расход батареи и трафика.
 
 **EN.** New Outbox folder: a message appears there as soon as you tap Send,
 you can undo it with a button or a swipe, and sending errors stay visible.
@@ -138,8 +103,7 @@ attached messages can be translated and are forwarded intact. Greetings can
 span several lines, in your own order. “My day” in widgets is a list with
 the weather, and the mail widget shows your mailbox names. Long
 conversations open without lag, and lighter syncing uses less battery and
-data. Drafts reach the server while you are still typing and stay in the same
-thread; mailboxes with their own Outbox folder use it.
+data.
 
 ## Google Play — короткий текст (27 языков)
 
@@ -151,7 +115,6 @@ thread; mailboxes with their own Outbox folder use it.
 • «Мой день» в виджетах — списком и с погодой
 • Приветствия в несколько строк, свой порядок вариантов
 • Длинные беседы — без подвисаний, меньше расход батареи
-• Черновики — на сервере уже во время набора, в той же переписке
 • Исправления и улучшения
 </ru-RU>
 <en-US>
@@ -161,7 +124,6 @@ thread; mailboxes with their own Outbox folder use it.
 • “My day” in widgets — as a list, with the weather
 • Multi-line greetings, your own order of greetings
 • Long conversations open without lag; lower battery use
-• Drafts are saved to the server as you type, in the same thread
 • Bug fixes and improvements
 </en-US>
 <de-DE>
@@ -171,7 +133,6 @@ thread; mailboxes with their own Outbox folder use it.
 • „Mein Tag“ in Widgets – als Liste, mit Wetter
 • Mehrzeilige Begrüßungen, eigene Reihenfolge
 • Lange Unterhaltungen ohne Ruckeln, weniger Akkuverbrauch
-• Entwürfe schon beim Schreiben auf dem Server, im selben Verlauf
 • Fehlerbehebungen und Verbesserungen
 </de-DE>
 <fr-FR>
@@ -181,7 +142,6 @@ thread; mailboxes with their own Outbox folder use it.
 • « Ma journée » dans les widgets — en liste, avec la météo
 • Salutations sur plusieurs lignes, ordre personnalisé
 • Longues conversations sans ralentissement, moins de batterie consommée
-• Brouillons enregistrés sur le serveur pendant la saisie, dans le même fil
 • Corrections et améliorations
 </fr-FR>
 <ar>
@@ -191,7 +151,6 @@ thread; mailboxes with their own Outbox folder use it.
 • «يومي» في الأدوات — كقائمة ومع الطقس
 • تحيات متعددة الأسطر وترتيب خاص بك
 • المحادثات الطويلة تُفتح دون تأخير، واستهلاك أقل للبطارية
-• تُحفظ المسودات على الخادم أثناء الكتابة، في نفس المحادثة
 • إصلاحات وتحسينات
 </ar>
 <hu-HU>
@@ -201,7 +160,6 @@ thread; mailboxes with their own Outbox folder use it.
 • „Napom” a widgetekben – listaként, időjárással
 • Többsoros üdvözlések, saját sorrend
 • Hosszú beszélgetések akadás nélkül, kisebb akkumulátor-használat
-• A piszkozatok már írás közben a szerveren, ugyanabban a szálban
 • Hibajavítások és fejlesztések
 </hu-HU>
 <vi>
@@ -211,7 +169,6 @@ thread; mailboxes with their own Outbox folder use it.
 • “Ngày của tôi” trong tiện ích — dạng danh sách, có thời tiết
 • Lời chào nhiều dòng, tự sắp xếp thứ tự
 • Cuộc trò chuyện dài mở không bị giật, tiết kiệm pin hơn
-• Thư nháp được lưu lên máy chủ ngay khi đang soạn, trong cùng chuỗi thư
 • Sửa lỗi và cải tiến
 </vi>
 <da-DK>
@@ -221,7 +178,6 @@ thread; mailboxes with their own Outbox folder use it.
 • “Min dag” i widgets – som liste, med vejret
 • Hilsner på flere linjer, din egen rækkefølge
 • Lange samtaler uden hak, lavere batteriforbrug
-• Kladder gemmes på serveren, mens du skriver, i samme tråd
 • Fejlrettelser og forbedringer
 </da-DK>
 <iw-IL>
@@ -231,7 +187,6 @@ thread; mailboxes with their own Outbox folder use it.
 • „היום שלי” בווידג'טים — כרשימה, עם מזג האוויר
 • ברכות בכמה שורות, סדר משלך
 • שיחות ארוכות נפתחות בלי תקיעות, צריכת סוללה נמוכה יותר
-• טיוטות נשמרות בשרת כבר בזמן הכתיבה, באותו שרשור
 • תיקוני באגים ושיפורים
 </iw-IL>
 <id>
@@ -241,7 +196,6 @@ thread; mailboxes with their own Outbox folder use it.
 • “Hari saya” di widget — berupa daftar, dengan cuaca
 • Salam beberapa baris, urutan sendiri
 • Percakapan panjang tanpa tersendat, lebih hemat baterai
-• Draf tersimpan di server saat mengetik, dalam utas yang sama
 • Perbaikan bug dan peningkatan
 </id>
 <es-ES>
@@ -251,7 +205,6 @@ thread; mailboxes with their own Outbox folder use it.
 • «Mi día» en los widgets: en lista y con el tiempo
 • Saludos de varias líneas, orden personalizado
 • Conversaciones largas sin bloqueos, menor consumo de batería
-• Borradores guardados en el servidor mientras escribe, en el mismo hilo
 • Correcciones y mejoras
 </es-ES>
 <it-IT>
@@ -261,7 +214,6 @@ thread; mailboxes with their own Outbox folder use it.
 • «La mia giornata» nei widget: in elenco, con il meteo
 • Saluti su più righe, ordine personalizzato
 • Conversazioni lunghe senza rallentamenti, minor consumo di batteria
-• Bozze salvate sul server durante la scrittura, nella stessa conversazione
 • Correzioni e miglioramenti
 </it-IT>
 <zh-CN>
@@ -271,7 +223,6 @@ thread; mailboxes with their own Outbox folder use it.
 • 小组件中的“我的一天”——列表显示，附天气
 • 多行问候语，自定顺序
 • 长会话打开不再卡顿，更省电
-• 草稿在输入时即保存到服务器，并归入同一会话
 • 错误修复和改进
 </zh-CN>
 <ko-KR>
@@ -281,7 +232,6 @@ thread; mailboxes with their own Outbox folder use it.
 • 위젯의 '나의 하루' — 목록으로, 날씨와 함께
 • 여러 줄 인사말, 순서 직접 지정
 • 긴 대화도 끊김 없이 열림, 배터리 사용량 감소
-• 작성 중에도 임시 저장 메일이 서버에 저장되고 같은 대화에 연결
 • 버그 수정 및 개선
 </ko-KR>
 <nl-NL>
@@ -291,7 +241,6 @@ thread; mailboxes with their own Outbox folder use it.
 • ‘Mijn dag’ in widgets – als lijst, met het weer
 • Begroetingen over meerdere regels, eigen volgorde
 • Lange gesprekken zonder haperingen, lager batterijverbruik
-• Concepten al tijdens het typen op de server, in hetzelfde gesprek
 • Bugfixes en verbeteringen
 </nl-NL>
 <no-NO>
@@ -301,7 +250,6 @@ thread; mailboxes with their own Outbox folder use it.
 • «Min dag» i moduler – som liste, med været
 • Hilsener over flere linjer, egen rekkefølge
 • Lange samtaler uten hakking, lavere batteribruk
-• Utkast lagres på serveren mens du skriver, i samme tråd
 • Feilrettinger og forbedringer
 </no-NO>
 <pl-PL>
@@ -311,7 +259,6 @@ thread; mailboxes with their own Outbox folder use it.
 • „Mój dzień” w widżetach — jako lista, z pogodą
 • Powitania w kilku wierszach, własna kolejność
 • Długie konwersacje bez zacięć, mniejsze zużycie baterii
-• Wersje robocze zapisywane na serwerze już podczas pisania, w tym samym wątku
 • Poprawki błędów i ulepszenia
 </pl-PL>
 <pt-BR>
@@ -321,7 +268,6 @@ thread; mailboxes with their own Outbox folder use it.
 • “Meu dia” nos widgets — em lista, com a previsão do tempo
 • Saudações em várias linhas, ordem personalizada
 • Conversas longas sem travamentos, menor consumo de bateria
-• Rascunhos salvos no servidor enquanto você digita, na mesma conversa
 • Correções e melhorias
 </pt-BR>
 <ro>
@@ -331,7 +277,6 @@ thread; mailboxes with their own Outbox folder use it.
 • „Ziua mea” în widgeturi — ca listă, cu vremea
 • Saluturi pe mai multe rânduri, ordine proprie
 • Conversațiile lungi se deschid fără blocaje, consum mai mic de baterie
-• Ciornele se salvează pe server în timp ce scrieți, în aceeași conversație
 • Remedieri și îmbunătățiri
 </ro>
 <sk>
@@ -341,7 +286,6 @@ thread; mailboxes with their own Outbox folder use it.
 • „Môj deň“ vo widgetoch – ako zoznam, s počasím
 • Viacriadkové pozdravy, vlastné poradie
 • Dlhé konverzácie bez sekania, nižšia spotreba batérie
-• Koncepty sa ukladajú na server už počas písania, v tom istom vlákne
 • Opravy chýb a vylepšenia
 </sk>
 <th>
@@ -351,7 +295,6 @@ thread; mailboxes with their own Outbox folder use it.
 • “วันของฉัน” ในวิดเจ็ต — แบบรายการ พร้อมสภาพอากาศ
 • คำทักทายหลายบรรทัด จัดลำดับเองได้
 • การสนทนายาวเปิดได้ไม่สะดุด ประหยัดแบตเตอรี่มากขึ้น
-• บันทึกฉบับร่างลงเซิร์ฟเวอร์ระหว่างพิมพ์ ในเธรดเดียวกัน
 • แก้ไขข้อบกพร่องและปรับปรุง
 </th>
 <tr-TR>
@@ -361,7 +304,6 @@ thread; mailboxes with their own Outbox folder use it.
 • Widget'larda “Günüm” — liste halinde, hava durumuyla
 • Çok satırlı selamlar, kendi sıranız
 • Uzun konuşmalar takılmadan açılır, daha az pil tüketimi
-• Taslaklar yazarken sunucuya kaydedilir, aynı yazışmada
 • Hata düzeltmeleri ve iyileştirmeler
 </tr-TR>
 <fi-FI>
@@ -371,7 +313,6 @@ thread; mailboxes with their own Outbox folder use it.
 • ”Oma päivä” pienoisohjelmissa – listana, säätiedon kanssa
 • Monirivisiä tervehdyksiä, oma järjestys
 • Pitkät keskustelut ilman nykimistä, pienempi akunkulutus
-• Luonnokset tallentuvat palvelimelle jo kirjoittaessa, samaan ketjuun
 • Virheenkorjauksia ja parannuksia
 </fi-FI>
 <hi-IN>
@@ -381,7 +322,6 @@ thread; mailboxes with their own Outbox folder use it.
 • विजेट में “मेरा दिन” — सूची के रूप में, मौसम के साथ
 • कई पंक्तियों वाले अभिवादन, अपना क्रम
 • लंबी बातचीत बिना अटके खुलती है, बैटरी की कम खपत
-• ड्राफ़्ट लिखते समय ही सर्वर पर सहेजे जाते हैं, उसी थ्रेड में
 • बग फ़िक्स और सुधार
 </hi-IN>
 <cs-CZ>
@@ -391,7 +331,6 @@ thread; mailboxes with their own Outbox folder use it.
 • „Můj den“ ve widgetech – jako seznam, s počasím
 • Víceřádkové pozdravy, vlastní pořadí
 • Dlouhé konverzace bez zasekávání, nižší spotřeba baterie
-• Koncepty se ukládají na server už při psaní, ve stejném vlákně
 • Opravy chyb a vylepšení
 </cs-CZ>
 <sv-SE>
@@ -401,7 +340,6 @@ thread; mailboxes with their own Outbox folder use it.
 • ”Min dag” i widgetar – som lista, med vädret
 • Hälsningar på flera rader, egen ordning
 • Långa konversationer utan hack, lägre batteriförbrukning
-• Utkast sparas på servern medan du skriver, i samma tråd
 • Felrättningar och förbättringar
 </sv-SE>
 <ja-JP>
@@ -411,7 +349,6 @@ thread; mailboxes with their own Outbox folder use it.
 • ウィジェットの「今日の予定」をリスト表示、天気付き
 • 複数行の挨拶、並び順を自由に
 • 長い会話もスムーズに表示、バッテリー消費を削減
-• 下書きを入力中にサーバーへ保存、同じスレッドにまとめて表示
 • 不具合の修正と改善
 </ja-JP>
 ```
@@ -428,7 +365,6 @@ thread; mailboxes with their own Outbox folder use it.
 • Без «RE:» и «FW:» в списке писем и уведомлениях
 • Приветствия в несколько строк, свой порядок вариантов
 • Длинные беседы — без подвисаний, меньше расход батареи
-• Черновики — на сервере уже во время набора, в той же переписке
 • Исправления и улучшения
 </ru-RU>
 <en-US>
@@ -438,7 +374,6 @@ thread; mailboxes with their own Outbox folder use it.
 • No “RE:” and “FW:” in the message list and notifications
 • Multi-line greetings, your own order of greetings
 • Long conversations open without lag; lower battery use
-• Drafts are saved to the server as you type, in the same thread
 • Bug fixes and improvements
 </en-US>
 <de-DE>
@@ -448,7 +383,6 @@ thread; mailboxes with their own Outbox folder use it.
 • Kein „RE:“ und „FW:“ in der Nachrichtenliste und in Mitteilungen
 • Mehrzeilige Begrüßungen, eigene Reihenfolge
 • Lange Unterhaltungen ohne Ruckeln, weniger Akkuverbrauch
-• Entwürfe schon beim Schreiben auf dem Server, im selben Verlauf
 • Fehlerbehebungen und Verbesserungen
 </de-DE>
 <fr-FR>
@@ -458,7 +392,6 @@ thread; mailboxes with their own Outbox folder use it.
 • Plus de « RE: » ni « FW: » dans la liste des messages et les notifications
 • Salutations sur plusieurs lignes, ordre personnalisé
 • Longues conversations sans ralentissement, moins de batterie consommée
-• Brouillons enregistrés sur le serveur pendant la saisie, dans le même fil
 • Corrections et améliorations
 </fr-FR>
 ```

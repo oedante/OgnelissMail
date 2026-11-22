@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../help/faq_screen.dart' show FaqButton;
 import '../../../l10n/app_localizations.dart';
 import '../../../services/device/device_calendar_sync.dart';
+import '../../../services/home_widget_service.dart';
 import '../../mail/providers/mail_providers.dart';
 import '../providers/module_settings_provider.dart';
 import '../../../core/permissions/app_permissions.dart';
@@ -72,7 +73,12 @@ class CalendarSettingsScreen extends ConsumerWidget {
               icon: AppIcons.format_list_numbered,
               title: l10n.tr('weekNumbers'),
               value: s.showWeekNumbers,
-              onChanged: n.setShowWeekNumbers,
+              onChanged: (v) async {
+                final c = ProviderScope.containerOf(context);
+                await n.setShowWeekNumbers(v);
+                // Сетка месяца в виджете календаря — тоже со столбцом недель.
+                unawaited(HomeWidgetService.updateFromContainer(c, force: true));
+              },
             ),
           ]),
           SettingsSectionTitle(l10n.tr('events')),

@@ -201,7 +201,7 @@ class _TimeGridViewState extends State<TimeGridView> {
             child: widget.days == 7
                 ? Center(
                     child: Text(
-                      l10n.tr('calWeekShort').replaceAll('{n}', '${CalendarViewUtils.isoWeek(days.first)}'),
+                      l10n.tr('calWeekShort').replaceAll('{n}', '${CalendarViewUtils.isoWeek(days.first.add(const Duration(days: 3)))}'),
                       style: theme.textTheme.labelSmall?.copyWith(color: theme.hintColor),
                     ),
                   )

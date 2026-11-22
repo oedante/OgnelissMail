@@ -97,7 +97,7 @@ class MonthGridView extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.only(top: 6),
                             child: Text(
-                              '${CalendarViewUtils.isoWeek(start.add(Duration(days: row * 7)))}',
+                              '${CalendarViewUtils.isoWeek(start.add(Duration(days: row * 7 + 3)))}',
                               textAlign: TextAlign.center,
                               style: theme.textTheme.labelSmall?.copyWith(color: theme.hintColor, fontSize: 10),
                             ),

@@ -247,6 +247,26 @@
         <item name="android:textColor">@color/widget_text_dk</item>
         <item name="android:textSize">13sp</item>
     </style>
+    <style name="WidgetWeekNumLt">
+        <item name="android:layout_width">22dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:lineSpacingMultiplier">0.9</item>
+        <item name="android:textColor">@color/widget_muted_lt</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="WidgetWeekNumDk">
+        <item name="android:layout_width">22dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:lineSpacingMultiplier">0.9</item>
+        <item name="android:textColor">@color/widget_muted_dk</item>
+        <item name="android:textSize">13sp</item>
+    </style>
     <style name="WidgetMonthCellFixedLt" parent="WidgetMonthCellLt">
         <item name="android:layout_marginStart">3dp</item>
         <item name="android:layout_marginEnd">3dp</item>

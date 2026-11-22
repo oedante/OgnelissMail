@@ -123,4 +123,14 @@ void main() {
     expect(titles, contains('Проверка'), reason: 'задача — своей строкой с галочкой');
     expect(titles.any((t) => t.contains('Счёт')), isFalse, reason: 'напоминание — завтра');
   });
+
+  // 22.11.2026: номер недели в виджете — «как в приложении»: подпись «Н{n}»
+  // и столбец в месяце по настройке «Номера недель».
+  test('номер недели: подпись и настройка приложения', () async {
+    var j = await run(HomeWidgetService.calendarKey);
+    expect(j['weekShort'], 'Н{n}');
+    expect(j['weekNums'], isFalse);
+    j = await run(HomeWidgetService.calendarKey, {'mod_week_numbers': true});
+    expect(j['weekNums'], isTrue);
+  });
 }

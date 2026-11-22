@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Send svar til alle</string>
     <string name="mailBarOrder">Knapper under meldingen</string>
     <string name="mailBarRightHand">For høyre hånd: Svar til høyre</string>
-    <string name="mailBarLeftHand">For venstre hånd: Svar til venstre</string>
+    <string name="mailBarLeftHand">Standard: Svar til venstre</string>
     <string name="mailBarCustom">Egen rekkefølge</string>
     <string name="mailBarDragHint">Ovenfra og ned her tilsvarer venstre mot høyre under en melding. Dra i håndtaket til høyre</string>
-    <string name="mailBarOrderHint">Svar er enklere å nå med tommelen, og Slett er tryggere unna systemets Tilbake-knapp, så du ikke sletter en melding ved et uhell.\n\nSom standard passer knappene for høyre hånd: Svar til høyre. For venstre hånd er de speilvendt. Du kan også ordne dem på din egen måte.\n\nNår det er skrevet tekst i feltet Svar…, blir knappene Svar og Svar til alle farget og sender den.</string>
+    <string name="mailBarOrderHint">Svar er enklere å nå med tommelen, og Slett er tryggere unna systemets Tilbake-knapp, så du ikke sletter en melding ved et uhell.\n\nSom standard er Svar til venstre, som i de fleste e-postapper. For høyre hånd er knappene speilvendt: Svar til høyre. Du kan også ordne dem på din egen måte.\n\nNår det er skrevet tekst i feltet Svar…, blir knappene Svar og Svar til alle farget og sender den.</string>
     <string name="confirmMailDelete">Spør før sletting</string>
     <string name="confirmMailDeleteDesc">Slett-knappen i en åpen melding</string>
     <string name="deleteMailAskTitle">Slette denne meldingen?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">Hvordan svarer jeg raskt uten å åpne redigeringen?</string>
     <string name="faq_mail_1_a">Over meldingsknappene er det et felt Svar…: skriv teksten og trykk Svar eller Svar til alle – knappen blir farget, og meldingen sendes med en hilsen og signaturen din. Med tomt felt åpner Svar hele redigeringen; krysset i feltet fjerner teksten, og Videresend tar den med inn i videresendingen. I en samtale sender den runde knappen til høyre (med tomt felt åpner den hele redigeringen). Du kan slå av feltet under Innstillinger → E-post → Hurtigsvar i meldinger og samtaler.</string>
     <string name="faq_mail_2_q">Hvordan endrer jeg rekkefølgen på knappene under en melding?</string>
-    <string name="faq_mail_2_a">Innstillinger → E-post → Knapper under meldingen. Som standard passer de for høyre hånd: Svar til høyre, Slett unna systemets Tilbake-knapp. Du kan velge For venstre hånd eller ordne knappene ved å dra. Samme sted finner du Spør før sletting (på som standard).</string>
+    <string name="faq_mail_2_a">Innstillinger → E-post → Knapper under meldingen. Som standard er Svar til venstre, som i de fleste e-postapper. Du kan velge For høyre hånd (Svar til høyre, Slett unna systemets Tilbake-knapp) eller ordne knappene ved å dra. Samme sted finner du Spør før sletting (på som standard).</string>
     <string name="faq_mail_3_q">Hvordan får jeg tilbake en slettet melding?</string>
     <string name="faq_mail_3_a">Rett etter sletting vises en linje «E-post slettet · Angre» med 7 sekunders nedtelling nederst i listen, over det nederste panelet – trykk Angre. Arkiver og Flytt til søppelpost kan angres på samme måte. Senere finner du meldingen i Slettede elementer og kan flytte den tilbake; for Exchange-postbokser finnes også Gjenopprett slettede elementer i Innstillinger.</string>
     <string name="faq_mail_4_q">Hvor legger Arkiver og Flytt til søppelpost en melding?</string>

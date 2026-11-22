@@ -3225,10 +3225,10 @@
     <string name="quickReplySendAll">Wyślij odpowiedź wszystkim</string>
     <string name="mailBarOrder">Przyciski pod wiadomością</string>
     <string name="mailBarRightHand">Dla prawej ręki: Odpowiedz po prawej</string>
-    <string name="mailBarLeftHand">Dla lewej ręki: Odpowiedz po lewej</string>
+    <string name="mailBarLeftHand">Standardowo: Odpowiedz po lewej</string>
     <string name="mailBarCustom">Własna kolejność</string>
     <string name="mailBarDragHint">Od góry do dołu tutaj to od lewej do prawej pod wiadomością. Przeciągaj za uchwyt po prawej</string>
-    <string name="mailBarOrderHint">Odpowiedz wygodniej mieć pod kciukiem, a Usuń bezpieczniej trzymać z dala od systemowego przycisku Wstecz, żeby nie usunąć wiadomości przez pomyłkę.\n\nDomyślnie przyciski są ułożone dla prawej ręki: Odpowiedz po prawej. Dla lewej ręki są odbite lustrzanie. Możesz też ułożyć je po swojemu.\n\nGdy w polu Odpowiedz… wpisano tekst, przyciski Odpowiedz i Odpowiedz wszystkim zmieniają kolor i wysyłają go.</string>
+    <string name="mailBarOrderHint">Odpowiedz wygodniej mieć pod kciukiem, a Usuń bezpieczniej trzymać z dala od systemowego przycisku Wstecz, żeby nie usunąć wiadomości przez pomyłkę.\n\nDomyślnie Odpowiedz jest po lewej, jak w większości aplikacji pocztowych. Dla prawej ręki przyciski są odbite lustrzanie: Odpowiedz po prawej. Możesz też ułożyć je po swojemu.\n\nGdy w polu Odpowiedz… wpisano tekst, przyciski Odpowiedz i Odpowiedz wszystkim zmieniają kolor i wysyłają go.</string>
     <string name="confirmMailDelete">Pytaj przed usunięciem</string>
     <string name="confirmMailDeleteDesc">Przycisk Usuń w otwartej wiadomości</string>
     <string name="deleteMailAskTitle">Usunąć tę wiadomość?</string>
@@ -3264,7 +3264,7 @@
     <string name="faq_mail_1_q">Jak szybko odpowiedzieć bez otwierania edytora?</string>
     <string name="faq_mail_1_a">Nad przyciskami wiadomości jest pole Odpowiedz…: wpisz tekst i dotknij Odpowiedz lub Odpowiedz wszystkim — przycisk zmieni kolor, a wiadomość wyjdzie z powitaniem i Twoim podpisem. Przy pustym polu Odpowiedz otwiera pełny edytor; krzyżyk w polu czyści tekst, a Przekaż dalej przenosi go do przekazywanej wiadomości. W konwersacji wysyła okrągły przycisk po prawej (przy pustym polu otwiera pełny edytor). Pole możesz wyłączyć w Ustawienia → Poczta → Szybka odpowiedź w wiadomościach i konwersacjach.</string>
     <string name="faq_mail_2_q">Jak zmienić kolejność przycisków pod wiadomością?</string>
-    <string name="faq_mail_2_a">Ustawienia → Poczta → Przyciski pod wiadomością. Domyślnie są ułożone dla prawej ręki: Odpowiedz po prawej, Usuń z dala od systemowego przycisku Wstecz. Możesz wybrać Dla lewej ręki albo ułożyć przyciski, przeciągając je. W tym samym miejscu jest Pytaj przed usunięciem (domyślnie włączone).</string>
+    <string name="faq_mail_2_a">Ustawienia → Poczta → Przyciski pod wiadomością. Domyślnie Odpowiedz jest po lewej, jak w większości aplikacji pocztowych. Możesz wybrać Dla prawej ręki (Odpowiedz po prawej, Usuń z dala od systemowego przycisku Wstecz) albo ułożyć przyciski, przeciągając je. W tym samym miejscu jest Pytaj przed usunięciem (domyślnie włączone).</string>
     <string name="faq_mail_3_q">Jak odzyskać usuniętą wiadomość?</string>
     <string name="faq_mail_3_a">Zaraz po usunięciu na dole listy, nad dolnym panelem, pojawia się pasek „Wiadomość usunięta · Cofnij” z 7-sekundowym odliczaniem — dotknij Cofnij. Archiwizuj i Przenieś do wiadomości-śmieci można cofnąć w ten sam sposób. Później wiadomość znajdziesz w Elementach usuniętych i możesz ją przenieść z powrotem; w skrzynkach Exchange w Ustawieniach jest też Odzyskaj usunięte elementy.</string>
     <string name="faq_mail_4_q">Gdzie trafiają wiadomości po użyciu Archiwizuj i Przenieś do wiadomości-śmieci?</string>

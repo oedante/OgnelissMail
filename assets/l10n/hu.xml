@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Válasz küldése mindenkinek</string>
     <string name="mailBarOrder">Gombok az üzenet alatt</string>
     <string name="mailBarRightHand">Jobb kézhez: a Válasz jobbra</string>
-    <string name="mailBarLeftHand">Bal kézhez: a Válasz balra</string>
+    <string name="mailBarLeftHand">Szokásos: a Válasz balra</string>
     <string name="mailBarCustom">Egyéni sorrend</string>
     <string name="mailBarDragHint">Itt fentről lefelé haladva az üzenet alatt balról jobbra következik. Húzd a jobb oldali fogantyúnál fogva</string>
-    <string name="mailBarOrderHint">A Válasz kényelmesebben elérhető a hüvelykujjal, a Törlés pedig biztonságosabb a rendszer Vissza gombjától távol, hogy ne töröld az üzenetet véletlenül.\n\nAlapértelmezés szerint a gombok jobb kézhez igazodnak: a Válasz jobbra van. Bal kézhez tükrözve jelennek meg. Saját kedved szerint is elrendezheted őket.\n\nHa a Válasz… mezőbe szöveg van írva, a Válasz és a Válasz mindenkinek gombok színesek lesznek, és elküldik azt.</string>
+    <string name="mailBarOrderHint">A Válasz kényelmesebben elérhető a hüvelykujjal, a Törlés pedig biztonságosabb a rendszer Vissza gombjától távol, hogy ne töröld az üzenetet véletlenül.\n\nAlapértelmezés szerint a Válasz balra van, mint a legtöbb levelezőalkalmazásban. Jobb kézhez tükrözve jelennek meg: a Válasz jobbra. Saját kedved szerint is elrendezheted őket.\n\nHa a Válasz… mezőbe szöveg van írva, a Válasz és a Válasz mindenkinek gombok színesek lesznek, és elküldik azt.</string>
     <string name="confirmMailDelete">Rákérdezés törlés előtt</string>
     <string name="confirmMailDeleteDesc">A Törlés gomb a megnyitott üzenetben</string>
     <string name="deleteMailAskTitle">Törli ezt az üzenetet?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">Hogyan válaszolhatok gyorsan a szerkesztő megnyitása nélkül?</string>
     <string name="faq_mail_1_a">Az üzenet gombjai fölött van egy Válasz… mező: írd be a szöveget, és koppints a Válasz vagy a Válasz mindenkinek gombra – a gomb színes lesz, és az üzenet köszöntéssel és az aláírásoddal együtt elmegy. Üres mezőnél a Válasz a teljes szerkesztőt nyitja meg; a mezőben lévő kereszt törli a szöveget, a Továbbítás pedig átviszi a szöveget a továbbított üzenetbe. Beszélgetésben a jobb oldali kerek gomb küld (üres mezőnél a teljes szerkesztőt nyitja meg). A mezőt kikapcsolhatod: Beállítások → Levelezés → Gyors válasz üzenetekben és beszélgetésekben.</string>
     <string name="faq_mail_2_q">Hogyan változtathatom meg az üzenet alatti gombok sorrendjét?</string>
-    <string name="faq_mail_2_a">Beállítások → Levelezés → Gombok az üzenet alatt. Alapértelmezés szerint jobb kézhez igazodnak: a Válasz jobbra van, a Törlés távol a rendszer Vissza gombjától. Választhatod a Bal kézhez lehetőséget, vagy húzással saját sorrendet állíthatsz be. Ugyanitt található a Rákérdezés törlés előtt (alapértelmezés szerint be van kapcsolva).</string>
+    <string name="faq_mail_2_a">Beállítások → Levelezés → Gombok az üzenet alatt. Alapértelmezés szerint a Válasz balra van, mint a legtöbb levelezőalkalmazásban. Választhatod a Jobb kézhez lehetőséget (a Válasz jobbra, a Törlés távol a rendszer Vissza gombjától), vagy húzással saját sorrendet állíthatsz be. Ugyanitt található a Rákérdezés törlés előtt (alapértelmezés szerint be van kapcsolva).</string>
     <string name="faq_mail_3_q">Hogyan kaphatok vissza egy törölt üzenetet?</string>
     <string name="faq_mail_3_a">Közvetlenül a törlés után a lista alján, az alsó panel fölött megjelenik egy „Üzenet törölve · Visszavonás” sáv 7 másodperces visszaszámlálással – koppints a Visszavonásra. Az Archiválás és az Áthelyezés levélszemétbe ugyanígy visszavonható. Később az üzenetet megtalálod a Törölt elemek között, és visszahelyezheted; Exchange-postafiókoknál a Beállításokban ott van a Törölt elemek helyreállítása is.</string>
     <string name="faq_mail_4_q">Hová teszi az üzenetet az Archiválás és az Áthelyezés levélszemétbe?</string>

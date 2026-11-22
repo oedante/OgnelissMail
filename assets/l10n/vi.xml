@@ -3186,10 +3186,10 @@
     <string name="quickReplySendAll">Gửi trả lời cho tất cả</string>
     <string name="mailBarOrder">Các nút bên dưới thư</string>
     <string name="mailBarRightHand">Cho tay phải: Trả lời ở bên phải</string>
-    <string name="mailBarLeftHand">Cho tay trái: Trả lời ở bên trái</string>
+    <string name="mailBarLeftHand">Chuẩn: Trả lời ở bên trái</string>
     <string name="mailBarCustom">Thứ tự tùy chỉnh</string>
     <string name="mailBarDragHint">Từ trên xuống dưới ở đây tương ứng từ trái sang phải bên dưới thư. Kéo bằng tay cầm ở bên phải</string>
-    <string name="mailBarOrderHint">Trả lời tiện hơn khi nằm dưới ngón cái, còn Xóa an toàn hơn khi tránh xa nút Quay lại của hệ thống để bạn không xóa nhầm thư.\n\nMặc định các nút phù hợp với tay phải: Trả lời ở bên phải. Với tay trái, các nút được đảo ngược. Bạn cũng có thể tự sắp xếp theo ý mình.\n\nKhi bạn nhập văn bản vào ô Trả lời…, các nút Trả lời và Trả lời tất cả sẽ đổi màu và gửi văn bản đó.</string>
+    <string name="mailBarOrderHint">Trả lời tiện hơn khi nằm dưới ngón cái, còn Xóa an toàn hơn khi tránh xa nút Quay lại của hệ thống để bạn không xóa nhầm thư.\n\nMặc định nút Trả lời ở bên trái, như trong hầu hết ứng dụng thư. Với tay phải, các nút được đảo ngược: Trả lời ở bên phải. Bạn cũng có thể tự sắp xếp theo ý mình.\n\nKhi bạn nhập văn bản vào ô Trả lời…, các nút Trả lời và Trả lời tất cả sẽ đổi màu và gửi văn bản đó.</string>
     <string name="confirmMailDelete">Hỏi trước khi xóa</string>
     <string name="confirmMailDeleteDesc">Nút Xóa trong thư đang mở</string>
     <string name="deleteMailAskTitle">Xóa thư này?</string>
@@ -3225,7 +3225,7 @@
     <string name="faq_mail_1_q">Làm thế nào để trả lời nhanh mà không mở trình soạn thảo?</string>
     <string name="faq_mail_1_a">Phía trên các nút của thư có ô Trả lời…: nhập nội dung rồi chạm Trả lời hoặc Trả lời tất cả — nút sẽ đổi màu và thư được gửi đi kèm lời chào và chữ ký của bạn. Khi ô trống, Trả lời sẽ mở trình soạn thảo đầy đủ; dấu thập trong ô xóa văn bản, còn Chuyển tiếp đưa văn bản vào thư chuyển tiếp. Trong cuộc trò chuyện, nút tròn bên phải dùng để gửi (khi ô trống, nút này mở trình soạn thảo đầy đủ). Bạn có thể tắt ô này trong Cài đặt → Thư → Trả lời nhanh trong thư và cuộc trò chuyện.</string>
     <string name="faq_mail_2_q">Làm thế nào để đổi thứ tự các nút bên dưới thư?</string>
-    <string name="faq_mail_2_a">Cài đặt → Thư → Các nút bên dưới thư. Mặc định các nút phù hợp với tay phải: Trả lời ở bên phải, Xóa tránh xa nút Quay lại của hệ thống. Bạn có thể chọn Cho tay trái hoặc sắp xếp các nút bằng cách kéo. Ngay tại đó còn có Hỏi trước khi xóa (mặc định bật).</string>
+    <string name="faq_mail_2_a">Cài đặt → Thư → Các nút bên dưới thư. Mặc định nút Trả lời ở bên trái, như trong hầu hết ứng dụng thư. Bạn có thể chọn Cho tay phải (Trả lời ở bên phải, Xóa tránh xa nút Quay lại của hệ thống) hoặc sắp xếp các nút bằng cách kéo. Ngay tại đó còn có Hỏi trước khi xóa (mặc định bật).</string>
     <string name="faq_mail_3_q">Làm thế nào để lấy lại thư đã xóa?</string>
     <string name="faq_mail_3_a">Ngay sau khi xóa, thanh “Đã xóa thư · Hoàn tác” với bộ đếm ngược 7 giây xuất hiện ở cuối danh sách, phía trên bảng dưới cùng — chạm Hoàn tác. Lưu trữ và Chuyển vào thư rác cũng có thể hoàn tác theo cách tương tự. Sau đó bạn có thể tìm thư trong Mục đã xóa và chuyển về lại; với hộp thư Exchange còn có Khôi phục các mục đã xóa trong Cài đặt.</string>
     <string name="faq_mail_4_q">Lưu trữ và Chuyển vào thư rác đưa thư đến đâu?</string>

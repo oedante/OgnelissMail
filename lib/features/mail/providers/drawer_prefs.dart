@@ -351,16 +351,16 @@ final mailSwipePagerProvider = NotifierProvider<MailSwipePagerNotifier, bool>(Ma
 /// «Изменить» рядом с «Ответить».
 enum MailBarAction { reply, replyAll, forward, later, delete, more }
 
-/// Порядок кнопок под письмом (1.7.3, просьба тестировщиков 25.10.2026):
-/// «Ответить» — под большим пальцем, «Удалить» — подальше от системной
-/// кнопки «Назад» (у многих телефонов она справа внизу, и письма удаляли
-/// случайно). По умолчанию — под правую руку: справа налево «Ответить»,
-/// «Ответить всем», «Переслать», «Позже», «Удалить», «Ещё». Левшам —
-/// зеркально; можно расставить и по-своему.
+/// Порядок кнопок под письмом (1.7.3, просьба тестировщиков 25.10.2026).
+/// По умолчанию с 2.6.9 (решение владельца 22.11.2026) — стандартно, как в
+/// большинстве почтовых программ: слева направо «Ответить», «Ответить всем»,
+/// «Переслать», «Позже», «Удалить», «Ещё». Под правую руку — зеркально:
+/// «Ответить» под большим пальцем, «Удалить» подальше от системной «Назад».
+/// Можно расставить и по-своему. Сохранённый выбор не трогается.
 class MailBarOrderNotifier extends Notifier<List<MailBarAction>> {
   static const _k = 'mail_bar_order';
 
-  /// Под правую руку (по умолчанию): «Ответить» — справа.
+  /// Под правую руку: «Ответить» — справа (по умолчанию в 1.7.3–2.6.8).
   static const rightHand = [
     MailBarAction.more,
     MailBarAction.delete,
@@ -370,7 +370,7 @@ class MailBarOrderNotifier extends Notifier<List<MailBarAction>> {
     MailBarAction.reply,
   ];
 
-  /// Под левую руку: «Ответить» — слева (порядок до 1.7.3).
+  /// Стандартно (по умолчанию): «Ответить» — слева.
   static const leftHand = [
     MailBarAction.reply,
     MailBarAction.replyAll,
@@ -383,7 +383,7 @@ class MailBarOrderNotifier extends Notifier<List<MailBarAction>> {
   @override
   List<MailBarAction> build() {
     final raw = ref.read(sharedPrefsProvider).getStringList(_k);
-    if (raw == null) return rightHand;
+    if (raw == null) return leftHand;
     final out = <MailBarAction>[
       for (final name in raw)
         for (final v in MailBarAction.values)

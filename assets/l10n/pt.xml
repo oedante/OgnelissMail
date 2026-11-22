@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Enviar resposta a todos</string>
     <string name="mailBarOrder">Botões abaixo da mensagem</string>
     <string name="mailBarRightHand">Para a mão direita: Responder à direita</string>
-    <string name="mailBarLeftHand">Para a mão esquerda: Responder à esquerda</string>
+    <string name="mailBarLeftHand">Padrão: Responder à esquerda</string>
     <string name="mailBarCustom">Ordem personalizada</string>
     <string name="mailBarDragHint">De cima para baixo aqui é da esquerda para a direita abaixo da mensagem. Arraste pela alça à direita</string>
-    <string name="mailBarOrderHint">Responder fica mais à mão sob o polegar, e Excluir é mais seguro longe do botão Voltar do sistema, para você não excluir uma mensagem por acidente.\n\nPor padrão, os botões são pensados para a mão direita: Responder à direita. Para a mão esquerda, eles ficam espelhados. Você também pode organizá-los do seu jeito.\n\nQuando há texto no campo Responder…, os botões Responder e Responder a todos ficam coloridos e enviam esse texto.</string>
+    <string name="mailBarOrderHint">Responder fica mais à mão sob o polegar, e Excluir é mais seguro longe do botão Voltar do sistema, para você não excluir uma mensagem por acidente.\n\nPor padrão, Responder fica à esquerda, como na maioria dos apps de e-mail. Para a mão direita, os botões ficam espelhados: Responder à direita. Você também pode organizá-los do seu jeito.\n\nQuando há texto no campo Responder…, os botões Responder e Responder a todos ficam coloridos e enviam esse texto.</string>
     <string name="confirmMailDelete">Perguntar antes de excluir</string>
     <string name="confirmMailDeleteDesc">O botão Excluir em uma mensagem aberta</string>
     <string name="deleteMailAskTitle">Excluir esta mensagem?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">Como responder rápido sem abrir o editor?</string>
     <string name="faq_mail_1_a">Acima dos botões da mensagem há um campo Responder…: digite o texto e toque em Responder ou Responder a todos — o botão fica colorido e a mensagem sai com uma saudação e a sua assinatura. Com o campo vazio, Responder abre o editor completo; o X no campo apaga o texto e Encaminhar o leva para o encaminhamento. Em uma conversa, o botão redondo à direita envia (com o campo vazio, abre o editor completo). Você pode desativar o campo em Configurações → E-mail → Resposta rápida em mensagens e conversas.</string>
     <string name="faq_mail_2_q">Como mudar a ordem dos botões abaixo da mensagem?</string>
-    <string name="faq_mail_2_a">Configurações → E-mail → Botões abaixo da mensagem. Por padrão, eles são pensados para a mão direita: Responder à direita e Excluir longe do botão Voltar do sistema. Você pode escolher Para a mão esquerda ou organizar os botões arrastando. No mesmo lugar está Perguntar antes de excluir (ativado por padrão).</string>
+    <string name="faq_mail_2_a">Configurações → E-mail → Botões abaixo da mensagem. Por padrão, Responder fica à esquerda, como na maioria dos apps de e-mail. Você pode escolher Para a mão direita (Responder à direita e Excluir longe do botão Voltar do sistema) ou organizar os botões arrastando. No mesmo lugar está Perguntar antes de excluir (ativado por padrão).</string>
     <string name="faq_mail_3_q">Como recuperar uma mensagem excluída?</string>
     <string name="faq_mail_3_a">Logo após excluir, aparece na parte de baixo da lista, acima do painel inferior, uma barra “E-mail excluído · Desfazer” com uma contagem regressiva de 7 segundos — toque em Desfazer. Arquivar e Mover para spam podem ser desfeitos da mesma forma. Depois, você pode encontrar a mensagem em Itens excluídos e movê-la de volta; nas caixas de correio do Exchange também há Recuperar itens excluídos nas Configurações.</string>
     <string name="faq_mail_4_q">Para onde Arquivar e Mover para spam levam a mensagem?</string>

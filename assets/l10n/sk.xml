@@ -3212,10 +3212,10 @@
     <string name="quickReplySendAll">Odoslať odpoveď všetkým</string>
     <string name="mailBarOrder">Tlačidlá pod správou</string>
     <string name="mailBarRightHand">Pre pravú ruku: Odpovedať vpravo</string>
-    <string name="mailBarLeftHand">Pre ľavú ruku: Odpovedať vľavo</string>
+    <string name="mailBarLeftHand">Štandardne: Odpovedať vľavo</string>
     <string name="mailBarCustom">Vlastné poradie</string>
     <string name="mailBarDragHint">Zhora nadol tu je zľava doprava pod správou. Ťahajte za úchyt vpravo</string>
-    <string name="mailBarOrderHint">Odpovedať je pohodlnejšie pod palcom a Odstrániť je bezpečnejšie ďalej od systémového tlačidla Späť, aby ste správu neodstránili omylom.\n\nPredvolene tlačidlá vyhovujú pravej ruke: Odpovedať vpravo. Pre ľavú ruku sú zrkadlovo obrátené. Môžete ich usporiadať aj po svojom.\n\nKeď sa do poľa Odpovedať… zadá text, tlačidlá Odpovedať a Odpovedať všetkým sa zafarbia a text odošlú.</string>
+    <string name="mailBarOrderHint">Odpovedať je pohodlnejšie pod palcom a Odstrániť je bezpečnejšie ďalej od systémového tlačidla Späť, aby ste správu neodstránili omylom.\n\nPredvolene je Odpovedať vľavo, ako vo väčšine poštových aplikácií. Pre pravú ruku sú tlačidlá zrkadlovo obrátené: Odpovedať vpravo. Môžete ich usporiadať aj po svojom.\n\nKeď sa do poľa Odpovedať… zadá text, tlačidlá Odpovedať a Odpovedať všetkým sa zafarbia a text odošlú.</string>
     <string name="confirmMailDelete">Pýtať sa pred odstránením</string>
     <string name="confirmMailDeleteDesc">Tlačidlo Odstrániť v otvorenej správe</string>
     <string name="deleteMailAskTitle">Odstrániť túto správu?</string>
@@ -3251,7 +3251,7 @@
     <string name="faq_mail_1_q">Ako rýchlo odpovedať bez otvorenia editora?</string>
     <string name="faq_mail_1_a">Nad tlačidlami správy je pole Odpovedať…: napíšte text a ťuknite na Odpovedať alebo Odpovedať všetkým — tlačidlo sa zafarbí a správa odíde s oslovením a vaším podpisom. Pri prázdnom poli Odpovedať otvorí úplný editor; krížik v poli vymaže text a Preposlať ho prenesie do preposielanej správy. V konverzácii odosiela okrúhle tlačidlo vpravo (pri prázdnom poli otvorí úplný editor). Pole môžete vypnúť v Nastavenia → Pošta → Rýchla odpoveď v správach a konverzáciách.</string>
     <string name="faq_mail_2_q">Ako zmeniť poradie tlačidiel pod správou?</string>
-    <string name="faq_mail_2_a">Nastavenia → Pošta → Tlačidlá pod správou. Predvolene vyhovujú pravej ruke: Odpovedať vpravo, Odstrániť ďalej od systémového tlačidla Späť. Môžete zvoliť Pre ľavú ruku alebo tlačidlá usporiadať presúvaním. Na tom istom mieste je aj Pýtať sa pred odstránením (predvolene zapnuté).</string>
+    <string name="faq_mail_2_a">Nastavenia → Pošta → Tlačidlá pod správou. Predvolene je Odpovedať vľavo, ako vo väčšine poštových aplikácií. Môžete zvoliť Pre pravú ruku (Odpovedať vpravo, Odstrániť ďalej od systémového tlačidla Späť) alebo tlačidlá usporiadať presúvaním. Na tom istom mieste je aj Pýtať sa pred odstránením (predvolene zapnuté).</string>
     <string name="faq_mail_3_q">Ako vrátiť odstránenú správu?</string>
     <string name="faq_mail_3_a">Hneď po odstránení sa dole v zozname, nad spodným panelom, zobrazí lišta „Správa odstránená · Späť“ so 7-sekundovým odpočtom — ťuknite na Späť. Archivovať a Presunúť do nevyžiadanej pošty sa dajú vrátiť rovnako. Neskôr môžete správu nájsť v priečinku Odstránená pošta a presunúť ju späť; pri schránkach Exchange je v Nastaveniach aj Obnoviť odstránené položky.</string>
     <string name="faq_mail_4_q">Kam správu presunú akcie Archivovať a Presunúť do nevyžiadanej pošty?</string>

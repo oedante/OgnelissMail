@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Envoyer la réponse à tous</string>
     <string name="mailBarOrder">Boutons sous le message</string>
     <string name="mailBarRightHand">Pour la main droite : Répondre à droite</string>
-    <string name="mailBarLeftHand">Pour la main gauche : Répondre à gauche</string>
+    <string name="mailBarLeftHand">Standard : Répondre à gauche</string>
     <string name="mailBarCustom">Ordre personnalisé</string>
     <string name="mailBarDragHint">De haut en bas ici correspond à gauche à droite sous le message. Faites glisser par la poignée à droite</string>
-    <string name="mailBarOrderHint">Répondre est plus pratique sous le pouce, et Supprimer plus sûr loin du bouton Retour du système, pour ne pas supprimer un message par erreur.\n\nPar défaut, les boutons sont placés pour la main droite : Répondre à droite. Pour la main gauche, en miroir. Vous pouvez aussi les disposer à votre façon.\n\nSi du texte est saisi dans le champ « Répondre… », les boutons Répondre et Répondre à tous se colorent et l’envoient.</string>
+    <string name="mailBarOrderHint">Répondre est plus pratique sous le pouce, et Supprimer plus sûr loin du bouton Retour du système, pour ne pas supprimer un message par erreur.\n\nPar défaut, Répondre est à gauche, comme dans la plupart des applications de messagerie. Pour la main droite, en miroir : Répondre à droite. Vous pouvez aussi les disposer à votre façon.\n\nSi du texte est saisi dans le champ « Répondre… », les boutons Répondre et Répondre à tous se colorent et l’envoient.</string>
     <string name="confirmMailDelete">Demander avant de supprimer</string>
     <string name="confirmMailDeleteDesc">Le bouton Supprimer dans un message ouvert</string>
     <string name="deleteMailAskTitle">Supprimer ce message ?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">Comment répondre vite sans ouvrir l’éditeur ?</string>
     <string name="faq_mail_1_a">Au-dessus des boutons du message se trouve le champ « Répondre… » : saisissez le texte et touchez « Répondre » ou « Répondre à tous » — le bouton se colore et le message part avec une formule d’appel et votre signature. Champ vide : « Répondre » ouvre l’éditeur complet ; la croix efface le texte, « Transférer » le reprend dans le transfert. Dans une conversation, le bouton rond à droite envoie (champ vide : éditeur complet). Désactivation : Réglages → Messagerie → « Réponse rapide dans le message et la conversation ».</string>
     <string name="faq_mail_2_q">Comment changer l’ordre des boutons sous un message ?</string>
-    <string name="faq_mail_2_a">Réglages → Messagerie → « Boutons sous le message ». Par défaut, ils sont placés pour la main droite : « Répondre » à droite, « Supprimer » loin du bouton Retour du système. Vous pouvez choisir « Pour la main gauche » ou les disposer en les faisant glisser. Au même endroit : « Demander avant de supprimer » (activé par défaut).</string>
+    <string name="faq_mail_2_a">Réglages → Messagerie → « Boutons sous le message ». Par défaut, « Répondre » est à gauche, comme dans la plupart des applications de messagerie. Vous pouvez choisir « Pour la main droite » (« Répondre » à droite, « Supprimer » loin du bouton Retour du système) ou les disposer en les faisant glisser. Au même endroit : « Demander avant de supprimer » (activé par défaut).</string>
     <string name="faq_mail_3_q">Comment récupérer un message supprimé ?</string>
     <string name="faq_mail_3_a">Juste après la suppression, la barre « E-mail supprimé · Annuler » apparaît en bas de la liste, au-dessus de la barre du bas, avec un compte à rebours de 7 secondes. Archiver et Déplacer vers Courrier indésirable s’annulent de la même façon. Plus tard, le message se trouve dans Éléments supprimés ; pour Exchange, il existe aussi « Récupérer les éléments supprimés » dans les réglages.</string>
     <string name="faq_mail_4_q">Où vont les messages avec Archiver et Déplacer vers Courrier indésirable ?</string>

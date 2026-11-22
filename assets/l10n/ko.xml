@@ -3186,10 +3186,10 @@
     <string name="quickReplySendAll">전체에게 답장 보내기</string>
     <string name="mailBarOrder">메일 하단 버튼</string>
     <string name="mailBarRightHand">오른손용: 답장이 오른쪽에</string>
-    <string name="mailBarLeftHand">왼손용: 답장이 왼쪽에</string>
+    <string name="mailBarLeftHand">기본: 답장이 왼쪽에</string>
     <string name="mailBarCustom">사용자 지정 순서</string>
     <string name="mailBarDragHint">여기서의 위에서 아래 순서가 메일 하단에서는 왼쪽에서 오른쪽 순서가 돼요. 오른쪽 핸들을 드래그하세요</string>
-    <string name="mailBarOrderHint">답장은 엄지손가락 아래에 있을 때 누르기 편하고, 삭제는 시스템 뒤로 가기 버튼에서 떨어져 있어야 실수로 메일을 삭제하지 않아 안전해요.\n\n기본적으로 버튼은 오른손에 맞춰져 있어요. 답장이 오른쪽에 있어요. 왼손용은 좌우가 반대예요. 원하는 대로 직접 배치할 수도 있어요.\n\n답장… 입력란에 글을 입력하면 답장과 전체 답장 버튼의 색이 바뀌고, 누르면 바로 전송돼요.</string>
+    <string name="mailBarOrderHint">답장은 엄지손가락 아래에 있을 때 누르기 편하고, 삭제는 시스템 뒤로 가기 버튼에서 떨어져 있어야 실수로 메일을 삭제하지 않아 안전해요.\n\n기본적으로 대부분의 메일 앱처럼 답장이 왼쪽에 있어요. 오른손용은 좌우가 반대라 답장이 오른쪽에 있어요. 원하는 대로 직접 배치할 수도 있어요.\n\n답장… 입력란에 글을 입력하면 답장과 전체 답장 버튼의 색이 바뀌고, 누르면 바로 전송돼요.</string>
     <string name="confirmMailDelete">삭제 전 확인</string>
     <string name="confirmMailDeleteDesc">열어 본 메일의 삭제 버튼</string>
     <string name="deleteMailAskTitle">이 메일을 삭제할까요?</string>
@@ -3225,7 +3225,7 @@
     <string name="faq_mail_1_q">편집기를 열지 않고 빠르게 답장하려면 어떻게 하나요?</string>
     <string name="faq_mail_1_a">메일 버튼 위에 답장… 입력란이 있어요. 글을 입력하고 답장 또는 전체 답장을 탭하면 버튼의 색이 바뀌고, 인사말과 서명이 포함된 메일이 전송돼요. 입력란이 비어 있으면 답장은 전체 편집기를 열어요. 입력란의 X는 글을 지우고, 전달은 글을 전달 메일로 옮겨요. 대화에서는 오른쪽의 둥근 버튼으로 전송해요(입력란이 비어 있으면 전체 편집기가 열려요). 설정 → 메일 → 메일 및 대화의 빠른 답장에서 이 입력란을 끌 수 있어요.</string>
     <string name="faq_mail_2_q">메일 하단 버튼의 순서를 바꾸려면 어떻게 하나요?</string>
-    <string name="faq_mail_2_a">설정 → 메일 → 메일 하단 버튼. 기본적으로 오른손에 맞춰져 있어요. 답장이 오른쪽에 있고, 삭제는 시스템 뒤로 가기 버튼에서 떨어져 있어요. 왼손용을 선택하거나 버튼을 드래그해서 직접 배치할 수 있어요. 같은 곳에 삭제 전 확인도 있어요(기본으로 켜져 있음).</string>
+    <string name="faq_mail_2_a">설정 → 메일 → 메일 하단 버튼. 기본적으로 대부분의 메일 앱처럼 답장이 왼쪽에 있어요. 오른손용(답장이 오른쪽, 삭제는 시스템 뒤로 가기 버튼에서 멀리)을 선택하거나 버튼을 드래그해서 직접 배치할 수 있어요. 같은 곳에 삭제 전 확인도 있어요(기본으로 켜져 있음).</string>
     <string name="faq_mail_3_q">삭제한 메일을 되돌리려면 어떻게 하나요?</string>
     <string name="faq_mail_3_a">삭제 직후 목록 하단, 하단 패널 위에 7초 카운트다운이 있는 “메일 삭제됨 · 실행 취소” 막대가 나타나요. 실행 취소를 탭하세요. 보관함과 스팸으로 이동도 같은 방법으로 취소할 수 있어요. 나중에는 삭제된 항목에서 메일을 찾아 다시 옮길 수 있어요. Exchange 메일함은 설정에서 삭제된 항목 복구도 사용할 수 있어요.</string>
     <string name="faq_mail_4_q">보관함과 스팸으로 이동은 메일을 어디로 옮기나요?</string>

@@ -2914,9 +2914,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     );
   }
 
-  /// Кнопки под письмом в порядке из настройки (1.7.3; по умолчанию — под
-  /// правую руку: «Ответить» справа, «Удалить» — подальше от системной
-  /// «Назад»). Черновику — «Изменить» рядом с «Ответить», со стороны края.
+  /// Кнопки под письмом в порядке из настройки (1.7.3; по умолчанию с 2.6.9 —
+  /// стандартно: «Ответить» слева). Черновику — «Изменить» рядом с
+  /// «Ответить», со стороны края.
   List<Widget> _barButtons(EmailModel email, AppSettings settings, AppLocalizations l10n,
       {required List<MailBarAction> order, required bool draft}) {
     final quick = _quickReply.hasText;

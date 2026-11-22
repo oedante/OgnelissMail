@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Invia risposta a tutti</string>
     <string name="mailBarOrder">Pulsanti sotto il messaggio</string>
     <string name="mailBarRightHand">Per la mano destra: Rispondi a destra</string>
-    <string name="mailBarLeftHand">Per la mano sinistra: Rispondi a sinistra</string>
+    <string name="mailBarLeftHand">Standard: Rispondi a sinistra</string>
     <string name="mailBarCustom">Ordine personalizzato</string>
     <string name="mailBarDragHint">Qui dall\'alto in basso corrisponde a da sinistra a destra sotto il messaggio. Trascina dalla maniglia a destra</string>
-    <string name="mailBarOrderHint">Rispondi è più comodo sotto il pollice, ed Elimina è più sicuro lontano dal pulsante Indietro del sistema, così non elimini un messaggio per errore.\n\nPer impostazione predefinita i pulsanti sono pensati per la mano destra: Rispondi a destra. Per la mano sinistra sono specchiati. Puoi anche disporli come preferisci.\n\nQuando nel campo Rispondi… c\'è del testo, i pulsanti Rispondi e Rispondi a tutti diventano colorati e lo inviano.</string>
+    <string name="mailBarOrderHint">Rispondi è più comodo sotto il pollice, ed Elimina è più sicuro lontano dal pulsante Indietro del sistema, così non elimini un messaggio per errore.\n\nPer impostazione predefinita Rispondi è a sinistra, come nella maggior parte delle app di posta. Per la mano destra i pulsanti sono specchiati: Rispondi a destra. Puoi anche disporli come preferisci.\n\nQuando nel campo Rispondi… c\'è del testo, i pulsanti Rispondi e Rispondi a tutti diventano colorati e lo inviano.</string>
     <string name="confirmMailDelete">Chiedi prima di eliminare</string>
     <string name="confirmMailDeleteDesc">Il pulsante Elimina in un messaggio aperto</string>
     <string name="deleteMailAskTitle">Eliminare questo messaggio?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">Come rispondo velocemente senza aprire l\'editor?</string>
     <string name="faq_mail_1_a">Sopra i pulsanti del messaggio c\'è un campo Rispondi…: scrivi il testo e tocca Rispondi o Rispondi a tutti — il pulsante diventa colorato e il messaggio parte con un saluto e la tua firma. Con il campo vuoto, Rispondi apre l\'editor completo; la croce nel campo cancella il testo e Inoltra lo sposta nell\'inoltro. In una conversazione, il pulsante tondo a destra invia (con il campo vuoto apre l\'editor completo). Puoi disattivare il campo in Impostazioni → Posta → Risposta rapida nei messaggi e nelle conversazioni.</string>
     <string name="faq_mail_2_q">Come cambio l\'ordine dei pulsanti sotto il messaggio?</string>
-    <string name="faq_mail_2_a">Impostazioni → Posta → Pulsanti sotto il messaggio. Per impostazione predefinita sono pensati per la mano destra: Rispondi a destra, Elimina lontano dal pulsante Indietro del sistema. Puoi scegliere Per la mano sinistra o disporre i pulsanti trascinandoli. Nello stesso punto c\'è Chiedi prima di eliminare (attivo per impostazione predefinita).</string>
+    <string name="faq_mail_2_a">Impostazioni → Posta → Pulsanti sotto il messaggio. Per impostazione predefinita Rispondi è a sinistra, come nella maggior parte delle app di posta. Puoi scegliere Per la mano destra (Rispondi a destra, Elimina lontano dal pulsante Indietro del sistema) o disporre i pulsanti trascinandoli. Nello stesso punto c\'è Chiedi prima di eliminare (attivo per impostazione predefinita).</string>
     <string name="faq_mail_3_q">Come recupero un messaggio eliminato?</string>
     <string name="faq_mail_3_a">Subito dopo l\'eliminazione, in basso nell\'elenco, sopra il pannello inferiore, compare una barra «Email eliminata · Annulla» con un conto alla rovescia di 7 secondi — tocca Annulla. Archivia e Sposta in spam si possono annullare allo stesso modo. Più tardi puoi trovare il messaggio in Posta eliminata e rimetterlo a posto; per le cassette postali Exchange c\'è anche Recupera elementi eliminati nelle Impostazioni.</string>
     <string name="faq_mail_4_q">Dove finiscono i messaggi con Archivia e Sposta in spam?</string>

@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Enviar respuesta a todos</string>
     <string name="mailBarOrder">Botones bajo el mensaje</string>
     <string name="mailBarRightHand">Para la mano derecha: Responder a la derecha</string>
-    <string name="mailBarLeftHand">Para la mano izquierda: Responder a la izquierda</string>
+    <string name="mailBarLeftHand">Estándar: Responder a la izquierda</string>
     <string name="mailBarCustom">Orden personalizado</string>
     <string name="mailBarDragHint">De arriba abajo aquí es de izquierda a derecha bajo el mensaje. Arrastra por el asa de la derecha</string>
-    <string name="mailBarOrderHint">Responder es más cómodo bajo el pulgar, y Eliminar es más seguro lejos del botón Atrás del sistema, para no eliminar un mensaje por error.\n\nDe forma predeterminada los botones están pensados para la mano derecha: Responder a la derecha. Para la mano izquierda se muestran en espejo. También puedes colocarlos a tu manera.\n\nCuando se escribe texto en el campo Responder…, los botones Responder y Responder a todos se colorean y lo envían.</string>
+    <string name="mailBarOrderHint">Responder es más cómodo bajo el pulgar, y Eliminar es más seguro lejos del botón Atrás del sistema, para no eliminar un mensaje por error.\n\nDe forma predeterminada, Responder está a la izquierda, como en la mayoría de las apps de correo. Para la mano derecha se muestran en espejo: Responder a la derecha. También puedes colocarlos a tu manera.\n\nCuando se escribe texto en el campo Responder…, los botones Responder y Responder a todos se colorean y lo envían.</string>
     <string name="confirmMailDelete">Preguntar antes de eliminar</string>
     <string name="confirmMailDeleteDesc">El botón Eliminar en un mensaje abierto</string>
     <string name="deleteMailAskTitle">¿Eliminar este mensaje?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">¿Cómo respondo rápido sin abrir el editor?</string>
     <string name="faq_mail_1_a">Encima de los botones del mensaje hay un campo Responder…: escribe tu texto y toca Responder o Responder a todos; el botón se colorea y el mensaje sale con un saludo y tu firma. Con el campo vacío, Responder abre el editor completo; la cruz del campo borra el texto y Reenviar lo pasa al reenvío. En una conversación, el botón redondo de la derecha envía (con el campo vacío abre el editor completo). Puedes desactivar el campo en Ajustes → Correo → Respuesta rápida en mensajes y conversaciones.</string>
     <string name="faq_mail_2_q">¿Cómo cambio el orden de los botones bajo el mensaje?</string>
-    <string name="faq_mail_2_a">Ajustes → Correo → Botones bajo el mensaje. De forma predeterminada están pensados para la mano derecha: Responder a la derecha y Eliminar lejos del botón Atrás del sistema. Puedes elegir Para la mano izquierda o colocar los botones arrastrándolos. En el mismo lugar está Preguntar antes de eliminar (activado de forma predeterminada).</string>
+    <string name="faq_mail_2_a">Ajustes → Correo → Botones bajo el mensaje. De forma predeterminada, Responder está a la izquierda, como en la mayoría de las apps de correo. Puedes elegir Para la mano derecha (Responder a la derecha y Eliminar lejos del botón Atrás del sistema) o colocar los botones arrastrándolos. En el mismo lugar está Preguntar antes de eliminar (activado de forma predeterminada).</string>
     <string name="faq_mail_3_q">¿Cómo recupero un mensaje eliminado?</string>
     <string name="faq_mail_3_a">Justo después de eliminar, aparece en la parte inferior de la lista, encima del panel inferior, una barra «Correo eliminado · Deshacer» con una cuenta atrás de 7 segundos: toca Deshacer. Archivar y Mover a spam se pueden deshacer del mismo modo. Más tarde puedes encontrar el mensaje en Elementos eliminados y volver a moverlo; en los buzones de Exchange también está Recuperar elementos eliminados en Ajustes.</string>
     <string name="faq_mail_4_q">¿Adónde van los mensajes con Archivar y Mover a spam?</string>

@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Lähetä vastaus kaikille</string>
     <string name="mailBarOrder">Painikkeet viestin alla</string>
     <string name="mailBarRightHand">Oikeaa kättä varten: Vastaa oikealla</string>
-    <string name="mailBarLeftHand">Vasenta kättä varten: Vastaa vasemmalla</string>
+    <string name="mailBarLeftHand">Tavallinen: Vastaa vasemmalla</string>
     <string name="mailBarCustom">Oma järjestys</string>
     <string name="mailBarDragHint">Ylhäältä alas tässä vastaa vasemmalta oikealle viestin alla. Vedä oikealla olevasta kahvasta</string>
-    <string name="mailBarOrderHint">Vastaa on helpompi tavoittaa peukalolla, ja Poista on turvallisempi kaukana järjestelmän Takaisin-painikkeesta, jotta et poista viestiä vahingossa.\n\nOletuksena painikkeet sopivat oikealle kädelle: Vastaa oikealla. Vasemmalle kädelle ne ovat peilikuvana. Voit myös järjestää ne omalla tavallasi.\n\nKun Vastaa…-kenttään kirjoitetaan tekstiä, Vastaa- ja Vastaa kaikille -painikkeet värjäytyvät ja lähettävät sen.</string>
+    <string name="mailBarOrderHint">Vastaa on helpompi tavoittaa peukalolla, ja Poista on turvallisempi kaukana järjestelmän Takaisin-painikkeesta, jotta et poista viestiä vahingossa.\n\nOletuksena Vastaa on vasemmalla, kuten useimmissa sähköpostisovelluksissa. Oikealle kädelle painikkeet ovat peilikuvana: Vastaa oikealla. Voit myös järjestää ne omalla tavallasi.\n\nKun Vastaa…-kenttään kirjoitetaan tekstiä, Vastaa- ja Vastaa kaikille -painikkeet värjäytyvät ja lähettävät sen.</string>
     <string name="confirmMailDelete">Kysy ennen poistamista</string>
     <string name="confirmMailDeleteDesc">Poista-painike avoimessa viestissä</string>
     <string name="deleteMailAskTitle">Poistetaanko tämä viesti?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">Miten vastaan nopeasti avaamatta editoria?</string>
     <string name="faq_mail_1_a">Viestipainikkeiden yläpuolella on Vastaa…-kenttä: kirjoita teksti ja napauta Vastaa tai Vastaa kaikille – painike värjäytyy, ja viesti lähtee tervehdyksen ja allekirjoituksesi kanssa. Tyhjällä kentällä Vastaa avaa koko editorin; kentän rasti tyhjentää tekstin, ja Välitä siirtää tekstin välitettävään viestiin. Keskustelussa pyöreä painike oikealla lähettää (tyhjällä kentällä se avaa koko editorin). Voit poistaa kentän käytöstä kohdassa Asetukset → Sähköposti → Pikavastaus viesteissä ja keskusteluissa.</string>
     <string name="faq_mail_2_q">Miten vaihdan viestin alla olevien painikkeiden järjestystä?</string>
-    <string name="faq_mail_2_a">Asetukset → Sähköposti → Painikkeet viestin alla. Oletuksena ne sopivat oikealle kädelle: Vastaa oikealla, Poista kaukana järjestelmän Takaisin-painikkeesta. Voit valita Vasenta kättä varten tai järjestää painikkeet vetämällä. Samassa paikassa on Kysy ennen poistamista (oletuksena käytössä).</string>
+    <string name="faq_mail_2_a">Asetukset → Sähköposti → Painikkeet viestin alla. Oletuksena Vastaa on vasemmalla, kuten useimmissa sähköpostisovelluksissa. Voit valita Oikeaa kättä varten (Vastaa oikealla, Poista kaukana järjestelmän Takaisin-painikkeesta) tai järjestää painikkeet vetämällä. Samassa paikassa on Kysy ennen poistamista (oletuksena käytössä).</string>
     <string name="faq_mail_3_q">Miten saan poistetun viestin takaisin?</string>
     <string name="faq_mail_3_a">Heti poistamisen jälkeen luettelon alareunaan, alapaneelin yläpuolelle, ilmestyy palkki ”Sähköposti poistettu · Kumoa” 7 sekunnin laskurilla – napauta Kumoa. Arkistoinnin ja roskapostiin siirtämisen voi kumota samalla tavalla. Myöhemmin löydät viestin Poistetut-kansiosta ja voit siirtää sen takaisin; Exchange-postilaatikoille on lisäksi Palauta poistetut kohteet Asetuksissa.</string>
     <string name="faq_mail_4_q">Minne Arkistoi ja Siirrä roskapostiin viestin vievät?</string>

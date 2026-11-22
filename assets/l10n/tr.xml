@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Yanıtı herkese gönder</string>
     <string name="mailBarOrder">İletinin altındaki düğmeler</string>
     <string name="mailBarRightHand">Sağ el için: Yanıtla sağda</string>
-    <string name="mailBarLeftHand">Sol el için: Yanıtla solda</string>
+    <string name="mailBarLeftHand">Standart: Yanıtla solda</string>
     <string name="mailBarCustom">Özel sıra</string>
     <string name="mailBarDragHint">Buradaki yukarıdan aşağıya sıra, iletinin altında soldan sağa sıradır. Sağdaki tutamaçtan sürükleyin</string>
-    <string name="mailBarOrderHint">Yanıtla başparmağın altında daha kullanışlıdır, Sil ise sistemin Geri düğmesinden uzakta daha güvenlidir; böylece bir iletiyi yanlışlıkla silmezsiniz.\n\nVarsayılan olarak düğmeler sağ ele göredir: Yanıtla sağda. Sol el için yerleri aynalanır. Düğmeleri kendinize göre de düzenleyebilirsiniz.\n\nYanıtla… alanına metin yazıldığında Yanıtla ve Tümünü yanıtla düğmeleri renklenir ve metni gönderir.</string>
+    <string name="mailBarOrderHint">Yanıtla başparmağın altında daha kullanışlıdır, Sil ise sistemin Geri düğmesinden uzakta daha güvenlidir; böylece bir iletiyi yanlışlıkla silmezsiniz.\n\nVarsayılan olarak Yanıtla, çoğu e-posta uygulamasında olduğu gibi soldadır. Sağ el için yerleri aynalanır: Yanıtla sağda. Düğmeleri kendinize göre de düzenleyebilirsiniz.\n\nYanıtla… alanına metin yazıldığında Yanıtla ve Tümünü yanıtla düğmeleri renklenir ve metni gönderir.</string>
     <string name="confirmMailDelete">Silmeden önce sor</string>
     <string name="confirmMailDeleteDesc">Açık bir iletideki Sil düğmesi</string>
     <string name="deleteMailAskTitle">Bu ileti silinsin mi?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">Düzenleyiciyi açmadan nasıl hızlı yanıt veririm?</string>
     <string name="faq_mail_1_a">İleti düğmelerinin üstünde bir Yanıtla… alanı var: metninizi yazın ve Yanıtla veya Tümünü yanıtla düğmesine dokunun — düğme renklenir ve ileti bir selamlama ve imzanızla gider. Alan boşken Yanıtla tam düzenleyiciyi açar; alandaki çarpı metni temizler, İlet ise metni iletme ekranına taşır. Bir konuşmada sağdaki yuvarlak düğme gönderir (alan boşken tam düzenleyiciyi açar). Alanı Ayarlar → E-posta → İletilerde ve konuşmalarda hızlı yanıt bölümünden kapatabilirsiniz.</string>
     <string name="faq_mail_2_q">İletinin altındaki düğmelerin sırasını nasıl değiştiririm?</string>
-    <string name="faq_mail_2_a">Ayarlar → E-posta → İletinin altındaki düğmeler. Varsayılan olarak sağ ele göredir: Yanıtla sağda, Sil sistemin Geri düğmesinden uzakta. Sol el için seçeneğini seçebilir veya düğmeleri sürükleyerek düzenleyebilirsiniz. Aynı yerde Silmeden önce sor da var (varsayılan olarak açık).</string>
+    <string name="faq_mail_2_a">Ayarlar → E-posta → İletinin altındaki düğmeler. Varsayılan olarak Yanıtla, çoğu e-posta uygulamasında olduğu gibi soldadır. Sağ el için seçeneğini (Yanıtla sağda, Sil sistemin Geri düğmesinden uzakta) seçebilir veya düğmeleri sürükleyerek düzenleyebilirsiniz. Aynı yerde Silmeden önce sor da var (varsayılan olarak açık).</string>
     <string name="faq_mail_3_q">Silinen bir iletiyi nasıl geri alırım?</string>
     <string name="faq_mail_3_a">Sildikten hemen sonra listenin altında, alt panelin üstünde 7 saniyelik geri sayımlı bir “E-posta silindi · Geri al” çubuğu görünür — Geri al\'a dokunun. Arşivle ve Gereksiz e-postaya taşı da aynı şekilde geri alınabilir. Daha sonra iletiyi Silinmiş öğeler\'de bulup geri taşıyabilirsiniz; Exchange posta kutularında Ayarlar\'da ayrıca Silinmiş öğeleri kurtar da vardır.</string>
     <string name="faq_mail_4_q">Arşivle ve Gereksiz e-postaya taşı iletiyi nereye koyar?</string>

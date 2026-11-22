@@ -3186,10 +3186,10 @@
     <string name="quickReplySendAll">发送回复给所有人</string>
     <string name="mailBarOrder">邮件下方的按钮</string>
     <string name="mailBarRightHand">适合右手：“回复”在右侧</string>
-    <string name="mailBarLeftHand">适合左手：“回复”在左侧</string>
+    <string name="mailBarLeftHand">标准：“回复”在左侧</string>
     <string name="mailBarCustom">自定义顺序</string>
     <string name="mailBarDragHint">此处从上到下对应邮件下方从左到右。拖动右侧的手柄</string>
-    <string name="mailBarOrderHint">“回复”放在拇指下方更顺手，“删除”远离系统“返回”按钮更安全，以免误删邮件。\n\n默认按钮适合右手：“回复”在右侧；适合左手时则左右镜像。您也可以按自己的方式排列。\n\n在“回复…”栏中输入文字后，“回复”和“全部回复”按钮会变色并直接发送。</string>
+    <string name="mailBarOrderHint">“回复”放在拇指下方更顺手，“删除”远离系统“返回”按钮更安全，以免误删邮件。\n\n默认与大多数邮件应用一样，“回复”在左侧；适合右手时则左右镜像，“回复”在右侧。您也可以按自己的方式排列。\n\n在“回复…”栏中输入文字后，“回复”和“全部回复”按钮会变色并直接发送。</string>
     <string name="confirmMailDelete">删除前询问</string>
     <string name="confirmMailDeleteDesc">打开的邮件中的“删除”按钮</string>
     <string name="deleteMailAskTitle">删除这封邮件？</string>
@@ -3225,7 +3225,7 @@
     <string name="faq_mail_1_q">如何不打开编辑器就快速回复？</string>
     <string name="faq_mail_1_a">邮件按钮上方有一个“回复…”栏：输入文字，然后点按“回复”或“全部回复”——按钮会变色，邮件会连同问候语和您的签名一起发出。栏为空时，“回复”会打开完整编辑器；栏中的叉号会清除文字，“转发”会把文字带入转发邮件。在会话中，右侧的圆形按钮用于发送（栏为空时会打开完整编辑器）。您可以在 设置 → 邮件 → 邮件和会话中的快捷回复 中关闭该栏。</string>
     <string name="faq_mail_2_q">如何调整邮件下方按钮的顺序？</string>
-    <string name="faq_mail_2_a">设置 → 邮件 → 邮件下方的按钮。默认适合右手：“回复”在右侧，“删除”远离系统“返回”按钮。您可以选择“适合左手”，也可以通过拖动自行排列按钮。同一处还有“删除前询问”（默认开启）。</string>
+    <string name="faq_mail_2_a">设置 → 邮件 → 邮件下方的按钮。默认与大多数邮件应用一样，“回复”在左侧。您可以选择“适合右手”（“回复”在右侧，“删除”远离系统“返回”按钮），也可以通过拖动自行排列按钮。同一处还有“删除前询问”（默认开启）。</string>
     <string name="faq_mail_3_q">如何找回已删除的邮件？</string>
     <string name="faq_mail_3_a">删除后，列表底部、底部栏上方会出现带 7 秒倒计时的“邮件已删除 · 撤消”条——点按“撤消”即可。“归档”和“移至垃圾邮件”也可以用同样的方式撤消。之后可以在“已删除邮件”中找到该邮件并移回；对于 Exchange 邮箱，设置中还有“恢复已删除邮件”。</string>
     <string name="faq_mail_4_q">“归档”和“移至垃圾邮件”会把邮件放到哪里？</string>

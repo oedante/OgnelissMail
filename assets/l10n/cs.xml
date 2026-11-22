@@ -3212,10 +3212,10 @@
     <string name="quickReplySendAll">Odeslat odpověď všem</string>
     <string name="mailBarOrder">Tlačítka pod zprávou</string>
     <string name="mailBarRightHand">Pro pravou ruku: Odpovědět vpravo</string>
-    <string name="mailBarLeftHand">Pro levou ruku: Odpovědět vlevo</string>
+    <string name="mailBarLeftHand">Standardně: Odpovědět vlevo</string>
     <string name="mailBarCustom">Vlastní pořadí</string>
     <string name="mailBarDragHint">Shora dolů zde odpovídá zleva doprava pod zprávou. Přetahujte za úchyt vpravo</string>
-    <string name="mailBarOrderHint">Odpovědět je lépe po ruce pod palcem a Smazat je bezpečnější dál od systémového tlačítka Zpět, takže zprávu omylem nesmažete.\n\nVe výchozím nastavení tlačítka vyhovují pravé ruce: Odpovědět vpravo. Pro levou ruku jsou zrcadlově otočená. Můžete je také uspořádat po svém.\n\nKdyž je v poli Odpovědět… napsán text, tlačítka Odpovědět a Odpovědět všem se zbarví a odešlou ho.</string>
+    <string name="mailBarOrderHint">Odpovědět je lépe po ruce pod palcem a Smazat je bezpečnější dál od systémového tlačítka Zpět, takže zprávu omylem nesmažete.\n\nVe výchozím nastavení je Odpovědět vlevo, jako ve většině poštovních aplikací. Pro pravou ruku jsou tlačítka zrcadlově otočená: Odpovědět vpravo. Můžete je také uspořádat po svém.\n\nKdyž je v poli Odpovědět… napsán text, tlačítka Odpovědět a Odpovědět všem se zbarví a odešlou ho.</string>
     <string name="confirmMailDelete">Ptát se před smazáním</string>
     <string name="confirmMailDeleteDesc">Tlačítko Smazat v otevřené zprávě</string>
     <string name="deleteMailAskTitle">Smazat tuto zprávu?</string>
@@ -3251,7 +3251,7 @@
     <string name="faq_mail_1_q">Jak rychle odpovědět bez otevření editoru?</string>
     <string name="faq_mail_1_a">Nad tlačítky zprávy je pole Odpovědět…: napište text a klepněte na Odpovědět nebo Odpovědět všem – tlačítko se zbarví a zpráva odejde s oslovením a vaším podpisem. S prázdným polem Odpovědět otevře celý editor; křížek v poli vymaže text a Přeposlat ho přenese do přeposílané zprávy. V konverzaci odesílá kulaté tlačítko vpravo (s prázdným polem otevře celý editor). Pole můžete vypnout v Nastavení → Pošta → Rychlá odpověď ve zprávách a konverzacích.</string>
     <string name="faq_mail_2_q">Jak změnit pořadí tlačítek pod zprávou?</string>
-    <string name="faq_mail_2_a">Nastavení → Pošta → Tlačítka pod zprávou. Ve výchozím nastavení vyhovují pravé ruce: Odpovědět vpravo, Smazat dál od systémového tlačítka Zpět. Můžete zvolit Pro levou ruku nebo tlačítka uspořádat přetažením. Na stejném místě je Ptát se před smazáním (ve výchozím stavu zapnuto).</string>
+    <string name="faq_mail_2_a">Nastavení → Pošta → Tlačítka pod zprávou. Ve výchozím nastavení je Odpovědět vlevo, jako ve většině poštovních aplikací. Můžete zvolit Pro pravou ruku (Odpovědět vpravo, Smazat dál od systémového tlačítka Zpět) nebo tlačítka uspořádat přetažením. Na stejném místě je Ptát se před smazáním (ve výchozím stavu zapnuto).</string>
     <string name="faq_mail_3_q">Jak získat zpět smazanou zprávu?</string>
     <string name="faq_mail_3_a">Hned po smazání se dole v seznamu, nad spodním panelem, objeví lišta „Zpráva smazána · Zpět“ s odpočtem 7 sekund – klepněte na Zpět. Archivovat a Přesunout do nevyžádané pošty lze vrátit stejně. Později zprávu najdete v Odstraněné poště a můžete ji přesunout zpět; u schránek Exchange je v Nastavení také Obnovit smazané položky.</string>
     <string name="faq_mail_4_q">Kam Archivovat a Přesunout do nevyžádané pošty zprávu uloží?</string>

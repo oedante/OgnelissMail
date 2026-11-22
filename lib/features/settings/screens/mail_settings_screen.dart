@@ -78,8 +78,8 @@ class MailSettingsScreen extends ConsumerWidget {
   }
 
   String _barOrderLabel(List<MailBarAction> order, AppLocalizations l10n) {
-    if (MailBarOrderNotifier.same(order, MailBarOrderNotifier.rightHand)) return l10n.tr('mailBarRightHand');
     if (MailBarOrderNotifier.same(order, MailBarOrderNotifier.leftHand)) return l10n.tr('mailBarLeftHand');
+    if (MailBarOrderNotifier.same(order, MailBarOrderNotifier.rightHand)) return l10n.tr('mailBarRightHand');
     return l10n.tr('mailBarCustom');
   }
 
@@ -526,7 +526,8 @@ class _MailBarOrderSheet extends ConsumerWidget {
     final notifier = ref.read(mailBarOrderProvider.notifier);
     final right = MailBarOrderNotifier.same(order, MailBarOrderNotifier.rightHand);
     final left = MailBarOrderNotifier.same(order, MailBarOrderNotifier.leftHand);
-    // Группа «рука»: true — правая, false — левая, null — свой порядок.
+    // Группа: false — стандартно («Ответить» слева, по умолчанию), true — под
+    // правую руку, null — свой порядок.
     final bool? hand = right ? true : (left ? false : null);
     return SafeArea(
       child: ConstrainedBox(
@@ -543,16 +544,16 @@ class _MailBarOrderSheet extends ConsumerWidget {
               ]),
             ),
             AppRadioTile<bool>(
-              value: true,
-              groupValue: hand,
-              title: Text(l10n.tr('mailBarRightHand')),
-              onChanged: (_) => unawaited(notifier.set(MailBarOrderNotifier.rightHand)),
-            ),
-            AppRadioTile<bool>(
               value: false,
               groupValue: hand,
               title: Text(l10n.tr('mailBarLeftHand')),
               onChanged: (_) => unawaited(notifier.set(MailBarOrderNotifier.leftHand)),
+            ),
+            AppRadioTile<bool>(
+              value: true,
+              groupValue: hand,
+              title: Text(l10n.tr('mailBarRightHand')),
+              onChanged: (_) => unawaited(notifier.set(MailBarOrderNotifier.rightHand)),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(Space.l, Space.s, Space.l, Space.xs),

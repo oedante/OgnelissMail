@@ -320,6 +320,21 @@ abstract final class ComposeWindowHost {
       case 'upload':
         // Окно закрывается — выгрузка идёт здесь, без ожидания.
         unawaited(s.upload(id, '${a['acc']}').catchError((Object _) => false));
+      case 'interim':
+        // Выгрузка во время правки (2.6.8): ответ — id заменённой копии.
+        final dropped = await s.uploadWhileEditing(id, '${a['acc']}', force: a['force'] == true);
+        return {'dropped': dropped};
+      case 'drop':
+        final account = c.read(accountsProvider).where((x) => x.id == '${a['acc']}').firstOrNull;
+        if (account == null) {
+          await s.forget(id);
+          return true;
+        }
+        final o = a['original'];
+        unawaited(s.dropServerCopy(account, id,
+            original: o is Map ? (id: '${o['id']}', folderId: '${o['folder']}') : null,
+            keep: {for (final k in (a['keep'] as List? ?? const [])) '$k'},
+            hard: a['hard'] != false));
       case 'complete':
         final account = c.read(accountsProvider).where((x) => x.id == '${a['acc']}').firstOrNull;
         final raw = a['row'];
@@ -545,6 +560,27 @@ class WindowDraftSyncService extends DraftSyncService {
   Future<bool> upload(String localId, String accountId) async {
     await MessageWindow.ask('composeDraft', {'op': 'upload', 'id': localId, 'acc': accountId});
     return true;
+  }
+
+  @override
+  Future<String?> uploadWhileEditing(String localId, String accountId, {bool force = false}) async {
+    final r = await MessageWindow.request(
+        'composeDraft', {'op': 'interim', 'id': localId, 'acc': accountId, 'force': force});
+    return r is Map ? r['dropped'] as String? : null;
+  }
+
+  @override
+  Future<void> dropServerCopy(AccountModel account, String localId,
+      {({String id, String folderId})? original, Set<String> keep = const {}, bool hard = true}) async {
+    await super.forget(localId);
+    await MessageWindow.ask('composeDraft', {
+      'op': 'drop',
+      'id': localId,
+      'acc': account.id,
+      if (original != null) 'original': {'id': original.id, 'folder': original.folderId},
+      'keep': keep.toList(),
+      'hard': hard,
+    });
   }
 
   @override

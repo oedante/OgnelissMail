@@ -4385,4 +4385,5 @@
     <string name="googleAccessCalendar">lịch</string>
     <string name="googleAccessContacts">danh bạ</string>
     <string name="googleAccessPhotos">ảnh người liên hệ</string>
+    <string name="outboxOnServer">Thư trong thư mục này trên máy chủ: {n}</string>
 </resources>

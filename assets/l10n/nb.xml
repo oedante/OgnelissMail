@@ -4406,4 +4406,5 @@
     <string name="googleAccessCalendar">kalender</string>
     <string name="googleAccessContacts">kontakter</string>
     <string name="googleAccessPhotos">bilder av kontakter</string>
+    <string name="outboxOnServer">Meldinger i denne mappen på serveren: {n}</string>
 </resources>

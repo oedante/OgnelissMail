@@ -205,23 +205,55 @@ class SpecialFolders {
 
   // Черновики, отправленные и корзина — по названию, если сервер не указал
   // их сам (замечание владельца 21.11.2026: у iCloud папка «Drafts» без
-  // пометки \Drafts была обычной папкой с английским названием).
+  // пометки \Drafts была обычной папкой с английским названием). 2.6.8 —
+  // больше языков (замечание владельца 22.11.2026: «папки на разных языках
+  // могут называться по-разному»).
   static const _draftsNames = [
-    'Drafts', 'Draft', 'Черновики', 'Entwürfe', 'Brouillons', 'Borradores', 'Bozze', 'Rascunhos',
-    'Concepten', 'Szkice', 'Koncepty', 'Utkast', 'Kladder', 'Luonnokset', 'Piszkozatok', 'Taslaklar',
+    'Drafts', 'Draft', 'Черновики', 'Чернетки', 'Entwürfe', 'Brouillons', 'Borradores', 'Bozze',
+    'Rascunhos', 'Concepten', 'Szkice', 'Wersje robocze', 'Koncepty', 'Utkast', 'Kladder', 'Luonnokset',
+    'Piszkozatok', 'Taslaklar', 'Ciorne', 'Чернови', 'Skice', 'Osnutki', 'Melnraksti', 'Juodraščiai',
+    'Πρόχειρα', 'טיוטות', 'المسودات', '下書き', '草稿', '草稿箱', '임시 보관함', 'Thư nháp', 'ฉบับร่าง', 'Draf',
   ];
   static const _sentNames = [
-    'Sent', 'Sent Items', 'Sent Messages', 'Sent Mail', 'Отправленные', 'Gesendet', 'Gesendete Elemente',
-    'Envoyés', 'Éléments envoyés', 'Enviados', 'Posta inviata', 'Verzonden', 'Wysłane', 'Odeslaná pošta',
+    'Sent', 'Sent Items', 'Sent Messages', 'Sent Mail', 'Отправленные', 'Надіслані', 'Gesendet',
+    'Gesendete Elemente', 'Gesendete Objekte', 'Envoyés', 'Éléments envoyés', 'Messages envoyés', 'Enviados',
+    'Elementos enviados', 'Posta inviata', 'Elementi inviati', 'Itens Enviados', 'Verzonden',
+    'Verzonden items', 'Wysłane', 'Elementy wysłane', 'Odeslaná pošta', 'Odeslané položky',
+    'Odoslané položky', 'Elküldött elemek', 'Elemente trimise', 'Изпратени', 'Poslano', 'Poslana pošta',
+    'Skickat', 'Skickade objekt', 'Sendt', 'Sendte elementer', 'Sendt post', 'Lähetetyt',
+    'Lähetetyt viestit', 'Nosūtītie', 'Išsiųsta', 'Gönderilmiş Öğeler', 'Gönderilenler', 'Απεσταλμένα',
+    'פריטים שנשלחו', 'العناصر المرسلة', '送信済みアイテム', '送信済み', '已发送', '已发送邮件', '寄件備份',
+    '보낸 편지함', 'Thư đã gửi', 'รายการที่ถูกส่ง', 'Item Terkirim', 'Terkirim',
   ];
   static const _trashNames = [
     'Trash', 'Deleted', 'Deleted Items', 'Deleted Messages', 'Bin', 'Корзина', 'Удаленные', 'Удалённые',
-    'Papierkorb', 'Gelöschte Elemente', 'Corbeille', 'Éléments supprimés', 'Papelera', 'Cestino',
-    'Lixeira', 'Prullenbak', 'Kosz', 'Koš',
+    'Кошик', 'Видалені', 'Papierkorb', 'Gelöschte Elemente', 'Gelöschte Objekte', 'Corbeille',
+    'Éléments supprimés', 'Papelera', 'Elementos eliminados', 'Cestino', 'Posta eliminata',
+    'Elementi eliminati', 'Lixeira', 'Lixo', 'Itens Excluídos', 'Itens Eliminados', 'Prullenbak',
+    'Verwijderde items', 'Kosz', 'Elementy usunięte', 'Koš', 'Odstraněná pošta', 'Odstránené položky',
+    'Törölt elemek', 'Elemente șterse', 'Кошче', 'Изтрити', 'Smeće', 'Izbrisano', 'Izbrisani elementi',
+    'Papperskorgen', 'Borttagna objekt', 'Papirkurv', 'Slettet post', 'Slettede elementer', 'Poistetut',
+    'Roskakori', 'Izdzēstie', 'Šiukšlinė', 'Silinmiş Öğeler', 'Çöp Kutusu', 'Διαγραμμένα', 'פריטים שנמחקו',
+    'العناصر المحذوفة', '削除済みアイテム', 'ゴミ箱', '已删除', '已删除邮件', '垃圾箱', '刪除的郵件',
+    '지운 편지함', '휴지통', 'Thùng rác', 'Mục đã xóa', 'รายการที่ถูกลบ', 'Item Terhapus', 'Tempat Sampah',
+  ];
+
+  /// «Исходящие» (2.6.8, снимок владельца 22.11.2026): у ящика есть своя
+  /// такая папка — меню показывает в ней очередь отправки Ogneliss, а не
+  /// заводит вторую. Exchange (EWS, ActiveSync) называет её сам, IMAP — нет:
+  /// узнаём по названию (Outlook и почтовые службы на разных языках).
+  static const _outboxNames = [
+    'Outbox', 'Исходящие', 'Вихідні', 'Postausgang', "Boîte d'envoi", 'Bandeja de salida',
+    'Posta in uscita', 'Caixa de saída', 'Postvak UIT', 'Skrzynka nadawcza', 'Pošta k odeslání',
+    'Pošta na odoslanie', 'Postázandó üzenetek', 'Ieșiri', 'Изходящи', 'Izlazni spremnik',
+    'Pošta za slanje', 'Пошта за слање', 'Odhodna pošta', 'Utkorgen', 'Udbakke', 'Utboks', 'Lähtevät',
+    'Izsūtne', 'Siunčiama', 'Giden Kutusu', 'Εξερχόμενα', 'תיבת דואר יוצא', 'علبة الصادر', '送信トレイ',
+    '发件箱', '寄件匣', '보낼 편지함', 'Hộp thư đi', 'กล่องจดหมายออก', 'Kotak Keluar', 'आउटबॉक्स',
   ];
   static final Set<String> _drafts = {for (final n in _draftsNames) norm(n)};
   static final Set<String> _sent = {for (final n in _sentNames) norm(n)};
   static final Set<String> _trash = {for (final n in _trashNames) norm(n)};
+  static final Set<String> _outbox = {for (final n in _outboxNames) norm(n)};
   static final Set<String> _junk = {for (final n in _junkNames) norm(n)};
   static final Set<String> _archive = {for (final n in _archiveNames) norm(n)};
 
@@ -234,6 +266,7 @@ class SpecialFolders {
     if (_drafts.contains(n)) return FolderType.drafts;
     if (_sent.contains(n)) return FolderType.sent;
     if (_trash.contains(n)) return FolderType.trash;
+    if (_outbox.contains(n)) return FolderType.outbox;
     return null;
   }
 
@@ -272,10 +305,10 @@ class SpecialFolders {
       final found = _byName(out, t, exclude: picked.values.toSet());
       if (found != null) out[found] = _retype(out[found], t);
     }
-    // Черновики, отправленные, корзина: только когда сервер такую папку не
-    // указал и папка с этим названием — на верхнем уровне (или во
-    // «Входящих»).
-    for (final t in const [FolderType.drafts, FolderType.sent, FolderType.trash]) {
+    // Черновики, отправленные, корзина, исходящие: только когда сервер
+    // такую папку не указал и папка с этим названием — на верхнем уровне
+    // (или во «Входящих»).
+    for (final t in const [FolderType.drafts, FolderType.sent, FolderType.trash, FolderType.outbox]) {
       if (out.any((f) => f.type == t)) continue;
       final found = _byName(out, t, exclude: picked.values.toSet());
       if (found != null) out[found] = _retype(out[found], t);
@@ -311,7 +344,11 @@ class SpecialFolders {
         serverPath: f.serverPath,
         unreadCount: f.unreadCount,
         totalCount: f.totalCount,
-        showInUnified: t == FolderType.junk ? false : (f.type == FolderType.junk ? true : f.showInUnified),
+        // «Исходящие», найденные по названию (2.6.8), — тоже не во «Всей
+        // почте», как от сервера.
+        showInUnified: t == FolderType.junk || t == FolderType.outbox
+            ? false
+            : (f.type == FolderType.junk ? true : f.showInUnified),
         isFavorite: f.isFavorite,
         sortOrder: f.sortOrder,
         isSynced: f.isSynced,

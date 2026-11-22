@@ -33,6 +33,7 @@ import '../../../data/models/email_model.dart';
 import '../../../data/models/folder_model.dart';
 import '../../../data/providers/database_provider.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
+import '../../../services/mail/draft_sync_service.dart' show DraftSyncService;
 import '../../../services/mail/special_folders.dart';
 import '../../../services/mail/sent_placeholder.dart' show SentPlaceholder;
 import '../../../core/security/mail_body_processor.dart' show MailBodyProcessor;
@@ -347,15 +348,29 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     // Таблица писем меняется при каждой синхронизации — экран беседы
     // перестраивается, только когда черновики правда изменились (2.0.0,
     // план 08.11.2026, «черновики беседы — distinct»).
-    _drafts = db
-        .watchDraftsLight(widget.accountId)
-        .map((rows) => [for (final r in rows) emailModelFromRow(r)])
-        .distinct(sameDraftList);
+    _drafts = db.watchDraftsLight(widget.accountId).map((rows) {
+      // Серверная копия своего черновика, который правится или ещё не
+      // выгружен (2.6.8), — не второй карточкой рядом с ним.
+      _shadow = _shadowOf(rows);
+      return [for (final r in rows) if (!_shadow.contains('${r.accountId}|${r.id}')) emailModelFromRow(r)];
+    }).distinct(sameDraftList);
+  }
+
+  Set<String> _shadow = const {};
+
+  Set<String> _shadowOf(List<Email> rows) {
+    try {
+      return DraftSyncService.shadowed(ref.read(sharedPrefsProvider), rows);
+    } catch (_) {
+      return const {};
+    }
   }
 
   /// Письма беседы и её черновики ответов, самое новое — первым.
   List<EmailModel> _withDrafts(List<EmailModel> emails, List<EmailModel>? drafts, Map<String, ReplyDraft> links) {
     if (drafts == null || drafts.isEmpty) return emails;
+    // Копия черновика с заголовками ответа встаёт в беседу сама.
+    if (_shadow.isNotEmpty) emails = [for (final e in emails) if (!_shadow.contains('${e.accountId}|${e.id}')) e];
     final found = conversationReplyDrafts(
       drafts: drafts,
       conversation: emails,

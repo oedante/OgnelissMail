@@ -93,7 +93,6 @@ import 'dart:convert';
 import '../../../services/mail/draft_autosave_service.dart';
 import '../../../services/mail/draft_files.dart';
 import '../../../core/logging/app_logger.dart';
-import '../../../services/mail/email_actions_service.dart';
 import '../../../widgets/common/app_sheet.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../widgets/people_picker_sheet.dart';
@@ -756,6 +755,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         ? widget.draftId!
         : 'draft-${const Uuid().v4()}';
     _draftSync.beginEdit(_draftId);
+    _lifecycle = AppLifecycleListener(onHide: _onAppHidden);
     _parentId = widget.replyToId ?? widget.forwardFromId;
     _parentForward = widget.replyToId == null && widget.forwardFromId != null;
     _parentAccountId = widget.accountId;
@@ -918,6 +918,83 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     _localSaved = true;
     setState(() => _savedAt = at);
     _rememberReplyDraft();
+    _pushServerCopy();
+  }
+
+  /// Выгрузка черновика на сервер во время правки (2.6.8, просьба владельца
+  /// 22.11.2026: черновик виден на другом устройстве и в веб-почте, пока
+  /// письмо ещё пишется, и не теряется, если приложение закроют). Не на
+  /// каждое нажатие, а после автосохранения и не чаще [_copyEvery]: правка
+  /// внутри полуминуты уходит в её конце. Сразу — «Сохранить» и
+  /// сворачивание приложения. Одна выгрузка за раз, следующая — после неё.
+  static const _copyEvery = Duration(seconds: 30);
+  bool _copyRunning = false;
+  bool _copyAgain = false;
+  bool _copyForce = false;
+  DateTime? _copyAt;
+  Timer? _copyTimer;
+
+  /// Черновик из серверной папки ещё догружается (_completeServerDraft):
+  /// пока не ясно, заменять ли его копию, — не выгружаем.
+  bool _copyReady = true;
+
+  AppLifecycleListener? _lifecycle;
+
+  void _pushServerCopy({bool force = false}) {
+    if (!mounted || _sentOrDiscarded || !_copyReady) return;
+    _copyForce |= force;
+    if (_copyRunning) {
+      _copyAgain = true;
+      return;
+    }
+    final last = _copyAt;
+    if (!_copyForce && last != null) {
+      final wait = _copyEvery - DateTime.now().difference(last);
+      if (wait > Duration.zero) {
+        _copyTimer ??= Timer(wait, () {
+          _copyTimer = null;
+          _pushServerCopy();
+        });
+        return;
+      }
+    }
+    _copyTimer?.cancel();
+    _copyTimer = null;
+    // Не тронутое письмо на телефон не записывается — выгружать нечего;
+    // та же версия, что уже на сервере, второй раз не уходит (сервис
+    // сверяет содержимое).
+    final acc = _fromAccount;
+    if (acc == null || !DraftSyncService.supports(acc)) return;
+    _copyRunning = true;
+    _copyAt = DateTime.now();
+    final f = _copyForce;
+    _copyForce = false;
+    unawaited(_draftSync.uploadWhileEditing(_draftId, acc.id, force: f).then((dropped) {
+      // Открытой из папки копии на сервере больше нет — её заменила
+      // выгруженная версия.
+      if (dropped != null && dropped == _serverDraft?.id) _serverDraft = null;
+    }).catchError((Object e) {
+      AppLogger.debug('Черновик во время правки не выгружен: $e');
+    }).whenComplete(() {
+      _copyRunning = false;
+      if (_copyAgain && mounted && !_sentOrDiscarded) {
+        _copyAgain = false;
+        _pushServerCopy();
+      }
+    }));
+  }
+
+  /// Приложение свернули (или окно на компьютере): несохранённое — на
+  /// телефон и на сервер, в том числе с файлами больше 2 МБ.
+  void _onAppHidden() {
+    if (!mounted || _sentOrDiscarded) return;
+    final a = _autosave;
+    if (a == null) return;
+    final pending = a.hasUnsavedChanges;
+    unawaited(() async {
+      if (pending) await a.forceSave();
+      _pushServerCopy(force: true);
+    }());
   }
 
   DateTime? _savedAt;
@@ -1889,7 +1966,10 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       _openedDraft = true;
       _pristineSaved = false;
       _markDraftChanged();
-      if (!local) unawaited(_completeServerDraft(row));
+      if (!local) {
+        _copyReady = false;
+        unawaited(_completeServerDraft(row).whenComplete(() => _copyReady = true));
+      }
       await _restoreParent(row);
     } catch (e) {
       AppLogger.warning('Черновик не открылся: $e');
@@ -2025,6 +2105,27 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         }
       }
     }
+    // Черновик ответа, начатый на другом устройстве или в веб-почте (2.6.8):
+    // связи с исходным письмом здесь нет, но черновик несёт заголовки
+    // ответа — исходное письмо находится по последнему Message-ID цепочки,
+    // а отправленный ответ встаёт в ту же переписку, даже если исходного
+    // письма на этом устройстве нет.
+    if (_parentId == null && row.folderId != 'drafts') {
+      final chain = row.referencesStr?.trim() ?? '';
+      final ids = RegExp(r'<[^<>\s]+>').allMatches(chain).map((m) => m.group(0)!).toList();
+      if (ids.isNotEmpty) {
+        _inReplyTo ??= ids.join(' ');
+        try {
+          final last = ids.last.substring(1, ids.last.length - 1);
+          final orig = await ref.read(databaseProvider).emailByMessageId(row.accountId, last);
+          if (orig != null && orig.id != row.id && !orig.isDraft) {
+            _parentId = orig.id;
+            _parentAccountId = orig.accountId;
+            _parentForward = false;
+          }
+        } catch (_) {}
+      }
+    }
     final pid = _parentId;
     if (pid == null) return;
     try {
@@ -2052,6 +2153,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   @override
   void dispose() {
     _editorWatch?.cancel();
+    _lifecycle?.dispose();
+    _copyTimer?.cancel();
     // Дослать черновик ДО освобождения контроллеров: снимок уже сделан в
     // _markDraftChanged, forceSave лишь пишет его в БД. Пустой черновик сервис
     // не сохраняет (проверка isEmpty внутри).
@@ -2077,8 +2180,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
           })));
         } else if (_serverDraft != null) {
           // Открытый из серверной папки черновик не меняли (или вернули как
-          // было): серверная копия и есть он; промежуточная локальная — не нужна.
-          unawaited(sync.forget(id));
+          // было): серверная копия и есть он; промежуточная локальная — не нужна,
+          // выгруженная во время правки версия (2.6.8) — тоже.
+          final sd = _serverDraft!;
+          final acc = _fromAccount;
+          unawaited(acc == null ? sync.forget(id) : sync.dropServerCopy(acc, id, keep: {sd.id}));
           if (accId != null && autosave != null) unawaited(ComposeWindow.track(autosave.deleteDraft(id, accId)));
         } else if (_localSaved) {
           // Свой черновик правили и вернули как было — записать как есть.
@@ -2091,9 +2197,13 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
           unawaited(ComposeWindow.track(sync.upload(id, accId)));
         }
       } else if (_snapshot().isEmpty) {
-        // Всё стёрли: черновика нет — и прежней автосохранённой копии тоже.
+        // Всё стёрли: черновика нет — и прежней автосохранённой копии тоже,
+        // и версии, выгруженной во время правки (2.6.8). Открытая из папки
+        // копия остаётся, как раньше.
         if (accId != null && autosave != null) unawaited(ComposeWindow.track(autosave.deleteDraft(id, accId)));
-        unawaited(sync.forget(id));
+        final sd = _serverDraft;
+        final acc = _fromAccount;
+        unawaited(acc == null ? sync.forget(id) : sync.dropServerCopy(acc, id, keep: {if (sd != null) sd.id}));
       } else {
         _rememberReplyDraft();
         // Свежий снимок: адресатов (плашки) правка полей не отмечала — без
@@ -3706,6 +3816,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       _markPristine();
       _openedDraft = true;
       _pristineSaved = true;
+      // «Сохранить» — на сервер сразу, не дожидаясь полуминуты.
+      _pushServerCopy(force: true);
     } else {
       showInlineError(l10n.tr('draftSaveFailed'));
     }
@@ -4986,46 +5098,34 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     }
   }
 
-  Future<void> _finishDraft({bool deleteServerCopy = true}) async {
+  /// Письмо отправлено (или «Удалить» — [discard]): черновик не нужен ни на
+  /// телефоне, ни на сервере. Серверные копии — письмо из «Черновиков»,
+  /// открытое в окне, копия, которую должен был заменить невыгруженный
+  /// черновик (1.7.2+111), и версия, выгруженная во время правки (2.6.8), —
+  /// удаляются после выгрузки, которая, может быть, ещё идёт. После
+  /// отправки — безвозвратно; «Удалить» — в корзину (кроме выгруженной во
+  /// время правки: это промежуточная копия).
+  Future<void> _finishDraft({bool discard = false}) async {
     _sentOrDiscarded = true;
-    // Серверная копия, которую должен был заменить этот черновик (его
-    // открывали из «Черновиков», а новая версия ещё не выгружена — не было
-    // связи): после отправки она тоже не нужна (1.7.2+111; раньше
-    // оставалась на сервере).
-    final replaced = _draftSync.replacesFor(_draftId);
+    _copyTimer?.cancel();
     _forgetReplyDraft();
     _autosave?.savedAt.removeListener(_onDraftSaved);
     _autosave?.stopAutosave();
-    unawaited(_draftSync.forget(_draftId));
+    final sd = _serverDraft;
+    final acc = _fromAccount;
+    // Файлы, которые отправка ещё возьмёт с сервера (не скачаны): письма с
+    // ними пока не удаляем.
+    final keep = discard ? const <String>{} : {for (final r in _pendingRefs()) r.emailId};
     try {
-      await _autosave?.deleteDraft(_draftId, _fromAccount?.id ?? '');
+      await _autosave?.deleteDraft(_draftId, acc?.id ?? '');
     } catch (_) {
       // Черновика могло и не быть (успели отправить до первого сохранения).
     }
-    // Письмо из серверных «Черновиков» отправлено — убираем и его.
-    final sd = _serverDraft;
-    final acc = _fromAccount;
-    // Файлы серверного черновика, которые ещё не скачаны, отправка берёт
-    // из него самого — такой черновик пока не удаляем.
-    final filesFromDraft = sd != null && _pendingRefs().any((r) => r.emailId == sd.id);
-    if (deleteServerCopy && sd != null && acc != null && !filesFromDraft) {
-      try {
-        await ref.read(emailActionsProvider).delete(acc, sd.id, sd.folderId, hard: true);
-      } catch (e) {
-        AppLogger.warning('Серверный черновик не удалён: $e');
-      }
+    if (acc == null) {
+      unawaited(_draftSync.forget(_draftId));
+      return;
     }
-    if (deleteServerCopy &&
-        replaced != null &&
-        replaced.id != sd?.id &&
-        acc != null &&
-        !_pendingRefs().any((r) => r.emailId == replaced.id)) {
-      try {
-        await ref.read(emailActionsProvider).delete(acc, replaced.id, replaced.folderId, hard: true);
-      } catch (e) {
-        AppLogger.warning('Прежняя копия черновика не удалена: $e');
-      }
-    }
+    unawaited(_draftSync.dropServerCopy(acc, _draftId, original: sd, keep: keep, hard: !discard));
   }
 
   /// Попытка переслать силами сервера. true — письмо ушло, обычная отправка
@@ -5335,17 +5435,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   /// «Удалить»: черновик убирается и с устройства, и из серверной папки
   /// (в корзину), если письмо было открыто оттуда.
-  Future<void> _deleteDraftCompletely() async {
-    // И копия, которую должен был заменить невыгруженный черновик.
-    final sd = _serverDraft ?? _draftSync.replacesFor(_draftId);
-    await _finishDraft(deleteServerCopy: false);
-    final acc = _fromAccount;
-    if (sd != null && acc != null) {
-      try {
-        await ref.read(emailActionsProvider).delete(acc, sd.id, sd.folderId);
-      } catch (_) {}
-    }
-  }
+  Future<void> _deleteDraftCompletely() => _finishDraft(discard: true);
 
   /// Вставить шаблон ответа (с подстановкой полей) в позицию курсора.
   Future<void> _insertTemplate() async {

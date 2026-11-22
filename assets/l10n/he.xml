@@ -4427,4 +4427,5 @@
     <string name="googleAccessCalendar">יומן</string>
     <string name="googleAccessContacts">אנשי קשר</string>
     <string name="googleAccessPhotos">תמונות אנשי קשר</string>
+    <string name="outboxOnServer">הודעות בתיקייה זו בשרת: {n}</string>
 </resources>

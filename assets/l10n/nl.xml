@@ -4406,4 +4406,5 @@
     <string name="googleAccessCalendar">agenda</string>
     <string name="googleAccessContacts">contacten</string>
     <string name="googleAccessPhotos">foto\'s van contacten</string>
+    <string name="outboxOnServer">Berichten in deze map op de server: {n}</string>
 </resources>

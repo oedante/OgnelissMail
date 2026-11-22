@@ -1430,7 +1430,9 @@ class EwsService {
   /// в Outlook. Возвращает ItemId. [attachments] — файлы черновика
   /// (1.7.2+111): CreateAttachment одним запросом, как у отправки. Файлы не
   /// приложились — созданный черновик удаляется (иначе при повторной
-  /// выгрузке на сервере осталась бы копия без файлов).
+  /// выгрузке на сервере осталась бы копия без файлов). [thread] — заголовки
+  /// ответа (2.6.8, InReplyTo и References): отправленный из Outlook или
+  /// с другого устройства, ответ встаёт в переписку получателя.
   Future<String?> saveDraft(
     AccountModel account, {
     required List<EmailAddress> to,
@@ -1438,12 +1440,14 @@ class EwsService {
     List<EmailAddress> bcc = const [],
     required String subject,
     required String bodyHtml,
+    ({String inReplyTo, String references})? thread,
     List<({String name, String? contentType, Uint8List bytes})> attachments = const [],
   }) async {
     final doc = await _soapRequest(
         account,
         EwsXmlBuilder.buildCreateDraft(
             to: to, cc: cc, bcc: bcc, subject: subject, bodyContent: bodyHtml, isHtml: true,
+            inReplyTo: thread?.inReplyTo, references: thread?.references,
             sharedMailbox: account.sharedMailboxEmail),
         idempotent: false);
     _ensureSuccess(doc, 'draft');

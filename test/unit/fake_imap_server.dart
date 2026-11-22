@@ -37,6 +37,9 @@ class FakeMessage {
   /// Письмо целиком (ответ на BODY[] / BODY.PEEK[] — литералом); null —
   /// сервер BODY[] не отдаёт.
   String? raw;
+
+  /// Текст письма, добавленного APPEND (для проверки заголовков).
+  String? appended;
 }
 
 class FakeMailbox {
@@ -193,7 +196,8 @@ class _Conn {
           _append = null;
           String? header(String name) =>
               RegExp('^$name:\\s*(.*)\$', multiLine: true, caseSensitive: false).firstMatch(text)?.group(1)?.trim();
-          final m = a.box.add(header('Subject') ?? '', flags: a.flags, messageId: header('Message-ID'));
+          final m = a.box.add(header('Subject') ?? '', flags: a.flags, messageId: header('Message-ID'))
+            ..appended = text;
           _ok(a.tag, '[APPENDUID ${a.box.uidValidity} ${m.uid}] APPEND completed');
           continue;
         }

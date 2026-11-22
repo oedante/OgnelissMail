@@ -4406,4 +4406,5 @@
     <string name="googleAccessCalendar">Kalender</string>
     <string name="googleAccessContacts">Kontakte</string>
     <string name="googleAccessPhotos">Fotos der Kontakte</string>
+    <string name="outboxOnServer">Nachrichten in diesem Ordner auf dem Server: {n}</string>
 </resources>

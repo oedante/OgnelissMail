@@ -4427,4 +4427,5 @@
     <string name="googleAccessCalendar">kalendár</string>
     <string name="googleAccessContacts">kontakty</string>
     <string name="googleAccessPhotos">fotky kontaktov</string>
+    <string name="outboxOnServer">Správy v tomto priečinku na serveri: {n}</string>
 </resources>

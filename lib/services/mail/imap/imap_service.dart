@@ -803,8 +803,9 @@ class ImapService {
     // при сохранении списка папок (SpecialFolders, 1.7.2+106). Раньше архивом
     // считалась любая папка со словом «archive» или «архив» в имени — и
     // «Архив 2019» внутри проекта тоже, а «В архив» выбирала из них первую.
-    final lower = mb.name.toLowerCase();
-    if (lower.contains('outbox') || lower.contains('исходящие')) return FolderType.outbox;
+    // «Исходящие» — так же (2.6.8): раньше ею была любая папка со словом
+    // «outbox» или «исходящие» в имени и на любом уровне, и только на двух
+    // языках.
     return FolderType.custom;
   }
 
@@ -2588,10 +2589,13 @@ class ImapService {
   /// Сохранить черновик в серверную папку «Черновики» (APPEND с флагом
   /// \Draft): его видно в веб-почте и других программах. [messageId] —
   /// заголовок Message-ID, по нему потом находится и удаляется прежняя копия.
-  /// Возвращает путь папки черновиков или null, если её на сервере нет.
+  /// Возвращает путь папки черновиков и UID копии (null — сервер без
+  /// UIDPLUS не сообщил) или null, если папки на сервере нет.
   /// [attachments] — файлы черновика (1.7.2+111): как у отправки,
-  /// multipart/mixed с текстом и файлами.
-  Future<String?> saveDraft(
+  /// multipart/mixed с текстом и файлами. [thread] — заголовки ответа
+  /// (2.6.8): черновик ответа встаёт в беседу и в веб-почте, и в программе
+  /// на другом устройстве, а отправленный оттуда — в переписку получателя.
+  Future<({String path, int? uid})?> saveDraft(
     AccountModel account, {
     required List<EmailAddress> to,
     List<EmailAddress> cc = const [],
@@ -2599,6 +2603,7 @@ class ImapService {
     required String subject,
     required String bodyHtml,
     required String messageId,
+    ({String inReplyTo, String references})? thread,
     List<({String name, String? contentType, Uint8List bytes})> attachments = const [],
   }) async {
     final plain = bodyHtml
@@ -2631,6 +2636,10 @@ class ImapService {
     // Через свойство, не setHeader: при сборке enough_mail пишет свой
     // Message-Id поверх заголовка (проверка на настоящем сервере, 01.11.2026).
     builder.messageId = messageId;
+    if (thread != null) {
+      builder.setHeader('In-Reply-To', thread.inReplyTo);
+      builder.setHeader('References', thread.references);
+    }
     final message = builder.buildMimeMessage();
     applyAddressHeaders(message,
         fromName: account.displayName,
@@ -2644,9 +2653,10 @@ class ImapService {
       if (drafts == null) return null;
       final path = _pathForEnoughMail(c, drafts.encodedPath);
       appending = true;
-      await c.appendMessage(message,
+      final r = await c.appendMessage(message,
           flags: [MessageFlags.draft, MessageFlags.seen], targetMailboxPath: path);
-      return drafts.encodedPath;
+      final uids = r.responseCodeAppendUid?.targetSequence.toList() ?? const <int>[];
+      return (path: drafts.encodedPath, uid: uids.length == 1 && uids.first > 0 ? uids.first : null);
     });
   }
 

@@ -4406,4 +4406,5 @@
     <string name="googleAccessCalendar">naptár</string>
     <string name="googleAccessContacts">névjegyek</string>
     <string name="googleAccessPhotos">partnerek fényképei</string>
+    <string name="outboxOnServer">Üzenetek ebben a mappában a szerveren: {n}</string>
 </resources>

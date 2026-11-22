@@ -4406,4 +4406,5 @@
     <string name="googleAccessCalendar">कैलेंडर</string>
     <string name="googleAccessContacts">संपर्क</string>
     <string name="googleAccessPhotos">संपर्कों की फ़ोटो</string>
+    <string name="outboxOnServer">सर्वर पर इस फ़ोल्डर में संदेश: {n}</string>
 </resources>

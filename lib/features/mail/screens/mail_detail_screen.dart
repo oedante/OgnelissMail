@@ -133,6 +133,7 @@ import '../../compose/providers/templates_provider.dart' show templatesProvider;
 import '../../compose/screens/compose_screen.dart' show ComposeScreen;
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
+import '../../../services/mail/draft_sync_service.dart' show DraftSyncService;
 import '../../../core/theme/ogneliss_look.dart';
 import '../../../core/theme/appearance.dart' show AppearanceLook;
 import '../../../widgets/common/mail_open_motion.dart' show MailHeroTags, MailOpenHandoff, MailSubjectHero;
@@ -837,8 +838,12 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       // беседа — находятся по связи «письмо → черновик», как в ленте.
       final drafts = await db.watchDraftsLight(widget.accountId).first;
       if (!mounted) return;
+      // Серверная копия своего черновика, который ещё правится (2.6.8), —
+      // не второй раз.
+      final shadow = DraftSyncService.shadowed(ref.read(sharedPrefsProvider), drafts);
+      if (shadow.isNotEmpty) emails.removeWhere((e) => shadow.contains('${e.accountId}|${e.id}'));
       emails.addAll(conversationReplyDrafts(
-        drafts: [for (final r in drafts) notifier.rowToModel(r)],
+        drafts: [for (final r in drafts) if (!shadow.contains('${r.accountId}|${r.id}')) notifier.rowToModel(r)],
         conversation: emails,
         accountId: widget.accountId,
         conversationId: conversationId,

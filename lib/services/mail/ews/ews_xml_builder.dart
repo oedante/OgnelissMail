@@ -730,6 +730,8 @@ $mailboxes
     required String bodyContent,
     bool isHtml = true,
     String? inReplyTo,
+    /// Вся цепочка (References) черновика ответа (2.6.8).
+    String? references,
     String importance = 'Normal',
     String sensitivity = 'Normal',
     String? sharedMailbox,
@@ -756,6 +758,7 @@ $mailboxes
       $bccXml
       ${readReceipt ? '<t:IsReadReceiptRequested>true</t:IsReadReceiptRequested>' : ''}
       ${_fromXml(sharedMailbox ?? fromAddress)}
+      ${references != null && references.trim().isNotEmpty ? '<t:References>${_escapeXml(references.trim())}</t:References>' : ''}
     </t:Message>
   </m:Items>
 </m:CreateItem>''';

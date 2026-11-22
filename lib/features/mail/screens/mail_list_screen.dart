@@ -18,6 +18,7 @@ import '../../../core/theme/app_icons.dart';
 import '../../../widgets/common/sync_progress_indicator.dart' show SyncStatusDot, SyncStatus, syncStatusProvider;
 import '../../../core/navigation/app_router.dart' show mailDetailPath, conversationPath, mailPagerPath;
 import '../../../core/logging/open_trace.dart';
+import '../../../core/logging/perf_mark.dart';
 import '../../../core/theme/mail_page_color.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../settings/widgets/feature_settings_sections.dart' show ExperimentalKeys;
@@ -1630,14 +1631,17 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       final rest = pinKeys.isEmpty
           ? emails
           : [for (final e in emails) if (!pinKeys.contains('${e.accountId}|${e.id}')) e];
-      _cachedGrouped = laterView
-          ? _groupByLater(emails, l10n)
-          : (byDate
-              ? [
-                  if (pinned.isNotEmpty) ...[l10n.tr('pinnedBand'), ...pinned],
-                  ..._groupByDate(rest, l10n),
-                ]
-              : List<dynamic>.from(emails));
+      // Метка производительности (2.6.8): группы по дням — в главном потоке.
+      _cachedGrouped = PerfMark.sync(
+          'лента: группы по дням',
+          () => laterView
+              ? _groupByLater(emails, l10n)
+              : (byDate
+                  ? [
+                      if (pinned.isNotEmpty) ...[l10n.tr('pinnedBand'), ...pinned],
+                      ..._groupByDate(rest, l10n),
+                    ]
+                  : List<dynamic>.from(emails)));
       _cachedGroupedSource = emails;
       _cachedGroupedRu = ru;
       // Подпись группы для каждой строки — для плавающей даты.

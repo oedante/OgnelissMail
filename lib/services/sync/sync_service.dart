@@ -48,6 +48,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/logging/app_logger.dart';
+import '../../core/logging/perf_mark.dart';
 import '../../core/network/connectivity_service.dart';
 import '../../data/database/app_database.dart';
 import '../../data/models/account_model.dart';
@@ -651,7 +652,6 @@ class SyncService {
   Future<void> syncAccount(AccountModel account) {
     _pimForce.add(account.id);
     _folderSyncForce.add(account.id);
-    _imapAllFoldersForce.add(account.id);
     return FinishInBackground.guard(() => _pass.run(() => _syncAccountBody(account), needs: PassScope.all));
   }
 
@@ -669,7 +669,6 @@ class SyncService {
   Future<void> syncNewAccount(AccountModel account) {
     _pimForce.add(account.id);
     _folderSyncForce.add(account.id);
-    _imapAllFoldersForce.add(account.id);
     return FinishInBackground.guard(() => _pass.run(() => _syncAccountBody(account), fresh: true));
   }
 
@@ -679,19 +678,6 @@ class SyncService {
 
   /// Последний LIST папок IMAP (2.6.8): не чаще раза в 30 минут.
   final Map<String, DateTime> _imapFolderListAt = {};
-
-  /// Ящики, у которых в ближайший проход проверить все папки, хоть
-  /// приложение и свёрнуто («обновить», первый проход).
-  final Set<String> _imapAllFoldersForce = {};
-
-  /// Папку IMAP пора проверять в свёрнутом приложении: «Входящие» —
-  /// всегда, остальные — раз в 30 минут ([at] — время прошлой проверки).
-  @visibleForTesting
-  static bool imapFolderDue(FolderModel folder, String? at, DateTime now) {
-    if (folder.type == FolderType.inbox) return true;
-    final last = DateTime.tryParse(at ?? '');
-    return last == null || now.difference(last) >= const Duration(minutes: 30);
-  }
   final Set<String> _folderSyncForce = {};
 
   /// Время последней синхронизации календаря/контактов/заметок/задач Exchange.
@@ -780,7 +766,9 @@ class SyncService {
       AppLogger.warning('Синхронизация ${account.email}: «$name» идёт больше минуты ($role)');
     });
     try {
-      final f = run();
+      // Метка производительности (2.6.8): этап — в Timeline и в журнал
+      // медленных кадров («шло: синхронизация: папка Входящие»).
+      final f = PerfMark.run('синхронизация: $name', run);
       return limit == null ? await f : await f.timeout(limit);
     } on TimeoutException {
       AppLogger.error('Синхронизация ${account.email}: «$name» не завершился за ${limit?.inSeconds} с — прерван');
@@ -2549,14 +2537,16 @@ class SyncService {
     }
     final skipKey = 'imap_skip:${account.id}:${folder.id}';
     final now = DateTime.now();
-    final missing = ImapReconcile.missing(
-      server: cands,
-      local: have,
-      floor: floor,
-      pending: pending,
-      skipped: ImapReconcile.readSkipped(_prefs.getStringList(skipKey), now),
-      limit: ImapService.maxRecover,
-    );
+    final missing = PerfMark.sync(
+        'IMAP: сверка писем',
+        () => ImapReconcile.missing(
+              server: cands,
+              local: have,
+              floor: floor,
+              pending: pending,
+              skipped: ImapReconcile.readSkipped(_prefs.getStringList(skipKey), now),
+              limit: ImapService.maxRecover,
+            ));
     if (missing.isEmpty) return const [];
     AppLogger.warning('IMAP ${folder.displayName}: на сервере есть письма, которых нет на устройстве, — '
         'догружаю: UID ${ImapService.briefUids(missing)}');
@@ -2669,15 +2659,19 @@ class SyncService {
                 ))
             .get();
     if ((from != null && to != null) || (vanished != null && vanished.isNotEmpty)) {
-      final gone = <String>[];
-      for (final row in await local()) {
-        if (row.edited) continue;
-        final u = uidOf(row.id);
-        if ((vanished != null && vanished.contains(u)) ||
-            (from != null && to != null && u >= from && u <= to && !delta.present.contains(u))) {
-          gone.add(row.id);
+      final rows = await local();
+      final gone = PerfMark.sync('IMAP: сверка удалённых', () {
+        final out = <String>[];
+        for (final row in rows) {
+          if (row.edited) continue;
+          final u = uidOf(row.id);
+          if ((vanished != null && vanished.contains(u)) ||
+              (from != null && to != null && u >= from && u <= to && !delta.present.contains(u))) {
+            out.add(row.id);
+          }
         }
-      }
+        return out;
+      });
       if (gone.isNotEmpty) {
         for (var i = 0; i < gone.length; i += 500) {
           final part = gone.sublist(i, i + 500 > gone.length ? gone.length : i + 500);
@@ -2900,21 +2894,11 @@ class SyncService {
               limit: const Duration(minutes: 3)));
       if (folders.isNotEmpty) _imapFolderListAt[account.id] = DateTime.now();
     }
-    final chosen = await _chosenFolders(db, account.id, folders);
-    // Свёрнуто (фоновая проверка): «Входящие» — каждый раз, остальные
-    // выбранные папки — раз в 30 минут (2.6.8, журнал владельца 21.11.2026:
-    // у Gmail каждая фоновая проверка открывала 7 папок по 1–1,5 с, держа
-    // радио включённым). На экране и по «обновить» — все, как раньше.
-    final foreground = WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
-    final forcedAll = _imapAllFoldersForce.remove(account.id);
-    final synced = foreground || forcedAll
-        ? chosen
-        : [
-            for (final f in chosen)
-              if (imapFolderDue(f, _prefs.getString('imap_folder_at:${account.id}:${f.id}'), DateTime.now())) f,
-          ];
-    AppLogger.info('IMAP sync: ${account.email} — папок ${folders.length}, синхронизируем ${synced.length}'
-        '${synced.length < chosen.length ? ' (остальные ${chosen.length - synced.length} — позже, приложение свёрнуто)' : ''}');
+    // Все выбранные папки — в каждый проход, и в свёрнутом приложении:
+    // как часто проверять почту, выбирает пользователь (расписание ящика),
+    // приложение его не прореживает (правило владельца 22.11.2026).
+    final synced = await _chosenFolders(db, account.id, folders);
+    AppLogger.info('IMAP sync: ${account.email} — папок ${folders.length}, синхронизируем ${synced.length}');
 
     int totalEmails = 0;
     final failedFolders = <String>[];
@@ -2922,7 +2906,6 @@ class SyncService {
       try {
         totalEmails += await _stage(account, 'папка ${folder.displayName}',
             () => _syncImapFolder(imap, db, account, folder, settings));
-        await _prefs.setString('imap_folder_at:${account.id}:${folder.id}', DateTime.now().toIso8601String());
       } catch (e) {
         failedFolders.add('${folder.displayName}: ${_shortError(e)}');
         AppLogger.error('IMAP sync папка "${folder.displayName}": $e');
@@ -3079,7 +3062,6 @@ class SyncService {
   /// (журнал 11.10.2026: по 60 раз за день «без изменений»).
   final Map<String, DateTime> _lastDav = {};
   static const _davEvery = Duration(minutes: 15);
-  static const _davEveryBackground = Duration(minutes: 60);
 
   Future<void> _syncDavPim(AccountModel account, AppDatabase db) async {
     // Рабочая почта по IMAP (2.6.0): календарь и контакты на сервере
@@ -3089,14 +3071,16 @@ class SyncService {
     if (!DavPimService.isSupported(account)) return;
     // Время прошлой проверки — и в настройках (2.6.8, журнал владельца
     // 21.11.2026: DAV в половине проходов — каждая фоновая задача, новый
-    // процесс, начинала с нуля). Свёрнуто — раз в час: встречи и контакты
-    // меняются редко, напоминания уже в расписании телефона.
+    // процесс, начинала с нуля). Свёрнуто — так же, как на экране: реже,
+    // чем выбрал пользователь, не проверяем (правило владельца 22.11.2026);
+    // минута запаса — чтобы проход по расписанию «15 минут», пришедший
+    // чуть раньше, не пропускал календарь через раз.
     final davKey = 'dav_pim_at:${account.id}';
     final lastDav = _lastDav[account.id] ?? DateTime.tryParse(_prefs.getString(davKey) ?? '');
-    final open = WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
-    final every = open ? _davEvery : _davEveryBackground;
     final forced = _pimForce.remove(account.id);
-    if (!forced && lastDav != null && DateTime.now().difference(lastDav) < every) return;
+    if (!forced && lastDav != null && DateTime.now().difference(lastDav) < _davEvery - const Duration(minutes: 1)) {
+      return;
+    }
     final davNow = DateTime.now();
     _lastDav[account.id] = davNow;
     await _prefs.setString(davKey, davNow.toIso8601String());

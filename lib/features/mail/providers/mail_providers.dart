@@ -35,6 +35,7 @@ import '../../../data/models/contact_model.dart' show ContactSource;
 import '../../../data/models/folder_model.dart';
 import '../../../data/providers/database_provider.dart';
 import '../../../core/logging/app_logger.dart';
+import '../../../core/logging/perf_mark.dart';
 import '../../../core/security/secure_storage_service.dart';
 import '../../../core/security/security_utils.dart' show SecurityUtils;
 import '../../../features/settings/providers/settings_provider.dart';
@@ -1610,7 +1611,11 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
   /// Теперь заново — только изменившиеся строки (аудит 11.10.2026).
   final Map<String, ({int hash, EmailModel model})> _models = {};
 
-  List<EmailModel> _modelsFor(List<Email> rows) {
+  // Метка производительности (2.6.8): в главном потоке при каждом
+  // изменении таблицы писем.
+  List<EmailModel> _modelsFor(List<Email> rows) => PerfMark.sync('лента: письма из базы', () => _modelsOf(rows));
+
+  List<EmailModel> _modelsOf(List<Email> rows) {
     final next = <String, ({int hash, EmailModel model})>{};
     final out = <EmailModel>[];
     for (final r in rows) {

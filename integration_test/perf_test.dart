@@ -10,7 +10,13 @@
 //    повторное и с запасным окном (MailEditorPool), медианы трёх;
 //  · запуск приложения без аккаунтов — от main() до первого кадра заставки
 //    и до первого экрана после неё (лицензия, знакомство или вход; заставка
-//    держится не меньше 1,8 с).
+//    держится не меньше 1,8 с);
+//  · прокрутка ленты во время синхронизации (2.6.8, план «Ж», просьба
+//    владельца 22.11.2026): каждые 300 мс в базу приходит пачка писем и
+//    меняются отметки прочитанного, лента перестраивается; считаются кадры,
+//    не уложившиеся в 16 мс сборки (missed_frame_build_budget_count), и
+//    худший кадр. Работа «синхронизации» — под метками производительности
+//    (PerfMark): в Timeline их видно рядом с кадрами.
 // Строки OGN_PERF (support/harness.dart) собирает tool/perf/perf_check.py,
 // сравнение с tool/perf/baseline.json — в CI (задача «emulator»).
 // Сборка отладочная (flutter test на устройстве — только она): числа
@@ -20,17 +26,32 @@
 // Отдельно: flutter test integration_test/perf_test.dart -d <эмулятор>
 
 import 'dart:async';
-import 'dart:ui' show PlatformDispatcher;
+import 'dart:io' show File;
+import 'dart:ui' show FrameTiming, PlatformDispatcher;
 
+import 'package:drift/drift.dart' show Value;
+import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/core/logging/open_trace.dart';
+import 'package:ogneliss/core/logging/perf_mark.dart';
+import 'package:ogneliss/core/security/mail_body_processor.dart';
+import 'package:ogneliss/data/database/app_database.dart';
+import 'package:ogneliss/data/models/email_model.dart';
+import 'package:ogneliss/data/models/folder_model.dart';
+import 'package:ogneliss/data/providers/database_provider.dart';
+import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/compose/widgets/mail_editor.dart';
+import 'package:ogneliss/features/mail/providers/mail_providers.dart' show emailModelFromRow;
+import 'package:ogneliss/features/mail/widgets/email_list_tile.dart';
 import 'package:ogneliss/features/mail/widgets/mail_html_view.dart';
 import 'package:ogneliss/main.dart' as app;
 import 'package:ogneliss/services/background/work_scheduler.dart';
 import 'package:ogneliss/splash_screen.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support/harness.dart';
 
@@ -240,6 +261,182 @@ Future<int> _openCompose(WidgetTester tester, GlobalKey<NavigatorState> nav, {re
   });
 }
 
+/// Письмо для ленты: адрес без «@» — строка не просит фото у адресной книги
+/// и значок организации из сети (замер — только лента и база).
+EmailsCompanion _row(int n, DateTime at) => EmailsCompanion.insert(
+  id: 'perf_$n',
+  accountId: 'a1',
+  folderId: 'inbox',
+  folderName: const Value('Входящие'),
+  fromEmail: 'sender-${n % 37}',
+  fromName: Value('Отправитель ${n % 37}'),
+  toRecipients: '[]',
+  subject: 'Итоги совещания №$n: сроки, задачи и ответственные',
+  bodyPreview: Value('Добрый день! Письмо №$n. Высылаю итоги совещания, основные решения — ниже.'),
+  receivedAt: at,
+  isRead: Value(n.isEven),
+  hasAttachments: Value(n % 5 == 0),
+  loadedLevel: const Value(1),
+);
+
+/// Лента писем папки прямо из базы, как в приложении: поток запроса →
+/// модели строк → EmailListTile.
+class _SyncFeed extends StatefulWidget {
+  const _SyncFeed({required this.db});
+
+  final AppDatabase db;
+
+  @override
+  State<_SyncFeed> createState() => _SyncFeedState();
+}
+
+class _SyncFeedState extends State<_SyncFeed> {
+  late final Stream<List<EmailModel>> _mails;
+
+  @override
+  void initState() {
+    super.initState();
+    final db = widget.db;
+    _mails = db
+        .customSelect(
+          "SELECT * FROM emails WHERE account_id = 'a1' AND folder_id = 'inbox' ORDER BY received_at DESC LIMIT 600",
+          readsFrom: {db.emails},
+        )
+        .watch()
+        .map(
+          (rows) => PerfMark.sync('лента: письма из базы', () => [for (final r in rows) emailModelFromRow(db.emails.map(r.data))]),
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('Входящие')),
+    body: StreamBuilder<List<EmailModel>>(
+      stream: _mails,
+      builder: (context, snap) {
+        final list = snap.data ?? const <EmailModel>[];
+        return ListView.builder(
+          itemCount: list.length,
+          itemBuilder: (context, i) => EmailListTile(key: ValueKey(list[i].id), email: list[i], onTap: () {}),
+        );
+      },
+    ),
+  );
+}
+
+/// «Синхронизация» для замера: каждые 300 мс — пачка из 20 новых писем
+/// (тексты разбираются в главном потоке, как превью при синхронизации) и
+/// отметки прочитанного у 40 старых.
+Timer _fakeSync(AppDatabase db, {required int from}) {
+  var n = from;
+  var busy = false;
+  final html = _letter(0);
+  return Timer.periodic(const Duration(milliseconds: 300), (_) async {
+    if (busy) return;
+    busy = true;
+    try {
+      final now = DateTime.now();
+      final rows = PerfMark.sync('тест: разбор пачки писем', () {
+        final out = <EmailsCompanion>[];
+        for (var i = 0; i < 20; i++) {
+          final preview = MailBodyProcessor.htmlToPlain(html);
+          out.add(
+            _row(++n, now.subtract(Duration(seconds: i))).copyWith(bodyPreview: Value(preview.length > 120 ? preview.substring(0, 120) : preview)),
+          );
+        }
+        return out;
+      });
+      await db.batch((b) => b.insertAllOnConflictUpdate(db.emails, rows));
+      await db.customUpdate(
+        "UPDATE emails SET is_read = NOT is_read WHERE account_id = 'a1' AND id IN "
+        "(SELECT id FROM emails WHERE account_id = 'a1' ORDER BY random() LIMIT 40)",
+        updates: {db.emails},
+      );
+    } finally {
+      busy = false;
+    }
+  });
+}
+
+/// Прокрутка ленты во время синхронизации: сводка кадров (FrameTimingSummarizer).
+Future<Map<String, dynamic>> _scrollDuringSync(WidgetTester tester) async {
+  final dir = await getTemporaryDirectory();
+  final file = File('${dir.path}/ogn_perf_scroll.sqlite');
+  if (file.existsSync()) file.deleteSync();
+  // Как в приложении: база в своём изоляте (createInBackground).
+  final db = AppDatabase.forTesting(NativeDatabase.createInBackground(file));
+  SharedPreferences.setMockInitialValues({});
+  final prefs = await SharedPreferences.getInstance();
+  final start = DateTime.now();
+  await db
+      .into(db.accounts)
+      .insert(
+        AccountsCompanion.insert(
+          id: 'a1',
+          type: 7,
+          email: 'me@corp.example',
+          displayName: 'Я',
+          username: 'me',
+          createdAt: DateTime(2026),
+        ),
+      );
+  await db
+      .into(db.folders)
+      .insert(
+        FoldersCompanion.insert(
+          id: 'inbox',
+          accountId: 'a1',
+          displayName: 'Входящие',
+          type: Value(FolderType.inbox.index),
+        ),
+      );
+  await db.batch((b) {
+    b.insertAll(db.emails, [for (var i = 0; i < 400; i++) _row(i, start.subtract(Duration(minutes: 7 * i)))]);
+  });
+  Timer? sync;
+  try {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [databaseProvider.overrideWithValue(db), sharedPrefsProvider.overrideWithValue(prefs)],
+        child: testApp(home: _SyncFeed(db: db)),
+      ),
+    );
+    await pumpUntil(tester, () => find.byType(EmailListTile).evaluate().length > 3, what: 'лента показана');
+    return await withAppFrames(() async {
+      // Кадры показа ленты отчитываются с задержкой — до замера.
+      await tester.pump(const Duration(seconds: 2));
+      final timings = <FrameTiming>[];
+      void collect(List<FrameTiming> t) => timings.addAll(t);
+      SchedulerBinding.instance.addTimingsCallback(collect);
+      sync = _fakeSync(db, from: 1000);
+      final list = find.byType(Scrollable).first;
+      for (var i = 0; i < 8; i++) {
+        await tester.fling(list, Offset(0, i.isEven ? -900 : 700), 3000);
+        await tester.pump(const Duration(milliseconds: 1200));
+      }
+      sync?.cancel();
+      // Отчёт о кадрах приходит пачками до раза в секунду.
+      await tester.pump(const Duration(seconds: 2));
+      SchedulerBinding.instance.removeTimingsCallback(collect);
+      expect(timings, isNotEmpty, reason: 'кадров прокрутки не было');
+      final n = await db.customSelect("SELECT count(*) AS c FROM emails WHERE account_id = 'a1'").getSingle();
+      expect(n.read<int>('c'), greaterThan(400), reason: 'синхронизация не записала писем');
+      final summary = FrameTimingSummarizer(timings).summary;
+      final slow = [for (final t in timings) if (t.totalSpan > const Duration(milliseconds: 34)) t].length;
+      return {
+        ...summary,
+        'slow_frames_34ms': slow,
+        'worst_total_ms': timings.map((t) => t.totalSpan.inMilliseconds).reduce((a, b) => a > b ? a : b),
+      };
+    });
+  } finally {
+    sync?.cancel();
+    await tester.pumpWidget(const SizedBox());
+    await db.close();
+    if (file.existsSync()) file.deleteSync();
+  }
+}
+
 void perfTests() {
   // Свои setUp/tearDown — только для этих тестов (в emulator_test.dart все
   // файлы идут одним набором).
@@ -295,6 +492,25 @@ void perfTests() {
         },
       );
     }, skip: !onAndroid);
+
+    testWidgets('скорость: прокрутка ленты во время синхронизации', (tester) async {
+      final s = await _scrollDuringSync(tester);
+      final pick = {
+        for (final k in [
+          'frame_count',
+          'missed_frame_build_budget_count',
+          'slow_frames_34ms',
+          'average_frame_build_time_millis',
+          '90th_percentile_frame_build_time_millis',
+          'worst_frame_build_time_millis',
+          'worst_total_ms',
+        ])
+          k: s[k],
+      };
+      PerfLog.record('scroll_sync_missed_frames', s['missed_frame_build_budget_count'] as num, extra: {'frames': pick});
+      PerfLog.record('scroll_sync_build_p90_ms', s['90th_percentile_frame_build_time_millis'] as num);
+      PerfLog.record('scroll_sync_worst_frame_ms', s['worst_total_ms'] as num);
+    });
 
     testWidgets('скорость: «Новое сообщение» — первое, повторное, с запасным окном', (tester) async {
       final nav = await _home(tester);

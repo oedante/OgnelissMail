@@ -20,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ogneliss/core/theme/app_icons.dart';
 import 'package:ogneliss/core/theme/app_theme.dart';
 import 'package:ogneliss/core/theme/appearance.dart';
@@ -72,6 +73,8 @@ import 'package:ogneliss/services/background/work_scheduler.dart';
 import 'package:ogneliss/widgets/common/hero_email_transition.dart';
 import 'package:ogneliss/widgets/common/ui_zoom.dart';
 import 'package:ogneliss/widgets/navigation/app_bottom_bar.dart';
+import 'package:ogneliss/widgets/navigation/main_shell.dart';
+import 'package:ogneliss/features/mail/providers/drawer_prefs.dart' show MailBarOrderNotifier;
 import 'package:ogneliss/widgets/ui/action_sheet.dart';
 import 'package:ogneliss/widgets/ui/app_menu_button.dart';
 import 'package:ogneliss/widgets/ui/confirm_dialog.dart';
@@ -227,6 +230,119 @@ Future<void> _inbox(AppDatabase db) async {
           isFlagged: Value(flagged),
         ));
   }
+}
+
+/// Поручения для снимков: свои и полученные, с разными сроками и статусами.
+Future<void> _demoAssignments(AppDatabase db) async {
+  final now = DateTime.now();
+  final d0 = DateTime(now.year, now.month, now.day);
+  Future<void> a(String id, String title, String who, String name, DateTime? due, int status,
+          {bool mine = true}) =>
+      AssignmentStore.insert(db,
+          id: id,
+          accountId: 'a1',
+          title: title,
+          ownerEmail: mine ? 'i.petrov@corp.example' : who,
+          ownerName: mine ? 'Иван Петров' : name,
+          assigneeEmail: mine ? who : 'i.petrov@corp.example',
+          assigneeName: mine ? name : 'Иван Петров',
+          due: due,
+          at: now.subtract(const Duration(days: 1)),
+          outgoing: mine).then((_) => AssignmentStore.update(db, id, status: status));
+  await a('AAAAAAAAAAAA', 'Согласовать договор поставки № 15', 'b.orlov@corp.example', 'Борис Орлов',
+      d0.subtract(const Duration(days: 1)), AssignmentStatus.inProgress);
+  await a('BBBBBBBBBBBB', 'Отчёт отдела за октябрь', 'v.belova@corp.example', 'Вера Белова', d0, AssignmentStatus.review);
+  await a('CCCCCCCCCCCC', 'Собрать даты отпусков отдела', 'v.belova@corp.example', 'Вера Белова',
+      d0.add(const Duration(days: 2)), AssignmentStatus.inProgress);
+  await a('DDDDDDDDDDDD', 'Обновить договор аренды', 'e.sokolova@corp.example', 'Елена Соколова',
+      d0.add(const Duration(days: 4)), AssignmentStatus.open);
+  await a('EEEEEEEEEEEE', 'Инвентаризация склада', 'd.kuznetsov@corp.example', 'Дмитрий Кузнецов', null,
+      AssignmentStatus.open);
+  await a('FFFFFFFFFFFF', 'Подготовить справку для аудита', 'a.smirnova@corp.example', 'Анна Смирнова',
+      d0.add(const Duration(days: 1)), AssignmentStatus.open, mine: false);
+  await AssignmentStore.addEvent(db,
+      id: 'm1', assignmentId: 'CCCCCCCCCCCC', type: 'message', author: 'v.belova@corp.example',
+      at: now.subtract(const Duration(hours: 20)), outgoing: false,
+      payload: {'text': 'Принято, сделаю к среде', 'status': AssignmentStatus.inProgress});
+}
+
+
+/// Снимок раздела внутри оболочки телефона (2.6.8, замечания владельца
+/// 22.11.2026 к презентации): нижняя панель с «Меню» слева и «Создать» в
+/// центре — как на телефоне, а не экран раздела сам по себе (такой без
+/// панели выглядел частью планшетного вида).
+Future<void> _shellShot(
+  WidgetTester tester,
+  String name,
+  String location, {
+  required AppDatabase db,
+  required SharedPreferences prefs,
+  Future<void> Function(WidgetTester tester)? before,
+}) async {
+  FlutterSecureStorage.setMockInitialValues({});
+  tester.view.physicalSize = _phone * 2;
+  tester.view.devicePixelRatio = 2;
+  addTearDown(tester.view.reset);
+  // Тест идёт на Linux — без этого оболочка рисует вид компьютера.
+  AppBottomBar.debugIgnoreDesktopPlatform = true;
+  addTearDown(() => AppBottomBar.debugIgnoreDesktopPlatform = false);
+  debugDisableShadows = false;
+  final router = GoRouter(initialLocation: location, routes: [
+    ShellRoute(
+      builder: (_, __, child) => MainShell(child: child),
+      routes: [
+        GoRoute(path: '/mail', builder: (_, __) => const MailListScreen()),
+        GoRoute(path: '/calendar', builder: (_, __) => const CalendarScreen()),
+        GoRoute(path: '/contacts', builder: (_, __) => const ContactsScreen()),
+        GoRoute(path: '/tasks', builder: (_, __) => const TasksScreen()),
+        GoRoute(path: '/notes', builder: (_, __) => const NotesScreen()),
+        GoRoute(path: '/my-day', builder: (_, __) => const MyDayScreen()),
+        GoRoute(path: '/assignments', builder: (_, __) => const AssignmentsScreen()),
+      ],
+    ),
+  ]);
+  await tester.pumpWidget(ProviderScope(
+    overrides: [
+      databaseProvider.overrideWithValue(db),
+      sharedPrefsProvider.overrideWithValue(prefs),
+    ],
+    child: MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme(1.0),
+      locale: const Locale('ru'),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      routerConfig: router,
+      builder: (context, child) {
+        final mq = MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling);
+        final zoom = UiZoom.auto(mq.size, 1.0);
+        UiZoom.current = zoom;
+        return MediaQuery(
+          data: mq,
+          child: UiZoomBox(zoom: zoom, child: MediaQuery(data: UiZoom.scaleData(mq, zoom), child: child!)),
+        );
+      },
+    ),
+  ));
+  await _settle(tester);
+  if (before != null) {
+    await before(tester);
+    await _settle(tester);
+  }
+  try {
+    await expectLater(find.byType(MaterialApp), matchesGoldenFile('out/$name.png'));
+  } finally {
+    debugDisableShadows = true;
+  }
+  await tester.pumpWidget(const SizedBox());
+  WorkScheduler.instance.releaseHold();
+  await tester.pump(const Duration(minutes: 2));
+  router.dispose();
 }
 
 Future<void> _settle(WidgetTester tester) async {
@@ -610,36 +726,7 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
     final db = (await tester.runAsync(() async {
       final db = await _db();
-      final now = DateTime.now();
-      final d0 = DateTime(now.year, now.month, now.day);
-      Future<void> a(String id, String title, String who, String name, DateTime? due, int status,
-              {bool mine = true}) =>
-          AssignmentStore.insert(db,
-              id: id,
-              accountId: 'a1',
-              title: title,
-              ownerEmail: mine ? 'i.petrov@corp.example' : who,
-              ownerName: mine ? 'Иван Петров' : name,
-              assigneeEmail: mine ? who : 'i.petrov@corp.example',
-              assigneeName: mine ? name : 'Иван Петров',
-              due: due,
-              at: now.subtract(const Duration(days: 1)),
-              outgoing: mine).then((_) => AssignmentStore.update(db, id, status: status));
-      await a('AAAAAAAAAAAA', 'Согласовать договор поставки № 15', 'b.orlov@corp.example', 'Борис Орлов',
-          d0.subtract(const Duration(days: 1)), AssignmentStatus.inProgress);
-      await a('BBBBBBBBBBBB', 'Отчёт отдела за октябрь', 'v.belova@corp.example', 'Вера Белова', d0, AssignmentStatus.review);
-      await a('CCCCCCCCCCCC', 'Собрать даты отпусков отдела', 'v.belova@corp.example', 'Вера Белова',
-          d0.add(const Duration(days: 2)), AssignmentStatus.inProgress);
-      await a('DDDDDDDDDDDD', 'Обновить договор аренды', 'e.sokolova@corp.example', 'Елена Соколова',
-          d0.add(const Duration(days: 4)), AssignmentStatus.open);
-      await a('EEEEEEEEEEEE', 'Инвентаризация склада', 'd.kuznetsov@corp.example', 'Дмитрий Кузнецов', null,
-          AssignmentStatus.open);
-      await a('FFFFFFFFFFFF', 'Подготовить справку для аудита', 'a.smirnova@corp.example', 'Анна Смирнова',
-          d0.add(const Duration(days: 1)), AssignmentStatus.open, mine: false);
-      await AssignmentStore.addEvent(db,
-          id: 'm1', assignmentId: 'CCCCCCCCCCCC', type: 'message', author: 'v.belova@corp.example',
-          at: now.subtract(const Duration(hours: 20)), outgoing: false,
-          payload: {'text': 'Принято, сделаю к среде', 'status': AssignmentStatus.inProgress});
+      await _demoAssignments(db);
       return db;
     }))!;
     await _shot(tester, 'assignments_list', const AssignmentsScreen(), theme: _themes['light']!(), db: db, prefs: prefs);
@@ -1012,6 +1099,60 @@ void main() {
       }))!;
       await _shot(tester, 'pres_${name}_phone', screen, theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs,
           textScale: 1.0);
+      await tester.runAsync(db.close);
+    });
+  }
+
+
+  // Презентации 2.6.8, вторая редакция (замечания владельца 22.11.2026):
+  // только телефон; разделы — в оболочке телефона (нижняя панель, «Меню»
+  // слева — как по умолчанию); кнопки под письмом в привычном порядке
+  // («Ответить» слева); лента — «Вся почта».
+  // Запуск: flutter test tool/shots --plain-name «презентация телефон» --update-goldens
+  for (final (name, location) in const [
+    ('mail', '/mail'),
+    ('drawer', '/mail'),
+    ('calendar', '/calendar'),
+    ('contacts', '/contacts'),
+    ('tasks', '/tasks'),
+    ('notes', '/notes'),
+    ('myday', '/my-day'),
+    ('assignments', '/assignments'),
+  ]) {
+    testWidgets('презентация телефон — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(() async {
+        final db = await _db();
+        await _letter(db);
+        await _inbox(db);
+        await _demoPim(db);
+        await _demoAssignments(db);
+        return db;
+      }))!;
+      await _shellShot(tester, 'pres2_${name}_phone', location, db: db, prefs: prefs, before: name == 'drawer'
+          ? (t) async {
+              await t.tap(find.text('Меню').last);
+            }
+          : null);
+      await tester.runAsync(db.close);
+    });
+  }
+  for (final more in const [false, true]) {
+    testWidgets('презентация телефон — письмо${more ? ', ещё' : ''}', (tester) async {
+      SharedPreferences.setMockInitialValues({
+        'mail_bar_order': [for (final a in MailBarOrderNotifier.leftHand) a.name],
+      });
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(_db))!;
+      await tester.runAsync(() => _letter(db));
+      await _shot(tester, more ? 'pres2_letter_more_phone' : 'pres2_letter_phone',
+          const MailDetailScreen(emailId: 'e1', accountId: 'a1'),
+          theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs, textScale: 1.0, before: more
+              ? (t) async {
+                  await t.tap(find.bySemanticsLabel('Ещё').last);
+                }
+              : null);
       await tester.runAsync(db.close);
     });
   }

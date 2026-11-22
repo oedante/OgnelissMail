@@ -275,7 +275,7 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
 
     final isTablet = screenWidth >= 600;
     final isDesktop = screenWidth >= 1200 ||
-        (!kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux));
+        (!kIsWeb && !AppBottomBar.debugIgnoreDesktopPlatform && (Platform.isWindows || Platform.isMacOS || Platform.isLinux));
 
     // Экран PIN показывается поверх всего приложения (AppLockGate в
     // MaterialApp.builder) — включая окна, открытые поверх оболочки.

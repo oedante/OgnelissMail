@@ -2500,6 +2500,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                       // Половина экрана (не меньше 260): на большом телефоне
                       // поле не обрывается посередине, на маленьком влезает.
                       height: (MediaQuery.sizeOf(context).height * 0.5).clamp(260.0, 640.0),
+                      // Ответ и пересылка с исходным письмом (2.6.8): поле — по
+                      // тексту, «Исходное письмо» — сразу под подписью.
+                      minHeight: _quoteHtml != null ? 160 : null,
                       bodyStyle: _style.css,
                       toolbarHidden: !(_showFormatting ??= MediaQuery.sizeOf(context).width >= 700),
                       onChanged: (html) {

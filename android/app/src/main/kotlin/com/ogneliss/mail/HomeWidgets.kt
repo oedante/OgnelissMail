@@ -799,7 +799,9 @@ class CalendarWidget : OgnelissWidget() {
         // 3 — «Мой день» (18.11.2026, просьба владельца: «в виджет календаря
         // ещё один режим „Мой день“, чтобы отдельный виджет не показывать»).
         val mode = WidgetUi.state(context).getInt("cal_mode_$id", 0).coerceIn(0, 3)
-        val myDay = if (mode == 3) WidgetUi.json(context, "flutter.widget_myday") else null
+        // Данные «Моего дня»: на его вкладке — разделы, на остальных — погода
+        // под датой (22.11.2026).
+        val myDay = WidgetUi.json(context, "flutter.widget_myday")
         val anchor = anchorOf(context, id, today)
         val evs = events(json)
         // Месяц: выбранный день — сохранённый, иначе сегодня (если месяц
@@ -868,8 +870,9 @@ class CalendarWidget : OgnelissWidget() {
             WidgetUi.startOfDay(c.timeInMillis)
         }
 
-        // Шапка: период и подпись «Календарь».
-        val calLabel = json?.optString("title")?.takeIf { it.isNotEmpty() } ?: context.getString(R.string.widget_cal_label)
+        // Шапка: период, под ним — погода (просьба пользователей 22.11.2026:
+        // подпись «Календарь» убрать, погоду показывать, как в виджете «Мой
+        // день»). Погоды нет — строки нет.
         val period = when (mode) {
             0 -> {
                 val rel = when (anchor) {
@@ -894,8 +897,9 @@ class CalendarWidget : OgnelissWidget() {
         val myDayLine = listOf(myDay?.optString("unread").orEmpty(), myDay?.optString("work").orEmpty())
             .filter { it.isNotEmpty() }.joinToString("  ·  ")
         // Погода — в начале строки (21.11.2026).
-        val myDaySub = listOf(myDay?.optString("weather").orEmpty(), myDayLine).filter { it.isNotEmpty() }.joinToString("  ·  ")
-        WidgetUi.text(v, R.id.cal_sub, if (mode == 3 && myDaySub.isNotEmpty()) myDaySub else calLabel)
+        val weather = myDay?.optString("weather").orEmpty()
+        val myDaySub = listOf(weather, myDayLine).filter { it.isNotEmpty() }.joinToString("  ·  ")
+        WidgetUi.text(v, R.id.cal_sub, if (mode == 3) myDaySub else weather)
 
         // Высота: поля, шапка, вкладки (8 + 32), отступ до содержимого.
         val height = WidgetUi.heightDp(context, manager, id, 300)

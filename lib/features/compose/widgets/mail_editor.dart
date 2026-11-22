@@ -324,6 +324,7 @@ class MailEditor extends StatefulWidget {
     this.initialHtml = '',
     this.placeholder = '',
     this.height = 360,
+    this.minHeight,
     this.onChanged,
     this.onReady,
     this.onFailed,
@@ -349,6 +350,12 @@ class MailEditor extends StatefulWidget {
   final String initialHtml;
   final String placeholder;
   final double height;
+
+  /// Высота по тексту (2.6.8): окно — не ниже [minHeight] и не выше
+  /// [height], дальше текст прокручивается внутри. null — всегда [height].
+  /// Ответ с исходным письмом: свёрнутое «Исходное письмо» — сразу под
+  /// подписью, а не внизу экрана под пустым полем.
+  final double? minHeight;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onReady;
 
@@ -559,12 +566,23 @@ class _MailEditorState extends State<MailEditor> {
   /// письмо было того же размера, что и остальной экран.
   static double get _zoom => !kIsWeb && Platform.isAndroid ? UiZoom.current : 1.0;
 
+  /// Высота текста из редактора (в точках экрана); null — ещё не пришла.
+  double? _contentHeight;
+
+  double get _boxHeight {
+    final min = widget.minHeight;
+    final h = _contentHeight;
+    if (min == null || h == null) return widget.height;
+    // Строка-другая про запас: под подписью есть куда нажать.
+    return (h + 24).clamp(min, widget.height);
+  }
+
   @override
   Widget build(BuildContext context) {
     final page = _page;
     final web = page == null || !_routeDone ? null : _webView(page);
     return SizedBox(
-      height: widget.height,
+      height: _boxHeight,
       child: web == null
           ? const SizedBox.shrink()
           : Platform.isAndroid
@@ -664,6 +682,16 @@ class _MailEditorState extends State<MailEditor> {
           callback: (args) {
             final html = args.isNotEmpty && args.first is String ? args.first as String : '';
             widget.onChanged?.call(html);
+            return null;
+          },
+        );
+        c.addJavaScriptHandler(
+          handlerName: 'height',
+          callback: (args) {
+            final v = args.isNotEmpty && args.first is num ? (args.first as num).toDouble() : null;
+            // Окно на Android рисуется без масштаба интерфейса (UiZoomUndo):
+            // точки страницы — в [_zoom] раз мельче точек экрана.
+            if (v != null && v > 0 && mounted) setState(() => _contentHeight = v / _zoom);
             return null;
           },
         );

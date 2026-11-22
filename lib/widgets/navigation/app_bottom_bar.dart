@@ -65,10 +65,18 @@ class AppBottomBar extends StatelessWidget {
     this.look,
   });
 
+  /// Снимки экранов (tool/shots, 2.6.8): тест идёт на Linux, и приложение
+  /// считало себя компьютером — нижней панели телефона на снимках не было.
+  /// true — вид по ширине окна, как на телефоне (и в оболочке MainShell).
+  /// Только для снимков и тестов.
+  static bool debugIgnoreDesktopPlatform = false;
+
   /// Нижняя панель используется (телефон). На планшете и компьютере —
   /// боковая навигация, и экранам нужны свои кнопки «Создать».
   static bool inUse(BuildContext context) {
-    final desktop = !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
+    final desktop = !kIsWeb &&
+        !debugIgnoreDesktopPlatform &&
+        (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
     return !desktop && MediaQuery.sizeOf(context).width < 600;
   }
 

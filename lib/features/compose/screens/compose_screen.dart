@@ -923,12 +923,16 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   /// Выгрузка черновика на сервер во время правки (2.6.8, просьба владельца
   /// 22.11.2026: черновик виден на другом устройстве и в веб-почте, пока
-  /// письмо ещё пишется, и не теряется, если приложение закроют). Идёт после
-  /// автосохранения (раз в 30 с при правке), «Сохранить» и при сворачивании
-  /// приложения; одна за раз, следующая — после неё.
+  /// письмо ещё пишется, и не теряется, если приложение закроют). Не на
+  /// каждое нажатие, а после автосохранения и не чаще [_copyEvery]: правка
+  /// внутри полуминуты уходит в её конце. Сразу — «Сохранить» и
+  /// сворачивание приложения. Одна выгрузка за раз, следующая — после неё.
+  static const _copyEvery = Duration(seconds: 30);
   bool _copyRunning = false;
   bool _copyAgain = false;
   bool _copyForce = false;
+  DateTime? _copyAt;
+  Timer? _copyTimer;
 
   /// Черновик из серверной папки ещё догружается (_completeServerDraft):
   /// пока не ясно, заменять ли его копию, — не выгружаем.
@@ -943,9 +947,26 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       _copyAgain = true;
       return;
     }
+    final last = _copyAt;
+    if (!_copyForce && last != null) {
+      final wait = _copyEvery - DateTime.now().difference(last);
+      if (wait > Duration.zero) {
+        _copyTimer ??= Timer(wait, () {
+          _copyTimer = null;
+          _pushServerCopy();
+        });
+        return;
+      }
+    }
+    _copyTimer?.cancel();
+    _copyTimer = null;
+    // Не тронутое письмо на телефон не записывается — выгружать нечего;
+    // та же версия, что уже на сервере, второй раз не уходит (сервис
+    // сверяет содержимое).
     final acc = _fromAccount;
-    if (acc == null || !DraftSyncService.supports(acc) || _isPristine) return;
+    if (acc == null || !DraftSyncService.supports(acc)) return;
     _copyRunning = true;
+    _copyAt = DateTime.now();
     final f = _copyForce;
     _copyForce = false;
     unawaited(_draftSync.uploadWhileEditing(_draftId, acc.id, force: f).then((dropped) {
@@ -2133,6 +2154,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   void dispose() {
     _editorWatch?.cancel();
     _lifecycle?.dispose();
+    _copyTimer?.cancel();
     // Дослать черновик ДО освобождения контроллеров: снимок уже сделан в
     // _markDraftChanged, forceSave лишь пишет его в БД. Пустой черновик сервис
     // не сохраняет (проверка isEmpty внутри).
@@ -3794,6 +3816,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       _markPristine();
       _openedDraft = true;
       _pristineSaved = true;
+      // «Сохранить» — на сервер сразу, не дожидаясь полуминуты.
+      _pushServerCopy(force: true);
     } else {
       showInlineError(l10n.tr('draftSaveFailed'));
     }
@@ -5083,6 +5107,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// время правки: это промежуточная копия).
   Future<void> _finishDraft({bool discard = false}) async {
     _sentOrDiscarded = true;
+    _copyTimer?.cancel();
     _forgetReplyDraft();
     _autosave?.savedAt.removeListener(_onDraftSaved);
     _autosave?.stopAutosave();

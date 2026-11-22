@@ -4406,4 +4406,5 @@
     <string name="googleAccessCalendar">kalenteri</string>
     <string name="googleAccessContacts">yhteystiedot</string>
     <string name="googleAccessPhotos">yhteyshenkilöiden kuvat</string>
+    <string name="outboxOnServer">Viestejä tässä kansiossa palvelimella: {n}</string>
 </resources>

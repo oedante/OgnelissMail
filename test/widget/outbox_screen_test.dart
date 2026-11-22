@@ -11,8 +11,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/core/theme/app_theme.dart';
 import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/data/models/account_model.dart';
+import 'package:ogneliss/data/models/folder_model.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
+import 'package:ogneliss/features/mail/providers/mail_providers.dart' show foldersProvider, selectedFolderIdProvider;
 import 'package:ogneliss/features/mail/screens/outbox_screen.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,6 +85,49 @@ void main() {
     expect(find.text('Отменить'), findsNWidgets(3), reason: 'и действие свайпа');
 
     // Таймер отсчёта остановить: экран закрыть; потоки базы — дождаться.
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 2));
+    await tester.runAsync(db.close);
+  });
+
+  // Своя папка «Исходящие» на сервере ящика (Exchange, снимок владельца
+  // 22.11.2026): в меню она и есть «Исходящие», без второй строки; письма,
+  // которые лежат в ней на сервере, — по строке внизу списка.
+  testWidgets('письма в серверной папке «Исходящие» — строкой, открывается папка', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        databaseProvider.overrideWithValue(db),
+        sharedPrefsProvider.overrideWithValue(prefs),
+        foldersProvider.overrideWith((ref) => Stream.value(const [
+              FolderModel(id: 'AAMkOutbox', accountId: 'a1', displayName: 'Исходящие', type: FolderType.outbox, totalCount: 2),
+            ])),
+      ],
+      child: MaterialApp(
+        theme: AppTheme.lightTheme(1.0),
+        locale: const Locale('ru'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: const Scaffold(body: OutboxList()),
+      ),
+    ));
+    for (var i = 0; i < 20 && find.byKey(const ValueKey('outbox_server_folder')).evaluate().isEmpty; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 30)));
+      await tester.pump();
+    }
+    expect(find.text('Письма в этой папке на сервере: 2'), findsOneWidget);
+    expect(find.text('Все письма отправлены'), findsNothing, reason: 'в папке на сервере письма есть');
+    await tester.tap(find.byKey(const ValueKey('outbox_server_folder')));
+    final c = ProviderScope.containerOf(tester.element(find.byType(OutboxList)));
+    expect(c.read(selectedFolderIdProvider), 'AAMkOutbox');
+
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 2));
     await tester.runAsync(db.close);

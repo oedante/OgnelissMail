@@ -4385,4 +4385,5 @@
     <string name="googleAccessCalendar">ปฏิทิน</string>
     <string name="googleAccessContacts">รายชื่อติดต่อ</string>
     <string name="googleAccessPhotos">รูปของผู้ติดต่อ</string>
+    <string name="outboxOnServer">ข้อความในโฟลเดอร์นี้บนเซิร์ฟเวอร์: {n}</string>
 </resources>

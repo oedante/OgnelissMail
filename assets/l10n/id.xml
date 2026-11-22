@@ -4385,4 +4385,5 @@
     <string name="googleAccessCalendar">kalender</string>
     <string name="googleAccessContacts">kontak</string>
     <string name="googleAccessPhotos">foto kontak</string>
+    <string name="outboxOnServer">Pesan di folder ini di server: {n}</string>
 </resources>

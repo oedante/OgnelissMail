@@ -4490,4 +4490,5 @@
     <string name="googleAccessCalendar">التقويم</string>
     <string name="googleAccessContacts">جهات الاتصال</string>
     <string name="googleAccessPhotos">صور المراسلين</string>
+    <string name="outboxOnServer">الرسائل في هذا المجلد على الخادم: {n}</string>
 </resources>

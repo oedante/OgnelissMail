@@ -4448,4 +4448,5 @@
     <string name="googleAccessCalendar">kalendarz</string>
     <string name="googleAccessContacts">kontakty</string>
     <string name="googleAccessPhotos">zdjęcia rozmówców</string>
+    <string name="outboxOnServer">Wiadomości w tym folderze na serwerze: {n}</string>
 </resources>

@@ -4385,4 +4385,5 @@
     <string name="googleAccessCalendar">캘린더</string>
     <string name="googleAccessContacts">연락처</string>
     <string name="googleAccessPhotos">상대방 사진</string>
+    <string name="outboxOnServer">서버의 이 폴더에 있는 메시지: {n}</string>
 </resources>

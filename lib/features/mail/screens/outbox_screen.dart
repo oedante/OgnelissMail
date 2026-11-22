@@ -36,7 +36,9 @@ import '../../../l10n/app_localizations.dart';
 import '../../../services/mail/offline_send_service.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/ui/empty_state.dart';
-import '../providers/mail_providers.dart' show accountsProvider, emailsProvider;
+import '../../../data/models/folder_model.dart';
+import '../providers/mail_providers.dart'
+    show accountsProvider, emailsProvider, foldersProvider, selectedFolderIdProvider;
 
 /// Виды строк очереди, которые — письма к отправке.
 const outboxSendTypes = {'send_email', 'send_pending', 'send_inflight', 'send_failed'};
@@ -312,10 +314,16 @@ class _OutboxListState extends ConsumerState<OutboxList> {
     final service = ref.watch(offlineSendProvider);
     final now = DateTime.now();
     _ensureTicker(items.any((i) => i.waiting(now)));
+    // Своя папка «Исходящие» на сервере ящика (Exchange и часть IMAP,
+    // 22.11.2026): в меню она и есть эти «Исходящие»; письма, которые лежат
+    // в ней на сервере (их положила другая программа), — по строке внизу.
+    final server = (ref.watch(foldersProvider).value ?? const <FolderModel>[])
+        .where((f) => f.type == FolderType.outbox && f.totalCount > 0)
+        .firstOrNull;
     return ValueListenableBuilder<List<OutboxSending>>(
       valueListenable: service.sendingNow,
       builder: (context, direct, _) {
-        if (items.isEmpty && direct.isEmpty) {
+        if (items.isEmpty && direct.isEmpty && server == null) {
           return EmptyState(icon: AppIcons.outbox, title: l10n.tr('outboxEmpty'));
         }
         return SlidableAutoCloseBehavior(
@@ -324,12 +332,25 @@ class _OutboxListState extends ConsumerState<OutboxList> {
             children: [
               for (final d in direct) _directTile(l10n, d),
               for (final i in items) _tile(l10n, i, now),
+              if (server != null) _serverTile(l10n, server),
             ],
           ),
         );
       },
     );
   }
+
+  /// Письма в папке «Исходящие» на сервере — открыть её как обычную папку.
+  Widget _serverTile(AppLocalizations l10n, FolderModel f) => Padding(
+        padding: const EdgeInsets.only(top: Space.s),
+        child: ListTile(
+          key: const ValueKey('outbox_server_folder'),
+          leading: Icon(AppIcons.folder, color: AppColors.mutedText(context)),
+          title: Text(l10n.tr('outboxOnServer').replaceAll('{n}', '${f.totalCount}')),
+          trailing: const Icon(AppIcons.chevron_right),
+          onTap: () => ref.read(selectedFolderIdProvider.notifier).state = f.id,
+        ),
+      );
 
   Widget _directTile(AppLocalizations l10n, OutboxSending d) {
     final theme = Theme.of(context);

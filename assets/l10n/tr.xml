@@ -4406,4 +4406,5 @@
     <string name="googleAccessCalendar">takvim</string>
     <string name="googleAccessContacts">kişiler</string>
     <string name="googleAccessPhotos">kişilerin fotoğrafları</string>
+    <string name="outboxOnServer">Sunucudaki bu klasörde bulunan iletiler: {n}</string>
 </resources>

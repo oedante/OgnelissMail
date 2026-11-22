@@ -687,8 +687,42 @@ class MailDrawer extends ConsumerWidget {
         final unified = ref.watch(unifiedModeProvider);
         final selectedId = unified ? null : ref.watch(selectedFolderIdProvider);
 
+        // «Исходящие» (21.11.2026, как в Outlook): письма к отправке — с
+        // отсчётом, отложенные и не отправленные; отправленные пропадают.
+        // Открывается в ленте, как любая папка. Своя папка «Исходящие» на
+        // сервере ящика (Exchange и часть IMAP, снимок владельца 22.11.2026)
+        // — она и есть: на её месте, без второй строки.
+        Widget outboxTile(int indent) => _FolderTile(
+              icon: AppIcons.outbox,
+              label: l10n.tr('outbox'),
+              indent: indent,
+              count: ref.watch(outboxCountProvider),
+              countColor: ref.watch(outboxItemsProvider).value?.any((i) => i.failed) ?? false
+                  ? AppColors.errorRed
+                  : null,
+              isSelected: selectedId == kOutboxFolderId ||
+                  folders.any((x) => x.id == selectedId && x.type == FolderType.outbox),
+              onTap: () {
+                ref.read(allAccountsModeProvider.notifier).state = false;
+                ref.read(unifiedModeProvider.notifier).state = false;
+                ref.read(selectedFolderIdProvider.notifier).state = kOutboxFolderId;
+                ref.read(mailFilterProvider.notifier).state = MailFilter.none;
+                _close(context);
+              },
+            );
+        bool hasOutbox(Iterable<FolderModel> list) =>
+            list.any((f) => f.type == FolderType.outbox || hasOutbox(tree.children[f.id] ?? const <FolderModel>[]));
+        final serverOutbox = hasOutbox(tree.roots);
+
         Iterable<Widget> branch(FolderModel f, int depth) sync* {
           final kids = tree.children[f.id] ?? const <FolderModel>[];
+          if (f.type == FolderType.outbox) {
+            yield outboxTile(depth);
+            for (final c in kids) {
+              yield* branch(c, depth + 1);
+            }
+            return;
+          }
           final isCollapsed = collapsed.contains(CollapsedFoldersNotifier.key(f.accountId, f.id));
           final tile = _FolderTile(
             icon: folderIconOf(f),
@@ -727,25 +761,8 @@ class MailDrawer extends ConsumerWidget {
         // или порядок, расставленный пользователем.
         return [
           for (final f in tree.roots) ...branch(f, 0),
-          // «Исходящие» (21.11.2026, как в Outlook): письма к отправке — с
-          // отсчётом, отложенные и не отправленные; отправленные пропадают.
-          // Открывается в ленте, как любая папка (21.11.2026).
-          _FolderTile(
-            icon: AppIcons.outbox,
-            label: l10n.tr('outbox'),
-            count: ref.watch(outboxCountProvider),
-            countColor: ref.watch(outboxItemsProvider).value?.any((i) => i.failed) ?? false
-                ? AppColors.errorRed
-                : null,
-            isSelected: selectedId == kOutboxFolderId,
-            onTap: () {
-              ref.read(allAccountsModeProvider.notifier).state = false;
-              ref.read(unifiedModeProvider.notifier).state = false;
-              ref.read(selectedFolderIdProvider.notifier).state = kOutboxFolderId;
-              ref.read(mailFilterProvider.notifier).state = MailFilter.none;
-              _close(context);
-            },
-          ),
+          // Своей папки «Исходящие» у ящика нет — строкой в конце дерева.
+          if (!serverOutbox) outboxTile(0),
           // «Рассылки» этого ящика — как папка в конце дерева, со значком
           // «?»: это не папка на сервере, а подборка по заголовку отписки
           // (10.10.2026; раньше — пункт «Ещё», общий для всех ящиков).

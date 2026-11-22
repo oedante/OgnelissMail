@@ -803,8 +803,9 @@ class ImapService {
     // при сохранении списка папок (SpecialFolders, 1.7.2+106). Раньше архивом
     // считалась любая папка со словом «archive» или «архив» в имени — и
     // «Архив 2019» внутри проекта тоже, а «В архив» выбирала из них первую.
-    final lower = mb.name.toLowerCase();
-    if (lower.contains('outbox') || lower.contains('исходящие')) return FolderType.outbox;
+    // «Исходящие» — так же (2.6.8): раньше ею была любая папка со словом
+    // «outbox» или «исходящие» в имени и на любом уровне, и только на двух
+    // языках.
     return FolderType.custom;
   }
 

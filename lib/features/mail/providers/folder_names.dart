@@ -48,11 +48,22 @@ String localizedFolderLabel(String name, AppLocalizations l10n) {
   if (_draftNames.contains(leaf)) return l10n.tr('drafts');
   if (_trashNames.contains(leaf)) return l10n.tr('trash');
   if (_outboxNames.contains(leaf)) return l10n.tr('outbox');
-  switch (SpecialFolders.typeByName(n)) {
+  // Остальные языки (2.6.8, «папки на разных языках могут называться
+  // по-разному») — по таблице названий SpecialFolders.
+  final last = n.contains('/') ? n.substring(n.lastIndexOf('/') + 1) : n;
+  switch (SpecialFolders.typeByName(n) ?? SpecialFolders.typeByName(last)) {
     case FolderType.junk:
       return l10n.tr('junk');
     case FolderType.archive:
       return l10n.tr('archive');
+    case FolderType.drafts:
+      return l10n.tr('drafts');
+    case FolderType.sent:
+      return l10n.tr('sent');
+    case FolderType.trash:
+      return l10n.tr('trash');
+    case FolderType.outbox:
+      return l10n.tr('outbox');
     default:
       return n;
   }

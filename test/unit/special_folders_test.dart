@@ -140,4 +140,50 @@ void main() {
     expect(_typeOf(list, 'Proj/Drafts'), FolderType.custom);
     expect(_typeOf(list, 'Old'), FolderType.custom);
   });
+
+  // «Исходящие» на разных языках (2.6.8, замечание владельца 22.11.2026:
+  // «папки на разных языках могут называться по-разному»): у ящика своя
+  // папка — меню показывает в ней очередь отправки, без второй строки.
+  group('«Исходящие»', () {
+    test('названия на разных языках', () {
+      for (final n in ['Outbox', 'Исходящие', 'Postausgang', "Boîte d'envoi", 'Boite denvoi', 'Bandeja de salida',
+          'Posta in uscita', 'Caixa de Saída', 'Postvak UIT', 'Skrzynka nadawcza', 'Pošta k odeslání', 'Utkorgen',
+          'Udbakke', 'Lähtevät', 'Giden Kutusu', 'Εξερχόμενα', '送信トレイ', '发件箱', '보낼 편지함', 'Вихідні']) {
+        expect(SpecialFolders.typeByName(n), FolderType.outbox, reason: n);
+      }
+      for (final n in ['Outbox 2019', 'Исходящие клиентам', 'Отправленные']) {
+        expect(SpecialFolders.typeByName(n), isNot(FolderType.outbox), reason: n);
+      }
+    });
+
+    test('IMAP: папка верхнего уровня — «Исходящие», не во «Всей почте»; вложенная — нет', () {
+      final out = SpecialFolders.apply([
+        _f('INBOX', 'INBOX', type: FolderType.inbox),
+        _f('Postausgang', 'Postausgang'),
+        _f('Projekte', 'Projekte'),
+        _f('Projekte/Postausgang', 'Postausgang', parent: 'Projekte'),
+      ]);
+      expect(_typeOf(out, 'Postausgang'), FolderType.outbox);
+      expect(out.firstWhere((f) => f.id == 'Postausgang').showInUnified, isFalse);
+      expect(_typeOf(out, 'Projekte/Postausgang'), FolderType.custom);
+    });
+
+    test('Exchange указал «Исходящие» сам — папка с таким же названием остаётся обычной', () {
+      final out = SpecialFolders.apply([
+        _f('AAMkOutbox', 'Исходящие', type: FolderType.outbox, unified: false),
+        _f('AAMkOld', 'Outbox'),
+      ]);
+      expect(_typeOf(out, 'AAMkOutbox'), FolderType.outbox);
+      expect(_typeOf(out, 'AAMkOld'), FolderType.custom);
+    });
+
+    test('больше языков у черновиков, отправленных, корзины', () {
+      expect(SpecialFolders.typeByName('Wersje robocze'), FolderType.drafts);
+      expect(SpecialFolders.typeByName('下書き'), FolderType.drafts);
+      expect(SpecialFolders.typeByName('Elementos enviados'), FolderType.sent);
+      expect(SpecialFolders.typeByName('보낸 편지함'), FolderType.sent);
+      expect(SpecialFolders.typeByName('Gelöschte Objekte'), FolderType.trash);
+      expect(SpecialFolders.typeByName('Papperskorgen'), FolderType.trash);
+    });
+  });
 }

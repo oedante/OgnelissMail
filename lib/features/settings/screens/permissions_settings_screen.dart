@@ -32,6 +32,7 @@ import '../../../core/platform/platform_diagnostics.dart';
 import '../../../services/push/push_wake_service.dart' show PushWakeService, pushWakeServiceProvider;
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../services/background/foreground_sync_controller.dart';
+import '../../../services/device/phone_mirror_service.dart' show phoneMirrorProvider;
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/security/device_security_service.dart';
@@ -191,7 +192,8 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
   Future<void> _allowAll() async {
     setState(() => _busy = true);
     try {
-      await AppPermissions.requestAllDialogs(context, only: widget.setup ? AppPermissions.setup : null);
+      await AppPermissions.requestAllDialogs(context,
+          only: widget.setup ? AppPermissions.setupFor(ref.read(phoneMirrorProvider)) : null);
       await _reload();
       // Особый доступ — системный экран; после возврата список обновится.
       if (!mounted) return;
@@ -221,7 +223,8 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
         .where((i) => _states[i.id] != AppPermissionState.notApplicable)
         // Первая настройка — только нужное для уведомлений и ещё не выданное.
         .where((i) => !widget.setup ||
-            (AppPermissions.setup.contains(i.id) && _states[i.id] != AppPermissionState.granted))
+            (AppPermissions.setupFor(ref.read(phoneMirrorProvider)).contains(i.id) &&
+                _states[i.id] != AppPermissionState.granted))
         .toList();
     final adminIdle = _adminIdleSeconds();
     final anyMissing = visible.any((i) => _states[i.id] != AppPermissionState.granted);
@@ -302,32 +305,20 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
   List<Widget> _backgroundGroup(BuildContext context, AppLocalizations l10n) {
     if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) return const [];
     final settings = ref.watch(settingsProvider);
+    final keepAlive = Platform.isAndroid &&
+        keepAliveNeeded(
+            keepAliveSetting: settings.backgroundKeepAlive,
+            globalInterval: settings.syncIntervalMinutes,
+            accounts: ref.watch(accountsProvider));
     return [
-      SettingsSectionTitle(l10n.tr('runInBackground')),
-      SettingsGroup(children: [
-        if (Platform.isAndroid)
-          SettingsSwitchItem(
-            icon: AppIcons.cloud_sync,
-            title: l10n.tr('runInBackground'),
-            hint: '${l10n.tr('runInBackgroundShort')}.\n\n${l10n.tr('runInBackgroundDesc')}',
-            value: settings.backgroundKeepAlive,
-            onChanged: (v) async {
-              await ref.read(settingsProvider.notifier).setBackgroundKeepAlive(v);
-              final ctl = ref.read(foregroundSyncControllerProvider);
-              // Включили — сразу, а не при следующем сворачивании.
-              if (keepAliveNeeded(
-                  keepAliveSetting: v,
-                  globalInterval: ref.read(settingsProvider).syncIntervalMinutes,
-                  accounts: ref.read(accountsProvider))) {
-                await ctl.start();
-              } else {
-                await ctl.stop();
-              }
-            },
-          ),
+      // «Работать в фоне» включается само, когда у ящика «Мгновенно» или «По
+      // расписанию» (2.7.0; переключатель — «Расширенные настройки →
+      // Проверка почты в фоне»). Здесь — как убрать строку из шторки.
+      if (Platform.isIOS || keepAlive) SettingsSectionTitle(l10n.tr('runInBackground')),
+      if (Platform.isIOS || keepAlive) SettingsGroup(children: [
         // Строка в шторке: без сервиса push в свёрнутом приложении не
         // работает, но само уведомление можно выключить в настройках канала.
-        if (Platform.isAndroid && settings.backgroundKeepAlive)
+        if (Platform.isAndroid && keepAlive)
           SettingsItem(
             icon: AppIcons.notifications_off,
             title: l10n.tr('bgNotifHide'),
@@ -367,7 +358,7 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
     // или знать, что почта проверяется по расписанию.
     final signalStep = Platform.isAndroid
         ? DeviceReadiness.steps(_diag, ios: false, signal: _signal)
-            .where((s) => s == ReadyStep.chooseSignals || s == ReadyStep.periodicOnly)
+            .where((s) => s == ReadyStep.periodicOnly)
             .firstOrNull
         : null;
     if (issues.isEmpty && !frozen && signalStep == null) return const [];
@@ -430,12 +421,11 @@ class _PermissionsSettingsScreenState extends ConsumerState<PermissionsSettingsS
             BgIssue.iosLowPower => row(AppIcons.battery_saver, l10n.tr('bgPowerSaveTitle'), l10n.tr('bgIosLowPowerBody')),
             _ => const SizedBox.shrink(),
           }),
-        if (signalStep == ReadyStep.chooseSignals)
-          row(AppIcons.cloud_sync, l10n.tr('setupSignalsChooseTitle'), l10n.tr('setupSignalsChooseBody'),
-              onTap: () => context.push('/settings/notifications'), warn: true),
+        // Приложение UnifiedPush выбирается само (2.7.0); без Google и без
+        // него — совет поставить, ручной выбор — «Проверка почты в фоне».
         if (signalStep == ReadyStep.periodicOnly)
           row(AppIcons.cloud_sync, l10n.tr('setupSignalsPeriodicTitle'), l10n.tr('pushWakeStatusPeriodic'),
-              onTap: () => context.push('/settings/notifications')),
+              onTap: () => context.push('/settings/background-delivery')),
       ]),
     ];
   }

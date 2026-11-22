@@ -38,9 +38,9 @@
     <string name="permCamera">Aparat</string>
     <string name="permCameraWhy">Zrobienie zdjęcia dokumentu do załączenia.</string>
     <string name="permContacts">Kontakty urządzenia</string>
-    <string name="permContactsWhy">Import kontaktów z urządzenia i eksport kontaktów firmowych do książki adresowej urządzenia (na Twoje polecenie w ustawieniach kontaktów).</string>
+    <string name="permContactsWhy">Kontakty Twoich skrzynek pojawiają się w Kontaktach telefonu jako osobna grupa: gdy dzwoni współpracownik, widać jego imię i stanowisko. Zmiany wprowadza się w aplikacji. Pozwala też zaimportować kontakty z telefonu do aplikacji. Kontakty Google (i iCloud na iPhonie) telefon synchronizuje sam — nie są duplikowane.</string>
     <string name="permCalendar">Kalendarz urządzenia</string>
-    <string name="permCalendarWhy">Eksport spotkań z poczty do kalendarza urządzenia (na Twoje polecenie w ustawieniach kalendarza).</string>
+    <string name="permCalendarWhy">Spotkania z Twoich skrzynek pojawiają się w kalendarzu telefonu, jego widżetach i na zegarku — jako osobny kalendarz tylko do odczytu; zmiany wprowadza się w aplikacji. Kalendarze Google (i iCloud na iPhonie) telefon synchronizuje sam — ich spotkania nie są duplikowane.</string>
     <string name="permExactAlarms">Dokładne przypomnienia</string>
     <string name="permExactAlarmsWhy">Przypomnienia o spotkaniach i o wiadomościach odłożonych na później przychodzą punktualnie. Bez tego Android może je opóźnić o kilka minut.</string>
     <string name="permBattery">Praca w tle bez ograniczeń</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Co {n} min</string>
     <string name="checkHourly">Co godzinę</string>
     <string name="checkManual">Tylko ręcznie</string>
-    <string name="checkMailHint">Natychmiast: serwer od razu zgłasza nową pocztę (w tle — z opcją Działaj w tle). Według harmonogramu: natychmiast w godzinach pracy, poza nimi w odstępach czasu (Ustawienia → Synchronizacja → Harmonogram dostarczania). Co 15/30/60 minut: zaplanowane sprawdzanie, najbardziej oszczędne. Ręcznie: po otwarciu aplikacji i pociągnięciu w dół, aby odświeżyć.</string>
+    <string name="checkMailHint">Natychmiast: serwer od razu zgłasza nową pocztę. Według harmonogramu: natychmiast w godzinach pracy, poza nimi w odstępach czasu (Ustawienia → Synchronizacja → Harmonogram dostarczania). Co 15/30/60 minut: zaplanowane sprawdzanie, najbardziej oszczędne. Ręcznie: po otwarciu aplikacji i pociągnięciu w dół, aby odświeżyć.</string>
     <string name="wifiOnlyAcc">Tylko Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automatyczne sprawdzanie tylko po połączeniu z Wi‑Fi</string>
     <string name="accSectionConnection">Połączenie</string>
@@ -2542,7 +2542,7 @@
     <string name="scheduleOffHours">W pozostałym czasie</string>
     <string name="scheduleAccounts">Konta według harmonogramu</string>
     <string name="scheduleNoAccounts">Na razie żadnego: wybierz „Według harmonogramu” w „Sprawdzaniu poczty” konta</string>
-    <string name="scheduleHelp">Natychmiastowe dostarczanie (push) utrzymuje połączenie z serwerem i budzi urządzenie co kilka minut. W nocy i w weekendy marnuje to baterię.\n\nPrzy „Według harmonogramu” poczta przychodzi natychmiast w godzinach i dniach pracy, a w pozostałym czasie aplikacja sprawdza ją co 15, 30 lub 60 minut.\n\nHarmonogram jest wspólny dla wszystkich kont ustawionych na „Według harmonogramu” (Ustawienia → konto → Sprawdzanie poczty). Inne tryby — Natychmiast, Co 15 minut itd. — działają jak dotąd.\n\nNa Androidzie natychmiastowe dostarczanie w tle wymaga opcji „Działaj w tle”. Na początku dnia pracy push włącza się w ciągu około 10 minut.</string>
+    <string name="scheduleHelp">Natychmiastowe dostarczanie (push) utrzymuje połączenie z serwerem i budzi urządzenie co kilka minut. W nocy i w weekendy marnuje to baterię.\n\nPrzy „Według harmonogramu” poczta przychodzi natychmiast w godzinach i dniach pracy, a w pozostałym czasie aplikacja sprawdza ją co 15, 30 lub 60 minut.\n\nHarmonogram jest wspólny dla wszystkich kont ustawionych na „Według harmonogramu” (Ustawienia → konto → Sprawdzanie poczty). Inne tryby — Natychmiast, Co 15 minut itd. — działają jak dotąd.</string>
     <string name="expScheduleDesc">Natychmiast w godzinach pracy, w pozostałym czasie co jakiś interwał</string>
     <string name="expScheduleHint">Tryb „Według harmonogramu” w Sprawdzaniu poczty konta. W godzinach i dniach pracy (domyślnie 7:00–19:00, pon–pt) poczta przychodzi natychmiast; poza nimi jest sprawdzana co 15, 30 lub 60 minut. Włączane dla każdego konta: Ustawienia → konto → Sprawdzanie poczty.</string>
     <string name="ruleAlwaysNoMove">„Zawsze powiadamiaj” i „Przenieś do folderu” nie działają razem: po przeniesieniu powiadomienie nie może otworzyć wiadomości. Wybierz jedno.</string>
@@ -3114,6 +3114,8 @@
     <string name="pushWakeTitleAndroid">Sprawdzanie poczty w tle</string>
     <string name="pushWakeHelpAndroid">Android sam decyduje, kiedy aplikacja w tle może działać: w głębokim uśpieniu odkłada sprawdzanie w tle, a od Androida 15 synchronizacja w tle dostaje najwyżej 6 godzin na dobę. Serwer dewelopera (ogneliss.ru/push) w wybranym odstępie wysyła przez Google (Firebase Cloud Messaging) pusty sygnał „sprawdź pocztę”, a aplikacja sama sprawdza skrzynki z tego urządzenia. Na serwer trafia tylko token powiadomień tej instalacji — bez adresów, haseł i wiadomości. W głębokim uśpieniu Android może dostarczyć sygnał później, w najbliższym oknie konserwacji. Bez usług Google — przez aplikację UnifiedPush (na przykład ntfy). Szczegóły w Polityce prywatności, sekcja 6.2.</string>
     <string name="pushWakeVia">Jak przychodzą sygnały</string>
+    <string name="bgDeliveryAuto">Wszystko tutaj ustawia się samo. Aplikację w tle budzi sygnał przez usługi Google, jeśli telefon je ma, w przeciwnym razie przez aplikację UnifiedPush (np. ntfy); bez nich poczta jest sprawdzana według harmonogramu. „{bg}” włącza się samo dla skrzynek z ustawieniem „{instant}” lub „{scheduled}”. Zmieniaj coś tutaj tylko wtedy, gdy powiadomienia o nowej poczcie przychodzą z opóźnieniem.</string>
+    <string name="bgDeliveryAutoShort">Wybierane samo: Google, UnifiedPush lub według harmonogramu</string>
     <string name="pushWakeViaHelp">Przez Google (Firebase Cloud Messaging) na telefonach z usługami Google Play. Bez nich — przez aplikację-dystrybutora UnifiedPush (na przykład ntfy): utrzymuje własne połączenie i przekazuje sygnał „sprawdź pocztę”. Sygnał jest szyfrowany kluczem tej instalacji i nie zawiera adresów ani wiadomości. Szczegóły w Polityce prywatności, sekcja 6.2.</string>
     <string name="pushWakeViaGoogle">Przez Google</string>
     <string name="pushWakeViaGoogleDesc">Wymaga usług Google Play</string>
@@ -3332,7 +3334,7 @@
     <string name="faq_tasks_3_a">Przytrzymaj notatkę: edytuj, wyślij e-mailem, udostępnij, skopiuj lub usuń.</string>
     <string name="faq_notify_title">Powiadomienia i tło</string>
     <string name="faq_notify_1_q">Dlaczego powiadomienia na iPhonie przychodzą z opóźnieniem?</string>
-    <string name="faq_notify_1_a">Gdy aplikacja jest otwarta, poczta przychodzi natychmiast. Gdy działa w tle, iOS sam decyduje, kiedy ją wybudzić: częściej, jeśli korzystasz z aplikacji codziennie, rzadziej w trybie niskiego zużycia energii lub przy słabej baterii. Aby wybudzała się częściej, pozostaw włączone Sprawdzanie poczty w tle (iPhone) w Ustawienia → Powiadomienia: serwer dewelopera wysyła przez Apple pusty sygnał „sprawdź pocztę” w wybranym przez Ciebie odstępie, a aplikacja sama sprawdza Twoje skrzynki z tego urządzenia; na serwer trafia tylko token powiadomień. Nie zamykaj aplikacji przez przesunięcie jej w przełączniku aplikacji: potem iOS nie wybudza jej ani sam, ani sygnałem, dopóki jej nie otworzysz ponownie. Upewnij się, że Odświeżanie aplikacji w tle jest włączone dla Ogneliss Mail w Ustawieniach iOS.</string>
+    <string name="faq_notify_1_a">Gdy aplikacja jest otwarta, poczta przychodzi natychmiast. Gdy działa w tle, iOS sam decyduje, kiedy ją wybudzić: częściej, jeśli korzystasz z aplikacji codziennie, rzadziej w trybie niskiego zużycia energii lub przy słabej baterii. Aby wybudzała się częściej, pozostaw włączone Sprawdzanie poczty w tle (iPhone) w Ustawienia → Ustawienia zaawansowane: serwer dewelopera wysyła przez Apple pusty sygnał „sprawdź pocztę” w wybranym przez Ciebie odstępie, a aplikacja sama sprawdza Twoje skrzynki z tego urządzenia; na serwer trafia tylko token powiadomień. Nie zamykaj aplikacji przez przesunięcie jej w przełączniku aplikacji: potem iOS nie wybudza jej ani sam, ani sygnałem, dopóki jej nie otworzysz ponownie. Upewnij się, że Odświeżanie aplikacji w tle jest włączone dla Ogneliss Mail w Ustawieniach iOS.</string>
     <string name="faq_notify_2_q">Jak wyłączyć powiadomienia dla jednego folderu?</string>
     <string name="faq_notify_2_a">Ustawienia → konto → Synchronizacja folderów: dzwonek obok przełącznika folderu włącza lub wyłącza powiadomienia o jego nowych wiadomościach (razem z podfolderami), a folder nadal się synchronizuje. Menu ⋮ zawiera Powiadomienia: wszystkie foldery i Powiadomienia: brak folderów. Nigdy nie ma powiadomień dla folderów Wysłane, Wersje robocze, Elementy usunięte ani Wiadomości-śmieci.</string>
     <string name="faq_notify_3_q">Dlaczego powiadomienia na Androidzie przychodzą z opóźnieniem?</string>
@@ -3835,7 +3837,7 @@
     <string name="apPreviewBubbleIn">Zatwierdzimy kosztorys do piątku?</string>
     <string name="apPreviewBubbleOut">Tak, wyślę dzisiaj.</string>
     <string name="notifyMessengerStyle">Powiadomienia jak w komunikatorze</string>
-    <string name="notifyMessengerStyleDesc">Zdjęcie lub inicjał nadawcy obok wiadomości</string>
+    <string name="notifyMessengerStyleDesc">Poczta od ludzi i współpracowników ze zdjęciem nadawcy, jak wiadomość; newslettery jako zwykłe powiadomienie</string>
     <string name="notifyVipConversations">Rozmowy dla VIP</string>
     <string name="notifyVipConversationsDesc">Poczta od VIP trafia do sekcji Rozmowy w Androidzie, gdzie można oznaczyć ją jako priorytetową</string>
     <string name="notifyAllConversations">Rozmowy dla całej poczty</string>
@@ -4401,7 +4403,7 @@
     <string name="faq_settings_4_q">Jak sprawdzić, do czego służy ustawienie?</string>
     <string name="faq_settings_4_a">Przytrzymaj pozycję ustawień (na komputerze kliknij ją prawym przyciskiem myszy): otworzy się wyjaśnienie, na co wpływa, oraz odpowiedzi na jej temat z „Pytań i odpowiedzi”. Ikona „?” obok nazwy otwiera to samo.</string>
     <string name="notifyPeopleConversations">Rozmowy dla poczty od ludzi</string>
-    <string name="notifyPeopleConversationsDesc">Zdjęcie nadawcy z ikoną aplikacji w poczcie od współpracowników i kontaktów, w której jesteś wśród odbiorców (do 50); newslettery jak zwykle</string>
+    <string name="notifyPeopleConversationsDesc">Portret nadawcy z ikoną aplikacji przy poczcie od współpracowników, kontaktów, osób, z którymi korespondowałeś, i ze skrzynek prywatnych (Gmail, Outlook…), gdzie jesteś wśród adresatów (do 50); newslettery jako zwykłe powiadomienie</string>
     <string name="offlineErrGateway">Brama organizacji zablokowała wiadomość z tej sieci (np. przez VPN) — zostanie wysłana automatycznie po zmianie sieci</string>
     <string name="tagsInsert">Wstaw pole:</string>
     <string name="tagGroupRecipient">Adresat</string>

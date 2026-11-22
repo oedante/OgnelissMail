@@ -38,9 +38,9 @@
     <string name="permCamera">Kamera</string>
     <string name="permCameraWhy">Memotret dokumen untuk dilampirkan.</string>
     <string name="permContacts">Kontak perangkat</string>
-    <string name="permContactsWhy">Mengimpor kontak perangkat dan mengekspor kontak perusahaan ke buku kontak perangkat (atas perintah Anda, di pengaturan kontak).</string>
+    <string name="permContactsWhy">Kontak dari kotak surat Anda muncul di Kontak ponsel sebagai grup terpisah: saat rekan kerja menelepon, nama dan jabatannya terlihat. Perubahan dilakukan di aplikasi. Izin ini juga dipakai untuk mengimpor kontak ponsel ke aplikasi. Kontak Google (dan iCloud di iPhone) disinkronkan oleh ponsel sendiri, jadi tidak diduplikasi.</string>
     <string name="permCalendar">Kalender perangkat</string>
-    <string name="permCalendarWhy">Mengekspor rapat dari email ke kalender perangkat (atas perintah Anda, di pengaturan kalender).</string>
+    <string name="permCalendarWhy">Rapat dari kotak surat Anda muncul di kalender ponsel, widget-nya, dan jam tangan sebagai kalender terpisah yang hanya bisa dibaca; perubahan dilakukan di aplikasi. Kalender Google (dan iCloud di iPhone) disinkronkan oleh ponsel sendiri, jadi rapatnya tidak diduplikasi.</string>
     <string name="permExactAlarms">Pengingat tepat waktu</string>
     <string name="permExactAlarmsWhy">Pengingat rapat dan “Nanti” tiba tepat waktu. Tanpa izin ini Android dapat menundanya beberapa menit.</string>
     <string name="permBattery">Latar belakang tanpa batasan</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Setiap {n} menit</string>
     <string name="checkHourly">Setiap jam</string>
     <string name="checkManual">Hanya manual</string>
-    <string name="checkMailHint">Instan — server langsung memberi tahu ada email baru (di latar belakang — dengan “Jalankan di latar belakang”). Sesuai jadwal — instan pada jam kerja, selain itu menurut interval (Pengaturan → Sinkronisasi → Jadwal pengiriman). Setiap 15/30/60 menit — pemeriksaan terjadwal, paling hemat. Manual — saat Anda membuka aplikasi dan menarik layar untuk menyegarkan.</string>
+    <string name="checkMailHint">Instan — server langsung memberi tahu ada email baru. Sesuai jadwal — instan pada jam kerja, selain itu menurut interval (Pengaturan → Sinkronisasi → Jadwal pengiriman). Setiap 15/30/60 menit — pemeriksaan terjadwal, paling hemat. Manual — saat Anda membuka aplikasi dan menarik layar untuk menyegarkan.</string>
     <string name="wifiOnlyAcc">Hanya Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Pemeriksaan otomatis hanya saat terhubung ke Wi‑Fi</string>
     <string name="accSectionConnection">Koneksi</string>
@@ -2506,7 +2506,7 @@
     <string name="scheduleOffHours">Waktu lainnya</string>
     <string name="scheduleAccounts">Akun dengan jadwal</string>
     <string name="scheduleNoAccounts">Belum ada: pilih Sesuai jadwal di Periksa email pada akun</string>
-    <string name="scheduleHelp">Pengiriman instan (push) menjaga koneksi ke server dan membangunkan perangkat setiap beberapa menit. Di malam hari dan akhir pekan ini memboroskan baterai.\n\nDengan Sesuai jadwal, email masuk seketika pada jam dan hari kerja, dan di waktu lainnya aplikasi memeriksa setiap 15, 30, atau 60 menit.\n\nJadwal ini berlaku untuk semua akun yang diatur ke Sesuai jadwal (Pengaturan → akun → Periksa email). Mode lain — Instan, Setiap 15 menit, dan seterusnya — berfungsi seperti sebelumnya.\n\nDi Android, pengiriman instan di latar belakang memerlukan Jalankan di latar belakang. Di awal hari kerja, push aktif dalam ~10 menit.</string>
+    <string name="scheduleHelp">Pengiriman instan (push) menjaga koneksi ke server dan membangunkan perangkat setiap beberapa menit. Di malam hari dan akhir pekan ini memboroskan baterai.\n\nDengan Sesuai jadwal, email masuk seketika pada jam dan hari kerja, dan di waktu lainnya aplikasi memeriksa setiap 15, 30, atau 60 menit.\n\nJadwal ini berlaku untuk semua akun yang diatur ke Sesuai jadwal (Pengaturan → akun → Periksa email). Mode lain — Instan, Setiap 15 menit, dan seterusnya — berfungsi seperti sebelumnya.</string>
     <string name="expScheduleDesc">Instan pada jam kerja, pada waktu lain sesuai interval</string>
     <string name="expScheduleHint">Mode Periksa email akun “Sesuai jadwal”. Pada jam dan hari kerja (secara default 07.00–19.00, Senin–Jumat) email masuk seketika; selain itu diperiksa setiap 15, 30, atau 60 menit. Diaktifkan per akun: Pengaturan → akun → Periksa email.</string>
     <string name="ruleAlwaysNoMove">“Selalu beri notifikasi” dan “Pindahkan ke folder” tidak dapat digunakan bersamaan: setelah dipindahkan, notifikasi tidak dapat membuka email. Pilih salah satu.</string>
@@ -3075,6 +3075,8 @@
     <string name="pushWakeTitleAndroid">Pemeriksaan email di latar belakang</string>
     <string name="pushWakeHelpAndroid">Android memutuskan sendiri kapan aplikasi di latar belakang boleh berjalan: saat tidur lelap, Android menunda pemeriksaan latar belakang, dan sejak Android 15 sinkronisasi latar belakang mendapat paling banyak 6 jam per hari. Server pengembang (ogneliss.ru/push) mengirim sinyal kosong «periksa email» melalui Google (Firebase Cloud Messaging) pada interval yang dipilih, dan aplikasi memeriksa kotak surat Anda sendiri dari perangkat ini. Hanya token notifikasi instalasi ini yang dikirim ke server — tanpa alamat, kata sandi, atau pesan. Saat tidur lelap, Android dapat mengirim sinyal lebih lambat, pada jendela pemeliharaan berikutnya. Tanpa layanan Google — melalui aplikasi UnifiedPush (misalnya ntfy). Detail ada di Kebijakan Privasi, bagian 6.2.</string>
     <string name="pushWakeVia">Cara sinyal diterima</string>
+    <string name="bgDeliveryAuto">Semua di sini diatur otomatis. Aplikasi di latar belakang dibangunkan oleh sinyal melalui layanan Google jika ponsel memilikinya, jika tidak melalui aplikasi UnifiedPush (misalnya ntfy); tanpa keduanya, email diperiksa sesuai jadwal. “{bg}” aktif sendiri untuk kotak surat dengan “{instant}” atau “{scheduled}”. Ubah sesuatu di sini hanya jika notifikasi email baru datang terlambat.</string>
+    <string name="bgDeliveryAutoShort">Dipilih otomatis: Google, UnifiedPush, atau sesuai jadwal</string>
     <string name="pushWakeViaHelp">Melalui Google (Firebase Cloud Messaging) di ponsel dengan layanan Google Play. Tanpa layanan itu, melalui aplikasi distributor UnifiedPush (misalnya ntfy): aplikasi tersebut menjaga koneksinya sendiri dan meneruskan sinyal “periksa email”. Sinyal dienkripsi dengan kunci instalasi ini dan tidak berisi alamat atau pesan. Detail ada di Kebijakan Privasi, bagian 6.2.</string>
     <string name="pushWakeViaGoogle">Melalui Google</string>
     <string name="pushWakeViaGoogleDesc">Memerlukan layanan Google Play</string>
@@ -3293,7 +3295,7 @@
     <string name="faq_tasks_3_a">Tekan lama catatan: edit, kirim lewat email, bagikan, salin, atau hapus.</string>
     <string name="faq_notify_title">Notifikasi dan latar belakang</string>
     <string name="faq_notify_1_q">Mengapa notifikasi terlambat di iPhone?</string>
-    <string name="faq_notify_1_a">Saat aplikasi terbuka, email masuk seketika. Saat berada di latar belakang, iOS menentukan sendiri kapan membangunkannya: lebih sering jika Anda memakai aplikasi setiap hari, lebih jarang dalam Mode Daya Rendah atau saat baterai hampir habis. Agar aplikasi lebih sering bangun, biarkan Pemeriksaan email di latar belakang (iPhone) tetap aktif di Pengaturan → Notifikasi: server pengembang mengirim sinyal kosong “periksa email” melalui Apple pada interval yang Anda pilih, dan aplikasi memeriksa kotak surat Anda sendiri, dari perangkat ini; hanya token notifikasi yang dikirim ke server. Jangan menutup aplikasi dengan menggesernya di pengalih aplikasi: setelah itu iOS tidak membangunkannya, baik sendiri maupun lewat sinyal, sampai Anda membuka aplikasi lagi. Pastikan Penyegaran App di Latar Belakang aktif untuk Ogneliss Mail di Pengaturan iOS.</string>
+    <string name="faq_notify_1_a">Saat aplikasi terbuka, email masuk seketika. Saat berada di latar belakang, iOS menentukan sendiri kapan membangunkannya: lebih sering jika Anda memakai aplikasi setiap hari, lebih jarang dalam Mode Daya Rendah atau saat baterai hampir habis. Agar aplikasi lebih sering bangun, biarkan Pemeriksaan email di latar belakang (iPhone) tetap aktif di Pengaturan → Pengaturan lanjutan: server pengembang mengirim sinyal kosong “periksa email” melalui Apple pada interval yang Anda pilih, dan aplikasi memeriksa kotak surat Anda sendiri, dari perangkat ini; hanya token notifikasi yang dikirim ke server. Jangan menutup aplikasi dengan menggesernya di pengalih aplikasi: setelah itu iOS tidak membangunkannya, baik sendiri maupun lewat sinyal, sampai Anda membuka aplikasi lagi. Pastikan Penyegaran App di Latar Belakang aktif untuk Ogneliss Mail di Pengaturan iOS.</string>
     <string name="faq_notify_2_q">Bagaimana cara mematikan notifikasi untuk satu folder?</string>
     <string name="faq_notify_2_a">Pengaturan → akun → Sinkronisasi folder: lonceng di samping sakelar folder mengaktifkan atau menonaktifkan notifikasi email barunya (beserta subfolder), dan folder tetap disinkronkan. Menu ⋮ berisi Notifikasi: semua folder dan Notifikasi: tanpa folder. Tidak pernah ada notifikasi untuk Terkirim, Draf, Item yang dihapus, atau Email sampah.</string>
     <string name="faq_notify_3_q">Mengapa notifikasi tertunda di Android?</string>
@@ -3778,7 +3780,7 @@
     <string name="apPreviewBubbleIn">Bisa kita setujui anggarannya sebelum Jumat?</string>
     <string name="apPreviewBubbleOut">Ya, saya kirim hari ini.</string>
     <string name="notifyMessengerStyle">Notifikasi seperti aplikasi pesan</string>
-    <string name="notifyMessengerStyleDesc">Foto atau inisial pengirim di samping pesan</string>
+    <string name="notifyMessengerStyleDesc">Email dari orang dan rekan kerja tampil dengan foto pengirim, seperti pesan; buletin sebagai notifikasi biasa</string>
     <string name="notifyVipConversations">Percakapan untuk VIP</string>
     <string name="notifyVipConversationsDesc">Email dari VIP muncul di bagian Percakapan Android, tempat Anda dapat menjadikannya prioritas</string>
     <string name="notifyAllConversations">Percakapan untuk semua email</string>
@@ -4338,7 +4340,7 @@
     <string name="faq_settings_4_q">Bagaimana cara mengetahui fungsi suatu pengaturan?</string>
     <string name="faq_settings_4_a">Tekan lama item pengaturan (di komputer, klik kanan): penjelasan tentang apa yang dipengaruhinya akan terbuka, beserta jawaban tentangnya dari “Tanya jawab”. Ikon “?” di samping nama membuka hal yang sama.</string>
     <string name="notifyPeopleConversations">Percakapan untuk email dari orang</string>
-    <string name="notifyPeopleConversationsDesc">Foto pengirim dengan ikon aplikasi di atasnya untuk email dari rekan kerja dan kontak yang mencantumkan Anda sebagai penerima (hingga 50); buletin tampil seperti biasa</string>
+    <string name="notifyPeopleConversationsDesc">Potret pengirim dengan ikon aplikasi di atasnya untuk email dari rekan kerja, kontak, orang yang pernah Anda surati, dan kotak pribadi (Gmail, Outlook…) yang mencantumkan Anda sebagai penerima (hingga 50); buletin sebagai notifikasi biasa</string>
     <string name="offlineErrGateway">Gateway organisasi Anda memblokir pesan dari jaringan ini (misalnya VPN) — pesan akan terkirim otomatis saat jaringan berganti</string>
     <string name="tagsInsert">Sisipkan kolom:</string>
     <string name="tagGroupRecipient">Penerima</string>

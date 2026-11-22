@@ -9,14 +9,12 @@ import '../../../widgets/ui/action_sheet.dart';
 import '../../../services/sync/sync_schedule.dart';
 import '../../../services/notifications/account_notify_mode.dart';
 import 'delivery_schedule_screen.dart' show scheduleDaysLabel;
-import '../../../services/device/phone_mirror_service.dart';
 import '../../../core/constants/app_constants.dart' show kRulesAndCategoriesEnabled;
 import '../../../core/utils/text_safe.dart';
 import 'dart:async';
 import '../../../services/mail/oauth/cross_platform_oauth.dart' show crossPlatformOAuthProvider;
 import '../../auth/providers/auth_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
-import '../../../core/permissions/app_permissions.dart';
 import '../../../core/theme/app_icons.dart';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -38,7 +36,6 @@ import '../../../widgets/common/sync_progress_indicator.dart' show syncStatusPro
 import '../../../services/background/foreground_sync_controller.dart';
 import '../../../widgets/common/eas_compat_switch.dart';
 import '../../../core/theme/tokens.dart';
-import '../../../core/theme/app_theme.dart' show AppColors;
 import '../../../core/utils/app_date_format.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -496,8 +493,9 @@ class AccountScreen extends ConsumerWidget {
               ),
           ]),
 
-          // ── В телефоне: контакты и календарь ящика ──
-          _PhoneMirrorSection(account: account),
+          // Контакты и календарь ящика в телефоне — по умолчанию, без
+          // переключателей здесь (2.7.0, замечание владельца 22.11.2026);
+          // общий выключатель — «Настройки → Контакты» и «→ Календарь».
 
           // ── Безопасность ──
           SettingsSectionTitle(l10n.tr('accSectionSecurity')),
@@ -1446,84 +1444,3 @@ void _pickComposeStyle(BuildContext context, WidgetRef ref, String accountId) {
     }),
   );
 }
-
-/// «В телефоне»: контакты и календарь ящика в «Контактах» и «Календаре»
-/// телефона (определитель номера, системный календарь и его виджеты).
-class _PhoneMirrorSection extends ConsumerStatefulWidget {
-  final AccountModel account;
-  const _PhoneMirrorSection({required this.account});
-
-  @override
-  ConsumerState<_PhoneMirrorSection> createState() => _PhoneMirrorSectionState();
-}
-
-class _PhoneMirrorSectionState extends ConsumerState<_PhoneMirrorSection> {
-  bool _busy = false;
-  String? _error;
-
-  Future<void> _toggle(bool contacts, bool on) async {
-    final l10n = AppLocalizations.of(context);
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    // Разрешение — через общий порядок (1.12.x, аудит устройств): запрещено
-    // навсегда — предложить настройки телефона, а не молча «Не удалось».
-    // Пояснение — уже в подсказке переключателя.
-    if (on && !await AppPermissions.ensure(context, contacts ? AppPermission.contacts : AppPermission.calendar,
-        explain: false)) {
-      if (mounted) setState(() => _busy = false);
-      return;
-    }
-    if (!mounted) return;
-    final svc = ref.read(phoneMirrorProvider);
-    final ok = contacts
-        ? await svc.setContacts(widget.account, on)
-        : await svc.setCalendar(widget.account, on);
-    if (!mounted) return;
-    setState(() {
-      _busy = false;
-      // Без всплывающих окон: причина — под переключателями.
-      if (!ok) _error = l10n.tr('phoneMirrorFailed');
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final svc = ref.read(phoneMirrorProvider);
-    if (!svc.isAvailable) return const SizedBox.shrink();
-    final l10n = AppLocalizations.of(context);
-    final a = widget.account;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SettingsSectionTitle(l10n.tr('phoneMirror')),
-        SettingsGroup(children: [
-          SettingsSwitchItem(
-            icon: AppIcons.contacts,
-            title: l10n.tr('phoneMirrorContacts'),
-            subtitle: l10n.tr('phoneMirrorContactsShort'),
-            hint: l10n.tr('phoneMirrorContactsDesc'),
-            value: svc.contactsOn(a.id),
-            onChanged: _busy ? null : (v) => _toggle(true, v),
-          ),
-          SettingsSwitchItem(
-            icon: AppIcons.calendar_today,
-            title: l10n.tr('phoneMirrorCalendar'),
-            subtitle: l10n.tr('phoneMirrorCalendarShort'),
-            hint: l10n.tr('phoneMirrorCalendarDesc'),
-            value: svc.calendarOn(a.id),
-            onChanged: _busy ? null : (v) => _toggle(false, v),
-          ),
-        ]),
-        if (_error != null)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(Space.l, Space.xs, Space.l, 0),
-            child: Text(_error!,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.errorText(context))),
-          ),
-      ],
-    );
-  }
-}
-

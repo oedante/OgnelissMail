@@ -38,9 +38,9 @@
     <string name="permCamera">Fotoaparát</string>
     <string name="permCameraWhy">Vyfotografování dokumentu k připojení.</string>
     <string name="permContacts">Kontakty zařízení</string>
-    <string name="permContactsWhy">Import kontaktů zařízení a export firemních kontaktů do adresáře zařízení (na váš pokyn v nastavení kontaktů).</string>
+    <string name="permContactsWhy">Kontakty vašich schránek se zobrazí v Kontaktech telefonu jako samostatná skupina: když volá kolega, vidíte jeho jméno a funkci. Změny se dělají v aplikaci. Slouží i k importu kontaktů z telefonu do aplikace. Kontakty Google (a iCloud na iPhonu) synchronizuje telefon sám – nezdvojují se.</string>
     <string name="permCalendar">Kalendář zařízení</string>
-    <string name="permCalendarWhy">Export schůzek z pošty do kalendáře zařízení (na váš pokyn v nastavení kalendáře).</string>
+    <string name="permCalendarWhy">Schůzky vašich schránek se zobrazí v kalendáři telefonu, jeho widgetech a na hodinkách – jako samostatný kalendář jen pro čtení; změny se dělají v aplikaci. Kalendáře Google (a iCloud na iPhonu) synchronizuje telefon sám – jejich schůzky se nezdvojují.</string>
     <string name="permExactAlarms">Přesné připomenutí</string>
     <string name="permExactAlarmsWhy">Připomenutí schůzek a odložených zpráv (Později) chodí přesně na čas. Bez tohoto oprávnění je Android může zpozdit o několik minut.</string>
     <string name="permBattery">Neomezená práce na pozadí</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Každých {n} min</string>
     <string name="checkHourly">Každou hodinu</string>
     <string name="checkManual">Pouze ručně</string>
-    <string name="checkMailHint">Okamžitě – server oznámí novou poštu hned (na pozadí – s volbou Běh na pozadí). Podle plánu – okamžitě v pracovní době, jinak v intervalech (Nastavení → Synchronizace → Plán doručování). Každých 15/30/60 minut – plánované kontroly, nejúspornější. Ručně – když otevřete aplikaci a potáhnete dolů pro obnovení.</string>
+    <string name="checkMailHint">Okamžitě – server oznámí novou poštu hned. Podle plánu – okamžitě v pracovní době, jinak v intervalech (Nastavení → Synchronizace → Plán doručování). Každých 15/30/60 minut – plánované kontroly, nejúspornější. Ručně – když otevřete aplikaci a potáhnete dolů pro obnovení.</string>
     <string name="wifiOnlyAcc">Pouze přes Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Automatická kontrola jen při připojení k Wi‑Fi</string>
     <string name="accSectionConnection">Připojení</string>
@@ -2530,7 +2530,7 @@
     <string name="scheduleOffHours">Ve zbývajícím čase</string>
     <string name="scheduleAccounts">Účty podle plánu</string>
     <string name="scheduleNoAccounts">Zatím žádný: vyberte Podle plánu v části Kontrola pošty u účtu</string>
-    <string name="scheduleHelp">Okamžité doručování (push) udržuje spojení se serverem a každých pár minut probouzí zařízení. V noci a o víkendech tím zbytečně ubývá baterie.\n\nSe režimem Podle plánu chodí pošta v pracovní dobu a v pracovní dny okamžitě a ve zbývajícím čase aplikace kontroluje každých 15, 30 nebo 60 minut.\n\nPlán je společný pro všechny účty nastavené na Podle plánu (Nastavení → účet → Kontrola pošty). Ostatní režimy — Okamžitě, Každých 15 minut apod. — fungují jako dřív.\n\nV Androidu vyžaduje okamžité doručování na pozadí Běh na pozadí. Na začátku pracovního dne se push zapne do cca 10 minut.</string>
+    <string name="scheduleHelp">Okamžité doručování (push) udržuje spojení se serverem a každých pár minut probouzí zařízení. V noci a o víkendech tím zbytečně ubývá baterie.\n\nSe režimem Podle plánu chodí pošta v pracovní dobu a v pracovní dny okamžitě a ve zbývajícím čase aplikace kontroluje každých 15, 30 nebo 60 minut.\n\nPlán je společný pro všechny účty nastavené na Podle plánu (Nastavení → účet → Kontrola pošty). Ostatní režimy — Okamžitě, Každých 15 minut apod. — fungují jako dřív.</string>
     <string name="expScheduleDesc">V pracovní době okamžitě, jinak v intervalech</string>
     <string name="expScheduleHint">Režim „Podle plánu“ v Kontrole pošty u účtu. V pracovní dobu a v pracovní dny (ve výchozím nastavení 7:00–19:00, po–pá) chodí pošta okamžitě; jinak se kontroluje každých 15, 30 nebo 60 minut. Zapíná se pro každý účet zvlášť: Nastavení → účet → Kontrola pošty.</string>
     <string name="ruleAlwaysNoMove">„Vždy oznamovat“ a „Přesunout do složky“ spolu nefungují: po přesunu oznámení zprávu neotevře. Vyberte jedno.</string>
@@ -3101,6 +3101,8 @@
     <string name="pushWakeTitleAndroid">Kontrola pošty na pozadí</string>
     <string name="pushWakeHelpAndroid">Android sám rozhoduje, kdy může aplikace na pozadí běžet: v hlubokém spánku odkládá kontroly na pozadí a od Androidu 15 dostává synchronizace na pozadí nejvýše 6 hodin denně. Server vývojáře (ogneliss.ru/push) ve zvoleném intervalu posílá přes Google (Firebase Cloud Messaging) prázdný signál „zkontroluj poštu“ a aplikace schránky zkontroluje sama, z tohoto zařízení. Na server se odesílá jen token oznámení této instalace — žádné adresy, hesla ani zprávy. V hlubokém spánku může Android signál doručit později, v nejbližším okně údržby. Bez služeb Google — přes aplikaci UnifiedPush (například ntfy). Podrobnosti jsou v Zásadách ochrany soukromí, oddíl 6.2.</string>
     <string name="pushWakeVia">Jak přicházejí signály</string>
+    <string name="bgDeliveryAuto">Vše zde se nastavuje samo. Aplikaci na pozadí probouzí signál přes služby Google, pokud je telefon má, jinak přes aplikaci UnifiedPush (např. ntfy); bez nich se pošta kontroluje podle plánu. „{bg}“ se zapíná samo u schránek s volbou „{instant}“ nebo „{scheduled}“. Něco zde měňte, jen pokud oznámení o nové poště chodí pozdě.</string>
+    <string name="bgDeliveryAutoShort">Volí se samo: Google, UnifiedPush nebo podle plánu</string>
     <string name="pushWakeViaHelp">Přes Google (Firebase Cloud Messaging) na telefonech se službami Google Play. Bez nich přes aplikaci distributora UnifiedPush (například ntfy): udržuje vlastní spojení a předává signál „zkontroluj poštu“. Signál je zašifrován klíčem této instalace a neobsahuje adresy ani zprávy. Podrobnosti: Zásady ochrany osobních údajů, oddíl 6.2.</string>
     <string name="pushWakeViaGoogle">Přes Google</string>
     <string name="pushWakeViaGoogleDesc">Vyžaduje služby Google Play</string>
@@ -3319,7 +3321,7 @@
     <string name="faq_tasks_3_a">Dlouze stiskněte poznámku: upravit, odeslat e-mailem, sdílet, kopírovat nebo smazat.</string>
     <string name="faq_notify_title">Oznámení a pozadí</string>
     <string name="faq_notify_1_q">Proč chodí oznámení na iPhonu se zpožděním?</string>
-    <string name="faq_notify_1_a">Dokud je aplikace otevřená, pošta dorazí okamžitě. Když je na pozadí, iOS sám rozhoduje, kdy ji probudí: častěji, pokud aplikaci používáte každý den, méně často v Úsporném režimu nebo při nízkém stavu baterie. Aby se probouzela častěji, nechte zapnuté Kontrola pošty na pozadí (iPhone) v Nastavení → Oznámení: server vývojáře posílá přes Apple ve zvoleném intervalu prázdný signál „zkontrolujte poštu“ a aplikace si schránky zkontroluje sama, z tohoto zařízení; na server se odesílá jen token oznámení. Aplikaci neukončujte přejetím v přepínači aplikací: poté ji iOS neprobudí ani sám od sebe, ani signálem, dokud aplikaci znovu neotevřete. Zkontrolujte, že je v nastavení iOS pro Ogneliss Mail zapnuté Obnovení na pozadí.</string>
+    <string name="faq_notify_1_a">Dokud je aplikace otevřená, pošta dorazí okamžitě. Když je na pozadí, iOS sám rozhoduje, kdy ji probudí: častěji, pokud aplikaci používáte každý den, méně často v Úsporném režimu nebo při nízkém stavu baterie. Aby se probouzela častěji, nechte zapnuté Kontrola pošty na pozadí (iPhone) v Nastavení → Rozšířená nastavení: server vývojáře posílá přes Apple ve zvoleném intervalu prázdný signál „zkontrolujte poštu“ a aplikace si schránky zkontroluje sama, z tohoto zařízení; na server se odesílá jen token oznámení. Aplikaci neukončujte přejetím v přepínači aplikací: poté ji iOS neprobudí ani sám od sebe, ani signálem, dokud aplikaci znovu neotevřete. Zkontrolujte, že je v nastavení iOS pro Ogneliss Mail zapnuté Obnovení na pozadí.</string>
     <string name="faq_notify_2_q">Jak vypnu oznámení pro jednu složku?</string>
     <string name="faq_notify_2_a">Nastavení → účet → Synchronizace složek: zvonek vedle přepínače složky zapne nebo vypne oznámení o nových zprávách v ní (včetně podsložek) a složka se dál synchronizuje. Nabídka ⋮ obsahuje Oznámení: všechny složky a Oznámení: žádné složky. Pro složky Odeslané, Koncepty, Odstraněná pošta a Nevyžádaná pošta se oznámení nezobrazují nikdy.</string>
     <string name="faq_notify_3_q">Proč chodí oznámení na Androidu se zpožděním?</string>
@@ -3816,7 +3818,7 @@
     <string name="apPreviewBubbleIn">Schválíme rozpočet do pátku?</string>
     <string name="apPreviewBubbleOut">Ano, pošlu ho dnes.</string>
     <string name="notifyMessengerStyle">Oznámení jako v messengeru</string>
-    <string name="notifyMessengerStyleDesc">Fotka nebo iniciála odesílatele vedle zprávy</string>
+    <string name="notifyMessengerStyleDesc">Pošta od lidí a kolegů s fotkou odesílatele jako zpráva; zpravodaje jako obyčejné oznámení</string>
     <string name="notifyVipConversations">Konverzace pro VIP</string>
     <string name="notifyVipConversationsDesc">Pošta od VIP se zobrazí v sekci Konverzace v Androidu, kde ji lze označit jako prioritní</string>
     <string name="notifyAllConversations">Konverzace pro všechny e-maily</string>
@@ -4380,7 +4382,7 @@
     <string name="faq_settings_4_q">Jak zjistím, k čemu nastavení slouží?</string>
     <string name="faq_settings_4_a">Podržte položku nastavení (na počítači na ni klikněte pravým tlačítkem myši): otevře se vysvětlení, co ovlivňuje, a odpovědi k ní z „Otázek a odpovědí“. Totéž otevře ikona „?“ vedle názvu.</string>
     <string name="notifyPeopleConversations">Konverzace pro poštu od lidí</string>
-    <string name="notifyPeopleConversationsDesc">Portrét odesílatele s ikonou aplikace u pošty od kolegů a kontaktů, kde jste mezi příjemci (nejvýše 50); zpravodaje jako obvykle</string>
+    <string name="notifyPeopleConversationsDesc">Portrét odesílatele s ikonou aplikace u pošty od kolegů, kontaktů, lidí, se kterými jste si psali, a z osobních schránek (Gmail, Outlook…), kde jste mezi adresáty (do 50); zpravodaje jako obyčejné oznámení</string>
     <string name="offlineErrGateway">Brána vaší organizace zablokovala zprávu z této sítě (například přes VPN) — odešle se automaticky po změně sítě</string>
     <string name="tagsInsert">Vložit pole:</string>
     <string name="tagGroupRecipient">Adresát</string>

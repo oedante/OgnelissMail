@@ -161,7 +161,8 @@ void main() {
       expect(sig(fcm: true), SignalChannel.google);
       expect(sig(dist: 'io.heckel.ntfy', n: 2), SignalChannel.unifiedPush);
       expect(sig(n: 1), SignalChannel.unifiedPush);
-      expect(sig(n: 2), SignalChannel.chooseDistributor);
+      // Несколько распространителей — выбирается сам (2.7.0), не человек.
+      expect(sig(n: 2), SignalChannel.unifiedPush);
       expect(sig(), SignalChannel.periodicOnly);
       expect(sig(enabled: false, fcm: true), SignalChannel.off);
     });

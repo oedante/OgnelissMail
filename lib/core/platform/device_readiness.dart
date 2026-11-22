@@ -106,7 +106,9 @@ class DeviceReadiness {
     if (!enabled) return SignalChannel.off;
     if (transportFcm) return SignalChannel.google;
     if (distributor != null && distributor.isNotEmpty) return SignalChannel.unifiedPush;
-    if (distributors == 1) return SignalChannel.unifiedPush; // выберется сам при регистрации
-    return distributors > 1 ? SignalChannel.chooseDistributor : SignalChannel.periodicOnly;
+    // Один или несколько — выберется сам при регистрации (несколько — первый
+    // по названию, 2.7.0); выбор вручную — в «Расширенных настройках».
+    if (distributors >= 1) return SignalChannel.unifiedPush;
+    return SignalChannel.periodicOnly;
   }
 }

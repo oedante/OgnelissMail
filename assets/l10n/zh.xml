@@ -38,9 +38,9 @@
     <string name="permCamera">相机</string>
     <string name="permCameraWhy">拍摄文档照片作为附件。</string>
     <string name="permContacts">设备联系人</string>
-    <string name="permContactsWhy">导入设备联系人，并将企业联系人导出到设备通讯录（仅在您于联系人设置中操作时）。</string>
+    <string name="permContactsWhy">您各邮箱的联系人会以单独分组显示在手机通讯录中：同事来电时可看到姓名和职位。修改请在应用中进行。此权限也用于将手机联系人导入应用。Google（以及 iPhone 上的 iCloud）联系人由手机自行同步，不会重复。</string>
     <string name="permCalendar">设备日历</string>
-    <string name="permCalendarWhy">将邮件中的会议导出到设备日历（仅在您于日历设置中操作时）。</string>
+    <string name="permCalendarWhy">您各邮箱的会议会以单独的只读日历显示在手机日历、其小组件和手表上；修改请在应用中进行。Google（以及 iPhone 上的 iCloud）日历由手机自行同步，其会议不会重复。</string>
     <string name="permExactAlarms">精确提醒</string>
     <string name="permExactAlarmsWhy">会议提醒和延后提醒准时送达。没有此权限，Android 可能会将提醒延迟几分钟。</string>
     <string name="permBattery">不受限制的后台运行</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">每 {n} 分钟</string>
     <string name="checkHourly">每小时</string>
     <string name="checkManual">仅手动</string>
-    <string name="checkMailHint">即时：服务器会立即通知新邮件（后台运行需开启“在后台运行”）。按计划：工作时间内即时，其余时间按间隔检查（设置 → 同步 → 投递计划）。每 15/30/60 分钟：定时检查，最省电。手动：打开应用并下拉刷新时检查。</string>
+    <string name="checkMailHint">即时：服务器会立即通知新邮件。按计划：工作时间内即时，其余时间按间隔检查（设置 → 同步 → 投递计划）。每 15/30/60 分钟：定时检查，最省电。手动：打开应用并下拉刷新时检查。</string>
     <string name="wifiOnlyAcc">仅限 Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">仅在连接 Wi‑Fi 时自动检查</string>
     <string name="accSectionConnection">连接</string>
@@ -2506,7 +2506,7 @@
     <string name="scheduleOffHours">其余时间</string>
     <string name="scheduleAccounts">按计划的账户</string>
     <string name="scheduleNoAccounts">暂无：请在账户的“检查邮件”中选择“按计划”</string>
-    <string name="scheduleHelp">即时送达（推送）会保持与服务器的连接，并每隔几分钟唤醒设备。夜间和周末这样会浪费电量。\n\n使用“按计划”时，邮件在工作时间和工作日即时送达，其余时间应用每 15、30 或 60 分钟检查一次。\n\n所有设为“按计划”的账户共用该计划（设置 → 账户 → 检查邮件）。其他模式——即时、每 15 分钟等——照常工作。\n\n在 Android 上，后台即时送达需要开启“后台运行”。工作日开始时，推送会在约 10 分钟内开启。</string>
+    <string name="scheduleHelp">即时送达（推送）会保持与服务器的连接，并每隔几分钟唤醒设备。夜间和周末这样会浪费电量。\n\n使用“按计划”时，邮件在工作时间和工作日即时送达，其余时间应用每 15、30 或 60 分钟检查一次。\n\n所有设为“按计划”的账户共用该计划（设置 → 账户 → 检查邮件）。其他模式——即时、每 15 分钟等——照常工作。</string>
     <string name="expScheduleDesc">工作时间即时送达，其余时间按间隔检查</string>
     <string name="expScheduleHint">账户的“检查邮件”模式为“按计划”。在工作时间和工作日（默认 7:00–19:00，周一至周五）邮件即时送达；其余时间每 15、30 或 60 分钟检查一次。按账户开启：设置 → 账户 → 检查邮件。</string>
     <string name="ruleAlwaysNoMove">“始终通知”和“移动到文件夹”不能同时使用：移动后，通知无法打开该邮件。请选择其一。</string>
@@ -3075,6 +3075,8 @@
     <string name="pushWakeTitleAndroid">服务器信号</string>
     <string name="pushWakeHelpAndroid">后台应用何时可以运行由 Android 自行决定：深度休眠时会推迟后台检查，自 Android 15 起后台同步每天最多只有 6 小时。开发者的服务器（ogneliss.ru/push）按所选间隔通过 Google（Firebase Cloud Messaging）发送空的“检查邮件”信号，应用随后从本设备自行检查邮箱。发送到服务器的只有本次安装的通知令牌——没有地址、密码或邮件。深度休眠时，Android 可能会在下一个维护窗口才送达信号。没有 Google 服务时，信号通过 UnifiedPush 应用（例如 ntfy）送达。详情见隐私政策第 6.2 节。</string>
     <string name="pushWakeVia">信号的送达方式</string>
+    <string name="bgDeliveryAuto">这里的一切都会自动设置。后台应用会被信号唤醒：手机有 Google 服务时经由 Google，否则经由 UnifiedPush 应用（例如 ntfy）；两者都没有时，按计划检查邮件。“{bg}”会对设为“{instant}”或“{scheduled}”的邮箱自动开启。只有新邮件通知延迟时才需要在这里更改。</string>
+    <string name="bgDeliveryAutoShort">自动选择：Google、UnifiedPush 或按计划</string>
     <string name="pushWakeViaHelp">在装有 Google Play 服务的手机上，通过 Google（Firebase Cloud Messaging）送达；没有 Google 服务时，通过 UnifiedPush 分发器应用（例如 ntfy）送达：它保持自己的连接，并转发“检查邮件”信号。信号使用本次安装的密钥加密，不包含任何地址或邮件。详情见隐私政策第 6.2 节。</string>
     <string name="pushWakeViaGoogle">通过 Google</string>
     <string name="pushWakeViaGoogleDesc">需要 Google Play 服务</string>
@@ -3293,7 +3295,7 @@
     <string name="faq_tasks_3_a">长按笔记：编辑、通过邮件发送、分享、复制或删除。</string>
     <string name="faq_notify_title">通知和后台运行</string>
     <string name="faq_notify_1_q">为什么 iPhone 上的通知会延迟？</string>
-    <string name="faq_notify_1_a">应用打开时，邮件会立即到达。应用在后台时，iOS 会自行决定何时唤醒它：如果你每天都使用该应用，唤醒会更频繁；在低电量模式或电量不足时则较少。若要让应用更频繁地被唤醒，请在“设置 → 通知”中保持开启“服务器信号 (iPhone)”：开发者的服务器会按你选择的间隔，通过 Apple 发送一个空的“检查邮件”信号，应用会在此设备上自行检查你的邮箱；只有通知令牌会发送到服务器。请不要在 App 切换器中上滑关闭应用：这样之后，iOS 既不会自行唤醒它，也不会因信号唤醒，直到你再次打开应用。请确保在 iOS 设置中已为 Ogneliss Mail 开启“后台 App 刷新”。</string>
+    <string name="faq_notify_1_a">应用打开时，邮件会立即到达。应用在后台时，iOS 会自行决定何时唤醒它：如果你每天都使用该应用，唤醒会更频繁；在低电量模式或电量不足时则较少。若要让应用更频繁地被唤醒，请在“设置 → 高级设置”中保持开启“服务器信号 (iPhone)”：开发者的服务器会按你选择的间隔，通过 Apple 发送一个空的“检查邮件”信号，应用会在此设备上自行检查你的邮箱；只有通知令牌会发送到服务器。请不要在 App 切换器中上滑关闭应用：这样之后，iOS 既不会自行唤醒它，也不会因信号唤醒，直到你再次打开应用。请确保在 iOS 设置中已为 Ogneliss Mail 开启“后台 App 刷新”。</string>
     <string name="faq_notify_2_q">如何关闭某个文件夹的通知？</string>
     <string name="faq_notify_2_a">设置 → 账户 → 文件夹同步：文件夹开关旁的铃铛可开启或关闭该文件夹新邮件的通知（包括子文件夹），文件夹仍会继续同步。⋮ 菜单中有“通知：所有文件夹”和“通知：无文件夹”。已发送邮件、草稿、已删除邮件和垃圾邮件永远不会有通知。</string>
     <string name="faq_notify_3_q">为什么 Android 上的通知不能及时到达？</string>
@@ -3778,7 +3780,7 @@
     <string name="apPreviewBubbleIn">周五前能批准预算吗？</string>
     <string name="apPreviewBubbleOut">好的，今天发。</string>
     <string name="notifyMessengerStyle">类似聊天应用的通知</string>
-    <string name="notifyMessengerStyleDesc">在邮件旁显示发件人的照片或首字母</string>
+    <string name="notifyMessengerStyleDesc">来自个人和同事的邮件像消息一样显示发件人照片；新闻邮件以普通通知显示</string>
     <string name="notifyVipConversations">VIP 对话</string>
     <string name="notifyVipConversationsDesc">VIP 的邮件会显示在 Android 的“对话”部分，可将其设为优先</string>
     <string name="notifyAllConversations">所有邮件显示为对话</string>
@@ -4338,7 +4340,7 @@
     <string name="faq_settings_4_q">如何了解某项设置的作用？</string>
     <string name="faq_settings_4_a">长按设置中的某一项（在电脑上点击鼠标右键）：会打开它影响什么的说明，以及「问题与解答」中与它相关的回答。名称旁的「?」图标也会打开同样的内容。</string>
     <string name="notifyPeopleConversations">来自个人的邮件显示为对话</string>
-    <string name="notifyPeopleConversationsDesc">同事和联系人发来、且你在收件人之中的邮件（收件人不超过 50 个）：发件人头像上带应用图标；简报照常显示</string>
+    <string name="notifyPeopleConversationsDesc">来自同事、联系人、通信过的人及个人邮箱（Gmail、Outlook…）且收件人中有您（不超过 50 人）的邮件显示发件人头像并带应用图标；新闻邮件以普通通知显示</string>
     <string name="offlineErrGateway">您所在组织的网关阻止了来自此网络（例如 VPN）的邮件——网络切换后将自动发送</string>
     <string name="tagsInsert">插入字段：</string>
     <string name="tagGroupRecipient">收件人</string>

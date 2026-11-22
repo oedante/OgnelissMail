@@ -38,9 +38,9 @@
     <string name="permCamera">Cámara</string>
     <string name="permCameraWhy">Hacer una foto de un documento para adjuntarla.</string>
     <string name="permContacts">Contactos del dispositivo</string>
-    <string name="permContactsWhy">Importar los contactos del dispositivo y exportar contactos corporativos a la agenda del dispositivo (cuando lo indiques en los ajustes de contactos).</string>
+    <string name="permContactsWhy">Los contactos de sus buzones aparecen en Contactos del teléfono como un grupo aparte: cuando llama un colega, ve su nombre y cargo. Los cambios se hacen en la app. También permite importar los contactos del teléfono a la app. Los contactos de Google (e iCloud en iPhone) los sincroniza el propio teléfono, así que no se duplican.</string>
     <string name="permCalendar">Calendario del dispositivo</string>
-    <string name="permCalendarWhy">Exportar reuniones del correo al calendario del dispositivo (cuando lo indiques en los ajustes del calendario).</string>
+    <string name="permCalendarWhy">Las reuniones de sus buzones aparecen en el calendario del teléfono, sus widgets y el reloj, como un calendario aparte de solo lectura; los cambios se hacen en la app. Los calendarios de Google (e iCloud en iPhone) los sincroniza el propio teléfono, así que sus reuniones no se duplican.</string>
     <string name="permExactAlarms">Recordatorios exactos</string>
     <string name="permExactAlarmsWhy">Los recordatorios de reuniones y de «Más tarde» llegan a su hora. Sin este permiso, Android puede retrasarlos varios minutos.</string>
     <string name="permBattery">Segundo plano sin restricciones</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Cada {n} min</string>
     <string name="checkHourly">Cada hora</string>
     <string name="checkManual">Solo manualmente</string>
-    <string name="checkMailHint">Instantánea: el servidor avisa del correo nuevo al momento (en segundo plano, con Ejecutar en segundo plano). Según horario: instantánea en horario laboral y, fuera de él, por intervalos (Ajustes → Sincronización → Horario de entrega). Cada 15/30/60 minutos: comprobaciones programadas, la opción más económica. Manual: al abrir la app y deslizar para actualizar.</string>
+    <string name="checkMailHint">Instantánea: el servidor avisa del correo nuevo al momento. Según horario: instantánea en horario laboral y, fuera de él, por intervalos (Ajustes → Sincronización → Horario de entrega). Cada 15/30/60 minutos: comprobaciones programadas, la opción más económica. Manual: al abrir la app y deslizar para actualizar.</string>
     <string name="wifiOnlyAcc">Solo con Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Comprobación automática solo con conexión Wi‑Fi</string>
     <string name="accSectionConnection">Conexión</string>
@@ -2518,7 +2518,7 @@
     <string name="scheduleOffHours">El resto del tiempo</string>
     <string name="scheduleAccounts">Cuentas con horario</string>
     <string name="scheduleNoAccounts">Ninguna todavía: elige «Según horario» en «Comprobar correo» de la cuenta</string>
-    <string name="scheduleHelp">La entrega instantánea (push) mantiene una conexión con el servidor y despierta el dispositivo cada pocos minutos. De noche y los fines de semana eso gasta batería.\n\nCon «Según horario», el correo llega al instante en las horas y los días laborables, y el resto del tiempo la aplicación lo comprueba cada 15, 30 o 60 minutos.\n\nEl horario es común a todas las cuentas con «Según horario» (Ajustes → cuenta → Comprobar correo). Los demás modos (Al instante, Cada 15 minutos, etc.) funcionan como antes.\n\nEn Android, la entrega instantánea en segundo plano requiere «Ejecutar en segundo plano». Al empezar la jornada laboral, el push se activa en unos 10 minutos.</string>
+    <string name="scheduleHelp">La entrega instantánea (push) mantiene una conexión con el servidor y despierta el dispositivo cada pocos minutos. De noche y los fines de semana eso gasta batería.\n\nCon «Según horario», el correo llega al instante en las horas y los días laborables, y el resto del tiempo la aplicación lo comprueba cada 15, 30 o 60 minutos.\n\nEl horario es común a todas las cuentas con «Según horario» (Ajustes → cuenta → Comprobar correo). Los demás modos (Al instante, Cada 15 minutos, etc.) funcionan como antes.</string>
     <string name="expScheduleDesc">Al instante en horario laboral, y con un intervalo el resto del tiempo</string>
     <string name="expScheduleHint">El modo «Según horario» de Comprobar correo de la cuenta. En las horas y los días laborables (por defecto 7:00–19:00, lun–vie) el correo llega al instante; si no, se comprueba cada 15, 30 o 60 minutos. Se activa por cuenta: Ajustes → cuenta → Comprobar correo.</string>
     <string name="ruleAlwaysNoMove">«Notificar siempre» y «Mover a la carpeta» no funcionan juntas: tras mover el mensaje, la notificación no puede abrirlo. Elige una.</string>
@@ -3088,6 +3088,8 @@
     <string name="pushWakeTitleAndroid">Comprobación en segundo plano</string>
     <string name="pushWakeHelpAndroid">Android decide por sí mismo cuándo puede funcionar una app en segundo plano: en reposo profundo aplaza las comprobaciones en segundo plano y, desde Android 15, la sincronización en segundo plano tiene como máximo 6 horas al día. El servidor del desarrollador (ogneliss.ru/push) envía a través de Google (Firebase Cloud Messaging), en el intervalo elegido, una señal vacía «revisa el correo», y la app revisa tus buzones por sí misma, desde este dispositivo. Al servidor solo se envía el token de notificaciones de esta instalación: ni direcciones, ni contraseñas, ni mensajes. En reposo profundo, Android puede entregar la señal más tarde, en la siguiente ventana de mantenimiento. Sin los servicios de Google, mediante una app de UnifiedPush (por ejemplo, ntfy). Más detalles en la Política de privacidad, sección 6.2.</string>
     <string name="pushWakeVia">Cómo llegan las señales</string>
+    <string name="bgDeliveryAuto">Todo aquí se configura automáticamente. La app en segundo plano se activa con una señal a través de los servicios de Google si el teléfono los tiene; si no, mediante una app de UnifiedPush (por ejemplo, ntfy); sin ellos, el correo se revisa según un horario. «{bg}» se activa solo en los buzones con «{instant}» o «{scheduled}». Cambie algo aquí solo si las notificaciones de correo nuevo llegan tarde.</string>
+    <string name="bgDeliveryAutoShort">Se elige solo: Google, UnifiedPush o según un horario</string>
     <string name="pushWakeViaHelp">A través de Google (Firebase Cloud Messaging) en teléfonos con servicios de Google Play. Sin ellos, mediante una app distribuidora de UnifiedPush (por ejemplo, ntfy): mantiene su propia conexión y transmite la señal «revisa el correo». La señal se cifra con la clave de esta instalación y no contiene direcciones ni mensajes. Más detalles en la Política de privacidad, sección 6.2.</string>
     <string name="pushWakeViaGoogle">A través de Google</string>
     <string name="pushWakeViaGoogleDesc">Requiere los servicios de Google Play</string>
@@ -3306,7 +3308,7 @@
     <string name="faq_tasks_3_a">Mantén pulsada la nota: editar, enviar por correo, compartir, copiar o eliminar.</string>
     <string name="faq_notify_title">Notificaciones y segundo plano</string>
     <string name="faq_notify_1_q">¿Por qué las notificaciones llegan con retraso en el iPhone?</string>
-    <string name="faq_notify_1_a">Mientras la aplicación está abierta, el correo llega al instante. Cuando está en segundo plano, iOS decide por su cuenta cuándo activarla: con más frecuencia si usas la aplicación a diario, con menos en el modo de bajo consumo o con la batería baja. Para que se active más a menudo, deja activadas las Comprobación en segundo plano (iPhone) en Ajustes → Notificaciones: el servidor del desarrollador envía a través de Apple una señal vacía de «revisa tu correo» con el intervalo que elijas, y la aplicación comprueba tus buzones por sí misma, desde este dispositivo; al servidor solo se envía el token de notificaciones. No cierres la aplicación deslizándola en el selector de apps: después, iOS no la activa ni por sí solo ni mediante una señal hasta que vuelvas a abrirla. Comprueba que la Actualización en segundo plano esté activada para Ogneliss Mail en los Ajustes de iOS.</string>
+    <string name="faq_notify_1_a">Mientras la aplicación está abierta, el correo llega al instante. Cuando está en segundo plano, iOS decide por su cuenta cuándo activarla: con más frecuencia si usas la aplicación a diario, con menos en el modo de bajo consumo o con la batería baja. Para que se active más a menudo, deja activadas las Comprobación en segundo plano (iPhone) en Ajustes → Ajustes avanzados: el servidor del desarrollador envía a través de Apple una señal vacía de «revisa tu correo» con el intervalo que elijas, y la aplicación comprueba tus buzones por sí misma, desde este dispositivo; al servidor solo se envía el token de notificaciones. No cierres la aplicación deslizándola en el selector de apps: después, iOS no la activa ni por sí solo ni mediante una señal hasta que vuelvas a abrirla. Comprueba que la Actualización en segundo plano esté activada para Ogneliss Mail en los Ajustes de iOS.</string>
     <string name="faq_notify_2_q">¿Cómo desactivo las notificaciones de una carpeta?</string>
     <string name="faq_notify_2_a">Ajustes → cuenta → Sincronización de carpetas: la campana junto al interruptor de una carpeta activa o desactiva las notificaciones de sus mensajes nuevos (con las subcarpetas), y la carpeta sigue sincronizándose. El menú ⋮ tiene Notificaciones: todas las carpetas y Notificaciones: ninguna carpeta. Nunca hay notificaciones para Enviados, Borradores, Elementos eliminados ni Correo no deseado.</string>
     <string name="faq_notify_3_q">¿Por qué las notificaciones no llegan al instante en Android?</string>
@@ -3797,7 +3799,7 @@
     <string name="apPreviewBubbleIn">¿Aprobamos el presupuesto antes del viernes?</string>
     <string name="apPreviewBubbleOut">Sí, lo envío hoy.</string>
     <string name="notifyMessengerStyle">Notificaciones como en mensajería</string>
-    <string name="notifyMessengerStyleDesc">La foto o inicial del remitente junto al mensaje</string>
+    <string name="notifyMessengerStyleDesc">El correo de personas y compañeros muestra la foto del remitente, como un mensaje; los boletines llegan como notificación simple</string>
     <string name="notifyVipConversations">Conversaciones para VIP</string>
     <string name="notifyVipConversationsDesc">El correo de los VIP aparece en Conversaciones de Android, donde puedes marcarlo como prioritario</string>
     <string name="notifyAllConversations">Conversaciones para todo el correo</string>
@@ -4359,7 +4361,7 @@
     <string name="faq_settings_4_q">¿Cómo sé qué hace un ajuste?</string>
     <string name="faq_settings_4_a">Mantén pulsado un elemento de los ajustes (en el ordenador, haz clic derecho): se abre una explicación de lo que afecta y las respuestas sobre él de «Preguntas y respuestas». El icono «?» junto al nombre abre lo mismo.</string>
     <string name="notifyPeopleConversations">Conversaciones para el correo de personas</string>
-    <string name="notifyPeopleConversationsDesc">Foto del remitente con el icono de la app para el correo de compañeros y contactos en el que usted está entre los destinatarios (hasta 50); los boletines, como siempre</string>
+    <string name="notifyPeopleConversationsDesc">Retrato del remitente con el icono de la app para correos de compañeros, contactos, personas con las que se ha escrito y buzones personales (Gmail, Outlook…) en los que usted figura entre los destinatarios (hasta 50); boletines como notificación simple</string>
     <string name="offlineErrGateway">La puerta de enlace de su organización bloqueó el mensaje desde esta red (por ejemplo, una VPN): se enviará automáticamente cuando cambie la red</string>
     <string name="tagsInsert">Insertar campo:</string>
     <string name="tagGroupRecipient">Destinatario</string>

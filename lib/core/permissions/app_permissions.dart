@@ -36,6 +36,7 @@ import '../platform/device_readiness.dart';
 import '../platform/platform_diagnostics.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/push/push_wake_service.dart' show PushWakeService, pushWakeServiceProvider;
+import '../../services/device/phone_mirror_service.dart' show PhoneMirrorService, phoneMirrorProvider;
 
 enum AppPermission {
   notifications,
@@ -80,9 +81,29 @@ class AppPermissions {
   static AppPermissionInfo info(AppPermission p) => all.firstWhere((i) => i.id == p);
 
   /// Шаг первой настройки (1.12.x): разрешения, без которых о письмах и
-  /// встречах устройство вовремя не сообщит. Контакты и календарь — по
-  /// месту, когда их включают.
-  static const setup = {AppPermission.notifications, AppPermission.exactAlarms, AppPermission.battery};
+  /// встречах устройство вовремя не сообщит. С 2.7.0 (замечание владельца
+  /// 22.11.2026: «он ожидает, что приложение будет настроено и сразу будет
+  /// работать») — и контакты с календарём: ящики пишут их в телефон по
+  /// умолчанию. Спрашиваются, только если есть такой ящик ([wanted]).
+  static const setup = {
+    AppPermission.notifications,
+    AppPermission.contacts,
+    AppPermission.calendar,
+    AppPermission.exactAlarms,
+    AppPermission.battery,
+  };
+
+  /// Разрешение нужно этому устройству сейчас: контакты и календарь — если
+  /// есть ящик, который пишет их в телефон (не Google, не iCloud на iPhone).
+  static bool wanted(AppPermission p, PhoneMirrorService mirror) => switch (p) {
+        AppPermission.contacts => mirror.wantsContacts,
+        AppPermission.calendar => mirror.wantsCalendar,
+        _ => true,
+      };
+
+  /// [setup] без ненужного этому устройству.
+  static Set<AppPermission> setupFor(PhoneMirrorService mirror) =>
+      {for (final p in setup) if (wanted(p, mirror)) p};
 
   /// Разрешения ОС есть только на мобильных платформах.
   static bool get supported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
@@ -208,6 +229,32 @@ class AppPermissions {
   // кто видел прежнюю.
   static const _setupShownKey = 'perm_setup_shown_v2';
 
+  /// Контакты и календарь спрошены у тех, кто настроил приложение до 2.7.0.
+  static const _mirrorAskedKey = 'perm_mirror_asked_v1';
+
+  /// Один раз после обновления до 2.7.0: контакты и встречи ящиков теперь
+  /// пишутся в телефон сами — спросить разрешения с пояснением (не
+  /// «запрещено навсегда» и не выданные — молча). Ящики ещё не загружены —
+  /// в следующий раз.
+  static Future<void> _maybeAskPhoneMirror(BuildContext context, SharedPreferences prefs) async {
+    if (!supported || (prefs.getBool(_mirrorAskedKey) ?? false)) return;
+    final mirror = ProviderScope.containerOf(context, listen: false).read(phoneMirrorProvider);
+    if (!mirror.accountsLoaded) return;
+    await prefs.setBool(_mirrorAskedKey, true);
+    final ask = [
+      if (mirror.wantsContacts && await state(AppPermission.contacts) == AppPermissionState.denied)
+        AppPermission.contacts,
+      if (mirror.wantsCalendar && await state(AppPermission.calendar) == AppPermissionState.denied)
+        AppPermission.calendar,
+    ];
+    var granted = false;
+    for (final p in ask) {
+      if (!context.mounted) return;
+      granted = await ensure(context, p) || granted;
+    }
+    if (granted) await mirror.syncAll(force: true);
+  }
+
   /// Один раз — сразу после входа в первый ящик (до этого приложению нечего
   /// синхронизировать и не о чем напоминать): экран «Разрешения» со всеми
   /// разрешениями, пояснением к каждому и кнопкой «Разрешить всё».
@@ -219,10 +266,17 @@ class AppPermissions {
   /// синхронизации (/setup/mailbox). На компьютере — только шаг 2.
   static Future<void> maybeShowSetup(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool(_setupShownKey) ?? false) return;
+    if (prefs.getBool(_setupShownKey) ?? false) {
+      // Первая настройка была до 2.7.0 — контакты и календарь не спрашивались.
+      if (context.mounted) await _maybeAskPhoneMirror(context, prefs);
+      return;
+    }
+    if (!context.mounted) return;
+    final mirror = ProviderScope.containerOf(context, listen: false).read(phoneMirrorProvider);
+    await prefs.setBool(_mirrorAskedKey, true);
     var missing = false;
     if (supported) {
-      for (final p in setup) {
+      for (final p in setupFor(mirror)) {
         if (await state(p) case AppPermissionState.denied || AppPermissionState.blocked) {
           missing = true;
           break;

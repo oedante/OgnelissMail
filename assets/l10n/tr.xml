@@ -38,9 +38,9 @@
     <string name="permCamera">Kamera</string>
     <string name="permCameraWhy">Eklemek üzere bir belgenin fotoğrafını çekmek için.</string>
     <string name="permContacts">Cihaz kişileri</string>
-    <string name="permContactsWhy">Cihaz kişilerini içe aktarmak ve kurumsal kişileri cihaz rehberine dışa aktarmak için (kişi ayarlarında siz komut verdiğinizde).</string>
+    <string name="permContactsWhy">Posta kutularınızın kişileri telefonun Kişiler uygulamasında ayrı bir grup olarak görünür: bir iş arkadaşınız aradığında adını ve unvanını görürsünüz. Değişiklikler uygulamada yapılır. Telefondaki kişileri uygulamaya aktarmak için de kullanılır. Google kişilerini (ve iPhone’da iCloud’u) telefon kendisi eşitler, bu yüzden çoğaltılmazlar.</string>
     <string name="permCalendar">Cihaz takvimi</string>
-    <string name="permCalendarWhy">E-postadaki toplantıları cihaz takvimine aktarmak için (takvim ayarlarında siz komut verdiğinizde).</string>
+    <string name="permCalendarWhy">Posta kutularınızın toplantıları telefonun takviminde, widget’larında ve saatte ayrı, salt okunur bir takvim olarak görünür; değişiklikler uygulamada yapılır. Google takvimlerini (ve iPhone’da iCloud’u) telefon kendisi eşitler, bu yüzden toplantıları çoğaltılmaz.</string>
     <string name="permExactAlarms">Tam zamanlı hatırlatıcılar</string>
     <string name="permExactAlarmsWhy">Toplantı ve “Daha sonra” hatırlatıcıları tam zamanında gelir. Bu izin olmadan Android bunları birkaç dakika geciktirebilir.</string>
     <string name="permBattery">Kısıtlamasız arka plan</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">{n} dakikada bir</string>
     <string name="checkHourly">Saatte bir</string>
     <string name="checkManual">Yalnızca elle</string>
-    <string name="checkMailHint">Anında: sunucu yeni postayı hemen bildirir (arka planda — Arka planda çalıştır ile). Programa göre: çalışma saatlerinde anında, diğer zamanlarda aralıklarla (Ayarlar → Senkronizasyon → Teslim programı). 15/30/60 dakikada bir: zamanlanmış denetimler, en ekonomik seçenek. Elle: uygulamayı açıp aşağı çekerek yenilediğinizde.</string>
+    <string name="checkMailHint">Anında: sunucu yeni postayı hemen bildirir. Programa göre: çalışma saatlerinde anında, diğer zamanlarda aralıklarla (Ayarlar → Senkronizasyon → Teslim programı). 15/30/60 dakikada bir: zamanlanmış denetimler, en ekonomik seçenek. Elle: uygulamayı açıp aşağı çekerek yenilediğinizde.</string>
     <string name="wifiOnlyAcc">Yalnızca Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Otomatik denetim yalnızca Wi‑Fi\'ye bağlıyken</string>
     <string name="accSectionConnection">Bağlantı</string>
@@ -2518,7 +2518,7 @@
     <string name="scheduleOffHours">Diğer zamanlarda</string>
     <string name="scheduleAccounts">Programa göre hesaplar</string>
     <string name="scheduleNoAccounts">Henüz yok: hesabın «Postayı denetle» bölümünde «Programa göre» seçin</string>
-    <string name="scheduleHelp">Anında teslimat (push), sunucuyla bir bağlantı tutar ve cihazı birkaç dakikada bir uyandırır. Geceleri ve hafta sonları bu pili boşa harcar.\n\n«Programa göre» ile posta, çalışma saatlerinde ve günlerinde anında gelir; diğer zamanlarda uygulama 15, 30 veya 60 dakikada bir kontrol eder.\n\nProgram, «Programa göre» ayarlı tüm hesaplar için ortaktır (Ayarlar → hesap → Postayı denetle). Diğer modlar — Anında, 15 dakikada bir vb. — eskisi gibi çalışır.\n\nAndroid\'de arka planda anında teslimat için Arka planda çalıştır gerekir. Çalışma gününün başında push yaklaşık 10 dakika içinde açılır.</string>
+    <string name="scheduleHelp">Anında teslimat (push), sunucuyla bir bağlantı tutar ve cihazı birkaç dakikada bir uyandırır. Geceleri ve hafta sonları bu pili boşa harcar.\n\n«Programa göre» ile posta, çalışma saatlerinde ve günlerinde anında gelir; diğer zamanlarda uygulama 15, 30 veya 60 dakikada bir kontrol eder.\n\nProgram, «Programa göre» ayarlı tüm hesaplar için ortaktır (Ayarlar → hesap → Postayı denetle). Diğer modlar — Anında, 15 dakikada bir vb. — eskisi gibi çalışır.</string>
     <string name="expScheduleDesc">Çalışma saatlerinde anında, diğer zamanlarda aralıklarla</string>
     <string name="expScheduleHint">Hesabın Postayı denetle modu «Programa göre». Çalışma saatlerinde ve günlerinde (varsayılan 07:00–19:00, Pzt–Cum) posta anında gelir; aksi halde 15, 30 veya 60 dakikada bir kontrol edilir. Hesap başına açılır: Ayarlar → hesap → Postayı denetle.</string>
     <string name="ruleAlwaysNoMove">«Her zaman bildir» ve «Klasöre taşı» birlikte çalışmaz: taşıdıktan sonra bildirim iletiyi açamaz. Birini seçin.</string>
@@ -3088,6 +3088,8 @@
     <string name="pushWakeTitleAndroid">Arka planda posta denetimi</string>
     <string name="pushWakeHelpAndroid">Android, arka plandaki bir uygulamanın ne zaman çalışabileceğine kendisi karar verir: derin uykuda arka plan denetimlerini erteler ve Android 15’ten beri arka plan eşitlemesine günde en fazla 6 saat verilir. Geliştiricinin sunucusu (ogneliss.ru/push) seçilen aralıkla Google (Firebase Cloud Messaging) üzerinden boş bir «postayı denetle» sinyali gönderir ve uygulama posta kutularınızı bu cihazdan kendisi denetler. Sunucuya yalnızca bu kurulumun bildirim belirteci gönderilir — adres, parola veya ileti gönderilmez. Derin uykuda Android sinyali daha sonra, bir sonraki bakım aralığında iletebilir. Google hizmetleri yoksa sinyal bir UnifiedPush uygulaması (örneğin ntfy) üzerinden gelir. Ayrıntılar Gizlilik Politikası’nın 6.2 bölümündedir.</string>
     <string name="pushWakeVia">Sinyaller nasıl gelir</string>
+    <string name="bgDeliveryAuto">Buradaki her şey otomatik ayarlanır. Arka plandaki uygulama, telefonda varsa Google hizmetleri üzerinden, yoksa bir UnifiedPush uygulaması (ör. ntfy) üzerinden gelen bir sinyalle uyandırılır; ikisi de yoksa e-posta bir zamanlamaya göre denetlenir. “{bg}”, “{instant}” veya “{scheduled}” ayarlı posta kutuları için kendiliğinden açılır. Burada yalnızca yeni e-posta bildirimleri geç geliyorsa bir şey değiştirin.</string>
+    <string name="bgDeliveryAutoShort">Otomatik seçilir: Google, UnifiedPush veya zamanlamaya göre</string>
     <string name="pushWakeViaHelp">Google Play hizmetleri olan telefonlarda Google (Firebase Cloud Messaging) üzerinden. Bunlar yoksa bir UnifiedPush dağıtıcı uygulaması (örneğin ntfy) üzerinden: kendi bağlantısını sürdürür ve “postayı denetle” sinyalini iletir. Sinyal bu kurulumun anahtarıyla şifrelenir; adres veya ileti içermez. Ayrıntılar: Gizlilik Politikası, bölüm 6.2.</string>
     <string name="pushWakeViaGoogle">Google üzerinden</string>
     <string name="pushWakeViaGoogleDesc">Google Play hizmetleri gerekir</string>
@@ -3306,7 +3308,7 @@
     <string name="faq_tasks_3_a">Nota uzun basın: düzenleyin, e-postayla gönderin, paylaşın, kopyalayın veya silin.</string>
     <string name="faq_notify_title">Bildirimler ve arka plan</string>
     <string name="faq_notify_1_q">iPhone\'da bildirimler neden geç geliyor?</string>
-    <string name="faq_notify_1_a">Uygulama açıkken posta hemen gelir. Arka plandayken iOS uygulamayı ne zaman uyandıracağına kendisi karar verir: uygulamayı her gün kullanıyorsanız daha sık, Düşük Güç Modu\'nda veya pil azken daha seyrek. Daha sık uyanmasını sağlamak için Ayarlar → Bildirimler bölümünde Arka planda posta denetimi (iPhone) seçeneğini açık tutun: geliştiricinin sunucusu, seçtiğiniz aralıkla Apple üzerinden boş bir “postanızı denetleyin” sinyali gönderir ve uygulama posta kutularınızı bu cihazdan kendisi denetler; sunucuya yalnızca bildirim belirteci gönderilir. Uygulamayı uygulama değiştiriciden kaydırarak kapatmayın: bundan sonra iOS uygulamayı siz yeniden açana kadar ne kendiliğinden ne de sinyalle uyandırır. iOS Ayarları\'nda Ogneliss Mail için Arka Planda Uygulama Yenileme\'nin açık olduğundan emin olun.</string>
+    <string name="faq_notify_1_a">Uygulama açıkken posta hemen gelir. Arka plandayken iOS uygulamayı ne zaman uyandıracağına kendisi karar verir: uygulamayı her gün kullanıyorsanız daha sık, Düşük Güç Modu\'nda veya pil azken daha seyrek. Daha sık uyanmasını sağlamak için Ayarlar → Gelişmiş ayarlar bölümünde Arka planda posta denetimi (iPhone) seçeneğini açık tutun: geliştiricinin sunucusu, seçtiğiniz aralıkla Apple üzerinden boş bir “postanızı denetleyin” sinyali gönderir ve uygulama posta kutularınızı bu cihazdan kendisi denetler; sunucuya yalnızca bildirim belirteci gönderilir. Uygulamayı uygulama değiştiriciden kaydırarak kapatmayın: bundan sonra iOS uygulamayı siz yeniden açana kadar ne kendiliğinden ne de sinyalle uyandırır. iOS Ayarları\'nda Ogneliss Mail için Arka Planda Uygulama Yenileme\'nin açık olduğundan emin olun.</string>
     <string name="faq_notify_2_q">Tek bir klasör için bildirimleri nasıl kapatırım?</string>
     <string name="faq_notify_2_a">Ayarlar → hesap → Klasör senkronizasyonu: bir klasörün anahtarının yanındaki zil, o klasördeki yeni iletilerin bildirimlerini (alt klasörlerle birlikte) açar veya kapatır; klasör senkronize olmaya devam eder. ⋮ menüsünde Bildirimler: tüm klasörler ve Bildirimler: hiçbir klasör seçenekleri bulunur. Gönderilenler, Taslaklar, Silinmiş öğeler veya Gereksiz e-posta için hiçbir zaman bildirim gelmez.</string>
     <string name="faq_notify_3_q">Android\'de bildirimler neden hemen gelmiyor?</string>
@@ -3797,7 +3799,7 @@
     <string name="apPreviewBubbleIn">Teklifi cumaya kadar onaylayalım mı?</string>
     <string name="apPreviewBubbleOut">Evet, bugün gönderirim.</string>
     <string name="notifyMessengerStyle">Mesajlaşma uygulaması gibi bildirimler</string>
-    <string name="notifyMessengerStyleDesc">Mesajın yanında gönderenin fotoğrafı veya baş harfi</string>
+    <string name="notifyMessengerStyleDesc">Kişilerden ve iş arkadaşlarından gelen postalar mesaj gibi gönderenin fotoğrafıyla; bültenler basit bildirim olarak</string>
     <string name="notifyVipConversations">VIP\'ler için görüşmeler</string>
     <string name="notifyVipConversationsDesc">VIP e-postaları Android\'in Görüşmeler bölümünde görünür ve öncelikli olarak işaretlenebilir</string>
     <string name="notifyAllConversations">Tüm postalar için sohbetler</string>
@@ -4359,7 +4361,7 @@
     <string name="faq_settings_4_q">Bir ayarın ne işe yaradığını nasıl öğrenirim?</string>
     <string name="faq_settings_4_a">Ayarlardaki bir öğeye basılı tutun (bilgisayarda sağ tıklayın): neyi etkilediğine dair bir açıklama ve «Sorular ve yanıtlar» bölümünden onunla ilgili yanıtlar açılır. Adın yanındaki «?» simgesi de aynısını açar.</string>
     <string name="notifyPeopleConversations">Kişilerden gelen e-postalar için sohbetler</string>
-    <string name="notifyPeopleConversationsDesc">Alıcılar arasında olduğunuz (en fazla 50) iş arkadaşı ve kişi e-postalarında, üzerinde uygulama simgesi olan gönderen fotoğrafı; bültenler her zamanki gibi</string>
+    <string name="notifyPeopleConversationsDesc">İş arkadaşlarından, kişilerden, yazıştığınız kişilerden ve kişisel kutulardan (Gmail, Outlook…) gelen, alıcılar arasında olduğunuz (en fazla 50) postalarda üzerinde uygulama simgesiyle gönderenin portresi; bültenler basit bildirim olarak</string>
     <string name="offlineErrGateway">Kuruluşunuzun ağ geçidi bu ağdan gelen iletiyi engelledi (örneğin VPN) — ağ değiştiğinde otomatik olarak gönderilecek</string>
     <string name="tagsInsert">Alan ekle:</string>
     <string name="tagGroupRecipient">Alıcı</string>

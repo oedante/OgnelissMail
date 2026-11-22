@@ -792,6 +792,46 @@ class ICalPatch {
     return _join(l);
   }
 
+  /// Убрать одно вхождение серии отменённым вхождением (RECURRENCE-ID и
+  /// STATUS:CANCELLED, RFC 5545) — для сервера, который не принял EXDATE
+  /// (2.7.1, журнал пользователя 22.11.2026: Google ответил 400 на удаление
+  /// одного повтора).
+  static String cancelOccurrence(
+    String ics, {
+    required String uid,
+    required DateTime originalStart,
+    required DateTime end,
+    required bool allDay,
+    required String summary,
+  }) {
+    final l = _removeOverride(ICalParser._unfold(ics), originalStart);
+    final master = _events(l).where((e) => !_hasRecurrenceId(l, e)).firstOrNull;
+    if (master == null) return ics;
+    final tzid = _masterTzid(l, master);
+    var seq = 0;
+    var depth = 0;
+    for (var i = master.$1 + 1; i < master.$2; i++) {
+      final up = l[i].toUpperCase();
+      if (up.startsWith('BEGIN:')) depth++;
+      if (up.startsWith('END:')) depth--;
+      if (depth == 0 && _name(l[i]) == 'SEQUENCE') {
+        seq = int.tryParse(l[i].substring(l[i].indexOf(':') + 1).trim()) ?? 0;
+      }
+    }
+    final ev = [
+      'BEGIN:VEVENT',
+      'UID:$uid',
+      allDay ? 'RECURRENCE-ID;VALUE=DATE:${_day(originalStart)}' : _stamp('RECURRENCE-ID', originalStart, tzid),
+      ..._fields(summary: summary, start: originalStart, end: end, allDay: allDay, tzid: tzid),
+      'SEQUENCE:${seq + 1}',
+      'STATUS:CANCELLED',
+      'END:VEVENT',
+    ];
+    final endCal = l.lastIndexWhere((x) => x.toUpperCase() == 'END:VCALENDAR');
+    l.insertAll(endCal < 0 ? l.length : endCal, ev);
+    return _join(l);
+  }
+
   static List<String> _removeOverride(List<String> l, DateTime originalStart) {
     for (final e in _events(l).reversed) {
       final rid = _recurrenceId(l, e);

@@ -38,9 +38,9 @@
     <string name="permCamera">Máy ảnh</string>
     <string name="permCameraWhy">Chụp ảnh tài liệu để đính kèm.</string>
     <string name="permContacts">Danh bạ thiết bị</string>
-    <string name="permContactsWhy">Nhập danh bạ của thiết bị và xuất danh bạ công ty sang sổ địa chỉ của thiết bị (chỉ khi bạn yêu cầu trong cài đặt danh bạ).</string>
+    <string name="permContactsWhy">Danh bạ của các hộp thư hiện trong Danh bạ điện thoại thành một nhóm riêng: khi đồng nghiệp gọi, bạn thấy tên và chức vụ. Thay đổi được thực hiện trong ứng dụng. Quyền này cũng dùng để nhập danh bạ điện thoại vào ứng dụng. Danh bạ Google (và iCloud trên iPhone) do điện thoại tự đồng bộ nên không bị trùng.</string>
     <string name="permCalendar">Lịch của thiết bị</string>
-    <string name="permCalendarWhy">Xuất các cuộc họp từ thư sang lịch của thiết bị (chỉ khi bạn yêu cầu trong cài đặt lịch).</string>
+    <string name="permCalendarWhy">Cuộc họp của các hộp thư hiện trong lịch điện thoại, tiện ích và trên đồng hồ dưới dạng một lịch riêng chỉ để xem; thay đổi được thực hiện trong ứng dụng. Lịch Google (và iCloud trên iPhone) do điện thoại tự đồng bộ nên cuộc họp không bị trùng.</string>
     <string name="permExactAlarms">Nhắc nhở chính xác</string>
     <string name="permExactAlarmsWhy">Nhắc về cuộc họp và nhắc hoãn thư đến đúng giờ. Nếu không có quyền này, Android có thể trì hoãn vài phút.</string>
     <string name="permBattery">Chạy nền không hạn chế</string>
@@ -1215,7 +1215,7 @@
     <string name="checkEvery">Mỗi {n} phút</string>
     <string name="checkHourly">Mỗi giờ</string>
     <string name="checkManual">Chỉ thủ công</string>
-    <string name="checkMailHint">Tức thì — máy chủ báo thư mới ngay lập tức (ở chế độ nền — với “Chạy trong nền”). Theo lịch — tức thì trong giờ làm việc, ngoài giờ thì theo khoảng thời gian (Cài đặt → Đồng bộ → Lịch nhận thư). Mỗi 15/30/60 phút — kiểm tra theo lịch, tiết kiệm nhất. Thủ công — khi bạn mở ứng dụng và kéo để làm mới.</string>
+    <string name="checkMailHint">Tức thì — máy chủ báo thư mới ngay lập tức. Theo lịch — tức thì trong giờ làm việc, ngoài giờ thì theo khoảng thời gian (Cài đặt → Đồng bộ → Lịch nhận thư). Mỗi 15/30/60 phút — kiểm tra theo lịch, tiết kiệm nhất. Thủ công — khi bạn mở ứng dụng và kéo để làm mới.</string>
     <string name="wifiOnlyAcc">Chỉ dùng Wi‑Fi</string>
     <string name="wifiOnlyAccDesc">Chỉ tự động kiểm tra khi kết nối Wi‑Fi</string>
     <string name="accSectionConnection">Kết nối</string>
@@ -2506,7 +2506,7 @@
     <string name="scheduleOffHours">Thời gian còn lại</string>
     <string name="scheduleAccounts">Tài khoản theo lịch</string>
     <string name="scheduleNoAccounts">Chưa có tài khoản nào: hãy chọn “Theo lịch” trong Kiểm tra thư của tài khoản</string>
-    <string name="scheduleHelp">Nhận thư tức thì (push) giữ kết nối với máy chủ và đánh thức thiết bị vài phút một lần. Ban đêm và cuối tuần điều đó làm hao pin.\n\nVới chế độ Theo lịch, thư đến tức thì trong giờ và ngày làm việc, còn thời gian còn lại ứng dụng kiểm tra mỗi 15, 30 hoặc 60 phút.\n\nLịch này dùng chung cho tất cả tài khoản được đặt là Theo lịch (Cài đặt → tài khoản → Kiểm tra thư). Các chế độ khác — Tức thì, Mỗi 15 phút, v.v. — hoạt động như trước.\n\nTrên Android, nhận thư tức thì trong nền cần bật Chạy trong nền. Đầu ngày làm việc, push sẽ bật trong khoảng 10 phút.</string>
+    <string name="scheduleHelp">Nhận thư tức thì (push) giữ kết nối với máy chủ và đánh thức thiết bị vài phút một lần. Ban đêm và cuối tuần điều đó làm hao pin.\n\nVới chế độ Theo lịch, thư đến tức thì trong giờ và ngày làm việc, còn thời gian còn lại ứng dụng kiểm tra mỗi 15, 30 hoặc 60 phút.\n\nLịch này dùng chung cho tất cả tài khoản được đặt là Theo lịch (Cài đặt → tài khoản → Kiểm tra thư). Các chế độ khác — Tức thì, Mỗi 15 phút, v.v. — hoạt động như trước.</string>
     <string name="expScheduleDesc">Tức thì trong giờ làm việc, ngoài giờ thì theo khoảng thời gian</string>
     <string name="expScheduleHint">Chế độ Kiểm tra thư “Theo lịch” của tài khoản. Trong giờ và ngày làm việc (mặc định 7:00–19:00, Thứ Hai–Thứ Sáu) thư đến tức thì; ngoài ra thư được kiểm tra mỗi 15, 30 hoặc 60 phút. Bật riêng cho từng tài khoản: Cài đặt → tài khoản → Kiểm tra thư.</string>
     <string name="ruleAlwaysNoMove">“Luôn thông báo” và “Di chuyển vào thư mục” không dùng chung được: sau khi di chuyển, thông báo không mở được thư. Hãy chọn một trong hai.</string>
@@ -3075,6 +3075,8 @@
     <string name="pushWakeTitleAndroid">Kiểm tra thư ở chế độ nền</string>
     <string name="pushWakeHelpAndroid">Android tự quyết định khi nào ứng dụng chạy nền được hoạt động: khi ngủ sâu, Android hoãn các lần kiểm tra nền, và từ Android 15 việc đồng bộ nền chỉ được tối đa 6 giờ mỗi ngày. Máy chủ của nhà phát triển (ogneliss.ru/push) gửi tín hiệu trống «kiểm tra thư» qua Google (Firebase Cloud Messaging) theo khoảng thời gian đã chọn, và ứng dụng tự kiểm tra hộp thư từ chính thiết bị này. Chỉ mã thông báo của lần cài đặt này được gửi đến máy chủ — không có địa chỉ, mật khẩu hay thư. Khi ngủ sâu, Android có thể chuyển tín hiệu muộn hơn, vào khoảng bảo trì tiếp theo. Khi không có dịch vụ Google — qua ứng dụng UnifiedPush (ví dụ ntfy). Chi tiết trong Chính sách quyền riêng tư, mục 6.2.</string>
     <string name="pushWakeVia">Cách nhận tín hiệu</string>
+    <string name="bgDeliveryAuto">Mọi thứ ở đây được tự động thiết lập. Ứng dụng chạy nền được đánh thức bằng tín hiệu qua dịch vụ Google nếu điện thoại có, nếu không thì qua một ứng dụng UnifiedPush (ví dụ ntfy); không có cả hai thì thư được kiểm tra theo lịch. “{bg}” tự bật cho các hộp thư đặt “{instant}” hoặc “{scheduled}”. Chỉ thay đổi ở đây nếu thông báo thư mới đến muộn.</string>
+    <string name="bgDeliveryAutoShort">Tự động chọn: Google, UnifiedPush hoặc theo lịch</string>
     <string name="pushWakeViaHelp">Qua Google (Firebase Cloud Messaging) trên điện thoại có dịch vụ Google Play. Nếu không có, qua ứng dụng phân phối UnifiedPush (ví dụ ntfy): ứng dụng này tự duy trì kết nối và chuyển tiếp tín hiệu “kiểm tra thư”. Tín hiệu được mã hóa bằng khóa của lần cài đặt này và không chứa địa chỉ hay thư. Chi tiết trong Chính sách quyền riêng tư, mục 6.2.</string>
     <string name="pushWakeViaGoogle">Qua Google</string>
     <string name="pushWakeViaGoogleDesc">Cần dịch vụ Google Play</string>
@@ -3293,7 +3295,7 @@
     <string name="faq_tasks_3_a">Nhấn giữ ghi chú: sửa, gửi qua email, chia sẻ, sao chép hoặc xóa.</string>
     <string name="faq_notify_title">Thông báo và chạy nền</string>
     <string name="faq_notify_1_q">Vì sao thông báo đến chậm trên iPhone?</string>
-    <string name="faq_notify_1_a">Khi ứng dụng đang mở, thư đến ngay lập tức. Khi ứng dụng chạy nền, iOS tự quyết định thời điểm đánh thức ứng dụng: thường xuyên hơn nếu bạn dùng ứng dụng mỗi ngày, ít hơn ở chế độ Nguồn điện thấp hoặc khi pin yếu. Để ứng dụng được đánh thức thường xuyên hơn, hãy bật Tín hiệu máy chủ (iPhone) trong Cài đặt → Thông báo: máy chủ của nhà phát triển gửi một tín hiệu “kiểm tra thư” trống qua Apple theo khoảng thời gian bạn chọn, còn ứng dụng tự kiểm tra các hộp thư của bạn, từ thiết bị này; chỉ mã thông báo được gửi đến máy chủ. Đừng đóng ứng dụng bằng cách vuốt nó đi trong trình chuyển đổi ứng dụng: sau đó iOS sẽ không đánh thức ứng dụng, dù tự động hay bằng tín hiệu, cho đến khi bạn mở lại ứng dụng. Hãy đảm bảo Làm mới ứng dụng trong nền được bật cho Ogneliss Mail trong Cài đặt iOS.</string>
+    <string name="faq_notify_1_a">Khi ứng dụng đang mở, thư đến ngay lập tức. Khi ứng dụng chạy nền, iOS tự quyết định thời điểm đánh thức ứng dụng: thường xuyên hơn nếu bạn dùng ứng dụng mỗi ngày, ít hơn ở chế độ Nguồn điện thấp hoặc khi pin yếu. Để ứng dụng được đánh thức thường xuyên hơn, hãy bật Tín hiệu máy chủ (iPhone) trong Cài đặt → Cài đặt nâng cao: máy chủ của nhà phát triển gửi một tín hiệu “kiểm tra thư” trống qua Apple theo khoảng thời gian bạn chọn, còn ứng dụng tự kiểm tra các hộp thư của bạn, từ thiết bị này; chỉ mã thông báo được gửi đến máy chủ. Đừng đóng ứng dụng bằng cách vuốt nó đi trong trình chuyển đổi ứng dụng: sau đó iOS sẽ không đánh thức ứng dụng, dù tự động hay bằng tín hiệu, cho đến khi bạn mở lại ứng dụng. Hãy đảm bảo Làm mới ứng dụng trong nền được bật cho Ogneliss Mail trong Cài đặt iOS.</string>
     <string name="faq_notify_2_q">Làm thế nào để tắt thông báo cho một thư mục?</string>
     <string name="faq_notify_2_a">Cài đặt → tài khoản → Đồng bộ thư mục: biểu tượng chuông bên cạnh công tắc của thư mục bật hoặc tắt thông báo về thư mới của thư mục đó (kể cả thư mục con), và thư mục vẫn tiếp tục đồng bộ. Menu ⋮ có Thông báo: tất cả thư mục và Thông báo: không thư mục nào. Không bao giờ có thông báo cho Đã gửi, Thư nháp, Thùng rác hoặc Thư rác.</string>
     <string name="faq_notify_3_q">Vì sao thông báo bị chậm trên Android?</string>
@@ -3778,7 +3780,7 @@
     <string name="apPreviewBubbleIn">Mình duyệt dự toán trước thứ Sáu nhé?</string>
     <string name="apPreviewBubbleOut">Vâng, hôm nay tôi gửi.</string>
     <string name="notifyMessengerStyle">Thông báo kiểu ứng dụng nhắn tin</string>
-    <string name="notifyMessengerStyleDesc">Ảnh hoặc chữ cái đầu của người gửi bên cạnh thư</string>
+    <string name="notifyMessengerStyleDesc">Thư từ mọi người và đồng nghiệp hiện ảnh người gửi như tin nhắn; bản tin hiện dưới dạng thông báo thường</string>
     <string name="notifyVipConversations">Cuộc trò chuyện cho VIP</string>
     <string name="notifyVipConversationsDesc">Thư từ VIP xuất hiện trong mục Cuộc trò chuyện của Android, nơi bạn có thể đặt làm ưu tiên</string>
     <string name="notifyAllConversations">Cuộc trò chuyện cho mọi thư</string>
@@ -4338,7 +4340,7 @@
     <string name="faq_settings_4_q">Làm sao biết một cài đặt có tác dụng gì?</string>
     <string name="faq_settings_4_a">Nhấn giữ một mục cài đặt (trên máy tính, nhấp chuột phải vào mục đó): phần giải thích mục đó ảnh hưởng đến gì sẽ mở ra, kèm các câu trả lời về nó trong «Câu hỏi và trả lời». Biểu tượng «?» cạnh tên cũng mở nội dung này.</string>
     <string name="notifyPeopleConversations">Hội thoại cho thư từ người</string>
-    <string name="notifyPeopleConversationsDesc">Ảnh người gửi kèm biểu tượng ứng dụng trên ảnh cho thư của đồng nghiệp và danh bạ mà bạn có trong danh sách người nhận (tối đa 50); bản tin hiển thị như thường</string>
+    <string name="notifyPeopleConversationsDesc">Ảnh người gửi kèm biểu tượng ứng dụng cho thư từ đồng nghiệp, danh bạ, người bạn từng trao đổi thư và hộp thư cá nhân (Gmail, Outlook…) có bạn trong danh sách người nhận (tối đa 50); bản tin hiện dưới dạng thông báo thường</string>
     <string name="offlineErrGateway">Cổng của tổ chức đã chặn thư từ mạng này (ví dụ VPN) — thư sẽ tự động được gửi khi mạng thay đổi</string>
     <string name="tagsInsert">Chèn trường:</string>
     <string name="tagGroupRecipient">Người nhận</string>

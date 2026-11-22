@@ -277,6 +277,7 @@ class DavPimService {
       await prefs.remove(_cardTagKey(accountId));
       await prefs.remove(_calTagKey(accountId));
       await prefs.remove(_todoKey(accountId));
+      await prefs.remove(_hiddenKey(accountId));
     } catch (_) {}
   }
 
@@ -495,6 +496,8 @@ class DavPimService {
           }
         }
       }
+      final hidden = await hiddenIds(account.id);
+      if (hidden.isNotEmpty) out.removeWhere((e) => isHidden(hidden, e.id));
       if (ok) {
         await _saveRes(account.id, res);
         if (tagLine != null) await _saveTag(_calTagKey(account.id), tagLine);
@@ -616,9 +619,11 @@ class DavPimService {
           return;
         }
         if (r.status != 412) {
-          throw Exception(client.denied
-              ? 'Нет прав на изменение этого календаря'
-              : 'Сервер не принял изменение (HTTP ${r.status})');
+          throw DavRefused(
+              r.status,
+              client.denied
+                  ? 'Нет прав на изменение этого календаря'
+                  : 'Сервер не принял изменение (HTTP ${r.status})');
         }
       }
       throw Exception('Событие изменено на сервере, повторите');
@@ -714,16 +719,56 @@ class DavPimService {
   }
 
   /// Удалить событие; вхождение серии — только его (EXDATE), не всю серию.
+  ///
+  /// Сервер не принял EXDATE (400) — отменённое вхождение (RECURRENCE-ID,
+  /// STATUS:CANCELLED). Не принял и его, или календарь только для чтения —
+  /// вхождение скрывается в приложении ([hide]): у дня рождения из контактов
+  /// Google даты не меняются (2.7.1, журнал пользователя 22.11.2026 18:48:
+  /// «Удаление события …#20261220: Сервер не принял изменение (HTTP 400)»),
+  /// а у чужого календаря (праздники, общий только для чтения) прав нет.
   Future<void> deleteEvent(AccountModel account, String authorization, String modelId) async {
     final id = parseId(account.id, modelId);
     if (id == null) return;
+    // Календарь только для чтения (права из PROPFIND): отказ сервера — не
+    // ошибка, событие скрывается в приложении.
+    final readOnly = (await _loadRes(account.id))[id.uid]?['w'] == false;
+    Future<void> hideReadOnly() async {
+      await hide(account.id, modelId);
+      AppLogger.info('CalDAV: событие календаря только для чтения скрыто в приложении');
+    }
+
     if (id.day != null) {
-      await _modify(account, authorization, id.uid, (ics) {
-        final orig = _originalStart(ics, id.day!);
-        if (orig == null) return ics;
-        final allDay = ICalParser.parse(ics).where((x) => x.recurrenceId == null).firstOrNull?.isAllDay ?? false;
-        return ICalPatch.addExdate(ics, orig, allDay: allDay);
-      });
+      try {
+        await _modify(account, authorization, id.uid, (ics) {
+          final orig = _originalStart(ics, id.day!);
+          if (orig == null) return ics;
+          final allDay = ICalParser.parse(ics).where((x) => x.recurrenceId == null).firstOrNull?.isAllDay ?? false;
+          return ICalPatch.addExdate(ics, orig, allDay: allDay);
+        });
+      } on DavRefused catch (e) {
+        if (readOnly && (e.status == 401 || e.status == 403)) return await hideReadOnly();
+        if (e.status != 400) rethrow;
+        AppLogger.info('CalDAV: сервер не принял исключение даты (HTTP 400) — отменённое вхождение');
+        try {
+          await _modify(account, authorization, id.uid, (ics) {
+            final orig = _originalStart(ics, id.day!);
+            final master = ICalParser.parse(ics).where((x) => x.recurrenceId == null).firstOrNull;
+            if (orig == null || master == null || master.start == null) return ics;
+            final len = master.end == null ? Duration(days: master.isAllDay ? 1 : 0) : master.end!.difference(master.start!);
+            return ICalPatch.cancelOccurrence(ics,
+                uid: id.uid,
+                originalStart: orig,
+                end: orig.add(len),
+                allDay: master.isAllDay,
+                summary: master.summary ?? '');
+          });
+        } on DavRefused catch (e2) {
+          if (e2.status != 400 && e2.status != 403) rethrow;
+          await hide(account.id, modelId);
+          AppLogger.info('CalDAV: даты события на сервере не меняются (HTTP ${e2.status}, например день рождения '
+              'из контактов Google) — вхождение ${id.day} скрыто в приложении');
+        }
+      }
       return;
     }
     final href = await _hrefOf(account, authorization, id.uid);
@@ -731,6 +776,7 @@ class DavPimService {
     final client = DavClient(authorization);
     try {
       final st = await client.deleteResource(href);
+      if (readOnly && (st == 401 || st == 403)) return await hideReadOnly();
       if (st != 404 && (st < 200 || st >= 300)) {
         throw Exception(client.denied
             ? 'Нет прав на изменение этого календаря'
@@ -742,6 +788,42 @@ class DavPimService {
     } finally {
       client.dispose();
     }
+  }
+
+  // Скрытые в приложении события и вхождения (id модели): сервер их не
+  // меняет — при следующих синхронизациях они не возвращаются.
+  static String _hiddenKey(String accountId) => 'dav_hidden_$accountId';
+
+  /// Не больше стольких скрытых — старые забываются.
+  static const _maxHidden = 300;
+
+  static Future<Set<String>> hiddenIds(String accountId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return {...?prefs.getStringList(_hiddenKey(accountId))};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  /// Скрыть событие (id без «#день» — все вхождения) или вхождение.
+  static Future<void> hide(String accountId, String modelId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final list = [...?prefs.getStringList(_hiddenKey(accountId))]
+        ..remove(modelId)
+        ..add(modelId);
+      await prefs.setStringList(
+          _hiddenKey(accountId), list.length > _maxHidden ? list.sublist(list.length - _maxHidden) : list);
+    } catch (_) {}
+  }
+
+  /// Скрыто ли событие [id] ([hidden] — из [hiddenIds]).
+  static bool isHidden(Set<String> hidden, String id) {
+    if (hidden.isEmpty) return false;
+    if (hidden.contains(id)) return true;
+    final hash = id.lastIndexOf('#');
+    return hash > 0 && hidden.contains(id.substring(0, hash));
   }
 
   Future<List<ContactModel>> fetchContacts(AccountModel account, String authorization) async =>
@@ -1245,4 +1327,14 @@ class DavPimService {
       client.dispose();
     }
   }
+}
+
+/// Сервер отказал в изменении ресурса: [status] — код ответа HTTP.
+class DavRefused implements Exception {
+  final int status;
+  final String message;
+  const DavRefused(this.status, this.message);
+
+  @override
+  String toString() => 'Exception: $message';
 }

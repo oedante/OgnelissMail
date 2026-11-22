@@ -24,6 +24,7 @@ import '../providers/module_settings_provider.dart';
 import '../../../core/permissions/app_permissions.dart';
 import '../../../services/notifications/reminder_scheduler_service.dart';
 import '../../../widgets/common/text_scale_cap.dart';
+import '../widgets/phone_mirror_switch.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineNotice;
 
 class CalendarSettingsScreen extends ConsumerWidget {
@@ -113,6 +114,8 @@ class CalendarSettingsScreen extends ConsumerWidget {
           ]),
           // «Показывать отклонённые» убрано: ответ на приглашение у событий
           // не хранится, переключатель ни на что не влиял.
+          // Встречи ящиков в календаре телефона — сами, по умолчанию (2.7.0).
+          const PhoneMirrorSection(contacts: false),
           const _DeviceCalendarExportSection(),
         ],
       ),

@@ -262,6 +262,7 @@ class AppSettings {
     this.notificationVibration = true,
     this.notificationMessengerStyle = true,
     this.notificationVipConversations = true,
+    // 2.7.0 (владелец 22.11.2026: «все как в мессенджере показывать»).
     this.notificationAllConversations = false,
     this.notificationPeopleConversations = true,
     this.syncOnlyWifi = false,

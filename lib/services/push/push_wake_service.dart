@@ -269,6 +269,20 @@ class PushWakeService {
     await apply();
   }
 
+  /// Способ выбран вручную («Расширенные настройки → Проверка почты в
+  /// фоне»); иначе приложение выбирает само.
+  bool get explicitChoice => _explicit;
+
+  /// Вернуть выбор способа приложению (2.7.0): Google, если есть сервисы
+  /// Google Play; иначе — приложение UnifiedPush; иначе — по расписанию.
+  Future<void> useAuto() async {
+    if (os != PushWakeOs.android) return;
+    await _unregister();
+    await _prefs.remove(_kTransport);
+    await _prefs.remove(_kUpDistributor);
+    await apply();
+  }
+
   static bool get supported => platformOs != null;
 
   String get _base => AppConstants.pushRelayUrl.trim().replaceAll(RegExp(r'/+$'), '');
@@ -461,13 +475,15 @@ class PushWakeService {
   Future<void> _applyUp() async {
     var dist = upDistributor;
     if (dist == null) {
-      // Выбор сам (1.12.x): распространитель один — он; нет или несколько —
-      // подскажет экран (несколько — выбирает человек, как велит UnifiedPush).
-      final list = await upDistributors();
-      if (list.length != 1) return;
-      dist = list.single.id;
+      // Выбор сам (1.12.x): распространитель один — он; несколько — первый
+      // по названию (2.7.0, замечание владельца 22.11.2026: «как и что будет
+      // будить приложение, пользователю не интересно»; другой — вручную в
+      // «Расширенных настройках»); нет — проверки по расписанию.
+      final list = [...await upDistributors()]..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      if (list.isEmpty) return;
+      dist = list.first.id;
       await _prefs.setString(_kUpDistributor, dist);
-      AppLogger.info('Сигналы сервера: UnifiedPush через ${list.single.name} (выбрано само)');
+      AppLogger.info('Сигналы сервера: UnifiedPush через ${list.first.name} (выбрано само из ${list.length})');
     }
     final vapid = await _vapidKey();
     await _upChannel.invokeMethod<void>('register', {'distributor': dist, 'vapid': ?vapid});

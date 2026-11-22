@@ -1999,6 +1999,22 @@ class AppDatabase extends _$AppDatabase {
     return out;
   }
 
+  /// Письма в серверных «Черновиках» ящика — с отметкой черновика (2.6.8,
+  /// замечание владельца 22.11.2026: «у черновиков нет кнопки
+  /// „Редактировать“»). IMAP отметку не присылает, и письма из «Черновиков»,
+  /// сохранённые до 2.6.8, беседа и экран письма показывали как обычные. Списки
+  /// обновляются, только если что-то изменилось. [draftsType] — индекс
+  /// FolderType.drafts. Возвращает, сколько писем отмечено.
+  Future<int> markServerDrafts(String accountId, int draftsType) async {
+    final n = await customUpdate(
+      'UPDATE emails SET is_draft = 1 WHERE account_id = ? AND is_draft = 0 '
+      'AND folder_id IN (SELECT id FROM folders WHERE account_id = ? AND type = ?)',
+      variables: [Variable.withString(accountId), Variable.withString(accountId), Variable.withInt(draftsType)],
+    );
+    if (n > 0) notifyUpdates({TableUpdate.onTable(emails, kind: UpdateKind.update)});
+    return n;
+  }
+
   /// Начало HTML писем без текстовой части (для превью — разбирает
   /// вызывающий, вне главного потока): не больше [limit] писем и [chars]
   /// символов на письмо. id → начало HTML.

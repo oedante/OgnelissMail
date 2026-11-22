@@ -13,9 +13,9 @@
 //    держится не меньше 1,8 с);
 //  · прокрутка ленты во время синхронизации (2.6.8, план «Ж», просьба
 //    владельца 22.11.2026): каждые 300 мс в базу приходит пачка писем и
-//    меняются отметки прочитанного, лента перестраивается; считаются кадры,
-//    не уложившиеся в 16 мс сборки (missed_frame_build_budget_count), и
-//    худший кадр. Работа «синхронизации» — под метками производительности
+//    меняются отметки прочитанного, лента перестраивается; замеры — 90-й
+//    процентиль сборки кадра и худший кадр, в подробностях — кадры, не
+//    уложившиеся в 16 мс сборки (missed_frame_build_budget_count). Работа «синхронизации» — под метками производительности
 //    (PerfMark): в Timeline их видно рядом с кадрами.
 // Строки OGN_PERF (support/harness.dart) собирает tool/perf/perf_check.py,
 // сравнение с tool/perf/baseline.json — в CI (задача «emulator»).
@@ -507,8 +507,9 @@ void perfTests() {
         ])
           k: s[k],
       };
-      PerfLog.record('scroll_sync_missed_frames', s['missed_frame_build_budget_count'] as num, extra: {'frames': pick});
-      PerfLog.record('scroll_sync_build_p90_ms', s['90th_percentile_frame_build_time_millis'] as num);
+      // Замеры — в мс (perf_baseline_test); число кадров дольше 16 мс
+      // сборки (missed_frame_build_budget_count) — в подробностях замера.
+      PerfLog.record('scroll_sync_build_ms', s['90th_percentile_frame_build_time_millis'] as num, extra: {'frames': pick});
       PerfLog.record('scroll_sync_worst_frame_ms', s['worst_total_ms'] as num);
     });
 

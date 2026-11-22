@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Skicka svar till alla</string>
     <string name="mailBarOrder">Knappar under meddelandet</string>
     <string name="mailBarRightHand">För högerhand: Svara till höger</string>
-    <string name="mailBarLeftHand">För vänsterhand: Svara till vänster</string>
+    <string name="mailBarLeftHand">Standard: Svara till vänster</string>
     <string name="mailBarCustom">Egen ordning</string>
     <string name="mailBarDragHint">Uppifrån och ned här motsvarar från vänster till höger under ett meddelande. Dra i handtaget till höger</string>
-    <string name="mailBarOrderHint">Svara är lättare att nå med tummen, och Ta bort är säkrare på avstånd från systemets Bakåt-knapp så att du inte tar bort ett meddelande av misstag.\n\nSom standard passar knapparna högerhanden: Svara till höger. För vänsterhanden är de speglade. Du kan också ordna dem på ditt eget sätt.\n\nNär text skrivs i fältet Svara… blir knapparna Svara och Svara alla färgade och skickar den.</string>
+    <string name="mailBarOrderHint">Svara är lättare att nå med tummen, och Ta bort är säkrare på avstånd från systemets Bakåt-knapp så att du inte tar bort ett meddelande av misstag.\n\nSom standard är Svara till vänster, som i de flesta e-postappar. För högerhanden är knapparna speglade: Svara till höger. Du kan också ordna dem på ditt eget sätt.\n\nNär text skrivs i fältet Svara… blir knapparna Svara och Svara alla färgade och skickar den.</string>
     <string name="confirmMailDelete">Fråga före borttagning</string>
     <string name="confirmMailDeleteDesc">Knappen Ta bort i ett öppet meddelande</string>
     <string name="deleteMailAskTitle">Ta bort det här meddelandet?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">Hur svarar jag snabbt utan att öppna redigeraren?</string>
     <string name="faq_mail_1_a">Ovanför meddelandeknapparna finns ett fält Svara…: skriv din text och tryck på Svara eller Svara alla – knappen blir färgad och meddelandet skickas med en hälsning och din signatur. Med tomt fält öppnar Svara hela redigeraren; krysset i fältet rensar texten och Vidarebefordra tar med den i vidarebefordran. I en konversation skickar den runda knappen till höger (med tomt fält öppnar den hela redigeraren). Du kan stänga av fältet under Inställningar → E-post → Snabbsvar i meddelanden och konversationer.</string>
     <string name="faq_mail_2_q">Hur ändrar jag ordningen på knapparna under ett meddelande?</string>
-    <string name="faq_mail_2_a">Inställningar → E-post → Knappar under meddelandet. Som standard passar de högerhanden: Svara till höger, Ta bort på avstånd från systemets Bakåt-knapp. Du kan välja För vänsterhand eller ordna knapparna genom att dra. På samma ställe finns Fråga före borttagning (på som standard).</string>
+    <string name="faq_mail_2_a">Inställningar → E-post → Knappar under meddelandet. Som standard är Svara till vänster, som i de flesta e-postappar. Du kan välja För högerhand (Svara till höger, Ta bort på avstånd från systemets Bakåt-knapp) eller ordna knapparna genom att dra. På samma ställe finns Fråga före borttagning (på som standard).</string>
     <string name="faq_mail_3_q">Hur får jag tillbaka ett borttaget meddelande?</string>
     <string name="faq_mail_3_a">Direkt efter borttagning visas ett fält ”E-post borttagen · Ångra” med 7 sekunders nedräkning längst ned i listan, ovanför den nedre panelen – tryck på Ångra. Arkivera och Flytta till skräppost kan ångras på samma sätt. Senare kan du hitta meddelandet i Borttagna objekt och flytta tillbaka det; för Exchange-postlådor finns också Återställ borttagna objekt i Inställningar.</string>
     <string name="faq_mail_4_q">Vart flyttar Arkivera och Flytta till skräppost ett meddelande?</string>

@@ -3212,10 +3212,10 @@
     <string name="quickReplySendAll">Trimite răspunsul tuturor</string>
     <string name="mailBarOrder">Butoane sub mesaj</string>
     <string name="mailBarRightHand">Pentru mâna dreaptă: Răspunde în dreapta</string>
-    <string name="mailBarLeftHand">Pentru mâna stângă: Răspunde în stânga</string>
+    <string name="mailBarLeftHand">Standard: Răspunde în stânga</string>
     <string name="mailBarCustom">Ordine personalizată</string>
     <string name="mailBarDragHint">Aici, de sus în jos înseamnă de la stânga la dreapta sub mesaj. Trage de mâner, în dreapta</string>
-    <string name="mailBarOrderHint">Răspunde este mai la îndemână sub degetul mare, iar Șterge este mai sigur departe de butonul Înapoi al sistemului, ca să nu ștergi un mesaj din greșeală.\n\nImplicit, butoanele sunt potrivite pentru mâna dreaptă: Răspunde în dreapta. Pentru mâna stângă, ele sunt oglindite. Le poți aranja și cum vrei tu.\n\nCând în câmpul Răspunde… este introdus text, butoanele Răspunde și Răspunde tuturor se colorează și îl trimit.</string>
+    <string name="mailBarOrderHint">Răspunde este mai la îndemână sub degetul mare, iar Șterge este mai sigur departe de butonul Înapoi al sistemului, ca să nu ștergi un mesaj din greșeală.\n\nImplicit, Răspunde este în stânga, ca în majoritatea aplicațiilor de e-mail. Pentru mâna dreaptă, butoanele sunt oglindite: Răspunde în dreapta. Le poți aranja și cum vrei tu.\n\nCând în câmpul Răspunde… este introdus text, butoanele Răspunde și Răspunde tuturor se colorează și îl trimit.</string>
     <string name="confirmMailDelete">Întreabă înainte de ștergere</string>
     <string name="confirmMailDeleteDesc">Butonul Șterge dintr-un mesaj deschis</string>
     <string name="deleteMailAskTitle">Ștergi acest mesaj?</string>
@@ -3251,7 +3251,7 @@
     <string name="faq_mail_1_q">Cum răspund rapid, fără să deschid editorul?</string>
     <string name="faq_mail_1_a">Deasupra butoanelor mesajului există câmpul Răspunde…: scrie textul și atinge Răspunde sau Răspunde tuturor — butonul se colorează, iar mesajul pleacă cu salut și cu semnătura ta. Cu câmpul gol, Răspunde deschide editorul complet; crucea din câmp șterge textul, iar Redirecționează îl mută în mesajul redirecționat. Într-o conversație, butonul rotund din dreapta trimite (cu câmpul gol, deschide editorul complet). Poți dezactiva câmpul în Setări → E-mail → Răspuns rapid în mesaje și conversații.</string>
     <string name="faq_mail_2_q">Cum schimb ordinea butoanelor de sub mesaj?</string>
-    <string name="faq_mail_2_a">Setări → E-mail → Butoane sub mesaj. Implicit sunt potrivite pentru mâna dreaptă: Răspunde în dreapta, Șterge departe de butonul Înapoi al sistemului. Poți alege Pentru mâna stângă sau poți aranja butoanele prin tragere. Tot acolo găsești Întreabă înainte de ștergere (activat implicit).</string>
+    <string name="faq_mail_2_a">Setări → E-mail → Butoane sub mesaj. Implicit, Răspunde este în stânga, ca în majoritatea aplicațiilor de e-mail. Poți alege Pentru mâna dreaptă (Răspunde în dreapta, Șterge departe de butonul Înapoi al sistemului) sau poți aranja butoanele prin tragere. Tot acolo găsești Întreabă înainte de ștergere (activat implicit).</string>
     <string name="faq_mail_3_q">Cum recuperez un mesaj șters?</string>
     <string name="faq_mail_3_a">Imediat după ștergere, în partea de jos a listei, deasupra panoului de jos, apare bara „Mesaj șters · Anulează” cu o numărătoare inversă de 7 secunde — atinge Anulează. Arhivează și Mută în Mesaje nedorite pot fi anulate la fel. Mai târziu poți găsi mesajul în Elemente șterse și îl poți muta înapoi; pentru cutiile poștale Exchange, în Setări există și Recuperează elementele șterse.</string>
     <string name="faq_mail_4_q">Unde pun Arhivează și Mută în Mesaje nedorite un mesaj?</string>

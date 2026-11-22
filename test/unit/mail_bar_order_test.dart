@@ -1,6 +1,6 @@
-// 1.7.3: кнопки под письмом — по умолчанию под правую руку («Ответить»
-// справа, «Удалить» подальше от системной «Назад»), левая рука — зеркально,
-// свой порядок запоминается; вопрос перед удалением включён по умолчанию.
+// 1.7.3: кнопки под письмом; с 2.6.9 по умолчанию — стандартно («Ответить»
+// слева, решение владельца 22.11.2026), под правую руку — зеркально, свой
+// порядок и сохранённый выбор запоминаются; вопрос перед удалением включён.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,16 +18,25 @@ void main() {
     return c;
   }
 
-  test('по умолчанию — под правую руку: «Ответить» справа', () async {
+  test('по умолчанию — стандартно: «Ответить» слева', () async {
     final c = await make({});
     final order = c.read(mailBarOrderProvider);
-    expect(order.last, MailBarAction.reply);
-    expect(order.first, MailBarAction.more);
-    expect(MailBarOrderNotifier.same(order, MailBarOrderNotifier.rightHand), isTrue);
+    expect(order.first, MailBarAction.reply);
+    expect(order.last, MailBarAction.more);
+    expect(MailBarOrderNotifier.same(order, MailBarOrderNotifier.leftHand), isTrue);
     expect(c.read(confirmMailDeleteProvider), isTrue);
   });
 
-  test('левая рука — зеркально', () {
+  test('сохранённый выбор «под правую руку» остаётся', () async {
+    final c = await make({
+      'mail_bar_order': [for (final a in MailBarOrderNotifier.rightHand) a.name],
+    });
+    final order = c.read(mailBarOrderProvider);
+    expect(order.last, MailBarAction.reply);
+    expect(MailBarOrderNotifier.same(order, MailBarOrderNotifier.rightHand), isTrue);
+  });
+
+  test('под правую руку — зеркально', () {
     expect(MailBarOrderNotifier.leftHand, MailBarOrderNotifier.rightHand.reversed.toList());
   });
 

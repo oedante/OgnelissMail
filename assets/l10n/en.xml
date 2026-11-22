@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Send reply to all</string>
     <string name="mailBarOrder">Buttons below a message</string>
     <string name="mailBarRightHand">For the right hand: Reply on the right</string>
-    <string name="mailBarLeftHand">For the left hand: Reply on the left</string>
+    <string name="mailBarLeftHand">Standard: Reply on the left</string>
     <string name="mailBarCustom">Custom order</string>
     <string name="mailBarDragHint">Top to bottom here is left to right below a message. Drag by the handle on the right</string>
-    <string name="mailBarOrderHint">Reply is handier under your thumb, and Delete is safer away from the system Back button so you do not delete a message by accident.\n\nBy default the buttons suit the right hand: Reply on the right. For the left hand they are mirrored. You can also arrange them your own way.\n\nWhen text is typed in the Reply… field, the Reply and Reply all buttons turn colored and send it.</string>
+    <string name="mailBarOrderHint">Reply is handier under your thumb, and Delete is safer away from the system Back button so you do not delete a message by accident.\n\nBy default Reply is on the left, as in most mail apps. For the right hand the buttons are mirrored: Reply on the right. You can also arrange them your own way.\n\nWhen text is typed in the Reply… field, the Reply and Reply all buttons turn colored and send it.</string>
     <string name="confirmMailDelete">Ask before deleting</string>
     <string name="confirmMailDeleteDesc">The Delete button in an open message</string>
     <string name="deleteMailAskTitle">Delete this message?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">How do I reply quickly without opening the editor?</string>
     <string name="faq_mail_1_a">Above the message buttons there is a Reply… field: type your text and tap Reply or Reply all — the button turns colored and the message goes out with a greeting and your signature. With an empty field, Reply opens the full editor; the cross in the field clears the text, and Forward moves it into the forward. In a conversation, the round button on the right sends (with an empty field it opens the full editor). You can turn the field off in Settings → Mail → Quick reply in messages and conversations.</string>
     <string name="faq_mail_2_q">How do I change the order of the buttons below a message?</string>
-    <string name="faq_mail_2_a">Settings → Mail → Buttons below a message. By default they suit the right hand: Reply on the right, Delete away from the system Back button. You can choose For the left hand or arrange the buttons by dragging. The same place has Ask before deleting (on by default).</string>
+    <string name="faq_mail_2_a">Settings → Mail → Buttons below a message. By default Reply is on the left, as in most mail apps. You can choose For the right hand (Reply on the right, Delete away from the system Back button) or arrange the buttons by dragging. The same place has Ask before deleting (on by default).</string>
     <string name="faq_mail_3_q">How do I get a deleted message back?</string>
     <string name="faq_mail_3_a">Right after deleting, an “Email Deleted · Undo” bar with a 7-second countdown appears at the bottom of the list, above the bottom panel — tap Undo. Archive and Move to Junk can be undone the same way. Later you can find the message in Deleted Items and move it back; for Exchange mailboxes there is also Recover deleted items in Settings.</string>
     <string name="faq_mail_4_q">Where do Archive and Move to Junk put a message?</string>

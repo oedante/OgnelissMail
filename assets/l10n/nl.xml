@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Antwoord naar allen verzenden</string>
     <string name="mailBarOrder">Knoppen onder het bericht</string>
     <string name="mailBarRightHand">Voor de rechterhand: Beantwoorden rechts</string>
-    <string name="mailBarLeftHand">Voor de linkerhand: Beantwoorden links</string>
+    <string name="mailBarLeftHand">Standaard: Beantwoorden links</string>
     <string name="mailBarCustom">Eigen volgorde</string>
     <string name="mailBarDragHint">Hier van boven naar beneden is van links naar rechts onder een bericht. Sleep aan de greep rechts</string>
-    <string name="mailBarOrderHint">Beantwoorden is handiger onder je duim, en Verwijderen is veiliger ver van de systeemknop Terug, zodat je niet per ongeluk een bericht verwijdert.\n\nStandaard zijn de knoppen voor de rechterhand ingedeeld: Beantwoorden rechts. Voor de linkerhand zijn ze gespiegeld. Je kunt ze ook zelf indelen.\n\nAls er tekst in het veld Beantwoorden… staat, kleuren de knoppen Beantwoorden en Allen beantwoorden en versturen ze die.</string>
+    <string name="mailBarOrderHint">Beantwoorden is handiger onder je duim, en Verwijderen is veiliger ver van de systeemknop Terug, zodat je niet per ongeluk een bericht verwijdert.\n\nStandaard staat Beantwoorden links, zoals in de meeste mail-apps. Voor de rechterhand zijn de knoppen gespiegeld: Beantwoorden rechts. Je kunt ze ook zelf indelen.\n\nAls er tekst in het veld Beantwoorden… staat, kleuren de knoppen Beantwoorden en Allen beantwoorden en versturen ze die.</string>
     <string name="confirmMailDelete">Vragen vóór verwijderen</string>
     <string name="confirmMailDeleteDesc">De knop Verwijderen in een geopend bericht</string>
     <string name="deleteMailAskTitle">Dit bericht verwijderen?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">Hoe antwoord ik snel zonder de editor te openen?</string>
     <string name="faq_mail_1_a">Boven de knoppen van het bericht staat een veld Beantwoorden…: typ je tekst en tik op Beantwoorden of Allen beantwoorden — de knop kleurt en het bericht gaat weg met een aanhef en je handtekening. Bij een leeg veld opent Beantwoorden de volledige editor; het kruisje in het veld wist de tekst en Doorsturen verplaatst de tekst naar het doorgestuurde bericht. In een gesprek verstuurt de ronde knop rechts (bij een leeg veld opent die de volledige editor). Je kunt het veld uitzetten in Instellingen → E-mail → Snel antwoord in berichten en gesprekken.</string>
     <string name="faq_mail_2_q">Hoe wijzig ik de volgorde van de knoppen onder een bericht?</string>
-    <string name="faq_mail_2_a">Instellingen → E-mail → Knoppen onder het bericht. Standaard zijn ze voor de rechterhand ingedeeld: Beantwoorden rechts, Verwijderen ver van de systeemknop Terug. Je kunt Voor de linkerhand kiezen of de knoppen indelen door te slepen. Op dezelfde plek staat Vragen vóór verwijderen (standaard aan).</string>
+    <string name="faq_mail_2_a">Instellingen → E-mail → Knoppen onder het bericht. Standaard staat Beantwoorden links, zoals in de meeste mail-apps. Je kunt Voor de rechterhand kiezen (Beantwoorden rechts, Verwijderen ver van de systeemknop Terug) of de knoppen indelen door te slepen. Op dezelfde plek staat Vragen vóór verwijderen (standaard aan).</string>
     <string name="faq_mail_3_q">Hoe krijg ik een verwijderd bericht terug?</string>
     <string name="faq_mail_3_a">Direct na het verwijderen verschijnt onderaan de lijst, boven het onderpaneel, een balk “E-mail verwijderd · Ongedaan maken” met een aftelling van 7 seconden — tik op Ongedaan maken. Archiveren en Naar spam verplaatsen kun je op dezelfde manier ongedaan maken. Later kun je het bericht vinden in Verwijderde items en terugzetten; voor Exchange-mailboxen staat in Instellingen ook Verwijderde items herstellen.</string>
     <string name="faq_mail_4_q">Waar zetten Archiveren en Naar spam verplaatsen een bericht neer?</string>

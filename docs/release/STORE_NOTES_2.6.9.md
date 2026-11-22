@@ -42,6 +42,12 @@
   как в виджете «Мой день» (если погода включена).
 - **Календарь**: в «Расписании» у задачи на завтра — «Срок», а не «Срок
   сегодня».
+- **Кнопки под письмом — по умолчанию стандартно**: «Ответить» слева, как в
+  большинстве почтовых программ (решение владельца 22.11.2026; было — под
+  правую руку, «Ответить» справа). «Под правую руку» и свой порядок — в
+  «Настройки → Почта → Кнопки под письмом»; кто выбирал порядок сам, у того
+  он остаётся. В арабском и иврите ряд идёт справа налево — «Ответить» там
+  справа, подписи выбора поправлены под это.
 - Черновик ответа не считается ответом в «должен ответить», списке
   ответивших и разборе поручений.
 
@@ -52,14 +58,16 @@
 правки. У ящиков со своей папкой «Исходящие» используется она, названия
 системных папок узнаются на многих языках. Смена ящика открывает ту же
 папку, при ответе исходное письмо стоит сразу под подписью, виджет
-календаря показывает погоду.
+календаря показывает погоду. Кнопка «Ответить» под письмом по умолчанию —
+слева.
 
 **EN.** Drafts reach the server while you are still typing — at most every
 half minute — and stay in the same thread; drafts from the server open for
 editing. Mailboxes with their own Outbox folder use it, and system folder
 names are recognised in many languages. Switching mailboxes keeps the same
 folder, the original message sits right below your signature when you
-reply, and the calendar widget shows the weather.
+reply, and the calendar widget shows the weather. The Reply button below a
+message is now on the left by default.
 
 ## Google Play — короткий текст (27 языков)
 

@@ -3186,10 +3186,10 @@
     <string name="quickReplySendAll">Kirim balasan ke semua</string>
     <string name="mailBarOrder">Tombol di bawah email</string>
     <string name="mailBarRightHand">Untuk tangan kanan: Balas di kanan</string>
-    <string name="mailBarLeftHand">Untuk tangan kiri: Balas di kiri</string>
+    <string name="mailBarLeftHand">Standar: Balas di kiri</string>
     <string name="mailBarCustom">Urutan kustom</string>
     <string name="mailBarDragHint">Dari atas ke bawah di sini sama dengan dari kiri ke kanan di bawah email. Seret dengan gagang di sebelah kanan</string>
-    <string name="mailBarOrderHint">Balas lebih mudah dijangkau ibu jari, dan Hapus lebih aman jika jauh dari tombol Kembali sistem agar Anda tidak menghapus email secara tidak sengaja.\n\nSecara default tombol disusun untuk tangan kanan: Balas di kanan. Untuk tangan kiri, susunannya dicerminkan. Anda juga dapat mengaturnya sendiri.\n\nSaat teks diketik di kolom Balas…, tombol Balas dan Balas semua berwarna dan mengirimkannya.</string>
+    <string name="mailBarOrderHint">Balas lebih mudah dijangkau ibu jari, dan Hapus lebih aman jika jauh dari tombol Kembali sistem agar Anda tidak menghapus email secara tidak sengaja.\n\nSecara default Balas ada di kiri, seperti di sebagian besar aplikasi email. Untuk tangan kanan, susunannya dicerminkan: Balas di kanan. Anda juga dapat mengaturnya sendiri.\n\nSaat teks diketik di kolom Balas…, tombol Balas dan Balas semua berwarna dan mengirimkannya.</string>
     <string name="confirmMailDelete">Tanya sebelum menghapus</string>
     <string name="confirmMailDeleteDesc">Tombol Hapus di email yang terbuka</string>
     <string name="deleteMailAskTitle">Hapus email ini?</string>
@@ -3225,7 +3225,7 @@
     <string name="faq_mail_1_q">Bagaimana cara membalas cepat tanpa membuka editor?</string>
     <string name="faq_mail_1_a">Di atas tombol email ada kolom Balas…: ketik teks lalu ketuk Balas atau Balas semua — tombol berwarna dan email terkirim dengan salam pembuka dan tanda tangan Anda. Jika kolom kosong, Balas membuka editor lengkap; tanda silang di kolom menghapus teks, dan Teruskan memindahkannya ke email yang diteruskan. Dalam percakapan, tombol bulat di sebelah kanan mengirim (jika kolom kosong, tombol ini membuka editor lengkap). Anda dapat mematikan kolom ini di Pengaturan → Email → Balasan cepat di email dan percakapan.</string>
     <string name="faq_mail_2_q">Bagaimana cara mengubah urutan tombol di bawah email?</string>
-    <string name="faq_mail_2_a">Pengaturan → Email → Tombol di bawah email. Secara default tombol disusun untuk tangan kanan: Balas di kanan, Hapus jauh dari tombol Kembali sistem. Anda dapat memilih Untuk tangan kiri atau mengatur tombol dengan menyeretnya. Di tempat yang sama ada Tanya sebelum menghapus (aktif secara default).</string>
+    <string name="faq_mail_2_a">Pengaturan → Email → Tombol di bawah email. Secara default Balas ada di kiri, seperti di sebagian besar aplikasi email. Anda dapat memilih Untuk tangan kanan (Balas di kanan, Hapus jauh dari tombol Kembali sistem) atau mengatur tombol dengan menyeretnya. Di tempat yang sama ada Tanya sebelum menghapus (aktif secara default).</string>
     <string name="faq_mail_3_q">Bagaimana cara mengembalikan email yang dihapus?</string>
     <string name="faq_mail_3_a">Segera setelah menghapus, bilah “Email dihapus · Urungkan” dengan hitung mundur 7 detik muncul di bagian bawah daftar, di atas panel bawah — ketuk Urungkan. Arsipkan dan Pindahkan ke spam dapat diurungkan dengan cara yang sama. Nanti Anda dapat menemukan email di Item yang dihapus dan memindahkannya kembali; untuk kotak surat Exchange, ada juga Pulihkan item yang dihapus di Pengaturan.</string>
     <string name="faq_mail_4_q">Ke mana Arsipkan dan Pindahkan ke spam memindahkan email?</string>

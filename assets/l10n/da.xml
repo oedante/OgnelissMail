@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Send svar til alle</string>
     <string name="mailBarOrder">Knapper under mailen</string>
     <string name="mailBarRightHand">Til højre hånd: Svar til højre</string>
-    <string name="mailBarLeftHand">Til venstre hånd: Svar til venstre</string>
+    <string name="mailBarLeftHand">Standard: Svar til venstre</string>
     <string name="mailBarCustom">Egen rækkefølge</string>
     <string name="mailBarDragHint">Oppefra og ned her svarer til fra venstre mod højre under en mail. Træk i håndtaget til højre</string>
-    <string name="mailBarOrderHint">Svar er nemmere at nå med tommelfingeren, og Slet er mere sikker væk fra systemets Tilbage-knap, så du ikke sletter en mail ved en fejl.\n\nSom standard passer knapperne til højre hånd: Svar til højre. Til venstre hånd er de spejlvendt. Du kan også arrangere dem på din egen måde.\n\nNår der er skrevet tekst i feltet Svar…, bliver knapperne Svar og Svar til alle farvede og sender den.</string>
+    <string name="mailBarOrderHint">Svar er nemmere at nå med tommelfingeren, og Slet er mere sikker væk fra systemets Tilbage-knap, så du ikke sletter en mail ved en fejl.\n\nSom standard er Svar til venstre, som i de fleste mailapps. Til højre hånd er knapperne spejlvendt: Svar til højre. Du kan også arrangere dem på din egen måde.\n\nNår der er skrevet tekst i feltet Svar…, bliver knapperne Svar og Svar til alle farvede og sender den.</string>
     <string name="confirmMailDelete">Spørg før sletning</string>
     <string name="confirmMailDeleteDesc">Knappen Slet i en åben mail</string>
     <string name="deleteMailAskTitle">Slet denne mail?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">Hvordan svarer jeg hurtigt uden at åbne editoren?</string>
     <string name="faq_mail_1_a">Over mailknapperne er der et felt Svar…: skriv din tekst og tryk på Svar eller Svar til alle – knappen bliver farvet, og mailen sendes med en hilsen og din signatur. Med et tomt felt åbner Svar den fulde editor; krydset i feltet rydder teksten, og Videresend flytter den med ind i videresendelsen. I en samtale sender den runde knap til højre (med et tomt felt åbner den den fulde editor). Du kan slå feltet fra under Indstillinger → Mail → Hurtigt svar i mails og samtaler.</string>
     <string name="faq_mail_2_q">Hvordan ændrer jeg rækkefølgen af knapperne under en mail?</string>
-    <string name="faq_mail_2_a">Indstillinger → Mail → Knapper under mailen. Som standard passer de til højre hånd: Svar til højre, Slet væk fra systemets Tilbage-knap. Du kan vælge Til venstre hånd eller arrangere knapperne ved at trække. Samme sted finder du Spørg før sletning (slået til som standard).</string>
+    <string name="faq_mail_2_a">Indstillinger → Mail → Knapper under mailen. Som standard er Svar til venstre, som i de fleste mailapps. Du kan vælge Til højre hånd (Svar til højre, Slet væk fra systemets Tilbage-knap) eller arrangere knapperne ved at trække. Samme sted finder du Spørg før sletning (slået til som standard).</string>
     <string name="faq_mail_3_q">Hvordan får jeg en slettet mail tilbage?</string>
     <string name="faq_mail_3_a">Lige efter sletning vises en bjælke »Mail slettet · Fortryd« med en nedtælling på 7 sekunder nederst på listen, over det nederste panel – tryk på Fortryd. Arkivér og Flyt til uønsket mail kan fortrydes på samme måde. Senere kan du finde mailen i Slettet post og flytte den tilbage; for Exchange-postkasser findes også Gendan slettede elementer i Indstillinger.</string>
     <string name="faq_mail_4_q">Hvor lægger Arkivér og Flyt til uønsket mail en mail?</string>

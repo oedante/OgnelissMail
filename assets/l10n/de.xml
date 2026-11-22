@@ -3199,10 +3199,10 @@
     <string name="quickReplySendAll">Antwort an alle senden</string>
     <string name="mailBarOrder">Schaltflächen unter der Nachricht</string>
     <string name="mailBarRightHand">Für die rechte Hand: Antworten rechts</string>
-    <string name="mailBarLeftHand">Für die linke Hand: Antworten links</string>
+    <string name="mailBarLeftHand">Standard: Antworten links</string>
     <string name="mailBarCustom">Eigene Reihenfolge</string>
     <string name="mailBarDragHint">Von oben nach unten entspricht links nach rechts unter der Nachricht. Am Griff rechts ziehen</string>
-    <string name="mailBarOrderHint">Antworten liegt am besten unter dem Daumen, Löschen besser weit weg von der Systemtaste Zurück, damit keine Nachricht versehentlich gelöscht wird.\n\nStandardmäßig sind die Schaltflächen für die rechte Hand angeordnet: Antworten rechts. Für die linke Hand gespiegelt. Sie können sie auch selbst anordnen.\n\nIst im Feld „Antworten…“ Text eingegeben, werden Antworten und Allen antworten farbig und senden ihn.</string>
+    <string name="mailBarOrderHint">Antworten liegt am besten unter dem Daumen, Löschen besser weit weg von der Systemtaste Zurück, damit keine Nachricht versehentlich gelöscht wird.\n\nStandardmäßig steht Antworten links, wie in den meisten Mail-Apps. Für die rechte Hand gespiegelt: Antworten rechts. Sie können sie auch selbst anordnen.\n\nIst im Feld „Antworten…“ Text eingegeben, werden Antworten und Allen antworten farbig und senden ihn.</string>
     <string name="confirmMailDelete">Vor dem Löschen fragen</string>
     <string name="confirmMailDeleteDesc">Schaltfläche Löschen in einer geöffneten Nachricht</string>
     <string name="deleteMailAskTitle">Diese Nachricht löschen?</string>
@@ -3238,7 +3238,7 @@
     <string name="faq_mail_1_q">Wie antworte ich schnell, ohne den Editor zu öffnen?</string>
     <string name="faq_mail_1_a">Über den Schaltflächen der Nachricht gibt es das Feld „Antworten…“: Text eingeben und „Antworten“ oder „Allen antworten“ tippen — die Schaltfläche wird farbig, die Nachricht geht mit Anrede und Signatur hinaus. Bei leerem Feld öffnet „Antworten“ den vollständigen Editor; das Kreuz im Feld löscht den Text, „Weiterleiten“ übernimmt ihn in die Weiterleitung. In einer Unterhaltung sendet die runde Schaltfläche rechts (bei leerem Feld öffnet sie den Editor). Abschalten: Einstellungen → E-Mail → „Schnellantwort in Nachricht und Unterhaltung“.</string>
     <string name="faq_mail_2_q">Wie ändere ich die Reihenfolge der Schaltflächen unter einer Nachricht?</string>
-    <string name="faq_mail_2_a">Einstellungen → E-Mail → „Schaltflächen unter der Nachricht“. Standardmäßig für die rechte Hand: „Antworten“ rechts, „Löschen“ weit weg von der Systemtaste „Zurück“. Wählbar ist auch „Für die linke Hand“ oder eine eigene Anordnung per Ziehen. Dort ist auch „Vor dem Löschen fragen“ (standardmäßig an).</string>
+    <string name="faq_mail_2_a">Einstellungen → E-Mail → „Schaltflächen unter der Nachricht“. Standardmäßig steht „Antworten“ links, wie in den meisten Mail-Apps. Wählbar ist auch „Für die rechte Hand“ („Antworten“ rechts, „Löschen“ weit weg von der Systemtaste „Zurück“) oder eine eigene Anordnung per Ziehen. Dort ist auch „Vor dem Löschen fragen“ (standardmäßig an).</string>
     <string name="faq_mail_3_q">Wie hole ich eine gelöschte Nachricht zurück?</string>
     <string name="faq_mail_3_a">Direkt nach dem Löschen erscheint unten in der Liste, über der unteren Leiste, die Zeile „E-Mail gelöscht · Rückgängig“ mit 7 Sekunden Countdown. Archivieren und In Junk-E-Mail verschieben lassen sich genauso rückgängig machen. Später finden Sie die Nachricht im Ordner „Gelöschte Elemente“; bei Exchange gibt es zusätzlich „Gelöschte wiederherstellen“ in den Einstellungen.</string>
     <string name="faq_mail_4_q">Wohin verschieben Archivieren und In Junk-E-Mail verschieben?</string>

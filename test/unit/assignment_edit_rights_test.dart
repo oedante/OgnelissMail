@@ -26,6 +26,9 @@ import 'package:ogneliss/services/notifications/notification_service.dart';
 import 'package:ogneliss/services/notifications/reminder_scheduler_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// «Доброе утро», «Добрый день» или «Добрый вечер» — по часам запуска теста.
+const _greet = '(Доброе утро|Добрый день|Добрый вечер)';
+
 class _Mail {
   final String from;
   final List<EmailAddress> to;
@@ -207,13 +210,14 @@ void main() {
     // обращение бралось из «Ситников Дмитрий» по тайм-ауту).
     final t0 = DateTime.now();
     await b.svc.create(account: acc(b), title: 'Тест', assignees: [const EmailAddress(email: who, displayName: 'Ситников Дмитрий')]);
-    expect(queue.last.html, contains('Добрый день, Дмитрий Александрович,'));
+    // Приветствие — по времени суток (22.11.2026): утро, день или вечер.
+    expect(queue.last.html, matches(RegExp('$_greet, Дмитрий Александрович,')));
     expect(DateTime.now().difference(t0), lessThan(const Duration(seconds: 3)));
     expect(await b.c.read(personNameDirectoryProvider).fullName(who, account: acc(b)), 'Ситников Дмитрий Александрович');
     // Имени нет вовсе — приветствие без имени, а не часть адреса.
     await b.svc.create(account: acc(b), title: 'Тест 2', assignees: [const EmailAddress(email: 'x.y@corp.ru')]);
-    expect(queue.last.html, contains('<p>Добрый день!</p>'));
-    expect(queue.last.html, startsWith('<p>Добрый день!</p><p><b>'), reason: 'без части адреса в обращении');
+    expect(queue.last.html, matches(RegExp('<p>$_greet!</p>')));
+    expect(queue.last.html, matches(RegExp('^<p>$_greet!</p><p><b>')), reason: 'без части адреса в обращении');
   });
 
   test('участники видят весь план: кто что и после кого делает, статусы этапов', () async {

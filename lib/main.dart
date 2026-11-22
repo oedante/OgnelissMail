@@ -29,6 +29,7 @@ import 'widgets/common/quiet_scaffold_messenger.dart';
 import 'widgets/common/inline_notice.dart' show InlineNoticeLayer;
 import 'widgets/common/animated_appearance.dart' show uiAnimations;
 import 'services/mail/own_addresses.dart';
+import 'features/mail/screens/attachment_preview_screen.dart' show AttachmentPreviewScreen;
 import 'features/mail/message_window.dart';
 import 'features/mail/message_window_host.dart';
 import 'features/mail/widgets/desktop_mail_web_view.dart' show DesktopMailWebView;
@@ -462,6 +463,17 @@ Future<void> main() async {
       // Подписка — до init: письмо, с которым приложение запущено, приходит
       // в поток сразу при init и без подписчика терялось.
       shareService.stream.listen((payload) async {
+        // Файл календаря (.ics) — событием с «В календарь» (22.11.2026: «А
+        // приложение не может такое открывать?»), а не вложением нового
+        // письма.
+        if ((payload.text ?? '').isEmpty &&
+            payload.filePaths.isNotEmpty &&
+            payload.filePaths.every((p) => AttachmentPreviewScreen.isCalendarFile(p, null))) {
+          final router = globalContainer.read(appRouterProvider);
+          await AppShortcuts.waitForMainScreen(router);
+          unawaited(router.push('/calendar-file', extra: payload.filePaths));
+          return;
+        }
         final params = <String, String>{};
         // Текст — между приветствием и подписью (раньше заменял письмо
         // целиком, и подпись с приветствием пропадали).

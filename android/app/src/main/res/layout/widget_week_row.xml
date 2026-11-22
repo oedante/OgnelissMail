@@ -6,6 +6,17 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingBottom="2dp">
+    <!-- Номер недели («Н47»), как в виде «Неделя» приложения (22.11.2026). -->
+    <TextView
+        android:id="@+id/wk_wn"
+        android:layout_width="28dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="2dp"
+        android:singleLine="true"
+        android:textColor="@color/widget_muted"
+        android:textSize="10sp"
+        android:visibility="gone" />
     <LinearLayout
         android:id="@+id/wk_cell0"
         android:layout_width="0dp"

@@ -6,6 +6,9 @@
     android:layout_height="0dp"
     android:layout_weight="1"
     android:orientation="horizontal">
+    <!-- Номер недели (22.11.2026): виден, если в приложении включены
+         «Номера недель». -->
+    <TextView android:id="@+id/mcw" style="@style/WidgetWeekNumDk" android:visibility="gone" />
     <TextView android:id="@+id/mc0" style="@style/WidgetMonthCellDk" />
     <TextView android:id="@+id/mc1" style="@style/WidgetMonthCellDk" />
     <TextView android:id="@+id/mc2" style="@style/WidgetMonthCellDk" />

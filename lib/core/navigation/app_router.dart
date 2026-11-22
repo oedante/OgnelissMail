@@ -3,6 +3,7 @@
 
 import '../../features/mail/screens/mail_list_pager.dart';
 import '../../features/mail/screens/outbox_screen.dart';
+import '../../features/mail/screens/attachment_preview_screen.dart' show AttachmentPreviewScreen, PreviewItem;
 import '../../features/contacts/my_contact.dart' show MyContactScreen;
 import 'package:flutter/material.dart';
 import '../theme/app_icons.dart';
@@ -245,6 +246,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/vip-settings', name: 'vip-settings',
         pageBuilder: (_, st) => settingsRoutePage(st, const VipSettingsScreen()),
+      ),
+      // Файл календаря (.ics), присланный через «Поделиться» (22.11.2026):
+      // событие и «В календарь», а не новое письмо с вложением.
+      GoRoute(
+        path: '/calendar-file', name: 'calendar-file',
+        pageBuilder: (_, state) {
+          final paths = [for (final p in (state.extra as List?) ?? const []) '$p'];
+          return MaterialPage(
+            child: AttachmentPreviewScreen(items: [
+              for (final p in paths) PreviewItem(filePath: p, fileName: p.split(RegExp(r'[/\\]')).last),
+            ]),
+          );
+        },
       ),
       GoRoute(
         path: '/create-event', name: 'create-event',

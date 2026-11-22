@@ -27,6 +27,7 @@ import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import java.util.GregorianCalendar
 import java.util.Locale
 
 /*
@@ -954,7 +955,8 @@ class CalendarWidget : OgnelissWidget() {
                 v.addView(R.id.cal_list, WidgetUi.note(context, context.getString(R.string.widget_open_app)))
             }
             else -> if (monthList) {
-                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month_fixed, sel, weekendDays(json))
+                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month_fixed, sel, weekendDays(json),
+                    json?.optBoolean("weekNums") == true)
                 // Заголовок выбранного дня (нажатие — вид «День») и его встречи.
                 val head = RemoteViews(context.packageName, WidgetUi.layout(context, R.layout.widget_row_day))
                 val label = when (sel) {
@@ -966,10 +968,30 @@ class CalendarWidget : OgnelissWidget() {
                 v.addView(R.id.cal_list, head)
                 renderDay(context, v, id, json, locale, evs, sel, now, listAvail)
             } else {
-                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month, null, weekendDays(json))
+                renderMonth(context, v, id, locale, evs, anchor, today, R.id.cal_month, null, weekendDays(json),
+                    json?.optBoolean("weekNums") == true)
             }
         }
         return v
+    }
+
+    /**
+     * Номер недели по ISO 8601 для строки, которая начинается с [rowStart]:
+     * считается по дню в середине строки, чтобы при неделе с воскресенья
+     * (или с субботы) номер был у большинства её дней, а не у первого.
+     */
+    private fun isoWeek(rowStart: Long): Int {
+        val c = GregorianCalendar()
+        c.firstDayOfWeek = Calendar.MONDAY
+        c.minimalDaysInFirstWeek = 4
+        c.timeInMillis = WidgetUi.addDays(rowStart, 3)
+        return c.get(Calendar.WEEK_OF_YEAR)
+    }
+
+    /** «Н47» на языке приложения (шаблон calWeekShort, {n} — номер). */
+    private fun weekLabel(json: JSONObject?, rowStart: Long): String {
+        val tpl = json?.optString("weekShort").orEmpty().ifEmpty { "{n}" }
+        return tpl.replace("{n}", isoWeek(rowStart).toString())
     }
 
     /** Сколько недель занимает месяц [anchor] в сетке (5 или 6, как в renderMonth). */
@@ -1053,6 +1075,9 @@ class CalendarWidget : OgnelissWidget() {
         val dotIds = intArrayOf(R.id.wk_dots0, R.id.wk_dots1, R.id.wk_dots2, R.id.wk_dots3, R.id.wk_dots4, R.id.wk_dots5, R.id.wk_dots6)
         val wd = SimpleDateFormat("EE", locale)
         val dn = SimpleDateFormat("d", locale)
+        // Номер недели слева, как в виде «Неделя» приложения («Н47»).
+        strip.setTextViewText(R.id.wk_wn, weekLabel(json, weekStart))
+        strip.setViewVisibility(R.id.wk_wn, View.VISIBLE)
         for (i in 0..6) {
             val d = WidgetUi.addDays(weekStart, i)
             strip.setTextViewText(names[i], WidgetUi.cap(wd.format(Date(d)), locale).trimEnd('.'))
@@ -1135,6 +1160,7 @@ class CalendarWidget : OgnelissWidget() {
         context: Context, v: RemoteViews, id: Int, locale: Locale,
         evs: List<Ev>, anchor: Long, today: Long, container: Int, sel: Long?,
         weekend: Set<Int> = setOf(Calendar.SATURDAY, Calendar.SUNDAY),
+        weekNums: Boolean = false,
     ) {
         val c = Calendar.getInstance()
         c.timeInMillis = anchor
@@ -1154,6 +1180,7 @@ class CalendarWidget : OgnelissWidget() {
             head.setTextViewText(headIds[i], WidgetUi.cap(wd.format(Date(d)), locale).trimEnd('.'))
             if (isWeekend(d, weekend)) WidgetUi.textColor(context, head, headIds[i], R.color.widget_weekend)
         }
+        if (weekNums) head.setViewVisibility(R.id.mhw, View.VISIBLE)
         v.addView(container, head)
 
         // Строки недель: столько, сколько занимает месяц (5 или 6).
@@ -1166,6 +1193,15 @@ class CalendarWidget : OgnelissWidget() {
             if (w >= 4 && cal.get(Calendar.MONTH) != month && day > first) break
             val row = RemoteViews(context.packageName, WidgetUi.layout(context,
                 if (sel == null) R.layout.widget_month_row else R.layout.widget_month_row_fixed))
+            // Номер недели — столбцом слева, как в сетке месяца приложения;
+            // второй строкой — пусто, чтобы число стояло вровень с датами.
+            if (weekNums) {
+                val wn = SpannableStringBuilder(isoWeek(day).toString())
+                wn.setSpan(RelativeSizeSpan(0.75f), 0, wn.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                wn.append("\n ")
+                row.setTextViewText(R.id.mcw, wn)
+                row.setViewVisibility(R.id.mcw, View.VISIBLE)
+            }
             for (i in 0..6) {
                 cal.timeInMillis = day
                 val inMonth = cal.get(Calendar.MONTH) == month

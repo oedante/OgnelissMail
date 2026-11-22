@@ -507,8 +507,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         _commitPendingRecipient(c, target);
       }
       _editingField = null;
-      _contactSuggestions.clear();
-      _lastQuery = '';
+      _clearSuggestions();
     });
     _updateGreeting();
     unawaited(_fillNamesFromContacts());
@@ -702,6 +701,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
   List<ContactModel> _contactSuggestions = [];
 
+  /// Свои группы рассылки («Контакты → Группы рассылки»), подходящие под
+  /// набранный текст: нажатие — все участники в поле (22.11.2026: группы в
+  /// поиске адресата не находились).
+  List<DistributionGroup> _groupSuggestions = const [];
+
   /// Поле, в котором сейчас набирают адрес: подсказки показываются прямо
   /// под ним и добавляют получателя именно туда (раньше — внизу экрана,
   /// под редактором, и всегда в «Кому»).
@@ -818,7 +822,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       setState(() {
         _commitPendingRecipient(c, target);
         _editingField = null;
-        if (_suggestFor == c) _contactSuggestions.clear();
+        if (_suggestFor == c) _clearSuggestions();
         _lastQuery = '';
       });
       if (c == _toController) _updateGreeting();
@@ -1723,6 +1727,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       emails: [for (final r in _toRecipients) r.email],
       appLang: ref.read(settingsProvider).locale.languageCode,
       ownDomains: acc == null ? const {} : OwnAddresses.domains(acc),
+      // «Доброе утро / день / вечер» — по часам (22.11.2026).
+      now: DateTime.now(),
     );
     if (!StringsStore.isLoaded(set.lang)) {
       unawaited(StringsStore.ensure(set.lang).then((_) {
@@ -3236,9 +3242,16 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     // Один портрет — в поле выбора (1.10.5, замечание владельца 03.11.2026:
     // «два инструмента указания отправителя, два портрета рядом»). Прежний
     // значок слева со своим списком убран: выбор — только полем, список —
-    // с портретами ящиков.
+    // с портретами ящиков. Слева — значок строки, как у «Кому», «Копии» и
+    // «Скрытой» (22.11.2026: для симметрии); портрет ящика — в колонке
+    // плашек адресатов.
     return Row(
       children: [
+        _fieldLead(
+          label: l10n.tr('from'),
+          child: Icon(AppIcons.outbox, size: 20, color: theme.colorScheme.primary),
+        ),
+        const SizedBox(width: Space.s),
         Expanded(
           // Меню-карточка (1.8.8) вместо списка Material. В строке — имя
           // ящика (раньше — адрес); в меню — имя и адрес. Адреса отправки «от
@@ -3333,8 +3346,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       if (!v.contains('@')) return;
       setState(() {
         _commitPendingRecipient(controller, recipients);
-        _contactSuggestions.clear();
-        _lastQuery = '';
+        _clearSuggestions();
       });
       if (recipients == _toRecipients) _updateGreeting();
       focusNode.requestFocus(); // следующий адрес — сразу
@@ -3946,16 +3958,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     debounce(const Duration(milliseconds: AppConstants.searchDebounceMs), () {
       if (query.trim().length >= 2) {
         _searchContacts(query.trim());
-      } else {
-        _searchSeq++;
-        _lastQuery = '';
-        if (mounted) {
-          setState(() {
-            _contactSuggestions.clear();
-        _lastQuery = '';
-            _galSearching = false;
-          });
-        }
+      } else if (mounted) {
+        setState(_clearSuggestions);
       }
     });
   }
@@ -3964,8 +3968,32 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// Exchange, телефон) и те, с кем шла переписка; для Exchange затем
   /// добавляется адресная книга организации. Раньше искалась только она, и
   /// у Gmail подсказок не было вовсе.
-  /// Идёт запрос к адресной книге организации (для индикатора).
-  bool _galSearching = false;
+  /// Поиск, для которого идёт запрос к адресной книге организации; -1 — не
+  /// идёт. Индикатор горит только для текущего поиска: раньше флаг не
+  /// сбрасывался, когда адресата выбирали до ответа сервера (номер поиска
+  /// менялся, а сбрасывал флаг только ответ на текущий), и «Ищем в адресной
+  /// книге…» крутилось под пустым полем до закрытия письма (22.11.2026).
+  int _galSeq = -1;
+  bool get _galSearching => _galSeq >= 0 && _galSeq == _searchSeq;
+
+  /// Подсказки убрать; запоздавший ответ поиска их не вернёт.
+  void _clearSuggestions() {
+    _searchSeq++;
+    _contactSuggestions.clear();
+    _groupSuggestions = const [];
+    _lastQuery = '';
+  }
+
+  /// Свои группы рассылки, название которых содержит [query] (без учёта
+  /// регистра; слово «Отдел» находит и «Отдел продаж»).
+  List<DistributionGroup> _matchGroups(String query) {
+    final q = query.trim().toLowerCase();
+    if (q.length < 2) return const [];
+    return [
+      for (final g in ref.read(distributionGroupsProvider))
+        if (g.members.isNotEmpty && g.name.toLowerCase().contains(q)) g,
+    ];
+  }
   /// Последний искомый текст (для «ничего не найдено»).
   String _lastQuery = '';
   /// Поиск по [_lastQuery] завершён (локальный и адресная книга).
@@ -4051,13 +4079,14 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     final acc = _fromAccount;
     final withGal = acc != null && acc.isMsExchange;
     setState(() {
+      _groupSuggestions = _matchGroups(query);
       _contactSuggestions = _stableMerge(query, out);
       _searchDone = !withGal;
     });
 
     // Адресная книга организации — дольше (запрос к серверу), дописываем.
     if (!withGal) return;
-    setState(() => _galSearching = true);
+    setState(() => _galSeq = seq);
     try {
       // Потолок 15 с: при плохой связи индикатор не крутится бесконечно.
       final gal = await safeAsync(() => ref
@@ -4071,9 +4100,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     } finally {
       if (mounted && seq == _searchSeq) {
         setState(() {
-          _galSearching = false;
+          _galSeq = -1;
           _searchDone = true;
         });
+      } else if (_galSeq == seq) {
+        _galSeq = -1;
       }
     }
   }
@@ -4116,12 +4147,14 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         // и пуст. Раньше надпись оставалась после выбора адресата (запрос
         // не сбрасывался) и мелькала, пока шёл поиск.
         : (_contactSuggestions.isEmpty &&
+                _groupSuggestions.isEmpty &&
                 _searchDone &&
                 _lastQuery.length >= 2 &&
                 (_suggestFor?.text.trim() ?? '') == _lastQuery)
             ? Text(AppLocalizations.of(context).tr('recipientSearchNone'), style: theme.textTheme.bodySmall)
             : null;
-    if (_contactSuggestions.isEmpty && status == null) return const SizedBox.shrink();
+    final groups = _groupSuggestions;
+    if (_contactSuggestions.isEmpty && groups.isEmpty && status == null) return const SizedBox.shrink();
     // «Ничего не найдено» — ненадолго: через 3 с строка убирается.
     if (_contactSuggestions.isEmpty && !_galSearching) {
       final q = _lastQuery;
@@ -4130,7 +4163,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         if (mounted && _lastQuery == q && _contactSuggestions.isEmpty) setState(() => _lastQuery = '');
       });
     }
-    if (_contactSuggestions.isEmpty) {
+    if (_contactSuggestions.isEmpty && groups.isEmpty) {
       return Padding(
         padding: const EdgeInsets.only(left: 44, bottom: Space.s, top: Space.xs),
         child: status,
@@ -4145,7 +4178,41 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          for (final c in _contactSuggestions.take(6))
+          // Свои группы рассылки — первыми: название набирают целиком.
+          for (final g in groups.take(3))
+            InkWell(
+              key: ValueKey('suggest_group_${g.name}'),
+              onTap: () => _addLocalGroup(g),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.s),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 14,
+                      backgroundColor: scheme.secondaryContainer,
+                      child: Icon(AppIcons.groups, size: 16, color: scheme.onSecondaryContainer),
+                    ),
+                    const SizedBox(width: Space.m),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(g.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodyMedium),
+                          Text(
+                            '${AppLocalizations.of(context).tr('groupMailingList')} · '
+                            '${AppLocalizations.of(context).tr('nRecipients').replaceAll('{n}', '${g.members.length}')}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          for (final c in _contactSuggestions.take(groups.isEmpty ? 6 : 6 - groups.length.clamp(0, 3)))
             InkWell(
               onTap: () => _addRecipient(c),
               child: Padding(
@@ -4322,6 +4389,25 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         );
       }),
     );
+  }
+
+  /// Своя группа из подсказок — все участники в поле, где набирали.
+  void _addLocalGroup(DistributionGroup g) {
+    final target = _suggestTarget ?? _toRecipients;
+    final field = _suggestFor ?? _toController;
+    setState(() {
+      for (final m in g.members) {
+        if (m.email.trim().isEmpty) continue;
+        if (!target.any((r) => r.email.toLowerCase() == m.email.toLowerCase())) {
+          target.add(EmailAddress(email: m.email, displayName: m.name));
+        }
+      }
+      field.clear();
+      _clearSuggestions();
+    });
+    if (identical(target, _toRecipients)) _updateGreeting();
+    _markDraftChanged();
+    HapticFeedback.selectionClick();
   }
 
   void _addGroupToRecipients(DistributionGroup g) {
@@ -4508,7 +4594,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   void _addRecipient(ContactModel contact) {
     final target = _suggestTarget ?? _toRecipients;
     final field = _suggestFor ?? _toController;
-    _searchSeq++; // запоздавший ответ поиска не вернёт подсказки
     setState(() {
       if (!target.any((r) => r.email.toLowerCase() == contact.email.toLowerCase())) {
         target.add(EmailAddress(
@@ -4518,8 +4603,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       }
       if (contact.isGroup) _groupEmails.add(contact.email.toLowerCase());
       field.clear();
-      _contactSuggestions.clear();
-        _lastQuery = '';
+      _clearSuggestions(); // запоздавший ответ поиска не вернёт подсказки
     });
     _updateGreeting();
     HapticFeedback.selectionClick();

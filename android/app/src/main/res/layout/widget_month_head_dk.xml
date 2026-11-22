@@ -6,6 +6,9 @@
     android:layout_height="18dp"
     android:gravity="center_vertical"
     android:orientation="horizontal">
+    <!-- Место над столбцом номеров недель. -->
+    <TextView android:id="@+id/mhw" android:layout_width="24dp" android:layout_height="wrap_content"
+        android:visibility="gone" />
     <TextView android:id="@+id/mh0" style="@style/WidgetWeekdayDk" />
     <TextView android:id="@+id/mh1" style="@style/WidgetWeekdayDk" />
     <TextView android:id="@+id/mh2" style="@style/WidgetWeekdayDk" />

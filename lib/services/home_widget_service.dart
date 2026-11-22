@@ -169,7 +169,8 @@ class HomeWidgetService {
       // Календарь — те ящики, что включены в «хабе» календаря в приложении.
       final hidden = {...?prefs.getStringList('cal_hidden_accounts')};
       final calIds = [for (final id in ids) if (!hidden.contains(id)) id];
-      final cal = jsonEncode(await _buildCalendar(db, calIds, l10n, now, private, colors, named, ids, activeAccountId));
+      final cal = jsonEncode(await _buildCalendar(db, calIds, l10n, now, private, colors, named, ids, activeAccountId,
+          prefs.getBool('mod_week_numbers') ?? false));
       final notes = jsonEncode(await _buildNotes(db, l10n, private));
       final tasks = jsonEncode(await _buildTasks(db, ids, l10n, now, private));
       // Все варианты «Почты» для виджетов со своим фильтром (запросы
@@ -792,7 +793,8 @@ for (final m in mails) {
   /// считает сам по началу дня — после полуночи они не устаревают.
   static Future<Map<String, Object?>> _buildCalendar(AppDatabase db, List<String> ids, AppLocalizations l10n,
       DateTime now, bool private, Map<String, int> colors,
-      [Map<String, String> labels = const {}, List<String> allIds = const [], String? activeAccountId]) async {
+      [Map<String, String> labels = const {}, List<String> allIds = const [], String? activeAccountId,
+      bool weekNums = false]) async {
     final hm = DateFormat('HH:mm');
     final today = DateTime(now.year, now.month, now.day);
     final until = today.add(const Duration(days: 14));
@@ -894,6 +896,11 @@ for (final m in mails) {
       // Четвёртая вкладка Android — «Мой день» (доска из widget_myday,
       // 18.11.2026: «чтобы отдельный виджет не показывать»).
       'tabs': [l10n.tr('viewDay'), l10n.tr('viewWeek'), l10n.tr('viewMonth'), l10n.tr('myDay')],
+      // Номер недели (22.11.2026, «как в приложении»): во «Неделе» — всегда
+      // («Н47» слева от дней), в «Месяце» — столбцом, если в приложении
+      // включено «Настройки → Календарь → Номера недель».
+      'weekShort': l10n.tr('calWeekShort'),
+      'weekNums': weekNums,
       // Окно «Создать» виджета: ящики (порядок из настроек; первым —
       // активный) и подписи на языке приложения.
       'defaultAccount': activeAccountId ?? '',

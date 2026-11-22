@@ -44,6 +44,7 @@ import '../../../core/security/link_opener.dart';
 import '../widgets/mail_html_view.dart';
 import '../widgets/eml_translate_button.dart';
 import '../widgets/forwarded_contacts_card.dart';
+import '../../calendar/widgets/ics_events_view.dart';
 import '../../compose/providers/distribution_groups_provider.dart' show DistributionGroup, GroupMember;
 import '../../contacts/screens/contact_groups_screen.dart' show groupsFromVcf;
 import '../../../services/mail/dav/vcard_parser.dart' show VCardData, VCardParser;
@@ -78,7 +79,7 @@ import '../../../services/security/smime_service.dart';
 import '../../../services/security/smime_mime.dart';
 import '../../../core/platform/app_share.dart';
 
-enum _Kind { image, pdf, text, pass, mail, zip, document, contact, other }
+enum _Kind { image, pdf, text, pass, mail, zip, document, contact, calendar, other }
 
 /// Одна вкладка предпросмотра: файл + подпись.
 class PreviewItem {
@@ -142,6 +143,9 @@ class AttachmentPreviewScreen extends StatefulWidget {
     if (ext == 'eml' || ext == 'p7m' || ct.contains('pkcs7-mime') || ct == 'message/rfc822') return true;
     // Контакты и группы файлом .vcf (21.11.2026) — здесь, с «Сохранить».
     if (_isVcard(name, ct)) return true;
+    // Событие файлом .ics (22.11.2026: бронирование гостиницы не
+    // открывалось) — здесь, с «В календарь».
+    if (isCalendarFile(name, ct)) return true;
     // Письмо Outlook .msg (1.12.x, просьба владельца 05.11.2026) — тоже
     // письмом, на всех устройствах: «Просмотр» iOS и Android его не открывают.
     if (MsgReader.isMsgName(name, mimeType: ct)) return true;
@@ -193,6 +197,13 @@ class AttachmentPreviewScreen extends StatefulWidget {
   /// включён); выключен — .txt и .md простым текстом, как раньше.
   static bool _textDocOn(PreviewItem item) =>
       TextDocReader.handles(item.fileName, mimeType: item.mimeType) && DocPreviewSettings.isOn(DocPreviewType.text);
+
+  /// Файл календаря: .ics, .vcs или text/calendar.
+  static bool isCalendarFile(String name, String? mimeType) {
+    final n = name.toLowerCase();
+    final ct = (mimeType ?? '').toLowerCase();
+    return n.endsWith('.ics') || n.endsWith('.vcs') || n.endsWith('.ical') || ct.startsWith('text/calendar');
+  }
 
   static bool _isVcard(String name, String? mimeType) {
     final n = name.toLowerCase();
@@ -250,6 +261,9 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
 
   /// Контакты и группы из .vcf.
   final Map<int, ({List<DistributionGroup> groups, List<VCardData> contacts})> _vcards = {};
+
+  /// Текст файлов календаря (.ics).
+  final Map<int, String> _ics = {};
   final Map<int, EmlMessage> _mails = {};
 
   /// Разобранные документы (1.11.x) и HTML текстовых — очищенный и
@@ -383,6 +397,7 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
     if (PackedArchive.kindOf(name) != null) return _Kind.zip;
     if (ext == 'pkpass') return _Kind.pass;
     if (AttachmentPreviewScreen._isVcard(name, widget.items[i].mimeType)) return _Kind.contact;
+    if (AttachmentPreviewScreen.isCalendarFile(name, widget.items[i].mimeType)) return _Kind.calendar;
     // Письмо — письмом, а не текстом MIME (раньше .eml показывался сырым:
     // заголовки Received, «=?koi8-r?…», quoted-printable).
     if (ext == 'eml' ||
@@ -443,6 +458,10 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
           final bytes = await File(item.filePath).readAsBytes();
           _vcards[i] = _readVcards(TextDocReader.decode(bytes, truncated: false),
               item.fileName.replaceAll(RegExp(r'\.(vcf|vcard)$', caseSensitive: false), ''));
+          break;
+        case _Kind.calendar:
+          final bytes = await File(item.filePath).readAsBytes();
+          _ics[i] = TextDocReader.decode(bytes, truncated: false);
           break;
         case _Kind.other:
           // Вложенное письмо без расширения (так его отдаёт Exchange) —
@@ -620,6 +639,8 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         return AppIcons.mail;
       case _Kind.contact:
         return AppIcons.contacts;
+      case _Kind.calendar:
+        return AppIcons.event;
       case _Kind.document:
         final f = OfficeFormats.of(widget.items[i].fileName, mimeType: widget.items[i].mimeType);
         if (f != null && OfficeFormats.isSheet(f)) return AppIcons.table_chart;
@@ -843,6 +864,15 @@ class _AttachmentPreviewScreenState extends State<AttachmentPreviewScreen>
         return ListView(padding: const EdgeInsets.all(Space.l), children: [
           ForwardedContactsCard(groups: v.groups, contacts: v.contacts),
         ]);
+
+      case _Kind.calendar:
+        final ics = _ics[i];
+        if (ics == null) return const Center(child: CircularProgressIndicator());
+        return IcsEventsView(
+          ics: ics,
+          fallbackTitle: widget.emailSubject ??
+              widget.items[i].fileName.replaceAll(RegExp(r'\.(ics|vcs|ical)$', caseSensitive: false), ''),
+        );
 
       case _Kind.document:
         final doc = _docs[i];

@@ -145,6 +145,7 @@ class QuickReplyService {
           emails: [for (final a in to) a.email],
           appLang: SignatureService.appLanguage(prefs),
           ownDomains: OwnAddresses.domains(account),
+          now: DateTime.now(),
         );
     var set = build();
     if (!StringsStore.isLoaded(set.lang)) {

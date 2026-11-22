@@ -35,6 +35,7 @@ import '../providers/mail_providers.dart' show emailsProvider;
 import '../../../data/database/app_database.dart' show CalendarEvent;
 import '../../../data/providers/database_provider.dart';
 import '../../calendar/event_conflicts.dart' show meetingConflicts;
+import '../../calendar/widgets/ics_events_view.dart' show createEventExtra, eventRangeText;
 import 'package:drift/drift.dart' hide Column;
 import '../../../widgets/common/inline_notice.dart' show showInlineError;
 
@@ -100,7 +101,7 @@ class _MeetingInviteBannerState extends ConsumerState<MeetingInviteBanner> {
         allDay: i.event.isAllDay,
         location: i.event.location,
         organizer: i.event.organizerEmail,
-        responseRequested: i.isRequest,
+        responseRequested: i.canReply,
         messageClass: i.isCancel ? 'IPM.Schedule.Meeting.Canceled' : 'IPM.Schedule.Meeting.Request',
       );
 
@@ -133,7 +134,7 @@ class _MeetingInviteBannerState extends ConsumerState<MeetingInviteBanner> {
     final mine = OwnAddresses.isMine(widget.account, widget.email.from.email) ||
         OwnAddresses.isMine(widget.account, orgMatch) ||
         OwnAddresses.isMine(widget.account, invite?.event.organizerEmail);
-    final imipCanRespond = _imip && invite != null && invite.isRequest && !mine;
+    final imipCanRespond = _imip && invite != null && invite.canReply && !mine;
     // Время и место показываем всегда (у приглашений ActiveSync тело часто
     // пустое), кнопки ответа — если транспорт умеет отвечать.
     // ActiveSync помечает приглашение явно (MeetingRequest) — без этой метки
@@ -173,7 +174,7 @@ class _MeetingInviteBannerState extends ConsumerState<MeetingInviteBanner> {
               const Icon(AppIcons.event_available, size: 18, color: color),
               const SizedBox(width: Space.s),
               Expanded(
-                child: Text(l10n.tr(invite != null && !invite.isRequest && !invite.isCancel ? 'icsEvent' : 'meetingInvitation'),
+                child: Text(l10n.tr(invite != null && !invite.canReply && !invite.isCancel ? 'icsEvent' : 'meetingInvitation'),
                     style: const TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 13)),
               ),
             ],
@@ -189,13 +190,8 @@ class _MeetingInviteBannerState extends ConsumerState<MeetingInviteBanner> {
               child: OutlinedButton.icon(
                 icon: const Icon(AppIcons.event, size: 18),
                 label: Text(l10n.tr('addToCalendar')),
-                onPressed: () => context.push('/create-event', extra: {
-                  'start': invite.event.start!.toLocal(),
-                  'end': (invite.event.end ?? invite.event.start!.add(const Duration(hours: 1))).toLocal(),
-                  'location': invite.event.location,
-                  'title': (invite.event.summary ?? '').trim().isEmpty ? widget.email.subject : invite.event.summary,
-                  'description': invite.event.description,
-                }),
+                onPressed: () => context.push('/create-event',
+                    extra: createEventExtra(invite.event, fallbackTitle: widget.email.subject)),
               ),
             ),
           // Ссылка на онлайн-встречу: организаторы кладут её в «место
@@ -309,11 +305,9 @@ class _MeetingInviteBannerState extends ConsumerState<MeetingInviteBanner> {
     String when() {
       final s = m.start;
       if (s == null) return '';
-      final day = DateFormat.yMMMMEEEEd(loc).format(s);
-      if (m.allDay) return '$day · ${l10n.tr('allDay')}';
-      final t = DateFormat.Hm(loc);
-      final e = m.end;
-      return e == null ? '$day, ${t.format(s)}' : '$day, ${t.format(s)}–${t.format(e)}';
+      // Несколько дней — «17 дек., 16:00 – 18 дек., 08:30» (раньше конец
+      // показывался одним временем, будто в тот же день).
+      return eventRangeText(s, m.end, allDay: m.allDay, l10n: l10n, locale: loc);
     }
 
     final style = Theme.of(context).textTheme.bodyMedium;

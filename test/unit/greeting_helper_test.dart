@@ -70,6 +70,40 @@ void main() {
     });
   });
 
+  // Просьба владельца 22.11.2026: во встроенных приветствиях — «Доброе
+  // утро», «Добрый день», «Добрый вечер» по часам.
+  group('время суток', () {
+    GreetingSet at(int hour, List<String> names, List<String> emails, {String lang = 'ru'}) =>
+        GreetingHelper.variants(
+            names: names, emails: emails, appLang: lang, now: DateTime(2026, 11, 22, hour, 30));
+
+    test('утро, день, вечер, ночь', () {
+      final n = ['Ситников Дмитрий Сергеевич'];
+      final e = ['d.sitnikov@example.com'];
+      expect(at(8, n, e).full, 'Доброе утро, Дмитрий Сергеевич,');
+      expect(at(13, n, e).full, 'Добрый день, Дмитрий Сергеевич,');
+      expect(at(17, n, e).full, 'Добрый день, Дмитрий Сергеевич,');
+      expect(at(18, n, e).full, 'Добрый вечер, Дмитрий Сергеевич,');
+      expect(at(2, n, e).full, 'Добрый вечер, Дмитрий Сергеевич,');
+      expect(at(20, const [], const []).hello, 'Добрый вечер!');
+      expect(at(7, ['Петров Иван', 'Сидоров Пётр'], ['a@corp.example', 'b@corp.example']).full,
+          'Доброе утро, коллеги,');
+      // Короткое — без «добрый …».
+      expect(at(20, n, e).short, 'Дмитрий Сергеевич,');
+    });
+
+    test('без времени — «Добрый день», как раньше', () {
+      expect(v(['Ситников Дмитрий Сергеевич'], ['d@example.com']).full, 'Добрый день, Дмитрий Сергеевич,');
+    });
+
+    test('другие языки: «Guten Abend», «Bonsoir»; «Hello» от часа не зависит', () {
+      expect(at(20, ['Hans Müller'], ['h@example.com'], lang: 'de').full, 'Guten Abend Hans,');
+      expect(at(9, ['Hans Müller'], ['h@example.com'], lang: 'de').full, 'Guten Morgen Hans,');
+      expect(at(20, ['Jean Dupont'], ['j@example.com'], lang: 'fr').full, 'Bonsoir Jean,');
+      expect(at(20, ['John Smith'], ['j@example.com'], lang: 'en').full, 'Hello John,');
+    });
+  });
+
   group('имя для обращения', () {
     test('пояснение в скобках и «Фамилия Имя»', () {
       expect(GreetingHelper.addressOf(GreetingHelper.cleanName('Петров Иван (ОТК)')), 'Иван');

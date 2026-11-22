@@ -14,6 +14,7 @@ import '../../../core/utils/text_safe.dart';
 import '../providers/drawer_prefs.dart' show drawerPinnedProvider, menuOnRightProvider, quickFiltersProvider, mailSwipePagerProvider;
 import '../../../widgets/navigation/app_bottom_bar.dart' show AppBottomBar;
 import '../providers/startup_folder.dart';
+import '../providers/folder_follow.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../widgets/common/sync_progress_indicator.dart' show SyncStatusDot, SyncStatus, syncStatusProvider;
 import '../../../core/navigation/app_router.dart' show mailDetailPath, conversationPath, mailPagerPath;
@@ -368,6 +369,33 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     ref.read(selectedFolderIdProvider.notifier).state = folderId;
   }
 
+  /// Сменили ящик, когда была открыта папка (2.6.8): такая же папка нового
+  /// ящика, иначе «Входящие» или «Вся почта» — см. folder_follow.dart.
+  Future<void> _followFolder(String prevId, String nextId) async {
+    final fid = ref.read(selectedFolderIdProvider);
+    if (fid == null || fid == kOutboxFolderId) return;
+    final db = ref.read(databaseProvider);
+    final rows = await (db.select(db.folders)..where((f) => f.accountId.isIn([prevId, nextId]))).get();
+    if (!mounted || ref.read(selectedFolderIdProvider) != fid || ref.read(activeAccountProvider)?.id != nextId) return;
+    final all = [for (final r in rows) folderFromRow(r)];
+    final to = followFolder(
+      selectedId: fid,
+      old: all.where((f) => f.accountId == prevId && f.id == fid).firstOrNull,
+      target: [for (final f in all) if (f.accountId == nextId) f],
+      homeInbox: ref.read(startupFolderProvider) == StartupFolder.inbox,
+    );
+    switch (to) {
+      case FollowStay():
+        return;
+      case FollowFolder(:final id):
+        ref.read(unifiedModeProvider.notifier).state = false;
+        ref.read(selectedFolderIdProvider.notifier).state = id;
+      case FollowAllMail():
+        ref.read(unifiedModeProvider.notifier).state = true;
+        ref.read(selectedFolderIdProvider.notifier).state = null;
+    }
+  }
+
   /// Приложение сворачивали — при возврате лента начинается сверху: иначе
   /// после перерыва непонятно, где новые письма (замечание 08.10.2026).
   bool _wasBackgrounded = false;
@@ -613,6 +641,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
       if (prev?.id != next?.id && _selectedEmailId != null) {
         setState(() { _selectedEmailId = null; _selectedAccountId = null; });
       }
+      if (prev != null && next != null && prev.id != next.id) unawaited(_followFolder(prev.id, next.id));
     });
 
     // Заголовок. Выбрана группа ящиков — её имя (1.6.27: раньше «Вся почта»,

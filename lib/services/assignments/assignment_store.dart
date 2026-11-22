@@ -590,7 +590,13 @@ abstract final class AssignmentStore {
             for (final r in refs) {
               hit = hit | e.referencesStr.like('%$r%');
             }
-            var cond = e.accountId.isIn(mine.keys) & e.receivedAt.isBiggerThanValue(since) & hit & e.id.isNotInQuery(linked);
+            // Черновики — не ответы (2.6.8: черновик ответа на сервере несёт
+            // заголовки цепочки и цитату с кодом поручения).
+            var cond = e.accountId.isIn(mine.keys) &
+                e.receivedAt.isBiggerThanValue(since) &
+                e.isDraft.equals(false) &
+                hit &
+                e.id.isNotInQuery(linked);
             // Порциями от старых к новым — по ключу, а не по смещению:
             // разобранные письма выпадают из выборки на ходу.
             final at = lastAt, last = lastId;

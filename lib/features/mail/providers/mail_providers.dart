@@ -48,6 +48,7 @@ import '../../../services/mail/focus_mode_service.dart' show focusModeProvider;
 import '../../../services/security/smime_service.dart' show smimeServiceProvider;
 import '../../../services/security/managed_config.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
+import '../../../services/mail/draft_sync_service.dart' show DraftSyncService;
 import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/encoded_words.dart';
 
@@ -1104,6 +1105,14 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
 
   bool _groupLogged = false;
 
+  Set<String> _shadowedDrafts(List<Email> rows) {
+    try {
+      return DraftSyncService.shadowed(ref.read(sharedPrefsProvider), rows);
+    } catch (_) {
+      return const {};
+    }
+  }
+
   void _emit(List<Email> rows) {
     _lastRows = rows;
     // Группа ящиков: в журнал — сколько писем каждого ящика попало в ленту
@@ -1119,8 +1128,12 @@ class EmailsNotifier extends StateNotifier<EmailListState> {
           '${per.keys.any((id) => !names.containsKey(id)) ? ' (в группе есть удалённый ящик)' : ''}'
           '${accounts.any((a) => per.containsKey(a.id) && !a.isActive) ? ' (есть выключенный ящик)' : ''}');
     }
-    var filtered = _dedupByMessageId(_applyFilters(rows)
-        .where((e) => _hidden.isEmpty || !_hidden.contains('${e.accountId}|${e.id}')))
+    // Серверная копия черновика, который правится здесь (выгружена во время
+    // правки, 2.6.8), — не второй строкой рядом с ним.
+    final shadow = _shadowedDrafts(rows);
+    var filtered = _dedupByMessageId(_applyFilters(rows).where((e) =>
+            (_hidden.isEmpty || !_hidden.contains('${e.accountId}|${e.id}')) &&
+            (shadow.isEmpty || !shadow.contains('${e.accountId}|${e.id}'))))
         .toList();
     if (groupByConversation) filtered = _collapseConversations(filtered);
     final models = _modelsFor(filtered);

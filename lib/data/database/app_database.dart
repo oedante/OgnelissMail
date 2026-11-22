@@ -2757,6 +2757,7 @@ class AppDatabase extends _$AppDatabase {
             ..where(emails.accountId.equals(accountId) &
                 emails.conversationId.equals(conversationId) &
                 emails.receivedAt.isBiggerThanValue(after) &
+                emails.isDraft.equals(false) &
                 emails.fromEmail.lower().isIn(me).not()))
           .map((r) => r.read(emails.fromEmail))
           .get();
@@ -2768,6 +2769,7 @@ class AppDatabase extends _$AppDatabase {
             ..addColumns([emails.fromEmail])
             ..where(emails.accountId.equals(accountId) &
                 emails.receivedAt.isBiggerThanValue(after) &
+                emails.isDraft.equals(false) &
                 emails.referencesStr.like('%$mid%') &
                 emails.fromEmail.lower().isIn(me).not()))
           .map((r) => r.read(emails.fromEmail))
@@ -2793,6 +2795,9 @@ class AppDatabase extends _$AppDatabase {
           ..where((e) => e.accountId.equals(accountId))
           ..where((e) => e.conversationId.equals(conversationId))
           ..where((e) => e.receivedAt.isBiggerThanValue(after))
+          // Черновик ответа — ещё не ответ (2.6.8: черновики на сервере несут
+          // заголовки ответа и встают в беседу).
+          ..where((e) => e.isDraft.equals(false))
           ..where((e) => e.fromEmail.lower().isIn(_mine(myEmail)))
           ..limit(1))
         .getSingleOrNull();
@@ -2815,6 +2820,7 @@ class AppDatabase extends _$AppDatabase {
     final row = await (select(emails)
           ..where((e) => e.accountId.equals(accountId))
           ..where((e) => e.receivedAt.isBiggerThanValue(after))
+          ..where((e) => e.isDraft.equals(false))
           ..where((e) => e.referencesStr.like('%$mid%'))
           ..where((e) => fromMe ? e.fromEmail.lower().isIn(me) : e.fromEmail.lower().isIn(me).not())
           ..limit(1))

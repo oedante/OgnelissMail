@@ -26,6 +26,7 @@ import 'package:ogneliss/core/theme/appearance.dart';
 import 'package:ogneliss/core/theme/tokens.dart';
 import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/data/models/email_model.dart';
+import 'package:ogneliss/data/models/contact_model.dart' show ContactSource;
 import 'package:ogneliss/data/models/folder_model.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
@@ -107,6 +108,82 @@ Future<AppDatabase> _db() async {
         type: Value(FolderType.inbox.index),
       ));
   return db;
+}
+
+/// Встречи на неделю, задачи, контакты организации и заметки — для снимков
+/// разделов телефона в презентациях (2.6.8).
+Future<void> _demoPim(AppDatabase db) async {
+  final now = DateTime.now();
+  final d0 = DateTime(now.year, now.month, now.day);
+  Future<void> ev(String id, String title, int day, int h, int m, int len, int color, {String? where}) =>
+      db.into(db.calendarEvents).insert(CalendarEventsCompanion.insert(
+            id: id,
+            accountId: 'a1',
+            title: title,
+            location: Value(where),
+            startTime: d0.add(Duration(days: day, hours: h, minutes: m)),
+            endTime: d0.add(Duration(days: day, hours: h, minutes: m + len)),
+            createdAt: now,
+            colorValue: Value(color),
+          ));
+  await ev('c1', 'Планёрка отдела', 0, 10, 0, 60, 0xFF4A78B0, where: 'Переговорная 4');
+  await ev('c2', 'Звонок поставщику', 0, 15, 0, 30, 0xFF5B8C5A);
+  await ev('c3', 'Созвон с ООО «Ромашка»', 1, 11, 0, 60, 0xFF7E5E9E, where: 'Онлайн');
+  await ev('c4', 'Обзор проекта «Склад»', 1, 16, 0, 60, 0xFFB0703F, where: 'Переговорная 2');
+  await ev('c5', 'Приёмка насосной станции № 3', 2, 9, 30, 120, 0xFF4A78B0, where: 'Насосная станция № 3');
+  await ev('c6', 'Совещание по бюджету', 3, 14, 0, 90, 0xFF7E5E9E, where: 'Переговорная 4');
+  await ev('c7', 'Обучение по охране труда', 4, 10, 0, 120, 0xFF5B8C5A, where: 'Учебный класс');
+  Future<void> task(String id, String title, DateTime? due, {int priority = 1, bool flag = false, int status = 0}) =>
+      db.into(db.tasks).insert(TasksCompanion.insert(
+            id: id,
+            accountId: 'a1',
+            title: title,
+            createdAt: now,
+            dueDate: Value(due),
+            priority: Value(priority),
+            isFlagged: Value(flag),
+            status: Value(status),
+          ));
+  await task('t1', 'Отчёт за октябрь', d0, priority: 2, flag: true);
+  await task('t2', 'Ответить Борису по договору', d0);
+  await task('t3', 'Подготовить презентацию для совещания', d0.add(const Duration(days: 1)));
+  await task('t4', 'Согласовать смету по ремонту', d0.add(const Duration(days: 2)), priority: 2);
+  await task('t5', 'Заказать пропуска для подрядчика', d0.add(const Duration(days: 3)));
+  await task('t6', 'Узнать у коллеги про акт', d0.subtract(const Duration(days: 1)));
+  await task('t7', 'Проверить график отпусков', null);
+  Future<void> person(String id, String name, String email, String title, String dept, String phone) =>
+      db.into(db.contacts).insert(ContactsCompanion.insert(
+            id: id,
+            accountId: const Value('a1'),
+            email: email,
+            displayName: name,
+            jobTitle: Value(title),
+            department: Value(dept),
+            company: const Value('ООО «Пример»'),
+            phoneWork: Value(phone),
+            source: Value(ContactSource.exchangeGal.index),
+          ));
+  await person('p1', 'Анна Смирнова', 'anna.smirnova@corp.example', 'Ведущий инженер', 'Отдел эксплуатации', '+7 495 100-10-01');
+  await person('p2', 'Борис Орлов', 'b.orlov@corp.example', 'Юрист', 'Юридический отдел', '+7 495 100-10-02');
+  await person('p3', 'Вера Белова', 'v.belova@corp.example', 'Экономист', 'Финансовый отдел', '+7 495 100-10-03');
+  await person('p4', 'Дмитрий Кузнецов', 'd.kuznetsov@corp.example', 'Кладовщик', 'Склад', '+7 495 100-10-04');
+  await person('p5', 'Елена Соколова', 'e.sokolova@corp.example', 'Специалист по кадрам', 'Отдел кадров', '+7 495 100-10-05');
+  await person('p6', 'Олег Кузнецов', 'o.kuznetsov@corp.example', 'Начальник отдела', 'Отдел эксплуатации', '+7 495 100-10-06');
+  await person('p7', 'Мария Иванова', 'm.ivanova@corp.example', 'Главный бухгалтер', 'Бухгалтерия', '+7 495 100-10-07');
+  await person('p8', 'Сергей Волков', 's.volkov@corp.example', 'Инженер по охране труда', 'Служба охраны труда', '+7 495 100-10-08');
+  Future<void> note(String id, String title, String body, int daysAgo) => db.into(db.notes).insert(NotesCompanion.insert(
+        id: id,
+        accountId: const Value('a1'),
+        title: Value(title),
+        body: Value(body),
+        createdAt: now.subtract(Duration(days: daysAgo)),
+        modifiedAt: now.subtract(Duration(days: daysAgo)),
+      ));
+  await note('n1', 'Вопросы к планёрке', 'Сроки ремонта насосной станции; график отпусков; закупка оборудования.', 0);
+  await note('n2', 'Контакты подрядчика', 'ООО «Ромашка», менеджер — Павел, +7 495 200-20-20.', 1);
+  await note('n3', 'Список на приёмку', 'Акт, паспорта оборудования, схема подключения, протокол испытаний.', 2);
+  await note('n4', 'Идеи по отчёту', 'Добавить сравнение с прошлым годом и график затрат по месяцам.', 4);
+  await note('n5', 'Командировка в Казань', 'Билеты, гостиница, программа визита на завод.', 7);
 }
 
 /// Письмо для снимков экрана письма и ответа.
@@ -913,6 +990,32 @@ void main() {
     }
   }
 
+  // Презентации 2.6.8 (просьба владельца 22.11.2026: «со скриншотами
+  // мобильного интерфейса»): календарь, задачи, контакты и заметки телефона —
+  // с демонстрационными данными (в «обзоре» выше эти разделы пустые).
+  // Запуск: flutter test tool/shots --plain-name презентация --update-goldens
+  for (final (name, screen) in <(String, Widget)>[
+    ('calendar', const CalendarScreen()),
+    ('tasks', const TasksScreen()),
+    ('contacts', const ContactsScreen()),
+    ('notes', const NotesScreen()),
+  ]) {
+    testWidgets('презентация — $name', (tester) async {
+      SharedPreferences.setMockInitialValues({'s_active_account': 'a1', 'reading_pane_asked_v1': true});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(() async {
+        final db = await _db();
+        await _letter(db);
+        await _inbox(db);
+        await _demoPim(db);
+        return db;
+      }))!;
+      await _shot(tester, 'pres_${name}_phone', screen, theme: AppTheme.lightTheme(1.0), db: db, prefs: prefs,
+          textScale: 1.0);
+      await tester.runAsync(db.close);
+    });
+  }
+
   // Настройки на компьютере (2.6.4, проход по интерфейсу компьютера,
   // 17.11.2026): телефонные пункты и тексты, ширина колонок. В тесте
   // Platform — Linux, как у компьютера.
@@ -1162,7 +1265,7 @@ void main() {
       await _shot(tester, 'login_$t', const LoginScreen(), theme: _themes[t]!(), db: db, prefs: prefs);
       await _shot(tester, 'login_exchange_$t', const LoginScreen(), theme: _themes[t]!(), db: db, prefs: prefs,
           before: (tester) async {
-        await tester.enterText(find.byType(TextField).first, 'oedante@ogneliss.ru');
+        await tester.enterText(find.byType(TextField).first, 'i.petrov@corp.example');
         await tester.ensureVisible(find.text('Exchange'));
         await tester.tap(find.text('Exchange'));
       });

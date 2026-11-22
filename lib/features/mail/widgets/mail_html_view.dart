@@ -51,6 +51,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
 import '../../../core/logging/app_logger.dart';
 import '../../../core/logging/open_trace.dart';
+import '../../../core/logging/perf_mark.dart';
 import '../../../services/background/work_scheduler.dart';
 import '../../../core/utils/work_isolate.dart';
 import '../../../core/security/mail_body_processor.dart';
@@ -279,6 +280,25 @@ class MailHtmlDocument {
     Map<String, String> inlineImages = const {},
     bool keepCid = false,
     bool clip = false,
+    DateContext? dates,
+  }) =>
+      // Разбор и очистка HTML — в главном потоке: метка производительности
+      // (2.6.8) — в Timeline и в журнал медленных кадров.
+      PerfMark.sync(
+          'письмо: разбор HTML',
+          () => _build(bodyHtml,
+              allowRemoteImages: allowRemoteImages,
+              inlineImages: inlineImages,
+              keepCid: keepCid,
+              clip: clip,
+              dates: dates));
+
+  static MailHtmlDocument _build(
+    String bodyHtml, {
+    required bool allowRemoteImages,
+    required Map<String, String> inlineImages,
+    required bool keepCid,
+    required bool clip,
     DateContext? dates,
   }) {
     final doc = html_parser.parse(bodyHtml);

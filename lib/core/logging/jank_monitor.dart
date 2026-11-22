@@ -15,13 +15,20 @@
 // «ожидание» — главный поток был занят до начала кадра (синхронизация,
 // разбор ответа сервера), «очередь отрисовки» — поток отрисовки занят
 // прежним кадром или встроенным окном.
+//
+// 2.6.8 (22.11.2026): и что в это время шло — по меткам производительности
+// (PerfMark): «главный поток: письмо: разбор HTML 420 мс; шло:
+// синхронизация: папка Входящие».
 
+import 'dart:developer' show Timeline;
 import 'dart:ui' show FramePhase, FrameTiming;
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart' show AppLifecycleListener, AppLifecycleState;
 
 import 'app_logger.dart';
+import 'perf_mark.dart';
 
 class JankMonitor {
   JankMonitor._();
@@ -66,7 +73,9 @@ class JankMonitor {
       if (ms > _worstMs) _worstMs = ms;
       if (total >= _slow && _logged < _perMinute) {
         _logged++;
-        AppLogger.info('Медленный кадр: $ms мс (${phasesOf(t)})');
+        final w = windowOf(t, Timeline.now);
+        final busy = PerfMark.describe(PerfMark.during(w.from, w.to));
+        AppLogger.info('Медленный кадр: $ms мс (${phasesOf(t)})${busy.isEmpty ? '' : ' — $busy'}');
       }
     }
     if (now.difference(_windowStart) >= const Duration(minutes: 1)) {
@@ -79,6 +88,22 @@ class JankMonitor {
       _worstMs = 0;
       _logged = 0;
     }
+  }
+
+  /// Отрезок (часы Timeline, мкс), в котором искать участки для
+  /// медленного кадра [t]: от чуть раньше начала кадра (главный поток мог
+  /// быть занят ещё до сигнала кадра) до конца отрисовки. Часы кадра — те
+  /// же, что у Timeline ([nowUs] — сейчас по ним); если нет (кадр «в
+  /// будущем» или давнее 10 с) — последние полторы секунды перед отчётом
+  /// (отчёт о кадрах приходит с задержкой до секунды).
+  @visibleForTesting
+  static ({int from, int to}) windowOf(FrameTiming t, int nowUs) {
+    final start = t.timestampInMicroseconds(FramePhase.vsyncStart);
+    final end = t.timestampInMicroseconds(FramePhase.rasterFinish);
+    if (end > nowUs + 1000000 || nowUs - end > 10000000) {
+      return (from: nowUs - t.totalSpan.inMicroseconds - 1500000, to: nowUs);
+    }
+    return (from: start - 100000, to: end);
   }
 
   /// Из чего сложилось время кадра: ожидание начала (главный поток занят),

@@ -79,8 +79,8 @@ def extract(paths: list[str]) -> dict:
                     ms = obj.get('ms')
                     if isinstance(ms, (int, float)):
                         metrics[name] = ms
-                        if obj.get('marks') or obj.get('runs'):
-                            details[name] = {k: obj[k] for k in ('marks', 'runs') if k in obj}
+                        if obj.get('marks') or obj.get('runs') or obj.get('frames'):
+                            details[name] = {k: obj[k] for k in ('marks', 'runs', 'frames') if k in obj}
     return {'metrics': dict(sorted(metrics.items())), 'details': details, 'info': info}
 
 

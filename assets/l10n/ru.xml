@@ -3837,7 +3837,7 @@
     <string name="apPreviewBubbleIn">Согласуем смету до пятницы?</string>
     <string name="apPreviewBubbleOut">Да, отправлю сегодня.</string>
     <string name="notifyMessengerStyle">Уведомления как в мессенджерах</string>
-    <string name="notifyMessengerStyleDesc">Фото или буква отправителя рядом с письмом</string>
+    <string name="notifyMessengerStyleDesc">Письма людей и коллег — с фото отправителя, как сообщения; рассылки — простым уведомлением</string>
     <string name="notifyVipConversations">Беседы для VIP</string>
     <string name="notifyVipConversationsDesc">Письма VIP — в разделе «Беседы» Android: их можно сделать приоритетными</string>
     <string name="notifyAllConversations">Беседы для всех писем</string>
@@ -4403,7 +4403,7 @@
     <string name="faq_settings_4_q">Как узнать, что делает настройка?</string>
     <string name="faq_settings_4_a">Удержите пункт настроек (на компьютере — нажмите на него правой кнопкой мыши): откроется пояснение, на что он влияет, и ответы про него из «Вопросов и ответов». То же открывает значок «?» рядом с названием.</string>
     <string name="notifyPeopleConversations">Беседы для писем от людей</string>
-    <string name="notifyPeopleConversationsDesc">Портрет отправителя со значком приложения на нём — у писем коллег и контактов, где вы среди адресатов (до 50); рассылки — обычным видом</string>
+    <string name="notifyPeopleConversationsDesc">Портрет отправителя со значком приложения на нём — у писем коллег, контактов, тех, с кем вы переписывались, и с личных ящиков (Gmail, Яндекс…), где вы среди адресатов (до 50); рассылки — простым уведомлением</string>
     <string name="offlineErrGateway">Шлюз организации не пропустил письмо из этой сети (например, через VPN) — оно уйдёт само после смены сети</string>
     <string name="tagsInsert">Вставить поле:</string>
     <string name="tagGroupRecipient">Адресат</string>

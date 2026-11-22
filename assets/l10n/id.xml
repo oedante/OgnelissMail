@@ -3780,7 +3780,7 @@
     <string name="apPreviewBubbleIn">Bisa kita setujui anggarannya sebelum Jumat?</string>
     <string name="apPreviewBubbleOut">Ya, saya kirim hari ini.</string>
     <string name="notifyMessengerStyle">Notifikasi seperti aplikasi pesan</string>
-    <string name="notifyMessengerStyleDesc">Foto atau inisial pengirim di samping pesan</string>
+    <string name="notifyMessengerStyleDesc">Email dari orang dan rekan kerja tampil dengan foto pengirim, seperti pesan; buletin sebagai notifikasi biasa</string>
     <string name="notifyVipConversations">Percakapan untuk VIP</string>
     <string name="notifyVipConversationsDesc">Email dari VIP muncul di bagian Percakapan Android, tempat Anda dapat menjadikannya prioritas</string>
     <string name="notifyAllConversations">Percakapan untuk semua email</string>
@@ -4340,7 +4340,7 @@
     <string name="faq_settings_4_q">Bagaimana cara mengetahui fungsi suatu pengaturan?</string>
     <string name="faq_settings_4_a">Tekan lama item pengaturan (di komputer, klik kanan): penjelasan tentang apa yang dipengaruhinya akan terbuka, beserta jawaban tentangnya dari “Tanya jawab”. Ikon “?” di samping nama membuka hal yang sama.</string>
     <string name="notifyPeopleConversations">Percakapan untuk email dari orang</string>
-    <string name="notifyPeopleConversationsDesc">Foto pengirim dengan ikon aplikasi di atasnya untuk email dari rekan kerja dan kontak yang mencantumkan Anda sebagai penerima (hingga 50); buletin tampil seperti biasa</string>
+    <string name="notifyPeopleConversationsDesc">Potret pengirim dengan ikon aplikasi di atasnya untuk email dari rekan kerja, kontak, orang yang pernah Anda surati, dan kotak pribadi (Gmail, Outlook…) yang mencantumkan Anda sebagai penerima (hingga 50); buletin sebagai notifikasi biasa</string>
     <string name="offlineErrGateway">Gateway organisasi Anda memblokir pesan dari jaringan ini (misalnya VPN) — pesan akan terkirim otomatis saat jaringan berganti</string>
     <string name="tagsInsert">Sisipkan kolom:</string>
     <string name="tagGroupRecipient">Penerima</string>

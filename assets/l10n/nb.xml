@@ -3799,7 +3799,7 @@
     <string name="apPreviewBubbleIn">Kan vi godkjenne overslaget innen fredag?</string>
     <string name="apPreviewBubbleOut">Ja, jeg sender det i dag.</string>
     <string name="notifyMessengerStyle">Varsler som i en meldingsapp</string>
-    <string name="notifyMessengerStyleDesc">Avsenderens bilde eller forbokstav ved meldingen</string>
+    <string name="notifyMessengerStyleDesc">E-post fra personer og kolleger vises med avsenderens bilde som en melding; nyhetsbrev som vanlig varsel</string>
     <string name="notifyVipConversations">Samtaler for VIP-er</string>
     <string name="notifyVipConversationsDesc">E-post fra VIP-er vises under Samtaler i Android, der du kan merke dem som prioriterte</string>
     <string name="notifyAllConversations">Samtaler for all e-post</string>
@@ -4361,7 +4361,7 @@
     <string name="faq_settings_4_q">Hvordan finner jeg ut hva en innstilling gjør?</string>
     <string name="faq_settings_4_a">Hold fingeren på et punkt i innstillingene (på en datamaskin: høyreklikk på det): Det åpnes en forklaring på hva det påvirker, og svar om det fra «Spørsmål og svar». Ikonet «?» ved siden av navnet åpner det samme.</string>
     <string name="notifyPeopleConversations">Samtaler for e-post fra personer</string>
-    <string name="notifyPeopleConversationsDesc">Avsenderens bilde med appikonet på for e-post fra kolleger og kontakter der du står blant mottakerne (opptil 50); nyhetsbrev som vanlig</string>
+    <string name="notifyPeopleConversationsDesc">Avsenderens portrett med appikonet på e-post fra kolleger, kontakter, personer du har skrevet med, og private postkasser (Gmail, Outlook…) der du er blant mottakerne (opptil 50); nyhetsbrev som vanlig varsel</string>
     <string name="offlineErrGateway">Organisasjonens gateway blokkerte meldingen fra dette nettverket (for eksempel et VPN) — den sendes automatisk når nettverket endres</string>
     <string name="tagsInsert">Sett inn felt:</string>
     <string name="tagGroupRecipient">Mottaker</string>

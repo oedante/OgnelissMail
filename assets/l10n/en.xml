@@ -3799,7 +3799,7 @@
     <string name="apPreviewBubbleIn">Can we approve the estimate by Friday?</string>
     <string name="apPreviewBubbleOut">Yes, I\'ll send it today.</string>
     <string name="notifyMessengerStyle">Messenger-style notifications</string>
-    <string name="notifyMessengerStyleDesc">The sender\'s photo or initial next to the message</string>
+    <string name="notifyMessengerStyleDesc">Mail from people and colleagues shows the sender\'s photo, like a message; newsletters arrive as plain notifications</string>
     <string name="notifyVipConversations">Conversations for VIPs</string>
     <string name="notifyVipConversationsDesc">VIP mail appears under Android Conversations, where you can mark it as priority</string>
     <string name="notifyAllConversations">Conversations for all mail</string>
@@ -4361,7 +4361,7 @@
     <string name="faq_settings_4_q">How do I find out what a setting does?</string>
     <string name="faq_settings_4_a">Press and hold a settings item (on a computer, right-click it): an explanation of what it affects opens, together with answers about it from “Questions and answers”. The “?” icon next to the name opens the same.</string>
     <string name="notifyPeopleConversations">Conversations for mail from people</string>
-    <string name="notifyPeopleConversationsDesc">The sender\'s portrait with the app icon on it for mail from colleagues and contacts that lists you among the recipients (up to 50); newsletters look as usual</string>
+    <string name="notifyPeopleConversationsDesc">The sender\'s portrait with the app icon on it for mail from colleagues, contacts, people you have written to and personal mailboxes (Gmail, Outlook…) that lists you among the recipients (up to 50); newsletters as plain notifications</string>
     <string name="offlineErrGateway">Your organization\'s gateway blocked the message from this network (for example, a VPN) — it will be sent automatically when the network changes</string>
     <string name="tagsInsert">Insert field:</string>
     <string name="tagGroupRecipient">Recipient</string>

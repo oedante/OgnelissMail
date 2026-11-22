@@ -3799,7 +3799,7 @@
     <string name="apPreviewBubbleIn">Kan vi godkänna kostnadsförslaget före fredag?</string>
     <string name="apPreviewBubbleOut">Ja, jag skickar det i dag.</string>
     <string name="notifyMessengerStyle">Aviseringar som i en chattapp</string>
-    <string name="notifyMessengerStyleDesc">Avsändarens foto eller initial bredvid meddelandet</string>
+    <string name="notifyMessengerStyleDesc">Mejl från personer och kollegor visas med avsändarens foto som ett meddelande; nyhetsbrev som vanlig avisering</string>
     <string name="notifyVipConversations">Konversationer för VIP</string>
     <string name="notifyVipConversationsDesc">E-post från VIP visas under Konversationer i Android, där du kan prioritera den</string>
     <string name="notifyAllConversations">Konversationer för all e-post</string>
@@ -4361,7 +4361,7 @@
     <string name="faq_settings_4_q">Hur tar jag reda på vad en inställning gör?</string>
     <string name="faq_settings_4_a">Håll fingret på en punkt i inställningarna (på en dator: högerklicka på den): en förklaring av vad den påverkar öppnas, tillsammans med svar om den från ”Frågor och svar”. Ikonen ”?” bredvid namnet öppnar samma sak.</string>
     <string name="notifyPeopleConversations">Konversationer för mejl från personer</string>
-    <string name="notifyPeopleConversationsDesc">Avsändarens bild med appikonen på för mejl från kolleger och kontakter där du är bland mottagarna (upp till 50); nyhetsbrev som vanligt</string>
+    <string name="notifyPeopleConversationsDesc">Avsändarens porträtt med appikonen på mejl från kollegor, kontakter, personer du har skrivit med och privata brevlådor (Gmail, Outlook…) där du är bland mottagarna (upp till 50); nyhetsbrev som vanlig avisering</string>
     <string name="offlineErrGateway">Organisationens gateway blockerade meddelandet från det här nätverket (till exempel ett VPN) — det skickas automatiskt när nätverket byts</string>
     <string name="tagsInsert">Infoga fält:</string>
     <string name="tagGroupRecipient">Mottagare</string>

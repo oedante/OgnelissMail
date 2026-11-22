@@ -3799,7 +3799,7 @@
     <string name="apPreviewBubbleIn">क्या शुक्रवार तक अनुमान मंज़ूर करें?</string>
     <string name="apPreviewBubbleOut">हाँ, आज भेज दूँगा।</string>
     <string name="notifyMessengerStyle">मैसेंजर जैसी सूचनाएं</string>
-    <string name="notifyMessengerStyleDesc">संदेश के पास प्रेषक की फ़ोटो या पहला अक्षर</string>
+    <string name="notifyMessengerStyleDesc">लोगों और सहकर्मियों की मेल प्रेषक की फ़ोटो के साथ, संदेश की तरह; न्यूज़लेटर सामान्य सूचना के रूप में</string>
     <string name="notifyVipConversations">VIP के लिए बातचीत</string>
     <string name="notifyVipConversationsDesc">VIP की मेल Android के बातचीत अनुभाग में दिखती है, जहां आप इसे प्राथमिकता दे सकते हैं</string>
     <string name="notifyAllConversations">सभी मेल के लिए बातचीत</string>
@@ -4361,7 +4361,7 @@
     <string name="faq_settings_4_q">कैसे जानें कि कोई सेटिंग क्या करती है?</string>
     <string name="faq_settings_4_a">सेटिंग्स के किसी आइटम को दबाकर रखें (कंप्यूटर पर उस पर राइट-क्लिक करें): वह किस पर असर डालता है, इसकी व्याख्या और «सवाल और जवाब» से उसके बारे में जवाब खुल जाएँगे। नाम के पास «?» आइकन भी यही खोलता है।</string>
     <string name="notifyPeopleConversations">लोगों के मेल के लिए बातचीत</string>
-    <string name="notifyPeopleConversationsDesc">सहकर्मियों और संपर्कों के ऐसे मेल में, जिनके प्राप्तकर्ताओं में आप हैं (50 तक), भेजने वाले की तस्वीर पर ऐप आइकन; न्यूज़लेटर सामान्य रूप में</string>
+    <string name="notifyPeopleConversationsDesc">सहकर्मियों, संपर्कों, जिनसे आपने पत्राचार किया है उनकी और निजी मेलबॉक्स (Gmail, Outlook…) की मेल पर, जिसमें आप प्राप्तकर्ताओं में हैं (50 तक), प्रेषक का चित्र उस पर ऐप आइकन के साथ; न्यूज़लेटर सामान्य सूचना के रूप में</string>
     <string name="offlineErrGateway">आपके संगठन के गेटवे ने इस नेटवर्क (जैसे VPN) से संदेश रोक दिया — नेटवर्क बदलने पर यह अपने आप भेजा जाएगा</string>
     <string name="tagsInsert">फ़ील्ड डालें:</string>
     <string name="tagGroupRecipient">प्राप्तकर्ता</string>

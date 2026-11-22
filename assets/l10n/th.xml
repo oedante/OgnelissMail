@@ -3780,7 +3780,7 @@
     <string name="apPreviewBubbleIn">อนุมัติใบประมาณการก่อนวันศุกร์ได้ไหม</string>
     <string name="apPreviewBubbleOut">ได้ เดี๋ยววันนี้ส่งให้</string>
     <string name="notifyMessengerStyle">การแจ้งเตือนแบบแอปแชท</string>
-    <string name="notifyMessengerStyleDesc">รูปภาพหรืออักษรย่อของผู้ส่งข้างข้อความ</string>
+    <string name="notifyMessengerStyleDesc">อีเมลจากบุคคลและเพื่อนร่วมงานแสดงรูปผู้ส่งเหมือนข้อความแชต จดหมายข่าวแสดงเป็นการแจ้งเตือนธรรมดา</string>
     <string name="notifyVipConversations">การสนทนาสำหรับ VIP</string>
     <string name="notifyVipConversationsDesc">อีเมลจาก VIP จะแสดงในส่วนการสนทนาของ Android ซึ่งคุณตั้งเป็นลำดับความสำคัญได้</string>
     <string name="notifyAllConversations">การสนทนาสำหรับอีเมลทั้งหมด</string>
@@ -4340,7 +4340,7 @@
     <string name="faq_settings_4_q">จะรู้ได้อย่างไรว่าการตั้งค่าแต่ละรายการทำอะไร</string>
     <string name="faq_settings_4_a">กดค้างที่รายการในการตั้งค่า (บนคอมพิวเตอร์ให้คลิกขวา) จะเปิดคำอธิบายว่ารายการนั้นมีผลต่ออะไร พร้อมคำตอบที่เกี่ยวข้องจาก «คำถามและคำตอบ» ไอคอน «?» ข้างชื่อก็เปิดสิ่งเดียวกัน</string>
     <string name="notifyPeopleConversations">การสนทนาสำหรับอีเมลจากบุคคล</string>
-    <string name="notifyPeopleConversationsDesc">รูปผู้ส่งที่มีไอคอนแอปบนรูป สำหรับอีเมลจากเพื่อนร่วมงานและรายชื่อติดต่อที่คุณอยู่ในผู้รับ (ไม่เกิน 50 คน) จดหมายข่าวแสดงแบบปกติ</string>
+    <string name="notifyPeopleConversationsDesc">รูปผู้ส่งพร้อมไอคอนแอปบนรูป สำหรับอีเมลจากเพื่อนร่วมงาน รายชื่อติดต่อ คนที่คุณเคยติดต่อ และกล่องจดหมายส่วนตัว (Gmail, Outlook…) ที่มีคุณอยู่ในผู้รับ (ไม่เกิน 50) จดหมายข่าวแสดงเป็นการแจ้งเตือนธรรมดา</string>
     <string name="offlineErrGateway">เกตเวย์ขององค์กรบล็อกข้อความจากเครือข่ายนี้ (เช่น VPN) — ข้อความจะถูกส่งโดยอัตโนมัติเมื่อเครือข่ายเปลี่ยน</string>
     <string name="tagsInsert">แทรกช่อง:</string>
     <string name="tagGroupRecipient">ผู้รับ</string>

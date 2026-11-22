@@ -3780,7 +3780,7 @@
     <string name="apPreviewBubbleIn">금요일까지 견적을 승인할까요?</string>
     <string name="apPreviewBubbleOut">네, 오늘 보낼게요.</string>
     <string name="notifyMessengerStyle">메신저 스타일 알림</string>
-    <string name="notifyMessengerStyleDesc">메시지 옆에 보낸 사람의 사진 또는 이니셜 표시</string>
+    <string name="notifyMessengerStyleDesc">사람과 동료가 보낸 메일은 메시지처럼 보낸 사람 사진과 함께, 뉴스레터는 일반 알림으로 표시</string>
     <string name="notifyVipConversations">VIP 대화</string>
     <string name="notifyVipConversationsDesc">VIP 메일이 Android의 대화 섹션에 표시되며 우선순위로 지정할 수 있습니다</string>
     <string name="notifyAllConversations">모든 메일을 대화로</string>
@@ -4340,7 +4340,7 @@
     <string name="faq_settings_4_q">설정이 어떤 역할을 하는지 어떻게 알 수 있나요?</string>
     <string name="faq_settings_4_a">설정 항목을 길게 누르세요(컴퓨터에서는 마우스 오른쪽 버튼으로 클릭). 그 항목이 무엇에 영향을 주는지에 대한 설명과 \'질문과 답변\'의 관련 답변이 열립니다. 이름 옆의 \'?\' 아이콘도 같은 내용을 엽니다.</string>
     <string name="notifyPeopleConversations">사람이 보낸 메일을 대화로</string>
-    <string name="notifyPeopleConversationsDesc">내가 받는 사람에 포함된 동료와 연락처의 메일(받는 사람 50명까지)은 보낸 사람 사진 위에 앱 아이콘 표시. 뉴스레터는 평소대로</string>
+    <string name="notifyPeopleConversationsDesc">동료, 연락처, 메일을 주고받은 사람, 개인 메일함(Gmail, Outlook…)에서 온 메일 중 내가 수신자에 포함된(최대 50명) 메일은 앱 아이콘이 붙은 보낸 사람 사진으로, 뉴스레터는 일반 알림으로</string>
     <string name="offlineErrGateway">조직의 게이트웨이가 이 네트워크(예: VPN)에서 보낸 메시지를 차단했습니다. 네트워크가 바뀌면 자동으로 전송됩니다</string>
     <string name="tagsInsert">필드 삽입:</string>
     <string name="tagGroupRecipient">받는 사람</string>

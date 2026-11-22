@@ -2312,9 +2312,9 @@ class SyncService {
           : const <String, String>{};
       // Кто из отправителей есть в контактах (не из переписки) — для
       // «Бесед для писем от людей» (18.11.2026).
-      final inContacts = MessengerNotify.styleOn(_prefs) && MessengerNotify.peopleConversationsOn(_prefs)
+      final (inContacts, correspondents) = MessengerNotify.styleOn(_prefs) && MessengerNotify.peopleConversationsOn(_prefs)
           ? await _contactSenders([for (final e in singles) e.from.email])
-          : const <String>{};
+          : (const <String>{}, const <String>{});
       final orgDomains = account.isWork ? OwnAddresses.domains(account) : const <String>{};
       bool sameOrg(String email) {
         final d = mailDomainOf(email);
@@ -2323,7 +2323,9 @@ class SyncService {
       }
       final lines = NotificationLines.of(_prefs, work: account.isWork);
       // Значок ящика (12.11.2026) — когда ящиков несколько, как и подпись.
-      final boxIcon = mailboxLabel == null || MessengerNotify.styleOn(_prefs)
+      // С 2.7.0 и при виде «как в мессенджерах»: рассылки — простым
+      // уведомлением, со значком ящика.
+      final boxIcon = mailboxLabel == null
           ? null
           : await MessengerNotify.mailboxIcon(
               accountId: account.id,
@@ -2353,13 +2355,17 @@ class SyncService {
           isVip: focus.isVip(e) || ruled[e.id]?.notify == RuleNotify.always,
           // Письмо от человека — портрет беседой (18.11.2026): не рассылка,
           // до 50 адресатов, вы в «Кому» или «Копии», отправитель из своей
-          // организации или из контактов.
+          // организации, из контактов, из переписки или с личного ящика
+          // (Gmail, Яндекс…, 2.7.0). Остальное — простым уведомлением.
           isFromPerson: MessengerNotify.fromPerson(
             bulk: DeviceRule.isMailingList(e) || AutoResponderNotifier.isAutomatedSender(e.from.email, e.subject),
             recipients: e.to.length + e.cc.length,
             addressedToMe: [...e.to, ...e.cc].any((a) => OwnAddresses.isMine(account, a.email)),
             sameOrg: sameOrg(e.from.email),
             inContacts: inContacts.contains(e.from.email.trim().toLowerCase()),
+            correspondent: correspondents.contains(e.from.email.trim().toLowerCase()),
+            personalAddress: isPublicMailDomain(mailDomainOf(e.from.email)) &&
+                MailContactsService.isPersonAddress(e.from.email),
           ),
           folderLabel: folderLabel,
           receivedAt: e.receivedAt,
@@ -2400,20 +2406,31 @@ class SyncService {
   /// PHOTO, Exchange Picture), как в списке писем (personPhotosProvider).
   /// Адреса (в нижнем регистре), которые есть в контактах — Exchange,
   /// Google, телефон, добавленные вручную; собранные из переписки — нет.
-  Future<Set<String>> _contactSenders(List<String> emails) async {
+  /// Отправители из контактов (Exchange, Google, телефон) и из переписки:
+  /// карточка «из переписки» со счётом от 3 — вы им писали (+3) или от них
+  /// не одно письмо (+1 за каждое).
+  Future<(Set<String>, Set<String>)> _contactSenders(List<String> emails) async {
     final keys = {for (final e in emails) if (e.contains('@')) e.trim().toLowerCase()};
-    if (keys.isEmpty) return const {};
+    if (keys.isEmpty) return (const <String>{}, const <String>{});
     try {
       final db = _ref.read(databaseProvider);
-      final rows = await (db.select(db.contacts)
-            ..where((c) => c.email.lower().isIn(keys) & c.source.equals(ContactSource.fromMail.index).not()))
-          .get();
-      return {for (final r in rows) r.email.toLowerCase()};
+      final rows = await (db.select(db.contacts)..where((c) => c.email.lower().isIn(keys))).get();
+      final contacts = <String>{};
+      final correspondents = <String>{};
+      for (final r in rows) {
+        if (r.source != ContactSource.fromMail.index) {
+          contacts.add(r.email.toLowerCase());
+        } else if (r.interactionCount >= 3) {
+          correspondents.add(r.email.toLowerCase());
+        }
+      }
+      return (contacts, correspondents);
     } catch (e) {
       AppLogger.debug('Контакты отправителей: $e');
-      return const {};
+      return (const <String>{}, const <String>{});
     }
   }
+
 
   Future<Map<String, String>> _senderPhotos(List<String> emails) async {
     final keys = {for (final e in emails) if (e.contains('@')) e.trim().toLowerCase()};

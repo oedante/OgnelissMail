@@ -3799,7 +3799,7 @@
     <string name="apPreviewBubbleIn">Können wir den Kostenvoranschlag bis Freitag freigeben?</string>
     <string name="apPreviewBubbleOut">Ja, ich schicke ihn heute.</string>
     <string name="notifyMessengerStyle">Benachrichtigungen wie im Messenger</string>
-    <string name="notifyMessengerStyleDesc">Foto oder Initiale des Absenders neben der Nachricht</string>
+    <string name="notifyMessengerStyleDesc">E-Mails von Personen und Kollegen mit Foto des Absenders wie eine Nachricht; Newsletter als einfache Benachrichtigung</string>
     <string name="notifyVipConversations">Unterhaltungen für VIPs</string>
     <string name="notifyVipConversationsDesc">E-Mails von VIPs erscheinen unter „Unterhaltungen“ in Android und lassen sich als vorrangig markieren</string>
     <string name="notifyAllConversations">Unterhaltungen für alle E-Mails</string>
@@ -4361,7 +4361,7 @@
     <string name="faq_settings_4_q">Wie erfahre ich, was eine Einstellung bewirkt?</string>
     <string name="faq_settings_4_a">Halten Sie einen Eintrag in den Einstellungen gedrückt (am Computer: Rechtsklick): Es öffnet sich eine Erklärung, worauf er sich auswirkt, und die Antworten dazu aus „Fragen und Antworten“. Dasselbe öffnet das Symbol „?“ neben dem Namen.</string>
     <string name="notifyPeopleConversations">Unterhaltungen für E-Mails von Personen</string>
-    <string name="notifyPeopleConversationsDesc">Bild des Absenders mit dem App-Symbol darauf bei E-Mails von Kollegen und Kontakten, in denen Sie unter den Empfängern stehen (bis 50); Newsletter wie gewohnt</string>
+    <string name="notifyPeopleConversationsDesc">Bild des Absenders mit dem App-Symbol darauf bei E-Mails von Kollegen, Kontakten, Personen, mit denen Sie geschrieben haben, und privaten Postfächern (Gmail, GMX…), in denen Sie unter den Empfängern stehen (bis 50); Newsletter als einfache Benachrichtigung</string>
     <string name="offlineErrGateway">Das Gateway Ihrer Organisation hat die Nachricht aus diesem Netzwerk blockiert (z. B. über VPN) – sie wird nach einem Netzwerkwechsel automatisch gesendet</string>
     <string name="tagsInsert">Feld einfügen:</string>
     <string name="tagGroupRecipient">Empfänger</string>

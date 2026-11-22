@@ -3780,7 +3780,7 @@
     <string name="apPreviewBubbleIn">周五前能批准预算吗？</string>
     <string name="apPreviewBubbleOut">好的，今天发。</string>
     <string name="notifyMessengerStyle">类似聊天应用的通知</string>
-    <string name="notifyMessengerStyleDesc">在邮件旁显示发件人的照片或首字母</string>
+    <string name="notifyMessengerStyleDesc">来自个人和同事的邮件像消息一样显示发件人照片；新闻邮件以普通通知显示</string>
     <string name="notifyVipConversations">VIP 对话</string>
     <string name="notifyVipConversationsDesc">VIP 的邮件会显示在 Android 的“对话”部分，可将其设为优先</string>
     <string name="notifyAllConversations">所有邮件显示为对话</string>
@@ -4340,7 +4340,7 @@
     <string name="faq_settings_4_q">如何了解某项设置的作用？</string>
     <string name="faq_settings_4_a">长按设置中的某一项（在电脑上点击鼠标右键）：会打开它影响什么的说明，以及「问题与解答」中与它相关的回答。名称旁的「?」图标也会打开同样的内容。</string>
     <string name="notifyPeopleConversations">来自个人的邮件显示为对话</string>
-    <string name="notifyPeopleConversationsDesc">同事和联系人发来、且你在收件人之中的邮件（收件人不超过 50 个）：发件人头像上带应用图标；简报照常显示</string>
+    <string name="notifyPeopleConversationsDesc">来自同事、联系人、通信过的人及个人邮箱（Gmail、Outlook…）且收件人中有您（不超过 50 人）的邮件显示发件人头像并带应用图标；新闻邮件以普通通知显示</string>
     <string name="offlineErrGateway">您所在组织的网关阻止了来自此网络（例如 VPN）的邮件——网络切换后将自动发送</string>
     <string name="tagsInsert">插入字段：</string>
     <string name="tagGroupRecipient">收件人</string>

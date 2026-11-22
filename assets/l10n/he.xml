@@ -3818,7 +3818,7 @@
     <string name="apPreviewBubbleIn">נאשר את הצעת המחיר עד יום שישי?</string>
     <string name="apPreviewBubbleOut">כן, אשלח היום.</string>
     <string name="notifyMessengerStyle">התראות בסגנון אפליקציית מסרים</string>
-    <string name="notifyMessengerStyleDesc">תמונת השולח או האות הראשונה לצד ההודעה</string>
+    <string name="notifyMessengerStyleDesc">דואר מאנשים ומעמיתים מוצג עם תמונת השולח, כמו הודעה; ניוזלטרים כהתראה רגילה</string>
     <string name="notifyVipConversations">שיחות לאנשי VIP</string>
     <string name="notifyVipConversationsDesc">דואר מאנשי VIP מופיע בקטע השיחות של Android, שם אפשר לסמן אותו כבעל עדיפות</string>
     <string name="notifyAllConversations">שיחות לכל הדואר</string>
@@ -4382,7 +4382,7 @@
     <string name="faq_settings_4_q">איך יודעים מה הגדרה עושה?</string>
     <string name="faq_settings_4_a">לחצו לחיצה ארוכה על פריט בהגדרות (במחשב – לחיצה ימנית בעכבר): ייפתח הסבר על מה הוא משפיע, יחד עם התשובות עליו מתוך „שאלות ותשובות”. הסמל „?” ליד השם פותח את אותו הדבר.</string>
     <string name="notifyPeopleConversations">שיחות להודעות מאנשים</string>
-    <string name="notifyPeopleConversationsDesc">תמונת השולח עם סמל האפליקציה עליה בהודעות מעמיתים ומאנשי קשר שבהן אתם בין הנמענים (עד 50); ידיעונים כרגיל</string>
+    <string name="notifyPeopleConversationsDesc">דיוקן השולח עם סמל האפליקציה עליו בדואר מעמיתים, מאנשי קשר, מאנשים שהתכתבת איתם ומתיבות אישיות (Gmail, Outlook…) שבהן אתה בין הנמענים (עד 50); ניוזלטרים כהתראה רגילה</string>
     <string name="offlineErrGateway">השער של הארגון חסם את ההודעה מהרשת הזו (למשל VPN) — היא תישלח אוטומטית כשהרשת תשתנה</string>
     <string name="tagsInsert">הוספת שדה:</string>
     <string name="tagGroupRecipient">נמען</string>

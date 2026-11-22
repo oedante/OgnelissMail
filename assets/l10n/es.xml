@@ -3799,7 +3799,7 @@
     <string name="apPreviewBubbleIn">¿Aprobamos el presupuesto antes del viernes?</string>
     <string name="apPreviewBubbleOut">Sí, lo envío hoy.</string>
     <string name="notifyMessengerStyle">Notificaciones como en mensajería</string>
-    <string name="notifyMessengerStyleDesc">La foto o inicial del remitente junto al mensaje</string>
+    <string name="notifyMessengerStyleDesc">El correo de personas y compañeros muestra la foto del remitente, como un mensaje; los boletines llegan como notificación simple</string>
     <string name="notifyVipConversations">Conversaciones para VIP</string>
     <string name="notifyVipConversationsDesc">El correo de los VIP aparece en Conversaciones de Android, donde puedes marcarlo como prioritario</string>
     <string name="notifyAllConversations">Conversaciones para todo el correo</string>
@@ -4361,7 +4361,7 @@
     <string name="faq_settings_4_q">¿Cómo sé qué hace un ajuste?</string>
     <string name="faq_settings_4_a">Mantén pulsado un elemento de los ajustes (en el ordenador, haz clic derecho): se abre una explicación de lo que afecta y las respuestas sobre él de «Preguntas y respuestas». El icono «?» junto al nombre abre lo mismo.</string>
     <string name="notifyPeopleConversations">Conversaciones para el correo de personas</string>
-    <string name="notifyPeopleConversationsDesc">Foto del remitente con el icono de la app para el correo de compañeros y contactos en el que usted está entre los destinatarios (hasta 50); los boletines, como siempre</string>
+    <string name="notifyPeopleConversationsDesc">Retrato del remitente con el icono de la app para correos de compañeros, contactos, personas con las que se ha escrito y buzones personales (Gmail, Outlook…) en los que usted figura entre los destinatarios (hasta 50); boletines como notificación simple</string>
     <string name="offlineErrGateway">La puerta de enlace de su organización bloqueó el mensaje desde esta red (por ejemplo, una VPN): se enviará automáticamente cuando cambie la red</string>
     <string name="tagsInsert">Insertar campo:</string>
     <string name="tagGroupRecipient">Destinatario</string>

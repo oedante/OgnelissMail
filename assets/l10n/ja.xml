@@ -3780,7 +3780,7 @@
     <string name="apPreviewBubbleIn">見積もりは金曜日までに承認できますか？</string>
     <string name="apPreviewBubbleOut">はい、今日送ります。</string>
     <string name="notifyMessengerStyle">メッセージアプリ風の通知</string>
-    <string name="notifyMessengerStyleDesc">メッセージの横に送信者の写真または頭文字を表示</string>
+    <string name="notifyMessengerStyleDesc">人や同僚からのメールは送信者の写真付きでメッセージのように、ニュースレターは通常の通知で表示</string>
     <string name="notifyVipConversations">VIP との会話</string>
     <string name="notifyVipConversationsDesc">VIP からのメールは Android の「会話」に表示され、優先に設定できます</string>
     <string name="notifyAllConversations">すべてのメールを会話に</string>
@@ -4340,7 +4340,7 @@
     <string name="faq_settings_4_q">設定の働きを知るには？</string>
     <string name="faq_settings_4_a">設定の項目を長押しします（パソコンでは右クリック）。その項目が何に影響するかの説明と、「質問と回答」の関連する回答が開きます。名前の横の「?」アイコンでも同じものが開きます。</string>
     <string name="notifyPeopleConversations">人からのメールを会話に</string>
-    <string name="notifyPeopleConversationsDesc">あなたが宛先に含まれる同僚や連絡先からのメール（宛先50人まで）は、差出人の写真にアプリのアイコンを重ねて表示。ニュースレターは通常どおり</string>
+    <string name="notifyPeopleConversationsDesc">同僚、連絡先、やり取りした相手、個人のメールボックス（Gmail、Outlook など）から届き、あなたが宛先に含まれる（50 人まで）メールは、アプリアイコン付きの送信者の写真で表示。ニュースレターは通常の通知</string>
     <string name="offlineErrGateway">組織のゲートウェイがこのネットワーク（VPN など）からのメッセージをブロックしました。ネットワークが切り替わると自動的に送信されます</string>
     <string name="tagsInsert">フィールドを挿入：</string>
     <string name="tagGroupRecipient">宛先</string>

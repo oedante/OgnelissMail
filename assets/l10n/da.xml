@@ -3799,7 +3799,7 @@
     <string name="apPreviewBubbleIn">Kan vi godkende overslaget inden fredag?</string>
     <string name="apPreviewBubbleOut">Ja, jeg sender det i dag.</string>
     <string name="notifyMessengerStyle">Notifikationer som i en beskedapp</string>
-    <string name="notifyMessengerStyleDesc">Afsenderens foto eller forbogstav ved beskeden</string>
+    <string name="notifyMessengerStyleDesc">Mail fra personer og kolleger vises med afsenderens foto som en besked; nyhedsbreve som almindelig notifikation</string>
     <string name="notifyVipConversations">Samtaler for VIP\'er</string>
     <string name="notifyVipConversationsDesc">Mail fra VIP\'er vises under Samtaler i Android, hvor du kan markere dem som prioriterede</string>
     <string name="notifyAllConversations">Samtaler for al mail</string>
@@ -4361,7 +4361,7 @@
     <string name="faq_settings_4_q">Hvordan finder jeg ud af, hvad en indstilling gør?</string>
     <string name="faq_settings_4_a">Hold fingeren på et punkt i indstillingerne (på en computer: højreklik på det): Der åbnes en forklaring på, hvad det påvirker, og svar om det fra „Spørgsmål og svar“. Ikonet „?“ ved siden af navnet åbner det samme.</string>
     <string name="notifyPeopleConversations">Samtaler for mails fra personer</string>
-    <string name="notifyPeopleConversationsDesc">Afsenderens billede med appikonet på for mails fra kolleger og kontakter, hvor du er blandt modtagerne (op til 50); nyhedsbreve som normalt</string>
+    <string name="notifyPeopleConversationsDesc">Afsenderens portræt med appens ikon på mail fra kolleger, kontakter, personer, du har skrevet med, og private postkasser (Gmail, Outlook…), hvor du er blandt modtagerne (op til 50); nyhedsbreve som almindelig notifikation</string>
     <string name="offlineErrGateway">Organisationens gateway blokerede beskeden fra dette netværk (for eksempel et VPN) — den sendes automatisk, når netværket skifter</string>
     <string name="tagsInsert">Indsæt felt:</string>
     <string name="tagGroupRecipient">Modtager</string>

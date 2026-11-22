@@ -3837,7 +3837,7 @@
     <string name="apPreviewBubbleIn">Zatwierdzimy kosztorys do piątku?</string>
     <string name="apPreviewBubbleOut">Tak, wyślę dzisiaj.</string>
     <string name="notifyMessengerStyle">Powiadomienia jak w komunikatorze</string>
-    <string name="notifyMessengerStyleDesc">Zdjęcie lub inicjał nadawcy obok wiadomości</string>
+    <string name="notifyMessengerStyleDesc">Poczta od ludzi i współpracowników ze zdjęciem nadawcy, jak wiadomość; newslettery jako zwykłe powiadomienie</string>
     <string name="notifyVipConversations">Rozmowy dla VIP</string>
     <string name="notifyVipConversationsDesc">Poczta od VIP trafia do sekcji Rozmowy w Androidzie, gdzie można oznaczyć ją jako priorytetową</string>
     <string name="notifyAllConversations">Rozmowy dla całej poczty</string>
@@ -4403,7 +4403,7 @@
     <string name="faq_settings_4_q">Jak sprawdzić, do czego służy ustawienie?</string>
     <string name="faq_settings_4_a">Przytrzymaj pozycję ustawień (na komputerze kliknij ją prawym przyciskiem myszy): otworzy się wyjaśnienie, na co wpływa, oraz odpowiedzi na jej temat z „Pytań i odpowiedzi”. Ikona „?” obok nazwy otwiera to samo.</string>
     <string name="notifyPeopleConversations">Rozmowy dla poczty od ludzi</string>
-    <string name="notifyPeopleConversationsDesc">Zdjęcie nadawcy z ikoną aplikacji w poczcie od współpracowników i kontaktów, w której jesteś wśród odbiorców (do 50); newslettery jak zwykle</string>
+    <string name="notifyPeopleConversationsDesc">Portret nadawcy z ikoną aplikacji przy poczcie od współpracowników, kontaktów, osób, z którymi korespondowałeś, i ze skrzynek prywatnych (Gmail, Outlook…), gdzie jesteś wśród adresatów (do 50); newslettery jako zwykłe powiadomienie</string>
     <string name="offlineErrGateway">Brama organizacji zablokowała wiadomość z tej sieci (np. przez VPN) — zostanie wysłana automatycznie po zmianie sieci</string>
     <string name="tagsInsert">Wstaw pole:</string>
     <string name="tagGroupRecipient">Adresat</string>

@@ -3780,7 +3780,7 @@
     <string name="apPreviewBubbleIn">Mình duyệt dự toán trước thứ Sáu nhé?</string>
     <string name="apPreviewBubbleOut">Vâng, hôm nay tôi gửi.</string>
     <string name="notifyMessengerStyle">Thông báo kiểu ứng dụng nhắn tin</string>
-    <string name="notifyMessengerStyleDesc">Ảnh hoặc chữ cái đầu của người gửi bên cạnh thư</string>
+    <string name="notifyMessengerStyleDesc">Thư từ mọi người và đồng nghiệp hiện ảnh người gửi như tin nhắn; bản tin hiện dưới dạng thông báo thường</string>
     <string name="notifyVipConversations">Cuộc trò chuyện cho VIP</string>
     <string name="notifyVipConversationsDesc">Thư từ VIP xuất hiện trong mục Cuộc trò chuyện của Android, nơi bạn có thể đặt làm ưu tiên</string>
     <string name="notifyAllConversations">Cuộc trò chuyện cho mọi thư</string>
@@ -4340,7 +4340,7 @@
     <string name="faq_settings_4_q">Làm sao biết một cài đặt có tác dụng gì?</string>
     <string name="faq_settings_4_a">Nhấn giữ một mục cài đặt (trên máy tính, nhấp chuột phải vào mục đó): phần giải thích mục đó ảnh hưởng đến gì sẽ mở ra, kèm các câu trả lời về nó trong «Câu hỏi và trả lời». Biểu tượng «?» cạnh tên cũng mở nội dung này.</string>
     <string name="notifyPeopleConversations">Hội thoại cho thư từ người</string>
-    <string name="notifyPeopleConversationsDesc">Ảnh người gửi kèm biểu tượng ứng dụng trên ảnh cho thư của đồng nghiệp và danh bạ mà bạn có trong danh sách người nhận (tối đa 50); bản tin hiển thị như thường</string>
+    <string name="notifyPeopleConversationsDesc">Ảnh người gửi kèm biểu tượng ứng dụng cho thư từ đồng nghiệp, danh bạ, người bạn từng trao đổi thư và hộp thư cá nhân (Gmail, Outlook…) có bạn trong danh sách người nhận (tối đa 50); bản tin hiện dưới dạng thông báo thường</string>
     <string name="offlineErrGateway">Cổng của tổ chức đã chặn thư từ mạng này (ví dụ VPN) — thư sẽ tự động được gửi khi mạng thay đổi</string>
     <string name="tagsInsert">Chèn trường:</string>
     <string name="tagGroupRecipient">Người nhận</string>

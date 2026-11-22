@@ -3799,7 +3799,7 @@
     <string name="apPreviewBubbleIn">On valide le devis d\'ici vendredi ?</string>
     <string name="apPreviewBubbleOut">Oui, je l\'envoie aujourd\'hui.</string>
     <string name="notifyMessengerStyle">Notifications comme une messagerie</string>
-    <string name="notifyMessengerStyleDesc">La photo ou l\'initiale de l\'expéditeur à côté du message</string>
+    <string name="notifyMessengerStyleDesc">Les e-mails de personnes et de collègues s\'affichent avec la photo de l\'expéditeur, comme un message ; les newsletters, en notification simple</string>
     <string name="notifyVipConversations">Conversations pour les VIP</string>
     <string name="notifyVipConversationsDesc">Les messages des VIP apparaissent dans « Conversations » d\'Android, où vous pouvez les rendre prioritaires</string>
     <string name="notifyAllConversations">Conversations pour tous les messages</string>
@@ -4361,7 +4361,7 @@
     <string name="faq_settings_4_q">Comment savoir à quoi sert un réglage ?</string>
     <string name="faq_settings_4_a">Appuyez longuement sur un élément des réglages (sur ordinateur, faites un clic droit) : une explication de ce qu’il change s’ouvre, avec les réponses le concernant dans « Questions et réponses ». L’icône « ? » à côté du nom ouvre la même chose.</string>
     <string name="notifyPeopleConversations">Conversations pour les messages de personnes</string>
-    <string name="notifyPeopleConversationsDesc">Portrait de l\'expéditeur avec l\'icône de l\'app pour les messages de collègues et de contacts qui vous comptent parmi les destinataires (jusqu\'à 50) ; les newsletters restent comme d\'habitude</string>
+    <string name="notifyPeopleConversationsDesc">Portrait de l\'expéditeur avec l\'icône de l\'app pour les e-mails de collègues, de contacts, de personnes avec qui vous avez échangé et de boîtes personnelles (Gmail, Orange…) qui vous comptent parmi les destinataires (jusqu\'à 50) ; newsletters en notification simple</string>
     <string name="offlineErrGateway">La passerelle de votre organisation a bloqué le message depuis ce réseau (par exemple un VPN) — il sera envoyé automatiquement après un changement de réseau</string>
     <string name="tagsInsert">Insérer un champ :</string>
     <string name="tagGroupRecipient">Destinataire</string>

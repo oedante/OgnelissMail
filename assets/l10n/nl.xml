@@ -3799,7 +3799,7 @@
     <string name="apPreviewBubbleIn">Keuren we de begroting vóór vrijdag goed?</string>
     <string name="apPreviewBubbleOut">Ja, ik stuur het vandaag.</string>
     <string name="notifyMessengerStyle">Meldingen zoals in een chat-app</string>
-    <string name="notifyMessengerStyleDesc">Foto of initiaal van de afzender naast het bericht</string>
+    <string name="notifyMessengerStyleDesc">Mail van mensen en collega\'s met de foto van de afzender, als een bericht; nieuwsbrieven als gewone melding</string>
     <string name="notifyVipConversations">Gesprekken voor VIP\'s</string>
     <string name="notifyVipConversationsDesc">Mail van VIP\'s verschijnt onder Gesprekken in Android, waar je deze als prioriteit kunt markeren</string>
     <string name="notifyAllConversations">Gesprekken voor alle mail</string>
@@ -4361,7 +4361,7 @@
     <string name="faq_settings_4_q">Hoe kom ik te weten wat een instelling doet?</string>
     <string name="faq_settings_4_a">Houd een onderdeel van de instellingen ingedrukt (op een computer: klik er met de rechtermuisknop op): er opent een uitleg over waar het invloed op heeft, met de antwoorden erover uit „Vragen en antwoorden”. Het pictogram „?” naast de naam opent hetzelfde.</string>
     <string name="notifyPeopleConversations">Gesprekken voor e-mail van personen</string>
-    <string name="notifyPeopleConversationsDesc">Foto van de afzender met het app-pictogram erop bij e-mail van collega\'s en contacten waarin u bij de ontvangers staat (tot 50); nieuwsbrieven zoals gewoonlijk</string>
+    <string name="notifyPeopleConversationsDesc">Portret van de afzender met het app-pictogram erop bij mail van collega\'s, contacten, mensen met wie u heeft gemaild en persoonlijke mailboxen (Gmail, Outlook…) waarin u bij de ontvangers staat (tot 50); nieuwsbrieven als gewone melding</string>
     <string name="offlineErrGateway">De gateway van uw organisatie heeft het bericht vanaf dit netwerk geblokkeerd (bijvoorbeeld via VPN) — het wordt automatisch verzonden zodra het netwerk wijzigt</string>
     <string name="tagsInsert">Veld invoegen:</string>
     <string name="tagGroupRecipient">Ontvanger</string>

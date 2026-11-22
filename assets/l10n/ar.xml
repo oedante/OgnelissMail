@@ -3875,7 +3875,7 @@
     <string name="apPreviewBubbleIn">هل نعتمد التقدير قبل الجمعة؟</string>
     <string name="apPreviewBubbleOut">نعم، سأرسله اليوم.</string>
     <string name="notifyMessengerStyle">إشعارات بأسلوب تطبيقات المراسلة</string>
-    <string name="notifyMessengerStyleDesc">صورة المرسل أو الحرف الأول من اسمه بجانب الرسالة</string>
+    <string name="notifyMessengerStyleDesc">رسائل الأشخاص والزملاء تظهر بصورة المرسل كرسالة محادثة؛ والنشرات البريدية كإشعار عادي</string>
     <string name="notifyVipConversations">محادثات لكبار الشخصيات</string>
     <string name="notifyVipConversationsDesc">يظهر بريد كبار الشخصيات في قسم المحادثات في Android، حيث يمكنك جعله ذا أولوية</string>
     <string name="notifyAllConversations">محادثات لكل البريد</string>
@@ -4445,7 +4445,7 @@
     <string name="faq_settings_4_q">كيف أعرف ما الذي يفعله إعداد ما؟</string>
     <string name="faq_settings_4_a">اضغط مطولًا على عنصر في الإعدادات (على الكمبيوتر انقر عليه بزر الفأرة الأيمن): يُفتح شرح لما يؤثر فيه، مع الإجابات عنه من «الأسئلة والأجوبة». وأيقونة «؟» بجانب الاسم تفتح الشيء نفسه.</string>
     <string name="notifyPeopleConversations">محادثات لرسائل الأشخاص</string>
-    <string name="notifyPeopleConversationsDesc">صورة المرسل وعليها أيقونة التطبيق لرسائل الزملاء وجهات الاتصال التي تكون أنت من مستلميها (حتى 50)؛ النشرات بالشكل المعتاد</string>
+    <string name="notifyPeopleConversationsDesc">صورة المرسل وعليها أيقونة التطبيق في رسائل الزملاء وجهات الاتصال ومن راسلتهم والصناديق الشخصية (Gmail وOutlook…) التي تكون فيها بين المستلمين (حتى 50)؛ والنشرات البريدية كإشعار عادي</string>
     <string name="offlineErrGateway">حظرت بوابة مؤسستك الرسالة من هذه الشبكة (مثل VPN) — سيتم إرسالها تلقائيًا عند تغيّر الشبكة</string>
     <string name="tagsInsert">إدراج حقل:</string>
     <string name="tagGroupRecipient">المستلم</string>

@@ -3818,7 +3818,7 @@
     <string name="apPreviewBubbleIn">Schválime rozpočet do piatku?</string>
     <string name="apPreviewBubbleOut">Áno, pošlem ho dnes.</string>
     <string name="notifyMessengerStyle">Upozornenia ako v messengeri</string>
-    <string name="notifyMessengerStyleDesc">Fotka alebo iniciála odosielateľa vedľa správy</string>
+    <string name="notifyMessengerStyleDesc">Pošta od ľudí a kolegov s fotkou odosielateľa ako správa; bulletiny ako obyčajné upozornenie</string>
     <string name="notifyVipConversations">Konverzácie pre VIP</string>
     <string name="notifyVipConversationsDesc">Pošta od VIP sa zobrazí v sekcii Konverzácie v Androide, kde ju môžete označiť ako prioritnú</string>
     <string name="notifyAllConversations">Konverzácie pre všetky e-maily</string>
@@ -4382,7 +4382,7 @@
     <string name="faq_settings_4_q">Ako zistím, na čo slúži nastavenie?</string>
     <string name="faq_settings_4_a">Podržte položku nastavení (na počítači na ňu kliknite pravým tlačidlom myši): otvorí sa vysvetlenie, čo ovplyvňuje, a odpovede k nej z „Otázok a odpovedí“. To isté otvorí ikona „?“ vedľa názvu.</string>
     <string name="notifyPeopleConversations">Konverzácie pre poštu od ľudí</string>
-    <string name="notifyPeopleConversationsDesc">Portrét odosielateľa s ikonou aplikácie pri pošte od kolegov a kontaktov, kde ste medzi príjemcami (najviac 50); spravodaje ako zvyčajne</string>
+    <string name="notifyPeopleConversationsDesc">Portrét odosielateľa s ikonou aplikácie pri pošte od kolegov, kontaktov, ľudí, s ktorými ste si písali, a z osobných schránok (Gmail, Outlook…), kde ste medzi adresátmi (do 50); bulletiny ako obyčajné upozornenie</string>
     <string name="offlineErrGateway">Brána vašej organizácie zablokovala správu z tejto siete (napríklad cez VPN) — odošle sa automaticky po zmene siete</string>
     <string name="tagsInsert">Vložiť pole:</string>
     <string name="tagGroupRecipient">Adresát</string>

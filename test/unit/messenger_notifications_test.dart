@@ -85,6 +85,33 @@ void main() {
       expect(from(me: false), isFalse, reason: 'на общий список, вас поимённо нет');
     });
 
+    // 2.7.0 (владелец 22.11.2026: «разграничить людей и коллег — там
+    // уведомления как в мессенджере, а рассылки сделаем простыми»): письмо
+    // знакомого с Gmail на Gmail — тоже от человека.
+    test('от человека: и с кем переписывались, и с личного ящика (Gmail, Яндекс…)', () {
+      bool from({bool bulk = false, bool corr = false, bool personal = false, bool me = true}) =>
+          MessengerNotify.fromPerson(
+              bulk: bulk, recipients: 1, addressedToMe: me, sameOrg: false, inContacts: false,
+              correspondent: corr, personalAddress: personal);
+      expect(from(), isFalse, reason: 'магазин, интернет-сервис');
+      expect(from(corr: true), isTrue);
+      expect(from(personal: true), isTrue);
+      expect(from(personal: true, bulk: true), isFalse, reason: 'рассылка с Gmail');
+      expect(from(personal: true, me: false), isFalse);
+    });
+
+    test('вид «как в мессенджере» — люди, коллеги и VIP; рассылки — простым уведомлением', () {
+      bool look({bool style = true, bool person = false, bool vip = false, bool all = false}) =>
+          MessengerNotify.conversation(
+              styleOn: style, vipConversationsOn: true, isVip: vip, allConversationsOn: all,
+              peopleConversationsOn: true, isFromPerson: person);
+      expect(look(person: true), isTrue);
+      expect(look(vip: true), isTrue);
+      expect(look(), isFalse, reason: 'рассылка');
+      expect(look(all: true), isTrue, reason: 'включено «Беседы для всех писем»');
+      expect(look(style: false, person: true), isFalse);
+    });
+
     test('нажатие открывает письмо — формат виджета «Почта»', () {
       final t = MessengerNotify.openTarget('acc 1', 'INBOX:42');
       final u = Uri.parse(t);
@@ -285,12 +312,12 @@ void main() {
       const s = AppSettings(isFirstLaunch: false);
       expect(s.notificationMessengerStyle, isTrue);
       expect(s.notificationVipConversations, isTrue);
-      // Беседы для всех писем — с 2.7.0 по умолчанию включены (владелец
-      // 22.11.2026: «все как в мессенджере показывать»).
-      expect(MessengerNotify.allConversationsOn(p), isTrue);
-      expect(s.notificationAllConversations, isTrue);
-      await p.setBool(MessengerNotify.prefAllConversations, false);
+      // Беседы для всех писем — по умолчанию выключены: рассылки — простым
+      // уведомлением (владелец 22.11.2026).
       expect(MessengerNotify.allConversationsOn(p), isFalse);
+      expect(s.notificationAllConversations, isFalse);
+      await p.setBool(MessengerNotify.prefAllConversations, true);
+      expect(MessengerNotify.allConversationsOn(p), isTrue);
       // Беседы для писем от людей (18.11.2026) — по умолчанию включены.
       expect(MessengerNotify.peopleConversationsOn(p), isTrue);
       expect(s.notificationPeopleConversations, isTrue);

@@ -54,11 +54,10 @@ class MessengerNotify {
   /// «Беседы для всех писем» на Android (1.11.0, вопрос владельца 04.11.2026
   /// «можно ли значок приложения заменить на портрет»): в свёрнутом
   /// уведомлении слева Android рисует портрет только у беседы, у остальных —
-  /// значок приложения. С 2.7.0 включено по умолчанию (владелец 22.11.2026:
-  /// «все как в мессенджере показывать» — портрет отправителя со значком
-  /// приложения, «Ответить» и «Прочитано», как у мессенджеров); выключить —
-  /// «Расширенные настройки → Уведомления».
-  static bool allConversationsOn(SharedPreferences? p) => p?.getBool(prefAllConversations) ?? true;
+  /// значок приложения. По умолчанию выключено (владелец 22.11.2026: «нам
+  /// нужен вид как в мессенджерах от людей, а рассылки можно в обычном
+  /// режиме показывать»); включить — «Расширенные настройки → Уведомления».
+  static bool allConversationsOn(SharedPreferences? p) => p?.getBool(prefAllConversations) ?? false;
 
   /// «Беседы для писем от людей» на Android (ответ владельца 18.11.2026 на
   /// вопрос «портрет беседой у всех писем от людей, а рассылки — обычным
@@ -79,17 +78,40 @@ class MessengerNotify {
   ///  · адресатов в «Кому» и «Копии» — не больше [maxPersonRecipients];
   ///  · вы сами — в «Кому» или «Копии» ([addressedToMe]): письмо на общий
   ///    список (all@…, отдел@…), где вас нет поимённо, — объявление;
-  ///  · отправитель из своей организации (домен рабочего ящика, [sameOrg])
-  ///    или есть в контактах (Exchange, Google, телефон — не собранные из
-  ///    переписки, [inContacts]).
+  ///  · отправитель из своей организации (домен рабочего ящика, [sameOrg]),
+  ///    есть в контактах (Exchange, Google, телефон, [inContacts]), с ним
+  ///    уже переписывались ([correspondent]: вы ему писали или от него не
+  ///    одно письмо) или это личный ящик на Gmail, Яндексе, Mail.ru…
+  ///    ([personalAddress], 2.7.0: письмо знакомого с Gmail на Gmail
+  ///    приходило обычным видом — владелец 22.11.2026: «нам нужен вид как в
+  ///    мессенджерах от людей, а рассылки можно в обычном режиме»).
   static bool fromPerson({
     required bool bulk,
     required int recipients,
     required bool addressedToMe,
     required bool sameOrg,
     required bool inContacts,
+    bool correspondent = false,
+    bool personalAddress = false,
   }) =>
-      !bulk && recipients <= maxPersonRecipients && addressedToMe && (sameOrg || inContacts);
+      !bulk &&
+      recipients <= maxPersonRecipients &&
+      addressedToMe &&
+      (sameOrg || inContacts || correspondent || personalAddress);
+
+  /// Письмо — беседой, как в мессенджере: портрет отправителя (на Android —
+  /// со значком приложения на нём, в разделе «Беседы»; на iPhone — фото
+  /// отправителя). Письма людей ([isFromPerson]) и VIP; все письма — если
+  /// включено «Беседы для всех писем». Рассылки и служебные — обычным видом.
+  static bool conversation({
+    required bool styleOn,
+    required bool vipConversationsOn,
+    required bool isVip,
+    bool allConversationsOn = false,
+    bool peopleConversationsOn = false,
+    bool isFromPerson = false,
+  }) =>
+      styleOn && (allConversationsOn || (peopleConversationsOn && isFromPerson) || (vipConversationsOn && isVip));
 
   static const _channel = MethodChannel('ogneliss/messenger');
 
@@ -123,8 +145,13 @@ class MessengerNotify {
     String? email,
   }) =>
       android &&
-      styleOn &&
-      (allConversationsOn || (peopleConversationsOn && isFromPerson) || (vipConversationsOn && isVip)) &&
+      conversation(
+          styleOn: styleOn,
+          vipConversationsOn: vipConversationsOn,
+          isVip: isVip,
+          allConversationsOn: allConversationsOn,
+          peopleConversationsOn: peopleConversationsOn,
+          isFromPerson: isFromPerson) &&
       shortcutId(email) != null;
 
   /// Что открыть ярлыком беседы — тот же формат, что у виджета «Почта»

@@ -3799,7 +3799,7 @@
     <string name="apPreviewBubbleIn">Jóváhagyjuk a költségvetést péntekig?</string>
     <string name="apPreviewBubbleOut">Igen, ma elküldöm.</string>
     <string name="notifyMessengerStyle">Értesítések, mint egy üzenetküldőben</string>
-    <string name="notifyMessengerStyleDesc">A feladó fotója vagy kezdőbetűje az üzenet mellett</string>
+    <string name="notifyMessengerStyleDesc">Emberektől és kollégáktól érkező levelek a feladó fotójával, mint egy üzenet; hírlevelek egyszerű értesítésként</string>
     <string name="notifyVipConversations">Beszélgetések VIP-eknek</string>
     <string name="notifyVipConversationsDesc">A VIP-ek levelei az Android Beszélgetések részében jelennek meg, ahol prioritásossá tehetők</string>
     <string name="notifyAllConversations">Beszélgetések minden levélhez</string>
@@ -4361,7 +4361,7 @@
     <string name="faq_settings_4_q">Honnan tudom meg, mit csinál egy beállítás?</string>
     <string name="faq_settings_4_a">Tartsa lenyomva a beállítás elemét (számítógépen kattintson rá a jobb egérgombbal): megnyílik a magyarázat, hogy mire van hatással, és a róla szóló válaszok a „Kérdések és válaszok” részből. A név melletti „?” ikon ugyanezt nyitja meg.</string>
     <string name="notifyPeopleConversations">Beszélgetések az emberektől érkező levelekhez</string>
-    <string name="notifyPeopleConversationsDesc">A feladó képe rajta az alkalmazás ikonjával a kollégák és névjegyek olyan leveleinél, amelyek címzettjei között Ön is szerepel (legfeljebb 50); a hírlevelek a szokásos módon</string>
+    <string name="notifyPeopleConversationsDesc">A feladó portréja az alkalmazás ikonjával a kollégáktól, névjegyektől, levelezőpartnerektől és személyes postafiókokból (Gmail, Outlook…) érkező leveleknél, amelyek címzettjei között ön is szerepel (legfeljebb 50); hírlevelek egyszerű értesítésként</string>
     <string name="offlineErrGateway">A szervezet átjárója letiltotta az üzenetet erről a hálózatról (például VPN-ről) — a hálózat váltása után automatikusan elküldjük</string>
     <string name="tagsInsert">Mező beszúrása:</string>
     <string name="tagGroupRecipient">Címzett</string>

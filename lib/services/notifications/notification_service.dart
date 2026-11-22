@@ -371,7 +371,18 @@ class NotificationService {
     // с фото или буквой. Выключено — уведомление прежнего вида. VIP
     // (1.10.5) — кольцо и звёздочка на портрете; без портрета — «VIP» в
     // шапке.
-    final messenger = MessengerNotify.styleOn(_prefs) && (Platform.isAndroid || Platform.isIOS);
+    // С 2.7.0 — только у писем людей и коллег (и VIP); рассылки и служебные
+    // письма — простым уведомлением (владелец 22.11.2026: «разграничить
+    // людей и коллег — там уведомления как в мессенджере, а рассылки сделаем
+    // простыми»). Android — беседой с портретом, iPhone — с фото отправителя.
+    final messenger = (Platform.isAndroid || Platform.isIOS) &&
+        MessengerNotify.conversation(
+            styleOn: MessengerNotify.styleOn(_prefs),
+            vipConversationsOn: MessengerNotify.vipConversationsOn(_prefs),
+            isVip: isVip,
+            allConversationsOn: MessengerNotify.allConversationsOn(_prefs),
+            peopleConversationsOn: MessengerNotify.peopleConversationsOn(_prefs),
+            isFromPerson: isFromPerson);
     final subText = NotificationText.subText(folder: folderLabel, mailbox: mailboxLabel, vip: isVip && !messenger);
     // Строка текста: на Android — тема (свёрнутое уведомление), на iPhone и
     // Mac тема — подзаголовок, а в тексте — начало письма и последней

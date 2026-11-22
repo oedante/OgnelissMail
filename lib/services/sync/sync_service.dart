@@ -1003,6 +1003,14 @@ class SyncService {
   /// синхронизацией того же ящика — ни в этом изоляте, ни в фоновом).
   Future<void> _syncAccountSafe(AccountModel account, AppSettings settings) async {
     await _exclusive(account.id, () => _syncAccountSafeImpl(account, settings));
+    // Письма, сохранённые раньше из серверных «Черновиков» без отметки
+    // черновика (до 2.6.8), — черновики: в беседе они открываются в
+    // редакторе. Запрос по индексу папки, обычно ничего не меняет.
+    try {
+      await _ref.read(databaseProvider).markServerDrafts(account.id, FolderType.drafts.index);
+    } catch (e) {
+      AppLogger.debug('Черновики с сервера — отметка: $e');
+    }
     if (account.usesEas && _pimWanted.remove(account.id)) {
       await _syncEasPimSessions(account);
     }
@@ -3977,7 +3985,10 @@ class SyncService {
               sentAt: Value(email.sentAt),
               isRead: Value(email.isRead),
               isFlagged: Value(email.isFlagged),
-              isDraft: Value(email.isDraft),
+              // Письмо из серверных «Черновиков» — черновик (2.6.8): IMAP
+              // отметку не присылает, и беседа показывала его как обычное
+              // письмо — с «Ответить», без «Редактировать».
+              isDraft: Value(email.isDraft || (folder.type == FolderType.drafts && email.folderId == folder.id)),
               hasAttachments: Value(email.hasAttachments),
               size: Value(email.size),
               sensitivity: Value(email.sensitivity),
@@ -4081,7 +4092,7 @@ class SyncService {
             sentAt: Value(email.sentAt),
             isRead: Value(serverSide.isRead),
             isFlagged: Value(serverSide.isFlagged),
-            isDraft: Value(email.isDraft),
+            isDraft: Value(email.isDraft || (folder.type == FolderType.drafts && serverSide.folderId == folder.id)),
             hasAttachments: Value(email.hasAttachments),
             size: Value(email.size),
             // Гриф из заголовков (прочитан при открытии) список с сервера не стирает.

@@ -337,7 +337,7 @@ class _AttachmentHubScreenState extends ConsumerState<AttachmentHubScreen> with 
     try {
       final bytes = await ref
           .read(mailEngineServiceProvider)
-          .getAttachmentBytes(account, item.attachmentId, emailId: item.emailId);
+          .getAttachmentBytes(account, item.attachmentId, emailId: item.emailId, waitForNetwork: true);
       return await cache.put(cacheKey, item.name, bytes);
     } catch (e) {
       showInlineError('${l10n.tr('attachDownloadFailed')}: $e');

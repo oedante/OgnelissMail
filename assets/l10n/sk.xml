@@ -4123,9 +4123,9 @@
     <string name="mailReadingSettings">Zoznam a čítanie</string>
     <string name="mailReadingSettingsDesc">Priečinok po spustení, konverzácie, riadky náhľadu, tlačidlá pod správou</string>
     <string name="mailComposeSettings">Písanie a odosielanie</string>
-    <string name="mailComposeSettingsDesc">Zrušenie odoslania, príjemcovia, ľudia v citáciách, veľkosť fotiek</string>
+    <string name="mailComposeSettingsDesc">Zrušenie odoslania, príjemcovia, ľudia v citáciách</string>
     <string name="mailFilesSettings">Sťahovanie a prílohy</string>
-    <string name="mailFilesSettingsDesc">Režim sťahovania, pošta v zariadení, náhľad dokumentov, hľadanie v prílohách</string>
+    <string name="mailFilesSettingsDesc">Režim sťahovania, pošta v zariadení, náhľad dokumentov, hľadanie v prílohách, veľkosť fotiek</string>
     <string name="mailTranslateSettingsDesc">Preklad správ v zariadení</string>
     <string name="mailSafetySettingsDesc">Upozornenia na podvrhnutých odosielateľov</string>
     <string name="generalDesc">Jazyk, otáčanie obrazovky, widget Pošta</string>
@@ -4430,4 +4430,8 @@
     <string name="googleAccessContacts">kontakty</string>
     <string name="googleAccessPhotos">fotky kontaktov</string>
     <string name="outboxOnServer">Správy v tomto priečinku na serveri: {n}</string>
+    <string name="mailProtection">Ochrana pošty</string>
+    <string name="mailProtectionDesc">Upozornenia na phishing a blokovanie sledovačov</string>
+    <string name="advancedSecurity">Zabezpečenie</string>
+    <string name="trackerDetailsDesc">Ktoré služby a správy, dôveryhodní odosielatelia</string>
 </resources>

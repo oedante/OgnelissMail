@@ -4186,9 +4186,9 @@
     <string name="mailReadingSettings">القائمة والقراءة</string>
     <string name="mailReadingSettingsDesc">مجلد البدء والمحادثات وأسطر المعاينة وأزرار أسفل الرسالة</string>
     <string name="mailComposeSettings">الكتابة والإرسال</string>
-    <string name="mailComposeSettingsDesc">التراجع عن الإرسال والمستلمون والأشخاص في الاقتباسات وحجم الصور</string>
+    <string name="mailComposeSettingsDesc">التراجع عن الإرسال والمستلمون والأشخاص في الاقتباسات</string>
     <string name="mailFilesSettings">التنزيل والمرفقات</string>
-    <string name="mailFilesSettingsDesc">وضع التنزيل والبريد على الجهاز ومعاينة المستندات والبحث في المرفقات</string>
+    <string name="mailFilesSettingsDesc">وضع التنزيل والبريد على الجهاز ومعاينة المستندات والبحث في المرفقات وحجم الصور</string>
     <string name="mailTranslateSettingsDesc">ترجمة البريد على الجهاز</string>
     <string name="mailSafetySettingsDesc">تحذيرات من المرسلين المزيفين</string>
     <string name="generalDesc">اللغة وتدوير الشاشة وأداة البريد</string>
@@ -4493,4 +4493,8 @@
     <string name="googleAccessContacts">جهات الاتصال</string>
     <string name="googleAccessPhotos">صور المراسلين</string>
     <string name="outboxOnServer">الرسائل في هذا المجلد على الخادم: {n}</string>
+    <string name="mailProtection">حماية البريد</string>
+    <string name="mailProtectionDesc">تحذيرات التصيّد وحظر أدوات التتبع</string>
+    <string name="advancedSecurity">الأمان</string>
+    <string name="trackerDetailsDesc">أي الخدمات والرسائل، والمرسلون الموثوقون</string>
 </resources>

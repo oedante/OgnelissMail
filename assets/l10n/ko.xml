@@ -4081,9 +4081,9 @@
     <string name="mailReadingSettings">목록 및 읽기</string>
     <string name="mailReadingSettingsDesc">시작 폴더, 대화, 미리보기 줄, 메일 아래 버튼</string>
     <string name="mailComposeSettings">작성 및 보내기</string>
-    <string name="mailComposeSettingsDesc">보내기 취소, 받는 사람, 인용 속 사람, 사진 크기</string>
+    <string name="mailComposeSettingsDesc">보내기 취소, 받는 사람, 인용 속 사람</string>
     <string name="mailFilesSettings">다운로드 및 첨부 파일</string>
-    <string name="mailFilesSettingsDesc">다운로드 방식, 기기의 메일, 문서 미리보기, 첨부 파일 검색</string>
+    <string name="mailFilesSettingsDesc">다운로드 방식, 기기의 메일, 문서 미리보기, 첨부 파일 검색, 사진 크기</string>
     <string name="mailTranslateSettingsDesc">기기에서 메일 번역</string>
     <string name="mailSafetySettingsDesc">위조된 보낸 사람 경고</string>
     <string name="generalDesc">언어, 화면 회전, 메일 위젯</string>
@@ -4388,4 +4388,8 @@
     <string name="googleAccessContacts">연락처</string>
     <string name="googleAccessPhotos">상대방 사진</string>
     <string name="outboxOnServer">서버의 이 폴더에 있는 메시지: {n}</string>
+    <string name="mailProtection">메일 보호</string>
+    <string name="mailProtectionDesc">피싱 경고 및 추적기 차단</string>
+    <string name="advancedSecurity">보안</string>
+    <string name="trackerDetailsDesc">어떤 서비스와 메일인지, 신뢰하는 보낸 사람</string>
 </resources>

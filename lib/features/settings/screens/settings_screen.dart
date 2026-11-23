@@ -22,7 +22,6 @@ import '../providers/settings_provider.dart';
 import '../providers/feature_flags_provider.dart';
 import '../../../services/security/pin_lock_service.dart';
 import '../../../services/mail/focus_mode_service.dart';
-import '../../../services/security/tracker_blocker.dart';
 import '../widgets/settings_split.dart';
 import '../../../services/background/foreground_sync_controller.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
@@ -58,7 +57,6 @@ class SettingsScreen extends ConsumerWidget {
     final pinState = ref.watch(pinLockProvider);
     final mdmPin = ref.watch(managedPolicyProvider.select((p) => p.requireAppLock));
     final focusState = ref.watch(focusModeProvider);
-    final trackerState = ref.watch(trackerBlockerProvider);
     // Из списка раздел открывается с отметкой: в две колонки — справа
     // вместо открытого, без «Назад».
     void open(String location) => openSettingsSectionWith(
@@ -325,33 +323,16 @@ class SettingsScreen extends ConsumerWidget {
                 }
               },
             ),
+            // «Защита писем» (2.7.2, замечание владельца 23.11.2026:
+            // «антифишинг и блокировку можно объединить»): фишинг и трекеры —
+            // один экран. Безопасность соединения и защита данных (DLP) —
+            // в «Расширенных настройках»: их настраивает администратор.
             SettingsItem(
               icon: AppIcons.phishing,
-              title: l10n.tr('antiPhishing'),
-              subtitle: l10n.tr('mailSafetySettingsDesc'),
+              title: l10n.tr('mailProtection'),
+              subtitle: l10n.tr('mailProtectionDesc'),
               selected: sel('/settings/mail/safety'),
               onTap: () => open('/settings/mail/safety'),
-            ),
-            SettingsItem(
-              icon: AppIcons.visibility_off,
-              title: l10n.tr('trackerBlocker'),
-              subtitle: '${trackerState.totalBlocked} ${l10n.tr('trackersBlocked').toLowerCase()}',
-              selected: sel('/settings/trackers'),
-              onTap: () => open('/settings/trackers'),
-            ),
-            SettingsItem(
-              icon: AppIcons.verified_user,
-              title: l10n.tr('connectionSecurity'),
-              subtitle: l10n.tr('connectionSecurityDesc'),
-              selected: sel('/settings/security'),
-              onTap: () => open('/settings/security'),
-            ),
-            SettingsItem(
-              icon: AppIcons.shield,
-              title: l10n.tr('dlpTitle'),
-              subtitle: l10n.tr('dlpSettingsDesc'),
-              selected: sel('/settings/dlp'),
-              onTap: () => open('/settings/dlp'),
             ),
             // Система замораживает приложение — подсказка прямо в строке.
             SettingsItem(

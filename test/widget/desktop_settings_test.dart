@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/settings/screens/accessibility_screen.dart';
+import 'package:ogneliss/features/settings/screens/advanced_settings_screen.dart';
 import 'package:ogneliss/features/settings/screens/mail_settings_screen.dart';
 import 'package:ogneliss/features/settings/screens/notifications_settings_screen.dart';
 import 'package:ogneliss/features/settings/screens/sync_settings_screen.dart';
@@ -99,11 +100,41 @@ void main() {
     await t.pumpWidget(const SizedBox());
   });
 
-  testWidgets('«Синхронизация» — отдельный экран: все ящики, расписание, конфликты', (t) async {
+  // Конфликты синхронизации решаются сами — выбор в «Расширенных
+  // настройках» (2.7.2, «пользователь добавил аккаунт — от него не должно
+  // что-то ещё требоваться»).
+  testWidgets('«Синхронизация» — отдельный экран: все ящики и расписание', (t) async {
     await _pump(t, const SyncSettingsScreen());
     expect(find.text(ru.tr('autoSyncAll')), findsOneWidget);
     expect(find.text(ru.tr('scheduleTitle')), findsOneWidget);
-    expect(find.text(ru.tr('syncConflicts')), findsOneWidget);
+    expect(find.text(ru.tr('syncConflicts')), findsNothing);
+    await t.pumpWidget(const SizedBox());
+  });
+
+  // Перегруппировка 2.7.2 (замечание владельца 23.11.2026: «антифишинг и
+  // блокировку можно объединить, размер фото — в "Загрузке и вложениях"»).
+  testWidgets('«Защита писем»: антифишинг и блокировка трекеров одним экраном', (t) async {
+    await _pump(t, const MailSettingsScreen(part: MailSettingsPart.safety));
+    expect(find.text(ru.tr('mailProtection')), findsOneWidget);
+    expect(find.text(ru.tr('dangerOnly')), findsOneWidget);
+    expect(find.byKey(const ValueKey('safety_trackers')), findsOneWidget);
+    expect(find.byKey(const ValueKey('safety_trackers_log')), findsOneWidget);
+    await t.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('размер фото при отправке — в «Загрузке и вложениях», не в «Написании»', (t) async {
+    await _pump(t, const MailSettingsScreen(part: MailSettingsPart.files));
+    expect(find.text(ru.tr('photoSendSize')), findsOneWidget);
+    await _pump(t, const MailSettingsScreen(part: MailSettingsPart.compose));
+    expect(find.text(ru.tr('photoSendSize')), findsNothing);
+    await t.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('«Расширенные»: конфликты, сертификаты и защита данных', (t) async {
+    await _pump(t, const AdvancedSettingsScreen());
+    expect(find.byKey(const ValueKey('adv_conflicts')), findsOneWidget);
+    expect(find.byKey(const ValueKey('adv_conn_security')), findsOneWidget);
+    expect(find.byKey(const ValueKey('adv_dlp')), findsOneWidget);
     await t.pumpWidget(const SizedBox());
   });
 }

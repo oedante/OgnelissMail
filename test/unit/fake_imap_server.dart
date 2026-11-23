@@ -108,6 +108,13 @@ class FakeImapServer {
   /// На команду, содержащую одну из строк, — BAD (сбой сервера).
   final failOn = <String>{};
 
+  /// На команду, содержащую одну из строк, — молчание: ответ не приходит
+  /// (связь встала посреди скачивания).
+  final hangOn = <String>{};
+
+  /// Сколько соединений было открыто.
+  int get connectionCount => _conns.length;
+
   /// Отклонять NOTIFY SET (NO [BADEVENT]).
   bool rejectNotify = false;
 
@@ -234,6 +241,7 @@ class _Conn {
       write('$tag BAD injected failure');
       return;
     }
+    if (srv.hangOn.any(cmd.contains)) return;
     final upper = cmd.toUpperCase();
     if (upper == 'CAPABILITY') {
       write('* CAPABILITY ${srv.caps}');

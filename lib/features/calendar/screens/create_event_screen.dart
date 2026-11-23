@@ -164,7 +164,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         final path = await cache.get(key);
         if (path != null && await File(path).exists()) return await File(path).readAsBytes();
         final bytes = Uint8List.fromList(
-            await ref.read(mailEngineServiceProvider).getAttachmentBytes(account, a.id, emailId: email.id));
+            await ref.read(mailEngineServiceProvider).getAttachmentBytes(account, a.id, emailId: email.id, waitForNetwork: true));
         if (bytes.isEmpty) throw StateError('сервер вернул пустое вложение');
         try {
           await cache.put(key, a.name, bytes);

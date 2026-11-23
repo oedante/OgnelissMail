@@ -19,6 +19,10 @@
 // разобрались — [takeParseFailures]; ImapService загружает их заново без
 // BODYSTRUCTURE. Сам пакет enough_mail не изменён.
 
+import 'dart:async';
+import 'dart:io' show SocketException;
+import 'dart:typed_data';
+
 import 'package:enough_mail/enough_mail.dart' as em;
 // ConnectionInfo не вынесен в открытый API enough_mail (как в
 // TolerantSmtpClient).
@@ -87,6 +91,73 @@ class TolerantImapClient extends em.ImapClient {
     final up = _transport.upgrade(onBadCertificate: onBadCertificate);
     if (up == null) return super.upgradeToSslSocket();
     connect(await up);
+  }
+
+  // ── Ход приёма и обрыв (2.7.2) ──
+  //
+  // Журнал владельца 23.11.2026: при плохой связи вложение качалось без
+  // конца, а после смены сети не начиналось снова. enough_mail при закрытом
+  // сокете (disconnect, обрыв) не завершает команды, ждущие ответа, — они
+  // висели до тайм-аута операции (у вложения — 20 мин), и очередь ящика
+  // стояла. [lost] завершается ошибкой при обрыве и при [abort]; ImapService
+  // ждёт команду наперегонки с ним. [lastDataAt] — когда пришли данные:
+  // по нему видно, что приём встал.
+
+  int _received = 0;
+  DateTime _lastData = DateTime.now();
+
+  /// Сколько байт пришло от сервера за всё время соединения.
+  int get bytesReceived => _received;
+
+  /// Когда от сервера пришли последние данные.
+  DateTime get lastDataAt => _lastData;
+
+  /// Отметить начало операции: ожидание приёма считается с этой минуты.
+  void touch() => _lastData = DateTime.now();
+
+  @override
+  void onDataReceived(Uint8List data) {
+    _received += data.length;
+    _lastData = DateTime.now();
+    super.onDataReceived(data);
+  }
+
+  Completer<void>? _lostCompleter;
+
+  Completer<void> get _lostC {
+    final c = _lostCompleter;
+    if (c != null) return c;
+    final n = Completer<void>();
+    // Никто может и не ждать — ошибка не должна считаться необработанной.
+    n.future.ignore();
+    return _lostCompleter = n;
+  }
+
+  /// Завершается ошибкой [SocketException], когда соединение оборвано
+  /// (сеть, сервер) или закрыто через [abort]; пока соединение живо — ждёт.
+  Future<void> get lost => _lostC.future;
+
+  /// Оборвано ли соединение.
+  bool get isLost => _lostCompleter?.isCompleted ?? false;
+
+  void _markLost(Object reason) {
+    final c = _lostC;
+    if (!c.isCompleted) c.completeError(SocketException('IMAP: соединение потеряно — $reason'));
+  }
+
+  @override
+  void onConnectionError(dynamic error) {
+    super.onConnectionError(error);
+    _markLost(error ?? 'закрыто');
+  }
+
+  /// Закрыть соединение так, чтобы команды, ждущие ответа, сразу получили
+  /// ошибку (а не ждали тайм-аута).
+  Future<void> abort(String reason) async {
+    _markLost(reason);
+    try {
+      await disconnect();
+    } catch (_) {}
   }
 
   /// Не больше стольких сбоев хранится до [takeParseFailures].

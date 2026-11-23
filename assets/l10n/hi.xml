@@ -4102,9 +4102,9 @@
     <string name="mailReadingSettings">सूची और पढ़ना</string>
     <string name="mailReadingSettingsDesc">शुरुआती फ़ोल्डर, बातचीत, पूर्वावलोकन पंक्तियाँ, संदेश के नीचे बटन</string>
     <string name="mailComposeSettings">लिखना और भेजना</string>
-    <string name="mailComposeSettingsDesc">भेजना पूर्ववत करें, प्राप्तकर्ता, उद्धरणों में लोग, फ़ोटो आकार</string>
+    <string name="mailComposeSettingsDesc">भेजना पूर्ववत करें, प्राप्तकर्ता, उद्धरणों में लोग</string>
     <string name="mailFilesSettings">डाउनलोड और अनुलग्नक</string>
-    <string name="mailFilesSettingsDesc">डाउनलोड मोड, डिवाइस पर मेल, दस्तावेज़ पूर्वावलोकन, अनुलग्नकों में खोज</string>
+    <string name="mailFilesSettingsDesc">डाउनलोड मोड, डिवाइस पर मेल, दस्तावेज़ पूर्वावलोकन, अनुलग्नकों में खोज, फ़ोटो आकार</string>
     <string name="mailTranslateSettingsDesc">डिवाइस पर मेल अनुवाद</string>
     <string name="mailSafetySettingsDesc">नकली प्रेषकों के बारे में चेतावनी</string>
     <string name="generalDesc">भाषा, स्क्रीन रोटेशन, मेल विजेट</string>
@@ -4409,4 +4409,8 @@
     <string name="googleAccessContacts">संपर्क</string>
     <string name="googleAccessPhotos">संपर्कों की फ़ोटो</string>
     <string name="outboxOnServer">सर्वर पर इस फ़ोल्डर में संदेश: {n}</string>
+    <string name="mailProtection">मेल सुरक्षा</string>
+    <string name="mailProtectionDesc">फ़िशिंग चेतावनियाँ और ट्रैकर अवरोधन</string>
+    <string name="advancedSecurity">सुरक्षा</string>
+    <string name="trackerDetailsDesc">कौन-सी सेवाएँ और संदेश, विश्वसनीय प्रेषक</string>
 </resources>

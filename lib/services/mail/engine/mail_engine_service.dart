@@ -25,6 +25,7 @@ import '../../sync/push_health.dart';
 import '../../../data/database/app_database.dart';
 import '../../../features/compose/providers/attachment_limit_provider.dart';
 import '../../../core/network/corporate_http_client.dart';
+import '../../../core/network/connectivity_service.dart' show connectivityServiceProvider;
 import '../../../core/security/secure_storage_service.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 import '../../../data/models/account_model.dart';
@@ -3639,8 +3640,65 @@ class MailEngineService {
   ///  · EAS — ItemOperations/Fetch по FileReference (это и есть id вложения);
   ///  · EWS — GetAttachment;
   ///  · IMAP — номер части MIME; id письма имеет вид «папка:uid».
+  ///
+  /// [waitForNetwork] — скачивание, которое ждёт человек (нажал на
+  /// вложение): обрыв связи — не ошибка, скачивание повторяется само, когда
+  /// связь вернётся (2.7.2, журнал владельца 23.11.2026: «при восстановлении
+  /// доступа к интернету скачивание не начинается — пришлось закрывать
+  /// приложение»). Не больше [attachmentRetries] повторов и
+  /// [attachmentNetworkWait] ожидания сети на каждый.
   Future<Uint8List> getAttachmentBytes(AccountModel account, String attachmentId,
-      {String? emailId}) async {
+      {String? emailId, bool waitForNetwork = false}) async {
+    for (var attempt = 0;; attempt++) {
+      try {
+        return await _attachmentBytesOnce(account, attachmentId, emailId: emailId);
+      } catch (e) {
+        if (!waitForNetwork || attempt >= attachmentRetries || !isNetworkFailure(e)) rethrow;
+        AppLogger.info('Вложение ${account.email}: связь пропала ($e) — повтор, когда сеть вернётся');
+        await _waitForNetwork(attempt);
+      }
+    }
+  }
+
+  static const attachmentRetries = 3;
+  static const attachmentNetworkWait = Duration(minutes: 10);
+
+  /// Ошибка связи (обрыв, нет сети, тайм-аут, сервер не ответил), а не отказ
+  /// сервера: такую стоит повторить, когда сеть вернётся.
+  @visibleForTesting
+  static bool isNetworkFailure(Object e) {
+    if (e is TimeoutException || e is NetworkException) return true;
+    final t = e.toString().toLowerCase();
+    return t.contains('socketexception') ||
+        t.contains('connection') ||
+        t.contains('соединение') ||
+        t.contains('timed out') ||
+        t.contains('timeout') ||
+        t.contains('handshake') ||
+        t.contains('host lookup') ||
+        t.contains('resolve host') ||
+        t.contains('network') ||
+        t.contains('(http 0)') ||
+        t.contains('не завершилась за');
+  }
+
+  /// Подождать сеть: нет связи — пока не появится (не дольше
+  /// [attachmentNetworkWait]), связь есть, но плохая — паузу 5, 15, 30 с.
+  Future<void> _waitForNetwork(int attempt) async {
+    final ref = _ref;
+    final pause = Duration(seconds: const [5, 15, 30][attempt.clamp(0, 2)]);
+    if (ref == null) return Future<void>.delayed(pause);
+    final until = DateTime.now().add(attachmentNetworkWait);
+    var offline = false;
+    while (!ref.read(connectivityServiceProvider).isConnected && DateTime.now().isBefore(until)) {
+      offline = true;
+      await Future<void>.delayed(const Duration(seconds: 2));
+    }
+    // Сеть только появилась — дать ей устояться; не пропадала — пауза.
+    await Future<void>.delayed(offline ? const Duration(seconds: 3) : pause);
+  }
+
+  Future<Uint8List> _attachmentBytesOnce(AccountModel account, String attachmentId, {String? emailId}) async {
     if (account.usesEas) {
       final eas = await _easEngine(account);
       if (eas == null) {

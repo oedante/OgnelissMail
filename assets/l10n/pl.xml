@@ -4144,9 +4144,9 @@
     <string name="mailReadingSettings">Lista i czytanie</string>
     <string name="mailReadingSettingsDesc">Folder startowy, wątki, wiersze podglądu, przyciski pod wiadomością</string>
     <string name="mailComposeSettings">Pisanie i wysyłanie</string>
-    <string name="mailComposeSettingsDesc">Cofanie wysyłki, odbiorcy, osoby w cytatach, rozmiar zdjęć</string>
+    <string name="mailComposeSettingsDesc">Cofanie wysyłki, odbiorcy, osoby w cytatach</string>
     <string name="mailFilesSettings">Pobieranie i załączniki</string>
-    <string name="mailFilesSettingsDesc">Tryb pobierania, poczta na urządzeniu, podgląd dokumentów, wyszukiwanie w załącznikach</string>
+    <string name="mailFilesSettingsDesc">Tryb pobierania, poczta na urządzeniu, podgląd dokumentów, wyszukiwanie w załącznikach, rozmiar zdjęć</string>
     <string name="mailTranslateSettingsDesc">Tłumaczenie wiadomości na urządzeniu</string>
     <string name="mailSafetySettingsDesc">Ostrzeżenia o podszywających się nadawcach</string>
     <string name="generalDesc">Język, obracanie ekranu, widżet Poczta</string>
@@ -4451,4 +4451,8 @@
     <string name="googleAccessContacts">kontakty</string>
     <string name="googleAccessPhotos">zdjęcia rozmówców</string>
     <string name="outboxOnServer">Wiadomości w tym folderze na serwerze: {n}</string>
+    <string name="mailProtection">Ochrona poczty</string>
+    <string name="mailProtectionDesc">Ostrzeżenia przed phishingiem i blokowanie trackerów</string>
+    <string name="advancedSecurity">Bezpieczeństwo</string>
+    <string name="trackerDetailsDesc">Które usługi i wiadomości, zaufani nadawcy</string>
 </resources>

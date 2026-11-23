@@ -2581,7 +2581,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       // запрос уходил в IMAP-ветку — вложение не открывалось.
       final bytes = await safeAsync(() => ref
           .read(mailEngineServiceProvider)
-          .getAttachmentBytes(account, att.id, emailId: widget.emailId));
+          .getAttachmentBytes(account, att.id, emailId: widget.emailId, waitForNetwork: true));
       if (bytes == null) return; // disposed
 
       // В КЭШ, а не в Documents: один файл на содержимое (MD5), LRU +
@@ -3876,7 +3876,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
 
     final bytes = await ref
         .read(mailEngineServiceProvider)
-        .getAttachmentBytes(account, att.id, emailId: widget.emailId);
+        .getAttachmentBytes(account, att.id, emailId: widget.emailId, waitForNetwork: true);
     return cache.put(key, att.name, bytes);
   }
 

@@ -123,7 +123,7 @@ class _ConversationFilesScreenState extends ConsumerState<ConversationFilesScree
         _failed.remove(key);
       });
       try {
-        final bytes = await ref.read(mailEngineServiceProvider).getAttachmentBytes(account, att.id, emailId: e.id);
+        final bytes = await ref.read(mailEngineServiceProvider).getAttachmentBytes(account, att.id, emailId: e.id, waitForNetwork: true);
         path = await cache.put(cacheKey, att.name, bytes);
       } catch (err) {
         // Не скачалось — значок у файла; нажатие повторит.

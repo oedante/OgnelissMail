@@ -4102,9 +4102,9 @@
     <string name="mailReadingSettings">Liste ve okuma</string>
     <string name="mailReadingSettingsDesc">Başlangıç klasörü, konuşmalar, önizleme satırları, ileti altındaki düğmeler</string>
     <string name="mailComposeSettings">Yazma ve gönderme</string>
-    <string name="mailComposeSettingsDesc">Göndermeyi geri al, alıcılar, alıntılardaki kişiler, fotoğraf boyutu</string>
+    <string name="mailComposeSettingsDesc">Göndermeyi geri al, alıcılar, alıntılardaki kişiler</string>
     <string name="mailFilesSettings">İndirme ve ekler</string>
-    <string name="mailFilesSettingsDesc">İndirme modu, cihazdaki postalar, belge önizleme, eklerde arama</string>
+    <string name="mailFilesSettingsDesc">İndirme modu, cihazdaki postalar, belge önizleme, eklerde arama, fotoğraf boyutu</string>
     <string name="mailTranslateSettingsDesc">Cihazda posta çevirisi</string>
     <string name="mailSafetySettingsDesc">Sahte gönderenler hakkında uyarılar</string>
     <string name="generalDesc">Dil, ekran döndürme, Posta widget\'ı</string>
@@ -4409,4 +4409,8 @@
     <string name="googleAccessContacts">kişiler</string>
     <string name="googleAccessPhotos">kişilerin fotoğrafları</string>
     <string name="outboxOnServer">Sunucudaki bu klasörde bulunan iletiler: {n}</string>
+    <string name="mailProtection">Posta koruması</string>
+    <string name="mailProtectionDesc">Kimlik avı uyarıları ve izleyici engelleme</string>
+    <string name="advancedSecurity">Güvenlik</string>
+    <string name="trackerDetailsDesc">Hangi hizmetler ve iletiler, güvenilen gönderenler</string>
 </resources>

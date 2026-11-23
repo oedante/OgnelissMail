@@ -135,7 +135,7 @@ Future<String?> peekFetchFile(WidgetRef ref, AccountModel? account, EmailModel e
     final local = a.localPath;
     if (local != null && local.isNotEmpty && await File(local).exists()) return local;
     if (account == null) return null;
-    final bytes = await engine.getAttachmentBytes(account, a.id, emailId: e.id);
+    final bytes = await engine.getAttachmentBytes(account, a.id, emailId: e.id, waitForNetwork: true);
     return await cache.put(key, a.name, bytes);
   } catch (err) {
     showInlineError('${l10n.tr('attachDownloadFailed')}: $err');
